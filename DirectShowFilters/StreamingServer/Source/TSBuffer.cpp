@@ -23,6 +23,7 @@
 *  nate can be reached on the forums at
 *    http://forums.dvbowners.com/
 */
+#include "StdAfx.h"
 #include "TSBuffer.h"
 #include "entercriticalsection.h"
 

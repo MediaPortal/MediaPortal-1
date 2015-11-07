@@ -23,6 +23,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 #include <fcntl.h>
 #endif
 
+#include "StdAfx.h"
 #include "TsStreamFileSource.h"
 #include "FileReader.h"
 #include "MultiFileReader.h"
@@ -45,7 +46,8 @@ TsStreamFileSource::createNew(UsageEnvironment& env, wchar_t const* fileName,
 	FileReader* reader;
 	if (wcsstr(fileName, L".tsbuffer")!=NULL)
 	{
-		reader = new MultiFileReader();
+      //MultiFileReader::MultiFileReader(BOOL useFileNext, BOOL useDummyWrites, CCritSec* pFilterLock, BOOL useRandomAccess, BOOL extraLogging):
+    reader   = new MultiFileReader(FALSE, FALSE, NULL, TRUE, FALSE);
 		__int64 fileSize= reader->GetFileSize();
 	}
 	else
