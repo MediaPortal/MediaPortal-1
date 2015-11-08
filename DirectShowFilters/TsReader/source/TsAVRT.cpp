@@ -49,9 +49,9 @@ TsAVRT::~TsAVRT()
 void TsAVRT::UnloadAVRT()
 {
   LogDebug("TsAVRT::UnloadAVRT() - Unloading AVRT libraries");
-  if (m_hModuleAVRT != NULL)
+  if (m_hModuleAVRT)
   {
-    LogDebug("TsAVRT::UnloadAVRT() - Freeing lib: avrt.dll");
+    //LogDebug("TsAVRT::UnloadAVRT() - Freeing lib: avrt.dll");
     if (!FreeLibrary(m_hModuleAVRT))
     {
       LogDebug("TsAVRT::UnloadAVRT() - avrt.dll could not be unloaded");
@@ -59,7 +59,6 @@ void TsAVRT::UnloadAVRT()
     m_hModuleAVRT = NULL;
   }
 }
-
 
 bool TsAVRT::LoadAVRT()
 {
@@ -73,7 +72,7 @@ bool TsAVRT::LoadAVRT()
   // Vista and later OS only, allowed to return NULL. Remember to check agains NULL when using
   if (m_hModuleAVRT)
   {
-    LogDebug("TsAVRT::LoadAVRT() - Successfully loaded AVRT dll");
+    //LogDebug("TsAVRT::LoadAVRT() - Successfully loaded AVRT dll");
     m_pAvSetMmThreadCharacteristicsW   = (TAvSetMmThreadCharacteristicsW*)GetProcAddress(m_hModuleAVRT,"AvSetMmThreadCharacteristicsW");
     m_pAvSetMmThreadPriority           = (TAvSetMmThreadPriority*)GetProcAddress(m_hModuleAVRT,"AvSetMmThreadPriority");
     m_pAvRevertMmThreadCharacteristics = (TAvRevertMmThreadCharacteristics*)GetProcAddress(m_hModuleAVRT,"AvRevertMmThreadCharacteristics");
@@ -84,4 +83,36 @@ bool TsAVRT::LoadAVRT()
   UnloadAVRT();
   return FALSE;
 } 
+
+HANDLE TsAVRT::SetMMCSThreadPlayback(LPDWORD pDwTaskIndex, AVRT_PRIORITY AvrtPriority)
+{  
+  HANDLE hAvrt = INVALID_HANDLE_VALUE;
+  
+  if (m_pAvSetMmThreadCharacteristicsW) 
+  {
+    hAvrt = m_pAvSetMmThreadCharacteristicsW(L"Playback", pDwTaskIndex);
+    
+    if ((hAvrt != INVALID_HANDLE_VALUE) && m_pAvSetMmThreadPriority) 
+    {
+      if (m_pAvSetMmThreadPriority(hAvrt, AVRT_PRIORITY_NORMAL))
+      {
+        LogDebug("TsAVRT::SetMMCSThread - Priority: %d, AvrtHandle: %d", AVRT_PRIORITY_NORMAL, hAvrt);
+      }
+    }
+  }
+  
+  return hAvrt;
+}
+
+void TsAVRT::RevertMMCSThread(HANDLE hAvrt)
+{
+  if ((hAvrt != INVALID_HANDLE_VALUE) && m_pAvRevertMmThreadCharacteristics) 
+  {
+    if (m_pAvRevertMmThreadCharacteristics(hAvrt))
+    {
+      LogDebug("TsAVRT::RevertMMCSThread - AvrtHandle: %d", hAvrt);
+    }
+  } 
+}
+
   

@@ -14,7 +14,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2009 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2015 Live Networks, Inc.  All rights reserved.
 // A class used for digest authentication.
 // C++ header
 
@@ -32,8 +32,12 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 class Authenticator {
 public:
   Authenticator();
+  Authenticator(char const* username, char const* password, Boolean passwordIsMD5 = False);
+      // If "passwordIsMD5" is True, then "password" is actually the value computed
+      // by md5(<username>:<realm>:<actual-password>)
   Authenticator(const Authenticator& orig);
   Authenticator& operator=(const Authenticator& rightSide);
+  Boolean operator<(const Authenticator* rightSide);
   virtual ~Authenticator();
 
   void reset();
@@ -41,8 +45,7 @@ public:
   void setRealmAndRandomNonce(char const* realm);
       // as above, except that the nonce is created randomly.
       // (This is used by servers.)
-  void setUsernameAndPassword(char const* username, char const* password,
-			      Boolean passwordIsMD5 = False);
+  void setUsernameAndPassword(char const* username, char const* password, Boolean passwordIsMD5 = False);
       // If "passwordIsMD5" is True, then "password" is actually the value computed
       // by md5(<username>:<realm>:<actual-password>)
 
@@ -52,14 +55,14 @@ public:
   char const* password() const { return fPassword; }
 
   char const* computeDigestResponse(char const* cmd, char const* url) const;
+      // The returned string from this function must later be freed by calling:
   void reclaimDigestResponse(char const* responseStr) const;
 
 private:
   void resetRealmAndNonce();
   void resetUsernameAndPassword();
   void assignRealmAndNonce(char const* realm, char const* nonce);
-  void assignUsernameAndPassword(char const* username, char const* password,
-				 Boolean passwordIsMD5);
+  void assignUsernameAndPassword(char const* username, char const* password, Boolean passwordIsMD5);
   void assign(char const* realm, char const* nonce,
 	      char const* username, char const* password, Boolean passwordIsMD5);
 

@@ -14,7 +14,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2009 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2015 Live Networks, Inc.  All rights reserved.
 // JPEG Video (RFC 2435) RTP Sources
 // Implementation
 
@@ -171,7 +171,10 @@ static void createHuffmanHeader(unsigned char*& p,
 
 static unsigned computeJPEGHeaderSize(unsigned qtlen, unsigned dri) {
   unsigned qtlen_half = qtlen/2; // in case qtlen is odd; shouldn't happen
-  return 495 + qtlen_half*2 + (dri > 0 ? 6 : 0);
+  qtlen = qtlen_half*2;
+
+  unsigned numQtables = qtlen > 64 ? 2 : 1;
+  return 485 + numQtables*5 + qtlen + (dri > 0 ? 6 : 0);
 }
 
 static void createJPEGHeader(unsigned char* buf, unsigned type,
@@ -238,7 +241,7 @@ static void createJPEGHeader(unsigned char* buf, unsigned type,
   *ptr++ = numQtables == 1 ? 0x00 : 0x01; // quant table id
   *ptr++ = 0x03; // id of component
   *ptr++ = 0x11; // sampling ratio (h,v)
-  *ptr++ = 0x01; // quant table id
+  *ptr++ = numQtables == 1 ? 0x00 : 0x01; // quant table id
 
   createHuffmanHeader(ptr, lum_dc_codelens, sizeof lum_dc_codelens,
 		      lum_dc_symbols, sizeof lum_dc_symbols, 0, 0);

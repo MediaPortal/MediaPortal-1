@@ -14,7 +14,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2009 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2015 Live Networks, Inc.  All rights reserved.
 // RTP sink for a common kind of payload format: Those which pack multiple,
 // complete codec frames (as many as possible) into each RTP packet.
 // Implementation
@@ -42,8 +42,9 @@ MultiFramedRTPSink::MultiFramedRTPSink(UsageEnvironment& env,
 				       unsigned numChannels)
   : RTPSink(env, rtpGS, rtpPayloadType, rtpTimestampFrequency,
 	    rtpPayloadFormatName, numChannels),
-  fOutBuf(NULL), fCurFragmentationOffset(0), fPreviousFrameEndedFragmentation(False) {
-  setPacketSizes(1000, 1448);
+    fOutBuf(NULL), fCurFragmentationOffset(0), fPreviousFrameEndedFragmentation(False),
+    fOnSendErrorFunc(NULL), fOnSendErrorData(NULL) {
+  setPacketSizes(1000, 1456);
       // Default max packet size (1500, minus allowance for IP, UDP, UMTP headers)
       // (Also, make it a multiple of 4 bytes, just in case that matters.)
 }
@@ -56,12 +57,12 @@ void MultiFramedRTPSink
 ::doSpecialFrameHandling(unsigned /*fragmentationOffset*/,
 			 unsigned char* /*frameStart*/,
 			 unsigned /*numBytesInFrame*/,
-			 struct timeval frameTimestamp,
+			 struct timeval framePresentationTime,
 			 unsigned /*numRemainingBytes*/) {
   // default implementation: If this is the first frame in the packet,
-  // use its timestamp for the RTP timestamp:
+  // use its presentationTime for the RTP timestamp:
   if (isFirstFrameInPacket()) {
-    setTimestamp(frameTimestamp);
+    setTimestamp(framePresentationTime);
   }
 }
 
@@ -100,9 +101,9 @@ void MultiFramedRTPSink::setMarkerBit() {
   fOutBuf->insertWord(rtpHdr, 0);
 }
 
-void MultiFramedRTPSink::setTimestamp(struct timeval timestamp) {
-  // First, convert the timestamp to a 32-bit RTP timestamp:
-  fCurrentTimestamp = convertToRTPTimestamp(timestamp);
+void MultiFramedRTPSink::setTimestamp(struct timeval framePresentationTime) {
+  // First, convert the presentation time to a 32-bit RTP timestamp:
+  fCurrentTimestamp = convertToRTPTimestamp(framePresentationTime);
 
   // Then, insert it into the RTP packet:
   fOutBuf->insertWord(fCurrentTimestamp, fTimestampPosition);
@@ -165,7 +166,7 @@ void MultiFramedRTPSink::buildAndSendPacket(Boolean isFirstPacket) {
   fIsFirstPacket = isFirstPacket;
 
   // Set up the RTP header:
-  unsigned rtpHdr = 0x80000000; // RTP version 2
+  unsigned rtpHdr = 0x80000000; // RTP version 2; marker ('M') bit not set (by default; it can be set later)
   rtpHdr |= (fRTPPayloadType<<16);
   rtpHdr |= fSeqNo; // sequence number
   fOutBuf->enqueueWord(rtpHdr);
@@ -235,13 +236,17 @@ void MultiFramedRTPSink
     gettimeofday(&fNextSendTime, NULL);
   }
 
+  fMostRecentPresentationTime = presentationTime;
+  if (fInitialPresentationTime.tv_sec == 0 && fInitialPresentationTime.tv_usec == 0) {
+    fInitialPresentationTime = presentationTime;
+  }    
+
   if (numTruncatedBytes > 0) {
     unsigned const bufferSize = fOutBuf->totalBytesAvailable();
-    unsigned newMaxSize = frameSize + numTruncatedBytes;
     envir() << "MultiFramedRTPSink::afterGettingFrame1(): The input frame data was too large for our buffer size ("
 	    << bufferSize << ").  "
 	    << numTruncatedBytes << " bytes of trailing data was dropped!  Correct this by increasing \"OutPacketBuffer::maxSize\" to at least "
-	    << newMaxSize << ", *before* creating this 'RTPSink'.  (Current value is "
+	    << OutPacketBuffer::maxSize + numTruncatedBytes << ", *before* creating this 'RTPSink'.  (Current value is "
 	    << OutPacketBuffer::maxSize << ".)\n";
   }
   unsigned curFragmentationOffset = fCurFragmentationOffset;
@@ -283,8 +288,7 @@ void MultiFramedRTPSink
         numFrameBytesToUse = 0;
       }
       fOutBuf->setOverflowData(fOutBuf->curPacketSize() + numFrameBytesToUse,
-          overflowBytes, presentationTime,
-          durationInMicroseconds);
+			       overflowBytes, presentationTime, durationInMicroseconds);
     } else if (fCurFragmentationOffset > 0) {
       // This is the last fragment of a frame that was fragmented over
       // more than one packet.  Do any special handling for this case:
@@ -293,7 +297,7 @@ void MultiFramedRTPSink
     }
   }
 
-  if (numFrameBytesToUse == 0) {
+  if (numFrameBytesToUse == 0 && frameSize > 0) {
     // Send our packet now, because we have filled it up:
     sendPacketIfNecessary();
   } else {
@@ -356,7 +360,10 @@ void MultiFramedRTPSink::sendPacketIfNecessary() {
 #ifdef TEST_LOSS
     if ((our_random()%10) != 0) // simulate 10% packet loss #####
 #endif
-    fRTPInterface.sendPacket(fOutBuf->packet(), fOutBuf->curPacketSize());
+      if (!fRTPInterface.sendPacket(fOutBuf->packet(), fOutBuf->curPacketSize())) {
+	// if failure handler has been specified, call it
+	if (fOnSendErrorFunc != NULL) (*fOnSendErrorFunc)(fOnSendErrorData);
+      }
     ++fPacketCount;
     fTotalOctetCount += fOutBuf->curPacketSize();
     fOctetCount += fOutBuf->curPacketSize()
@@ -383,24 +390,21 @@ void MultiFramedRTPSink::sendPacketIfNecessary() {
 
   if (fNoFramesLeft) {
     // We're done:
-    onSourceClosure(this);
+    onSourceClosure();
   } else {
     // We have more frames left to send.  Figure out when the next frame
     // is due to start playing, then make sure that we wait this long before
     // sending the next packet.
     struct timeval timeNow;
     gettimeofday(&timeNow, NULL);
-    int uSecondsToGo;
-    if (fNextSendTime.tv_sec < timeNow.tv_sec
-	|| (fNextSendTime.tv_sec == timeNow.tv_sec && fNextSendTime.tv_usec < timeNow.tv_usec)) {
-      uSecondsToGo = 0; // prevents integer underflow if too far behind
-    } else {
-      uSecondsToGo = (fNextSendTime.tv_sec - timeNow.tv_sec)*1000000 + (fNextSendTime.tv_usec - timeNow.tv_usec);
+    int secsDiff = fNextSendTime.tv_sec - timeNow.tv_sec;
+    int64_t uSecondsToGo = secsDiff*1000000 + (fNextSendTime.tv_usec - timeNow.tv_usec);
+    if (uSecondsToGo < 0 || secsDiff < 0) { // sanity check: Make sure that the time-to-delay is non-negative:
+      uSecondsToGo = 0;
     }
 
     // Delay this amount of time:
-    nextTask() = envir().taskScheduler().scheduleDelayedTask(uSecondsToGo,
-						(TaskFunc*)sendNext, this);
+    nextTask() = envir().taskScheduler().scheduleDelayedTask(uSecondsToGo, (TaskFunc*)sendNext, this);
   }
 }
 

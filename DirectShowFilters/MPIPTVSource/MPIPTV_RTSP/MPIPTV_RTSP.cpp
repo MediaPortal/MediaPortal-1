@@ -33,9 +33,7 @@
 
 #define METHOD_RTSP_SCHEDULER_WORKER_NAME                               _T("RtspSchedulerWorker()")
 #define METHOD_SUBSESSION_BYE_HANDLER_NAME                              _T("SubsessionByeHandler()")
-#define METHOD_CLOSE_SINKS_NAME                                         _T("CloseSinks()")
 #define METHOD_TEARDOWN_MEDIA_SESSION_NAME                              _T("TeardownMediaSession()")
-#define METHOD_RTSP_TEARDOWN_SESSION_WORKER_NAME                        _T("RtspTearDownSessionWorker()")
 
 PIProtocol CreateProtocolInstance(void)
 {
@@ -59,18 +57,20 @@ CMPIPTV_RTSP::CMPIPTV_RTSP()
   this->rtspScheduler = NULL;
   this->rtspEnvironment = NULL;
   this->rtspClient = NULL;
+  this->rtspResponseEvent = NULL;
   this->rtspSession = NULL;
+  this->isRtspSessionSetup = false;
   this->rtspSchedulerThreadHandle = NULL;
   this->rtspSchedulerThreadId = 0;
   this->rtspThreadShouldExit = 0;
-  this->rtspSource = NULL;
+  this->rtspRtpClientPortRangeStart = RTSP_RTP_CLIENT_PORT_RANGE_START_DEFAULT;
+  this->rtspRtpClientPortRangeEnd = RTSP_RTP_CLIENT_PORT_RANGE_END_DEFAULT;
   this->rtspUdpSink = NULL;
   this->rtspUdpGroupsock = NULL;
   this->rtspUdpSinkMaxPayloadSize = RTSP_UDP_SINK_MAX_PAYLOAD_SIZE_DEFAULT;
   this->rtspUdpPortRangeStart = RTSP_UDP_PORT_RANGE_START_DEFAULT;
   this->rtspUdpPortRangeEnd = RTSP_UDP_PORT_RANGE_END_DEFAULT;
-  this->rtspTeardownRequestMaximumCount = RTSP_TEARDOWN_REQUEST_MAXIMUM_COUNT_DEFAULT;
-  this->rtspTeardownRequestTimeout = RTSP_TEARDOWN_REQUEST_TIMEOUT_DEFAULT;
+  this->rtspCommandResponseTimeout = RTSP_COMMAND_RESPONSE_TIMEOUT_DEFAULT;
   this->openConnetionMaximumAttempts = RTSP_OPEN_CONNECTION_MAXIMUM_ATTEMPTS_DEFAULT;
 
   this->logger.Log(LOGGER_INFO, METHOD_END_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_CONSTRUCTOR_NAME);
@@ -98,6 +98,12 @@ CMPIPTV_RTSP::~CMPIPTV_RTSP()
     this->rtspScheduler = NULL;
   }
 
+  if (this->rtspResponseEvent != NULL)
+  {
+    CloseHandle(this->rtspResponseEvent);
+    this->rtspResponseEvent = NULL;
+  }
+
   FREE_MEM(this->rtspUrl);
 
   this->logger.Log(LOGGER_INFO, METHOD_END_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_DESTRUCTOR_NAME);
@@ -115,26 +121,34 @@ int CMPIPTV_RTSP::Initialize(HANDLE lockMutex, CParameterCollection *configurati
   int result = this->CMPIPTV_UDP::Initialize(lockMutex, configuration);
 
   this->receiveDataTimeout = this->configurationParameters->GetValueLong(CONFIGURATION_RTSP_RECEIVE_DATA_TIMEOUT, true, RTSP_RECEIVE_DATA_TIMEOUT_DEFAULT);
+  this->rtspRtpClientPortRangeStart = this->configurationParameters->GetValueLong(CONFIGURATION_RTSP_RTP_CLIENT_PORT_RANGE_START, true, RTSP_RTP_CLIENT_PORT_RANGE_START_DEFAULT);
+  this->rtspRtpClientPortRangeEnd = this->configurationParameters->GetValueLong(CONFIGURATION_RTSP_RTP_CLIENT_PORT_RANGE_END, true, RTSP_RTP_CLIENT_PORT_RANGE_END_DEFAULT);
   this->rtspUdpSinkMaxPayloadSize = this->configurationParameters->GetValueUnsignedInt(CONFIGURATION_RTSP_UDP_SINK_MAX_PAYLOAD_SIZE, true, RTSP_UDP_SINK_MAX_PAYLOAD_SIZE_DEFAULT);
   this->rtspUdpPortRangeStart = this->configurationParameters->GetValueLong(CONFIGURATION_RTSP_UDP_PORT_RANGE_START, true, RTSP_UDP_PORT_RANGE_START_DEFAULT);
   this->rtspUdpPortRangeEnd = this->configurationParameters->GetValueLong(CONFIGURATION_RTSP_UDP_PORT_RANGE_END, true, RTSP_UDP_PORT_RANGE_END_DEFAULT);
-  this->rtspTeardownRequestMaximumCount = this->configurationParameters->GetValueLong(CONFIGURATION_RTSP_TEARDOWN_REQUEST_MAXIMUM_COUNT, true, RTSP_TEARDOWN_REQUEST_MAXIMUM_COUNT_DEFAULT);
-  this->rtspTeardownRequestTimeout = this->configurationParameters->GetValueLong(CONFIGURATION_RTSP_TEARDOWN_REQUEST_TIMEOUT, true, RTSP_TEARDOWN_REQUEST_TIMEOUT_DEFAULT);
+  this->rtspCommandResponseTimeout = this->configurationParameters->GetValueLong(CONFIGURATION_RTSP_COMMAND_RESPONSE_TIMEOUT, true, RTSP_COMMAND_RESPONSE_TIMEOUT_DEFAULT);
   this->openConnetionMaximumAttempts = this->configurationParameters->GetValueLong(CONFIGURATION_RTSP_OPEN_CONNECTION_MAXIMUM_ATTEMPTS, true, RTSP_OPEN_CONNECTION_MAXIMUM_ATTEMPTS_DEFAULT);
 
   this->receiveDataTimeout = (this->receiveDataTimeout < 0) ? RTSP_RECEIVE_DATA_TIMEOUT_DEFAULT : this->receiveDataTimeout;
+  this->rtspRtpClientPortRangeStart = (this->rtspRtpClientPortRangeStart < 0) ? RTSP_RTP_CLIENT_PORT_RANGE_START_DEFAULT : this->rtspRtpClientPortRangeStart & ~1;
+  this->rtspRtpClientPortRangeEnd = (this->rtspRtpClientPortRangeEnd < this->rtspRtpClientPortRangeStart) ? min(65535, this->rtspRtpClientPortRangeStart + 1000) : min(65535, this->rtspRtpClientPortRangeEnd);
   this->rtspUdpSinkMaxPayloadSize = (this->rtspUdpSinkMaxPayloadSize < 0) ? RTSP_UDP_SINK_MAX_PAYLOAD_SIZE_DEFAULT : this->rtspUdpSinkMaxPayloadSize;
   this->rtspUdpPortRangeStart = (this->rtspUdpPortRangeStart <= 1024) ? RTSP_UDP_PORT_RANGE_START_DEFAULT : this->rtspUdpPortRangeStart;
   this->rtspUdpPortRangeEnd = (this->rtspUdpPortRangeEnd < this->rtspUdpPortRangeStart) ? min(65535, this->rtspUdpPortRangeStart + 1000) : min(65535, this->rtspUdpPortRangeEnd);
-  this->rtspTeardownRequestMaximumCount = (this->rtspTeardownRequestMaximumCount <= 0) ? RTSP_TEARDOWN_REQUEST_MAXIMUM_COUNT_DEFAULT : this->rtspTeardownRequestMaximumCount;
-  this->rtspTeardownRequestTimeout = (this->rtspTeardownRequestTimeout < 0) ? RTSP_TEARDOWN_REQUEST_TIMEOUT_DEFAULT : this->rtspTeardownRequestTimeout;
+  this->rtspCommandResponseTimeout = (this->rtspCommandResponseTimeout < 0) ? RTSP_COMMAND_RESPONSE_TIMEOUT_DEFAULT : this->rtspCommandResponseTimeout;
   this->openConnetionMaximumAttempts = (this->openConnetionMaximumAttempts < 0) ? RTSP_OPEN_CONNECTION_MAXIMUM_ATTEMPTS_DEFAULT : this->openConnetionMaximumAttempts;
 
   this->rtspScheduler = RtspTaskScheduler::createNew();
-  this->rtspEnvironment = BasicUsageEnvironment::createNew(*this->rtspScheduler);
+  if (this->rtspScheduler != NULL)
+  {
+    this->rtspEnvironment = BasicUsageEnvironment::createNew(*this->rtspScheduler);
+  }
 
   result |= (this->rtspScheduler == NULL);
   result |= (this->rtspEnvironment == NULL);
+
+  this->rtspResponseEvent = CreateEvent(NULL, TRUE, FALSE, NULL);
+  result |= (this->rtspResponseEvent == NULL);
 
   return (result == STATUS_OK) ? STATUS_OK : STATUS_ERROR;
 }
@@ -241,332 +255,245 @@ int CMPIPTV_RTSP::ParseUrl(const TCHAR *url, const CParameterCollection *paramet
 int CMPIPTV_RTSP::OpenConnection(void)
 {
   this->logger.Log(LOGGER_INFO, METHOD_START_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_OPEN_CONNECTION_NAME);
-  int result = STATUS_OK;
+  this->isRtspSessionSetup = false;
 
-  this->rtspClient = RTSPClient::createNew(*this->rtspEnvironment);
-  result |= (this->rtspClient == NULL);
-
-  if (result == STATUS_OK)
+  // LIVE555 works with char, not with TCHAR
+  char *tempRtspUrl = ConvertToMultiByte(this->rtspUrl);
+  if (tempRtspUrl == NULL)
   {
-    // RTSPClient works with char, not with TCHAR
-    char *tempRtspUrl = ConvertToMultiByte(this->rtspUrl);
-    result |= (tempRtspUrl == NULL);
-    if (result == STATUS_OK)
-    {
-      char* optionsResult = this->rtspClient->sendOptionsCmd(tempRtspUrl, NULL, NULL, NULL, this->receiveDataTimeout / 2000);
-      result |= (optionsResult == NULL);
+    return STATUS_ERROR;
+  }
 
-      if (result != STATUS_OK)
+  // start LIVE555 worker thread
+  this->rtspSchedulerThreadHandle = CreateThread( 
+    NULL,                                   // default security attributes
+    0,                                      // use default stack size  
+    &CMPIPTV_RTSP::RtspSchedulerWorker,     // thread function name
+    this,                                   // argument to thread function 
+    0,                                      // use default creation flags 
+    &this->rtspSchedulerThreadId);          // returns the thread identifier
+  if (this->rtspSchedulerThreadHandle == NULL)
+  {
+    this->logger.Log(LOGGER_ERROR, _T("%s: %s: failed to create RTSP scheduler thread, error = %i"), PROTOCOL_IMPLEMENTATION_NAME, METHOD_OPEN_CONNECTION_NAME, GetLastError());
+    return STATUS_ERROR;
+  }
+
+  this->rtspClient = MPRTSPClient::createNew(this, *this->rtspEnvironment, tempRtspUrl);
+  FREE_MEM(tempRtspUrl);
+  if (
+    this->rtspClient == NULL ||
+    SendRtspCommand(METHOD_OPEN_CONNECTION_NAME, _T("OPTIONS")) != STATUS_OK ||
+    SendRtspCommand(METHOD_OPEN_CONNECTION_NAME, _T("DESCRIBE")) != STATUS_OK
+  )
+  {
+    CloseConnection();
+    return STATUS_ERROR;
+  }
+
+  this->rtspSession = MediaSession::createNew(*this->rtspEnvironment, this->rtspResponseResultString);
+  if (this->rtspSession == NULL || !this->rtspSession->hasSubsessions())
+  {
+    this->LogRtspMessage(LOGGER_ERROR, METHOD_OPEN_CONNECTION_NAME, this->rtspSession == NULL ? _T("failed to create session") : _T("session doesn't have sub-sessions"));
+    CloseConnection();
+    return STATUS_ERROR;
+  }
+
+  // Setup the RTP source for the session. Only one sub-session expected/supported.
+  MediaSubsessionIterator iter(*this->rtspSession);
+  MediaSubsession *subsession = NULL;
+  FramedSource *rtspSource = NULL;
+  while ((subsession = iter.next()) != NULL)
+  {
+#ifdef _MBCS
+    TCHAR *subSessionName = ConvertToMultiByteA(subsession->mediumName());
+    TCHAR *subSessionCodecName = ConvertToMultiByteA(subsession->codecName());
+#else
+    TCHAR *subSessionName = ConvertToUnicodeA(subsession->mediumName());
+    TCHAR *subSessionCodecName = ConvertToUnicodeA(subsession->codecName());
+#endif
+
+    if (_tcsncicmp(subSessionName, _T("video"), 5) != 0 || _tcsncicmp(subSessionCodecName, _T("MP2T"), 4) != 0)
+    {
+      TCHAR *message = FormatString(_T("sub-session medium or codec not supported, medium = %s, codec = %s"), subSessionName, subSessionCodecName);
+      this->LogRtspMessage(LOGGER_ERROR, METHOD_OPEN_CONNECTION_NAME, message);
+      FREE_MEM(message);
+      FREE_MEM(subSessionName);
+      FREE_MEM(subSessionCodecName);
+      continue;
+    }
+
+    // If a client port is configured, find a free pair of ports in the range.
+    // The first port is used for RTP; the second port is used for RTCP. Once
+    // we find one free port, we assume the next one is also free.
+    if (this->rtspRtpClientPortRangeStart > 0)
+    {
+      struct in_addr destinationAddress;
+      destinationAddress.s_addr = our_inet_addr("127.0.0.1");
+      unsigned int port = this->rtspRtpClientPortRangeStart;
+      Groupsock *groupsock = NULL;
+      do
       {
-        TCHAR *message = FormatString(METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_OPEN_CONNECTION_NAME, _T("error occured while sending OPTIONS command"));
-        this->LogRtspMessage(LOGGER_ERROR, message);
-        FREE_MEM(message);
+        this->logger.Log(LOGGER_VERBOSE, _T("%s: %s: RTP client port %u"), PROTOCOL_IMPLEMENTATION_NAME, METHOD_OPEN_CONNECTION_NAME, port);
+
+        // special construction force not reuse same UDP port
+        {
+          NoReuse noReuse(*this->rtspEnvironment);
+          groupsock = new Groupsock(*this->rtspEnvironment, destinationAddress, port, 1);
+        }
+
+        if (groupsock == NULL || groupsock->socketNum() == -1)
+        {
+          this->logger.Log(LOGGER_WARNING, _T("%s: %s: RTP client port %u occupied, trying next even port"), PROTOCOL_IMPLEMENTATION_NAME, METHOD_OPEN_CONNECTION_NAME, port);
+          port += 2;
+          if (groupsock != NULL)
+          {
+            delete groupsock;
+            groupsock = NULL;
+          }
+        }
+      }
+      while ((groupsock == NULL) && (port <= this->rtspRtpClientPortRangeEnd));
+      // Did we find a free port? If not, we fall back to a random port chosen
+      // by LIVE555.
+      if (groupsock != NULL)
+      {
+        delete groupsock;
+        groupsock = NULL;
+        subsession->setClientPortNum(port);
+      }
+    }
+
+    if (!subsession->initiate() || subsession->rtpSource() == NULL)
+    {
+      TCHAR *message = FormatString(_T("failed to create receiver for sub-session, medium = %s, codec = %s"), subSessionName, subSessionCodecName);
+      this->LogRtspMessage(LOGGER_ERROR, METHOD_OPEN_CONNECTION_NAME, message);
+      FREE_MEM(message);
+      FREE_MEM(subSessionName);
+      FREE_MEM(subSessionCodecName);
+      continue;
+    }
+
+    this->logger.Log(LOGGER_VERBOSE, _T("%s: %s: created receiver for sub-session, medium = %s, codec = %s"), PROTOCOL_IMPLEMENTATION_NAME, METHOD_OPEN_CONNECTION_NAME, subSessionName, subSessionCodecName);
+    FREE_MEM(subSessionName);
+    FREE_MEM(subSessionCodecName);
+
+    // set session ID, doesn't matter what
+    subsession->setSessionId(subsession->mediumName());
+
+    // because we're saving the incoming data, rather than playing
+    // it in real time, allow an especially large time threshold
+    // for reordering misordered incoming packets:
+    subsession->rtpSource()->setPacketReorderingThresholdTime(1000000); // 1 second
+
+    // set the RTP source's OS socket buffer size as appropriate
+    int socketNum = subsession->rtpSource()->RTPgs()->socketNum();
+    unsigned int currentBufferSize = getReceiveBufferSize(*this->rtspEnvironment, socketNum);
+    if (this->defaultBufferSize > currentBufferSize)
+    {
+      setReceiveBufferTo(*this->rtspEnvironment, socketNum, this->defaultBufferSize);
+      unsigned setBufferSize = getReceiveBufferSize(*this->rtspEnvironment, socketNum);
+      if (setBufferSize == this->defaultBufferSize)
+      {
+        this->logger.Log(LOGGER_VERBOSE, _T("%s: %s: set buffer size for sub-session, previous size = %i, requested size = %i, current size = %i"), PROTOCOL_IMPLEMENTATION_NAME, METHOD_OPEN_CONNECTION_NAME, subSessionName, currentBufferSize, this->defaultBufferSize, setBufferSize);
       }
       else
       {
-        TCHAR *message = FormatString(METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_OPEN_CONNECTION_NAME, _T("OPTIONS result"));
-        this->LogFullRtspMessage(LOGGER_VERBOSE, message, optionsResult);
-        FREE_MEM(message);
-
-        char *describeResult = this->rtspClient->describeURL(tempRtspUrl, NULL, FALSE, this->receiveDataTimeout / 2000);
-        result |= (describeResult == NULL);
-
-        if (result != STATUS_OK)
-        {
-          TCHAR *message = FormatString(METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_OPEN_CONNECTION_NAME, _T("error occured while sending DESCRIBE command"));
-          this->LogRtspMessage(LOGGER_ERROR, message);
-          FREE_MEM(message);
-        }
-        else
-        {
-          TCHAR *message = FormatString(METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_OPEN_CONNECTION_NAME, _T("DESCRIBE result"));
-          this->LogFullRtspMessage(LOGGER_VERBOSE, message, describeResult);
-          FREE_MEM(message);
-
-          this->rtspSession = MediaSession::createNew(*this->rtspEnvironment, describeResult);
-          result |= (this->rtspSession == NULL);
-
-          if (result != STATUS_OK)
-          {
-            TCHAR *message = FormatString(METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_OPEN_CONNECTION_NAME, _T("error occured while creating new session"));
-            this->LogRtspMessage(LOGGER_ERROR, message);
-            FREE_MEM(message);
-          }
-          else
-          {
-            result |= (!this->rtspSession->hasSubsessions());
-            if (result != STATUS_OK)
-            {
-              this->logger.Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_OPEN_CONNECTION_NAME, _T("session doesn't have subsessions"));
-            }
-            else
-            {
-              // Then, setup the "RTPSource"s for the session:
-              MediaSubsessionIterator iter(*this->rtspSession);
-              MediaSubsession *subsession = NULL;
-
-              while ((result == STATUS_OK) && ((subsession = iter.next()) != NULL))
-              {
-                char *tempSubSessionName = (char *)subsession->mediumName();
-                char *tempSubSessionCodecName = (char *)subsession->codecName();
-#ifdef _MBCS
-                TCHAR *subSessionName = ConvertToMultiByteA(tempSubSessionName);
-                TCHAR *subSessionCodecName = ConvertToMultiByteA(tempSubSessionCodecName);
-#else
-                TCHAR *subSessionName = ConvertToUnicodeA(tempSubSessionName);
-                TCHAR *subSessionCodecName = ConvertToUnicodeA(tempSubSessionCodecName);
-#endif
-                if (!subsession->initiate())
-                {
-                  result = STATUS_ERROR;
-                  TCHAR *message = FormatString(_T("%s: %s: unable to create receiver for subsession '%s', codec '%s'"), PROTOCOL_IMPLEMENTATION_NAME, METHOD_OPEN_CONNECTION_NAME, subSessionName, subSessionCodecName);
-                  this->LogRtspMessage(LOGGER_ERROR, message);
-                  FREE_MEM(message);
-                }
-                else
-                {
-                  this->logger.Log(LOGGER_VERBOSE, _T("%s: %s: created receiver for subsession '%s', codec '%s'"), PROTOCOL_IMPLEMENTATION_NAME, METHOD_OPEN_CONNECTION_NAME, subSessionName, subSessionCodecName);
-
-                  // set session ID, doesn't matter what
-                  subsession->sessionId = tempSubSessionName;
-
-                  if (subsession->rtpSource() != NULL)
-                  {
-                    // because we're saving the incoming data, rather than playing
-                    // it in real time, allow an especially large time threshold
-                    // (1 second) for reordering misordered incoming packets:
-                    unsigned const thresh = 1000000; // 1 second
-                    subsession->rtpSource()->setPacketReorderingThresholdTime(thresh);
-
-                    // set the RTP source's OS socket buffer size as appropriate
-                    int socketNum = subsession->rtpSource()->RTPgs()->socketNum();
-                    unsigned int currentBufferSize = getReceiveBufferSize(*this->rtspEnvironment, socketNum);
-
-                    if (this->defaultBufferSize > currentBufferSize)
-                    {
-                      setReceiveBufferTo(*this->rtspEnvironment, socketNum, this->defaultBufferSize);
-                      unsigned setBufferSize = getReceiveBufferSize(*this->rtspEnvironment, socketNum);
-
-                      if (setBufferSize == this->defaultBufferSize)
-                      {
-                        this->logger.Log(LOGGER_VERBOSE, _T("%s: %s: set buffer size for subsession '%s' successful, previous size: %i, requested size: %i, current size: %i"), PROTOCOL_IMPLEMENTATION_NAME, METHOD_OPEN_CONNECTION_NAME, subSessionName, currentBufferSize, this->defaultBufferSize, setBufferSize);
-                      }
-                      else
-                      {
-                        result = STATUS_ERROR;
-                        this->logger.Log(LOGGER_ERROR, _T("%s: %s: set buffer size for subsession '%s' failed, previous size: %i, requested size: %i, current size: %i"), PROTOCOL_IMPLEMENTATION_NAME, METHOD_OPEN_CONNECTION_NAME, subSessionName, currentBufferSize, this->defaultBufferSize, setBufferSize);
-                      }
-                    }
-
-                    if (_tcsncicmp(subSessionName, _T("audio"), 5) == 0)
-                    {
-                      // audio
-                      this->logger.Log(LOGGER_VERBOSE, _T("%s: %s: audio subsession '%s'"), PROTOCOL_IMPLEMENTATION_NAME, METHOD_OPEN_CONNECTION_NAME, subSessionName);
-                      result |= (!rtspClient->setupMediaSubsession(*subsession));
-
-                      if (result != STATUS_OK)
-                      {
-                        // error occured
-                        TCHAR *message = FormatString(METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_OPEN_CONNECTION_NAME, _T("error while setup subsession"));
-                        this->LogRtspMessage(LOGGER_ERROR, message);
-                        FREE_MEM(message);
-                      }
-                      else
-                      {
-                        this->logger.Log(LOGGER_WARNING, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_OPEN_CONNECTION_NAME, _T("subsession audio codec not supported"));
-                      }
-                    }
-                    else if (_tcsncicmp(subSessionName, _T("video"), 5) == 0)
-                    {
-                      // video
-                      this->logger.Log(LOGGER_VERBOSE, _T("%s: %s: video subsession '%s'"), PROTOCOL_IMPLEMENTATION_NAME, METHOD_OPEN_CONNECTION_NAME, subSessionName);
-                      result |= (!rtspClient->setupMediaSubsession(*subsession));
-
-                      if (result != STATUS_OK)
-                      {
-                        // error occured
-                        TCHAR *message = FormatString(METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_OPEN_CONNECTION_NAME, _T("error while setup subsession"));
-                        this->LogRtspMessage(LOGGER_ERROR, message);
-                        FREE_MEM(message);
-                      }
-                      else
-                      {
-                        if (_tcsncicmp(subSessionCodecName, _T("MP2T"), 4) == 0)
-                        {
-                          // MPEG2 Transport Stream
-                          // set new RTSP source
-                          this->rtspSource = subsession->rtpSource();
-
-                          if (subsession->rtcpInstance() != NULL)
-                          {
-                            this->logger.Log(LOGGER_VERBOSE, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_OPEN_CONNECTION_NAME, _T("set subsession 'Bye' handler"));
-                            subsession->rtcpInstance()->setByeHandler(SubsessionByeHandler, this);
-                          }
-                        }
-                        else if (_tcsncicmp(subSessionCodecName, _T("H264"), 4) == 0)
-                        {
-                          // H264 codec, HD TV
-                          this->logger.Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_OPEN_CONNECTION_NAME, _T("H264 not supported"));
-                          result = STATUS_ERROR;
-                        }
-                        else
-                        {
-                          // SD TV
-                          this->logger.Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_OPEN_CONNECTION_NAME, _T("other subsession video codec than MP2T not supported"));
-                          result = STATUS_ERROR;
-                        }
-                      }
-                    }
-                    else
-                    {
-                      this->logger.Log(LOGGER_WARNING, _T("%s: %s: unknown subsession '%s', ignored"), PROTOCOL_IMPLEMENTATION_NAME, METHOD_OPEN_CONNECTION_NAME, subSessionName);
-                    }
-                  }
-                  else
-                  {
-                    this->logger.Log(LOGGER_WARNING, _T("%s: %s: subsession '%s' doesn't have RTP source"), PROTOCOL_IMPLEMENTATION_NAME, METHOD_OPEN_CONNECTION_NAME, subSessionName);
-                  }
-                }
-
-                // free subsession name and codec name
-                FREE_MEM(subSessionName);
-                FREE_MEM(subSessionCodecName);
-              }
-
-              // we should have some RTSP source
-              result |= (this->rtspSource == NULL);
-
-              if (result == STATUS_OK)
-              {
-                result |= (!this->rtspClient->playMediaSession(*this->rtspSession));
-
-                if (result != STATUS_OK)
-                {
-                  // error occured
-                  TCHAR *message = FormatString(METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_OPEN_CONNECTION_NAME, _T("error while playing session"));
-                  this->LogRtspMessage(LOGGER_ERROR, message);
-                  FREE_MEM(message);
-                }
-                else
-                {
-                  // create UDP socket and start playing
-                  struct in_addr destinationAddress;
-                  destinationAddress.s_addr = our_inet_addr("127.0.0.1");
-
-                  unsigned int port = this->rtspUdpPortRangeStart;
-                  do
-                  {
-                    this->logger.Log(LOGGER_VERBOSE, _T("%s: %s: UDP port %u"), PROTOCOL_IMPLEMENTATION_NAME, METHOD_OPEN_CONNECTION_NAME, port);
-
-                    // special construction force not reuse same UDP port
-                    {
-                      NoReuse noReuse;
-                      this->rtspUdpGroupsock = new Groupsock(*this->rtspEnvironment, destinationAddress, port, 1);
-                    }
-
-                    if (this->rtspUdpGroupsock->socketNum() == (-1))
-                    {
-                      this->logger.Log(LOGGER_ERROR, _T("%s: %s: UDP port %u occupied, trying another port"), PROTOCOL_IMPLEMENTATION_NAME, METHOD_OPEN_CONNECTION_NAME, port);
-                      port++;
-                      delete this->rtspUdpGroupsock;
-                      this->rtspUdpGroupsock = NULL;
-                    }
-                  }
-                  while ((this->rtspUdpGroupsock == NULL) && (port <= this->rtspUdpPortRangeEnd));
-
-                  result |= (this->rtspUdpGroupsock == NULL);
-                  if (result != STATUS_OK)
-                  {
-                    this->logger.Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_OPEN_CONNECTION_NAME, _T("cannot create UDP sink, no free port"));
-                  }
-                  else
-                  {
-                    this->rtspUdpSink = BasicUDPSink::createNew(*this->rtspEnvironment, this->rtspUdpGroupsock, this->rtspUdpSinkMaxPayloadSize);
-                    result |= (this->rtspUdpSink == NULL);
-
-                    if (result != STATUS_OK)
-                    {
-                      TCHAR *message = FormatString(METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_OPEN_CONNECTION_NAME, _T("cannot create UDP sink"));
-                      this->LogRtspMessage(LOGGER_ERROR, message);
-                      FREE_MEM(message);
-                    }
-                    else
-                    {
-                      if (this->rtspUdpSink->startPlaying(*this->rtspSource, NULL, NULL))
-                      {
-                        this->logger.Log(LOGGER_INFO, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_OPEN_CONNECTION_NAME, _T("playing started"));
-
-                        // now create UDP connection
-                        TCHAR *url = FormatString(_T("udp://@127.0.0.1:%u"), port);
-                        result |= (url == NULL);
-
-                        if (result == STATUS_OK)
-                        {
-                          // parse UDP url
-                          // ParseURL calls ClearSession and IsConnected must return FALSE
-                          // in another case will be current RTSP connection closed
-                          result = this->CMPIPTV_UDP::ParseUrl(url, NULL);
-
-                          if (result == STATUS_OK)
-                          {
-                            // connect to UDP url
-                            result = this->CMPIPTV_UDP::OpenConnection();
-                          }
-                        }
-                        FREE_MEM(url);
-                      }
-                      else
-                      {
-                        result = STATUS_ERROR;
-                        TCHAR *message = FormatString(METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_OPEN_CONNECTION_NAME, _T("error occured while starting playing"));
-                        this->LogRtspMessage(LOGGER_ERROR, message);
-                        FREE_MEM(message);
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-
-      if (optionsResult != NULL)
-      {
-        delete[] optionsResult;
-        optionsResult = NULL;
+        this->logger.Log(LOGGER_WARNING, _T("%s: %s: failed to set buffer size for sub-session, previous size = %i, requested size = %i, current size = %i"), PROTOCOL_IMPLEMENTATION_NAME, METHOD_OPEN_CONNECTION_NAME, subSessionName, currentBufferSize, this->defaultBufferSize, setBufferSize);
       }
     }
-    FREE_MEM(tempRtspUrl);
-  }
 
-  if (result == STATUS_OK)
-  {
-    // start winsock worker thread
-    this->rtspSchedulerThreadHandle = CreateThread( 
-      NULL,                                   // default security attributes
-      0,                                      // use default stack size  
-      &CMPIPTV_RTSP::RtspSchedulerWorker,     // thread function name
-      this,                                   // argument to thread function 
-      0,                                      // use default creation flags 
-      &this->rtspSchedulerThreadId);          // returns the thread identifier
-
-    if (this->rtspSchedulerThreadHandle == NULL)
+    if (SendRtspCommand(METHOD_OPEN_CONNECTION_NAME, _T("SETUP"), subsession) != STATUS_OK)
     {
-      // thread not created
-      result = STATUS_ERROR;
-      this->logger.Log(LOGGER_ERROR, _T("%s: %s: cannot create RTSP scheduler thread, error: %i"), PROTOCOL_IMPLEMENTATION_NAME, METHOD_OPEN_CONNECTION_NAME, GetLastError());
+      CloseConnection();
+      return STATUS_ERROR;
+    }
+    rtspSource = subsession->rtpSource();
+    break;
+  }
+
+  // If we don't have an RTSP source then we can't continue.
+  if (rtspSource == NULL)
+  {
+    CloseConnection();
+    return STATUS_ERROR;
+  }
+
+  this->isRtspSessionSetup = true;
+  if (SendRtspCommand(METHOD_OPEN_CONNECTION_NAME, _T("PLAY")) != STATUS_OK)
+  {
+    CloseConnection();
+    return STATUS_ERROR;
+  }
+
+  // create UDP socket and start playing
+  struct in_addr destinationAddress;
+  destinationAddress.s_addr = our_inet_addr("127.0.0.1");
+
+  unsigned int port = this->rtspUdpPortRangeStart;
+  do
+  {
+    this->logger.Log(LOGGER_VERBOSE, _T("%s: %s: UDP port %u"), PROTOCOL_IMPLEMENTATION_NAME, METHOD_OPEN_CONNECTION_NAME, port);
+
+    // special construction force not reuse same UDP port
+    {
+      NoReuse noReuse(*this->rtspEnvironment);
+      this->rtspUdpGroupsock = new Groupsock(*this->rtspEnvironment, destinationAddress, port, 1);
+    }
+
+    if (this->rtspUdpGroupsock == NULL || this->rtspUdpGroupsock->socketNum() == -1)
+    {
+      this->logger.Log(LOGGER_WARNING, _T("%s: %s: UDP port %u occupied, trying another port"), PROTOCOL_IMPLEMENTATION_NAME, METHOD_OPEN_CONNECTION_NAME, port);
+      port++;
+      if (this->rtspUdpGroupsock != NULL)
+      {
+        delete this->rtspUdpGroupsock;
+        this->rtspUdpGroupsock = NULL;
+      }
     }
   }
+  while ((this->rtspUdpGroupsock == NULL) && (port <= this->rtspUdpPortRangeEnd));
 
-  if (result != STATUS_OK)
+  if (this->rtspUdpGroupsock == NULL)
   {
-    // if failed opening connection, than close connection
-    this->CloseConnection();
+    this->logger.Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_OPEN_CONNECTION_NAME, _T("failed to create UDP socket, no free port"));
+    CloseConnection();
+    return STATUS_ERROR;
   }
 
-  this->logger.Log(LOGGER_INFO, (result == STATUS_OK) ? METHOD_END_FORMAT : METHOD_END_FAIL_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_OPEN_CONNECTION_NAME);
-  return (result == STATUS_OK) ? STATUS_OK : STATUS_ERROR;
+  this->rtspUdpSink = BasicUDPSink::createNew(*this->rtspEnvironment, this->rtspUdpGroupsock, this->rtspUdpSinkMaxPayloadSize);
+  if (this->rtspUdpSink == NULL)
+  {
+    this->logger.Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_OPEN_CONNECTION_NAME, _T("failed to create UDP sink"));
+    CloseConnection();
+    return STATUS_ERROR;
+  }
+
+  if (!this->rtspUdpSink->startPlaying(*rtspSource, NULL, NULL))
+  {
+    this->LogRtspMessage(LOGGER_ERROR, METHOD_OPEN_CONNECTION_NAME, _T("failed to start UDP sink"));
+    CloseConnection();
+    return STATUS_ERROR;
+  }
+
+  this->logger.Log(LOGGER_INFO, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_OPEN_CONNECTION_NAME, _T("streaming started"));
+
+  // create a UDP connection to the local stream
+  TCHAR *url = FormatString(_T("udp://@127.0.0.1:%u"), port);
+  if (
+    url == NULL ||
+    this->CMPIPTV_UDP::ParseUrl(url, NULL) != STATUS_OK ||
+    this->CMPIPTV_UDP::OpenConnection() != STATUS_OK
+  )
+  {
+    FREE_MEM(url);
+    this->logger.Log(LOGGER_INFO, METHOD_END_FAIL_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_OPEN_CONNECTION_NAME);
+    CloseConnection();
+    return STATUS_ERROR;
+  }
+
+  FREE_MEM(url);
+  this->logger.Log(LOGGER_INFO, METHOD_END_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_OPEN_CONNECTION_NAME);
+  return STATUS_OK;
 }
 
 int CMPIPTV_RTSP::IsConnected(void)
@@ -576,29 +503,25 @@ int CMPIPTV_RTSP::IsConnected(void)
     // receiving data, return status of UDP connection
     return this->CMPIPTV_UDP::IsConnected();
   }
-  else
+
+  if (!this->CMPIPTV_UDP::IsConnected())
   {
-    if (!this->CMPIPTV_UDP::IsConnected())
-    {
-      return FALSE;
-    }
-    else
-    {
-      // we have UDP connection but RTSP connection is closed
-      // if buffer is not occupied, close UDP connection
-      unsigned int occupiedSpace = 0;
-      this->GetSafeBufferSizes(this->lockMutex, NULL, &occupiedSpace, NULL);
-
-      if (occupiedSpace == 0)
-      {
-        this->CloseConnection();
-        return FALSE;
-      }
-
-      // we are still connected when RTSP connection is closed, but UDP connection is opened and we have data in buffer
-      return TRUE;
-    }
+    return FALSE;
   }
+
+  // we have UDP connection but RTSP connection is closed
+  // if buffer is not occupied, close UDP connection
+  unsigned int occupiedSpace = 0;
+  this->GetSafeBufferSizes(this->lockMutex, NULL, &occupiedSpace, NULL);
+
+  if (occupiedSpace == 0)
+  {
+    this->CloseConnection();
+    return FALSE;
+  }
+
+  // we are still connected when RTSP connection is closed, but UDP connection is opened and we have data in buffer
+  return TRUE;
 }
 
 void CMPIPTV_RTSP::CloseConnection(void)
@@ -618,7 +541,7 @@ void CMPIPTV_RTSP::CloseConnection(void)
   // wait for the RTSP worker thread to exit      
   if (this->rtspSchedulerThreadHandle != NULL)
   {
-    this->logger.Log(LOGGER_INFO, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_CLOSE_CONNECTION_NAME, _T("waiting RTSP worker thread to exit"));
+    this->logger.Log(LOGGER_INFO, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_CLOSE_CONNECTION_NAME, _T("wait for RTSP worker thread to exit"));
     if (WaitForSingleObject(this->rtspSchedulerThreadHandle, 1000) == WAIT_TIMEOUT)
     {
       // thread didn't exit, kill it now
@@ -629,9 +552,6 @@ void CMPIPTV_RTSP::CloseConnection(void)
 
   this->rtspSchedulerThreadHandle = NULL;
   this->rtspThreadShouldExit = 0;
-
-  // this->rtspSource is part of subsession, which is removed with this->rtspSession
-  this->rtspSource = NULL;
 
   this->logger.Log(LOGGER_INFO, METHOD_END_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_CLOSE_CONNECTION_NAME);
 }
@@ -674,34 +594,109 @@ GUID CMPIPTV_RTSP::GetInstanceId(void)
   return this->logger.loggerInstance;
 }
 
-char *CMPIPTV_RTSP::GetLastRtspMessageA(void)
+unsigned int CMPIPTV_RTSP::GetOpenConnectionMaximumAttempts(void)
 {
-  return ConvertToMultiByteA(this->rtspEnvironment->getResultMsg());
+  return this->openConnetionMaximumAttempts;
 }
 
-wchar_t *CMPIPTV_RTSP::GetLastRtspMessageW(void)
+int CMPIPTV_RTSP::SendRtspCommand(const TCHAR *method, const TCHAR *command, MediaSubsession *subsession)
 {
-  return ConvertToUnicodeA(this->rtspEnvironment->getResultMsg());
-}
+  this->logger.Log(LOGGER_VERBOSE, _T("%s: %s: send %s command"), PROTOCOL_IMPLEMENTATION_NAME, method, command);
+  ResetEvent(this->rtspResponseEvent);
+  if (_tcscmp(command, _T("OPTIONS")) == 0)
+  {
+    this->rtspClient->sendOptionsCommand(&CMPIPTV_RTSP::OnRtspResponseReceived);
+  }
+  else if (_tcscmp(command, _T("DESCRIBE")) == 0)
+  {
+    this->rtspClient->sendDescribeCommand(&CMPIPTV_RTSP::OnRtspResponseReceived);
+  }
+  else if (_tcscmp(command, _T("SETUP")) == 0)
+  {
+    this->rtspClient->sendSetupCommand(*subsession, &CMPIPTV_RTSP::OnRtspResponseReceived);
+  }
+  else if (_tcscmp(command, _T("PLAY")) == 0)
+  {
+    this->rtspClient->sendPlayCommand(*this->rtspSession, &CMPIPTV_RTSP::OnRtspResponseReceived);
+  }
+  else if (_tcscmp(command, _T("TEARDOWN")) == 0)
+  {
+    this->rtspClient->sendTeardownCommand(*this->rtspSession, &CMPIPTV_RTSP::OnRtspResponseReceived);
+  }
+  else
+  {
+    return STATUS_ERROR;
+  }
 
-void CMPIPTV_RTSP::LogRtspMessage(unsigned int loggerLevel, const TCHAR* messagePrefix)
-{
-  char *lastRtspMessage = this->GetLastRtspMessageA();
-
-  this->LogFullRtspMessage(loggerLevel, messagePrefix, lastRtspMessage);
-
-  FREE_MEM(lastRtspMessage);
-}
-
-void CMPIPTV_RTSP::LogFullRtspMessage(unsigned int loggerLevel, const TCHAR* messagePrefix, const char *message)
-{
+  if (WaitForSingleObject(this->rtspResponseEvent, this->rtspCommandResponseTimeout) == WAIT_TIMEOUT)
+  {
+    this->logger.Log(LOGGER_ERROR, _T("%s: %s: %s command timed out"), PROTOCOL_IMPLEMENTATION_NAME, method, command);
+    return STATUS_ERROR;
+  }
+  if (this->rtspResponseResultCode != 0)
+  {
 #ifdef _MBCS
-  TCHAR *convertedRtspMessage = ConvertToMultiByteA(message);
+    TCHAR *convertedRtspResponse = ConvertToMultiByteA(&this->rtspResponseResultString[0]);
 #else
-  TCHAR *convertedRtspMessage = ConvertToUnicodeA(message);
+    TCHAR *convertedRtspResponse = ConvertToUnicodeA(&this->rtspResponseResultString[0]);
+#endif
+    this->logger.Log(LOGGER_ERROR, _T("%s: %s: %s command failed, code = %i, response = %s"), PROTOCOL_IMPLEMENTATION_NAME, method, command, this->rtspResponseResultCode, (convertedRtspResponse == NULL) ? _T("unable to get message") : convertedRtspResponse);
+    FREE_MEM(convertedRtspResponse);
+    return STATUS_ERROR;
+  }
+
+#ifdef _MBCS
+  TCHAR *convertedRtspResponse = ConvertToMultiByteA(&this->rtspResponseResultString[0]);
+#else
+  TCHAR *convertedRtspResponse = ConvertToUnicodeA(&this->rtspResponseResultString[0]);
+#endif
+  this->logger.Log(LOGGER_VERBOSE, _T("%s: %s: %s command succeeded, response = %s"), PROTOCOL_IMPLEMENTATION_NAME, method, command, (convertedRtspResponse == NULL) ? _T("unable to get message") : convertedRtspResponse);
+  FREE_MEM(convertedRtspResponse);
+  return STATUS_OK;
+}
+
+void CMPIPTV_RTSP::OnRtspResponseReceived(RTSPClient *client, int resultCode, char *resultString)
+{
+  CMPIPTV_RTSP* rtspPluginInstance = (CMPIPTV_RTSP*)((MPRTSPClient*)client)->Context();
+  if (rtspPluginInstance == NULL)
+  {
+    // This can happen if the client attempted to send a command, the command
+    // was assumed to have timed out after some time, and the client was
+    // subsequently destroyed as a result. This is the response to the command.
+    // We can't do anything more than clean up.
+    if (resultString != NULL)
+    {
+      delete[] resultString;
+    }
+    return;
+  }
+
+  rtspPluginInstance->rtspResponseResultCode = resultCode;
+  if (resultString == NULL)
+  {
+    rtspPluginInstance->rtspResponseResultString[0] = NULL;
+  }
+  else
+  {
+    strncpy(rtspPluginInstance->rtspResponseResultString, resultString, RTSP_MAX_RESPONSE_BYTE_COUNT);
+    rtspPluginInstance->rtspResponseResultString[RTSP_MAX_RESPONSE_BYTE_COUNT - 1] = NULL;
+    delete[] resultString;
+  }
+  SetEvent(rtspPluginInstance->rtspResponseEvent);
+}
+
+void CMPIPTV_RTSP::LogRtspMessage(unsigned int loggerLevel, const TCHAR *method, const TCHAR *message)
+{
+  const char *lastRtspMessage = this->rtspEnvironment->getResultMsg();
+
+#ifdef _MBCS
+  TCHAR *convertedRtspMessage = ConvertToMultiByteA(lastRtspMessage);
+#else
+  TCHAR *convertedRtspMessage = ConvertToUnicodeA(lastRtspMessage);
 #endif
 
-  this->logger.Log(loggerLevel, _T("%s%s %s"), messagePrefix, (convertedRtspMessage == NULL) ? _T(",") : _T(":"), (convertedRtspMessage == NULL) ? _T("unable to get message") : convertedRtspMessage);
+  this->logger.Log(loggerLevel, _T("%s: %s: %s, %s"), PROTOCOL_IMPLEMENTATION_NAME, method, message, (convertedRtspMessage == NULL) ? _T("unable to get message") : convertedRtspMessage);
+
   FREE_MEM(convertedRtspMessage);
 }
 
@@ -730,129 +725,50 @@ void CMPIPTV_RTSP::SubsessionByeHandler(void *lpCMPIPTV_RTSP)
   instance->logger.Log(LOGGER_INFO, METHOD_END_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_SUBSESSION_BYE_HANDLER_NAME);
 }
 
-void CMPIPTV_RTSP::CloseSinks(void)
-{
-  // free UDP sink
-  if (this->rtspUdpSink != NULL)
-  {
-    this->logger.Log(LOGGER_INFO, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_CLOSE_SINKS_NAME, _T("closing UDP sink"));
-    this->rtspUdpSink->stopPlaying();
-    Medium::close(this->rtspUdpSink);
-    this->rtspUdpSink = NULL;
-  }
-
-  // free UDP socket
-  if (this->rtspUdpGroupsock != NULL)
-  {
-    this->logger.Log(LOGGER_INFO, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_CLOSE_SINKS_NAME, _T("closing UDP socket"));
-    delete this->rtspUdpGroupsock;
-    this->rtspUdpGroupsock = NULL;
-  }
-}
-
 bool CMPIPTV_RTSP::TeardownMediaSession(bool forceTeardown)
 {
   this->logger.Log(LOGGER_INFO, METHOD_START_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_TEARDOWN_MEDIA_SESSION_NAME);
-  bool result = (((this->rtspClient == NULL) && (this->rtspSession == NULL)) || ((this->rtspClient != NULL) && (this->rtspSession != NULL)));
+  bool result = true;
 
-  if (result && (this->rtspClient != NULL) && (this->rtspSession != NULL))
+  if (this->rtspClient != NULL && this->rtspSession != NULL && this->isRtspSessionSetup)
   {
-    unsigned int requestCount = 0;
-    do
-    {
-      HANDLE rtspTearDownSessionThreadHandle = NULL;
-      DWORD rtspTearDownSessionThreadId = 0;
-
-      // start RTSP teardown session worker thread
-      rtspTearDownSessionThreadHandle = CreateThread( 
-        NULL,                                       // default security attributes
-        0,                                          // use default stack size  
-        &CMPIPTV_RTSP::RtspTearDownSessionWorker,   // thread function name
-        this,                                       // argument to thread function 
-        0,                                          // use default creation flags 
-        &rtspTearDownSessionThreadId);              // returns the thread identifier
-
-      if (rtspTearDownSessionThreadHandle == NULL)
-      {
-        // thread not created
-        // just log error message and try again
-        this->logger.Log(LOGGER_ERROR, _T("%s: %s: cannot create RTSP teardown worker thread, error: %i"), PROTOCOL_IMPLEMENTATION_NAME, METHOD_TEARDOWN_MEDIA_SESSION_NAME, GetLastError());
-      }
-      else
-      {
-        this->logger.Log(LOGGER_INFO, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_TEARDOWN_MEDIA_SESSION_NAME, _T("waiting RTSP teardown worker thread to exit"));
-        if (WaitForSingleObject(rtspTearDownSessionThreadHandle, this->rtspTeardownRequestTimeout) == WAIT_TIMEOUT)
-        {
-          // thread didn't exit, kill it now
-          this->logger.Log(LOGGER_INFO, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_TEARDOWN_MEDIA_SESSION_NAME, _T("RTSP teardown worker thread didn't exit, terminating thread"));
-          TerminateThread(rtspTearDownSessionThreadHandle, 0);
-        }
-        else
-        {
-          // thread terminated
-          // set result and break
-          result &= this->rtspTearDownSessionWorkerResult;
-          break;
-        }
-      }
-
-      requestCount++;
-
-      // give another threads chance to work
-      Sleep(1);
-
-      result &= (requestCount <= this->rtspTeardownRequestMaximumCount);
-    } while (result);
-  }
-
-  if (!result && (this->rtspClient != NULL) && (this->rtspSession != NULL))
-  {
-    TCHAR *message = FormatString(METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_TEARDOWN_MEDIA_SESSION_NAME, _T("cannot teardown media session"));
-    this->LogRtspMessage(LOGGER_ERROR, message);
-    FREE_MEM(message);
+    result = SendRtspCommand(METHOD_TEARDOWN_MEDIA_SESSION_NAME, _T("TEARDOWN")) == STATUS_OK;
+    this->isRtspSessionSetup = !result;
   }
 
   if (forceTeardown || result)
   {
     // close all media sinks after teardown and before closing RTSP session and client
-    this->CloseSinks();
+    if (this->rtspUdpSink != NULL)
+    {
+      this->logger.Log(LOGGER_INFO, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_TEARDOWN_MEDIA_SESSION_NAME, _T("closing UDP sink"));
+      this->rtspUdpSink->stopPlaying();
+      Medium::close(this->rtspUdpSink);
+      this->rtspUdpSink = NULL;
+    }
+
+    if (this->rtspUdpGroupsock != NULL)
+    {
+      this->logger.Log(LOGGER_INFO, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_TEARDOWN_MEDIA_SESSION_NAME, _T("closing UDP socket"));
+      delete this->rtspUdpGroupsock;
+      this->rtspUdpGroupsock = NULL;
+    }
 
     if (this->rtspSession != NULL)
     {
       this->logger.Log(LOGGER_INFO, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_TEARDOWN_MEDIA_SESSION_NAME, _T("closing RTSP session"));
       Medium::close(this->rtspSession);
+      this->rtspSession = NULL;
     }
 
     if (this->rtspClient != NULL)
     {
       this->logger.Log(LOGGER_INFO, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_TEARDOWN_MEDIA_SESSION_NAME, _T("closing RTSP client"));
       Medium::close(this->rtspClient);
+      this->rtspClient = NULL;
     }
-
-    this->rtspSession = NULL;
-    this->rtspClient = NULL;
-
-    result = true;
   }
 
   this->logger.Log(LOGGER_INFO, (result) ? METHOD_END_FORMAT : METHOD_END_FAIL_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_TEARDOWN_MEDIA_SESSION_NAME);
   return result;
-}
-
-DWORD WINAPI CMPIPTV_RTSP::RtspTearDownSessionWorker(LPVOID lpParam)
-{
-  CMPIPTV_RTSP *caller = (CMPIPTV_RTSP*)lpParam;
-  caller->logger.Log(LOGGER_INFO, METHOD_START_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RTSP_TEARDOWN_SESSION_WORKER_NAME);
-  caller->rtspTearDownSessionWorkerResult = false;
-
-  caller->logger.Log(LOGGER_VERBOSE, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RTSP_TEARDOWN_SESSION_WORKER_NAME, _T("sending TEARDOWN request"));
-  caller->rtspTearDownSessionWorkerResult = (caller->rtspClient->teardownMediaSession(*caller->rtspSession) == 1);
-
-  caller->logger.Log(LOGGER_INFO, (caller->rtspTearDownSessionWorkerResult) ? METHOD_END_FORMAT : METHOD_END_FAIL_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RTSP_TEARDOWN_SESSION_WORKER_NAME);
-  return S_OK;
-}
-
-unsigned int CMPIPTV_RTSP::GetOpenConnectionMaximumAttempts(void)
-{
-  return this->openConnetionMaximumAttempts;
 }

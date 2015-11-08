@@ -14,8 +14,8 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2009 Live Networks, Inc.  All rights reserved.
-// RTP sink for AMR audio (RFC 3267)
+// Copyright (c) 1996-2015 Live Networks, Inc.  All rights reserved.
+// RTP sink for AMR audio (RFC 4867)
 // Implementation
 
 // NOTE: At present, this is just a limited implementation, supporting:
@@ -76,7 +76,7 @@ Boolean AMRAudioRTPSink::sourceIsCompatibleWithUs(MediaSource& source) {
 void AMRAudioRTPSink::doSpecialFrameHandling(unsigned fragmentationOffset,
 					     unsigned char* frameStart,
 					     unsigned numBytesInFrame,
-					     struct timeval frameTimestamp,
+					     struct timeval framePresentationTime,
 					     unsigned numRemainingBytes) {
   // If this is the 1st frame in the 1st packet, set the RTP 'M' (marker)
   // bit (because this is considered the start of a talk spurt):
@@ -105,7 +105,7 @@ void AMRAudioRTPSink::doSpecialFrameHandling(unsigned fragmentationOffset,
   // to set the packet's timestamp:
   MultiFramedRTPSink::doSpecialFrameHandling(fragmentationOffset,
                                              frameStart, numBytesInFrame,
-                                             frameTimestamp,
+                                             framePresentationTime,
                                              numRemainingBytes);
 }
 

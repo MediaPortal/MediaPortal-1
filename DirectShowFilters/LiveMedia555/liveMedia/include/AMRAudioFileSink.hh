@@ -14,7 +14,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2009 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2015 Live Networks, Inc.  All rights reserved.
 // AMR Audio File Sinks
 // C++ header
 
@@ -40,8 +40,9 @@ protected:
 
 protected: // redefined virtual functions:
   virtual Boolean sourceIsCompatibleWithUs(MediaSource& source);
-  virtual void afterGettingFrame1(unsigned frameSize,
-				  struct timeval presentationTime);
+  virtual void afterGettingFrame(unsigned frameSize,
+				 unsigned numTruncatedBytes,
+				 struct timeval presentationTime);
 
 protected:
   Boolean fHaveWrittenHeader;

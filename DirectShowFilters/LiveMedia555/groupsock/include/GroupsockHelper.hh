@@ -14,7 +14,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "mTunnel" multicast access service
-// Copyright (c) 1996-2009 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2015 Live Networks, Inc.  All rights reserved.
 // Helper routines to implement 'group sockets'
 // C++ header
 
@@ -25,27 +25,25 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 #include "NetAddress.hh"
 #endif
 
-int setupDatagramSocket(UsageEnvironment& env,
-			Port port, Boolean setLoopback = True);
+int setupDatagramSocket(UsageEnvironment& env, Port port);
 int setupStreamSocket(UsageEnvironment& env,
 		      Port port, Boolean makeNonBlocking = True);
 
 int readSocket(UsageEnvironment& env,
 	       int socket, unsigned char* buffer, unsigned bufferSize,
-	       struct sockaddr_in& fromAddress,
-	       struct timeval* timeout = NULL);
-
-int readSocketExact(UsageEnvironment& env,
-		    int socket, unsigned char* buffer, unsigned bufferSize,
-		    struct sockaddr_in& fromAddress,
-		    struct timeval* timeout = NULL);
-    // like "readSocket()", except that it rereads as many times as needed until
-    // *exactly* "bufferSize" bytes are read.
+	       struct sockaddr_in& fromAddress);
 
 Boolean writeSocket(UsageEnvironment& env,
-		    int socket, struct in_addr address, Port port,
+		    int socket, struct in_addr address, portNumBits portNum/*network byte order*/,
 		    u_int8_t ttlArg,
 		    unsigned char* buffer, unsigned bufferSize);
+
+Boolean writeSocket(UsageEnvironment& env,
+		    int socket, struct in_addr address, portNumBits portNum/*network byte order*/,
+		    unsigned char* buffer, unsigned bufferSize);
+    // An optimized version of "writeSocket" that omits the "setsockopt()" call to set the TTL.
+
+void ignoreSigPipeOnSocket(int socketNum);
 
 unsigned getSendBufferSize(UsageEnvironment& env, int socket);
 unsigned getReceiveBufferSize(UsageEnvironment& env, int socket);
@@ -59,6 +57,8 @@ unsigned increaseReceiveBufferTo(UsageEnvironment& env,
 				 int socket, unsigned requestedSize);
 
 Boolean makeSocketNonBlocking(int sock);
+Boolean makeSocketBlocking(int sock, unsigned writeTimeoutInMilliseconds = 0);
+  // A "writeTimeoutInMilliseconds" value of 0 means: Don't timeout
 
 Boolean socketJoinGroup(UsageEnvironment& env, int socket,
 			netAddressBits groupAddress);
@@ -112,20 +112,31 @@ char const* timestampString();
 //          }
 class NoReuse {
 public:
-  NoReuse();
+  NoReuse(UsageEnvironment& env);
   ~NoReuse();
+
+private:
+  UsageEnvironment& fEnv;
 };
 
 
-#if (defined(__WIN32__) || defined(_WIN32)) && !defined(IMN_PIM)
+// Define the "UsageEnvironment"-specific "groupsockPriv" structure:
+
+struct _groupsockPriv { // There should be only one of these allocated
+  HashTable* socketTable;
+  int reuseFlag;
+};
+_groupsockPriv* groupsockPriv(UsageEnvironment& env); // allocates it if necessary
+void reclaimGroupsockPriv(UsageEnvironment& env);
+
+
+#if defined(__WIN32__) || defined(_WIN32)
 // For Windoze, we need to implement our own gettimeofday()
 extern int gettimeofday(struct timeval*, int*);
 #endif
 
 // The following are implemented in inet.c:
 extern "C" netAddressBits our_inet_addr(char const*);
-extern "C" char* our_inet_ntoa(struct in_addr);
-extern "C" struct hostent* our_gethostbyname(char* name);
 extern "C" void our_srandom(int x);
 extern "C" long our_random();
 extern "C" u_int32_t our_random32(); // because "our_random()" returns a 31-bit number

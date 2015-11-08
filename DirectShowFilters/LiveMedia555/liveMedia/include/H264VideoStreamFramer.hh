@@ -14,30 +14,28 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2009 Live Networks, Inc.  All rights reserved.
-// Any source that feeds into a "H264VideoRTPSink" must be of this class.
-// This is a virtual base class; subclasses must implement the
-// "currentNALUnitEndsAccessUnit()" virtual function.
+// Copyright (c) 1996-2015 Live Networks, Inc.  All rights reserved.
+// A filter that breaks up a H.264 Video Elementary Stream into NAL units.
 // C++ header
 
 #ifndef _H264_VIDEO_STREAM_FRAMER_HH
 #define _H264_VIDEO_STREAM_FRAMER_HH
 
-#ifndef _FRAMED_FILTER_HH
-#include "FramedFilter.hh"
+#ifndef _H264_OR_5_VIDEO_STREAM_FRAMER_HH
+#include "H264or5VideoStreamFramer.hh"
 #endif
 
-class H264VideoStreamFramer: public FramedFilter {
+class H264VideoStreamFramer: public H264or5VideoStreamFramer {
 public:
-  virtual Boolean currentNALUnitEndsAccessUnit() = 0;
-  // subclasses must define this function.  It returns True iff the
-  // most recently received NAL unit ends a video 'access unit' (i.e., 'frame')
+  static H264VideoStreamFramer* createNew(UsageEnvironment& env, FramedSource* inputSource,
+					  Boolean includeStartCodeInOutput = False);
 
 protected:
-  H264VideoStreamFramer(UsageEnvironment& env, FramedSource* inputSource);
+  H264VideoStreamFramer(UsageEnvironment& env, FramedSource* inputSource,
+			Boolean createParser, Boolean includeStartCodeInOutput);
+      // called only by "createNew()"
   virtual ~H264VideoStreamFramer();
 
-private:
   // redefined virtual functions:
   virtual Boolean isH264VideoStreamFramer() const;
 };

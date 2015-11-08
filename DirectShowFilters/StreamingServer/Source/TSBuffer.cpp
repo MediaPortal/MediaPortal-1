@@ -23,15 +23,9 @@
 *  nate can be reached on the forums at
 *    http://forums.dvbowners.com/
 */
-
-#include <winsock2.h>
-#include <ws2tcpip.h>
-#include <streams.h>
 #include "TSBuffer.h"
-#include <crtdbg.h>
-#include <math.h>
-#include "global.h"
 #include "entercriticalsection.h"
+
 
 #define TV_BUFFER_ITEM_SIZE	32336
 #define RADIO_BUFFER_ITEM_SIZE	1880

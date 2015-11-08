@@ -45,6 +45,9 @@ public:
   TAvSetMmThreadPriority*             m_pAvSetMmThreadPriority;
   TAvRevertMmThreadCharacteristics*   m_pAvRevertMmThreadCharacteristics;
 
+  HANDLE SetMMCSThreadPlayback(LPDWORD pDwTaskIndex, AVRT_PRIORITY AvrtPriority);
+  void RevertMMCSThread(HANDLE hAvrt);
+
 private:
   HMODULE m_hModuleAVRT;
   

@@ -23,9 +23,8 @@
 *  nate can be reached on the forums at
 *    http://forums.dvbowners.com/
 */
-#include <windows.h>
 #include "MultiFileReader.h"
-#include <atlbase.h>
+#include "atlconv.h"    // USES_CONVERSION
 
 //Maximum time in msec to wait for the buffer file to become available - Needed for DVB radio (this sometimes takes some time)
 #define MAX_BUFFER_TIMEOUT	1500

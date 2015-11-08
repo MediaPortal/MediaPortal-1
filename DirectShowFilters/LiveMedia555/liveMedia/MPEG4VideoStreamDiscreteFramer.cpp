@@ -14,7 +14,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2009 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2015 Live Networks, Inc.  All rights reserved.
 // A simplified version of "MPEG4VideoStreamFramer" that takes only complete,
 // discrete frames (rather than an arbitrary byte stream) as input.
 // This avoids the parsing and data copying overhead of the full
@@ -25,16 +25,16 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 
 MPEG4VideoStreamDiscreteFramer*
 MPEG4VideoStreamDiscreteFramer::createNew(UsageEnvironment& env,
-				  FramedSource* inputSource) {
+				  FramedSource* inputSource, Boolean leavePresentationTimesUnmodified) {
   // Need to add source type checking here???  #####
-  return new MPEG4VideoStreamDiscreteFramer(env, inputSource);
+  return new MPEG4VideoStreamDiscreteFramer(env, inputSource, leavePresentationTimesUnmodified);
 }
 
 MPEG4VideoStreamDiscreteFramer
 ::MPEG4VideoStreamDiscreteFramer(UsageEnvironment& env,
-				 FramedSource* inputSource)
+				 FramedSource* inputSource, Boolean leavePresentationTimesUnmodified)
   : MPEG4VideoStreamFramer(env, inputSource, False/*don't create a parser*/),
-    vop_time_increment_resolution(0), fNumVTIRBits(0),
+    fLeavePresentationTimesUnmodified(leavePresentationTimesUnmodified), vop_time_increment_resolution(0), fNumVTIRBits(0),
     fLastNonBFrameVop_time_increment(0) {
   fLastNonBFramePresentationTime.tv_sec = 0;
   fLastNonBFramePresentationTime.tv_usec = 0;
@@ -145,7 +145,7 @@ void MPEG4VideoStreamDiscreteFramer
 	}
 
 	// If this is a "B" frame, then we have to tweak "presentationTime":
-	if (vop_coding_type == 2/*B*/
+	if (!fLeavePresentationTimesUnmodified && vop_coding_type == 2/*B*/
 	    && (fLastNonBFramePresentationTime.tv_usec > 0 ||
 		fLastNonBFramePresentationTime.tv_sec > 0)) {
 	  int timeIncrement

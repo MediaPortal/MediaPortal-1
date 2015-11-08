@@ -14,7 +14,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2009 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2015 Live Networks, Inc.  All rights reserved.
 // RTP sink for DV video (RFC 3189)
 // (Thanks to Ben Hutchings for prototyping this.)
 // C++ header
@@ -25,10 +25,14 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 #ifndef _VIDEO_RTP_SINK_HH
 #include "VideoRTPSink.hh"
 #endif
+#ifndef _DV_VIDEO_STREAM_FRAMER_HH
+#include "DVVideoStreamFramer.hh"
+#endif
 
 class DVVideoRTPSink: public VideoRTPSink {
 public:
   static DVVideoRTPSink* createNew(UsageEnvironment& env, Groupsock* RTPgs, unsigned char rtpPayloadFormat);
+  char const* auxSDPLineFromFramer(DVVideoStreamFramer* framerSource);
 
 protected:
   DVVideoRTPSink(UsageEnvironment& env, Groupsock* RTPgs, unsigned char rtpPayloadFormat);
@@ -41,7 +45,7 @@ private: // redefined virtual functions:
   virtual void doSpecialFrameHandling(unsigned fragmentationOffset,
                                       unsigned char* frameStart,
                                       unsigned numBytesInFrame,
-                                      struct timeval frameTimestamp,
+                                      struct timeval framePresentationTime,
                                       unsigned numRemainingBytes);
   virtual unsigned computeOverflowForNewFrame(unsigned newFrameSize) const;
   virtual char const* auxSDPLine();

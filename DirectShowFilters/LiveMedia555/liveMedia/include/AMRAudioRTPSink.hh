@@ -14,8 +14,8 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2009 Live Networks, Inc.  All rights reserved.
-// RTP sink for AMR audio (RFC 3267)
+// Copyright (c) 1996-2015 Live Networks, Inc.  All rights reserved.
+// RTP sink for AMR audio (RFC 4867)
 // C++ header
 
 #ifndef _AMR_AUDIO_RTP_SINK_HH
@@ -48,7 +48,7 @@ private: // redefined virtual functions:
   virtual void doSpecialFrameHandling(unsigned fragmentationOffset,
                                       unsigned char* frameStart,
                                       unsigned numBytesInFrame,
-                                      struct timeval frameTimestamp,
+                                      struct timeval framePresentationTime,
                                       unsigned numRemainingBytes);
   virtual Boolean
   frameCanAppearAfterPacketStart(unsigned char const* frameStart,

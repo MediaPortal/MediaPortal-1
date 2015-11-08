@@ -14,7 +14,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2009 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2015 Live Networks, Inc.  All rights reserved.
 // A server demultiplexer for a MPEG 1 or 2 Program Stream
 // C++ header
 
@@ -61,7 +61,7 @@ private:
   Boolean fReuseFirstSource;
   MPEG1or2Demux* fSession0Demux;
   MPEG1or2Demux* fLastCreatedDemux;
-  u_int8_t fLastClientSessionId;
+  unsigned fLastClientSessionId;
 };
 
 #endif
