@@ -1975,6 +1975,17 @@ public class MediaPortalApp : D3D, IRender
             {
               case 0:
                 Log.Info("Main: User is providing input to the session");
+                if (_suspended && !_resumedSuspended)
+                {
+                  // Resume operation of user interface for PBT_APMRESUMEAUTOMATIC without PBT_APMRESUMESUSPEND.
+                  Log.Info("Main: Resuming operation of user interface");
+                  OnResumeSuspend();
+                  msg.WParam = new IntPtr((int)PBT_EVENT.PBT_APMRESUMESUSPEND);
+                  PluginManager.WndProc(ref msg);
+                  msg.WParam = new IntPtr((int)PBT_EVENT.PBT_POWERSETTINGCHANGE);
+                  _resumedSuspended = true;
+                  _suspended = false;
+                }
                 IsUserPresent = true;
                 ShowMouseCursor(false);
                 break;
