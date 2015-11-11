@@ -1979,13 +1979,18 @@ public class MediaPortalApp : D3D, IRender
                 if (_suspended && !_resumedSuspended)
                 {
                   // Resume operation of user interface for PBT_APMRESUMEAUTOMATIC without PBT_APMRESUMESUSPEND.
-                  Log.Info("Main: Resuming operation of user interface");
+                  Log.Info("Main: Providing input - Resuming operation of user interface");
                   OnResumeSuspend();
                   msg.WParam = new IntPtr((int)PBT_EVENT.PBT_APMRESUMESUSPEND);
                   PluginManager.WndProc(ref msg);
                   msg.WParam = new IntPtr((int)PBT_EVENT.PBT_POWERSETTINGCHANGE);
                   _resumedSuspended = true;
                   _suspended = false;
+                }
+                if (GUIGraphicsContext.IsDirectX9ExUsed())
+                {
+                  Log.Debug("Main: Providing input - set GUIGraphicsContext.State.RUNNING");
+                  GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.RUNNING;
                 }
                 IsUserPresent = true;
                 ShowMouseCursor(false);
