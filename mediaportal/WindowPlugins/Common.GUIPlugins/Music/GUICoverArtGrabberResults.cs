@@ -706,8 +706,7 @@ namespace MediaPortal.GUI.Music
 
       listView.Clear();
 
-      //Log.Debug("Current cover art image: {0}", imgCoverArt.FileName);
-
+      Log.Debug("Current cover art image: {0}", imgCoverArt.FileName);
       imgCoverArt.SetFileName("");
       imgCoverArt.SetFileName(_ThumbPath);
       Log.Debug("New cover art image: {0}", imgCoverArt.FileName);
