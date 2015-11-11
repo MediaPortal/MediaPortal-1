@@ -72,6 +72,7 @@ namespace TvControl
     private static string _hostName = System.Net.Dns.GetHostName();
     private static TcpChannel _callbackChannel = null; // callback channel
     private static bool _useIncreasedTimeoutForInitialConnection = true;
+    private static readonly object RemoteControlLock = new object();
 
     #endregion
 
@@ -89,6 +90,7 @@ namespace TvControl
     /// <summary>
     /// Registers Ci Menu Callbackhandler in TvPlugin, connects to a server side event
     /// </summary>
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public static void RegisterCiMenuCallbacks(CiMenuCallbackSink sink)
     {
       RefreshRemotingConnectionStatus();
@@ -127,85 +129,91 @@ namespace TvControl
     [MethodImpl(MethodImplOptions.Synchronized)]
     private static void RefreshRemotingConnectionStatus()
     {
-      Stopwatch benchClock = Stopwatch.StartNew();
-      try
+      lock (RemoteControlLock)
       {
-        if (_tvControl == null)
+        Stopwatch benchClock = Stopwatch.StartNew();
+        try
         {
-          _isRemotingConnected = false;
-          return;
-        }
-
-        int timeout = 250;
-        if (!_isRemotingConnected && _firstFailure)
-        {
-          timeout = MAX_WAIT_FOR_SERVER_REMOTING_CONNECTION;
-          if (_useIncreasedTimeoutForInitialConnection)
+          if (_tvControl == null)
           {
-            timeout = MAX_WAIT_FOR_SERVER_REMOTING_CONNECTION_INITIAL;
-            _useIncreasedTimeoutForInitialConnection = false;
+            _isRemotingConnected = false;
+            return;
+          }
+
+          int timeout = 250;
+          if (!_isRemotingConnected && _firstFailure)
+          {
+            timeout = MAX_WAIT_FOR_SERVER_REMOTING_CONNECTION;
+            if (_useIncreasedTimeoutForInitialConnection)
+            {
+              timeout = MAX_WAIT_FOR_SERVER_REMOTING_CONNECTION_INITIAL;
+              _useIncreasedTimeoutForInitialConnection = false;
+            }
+          }
+
+          int iterations = (timeout/MAX_TCP_TIMEOUT);
+
+          if (iterations < 1)
+          {
+            iterations = 1;
+          }
+
+          int count = 0;
+
+          while (!_isRemotingConnected && count < iterations)
+          {
+            CheckTcpPort();
+
+            count++;
+            if (!_isRemotingConnected)
+            {
+              Thread.Sleep(10);
+            }
           }
         }
-
-        int iterations = (timeout / MAX_TCP_TIMEOUT);
-
-        if (iterations < 1)
+        catch (System.Threading.ThreadAbortException)
         {
-          iterations = 1;
+          benchClock.Stop();
+          Log.Info("RemoteControl - timed out after {0} msec", benchClock.ElapsedMilliseconds);
+          Thread.ResetAbort();
         }
-
-        int count = 0;
-
-        while (!_isRemotingConnected && count < iterations)
+        catch (Exception e)
         {
-          CheckTcpPort();
-
-          count++;
-          if (!_isRemotingConnected)
-          {
-            Thread.Sleep(10);
-          }
+          Log.Info("RemoteControl - RefreshRemotingConnectionStatus exception : {0} {1} {2}", e.Message, e.Source,
+            e.StackTrace);
+          //ignore
         }
-      }
-      catch (System.Threading.ThreadAbortException)
-      {
-        benchClock.Stop();
-        Log.Info("RemoteControl - timed out after {0} msec", benchClock.ElapsedMilliseconds);
-        Thread.ResetAbort();
-      }
-      catch (Exception e)
-      {
-        Log.Info("RemoteControl - RefreshRemotingConnectionStatus exception : {0} {1} {2}", e.Message, e.Source,
-                 e.StackTrace);
-        //ignore
-      }
-      finally
-      {
-        InvokeEvents();
+        finally
+        {
+          InvokeEvents();
+        }
       }
     }
 
     private static void InvokeEvents()
     {
-      if (!_isRemotingConnected)
+      lock (RemoteControlLock)
       {
-        if (OnRemotingDisconnected != null) //raise event
+        if (!_isRemotingConnected)
         {
-          if (!_firstFailure)
+          if (OnRemotingDisconnected != null) //raise event
           {
-            Log.Info("RemoteControl - Disconnected ");
-            OnRemotingDisconnected();
+            if (!_firstFailure)
+            {
+              Log.Info("RemoteControl - Disconnected ");
+              OnRemotingDisconnected();
+            }
+            _firstFailure = false;
           }
-          _firstFailure = false;
         }
-      }
-      else
-      {
-        _firstFailure = true;
-        if (OnRemotingConnected != null)
+        else
         {
-          Log.Info("RemoteControl - Connected");
-          OnRemotingConnected();
+          _firstFailure = true;
+          if (OnRemotingConnected != null)
+          {
+            Log.Info("RemoteControl - Connected");
+            OnRemotingConnected();
+          }
         }
       }
     }
@@ -441,7 +449,7 @@ namespace TvControl
     /// <summary>
     /// returns an the <see cref="T:TvControl.IController"/> interface to the tv server
     /// </summary>
-    /// <value>The instance.</value>    
+    /// <value>The instance.</value>
     public static IController Instance
     {
       get
