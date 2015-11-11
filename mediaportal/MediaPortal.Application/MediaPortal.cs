@@ -141,6 +141,7 @@ public class MediaPortalApp : D3D, IRender
   private int                   _backupSizeHeight;
   private bool                  _usePrimaryScreen;
   private string                _screenDisplayName;
+  private bool                  _resumedFromInputSession;
 
   // ReSharper disable InconsistentNaming
   private const int WM_SYSCOMMAND            = 0x0112; // http://msdn.microsoft.com/en-us/library/windows/desktop/ms646360(v=vs.85).aspx
@@ -1779,6 +1780,7 @@ public class MediaPortalApp : D3D, IRender
         case (int)PBT_EVENT.PBT_APMSUSPEND:
           _resumedAutomatic = false;
           _resumedSuspended = false;
+          _resumedFromInputSession = false;
           _delayedResume = false;
           _suspended = true;
 
@@ -1814,6 +1816,7 @@ public class MediaPortalApp : D3D, IRender
           // Suspending GUIGraphicsContext when going to S3
           if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.RUNNING)
           {
+            Log.Debug("Main: PBT_APMSUSPEND - set GUIGraphicsContext.State.SUSPENDING");
             GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.SUSPENDING;
           }
 
@@ -1877,6 +1880,7 @@ public class MediaPortalApp : D3D, IRender
 
           _resumedAutomatic = false;
           _resumedSuspended = false;
+          _resumedFromInputSession = false;
 
           // PBT_APMRESUMECRITICAL should be handled in same way as PBT_APMRESUMEAUTOMATIC
           goto case (int)PBT_EVENT.PBT_APMRESUMEAUTOMATIC;
@@ -1900,7 +1904,7 @@ public class MediaPortalApp : D3D, IRender
             PluginManager.WndProc(ref msg);
           }
 
-          if (!_resumedSuspended)
+          if (!_resumedSuspended || _resumedFromInputSession)
           {
             // Resume operation of user interface
             Log.Info("Main: Resuming operation of user interface");
@@ -1986,11 +1990,7 @@ public class MediaPortalApp : D3D, IRender
                   msg.WParam = new IntPtr((int)PBT_EVENT.PBT_POWERSETTINGCHANGE);
                   _resumedSuspended = true;
                   _suspended = false;
-                }
-                if (GUIGraphicsContext.IsDirectX9ExUsed())
-                {
-                  Log.Debug("Main: Providing input - set GUIGraphicsContext.State.RUNNING");
-                  GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.RUNNING;
+                  _resumedFromInputSession = true;
                 }
                 IsUserPresent = true;
                 ShowMouseCursor(false);
@@ -2765,6 +2765,7 @@ public class MediaPortalApp : D3D, IRender
   {
     // Make sure that plugins cannot open dialog when system is entering standby
     _ignoreContextMenuAction = true;
+    Log.Debug("Main: PrepareSuspend - set GUIGraphicsContext.State.SUSPENDING");
     GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.SUSPENDING;
   }
 
