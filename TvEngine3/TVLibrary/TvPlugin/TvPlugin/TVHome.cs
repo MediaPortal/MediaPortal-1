@@ -31,6 +31,7 @@ using System.Globalization;
 using System.IO;
 using System.Net;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
@@ -102,6 +103,7 @@ namespace TvPlugin
     private static readonly SynchronizationContext _mainThreadContext = SynchronizationContext.Current;
     private Channel _resumeChannel = null;
     private Thread heartBeatTransmitterThread = null;
+    private Thread RemotingThread = null;
     private static DateTime _updateProgressTimer = DateTime.MinValue;
     public static ChannelNavigator m_navigator;
     private static TVUtil _util;
@@ -132,7 +134,6 @@ namespace TvPlugin
     private static bool _doingChannelChange = false;
     private static bool _ServerNotConnectedHandled = false;
     private static bool _recoverTV = false;
-    private static bool _connected = false;
     private static bool _isAnyCardRecording = false;
     protected static TvServer _server;
     internal static bool firstNotLoaded = true;
@@ -326,13 +327,47 @@ namespace TvPlugin
       }
     }
 
+    private void RemotingCheck()
+    {
+      Log.Debug("TVHome: RemotingCheck()");
+      RemoteControl.OnRemotingDisconnected += RemoteControl_OnRemotingDisconnected;
+      RemoteControl.OnRemotingConnected += RemoteControl_OnRemotingConnected;
+    }
+
+    private void startRemotingThread()
+    {
+      if (RemotingThread != null)
+      {
+        if (RemotingThread.IsAlive)
+        {
+          return;
+        }
+      }
+      Log.Debug("TVHome: RemotingThread started.");
+      RemotingThread = new Thread(RemotingCheck);
+      RemotingThread.IsBackground = true;
+      RemotingThread.Name = "TvClient-TvHome: RemotingThread";
+      RemotingThread.Start();
+    }
+
+    private void stopRemotingThread()
+    {
+      if (RemotingThread != null)
+      {
+        if (RemotingThread.IsAlive)
+        {
+          RemoteControl.OnRemotingDisconnected -= RemoteControl_OnRemotingDisconnected;
+          RemoteControl.OnRemotingConnected -= RemoteControl_OnRemotingConnected;
+          Log.Debug("TVHome: RemotingThread stopped.");
+          RemotingThread.Abort();
+        }
+      }
+    }
+
     public override void OnAdded()
     {
       Log.Info("TVHome:OnAdded");
-      RemoteControl.OnRemotingDisconnected +=
-        new RemoteControl.RemotingDisconnectedDelegate(RemoteControl_OnRemotingDisconnected);
-      RemoteControl.OnRemotingConnected += new RemoteControl.RemotingConnectedDelegate(RemoteControl_OnRemotingConnected);
-
+      startRemotingThread();
       GUIGraphicsContext.OnBlackImageRendered += new BlackImageRenderedHandler(OnBlackImageRendered);
       GUIGraphicsContext.OnVideoReceived += new VideoReceivedHandler(OnVideoReceived);
 
@@ -402,9 +437,7 @@ namespace TvPlugin
     {
       OnPageDestroy(-1);
 
-      RemoteControl.OnRemotingDisconnected -=
-       new RemoteControl.RemotingDisconnectedDelegate(RemoteControl_OnRemotingDisconnected);
-      RemoteControl.OnRemotingConnected -= new RemoteControl.RemotingConnectedDelegate(RemoteControl_OnRemotingConnected);
+      stopRemotingThread();
 
       GUIGraphicsContext.OnBlackImageRendered -= new BlackImageRenderedHandler(OnBlackImageRendered);
       GUIGraphicsContext.OnVideoReceived -= new VideoReceivedHandler(OnVideoReceived);
@@ -1152,11 +1185,7 @@ namespace TvPlugin
       get { return _isAnyCardRecording; }
     }
 
-    public static bool Connected
-    {
-      get { return _connected; }
-      set { _connected = value; }
-    }
+    public static bool Connected { get; set; }
 
     public static VirtualCard Card
     {
@@ -1412,7 +1441,7 @@ namespace TvPlugin
     //  }
     //}
 
-    private static void RemoteControl_OnRemotingConnected()
+    private static void RemoteControl_OnRemotingConnectedThread()
     {
       if (!Connected)
         Log.Info("TVHome: OnRemotingConnected, recovered from a disconnection");
@@ -1422,8 +1451,7 @@ namespace TvPlugin
       {
         _recoverTV = false;
         GUIMessage initMsg = null;
-        initMsg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_INIT, (int) Window.WINDOW_TV_OVERLAY, 0, 0, 0, 0,
-                                 null);
+        initMsg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_INIT, (int)Window.WINDOW_TV_OVERLAY, 0, 0, 0, 0, null);
         GUIWindowManager.SendThreadMessage(initMsg);
       }
       if (firstNotLoaded)
@@ -1432,13 +1460,26 @@ namespace TvPlugin
         OnLoaded();
       }
     }
+    private static void RemoteControl_OnRemotingConnected()
+    {
+      Thread remoteControlOnRemotingConnectedThread = new Thread(RemoteControl_OnRemotingConnectedThread);
+      remoteControlOnRemotingConnectedThread.IsBackground = true;
+      remoteControlOnRemotingConnectedThread.Start();
+    }
 
-    private static void RemoteControl_OnRemotingDisconnected()
+    private static void RemoteControl_OnRemotingDisconnectedThread()
     {
       if (Connected)
         Log.Info("TVHome: OnRemotingDisconnected");
       Connected = false;
       HandleServerNotConnected();
+    }
+
+    private static void RemoteControl_OnRemotingDisconnected()
+    {
+      Thread remoteControlOnRemotingDisconnectedThread = new Thread(RemoteControl_OnRemotingDisconnectedThread);
+      remoteControlOnRemotingDisconnectedThread.IsBackground = true;
+      remoteControlOnRemotingDisconnectedThread.Start();
     }
 
     private void Application_ApplicationExit(object sender, EventArgs e)
@@ -3593,6 +3634,11 @@ namespace TvPlugin
     }
 
     private static readonly object _asyncTuneLock = new object();
+
+    static TVHome()
+    {
+      Connected = false;
+    }
 
     /// <summary>
     /// returns the virtualcard which is timeshifting the channel specified
