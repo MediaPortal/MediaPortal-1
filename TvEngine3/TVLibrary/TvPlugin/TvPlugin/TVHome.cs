@@ -103,7 +103,6 @@ namespace TvPlugin
     private static readonly SynchronizationContext _mainThreadContext = SynchronizationContext.Current;
     private Channel _resumeChannel = null;
     private Thread heartBeatTransmitterThread = null;
-    private Thread RemotingThread = null;
     private static DateTime _updateProgressTimer = DateTime.MinValue;
     public static ChannelNavigator m_navigator;
     private static TVUtil _util;
@@ -327,47 +326,12 @@ namespace TvPlugin
       }
     }
 
-    private void RemotingCheck()
-    {
-      Log.Debug("TVHome: RemotingCheck()");
-      RemoteControl.OnRemotingDisconnected += RemoteControl_OnRemotingDisconnected;
-      RemoteControl.OnRemotingConnected += RemoteControl_OnRemotingConnected;
-    }
-
-    private void startRemotingThread()
-    {
-      if (RemotingThread != null)
-      {
-        if (RemotingThread.IsAlive)
-        {
-          return;
-        }
-      }
-      Log.Debug("TVHome: RemotingThread started.");
-      RemotingThread = new Thread(RemotingCheck);
-      RemotingThread.IsBackground = true;
-      RemotingThread.Name = "TvClient-TvHome: RemotingThread";
-      RemotingThread.Start();
-    }
-
-    private void stopRemotingThread()
-    {
-      if (RemotingThread != null)
-      {
-        if (RemotingThread.IsAlive)
-        {
-          RemoteControl.OnRemotingDisconnected -= RemoteControl_OnRemotingDisconnected;
-          RemoteControl.OnRemotingConnected -= RemoteControl_OnRemotingConnected;
-          Log.Debug("TVHome: RemotingThread stopped.");
-          RemotingThread.Abort();
-        }
-      }
-    }
-
     public override void OnAdded()
     {
       Log.Info("TVHome:OnAdded");
-      startRemotingThread();
+      RemoteControl.OnRemotingDisconnected += RemoteControl_OnRemotingDisconnected;
+      RemoteControl.OnRemotingConnected += RemoteControl_OnRemotingConnected;
+
       GUIGraphicsContext.OnBlackImageRendered += new BlackImageRenderedHandler(OnBlackImageRendered);
       GUIGraphicsContext.OnVideoReceived += new VideoReceivedHandler(OnVideoReceived);
 
@@ -437,7 +401,8 @@ namespace TvPlugin
     {
       OnPageDestroy(-1);
 
-      stopRemotingThread();
+      RemoteControl.OnRemotingDisconnected -= RemoteControl_OnRemotingDisconnected;
+      RemoteControl.OnRemotingConnected -= RemoteControl_OnRemotingConnected;
 
       GUIGraphicsContext.OnBlackImageRendered -= new BlackImageRenderedHandler(OnBlackImageRendered);
       GUIGraphicsContext.OnVideoReceived -= new VideoReceivedHandler(OnVideoReceived);
