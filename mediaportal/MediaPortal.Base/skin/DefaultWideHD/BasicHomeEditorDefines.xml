@@ -490,6 +490,7 @@
   <define property="true" evaluateNow="true">#AUDIO6.plugin:mvCentral</define>
   <define property="true" evaluateNow="true">#AUDIO6.hyperlink:112011</define>
   <define property="true" evaluateNow="true">#AUDIO6.parameter:</define>
+  <define property="true" evaluateNow="true">#AUDIO6.latestmedia:91929928</define>
   <define property="true" evaluateNow="true">#AUDIO6.hover:hover_mvCentral.png</define>
   <define property="true" evaluateNow="true">#AUDIO6.background:Animations\BasicHome\music.jpg</define>
   <define property="true" evaluateNow="true">#AUDIO6.iconfocus:tb_music.png</define>
@@ -1146,7 +1147,7 @@
   <define property="true" evaluateNow="true">#.SETUP.hyperlink:4</define>
   <define property="true" evaluateNow="true">#.SETUP.parameter:</define>
   <define property="true" evaluateNow="true">#.SETUP.hover:hover_settings.png</define>
-  <define property="true" evaluateNow="true">#.SETUP.background:Animations\BasicHome\BH Settings.jpg</define>
+  <define property="true" evaluateNow="true">#.SETUP.background:Animations\BasicHome\Settings.jpg</define>
   <define property="true" evaluateNow="true">#.SETUP.iconfocus:tb_settings.png</define>
   <define property="true" evaluateNow="true">#.SETUP.iconnofocus:tb_settingsNF.png</define>
   <define property="true" evaluateNow="true">#.SETUP.active:#(iif(and(or(eq(#.SETUP.plugin,''),plugin.isenabled(#.SETUP.plugin)),neq(#.SETUP.name,#PLUGOPTERROR)),' ',''))</define>
@@ -1158,7 +1159,7 @@
   <define property="true" evaluateNow="true">#1.SETUP.hyperlink:1016</define>
   <define property="true" evaluateNow="true">#1.SETUP.parameter:</define>
   <define property="true" evaluateNow="true">#1.SETUP.hover:hover_settings.png</define>
-  <define property="true" evaluateNow="true">#1.SETUP.background:Animations\BasicHome\BH Settings.jpg</define>
+  <define property="true" evaluateNow="true">#1.SETUP.background:Animations\BasicHome\Settings.jpg</define>
   <define property="true" evaluateNow="true">#1.SETUP.iconfocus:tb_settings.png</define>
   <define property="true" evaluateNow="true">#1.SETUP.iconnofocus:tb_settingsNF.png</define>
   <define property="true" evaluateNow="true">#1.SETUP.active:#(iif(and(or(eq(#1.SETUP.plugin,''),plugin.isenabled(#1.SETUP.plugin)),neq(#1.SETUP.name,#PLUGOPTERROR)),' ',''))</define>
@@ -1170,7 +1171,7 @@
   <define property="true" evaluateNow="true">#2.SETUP.hyperlink:1021</define>
   <define property="true" evaluateNow="true">#2.SETUP.parameter:</define>
   <define property="true" evaluateNow="true">#2.SETUP.hover:hover_settings.png</define>
-  <define property="true" evaluateNow="true">#2.SETUP.background:Animations\BasicHome\BH Settings.jpg</define>
+  <define property="true" evaluateNow="true">#2.SETUP.background:Animations\BasicHome\Settings.jpg</define>
   <define property="true" evaluateNow="true">#2.SETUP.iconfocus:tb_settings.png</define>
   <define property="true" evaluateNow="true">#2.SETUP.iconnofocus:tb_settingsNF.png</define>
   <define property="true" evaluateNow="true">#2.SETUP.active:#(iif(and(or(eq(#2.SETUP.plugin,''),plugin.isenabled(#2.SETUP.plugin)),neq(#2.SETUP.name,#PLUGOPTERROR)),' ',''))</define>
@@ -1182,7 +1183,7 @@
   <define property="true" evaluateNow="true">#3.SETUP.hyperlink:705</define>
   <define property="true" evaluateNow="true">#3.SETUP.parameter:</define>
   <define property="true" evaluateNow="true">#3.SETUP.hover:hover_settings.png</define>
-  <define property="true" evaluateNow="true">#3.SETUP.background:Animations\BasicHome\BH Settings.jpg</define>
+  <define property="true" evaluateNow="true">#3.SETUP.background:Animations\BasicHome\Settings.jpg</define>
   <define property="true" evaluateNow="true">#3.SETUP.iconfocus:tb_settings.png</define>
   <define property="true" evaluateNow="true">#3.SETUP.iconnofocus:tb_settingsNF.png</define>
   <define property="true" evaluateNow="true">#3.SETUP.active:#(iif(and(or(eq(#3.SETUP.plugin,''),plugin.isenabled(#3.SETUP.plugin)),neq(#3.SETUP.name,#PLUGOPTERROR)),' ',''))</define>
@@ -1194,7 +1195,7 @@
   <define property="true" evaluateNow="true">#4.SETUP.hyperlink:9</define>
   <define property="true" evaluateNow="true">#4.SETUP.parameter:</define>
   <define property="true" evaluateNow="true">#4.SETUP.hover:hover_settings.png</define>
-  <define property="true" evaluateNow="true">#4.SETUP.background:Animations\BasicHome\BH Settings.jpg</define>
+  <define property="true" evaluateNow="true">#4.SETUP.background:Animations\BasicHome\Settings.jpg</define>
   <define property="true" evaluateNow="true">#4.SETUP.iconfocus:tb_settings.png</define>
   <define property="true" evaluateNow="true">#4.SETUP.iconnofocus:tb_settingsNF.png</define>
   <define property="true" evaluateNow="true">#4.SETUP.active:#(iif(and(or(eq(#4.SETUP.plugin,''),plugin.isenabled(#4.SETUP.plugin)),neq(#4.SETUP.name,#PLUGOPTERROR)),' ',''))</define>
@@ -1206,7 +1207,7 @@
   <define property="true" evaluateNow="true">#5.SETUP.hyperlink:700</define>
   <define property="true" evaluateNow="true">#5.SETUP.parameter:</define>
   <define property="true" evaluateNow="true">#5.SETUP.hover:hover_settings.png</define>
-  <define property="true" evaluateNow="true">#5.SETUP.background:Animations\BasicHome\BH Settings.jpg</define>
+  <define property="true" evaluateNow="true">#5.SETUP.background:Animations\BasicHome\Settings.jpg</define>
   <define property="true" evaluateNow="true">#5.SETUP.iconfocus:tb_settings.png</define>
   <define property="true" evaluateNow="true">#5.SETUP.iconnofocus:tb_settingsNF.png</define>
   <define property="true" evaluateNow="true">#5.SETUP.active:#(iif(and(or(eq(#5.SETUP.plugin,''),plugin.isenabled(#5.SETUP.plugin)),neq(#5.SETUP.name,#PLUGOPTERROR)),' ',''))</define>
@@ -1218,7 +1219,7 @@
   <define property="true" evaluateNow="true">#6.SETUP.hyperlink:12</define>
   <define property="true" evaluateNow="true">#6.SETUP.parameter:</define>
   <define property="true" evaluateNow="true">#6.SETUP.hover:hover_settings.png</define>
-  <define property="true" evaluateNow="true">#6.SETUP.background:Animations\BasicHome\BH Settings.jpg</define>
+  <define property="true" evaluateNow="true">#6.SETUP.background:Animations\BasicHome\Settings.jpg</define>
   <define property="true" evaluateNow="true">#6.SETUP.iconfocus:tb_settings.png</define>
   <define property="true" evaluateNow="true">#6.SETUP.iconnofocus:tb_settingsNF.png</define>
   <define property="true" evaluateNow="true">#6.SETUP.active:#(iif(and(or(eq(#6.SETUP.plugin,''),plugin.isenabled(#6.SETUP.plugin)),neq(#6.SETUP.name,#PLUGOPTERROR)),' ',''))</define>
@@ -1230,7 +1231,7 @@
   <define property="true" evaluateNow="true">#7.SETUP.hyperlink:9</define>
   <define property="true" evaluateNow="true">#7.SETUP.parameter:</define>
   <define property="true" evaluateNow="true">#7.SETUP.hover:hover_settings.png</define>
-  <define property="true" evaluateNow="true">#7.SETUP.background:Animations\BasicHome\BH Settings.jpg</define>
+  <define property="true" evaluateNow="true">#7.SETUP.background:Animations\BasicHome\Settings.jpg</define>
   <define property="true" evaluateNow="true">#7.SETUP.iconfocus:tb_settings.png</define>
   <define property="true" evaluateNow="true">#7.SETUP.iconnofocus:tb_settingsNF.png</define>
   <define property="true" evaluateNow="true">#7.SETUP.active:#(iif(and(or(eq(#7.SETUP.plugin,''),plugin.isenabled(#7.SETUP.plugin)),neq(#7.SETUP.name,#PLUGOPTERROR)),' ',''))</define>
@@ -1242,7 +1243,7 @@
   <define property="true" evaluateNow="true">#8.SETUP.hyperlink:704</define>
   <define property="true" evaluateNow="true">#8.SETUP.parameter:</define>
   <define property="true" evaluateNow="true">#8.SETUP.hover:hover_settings.png</define>
-  <define property="true" evaluateNow="true">#8.SETUP.background:Animations\BasicHome\BH Settings.jpg</define>
+  <define property="true" evaluateNow="true">#8.SETUP.background:Animations\BasicHome\Settings.jpg</define>
   <define property="true" evaluateNow="true">#8.SETUP.iconfocus:tb_settings.png</define>
   <define property="true" evaluateNow="true">#8.SETUP.iconnofocus:tb_settingsNF.png</define>
   <define property="true" evaluateNow="true">#8.SETUP.active:#(iif(and(or(eq(#8.SETUP.plugin,''),plugin.isenabled(#8.SETUP.plugin)),neq(#8.SETUP.name,#PLUGOPTERROR)),' ',''))</define>
@@ -1254,7 +1255,7 @@
   <define property="true" evaluateNow="true">#9.SETUP.hyperlink:1024</define>
   <define property="true" evaluateNow="true">#9.SETUP.parameter:</define>
   <define property="true" evaluateNow="true">#9.SETUP.hover:hover_settings.png</define>
-  <define property="true" evaluateNow="true">#9.SETUP.background:Animations\BasicHome\BH Settings.jpg</define>
+  <define property="true" evaluateNow="true">#9.SETUP.background:Animations\BasicHome\Settings.jpg</define>
   <define property="true" evaluateNow="true">#9.SETUP.iconfocus:tb_settings.png</define>
   <define property="true" evaluateNow="true">#9.SETUP.iconnofocus:tb_settingsNF.png</define>
   <define property="true" evaluateNow="true">#9.SETUP.active:#(iif(and(or(eq(#9.SETUP.plugin,''),plugin.isenabled(#9.SETUP.plugin)),neq(#9.SETUP.name,#PLUGOPTERROR)),' ',''))</define>
@@ -1266,7 +1267,7 @@
   <define property="true" evaluateNow="true">#10.SETUP.hyperlink:14</define>
   <define property="true" evaluateNow="true">#10.SETUP.parameter:</define>
   <define property="true" evaluateNow="true">#10.SETUP.hover:hover_settings.png</define>
-  <define property="true" evaluateNow="true">#10.SETUP.background:Animations\BasicHome\BH Settings.jpg</define>
+  <define property="true" evaluateNow="true">#10.SETUP.background:Animations\BasicHome\Settings.jpg</define>
   <define property="true" evaluateNow="true">#10.SETUP.iconfocus:tb_settings.png</define>
   <define property="true" evaluateNow="true">#10.SETUP.iconnofocus:tb_settingsNF.png</define>
   <define property="true" evaluateNow="true">#10.SETUP.active:#(iif(and(or(eq(#10.SETUP.plugin,''),plugin.isenabled(#10.SETUP.plugin)),neq(#10.SETUP.name,#PLUGOPTERROR)),' ',''))</define>
@@ -1278,7 +1279,7 @@
   <define property="true" evaluateNow="true">#11.SETUP.hyperlink:703</define>
   <define property="true" evaluateNow="true">#11.SETUP.parameter:</define>
   <define property="true" evaluateNow="true">#11.SETUP.hover:hover_settings.png</define>
-  <define property="true" evaluateNow="true">#11.SETUP.background:Animations\BasicHome\BH Settings.jpg</define>
+  <define property="true" evaluateNow="true">#11.SETUP.background:Animations\BasicHome\Settings.jpg</define>
   <define property="true" evaluateNow="true">#11.SETUP.iconfocus:tb_settings.png</define>
   <define property="true" evaluateNow="true">#11.SETUP.iconnofocus:tb_settingsNF.png</define>
   <define property="true" evaluateNow="true">#11.SETUP.active:#(iif(and(or(eq(#11.SETUP.plugin,''),plugin.isenabled(#11.SETUP.plugin)),neq(#11.SETUP.name,#PLUGOPTERROR)),' ',''))</define>
