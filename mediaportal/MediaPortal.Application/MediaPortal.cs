@@ -1904,7 +1904,7 @@ public class MediaPortalApp : D3D, IRender
             PluginManager.WndProc(ref msg);
           }
 
-          if (!_resumedSuspended || _resumedFromInputSession)
+          if (!_resumedSuspended)
           {
             // Resume operation of user interface
             Log.Info("Main: Resuming operation of user interface");
@@ -1980,7 +1980,7 @@ public class MediaPortalApp : D3D, IRender
             {
               case 0:
                 Log.Info("Main: User is providing input to the session");
-                if (_suspended && !_resumedSuspended)
+                if (_suspended && _resumedAutomatic && !_resumedSuspended)
                 {
                   // Resume operation of user interface for PBT_APMRESUMEAUTOMATIC without PBT_APMRESUMESUSPEND.
                   Log.Info("Main: Providing input - Resuming operation of user interface");
