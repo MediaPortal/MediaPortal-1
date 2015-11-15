@@ -1097,7 +1097,7 @@ bool CDeMultiplexer::Start()
         if (m_hadPESfail > 64)
         {
           //Probably initial decryption problems so allow more time....
-          timeout = 60000;
+          timeout = 5000;
         }
         continue;
       }
