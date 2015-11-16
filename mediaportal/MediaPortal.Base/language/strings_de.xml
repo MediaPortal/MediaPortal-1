@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Language name="German" characters="255">
 	<Section name="unmapped">
 		<String id="0" prefix="Meine ">Anwendungen</String>
@@ -715,6 +715,8 @@
 		<String id="782">Erweiterte Aufnahme</String>
 		<String id="783">Um 180° drehen</String>
 		<String id="784">Um 270° drehen</String>
+		<String id="789"></String>
+    <String id="790"></String>
 		<String id="791">Cover-Flow</String>
 		<String id="792">Ansichts-Menü</String>
 		<String id="798">niedrig</String>

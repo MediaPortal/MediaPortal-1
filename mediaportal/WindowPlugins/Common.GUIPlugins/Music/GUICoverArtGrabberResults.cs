@@ -702,13 +702,14 @@ namespace MediaPortal.GUI.Music
       {
         return;
       }
+      imgCoverArt = new GUIImage(GetID);
 
       listView.Clear();
 
-      Console.WriteLine("Current cover art image: " + imgCoverArt.FileName);
+      Log.Debug("Current cover art image: {0}", imgCoverArt.FileName);
       imgCoverArt.SetFileName("");
       imgCoverArt.SetFileName(_ThumbPath);
-      Console.WriteLine("New cover art image: " + imgCoverArt.FileName);
+      Log.Debug("New cover art image: {0}", imgCoverArt.FileName);
 
       if (amazonWS.HasAlbums)
       {
