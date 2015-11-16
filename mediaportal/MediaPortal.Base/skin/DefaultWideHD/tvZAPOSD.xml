@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!--version="1.0" encoding="utf-8" standalone="yes"-->
+<!--version="1.0" encoding="utf-8" standalone="yes"-->
+<window>
+  <id>3007</id>
+  <defaultcontrol>213</defaultcontrol>
+  <allowoverlay>no</allowoverlay>
+  <controls>
+    <control>
+      <description>background</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>200</posX>
+      <posY>773</posY>
+      <height>312</height>
+      <width>1545</width>
+      <texture>OSDBG2.png</texture>
+      <colordiffuse>eeffffff</colordiffuse>
+    </control>
+    <control>
+      <description>Time BG</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>1474</posX>
+      <posY>810</posY>
+      <width>216</width>
+      <height>52</height>
+      <texture>buttonfocus.png</texture>
+      <colordiffuse>90ffffff</colordiffuse>
+      <!--visible>!skin.hassetting(#skin.analogosd)</visible-->
+    </control>
+    <control>
+      <description>Time Info</description>
+      <type>label</type>
+      <id>110</id>
+      <posX>1668</posX>
+      <posY>811</posY>
+      <label>#time</label>
+      <align>right</align>
+      <font>font16</font>
+      <textcolor>ivory</textcolor>
+      <!--visible>!skin.hassetting(#skin.analogosd)</visible-->
+    </control>
+    <control>
+      <type>image</type>
+      <id>10</id>
+      <posX>254</posX>
+      <posY>825</posY>
+      <width>137</width>
+      <height>137</height>
+      <texture>#TV.View.thumb</texture>
+      <centered>yes</centered>
+      <keepaspectratio>yes</keepaspectratio>
+    </control>
+    <control>
+      <description>Current channel</description>
+      <type>label</type>
+      <id>35</id>
+      <posX>427</posX>
+      <posY>821</posY>
+      <width>1007</width>
+      <label>-</label>
+      <align>left</align>
+      <font>font16</font>
+      <textcolor>ivory</textcolor>
+    </control>
+    <control>
+      <type>image</type>
+      <description>progressbar bg</description>
+      <id>1</id>
+      <posX>427</posX>
+      <posY>935</posY>
+      <width>1183</width>
+      <height>29</height>
+      <texture>osd_progress_background.png</texture>
+    </control>
+    <control>
+      <description>progress bar</description>
+      <type>progress</type>
+      <id>20</id>
+      <posX>428</posX>
+      <posY>937</posY>
+      <width>1180</width>
+      <offset>0</offset>
+      <height>23</height>
+      <innerheight>24</innerheight>
+      <lefttexture>osd_progress_left.png</lefttexture>
+      <midtexture>osd_progress_mid.png</midtexture>
+      <righttexture>osd_progress_right.png</righttexture>
+      <label>#TV.View.Percentage</label>
+      <visible>yes</visible>
+    </control>
+    <control>
+      <description>Start Time Info</description>
+      <type>label</type>
+      <id>101</id>
+      <posX>427</posX>
+      <posY>880</posY>
+      <label>#TV.View.start</label>
+      <align>left</align>
+      <font>Menutitle</font>
+      <textcolor>dodgerblue</textcolor>
+    </control>
+    <control>
+      <description>On tv NOW</description>
+      <id>36</id>
+      <type>textbox</type>
+      <posX>593</posX>
+      <posY>877</posY>
+      <width>978</width>
+      <height>42</height>
+      <label>#TV.View.title</label>
+      <font>Menutitle</font>
+      <textcolor>dodgerblue</textcolor>
+    </control>
+    <control>
+      <description>End Time Info</description>
+      <type>label</type>
+      <id>102</id>
+      <posX>427</posX>
+      <posY>971</posY>
+      <label>#TV.View.Stop</label>
+      <align>left</align>
+      <textcolor>ivory</textcolor>
+      <font>font14</font>
+      <shadowAngle>0</shadowAngle>
+      <shadowDistance>0</shadowDistance>
+      <shadowColor />
+    </control>
+    <control>
+      <description>On tv NEXT</description>
+      <id>37</id>
+      <type>textbox</type>
+      <posX>593</posX>
+      <posY>969</posY>
+      <height>42</height>
+      <width>978</width>
+      <align>left</align>
+      <font>font14</font>
+      <textcolor>ivory</textcolor>
+      <shadowAngle>0</shadowAngle>
+      <shadowDistance>0</shadowDistance>
+      <shadowColor />
+    </control>
+    <control>
+      <description>rec logo</description>
+      <type>image</type>
+      <id>39</id>
+      <posX>1630</posX>
+      <posY>975</posY>
+      <width>50</width>
+      <height>50</height>
+      <texture>recording.png</texture>
+      <animation effect="zoom" start="100,100" end="110,110" time="500" condition="true" pulse="true">conditional</animation>
+    </control>
+    <control>
+      <description>background</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>-20</posX>
+      <posY>42</posY>
+      <height>110</height>
+      <width>270</width>
+      <texture>picturecase_mask.png</texture>
+      <colordiffuse>ddffffff</colordiffuse>
+      <visible>control.isvisible(38)</visible>
+    </control>
+    <control>
+      <description>Zap to channel no</description>
+      <type>label</type>
+      <id>38</id>
+      <posX>73</posX>
+      <posY>42</posY>
+      <label>-</label>
+      <align>left</align>
+      <font>font36</font>
+      <textcolor>ff0066ff</textcolor>
+      <visible>no</visible>
+      <animation effect="zoom" start="100,100" end="160,160" time="0">visible</animation>
+    </control>
+  </controls>
+</window>

@@ -27,10 +27,11 @@ using MediaPortal.Hooks;
 using MediaPortal.Profile;
 using MediaPortal.Util;
 using Action = MediaPortal.GUI.Library.Action;
+using Mapping = MediaPortal.InputDevices.InputHandler.Mapping;
 
 namespace MediaPortal.InputDevices
 {
-    public class AppCommandListener
+    public class AppCommandListener : IInputDevice
     {
         private bool controlEnabled = false;
         private bool controlEnabledGlobally = false;
@@ -142,11 +143,9 @@ namespace MediaPortal.InputDevices
         /// <param name="key"></param>
         /// <param name="keyCode"></param>
         /// <returns></returns>
-        public bool WndProcAppCommand(ref Message msg, out Action action, out char key, out Keys keyCode)
+        public bool WndProcAppCommand(ref Message msg, out Mapping mappedCommand, bool shouldRaiseAction = true)
         {
-            action = null;
-            key = (char)0;
-            keyCode = Keys.A;
+            mappedCommand = null;
 
             AppCommands appCommand = (AppCommands)Win32.Macro.GET_APPCOMMAND_LPARAM(msg.LParam);
 
@@ -171,9 +170,14 @@ namespace MediaPortal.InputDevices
                 Log.Info("AppCommand: {0} - {1}", appCommand, InputDevices.LastHidRequest.ToString());
             }
 
-            if (!_inputHandler.MapAction((int)appCommand))
+            mappedCommand = _inputHandler.GetMapping(((int)appCommand).ToString());
+
+            if (shouldRaiseAction)
             {
-                return false;
+                if (!_inputHandler.MapAction((int)appCommand))
+                {
+                    return false;
+                }
             }
 
             msg.Result = new IntPtr(1);
@@ -194,6 +198,7 @@ namespace MediaPortal.InputDevices
             action = null;
             key = (char)0;
             keyCode = Keys.A;
+            Mapping mappedCommand = null;
 
             if (!controlEnabled)
             {
@@ -203,13 +208,27 @@ namespace MediaPortal.InputDevices
             switch (msg.Msg)
             {
                 case Win32.Const.WM_APPCOMMAND:
-                    return WndProcAppCommand(ref msg, out action, out key, out keyCode);
+                    return WndProcAppCommand(ref msg, out mappedCommand);
 
                 default:
                     return false;
             }
         }
 
-
+      /// <summary>
+      /// Get the mapping for this remote
+      /// </summary>
+      /// <param name="msg"></param>
+      /// <returns></returns>
+      public MediaPortal.InputDevices.InputHandler.Mapping GetMapping(Message msg)
+      {
+        if (controlEnabled && msg.Msg == Win32.Const.WM_APPCOMMAND)
+        {
+          Mapping mappedCommand = null;
+          if (WndProcAppCommand(ref msg, out mappedCommand, false))
+            return mappedCommand;
+        }
+        return null;
+      }
     }
 }

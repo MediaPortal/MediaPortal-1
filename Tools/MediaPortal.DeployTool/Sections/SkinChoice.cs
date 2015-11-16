@@ -53,12 +53,6 @@ namespace MediaPortal.DeployTool.Sections
           pbSkin.Image = Images.preview_titan;
           InstallationProperties.Instance.Set("ChosenSkin", "Titan");
         }
-        else
-        { // choose 4:3 skin
-          btnDefault.Image = Images.Choose_button_on;
-          pbSkin.Image = Images.preview_default;
-          InstallationProperties.Instance.Set("ChosenSkin", "Default");
-        }
       }
 
       UpdateUI();
@@ -88,7 +82,6 @@ namespace MediaPortal.DeployTool.Sections
       btnExisting.Image = Images.Choose_button_off;
       btnTitan.Image = Images.Choose_button_on;
       btnDefaultWide.Image = Images.Choose_button_off;
-      btnDefault.Image = Images.Choose_button_off;
       pbSkin.Image = Images.preview_titan;
       InstallationProperties.Instance.Set("ChosenSkin", "Titan");
     }
@@ -98,19 +91,8 @@ namespace MediaPortal.DeployTool.Sections
       btnExisting.Image = Images.Choose_button_off;
       btnTitan.Image = Images.Choose_button_off;
       btnDefaultWide.Image = Images.Choose_button_on;
-      btnDefault.Image = Images.Choose_button_off;
-      pbSkin.Image = Images.preview_default_wide;
-      InstallationProperties.Instance.Set("ChosenSkin", "DefaultWide");
-    }
-
-    private void btnSkin3_Click(object sender, EventArgs e)
-    {
-      btnExisting.Image = Images.Choose_button_off;
-      btnTitan.Image = Images.Choose_button_off;
-      btnDefaultWide.Image = Images.Choose_button_off;
-      btnDefault.Image = Images.Choose_button_on;
-      pbSkin.Image = Images.preview_default;
-      InstallationProperties.Instance.Set("ChosenSkin", "Default");
+      pbSkin.Image = Images.preview_DefaultWide_HD;
+      InstallationProperties.Instance.Set("ChosenSkin", "DefaultWideHD");
     }
 
     private void btnExisting_Click(object sender, EventArgs e)
@@ -118,7 +100,6 @@ namespace MediaPortal.DeployTool.Sections
       btnExisting.Image = Images.Choose_button_on;
       btnTitan.Image = Images.Choose_button_off;
       btnDefaultWide.Image = Images.Choose_button_off;
-      btnDefault.Image = Images.Choose_button_off;
       pbSkin.Image = null;
       InstallationProperties.Instance.Set("ChosenSkin", "[Existing]");
     }

@@ -404,6 +404,7 @@ namespace MediaPortal.GUI.Music
       playlistPlayer.Play(iItem);
       SelectCurrentPlayingSong();
       UpdateButtonStates();
+      DoPlayNowJumpTo(facadeLayout.Count);
     }
 
     public override void Process()

@@ -402,6 +402,10 @@ Section "MediaPortal core files (required)" SecCore
   File /nonfatal /r /x .git "${MEDIAPORTAL.BASE}\thumbs\*"
 ### AUTO-GENERATED   UNINSTALLATION CODE   END ###
 
+  ; remve Default and DefautWide skins (were used before 1.13)
+  RMDir /r "$MPdir.Skin\Default"
+  RMDir /r "$MPdir.Skin\DefaultWide"
+
   ; create empty folders
   SetOutPath "$MPdir.Config"
   CreateDirectory "$MPdir.Config"
@@ -477,6 +481,7 @@ Section "MediaPortal core files (required)" SecCore
   File "${git_MP}\ExternalPlayers\bin\${BUILD_TYPE}\ExternalPlayers.dll"
   SetOutPath "$MPdir.Plugins\process"
   File "${git_MP}\ProcessPlugins\bin\${BUILD_TYPE}\ProcessPlugins.dll"
+  File "${git_MP}\ProcessPlugins\MiniDisplay\bin\${BUILD_TYPE}\MiniDisplayPlugin.dll"
   SetOutPath "$MPdir.Plugins\subtitle"
   File "${git_MP}\SubtitlePlugins\bin\${BUILD_TYPE}\SubtitlePlugins.dll"
   SetOutPath "$MPdir.Plugins\Windows"
@@ -507,6 +512,7 @@ Section "MediaPortal core files (required)" SecCore
   SetOutPath "$MPdir.Base\"
   File "${git_ROOT}\Packages\BASS.2.4.10\bass.dll"
   File "${git_ROOT}\Packages\BASS.NET.2.4.10.3\lib\net40\Bass.Net.dll"
+  File "${git_ROOT}\Packages\System.Management.Automation.6.1.7601.17515\lib\net40\System.Management.Automation.dll"
   ; Bass Addons
   SetOutPath "$MPdir.Base\"
   File "${git_ROOT}\Packages\bass.asio.1.3.0.2\bassasio.dll"
@@ -536,6 +542,9 @@ Section "MediaPortal core files (required)" SecCore
   ; taglib-sharp
   SetOutPath "$MPdir.Base\"
   File "${git_ROOT}\Packages\MediaPortal.TagLib.2.0.3.8\lib\taglib-sharp.dll"
+  ; SharpLibHid
+  SetOutPath "$MPdir.Base\"
+  File "${git_ROOT}\Packages\SharpLibHid.1.1.0\lib\net20\SharpLibHid.dll"
   ; Doc
   SetOutPath "$MPdir.Base\Docs"
   File "${git_MP}\Docs\BASS License.txt"
@@ -563,6 +572,7 @@ Section "MediaPortal core files (required)" SecCore
   !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${git_DirectShowFilters}\MPAudioswitcher\bin\${BUILD_TYPE}\MPAudioSwitcher.ax"  "$MPdir.Base\MPAudioSwitcher.ax"  "$MPdir.Base"
   ; used for digital tv
   !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${git_DirectShowFilters}\TsReader\bin\${BUILD_TYPE}\TsReader.ax"                "$MPdir.Base\TsReader.ax"         "$MPdir.Base"
+  !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${git_DirectShowFilters}\Core-CC-Parser\CCCP\${BUILD_TYPE}\cccp.ax"             "$MPdir.Base\cccp.ax"             "$MPdir.Base"
   WriteRegStr HKCR "Media Type\Extensions\.ts"        "Source Filter" "{b9559486-e1bb-45d3-a2a2-9a7afe49b23f}"
   WriteRegStr HKCR "Media Type\Extensions\.tp"        "Source Filter" "{b9559486-e1bb-45d3-a2a2-9a7afe49b23f}"
   WriteRegStr HKCR "Media Type\Extensions\.tsbuffer"  "Source Filter" "{b9559486-e1bb-45d3-a2a2-9a7afe49b23f}"
@@ -580,7 +590,9 @@ Section "MediaPortal core files (required)" SecCore
 
   ; used for Default and Titan Skin Font
   StrCpy $FONT_DIR $FONTS
-  !insertmacro InstallTTFFont "${MEDIAPORTAL.BASE}\skin\DefaultWide\MPDefaultFonts\MediaPortalDefault.ttf"
+
+  !insertmacro InstallTTFFont "${MEDIAPORTAL.BASE}\skin\DefaultWideHD\MPDefaultFonts\Lato-Medium.ttf"
+  !insertmacro InstallTTFFont "${MEDIAPORTAL.BASE}\skin\DefaultWideHD\MPDefaultFonts\Lato-Light.ttf"
   !insertmacro InstallTTFFont "${MEDIAPORTAL.BASE}\skin\Titan\Fonts\TitanSmall.ttf"
   !insertmacro InstallTTFFont "${MEDIAPORTAL.BASE}\skin\Titan\Fonts\Titan.ttf"
   !insertmacro InstallTTFFont "${MEDIAPORTAL.BASE}\skin\Titan\Fonts\TitanLight.ttf"
@@ -609,6 +621,7 @@ SectionEnd
   !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED "$MPdir.Base\MPAudioSwitcher.ax"
   ; used for digital tv
   !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED "$MPdir.Base\TsReader.ax"
+  !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED "$MPdir.Base\cccp.ax"
   ; used for Blu-ray
   !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED "$MPdir.Base\BDReader.ax"
   !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED "$MPdir.Base\DVBSub3.ax"
@@ -664,6 +677,7 @@ SectionEnd
   Delete "$MPdir.Base\Dxerr9.dll"
   Delete "$MPdir.Base\mpcSubs.dll"
   Delete "$MPdir.Base\MiniDisplayLibrary.dll"
+  Delete "$MPdir.Base\System.Management.Automation.dll"
   ; iMON VFD/LCD
   Delete "$MPdir.Base\iMONDisplay.dll"
   Delete "$MPdir.Base\iMONDisplayWrapper.dll"
@@ -696,6 +710,7 @@ SectionEnd
   Delete "$MPdir.Plugins\ExternalPlayers\ExternalPlayers.dll"
   RMDir "$MPdir.Plugins\ExternalPlayers"
   Delete "$MPdir.Plugins\process\ProcessPlugins.dll"
+  Delete "$MPdir.Plugins\process\MiniDisplayPlugin.dll"
   RMDir "$MPdir.Plugins\process"
   Delete "$MPdir.Plugins\subtitle\SubtitlePlugins.dll"
   RMDir "$MPdir.Plugins\subtitle"
@@ -827,7 +842,6 @@ Section -Post
   ; removing old externaldisplay files - requested by chemelli
   ${LOG_TEXT} "INFO" "Removing obsolete (External/Mini/Cybr)Display files"
   Delete "$MPdir.Plugins\process\ExternalDisplayPlugin.dll"
-  Delete "$MPdir.Plugins\process\MiniDisplayPlugin.dll"
   Delete "$MPdir.Plugins\process\CybrDisplayPlugin.dll"
   Delete "$MPdir.Plugins\windows\CybrDisplayPlugin.dll"
 

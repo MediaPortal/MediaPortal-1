@@ -107,6 +107,11 @@
     <Reference Include="Microsoft.DirectX.DirectInput, Version=1.0.2902.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
       <SpecificVersion>True</SpecificVersion>
     </Reference>
+    <Reference Include="SharpLibHid, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Packages\SharpLibHid.1.1.0\lib\net20\SharpLibHid.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System">
       <Name>System</Name>
     </Reference>
@@ -183,6 +188,7 @@
     <Compile Include="Hook\HookEventArgs.cs" />
     <Compile Include="Hook\HookEventHandler.cs" />
     <Compile Include="Hook\KeyboardHook.cs" />
+    <Compile Include="IInputDevice.cs" />
     <Compile Include="InputMapper\HidInputMappingForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -212,8 +218,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Remotes\HcwRemote\irremote.cs" />
-    <Compile Include="Remotes\Hid\HidDevice.cs" />
-    <Compile Include="Remotes\Hid\HidEvent.cs" />
     <Compile Include="Remotes\Hid\HidHandler.cs" />
     <Compile Include="Remotes\Hid\HidListener.cs">
       <SubType>Code</SubType>
@@ -222,19 +226,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Remotes\Hid\HidUsageAction.cs" />
-    <Compile Include="Remotes\Hid\HidUsageTables.cs" />
     <Compile Include="Remotes\IrTrans\IrTRans.cs" />
-    <Compile Include="Remotes\MCE2005Remote\MediaPortal.Hardware\Device.cs" />
-    <Compile Include="Remotes\MCE2005Remote\MediaPortal.Hardware\DeviceCollection.cs" />
-    <Compile Include="Remotes\MCE2005Remote\MediaPortal.Hardware\DeviceEventHandler.cs" />
-    <Compile Include="Remotes\MCE2005Remote\MediaPortal.Hardware\DeviceWatcher.cs" />
-    <Compile Include="Remotes\MCE2005Remote\MCE2005Remote.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Remotes\MCE2005Remote\MediaPortal.Hardware\Remote.cs" />
-    <Compile Include="Remotes\MCE2005Remote\MediaPortal.Hardware\RemoteButton.cs" />
-    <Compile Include="Remotes\MCE2005Remote\MediaPortal.Hardware\RemoteEventArgs.cs" />
-    <Compile Include="Remotes\MCE2005Remote\MediaPortal.Hardware\RemoteEventHandler.cs" />
     <Compile Include="ControlDevices\Devices\USBUIRT\USBUIRTPlugin.cs" />
     <Compile Include="ControlDevices\Devices\USBUIRT\USBUIRTAPI.cs" />
     <None Include="ControlDevices\Devices\USBUIRT\USBUIRTControlCode.cs" />
@@ -250,6 +242,7 @@
       <DependentUpon>RemoteLearn.cs</DependentUpon>
     </Compile>
     <Compile Include="Remotes\X10Remote\X10Remote.cs" />
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="ControlDevices\Util\LearnCodePanel.resx">

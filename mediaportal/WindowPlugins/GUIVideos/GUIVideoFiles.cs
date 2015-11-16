@@ -150,6 +150,7 @@ namespace MediaPortal.GUI.Video
     private bool _scanSkipExisting;
     private bool _getActors = true;
     private bool _markWatchedFiles = true;
+    private bool _hideWatchedFiles = false;
     private ArrayList _conflictFiles = new ArrayList();
     private bool _switchRemovableDrives;
     // Stacked files duration - for watched status/also used in GUIVideoTitle
@@ -656,6 +657,10 @@ namespace MediaPortal.GUI.Video
         case GUIMessage.MessageType.GUI_MSG_LAYOUT_CHANGED:
           FolderSetting folderSetting = new FolderSetting();
           folderSetting.UpdateFolders(-1, CurrentSortAsc, (int)CurrentLayout);
+          break;
+
+        case GUIMessage.MessageType.GUI_MSG_REFRESH_MEDIAINFO:
+          SelectCurrentItem();
           break;
       }
       return base.OnMessage(message);
@@ -1200,6 +1205,10 @@ namespace MediaPortal.GUI.Video
       {
         dlg.AddLocalizedString(868); // Reset virtual directory
       }
+      else if (item.IsRemote || (item.IsFolder) && (item.Label == "..") && _virtualDirectory.IsShareOfflineDetected())
+      {
+        dlg.AddLocalizedString(868); // Force reset virtual directory if user want to refresh offline share
+      }
       else if (item.IsRemote || (item.IsFolder) && (item.Label == ".."))
       {
         return;
@@ -1359,6 +1368,11 @@ namespace MediaPortal.GUI.Video
         #endregion
 
         dlg.AddLocalizedString(1299); // Refresh current directory
+
+        if (_virtualDirectory.IsShareOfflineDetected())
+        {
+          dlg.AddLocalizedString(868); // Force reset virtual directory if user want to refresh offline share
+        }
       }
 
       dlg.AddLocalizedString(1262); // Update grabber scripts
@@ -1368,6 +1382,14 @@ namespace MediaPortal.GUI.Video
       if (!item.IsFolder)
       {
         dlg.AddLocalizedString(1984); // Refresh thumb
+        if (!_hideWatchedFiles)
+        {
+          dlg.AddLocalizedString(2498); // Hide watched movies
+        }
+        else
+        {
+          dlg.AddLocalizedString(2499); // Unhide watched movies
+        }
       }
 
       if (item.IsFolder && item.Label != "..")
@@ -1433,12 +1455,14 @@ namespace MediaPortal.GUI.Video
           _mapSettings.Stack = true;
           LoadDirectory(_currentFolder);
           UpdateButtonStates();
+          SaveFolderSettings(_currentFolder);
           break;
 
         case 347: //Unstack
           _mapSettings.Stack = false;
           LoadDirectory(_currentFolder);
           UpdateButtonStates();
+          SaveFolderSettings(_currentFolder);
           break;
 
         case 102: //Scan
@@ -1669,6 +1693,18 @@ namespace MediaPortal.GUI.Video
             }
           }
 
+          break;
+        case 2498: // Hide watched movies
+          Log.Debug("GUIVideoFiles: Hide watched movies");
+          _hideWatchedFiles = true;
+          LoadDirectory(_currentFolder);
+          UpdateButtonStates();
+          break;
+        case 2499: // Unhide watched movies
+          Log.Debug("GUIVideoFiles: Unhide watched movies");
+          _hideWatchedFiles = false;
+          LoadDirectory(_currentFolder);
+          UpdateButtonStates();
           break;
         case 1995: // Create 4x4 folder.jpg
           Log.Debug("Create folder.jpg from context menu: {0}", item.Path);
@@ -2901,45 +2937,64 @@ namespace MediaPortal.GUI.Video
         mInfo.SetMediaInfoProperties(file, true);
         mInfo.SetDurationProperty(movieId);
         IMDBMovie.SetMovieData(item);
-        SelectCurrentItem();
+
+        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_REFRESH_MEDIAINFO, 0, 0, 0, 0, 0, 0);
+        GUIWindowManager.SendMessage(msg);
       }
     }
 
     private static bool WakeUpSrv(string newFolderName)
     {
+      bool wakeOnLanEnabled;
       if (!Util.Utils.IsUNCNetwork(newFolderName))
       {
-        return true;
+        // Check if letter drive is a network drive
+        string detectedFolderName = Util.Utils.FindUNCPaths(newFolderName);
+        if (Util.Utils.IsUNCNetwork(detectedFolderName))
+        {
+          wakeOnLanEnabled = _virtualDirectory.IsWakeOnLanEnabled(_virtualDirectory.GetShare(newFolderName));
+          newFolderName = detectedFolderName;
+        }
+        else
+        {
+          return true;
+        }
       }
-      
+      else
+      {
+        wakeOnLanEnabled = _virtualDirectory.IsWakeOnLanEnabled(_virtualDirectory.GetShare(newFolderName));
+      }
+
       string serverName = string.Empty;
-      bool wakeOnLanEnabled = _virtualDirectory.IsWakeOnLanEnabled(_virtualDirectory.GetShare(newFolderName));
 
       if (wakeOnLanEnabled)
       {
         serverName = Util.Utils.GetServerNameFromUNCPath(newFolderName);
-      }
 
-      DateTime now = DateTime.Now;
-      TimeSpan ts = now - _prevWolTime;
+        DateTime now = DateTime.Now;
+        TimeSpan ts = now - _prevWolTime;
 
-      if (serverName == _prevServerName && _wolResendTime * 60 > ts.TotalSeconds)
-      {
-        return true;
-      }
+        if (serverName == _prevServerName && _wolResendTime*60 > ts.TotalSeconds)
+        {
+          return true;
+        }
 
-      _prevWolTime = DateTime.Now;
-      _prevServerName = serverName;
+        _prevWolTime = DateTime.Now;
+        _prevServerName = serverName;
 
-      try
-      {
-        Log.Debug("WakeUpSrv: FolderName = {0}, ShareName = {1}, WOL enabled = {2}", newFolderName, _virtualDirectory.GetShare(newFolderName).Name, wakeOnLanEnabled);
-      }
-      catch { };
+        try
+        {
+          Log.Debug("WakeUpSrv: FolderName = {0}, ShareName = {1}, WOL enabled = {2}", newFolderName,
+                    _virtualDirectory.GetShare(newFolderName).Name, wakeOnLanEnabled);
+        }
+        catch
+        {
+        }
 
-      if (!string.IsNullOrEmpty(serverName))
-      {
-        return WakeupUtils.HandleWakeUpServer(serverName, _wolTimeout);
+        if (!string.IsNullOrEmpty(serverName))
+        {
+          return WakeupUtils.HandleWakeUpServer(serverName, _wolTimeout);
+        }
       }
       return true;
     }
@@ -3014,7 +3069,16 @@ namespace MediaPortal.GUI.Video
           int timesWatched = 0;
           int movieId = VideoDatabase.GetMovieId(file);
           bool played = VideoDatabase.GetmovieWatchedStatus(movieId, out percentWatched, out timesWatched);
-          item.Duration = VideoDatabase.GetMovieDuration(movieId);
+
+          if (_mapSettings != null && _mapSettings.Stack)
+          {
+            item.Duration = VideoDatabase.GetMovieDuration(movieId);
+          }
+          else
+          {
+            int fileID = VideoDatabase.GetFileId(item.Path);
+            item.Duration = VideoDatabase.GetVideoDuration(fileID);
+          }
 
           // set label 1 & 2
           SetLabel(item);
@@ -3092,8 +3156,11 @@ namespace MediaPortal.GUI.Video
 
           //Do NOT add OnItemSelected event handler here, because its still there...
 
-          facadeLayout.Add(item);
-          currentItemIndex ++;
+          if (item.IsFolder || !item.IsFolder && !_hideWatchedFiles && item.IsPlayed || !item.IsFolder && !item.IsPlayed)
+          {
+            facadeLayout.Add(item);
+            currentItemIndex++;
+          }
         }
       } // End Cached items
       else
@@ -3166,14 +3233,19 @@ namespace MediaPortal.GUI.Video
 
               if (!string.IsNullOrEmpty(newFolderName) || Util.Utils.CheckServerStatus(item.Path))
               {
-                isMovieFolder = IsMovieFolder(item.Path);
+                if (item.IsFolder)
+                {
+                  isMovieFolder = IsMovieFolder(item.Path);
+                }
+                else
+                {
+                  isMovieFolder = false;
+                }
 
                 if (VirtualDirectory.IsValidExtension(item.Path, Util.Utils.VideoExtensions, false) || isMovieFolder)
                 {
                   item.Label = pair.Key;
                 }
-
-                SetLabel(item);
               }
 
               // Check db for watched status for played movie or changed status in movie info window
@@ -3196,6 +3268,7 @@ namespace MediaPortal.GUI.Video
                 int timesWatched = 0;
                 int movieId = VideoDatabase.GetMovieId(file);
                 bool played = VideoDatabase.GetmovieWatchedStatus(movieId, out percentWatched, out timesWatched);
+
                 item.Duration = VideoDatabase.GetMovieDuration(movieId);
 
                 if (_markWatchedFiles)
@@ -3230,8 +3303,13 @@ namespace MediaPortal.GUI.Video
                 }
               }
 
+              SetLabel(item);
               item.OnItemSelected += item_OnItemSelected;
-              facadeLayout.Add(item);
+
+              if (item.IsFolder || !item.IsFolder && !_hideWatchedFiles && item.IsPlayed || !item.IsFolder && !item.IsPlayed)
+              {
+                facadeLayout.Add(item);
+              }
             }
           }
           itemlist = facadeLayout.ListLayout.ListItems;
@@ -3240,11 +3318,18 @@ namespace MediaPortal.GUI.Video
         {
           foreach (GUIListItem item in itemlist)
           {
-            SetLabel(item);
-
             // Check db for watched status for played movie or changed status in movie info window
             string file = item.Path;
-            bool isMovieFolder = IsMovieFolder(item.Path);
+            bool isMovieFolder;
+
+            if (item.IsFolder)
+            {
+              isMovieFolder = IsMovieFolder(item.Path);
+            }
+            else
+            {
+              isMovieFolder = false;
+            }
 
             if (!item.IsFolder || isMovieFolder)
             {
@@ -3265,6 +3350,9 @@ namespace MediaPortal.GUI.Video
               int movieId = VideoDatabase.GetMovieId(file);
               bool played = VideoDatabase.GetmovieWatchedStatus(movieId, out percentWatched, out timesWatched);
               item.Duration = VideoDatabase.GetMovieDuration(movieId);
+
+              int fileID = VideoDatabase.GetFileId(item.Path);
+              item.Duration = VideoDatabase.GetVideoDuration(fileID);
 
               if (_markWatchedFiles)
               {
@@ -3296,8 +3384,13 @@ namespace MediaPortal.GUI.Video
               }
             }
 
+            SetLabel(item);
             item.OnItemSelected += item_OnItemSelected;
-            facadeLayout.Add(item);
+
+            if (item.IsFolder || !item.IsFolder && !_hideWatchedFiles && item.IsPlayed || !item.IsFolder && !item.IsPlayed)
+            {
+              facadeLayout.Add(item);
+            }
           }
         }
       } // End non cache items
@@ -4246,9 +4339,6 @@ namespace MediaPortal.GUI.Video
 
       if (CurrentSortMethod == VideoSort.SortMethod.Name_With_Duration && !item.IsFolder && item.Label != "..")
       {
-        int newMovieId = VideoDatabase.GetMovieId(item.Path);
-        item.Duration = VideoDatabase.GetMovieDuration(newMovieId);
-
         if (item.Duration > 0)
         {
           item.Label2 = Util.Utils.SecondsToShortHMSString(item.Duration);

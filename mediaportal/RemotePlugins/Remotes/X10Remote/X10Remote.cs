@@ -25,6 +25,7 @@ using MediaPortal.Configuration;
 using MediaPortal.GUI.Library;
 using MediaPortal.Profile;
 using X10;
+using System.Windows.Forms;
 
 namespace MediaPortal.InputDevices
 {
@@ -32,7 +33,7 @@ namespace MediaPortal.InputDevices
   /// This class initializes the x10 remotes and implements a sink to catch commands. A delegate is provided
   /// so that external classes can be made aware of events - mainly useful for learning.
   /// </summary>
-  public class X10Remote : _DIX10InterfaceEvents
+  public class X10Remote : _DIX10InterfaceEvents, IInputDevice
   {
     #region Member Variables
 
@@ -213,5 +214,47 @@ namespace MediaPortal.InputDevices
     }
 
     #endregion
+
+    /// <summary>
+    /// Required for the IInputDevice interface
+    /// </summary>
+    /// <param name="hwnd"></param>
+    public void Init(IntPtr hwnd)
+    {
+      Init();
+    }
+
+    /// <summary>
+    /// Required for the IInputDevice interface
+    /// </summary>
+    public void DeInit()
+    {
+    }
+
+    /// <summary>
+    /// Required for the IInputDevice interface
+    /// </summary>    
+    /// <param name="msg"></param>
+    /// <param name="action"></param>
+    /// <param name="key"></param>
+    /// <param name="keyCode"></param>
+    /// <returns></returns>
+    public bool WndProc(ref System.Windows.Forms.Message msg, out GUI.Library.Action action, out char key, out Keys keyCode)
+    {
+      action = null;
+      key = (char)0;
+      keyCode = Keys.A;
+      return false;
+    }
+
+    /// <summary>
+    /// Get the mapping for this wndproc action
+    /// </summary>
+    /// <param name="msg"></param>
+    /// <returns></returns>
+    public MediaPortal.InputDevices.InputHandler.Mapping GetMapping(Message msg)
+    {
+      return null;
+    }
   }
 }

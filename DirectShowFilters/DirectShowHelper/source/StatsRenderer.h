@@ -16,6 +16,7 @@
 
 #include <atlstr.h>
 #include <atltypes.h>
+#include <pdh.h>
 
 class MPEVRCustomPresenter;
 
@@ -78,4 +79,10 @@ private:
 
   // Presenter notices us when video frame size changes
   bool m_bVideoSizeChanged;
+
+	PDH_HQUERY m_cpuQuery;
+	PDH_HCOUNTER m_cpuTotal;
+	int m_counter;
+	PDH_FMT_COUNTERVALUE counterVal;
+	double  m_cpuTotalUsage;
 };

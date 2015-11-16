@@ -1,0 +1,2065 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+
+<!-- Include flag for defines
+
+  <include condition="#(neq(#hedit.defines,'1'))">BasicHomeEditorDefines.xml</include>
+
+  Set #hedit.defines to 0 to always include or 1 to include only once per MP session (efficiency tweak)
+
+-->
+
+  <define property="true" evaluateNow="true">#hedit.defines:1</define>
+
+<!--
+
+#hedit.inuse
+
+#hedit.main
+#hedit.main.at
+
+#hedit.sub.at
+
+#hedit.sub.return
+#hedit.sub.calc.nav
+#hedit.sub.calc.fwd
+#hedit.sub.calc.bwd
+#hedit.sub.calc.start
+#hedit.sub.calc.count
+
+#hedit.sub.use.[1 to max]
+#hedit.sub.pos.[1 to max]
+
+#hedit.sub.[1 to max]
+
+-->
+
+  <define property="true" evaluateNow="true">#hedit.debug:0</define>
+  <define property="true" evaluateNow="true">#hedit.debug.info:0</define>
+  <define property="true" evaluateNow="true">#hedit.debug.mouse:0</define>
+
+  <define property="true" evaluateNow="true">#hedit.mode:#(iif(neq(string.format('{0}',#hedit.mode),''),#hedit.mode,'Horizontal (scroll)'))</define>
+  
+  <!--     *******************************************************************************************  -->
+  <!--     **************************************   INITIAL SETTINGS  ********************************  -->
+  <!--     *******************************************************************************************  -->
+  
+  <define property="true" evaluateNow="true">#hedit.button.1:#(iif(neq(string.format('{0}',#hedit.button.1),''),#hedit.button.1,'#TV1'))</define>
+  <define property="true" evaluateNow="true">#hedit.button.2:#(iif(neq(string.format('{0}',#hedit.button.2),''),#hedit.button.2,'#VIDEO1'))</define>
+  <define property="true" evaluateNow="true">#hedit.button.3:#(iif(neq(string.format('{0}',#hedit.button.3),''),#hedit.button.3,'#.MUSIC'))</define>
+  <define property="true" evaluateNow="true">#hedit.button.4:#(iif(neq(string.format('{0}',#hedit.button.4),''),#hedit.button.4,'#PICTURE1'))</define>
+  <define property="true" evaluateNow="true">#hedit.button.5:#(iif(neq(string.format('{0}',#hedit.button.5),''),#hedit.button.5,'#.SETUP'))</define>
+  <define property="true" evaluateNow="true">#hedit.button.6:#(iif(neq(string.format('{0}',#hedit.button.6),''),#hedit.button.6,'#NONE'))</define>
+  <define property="true" evaluateNow="true">#hedit.button.7:#(iif(neq(string.format('{0}',#hedit.button.7),''),#hedit.button.7,'#NONE'))</define>
+  <define property="true" evaluateNow="true">#hedit.button.8:#(iif(neq(string.format('{0}',#hedit.button.8),''),#hedit.button.8,'#NONE'))</define>
+  <define property="true" evaluateNow="true">#hedit.button.9:#(iif(neq(string.format('{0}',#hedit.button.9),''),#hedit.button.9,'#NONE'))</define>
+  <define property="true" evaluateNow="true">#hedit.button.10:#(iif(neq(string.format('{0}',#hedit.button.10),''),#hedit.button.10,'#NONE'))</define>
+  
+  <define property="true" evaluateNow="true">#hedit.button.1.1:#(iif(neq(string.format('{0}',#hedit.button.1.1),''),#hedit.button.1.1,'#TV2'))</define>
+  <define property="true" evaluateNow="true">#hedit.button.1.2:#(iif(neq(string.format('{0}',#hedit.button.1.2),''),#hedit.button.1.2,'#TV3'))</define>
+  <define property="true" evaluateNow="true">#hedit.button.1.3:#(iif(neq(string.format('{0}',#hedit.button.1.3),''),#hedit.button.1.3,'#TV4'))</define>
+  <define property="true" evaluateNow="true">#hedit.button.1.4:#(iif(neq(string.format('{0}',#hedit.button.1.4),''),#hedit.button.1.4,'#NONE'))</define>
+  <define property="true" evaluateNow="true">#hedit.button.1.5:#(iif(neq(string.format('{0}',#hedit.button.1.5),''),#hedit.button.1.5,'#NONE'))</define>
+  <define property="true" evaluateNow="true">#hedit.button.1.6:#(iif(neq(string.format('{0}',#hedit.button.1.6),''),#hedit.button.1.6,'#NONE'))</define>
+  <define property="true" evaluateNow="true">#hedit.button.1.7:#(iif(neq(string.format('{0}',#hedit.button.1.7),''),#hedit.button.1.7,'#NONE'))</define>
+  <define property="true" evaluateNow="true">#hedit.button.1.8:#(iif(neq(string.format('{0}',#hedit.button.1.8),''),#hedit.button.1.8,'#NONE'))</define>
+  <define property="true" evaluateNow="true">#hedit.button.2.1:#(iif(neq(string.format('{0}',#hedit.button.2.1),''),#hedit.button.2.1,'#NONE'))</define>
+  <define property="true" evaluateNow="true">#hedit.button.2.2:#(iif(neq(string.format('{0}',#hedit.button.2.2),''),#hedit.button.2.2,'#NONE'))</define>
+  <define property="true" evaluateNow="true">#hedit.button.2.3:#(iif(neq(string.format('{0}',#hedit.button.2.3),''),#hedit.button.2.3,'#NONE'))</define>
+  <define property="true" evaluateNow="true">#hedit.button.2.4:#(iif(neq(string.format('{0}',#hedit.button.2.4),''),#hedit.button.2.4,'#NONE'))</define>
+  <define property="true" evaluateNow="true">#hedit.button.2.5:#(iif(neq(string.format('{0}',#hedit.button.2.5),''),#hedit.button.2.5,'#NONE'))</define>
+  <define property="true" evaluateNow="true">#hedit.button.2.6:#(iif(neq(string.format('{0}',#hedit.button.2.6),''),#hedit.button.2.6,'#NONE'))</define>
+  <define property="true" evaluateNow="true">#hedit.button.2.7:#(iif(neq(string.format('{0}',#hedit.button.2.7),''),#hedit.button.2.7,'#NONE'))</define>
+  <define property="true" evaluateNow="true">#hedit.button.2.8:#(iif(neq(string.format('{0}',#hedit.button.2.8),''),#hedit.button.2.8,'#NONE'))</define>
+  <define property="true" evaluateNow="true">#hedit.button.3.1:#(iif(neq(string.format('{0}',#hedit.button.3.1),''),#hedit.button.3.1,'#NONE'))</define>
+  <define property="true" evaluateNow="true">#hedit.button.3.2:#(iif(neq(string.format('{0}',#hedit.button.3.2),''),#hedit.button.3.2,'#NONE'))</define>
+  <define property="true" evaluateNow="true">#hedit.button.3.3:#(iif(neq(string.format('{0}',#hedit.button.3.3),''),#hedit.button.3.3,'#NONE'))</define>
+  <define property="true" evaluateNow="true">#hedit.button.3.4:#(iif(neq(string.format('{0}',#hedit.button.3.4),''),#hedit.button.3.4,'#NONE'))</define>
+  <define property="true" evaluateNow="true">#hedit.button.3.5:#(iif(neq(string.format('{0}',#hedit.button.3.5),''),#hedit.button.3.5,'#NONE'))</define>
+  <define property="true" evaluateNow="true">#hedit.button.3.6:#(iif(neq(string.format('{0}',#hedit.button.3.6),''),#hedit.button.3.6,'#NONE'))</define>
+  <define property="true" evaluateNow="true">#hedit.button.3.7:#(iif(neq(string.format('{0}',#hedit.button.3.7),''),#hedit.button.3.7,'#NONE'))</define>
+  <define property="true" evaluateNow="true">#hedit.button.3.8:#(iif(neq(string.format('{0}',#hedit.button.3.8),''),#hedit.button.3.8,'#NONE'))</define>
+  <define property="true" evaluateNow="true">#hedit.button.4.1:#(iif(neq(string.format('{0}',#hedit.button.4.1),''),#hedit.button.4.1,'#NONE'))</define>
+  <define property="true" evaluateNow="true">#hedit.button.4.2:#(iif(neq(string.format('{0}',#hedit.button.4.2),''),#hedit.button.4.2,'#NONE'))</define>
+  <define property="true" evaluateNow="true">#hedit.button.4.3:#(iif(neq(string.format('{0}',#hedit.button.4.3),''),#hedit.button.4.3,'#NONE'))</define>
+  <define property="true" evaluateNow="true">#hedit.button.4.4:#(iif(neq(string.format('{0}',#hedit.button.4.4),''),#hedit.button.4.4,'#NONE'))</define>
+  <define property="true" evaluateNow="true">#hedit.button.4.5:#(iif(neq(string.format('{0}',#hedit.button.4.5),''),#hedit.button.4.5,'#NONE'))</define>
+  <define property="true" evaluateNow="true">#hedit.button.4.6:#(iif(neq(string.format('{0}',#hedit.button.4.6),''),#hedit.button.4.6,'#NONE'))</define>
+  <define property="true" evaluateNow="true">#hedit.button.4.7:#(iif(neq(string.format('{0}',#hedit.button.4.7),''),#hedit.button.4.7,'#NONE'))</define>
+  <define property="true" evaluateNow="true">#hedit.button.4.8:#(iif(neq(string.format('{0}',#hedit.button.4.8),''),#hedit.button.4.8,'#NONE'))</define>
+  <define property="true" evaluateNow="true">#hedit.button.5.1:#(iif(neq(string.format('{0}',#hedit.button.5.1),''),#hedit.button.5.1,'#3.SETUP'))</define>
+  <define property="true" evaluateNow="true">#hedit.button.5.2:#(iif(neq(string.format('{0}',#hedit.button.5.2),''),#hedit.button.5.2,'#NONE'))</define>
+  <define property="true" evaluateNow="true">#hedit.button.5.3:#(iif(neq(string.format('{0}',#hedit.button.5.3),''),#hedit.button.5.3,'#NONE'))</define>
+  <define property="true" evaluateNow="true">#hedit.button.5.4:#(iif(neq(string.format('{0}',#hedit.button.5.4),''),#hedit.button.5.4,'#NONE'))</define>
+  <define property="true" evaluateNow="true">#hedit.button.5.5:#(iif(neq(string.format('{0}',#hedit.button.5.5),''),#hedit.button.5.5,'#NONE'))</define>
+  <define property="true" evaluateNow="true">#hedit.button.5.6:#(iif(neq(string.format('{0}',#hedit.button.5.6),''),#hedit.button.5.6,'#NONE'))</define>
+  <define property="true" evaluateNow="true">#hedit.button.5.7:#(iif(neq(string.format('{0}',#hedit.button.5.7),''),#hedit.button.5.7,'#NONE'))</define>
+  <define property="true" evaluateNow="true">#hedit.button.5.8:#(iif(neq(string.format('{0}',#hedit.button.5.8),''),#hedit.button.5.8,'#NONE'))</define>
+  <define property="true" evaluateNow="true">#hedit.button.6.1:#(iif(neq(string.format('{0}',#hedit.button.6.1),''),#hedit.button.6.1,'#NONE'))</define>
+  <define property="true" evaluateNow="true">#hedit.button.6.2:#(iif(neq(string.format('{0}',#hedit.button.6.2),''),#hedit.button.6.2,'#NONE'))</define>
+  <define property="true" evaluateNow="true">#hedit.button.6.3:#(iif(neq(string.format('{0}',#hedit.button.6.3),''),#hedit.button.6.3,'#NONE'))</define>
+  <define property="true" evaluateNow="true">#hedit.button.6.4:#(iif(neq(string.format('{0}',#hedit.button.6.4),''),#hedit.button.6.4,'#NONE'))</define>
+  <define property="true" evaluateNow="true">#hedit.button.6.5:#(iif(neq(string.format('{0}',#hedit.button.6.5),''),#hedit.button.6.5,'#NONE'))</define>
+  <define property="true" evaluateNow="true">#hedit.button.6.6:#(iif(neq(string.format('{0}',#hedit.button.6.6),''),#hedit.button.6.6,'#NONE'))</define>
+  <define property="true" evaluateNow="true">#hedit.button.6.7:#(iif(neq(string.format('{0}',#hedit.button.6.7),''),#hedit.button.6.7,'#NONE'))</define>
+  <define property="true" evaluateNow="true">#hedit.button.6.8:#(iif(neq(string.format('{0}',#hedit.button.6.8),''),#hedit.button.6.8,'#NONE'))</define>
+  <define property="true" evaluateNow="true">#hedit.button.7.1:#(iif(neq(string.format('{0}',#hedit.button.7.1),''),#hedit.button.7.1,'#NONE'))</define>
+  <define property="true" evaluateNow="true">#hedit.button.7.2:#(iif(neq(string.format('{0}',#hedit.button.7.2),''),#hedit.button.7.2,'#NONE'))</define>
+  <define property="true" evaluateNow="true">#hedit.button.7.3:#(iif(neq(string.format('{0}',#hedit.button.7.3),''),#hedit.button.7.3,'#NONE'))</define>
+  <define property="true" evaluateNow="true">#hedit.button.7.4:#(iif(neq(string.format('{0}',#hedit.button.7.4),''),#hedit.button.7.4,'#NONE'))</define>
+  <define property="true" evaluateNow="true">#hedit.button.7.5:#(iif(neq(string.format('{0}',#hedit.button.7.5),''),#hedit.button.7.5,'#NONE'))</define>
+  <define property="true" evaluateNow="true">#hedit.button.7.6:#(iif(neq(string.format('{0}',#hedit.button.7.6),''),#hedit.button.7.6,'#NONE'))</define>
+  <define property="true" evaluateNow="true">#hedit.button.7.7:#(iif(neq(string.format('{0}',#hedit.button.7.7),''),#hedit.button.7.7,'#NONE'))</define>
+  <define property="true" evaluateNow="true">#hedit.button.7.8:#(iif(neq(string.format('{0}',#hedit.button.7.8),''),#hedit.button.7.8,'#NONE'))</define>
+  <define property="true" evaluateNow="true">#hedit.button.8.1:#(iif(neq(string.format('{0}',#hedit.button.8.1),''),#hedit.button.8.1,'#NONE'))</define>
+  <define property="true" evaluateNow="true">#hedit.button.8.2:#(iif(neq(string.format('{0}',#hedit.button.8.2),''),#hedit.button.8.2,'#NONE'))</define>
+  <define property="true" evaluateNow="true">#hedit.button.8.3:#(iif(neq(string.format('{0}',#hedit.button.8.3),''),#hedit.button.8.3,'#NONE'))</define>
+  <define property="true" evaluateNow="true">#hedit.button.8.4:#(iif(neq(string.format('{0}',#hedit.button.8.4),''),#hedit.button.8.4,'#NONE'))</define>
+  <define property="true" evaluateNow="true">#hedit.button.8.5:#(iif(neq(string.format('{0}',#hedit.button.8.5),''),#hedit.button.8.5,'#NONE'))</define>
+  <define property="true" evaluateNow="true">#hedit.button.8.6:#(iif(neq(string.format('{0}',#hedit.button.8.6),''),#hedit.button.8.6,'#NONE'))</define>
+  <define property="true" evaluateNow="true">#hedit.button.8.7:#(iif(neq(string.format('{0}',#hedit.button.8.7),''),#hedit.button.8.7,'#NONE'))</define>
+  <define property="true" evaluateNow="true">#hedit.button.8.8:#(iif(neq(string.format('{0}',#hedit.button.8.8),''),#hedit.button.8.8,'#NONE'))</define>
+  <define property="true" evaluateNow="true">#hedit.button.9.1:#(iif(neq(string.format('{0}',#hedit.button.9.1),''),#hedit.button.9.1,'#NONE'))</define>
+  <define property="true" evaluateNow="true">#hedit.button.9.2:#(iif(neq(string.format('{0}',#hedit.button.9.2),''),#hedit.button.9.2,'#NONE'))</define>
+  <define property="true" evaluateNow="true">#hedit.button.9.3:#(iif(neq(string.format('{0}',#hedit.button.9.3),''),#hedit.button.9.3,'#NONE'))</define>
+  <define property="true" evaluateNow="true">#hedit.button.9.4:#(iif(neq(string.format('{0}',#hedit.button.9.4),''),#hedit.button.9.4,'#NONE'))</define>
+  <define property="true" evaluateNow="true">#hedit.button.9.5:#(iif(neq(string.format('{0}',#hedit.button.9.5),''),#hedit.button.9.5,'#NONE'))</define>
+  <define property="true" evaluateNow="true">#hedit.button.9.6:#(iif(neq(string.format('{0}',#hedit.button.9.6),''),#hedit.button.9.6,'#NONE'))</define>
+  <define property="true" evaluateNow="true">#hedit.button.9.7:#(iif(neq(string.format('{0}',#hedit.button.9.7),''),#hedit.button.9.7,'#NONE'))</define>
+  <define property="true" evaluateNow="true">#hedit.button.9.8:#(iif(neq(string.format('{0}',#hedit.button.9.8),''),#hedit.button.9.8,'#NONE'))</define>
+  <define property="true" evaluateNow="true">#hedit.button.10.1:#(iif(neq(string.format('{0}',#hedit.button.10.1),''),#hedit.button.10.1,'#NONE'))</define>
+  <define property="true" evaluateNow="true">#hedit.button.10.2:#(iif(neq(string.format('{0}',#hedit.button.10.2),''),#hedit.button.10.2,'#NONE'))</define>
+  <define property="true" evaluateNow="true">#hedit.button.10.3:#(iif(neq(string.format('{0}',#hedit.button.10.3),''),#hedit.button.10.3,'#NONE'))</define>
+  <define property="true" evaluateNow="true">#hedit.button.10.4:#(iif(neq(string.format('{0}',#hedit.button.10.4),''),#hedit.button.10.4,'#NONE'))</define>
+  <define property="true" evaluateNow="true">#hedit.button.10.5:#(iif(neq(string.format('{0}',#hedit.button.10.5),''),#hedit.button.10.5,'#NONE'))</define>
+  <define property="true" evaluateNow="true">#hedit.button.10.6:#(iif(neq(string.format('{0}',#hedit.button.10.6),''),#hedit.button.10.6,'#NONE'))</define>
+  <define property="true" evaluateNow="true">#hedit.button.10.7:#(iif(neq(string.format('{0}',#hedit.button.10.7),''),#hedit.button.10.7,'#NONE'))</define>
+  <define property="true" evaluateNow="true">#hedit.button.10.8:#(iif(neq(string.format('{0}',#hedit.button.10.8),''),#hedit.button.10.8,'#NONE'))</define>
+  
+  <define property="true" evaluateNow="true">#hedit.main.pos.1:#(iif(neq(string.format('{0}',#hedit.main.pos.1),''),#hedit.main.pos.1,'3'))</define>
+  <define property="true" evaluateNow="true">#hedit.main.pos.2:#(iif(neq(string.format('{0}',#hedit.main.pos.2),''),#hedit.main.pos.2,'4'))</define>
+  <define property="true" evaluateNow="true">#hedit.main.pos.3:#(iif(neq(string.format('{0}',#hedit.main.pos.3),''),#hedit.main.pos.3,'5'))</define>
+  <define property="true" evaluateNow="true">#hedit.main.pos.4:#(iif(neq(string.format('{0}',#hedit.main.pos.4),''),#hedit.main.pos.4,'1'))</define>
+  <define property="true" evaluateNow="true">#hedit.main.pos.5:#(iif(neq(string.format('{0}',#hedit.main.pos.5),''),#hedit.main.pos.5,'2'))</define>
+  <define property="true" evaluateNow="true">#hedit.main.pos.6:#(iif(neq(string.format('{0}',#hedit.main.pos.6),''),#hedit.main.pos.6,'3'))</define>
+  <define property="true" evaluateNow="true">#hedit.main.pos.7:#(iif(neq(string.format('{0}',#hedit.main.pos.7),''),#hedit.main.pos.7,'4'))</define>
+
+  <define property="true" evaluateNow="true">#hedit.main.use.1:#(iif(neq(string.format('{0}',#hedit.main.use.1),''),#hedit.main.use.1,#hedit.button.3))</define>
+  <define property="true" evaluateNow="true">#hedit.main.use.2:#(iif(neq(string.format('{0}',#hedit.main.use.2),''),#hedit.main.use.2,#hedit.button.4))</define>
+  <define property="true" evaluateNow="true">#hedit.main.use.3:#(iif(neq(string.format('{0}',#hedit.main.use.3),''),#hedit.main.use.3,#hedit.button.5))</define>
+  <define property="true" evaluateNow="true">#hedit.main.use.4:#(iif(neq(string.format('{0}',#hedit.main.use.4),''),#hedit.main.use.4,#hedit.button.1))</define>
+  <define property="true" evaluateNow="true">#hedit.main.use.5:#(iif(neq(string.format('{0}',#hedit.main.use.5),''),#hedit.main.use.5,#hedit.button.2))</define>
+  <define property="true" evaluateNow="true">#hedit.main.use.6:#(iif(neq(string.format('{0}',#hedit.main.use.6),''),#hedit.main.use.6,#hedit.button.3))</define>
+  <define property="true" evaluateNow="true">#hedit.main.use.7:#(iif(neq(string.format('{0}',#hedit.main.use.7),''),#hedit.main.use.7,#hedit.button.4))</define>
+
+
+  <define property="true" evaluateNow="true">#xxx:#(skin.setstring('#hedit.main',#hedit.button.1))</define>
+  <define property="true" evaluateNow="true">#xxx:#(skin.setstring('#hedit.main.at','#hedit.button.1'))</define>
+  <define property="true" evaluateNow="true">#xxx:#(skin.setstring('#hedit.main.bind',string.format('#{0}',string.ltrim(#hedit.main,'#0123456789.'))))</define>
+  <define property="true" evaluateNow="true">#xxx:#(skin.setstring('#hedit.sub.at','1'))</define>
+  <define property="true" evaluateNow="true">#xxx:#(skin.setstring('#hedit.sub.1',#hedit.button.1.1))</define>
+  <define property="true" evaluateNow="true">#xxx:#(skin.setstring('#hedit.sub.2',#hedit.button.1.2))</define>
+  <define property="true" evaluateNow="true">#xxx:#(skin.setstring('#hedit.sub.3',#hedit.button.1.3))</define>
+  <define property="true" evaluateNow="true">#xxx:#(skin.setstring('#hedit.sub.4',#hedit.button.1.4))</define>
+  <define property="true" evaluateNow="true">#xxx:#(skin.setstring('#hedit.sub.5',#hedit.button.1.5))</define>
+  <define property="true" evaluateNow="true">#xxx:#(skin.setstring('#hedit.sub.6',#hedit.button.1.6))</define>
+  <define property="true" evaluateNow="true">#xxx:#(skin.setstring('#hedit.sub.7',#hedit.button.1.7))</define>
+
+  <define property="true" evaluateNow="true">#xxx:#(skin.setstring('#hedit.main.calc.nav',''))</define>
+  <define property="true" evaluateNow="true">#xxx:#(skin.setstring('#hedit.sub.calc.nav',''))</define>
+  <define property="true" evaluateNow="true">#xxx:#(skin.setstring('#hedit.inuse',''))</define>
+
+  <!--     *******************************************************************************************  -->
+  <!--     ***************************   Error text to show when plugin unavailable   ****************  -->
+  <!--     *******************************************************************************************  -->
+
+  <define property="true" evaluateNow="true">#PLUGERROR:#(string.format(' {0}',L(1056)))</define>
+
+  <define property="true" evaluateNow="true">#PLUGOPTERROR:#(L(993))</define>
+
+  <!--     *******************************************************************************************  -->
+  <!--     ********************************   "None selected" [item]   *******************************  -->
+  <!--     *******************************************************************************************  -->
+
+  <define property="true" evaluateNow="true">#NONE.name:#(L(231))</define>
+  <define property="true" evaluateNow="true">#NONE.plugin:</define>
+  <define property="true" evaluateNow="true">#NONE.hyperlink:</define>
+  <define property="true" evaluateNow="true">#NONE.parameter:</define>
+  <define property="true" evaluateNow="true">#NONE.hover:</define>
+  <define property="true" evaluateNow="true">#NONE.active:</define>
+  <define property="true" evaluateNow="true">#NONE.display:</define>
+  <define property="true" evaluateNow="true">#NONE:#(#NONE.name)</define>
+
+  <!--     *******************************************************************************************  -->
+  <!--     **************************** Default item used when no active buttons**********************  -->
+  <!--     *******************************************************************************************  -->
+
+  <define property="true" evaluateNow="true">#DEFAULT.name:#(L(300120)) #(L(897))</define>
+  <define property="true" evaluateNow="true">#DEFAULT.plugin:</define>
+  <define property="true" evaluateNow="true">#DEFAULT.hyperlink:705</define>
+  <define property="true" evaluateNow="true">#DEFAULT.parameter:</define>
+  <define property="true" evaluateNow="true">#DEFAULT.hover:hover:hover_settings.png</define>
+  <define property="true" evaluateNow="true">#DEFAULT.active: </define>
+  <define property="true" evaluateNow="true">#DEFAULT:#(#DEFAULT.name)</define>
+
+  <!--     *******************************************************************************************  -->
+  <!--     ****************************   Defines for the lists shown in Editor menu   ***************  -->
+  <!--     *******************************************************************************************  -->
+
+  <define property="true" evaluateNow="true">#list.dialog:#(L(496))</define>
+
+  <define property="true" evaluateNow="true">#list.header.left:--------------------  </define>
+  <define property="true" evaluateNow="true">#list.header.right:  --------------------</define>
+
+  <define property="true" evaluateNow="true">#list.header.custom:</define>
+
+  <define property="true" evaluateNow="true">#list.GENERAL:#(#list.header.left)#(L(128))#(#list.header.right),#NONE,#.SETUP</define>
+
+  <define property="true" evaluateNow="true">#list.TV:#(#list.header.left)#(L(605))#(#list.header.right),#NONE,#TV1,#TV2,#TV3,#TV4,#TV5,#TV6,#TV7,#TV8</define>
+
+  <define property="true" evaluateNow="true">#list.VIDEO:#(#list.header.left)#(L(291))#(#list.header.right),#NONE,#VIDEO1,#.TVSERIES,#1.TVSERIES,#2.TVSERIES,#3.TVSERIES,#4.TVSERIES,#5.TVSERIES,#6.TVSERIES,#7.TVSERIES,#8.TVSERIES,#9.TVSERIES,#10.TVSERIES,#11.TVSERIES,#12.TVSERIES,#13.TVSERIES,#14.TVSERIES,#15.TVSERIES,#.MOVPIC,#1.MOVPIC,#2.MOVPIC,#3.MOVPIC,#4.MOVPIC,#5.MOVPIC,#6.MOVPIC,#7.MOVPIC,#8.MOVPIC,#9.MOVPIC,#10.MOVPIC,#VIDEO3,#VIDEO4,#VIDEO5,#.TRAKT,#1.TRAKT,#2.TRAKT,#3.TRAKT,#4.TRAKT,#5.TRAKT,#6.TRAKT,#7.TRAKT,#8.TRAKT,#9.TRAKT,#10.TRAKT,#11.TRAKT,#12.TRAKT,#VIDEO6,#VIDEO7</define>
+
+  <define property="true" evaluateNow="true">#list.AUDIO:#(#list.header.left)#(L(292))#(#list.header.right),#NONE,#AUDIO1,#AUDIO2,#AUDIO3,#AUDIO4,#AUDIO5,#AUDIO6,#AUDIO7,#AUDIO8,#AUDIO9,#AUDIO10,#AUDIO11,#.MUSIC,#1.MUSIC,#2.MUSIC,#3.MUSIC,#4.MUSIC,#5.MUSIC,#6.MUSIC,#7.MUSIC,#8.MUSIC,#9.MUSIC,#10.MUSIC</define>
+
+  <define property="true" evaluateNow="true">#list.PICTURE:#(#list.header.left)#(L(1))#(#list.header.right),#NONE,#PICTURE1,#PICTURE2</define>
+
+  <define property="true" evaluateNow="true">#list.WEATHER:#(#list.header.left)#(L(400))#(#list.header.right),#NONE,#.WORLDWEATHER,#1.WORLDWEATHER,#2.WORLDWEATHER,#3.WORLDWEATHER,#4.WORLDWEATHER,#5.WORLDWEATHER,#WEATHER2</define>
+
+  <define property="true" evaluateNow="true">#list.INTERNET:#(#list.header.left)#(L(443))#(#list.header.right),#NONE,#INTERNET1,#INTERNET2,#INTERNET3,#INTERNET4,#INTERNET5,#INTERNET6,#INTERNET7,#INTERNET8,#INTERNET9,#INTERNET10,#INTERNET11,#INTERNET12,#INTERNET13,#INTERNET14,#INTERNET15,#INTERNET16,#INTERNET17</define>
+
+  <define property="true" evaluateNow="true">#list.HOME:#(#list.header.left)#(L(974))#(#list.header.right),#NONE,#HOME1,#HOME2,#HOME3,#HOME4,#HOME5,#HOME6,#HOME7,#HOME8,#HOME9,#HOME10,#HOME11,#HOME12,#HOME13,#HOME14,#HOME15,#HOME16</define>
+
+  <define property="true" evaluateNow="true">#list.GAME:#(#list.header.left)Games#(#list.header.right),#NONE,#GAME1,#GAME2,#GAME3,#GAME4,#GAME5,#GAME6,#GAME7,#GAME8,#GAME9,#GAME10,#GAME11,#GAME12,#GAME13,#GAME14</define>
+
+    <define property="true" evaluateNow="true">#list.SETUP:#(#list.header.left)#(L(897))#(#list.header.right),#NONE,#.SETUP,#1.SETUP,#2.SETUP,#3.SETUP,#4.SETUP,#5.SETUP,#6.SETUP,#7.SETUP,#8.SETUP,#9.SETUP,#10.SETUP,#11.SETUP</define>
+    
+      <define property="true" evaluateNow="true">#list.EXIT:#(#list.header.left)EXIT#(#list.header.right),#NONE,#EXIT1,#EXIT2</define>
+
+  <define property="true" evaluateNow="true">#list.ALL:#(string.format('{0},{1},{2},{3},{4},{5},{6},{7},{8},{9}',#list.TV,#list.VIDEO,#list.AUDIO,#list.PICTURE,#list.WEATHER,#list.INTERNET,#list.HOME,#list.GAME,#list.SETUP,#list.EXIT))</define>
+
+
+  <!--     *******************************************************************************************  -->
+  <!--     **************************************     TV ITEMS   *************************************  -->
+  <!--     *******************************************************************************************  -->
+
+  <!-- TV -->
+  <define property="true" evaluateNow="true">#TV1.name:#(L(605))</define>
+  <define property="true" evaluateNow="true">#TV1.plugin:TV</define>
+  <define property="true" evaluateNow="true">#TV1.hyperlink:1</define>
+  <define property="true" evaluateNow="true">#TV1.parameter:</define>
+  <define property="true" evaluateNow="true">#TV1.hover:hover_my tv.png</define>
+  <define property="true" evaluateNow="true">#TV1.background:Animations\BasicHome\tv.jpg</define>
+  <define property="true" evaluateNow="true">#TV1.iconfocus:tb_TV.png</define>
+  <define property="true" evaluateNow="true">#TV1.iconnofocus:tb_TVNF.png</define>
+  <define property="true" evaluateNow="true">#TV1.background:Animations\BasicHome\tv.jpg</define>
+  <define property="true" evaluateNow="true">#TV1:#(string.format('{0}',#TV1.name))</define>
+
+  <!-- TV Guide -->
+  <define property="true" evaluateNow="true">#TV2.name:#(L(600))</define>
+  <define property="true" evaluateNow="true">#TV2.plugin:TV</define>
+  <define property="true" evaluateNow="true">#TV2.hyperlink:600</define>
+  <define property="true" evaluateNow="true">#TV2.parameter:</define>
+  <define property="true" evaluateNow="true">#TV2.hover:hover_tvprogram.png</define>
+  <define property="true" evaluateNow="true">#TV2.background:Animations\BasicHome\tv.jpg</define>
+  <define property="true" evaluateNow="true">#TV2.iconfocus:tb_TV.png</define>
+  <define property="true" evaluateNow="true">#TV2.iconnofocus:tb_TVNF.png</define>
+  <define property="true" evaluateNow="true">#TV2:#(string.format('{0}',#TV2.name))</define>
+
+  <!-- Recorded TV -->
+  <define property="true" evaluateNow="true">#TV3.name:#(L(604))</define>
+  <define property="true" evaluateNow="true">#TV3.plugin:TV</define>
+  <define property="true" evaluateNow="true">#TV3.hyperlink:603</define>
+  <define property="true" evaluateNow="true">#TV3.parameter:</define>
+  <define property="true" evaluateNow="true">#TV3.hover:hover_mediaslayer.png</define>
+  <define property="true" evaluateNow="true">#TV3.background:Animations\BasicHome\tv.jpg</define>
+  <define property="true" evaluateNow="true">#TV3.iconfocus:tb_TV.png</define>
+  <define property="true" evaluateNow="true">#TV3.iconnofocus:tb_TVNF.png</define>
+  <define property="true" evaluateNow="true">#TV3:#(string.format('{0}',#TV3.name))</define>
+  <define property="true" evaluateNow="true">#TV3.latestmedia:91919984</define>
+
+  <!-- Scheduled TV -->
+  <define property="true" evaluateNow="true">#TV4.name:#(L(603))</define>
+  <define property="true" evaluateNow="true">#TV4.plugin:TV</define>
+  <define property="true" evaluateNow="true">#TV4.hyperlink:601</define>
+  <define property="true" evaluateNow="true">#TV4.parameter:</define>
+  <define property="true" evaluateNow="true">#TV4.hover:hover_my alarm.png</define>
+  <define property="true" evaluateNow="true">#TV4.background:Animations\BasicHome\tv.jpg</define>
+  <define property="true" evaluateNow="true">#TV4.iconfocus:tb_TV.png</define>
+  <define property="true" evaluateNow="true">#TV4.iconnofocus:tb_TVNF.png</define>
+  <define property="true" evaluateNow="true">#TV4:#(string.format('{0}',#TV4.name))</define>
+  
+  <!-- Search TV -->
+  <define property="true" evaluateNow="true">#TV5.name:#(L(137))</define>
+  <define property="true" evaluateNow="true">#TV5.plugin:TV</define>
+  <define property="true" evaluateNow="true">#TV5.hyperlink:604</define>
+  <define property="true" evaluateNow="true">#TV5.parameter:</define>
+  <define property="true" evaluateNow="true">#TV5.hover:hover_search music.png</define>
+  <define property="true" evaluateNow="true">#TV5.background:Animations\BasicHome\tv.jpg</define>
+  <define property="true" evaluateNow="true">#TV5.iconfocus:tb_TV.png</define>
+  <define property="true" evaluateNow="true">#TV5.iconnofocus:tb_TVNF.png</define>
+  <define property="true" evaluateNow="true">#TV5:#(string.format('{0}',#TV5.name))</define>
+
+  <!-- Clickfinder -->
+  <define property="true" evaluateNow="true">#TV6.name:Clickfinder</define>
+  <define property="true" evaluateNow="true">#TV6.plugin:Clickfinder ProgramGuide</define>
+  <define property="true" evaluateNow="true">#TV6.hyperlink:165654465</define>
+  <define property="true" evaluateNow="true">#TV6.parameter:</define>
+  <define property="true" evaluateNow="true">#TV6.hover:hover_Clickfinder ProgramGuide.png</define>
+  <define property="true" evaluateNow="true">#TV6.background:Animations\BasicHome\tv.jpg</define>
+  <define property="true" evaluateNow="true">#TV6.iconfocus:tb_TV.png</define>
+  <define property="true" evaluateNow="true">#TV6.iconnofocus:tb_TVNF.png</define>
+  <define property="true" evaluateNow="true">#TV6.active:#(iif(or(eq(#TV6.plugin,''),plugin.isenabled(#TV6.plugin)),' ',''))</define>
+  <define property="true" evaluateNow="true">#TV6:#(string.format('{0}{1}',#TV6.name,iif(eq(#TV6.active,' '),'',#PLUGERROR)))</define>
+
+  <!-- TV Wishlist -->
+  <define property="true" evaluateNow="true">#TV7.name:Tv WishList</define>
+  <define property="true" evaluateNow="true">#TV7.plugin:TvWishListMP</define>
+  <define property="true" evaluateNow="true">#TV7.hyperlink:70943675</define>
+  <define property="true" evaluateNow="true">#TV7.parameter:</define>
+  <define property="true" evaluateNow="true">#TV7.hover:hover_TvWishList.png</define>
+  <define property="true" evaluateNow="true">#TV7.background:Animations\BasicHome\tv.jpg</define>
+  <define property="true" evaluateNow="true">#TV7.iconfocus:tb_TV.png</define>
+  <define property="true" evaluateNow="true">#TV7.iconnofocus:tb_TVNF.png</define>
+  <define property="true" evaluateNow="true">#TV7.active:#(iif(or(eq(#TV7.plugin,''),plugin.isenabled(#TV7.plugin)),' ',''))</define>
+  <define property="true" evaluateNow="true">#TV7:#(string.format('{0}{1}',#TV7.name,iif(eq(#TV7.active,' '),'',#PLUGERROR)))</define>
+
+  <!-- Logo Manager -->
+  <define property="true" evaluateNow="true">#TV8.name:Logo Manager</define>
+  <define property="true" evaluateNow="true">#TV8.plugin:LogoManager</define>
+  <define property="true" evaluateNow="true">#TV8.hyperlink:757278</define>
+  <define property="true" evaluateNow="true">#TV8.parameter:</define>
+  <define property="true" evaluateNow="true">#TV8.hover:hover_tvprogram.png</define>
+  <define property="true" evaluateNow="true">#TV8.background:Animations\BasicHome\tv.jpg</define>
+  <define property="true" evaluateNow="true">#TV8.iconfocus:tb_TV.png</define>
+  <define property="true" evaluateNow="true">#TV1.iconnofocus:tb_TVNF.png</define>
+  <define property="true" evaluateNow="true">#TV8.active:#(iif(or(eq(#TV8.plugin,''),plugin.isenabled(#TV8.plugin)),' ',''))</define>
+  <define property="true" evaluateNow="true">#TV8:#(string.format('{0}{1}',#TV8.name,iif(eq(#TV8.active,' '),'',#PLUGERROR)))</define>
+
+  <!--     *******************************************************************************************  -->
+  <!--     **************************************    VIDEO ITEMS   ***********************************  -->
+  <!--     *******************************************************************************************  -->
+
+  <!-- My Videos -->
+  <define property="true" evaluateNow="true">#VIDEO1.name:#(L(3))</define>
+  <define property="true" evaluateNow="true">#VIDEO1.plugin:Videos</define>
+  <define property="true" evaluateNow="true">#VIDEO1.hyperlink:6</define>
+  <define property="true" evaluateNow="true">#VIDEO1.parameter:</define>
+  <define property="true" evaluateNow="true">#VIDEO1.hover:hover_my videos.png</define>
+  <define property="true" evaluateNow="true">#VIDEO1.background:Animations\BasicHome\videos.jpg</define>
+  <define property="true" evaluateNow="true">#VIDEO1.iconfocus:tb_video.png</define>
+  <define property="true" evaluateNow="true">#VIDEO1.iconnofocus:tb_videoNF.png</define>
+  <define property="true" evaluateNow="true">#VIDEO1.active:#(iif(or(eq(#VIDEO1.plugin,''),plugin.isenabled(#VIDEO1.plugin)),' ',''))</define>
+  <define property="true" evaluateNow="true">#VIDEO1:#(string.format('{0}{1}',#VIDEO1.name,iif(eq(#VIDEO1.active,' '),'',#PLUGERROR)))</define>
+  <define property="true" evaluateNow="true">#VIDEO1.latestmedia:91915991</define>
+
+  <!-- TV Series -->
+  <define property="true" evaluateNow="true">#VIDEO2.name:#(L(1300))</define>
+  <define property="true" evaluateNow="true">#VIDEO2.plugin:MP-TV Series</define>
+  <define property="true" evaluateNow="true">#VIDEO2.hyperlink:9811</define>
+  <define property="true" evaluateNow="true">#VIDEO2.parameter:</define>
+  <define property="true" evaluateNow="true">#VIDEO2.hover:hover_my tv series.png</define>
+  <define property="true" evaluateNow="true">#VIDEO2.background:Animations\BasicHome\videos.jpg</define>
+  <define property="true" evaluateNow="true">#VIDEO2.iconfocus:tb_video.png</define>
+  <define property="true" evaluateNow="true">#VIDEO2.iconnofocus:tb_videoNF.png</define>
+  <define property="true" evaluateNow="true">#VIDEO2.active:#(iif(or(eq(#VIDEO2.plugin,''),plugin.isenabled(#VIDEO2.plugin)),' ',''))</define>
+  <define property="true" evaluateNow="true">#VIDEO2:#(string.format('{0}{1}',#VIDEO2.name,iif(eq(#VIDEO2.active,' '),'',#PLUGERROR)))</define>
+  <define property="true" evaluateNow="true">#VIDEO2.latestmedia:91919994</define>
+
+  <!-- Online Videos -->
+  <define property="true" evaluateNow="true">#VIDEO3.name:OnlineVideos</define>
+  <define property="true" evaluateNow="true">#VIDEO3.plugin:OnlineVideos</define>
+  <define property="true" evaluateNow="true">#VIDEO3.hyperlink:4755</define>
+  <define property="true" evaluateNow="true">#VIDEO3.parameter:</define>
+  <define property="true" evaluateNow="true">#VIDEO3.hover:hover_onlinevideos.png</define>
+  <define property="true" evaluateNow="true">#VIDEO3.background:Animations\BasicHome\videos.jpg</define>
+  <define property="true" evaluateNow="true">#VIDEO3.iconfocus:tb_video.png</define>
+  <define property="true" evaluateNow="true">#VIDEO3.iconnofocus:tb_videoNF.png</define>
+  <define property="true" evaluateNow="true">#VIDEO3.active:#(iif(or(eq(#VIDEO3.plugin,''),plugin.isenabled(#VIDEO3.plugin)),' ',''))</define>
+  <define property="true" evaluateNow="true">#VIDEO3:#(string.format('{0}{1}',#VIDEO3.name,iif(eq(#VIDEO3.active,' '),'',#PLUGERROR)))</define>
+  
+  <!-- mY fILMS -->
+  <define property="true" evaluateNow="true">#VIDEO4.name:#(L(342))</define>
+  <define property="true" evaluateNow="true">#VIDEO4.plugin:MyFilms</define>
+  <define property="true" evaluateNow="true">#VIDEO4.hyperlink:7986</define>
+  <define property="true" evaluateNow="true">#VIDEO4.parameter:</define>
+  <define property="true" evaluateNow="true">#VIDEO4.hover:hover_films.png</define>
+  <define property="true" evaluateNow="true">#VIDEO4.background:Animations\BasicHome\videos.jpg</define>
+  <define property="true" evaluateNow="true">#VIDEO4.iconfocus:tb_video.png</define>
+  <define property="true" evaluateNow="true">#VIDEO4.iconnofocus:tb_videoNF.png</define>
+  <define property="true" evaluateNow="true">#VIDEO4.active:#(iif(or(eq(#VIDEO4.plugin,''),plugin.isenabled(#VIDEO4.plugin)),' ',''))</define>
+  <define property="true" evaluateNow="true">#VIDEO4:#(string.format('{0}{1}',#VIDEO4.name,iif(eq(#VIDEO4.active,' '),'',#PLUGERROR)))</define>
+  <define property="true" evaluateNow="true">#VIDEO4.latestmedia:91919988</define>
+
+  <!-- ShowTimes -->
+  <define property="true" evaluateNow="true">#VIDEO5.name:ShowTimes</define>
+  <define property="true" evaluateNow="true">#VIDEO5.plugin:ShowTimes</define>
+  <define property="true" evaluateNow="true">#VIDEO5.hyperlink:7111992</define>
+  <define property="true" evaluateNow="true">#VIDEO5.parameter:</define>
+  <define property="true" evaluateNow="true">#VIDEO5.hover:hover_ShowTimes.png</define>
+  <define property="true" evaluateNow="true">#VIDEO5.background:Animations\BasicHome\videos.jpg</define>
+  <define property="true" evaluateNow="true">#VIDEO5.iconfocus:tb_video.png</define>
+  <define property="true" evaluateNow="true">#VIDEO5.iconnofocus:tb_videoNF.png</define>
+  <define property="true" evaluateNow="true">#VIDEO5.active:#(iif(or(eq(#VIDEO5.plugin,''),plugin.isenabled(#VIDEO5.plugin)),' ',''))</define>
+  <define property="true" evaluateNow="true">#VIDEO5:#(string.format('{0}{1}',#VIDEO5.name,iif(eq(#VIDEO5.active,' '),'',#PLUGERROR)))</define>
+
+  <!-- SubCentral -->
+  <define property="true" evaluateNow="true">#VIDEO6.name:SubCentral</define>
+  <define property="true" evaluateNow="true">#VIDEO6.plugin:SubCentral</define>
+  <define property="true" evaluateNow="true">#VIDEO6.hyperlink:84623</define>
+  <define property="true" evaluateNow="true">#VIDEO6.parameter:</define>
+  <define property="true" evaluateNow="true">#VIDEO6.hover:hover_subcentral.png</define>
+  <define property="true" evaluateNow="true">#VIDEO6.background:Animations\BasicHome\videos.jpg</define>
+  <define property="true" evaluateNow="true">#VIDEO6.iconfocus:tb_video.png</define>
+  <define property="true" evaluateNow="true">#VIDEO6.iconnofocus:tb_videoNF.png</define>
+  <define property="true" evaluateNow="true">#VIDEO6.active:#(iif(or(eq(#VIDEO6.plugin,''),plugin.isenabled(#VIDEO6.plugin)),' ',''))</define>
+  <define property="true" evaluateNow="true">#VIDEO6:#(string.format('{0}{1}',#VIDEO6.name,iif(eq(#VIDEO6.active,' '),'',#PLUGERROR)))</define>
+
+  <!-- Netflix Alpha -->
+  <define property="true" evaluateNow="true">#VIDEO7.name:Netflix Alpha</define>
+  <define property="true" evaluateNow="true">#VIDEO7.plugin:Netflix Alpha</define>
+  <define property="true" evaluateNow="true">#VIDEO7.hyperlink:18764</define>
+  <define property="true" evaluateNow="true">#VIDEO7.parameter:</define>
+  <define property="true" evaluateNow="true">#VIDEO7.hover:hover_films.png</define>
+  <define property="true" evaluateNow="true">#VIDEO7.background:Animations\BasicHome\videos.jpg</define>
+  <define property="true" evaluateNow="true">#VIDEO7.iconfocus:tb_video.png</define>
+  <define property="true" evaluateNow="true">#VIDEO7.iconnofocus:tb_videoNF.png</define>
+  <define property="true" evaluateNow="true">#VIDEO7.active:#(iif(or(eq(#VIDEO7.plugin,''),plugin.isenabled(#VIDEO7.plugin)),' ',''))</define>
+  <define property="true" evaluateNow="true">#VIDEO7:#(string.format('{0}{1}',#VIDEO7.name,iif(eq(#VIDEO7.active,' '),'',#PLUGERROR)))</define>
+
+  <!--     *******************************************************************************************  -->
+  <!--     **************************************    AUDIO ITEMS   ***********************************  -->
+  <!--     *******************************************************************************************  -->
+
+  <define property="true" evaluateNow="true">#AUDIO1.name:#(L(4540))</define>
+  <define property="true" evaluateNow="true">#AUDIO1.plugin:Music</define>
+  <define property="true" evaluateNow="true">#AUDIO1.hyperlink:510</define>
+  <define property="true" evaluateNow="true">#AUDIO1.parameter:</define>
+  <define property="true" evaluateNow="true">#AUDIO1.hover:hover_nowplaying.png</define>
+  <define property="true" evaluateNow="true">#AUDIO1.background:Animations\BasicHome\music.jpg</define>
+  <define property="true" evaluateNow="true">#AUDIO1.iconfocus:tb_music.png</define>
+  <define property="true" evaluateNow="true">#AUDIO1.iconnofocus:tb_musicNF.png</define>
+  <define property="true" evaluateNow="true">#AUDIO1.latestmedia:91919997</define>
+  <define property="true" evaluateNow="true">#AUDIO1.active:#(iif(or(eq(#AUDIO1.plugin,''),plugin.isenabled(#AUDIO1.plugin)),' ',''))</define>
+  <define property="true" evaluateNow="true">#AUDIO1:#(string.format('{0}{1}',#AUDIO1.name,iif(eq(#AUDIO1.active,' '),'',#PLUGERROR)))</define>
+
+  <define property="true" evaluateNow="true">#AUDIO2.name:#(L(665))</define>
+  <define property="true" evaluateNow="true">#AUDIO2.plugin:Radio</define>
+  <define property="true" evaluateNow="true">#AUDIO2.hyperlink:30</define>
+  <define property="true" evaluateNow="true">#AUDIO2.parameter:</define>
+  <define property="true" evaluateNow="true">#AUDIO2.hover:hover_my radio.png</define>
+  <define property="true" evaluateNow="true">#AUDIO2.background:Animations\BasicHome\music.jpg</define>
+  <define property="true" evaluateNow="true">#AUDIO2.iconfocus:tb_music.png</define>
+  <define property="true" evaluateNow="true">#AUDIO2.iconnofocus:tb_musicNF.png</define>
+  <define property="true" evaluateNow="true">#AUDIO2.active:#(iif(or(eq(#AUDIO2.plugin,''),plugin.isenabled(#AUDIO2.plugin)),' ',''))</define>
+  <define property="true" evaluateNow="true">#AUDIO2:#(string.format('{0}{1}',#AUDIO2.name,iif(eq(#AUDIO2.active,' '),'',#PLUGERROR)))</define>
+
+  <define property="true" evaluateNow="true">#AUDIO3.name:TuneIn</define>
+  <define property="true" evaluateNow="true">#AUDIO3.plugin:TuneIn</define>
+  <define property="true" evaluateNow="true">#AUDIO3.hyperlink:25650</define>
+  <define property="true" evaluateNow="true">#AUDIO3.parameter:</define>
+  <define property="true" evaluateNow="true">#AUDIO3.hover:hover_RadioTime.png</define>
+  <define property="true" evaluateNow="true">#AUDIO3.background:Animations\BasicHome\music.jpg</define>
+  <define property="true" evaluateNow="true">#AUDIO3.iconfocus:tb_music.png</define>
+  <define property="true" evaluateNow="true">#AUDIO3.iconnofocus:tb_musicNF.png</define>
+  <define property="true" evaluateNow="true">#AUDIO3.active:#(iif(or(eq(#AUDIO3.plugin,''),plugin.isenabled(#AUDIO3.plugin)),' ',''))</define>
+  <define property="true" evaluateNow="true">#AUDIO3:#(string.format('{0}{1}',#AUDIO3.name,iif(eq(#AUDIO3.active,' '),'',#PLUGERROR)))</define>
+
+  <define property="true" evaluateNow="true">#AUDIO4.name:Shoutcast</define>
+  <define property="true" evaluateNow="true">#AUDIO4.plugin:Shoutcast</define>
+  <define property="true" evaluateNow="true">#AUDIO4.hyperlink:2345</define>
+  <define property="true" evaluateNow="true">#AUDIO4.parameter:</define>
+  <define property="true" evaluateNow="true">#AUDIO4.hover:hover_shoutcast.png</define>
+  <define property="true" evaluateNow="true">#AUDIO4.background:Animations\BasicHome\music.jpg</define>
+  <define property="true" evaluateNow="true">#AUDIO4.iconfocus:tb_music.png</define>
+  <define property="true" evaluateNow="true">#AUDIO4.iconnofocus:tb_musicNF.png</define>
+  <define property="true" evaluateNow="true">#AUDIO4.active:#(iif(or(eq(#AUDIO4.plugin,''),plugin.isenabled(#AUDIO4.plugin)),' ',''))</define>
+  <define property="true" evaluateNow="true">#AUDIO4:#(string.format('{0}{1}',#AUDIO4.name,iif(eq(#AUDIO4.active,' '),'',#PLUGERROR)))</define>
+
+  <define property="true" evaluateNow="true">#AUDIO5.name:Webradio</define>
+  <define property="true" evaluateNow="true">#AUDIO5.plugin:MyWebradio</define>
+  <define property="true" evaluateNow="true">#AUDIO5.hyperlink:5670</define>
+  <define property="true" evaluateNow="true">#AUDIO5.parameter:</define>
+  <define property="true" evaluateNow="true">#AUDIO5.hover:hover_mywebradio.png</define>
+  <define property="true" evaluateNow="true">#AUDIO5.background:Animations\BasicHome\music.jpg</define>
+  <define property="true" evaluateNow="true">#AUDIO5.iconfocus:tb_music.png</define>
+  <define property="true" evaluateNow="true">#AUDIO5.iconnofocus:tb_musicNF.png</define>
+  <define property="true" evaluateNow="true">#AUDIO5.active:#(iif(or(eq(#AUDIO5.plugin,''),plugin.isenabled(#AUDIO5.plugin)),' ',''))</define>
+  <define property="true" evaluateNow="true">#AUDIO5:#(string.format('{0}{1}',#AUDIO5.name,iif(eq(#AUDIO5.active,' '),'',#PLUGERROR)))</define>
+
+  <define property="true" evaluateNow="true">#AUDIO6.name:mvCentral</define>
+  <define property="true" evaluateNow="true">#AUDIO6.plugin:mvCentral</define>
+  <define property="true" evaluateNow="true">#AUDIO6.hyperlink:112011</define>
+  <define property="true" evaluateNow="true">#AUDIO6.parameter:</define>
+  <define property="true" evaluateNow="true">#AUDIO6.hover:hover_mvCentral.png</define>
+  <define property="true" evaluateNow="true">#AUDIO6.background:Animations\BasicHome\music.jpg</define>
+  <define property="true" evaluateNow="true">#AUDIO6.iconfocus:tb_music.png</define>
+  <define property="true" evaluateNow="true">#AUDIO6.iconnofocus:tb_musicNF.png</define>
+  <define property="true" evaluateNow="true">#AUDIO6.active:#(iif(or(eq(#AUDIO6.plugin,''),plugin.isenabled(#AUDIO6.plugin)),' ',''))</define>
+  <define property="true" evaluateNow="true">#AUDIO6:#(string.format('{0}{1}',#AUDIO6.name,iif(eq(#AUDIO6.active,' '),'',#PLUGERROR)))</define>
+
+  <define property="true" evaluateNow="true">#AUDIO7.name:#(L(137)) #(L(249))</define>
+  <define property="true" evaluateNow="true">#AUDIO7.plugin:Search music</define>
+  <define property="true" evaluateNow="true">#AUDIO7.hyperlink:30885</define>
+  <define property="true" evaluateNow="true">#AUDIO7.parameter:</define>
+  <define property="true" evaluateNow="true">#AUDIO7.hover:hover_search music.png</define>
+  <define property="true" evaluateNow="true">#AUDIO7.background:Animations\BasicHome\music.jpg</define>
+  <define property="true" evaluateNow="true">#AUDIO7.iconfocus:tb_music.png</define>
+  <define property="true" evaluateNow="true">#AUDIO7.iconnofocus:tb_musicNF.png</define>
+  <define property="true" evaluateNow="true">#AUDIO7.active:#(iif(or(eq(#AUDIO7.plugin,''),plugin.isenabled(#AUDIO7.plugin)),' ',''))</define>
+  <define property="true" evaluateNow="true">#AUDIO7:#(string.format('{0}{1}',#AUDIO7.name,iif(eq(#AUDIO7.active,' '),'',#PLUGERROR)))</define>
+
+  <define property="true" evaluateNow="true">#AUDIO8.name:Lyrics</define>
+  <define property="true" evaluateNow="true">#AUDIO8.plugin:My Lyrics</define>
+  <define property="true" evaluateNow="true">#AUDIO8.hyperlink:90478</define>
+  <define property="true" evaluateNow="true">#AUDIO8.parameter:</define>
+  <define property="true" evaluateNow="true">#AUDIO8.hover:hover_my lyrics.png</define>
+  <define property="true" evaluateNow="true">#AUDIO8.background:Animations\BasicHome\music.jpg</define>
+  <define property="true" evaluateNow="true">#AUDIO8.iconfocus:tb_music.png</define>
+  <define property="true" evaluateNow="true">#AUDIO8.iconnofocus:tb_musicNF.png</define>
+  <define property="true" evaluateNow="true">#AUDIO8.active:#(iif(or(eq(#AUDIO8.plugin,''),plugin.isenabled(#AUDIO8.plugin)),' ',''))</define>
+  <define property="true" evaluateNow="true">#AUDIO8:#(string.format('{0}{1}',#AUDIO8.name,iif(eq(#AUDIO8.active,' '),'',#PLUGERROR)))</define>
+
+  <define property="true" evaluateNow="true">#AUDIO9.name:MusicInfoHandler</define>
+  <define property="true" evaluateNow="true">#AUDIO9.plugin:MusicInfoHandler GUI</define>
+  <define property="true" evaluateNow="true">#AUDIO9.hyperlink:1599</define>
+  <define property="true" evaluateNow="true">#AUDIO9.parameter:</define>
+  <define property="true" evaluateNow="true">#AUDIO9.hover:hover_my music.png</define>
+  <define property="true" evaluateNow="true">#AUDIO9.background:Animations\BasicHome\music.jpg</define>
+  <define property="true" evaluateNow="true">#AUDIO9.iconfocus:tb_music.png</define>
+  <define property="true" evaluateNow="true">#AUDIO9.iconnofocus:tb_musicNF.png</define>
+  <define property="true" evaluateNow="true">#AUDIO9.active:#(iif(or(eq(#AUDIO9.plugin,''),plugin.isenabled(#AUDIO9.plugin)),' ',''))</define>
+  <define property="true" evaluateNow="true">#AUDIO9:#(string.format('{0}{1}',#AUDIO9.name,iif(eq(#AUDIO9.active,' '),'',#PLUGERROR)))</define>
+
+  <define property="true" evaluateNow="true">#AUDIO10.name:Rockstar</define>
+  <define property="true" evaluateNow="true">#AUDIO10.plugin:Rockstar</define>
+  <define property="true" evaluateNow="true">#AUDIO10.hyperlink:47286</define>
+  <define property="true" evaluateNow="true">#AUDIO10.parameter:</define>
+  <define property="true" evaluateNow="true">#AUDIO10.hover:musicvideos-background.jpg</define>
+  <define property="true" evaluateNow="true">#AUDIO10.background:Animations\BasicHome\music.jpg</define>
+  <define property="true" evaluateNow="true">#AUDIO10.iconfocus:tb_music.png</define>
+  <define property="true" evaluateNow="true">#AUDIO10.iconnofocus:tb_musicNF.png</define>
+  <define property="true" evaluateNow="true">#AUDIO10.active:#(iif(or(eq(#AUDIO10.plugin,''),plugin.isenabled(#AUDIO10.plugin)),' ',''))</define>
+  <define property="true" evaluateNow="true">#AUDIO10:#(string.format('{0}{1}',#AUDIO10.name,iif(eq(#AUDIO10.active,' '),'',#PLUGERROR)))</define>
+
+  <define property="true" evaluateNow="true">#AUDIO11.name:YouTube.FM</define>
+  <define property="true" evaluateNow="true">#AUDIO11.plugin:YouTubeFM</define>
+  <define property="true" evaluateNow="true">#AUDIO11.hyperlink:29052</define>
+  <define property="true" evaluateNow="true">#AUDIO11.parameter:</define>
+  <define property="true" evaluateNow="true">#AUDIO11.hover:youtubefm_logo.png</define>
+  <define property="true" evaluateNow="true">#AUDIO11.background:Animations\BasicHome\music.jpg</define>
+  <define property="true" evaluateNow="true">#AUDIO11.iconfocus:tb_music.png</define>
+  <define property="true" evaluateNow="true">#AUDIO11.iconnofocus:tb_musicNF.png</define>
+  <define property="true" evaluateNow="true">#AUDIO11.active:#(iif(or(eq(#AUDIO11.plugin,''),plugin.isenabled(#AUDIO11.plugin)),' ',''))</define>
+  <define property="true" evaluateNow="true">#AUDIO11:#(string.format('{0}{1}',#AUDIO11.name,iif(eq(#AUDIO11.active,' '),'',#PLUGERROR)))</define>
+
+  <!--     *******************************************************************************************  -->
+  <!--     **************************************   PICTURES ITEMS   *********************************  -->
+  <!--     *******************************************************************************************  -->
+
+  <define property="true" evaluateNow="true">#PICTURE1.name:#(L(1))</define>
+  <define property="true" evaluateNow="true">#PICTURE1.plugin:Pictures</define>
+  <define property="true" evaluateNow="true">#PICTURE1.hyperlink:2</define>
+  <define property="true" evaluateNow="true">#PICTURE1.parameter:</define>
+  <define property="true" evaluateNow="true">#PICTURE1.hover:hover_my pictures.png</define>
+  <define property="true" evaluateNow="true">#PICTURE1.background:Animations\BasicHome\pictures.jpg</define>
+  <define property="true" evaluateNow="true">#PICTURE1.iconfocus:tb_picture.png</define>
+  <define property="true" evaluateNow="true">#PICTURE1.iconnofocus:tb_pictureNF.png</define>
+  <define property="true" evaluateNow="true">#PICTURE1.active:#(iif(or(eq(#PICTURE1.plugin,''),plugin.isenabled(#PICTURE1.plugin)),' ',''))</define>
+  <define property="true" evaluateNow="true">#PICTURE1:#(string.format('{0}{1}',#PICTURE1.name,iif(eq(#PICTURE1.active,' '),'',#PLUGERROR)))</define>
+  <define property="true" evaluateNow="true">#PICTURE1.latestmedia:91919971</define>
+
+  <define property="true" evaluateNow="true">#PICTURE2.name:Slideshow</define>
+  <define property="true" evaluateNow="true">#PICTURE2.plugin:MPPhotoSlideshow</define>
+  <define property="true" evaluateNow="true">#PICTURE2.hyperlink:58963</define>
+  <define property="true" evaluateNow="true">#PICTURE2.parameter:</define>
+  <define property="true" evaluateNow="true">#PICTURE2.hover:hover_mpphoto slideshow.png</define>
+  <define property="true" evaluateNow="true">#PICTURE2.background:Animations\BasicHome\pictures.jpg</define>
+  <define property="true" evaluateNow="true">#PICTURE2.iconfocus:tb_picture.png</define>
+  <define property="true" evaluateNow="true">#PICTURE2.iconnofocus:tb_pictureNF.png</define>
+  <define property="true" evaluateNow="true">#PICTURE2.active:#(iif(or(eq(#PICTURE2.plugin,''),plugin.isenabled(#PICTURE2.plugin)),' ',''))</define>
+  <define property="true" evaluateNow="true">#PICTURE2:#(string.format('{0}{1}',#PICTURE2.name,iif(eq(#PICTURE2.active,' '),'',#PLUGERROR)))</define>
+  <define property="true" evaluateNow="true">#PICTURE2.latestmedia:91919971</define>
+
+  <!--     *******************************************************************************************  -->
+  <!--     **************************************   WEATHER ITEMS   **********************************  -->
+  <!--     *******************************************************************************************  -->
+
+  <define property="true" evaluateNow="true">#WEATHER1.name:#(L(8))</define>
+  <define property="true" evaluateNow="true">#WEATHER1.plugin:World Weather</define>
+  <define property="true" evaluateNow="true">#WEATHER1.hyperlink:7977</define>
+  <define property="true" evaluateNow="true">#WEATHER1.parameter:</define>
+  <define property="true" evaluateNow="true">#WEATHER1.hover:hover_my Weather.png</define>
+  <define property="true" evaluateNow="true">#WEATHER1.background:Animations\BasicHome\weather.jpg</define>
+  <define property="true" evaluateNow="true">#WEATHER1.iconfocus:tb_weather.png</define>
+  <define property="true" evaluateNow="true">#WEATHER1.iconnofocus:tb_weatherNF.png</define>
+  <define property="true" evaluateNow="true">#WEATHER1.active:#(iif(or(eq(#WEATHER1.plugin,''),plugin.isenabled(#WEATHER1.plugin)),' ',''))</define>
+  <define property="true" evaluateNow="true">#WEATHER1:#(string.format('{0}{1}',#WEATHER1.name,iif(eq(#WEATHER1.active,' '),'',#PLUGERROR)))</define>
+
+  <define property="true" evaluateNow="true">#WEATHER2.name:#(L(8)) Lite</define>
+  <define property="true" evaluateNow="true">#WEATHER2.plugin:World Weather Lite</define>
+  <define property="true" evaluateNow="true">#WEATHER2.hyperlink:79770</define>
+  <define property="true" evaluateNow="true">#WEATHER2.parameter:</define>
+  <define property="true" evaluateNow="true">#WEATHER2.hover:hover_my Weather.png</define>
+  <define property="true" evaluateNow="true">#WEATHER2.background:Animations\BasicHome\weather.jpg</define>
+  <define property="true" evaluateNow="true">#WEATHER2.iconfocus:tb_weather.png</define>
+  <define property="true" evaluateNow="true">#WEATHER2.iconnofocus:tb_weatherNF.png</define>
+  <define property="true" evaluateNow="true">#WEATHER2.active:#(iif(or(eq(#WEATHER2.plugin,''),plugin.isenabled(#WEATHER2.plugin)),' ',''))</define>
+  <define property="true" evaluateNow="true">#WEATHER2:#(string.format('{0}{1}',#WEATHER2.name,iif(eq(#WEATHER2.active,' '),'',#PLUGERROR)))</define>
+
+  <!--     *******************************************************************************************  -->
+  <!--     **************************************    INTERNET ITEMS   ********************************  -->
+  <!--     *******************************************************************************************  -->
+
+  <define property="true" evaluateNow="true">#INTERNET1.name:Wikipedia</define>
+  <define property="true" evaluateNow="true">#INTERNET1.plugin:Wikipedia</define>
+  <define property="true" evaluateNow="true">#INTERNET1.hyperlink:4711</define>
+  <define property="true" evaluateNow="true">#INTERNET1.parameter:</define>
+  <define property="true" evaluateNow="true">#INTERNET1.hover:hover_wikipedia.png</define>
+  <define property="true" evaluateNow="true">#INTERNET1.background:Animations\BasicHome\internet.jpg</define>
+  <define property="true" evaluateNow="true">#INTERNET1.iconfocus:tb_internet.png</define>
+  <define property="true" evaluateNow="true">#INTERNET1.iconnofocus:tb_internetNF.png</define>
+  <define property="true" evaluateNow="true">#INTERNET1.active:#(iif(or(eq(#INTERNET1.plugin,''),plugin.isenabled(#INTERNET1.plugin)),' ',''))</define>
+  <define property="true" evaluateNow="true">#INTERNET1:#(string.format('{0}{1}',#INTERNET1.name,iif(eq(#INTERNET1.active,' '),'',#PLUGERROR)))</define>
+
+  <define property="true" evaluateNow="true">#INTERNET2.name:BrowseTheWeb</define>
+  <define property="true" evaluateNow="true">#INTERNET2.plugin:BrowseTheWeb</define>
+  <define property="true" evaluateNow="true">#INTERNET2.hyperlink:54537689</define>
+  <define property="true" evaluateNow="true">#INTERNET2.parameter:</define>
+  <define property="true" evaluateNow="true">#INTERNET2.hover:hover_webbrowser.png</define>
+  <define property="true" evaluateNow="true">#INTERNET2.background:Animations\BasicHome\internet.jpg</define>
+  <define property="true" evaluateNow="true">#INTERNET2.iconfocus:tb_internet.png</define>
+  <define property="true" evaluateNow="true">#INTERNET2.iconnofocus:tb_internetNF.png</define>
+  <define property="true" evaluateNow="true">#INTERNET2.active:#(iif(or(eq(#INTERNET2.plugin,''),plugin.isenabled(#INTERNET2.plugin)),' ',''))</define>
+  <define property="true" evaluateNow="true">#INTERNET2:#(string.format('{0}{1}',#INTERNET2.name,iif(eq(#INTERNET2.active,' '),'',#PLUGERROR)))</define>
+
+  <define property="true" evaluateNow="true">#INTERNET3.name:RSS</define>
+  <define property="true" evaluateNow="true">#INTERNET3.plugin:InfoService</define>
+  <define property="true" evaluateNow="true">#INTERNET3.hyperlink:16001</define>
+  <define property="true" evaluateNow="true">#INTERNET3.parameter:</define>
+  <define property="true" evaluateNow="true">#INTERNET3.hover:hover_my news.png</define>
+  <define property="true" evaluateNow="true">#INTERNET3.background:Animations\BasicHome\internet.jpg</define>
+  <define property="true" evaluateNow="true">#INTERNET3.iconfocus:tb_internet.png</define>
+  <define property="true" evaluateNow="true">#INTERNET3.iconnofocus:tb_internetNF.png</define>
+  <define property="true" evaluateNow="true">#INTERNET3.active:#(iif(or(eq(#INTERNET3.plugin,''),plugin.isenabled(#INTERNET3.plugin)),' ',''))</define>
+  <define property="true" evaluateNow="true">#INTERNET3:#(string.format('{0}{1}',#INTERNET3.name,iif(eq(#INTERNET3.active,' '),'',#PLUGERROR)))</define>
+
+  <define property="true" evaluateNow="true">#INTERNET4.name:Score Center</define>
+  <define property="true" evaluateNow="true">#INTERNET4.plugin:My Score Center</define>
+  <define property="true" evaluateNow="true">#INTERNET4.hyperlink:42000</define>
+  <define property="true" evaluateNow="true">#INTERNET4.parameter:</define>
+  <define property="true" evaluateNow="true">#INTERNET4.hover:hover_Score Center.png</define>
+  <define property="true" evaluateNow="true">#INTERNET4.background:Animations\BasicHome\internet.jpg</define>
+  <define property="true" evaluateNow="true">#INTERNET4.iconfocus:tb_internet.png</define>
+  <define property="true" evaluateNow="true">#INTERNET4.iconnofocus:tb_internetNF.png</define>
+  <define property="true" evaluateNow="true">#INTERNET4.active:#(iif(or(eq(#INTERNET4.plugin,''),plugin.isenabled(#INTERNET4.plugin)),' ',''))</define>
+  <define property="true" evaluateNow="true">#INTERNET4:#(string.format('{0}{1}',#INTERNET4.name,iif(eq(#INTERNET4.active,' '),'',#PLUGERROR)))</define>
+
+  <define property="true" evaluateNow="true">#INTERNET5.name:Stocks</define>
+  <define property="true" evaluateNow="true">#INTERNET5.plugin:Stocks</define>
+  <define property="true" evaluateNow="true">#INTERNET5.hyperlink:7973</define>
+  <define property="true" evaluateNow="true">#INTERNET5.parameter:</define>
+  <define property="true" evaluateNow="true">#INTERNET5.hover:hover_stocks.png</define>
+  <define property="true" evaluateNow="true">#INTERNET5.background:Animations\BasicHome\internet.jpg</define>
+  <define property="true" evaluateNow="true">#INTERNET5.iconfocus:tb_internet.png</define>
+  <define property="true" evaluateNow="true">#INTERNET5.iconnofocus:tb_internetNF.png</define>
+  <define property="true" evaluateNow="true">#INTERNET5.active:#(iif(or(eq(#INTERNET5.plugin,''),plugin.isenabled(#INTERNET5.plugin)),' ',''))</define>
+  <define property="true" evaluateNow="true">#INTERNET5:#(string.format('{0}{1}',#INTERNET5.name,iif(eq(#INTERNET5.active,' '),'',#PLUGERROR)))</define>
+
+  <define property="true" evaluateNow="true">#INTERNET6.name:MailTip</define>
+  <define property="true" evaluateNow="true">#INTERNET6.plugin:MailTip</define>
+  <define property="true" evaluateNow="true">#INTERNET6.hyperlink:7970</define>
+  <define property="true" evaluateNow="true">#INTERNET6.parameter:</define>
+  <define property="true" evaluateNow="true">#INTERNET6.hover:hover_mailtip.png</define>
+  <define property="true" evaluateNow="true">#INTERNET6.background:Animations\BasicHome\internet.jpg</define>
+  <define property="true" evaluateNow="true">#INTERNET6.iconfocus:tb_internet.png</define>
+  <define property="true" evaluateNow="true">#INTERNET6.iconnofocus:tb_internetNF.png</define>
+  <define property="true" evaluateNow="true">#INTERNET6.active:#(iif(or(eq(#INTERNET6.plugin,''),plugin.isenabled(#INTERNET6.plugin)),' ',''))</define>
+  <define property="true" evaluateNow="true">#INTERNET6:#(string.format('{0}{1}',#INTERNET6.name,iif(eq(#INTERNET6.active,' '),'',#PLUGERROR)))</define>
+
+  <define property="true" evaluateNow="true">#INTERNET7.name:Worldmap</define>
+  <define property="true" evaluateNow="true">#INTERNET7.plugin:MyWorldmap</define>
+  <define property="true" evaluateNow="true">#INTERNET7.hyperlink:10234</define>
+  <define property="true" evaluateNow="true">#INTERNET7.parameter:</define>
+  <define property="true" evaluateNow="true">#INTERNET7.hover:hover_worldmap.png</define>
+  <define property="true" evaluateNow="true">#INTERNET7.background:Animations\BasicHome\internet.jpg</define>
+  <define property="true" evaluateNow="true">#INTERNET7.iconfocus:tb_internet.png</define>
+  <define property="true" evaluateNow="true">#INTERNET7.iconnofocus:tb_internetNF.png</define>
+  <define property="true" evaluateNow="true">#INTERNET7.active:#(iif(or(eq(#INTERNET7.plugin,''),plugin.isenabled(#INTERNET7.plugin)),' ',''))</define>
+  <define property="true" evaluateNow="true">#INTERNET7:#(string.format('{0}{1}',#INTERNET7.name,iif(eq(#INTERNET7.active,' '),'',#PLUGERROR)))</define>
+
+  <define property="true" evaluateNow="true">#INTERNET8.name:APOD</define>
+  <define property="true" evaluateNow="true">#INTERNET8.plugin:APOD</define>
+  <define property="true" evaluateNow="true">#INTERNET8.hyperlink:3355</define>
+  <define property="true" evaluateNow="true">#INTERNET8.parameter:</define>
+  <define property="true" evaluateNow="true">#INTERNET8.hover:hover_apod.png</define>
+  <define property="true" evaluateNow="true">#INTERNET8.background:Animations\BasicHome\internet.jpg</define>
+  <define property="true" evaluateNow="true">#INTERNET8.iconfocus:tb_internet.png</define>
+  <define property="true" evaluateNow="true">#INTERNET8.iconnofocus:tb_internetNF.png</define>
+  <define property="true" evaluateNow="true">#INTERNET8.active:#(iif(or(eq(#INTERNET8.plugin,''),plugin.isenabled(#INTERNET8.plugin)),' ',''))</define>
+  <define property="true" evaluateNow="true">#INTERNET8:#(string.format('{0}{1}',#INTERNET8.name,iif(eq(#INTERNET8.active,' '),'',#PLUGERROR)))</define>
+
+  <define property="true" evaluateNow="true">#INTERNET9.name:Daily Comics</define>
+  <define property="true" evaluateNow="true">#INTERNET9.plugin:My Daily Comics</define>
+  <define property="true" evaluateNow="true">#INTERNET9.hyperlink:7676</define>
+  <define property="true" evaluateNow="true">#INTERNET9.parameter:</define>
+  <define property="true" evaluateNow="true">#INTERNET9.hover:hover_my daily comics.png</define>
+  <define property="true" evaluateNow="true">#INTERNET9.background:Animations\BasicHome\internet.jpg</define>
+  <define property="true" evaluateNow="true">#INTERNET9.iconfocus:tb_internet.png</define>
+  <define property="true" evaluateNow="true">#INTERNET9.iconnofocus:tb_internetNF.png</define>
+  <define property="true" evaluateNow="true">#INTERNET9.active:#(iif(or(eq(#INTERNET9.plugin,''),plugin.isenabled(#INTERNET9.plugin)),' ',''))</define>
+  <define property="true" evaluateNow="true">#INTERNET9:#(string.format('{0}{1}',#INTERNET9.name,iif(eq(#INTERNET9.active,' '),'',#PLUGERROR)))</define>
+
+  <define property="true" evaluateNow="true">#INTERNET10.name:Google Calendar</define>
+  <define property="true" evaluateNow="true">#INTERNET10.plugin:Google Calendar</define>
+  <define property="true" evaluateNow="true">#INTERNET10.hyperlink:80000</define>
+  <define property="true" evaluateNow="true">#INTERNET10.parameter:</define>
+  <define property="true" evaluateNow="true">#INTERNET10.hover:hover_C3.MediaPortal.GoogleCalendar.png</define>
+  <define property="true" evaluateNow="true">#INTERNET10.background:Animations\BasicHome\internet.jpg</define>
+  <define property="true" evaluateNow="true">#INTERNET10.iconfocus:tb_internet.png</define>
+  <define property="true" evaluateNow="true">#INTERNET10.iconnofocus:tb_internetNF.png</define>
+  <define property="true" evaluateNow="true">#INTERNET10.active:#(iif(or(eq(#INTERNET10.plugin,''),plugin.isenabled(#INTERNET10.plugin)),' ',''))</define>
+  <define property="true" evaluateNow="true">#INTERNET10:#(string.format('{0}{1}',#INTERNET10.name,iif(eq(#INTERNET10.active,' '),'',#PLUGERROR)))</define>
+
+  <define property="true" evaluateNow="true">#INTERNET11.name:Webbrowser</define>
+  <define property="true" evaluateNow="true">#INTERNET11.plugin:Webbrowser</define>
+  <define property="true" evaluateNow="true">#INTERNET11.hyperlink:16002</define>
+  <define property="true" evaluateNow="true">#INTERNET11.parameter:</define>
+  <define property="true" evaluateNow="true">#INTERNET11.hover:hover_webbrowser.png</define>
+  <define property="true" evaluateNow="true">#INTERNET11.background:Animations\BasicHome\internet.jpg</define>
+  <define property="true" evaluateNow="true">#INTERNET11.iconfocus:tb_internet.png</define>
+  <define property="true" evaluateNow="true">#INTERNET11.iconnofocus:tb_internetNF.png</define>
+  <define property="true" evaluateNow="true">#INTERNET11.active:#(iif(or(eq(#INTERNET11.plugin,''),plugin.isenabled(#INTERNET11.plugin)),' ',''))</define>
+  <define property="true" evaluateNow="true">#INTERNET11:#(string.format('{0}{1}',#INTERNET11.name,iif(eq(#INTERNET11.active,' '),'',#PLUGERROR)))</define>
+
+  <define property="true" evaluateNow="true">#INTERNET12.name:mpNZB</define>
+  <define property="true" evaluateNow="true">#INTERNET12.plugin:mpNZB</define>
+  <define property="true" evaluateNow="true">#INTERNET12.hyperlink:3847</define>
+  <define property="true" evaluateNow="true">#INTERNET12.parameter:</define>
+  <define property="true" evaluateNow="true">#INTERNET12.hover:hover_mpNZB.png</define>
+  <define property="true" evaluateNow="true">#INTERNET12.background:Animations\BasicHome\internet.jpg</define>
+  <define property="true" evaluateNow="true">#INTERNET12.iconfocus:tb_internet.png</define>
+  <define property="true" evaluateNow="true">#INTERNET12.iconnofocus:tb_internetNF.png</define>
+  <define property="true" evaluateNow="true">#INTERNET12.active:#(iif(or(eq(#INTERNET12.plugin,''),plugin.isenabled(#INTERNET12.plugin)),' ',''))</define>
+  <define property="true" evaluateNow="true">#INTERNET12:#(string.format('{0}{1}',#INTERNET12.name,iif(eq(#INTERNET12.active,' '),'',#PLUGERROR)))</define>
+
+  <define property="true" evaluateNow="true">#INTERNET13.name:Skype4MP</define>
+  <define property="true" evaluateNow="true">#INTERNET13.plugin:Skype4MP</define>
+  <define property="true" evaluateNow="true">#INTERNET13.hyperlink:1911</define>
+  <define property="true" evaluateNow="true">#INTERNET13.parameter:</define>
+  <define property="true" evaluateNow="true">#INTERNET13.hover:hover_skype4mp.png</define>
+  <define property="true" evaluateNow="true">#INTERNET13.background:Animations\BasicHome\internet.jpg</define>
+  <define property="true" evaluateNow="true">#INTERNET13.iconfocus:tb_internet.png</define>
+  <define property="true" evaluateNow="true">#INTERNET13.iconnofocus:tb_internetNF.png</define>
+  <define property="true" evaluateNow="true">#INTERNET13.active:#(iif(or(eq(#INTERNET13.plugin,''),plugin.isenabled(#INTERNET13.plugin)),' ',''))</define>
+  <define property="true" evaluateNow="true">#INTERNET13:#(string.format('{0}{1}',#INTERNET13.name,iif(eq(#INTERNET13.active,' '),'',#PLUGERROR)))</define>
+  
+  <define property="true" evaluateNow="true">#INTERNET14.name:Bing Image</define>
+  <define property="true" evaluateNow="true">#INTERNET14.plugin:Bing Image</define>
+  <define property="true" evaluateNow="true">#INTERNET14.hyperlink:7974</define>
+  <define property="true" evaluateNow="true">#INTERNET14.parameter:</define>
+  <define property="true" evaluateNow="true">#INTERNET14.hover:hover_bingimage.png</define>
+  <define property="true" evaluateNow="true">#INTERNET14.background:Animations\BasicHome\internet.jpg</define>
+  <define property="true" evaluateNow="true">#INTERNET14.iconfocus:tb_internet.png</define>
+  <define property="true" evaluateNow="true">#INTERNET14.iconnofocus:tb_internetNF.png</define>
+  <define property="true" evaluateNow="true">#INTERNET14.active:#(iif(or(eq(#INTERNET14.plugin,''),plugin.isenabled(#INTERNET14.plugin)),' ',''))</define>
+  <define property="true" evaluateNow="true">#INTERNET14:#(string.format('{0}{1}',#INTERNET14.name,iif(eq(#INTERNET14.active,' '),'',#PLUGERROR)))</define>
+  
+  <define property="true" evaluateNow="true">#INTERNET15.name:World News</define>
+  <define property="true" evaluateNow="true">#INTERNET15.plugin:World News</define>
+  <define property="true" evaluateNow="true">#INTERNET15.hyperlink:7979</define>
+  <define property="true" evaluateNow="true">#INTERNET15.parameter:</define>
+  <define property="true" evaluateNow="true">#INTERNET15.hover:hover_worldnews.png</define>
+  <define property="true" evaluateNow="true">#INTERNET15.background:Animations\BasicHome\internet.jpg</define>
+  <define property="true" evaluateNow="true">#INTERNET15.iconfocus:tb_internet.png</define>
+  <define property="true" evaluateNow="true">#INTERNET15.iconnofocus:tb_internetNF.png</define>
+  <define property="true" evaluateNow="true">#INTERNET15.active:#(iif(or(eq(#INTERNET15.plugin,''),plugin.isenabled(#INTERNET15.plugin)),' ',''))</define>
+  <define property="true" evaluateNow="true">#INTERNET15:#(string.format('{0}{1}',#INTERNET15.name,iif(eq(#INTERNET15.active,' '),'',#PLUGERROR)))</define>
+  
+  <define property="true" evaluateNow="true">#INTERNET16.name:Steam</define>
+  <define property="true" evaluateNow="true">#INTERNET16.plugin:MPsteam</define>
+  <define property="true" evaluateNow="true">#INTERNET16.hyperlink:8465</define>
+  <define property="true" evaluateNow="true">#INTERNET16.parameter:</define>
+  <define property="true" evaluateNow="true">#INTERNET16.hover:hover_MPsteam.png</define>
+  <define property="true" evaluateNow="true">#INTERNET16.background:Animations\BasicHome\internet.jpg</define>
+  <define property="true" evaluateNow="true">#INTERNET16.iconfocus:tb_internet.png</define>
+  <define property="true" evaluateNow="true">#INTERNET16.iconnofocus:tb_internetNF.png</define>
+  <define property="true" evaluateNow="true">#INTERNET16.active:#(iif(or(eq(#INTERNET16.plugin,''),plugin.isenabled(#INTERNET16.plugin)),' ',''))</define>
+  <define property="true" evaluateNow="true">#INTERNET16:#(string.format('{0}{1}',#INTERNET16.name,iif(eq(#INTERNET16.active,' '),'',#PLUGERROR)))</define>
+  
+  <define property="true" evaluateNow="true">#INTERNET17.name:World Places</define>
+  <define property="true" evaluateNow="true">#INTERNET17.plugin:World Places</define>
+  <define property="true" evaluateNow="true">#INTERNET17.hyperlink:7981</define>
+  <define property="true" evaluateNow="true">#INTERNET17.parameter:</define>
+  <define property="true" evaluateNow="true">#INTERNET17.hover:hover_worldplaces.png</define>
+  <define property="true" evaluateNow="true">#INTERNET17.background:Animations\BasicHome\internet.jpg</define>
+  <define property="true" evaluateNow="true">#INTERNET17.iconfocus:tb_internet.png</define>
+  <define property="true" evaluateNow="true">#INTERNET17.iconnofocus:tb_internetNF.png</define>
+  <define property="true" evaluateNow="true">#INTERNET17.active:#(iif(or(eq(#INTERNET17.plugin,''),plugin.isenabled(#INTERNET17.plugin)),' ',''))</define>
+  <define property="true" evaluateNow="true">#INTERNET17:#(string.format('{0}{1}',#INTERNET17.name,iif(eq(#INTERNET17.active,' '),'',#PLUGERROR)))</define>
+  
+  <!--     *******************************************************************************************  -->
+  <!--     **************************************    HOME ITEMS   ************************************  -->
+  <!--     *******************************************************************************************  -->
+
+  <define property="true" evaluateNow="true">#HOME1.name:#(L(974))</define>
+  <define property="true" evaluateNow="true">#HOME1.plugin:Home</define>
+  <define property="true" evaluateNow="true">#HOME1.hyperlink:0</define>
+  <define property="true" evaluateNow="true">#HOME1.parameter:</define>
+  <define property="true" evaluateNow="true">#HOME1.hover:hover_my plugins.png</define>
+  <define property="true" evaluateNow="true">#HOME1.background:Animations\BasicHome\plugins.jpg</define>
+  <define property="true" evaluateNow="true">#HOME1.iconfocus:tb_menu.png</define>
+  <define property="true" evaluateNow="true">#HOME1.iconnofocus:tb_menuNF.png</define>
+  <define property="true" evaluateNow="true">#HOME1.active:#(iif(or(eq(#HOME1.plugin,''),plugin.isenabled(#HOME1.plugin)),' ',''))</define>
+  <define property="true" evaluateNow="true">#HOME1:#(string.format('{0}{1}',#HOME1.name,iif(eq(#HOME1.active,' '),'',#PLUGERROR)))</define>
+
+  <define property="true" evaluateNow="true">#HOME2.name:#(L(14001))</define>
+  <define property="true" evaluateNow="true">#HOME2.plugin:Extensions</define>
+  <define property="true" evaluateNow="true">#HOME2.hyperlink:801</define>
+  <define property="true" evaluateNow="true">#HOME2.parameter:</define>
+  <define property="true" evaluateNow="true">#HOME2.hover:hover_extensions.png</define>
+  <define property="true" evaluateNow="true">#HOME2.background:Animations\BasicHome\plugins.jpg</define>
+  <define property="true" evaluateNow="true">#HOME2.iconfocus:tb_menu.png</define>
+  <define property="true" evaluateNow="true">#HOME2.iconnofocus:tb_menuNF.png</define>
+  <define property="true" evaluateNow="true">#HOME2.active:#(iif(or(eq(#HOME2.plugin,''),plugin.isenabled(#HOME2.plugin)),' ',''))</define>
+  <define property="true" evaluateNow="true">#HOME2:#(string.format('{0}{1}',#HOME2.name,iif(eq(#HOME2.active,' '),'',#PLUGERROR)))</define>
+
+  <define property="true" evaluateNow="true">#HOME3.name:#(L(7))</define>
+  <define property="true" evaluateNow="true">#HOME3.plugin:FileExplorer</define>
+  <define property="true" evaluateNow="true">#HOME3.hyperlink:557311</define>
+  <define property="true" evaluateNow="true">#HOME3.parameter:</define>
+  <define property="true" evaluateNow="true">#HOME3.hover:hover_my explorer.png</define>
+  <define property="true" evaluateNow="true">#HOME3.background:Animations\BasicHome\plugins.jpg</define>
+  <define property="true" evaluateNow="true">#HOME3.iconfocus:tb_menu.png</define>
+  <define property="true" evaluateNow="true">#HOME3.iconnofocus:tb_menuNF.png</define>
+  <define property="true" evaluateNow="true">#HOME3.active:#(iif(or(eq(#HOME3.plugin,''),plugin.isenabled(#HOME3.plugin)),' ',''))</define>
+  <define property="true" evaluateNow="true">#HOME3:#(string.format('{0}{1}',#HOME3.name,iif(eq(#HOME3.active,' '),'',#PLUGERROR)))</define>
+
+  <define property="true" evaluateNow="true">#HOME4.name:SleepControl</define>
+  <define property="true" evaluateNow="true">#HOME4.plugin:Sleep Control</define>
+  <define property="true" evaluateNow="true">#HOME4.hyperlink:7969</define>
+  <define property="true" evaluateNow="true">#HOME4.parameter:</define>
+  <define property="true" evaluateNow="true">#HOME4.hover:hover_sleepcontrol.png</define>
+  <define property="true" evaluateNow="true">#HOME4.background:Animations\BasicHome\plugins.jpg</define>
+  <define property="true" evaluateNow="true">#HOME4.iconfocus:tb_menu.png</define>
+  <define property="true" evaluateNow="true">#HOME4.iconnofocus:tb_menuNF.png</define>
+  <define property="true" evaluateNow="true">#HOME4.active:#(iif(or(eq(#HOME4.plugin,''),plugin.isenabled(#HOME4.plugin)),' ',''))</define>
+  <define property="true" evaluateNow="true">#HOME4:#(string.format('{0}{1}',#HOME4.name,iif(eq(#HOME4.active,' '),'',#PLUGERROR)))</define>
+
+  <define property="true" evaluateNow="true">#HOME5.name:Windows Update</define>
+  <define property="true" evaluateNow="true">#HOME5.plugin:Update Control</define>
+  <define property="true" evaluateNow="true">#HOME5.hyperlink:7984</define>
+  <define property="true" evaluateNow="true">#HOME5.parameter:</define>
+  <define property="true" evaluateNow="true">#HOME5.hover:hover_updatecontrol.png</define>
+  <define property="true" evaluateNow="true">#HOME5.background:Animations\BasicHome\plugins.jpg</define>
+  <define property="true" evaluateNow="true">#HOME5.iconfocus:tb_menu.png</define>
+  <define property="true" evaluateNow="true">#HOME5.iconnofocus:tb_menuNF.png</define>
+  <define property="true" evaluateNow="true">#HOME5.active:#(iif(or(eq(#HOME5.plugin,''),plugin.isenabled(#HOME5.plugin)),' ',''))</define>
+  <define property="true" evaluateNow="true">#HOME5:#(string.format('{0}{1}',#HOME5.name,iif(eq(#HOME5.active,' '),'',#PLUGERROR)))</define>
+
+  <define property="true" evaluateNow="true">#HOME6.name:WorldClock</define>
+  <define property="true" evaluateNow="true">#HOME6.plugin:World Clock</define>
+  <define property="true" evaluateNow="true">#HOME6.hyperlink:7978</define>
+  <define property="true" evaluateNow="true">#HOME6.parameter:</define>
+  <define property="true" evaluateNow="true">#HOME6.hover:hover_worldclock.png</define>
+  <define property="true" evaluateNow="true">#HOME6.background:Animations\BasicHome\plugins.jpg</define>
+  <define property="true" evaluateNow="true">#HOME6.iconfocus:tb_menu.png</define>
+  <define property="true" evaluateNow="true">#HOME6.iconnofocus:tb_menuNF.png</define>
+  <define property="true" evaluateNow="true">#HOME6.active:#(iif(or(eq(#HOME6.plugin,''),plugin.isenabled(#HOME6.plugin)),' ',''))</define>
+  <define property="true" evaluateNow="true">#HOME6:#(string.format('{0}{1}',#HOME6.name,iif(eq(#HOME6.active,' '),'',#PLUGERROR)))</define>
+
+  <define property="true" evaluateNow="true">#HOME7.name:PowerControl</define>
+  <define property="true" evaluateNow="true">#HOME7.plugin:Power Control</define>
+  <define property="true" evaluateNow="true">#HOME7.hyperlink:7983</define>
+  <define property="true" evaluateNow="true">#HOME7.parameter:</define>
+  <define property="true" evaluateNow="true">#HOME7.hover:hover_powercontrol.png</define>
+  <define property="true" evaluateNow="true">#HOME7.background:Animations\BasicHome\plugins.jpg</define>
+  <define property="true" evaluateNow="true">#HOME7.iconfocus:tb_menu.png</define>
+  <define property="true" evaluateNow="true">#HOME7.iconnofocus:tb_menuNF.png</define>
+  <define property="true" evaluateNow="true">#HOME7.active:#(iif(or(eq(#HOME7.plugin,''),plugin.isenabled(#HOME7.plugin)),' ',''))</define>
+  <define property="true" evaluateNow="true">#HOME7:#(string.format('{0}{1}',#HOME7.name,iif(eq(#HOME7.active,' '),'',#PLUGERROR)))</define>
+
+  <define property="true" evaluateNow="true">#HOME8.name:IMDb+</define>
+  <define property="true" evaluateNow="true">#HOME8.plugin:IMDbPlus</define>
+  <define property="true" evaluateNow="true">#HOME8.hyperlink:31415</define>
+  <define property="true" evaluateNow="true">#HOME8.parameter:</define>
+  <define property="true" evaluateNow="true">#HOME8.hover:hover_imdb+.png</define>
+  <define property="true" evaluateNow="true">#HOME8.background:Animations\BasicHome\plugins.jpg</define>
+  <define property="true" evaluateNow="true">#HOME8.iconfocus:tb_menu.png</define>
+  <define property="true" evaluateNow="true">#HOME8.iconnofocus:tb_menuNF.png</define>
+  <define property="true" evaluateNow="true">#HOME8.active:#(iif(or(eq(#HOME8.plugin,''),plugin.isenabled(#HOME8.plugin)),' ',''))</define>
+  <define property="true" evaluateNow="true">#HOME8:#(string.format('{0}{1}',#HOME8.name,iif(eq(#HOME8.active,' '),'',#PLUGERROR)))</define>
+
+  <define property="true" evaluateNow="true">#HOME9.name:Burner</define>
+  <define property="true" evaluateNow="true">#HOME9.plugin:MyBurner</define>
+  <define property="true" evaluateNow="true">#HOME9.hyperlink:76220</define>
+  <define property="true" evaluateNow="true">#HOME9.parameter:</define>
+  <define property="true" evaluateNow="true">#HOME9.hover:hover_my burner.png</define>
+  <define property="true" evaluateNow="true">#HOME9.background:Animations\BasicHome\plugins.jpg</define>
+  <define property="true" evaluateNow="true">#HOME9.iconfocus:tb_menu.png</define>
+  <define property="true" evaluateNow="true">#HOME9.iconnofocus:tb_menuNF.png</define>
+  <define property="true" evaluateNow="true">#HOME9.active:#(iif(or(eq(#HOME9.plugin,''),plugin.isenabled(#HOME9.plugin)),' ',''))</define>
+  <define property="true" evaluateNow="true">#HOME9:#(string.format('{0}{1}',#HOME9.name,iif(eq(#HOME9.active,' '),'',#PLUGERROR)))</define>
+
+  <define property="true" evaluateNow="true">#HOME10.name:HTPC-Info</define>
+  <define property="true" evaluateNow="true">#HOME10.plugin:HTPC Info</define>
+  <define property="true" evaluateNow="true">#HOME10.hyperlink:7972</define>
+  <define property="true" evaluateNow="true">#HOME10.parameter:</define>
+  <define property="true" evaluateNow="true">#HOME10.hover:hover_htpcinfo.png</define>
+  <define property="true" evaluateNow="true">#HOME10.background:Animations\BasicHome\plugins.jpg</define>
+  <define property="true" evaluateNow="true">#HOME10.iconfocus:tb_menu.png</define>
+  <define property="true" evaluateNow="true">#HOME10.iconnofocus:tb_menuNF.png</define>
+  <define property="true" evaluateNow="true">#HOME10.active:#(iif(or(eq(#HOME10.plugin,''),plugin.isenabled(#HOME10.plugin)),' ',''))</define>
+  <define property="true" evaluateNow="true">#HOME10:#(string.format('{0}{1}',#HOME10.name,iif(eq(#HOME10.active,' '),'',#PLUGERROR)))</define>
+
+  <define property="true" evaluateNow="true">#HOME11.name:Media Slayer</define>
+  <define property="true" evaluateNow="true">#HOME11.plugin:Media Slayer</define>
+  <define property="true" evaluateNow="true">#HOME11.hyperlink:8765</define>
+  <define property="true" evaluateNow="true">#HOME11.parameter:</define>
+  <define property="true" evaluateNow="true">#HOME11.hover:hover_mediaslayer.png</define>
+  <define property="true" evaluateNow="true">#HOME11.background:Animations\BasicHome\plugins.jpg</define>
+  <define property="true" evaluateNow="true">#HOME11.iconfocus:tb_menu.png</define>
+  <define property="true" evaluateNow="true">#HOME11.iconnofocus:tb_menuNF.png</define>
+  <define property="true" evaluateNow="true">#HOME11.active:#(iif(or(eq(#HOME11.plugin,''),plugin.isenabled(#HOME11.plugin)),' ',''))</define>
+  <define property="true" evaluateNow="true">#HOME11:#(string.format('{0}{1}',#HOME11.name,iif(eq(#HOME11.active,' '),'',#PLUGERROR)))</define>
+
+  <define property="true" evaluateNow="true">#HOME12.name:FRITZ!Box Manager</define>
+  <define property="true" evaluateNow="true">#HOME12.plugin:FRITZ!Box Manager</define>
+  <define property="true" evaluateNow="true">#HOME12.hyperlink:464554880</define>
+  <define property="true" evaluateNow="true">#HOME12.parameter:</define>
+  <define property="true" evaluateNow="true">#HOME12.hover:hover_FritzBox.png</define>
+  <define property="true" evaluateNow="true">#HOME12.background:Animations\BasicHome\plugins.jpg</define>
+  <define property="true" evaluateNow="true">#HOME12.iconfocus:tb_menu.png</define>
+  <define property="true" evaluateNow="true">#HOME12.iconnofocus:tb_menuNF.png</define>
+  <define property="true" evaluateNow="true">#HOME12.active:#(iif(or(eq(#HOME12.plugin,''),plugin.isenabled(#HOME12.plugin)),' ',''))</define>
+  <define property="true" evaluateNow="true">#HOME12:#(string.format('{0}{1}',#HOME12.name,iif(eq(#HOME12.active,' '),'',#PLUGERROR)))</define>
+
+  <define property="true" evaluateNow="true">#HOME13.name:MediaTip</define>
+  <define property="true" evaluateNow="true">#HOME13.plugin:MediaTip</define>
+  <define property="true" evaluateNow="true">#HOME13.hyperlink:7980</define>
+  <define property="true" evaluateNow="true">#HOME13.parameter:</define>
+  <define property="true" evaluateNow="true">#HOME13.hover:hover_mediatip.png</define>
+  <define property="true" evaluateNow="true">#HOME13.background:Animations\BasicHome\plugins.jpg</define>
+  <define property="true" evaluateNow="true">#HOME13.iconfocus:tb_menu.png</define>
+  <define property="true" evaluateNow="true">#HOME13.iconnofocus:tb_menuNF.png</define>
+  <define property="true" evaluateNow="true">#HOME13.active:#(iif(or(eq(#HOME13.plugin,''),plugin.isenabled(#HOME13.plugin)),' ',''))</define>
+  <define property="true" evaluateNow="true">#HOME13:#(string.format('{0}{1}',#HOME13.name,iif(eq(#HOME13.active,' '),'',#PLUGERROR)))</define>
+  
+  <define property="true" evaluateNow="true">#HOME14.name:#(L(913))</define>
+  <define property="true" evaluateNow="true">#HOME14.plugin:Home</define>
+  <define property="true" evaluateNow="true">#HOME14.hyperlink:34</define>
+  <define property="true" evaluateNow="true">#HOME14.parameter:</define>
+  <define property="true" evaluateNow="true">#HOME14.hover:hover_my plugins.png</define>
+  <define property="true" evaluateNow="true">#HOME14.background:Animations\BasicHome\plugins.jpg</define>
+  <define property="true" evaluateNow="true">#HOME14.iconfocus:tb_menu.png</define>
+  <define property="true" evaluateNow="true">#HOME14.iconnofocus:tb_menuNF.png</define>
+  <define property="true" evaluateNow="true">#HOME14.active:#(iif(or(eq(#HOME14.plugin,''),plugin.isenabled(#HOME14.plugin)),' ',''))</define>
+  <define property="true" evaluateNow="true">#HOME14:#(string.format('{0}{1}',#HOME14.name,iif(eq(#HOME14.active,' '),'',#PLUGERROR)))</define>
+  
+  <define property="true" evaluateNow="true">#HOME15.name:#(L(51))</define>
+  <define property="true" evaluateNow="true">#HOME15.plugin:Home</define>
+  <define property="true" evaluateNow="true">#HOME15.hyperlink:3001</define>
+  <define property="true" evaluateNow="true">#HOME15.parameter:</define>
+  <define property="true" evaluateNow="true">#HOME15.hover:hover_play disc.png</define>
+  <define property="true" evaluateNow="true">#HOME15.background:Animations\BasicHome\plugins.jpg</define>
+  <define property="true" evaluateNow="true">#HOME15.iconfocus:tb_menu.png</define>
+  <define property="true" evaluateNow="true">#HOME15.iconnofocus:tb_menuNF.png</define>
+  <define property="true" evaluateNow="true">#HOME15.active:#(iif(or(eq(#HOME15.plugin,''),plugin.isenabled(#HOME15.plugin)),' ',''))</define>
+  <define property="true" evaluateNow="true">#HOME15:#(string.format('{0}{1}',#HOME15.name,iif(eq(#HOME15.active,' '),'',#PLUGERROR)))</define>
+  
+  <define property="true" evaluateNow="true">#HOME16.name:MultiShortcut</define>
+  <define property="true" evaluateNow="true">#HOME16.plugin:MultiShortcut</define>
+  <define property="true" evaluateNow="true">#HOME16.hyperlink:8696</define>
+  <define property="true" evaluateNow="true">#HOME16.parameter:</define>
+  <define property="true" evaluateNow="true">#HOME16.hover:hover_my plugins.png</define>
+  <define property="true" evaluateNow="true">#HOME16.background:Animations\BasicHome\plugins.jpg</define>
+  <define property="true" evaluateNow="true">#HOME16.iconfocus:tb_menu.png</define>
+  <define property="true" evaluateNow="true">#HOME16.iconnofocus:tb_menuNF.png</define>
+  <define property="true" evaluateNow="true">#HOME16.active:#(iif(or(eq(#HOME16.plugin,''),plugin.isenabled(#HOME16.plugin)),' ',''))</define>
+  <define property="true" evaluateNow="true">#HOME16:#(string.format('{0}{1}',#HOME16.name,iif(eq(#HOME16.active,' '),'',#PLUGERROR)))</define>
+
+
+  <!--     *******************************************************************************************  -->
+  <!--     **************************************    GAME ITEMS   ************************************  -->
+  <!--     *******************************************************************************************  -->
+
+  <define property="true" evaluateNow="true">#GAME1.name:#(L(19001))</define>
+  <define property="true" evaluateNow="true">#GAME1.plugin:Tetris</define>
+  <define property="true" evaluateNow="true">#GAME1.hyperlink:7776</define>
+  <define property="true" evaluateNow="true">#GAME1.parameter:</define>
+  <define property="true" evaluateNow="true">#GAME1.hover:hover_tetris.png</define>
+  <define property="true" evaluateNow="true">#GAME1.background:Animations\BasicHome\games.jpg</define>
+  <define property="true" evaluateNow="true">#GAME1.iconfocus:tb_games.png</define>
+  <define property="true" evaluateNow="true">#GAME1.iconnofocus:tb_gamesNF.png</define>
+  <define property="true" evaluateNow="true">#GAME1.active:#(iif(or(eq(#GAME1.plugin,''),plugin.isenabled(#GAME1.plugin)),' ',''))</define>
+  <define property="true" evaluateNow="true">#GAME1:#(string.format('{0}{1}',#GAME1.name,iif(eq(#GAME1.active,' '),'',#PLUGERROR)))</define>
+
+  <define property="true" evaluateNow="true">#GAME2.name:#(L(19101))</define>
+  <define property="true" evaluateNow="true">#GAME2.plugin:Sudoku</define>
+  <define property="true" evaluateNow="true">#GAME2.hyperlink:7777</define>
+  <define property="true" evaluateNow="true">#GAME2.parameter:</define>
+  <define property="true" evaluateNow="true">#GAME2.hover:hover_mynumberplace.png</define>
+  <define property="true" evaluateNow="true">#GAME2.background:Animations\BasicHome\games.jpg</define>
+  <define property="true" evaluateNow="true">#GAME2.iconfocus:tb_games.png</define>
+  <define property="true" evaluateNow="true">#GAME2.iconnofocus:tb_gamesNF.png</define>
+  <define property="true" evaluateNow="true">#GAME2.active:#(iif(or(eq(#GAME2.plugin,''),plugin.isenabled(#GAME2.plugin)),' ',''))</define>
+  <define property="true" evaluateNow="true">#GAME2:#(string.format('{0}{1}',#GAME2.name,iif(eq(#GAME2.active,' '),'',#PLUGERROR)))</define>
+
+  <define property="true" evaluateNow="true">#GAME3.name:Mastermind</define>
+  <define property="true" evaluateNow="true">#GAME3.plugin:Mastermind</define>
+  <define property="true" evaluateNow="true">#GAME3.hyperlink:567834</define>
+  <define property="true" evaluateNow="true">#GAME3.parameter:</define>
+  <define property="true" evaluateNow="true">#GAME3.hover:hover_my mastermind.png</define>
+  <define property="true" evaluateNow="true">#GAME3.background:Animations\BasicHome\games.jpg</define>
+  <define property="true" evaluateNow="true">#GAME3.iconfocus:tb_games.png</define>
+  <define property="true" evaluateNow="true">#GAME3.iconnofocus:tb_gamesNF.png</define>
+  <define property="true" evaluateNow="true">#GAME3.active:#(iif(or(eq(#GAME3.plugin,''),plugin.isenabled(#GAME3.plugin)),' ',''))</define>
+  <define property="true" evaluateNow="true">#GAME3:#(string.format('{0}{1}',#GAME3.name,iif(eq(#GAME3.active,' '),'',#PLUGERROR)))</define>
+
+  <define property="true" evaluateNow="true">#GAME4.name:Chess</define>
+  <define property="true" evaluateNow="true">#GAME4.plugin:Chess</define>
+  <define property="true" evaluateNow="true">#GAME4.hyperlink:36453969</define>
+  <define property="true" evaluateNow="true">#GAME4.parameter:</define>
+  <define property="true" evaluateNow="true">#GAME4.hover:hover_my_chess.png</define>
+  <define property="true" evaluateNow="true">#GAME4.background:Animations\BasicHome\games.jpg</define>
+  <define property="true" evaluateNow="true">#GAME4.iconfocus:tb_games.png</define>
+  <define property="true" evaluateNow="true">#GAME4.iconnofocus:tb_gamesNF.png</define>
+  <define property="true" evaluateNow="true">#GAME4.active:#(iif(or(eq(#GAME4.plugin,''),plugin.isenabled(#GAME4.plugin)),' ',''))</define>
+  <define property="true" evaluateNow="true">#GAME4:#(string.format('{0}{1}',#GAME4.name,iif(eq(#GAME4.active,' '),'',#PLUGERROR)))</define>
+
+  <define property="true" evaluateNow="true">#GAME5.name:Pipes</define>
+  <define property="true" evaluateNow="true">#GAME5.plugin:Pipes</define>
+  <define property="true" evaluateNow="true">#GAME5.hyperlink:426144</define>
+  <define property="true" evaluateNow="true">#GAME5.parameter:</define>
+  <define property="true" evaluateNow="true">#GAME5.hover:hover_pipes.png</define>
+  <define property="true" evaluateNow="true">#GAME5.background:Animations\BasicHome\games.jpg</define>
+  <define property="true" evaluateNow="true">#GAME5.iconfocus:tb_games.png</define>
+  <define property="true" evaluateNow="true">#GAME5.iconnofocus:tb_gamesNF.png</define>
+  <define property="true" evaluateNow="true">#GAME5.active:#(iif(or(eq(#GAME5.plugin,''),plugin.isenabled(#GAME5.plugin)),' ',''))</define>
+  <define property="true" evaluateNow="true">#GAME5:#(string.format('{0}{1}',#GAME5.name,iif(eq(#GAME5.active,' '),'',#PLUGERROR)))</define>
+
+  <define property="true" evaluateNow="true">#GAME6.name:Frustration</define>
+  <define property="true" evaluateNow="true">#GAME6.plugin:Frustration</define>
+  <define property="true" evaluateNow="true">#GAME6.hyperlink:32647501</define>
+  <define property="true" evaluateNow="true">#GAME6.parameter:</define>
+  <define property="true" evaluateNow="true">#GAME6.hover:hover_my frustration.png</define>
+  <define property="true" evaluateNow="true">#GAME6.background:Animations\BasicHome\games.jpg</define>
+  <define property="true" evaluateNow="true">#GAME6.iconfocus:tb_games.png</define>
+  <define property="true" evaluateNow="true">#GAME6.iconnofocus:tb_gamesNF.png</define>
+  <define property="true" evaluateNow="true">#GAME6.active:#(iif(or(eq(#GAME6.plugin,''),plugin.isenabled(#GAME6.plugin)),' ',''))</define>
+  <define property="true" evaluateNow="true">#GAME6:#(string.format('{0}{1}',#GAME6.name,iif(eq(#GAME6.active,' '),'',#PLUGERROR)))</define>
+
+  <define property="true" evaluateNow="true">#GAME7.name:Yahtzee</define>
+  <define property="true" evaluateNow="true">#GAME7.plugin:Yahtzee</define>
+  <define property="true" evaluateNow="true">#GAME7.hyperlink:22031923</define>
+  <define property="true" evaluateNow="true">#GAME7.parameter:</define>
+  <define property="true" evaluateNow="true">#GAME7.hover:hover_my yahtzee.png</define>
+  <define property="true" evaluateNow="true">#GAME7.background:Animations\BasicHome\games.jpg</define>
+  <define property="true" evaluateNow="true">#GAME7.iconfocus:tb_games.png</define>
+  <define property="true" evaluateNow="true">#GAME7.iconnofocus:tb_gamesNF.png</define>
+  <define property="true" evaluateNow="true">#GAME7.active:#(iif(or(eq(#GAME7.plugin,''),plugin.isenabled(#GAME7.plugin)),' ',''))</define>
+  <define property="true" evaluateNow="true">#GAME7:#(string.format('{0}{1}',#GAME7.name,iif(eq(#GAME7.active,' '),'',#PLUGERROR)))</define>
+
+  <define property="true" evaluateNow="true">#GAME8.name:ClickMania</define>
+  <define property="true" evaluateNow="true">#GAME8.plugin:ClickMania</define>
+  <define property="true" evaluateNow="true">#GAME8.hyperlink:5555</define>
+  <define property="true" evaluateNow="true">#GAME8.parameter:</define>
+  <define property="true" evaluateNow="true">#GAME8.hover:hover_clickmania.png</define>
+  <define property="true" evaluateNow="true">#GAME8.background:Animations\BasicHome\games.jpg</define>
+  <define property="true" evaluateNow="true">#GAME8.iconfocus:tb_games.png</define>
+  <define property="true" evaluateNow="true">#GAME8.iconnofocus:tb_gamesNF.png</define>
+  <define property="true" evaluateNow="true">#GAME8.active:#(iif(or(eq(#GAME8.plugin,''),plugin.isenabled(#GAME8.plugin)),' ',''))</define>
+  <define property="true" evaluateNow="true">#GAME8:#(string.format('{0}{1}',#GAME8.name,iif(eq(#GAME8.active,' '),'',#PLUGERROR)))</define>
+
+  <define property="true" evaluateNow="true">#GAME9.name:Connect 4</define>
+  <define property="true" evaluateNow="true">#GAME9.plugin:Connect4</define>
+  <define property="true" evaluateNow="true">#GAME9.hyperlink:22031969</define>
+  <define property="true" evaluateNow="true">#GAME9.parameter:</define>
+  <define property="true" evaluateNow="true">#GAME9.hover:hover_my connect4.png</define>
+  <define property="true" evaluateNow="true">#GAME9.background:Animations\BasicHome\games.jpg</define>
+  <define property="true" evaluateNow="true">#GAME9.iconfocus:tb_games.png</define>
+  <define property="true" evaluateNow="true">#GAME9.iconnofocus:tb_gamesNF.png</define>
+  <define property="true" evaluateNow="true">#GAME9.active:#(iif(or(eq(#GAME9.plugin,''),plugin.isenabled(#GAME9.plugin)),' ',''))</define>
+  <define property="true" evaluateNow="true">#GAME9:#(string.format('{0}{1}',#GAME9.name,iif(eq(#GAME9.active,' '),'',#PLUGERROR)))</define>
+
+  <define property="true" evaluateNow="true">#GAME10.name:Hexxagon</define>
+  <define property="true" evaluateNow="true">#GAME10.plugin:Hexxagon</define>
+  <define property="true" evaluateNow="true">#GAME10.hyperlink:1234711</define>
+  <define property="true" evaluateNow="true">#GAME10.parameter:</define>
+  <define property="true" evaluateNow="true">#GAME10.hover:hover_my hexxagon.png</define>
+  <define property="true" evaluateNow="true">#GAME10.background:Animations\BasicHome\games.jpg</define>
+  <define property="true" evaluateNow="true">#GAME10.iconfocus:tb_games.png</define>
+  <define property="true" evaluateNow="true">#GAME10.iconnofocus:tb_gamesNF.png</define>
+  <define property="true" evaluateNow="true">#GAME10.active:#(iif(or(eq(#GAME10.plugin,''),plugin.isenabled(#GAME10.plugin)),' ',''))</define>
+  <define property="true" evaluateNow="true">#GAME10:#(string.format('{0}{1}',#GAME10.name,iif(eq(#GAME10.active,' '),'',#PLUGERROR)))</define>
+
+  <define property="true" evaluateNow="true">#GAME11.name:Minesweeper</define>
+  <define property="true" evaluateNow="true">#GAME11.plugin:Minesweeper</define>
+  <define property="true" evaluateNow="true">#GAME11.hyperlink:32327501</define>
+  <define property="true" evaluateNow="true">#GAME11.parameter:</define>
+  <define property="true" evaluateNow="true">#GAME11.hover:hover_my minesweeper.png</define>
+  <define property="true" evaluateNow="true">#GAME11.background:Animations\BasicHome\games.jpg</define>
+  <define property="true" evaluateNow="true">#GAME11.iconfocus:tb_games.png</define>
+  <define property="true" evaluateNow="true">#GAME11.iconnofocus:tb_gamesNF.png</define>
+  <define property="true" evaluateNow="true">#GAME11.active:#(iif(or(eq(#GAME11.plugin,''),plugin.isenabled(#GAME11.plugin)),' ',''))</define>
+  <define property="true" evaluateNow="true">#GAME11:#(string.format('{0}{1}',#GAME11.name,iif(eq(#GAME11.active,' '),'',#PLUGERROR)))</define>
+
+  <define property="true" evaluateNow="true">#GAME12.name:Emulators</define>
+  <define property="true" evaluateNow="true">#GAME12.plugin:Emulators 2</define>
+  <define property="true" evaluateNow="true">#GAME12.hyperlink:7942</define>
+  <define property="true" evaluateNow="true">#GAME12.parameter:</define>
+  <define property="true" evaluateNow="true">#GAME12.hover:hover_emulators 2.png</define>
+  <define property="true" evaluateNow="true">#GAME12.background:Animations\BasicHome\games.jpg</define>
+  <define property="true" evaluateNow="true">#GAME12.iconfocus:tb_games.png</define>
+  <define property="true" evaluateNow="true">#GAME12.iconnofocus:tb_gamesNF.png</define>
+  <define property="true" evaluateNow="true">#GAME12.active:#(iif(or(eq(#GAME12.plugin,''),plugin.isenabled(#GAME12.plugin)),' ',''))</define>
+  <define property="true" evaluateNow="true">#GAME12:#(string.format('{0}{1}',#GAME12.name,iif(eq(#GAME12.active,' '),'',#PLUGERROR)))</define>
+  
+  <define property="true" evaluateNow="true">#GAME13.name:Flash Games</define>
+  <define property="true" evaluateNow="true">#GAME13.plugin:Flash Games</define>
+  <define property="true" evaluateNow="true">#GAME13.hyperlink:8796</define>
+  <define property="true" evaluateNow="true">#GAME13.parameter:</define>
+  <define property="true" evaluateNow="true">#GAME13.hover:hover_Flash Games.png</define>
+  <define property="true" evaluateNow="true">#GAME13.background:Animations\BasicHome\games.jpg</define>
+  <define property="true" evaluateNow="true">#GAME13.iconfocus:tb_games.png</define>
+  <define property="true" evaluateNow="true">#GAME13.iconnofocus:tb_gamesNF.png</define>
+  <define property="true" evaluateNow="true">#GAME13.active:#(iif(or(eq(#GAME13.plugin,''),plugin.isenabled(#GAME13.plugin)),' ',''))</define>
+  <define property="true" evaluateNow="true">#GAME13:#(string.format('{0}{1}',#GAME13.name,iif(eq(#GAME13.active,' '),'',#PLUGERROR)))</define>
+  
+  <define property="true" evaluateNow="true">#GAME14.name:Games Menu</define>
+  <define property="true" evaluateNow="true">#GAME14.plugin:</define>
+  <define property="true" evaluateNow="true">#GAME14.hyperlink:8888</define>
+  <define property="true" evaluateNow="true">#GAME14.parameter:</define>
+  <define property="true" evaluateNow="true">#GAME14.hover:hover_games menu.png</define>
+  <define property="true" evaluateNow="true">#GAME14.background:Animations\BasicHome\games.jpg</define>
+  <define property="true" evaluateNow="true">#GAME14.iconfocus:tb_games.png</define>
+  <define property="true" evaluateNow="true">#GAME14.iconnofocus:tb_gamesNF.png</define>
+  <define property="true" evaluateNow="true">#GAME14.active:#(iif(or(eq(#GAME14.plugin,''),plugin.isenabled(#GAME14.plugin)),' ',''))</define>
+  <define property="true" evaluateNow="true">#GAME14:#(string.format('{0}{1}',#GAME14.name,iif(eq(#GAME14.active,' '),'',#PLUGERROR)))</define>
+
+  <!--     *******************************************************************************************  -->
+  <!--     **************************************    SETUP ITEMS   ***********************************  -->
+  <!--     *******************************************************************************************  -->
+
+  <!-- Settings -->
+  <define property="true" evaluateNow="true">#.SETUP.name:#(L(897))</define>
+  <define property="true" evaluateNow="true">#.SETUP.plugin:Settings</define>
+  <define property="true" evaluateNow="true">#.SETUP.hyperlink:4</define>
+  <define property="true" evaluateNow="true">#.SETUP.parameter:</define>
+  <define property="true" evaluateNow="true">#.SETUP.hover:hover_settings.png</define>
+  <define property="true" evaluateNow="true">#.SETUP.background:Animations\BasicHome\BH Settings.jpg</define>
+  <define property="true" evaluateNow="true">#.SETUP.iconfocus:tb_settings.png</define>
+  <define property="true" evaluateNow="true">#.SETUP.iconnofocus:tb_settingsNF.png</define>
+  <define property="true" evaluateNow="true">#.SETUP.active:#(iif(and(or(eq(#.SETUP.plugin,''),plugin.isenabled(#.SETUP.plugin)),neq(#.SETUP.name,#PLUGOPTERROR)),' ',''))</define>
+  <define property="true" evaluateNow="true">#.SETUP:#(string.format('{0}{1}',#.SETUP.name,iif(eq(#.SETUP.active,' '),'',#PLUGERROR)))</define>
+
+  <!-- General Settings -->
+  <define property="true" evaluateNow="true">#1.SETUP.name:#(L(128))</define>
+  <define property="true" evaluateNow="true">#1.SETUP.plugin:Settings</define>
+  <define property="true" evaluateNow="true">#1.SETUP.hyperlink:1016</define>
+  <define property="true" evaluateNow="true">#1.SETUP.parameter:</define>
+  <define property="true" evaluateNow="true">#1.SETUP.hover:hover_settings.png</define>
+  <define property="true" evaluateNow="true">#1.SETUP.background:Animations\BasicHome\BH Settings.jpg</define>
+  <define property="true" evaluateNow="true">#1.SETUP.iconfocus:tb_settings.png</define>
+  <define property="true" evaluateNow="true">#1.SETUP.iconnofocus:tb_settingsNF.png</define>
+  <define property="true" evaluateNow="true">#1.SETUP.active:#(iif(and(or(eq(#1.SETUP.plugin,''),plugin.isenabled(#1.SETUP.plugin)),neq(#1.SETUP.name,#PLUGOPTERROR)),' ',''))</define>
+  <define property="true" evaluateNow="true">#1.SETUP:#(string.format('{0}{1}',#1.SETUP.name,iif(eq(#1.SETUP.active,' '),'',#PLUGERROR)))</define>
+
+  <!-- GUI Settings -->
+  <define property="true" evaluateNow="true">#2.SETUP.name:#(L(101021))</define>
+  <define property="true" evaluateNow="true">#2.SETUP.plugin:Settings</define>
+  <define property="true" evaluateNow="true">#2.SETUP.hyperlink:1021</define>
+  <define property="true" evaluateNow="true">#2.SETUP.parameter:</define>
+  <define property="true" evaluateNow="true">#2.SETUP.hover:hover_settings.png</define>
+  <define property="true" evaluateNow="true">#2.SETUP.background:Animations\BasicHome\BH Settings.jpg</define>
+  <define property="true" evaluateNow="true">#2.SETUP.iconfocus:tb_settings.png</define>
+  <define property="true" evaluateNow="true">#2.SETUP.iconnofocus:tb_settingsNF.png</define>
+  <define property="true" evaluateNow="true">#2.SETUP.active:#(iif(and(or(eq(#2.SETUP.plugin,''),plugin.isenabled(#2.SETUP.plugin)),neq(#2.SETUP.name,#PLUGOPTERROR)),' ',''))</define>
+  <define property="true" evaluateNow="true">#2.SETUP:#(string.format('{0}{1}',#2.SETUP.name,iif(eq(#2.SETUP.active,' '),'',#PLUGERROR)))</define>
+
+  <!-- Skin Settings -->
+  <define property="true" evaluateNow="true">#3.SETUP.name:#(L(300120))</define>
+  <define property="true" evaluateNow="true">#3.SETUP.plugin:Settings</define>
+  <define property="true" evaluateNow="true">#3.SETUP.hyperlink:705</define>
+  <define property="true" evaluateNow="true">#3.SETUP.parameter:</define>
+  <define property="true" evaluateNow="true">#3.SETUP.hover:hover_settings.png</define>
+  <define property="true" evaluateNow="true">#3.SETUP.background:Animations\BasicHome\BH Settings.jpg</define>
+  <define property="true" evaluateNow="true">#3.SETUP.iconfocus:tb_settings.png</define>
+  <define property="true" evaluateNow="true">#3.SETUP.iconnofocus:tb_settingsNF.png</define>
+  <define property="true" evaluateNow="true">#3.SETUP.active:#(iif(and(or(eq(#3.SETUP.plugin,''),plugin.isenabled(#3.SETUP.plugin)),neq(#3.SETUP.name,#PLUGOPTERROR)),' ',''))</define>
+  <define property="true" evaluateNow="true">#3.SETUP:#(string.format('{0}{1}',#3.SETUP.name,iif(eq(#3.SETUP.active,' '),'',#PLUGERROR)))</define>
+
+  <!-- Screen setup -->
+  <define property="true" evaluateNow="true">#4.SETUP.name:#(L(6023))</define>
+  <define property="true" evaluateNow="true">#4.SETUP.plugin:Settings</define>
+  <define property="true" evaluateNow="true">#4.SETUP.hyperlink:9</define>
+  <define property="true" evaluateNow="true">#4.SETUP.parameter:</define>
+  <define property="true" evaluateNow="true">#4.SETUP.hover:hover_settings.png</define>
+  <define property="true" evaluateNow="true">#4.SETUP.background:Animations\BasicHome\BH Settings.jpg</define>
+  <define property="true" evaluateNow="true">#4.SETUP.iconfocus:tb_settings.png</define>
+  <define property="true" evaluateNow="true">#4.SETUP.iconnofocus:tb_settingsNF.png</define>
+  <define property="true" evaluateNow="true">#4.SETUP.active:#(iif(and(or(eq(#4.SETUP.plugin,''),plugin.isenabled(#4.SETUP.plugin)),neq(#4.SETUP.name,#PLUGOPTERROR)),' ',''))</define>
+  <define property="true" evaluateNow="true">#4.SETUP:#(string.format('{0}{1}',#4.SETUP.name,iif(eq(#4.SETUP.active,' '),'',#PLUGERROR)))</define>
+
+  <!-- TV Settings -->
+  <define property="true" evaluateNow="true">#5.SETUP.name:#(L(605))</define>
+  <define property="true" evaluateNow="true">#5.SETUP.plugin:Settings</define>
+  <define property="true" evaluateNow="true">#5.SETUP.hyperlink:700</define>
+  <define property="true" evaluateNow="true">#5.SETUP.parameter:</define>
+  <define property="true" evaluateNow="true">#5.SETUP.hover:hover_settings.png</define>
+  <define property="true" evaluateNow="true">#5.SETUP.background:Animations\BasicHome\BH Settings.jpg</define>
+  <define property="true" evaluateNow="true">#5.SETUP.iconfocus:tb_settings.png</define>
+  <define property="true" evaluateNow="true">#5.SETUP.iconnofocus:tb_settingsNF.png</define>
+  <define property="true" evaluateNow="true">#5.SETUP.active:#(iif(and(or(eq(#5.SETUP.plugin,''),plugin.isenabled(#5.SETUP.plugin)),neq(#5.SETUP.name,#PLUGOPTERROR)),' ',''))</define>
+  <define property="true" evaluateNow="true">#5.SETUP:#(string.format('{0}{1}',#5.SETUP.name,iif(eq(#5.SETUP.active,' '),'',#PLUGERROR)))</define>
+
+  <!-- Pictures Settings -->
+  <define property="true" evaluateNow="true">#6.SETUP.name:#(L(1))</define>
+  <define property="true" evaluateNow="true">#6.SETUP.plugin:Settings</define>
+  <define property="true" evaluateNow="true">#6.SETUP.hyperlink:12</define>
+  <define property="true" evaluateNow="true">#6.SETUP.parameter:</define>
+  <define property="true" evaluateNow="true">#6.SETUP.hover:hover_settings.png</define>
+  <define property="true" evaluateNow="true">#6.SETUP.background:Animations\BasicHome\BH Settings.jpg</define>
+  <define property="true" evaluateNow="true">#6.SETUP.iconfocus:tb_settings.png</define>
+  <define property="true" evaluateNow="true">#6.SETUP.iconnofocus:tb_settingsNF.png</define>
+  <define property="true" evaluateNow="true">#6.SETUP.active:#(iif(and(or(eq(#6.SETUP.plugin,''),plugin.isenabled(#6.SETUP.plugin)),neq(#6.SETUP.name,#PLUGOPTERROR)),' ',''))</define>
+  <define property="true" evaluateNow="true">#6.SETUP:#(string.format('{0}{1}',#6.SETUP.name,iif(eq(#6.SETUP.active,' '),'',#PLUGERROR)))</define>
+
+  <!-- Videos Settings -->
+  <define property="true" evaluateNow="true">#7.SETUP.name:#(L(157))</define>
+  <define property="true" evaluateNow="true">#7.SETUP.plugin:Settings</define>
+  <define property="true" evaluateNow="true">#7.SETUP.hyperlink:9</define>
+  <define property="true" evaluateNow="true">#7.SETUP.parameter:</define>
+  <define property="true" evaluateNow="true">#7.SETUP.hover:hover_settings.png</define>
+  <define property="true" evaluateNow="true">#7.SETUP.background:Animations\BasicHome\BH Settings.jpg</define>
+  <define property="true" evaluateNow="true">#7.SETUP.iconfocus:tb_settings.png</define>
+  <define property="true" evaluateNow="true">#7.SETUP.iconnofocus:tb_settingsNF.png</define>
+  <define property="true" evaluateNow="true">#7.SETUP.active:#(iif(and(or(eq(#7.SETUP.plugin,''),plugin.isenabled(#7.SETUP.plugin)),neq(#7.SETUP.name,#PLUGOPTERROR)),' ',''))</define>
+  <define property="true" evaluateNow="true">#7.SETUP:#(string.format('{0}{1}',#7.SETUP.name,iif(eq(#7.SETUP.active,' '),'',#PLUGERROR)))</define>
+
+  <!-- DVD Settings -->
+  <define property="true" evaluateNow="true">#8.SETUP.name:#(L(1027))</define>
+  <define property="true" evaluateNow="true">#8.SETUP.plugin:Settings</define>
+  <define property="true" evaluateNow="true">#8.SETUP.hyperlink:704</define>
+  <define property="true" evaluateNow="true">#8.SETUP.parameter:</define>
+  <define property="true" evaluateNow="true">#8.SETUP.hover:hover_settings.png</define>
+  <define property="true" evaluateNow="true">#8.SETUP.background:Animations\BasicHome\BH Settings.jpg</define>
+  <define property="true" evaluateNow="true">#8.SETUP.iconfocus:tb_settings.png</define>
+  <define property="true" evaluateNow="true">#8.SETUP.iconnofocus:tb_settingsNF.png</define>
+  <define property="true" evaluateNow="true">#8.SETUP.active:#(iif(and(or(eq(#8.SETUP.plugin,''),plugin.isenabled(#8.SETUP.plugin)),neq(#8.SETUP.name,#PLUGOPTERROR)),' ',''))</define>
+  <define property="true" evaluateNow="true">#8.SETUP:#(string.format('{0}{1}',#8.SETUP.name,iif(eq(#8.SETUP.active,' '),'',#PLUGERROR)))</define>
+
+  <!-- BluRay Settings -->
+  <define property="true" evaluateNow="true">#9.SETUP.name:#(L(300217))</define>
+  <define property="true" evaluateNow="true">#9.SETUP.plugin:Settings</define>
+  <define property="true" evaluateNow="true">#9.SETUP.hyperlink:1024</define>
+  <define property="true" evaluateNow="true">#9.SETUP.parameter:</define>
+  <define property="true" evaluateNow="true">#9.SETUP.hover:hover_settings.png</define>
+  <define property="true" evaluateNow="true">#9.SETUP.background:Animations\BasicHome\BH Settings.jpg</define>
+  <define property="true" evaluateNow="true">#9.SETUP.iconfocus:tb_settings.png</define>
+  <define property="true" evaluateNow="true">#9.SETUP.iconnofocus:tb_settingsNF.png</define>
+  <define property="true" evaluateNow="true">#9.SETUP.active:#(iif(and(or(eq(#9.SETUP.plugin,''),plugin.isenabled(#9.SETUP.plugin)),neq(#9.SETUP.name,#PLUGOPTERROR)),' ',''))</define>
+  <define property="true" evaluateNow="true">#9.SETUP:#(string.format('{0}{1}',#9.SETUP.name,iif(eq(#9.SETUP.active,' '),'',#PLUGERROR)))</define>
+
+  <!-- Music Settings -->
+  <define property="true" evaluateNow="true">#10.SETUP.name:#(L(2))</define>
+  <define property="true" evaluateNow="true">#10.SETUP.plugin:Settings</define>
+  <define property="true" evaluateNow="true">#10.SETUP.hyperlink:14</define>
+  <define property="true" evaluateNow="true">#10.SETUP.parameter:</define>
+  <define property="true" evaluateNow="true">#10.SETUP.hover:hover_settings.png</define>
+  <define property="true" evaluateNow="true">#10.SETUP.background:Animations\BasicHome\BH Settings.jpg</define>
+  <define property="true" evaluateNow="true">#10.SETUP.iconfocus:tb_settings.png</define>
+  <define property="true" evaluateNow="true">#10.SETUP.iconnofocus:tb_settingsNF.png</define>
+  <define property="true" evaluateNow="true">#10.SETUP.active:#(iif(and(or(eq(#10.SETUP.plugin,''),plugin.isenabled(#10.SETUP.plugin)),neq(#10.SETUP.name,#PLUGOPTERROR)),' ',''))</define>
+  <define property="true" evaluateNow="true">#10.SETUP:#(string.format('{0}{1}',#10.SETUP.name,iif(eq(#10.SETUP.active,' '),'',#PLUGERROR)))</define>
+  
+  <!-- Video Settings -->
+  <define property="true" evaluateNow="true">#11.SETUP.name:#(L(3))</define>
+  <define property="true" evaluateNow="true">#11.SETUP.plugin:Settings</define>
+  <define property="true" evaluateNow="true">#11.SETUP.hyperlink:703</define>
+  <define property="true" evaluateNow="true">#11.SETUP.parameter:</define>
+  <define property="true" evaluateNow="true">#11.SETUP.hover:hover_settings.png</define>
+  <define property="true" evaluateNow="true">#11.SETUP.background:Animations\BasicHome\BH Settings.jpg</define>
+  <define property="true" evaluateNow="true">#11.SETUP.iconfocus:tb_settings.png</define>
+  <define property="true" evaluateNow="true">#11.SETUP.iconnofocus:tb_settingsNF.png</define>
+  <define property="true" evaluateNow="true">#11.SETUP.active:#(iif(and(or(eq(#11.SETUP.plugin,''),plugin.isenabled(#11.SETUP.plugin)),neq(#11.SETUP.name,#PLUGOPTERROR)),' ',''))</define>
+  <define property="true" evaluateNow="true">#11.SETUP:#(string.format('{0}{1}',#11.SETUP.name,iif(eq(#11.SETUP.active,' '),'',#PLUGERROR)))</define>
+  
+  <!--     *******************************************************************************************  -->
+  <!--     **************************************    EXIT ITEMS   ************************************  -->
+  <!--     *******************************************************************************************  -->
+
+  <define property="true" evaluateNow="true">#EXIT1.name:#(L(1057))</define>
+  <define property="true" evaluateNow="true">#EXIT1.plugin:</define>
+  <define property="true" evaluateNow="true">#EXIT1.action:97</define>
+  <define property="true" evaluateNow="true">#EXIT1.parameter:</define>
+  <define property="true" evaluateNow="true">#EXIT1.hover:hover_exit.png</define>
+  <define property="true" evaluateNow="true">#EXIT1.background:Animations\BasicHome\shutdown.jpg</define>
+  <define property="true" evaluateNow="true">#EXIT1.iconfocus:tb_exit.png.png</define>
+  <define property="true" evaluateNow="true">#EXIT1.iconnofocus:tb_exit.pngsNF.png</define>
+  <define property="true" evaluateNow="true">#EXIT1.active:#(iif(or(eq(#EXIT1.plugin,''),plugin.isenabled(#EXIT1.plugin)),' ',''))</define>
+  <define property="true" evaluateNow="true">#EXIT1:#(string.format('{0}{1}',#EXIT1.name,iif(eq(#EXIT1.active,' '),'',#PLUGERROR)))</define>
+
+  <define property="true" evaluateNow="true">#EXIT2.name:#(L(1057)) (#(L(496)))</define>
+  <define property="true" evaluateNow="true">#EXIT2.plugin:</define>
+  <define property="true" evaluateNow="true">#EXIT2.action:99</define>
+  <define property="true" evaluateNow="true">#EXIT2.parameter:</define>
+  <define property="true" evaluateNow="true">#EXIT2.hover:hover_exit.png</define>
+  <define property="true" evaluateNow="true">#EXIT2.background:Animations\BasicHome\shutdown.jpg</define>
+  <define property="true" evaluateNow="true">#EXIT2.iconfocus:tb_exit.png.png</define>
+  <define property="true" evaluateNow="true">#EXIT2.iconnofocus:tb_exit.pngsNF.png</define>
+  <define property="true" evaluateNow="true">#EXIT2.active:#(iif(or(eq(#EXIT2.plugin,''),plugin.isenabled(#EXIT2.plugin)),' ',''))</define>
+  <define property="true" evaluateNow="true">#EXIT2:#(string.format('{0}{1}',#EXIT2.name,iif(eq(#EXIT2.active,' '),'',#PLUGERROR)))</define>
+
+
+  <!--     *******************************************************************************************  -->
+  <!--     ************  HERE ARE THE DIFFERENT VIEWS FOR MUSIC, MOVPIC, WEATHER, TRAKT etc. *********  -->
+  <!--     *******************************************************************************************  -->
+  
+  <!--     *******************************************************************************************  -->
+  <!--     **************************************   MUSIC VIEWS   ************************************  -->
+  <!--     *******************************************************************************************  -->
+
+  <!-- Music -->
+  <define property="true" evaluateNow="true">#.MUSIC.name:#(L(2))</define>
+  <define property="true" evaluateNow="true">#.MUSIC.plugin:Music</define>
+  <define property="true" evaluateNow="true">#.MUSIC.hyperlink:501</define>
+  <define property="true" evaluateNow="true">#.MUSIC.parameter:</define>
+  <define property="true" evaluateNow="true">#.MUSIC.hover:hover_my music.png</define>
+  <define property="true" evaluateNow="true">#.MUSIC.background:Animations\BasicHome\music.jpg</define>
+  <define property="true" evaluateNow="true">#.MUSIC.iconfocus:tb_music.png</define>
+  <define property="true" evaluateNow="true">#.MUSIC.iconnofocus:tb_musicNF.png</define>
+  <define property="true" evaluateNow="true">#.MUSIC.active:#(iif(and(or(eq(#.MUSIC.plugin,''),plugin.isenabled(#.MUSIC.plugin)),neq(#.MUSIC.name,#PLUGOPTERROR)),' ',''))</define>
+  <define property="true" evaluateNow="true">#.MUSIC:#(string.format('{0}{1}',#.MUSIC.name,iif(eq(#.MUSIC.active,' '),'',#PLUGERROR)))</define>
+
+  <!-- Album Artists -->
+  <define property="true" evaluateNow="true">#1.MUSIC.name:#(L(528))</define>
+  <define property="true" evaluateNow="true">#1.MUSIC.plugin:Music</define>
+  <define property="true" evaluateNow="true">#1.MUSIC.hyperlink:504</define>
+  <define property="true" evaluateNow="true">#1.MUSIC.parameter:528</define>
+  <define property="true" evaluateNow="true">#1.MUSIC.hover:hover_my music.png</define>
+  <define property="true" evaluateNow="true">#1.MUSIC.background:Animations\BasicHome\music.jpg</define>
+  <define property="true" evaluateNow="true">#1.MUSIC.iconfocus:tb_music.png</define>
+  <define property="true" evaluateNow="true">#1.MUSIC.iconnofocus:tb_musicNF.png</define>
+  <define property="true" evaluateNow="true">#1.MUSIC.active:#(iif(and(or(eq(#1.MUSIC.plugin,''),plugin.isenabled(#1.MUSIC.plugin)),neq(#1.MUSIC.name,#PLUGOPTERROR)),' ',''))</define>
+  <define property="true" evaluateNow="true">#1.MUSIC:#(string.format('{0}{1}',#1.MUSIC.name,iif(eq(#1.MUSIC.active,' '),'',#PLUGERROR)))</define>
+
+  <!-- Album Artists (index) -->
+  <define property="true" evaluateNow="true">#2.MUSIC.name:#(L(1219))</define>
+  <define property="true" evaluateNow="true">#2.MUSIC.plugin:Music</define>
+  <define property="true" evaluateNow="true">#2.MUSIC.hyperlink:504</define>
+  <define property="true" evaluateNow="true">#2.MUSIC.parameter:1219</define>
+  <define property="true" evaluateNow="true">#2.MUSIC.hover:hover_my music.png</define>
+  <define property="true" evaluateNow="true">#2.MUSIC.background:Animations\BasicHome\music.jpg</define>
+  <define property="true" evaluateNow="true">#2.MUSIC.iconfocus:tb_music.png</define>
+  <define property="true" evaluateNow="true">#2.MUSIC.iconnofocus:tb_musicNF.png</define>
+  <define property="true" evaluateNow="true">#2.MUSIC.active:#(iif(and(or(eq(#2.MUSIC.plugin,''),plugin.isenabled(#2.MUSIC.plugin)),neq(#2.MUSIC.name,#PLUGOPTERROR)),' ',''))</define>
+  <define property="true" evaluateNow="true">#2.MUSIC:#(string.format('{0}{1}',#2.MUSIC.name,iif(eq(#2.MUSIC.active,' '),'',#PLUGERROR)))</define>
+
+  <!-- Genres -->
+  <define property="true" evaluateNow="true">#3.MUSIC.name:#(L(135))</define>
+  <define property="true" evaluateNow="true">#3.MUSIC.plugin:Music</define>
+  <define property="true" evaluateNow="true">#3.MUSIC.hyperlink:504</define>
+  <define property="true" evaluateNow="true">#3.MUSIC.parameter:135</define>
+  <define property="true" evaluateNow="true">#3.MUSIC.hover:hover_my music.png</define>
+  <define property="true" evaluateNow="true">#3.MUSIC.background:Animations\BasicHome\music.jpg</define>
+  <define property="true" evaluateNow="true">#3.MUSIC.iconfocus:tb_music.png</define>
+  <define property="true" evaluateNow="true">#3.MUSIC.iconnofocus:tb_musicNF.png</define>
+  <define property="true" evaluateNow="true">#3.MUSIC.active:#(iif(and(or(eq(#3.MUSIC.plugin,''),plugin.isenabled(#3.MUSIC.plugin)),neq(#3.MUSIC.name,#PLUGOPTERROR)),' ',''))</define>
+  <define property="true" evaluateNow="true">#3.MUSIC:#(string.format('{0}{1}',#3.MUSIC.name,iif(eq(#3.MUSIC.active,' '),'',#PLUGERROR)))</define>
+
+  <!-- Albums -->
+  <define property="true" evaluateNow="true">#4.MUSIC.name:#(L(132))</define>
+  <define property="true" evaluateNow="true">#4.MUSIC.plugin:Music</define>
+  <define property="true" evaluateNow="true">#4.MUSIC.hyperlink:504</define>
+  <define property="true" evaluateNow="true">#4.MUSIC.parameter:132</define>
+  <define property="true" evaluateNow="true">#4.MUSIC.hover:hover_my music.png</define>
+  <define property="true" evaluateNow="true">#4.MUSIC.background:Animations\BasicHome\music.jpg</define>
+  <define property="true" evaluateNow="true">#4.MUSIC.iconfocus:tb_music.png</define>
+  <define property="true" evaluateNow="true">#4.MUSIC.iconnofocus:tb_musicNF.png</define>
+  <define property="true" evaluateNow="true">#4.MUSIC.active:#(iif(and(or(eq(#4.MUSIC.plugin,''),plugin.isenabled(#4.MUSIC.plugin)),neq(#4.MUSIC.name,#PLUGOPTERROR)),' ',''))</define>
+  <define property="true" evaluateNow="true">#4.MUSIC:#(string.format('{0}{1}',#4.MUSIC.name,iif(eq(#4.MUSIC.active,' '),'',#PLUGERROR)))</define>
+
+  <!-- Songs -->
+  <define property="true" evaluateNow="true">#5.MUSIC.name:#(L(1052))</define>
+  <define property="true" evaluateNow="true">#5.MUSIC.plugin:Music</define>
+  <define property="true" evaluateNow="true">#5.MUSIC.hyperlink:504</define>
+  <define property="true" evaluateNow="true">#5.MUSIC.parameter:1052</define>
+  <define property="true" evaluateNow="true">#5.MUSIC.hover:hover_my music.png</define>
+  <define property="true" evaluateNow="true">#5.MUSIC.background:Animations\BasicHome\music.jpg</define>
+  <define property="true" evaluateNow="true">#5.MUSIC.iconfocus:tb_music.png</define>
+  <define property="true" evaluateNow="true">#5.MUSIC.iconnofocus:tb_musicNF.png</define>
+  <define property="true" evaluateNow="true">#5.MUSIC.active:#(iif(and(or(eq(#5.MUSIC.plugin,''),plugin.isenabled(#5.MUSIC.plugin)),neq(#5.MUSIC.name,#PLUGOPTERROR)),' ',''))</define>
+  <define property="true" evaluateNow="true">#5.MUSIC:#(string.format('{0}{1}',#5.MUSIC.name,iif(eq(#5.MUSIC.active,' '),'',#PLUGERROR)))</define>
+
+  <!-- Recently Added -->
+  <define property="true" evaluateNow="true">#6.MUSIC.name:#(L(4558))</define>
+  <define property="true" evaluateNow="true">#6.MUSIC.plugin:Music</define>
+  <define property="true" evaluateNow="true">#6.MUSIC.hyperlink:504</define>
+  <define property="true" evaluateNow="true">#6.MUSIC.parameter:4558</define>
+  <define property="true" evaluateNow="true">#6.MUSIC.hover:hover_my music.png</define>
+  <define property="true" evaluateNow="true">#6.MUSIC.background:Animations\BasicHome\music.jpg</define>
+  <define property="true" evaluateNow="true">#6.MUSIC.iconfocus:tb_music.png</define>
+  <define property="true" evaluateNow="true">#6.MUSIC.iconnofocus:tb_musicNF.png</define>
+  <define property="true" evaluateNow="true">#6.MUSIC.active:#(iif(and(or(eq(#6.MUSIC.plugin,''),plugin.isenabled(#6.MUSIC.plugin)),neq(#6.MUSIC.name,#PLUGOPTERROR)),' ',''))</define>
+  <define property="true" evaluateNow="true">#6.MUSIC:#(string.format('{0}{1}',#6.MUSIC.name,iif(eq(#6.MUSIC.active,' '),'',#PLUGERROR)))</define>
+
+  <!-- Years -->
+  <define property="true" evaluateNow="true">#7.MUSIC.name:#(L(987))</define>
+  <define property="true" evaluateNow="true">#7.MUSIC.plugin:Music</define>
+  <define property="true" evaluateNow="true">#7.MUSIC.hyperlink:504</define>
+  <define property="true" evaluateNow="true">#7.MUSIC.parameter:987</define>
+  <define property="true" evaluateNow="true">#7.MUSIC.hover:hover_my music.png</define>
+  <define property="true" evaluateNow="true">#7.MUSIC.background:Animations\BasicHome\music.jpg</define>
+  <define property="true" evaluateNow="true">#7.MUSIC.iconfocus:tb_music.png</define>
+  <define property="true" evaluateNow="true">#7.MUSIC.iconnofocus:tb_musicNF.png</define>
+  <define property="true" evaluateNow="true">#7.MUSIC.active:#(iif(and(or(eq(#7.MUSIC.plugin,''),plugin.isenabled(#7.MUSIC.plugin)),neq(#7.MUSIC.name,#PLUGOPTERROR)),' ',''))</define>
+  <define property="true" evaluateNow="true">#7.MUSIC:#(string.format('{0}{1}',#7.MUSIC.name,iif(eq(#7.MUSIC.active,' '),'',#PLUGERROR)))</define>
+
+  <!-- Top 100 -->
+  <define property="true" evaluateNow="true">#8.MUSIC.name:#(L(271))</define>
+  <define property="true" evaluateNow="true">#8.MUSIC.plugin:Music</define>
+  <define property="true" evaluateNow="true">#8.MUSIC.hyperlink:504</define>
+  <define property="true" evaluateNow="true">#8.MUSIC.parameter:271</define>
+  <define property="true" evaluateNow="true">#8.MUSIC.hover:hover_my music.png</define>
+  <define property="true" evaluateNow="true">#8.MUSIC.background:Animations\BasicHome\music.jpg</define>
+  <define property="true" evaluateNow="true">#8.MUSIC.iconfocus:tb_music.png</define>
+  <define property="true" evaluateNow="true">#8.MUSIC.iconnofocus:tb_musicNF.png</define>
+  <define property="true" evaluateNow="true">#8.MUSIC.active:#(iif(and(or(eq(#8.MUSIC.plugin,''),plugin.isenabled(#8.MUSIC.plugin)),neq(#8.MUSIC.name,#PLUGOPTERROR)),' ',''))</define>
+  <define property="true" evaluateNow="true">#8.MUSIC:#(string.format('{0}{1}',#8.MUSIC.name,iif(eq(#8.MUSIC.active,' '),'',#PLUGERROR)))</define>
+
+  <!-- Playlist -->
+  <define property="true" evaluateNow="true">#9.MUSIC.name:#(L(136))</define>
+  <define property="true" evaluateNow="true">#9.MUSIC.plugin:Music</define>
+  <define property="true" evaluateNow="true">#9.MUSIC.hyperlink:500</define>
+  <define property="true" evaluateNow="true">#9.MUSIC.parameter:</define>
+  <define property="true" evaluateNow="true">#9.MUSIC.hover:hover_my playlists.png</define>
+  <define property="true" evaluateNow="true">#9.MUSIC.background:Animations\BasicHome\music.jpg</define>
+  <define property="true" evaluateNow="true">#9.MUSIC.iconfocus:tb_music.png</define>
+  <define property="true" evaluateNow="true">#9.MUSIC.iconnofocus:tb_musicNF.png</define>
+  <define property="true" evaluateNow="true">#9.MUSIC.active:#(iif(and(or(eq(#9.MUSIC.plugin,''),plugin.isenabled(#9.MUSIC.plugin)),neq(#9.MUSIC.name,#PLUGOPTERROR)),' ',''))</define>
+  <define property="true" evaluateNow="true">#9.MUSIC:#(string.format('{0}{1}',#9.MUSIC.name,iif(eq(#9.MUSIC.active,' '),'',#PLUGERROR)))</define>
+
+  <!-- Music Settings -->
+  <define property="true" evaluateNow="true">#10.MUSIC.name:#(L(2)) #(L(5))</define>
+  <define property="true" evaluateNow="true">#10.MUSIC.plugin:Music</define>
+  <define property="true" evaluateNow="true">#10.MUSIC.hyperlink:14</define>
+  <define property="true" evaluateNow="true">#10.MUSIC.parameter:</define>
+  <define property="true" evaluateNow="true">#10.MUSIC.hover:hover_my music.png</define>
+  <define property="true" evaluateNow="true">#10.MUSIC.background:Animations\BasicHome\music.jpg</define>
+  <define property="true" evaluateNow="true">#10.MUSIC.iconfocus:tb_music.png</define>
+  <define property="true" evaluateNow="true">#10.MUSIC.iconnofocus:tb_musicNF.png</define>
+  <define property="true" evaluateNow="true">#10.MUSIC.active:#(iif(and(or(eq(#10.MUSIC.plugin,''),plugin.isenabled(#10.MUSIC.plugin)),neq(#10.MUSIC.name,#PLUGOPTERROR)),' ',''))</define>
+  <define property="true" evaluateNow="true">#10.MUSIC:#(string.format('{0}{1}',#10.MUSIC.name,iif(eq(#9.MUSIC.active,' '),'',#PLUGERROR)))</define>
+
+  <!--     *******************************************************************************************  -->
+  <!--     *********************************   MOVING PICTURES VIEWS   *******************************  -->
+  <!--     *******************************************************************************************  -->
+
+  <!-- Moving Pictures -->
+  <define property="true" evaluateNow="true">#.MOVPIC.name:Moving Pictures</define>
+  <define property="true" evaluateNow="true">#.MOVPIC.plugin:Moving Pictures</define>
+  <define property="true" evaluateNow="true">#.MOVPIC.hyperlink:96742</define>
+  <define property="true" evaluateNow="true">#.MOVPIC.parameter:</define>
+  <define property="true" evaluateNow="true">#.MOVPIC.hover:hover_moving pictures.png</define>
+  <define property="true" evaluateNow="true">#.MOVPIC.background:Animations\BasicHome\videos.jpg</define>
+  <define property="true" evaluateNow="true">#.MOVPIC.iconfocus:tb_video.png</define>
+  <define property="true" evaluateNow="true">#.MOVPIC.iconnofocus:tb_videoNF.png</define>
+  <define property="true" evaluateNow="true">#.MOVPIC.active:#(iif(and(or(eq(#.MOVPIC.plugin,''),plugin.isenabled(#.MOVPIC.plugin)),neq(#.MOVPIC.name,#PLUGOPTERROR)),' ',''))</define>
+  <define property="true" evaluateNow="true">#.MOVPIC:#(string.format('{0}{1}',#.MOVPIC.name,iif(eq(#.MOVPIC.active,' '),'',#PLUGERROR)))</define>
+  <define property="true" evaluateNow="true">#.MOVPIC.latestmedia:91919991</define>
+
+  <!-- Moving Pictures Custom 1 -->
+  <define property="true" evaluateNow="true">#1.MOVPIC.name:#(iif(neq(string.format('{0}',#MovingPictures.Category.Item.1.Name),''),#MovingPictures.Category.Item.1.Name,#PLUGOPTERROR))</define>
+  <define property="true" evaluateNow="true">#1.MOVPIC.plugin:Moving Pictures</define>
+  <define property="true" evaluateNow="true">#1.MOVPIC.hyperlink:96742</define>
+  <define property="true" evaluateNow="true">#1.MOVPIC.parameter:#(iif(neq(string.format('{0}',#MovingPictures.Category.Item.1.HyperlinkParameter),''),#MovingPictures.Category.Item.1.HyperlinkParameter,''))</define>
+  <define property="true" evaluateNow="true">#1.MOVPIC.hover:hover_moving pictures.png</define>
+  <define property="true" evaluateNow="true">#1.MOVPIC.background:Animations\BasicHome\videos.jpg</define>
+  <define property="true" evaluateNow="true">#1.MOVPIC.iconfocus:tb_video.png</define>
+  <define property="true" evaluateNow="true">#1.MOVPIC.iconnofocus:tb_videoNF.png</define>
+  <define property="true" evaluateNow="true">#1.MOVPIC.active:#(iif(and(or(eq(#1.MOVPIC.plugin,''),plugin.isenabled(#1.MOVPIC.plugin)),neq(#1.MOVPIC.name,#PLUGOPTERROR)),' ',''))</define>
+  <define property="true" evaluateNow="true">#1.MOVPIC:MovPic | #(string.format('{0}{1}',#1.MOVPIC.name,iif(eq(#1.MOVPIC.active,' '),'',#PLUGERROR)))</define>
+  <define property="true" evaluateNow="true">#1.MOVPIC.latestmedia:91919991</define>
+
+  <!-- Moving Pictures Custom 2 -->
+  <define property="true" evaluateNow="true">#2.MOVPIC.name:#(iif(neq(string.format('{0}',#MovingPictures.Category.Item.2.Name),''),#MovingPictures.Category.Item.2.Name,#PLUGOPTERROR))</define>
+  <define property="true" evaluateNow="true">#2.MOVPIC.plugin:Moving Pictures</define>
+  <define property="true" evaluateNow="true">#2.MOVPIC.hyperlink:96742</define>
+  <define property="true" evaluateNow="true">#2.MOVPIC.parameter:#(iif(neq(string.format('{0}',#MovingPictures.Category.Item.2.HyperlinkParameter),''),#MovingPictures.Category.Item.2.HyperlinkParameter,''))</define>
+  <define property="true" evaluateNow="true">#2.MOVPIC.hover:hover_moving pictures.png</define>
+  <define property="true" evaluateNow="true">#2.MOVPIC.background:Animations\BasicHome\videos.jpg</define>
+  <define property="true" evaluateNow="true">#2.MOVPIC.iconfocus:tb_video.png</define>
+  <define property="true" evaluateNow="true">#2.MOVPIC.iconnofocus:tb_videoNF.png</define>
+  <define property="true" evaluateNow="true">#2.MOVPIC.active:#(iif(and(or(eq(#2.MOVPIC.plugin,''),plugin.isenabled(#2.MOVPIC.plugin)),neq(#2.MOVPIC.name,#PLUGOPTERROR)),' ',''))</define>
+  <define property="true" evaluateNow="true">#2.MOVPIC:MovPic | #(string.format('{0}{1}',#2.MOVPIC.name,iif(eq(#2.MOVPIC.active,' '),'',#PLUGERROR)))</define>
+  <define property="true" evaluateNow="true">#2.MOVPIC.latestmedia:91919991</define>
+  
+
+  <!-- Moving Pictures Custom 3 -->
+  <define property="true" evaluateNow="true">#3.MOVPIC.name:#(iif(neq(string.format('{0}',#MovingPictures.Category.Item.3.Name),''),#MovingPictures.Category.Item.3.Name,#PLUGOPTERROR))</define>
+  <define property="true" evaluateNow="true">#3.MOVPIC.plugin:Moving Pictures</define>
+  <define property="true" evaluateNow="true">#3.MOVPIC.hyperlink:96742</define>
+  <define property="true" evaluateNow="true">#3.MOVPIC.parameter:#(iif(neq(string.format('{0}',#MovingPictures.Category.Item.3.HyperlinkParameter),''),#MovingPictures.Category.Item.3.HyperlinkParameter,''))</define>
+  <define property="true" evaluateNow="true">#3.MOVPIC.hover:hover_moving pictures.png</define>
+  <define property="true" evaluateNow="true">#3.MOVPIC.background:Animations\BasicHome\videos.jpg</define>
+  <define property="true" evaluateNow="true">#3.MOVPIC.iconfocus:tb_video.png</define>
+  <define property="true" evaluateNow="true">#3.MOVPIC.iconnofocus:tb_videoNF.png</define>
+  <define property="true" evaluateNow="true">#3.MOVPIC.active:#(iif(and(or(eq(#3.MOVPIC.plugin,''),plugin.isenabled(#3.MOVPIC.plugin)),neq(#3.MOVPIC.name,#PLUGOPTERROR)),' ',''))</define>
+  <define property="true" evaluateNow="true">#3.MOVPIC:MovPic | #(string.format('{0}{1}',#3.MOVPIC.name,iif(eq(#3.MOVPIC.active,' '),'',#PLUGERROR)))</define>
+  <define property="true" evaluateNow="true">#3.MOVPIC.latestmedia:91919991</define>
+
+  <!-- Moving Pictures Custom 4 -->
+  <define property="true" evaluateNow="true">#4.MOVPIC.name:#(iif(neq(string.format('{0}',#MovingPictures.Category.Item.4.Name),''),#MovingPictures.Category.Item.4.Name,#PLUGOPTERROR))</define>
+  <define property="true" evaluateNow="true">#4.MOVPIC.plugin:Moving Pictures</define>
+  <define property="true" evaluateNow="true">#4.MOVPIC.hyperlink:96742</define>
+  <define property="true" evaluateNow="true">#4.MOVPIC.parameter:#(iif(neq(string.format('{0}',#MovingPictures.Category.Item.4.HyperlinkParameter),''),#MovingPictures.Category.Item.4.HyperlinkParameter,''))</define>
+  <define property="true" evaluateNow="true">#4.MOVPIC.hover:hover_moving pictures.png</define>
+  <define property="true" evaluateNow="true">#4.MOVPIC.background:Animations\BasicHome\videos.jpg</define>
+  <define property="true" evaluateNow="true">#4.MOVPIC.iconfocus:tb_video.png</define>
+  <define property="true" evaluateNow="true">#4.MOVPIC.iconnofocus:tb_videoNF.png</define>
+  <define property="true" evaluateNow="true">#4.MOVPIC.active:#(iif(and(or(eq(#4.MOVPIC.plugin,''),plugin.isenabled(#4.MOVPIC.plugin)),neq(#4.MOVPIC.name,#PLUGOPTERROR)),' ',''))</define>
+  <define property="true" evaluateNow="true">#4.MOVPIC:MovPic | #(string.format('{0}{1}',#4.MOVPIC.name,iif(eq(#4.MOVPIC.active,' '),'',#PLUGERROR)))</define>
+  <define property="true" evaluateNow="true">#4.MOVPIC.latestmedia:91919991</define>
+
+  <!-- Moving Pictures Custom 5 -->
+  <define property="true" evaluateNow="true">#5.MOVPIC.name:#(iif(neq(string.format('{0}',#MovingPictures.Category.Item.5.Name),''),#MovingPictures.Category.Item.5.Name,#PLUGOPTERROR))</define>
+  <define property="true" evaluateNow="true">#5.MOVPIC.plugin:Moving Pictures</define>
+  <define property="true" evaluateNow="true">#5.MOVPIC.hyperlink:96742</define>
+  <define property="true" evaluateNow="true">#5.MOVPIC.parameter:#(iif(neq(string.format('{0}',#MovingPictures.Category.Item.5.HyperlinkParameter),''),#MovingPictures.Category.Item.5.HyperlinkParameter,''))</define>
+  <define property="true" evaluateNow="true">#5.MOVPIC.hover:hover_moving pictures.png</define>
+  <define property="true" evaluateNow="true">#5.MOVPIC.background:Animations\BasicHome\videos.jpg</define>
+  <define property="true" evaluateNow="true">#5.MOVPIC.iconfocus:tb_video.png</define>
+  <define property="true" evaluateNow="true">#5.MOVPIC.iconnofocus:tb_videoNF.png</define>
+  <define property="true" evaluateNow="true">#5.MOVPIC.active:#(iif(and(or(eq(#5.MOVPIC.plugin,''),plugin.isenabled(#5.MOVPIC.plugin)),neq(#5.MOVPIC.name,#PLUGOPTERROR)),' ',''))</define>
+  <define property="true" evaluateNow="true">#5.MOVPIC:MovPic | #(string.format('{0}{1}',#5.MOVPIC.name,iif(eq(#5.MOVPIC.active,' '),'',#PLUGERROR)))</define>
+  <define property="true" evaluateNow="true">#5.MOVPIC.latestmedia:91919991</define>
+
+  <!-- Moving Pictures Custom 6 -->
+  <define property="true" evaluateNow="true">#6.MOVPIC.name:#(iif(neq(string.format('{0}',#MovingPictures.Category.Item.6.Name),''),#MovingPictures.Category.Item.6.Name,#PLUGOPTERROR))</define>
+  <define property="true" evaluateNow="true">#6.MOVPIC.plugin:Moving Pictures</define>
+  <define property="true" evaluateNow="true">#6.MOVPIC.hyperlink:96742</define>
+  <define property="true" evaluateNow="true">#6.MOVPIC.parameter:#(iif(neq(string.format('{0}',#MovingPictures.Category.Item.6.HyperlinkParameter),''),#MovingPictures.Category.Item.6.HyperlinkParameter,''))</define>
+  <define property="true" evaluateNow="true">#6.MOVPIC.hover:hover_moving pictures.png</define>
+  <define property="true" evaluateNow="true">#6.MOVPIC.background:Animations\BasicHome\videos.jpg</define>
+  <define property="true" evaluateNow="true">#6.MOVPIC.iconfocus:tb_video.png</define>
+  <define property="true" evaluateNow="true">#6.MOVPIC.iconnofocus:tb_videoNF.png</define>
+  <define property="true" evaluateNow="true">#6.MOVPIC.active:#(iif(and(or(eq(#6.MOVPIC.plugin,''),plugin.isenabled(#6.MOVPIC.plugin)),neq(#6.MOVPIC.name,#PLUGOPTERROR)),' ',''))</define>
+  <define property="true" evaluateNow="true">#6.MOVPIC:MovPic | #(string.format('{0}{1}',#6.MOVPIC.name,iif(eq(#6.MOVPIC.active,' '),'',#PLUGERROR)))</define>
+  <define property="true" evaluateNow="true">#6.MOVPIC.latestmedia:91919991</define>
+
+  <!-- Moving Pictures Custom 7 -->
+  <define property="true" evaluateNow="true">#7.MOVPIC.name:#(iif(neq(string.format('{0}',#MovingPictures.Category.Item.7.Name),''),#MovingPictures.Category.Item.7.Name,#PLUGOPTERROR))</define>
+  <define property="true" evaluateNow="true">#7.MOVPIC.plugin:Moving Pictures</define>
+  <define property="true" evaluateNow="true">#7.MOVPIC.hyperlink:96742</define>
+  <define property="true" evaluateNow="true">#7.MOVPIC.parameter:#(iif(neq(string.format('{0}',#MovingPictures.Category.Item.7.HyperlinkParameter),''),#MovingPictures.Category.Item.7.HyperlinkParameter,''))</define>
+  <define property="true" evaluateNow="true">#7.MOVPIC.hover:hover_moving pictures.png</define>
+  <define property="true" evaluateNow="true">#7.MOVPIC.background:Animations\BasicHome\videos.jpg</define>
+  <define property="true" evaluateNow="true">#7.MOVPIC.iconfocus:tb_video.png</define>
+  <define property="true" evaluateNow="true">#7.MOVPIC.iconnofocus:tb_videoNF.png</define>
+  <define property="true" evaluateNow="true">#7.MOVPIC.active:#(iif(and(or(eq(#7.MOVPIC.plugin,''),plugin.isenabled(#7.MOVPIC.plugin)),neq(#7.MOVPIC.name,#PLUGOPTERROR)),' ',''))</define>
+  <define property="true" evaluateNow="true">#7.MOVPIC:MovPic | #(string.format('{0}{1}',#7.MOVPIC.name,iif(eq(#7.MOVPIC.active,' '),'',#PLUGERROR)))</define>
+  <define property="true" evaluateNow="true">#7.MOVPIC.latestmedia:91919991</define>
+
+  <!-- Moving Pictures Custom 8 -->
+  <define property="true" evaluateNow="true">#8.MOVPIC.name:#(iif(neq(string.format('{0}',#MovingPictures.Category.Item.8.Name),''),#MovingPictures.Category.Item.8.Name,#PLUGOPTERROR))</define>
+  <define property="true" evaluateNow="true">#8.MOVPIC.plugin:Moving Pictures</define>
+  <define property="true" evaluateNow="true">#8.MOVPIC.hyperlink:96742</define>
+  <define property="true" evaluateNow="true">#8.MOVPIC.parameter:#(iif(neq(string.format('{0}',#MovingPictures.Category.Item.8.HyperlinkParameter),''),#MovingPictures.Category.Item.8.HyperlinkParameter,''))</define>
+  <define property="true" evaluateNow="true">#8.MOVPIC.hover:hover_moving pictures.png</define>
+  <define property="true" evaluateNow="true">#8.MOVPIC.background:Animations\BasicHome\videos.jpg</define>
+  <define property="true" evaluateNow="true">#8.MOVPIC.iconfocus:tb_video.png</define>
+  <define property="true" evaluateNow="true">#8.MOVPIC.iconnofocus:tb_videoNF.png</define>
+  <define property="true" evaluateNow="true">#8.MOVPIC.active:#(iif(and(or(eq(#8.MOVPIC.plugin,''),plugin.isenabled(#8.MOVPIC.plugin)),neq(#8.MOVPIC.name,#PLUGOPTERROR)),' ',''))</define>
+  <define property="true" evaluateNow="true">#8.MOVPIC:MovPic | #(string.format('{0}{1}',#8.MOVPIC.name,iif(eq(#8.MOVPIC.active,' '),'',#PLUGERROR)))</define>
+  <define property="true" evaluateNow="true">#8.MOVPIC.latestmedia:91919991</define>
+
+  <!-- Moving Pictures Custom 9 -->
+  <define property="true" evaluateNow="true">#9.MOVPIC.name:#(iif(neq(string.format('{0}',#MovingPictures.Category.Item.9.Name),''),#MovingPictures.Category.Item.9.Name,#PLUGOPTERROR))</define>
+  <define property="true" evaluateNow="true">#9.MOVPIC.plugin:Moving Pictures</define>
+  <define property="true" evaluateNow="true">#9.MOVPIC.hyperlink:96742</define>
+  <define property="true" evaluateNow="true">#9.MOVPIC.parameter:#(iif(neq(string.format('{0}',#MovingPictures.Category.Item.9.HyperlinkParameter),''),#MovingPictures.Category.Item.9.HyperlinkParameter,''))</define>
+  <define property="true" evaluateNow="true">#9.MOVPIC.hover:hover_moving pictures.png</define>
+  <define property="true" evaluateNow="true">#9.MOVPIC.background:Animations\BasicHome\videos.jpg</define>
+  <define property="true" evaluateNow="true">#9.MOVPIC.iconfocus:tb_video.png</define>
+  <define property="true" evaluateNow="true">#9.MOVPIC.iconnofocus:tb_videoNF.png</define>
+  <define property="true" evaluateNow="true">#9.MOVPIC.active:#(iif(and(or(eq(#9.MOVPIC.plugin,''),plugin.isenabled(#9.MOVPIC.plugin)),neq(#9.MOVPIC.name,#PLUGOPTERROR)),' ',''))</define>
+  <define property="true" evaluateNow="true">#9.MOVPIC:MovPic | #(string.format('{0}{1}',#9.MOVPIC.name,iif(eq(#9.MOVPIC.active,' '),'',#PLUGERROR)))</define>
+  <define property="true" evaluateNow="true">#9.MOVPIC.latestmedia:91919991</define>
+
+  <!-- Moving Pictures Custom 10 -->
+  <define property="true" evaluateNow="true">#10.MOVPIC.name:#(iif(neq(string.format('{0}',#MovingPictures.Category.Item.10.Name),''),#MovingPictures.Category.Item.10.Name,#PLUGOPTERROR))</define>
+  <define property="true" evaluateNow="true">#10.MOVPIC.plugin:Moving Pictures</define>
+  <define property="true" evaluateNow="true">#10.MOVPIC.hyperlink:96742</define>
+  <define property="true" evaluateNow="true">#10.MOVPIC.parameter:#(iif(neq(string.format('{0}',#MovingPictures.Category.Item.10.HyperlinkParameter),''),#MovingPictures.Category.Item.10.HyperlinkParameter,''))</define>
+  <define property="true" evaluateNow="true">#10.MOVPIC.hover:hover_moving pictures.png</define>
+  <define property="true" evaluateNow="true">#10.MOVPIC.background:Animations\BasicHome\videos.jpg</define>
+  <define property="true" evaluateNow="true">#10.MOVPIC.iconfocus:tb_video.png</define>
+  <define property="true" evaluateNow="true">#10.MOVPIC.iconnofocus:tb_videoNF.png</define>
+  <define property="true" evaluateNow="true">#10.MOVPIC.active:#(iif(and(or(eq(#10.MOVPIC.plugin,''),plugin.isenabled(#10.MOVPIC.plugin)),neq(#10.MOVPIC.name,#PLUGOPTERROR)),' ',''))</define>
+  <define property="true" evaluateNow="true">#10.MOVPIC:MovPic | #(string.format('{0}{1}',#10.MOVPIC.name,iif(eq(#10.MOVPIC.active,' '),'',#PLUGERROR)))</define>
+  <define property="true" evaluateNow="true">#10.MOVPIC.latestmedia:91919991</define>
+
+  <!--     *******************************************************************************************  -->
+  <!--     **************************************     TRAKT VIEWS   **********************************  -->
+  <!--     *******************************************************************************************  -->
+
+  <!-- Trakt -->
+  <define property="true" evaluateNow="true">#.TRAKT.name:Trakt</define>
+  <define property="true" evaluateNow="true">#.TRAKT.plugin:Trakt</define>
+  <define property="true" evaluateNow="true">#.TRAKT.hyperlink:87258</define>
+  <define property="true" evaluateNow="true">#.TRAKT.parameter:</define>
+  <define property="true" evaluateNow="true">#.TRAKT.hover:hover_trakt.png</define>
+  <define property="true" evaluateNow="true">#.TRAKT.background:Animations\BasicHome\videos.jpg</define>
+  <define property="true" evaluateNow="true">#.TRAKT.iconfocus:tb_video.png</define>
+  <define property="true" evaluateNow="true">#.TRAKT.iconnofocus:tb_videoNF.png</define>
+  <define property="true" evaluateNow="true">#.TRAKT.active:#(iif(and(or(eq(#.TRAKT.plugin,''),plugin.isenabled(#.TRAKT.plugin)),neq(#.TRAKT.name,#PLUGOPTERROR)),' ',''))</define>
+  <define property="true" evaluateNow="true">#.TRAKT:#(string.format('{0}{1}',#.TRAKT.name,iif(eq(#.TRAKT.active,' '),'',#PLUGERROR)))</define>
+  <define property="true" evaluateNow="true">#.TRAKT.latestmedia:98302</define>
+
+  <!-- Trending Movies -->
+  <define property="true" evaluateNow="true">#1.TRAKT.name:#(iif(neq(string.format('{0}',#Trakt.Translation.TrendingMovies.Label),''),#Trakt.Translation.TrendingMovies.Label,#PLUGOPTERROR))</define>
+  <define property="true" evaluateNow="true">#1.TRAKT.plugin:Trakt</define>
+  <define property="true" evaluateNow="true">#1.TRAKT.hyperlink:87266</define>
+  <define property="true" evaluateNow="true">#1.TRAKT.parameter:</define>
+  <define property="true" evaluateNow="true">#1.TRAKT.hover:hover_trakt.png</define>
+  <define property="true" evaluateNow="true">#1.TRAKT.background:Animations\BasicHome\videos.jpg</define>
+  <define property="true" evaluateNow="true">#1.TRAKT.iconfocus:tb_video.png</define>
+  <define property="true" evaluateNow="true">#1.TRAKT.iconnofocus:tb_videoNF.png</define>
+  <define property="true" evaluateNow="true">#1.TRAKT.active:#(iif(and(or(eq(#1.TRAKT.plugin,''),plugin.isenabled(#1.TRAKT.plugin)),neq(#1.TRAKT.name,#PLUGOPTERROR)),' ',''))</define>
+  <define property="true" evaluateNow="true">#1.TRAKT:#(#.TRAKT.name) | #(string.format('{0}{1}',#1.TRAKT.name,iif(eq(#1.TRAKT.active,' '),'',#PLUGERROR)))</define>
+  <define property="true" evaluateNow="true">#1.TRAKT.latestmedia:98302</define>
+
+  <!-- Trending Shows -->
+  <define property="true" evaluateNow="true">#2.TRAKT.name:#(iif(neq(string.format('{0}',#Trakt.Translation.TrendingShows.Label),''),#Trakt.Translation.TrendingShows.Label,#PLUGOPTERROR))</define>
+  <define property="true" evaluateNow="true">#2.TRAKT.plugin:Trakt</define>
+  <define property="true" evaluateNow="true">#2.TRAKT.hyperlink:87265</define>
+  <define property="true" evaluateNow="true">#2.TRAKT.parameter:</define>
+  <define property="true" evaluateNow="true">#2.TRAKT.hover:hover_trakt.png</define>
+  <define property="true" evaluateNow="true">#2.TRAKT.background:Animations\BasicHome\videos.jpg</define>
+  <define property="true" evaluateNow="true">#2.TRAKT.iconfocus:tb_video.png</define>
+  <define property="true" evaluateNow="true">#2.TRAKT.iconnofocus:tb_videoNF.png</define>
+  <define property="true" evaluateNow="true">#2.TRAKT.active:#(iif(and(or(eq(#2.TRAKT.plugin,''),plugin.isenabled(#2.TRAKT.plugin)),neq(#2.TRAKT.name,#PLUGOPTERROR)),' ',''))</define>
+  <define property="true" evaluateNow="true">#2.TRAKT:#(#.TRAKT.name) | #(string.format('{0}{1}',#2.TRAKT.name,iif(eq(#2.TRAKT.active,' '),'',#PLUGERROR)))</define>
+  <define property="true" evaluateNow="true">#2.TRAKT.latestmedia:98301</define>
+
+  <!-- Calendar -->
+  <define property="true" evaluateNow="true">#3.TRAKT.name:#(iif(neq(string.format('{0}',#Trakt.Translation.Calendar.Label),''),#Trakt.Translation.Calendar.Label,#PLUGOPTERROR))</define>
+  <define property="true" evaluateNow="true">#3.TRAKT.plugin:Trakt</define>
+  <define property="true" evaluateNow="true">#3.TRAKT.hyperlink:87259</define>
+  <define property="true" evaluateNow="true">#3.TRAKT.parameter:</define>
+  <define property="true" evaluateNow="true">#3.TRAKT.hover:hover_trakt.png</define>
+  <define property="true" evaluateNow="true">#3.TRAKT.background:Animations\BasicHome\videos.jpg</define>
+  <define property="true" evaluateNow="true">#3.TRAKT.iconfocus:tb_video.png</define>
+  <define property="true" evaluateNow="true">#3.TRAKT.iconnofocus:tb_videoNF.png</define>
+  <define property="true" evaluateNow="true">#3.TRAKT.active:#(iif(and(or(eq(#3.TRAKT.plugin,''),plugin.isenabled(#3.TRAKT.plugin)),neq(#3.TRAKT.name,#PLUGOPTERROR)),' ',''))</define>
+  <define property="true" evaluateNow="true">#3.TRAKT:#(#.TRAKT.name) | #(string.format('{0}{1}',#3.TRAKT.name,iif(eq(#3.TRAKT.active,' '),'',#PLUGERROR)))</define>
+  <define property="true" evaluateNow="true">#3.TRAKT.latestmedia:98302</define>
+
+  <!-- Recommendations -->
+  <define property="true" evaluateNow="true">#4.TRAKT.name:#(iif(neq(string.format('{0}',#Trakt.Translation.Recommendations.Label),''),#Trakt.Translation.Recommendations.Label,#PLUGOPTERROR))</define>
+  <define property="true" evaluateNow="true">#4.TRAKT.plugin:Trakt</define>
+  <define property="true" evaluateNow="true">#4.TRAKT.hyperlink:87261</define>
+  <define property="true" evaluateNow="true">#4.TRAKT.parameter:</define>
+  <define property="true" evaluateNow="true">#4.TRAKT.hover:hover_trakt.png</define>
+  <define property="true" evaluateNow="true">#4.TRAKT.background:Animations\BasicHome\videos.jpg</define>
+  <define property="true" evaluateNow="true">#4.TRAKT.iconfocus:tb_video.png</define>
+  <define property="true" evaluateNow="true">#4.TRAKT.iconnofocus:tb_videoNF.png</define>
+  <define property="true" evaluateNow="true">#4.TRAKT.active:#(iif(and(or(eq(#4.TRAKT.plugin,''),plugin.isenabled(#4.TRAKT.plugin)),neq(#4.TRAKT.name,#PLUGOPTERROR)),' ',''))</define>
+  <define property="true" evaluateNow="true">#4.TRAKT:#(#.TRAKT.name) | #(string.format('{0}{1}',#4.TRAKT.name,iif(eq(#4.TRAKT.active,' '),'',#PLUGERROR)))</define>
+  <define property="true" evaluateNow="true">#4.TRAKT.latestmedia:98302</define>
+
+  <!-- Lists -->
+  <define property="true" evaluateNow="true">#5.TRAKT.name:#(iif(neq(string.format('{0}',#Trakt.Translation.Lists.Label),''),#Trakt.Translation.Lists.Label,#PLUGOPTERROR))</define>
+  <define property="true" evaluateNow="true">#5.TRAKT.plugin:Trakt</define>
+  <define property="true" evaluateNow="true">#5.TRAKT.hyperlink:87275</define>
+  <define property="true" evaluateNow="true">#5.TRAKT.parameter:</define>
+  <define property="true" evaluateNow="true">#5.TRAKT.hover:hover_trakt.png</define>
+  <define property="true" evaluateNow="true">#5.TRAKT.background:Animations\BasicHome\videos.jpg</define>
+  <define property="true" evaluateNow="true">#5.TRAKT.iconfocus:tb_video.png</define>
+  <define property="true" evaluateNow="true">#5.TRAKT.iconnofocus:tb_videoNF.png</define>
+  <define property="true" evaluateNow="true">#5.TRAKT.active:#(iif(and(or(eq(#5.TRAKT.plugin,''),plugin.isenabled(#5.TRAKT.plugin)),neq(#5.TRAKT.name,#PLUGOPTERROR)),' ',''))</define>
+  <define property="true" evaluateNow="true">#5.TRAKT:#(#.TRAKT.name) | #(string.format('{0}{1}',#5.TRAKT.name,iif(eq(#5.TRAKT.active,' '),'',#PLUGERROR)))</define>
+  <define property="true" evaluateNow="true">#5.TRAKT.latestmedia:98302</define>
+
+  <!-- Watch List -->
+  <define property="true" evaluateNow="true">#6.TRAKT.name:#(iif(neq(string.format('{0}',#Trakt.Translation.WatchList.Label),''),#Trakt.Translation.WatchList.Label,#PLUGOPTERROR))</define>
+  <define property="true" evaluateNow="true">#6.TRAKT.plugin:Trakt</define>
+  <define property="true" evaluateNow="true">#6.TRAKT.hyperlink:87267</define>
+  <define property="true" evaluateNow="true">#6.TRAKT.parameter:</define>
+  <define property="true" evaluateNow="true">#6.TRAKT.hover:hover_trakt.png</define>
+  <define property="true" evaluateNow="true">#6.TRAKT.background:Animations\BasicHome\videos.jpg</define>
+  <define property="true" evaluateNow="true">#6.TRAKT.iconfocus:tb_video.png</define>
+  <define property="true" evaluateNow="true">#6.TRAKT.iconnofocus:tb_videoNF.png</define>
+  <define property="true" evaluateNow="true">#6.TRAKT.active:#(iif(and(or(eq(#6.TRAKT.plugin,''),plugin.isenabled(#6.TRAKT.plugin)),neq(#6.TRAKT.name,#PLUGOPTERROR)),' ',''))</define>
+  <define property="true" evaluateNow="true">#6.TRAKT:#(#.TRAKT.name) | #(string.format('{0}{1}',#6.TRAKT.name,iif(eq(#6.TRAKT.active,' '),'',#PLUGERROR)))</define>
+  <define property="true" evaluateNow="true">#6.TRAKT.latestmedia:98302</define>
+
+  <!-- Trakt Settings -->
+  <define property="true" evaluateNow="true">#7.TRAKT.name:#(iif(neq(string.format('{0}',#Trakt.Translation.Settings.Label),''),string.format('Trakt {0}',#Trakt.Translation.Settings.Label),#PLUGOPTERROR))</define>
+  <define property="true" evaluateNow="true">#7.TRAKT.plugin:Trakt</define>
+  <define property="true" evaluateNow="true">#7.TRAKT.hyperlink:87271</define>
+  <define property="true" evaluateNow="true">#7.TRAKT.parameter:</define>
+  <define property="true" evaluateNow="true">#7.TRAKT.hover:hover_trakt.png</define>
+  <define property="true" evaluateNow="true">#7.TRAKT.background:Animations\BasicHome\videos.jpg</define>
+  <define property="true" evaluateNow="true">#7.TRAKT.iconfocus:tb_video.png</define>
+  <define property="true" evaluateNow="true">#7.TRAKT.iconnofocus:tb_videoNF.png</define>
+  <define property="true" evaluateNow="true">#7.TRAKT.active:#(iif(and(or(eq(#7.TRAKT.plugin,''),plugin.isenabled(#7.TRAKT.plugin)),neq(#7.TRAKT.name,#PLUGOPTERROR)),' ',''))</define>
+  <define property="true" evaluateNow="true">#7.TRAKT:#(#.TRAKT.name) | #(string.format('{0}{1}',#7.TRAKT.name,iif(eq(#7.TRAKT.active,' '),'',#PLUGERROR)))</define>
+  <define property="true" evaluateNow="true">#7.TRAKT.latestmedia:98302</define>
+  
+  <!-- Popular Movies -->
+  <define property="true" evaluateNow="true">#8.TRAKT.name:#(iif(neq(string.format('{0}',#Trakt.Translation.PopularMovies.Label),''),#Trakt.Translation.PopularMovies.Label,#PLUGOPTERROR))</define>
+  <define property="true" evaluateNow="true">#8.TRAKT.plugin:Trakt</define>
+  <define property="true" evaluateNow="true">#8.TRAKT.hyperlink:87101</define>
+  <define property="true" evaluateNow="true">#8.TRAKT.parameter:</define>
+  <define property="true" evaluateNow="true">#8.TRAKT.hover:hover_trakt.png</define>
+  <define property="true" evaluateNow="true">#8.TRAKT.background:Animations\BasicHome\videos.jpg</define>
+  <define property="true" evaluateNow="true">#8.TRAKT.iconfocus:tb_video.png</define>
+  <define property="true" evaluateNow="true">#8.TRAKT.iconnofocus:tb_videoNF.png</define>
+  <define property="true" evaluateNow="true">#8.TRAKT.active:#(iif(and(or(eq(#8.TRAKT.plugin,''),plugin.isenabled(#8.TRAKT.plugin)),neq(#8.TRAKT.name,#PLUGOPTERROR)),' ',''))</define>
+  <define property="true" evaluateNow="true">#8.TRAKT:#(#.TRAKT.name) | #(string.format('{0}{1}',#8.TRAKT.name,iif(eq(#8.TRAKT.active,' '),'',#PLUGERROR)))</define>
+  <define property="true" evaluateNow="true">#8.TRAKT.latestmedia:98302</define>
+
+  <!-- Popular Shows -->
+  <define property="true" evaluateNow="true">#9.TRAKT.name:#(iif(neq(string.format('{0}',#Trakt.Translation.PopularShows.Label),''),#Trakt.Translation.PopularShows.Label,#PLUGOPTERROR))</define>
+  <define property="true" evaluateNow="true">#9.TRAKT.plugin:Trakt</define>
+  <define property="true" evaluateNow="true">#9.TRAKT.hyperlink:87102</define>
+  <define property="true" evaluateNow="true">#9.TRAKT.parameter:</define>
+  <define property="true" evaluateNow="true">#9.TRAKT.hover:hover_trakt.png</define>
+  <define property="true" evaluateNow="true">#9.TRAKT.background:Animations\BasicHome\videos.jpg</define>
+  <define property="true" evaluateNow="true">#9.TRAKT.iconfocus:tb_video.png</define>
+  <define property="true" evaluateNow="true">#9.TRAKT.iconnofocus:tb_videoNF.png</define>
+  <define property="true" evaluateNow="true">#9.TRAKT.active:#(iif(and(or(eq(#9.TRAKT.plugin,''),plugin.isenabled(#9.TRAKT.plugin)),neq(#9.TRAKT.name,#PLUGOPTERROR)),' ',''))</define>
+  <define property="true" evaluateNow="true">#9.TRAKT:#(#.TRAKT.name) | #(string.format('{0}{1}',#9.TRAKT.name,iif(eq(#9.TRAKT.active,' '),'',#PLUGERROR)))</define>
+  <define property="true" evaluateNow="true">#9.TRAKT.latestmedia:98302</define>
+
+<!-- Anticipated Movies -->
+  <define property="true" evaluateNow="true">#10.TRAKT.name:#(iif(neq(string.format('{0}',#Trakt.Translation.AnticipatedMovies.Label),''),#Trakt.Translation.AnticipatedMovies.Label,#PLUGOPTERROR))</define>
+  <define property="true" evaluateNow="true">#10.TRAKT.plugin:Trakt</define>
+  <define property="true" evaluateNow="true">#10.TRAKT.hyperlink:87605</define>
+  <define property="true" evaluateNow="true">#10.TRAKT.parameter:</define>
+  <define property="true" evaluateNow="true">#10.TRAKT.hover:hover_trakt.png</define>
+  <define property="true" evaluateNow="true">#10.TRAKT.background:Animations\BasicHome\videos.jpg</define>
+  <define property="true" evaluateNow="true">#10.TRAKT.iconfocus:tb_video.png</define>
+  <define property="true" evaluateNow="true">#10.TRAKT.iconnofocus:tb_videoNF.png</define>
+  <define property="true" evaluateNow="true">#10.TRAKT.active:#(iif(and(or(eq(#10.TRAKT.plugin,''),plugin.isenabled(#10.TRAKT.plugin)),neq(#10.TRAKT.name,#PLUGOPTERROR)),' ',''))</define>
+  <define property="true" evaluateNow="true">#10.TRAKT:#(#.TRAKT.name) | #(string.format('{0}{1}',#10.TRAKT.name,iif(eq(#10.TRAKT.active,' '),'',#PLUGERROR)))</define>
+  <define property="true" evaluateNow="true">#10.TRAKT.latestmedia:98302</define>
+
+  <!-- Anticipated Shows -->
+  <define property="true" evaluateNow="true">#11.TRAKT.name:#(iif(neq(string.format('{0}',#Trakt.Translation.AnticipatedShows.Label),''),#Trakt.Translation.AnticipatedShows.Label,#PLUGOPTERROR))</define>
+  <define property="true" evaluateNow="true">#11.TRAKT.plugin:Trakt</define>
+  <define property="true" evaluateNow="true">#11.TRAKT.hyperlink:87606</define>
+  <define property="true" evaluateNow="true">#11.TRAKT.parameter:</define>
+  <define property="true" evaluateNow="true">#11.TRAKT.hover:hover_trakt.png</define>
+  <define property="true" evaluateNow="true">#11.TRAKT.background:Animations\BasicHome\videos.jpg</define>
+  <define property="true" evaluateNow="true">#11.TRAKT.iconfocus:tb_video.png</define>
+  <define property="true" evaluateNow="true">#11.TRAKT.iconnofocus:tb_videoNF.png</define>
+  <define property="true" evaluateNow="true">#11.TRAKT.active:#(iif(and(or(eq(#11.TRAKT.plugin,''),plugin.isenabled(#11.TRAKT.plugin)),neq(#11.TRAKT.name,#PLUGOPTERROR)),' ',''))</define>
+  <define property="true" evaluateNow="true">#11.TRAKT:#(#.TRAKT.name) | #(string.format('{0}{1}',#11.TRAKT.name,iif(eq(#11.TRAKT.active,' '),'',#PLUGERROR)))</define>
+  <define property="true" evaluateNow="true">#11.TRAKT.latestmedia:98302</define>
+  
+  <!-- Box Office -->
+  <define property="true" evaluateNow="true">#12.TRAKT.name:#(iif(neq(string.format('{0}',#Trakt.Translation.BoxOffice.Label),''),#Trakt.Translation.BoxOffice.Label,#PLUGOPTERROR))</define>
+  <define property="true" evaluateNow="true">#12.TRAKT.plugin:Trakt</define>
+  <define property="true" evaluateNow="true">#12.TRAKT.hyperlink:87607</define>
+  <define property="true" evaluateNow="true">#12.TRAKT.parameter:</define>
+  <define property="true" evaluateNow="true">#12.TRAKT.hover:hover_trakt.png</define>
+  <define property="true" evaluateNow="true">#12.TRAKT.background:Animations\BasicHome\videos.jpg</define>
+  <define property="true" evaluateNow="true">#12.TRAKT.iconfocus:tb_video.png</define>
+  <define property="true" evaluateNow="true">#12.TRAKT.iconnofocus:tb_videoNF.png</define>
+  <define property="true" evaluateNow="true">#12.TRAKT.active:#(iif(and(or(eq(#12.TRAKT.plugin,''),plugin.isenabled(#12.TRAKT.plugin)),neq(#12.TRAKT.name,#PLUGOPTERROR)),' ',''))</define>
+  <define property="true" evaluateNow="true">#12.TRAKT:#(#.TRAKT.name) | #(string.format('{0}{1}',#12.TRAKT.name,iif(eq(#12.TRAKT.active,' '),'',#PLUGERROR)))</define>
+  <define property="true" evaluateNow="true">#12.TRAKT.latestmedia:98302</define>
+
+  <!--     *******************************************************************************************  -->
+  <!--     **********************************   WORLDWEATHER VIEWS   *********************************  -->
+  <!--     *******************************************************************************************  -->
+
+  <!-- Weather -->
+  <define property="true" evaluateNow="true">#.WORLDWEATHER.name:#(L(8))</define>
+  <define property="true" evaluateNow="true">#.WORLDWEATHER.plugin:World Weather</define>
+  <define property="true" evaluateNow="true">#.WORLDWEATHER.hyperlink:7977</define>
+  <define property="true" evaluateNow="true">#.WORLDWEATHER.parameter:</define>
+  <define property="true" evaluateNow="true">#.WORLDWEATHER.hover:hover_my Weather.png</define>
+  <define property="true" evaluateNow="true">#.WORLDWEATHER.background:Animations\BasicHome\weather.jpg</define>
+  <define property="true" evaluateNow="true">#.WORLDWEATHER.iconfocus:tb_weather.png</define>
+  <define property="true" evaluateNow="true">#.WORLDWEATHER.iconnofocus:tb_weatherNF.png</define>
+  <define property="true" evaluateNow="true">#.WORLDWEATHER.active:#(iif(and(or(eq(#.WORLDWEATHER.plugin,''),plugin.isenabled(#.WORLDWEATHER.plugin)),neq(#.WORLDWEATHER.name,#PLUGOPTERROR)),' ',''))</define>
+  <define property="true" evaluateNow="true">#.WORLDWEATHER:#(string.format('{0}{1}',#.WORLDWEATHER.name,iif(eq(#.WORLDWEATHER.active,' '),'',#PLUGERROR)))</define>
+
+  <!-- Condition -->
+  <define property="true" evaluateNow="true">#1.WORLDWEATHER.name:#(iif(neq(string.format('{0}',#WorldWeather.TranslationCondition),''),#WorldWeather.TranslationCondition,#PLUGOPTERROR))</define>
+  <define property="true" evaluateNow="true">#1.WORLDWEATHER.plugin:World Weather</define>
+  <define property="true" evaluateNow="true">#1.WORLDWEATHER.hyperlink:7977</define>
+  <define property="true" evaluateNow="true">#1.WORLDWEATHER.parameter:Condition</define>
+  <define property="true" evaluateNow="true">#1.WORLDWEATHER.hover:hover_my Weather.png</define>
+  <define property="true" evaluateNow="true">#1.WORLDWEATHER.background:Animations\BasicHome\weather.jpg</define>
+  <define property="true" evaluateNow="true">#1.WORLDWEATHER.iconfocus:tb_weather.png</define>
+  <define property="true" evaluateNow="true">#1.WORLDWEATHER.iconnofocus:tb_weatherNF.png</define>
+  <define property="true" evaluateNow="true">#1.WORLDWEATHER.active:#(iif(and(or(eq(#1.WORLDWEATHER.plugin,''),plugin.isenabled(#1.WORLDWEATHER.plugin)),neq(#1.WORLDWEATHER.name,#PLUGOPTERROR)),' ',''))</define>
+  <define property="true" evaluateNow="true">#1.WORLDWEATHER:#(string.format('{0}{1}',#1.WORLDWEATHER.name,iif(eq(#1.WORLDWEATHER.active,' '),'',#PLUGERROR)))</define>
+
+  <!-- Images -->
+  <define property="true" evaluateNow="true">#2.WORLDWEATHER.name:#(iif(neq(string.format('{0}',#WorldWeather.TranslationSatelliteImage),''),#WorldWeather.TranslationSatelliteImage,#PLUGOPTERROR))</define>
+  <define property="true" evaluateNow="true">#2.WORLDWEATHER.plugin:World Weather</define>
+  <define property="true" evaluateNow="true">#2.WORLDWEATHER.hyperlink:7977</define>
+  <define property="true" evaluateNow="true">#2.WORLDWEATHER.parameter:Image</define>
+  <define property="true" evaluateNow="true">#2.WORLDWEATHER.hover:hover_my Weather.png</define>
+  <define property="true" evaluateNow="true">#2.WORLDWEATHER.background:Animations\BasicHome\weather.jpg</define>
+  <define property="true" evaluateNow="true">#2.WORLDWEATHER.iconfocus:tb_weather.png</define>
+  <define property="true" evaluateNow="true">#2.WORLDWEATHER.iconnofocus:tb_weatherNF.png</define>
+  <define property="true" evaluateNow="true">#2.WORLDWEATHER.active:#(iif(and(or(eq(#2.WORLDWEATHER.plugin,''),plugin.isenabled(#2.WORLDWEATHER.plugin)),neq(#2.WORLDWEATHER.name,#PLUGOPTERROR)),' ',''))</define>
+  <define property="true" evaluateNow="true">#2.WORLDWEATHER:#(string.format('{0}{1}',#2.WORLDWEATHER.name,iif(eq(#2.WORLDWEATHER.active,' '),'',#PLUGERROR)))</define>
+
+  <!-- Geo Clock -->
+  <define property="true" evaluateNow="true">#3.WORLDWEATHER.name:#(iif(neq(string.format('{0}',#WorldWeather.TranslationGeoClock),''),#WorldWeather.TranslationGeoClock,#PLUGOPTERROR))</define>
+  <define property="true" evaluateNow="true">#3.WORLDWEATHER.plugin:World Weather</define>
+  <define property="true" evaluateNow="true">#3.WORLDWEATHER.hyperlink:7977</define>
+  <define property="true" evaluateNow="true">#3.WORLDWEATHER.parameter:GeoClock</define>
+  <define property="true" evaluateNow="true">#3.WORLDWEATHER.hover:hover_my Weather.png</define>
+  <define property="true" evaluateNow="true">#3.WORLDWEATHER.background:Animations\BasicHome\weather.jpg</define>
+  <define property="true" evaluateNow="true">#3.WORLDWEATHER.iconfocus:tb_weather.png</define>
+  <define property="true" evaluateNow="true">#3.WORLDWEATHER.iconnofocus:tb_weatherNF.png</define>
+  <define property="true" evaluateNow="true">#3.WORLDWEATHER.active:#(iif(and(or(eq(#3.WORLDWEATHER.plugin,''),plugin.isenabled(#3.WORLDWEATHER.plugin)),neq(#3.WORLDWEATHER.name,#PLUGOPTERROR)),' ',''))</define>
+  <define property="true" evaluateNow="true">#3.WORLDWEATHER:#(string.format('{0}{1}',#3.WORLDWEATHER.name,iif(eq(#3.WORLDWEATHER.active,' '),'',#PLUGERROR)))</define>
+
+  <!-- Astronomy -->
+  <define property="true" evaluateNow="true">#4.WORLDWEATHER.name:#(iif(neq(string.format('{0}',#WorldWeather.TranslationStarrySky),''),#WorldWeather.TranslationStarrySky,#PLUGOPTERROR))</define>
+  <define property="true" evaluateNow="true">#4.WORLDWEATHER.plugin:World Weather</define>
+  <define property="true" evaluateNow="true">#4.WORLDWEATHER.hyperlink:7977</define>
+  <define property="true" evaluateNow="true">#4.WORLDWEATHER.parameter:Astronomy</define>
+  <define property="true" evaluateNow="true">#4.WORLDWEATHER.hover:hover_my Weather.png</define>
+  <define property="true" evaluateNow="true">#4.WORLDWEATHER.background:Animations\BasicHome\weather.jpg</define>
+  <define property="true" evaluateNow="true">#4.WORLDWEATHER.iconfocus:tb_weather.png</define>
+  <define property="true" evaluateNow="true">#4.WORLDWEATHER.iconnofocus:tb_weatherNF.png</define>
+  <define property="true" evaluateNow="true">#4.WORLDWEATHER.active:#(iif(and(or(eq(#4.WORLDWEATHER.plugin,''),plugin.isenabled(#4.WORLDWEATHER.plugin)),neq(#4.WORLDWEATHER.name,#PLUGOPTERROR)),' ',''))</define>
+  <define property="true" evaluateNow="true">#4.WORLDWEATHER:#(string.format('{0}{1}',#4.WORLDWEATHER.name,iif(eq(#4.WORLDWEATHER.active,' '),'',#PLUGERROR)))</define>
+
+  <!-- Calendar -->
+  <define property="true" evaluateNow="true">#5.WORLDWEATHER.name:#(iif(neq(string.format('{0}',#WorldWeather.TranslationHoliday),''),#WorldWeather.TranslationHoliday,#PLUGOPTERROR))</define>
+  <define property="true" evaluateNow="true">#5.WORLDWEATHER.plugin:World Weather</define>
+  <define property="true" evaluateNow="true">#5.WORLDWEATHER.hyperlink:7977</define>
+  <define property="true" evaluateNow="true">#5.WORLDWEATHER.parameter:Calendar</define>
+  <define property="true" evaluateNow="true">#5.WORLDWEATHER.hover:hover_my Weather.png</define>
+  <define property="true" evaluateNow="true">#5.WORLDWEATHER.background:Animations\BasicHome\weather.jpg</define>
+  <define property="true" evaluateNow="true">#5.WORLDWEATHER.iconfocus:tb_weather.png</define>
+  <define property="true" evaluateNow="true">#5.WORLDWEATHER.iconnofocus:tb_weatherNF.png</define>
+  <define property="true" evaluateNow="true">#5.WORLDWEATHER.active:#(iif(and(or(eq(#5.WORLDWEATHER.plugin,''),plugin.isenabled(#5.WORLDWEATHER.plugin)),neq(#5.WORLDWEATHER.name,#PLUGOPTERROR)),' ',''))</define>
+  <define property="true" evaluateNow="true">#5.WORLDWEATHER:#(string.format('{0}{1}',#5.WORLDWEATHER.name,iif(eq(#5.WORLDWEATHER.active,' '),'',#PLUGERROR)))</define>
+
+  <!--     *******************************************************************************************  -->
+  <!--     **************************************   TVSERIES VIEWS   *********************************  -->
+  <!--     *******************************************************************************************  -->
+
+  <!-- TV Series -->
+  <define property="true" evaluateNow="true">#.TVSERIES.name:#(L(1300))</define>
+  <define property="true" evaluateNow="true">#.TVSERIES.plugin:MP-TV Series</define>
+  <define property="true" evaluateNow="true">#.TVSERIES.hyperlink:9811</define>
+  <define property="true" evaluateNow="true">#.TVSERIES.parameter:</define>
+  <define property="true" evaluateNow="true">#.TVSERIES.hover:hover_my tv series.png</define>
+  <define property="true" evaluateNow="true">#.TVSERIES.background:Animations\BasicHome\videos.jpg</define>
+  <define property="true" evaluateNow="true">#.TVSERIES.iconfocus:tb_video.png</define>
+  <define property="true" evaluateNow="true">#.TVSERIES.iconnofocus:tb_videoNF.png</define>
+  <define property="true" evaluateNow="true">#.TVSERIES.active:#(iif(and(or(eq(#.TVSERIES.plugin,''),plugin.isenabled(#.TVSERIES.plugin)),neq(#.TVSERIES.name,#PLUGOPTERROR)),' ',''))</define>
+  <define property="true" evaluateNow="true">#.TVSERIES:#(string.format('{0}{1}',#.TVSERIES.name,iif(eq(#.TVSERIES.active,' '),'',#PLUGERROR)))</define>
+  <define property="true" evaluateNow="true">#.TVSERIES.latestmedia:91919994</define>
+
+  <!-- TV Series Custom 1 -->
+  <define property="true" evaluateNow="true">#1.TVSERIES.name:#(iif(neq(string.format('{0}',#TVSeries.View.Item.1.Name),''),#TVSeries.View.Item.1.Name,#PLUGOPTERROR))</define>
+  <define property="true" evaluateNow="true">#1.TVSERIES.plugin:MP-TV Series</define>
+  <define property="true" evaluateNow="true">#1.TVSERIES.hyperlink:9811</define>
+  <define property="true" evaluateNow="true">#1.TVSERIES.parameter:#(iif(neq(string.format('{0}',#TVSeries.View.Item.1.HyperlinkParameter),''),#TVSeries.View.Item.1.HyperlinkParameter,''))</define>
+  <define property="true" evaluateNow="true">#1.TVSERIES.hover:hover_my tv series.png</define>
+  <define property="true" evaluateNow="true">#1.TVSERIES.background:Animations\BasicHome\videos.jpg</define>
+  <define property="true" evaluateNow="true">#1.TVSERIES.iconfocus:tb_video.png</define>
+  <define property="true" evaluateNow="true">#1.TVSERIES.iconnofocus:tb_videoNF.png</define>
+  <define property="true" evaluateNow="true">#1.TVSERIES.active:#(iif(and(or(eq(#1.TVSERIES.plugin,''),plugin.isenabled(#1.TVSERIES.plugin)),neq(#1.TVSERIES.name,#PLUGOPTERROR)),' ',''))</define>
+  <define property="true" evaluateNow="true">#1.TVSERIES:TV-S. | #(string.format('{0}{1}',#1.TVSERIES.name,iif(eq(#1.TVSERIES.active,' '),'',#PLUGERROR)))</define>
+  <define property="true" evaluateNow="true">#1.TVSERIES.latestmedia:91919994</define>
+
+  <!-- TV Series Custom 2 -->
+  <define property="true" evaluateNow="true">#2.TVSERIES.name:#(iif(neq(string.format('{0}',#TVSeries.View.Item.2.Name),''),#TVSeries.View.Item.2.Name,#PLUGOPTERROR))</define>
+  <define property="true" evaluateNow="true">#2.TVSERIES.plugin:MP-TV Series</define>
+  <define property="true" evaluateNow="true">#2.TVSERIES.hyperlink:9811</define>
+  <define property="true" evaluateNow="true">#2.TVSERIES.parameter:#(iif(neq(string.format('{0}',#TVSeries.View.Item.2.HyperlinkParameter),''),#TVSeries.View.Item.2.HyperlinkParameter,''))</define>
+  <define property="true" evaluateNow="true">#2.TVSERIES.hover:hover_my tv series.png</define>
+  <define property="true" evaluateNow="true">#2.TVSERIES.background:Animations\BasicHome\videos.jpg</define>
+  <define property="true" evaluateNow="true">#2.TVSERIES.iconfocus:tb_video.png</define>
+  <define property="true" evaluateNow="true">#2.TVSERIES.iconnofocus:tb_videoNF.png</define>
+  <define property="true" evaluateNow="true">#2.TVSERIES.active:#(iif(and(or(eq(#2.TVSERIES.plugin,''),plugin.isenabled(#2.TVSERIES.plugin)),neq(#2.TVSERIES.name,#PLUGOPTERROR)),' ',''))</define>
+  <define property="true" evaluateNow="true">#2.TVSERIES:TV-S. | #(string.format('{0}{1}',#2.TVSERIES.name,iif(eq(#2.TVSERIES.active,' '),'',#PLUGERROR)))</define>
+  <define property="true" evaluateNow="true">#2.TVSERIES.latestmedia:91919994</define>
+
+  <!-- TV Series Custom 3 -->
+  <define property="true" evaluateNow="true">#3.TVSERIES.name:#(iif(neq(string.format('{0}',#TVSeries.View.Item.3.Name),''),#TVSeries.View.Item.3.Name,#PLUGOPTERROR))</define>
+  <define property="true" evaluateNow="true">#3.TVSERIES.plugin:MP-TV Series</define>
+  <define property="true" evaluateNow="true">#3.TVSERIES.hyperlink:9811</define>
+  <define property="true" evaluateNow="true">#3.TVSERIES.parameter:#(iif(neq(string.format('{0}',#TVSeries.View.Item.3.HyperlinkParameter),''),#TVSeries.View.Item.3.HyperlinkParameter,''))</define>
+  <define property="true" evaluateNow="true">#3.TVSERIES.hover:hover_my tv series.png</define>
+  <define property="true" evaluateNow="true">#3.TVSERIES.background:Animations\BasicHome\videos.jpg</define>
+  <define property="true" evaluateNow="true">#3.TVSERIES.iconfocus:tb_video.png</define>
+  <define property="true" evaluateNow="true">#3.TVSERIES.iconnofocus:tb_videoNF.png</define>
+  <define property="true" evaluateNow="true">#3.TVSERIES.active:#(iif(and(or(eq(#3.TVSERIES.plugin,''),plugin.isenabled(#3.TVSERIES.plugin)),neq(#3.TVSERIES.name,#PLUGOPTERROR)),' ',''))</define>
+  <define property="true" evaluateNow="true">#3.TVSERIES:TV-S. | #(string.format('{0}{1}',#3.TVSERIES.name,iif(eq(#3.TVSERIES.active,' '),'',#PLUGERROR)))</define>
+  <define property="true" evaluateNow="true">#3.TVSERIES.latestmedia:91919994</define>
+
+  <!-- TV Series Custom 4 -->
+  <define property="true" evaluateNow="true">#4.TVSERIES.name:#(iif(neq(string.format('{0}',#TVSeries.View.Item.4.Name),''),#TVSeries.View.Item.4.Name,#PLUGOPTERROR))</define>
+  <define property="true" evaluateNow="true">#4.TVSERIES.plugin:MP-TV Series</define>
+  <define property="true" evaluateNow="true">#4.TVSERIES.hyperlink:9811</define>
+  <define property="true" evaluateNow="true">#4.TVSERIES.parameter:#(iif(neq(string.format('{0}',#TVSeries.View.Item.4.HyperlinkParameter),''),#TVSeries.View.Item.4.HyperlinkParameter,''))</define>
+  <define property="true" evaluateNow="true">#4.TVSERIES.hover:hover_my tv series.png</define>
+  <define property="true" evaluateNow="true">#4.TVSERIES.background:Animations\BasicHome\videos.jpg</define>
+  <define property="true" evaluateNow="true">#4.TVSERIES.iconfocus:tb_video.png</define>
+  <define property="true" evaluateNow="true">#4.TVSERIES.iconnofocus:tb_videoNF.png</define>
+  <define property="true" evaluateNow="true">#4.TVSERIES.active:#(iif(and(or(eq(#4.TVSERIES.plugin,''),plugin.isenabled(#4.TVSERIES.plugin)),neq(#4.TVSERIES.name,#PLUGOPTERROR)),' ',''))</define>
+  <define property="true" evaluateNow="true">#4.TVSERIES:TV-S. | #(string.format('{0}{1}',#4.TVSERIES.name,iif(eq(#4.TVSERIES.active,' '),'',#PLUGERROR)))</define>
+  <define property="true" evaluateNow="true">#4.TVSERIES.latestmedia:91919994</define>
+
+  <!-- TV Series Custom 5 -->
+  <define property="true" evaluateNow="true">#5.TVSERIES.name:#(iif(neq(string.format('{0}',#TVSeries.View.Item.5.Name),''),#TVSeries.View.Item.5.Name,#PLUGOPTERROR))</define>
+  <define property="true" evaluateNow="true">#5.TVSERIES.plugin:MP-TV Series</define>
+  <define property="true" evaluateNow="true">#5.TVSERIES.hyperlink:9811</define>
+  <define property="true" evaluateNow="true">#5.TVSERIES.parameter:#(iif(neq(string.format('{0}',#TVSeries.View.Item.5.HyperlinkParameter),''),#TVSeries.View.Item.5.HyperlinkParameter,''))</define>
+  <define property="true" evaluateNow="true">#5.TVSERIES.hover:hover_my tv series.png</define>
+  <define property="true" evaluateNow="true">#5.TVSERIES.background:Animations\BasicHome\videos.jpg</define>
+  <define property="true" evaluateNow="true">#5.TVSERIES.iconfocus:tb_video.png</define>
+  <define property="true" evaluateNow="true">#5.TVSERIES.iconnofocus:tb_videoNF.png</define>
+  <define property="true" evaluateNow="true">#5.TVSERIES.active:#(iif(and(or(eq(#5.TVSERIES.plugin,''),plugin.isenabled(#5.TVSERIES.plugin)),neq(#5.TVSERIES.name,#PLUGOPTERROR)),' ',''))</define>
+  <define property="true" evaluateNow="true">#5.TVSERIES:TV-S. | #(string.format('{0}{1}',#5.TVSERIES.name,iif(eq(#5.TVSERIES.active,' '),'',#PLUGERROR)))</define>
+  <define property="true" evaluateNow="true">#5.TVSERIES.latestmedia:91919994</define>
+
+  <!-- TV Series Custom 6 -->
+  <define property="true" evaluateNow="true">#6.TVSERIES.name:#(iif(neq(string.format('{0}',#TVSeries.View.Item.6.Name),''),#TVSeries.View.Item.6.Name,#PLUGOPTERROR))</define>
+  <define property="true" evaluateNow="true">#6.TVSERIES.plugin:MP-TV Series</define>
+  <define property="true" evaluateNow="true">#6.TVSERIES.hyperlink:9811</define>
+  <define property="true" evaluateNow="true">#6.TVSERIES.parameter:#(iif(neq(string.format('{0}',#TVSeries.View.Item.6.HyperlinkParameter),''),#TVSeries.View.Item.6.HyperlinkParameter,''))</define>
+  <define property="true" evaluateNow="true">#6.TVSERIES.hover:hover_my tv series.png</define>
+  <define property="true" evaluateNow="true">#6.TVSERIES.background:Animations\BasicHome\videos.jpg</define>
+  <define property="true" evaluateNow="true">#6.TVSERIES.iconfocus:tb_video.png</define>
+  <define property="true" evaluateNow="true">#6.TVSERIES.iconnofocus:tb_videoNF.png</define>
+  <define property="true" evaluateNow="true">#6.TVSERIES.active:#(iif(and(or(eq(#6.TVSERIES.plugin,''),plugin.isenabled(#6.TVSERIES.plugin)),neq(#6.TVSERIES.name,#PLUGOPTERROR)),' ',''))</define>
+  <define property="true" evaluateNow="true">#6.TVSERIES:TV-S. | #(string.format('{0}{1}',#6.TVSERIES.name,iif(eq(#6.TVSERIES.active,' '),'',#PLUGERROR)))</define>
+  <define property="true" evaluateNow="true">#6.TVSERIES.latestmedia:91919994</define>
+
+  <!-- TV Series Custom 7 -->
+  <define property="true" evaluateNow="true">#7.TVSERIES.name:#(iif(neq(string.format('{0}',#TVSeries.View.Item.7.Name),''),#TVSeries.View.Item.7.Name,#PLUGOPTERROR))</define>
+  <define property="true" evaluateNow="true">#7.TVSERIES.plugin:MP-TV Series</define>
+  <define property="true" evaluateNow="true">#7.TVSERIES.hyperlink:9811</define>
+  <define property="true" evaluateNow="true">#7.TVSERIES.parameter:#(iif(neq(string.format('{0}',#TVSeries.View.Item.7.HyperlinkParameter),''),#TVSeries.View.Item.7.HyperlinkParameter,''))</define>
+  <define property="true" evaluateNow="true">#7.TVSERIES.hover:hover_my tv series.png</define>
+  <define property="true" evaluateNow="true">#7.TVSERIES.background:Animations\BasicHome\videos.jpg</define>
+  <define property="true" evaluateNow="true">#7.TVSERIES.iconfocus:tb_video.png</define>
+  <define property="true" evaluateNow="true">#7.TVSERIES.iconnofocus:tb_videoNF.png</define>
+  <define property="true" evaluateNow="true">#7.TVSERIES.active:#(iif(and(or(eq(#7.TVSERIES.plugin,''),plugin.isenabled(#7.TVSERIES.plugin)),neq(#7.TVSERIES.name,#PLUGOPTERROR)),' ',''))</define>
+  <define property="true" evaluateNow="true">#7.TVSERIES:TV-S. | #(string.format('{0}{1}',#7.TVSERIES.name,iif(eq(#7.TVSERIES.active,' '),'',#PLUGERROR)))</define>
+  <define property="true" evaluateNow="true">#7.TVSERIES.latestmedia:91919994</define>
+
+  <!-- TV Series Custom 8 -->
+  <define property="true" evaluateNow="true">#8.TVSERIES.name:#(iif(neq(string.format('{0}',#TVSeries.View.Item.8.Name),''),#TVSeries.View.Item.8.Name,#PLUGOPTERROR))</define>
+  <define property="true" evaluateNow="true">#8.TVSERIES.plugin:MP-TV Series</define>
+  <define property="true" evaluateNow="true">#8.TVSERIES.hyperlink:9811</define>
+  <define property="true" evaluateNow="true">#8.TVSERIES.parameter:#(iif(neq(string.format('{0}',#TVSeries.View.Item.8.HyperlinkParameter),''),#TVSeries.View.Item.8.HyperlinkParameter,''))</define>
+  <define property="true" evaluateNow="true">#8.TVSERIES.hover:hover_my tv series.png</define>
+  <define property="true" evaluateNow="true">#8.TVSERIES.background:Animations\BasicHome\videos.jpg</define>
+  <define property="true" evaluateNow="true">#8.TVSERIES.iconfocus:tb_video.png</define>
+  <define property="true" evaluateNow="true">#8.TVSERIES.iconnofocus:tb_videoNF.png</define>
+  <define property="true" evaluateNow="true">#8.TVSERIES.active:#(iif(and(or(eq(#8.TVSERIES.plugin,''),plugin.isenabled(#8.TVSERIES.plugin)),neq(#8.TVSERIES.name,#PLUGOPTERROR)),' ',''))</define>
+  <define property="true" evaluateNow="true">#8.TVSERIES:TV-S. | #(string.format('{0}{1}',#8.TVSERIES.name,iif(eq(#8.TVSERIES.active,' '),'',#PLUGERROR)))</define>
+  <define property="true" evaluateNow="true">#8.TVSERIES.latestmedia:91919994</define>
+
+  <!-- TV Series Custom 9 -->
+  <define property="true" evaluateNow="true">#9.TVSERIES.name:#(iif(neq(string.format('{0}',#TVSeries.View.Item.9.Name),''),#TVSeries.View.Item.9.Name,#PLUGOPTERROR))</define>
+  <define property="true" evaluateNow="true">#9.TVSERIES.plugin:MP-TV Series</define>
+  <define property="true" evaluateNow="true">#9.TVSERIES.hyperlink:9811</define>
+  <define property="true" evaluateNow="true">#9.TVSERIES.parameter:#(iif(neq(string.format('{0}',#TVSeries.View.Item.9.HyperlinkParameter),''),#TVSeries.View.Item.9.HyperlinkParameter,''))</define>
+  <define property="true" evaluateNow="true">#9.TVSERIES.hover:hover_my tv series.png</define>
+  <define property="true" evaluateNow="true">#9.TVSERIES.background:Animations\BasicHome\videos.jpg</define>
+  <define property="true" evaluateNow="true">#9.TVSERIES.iconfocus:tb_video.png</define>
+  <define property="true" evaluateNow="true">#9.TVSERIES.iconnofocus:tb_videoNF.png</define>
+  <define property="true" evaluateNow="true">#9.TVSERIES.active:#(iif(and(or(eq(#9.TVSERIES.plugin,''),plugin.isenabled(#9.TVSERIES.plugin)),neq(#9.TVSERIES.name,#PLUGOPTERROR)),' ',''))</define>
+  <define property="true" evaluateNow="true">#9.TVSERIES:TV-S. | #(string.format('{0}{1}',#9.TVSERIES.name,iif(eq(#9.TVSERIES.active,' '),'',#PLUGERROR)))</define>
+  <define property="true" evaluateNow="true">#9.TVSERIES.latestmedia:91919994</define>
+
+  <!-- TV Series Custom 10 -->
+  <define property="true" evaluateNow="true">#10.TVSERIES.name:#(iif(neq(string.format('{0}',#TVSeries.View.Item.10.Name),''),#TVSeries.View.Item.10.Name,#PLUGOPTERROR))</define>
+  <define property="true" evaluateNow="true">#10.TVSERIES.plugin:MP-TV Series</define>
+  <define property="true" evaluateNow="true">#10.TVSERIES.hyperlink:9811</define>
+  <define property="true" evaluateNow="true">#10.TVSERIES.parameter:#(iif(neq(string.format('{0}',#TVSeries.View.Item.10.HyperlinkParameter),''),#TVSeries.View.Item.10.HyperlinkParameter,''))</define>
+  <define property="true" evaluateNow="true">#10.TVSERIES.hover:hover_my tv series.png</define>
+  <define property="true" evaluateNow="true">#10.TVSERIES.background:Animations\BasicHome\videos.jpg</define>
+  <define property="true" evaluateNow="true">#10.TVSERIES.iconfocus:tb_video.png</define>
+  <define property="true" evaluateNow="true">#10.TVSERIES.iconnofocus:tb_videoNF.png</define>
+  <define property="true" evaluateNow="true">#10.TVSERIES.active:#(iif(and(or(eq(#10.TVSERIES.plugin,''),plugin.isenabled(#10.TVSERIES.plugin)),neq(#10.TVSERIES.name,#PLUGOPTERROR)),' ',''))</define>
+  <define property="true" evaluateNow="true">#10.TVSERIES:TV-S. | #(string.format('{0}{1}',#10.TVSERIES.name,iif(eq(#10.TVSERIES.active,' '),'',#PLUGERROR)))</define>
+  <define property="true" evaluateNow="true">#10.TVSERIES.latestmedia:91919994</define>
+
+  <!-- TV Series Custom 11 -->
+  <define property="true" evaluateNow="true">#11.TVSERIES.name:#(iif(neq(string.format('{0}',#TVSeries.View.Item.11.Name),''),#TVSeries.View.Item.11.Name,#PLUGOPTERROR))</define>
+  <define property="true" evaluateNow="true">#11.TVSERIES.plugin:MP-TV Series</define>
+  <define property="true" evaluateNow="true">#11.TVSERIES.hyperlink:9811</define>
+  <define property="true" evaluateNow="true">#11.TVSERIES.parameter:#(iif(neq(string.format('{0}',#TVSeries.View.Item.11.HyperlinkParameter),''),#TVSeries.View.Item.11.HyperlinkParameter,''))</define>
+  <define property="true" evaluateNow="true">#11.TVSERIES.hover:hover_my tv series.png</define>
+  <define property="true" evaluateNow="true">#11.TVSERIES.background:Animations\BasicHome\videos.jpg</define>
+  <define property="true" evaluateNow="true">#11.TVSERIES.iconfocus:tb_video.png</define>
+  <define property="true" evaluateNow="true">#11.TVSERIES.iconnofocus:tb_videoNF.png</define>
+  <define property="true" evaluateNow="true">#11.TVSERIES.active:#(iif(and(or(eq(#11.TVSERIES.plugin,''),plugin.isenabled(#11.TVSERIES.plugin)),neq(#11.TVSERIES.name,#PLUGOPTERROR)),' ',''))</define>
+  <define property="true" evaluateNow="true">#11.TVSERIES:TV-S. | #(string.format('{0}{1}',#11.TVSERIES.name,iif(eq(#11.TVSERIES.active,' '),'',#PLUGERROR)))</define>
+  <define property="true" evaluateNow="true">#11.TVSERIES.latestmedia:91919994</define>
+
+  <!-- TV Series Custom 12 -->
+  <define property="true" evaluateNow="true">#12.TVSERIES.name:#(iif(neq(string.format('{0}',#TVSeries.View.Item.12.Name),''),#TVSeries.View.Item.12.Name,#PLUGOPTERROR))</define>
+  <define property="true" evaluateNow="true">#12.TVSERIES.plugin:MP-TV Series</define>
+  <define property="true" evaluateNow="true">#12.TVSERIES.hyperlink:9811</define>
+  <define property="true" evaluateNow="true">#12.TVSERIES.parameter:#(iif(neq(string.format('{0}',#TVSeries.View.Item.12.HyperlinkParameter),''),#TVSeries.View.Item.12.HyperlinkParameter,''))</define>
+  <define property="true" evaluateNow="true">#12.TVSERIES.hover:hover_my tv series.png</define>
+  <define property="true" evaluateNow="true">#12.TVSERIES.background:Animations\BasicHome\videos.jpg</define>
+  <define property="true" evaluateNow="true">#12.TVSERIES.iconfocus:tb_video.png</define>
+  <define property="true" evaluateNow="true">#12.TVSERIES.iconnofocus:tb_videoNF.png</define>
+  <define property="true" evaluateNow="true">#12.TVSERIES.active:#(iif(and(or(eq(#12.TVSERIES.plugin,''),plugin.isenabled(#12.TVSERIES.plugin)),neq(#12.TVSERIES.name,#PLUGOPTERROR)),' ',''))</define>
+  <define property="true" evaluateNow="true">#12.TVSERIES:TV-S. | #(string.format('{0}{1}',#12.TVSERIES.name,iif(eq(#12.TVSERIES.active,' '),'',#PLUGERROR)))</define>
+  <define property="true" evaluateNow="true">#12.TVSERIES.latestmedia:91919994</define>
+
+  <!-- TV Series Custom 13 -->
+  <define property="true" evaluateNow="true">#13.TVSERIES.name:#(iif(neq(string.format('{0}',#TVSeries.View.Item.13.Name),''),#TVSeries.View.Item.13.Name,#PLUGOPTERROR))</define>
+  <define property="true" evaluateNow="true">#13.TVSERIES.plugin:MP-TV Series</define>
+  <define property="true" evaluateNow="true">#13.TVSERIES.hyperlink:9811</define>
+  <define property="true" evaluateNow="true">#13.TVSERIES.parameter:#(iif(neq(string.format('{0}',#TVSeries.View.Item.13.HyperlinkParameter),''),#TVSeries.View.Item.13.HyperlinkParameter,''))</define>
+  <define property="true" evaluateNow="true">#13.TVSERIES.hover:hover_my tv series.png</define>
+  <define property="true" evaluateNow="true">#13.TVSERIES.background:Animations\BasicHome\videos.jpg</define>
+  <define property="true" evaluateNow="true">#13.TVSERIES.iconfocus:tb_video.png</define>
+  <define property="true" evaluateNow="true">#13.TVSERIES.iconnofocus:tb_videoNF.png</define>
+  <define property="true" evaluateNow="true">#13.TVSERIES.active:#(iif(and(or(eq(#13.TVSERIES.plugin,''),plugin.isenabled(#13.TVSERIES.plugin)),neq(#13.TVSERIES.name,#PLUGOPTERROR)),' ',''))</define>
+  <define property="true" evaluateNow="true">#13.TVSERIES:TV-S. | #(string.format('{0}{1}',#13.TVSERIES.name,iif(eq(#13.TVSERIES.active,' '),'',#PLUGERROR)))</define>
+  <define property="true" evaluateNow="true">#13.TVSERIES.latestmedia:91919994</define>
+
+  <!-- TV Series Custom 14 -->
+  <define property="true" evaluateNow="true">#14.TVSERIES.name:#(iif(neq(string.format('{0}',#TVSeries.View.Item.14.Name),''),#TVSeries.View.Item.14.Name,#PLUGOPTERROR))</define>
+  <define property="true" evaluateNow="true">#14.TVSERIES.plugin:MP-TV Series</define>
+  <define property="true" evaluateNow="true">#14.TVSERIES.hyperlink:9811</define>
+  <define property="true" evaluateNow="true">#14.TVSERIES.parameter:#(iif(neq(string.format('{0}',#TVSeries.View.Item.14.HyperlinkParameter),''),#TVSeries.View.Item.14.HyperlinkParameter,''))</define>
+  <define property="true" evaluateNow="true">#14.TVSERIES.hover:hover_my tv series.png</define>
+  <define property="true" evaluateNow="true">#14.TVSERIES.background:Animations\BasicHome\videos.jpg</define>
+  <define property="true" evaluateNow="true">#14.TVSERIES.iconfocus:tb_video.png</define>
+  <define property="true" evaluateNow="true">#14.TVSERIES.iconnofocus:tb_videoNF.png</define>
+  <define property="true" evaluateNow="true">#14.TVSERIES.active:#(iif(and(or(eq(#14.TVSERIES.plugin,''),plugin.isenabled(#14.TVSERIES.plugin)),neq(#14.TVSERIES.name,#PLUGOPTERROR)),' ',''))</define>
+  <define property="true" evaluateNow="true">#14.TVSERIES:TV-S. | #(string.format('{0}{1}',#14.TVSERIES.name,iif(eq(#14.TVSERIES.active,' '),'',#PLUGERROR)))</define>
+  <define property="true" evaluateNow="true">#14.TVSERIES.latestmedia:91919994</define>
+
+  <!-- TV Series Custom 15 -->
+  <define property="true" evaluateNow="true">#15.TVSERIES.name:#(iif(neq(string.format('{0}',#TVSeries.View.Item.15.Name),''),#TVSeries.View.Item.15.Name,#PLUGOPTERROR))</define>
+  <define property="true" evaluateNow="true">#15.TVSERIES.plugin:MP-TV Series</define>
+  <define property="true" evaluateNow="true">#15.TVSERIES.hyperlink:9811</define>
+  <define property="true" evaluateNow="true">#15.TVSERIES.parameter:#(iif(neq(string.format('{0}',#TVSeries.View.Item.15.HyperlinkParameter),''),#TVSeries.View.Item.15.HyperlinkParameter,''))</define>
+  <define property="true" evaluateNow="true">#15.TVSERIES.hover:hover_my tv series.png</define>
+  <define property="true" evaluateNow="true">#15.TVSERIES.background:Animations\BasicHome\videos.jpg</define>
+  <define property="true" evaluateNow="true">#15.TVSERIES.iconfocus:tb_video.png</define>
+  <define property="true" evaluateNow="true">#15.TVSERIES.iconnofocus:tb_videoNF.png</define>
+  <define property="true" evaluateNow="true">#15.TVSERIES.active:#(iif(and(or(eq(#15.TVSERIES.plugin,''),plugin.isenabled(#15.TVSERIES.plugin)),neq(#15.TVSERIES.name,#PLUGOPTERROR)),' ',''))</define>
+  <define property="true" evaluateNow="true">#15.TVSERIES:TV-S. | #(string.format('{0}{1}',#15.TVSERIES.name,iif(eq(#15.TVSERIES.active,' '),'',#PLUGERROR)))</define>
+  <define property="true" evaluateNow="true">#15.TVSERIES.latestmedia:91919994</define>
+
+<!-- :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: -->
+
+</window>

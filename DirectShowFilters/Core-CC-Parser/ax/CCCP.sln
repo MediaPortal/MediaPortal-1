@@ -1,0 +1,25 @@
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CCCP", "CCCP.vcxproj", "{F03EA5AB-4074-4E9D-9466-CB117BAA1A3F}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug Unicode|Win32 = Debug Unicode|Win32
+		Debug|Win32 = Debug|Win32
+		Release Unicode|Win32 = Release Unicode|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F03EA5AB-4074-4E9D-9466-CB117BAA1A3F}.Debug Unicode|Win32.ActiveCfg = Debug Unicode|Win32
+		{F03EA5AB-4074-4E9D-9466-CB117BAA1A3F}.Debug Unicode|Win32.Build.0 = Debug Unicode|Win32
+		{F03EA5AB-4074-4E9D-9466-CB117BAA1A3F}.Debug|Win32.ActiveCfg = Debug|Win32
+		{F03EA5AB-4074-4E9D-9466-CB117BAA1A3F}.Debug|Win32.Build.0 = Debug|Win32
+		{F03EA5AB-4074-4E9D-9466-CB117BAA1A3F}.Release Unicode|Win32.ActiveCfg = Release Unicode|Win32
+		{F03EA5AB-4074-4E9D-9466-CB117BAA1A3F}.Release Unicode|Win32.Build.0 = Release Unicode|Win32
+		{F03EA5AB-4074-4E9D-9466-CB117BAA1A3F}.Release|Win32.ActiveCfg = Release|Win32
+		{F03EA5AB-4074-4E9D-9466-CB117BAA1A3F}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

@@ -1,5 +1,5 @@
 /*
- * (C) 2006-2012 see Authors.txt
+ * (C) 2006-2013 see Authors.txt
  *
  * This file is part of MPC-HC.
  *
@@ -21,6 +21,7 @@
 #include "stdafx.h"
 #include "HdmvSub.h"
 #include "../DSUtil/GolombBuffer.h"
+#include <algorithm>
 
 #if (0) // Set to 1 to activate HDMV subtitles traces
 #define TRACE_HDMVSUB TRACE
@@ -32,11 +33,11 @@
 CHdmvSub::CHdmvSub()
     : CBaseSub(ST_HDMV)
     , m_nCurSegment(NO_SEGMENT)
-    , m_pSegBuffer(NULL)
+    , m_pSegBuffer(nullptr)
     , m_nTotalSegBuffer(0)
     , m_nSegBufferPos(0)
     , m_nSegSize(0)
-    , m_pCurrentPresentationSegment(NULL)
+    , m_pCurrentPresentationSegment(nullptr)
 {
 }
 
@@ -62,22 +63,17 @@ void CHdmvSub::AllocSegment(int nSize)
 
 POSITION CHdmvSub::GetStartPosition(REFERENCE_TIME rt, double fps)
 {
-    HDMV_PRESENTATION_SEGMENT* pPresentationSegment;
-
-    // Cleanup old PG
-    while (m_pPresentationSegments.GetCount() > 0) {
-        pPresentationSegment = m_pPresentationSegments.GetHead();
+    POSITION pos = m_pPresentationSegments.GetHeadPosition();
+    while (pos) {
+        HDMV_PRESENTATION_SEGMENT* pPresentationSegment = m_pPresentationSegments.GetAt(pos);
         if (pPresentationSegment->rtStop < rt) {
-            TRACE_HDMVSUB(_T("CHdmvSub:HDMV Remove Presentation segment %d  %s => %s (rt=%s)\n"), pPresentationSegment->composition_descriptor.nNumber,
-                          ReftimeToString(pPresentationSegment->rtStart), ReftimeToString(pPresentationSegment->rtStop), ReftimeToString(rt));
-            m_pPresentationSegments.RemoveHead();
-            delete pPresentationSegment;
+            m_pPresentationSegments.GetNext(pos);
         } else {
             break;
         }
     }
 
-    return m_pPresentationSegments.GetHeadPosition();
+    return pos;
 }
 
 HRESULT CHdmvSub::ParseSample(IMediaSample* pSample)
@@ -85,11 +81,11 @@ HRESULT CHdmvSub::ParseSample(IMediaSample* pSample)
     CheckPointer(pSample, E_POINTER);
     HRESULT hr;
     REFERENCE_TIME rtStart = INVALID_TIME, rtStop = INVALID_TIME;
-    BYTE* pData = NULL;
+    BYTE* pData = nullptr;
     int lSampleLen;
 
     hr = pSample->GetPointer(&pData);
-    if (FAILED(hr) || pData == NULL) {
+    if (FAILED(hr) || pData == nullptr) {
         return hr;
     }
     lSampleLen = pSample->GetActualDataLength();
@@ -214,7 +210,9 @@ void CHdmvSub::EnqueuePresentationSegment(REFERENCE_TIME rt)
                 pObject->m_width = pObjectData.m_width;
                 pObject->m_height = pObjectData.m_height;
 
-                pObject->SetRLEData(pObjectData.GetRLEData(), pObjectData.GetRLEDataSize(), pObjectData.GetRLEDataSize());
+                if (pObjectData.GetRLEData()) {
+                    pObject->SetRLEData(pObjectData.GetRLEData(), pObjectData.GetRLEDataSize(), pObjectData.GetRLEDataSize());
+                }
             }
 
             m_pPresentationSegments.AddTail(m_pCurrentPresentationSegment);
@@ -225,7 +223,7 @@ void CHdmvSub::EnqueuePresentationSegment(REFERENCE_TIME rt)
             delete m_pCurrentPresentationSegment;
         }
 
-        m_pCurrentPresentationSegment = NULL;
+        m_pCurrentPresentationSegment = nullptr;
     }
 }
 
@@ -241,14 +239,12 @@ void CHdmvSub::ParsePalette(CGolombBuffer* pGBuffer, unsigned short nSize)  // #
     CLUT.size = BYTE((nSize - 2) / sizeof(HDMV_PALETTE));
 
     for (int i = 0; i < CLUT.size; i++) {
-        BYTE entry_id = pGBuffer->ReadByte();
+        CLUT.palette[i].entry_id = pGBuffer->ReadByte();
 
-        CLUT.palette[entry_id].entry_id = entry_id;
-
-        CLUT.palette[entry_id].Y  = pGBuffer->ReadByte();
-        CLUT.palette[entry_id].Cr = pGBuffer->ReadByte();
-        CLUT.palette[entry_id].Cb = pGBuffer->ReadByte();
-        CLUT.palette[entry_id].T  = pGBuffer->ReadByte();
+        CLUT.palette[i].Y  = pGBuffer->ReadByte();
+        CLUT.palette[i].Cr = pGBuffer->ReadByte();
+        CLUT.palette[i].Cb = pGBuffer->ReadByte();
+        CLUT.palette[i].T  = pGBuffer->ReadByte();
     }
 }
 
@@ -263,7 +259,7 @@ void CHdmvSub::ParseObject(CGolombBuffer* pGBuffer, unsigned short nUnitSize)   
     BYTE m_sequence_desc = pGBuffer->ReadByte();
 
     if (m_sequence_desc & 0x80) {
-        DWORD object_data_length  = (DWORD)pGBuffer->BitRead(24);
+        int object_data_length = (int)pGBuffer->BitRead(24);
 
         pObject.m_width = pGBuffer->ReadShort();
         pObject.m_height = pGBuffer->ReadShort();
@@ -310,6 +306,8 @@ void CHdmvSub::ParseCompositionDescriptor(CGolombBuffer* pGBuffer, COMPOSITION_D
 
 void CHdmvSub::Render(SubPicDesc& spd, REFERENCE_TIME rt, RECT& bbox)
 {
+    RemoveOldSegments(rt);
+
     HDMV_PRESENTATION_SEGMENT* pPresentationSegment = FindPresentationSegment(rt);
 
     bbox.left   = LONG_MAX;
@@ -335,7 +333,8 @@ void CHdmvSub::Render(SubPicDesc& spd, REFERENCE_TIME rt, RECT& bbox)
                 bbox.right  = max(pObject->m_horizontal_position + pObject->m_width, bbox.right);
                 bbox.bottom = max(pObject->m_vertical_position + pObject->m_height, bbox.bottom);
 
-                TRACE_HDMVSUB(_T(" --> Object %d (Res=%dx%d, SPDRes=%dx%d)\n"), pObject->m_object_id_ref, pObject->m_width, pObject->m_height, spd.w, spd.h);
+                TRACE_HDMVSUB(_T(" --> Object %d (Pos=%dx%d, Res=%dx%d, SPDRes=%dx%d)\n"),
+                              pObject->m_object_id_ref, pObject->m_horizontal_position, pObject->m_vertical_position, pObject->m_width, pObject->m_height, spd.w, spd.h);
                 pObject->RenderHdmv(spd);
             } else {
                 TRACE_HDMVSUB(_T(" --> Invalid object %d\n"), pObject->m_object_id_ref);
@@ -364,9 +363,20 @@ HRESULT CHdmvSub::GetTextureSize(POSITION pos, SIZE& MaxTextureSize, SIZE& Video
 
 void CHdmvSub::Reset()
 {
-    HDMV_PRESENTATION_SEGMENT* pPresentationSegment;
-    while (m_pPresentationSegments.GetCount() > 0) {
-        pPresentationSegment = m_pPresentationSegments.RemoveHead();
+    while (!m_pPresentationSegments.IsEmpty()) {
+        HDMV_PRESENTATION_SEGMENT* pPresentationSegment = m_pPresentationSegments.RemoveHead();
+        delete pPresentationSegment;
+    }
+}
+
+void CHdmvSub::RemoveOldSegments(REFERENCE_TIME rt)
+{
+    // Cleanup the old presentation segments. We keep a 2 min buffer to play nice with the queue.
+    while (!m_pPresentationSegments.IsEmpty() && m_pPresentationSegments.GetHead()->rtStop + 120 * 10000000i64 < rt) {
+        HDMV_PRESENTATION_SEGMENT* pPresentationSegment = m_pPresentationSegments.RemoveHead();
+        TRACE_HDMVSUB(_T("CHdmvSub::RemoveOldSegments Remove presentation segment %d %s => %s (rt=%s)\n"),
+                      pPresentationSegment->composition_descriptor.nNumber,
+                      ReftimeToString(pPresentationSegment->rtStart), ReftimeToString(pPresentationSegment->rtStop), ReftimeToString(rt));
         delete pPresentationSegment;
     }
 }
@@ -383,7 +393,7 @@ CHdmvSub::HDMV_PRESENTATION_SEGMENT* CHdmvSub::FindPresentationSegment(REFERENCE
         }
     }
 
-    return NULL;
+    return nullptr;
 }
 
 CompositionObject* CHdmvSub::FindObject(HDMV_PRESENTATION_SEGMENT* pPresentationSegment, short sObjectId)
@@ -398,5 +408,5 @@ CompositionObject* CHdmvSub::FindObject(HDMV_PRESENTATION_SEGMENT* pPresentation
         }
     }
 
-    return NULL;
+    return nullptr;
 }

@@ -931,27 +931,26 @@ namespace DShowNET.Helper
                 }
               }
 
-              ReleaseComObject(i.pGraph);
+              if (i.pGraph != null)
+              {
+                ReleaseComObject(i.pGraph);
+              }
               try
               {
                 if (pinName == "Audio")
                 {
                   try
                   {
-                  #pragma warning disable 168
-                    VolumeHandler vh = VolumeHandler.Instance;
-                  #pragma warning restore 168
-                    Log.Debug("DirectShowUtil: volume handler value {0}", vh.Volume);
                     // vh.Volume = 19660500 that means Audio endpoint device are not available.
-                    if (vh.Volume == 19660500) // Check if new audio device is connected
+                    if (GUIGraphicsContext.VolumeHandler != null && GUIGraphicsContext.VolumeHandler.Volume == 19660500) // Check if new audio device is connected
                     {
+                      Log.Debug("DirectShowUtil: need dispose volume handler value {0}", GUIGraphicsContext.VolumeHandler.Volume);
                       VolumeHandler.Dispose();
-                    #pragma warning disable 168
-                      vh = VolumeHandler.Instance;
-                    #pragma warning restore 168
+                      GUIGraphicsContext.VolumeHandler = VolumeHandler.Instance;
                     }
-                    if (vh.Volume != 19660500)
+                    if (GUIGraphicsContext.VolumeHandler != null && GUIGraphicsContext.VolumeHandler.Volume != 19660500 && GUIGraphicsContext.DeviceAudioConnected > 0)
                     {
+                      Log.Debug("DirectShowUtil: volume handler value {0}", GUIGraphicsContext.VolumeHandler.Volume);
                       Log.Debug("DirectShowUtil: build the graph for PIN : {0}", pinName);
                       hr = graphBuilder.Render(pins[0]);
                     }

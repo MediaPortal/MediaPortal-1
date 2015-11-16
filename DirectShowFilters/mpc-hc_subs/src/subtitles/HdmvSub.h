@@ -1,5 +1,5 @@
 /*
- * (C) 2006-2012 see Authors.txt
+ * (C) 2006-2013 see Authors.txt
  *
  * This file is part of MPC-HC.
  *
@@ -27,9 +27,6 @@ class CGolombBuffer;
 class CHdmvSub : public CBaseSub
 {
 public:
-
-    static const REFERENCE_TIME INVALID_TIME = _I64_MIN;
-
     enum HDMV_SEGMENT_TYPE {
         NO_SEGMENT       = 0xFFFF,
         PALETTE          = 0x14,
@@ -44,8 +41,8 @@ public:
 
 
     struct VIDEO_DESCRIPTOR {
-        short nVideoWidth;
-        short nVideoHeight;
+        int nVideoWidth;
+        int nVideoHeight;
         BYTE  bFrameRate;     // <= Frame rate here!
     };
 
@@ -61,14 +58,16 @@ public:
     };
 
     struct HDMV_CLUT {
-        BYTE         id;
-        BYTE         version_number;
-        BYTE         size;
+        BYTE    id;
+        BYTE    version_number;
+        BYTE    size;
 
         HDMV_PALETTE palette[256];
 
-        HDMV_CLUT() : id(0), version_number(0), size(0) {
-            memset(palette, 0, sizeof(palette));
+        HDMV_CLUT() : id(0)
+            , version_number(0)
+            , size(0) {
+            ZeroMemory(palette, sizeof(palette));
         }
     };
 
@@ -87,9 +86,8 @@ public:
         CAtlList<CompositionObject*> objects;
 
         ~HDMV_PRESENTATION_SEGMENT() {
-            CompositionObject* pObject;
-            while (objects.GetCount() > 0) {
-                pObject = objects.RemoveHead();
+            while (!objects.IsEmpty()) {
+                CompositionObject* pObject = objects.RemoveHead();
                 delete pObject;
             }
         }
@@ -109,11 +107,11 @@ public:
 
     virtual REFERENCE_TIME GetStart(POSITION nPos) {
         HDMV_PRESENTATION_SEGMENT* pPresentationSegment = m_pPresentationSegments.GetAt(nPos);
-        return pPresentationSegment != NULL ? pPresentationSegment->rtStart : INVALID_TIME;
+        return pPresentationSegment != nullptr ? pPresentationSegment->rtStart : INVALID_TIME;
     };
     virtual REFERENCE_TIME GetStop(POSITION nPos) {
         HDMV_PRESENTATION_SEGMENT* pPresentationSegment = m_pPresentationSegments.GetAt(nPos);
-        return pPresentationSegment != NULL ? pPresentationSegment->rtStop : INVALID_TIME;
+        return pPresentationSegment != nullptr ? pPresentationSegment->rtStop : INVALID_TIME;
     };
 
     void    Render(SubPicDesc& spd, REFERENCE_TIME rt, RECT& bbox);
@@ -149,4 +147,6 @@ private:
 
     HDMV_PRESENTATION_SEGMENT* FindPresentationSegment(REFERENCE_TIME rt);
     CompositionObject* FindObject(HDMV_PRESENTATION_SEGMENT* pPresentationSegment, short sObjectId);
+
+    void      RemoveOldSegments(REFERENCE_TIME rt);
 };

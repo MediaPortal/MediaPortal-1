@@ -1,0 +1,571 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!--version="1.0" encoding="utf-8" standalone="yes"-->
+<window>
+  <allowoverlay>yes</allowoverlay>
+  <controls>
+    <!-- *** Location *** -->
+    <control>
+      <description>Location label</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>645</posX>
+      <posY>165</posY>
+      <width>750</width>
+      <label>#WorldWeather.Location #WorldWeather.LocationDescription</label>
+      <font>font18bold</font>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,History)</visible>
+    </control>
+    <control>
+      <description>Location year label</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>645</posX>
+      <posY>217</posY>
+      <label>#WorldWeather.TranslationChart #WorldWeather.HistoryYear4Year - #WorldWeather.HistoryYear0Year</label>
+      <font>font9</font>
+      <textcolor>ff808080</textcolor>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,History)</visible>
+    </control>
+    <!-- *** History Temperature Chart (Year) *** -->
+    <control>
+      <description>temperature chart</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>555</posX>
+      <posY>105</posY>
+      <width>1245</width>
+      <!--<height>600</height>-->
+      <keepaspectratio>no</keepaspectratio>
+      <texture>#WorldWeather.HistoryYearTemperatureChart</texture>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,History)+!string.equals(#WorldWeather.HistoryYear0Date, )</visible>
+    </control>
+    <!-- *** History (Year) *** -->
+    <control>
+      <description>year 0 day</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>600</posX>
+      <posY>405</posY>
+      <height>30</height>
+      <width>262</width>
+      <align>center</align>
+      <label>#WorldWeather.HistoryYear0Day</label>
+      <font>font9</font>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,History)+!string.equals(#WorldWeather.HistoryYear0Day, )</visible>
+    </control>
+    <control>
+      <description>year 0 date</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>600</posX>
+      <posY>435</posY>
+      <height>30</height>
+      <width>262</width>
+      <align>center</align>
+      <label>#WorldWeather.HistoryYear0Date</label>
+      <font>font9</font>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,History)+!string.equals(#WorldWeather.HistoryYear0Date, )</visible>
+    </control>
+    <control>
+      <description>year 0 icon</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>667</posX>
+      <posY>472</posY>
+      <width>127</width>
+      <height>127</height>
+      <texture>#WorldWeather.HistoryYear0IconImage</texture>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,History)+!string.equals(#WorldWeather.HistoryYear0Date, )</visible>
+    </control>
+    <control>
+      <description>year 0 condition</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>600</posX>
+      <posY>570</posY>
+      <height>30</height>
+      <width>262</width>
+      <align>center</align>
+      <label>#WorldWeather.HistoryYear0Condition</label>
+      <font>font9</font>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,History)+!string.equals(#WorldWeather.HistoryYear0Date, )</visible>
+    </control>
+    <control>
+      <description>year 0 temperature</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>600</posX>
+      <posY>607</posY>
+      <height>30</height>
+      <width>262</width>
+      <align>center</align>
+      <label>#WorldWeather.HistoryYear0MinTemperature / #WorldWeather.HistoryYear0MaxTemperature</label>
+      <font>font8</font>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,History)+!string.equals(#WorldWeather.HistoryYear0Date, )</visible>
+    </control>
+    <control>
+      <description>year 0 wind</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>600</posX>
+      <posY>637</posY>
+      <height>30</height>
+      <width>262</width>
+      <align>center</align>
+      <label>#WorldWeather.HistoryYear0MinWindSpeed / #WorldWeather.HistoryYear0MaxWindSpeed</label>
+      <font>font8</font>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,History)+!string.equals(#WorldWeather.HistoryYear0Date, )</visible>
+    </control>
+    <control>
+      <description>year 0 pressure</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>600</posX>
+      <posY>667</posY>
+      <height>30</height>
+      <width>262</width>
+      <align>center</align>
+      <label>#WorldWeather.HistoryYear0MinPressure / #WorldWeather.HistoryYear0MaxPressure</label>
+      <font>font8</font>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,History)+!string.equals(#WorldWeather.HistoryYear0Date, )</visible>
+    </control>
+    <control>
+      <description>year 0 precipitation</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>600</posX>
+      <posY>697</posY>
+      <height>30</height>
+      <width>262</width>
+      <align>center</align>
+      <label>#WorldWeather.HistoryYear0Precipitation</label>
+      <font>font8</font>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,History)+!string.equals(#WorldWeather.HistoryYear0Date, )</visible>
+    </control>
+    <!-- *** History (Year) *** -->
+    <control>
+      <description>year 1 day</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>825</posX>
+      <posY>405</posY>
+      <height>30</height>
+      <width>262</width>
+      <align>center</align>
+      <label>#WorldWeather.HistoryYear1Day</label>
+      <font>font9</font>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,History)+!string.equals(#WorldWeather.HistoryYear1Day, )</visible>
+    </control>
+    <control>
+      <description>year 1 date</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>825</posX>
+      <posY>435</posY>
+      <height>30</height>
+      <width>262</width>
+      <align>center</align>
+      <label>#WorldWeather.HistoryYear1Date</label>
+      <font>font9</font>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,History)+!string.equals(#WorldWeather.HistoryYear1Date, )</visible>
+    </control>
+    <control>
+      <description>year 1 icon</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>892</posX>
+      <posY>472</posY>
+      <width>127</width>
+      <height>127</height>
+      <texture>#WorldWeather.HistoryYear1IconImage</texture>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,History)+!string.equals(#WorldWeather.HistoryYear1Date, )</visible>
+    </control>
+    <control>
+      <description>year 1 condition</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>825</posX>
+      <posY>570</posY>
+      <height>30</height>
+      <width>262</width>
+      <align>center</align>
+      <label>#WorldWeather.HistoryYear1Condition</label>
+      <font>font9</font>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,History)+!string.equals(#WorldWeather.HistoryYear1Date, )</visible>
+    </control>
+    <control>
+      <description>year 1 temperature</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>825</posX>
+      <posY>607</posY>
+      <height>30</height>
+      <width>262</width>
+      <align>center</align>
+      <label>#WorldWeather.HistoryYear1MinTemperature / #WorldWeather.HistoryYear1MaxTemperature</label>
+      <font>font8</font>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,History)+!string.equals(#WorldWeather.HistoryYear1Date, )</visible>
+    </control>
+    <control>
+      <description>year 1 wind</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>825</posX>
+      <posY>637</posY>
+      <height>30</height>
+      <width>262</width>
+      <align>center</align>
+      <label>#WorldWeather.HistoryYear1MinWindSpeed / #WorldWeather.HistoryYear1MaxWindSpeed</label>
+      <font>font8</font>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,History)+!string.equals(#WorldWeather.HistoryYear1Date, )</visible>
+    </control>
+    <control>
+      <description>year 1 pressure</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>825</posX>
+      <posY>667</posY>
+      <height>30</height>
+      <width>262</width>
+      <align>center</align>
+      <label>#WorldWeather.HistoryYear1MinPressure / #WorldWeather.HistoryYear1MaxPressure</label>
+      <font>font8</font>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,History)+!string.equals(#WorldWeather.HistoryYear1Date, )</visible>
+    </control>
+    <control>
+      <description>year 1 precipitation</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>825</posX>
+      <posY>697</posY>
+      <height>30</height>
+      <width>262</width>
+      <align>center</align>
+      <label>#WorldWeather.HistoryYear1Precipitation</label>
+      <font>font8</font>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,History)+!string.equals(#WorldWeather.HistoryYear1Date, )</visible>
+    </control>
+    <!-- *** History (Year) *** -->
+    <control>
+      <description>year 2 day</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>1050</posX>
+      <posY>405</posY>
+      <height>30</height>
+      <width>262</width>
+      <align>center</align>
+      <label>#WorldWeather.HistoryYear2Day</label>
+      <font>font9</font>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,History)+!string.equals(#WorldWeather.HistoryYear2Day, )</visible>
+    </control>
+    <control>
+      <description>year 2 date</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>1050</posX>
+      <posY>435</posY>
+      <height>30</height>
+      <width>262</width>
+      <align>center</align>
+      <label>#WorldWeather.HistoryYear2Date</label>
+      <font>font9</font>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,History)+!string.equals(#WorldWeather.HistoryYear2Date, )</visible>
+    </control>
+    <control>
+      <description>year 2 icon</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>1117</posX>
+      <posY>472</posY>
+      <width>127</width>
+      <height>127</height>
+      <texture>#WorldWeather.HistoryYear2IconImage</texture>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,History)+!string.equals(#WorldWeather.HistoryYear2Date, )</visible>
+    </control>
+    <control>
+      <description>year 2 condition</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>1050</posX>
+      <posY>570</posY>
+      <height>30</height>
+      <width>262</width>
+      <align>center</align>
+      <label>#WorldWeather.HistoryYear2Condition</label>
+      <font>font9</font>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,History)+!string.equals(#WorldWeather.HistoryYear2Date, )</visible>
+    </control>
+    <control>
+      <description>year 2 temperature</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>1050</posX>
+      <posY>607</posY>
+      <height>30</height>
+      <width>262</width>
+      <align>center</align>
+      <label>#WorldWeather.HistoryYear2MinTemperature / #WorldWeather.HistoryYear2MaxTemperature</label>
+      <font>font8</font>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,History)+!string.equals(#WorldWeather.HistoryYear2Date, )</visible>
+    </control>
+    <control>
+      <description>year 2 wind</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>1050</posX>
+      <posY>637</posY>
+      <height>30</height>
+      <width>262</width>
+      <align>center</align>
+      <label>#WorldWeather.HistoryYear2MinWindSpeed / #WorldWeather.HistoryYear2MaxWindSpeed</label>
+      <font>font8</font>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,History)+!string.equals(#WorldWeather.HistoryYear2Date, )</visible>
+    </control>
+    <control>
+      <description>year 2 pressure</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>1050</posX>
+      <posY>667</posY>
+      <height>30</height>
+      <width>262</width>
+      <align>center</align>
+      <label>#WorldWeather.HistoryYear2MinPressure / #WorldWeather.HistoryYear2MaxPressure</label>
+      <font>font8</font>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,History)+!string.equals(#WorldWeather.HistoryYear2Date, )</visible>
+    </control>
+    <control>
+      <description>year 2 precipitation</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>1050</posX>
+      <posY>697</posY>
+      <height>30</height>
+      <width>262</width>
+      <align>center</align>
+      <label>#WorldWeather.HistoryYear2Precipitation</label>
+      <font>font8</font>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,History)+!string.equals(#WorldWeather.HistoryYear2Date, )</visible>
+    </control>
+    <!-- *** History (Year) *** -->
+    <control>
+      <description>year 3 day</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>1275</posX>
+      <posY>405</posY>
+      <height>30</height>
+      <width>262</width>
+      <align>center</align>
+      <label>#WorldWeather.HistoryYear3Day</label>
+      <font>font9</font>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,History)+!string.equals(#WorldWeather.HistoryYear3Day, )</visible>
+    </control>
+    <control>
+      <description>year 3 date</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>1275</posX>
+      <posY>435</posY>
+      <height>30</height>
+      <width>262</width>
+      <align>center</align>
+      <label>#WorldWeather.HistoryYear3Date</label>
+      <font>font9</font>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,History)+!string.equals(#WorldWeather.HistoryYear3Date, )</visible>
+    </control>
+    <control>
+      <description>year 3 icon</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>1342</posX>
+      <posY>472</posY>
+      <width>127</width>
+      <height>127</height>
+      <texture>#WorldWeather.HistoryYear3IconImage</texture>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,History)+!string.equals(#WorldWeather.HistoryYear3Date, )</visible>
+    </control>
+    <control>
+      <description>year 3 condition</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>1275</posX>
+      <posY>570</posY>
+      <height>30</height>
+      <width>262</width>
+      <align>center</align>
+      <label>#WorldWeather.HistoryYear3Condition</label>
+      <font>font9</font>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,History)+!string.equals(#WorldWeather.HistoryYear3Date, )</visible>
+    </control>
+    <control>
+      <description>year 3 temperature</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>1275</posX>
+      <posY>607</posY>
+      <height>30</height>
+      <width>262</width>
+      <align>center</align>
+      <label>#WorldWeather.HistoryYear3MinTemperature / #WorldWeather.HistoryYear3MaxTemperature</label>
+      <font>font8</font>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,History)+!string.equals(#WorldWeather.HistoryYear3Date, )</visible>
+    </control>
+    <control>
+      <description>year 3 wind</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>1275</posX>
+      <posY>637</posY>
+      <height>30</height>
+      <width>262</width>
+      <align>center</align>
+      <label>#WorldWeather.HistoryYear3MinWindSpeed / #WorldWeather.HistoryYear3MaxWindSpeed</label>
+      <font>font8</font>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,History)+!string.equals(#WorldWeather.HistoryYear3Date, )</visible>
+    </control>
+    <control>
+      <description>year 3 pressure</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>1275</posX>
+      <posY>667</posY>
+      <height>30</height>
+      <width>262</width>
+      <align>center</align>
+      <label>#WorldWeather.HistoryYear3MinPressure / #WorldWeather.HistoryYear3MaxPressure</label>
+      <font>font8</font>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,History)+!string.equals(#WorldWeather.HistoryYear3Date, )</visible>
+    </control>
+    <control>
+      <description>year 3 precipitation</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>1275</posX>
+      <posY>697</posY>
+      <height>30</height>
+      <width>262</width>
+      <align>center</align>
+      <label>#WorldWeather.HistoryYear3Precipitation</label>
+      <font>font8</font>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,History)+!string.equals(#WorldWeather.HistoryYear3Date, )</visible>
+    </control>
+    <!-- *** History (Year) *** -->
+    <control>
+      <description>year 4 day</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>1500</posX>
+      <posY>405</posY>
+      <height>30</height>
+      <width>262</width>
+      <align>center</align>
+      <label>#WorldWeather.HistoryYear4Day</label>
+      <font>font9</font>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,History)+!string.equals(#WorldWeather.HistoryYear4Day, )</visible>
+    </control>
+    <control>
+      <description>year 4 date</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>1500</posX>
+      <posY>435</posY>
+      <height>30</height>
+      <width>262</width>
+      <align>center</align>
+      <label>#WorldWeather.HistoryYear4Date</label>
+      <font>font9</font>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,History)+!string.equals(#WorldWeather.HistoryYear4Date, )</visible>
+    </control>
+    <control>
+      <description>year 4 icon</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>1567</posX>
+      <posY>472</posY>
+      <width>127</width>
+      <height>127</height>
+      <texture>#WorldWeather.HistoryYear4IconImage</texture>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,History)+!string.equals(#WorldWeather.HistoryYear4Date, )</visible>
+    </control>
+    <control>
+      <description>year 4 condition</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>1500</posX>
+      <posY>570</posY>
+      <height>30</height>
+      <width>262</width>
+      <align>center</align>
+      <label>#WorldWeather.HistoryYear4Condition</label>
+      <font>font9</font>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,History)+!string.equals(#WorldWeather.HistoryYear4Date, )</visible>
+    </control>
+    <control>
+      <description>year 4 temperature</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>1500</posX>
+      <posY>607</posY>
+      <height>30</height>
+      <width>262</width>
+      <align>center</align>
+      <label>#WorldWeather.HistoryYear4MinTemperature / #WorldWeather.HistoryYear4MaxTemperature</label>
+      <font>font8</font>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,History)+!string.equals(#WorldWeather.HistoryYear4Date, )</visible>
+    </control>
+    <control>
+      <description>year 4 wind</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>1500</posX>
+      <posY>637</posY>
+      <height>30</height>
+      <width>262</width>
+      <align>center</align>
+      <label>#WorldWeather.HistoryYear4MinWindSpeed / #WorldWeather.HistoryYear4MaxWindSpeed</label>
+      <font>font8</font>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,History)+!string.equals(#WorldWeather.HistoryYear4Date, )</visible>
+    </control>
+    <control>
+      <description>year 4 pressure</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>1500</posX>
+      <posY>667</posY>
+      <height>30</height>
+      <width>262</width>
+      <align>center</align>
+      <label>#WorldWeather.HistoryYear4MinPressure / #WorldWeather.HistoryYear4MaxPressure</label>
+      <font>font8</font>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,History)+!string.equals(#WorldWeather.HistoryYear4Date, )</visible>
+    </control>
+    <control>
+      <description>year 4 precipitation</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>1500</posX>
+      <posY>697</posY>
+      <height>30</height>
+      <width>262</width>
+      <align>center</align>
+      <label>#WorldWeather.HistoryYear4Precipitation</label>
+      <font>font8</font>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,History)+!string.equals(#WorldWeather.HistoryYear4Date, )</visible>
+    </control>
+    <!-- *** Feature notification *** -->
+    <control>
+      <description>Feature notification</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>600</posX>
+      <posY>525</posY>
+      <width>1140</width>
+      <label>This feature isn't enabled.</label>
+      <align>center</align>
+      <font>Menutitle</font>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,History)+string.equals(#WorldWeather.HistoryYearCount, )</visible>
+    </control>
+  </controls>
+</window>

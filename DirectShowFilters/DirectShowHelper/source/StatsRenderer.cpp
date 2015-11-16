@@ -23,11 +23,13 @@
 #include "evrcustompresenter.h"
 #include "version.h"
 
+#include "pdh.h"
+
 // For more details for memory leak detection see the alloctracing.h header
 #include "..\..\alloctracing.h"
 
 #define countof(array) (sizeof(array)/sizeof(array[0]))
-
+#pragma comment(lib, "pdh.lib")
 #pragma pack(push, 1)
 template<int texcoords>
 struct MYD3DVERTEX {float x, y, z, rhw; struct {float u, v;} t[texcoords];};
@@ -72,6 +74,17 @@ StatsRenderer::StatsRenderer(MPEVRCustomPresenter* presenter, IDirect3DDevice9* 
   {
     m_pD3DXCreateLine(m_pD3DDev, &m_pLine);
   }
+
+	PDH_STATUS pdhStatus;
+
+	PdhOpenQuery(NULL, NULL, &m_cpuQuery);
+	pdhStatus = PdhAddEnglishCounter(m_cpuQuery, L"\\Processor(_Total)\\% Processor Time", NULL, &m_cpuTotal);
+	if (pdhStatus == ERROR_SUCCESS)
+	{
+		PdhCollectQueryData(m_cpuQuery);
+	}
+
+	m_counter = 20;
 }
 
 
@@ -189,13 +202,35 @@ void StatsRenderer::DrawStats()
   LONGLONG llMinSyncOffset = m_pPresenter->m_MinSyncOffset;
 
   RECT rc = {m_pPresenter->m_iVideoWidth/32, m_pPresenter->m_iVideoHeight/8, m_pPresenter->m_iVideoWidth, m_pPresenter->m_iVideoHeight};
-  if (m_pFont && m_pSprite)
-  {
-    m_pSprite->Begin(D3DXSPRITE_ALPHABLEND);
-    CString  strText;
-    int TextHeight = int(25.0*m_TextScale + 0.5);
-    int BlankHeight = int(10.0*m_TextScale + 0.5);
-    
+	if (m_pFont && m_pSprite)
+	{
+		m_pSprite->Begin(D3DXSPRITE_ALPHABLEND);
+		CString  strText;
+		int TextHeight = int(25.0*m_TextScale + 0.5);
+		int BlankHeight = int(10.0*m_TextScale + 0.5);
+
+		if (m_counter == 20)
+		{
+			PDH_STATUS pdhStatus;
+			pdhStatus = PdhCollectQueryData(m_cpuQuery);
+
+			if (pdhStatus == ERROR_SUCCESS)
+			{
+				PdhGetFormattedCounterValue(m_cpuTotal, PDH_FMT_DOUBLE, NULL, &counterVal);
+				m_cpuTotalUsage = counterVal.doubleValue;
+			}
+			else
+			{
+				m_cpuTotalUsage = 0;
+			}
+			m_counter = 0;
+		}
+		m_counter++;
+		
+		strText.Format(_T("Total CPU: %2.0f %%"), m_cpuTotalUsage);
+		DrawText(rc, strText);
+		OffsetRect(&rc, 0, TextHeight);
+
     strText.Format(_T("Display: %d x %d @ %.6f Hz | Meas rfsh: %.6f Hz | MaxLine: %d | PCD: %.6f"), 
       m_pPresenter->m_displayMode.Width, m_pPresenter->m_displayMode.Height,
       m_pPresenter->m_dD3DRefreshRate, 1000.0/m_pPresenter->m_displayParams.dEstRefreshCycle, m_pPresenter->m_displayParams.maxScanLine,
