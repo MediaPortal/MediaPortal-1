@@ -198,7 +198,7 @@
       <id>1</id>
       <posX>1000</posX>
       <posY>1030</posY>
-      <label>Video</label>
+      <label>291</label>
       <font>font10</font>
       <align>center</align>
       <textcolor>ivory</textcolor>
@@ -210,7 +210,7 @@
       <id>1</id>
       <posX>1060</posX>
       <posY>1030</posY>
-      <label>Audio</label>
+      <label>292</label>
       <font>font10</font>
       <align>center</align>
       <textcolor>ivory</textcolor>

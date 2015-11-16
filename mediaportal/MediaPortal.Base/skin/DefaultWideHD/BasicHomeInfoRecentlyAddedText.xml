@@ -237,7 +237,7 @@
           <posX>124</posX>
           <posY>614</posY>
           <width>1030</width>
-          <label>#SkinTranslation.Translations.NewEpisodes.Label:</label>
+          <label>#latestMediaHandler.tvseries.latest.type:</label>
           <align>left</align>
           <font>font11</font>
           <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>

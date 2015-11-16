@@ -235,7 +235,7 @@
           <posX>124</posX>
           <posY>114</posY>
           <width>1030</width>
-          <label>#SkinTranslation.Translations.NewEpisodes.Label:</label>
+          <label>#latestMediaHandler.tvseries.latest.type:</label>
           <align>left</align>
           <font>font11</font>
           <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
@@ -933,6 +933,87 @@
             <animation effect="zoom" start="100,100" end="108,108" time="100">focus</animation>
           </control>
         </control>
+        <control>
+          <description>Plot Background</description>
+          <type>image</type>
+          <id>0</id>
+          <posX>70</posX>
+          <posY>330</posY>
+          <width>1770</width>
+          <height>225</height>
+          <texture>osdbg2.png</texture>
+          <colordiffuse>ffffffff</colordiffuse>
+          <animation effect="fade" delay="1000" time="500">visible</animation>
+          <visible>control.hasfocus(91919984)</visible>
+        </control>
+        <control>
+          <description>Plot Background</description>
+          <type>image</type>
+          <id>0</id>
+          <posX>70</posX>
+          <posY>330</posY>
+          <width>1770</width>
+          <height>225</height>
+          <texture>osdbg2.png</texture>
+          <colordiffuse>ffffffff</colordiffuse>
+          <animation effect="fade" delay="1000" time="500">visible</animation>
+          <visible>control.hasfocus(91919985)</visible>
+        </control>
+        <control>
+          <description>Plot Background</description>
+          <type>image</type>
+          <id>0</id>
+          <posX>70</posX>
+          <posY>330</posY>
+          <width>1770</width>
+          <height>225</height>
+          <texture>osdbg2.png</texture>
+          <colordiffuse>ffffffff</colordiffuse>
+          <animation effect="fade" delay="1000" time="500">visible</animation>
+          <visible>control.hasfocus(91919986)</visible>
+        </control>
+        <control>
+          <description>TVRecordings Plot 1</description>
+          <type>textboxscrollup</type>
+          <id>1</id>
+          <posX>140</posX>
+          <posY>360</posY>
+          <width>1650</width>
+          <height>165</height>
+          <font>font10</font>
+          <textcolor>ffffffff</textcolor>
+          <label>#latestMediaHandler.tvrecordings.latest1.summary</label>
+          <visible>control.hasfocus(91919984)</visible>
+          <animation effect="fade" delay="1000" time="500">visible</animation>
+        </control>
+        <control>
+          <description>TVRecordings Plot 2</description>
+          <type>textboxscrollup</type>
+          <id>1</id>
+          <posX>140</posX>
+          <posY>360</posY>
+          <width>1650</width>
+          <height>165</height>
+          <font>font10</font>
+          <textcolor>ffffffff</textcolor>
+          <label>#latestMediaHandler.tvrecordings.latest2.summary</label>
+          <visible>control.hasfocus(91919985)</visible>
+          <animation effect="fade" delay="1000" time="500">visible</animation>
+        </control>
+        <control>
+          <description>TVRecordings Plot 3</description>
+          <type>textboxscrollup</type>
+          <id>1</id>
+          <posX>140</posX>
+          <posY>360</posY>
+          <width>1650</width>
+          <height>165</height>
+          <font>font10</font>
+          <textcolor>ffffffff</textcolor>
+          <label>#latestMediaHandler.tvrecordings.latest3.summary</label>
+          <visible>control.hasfocus(91919986)</visible>
+          <animation effect="fade" delay="1000" time="500">visible</animation>
+        </control>
       </control>
       <!-- ******************************************************************************************* -->
       <!-- ************************* RECENTLY ADDED MUSIC ************************************** -->
@@ -1116,6 +1197,87 @@
             <animation effect="zoom" start="100,100" end="108,108" time="100">focus</animation>
           </control>
         </control>
+        <control>
+          <description>Plot Background</description>
+          <type>image</type>
+          <id>0</id>
+          <posX>70</posX>
+          <posY>330</posY>
+          <width>1770</width>
+          <height>225</height>
+          <texture>osdbg2.png</texture>
+          <colordiffuse>ffffffff</colordiffuse>
+          <animation effect="fade" delay="1000" time="500">visible</animation>
+          <visible>control.hasfocus(91919997)</visible>
+        </control>
+        <control>
+          <description>Plot Background</description>
+          <type>image</type>
+          <id>0</id>
+          <posX>70</posX>
+          <posY>330</posY>
+          <width>1770</width>
+          <height>225</height>
+          <texture>osdbg2.png</texture>
+          <colordiffuse>ffffffff</colordiffuse>
+          <animation effect="fade" delay="1000" time="500">visible</animation>
+          <visible>control.hasfocus(91919998)</visible>
+        </control>
+        <control>
+          <description>Plot Background</description>
+          <type>image</type>
+          <id>0</id>
+          <posX>70</posX>
+          <posY>330</posY>
+          <width>1770</width>
+          <height>225</height>
+          <texture>osdbg2.png</texture>
+          <colordiffuse>ffffffff</colordiffuse>
+          <animation effect="fade" delay="1000" time="500">visible</animation>
+          <visible>control.hasfocus(91919999)</visible>
+        </control>
+        <control>
+          <description>music artistbio 1</description>
+          <type>textboxscrollup</type>
+          <id>1</id>
+          <posX>140</posX>
+          <posY>360</posY>
+          <width>1650</width>
+          <height>165</height>
+          <font>font10</font>
+          <textcolor>ffffffff</textcolor>
+          <label>#latestMediaHandler.music.latest1.artistbio</label>
+          <visible>control.hasfocus(91919997)</visible>
+          <animation effect="fade" delay="1000" time="500">visible</animation>
+        </control>
+        <control>
+          <description>music artistbio 2</description>
+          <type>textboxscrollup</type>
+          <id>1</id>
+          <posX>140</posX>
+          <posY>360</posY>
+          <width>1650</width>
+          <height>165</height>
+          <font>font10</font>
+          <textcolor>ffffffff</textcolor>
+          <label>#latestMediaHandler.music.latest2.artistbio</label>
+          <visible>control.hasfocus(91919998)</visible>
+          <animation effect="fade" delay="1000" time="500">visible</animation>
+        </control>
+        <control>
+          <description>music artistbio 3</description>
+          <type>textboxscrollup</type>
+          <id>1</id>
+          <posX>140</posX>
+          <posY>360</posY>
+          <width>1650</width>
+          <height>165</height>
+          <font>font10</font>
+          <textcolor>ffffffff</textcolor>
+          <label>#latestMediaHandler.music.latest3.artistbio</label>
+          <visible>control.hasfocus(91919999)</visible>
+          <animation effect="fade" delay="1000" time="500">visible</animation>
+        </control> 
       </control>
       <!-- ******************************************************************************************* -->
       <!-- ************************* RECENTLY ADDED PICTURES *********************************** -->
@@ -2571,7 +2733,7 @@
       <control>
         <type>group</type>
         <description>group element</description>
-        <visible>plugin.isenabled(Latest Media Handler)+plugin.isenabled(mvCentral)+string.contains(#highlightedbutton,AUDIO6)+!string.equals(#latestMediaHandler.mvcentral.latest.enabled,)+!string.equals(#latestMediaHandler.mvcentral.latest1.artist,)</visible>
+        <visible>plugin.isenabled(Latest Media Handler)+plugin.isenabled(mvCentral)+[string.contains(#highlightedbutton,AUDIO6)]|[Control.isvisible(6115010)+Control.isvisible(6115011)+Control.isvisible(6115012)]|[Control.hasfocus(91929928)|Control.hasfocus(91929929)|Control.hasfocus(91929930)]+!string.equals(#latestMediaHandler.mvcentral.latest.enabled,)+!string.equals(#latestMediaHandler.mvcentral.latest1.artist,)</visible>
         <control>
           <description>background for recently added files</description>
           <type>image</type>
@@ -2591,10 +2753,11 @@
           <posX>124</posX>
           <posY>159</posY>
           <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
+          <visible>plugin.isenabled(Latest Media Handler)+plugin.isenabled(mvCentral)+[string.contains(#highlightedbutton,AUDIO6)]|[Control.hasfocus(91929928)|Control.hasfocus(91929929)|Control.hasfocus(91929930)]+!string.equals(#latestMediaHandler.mvcentral.latest.enabled,)+!string.equals(#latestMediaHandler.mvcentral.latest1.artist,)</visible>
           <control>
             <description>Cover1</description>
             <type>image</type>
-            <id>1</id>
+            <id>6115010</id>
             <width>132</width>
             <height>132</height>
             <texture mask="cdcase_mask.png">#latestMediaHandler.mvcentral.latest1.thumb</texture>
@@ -2602,7 +2765,7 @@
           <control>
             <description>Cover2</description>
             <type>image</type>
-            <id>1</id>
+            <id>6115011</id>
             <width>132</width>
             <height>132</height>
             <texture mask="cdcase_mask.png">#latestMediaHandler.mvcentral.latest2.thumb</texture>
@@ -2610,24 +2773,25 @@
           <control>
             <description>Cover3</description>
             <type>image</type>
-            <id>1</id>
+            <id>6115012</id>
             <width>132</width>
             <height>132</height>
             <texture mask="cdcase_mask.png">#latestMediaHandler.mvcentral.latest3.thumb</texture>
           </control>
         </control>
-        <control Style="BasicHomeRecentlyLabel">
+        <control>
           <description>Updates label</description>
           <type>label</type>
           <id>0</id>
           <posX>124</posX>
           <posY>114</posY>
           <width>393</width>
+          <font>font11</font>
           <label>#latestMediaHandler.music.label</label>
           <align>left</align>
           <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
         </control>
-        <control Style="BasicHomeRecentlyLabel">
+        <control>
           <description>mvCentral updates</description>
           <type>label</type>
           <id>0</id>
@@ -2636,12 +2800,22 @@
           <width>1196</width>
           <label>#latestMediaHandler.mvcentral.latest1.artist ~ #latestMediaHandler.mvcentral.latest1.album ~ #latestMediaHandler.mvcentral.latest1.track (#latestMediaHandler.mvcentral.latest1.dateAdded)</label>
           <align>left</align>
-          <font>font12</font>
+          <font>font11</font>
           <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
           <textcolor>white</textcolor>
           <visible>!string.equals(#latestMediaHandler.mvcentral.latest1.artist,)</visible>
         </control>
-        <control Style="BasicHomeRecentlyLabel">
+        <control>
+          <description>Music updates marker</description>
+          <type>image</type>
+          <id>0</id>
+          <posX>564</posX>
+          <posY>161</posY>
+          <width>1246</width>
+          <texture>listfocus.png</texture>
+          <visible>Control.hasfocus(91929928)</visible>
+        </control>
+        <control>
           <description>mvCentral updates</description>
           <type>label</type>
           <id>0</id>
@@ -2651,11 +2825,21 @@
           <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
           <label>#latestMediaHandler.mvcentral.latest2.artist ~ #latestMediaHandler.mvcentral.latest2.album ~ #latestMediaHandler.mvcentral.latest2.track (#latestMediaHandler.mvcentral.latest2.dateAdded)</label>
           <align>left</align>
-          <font>font12</font>
+          <font>font11</font>
           <textcolor>white</textcolor>
           <visible>!string.equals(#latestMediaHandler.mvcentral.latest2.artist,)</visible>
         </control>
-        <control Style="BasicHomeRecentlyLabel">
+        <control>
+          <description>Music updates marker</description>
+          <type>image</type>
+          <id>0</id>
+          <posX>564</posX>
+          <posY>196</posY>
+          <width>1246</width>
+          <texture>listfocus.png</texture>
+          <visible>Control.hasfocus(91929929)</visible>
+        </control>
+        <control>
           <description>mvCentral updates</description>
           <type>label</type>
           <id>0</id>
@@ -2665,10 +2849,151 @@
           <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
           <label>#latestMediaHandler.mvcentral.latest3.artist ~ #latestMediaHandler.mvcentral.latest3.album ~ #latestMediaHandler.mvcentral.latest3.track (#latestMediaHandler.mvcentral.latest3.dateAdded)</label>
           <align>left</align>
-          <font>font12</font>
+          <font>font11</font>
           <textcolor>white</textcolor>
           <visible>!string.equals(#latestMediaHandler.mvcentral.latest3.artist,)</visible>
         </control>
+        <control>
+          <description>Music updates marker</description>
+          <type>image</type>
+          <id>0</id>
+          <posX>564</posX>
+          <posY>231</posY>
+          <width>1246</width>
+          <texture>listfocus.png</texture>
+          <visible>Control.hasfocus(91929930)</visible>
+        </control>
+        <control>
+          <type>group</type>
+          <description>group element</description>
+          <layout>StackLayout(10, Horizontal, true)</layout>
+          <posX>124</posX>
+          <posY>159</posY>
+          <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
+          <control>
+            <type>button</type>
+            <id>91929928</id>
+            <width>132</width>
+            <height>132</height>
+            <textureFocus>cdcase-focus.png</textureFocus>
+            <textureNoFocus />
+            <label>-</label>
+            <onleft>91929930</onleft>
+            <onright>91929929</onright>
+            <onup>17</onup>
+            <ondown>820101</ondown>
+            <animation effect="zoom" start="100,100" end="108,108" time="100">focus</animation>
+          </control>
+          <control>
+            <type>button</type>
+            <id>91929929</id>
+            <width>132</width>
+            <height>132</height>
+            <textureFocus>cdcase-focus.png</textureFocus>
+            <textureNoFocus />
+            <label>-</label>
+            <onleft>91929928</onleft>
+            <onright>91929930</onright>
+            <onup>17</onup>
+            <ondown>820101</ondown>
+            <animation effect="zoom" start="100,100" end="108,108" time="100">focus</animation>
+          </control>
+          <control>
+            <type>button</type>
+            <id>91929930</id>
+            <width>132</width>
+            <height>132</height>
+            <textureFocus>cdcase-focus.png</textureFocus>
+            <textureNoFocus />
+            <label>-</label>
+            <onleft>91929929</onleft>
+            <onright>91929928</onright>
+            <onup>17</onup>
+            <ondown>820101</ondown>
+            <animation effect="zoom" start="100,100" end="108,108" time="100">focus</animation>
+          </control>
+        </control>
+        <control>
+          <description>Plot Background</description>
+          <type>image</type>
+          <id>0</id>
+          <posX>70</posX>
+          <posY>330</posY>
+          <width>1770</width>
+          <height>225</height>
+          <texture>osdbg2.png</texture>
+          <colordiffuse>ffffffff</colordiffuse>
+          <animation effect="fade" delay="1000" time="500">visible</animation>
+          <visible>control.hasfocus(91929928)</visible>
+        </control>
+        <control>
+          <description>Plot Background</description>
+          <type>image</type>
+          <id>0</id>
+          <posX>70</posX>
+          <posY>330</posY>
+          <width>1770</width>
+          <height>225</height>
+          <texture>osdbg2.png</texture>
+          <colordiffuse>ffffffff</colordiffuse>
+          <animation effect="fade" delay="1000" time="500">visible</animation>
+          <visible>control.hasfocus(91929929)</visible>
+        </control>
+        <control>
+          <description>Plot Background</description>
+          <type>image</type>
+          <id>0</id>
+          <posX>70</posX>
+          <posY>330</posY>
+          <width>1770</width>
+          <height>225</height>
+          <texture>osdbg2.png</texture>
+          <colordiffuse>ffffffff</colordiffuse>
+          <animation effect="fade" delay="1000" time="500">visible</animation>
+          <visible>control.hasfocus(91929930)</visible>
+        </control>
+        <control>
+          <description>mvcentral artistbio 1</description>
+          <type>textboxscrollup</type>
+          <id>1</id>
+          <posX>140</posX>
+          <posY>360</posY>
+          <width>1650</width>
+          <height>165</height>
+          <font>font10</font>
+          <textcolor>ffffffff</textcolor>
+          <label>#latestMediaHandler.mvcentral.latest1.artistbio</label>
+          <visible>control.hasfocus(91929928)</visible>
+          <animation effect="fade" delay="1000" time="500">visible</animation>
+        </control>
+        <control>
+          <description>mvcentral artistbio 2</description>
+          <type>textboxscrollup</type>
+          <id>1</id>
+          <posX>140</posX>
+          <posY>360</posY>
+          <width>1650</width>
+          <height>165</height>
+          <font>font10</font>
+          <textcolor>ffffffff</textcolor>
+          <label>#latestMediaHandler.mvcentral.latest2.artistbio</label>
+          <visible>control.hasfocus(91929929)</visible>
+          <animation effect="fade" delay="1000" time="500">visible</animation>
+        </control>
+        <control>
+          <description>mvcentral artistbio 3</description>
+          <type>textboxscrollup</type>
+          <id>1</id>
+          <posX>140</posX>
+          <posY>360</posY>
+          <width>1650</width>
+          <height>165</height>
+          <font>font10</font>
+          <textcolor>ffffffff</textcolor>
+          <label>#latestMediaHandler.mvcentral.latest3.artistbio</label>
+          <visible>control.hasfocus(91929930)</visible>
+          <animation effect="fade" delay="1000" time="500">visible</animation>
+        </control> 
       </control>
     </control>
     <!-- ******************************************************************************************* -->
@@ -2716,7 +3041,7 @@
       <texture>cdcase-rotating.png</texture>
       <animation effect="zoom" start="100,100" end="108,108" time="100">visible</animation>
       <animation effect="rotate" delay="0" end="-360" time="2000" loop="true" condition="true">conditional</animation>
-      <visible>control.hasfocus(91919997)</visible>
+      <visible>control.hasfocus(91919997)|control.hasfocus(91929928)</visible>
     </control>
     <control>
       <type>image</type>
@@ -2728,7 +3053,7 @@
       <texture>cdcase-rotating.png</texture>
       <animation effect="zoom" start="100,100" end="108,108" time="100">visible</animation>
       <animation effect="rotate" delay="0" end="-360" time="2000" loop="true" condition="true">conditional</animation>
-      <visible>control.hasfocus(91919998)</visible>
+      <visible>control.hasfocus(91919998)|control.hasfocus(91929929)</visible>
     </control>
     <control>
       <type>image</type>
@@ -2740,7 +3065,7 @@
       <texture>cdcase-rotating.png</texture>
       <animation effect="zoom" start="100,100" end="108,108" time="100">visible</animation>
       <animation effect="rotate" delay="0" end="-360" time="2000" loop="true" condition="true">conditional</animation>
-      <visible>control.hasfocus(91919999)</visible>
+      <visible>control.hasfocus(91919999)|control.hasfocus(91929930)</visible>
     </control>
     <!-- ******************************************************************************************* -->
     <!-- ************************* ANIMATED PLAY BUTTON PICTURE FRAME  ***************************** -->
