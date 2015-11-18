@@ -156,7 +156,14 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         TuningDetailFilter filter = new TuningDetailFilter("analog");
         if (string.Equals(scanMode, SCAN_MODE_FM_RADIO))
         {
-          tuningDetails = filter.LoadList("FM Radio.xml", false);
+          if (string.Equals(System.Globalization.RegionInfo.CurrentRegion.EnglishName, "Japan"))
+          {
+            tuningDetails = filter.LoadList("FM Radio Japan.xml", false);
+          }
+          else
+          {
+            tuningDetails = filter.LoadList("FM Radio.xml", false);
+          }
         }
         else if (string.Equals(scanMode, SCAN_MODE_TV_CABLE) || string.Equals(scanMode, SCAN_MODE_TV_TERRESTRIAL))
         {
