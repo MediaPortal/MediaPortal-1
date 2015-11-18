@@ -1040,6 +1040,9 @@ namespace MediaPortal.Dialogs
         {
           // delete from database
           DeleteFromDatabase(item);
+
+          // this will delete xml, nfo, txt, jpg with same name
+          Util.Utils.DeleteRecording(item.Path);
         }
       }
     }
