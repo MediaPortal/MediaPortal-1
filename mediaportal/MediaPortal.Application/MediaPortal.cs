@@ -2895,7 +2895,7 @@ public class MediaPortalApp : D3D, IRender
     RestoreFromTray();
 
     // Force focus after resume done (really weird sequence) disable for now
-    //ForceMPFocus();
+    ForceMPFocus();
 
     Log.Info("Main: OnResumeSuspend - Done");
   }
