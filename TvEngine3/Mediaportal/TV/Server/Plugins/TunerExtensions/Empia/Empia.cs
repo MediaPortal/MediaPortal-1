@@ -183,9 +183,9 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Empia
       // them all.
       int hr = (int)NativeMethods.HResult.E_FAIL;
       KSPropertySupport support = 0;
-      foreach (Enum e in Enum.GetValues(typeof(BdaExtensionProperty)))
+      foreach (BdaExtensionProperty property in Enum.GetValues(typeof(BdaExtensionProperty)))
       {
-        hr = ps.QuerySupported(BDA_EXTENSION_PROPERTY_SET, Convert.ToInt32(e), out support);
+        hr = ps.QuerySupported(BDA_EXTENSION_PROPERTY_SET, (int)property, out support);
         if (hr == (int)NativeMethods.HResult.S_OK)
         {
           return ps;
