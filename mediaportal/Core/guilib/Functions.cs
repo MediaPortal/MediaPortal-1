@@ -20,6 +20,7 @@
 
 using System;
 using System.ComponentModel;
+using System.Globalization;
 using System.Text.RegularExpressions;
 
 namespace MediaPortal.GUI.Library
@@ -217,7 +218,7 @@ namespace MediaPortal.GUI.Library
       {
         return "false";
       }
-      return text.Equals(part).ToString().ToLower();
+      return ((CultureInfo.InvariantCulture.CompareInfo.Compare(text, part, CompareOptions.IgnoreCase) == 0) ? "true" : "false");
     }
 
     [XMLSkinFunction("string.contains")]
@@ -227,7 +228,7 @@ namespace MediaPortal.GUI.Library
       {
         return "false";
       }
-      return text.Contains(part).ToString().ToLower();
+      return ((CultureInfo.InvariantCulture.CompareInfo.IndexOf(text, part, CompareOptions.IgnoreCase) >= 0) ? "true" : "false");
     }
 
     #endregion
@@ -335,7 +336,7 @@ namespace MediaPortal.GUI.Library
       {
         return false;
       }
-      return text.ToString().ToLower().Contains(part.ToString().ToLower());
+      return (CultureInfo.InvariantCulture.CompareInfo.IndexOf(text.ToString(), part.ToString(), CompareOptions.IgnoreCase) >= 0);
     }
 
     [XMLSkinFunction("ncont")]
@@ -345,7 +346,7 @@ namespace MediaPortal.GUI.Library
       {
         return false;
       }
-      return !text.ToString().ToLower().Contains(part.ToString().ToLower());
+      return (CultureInfo.InvariantCulture.CompareInfo.IndexOf(text.ToString(), part.ToString(), CompareOptions.IgnoreCase) < 0);
     }
 
     [XMLSkinFunction("gt")]
