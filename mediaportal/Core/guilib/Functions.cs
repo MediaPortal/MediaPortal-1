@@ -320,12 +320,20 @@ namespace MediaPortal.GUI.Library
     [XMLSkinFunction("eq")]
     public new static bool Equals(object arg1, object arg2)
     {
+      if ((arg1 is string) && (arg2 is string))
+      {
+        return (CultureInfo.InvariantCulture.CompareInfo.Compare(arg1.ToString(), arg2.ToString(), CompareOptions.IgnoreCase) == 0);
+      }
       return object.Equals(arg1, arg2);
     }
 
     [XMLSkinFunction("neq")]
     public static bool NotEquals(object arg1, object arg2)
     {
+      if ((arg1 is string) && (arg2 is string))
+      {
+        return (CultureInfo.InvariantCulture.CompareInfo.Compare(arg1.ToString(), arg2.ToString(), CompareOptions.IgnoreCase) != 0);
+      }
       return !object.Equals(arg1, arg2);
     }
 
