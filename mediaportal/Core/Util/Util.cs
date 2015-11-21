@@ -4951,8 +4951,6 @@ namespace MediaPortal.Util
       catch (Exception) {}
     }
 
-    //void DeleteOldTimeShiftFiles(string path)
-
     public static void DeleteRecording(string recordingFilename)
     {
       Utils.FileDelete(recordingFilename);
@@ -4991,6 +4989,10 @@ namespace MediaPortal.Util
               }
               //delete Matroska tag file
               if (fileName.ToLowerInvariant().IndexOf(".xml") >= 0)
+              {
+                File.Delete(fileName);
+              }
+              if (fileName.ToLowerInvariant().IndexOf(".nfo") >= 0)
               {
                 File.Delete(fileName);
               }
