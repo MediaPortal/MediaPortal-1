@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+    <metadata>
+        <id>MediaPortal.MP1.Plugin</id>
+        <version>1.15.0</version>
+        <authors>Stéphane Lenclud</authors>
+        <licenseUrl>http://www.gnu.org/licenses</licenseUrl>
+        <projectUrl>http://www.team-mediaportal.com/</projectUrl>
+        <iconUrl>view-source:http://www.team-mediaportal.com/templates/yoo_nano2/favicon.ico</iconUrl>
+        <requireLicenseAcceptance>false</requireLicenseAcceptance>
+        <description>Develop your own MP1 plug-in for MediaPortal.</description>
+        <copyright>Team MediaPortal</copyright>
+        <tags>MediaPortal plugin</tags>
+    </metadata>
+    <files>
+        <file src="..\mediaportal\MediaPortal.Application\bin\Release\Common.Utils.dll" target="lib\net40\Common.Utils.dll" />
+        <file src="..\mediaportal\MediaPortal.Application\bin\Release\Core.dll" target="lib\net40\Core.dll" />
+        <file src="..\mediaportal\MediaPortal.Application\bin\Release\plugins\Windows\Dialogs.dll" target="lib\net40\Dialogs.dll" />
+        <file src="..\mediaportal\MediaPortal.Application\bin\Release\Utils.dll" target="lib\net40\Utils.dll" />
+    </files>
+</package>
