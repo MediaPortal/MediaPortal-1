@@ -2380,11 +2380,23 @@
 	<String id="350018">NoPlugin</String>
 	<String id="350019">Label settings...</String>
 	<String id="350020">Press Info/F9 for all supported plugins...</String>
-	<String id="350021">Weather</String>
+	<String id="350021">World Weather Lite</String>
 	<String id="350022">MusicInfo Handler</String>
 	<String id="350023">Settings</String>
 	<String id="350024">Guide</String>
 	<String id="350025">Red Bull TV</String>
 	<String id="350026">YouTube</String>
+	<String id="350027">Worldnews</String>
+	<String id="350028">FritzBox</String>
+	<String id="350029">Radiotime</String>
+	<String id="350030">MvCentral</String>
+	<String id="350031">MultiShortcut</String>
+	<String id="350032">World Weather</String>
+	<String id="350033">Elapsed</String>
+	<String id="350034">Ends in</String>
+	<String id="350035">MultiShortcut2</String>
+    <String id="350036">MultiShortcut3</String>
+    <String id="350037">MovingPictures</String>
+    <String id="350038">HTPCinfo</String>
    </Section>
 </Language>
