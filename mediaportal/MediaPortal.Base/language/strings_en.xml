@@ -2394,5 +2394,9 @@
 	<String id="350032">World Weather</String>
 	<String id="350033">Elapsed</String>
 	<String id="350034">Ends in</String>
+	<String id="350035">MultiShortcut2</String>
+    <String id="350036">MultiShortcut3</String>
+    <String id="350037">MovingPictures</String>
+    <String id="350038">HTPCinfo</String>
    </Section>
 </Language>

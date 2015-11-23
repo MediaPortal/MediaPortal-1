@@ -2392,5 +2392,9 @@
 	<String id="350032">Weer</String>
 	<String id="350033">Verstreken</String>
 	<String id="350034">Eindigt in</String>
+	<String id="350035">MultiShortcut2</String>
+    <String id="350036">MultiShortcut3</String>
+    <String id="350037">MovingPictures</String>
+    <String id="350038">HTPCinfo</String>
   </Section>
 </Language>
