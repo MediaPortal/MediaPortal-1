@@ -641,8 +641,8 @@ bool CParserEam::GetLatestMessageTextByLanguage(unsigned long language,
 
 bool CParserEam::DecodeInBandDetailsChannelDescriptor(unsigned char* data,
                                                       unsigned char dataLength,
-                                                      unsigned char rfChannel,
-                                                      unsigned short programNumber)
+                                                      unsigned char& rfChannel,
+                                                      unsigned short& programNumber)
 {
   if (dataLength != 3)
   {

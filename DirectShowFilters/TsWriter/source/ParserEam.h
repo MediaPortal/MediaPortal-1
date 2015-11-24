@@ -290,15 +290,15 @@ class CParserEam
         unsigned short AudioOobSourceId;
 
         map<unsigned long, char*> AlertTexts;
-        vector<unsigned long> LocationCodes;          // state code | county sub-division | county code
-        vector<unsigned long> Exceptions;             // in band: major channel number | minor channel number; out of band: source ID
-        vector<unsigned long> AlternativeExceptions;  // in band exception channels descriptor: RF channel | program number
+        vector<unsigned long> LocationCodes;          // state code [8 bits] | county sub-division [8 bits] | county code [16 bits]
+        vector<unsigned long> Exceptions;             // in band: major channel number [16 bits] | minor channel number [16 bits]; out of band: source ID [16 bits]
+        vector<unsigned long> AlternativeExceptions;  // in band exception channels descriptor: RF channel [8 bits] | program number [16 bits]
     };
 
     static bool DecodeInBandDetailsChannelDescriptor(unsigned char* data,
                                                       unsigned char dataLength,
-                                                      unsigned char rfChannel,
-                                                      unsigned short programNumber);
+                                                      unsigned char& rfChannel,
+                                                      unsigned short& programNumber);
     static bool DecodeInBandExceptionChannelDescriptor(unsigned char* data,
                                                         unsigned char dataLength,
                                                         vector<unsigned long>& channels);

@@ -445,7 +445,7 @@ void CParserNitDvb::OnNewSection(CSection& section)
       vector<unsigned long long> transportStreamTargetRegionIds;
       char* transportStreamDefaultAuthority = NULL;
       vector<unsigned long> frequencies;
-      map<unsigned long, unsigned long> cellFrequencies;                                // cell ID | cell ID extension => frequency
+      map<unsigned long, unsigned long> cellFrequencies;                                // cell ID [16 bits] | cell ID extension [8 bits] => frequency
       CRecordNitTransmitterCable recordCable;
       CRecordNitTransmitterSatellite recordSatellite;
       CRecordNitTransmitterTerrestrial recordTerrestrial;
@@ -630,9 +630,9 @@ bool CParserNitDvb::GetService(unsigned short originalNetworkId,
                                 unsigned char& availableInCellCount,
                                 unsigned long long* targetRegionIds,
                                 unsigned char& targetRegionIdCount,
-                                unsigned short* freesatRegionIds,
+                                unsigned long* freesatRegionIds,
                                 unsigned char& freesatRegionIdCount,
-                                unsigned short* openTvRegionIds,
+                                unsigned long* openTvRegionIds,
                                 unsigned char& openTvRegionIdCount,
                                 unsigned short* freesatChannelCategoryIds,
                                 unsigned char& freesatChannelCategoryIdCount,
@@ -683,6 +683,7 @@ bool CParserNitDvb::GetService(unsigned short originalNetworkId,
     break;
   }
 
+  vector<unsigned long> expandedRegionIds;
   if (services.size() == 1)
   {
     CRecordNitService* record = services[0];
@@ -739,7 +740,8 @@ bool CParserNitDvb::GetService(unsigned short originalNetworkId,
                 m_name, originalNetworkId, transportStreamId, serviceId,
                 requiredCount, targetRegionIdCount);
     }
-    if (!CUtils::CopyVectorToArray(record->FreesatRegionIds,
+    ExpandRegionIds(record->FreesatRegionIds, record->TableIdExtension, expandedRegionIds);
+    if (!CUtils::CopyVectorToArray(expandedRegionIds,
                                     freesatRegionIds,
                                     freesatRegionIdCount,
                                     requiredCount))
@@ -748,7 +750,8 @@ bool CParserNitDvb::GetService(unsigned short originalNetworkId,
                 m_name, originalNetworkId, transportStreamId, serviceId,
                 requiredCount, freesatRegionIdCount);
     }
-    if (!CUtils::CopyVectorToArray(record->OpenTvRegionIds,
+    ExpandRegionIds(record->OpenTvRegionIds, record->TableIdExtension, expandedRegionIds);
+    if (!CUtils::CopyVectorToArray(expandedRegionIds,
                                     openTvRegionIds,
                                     openTvRegionIdCount,
                                     requiredCount))
@@ -805,8 +808,8 @@ bool CParserNitDvb::GetService(unsigned short originalNetworkId,
   map<unsigned short, bool> tempGroupIds;
   map<unsigned long, bool> tempAvailableInCells;
   map<unsigned long long, bool> tempTargetRegionIds;
-  map<unsigned short, bool> tempFreesatRegionIds;
-  map<unsigned short, bool> tempOpenTvRegionIds;
+  map<unsigned long, bool> tempFreesatRegionIds;
+  map<unsigned long, bool> tempOpenTvRegionIds;
   map<unsigned short, bool> tempFreesatChannelCategoryIds;
   map<unsigned char, bool> tempNorDigChannelListIds;
   map<unsigned long, bool> tempAvailableInCountries;
@@ -859,8 +862,10 @@ bool CParserNitDvb::GetService(unsigned short originalNetworkId,
     tempGroupIds[record->TableIdExtension] = true;
     AggregateSet(record->AvailableInCells, tempAvailableInCells);
     AggregateSet(record->TargetRegionIds, tempTargetRegionIds);
-    AggregateSet(record->FreesatRegionIds, tempFreesatRegionIds);
-    AggregateSet(record->OpenTvRegionIds, tempOpenTvRegionIds);
+    ExpandRegionIds(record->FreesatRegionIds, record->TableIdExtension, expandedRegionIds);
+    AggregateSet(expandedRegionIds, tempFreesatRegionIds);
+    ExpandRegionIds(record->OpenTvRegionIds, record->TableIdExtension, expandedRegionIds);
+    AggregateSet(expandedRegionIds, tempOpenTvRegionIds);
     AggregateSet(record->FreesatChannelCategoryIds, tempFreesatChannelCategoryIds);
     AggregateSet(record->NorDigChannelListIds, tempNorDigChannelListIds);
     AggregateSet(record->AvailableInCountries, tempAvailableInCountries);
@@ -1316,6 +1321,18 @@ void CParserNitDvb::CleanUpMapOfMaps(map<unsigned short, map<unsigned long, unsi
     }
   }
   mapOfMaps.clear();
+}
+
+void CParserNitDvb::ExpandRegionIds(const vector<unsigned short>& regionIds,
+                                    unsigned short tableIdExtension,
+                                    vector<unsigned long>& expandedRegionIds)
+{
+  expandedRegionIds.clear();
+  vector<unsigned short>::const_iterator it = regionIds.begin();
+  for ( ; it != regionIds.end(); it++)
+  {
+    expandedRegionIds.push_back(((unsigned long)tableIdExtension << 16) | *it);
+  }
 }
 
 template<class T> void CParserNitDvb::AggregateSet(const vector<T>& values, map<T, bool>& set)
@@ -3869,11 +3886,6 @@ bool CParserNitDvb::DecodeFreesatChannelDescriptor(unsigned char* data,
         }
 
         visibleInGuideFlags[serviceId] = true;
-        AddLogicalChannelNumber(serviceId,
-                                regionId,
-                                logicalChannelNumber,
-                                L"Freesat",
-                                logicalChannelNumbers);
 
         vector<unsigned short>* channelRegionIds = regionIds[serviceId];
         if (channelRegionIds == NULL)
@@ -3884,9 +3896,11 @@ bool CParserNitDvb::DecodeFreesatChannelDescriptor(unsigned char* data,
             LogDebug(L"%s: failed to allocate vector for service %hu's Freesat region IDs",
                       m_name, serviceId);
             regionIds.erase(serviceId);
-            continue;
           }
-          regionIds[serviceId] = channelRegionIds;
+          else
+          {
+            regionIds[serviceId] = channelRegionIds;
+          }
         }
 
         if (regionId == 0xffff) // "all regions within bouquet"
@@ -3894,15 +3908,30 @@ bool CParserNitDvb::DecodeFreesatChannelDescriptor(unsigned char* data,
           vector<unsigned short>::const_iterator regionIdIt = bouquetRegionIds.begin();
           for ( ; regionIdIt != bouquetRegionIds.end(); regionIdIt++)
           {
-            if (find(channelRegionIds->begin(), channelRegionIds->end(), *regionIdIt) == channelRegionIds->end())
+            unsigned bouquetRegionId = *regionIdIt;
+            AddLogicalChannelNumber(serviceId,
+                                    bouquetRegionId,
+                                    logicalChannelNumber,
+                                    L"Freesat",
+                                    logicalChannelNumbers);
+
+            if (channelRegionIds != NULL && find(channelRegionIds->begin(), channelRegionIds->end(), bouquetRegionId) == channelRegionIds->end())
             {
               channelRegionIds->push_back(*regionIdIt);
             }
           }
         }
-        else if (find(channelRegionIds->begin(), channelRegionIds->end(), regionId) == channelRegionIds->end())
+        else
         {
-          channelRegionIds->push_back(regionId);
+          AddLogicalChannelNumber(serviceId,
+                                  regionId,
+                                  logicalChannelNumber,
+                                  L"Freesat",
+                                  logicalChannelNumbers);
+          if (channelRegionIds != NULL && find(channelRegionIds->begin(), channelRegionIds->end(), regionId) == channelRegionIds->end())
+          {
+            channelRegionIds->push_back(regionId);
+          }
         }
       }
     }

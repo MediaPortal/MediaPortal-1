@@ -70,9 +70,9 @@ class CParserNitDvb : public CSectionDecoder, public IDefaultAuthorityProvider
                     unsigned char& availableInCellCount,
                     unsigned long long* targetRegionIds,
                     unsigned char& targetRegionIdCount,
-                    unsigned short* freesatRegionIds,
+                    unsigned long* freesatRegionIds,
                     unsigned char& freesatRegionIdCount,
-                    unsigned short* openTvRegionIds,
+                    unsigned long* openTvRegionIds,
                     unsigned char& openTvRegionIdCount,
                     unsigned short* freesatChannelCategoryIds,
                     unsigned char& freesatChannelCategoryIdCount,
@@ -378,9 +378,9 @@ class CParserNitDvb : public CSectionDecoder, public IDefaultAuthorityProvider
         unsigned short FreesatChannelId;
         unsigned short OpenTvChannelId;
         bool VisibleInGuide;
-        map<unsigned long, unsigned short> LogicalChannelNumbers;  // is HD bit | region ID => LCN
+        map<unsigned long, unsigned short> LogicalChannelNumbers;  // is HD bit [1 bit] | region ID [16 bits] => LCN
         char* DefaultAuthority;
-        vector<unsigned long> AvailableInCells;       // cell ID | cell ID extension
+        vector<unsigned long> AvailableInCells;       // cell ID [16 bits] | cell ID extension [8 bits]
         vector<unsigned long long> TargetRegionIds;
         vector<unsigned short> FreesatRegionIds;
         vector<unsigned short> OpenTvRegionIds;
@@ -1056,6 +1056,9 @@ class CParserNitDvb : public CSectionDecoder, public IDefaultAuthorityProvider
     template<class T> static void CleanUpGroupIds(map<unsigned short, vector<T>*>& groupIds);
     static void CleanUpMapOfMaps(map<unsigned short, map<unsigned long, unsigned short>*>& mapOfMaps);
 
+    static void ExpandRegionIds(const vector<unsigned short>& regionIds,
+                                unsigned short tableIdExtension,
+                                vector<unsigned long>& expandedRegionIds);
     template<class T> static void AggregateSet(const vector<T>& values, map<T, bool>& set);
     template<class T1, class T2> static bool GetSetValues(const map<T1, bool>& set,
                                                           T1* keys,
@@ -1266,8 +1269,8 @@ class CParserNitDvb : public CSectionDecoder, public IDefaultAuthorityProvider
     bool m_useCompatibilityMode;
     unsigned short m_networkId;
 
-    map<unsigned long long, map<unsigned long, char*>*> m_groupNames;   // name type ID | name ID -> [language -> name]
-    map<unsigned long, unsigned short> m_tableKeys;                     // table ID | table ID extension -> table key
+    map<unsigned long long, map<unsigned long, char*>*> m_groupNames;   // name type ID [8 bits] | name ID [56 bits] -> [language -> name]
+    map<unsigned long, unsigned short> m_tableKeys;                     // table ID [8 bits] | table ID extension [16 bits] -> table key
     unsigned short m_nextTableKey;
     CRecordStore m_recordsService;
     CRecordStore m_recordsTransmitter;

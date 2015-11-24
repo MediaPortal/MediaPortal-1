@@ -1584,7 +1584,7 @@ void CParserEitDvb::OnNewSection(int pid, int tableId, CSection& section)
       event->TransportStreamId = transportStreamId;
       event->ServiceId = serviceId;
 
-      map<unsigned long long, vector<unsigned long long>*> premiereShowings;  // ONID << 32 | TSID << 16 | SID => [ date << 24 | time ]
+      map<unsigned long long, vector<unsigned long long>*> premiereShowings;  // ONID [16 bits] | TSID [16 bits] | SID [16 bits] => [ epoch ]
       if (!DecodeEventRecord(data, pointer, endOfSection, *event, premiereShowings))
       {
         LogDebug(L"EIT DVB: invalid section, PID = %d, table ID = 0x%x, service ID = %hu, TSID = %hu, ONID = %hu, version number = %d, section number = %d, event ID = %llu",
