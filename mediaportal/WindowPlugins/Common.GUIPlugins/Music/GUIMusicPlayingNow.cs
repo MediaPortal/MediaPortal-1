@@ -208,7 +208,7 @@ namespace MediaPortal.GUI.Music
       {
         return;
       }
-      ImagePathContainer.Clear();
+
       if (GUIWindowManager.ActiveWindow == GetID && !_isStopped)
       {
         _isStopped = true;
@@ -285,8 +285,6 @@ namespace MediaPortal.GUI.Music
         Log.Debug("GUIMusicPlayingNow: Do Last.FM lookup for similar trracks");
         UpdateSimilarTracks(CurrentTrackFileName);
       }
-
-
     }
 
     #endregion
@@ -466,6 +464,11 @@ namespace MediaPortal.GUI.Music
       }
 
       UpdateImagePathContainer();
+
+      if (g_Player.Playing && g_Player.IsRadio)
+      {
+        PlaylistPlayer.Reset();
+      }
 
       if (g_Player.Playing)
       {
@@ -942,7 +945,7 @@ namespace MediaPortal.GUI.Music
 
     private void UpdateTrackInfo()
     {
-      if (PreviousTrackTag == null)
+      if (PreviousTrackTag == null || CurrentTrackTag == null)
       {
         _trackChanged = true;
       }
