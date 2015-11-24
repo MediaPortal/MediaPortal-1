@@ -199,6 +199,7 @@ namespace MediaPortal
     protected static Screen            _screenFocus;              // Screen Focus when minimize / restore to systray
     protected static Screen            _backupscreen;             // Screen Focus when minimize / restore to systray
     protected static Rectangle         _backupBounds;             // Bounds backup
+    protected static bool              _keepstartfullscreen;
 
     #endregion
 
@@ -248,6 +249,7 @@ namespace MediaPortal
         _alwaysOnTop             = xmlreader.GetValueAsBool("general", "alwaysontop", false);
         _reduceFrameRate         = xmlreader.GetValueAsBool("gui", "reduceframerate", false);
         _doNotWaitForVSync       = xmlreader.GetValueAsBool("debug", "donotwaitforvsync", false);
+        _keepstartfullscreen = xmlreader.GetValueAsBool("general", "keepstartfullscreen", false);
       }
 
       _useExclusiveDirectXMode = !UseEnhancedVideoRenderer && _useExclusiveDirectXMode;
@@ -482,96 +484,99 @@ namespace MediaPortal
     /// </summary>
     protected void ToggleFullscreen()
     {
-      Log.Debug("D3D: ToggleFullScreen()");
-
-      // disable event handlers
-      if (GUIGraphicsContext.DX9Device != null)
+      if (!_keepstartfullscreen)
       {
-        GUIGraphicsContext.DX9Device.DeviceLost -= OnDeviceLost;
-      }
+        Log.Debug("D3D: ToggleFullScreen()");
 
-      // Reset DialogMenu to avoid freeze when going to fullscreen/windowed
-      var dialogMenu = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
-      if (dialogMenu != null && (GUIWindowManager.RoutedWindow == (int)GUIWindow.Window.WINDOW_DIALOG_MENU || GUIWindowManager.RoutedWindow == (int)GUIWindow.Window.WINDOW_DIALOG_OK))
-      {
-        dialogMenu.Dispose();
-        GUIWindowManager.UnRoute(); // only unroute if we still the routed window
-      }
-
-      // reset device if necessary
-      Windowed = !Windowed;
-      RecreateSwapChain(false);
-      Windowed = !Windowed;
-
-      // adjust form sizes and properties
-      if (Windowed)
-      {
-        Log.Info("D3D: Switching from windowed mode to full screen");
-        
-        if (AutoHideTaskbar)
+        // disable event handlers
+        if (GUIGraphicsContext.DX9Device != null)
         {
-          HideTaskBar(true);
+          GUIGraphicsContext.DX9Device.DeviceLost -= OnDeviceLost;
         }
 
-        // exist miniTVMode
-        if (_menuItemMiniTv.Checked)
+        // Reset DialogMenu to avoid freeze when going to fullscreen/windowed
+        var dialogMenu = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
+        if (dialogMenu != null && (GUIWindowManager.RoutedWindow == (int)GUIWindow.Window.WINDOW_DIALOG_MENU || GUIWindowManager.RoutedWindow == (int)GUIWindow.Window.WINDOW_DIALOG_OK))
         {
-          ToggleMiniTV();
+          dialogMenu.Dispose();
+          GUIWindowManager.UnRoute(); // only unroute if we still the routed window
         }
 
-        _oldClientRectangle.Location = Location;
-        _oldClientRectangle.Size     = ClientSize;
+        // reset device if necessary
+        Windowed = !Windowed;
+        RecreateSwapChain(false);
+        Windowed = !Windowed;
 
-        WindowState         = FormWindowState.Normal;
-        FormBorderStyle     = FormBorderStyle.None;
-        MaximizeBox         = false;
-        MinimizeBox         = false;
-        Menu                = null;
-        Windowed            = false;
-        Location            = new Point(GUIGraphicsContext.currentScreen.Bounds.X, GUIGraphicsContext.currentScreen.Bounds.Y);
-        ClientSize          = GUIGraphicsContext.currentScreen.Bounds.Size;
-      }
-      else
-      {
-        Log.Info("D3D: Switching from full screen to windowed mode");
-
-        if (AutoHideTaskbar)
+        // adjust form sizes and properties
+        if (Windowed)
         {
-          HideTaskBar(false);
-        }
+          Log.Info("D3D: Switching from windowed mode to full screen");
 
-        WindowState     = FormWindowState.Normal;
-        FormBorderStyle = FormBorderStyle.Sizable;
-        MaximizeBox     = true;
-        MinimizeBox     = true;
-        Menu            = _menuStripMain;
-        Windowed        = true;
+          if (AutoHideTaskbar)
+          {
+            HideTaskBar(true);
+          }
 
-        if (_oldClientRectangle.IsEmpty)
-        {
-          Location   = new Point(GUIGraphicsContext.currentScreen.Bounds.X, GUIGraphicsContext.currentScreen.Bounds.Y);
-          ClientSize = CalcMaxClientArea();
+          // exist miniTVMode
+          if (_menuItemMiniTv.Checked)
+          {
+            ToggleMiniTV();
+          }
+
+          _oldClientRectangle.Location = Location;
+          _oldClientRectangle.Size = ClientSize;
+
+          WindowState = FormWindowState.Normal;
+          FormBorderStyle = FormBorderStyle.None;
+          MaximizeBox = false;
+          MinimizeBox = false;
+          Menu = null;
+          Windowed = false;
+          Location = new Point(GUIGraphicsContext.currentScreen.Bounds.X, GUIGraphicsContext.currentScreen.Bounds.Y);
+          ClientSize = GUIGraphicsContext.currentScreen.Bounds.Size;
         }
         else
         {
-          Location   = _oldClientRectangle.Location;
-          ClientSize = _oldClientRectangle.Size;
+          Log.Info("D3D: Switching from full screen to windowed mode");
+
+          if (AutoHideTaskbar)
+          {
+            HideTaskBar(false);
+          }
+
+          WindowState = FormWindowState.Normal;
+          FormBorderStyle = FormBorderStyle.Sizable;
+          MaximizeBox = true;
+          MinimizeBox = true;
+          Menu = _menuStripMain;
+          Windowed = true;
+
+          if (_oldClientRectangle.IsEmpty)
+          {
+            Location = new Point(GUIGraphicsContext.currentScreen.Bounds.X, GUIGraphicsContext.currentScreen.Bounds.Y);
+            ClientSize = CalcMaxClientArea();
+          }
+          else
+          {
+            Location = _oldClientRectangle.Location;
+            ClientSize = _oldClientRectangle.Size;
+          }
+
+          LastRect.top = Location.Y;
+          LastRect.left = Location.X;
+          LastRect.bottom = Size.Height;
+          LastRect.right = Size.Width;
         }
 
-        LastRect.top    = Location.Y;
-        LastRect.left   = Location.X;
-        LastRect.bottom = Size.Height;
-        LastRect.right  = Size.Width;
-      }
+        Update();
+        Log.Info("D3D: Client Size: {0}x{1}", ClientSize.Width, ClientSize.Height);
+        Log.Info("D3D: Screen size: {0}x{1}", GUIGraphicsContext.currentScreen.Bounds.Width, GUIGraphicsContext.currentScreen.Bounds.Height);
 
-      Update();
-      Log.Info("D3D: Client Size: {0}x{1}", ClientSize.Width, ClientSize.Height);
-      Log.Info("D3D: Screen size: {0}x{1}", GUIGraphicsContext.currentScreen.Bounds.Width, GUIGraphicsContext.currentScreen.Bounds.Height);
-
-      // enable event handlers
-      if (GUIGraphicsContext.DX9Device != null)
-      {
-        GUIGraphicsContext.DX9Device.DeviceLost += OnDeviceLost;
+        // enable event handlers
+        if (GUIGraphicsContext.DX9Device != null)
+        {
+          GUIGraphicsContext.DX9Device.DeviceLost += OnDeviceLost;
+        }
       }
     }
 
@@ -1111,7 +1116,7 @@ namespace MediaPortal
       if (GUIGraphicsContext.SkinSize.Width + border.Width <= GUIGraphicsContext.currentScreen.WorkingArea.Width &&
           GUIGraphicsContext.SkinSize.Height + border.Height <= GUIGraphicsContext.currentScreen.WorkingArea.Height)
       {
-        clientArea = new Size(GUIGraphicsContext.SkinSize.Width, GUIGraphicsContext.SkinSize.Height);
+        clientArea = new Size(GUIGraphicsContext.SkinSize.Width + border.Width, GUIGraphicsContext.SkinSize.Height + border.Height);
       }
       else
       {
@@ -2159,7 +2164,6 @@ namespace MediaPortal
         _firstLoadedScreen = true;
         Screen screenfocus = Screen.FromControl(this);
         this.WindowState = FormWindowState.Minimized;
-        this.Show();
         this.WindowState = FormWindowState.Normal;
         _firstLoadedScreen = false;
         // Restore previous saved screen
@@ -2521,6 +2525,16 @@ namespace MediaPortal
     /// </summary>
     protected override void Dispose(bool disposing)
     {
+      // Store MP Windowed
+      using (var xmlWriter = new MPSettings())
+      {
+        var backupSize = ClientSize;
+        xmlWriter.SetValue("gui", "lastlocationx", Location.X);
+        xmlWriter.SetValue("gui", "lastlocationy", Location.Y);
+        xmlWriter.SetValue("gui", "backupsizewidth", backupSize.Width);
+        xmlWriter.SetValue("gui", "backupsizeheight", backupSize.Height);
+      }
+
       CleanupEnvironment();
 
       if (_notifyIcon != null)

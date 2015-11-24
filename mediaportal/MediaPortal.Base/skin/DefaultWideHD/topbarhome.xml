@@ -1,0 +1,258 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!--version="1.0" encoding="UTF-8"-->
+<window>
+  <id>3005</id>
+  <defaultcontrol>21</defaultcontrol>
+  <allowoverlay>no</allowoverlay>
+  <autohidetopbar>yes</autohidetopbar>
+  <controls>
+    <control>
+      <type>group</type>
+      <description>group element</description>
+      <animation effect="slide" start="0,-60" time="100" condition="!control.hasfocus(50)" reversible="true">conditional</animation>
+      <visible>!control.hasfocus(50)</visible>
+      <control>
+      <description>Topbar BG</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>505</posX>
+      <posY>0</posY>
+      <width>930</width>
+      <height>72</height>
+      <texture>OSDBG2.png</texture>
+    </control>
+      <control>
+      <description>group element</description>
+      <type>group</type>
+      <posX>530</posX>
+      <posY>8</posY>
+      <layout>StackLayout(5, Horizontal, true)</layout>
+      <control>
+        <description>ScreenBack button</description>
+        <type>button</type>
+        <id>121</id>
+        <width>58</width>
+        <height>56</height>
+        <textureFocus>tb_back.png</textureFocus>
+        <textureNoFocus>tb_backNF.png</textureNoFocus>
+        <label>-</label>
+        <action>10</action>
+        <onleft>32</onleft>
+        <onright>26</onright>
+        <onup>121</onup>
+        <ondown>2</ondown>
+        <animation effect="zoom" start="100,100" end="110,110" time="0">focus</animation>
+      </control>
+      <control>
+        <description>Home button</description>
+        <type>button</type>
+        <id>26</id>
+        <width>58</width>
+        <height>56</height>
+        <textureFocus>tb_home.png</textureFocus>
+        <textureNoFocus>tb_homeNF.png</textureNoFocus>
+        <hyperlink>35</hyperlink>
+        <label>-</label>
+        <action>10</action>
+        <onleft>121</onleft>
+        <onright>101</onright>
+        <onup>26</onup>
+        <ondown>2</ondown>
+        <animation effect="zoom" start="100,100" end="110,110" time="0">focus</animation>
+      </control>
+      <control>
+        <description>videowallpaper button</description>
+        <type>button</type>
+        <id>101</id>
+        <width>58</width>
+        <height>56</height>
+        <textureFocus>tb_full_screen.png</textureFocus>
+        <textureNoFocus>tb_full_screenNF.png</textureNoFocus>
+        <label>-</label>
+        <action>101</action>
+        <onleft>26</onleft>
+        <onright>1102</onright>
+        <onup>101</onup>
+        <ondown>2</ondown>
+        <animation effect="zoom" start="100,100" end="110,110" time="0">focus</animation>
+      </control>
+      <control>
+        <description>volume down button</description>
+        <type>button</type>
+        <id>1102</id>
+        <width>58</width>
+        <height>56</height>
+        <textureFocus>tb_volumedown.png</textureFocus>
+        <textureNoFocus>tb_volumedownNF.png</textureNoFocus>
+        <action>102</action>
+        <label>-</label>
+        <onleft>101</onleft>
+        <onright>1103</onright>
+        <onup>1102</onup>
+        <ondown>2</ondown>
+        <animation effect="zoom" start="100,100" end="110,110" time="0">focus</animation>
+      </control>
+      <control>
+        <description>volume up button</description>
+        <type>button</type>
+        <id>1103</id>
+        <width>58</width>
+        <height>56</height>
+        <textureFocus>tb_volumeup.png</textureFocus>
+        <textureNoFocus>tb_volumeupNF.png</textureNoFocus>
+        <action>103</action>
+        <label>-</label>
+        <onleft>1102</onleft>
+        <onright>22</onright>
+        <onup>1103</onup>
+        <ondown>2</ondown>
+        <animation effect="zoom" start="100,100" end="110,110" time="0">focus</animation>
+      </control>
+      <control>
+        <description>skipback button</description>
+        <type>button</type>
+        <id>22</id>
+        <width>58</width>
+        <height>56</height>
+        <textureFocus>tb_skipback.png</textureFocus>
+        <textureNoFocus>tb_skipbackNF.png</textureNoFocus>
+        <action>15</action>
+        <label>-</label>
+        <onleft>1103</onleft>
+        <onright>23</onright>
+        <onup>22</onup>
+        <ondown>2</ondown>
+        <animation effect="zoom" start="100,100" end="110,110" time="0">focus</animation>
+      </control>
+      <control>
+        <description>rewind button</description>
+        <type>button</type>
+        <id>23</id>
+        <width>58</width>
+        <height>56</height>
+        <textureFocus>tb_rew.png</textureFocus>
+        <textureNoFocus>tb_rewNF.png</textureNoFocus>
+        <action>78</action>
+        <label>-</label>
+        <onleft>22</onleft>
+        <onright>24</onright>
+        <onup>23</onup>
+        <ondown>2</ondown>
+        <animation effect="zoom" start="100,100" end="110,110" time="0">focus</animation>
+      </control>
+      <control>
+        <description>play button</description>
+        <type>button</type>
+        <id>24</id>
+        <width>58</width>
+        <height>56</height>
+        <textureFocus>tb_play.png</textureFocus>
+        <textureNoFocus>tb_playNF.png</textureNoFocus>
+        <action>12</action>
+        <label>-</label>
+        <onleft>23</onleft>
+        <onright>27</onright>
+        <onup>24</onup>
+        <ondown>2</ondown>
+        <animation effect="zoom" start="100,100" end="110,110" time="0">focus</animation>
+      </control>
+      <control>
+        <description>stop button</description>
+        <type>button</type>
+        <id>27</id>
+        <width>58</width>
+        <height>56</height>
+        <textureFocus>tb_stop.png</textureFocus>
+        <textureNoFocus>tb_stopNF.png</textureNoFocus>
+        <action>13</action>
+        <label>-</label>
+        <onleft>24</onleft>
+        <onright>28</onright>
+        <onup>27</onup>
+        <ondown>2</ondown>
+        <animation effect="zoom" start="100,100" end="110,110" time="0">focus</animation>
+      </control>
+      <control>
+        <description>fast forward button</description>
+        <type>button</type>
+        <id>28</id>
+        <width>58</width>
+        <height>56</height>
+        <textureFocus>tb_fastforward.png</textureFocus>
+        <textureNoFocus>tb_fastforwardNF.png</textureNoFocus>
+        <action>77</action>
+        <label>-</label>
+        <onleft>27</onleft>
+        <onright>29</onright>
+        <onup>28</onup>
+        <ondown>2</ondown>
+        <animation effect="zoom" start="100,100" end="110,110" time="0">focus</animation>
+      </control>
+      <control>
+        <description>next button</description>
+        <type>button</type>
+        <id>29</id>
+        <width>58</width>
+        <height>56</height>
+        <textureFocus>tb_skipforward.png</textureFocus>
+        <textureNoFocus>tb_skipforwardNF.png</textureNoFocus>
+        <action>14</action>
+        <label>-</label>
+        <onleft>28</onleft>
+        <onright>30</onright>
+        <onup>29</onup>
+        <ondown>2</ondown>
+        <animation effect="zoom" start="100,100" end="110,110" time="0">focus</animation>
+      </control>
+      <control>
+        <description>info button</description>
+        <type>button</type>
+        <id>30</id>
+        <width>58</width>
+        <height>56</height>
+        <textureFocus>tb_info.png</textureFocus>
+        <textureNoFocus>tb_infoNF.png</textureNoFocus>
+        <hyperlink>7982</hyperlink>
+        <label>-</label>
+        <onleft>29</onleft>
+        <onright>31</onright>
+        <onup>29</onup>
+        <ondown>2</ondown>
+        <animation effect="zoom" start="100,100" end="110,110" time="0">focus</animation>
+      </control>
+      <control>
+        <description>Exit button</description>
+        <type>button</type>
+        <id>31</id>
+        <width>58</width>
+        <height>56</height>
+        <textureFocus>tb_exit.png</textureFocus>
+        <textureNoFocus>tb_exitNF.png</textureNoFocus>
+        <label>-</label>
+        <action>97</action>
+        <onleft>30</onleft>
+        <onright>32</onright>
+        <onup>31</onup>
+        <ondown>2</ondown>
+        <animation effect="zoom" start="100,100" end="110,110" time="0">focus</animation>
+      </control>
+      <control>
+        <description>Shutdown button</description>
+        <type>button</type>
+        <id>32</id>
+        <width>58</width>
+        <height>56</height>
+        <textureFocus>tb_shutdown.png</textureFocus>
+        <textureNoFocus>tb_shutdownNF.png</textureNoFocus>
+        <action>99</action>
+        <label>-</label>
+        <onleft>31</onleft>
+        <onright>121</onright>
+        <onup>32</onup>
+        <ondown>2</ondown>
+        <animation effect="zoom" start="100,100" end="110,110" time="0">focus</animation>
+      </control>
+    </control>
+    </control>
+  </controls>
+</window>

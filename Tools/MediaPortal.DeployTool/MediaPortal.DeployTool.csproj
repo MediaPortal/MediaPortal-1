@@ -491,9 +491,7 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Install.ico" />
-    <None Include="Resources\preview_default_wide.png" />
     <None Include="Resources\preview_titan.png" />
-    <None Include="Resources\preview_default.png" />
     <None Include="MediaPortal.DeployTool.exe.manifest" />
     <None Include="Resources\MePo_average.png" />
     <None Include="Resources\MePo_smart.png" />
@@ -511,6 +509,7 @@
     <None Include="Resources\helpIcon.png" />
     <None Include="Resources\Background exit button.png" />
     <None Include="Resources\Background help button.png" />
+    <None Include="Resources\DefaultWide HD.PNG" />
     <Content Include="Resources\MePo_download.png" />
   </ItemGroup>
   <ItemGroup>

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Skin translation file -->
+<!-- English (US) -->
+<strings>
+  <string Field="WorldNewsTicker">Activate WorldNews Ticker</string>
+  <string Field="AnalogClockOSD">Analog Clock in OSDs</string>
+  <string Field="MusicNowPlayingFanart">Music NowPlaying Fanart in BasicHome</string>
+  <string Field="MusicFanart">Random Music Fanart in BasicHome</string>
+  <string Field="VideoFanart">Random Video Fanart in BasicHome</string>
+  <string Field="TVGuideRows">Number of rows in TV guide</string>
+  <string Field="TVSeriesRows">Rows in TVSeries Wide Banner</string>
+  <string Field="DescriptionTopbar">Description of topbar buttons:</string>
+  <string Field="BackPrevious">Vissza az elozo ablakra</string>
+  <string Field="BackBasicHome">Vissza a BasicHome-ra</string>
+  <string Field="LiveTV">Élo TV/videó a háttérben</string>
+  <string Field="PlayControls">Audio/Video play controls</string>
+  <string Field="SkinInfo">This screen</string>
+  <string Field="CloseExit">Kilépés a MP-ból</string>
+  <string Field="ShutdownOptions">Kikapcsolási lehetoségek</string>
+  <string Field="InfoButton">In list views: Pressing right (remote/keyboard) or hover with mouse shows extended information</string>
+  <string Field="SupportedPlugins">Supported Plugins (in alphabetical order):</string>
+  <string Field="PluginsMP">... and of course all standard plugins of MediaPortal 1.7.x or newer versions</string>
+  <string Field="MPVersion">DefaultWide HD 1.5 is designed for MP 1.7.x or newer versions.</string>
+  <string Field="Enjoy">Enjoy MediaPortal with DefaultWide HD 1.5!</string>
+  <string Field="Background">Background</string>
+  <string Field="Games">Games</string>
+  <string Field="NewEpisodes">Recently added episodes</string>
+  <string Field="NewRecordings">Recently added TV recordings</string>
+  <string Field="NewVideos">Recently added videos</string>
+  <string Field="NewYouTubeVideos">Recently added YouTube videos</string>
+  <string Field="NewFilms">Recently added movies</string>
+  <string Field="LastPlayed">Last played</string>
+  <string Field="NewPictures">Recently added pictures</string>
+  <string Field="NowRecording">Active recordings</string>
+  <string Field="FullView">Infos always visible</string>
+  <string Field="ShowDVDArt">Show DVD-Art</string>
+  <string Field="NoClock">Deactivate Clock and Plugin Icons</string>
+  <string Field="FastAccess">Fast Access Menu in Topbar</string>
+  <string Field="Timer">#(L(603))</string>
+  <string Field="Update">DefaultWide HD 1.6 available!</string>
+  <string Field="BasicHomeEditorModernUI">ATTENTION: With this theme you must not place plugins from TV, Video or Music into Internet or Games, otherwise you may encounter navigation issues in either Internet or Games! catavolt :-D</string>
+  <string Field="BasicHomeEditorHorizonUp">ATTENTION: With this theme you should set plugins only within their category (e.g. TVSeries only in Videos), otherwise you will encounter display issues regarding latest added media!  catavolt :-D</string>
+  <string Field="BasicHomeEditorNoPlugin">ATTENTION: Please make sure that every first item of every category contains an enabled plugin, otherwise navigation in the catagories will fail! catavolt :-D</string>
+  <string Field="tvstreaminfo">TV OSD stream info always visible</string>
+</strings>

@@ -518,6 +518,7 @@ namespace MediaPortal.GUI.Library
       //string strReferenceFile = _windowXmlFileName.Substring(0, iPos);
       _windowXmlFileName = GUIGraphicsContext.GetThemedSkinFile(_windowXmlFileName.Substring(_windowXmlFileName.LastIndexOf("\\")));
       string strReferenceFile = GUIGraphicsContext.GetThemedSkinFile(@"\references.xml");
+
       GUIControlFactory.LoadReferences(strReferenceFile);
 
       try
@@ -861,7 +862,8 @@ namespace MediaPortal.GUI.Library
         if (xmlNodeList != null)
           foreach (XmlNode node in xmlNodeList)
           {
-            string[] tokens = node.InnerText.Split(':');
+            // Split only fisrt ':' otherwise full path can like (C:\) will be split too
+            string[] tokens = node.InnerText.Split(new[] { ':' }, 2);
 
             if (tokens.Length < 2)
             {

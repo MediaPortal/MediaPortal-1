@@ -1,17 +1,17 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ArrayOfDVBCTuning xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <DVBCTuning>
-    <Frequency>113000</Frequency>
+    <Frequency>114000</Frequency>
     <ModulationType>Mod256Qam</ModulationType>
     <SymbolRate>6900</SymbolRate>
   </DVBCTuning>
   <DVBCTuning>
-    <Frequency>121000</Frequency>
+    <Frequency>122000</Frequency>
     <ModulationType>Mod256Qam</ModulationType>
     <SymbolRate>6900</SymbolRate>
   </DVBCTuning>
   <DVBCTuning>
-    <Frequency>129000</Frequency>
+    <Frequency>130000</Frequency>
     <ModulationType>Mod256Qam</ModulationType>
     <SymbolRate>6900</SymbolRate>
   </DVBCTuning>

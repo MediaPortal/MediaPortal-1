@@ -73,7 +73,7 @@
     <String id="107">Oui</String>
     <String id="108">Diaporama</String>
     <String id="109">Créer les jaquettes</String>
-    <String id="110">Créer les vignettes</String>
+    <String id="110">Créer les miniatures</String>
     <String id="111">Raccourcis</String>
     <String id="112">EN PAUSE</String>
     <String id="113" prefix="Mes ">Fichiers : Source</String>
@@ -377,7 +377,7 @@
     <String id="412">Impossible d'obtenir la météo</String>
     <String id="413">Manuel</String>
     <String id="414">Aucune critique pour cet album</String>
-    <String id="415">Téléchargement des vignettes...</String>
+    <String id="415">Téléchargement des miniatures...</String>
     <String id="416">Indisponible</String>
     <String id="417">Grandes icônes</String>
     <String id="418" prefix="Mes ">Vidéos/Genres</String>
@@ -757,7 +757,7 @@
     <String id="865">Temps en minutes avant l'arrêt : </String>
     <String id="866">Fondu du volume</String>
     <String id="867">Eteindre l'ordinateur</String>
-    <String id="868">Redémarrer</String>
+    <String id="868">Réactualiser les partages déconnectés</String>
     <String id="869">Nouvelle Alarme</String>
     <String id="870">Récurrence</String>
     <String id="871">Réveiller le PC</String>
@@ -1184,6 +1184,20 @@
     <String id="1976">rpm</String>
     <String id="1977">Système de Fichiers</String>
     <String id="1978">MemVirtuelle</String>
+    <String id="1984">Rafraîchir les miniatures vidéo</String>
+    <String id="1989">Il y a des fichiers en lecture seule dans le dossier !</String>
+    <String id="1990">Réveil du Serveur</String>
+    <String id="1991">Patientez jusqu'au réveil du serveur</String>
+    <String id="1992">Le serveur n'est pas disponible</String>
+    <String id="1993">Vérifiez la connection au réseau ou augmentez la valeur du timeout.</String>
+    <String id="1994">Attendez que le répertoire distant soit en ligne.</String>
+    <String id="1995">Créer une miniature du dossier à partir des miniatures</String>
+    <String id="1999">Nom avec Durée</String>
+    <String id="2000">La chanson est en lecture seule !</String>
+    <String id="2001">L'image est en lecture seule !</String>
+    <String id="2002">Le film est en lecture seule !</String>
+    <String id="2003">Le fichier est en lecture seule !</String>
+    <String id="2004">Voulez-vous supprimer ?</String>
     <String id="2005">Supprimer</String>
     <String id="2006">Titre</String>
     <String id="2007">Champ</String>
@@ -1326,6 +1340,10 @@
     <String id="2145">Importation de la playlist courante</String>
     <String id="2146">Espace insuffisant sur le CD</String>
     <String id="2147">Espace insuffisant sur le DVD</String>
+    <String id="2148">Appliquez les changements à tous les sous-dossiers ?</String>
+    <String id="2149">Question</String>
+    <String id="2160">Met à jour les infos Média dans le dossier sélectionné</String>
+    <String id="2161">Annule le processus de mise à jour des infos Média</String>
     <String id="2200" prefix="Mon ">Explorateur</String>
     <String id="2201">Sélectionner une source</String>
     <String id="2202">Sélectionner une destination</String>
@@ -1830,6 +1848,7 @@
     <String id="34061">Entrez un nom d'utilisateur...</String>
     <String id="34062">Entrez un artiste...</String>
     <String id="34063">Aucun artiste sélectionné</String>
+    <String id="34064">Une connection Internet est requise\nFor Last.FM Radio</String>
     <String id="40001">Attente de mise en veille</String>
     <String id="40002">MediaPortal ne répond pas car il est encore occupé</String>
     <String id="40003">Quand toutes les tâches seront terminées, MediaPortal passera en veille.</String>
@@ -1880,6 +1899,8 @@
     <String id="100510">Musique/Lu maintenant</String>
     <String id="100511">Musique/Plein écran</String>
     <String id="100512">LastFM Love/Ban</String>
+    <String id="100513">Saisir l'ancien code PIN</String>
+    <String id="100514">Saisir le nouveau code PIN</String>
     <String id="100600">TV/Guide</String>
     <String id="100601">TV/Programmation</String>
     <String id="100602">TV/Plein écran</String>
@@ -1947,7 +1968,7 @@
     <String id="101002">Clavier virtuel</String>
     <String id="101003">Clavier virtuel Web</String>
     <String id="101004">Clavier virtuel SMS</String>
-    <String id="101005">GUI - Vignettes</String>
+    <String id="101005">GUI - miniatures</String>
     <String id="101006">GUI - Affichage à l'écran</String>
     <String id="101007">Volume</String>
     <String id="101008">Général - taux de rafraîchissement dynamique</String>
@@ -2014,6 +2035,10 @@
     <String id="109005">Mini écran - Configuration - Pavé numérique</String>
     <String id="109006">Mini écran - Configuration - Télécommande</String>
     <String id="102019">TV notification</String>
+    <String id="190000">Annuler le processus de création des miniatures</String>
+    <String id="190001">Créer les miniatures manquantes (avec les sous-dossiers)</String>
+    <String id="190010">Votre base de données {0} est corrompue.</String>
+    <String id="190011">Dossier</String>
     <String id="200000">Sélectionnez le logiciel de récupération des programmes TV. Note : Si votre pays n'est</String>
     <String id="200001">pas dans la liste, il vous faudra remplir manuellement le fichier tvguide.xml.</String>
     <String id="200002">Vous pouvez maintenant lier vos programmes TV à vos chaînes TV.</String>
@@ -2061,9 +2086,9 @@
     <String id="200043">Nettoyer les enregistrements</String>
     <String id="200044">Enregistrements invalides</String>
     <String id="200045">Les deux</String>
-    <String id="200046">Créer vignettes (ce dossier)</String>
-    <String id="200047">Créer vignettes (avec sous-dossiers)</String>
-    <String id="200048">Re-créer toutes les vignettes</String>
+    <String id="200046">Créer miniatures (ce dossier)</String>
+    <String id="200047">Créer miniatures (avec sous-dossiers)</String>
+    <String id="200048">Re-créer toutes les miniatures</String>
     <String id="200049">Seulement les enregs déjà vus</String>
     <String id="200050">Cela supprimera les enregs du disque dur</String>
     <String id="200051">Supprimer cet épisode ?</String>
@@ -2167,7 +2192,7 @@
     <String id="300058">Chemin</String>
     <String id="300059">Pin</String>
     <String id="300060">Paramètres Grabber</String>
-    <String id="300061">Démarrage de la création de vignettes photo et ajouts de bases de données</String>
+    <String id="300061">Démarrage de la création de miniatures photo et ajouts de bases de données</String>
     <String id="300062">Analyse de la base de données images terminé.</String>
     <String id="300063">Ajouter</String>
     <String id="300064">Supprimer</String>
@@ -2202,6 +2227,7 @@
     <String id="300093">Redémarrer MP en cas de crash</String>
     <String id="300094">Délai d'attente avant de redémarrer (en secondes)</String>
     <String id="300095">Extinction du moniteur (avec l'économiseur d'écran)</String>
+    <String id="300096">TVs Ultra HD, Vidéo-projecteurs</String>
     <String id="300100">Afficher le dernier module actif lors du réveil</String>
     <String id="300102">Délai avant l'ouverture</String>
     <String id="300103">Lors de l'ouverture de MediaPortal</String>
@@ -2245,20 +2271,20 @@
     <String id="300142">Relative (%)</String>
     <String id="300143">Constant (sec)</String>
     <String id="300144">Valeur de l'intervalle de saut</String>
-    <String id="300145">Définition de la vignette</String>
+    <String id="300145">Définition de la miniature</String>
     <String id="300146">Compositing : </String>
     <String id="300147">Interpolation : </String>
     <String id="300148">Lissage : </String>
     <String id="300149">Type d'écran: </String>
     <String id="300150">Créer un dossier cache sur demande</String>
-    <String id="300151">Supprimer les vignettes pour la musique</String>
+    <String id="300151">Supprimer les miniatures pour la musique</String>
     <String id="300152">Photos</String>
-    <String id="300153">Création automatique des vignettes</String>
+    <String id="300153">Création automatique des miniatures</String>
     <String id="300154">Supprimer la mémoire cache des images</String>
     <String id="300155">Vidéos</String>
-    <String id="300156">Création automatique des vignettes</String>
-    <String id="300157">Laisser les vignettes dans le dossier d'enregistrement</String>
-    <String id="300158">Supprimer les vignettes Vidéos</String>
+    <String id="300156">Création automatique des miniatures</String>
+    <String id="300157">Laisser les miniatures dans le dossier d'enregistrement</String>
+    <String id="300158">Supprimer les miniatures Vidéos</String>
     <String id="300159">Aperçu de l'apparence</String>
     <String id="300160">Rangées</String>
     <String id="300161">Base de données</String>
@@ -2268,7 +2294,7 @@
     <String id="300165">Mise à jour de la base de données aprés une modification</String>
     <String id="300166">Enlever le préfixe des artistes (The Who -&gt; Who, The)</String>
     <String id="300167">Traiter les pistes contenus dans un dossier comme un album</String>
-    <String id="300168">Création de vignettes via : </String>
+    <String id="300168">Création de miniatures via : </String>
     <String id="300169">l'icône du dossier .jpg (recommandé)</String>
     <String id="300170">*. png, *.jpg  (préfère la couverture)</String>
     <String id="300171">La pochette intégrée dans ID3-Tags</String>
@@ -2322,15 +2348,42 @@
     <String id="300219">Format Audio</String>
     <String id="300220">Controle parental</String>
     <String id="300221">Chaque dossier est un film</String>
-    <String id="300222">Vignettes</String>
+    <String id="300222">miniatures</String>
     <String id="300223">Les dossiers sont des films : </String>
-    <String id="300224">Affichage des vignettes des vidéos désactivées</String>
+    <String id="300224">Affichage des miniatures des vidéos désactivées</String>
     <String id="300225">Utiliser "Trier titre"</String>
     <String id="300226">Utiliser uniquement le scraper NFO interne</String>
-    <String id="300227">Suppression des vignettes Blacklistés</String>
+    <String id="300227">Suppression des miniatures Blacklistés</String>
     <String id="300228">Demander confirmation lors de l'arrêt du Timeshift</String>
     <String id="300229">Réduire en icône lorsque MP n'est plus au premier plan</String>
     <String id="300230">Arrêter la lecture lors d'une modification du rendu audio</String>
     <String id="300231">Réduction du taux de rafraichissement lorsque MP n'est plus au premier plan</String>
+    <String id="300232">Mettre à jour les fichiers uniquement après {0}</String>
+    <String id="350001">Appuyez sur Info/F9 pour les réglages rapides...</String>
+    <String id="350002">Films</String>
+    <String id="350003">Lecteur de Disque</String>
+    <String id="350004">Trakt</String>
+    <String id="350005">TvWishList</String>
+    <String id="350006">Vidéos en ligne</String>
+    <String id="350007">Extensions</String>
+    <String id="350008">SubCentral</String>
+    <String id="350009">IMDb+</String>
+    <String id="350010">LogoManager</String>
+    <String id="350011">InfoService</String>
+    <String id="350012">Bing Images</String>
+    <String id="350013">MyLyrics</String>
+    <String id="350014">BrowseTheWeb</String>
+    <String id="350015">AirPlayer</String>
+    <String id="350016">Rockstar</String>
+    <String id="350017">ShowTimes</String>
+    <String id="350018">Pas de Plugin</String>
+    <String id="350019">Paramètres des étiquettes...</String>
+    <String id="350020">Appuyez sur Info/F9 pour les plugins supportés...</String>
+    <String id="350021">Météo</String>
+    <String id="350022">MusicInfo Handler</String>
+    <String id="350023">Réglages</String>
+    <String id="350024">Guide</String>
+    <String id="350025">Red Bull TV</String>
+    <String id="350026">YouTube</String>
   </Section>
 </Language>
