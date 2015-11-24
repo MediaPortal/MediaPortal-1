@@ -254,7 +254,23 @@ namespace MediaPortal.GUI.Music
       CurrentTrackFileName = filename;
       GetTrackTags();
 
-      CurrentThumbFileName = GUIMusicBaseWindow.GetCoverArt(false, CurrentTrackFileName, CurrentTrackTag);
+      if (g_Player.IsRadio)
+      {
+
+        string strLogo = GUIPropertyManager.GetProperty("#Play.Current.Thumb");
+        if (!string.IsNullOrEmpty(strLogo))
+        {
+          CurrentThumbFileName = strLogo;
+        }
+        else
+        {
+          CurrentThumbFileName = string.Empty;
+        }
+      }
+      else
+      {
+        CurrentThumbFileName = GUIMusicBaseWindow.GetCoverArt(false, CurrentTrackFileName, CurrentTrackTag);
+      }
 
       if (string.IsNullOrEmpty(CurrentThumbFileName))
         // no LOCAL Thumb found because user has bad settings -> check if there is a folder.jpg in the share
