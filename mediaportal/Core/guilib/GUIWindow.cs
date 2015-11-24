@@ -251,6 +251,7 @@ namespace MediaPortal.GUI.Library
 
     private VisualEffect _showAnimation = new VisualEffect(); // for dialogs
     private VisualEffect _closeAnimation = new VisualEffect();
+    public static readonly SynchronizationContext _mainThreadContext = SynchronizationContext.Current;
 
     #endregion
 
@@ -494,7 +495,14 @@ namespace MediaPortal.GUI.Library
       String threadName = Thread.CurrentThread.Name;
       if (threadName != "MPMain" && threadName != "Config Main")
       {
-        Log.Error("LoadSkin: Running on wrong thread - StackTrace: '{0}'", Environment.StackTrace);
+        if (threadName != null)
+        {
+          Log.Error("LoadSkin: Running on wrong thread name [{0}] - StackTrace: '{1}'", threadName, Environment.StackTrace);
+        }
+        else
+        {
+          Log.Error("LoadSkin: Running on wrong thread - StackTrace: '{0}'", Environment.StackTrace);
+        }
       }
 
       _lastSkin = GUIGraphicsContext.Skin;
@@ -686,7 +694,7 @@ namespace MediaPortal.GUI.Library
             }
           }
         }
-        
+
         _rememberLastFocusedControl = false;
         if (GUIGraphicsContext.AllowRememberLastFocusedItem)
         {
@@ -1869,6 +1877,10 @@ namespace MediaPortal.GUI.Library
           {
             _previousFocusedControlId = id;
           }
+        }
+        catch (ThreadAbortException)
+        {
+          Log.Debug("OnMessage.ThreadAbortException exception.");
         }
         catch (Exception ex)
         {
