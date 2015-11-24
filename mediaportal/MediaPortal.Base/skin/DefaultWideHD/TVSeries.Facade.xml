@@ -36,6 +36,7 @@
           <IconXOff>750</IconXOff>
           <IconYOff>9</IconYOff>
           <textXOff2>747</textXOff2>
+          <textureFocus>#(iif(eq(#TVSeries.Episode.Watched,'0'),'button_focus_notwatched.png','button_focus.png'))</textureFocus>
           <onright>2</onright>
         </control>
         <control>
