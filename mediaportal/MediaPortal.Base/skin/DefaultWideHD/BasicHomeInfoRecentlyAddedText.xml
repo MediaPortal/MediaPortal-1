@@ -955,16 +955,12 @@
     <control>
       <type>group</type>
       <description>group element</description>
-      <animation effect="fade" start="0" end="100" time="500" condition="[plugin.isenabled(Latest Media Handler)+string.contains(#highlightedbutton,AUDIO1)|[Control.isvisible(66661)+Control.isvisible(66662)+Control.isvisible(66663)]|[Control.hasfocus(91919997)|Control.hasfocus(91919998)|Control.hasfocus(91919999)]+string.equals(#latestMediaHandler.music.latest.enabled,true)]+!string.equals(#latestMediaHandler.music.latest1.artist,)">conditional</animation>
-      <animation effect="fade" start="100" end="0" time="700" delay="20000" condition="[plugin.isenabled(Latest Media Handler)+string.contains(#highlightedbutton,AUDIO1)|[Control.isvisible(66661)+Control.isvisible(66662)+Control.isvisible(66663)]|[Control.hasfocus(91919997)|Control.hasfocus(91919998)|Control.hasfocus(91919999)]+string.equals(#latestMediaHandler.music.latest.enabled,true)]+!string.equals(#latestMediaHandler.music.latest1.artist,)">conditional</animation>
+      <animation effect="fade" start="0" end="100" time="500" condition="[plugin.isenabled(Latest Media Handler)+[string.contains(#highlightedbutton,AUDIO1)|string.contains(#highlightedbutton,MUSIC)]|[Control.isvisible(66661)+Control.isvisible(66662)+Control.isvisible(66663)]|[Control.hasfocus(91919997)|Control.hasfocus(91919998)|Control.hasfocus(91919999)]+string.equals(#latestMediaHandler.music.latest.enabled,true)]+!string.equals(#latestMediaHandler.music.latest1.artist,)">conditional</animation>
+      <animation effect="fade" start="100" end="0" time="700" delay="20000" condition="[plugin.isenabled(Latest Media Handler)+[string.contains(#highlightedbutton,AUDIO1)|string.contains(#highlightedbutton,MUSIC)]|[Control.isvisible(66661)+Control.isvisible(66662)+Control.isvisible(66663)]|[Control.hasfocus(91919997)|Control.hasfocus(91919998)|Control.hasfocus(91919999)]+string.equals(#latestMediaHandler.music.latest.enabled,true)]+!string.equals(#latestMediaHandler.music.latest1.artist,)">conditional</animation>
       <control>
         <type>group</type>
         <description>group element</description>
-        <visible>[plugin.isenabled(Latest Media Handler)+string.contains(#highlightedbutton,AUDIO1)|[Control.isvisible(66661)+Control.isvisible(66662)+Control.isvisible(66663)]|[Control.hasfocus(91919997)|Control.hasfocus(91919998)|Control.hasfocus(91919999)]+string.equals(#latestMediaHandler.music.latest.enabled,true)]+!string.equals(#latestMediaHandler.music.latest1.artist,)</visible>
-        
-        
-        
-        
+        <visible>[plugin.isenabled(Latest Media Handler)+[string.contains(#highlightedbutton,AUDIO1)|string.contains(#highlightedbutton,MUSIC)]|[Control.isvisible(66661)+Control.isvisible(66662)+Control.isvisible(66663)]|[Control.hasfocus(91919997)|Control.hasfocus(91919998)|Control.hasfocus(91919999)]+string.equals(#latestMediaHandler.music.latest.enabled,true)]+!string.equals(#latestMediaHandler.music.latest1.artist,)</visible>
         <control>
           <description>background for recently added files</description>
           <type>image</type>
@@ -1061,7 +1057,7 @@
           <posX>124</posX>
           <posY>659</posY>
           <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
-          <visible>[plugin.isenabled(Latest Media Handler)+string.contains(#highlightedbutton,AUDIO1)|[Control.hasfocus(91919997)|Control.hasfocus(91919998)|Control.hasfocus(91919999)]+string.equals(#latestMediaHandler.music.latest.enabled,true)]+!string.equals(#latestMediaHandler.music.latest1.artist,)</visible>
+          <visible>[plugin.isenabled(Latest Media Handler)+[string.contains(#highlightedbutton,AUDIO1)|string.contains(#highlightedbutton,MUSIC)]|[Control.hasfocus(91919997)|Control.hasfocus(91919998)|Control.hasfocus(91919999)]+string.equals(#latestMediaHandler.music.latest.enabled,true)]+!string.equals(#latestMediaHandler.music.latest1.artist,)</visible>
           <control>
             <description>Music Updates</description>
             <type>image</type>

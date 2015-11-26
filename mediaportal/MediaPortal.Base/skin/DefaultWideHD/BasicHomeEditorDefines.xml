@@ -217,7 +217,7 @@
 
   <define property="true" evaluateNow="true">#list.TV:#(#list.header.left)#(L(605))#(#list.header.right),#NONE,#TV1,#TV2,#TV3,#TV4,#TV5,#TV6,#TV7,#TV8</define>
 
-  <define property="true" evaluateNow="true">#list.VIDEO:#(#list.header.left)#(L(291))#(#list.header.right),#NONE,#VIDEO1,#.TVSERIES,#1.TVSERIES,#2.TVSERIES,#3.TVSERIES,#4.TVSERIES,#5.TVSERIES,#6.TVSERIES,#7.TVSERIES,#8.TVSERIES,#9.TVSERIES,#10.TVSERIES,#11.TVSERIES,#12.TVSERIES,#13.TVSERIES,#14.TVSERIES,#15.TVSERIES,#.MOVPIC,#1.MOVPIC,#2.MOVPIC,#3.MOVPIC,#4.MOVPIC,#5.MOVPIC,#6.MOVPIC,#7.MOVPIC,#8.MOVPIC,#9.MOVPIC,#10.MOVPIC,#VIDEO3,#VIDEO4,#VIDEO5,#.TRAKT,#1.TRAKT,#2.TRAKT,#3.TRAKT,#4.TRAKT,#5.TRAKT,#6.TRAKT,#7.TRAKT,#8.TRAKT,#9.TRAKT,#10.TRAKT,#11.TRAKT,#12.TRAKT,#VIDEO6,#VIDEO7</define>
+  <define property="true" evaluateNow="true">#list.VIDEO:#(#list.header.left)#(L(291))#(#list.header.right),#NONE,#VIDEO1,#.TVSERIES,#1.TVSERIES,#2.TVSERIES,#3.TVSERIES,#4.TVSERIES,#5.TVSERIES,#6.TVSERIES,#7.TVSERIES,#8.TVSERIES,#9.TVSERIES,#10.TVSERIES,#11.TVSERIES,#12.TVSERIES,#13.TVSERIES,#14.TVSERIES,#15.TVSERIES,#.MOVPIC,#1.MOVPIC,#2.MOVPIC,#3.MOVPIC,#4.MOVPIC,#5.MOVPIC,#6.MOVPIC,#7.MOVPIC,#8.MOVPIC,#9.MOVPIC,#10.MOVPIC,#VIDEO3,#VIDEO4,#VIDEO5,#.TRAKT,#1.TRAKT,#2.TRAKT,#3.TRAKT,#4.TRAKT,#5.TRAKT,#6.TRAKT,#7.TRAKT,#8.TRAKT,#9.TRAKT,#10.TRAKT,#11.TRAKT,#12.TRAKT,#VIDEO6,#VIDEO7,#VIDEO8</define>
 
   <define property="true" evaluateNow="true">#list.AUDIO:#(#list.header.left)#(L(292))#(#list.header.right),#NONE,#AUDIO1,#AUDIO2,#AUDIO3,#AUDIO4,#AUDIO5,#AUDIO6,#AUDIO7,#AUDIO8,#AUDIO9,#AUDIO10,#AUDIO11,#.MUSIC,#1.MUSIC,#2.MUSIC,#3.MUSIC,#4.MUSIC,#5.MUSIC,#6.MUSIC,#7.MUSIC,#8.MUSIC,#9.MUSIC,#10.MUSIC</define>
 
@@ -425,6 +425,18 @@
   <define property="true" evaluateNow="true">#VIDEO7.iconnofocus:tb_videoNF.png</define>
   <define property="true" evaluateNow="true">#VIDEO7.active:#(iif(or(eq(#VIDEO7.plugin,''),plugin.isenabled(#VIDEO7.plugin)),' ',''))</define>
   <define property="true" evaluateNow="true">#VIDEO7:#(string.format('{0}{1}',#VIDEO7.name,iif(eq(#VIDEO7.active,' '),'',#PLUGERROR)))</define>
+  
+  <!-- MyVideoReDo -->
+  <define property="true" evaluateNow="true">#VIDEO8.name:MyVideoRedo</define>
+  <define property="true" evaluateNow="true">#VIDEO8.plugin:MyVideoRedo</define>
+  <define property="true" evaluateNow="true">#VIDEO8.hyperlink:1208</define>
+  <define property="true" evaluateNow="true">#VIDEO8.parameter:</define>
+  <define property="true" evaluateNow="true">#VIDEO8.hover:hover_myVideoReDo.png</define>
+  <define property="true" evaluateNow="true">#VIDEO8.background:Animations\BasicHome\videos.jpg</define>
+  <define property="true" evaluateNow="true">#VIDEO8.iconfocus:tb_video.png</define>
+  <define property="true" evaluateNow="true">#VIDEO8.iconnofocus:tb_videoNF.png</define>
+  <define property="true" evaluateNow="true">#VIDEO8.active:#(iif(or(eq(#VIDEO8.plugin,''),plugin.isenabled(#VIDEO8.plugin)),' ',''))</define>
+  <define property="true" evaluateNow="true">#VIDEO8:#(string.format('{0}{1}',#VIDEO8.name,iif(eq(#VIDEO8.active,' '),'',#PLUGERROR)))</define>
 
   <!--     *******************************************************************************************  -->
   <!--     **************************************    AUDIO ITEMS   ***********************************  -->
@@ -1329,6 +1341,7 @@
   <define property="true" evaluateNow="true">#.MUSIC.background:Animations\BasicHome\music.jpg</define>
   <define property="true" evaluateNow="true">#.MUSIC.iconfocus:tb_music.png</define>
   <define property="true" evaluateNow="true">#.MUSIC.iconnofocus:tb_musicNF.png</define>
+  <define property="true" evaluateNow="true">#.MUSIC.latestmedia:91919997</define>
   <define property="true" evaluateNow="true">#.MUSIC.active:#(iif(and(or(eq(#.MUSIC.plugin,''),plugin.isenabled(#.MUSIC.plugin)),neq(#.MUSIC.name,#PLUGOPTERROR)),' ',''))</define>
   <define property="true" evaluateNow="true">#.MUSIC:#(string.format('{0}{1}',#.MUSIC.name,iif(eq(#.MUSIC.active,' '),'',#PLUGERROR)))</define>
 
@@ -1341,6 +1354,7 @@
   <define property="true" evaluateNow="true">#1.MUSIC.background:Animations\BasicHome\music.jpg</define>
   <define property="true" evaluateNow="true">#1.MUSIC.iconfocus:tb_music.png</define>
   <define property="true" evaluateNow="true">#1.MUSIC.iconnofocus:tb_musicNF.png</define>
+  <define property="true" evaluateNow="true">#1.MUSIC.latestmedia:91919997</define>
   <define property="true" evaluateNow="true">#1.MUSIC.active:#(iif(and(or(eq(#1.MUSIC.plugin,''),plugin.isenabled(#1.MUSIC.plugin)),neq(#1.MUSIC.name,#PLUGOPTERROR)),' ',''))</define>
   <define property="true" evaluateNow="true">#1.MUSIC:#(string.format('{0}{1}',#1.MUSIC.name,iif(eq(#1.MUSIC.active,' '),'',#PLUGERROR)))</define>
 
@@ -1353,6 +1367,7 @@
   <define property="true" evaluateNow="true">#2.MUSIC.background:Animations\BasicHome\music.jpg</define>
   <define property="true" evaluateNow="true">#2.MUSIC.iconfocus:tb_music.png</define>
   <define property="true" evaluateNow="true">#2.MUSIC.iconnofocus:tb_musicNF.png</define>
+  <define property="true" evaluateNow="true">#2.MUSIC.latestmedia:91919997</define>
   <define property="true" evaluateNow="true">#2.MUSIC.active:#(iif(and(or(eq(#2.MUSIC.plugin,''),plugin.isenabled(#2.MUSIC.plugin)),neq(#2.MUSIC.name,#PLUGOPTERROR)),' ',''))</define>
   <define property="true" evaluateNow="true">#2.MUSIC:#(string.format('{0}{1}',#2.MUSIC.name,iif(eq(#2.MUSIC.active,' '),'',#PLUGERROR)))</define>
 
@@ -1365,6 +1380,7 @@
   <define property="true" evaluateNow="true">#3.MUSIC.background:Animations\BasicHome\music.jpg</define>
   <define property="true" evaluateNow="true">#3.MUSIC.iconfocus:tb_music.png</define>
   <define property="true" evaluateNow="true">#3.MUSIC.iconnofocus:tb_musicNF.png</define>
+  <define property="true" evaluateNow="true">#3.MUSIC.latestmedia:91919997</define>
   <define property="true" evaluateNow="true">#3.MUSIC.active:#(iif(and(or(eq(#3.MUSIC.plugin,''),plugin.isenabled(#3.MUSIC.plugin)),neq(#3.MUSIC.name,#PLUGOPTERROR)),' ',''))</define>
   <define property="true" evaluateNow="true">#3.MUSIC:#(string.format('{0}{1}',#3.MUSIC.name,iif(eq(#3.MUSIC.active,' '),'',#PLUGERROR)))</define>
 
@@ -1377,6 +1393,7 @@
   <define property="true" evaluateNow="true">#4.MUSIC.background:Animations\BasicHome\music.jpg</define>
   <define property="true" evaluateNow="true">#4.MUSIC.iconfocus:tb_music.png</define>
   <define property="true" evaluateNow="true">#4.MUSIC.iconnofocus:tb_musicNF.png</define>
+  <define property="true" evaluateNow="true">#4.MUSIC.latestmedia:91919997</define>
   <define property="true" evaluateNow="true">#4.MUSIC.active:#(iif(and(or(eq(#4.MUSIC.plugin,''),plugin.isenabled(#4.MUSIC.plugin)),neq(#4.MUSIC.name,#PLUGOPTERROR)),' ',''))</define>
   <define property="true" evaluateNow="true">#4.MUSIC:#(string.format('{0}{1}',#4.MUSIC.name,iif(eq(#4.MUSIC.active,' '),'',#PLUGERROR)))</define>
 
@@ -1389,6 +1406,7 @@
   <define property="true" evaluateNow="true">#5.MUSIC.background:Animations\BasicHome\music.jpg</define>
   <define property="true" evaluateNow="true">#5.MUSIC.iconfocus:tb_music.png</define>
   <define property="true" evaluateNow="true">#5.MUSIC.iconnofocus:tb_musicNF.png</define>
+  <define property="true" evaluateNow="true">#5.MUSIC.latestmedia:91919997</define>
   <define property="true" evaluateNow="true">#5.MUSIC.active:#(iif(and(or(eq(#5.MUSIC.plugin,''),plugin.isenabled(#5.MUSIC.plugin)),neq(#5.MUSIC.name,#PLUGOPTERROR)),' ',''))</define>
   <define property="true" evaluateNow="true">#5.MUSIC:#(string.format('{0}{1}',#5.MUSIC.name,iif(eq(#5.MUSIC.active,' '),'',#PLUGERROR)))</define>
 
@@ -1400,6 +1418,7 @@
   <define property="true" evaluateNow="true">#6.MUSIC.hover:hover_my music.png</define>
   <define property="true" evaluateNow="true">#6.MUSIC.background:Animations\BasicHome\music.jpg</define>
   <define property="true" evaluateNow="true">#6.MUSIC.iconfocus:tb_music.png</define>
+  <define property="true" evaluateNow="true">#6.MUSIC.latestmedia:91919997</define>
   <define property="true" evaluateNow="true">#6.MUSIC.iconnofocus:tb_musicNF.png</define>
   <define property="true" evaluateNow="true">#6.MUSIC.active:#(iif(and(or(eq(#6.MUSIC.plugin,''),plugin.isenabled(#6.MUSIC.plugin)),neq(#6.MUSIC.name,#PLUGOPTERROR)),' ',''))</define>
   <define property="true" evaluateNow="true">#6.MUSIC:#(string.format('{0}{1}',#6.MUSIC.name,iif(eq(#6.MUSIC.active,' '),'',#PLUGERROR)))</define>
@@ -1413,6 +1432,7 @@
   <define property="true" evaluateNow="true">#7.MUSIC.background:Animations\BasicHome\music.jpg</define>
   <define property="true" evaluateNow="true">#7.MUSIC.iconfocus:tb_music.png</define>
   <define property="true" evaluateNow="true">#7.MUSIC.iconnofocus:tb_musicNF.png</define>
+  <define property="true" evaluateNow="true">#7.MUSIC.latestmedia:91919997</define>
   <define property="true" evaluateNow="true">#7.MUSIC.active:#(iif(and(or(eq(#7.MUSIC.plugin,''),plugin.isenabled(#7.MUSIC.plugin)),neq(#7.MUSIC.name,#PLUGOPTERROR)),' ',''))</define>
   <define property="true" evaluateNow="true">#7.MUSIC:#(string.format('{0}{1}',#7.MUSIC.name,iif(eq(#7.MUSIC.active,' '),'',#PLUGERROR)))</define>
 
@@ -1425,6 +1445,7 @@
   <define property="true" evaluateNow="true">#8.MUSIC.background:Animations\BasicHome\music.jpg</define>
   <define property="true" evaluateNow="true">#8.MUSIC.iconfocus:tb_music.png</define>
   <define property="true" evaluateNow="true">#8.MUSIC.iconnofocus:tb_musicNF.png</define>
+  <define property="true" evaluateNow="true">#8.MUSIC.latestmedia:91919997</define>
   <define property="true" evaluateNow="true">#8.MUSIC.active:#(iif(and(or(eq(#8.MUSIC.plugin,''),plugin.isenabled(#8.MUSIC.plugin)),neq(#8.MUSIC.name,#PLUGOPTERROR)),' ',''))</define>
   <define property="true" evaluateNow="true">#8.MUSIC:#(string.format('{0}{1}',#8.MUSIC.name,iif(eq(#8.MUSIC.active,' '),'',#PLUGERROR)))</define>
 
@@ -1437,6 +1458,7 @@
   <define property="true" evaluateNow="true">#9.MUSIC.background:Animations\BasicHome\music.jpg</define>
   <define property="true" evaluateNow="true">#9.MUSIC.iconfocus:tb_music.png</define>
   <define property="true" evaluateNow="true">#9.MUSIC.iconnofocus:tb_musicNF.png</define>
+  <define property="true" evaluateNow="true">#9.MUSIC.latestmedia:91919997</define>
   <define property="true" evaluateNow="true">#9.MUSIC.active:#(iif(and(or(eq(#9.MUSIC.plugin,''),plugin.isenabled(#9.MUSIC.plugin)),neq(#9.MUSIC.name,#PLUGOPTERROR)),' ',''))</define>
   <define property="true" evaluateNow="true">#9.MUSIC:#(string.format('{0}{1}',#9.MUSIC.name,iif(eq(#9.MUSIC.active,' '),'',#PLUGERROR)))</define>
 
@@ -1449,6 +1471,7 @@
   <define property="true" evaluateNow="true">#10.MUSIC.background:Animations\BasicHome\music.jpg</define>
   <define property="true" evaluateNow="true">#10.MUSIC.iconfocus:tb_music.png</define>
   <define property="true" evaluateNow="true">#10.MUSIC.iconnofocus:tb_musicNF.png</define>
+  <define property="true" evaluateNow="true">#10.MUSIC.latestmedia:91919997</define>
   <define property="true" evaluateNow="true">#10.MUSIC.active:#(iif(and(or(eq(#10.MUSIC.plugin,''),plugin.isenabled(#10.MUSIC.plugin)),neq(#10.MUSIC.name,#PLUGOPTERROR)),' ',''))</define>
   <define property="true" evaluateNow="true">#10.MUSIC:#(string.format('{0}{1}',#10.MUSIC.name,iif(eq(#9.MUSIC.active,' '),'',#PLUGERROR)))</define>
 
