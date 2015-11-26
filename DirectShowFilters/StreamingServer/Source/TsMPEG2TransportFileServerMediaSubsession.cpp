@@ -1,3 +1,4 @@
+#include "StdAfx.h"
 #include "TsMPEG2TransportFileServerMediaSubsession.h"
 #ifndef _SIMPLE_RTP_SINK_HH
 #include "SimpleRTPSink.hh"
@@ -111,7 +112,8 @@ FileReader* TsMPEG2TransportFileServerMediaSubsession::OpenFileDuration() const
 
   if (wcsstr(m_fileName, L".tsbuffer")!=NULL)
   {
-    pFileDuration = new MultiFileReader();
+      //MultiFileReader::MultiFileReader(BOOL useFileNext, BOOL useDummyWrites, CCritSec* pFilterLock, BOOL useRandomAccess, BOOL extraLogging):
+    pFileDuration   = new MultiFileReader(FALSE, FALSE, NULL, FALSE, FALSE);
   }
   else
   {

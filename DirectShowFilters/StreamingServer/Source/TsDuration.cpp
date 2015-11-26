@@ -18,6 +18,7 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+#include "StdAfx.h"
 #include "TsDuration.h"
 #include "..\..\shared\AdaptionField.h"
 #include "..\..\shared\TsHeader.h"

@@ -18,6 +18,7 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+#include "StdAfx.h"
 #include "TsFileSeek.h"
 #include "..\..\shared\adaptionfield.h"
 #include <math.h>   // fabs()
