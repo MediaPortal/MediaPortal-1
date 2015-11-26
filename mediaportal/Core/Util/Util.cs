@@ -4972,11 +4972,6 @@ namespace MediaPortal.Util
           {
             if (fileName.ToLowerInvariant().IndexOf(filename) >= 0)
             {
-              //delete all Timeshift buffer files
-              if (fileName.ToLowerInvariant().IndexOf(".sbe") >= 0)
-              {
-                File.Delete(fileName);
-              }
               //delete Thumbnails
               if (fileName.ToLowerInvariant().IndexOf(".jpg") >= 0)
               {
