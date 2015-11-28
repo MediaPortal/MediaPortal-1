@@ -485,7 +485,6 @@ namespace MediaPortal.GUI.Library
       {
         LoadSkin();
       }
-      //LoadSkin();
       if (!_windowAllocated)
       {
         AllocResources();
