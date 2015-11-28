@@ -3,26 +3,10 @@
 <!-- English (US) -->
 <strings>
   <string Field="WorldNewsTicker">Показать бегущую строку WorldNews</string>
-  <string Field="AnalogClockOSD">Аналоговые часы в инфо-окнах</string>
   <string Field="MusicNowPlayingFanart">Фан-арт музыки "Сейчас играет" для Главного экрана</string>
   <string Field="MusicFanart">Случайный фан-арт музыки для Главного экрана</string>
   <string Field="VideoFanart">Случайный фан-арт видео для Главного экрана</string>
   <string Field="TVGuideRows">Кол-во строк в ТВ-программе</string>
-  <string Field="TVSeriesRows">Кол-во строк в заголовке плагина сериалов</string>
-  <string Field="DescriptionTopbar">Подсказки для кнопок верхней панели:</string>
-  <string Field="BackPrevious">Назад к предыдущему окну</string>
-  <string Field="BackBasicHome">Назад к Главному экрану</string>
-  <string Field="LiveTV">ТВ/Видео в фоне</string>
-  <string Field="PlayControls">Элементы управления проигрыванием</string>
-  <string Field="SkinInfo">Этот экран</string>
-  <string Field="CloseExit">Закрыть Медиапортал</string>
-  <string Field="ShutdownOptions">Варианты завершения</string>
-  <string Field="InfoButton">В списках: показать расширенную информацию при вызове конт. меню или задержке курсора мыши</string>
-  <string Field="SupportedPlugins">Поддерживаемые плагины (в алфавитном порядке):</string>
-  <string Field="PluginsMP">... и, конечно, все стандартные плагины Медиапортала версии 1.7.x или новее</string>
-  <string Field="MPVersion">Скин DefaultWide HD 1.5 разработан для Медипортала версии 1.7.x или новее.</string>
-  <string Field="Enjoy">Наслаждайтесь Медиапорталом со скином DefaultWide HD 1.5!</string>
-  <string Field="Background">Фон</string>
   <string Field="Games">Игры</string>
   <string Field="NewEpisodes">недавно добавленные серии</string>
   <string Field="NewRecordings">Недавно записанные ТВ-передачи</string>
@@ -32,14 +16,6 @@
   <string Field="LastPlayed">Последним проигрывалось</string>
   <string Field="NewPictures">Недавно добавленные изображения</string>
   <string Field="NowRecording">Активные записи</string>
-  <string Field="FullView">Показать всю доступную информацию</string>
-  <string Field="ShowDVDArt">Показать DVD-Art</string>
-  <string Field="NoClock">Убрать значки часов и плагинов</string>
-  <string Field="FastAccess">Меню быстрого доступа в верхней панели</string>
   <string Field="Timer">#(L(603))</string>
-  <string Field="Update">Доступна версия 1.6+ для DefaultWide HD!</string>
-  <string Field="BasicHomeEditorModernUI">ВНИМАНИЕ: При использовании этой темы нельзя помещать плагины ТВ, Видео и Музыки в категории Интернет или Игры, иначе могут быть проблемы с навигацией внутри плагинов Интернет или Игры! Автор :-D</string>
-  <string Field="BasicHomeEditorHorizonUp">ВНИМАНИЕ: При использовании этой темы плагины должны находиться только внутри своих категорий (напр. Сериалы - только в Видео), иначе возможны ошибки отображения недавно добавленных элементов! Автор :-D</string>
-  <string Field="BasicHomeEditorNoPlugin">ВНИМАНИЕ: Убедитесь, что первый пункт каждой категории содержит работающий плагин, иначе навигация в категориях не будет работать! Автор :-D</string>
   <string Field="tvstreaminfo">Всегда показывать инфо о ТВ-потоке в инфо-окне</string>
 </strings>

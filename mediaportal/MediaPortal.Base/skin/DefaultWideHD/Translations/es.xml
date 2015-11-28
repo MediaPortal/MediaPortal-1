@@ -3,43 +3,21 @@
 <!-- English (US) -->
 <strings>
   <string Field="WorldNewsTicker">Activar ticker de WorldNews</string>
-  <string Field="AnalogClockOSD">Reloj analógico en OSDs</string>
   <string Field="MusicNowPlayingFanart">Fondo de música reproduciendo en BasicHome</string>
   <string Field="MusicFanart">Fondo de música aleatorio en BasicHome</string>
   <string Field="VideoFanart">Fondo de video aleatorio en BasicHome</string>
   <string Field="TVGuideRows">Filas en guía de TV</string>
   <string Field="TVSeriesRows">Filas en TVSeries Wide Banners</string>
-  <string Field="DescriptionTopbar">Descripción de los botones de barra superior:</string>
-  <string Field="BackPrevious">Regreso a la pantalla anterior</string>
-  <string Field="BackBasicHome">Regreso a BasicHome</string>
-  <string Field="LiveTV">LiveTV/video en el fondo</string>
-  <string Field="PlayControls">Controles de reproducción de audio/vídeo</string>
-  <string Field="SkinInfo">Información sobre el Skin</string>
-  <string Field="CloseExit">Cerrar/Salir MP</string>
-  <string Field="ShutdownOptions">Opciones de apagado</string>
-  <string Field="InfoButton">En listas: pulsa "derecha" (remoto/teclado) o tocar con el ratón muestra información ampliada</string>
-  <string Field="SupportedPlugins">Extensiones compatibles (en orden alfabético):</string>
-  <string Field="PluginsMP">... y por supuesto todos los extensiones estándar de MediaPortal 1.7.x y posteriores versiones</string>
-  <string Field="MPVersion">DefaultWide HD 1.5 está diseñado para MP 1.7.x y posteriores versiones.</string>
-  <string Field="Enjoy">Disfrute de MediaPortal con DefaultWide HD 1.5!</string>
   <string Field="Background">Fondo</string>
   <string Field="Games">Juegos</string>
   <string Field="NewEpisodes">Episodios recientemente agregado</string>
   <string Field="NewRecordings">Grabaciones de TV recientemente agregado</string>
   <string Field="NewVideos">Vídeos añadidos recientemente</string>
-  <string Field="NewYouTubeVideos">Videos de YouTube agregados recientemente</string>
+  <string Field="NewYouTubeVideos">Videos de Online Videos agregados recientemente</string>
   <string Field="NewFilms">Películas recientemente agregado</string>
   <string Field="LastPlayed">Última música reproducida</string>
   <string Field="NewPictures">Fotos añadidos recientemente</string>
   <string Field="NowRecording">Grabaciones activas</string>
-  <string Field="FullView">Información siempre visible</string>
-  <string Field="ShowDVDArt">Mostrar art DVD</string>
-  <string Field="NoClock">Desactivar Reloj y Programas Icons</string>
-  <string Field="FastAccess">Menú Rápido en topbar</string>
   <string Field="Timer">#(L(603))</string>
-  <string Field="Update">DefaultWide HD 1.6 está disponible!</string>
-  <string Field="BasicHomeEditorModernUI">ATENCIÓN: Con este tema no se debe colocar plugins de TV, vídeo o música en Internet o juegos, de lo contrario puede encontrarse con problemas de navegación, ya sea en Internet o juegos! catavolt:-D </string>
-  <string Field="BasicHomeEditorHorizonUp">ATENCIÓN: Con este tema se debe configurar plugins sólo dentro de su categoría (por ejemplo, TVSeries sólo en Videos), de lo contrario se encontrará con problemas de visualización con respecto a los medios más recientes añadido! catavolt :-D</string>
-  <string Field="BasicHomeEditorNoPlugin">ATENCIÓN: Por favor, asegúrese de que cada primer elemento de cada categoría contiene un plugin está habilitado, de lo contrario la navegación en las categorías fallará! catavolt :-D</string>
   <string Field="tvstreaminfo">TV OSD información del canal siempre visible</string>
 </strings>

@@ -7,7 +7,8 @@
     <control>
       <type>group</type>
       <description>group element</description>
-      <animation effect="fade" start="0" end="100" time="700" delay="2000" condition="window.isvisible(35)">conditional</animation>
+      <animation effect="fade" start="0" end="100" time="700" delay="500" condition="window.isvisible(35)">conditional</animation>
+      <visible>window.isvisible(35)</visible>
       <!-- ******************************************************************************************* -->
       <!-- ************************* TRENDING MOVIES/SERIES TRAKT ************************************ -->
       <!-- ******************************************************************************************* -->
@@ -33,7 +34,7 @@
         <width>1030</width>
         <label>#Trakt.Translation.TrendingMovies.Label:</label>
         <font>font11</font>
-        <textcolor>ivory</textcolor>
+        <textcolor>FFFFFFFF</textcolor>
         <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
         <visible>plugin.isenabled(Trakt)+string.contains(#highlightedbutton,TRAKT)+window.isvisible(35)|[Control.isvisible(61150)]|[Control.hasfocus(98302)|Control.hasfocus(98301)]</visible>
       </control>
@@ -46,37 +47,10 @@
         <width>590</width>
         <label>#Trakt.Translation.TrendingShows.Label:</label>
         <font>font11</font>
-        <textcolor>ivory</textcolor>
+        <textcolor>FFFFFFFF</textcolor>
         <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
         <visible>plugin.isenabled(Trakt)+string.contains(#highlightedbutton,TRAKT)+window.isvisible(35)|[Control.isvisible(61150)]|[Control.hasfocus(98302)|Control.hasfocus(98301)]</visible>
       </control>
-      <!--            :: Movie Titles ::            -->
-      <control>
-        <type>fadelabel</type>
-        <id>0</id>
-        <posX>430</posX>
-        <posY>114</posY>
-        <width>580</width>
-        <label>#selecteditem</label>
-        <font>font11</font>
-        <textcolor>ivory</textcolor>
-        <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
-        <visible>Control.hasfocus(98302)</visible>
-      </control>
-      <!--            :: Series Titles ::            -->
-      <control>
-        <type>fadelabel</type>
-        <id>0</id>
-        <posX>1310</posX>
-        <posY>114</posY>
-        <width>580</width>
-        <label>#selecteditem</label>
-        <font>font11</font>
-        <textcolor>ivory</textcolor>
-        <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
-        <visible>Control.hasfocus(98301)</visible>
-      </control>
-      
       <control>
         <description>Trending Movies</description>
         <type>facadeview</type>
@@ -167,244 +141,85 @@
           <visible>plugin.isenabled(Trakt)+string.contains(#highlightedbutton,TRAKT)+window.isvisible(35)|[Control.isvisible(61150)]|[Control.hasfocus(98302)|Control.hasfocus(98301)]</visible>
         </control>
       </control>
-      <!-- ******************************************************************************************** -->
-      <!-- ***************************** RECENTLY ADDED TV SERIES ************************************* -->
-      <!-- ******************************************************************************************** -->
+      <!--            :: Movie Titles ::            -->
       <control>
-          <description>background for recently added files</description>
-          <type>image</type>
-          <id>0</id>
-          <posX>70</posX>
-          <posY>90</posY>
-          <width>1770</width>
-          <height>275</height>
-          <texture>osdbg2.png</texture>
-          <colordiffuse>ffffffff</colordiffuse>
-          <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
-          <visible>plugin.isenabled(Latest Media Handler)+plugin.isenabled(MP-TV Series)+string.equals(#latestMediaHandler.tvseries.latest.enabled,true)+!string.equals(#latestMediaHandler.tvseries.latest1.serieName,)+[string.contains(#highlightedbutton,VIDEO2)|string.contains(#highlightedbutton,TVSERIES)|Control.hasfocus(919199940)]</visible>
-        </control>
-        <control>
-          <description>Updates label</description>
-          <type>label</type>
-          <id>0</id>
-          <posX>124</posX>
-          <posY>114</posY>
-          <width>1750</width>
-          <font>font11</font>
-          <label>#latestMediaHandler.tvseries.latest.type  #latestMediaHandler.tvseries.selected.serieName  S#latestMediaHandler.tvseries.selected.seasonIndexE#latestMediaHandler.tvseries.selected.episodeIndex: #latestMediaHandler.tvseries.selected.episodeName (#latestMediaHandler.tvseries.selected.dateAdded)</label>
-          <align>left</align>
-          <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
-          <visible>plugin.isenabled(Latest Media Handler)+plugin.isenabled(MP-TV Series)+string.equals(#latestMediaHandler.tvseries.latest.enabled,true)+!string.equals(#latestMediaHandler.tvseries.latest1.serieName,)+[string.contains(#highlightedbutton,VIDEO2)|string.contains(#highlightedbutton,TVSERIES)|Control.hasfocus(919199940)]</visible>
-        </control>
-        <control>
-        <description>composite control consisting of a list control and a thumbnail panel</description>
-        <type>facadeview</type>
-        <id>919199940</id>
-        <control>
-          <description>Filmstrip view</description>
-          <type>filmstrip</type>
-          <id>919199940</id>
-          <posX>124</posX>
-          <posY>159</posY>
-          <width>1700</width>
-          <height>180</height>
-          <onleft>919199940</onleft>
-          <onright>919199940</onright>
-          <onup>17</onup>
-          <ondown>820101</ondown>
-          <itemWidth>210</itemWidth>
-          <itemHeight>170</itemHeight>
-          <textureWidth>195</textureWidth>
-          <textureHeight>167</textureHeight>
-          <thumbWidth>195</thumbWidth>
-          <thumbHeight>167</thumbHeight>
-          <thumbPosX>0</thumbPosX>
-          <thumbPosY>0</thumbPosY>
-          <thumbVAlign>middle</thumbVAlign>>
-          <keepaspectratio>yes</keepaspectratio>
-          <thumbs mask="picturecase_mask.png" />
-          <imageFolder></imageFolder>
-          <imageFolderFocus></imageFolderFocus>
-          <frameFocus>tvseries-focus.png</frameFocus>
-          <showFrame>yes</showFrame>
-          <showFolder>yes</showFolder>
-          <showBackGround>no</showBackGround>
-          <showInfoImage>yes</showInfoImage>
-          <enableFocusZoom>no</enableFocusZoom>
-          <scrollOffset>5</scrollOffset>
-          <suffix>|</suffix>
-          <folderPrefix />
-          <folderSuffix />
-          <showScrollbar>no</showScrollbar>
-          <thumbAnimation effect="zoom" start="100,100" end="110,110" time="300" tween="circle" ease="inout">focus</thumbAnimation>
-          <thumbAnimation effect="zoom" start="110,110" end="100,100" time="200" tween="back" ease="inout">unfocus</thumbAnimation>
-          <spinPosX>3710</spinPosX>
-          <spinPosY>801</spinPosY>
-          <visible>plugin.isenabled(Latest Media Handler)+plugin.isenabled(MP-TV Series)+string.equals(#latestMediaHandler.tvseries.latest.enabled,true)+!string.equals(#latestMediaHandler.tvseries.latest1.serieName,)+[string.contains(#highlightedbutton,VIDEO2)|string.contains(#highlightedbutton,TVSERIES)|Control.hasfocus(919199940)]</visible>
-        </control>
-        </control>
-        <control>
-          <description>Plot Background</description>
-          <type>image</type>
-          <id>0</id>
-          <posX>70</posX>
-          <posY>360</posY>
-          <width>1770</width>
-          <height>225</height>
-          <texture>osdbg2.png</texture>
-          <colordiffuse>ffffffff</colordiffuse>
-          <animation effect="fade" delay="1000" time="500">visible</animation>
-          <visible>control.hasfocus(919199940)</visible>
-        </control>
-        <!--control>
-          <description>Plot Image</description>
-          <type>image</type>
-          <id>0</id>
-          <posX>130</posX>
-          <posY>390</posY>
-          <width>284</width>
-          <height>160</height>
-          <texture>#latestMediaHandler.tvseries.selected.thumb</texture>
-          <animation effect="fade" delay="1000" time="500">visible</animation>
-          <visible>control.hasfocus(919199940)+!string.equals(#latestMediaHandler.tvseries.latest.mode,episodes)</visible>
-        </control-->
-        <!--control>
-          <description>music artistbio 1</description>
-          <type>textboxscrollup</type>
-          <id>0</id>
-          <posX>450</posX>
-          <posY>390</posY>
-          <width>1350</width>
-          <height>165</height>
-          <font>font10</font>
-          <textcolor>ffffffff</textcolor>
-          <label>#latestMediaHandler.tvseries.selected.plot</label>
-          <visible>control.hasfocus(919199940)+!string.equals(#latestMediaHandler.tvseries.latest.mode,episodes)</visible>
-          <animation effect="fade" delay="1000" time="500">visible</animation>
-        </control-->
-        <control>
-          <description>music artistbio 1</description>
-          <type>textboxscrollup</type>
-          <id>0</id>
-          <posX>140</posX>
-          <posY>390</posY>
-          <width>1650</width>
-          <height>165</height>
-          <font>font10</font>
-          <textcolor>ffffffff</textcolor>
-          <label>#latestMediaHandler.tvseries.selected.plot</label>
-          <visible>control.hasfocus(919199940)</visible>
-          <animation effect="fade" delay="1000" time="500">visible</animation>
-        </control>
+        <type>fadelabel</type>
+        <id>1</id>
+        <posX>531</posX>
+        <posY>166</posY>
+        <width>380</width>
+        <label>#Trakt.Movie.0.Title</label>
+        <font>font11</font>
+        <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
+        <visible>plugin.isenabled(Trakt)+string.contains(#highlightedbutton,TRAKT)+window.isvisible(35)|[Control.isvisible(61150)]|[Control.hasfocus(98302)|Control.hasfocus(98301)]</visible>
+      </control>
+      <control>
+        <type>fadelabel</type>
+        <id>1</id>
+        <posX>531</posX>
+        <posY>201</posY>
+        <width>380</width>
+        <label>#Trakt.Movie.1.Title</label>
+        <font>font11</font>
+        <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
+        <visible>plugin.isenabled(Trakt)+string.contains(#highlightedbutton,TRAKT)+window.isvisible(35)|[Control.isvisible(61150)]|[Control.hasfocus(98302)|Control.hasfocus(98301)]</visible>
+      </control>
+      <control>
+        <type>fadelabel</type>
+        <id>1</id>
+        <posX>531</posX>
+        <posY>236</posY>
+        <width>380</width>
+        <label>#Trakt.Movie.2.Title</label>
+        <font>font11</font>
+        <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
+        <visible>plugin.isenabled(Trakt)+string.contains(#highlightedbutton,TRAKT)+window.isvisible(35)|[Control.isvisible(61150)]|[Control.hasfocus(98302)|Control.hasfocus(98301)]</visible>
+      </control>
+      <!--            :: Series Titles ::            -->
+      <control>
+        <type>fadelabel</type>
+        <id>1</id>
+        <posX>1400</posX>
+        <posY>166</posY>
+        <width>380</width>
+        <label>#Trakt.Show.0.Title</label>
+        <font>font12</font>
+        <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
+        <visible>plugin.isenabled(Trakt)+string.contains(#highlightedbutton,TRAKT)+window.isvisible(35)|[Control.isvisible(61150)]|[Control.hasfocus(98302)|Control.hasfocus(98301)]</visible>
+      </control>
+      <control>
+        <type>fadelabel</type>
+        <id>1</id>
+        <posX>1400</posX>
+        <posY>201</posY>
+        <width>380</width>
+        <label>#Trakt.Show.1.Title</label>
+        <font>font12</font>
+        <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
+        <visible>plugin.isenabled(Trakt)+string.contains(#highlightedbutton,TRAKT)+window.isvisible(35)|[Control.isvisible(61150)]|[Control.hasfocus(98302)|Control.hasfocus(98301)]</visible>
+      </control>
+      <control>
+        <type>fadelabel</type>
+        <id>1</id>
+        <posX>1400</posX>
+        <posY>236</posY>
+        <width>380</width>
+        <label>#Trakt.Show.2.Title</label>
+        <font>font12</font>
+        <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
+        <visible>plugin.isenabled(Trakt)+string.contains(#highlightedbutton,TRAKT)+window.isvisible(35)|[Control.isvisible(61150)]|[Control.hasfocus(98302)|Control.hasfocus(98301)]</visible>
+      </control>
       <!-- ******************************************************************************************* -->
-      <!-- ************************* RECENTLY ADDED MOVINGPICTURES *********************************** -->
+      <!-- ************************* RECENTLY ADDED MP TV Series ************************************* -->
       <!-- ******************************************************************************************* -->
       <control>
-          <description>background for recently added files</description>
+        <type>group</type>
+        <description>group element</description>
+        <visible>plugin.isenabled(Latest Media Handler)+plugin.isenabled(MP-TV Series)+string.equals(#latestMediaHandler.tvseries.latest.enabled,true)+[string.contains(#highlightedbutton,VIDEO2)|string.contains(#highlightedbutton,TVSERIES)]|[Control.isvisible(55551)+Control.isvisible(55552)+Control.isvisible(55553)]|[Control.hasfocus(91919994)|Control.hasfocus(91919995)|Control.hasfocus(91919996)]+!string.equals(#latestMediaHandler.tvseries.latest1.serieName,)</visible>
+        <control>
+          <description>background for recently added files TVSeries</description>
           <type>image</type>
-          <id>0</id>
-          <posX>70</posX>
-          <posY>90</posY>
-          <width>1770</width>
-          <height>275</height>
-          <texture>osdbg2.png</texture>
-          <colordiffuse>ffffffff</colordiffuse>
-          <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
-          <visible>plugin.isenabled(Latest Media Handler)+plugin.isenabled(Moving Pictures)+string.equals(#latestMediaHandler.movingpicture.latest.enabled,true)+!string.equals(#latestMediaHandler.movingpicture.latest1.title,)+[string.contains(#highlightedbutton,MOVPIC)|Control.hasfocus(919199910)]</visible>
-        </control>
-        <control>
-          <description>Updates label</description>
-          <type>label</type>
-          <id>0</id>
-          <posX>124</posX>
-          <posY>114</posY>
-          <width>1750</width>
-          <font>font11</font>
-          <label>#SkinTranslation.Translations.NewFilms.Label:  #latestMediaHandler.movingpicture.selected.title  ~ #latestMediaHandler.movingpicture.selected.genre  (#latestMediaHandler.movingpicture.selected.dateAdded)</label>
-          <align>left</align>
-          <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
-          <visible>plugin.isenabled(Latest Media Handler)+plugin.isenabled(Moving Pictures)+string.equals(#latestMediaHandler.movingpicture.latest.enabled,true)+!string.equals(#latestMediaHandler.movingpicture.latest1.title,)+[string.contains(#highlightedbutton,MOVPIC)|Control.hasfocus(919199910)]</visible>
-        </control>
-        <control>
-        <description>composite control consisting of a list control and a thumbnail panel</description>
-        <type>facadeview</type>
-        <id>919199910</id>
-        <control>
-          <description>Filmstrip view</description>
-          <type>filmstrip</type>
-          <id>919199910</id>
-          <posX>124</posX>
-          <posY>159</posY>
-          <width>1850</width>
-          <height>140</height>
-          <onleft>919199910</onleft>
-          <onright>919199910</onright>
-          <onup>17</onup>
-          <ondown>820101</ondown>
-          <itemWidth>150</itemWidth>
-          <itemHeight>170</itemHeight>
-          <textureWidth>119</textureWidth>
-          <textureHeight>167</textureHeight>
-          <thumbWidth>119</thumbWidth>
-          <thumbHeight>167</thumbHeight>
-          <thumbPosX>0</thumbPosX>
-          <thumbPosY>0</thumbPosY>
-          <keepaspectratio>no</keepaspectratio>
-          <thumbs mask="dvdcase_mask.png" />
-          <imageFolder></imageFolder>
-          <imageFolderFocus></imageFolderFocus>
-          <frameFocus>dvdcase-focus.png</frameFocus>
-          <showFrame>yes</showFrame>
-          <showFolder>yes</showFolder>
-          <showBackGround>no</showBackGround>
-          <showInfoImage>no</showInfoImage>
-          <enableFocusZoom>no</enableFocusZoom>
-          <scrollOffset>5</scrollOffset>
-          <suffix>|</suffix>
-          <folderPrefix />
-          <folderSuffix />
-          <showScrollbar>no</showScrollbar>
-          <thumbAnimation effect="zoom" start="100,100" end="110,110" time="300" tween="circle" ease="inout">focus</thumbAnimation>
-          <thumbAnimation effect="zoom" start="110,110" end="100,100" time="200" tween="back" ease="inout">unfocus</thumbAnimation>
-          <spinPosX>3710</spinPosX>
-          <spinPosY>801</spinPosY>
-          <visible>plugin.isenabled(Latest Media Handler)+plugin.isenabled(Moving Pictures)+string.equals(#latestMediaHandler.movingpicture.latest.enabled,true)+!string.equals(#latestMediaHandler.movingpicture.latest1.title,)+[string.contains(#highlightedbutton,MOVPIC)|Control.hasfocus(919199910)]</visible>
-        </control>
-        </control>
-        <control>
-          <description>Plot Background</description>
-          <type>image</type>
-          <id>0</id>
-          <posX>70</posX>
-          <posY>360</posY>
-          <width>1770</width>
-          <height>225</height>
-          <texture>osdbg2.png</texture>
-          <colordiffuse>ffffffff</colordiffuse>
-          <animation effect="fade" delay="1000" time="500">visible</animation>
-          <visible>control.hasfocus(919199910)</visible>
-        </control>
-        <control>
-          <description>MovPic Plot</description>
-          <type>textboxscrollup</type>
-          <id>0</id>
-          <posX>140</posX>
-          <posY>390</posY>
-          <width>1650</width>
-          <height>165</height>
-          <font>font10</font>
-          <textcolor>ffffffff</textcolor>
-          <label>#latestMediaHandler.movingpicture.selected.plot</label>
-          <visible>control.hasfocus(919199910)</visible>
-          <animation effect="fade" delay="1000" time="500">visible</animation>
-        </control>
-      <!-- ******************************************************************************************** -->
-      <!-- ******************************* RECENTLY ADDED TV RECORDINGS ****************************** -->
-      <!-- ******************************************************************************************* -->
-      <control>
-          <description>background for recently added files</description>
-          <type>image</type>
-          <id>0</id>
+          <id>98765</id>
           <posX>70</posX>
           <posY>90</posY>
           <width>1770</width>
@@ -412,169 +227,176 @@
           <texture>osdbg2.png</texture>
           <colordiffuse>ffffffff</colordiffuse>
           <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
-          <visible>plugin.isenabled(Latest Media Handler)+plugin.isenabled(TV)+string.equals(#latestMediaHandler.tvrecordings.latest.enabled,true)+!string.equals(#latestMediaHandler.tvrecordings.latest1.title,)+[string.contains(#highlightedbutton,TV3)|Control.hasfocus(919199840)]</visible>
         </control>
-        <control>
+        <control Style="BasicHomeRecentlyLabel">
           <description>Updates label</description>
           <type>label</type>
           <id>0</id>
           <posX>124</posX>
           <posY>114</posY>
-          <width>1750</width>
-          <font>font11</font>
-          <label>#SkinTranslation.Translations.NewRecordings.Label:  #latestMediaHandler.tvrecordings.selected.title (#latestMediaHandler.tvrecordings.selected.dateAdded)</label>
+          <width>1030</width>
+          <label>#SkinTranslation.Translations.NewEpisodes.Label:</label>
           <align>left</align>
+          <font>font11</font>
           <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
-          <visible>plugin.isenabled(Latest Media Handler)+plugin.isenabled(TV)+string.equals(#latestMediaHandler.tvrecordings.latest.enabled,true)+!string.equals(#latestMediaHandler.tvrecordings.latest1.title,)+[string.contains(#highlightedbutton,TV3)|Control.hasfocus(919199840)]</visible>
         </control>
-        <control>
-        <description>composite control consisting of a list control and a thumbnail panel</description>
-        <type>facadeview</type>
-        <id>919199840</id>
-        <control>
-          <description>Filmstrip view</description>
-          <type>filmstrip</type>
-          <id>919199840</id>
-          <posX>124</posX>
-          <posY>165</posY>
-          <width>1700</width>
-          <height>140</height>
-          <onleft>919199840</onleft>
-          <onright>919199840</onright>
-          <onup>17</onup>
-          <ondown>820101</ondown>
-          <itemWidth>208</itemWidth>
-          <itemHeight>130</itemHeight>
-          <textureWidth>188</textureWidth>
-          <textureHeight>118</textureHeight>
-          <thumbWidth>188</thumbWidth>
-          <thumbHeight>118</thumbHeight>
-          <thumbPosX>0</thumbPosX>
-          <thumbPosY>0</thumbPosY>
-          <keepaspectratio>no</keepaspectratio>
-          <thumbs mask="picturecase_mask.png" />
-          <imageFolder></imageFolder>
-          <imageFolderFocus></imageFolderFocus>
-          <frameFocus>picturecase-focus.png</frameFocus>
-          <showFrame>yes</showFrame>
-          <showFolder>yes</showFolder>
-          <showBackGround>no</showBackGround>
-          <showInfoImage>no</showInfoImage>
-          <enableFocusZoom>no</enableFocusZoom>
-          <scrollOffset>5</scrollOffset>
-          <suffix>|</suffix>
-          <folderPrefix />
-          <folderSuffix />
-          <showScrollbar>no</showScrollbar>
-          <thumbAnimation effect="zoom" start="100,100" end="110,110" time="300" tween="circle" ease="inout">focus</thumbAnimation>
-          <thumbAnimation effect="zoom" start="110,110" end="100,100" time="200" tween="back" ease="inout">unfocus</thumbAnimation>
-          <spinPosX>3710</spinPosX>
-          <spinPosY>801</spinPosY>
-          <visible>plugin.isenabled(Latest Media Handler)+plugin.isenabled(TV)+string.equals(#latestMediaHandler.tvrecordings.latest.enabled,true)+!string.equals(#latestMediaHandler.tvrecordings.latest1.title,)+[string.contains(#highlightedbutton,TV3)|Control.hasfocus(919199840)]</visible>
-        </control>
-        </control>
-        <control>
-          <description>Plot Background</description>
-          <type>image</type>
-          <id>0</id>
-          <posX>70</posX>
-          <posY>360</posY>
-          <width>1770</width>
-          <height>225</height>
-          <texture>osdbg2.png</texture>
-          <colordiffuse>ffffffff</colordiffuse>
-          <animation effect="fade" delay="1000" time="500">visible</animation>
-          <visible>control.hasfocus(919199840)</visible>
-        </control>
-        <control>
-          <description>TVRecordings Plot</description>
-          <type>textboxscrollup</type>
-          <id>0</id>
-          <posX>140</posX>
-          <posY>390</posY>
-          <width>1650</width>
-          <height>165</height>
-          <font>font10</font>
-          <textcolor>ffffffff</textcolor>
-          <label>#latestMediaHandler.tvrecordings.selected.summary</label>
-          <visible>control.hasfocus(919199840)</visible>
-          <animation effect="fade" delay="1000" time="500">visible</animation>
-        </control>
-      <!-- ******************************************************************************************* -->
-      <!-- ************************* RECENTLY ADDED MUSIC ************************************** -->
-      <!-- ******************************************************************************************* -->
-      <control>
-          <description>background for recently added files</description>
-          <type>image</type>
-          <id>0</id>
-          <posX>70</posX>
-          <posY>90</posY>
-          <width>1770</width>
-          <height>245</height>
-          <texture>osdbg2.png</texture>
-          <colordiffuse>ffffffff</colordiffuse>
-          <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
-          <visible>plugin.isenabled(Latest Media Handler)+plugin.isenabled(Music)+string.equals(#latestMediaHandler.music.latest.enabled,true)+!string.equals(#latestMediaHandler.music.latest1.artist,)+[string.contains(#highlightedbutton,AUDIO1)|string.contains(#highlightedbutton,MUSIC)|Control.hasfocus(919199970)]</visible>
-        </control>
-        <control>
-          <description>Updates label</description>
+        <control Style="BasicHomeRecentlyLabel">
+          <description>TVSeries updates</description>
           <type>label</type>
           <id>0</id>
-          <posX>124</posX>
-          <posY>114</posY>
-          <width>1750</width>
-          <font>font11</font>
-          <label>#latestMediaHandler.music.label  #latestMediaHandler.music.selected.artist ~ #latestMediaHandler.music.selected.album  (#latestMediaHandler.music.selected.dateAdded)</label>
+          <posX>742</posX>
+          <posY>166</posY>
+          <width>1030</width>
+          <label>#latestMediaHandler.tvseries.latest1.serieName  S#latestMediaHandler.tvseries.latest1.seasonIndexE#latestMediaHandler.tvseries.latest1.episodeIndex: #latestMediaHandler.tvseries.latest1.episodeName (#latestMediaHandler.tvseries.latest1.dateAdded)</label>
           <align>left</align>
+          <font>font11</font>
           <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
-          <visible>plugin.isenabled(Latest Media Handler)+plugin.isenabled(Music)+string.equals(#latestMediaHandler.music.latest.enabled,true)+!string.equals(#latestMediaHandler.music.latest1.artist,)+[string.contains(#highlightedbutton,AUDIO1)|string.contains(#highlightedbutton,MUSIC)|Control.hasfocus(919199970)]</visible>
+          <visible>!string.equals(#latestMediaHandler.tvseries.latest1.serieName,)</visible>
         </control>
         <control>
-        <description>composite control consisting of a list control and a thumbnail panel</description>
-        <type>facadeview</type>
-        <id>919199970</id>
+          <description>TVSeries updates marker</description>
+          <type>image</type>
+          <id>0</id>
+          <posX>732</posX>
+          <posY>168</posY>
+          <width>1080</width>
+          <texture>listfocus.png</texture>
+          <visible>Control.hasfocus(91919994)</visible>
+        </control>
+        <control Style="BasicHomeRecentlyLabel">
+          <description>TVSeries updates</description>
+          <type>label</type>
+          <id>0</id>
+          <posX>742</posX>
+          <posY>201</posY>
+          <width>1030</width>
+          <label>#latestMediaHandler.tvseries.latest2.serieName  S#latestMediaHandler.tvseries.latest2.seasonIndexE#latestMediaHandler.tvseries.latest2.episodeIndex: #latestMediaHandler.tvseries.latest2.episodeName (#latestMediaHandler.tvseries.latest2.dateAdded)</label>
+          <align>left</align>
+          <font>font11</font>
+          <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
+          <visible>!string.equals(#latestMediaHandler.tvseries.latest2.serieName,)</visible>
+        </control>
         <control>
-          <description>Filmstrip view</description>
-          <type>filmstrip</type>
-          <id>919199970</id>
+          <description>TVSeries updates marker</description>
+          <type>image</type>
+          <id>0</id>
+          <posX>732</posX>
+          <posY>203</posY>
+          <width>1080</width>
+          <texture>listfocus.png</texture>
+          <visible>Control.hasfocus(91919995)</visible>
+        </control>
+        <control Style="BasicHomeRecentlyLabel">
+          <description>TVSeries updates</description>
+          <type>label</type>
+          <id>0</id>
+          <posX>742</posX>
+          <posY>236</posY>
+          <width>1030</width>
+          <label>#latestMediaHandler.tvseries.latest3.serieName  S#latestMediaHandler.tvseries.latest3.seasonIndexE#latestMediaHandler.tvseries.latest3.episodeIndex: #latestMediaHandler.tvseries.latest3.episodeName (#latestMediaHandler.tvseries.latest3.dateAdded)</label>
+          <align>left</align>
+          <font>font11</font>
+          <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
+          <visible>!string.equals(#latestMediaHandler.tvseries.latest3.serieName,)</visible>
+        </control>
+        <control>
+          <description>TVSeries updates marker</description>
+          <type>image</type>
+          <id>0</id>
+          <posX>732</posX>
+          <posY>238</posY>
+          <width>1080</width>
+          <texture>listfocus.png</texture>
+          <visible>Control.hasfocus(91919996)</visible>
+        </control>
+        <control>
+          <type>group</type>
+          <description>group element</description>
+          <layout>StackLayout(10, Horizontal, true)</layout>
           <posX>124</posX>
           <posY>159</posY>
-          <width>1850</width>
-          <height>140</height>
-          <onleft>820101</onleft>
-          <onright>820101</onright>
-          <onup>17</onup>
-          <ondown>820101</ondown>
-          <itemWidth>150</itemWidth>
-          <itemHeight>150</itemHeight>
-          <textureWidth>132</textureWidth>
-          <textureHeight>132</textureHeight>
-          <thumbWidth>132</thumbWidth>
-          <thumbHeight>132</thumbHeight>
-          <thumbPosX>0</thumbPosX>
-          <thumbPosY>0</thumbPosY>
-          <keepaspectratio>no</keepaspectratio>
-          <thumbs mask="cdcase_mask.png" />
-          <!--<InfoImage flipY="true" diffuse="Thumb_Mask.png"/>-->
-          <imageFolder></imageFolder>
-          <imageFolderFocus></imageFolderFocus>
-          <frameFocus>cdcase-focus.png</frameFocus>
-          <showFrame>yes</showFrame>
-          <showFolder>yes</showFolder>
-          <showBackGround>no</showBackGround>
-          <showInfoImage>no</showInfoImage>
-          <enableFocusZoom>no</enableFocusZoom>
-          <scrollOffset>5</scrollOffset>
-          <suffix>|</suffix>
-          <folderPrefix />
-          <folderSuffix />
-          <showScrollbar>no</showScrollbar>
-          <thumbAnimation effect="zoom" start="100,100" end="110,110" time="300" tween="circle" ease="inout">focus</thumbAnimation>
-          <thumbAnimation effect="zoom" start="110,110" end="100,100" time="200" tween="back" ease="inout">unfocus</thumbAnimation>
-          <spinPosX>3710</spinPosX>
-          <spinPosY>801</spinPosY>
-          <visible>plugin.isenabled(Latest Media Handler)+plugin.isenabled(Music)+string.equals(#latestMediaHandler.music.latest.enabled,true)+!string.equals(#latestMediaHandler.music.latest1.artist,)+[string.contains(#highlightedbutton,AUDIO1)|string.contains(#highlightedbutton,MUSIC)|Control.hasfocus(919199970)]</visible>
+          <visible>plugin.isenabled(Latest Media Handler)+plugin.isenabled(MP-TV Series)+string.equals(#latestMediaHandler.tvseries.latest.enabled,true)+[string.contains(#highlightedbutton,VIDEO2)|string.contains(#highlightedbutton,TVSERIES)]|[Control.hasfocus(91919994)|Control.hasfocus(91919995)|Control.hasfocus(91919996)]+!string.equals(#latestMediaHandler.tvseries.latest1.serieName,)</visible>
+          <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
+          <control>
+            <description>Cover1</description>
+            <type>image</type>
+            <id>55551</id>
+            <width>188</width>
+            <height>118</height>
+            <texture mask="picturecase_mask.png">#latestMediaHandler.tvseries.latest1.thumb</texture>
+            <animation effect="zoom" start="100,100" end="108,108" time="100" condition="control.hasfocus(91919994)">conditional</animation>
+          </control>
+          <control>
+            <description>Cover2</description>
+            <type>image</type>
+            <id>55552</id>
+            <width>188</width>
+            <height>118</height>
+            <texture mask="picturecase_mask.png">#latestMediaHandler.tvseries.latest2.thumb</texture>
+            <animation effect="zoom" start="100,100" end="108,108" time="100" condition="control.hasfocus(91919995)">conditional</animation>
+          </control>
+          <control>
+            <description>Cover3</description>
+            <type>image</type>
+            <id>55553</id>
+            <width>188</width>
+            <height>118</height>
+            <texture mask="picturecase_mask.png">#latestMediaHandler.tvseries.latest3.thumb</texture>
+            <animation effect="zoom" start="100,100" end="108,108" time="100" condition="control.hasfocus(91919996)">conditional</animation>
+          </control>
         </control>
+        <control>
+          <type>group</type>
+          <description>group element</description>
+          <layout>StackLayout(10, Horizontal, true)</layout>
+          <posX>124</posX>
+          <posY>159</posY>
+          <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
+          <control>
+            <description>Overlay Cover 1</description>
+            <type>button</type>
+            <id>91919994</id>
+            <width>188</width>
+            <height>118</height>
+            <textureFocus>picturecase-focus.png</textureFocus>
+            <textureNoFocus />
+            <label>-</label>
+            <onright>91919995</onright>
+            <onleft>91919996</onleft>
+            <onup>17</onup>
+            <ondown>820101</ondown>
+            <animation effect="zoom" start="100,100" end="108,108" time="100">focus</animation>
+          </control>
+          <control>
+            <description>Overlay Cover 2</description>
+            <type>button</type>
+            <id>91919995</id>
+            <width>188</width>
+            <height>118</height>
+            <textureFocus>picturecase-focus.png</textureFocus>
+            <textureNoFocus />
+            <label>-</label>
+            <onright>91919996</onright>
+            <onleft>91919994</onleft>
+            <onup>17</onup>
+            <ondown>820101</ondown>
+            <animation effect="zoom" start="100,100" end="108,108" time="100">focus</animation>
+          </control>
+          <control>
+            <description>Overlay Cover 3</description>
+            <type>button</type>
+            <id>91919996</id>
+            <width>188</width>
+            <height>118</height>
+            <textureFocus>picturecase-focus.png</textureFocus>
+            <textureNoFocus />
+            <label>-</label>
+            <onup>17</onup>
+            <ondown>820101</ondown>
+            <onleft>91919995</onleft>
+            <onright>91919994</onright>
+            <animation effect="zoom" start="100,100" end="108,108" time="100">focus</animation>
+          </control>
         </control>
         <control>
           <description>Plot Background</description>
@@ -583,30 +405,726 @@
           <posX>70</posX>
           <posY>330</posY>
           <width>1770</width>
-          <height>225</height>
+          <height>215</height>
           <texture>osdbg2.png</texture>
           <colordiffuse>ffffffff</colordiffuse>
           <animation effect="fade" delay="1000" time="500">visible</animation>
-          <visible>control.hasfocus(919199970)</visible>
+          <visible>control.hasfocus(91919994)</visible>
         </control>
         <control>
-          <description>music artistbio 1</description>
-          <type>textboxscrollup</type>
+          <description>Plot Background</description>
+          <type>image</type>
           <id>0</id>
+          <posX>70</posX>
+          <posY>330</posY>
+          <width>1770</width>
+          <height>215</height>
+          <texture>osdbg2.png</texture>
+          <colordiffuse>ffffffff</colordiffuse>
+          <animation effect="fade" delay="1000" time="500">visible</animation>
+          <visible>control.hasfocus(91919995)</visible>
+        </control>
+        <control>
+          <description>Plot Background</description>
+          <type>image</type>
+          <id>0</id>
+          <posX>70</posX>
+          <posY>330</posY>
+          <width>1770</width>
+          <height>215</height>
+          <texture>osdbg2.png</texture>
+          <colordiffuse>ffffffff</colordiffuse>
+          <animation effect="fade" delay="1000" time="500">visible</animation>
+          <visible>control.hasfocus(91919996)</visible>
+        </control>
+        <control>
+          <description>TVSeries Plot 1</description>
+          <type>textboxscrollup</type>
+          <id>1</id>
           <posX>140</posX>
           <posY>360</posY>
           <width>1650</width>
           <height>165</height>
           <font>font10</font>
           <textcolor>ffffffff</textcolor>
-          <label>#latestMediaHandler.music.selected.artistbio</label>
-          <visible>control.hasfocus(919199970)</visible>
+          <label>#latestMediaHandler.tvseries.latest1.plot</label>
+          <visible>control.hasfocus(91919994)</visible>
           <animation effect="fade" delay="1000" time="500">visible</animation>
         </control>
-      <!-- ******************************************************************************************** -->
-      <!-- ******************************* RECENTLY ADDED PICTURES *********************************** -->
+        <control>
+          <description>TVSeries Plot 2</description>
+          <type>textboxscrollup</type>
+          <id>1</id>
+          <posX>140</posX>
+          <posY>360</posY>
+          <width>1650</width>
+          <height>165</height>
+          <font>font10</font>
+          <textcolor>ffffffff</textcolor>
+          <label>#latestMediaHandler.tvseries.latest2.plot</label>
+          <visible>control.hasfocus(91919995)</visible>
+          <animation effect="fade" delay="1000" time="500">visible</animation>
+        </control>
+        <control>
+          <description>TVSeries Plot 3</description>
+          <type>textboxscrollup</type>
+          <id>1</id>
+          <posX>140</posX>
+          <posY>360</posY>
+          <width>1650</width>
+          <height>165</height>
+          <font>font10</font>
+          <textcolor>ffffffff</textcolor>
+          <label>#latestMediaHandler.tvseries.latest3.plot</label>
+          <visible>control.hasfocus(91919996)</visible>
+          <animation effect="fade" delay="1000" time="500">visible</animation>
+        </control>
+      </control>
+      <!-- ******************************************************************************************* -->
+      <!-- ************************* RECENTLY ADDED MOVING PICTURES **************************** -->
       <!-- ******************************************************************************************* -->
       <control>
+        <type>group</type>
+        <description>group element</description>
+        <visible>[plugin.isenabled(Latest Media Handler)+string.contains(#highlightedbutton,MOVPIC)|[Control.isvisible(55554)+Control.isvisible(55555)+Control.isvisible(55556)]|[Control.hasfocus(91919991)|Control.hasfocus(91919992)|Control.hasfocus(91919993)]+plugin.isenabled(Moving Pictures)+string.equals(#latestMediaHandler.movingpicture.latest.enabled,true)]+!string.equals(#latestMediaHandler.movingpicture.latest1.title,)</visible>
+        <control>
+          <description>background for recently added files</description>
+          <type>image</type>
+          <id>98764</id>
+          <posX>70</posX>
+          <posY>90</posY>
+          <width>1770</width>
+          <height>275</height>
+          <texture>osdbg2.png</texture>
+          <colordiffuse>ffffffff</colordiffuse>
+          <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
+        </control>
+        <control Style="BasicHomeRecentlyLabel">
+          <description>Updates label</description>
+          <type>label</type>
+          <id>0</id>
+          <posX>124</posX>
+          <posY>114</posY>
+          <width>393</width>
+          <label>#SkinTranslation.Translations.NewFilms.Label:</label>
+          <align>left</align>
+          <font>font11</font>
+          <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
+        </control>
+        <control Style="BasicHomeRecentlyLabel">
+          <description>MovPic updates</description>
+          <type>label</type>
+          <id>0</id>
+          <posX>531</posX>
+          <posY>166</posY>
+          <width>1240</width>
+          <label>#latestMediaHandler.movingpicture.latest1.title ~ #latestMediaHandler.movingpicture.latest1.runtime #(L(2998)). ~ #latestMediaHandler.movingpicture.latest1.year (#latestMediaHandler.movingpicture.latest1.dateAdded)</label>
+          <align>left</align>
+          <font>font11</font>
+          <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
+          <visible>!string.equals(#latestMediaHandler.movingpicture.latest1.title,)</visible>
+        </control>
+        <control>
+          <description>Moving Pictures updates marker</description>
+          <type>image</type>
+          <id>0</id>
+          <posX>521</posX>
+          <posY>168</posY>
+          <width>1290</width>
+          <texture>listfocus.png</texture>
+          <visible>Control.hasfocus(91919991)</visible>
+        </control>
+        <control Style="BasicHomeRecentlyLabel">
+          <description>Movpic updates</description>
+          <type>label</type>
+          <id>0</id>
+          <posX>531</posX>
+          <posY>201</posY>
+          <width>1240</width>
+          <label>#latestMediaHandler.movingpicture.latest2.title ~ #latestMediaHandler.movingpicture.latest2.runtime #(L(2998)). ~ #latestMediaHandler.movingpicture.latest2.year (#latestMediaHandler.movingpicture.latest2.dateAdded)</label>
+          <align>left</align>
+          <font>font11</font>
+          <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
+          <visible>!string.equals(#latestMediaHandler.movingpicture.latest2.title,)</visible>
+        </control>
+        <control>
+          <description>Moving Pictures updates marker</description>
+          <type>image</type>
+          <id>0</id>
+          <posX>521</posX>
+          <posY>203</posY>
+          <width>1290</width>
+          <texture>listfocus.png</texture>
+          <visible>Control.hasfocus(91919992)</visible>
+        </control>
+        <control Style="BasicHomeRecentlyLabel">
+          <description>MovPic updates</description>
+          <type>label</type>
+          <id>0</id>
+          <posX>531</posX>
+          <posY>236</posY>
+          <width>1240</width>
+          <label>#latestMediaHandler.movingpicture.latest3.title ~ #latestMediaHandler.movingpicture.latest3.runtime #(L(2998)). ~ #latestMediaHandler.movingpicture.latest3.year (#latestMediaHandler.movingpicture.latest3.dateAdded)</label>
+          <align>left</align>
+          <font>font11</font>
+          <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
+          <visible>!string.equals(#latestMediaHandler.movingpicture.latest3.title,)</visible>
+        </control>
+        <control>
+          <description>Moving Pictures updates marker</description>
+          <type>image</type>
+          <id>0</id>
+          <posX>521</posX>
+          <posY>238</posY>
+          <width>1290</width>
+          <texture>listfocus.png</texture>
+          <visible>Control.hasfocus(91919993)</visible>
+        </control>
+        <control>
+          <type>group</type>
+          <description>group element</description>
+          <layout>StackLayout(10, Horizontal, true)</layout>
+          <posX>124</posX>
+          <posY>162</posY>
+          <visible>[plugin.isenabled(Latest Media Handler)+string.contains(#highlightedbutton,MOVPIC)|[Control.hasfocus(91919991)|Control.hasfocus(91919992)|Control.hasfocus(91919993)]+plugin.isenabled(Moving Pictures)+string.equals(#latestMediaHandler.movingpicture.latest.enabled,true)]+!string.equals(#latestMediaHandler.movingpicture.latest1.title,)</visible>
+          <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
+          <control>
+            <description>Cover1</description>
+            <type>image</type>
+            <id>55554</id>
+            <width>119</width>
+            <height>167</height>
+            <texture mask="dvdcase_mask.png">#latestMediaHandler.movingpicture.latest1.thumb</texture>
+            <animation effect="zoom" start="100,100" end="108,108" time="100" condition="control.hasfocus(91919991)">conditional</animation>
+          </control>
+          <control>
+            <description>Cover2</description>
+            <type>image</type>
+            <id>55555</id>
+            <width>119</width>
+            <height>167</height>
+            <texture mask="dvdcase_mask.png">#latestMediaHandler.movingpicture.latest2.thumb</texture>
+            <animation effect="zoom" start="100,100" end="108,108" time="100" condition="control.hasfocus(91919992)">conditional</animation>
+          </control>
+          <control>
+            <description>Cover3</description>
+            <type>image</type>
+            <id>55556</id>
+            <width>119</width>
+            <height>167</height>
+            <texture mask="dvdcase_mask.png">#latestMediaHandler.movingpicture.latest3.thumb</texture>
+            <animation effect="zoom" start="100,100" end="108,108" time="100" condition="control.hasfocus(91919993)">conditional</animation>
+          </control>
+        </control>
+        <control>
+          <type>group</type>
+          <description>group element</description>
+          <layout>StackLayout(10, Horizontal, true)</layout>
+          <posX>124</posX>
+          <posY>162</posY>
+          <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
+          <control>
+            <description>Overlay Cover 1</description>
+            <type>button</type>
+            <id>91919991</id>
+            <width>119</width>
+            <height>167</height>
+            <textureFocus>dvdcase-focus.png</textureFocus>
+            <textureNoFocus />
+            <label>-</label>
+            <onright>91919992</onright>
+            <onleft>91919993</onleft>
+            <onup>17</onup>
+            <ondown>820101</ondown>
+            <animation effect="zoom" start="100,100" end="108,108" time="100">focus</animation>
+          </control>
+          <control>
+            <description>Overlay Cover 2</description>
+            <type>button</type>
+            <id>91919992</id>
+            <width>119</width>
+            <height>167</height>
+            <textureFocus>dvdcase-focus.png</textureFocus>
+            <textureNoFocus />
+            <label>-</label>
+            <onright>91919993</onright>
+            <onleft>91919991</onleft>
+            <onup>17</onup>
+            <ondown>820101</ondown>
+            <animation effect="zoom" start="100,100" end="108,108" time="100">focus</animation>
+          </control>
+          <control>
+            <description>Overlay Cover 3</description>
+            <type>button</type>
+            <id>91919993</id>
+            <width>119</width>
+            <height>167</height>
+            <textureFocus>dvdcase-focus.png</textureFocus>
+            <textureNoFocus />
+            <label>-</label>
+            <onright>91919991</onright>
+            <onleft>91919992</onleft>
+            <onup>17</onup>
+            <ondown>820101</ondown>
+            <animation effect="zoom" start="100,100" end="108,108" time="100">focus</animation>
+          </control>
+        </control>
+        <control>
+          <description>Plot Background</description>
+          <type>image</type>
+          <id>0</id>
+          <posX>70</posX>
+          <posY>350</posY>
+          <width>1770</width>
+          <height>225</height>
+          <texture>osdbg2.png</texture>
+          <colordiffuse>ffffffff</colordiffuse>
+          <animation effect="fade" delay="1000" time="500">visible</animation>
+          <visible>control.hasfocus(91919991)</visible>
+        </control>
+        <control>
+          <description>Plot Background</description>
+          <type>image</type>
+          <id>0</id>
+          <posX>70</posX>
+          <posY>350</posY>
+          <width>1770</width>
+          <height>225</height>
+          <texture>osdbg2.png</texture>
+          <colordiffuse>ffffffff</colordiffuse>
+          <animation effect="fade" delay="1000" time="500">visible</animation>
+          <visible>control.hasfocus(91919992)</visible>
+        </control>
+        <control>
+          <description>Plot Background</description>
+          <type>image</type>
+          <id>0</id>
+          <posX>70</posX>
+          <posY>350</posY>
+          <width>1770</width>
+          <height>225</height>
+          <texture>osdbg2.png</texture>
+          <colordiffuse>ffffffff</colordiffuse>
+          <animation effect="fade" delay="1000" time="500">visible</animation>
+          <visible>control.hasfocus(91919993)</visible>
+        </control>
+        <control>
+          <description>MovPic Plot 1</description>
+          <type>textboxscrollup</type>
+          <id>1</id>
+          <posX>140</posX>
+          <posY>380</posY>
+          <width>1650</width>
+          <height>165</height>
+          <font>font10</font>
+          <textcolor>ffffffff</textcolor>
+          <label>#latestMediaHandler.movingpicture.latest1.plot</label>
+          <visible>control.hasfocus(91919991)</visible>
+          <animation effect="fade" delay="1000" time="500">visible</animation>
+        </control>
+        <control>
+          <description>MovPic Plot 2</description>
+          <type>textboxscrollup</type>
+          <id>1</id>
+          <posX>140</posX>
+          <posY>380</posY>
+          <width>1650</width>
+          <height>165</height>
+          <font>font10</font>
+          <textcolor>ffffffff</textcolor>
+          <label>#latestMediaHandler.movingpicture.latest2.plot</label>
+          <visible>control.hasfocus(91919992)</visible>
+          <animation effect="fade" delay="1000" time="500">visible</animation>
+        </control>
+        <control>
+          <description>MovPic Plot 3</description>
+          <type>textboxscrollup</type>
+          <id>1</id>
+          <posX>140</posX>
+          <posY>380</posY>
+          <width>1650</width>
+          <height>165</height>
+          <font>font10</font>
+          <textcolor>ffffffff</textcolor>
+          <label>#latestMediaHandler.movingpicture.latest3.plot</label>
+          <visible>control.hasfocus(91919993)</visible>
+          <animation effect="fade" delay="1000" time="500">visible</animation>
+        </control>
+      </control>
+      <!-- ******************************************************************************************* -->
+      <!-- ************************* RECENTLY ADDED TV RECORDINGS ******************************* -->
+      <!-- ******************************************************************************************* -->
+      <control>
+        <type>group</type>
+        <description>group element</description>
+        <visible>[plugin.isenabled(Latest Media Handler)+string.contains(#highlightedbutton,TV3)|[Control.isvisible(55557)+Control.isvisible(55558)+Control.isvisible(55559)]|[Control.hasfocus(91919984)|Control.hasfocus(91919985)|Control.hasfocus(91919986)]+string.equals(#latestMediaHandler.tvrecordings.latest.enabled,true)]+!string.equals(#latestMediaHandler.tvrecordings.latest1.title,)</visible>
+        <control>
+          <description>background for recently added files</description>
+          <type>image</type>
+          <id>98763</id>
+          <posX>70</posX>
+          <posY>90</posY>
+          <width>1770</width>
+          <height>245</height>
+          <texture>osdbg2.png</texture>
+          <colordiffuse>ffffffff</colordiffuse>
+          <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
+        </control>
+        <control Style="BasicHomeRecentlyLabel">
+          <description>Updates label</description>
+          <type>label</type>
+          <id>0</id>
+          <posX>124</posX>
+          <posY>114</posY>
+          <width>1030</width>
+          <label>#SkinTranslation.Translations.NewRecordings.Label:</label>
+          <align>left</align>
+          <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
+        </control>
+        <control Style="BasicHomeRecentlyLabel">
+          <description>TVRecordings updates</description>
+          <type>label</type>
+          <id>0</id>
+          <posX>742</posX>
+          <posY>166</posY>
+          <width>1030</width>
+          <label>#latestMediaHandler.tvrecordings.latest1.title (#latestMediaHandler.tvrecordings.latest1.dateAdded)</label>
+          <align>left</align>
+          <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
+          <visible>!string.equals(#latestMediaHandler.tvrecordings.latest1.title,)</visible>
+        </control>
+        <control>
+          <description>TVRecordings updates marker</description>
+          <type>image</type>
+          <id>0</id>
+          <posX>732</posX>
+          <posY>168</posY>
+          <width>1080</width>
+          <texture>listfocus.png</texture>
+          <visible>Control.hasfocus(91919984)</visible>
+        </control>
+        <control Style="BasicHomeRecentlyLabel">
+          <description>TVRecordings updates</description>
+          <type>label</type>
+          <id>0</id>
+          <posX>742</posX>
+          <posY>201</posY>
+          <width>1030</width>
+          <label>#latestMediaHandler.tvrecordings.latest2.title (#latestMediaHandler.tvrecordings.latest2.dateAdded)</label>
+          <align>left</align>
+          <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
+          <visible>!string.equals(#latestMediaHandler.tvrecordings.latest2.title,)</visible>
+        </control>
+        <control>
+          <description>TVRecordings updates marker</description>
+          <type>image</type>
+          <id>0</id>
+          <posX>732</posX>
+          <posY>203</posY>
+          <width>1080</width>
+          <texture>listfocus.png</texture>
+          <visible>Control.hasfocus(91919985)</visible>
+        </control>
+        <control Style="BasicHomeRecentlyLabel">
+          <description>TVRecordings updates</description>
+          <type>label</type>
+          <id>0</id>
+          <posX>742</posX>
+          <posY>236</posY>
+          <width>1030</width>
+          <label>#latestMediaHandler.tvrecordings.latest3.title (#latestMediaHandler.tvrecordings.latest3.dateAdded)</label>
+          <align>left</align>
+          <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
+          <visible>!string.equals(#latestMediaHandler.tvrecordings.latest3.title,)</visible>
+        </control>
+        <control>
+          <description>TVRecordings updates marker</description>
+          <type>image</type>
+          <id>0</id>
+          <posX>732</posX>
+          <posY>238</posY>
+          <width>1080</width>
+          <texture>listfocus.png</texture>
+          <visible>Control.hasfocus(91919986)</visible>
+        </control>
+        <control>
+          <type>group</type>
+          <description>group element</description>
+          <layout>StackLayout(10, Horizontal, true)</layout>
+          <posX>124</posX>
+          <posY>159</posY>
+          <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
+          <visible>[plugin.isenabled(Latest Media Handler)+string.contains(#highlightedbutton,TV3)|[Control.hasfocus(91919984)|Control.hasfocus(91919985)|Control.hasfocus(91919986)]+string.equals(#latestMediaHandler.tvrecordings.latest.enabled,true)]+!string.equals(#latestMediaHandler.tvrecordings.latest1.title,)</visible>
+          <control>
+            <description>TVRecordings Updates</description>
+            <type>image</type>
+            <id>55557</id>
+            <width>188</width>
+            <height>118</height>
+            <texture mask="picturecase_mask.png">#latestMediaHandler.tvrecordings.latest1.thumb</texture>
+            <animation effect="zoom" start="100,100" end="108,108" time="100" condition="control.hasfocus(91919984)">conditional</animation>
+          </control>
+          <control>
+            <description>TVRecordings Updates</description>
+            <type>image</type>
+            <id>55558</id>
+            <width>188</width>
+            <height>118</height>
+            <texture mask="picturecase_mask.png">#latestMediaHandler.tvrecordings.latest2.thumb</texture>
+            <animation effect="zoom" start="100,100" end="108,108" time="100" condition="control.hasfocus(91919985)">conditional</animation>
+          </control>
+          <control>
+            <description>TVRecordings Updates</description>
+            <type>image</type>
+            <id>55559</id>
+            <width>188</width>
+            <height>118</height>
+            <texture mask="picturecase_mask.png">#latestMediaHandler.tvrecordings.latest3.thumb</texture>
+            <animation effect="zoom" start="100,100" end="108,108" time="100" condition="control.hasfocus(91919986)">conditional</animation>
+          </control>
+        </control>
+        <control>
+          <type>group</type>
+          <description>group element</description>
+          <layout>StackLayout(10, Horizontal, true)</layout>
+          <posX>124</posX>
+          <posY>159</posY>
+          <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
+          <control>
+            <type>button</type>
+            <id>91919984</id>
+            <width>188</width>
+            <height>118</height>
+            <textureFocus>picturecase-focus.png</textureFocus>
+            <textureNoFocus />
+            <label>-</label>
+            <onleft>91919986</onleft>
+            <onright>91919985</onright>
+            <onup>17</onup>
+            <ondown>820101</ondown>
+            <animation effect="zoom" start="100,100" end="108,108" time="100">focus</animation>
+          </control>
+          <control>
+            <type>button</type>
+            <id>91919985</id>
+            <width>188</width>
+            <height>118</height>
+            <textureFocus>picturecase-focus.png</textureFocus>
+            <textureNoFocus />
+            <label>-</label>
+            <onleft>91919984</onleft>
+            <onright>91919986</onright>
+            <onup>17</onup>
+            <ondown>820101</ondown>
+            <animation effect="zoom" start="100,100" end="108,108" time="100">focus</animation>
+          </control>
+          <control>
+            <type>button</type>
+            <id>91919986</id>
+            <width>188</width>
+            <height>118</height>
+            <textureFocus>picturecase-focus.png</textureFocus>
+            <textureNoFocus />
+            <label>-</label>
+            <onleft>91919985</onleft>
+            <onright>91919984</onright>
+            <onup>17</onup>
+            <ondown>820101</ondown>
+            <animation effect="zoom" start="100,100" end="108,108" time="100">focus</animation>
+          </control>
+        </control>
+      </control>
+      <!-- ******************************************************************************************* -->
+      <!-- ************************* RECENTLY ADDED MUSIC ************************************** -->
+      <!-- ******************************************************************************************* -->
+      <control>
+        <type>group</type>
+        <description>group element</description>
+        <visible>[plugin.isenabled(Latest Media Handler)+string.contains(#highlightedbutton,AUDIO1)|[Control.isvisible(66661)+Control.isvisible(66662)+Control.isvisible(66663)]|[Control.hasfocus(91919997)|Control.hasfocus(91919998)|Control.hasfocus(91919999)]+string.equals(#latestMediaHandler.music.latest.enabled,true)]+!string.equals(#latestMediaHandler.music.latest1.artist,)</visible>
+        <control>
+          <description>background for recently added files</description>
+          <type>image</type>
+          <id>98762</id>
+          <posX>70</posX>
+          <posY>90</posY>
+          <width>1770</width>
+          <height>245</height>
+          <texture>osdbg2.png</texture>
+          <colordiffuse>ffffffff</colordiffuse>
+          <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
+        </control>
+        <control Style="BasicHomeRecentlyLabel">
+          <description>Updates label</description>
+          <type>label</type>
+          <id>0</id>
+          <posX>124</posX>
+          <posY>114</posY>
+          <width>393</width>
+          <label>#latestMediaHandler.music.label</label>
+          <align>left</align>
+          <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
+        </control>
+        <control Style="BasicHomeRecentlyLabel">
+          <description>Music updates</description>
+          <type>label</type>
+          <id>0</id>
+          <posX>574</posX>
+          <posY>159</posY>
+          <width>1196</width>
+          <label>#latestMediaHandler.music.latest1.artist ~ #latestMediaHandler.music.latest1.album (#latestMediaHandler.music.latest1.dateAdded)</label>
+          <align>left</align>
+          <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
+          <visible>!string.equals(#latestMediaHandler.music.latest1.artist,)</visible>
+        </control>
+        <control>
+          <description>Music updates marker</description>
+          <type>image</type>
+          <id>0</id>
+          <posX>564</posX>
+          <posY>161</posY>
+          <width>1246</width>
+          <texture>listfocus.png</texture>
+          <visible>Control.hasfocus(91919997)</visible>
+        </control>
+        <control Style="BasicHomeRecentlyLabel">
+          <description>Music updates</description>
+          <type>label</type>
+          <id>0</id>
+          <posX>574</posX>
+          <posY>194</posY>
+          <width>1196</width>
+          <label>#latestMediaHandler.music.latest2.artist ~ #latestMediaHandler.music.latest2.album (#latestMediaHandler.music.latest2.dateAdded)</label>
+          <align>left</align>
+          <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
+          <visible>!string.equals(#latestMediaHandler.music.latest2.artist,)</visible>
+        </control>
+        <control>
+          <description>Music updates marker</description>
+          <type>image</type>
+          <id>0</id>
+          <posX>564</posX>
+          <posY>196</posY>
+          <width>1246</width>
+          <texture>listfocus.png</texture>
+          <visible>Control.hasfocus(91919998)</visible>
+        </control>
+        <control Style="BasicHomeRecentlyLabel">
+          <description>Music updates</description>
+          <type>label</type>
+          <id>0</id>
+          <posX>574</posX>
+          <posY>229</posY>
+          <width>1196</width>
+          <label>#latestMediaHandler.music.latest3.artist ~ #latestMediaHandler.music.latest3.album (#latestMediaHandler.music.latest3.dateAdded)</label>
+          <align>left</align>
+          <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
+          <visible>!string.equals(#latestMediaHandler.music.latest3.artist,)</visible>
+        </control>
+        <control>
+          <description>Music updates marker</description>
+          <type>image</type>
+          <id>0</id>
+          <posX>564</posX>
+          <posY>231</posY>
+          <width>1246</width>
+          <texture>listfocus.png</texture>
+          <visible>Control.hasfocus(91919999)</visible>
+        </control>
+        <control>
+          <type>group</type>
+          <description>group element</description>
+          <layout>StackLayout(10, Horizontal, true)</layout>
+          <posX>124</posX>
+          <posY>159</posY>
+          <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
+          <visible>[plugin.isenabled(Latest Media Handler)+string.contains(#highlightedbutton,AUDIO1)|[Control.hasfocus(91919997)|Control.hasfocus(91919998)|Control.hasfocus(91919999)]+string.equals(#latestMediaHandler.music.latest.enabled,true)]+!string.equals(#latestMediaHandler.music.latest1.artist,)</visible>
+          <control>
+            <description>Music Updates</description>
+            <type>image</type>
+            <id>66661</id>
+            <width>132</width>
+            <height>132</height>
+            <texture mask="cdcase_mask.png">#latestMediaHandler.music.latest1.thumb</texture>
+            <animation effect="zoom" start="100,100" end="108,108" time="100" condition="control.hasfocus(91919997)">conditional</animation>
+          </control>
+          <control>
+            <description>Music Updates</description>
+            <type>image</type>
+            <id>66662</id>
+            <width>132</width>
+            <height>132</height>
+            <texture mask="cdcase_mask.png">#latestMediaHandler.music.latest2.thumb</texture>
+            <animation effect="zoom" start="100,100" end="108,108" time="100" condition="control.hasfocus(91919998)">conditional</animation>
+          </control>
+          <control>
+            <description>Music Updates</description>
+            <type>image</type>
+            <id>66663</id>
+            <width>132</width>
+            <height>132</height>
+            <texture mask="cdcase_mask.png">#latestMediaHandler.music.latest3.thumb</texture>
+            <animation effect="zoom" start="100,100" end="108,108" time="100" condition="control.hasfocus(91919999)">conditional</animation>
+          </control>
+        </control>
+        <control>
+          <type>group</type>
+          <description>group element</description>
+          <layout>StackLayout(10, Horizontal, true)</layout>
+          <posX>124</posX>
+          <posY>159</posY>
+          <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
+          <control>
+            <type>button</type>
+            <id>91919997</id>
+            <width>132</width>
+            <height>132</height>
+            <textureFocus>cdcase-focus.png</textureFocus>
+            <textureNoFocus />
+            <label>-</label>
+            <onleft>91919999</onleft>
+            <onright>91919998</onright>
+            <onup>17</onup>
+            <ondown>820101</ondown>
+            <animation effect="zoom" start="100,100" end="108,108" time="100">focus</animation>
+          </control>
+          <control>
+            <type>button</type>
+            <id>91919998</id>
+            <width>132</width>
+            <height>132</height>
+            <textureFocus>cdcase-focus.png</textureFocus>
+            <textureNoFocus />
+            <label>-</label>
+            <onleft>91919997</onleft>
+            <onright>91919999</onright>
+            <onup>17</onup>
+            <ondown>820101</ondown>
+            <animation effect="zoom" start="100,100" end="108,108" time="100">focus</animation>
+          </control>
+          <control>
+            <type>button</type>
+            <id>91919999</id>
+            <width>132</width>
+            <height>132</height>
+            <textureFocus>cdcase-focus.png</textureFocus>
+            <textureNoFocus />
+            <label>-</label>
+            <onleft>91919998</onleft>
+            <onright>91919997</onright>
+            <onup>17</onup>
+            <ondown>820101</ondown>
+            <animation effect="zoom" start="100,100" end="108,108" time="100">focus</animation>
+          </control>
+        </control>
+      </control>
+      <!-- ******************************************************************************************* -->
+      <!-- ************************* RECENTLY ADDED PICTURES *********************************** -->
+      <!-- ******************************************************************************************* -->
+      <control>
+        <type>group</type>
+        <description>group element</description>
+        <visible>[plugin.isenabled(Latest Media Handler)+string.contains(#highlightedbutton,PICTURE)|[Control.isvisible(77774)+Control.isvisible(77775)+Control.isvisible(77776)]|[Control.hasfocus(91919971)|Control.hasfocus(91919972)|Control.hasfocus(91919973)]+plugin.isenabled(Pictures)+string.equals(#latestMediaHandler.picture.latest.enabled,true)]+!string.equals(#latestMediaHandler.picture.latest1.title,)</visible>
+        <control>
           <description>background for recently added files</description>
           <type>image</type>
           <id>0</id>
@@ -617,75 +1135,186 @@
           <texture>osdbg2.png</texture>
           <colordiffuse>ffffffff</colordiffuse>
           <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
-          <visible>plugin.isenabled(Latest Media Handler)+plugin.isenabled(Pictures)+string.equals(#latestMediaHandler.picture.latest.enabled,true)+!string.equals(#latestMediaHandler.picture.latest1.title,)+[string.contains(#highlightedbutton,PICTURE)|Control.hasfocus(919199710)]</visible>
         </control>
-        <control>
+        <control Style="BasicHomeRecentlyLabel">
           <description>Updates label</description>
           <type>label</type>
           <id>0</id>
           <posX>124</posX>
           <posY>114</posY>
-          <width>1750</width>
-          <font>font11</font>
-          <label>#SkinTranslation.Translations.NewPictures.Label:  #latestMediaHandler.picture.selected.title  (#latestMediaHandler.picture.selected.dateAdded)</label>
+          <width>393</width>
+          <label>#SkinTranslation.Translations.NewPictures.Label:</label>
           <align>left</align>
           <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
-          <visible>plugin.isenabled(Latest Media Handler)+plugin.isenabled(Pictures)+string.equals(#latestMediaHandler.picture.latest.enabled,true)+!string.equals(#latestMediaHandler.picture.latest1.title,)+[string.contains(#highlightedbutton,PICTURE)|Control.hasfocus(919199710)]</visible>
+        </control>
+        <control Style="BasicHomeRecentlyLabel">
+          <description>Picture updates</description>
+          <type>label</type>
+          <id>0</id>
+          <posX>755</posX>
+          <posY>166</posY>
+          <width>1030</width>
+          <label>#latestMediaHandler.picture.latest1.title (#latestMediaHandler.picture.latest1.dateAdded)</label>
+          <align>left</align>
+          <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
+          <visible>!string.equals(#latestMediaHandler.picture.latest1.title,)</visible>
         </control>
         <control>
-        <description>composite control consisting of a list control and a thumbnail panel</description>
-        <type>facadeview</type>
-        <id>919199710</id>
-        <control>
-          <description>Filmstrip view</description>
-          <type>filmstrip</type>
-          <id>919199710</id>
-          <posX>124</posX>
-          <posY>165</posY>
-          <width>1700</width>
-          <height>140</height>
-          <onleft>919199710</onleft>
-          <onright>919199710</onright>
-          <onup>17</onup>
-          <ondown>820101</ondown>
-          <itemWidth>208</itemWidth>
-          <itemHeight>130</itemHeight>
-          <textureWidth>188</textureWidth>
-          <textureHeight>118</textureHeight>
-          <thumbWidth>188</thumbWidth>
-          <thumbHeight>118</thumbHeight>
-          <thumbPosX>0</thumbPosX>
-          <thumbPosY>0</thumbPosY>
-          <keepaspectratio>no</keepaspectratio>
-          <thumbs mask="picturecase_mask.png" />
-          <imageFolder></imageFolder>
-          <imageFolderFocus></imageFolderFocus>
-          <frameFocus>picturecase-focus.png</frameFocus>
-          <showFrame>yes</showFrame>
-          <showFolder>yes</showFolder>
-          <showBackGround>no</showBackGround>
-          <showInfoImage>no</showInfoImage>
-          <enableFocusZoom>no</enableFocusZoom>
-          <scrollOffset>5</scrollOffset>
-          <suffix>|</suffix>
-          <folderPrefix />
-          <folderSuffix />
-          <showScrollbar>no</showScrollbar>
-          <thumbAnimation effect="zoom" start="100,100" end="110,110" time="300" tween="circle" ease="inout">focus</thumbAnimation>
-          <thumbAnimation effect="zoom" start="110,110" end="100,100" time="200" tween="back" ease="inout">unfocus</thumbAnimation>
-          <spinPosX>3710</spinPosX>
-          <spinPosY>801</spinPosY>
-          <visible>plugin.isenabled(Latest Media Handler)+plugin.isenabled(Pictures)+string.equals(#latestMediaHandler.picture.latest.enabled,true)+!string.equals(#latestMediaHandler.picture.latest1.title,)+[string.contains(#highlightedbutton,PICTURE)|Control.hasfocus(919199710)]</visible>
-        </control>
-        </control>
-        
-      <!-- ******************************************************************************************** -->
-      <!-- ******************************* RECENTLY ADDED MYFILMS *********************************** -->
-      <!-- ******************************************************************************************* -->
-      <control>
-          <description>background for recently added files</description>
+          <description>Picture updates marker</description>
           <type>image</type>
           <id>0</id>
+          <posX>745</posX>
+          <posY>168</posY>
+          <width>1080</width>
+          <texture>listfocus.png</texture>
+          <visible>Control.hasfocus(91919971)</visible>
+        </control>
+        <control Style="BasicHomeRecentlyLabel">
+          <description>Picture updates</description>
+          <type>label</type>
+          <id>0</id>
+          <posX>755</posX>
+          <posY>201</posY>
+          <width>1030</width>
+          <label>#latestMediaHandler.picture.latest2.title (#latestMediaHandler.picture.latest2.dateAdded)</label>
+          <align>left</align>
+          <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
+          <visible>!string.equals(#latestMediaHandler.picture.latest2.title,)</visible>
+        </control>
+        <control>
+          <description>Picture updates marker</description>
+          <type>image</type>
+          <id>0</id>
+          <posX>745</posX>
+          <posY>203</posY>
+          <width>1080</width>
+          <texture>listfocus.png</texture>
+          <visible>Control.hasfocus(91919972)</visible>
+        </control>
+        <control Style="BasicHomeRecentlyLabel">
+          <description>Picture updates</description>
+          <type>label</type>
+          <id>0</id>
+          <posX>755</posX>
+          <posY>236</posY>
+          <width>1030</width>
+          <label>#latestMediaHandler.picture.latest3.title (#latestMediaHandler.picture.latest3.dateAdded)</label>
+          <align>left</align>
+          <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
+          <visible>!string.equals(#latestMediaHandler.picture.latest3.title,)</visible>
+        </control>
+        <control>
+          <description>Picture updates marker</description>
+          <type>image</type>
+          <id>0</id>
+          <posX>745</posX>
+          <posY>238</posY>
+          <width>1080</width>
+          <texture>listfocus.png</texture>
+          <visible>Control.hasfocus(91919973)</visible>
+        </control>
+        <control>
+          <type>group</type>
+          <description>group element</description>
+          <layout>StackLayout(10, Horizontal, true)</layout>
+          <posX>124</posX>
+          <posY>159</posY>
+          <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
+          <animation effect="zoom" condition="true" start="100,100" end="101,101" time="0">conditional</animation>
+          <visible>[plugin.isenabled(Latest Media Handler)+string.contains(#highlightedbutton,PICTURE)|[Control.hasfocus(91919971)|Control.hasfocus(91919972)|Control.hasfocus(91919973)]+plugin.isenabled(Pictures)+string.equals(#latestMediaHandler.picture.latest.enabled,true)]+!string.equals(#latestMediaHandler.picture.latest1.title,)</visible>
+          <control>
+            <description>Picture updates</description>
+            <type>image</type>
+            <id>77774</id>
+            <width>188</width>
+            <height>118</height>
+            <texture mask="picturecase_mask.png">#latestMediaHandler.picture.latest1.thumb</texture>
+            <animation effect="zoom" start="100,100" end="108,108" time="100" condition="control.hasfocus(91919971)">conditional</animation>
+          </control>
+          <control>
+            <description>Picture updates</description>
+            <type>image</type>
+            <id>77775</id>
+            <width>188</width>
+            <height>118</height>
+            <texture mask="picturecase_mask.png">#latestMediaHandler.picture.latest2.thumb</texture>
+            <animation effect="zoom" start="100,100" end="108,108" time="100" condition="control.hasfocus(91919972)">conditional</animation>
+          </control>
+          <control>
+            <description>Picture updates</description>
+            <type>image</type>
+            <id>77776</id>
+            <width>188</width>
+            <height>118</height>
+            <texture mask="picturecase_mask.png">#latestMediaHandler.picture.latest3.thumb</texture>
+            <animation effect="zoom" start="100,100" end="108,108" time="100" condition="control.hasfocus(91919973)">conditional</animation>
+          </control>
+          </control>
+          <control>
+          <type>group</type>
+          <description>group element</description>
+          <layout>StackLayout(10, Horizontal, true)</layout>
+          <posX>124</posX>
+          <posY>159</posY>
+          <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
+          <control>
+            <description>Overlay Cover 1</description>
+            <type>button</type>
+            <id>91919971</id>
+            <width>188</width>
+            <height>118</height>
+            <textureFocus>picturecase-focus.png</textureFocus>
+            <textureNoFocus />
+            <label>-</label>
+            <onright>91919972</onright>
+            <onleft>91919973</onleft>
+            <onup>17</onup>
+            <ondown>820101</ondown>
+            <animation effect="zoom" start="100,100" end="108,108" time="100">focus</animation>
+          </control>
+          <control>
+            <description>Overlay Cover 2</description>
+            <type>button</type>
+            <id>91919972</id>
+            <width>188</width>
+            <height>118</height>
+            <textureFocus>picturecase-focus.png</textureFocus>
+            <textureNoFocus />
+            <label>-</label>
+            <onright>91919973</onright>
+            <onleft>91919971</onleft>
+            <onup>17</onup>
+            <ondown>820101</ondown>
+            <animation effect="zoom" start="100,100" end="108,108" time="100">focus</animation>
+          </control>
+          <control>
+            <description>Overlay Cover 3</description>
+            <type>button</type>
+            <id>91919973</id>
+            <width>188</width>
+            <height>118</height>
+            <textureFocus>picturecase-focus.png</textureFocus>
+            <textureNoFocus />
+            <label>-</label>
+            <onup>17</onup>
+            <ondown>820101</ondown>
+            <onleft>91919972</onleft>
+            <onright>91919971</onright>
+            <animation effect="zoom" start="100,100" end="108,108" time="100">focus</animation>
+          </control>
+        </control>
+      </control>
+      <!-- ******************************************************************************************* -->
+      <!-- ************************* RECENTLY ADDED MY FILMS ************************************* -->
+      <!-- ******************************************************************************************* -->
+      <control>
+        <type>group</type>
+        <description>group element</description>
+        <visible>[plugin.isenabled(Latest Media Handler)+string.contains(#highlightedbutton,VIDEO4)|[Control.isvisible(66664)+Control.isvisible(66665)+Control.isvisible(66666)]|[Control.hasfocus(91919988)|Control.hasfocus(91919989)|Control.hasfocus(91919990)]+plugin.isenabled(MyFilms)+string.equals(#latestMediaHandler.myfilms.latest.enabled,true)]+!string.equals(#latestMediaHandler.myfilms.latest1.title,)</visible>
+        <control>
+          <description>background for recently added files</description>
+          <type>image</type>
+          <id>98761</id>
           <posX>70</posX>
           <posY>90</posY>
           <width>1770</width>
@@ -693,68 +1322,178 @@
           <texture>osdbg2.png</texture>
           <colordiffuse>ffffffff</colordiffuse>
           <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
-          <visible>plugin.isenabled(Latest Media Handler)+plugin.isenabled(MyFilms)+string.equals(#latestMediaHandler.myfilms.latest.enabled,true)+!string.equals(#latestMediaHandler.myfilms.latest1.title,)+[string.contains(#highlightedbutton,VIDEO4)|Control.hasfocus(919199880)]</visible>
         </control>
-        <control>
+        <control Style="BasicHomeRecentlyLabel">
           <description>Updates label</description>
           <type>label</type>
           <id>0</id>
           <posX>124</posX>
           <posY>114</posY>
-          <width>1750</width>
-          <font>font11</font>
-          <label>#SkinTranslation.Translations.NewFilms.Label:  #latestMediaHandler.myfilms.selected.title  ~ #latestMediaHandler.myfilms.selected.genre  (#latestMediaHandler.myfilms.selected.dateAdded)</label>
+          <width>393</width>
+          <label>#SkinTranslation.Translations.NewFilms.Label:</label>
           <align>left</align>
+          <font>font11</font>
           <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
-          <visible>plugin.isenabled(Latest Media Handler)+plugin.isenabled(MyFilms)+string.equals(#latestMediaHandler.myfilms.latest.enabled,true)+!string.equals(#latestMediaHandler.myfilms.latest1.title,)+[string.contains(#highlightedbutton,VIDEO4)|Control.hasfocus(919199880)]</visible>
+        </control>
+        <control Style="BasicHomeRecentlyLabel">
+          <description>myfilms updates</description>
+          <type>label</type>
+          <id>0</id>
+          <posX>531</posX>
+          <posY>166</posY>
+          <width>1240</width>
+          <label>#latestMediaHandler.myfilms.latest1.title ~ #latestMediaHandler.myfilms.latest1.runtime #(L(2998)). ~ #latestMediaHandler.myfilms.latest1.year (#latestMediaHandler.myfilms.latest1.dateAdded)</label>
+          <align>left</align>
+          <font>font11</font>
+          <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
+          <visible>!string.equals(#latestMediaHandler.myfilms.latest1.title,)</visible>
         </control>
         <control>
-        <description>composite control consisting of a list control and a thumbnail panel</description>
-        <type>facadeview</type>
-        <id>919199880</id>
+          <description>MyFilms updates marker</description>
+          <type>image</type>
+          <id>0</id>
+          <posX>521</posX>
+          <posY>168</posY>
+          <width>1290</width>
+          <texture>listfocus.png</texture>
+          <visible>Control.hasfocus(91919988)</visible>
+        </control>
+        <control Style="BasicHomeRecentlyLabel">
+          <description>myfilms updates</description>
+          <type>label</type>
+          <id>0</id>
+          <posX>531</posX>
+          <posY>201</posY>
+          <width>1240</width>
+          <label>#latestMediaHandler.myfilms.latest2.title ~ #latestMediaHandler.myfilms.latest2.runtime #(L(2998)). ~ #latestMediaHandler.myfilms.latest2.year (#latestMediaHandler.myfilms.latest2.dateAdded)</label>
+          <align>left</align>
+          <font>font11</font>
+          <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
+          <visible>!string.equals(#latestMediaHandler.myfilms.latest2.title,)</visible>
+        </control>
         <control>
-          <description>Filmstrip view</description>
-          <type>filmstrip</type>
-          <id>919199880</id>
+          <description>MyFilms updates marker</description>
+          <type>image</type>
+          <id>0</id>
+          <posX>521</posX>
+          <posY>203</posY>
+          <width>1290</width>
+          <texture>listfocus.png</texture>
+          <visible>Control.hasfocus(91919989)</visible>
+        </control>
+        <control Style="BasicHomeRecentlyLabel">
+          <description>myfilms updates</description>
+          <type>label</type>
+          <id>0</id>
+          <posX>531</posX>
+          <posY>236</posY>
+          <width>1240</width>
+          <label>#latestMediaHandler.myfilms.latest3.title ~ #latestMediaHandler.myfilms.latest3.runtime #(L(2998)). ~ #latestMediaHandler.myfilms.latest3.year (#latestMediaHandler.myfilms.latest3.dateAdded)</label>
+          <align>left</align>
+          <font>font11</font>
+          <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
+          <visible>!string.equals(#latestMediaHandler.myfilms.latest3.title,)</visible>
+        </control>
+        <control>
+          <description>MyFilms updates marker</description>
+          <type>image</type>
+          <id>0</id>
+          <posX>521</posX>
+          <posY>238</posY>
+          <width>1290</width>
+          <texture>listfocus.png</texture>
+          <visible>Control.hasfocus(91919990)</visible>
+        </control>
+        <control>
+          <type>group</type>
+          <description>group element</description>
+          <layout>StackLayout(10, Horizontal, true)</layout>
           <posX>124</posX>
-          <posY>159</posY>
-          <width>1850</width>
-          <height>140</height>
-          <onleft>919199880</onleft>
-          <onright>919199880</onright>
-          <onup>17</onup>
-          <ondown>820101</ondown>
-          <itemWidth>150</itemWidth>
-          <itemHeight>170</itemHeight>
-          <textureWidth>119</textureWidth>
-          <textureHeight>167</textureHeight>
-          <thumbWidth>119</thumbWidth>
-          <thumbHeight>167</thumbHeight>
-          <thumbPosX>0</thumbPosX>
-          <thumbPosY>0</thumbPosY>
-          <keepaspectratio>no</keepaspectratio>
-          <thumbs mask="dvdcase_mask.png" />
-          <imageFolder></imageFolder>
-          <imageFolderFocus></imageFolderFocus>
-          <frameFocus>dvdcase-focus.png</frameFocus>
-          <showFrame>yes</showFrame>
-          <showFolder>yes</showFolder>
-          <showBackGround>no</showBackGround>
-          <showInfoImage>no</showInfoImage>
-          <enableFocusZoom>no</enableFocusZoom>
-          <scrollOffset>5</scrollOffset>
-          <suffix>|</suffix>
-          <folderPrefix />
-          <folderSuffix />
-          <showScrollbar>no</showScrollbar>
-          <thumbAnimation effect="zoom" start="100,100" end="110,110" time="300" tween="circle" ease="inout">focus</thumbAnimation>
-          <thumbAnimation effect="zoom" start="110,110" end="100,100" time="200" tween="back" ease="inout">unfocus</thumbAnimation>
-          <spinPosX>3710</spinPosX>
-          <spinPosY>801</spinPosY>
-          <visible>plugin.isenabled(Latest Media Handler)+plugin.isenabled(MyFilms)+string.equals(#latestMediaHandler.myfilms.latest.enabled,true)+!string.equals(#latestMediaHandler.myfilms.latest1.title,)+[string.contains(#highlightedbutton,VIDEO4)|Control.hasfocus(919199880)]</visible>
+          <posY>162</posY>
+          <visible>[plugin.isenabled(Latest Media Handler)+string.contains(#highlightedbutton,VIDEO4)|[Control.hasfocus(91919988)|Control.hasfocus(91919989)|Control.hasfocus(91919990)]+plugin.isenabled(MyFilms)+string.equals(#latestMediaHandler.myfilms.latest.enabled,true)]+!string.equals(#latestMediaHandler.myfilms.latest1.title,)</visible>
+          <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
+          <control>
+            <description>Cover1</description>
+            <type>image</type>
+            <id>66664</id>
+            <width>119</width>
+            <height>167</height>
+            <texture mask="dvdcase_mask.png">#latestMediaHandler.myfilms.latest1.poster</texture>
+            <animation effect="zoom" start="100,100" end="108,108" time="100" condition="control.hasfocus(91919988)">conditional</animation>
+          </control>
+          <control>
+            <description>Cover2</description>
+            <type>image</type>
+            <id>66665</id>
+            <width>119</width>
+            <height>167</height>
+            <texture mask="dvdcase_mask.png">#latestMediaHandler.myfilms.latest2.poster</texture>
+            <animation effect="zoom" start="100,100" end="108,108" time="100" condition="control.hasfocus(91919989)">conditional</animation>
+          </control>
+          <control>
+            <description>Cover3</description>
+            <type>image</type>
+            <id>66666</id>
+            <width>119</width>
+            <height>167</height>
+            <texture mask="dvdcase_mask.png">#latestMediaHandler.myfilms.latest3.poster</texture>
+            <animation effect="zoom" start="100,100" end="108,108" time="100" condition="control.hasfocus(91919990)">conditional</animation>
+          </control>
         </control>
+        <control>
+          <type>group</type>
+          <description>group element</description>
+          <layout>StackLayout(10, Horizontal, true)</layout>
+          <posX>124</posX>
+          <posY>162</posY>
+          <animation effect="slide" start="-300,0" time="200">visible</animation>
+          <control>
+            <description>Overlay Cover 1</description>
+            <type>button</type>
+            <id>91919988</id>
+            <width>119</width>
+            <height>167</height>
+            <textureFocus>dvdcase-focus.png</textureFocus>
+            <textureNoFocus />
+            <label>-</label>
+            <onright>91919989</onright>
+            <onleft>91919990</onleft>
+            <onup>17</onup>
+            <ondown>820101</ondown>
+            <animation effect="zoom" start="100,100" end="108,108" time="100">focus</animation>
+          </control>
+          <control>
+            <description>Overlay Cover 2</description>
+            <type>button</type>
+            <id>91919989</id>
+            <width>119</width>
+            <height>167</height>
+            <textureFocus>dvdcase-focus.png</textureFocus>
+            <textureNoFocus />
+            <label>-</label>
+            <onright>91919990</onright>
+            <onleft>91919988</onleft>
+            <onup>17</onup>
+            <ondown>820101</ondown>
+            <animation effect="zoom" start="100,100" end="108,108" time="100">focus</animation>
+          </control>
+          <control>
+            <description>Overlay Cover 3</description>
+            <type>button</type>
+            <id>91919990</id>
+            <width>119</width>
+            <height>167</height>
+            <textureFocus>dvdcase-focus.png</textureFocus>
+            <textureNoFocus />
+            <label>-</label>
+            <onright>91919988</onright>
+            <onleft>91919989</onleft>
+            <onup>17</onup>
+            <ondown>820101</ondown>
+            <animation effect="zoom" start="100,100" end="108,108" time="100">focus</animation>
+          </control>
         </control>
-        
+      </control>
       <!-- ******************************************************************************************* -->
       <!-- ************************* RECENTLY ADDED ONLINE VIDEOS ********************************* -->
       <!-- ******************************************************************************************* -->
@@ -774,50 +1513,46 @@
           <colordiffuse>ffffffff</colordiffuse>
           <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
         </control>
-        <control>
+        <control Style="BasicHomeRecentlyLabel">
           <description>Updates label</description>
           <type>label</type>
           <id>0</id>
           <posX>124</posX>
           <posY>114</posY>
           <width>1030</width>
-          <font>font11</font>
           <label>#SkinTranslation.Translations.NewYouTubeVideos.Label:</label>
           <align>left</align>
           <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
         </control>
-        <control>
+        <control Style="BasicHomeRecentlyLabel">
           <description>onlinevideos updates</description>
           <type>label</type>
           <id>0</id>
           <posX>742</posX>
           <posY>166</posY>
           <width>1030</width>
-          <font>font11</font>
           <label>#OnlineVideos.LatestVideo1.Title ~ #OnlineVideos.LatestVideo1.Duration ~ #OnlineVideos.LatestVideo1.Aired (#OnlineVideos.LatestVideo1.Site)</label>
           <align>left</align>
           <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
         </control>
-        <control>
+        <control Style="BasicHomeRecentlyLabel">
           <description>onlinevideos updates</description>
           <type>label</type>
           <id>0</id>
           <posX>742</posX>
           <posY>201</posY>
           <width>1030</width>
-          <font>font11</font>
           <label>#OnlineVideos.LatestVideo2.Title ~ #OnlineVideos.LatestVideo2.Duration ~ #OnlineVideos.LatestVideo2.Aired (#OnlineVideos.LatestVideo2.Site)</label>
           <align>left</align>
           <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
         </control>
-        <control>
+        <control Style="BasicHomeRecentlyLabel">
           <description>onlinevideos updates</description>
           <type>label</type>
           <id>0</id>
           <posX>742</posX>
           <posY>236</posY>
           <width>1030</width>
-          <font>font11</font>
           <label>#OnlineVideos.LatestVideo3.Title ~ #OnlineVideos.LatestVideo3.Duration ~ #OnlineVideos.LatestVideo3.Aired (#OnlineVideos.LatestVideo3.Site)</label>
           <align>left</align>
           <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
@@ -835,6 +1570,7 @@
             <id>0</id>
             <width>188</width>
             <height>118</height>
+            <keepaspectratio>yes</keepaspectratio>
             <texture mask="picturecase_mask.png">#OnlineVideos.LatestVideo1.Thumb</texture>
           </control>
           <control>
@@ -843,6 +1579,7 @@
             <id>0</id>
             <width>188</width>
             <height>118</height>
+            <keepaspectratio>yes</keepaspectratio>
             <texture mask="picturecase_mask.png">#OnlineVideos.LatestVideo2.Thumb</texture>
           </control>
           <control>
@@ -851,17 +1588,22 @@
             <id>0</id>
             <width>188</width>
             <height>118</height>
+            <keepaspectratio>yes</keepaspectratio>
             <texture mask="picturecase_mask.png">#OnlineVideos.LatestVideo3.Thumb</texture>
           </control>
         </control>
       </control>
       <!-- ******************************************************************************************* -->
-      <!-- ******************************* RECENTLY ADDED MYVIDEOS *********************************** -->
+      <!-- ************************* RECENTLY ADDED ~ MYVIDEOS *********************************** -->
       <!-- ******************************************************************************************* -->
       <control>
+        <type>group</type>
+        <description>group element</description>
+        <visible>[string.contains(#highlightedbutton,VIDEO1)|[Control.isvisible(88884)+Control.isvisible(88885)+Control.isvisible(88886)]|[Control.hasfocus(91915991)|Control.hasfocus(91915992)|Control.hasfocus(91915993)]+plugin.isenabled(Videos)]+!string.equals(#latestMediaHandler.myvideo.latest1.enabled,)</visible>
+        <control>
           <description>background for recently added files</description>
           <type>image</type>
-          <id>0</id>
+          <id>99999</id>
           <posX>70</posX>
           <posY>90</posY>
           <width>1770</width>
@@ -869,94 +1611,256 @@
           <texture>osdbg2.png</texture>
           <colordiffuse>ffffffff</colordiffuse>
           <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
-          <visible>plugin.isenabled(Latest Media Handler)+plugin.isenabled(Videos)+string.equals(#latestMediaHandler.myvideo.latest.enabled,true)+!string.equals(#latestMediaHandler.myvideo.latest1.title,)+[string.contains(#highlightedbutton,VIDEO1)|Control.hasfocus(919198710)]</visible>
         </control>
-        <control>
+        <control Style="BasicHomeRecentlyLabel">
           <description>Updates label</description>
           <type>label</type>
           <id>0</id>
           <posX>124</posX>
           <posY>114</posY>
-          <width>1750</width>
-          <font>font11</font>
-          <label>#SkinTranslation.Translations.NewFilms.Label:  #latestMediaHandler.myvideo.selected.title  ~ #latestMediaHandler.myvideo.selected.genre  (#latestMediaHandler.myvideo.selected.dateAdded)</label>
+          <width>393</width>
+          <label>#SkinTranslation.Translations.NewVideos.Label:</label>
           <align>left</align>
+          <font>font11</font>
           <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
-          <visible>plugin.isenabled(Latest Media Handler)+plugin.isenabled(Videos)+string.equals(#latestMediaHandler.myvideo.latest.enabled,true)+!string.equals(#latestMediaHandler.myvideo.latest1.title,)+[string.contains(#highlightedbutton,VIDEO1)|Control.hasfocus(919198710)]</visible>
+        </control>
+        <control Style="BasicHomeRecentlyLabel">
+          <description>Videos updates</description>
+          <type>label</type>
+          <id>0</id>
+          <posX>531</posX>
+          <posY>166</posY>
+          <width>1240</width>
+          <label>#latestMediaHandler.myvideo.latest1.title ~ #latestMediaHandler.myvideo.latest1.genre ~ #latestMediaHandler.myvideo.latest1.runtime #(L(2998)). ~ #latestMediaHandler.myvideo.latest1.year (#latestMediaHandler.myvideo.latest1.dateAdded)</label>
+          <align>left</align>
+          <font>font11</font>
+          <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
         </control>
         <control>
-        <description>composite control consisting of a list control and a thumbnail panel</description>
-        <type>facadeview</type>
-        <id>919198710</id>
+          <description>MyVideos updates marker</description>
+          <type>image</type>
+          <id>0</id>
+          <posX>521</posX>
+          <posY>168</posY>
+          <width>1290</width>
+          <texture>listfocus.png</texture>
+          <visible>Control.hasfocus(91915991)</visible>
+        </control>
+        <control Style="BasicHomeRecentlyLabel">
+          <description>Videos updates</description>
+          <type>label</type>
+          <id>0</id>
+          <posX>531</posX>
+          <posY>201</posY>
+          <width>1240</width>
+          <label>#latestMediaHandler.myvideo.latest2.title ~ #latestMediaHandler.myvideo.latest2.genre ~ #latestMediaHandler.myvideo.latest2.runtime #(L(2998)). ~ #latestMediaHandler.myvideo.latest2.year (#latestMediaHandler.myvideo.latest2.dateAdded)</label>
+          <align>left</align>
+          <font>font11</font>
+          <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
+        </control>
         <control>
-          <description>Filmstrip view</description>
-          <type>filmstrip</type>
-          <id>919198710</id>
+          <description>MyVideos updates marker</description>
+          <type>image</type>
+          <id>0</id>
+          <posX>521</posX>
+          <posY>203</posY>
+          <width>1290</width>
+          <texture>listfocus.png</texture>
+          <visible>Control.hasfocus(91915992)</visible>
+        </control>
+        <control Style="BasicHomeRecentlyLabel">
+          <description>Videos updates</description>
+          <type>label</type>
+          <id>0</id>
+          <posX>531</posX>
+          <posY>236</posY>
+          <width>1240</width>
+          <label>#latestMediaHandler.myvideo.latest3.title ~ #latestMediaHandler.myvideo.latest3.genre ~ #latestMediaHandler.myvideo.latest3.runtime #(L(2998)). ~ #latestMediaHandler.myvideo.latest3.year (#latestMediaHandler.myvideo.latest3.dateAdded)</label>
+          <align>left</align>
+          <font>font11</font>
+          <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
+        </control>
+        <control>
+          <description>MyVideos updates marker</description>
+          <type>image</type>
+          <id>0</id>
+          <posX>521</posX>
+          <posY>238</posY>
+          <width>1290</width>
+          <texture>listfocus.png</texture>
+          <visible>Control.hasfocus(91915993)</visible>
+        </control>
+        <control>
+          <type>group</type>
+          <description>group element</description>
+          <layout>StackLayout(10, Horizontal, true)</layout>
           <posX>124</posX>
-          <posY>159</posY>
-          <width>1850</width>
-          <height>140</height>
-          <onleft>919198710</onleft>
-          <onright>919198710</onright>
-          <onup>17</onup>
-          <ondown>820101</ondown>
-          <itemWidth>150</itemWidth>
-          <itemHeight>170</itemHeight>
-          <textureWidth>119</textureWidth>
-          <textureHeight>167</textureHeight>
-          <thumbWidth>119</thumbWidth>
-          <thumbHeight>167</thumbHeight>
-          <thumbPosX>0</thumbPosX>
-          <thumbPosY>0</thumbPosY>
-          <keepaspectratio>no</keepaspectratio>
-          <thumbs mask="dvdcase_mask.png" />
-          <imageFolder></imageFolder>
-          <imageFolderFocus></imageFolderFocus>
-          <frameFocus>dvdcase-focus.png</frameFocus>
-          <showFrame>yes</showFrame>
-          <showFolder>yes</showFolder>
-          <showBackGround>no</showBackGround>
-          <showInfoImage>no</showInfoImage>
-          <enableFocusZoom>no</enableFocusZoom>
-          <scrollOffset>5</scrollOffset>
-          <suffix>|</suffix>
-          <folderPrefix />
-          <folderSuffix />
-          <showScrollbar>no</showScrollbar>
-          <thumbAnimation effect="zoom" start="100,100" end="110,110" time="300" tween="circle" ease="inout">focus</thumbAnimation>
-          <thumbAnimation effect="zoom" start="110,110" end="100,100" time="200" tween="back" ease="inout">unfocus</thumbAnimation>
-          <spinPosX>3710</spinPosX>
-          <spinPosY>801</spinPosY>
-          <visible>plugin.isenabled(Latest Media Handler)+plugin.isenabled(Videos)+string.equals(#latestMediaHandler.myvideo.latest.enabled,true)+!string.equals(#latestMediaHandler.myvideo.latest1.title,)+[string.contains(#highlightedbutton,VIDEO1)|Control.hasfocus(919198710)]</visible>
+          <posY>162</posY>
+          <visible>[string.contains(#highlightedbutton,VIDEO1)|[Control.hasfocus(91915991)|Control.hasfocus(91915992)|Control.hasfocus(91915993)]+plugin.isenabled(Videos)]+!string.equals(#latestMediaHandler.myvideo.latest1.enabled,)</visible>
+          <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
+          <control>
+            <description>Cover1</description>
+            <type>image</type>
+            <id>88884</id>
+            <width>119</width>
+            <height>167</height>
+            <texture mask="dvdcase_mask.png">#latestMediaHandler.myvideo.latest1.thumb</texture>
+            <animation effect="zoom" start="100,100" end="108,108" time="100" condition="control.hasfocus(91915991)">conditional</animation>
+          </control>
+          <control>
+            <description>Cover2</description>
+            <type>image</type>
+            <id>88885</id>
+            <width>119</width>
+            <height>167</height>
+            <texture mask="dvdcase_mask.png">#latestMediaHandler.myvideo.latest2.thumb</texture>
+            <animation effect="zoom" start="100,100" end="108,108" time="100" condition="control.hasfocus(91915992)">conditional</animation>
+          </control>
+          <control>
+            <description>Cover3</description>
+            <type>image</type>
+            <id>88886</id>
+            <width>119</width>
+            <height>167</height>
+            <texture mask="dvdcase_mask.png">#latestMediaHandler.myvideo.latest3.thumb</texture>
+            <animation effect="zoom" start="100,100" end="108,108" time="100" condition="control.hasfocus(91915993)">conditional</animation>
+          </control>
         </control>
+        <control>
+          <type>group</type>
+          <description>group element</description>
+          <layout>StackLayout(10, Horizontal, true)</layout>
+          <posX>124</posX>
+          <posY>162</posY>
+          <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
+          <control>
+            <description>Overlay Cover 1</description>
+            <type>button</type>
+            <id>91915991</id>
+            <width>119</width>
+            <height>167</height>
+            <textureFocus>dvdcase-focus.png</textureFocus>
+            <textureNoFocus />
+            <label>-</label>
+            <onright>91915992</onright>
+            <onleft>91915993</onleft>
+            <onup>17</onup>
+            <ondown>820101</ondown>
+            <animation effect="zoom" start="100,100" end="108,108" time="100">focus</animation>
+          </control>
+          <control>
+            <description>Overlay Cover 2</description>
+            <type>button</type>
+            <id>91915992</id>
+            <width>119</width>
+            <height>167</height>
+            <textureFocus>dvdcase-focus.png</textureFocus>
+            <textureNoFocus />
+            <label>-</label>
+            <onright>91915993</onright>
+            <onleft>91915991</onleft>
+            <onup>17</onup>
+            <ondown>820101</ondown>
+            <animation effect="zoom" start="100,100" end="108,108" time="100">focus</animation>
+          </control>
+          <control>
+            <description>Overlay Cover 3</description>
+            <type>button</type>
+            <id>91915993</id>
+            <width>119</width>
+            <height>167</height>
+            <textureFocus>dvdcase-focus.png</textureFocus>
+            <textureNoFocus />
+            <label>-</label>
+            <onright>91915991</onright>
+            <onleft>91915992</onleft>
+            <onup>17</onup>
+            <ondown>820101</ondown>
+            <animation effect="zoom" start="100,100" end="108,108" time="100">focus</animation>
+          </control>
         </control>
         <control>
           <description>Plot Background</description>
           <type>image</type>
           <id>0</id>
           <posX>70</posX>
-          <posY>360</posY>
+          <posY>350</posY>
           <width>1770</width>
           <height>225</height>
           <texture>osdbg2.png</texture>
           <colordiffuse>ffffffff</colordiffuse>
           <animation effect="fade" delay="1000" time="500">visible</animation>
-          <visible>control.hasfocus(919198710)</visible>
+          <visible>control.hasfocus(91915991)</visible>
         </control>
         <control>
-          <description>VIDEO1 Plot</description>
-          <type>textboxscrollup</type>
+          <description>Plot Background</description>
+          <type>image</type>
           <id>0</id>
+          <posX>70</posX>
+          <posY>350</posY>
+          <width>1770</width>
+          <height>225</height>
+          <texture>osdbg2.png</texture>
+          <colordiffuse>ffffffff</colordiffuse>
+          <animation effect="fade" delay="1000" time="500">visible</animation>
+          <visible>control.hasfocus(91915992)</visible>
+        </control>
+        <control>
+          <description>Plot Background</description>
+          <type>image</type>
+          <id>0</id>
+          <posX>70</posX>
+          <posY>350</posY>
+          <width>1770</width>
+          <height>225</height>
+          <texture>osdbg2.png</texture>
+          <colordiffuse>ffffffff</colordiffuse>
+          <animation effect="fade" delay="1000" time="500">visible</animation>
+          <visible>control.hasfocus(91915993)</visible>
+        </control>
+        <control>
+          <description>MovPic Plot 1</description>
+          <type>textboxscrollup</type>
+          <id>1</id>
           <posX>140</posX>
-          <posY>390</posY>
+          <posY>380</posY>
           <width>1650</width>
           <height>165</height>
           <font>font10</font>
           <textcolor>ffffffff</textcolor>
-          <label>#latestMediaHandler.myvideo.selected.plot</label>
-          <visible>control.hasfocus(919198710)</visible>
+          <label>#latestMediaHandler.myvideo.latest1.plot</label>
+          <visible>control.hasfocus(91915991)</visible>
           <animation effect="fade" delay="1000" time="500">visible</animation>
         </control>
+        <control>
+          <description>MovPic Plot 2</description>
+          <type>textboxscrollup</type>
+          <id>1</id>
+          <posX>140</posX>
+          <posY>380</posY>
+          <width>1650</width>
+          <height>165</height>
+          <font>font10</font>
+          <textcolor>ffffffff</textcolor>
+          <label>#latestMediaHandler.myvideo.latest2.plot</label>
+          <visible>control.hasfocus(91915992)</visible>
+          <animation effect="fade" delay="1000" time="500">visible</animation>
+        </control>
+        <control>
+          <description>MovPic Plot 3</description>
+          <type>textboxscrollup</type>
+          <id>1</id>
+          <posX>140</posX>
+          <posY>380</posY>
+          <width>1650</width>
+          <height>165</height>
+          <font>font10</font>
+          <textcolor>ffffffff</textcolor>
+          <label>#latestMediaHandler.myvideo.latest3.plot</label>
+          <visible>control.hasfocus(91915993)</visible>
+          <animation effect="fade" delay="1000" time="500">visible</animation>
+        </control>
+      </control>
       <!-- ******************************************************************************************* -->
       <!-- *************************      RECENTLY ADDED CLICKFINDER ********************************* -->
       <!-- ******************************************************************************************* -->
@@ -976,52 +1880,48 @@
           <colordiffuse>ffffffff</colordiffuse>
           <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
         </control>
-        <control>
+        <control Style="BasicHomeRecentlyLabel">
           <description>Updates label</description>
           <type>label</type>
           <id>0</id>
           <posX>124</posX>
           <posY>114</posY>
           <width>1030</width>
-          <font>font11</font>
           <label>Heutige Film-Highlights:</label>
           <align>left</align>
           <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
         </control>
-        <control>
+        <control Style="BasicHomeRecentlyLabel">
           <description>Clickfinder Updates</description>
           <type>label</type>
           <id>0</id>
           <posX>742</posX>
           <posY>166</posY>
           <width>1050</width>
-          <font>font11</font>
           <label>#ClickfinderPG.Movie1.Title ~ #ClickfinderPG.Movie1.Genre (#ClickfinderPG.Movie1.Channel - #ClickfinderPG.Movie1.Time)</label>
           <align>left</align>
           <visible>!string.equals(#ClickfinderPG.Movie1.Title,)</visible>
           <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
         </control>
-        <control>
+        <control Style="BasicHomeRecentlyLabel">
           <description>Clickfinder Updates</description>
           <type>label</type>
           <id>0</id>
           <posX>742</posX>
           <posY>201</posY>
           <width>1050</width>
-          <font>font11</font>
           <label>#ClickfinderPG.Movie2.Title ~ #ClickfinderPG.Movie2.Genre (#ClickfinderPG.Movie2.Channel - #ClickfinderPG.Movie2.Time)</label>
           <align>left</align>
           <visible>!string.equals(#ClickfinderPG.Movie2.Title,)</visible>
           <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
         </control>
-        <control>
+        <control Style="BasicHomeRecentlyLabel">
           <description>Clickfinder Updates</description>
           <type>label</type>
           <id>0</id>
           <posX>742</posX>
           <posY>236</posY>
           <width>1050</width>
-          <font>font11</font>
           <label>#ClickfinderPG.Movie3.Title ~ #ClickfinderPG.Movie3.Genre (#ClickfinderPG.Movie3.Channel - #ClickfinderPG.Movie3.Time)</label>
           <align>left</align>
           <visible>!string.equals(#ClickfinderPG.Movie3.Title,)</visible>
@@ -1069,7 +1969,7 @@
           <control>
             <description>MovieTvMovieStar1</description>
             <type>image</type>
-            <id>0</id>
+            <id>1</id>
             <width>44</width>
             <height>45</height>
             <texture>#ClickfinderPG.Movie1.TvMovieStar</texture>
@@ -1079,7 +1979,7 @@
           <control>
             <description>MovieTvMovieStar2</description>
             <type>image</type>
-            <id>0</id>
+            <id>1</id>
             <width>44</width>
             <height>45</height>
             <texture>#ClickfinderPG.Movie2.TvMovieStar</texture>
@@ -1089,7 +1989,7 @@
           <control>
             <description>MovieTvMovieStar3</description>
             <type>image</type>
-            <id>0</id>
+            <id>1</id>
             <width>44</width>
             <height>45</height>
             <texture>#ClickfinderPG.Movie3.TvMovieStar</texture>
@@ -1117,14 +2017,13 @@
           <colordiffuse>ffffffff</colordiffuse>
           <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
         </control>
-        <control>
+        <control Style="BasicHomeRecentlyLabel">
           <description>Updates label</description>
           <type>label</type>
           <id>0</id>
           <posX>124</posX>
           <posY>114</posY>
           <width>1030</width>
-          <font>font11</font>
           <label>#(L(603)):</label>
           <align>left</align>
           <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
@@ -1139,7 +2038,7 @@
           <control>
             <description>ChannelLogo1</description>
             <type>image</type>
-            <id>0</id>
+            <id>1</id>
             <width>30</width>
             <height>30</height>
             <texture>#latestMediaHandler.tvrecordings.scheduled1.channelLogo</texture>
@@ -1149,7 +2048,7 @@
           <control>
             <description>ChannelLogo2</description>
             <type>image</type>
-            <id>0</id>
+            <id>1</id>
             <width>30</width>
             <height>30</height>
             <texture>#latestMediaHandler.tvrecordings.scheduled2.channelLogo</texture>
@@ -1159,7 +2058,7 @@
           <control>
             <description>ChannelLogo3</description>
             <type>image</type>
-            <id>0</id>
+            <id>1</id>
             <width>30</width>
             <height>30</height>
             <texture>#latestMediaHandler.tvrecordings.scheduled3.channelLogo</texture>
@@ -1167,7 +2066,7 @@
             <keepaspectratio>no</keepaspectratio>
           </control>
         </control>
-        <control>
+        <control Style="BasicHomeRecentlyLabel">
           <description>Scheduled TVRecordings updates</description>
           <type>fadelabel</type>
           <id>0</id>
@@ -1176,12 +2075,12 @@
           <width>1500</width>
           <label>#latestMediaHandler.tvrecordings.scheduled1.title (#latestMediaHandler.tvrecordings.scheduled1.channel)      #latestMediaHandler.tvrecordings.scheduled1.startDate  ~  #latestMediaHandler.tvrecordings.scheduled1.startTime-#latestMediaHandler.tvrecordings.scheduled1.endTime</label>
           <align>left</align>
-          <font>font11</font>
+          <font>font12</font>
           <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
-          <textcolor>ivory</textcolor>
+          <textcolor>white</textcolor>
           <visible>!string.equals(#latestMediaHandler.tvrecordings.scheduled1.title,)</visible>
         </control>
-        <control>
+        <control Style="BasicHomeRecentlyLabel">
           <description>Scheduled TVRecordings updates</description>
           <type>fadelabel</type>
           <id>0</id>
@@ -1191,11 +2090,11 @@
           <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
           <label>#latestMediaHandler.tvrecordings.scheduled2.title (#latestMediaHandler.tvrecordings.scheduled2.channel)      #latestMediaHandler.tvrecordings.scheduled2.startDate  ~  #latestMediaHandler.tvrecordings.scheduled2.startTime-#latestMediaHandler.tvrecordings.scheduled2.endTime</label>
           <align>left</align>
-          <font>font11</font>
-          <textcolor>ivory</textcolor>
+          <font>font12</font>
+          <textcolor>white</textcolor>
           <visible>!string.equals(#latestMediaHandler.tvrecordings.scheduled2.title,)</visible>
         </control>
-        <control>
+        <control Style="BasicHomeRecentlyLabel">
           <description>Scheduled TVRecordings updates</description>
           <type>fadelabel</type>
           <id>0</id>
@@ -1205,8 +2104,8 @@
           <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
           <label>#latestMediaHandler.tvrecordings.scheduled3.title (#latestMediaHandler.tvrecordings.scheduled3.channel)      #latestMediaHandler.tvrecordings.scheduled3.startDate  ~  #latestMediaHandler.tvrecordings.scheduled3.startTime-#latestMediaHandler.tvrecordings.scheduled3.endTime</label>
           <align>left</align>
-          <font>font11</font>
-          <textcolor>ivory</textcolor>
+          <font>font12</font>
+          <textcolor>white</textcolor>
           <visible>!string.equals(#latestMediaHandler.tvrecordings.scheduled3.title,)</visible>
         </control>
       </control>
@@ -1247,7 +2146,6 @@
           <id>0</id>
           <posX>1387</posX>
           <posY>128</posY>
-          <font>font11</font>
           <label>#(L(158)): #DriveFreeSpace.AvailableSpace.Percentage%</label>
           <font>Label</font>
           <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
@@ -1294,14 +2192,13 @@
           <righttexture>overlay_progress_right_red.png</righttexture>
           <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
         </control>
-        <control>
+        <control Style="BasicHomeRecentlyLabel">
           <description>Updates label</description>
           <type>label</type>
           <id>0</id>
           <posX>124</posX>
           <posY>114</posY>
           <width>1030</width>
-          <font>font11</font>
           <label>#(L(603)):</label>
           <align>left</align>
           <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
@@ -1316,7 +2213,7 @@
           <control>
             <description>ChannelLogo1</description>
             <type>image</type>
-            <id>0</id>
+            <id>1</id>
             <width>30</width>
             <height>30</height>
             <texture>#latestMediaHandler.tvrecordings.scheduled1.channelLogo</texture>
@@ -1326,7 +2223,7 @@
           <control>
             <description>ChannelLogo2</description>
             <type>image</type>
-            <id>0</id>
+            <id>1</id>
             <width>30</width>
             <height>30</height>
             <texture>#latestMediaHandler.tvrecordings.scheduled2.channelLogo</texture>
@@ -1336,7 +2233,7 @@
           <control>
             <description>ChannelLogo3</description>
             <type>image</type>
-            <id>0</id>
+            <id>1</id>
             <width>30</width>
             <height>30</height>
             <texture>#latestMediaHandler.tvrecordings.scheduled3.channelLogo</texture>
@@ -1344,7 +2241,7 @@
             <keepaspectratio>no</keepaspectratio>
           </control>
         </control>
-        <control>
+        <control Style="BasicHomeRecentlyLabel">
           <description>Scheduled TVRecordings updates</description>
           <type>fadelabel</type>
           <id>0</id>
@@ -1353,12 +2250,12 @@
           <width>1177</width>
           <label>#latestMediaHandler.tvrecordings.scheduled1.title (#latestMediaHandler.tvrecordings.scheduled1.channel)      #latestMediaHandler.tvrecordings.scheduled1.startDate  ~  #latestMediaHandler.tvrecordings.scheduled1.startTime-#latestMediaHandler.tvrecordings.scheduled1.endTime</label>
           <align>left</align>
-          <font>font11</font>
+          <font>font12</font>
           <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
-          <textcolor>ivory</textcolor>
+          <textcolor>white</textcolor>
           <visible>!string.equals(#latestMediaHandler.tvrecordings.scheduled1.title,)</visible>
         </control>
-        <control>
+        <control Style="BasicHomeRecentlyLabel">
           <description>Scheduled TVRecordings updates</description>
           <type>fadelabel</type>
           <id>0</id>
@@ -1368,11 +2265,11 @@
           <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
           <label>#latestMediaHandler.tvrecordings.scheduled2.title (#latestMediaHandler.tvrecordings.scheduled2.channel)      #latestMediaHandler.tvrecordings.scheduled2.startDate  ~  #latestMediaHandler.tvrecordings.scheduled2.startTime-#latestMediaHandler.tvrecordings.scheduled2.endTime</label>
           <align>left</align>
-          <font>font11</font>
-          <textcolor>ivory</textcolor>
+          <font>font12</font>
+          <textcolor>white</textcolor>
           <visible>!string.equals(#latestMediaHandler.tvrecordings.scheduled2.title,)</visible>
         </control>
-        <control>
+        <control Style="BasicHomeRecentlyLabel">
           <description>Scheduled TVRecordings updates</description>
           <type>fadelabel</type>
           <id>0</id>
@@ -1382,8 +2279,8 @@
           <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
           <label>#latestMediaHandler.tvrecordings.scheduled3.title (#latestMediaHandler.tvrecordings.scheduled3.channel)      #latestMediaHandler.tvrecordings.scheduled3.startDate  ~  #latestMediaHandler.tvrecordings.scheduled3.startTime-#latestMediaHandler.tvrecordings.scheduled3.endTime</label>
           <align>left</align>
-          <font>font11</font>
-          <textcolor>ivory</textcolor>
+          <font>font12</font>
+          <textcolor>white</textcolor>
           <visible>!string.equals(#latestMediaHandler.tvrecordings.scheduled3.title,)</visible>
         </control>
       </control>
@@ -1405,14 +2302,13 @@
           <texture>osdbg2.png</texture>
           <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
         </control>
-        <control>
+        <control Style="BasicHomeRecentlyLabel">
           <description>Updates label</description>
           <type>label</type>
           <id>0</id>
           <posX>124</posX>
           <posY>114</posY>
           <width>1030</width>
-          <font>font11</font>
           <label>#(L(200052)):</label>
           <align>left</align>
           <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
@@ -1427,7 +2323,7 @@
           <control>
             <description>ChannelLogo1</description>
             <type>image</type>
-            <id>0</id>
+            <id>1</id>
             <width>30</width>
             <height>30</height>
             <texture>#latestMediaHandler.tvrecordings.active1.channelLogo</texture>
@@ -1437,7 +2333,7 @@
           <control>
             <description>ChannelLogo2</description>
             <type>image</type>
-            <id>0</id>
+            <id>1</id>
             <width>30</width>
             <height>30</height>
             <texture>#latestMediaHandler.tvrecordings.active2.channelLogo</texture>
@@ -1447,7 +2343,7 @@
           <control>
             <description>ChannelLogo3</description>
             <type>image</type>
-            <id>0</id>
+            <id>1</id>
             <width>30</width>
             <height>30</height>
             <texture>#latestMediaHandler.tvrecordings.active3.channelLogo</texture>
@@ -1455,7 +2351,7 @@
             <keepaspectratio>no</keepaspectratio>
           </control>
         </control>
-        <control>
+        <control Style="BasicHomeRecentlyLabel">
           <description>active TVRecordings updates</description>
           <type>fadelabel</type>
           <id>0</id>
@@ -1464,12 +2360,12 @@
           <width>1500</width>
           <label>#latestMediaHandler.tvrecordings.active1.title (#latestMediaHandler.tvrecordings.active1.channel)      #latestMediaHandler.tvrecordings.active1.startDate  ~  #latestMediaHandler.tvrecordings.active1.startTime-#latestMediaHandler.tvrecordings.active1.endTime</label>
           <align>left</align>
-          <font>font11</font>
+          <font>font12</font>
           <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
-          <textcolor>ivory</textcolor>
+          <textcolor>white</textcolor>
           <visible>!string.equals(#latestMediaHandler.tvrecordings.active1.title,)</visible>
         </control>
-        <control>
+        <control Style="BasicHomeRecentlyLabel">
           <description>active TVRecordings updates</description>
           <type>fadelabel</type>
           <id>0</id>
@@ -1479,11 +2375,11 @@
           <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
           <label>#latestMediaHandler.tvrecordings.active2.title (#latestMediaHandler.tvrecordings.active2.channel)      #latestMediaHandler.tvrecordings.active2.startDate  ~  #latestMediaHandler.tvrecordings.active2.startTime-#latestMediaHandler.tvrecordings.active2.endTime</label>
           <align>left</align>
-          <font>font11</font>
-          <textcolor>ivory</textcolor>
+          <font>font12</font>
+          <textcolor>white</textcolor>
           <visible>!string.equals(#latestMediaHandler.tvrecordings.active2.title,)</visible>
         </control>
-        <control>
+        <control Style="BasicHomeRecentlyLabel">
           <description>active TVRecordings updates</description>
           <type>fadelabel</type>
           <id>0</id>
@@ -1493,8 +2389,8 @@
           <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
           <label>#latestMediaHandler.tvrecordings.active3.title (#latestMediaHandler.tvrecordings.active3.channel)      #latestMediaHandler.tvrecordings.active3.startDate  ~  #latestMediaHandler.tvrecordings.active3.startTime-#latestMediaHandler.tvrecordings.active3.endTime</label>
           <align>left</align>
-          <font>font11</font>
-          <textcolor>ivory</textcolor>
+          <font>font12</font>
+          <textcolor>white</textcolor>
           <visible>!string.equals(#latestMediaHandler.tvrecordings.active3.title,)</visible>
         </control>
       </control>
@@ -1534,7 +2430,6 @@
           <id>0</id>
           <posX>1387</posX>
           <posY>128</posY>
-          <font>font11</font>
           <label>#(L(158)): #DriveFreeSpace.AvailableSpace.Percentage%</label>
           <font>Label</font>
           <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
@@ -1581,14 +2476,13 @@
           <righttexture>overlay_progress_right_red.png</righttexture>
           <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
         </control>
-        <control>
+        <control Style="BasicHomeRecentlyLabel">
           <description>Updates label</description>
           <type>label</type>
           <id>0</id>
           <posX>124</posX>
           <posY>114</posY>
           <width>1030</width>
-          <font>font11</font>
           <label>#(L(200052)):</label>
           <align>left</align>
           <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
@@ -1603,7 +2497,7 @@
           <control>
             <description>ChannelLogo1</description>
             <type>image</type>
-            <id>0</id>
+            <id>1</id>
             <width>30</width>
             <height>30</height>
             <texture>#latestMediaHandler.tvrecordings.active1.channelLogo</texture>
@@ -1613,7 +2507,7 @@
           <control>
             <description>ChannelLogo2</description>
             <type>image</type>
-            <id>0</id>
+            <id>1</id>
             <width>30</width>
             <height>30</height>
             <texture>#latestMediaHandler.tvrecordings.active2.channelLogo</texture>
@@ -1623,7 +2517,7 @@
           <control>
             <description>ChannelLogo3</description>
             <type>image</type>
-            <id>0</id>
+            <id>1</id>
             <width>30</width>
             <height>30</height>
             <texture>#latestMediaHandler.tvrecordings.active3.channelLogo</texture>
@@ -1631,7 +2525,7 @@
             <keepaspectratio>no</keepaspectratio>
           </control>
         </control>
-        <control>
+        <control Style="BasicHomeRecentlyLabel">
           <description>active TVRecordings updates</description>
           <type>fadelabel</type>
           <id>0</id>
@@ -1640,12 +2534,12 @@
           <width>1177</width>
           <label>#latestMediaHandler.tvrecordings.active1.title (#latestMediaHandler.tvrecordings.active1.channel)      #latestMediaHandler.tvrecordings.active1.startDate  ~  #latestMediaHandler.tvrecordings.active1.startTime-#latestMediaHandler.tvrecordings.active1.endTime</label>
           <align>left</align>
-          <font>font11</font>
+          <font>font12</font>
           <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
-          <textcolor>ivory</textcolor>
+          <textcolor>white</textcolor>
           <visible>!string.equals(#latestMediaHandler.tvrecordings.active1.title,)</visible>
         </control>
-        <control>
+        <control Style="BasicHomeRecentlyLabel">
           <description>active TVRecordings updates</description>
           <type>fadelabel</type>
           <id>0</id>
@@ -1655,11 +2549,11 @@
           <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
           <label>#latestMediaHandler.tvrecordings.active2.title (#latestMediaHandler.tvrecordings.active2.channel)      #latestMediaHandler.tvrecordings.active2.startDate  ~  #latestMediaHandler.tvrecordings.active2.startTime-#latestMediaHandler.tvrecordings.active2.endTime</label>
           <align>left</align>
-          <font>font11</font>
-          <textcolor>ivory</textcolor>
+          <font>font12</font>
+          <textcolor>white</textcolor>
           <visible>!string.equals(#latestMediaHandler.tvrecordings.active2.title,)</visible>
         </control>
-        <control>
+        <control Style="BasicHomeRecentlyLabel">
           <description>active TVRecordings updates</description>
           <type>fadelabel</type>
           <id>0</id>
@@ -1669,18 +2563,22 @@
           <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
           <label>#latestMediaHandler.tvrecordings.active3.title (#latestMediaHandler.tvrecordings.active3.channel)      #latestMediaHandler.tvrecordings.active3.startDate  ~  #latestMediaHandler.tvrecordings.active3.startTime-#latestMediaHandler.tvrecordings.active3.endTime</label>
           <align>left</align>
-          <font>font11</font>
-          <textcolor>ivory</textcolor>
+          <font>font12</font>
+          <textcolor>white</textcolor>
           <visible>!string.equals(#latestMediaHandler.tvrecordings.active3.title,)</visible>
         </control>
       </control>
       <!-- ******************************************************************************************* -->
-      <!-- *************************** RECENTLY ADDED MVCENTRAL ************************************** -->
+      <!-- ************************* RECENTLY ADDED ~ MVCENTRAL ************************************** -->
       <!-- ******************************************************************************************* -->
       <control>
+        <type>group</type>
+        <description>group element</description>
+        <visible>plugin.isenabled(Latest Media Handler)+plugin.isenabled(mvCentral)+string.contains(#highlightedbutton,AUDIO6)+!string.equals(#latestMediaHandler.mvcentral.latest.enabled,)+!string.equals(#latestMediaHandler.mvcentral.latest1.artist,)</visible>
+        <control>
           <description>background for recently added files</description>
           <type>image</type>
-          <id>0</id>
+          <id>5555</id>
           <posX>70</posX>
           <posY>90</posY>
           <width>1770</width>
@@ -1688,97 +2586,94 @@
           <texture>osdbg2.png</texture>
           <colordiffuse>ffffffff</colordiffuse>
           <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
-          <visible>plugin.isenabled(Latest Media Handler)+plugin.isenabled(mvCentral)+string.equals(#latestMediaHandler.mvcentral.latest.enabled,true)+!string.equals(#latestMediaHandler.mvcentral.latest1.artist,)+[string.contains(#highlightedbutton,AUDIO6)|Control.hasfocus(919299280)]</visible>
         </control>
         <control>
+          <type>group</type>
+          <description>group element</description>
+          <layout>StackLayout(10, Horizontal, true)</layout>
+          <posX>124</posX>
+          <posY>159</posY>
+          <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
+          <control>
+            <description>Cover1</description>
+            <type>image</type>
+            <id>1</id>
+            <width>132</width>
+            <height>132</height>
+            <texture mask="cdcase_mask.png">#latestMediaHandler.mvcentral.latest1.thumb</texture>
+          </control>
+          <control>
+            <description>Cover2</description>
+            <type>image</type>
+            <id>1</id>
+            <width>132</width>
+            <height>132</height>
+            <texture mask="cdcase_mask.png">#latestMediaHandler.mvcentral.latest2.thumb</texture>
+          </control>
+          <control>
+            <description>Cover3</description>
+            <type>image</type>
+            <id>1</id>
+            <width>132</width>
+            <height>132</height>
+            <texture mask="cdcase_mask.png">#latestMediaHandler.mvcentral.latest3.thumb</texture>
+          </control>
+        </control>
+        <control Style="BasicHomeRecentlyLabel">
           <description>Updates label</description>
           <type>label</type>
           <id>0</id>
           <posX>124</posX>
           <posY>114</posY>
-          <width>1750</width>
-          <font>font11</font>
-          <label>#latestMediaHandler.mvcentral.label  #latestMediaHandler.mvcentral.selected.artist ~ #latestMediaHandler.mvcentral.selected.album  (#latestMediaHandler.mvcentral.selected.dateAdded)</label>
+          <width>393</width>
+          <label>#latestMediaHandler.music.label</label>
           <align>left</align>
           <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
-          <visible>plugin.isenabled(Latest Media Handler)+plugin.isenabled(mvCentral)+string.equals(#latestMediaHandler.mvcentral.latest.enabled,true)+!string.equals(#latestMediaHandler.mvcentral.latest1.artist,)+[string.contains(#highlightedbutton,AUDIO6)|Control.hasfocus(919299280)]</visible>
         </control>
-        <control>
-        <description>composite control consisting of a list control and a thumbnail panel</description>
-        <type>facadeview</type>
-        <id>919299280</id>
-        <control>
-          <description>Filmstrip view</description>
-          <type>filmstrip</type>
-          <id>919299280</id>
-          <posX>124</posX>
+        <control Style="BasicHomeRecentlyLabel">
+          <description>mvCentral updates</description>
+          <type>label</type>
+          <id>0</id>
+          <posX>574</posX>
           <posY>159</posY>
-          <width>1850</width>
-          <height>140</height>
-          <onleft>820101</onleft>
-          <onright>820101</onright>
-          <onup>17</onup>
-          <ondown>820101</ondown>
-          <itemWidth>150</itemWidth>
-          <itemHeight>150</itemHeight>
-          <textureWidth>132</textureWidth>
-          <textureHeight>132</textureHeight>
-          <thumbWidth>132</thumbWidth>
-          <thumbHeight>132</thumbHeight>
-          <thumbPosX>0</thumbPosX>
-          <thumbPosY>0</thumbPosY>
-          <keepaspectratio>no</keepaspectratio>
-          <thumbs mask="cdcase_mask.png" />
-          <!--<InfoImage flipY="true" diffuse="Thumb_Mask.png"/>-->
-          <imageFolder></imageFolder>
-          <imageFolderFocus></imageFolderFocus>
-          <frameFocus>cdcase-focus.png</frameFocus>
-          <showFrame>yes</showFrame>
-          <showFolder>yes</showFolder>
-          <showBackGround>no</showBackGround>
-          <showInfoImage>no</showInfoImage>
-          <enableFocusZoom>no</enableFocusZoom>
-          <scrollOffset>5</scrollOffset>
-          <suffix>|</suffix>
-          <folderPrefix />
-          <folderSuffix />
-          <showScrollbar>no</showScrollbar>
-          <thumbAnimation effect="zoom" start="100,100" end="110,110" time="300" tween="circle" ease="inout">focus</thumbAnimation>
-          <thumbAnimation effect="zoom" start="110,110" end="100,100" time="200" tween="back" ease="inout">unfocus</thumbAnimation>
-          <spinPosX>3710</spinPosX>
-          <spinPosY>801</spinPosY>
-          <visible>plugin.isenabled(Latest Media Handler)+plugin.isenabled(mvCentral)+string.equals(#latestMediaHandler.mvcentral.latest.enabled,true)+!string.equals(#latestMediaHandler.mvcentral.latest1.artist,)+[string.contains(#highlightedbutton,AUDIO6)|Control.hasfocus(919299280)]</visible>
+          <width>1196</width>
+          <label>#latestMediaHandler.mvcentral.latest1.artist ~ #latestMediaHandler.mvcentral.latest1.album ~ #latestMediaHandler.mvcentral.latest1.track (#latestMediaHandler.mvcentral.latest1.dateAdded)</label>
+          <align>left</align>
+          <font>font12</font>
+          <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
+          <textcolor>white</textcolor>
+          <visible>!string.equals(#latestMediaHandler.mvcentral.latest1.artist,)</visible>
         </control>
-        </control>
-        <control>
-          <description>Plot Background</description>
-          <type>image</type>
+        <control Style="BasicHomeRecentlyLabel">
+          <description>mvCentral updates</description>
+          <type>label</type>
           <id>0</id>
-          <posX>70</posX>
-          <posY>330</posY>
-          <width>1770</width>
-          <height>225</height>
-          <texture>osdbg2.png</texture>
-          <colordiffuse>ffffffff</colordiffuse>
-          <animation effect="fade" delay="1000" time="500">visible</animation>
-          <visible>control.hasfocus(919299280)</visible>
+          <posX>574</posX>
+          <posY>194</posY>
+          <width>1196</width>
+          <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
+          <label>#latestMediaHandler.mvcentral.latest2.artist ~ #latestMediaHandler.mvcentral.latest2.album ~ #latestMediaHandler.mvcentral.latest2.track (#latestMediaHandler.mvcentral.latest2.dateAdded)</label>
+          <align>left</align>
+          <font>font12</font>
+          <textcolor>white</textcolor>
+          <visible>!string.equals(#latestMediaHandler.mvcentral.latest2.artist,)</visible>
         </control>
-        <control>
-          <description>music artistbio 1</description>
-          <type>textboxscrollup</type>
+        <control Style="BasicHomeRecentlyLabel">
+          <description>mvCentral updates</description>
+          <type>label</type>
           <id>0</id>
-          <posX>140</posX>
-          <posY>360</posY>
-          <width>1650</width>
-          <height>165</height>
-          <font>font10</font>
-          <textcolor>ffffffff</textcolor>
-          <label>#latestMediaHandler.mvcentral.selected.artistbio</label>
-          <visible>control.hasfocus(919299280)</visible>
-          <animation effect="fade" delay="1000" time="500">visible</animation>
+          <posX>574</posX>
+          <posY>229</posY>
+          <width>1196</width>
+          <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
+          <label>#latestMediaHandler.mvcentral.latest3.artist ~ #latestMediaHandler.mvcentral.latest3.album ~ #latestMediaHandler.mvcentral.latest3.track (#latestMediaHandler.mvcentral.latest3.dateAdded)</label>
+          <align>left</align>
+          <font>font12</font>
+          <textcolor>white</textcolor>
+          <visible>!string.equals(#latestMediaHandler.mvcentral.latest3.artist,)</visible>
         </control>
-        </control>
-    <!-- END OF BIG GROUP!!! -->
+      </control>
+    </control>
     <!-- ******************************************************************************************* -->
     <!-- ************************* RECENTLY ADDED ~ LYRICS ***************************************** -->
     <!-- ******************************************************************************************* -->
@@ -1808,6 +2703,126 @@
       <visible>plugin.isenabled(My Lyrics)+string.contains(#highlightedbutton,AUDIO8)+Player.HasAudio+!Player.HasVideo</visible>
       <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
     </control>
+    <!-- ******************************************************************************************* -->
+    <!-- *************************    ANIMATED PLAY BUTTON    ************************************** -->
+    <!-- ******************************************************************************************* -->
+    <!-- ******************************************************************************************* -->
+    <!-- ************************* ANIMATED PLAY BUTTON CD FRAME  ********************************** -->
+    <!-- ******************************************************************************************* -->
+    <control>
+      <type>image</type>
+      <id>0</id>
+      <posX>124</posX>
+      <posY>159</posY>
+      <width>132</width>
+      <height>132</height>
+      <texture>cdcase-rotating.png</texture>
+      <animation effect="zoom" start="100,100" end="108,108" time="100">visible</animation>
+      <animation effect="rotate" delay="0" end="-360" time="2000" loop="true" condition="true">conditional</animation>
+      <visible>control.hasfocus(91919997)</visible>
+    </control>
+    <control>
+      <type>image</type>
+      <id>0</id>
+      <posX>266</posX>
+      <posY>159</posY>
+      <width>132</width>
+      <height>132</height>
+      <texture>cdcase-rotating.png</texture>
+      <animation effect="zoom" start="100,100" end="108,108" time="100">visible</animation>
+      <animation effect="rotate" delay="0" end="-360" time="2000" loop="true" condition="true">conditional</animation>
+      <visible>control.hasfocus(91919998)</visible>
+    </control>
+    <control>
+      <type>image</type>
+      <id>0</id>
+      <posX>408</posX>
+      <posY>159</posY>
+      <width>132</width>
+      <height>132</height>
+      <texture>cdcase-rotating.png</texture>
+      <animation effect="zoom" start="100,100" end="108,108" time="100">visible</animation>
+      <animation effect="rotate" delay="0" end="-360" time="2000" loop="true" condition="true">conditional</animation>
+      <visible>control.hasfocus(91919999)</visible>
+    </control>
+    <!-- ******************************************************************************************* -->
+    <!-- ************************* ANIMATED PLAY BUTTON PICTURE FRAME  ***************************** -->
+    <!-- ******************************************************************************************* -->
+    <control>
+      <type>image</type>
+      <id>0</id>
+      <posX>159</posX>
+      <posY>159</posY>
+      <width>118</width>
+      <height>118</height>
+      <texture>cdcase-rotating.png</texture>
+      <animation effect="zoom" start="100,100" end="108,108" time="100">visible</animation>
+      <animation effect="rotate" delay="0" end="-360" time="2000" loop="true" condition="true">conditional</animation>
+      <visible>control.hasfocus(91919994)|control.hasfocus(91919984)|control.hasfocus(91919971)</visible>
+    </control>
+    <control>
+      <type>image</type>
+      <id>0</id>
+      <posX>357</posX>
+      <posY>159</posY>
+      <width>118</width>
+      <height>118</height>
+      <texture>cdcase-rotating.png</texture>
+      <animation effect="zoom" start="100,100" end="108,108" time="100">visible</animation>
+      <animation effect="rotate" delay="0" end="-360" time="2000" loop="true" condition="true">conditional</animation>
+      <visible>control.hasfocus(91919995)|control.hasfocus(91919985)|control.hasfocus(91919972)</visible>
+    </control>
+    <control>
+      <type>image</type>
+      <id>0</id>
+      <posX>555</posX>
+      <posY>159</posY>
+      <width>118</width>
+      <height>118</height>
+      <texture>cdcase-rotating.png</texture>
+      <animation effect="zoom" start="100,100" end="108,108" time="100">visible</animation>
+      <animation effect="rotate" delay="0" end="-360" time="2000" loop="true" condition="true">conditional</animation>
+      <visible>control.hasfocus(91919996)|control.hasfocus(91919986)|control.hasfocus(91919973)</visible>
+    </control>
+    <!-- ******************************************************************************************* -->
+    <!-- ************************* ANIMATED PLAY BUTTON DVD FRAME  ********************************* -->
+    <!-- ******************************************************************************************* -->
+    <control>
+      <type>image</type>
+      <id>0</id>
+      <posX>118</posX>
+      <posY>179</posY>
+      <width>132</width>
+      <height>132</height>
+      <texture>cdcase-rotating.png</texture>
+      <animation effect="zoom" start="100,100" end="108,108" time="100">visible</animation>
+      <animation effect="rotate" delay="0" end="-360" time="2000" loop="true" condition="true">conditional</animation>
+      <visible>control.hasfocus(91919991)|control.hasfocus(91919988)|control.hasfocus(91915991)</visible>
+    </control>
+    <control>
+      <type>image</type>
+      <id>0</id>
+      <posX>246</posX>
+      <posY>179</posY>
+      <width>132</width>
+      <height>132</height>
+      <texture>cdcase-rotating.png</texture>
+      <animation effect="zoom" start="100,100" end="108,108" time="100">visible</animation>
+      <animation effect="rotate" delay="0" end="-360" time="2000" loop="true" condition="true">conditional</animation>
+      <visible>control.hasfocus(91919992)|control.hasfocus(91919989)|control.hasfocus(91915992)</visible>
+    </control>
+    <control>
+      <type>image</type>
+      <id>0</id>
+      <posX>376</posX>
+      <posY>179</posY>
+      <width>132</width>
+      <height>132</height>
+      <texture>cdcase-rotating.png</texture>
+      <animation effect="zoom" start="100,100" end="108,108" time="100">visible</animation>
+      <animation effect="rotate" delay="0" end="-360" time="2000" loop="true" condition="true">conditional</animation>
+      <visible>control.hasfocus(91919993)|control.hasfocus(91919990)|control.hasfocus(91915993)</visible>
+    </control>
     <!--     *******************************************************************************************  -->
     <!--     *****************************  WEATHER INFO ON BASIC HOME  ********************************  -->
     <!--     *******************************************************************************************  -->
@@ -1821,7 +2836,7 @@
       <control>
         <description>weather area</description>
         <type>image</type>
-        <id>0</id>
+        <id>1</id>
         <posX>70</posX>
         <posY>90</posY>
         <width>1770</width>
@@ -1838,7 +2853,7 @@
         <control>
           <description>Location</description>
           <type>label</type>
-          <id>0</id>
+          <id>1</id>
           <width>410</width>
           <font>font10</font>
           <textcolor>gainsboro</textcolor>
@@ -1847,7 +2862,7 @@
         <control>
           <description>Location</description>
           <type>label</type>
-          <id>0</id>
+          <id>1</id>
           <font>font10</font>
           <width>410</width>
           <textcolor>gainsboro</textcolor>
@@ -1856,7 +2871,7 @@
         <control>
           <description>Location</description>
           <type>label</type>
-          <id>0</id>
+          <id>1</id>
           <font>font10</font>
           <width>410</width>
           <textcolor>gainsboro</textcolor>
@@ -1865,7 +2880,7 @@
         <control>
           <description>Location</description>
           <type>label</type>
-          <id>0</id>
+          <id>1</id>
           <font>font10</font>
           <width>410</width>
           <textcolor>gainsboro</textcolor>
@@ -1881,7 +2896,7 @@
         <control>
           <description>Temperature</description>
           <type>label</type>
-          <id>0</id>
+          <id>1</id>
           <font>font10</font>
           <width>410</width>
           <textcolor>ivory</textcolor>
@@ -1890,7 +2905,7 @@
         <control>
           <description>Temperature</description>
           <type>label</type>
-          <id>0</id>
+          <id>1</id>
           <font>font10</font>
           <width>410</width>
           <textcolor>ivory</textcolor>
@@ -1899,7 +2914,7 @@
         <control>
           <description>Temperature</description>
           <type>label</type>
-          <id>0</id>
+          <id>1</id>
           <font>font10</font>
           <width>410</width>
           <textcolor>ivory</textcolor>
@@ -1908,7 +2923,7 @@
         <control>
           <description>Temperature</description>
           <type>label</type>
-          <id>0</id>
+          <id>1</id>
           <width>410</width>
           <font>font10</font>
           <textcolor>ivory</textcolor>
@@ -1924,7 +2939,7 @@
         <control>
           <description>Condition</description>
           <type>fadelabel</type>
-          <id>0</id>
+          <id>1</id>
           <width>410</width>
           <font>font10</font>
           <textcolor>ivory</textcolor>
@@ -1933,7 +2948,7 @@
         <control>
           <description>Condition</description>
           <type>fadelabel</type>
-          <id>0</id>
+          <id>1</id>
           <width>410</width>
           <font>font10</font>
           <textcolor>ivory</textcolor>
@@ -1942,7 +2957,7 @@
         <control>
           <description>Condition</description>
           <type>fadelabel</type>
-          <id>0</id>
+          <id>1</id>
           <width>410</width>
           <font>font10</font>
           <textcolor>ivory</textcolor>
@@ -1951,7 +2966,7 @@
         <control>
           <description>Condition</description>
           <type>fadelabel</type>
-          <id>0</id>
+          <id>1</id>
           <width>410</width>
           <font>font10</font>
           <textcolor>ivory</textcolor>
@@ -1967,7 +2982,7 @@
         <control>
           <description>Weather image</description>
           <type>image</type>
-          <id>0</id>
+          <id>1</id>
           <width>131</width>
           <height>90</height>
           <texture>#WorldWeather.ForecastDay1IconImage</texture>
@@ -1975,7 +2990,7 @@
         <control>
           <description>Weather image</description>
           <type>image</type>
-          <id>0</id>
+          <id>1</id>
           <width>131</width>
           <height>90</height>
           <texture>#WorldWeather.ForecastDay2IconImage</texture>
@@ -1983,7 +2998,7 @@
         <control>
           <description>Weather image</description>
           <type>image</type>
-          <id>0</id>
+          <id>1</id>
           <width>131</width>
           <height>90</height>
           <texture>#WorldWeather.ForecastDay3IconImage</texture>
@@ -1991,7 +3006,7 @@
         <control>
           <description>Weather image</description>
           <type>image</type>
-          <id>0</id>
+          <id>1</id>
           <width>131</width>
           <height>90</height>
           <texture>#WorldWeather.ForecastDay4IconImage</texture>
@@ -2000,7 +3015,7 @@
       <control>
         <description>Weather image</description>
         <type>image</type>
-        <id>0</id>
+        <id>1</id>
         <posX>135</posX>
         <posY>113</posY>
         <width>131</width>
@@ -2010,7 +3025,7 @@
       <control>
         <description>Weather image</description>
         <type>image</type>
-        <id>0</id>
+        <id>1</id>
         <posX>1715</posX>
         <posY>123</posY>
         <width>72</width>
@@ -2038,6 +3053,19 @@
         <height>70</height>
         <label>#(L(143)) #WorldWeather.TodayCondition ~ #WorldWeather.TranslationPrecipitation: #WorldWeather.TodayPrecipitation  ~  #WorldWeather.TranslationVisibility: #WorldWeather.TodayVisibility  ~  #WorldWeather.TranslationWind: #WorldWeather.TodayWindDirection - #WorldWeather.TodayWindSpeed  ~  #WorldWeather.TranslationHumidity: #WorldWeather.TodayHumidity  ~  #WorldWeather.TranslationPressure: #WorldWeather.TodayPressure (#WorldWeather.TodayBarometricPressure)  ~  #WorldWeather.TranslationDewPoint: #WorldWeather.TodayDewPoint  ~  #WorldWeather.TranslationSunrise: #WorldWeather.LocationSunriseTime  ~  #WorldWeather.TranslationSunset: #WorldWeather.LocationSunsetTime  ~  #WorldWeather.TranslationMoonPhase: #WorldWeather.LocationMoonPhase</label>
         <font>font10</font>
+        <visible>!skin.hassetting(#skin.worldweatherlite)</visible>
+      </control>
+      <control>
+        <description>weather conditions textbox</description>
+        <type>fadelabel</type>
+        <id>0</id>
+        <posX>290</posX>
+        <posY>123</posY>
+        <width>1400</width>
+        <height>70</height>
+        <label>#WorldWeather.TranslationTodayCondition: #WorldWeather.TodayCondition ~ #WorldWeather.TranslationVisibility: #WorldWeather.TodayVisibility   ~   #WorldWeather.TranslationWind: #WorldWeather.TodayWindDirection - #WorldWeather.TodayWindSpeed   ~   #WorldWeather.TranslationHumidity: #WorldWeather.TodayHumidity   ~   #WorldWeather.TranslationPressure: #WorldWeather.TodayPressure   ~   #WorldWeather.TranslationDewPoint: #WorldWeather.TodayDewPoint</label>
+        <font>font10</font>
+        <visible>skin.hassetting(#skin.worldweatherlite)</visible>
       </control>
     </control>
   </controls>
