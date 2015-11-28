@@ -474,7 +474,18 @@ namespace MediaPortal.GUI.Library
       }
 
       // else load xml file now
-      LoadSkin();
+      if (System.Windows.Forms.Form.ActiveForm != null && System.Windows.Forms.Form.ActiveForm.InvokeRequired)
+      {
+        GUIWindow._mainThreadContext.Send(delegate
+        {
+          LoadSkin();
+        }, null);
+      }
+      else
+      {
+        LoadSkin();
+      }
+      //LoadSkin();
       if (!_windowAllocated)
       {
         AllocResources();
@@ -1068,7 +1079,17 @@ namespace MediaPortal.GUI.Library
     {
       if (_isSkinLoaded && (_lastSkin != GUIGraphicsContext.Skin))
       {
-        LoadSkin();
+        if (System.Windows.Forms.Form.ActiveForm != null && System.Windows.Forms.Form.ActiveForm.InvokeRequired)
+        {
+          GUIWindow._mainThreadContext.Send(delegate
+          {
+            LoadSkin();
+          }, null);
+        }
+        else
+        {
+          LoadSkin();
+        }
       }
 
       if (_rememberLastFocusedControl && _rememberLastFocusedControlId >= 0)
@@ -1196,7 +1217,17 @@ namespace MediaPortal.GUI.Library
         }
 
         Dispose();
-        LoadSkin();
+        if (System.Windows.Forms.Form.ActiveForm != null && System.Windows.Forms.Form.ActiveForm.InvokeRequired)
+        {
+          GUIWindow._mainThreadContext.Send(delegate
+          {
+            LoadSkin();
+          }, null);
+        }
+        else
+        {
+          LoadSkin();
+        }
         HashSet<int> faultyControl = new HashSet<int>();
         // tell every control we're gonna alloc the resources next
         for (int i = 0; i < Children.Count; i++)
@@ -1740,7 +1771,17 @@ namespace MediaPortal.GUI.Library
               }
               else
               {
-                LoadSkin();
+                if (System.Windows.Forms.Form.ActiveForm != null && System.Windows.Forms.Form.ActiveForm.InvokeRequired)
+                {
+                  GUIWindow._mainThreadContext.Send(delegate
+                  {
+                    LoadSkin();
+                  }, null);
+                }
+                else
+                {
+                  LoadSkin();
+                }
                 if (!_windowAllocated)
                 {
                   AllocResources();
