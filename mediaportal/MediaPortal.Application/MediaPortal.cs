@@ -142,6 +142,7 @@ public class MediaPortalApp : D3D, IRender
   private bool                  _usePrimaryScreen;
   private string                _screenDisplayName;
   private bool                  _resumedFromInputSession;
+  private bool                  _threadedStartup;
 
   // ReSharper disable InconsistentNaming
   private const int WM_SYSCOMMAND            = 0x0112; // http://msdn.microsoft.com/en-us/library/windows/desktop/ms646360(v=vs.85).aspx
@@ -3446,20 +3447,24 @@ public class MediaPortalApp : D3D, IRender
       _locationY = xmlreader.GetValueAsInt("gui", "lastlocationy", 0);
       _backupSizeWidth = xmlreader.GetValueAsInt("gui", "backupsizewidth", 0);
       _backupSizeHeight = xmlreader.GetValueAsInt("gui", "backupsizeheight", 0);
+      _threadedStartup = xmlreader.GetValueAsBool("general", "threadedstartup", false);
     }
 
     Log.Info("Startup: Starting Window Manager");
     GUIWindowManager.PreInit();
     GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.RUNNING;
 
-    Log.Info("Startup: Activating Window Manager");
-    if ((_startWithBasicHome) && (File.Exists(GUIGraphicsContext.GetThemedSkinFile(@"\basichome.xml"))))
+    if (!_threadedStartup)
     {
-      GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_SECOND_HOME);
-    }
-    else
-    {
-      GUIWindowManager.ActivateWindow(GUIWindowManager.ActiveWindow);
+      Log.Info("Startup: Activating Window Manager");
+      if ((_startWithBasicHome) && (File.Exists(GUIGraphicsContext.GetThemedSkinFile(@"\basichome.xml"))))
+      {
+        GUIWindowManager.ActivateWindow((int) GUIWindow.Window.WINDOW_SECOND_HOME);
+      }
+      else
+      {
+        GUIWindowManager.ActivateWindow(GUIWindowManager.ActiveWindow);
+      }
     }
 
     // setting D3D9 helper variables

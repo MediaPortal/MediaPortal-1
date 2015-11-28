@@ -24,6 +24,7 @@ using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
@@ -815,6 +816,20 @@ namespace MediaPortal
         TopMost = false; // important
         Focus();
         _firstTimeActivated = false;
+
+        using (Settings xmlreader = new MPSettings())
+        {
+          Log.Info("Startup: Activating Window Manager");
+          if ((xmlreader.GetValueAsBool("general", "threadedstartup", false)) &&
+              (File.Exists(GUIGraphicsContext.GetThemedSkinFile(@"\basichome.xml"))))
+          {
+            GUIWindowManager.ActivateWindow((int) GUIWindow.Window.WINDOW_SECOND_HOME);
+          }
+          else
+          {
+            GUIWindowManager.ActivateWindow(GUIWindowManager.ActiveWindow);
+          }
+        }
       }
     }
 

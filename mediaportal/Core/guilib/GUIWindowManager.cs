@@ -874,16 +874,23 @@ namespace MediaPortal.GUI.Library
         #endregion
 
         //activate the new window
-        _activeWindowId = newWindow.GetID;
-        if (OnActivateWindow != null)
+        if (newWindow != null)
         {
-          OnActivateWindow(_activeWindowId);
-        }
+          _activeWindowId = newWindow.GetID;
+          if (OnActivateWindow != null)
+          {
+            OnActivateWindow(_activeWindowId);
+          }
 
-        msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_INIT, _activeWindowId, 0, 0, _previousActiveWindowId,
-                             (skipAnimation ? 1 : 0), loadParameter);
-        msg.Param3 = focusControlId;
-        newWindow.OnMessage(msg);
+            msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_INIT, _activeWindowId, 0, 0, _previousActiveWindowId,
+                                 (skipAnimation ? 1 : 0), loadParameter);
+            msg.Param3 = focusControlId;
+            newWindow.OnMessage(msg);
+        }
+        else
+        {
+          Log.Error("Windowmanager: can't load newWindow");
+        }
       }
       catch (Exception ex)
       {
