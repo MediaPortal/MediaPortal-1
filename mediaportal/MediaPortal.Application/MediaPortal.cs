@@ -3447,24 +3447,20 @@ public class MediaPortalApp : D3D, IRender
       _locationY = xmlreader.GetValueAsInt("gui", "lastlocationy", 0);
       _backupSizeWidth = xmlreader.GetValueAsInt("gui", "backupsizewidth", 0);
       _backupSizeHeight = xmlreader.GetValueAsInt("gui", "backupsizeheight", 0);
-      _threadedStartup = xmlreader.GetValueAsBool("general", "threadedstartup", false);
     }
 
     Log.Info("Startup: Starting Window Manager");
     GUIWindowManager.PreInit();
     GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.RUNNING;
 
-    if (!_threadedStartup)
+    Log.Info("Startup: Activating Window Manager");
+    if ((_startWithBasicHome) && (File.Exists(GUIGraphicsContext.GetThemedSkinFile(@"\basichome.xml"))))
     {
-      Log.Info("Startup: Activating Window Manager");
-      if ((_startWithBasicHome) && (File.Exists(GUIGraphicsContext.GetThemedSkinFile(@"\basichome.xml"))))
-      {
-        GUIWindowManager.ActivateWindow((int) GUIWindow.Window.WINDOW_SECOND_HOME);
-      }
-      else
-      {
-        GUIWindowManager.ActivateWindow(GUIWindowManager.ActiveWindow);
-      }
+      GUIWindowManager.ActivateWindow((int) GUIWindow.Window.WINDOW_SECOND_HOME);
+    }
+    else
+    {
+      GUIWindowManager.ActivateWindow(GUIWindowManager.ActiveWindow);
     }
 
     // setting D3D9 helper variables
