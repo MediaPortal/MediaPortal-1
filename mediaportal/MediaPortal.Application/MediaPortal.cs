@@ -2201,6 +2201,7 @@ public class MediaPortalApp : D3D, IRender
                 GUIGraphicsContext.DeviceAudioConnected--;
                 if (_stopOnLostAudioRenderer)
                 {
+                  Log.Debug("Main: Stop playback");
                   g_Player.Stop();
                   while (GUIGraphicsContext.IsPlaying)
                   {
@@ -2221,6 +2222,7 @@ public class MediaPortalApp : D3D, IRender
                 GUIGraphicsContext.DeviceAudioConnected++;
                 if (_stopOnLostAudioRenderer)
                 {
+                  Log.Debug("Main: Stop playback");
                   g_Player.Stop();
                   while (GUIGraphicsContext.IsPlaying)
                   {
