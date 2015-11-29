@@ -483,7 +483,10 @@ namespace MediaPortal.GUI.Library
       }
       else
       {
-        LoadSkin();
+        GUIWindow._mainThreadContext.Send(delegate
+        {
+          LoadSkin();
+        }, null);
       }
       if (!_windowAllocated)
       {
@@ -1087,7 +1090,10 @@ namespace MediaPortal.GUI.Library
         }
         else
         {
-          LoadSkin();
+          GUIWindow._mainThreadContext.Send(delegate
+          {
+            LoadSkin();
+          }, null);
         }
       }
 
@@ -1225,7 +1231,10 @@ namespace MediaPortal.GUI.Library
         }
         else
         {
-          LoadSkin();
+          GUIWindow._mainThreadContext.Send(delegate
+          {
+            LoadSkin();
+          }, null);
         }
         HashSet<int> faultyControl = new HashSet<int>();
         // tell every control we're gonna alloc the resources next
@@ -1779,7 +1788,10 @@ namespace MediaPortal.GUI.Library
                 }
                 else
                 {
-                  LoadSkin();
+                  GUIWindow._mainThreadContext.Send(delegate
+                  {
+                    LoadSkin();
+                  }, null);
                 }
                 if (!_windowAllocated)
                 {
