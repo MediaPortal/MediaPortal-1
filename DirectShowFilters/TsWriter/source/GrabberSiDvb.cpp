@@ -871,6 +871,7 @@ STDMETHODIMP_(bool) CGrabberSiDvb::GetTransmitter(unsigned short index,
                                                   short* longitude,
                                                   unsigned short* cellId,
                                                   unsigned char* cellIdExtension,
+                                                  bool* isMultipleInputStream,
                                                   unsigned char* plpId)
 {
   return m_parserNit.GetTransmitter(index,
@@ -891,6 +892,7 @@ STDMETHODIMP_(bool) CGrabberSiDvb::GetTransmitter(unsigned short index,
                                     *longitude,
                                     *cellId,
                                     *cellIdExtension,
+                                    *isMultipleInputStream,
                                     *plpId);
 }
 

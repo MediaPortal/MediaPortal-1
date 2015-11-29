@@ -204,5 +204,6 @@ DECLARE_INTERFACE_(IGrabberSiDvb, IGrabber)
                                     short* longitude,
                                     unsigned short* cellId,
                                     unsigned char* cellIdExtension,
+                                    bool* isMultipleInputStream,
                                     unsigned char* plpId)PURE;
 };

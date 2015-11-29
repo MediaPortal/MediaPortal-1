@@ -1140,6 +1140,7 @@ bool CParserNitDvb::GetTransmitter(unsigned short index,
                                     short& longitude,
                                     unsigned short& cellId,
                                     unsigned char& cellIdExtension,
+                                    bool& isMultipleInputStream,
                                     unsigned char& plpId) const
 {
   CEnterCriticalSection lock(m_section);
@@ -1196,6 +1197,7 @@ bool CParserNitDvb::GetTransmitter(unsigned short index,
                   transportStreamId, recordCable->ActiveOfdmSymbolDuration);
         bandwidth = 6000;
       }
+      isMultipleInputStream = true;
       plpId = recordCable->PlpId;
     }
     else
@@ -1204,6 +1206,7 @@ bool CParserNitDvb::GetTransmitter(unsigned short index,
       modulation = recordCable->Modulation;
       symbolRate = recordCable->SymbolRate;
       innerFecRate = recordCable->InnerFecRate;
+      isMultipleInputStream = false;
     }
 
     polarisation = 0;
@@ -1226,11 +1229,13 @@ bool CParserNitDvb::GetTransmitter(unsigned short index,
     if (recordSatellite->IsS2)
     {
       broadcastStandard = 0x0200;   // This is as-per the TV Server database BroadcastStandard.DvbS2 value.
+      isMultipleInputStream = recordSatellite->MultipleInputStreamFlag;
       plpId = recordSatellite->InputStreamIdentifier;
     }
     else
     {
       broadcastStandard = 0x0100;   // This is as-per the TV Server database BroadcastStandard.DvbS value.
+      isMultipleInputStream = false;
     }
 
     bandwidth = 0;
@@ -1248,11 +1253,13 @@ bool CParserNitDvb::GetTransmitter(unsigned short index,
       broadcastStandard = 0x1000;   // This is as-per the TV Server database BroadcastStandard.DvbT2 value.
       cellId = recordTerrestrial->CellId;
       cellIdExtension = recordTerrestrial->CellIdExtension;
+      isMultipleInputStream = recordTerrestrial->MultipleInputStreamFlag;
       plpId = recordTerrestrial->PlpId;
     }
     else
     {
       broadcastStandard = 0x0800;   // This is as-per the TV Server database BroadcastStandard.DvbT value.
+      isMultipleInputStream = false;
     }
 
     polarisation = 0;

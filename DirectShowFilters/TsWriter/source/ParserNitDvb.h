@@ -163,6 +163,7 @@ class CParserNitDvb : public CSectionDecoder, public IDefaultAuthorityProvider
                         short& longitude,
                         unsigned short& cellId,
                         unsigned char& cellIdExtension,
+                        bool& isMultipleInputStream,
                         unsigned char& plpId) const;
 
   protected:

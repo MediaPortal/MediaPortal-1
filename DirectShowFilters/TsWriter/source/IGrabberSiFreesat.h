@@ -204,5 +204,6 @@ DECLARE_INTERFACE_(IGrabberSiFreesat, IGrabberSiDvb)
                                     short* longitude,
                                     unsigned short* cellId,
                                     unsigned char* cellIdExtension,
+                                    bool* isMultipleInputStream,
                                     unsigned char* plpId)PURE;
 };
