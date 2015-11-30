@@ -487,13 +487,7 @@ STDMETHODIMP_(bool) CGrabberSiDvb::GetService(unsigned short index,
 
     // Add cell availability. Only add cells that aren't in either of the lists
     // from the SDT.
-    if (availableInCells == NULL && nitAvailableInCellCount > 0)
-    {
-      LogDebug(L"SI DVB %d: insufficient available in cell array size, ONID = %hu, TSID = %hu, service ID = %hu, required size = %hhu, actual size = 0",
-                m_parserNit.GetPid(), *originalNetworkId, *transportStreamId,
-                *serviceId, nitAvailableInCellCount);
-    }
-    else
+    if (availableInCells != NULL)
     {
       bool insufficientSize = false;
       for (unsigned char i = 0; i < nitAvailableInCellCount; i++)
@@ -553,9 +547,9 @@ STDMETHODIMP_(bool) CGrabberSiDvb::GetService(unsigned short index,
   }
 
   // Add any LCN from the SDT if the array has room for it.
-  if (sdtLogicalChannelNumber != 0)
+  if (sdtLogicalChannelNumber != 0 && logicalChannelNumbers != NULL)
   {
-    if (logicalChannelNumbers == NULL || *logicalChannelNumberCount == originalLogicalChannelNumberCount)
+    if (*logicalChannelNumberCount == originalLogicalChannelNumberCount)
     {
       LogDebug(L"SI DVB %d: insufficient logical channel number array size, ONID = %hu, TSID = %hu, service ID = %hu, required size = %hu, actual size = %hu",
                 m_parserSdt.GetPid(), *originalNetworkId, *transportStreamId,

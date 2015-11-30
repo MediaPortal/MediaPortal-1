@@ -690,21 +690,28 @@ bool CParserNitDvb::GetService(unsigned short originalNetworkId,
     freesatChannelId = record->FreesatChannelId;
     openTvChannelId = record->OpenTvChannelId;
 
-    unsigned short requiredLcnCount;
-    vector<unsigned long long> tempLcns;
-    map<unsigned long, unsigned short>::const_iterator lcnIt = record->LogicalChannelNumbers.begin();
-    for ( ; lcnIt != record->LogicalChannelNumbers.end(); lcnIt++)
+    if (logicalChannelNumbers == NULL)
     {
-      tempLcns.push_back(((unsigned long long)record->TableId << 56) | ((unsigned long long)record->TableIdExtension << 40) | ((unsigned long long)lcnIt->first << 16) | lcnIt->second);
+      logicalChannelNumberCount = 0;
     }
-    if (!CUtils::CopyVectorToArray(tempLcns,
-                                    logicalChannelNumbers,
-                                    logicalChannelNumberCount,
-                                    requiredLcnCount))
+    else
     {
-      LogDebug(L"%s: insufficient logical channel number array size, ONID = %hu, TSID = %hu, service ID = %hu, required size = %hu, actual size = %hu",
-                m_name, originalNetworkId, transportStreamId, serviceId,
-                requiredLcnCount, logicalChannelNumberCount);
+      unsigned short requiredLcnCount;
+      vector<unsigned long long> tempLcns;
+      map<unsigned long, unsigned short>::const_iterator lcnIt = record->LogicalChannelNumbers.begin();
+      for ( ; lcnIt != record->LogicalChannelNumbers.end(); lcnIt++)
+      {
+        tempLcns.push_back(((unsigned long long)record->TableId << 56) | ((unsigned long long)record->TableIdExtension << 40) | ((unsigned long long)lcnIt->first << 16) | lcnIt->second);
+      }
+      if (!CUtils::CopyVectorToArray(tempLcns,
+                                      logicalChannelNumbers,
+                                      logicalChannelNumberCount,
+                                      requiredLcnCount))
+      {
+        LogDebug(L"%s: insufficient logical channel number array size, ONID = %hu, TSID = %hu, service ID = %hu, required size = %hu, actual size = %hu",
+                  m_name, originalNetworkId, transportStreamId, serviceId,
+                  requiredLcnCount, logicalChannelNumberCount);
+      }
     }
 
     visibleInGuide = record->VisibleInGuide;
@@ -712,8 +719,11 @@ bool CParserNitDvb::GetService(unsigned short originalNetworkId,
     if (groupIds == NULL || groupIdCount == 0)
     {
       groupIdCount = 0;
-      LogDebug(L"%s: insufficient group ID array size, ONID = %hu, TSID = %hu, service ID = %hu, required size = 1, actual size = 0",
-                m_name, originalNetworkId, transportStreamId, serviceId);
+      if (groupIds != NULL)
+      {
+        LogDebug(L"%s: insufficient group ID array size, ONID = %hu, TSID = %hu, service ID = %hu, required size = 1, actual size = 0",
+                  m_name, originalNetworkId, transportStreamId, serviceId);
+      }
     }
     else
     {
@@ -725,7 +735,7 @@ bool CParserNitDvb::GetService(unsigned short originalNetworkId,
     if (!CUtils::CopyVectorToArray(record->AvailableInCells,
                                     availableInCells,
                                     availableInCellCount,
-                                    requiredCount))
+                                    requiredCount) && availableInCells != NULL)
     {
       LogDebug(L"%s: insufficient available in cell array size, ONID = %hu, TSID = %hu, service ID = %hu, required size = %hhu, actual size = %hhu",
                 m_name, originalNetworkId, transportStreamId, serviceId,
@@ -734,7 +744,7 @@ bool CParserNitDvb::GetService(unsigned short originalNetworkId,
     if (!CUtils::CopyVectorToArray(record->TargetRegionIds,
                                     targetRegionIds,
                                     targetRegionIdCount,
-                                    requiredCount))
+                                    requiredCount) && targetRegionIds != NULL)
     {
       LogDebug(L"%s: insufficient target region ID array size, ONID = %hu, TSID = %hu, service ID = %hu, required size = %hhu, actual size = %hhu",
                 m_name, originalNetworkId, transportStreamId, serviceId,
@@ -744,7 +754,7 @@ bool CParserNitDvb::GetService(unsigned short originalNetworkId,
     if (!CUtils::CopyVectorToArray(expandedRegionIds,
                                     freesatRegionIds,
                                     freesatRegionIdCount,
-                                    requiredCount))
+                                    requiredCount) && freesatRegionIds != NULL)
     {
       LogDebug(L"%s: insufficient Freesat region ID array size, ONID = %hu, TSID = %hu, service ID = %hu, required size = %hhu, actual size = %hhu",
                 m_name, originalNetworkId, transportStreamId, serviceId,
@@ -754,7 +764,7 @@ bool CParserNitDvb::GetService(unsigned short originalNetworkId,
     if (!CUtils::CopyVectorToArray(expandedRegionIds,
                                     openTvRegionIds,
                                     openTvRegionIdCount,
-                                    requiredCount))
+                                    requiredCount) && openTvRegionIds != NULL)
     {
       LogDebug(L"%s: insufficient OpenTV region ID array size, ONID = %hu, TSID = %hu, service ID = %hu, required size = %hhu, actual size = %hhu",
                 m_name, originalNetworkId, transportStreamId, serviceId,
@@ -763,7 +773,7 @@ bool CParserNitDvb::GetService(unsigned short originalNetworkId,
     if (!CUtils::CopyVectorToArray(record->FreesatChannelCategoryIds,
                                     freesatChannelCategoryIds,
                                     freesatChannelCategoryIdCount,
-                                    requiredCount))
+                                    requiredCount) && freesatChannelCategoryIds != NULL)
     {
       LogDebug(L"%s: insufficient Freesat channel category ID array size, ONID = %hu, TSID = %hu, service ID = %hu, required size = %hhu, actual size = %hhu",
                 m_name, originalNetworkId, transportStreamId, serviceId,
@@ -772,7 +782,7 @@ bool CParserNitDvb::GetService(unsigned short originalNetworkId,
     if (!CUtils::CopyVectorToArray(record->NorDigChannelListIds,
                                     norDigChannelListIds,
                                     norDigChannelListIdCount,
-                                    requiredCount))
+                                    requiredCount) && norDigChannelListIds != NULL)
     {
       LogDebug(L"%s: insufficient NorDig channel list ID array size, ONID = %hu, TSID = %hu, service ID = %hu, required size = %hhu, actual size = %hhu",
                 m_name, originalNetworkId, transportStreamId, serviceId,
@@ -781,7 +791,7 @@ bool CParserNitDvb::GetService(unsigned short originalNetworkId,
     if (!CUtils::CopyVectorToArray(record->AvailableInCountries,
                                     availableInCountries,
                                     availableInCountryCount,
-                                    requiredCount))
+                                    requiredCount) && availableInCountries != NULL)
     {
       LogDebug(L"%s: insufficient available in country array size, ONID = %hu, TSID = %hu, service ID = %hu, required size = %hhu, actual size = %hhu",
                 m_name, originalNetworkId, transportStreamId, serviceId,
@@ -790,7 +800,7 @@ bool CParserNitDvb::GetService(unsigned short originalNetworkId,
     if (!CUtils::CopyVectorToArray(record->UnavailableInCountries,
                                     unavailableInCountries,
                                     unavailableInCountryCount,
-                                    requiredCount))
+                                    requiredCount) && unavailableInCountries != NULL)
     {
       LogDebug(L"%s: insufficient unavailable in country array size, ONID = %hu, TSID = %hu, service ID = %hu, required size = %hhu, actual size = %hhu",
                 m_name, originalNetworkId, transportStreamId, serviceId,
@@ -872,64 +882,94 @@ bool CParserNitDvb::GetService(unsigned short originalNetworkId,
     AggregateSet(record->UnavailableInCountries, tempUnavailableInCountries);
   }
 
-  if (!GetSetValues(tempLcns, logicalChannelNumbers, logicalChannelNumberCount))
+  if (
+    !GetSetValues(tempLcns, logicalChannelNumbers, logicalChannelNumberCount) &&
+    logicalChannelNumbers != NULL
+  )
   {
     LogDebug(L"%s: insufficient logical channel number array size, ONID = %hu, TSID = %hu, service ID = %hu, required size = %llu, actual size = %hhu",
               m_name, originalNetworkId, transportStreamId, serviceId,
               tempLcns.size(), groupIdCount);
   }
-  if (!GetSetValues(tempGroupIds, groupIds, groupIdCount))
+  if (
+    !GetSetValues(tempGroupIds, groupIds, groupIdCount) &&
+    groupIds != NULL
+  )
   {
     LogDebug(L"%s: insufficient group ID array size, ONID = %hu, TSID = %hu, service ID = %hu, required size = %llu, actual size = %hhu",
               m_name, originalNetworkId, transportStreamId, serviceId,
               tempGroupIds.size(), groupIdCount);
   }
-  if (!GetSetValues(tempAvailableInCells, availableInCells, availableInCellCount))
+  if (
+    !GetSetValues(tempAvailableInCells, availableInCells, availableInCellCount) &&
+    availableInCells != NULL
+  )
   {
     LogDebug(L"%s: insufficient available in cell array size, ONID = %hu, TSID = %hu, service ID = %hu, required size = %llu, actual size = %hhu",
               m_name, originalNetworkId, transportStreamId, serviceId,
               tempAvailableInCells.size(), availableInCellCount);
   }
-  if (!GetSetValues(tempTargetRegionIds, targetRegionIds, targetRegionIdCount))
+  if (
+    !GetSetValues(tempTargetRegionIds, targetRegionIds, targetRegionIdCount) &&
+    targetRegionIds != NULL
+  )
   {
     LogDebug(L"%s: insufficient target region ID array size, ONID = %hu, TSID = %hu, service ID = %hu, required size = %llu, actual size = %hhu",
               m_name, originalNetworkId, transportStreamId, serviceId,
               tempTargetRegionIds.size(), targetRegionIdCount);
   }
-  if (!GetSetValues(tempFreesatRegionIds, freesatRegionIds, freesatRegionIdCount))
+  if (
+    !GetSetValues(tempFreesatRegionIds, freesatRegionIds, freesatRegionIdCount) &&
+    freesatRegionIds != NULL
+  )
   {
     LogDebug(L"%s: insufficient Freesat region ID array size, ONID = %hu, TSID = %hu, service ID = %hu, required size = %llu, actual size = %hhu",
               m_name, originalNetworkId, transportStreamId, serviceId,
               tempFreesatRegionIds.size(), freesatRegionIdCount);
   }
-  if (!GetSetValues(tempOpenTvRegionIds, openTvRegionIds, openTvRegionIdCount))
+  if (
+    !GetSetValues(tempOpenTvRegionIds, openTvRegionIds, openTvRegionIdCount) &&
+    openTvRegionIds != NULL
+  )
   {
     LogDebug(L"%s: insufficient OpenTV region ID array size, ONID = %hu, TSID = %hu, service ID = %hu, required size = %llu, actual size = %hhu",
               m_name, originalNetworkId, transportStreamId, serviceId,
               tempOpenTvRegionIds.size(), openTvRegionIdCount);
   }
-  if (!GetSetValues(tempFreesatChannelCategoryIds,
-                    freesatChannelCategoryIds,
-                    freesatChannelCategoryIdCount))
+  if (
+    !GetSetValues(tempFreesatChannelCategoryIds,
+                  freesatChannelCategoryIds,
+                  freesatChannelCategoryIdCount) &&
+    freesatChannelCategoryIds != NULL
+  )
   {
     LogDebug(L"%s: insufficient Freesat channel category ID array size, ONID = %hu, TSID = %hu, service ID = %hu, required size = %llu, actual size = %hhu",
               m_name, originalNetworkId, transportStreamId, serviceId,
               tempFreesatChannelCategoryIds.size(),
               freesatChannelCategoryIdCount);
   }
-  if (!GetSetValues(tempNorDigChannelListIds, norDigChannelListIds, norDigChannelListIdCount))
+  if (
+    !GetSetValues(tempNorDigChannelListIds, norDigChannelListIds, norDigChannelListIdCount) &&
+    norDigChannelListIds != NULL
+  )
   {
     LogDebug(L"%s: insufficient NorDig channel list ID array size, ONID = %hu, TSID = %hu, service ID = %hu, required size = %llu, actual size = %hhu",
               m_name, originalNetworkId, transportStreamId, serviceId,
               tempNorDigChannelListIds.size(), norDigChannelListIdCount);
   }
-  if (!GetSetValues(tempAvailableInCountries, availableInCountries, availableInCountryCount))
+  if (
+    !GetSetValues(tempAvailableInCountries, availableInCountries, availableInCountryCount) &&
+    availableInCountries != NULL
+  )
   {
     LogDebug(L"%s: insufficient available in country array size, ONID = %hu, TSID = %hu, service ID = %hu, required size = %llu, actual size = %hhu",
               m_name, originalNetworkId, transportStreamId, serviceId,
               tempAvailableInCountries.size(), availableInCountryCount);
   }
-  if (!GetSetValues(tempUnavailableInCountries, unavailableInCountries, unavailableInCountryCount))
+  if (
+    !GetSetValues(tempUnavailableInCountries, unavailableInCountries, unavailableInCountryCount) &&
+    unavailableInCountries != NULL
+  )
   {
     LogDebug(L"%s: insufficient unavailable in country array size, ONID = %hu, TSID = %hu, service ID = %hu, required size = %llu, actual size = %hhu",
               m_name, originalNetworkId, transportStreamId, serviceId,

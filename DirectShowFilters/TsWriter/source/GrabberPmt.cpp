@@ -398,7 +398,7 @@ bool CGrabberPmt::GetProgramInformation(unsigned short& pid,
   if (!CUtils::CopyVectorToArray(vectorLanguagesAudio,
                                   audioLanguages,
                                   audioLanguageCount,
-                                  requiredCount))
+                                  requiredCount) && audioLanguages != NULL)
   {
     LogDebug(L"PMT %d %hu: insufficient audio language array size, required size = %hhu, actual size = %hhu",
               GetPid(), m_programNumber, requiredCount, audioLanguageCount);
@@ -406,7 +406,7 @@ bool CGrabberPmt::GetProgramInformation(unsigned short& pid,
   if (!CUtils::CopyVectorToArray(vectorLanguagesSubtitles,
                                   subtitlesLanguages,
                                   subtitlesLanguageCount,
-                                  requiredCount))
+                                  requiredCount) && subtitlesLanguages != NULL)
   {
     LogDebug(L"PMT %d %hu: insufficient subtitles language array size, required size = %hhu, actual size = %hhu",
               GetPid(), m_programNumber, requiredCount, subtitlesLanguageCount);

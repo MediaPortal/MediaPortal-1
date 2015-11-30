@@ -467,7 +467,7 @@ bool CParserSdt::GetService(unsigned short index,
   if (!CUtils::CopyVectorToArray(m_currentRecord->AudioLanguages,
                                   audioLanguages,
                                   audioLanguageCount,
-                                  requiredCount))
+                                  requiredCount) && audioLanguages != NULL)
   {
     LogDebug(L"SDT %d: insufficient audio language array size, service index = %hu, table ID = 0x%hhx, ONID = %hu, TSID = %hu, service ID = %hu, reference service ID = %hu, required size = %hhu, actual size = %hhu",
               GetPid(), index, tableId, originalNetworkId, transportStreamId,
@@ -477,7 +477,7 @@ bool CParserSdt::GetService(unsigned short index,
   if (!CUtils::CopyVectorToArray(m_currentRecord->SubtitlesLanguages,
                                   subtitlesLanguages,
                                   subtitlesLanguageCount,
-                                  requiredCount))
+                                  requiredCount) && subtitlesLanguages != NULL)
   {
     LogDebug(L"SDT %d: insufficient subtitles language array size, service index = %hu, table ID = 0x%hhx, ONID = %hu, TSID = %hu, service ID = %hu, reference service ID = %hu, required size = %hhu, actual size = %hhu",
               GetPid(), index, tableId, originalNetworkId, transportStreamId,
@@ -495,7 +495,7 @@ bool CParserSdt::GetService(unsigned short index,
   if (!CUtils::CopyVectorToArray(recordSdt->AvailableInCountries,
                                   availableInCountries,
                                   availableInCountryCount,
-                                  requiredCount))
+                                  requiredCount) && availableInCountries != NULL)
   {
     LogDebug(L"SDT %d: insufficient available in country array size, service index = %hu, table ID = 0x%hhx, ONID = %hu, TSID = %hu, service ID = %hu, reference service ID = %hu, required size = %hhu, actual size = %hhu",
               GetPid(), index, tableId, originalNetworkId, transportStreamId,
@@ -505,7 +505,7 @@ bool CParserSdt::GetService(unsigned short index,
   if (!CUtils::CopyVectorToArray(recordSdt->UnavailableInCountries,
                                   unavailableInCountries,
                                   unavailableInCountryCount,
-                                  requiredCount))
+                                  requiredCount) && unavailableInCountries != NULL)
   {
     LogDebug(L"SDT %d: insufficient unavailable in country array size, service index = %hu, table ID = 0x%hhx, ONID = %hu, TSID = %hu, service ID = %hu, reference service ID = %hu, required size = %hhu, actual size = %hhu",
               GetPid(), index, tableId, originalNetworkId, transportStreamId,
@@ -515,7 +515,7 @@ bool CParserSdt::GetService(unsigned short index,
   if (!CUtils::CopyVectorToArray(recordSdt->AvailableInCells,
                                   availableInCells,
                                   availableInCellCount,
-                                  requiredCount))
+                                  requiredCount) && availableInCells != NULL)
   {
     LogDebug(L"SDT %d: insufficient available in cell array size, service index = %hu, table ID = 0x%hhx, ONID = %hu, TSID = %hu, service ID = %hu, reference service ID = %hu, required size = %hhu, actual size = %hhu",
               GetPid(), index, tableId, originalNetworkId, transportStreamId,
@@ -525,7 +525,7 @@ bool CParserSdt::GetService(unsigned short index,
   if (!CUtils::CopyVectorToArray(recordSdt->UnavailableInCells,
                                   unavailableInCells,
                                   unavailableInCellCount,
-                                  requiredCount))
+                                  requiredCount) && unavailableInCells != NULL)
   {
     LogDebug(L"SDT %d: insufficient unavailable in cell array size, service index = %hu, table ID = 0x%hhx, ONID = %hu, TSID = %hu, service ID = %hu, reference service ID = %hu, required size = %hhu, actual size = %hhu",
               GetPid(), index, tableId, originalNetworkId, transportStreamId,
@@ -535,7 +535,7 @@ bool CParserSdt::GetService(unsigned short index,
   if (!CUtils::CopyVectorToArray(recordSdt->TargetRegionIds,
                                   targetRegionIds,
                                   targetRegionIdCount,
-                                  requiredCount))
+                                  requiredCount) && targetRegionIds != NULL)
   {
     LogDebug(L"SDT %d: insufficient target region ID array size, service index = %hu, table ID = 0x%hhx, ONID = %hu, TSID = %hu, service ID = %hu, reference service ID = %hu, required size = %hhu, actual size = %hhu",
               GetPid(), index, tableId, originalNetworkId, transportStreamId,
