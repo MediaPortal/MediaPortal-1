@@ -474,20 +474,11 @@ namespace MediaPortal.GUI.Library
       }
 
       // else load xml file now
-      if (System.Windows.Forms.Form.ActiveForm != null && System.Windows.Forms.Form.ActiveForm.InvokeRequired)
+      GUIWindow._mainThreadContext.Send(delegate
       {
-        GUIWindow._mainThreadContext.Send(delegate
-        {
-          LoadSkin();
-        }, null);
-      }
-      else
-      {
-        GUIWindow._mainThreadContext.Send(delegate
-        {
-          LoadSkin();
-        }, null);
-      }
+        LoadSkin();
+      }, null);
+
       if (!_windowAllocated)
       {
         AllocResources();
@@ -1081,20 +1072,10 @@ namespace MediaPortal.GUI.Library
     {
       if (_isSkinLoaded && (_lastSkin != GUIGraphicsContext.Skin))
       {
-        if (System.Windows.Forms.Form.ActiveForm != null && System.Windows.Forms.Form.ActiveForm.InvokeRequired)
+        GUIWindow._mainThreadContext.Send(delegate
         {
-          GUIWindow._mainThreadContext.Send(delegate
-          {
-            LoadSkin();
-          }, null);
-        }
-        else
-        {
-          GUIWindow._mainThreadContext.Send(delegate
-          {
-            LoadSkin();
-          }, null);
-        }
+          LoadSkin();
+        }, null);
       }
 
       if (_rememberLastFocusedControl && _rememberLastFocusedControlId >= 0)
@@ -1222,20 +1203,12 @@ namespace MediaPortal.GUI.Library
         }
 
         Dispose();
-        if (System.Windows.Forms.Form.ActiveForm != null && System.Windows.Forms.Form.ActiveForm.InvokeRequired)
+
+        GUIWindow._mainThreadContext.Send(delegate
         {
-          GUIWindow._mainThreadContext.Send(delegate
-          {
-            LoadSkin();
-          }, null);
-        }
-        else
-        {
-          GUIWindow._mainThreadContext.Send(delegate
-          {
-            LoadSkin();
-          }, null);
-        }
+          LoadSkin();
+        }, null);
+
         HashSet<int> faultyControl = new HashSet<int>();
         // tell every control we're gonna alloc the resources next
         for (int i = 0; i < Children.Count; i++)
@@ -1779,20 +1752,11 @@ namespace MediaPortal.GUI.Library
               }
               else
               {
-                if (System.Windows.Forms.Form.ActiveForm != null && System.Windows.Forms.Form.ActiveForm.InvokeRequired)
+                GUIWindow._mainThreadContext.Send(delegate
                 {
-                  GUIWindow._mainThreadContext.Send(delegate
-                  {
-                    LoadSkin();
-                  }, null);
-                }
-                else
-                {
-                  GUIWindow._mainThreadContext.Send(delegate
-                  {
-                    LoadSkin();
-                  }, null);
-                }
+                  LoadSkin();
+                }, null);
+
                 if (!_windowAllocated)
                 {
                   AllocResources();
