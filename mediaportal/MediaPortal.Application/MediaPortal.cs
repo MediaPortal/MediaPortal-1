@@ -3522,14 +3522,7 @@ public class MediaPortalApp : D3D, IRender
     Log.Warn("Main: OnDeviceLost()");
     if (!Created || !AppActive)
     {
-      if (!Created)
-      {
-        Log.Debug("Main: Form not created yet - ignoring Event");
-      }
-      else
-      {
-        Log.Debug("Main: Application not ready - ignoring Event");
-      }
+      Log.Debug(!Created ? "Main: Form not created yet - ignoring Event" : "Main: Application not ready - ignoring Event");
       return;
     }
     GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.LOST;
@@ -3713,6 +3706,18 @@ public class MediaPortalApp : D3D, IRender
   /// </summary>
   protected override void OnProcess()
   {
+    if (deviceLost)
+    {
+      // Try to get the device back
+      AttemptRecovery();
+    }
+
+    // If we couldn't get the device back, don't try to render
+    if (deviceLost)
+    {
+      return;
+    }
+
     // Set the date & time
     if (DateTime.Now.Second != _updateTimer.Second)
     {

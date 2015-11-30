@@ -141,6 +141,7 @@ namespace MediaPortal
     protected GraphicsAdapterInfo  AdapterInfo;              // hold adapter info for the selected display on startup of MP
     protected int MouseTimeOutMP;                            // Mouse activity timeout while in MP in seconds
     protected int MouseTimeOutFullscreen;                    // Mouse activity timeout while in Fullscreen in seconds
+    protected bool                 deviceLost;
 
     #endregion
 
@@ -635,65 +636,70 @@ namespace MediaPortal
         GUIWindowManager.Dispose();
         GUIFontManager.Dispose();
         GUITextureManager.Dispose();
-        GUIGraphicsContext.DX9Device.EvictManagedResources();
+        if (GUIGraphicsContext.DX9Device != null)
+        {
+          GUIGraphicsContext.DX9Device.EvictManagedResources();
 
-        if (useBackup)
-        {
-          try
+          if (useBackup)
           {
-            Log.Debug("Main: RecreateSwapChain() by restoring startup DirectX values");
-            GUIGraphicsContext.DirectXPresentParameters = _presentParamsBackup;
-            GUIGraphicsContext.DX9Device.Reset(_presentParamsBackup);
+            try
+            {
+              Log.Debug("Main: RecreateSwapChain() by restoring startup DirectX values");
+              GUIGraphicsContext.DirectXPresentParameters = _presentParamsBackup;
+              GUIGraphicsContext.DX9Device.Reset(_presentParamsBackup);
+            }
+            catch (InvalidCallException)
+            {
+              Log.Error("D3D: D3DERR_INVALIDCALL - presentation parameters might contain an invalid value");
+            }
+            catch (DeviceLostException)
+            {
+              Log.Error("D3D: D3DERR_DEVICELOST - device is lost but cannot be reset at this time");
+            }
+            catch (DriverInternalErrorException)
+            {
+              Log.Error("D3D: D3DERR_DRIVERINTERNALERROR - internal driver error");
+            }
+            catch (OutOfVideoMemoryException)
+            {
+              Log.Error("D3D: D3DERR_OUTOFVIDEOMEMORY - not enough available display memory to perform the operation");
+            }
+            catch (OutOfMemoryException)
+            {
+              Log.Error("D3D: D3DERR_OUTOFMEMORY - could not allocate sufficient memory to complete the call");
+            }
           }
-          catch (InvalidCallException)
+          else
           {
-            Log.Error("D3D: D3DERR_INVALIDCALL - presentation parameters might contain an invalid value");
-          }
-          catch (DeviceLostException)
-          {
-            Log.Error("D3D: D3DERR_DEVICELOST - device is lost but cannot be reset at this time");
-          }
-          catch (DriverInternalErrorException)
-          {
-            Log.Error("D3D: D3DERR_DRIVERINTERNALERROR - internal driver error");
-          }
-          catch (OutOfVideoMemoryException)
-          {
-            Log.Error("D3D: D3DERR_OUTOFVIDEOMEMORY - not enough available display memory to perform the operation");
-          }
-          catch (OutOfMemoryException)
-          {
-            Log.Error("D3D: D3DERR_OUTOFMEMORY - could not allocate sufficient memory to complete the call");
-          }
-        }
-        else
-        {
-          // build new D3D presentation parameters and reset device
-          Log.Debug("Main: RecreateSwapChain() by rebuild PresentParams");
-          BuildPresentParams(Windowed);
-          try
-          {
-            GUIGraphicsContext.DX9Device.Reset(_presentParams);
-          }
-          catch (InvalidCallException)
-          {
-            Log.Error("D3D: D3DERR_INVALIDCALL - presentation parametters might contain an invalid value");
-          }
-          catch (DeviceLostException)
-          {
-            Log.Error("D3D: D3DERR_DEVICELOST - device is lost but cannot be reset at this time");
-          }
-          catch (DriverInternalErrorException)
-          {
-            Log.Error("D3D: D3DERR_DRIVERINTERNALERROR - internal driver error");
-          }
-          catch (OutOfVideoMemoryException)
-          {
-            Log.Error("D3D: D3DERR_OUTOFVIDEOMEMORY - not enough available display memory to perform the operation");
-          }
-          catch (OutOfMemoryException)
-          {
-            Log.Error("D3D: D3DERR_OUTOFMEMORY - could not allocate sufficient memory to complete the call");
+            // build new D3D presentation parameters and reset device
+            Log.Debug("Main: RecreateSwapChain() by rebuild PresentParams");
+            BuildPresentParams(Windowed);
+            try
+            {
+              GUIGraphicsContext.DX9Device.Reset(_presentParams);
+            }
+            catch (InvalidCallException)
+            {
+              Log.Error("D3D: D3DERR_INVALIDCALL - presentation parametters might contain an invalid value");
+            }
+            catch (DeviceLostException)
+            {
+              // Indicate that the device has been lost
+              deviceLost = true;
+              Log.Error("D3D: D3DERR_DEVICELOST - device is lost but cannot be reset at this time");
+            }
+            catch (DriverInternalErrorException)
+            {
+              Log.Error("D3D: D3DERR_DRIVERINTERNALERROR - internal driver error");
+            }
+            catch (OutOfVideoMemoryException)
+            {
+              Log.Error("D3D: D3DERR_OUTOFVIDEOMEMORY - not enough available display memory to perform the operation");
+            }
+            catch (OutOfMemoryException)
+            {
+              Log.Error("D3D: D3DERR_OUTOFMEMORY - could not allocate sufficient memory to complete the call");
+            }
           }
         }
 
@@ -736,6 +742,18 @@ namespace MediaPortal
     /// </summary>
     protected void FullRender()
     {
+      if (deviceLost)
+      {
+        // Try to get the device back
+        AttemptRecovery();
+      }
+
+      // If we couldn't get the device back, don't try to render
+      if (deviceLost)
+      {
+        return;
+      }
+
       // don't render if form is minimized and not visible to the user
       // TODO: do not render when display is turned off or we are in away mode - needs testing
       //if (!IsVislbe || IsInAwayMode || !IsDisplayTurnedOn)
@@ -818,6 +836,34 @@ namespace MediaPortal
       }
     }
 
+    protected void AttemptRecovery()
+    {
+      try
+      {
+        GUIGraphicsContext.DX9Device.TestCooperativeLevel();
+      }
+      catch (DeviceLostException)
+      {
+      }
+      catch (DeviceNotResetException)
+      {
+        try
+        {
+          GUIGraphicsContext.DX9Device.Reset(_presentParams);
+          deviceLost = false;
+
+          // Spew a message into the output window of the debugger
+          Log.Debug("Device successfully reset");
+        }
+        catch (DeviceLostException)
+        {
+          // If it's still lost or lost again, just do 
+          // nothing
+        }
+      }
+    }
+
+
 
     /// <summary>
     /// 
@@ -844,7 +890,7 @@ namespace MediaPortal
         Log.Debug("D3D: Testing cooperation level of device");
         try
         {
-          GUIGraphicsContext.DX9Device.TestCooperativeLevel();
+          if (GUIGraphicsContext.DX9Device != null) GUIGraphicsContext.DX9Device.TestCooperativeLevel();
         }
         catch (DeviceLostException)
         {
