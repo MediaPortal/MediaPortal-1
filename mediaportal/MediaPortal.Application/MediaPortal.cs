@@ -141,7 +141,6 @@ public class MediaPortalApp : D3D, IRender
   private int                   _backupSizeHeight;
   private bool                  _usePrimaryScreen;
   private string                _screenDisplayName;
-  private bool                  _resumedFromInputSession;
   private bool                  _threadedStartup;
 
   // ReSharper disable InconsistentNaming
@@ -1781,7 +1780,6 @@ public class MediaPortalApp : D3D, IRender
         case (int)PBT_EVENT.PBT_APMSUSPEND:
           _resumedAutomatic = false;
           _resumedSuspended = false;
-          _resumedFromInputSession = false;
           _delayedResume = false;
           _suspended = true;
 
@@ -1881,7 +1879,6 @@ public class MediaPortalApp : D3D, IRender
 
           _resumedAutomatic = false;
           _resumedSuspended = false;
-          _resumedFromInputSession = false;
 
           // PBT_APMRESUMECRITICAL should be handled in same way as PBT_APMRESUMEAUTOMATIC
           goto case (int)PBT_EVENT.PBT_APMRESUMEAUTOMATIC;
@@ -1991,7 +1988,6 @@ public class MediaPortalApp : D3D, IRender
                   msg.WParam = new IntPtr((int)PBT_EVENT.PBT_POWERSETTINGCHANGE);
                   _resumedSuspended = true;
                   _suspended = false;
-                  _resumedFromInputSession = true;
                 }
                 IsUserPresent = true;
                 ShowMouseCursor(false);
