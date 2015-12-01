@@ -1410,7 +1410,7 @@ namespace MediaPortal.GUI.Video
       dlg.AddLocalizedString(1307); // Update internal grabber scripts
       dlg.AddLocalizedString(1263); // Set default grabber
 
-      if (!item.IsFolder)
+      if (item != null && !item.IsFolder)
       {
         dlg.AddLocalizedString(1984); // Refresh thumb
         if (!_hideWatchedFiles)
@@ -1423,7 +1423,7 @@ namespace MediaPortal.GUI.Video
         }
       }
 
-      if (item.IsFolder && item.Label != "..")
+      if (item != null && (item.IsFolder && item.Label != ".."))
       {
         dlg.AddLocalizedString(1995); // Create 4x4 folder.jpg
         if (_refreshMediaInfoThread != null && _refreshMediaInfoThread.IsAlive)
