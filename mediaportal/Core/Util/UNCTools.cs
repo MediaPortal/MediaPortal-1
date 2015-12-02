@@ -294,7 +294,15 @@ namespace MediaPortal.Util
 
             //UNC device is online or local file/folder
             return strUNCPath;
+        }
 
+        public static bool IsUNCFileFolderOnline(string strFile)
+        {
+          if (UNCFileFolderOnline(strFile) == string.Empty)
+          {
+            return false;
+          }
+          return true;
         }
 
         //Method UNCCopyFile copies a remote file (strSourceFile) to the given strDestFile

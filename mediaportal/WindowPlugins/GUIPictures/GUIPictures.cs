@@ -457,6 +457,7 @@ namespace MediaPortal.GUI.Pictures
     private Thread _refreshThumbnailsThread;
     private GUIDialogProgress _progressDialogForRefreshThumbnails;
     private static bool _refreshThumbnailsThreadAbort = false;
+    private static Thread _removableDrivesHandlerThread;
 
     #endregion
 
@@ -577,6 +578,14 @@ namespace MediaPortal.GUI.Pictures
       }
       GUIWindowManager.Receivers += new SendMessageHandler(GUIWindowManager_OnNewMessage);
 
+      _removableDrivesHandlerThread = new Thread(ListRemovableDrives);
+      _removableDrivesHandlerThread.IsBackground = true;
+      _removableDrivesHandlerThread.Name = "PictureRemovableDrivesHandlerThread";
+      _removableDrivesHandlerThread.Start();
+    }
+
+    private void ListRemovableDrives()
+    {
       RemovableDrivesHandler.ListRemovableDrives(_virtualDirectory.GetDirectoryExt(string.Empty));
     }
 
@@ -979,6 +988,10 @@ namespace MediaPortal.GUI.Pictures
             {
               _virtualDirectory.AddRemovableDrive(message.Label, message.Label2);
             }
+          }
+          if (_removableDrivesHandlerThread != null)
+          {
+            _removableDrivesHandlerThread.Join();
           }
           RemovableDrivesHandler.ListRemovableDrives(_virtualDirectory.GetDirectoryExt(string.Empty));
           LoadDirectory(currentFolder);
@@ -2677,6 +2690,8 @@ namespace MediaPortal.GUI.Pictures
 
       if (disp == Display.Files)
       {
+        _removableDrivesHandlerThread.Join();
+        
         itemlist = _virtualDirectory.GetDirectoryExt(currentFolder);
 
         if (currentFolder == string.Empty)

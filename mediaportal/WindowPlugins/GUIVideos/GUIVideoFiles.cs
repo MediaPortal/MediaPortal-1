@@ -131,7 +131,7 @@ namespace MediaPortal.GUI.Video
     private static PlayListPlayer _playlistPlayer;
     private static PlayListType _currentPlaylistType;
     private static int _currentPlaylistIndex = -1;
-
+    private static Thread _removableDrivesHandlerThread;
     private MapSettings _mapSettings = new MapSettings();
     private DirectoryHistory _history = new DirectoryHistory();
     private string _virtualStartDirectory = string.Empty;
@@ -257,6 +257,14 @@ namespace MediaPortal.GUI.Video
       GUIWindowManager.Receivers += GUIWindowManager_OnNewMessage;
       LoadSettings();
 
+      _removableDrivesHandlerThread = new Thread(ListRemovableDrives);
+      _removableDrivesHandlerThread.IsBackground = true;
+      _removableDrivesHandlerThread.Name = "VideoRemovableDrivesHandlerThread";
+      _removableDrivesHandlerThread.Start();
+    }
+
+    private void ListRemovableDrives()
+    {
       RemovableDrivesHandler.ListRemovableDrives(_virtualDirectory.GetDirectoryExt(string.Empty));
     }
 
@@ -623,6 +631,11 @@ namespace MediaPortal.GUI.Video
               _virtualDirectory.AddRemovableDrive(message.Label, message.Label2);
             }
           }
+          if (_removableDrivesHandlerThread != null)
+          {
+            _removableDrivesHandlerThread.Join();
+          }
+
           RemovableDrivesHandler.ListRemovableDrives(_virtualDirectory.GetDirectoryExt(string.Empty));
           LoadDirectory(_currentFolder);
           break;
@@ -3161,6 +3174,8 @@ namespace MediaPortal.GUI.Video
       } // End Cached items
       else
       {
+        _removableDrivesHandlerThread.Join();
+        
         // here we get ALL files in every subdir, look for folderthumbs, defaultthumbs, etc
         itemlist = _virtualDirectory.GetDirectoryExt(_currentFolder);
 
@@ -3227,7 +3242,7 @@ namespace MediaPortal.GUI.Video
               GUIListItem item = innerList[i];
               bool isMovieFolder = false;
 
-              if (!string.IsNullOrEmpty(newFolderName) || Util.Utils.CheckServerStatus(item.Path))
+              if (!string.IsNullOrEmpty(newFolderName) || UNCTools.UNCFileFolderExists(item.Path))
               {
                 if (item.IsFolder)
                 {

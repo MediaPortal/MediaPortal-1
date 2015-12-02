@@ -135,7 +135,7 @@ namespace MediaPortal.GUI.Music
     private DirectoryHistory _dirHistory = new DirectoryHistory();
     private GUIListItem _selectedListItem = null;
     private static VirtualDirectory _virtualDirectory;
-
+    private static Thread _removableDrivesHandlerThread;
     private int _selectedAlbum = -1;
     private int _selectedItem = -1;
     private string _discId = string.Empty;
@@ -347,6 +347,14 @@ namespace MediaPortal.GUI.Music
       _virtualDirectory.AddDrives();
       _virtualDirectory.SetExtensions(Util.Utils.AudioExtensions);
 
+      _removableDrivesHandlerThread = new Thread(ListRemovableDrives);
+      _removableDrivesHandlerThread.IsBackground = true;
+      _removableDrivesHandlerThread.Name = "MusicRemovableDrivesHandlerThread";
+      _removableDrivesHandlerThread.Start();
+    }
+
+    private void ListRemovableDrives()
+    {
       RemovableDrivesHandler.ListRemovableDrives(_virtualDirectory.GetDirectoryExt(string.Empty));
     }
 
@@ -527,6 +535,7 @@ namespace MediaPortal.GUI.Music
 
         currentFolder = strNewDirectory;
 
+        _removableDrivesHandlerThread.Join();
         List<GUIListItem> itemlist = _virtualDirectory.GetDirectoryExt(currentFolder);
 
         if (currentFolder == string.Empty)
@@ -670,6 +679,10 @@ namespace MediaPortal.GUI.Music
             {
               _virtualDirectory.AddRemovableDrive(message.Label, message.Label2);
             }
+          }
+          if (_removableDrivesHandlerThread != null)
+          {
+            _removableDrivesHandlerThread.Join();
           }
           RemovableDrivesHandler.ListRemovableDrives(_virtualDirectory.GetDirectoryExt(string.Empty));
           LoadDirectory(currentFolder);
