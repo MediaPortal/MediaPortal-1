@@ -62,7 +62,7 @@
           <id>9875</id>
           <description>Album Info Button</description>
           <type>button</type>
-          <label>Album Information</label>
+          <label>#(L(270))-#(L(1020))</label>
           <onright>333</onright>
           <onleft>333</onleft>
           <onup>17</onup>

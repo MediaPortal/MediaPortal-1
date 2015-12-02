@@ -11,7 +11,7 @@ ID format AA-B-C-DD [group/subgroup/layer/item] eg: 990105 = group 99 / subgroup
   <define property="true" evaluateNow="true">#image.posy:935</define>
   <define property="true" evaluateNow="true">#image.width:274</define>
   <define property="true" evaluateNow="true">#image.height:70</define>
-  <define property="true" evaluateNow="true">#label.posx:804</define>
+  <define property="true" evaluateNow="true">#label.posx:815</define>
   <define property="true" evaluateNow="true">#label.posy:985</define>
   <define property="true" evaluateNow="true">#label.width:264</define>
   

@@ -55,50 +55,6 @@
       <visible>yes</visible>
     </control>
     <control>
-      <description>Clock</description>
-      <type>image</type>
-      <id>0</id>
-      <posX>174</posX>
-      <posY>880</posY>
-      <width>101</width>
-      <height>101</height>
-      <texture>clock.png</texture>
-      <visible>skin.hassetting(#skin.analogosd)+![control.isvisible(400)|control.isvisible(800)|control.isvisible(550)|control.isvisible(700)|control.isvisible(600)]</visible>
-    </control>
-    <control>
-      <type>image</type>
-      <id>0</id>
-      <posX>175</posX>
-      <posY>881</posY>
-      <width>98</width>
-      <height>98</height>
-      <texture>clockHandMinute.png</texture>
-      <animation effect="rotate" clockhandle="minute" time="500" condition="true" loop="true">Conditional</animation>
-      <visible>skin.hassetting(#skin.analogosd)+![control.isvisible(400)|control.isvisible(800)|control.isvisible(550)|control.isvisible(700)|control.isvisible(600)]</visible>
-    </control>
-    <control>
-      <type>image</type>
-      <id>0</id>
-      <posX>175</posX>
-      <posY>881</posY>
-      <width>98</width>
-      <height>98</height>
-      <texture>clockHandHour.png</texture>
-      <animation effect="rotate" clockhandle="hour" time="500" condition="true" loop="true">Conditional</animation>
-      <visible>skin.hassetting(#skin.analogosd)+![control.isvisible(400)|control.isvisible(800)|control.isvisible(550)|control.isvisible(700)|control.isvisible(600)]</visible>
-    </control>
-    <control>
-      <type>image</type>
-      <id>0</id>
-      <posX>175</posX>
-      <posY>881</posY>
-      <width>98</width>
-      <height>98</height>
-      <texture>clockHandSecond.png</texture>
-      <animation effect="rotate" clockhandle="second" time="500" condition="true" loop="true">Conditional</animation>
-      <visible>skin.hassetting(#skin.analogosd)+![control.isvisible(400)|control.isvisible(800)|control.isvisible(550)|control.isvisible(700)|control.isvisible(600)]</visible>
-    </control>
-    <control>
       <description>Current channel</description>
       <type>label</type>
       <id>1</id>
