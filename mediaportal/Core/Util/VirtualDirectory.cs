@@ -1517,22 +1517,14 @@ namespace MediaPortal.Util
             Log.Debug("GetRootExt(): '{0}' is offline. Skip checking of {1}", serverName, item.Path);
 
             isUNCNetwork = true;
-            pathOnline = false;
           }
           else
           {
             isUNCNetwork = Util.Utils.IsUNCNetwork(Util.Utils.FindUNCPaths(item.Path));
 
-            if (isUNCNetwork)
-            {
-              pathOnline = UNCTools.IsUNCFileFolderOnline(item.Path);
-            }
-            else
-            {
-              pathOnline = true;
-            }
+            pathOnline = !isUNCNetwork || UNCTools.IsUNCFileFolderOnline(item.Path);
 
-            if (!pathOnline && isUNCNetwork)
+            if (!pathOnline)
             {
               ignoredItems.Add(serverName);
               Log.Debug("GetRootExt(): '{0}' is offline. Added to the ignored list.", serverName);
