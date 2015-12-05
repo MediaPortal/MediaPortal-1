@@ -56,7 +56,8 @@ class CParserSdt : public CSectionDecoder, public IDefaultAuthorityProvider
     bool IsReadyActual() const;
     bool IsReadyOther() const;
 
-    unsigned short GetServiceCount() const;
+    void GetServiceCount(unsigned short& actualOriginalNetworkId,
+                          unsigned short& serviceCount) const;
     bool GetService(unsigned short index,
                       unsigned char& tableId,
                       unsigned short& originalNetworkId,
@@ -526,6 +527,7 @@ class CParserSdt : public CSectionDecoder, public IDefaultAuthorityProvider
     ICallBackSdt* m_callBack;
     CRecordStore m_records;
 
+    unsigned short m_actualOriginalNetworkId;
     CRecordSdt* m_currentRecord;
     unsigned short m_currentRecordIndex;
     CRecordSdt* m_referenceRecord;

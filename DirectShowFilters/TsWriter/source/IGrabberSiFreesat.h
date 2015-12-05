@@ -46,7 +46,8 @@ DECLARE_INTERFACE_(IGrabberSiFreesat, IGrabberSiDvb)
   STDMETHOD_(bool, IsReadySdtActual)(THIS)PURE;
   STDMETHOD_(bool, IsReadySdtOther)(THIS)PURE;
 
-  STDMETHOD_(unsigned short, GetServiceCount)(THIS)PURE;
+  STDMETHOD_(void, GetServiceCount)(THIS_ unsigned short* actualOriginalNetworkId,
+                                    unsigned short* serviceCount)PURE;
   STDMETHOD_(bool, GetService)(THIS_ unsigned short index,
                                 unsigned char* tableId,
                                 unsigned short* originalNetworkId,

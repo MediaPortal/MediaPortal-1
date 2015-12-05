@@ -67,7 +67,8 @@ class CGrabberSiDvb
     STDMETHODIMP_(bool) IsReadySdtActual();
     STDMETHODIMP_(bool) IsReadySdtOther();
 
-    STDMETHODIMP_(unsigned short) GetServiceCount();
+    STDMETHODIMP_(void) GetServiceCount(unsigned short* actualOriginalNetworkId,
+                                        unsigned short* serviceCount);
     STDMETHODIMP_(bool) GetService(unsigned short index,
                                     unsigned char* tableId,
                                     unsigned short* originalNetworkId,

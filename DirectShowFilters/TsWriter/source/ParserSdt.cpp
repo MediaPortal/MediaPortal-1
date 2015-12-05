@@ -42,6 +42,7 @@ CParserSdt::CParserSdt(void) : m_records(600000)
 {
   m_isOtherReady = false;
   m_otherCompleteTime = 0;
+  m_actualOriginalNetworkId = 0;
 
   m_currentRecord = NULL;
   m_currentRecordIndex = 0xffff;
@@ -68,6 +69,7 @@ void CParserSdt::Reset(bool enableCrcCheck)
   m_seenSectionsOther.clear();
   m_unseenSectionsOther.clear();
   m_isOtherReady = false;
+  m_actualOriginalNetworkId = 0;
   m_currentRecord = NULL;
   m_currentRecordIndex = 0xffff;
   m_referenceRecord = NULL;
@@ -107,10 +109,12 @@ void CParserSdt::OnNewSection(CSection& section)
     //          section.section_length, section.SectionNumber,
     //          section.LastSectionNumber);
 
+    CEnterCriticalSection lock(m_section);
     vector<unsigned long long>* seenSections;
     vector<unsigned long long>* unseenSections;
     if (section.table_id == TABLE_ID_SDT_ACTUAL)
     {
+      m_actualOriginalNetworkId = originalNetworkId;
       seenSections = &m_seenSectionsActual;
       unseenSections = &m_unseenSectionsActual;
     }
@@ -124,7 +128,6 @@ void CParserSdt::OnNewSection(CSection& section)
     unsigned long long sectionKey = ((unsigned long long)section.table_id << 48) | ((unsigned long long)section.version_number << 40) | ((unsigned long long)originalNetworkId << 24) | ((unsigned long long)transportStreamId << 8) | section.SectionNumber;
     unsigned long long sectionGroupMask = 0xffff00ffffffff00;
     unsigned long long sectionGroupKey = sectionKey & sectionGroupMask;
-    CEnterCriticalSection lock(m_section);
     vector<unsigned long long>::const_iterator sectionIt = find(seenSections->begin(),
                                                                 seenSections->end(),
                                                                 sectionKey);
@@ -359,10 +362,12 @@ bool CParserSdt::IsReadyOther() const
   return m_isOtherReady;
 }
 
-unsigned short CParserSdt::GetServiceCount() const
+void CParserSdt::GetServiceCount(unsigned short& actualOriginalNetworkId,
+                                  unsigned short& serviceCount) const
 {
   CEnterCriticalSection lock(m_section);
-  return (unsigned short)m_records.GetRecordCount();
+  actualOriginalNetworkId = m_actualOriginalNetworkId;
+  serviceCount = (unsigned short)m_records.GetRecordCount();
 }
 
 bool CParserSdt::GetService(unsigned short index,

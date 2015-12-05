@@ -190,9 +190,10 @@ STDMETHODIMP_(bool) CGrabberSiDvb::IsReadySdtOther()
   return m_parserSdt.IsReadyOther();
 }
 
-STDMETHODIMP_(unsigned short) CGrabberSiDvb::GetServiceCount()
+STDMETHODIMP_(void) CGrabberSiDvb::GetServiceCount(unsigned short* actualOriginalNetworkId,
+                                                    unsigned short* serviceCount)
 {
-  return m_parserSdt.GetServiceCount();
+  m_parserSdt.GetServiceCount(*actualOriginalNetworkId, *serviceCount);
 }
 
 STDMETHODIMP_(bool) CGrabberSiDvb::GetService(unsigned short index,
