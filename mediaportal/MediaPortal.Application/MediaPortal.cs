@@ -1724,7 +1724,17 @@ public class MediaPortalApp : D3D, IRender
   private bool OnSysCommand(ref Message msg)
   {
     Log.Debug("Main: WM_SYSCOMMAND ({0})", Enum.GetName(typeof(SYSCOMMAND), msg.WParam.ToInt32() & 0xFFF0));
+    Log.Debug("Main: WM_SYSCOMMAND (IsInAwayMode : {0}) - (IsDisplayTurnedOn : {1}) - (IsUserPresent : {2})", IsInAwayMode, IsDisplayTurnedOn, IsUserPresent);
     bool result = true;
+    bool resumeTimeOutReached = false;
+    int displayState = msg.LParam.ToInt32();
+    ResumeTimeOutMP = 90;
+    var timeSpam = DateTime.Now - ResumeTimeOutTimer;
+    if (timeSpam.TotalSeconds >= ResumeTimeOutMP)
+    {
+      resumeTimeOutReached = true;
+    }
+    Log.Debug("Main: WM_SYSCOMMAND: resumeTimeOutReached : {0}", resumeTimeOutReached);
     switch (msg.WParam.ToInt32() & 0xFFF0)
     {
       // user clicked on minimize button
@@ -1735,24 +1745,32 @@ public class MediaPortalApp : D3D, IRender
 
       // Windows is requesting to turn off the display
       case SC_MONITORPOWER:
-        int displayState = msg.LParam.ToInt32();
-        Log.Debug("Main: SC_MONITORPOWER : The display is {0}", Enum.GetName(typeof(MonitorState),msg.LParam.ToInt32()));
+        Log.Debug("Main: SC_MONITORPOWER : The display requested value is {0}", Enum.GetName(typeof(MonitorState),msg.LParam.ToInt32()));
         if ((GUIGraphicsContext.IsFullScreenVideo && !g_Player.Paused) || GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_SLIDESHOW && displayState != (int) MonitorState.ON)
         {
           PluginManager.WndProc(ref msg);
-          Log.Info("Main: Active player - resetting idle timer for display to be turned off");
+          Log.Info("Main: SC_MONITORPOWER Active player - resetting idle timer for display to be turned off");
           SetThreadExecutionState(EXECUTION_STATE.ES_SYSTEM_REQUIRED | EXECUTION_STATE.ES_DISPLAY_REQUIRED);
           msg.Result = (IntPtr)1;
           result = false;
         }
-        else if (_suspended)
+        else if (_suspended && displayState == (int)MonitorState.OFF)
         {
           // Don't send display off message when we are in suspend
+          Log.Debug("Main: SC_MONITORPOWER : don't send monitor OFF when suspended");
           result = false;
         }
-        else 
+        else if (!resumeTimeOutReached && displayState == (int)MonitorState.OFF)
+        {
+          msg.LParam = new IntPtr((int)MonitorState.ON);
+          SetThreadExecutionState(EXECUTION_STATE.ES_SYSTEM_REQUIRED | EXECUTION_STATE.ES_DISPLAY_REQUIRED);
+          msg.Result = (IntPtr)0;
+          Log.Debug("Main: SC_MONITORPOWER : don't send monitor OFF : msg result : {0} - time span elapsed {1} seconds", msg.Result, timeSpam.Seconds);
+        }
+        else
         {
           msg.Result = (IntPtr)0;
+          Log.Debug("Main: SC_MONITORPOWER : send monitor : msg result : {0}", msg.Result);
         }
         break;
 
@@ -1762,19 +1780,28 @@ public class MediaPortalApp : D3D, IRender
         if ((GUIGraphicsContext.IsFullScreenVideo && !g_Player.Paused) || GUIWindowManager.ActiveWindow == (int) GUIWindow.Window.WINDOW_SLIDESHOW)
         {
           PluginManager.WndProc(ref msg);
-          Log.Info("Main: Active player - resetting idle timer for screen save to be turned on");
+          Log.Info("Main: SC_SCREENSAVE Active player - resetting idle timer for screen save to be turned on");
           SetThreadExecutionState(EXECUTION_STATE.ES_SYSTEM_REQUIRED | EXECUTION_STATE.ES_DISPLAY_REQUIRED);
           msg.Result = (IntPtr)1;
           result = false;
         }
-        else if (_suspended)
+        else if (_suspended && displayState == (int)MonitorState.OFF)
         {
           // Don't send display off message when we are in suspend
+          Log.Debug("Main: SC_SCREENSAVE : don't send monitor OFF when suspended");
           result = false;
+        }
+        else if (!resumeTimeOutReached && displayState == (int)MonitorState.OFF)
+        {
+          msg.LParam = new IntPtr((int)MonitorState.ON);
+          SetThreadExecutionState(EXECUTION_STATE.ES_SYSTEM_REQUIRED | EXECUTION_STATE.ES_DISPLAY_REQUIRED);
+          msg.Result = (IntPtr)0;
+          Log.Debug("Main: SC_SCREENSAVE : don't send monitor OFF : msg result : {0} - time span elapsed {1} seconds", msg.Result, timeSpam.Seconds);
         }
         else
         {
           msg.Result = (IntPtr)0;
+          Log.Debug("Main: SC_SCREENSAVE : send monitor : msg result : {0}", msg.Result);
         }
         break;
     }
@@ -2013,8 +2040,11 @@ public class MediaPortalApp : D3D, IRender
                 ShowMouseCursor(false);
                 break;
               case 2:
-                Log.Info("Main: The user activity timeout has elapsed with no interaction from the user");
-                IsUserPresent = false;
+                if (!_suspended)
+                {
+                  Log.Info("Main: The user activity timeout has elapsed with no interaction from the user");
+                  IsUserPresent = false;
+                }
                 break;
             }
           }
@@ -2919,6 +2949,9 @@ public class MediaPortalApp : D3D, IRender
     ForceMPFocus();
 
     Log.Info("Main: OnResumeSuspend - Done");
+
+    // Set timeout on resume to avoid multiple display ON and OFF message 
+    ResumeTimeOutTimer = DateTime.Now;
   }
 
   #endregion
