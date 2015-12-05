@@ -1402,28 +1402,31 @@ namespace MediaPortal.GUI.Library
     /// <returns>id of control or -1 if no control has the focus</returns>
     public virtual int GetFocusControlId()
     {
-      foreach (GUIControl child in Children)
+      lock (this)
       {
-        GUIGroup grp = child as GUIGroup;
-        if (grp != null)
+        foreach (GUIControl child in Children)
         {
-          int iFocusedControlId = grp.GetFocusControlId();
-          if (iFocusedControlId >= 0)
+          GUIGroup grp = child as GUIGroup;
+          if (grp != null)
           {
-            _previousFocusedControlId = iFocusedControlId;
-            return iFocusedControlId;
+            int iFocusedControlId = grp.GetFocusControlId();
+            if (iFocusedControlId >= 0)
+            {
+              _previousFocusedControlId = iFocusedControlId;
+              return iFocusedControlId;
+            }
+          }
+          else
+          {
+            var guicontrol = child;
+            if (guicontrol.Focus)
+            {
+              return guicontrol.GetID;
+            }
           }
         }
-        else
-        {
-          var guicontrol = child;
-          if (guicontrol.Focus)
-          {
-            return guicontrol.GetID;
-          }
-        }
+        return -1;
       }
-      return -1;
     }
 
     /// <summary>

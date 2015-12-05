@@ -345,6 +345,13 @@ public class MediaPortalApp : D3D, IRender
   // ReSharper restore InconsistentNaming
   // ReSharper restore UnusedMember.Local
 
+  private enum MonitorState
+  {
+    ON = -1,
+    OFF = 2,
+    STANDBY = 1
+  }
+
   #endregion
 
   #region structs
@@ -1729,8 +1736,8 @@ public class MediaPortalApp : D3D, IRender
       // Windows is requesting to turn off the display
       case SC_MONITORPOWER:
         int displayState = msg.LParam.ToInt32();
-        Log.Debug("Main: SC_MONITORPOWER {0}", displayState);
-        if ((GUIGraphicsContext.IsFullScreenVideo && !g_Player.Paused) || GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_SLIDESHOW && displayState != -1)
+        Log.Debug("Main: SC_MONITORPOWER : The display is {0}", Enum.GetName(typeof(MonitorState),msg.LParam.ToInt32()));
+        if ((GUIGraphicsContext.IsFullScreenVideo && !g_Player.Paused) || GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_SLIDESHOW && displayState != (int) MonitorState.ON)
         {
           PluginManager.WndProc(ref msg);
           Log.Info("Main: Active player - resetting idle timer for display to be turned off");
@@ -1738,7 +1745,12 @@ public class MediaPortalApp : D3D, IRender
           msg.Result = (IntPtr)1;
           result = false;
         }
-        else
+        else if (_suspended)
+        {
+          // Don't send display off message when we are in suspend
+          result = false;
+        }
+        else 
         {
           msg.Result = (IntPtr)0;
         }
@@ -1753,6 +1765,11 @@ public class MediaPortalApp : D3D, IRender
           Log.Info("Main: Active player - resetting idle timer for screen save to be turned on");
           SetThreadExecutionState(EXECUTION_STATE.ES_SYSTEM_REQUIRED | EXECUTION_STATE.ES_DISPLAY_REQUIRED);
           msg.Result = (IntPtr)1;
+          result = false;
+        }
+        else if (_suspended)
+        {
+          // Don't send display off message when we are in suspend
           result = false;
         }
         else
@@ -1782,6 +1799,7 @@ public class MediaPortalApp : D3D, IRender
           _resumedSuspended = false;
           _delayedResume = false;
           _suspended = true;
+          Log.Debug("Main: PBT_APMSUSPEND - suspended is true");
 
           Screen screen = Screen.FromControl(this);
 
@@ -1923,6 +1941,7 @@ public class MediaPortalApp : D3D, IRender
           }
 
           _suspended = false;
+          Log.Debug("Main: PBT_APMRESUMESUSPEND - suspended is false");
 
           // force form dimensions to screen size to compensate for HDMI hot plug problems (e.g. WM_DiSPLAYCHANGE reported 1920x1080 but system is still in 1024x768 mode).
           if (GUIGraphicsContext.currentScreen.Bounds.Width == 1024 &&
@@ -1988,6 +2007,7 @@ public class MediaPortalApp : D3D, IRender
                   msg.WParam = new IntPtr((int)PBT_EVENT.PBT_POWERSETTINGCHANGE);
                   _resumedSuspended = true;
                   _suspended = false;
+                  Log.Debug("Main: Providing input - suspended is false");
                 }
                 IsUserPresent = true;
                 ShowMouseCursor(false);
