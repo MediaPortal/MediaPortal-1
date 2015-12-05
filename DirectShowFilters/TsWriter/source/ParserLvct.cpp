@@ -591,13 +591,13 @@ bool CParserLvct::DecodeChannelRecord(unsigned char* sectionData,
     }
     pointer += 14;
 
-    record.MajorChannelNumber = ((sectionData[pointer] & 0xf) << 6) | (sectionData[pointer + 1] >> 6);
+    record.MajorChannelNumber = ((sectionData[pointer] & 0xf) << 6) | (sectionData[pointer + 1] >> 2);
     pointer++;
     record.MinorChannelNumber = ((sectionData[pointer] & 0x3) << 8) | sectionData[pointer + 1];
     pointer += 2;
 
     // Pack one-part channel numbers into the major channel number.
-    if (((record.MajorChannelNumber >> 4) & 0x3f) == 0x3f)
+    if ((record.MajorChannelNumber & 0x3f0) == 0x3f0)
     {
       record.MajorChannelNumber = ((record.MajorChannelNumber & 0xf) << 10) | record.MinorChannelNumber;
       record.MinorChannelNumber = 0;
