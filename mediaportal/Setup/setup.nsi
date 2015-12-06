@@ -106,6 +106,9 @@ Var frominstall
 
 Var MPTray_Running
 
+Var PREVIOUS_SKINSETTINGS_TITAN_CONFIG
+Var PREVIOUS_SKINSETTINGS_DEFAULTWIDEHD_CONFIG
+
 #---------------------------------------------------------------------------
 # INCLUDE FILES
 #---------------------------------------------------------------------------
