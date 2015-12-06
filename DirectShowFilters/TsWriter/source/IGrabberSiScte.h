@@ -40,6 +40,7 @@ DECLARE_INTERFACE_(IGrabberSiScte, IGrabberSiAtsc)
   STDMETHOD_(bool, GetLvctChannel)(THIS_ unsigned short index,
                                     unsigned char* tableId,
                                     unsigned short* sectionTransportStreamId,
+                                    unsigned short* mapId,
                                     char* shortName,
                                     unsigned short* shortNameBufferSize,
                                     unsigned char* longNameCount,

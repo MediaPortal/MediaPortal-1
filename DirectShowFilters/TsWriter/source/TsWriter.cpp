@@ -374,7 +374,7 @@ void CTsWriter::AnalyseOobSiSection(CSection& section)
     return;
   }
 
-  m_grabberSiScte->OnNewSection(PID_SCTE_BASE, section.table_id, section);
+  m_grabberSiScte->OnNewOutOfBandSection(section);
 }
 
 void CTsWriter::AnalyseTsPacket(unsigned char* tsPacket)

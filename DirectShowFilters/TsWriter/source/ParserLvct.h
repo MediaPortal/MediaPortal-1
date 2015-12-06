@@ -46,7 +46,7 @@ class CParserLvct
 
     void Reset();
     void SetCallBack(ICallBackLvct* callBack);
-    void OnNewSection(CSection& section);
+    void OnNewSection(CSection& section, bool isOutOfBandSection);
     bool IsSeen() const;
     bool IsReady() const;
 
@@ -54,6 +54,7 @@ class CParserLvct
     bool GetChannel(unsigned short index,
                     unsigned char& tableId,
                     unsigned short& sectionTransportStreamId,
+                    unsigned short& mapId,
                     char* shortName,
                     unsigned short& shortNameBufferSize,
                     unsigned char& longNameCount,
@@ -96,6 +97,7 @@ class CParserLvct
         {
           TableId = 0;
           SectionTransportStreamId = 0;
+          MapId = 0;
           ShortName = NULL;
           MajorChannelNumber = 0;
           MinorChannelNumber = 0;
@@ -133,6 +135,7 @@ class CParserLvct
             recordLvct == NULL ||
             TableId != recordLvct->TableId ||
             SectionTransportStreamId != recordLvct->SectionTransportStreamId ||
+            MapId != recordLvct->MapId ||
             !CUtils::CompareStrings(ShortName, recordLvct->ShortName) ||
             !CUtils::CompareStringSets(LongNames, recordLvct->LongNames) ||
             MajorChannelNumber != recordLvct->MajorChannelNumber ||
@@ -168,13 +171,13 @@ class CParserLvct
 
         unsigned long long GetExpiryKey() const
         {
-          return (TableId << 16) | SectionTransportStreamId;
+          return (TableId << 16) | SectionTransportStreamId | MapId;
         }
 
         void Debug(const wchar_t* situation) const
         {
-          LogDebug(L"LVCT: channel %s, table ID = 0x%hhx, section TSID = %hu, TSID = %hu, program number = %hu, source ID = %hu, short name = %S, long name count = %llu, major channel = %hu, minor channel = %hu, service type = %hhu, carrier frequency = %lu Hz, modulation mode = %hhu, access controlled = %d, hidden = %d, hide guide = %d, video stream count = %hhu, audio stream count = %hhu, audio language count = %llu, captions language count = %llu, is 3D = %d, ETM location = %hhu, path select = %d, out of band = %d",
-                    situation, TableId, SectionTransportStreamId,
+          LogDebug(L"LVCT: channel %s, table ID = 0x%hhx, section TSID = %hu, map ID = %hu, TSID = %hu, program number = %hu, source ID = %hu, short name = %S, long name count = %llu, major channel = %hu, minor channel = %hu, service type = %hhu, carrier frequency = %lu Hz, modulation mode = %hhu, access controlled = %d, hidden = %d, hide guide = %d, video stream count = %hhu, audio stream count = %hhu, audio language count = %llu, captions language count = %llu, is 3D = %d, ETM location = %hhu, path select = %d, out of band = %d",
+                    situation, TableId, SectionTransportStreamId, MapId,
                     TransportStreamId, ProgramNumber, SourceId,
                     ShortName == NULL ? "" : ShortName,
                     (unsigned long long)LongNames.size(), MajorChannelNumber,
@@ -197,6 +200,7 @@ class CParserLvct
           {
             callBackLvct->OnLvctReceived(TableId,
                                           SectionTransportStreamId,
+                                          MapId,
                                           ShortName,
                                           LongNames,
                                           MajorChannelNumber,
@@ -228,6 +232,7 @@ class CParserLvct
           {
             callBackLvct->OnLvctChanged(TableId,
                                           SectionTransportStreamId,
+                                          MapId,
                                           ShortName,
                                           LongNames,
                                           MajorChannelNumber,
@@ -259,6 +264,7 @@ class CParserLvct
           {
             callBackLvct->OnLvctRemoved(TableId,
                                           SectionTransportStreamId,
+                                          MapId,
                                           ShortName,
                                           LongNames,
                                           MajorChannelNumber,
@@ -286,6 +292,7 @@ class CParserLvct
 
         unsigned char TableId;
         unsigned short SectionTransportStreamId;
+        unsigned short MapId;
         char* ShortName;
         map<unsigned long, char*> LongNames;
         unsigned short MajorChannelNumber;

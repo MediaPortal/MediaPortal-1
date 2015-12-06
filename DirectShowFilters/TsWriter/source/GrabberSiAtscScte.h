@@ -72,7 +72,9 @@ class CGrabberSiAtscScte
     void Reset(bool enableCrcCheck);
     STDMETHODIMP_(void) SetCallBack(ICallBackGrabber* callBack);
     bool OnTsPacket(CTsHeader& header, unsigned char* tsPacket);
+    void OnNewOutOfBandSection(CSection& section);
     void OnNewSection(int pid, int tableId, CSection& section);
+    void OnNewSection(int pid, int tableId, CSection& section, bool isOutOfBandSection);
 
     STDMETHODIMP_(bool) IsSeenLvct();
     bool IsSeenMgt() const;
@@ -119,6 +121,7 @@ class CGrabberSiAtscScte
     STDMETHODIMP_(bool) GetLvctChannel(unsigned short index,
                                         unsigned char* tableId,
                                         unsigned short* sectionTransportStreamId,
+                                        unsigned short* mapId,
                                         char* shortName,
                                         unsigned short* shortNameBufferSize,
                                         unsigned char* longNameCount,

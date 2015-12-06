@@ -110,7 +110,17 @@ bool CGrabberSiAtscScte::OnTsPacket(CTsHeader& header, unsigned char* tsPacket)
   return false;
 }
 
+void CGrabberSiAtscScte::OnNewOutOfBandSection(CSection& section)
+{
+  OnNewSection(PID_SCTE_BASE, section.table_id, section, true);
+}
+
 void CGrabberSiAtscScte::OnNewSection(int pid, int tableId, CSection& section)
+{
+  OnNewSection(pid, tableId, section, false);
+}
+
+void CGrabberSiAtscScte::OnNewSection(int pid, int tableId, CSection& section, bool isOutOfBandSection)
 {
   switch (tableId)
   {
@@ -119,7 +129,7 @@ void CGrabberSiAtscScte::OnNewSection(int pid, int tableId, CSection& section)
       break;
     case TABLE_ID_LVCT_CABLE:
     case TABLE_ID_LVCT_TERRESTRIAL:
-      m_parserLvct.OnNewSection(section);
+      m_parserLvct.OnNewSection(section, isOutOfBandSection);
       break;
     case TABLE_ID_MGT:
       m_parserMgt.OnNewSection(section);
@@ -247,6 +257,7 @@ STDMETHODIMP_(unsigned short) CGrabberSiAtscScte::GetLvctChannelCount()
 STDMETHODIMP_(bool) CGrabberSiAtscScte::GetLvctChannel(unsigned short index,
                                                         unsigned char* tableId,
                                                         unsigned short* sectionTransportStreamId,
+                                                        unsigned short* mapId,
                                                         char* shortName,
                                                         unsigned short* shortNameBufferSize,
                                                         unsigned char* longNameCount,
@@ -275,6 +286,7 @@ STDMETHODIMP_(bool) CGrabberSiAtscScte::GetLvctChannel(unsigned short index,
   return m_parserLvct.GetChannel(index,
                                   *tableId,
                                   *sectionTransportStreamId,
+                                  *mapId,
                                   shortName,
                                   *shortNameBufferSize,
                                   *longNameCount,

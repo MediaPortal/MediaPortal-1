@@ -33,6 +33,7 @@ class ICallBackLvct : public ICallBackTableParser
 
     virtual void OnLvctReceived(unsigned char tableId,
                                 unsigned short sectionTransportStreamId,
+                                unsigned short mapId,
                                 const char* shortName,
                                 const map<unsigned long, char*>& longNames,
                                 unsigned short majorChannelNumber,
@@ -56,6 +57,7 @@ class ICallBackLvct : public ICallBackTableParser
                                 const vector<unsigned long>& captionsLanguages) {}
     virtual void OnLvctChanged(unsigned char tableId,
                                 unsigned short sectionTransportStreamId,
+                                unsigned short mapId,
                                 const char* shortName,
                                 const map<unsigned long, char*>& longNames,
                                 unsigned short majorChannelNumber,
@@ -79,6 +81,7 @@ class ICallBackLvct : public ICallBackTableParser
                                 const vector<unsigned long>& captionsLanguages) {}
     virtual void OnLvctRemoved(unsigned char tableId,
                                 unsigned short sectionTransportStreamId,
+                                unsigned short mapId,
                                 const char* shortName,
                                 const map<unsigned long, char*>& longNames,
                                 unsigned short majorChannelNumber,
