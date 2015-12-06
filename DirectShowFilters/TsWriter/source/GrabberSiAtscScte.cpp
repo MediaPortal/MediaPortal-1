@@ -457,69 +457,100 @@ STDMETHODIMP_(bool) CGrabberSiAtscScte::GetSvctChannel(unsigned short index,
     *majorChannelNumber = virtualChannelNumber;
   }
 
-  if (!m_parserNtt.GetSourceName(*transmissionMedium,
-                                  *applicationVirtualChannel,
-                                  *sourceId,
-                                  *sourceNameLanguage,
-                                  sourceName,
-                                  *sourceNameBufferSize))
+  if (sourceName == NULL)
+  {
+    *sourceNameBufferSize = 0;
+  }
+  else if (!m_parserNtt.GetSourceName(*transmissionMedium,
+                                      *applicationVirtualChannel,
+                                      *sourceId,
+                                      *sourceNameLanguage,
+                                      sourceName,
+                                      *sourceNameBufferSize))
   {
     LogDebug(L"SI ATSC/SCTE %d: missing source name, transmission medium = %hhu, application VC = %d, source ID = %hu",
               m_sectionDecoder.GetPid(), *transmissionMedium,
               *applicationVirtualChannel, *sourceId);
   }
 
-  if (!m_parserNtt.GetMapName(*transmissionMedium,
-                              *vctId,
-                              *mapNameLanguage,
-                              mapName,
-                              *mapNameBufferSize))
+  if (mapName == NULL)
   {
-    if (*vctId != 0)
+    *mapNameBufferSize = 0;
+  }
+  else if (!m_parserNtt.GetMapName(*transmissionMedium,
+                                    *vctId,
+                                    *mapNameLanguage,
+                                    mapName,
+                                    *mapNameBufferSize) && *vctId != 0)
+  {
+    LogDebug(L"SI ATSC/SCTE %d: missing VCT/map name, transmission medium = %hhu, VCT ID = %hu",
+              m_sectionDecoder.GetPid(), *transmissionMedium, *vctId);
+  }
+
+  if (*channelType == 3 || *transmissionMedium != 1)  // NVOD access or non-satellite
+  {
+    if (transponderName == NULL || *transponderNameBufferSize == 0)
     {
-      LogDebug(L"SI ATSC/SCTE %d: missing VCT/map name, transmission medium = %hhu, VCT ID = %hu",
-                m_sectionDecoder.GetPid(), *transmissionMedium, *vctId);
+      *transponderNameBufferSize = 0;
+    }
+    else
+    {
+      transponderName[0] = NULL;
+      *transponderNameBufferSize = 1;
+    }
+    if (satelliteReferenceName == NULL && *satelliteReferenceNameBufferSize == 0)
+    {
+      *satelliteReferenceNameBufferSize = 0;
+    }
+    else
+    {
+      satelliteReferenceName[0] = NULL;
+      *satelliteReferenceNameBufferSize = 1;
+    }
+    if (satelliteFullName != NULL && *satelliteFullNameBufferSize != 0)
+    {
+      *satelliteFullNameBufferSize = 0;
+    }
+    else
+    {
+      satelliteFullName[0] = NULL;
+      *satelliteFullNameBufferSize = 1;
+    }
+
+    if (*channelType == 3)
+    {
+      return true;
     }
   }
-
-  if (*transponderNameBufferSize != 0)
+  else
   {
-    transponderName[0] = NULL;
-  }
-  if (*satelliteReferenceNameBufferSize != 0)
-  {
-    satelliteReferenceName[0] = NULL;
-  }
-  if (*satelliteFullNameBufferSize != 0)
-  {
-    satelliteFullName[0] = NULL;
-  }
-
-  if (*channelType == 3)  // NVOD access
-  {
-    return true;
-  }
-
-  if (*transmissionMedium == 1)   // satellite
-  {
-    if (!m_parserNtt.GetTransponderName(*transmissionMedium,
-                                        *satelliteId,
-                                        *transponderNumber,
-                                        *transponderNameLanguage,
-                                        transponderName,
-                                        *transponderNameBufferSize))
+    if (transponderName == NULL)
+    {
+      *transponderNameBufferSize = 0;
+    }
+    else if (!m_parserNtt.GetTransponderName(*transmissionMedium,
+                                              *satelliteId,
+                                              *transponderNumber,
+                                              *transponderNameLanguage,
+                                              transponderName,
+                                              *transponderNameBufferSize))
     {
       LogDebug(L"SI ATSC/SCTE %d: missing transponder name, satellite ID = %hhu, transponder number = %hhu",
                 m_sectionDecoder.GetPid(), *satelliteId, *transponderNumber);
     }
 
-    if (!m_parserNtt.GetSatelliteText(*transmissionMedium,
-                                      *satelliteId,
-                                      *satelliteNameLanguage,
-                                      satelliteReferenceName,
-                                      *satelliteReferenceNameBufferSize,
-                                      satelliteFullName,
-                                      *satelliteFullNameBufferSize))
+    if (satelliteReferenceName == NULL && satelliteFullName == NULL)
+    {
+      *satelliteReferenceNameBufferSize = 0;
+      *satelliteFullNameBufferSize = 0;
+    }
+    else if (!m_parserNtt.GetSatelliteText(*transmissionMedium,
+                                            *satelliteId,
+                                            *satelliteNameLanguage,
+                                            satelliteReferenceName,
+                                            *satelliteReferenceNameBufferSize,
+                                            satelliteFullName,
+                                            *satelliteFullNameBufferSize))
     {
       LogDebug(L"SI ATSC/SCTE %d: missing satellite name, satellite ID = %hhu",
                 m_sectionDecoder.GetPid(), *satelliteId);

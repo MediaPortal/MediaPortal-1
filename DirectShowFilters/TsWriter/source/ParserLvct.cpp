@@ -420,7 +420,7 @@ bool CParserLvct::GetChannel(unsigned short index,
   if (!CUtils::CopyStringToBuffer(m_currentRecord->ShortName,
                                   shortName,
                                   shortNameBufferSize,
-                                  requiredBufferSize))
+                                  requiredBufferSize) && shortName != NULL)
   {
     LogDebug(L"LVCT %hu: insufficient short name buffer size, channel index = %hu, table ID = 0x%hhx, TSID = %hu, channel TSID = %hu, program number = %hu, major channel number = %hu, minor channel number = %hu, required size = %hu, actual size = %hu",
               m_pid, index, tableId, sectionTransportStreamId,
@@ -432,7 +432,7 @@ bool CParserLvct::GetChannel(unsigned short index,
   if (!CUtils::CopyVectorToArray(m_currentRecord->AudioLanguages,
                                   audioLanguages,
                                   audioLanguageCount,
-                                  requiredCount))
+                                  requiredCount) && audioLanguages != NULL)
   {
     LogDebug(L"LVCT %hu: insufficient audio language array size, channel index = %hu, table ID = 0x%hhx, TSID = %hu, channel TSID = %hu, program number = %hu, major channel number = %hu, minor channel number = %hu, required size = %hhu, actual size = %hhu",
               m_pid, index, tableId, sectionTransportStreamId,
@@ -442,7 +442,7 @@ bool CParserLvct::GetChannel(unsigned short index,
   if (!CUtils::CopyVectorToArray(m_currentRecord->CaptionsLanguages,
                                   captionsLanguages,
                                   captionsLanguageCount,
-                                  requiredCount))
+                                  requiredCount) && captionsLanguages != NULL)
   {
     LogDebug(L"LVCT %hu: insufficient captions language array size, channel index = %hu, table ID = 0x%hhx, TSID = %hu, channel TSID = %hu, program number = %hu, major channel number = %hu, minor channel number = %hu, required size = %hhu, actual size = %hhu",
               m_pid, index, tableId, sectionTransportStreamId,
