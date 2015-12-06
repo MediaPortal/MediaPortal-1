@@ -299,28 +299,28 @@ ShowUninstDetails show
 !macroend
 
 !macro BackupSkinSettings
-  ${If} ${FileExists} "${COMMON_APPDATA}\DefaultWideHD\SkinSettings.xml"
+  ${If} ${FileExists} "${COMMON_APPDATA}\skin\DefaultWideHD\SkinSettings.xml"
     GetTempFileName $PREVIOUS_SKINSETTINGS_DEFAULTWIDEHD_CONFIG
-    ${LOG_TEXT} "INFO" "Backup SkinSettings.xml for DefaultWideHD (${COMMON_APPDATA}\DefaultWideHD\SkinSettings.xml)"
-    CopyFiles /SILENT /FILESONLY "${COMMON_APPDATA}\DefaultWideHD\SkinSettings.xml" "$PREVIOUS_SKINSETTINGS_DEFAULTWIDEHD_CONFIG"
+    ${LOG_TEXT} "INFO" "Backup SkinSettings.xml for DefaultWideHD (${COMMON_APPDATA}\skin\DefaultWideHD\SkinSettings.xml)"
+    CopyFiles /SILENT /FILESONLY "${COMMON_APPDATA}\skin\DefaultWideHD\SkinSettings.xml" "$PREVIOUS_SKINSETTINGS_DEFAULTWIDEHD_CONFIG"
   ${EndIf}
   
-  ${If} ${FileExists} "${COMMON_APPDATA}\Titan\SkinSettings.xml"
+  ${If} ${FileExists} "${COMMON_APPDATA}\skin\Titan\SkinSettings.xml"
     GetTempFileName $PREVIOUS_SKINSETTINGS_TITAN_CONFIG
-    ${LOG_TEXT} "INFO" "Backup SkinSettings.xml for Titan (${COMMON_APPDATA}\Titan\SkinSettings.xml)"
-    CopyFiles /SILENT /FILESONLY "${COMMON_APPDATA}\Titan\SkinSettings.xml" "$PREVIOUS_SKINSETTINGS_TITAN_CONFIG"
+    ${LOG_TEXT} "INFO" "Backup SkinSettings.xml for Titan (${COMMON_APPDATA}\skin\Titan\SkinSettings.xml)"
+    CopyFiles /SILENT /FILESONLY "${COMMON_APPDATA}\skin\Titan\SkinSettings.xml" "$PREVIOUS_SKINSETTINGS_TITAN_CONFIG"
   ${EndIf}
 !macroend
 
 !macro RestoreSkinSettings
   ${If} ${FileExists} "$PREVIOUS_SKINSETTINGS_DEFAULTWIDEHD_CONFIG"
-    ${LOG_TEXT} "INFO" "Restore SkinSettings.xml for DefaultWideHD (${COMMON_APPDATA}\DefaultWideHD\SkinSettings.xml)"
-    CopyFiles /SILENT /FILESONLY "$PREVIOUS_SKINSETTINGS_DEFAULTWIDEHD_CONFIG" "${COMMON_APPDATA}\DefaultWideHD\SkinSettings.xml" 
+    ${LOG_TEXT} "INFO" "Restore SkinSettings.xml for DefaultWideHD (${COMMON_APPDATA}\skin\DefaultWideHD\SkinSettings.xml)"
+    CopyFiles /SILENT /FILESONLY "$PREVIOUS_SKINSETTINGS_DEFAULTWIDEHD_CONFIG" "${COMMON_APPDATA}\skin\DefaultWideHD\SkinSettings.xml" 
   ${EndIf}
 
   ${If} ${FileExists} "$PREVIOUS_SKINSETTINGS_TITAN_CONFIG"
-    ${LOG_TEXT} "INFO" "Restore SkinSettings.xml for Titan (${COMMON_APPDATA}\Titan\SkinSettings.xml)"
-    CopyFiles /SILENT /FILESONLY "$PREVIOUS_SKINSETTINGS_TITAN_CONFIG" "${COMMON_APPDATA}\Titan\SkinSettings.xml" 
+    ${LOG_TEXT} "INFO" "Restore SkinSettings.xml for Titan (${COMMON_APPDATA}\skin\Titan\SkinSettings.xml)"
+    CopyFiles /SILENT /FILESONLY "$PREVIOUS_SKINSETTINGS_TITAN_CONFIG" "${COMMON_APPDATA}\skin\Titan\SkinSettings.xml" 
   ${EndIf}  
 !macroend
 
