@@ -1157,19 +1157,19 @@ namespace MediaPortal.GUI.Library
             continue;
           }
 
-          if (string.Compare(token, "Horizontal") == 0)
+          if (String.CompareOrdinal(token, "Horizontal") == 0)
           {
             valuesTemp.Add((int)Orientation.Horizontal);
           }
-          else if (string.Compare(token, "Vertical") == 0)
+          else if (String.CompareOrdinal(token, "Vertical") == 0)
           {
             valuesTemp.Add((int)Orientation.Vertical);
           }
-          else if (string.Compare(token, "true") == 0)
+          else if (String.CompareOrdinal(token, "true") == 0)
           {
             valuesTemp.Add(1);
           }
-          else if (string.Compare(token, "false") == 0)
+          else if (String.CompareOrdinal(token, "false") == 0)
           {
             valuesTemp.Add(0);
           }
