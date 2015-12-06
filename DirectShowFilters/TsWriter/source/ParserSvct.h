@@ -222,7 +222,13 @@ class CParserSvct
           CdtReference = 0;
           ProgramNumber = 0;
           MmtReference = 0;
-          Scrambled = false;
+
+          // Important: the standard digital virtual channel records don't have
+          // an encryption indicator (!!!). We assume all channels are
+          // encrypted unless otherwise specified (eg. through a channel
+          // properties descriptor).
+          Scrambled = true;
+
           VideoStandard = 0;
           WideBandwidthAudio = false;
           CompandedAudio = false;
