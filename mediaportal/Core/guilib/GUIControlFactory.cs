@@ -1003,7 +1003,7 @@ namespace MediaPortal.GUI.Library
         valueParameters = new int[0];
       }
 
-      if (string.Compare(layoutClass, "GridLayout", true) == 0)
+      if (String.Compare(layoutClass, "GridLayout", StringComparison.OrdinalIgnoreCase) == 0)
       {
         if (valueParameters.Length >= 5)
         {
@@ -1034,7 +1034,7 @@ namespace MediaPortal.GUI.Library
         return null;
       }
 
-      if (string.Compare(layoutClass, "StackLayout", true) == 0)
+      if (String.Compare(layoutClass, "StackLayout", StringComparison.OrdinalIgnoreCase) == 0)
       {
         if (valueParameters.Length >= 3)
         {
@@ -1059,7 +1059,7 @@ namespace MediaPortal.GUI.Library
         return null;
       }
 
-      if (string.Compare(layoutClass, "RingLayout", true) == 0)
+      if (String.Compare(layoutClass, "RingLayout", StringComparison.OrdinalIgnoreCase) == 0)
       {
         if (valueParameters.Length >= 2)
         {
@@ -1079,7 +1079,7 @@ namespace MediaPortal.GUI.Library
         return null;
       }
 
-      if (string.Compare(layoutClass, "TableLayout", true) == 0)
+      if (String.Compare(layoutClass, "TableLayout", StringComparison.OrdinalIgnoreCase) == 0)
       {
         if (valueParameters.Length >= 4)
         {
@@ -1109,7 +1109,7 @@ namespace MediaPortal.GUI.Library
         return null;
       }
 
-      if (string.Compare(layoutClass, "TableCell", true) == 0)
+      if (String.Compare(layoutClass, "TableCell", StringComparison.OrdinalIgnoreCase) == 0)
       {
         if (valueParameters.Length >= 3)
         {
@@ -1157,19 +1157,19 @@ namespace MediaPortal.GUI.Library
             continue;
           }
 
-          if (String.CompareOrdinal(token, "Horizontal") == 0)
+          if (String.CompareOrdinal(token.ToLowerInvariant(), "horizontal") == 0)
           {
             valuesTemp.Add((int)Orientation.Horizontal);
           }
-          else if (String.CompareOrdinal(token, "Vertical") == 0)
+          else if (String.CompareOrdinal(token.ToLowerInvariant(), "vertical") == 0)
           {
             valuesTemp.Add((int)Orientation.Vertical);
           }
-          else if (String.CompareOrdinal(token, "true") == 0)
+          else if (String.CompareOrdinal(token.ToLowerInvariant(), "true") == 0)
           {
             valuesTemp.Add(1);
           }
-          else if (String.CompareOrdinal(token, "false") == 0)
+          else if (String.CompareOrdinal(token.ToLowerInvariant(), "false") == 0)
           {
             valuesTemp.Add(0);
           }

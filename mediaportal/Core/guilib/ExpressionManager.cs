@@ -311,7 +311,7 @@ namespace MediaPortal.GUI.Library
 
     public static string Parse(string line, ExpressionOptions options)
     {
-      if (line.IndexOf("#(") > -1)
+      if (line.IndexOf("#(", StringComparison.Ordinal) > -1)
       {
         MatchCollection matches = _exprTriggerRegEx.Matches(line);
         int offset = 0;
