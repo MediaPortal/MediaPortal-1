@@ -106,6 +106,9 @@ Var frominstall
 
 Var MPTray_Running
 
+Var PREVIOUS_SKINSETTINGS_TITAN_CONFIG
+Var PREVIOUS_SKINSETTINGS_DEFAULTWIDEHD_CONFIG
+
 #---------------------------------------------------------------------------
 # INCLUDE FILES
 #---------------------------------------------------------------------------
@@ -295,6 +298,32 @@ ShowUninstDetails show
   SendMessage ${HWND_BROADCAST} ${WM_FONTCHANGE} 0 0 /TIMEOUT=1000
 !macroend
 
+!macro BackupSkinSettings
+  ${If} ${FileExists} "${COMMON_APPDATA}\skin\DefaultWideHD\SkinSettings.xml"
+    GetTempFileName $PREVIOUS_SKINSETTINGS_DEFAULTWIDEHD_CONFIG
+    ${LOG_TEXT} "INFO" "Backup SkinSettings.xml for DefaultWideHD (${COMMON_APPDATA}\skin\DefaultWideHD\SkinSettings.xml)"
+    CopyFiles /SILENT /FILESONLY "${COMMON_APPDATA}\skin\DefaultWideHD\SkinSettings.xml" "$PREVIOUS_SKINSETTINGS_DEFAULTWIDEHD_CONFIG"
+  ${EndIf}
+  
+  ${If} ${FileExists} "${COMMON_APPDATA}\skin\Titan\SkinSettings.xml"
+    GetTempFileName $PREVIOUS_SKINSETTINGS_TITAN_CONFIG
+    ${LOG_TEXT} "INFO" "Backup SkinSettings.xml for Titan (${COMMON_APPDATA}\skin\Titan\SkinSettings.xml)"
+    CopyFiles /SILENT /FILESONLY "${COMMON_APPDATA}\skin\Titan\SkinSettings.xml" "$PREVIOUS_SKINSETTINGS_TITAN_CONFIG"
+  ${EndIf}
+!macroend
+
+!macro RestoreSkinSettings
+  ${If} ${FileExists} "$PREVIOUS_SKINSETTINGS_DEFAULTWIDEHD_CONFIG"
+    ${LOG_TEXT} "INFO" "Restore SkinSettings.xml for DefaultWideHD (${COMMON_APPDATA}\skin\DefaultWideHD\SkinSettings.xml)"
+    CopyFiles /SILENT /FILESONLY "$PREVIOUS_SKINSETTINGS_DEFAULTWIDEHD_CONFIG" "${COMMON_APPDATA}\skin\DefaultWideHD\SkinSettings.xml" 
+  ${EndIf}
+
+  ${If} ${FileExists} "$PREVIOUS_SKINSETTINGS_TITAN_CONFIG"
+    ${LOG_TEXT} "INFO" "Restore SkinSettings.xml for Titan (${COMMON_APPDATA}\skin\Titan\SkinSettings.xml)"
+    CopyFiles /SILENT /FILESONLY "$PREVIOUS_SKINSETTINGS_TITAN_CONFIG" "${COMMON_APPDATA}\skin\Titan\SkinSettings.xml" 
+  ${EndIf}  
+!macroend
+
 Function RunUninstaller
 
 !ifndef GIT_BUILD
@@ -318,6 +347,7 @@ Section "-prepare" SecPrepare
   ${ReadMediaPortalDirs} "$INSTDIR"
 
   !insertmacro ShutdownRunningMediaPortalApplications
+  !insertmacro BackupSkinSettings
 
   ${LOG_TEXT} "INFO" "Deleting SkinCache..."
   RMDir /r "$MPdir.Cache"
@@ -620,6 +650,8 @@ Section "MediaPortal core files (required)" SecCore
   !insertmacro InstallTTFFont "${MEDIAPORTAL.BASE}\skin\Titan\Fonts\TitanMedium.ttf"
   SendMessage ${HWND_BROADCAST} ${WM_FONTCHANGE} 0 0 /TIMEOUT=1000
   
+  !insertmacro RestoreSkinSettings
+
 SectionEnd
 !macro Remove_${SecCore}
   ${LOG_TEXT} "INFO" "Uninstalling MediaPortal core files..."
@@ -676,7 +708,7 @@ SectionEnd
   Delete "$MPdir.Config\scripts\MovieInfo\IMDB_MP13x.csscript"
   RMDir "$MPdir.Config\scripts\MovieInfo"
   Delete "$MPdir.Config\scripts\InternalActorMoviesGrabber.csscript"
-	Delete "$MPdir.Config\scripts\InternalMovieImagesGrabber.csscript"
+  Delete "$MPdir.Config\scripts\InternalMovieImagesGrabber.csscript"
   Delete "$MPdir.Config\scripts\VDBParserStrings.xml"
   RMDir "$MPdir.Config\scripts"
 
