@@ -187,6 +187,10 @@ namespace MediaPortal.GUI.Library
             {
               paramValues[i] = _parameters[i].Evaluate(options);
             }
+            else
+            {
+              return 0;
+            }
           }
           _value = _func.Invoke(paramValues);
           if (_value == null)
