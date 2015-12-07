@@ -744,7 +744,7 @@ bool CParserNtt::IsReadyPrivate(unsigned char transmissionMedium) const
     }
   }
 
-  // Check that we have seen all the satellite transponders that we expect.
+  // Check that we have seen all the rating region names that we expect.
   map<unsigned char, bool> ratingRegions;
   for (unsigned long i = 0; i < recordCountRt; i++)
   {
@@ -1086,7 +1086,6 @@ bool CParserNtt::DecodeSection(CSection& section,
   }
   return false;
 }
-
 
 bool CParserNtt::DecodeTransponderNameSubTable(unsigned char* data,
                                                 unsigned short& pointer,
