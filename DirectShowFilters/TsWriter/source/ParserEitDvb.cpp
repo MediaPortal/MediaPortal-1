@@ -1205,7 +1205,7 @@ void CParserEitDvb::OnNewSection(int pid, int tableId, CSection& section)
 {
   try
   {
-    if (!section.CurrentNextIndicator)
+    if (!section.SectionSyntaxIndicator || !section.CurrentNextIndicator)
     {
       return;
     }
@@ -1217,7 +1217,8 @@ void CParserEitDvb::OnNewSection(int pid, int tableId, CSection& section)
       case PID_EIT_MULTICHOICE:
         if (
           (m_grabFreesat && (m_freesatPidEitPf > 0 || m_freesatPidEitSchedule > 0)) ||
-          tableId < TABLE_ID_EIT_DVB_START || tableId > TABLE_ID_EIT_DVB_END)
+          tableId < TABLE_ID_EIT_DVB_START || tableId > TABLE_ID_EIT_DVB_END
+        )
         {
           return;
         }

@@ -173,11 +173,11 @@ HRESULT CDiskRecorder::SetPmt(unsigned char* pmt,
       return E_FAIL;
     }
 
-    CEnterCriticalSection lock(m_section);
     CSection section;
     section.AppendData(pmt, min(sizeof(section.Data), pmtSize));
+    CEnterCriticalSection lock(m_section);
     m_pmtParser.Reset();
-    if (!section.IsSectionComplete() || !m_pmtParser.DecodePmtSection(section))
+    if (!section.IsComplete() || !m_pmtParser.DecodePmtSection(section))
     {
       WriteLog(L"invalid PMT, incomplete or invalid section");
       return E_FAIL;

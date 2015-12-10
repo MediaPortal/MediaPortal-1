@@ -501,6 +501,8 @@ void CParserAet::OnNewSection(int pid, int tableId, CSection& section)
   {
     if (
       (tableId != TABLE_ID_AEIT && tableId != TABLE_ID_AETT) ||
+      !section.SectionSyntaxIndicator ||
+      !section.PrivateIndicator ||
       !section.CurrentNextIndicator
     )
     {

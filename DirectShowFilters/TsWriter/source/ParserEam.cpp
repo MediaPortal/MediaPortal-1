@@ -75,7 +75,12 @@ void CParserEam::OnNewSection(CSection& section)
 {
   try
   {
-    if (section.table_id != TABLE_ID_EAM || !section.CurrentNextIndicator)
+    if (
+      section.table_id != TABLE_ID_EAM ||
+      !section.SectionSyntaxIndicator ||
+      section.PrivateIndicator ||
+      !section.CurrentNextIndicator
+    )
     {
       return;
     }

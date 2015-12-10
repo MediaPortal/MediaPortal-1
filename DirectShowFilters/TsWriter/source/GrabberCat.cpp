@@ -66,7 +66,12 @@ void CGrabberCat::OnNewSection(CSection& section)
 {
   try
   {
-    if (section.table_id != TABLE_ID_CAT || !section.CurrentNextIndicator)
+    if (
+      section.table_id != TABLE_ID_CAT ||
+      !section.SectionSyntaxIndicator ||
+      section.PrivateIndicator ||
+      !section.CurrentNextIndicator
+    )
     {
       return;
     }

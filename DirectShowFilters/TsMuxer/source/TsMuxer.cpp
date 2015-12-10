@@ -1545,13 +1545,18 @@ HRESULT CTsMuxer::ReadProgramMapTable(unsigned char* data,
 {
   CSection section;
   section.AppendData(data, dataLength);
-  if (!section.IsSectionComplete() || section.section_length + 4 > TS_PACKET_LEN) // + 4 for pointer field, table ID, section length bytes
+  if (!section.IsComplete() || section.section_length + 4 > TS_PACKET_LEN) // + 4 for pointer field, table ID, section length bytes
   {
     // Section doesn't fit in one packet.
     LogDebug(L"muxer: pin %hhu larger-than-TS-packet PMT section not supported",
               info.PinId);
     info.IsCompatible = false;
     return S_FALSE;
+  }
+  if (!section.IsValid())
+  {
+    LogDebug(L"muxer: pin %hhu PMT section is invalid", info.PinId);
+    return S_OK;
   }
   if (info.PmtVersion == section.version_number || info.ServiceId != section.table_id_extension)
   {

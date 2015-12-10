@@ -32,7 +32,8 @@ class CSection
 
     void Reset();
     unsigned short AppendData(const unsigned char* data, unsigned long dataLength);
-    bool IsSectionComplete();
+    bool IsComplete();
+    bool IsValid();
 
     CSection& operator = (const CSection& section);
     void Copy(const CSection &section);

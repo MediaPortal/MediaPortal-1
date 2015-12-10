@@ -69,7 +69,12 @@ void CParserEtt::OnNewSection(CSection& section)
 {
   try
   {
-    if (section.table_id != TABLE_ID_ETT || !section.CurrentNextIndicator)
+    if (
+      section.table_id != TABLE_ID_ETT ||
+      !section.SectionSyntaxIndicator ||
+      !section.PrivateIndicator ||
+      !section.CurrentNextIndicator
+    )
     {
       return;
     }

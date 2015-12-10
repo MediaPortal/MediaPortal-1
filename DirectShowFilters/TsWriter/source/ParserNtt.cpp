@@ -818,7 +818,11 @@ bool CParserNtt::DecodeSection(CSection& section,
 {
   try
   {
-    if (section.table_id != TABLE_ID_NTT)
+    if (
+      section.table_id != TABLE_ID_NTT ||
+      section.SectionSyntaxIndicator ||
+      section.PrivateIndicator
+    )
     {
       return false;
     }

@@ -88,6 +88,8 @@ void CParserSdt::OnNewSection(CSection& section)
   {
     if (
       (section.table_id != TABLE_ID_SDT_ACTUAL && section.table_id != TABLE_ID_SDT_OTHER) ||
+      !section.SectionSyntaxIndicator ||
+      !section.PrivateIndicator ||
       !section.CurrentNextIndicator
     )
     {

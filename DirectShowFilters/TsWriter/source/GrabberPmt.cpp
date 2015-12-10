@@ -93,7 +93,12 @@ void CGrabberPmt::OnNewSection(CSection& section)
 {
   try
   {
-    if (section.table_id != TABLE_ID_PMT || !section.CurrentNextIndicator)
+    if (
+      section.table_id != TABLE_ID_PMT ||
+      !section.SectionSyntaxIndicator ||
+      section.PrivateIndicator ||
+      !section.CurrentNextIndicator
+    )
     {
       return;
     }

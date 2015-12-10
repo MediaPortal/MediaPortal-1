@@ -56,7 +56,12 @@ void CParserMgt::OnNewSection(CSection& section)
 {
   try
   {
-    if (section.table_id != TABLE_ID_MGT || !section.CurrentNextIndicator)
+    if (
+      section.table_id != TABLE_ID_MGT ||
+      !section.SectionSyntaxIndicator ||
+      !section.PrivateIndicator ||
+      !section.CurrentNextIndicator
+    )
     {
       return;
     }

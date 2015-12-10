@@ -587,7 +587,7 @@ void CParserOpenTv::OnNewSection(int pid, int tableId, CSection& section)
 {
   try
   {
-    if (!section.CurrentNextIndicator)
+    if (!section.SectionSyntaxIndicator || !section.CurrentNextIndicator)
     {
       return;
     }

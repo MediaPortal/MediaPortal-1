@@ -82,6 +82,8 @@ void CParserLvct::OnNewSection(CSection& section, bool isOutOfBandSection)
         section.table_id != TABLE_ID_LVCT_CABLE &&
         section.table_id != TABLE_ID_LVCT_TERRESTRIAL
       ) ||
+      !section.SectionSyntaxIndicator ||
+      !section.PrivateIndicator ||
       !section.CurrentNextIndicator
     )
     {

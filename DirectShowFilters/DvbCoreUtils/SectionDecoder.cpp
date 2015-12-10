@@ -20,7 +20,6 @@
  */
 #include "..\shared\SectionDecoder.h"
 #include <cstddef>    // NULL
-#include "..\shared\DvbUtil.h"
 #include "..\shared\PacketSync.h"
 #include "..\shared\TsHeader.h"
 
@@ -161,7 +160,7 @@ void CSectionDecoder::OnTsPacket(CTsHeader& header, unsigned char* tsPacket)
       }
 
       packetPointer += m_section.AppendData(&tsPacket[packetPointer], TS_PACKET_LEN - packetPointer);
-      if (m_section.IsSectionComplete())
+      if (m_section.IsComplete())
       {
         // Sanity check: sections with table ID 0 should only ever be carried
         // on PID 0 (PAT). This check helps managing non-section data that has
@@ -170,26 +169,7 @@ void CSectionDecoder::OnTsPacket(CTsHeader& header, unsigned char* tsPacket)
         // sequence: 00 00 01.
         if (m_pid == 0 || m_section.Data[0] != 0)
         {
-          // Check for errors in the section. Only sections with the syntax
-          // indicator set have a CRC.
-          unsigned long crc = 0;
-          if (m_section.SectionSyntaxIndicator && m_isCrcCheckEnabled)
-          {
-            // Is the CRC actually populated? Some providers fill the CRC with
-            // zeroes or ones instead of setting it correctly.
-            unsigned char* crcPointer = &(m_section.Data[m_section.section_length - 1]);
-            if (
-              (*crcPointer != 0 && *crcPointer != 0xff) ||
-              *crcPointer != *(crcPointer + 1) ||
-              *crcPointer != *(crcPointer + 2) ||
-              *crcPointer != *(crcPointer + 3)
-            )
-            {
-              crc = CalculatCrc32(m_section.Data, m_section.section_length + 3);
-            }
-          }
-
-          if (crc == 0)
+          if (!m_isCrcCheckEnabled || m_section.IsValid())
           {
             OnNewSection(m_section);
             if (m_callback != NULL)

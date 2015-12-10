@@ -72,7 +72,6 @@ class CGrabberSiAtscScte
     void Reset(bool enableCrcCheck);
     STDMETHODIMP_(void) SetCallBack(ICallBackGrabber* callBack);
     bool OnTsPacket(CTsHeader& header, unsigned char* tsPacket);
-    void OnNewOutOfBandSection(CSection& section);
     void OnNewSection(int pid, int tableId, CSection& section);
     void OnNewSection(int pid, int tableId, CSection& section, bool isOutOfBandSection);
 
@@ -235,6 +234,9 @@ class CGrabberSiAtscScte
                                               unsigned short* vctId,
                                               unsigned short* virtualChannelNumber);
 
+    STDMETHODIMP_(void) OnOutOfBandSectionReceived(unsigned char* sectionData,
+                                                    unsigned short sectionDataBufferSize);
+
   private:
     void OnTableSeen(unsigned char tableId);
     void OnTableComplete(unsigned char tableId);
@@ -318,6 +320,5 @@ class CGrabberSiAtscScte
     CParserSvct m_parserSvct;
     ICallBackGrabber* m_callBackGrabber;
     ICallBackSiAtscScte* m_callBackSiAtscScte;
-    unsigned char m_expectedTableCountLvct;
-    unsigned char m_expectedTableCountSvct;
+    bool m_enableCrcCheck;
 };

@@ -63,6 +63,7 @@ class CInputPinOobSi : public CRenderedInputPin
     clock_t GetReceiveTime();
     HRESULT StartDumping(const wchar_t* fileName);
     HRESULT StopDumping();
+    void CheckSectionCrcs(bool enable);
 
   private:
     ITsAnalyser* m_analyser;
@@ -72,4 +73,6 @@ class CInputPinOobSi : public CRenderedInputPin
     bool m_isDumpEnabled;
     FileWriter m_dumpFileWriter;
     CCritSec m_dumpLock;
+
+    bool m_enableCrcCheck;
 };

@@ -18,8 +18,9 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
-#include "..\shared\Section.h"
 #include <cstring>    // memcpy()
+#include "..\shared\DvbUtil.h"
+#include "..\shared\Section.h"
 
 
 #define SECTION_LENGTH_NOT_SET 0
@@ -81,23 +82,48 @@ unsigned short CSection::AppendData(const unsigned char* data, unsigned long dat
   memcpy(&Data[BufferPos], data, copyByteCount);
   BufferPos += copyByteCount;
 
-  if (IsSectionComplete())
+  if (IsComplete())
   {
     table_id = Data[0];
     SectionSyntaxIndicator = (Data[1] & 0x80) != 0;
     PrivateIndicator = (Data[1] & 0x40) != 0;
-    table_id_extension = (Data[3] << 8) | Data[4];
-    version_number = (Data[5] >> 1) & 0x1f;
-    CurrentNextIndicator = (Data[5] & 1) != 0;
-    SectionNumber = Data[6];
-    LastSectionNumber = Data[7];
+    if (SectionSyntaxIndicator)
+    {
+      table_id_extension = (Data[3] << 8) | Data[4];
+      version_number = (Data[5] >> 1) & 0x1f;
+      CurrentNextIndicator = (Data[5] & 1) != 0;
+      SectionNumber = Data[6];
+      LastSectionNumber = Data[7];
+    }
   }
   return copyByteCount;
 }
 
-bool CSection::IsSectionComplete()
+bool CSection::IsComplete()
 {
   return section_length != SECTION_LENGTH_NOT_SET && BufferPos >= section_length + 3;
+}
+
+bool CSection::IsValid()
+{
+  unsigned long crc = 0;
+  // Only sections with the syntax indicator set have a CRC.
+  if (SectionSyntaxIndicator)
+  {
+    // Is the CRC actually populated? Some providers fill the CRC with
+    // zeroes or ones instead of setting it correctly.
+    unsigned char* crcPointer = &(Data[section_length - 1]);
+    if (
+      (*crcPointer != 0 && *crcPointer != 0xff) ||
+      *crcPointer != *(crcPointer + 1) ||
+      *crcPointer != *(crcPointer + 2) ||
+      *crcPointer != *(crcPointer + 3)
+    )
+    {
+      crc = CalculatCrc32(Data, section_length + 3);
+    }
+  }
+  return crc == 0;
 }
 
 CSection& CSection::operator = (const CSection& section)

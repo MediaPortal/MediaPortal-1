@@ -68,7 +68,12 @@ void CParserPat::OnNewSection(CSection& section)
 {
   try
   {
-    if (section.table_id != TABLE_ID_PAT || !section.CurrentNextIndicator)
+    if (
+      section.table_id != TABLE_ID_PAT ||
+      !section.SectionSyntaxIndicator ||
+      section.PrivateIndicator ||
+      !section.CurrentNextIndicator
+    )
     {
       return;
     }

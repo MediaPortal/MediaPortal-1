@@ -577,7 +577,7 @@ bool CParserNitAtsc::DecodeSection(CSection& section,
 {
   try
   {
-    if (section.table_id != TABLE_ID_NIT_ATSC)
+    if (section.table_id != TABLE_ID_NIT_ATSC || section.SectionSyntaxIndicator)
     {
       return false;
     }

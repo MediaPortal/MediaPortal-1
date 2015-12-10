@@ -156,10 +156,20 @@ STDMETHODIMP CInputPinOobSi::Receive(IMediaSample* sample)
     }
     
     CSection s;
-    s.table_id = data[0];
-    s.section_length = sampleLength - 3;  // 1 for the table_id, 2 for the section_length bytes
-    memcpy(s.Data, data, sampleLength);
-    m_analyser->AnalyseOobSiSection(s);
+    s.AppendData(data, min(sizeof(s.Data), sampleLength));
+    if (!s.IsComplete())
+    {
+      LogDebug(L"OOB SI input: received incomplete section sample, sample length = %ld, section length = %d",
+                sampleLength, s.section_length);
+    }
+    else if (m_enableCrcCheck && !s.IsValid())
+    {
+      LogDebug(L"OOB SI input: received invalid section");
+    }
+    else
+    {
+      m_analyser->AnalyseOobSiSection(s);
+    }
     return S_OK;
   }
   catch (...)
@@ -219,4 +229,9 @@ HRESULT CInputPinOobSi::StopDumping()
     m_isDumpEnabled = false;
   }
   return S_OK;
+}
+
+void CInputPinOobSi::CheckSectionCrcs(bool enable)
+{
+  m_enableCrcCheck = enable;
 }

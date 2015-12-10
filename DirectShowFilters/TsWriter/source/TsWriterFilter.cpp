@@ -278,3 +278,8 @@ STDMETHODIMP CTsWriterFilter::DumpInput(bool enableTs, bool enableOobSi)
   m_isDebugEnabledOobSi = enableOobSi;
   return S_OK;
 }
+
+void CTsWriterFilter::CheckSectionCrcs(bool enable)
+{
+  m_inputPinOobSi->CheckSectionCrcs(enable);
+}

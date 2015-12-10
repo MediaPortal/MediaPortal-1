@@ -91,23 +91,22 @@ void CBasePmtParser::OnTsPacket(unsigned char* tsPacket)
 }
 
 bool CBasePmtParser::DecodePmtSection(const CSection& section)
-{   
-  // 0x02 = standard PMT table ID
-  if (section.table_id != 0x02)
-  {
-    return false;
-  }
-
+{
   try
   {
+    if (
+      section.table_id != 0x02 ||         // 0x02 = standard PMT table ID
+      !section.SectionSyntaxIndicator ||
+      section.PrivateIndicator ||
+      !section.CurrentNextIndicator       // Details do not apply yet...
+    )
+    {
+      return false;
+    }
+
     if (section.section_length > 1021 || section.section_length < 13)
     {
       LogDebug(L"PMT: invalid section, length = %d", section.section_length);
-      return false;
-    }
-    if (!section.CurrentNextIndicator)
-    {
-      // Details do not apply yet...
       return false;
     }
 

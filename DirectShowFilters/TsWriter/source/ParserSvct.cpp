@@ -582,7 +582,11 @@ bool CParserSvct::DecodeSection(CSection& section,
 {
   try
   {
-    if (section.table_id != TABLE_ID_SVCT)
+    if (
+      section.table_id != TABLE_ID_SVCT ||
+      section.SectionSyntaxIndicator ||
+      section.PrivateIndicator
+    )
     {
       return false;
     }

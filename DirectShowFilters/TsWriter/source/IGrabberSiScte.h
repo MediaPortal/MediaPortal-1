@@ -146,4 +146,9 @@ DECLARE_INTERFACE_(IGrabberSiScte, IGrabberSiAtsc)
                                           unsigned char* transmissionMedium,
                                           unsigned short* vctId,
                                           unsigned short* virtualChannelNumber)PURE;
+
+
+  // IGrabberSiScte
+  STDMETHOD_(void, OnOutOfBandSectionReceived)(THIS_ unsigned char* sectionData,
+                                                unsigned short sectionDataBufferSize)PURE;
 };

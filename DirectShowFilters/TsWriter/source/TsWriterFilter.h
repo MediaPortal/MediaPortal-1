@@ -59,6 +59,7 @@ class CTsWriterFilter : public CBaseFilter
 
     STDMETHODIMP SetDumpFilePath(wchar_t* path);
     STDMETHODIMP DumpInput(bool enableTs, bool enableOobSi);
+    void CheckSectionCrcs(bool enable);
 
   private:
     ITsAnalyser* m_analyser;

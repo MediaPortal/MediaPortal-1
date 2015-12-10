@@ -40,8 +40,7 @@ CGrabberSiAtscScte::CGrabberSiAtscScte(unsigned short pid,
 
   m_callBackGrabber = NULL;
   m_callBackSiAtscScte = callBack;
-  m_expectedTableCountLvct = 0;
-  m_expectedTableCountSvct = 0;
+  m_enableCrcCheck = true;
 
   m_sectionDecoder.SetPid(pid);
   m_sectionDecoder.SetCallBack(this);
@@ -84,7 +83,9 @@ STDMETHODIMP CGrabberSiAtscScte::NonDelegatingQueryInterface(REFIID iid, void** 
 
 void CGrabberSiAtscScte::Reset(bool enableCrcCheck)
 {
-  m_sectionDecoder.EnableCrcCheck(enableCrcCheck);
+  CEnterCriticalSection lock(m_section);
+  m_enableCrcCheck = enableCrcCheck;
+  m_sectionDecoder.EnableCrcCheck(m_enableCrcCheck);
   m_sectionDecoder.Reset();
   m_parserEam.Reset();
   m_parserLvct.Reset();
@@ -110,11 +111,6 @@ bool CGrabberSiAtscScte::OnTsPacket(CTsHeader& header, unsigned char* tsPacket)
   return false;
 }
 
-void CGrabberSiAtscScte::OnNewOutOfBandSection(CSection& section)
-{
-  OnNewSection(PID_SCTE_BASE, section.table_id, section, true);
-}
-
 void CGrabberSiAtscScte::OnNewSection(int pid, int tableId, CSection& section)
 {
   OnNewSection(pid, tableId, section, false);
@@ -122,6 +118,7 @@ void CGrabberSiAtscScte::OnNewSection(int pid, int tableId, CSection& section)
 
 void CGrabberSiAtscScte::OnNewSection(int pid, int tableId, CSection& section, bool isOutOfBandSection)
 {
+  CEnterCriticalSection lock(m_section);
   switch (tableId)
   {
     case TABLE_ID_EAM:
@@ -659,6 +656,26 @@ STDMETHODIMP_(bool) CGrabberSiAtscScte::GetSvctDefinedChannel(unsigned short ind
                                         *transmissionMedium,
                                         *vctId,
                                         *virtualChannelNumber);
+}
+
+STDMETHODIMP_(void) CGrabberSiAtscScte::OnOutOfBandSectionReceived(unsigned char* sectionData,
+                                                                    unsigned short sectionDataBufferSize)
+{
+  CSection s;
+  unsigned short pid = (sectionData[0] << 8) | sectionData[1];
+  s.AppendData(&sectionData[2], min(sizeof(s.Data), sectionDataBufferSize - 2));
+  if (!s.IsComplete())
+  {
+    LogDebug(L"SI ATSC/SCTE %hu: received incomplete out-of-band section, section data buffer size = %hu, section length = %d",
+              pid, sectionDataBufferSize, s.section_length);
+    return;
+  }
+  else if (m_enableCrcCheck && !s.IsValid())
+  {
+    LogDebug(L"SI ATSC/SCTE %hu: received invalid section", pid);
+    return;
+  }
+  OnNewSection(pid, s.table_id, s, true);
 }
 
 void CGrabberSiAtscScte::OnTableSeen(unsigned char tableId)

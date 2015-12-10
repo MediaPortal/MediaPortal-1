@@ -100,10 +100,14 @@ void CParserNitDvb::OnNewSection(CSection& section)
 {
   try
   {
+    if (!section.SectionSyntaxIndicator || !section.CurrentNextIndicator)
+    {
+      return;
+    }
     vector<unsigned char>::const_iterator tableIt = find(m_tableIds.begin(),
                                                           m_tableIds.end(),
                                                           section.table_id);
-    if (tableIt == m_tableIds.end() || !section.CurrentNextIndicator)
+    if (tableIt == m_tableIds.end())
     {
       return;
     }

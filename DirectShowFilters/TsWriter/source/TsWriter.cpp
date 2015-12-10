@@ -374,7 +374,7 @@ void CTsWriter::AnalyseOobSiSection(CSection& section)
     return;
   }
 
-  m_grabberSiScte->OnNewOutOfBandSection(section);
+  m_grabberSiScte->OnNewSection(PID_SCTE_BASE, section.table_id, section, true);
 }
 
 void CTsWriter::AnalyseTsPacket(unsigned char* tsPacket)
@@ -458,6 +458,7 @@ STDMETHODIMP_(void) CTsWriter::CheckSectionCrcs(bool enable)
 {
   LogDebug(L"writer: check section CRCs, enable = %d", enable);
   m_checkSectionCrcs = enable;
+  m_filter->CheckSectionCrcs(enable);
 }
 
 STDMETHODIMP_(void) CTsWriter::SetObserver(IObserver* observer)
