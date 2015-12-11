@@ -22,6 +22,9 @@ using System.ComponentModel;
 
 namespace Mediaportal.TV.Server.Common.Types.Enum
 {
+  // * = last number repeats
+  // ' = numbers repeat (eg. 0.45454545...)
+  // ... = no repeating pattern
   public enum FecCodeRate
   {
     Automatic,
@@ -32,7 +35,7 @@ namespace Mediaportal.TV.Server.Common.Types.Enum
     [Description("1/4")]
     Rate1_4,                  // 0.25
     [Description("4/15")]
-    Rate4_15,                 // 0.266**
+    Rate4_15,                 // 0.266*
     [Description("13/45")]
     Rate13_45,                // 0.288*
     [Description("14/45")]
