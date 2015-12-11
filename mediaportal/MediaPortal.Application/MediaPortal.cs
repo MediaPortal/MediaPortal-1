@@ -142,6 +142,7 @@ public class MediaPortalApp : D3D, IRender
   private bool                  _usePrimaryScreen;
   private string                _screenDisplayName;
   private bool                  _threadedStartup;
+  private bool                  _resumeTimeOutReached = false;
 
   // ReSharper disable InconsistentNaming
   private const int WM_SYSCOMMAND            = 0x0112; // http://msdn.microsoft.com/en-us/library/windows/desktop/ms646360(v=vs.85).aspx
@@ -1726,15 +1727,13 @@ public class MediaPortalApp : D3D, IRender
     Log.Debug("Main: WM_SYSCOMMAND ({0})", Enum.GetName(typeof(SYSCOMMAND), msg.WParam.ToInt32() & 0xFFF0));
     Log.Debug("Main: WM_SYSCOMMAND (IsInAwayMode : {0}) - (IsDisplayTurnedOn : {1}) - (IsUserPresent : {2})", IsInAwayMode, IsDisplayTurnedOn, IsUserPresent);
     bool result = true;
-    bool resumeTimeOutReached = false;
     int displayState = msg.LParam.ToInt32();
-    ResumeTimeOutMP = 90;
-    var timeSpam = DateTime.Now - ResumeTimeOutTimer;
-    if (timeSpam.TotalSeconds >= ResumeTimeOutMP)
+    var timeSpan = DateTime.Now - ResumeTimeOutTimer;
+    if (timeSpan.TotalSeconds >= ResumeTimeOutMP)
     {
-      resumeTimeOutReached = true;
+      _resumeTimeOutReached = true;
     }
-    Log.Debug("Main: WM_SYSCOMMAND: resumeTimeOutReached : {0}", resumeTimeOutReached);
+    Log.Debug("Main: WM_SYSCOMMAND: resumeTimeOutReached : {0}", _resumeTimeOutReached);
     switch (msg.WParam.ToInt32() & 0xFFF0)
     {
       // user clicked on minimize button
@@ -1760,12 +1759,12 @@ public class MediaPortalApp : D3D, IRender
           Log.Debug("Main: SC_MONITORPOWER : don't send monitor OFF when suspended");
           result = false;
         }
-        else if (!resumeTimeOutReached && displayState == (int)MonitorState.OFF)
+        else if (!_resumeTimeOutReached && displayState == (int)MonitorState.OFF)
         {
           msg.LParam = new IntPtr((int)MonitorState.ON);
           SetThreadExecutionState(EXECUTION_STATE.ES_SYSTEM_REQUIRED | EXECUTION_STATE.ES_DISPLAY_REQUIRED);
           msg.Result = (IntPtr)0;
-          Log.Debug("Main: SC_MONITORPOWER : don't send monitor OFF : msg result : {0} - time span elapsed {1} seconds", msg.Result, timeSpam.Seconds);
+          Log.Debug("Main: SC_MONITORPOWER : don't send monitor OFF : msg result : {0} - time span elapsed {1} seconds", msg.Result, timeSpan.Seconds);
         }
         else
         {
@@ -1791,12 +1790,12 @@ public class MediaPortalApp : D3D, IRender
           Log.Debug("Main: SC_SCREENSAVE : don't send monitor OFF when suspended");
           result = false;
         }
-        else if (!resumeTimeOutReached && displayState == (int)MonitorState.OFF)
+        else if (!_resumeTimeOutReached && displayState == (int)MonitorState.OFF)
         {
           msg.LParam = new IntPtr((int)MonitorState.ON);
           SetThreadExecutionState(EXECUTION_STATE.ES_SYSTEM_REQUIRED | EXECUTION_STATE.ES_DISPLAY_REQUIRED);
           msg.Result = (IntPtr)0;
-          Log.Debug("Main: SC_SCREENSAVE : don't send monitor OFF : msg result : {0} - time span elapsed {1} seconds", msg.Result, timeSpam.Seconds);
+          Log.Debug("Main: SC_SCREENSAVE : don't send monitor OFF : msg result : {0} - time span elapsed {1} seconds", msg.Result, timeSpan.Seconds);
         }
         else
         {
@@ -1826,6 +1825,7 @@ public class MediaPortalApp : D3D, IRender
           _resumedSuspended = false;
           _delayedResume = false;
           _suspended = true;
+          _resumeTimeOutReached = false;
           Log.Debug("Main: PBT_APMSUSPEND - suspended is true");
 
           Screen screen = Screen.FromControl(this);
@@ -2003,6 +2003,14 @@ public class MediaPortalApp : D3D, IRender
             switch (ps.Data)
             {
               case 0:
+                if (!_resumeTimeOutReached)
+                {
+                  var timeSpan = DateTime.Now - ResumeTimeOutTimer;
+                  SetThreadExecutionState(EXECUTION_STATE.ES_SYSTEM_REQUIRED | EXECUTION_STATE.ES_DISPLAY_REQUIRED);
+                  msg.Result = (IntPtr) 1;
+                  Log.Debug("Main: PBT_POWERSETTINGCHANGE : don't send monitor OFF : msg result : {0} - time span elapsed {1} seconds", msg.Result, timeSpan.Seconds);
+                  break;
+                }
                 Log.Info("Main: The display is off");
                 IsDisplayTurnedOn = false;
                 break;
@@ -2040,7 +2048,7 @@ public class MediaPortalApp : D3D, IRender
                 ShowMouseCursor(false);
                 break;
               case 2:
-                if (!_suspended)
+                if (!_suspended && _resumeTimeOutReached)
                 {
                   Log.Info("Main: The user activity timeout has elapsed with no interaction from the user");
                   IsUserPresent = false;
@@ -2952,6 +2960,11 @@ public class MediaPortalApp : D3D, IRender
 
     // Set timeout on resume to avoid multiple display ON and OFF message 
     ResumeTimeOutTimer = DateTime.Now;
+    _resumeTimeOutReached = false;
+
+    // Set the timer to avoid display OFF and ON after the resume
+    ResumeTimeOutMP = 90;
+    
   }
 
   #endregion
