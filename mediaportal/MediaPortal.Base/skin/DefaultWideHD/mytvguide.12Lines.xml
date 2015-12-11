@@ -280,6 +280,15 @@
       <posY>3</posY>
     </control>
     <control>
+      <description>record pin</description>
+      <type>image</type>
+      <id>31</id>
+      <posX>147</posX>
+      <posY>960</posY>
+      <texture>tvguide_record_button.png</texture>
+      <visible>no</visible>
+    </control>
+    <control>
       <description>TvGroup button</description>
       <type>button3part</type>
       <id>100</id>
