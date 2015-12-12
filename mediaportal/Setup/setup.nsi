@@ -549,15 +549,14 @@ Section "MediaPortal core files (required)" SecCore
   ; NuGet binaries MediaInfo
   SetOutPath "$MPdir.Base\"
   File "${git_ROOT}\Packages\MediaInfo.0.7.72\MediaInfo.dll"
-  ; NuGet binaries
+  ; NuGet binaries Sqlite
   SetOutPath "$MPdir.Base\"
-  File "${git_ROOT}\Packages\bass.asio.1.3.0.2\bassasio.dll"
-  File "${git_ROOT}\Packages\System.Management.Automation.6.1.7601.17515\lib\net40\System.Management.Automation.dll"
-  ; NuGet binaries
+  File "${git_ROOT}\Packages\Sqlite.3.9.2\Sqlite.dll"
   ; Bass Core
   SetOutPath "$MPdir.Base\"
   File "${git_ROOT}\Packages\BASS.2.4.10\bass.dll"
   File "${git_ROOT}\Packages\BASS.NET.2.4.10.3\lib\net40\Bass.Net.dll"
+  File "${git_ROOT}\Packages\System.Management.Automation.6.1.7601.17515\lib\net40\System.Management.Automation.dll"
   ; Bass Addons
   SetOutPath "$MPdir.Base\"
   File "${git_ROOT}\Packages\bass.asio.1.3.0.2\bassasio.dll"
@@ -606,10 +605,6 @@ Section "MediaPortal core files (required)" SecCore
   ; TvLibrary for Genre
   File "${git_TVServer}\TvLibrary.Interfaces\bin\${BUILD_TYPE}\TvLibrary.Interfaces.dll"
   File "${git_MP}\LastFMLibrary\bin\${BUILD_TYPE}\LastFMLibrary.dll"
-  ; sqlite
-  SetOutPath "$MPdir.Base\"
-  File "${git_ROOT}\Packages\Sqlite3.3.9.2\sqlite3.dll"
-  CopyFiles /SILENT "$MPdir.Base\sqlite3.dll" "$MPdir.Base\sqlite.dll"
   ; MediaPortal.exe
   
   ; protocol implementations for MPUrlSourceSplitter.ax
