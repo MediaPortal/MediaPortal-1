@@ -549,7 +549,9 @@ Section "MediaPortal core files (required)" SecCore
   ; NuGet binaries MediaInfo
   SetOutPath "$MPdir.Base\"
   File "${git_ROOT}\Packages\MediaInfo.0.7.69\MediaInfo.dll"
-  ; NuGet binaries
+  ; NuGet binaries Sqlite
+  SetOutPath "$MPdir.Base\"
+  File "${git_ROOT}\Packages\Sqlite.3.9.2\Sqlite.dll"
   ; Bass Core
   SetOutPath "$MPdir.Base\"
   File "${git_ROOT}\Packages\BASS.2.4.10\bass.dll"
