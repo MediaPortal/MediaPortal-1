@@ -144,10 +144,10 @@ xcopy %1\MPE\MpeMaker\bin\%2\MpeMaker.* . /Y /D
 
 REM Nuget 
 xcopy %1\Databases\bin\%2\HtmlAgilityPack.* . /Y /D
-xcopy %1\..\Packages\MediaInfo.0.7.69\MediaInfo.dll . /Y /D
+xcopy %1\..\Packages\MediaInfo.0.7.72\MediaInfo.dll . /Y /D
 
 REM ffmpeg 
-xcopy %1\..\Packages\ffmpeg.2.1.1\ffmpeg.exe MovieThumbnailer\ /Y /D
+xcopy %1\..\Packages\ffmpeg.2.7.1\ffmpeg.exe MovieThumbnailer\ /Y /D
 
 REM iMON Display 
 xcopy %1\..\Packages\MediaPortal-iMON-Display.1.0.1\lib\iMONDisplay.dll . /Y /D
