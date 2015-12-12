@@ -22,6 +22,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Windows.Media.Animation;
@@ -1402,7 +1403,7 @@ namespace MediaPortal.GUI.Library
     /// <returns>id of control or -1 if no control has the focus</returns>
     public virtual int GetFocusControlId()
     {
-      foreach (GUIControl child in Children)
+      foreach (GUIControl child in Children.ToList())
       {
         GUIGroup grp = child as GUIGroup;
         if (grp != null)

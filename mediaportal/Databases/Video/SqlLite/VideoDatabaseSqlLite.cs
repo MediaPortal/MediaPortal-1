@@ -6718,7 +6718,16 @@ namespace MediaPortal.Video.Database
       // Add directorID
       try
       {
-        details.DirectorID = Int32.Parse(DatabaseUtility.Get(results, iRow, "movieinfo.idDirector"));
+        int numValue;
+        bool parsed = Int32.TryParse(DatabaseUtility.Get(results, iRow, "movieinfo.idDirector"), out numValue);
+        if (parsed)
+        {
+          details.DirectorID = numValue;
+        }
+        else
+        {
+          details.DirectorID = -1;
+        }
       }
       catch (Exception)
       {
