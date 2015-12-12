@@ -279,15 +279,21 @@
       <posX>15</posX>
       <posY>6</posY>
     </control>
+   <control>
+      <description>record pin</description>
+      <type>image</type>
+      <id>31</id>
+      <posX>147</posX>
+      <posY>960</posY>
+      <texture>tvguide_record_button.png</texture>
+      <visible>no</visible>
+    </control>
     <control>
       <description>record pin</description>
       <type>image</type>
       <id>31</id>
-      <posX>1837</posX>
-      <posY>829</posY>
-      <width>52</width>
-      <height>45</height>
-      <align>left</align>
+      <posX>147</posX>
+      <posY>960</posY>
       <texture>tvguide_record_button.png</texture>
       <visible>no</visible>
     </control>
