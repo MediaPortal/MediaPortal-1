@@ -606,6 +606,10 @@ Section "MediaPortal core files (required)" SecCore
   ; TvLibrary for Genre
   File "${git_TVServer}\TvLibrary.Interfaces\bin\${BUILD_TYPE}\TvLibrary.Interfaces.dll"
   File "${git_MP}\LastFMLibrary\bin\${BUILD_TYPE}\LastFMLibrary.dll"
+  ; sqlite
+  SetOutPath "$MPdir.Base\"
+  File "${git_ROOT}\Packages\Sqlite3.3.9.2\sqlite3.dll"
+  CopyFiles /SILENT "$MPdir.Base\sqlite3.dll" "$MPdir.Base\sqlite.dll"
   ; MediaPortal.exe
   
   ; protocol implementations for MPUrlSourceSplitter.ax
