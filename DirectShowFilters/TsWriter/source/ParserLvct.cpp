@@ -396,7 +396,7 @@ bool CParserLvct::GetChannel(unsigned short index,
                               unsigned char& etmLocation,
                               bool& accessControlled,
                               bool& hidden,
-                              bool& pathSelect,
+                              unsigned char& pathSelect,
                               bool& outOfBand,
                               bool& hideGuide,
                               unsigned char& serviceType,
@@ -640,7 +640,7 @@ bool CParserLvct::DecodeChannelRecord(unsigned char* sectionData,
     record.Hidden = (sectionData[pointer] & 0x10) != 0;
 
     // cable only
-    record.PathSelect = (sectionData[pointer] & 0x8) != 0;
+    record.PathSelect = (sectionData[pointer] >> 3) & 0x1;
     record.OutOfBand = (sectionData[pointer] & 0x4) != 0;
 
     record.HideGuide = (sectionData[pointer++] & 0x2) != 0;
@@ -658,7 +658,7 @@ bool CParserLvct::DecodeChannelRecord(unsigned char* sectionData,
 
     unsigned short descriptorsLength = ((sectionData[pointer] & 0x3) << 8) | sectionData[pointer + 1];
     pointer += 2;
-    //LogDebug(L"LVCT: short name = %S, major channel = %hu, minor channel = %hu, modulation mode = %hhu, carrier frequency = %lu Hz, channel TSID = %hu, program number = %hu, ETM location = %hhu, access controlled = %d, hidden = %d, path select = %d, out of band = %d, hide guide = %d, service type = %hhu, source ID = %hu, descriptors length = %hu",
+    //LogDebug(L"LVCT: short name = %S, major channel = %hu, minor channel = %hu, modulation mode = %hhu, carrier frequency = %lu Hz, channel TSID = %hu, program number = %hu, ETM location = %hhu, access controlled = %d, hidden = %d, path select = %hhu, out of band = %d, hide guide = %d, service type = %hhu, source ID = %hu, descriptors length = %hu",
     //          record.ShortName == NULL ? "" : record.ShortName,
     //          record.MajorChannelNumber, record.MinorChannelNumber,
     //          record.ModulationMode, record.CarrierFrequency,

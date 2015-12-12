@@ -67,7 +67,7 @@ class CParserLvct
                     unsigned char& etmLocation,
                     bool& accessControlled,
                     bool& hidden,
-                    bool& pathSelect,
+                    unsigned char& pathSelect,
                     bool& outOfBand,
                     bool& hideGuide,
                     unsigned char& serviceType,
@@ -108,7 +108,7 @@ class CParserLvct
           EtmLocation = 0;
           AccessControlled = false;
           Hidden = false;
-          PathSelect = false;
+          PathSelect = 0;
           OutOfBand = false;
           HideGuide = false;
           ServiceType = 0;
@@ -176,7 +176,7 @@ class CParserLvct
 
         void Debug(const wchar_t* situation) const
         {
-          LogDebug(L"LVCT: channel %s, table ID = 0x%hhx, section TSID = %hu, map ID = %hu, TSID = %hu, program number = %hu, source ID = %hu, short name = %S, long name count = %llu, major channel = %hu, minor channel = %hu, service type = %hhu, carrier frequency = %lu Hz, modulation mode = %hhu, access controlled = %d, hidden = %d, hide guide = %d, video stream count = %hhu, audio stream count = %hhu, audio language count = %llu, captions language count = %llu, is 3D = %d, ETM location = %hhu, path select = %d, out of band = %d",
+          LogDebug(L"LVCT: channel %s, table ID = 0x%hhx, section TSID = %hu, map ID = %hu, TSID = %hu, program number = %hu, source ID = %hu, short name = %S, long name count = %llu, major channel = %hu, minor channel = %hu, service type = %hhu, carrier frequency = %lu Hz, modulation mode = %hhu, access controlled = %d, hidden = %d, hide guide = %d, video stream count = %hhu, audio stream count = %hhu, audio language count = %llu, captions language count = %llu, is 3D = %d, ETM location = %hhu, path select = %hhu, out of band = %d",
                     situation, TableId, SectionTransportStreamId, MapId,
                     TransportStreamId, ProgramNumber, SourceId,
                     ShortName == NULL ? "" : ShortName,
@@ -304,7 +304,7 @@ class CParserLvct
         unsigned char EtmLocation;
         bool AccessControlled;
         bool Hidden;
-        bool PathSelect;
+        unsigned char PathSelect;
         bool OutOfBand;
         bool HideGuide;
         unsigned char ServiceType;

@@ -53,7 +53,7 @@ DECLARE_INTERFACE_(IGrabberSiScte, IGrabberSiAtsc)
                                     unsigned char* etmLocation,
                                     bool* accessControlled,
                                     bool* hidden,
-                                    bool* pathSelect,
+                                    unsigned char* pathSelect,
                                     bool* outOfBand,
                                     bool* hideGuide,
                                     unsigned char* serviceType,
