@@ -130,6 +130,8 @@ namespace MediaPortal.Player
 
     public delegate void ChangedHandler(MediaType type, int stoptime, string filename);
 
+    public delegate void PopupMenuCreateHandler(IDialogbox dialogbox);
+
     public delegate void AudioTracksReadyHandler();
 
     public delegate void TVChannelChangeHandler();
@@ -142,6 +144,7 @@ namespace MediaPortal.Player
     public static event StoppedHandler PlayBackStopped;
     public static event EndedHandler PlayBackEnded;
     public static event StartedHandler PlayBackStarted;
+    public static event PopupMenuCreateHandler PopupMenuCreate; 
     public static event AudioTracksReadyHandler AudioTracksReady;
     public static event TVChannelChangeHandler TVChannelChanged;
 
@@ -3776,6 +3779,14 @@ namespace MediaPortal.Player
     #endregion
 
     #region private members
+
+    public static void OnPopupMenuCreate(IDialogbox dialogbox)
+    {
+      if (PopupMenuCreate != null)
+      {
+        PopupMenuCreate(dialogbox);
+      }
+    }
 
     #endregion
   }
