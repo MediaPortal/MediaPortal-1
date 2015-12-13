@@ -41,6 +41,8 @@ namespace TvPlugin
     private static bool _notifiesListChanged;
     private static bool _enableRecNotification;
     private static bool _busy;
+    private static bool _alreadyStarted;
+    private static bool _alreadyStopped;
     private int _preNotifyConfig;
 
     //list of all notifies (alert me n minutes before program starts)
@@ -80,14 +82,24 @@ namespace TvPlugin
 
     public void Start()
     {
-      Log.Info("TvNotify: start");
-      _timer.Start();
+      _alreadyStopped = false;
+      if (!_alreadyStarted)
+      {
+        Log.Info("TvNotify: start");
+        _timer.Start();
+        _alreadyStarted = true;
+      }
     }
 
     public void Stop()
     {
-      Log.Info("TvNotify: stop");
-      _timer.Stop();
+      _alreadyStarted = false;
+      if (!_alreadyStopped)
+      {
+        Log.Info("TvNotify: stop");
+        _timer.Stop();
+        _alreadyStopped = true;
+      }
     }
 
     public static bool RecordingNotificationEnabled

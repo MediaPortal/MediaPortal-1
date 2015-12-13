@@ -1424,6 +1424,7 @@ namespace TvPlugin
         firstNotLoaded = false;
         OnLoaded();
       }
+      _notifyManager.Start();
     }
     private static void RemoteControl_OnRemotingConnected()
     {
@@ -1439,6 +1440,7 @@ namespace TvPlugin
       if (Connected)
         Log.Info("TVHome: OnRemotingDisconnected");
       Connected = false;
+      _notifyManager.Stop();
       HandleServerNotConnected();
     }
 
@@ -2404,11 +2406,19 @@ namespace TvPlugin
       UpdateStateOfRecButton();
     }
 
+    private void UpdateStateOfRecButton()
+    {
+      Thread updateStateOfRecButtonThread = new Thread(UpdateStateOfRecButtonThread);
+      updateStateOfRecButtonThread.IsBackground = true;
+      updateStateOfRecButtonThread.Name = "updateStateOfRecButtonThread";
+      updateStateOfRecButtonThread.Start();
+    }
+
     /// <summary>
     /// Update the state of the following buttons
     /// - record now
     /// </summary>
-    private void UpdateStateOfRecButton()
+    private void UpdateStateOfRecButtonThread()
     {
       if (!Connected)
       {
@@ -2447,6 +2457,14 @@ namespace TvPlugin
     }
 
     private void UpdateRecordingIndicator()
+    {
+      Thread updateRecordingIndicatorThread = new Thread(UpdateRecordingIndicatorThread);
+      updateRecordingIndicatorThread.IsBackground = true;
+      updateRecordingIndicatorThread.Name = "updateRecordingIndicatorThread";
+      updateRecordingIndicatorThread.Start();
+    }
+
+    private void UpdateRecordingIndicatorThread()
     {
       DateTime now = DateTime.Now;
       //Log.Debug("updaterec: conn:{0}, rec:{1}", Connected, Card.IsRecording);
