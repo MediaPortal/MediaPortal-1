@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!--version="1.0" encoding="utf-8" standalone="yes"-->
+<window>
+  <id>2020</id>
+  <defaultcontrol>3</defaultcontrol>
+  <allowoverlay>no</allowoverlay>
+  <controls>
+    <control>
+      <id>0</id>
+      <type>image</type>
+      <width>1920</width>
+      <height>1080</height>
+      <texture>blue.png</texture>
+    </control>
+    <control>
+      <type>label</type>
+      <id>0</id>
+      <posX>90</posX>
+      <posY>40</posY>
+      <label>1900</label>
+      <font>font16</font>
+      <align>left</align>
+      <textcolor>ffffd700</textcolor>
+    </control>
+    <control>
+      <id>0</id>
+      <type>image</type>
+      <posX>768</posX>
+      <posY>348</posY>
+      <colordiffuse>d0d0d0d0</colordiffuse>
+      <texture>warning-icon.png</texture>
+    </control>
+    <control>
+      <id>0</id>
+      <description>dialog line 1</description>
+      <type>textbox</type>
+      <posX>255</posX>
+      <posY>180</posY>
+      <width>1410</width>
+      <height>480</height>
+      <textcolor>ffffd700</textcolor>
+      <font>font13</font>
+      <align>center</align>
+      <label>#(string.format(1901, #userskin))</label>
+    </control>
+    <control>
+      <id>2</id>
+      <description>Ignore check box</description>
+      <type>checkmark</type>
+      <onleft>11</onleft>
+      <onright>11</onright>
+      <onup>10</onup>
+      <ondown>10</ondown>
+      <posX>150</posX>
+      <posY>900</posY>
+      <width>519</width>
+      <height>42</height>
+      <label>1902</label>
+    </control>
+    <control>
+      <id>3</id>
+      <description>Continue button</description>
+      <type>button</type>
+      <onleft>10</onleft>
+      <onright>10</onright>
+      <onup>11</onup>
+      <ondown>11</ondown>
+      <posX>1170</posX>
+      <posY>879</posY>
+      <width>600</width>
+      <height>70</height>
+      <textureFocus>button_focus.png</textureFocus>
+      <textureNoFocus>button_nofocus.png</textureNoFocus>
+      <label>#(string.format(1903,#countdownseconds))</label>
+      <textalign>CENTER</textalign>
+      <textXOff>84</textXOff>
+      <textYOff>12</textYOff>
+    </control>
+  </controls>
+</window>

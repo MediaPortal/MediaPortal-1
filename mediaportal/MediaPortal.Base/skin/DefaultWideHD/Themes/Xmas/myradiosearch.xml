@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!--version="1.0" encoding="utf-8" standalone="yes"-->
+<window>
+  <id>8900</id>
+  <defaultcontrol>2</defaultcontrol>
+  <allowoverlay>yes</allowoverlay>
+  <define>#header.label:currentmodule</define>
+  <define>#header.hover:hover_my radio.png</define>
+  <controls>
+    <control>
+      <description>BG</description>
+      <type>image</type>
+      <id>1</id>
+      <texture>BH Radio.jpg</texture>
+      <width>1920</width>
+      <height>1080</height>
+    </control>
+    <import>common.window.xml</import>
+    <import>common.time.xml</import>
+    <control>
+      <description>General Overlay</description>
+      <id>0</id>
+      <type>image</type>
+      <posX>0</posX>
+      <posY>45</posY>
+      <width>1920</width>
+      <height>1080</height>
+      <texture>general_overlay.png</texture>
+    </control>
+    <control>
+      <description>Number of Files Label</description>
+      <type>label</type>
+      <id>12</id>
+      <posX>3817</posX>
+      <posY>789</posY>
+      <label>#itemcount</label>
+      <align>right</align>
+      <font>font10</font>
+      <textcolor>ffffd700</textcolor>
+      <visible>no</visible>
+    </control>
+    <control>
+      <type>actiongroup</type>
+      <description>action menu</description>
+      <defaultcontrol>2</defaultcontrol>
+      <onexit>0</onexit>
+      <buttonX>0</buttonX>
+      <buttonY>-60</buttonY>
+      <buttonwidth>159</buttonwidth>
+      <buttonheight>1080</buttonheight>
+      <textureFocus>-</textureFocus>
+      <textureNoFocus>Action_nofocus.png</textureNoFocus>
+      <width>412</width>
+      <height>1080</height>
+      <dimColor>00ffffff</dimColor>
+      <control>
+        <type>image</type>
+        <id>0</id>
+        <width>1920</width>
+        <height>1080</height>
+        <texture>white.png</texture>
+        <colordiffuse>50005eef</colordiffuse>
+      </control>
+      <control>
+        <type>image</type>
+        <posX>39</posX>
+        <posY>117</posY>
+        <width>480</width>
+        <height>886</height>
+        <texture>Backslide.png</texture>
+        <colorDiffuse>fffffffff</colorDiffuse>
+        <visible>!Control.HasFocus(50)</visible>
+        <animation effect="slide" time="70" start="-300,0" reversible="false">visible</animation>
+        <animation effect="slide" time="70" end="-300,0" reversible="false">hidden</animation>
+      </control>
+      <control>
+        <description>group element</description>
+        <type>group</type>
+        <animation effect="slide" time="70" start="-300,0" reversible="false">visible</animation>
+        <animation effect="slide" time="70" end="-300,0" reversible="false">hidden</animation>
+        <layout>StackLayout(0, Vertical, true)</layout>
+        <posX>75</posX>
+        <posY>181</posY>
+        <control>
+          <description>Sort by Name/Date/Channel</description>
+          <type>sortbutton</type>
+          <id>2</id>
+          <label>620</label>
+          <onleft>10</onleft>
+          <onright>11</onright>
+          <onup>17</onup>
+          <ondown>20</ondown>
+        </control>
+        <control>
+          <description>View by Title/Genre</description>
+          <type>button</type>
+          <id>20</id>
+          <textcolor>ffffd700</textcolor>
+          <colordiffuse>ffffffff</colordiffuse>
+          <label>1522</label>
+          <onleft>10</onleft>
+          <onright>11</onright>
+          <onup>2</onup>
+          <ondown>7</ondown>
+        </control>
+        <control>
+          <description>Starts with</description>
+          <type>selectbutton</type>
+          <id>7</id>
+          <label>872</label>
+          <onleft>7</onleft>
+          <onright>11</onright>
+          <onup>20</onup>
+          <ondown>19</ondown>
+        </control>
+        <control>
+          <description>Search</description>
+          <type>button</type>
+          <id>19</id>
+          <label>2051</label>
+          <onup>7</onup>
+          <ondown>21</ondown>
+          <onleft>10</onleft>
+          <onright>11</onright>
+        </control>
+        <control>
+          <description>Search Description</description>
+          <type>button</type>
+          <id>21</id>
+          <label>1523</label>
+          <onup>19</onup>
+          <ondown>2</ondown>
+          <onleft>10</onleft>
+          <onright>11</onright>
+        </control>
+      </control>
+    </control>
+    <control>
+      <type>group</type>
+      <description>group element</description>
+      <control>
+        <description>listcontrol</description>
+        <type>listcontrol</type>
+        <id>10</id>
+        <height>450</height>
+      </control>
+      <control>
+        <description>scheduler recordings listcontrol</description>
+        <type>listcontrol</type>
+        <id>11</id>
+        <height>450</height>
+      </control>
+    </control>
+    <control>
+      <description>Seperator</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>120</posX>
+      <posY>637</posY>
+      <width>1710</width>
+      <height>1</height>
+      <texture>hbar1white.png</texture>
+      <colordiffuse>60ffffff</colordiffuse>
+    </control>
+    <control>
+      <id>1</id>
+      <type>image</type>
+      <posX>120</posX>
+      <posY>660</posY>
+      <width>90</width>
+      <height>90</height>
+      <keepaspectratio>yes</keepaspectratio>
+      <centered>yes</centered>
+      <zoom>no</zoom>
+      <texture>#selectedthumb</texture>
+    </control>
+    <control>
+      <description>Current program title</description>
+      <type>fadelabel</type>
+      <id>13</id>
+      <posX>240</posX>
+      <posY>660</posY>
+      <width>1590</width>
+      <label>#Radio.Search.Title</label>
+      <font>font14</font>
+      <textcolor>ffffd700</textcolor>
+      <visible>control.hasfocus(10) | control.hasfocus(11)</visible>
+    </control>
+    <control>
+      <description>Current program time</description>
+      <type>label</type>
+      <id>14</id>
+      <posX>240</posX>
+      <posY>705</posY>
+      <width>1590</width>
+      <label>#Radio.Search.Time</label>
+      <font>font11</font>
+      <textcolor>ffffd700</textcolor>
+      <visible>control.hasfocus(10) | control.hasfocus(11)</visible>
+    </control>
+    <control>
+      <description>Description1</description>
+      <type>textboxscrollup</type>
+      <id>15</id>
+      <posX>240</posX>
+      <posY>757</posY>
+      <width>1590</width>
+      <height>157</height>
+      <font>font11</font>
+      <label>#Radio.Search.Description</label>
+      <textcolor>ffffd700</textcolor>
+      <visible>control.hasfocus(10) | control.hasfocus(11)</visible>
+    </control>
+    <control>
+      <description>genre</description>
+      <type>label</type>
+      <id>17</id>
+      <posX>3735</posX>
+      <posY>660</posY>
+      <width>1113</width>
+      <label>#Radio.Search.Genre</label>
+      <font>font11</font>
+      <textcolor>ffffd700</textcolor>
+      <visible>control.hasfocus(10) | control.hasfocus(11)</visible>
+    </control>
+    <control>
+      <description>Current channel</description>
+      <type>label</type>
+      <id>16</id>
+      <posX>3693</posX>
+      <posY>780</posY>
+      <label>#Radio.Search.Channel</label>
+      <align>left</align>
+      <font>font13</font>
+      <textcolor>ffffd700</textcolor>
+    </control>
+  </controls>
+</window>

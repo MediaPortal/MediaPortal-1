@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!--version="1.0" encoding="utf-8" standalone="yes"-->
+<window>
+  <id>87264</id>
+  <defaultcontrol>2</defaultcontrol>
+  <allowoverlay>no</allowoverlay>
+  <rememberLastFocusedControl>yes</rememberLastFocusedControl>
+  <define>#currentmodule:#Trakt.Translation.Trending.Label</define>
+  <define>#selecteditem:#highlightedbutton</define>
+  <define>#defaultcontrol:2</define>
+  <define>#defaultcontrol.onleft:9994</define>
+  <controls>
+    <control>
+      <description>BG</description>
+      <type>image</type>
+      <id>1</id>
+      <texture>BH Trakt.jpg</texture>
+      <width>1920</width>
+      <height>1080</height>
+      <colordiffuse>90ffffff</colordiffuse>
+    </control>
+    <import>Trakt.Common.Fanart.xml</import>
+    <import>common.window.xml</import>
+    <import>common.time.xml</import>
+    <import>Trakt.Common.xml</import>
+    <control>
+      <type>group</type>
+      <description>group element</description>
+      <posX>525</posX>
+      <posY>241</posY>
+      <width>394</width>
+      <height>568</height>
+      <layout>StackLayout(Vertical)</layout>
+      <control>
+        <type>button</type>
+        <description>Trending Movies</description>
+        <id>2</id>
+        <label>#Trakt.Translation.TrendingMovies.Label</label>
+        <hyperlink>87266</hyperlink>
+        <onup>17</onup>
+        <width>559</width>
+        <onleft>#defaultcontrol.onleft</onleft>
+      </control>
+      <control>
+        <description>Trending Shows</description>
+        <type>button</type>
+        <id>3</id>
+        <label>#Trakt.Translation.TrendingShows.Label</label>
+        <hyperlink>87265</hyperlink>
+        <width>559</width>
+        <onleft>#defaultcontrol.onleft</onleft>
+        <ondown>2</ondown>
+      </control>
+    </control>
+  </controls>
+</window>

@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <!--DefaultWide-->
+  <id>3355</id>
+  <defaultcontrol>4</defaultcontrol>
+  <allowoverlay>yes</allowoverlay>
+  <controls>
+    <control>
+      <description>image</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>1920</width>
+      <height>1080</height>
+      <texture>black.jpg</texture>
+    </control>
+    <control>
+      <description>image</description>
+      <type>image</type>
+      <id>4</id>
+      <posX>0</posX>
+      <posY>0</posY>
+      <onup>2</onup>
+      <ondown>2</ondown>
+    </control>
+    <control>
+      <description>title</description>
+      <type>textbox</type>
+      <id>6</id>
+      <posX>0</posX>
+      <posY>24</posY>
+      <width>1920</width>
+      <height>144</height>
+      <font>font16</font>
+      <textcolor>ffffd700</textcolor>
+      <textalign>center</textalign>
+      <colordiffuse>ffffffff</colordiffuse>
+    </control>
+    <control>
+      <description>image</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>45</posX>
+      <posY>750</posY>
+      <width>1875</width>
+      <height>300</height>
+      <texture>BH background2.png</texture>
+      <animation effect="fade" start="0" end="100" time="1000" reversible="true">visiblechange</animation>
+      <visible>control.hasfocus(2)</visible>
+    </control>
+    <control>
+      <description>info</description>
+      <type>textboxscrollup</type>
+      <id>5</id>
+      <posX>75</posX>
+      <posY>780</posY>
+      <width>1845</width>
+      <height>240</height>
+      <font>font11</font>
+      <textcolor>ffffd700</textcolor>
+      <colordiffuse>ffffffff</colordiffuse>
+      <seperator>--------------------------------</seperator>
+      <scrollStartDelaySec>10</scrollStartDelaySec>
+      <animation effect="fade" start="0" end="100" time="1000" reversible="true">visiblechange</animation>
+      <visible>control.hasfocus(2)</visible>
+    </control>
+    <control>
+      <description>Show Text</description>
+      <type>button</type>
+      <id>2</id>
+      <posX>20</posX>
+      <posY>70</posY>
+      <width>240</width>
+      <label>Show Text</label>
+    </control>
+    <control>
+      <description>Header</description>
+      <type>fadelabel</type>
+      <posX>45</posX>
+      <posY>15</posY>
+      <width>525</width>
+      <font>Label</font>
+      <align>left</align>
+      <textcolor>ffffd700</textcolor>
+      <label>APOD</label>
+    </control>
+  </controls>
+</window>

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!--version="1.0" encoding="utf-8" standalone="yes"-->
+<!--version="1.0" encoding="utf-8" standalone="yes"-->
+<window>
+  <allowoverlay>yes</allowoverlay>
+  <controls>
+    <!-- *** GeoClock *** -->
+    <control>
+      <description>Location label</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>45</posX>
+      <posY>15</posY>
+      <width>900</width>
+      <label>#(L(8))  #(L(19100))</label>
+      <font>Label</font>
+      <align>left</align>
+      <textcolor>ffffd700</textcolor>
+      <visible>string.equals(#WorldWeather.View,GeoClock)</visible>
+    </control>
+    <control>
+      <description>GeoClock image</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>1920</width>
+      <height>1080</height>
+      <texture>#WorldWeather.ImageGeoClock</texture>
+      <visible>string.equals(#WorldWeather.View,GeoClock)</visible>
+    </control>
+    <!-- *** Timzone description *** -->
+    <control>
+      <description>timezone description label</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>0</posX>
+      <posY>1047</posY>
+      <width>1920</width>
+      <align>center</align>
+      <label>#WorldWeather.LocationTimezoneDescription</label>
+      <font>font11</font>
+      <textcolor>black</textcolor>
+      <visible>string.equals(#WorldWeather.View,GeoClock)+!string.equals(#WorldWeather.ImageGeoClock, )</visible>
+    </control>
+  </controls>
+</window>

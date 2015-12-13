@@ -56,7 +56,7 @@
         <posY>260</posY>
         <width>480</width>
         <label>924</label>
-        <textcolor>white</textcolor>
+        <textcolor>ffffd700</textcolor>
         <font>Label</font>
       </control>
       <control>
@@ -167,7 +167,7 @@
         <posY>260</posY>
         <width>1000</width>
         <label>#currentmodule</label>
-        <textcolor>white</textcolor>
+        <textcolor>ffffd700</textcolor>
         <font>Label</font>
       </control>
       <control>
@@ -238,7 +238,7 @@
         <posY>585</posY>
         <width>500</width>
         <label>OSD + WorldNews Ticker</label>
-        <textcolor>white</textcolor>
+        <textcolor>ffffd700</textcolor>
         <font>Label</font>
       </control>
       <control>
@@ -282,7 +282,7 @@
         <posY>800</posY>
         <width>500</width>
         <label>#(L(600)) #(L(300160))</label>
-        <textcolor>white</textcolor>
+        <textcolor>ffffd700</textcolor>
         <font>Label</font>
       </control>
       <control>
