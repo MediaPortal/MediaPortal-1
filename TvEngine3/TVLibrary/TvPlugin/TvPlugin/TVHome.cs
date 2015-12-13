@@ -1030,11 +1030,12 @@ namespace TvPlugin
             GUIWindowManager.SendThreadMessage(initMsgTV);
             return true;
           }
-          Thread showDlgThread = new Thread(ShowDlgThread);
-          showDlgThread.IsBackground = true;
-          // show the dialog asynch.
-          // this fixes a hang situation that would happen when resuming TV with showlastactivemodule
-          showDlgThread.Start();
+          //Thread showDlgThread = new Thread(ShowDlgThread);
+          //showDlgThread.IsBackground = true;
+          //// show the dialog asynch.
+          //// this fixes a hang situation that would happen when resuming TV with showlastactivemodule
+          //showDlgThread.Start();
+          _ServerNotConnectedHandled = true;
           return true;
         }
         else
