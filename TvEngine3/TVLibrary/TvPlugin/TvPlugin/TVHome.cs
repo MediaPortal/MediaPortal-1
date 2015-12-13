@@ -1152,10 +1152,14 @@ namespace TvPlugin
     {
       get
       {
-        if (_card == null)
+        if (Connected)
         {
-          IUser user = new User();
-          _card = TvServer.CardByIndex(user, 0);
+          if (_card == null)
+          {
+            IUser user = new User();
+            _card = TvServer.CardByIndex(user, 0);
+          }
+          return _card;
         }
         return _card;
       }
@@ -1743,7 +1747,10 @@ namespace TvPlugin
         //Connected = false;
         _ServerNotConnectedHandled = false;
       }
-      catch (Exception) { }
+      catch (Exception)
+      {
+        // ignored
+      }
       finally
       {
         _ServerNotConnectedHandled = false;

@@ -839,7 +839,7 @@ namespace TvPlugin
                 _showChannelLogos = false;
                 if (TVHome.Card.IsTimeShifting)
                 {
-                  _currentChannel = TVHome.Navigator.Channel;
+                  if (TVHome.Navigator != null) _currentChannel = TVHome.Navigator.Channel;
                   PositionGuideCursorToCurrentChannel();
                 }
               }
