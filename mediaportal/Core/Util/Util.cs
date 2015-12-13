@@ -2698,6 +2698,7 @@ namespace MediaPortal.Util
         }
         return;
       }
+      Log.Debug("Util DownLoadImage URL : {0}, file : {1}",strURL, file);
       DownLoadImage(strURL, file);
       if (File.Exists(file))
       {
@@ -2733,6 +2734,7 @@ namespace MediaPortal.Util
 
       string file = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.InternetCache), url);
       FileDelete(file);
+      Log.Debug("Util DownLoadImage URL : {0}, file : {1}", strURL, file);
       DownLoadImage(strURL, file);
       
       if (File.Exists(file))

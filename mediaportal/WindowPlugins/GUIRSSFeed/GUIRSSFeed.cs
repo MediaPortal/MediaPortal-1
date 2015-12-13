@@ -481,6 +481,7 @@ namespace MediaPortal.GUI.RSS
                 strTemp = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.InternetCache), strTemp);
 
                 Util.Utils.FileDelete(strTemp);
+                Log.Debug("GUIRSSFeed : DownLoadImage URL : {0}, file : {1}", strImage, strTemp);
                 Util.Utils.DownLoadImage(strImage, strTemp);
                 //MediaPortal.Util.Utils.DownLoadAndCacheImage(strImage, strTemp);
 

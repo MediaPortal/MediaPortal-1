@@ -149,7 +149,7 @@ namespace MediaPortal.GUI.Music
     private void bw_DoWork(object sender, DoWorkEventArgs e)
     {
       string thumbNailFileName = Util.Utils.GetAlbumThumbName(albumInfo.Artist, albumInfo.Title);
-      Log.Debug("downloading album image for: {0} - {1}", albumInfo.Artist, albumInfo.Title);
+      Log.Debug("GUIMusicInfo downloading album image for: {0} - {1}", albumInfo.Artist, albumInfo.Title);
       Util.Utils.DownLoadImage(albumInfo.ImageURL, thumbNailFileName);
     }
 

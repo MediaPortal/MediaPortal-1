@@ -149,7 +149,7 @@ namespace MediaPortal.GUI.Music
     private void bw_DoWork(object sender, DoWorkEventArgs e)
     {
       string coverArtFileName = GUIMusicBaseWindow.GetArtistCoverArtName(artistInfo.Artist);
-      Log.Debug("downloading thumbnail for artist: {0}", artistInfo.Artist);
+      Log.Debug("GUIMusicArtistInfo downloading thumbnail for artist: {0}", artistInfo.Artist);
       Util.Utils.DownLoadImage(artistInfo.ImageURL, coverArtFileName);
     }
 
