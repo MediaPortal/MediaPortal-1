@@ -333,7 +333,7 @@
       <posX>1095</posX>
       <posY>441</posY>
       <width>420</width>
-      <label>#year</label>
+      <label>#(iif(eq(#year,'1900'),' ','#year'))</label>
       <font>font12</font>
       <textcolor>ivory</textcolor>
       <visible>facadeview.list+ string.equals(#hideinfo, False)</visible>
@@ -357,7 +357,7 @@
       <posX>1095</posX>
       <posY>507</posY>
       <width>420</width>
-      <label>#runtime</label>
+      <label>#(iif(eq(#runtime,'0 min (0:00)'),' ','#runtime'))</label>
       <font>font12</font>
       <textcolor>ivory</textcolor>
       <visible>facadeview.list+ string.equals(#hideinfo, False)</visible>

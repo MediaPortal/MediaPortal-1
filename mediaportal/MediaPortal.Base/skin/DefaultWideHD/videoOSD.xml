@@ -47,51 +47,6 @@
       <align>right</align>
       <font>font16</font>
       <textcolor>ivory</textcolor>
-      
-    </control>
-    <control>
-      <description>Clock</description>
-      <type>image</type>
-      <id>0</id>
-      <posX>174</posX>
-      <posY>880</posY>
-      <width>101</width>
-      <height>101</height>
-      <texture>clock.png</texture>
-      <visible>skin.hassetting(#skin.analogosd)+![control.isvisible(400)|control.isvisible(800)|control.isvisible(550)|control.isvisible(700)|control.isvisible(600)]</visible>
-    </control>
-    <control>
-      <type>image</type>
-      <id>0</id>
-      <posX>175</posX>
-      <posY>881</posY>
-      <width>98</width>
-      <height>98</height>
-      <texture>clockHandMinute.png</texture>
-      <animation effect="rotate" clockhandle="minute" time="500" condition="true" loop="true">Conditional</animation>
-      <visible>skin.hassetting(#skin.analogosd)+![control.isvisible(400)|control.isvisible(800)|control.isvisible(550)|control.isvisible(700)|control.isvisible(600)]</visible>
-    </control>
-    <control>
-      <type>image</type>
-      <id>0</id>
-      <posX>175</posX>
-      <posY>881</posY>
-      <width>98</width>
-      <height>98</height>
-      <texture>clockHandHour.png</texture>
-      <animation effect="rotate" clockhandle="hour" time="500" condition="true" loop="true">Conditional</animation>
-      <visible>skin.hassetting(#skin.analogosd)+![control.isvisible(400)|control.isvisible(800)|control.isvisible(550)|control.isvisible(700)|control.isvisible(600)]</visible>
-    </control>
-    <control>
-      <type>image</type>
-      <id>0</id>
-      <posX>175</posX>
-      <posY>881</posY>
-      <width>98</width>
-      <height>98</height>
-      <texture>clockHandSecond.png</texture>
-      <animation effect="rotate" clockhandle="second" time="500" condition="true" loop="true">Conditional</animation>
-      <visible>skin.hassetting(#skin.analogosd)+![control.isvisible(400)|control.isvisible(800)|control.isvisible(550)|control.isvisible(700)|control.isvisible(600)]</visible>
     </control>
     <control>
       <description>background</description>
@@ -200,7 +155,7 @@
       <texture mask="dvdcase_mask.png">#Play.Current.Thumb</texture>
       <keepaspectratio>no</keepaspectratio>
       <animation effect="fade" time="100" reversible="true">visible</animation>
-      <visible>!skin.hassetting(#skin.analogosd)+![control.isvisible(400)|control.isvisible(800)|control.isvisible(550)|control.isvisible(700)|control.isvisible(600)]</visible>
+      <visible>![control.isvisible(400)|control.isvisible(800)|control.isvisible(550)|control.isvisible(700)|control.isvisible(600)]</visible>
     </control>
     <control>
       <id>1</id>
@@ -210,31 +165,7 @@
       <width>157</width>
       <height>239</height>
       <texture>dvdcase.png</texture>
-      <visible>!skin.hassetting(#skin.analogosd)+control.hasthumb(102)+![control.isvisible(400)|control.isvisible(800)|control.isvisible(550)|control.isvisible(700)|control.isvisible(600)]</visible>
-      <animation effect="fade" time="100" reversible="true">visible</animation>
-    </control>
-    <control>
-      <description>Movie thumb</description>
-      <type>image</type>
-      <id>1</id>
-      <posX>1583</posX>
-      <posY>737</posY>
-      <width>187</width>
-      <height>285</height>
-      <texture mask="dvdcase_mask.png">#Play.Current.Thumb</texture>
-      <keepaspectratio>no</keepaspectratio>
-      <animation effect="fade" time="100" reversible="true">visible</animation>
-      <visible>skin.hassetting(#skin.analogosd)+![control.isvisible(400)|control.isvisible(800)|control.isvisible(550)|control.isvisible(700)|control.isvisible(600)]</visible>
-    </control>
-    <control>
-      <id>1</id>
-      <type>image</type>
-      <posX>1583</posX>
-      <posY>737</posY>
-      <width>187</width>
-      <height>285</height>
-      <texture>dvdcase.png</texture>
-      <visible>skin.hassetting(#skin.analogosd)+control.hasthumb(102)+![control.isvisible(400)|control.isvisible(800)|control.isvisible(550)|control.isvisible(700)|control.isvisible(600)]</visible>
+      <visible>control.hasthumb(102)+![control.isvisible(400)|control.isvisible(800)|control.isvisible(550)|control.isvisible(700)|control.isvisible(600)]</visible>
       <animation effect="fade" time="100" reversible="true">visible</animation>
     </control>
     <import>common.logos.xml</import>

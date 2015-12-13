@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <!--version="1.0" encoding="utf-8" standalone="yes"-->
 <window>
   <id>2004</id>
@@ -88,7 +88,7 @@
       <posX>877</posX>
       <posY>1015</posY>
       <visible>Player.HasAudio+!Player.HasVideo</visible>
-      <label>#(L(179)): #Play.Current.Title</label>
+      <label>#(L(182)): #Play.Current.Title</label>
       <width>840</width>
       <align>right</align>
       <font>font11</font>

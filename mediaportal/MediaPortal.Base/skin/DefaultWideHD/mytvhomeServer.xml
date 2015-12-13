@@ -166,23 +166,20 @@
         <description>TV Shows</description>
         <type>button</type>
         <id>76</id>
-        <hyperlink>25</hyperlink>
-        <label>3</label>
+        <hyperlink>9811</hyperlink>
+        <label>1300</label>
         <onup>13</onup>
         <ondown>77</ondown>
-        <onleft>99</onleft>
         <visible>plugin.isenabled(MP-TV Series)</visible>
       </control>
       <control>
         <description>Videos</description>
         <type>button</type>
         <id>77</id>
-        <hyperlink>9811</hyperlink>
-        <label>1300</label>
+        <hyperlink>25</hyperlink>
+        <label>3</label>
         <onup>76</onup>
         <ondown>8</ondown>
-        <onleft>99</onleft>
-        <visible>plugin.isenabled(Videos)</visible>
       </control>
     </control>
     <control>

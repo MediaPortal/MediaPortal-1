@@ -509,7 +509,7 @@ ID format AA-B-C-DD [group/subgroup/layer/item] eg: 990105 = group 99 / subgroup
       <animation effect="fade" time="0" reversible="false">hidden</animation>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="0">WindowClose</animation>
-      <visible>string.contains(#hedit.inuse,sub)+[string.contains(#highlightedbutton,TVSERIES)|string.contains(#highlightedbutton,VIDEO1)|string.contains(#highlightedbutton,VIDEO2)|string.contains(#highlightedbutton,MOVPIC)|string.contains(#highlightedbutton,TV3)|string.contains(#highlightedbutton,AUDIO1)|string.contains(#highlightedbutton,VIDEO4)|string.contains(#highlightedbutton,MUSIC)|string.contains(#highlightedbutton,TRAKT)|string.contains(#highlightedbutton,PICTURE)]</visible>
+      <visible>string.contains(#hedit.inuse,sub)+[string.contains(#highlightedbutton,TVSERIES)|string.contains(#highlightedbutton,VIDEO1)|string.contains(#highlightedbutton,VIDEO2)|string.contains(#highlightedbutton,MOVPIC)|string.contains(#highlightedbutton,TV3)|string.contains(#highlightedbutton,AUDIO1)|string.contains(#highlightedbutton,VIDEO4)|string.contains(#highlightedbutton,MUSIC)|string.contains(#highlightedbutton,TRAKT)|string.contains(#highlightedbutton,PICTURE)|string.contains(#highlightedbutton,AUDIO6)]</visible>
     </control>
 
   </controls>
