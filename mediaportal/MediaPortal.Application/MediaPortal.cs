@@ -143,6 +143,7 @@ public class MediaPortalApp : D3D, IRender
   private string                _screenDisplayName;
   private bool                  _threadedStartup;
   private bool                  _resumeTimeOutReached = false;
+  private bool                  _wndProcPluginExecuted = false;
 
   // ReSharper disable InconsistentNaming
   private const int WM_SYSCOMMAND            = 0x0112; // http://msdn.microsoft.com/en-us/library/windows/desktop/ms646360(v=vs.85).aspx
@@ -1518,6 +1519,7 @@ public class MediaPortalApp : D3D, IRender
   {
     try
     {
+      _wndProcPluginExecuted = false;
       switch (msg.Msg)
       {
         case (int)ShellNotifications.WmShnotify:
@@ -1567,25 +1569,25 @@ public class MediaPortalApp : D3D, IRender
             if (!_suspended)
             {
               OnGetMinMaxInfo(ref msg);
-              PluginManager.WndProc(ref msg);
+              WndProcPlugin(ref msg, false);
             }
           }
           break;
 
         case WM_ENTERSIZEMOVE:
           Log.Debug("Main: WM_ENTERSIZEMOVE");
-          PluginManager.WndProc(ref msg);
+          WndProcPlugin(ref msg, false);
           break;
 
         case WM_EXITSIZEMOVE:
           Log.Debug("Main: WM_EXITSIZEMOVE");
-          PluginManager.WndProc(ref msg);
+          WndProcPlugin(ref msg, false);
           break;
 
         // only allow window to be moved inside a valid working area
         case WM_MOVING:
           OnMoving(ref msg);
-          PluginManager.WndProc(ref msg);
+          WndProcPlugin(ref msg, false);
           break;
 
         // verify window size in case it was not resized by the user
@@ -1593,7 +1595,7 @@ public class MediaPortalApp : D3D, IRender
           if (!_keepstartfullscreen)
           {
             OnSize(ref msg);
-            PluginManager.WndProc(ref msg);
+            WndProcPlugin(ref msg, false);
           }
           break;
 
@@ -1602,7 +1604,7 @@ public class MediaPortalApp : D3D, IRender
           if (!_keepstartfullscreen)
           {
             OnSizing(ref msg);
-            PluginManager.WndProc(ref msg);
+            WndProcPlugin(ref msg, false);
           }
           break;
 
@@ -1611,7 +1613,7 @@ public class MediaPortalApp : D3D, IRender
           if (!_keepstartfullscreen)
           {
             OnDisplayChange(ref msg);
-            PluginManager.WndProc(ref msg);
+            WndProcPlugin(ref msg, false);
           }
           break;
 
@@ -1620,13 +1622,13 @@ public class MediaPortalApp : D3D, IRender
           if (!_keepstartfullscreen)
           {
             OnDeviceChange(ref msg);
-            PluginManager.WndProc(ref msg);
+            WndProcPlugin(ref msg, false);
           }
           break;
 
         case WM_QUERYENDSESSION:
           Log.Debug("Main: WM_QUERYENDSESSION");
-          PluginManager.WndProc(ref msg);
+          WndProcPlugin(ref msg, false);
           base.WndProc(ref msg);
           ShuttingDown = true;
           msg.Result = (IntPtr)1;
@@ -1634,7 +1636,7 @@ public class MediaPortalApp : D3D, IRender
 
         case WM_ENDSESSION:
           Log.Info("Main: WM_ENDESSION");
-          PluginManager.WndProc(ref msg);
+          WndProcPlugin(ref msg, false);
           base.WndProc(ref msg);
           Application.ExitThread();
           Application.Exit();
@@ -1644,7 +1646,7 @@ public class MediaPortalApp : D3D, IRender
         // handle activation and deactivation requests
         case WM_ACTIVATE:
           OnActivate(ref msg);
-          PluginManager.WndProc(ref msg);
+          WndProcPlugin(ref msg, false);
           break;
 
         // handle system commands
@@ -1654,12 +1656,12 @@ public class MediaPortalApp : D3D, IRender
           {
             return;
           }
-          PluginManager.WndProc(ref msg);
+          WndProcPlugin(ref msg, false);
           break;
 
         // handle default commands needed for plugins
         default:
-          PluginManager.WndProc(ref msg);
+          WndProcPlugin(ref msg, false);
           break;
       }
 
@@ -1747,7 +1749,7 @@ public class MediaPortalApp : D3D, IRender
         Log.Debug("Main: SC_MONITORPOWER : The display requested value is {0}", Enum.GetName(typeof(MonitorState),msg.LParam.ToInt32()));
         if ((GUIGraphicsContext.IsFullScreenVideo && !g_Player.Paused) || GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_SLIDESHOW && displayState != (int) MonitorState.ON)
         {
-          PluginManager.WndProc(ref msg);
+          WndProcPlugin(ref msg, false);
           Log.Info("Main: SC_MONITORPOWER Active player - resetting idle timer for display to be turned off");
           SetThreadExecutionState(EXECUTION_STATE.ES_SYSTEM_REQUIRED | EXECUTION_STATE.ES_DISPLAY_REQUIRED);
           msg.Result = (IntPtr)1;
@@ -1778,7 +1780,7 @@ public class MediaPortalApp : D3D, IRender
         Log.Debug("Main: SC_SCREENSAVE");
         if ((GUIGraphicsContext.IsFullScreenVideo && !g_Player.Paused) || GUIWindowManager.ActiveWindow == (int) GUIWindow.Window.WINDOW_SLIDESHOW)
         {
-          PluginManager.WndProc(ref msg);
+          WndProcPlugin(ref msg, false);
           Log.Info("Main: SC_SCREENSAVE Active player - resetting idle timer for screen save to be turned on");
           SetThreadExecutionState(EXECUTION_STATE.ES_SYSTEM_REQUIRED | EXECUTION_STATE.ES_DISPLAY_REQUIRED);
           msg.Result = (IntPtr)1;
@@ -1871,9 +1873,9 @@ public class MediaPortalApp : D3D, IRender
           }
 
           // Suspend operation
-          Log.Info("Main: Suspending operation");
+          Log.Info("Main: PBT_APMSUSPEND Suspending operation");
           PrepareSuspend();
-          PluginManager.WndProc(ref msg);
+          WndProcPlugin(ref msg, false);
           OnSuspend();
 
           // enable event handlers
@@ -1897,10 +1899,10 @@ public class MediaPortalApp : D3D, IRender
           if (!_resumedAutomatic)
           {
             _resumedAutomatic = true;
-            Log.Info("Main: Resuming automatic operation");
+            Log.Info("Main: PBT_APMRESUMEAUTOMATIC Resuming automatic operation");
             OnResumeAutomatic();
             msg.WParam = new IntPtr((int)PBT_EVENT.PBT_APMRESUMEAUTOMATIC);
-            PluginManager.WndProc(ref msg);
+            WndProcPlugin(ref msg, false);
           }
           else
           {
@@ -1916,7 +1918,7 @@ public class MediaPortalApp : D3D, IRender
 
         // Only for Windows XP
         case (int)PBT_EVENT.PBT_APMRESUMECRITICAL:
-          Log.Info("Main: Resuming operation after a forced suspend");
+          Log.Info("Main: PBT_APMRESUMECRITICAL Resuming operation after a forced suspend");
 
           // We don't know if this is a 2nd call (bug in bios / drivers) or 1st call without a PBT_APMSUSPEND.
           // We can only assume this is 1st call in a scenario where PBT_APMSUSPEND is missing.
@@ -1941,19 +1943,19 @@ public class MediaPortalApp : D3D, IRender
           if (!_resumedAutomatic)
           {
             _resumedAutomatic = true;
-            Log.Info("Main: Resuming automatic operation - order of events is wrong");
+            Log.Info("Main:  PBT_APMRESUMESUSPEND Resuming automatic operation - order of events is wrong");
             OnResumeAutomatic();
             msg.WParam = new IntPtr((int)PBT_EVENT.PBT_APMRESUMEAUTOMATIC);
-            PluginManager.WndProc(ref msg);
+            WndProcPlugin(ref msg, false);
           }
 
           if (!_resumedSuspended)
           {
             // Resume operation of user interface
-            Log.Info("Main: Resuming operation of user interface");
+            Log.Info("Main:  PBT_APMRESUMESUSPEND Resuming operation of user interface");
             OnResumeSuspend();
             msg.WParam = new IntPtr((int)PBT_EVENT.PBT_APMRESUMESUSPEND);
-            PluginManager.WndProc(ref msg);
+            WndProcPlugin(ref msg, true);
             _resumedSuspended = true;
           }
           else
@@ -2038,7 +2040,7 @@ public class MediaPortalApp : D3D, IRender
                   Log.Info("Main: Providing input - Resuming operation of user interface");
                   OnResumeSuspend();
                   msg.WParam = new IntPtr((int)PBT_EVENT.PBT_APMRESUMESUSPEND);
-                  PluginManager.WndProc(ref msg);
+                  WndProcPlugin(ref msg, false);
                   msg.WParam = new IntPtr((int)PBT_EVENT.PBT_POWERSETTINGCHANGE);
                   _resumedSuspended = true;
                   _suspended = false;
@@ -2056,8 +2058,7 @@ public class MediaPortalApp : D3D, IRender
                 break;
             }
           }
-
-          PluginManager.WndProc(ref msg);
+          WndProcPlugin(ref msg, false);
           break;
       }
       msg.Result = (IntPtr)1;
@@ -2065,6 +2066,15 @@ public class MediaPortalApp : D3D, IRender
     catch (System.Exception ex)
     {
       Log.Error("Main: Exception catch on OnPowerBroadcast : {0}", ex);
+    }
+  }
+
+  private void WndProcPlugin(ref Message msg, bool force)
+  {
+    if (!_wndProcPluginExecuted || force)
+    {
+      PluginManager.WndProc(ref msg);
+      _wndProcPluginExecuted = true;
     }
   }
 
