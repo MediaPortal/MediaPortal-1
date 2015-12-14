@@ -1559,7 +1559,10 @@ public class MediaPortalApp : D3D, IRender
 
         // power management
         case WM_POWERBROADCAST:
-          OnPowerBroadcast(ref msg);
+          if (!OnPowerBroadcast(ref msg))
+          {
+            return;
+          }
           break;
 
         // set maximum and minimum form size in windowed mode
@@ -1813,7 +1816,7 @@ public class MediaPortalApp : D3D, IRender
   /// Process WM_POWERBROADCAST messages
   /// </summary>
   /// <param name="msg"></param>
-  private void OnPowerBroadcast(ref Message msg)
+  private bool OnPowerBroadcast(ref Message msg)
   {
     try
     {
@@ -2011,7 +2014,7 @@ public class MediaPortalApp : D3D, IRender
                   SetThreadExecutionState(EXECUTION_STATE.ES_SYSTEM_REQUIRED | EXECUTION_STATE.ES_DISPLAY_REQUIRED);
                   msg.Result = (IntPtr) 1;
                   Log.Debug("Main: PBT_POWERSETTINGCHANGE : don't send monitor OFF : msg result : {0} - time span elapsed {1} seconds", msg.Result, timeSpan.Seconds);
-                  break;
+                  return false;
                 }
                 Log.Info("Main: The display is off");
                 IsDisplayTurnedOn = false;
@@ -2067,6 +2070,7 @@ public class MediaPortalApp : D3D, IRender
     {
       Log.Error("Main: Exception catch on OnPowerBroadcast : {0}", ex);
     }
+    return true;
   }
 
   private void WndProcPlugin(ref Message msg, bool force)

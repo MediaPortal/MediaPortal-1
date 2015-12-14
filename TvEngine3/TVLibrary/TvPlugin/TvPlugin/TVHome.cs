@@ -205,6 +205,28 @@ namespace TvPlugin
 
     #endregion
 
+    #region enum
+
+    // http://msdn.microsoft.com/en-us/library/windows/desktop/aa373247(v=vs.85).aspx
+    // ReSharper disable InconsistentNaming
+    // ReSharper disable UnusedMember.Local
+    private enum PBT_EVENT
+    {
+      PBT_APMPOWERSTATUSCHANGE = 0x000A,
+      PBT_APMRESUMEAUTOMATIC = 0x0012,
+      PBT_APMRESUMESUSPEND = 0x0007,
+      PBT_APMSUSPEND = 0x0004,
+      PBT_POWERSETTINGCHANGE = 0x8013,
+      // XP only
+      PBT_APMBATTERYLOW = 0x0009,
+      PBT_APMOEMEVENT = 0x000B,
+      PBT_APMQUERYSUSPEND = 0x0000,
+      PBT_APMQUERYSUSPENDFAILED = 0x0002,
+      PBT_APMRESUMECRITICAL = 0x0006
+    }
+
+    #endregion
+
     #region ISetupForm Members
 
     public bool CanEnable()
@@ -1807,7 +1829,7 @@ namespace TvPlugin
     {
       if (msg.Msg == WM_POWERBROADCAST)
       {
-        Log.Warn("TVHome.WndProc()");
+        Log.Warn("TVHome.WndProc() : msg {0}", Enum.GetName(typeof(PBT_EVENT), msg.WParam.ToInt32()));
         switch (msg.WParam.ToInt32())
         {
           case PBT_APMSTANDBY:
