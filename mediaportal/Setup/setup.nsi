@@ -633,13 +633,13 @@ Section "MediaPortal core files (required)" SecCore
 
   ; delete font for proper reinstallation for Default and Titan Skin Font
   !insertmacro un.Fonts
-  Delete "$FONT\TitanSmall.ttf"
-  Delete "$FONT\Titan.ttf"
-  Delete "$FONT\TitanLight.ttf"
-  Delete "$FONT\TitanMedium.ttf"
-  Delete "$FONT\Lato-Medium.ttf"
-  Delete "$FONT\Lato-Light.ttf"
-  Delete "$FONT\NotoSans-Regular.ttf"
+  Delete "${MEDIAPORTAL.BASE}\skin\Titan\Fonts\TitanSmall.ttf"
+  Delete "${MEDIAPORTAL.BASE}\skin\Titan\Fonts\Titan.ttf"
+  Delete "${MEDIAPORTAL.BASE}\skin\Titan\Fonts\TitanLight.ttf"
+  Delete "${MEDIAPORTAL.BASE}\skin\Titan\Fonts\TitanMedium.ttf"
+  Delete "${MEDIAPORTAL.BASE}\skin\DefaultWideHD\MPDefaultFonts\Lato-Medium.ttf"
+  Delete "${MEDIAPORTAL.BASE}\skin\DefaultWideHD\MPDefaultFonts\Lato-Light.ttf"
+  Delete "${MEDIAPORTAL.BASE}\skin\DefaultWideHD\MPDefaultFonts\NotoSans-Regular.ttf"
 
   ; used for Default and Titan Skin Font
   StrCpy $FONT_DIR $FONTS
