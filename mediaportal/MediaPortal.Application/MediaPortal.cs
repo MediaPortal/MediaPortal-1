@@ -1664,6 +1664,7 @@ public class MediaPortalApp : D3D, IRender
 
         // handle default commands needed for plugins
         default:
+          Log.Debug("Main: WndProcPlugin default: (msg {0})", msg);
           WndProcPlugin(ref msg, false);
           break;
       }
@@ -2077,8 +2078,9 @@ public class MediaPortalApp : D3D, IRender
   {
     if (!_wndProcPluginExecuted || force)
     {
-      PluginManager.WndProc(ref msg);
+      Log.Debug("Main: WndProcPlugin - msg {2}", msg);
       _wndProcPluginExecuted = true;
+      PluginManager.WndProc(ref msg);
     }
   }
 

@@ -1111,10 +1111,13 @@ namespace MediaPortal.GUI.Library
           {
             var pluginRev = plugin as IPluginReceiver;
             res = pluginRev.WndProc(ref msg);
+
+            Log.Debug("PluginManager - WndProc {0} - plugin {1}", msg, plugin.PluginName());
             
             // Do not allow badly behaving plugins to steal power events from other plugins
             if (res && msg.Msg != WM_POWERBROADCAST)
             {
+              Log.Debug("PluginManager - WndProc (msg.Msg != WM_POWERBROADCAST) {0}", msg);
               break;
             }
           }

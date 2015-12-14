@@ -1830,6 +1830,7 @@ namespace TvPlugin
       if (msg.Msg == WM_POWERBROADCAST)
       {
         Log.Warn("TVHome.WndProc() : msg {0}", Enum.GetName(typeof(PBT_EVENT), msg.WParam.ToInt32()));
+        Log.Debug("TVHome.WndProc() : msg {0}", msg);
         switch (msg.WParam.ToInt32())
         {
           case PBT_APMSTANDBY:
