@@ -37,7 +37,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Stream
   /// An implementation of <see cref="ITuner"/> for receiving DVB-compliant
   /// streams with the MediaPortal stream source filter.
   /// </summary>
-  internal class TunerStream : TunerDirectShowBase
+  internal class TunerStream : TunerDirectShowMpeg2TsBase
   {
     /// <summary>
     /// The MediaPortal IPTV/DVB-IP/URL stream source filter class ID.
@@ -129,8 +129,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Stream
     /// <summary>
     /// Actually load the tuner.
     /// </summary>
+    /// <param name="streamFormat">The format(s) of the streams that the tuner is expected to support.</param>
     /// <returns>the set of extensions loaded for the tuner, in priority order</returns>
-    public override IList<ITunerExtension> PerformLoading()
+    public override IList<ITunerExtension> PerformLoading(StreamFormat streamFormat = StreamFormat.Default)
     {
       this.LogDebug("DirectShow stream: perform loading");
       InitialiseGraph();
@@ -143,7 +144,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Stream
       IList<ITunerExtension> extensions = LoadExtensions(_filterStreamSource, ref lastFilter);
 
       // Complete the graph.
-      AddAndConnectTsWriterIntoGraph(lastFilter);
+      AddAndConnectTsWriterIntoGraph(lastFilter, streamFormat);
       CompleteGraph();
       return extensions;
     }
@@ -175,6 +176,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Stream
         }
         Release.ComObject("DirectShow stream source filter", ref _filterStreamSource);
         Release.AmMediaType(ref _sourceMediaType);
+
+        RemoveTsWriterFromGraph();
       }
 
       CleanUpGraph(isFinalising);

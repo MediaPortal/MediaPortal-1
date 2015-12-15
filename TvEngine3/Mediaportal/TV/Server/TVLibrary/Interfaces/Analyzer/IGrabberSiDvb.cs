@@ -21,6 +21,9 @@
 using System;
 using System.Runtime.InteropServices;
 using Mediaportal.TV.Server.Common.Types.Enum;
+using Mediaportal.TV.Server.TVLibrary.Implementations.Dvb.Enum;
+using Polarisation = Mediaportal.TV.Server.TVLibrary.Implementations.Dvb.Enum.Polarisation;
+using RollOffFactor = Mediaportal.TV.Server.TVLibrary.Implementations.Dvb.Enum.RollOffFactor;
 
 namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
 {
@@ -121,9 +124,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
     /// <summary>
     /// Get the number of DVB services received by the grabber.
     /// </summary>
-    /// <returns>the number of DVB services received by the grabber</returns>
+    /// <param name="actualOriginalNetworkId">The identifier of the original network that the SDT-actual is associated with.</param>
+    /// <param name="serviceCount">The number of DVB services received by the grabber.</param>
     [PreserveSig]
-    ushort GetServiceCount();
+    void GetServiceCount(out ushort actualOriginalNetworkId, out ushort serviceCount);
 
     /// <summary>
     /// Retrieve a DVB service's details from the grabber.
@@ -201,9 +205,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
                     out byte dishSubChannelNumber,
                     [MarshalAs(UnmanagedType.I1)] out bool eitScheduleFlag,
                     [MarshalAs(UnmanagedType.I1)] out bool eitPresentFollowingFlag,
-                    out byte runningStatus,
+                    out RunningStatus runningStatus,
                     [MarshalAs(UnmanagedType.I1)] out bool freeCaMode,
-                    out byte serviceType,
+                    out ServiceType serviceType,
                     out byte serviceNameCount,
                     [MarshalAs(UnmanagedType.I1)] out bool visibleInGuide,
                     out ushort streamCountVideo,
@@ -229,9 +233,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
                     ref byte unavailableInCellCount,
                     [Out, MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 40)] ulong[] targetRegionIds,
                     ref byte targetRegionIdCount,
-                    [Out, MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 42)] ushort[] freesatRegionIds,
+                    [Out, MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 42)] uint[] freesatRegionIds,
                     ref byte freesatRegionIdCount,
-                    [Out, MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 44)] ushort[] openTvRegionIds,
+                    [Out, MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 44)] uint[] openTvRegionIds,
                     ref byte openTvRegionIdCount,
                     [Out, MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 46)] ushort[] freesatChannelCategoryIds,
                     ref byte freesatChannelCategoryIdCount,
@@ -554,12 +558,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
     /// <param name="longitude">The longitude of the geostationary satellite on which the transmitter is located in tenths of a degree. Positive values indicate Eastern hemisphere. Only applicable for DVB-S and DVB-S2 transmitters.</param>
     /// <param name="cellId">The identifier of the terrestrial cell in which the transmitter is located. Only applicable for DVB-T and DVB-T2 transmitters.</param>
     /// <param name="cellIdExtension">The identifier extension of the terrestrial cell in which the transmitter is located. Only applicable for DVB-T and DVB-T2 transmitters.</param>
+    /// <param name="isMultipleInputStream">An indication of whether the transmitter broadcasts multiple transport streams. Only applicable for DVB-C2, DVB-S2 and DVBT2 transmitters.</param>
     /// <param name="plpId">The identifier of the physical layer pipe in which the <paramref name="transportStreamId">transport stream</paramref> is multiplexed. Only applicable for DVB-C2, DVB-S2 and DVB-T2 transmitters.</param>
     /// <returns><c>true</c> if the transmitter's details are successfully retrieved, otherwise <c>false</c></returns>
     [PreserveSig]
     [return: MarshalAs(UnmanagedType.I1)]
     bool GetTransmitter(ushort index,
-                        out ushort tableId,
+                        out byte tableId,
                         out ushort networkId,
                         out ushort originalNetworkId,
                         out ushort transportStreamId,
@@ -567,15 +572,16 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
                         out BroadcastStandard broadcastStandard,
                         [Out, MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 8)] uint[] frequencies,
                         ref byte frequencyCount,
-                        out byte polarisation,
+                        out Polarisation polarisation,
                         out byte modulation,
                         out uint symbolRate,
                         out ushort bandwidth,
-                        out byte innerFecRate,
-                        out byte rollOffFactor,
+                        out FecCodeRateDvbCS innerFecRate,
+                        out RollOffFactor rollOffFactor,
                         out short longitude,
                         out ushort cellId,
                         out byte cellIdExtension,
+                        [MarshalAs(UnmanagedType.I1)] out bool isMultipleInputStream,
                         out byte plpId);
   }
 }

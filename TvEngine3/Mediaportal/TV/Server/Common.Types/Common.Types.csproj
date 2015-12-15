@@ -67,9 +67,11 @@
     <Compile Include="Enum\BroadcastStandard.cs" />
     <Compile Include="Enum\CamType.cs" />
     <Compile Include="Enum\ContentAdvisory.cs" />
+    <Compile Include="Enum\ChannelGroupType.cs" />
     <Compile Include="Enum\RecordingThumbnailQuality.cs" />
     <Compile Include="Enum\FrameSize.cs" />
     <Compile Include="Enum\FrameRate.cs" />
+    <Compile Include="Enum\TunerEpgGrabberProtocol.cs" />
     <Compile Include="Enum\VideoOrCameraPropertyFlag.cs" />
     <Compile Include="Enum\VideoOrCameraProperty.cs" />
     <Compile Include="Enum\TunerIdleMode.cs" />
@@ -92,6 +94,16 @@
     <Compile Include="Enum\ProgramState.cs" />
     <Compile Include="Enum\ScheduleRecordingType.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Provider\BouquetFreesat.cs" />
+    <Compile Include="Provider\BouquetFreeviewSatellite.cs" />
+    <Compile Include="Provider\BouquetOpenTvFoxtel.cs" />
+    <Compile Include="Provider\BouquetOpenTvSkyUk.cs" />
+    <Compile Include="Provider\BouquetOpenvSkyNz.cs" />
+    <Compile Include="Provider\DishNetworkMarket.cs" />
+    <Compile Include="Provider\RegionFreesat.cs" />
+    <Compile Include="Provider\RegionOpenTvFoxtel.cs" />
+    <Compile Include="Provider\RegionOpenTvSkyNz.cs" />
+    <Compile Include="Provider\RegionOpenTvSkyUk.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -1305,29 +1305,30 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
         Release.ComObject("WDM analog capture audio filter", ref _filterAudio);
       }
       Release.ComObject("WDM analog capture video filter", ref _filterVideo);
+      _filterAudio = null;
 
       if (_deviceMain != null)
       {
         DevicesInUse.Instance.Remove(_deviceMain);
-        // Do NOT Dispose() or set the capture device to NULL. We would be
-        // unable to reload. The tuner instance that instanciated this capture
-        // is responsible for disposing it.
+        // Do NOT Dispose() or set the main device to NULL. We would be unable
+        // to reload. The tuner instance that instanciated this capture is
+        // responsible for disposing it.
+        return;
       }
-      else
+
+      if (_deviceAudio != null && _deviceAudio != _deviceVideo)
       {
-        if (_deviceAudio != null && _deviceAudio != _deviceVideo)
-        {
-          DevicesInUse.Instance.Remove(_deviceAudio);
-          _deviceAudio.Dispose();
-          _deviceAudio = null;
-        }
-        if (_deviceVideo != null)
-        {
-          DevicesInUse.Instance.Remove(_deviceVideo);
-          _deviceVideo.Dispose();
-          _deviceVideo = null;
-        }
+        DevicesInUse.Instance.Remove(_deviceAudio);
+        _deviceAudio.Dispose();
+        _deviceAudio = null;
       }
+      if (_deviceVideo != null)
+      {
+        DevicesInUse.Instance.Remove(_deviceVideo);
+        _deviceVideo.Dispose();
+        _deviceVideo = null;
+      }
+      _deviceAudio = null;
     }
 
     #region parameter translation

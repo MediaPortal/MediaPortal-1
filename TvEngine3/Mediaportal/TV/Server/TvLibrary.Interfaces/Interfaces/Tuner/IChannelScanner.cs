@@ -19,8 +19,9 @@
 #endregion
 
 using System.Collections.Generic;
+using Mediaportal.TV.Server.Common.Types.Enum;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Channel;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.TuningDetail;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations;
 
 namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Tuner
 {
@@ -47,18 +48,21 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Tuner
     /// Tune to a specified channel and scan for channel information.
     /// </summary>
     /// <param name="channel">The channel to tune to.</param>
-    /// <returns>the channel information found</returns>
-    List<IChannel> Scan(IChannel channel);
+    /// <param name="isFastNetworkScan"><c>True</c> to do a fast network scan.</param>
+    /// <param name="channels">The channel information found.</param>
+    /// <param name="groupNames">The names of the groups referenced in <paramref name="channels"/>.</param>
+    void Scan(IChannel channel, bool isFastNetworkScan, out IList<ScannedChannel> channels, out IDictionary<ChannelGroupType, IDictionary<ulong, string>> groupNames);
 
     /// <summary>
-    /// Tune to a specified channel and scan for network information.
+    /// Tune to a specified channel and scan for transmitter tuning details
+    /// within the available network information.
     /// </summary>
     /// <param name="channel">The channel to tune to.</param>
-    /// <returns>the network information found</returns>
-    List<TuningDetail> ScanNIT(IChannel channel);
+    /// <returns>the tuning details found</returns>
+    IList<TuningDetail> ScanNetworkInformation(IChannel channel);
 
     /// <summary>
-    /// Abort scanning for channels.
+    /// Abort scanning for channels and/or network information.
     /// </summary>
     void AbortScanning();
   }

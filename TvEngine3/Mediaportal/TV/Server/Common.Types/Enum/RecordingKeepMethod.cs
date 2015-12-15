@@ -18,13 +18,21 @@
 
 #endregion
 
+using System.ComponentModel;
+
 namespace Mediaportal.TV.Server.Common.Types.Enum
 {
   public enum RecordingKeepMethod
   {
+    [Description("Until Space Needed")]
     UntilSpaceNeeded,
+    [Description("Until Watched")]
     UntilWatched,
+    [Description("Until Episode Limit")]
+    UntilEpisodeLimit,
+    [Description("Until Date")]
     UntilDate,
+    [Description("Always")]
     Always
   }
 }

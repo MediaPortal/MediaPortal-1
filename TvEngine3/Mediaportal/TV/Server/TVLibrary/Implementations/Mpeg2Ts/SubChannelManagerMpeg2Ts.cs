@@ -217,7 +217,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Mpeg2Ts
     private bool _isPatComplete = false;
     private IDictionary<int, ProgramInformation> _programs = new Dictionary<int, ProgramInformation>(20);   // program number => information
     private TableConditionalAccess _cat = null;
-    private ManualResetEvent _programWaitEvent = new ManualResetEvent(false);
+    private AutoResetEvent _programWaitEvent = new AutoResetEvent(false);
 
     #endregion
 
@@ -225,12 +225,17 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Mpeg2Ts
     /// Initialise a new instance of the <see cref="SubChannelManagerMpeg2Ts"/> class.
     /// </summary>
     /// <param name="tsWriter">The TS writer instance used to perform/implement time-shifting and recording.</param>
-    /// <param name="canReceiveAllTransmitterSubChannels"><c>True</c> if the tuner can simultaneously receive all sub-channels from the tuned transmitter.</param>
-    public SubChannelManagerMpeg2Ts(ITsWriter tsWriter, bool canReceiveAllTransmitterSubChannels = true)
-      : base(canReceiveAllTransmitterSubChannels)
+    /// <param name="canSimultaneouslyReceivePrograms"><c>True</c> if the tuner can simultaneously receive all programs from the tuned transmitter.</param>
+    /// <param name="alwaysRequiredPids">The PIDs which are required for any and all sub-channels.</param>
+    public SubChannelManagerMpeg2Ts(ITsWriter tsWriter, bool canSimultaneouslyReceivePrograms = true, ICollection<ushort> alwaysRequiredPids = null)
+      : base(canSimultaneouslyReceivePrograms)
     {
       _tsWriter = tsWriter;
       _tsWriter.SetObserver(this);
+      if (alwaysRequiredPids != null)
+      {
+        _alwaysRequiredPids = new HashSet<ushort>(alwaysRequiredPids);
+      }
     }
 
     #region private members
@@ -781,14 +786,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Mpeg2Ts
         return mpeg2Channel.ProgramNumber;
       }
       return 0;
-    }
-
-    public HashSet<ushort> AlwaysRequiredPids
-    {
-      set
-      {
-        _alwaysRequiredPids = value;
-      }
     }
 
     #region sub-channel manager base implementations/overrides

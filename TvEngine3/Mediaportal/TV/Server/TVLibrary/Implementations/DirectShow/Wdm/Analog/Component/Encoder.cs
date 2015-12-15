@@ -1074,6 +1074,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
           _deviceEncoderAudio = null;
         }
       }
+
       if (_filterEncoderVideo != null)
       {
         if (graph != null)
@@ -1089,6 +1090,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
           _deviceEncoderVideo = null;
         }
       }
+      _filterEncoderAudio = null;
+      _deviceEncoderAudio = null;
+
       if (_filterMultiplexer != null)
       {
         if (graph != null)

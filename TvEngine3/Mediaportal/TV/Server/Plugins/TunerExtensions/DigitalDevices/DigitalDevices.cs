@@ -2029,7 +2029,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
           }
           _privateCiContexts = null;
         }
-        Release.ComObject("Digital Devices graph", ref _graph);
+        _graph = null;
 
         IDisposable d = _diseqcInterface as IDisposable;
         if (d != null)

@@ -26,9 +26,8 @@ using DirectShowLib;
 using Mediaportal.TV.Server.Common.Types.Country;
 using Mediaportal.TV.Server.Common.Types.Enum;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
-using Mediaportal.TV.Server.TVLibrary.Implementations.Analog;
 using Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.Component;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer;
+using Mediaportal.TV.Server.TVLibrary.Implementations.Enum;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Channel;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channel;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Exception;
@@ -44,7 +43,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog
   /// An implementation of <see cref="ITuner"/> for analog tuners and capture
   /// devices with WDM/DirectShow drivers.
   /// </summary>
-  internal class TunerAnalog : TunerDirectShowBase
+  internal class TunerAnalog : TunerDirectShowMpeg2TsBase
   {
     #region variables
 
@@ -470,8 +469,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog
     /// <summary>
     /// Actually load the tuner.
     /// </summary>
+    /// <param name="streamFormat">The format(s) of the streams that the tuner is expected to support.</param>
     /// <returns>the set of extensions loaded for the tuner, in priority order</returns>
-    public override IList<ITunerExtension> PerformLoading()
+    public override IList<ITunerExtension> PerformLoading(StreamFormat streamFormat = StreamFormat.Default)
     {
       this.LogDebug("WDM analog: perform loading");
 
@@ -501,15 +501,14 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog
         extensions = LoadExtensions(_capture.VideoFilter ?? _capture.AudioFilter, ref lastFilter);
       }
 
-      AddAndConnectTsWriterIntoGraph(lastFilter);
+      if (streamFormat == StreamFormat.Default)
+      {
+        streamFormat = StreamFormat.Mpeg2Ts | StreamFormat.Analog;
+      }
+      AddAndConnectTsWriterIntoGraph(lastFilter, streamFormat);
       CompleteGraph();
 
       _capture.OnGraphCompleted();
-
-      _epgGrabber = null;   // Teletext scraping and RDS grabbing currently not supported.
-
-      _subChannelManager = new SubChannelManagerAnalog(TsWriter as ITsWriter);
-      _channelScanner = new ChannelScannerDirectShowAnalog(this, TsWriter as ITsChannelScan);
       return extensions;
     }
 
@@ -539,6 +538,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog
         {
           _encoder.PerformUnloading(Graph);
         }
+
+        RemoveTsWriterFromGraph();
       }
 
       CleanUpGraph(isFinalising);

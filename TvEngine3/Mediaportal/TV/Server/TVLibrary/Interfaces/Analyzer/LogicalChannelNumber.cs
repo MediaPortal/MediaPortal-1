@@ -25,13 +25,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
   [StructLayout(LayoutKind.Sequential, Pack = 1)]
   internal struct LogicalChannelNumber
   {
-    ushort ChannelNumber;
-    ushort RegionId;
+    public ushort ChannelNumber;
+    public ushort RegionId;
 
     [MarshalAs(UnmanagedType.I1)]
-    bool IsHighDefinition;
+    public bool IsHighDefinition;
 
-    ushort TableIdExtension;
-    byte TableId;
+    public ushort TableIdExtension;
+    public byte TableId;
   }
 }

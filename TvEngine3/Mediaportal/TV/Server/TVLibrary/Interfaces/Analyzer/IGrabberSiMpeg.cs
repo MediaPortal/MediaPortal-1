@@ -91,7 +91,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
     /// <returns><c>true</c> if the program's details are successfully retrieved, otherwise <c>false</c></returns>
     [PreserveSig]
     [return: MarshalAs(UnmanagedType.I1)]
-    bool GetProgramByIndex(uint index,
+    bool GetProgramByIndex(ushort index,
                             out ushort programNumber,
                             out ushort pmtPid,
                             [MarshalAs(UnmanagedType.I1)] out bool isPmtReceived,

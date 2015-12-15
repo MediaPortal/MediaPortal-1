@@ -19,14 +19,17 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using DirectShowLib;
 using DirectShowLib.BDA;
 using Mediaportal.TV.Server.Common.Types.Enum;
+using Mediaportal.TV.Server.TVLibrary.Implementations.Enum;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Channel;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channel;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Exception;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.NetworkProvider;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension;
 using MediaPortal.Common.Utils;
 using BdaPolarisation = DirectShowLib.BDA.Polarisation;
 using MpPolarisation = Mediaportal.TV.Server.Common.Types.Enum.Polarisation;
@@ -158,6 +161,20 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
       {
         return "MediaPortal PSK Tuning Space";
       }
+    }
+
+    /// <summary>
+    /// Actually load the tuner.
+    /// </summary>
+    /// <param name="streamFormat">The format(s) of the streams that the tuner is expected to support.</param>
+    /// <returns>the set of extensions loaded for the tuner, in priority order</returns>
+    public override IList<ITunerExtension> PerformLoading(StreamFormat streamFormat = StreamFormat.Default)
+    {
+      if (streamFormat == StreamFormat.Default)
+      {
+        streamFormat = StreamFormat.Mpeg2Ts | StreamFormat.Dvb | StreamFormat.Freesat;
+      }
+      return base.PerformLoading(streamFormat);
     }
 
     #endregion

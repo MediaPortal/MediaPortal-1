@@ -20,11 +20,9 @@
 
 using System.Collections.Generic;
 using Mediaportal.TV.Server.Common.Types.Enum;
-using Mediaportal.TV.Server.TVLibrary.Implementations.Atsc;
 using Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2.Enum;
 using Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2.Struct;
-using Mediaportal.TV.Server.TVLibrary.Implementations.Mpeg2Ts;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer;
+using Mediaportal.TV.Server.TVLibrary.Implementations.Enum;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Channel;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channel;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Exception;
@@ -161,19 +159,15 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
     /// <summary>
     /// Actually load the tuner.
     /// </summary>
+    /// <param name="streamFormat">The format(s) of the streams that the tuner is expected to support.</param>
     /// <returns>the set of extensions loaded for the tuner, in priority order</returns>
-    public override IList<ITunerExtension> PerformLoading()
+    public override IList<ITunerExtension> PerformLoading(StreamFormat streamFormat = StreamFormat.Default)
     {
-      IList<ITunerExtension> extensions = base.PerformLoading();
-
-      _subChannelManager = new SubChannelManagerMpeg2Ts(TsWriter as ITsWriter, true);
-      _epgGrabber = new EpgGrabberAtsc(TsWriter as IGrabberEpgAtsc, TsWriter as IGrabberEpgScte);
-
-      if (_channelScanner != null)
+      if (streamFormat == StreamFormat.Default)
       {
-        _channelScanner.Helper = new ChannelScannerHelperAtsc();
+        streamFormat = StreamFormat.Mpeg2Ts | StreamFormat.Atsc | StreamFormat.Scte;
       }
-      return extensions;
+      return base.PerformLoading(streamFormat);
     }
 
     #endregion

@@ -23,7 +23,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
   /// <summary>
   /// Observable PID types.
   /// </summary>
-  public enum PidType
+  internal enum PidType
   {
     /// <summary>
     /// Video stream.

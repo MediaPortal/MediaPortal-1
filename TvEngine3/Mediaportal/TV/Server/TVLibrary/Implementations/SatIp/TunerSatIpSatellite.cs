@@ -18,7 +18,9 @@
 
 #endregion
 
+using System.Collections.Generic;
 using Mediaportal.TV.Server.Common.Types.Enum;
+using Mediaportal.TV.Server.TVLibrary.Implementations.Enum;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Channel;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channel;
@@ -56,6 +58,26 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.SatIp
     public TunerSatIpSatellite(DeviceDescriptor serverDescriptor, int sequenceNumber, ITunerInternal streamTuner)
       : base(serverDescriptor, sequenceNumber, "S", BroadcastStandard.DvbS | BroadcastStandard.DvbS2, streamTuner)
     {
+    }
+
+    #endregion
+
+    #region ITunerInternal members
+
+    #region state control
+
+    /// <summary>
+    /// Actually load the tuner.
+    /// </summary>
+    /// <param name="streamFormat">The format(s) of the streams that the tuner is expected to support.</param>
+    /// <returns>the set of extensions loaded for the tuner, in priority order</returns>
+    public override IList<ITunerExtension> PerformLoading(StreamFormat streamFormat = StreamFormat.Default)
+    {
+      if (streamFormat == StreamFormat.Default)
+      {
+        streamFormat = StreamFormat.Mpeg2Ts | StreamFormat.Dvb | StreamFormat.Freesat;
+      }
+      return base.PerformLoading(streamFormat);
     }
 
     #endregion
@@ -195,6 +217,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.SatIp
 
       PerformTuning(dvbs2Channel, string.Format("{0}2&mtype={1}&plts={2}&ro={3}", parameters, modulation, pilotTonesState, rollOffFactor));
     }
+
+    #endregion
 
     #endregion
 

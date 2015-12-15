@@ -95,7 +95,6 @@
     <Compile Include="CiMenu\CiMenu.cs" />
     <Compile Include="CiMenu\CiMenuEntry.cs" />
     <Compile Include="CiMenu\CiMenuState.cs" />
-    <Compile Include="Implementations\Atsc\Enum\ServiceType.cs" />
     <Compile Include="Implementations\Channel\ChannelBase.cs" />
     <Compile Include="Implementations\Channel\ChannelDvbBase.cs" />
     <Compile Include="Implementations\Channel\ChannelDvbT2.cs" />
@@ -109,7 +108,6 @@
     <Compile Include="Implementations\Dvb\Enum\CaPmtCommand.cs" />
     <Compile Include="Implementations\Dvb\Enum\CaPmtListManagementAction.cs" />
     <Compile Include="Implementations\Dvb\Enum\ExtensionDescriptorTag.cs" />
-    <Compile Include="Implementations\Dvb\Enum\ServiceType.cs" />
     <Compile Include="Implementations\Dvb\Enum\MmiTag.cs" />
     <Compile Include="Implementations\Dvb\Enum\MmiApplicationType.cs" />
     <Compile Include="Implementations\Dvb\Enum\MmiResponseType.cs" />
@@ -137,6 +135,7 @@
     <Compile Include="Implementations\Mpeg2Ts\Enum\StreamType.cs" />
     <Compile Include="Implementations\Mpeg2Ts\Enum\DescriptorTag.cs" />
     <Compile Include="Implementations\Mpeg2Ts\TableProgramMap.cs" />
+    <Compile Include="Implementations\ScannedChannel.cs" />
     <Compile Include="Implementations\SetTopBoxProfile.cs" />
     <Compile Include="Implementations\TuningDetail.cs" />
     <Compile Include="Instantiator.cs" />

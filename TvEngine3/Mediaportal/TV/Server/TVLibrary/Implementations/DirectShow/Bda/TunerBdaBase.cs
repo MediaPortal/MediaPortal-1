@@ -28,6 +28,7 @@ using DirectShowLib.BDA;
 using Mediaportal.TV.Server.Common.Types.Enum;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
+using Mediaportal.TV.Server.TVLibrary.Implementations.Enum;
 using Mediaportal.TV.Server.TVLibrary.Implementations.Helper;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Channel;
@@ -45,7 +46,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
   /// A base implementation of <see cref="ITuner"/> for tuners with BDA
   /// drivers.
   /// </summary>
-  internal abstract class TunerBdaBase : TunerDirectShowBase, IESEvents
+  internal abstract class TunerBdaBase : TunerDirectShowMpeg2TsBase, IESEvents
   {
     #region constants
 
@@ -78,13 +79,15 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
     #region compatibility filters
 
     /// <summary>
-    /// Enable or disable use of the MPEG 2 demultiplexer and BDA TIF. Compatibility with some tuners
-    /// requires these filters to be connected into the graph.
+    /// Enable or disable use of the MPEG 2 demultiplexer and BDA TIF.
+    /// Compatibility with some tuners requires these filters to be connected
+    /// into the graph.
     /// </summary>
     private bool _addCompatibilityFilters = true;
 
     /// <summary>
-    /// An infinite tee filter, used to fork the stream to the demultiplexer and TS writer/analyser.
+    /// An infinite tee filter, used to fork the stream to the demultiplexer
+    /// and TS writer/analyser.
     /// </summary>
     private IBaseFilter _filterInfiniteTee = null;
 
@@ -415,7 +418,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
       }
 
       _filterPbdaPt = FilterGraphTools.AddFilterFromRegisteredClsid(Graph, PBDA_PT_FILTER_CLSID, "PBDA PT Filter");
-      FilterGraphTools.ConnectFilters(Graph, lastFilter, 0, _filterPbdaPt, 0);
+      FilterGraphTools.ConnectFilters(Graph, lastFilter, 1, _filterPbdaPt, 0);    // upstream output pin 0 is expected to be the OOB channel output; output pin 1 is expected to be the MPEG 2 TS output
       lastFilter = _filterPbdaPt;
     }
 
@@ -544,7 +547,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
         new KeyValuePair<string, Guid>("DRI DRM session", typeof(IBDA_DRIWMDRMSession).GUID),
         new KeyValuePair<string, Guid>("mux", typeof(IBDA_MUX).GUID),
         new KeyValuePair<string, Guid>("transport stream selector", typeof(IBDA_TransportStreamSelector).GUID),
-        new KeyValuePair<string, Guid>("user activity", typeof(IBDA_UserActivityService).GUID)
+        new KeyValuePair<string, Guid>("user activity", typeof(IBDA_UserActivityService).GUID),
+        new KeyValuePair<string, Guid>("DiSEqC", typeof(IBDA_DiseqCommand).GUID)
       };
 
       this.LogDebug("BDA base: enumerate services...");
@@ -700,8 +704,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
     /// <summary>
     /// Actually load the tuner.
     /// </summary>
+    /// <param name="streamFormat">The format(s) of the streams that the tuner is expected to support.</param>
     /// <returns>the set of extensions loaded for the tuner, in priority order</returns>
-    public override IList<ITunerExtension> PerformLoading()
+    public override IList<ITunerExtension> PerformLoading(StreamFormat streamFormat = StreamFormat.Default)
     {
       this.LogDebug("BDA base: perform loading");
       InitialiseGraph();
@@ -743,6 +748,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
       // Check for and load extensions, adding any additional filters to the graph.
       IList<ITunerExtension> extensions = LoadExtensions(MainFilter, ref lastFilter);
 
+      if (streamFormat == StreamFormat.Default)
+      {
+        streamFormat = StreamFormat.Mpeg2Ts | StreamFormat.Dvb;
+      }
+
       // If using a Microsoft network provider and configured to do so, add an
       // infinite tee, MPEG 2 demultiplexer and transport information filter in
       // addition to the required TS writer/analyser.
@@ -751,14 +761,14 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
         this.LogDebug("BDA base: add compatibility filters");
         _filterInfiniteTee = (IBaseFilter)new InfTee();
         FilterGraphTools.AddAndConnectFilterIntoGraph(Graph, _filterInfiniteTee, "Infinite Tee", lastFilter);
-        AddAndConnectTsWriterIntoGraph(_filterInfiniteTee);
+        AddAndConnectTsWriterIntoGraph(_filterInfiniteTee, streamFormat);
         _filterMpeg2Demultiplexer = (IBaseFilter)new MPEG2Demultiplexer();
         FilterGraphTools.AddAndConnectFilterIntoGraph(Graph, _filterMpeg2Demultiplexer, "MPEG 2 Demultiplexer", _filterInfiniteTee, 1);
         AddAndConnectTransportInformationFilterIntoGraph();
       }
       else
       {
-        AddAndConnectTsWriterIntoGraph(lastFilter);
+        AddAndConnectTsWriterIntoGraph(lastFilter, streamFormat);
       }
 
       CompleteGraph();
@@ -795,24 +805,17 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
       if (Graph != null)
       {
         Graph.RemoveFilter(_filterNetworkProvider);
+        Graph.RemoveFilter(_filterPbdaPt);
         Graph.RemoveFilter(_filterInfiniteTee);
         Graph.RemoveFilter(_filterMpeg2Demultiplexer);
         Graph.RemoveFilter(_filterTransportInformation);
       }
       Release.ComObject("base BDA tuner network provider", ref _filterNetworkProvider);
+      Release.ComObject("base BDA tuner PBDA PT filter", ref _filterPbdaPt);
       Release.ComObject("base BDA tuner infinite tee", ref _filterInfiniteTee);
       Release.ComObject("base BDA tuner MPEG 2 demultiplexer", ref _filterMpeg2Demultiplexer);
       Release.ComObject("base BDA tuner transport information filter", ref _filterTransportInformation);
       Release.ComObject("base BDA tuner tuning space", ref _tuningSpace);
-
-      if (_filterPbdaPt != null)
-      {
-        if (Graph != null)
-        {
-          Graph.RemoveFilter(_filterPbdaPt);
-        }
-        Release.ComObject("base BDA tuner PBDA PT filter", ref _filterPbdaPt);
-      }
 
       if (_filterCapture != null)
       {
@@ -822,11 +825,15 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
         }
         Release.ComObject("base BDA tuner capture filter", ref _filterCapture);
 
-        DevicesInUse.Instance.Remove(_deviceCapture);
-        _deviceCapture.Dispose();
-        _deviceCapture = null;
+        if (_deviceCapture != null)
+        {
+          DevicesInUse.Instance.Remove(_deviceCapture);
+          _deviceCapture.Dispose();
+          _deviceCapture = null;
+        }
       }
 
+      RemoveTsWriterFromGraph();
       CleanUpGraph(isFinalising);
     }
 

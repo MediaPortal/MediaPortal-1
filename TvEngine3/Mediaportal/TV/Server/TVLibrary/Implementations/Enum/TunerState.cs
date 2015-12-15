@@ -23,10 +23,13 @@ using System.ComponentModel;
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.Enum
 {
   /// <summary>
-  /// Tuner state. For a tuner that presents a DirectShow/BDA filter interface, this measure of
-  /// state roughly mirrors the state of the graph.
+  /// Tuner state.
   /// </summary>
-  public enum TunerState
+  /// <remarks>
+  /// For a tuner that exposes a DirectShow filter interface, state roughly
+  /// mirrors the state of the graph.
+  /// </remarks>
+  internal enum TunerState
   {
     /// <summary>
     /// The tuner is not yet loaded. It must be loaded/initialised before any interaction may occur.

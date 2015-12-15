@@ -926,7 +926,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.SmarDtvUsbCi
             _isFilterInGraph = false;
             _graph.RemoveFilter(_ciFilter);
           }
-          Release.ComObject("SmarDTV USB CI graph", ref _graph);
+          _graph = null;
         }
         if (_ciFilter != null)
         {

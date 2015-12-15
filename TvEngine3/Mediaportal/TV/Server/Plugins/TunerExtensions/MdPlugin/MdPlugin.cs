@@ -154,7 +154,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MdPlugin
 
       public byte AnalogTvStandard; // 0x00 = PAL, 0x11 = NTSC
 
-      public byte ServiceType;
+      public byte ServiceType;  // DVB encoding
       public byte CaId;
       private byte Padding3;
 
@@ -256,11 +256,11 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MdPlugin
       // a TV or radio service.
       if (programToDecrypt.VideoPid != 0)
       {
-        programToDecrypt.ServiceType = (byte)ServiceType.DigitalTelevision;
+        programToDecrypt.ServiceType = 1;   // digital television
       }
       else
       {
-        programToDecrypt.ServiceType = (byte)ServiceType.DigitalRadio;
+        programToDecrypt.ServiceType = 2;   // digital radio
       }
 
       this.LogDebug("MD plugin: service ID = {0}, PCR PID = {1}, service type = {2}, video PID = {3}, audio PID = {4}, AC3 PID = {5}, teletext PID = {6}",
@@ -1160,6 +1160,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MdPlugin
 
       // Add one filter for each decoding slot. Note that we preset the capacity in Initialise().
       this.LogDebug("MD plugin: adding {0} decoding filter(s)", _slotCount);
+      _graph = graph;
       int hr;
       IPin inputPin;
       IPin outputPin;
@@ -1727,7 +1728,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MdPlugin
             }
           }
 
-          Release.ComObject("MD plugin graph", ref _graph);
+          _graph = null;
         }
 
         if (_slots != null)

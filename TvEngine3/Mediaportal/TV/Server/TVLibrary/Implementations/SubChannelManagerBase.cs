@@ -54,7 +54,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// than one sub-channel simultaneously. CableCARD tuners are a good
     /// example.
     /// </remarks>
-    private bool _canReceiveAllTransmitterSubChannels = true;
+    private bool _canSimultaneouslyReceiveTransmitterSubChannels = true;
 
     /// <summary>
     /// The maximum time to wait for implementation-dependent stream
@@ -72,10 +72,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// <summary>
     /// Initialise a new instance of the <see cref="SubChannelManagerBase"/> class.
     /// </summary>
-    /// <param name="canReceiveAllTransmitterSubChannels"><c>True</c> if the tuner can simultaneously receive all sub-channels from the tuned transmitter.</param>
-    protected SubChannelManagerBase(bool canReceiveAllTransmitterSubChannels = true)
+    /// <param name="canSimultaneouslyReceiveTransmitterSubChannels"><c>True</c> if the tuner can simultaneously receive all sub-channels from the tuned transmitter.</param>
+    protected SubChannelManagerBase(bool canSimultaneouslyReceiveTransmitterSubChannels = true)
     {
-      _canReceiveAllTransmitterSubChannels = canReceiveAllTransmitterSubChannels;
+      _canSimultaneouslyReceiveTransmitterSubChannels = canSimultaneouslyReceiveTransmitterSubChannels;
     }
 
     #region ISubChannelManager members
@@ -150,7 +150,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
 
       // Some tuners (for example: CableCARD tuners) are only able to deliver
       // one sub-channel.
-      if (!_canReceiveAllTransmitterSubChannels && _subChannels.Count > 0)
+      if (!_canSimultaneouslyReceiveTransmitterSubChannels && _subChannels.Count > 0)
       {
         if (isNew)
         {
@@ -200,13 +200,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     #region sub-channels
 
     /// <summary>
-    /// Can the sub-channel manager receive all sub-channels from the current transmitter simultaneously?
+    /// Can the sub-channel manager receive multiple sub-channels from the current transmitter simultaneously?
     /// </summary>
-    public bool CanReceiveAllTransmitterSubChannels
+    public bool CanSimultaneouslyReceiveTransmitterSubChannels
     {
       get
       {
-        return _canReceiveAllTransmitterSubChannels;
+        return _canSimultaneouslyReceiveTransmitterSubChannels;
       }
     }
 

@@ -27,7 +27,6 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using Mediaportal.TV.Server.Common.Types.Enum;
 using Mediaportal.TV.Server.TVDatabase.Entities;
-using Mediaportal.TV.Server.TVLibrary.Implementations.Dvb;
 using Mediaportal.TV.Server.TVLibrary.Implementations.Enum;
 using Mediaportal.TV.Server.TVLibrary.Implementations.Helper;
 using Mediaportal.TV.Server.TVLibrary.Implementations.Rtsp;
@@ -647,8 +646,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.SatIp
     /// <summary>
     /// Actually load the tuner.
     /// </summary>
+    /// <param name="streamFormat">The format(s) of the streams that the tuner is expected to support.</param>
     /// <returns>the set of extensions loaded for the tuner, in priority order</returns>
-    public override IList<ITunerExtension> PerformLoading()
+    public override IList<ITunerExtension> PerformLoading(StreamFormat streamFormat = StreamFormat.Default)
     {
       TunerExtensionLoader loader = new TunerExtensionLoader();
       IList<ITunerExtension> extensions = loader.Load(this, _serverDescriptor);
@@ -656,7 +656,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.SatIp
       // Add the stream tuner extensions to our extensions, but don't re-sort
       // by priority afterwards. This ensures that our extensions are always
       // given first consideration.
-      IList<ITunerExtension> streamTunerExtensions = _streamTuner.PerformLoading();
+      if (streamFormat == StreamFormat.Default)
+      {
+        streamFormat = StreamFormat.Mpeg2Ts | StreamFormat.Dvb;
+      }
+      IList<ITunerExtension> streamTunerExtensions = _streamTuner.PerformLoading(streamFormat);
       foreach (ITunerExtension e in streamTunerExtensions)
       {
         extensions.Add(e);
@@ -666,7 +670,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.SatIp
       if (_channelScanner != null)
       {
         _channelScanner.Tuner = this;
-        _channelScanner.Helper = new ChannelScannerHelperDvb();
       }
       return extensions;
     }

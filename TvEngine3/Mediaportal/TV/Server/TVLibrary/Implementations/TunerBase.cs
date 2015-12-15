@@ -863,7 +863,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       try
       {
         ReloadConfiguration();
-        _extensions = PerformLoading();
+        _extensions = PerformLoading(StreamFormat.Default);
 
         _state = TunerState.Stopped;
 
@@ -932,8 +932,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// <summary>
     /// Actually load the tuner.
     /// </summary>
+    /// <param name="streamFormat">The format(s) of the streams that the tuner is expected to support.</param>
     /// <returns>the set of extensions loaded for the tuner, in priority order</returns>
-    public abstract IList<ITunerExtension> PerformLoading();
+    public abstract IList<ITunerExtension> PerformLoading(StreamFormat streamFormat = StreamFormat.Default);
 
     /// <summary>
     /// Open any <see cref="ITunerExtension">extensions</see> loaded for this
@@ -1544,7 +1545,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// <summary>
     /// Can the tuner receive all sub-channels from the current transmitter simultaneously?
     /// </summary>
-    public bool CanReceiveAllTransmitterSubChannels
+    public bool CanSimultaneouslyReceiveTransmitterSubChannels
     {
       get
       {
@@ -1552,7 +1553,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
         {
           return true;
         }
-        return SubChannelManager.CanReceiveAllTransmitterSubChannels;
+        return SubChannelManager.CanSimultaneouslyReceiveTransmitterSubChannels;
       }
     }
 

@@ -26,6 +26,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using Mediaportal.TV.Server.Common.Types.Enum;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
+using Mediaportal.TV.Server.TVLibrary.Implementations.Dvb.Enum;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Channel;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations;
@@ -945,7 +946,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
     #endregion
 
     /// <summary>
-    /// The current transmitter/multiplex tuning details.
+    /// The current transmitter tuning detail.
     /// </summary>
     private IChannel _currentTuningDetail = null;
 
@@ -1313,6 +1314,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
       ushort serviceCount = _grabberDvb.GetServiceCount();
       this.LogDebug("EPG DVB: EIT, initial service count = {0}", serviceCount);
       IDictionary<IChannel, IList<EpgProgram>> channels = new Dictionary<IChannel, IList<EpgProgram>>(serviceCount);
+      if (serviceCount == 0)
+      {
+        return channels;
+      }
 
       const ushort BUFFER_SIZE_SERIES_ID = 300;
       IntPtr bufferSeriesId = Marshal.AllocCoTaskMem(BUFFER_SIZE_SERIES_ID);
@@ -1330,10 +1335,14 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
       IntPtr bufferExtendedDescription = Marshal.AllocCoTaskMem(BUFFER_SIZE_EXTENDED_DESCRIPTION);
       try
       {
+        ushort originalNetworkId;
+        ushort transportStreamId;
+        ushort serviceId;
+        ushort eventCount;
         ulong eventId;
         ulong startDateTimeEpoch;
         ushort duration;
-        byte runningStatus;
+        RunningStatus runningStatus;
         bool freeCaMode;
         ushort referenceServiceId;
         ulong referenceEventId;
@@ -1356,10 +1365,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
         int validEventCount = 0;
         for (ushort i = 0; i < serviceCount; i++)
         {
-          ushort originalNetworkId;
-          ushort transportStreamId;
-          ushort serviceId;
-          ushort eventCount;
           if (!_grabberDvb.GetService(i, out originalNetworkId, out transportStreamId, out serviceId, out eventCount))
           {
             this.LogWarn("EPG DVB: failed to get EIT service, service index = {0}, service count = {1}", i, serviceCount);
@@ -1416,6 +1421,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
             programStartTime = programStartTime.ToLocalTime();
             EpgProgram program = new EpgProgram(programStartTime, programStartTime.AddMinutes(duration));
 
+            bool isPlaceholderOrDummyEvent = false;
             for (byte k = 0; k < textCount; k++)
             {
               ushort bufferSizeTitle = BUFFER_SIZE_TITLE;
@@ -1440,8 +1446,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
               string title = TidyString(DvbTextConverter.Convert(bufferTitle, bufferSizeTitle));
               if (string.IsNullOrEmpty(title) || title.Equals("."))
               {
-                // Placeholder or dummy event => discard.
-                continue;
+                isPlaceholderOrDummyEvent = true;
+                break;
               }
               program.Titles.Add(language.Code, title);
 
@@ -1511,6 +1517,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
               }
 
               program.Descriptions.Add(language.Code, description);
+            }
+
+            if (isPlaceholderOrDummyEvent)
+            {
+              continue;
             }
 
             if (isHighDefinition)
@@ -2371,7 +2382,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
     {
       this.LogDebug("EPG DVB: reload configuration");
 
-      // Satellite broadcasters sometimes use proprietary formats.
       bool defaultGrabBellExpressVu = false;
       bool defaultGrabDishNetwork = false;
       bool defaultGrabFreesat = false;
@@ -2384,11 +2394,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
       string countryName = RegionInfo.CurrentRegion.EnglishName;
       if (countryName != null)
       {
-        if (countryName.Contains("America"))
-        {
-          defaultGrabDishNetwork = true;
-        }
-        else if (countryName.Equals("Australia"))
+        if (countryName.Equals("Australia"))
         {
           defaultGrabOpenTv = true;   // Foxtel
         }
@@ -2398,7 +2404,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
         }
         else if (countryName.Equals("France"))
         {
-          defaultGrabMhw1 = true;   // Canal Satellite
+          defaultGrabMhw1 = true;   // Canalsat
         }
         else if (countryName.Equals("Germany"))
         {
@@ -2408,9 +2414,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
         {
           defaultGrabOpenTv = true;   // Sky
         }
-        else if (countryName.Contains("Netherlands"))
+        else if (countryName.Equals("Netherlands, The"))
         {
-          defaultGrabMhw1 = true;   // Canal Digitaal Satellite
+          defaultGrabMhw1 = true;   // Canal Digitaal
         }
         else if (countryName.Equals("New Zealand"))
         {
@@ -2422,7 +2428,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
         }
         else if (countryName.Equals("Spain"))
         {
-          defaultGrabMhw2 = true;   // Digital+
+          defaultGrabMhw2 = true;   // Canal+/Digital+
         }
         else if (countryName.Equals("South Africa"))
         {
@@ -2437,6 +2443,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
           defaultGrabFreesat = true;
           defaultGrabOpenTv = true;   // Sky
         }
+        else if (countryName.Equals("United States"))
+        {
+          defaultGrabDishNetwork = true;
+        }
       }
 
       bool grabBellExpressVu = SettingsManagement.GetValue("grabEpgBellExpressVu", defaultGrabBellExpressVu);
@@ -2449,6 +2459,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
       bool grabOpenTv = SettingsManagement.GetValue("grabEpgOpenTv", defaultGrabOpenTv);
       bool grabPremiere = SettingsManagement.GetValue("grabEpgPremiere", defaultGrabPremiere);
       bool grabViasatSweden = SettingsManagement.GetValue("grabEpgViasatSweden", defaultGrabViasatSweden);
+      // TODO
     }
 
     /// <summary>

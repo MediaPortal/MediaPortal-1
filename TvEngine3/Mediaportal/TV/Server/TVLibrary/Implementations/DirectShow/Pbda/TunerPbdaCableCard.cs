@@ -24,8 +24,10 @@ using DirectShowLib;
 using DirectShowLib.BDA;
 using Mediaportal.TV.Server.Common.Types.Enum;
 using Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda;
+using Mediaportal.TV.Server.TVLibrary.Implementations.Enum;
 using Mediaportal.TV.Server.TVLibrary.Implementations.Helper;
 using Mediaportal.TV.Server.TVLibrary.Implementations.Mpeg2Ts;
+using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Channel;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channel;
@@ -50,6 +52,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Pbda
     /// access menu interaction.
     /// </summary>
     private IBDA_ConditionalAccess _caInterface = null;
+
+    /// <summary>
+    /// The tuner's sub-channel manager.
+    /// </summary>
+    private ISubChannelManager _subChannelManager = null;
 
     // CA menu variables
     private object _caMenuCallBackLock = new object();
@@ -79,15 +86,21 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Pbda
     /// <summary>
     /// Actually load the tuner.
     /// </summary>
+    /// <param name="streamFormat">The format(s) of the streams that the tuner is expected to support.</param>
     /// <returns>the set of extensions loaded for the tuner, in priority order</returns>
-    public override IList<ITunerExtension> PerformLoading()
+    public override IList<ITunerExtension> PerformLoading(StreamFormat streamFormat = StreamFormat.Default)
     {
       this.LogDebug("PBDA CableCARD: perform loading");
-      IList<ITunerExtension> extensions = base.PerformLoading();
+
+      if (streamFormat == StreamFormat.Default)
+      {
+        streamFormat = StreamFormat.Scte;
+      }
+      IList<ITunerExtension> extensions = base.PerformLoading(streamFormat);
 
       // Connect the tuner filter OOB info into TsWriter.
       this.LogDebug("PBDA CableCARD: connect out-of-band stream");
-      FilterGraphTools.ConnectFilters(Graph, MainFilter, 1, TsWriter, 1);
+      FilterGraphTools.ConnectFilters(Graph, MainFilter, 0, TsWriter, 1);   // upstream output pin 0 is expected to be the OOB channel output; output pin 1 is expected to be the MPEG 2 TS output
 
       _caInterface = MainFilter as IBDA_ConditionalAccess;
       if (_caInterface == null)
@@ -101,15 +114,21 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Pbda
       // MPEG-TS in RTP packets according to [RTSP] and [RTP].
       // - OpenCable DRI I04 specification, 10 September 2010
       _subChannelManager = new SubChannelManagerMpeg2Ts(TsWriter as ITsWriter, false);
-
-      // The EPG grabber currently supports ATSC and SCTE EPG formats, but in
-      // practise it seems cable providers do not broadcast EPG with standard
-      // formats.
-      if (!SupportedBroadcastStandards.HasFlag(BroadcastStandard.Atsc))
-      {
-        _epgGrabber = null;
-      }
       return extensions;
+    }
+
+    /// <summary>
+    /// Actually unload the tuner.
+    /// </summary>
+    /// <param name="isFinalising"><c>True</c> if the tuner is being finalised.</param>
+    public override void PerformUnloading(bool isFinalising = false)
+    {
+      this.LogDebug("PBDA CableCARD: perform unloading");
+      if (!isFinalising)
+      {
+        _subChannelManager = null;
+      }
+      base.PerformUnloading(isFinalising);
     }
 
     #endregion
@@ -253,6 +272,21 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Pbda
       }
 
       base.GetSignalStatus(out isLocked, out isPresent, out strength, out quality, onlyGetLock);
+    }
+
+    #endregion
+
+    #region interfaces
+
+    /// <summary>
+    /// Get the tuner's sub-channel manager.
+    /// </summary>
+    public override ISubChannelManager SubChannelManager
+    {
+      get
+      {
+        return _subChannelManager;
+      }
     }
 
     #endregion

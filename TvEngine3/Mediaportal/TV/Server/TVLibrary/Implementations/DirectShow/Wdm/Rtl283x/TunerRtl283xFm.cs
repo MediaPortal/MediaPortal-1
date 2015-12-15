@@ -30,6 +30,7 @@ using Mediaportal.TV.Server.TVLibrary.Implementations.Analog;
 using Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.Component;
 using Mediaportal.TV.Server.TVLibrary.Implementations.Enum;
 using Mediaportal.TV.Server.TVLibrary.Implementations.Helper;
+using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Channel;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channel;
@@ -56,7 +57,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
   /// In short, this code is complex. Please take care and make sure you understand what you're
   /// doing before you make changes.
   /// </remarks>
-  internal class TunerRtl283xFm : TunerDirectShowBase
+  internal class TunerRtl283xFm : TunerDirectShowMpeg2TsBase
   {
     #region enums
 
@@ -284,6 +285,16 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
     private DsDevice _mainTunerDevice = null;
     private bool _mainTunerDeviceInUse = false;
     private TsWriterWrapper _staTsWriter = null;
+
+    /// <summary>
+    /// The tuner's sub-channel manager.
+    /// </summary>
+    private ISubChannelManager _subChannelManager = null;
+
+    /// <summary>
+    /// The tuner's channel scanning interface.
+    /// </summary>
+    private IChannelScannerInternal _channelScanner = null;
 
     // STA graph thread variables.
     private object _graphThreadLock = new object();
@@ -562,8 +573,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
     /// <summary>
     /// Actually load the tuner.
     /// </summary>
+    /// <param name="streamFormat">The format(s) of the streams that the tuner is expected to support.</param>
     /// <returns>the set of extensions loaded for the tuner, in priority order</returns>
-    public override IList<ITunerExtension> PerformLoading()
+    public override IList<ITunerExtension> PerformLoading(StreamFormat streamFormat = StreamFormat.Default)
     {
       if (Thread.CurrentThread.GetApartmentState() == ApartmentState.STA)
       {
@@ -571,7 +583,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
       }
       else
       {
-        object[] p = null;
+        object[] p = new object[1] { streamFormat };
         return (IList<ITunerExtension>)InvokeGraphJob(GraphJobType.Load, ref p);
       }
     }
@@ -579,8 +591,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
     /// <summary>
     /// Actually load the tuner.
     /// </summary>
+    /// <param name="streamFormat">The format(s) of the streams that the tuner is expected to support.</param>
     /// <returns>the set of extensions loaded for the tuner, in priority order</returns>
-    private IList<ITunerExtension> InternalPerformLoading()
+    private IList<ITunerExtension> InternalPerformLoading(StreamFormat streamFormat = StreamFormat.Default)
     {
       this.LogDebug("RTL283x FM: perform loading");
 
@@ -664,16 +677,18 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
       // Check for and load extensions, adding any additional filters to the graph.
       IBaseFilter lastFilter = _encoder.TsMultiplexerFilter;
       IList<ITunerExtension> extensions = LoadExtensions(_filterSource, ref lastFilter);
-      AddAndConnectTsWriterIntoGraph(lastFilter);
+      if (streamFormat == StreamFormat.Default)
+      {
+        streamFormat = StreamFormat.Mpeg2Ts | StreamFormat.Analog;
+      }
+      AddAndConnectTsWriterIntoGraph(lastFilter, streamFormat);
       CompleteGraph();
 
       _fmSource = _filterSource as IRtl283xFmSource;
       _staTsWriter = new TsWriterWrapper(InvokeTsWriterITsWriterJob, InvokeTsWriterIGrabberSiDvbJob, InvokeTsWriterIGrabberSiMpegJob);
 
-      _epgGrabber = null;   // RDS grabbing currently not supported.
-
       _subChannelManager = new SubChannelManagerAnalog(_staTsWriter);
-      _channelScanner = new ChannelScannerDirectShowAnalog(this, _staTsWriter);
+      _channelScanner = new ChannelScannerAnalog(this, _staTsWriter as IGrabberSiMpeg, _staTsWriter as IGrabberSiDvb);
       return extensions;
     }
 
@@ -750,6 +765,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
         _fmSource = null;
 
         _encoder.PerformUnloading(Graph);
+
+        _subChannelManager = null;
+        _channelScanner = null;
+        _staTsWriter = null;
+        RemoveTsWriterFromGraph();
 
         // Only remove the main tuner device from use when we registered it.
         if (_mainTunerDeviceInUse)
@@ -866,6 +886,32 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
         this.LogWarn("RTL283x FM: failed to update signal quality");
       }
       strength = quality;
+    }
+
+    #endregion
+
+    #region interfaces
+
+    /// <summary>
+    /// Get the tuner's sub-channel manager.
+    /// </summary>
+    public override ISubChannelManager SubChannelManager
+    {
+      get
+      {
+        return _subChannelManager;
+      }
+    }
+
+    /// <summary>
+    /// Get the tuner's channel scanning interface.
+    /// </summary>
+    public override IChannelScannerInternal InternalChannelScanningInterface
+    {
+      get
+      {
+        return _channelScanner;
+      }
     }
 
     #endregion

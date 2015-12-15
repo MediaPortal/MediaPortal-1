@@ -27,6 +27,7 @@ using Mediaportal.TV.Server.Common.Types.Enum;
 using Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2.Enum;
 using Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2.Interface;
 using Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2.Struct;
+using Mediaportal.TV.Server.TVLibrary.Implementations.Enum;
 using Mediaportal.TV.Server.TVLibrary.Implementations.Helper;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Channel;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channel;
@@ -44,7 +45,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
   /// A base implementation of <see cref="ITuner"/> for TechniSat tuners with
   /// B2C2 chipsets and WDM drivers.
   /// </summary>
-  internal abstract class TunerB2c2Base : TunerDirectShowBase, IMpeg2PidFilter, IRemoteControlListener
+  internal abstract class TunerB2c2Base : TunerDirectShowMpeg2TsBase, IMpeg2PidFilter, IRemoteControlListener
   {
     #region constants
 
@@ -349,8 +350,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
     /// <summary>
     /// Actually load the tuner.
     /// </summary>
+    /// <param name="streamFormat">The format(s) of the streams that the tuner is expected to support.</param>
     /// <returns>the set of extensions loaded for the tuner, in priority order</returns>
-    public override IList<ITunerExtension> PerformLoading()
+    public override IList<ITunerExtension> PerformLoading(StreamFormat streamFormat = StreamFormat.Default)
     {
       this.LogDebug("B2C2 base: perform loading");
       InitialiseGraph();
@@ -377,7 +379,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
       IList<ITunerExtension> extensions = LoadExtensions(_deviceInfo, ref lastFilter);
 
       // Complete the graph.
-      AddAndConnectTsWriterIntoGraph(lastFilter);
+      if (streamFormat == StreamFormat.Default)
+      {
+        streamFormat = StreamFormat.Mpeg2Ts | StreamFormat.Dvb;
+      }
+      AddAndConnectTsWriterIntoGraph(lastFilter, streamFormat);
       CompleteGraph();
 
       ReadTunerInfo();
@@ -414,6 +420,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
         }
         Release.ComObject("B2C2 infinite tee", ref _filterInfiniteTee);
         Release.ComObject("B2C2 source filter", ref _filterB2c2Adapter);
+
+        RemoveTsWriterFromGraph();
       }
 
       CleanUpGraph(isFinalising);

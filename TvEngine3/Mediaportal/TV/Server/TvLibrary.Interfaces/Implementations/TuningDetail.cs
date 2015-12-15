@@ -19,6 +19,7 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using System.Xml.Serialization;
 using Mediaportal.TV.Server.Common.Types.Country;
 using Mediaportal.TV.Server.Common.Types.Enum;
@@ -27,7 +28,7 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channel;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using MediaPortal.Common.Utils.ExtensionMethods;
 
-namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.TuningDetail
+namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations
 {
   [Serializable]
   public class TuningDetail
@@ -47,6 +48,21 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.TuningDetai
     public PilotTonesState PilotTonesState = PilotTonesState.Automatic;
     public RollOffFactor RollOffFactor = RollOffFactor.Automatic;
     public int StreamId = -1;
+
+    // The set of possible alternative/regional frequencies. This list is only
+    // populated for certain network information (NIT) scan results. When the
+    // list is populated, the frequency property/variable will not be set. Only
+    // one frequency is expected to be receivable.
+    [XmlIgnore]
+    public IList<int> Frequencies = new List<int>();
+
+    // These properties are only populated for network information (NIT) scan
+    // results. They're used to minimise the number of tuning details that need
+    // to be tried.
+    [XmlIgnore]
+    public ushort OriginalNetworkId = 0;
+    [XmlIgnore]
+    public ushort TransportStreamId = 0;
 
     // Placeholders, to enable this class to be used for satellite, analog TV
     // and stream scanning even though we don't load the tuning details from
@@ -230,11 +246,37 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.TuningDetai
         FecCodeRate != tuningDetail.FecCodeRate ||
         PilotTonesState != tuningDetail.PilotTonesState ||
         RollOffFactor != tuningDetail.RollOffFactor ||
-        StreamId != tuningDetail.StreamId
+        StreamId != tuningDetail.StreamId ||
+        (
+          Frequencies == null &&
+          tuningDetail.Frequencies != null &&
+          tuningDetail.Frequencies.Count > 0
+        ) ||
+        (
+          Frequencies != null &&
+          Frequencies.Count > 0 &&
+          tuningDetail.Frequencies == null
+        )
       )
       {
         return false;
       }
+
+      foreach (int frequency in Frequencies)
+      {
+        if (!tuningDetail.Frequencies.Contains(frequency))
+        {
+          return false;
+        }
+      }
+      foreach (int frequency in tuningDetail.Frequencies)
+      {
+        if (!Frequencies.Contains(frequency))
+        {
+          return false;
+        }
+      }
+
       return true;
     }
 
@@ -251,7 +293,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.TuningDetai
               Polarisation.GetHashCode() ^ ModulationScheme.GetHashCode() ^
               SymbolRate.GetHashCode() ^ FecCodeRate.GetHashCode() ^
               PilotTonesState.GetHashCode() ^ RollOffFactor.GetHashCode() ^
-              StreamId.GetHashCode();
+              StreamId.GetHashCode() ^ Frequencies.GetHashCode();
     }
 
     /// <summary>
@@ -260,11 +302,24 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.TuningDetai
     /// <returns>a <see cref="T:System.String"/> that represents the current <see cref="T:System.Object"/></returns>
     public override string ToString()
     {
-      string frequencyMhz = string.Format("{0:#.##}", (float)Frequency / 1000);
+      string frequencyMhz;
+      if (Frequencies != null && Frequencies.Count > 0)
+      {
+        List<string> frequencyStrings = new List<string>(Frequencies.Count);
+        foreach (int frequency in Frequencies)
+        {
+          frequencyStrings.Add(string.Format("{0:#.##}", (float)frequency / 1000));
+        }
+        frequencyMhz = string.Join("/", frequencyStrings);
+      }
+      else
+      {
+        frequencyMhz = string.Format("{0:#.##}", (float)Frequency / 1000);
+      }
       switch (BroadcastStandard)
       {
         case BroadcastStandard.AmRadio:
-          return string.Format("{0} kHz", Frequency);
+          return string.Format("{0} kHz", Frequencies != null && Frequencies.Count > 0 ? string.Join("/", Frequencies) : Frequency.ToString());
         case BroadcastStandard.AnalogTelevision:
           return string.Format("#{0}", PhysicalChannelNumber);
         case BroadcastStandard.FmRadio:

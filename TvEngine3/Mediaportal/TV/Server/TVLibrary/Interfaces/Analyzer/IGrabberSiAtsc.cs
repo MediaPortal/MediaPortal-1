@@ -20,6 +20,7 @@
 
 using System;
 using System.Runtime.InteropServices;
+using Mediaportal.TV.Server.TVLibrary.Implementations.Atsc.Enum;
 
 namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
 {
@@ -65,7 +66,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
     /// </summary>
     /// <param name="index">The index of the channel to retrieve. Should be in the range 0 to GetLvctChannelCount() - 1.</param>
     /// <param name="tableId">The identifier of the table from which the channel was received. Value is <c>0xc8</c> for ATSC terrestrial LVCT or <c>0xc9</c> for ATSC/SCTE cable LVCT.</param>
-    /// <param name="sectionTransportStreamId">The identifier of the transport stream that the channel information was received from.</param>
+    /// <param name="sectionTransportStreamId">The identifier of the transport stream that the channel information was received from. Only applicable for channels defined in tables received via the in-band channel. Refer to ATSC specifications for further detail.</param>
+    /// <param name="mapId">The identifier for this long-form virtual channel table. Only applicable for cable channels defined in tables received via the out-of-band channel. Refer to SCTE specifications for further detail.</param>
     /// <param name="shortName">A buffer containing the channel's short name, encoded as DVB-compatible text. The caller must allocate and free this buffer.</param>
     /// <param name="shortNameBufferSize">As an input, the size of the <paramref name="shortName">short name buffer</paramref>; as an output, the consumed buffer size.</param>
     /// <param name="longNameCount">The number of languages in which the channel's long name is available.</param>
@@ -78,7 +80,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
     /// <param name="etmLocation">The channel's extended text message location, encoded according to ATSC specifications.</param>
     /// <param name="accessControlled">An indication of whether the channel's sub-streams are encrypted or not.</param>
     /// <param name="hidden">An indication of whether the channel is hidden. Refer to ATSC specifications for further detail.</param>
-    /// <param name="pathSelect">An indication of the physical transmission path that the channel is associated with. Only applicable for cable channels. Refer to ATSC specifications for further detail.</param>
+    /// <param name="pathSelect">The physical transmission path that the channel is associated with. Only applicable for cable channels. Refer to ATSC specifications for further detail.</param>
     /// <param name="outOfBand">An indication of whether the channel is transmitted in an out-of-band transmission path. Only applicable for cable channels. Refer to ATSC specifications for further detail.</param>
     /// <param name="hideGuide">An indication of whether the channel is intended to be visible in the electronic programme guide.</param>
     /// <param name="serviceType">The channel's type, encoded according to ATSC specifications.</param>
@@ -96,22 +98,23 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
     bool GetLvctChannel(ushort index,
                         out byte tableId,
                         out ushort sectionTransportStreamId,
+                        out ushort mapId,
                         IntPtr shortName,
                         ref ushort shortNameBufferSize,
                         out byte longNameCount,
                         out ushort majorChannelNumber,
                         out ushort minorChannelNumber,
-                        out byte modulationMode,
+                        out ModulationMode modulationMode,
                         out uint carrierFrequency,
                         out ushort transportStreamId,
                         out ushort programNumber,
-                        out byte etmLocation,
+                        out EtmLocation etmLocation,
                         [MarshalAs(UnmanagedType.I1)] out bool accessControlled,
                         [MarshalAs(UnmanagedType.I1)] out bool hidden,
-                        [MarshalAs(UnmanagedType.I1)] out bool pathSelect,
+                        out PathSelect pathSelect,
                         [MarshalAs(UnmanagedType.I1)] out bool outOfBand,
                         [MarshalAs(UnmanagedType.I1)] out bool hideGuide,
-                        out byte serviceType,
+                        out ServiceType serviceType,
                         out ushort sourceId,
                         out byte streamCountVideo,
                         out byte streamCountAudio,
@@ -139,13 +142,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
                                         ref ushort nameBufferSize);
 
     /// <summary>
-    /// Retrieve a DVB service's name from the grabber.
+    /// Retrieve an ATSC long-form virtual channel's long name from the grabber.
     /// </summary>
     /// <param name="channelIndex">The channel's index. Should be in the range 0 to GetLvctChannelCount() - 1.</param>
     /// <param name="language">The language of the name to retrieve.</param>
     /// <param name="name">A buffer containing the channel's long name, encoded as DVB-compatible text. The caller must allocate and free this buffer.</param>
     /// <param name="nameBufferSize">As an input, the size of the <paramref name="name">long name buffer</paramref>; as an output, the consumed buffer size.</param>
-    /// <returns><c>true</c> if the service's name is successfully retrieved, otherwise <c>false</c></returns>
+    /// <returns><c>true</c> if the channel's long name is successfully retrieved, otherwise <c>false</c></returns>
     [PreserveSig]
     [return: MarshalAs(UnmanagedType.I1)]
     bool GetLvctChannelLongNameByLanguage(ushort channelIndex,
@@ -170,16 +173,16 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
     bool IsReadySvct();
 
     /// <summary>
-    /// Get the number of ATSC channels received by the grabber from the short-form virtual channel table.
+    /// Get the number of ATSC virtual channels received by the grabber from the short-form virtual channel table.
     /// </summary>
-    /// <returns>the number of ATSC channels received by the grabber from the SVCT</returns>
+    /// <returns>the number of ATSC virtual channels received by the grabber from the SVCT</returns>
     [PreserveSig]
-    ushort GetSvctChannelCount();
+    ushort GetSvctVirtualChannelCount();
 
     /// <summary>
     /// Retrieve an ATSC short-form virtual channel's details from the grabber.
     /// </summary>
-    /// <param name="index">The index of the channel to retrieve. Should be in the range 0 to GetSvctChannelCount() - 1.</param>
+    /// <param name="index">The index of the channel to retrieve. Should be in the range 0 to GetSvctVirtualChannelCount() - 1.</param>
     /// <param name="transmissionMedium">The medium which is used to transmit the channel.</param>
     /// <param name="vctId">The identifier of the virtual channel table which the channel is associated with.</param>
     /// <param name="mapNameLanguage">The language of the <paramref name="mapName">map/VCT's name</paramref>.</param>
@@ -245,68 +248,90 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
     /// <returns><c>true</c> if the channel's details are successfully retrieved, otherwise <c>false</c></returns>
     [PreserveSig]
     [return: MarshalAs(UnmanagedType.I1)]
-    bool GetSvctChannel(ushort index,
-                        out byte transmissionMedium,
-                        out ushort vctId,
-                        out Iso639Code mapNameLanguage,
-                        IntPtr mapName,
-                        ref ushort mapNameBufferSize,
-                        [MarshalAs(UnmanagedType.I1)] out bool splice,
-                        out uint activationTime,
-                        [MarshalAs(UnmanagedType.I1)] out bool hdtvChannel,
-                        [MarshalAs(UnmanagedType.I1)] out bool preferredSource,
-                        [MarshalAs(UnmanagedType.I1)] out bool applicationVirtualChannel,
-                        out ushort majorChannelNumber,
-                        out ushort minorChannelNumber,
-                        out ushort sourceId,
-                        out Iso639Code sourceNameLanguage,
-                        IntPtr sourceName,
-                        ref ushort sourceNameBufferSize,
-                        [MarshalAs(UnmanagedType.I1)] out bool accessControlled,
-                        [MarshalAs(UnmanagedType.I1)] out bool hideGuide,
-                        out byte serviceType,
-                        [MarshalAs(UnmanagedType.I1)] out bool outOfBand,
-                        out byte bitstreamSelect,
-                        out byte pathSelect,
-                        out byte channelType,
-                        out ushort nvodChannelBase,
-                        out byte transportType, 
-                        [MarshalAs(UnmanagedType.I1)] out bool wideBandwidthVideo,
-                        out byte waveformStandard,
-                        out byte videoStandard,
-                        [MarshalAs(UnmanagedType.I1)] out bool wideBandwidthAudio,
-                        [MarshalAs(UnmanagedType.I1)] out bool compandedAudio,
-                        out byte matrixMode,
-                        out ushort subcarrier2Offset,
-                        out ushort subcarrier1Offset,
-                        [MarshalAs(UnmanagedType.I1)] out bool suppressVideo,
-                        out byte audioSelection,
-                        out ushort programNumber,
-                        out ushort transportStreamId, 
-                        out byte satelliteId,
-                        out Iso639Code satelliteNameLanguage,
-                        IntPtr satelliteReferenceName,
-                        ref ushort satelliteReferenceNameBufferSize,
-                        IntPtr satelliteFullName,
-                        ref ushort satelliteFullNameBufferSize,
-                        out byte hemisphere,
-                        out ushort orbitalPosition,
-                        [MarshalAs(UnmanagedType.I1)] out bool youAreHere,
-                        out byte frequencyBand,
-                        [MarshalAs(UnmanagedType.I1)] out bool outOfService,
-                        out byte polarisationType,
-                        out byte transponderNumber,
-                        out Iso639Code transponderNameLanguage,
-                        IntPtr transponderName,
-                        ref ushort transponderNameBufferSize,
-                        [MarshalAs(UnmanagedType.I1)] out bool rootTransponder,
-                        out byte toneSelect,
-                        out byte polarisation,
-                        out uint frequency,
-                        out uint symbolRate,
-                        out byte transmissionSystem,
-                        out byte innerCodingMode,
-                        [MarshalAs(UnmanagedType.I1)] out bool splitBitstreamMode,
-                        out byte modulationFormat);
+    bool GetSvctVirtualChannel(ushort index,
+                                out TransmissionMedium transmissionMedium,
+                                out ushort vctId,
+                                out Iso639Code mapNameLanguage,
+                                IntPtr mapName,
+                                ref ushort mapNameBufferSize,
+                                [MarshalAs(UnmanagedType.I1)] out bool splice,
+                                out uint activationTime,
+                                [MarshalAs(UnmanagedType.I1)] out bool hdtvChannel,
+                                [MarshalAs(UnmanagedType.I1)] out bool preferredSource,
+                                [MarshalAs(UnmanagedType.I1)] out bool applicationVirtualChannel,
+                                out ushort majorChannelNumber,
+                                out ushort minorChannelNumber,
+                                out ushort sourceId,
+                                out Iso639Code sourceNameLanguage,
+                                IntPtr sourceName,
+                                ref ushort sourceNameBufferSize,
+                                [MarshalAs(UnmanagedType.I1)] out bool accessControlled,
+                                [MarshalAs(UnmanagedType.I1)] out bool hideGuide,
+                                out ServiceType serviceType,
+                                [MarshalAs(UnmanagedType.I1)] out bool outOfBand,
+                                out BitstreamSelect bitstreamSelect,
+                                out PathSelect pathSelect,
+                                out ChannelType channelType,
+                                out ushort nvodChannelBase,
+                                out TransportType transportType,
+                                [MarshalAs(UnmanagedType.I1)] out bool wideBandwidthVideo,
+                                out WaveformStandard waveformStandard,
+                                out VideoStandard videoStandard,
+                                [MarshalAs(UnmanagedType.I1)] out bool wideBandwidthAudio,
+                                [MarshalAs(UnmanagedType.I1)] out bool compandedAudio,
+                                out MatrixMode matrixMode,
+                                out ushort subcarrier2Offset,
+                                out ushort subcarrier1Offset,
+                                [MarshalAs(UnmanagedType.I1)] out bool suppressVideo,
+                                out AudioSelection audioSelection,
+                                out ushort programNumber,
+                                out ushort transportStreamId,
+                                out byte satelliteId,
+                                out Iso639Code satelliteNameLanguage,
+                                IntPtr satelliteReferenceName,
+                                ref ushort satelliteReferenceNameBufferSize,
+                                IntPtr satelliteFullName,
+                                ref ushort satelliteFullNameBufferSize,
+                                out Hemisphere hemisphere,
+                                out ushort orbitalPosition,
+                                [MarshalAs(UnmanagedType.I1)] out bool youAreHere,
+                                out FrequencyBand frequencyBand,
+                                [MarshalAs(UnmanagedType.I1)] out bool outOfService,
+                                out PolarisationType polarisationType,
+                                out byte transponderNumber,
+                                out Iso639Code transponderNameLanguage,
+                                IntPtr transponderName,
+                                ref ushort transponderNameBufferSize,
+                                [MarshalAs(UnmanagedType.I1)] out bool rootTransponder,
+                                out ToneSelect toneSelect,
+                                out Polarisation polarisation,
+                                out uint frequency,
+                                out uint symbolRate,
+                                out TransmissionSystem transmissionSystem,
+                                out InnerCodingMode innerCodingMode,
+                                [MarshalAs(UnmanagedType.I1)] out bool splitBitstreamMode,
+                                out ModulationFormat modulationFormat);
+
+    /// <summary>
+    /// Get the number of ATSC defined channels received by the grabber from the short-form virtual channel table.
+    /// </summary>
+    /// <returns>the number of ATSC defined channels received by the grabber from the SVCT</returns>
+    [PreserveSig]
+    ushort GetSvctDefinedChannelCount();
+
+    /// <summary>
+    /// Retrieve an ATSC defined channel's details from the grabber.
+    /// </summary>
+    /// <param name="index">The index of the channel to retrieve. Should be in the range 0 to GetSvctDefinedChannelCount() - 1.</param>
+    /// <param name="transmissionMedium">The medium which is used to transmit the channel.</param>
+    /// <param name="vctId">The identifier of the virtual channel table which the channel is associated with.</param>
+    /// <param name="virtualChannelNumber">The channel's virtual channel number.</param>
+    /// <returns><c>true</c> if the channel's details are successfully retrieved, otherwise <c>false</c></returns>
+    [PreserveSig]
+    [return: MarshalAs(UnmanagedType.I1)]
+    bool GetSvctDefinedChannel(ushort index,
+                                out TransmissionMedium transmissionMedium,
+                                out ushort vctId,
+                                out ushort virtualChannelNumber);
   }
 }

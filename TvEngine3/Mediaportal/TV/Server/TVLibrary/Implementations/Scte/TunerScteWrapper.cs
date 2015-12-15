@@ -21,13 +21,12 @@
 using System.Collections.Generic;
 using Mediaportal.TV.Server.Common.Types.Enum;
 using Mediaportal.TV.Server.TVDatabase.Entities;
-using Mediaportal.TV.Server.TVLibrary.Implementations.Atsc;
 using Mediaportal.TV.Server.TVLibrary.Implementations.Enum;
-using Mediaportal.TV.Server.TVLibrary.Implementations.Mpeg2Ts;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Channel;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channel;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Exception;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Tuner;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.Scte
@@ -90,11 +89,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Scte
     private ITunerInternal _dvbcTuner = null;
 
     /// <summary>
-    /// The tuner's sub-channel manager.
-    /// </summary>
-    private ISubChannelManager _subChannelManager = null;
-
-    /// <summary>
     /// The tuner's channel scanning interface.
     /// </summary>
     private IChannelScannerInternal _channelScanner = null;
@@ -148,23 +142,19 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Scte
     /// <summary>
     /// Actually load the tuner.
     /// </summary>
+    /// <param name="streamFormat">The format(s) of the streams that the tuner is expected to support.</param>
     /// <returns>the set of extensions loaded for the tuner, in priority order</returns>
-    public override IList<ITunerExtension> PerformLoading()
+    public override IList<ITunerExtension> PerformLoading(StreamFormat streamFormat = StreamFormat.Default)
     {
-      IList<ITunerExtension> extensions = _dvbcTuner.PerformLoading();
-
-      _subChannelManager = _dvbcTuner.SubChannelManager;
-      SubChannelManagerMpeg2Ts subChannelManagerMpeg2Ts = _subChannelManager as SubChannelManagerMpeg2Ts;
-      if (subChannelManagerMpeg2Ts != null)
+      if (streamFormat == StreamFormat.Default)
       {
-        subChannelManagerMpeg2Ts.AlwaysRequiredPids = new HashSet<ushort> { SubChannelManagerMpeg2Ts.PID_PAT };
+        streamFormat = StreamFormat.Mpeg2Ts | StreamFormat.Scte;
       }
-
+      IList<ITunerExtension> extensions = _dvbcTuner.PerformLoading(streamFormat);
       _channelScanner = _dvbcTuner.InternalChannelScanningInterface;
       if (_channelScanner != null)
       {
         _channelScanner.Tuner = this;
-        _channelScanner.Helper = new ChannelScannerHelperAtsc();
       }
       return extensions;
     }
@@ -190,7 +180,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Scte
     {
       if (!isFinalising)
       {
-        _subChannelManager = null;
         _channelScanner = null;
         _dvbcTuner.PerformUnloading();
       }
@@ -280,7 +269,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Scte
     {
       get
       {
-        return _subChannelManager;
+        return _dvbcTuner.SubChannelManager;
       }
     }
 
@@ -292,6 +281,17 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Scte
       get
       {
         return _channelScanner;
+      }
+    }
+
+    /// <summary>
+    /// Get the tuner's electronic programme guide data grabbing interface.
+    /// </summary>
+    public override IEpgGrabber InternalEpgGrabberInterface
+    {
+      get
+      {
+        return _dvbcTuner.InternalEpgGrabberInterface;
       }
     }
 

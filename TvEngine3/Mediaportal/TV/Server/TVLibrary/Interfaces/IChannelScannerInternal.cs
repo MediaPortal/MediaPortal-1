@@ -35,13 +35,5 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces
     {
       set;
     }
-
-    /// <summary>
-    /// Set the scanner's helper.
-    /// </summary>
-    IChannelScannerHelper Helper
-    {
-      set;
-    }
   }
 }

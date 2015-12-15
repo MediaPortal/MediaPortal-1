@@ -37,11 +37,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Dvb.Enum
     /// <summary>
     /// Profile.
     /// </summary>
-    Profile,
+    Profile = 0x9f8011,
     /// <summary>
     /// Profile change.
     /// </summary>
-    ProfileChange,
+    ProfileChange = 0x9f8012,
 
     /// <summary>
     /// Application information enquiry.
@@ -50,11 +50,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Dvb.Enum
     /// <summary>
     /// Application information.
     /// </summary>
-    ApplicationInfo,
+    ApplicationInfo = 0x9f8021,
     /// <summary>
     /// Enter menu.
     /// </summary>
-    EnterMenu,
+    EnterMenu = 0x9f8022,
 
     /// <summary>
     /// Conditional access information enquiry.
@@ -63,15 +63,15 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Dvb.Enum
     /// <summary>
     /// Conditional access information.
     /// </summary>
-    ConditionalAccessInfo,
+    ConditionalAccessInfo = 0x9f8031,
     /// <summary>
     /// Conditional access information program map table.
     /// </summary>
-    ConditionalAccessPmt,
+    ConditionalAccessPmt = 0x9f8032,
     /// <summary>
     /// Conditional access information program map table response.
     /// </summary>
-    ConditionalAccessPmtResponse,
+    ConditionalAccessPmtResponse = 0x9f8033,
 
     /// <summary>
     /// Tune.
@@ -80,15 +80,15 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Dvb.Enum
     /// <summary>
     /// Replace.
     /// </summary>
-    Replace,
+    Replace = 0x9f8401,
     /// <summary>
     /// Clear replace.
     /// </summary>
-    ClearReplace,
+    ClearReplace = 0x9f8402,
     /// <summary>
     /// Ask release.
     /// </summary>
-    AskRelease,
+    AskRelease = 0x9f8403,
 
     /// <summary>
     /// Date/time enquiry.
@@ -97,7 +97,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Dvb.Enum
     /// <summary>
     /// Date/time.
     /// </summary>
-    DateTime,
+    DateTime = 0x9f8441,
 
     /// <summary>
     /// Close man-machine interface.
@@ -106,95 +106,95 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Dvb.Enum
     /// <summary>
     /// Display control.
     /// </summary>
-    DisplayControl,
+    DisplayControl = 0x9f8801,
     /// <summary>
     /// Display reply.
     /// </summary>
-    DisplayReply,
+    DisplayReply = 0x9f8802,
     /// <summary>
     /// Text - last.
     /// </summary>
-    TextLast,
+    TextLast = 0x9f8803,
     /// <summary>
     /// Text - more.
     /// </summary>
-    TextMore,
+    TextMore = 0x9f8804,
     /// <summary>
     /// Keypad control.
     /// </summary>
-    KeypadControl,
+    KeypadControl = 0x9f8805,
     /// <summary>
     /// Key press.
     /// </summary>
-    KeyPress,
+    KeyPress = 0x9f8806,
     /// <summary>
     /// Enquiry.
     /// </summary>
-    Enquiry,
+    Enquiry = 0x9f8807,
     /// <summary>
     /// Answer.
     /// </summary>
-    Answer,
+    Answer = 0x9f8808,
     /// <summary>
     /// Menu - last.
     /// </summary>
-    MenuLast,
+    MenuLast = 0x9f8809,
     /// <summary>
     /// Menu - more.
     /// </summary>
-    MenuMore,
+    MenuMore = 0x9f880a,
     /// <summary>
     /// Menu answer.
     /// </summary>
-    MenuAnswer,
+    MenuAnswer = 0x9f880b,
     /// <summary>
     /// List - last.
     /// </summary>
-    ListLast,
+    ListLast = 0x9f880c,
     /// <summary>
     /// List - more.
     /// </summary>
-    ListMore,
+    ListMore = 0x9f880d,
     /// <summary>
     /// Subtitle segment - last.
     /// </summary>
-    SubtitleSegmentLast,
+    SubtitleSegmentLast = 0x9f880e,
     /// <summary>
     /// Subtitle segment - more.
     /// </summary>
-    SubtitleSegmentMore,
+    SubtitleSegmentMore = 0x9f880f,
     /// <summary>
     /// Display message.
     /// </summary>
-    DisplayMessage,
+    DisplayMessage = 0x9f8810,
     /// <summary>
     /// Scene end mark.
     /// </summary>
-    SceneEndMark,
+    SceneEndMark = 0x9f8811,
     /// <summary>
     /// Scene done.
     /// </summary>
-    SceneDone,
+    SceneDone = 0x9f8812,
     /// <summary>
     /// Scene control.
     /// </summary>
-    SceneControl,
+    SceneControl = 0x9f8813,
     /// <summary>
     /// Subtitle download - last.
     /// </summary>
-    SubtitleDownloadLast,
+    SubtitleDownloadLast = 0x9f8814,
     /// <summary>
     /// Subtitle download - more.
     /// </summary>
-    SubtitleDownloadMore,
+    SubtitleDownloadMore = 0x9f8815,
     /// <summary>
     /// Flush download.
     /// </summary>
-    FlushDownload,
+    FlushDownload = 0x9f8816,
     /// <summary>
     /// Download reply.
     /// </summary>
-    DownloadReply,
+    DownloadReply = 0x9f8817,
 
     /// <summary>
     /// Communication command.
@@ -203,26 +203,26 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Dvb.Enum
     /// <summary>
     /// Connection descriptor.
     /// </summary>
-    ConnectionDescriptor,
+    ConnectionDescriptor = 0x9f8c01,
     /// <summary>
     /// Communication reply.
     /// </summary>
-    CommsReply,
+    CommsReply = 0x9f8c02,
     /// <summary>
     /// Communication send - last.
     /// </summary>
-    CommsSendLast,
+    CommsSendLast = 0x9f8c03,
     /// <summary>
     /// Communication send - more.
     /// </summary>
-    CommsSendMore,
+    CommsSendMore = 0x9f8c04,
     /// <summary>
     /// Communication receive - last.
     /// </summary>
-    CommsReceiveLast,
+    CommsReceiveLast = 0x9f8c05,
     /// <summary>
     /// Communication receive - more.
     /// </summary>
-    CommsReceiveMore
+    CommsReceiveMore = 0x9f8c06
   }
 }

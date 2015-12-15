@@ -37,7 +37,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces
 
     // TODO I'd like to remove these methods because this interface is intended to describe the
     // functions that must be overriden/implemented in order to successfully reuse TunerBase via
-    // inherritence... and in general these functions shouldn't or can't be overriden
+    // inheritance... and in general these functions shouldn't or can't be overriden
 
     /// <summary>
     /// Set the tuner's group.
@@ -64,8 +64,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces
     /// <summary>
     /// Actually load the tuner.
     /// </summary>
+    /// <param name="streamFormat">The format(s) of the streams that the tuner is expected to support.</param>
     /// <returns>the set of extensions loaded for the tuner, in priority order</returns>
-    IList<ITunerExtension> PerformLoading();
+    IList<ITunerExtension> PerformLoading(StreamFormat streamFormat = StreamFormat.Default);
 
     /// <summary>
     /// Actually set the state of the tuner.

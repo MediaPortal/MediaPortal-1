@@ -527,18 +527,19 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
           byte[] section = (byte[])newValue;
           if (section != null && section.Length > 3)
           {
+            ushort pid = (ushort)((section[0] << 8) | section[1]);
             byte tableId = section[2];
-            if (tableId == 0xc2 || tableId == 0xc3 || tableId == 0xc4 || tableId == 0xc8 || tableId == 0xc9)
+            if (pid == 0x1ffc && tableId >= 0xc2 && tableId <= 0xc9 && tableId != 0xc5 && tableId != 0xc6)
             {
               ChannelScannerDri scanner = InternalChannelScanningInterface as ChannelScannerDri;
               if (scanner != null)
               {
-                scanner.OnTableSection(section);
+                scanner.OnOutOfBandSectionReceived(section);
               }
             }
-            else if ((tableId != 0xc5 || section.Length != 16) && tableId != 0xfd) // not a standard system time or stuffing table
+            else if (pid != 0x1ffc || ((tableId != 0xc5 || section.Length != 16) && tableId != 0xfd)) // not a standard system time or stuffing table
             {
-              this.LogDebug("DRI CableCARD: unhandled table section, table ID = {0}", tableId);
+              this.LogDebug("DRI CableCARD: unhandled table section, PID = {0}, table ID = {1}", pid, tableId);
               Dump.DumpBinary(section);
             }
           }
@@ -651,8 +652,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
     /// <summary>
     /// Actually load the tuner.
     /// </summary>
+    /// <param name="streamFormat">The format(s) of the streams that the tuner is expected to support.</param>
     /// <returns>the set of extensions loaded for the tuner, in priority order</returns>
-    public override IList<ITunerExtension> PerformLoading()
+    public override IList<ITunerExtension> PerformLoading(StreamFormat streamFormat = StreamFormat.Default)
     {
       this.LogDebug("DRI CableCARD: perform loading");
 
@@ -697,14 +699,23 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
       // Add the stream tuner extensions to our extensions, but don't re-sort
       // by priority afterwards. This ensures that our extensions are always
       // given first consideration.
-      IList<ITunerExtension> streamTunerExtensions = _streamTuner.PerformLoading();
+      if (streamFormat == StreamFormat.Default)
+      {
+        streamFormat = StreamFormat.Scte;
+        if (SupportedBroadcastStandards.HasFlag(BroadcastStandard.Atsc))
+        {
+          streamFormat |= StreamFormat.Mpeg2Ts | StreamFormat.Atsc;
+        }
+      }
+      IList<ITunerExtension> streamTunerExtensions = _streamTuner.PerformLoading(streamFormat);
       foreach (ITunerExtension e in streamTunerExtensions)
       {
         extensions.Add(e);
       }
 
       _subChannelManager = new SubChannelManagerDri(_isCetonDevice, _serviceMux, _streamTuner.SubChannelManager);
-      _channelScanner = new ChannelScannerDri(this, _serverIpAddress, _serviceFdc.RequestTables);
+      _streamTuner.InternalChannelScanningInterface.Tuner = this;
+      _channelScanner = new ChannelScannerDri(_streamTuner.InternalChannelScanningInterface, _isCetonDevice, _serverIpAddress, _serviceFdc.RequestTables);
       return extensions;
     }
 

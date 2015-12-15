@@ -24,14 +24,9 @@ using System.Runtime.InteropServices.ComTypes;
 using DirectShowLib;
 using DirectShowLib.BDA;
 using Mediaportal.TV.Server.Common.Types.Enum;
-using Mediaportal.TV.Server.TVDatabase.Entities;
-using Mediaportal.TV.Server.TVLibrary.Implementations.Dvb;
 using Mediaportal.TV.Server.TVLibrary.Implementations.Enum;
 using Mediaportal.TV.Server.TVLibrary.Implementations.Helper;
-using Mediaportal.TV.Server.TVLibrary.Interfaces;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Exception;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Helper;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Tuner;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension;
@@ -67,34 +62,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
     /// </summary>
     private IBaseFilter _filterMain = null;
 
-    /// <summary>
-    /// The MediaPortal TS writer/analyser filter.
-    /// </summary>
-    private IBaseFilter _filterTsWriter = null;
-
-    /// <summary>
-    /// The tuner's sub-channel manager.
-    /// </summary>
-    protected ISubChannelManager _subChannelManager = null;
-
-    /// <summary>
-    /// The tuner's channel scanning interface.
-    /// </summary>
-    protected IChannelScannerInternal _channelScanner = null;
-
-    /// <summary>
-    /// The tuner's EPG grabbing interface.
-    /// </summary>
-    protected IEpgGrabber _epgGrabber = null;
-
     // Graph event registration.
     private IRegisterServiceProvider _registerServiceProvider = null;
     private BroadcastEventService _broadcastEventService = null;
     private int _broadcastEventRegistrationCookie = -1;
-
-    // TsWriter configuration.
-    private int _tsWriterInputDumpMask = 0;
-    private bool _tsWriterDisableCrcChecking = false;
 
     #endregion
 
@@ -141,17 +112,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
       get
       {
         return _filterMain;
-      }
-    }
-
-    /// <summary>
-    /// Get the tuner's TS writer/analyser filter instance.
-    /// </summary>
-    protected IBaseFilter TsWriter
-    {
-      get
-      {
-        return _filterTsWriter;
       }
     }
 
@@ -234,9 +194,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
       catch
       {
       }
-      _subChannelManager = new SubChannelManagerDvb(_filterTsWriter as ITsWriter, true);
-      _channelScanner = new ChannelScannerDirectShowBase(this, new ChannelScannerHelperDvb(), _filterTsWriter as ITsChannelScan);
-      _epgGrabber = new EpgGrabberDvb(_filterTsWriter as IGrabberEpgDvb, _filterTsWriter as IGrabberEpgMhw, _filterTsWriter as IGrabberEpgOpenTv);
 
       RegisterForEvents();
     }
@@ -259,29 +216,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
       {
         DevicesInUse.Instance.Remove(_deviceMain);
         throw new TvException(ex, "Failed to add filter for DirectShow tuner main component to graph.");
-      }
-    }
-
-    /// <summary>
-    /// Add and connect the TS writer/analyser filter into the DirectShow graph.
-    /// ...[upstream filter]->[TS writer/analyser]
-    /// </summary>
-    /// <param name="upstreamFilter">The filter to connect to the TS writer/analyser filter.</param>
-    protected void AddAndConnectTsWriterIntoGraph(IBaseFilter upstreamFilter)
-    {
-      this.LogDebug("DirectShow base: add TS writer/analyser filter");
-      _filterTsWriter = ComHelper.LoadComObjectFromFile("TsWriter.ax", typeof(MediaPortalTsWriter).GUID, typeof(IBaseFilter).GUID, true) as IBaseFilter;
-      FilterGraphTools.AddAndConnectFilterIntoGraph(_graph, _filterTsWriter, "MediaPortal TS Analyser", upstreamFilter);
-      ApplyTsWriterConfig();
-    }
-
-    private void ApplyTsWriterConfig()
-    {
-      ITsWriter tsWriter = _filterTsWriter as ITsWriter;
-      if (tsWriter != null)
-      {
-        tsWriter.DumpInput((_tsWriterInputDumpMask & 1) != 0, (_tsWriterInputDumpMask & 2) != 0);
-        tsWriter.CheckSectionCrcs(!_tsWriterDisableCrcChecking);
       }
     }
 
@@ -422,7 +356,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
       if (_graph != null)
       {
         // First remove the filters that we inserted.
-        _graph.RemoveFilter(_filterTsWriter);
         if (_filterMain != null)
         {
           _graph.RemoveFilter(_filterMain);
@@ -463,36 +396,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
         }
         Release.ComObject("DirectShow tuner graph", ref _graph);
       }
-
-      _subChannelManager = null;
-      _channelScanner = null;
-      _epgGrabber = null;
-      Release.ComObject("TS writer/analyser filter", ref _filterTsWriter);
     }
 
     #endregion
 
     #region ITunerInternal members
-
-    #region configuration
-
-    /// <summary>
-    /// Reload the tuner's configuration.
-    /// </summary>
-    /// <param name="configuration">The tuner's configuration.</param>
-    public override void ReloadConfiguration(Tuner configuration)
-    {
-      this.LogDebug("DirectShow base: reload configuration");
-      _tsWriterInputDumpMask = configuration.TsWriterInputDumpMask;
-      _tsWriterDisableCrcChecking = configuration.DisableTsWriterCrcChecking;
-
-      this.LogDebug("  TsWriter input dump mask = 0x{0:x}", _tsWriterInputDumpMask);
-      this.LogDebug("  TsWriter CRC check?      = {0}", !_tsWriterDisableCrcChecking);
-
-      ApplyTsWriterConfig();
-    }
-
-    #endregion
 
     #region state control
 
@@ -542,54 +450,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
         hr = (int)NativeMethods.HResult.E_FAIL;
       }
       TvExceptionDirectShowError.Throw(hr, "Failed to change tuner state to {0}.", state);
-    }
-
-    #endregion
-
-    #region interfaces
-
-    /// <summary>
-    /// Get the tuner's sub-channel manager.
-    /// </summary>
-    public override ISubChannelManager SubChannelManager
-    {
-      get
-      {
-        return _subChannelManager;
-      }
-    }
-
-    /// <summary>
-    /// Get the tuner's channel linkage scanning interface.
-    /// </summary>
-    public override IChannelLinkageScanner InternalChannelLinkageScanningInterface
-    {
-      get
-      {
-        return null;  // not required => no longer supported by TsWriter
-      }
-    }
-
-    /// <summary>
-    /// Get the tuner's channel scanning interface.
-    /// </summary>
-    public override IChannelScannerInternal InternalChannelScanningInterface
-    {
-      get
-      {
-        return _channelScanner;
-      }
-    }
-
-    /// <summary>
-    /// Get the tuner's electronic programme guide data grabbing interface.
-    /// </summary>
-    public override IEpgGrabber InternalEpgGrabberInterface
-    {
-      get
-      {
-        return _epgGrabber;
-      }
     }
 
     #endregion

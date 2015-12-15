@@ -600,10 +600,14 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
         }
         Release.ComObject("WDM analog tuner TV audio filter", ref _filterTvAudio);
 
-        DevicesInUse.Instance.Remove(_deviceTvAudio);
-        _deviceTvAudio.Dispose();
-        _deviceTvAudio = null;
+        if (_deviceTvAudio != null)
+        {
+          DevicesInUse.Instance.Remove(_deviceTvAudio);
+          _deviceTvAudio.Dispose();
+          _deviceTvAudio = null;
+        }
       }
+
       if (_filterTuner != null)
       {
         if (graph != null)
@@ -612,10 +616,15 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
         }
         Release.ComObject("WDM analog tuner filter", ref _filterTuner);
 
-        DevicesInUse.Instance.Remove(_deviceTuner);
-        _deviceTuner.Dispose();
-        _deviceTuner = null;
+        if (_deviceTuner != null)
+        {
+          DevicesInUse.Instance.Remove(_deviceTuner);
+          _deviceTuner.Dispose();
+          _deviceTuner = null;
+        }
       }
+      _filterTvAudio = null;
+      _deviceTvAudio = null;
     }
   }
 }

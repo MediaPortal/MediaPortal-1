@@ -129,7 +129,7 @@ namespace Mediaportal.TV.Server.Common.Types.Enum
     [Description("Turbo FEC")]
     SatelliteTurboFec = 0x00040000,
     /// <summary>
-    /// Motorolla DigiCipher 2 (DC II) standard for satellite and cable broadcast.
+    /// Motorola DigiCipher 2 (DC II) standard for satellite and cable broadcast.
     /// </summary>
     [Description("DigiCipher 2")]
     DigiCipher2 = 0x00080000,
@@ -171,7 +171,7 @@ namespace Mediaportal.TV.Server.Common.Types.Enum
     /// <summary>
     /// A mask for identifying broadcast standards that are applicable for satellite transmission.
     /// </summary>
-    MaskSatellite = 0x001b0740,
+    MaskSatellite = 0x001d0740,
     /// <summary>
     /// A mask for identifying broadcast standards that are applicable for terrestrial transmission.
     /// </summary>

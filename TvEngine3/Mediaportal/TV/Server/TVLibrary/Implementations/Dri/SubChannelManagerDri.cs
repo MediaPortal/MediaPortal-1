@@ -21,7 +21,6 @@
 using System;
 using System.Collections.Generic;
 using Mediaportal.TV.Server.TVLibrary.Implementations.Dri.Service;
-using Mediaportal.TV.Server.TVLibrary.Implementations.Mpeg2Ts;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Channel;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channel;
@@ -49,11 +48,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
       _isCetonDevice = isCetonDevice;
       _muxService = muxService;
       _subChannelManager = subChannelManager;
-      SubChannelManagerMpeg2Ts subChannelManagerMpeg2Ts = subChannelManager as SubChannelManagerMpeg2Ts;
-      if (subChannelManagerMpeg2Ts != null)
-      {
-        subChannelManagerMpeg2Ts.AlwaysRequiredPids = new HashSet<ushort> { SubChannelManagerMpeg2Ts.PID_PAT };
-      }
     }
 
     #region sub-channel manager base implementations/overrides

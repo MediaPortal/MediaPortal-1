@@ -81,10 +81,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// <summary>
     /// Actually load the tuner.
     /// </summary>
+    /// <param name="streamFormat">The format(s) of the streams that the tuner is expected to support.</param>
     /// <returns>the set of extensions loaded for the tuner, in priority order</returns>
-    public IList<ITunerExtension> PerformLoading()
+    public IList<ITunerExtension> PerformLoading(StreamFormat streamFormat = StreamFormat.Default)
     {
-      _extensions = _tuner.PerformLoading();
+      _extensions = _tuner.PerformLoading(streamFormat);
       _wrappedExtensions = new List<TunerExtensionWrapper>(_extensions.Count);
       IList<ITunerExtension> extensions = new List<ITunerExtension>(_extensions.Count);
       foreach (ITunerExtension e in _extensions)

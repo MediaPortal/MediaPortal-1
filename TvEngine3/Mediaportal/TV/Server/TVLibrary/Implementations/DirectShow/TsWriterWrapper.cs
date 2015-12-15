@@ -22,8 +22,11 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using Mediaportal.TV.Server.Common.Types.Enum;
+using Mediaportal.TV.Server.TVLibrary.Implementations.Dvb.Enum;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using Polarisation = Mediaportal.TV.Server.TVLibrary.Implementations.Dvb.Enum.Polarisation;
+using RollOffFactor = Mediaportal.TV.Server.TVLibrary.Implementations.Dvb.Enum.RollOffFactor;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
 {
@@ -365,10 +368,14 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
       return (bool)_delegateGrabberSiDvb("IsReadySdtOther", ref parameters);
     }
 
-    public ushort GetServiceCount()
+    public void GetServiceCount(out ushort actualOriginalNetworkId, out ushort serviceCount)
     {
-      object[] parameters = null;
-      return (ushort)_delegateGrabberSiDvb("GetServiceCount", ref parameters);
+      actualOriginalNetworkId = 0;
+      serviceCount = 0;
+      object[] parameters = new object[2] { actualOriginalNetworkId, serviceCount };
+      _delegateGrabberSiDvb("GetServiceCount", ref parameters);
+      actualOriginalNetworkId = (ushort)parameters[0];
+      serviceCount = (ushort)parameters[1];
     }
 
     public bool GetService(ushort index,
@@ -384,9 +391,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
                             out byte dishSubChannelNumber,
                             out bool eitScheduleFlag,
                             out bool eitPresentFollowingFlag,
-                            out byte runningStatus,
+                            out RunningStatus runningStatus,
                             out bool freeCaMode,
-                            out byte serviceType,
+                            out ServiceType serviceType,
                             out byte serviceNameCount,
                             out bool visibleInGuide,
                             out ushort streamCountVideo,
@@ -412,9 +419,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
                             ref byte unavailableInCellCount,
                             ulong[] targetRegionIds,
                             ref byte targetRegionIdCount,
-                            ushort[] freesatRegionIds,
+                            uint[] freesatRegionIds,
                             ref byte freesatRegionIdCount,
-                            ushort[] openTvRegionIds,
+                            uint[] openTvRegionIds,
                             ref byte openTvRegionIdCount,
                             ushort[] freesatChannelCategoryIds,
                             ref byte freesatChannelCategoryIdCount,
@@ -439,9 +446,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
       dishSubChannelNumber = 0;
       eitScheduleFlag = false;
       eitPresentFollowingFlag = false;
-      runningStatus = 0;
+      runningStatus = RunningStatus.Running;
       freeCaMode = false;
-      serviceType = 0;
+      serviceType = ServiceType.DigitalTelevision;
       serviceNameCount = 0;
       visibleInGuide = true;
       streamCountVideo = 0;
@@ -529,9 +536,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
       dishSubChannelNumber = (byte)parameters[10];
       eitScheduleFlag = (bool)parameters[11];
       eitPresentFollowingFlag = (bool)parameters[12];
-      runningStatus = (byte)parameters[13];
+      runningStatus = (RunningStatus)parameters[13];
       freeCaMode = (bool)parameters[14];
-      serviceType = (byte)parameters[15];
+      serviceType = (ServiceType)parameters[15];
       serviceNameCount = (byte)parameters[16];
       visibleInGuide = (bool)parameters[17];
       streamCountVideo = (ushort)parameters[18];
@@ -804,7 +811,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
     }
 
     public bool GetTransmitter(ushort index,
-                                out ushort tableId,
+                                out byte tableId,
                                 out ushort networkId,
                                 out ushort originalNetworkId,
                                 out ushort transportStreamId,
@@ -812,15 +819,16 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
                                 out BroadcastStandard broadcastStandard,
                                 uint[] frequencies,
                                 ref byte frequencyCount,
-                                out byte polarisation,
+                                out Polarisation polarisation,
                                 out byte modulation,
                                 out uint symbolRate,
                                 out ushort bandwidth,
-                                out byte innerFecRate,
-                                out byte rollOffFactor,
+                                out FecCodeRateDvbCS innerFecRate,
+                                out RollOffFactor rollOffFactor,
                                 out short longitude,
                                 out ushort cellId,
                                 out byte cellIdExtension,
+                                out bool isMultipleInputStream,
                                 out byte plpId)
     {
       tableId = 0;
@@ -829,17 +837,18 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
       transportStreamId = 0;
       isHomeTransmitter = false;
       broadcastStandard = BroadcastStandard.Unknown;
-      polarisation = 0;
+      polarisation = Polarisation.LinearHorizontal;
       modulation = 0;
       symbolRate = 0;
       bandwidth = 0;
-      innerFecRate = 0;
-      rollOffFactor = 0;
+      innerFecRate = FecCodeRateDvbCS.NoConvolutionalCoding;
+      rollOffFactor = RollOffFactor.ThirtyFive;
       longitude = 0;
       cellId = 0;
       cellIdExtension = 0;
+      isMultipleInputStream = false;
       plpId = 0;
-      object[] parameters = new object[19]
+      object[] parameters = new object[20]
       {
         index,
         tableId,
@@ -859,6 +868,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
         longitude,
         cellId,
         cellIdExtension,
+        isMultipleInputStream,
         plpId
       };
       bool result = (bool)_delegateGrabberSiDvb("GetTransmitter", ref parameters);
@@ -869,16 +879,17 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
       isHomeTransmitter = (bool)parameters[5];
       broadcastStandard = (BroadcastStandard)parameters[6];
       frequencyCount = (byte)parameters[8];
-      polarisation = (byte)parameters[9];
+      polarisation = (Polarisation)parameters[9];
       modulation = (byte)parameters[10];
       symbolRate = (uint)parameters[11];
       bandwidth = (ushort)parameters[12];
-      innerFecRate = (byte)parameters[13];
-      rollOffFactor = (byte)parameters[14];
+      innerFecRate = (FecCodeRateDvbCS)parameters[13];
+      rollOffFactor = (RollOffFactor)parameters[14];
       longitude = (short)parameters[15];
       cellId = (ushort)parameters[16];
       cellIdExtension = (byte)parameters[17];
-      plpId = (byte)parameters[18];
+      isMultipleInputStream = (bool)parameters[18];
+      plpId = (byte)parameters[19];
       return result;
     }
 
@@ -918,7 +929,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
       programCount = (ushort)parameters[2];
     }
 
-    public bool GetProgramByIndex(uint index,
+    public bool GetProgramByIndex(ushort index,
                                   out ushort programNumber,
                                   out ushort pmtPid,
                                   out bool isPmtReceived,

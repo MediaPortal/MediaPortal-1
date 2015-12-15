@@ -309,7 +309,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Tuner
     /// <summary>
     /// Can the tuner receive all sub-channels from the current transmitter simultaneously?
     /// </summary>
-    bool CanReceiveAllTransmitterSubChannels
+    bool CanSimultaneouslyReceiveTransmitterSubChannels
     {
       get;
     }

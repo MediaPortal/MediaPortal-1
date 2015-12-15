@@ -18,15 +18,23 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
+using Mediaportal.TV.Server.Common.Types.Enum;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Channel;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Tuner;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Dvb;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channel;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.Atsc
 {
   /// <summary>
   /// An implementation of <see cref="IEpgGrabber"/> for electronic programme
-  /// guide data formats used by ATSC broadcasters.
+  /// guide data formats used by ATSC and SCTE broadcasters.
   /// </summary>
   internal class EpgGrabberAtsc : IEpgGrabber
   {
@@ -180,15 +188,23 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Atsc
 
     #endregion
 
+    private IGrabberEpgAtsc _grabberAtsc = null;
+    private IGrabberEpgScte _grabberScte = null;
+
+    /// <summary>
+    /// The current transmitter tuning detail.
+    /// </summary>
+    private IChannel _currentTuningDetail = null;
+
     /// <summary>
     /// Initialise a new instance of the <see cref="EpgGrabberAtsc"/> class.
     /// </summary>
-    /// <param name="grabberAtsc">The DVB EPG grabber, if available/supported.</param>
-    /// <param name="grabberMhw">The MediaHighway EPG grabber, if available/supported.</param>
-    /// <param name="grabberOpenTv">The OpenTV EPG grabber, if available/supported.</param>
+    /// <param name="grabberAtsc">The ATSC EPG grabber, if available/supported.</param>
+    /// <param name="grabberScte">The SCTE EPG grabber, if available/supported.</param>
     public EpgGrabberAtsc(IGrabberEpgAtsc grabberAtsc, IGrabberEpgScte grabberScte)
     {
-      // TODO
+      _grabberAtsc = grabberAtsc;
+      _grabberScte = grabberScte;
     }
 
     private static string GetAtscGenreDescription(byte genreId)
@@ -233,5 +249,271 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Atsc
     }
 
     #endregion
+
+    private IDictionary<IChannel, IList<EpgProgram>> CollectData(IGrabberEpgAtsc grabber)
+    {
+      uint eventCount = _grabberAtsc.GetEventCount();
+      this.LogDebug("EPG ATSC: initial event count = {0}", eventCount);
+      IDictionary<ushort, List<EpgProgram>> channels = new Dictionary<ushort, List<EpgProgram>>(100);
+
+      const byte ARRAY_SIZE_AUDIO_LANGUAGES = 20;
+      const byte ARRAY_SIZE_CAPTIONS_LANGUAGES = 20;
+      const byte ARRAY_SIZE_GENRE_IDS = 20;
+      const ushort BUFFER_SIZE_TITLE = 300;
+      IntPtr bufferTitle = Marshal.AllocCoTaskMem(BUFFER_SIZE_TITLE);
+      const ushort BUFFER_SIZE_DESCRIPTION = 1000;
+      IntPtr bufferDescription = Marshal.AllocCoTaskMem(BUFFER_SIZE_DESCRIPTION);
+      try
+      {
+        ushort sourceId;
+        ushort eventId;
+        ulong startDateTimeEpoch;
+        ushort duration;
+        byte textCount;
+        Iso639Code[] audioLanguages = new Iso639Code[ARRAY_SIZE_AUDIO_LANGUAGES];
+        Iso639Code[] captionsLanguages = new Iso639Code[ARRAY_SIZE_CAPTIONS_LANGUAGES];
+        byte[] genreIds = new byte[ARRAY_SIZE_GENRE_IDS];
+        byte vchipRating;
+        byte mpaaClassification;
+        ushort advisories;
+        Iso639Code language;
+        for (uint i = 0; i < eventCount; i++)
+        {
+          byte countAudioLanguages = ARRAY_SIZE_AUDIO_LANGUAGES;
+          byte countCaptionsLanguages = ARRAY_SIZE_CAPTIONS_LANGUAGES;
+          byte countGenreIds = ARRAY_SIZE_GENRE_IDS;
+          bool result = grabber.GetEvent(i,
+                                          out sourceId,
+                                          out eventId,
+                                          out startDateTimeEpoch,
+                                          out duration,
+                                          out textCount,
+                                          audioLanguages,
+                                          ref countAudioLanguages,
+                                          captionsLanguages,
+                                          ref countCaptionsLanguages,
+                                          genreIds,
+                                          ref countGenreIds,
+                                          out vchipRating,
+                                          out mpaaClassification,
+                                          out advisories);
+          if (!result)
+          {
+            this.LogWarn("EPG ATSC: failed to get event, event index = {0}, event count = {1}", i, eventCount);
+            continue;
+          }
+
+          DateTime programStartTime = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+          programStartTime.AddSeconds(startDateTimeEpoch);
+          programStartTime = programStartTime.ToLocalTime();
+          EpgProgram program = new EpgProgram(programStartTime, programStartTime.AddMinutes(duration));
+
+          bool isPlaceholderOrDummyEvent = false;
+          for (byte j = 0; j < textCount; j++)
+          {
+            ushort bufferSizeTitle = BUFFER_SIZE_TITLE;
+            ushort bufferSizeDescription = BUFFER_SIZE_DESCRIPTION;
+            result = grabber.GetEventTextByIndex(i, j,
+                                                  out language,
+                                                  bufferTitle,
+                                                  ref bufferSizeTitle,
+                                                  bufferDescription,
+                                                  ref bufferSizeDescription);
+            if (!result)
+            {
+              this.LogWarn("EPG ATSC: failed to get event text, event index = {0}, event count = {1}, text index = {2}, text count = {3}", i, eventCount, j, textCount);
+              continue;
+            }
+
+            string title = TidyString(DvbTextConverter.Convert(bufferTitle, bufferSizeTitle));
+            if (string.IsNullOrEmpty(title))
+            {
+              isPlaceholderOrDummyEvent = true;
+              continue;
+            }
+            program.Titles.Add(language.Code, title);
+
+            string description = TidyString(DvbTextConverter.Convert(bufferDescription, bufferSizeDescription));
+            if (!string.IsNullOrEmpty(description))
+            {
+              program.Descriptions.Add(language.Code, description);
+            }
+          }
+
+          if (isPlaceholderOrDummyEvent)
+          {
+            continue;
+          }
+
+          for (byte x = 0; x < countAudioLanguages; x++)
+          {
+            program.AudioLanguages.Add(audioLanguages[x].Code);
+          }
+          for (byte x = 0; x < countCaptionsLanguages; x++)
+          {
+            program.SubtitlesLanguages.Add(captionsLanguages[x].Code);
+          }
+          for (byte x = 0; x < countGenreIds; x++)
+          {
+            string genreDescription;
+            if (MAPPING_ATSC_GENRES.TryGetValue(genreIds[x], out genreDescription))
+            {
+              program.Categories.Add(genreDescription);
+            }
+          }
+          string mpaaClassificationDescription = GetMpaaClassificationDescription(mpaaClassification);
+          if (mpaaClassificationDescription != null)
+          {
+            program.Classifications.Add("MPAA", mpaaClassificationDescription);
+          }
+          program.Advisories = GetContentAdvisories(advisories);
+          string vchipRatingDescription = GetVchipRatingDescription(vchipRating);
+          if (vchipRatingDescription != null)
+          {
+            program.Classifications.Add("V-Chip", vchipRatingDescription);
+          }
+
+          List<EpgProgram> programs;
+          if (!channels.TryGetValue(sourceId, out programs))
+          {
+            programs = new List<EpgProgram>(100);
+            channels.Add(sourceId, programs);
+          }
+          programs.Add(program);
+        }
+
+        IDictionary<IChannel, IList<EpgProgram>> epgChannels = new Dictionary<IChannel, IList<EpgProgram>>(channels.Count);
+        int validEventCount = 0;
+        foreach (var channel in channels)
+        {
+          IChannel atscScteChannel = _currentTuningDetail.Clone() as IChannel;
+          ChannelAtsc atscChannel = atscScteChannel as ChannelAtsc;
+          if (atscChannel != null)
+          {
+            atscChannel.SourceId = channel.Key;
+          }
+          else
+          {
+            ChannelScte scteChannel = atscScteChannel as ChannelScte;
+            if (scteChannel != null)
+            {
+              scteChannel.SourceId = channel.Key;
+            }
+            else
+            {
+              this.LogWarn("EPG ATSC: the tuned channel is not an ATSC or SCTE channel");
+              continue;
+            }
+          }
+          channel.Value.Sort();
+          epgChannels.Add(atscScteChannel, channel.Value);
+          validEventCount += channel.Value.Count;
+        }
+
+        this.LogDebug("EPG ATSC: channel count = {0}, event count = {1}", channels.Count, validEventCount);
+        return epgChannels;
+      }
+      finally
+      {
+        if (bufferTitle != IntPtr.Zero)
+        {
+          Marshal.FreeCoTaskMem(bufferTitle);
+        }
+        if (bufferDescription != IntPtr.Zero)
+        {
+          Marshal.FreeCoTaskMem(bufferDescription);
+        }
+      }
+    }
+
+    private static string TidyString(string s)
+    {
+      if (s == null)
+      {
+        return string.Empty;
+      }
+      return s.Trim();
+    }
+
+    private static string GetMpaaClassificationDescription(byte classification)
+    {
+      // Note: the ATSC/SCTE RRT encoding differs from the Dish/BEV encoding.
+      switch (classification)
+      {
+        case 1:
+          return "G";       // general
+        case 2:
+          return "PG";      // parental guidance
+        case 3:
+          return "PG-13";   // parental guidance under 13
+        case 4:
+          return "R";       // restricted
+        case 5:
+          return "NC-17";   // nobody 17 and under
+        case 6:
+          return "X";      // not rated
+        case 7:
+          return "NR";      // not rated
+      }
+      return null;
+    }
+
+    private static ContentAdvisory GetContentAdvisories(ushort advisories)
+    {
+      ContentAdvisory advisoryFlags = ContentAdvisory.None;
+      if ((advisories & 0x01) != 0)
+      {
+        advisoryFlags |= ContentAdvisory.SexualSituations;
+      }
+      if ((advisories & 0x02) != 0)
+      {
+        advisoryFlags |= ContentAdvisory.CourseOrCrudeLanguage;
+      }
+      if ((advisories & 0x04) != 0)
+      {
+        advisoryFlags |= ContentAdvisory.MildSensuality;
+      }
+      if ((advisories & 0x08) != 0)
+      {
+        advisoryFlags |= ContentAdvisory.FantasyViolence;
+      }
+      if ((advisories & 0x10) != 0)
+      {
+        advisoryFlags |= ContentAdvisory.Violence;
+      }
+      if ((advisories & 0x20) != 0)
+      {
+        advisoryFlags |= ContentAdvisory.MildPeril;
+      }
+      if ((advisories & 0x40) != 0)
+      {
+        advisoryFlags |= ContentAdvisory.Nudity;
+      }
+      if ((advisories & 0x8000) != 0)
+      {
+        advisoryFlags |= ContentAdvisory.SuggestiveDialogue;
+      }
+      return advisoryFlags;
+    }
+
+    private static string GetVchipRatingDescription(byte rating)
+    {
+      switch (rating)
+      {
+        case 1:
+          return "TV-Y";    // all children
+        case 2:
+          return "TV-Y7";   // children 7 and older
+        case 3:
+          return "TV-G";    // general audience
+        case 4:
+          return "TV-PG";   // parental guidance
+        case 5:
+          return "TV-14";   // adults 14 and older
+        case 6:
+          return "TV-MA";   // mature audience
+      }
+      return null;
+    }
   }
 }

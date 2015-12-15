@@ -20,6 +20,7 @@
 
 using System;
 using System.Runtime.InteropServices;
+using Mediaportal.TV.Server.TVLibrary.Implementations.Dvb.Enum;
 
 namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
 {
@@ -141,7 +142,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
                   out ulong eventId,
                   out ulong startDateTime,
                   out ushort duration,
-                  out byte runningStatus,
+                  out RunningStatus runningStatus,
                   [MarshalAs(UnmanagedType.I1)] out bool freeCaMode,
                   out ushort referenceServiceId,
                   out ulong referenceEventId,
