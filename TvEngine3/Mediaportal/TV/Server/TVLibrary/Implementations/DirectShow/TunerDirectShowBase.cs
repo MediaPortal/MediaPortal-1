@@ -238,28 +238,38 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
         return;
       }
 
-      int hr = (int)NativeMethods.HResult.E_FAIL;
+      int hr = (int)NativeMethods.HResult.E_NOINTERFACE;
       object obj = null;
       try
       {
-        hr = serviceProvider.QueryService(typeof(BroadcastEventService).GUID, typeof(IBroadcastEvent).GUID, out obj);
+        if (Environment.OSVersion.Version.Major >= 6) // Vista or later
+        {
+          hr = serviceProvider.QueryService(typeof(BroadcastEventService).GUID, typeof(IBroadcastEventEx).GUID, out obj);
+        }
+        else
+        {
+          hr = serviceProvider.QueryService(typeof(BroadcastEventService).GUID, typeof(IBroadcastEvent).GUID, out obj);
+        }
         if (hr == (int)NativeMethods.HResult.S_OK)
         {
           _broadcastEventService = obj as BroadcastEventService;
           if (_broadcastEventService == null)
           {
-            throw new Exception();
+            hr = (int)NativeMethods.HResult.E_FAIL;
           }
-          this.LogDebug("DirectShow base: broadcast event service already registered");
-        }
-        else
-        {
-          throw new Exception();
+          else
+          {
+            this.LogDebug("DirectShow base: broadcast event service already registered");
+          }
         }
       }
       catch
       {
         // Invalid cast exception thrown when service not registered.
+      }
+
+      if (hr != (int)NativeMethods.HResult.S_OK)
+      {
         this.LogDebug("DirectShow base: register broadcast event service, hr = 0x{0:x}", hr);
         _registerServiceProvider = _graph as IRegisterServiceProvider;
         if (_registerServiceProvider == null)

@@ -554,7 +554,15 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
       this.LogDebug("BDA base: enumerate services...");
       foreach (KeyValuePair<string, Guid> service in servicesToTest)
       {
-        hr = serviceProvider.QueryService(service.Value, service.Value, out obj);
+        try
+        {
+          hr = serviceProvider.QueryService(service.Value, service.Value, out obj);
+        }
+        catch
+        {
+          // Invalid cast exception thrown when service not registered/available.
+          hr = (int)NativeMethods.HResult.E_NOINTERFACE;
+        }
         if (hr == (int)NativeMethods.HResult.S_OK)
         {
           this.LogDebug("  {0}, is CP = {1}, is CP container = {2}", service.Key, obj is IConnectionPoint, obj is IConnectionPointContainer);
@@ -564,10 +572,18 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
 
       #endregion
 
-      hr = serviceProvider.QueryService(typeof(ESEventService).GUID, typeof(IESEventService).GUID, out obj);
+      try
+      {
+        hr = serviceProvider.QueryService(typeof(ESEventService).GUID, typeof(IESEventService).GUID, out obj);
+      }
+      catch
+      {
+        // Invalid cast exception thrown when service not registered/available.
+        hr = (int)NativeMethods.HResult.E_NOINTERFACE;
+      }
       if (hr != (int)NativeMethods.HResult.S_OK)
       {
-        this.LogDebug("BDA base: event service not available");
+        this.LogDebug("BDA base: event service not available, hr = 0x{0:x}", hr);
         return;
       }
 
@@ -579,46 +595,46 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
       }
 
       this.LogDebug("BDA base: advise event service connection points...");
+      IntPtr fetchCount = Marshal.AllocHGlobal(sizeof(int));
       try
       {
         IEnumConnectionPoints connectionPointEnum;
         connectionPointContainer.EnumConnectionPoints(out connectionPointEnum);
         IConnectionPoint[] connectionPoints = new IConnectionPoint[2];
-        IntPtr fetchCount = Marshal.AllocHGlobal(sizeof(int));
-        try
+        while (connectionPointEnum.Next(1, connectionPoints, fetchCount) == (int)NativeMethods.HResult.S_OK && Marshal.ReadInt32(fetchCount, 0) == 1)
         {
-          while (connectionPointEnum.Next(1, connectionPoints, fetchCount) == (int)NativeMethods.HResult.S_OK && Marshal.ReadInt32(fetchCount, 0) == 1)
+          IConnectionPoint connectionPoint = connectionPoints[0];
+          Guid iid = Guid.Empty;
+          int cookie;
+          connectionPoint.GetConnectionInterface(out iid);
+          if (
+            iid == typeof(IESCloseMmiEvent).GUID ||
+            iid == typeof(IESFileExpiryDateEvent).GUID ||
+            iid == typeof(IESIsdbCasResponseEvent).GUID ||
+            iid == typeof(IESLicenseRenewalResultEvent).GUID ||
+            iid == typeof(IESOpenMmiEvent).GUID ||
+            iid == typeof(IESRequestTunerEvent).GUID ||
+            iid == typeof(IESValueUpdatedEvent).GUID
+          )
           {
-            IConnectionPoint connectionPoint = connectionPoints[0];
-            Guid iid = Guid.Empty;
-            int cookie;
-            connectionPoint.GetConnectionInterface(out iid);
-            if (
-              iid == typeof(IESCloseMmiEvent).GUID ||
-              iid == typeof(IESFileExpiryDateEvent).GUID ||
-              iid == typeof(IESIsdbCasResponseEvent).GUID ||
-              iid == typeof(IESLicenseRenewalResultEvent).GUID ||
-              iid == typeof(IESOpenMmiEvent).GUID ||
-              iid == typeof(IESRequestTunerEvent).GUID ||
-              iid == typeof(IESValueUpdatedEvent).GUID
-            )
+            this.LogDebug("  {0}", iid);
+            try
             {
-              this.LogDebug("  {0}", iid);
               connectionPoint.Advise((IESEvents)this, out cookie);
               _eventRegistrations.Add(iid, new KeyValuePair<int, IConnectionPoint>(cookie, connectionPoint));
             }
-            else
+            catch (Exception ex)
             {
-              // These events might be interesting but we can't register if we
-              // don't implement the call back interface.
-              this.LogDebug("  other, IID = {0}", iid);
-              Release.ComObject(string.Format("base BDA tuner event service connection point {0}", iid), ref connectionPoint);
+              this.LogWarn(ex, "BDA base: failed to register for connection interface, IID = {0}", iid);
             }
           }
-        }
-        finally
-        {
-          Marshal.FreeHGlobal(fetchCount);
+          else
+          {
+            // These events might be interesting but we can't register if we
+            // don't implement the call back interface.
+            this.LogDebug("  other, IID = {0}", iid);
+            Release.ComObject(string.Format("base BDA tuner event service connection point {0}", iid), ref connectionPoint);
+          }
         }
       }
       catch (Exception ex)
@@ -627,6 +643,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
       }
       finally
       {
+        Marshal.FreeHGlobal(fetchCount);
         Release.ComObject("base BDA tuner event service", ref obj);
       }
     }
