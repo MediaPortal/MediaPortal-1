@@ -1504,6 +1504,9 @@ namespace DirectShowLib
 
     /// <summary> KSMEDIUMSETID_Standard </summary>
     public static readonly Guid KS_MEDIUM_SET_ID_STANDARD = new Guid(0x4747b320, 0x62ce, 0x11cf, 0xa5, 0xd6, 0x28, 0xdb, 0x04, 0xc1, 0x00, 0x00);
+
+    /// <summary> MEDIASUBTYPE_MPEG2_UDCR_TRANSPORT </summary>
+    public static readonly Guid MEDIA_SUB_TYPE_MPEG2_UDCR_TRANSPORT = new Guid(0x18bec4ea, 0x4676, 0x450e, 0xb4, 0x78, 0x0c, 0xd8, 0x4c, 0x54, 0xb3, 0x27);
   }
 
   /// <summary>

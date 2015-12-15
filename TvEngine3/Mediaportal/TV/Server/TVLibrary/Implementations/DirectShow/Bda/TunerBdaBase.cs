@@ -389,7 +389,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
             AMMediaType mediaType = mediaTypes[0];
             try
             {
-              if (mediaType.majorType == DirectShowLib.MediaType.Mpeg2Sections)
+              // CableCARD tuners.
+              if (mediaType.majorType == DirectShowLib.MediaType.Stream && mediaType.subType == TveGuid.MEDIA_SUB_TYPE_MPEG2_UDCR_TRANSPORT)
               {
                 isPtFilterRequired = true;
                 break;
@@ -418,7 +419,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
       }
 
       _filterPbdaPt = FilterGraphTools.AddFilterFromRegisteredClsid(Graph, PBDA_PT_FILTER_CLSID, "PBDA PT Filter");
-      FilterGraphTools.ConnectFilters(Graph, lastFilter, 1, _filterPbdaPt, 0);    // upstream output pin 0 is expected to be the OOB channel output; output pin 1 is expected to be the MPEG 2 TS output
+      FilterGraphTools.ConnectFilters(Graph, lastFilter, 0, _filterPbdaPt, 0);
       lastFilter = _filterPbdaPt;
     }
 

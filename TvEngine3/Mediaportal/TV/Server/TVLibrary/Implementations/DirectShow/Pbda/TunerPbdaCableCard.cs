@@ -100,7 +100,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Pbda
 
       // Connect the tuner filter OOB info into TsWriter.
       this.LogDebug("PBDA CableCARD: connect out-of-band stream");
-      FilterGraphTools.ConnectFilters(Graph, MainFilter, 0, TsWriter, 1);   // upstream output pin 0 is expected to be the OOB channel output; output pin 1 is expected to be the MPEG 2 TS output
+      FilterGraphTools.ConnectFilters(Graph, MainFilter, 1, TsWriter, 1);
 
       _caInterface = MainFilter as IBDA_ConditionalAccess;
       if (_caInterface == null)
