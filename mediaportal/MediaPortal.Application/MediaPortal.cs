@@ -1664,7 +1664,6 @@ public class MediaPortalApp : D3D, IRender
 
         // handle default commands needed for plugins
         default:
-          Log.Debug("Main: WndProcPlugin default: (msg {0})", msg);
           WndProcPlugin(ref msg, false);
           break;
       }
@@ -1769,8 +1768,9 @@ public class MediaPortalApp : D3D, IRender
         {
           msg.LParam = new IntPtr((int)MonitorState.ON);
           SetThreadExecutionState(EXECUTION_STATE.ES_SYSTEM_REQUIRED | EXECUTION_STATE.ES_DISPLAY_REQUIRED);
-          msg.Result = (IntPtr)0;
+          msg.Result = (IntPtr)1;
           Log.Debug("Main: SC_MONITORPOWER : don't send monitor OFF : msg result : {0} - time span elapsed {1} seconds", msg.Result, timeSpan.Seconds);
+          return false;
         }
         else
         {
@@ -1798,9 +1798,8 @@ public class MediaPortalApp : D3D, IRender
         }
         else if (!_resumeTimeOutReached && displayState == (int)MonitorState.OFF)
         {
-          msg.LParam = new IntPtr((int)MonitorState.ON);
           SetThreadExecutionState(EXECUTION_STATE.ES_SYSTEM_REQUIRED | EXECUTION_STATE.ES_DISPLAY_REQUIRED);
-          msg.Result = (IntPtr)0;
+          msg.Result = (IntPtr)1;
           Log.Debug("Main: SC_SCREENSAVE : don't send monitor OFF : msg result : {0} - time span elapsed {1} seconds", msg.Result, timeSpan.Seconds);
         }
         else
@@ -2012,8 +2011,8 @@ public class MediaPortalApp : D3D, IRender
                 if (!_resumeTimeOutReached)
                 {
                   var timeSpan = DateTime.Now - ResumeTimeOutTimer;
-                  SetThreadExecutionState(EXECUTION_STATE.ES_SYSTEM_REQUIRED | EXECUTION_STATE.ES_DISPLAY_REQUIRED);
-                  msg.Result = (IntPtr) 1;
+                  Log.Info("Main: PBT_POWERSETTINGCHANGE The display requested is off");
+                  IsDisplayTurnedOn = true;
                   Log.Debug("Main: PBT_POWERSETTINGCHANGE : don't send monitor OFF : msg result : {0} - time span elapsed {1} seconds", msg.Result, timeSpan.Seconds);
                   return false;
                 }
@@ -2078,7 +2077,7 @@ public class MediaPortalApp : D3D, IRender
   {
     if (!_wndProcPluginExecuted || force)
     {
-      Log.Debug("Main: WndProcPlugin - msg {2}", msg);
+      //Log.Debug("Main: WndProcPlugin - msg {0}", msg);
       _wndProcPluginExecuted = true;
       PluginManager.WndProc(ref msg);
     }
