@@ -169,6 +169,37 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Atsc
       return CreateScannedChannel(newChannel, isVisibleInGuide, BroadcastStandard.Scte, groupNames);
     }
 
+    /// <summary>
+    /// Create a scanned channel instance representing a channel.
+    /// </summary>
+    /// <param name="channel">The channel.</param>
+    /// <param name="isVisibleInGuide"><c>True</c> if the channel should be visible in the programme guide.</param>
+    /// <param name="broadcastStandard">The standard used to broadcast the channel.</param>
+    /// <param name="groupNames">A dictionary of channel group names.</param>
+    /// <returns>the created scanned channel instance</returns>
+    public static ScannedChannel CreateScannedChannel(IChannel channel, bool isVisibleInGuide, BroadcastStandard broadcastStandard, IDictionary<ChannelGroupType, IDictionary<ulong, string>> groupNames)
+    {
+      ScannedChannel scannedChannel = new ScannedChannel(channel);
+      scannedChannel.IsVisibleInGuide = isVisibleInGuide;
+
+      // Constructed/derived groups.
+      if (broadcastStandard != BroadcastStandard.Unknown)
+      {
+        if (!groupNames[ChannelGroupType.BroadcastStandard].ContainsKey((ulong)broadcastStandard))
+        {
+          groupNames[ChannelGroupType.BroadcastStandard][(ulong)broadcastStandard] = broadcastStandard.GetDescription();
+        }
+        scannedChannel.Groups.Add(ChannelGroupType.BroadcastStandard, new List<ulong> { (ulong)broadcastStandard });
+      }
+      if (!string.IsNullOrEmpty(channel.Provider))
+      {
+        ulong hashCode = (ulong)channel.Provider.GetHashCode();
+        groupNames[ChannelGroupType.ChannelProvider][hashCode] = channel.Provider;
+        scannedChannel.Groups.Add(ChannelGroupType.ChannelProvider, new List<ulong> { hashCode });
+      }
+      return scannedChannel;
+    }
+
     #region ICallBackGrabber members
 
     /// <summary>
@@ -276,8 +307,23 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Atsc
     /// <param name="groupNames">The names of the groups referenced in <paramref name="channels"/>.</param>
     public void Scan(IChannel channel, bool isFastNetworkScan, out IList<ScannedChannel> channels, out IDictionary<ChannelGroupType, IDictionary<ulong, string>> groupNames)
     {
+      ISet<string> ignoredChannelNumbers;
+      Scan(channel, isFastNetworkScan, out channels, out groupNames, out ignoredChannelNumbers);
+    }
+
+    /// <summary>
+    /// Tune to a specified channel and scan for channel information.
+    /// </summary>
+    /// <param name="channel">The channel to tune to.</param>
+    /// <param name="isFastNetworkScan"><c>True</c> to do a fast network scan.</param>
+    /// <param name="channels">The channel information found.</param>
+    /// <param name="groupNames">The names of the groups referenced in <paramref name="channels"/>.</param>
+    /// <param name="ignoredChannelNumbers">A set of the channel numbers that were ignored for whatever reason.</param>
+    public void Scan(IChannel channel, bool isFastNetworkScan, out IList<ScannedChannel> channels, out IDictionary<ChannelGroupType, IDictionary<ulong, string>> groupNames, out ISet<string> ignoredChannelNumbers)
+    {
       channels = new List<ScannedChannel>(100);
       groupNames = new Dictionary<ChannelGroupType, IDictionary<ulong, string>>(50);
+      ignoredChannelNumbers = new HashSet<string>();
 
       if (_grabberMpeg == null && _grabberAtsc == null && _grabberScte == null)
       {
@@ -394,17 +440,19 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Atsc
         IDictionary<uint, ProgramInfo> programs = new Dictionary<uint, ProgramInfo>(0);
         IDictionary<uint, ScannedChannel> atscChannels;
         IDictionary<ChannelGroupType, IDictionary<ulong, string>> atscGroupNames;
+        ISet<string> atscIgnoredChannelNumbers;
         IDictionary<uint, ScannedChannel> scteChannels;
         IDictionary<ChannelGroupType, IDictionary<ulong, string>> scteGroupNames;
+        ISet<string> scteIgnoredChannelNumbers;
         if (_seenTables.HasFlag(TableType.AtscSvct) || _seenTables.HasFlag(TableType.ScteSvct))
         {
-          CollectSvctVirtualChannels(_grabberAtsc, channel, out atscChannels, out atscGroupNames);
+          CollectSvctVirtualChannels(_grabberAtsc, channel, out atscChannels, out atscGroupNames, out atscIgnoredChannelNumbers);
           if (_cancelScan)
           {
             return;
           }
 
-          CollectSvctVirtualChannels(_grabberScte, channel, out scteChannels, out scteGroupNames);
+          CollectSvctVirtualChannels(_grabberScte, channel, out scteChannels, out scteGroupNames, out scteIgnoredChannelNumbers);
           if (_cancelScan)
           {
             return;
@@ -437,6 +485,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Atsc
           {
             return;
           }
+
+          atscIgnoredChannelNumbers = new HashSet<string>();
+          scteIgnoredChannelNumbers = new HashSet<string>();
         }
 
         // Combine the ATSC and SCTE channel and group information.
@@ -455,6 +506,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Atsc
           finalChannels = atscChannels;
           groupNames = atscGroupNames;
         }
+        ignoredChannelNumbers = atscIgnoredChannelNumbers;
+        ignoredChannelNumbers.UnionWith(scteIgnoredChannelNumbers);
 
         // Add channels for programs that don't have VCT information.
         foreach (var program in programs)
@@ -688,9 +741,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Atsc
     /// </summary>
     /// <param name="grabber">The channel information grabber.</param>
     /// <param name="tuningChannel">The tuning details used to tune the current transport stream.</param>
-    /// <param name="channels">A dictionary of channels, keyed on the transport stream identifier and program number.</param>
+    /// <param name="channels">A dictionary of channels, keyed on the major and minor channel numbers.</param>
     /// <param name="groupNames">A dictionary of channel group names.</param>
-    private void CollectSvctVirtualChannels(IGrabberSiAtsc grabber, IChannel tuningChannel, out IDictionary<uint, ScannedChannel> channels, out IDictionary<ChannelGroupType, IDictionary<ulong, string>> groupNames)
+    /// <param name="ignoredChannelNumbers">A set of the channel numbers that were ignored for whatever reason.</param>
+    private void CollectSvctVirtualChannels(IGrabberSiAtsc grabber, IChannel tuningChannel, out IDictionary<uint, ScannedChannel> channels, out IDictionary<ChannelGroupType, IDictionary<ulong, string>> groupNames, out ISet<string> ignoredChannelNumbers)
     {
       ushort channelCount = 0;
       if (grabber != null)
@@ -701,7 +755,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Atsc
 
       channels = new Dictionary<uint, ScannedChannel>(channelCount);
       groupNames = new Dictionary<ChannelGroupType, IDictionary<ulong, string>>(5);
-      HashSet<uint> ignoreChannels = new HashSet<uint>();
+      ignoredChannelNumbers = new HashSet<string>();
 
       int j = 1;
       TransmissionMedium transmissionMedium;
@@ -905,10 +959,18 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Atsc
             // that indicate S-VCT might be used with satellite and terrestrial
             // broadcasts as well. However we currently don't support those
             // possibilities.
-            uint key = ((uint)majorChannelNumber << 16) | minorChannelNumber;
+            string lcn;
+            if (minorChannelNumber == 0)
+            {
+              lcn = majorChannelNumber.ToString();
+            }
+            else
+            {
+              lcn = string.Format("{0}.{1}", majorChannelNumber, minorChannelNumber);
+            }
             if (transmissionMedium != TransmissionMedium.Cable || applicationVirtualChannel || pathSelect == PathSelect.Path2 || outOfBand)   // not cable OR application (data) channel OR alternative feed
             {
-              ignoreChannels.Add(key);
+              ignoredChannelNumbers.Add(lcn);
               continue;
             }
 
@@ -998,18 +1060,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Atsc
             {
               newChannel.Provider = mapName;
             }
-            if (minorChannelNumber == 0)
-            {
-              newChannel.LogicalChannelNumber = majorChannelNumber.ToString();
-            }
-            else
-            {
-              newChannel.LogicalChannelNumber = string.Format("{0}.{1}", majorChannelNumber, minorChannelNumber);
-            }
+            newChannel.LogicalChannelNumber = lcn;
             newChannel.IsEncrypted = accessControlled;
             newChannel.IsHighDefinition = hdtvChannel;
 
-            channels.Add(key, CreateScannedChannel(newChannel, channelType != ChannelType.Hidden || !hideGuide, broadcastStandard, groupNames));
+            channels.Add(((uint)majorChannelNumber << 16) | minorChannelNumber, CreateScannedChannel(newChannel, channelType != ChannelType.Hidden || !hideGuide, broadcastStandard, groupNames));
           }
         }
         finally
@@ -1044,7 +1099,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Atsc
         }
 
         uint key = (uint)majorChannelNumber << 16;
-        if (channels.ContainsKey(key) || ignoreChannels.Contains(key) || transmissionMedium != TransmissionMedium.Cable)
+        if (
+          channels.ContainsKey(key) ||
+          ignoredChannelNumbers.Contains(majorChannelNumber.ToString()) ||
+          transmissionMedium != TransmissionMedium.Cable
+        )
         {
           continue;
         }
@@ -1409,37 +1468,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Atsc
       {
         Marshal.FreeCoTaskMem(nameBuffer);
       }
-    }
-
-    /// <summary>
-    /// Create a scanned channel instance representing a channel.
-    /// </summary>
-    /// <param name="channel">The channel.</param>
-    /// <param name="isVisibleInGuide"><c>True</c> if the channel should be visible in the programme guide.</param>
-    /// <param name="broadcastStandard">The standard used to broadcast the channel.</param>
-    /// <param name="groupNames">A dictionary of channel group names.</param>
-    /// <returns>the created scanned channel instance</returns>
-    private static ScannedChannel CreateScannedChannel(IChannel channel, bool isVisibleInGuide, BroadcastStandard broadcastStandard, IDictionary<ChannelGroupType, IDictionary<ulong, string>> groupNames)
-    {
-      ScannedChannel scannedChannel = new ScannedChannel(channel);
-      scannedChannel.IsVisibleInGuide = isVisibleInGuide;
-
-      // Constructed/derived groups.
-      if (broadcastStandard != BroadcastStandard.Unknown)
-      {
-        if (!groupNames[ChannelGroupType.BroadcastStandard].ContainsKey((ulong)broadcastStandard))
-        {
-          groupNames[ChannelGroupType.BroadcastStandard][(ulong)broadcastStandard] = broadcastStandard.GetDescription();
-        }
-        scannedChannel.Groups.Add(ChannelGroupType.BroadcastStandard, new List<ulong> { (ulong)broadcastStandard });
-      }
-      if (!string.IsNullOrEmpty(channel.Provider))
-      {
-        ulong hashCode = (ulong)channel.Provider.GetHashCode();
-        groupNames[ChannelGroupType.ChannelProvider][hashCode] = channel.Provider;
-        scannedChannel.Groups.Add(ChannelGroupType.ChannelProvider, new List<ulong> { hashCode });
-      }
-      return scannedChannel;
     }
 
     /// <summary>

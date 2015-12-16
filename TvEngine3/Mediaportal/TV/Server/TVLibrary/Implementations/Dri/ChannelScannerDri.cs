@@ -29,6 +29,7 @@ using Mediaportal.TV.Server.TVLibrary.Implementations.Atsc;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Channel;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channel;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Tuner;
 
@@ -142,7 +143,16 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
             while (!requestTablesEvent.WaitOne(30000));
           }
         );
-        _scanner.Scan(channel, isFastNetworkScan, out channels, out groupNames);
+        ISet<string> ignoredChannelNumbers;
+        if (_scannerAtsc != null)
+        {
+          _scannerAtsc.Scan(channel, isFastNetworkScan, out channels, out groupNames, out ignoredChannelNumbers);
+        }
+        else
+        {
+          _scanner.Scan(channel, isFastNetworkScan, out channels, out groupNames);
+          ignoredChannelNumbers = new HashSet<string>();
+        }
         if (_cancelScan)
         {
           return;
@@ -168,12 +178,40 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
         this.LogInfo("  scanned = {0}", channels.Count);
         this.LogInfo("  no name = {0} [{1}]", namelessChannels.Count, string.Join(", ", namelessChannels));
         this.LogInfo("  hidden  = {0} [{1}]", hiddenChannels.Count, string.Join(", ", hiddenChannels));
+        this.LogInfo("  ignored = {0} [{1}]", ignoredChannelNumbers.Count, string.Join(", ", ignoredChannelNumbers));
+
+        // Get the Ceton or SiliconDust proprietary channel list.
+        // We use the list for three purposes...
+        //
+        // 1. Marking inaccessible channels as not visible in the guide.
+        // We can determine whether a given channel is accessible or not by
+        // trying to tune it directly... but this is incredibly time consuming
+        // (~2 seconds per channel x ~500 channels???) and error prone for
+        // hundreds of channels. SiliconDust already do this so we save time
+        // and reuse the information from their list.
+        //
+        // 2. Updating names of channels where real names were previously not
+        //    available.
+        // For some reason some channels in the CableCARD's channel list don't
+        // seem to be assigned names. It makes sense to acquire missing names
+        // from a proprietary list where possible.
+        //
+        // 3. Adding channels delivered using switched digital video (SDV).
+        // Channels delivered via SDV are not generally included in the
+        // CableCARD's channel list. Sometimes they are, but apparently that is
+        // a mistake which we can't rely on. The only certain way to get a
+        // complete channel list when SDV is active is to request it from the
+        // tuning adaptor/resolver. Only the tuner can communicate directly
+        // with the TA/TR. Since we have no way to ask the tuner to ask the
+        // TA/TR to give us the information, we have to use proprietary lists.
         if (_isCetonDevice)
         {
-          return;
+          UpdateChannelsCeton(_tunerIpAddress, channels, groupNames, ignoredChannelNumbers);
         }
-
-        UpdateChannels(channels, groupNames);
+        else
+        {
+          UpdateChannelsSiliconDust(_tunerIpAddress, channels, groupNames, ignoredChannelNumbers);
+        }
       }
       finally
       {
@@ -207,37 +245,18 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
 
     #region private functions
 
-    private void UpdateChannels(IList<ScannedChannel> channels, IDictionary<ChannelGroupType, IDictionary<ulong, string>> groupNames)
+    private static void UpdateChannelsSiliconDust(string tunerIpAddress, IList<ScannedChannel> channels, IDictionary<ChannelGroupType, IDictionary<ulong, string>> groupNames, ISet<string> ignoredChannelNumbers)
     {
-      // Get the SiliconDust proprietary channel list.
-      // We use this for three purposes:
-      // 1. Marking inaccessible channels as not visible in the guide.
-      // 2. Updating names of channels where real names were previously not
-      //    available.
-      // 3. Adding channels delivered using switched digital video (SDV).
-      //
-      // We can determine whether a given channel is accessible or not by
-      // trying to tune it directly... but this is incredibly time consuming
-      // and error prone for hundreds of channels. Therefore we use the
-      // proprietary list instead.
-      //
-      // Channels delivered via SDV are not generally included in the
-      // CableCARD's channel list. Sometimes they are, but apparently that is a
-      // mistake which we can't rely on. The only certain way to get a complete
-      // channel list when SDV is active is to request it from the tuning
-      // adaptor/resolver. Only the tuner can communicate directly with the
-      // TA/TR, and we have no way to ask the tuner to ask the TA/TR to give us
-      // the information. Therefore we have to use the proprietary list.
       IDictionary<string, string> channelsSubscribedCopyFreely;
       IDictionary<string, string> channelsNotSubscribed;
       IDictionary<string, string> channelsCopyOnce;
-      if (!GetSiliconDustChannelSets(out channelsSubscribedCopyFreely, out channelsNotSubscribed, out channelsCopyOnce))
+      if (!GetSiliconDustChannelSets(tunerIpAddress, out channelsSubscribedCopyFreely, out channelsNotSubscribed, out channelsCopyOnce))
       {
         return;
       }
 
       // Build/filter the final channel list.
-      this.LogInfo("scan DRI: update channel details...");
+      Log.Info("scan DRI: update channel details using Silicondust lineup info...");
       foreach (ScannedChannel channel in channels)
       {
         string lcn = channel.Channel.LogicalChannelNumber;
@@ -248,12 +267,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
           channelsCopyOnce.Remove(lcn);
           if (channel.Channel.Name.StartsWith("Unknown ") && !string.IsNullOrEmpty(name))
           {
-            this.LogDebug("  setting name, name = {0}, number = {1}", name, lcn);
+            Log.Debug("  setting name, name = {0}, number = {1}", name, lcn);
             channel.Channel.Name = name;
           }
           if (channel.IsVisibleInGuide)
           {
-            this.LogDebug("  clearing visible-in-guide flag, name = {0}, number = {1}", channel.Channel.Name, lcn);
+            Log.Debug("  clearing visible-in-guide flag, name = {0}, number = {1}", channel.Channel.Name, lcn);
             channel.IsVisibleInGuide = false;
           }
           continue;
@@ -263,13 +282,20 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
           channelsSubscribedCopyFreely.Remove(lcn);
           if (channel.Channel.Name.StartsWith("Unknown ") && !string.IsNullOrEmpty(name))
           {
-            this.LogDebug("  setting name, name = {0}, number = {1}", name, lcn);
+            Log.Debug("  setting name, name = {0}, number = {1}", name, lcn);
             channel.Channel.Name = name;
           }
           continue;
         }
 
-        this.LogWarn("  unknown channel accessibility, name = {0}, number = {1}", channel.Channel.Name, lcn);
+        Log.Warn("  scanned channel not in SiliconDust lineup(s), name = {0}, number = {1}", channel.Channel.Name, lcn);
+      }
+
+      foreach (string channelNumber in ignoredChannelNumbers)
+      {
+        channelsSubscribedCopyFreely.Remove(channelNumber);
+        channelsNotSubscribed.Remove(channelNumber);
+        channelsCopyOnce.Remove(channelNumber);
       }
 
       // Any channels remaining in the SiliconDust channel lists are assumed to
@@ -282,7 +308,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
       {
         return;
       }
-      this.LogInfo("scan DRI: add {0} switched digital video channel(s)...", sdvChannelCount);
+      Log.Info("scan DRI: add {0} switched digital video channel(s)...", sdvChannelCount);
       foreach (KeyValuePair<string, string> channel in channelsSubscribedCopyFreely)
       {
         channels.Add(ChannelScannerAtsc.CreateSdvChannel(channel.Value, channel.Key, true, groupNames));
@@ -297,29 +323,29 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
       }
     }
 
-    private bool GetSiliconDustChannelSets(out IDictionary<string, string> channelsSubscribedCopyFreely, out IDictionary<string, string> channelsNotSubscribed, out IDictionary<string, string> channelsCopyOnce)
+    private static bool GetSiliconDustChannelSets(string tunerIpAddress, out IDictionary<string, string> channelsSubscribedCopyFreely, out IDictionary<string, string> channelsNotSubscribed, out IDictionary<string, string> channelsCopyOnce)
     {
       channelsSubscribedCopyFreely = new Dictionary<string, string>();  // channel number => name
       channelsNotSubscribed = new SortedDictionary<string, string>();   // channel number => name
       channelsCopyOnce = new Dictionary<string, string>();              // channel number => name
 
       IDictionary<string, string> channelsSubscribedCopyOnce;
-      if (!GetSiliconDustChannelLineUp(new Uri(new Uri(_tunerIpAddress), "lineup.xml"), out channelsSubscribedCopyFreely, out channelsSubscribedCopyOnce))
+      if (!GetSiliconDustChannelLineUp(new Uri(new Uri(tunerIpAddress), "lineup.xml"), out channelsSubscribedCopyFreely, out channelsSubscribedCopyOnce))
       {
         return false;
       }
 
       int subscribedCount = channelsSubscribedCopyFreely.Count + channelsCopyOnce.Count;
-      this.LogInfo("scan DRI: SiliconDust lineup info...");
-      this.LogInfo("  subscribed         = {0}", subscribedCount);
-      this.LogInfo("  subscribed DRM     = {0}", channelsSubscribedCopyOnce.Count);
+      Log.Info("scan DRI: SiliconDust lineup info...");
+      Log.Info("  subscribed         = {0}", subscribedCount);
+      Log.Info("  subscribed DRM     = {0}", channelsSubscribedCopyOnce.Count);
       foreach (KeyValuePair<string, string> channel in channelsSubscribedCopyOnce)
       {
-        this.LogDebug("  {0, -5} = {1}", channel.Key, channel.Value);
+        Log.Debug("  {0, -5} = {1}", channel.Key, channel.Value);
       }
 
       IDictionary<string, string> channelsCopyFreely;   // includes channels that aren't part of the user's subscribed package(s)
-      if (!GetSiliconDustChannelLineUp(new Uri(new Uri(_tunerIpAddress), "lineup.xml?show=all"), out channelsCopyFreely, out channelsCopyOnce))
+      if (!GetSiliconDustChannelLineUp(new Uri(new Uri(tunerIpAddress), "lineup.xml?show=all"), out channelsCopyFreely, out channelsCopyOnce))
       {
         channelsCopyOnce = channelsSubscribedCopyOnce;
         return true;
@@ -327,25 +353,25 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
 
       HashSet<string> temp = new HashSet<string>(channelsCopyFreely.Keys);
       temp.ExceptWith(channelsSubscribedCopyFreely.Keys);
-      this.LogInfo("  not subscribed     = {0}", temp.Count);
+      Log.Info("  not subscribed     = {0}", temp.Count);
       foreach (string channelNumber in temp)
       {
         string name = channelsCopyFreely[channelNumber];
         channelsNotSubscribed.Add(channelNumber, name);
-        this.LogDebug("  {0, -5} = {1}", channelNumber, name);
+        Log.Debug("  {0, -5} = {1}", channelNumber, name);
       }
 
       temp = new HashSet<string>(channelsCopyOnce.Keys);
       temp.ExceptWith(channelsSubscribedCopyOnce.Keys);
-      this.LogInfo("  not subscribed DRM = {0}", temp.Count);
+      Log.Info("  not subscribed DRM = {0}", temp.Count);
       foreach (string channelNumber in temp)
       {
-        this.LogDebug("  {0, -5} = {1}", channelNumber, channelsCopyOnce[channelNumber]);
+        Log.Debug("  {0, -5} = {1}", channelNumber, channelsCopyOnce[channelNumber]);
       }
       return true;
     }
 
-    private bool GetSiliconDustChannelLineUp(Uri uri, out IDictionary<string, string> channelsCopyFreely, out IDictionary<string, string> channelsCopyOnce)
+    private static bool GetSiliconDustChannelLineUp(Uri uri, out IDictionary<string, string> channelsCopyFreely, out IDictionary<string, string> channelsCopyOnce)
     {
       channelsCopyFreely = new SortedDictionary<string, string>();  // channel number => name
       channelsCopyOnce = new SortedDictionary<string, string>();    // channel number => name
@@ -360,7 +386,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
       }
       catch (Exception ex)
       {
-        this.LogWarn(ex, "scan DRI: failed to get SiliconDust XML lineup from tuner, URI = {0}", uri);
+        Log.Warn(ex, "scan DRI: failed to get SiliconDust XML lineup from tuner, URI = {0}", uri);
         request.Abort();
         return false;
       }
@@ -380,7 +406,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
           {
             if (xmlReader.NodeType == XmlNodeType.EndElement && xmlReader.Name.Equals("Program"))
             {
-              if (string.IsNullOrEmpty(number))
+              if (!string.IsNullOrEmpty(number))
               {
                 if (!isCopyFreely)
                 {
@@ -432,7 +458,194 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
       }
       catch (Exception ex)
       {
-        this.LogError(ex, "scan DRI: failed to handle SiliconDust XML lineup response from tuner, URI = {0}", uri);
+        Log.Error(ex, "scan DRI: failed to handle SiliconDust XML lineup response from tuner, URI = {0}", uri);
+        return false;
+      }
+      finally
+      {
+        if (response != null)
+        {
+          response.Close();
+        }
+      }
+    }
+
+    private static void UpdateChannelsCeton(string tunerIpAddress, IList<ScannedChannel> channels, IDictionary<ChannelGroupType, IDictionary<ulong, string>> groupNames, ISet<string> ignoredChannelNumbers)
+    {
+      IDictionary<string, IChannel> cetonChannels;
+      if (!GetCetonChannelLineUp(tunerIpAddress, out cetonChannels))
+      {
+        return;
+      }
+      Log.Info("scan DRI: Ceton channel count = {0}", cetonChannels.Count);
+
+      foreach (ScannedChannel channel in channels)
+      {
+        string lcn = channel.Channel.LogicalChannelNumber;
+        IChannel tuningChannel;
+        if (cetonChannels.TryGetValue(lcn, out tuningChannel))
+        {
+          if (channel.Channel.Name.StartsWith("Unknown ") && !string.IsNullOrEmpty(tuningChannel.Name))
+          {
+            Log.Debug("  setting name, name = {0}, number = {1}", tuningChannel.Name, lcn);
+            channel.Channel.Name = tuningChannel.Name;
+          }
+ 
+        }
+
+        Log.Warn("  scanned channel not in Ceton lineup, name = {0}, number = {1}", channel.Channel.Name, lcn);
+      }
+
+      foreach (string channelNumber in ignoredChannelNumbers)
+      {
+        cetonChannels.Remove(channelNumber);
+      }
+
+      // Any channels remaining in the Ceton channel list are assumed to have
+      // been missed during scanning (time limit too low) or not be included in
+      // the CableCARD's channel list (SDV channels). Add them.
+      if (cetonChannels.Count == 0)
+      {
+        return;
+      }
+      Log.Info("scan DRI: add {0} extra channel(s) from the Ceton list...", cetonChannels.Count);
+      foreach (IChannel channel in cetonChannels.Values)
+      {
+        channels.Add(ChannelScannerAtsc.CreateScannedChannel(channel, true, BroadcastStandard.Scte, groupNames));
+      }
+    }
+
+    /// <remarks>
+    /// We don't know:
+    /// 1. Whether applications are excluded.
+    /// 2. Whether SDV channels are included.
+    /// Also note that copy once channels are definitely not excluded.
+    /// </remarks>
+    private static bool GetCetonChannelLineUp(string tunerIpAddress, out IDictionary<string, IChannel> channels)
+    {
+      channels = new Dictionary<string, IChannel>();
+
+      // Request.
+      Uri uri = new Uri(new Uri(tunerIpAddress), "view_channel_map.cgi?page=0&xml=1");
+      HttpWebRequest request = (HttpWebRequest)HttpWebRequest.Create(uri);
+      request.Timeout = 5000;
+      HttpWebResponse response = null;
+      try
+      {
+        response = (HttpWebResponse)request.GetResponse();
+      }
+      catch (Exception ex)
+      {
+        Log.Warn(ex, "scan DRI: failed to get Ceton XML lineup from tuner, URI = {0}", uri);
+        request.Abort();
+        return false;
+      }
+
+      // Response.
+      string content = string.Empty;
+      try
+      {
+        using (Stream responseStream = response.GetResponseStream())
+        using (TextReader textReader = new StreamReader(responseStream, System.Text.Encoding.UTF8))
+        using (XmlReader xmlReader = XmlReader.Create(textReader))
+        {
+          int number = 0;
+          string name = string.Empty;
+          string modulation = string.Empty;
+          int frequency = 0;
+          int programNumber = 0;
+          string eia = string.Empty;    // <physical channel number>.<program number>
+          int sourceId = 0;
+          while (!xmlReader.EOF)
+          {
+            if (xmlReader.NodeType == XmlNodeType.EndElement && xmlReader.Name.Equals("Program"))
+            {
+              if (number != 0)
+              {
+                ChannelScte channel = new ChannelScte();
+                channel.LogicalChannelNumber = number.ToString();
+                channel.Name = name;
+                channel.Provider = "Cable";
+                channel.MediaType = MediaType.Television;   // assumed
+                channel.IsEncrypted = true;                 // assumed
+                channel.Frequency = frequency;
+                if (modulation.Equals("QAM256"))
+                {
+                  channel.ModulationScheme = ModulationSchemeQam.Qam256;
+                }
+                else if (modulation.Equals("QAM64"))
+                {
+                  channel.ModulationScheme = ModulationSchemeQam.Qam64;
+                }
+                else
+                {
+                  Log.Warn("scan DRI: unrecognised Ceton modulation scheme {0}, falling back to automatic", modulation);
+                  channel.ModulationScheme = ModulationSchemeQam.Automatic;
+                }
+                channel.TransportStreamId = 0;              // doesn't really matter
+                channel.SourceId = sourceId;
+                channel.ProgramNumber = programNumber;
+                channel.PmtPid = 0;                         // lookup the correct PID from the PAT when the channel is tuned
+                channels.Add(channel.LogicalChannelNumber, channel);
+              }
+              number = 0;
+              name = string.Empty;
+              modulation = string.Empty;
+              frequency = 0;
+              programNumber = 0;
+              eia = string.Empty;
+              sourceId = 0;
+            }
+            else if (xmlReader.NodeType == XmlNodeType.Element)
+            {
+              if (xmlReader.Name.Equals("number"))
+              {
+                number = xmlReader.ReadElementContentAsInt();
+              }
+              else if (xmlReader.Name.Equals("name"))
+              {
+                // Note: for some reason ReadElementContentAsBase64() seems to
+                // also read the <modulation> start element, so we avoid using
+                // it.
+                name = System.Text.Encoding.UTF8.GetString(Convert.FromBase64String(xmlReader.ReadElementContentAsString()));
+              }
+              else if (xmlReader.Name.Equals("modulation"))
+              {
+                modulation = xmlReader.ReadElementContentAsString();
+              }
+              else if (xmlReader.Name.Equals("frequency"))
+              {
+                frequency = xmlReader.ReadElementContentAsInt();
+              }
+              else if (xmlReader.Name.Equals("program"))
+              {
+                programNumber = xmlReader.ReadElementContentAsInt();
+              }
+              else if (xmlReader.Name.Equals("eia"))
+              {
+                eia = xmlReader.ReadElementContentAsString();
+              }
+              else if (xmlReader.Name.Equals("sourceid"))
+              {
+                sourceId = xmlReader.ReadElementContentAsInt();
+              }
+              else
+              {
+                xmlReader.Read();
+              }
+              continue;
+            }
+            xmlReader.Read();
+          }
+          xmlReader.Close();
+          textReader.Close();
+          responseStream.Close();
+        }
+        return true;
+      }
+      catch (Exception ex)
+      {
+        Log.Error(ex, "scan DRI: failed to handle SiliconDust XML lineup response from tuner, URI = {0}", uri);
         return false;
       }
       finally
