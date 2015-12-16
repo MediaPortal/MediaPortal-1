@@ -91,6 +91,8 @@ namespace TvLibrary.Implementations.DVB
     private const Int32 KSPROPERTY_TYPE_GET = 1;
     private const Int32 KSPROPERTY_TYPE_SET = 2;
 
+    private int _prevServiceId = -1;
+
     private Guid KSPROPERTYSET_DD_COMMON_INTERFACE = new Guid("0aa8a501-a240-11de-b130-000000004d56");
     private Guid KSMETHODSET_DD_CAM_CONTROL = new Guid("0aa8a511-a240-11de-b130-000000004d56");
 
@@ -258,8 +260,8 @@ namespace TvLibrary.Implementations.DVB
         Int32 hr = pControl.KsProperty(ref KsProperty, Marshal.SizeOf(KsProperty),
                                        pSid, paramSize,
                                        ref dwReturned);
-        Log.Log.Debug(
-          FormatMessage(String.Format("--> Setting service id {0} for decrypting returned {1}", serviceId, hr)));
+        Log.Log.Debug(FormatMessage(String.Format("--> Setting service id {0} for decrypting returned {1}", serviceId, hr)));
+        _prevServiceId = serviceId;
         return (hr == 0);
       }
       finally
