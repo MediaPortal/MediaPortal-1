@@ -585,6 +585,9 @@ namespace DirectShowLib
     OverWrite = 0x00000001
   }
 
+  /*
+   * Redefined in TveCustomisations.cs.
+   * 
   /// <summary>
   /// From KSPROPERTY_SUPPORT_* defines
   /// </summary>
@@ -592,7 +595,7 @@ namespace DirectShowLib
   {
     Get = 1,
     Set = 2
-  }
+  }*/
 
   /// <summary>
   /// From AMPROPERTY_PIN
@@ -700,7 +703,7 @@ namespace DirectShowLib
   }
 
   /*
-   * Redefined in MediaPortalCustomisations.cs.
+   * Redefined in TveCustomisations.cs.
    * 
   /// <summary>
   /// From TVAudioMode
@@ -717,7 +720,7 @@ namespace DirectShowLib
   }*/
 
   /*
-   * Redefined in MediaPortalCustomisations.cs.
+   * Redefined in TveCustomisations.cs.
    * 
   /// <summary>
   /// From VideoProcAmpProperty
@@ -1318,7 +1321,7 @@ namespace DirectShowLib
   }
 
   /*
-   * Redefined in MediaPortalCustomisations.cs.
+   * Redefined in TveCustomisations.cs.
    * 
   /// <summary>
   /// From CameraControlProperty

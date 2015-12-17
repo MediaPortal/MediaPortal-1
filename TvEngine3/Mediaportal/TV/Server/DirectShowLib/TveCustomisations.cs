@@ -40,6 +40,16 @@ using System.Text.RegularExpressions;
 namespace DirectShowLib
 {
   /// <summary>
+  /// From KSPROPERTY_SUPPORT_* defines
+  /// </summary>
+  [Flags]     // added this flags attribute
+  public enum KSPropertySupport
+  {
+    Get = 1,
+    Set = 2
+  }
+
+  /// <summary>
   /// From TVAudioMode
   /// </summary>
   [Flags]
