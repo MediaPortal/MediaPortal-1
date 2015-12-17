@@ -227,8 +227,9 @@ namespace TvService
         }
         catch (InvalidOperationException) {}
 
-        if (_tvController.AllCardsIdle == false)
-          return;
+        //remove following check to enable multi-card epg grabbing (still beta)
+        //if (_tvController.AllCardsIdle == false)
+        //  return;
         foreach (EpgCard card in _epgCards)
         {
           //Log.Epg("card:{0} grabbing:{1}", card.Card.IdCard, card.IsGrabbing);
@@ -236,8 +237,9 @@ namespace TvService
             return;
           if (card.IsGrabbing)
             continue;
-          if (_tvController.AllCardsIdle == false)
-            return;
+          //remove following check to enable multi-card epg grabbing (still beta)
+          //if (_tvController.AllCardsIdle == false)
+          //  return;
           GrabEpgOnCard(card);
         }
       }

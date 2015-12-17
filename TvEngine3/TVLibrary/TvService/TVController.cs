@@ -1662,7 +1662,13 @@ namespace TvService
         }
 
         Fire(this, new TvServerEventArgs(TvServerEventType.StartTimeShifting, GetVirtualCard(user), (User)user));
-        StopEPGgrabber();        
+
+        //remove following check to enable multi-card epg grabbing (still beta)
+        Card card = Card.Retrieve(user.CardId);
+        if (card != null && card.GrabEPG)
+        {
+          StopEPGgrabber();
+        }
 
         bool isTimeShifting;
         try
@@ -2642,7 +2648,9 @@ namespace TvService
         user.Priority = UserFactory.GetDefaultPriority(user.Name, user.Priority);
         Channel channel = Channel.Retrieve(idChannel);
         Log.Write("Controller: StartTimeShifting {0} {1}", channel.DisplayName, channel.IdChannel);
-        StopEPGgrabber();
+
+        //remove following check to enable multi-card epg grabbing (still beta)
+        //StopEPGgrabber();
 
         IDictionary<CardDetail, ICardTuneReservationTicket> tickets = null;
         try

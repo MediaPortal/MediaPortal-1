@@ -379,9 +379,14 @@ namespace TvService
         return false;
       }
       //remove following check to enable multi-card epg grabbing (still beta)
-      if (_tvController.AllCardsIdle == false)
+      //if (_tvController.AllCardsIdle == false)
+      //{
+      //  Log.Epg("Epg: card:{0} cards are not idle", Card.IdCard);
+      //  return false;
+      //}
+      if (!_card.GrabEPG)
       {
-        Log.Epg("Epg: card:{0} cards are not idle", Card.IdCard);
+        Log.Epg("Epg: card:{0} not enable for grabbing", Card.IdCard);
         return false;
       }
 

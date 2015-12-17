@@ -253,7 +253,17 @@ namespace TvService
     {
       if (_timeshiftingEpgGrabberEnabled)
       {
-        _cardHandler.Card.GrabEpg();
+        Channel channel = Channel.Retrieve(user.IdChannel);
+        Card card = Card.Retrieve(user.CardId);
+        if (card.GrabEPG || channel.GrabEpg)
+        {
+          _cardHandler.Card.GrabEpg();
+        }
+        else
+        {
+          Log.Info("TimeshiftingEPG: card [{0}] for channel [{1}] is not configured for grabbing epg",
+            card.Name, channel.DisplayName);
+        }
       }
     }
 
