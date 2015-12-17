@@ -544,6 +544,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
 
     private bool _isTwinhan = false;
     private bool _isElgatoDriver = false;
+    private bool _isElgatoPbdaDriver = false;
     private bool _isTerraTecDriver = false;
     private bool _isCaInterfaceOpen = false;
     #pragma warning disable 0414
@@ -591,6 +592,8 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
 
     private bool _isRemoteControlInterfaceOpen = false;
     private ITwinhanRemoteControl _remoteControlInterface = null;
+
+    private IDiseqcDevice _elgatoPbdaDiseqcInterface = null;
 
     #endregion
 
@@ -732,7 +735,8 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
     /// <summary>
     /// Attempt to read the driver information from the tuner.
     /// </summary>
-    private void ReadDriverInfo()
+    /// <returns><c>true</c> if the driver information is read successfully, otherwise <c>false</c></returns>
+    private bool ReadDriverInfo()
     {
       this.LogDebug("Twinhan: read driver information");
       for (int i = 0; i < DRIVER_INFO_SIZE; i++)
@@ -744,7 +748,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
       if (hr != (int)NativeMethods.HResult.S_OK || returnedByteCount != DRIVER_INFO_SIZE)
       {
         this.LogWarn("Twinhan: failed to read driver information, hr = 0x{0:x}, byte count = {1}", hr, returnedByteCount);
-        return;
+        return false;
       }
 
       //this.LogDebug("Twinhan: number of DriverInfo bytes returned is {0}", returnedByteCount);
@@ -761,6 +765,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
       this.LogDebug("  hardware info               = {0}", driverInfo.HardwareInfo);
       this.LogDebug("  CI event mode supported     = {0}", (driverInfo.CiMmiFlags & 0x01) != 0);
       this.LogDebug("  simulator mode              = {0}", driverInfo.SimType);
+      return true;
     }
 
     /// <summary>
@@ -1178,19 +1183,6 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
         return false;
       }
 
-      // Elgato EyeTV Sat Free tuners expose the Twinhan property set but don't
-      // seem to work properly when it is used.
-      // http://forum.team-mediaportal.com/threads/tbs-5990-q-box-s2-hdtv-kein-signal.126540/
-      // On the other hand, Elgato EyeTV Sat [with CI] tuners also expose the
-      // property set and *do* seem to work properly.
-      // http://forum.team-mediaportal.com/threads/after-restart-tv-stops-playing-after-first-attempt.132016/
-      if (tunerExternalId.ToLowerInvariant().Contains("usb#vid_0fd9&pid_003b#"))
-      {
-        this.LogDebug("Twinhan: detected Elgato EyeTV Sat Free, not supported");
-        Release.ComObject("Twinhan property set", ref _propertySet);
-        return false;
-      }
-
       this.LogInfo("Twinhan: extension supported");
       _isTwinhan = true;
       _tunerSupportedBroadcastStandards = tunerSupportedBroadcastStandards;
@@ -1212,8 +1204,15 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
       else
       {
         tunerFilterName = tunerFilterName.ToLowerInvariant();
-        if (tunerFilterName.Contains("eyetv"))    // EyeTV Sat - USB VID = 0FD9, PID = 0025/002A/0036
+        if (tunerFilterName.Contains("eyetv"))
         {
+          // Elgato EyeTV Sat and Elgato EyeTV Sat Free tuners expose the
+          // Twinhan property set. Older drivers work fine. At some point the
+          // driver seems to have been rewritten or heavily reworked. All new
+          // drivers do not lock on signal if the LNB and/or DiSEqC IOCTLs are
+          // used. Refer to:
+          // http://forum.team-mediaportal.com/threads/tbs-5990-q-box-s2-hdtv-kein-signal.126540/
+          // http://forum.team-mediaportal.com/threads/after-restart-tv-stops-playing-after-first-attempt.132016/
           this.LogDebug("Twinhan: this tuner has an Elgato driver");
           _isElgatoDriver = true;
         }
@@ -1229,8 +1228,26 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
       {
         ReadPidFilterInfo();
       }
-      ReadDriverInfo();
+      bool isDriverInfoReadable = ReadDriverInfo();
+      _isElgatoPbdaDriver = _isElgatoDriver && !isDriverInfoReadable;
       ReadRegistryParams();
+
+      // Elgato EyeTV tuners with PBDA drivers must use the Microsoft BDA
+      // DiSEqC interface.
+      if (_isElgatoPbdaDriver && (tunerSupportedBroadcastStandards & BroadcastStandard.MaskSatellite) != 0)
+      {
+        _elgatoPbdaDiseqcInterface = new MicrosoftBdaDiseqc.MicrosoftBdaDiseqc();
+        if (!_elgatoPbdaDiseqcInterface.Initialise(tunerExternalId, tunerSupportedBroadcastStandards, context))
+        {
+          this.LogWarn("Twinhan: failed to initialise Elgato PBDA DiSEqC interface");
+          IDisposable d = _elgatoPbdaDiseqcInterface as IDisposable;
+          if (d != null)
+          {
+            d.Dispose();
+          }
+          _elgatoPbdaDiseqcInterface = null;
+        }
+      }
       return true;
     }
 
@@ -1269,6 +1286,11 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
       if (!_isTwinhan)
       {
         this.LogWarn("Twinhan: not initialised or interface not supported");
+        return;
+      }
+
+      if (_isElgatoPbdaDriver)
+      {
         return;
       }
 
@@ -2052,6 +2074,15 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
     /// <returns><c>true</c> if the command is sent successfully, otherwise <c>false</c></returns>
     bool IDiseqcDevice.SendCommand(byte[] command)
     {
+      if (_isElgatoPbdaDriver)
+      {
+        if (_elgatoPbdaDiseqcInterface != null)
+        {
+          return _elgatoPbdaDiseqcInterface.SendCommand(command);
+        }
+        return false;
+      }
+
       this.LogDebug("Twinhan: send DiSEqC command");
 
       if (!_isTwinhan)
@@ -2122,6 +2153,15 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
     /// <returns><c>true</c> if the command is sent successfully, otherwise <c>false</c></returns>
     bool IDiseqcDevice.SendCommand(ToneBurst command)
     {
+      if (_isElgatoPbdaDriver)
+      {
+        if (_elgatoPbdaDiseqcInterface != null)
+        {
+          return _elgatoPbdaDiseqcInterface.SendCommand(command);
+        }
+        return false;
+      }
+
       this.LogDebug("Twinhan: send tone burst command, command = {0}", command);
 
       if (!_isTwinhan)
@@ -2153,6 +2193,15 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
     /// <returns><c>true</c> if the tone state is set successfully, otherwise <c>false</c></returns>
     bool IDiseqcDevice.SetToneState(Tone22kState state)
     {
+      if (_isElgatoPbdaDriver)
+      {
+        if (_elgatoPbdaDiseqcInterface != null)
+        {
+          return _elgatoPbdaDiseqcInterface.SetToneState(state);
+        }
+        return false;
+      }
+
       this.LogDebug("Twinhan: set tone state, state = {0}", state);
 
       if (!_isTwinhan)
@@ -2204,8 +2253,18 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
     /// <returns><c>true</c> if the response is read successfully, otherwise <c>false</c></returns>
     bool IDiseqcDevice.ReadResponse(out byte[] response)
     {
-      this.LogDebug("Twinhan: read DiSEqC response");
       response = null;
+
+      if (_isElgatoPbdaDriver)
+      {
+        if (_elgatoPbdaDiseqcInterface != null)
+        {
+          return _elgatoPbdaDiseqcInterface.ReadResponse(out response);
+        }
+        return false;
+      }
+
+      this.LogDebug("Twinhan: read DiSEqC response");
 
       if (!_isTwinhan)
       {
@@ -2325,6 +2384,16 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
       {
         CloseConditionalAccessInterface(isDisposing);
         CloseRemoteControlListenerInterface(isDisposing);
+
+        if (isDisposing)
+        {
+          IDisposable d = _elgatoPbdaDiseqcInterface as IDisposable;
+          if (d != null)
+          {
+            d.Dispose();
+          }
+          _elgatoPbdaDiseqcInterface = null;
+        }
       }
       if (_generalBuffer != IntPtr.Zero)
       {

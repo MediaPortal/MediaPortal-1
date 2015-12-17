@@ -94,6 +94,10 @@
       <Project>{AE752FB4-7450-4150-9BAD-19EFA9D2AC37}</Project>
       <Name>TvLibrary.Interfaces</Name>
     </ProjectReference>
+    <ProjectReference Include="..\MicrosoftBdaDiseqc\MicrosoftBdaDiseqc.csproj">
+      <Project>{1C632954-8D35-41F2-B994-E4D45857BC6D}</Project>
+      <Name>MicrosoftBdaDiseqc</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
