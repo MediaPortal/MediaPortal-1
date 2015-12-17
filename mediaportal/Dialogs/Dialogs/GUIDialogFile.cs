@@ -841,7 +841,7 @@ namespace MediaPortal.Dialogs
                   string strDestinationFile = sourceFolder + "\\" + strDestinationName + strExtension;
                   try
                   {
-                    File.Move(item.Path, strDestinationFile);
+                    RenameRecording(item.Path, strDestinationFile);
                   }
                   catch (Exception)
                   {
@@ -887,6 +887,54 @@ namespace MediaPortal.Dialogs
           }
           break;
       }
+    }
+
+    private void RenameRecording(string recordingFilename, string destinationFile)
+    {
+      File.Move(recordingFilename, destinationFile);
+
+      int pos = recordingFilename.LastIndexOf(@"\");
+      if (pos < 0)
+        return;
+      string path = Path.GetDirectoryName(recordingFilename);
+      string filename = Path.GetFileNameWithoutExtension(recordingFilename);
+      string destinationFilename = Path.GetFileNameWithoutExtension(destinationFile);
+
+      string[] files;
+      try
+      {
+        files = Directory.GetFiles(path);
+        foreach (string fileName in files)
+        {
+          try
+          {
+            if (fileName.ToLowerInvariant().IndexOf(filename) >= 0)
+            {
+              //rename Thumbnails
+              if (fileName.ToLowerInvariant().IndexOf(".jpg") >= 0)
+              {
+                File.Move(fileName, path + "\\" + destinationFilename + ".jpg");
+              }
+              //rename comskip txt file
+              if (fileName.ToLowerInvariant().IndexOf(".txt") >= 0)
+              {
+                File.Move(fileName, path + "\\" + destinationFilename + ".txt");
+              }
+              //rename Matroska tag file
+              if (fileName.ToLowerInvariant().IndexOf(".xml") >= 0)
+              {
+                File.Move(fileName, path + "\\" + destinationFilename + ".xml");
+              }
+              if (fileName.ToLowerInvariant().IndexOf(".nfo") >= 0)
+              {
+                File.Move(fileName, path + "\\" + destinationFilename + ".nfo");
+              }
+            }
+          }
+          catch (Exception) { }
+        }
+      }
+      catch (Exception) { }
     }
 
     private void CleanDirectoryReadOnlyAttributes(string targetDirectory)
