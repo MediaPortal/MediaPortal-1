@@ -338,7 +338,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Pbda
       int hr = _caInterface.get_SmartCardInfo(out cardName, out cardManufacturer, out isDaylightSavings, out ratingRegion, out timeOffset, out lang, out locationCode);
       if (hr != (int)NativeMethods.HResult.S_OK)
       {
-        this.LogError("PBDA CableCARD: failed to read smart card information, hr = 0x{0:x}");
+        this.LogError("PBDA CableCARD: failed to read smart card information, hr = 0x{0:x}", hr);
         return false;
       }
       this.LogDebug("  card name         = {0}", cardName);
@@ -359,21 +359,23 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Pbda
       hr = _caInterface.get_SmartCardApplications(out appCount, maxAppCount, applicationDetails);
       if (hr != (int)NativeMethods.HResult.S_OK)
       {
-        this.LogError("PBDA CableCARD: failed to read smart card application list, hr = 0x{0:x}");
+        this.LogError("PBDA CableCARD: failed to read smart card application list, hr = 0x{0:x}", hr);
         return false;
       }
 
       // Translate into standard DRI application list format.
       int byteCount = 1 + (7 * appCount);   // + 1 for app count, (1 + 2 + 1 + 1 + 2) for app type, version, name length, name NULL termination, URL length
-      foreach (SmartCardApplication app in applicationDetails)
+      for (int i = 0; i < appCount; i++)
       {
+        SmartCardApplication app = applicationDetails[i];
         byteCount += app.pbstrApplicationName.Length + app.pbstrApplicationURL.Length;
       }
       byte[] applicationList = new byte[byteCount];
       applicationList[0] = (byte)appCount;
       int offset = 1;
-      foreach (SmartCardApplication app in applicationDetails)
+      for (int i = 0; i < appCount; i++)
       {
+        SmartCardApplication app = applicationDetails[i];
         applicationList[offset++] = (byte)app.ApplicationType;
         applicationList[offset++] = (byte)(app.ApplicationVersion >> 8);
         applicationList[offset++] = (byte)(app.ApplicationVersion & 0xff);
