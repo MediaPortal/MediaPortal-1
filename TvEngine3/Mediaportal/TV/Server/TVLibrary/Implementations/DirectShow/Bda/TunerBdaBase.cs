@@ -48,6 +48,24 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
   /// </summary>
   internal abstract class TunerBdaBase : TunerDirectShowMpeg2TsBase, IESEvents
   {
+    #region structs
+
+    private struct EventRegistration
+    {
+      public Guid EventIid;
+      public int RegistrationCookie;
+      public IConnectionPoint ConnectionPoint;
+
+      public EventRegistration(Guid eventIid, int registrationCookie, IConnectionPoint connectionPoint)
+      {
+        EventIid = eventIid;
+        RegistrationCookie = registrationCookie;
+        ConnectionPoint = connectionPoint;
+      }
+    }
+
+    #endregion
+
     #region constants
 
     private static readonly Guid PBDA_PT_FILTER_CLSID = new Guid(0x89c2e132, 0xc29b, 0x11db, 0x96, 0xfa, 0x00, 0x50, 0x56, 0xc0, 0x00, 0x08);
@@ -145,10 +163,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
     /// <summary>
     /// A dictionary of PBDA event registrations.
     /// </summary>
-    /// <remarks>
-    /// event ID => [cookie, connection point]
-    /// </remarks>
-    private IDictionary<Guid, KeyValuePair<int, IConnectionPoint>> _eventRegistrations = new Dictionary<Guid, KeyValuePair<int, IConnectionPoint>>();
+    private IList<EventRegistration> _eventRegistrations = new List<EventRegistration>();
 
     #endregion
 
@@ -597,18 +612,30 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
 
       this.LogDebug("BDA base: advise event service connection points...");
       IntPtr fetchCount = Marshal.AllocHGlobal(sizeof(int));
+      IEnumConnectionPoints connectionPointEnum = null;
       try
       {
-        IEnumConnectionPoints connectionPointEnum;
         connectionPointContainer.EnumConnectionPoints(out connectionPointEnum);
         IConnectionPoint[] connectionPoints = new IConnectionPoint[2];
         while (connectionPointEnum.Next(1, connectionPoints, fetchCount) == (int)NativeMethods.HResult.S_OK && Marshal.ReadInt32(fetchCount, 0) == 1)
         {
           IConnectionPoint connectionPoint = connectionPoints[0];
+          if (connectionPoint == null)
+          {
+            this.LogWarn("BDA base: event service connection point is null");
+            break;
+          }
+
           Guid iid = Guid.Empty;
           int cookie;
           connectionPoint.GetConnectionInterface(out iid);
           if (
+            // IESEvents is the only IID advertised for the Elgato EyeTV Sat on
+            // W10 with driver 1.12.00.65. Other events not listed here might
+            // be of interest but we can't register if we don't implement the
+            // call back interface.
+            iid == typeof(IESEvents).GUID ||
+            iid == typeof(IESEvent).GUID ||
             iid == typeof(IESCloseMmiEvent).GUID ||
             iid == typeof(IESFileExpiryDateEvent).GUID ||
             iid == typeof(IESIsdbCasResponseEvent).GUID ||
@@ -622,7 +649,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
             try
             {
               connectionPoint.Advise((IESEvents)this, out cookie);
-              _eventRegistrations.Add(iid, new KeyValuePair<int, IConnectionPoint>(cookie, connectionPoint));
+              _eventRegistrations.Add(new EventRegistration(iid, cookie, connectionPoint));
+              continue;
             }
             catch (Exception ex)
             {
@@ -631,11 +659,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
           }
           else
           {
-            // These events might be interesting but we can't register if we
-            // don't implement the call back interface.
             this.LogDebug("  other, IID = {0}", iid);
-            Release.ComObject(string.Format("base BDA tuner event service connection point {0}", iid), ref connectionPoint);
           }
+          Release.ComObject(string.Format("base BDA tuner event service connection point {0}", iid), ref connectionPoint);
         }
       }
       catch (Exception ex)
@@ -645,6 +671,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
       finally
       {
         Marshal.FreeHGlobal(fetchCount);
+        Release.ComObject("base BDA tuner event service connection point enumerator", ref connectionPointEnum);
         Release.ComObject("base BDA tuner event service", ref obj);
       }
     }
@@ -653,10 +680,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
     {
       this.LogDebug("BDA base: unregister for events");
 
-      foreach (KeyValuePair<int, IConnectionPoint> registration in _eventRegistrations.Values)
+      foreach (EventRegistration registration in _eventRegistrations)
       {
-        registration.Value.Unadvise(registration.Key);
-        IConnectionPoint connectionPoint = registration.Value;
+        registration.ConnectionPoint.Unadvise(registration.RegistrationCookie);
+        IConnectionPoint connectionPoint = registration.ConnectionPoint;
         Release.ComObject("base BDA tuner event registration connection point", ref connectionPoint);
       }
       _eventRegistrations.Clear();

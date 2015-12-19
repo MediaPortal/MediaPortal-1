@@ -64,7 +64,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
 
     // Graph event registration.
     private IRegisterServiceProvider _registerServiceProvider = null;
-    private BroadcastEventService _broadcastEventService = null;
+    private IConnectionPoint _broadcastEventServiceConnectionPoint = null;
     private int _broadcastEventRegistrationCookie = -1;
 
     #endregion
@@ -250,16 +250,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
         {
           hr = serviceProvider.QueryService(typeof(BroadcastEventService).GUID, typeof(IBroadcastEvent).GUID, out obj);
         }
-        if (hr == (int)NativeMethods.HResult.S_OK)
+        if (hr == (int)NativeMethods.HResult.S_OK && obj != null)
         {
-          _broadcastEventService = obj as BroadcastEventService;
-          if (_broadcastEventService == null)
+          this.LogDebug("DirectShow base: broadcast event service already registered");
+          if (!(obj is BroadcastEventService))
           {
-            hr = (int)NativeMethods.HResult.E_FAIL;
-          }
-          else
-          {
-            this.LogDebug("DirectShow base: broadcast event service already registered");
+            this.LogWarn("DirectShow base: registered broadcast event service implementation is not a broadcast service instance");
           }
         }
       }
@@ -281,40 +277,49 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
         // The event service should be available, even on XP.
         try
         {
-          _broadcastEventService = new BroadcastEventService();
+          obj = new BroadcastEventService();
         }
         catch
         {
         }
-        if (_broadcastEventService == null)
+        if (obj == null)
         {
           this.LogWarn("DirectShow base: failed to register for events, broadcast event service not supported/available");
           return;
         }
 
-        hr = _registerServiceProvider.RegisterService(typeof(BroadcastEventService).GUID, _broadcastEventService);
+        hr = _registerServiceProvider.RegisterService(typeof(BroadcastEventService).GUID, obj);
         if (hr != (int)NativeMethods.HResult.S_OK)
         {
           this.LogWarn("DirectShow base: failed to register broadcast event service, hr = 0x{0:x}", hr);
+          Release.ComObject("DirectShow tuner broadcast event service", ref obj);
+          _registerServiceProvider = null;
           return;
         }
       }
 
       try
       {
-        IConnectionPoint connectionPoint = _broadcastEventService as IConnectionPoint;
+        _broadcastEventServiceConnectionPoint = obj as IConnectionPoint;
+        if (_broadcastEventServiceConnectionPoint == null)
+        {
+          this.LogWarn("DirectShow base: failed to register for events, broadcast event service implementation is not a connection point");
+          Release.ComObject("DirectShow tuner broadcast event service", ref obj);
+          return;
+        }
         if (Environment.OSVersion.Version.Major >= 6) // Vista or later
         {
-          connectionPoint.Advise((IBroadcastEventEx)this, out _broadcastEventRegistrationCookie);
+          _broadcastEventServiceConnectionPoint.Advise((IBroadcastEventEx)this, out _broadcastEventRegistrationCookie);
         }
         else
         {
-          connectionPoint.Advise((IBroadcastEvent)this, out _broadcastEventRegistrationCookie);
+          _broadcastEventServiceConnectionPoint.Advise((IBroadcastEvent)this, out _broadcastEventRegistrationCookie);
         }
       }
       catch (Exception ex)
       {
         this.LogWarn(ex, "DirectShow base: failed to register for events, advise failed");
+        _broadcastEventRegistrationCookie = -1;
       }
     }
 
@@ -322,12 +327,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
     {
       this.LogDebug("DirectShow base: unregister for events");
 
-      if (_broadcastEventService != null)
+      if (_broadcastEventServiceConnectionPoint != null)
       {
         if (_broadcastEventRegistrationCookie != -1)
         {
-          IConnectionPoint connectionPoint = _broadcastEventService as IConnectionPoint;
-          connectionPoint.Unadvise(_broadcastEventRegistrationCookie);
+          _broadcastEventServiceConnectionPoint.Unadvise(_broadcastEventRegistrationCookie);
           _broadcastEventRegistrationCookie = -1;
         }
 
@@ -337,7 +341,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
           _registerServiceProvider = null;
         }
 
-        Release.ComObject("DirectShow tuner broadcast event service", ref _broadcastEventService);
+        Release.ComObject("DirectShow tuner broadcast event service connection point", ref _broadcastEventServiceConnectionPoint);
       }
     }
 
