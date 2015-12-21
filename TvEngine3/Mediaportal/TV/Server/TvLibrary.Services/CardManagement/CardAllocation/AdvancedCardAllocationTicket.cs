@@ -69,6 +69,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardAllocation
     {      
       var cardetails = new List<CardDetail>();
 
+      // first check if card can be added
       foreach (CardDetail cardDetail in cardsAvailable)
       {
         ICardTuneReservationTicket ticket = GetCardTuneReservationTicket(cardDetail.Card.IdCard);
@@ -82,11 +83,35 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardAllocation
           IChannel tuningDetail = cardDetail.TuningDetail;
           bool checkTransponder = CheckTransponder(user, 
                                                    cards[cardDetail.Card.IdCard],
-                                                   tuningDetail);
+                                                   tuningDetail, false);
           if (checkTransponder)
             cardetails.Add(cardDetail);
-          }          
+          }
+      }
+
+      // if not card available, we need to try kick timeshifting card
+      if (cardetails.Count == 0)
+      {
+        Log.Debug("start a second check to find an available card");
+        foreach (CardDetail cardDetail in cardsAvailable)
+        {
+          ICardTuneReservationTicket ticket = GetCardTuneReservationTicket(cardDetail.Card.IdCard);
+          if (ticket != null)
+          {
+            cardDetail.SameTransponder = ticket.IsSameTransponder;
+            cardDetail.NumberOfOtherUsers = ticket.NumberOfOtherUsersOnCurrentCard;
+            cardDetail.ChannelTimeshiftingOnOtherMux = ticket.ChannelTimeshiftingOnOtherMux;
+            LogNumberOfOtherUsersFound(cardDetail);
+            IDictionary<int, ITvCardHandler> cards = ServiceManager.Instance.InternalControllerService.CardCollection;
+            IChannel tuningDetail = cardDetail.TuningDetail;
+            bool checkTransponder = CheckTransponder(user,
+                                                     cards[cardDetail.Card.IdCard],
+                                                     tuningDetail, true);
+            if (checkTransponder)
+              cardetails.Add(cardDetail);
+          }
         }
+      }
 
       cardetails.SortStable();
 
