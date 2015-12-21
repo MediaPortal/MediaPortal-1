@@ -1688,21 +1688,29 @@ namespace TvService
             Log.Info("user:{0} card:{1} sub:{2} add stream:{3}", user.Name, user.CardId, user.SubChannel, fileName);
             if (File.Exists(fileName))
             {
-              _streamer.Start();
+              if (_streamer != null)
+              {
+                _streamer.Start();
 
-              //  Default to tv
-              bool isTv = true;
+                //  Default to tv
+                bool isTv = true;
 
-              ITvSubChannel subChannel = _cards[cardId].Card.GetSubChannel(user.SubChannel);
+                ITvSubChannel subChannel = _cards[cardId].Card.GetSubChannel(user.SubChannel);
 
-              if (subChannel != null && subChannel.CurrentChannel != null)
-                isTv = subChannel.CurrentChannel.IsTv;
+                if (subChannel != null && subChannel.CurrentChannel != null)
+                  isTv = subChannel.CurrentChannel.IsTv;
+                else
+                  Log.Error("SubChannel or CurrentChannel is null when starting streaming");
+
+                RtspStream stream = new RtspStream(String.Format("stream{0}.{1}", cardId, user.SubChannel), fileName,
+                  _cards[cardId].Card, isTv);
+                _streamer.AddStream(stream);
+              }
               else
-                Log.Error("SubChannel or CurrentChannel is null when starting streaming");
-
-              RtspStream stream = new RtspStream(String.Format("stream{0}.{1}", cardId, user.SubChannel), fileName,
-                                                 _cards[cardId].Card, isTv);
-              _streamer.AddStream(stream);
+              {
+                Log.Error("streamer is null when starting streaming");
+                return TvResult.UnknownError;
+              }
             }
             else
             {
@@ -2031,7 +2039,10 @@ namespace TvService
           {
             Log.Write("Controller:Timeshifting stopped on card:{0}", cardId);
             int subChannel = user.SubChannel;
-            _streamer.Remove(String.Format("stream{0}.{1}", cardId, subChannel));
+            if (_streamer != null)
+            {
+              _streamer.Remove(String.Format("stream{0}.{1}", cardId, subChannel));
+            }
           }
           StartEPGgrabber();
           UpdateChannelStatesForUsers();
