@@ -1,0 +1,264 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <id>426144</id>
+  <defaultcontrol>2</defaultcontrol>
+  <allowoverlay>no</allowoverlay>
+  <define>#header.label:Pipes</define>
+  <define>#header.hover:hover_pipes.png</define>
+  <controls>
+    <control>
+      <type>image</type>
+      <id>1</id>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>1920</width>
+      <height>1080</height>
+      <texture>gamebg.jpg</texture>
+    </control>
+    <control>
+      <type>label</type>
+      <id>1</id>
+      <posX>45</posX>
+      <posY>15</posY>
+      <label>#header.label</label>
+      <font>Label</font>
+      <align>left</align>
+      <textcolor>ffffd700</textcolor>
+    </control>
+    <import>common.time.xml</import>
+    <control>
+      <type>label</type>
+      <description>Score</description>
+      <id>31</id>
+      <posX>2950</posX>
+      <posY>87</posY>
+      <label>#pipes_title</label>
+      <font>font18</font>
+      <textcolor>20ffffff</textcolor>
+    </control>
+    <control>
+      <description>Button background</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>50</posX>
+      <posY>205</posY>
+      <height>290</height>
+      <width>420</width>
+      <texture>am-background.png</texture>
+      <colordiffuse>50ffffff</colordiffuse>
+      <animation effect="slide" time="400" start="-300,0">WindowOpen</animation>
+      <animation effect="slide" time="400" end="0,-300">WindowClose</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+    </control>
+    <control>
+      <type>group</type>
+      <description>group element</description>
+      <layout>StackLayout(0, vertical, true)</layout>
+      <posX>70</posX>
+      <posY>225</posY>
+      <animation effect="slide" time="400" start="-300,0">WindowOpen</animation>
+      <animation effect="slide" time="400" end="0,-300">WindowClose</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <control>
+        <description>New Game</description>
+        <type>button</type>
+        <label>19002</label>
+        <id>2</id>
+        <onleft>10</onleft>
+        <onright>10</onright>
+        <onup>17</onup>
+        <ondown>8</ondown>
+      </control>
+      <control>
+        <type>checkbutton</type>
+        <description>Timed Game</description>
+        <id>8</id>
+        <onleft>10</onleft>
+        <onright>10</onright>
+        <onup>2</onup>
+        <ondown>4</ondown>
+        <label>635</label>
+      </control>
+      <control>
+        <type>checkbutton</type>
+        <description>Sounds</description>
+        <id>4</id>
+        <onleft>10</onleft>
+        <onright>10</onright>
+        <onup>8</onup>
+        <ondown>6</ondown>
+        <label>19004</label>
+      </control>
+      <control>
+        <type>checkbutton</type>
+        <description>Keyboard</description>
+        <id>6</id>
+        <onleft>10</onleft>
+        <onright>10</onright>
+        <onup>4</onup>
+        <ondown>2</ondown>
+        <label>101000</label>
+      </control>
+    </control>
+    <control>
+      <description>info group</description>
+      <type>group</type>
+      <animation effect="slide" time="400" start="-300,0">WindowOpen</animation>
+      <animation effect="slide" time="400" end="0,-300">WindowClose</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <control>
+        <description>Scoreboard background</description>
+        <type>image</type>
+        <id>1</id>
+        <posX>50</posX>
+        <posY>562</posY>
+        <width>473</width>
+        <height>393</height>
+        <texture mask="cdcase_mask.png">black.png</texture>
+        <colordiffuse>40ffffff</colordiffuse>
+      </control>
+      <control>
+        <type>label</type>
+        <description>Level: label</description>
+        <id>207</id>
+        <posX>100</posX>
+        <posY>703</posY>
+        <label>19006</label>
+        <font>font14</font>
+      </control>
+      <control>
+        <type>label</type>
+        <description>Level</description>
+        <id>208</id>
+        <posX>450</posX>
+        <posY>703</posY>
+        <label>#pipes_level</label>
+        <font>font14</font>
+        <align>right</align>
+      </control>
+      <control>
+        <type>label</type>
+        <description>Moves: label</description>
+        <id>205</id>
+        <posX>100</posX>
+        <posY>759</posY>
+        <label>Moves</label>
+        <font>font14</font>
+      </control>
+      <control>
+        <type>label</type>
+        <description>Moves</description>
+        <id>206</id>
+        <posX>450</posX>
+        <posY>759</posY>
+        <label>#pipes_moves</label>
+        <font>font14</font>
+        <align>right</align>
+      </control>
+      <control>
+        <type>label</type>
+        <description>Score: label</description>
+        <id>201</id>
+        <posX>100</posX>
+        <posY>815</posY>
+        <label>19005</label>
+        <font>font14</font>
+      </control>
+      <control>
+        <type>label</type>
+        <description>Score</description>
+        <id>202</id>
+        <posX>450</posX>
+        <posY>815</posY>
+        <label>#pipes_score</label>
+        <font>font14</font>
+        <align>right</align>
+      </control>
+      <control>
+        <type>label</type>
+        <description>Highscore: label</description>
+        <id>203</id>
+        <posX>100</posX>
+        <posY>871</posY>
+        <label>19008</label>
+        <font>font14</font>
+      </control>
+      <control>
+        <type>label</type>
+        <description>Highscore</description>
+        <id>204</id>
+        <posX>450</posX>
+        <posY>871</posY>
+        <label>#pipes_highscore</label>
+        <font>font14</font>
+        <align>right</align>
+      </control>
+      <control>
+        <type>label</type>
+        <description>Time</description>
+        <id>25</id>
+        <posX>100</posX>
+        <posY>583</posY>
+        <label>#pipes_time</label>
+        <font>font36</font>
+        <textcolor>60ffffff</textcolor>
+      </control>
+    </control>
+    <control>
+      <type>group</type>
+      <description>group element</description>
+      <id>0</id>
+      <posX>719</posX>
+      <posY>140</posY>
+      <width>1000</width>
+      <height>815</height>
+      <animation effect="slide" time="400" start="-300,0">WindowOpen</animation>
+      <animation effect="slide" time="400" end="0,-300">WindowClose</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <mpe>
+        <layout>Grid</layout>
+        <spring>no</spring>
+        <spacing>0</spacing>
+        <padding>
+          <top>0</top>
+          <right>0</right>
+          <bottom>0</bottom>
+          <left>0</left>
+        </padding>
+      </mpe>
+      <control>
+        <type>Pipes</type>
+        <description>Pipes control</description>
+        <id>10</id>
+        <posX>729</posX>
+        <posY>154</posY>
+        <width>986</width>
+        <height>801</height>
+        <colordiffuse>60ffffff</colordiffuse>
+        <onleft>2</onleft>
+        <onright>2</onright>
+        <onup>2</onup>
+        <ondown>2</ondown>
+        <nextblocky>368</nextblocky>
+        <texture>Pipes\background.png</texture>
+        <texturefocus>Pipes\background_focus.png</texturefocus>
+        <font>font16</font>
+        <textcolor>ffffd700</textcolor>
+        <onback>2</onback>
+      </control>
+    </control>
+    <control>
+      <type>label</type>
+      <description>Score</description>
+      <id>28</id>
+      <posX>729</posX>
+      <posY>101</posY>
+      <label>#pipes_status</label>
+      <font>font14</font>
+    </control>
+  </controls>
+</window>

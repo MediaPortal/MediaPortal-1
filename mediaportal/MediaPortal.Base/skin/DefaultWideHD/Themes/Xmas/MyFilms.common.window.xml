@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!--version="1.0" encoding="utf-8" standalone="yes"-->
+<window>
+  <controls>
+    <control>
+      <description>background top overlay</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>1920</width>
+      <height>405</height>
+      <texture>overlay_top.png</texture>
+      <colordiffuse>ccffffff</colordiffuse>
+    </control>
+    <!--  Current Module, Number of Files, Config/DB name, User name (if set)  -->
+    <control>
+      <type>label</type>
+      <id>1</id>
+      <posX>45</posX>
+      <posY>15</posY>
+      <width>1425</width>
+      <label>#myfilms.config.pluginname/#myfilms.view/#myfilms.select</label>
+      <font>Label</font>
+      <align>left</align>
+      <textcolor>ffffd700</textcolor>
+    </control>
+    <control>
+      <description>Number of Files Label</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>45</posX>
+      <posY>52</posY>
+      <label>#selectedindex/#myfilms.nbobjects.value #itemtype</label>
+      <align>left</align>
+      <textcolor>ffffd700</textcolor>
+      <font>font10</font>
+      <visible>string.equals(#selectedindex)+string.equals(#itemcount)</visible>
+    </control>
+    <control>
+      <description>Config, User Name, Test Mode</description>
+      <type>fadelabel</type>
+      <id>1</id>
+      <posX>1866</posX>
+      <posY>52</posY>
+      <width>750</width>
+      <align>right</align>
+      <font>font10</font>
+      <textcolor>ffffd700</textcolor>
+      <label>#myfilms.config.currentconfig#(iif(neq(#myfilms.user.name.value,''),': #myfilms.user.name.value',''))#(iif(eq(#myfilms.user.onlinestatus,'online'),' (Trakt)',''))#(iif(neq(#myfilms.config.pluginmode,'normal'),' | #myfilms.config.pluginmode mode',''))</label>
+    </control>
+    <!-- GLOBAL FILTERS -->
+    <control>
+      <description>Global Filter Icons group</description>
+      <type>group</type>
+      <posX>45</posX>
+      <posY>120</posY>
+      <layout>StackLayout(5,Horizontal,true)</layout>
+      <dimColor>ffffffff</dimColor>
+      <control>
+        <type>image</type>
+        <description>UnWatched Global Filter Icon</description>
+        <id>0</id>
+        <width>28</width>
+        <keepaspectratio>yes</keepaspectratio>
+        <texture>MyFilms\overlayunwatched.png</texture>
+        <visible>string.contains(#myfilms.globalfilter.unwatched,True)</visible>
+      </control>
+      <control>
+        <type>image</type>
+        <description>Media Available Global Filter Icon</description>
+        <id>0</id>
+        <width>30</width>
+        <keepaspectratio>yes</keepaspectratio>
+        <texture>MyFilms\online.png</texture>
+        <visible>string.contains(#myfilms.globalfilter.isonline,True)</visible>
+      </control>
+      <control>
+        <type>image</type>
+        <description>Trailer Global Filter Icon</description>
+        <id>0</id>
+        <width>40</width>
+        <keepaspectratio>yes</keepaspectratio>
+        <texture>MyFilms\Trailer.png</texture>
+        <visible>string.contains(#myfilms.globalfilter.trailersonly,True)</visible>
+      </control>
+      <control>
+        <type>image</type>
+        <description>Rating Global Filter Icon</description>
+        <id>0</id>
+        <width>33</width>
+        <keepaspectratio>yes</keepaspectratio>
+        <texture>stargood.png</texture>
+        <visible>string.contains(#myfilms.globalfilter.minrating,True)</visible>
+      </control>
+      <!-- <control>
+        <type>label</type>
+        <description>Rating Global Filter Value</description>
+        <id>1</id>
+        <label>#myfilms.globalfilter.minratingvalue</label>
+        <visible>string.contains(#myfilms.globalfilter.minratingvalue)</visible>
+      </control> -->
+    </control>
+    <!-- END GLOBAL FILTER SECTION -->
+    <!-- DOWNLOAD/STATUS INDICATORS/Message -->
+    <control>
+      <description>Download Icon - whenever background downloading is in process</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>937</posX>
+      <posY>49</posY>
+      <width>45</width>
+      <texture>MyFilms\download.png</texture>
+      <keepaspectratio>yes</keepaspectratio>
+      <visible>[string.equals(#myfilms.statusmessage)|string.equals(#myfilms.details.downloads.count)|[plugin.isenabled(OnlineVideos)+!string.equals(#OnlineVideos.currentDownloads,0)]]</visible>
+      <animation effect="zoom" start="100,100" end="105,105" time="500" condition="true" pulse="true">conditional</animation>
+      <animation effect="fade" time="250">visiblechange</animation>
+    </control>
+    <control>
+      <description>Global Updates Status Message</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>1039</posX>
+      <posY>57</posY>
+      <width>601</width>
+      <align>left</align>
+      <font>font10</font>
+      <textcolor>90ffffff</textcolor>
+      <label>#myfilms.statusmessage</label>
+      <!-- "Global update active" message -->
+      <animation effect="fade" time="250">visiblechange</animation>
+    </control>
+    <control>
+      <description>Persons icon</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>870</posX>
+      <posY>54</posY>
+      <width>37</width>
+      <keepaspectratio>yes</keepaspectratio>
+      <texture>MyFilms\Persons.png</texture>
+      <visible>string.equals(#myfilms.details.downloads.count)</visible>
+      <animation effect="fade" time="250">visiblechange</animation>
+    </control>
+    <control>
+      <description>Person Image/Info Download Status Messages</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>855</posX>
+      <posY>57</posY>
+      <width>618</width>
+      <align>right</align>
+      <font>font10</font>
+      <textcolor>90ffffff</textcolor>
+      <label>#myfilms.details.downloads.count - #myfilms.details.downloads.name</label>
+      <visible>string.equals(#myfilms.details.downloads.count)</visible>
+      <animation effect="fade" time="250">visiblechange</animation>
+    </control>
+    <!-- OnlineVideos Trailer download indicator -->
+    <control>
+      <description>OnlineVideos icon</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>994</posX>
+      <posY>37</posY>
+      <width>67</width>
+      <height>90</height>
+      <texture>hover_onlinevideos.png</texture>
+      <visible>!string.equals(#myfilms.statusmessage)+[plugin.isenabled(OnlineVideos)+!string.equals(#OnlineVideos.currentDownloads,0)]</visible>
+      <animation effect="fade" time="250">visiblechange</animation>
+    </control>
+    <control>
+      <description>OnlineVideos Trailer downloads count</description>
+      <type>label</type>
+      <id>47016</id>
+      <posX>1065</posX>
+      <posY>57</posY>
+      <align>left</align>
+      <font>font10</font>
+      <label>#OnlineVideos.currentDownloads</label>
+      <textcolor>90ffffff</textcolor>
+      <visible>!string.equals(#myfilms.statusmessage)+[plugin.isenabled(OnlineVideos)+!string.equals(#OnlineVideos.currentDownloads,0)]</visible>
+      <animation effect="fade" time="250">visiblechange</animation>
+    </control>
+    <!-- END DOWNLOAD/STATUS INDICATORS/Message -->
+  </controls>
+</window>

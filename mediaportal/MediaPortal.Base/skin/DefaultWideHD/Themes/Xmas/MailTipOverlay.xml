@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!--version="1.0" encoding="utf-8" standalone="yes"-->
+<window>
+  <id>79700</id>
+  <defaultcontrol>0</defaultcontrol>
+  <allowoverlay>yes</allowoverlay>
+  <controls>
+    <control>
+      <type>image</type>
+      <id>1</id>
+      <width>1920</width>
+      <height>1080</height>
+      <texture>white.png</texture>
+      <colordiffuse>50005eef</colordiffuse>
+    </control>
+    <control>
+      <type>image</type>
+      <id>1</id>
+      <posX>321</posX>
+      <posY>102</posY>
+      <width>1248</width>
+      <height>930</height>
+      <texture>context_background.png</texture>
+      <colordiffuse>ffffffff</colordiffuse>
+    </control>
+    <!-- *** Mail Subject *** -->
+    <control>
+      <description>Mail Subject</description>
+      <type>fadelabel</type>
+      <id>10</id>
+      <posX>390</posX>
+      <posY>138</posY>
+      <width>1042</width>
+      <label>#MailTip.MailSubject</label>
+      <font>font12</font>
+    </control>
+    <!-- *** Mail Provider *** -->
+    <control>
+      <description>Mail Provider Image</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>1459</posX>
+      <posY>138</posY>
+      <width>63</width>
+      <height>63</height>
+      <keepaspectratio>yes</keepaspectratio>
+      <texture>#MailTip.MailboxProviderImage</texture>
+      <align>right</align>
+    </control>
+    <!-- *** Mail Text *** -->
+    <control>
+      <description>Mail Text</description>
+      <type>textboxscrollup</type>
+      <id>10</id>
+      <posX>390</posX>
+      <posY>201</posY>
+      <width>1129</width>
+      <height>729</height>
+      <label>#MailTip.MailText</label>
+    </control>
+    <!-- *** Mail Attachments *** -->
+    <control>
+      <description>divider horizontal</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>381</posX>
+      <posY>946</posY>
+      <width>1140</width>
+      <height>0</height>
+      <texture>hbar1white.png</texture>
+      <colordiffuse>ff6FAFE1</colordiffuse>
+    </control>
+    <control>
+      <description>Mail Subject</description>
+      <type>fadelabel</type>
+      <id>10</id>
+      <posX>390</posX>
+      <posY>954</posY>
+      <width>870</width>
+      <height>789</height>
+      <label>#MailTip.MailAttachment #MailTip.TranslationAttachment</label>
+      <visible>!string.equals(#MailTip.MailAttachment,0)</visible>
+      <font>font9</font>
+    </control>
+    <control>
+      <description>Mail Subject</description>
+      <type>fadelabel</type>
+      <id>10</id>
+      <posX>390</posX>
+      <posY>954</posY>
+      <width>870</width>
+      <label>#MailTip.TranslationNoAttachment</label>
+      <visible>string.equals(#MailTip.MailAttachment,0)</visible>
+      <font>font9</font>
+    </control>
+  </controls>
+</window>
