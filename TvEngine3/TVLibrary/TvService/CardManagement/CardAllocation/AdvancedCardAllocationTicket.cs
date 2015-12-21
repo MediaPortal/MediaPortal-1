@@ -57,7 +57,7 @@ namespace TvService
         if (tvController != null)
         {
           ITvCardHandler card = tvController.CardCollection[cardDetail.Card.IdCard];
-          Log.Info("Controller:    card:{0} type:{1} users: {2}", cardDetail.Card.IdCard, card.Type, cardDetail.NumberOfOtherUsers);              
+          Log.Info("Controller:    card:{0} type:{1} users: {2}", cardDetail.Card.IdCard, card.Type, cardDetail.NumberOfOtherUsers);
         }
       }
     }
@@ -66,24 +66,49 @@ namespace TvService
     {
       var cardetails = new List<CardDetail>();
 
+      // first check if card can be added
       foreach (CardDetail cardDetail in cardsAvailable)
       {
         ICardTuneReservationTicket ticket = GetCardTuneReservationTicket(cardDetail.Card.IdCard);
 
         if (ticket != null)
-        {          
+        {
           cardDetail.SameTransponder = ticket.IsSameTransponder;
           cardDetail.NumberOfOtherUsers = ticket.NumberOfOtherUsersOnCurrentCard;
           LogNumberOfOtherUsersFound(cardDetail);
           IDictionary<int, ITvCardHandler> cards = _controller.CardCollection;
           IChannel tuningDetail = cardDetail.TuningDetail;
-          bool checkTransponder = CheckTransponder(user, 
-                                                   cards[cardDetail.Card.IdCard],                                                    
-                                                   tuningDetail);
+          bool checkTransponder = CheckTransponder(user, cards[cardDetail.Card.IdCard], tuningDetail, false);
           if (checkTransponder)
+          {
             cardetails.Add(cardDetail);
-          }          
+          }
         }
+      }
+
+      // if not card available, we need to try kick timeshifting card
+      if (cardetails.Count == 0)
+      {
+        Log.Debug("start a second check to find an available card");
+        foreach (CardDetail cardDetail in cardsAvailable)
+        {
+          ICardTuneReservationTicket ticket = GetCardTuneReservationTicket(cardDetail.Card.IdCard);
+
+          if (ticket != null)
+          {
+            cardDetail.SameTransponder = ticket.IsSameTransponder;
+            cardDetail.NumberOfOtherUsers = ticket.NumberOfOtherUsersOnCurrentCard;
+            LogNumberOfOtherUsersFound(cardDetail);
+            IDictionary<int, ITvCardHandler> cards = _controller.CardCollection;
+            IChannel tuningDetail = cardDetail.TuningDetail;
+            bool checkTransponder = CheckTransponder(user, cards[cardDetail.Card.IdCard], tuningDetail, true);
+            if (checkTransponder)
+            {
+              cardetails.Add(cardDetail);
+            }
+          }
+        }
+      }
 
       cardetails.SortStable();
 
