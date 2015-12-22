@@ -437,6 +437,11 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Empia
     /// <returns><c>true</c> if the filter is successfully disabled, otherwise <c>false</c></returns>
     bool IMpeg2PidFilter.Disable()
     {
+      if (!_isPidFilterSupported)
+      {
+        return true;
+      }
+
       this.LogDebug("eMPIA: disable PID filter");
       if (!_isEmpia)
       {
@@ -491,7 +496,17 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Empia
     /// <returns><c>true</c> if the filter configuration is successfully applied, otherwise <c>false</c></returns>
     bool IMpeg2PidFilter.ApplyConfiguration()
     {
+      if (!_isPidFilterSupported)
+      {
+        return true;
+      }
+
       this.LogDebug("eMPIA: apply PID filter configuration");
+      if (!_isEmpia)
+      {
+        this.LogWarn("eMPIA: not initialised or interface not supported");
+        return false;
+      }
 
       int hr = ConfigurePidFilter();
       if (hr == (int)NativeMethods.HResult.S_OK)

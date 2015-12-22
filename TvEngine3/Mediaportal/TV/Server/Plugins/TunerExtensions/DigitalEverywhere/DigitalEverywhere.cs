@@ -1655,6 +1655,11 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
     bool IMpeg2PidFilter.ApplyConfiguration()
     {
       this.LogDebug("Digital Everywhere: apply PID filter configuration");
+      if (!_isDigitalEverywhere)
+      {
+        this.LogWarn("Digital Everywhere: not initialised or interface not supported");
+        return false;
+      }
 
       int hr = ConfigurePidFilter(true);
       if (hr == (int)NativeMethods.HResult.S_OK)
