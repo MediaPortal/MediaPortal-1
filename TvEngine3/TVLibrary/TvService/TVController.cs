@@ -1663,7 +1663,7 @@ namespace TvService
 
         Fire(this, new TvServerEventArgs(TvServerEventType.StartTimeShifting, GetVirtualCard(user), (User)user));
 
-        //remove following check to enable multi-card epg grabbing (still beta)
+        // Multi-EPG Grabbing
         Card card = Card.Retrieve(user.CardId);
         if (card != null && card.GrabEPG)
         {
@@ -2660,7 +2660,7 @@ namespace TvService
         Channel channel = Channel.Retrieve(idChannel);
         Log.Write("Controller: StartTimeShifting {0} {1}", channel.DisplayName, channel.IdChannel);
 
-        //remove following check to enable multi-card epg grabbing (still beta)
+        // Multi-EPG Grabbing
         //StopEPGgrabber();
 
         IDictionary<CardDetail, ICardTuneReservationTicket> tickets = null;
@@ -3138,7 +3138,8 @@ namespace TvService
 
     private void StartEPGgrabber()
     {
-      if (_epgGrabber != null && AllCardsIdle)
+      // Multi-EPG Grabbing
+      if (_epgGrabber != null) // && AllCardsIdle)
       {
         Log.Write("Controller: epg start");
         _epgGrabber.Start();
@@ -3367,7 +3368,7 @@ namespace TvService
             if (_epgGrabber != null)
             {
               if (_layer.GetSetting("idleEPGGrabberEnabled", "yes").Value == "yes")
-              {                
+              {
                 StartEPGgrabber();
               }
             }
@@ -3378,7 +3379,7 @@ namespace TvService
             {
               if (_layer.GetSetting("idleEPGGrabberEnabled", "yes").Value == "yes")
               {
-                StopEPGgrabber();                
+                StopEPGgrabber();
               }
             }
           }

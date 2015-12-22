@@ -964,20 +964,25 @@ namespace TvLibrary.Implementations.DVB
         return;
       if (_conditionalAccess.AllowedToStopGraph)
       {
-        FilterState state;
-        ((IMediaControl)_graphBuilder).GetState(10, out state);
+        FilterState state = FilterState.Stopped;
+        var mediaControl = _graphBuilder as IMediaControl;
+        if (mediaControl != null) mediaControl.GetState(10, out state);
         if (state == FilterState.Stopped)
         {
           Log.Log.WriteFile("dvb:StopGraph filterstate already stopped, returning.");
           return;
         }
         Log.Log.WriteFile("dvb:StopGraph");
-        int hr = ((IMediaControl)_graphBuilder).Stop();
-        Log.Log.WriteFile("debug: IMediaControl stopped! hr = 0x{0:x} :)", hr);
-        if (hr < 0 || hr > 1)
+        var control = _graphBuilder as IMediaControl;
+        if (control != null)
         {
-          Log.Log.Error("dvb:StopGraph returns:0x{0:X}", hr);
-          throw new TvException("Unable to stop graph");
+          int hr = control.Stop();
+          Log.Log.WriteFile("debug: IMediaControl stopped! hr = 0x{0:x} :)", hr);
+          if (hr < 0 || hr > 1)
+          {
+            Log.Log.Error("dvb:StopGraph returns:0x{0:X}", hr);
+            throw new TvException("Unable to stop graph");
+          }
         }
         _conditionalAccess.OnStopGraph();
         // *** this should be removed when solution for graph start problem exists
@@ -989,12 +994,16 @@ namespace TvLibrary.Implementations.DVB
       }
       else
       {
-        int hr = ((IMediaControl)_graphBuilder).Stop();
-        Log.Log.WriteFile("dvb:StopGraph - conditionalAccess.AllowedToStopGraph = false");
-        if (hr < 0 || hr > 1)
+        var mediaControl = _graphBuilder as IMediaControl;
+        if (mediaControl != null)
         {
-          Log.Log.Error("dvb:StopGraph returns:0x{0:X}", hr);
-          throw new TvException("Unable to stop graph");
+          int hr = mediaControl.Stop();
+          Log.Log.WriteFile("dvb:StopGraph - conditionalAccess.AllowedToStopGraph = false");
+          if (hr < 0 || hr > 1)
+          {
+            Log.Log.Error("dvb:StopGraph returns:0x{0:X}", hr);
+            throw new TvException("Unable to stop graph");
+          }
         }
         _graphState = GraphState.Created;
       }

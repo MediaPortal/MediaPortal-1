@@ -1013,6 +1013,8 @@ namespace TvService
       finally
       {
         CardReservationHelper.CancelAllCardReservations(tickets, _tvController.CardCollection);
+        // Enable EPG for other card
+        _tvController.EpgGrabberEnabled = true;
       }
     }
 

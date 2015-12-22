@@ -520,15 +520,14 @@ namespace TvService
             CardReservationHelper.CancelCardReservation(cardHandler, ticket);
             throw;
           }
-                       
-        }            
+        }
         _user.CardId = -1;
         Log.Epg("Epg: card:{0} could not tune to channel:{1}", Card.IdCard, result.ToString());
         return false;
       }
       catch (Exception ex)
       {
-        Log.Write(ex);        
+        Log.Write(ex);
         throw;
       }
     }

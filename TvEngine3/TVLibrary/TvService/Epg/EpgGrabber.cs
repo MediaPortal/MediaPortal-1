@@ -210,46 +210,57 @@ namespace TvService
     /// <param name="e"></param>
     private void _epgTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
     {
-      //security check, dont allow re-entrancy here
-      if (_reEntrant)
-        return;
-      if (_epgTimer.Interval == 1000)
-        _epgTimer.Interval = 30000;
-      try
+      lock (this)
       {
-        _reEntrant = true;
-
+        //security check, dont allow re-entrancy here
+        if (_reEntrant)
+          return;
+        if (_epgTimer.Interval == 1000)
+        {
+          _epgTimer.Interval = 30000;
+        }
         try
         {
-          string threadname = Thread.CurrentThread.Name;
-          if (string.IsNullOrEmpty(threadname))
-            Thread.CurrentThread.Name = "DVB EPG timer";
-        }
-        catch (InvalidOperationException) {}
+          _reEntrant = true;
 
-        //remove following check to enable multi-card epg grabbing (still beta)
-        //if (_tvController.AllCardsIdle == false)
-        //  return;
-        foreach (EpgCard card in _epgCards)
-        {
-          //Log.Epg("card:{0} grabbing:{1}", card.Card.IdCard, card.IsGrabbing);
-          if (!_isRunning)
-            return;
-          if (card.IsGrabbing)
-            continue;
-          //remove following check to enable multi-card epg grabbing (still beta)
+          try
+          {
+            string threadname = Thread.CurrentThread.Name;
+            if (string.IsNullOrEmpty(threadname))
+              Thread.CurrentThread.Name = "DVB EPG timer";
+          }
+          catch (InvalidOperationException)
+          {
+          }
+
+          // Multi-EPG Grabbing
           //if (_tvController.AllCardsIdle == false)
           //  return;
-          GrabEpgOnCard(card);
+          foreach (EpgCard card in _epgCards)
+          {
+            //Log.Epg("card:{0} grabbing:{1}", card.Card.IdCard, card.IsGrabbing);
+            if (!_isRunning)
+            {
+              return;
+            }
+            if (card.IsGrabbing)
+            {
+              continue;
+            }
+            // Multi-EPG Grabbing
+            //if (_tvController.AllCardsIdle == false)
+            //  return;
+            GrabEpgOnCard(card);
+          }
         }
-      }
-      catch (Exception ex)
-      {
-        Log.Write(ex);
-      }
-      finally
-      {
-        _reEntrant = false;
+        catch (Exception ex)
+        {
+          Log.Write(ex);
+        }
+        finally
+        {
+          _reEntrant = false;
+        }
       }
     }
 
