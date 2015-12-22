@@ -20,14 +20,18 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using System.Runtime.InteropServices;
 using System.Threading;
 using DirectShowLib;
 using Mediaportal.TV.Server.Common.Types.Enum;
+using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Channel;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension;
 using MediaPortal.Common.Utils;
+using Microsoft.Win32;
 
 namespace Mediaportal.TV.Server.Plugins.TunerExtension.Realtek
 {
@@ -39,7 +43,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Realtek
   {
     #region enums
 
-    private enum BdaExtensionProperty
+    private enum BdaExtensionPropertyDeviceControl
     {
       IrCode = 0,
       UsbMode,
@@ -49,11 +53,115 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Realtek
       PidFilterStatus
     }
 
+    private enum BdaExtensionPropertyFilterReadWrite
+    {
+      Ir = 11
+    }
+
+    private enum RtlIrType : int
+    {
+      Rc6 = 0,
+      Rc5,
+      Nec
+    }
+
+    // DigitalNow Dabby remote control codes.
+    // I couldn't find a picture of the remote.
+    private enum RtlNecIrCode : uint
+    {
+      Power = 0x866bc23d,
+      Source = 0x866b807f,
+      Zoom = 0x866bd02f,
+      ShutDown = 0x866bc03f,
+      One = 0x866b20df,
+      Two = 0x866b10ef,
+      Three = 0x866b40bf,
+      Four = 0x866bf00f,
+      Five = 0x866ba05f,
+      Six = 0x866b609f,
+      Seven = 0x866b30cf,
+      Eight = 0x866bb04f,
+      Nine = 0x866b50af,
+      Zero = 0x866b8877,
+      ChannelUp = 0x866b906f,
+      ChannelDown = 0x866be01f,
+      VolumeUp = 0x866b708f,
+      VolumeDown = 0x866bc837,
+      Back = 0x866b08f7,
+      Okay = 0x866b48b7,    // enter
+      Record = 0x866b28d7,
+      Stop = 0x866ba857,
+      Play = 0x866b6897,
+      Mute = 0x866be817,
+      Up = 0x866b18e7,
+      Down = 0x866b9867,
+      Left = 0x866b58a7,
+      Right = 0x866bd827,
+      Red = 0x866b38c7,
+      Green = 0x866bb847,
+      Yellow = 0x866b7887,
+      Blue = 0x866bf807
+    }
+
+    #endregion
+
+    #region delegates
+
+    /// <summary>
+    /// Initialise a Realtek BDA filter.
+    /// </summary>
+    /// <remarks>
+    /// This initialisation is necessary to use the IR functions.
+    /// </remarks>
+    /// <param name="hwnd">An optional window handle for receiving device change notifications.</param>
+    /// <returns><c>true</c> if initialisation is successful, otherwise <c>false</c></returns>
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    private delegate bool RTK_BDAFilterInit(IntPtr hwnd);
+
+    /// <summary>
+    /// Release (deinitialise) a Realtek BDA filter.
+    /// </summary>
+    /// <param name="hwnd">The window handle registered with RTK_BDAFilterInit(), if any.</param>
+    /// <returns><c>true</c> if release is successful, otherwise <c>false</c></returns>
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    private delegate bool RTK_BDAFilterRelease(IntPtr hwnd);
+
+    /// <summary>
+    /// Initialise IR access.
+    /// </summary>
+    /// <returns><c>true</c> if initialisation is successful, otherwise <c>false</c></returns>
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    private delegate bool RTK_InitialAPModeIRParameter();
+
+    /// <summary>
+    /// Get the IR code type.
+    /// </summary>
+    /// <param name="irType">The IR code type.</param>
+    /// <returns><c>true</c> if the IR code type is retrieved successfully, otherwise <c>false</c></returns>
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    private delegate bool RTK_GetAPModeIRCurrentIRType(out RtlIrType irType);
+
+    /// <summary>
+    /// Get an IR code, if available.
+    /// </summary>
+    /// <param name="isIrCodeAvailable"><c>True</c> if an IR code is available.</param>
+    /// <param name="irCode">The IR code.</param>
+    /// <param name="irCodeSize">The size of the IR code buffer in bytes.</param>
+    /// <returns><c>true</c> if the IR code is retrieved successfully, otherwise <c>false</c></returns>
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    private delegate bool RTK_GetAPModeIRCode([MarshalAs(UnmanagedType.Bool)] out bool isIrCodeAvailable, out uint irCode, IntPtr irCodeSize);
+
     #endregion
 
     #region constants
 
-    private static readonly Guid BDA_EXTENSION_PROPERTY_SET = new Guid(0x1bfb70f7, 0xadfb, 0x4414, 0x9f, 0xd4, 0x60, 0xe9, 0xe5, 0x40, 0xa5, 0x59);
+    private static readonly Guid BDA_EXTENSION_PROPERTY_SET_DEVICE_CONTROL = new Guid(0x1bfb70f7, 0xadfb, 0x4414, 0x9f, 0xd4, 0x60, 0xe9, 0xe5, 0x40, 0xa5, 0x59);
+    private static readonly Guid BDA_EXTENSION_PROPERTY_SET_FILTER_READ_WRITE = new Guid(0xc8890094, 0x30e0, 0x4a9f, 0x9c, 0xda, 0x3a, 0x6e, 0xc8, 0x6e, 0xb8, 0xa8);
 
     private static readonly int KS_PROPERTY_SIZE = Marshal.SizeOf(typeof(KsProperty));    // 24
 
@@ -64,14 +172,36 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Realtek
     #region variables
 
     private bool _isRealtek = false;
+    private string _tunerName = null;
+    private string _productInstanceId = null;
     private IKsPropertySet _propertySet = null;
     private IntPtr _instanceBuffer = IntPtr.Zero;
     private IntPtr _generalBuffer = IntPtr.Zero;
 
+    #region remote control
+
     private bool _isRemoteControlInterfaceOpen = false;
-    private IntPtr _remoteControlBuffer = IntPtr.Zero;
+    private RtlIrType _irType = RtlIrType.Nec;
     private Thread _remoteControlListenerThread = null;
     private AutoResetEvent _remoteControlListenerThreadStopEvent = null;
+
+    // This variable tracks the number of open remote control API instances which corresponds with used DLL indices.
+    private static int _remoteControlApiCount = 0;
+    private static HashSet<string> _openRemoteControlProducts = new HashSet<string>();
+
+    // Remote control API instance variables.
+    private int _remoteControlApiIndex = 0;
+    private bool _isRemoteControlDllLoaded = false;
+    private IntPtr _remoteControlApiLibHandle = IntPtr.Zero;
+
+    // Delegate instances for the required IR API (RTL283XACCESS) functions.
+    private RTK_BDAFilterInit _bdaFilterInit = null;
+    private RTK_BDAFilterRelease _bdaFilterRelease = null;
+    private RTK_InitialAPModeIRParameter _initialiseIr = null;
+    private RTK_GetAPModeIRCurrentIRType _getIrType = null;
+    private RTK_GetAPModeIRCode _getIrCode = null;
+
+    #endregion
 
     private HashSet<ushort> _pidFilterPids = new HashSet<ushort>();
     private HashSet<ushort> _pidFilterPidsToRemove = new HashSet<ushort>();
@@ -79,6 +209,220 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Realtek
     private bool _isPidFilterDisabled = false;
 
     #endregion
+
+    /// <summary>
+    /// Set the tuner for the remote control API to use.
+    /// </summary>
+    /// <remarks>
+    /// Normally the remote control API will bind to the first tuner which
+    /// matches a list of friendly names located in the registry. We manipulate
+    /// the registry list to ensure the API binds to a specific tuner/product.
+    /// In theory this should enable us to receive remote control inputs from
+    /// all Realtek products.
+    /// </remarks>
+    /// <param name="tunerName">The target tuner's name.</param>
+    /// <returns>a token to enable calling ResetRcApiTuner() if successful, otherwise null</returns>
+    private string SetRcApiTuner(string tunerName)
+    {
+      string originalListTunerName = null;
+      List<RegistryView> views = new List<RegistryView>() { RegistryView.Default };
+      if (OSInfo.OSInfo.Is64BitOs() && IntPtr.Size != 8)
+      {
+        views.Add(RegistryView.Registry64);
+      }
+      try
+      {
+        foreach (RegistryView view in views)
+        {
+          using (RegistryKey key = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, view).CreateSubKey(@"SYSTEM\CurrentControlSet\Services\RTL2832UBDA"))
+          {
+            try
+            {
+              if (string.IsNullOrEmpty(originalListTunerName))
+              {
+                originalListTunerName = (string)key.GetValue("FilterName1");
+              }
+              key.SetValue("FilterName1", tunerName);
+            }
+            finally
+            {
+              key.Close();
+            }
+          }
+        }
+      }
+      catch (Exception ex)
+      {
+        this.LogWarn(ex, "Realtek: failed to set remote control API tuner");
+      }
+      return originalListTunerName;
+    }
+
+    /// <summary>
+    /// Unset the remote control API's tuner.
+    /// </summary>
+    /// <param name="token">The configuration token returned from SetRcApiTuner().</param>
+    private void ResetRcApiTuner(string token)
+    {
+      if (string.IsNullOrEmpty(token))
+      {
+        return;
+      }
+
+      List<RegistryView> views = new List<RegistryView>() { RegistryView.Default };
+      if (OSInfo.OSInfo.Is64BitOs() && IntPtr.Size != 8)
+      {
+        views.Add(RegistryView.Registry64);
+      }
+      try
+      {
+        foreach (RegistryView view in views)
+        {
+          using (RegistryKey key = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, view).CreateSubKey(@"SYSTEM\CurrentControlSet\Services\RTL2832UBDA"))
+          {
+            try
+            {
+              key.SetValue("FilterName1", token);
+            }
+            finally
+            {
+              key.Close();
+            }
+          }
+        }
+      }
+      catch (Exception ex)
+      {
+        this.LogWarn(ex, "Realtek: failed to reset remote control API tuner");
+      }
+    }
+
+    /// <summary>
+    /// Load a remote control API instance. This involves obtaining delegate
+    /// instances for each of the required member functions.
+    /// </summary>
+    /// <returns><c>true</c> if the instance is successfully loaded, otherwise <c>false</c></returns>
+    private bool LoadNewRcApiInstance()
+    {
+      _remoteControlApiCount++;
+      _remoteControlApiIndex = _remoteControlApiCount;
+      this.LogDebug("Realtek: loading API, API index = {0}", _remoteControlApiIndex);
+      string resourcesFolder = PathManager.BuildAssemblyRelativePath("Resources");
+      string fileNameSource = Path.Combine(resourcesFolder, "RTL283XACCESS.dll");
+      string fileNameTarget = Path.Combine(resourcesFolder, string.Format("RTL283XACCESS{0}.dll", _remoteControlApiIndex));
+      if (!File.Exists(fileNameTarget))
+      {
+        try
+        {
+          File.Copy(fileNameSource, fileNameTarget);
+        }
+        catch (Exception ex)
+        {
+          this.LogError(ex, "Realtek: failed to copy access DLL");
+          return false;
+        }
+      }
+      _remoteControlApiLibHandle = NativeMethods.LoadLibrary(fileNameTarget);
+      if (_remoteControlApiLibHandle == IntPtr.Zero)
+      {
+        this.LogError("Realtek: failed to load access DLL");
+        return false;
+      }
+
+      try
+      {
+        IntPtr function = NativeMethods.GetProcAddress(_remoteControlApiLibHandle, "RTK_BDAFilterInit");
+        if (function == IntPtr.Zero)
+        {
+          this.LogError("Realtek: failed to locate the RTK_BDAFilterInit function");
+          return false;
+        }
+        try
+        {
+          _bdaFilterInit = (RTK_BDAFilterInit)Marshal.GetDelegateForFunctionPointer(function, typeof(RTK_BDAFilterInit));
+        }
+        catch (Exception ex)
+        {
+          this.LogError(ex, "Realtek: failed to load the RTK_BDAFilterInit function");
+          return false;
+        }
+
+        function = NativeMethods.GetProcAddress(_remoteControlApiLibHandle, "RTK_BDAFilterRelease");
+        if (function == IntPtr.Zero)
+        {
+          this.LogError("Realtek: failed to locate the RTK_BDAFilterRelease function");
+          return false;
+        }
+        try
+        {
+          _bdaFilterRelease = (RTK_BDAFilterRelease)Marshal.GetDelegateForFunctionPointer(function, typeof(RTK_BDAFilterRelease));
+        }
+        catch (Exception ex)
+        {
+          this.LogError(ex, "Realtek: failed to load the RTK_BDAFilterRelease function");
+          return false;
+        }
+
+        function = NativeMethods.GetProcAddress(_remoteControlApiLibHandle, "RTK_InitialAPModeIRParameter");
+        if (function == IntPtr.Zero)
+        {
+          this.LogError("Realtek: failed to locate the RTK_InitialAPModeIRParameter function");
+          return false;
+        }
+        try
+        {
+          _initialiseIr = (RTK_InitialAPModeIRParameter)Marshal.GetDelegateForFunctionPointer(function, typeof(RTK_InitialAPModeIRParameter));
+        }
+        catch (Exception ex)
+        {
+          this.LogError(ex, "Realtek: failed to load the RTK_InitialAPModeIRParameter function");
+          return false;
+        }
+
+        function = NativeMethods.GetProcAddress(_remoteControlApiLibHandle, "RTK_GetAPModeIRCurrentIRType");
+        if (function == IntPtr.Zero)
+        {
+          this.LogError("Realtek: failed to locate the RTK_GetAPModeIRCurrentIRType function");
+          return false;
+        }
+        try
+        {
+          _getIrType = (RTK_GetAPModeIRCurrentIRType)Marshal.GetDelegateForFunctionPointer(function, typeof(RTK_GetAPModeIRCurrentIRType));
+        }
+        catch (Exception ex)
+        {
+          this.LogError(ex, "Realtek: failed to load the RTK_GetAPModeIRCurrentIRType function");
+          return false;
+        }
+
+        function = NativeMethods.GetProcAddress(_remoteControlApiLibHandle, "RTK_GetAPModeIRCode");
+        if (function == IntPtr.Zero)
+        {
+          this.LogError("Realtek: failed to locate the RTK_GetAPModeIRCode function");
+          return false;
+        }
+        try
+        {
+          _getIrCode = (RTK_GetAPModeIRCode)Marshal.GetDelegateForFunctionPointer(function, typeof(RTK_GetAPModeIRCode));
+        }
+        catch (Exception ex)
+        {
+          this.LogError(ex, "Realtek: failed to load the RTK_GetAPModeIRCode function");
+          return false;
+        }
+
+        _isRemoteControlDllLoaded = true;
+        return true;
+      }
+      finally
+      {
+        if (!_isRemoteControlDllLoaded)
+        {
+          NativeMethods.FreeLibrary(_remoteControlApiLibHandle);
+          _remoteControlApiLibHandle = IntPtr.Zero;
+        }
+      }
+    }
 
     #region remote control listener thread
 
@@ -146,31 +490,20 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Realtek
     private void RemoteControlListener()
     {
       this.LogDebug("Realtek: remote control listener thread start polling");
-      int hr;
-      int returnedByteCount;
-      int previousCode = 0;
       try
       {
+        bool isIrCodeAvailable;
+        uint irCode;
+        IntPtr irCodeSize = new IntPtr(4);    // size of irCode
         while (!_remoteControlListenerThreadStopEvent.WaitOne(REMOTE_CONTROL_LISTENER_THREAD_WAIT_TIME))
         {
-          Marshal.WriteInt32(_remoteControlBuffer, 0, 0);
-          hr = _propertySet.Get(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.IrCode,
-            _instanceBuffer, KS_PROPERTY_SIZE,
-            _remoteControlBuffer, 4,
-            out returnedByteCount
-          );
-          if (hr != (int)NativeMethods.HResult.S_OK || returnedByteCount != 4)
+          if (_getIrCode(out isIrCodeAvailable, out irCode, irCodeSize))
           {
-            this.LogError("Realtek: failed to read remote code, hr = 0x{0:x}, byte count = {1}", hr, returnedByteCount);
+            this.LogError("Realtek: failed to read remote code");
           }
-          else
+          else if (isIrCodeAvailable)
           {
-            int code = Marshal.ReadInt32(_remoteControlBuffer, 0);
-            if (code != previousCode)
-            {
-              this.LogDebug("Realtek: remote control key press, code = 0x{0:x8}", code);
-              previousCode = code;
-            }
+            this.LogDebug("Realtek: remote control key press, code = {0}", (RtlNecIrCode)irCode);
           }
         }
       }
@@ -214,15 +547,40 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Realtek
       }
 
       KSPropertySupport support;
-      int hr = _propertySet.QuerySupported(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.IrCode, out support);
+      int hr = _propertySet.QuerySupported(BDA_EXTENSION_PROPERTY_SET_FILTER_READ_WRITE, (int)BdaExtensionPropertyFilterReadWrite.Ir, out support);
       if (hr != (int)NativeMethods.HResult.S_OK || !support.HasFlag(KSPropertySupport.Get))
       {
-        this.LogDebug("Realtek: property set not supported, hr = 0x{0:x}, support = {1}", hr, support);
+        this.LogDebug("Realtek: filter read/write property set not supported, hr = 0x{0:x}, support = {1}", hr, support);
+        return false;
+      }
+
+      hr = _propertySet.QuerySupported(BDA_EXTENSION_PROPERTY_SET_DEVICE_CONTROL, (int)BdaExtensionPropertyDeviceControl.IrCode, out support);
+      if (hr != (int)NativeMethods.HResult.S_OK || !support.HasFlag(KSPropertySupport.Get))
+      {
+        this.LogDebug("Realtek: device control property set not supported, hr = 0x{0:x}, support = {1}", hr, support);
         return false;
       }
 
       this.LogInfo("Realtek: extension supported");
       _isRealtek = true;
+
+      if (tunerExternalId != null)
+      {
+        DsDevice[] devices = DsDevice.GetDevicesOfCat(FilterCategory.BDASourceFiltersCategory);
+        foreach (DsDevice device in devices)
+        {
+          if (device != null)
+          {
+            if (tunerExternalId.Contains(device.DevicePath))
+            {
+              _tunerName = device.Name;
+              _productInstanceId = device.ProductInstanceIdentifier;
+            }
+            device.Dispose();
+          }
+        }
+      }
+
       _instanceBuffer = Marshal.AllocCoTaskMem(KS_PROPERTY_SIZE);
       _generalBuffer = Marshal.AllocCoTaskMem(4);
 
@@ -265,8 +623,14 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Realtek
       }
 
       this.LogDebug("Realtek: disable PID filter");
+      if (!_isRealtek)
+      {
+        this.LogWarn("Realtek: not initialised or interface not supported");
+        return false;
+      }
+
       Marshal.WriteInt32(_generalBuffer, 0, 0);
-      int hr = _propertySet.Set(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.PidFilterStatus,
+      int hr = _propertySet.Set(BDA_EXTENSION_PROPERTY_SET_DEVICE_CONTROL, (int)BdaExtensionPropertyDeviceControl.PidFilterStatus,
           _instanceBuffer, KS_PROPERTY_SIZE,
           _generalBuffer, 4
       );
@@ -327,12 +691,18 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Realtek
       }
 
       this.LogDebug("Realtek: apply PID filter configuration");
+      if (!_isRealtek)
+      {
+        this.LogWarn("Realtek: not initialised or interface not supported");
+        return false;
+      }
+
       int hr = (int)NativeMethods.HResult.S_OK;
       if (_isPidFilterDisabled)
       {
         this.LogDebug("  enable filter...");
         Marshal.WriteInt32(_generalBuffer, 0, 1);
-        hr = _propertySet.Set(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.PidFilterStatus,
+        hr = _propertySet.Set(BDA_EXTENSION_PROPERTY_SET_DEVICE_CONTROL, (int)BdaExtensionPropertyDeviceControl.PidFilterStatus,
             _instanceBuffer, KS_PROPERTY_SIZE,
             _generalBuffer, 4
         );
@@ -352,7 +722,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Realtek
         foreach (ushort pid in _pidFilterPidsToRemove)
         {
           Marshal.WriteInt32(_generalBuffer, 0, pid);
-          hr |= _propertySet.Set(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.DisablePid,
+          hr |= _propertySet.Set(BDA_EXTENSION_PROPERTY_SET_DEVICE_CONTROL, (int)BdaExtensionPropertyDeviceControl.DisablePid,
               _instanceBuffer, KS_PROPERTY_SIZE,
               _generalBuffer, 4
           );
@@ -372,7 +742,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Realtek
         foreach (ushort pid in _pidFilterPidsToAdd)
         {
           Marshal.WriteInt32(_generalBuffer, 0, pid);
-          hr |= _propertySet.Set(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.EnablePid,
+          hr |= _propertySet.Set(BDA_EXTENSION_PROPERTY_SET_DEVICE_CONTROL, (int)BdaExtensionPropertyDeviceControl.EnablePid,
               _instanceBuffer, KS_PROPERTY_SIZE,
               _generalBuffer, 4
           );
@@ -412,10 +782,76 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Realtek
         this.LogWarn("Realtek: remote control interface is already open");
         return true;
       }
+      if (string.IsNullOrEmpty(_tunerName) || string.IsNullOrEmpty(_productInstanceId))
+      {
+        this.LogDebug("Realtek: tuner identifiers are not set");
+        return false;
+      }
+      if (_openRemoteControlProducts.Contains(_productInstanceId))
+      {
+        this.LogDebug("Realtek: multi-tuner product remote control opened for other tuner");
+        return false;
+      }
 
-      // Initialise() already checked that the property is supported.
-      _remoteControlBuffer = Marshal.AllocCoTaskMem(4);
-      _isRemoteControlInterfaceOpen = true;
+      // Realtek and/or DigitalNow distribute a utiltity that enables the
+      // remote to work with popular media software. It seems that the utility
+      // may cause RTK_GetAPModeIRCode() to fail sometimes (due to hardware
+      // contention???). Therefore it would be desirable to automatically stop
+      // and restart the utility. Unfortunately we currently have no way to
+      // restart the utility, so we can only warn when we detect that it is
+      // running.
+      if (Process.GetProcessesByName("RTLRCtl").Length > 0)
+      {
+        this.LogWarn("Realtek: remote control utility (RTLRCtl.exe) is running");
+      }
+
+      if (!LoadNewRcApiInstance())
+      {
+        return false;
+      }
+
+      string resetToken = null;
+      try
+      {
+        resetToken = SetRcApiTuner(_tunerName);
+
+        if (!_bdaFilterInit(IntPtr.Zero))
+        {
+          this.LogError("Realtek: failed to initialise BDA filter");
+          return false;
+        }
+
+        if (!_initialiseIr())
+        {
+          this.LogError("Realtek: failed to initialise remote control API");
+          _bdaFilterRelease(IntPtr.Zero);
+          return false;
+        }
+
+        if (_getIrType(out _irType))
+        {
+          this.LogDebug("Realtek: IR type = {0}", _irType);
+        }
+        else
+        {
+          this.LogWarn("Realtek: failed to get IR type, defaulting to NEC");
+          _irType = RtlIrType.Nec;
+        }
+
+        _isRemoteControlInterfaceOpen = true;
+      }
+      finally
+      {
+        ResetRcApiTuner(resetToken);
+        if (!_isRemoteControlInterfaceOpen)
+        {
+          NativeMethods.FreeLibrary(_remoteControlApiLibHandle);
+          _remoteControlApiLibHandle = IntPtr.Zero;
+          _isRemoteControlDllLoaded = false;
+        }
+      }
+
+      _openRemoteControlProducts.Add(_productInstanceId);
       StartRemoteControlListenerThread();
 
       this.LogDebug("Realtek: result = success");
@@ -438,11 +874,19 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Realtek
       if (isDisposing)
       {
         StopRemoteControlListenerThread();
+
+        if (_isRemoteControlInterfaceOpen)
+        {
+          _bdaFilterRelease(IntPtr.Zero);
+          _openRemoteControlProducts.Remove(_productInstanceId);
+        }
       }
-      if (_remoteControlBuffer != IntPtr.Zero)
+
+      if (_remoteControlApiLibHandle != IntPtr.Zero)
       {
-        Marshal.FreeCoTaskMem(_remoteControlBuffer);
-        _remoteControlBuffer = IntPtr.Zero;
+        NativeMethods.FreeLibrary(_remoteControlApiLibHandle);
+        _remoteControlApiLibHandle = IntPtr.Zero;
+        _isRemoteControlDllLoaded = false;
       }
 
       _isRemoteControlInterfaceOpen = false;
