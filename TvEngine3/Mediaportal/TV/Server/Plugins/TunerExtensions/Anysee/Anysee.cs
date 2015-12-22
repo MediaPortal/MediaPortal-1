@@ -767,7 +767,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
       private CI_Control _ciControl = null;
 
       private int _apiIndex = 0;
-      private bool _dllLoaded = false;
+      private bool _isDllLoaded = false;
       private string _devicePath = string.Empty;
 
       private IntPtr _ciApiInstance = IntPtr.Zero;
@@ -789,7 +789,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
         this.LogDebug("Anysee: load CI API, index = {0}", _apiIndex);
         string resourcesFolder = PathManager.BuildAssemblyRelativePath("Resources");
         string fileNameSource = Path.Combine(resourcesFolder, "CIAPI.dll");
-        string fileNameTarget = Path.Combine(resourcesFolder, "CIAPI" + _apiIndex + ".dll");
+        string fileNameTarget = Path.Combine(resourcesFolder, string.Format("CIAPI{0}.dll", _apiIndex));
         if (!File.Exists(fileNameTarget))
         {
           try
@@ -891,11 +891,11 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
             return;
           }
 
-          _dllLoaded = true;
+          _isDllLoaded = true;
         }
         finally
         {
-          if (!_dllLoaded)
+          if (!_isDllLoaded)
           {
             NativeMethods.FreeLibrary(_libHandle);
             _libHandle = IntPtr.Zero;
@@ -939,7 +939,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
       {
         this.LogDebug("Anysee: open CI API, index = {0}", _apiIndex);
 
-        if (!_dllLoaded)
+        if (!_isDllLoaded)
         {
           this.LogError("Anysee: the CI API DLL functions were not successfully loaded");
           return false;
@@ -1072,7 +1072,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
       {
         this.LogDebug("Anysee: close CI API");
 
-        if (!_dllLoaded)
+        if (!_isDllLoaded)
         {
           this.LogWarn("Anysee: the CI API DLL has not been successfully loaded");
           return true;

@@ -312,9 +312,9 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Turbosight
 
     // Conditional access API instance variables.
     private int _ciApiIndex = 0;
-    private bool _dllLoaded = false;
+    private bool _isCiApiDllLoaded = false;
     private IntPtr _ciApiLibHandle = IntPtr.Zero;
-    private IntPtr _ciHandle = IntPtr.Zero;
+    private IntPtr _ciApiHandle = IntPtr.Zero;
 
     // Delegate instances for each CI API function.
     private On_Start_CI _onStartCi = null;
@@ -375,7 +375,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Turbosight
       this.LogDebug("Turbosight: loading API, API index = {0}", _ciApiIndex);
       string resourcesFolder = PathManager.BuildAssemblyRelativePath("Resources");
       string fileNameSource = Path.Combine(resourcesFolder, "tbsCIapi.dll");
-      string fileNameTarget = Path.Combine(resourcesFolder, "tbsCIapi" + _ciApiIndex + ".dll");
+      string fileNameTarget = Path.Combine(resourcesFolder, string.Format("tbsCIapi{0}.dll", _ciApiIndex));
       if (!File.Exists(fileNameTarget))
       {
         try
@@ -477,12 +477,12 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Turbosight
           return false;
         }
 
-        _dllLoaded = true;
+        _isCiApiDllLoaded = true;
         return true;
       }
       finally
       {
-        if (!_dllLoaded)
+        if (!_isCiApiDllLoaded)
         {
           NativeMethods.FreeLibrary(_ciApiLibHandle);
           _ciApiLibHandle = IntPtr.Zero;
@@ -604,7 +604,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Turbosight
         while (!_mmiHandlerThreadStopEvent.WaitOne(MMI_HANDLER_THREAD_WAIT_TIME))
         {
           // Check for CAM state changes.
-          bool newState = _camAvailable(_ciHandle);
+          bool newState = _camAvailable(_ciApiHandle);
           if (newState != _isCamPresent)
           {
             _isCamPresent = newState;
@@ -654,7 +654,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Turbosight
           }
 
           // Send/resend the message.
-          _mmiProcess(_ciHandle, _mmiMessageBuffer, _mmiResponseBuffer);
+          _mmiProcess(_ciApiHandle, _mmiMessageBuffer, _mmiResponseBuffer);
 
           bool removeMessage = false;
           try
@@ -1428,18 +1428,21 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Turbosight
       }
 
       // Attempt to initialise the interface.
-      _ciHandle = _onStartCi(_tunerFilter, _tunerFilterName, _ciApiIndex);
-      if (_ciHandle == IntPtr.Zero || _ciHandle.ToInt64() == -1 || _ciHandle.ToInt32() == -1)
+      _ciApiHandle = _onStartCi(_tunerFilter, _tunerFilterName, _ciApiIndex);
+      if (_ciApiHandle == IntPtr.Zero || _ciApiHandle.ToInt64() == -1 || _ciApiHandle.ToInt32() == -1)
       {
         this.LogWarn("Turbosight: interface handle is null");
         _isCiSlotPresent = false;
+        NativeMethods.FreeLibrary(_ciApiLibHandle);
+        _ciApiLibHandle = IntPtr.Zero;
+        _isCiApiDllLoaded = false;
         return false;
       }
 
       _mmiMessageBuffer = Marshal.AllocCoTaskMem(MMI_MESSAGE_BUFFER_SIZE);
       _mmiResponseBuffer = Marshal.AllocCoTaskMem(MMI_RESPONSE_BUFFER_SIZE);
       _mmiMessageQueue = new List<MmiMessage>(10);
-      _isCamPresent = _camAvailable(_ciHandle);
+      _isCamPresent = _camAvailable(_ciApiHandle);
       this.LogDebug("Turbosight: CAM available = {0}", _isCamPresent);
 
       _isCaInterfaceOpen = true;
@@ -1481,10 +1484,10 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Turbosight
 
       if (_isCaInterfaceOpen)
       {
-        if (_ciHandle != IntPtr.Zero)
+        if (_ciApiHandle != IntPtr.Zero)
         {
-          _onExitCi(_ciHandle);
-          _ciHandle = IntPtr.Zero;
+          _onExitCi(_ciApiHandle);
+          _ciApiHandle = IntPtr.Zero;
         }
         else
         {
@@ -1513,7 +1516,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Turbosight
         _mmiMessageQueue = null;
       }
 
-      _dllLoaded = false;
+      _isCiApiDllLoaded = false;
       _isCiSlotPresent = false;
       _isCamPresent = false;
       _isCaInterfaceOpen = false;
@@ -1604,7 +1607,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Turbosight
       pmtBytes[1] = (byte)command;
       rawPmt.CopyTo(pmtBytes, 2);
 
-      _sendPmt(_ciHandle, pmtBytes, (ushort)pmtBytes.Length);
+      _sendPmt(_ciApiHandle, pmtBytes, (ushort)pmtBytes.Length);
 
       this.LogDebug("Turbosight: result = success");
       return true;
