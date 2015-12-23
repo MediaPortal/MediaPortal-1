@@ -32,11 +32,6 @@ namespace TvService
   {
     #region variables
 
-    private TuningDetail _detail;
-    private List<Channel> _channels;
-    private int _currentChannelIndex;
-    private bool _inUse;
-
     #endregion
 
     #region ctor
@@ -47,10 +42,10 @@ namespace TvService
     /// <param name="detail">The detail.</param>
     public Transponder(TuningDetail detail)
     {
-      _channels = new List<Channel>();
-      _detail = detail;
-      _currentChannelIndex = -1;
-      _inUse = false;
+      Channels = new List<Channel>();
+      TuningDetail = detail;
+      Index = -1;
+      InUse = false;
     }
 
     #endregion
@@ -61,56 +56,41 @@ namespace TvService
     /// Gets or sets a value indicating whether the transponder is in use or not
     /// </summary>
     /// <value><c>true</c> if in use; otherwise, <c>false</c>.</value>
-    public bool InUse
-    {
-      get { return _inUse; }
-      set { _inUse = value; }
-    }
+    public bool InUse { get; set; }
 
     /// <summary>
     /// Gets or sets the current channel index.
     /// </summary>
     /// <value>The channel index.</value>
-    public int Index
-    {
-      get { return _currentChannelIndex; }
-    }
+    public int Index { get; private set; }
 
     public Channel CurrentChannel
     {
-      get { return Channels[_currentChannelIndex]; }
+      get { return Channels[Index]; }
     }
 
     public Channel GetNextChannel()
     {
-      _currentChannelIndex++;
-      if (_currentChannelIndex == Channels.Count)
+      Index++;
+      if (Index == Channels.Count)
       {
-        _currentChannelIndex = -1;
+        Index = -1;
         return null;
       }
-      return Channels[_currentChannelIndex];
+      return Channels[Index];
     }
 
     /// <summary>
     /// Gets or sets the channels for this transponder
     /// </summary>
     /// <value>The channels.</value>
-    public List<Channel> Channels
-    {
-      get { return _channels; }
-      set { _channels = value; }
-    }
+    public List<Channel> Channels { get; set; }
 
     /// <summary>
     /// Gets or sets the tuning details for this transponder.
     /// </summary>
     /// <value>The tuning detail.</value>
-    public TuningDetail TuningDetail
-    {
-      get { return _detail; }
-      set { _detail = value; }
-    }
+    public TuningDetail TuningDetail { get; set; }
 
     /// <summary>
     /// Gets the tuning detail for the current channel.
@@ -184,10 +164,10 @@ namespace TvService
     /// </summary>
     public void Dump()
     {
-      Log.Write("Transponder:{0} {1} {2} {3} {4} {5}", _currentChannelIndex, TuningDetail.ChannelType,
+      Log.Write("Transponder:{0} {1} {2} {3} {4} {5}", Index, TuningDetail.ChannelType,
                 TuningDetail.Frequency, TuningDetail.Modulation, TuningDetail.Symbolrate, TuningDetail.Bandwidth,
                 TuningDetail.Polarisation);
-      foreach (Channel c in _channels)
+      foreach (Channel c in Channels)
       {
         Log.Write(" {0}", c.DisplayName);
       }
@@ -223,18 +203,14 @@ namespace TvService
 
     #endregion
 
-    private Transponder _currentTransponder;
-    private int _currentTransponderIndex = -1;
-
-    public Transponder CurrentTransponder
+    public TransponderList()
     {
-      get { return _currentTransponder; }
+      CurrentIndex = -1;
     }
 
-    public int CurrentIndex
-    {
-      get { return _currentTransponderIndex; }
-    }
+    public Transponder CurrentTransponder { get; private set; }
+
+    public int CurrentIndex { get; private set; }
 
     /// <summary>
     /// Clears the list
@@ -242,8 +218,8 @@ namespace TvService
     public void Reset()
     {
       Clear();
-      _currentTransponder = null;
-      _currentTransponderIndex = -1;
+      CurrentTransponder = null;
+      CurrentIndex = -1;
     }
 
     /// <summary>
@@ -302,14 +278,14 @@ namespace TvService
     /// </summary>
     public Transponder GetNextTransponder()
     {
-      _currentTransponderIndex++;
-      if (_currentTransponderIndex == Count)
+      CurrentIndex++;
+      if (CurrentIndex == Count)
       {
-        _currentTransponder = null;
-        _currentTransponderIndex = -1;
+        CurrentTransponder = null;
+        CurrentIndex = -1;
         return null;
       }
-      _currentTransponder = this[_currentTransponderIndex];
+      CurrentTransponder = this[CurrentIndex];
       return CurrentTransponder;
     }
   }
