@@ -41,6 +41,7 @@
       this.edDescriptionTest = new System.Windows.Forms.TextBox();
       this.btnTest = new System.Windows.Forms.Button();
       this.groupBox2 = new System.Windows.Forms.GroupBox();
+      this.checkBoxEnableEPGWhileIdleOnAllTuners = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.numericUpDownEpgRefresh = new System.Windows.Forms.NumericUpDown();
       this.numericUpDownEpgTimeOut = new System.Windows.Forms.NumericUpDown();
       this.checkBoxEnableEPGWhileIdle = new MediaPortal.UserInterface.Controls.MPCheckBox();
@@ -74,8 +75,8 @@
       // 
       // groupBox9
       // 
-      this.groupBox9.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox9.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox9.Controls.Add(this.label31);
       this.groupBox9.Controls.Add(this.edTitleTemplate);
       this.groupBox9.Controls.Add(this.label27);
@@ -87,7 +88,7 @@
       this.groupBox9.Controls.Add(this.label29);
       this.groupBox9.Controls.Add(this.edDescriptionTest);
       this.groupBox9.Controls.Add(this.btnTest);
-      this.groupBox9.Location = new System.Drawing.Point(3, 200);
+      this.groupBox9.Location = new System.Drawing.Point(3, 215);
       this.groupBox9.Name = "groupBox9";
       this.groupBox9.Size = new System.Drawing.Size(457, 192);
       this.groupBox9.TabIndex = 41;
@@ -96,19 +97,19 @@
       // 
       // label31
       // 
-      this.label31.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.label31.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.label31.Location = new System.Drawing.Point(326, 80);
       this.label31.Name = "label31";
       this.label31.Size = new System.Drawing.Size(125, 106);
       this.label31.TabIndex = 37;
       this.label31.Text = "%TITLE%\r\n%DESCRIPTION%\r\n%GENRE%\r\n%STARRATING%\r\n%STARRATING_STR%\r\n%CLASSIFICATION%" +
-          "\r\n%PARENTALRATING%\r\n%NEWLINE%";
+    "\r\n%PARENTALRATING%\r\n%NEWLINE%";
       // 
       // edTitleTemplate
       // 
-      this.edTitleTemplate.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.edTitleTemplate.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.edTitleTemplate.Location = new System.Drawing.Point(75, 19);
       this.edTitleTemplate.Name = "edTitleTemplate";
       this.edTitleTemplate.Size = new System.Drawing.Size(245, 20);
@@ -144,8 +145,8 @@
       // 
       // edDescriptionTemplate
       // 
-      this.edDescriptionTemplate.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.edDescriptionTemplate.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.edDescriptionTemplate.Location = new System.Drawing.Point(75, 45);
       this.edDescriptionTemplate.Name = "edDescriptionTemplate";
       this.edDescriptionTemplate.Size = new System.Drawing.Size(245, 20);
@@ -162,8 +163,8 @@
       // 
       // edTitleTest
       // 
-      this.edTitleTest.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.edTitleTest.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.edTitleTest.Location = new System.Drawing.Point(75, 100);
       this.edTitleTest.Name = "edTitleTest";
       this.edTitleTest.ReadOnly = true;
@@ -181,9 +182,9 @@
       // 
       // edDescriptionTest
       // 
-      this.edDescriptionTest.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.edDescriptionTest.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.edDescriptionTest.Location = new System.Drawing.Point(75, 126);
       this.edDescriptionTest.Multiline = true;
       this.edDescriptionTest.Name = "edDescriptionTest";
@@ -204,8 +205,8 @@
       // 
       // groupBox2
       // 
-      this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox2.Controls.Add(this.numericUpDownEpgRefresh);
       this.groupBox2.Controls.Add(this.numericUpDownEpgTimeOut);
       this.groupBox2.Controls.Add(this.checkBoxEnableEPGWhileIdle);
@@ -213,16 +214,28 @@
       this.groupBox2.Controls.Add(this.label14);
       this.groupBox2.Controls.Add(this.label8);
       this.groupBox2.Controls.Add(this.label7);
-      this.groupBox2.Location = new System.Drawing.Point(235, 96);
+      this.groupBox2.Location = new System.Drawing.Point(235, 123);
       this.groupBox2.Name = "groupBox2";
-      this.groupBox2.Size = new System.Drawing.Size(225, 98);
+      this.groupBox2.Size = new System.Drawing.Size(225, 88);
       this.groupBox2.TabIndex = 40;
       this.groupBox2.TabStop = false;
       this.groupBox2.Text = "EPG grabbing while idle";
       // 
+      // checkBoxEnableEPGWhileIdleOnAllTuners
+      // 
+      this.checkBoxEnableEPGWhileIdleOnAllTuners.AutoSize = true;
+      this.checkBoxEnableEPGWhileIdleOnAllTuners.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.checkBoxEnableEPGWhileIdleOnAllTuners.Location = new System.Drawing.Point(11, 87);
+      this.checkBoxEnableEPGWhileIdleOnAllTuners.Name = "checkBoxEnableEPGWhileIdleOnAllTuners";
+      this.checkBoxEnableEPGWhileIdleOnAllTuners.Size = new System.Drawing.Size(71, 17);
+      this.checkBoxEnableEPGWhileIdleOnAllTuners.TabIndex = 12;
+      this.checkBoxEnableEPGWhileIdleOnAllTuners.Text = "Multi-EPG";
+      this.checkBoxEnableEPGWhileIdleOnAllTuners.UseVisualStyleBackColor = true;
+      this.checkBoxEnableEPGWhileIdleOnAllTuners.CheckedChanged += new System.EventHandler(this.mpCheckBox1_CheckedChanged);
+      // 
       // numericUpDownEpgRefresh
       // 
-      this.numericUpDownEpgRefresh.Location = new System.Drawing.Point(86, 68);
+      this.numericUpDownEpgRefresh.Location = new System.Drawing.Point(86, 63);
       this.numericUpDownEpgRefresh.Maximum = new decimal(new int[] {
             3600,
             0,
@@ -240,7 +253,7 @@
       // 
       // numericUpDownEpgTimeOut
       // 
-      this.numericUpDownEpgTimeOut.Location = new System.Drawing.Point(86, 42);
+      this.numericUpDownEpgTimeOut.Location = new System.Drawing.Point(86, 37);
       this.numericUpDownEpgTimeOut.Maximum = new decimal(new int[] {
             3600,
             0,
@@ -260,7 +273,7 @@
       // 
       this.checkBoxEnableEPGWhileIdle.AutoSize = true;
       this.checkBoxEnableEPGWhileIdle.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.checkBoxEnableEPGWhileIdle.Location = new System.Drawing.Point(10, 19);
+      this.checkBoxEnableEPGWhileIdle.Location = new System.Drawing.Point(10, 17);
       this.checkBoxEnableEPGWhileIdle.Name = "checkBoxEnableEPGWhileIdle";
       this.checkBoxEnableEPGWhileIdle.Size = new System.Drawing.Size(63, 17);
       this.checkBoxEnableEPGWhileIdle.TabIndex = 11;
@@ -270,7 +283,7 @@
       // label15
       // 
       this.label15.AutoSize = true;
-      this.label15.Location = new System.Drawing.Point(177, 68);
+      this.label15.Location = new System.Drawing.Point(177, 63);
       this.label15.Name = "label15";
       this.label15.Size = new System.Drawing.Size(28, 13);
       this.label15.TabIndex = 7;
@@ -279,16 +292,16 @@
       // label14
       // 
       this.label14.AutoSize = true;
-      this.label14.Location = new System.Drawing.Point(7, 70);
+      this.label14.Location = new System.Drawing.Point(7, 65);
       this.label14.Name = "label14";
       this.label14.Size = new System.Drawing.Size(73, 13);
       this.label14.TabIndex = 5;
-      this.label14.Text = "Refresh every";
+      this.label14.Text = "Refresh every:";
       // 
       // label8
       // 
       this.label8.AutoSize = true;
-      this.label8.Location = new System.Drawing.Point(177, 44);
+      this.label8.Location = new System.Drawing.Point(177, 39);
       this.label8.Name = "label8";
       this.label8.Size = new System.Drawing.Size(28, 13);
       this.label8.TabIndex = 4;
@@ -297,7 +310,7 @@
       // label7
       // 
       this.label7.AutoSize = true;
-      this.label7.Location = new System.Drawing.Point(7, 44);
+      this.label7.Location = new System.Drawing.Point(7, 39);
       this.label7.Name = "label7";
       this.label7.Size = new System.Drawing.Size(48, 13);
       this.label7.TabIndex = 2;
@@ -309,18 +322,18 @@
       this.groupBox5.Controls.Add(this.checkBoxEnableEpgWhileTimeshifting);
       this.groupBox5.Controls.Add(this.label22);
       this.groupBox5.Controls.Add(this.label23);
-      this.groupBox5.Location = new System.Drawing.Point(3, 96);
+      this.groupBox5.Location = new System.Drawing.Point(3, 123);
       this.groupBox5.Name = "groupBox5";
-      this.groupBox5.Size = new System.Drawing.Size(226, 98);
+      this.groupBox5.Size = new System.Drawing.Size(226, 88);
       this.groupBox5.TabIndex = 39;
       this.groupBox5.TabStop = false;
       this.groupBox5.Text = "EPG grabbing while timeshifting/recording";
       // 
       // numericUpDownTSEpgTimeout
       // 
-      this.numericUpDownTSEpgTimeout.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.numericUpDownTSEpgTimeout.Location = new System.Drawing.Point(70, 42);
+      this.numericUpDownTSEpgTimeout.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+      this.numericUpDownTSEpgTimeout.Location = new System.Drawing.Point(70, 39);
       this.numericUpDownTSEpgTimeout.Maximum = new decimal(new int[] {
             3600,
             0,
@@ -340,7 +353,7 @@
       // 
       this.checkBoxEnableEpgWhileTimeshifting.AutoSize = true;
       this.checkBoxEnableEpgWhileTimeshifting.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.checkBoxEnableEpgWhileTimeshifting.Location = new System.Drawing.Point(11, 19);
+      this.checkBoxEnableEpgWhileTimeshifting.Location = new System.Drawing.Point(9, 17);
       this.checkBoxEnableEpgWhileTimeshifting.Name = "checkBoxEnableEpgWhileTimeshifting";
       this.checkBoxEnableEpgWhileTimeshifting.Size = new System.Drawing.Size(63, 17);
       this.checkBoxEnableEpgWhileTimeshifting.TabIndex = 9;
@@ -360,7 +373,7 @@
       // label23
       // 
       this.label23.AutoSize = true;
-      this.label23.Location = new System.Drawing.Point(6, 44);
+      this.label23.Location = new System.Drawing.Point(6, 41);
       this.label23.Name = "label23";
       this.label23.Size = new System.Drawing.Size(48, 13);
       this.label23.TabIndex = 5;
@@ -368,8 +381,9 @@
       // 
       // groupBox7
       // 
-      this.groupBox7.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox7.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox7.Controls.Add(this.checkBoxEnableEPGWhileIdleOnAllTuners);
       this.groupBox7.Controls.Add(this.checkboxSameTransponder);
       this.groupBox7.Controls.Add(this.label1);
       this.groupBox7.Controls.Add(this.checkBoxEnableCRCCheck);
@@ -377,22 +391,11 @@
       this.groupBox7.Controls.Add(this.checkBoxAlwaysFillHoles);
       this.groupBox7.Location = new System.Drawing.Point(3, 3);
       this.groupBox7.Name = "groupBox7";
-      this.groupBox7.Size = new System.Drawing.Size(457, 90);
+      this.groupBox7.Size = new System.Drawing.Size(457, 114);
       this.groupBox7.TabIndex = 38;
       this.groupBox7.TabStop = false;
       this.groupBox7.Text = "General";
       // 
-      // checkBoxEnableCRCCheck
-      // 
-      this.checkBoxEnableCRCCheck.AutoSize = true;
-      this.checkBoxEnableCRCCheck.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.checkBoxEnableCRCCheck.Location = new System.Drawing.Point(11, 42);
-      this.checkBoxEnableCRCCheck.Name = "checkBoxEnableCRCCheck";
-      this.checkBoxEnableCRCCheck.Size = new System.Drawing.Size(115, 17);
-      this.checkBoxEnableCRCCheck.TabIndex = 12;
-      this.checkBoxEnableCRCCheck.Text = "Enable CRC check";
-      this.checkBoxEnableCRCCheck.UseVisualStyleBackColor = true;
-      //
       // checkboxSameTransponder
       // 
       this.checkboxSameTransponder.AutoSize = true;
@@ -413,7 +416,18 @@
       this.label1.Size = new System.Drawing.Size(321, 26);
       this.label1.TabIndex = 13;
       this.label1.Text = "(This will increase stability of EPG grabbing.If your provider doesn\'t \r\nbroadcas" +
-          "t CRC checksums, you have to disable it)";
+    "t CRC checksums, you have to disable it)";
+      // 
+      // checkBoxEnableCRCCheck
+      // 
+      this.checkBoxEnableCRCCheck.AutoSize = true;
+      this.checkBoxEnableCRCCheck.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.checkBoxEnableCRCCheck.Location = new System.Drawing.Point(11, 42);
+      this.checkBoxEnableCRCCheck.Name = "checkBoxEnableCRCCheck";
+      this.checkBoxEnableCRCCheck.Size = new System.Drawing.Size(115, 17);
+      this.checkBoxEnableCRCCheck.TabIndex = 12;
+      this.checkBoxEnableCRCCheck.Text = "Enable CRC check";
+      this.checkBoxEnableCRCCheck.UseVisualStyleBackColor = true;
       // 
       // checkBoxAlwaysUpdate
       // 
@@ -453,9 +467,9 @@
       // 
       // tabControlEpg
       // 
-      this.tabControlEpg.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.tabControlEpg.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.tabControlEpg.Controls.Add(this.tabPage1);
       this.tabControlEpg.Location = new System.Drawing.Point(0, 0);
       this.tabControlEpg.Name = "tabControlEpg";
@@ -522,5 +536,6 @@
     private System.Windows.Forms.Label label1;
     private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxEnableCRCCheck;
     private MediaPortal.UserInterface.Controls.MPCheckBox checkboxSameTransponder;
+    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxEnableEPGWhileIdleOnAllTuners;
   }
 }

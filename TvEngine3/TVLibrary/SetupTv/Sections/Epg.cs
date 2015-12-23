@@ -49,6 +49,7 @@ namespace SetupTv.Sections
       checkboxSameTransponder.Checked = (layer.GetSetting("generalGrapOnlyForSameTransponder", "no").Value == "yes");
 
       checkBoxEnableEPGWhileIdle.Checked = (layer.GetSetting("idleEPGGrabberEnabled", "yes").Value == "yes");
+      checkBoxEnableEPGWhileIdleOnAllTuners.Checked = (layer.GetSetting("idleEPGGrabberEnabledOnAllTuners", "no").Value == "yes");
       checkBoxEnableCRCCheck.Checked = !DebugSettings.DisableCRCCheck;
       numericUpDownEpgTimeOut.Value = Convert.ToDecimal(layer.GetSetting("timeoutEPG", "10").Value);
       numericUpDownEpgRefresh.Value = Convert.ToDecimal(layer.GetSetting("timeoutEPGRefresh", "240").Value);
@@ -81,6 +82,10 @@ namespace SetupTv.Sections
 
       s = layer.GetSetting("idleEPGGrabberEnabled", "yes");
       s.Value = checkBoxEnableEPGWhileIdle.Checked ? "yes" : "no";
+      s.Persist();
+
+      s = layer.GetSetting("idleEPGGrabberEnabledOnAllTuners", "no");
+      s.Value = checkBoxEnableEPGWhileIdleOnAllTuners.Checked ? "yes" : "no";
       s.Persist();
 
       s = layer.GetSetting("timeoutEPG", "10");
@@ -129,6 +134,11 @@ namespace SetupTv.Sections
       defaults.Add("%NEWLINE%", Environment.NewLine);
       edTitleTest.Text = EvalTemplate(edTitleTemplate.Text, defaults);
       edDescriptionTest.Text = EvalTemplate(edDescriptionTemplate.Text, defaults);
+    }
+
+    private void mpCheckBox1_CheckedChanged(object sender, EventArgs e)
+    {
+
     }
   }
 }

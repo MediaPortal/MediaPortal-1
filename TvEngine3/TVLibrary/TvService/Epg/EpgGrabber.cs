@@ -234,8 +234,11 @@ namespace TvService
           }
 
           // Multi-EPG Grabbing
-          //if (_tvController.AllCardsIdle == false)
-          //  return;
+          TvBusinessLayer layer = new TvBusinessLayer();
+          if (_tvController.AllCardsIdle == false && layer.GetSetting("idleEPGGrabberEnabledOnAllTuners", "no").Value != "yes")
+          {
+            return;
+          }
           foreach (EpgCard card in _epgCards)
           {
             //Log.Epg("card:{0} grabbing:{1}", card.Card.IdCard, card.IsGrabbing);
@@ -248,8 +251,10 @@ namespace TvService
               continue;
             }
             // Multi-EPG Grabbing
-            //if (_tvController.AllCardsIdle == false)
-            //  return;
+            if (_tvController.AllCardsIdle == false && layer.GetSetting("idleEPGGrabberEnabledOnAllTuners", "no").Value != "yes")
+            {
+              return;
+            }
             GrabEpgOnCard(card);
           }
         }

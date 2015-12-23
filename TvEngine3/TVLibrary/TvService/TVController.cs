@@ -2691,7 +2691,7 @@ namespace TvService
         finally
         {
           CardReservationHelper.CancelAllCardReservations(tickets, CardCollection);
-          if (!HasTvSucceeded(result))
+          if (!HasTvSucceeded(result) || _layer.GetSetting("idleEPGGrabberEnabledOnAllTuners", "no").Value == "yes")
           {
             StartEPGgrabber();
           }
@@ -3139,7 +3139,7 @@ namespace TvService
     private void StartEPGgrabber()
     {
       // Multi-EPG Grabbing
-      if (_epgGrabber != null) // && AllCardsIdle)
+      if (_epgGrabber != null && (AllCardsIdle || _layer.GetSetting("idleEPGGrabberEnabledOnAllTuners", "no").Value == "yes"))
       {
         Log.Write("Controller: epg start");
         _epgGrabber.Start();
