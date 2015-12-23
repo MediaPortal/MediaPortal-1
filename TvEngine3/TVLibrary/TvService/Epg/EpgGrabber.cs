@@ -204,68 +204,65 @@ namespace TvService
     /// timer callback.
     /// This method is called by a timer every 30 seconds to wake up the epg grabber
     /// the epg grabber will check if its time to grab the epg for a channel
-    /// and ifso it starts the grabbing process
+    /// and if so it starts the grabbing process
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="e"></param>
     private void _epgTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
     {
-      lock (this)
+      //security check, dont allow re-entrancy here
+      if (_reEntrant)
+        return;
+      if (_epgTimer.Interval == 1000)
       {
-        //security check, dont allow re-entrancy here
-        if (_reEntrant)
-          return;
-        if (_epgTimer.Interval == 1000)
-        {
-          _epgTimer.Interval = 30000;
-        }
+        _epgTimer.Interval = 30000;
+      }
+      try
+      {
+        _reEntrant = true;
+
         try
         {
-          _reEntrant = true;
+          string threadname = Thread.CurrentThread.Name;
+          if (string.IsNullOrEmpty(threadname))
+            Thread.CurrentThread.Name = "DVB EPG timer";
+        }
+        catch (InvalidOperationException)
+        {
+        }
 
-          try
+        // Multi-EPG Grabbing
+        TvBusinessLayer layer = new TvBusinessLayer();
+        if (_tvController.AllCardsIdle == false && layer.GetSetting("idleEPGGrabberEnabledOnAllTuners", "no").Value != "yes")
+        {
+          return;
+        }
+        foreach (EpgCard card in _epgCards)
+        {
+          //Log.Epg("card:{0} grabbing:{1}", card.Card.IdCard, card.IsGrabbing);
+          if (!_isRunning)
           {
-            string threadname = Thread.CurrentThread.Name;
-            if (string.IsNullOrEmpty(threadname))
-              Thread.CurrentThread.Name = "DVB EPG timer";
+            return;
           }
-          catch (InvalidOperationException)
+          if (card.IsGrabbing)
           {
+            continue;
           }
-
           // Multi-EPG Grabbing
-          TvBusinessLayer layer = new TvBusinessLayer();
           if (_tvController.AllCardsIdle == false && layer.GetSetting("idleEPGGrabberEnabledOnAllTuners", "no").Value != "yes")
           {
             return;
           }
-          foreach (EpgCard card in _epgCards)
-          {
-            //Log.Epg("card:{0} grabbing:{1}", card.Card.IdCard, card.IsGrabbing);
-            if (!_isRunning)
-            {
-              return;
-            }
-            if (card.IsGrabbing)
-            {
-              continue;
-            }
-            // Multi-EPG Grabbing
-            if (_tvController.AllCardsIdle == false && layer.GetSetting("idleEPGGrabberEnabledOnAllTuners", "no").Value != "yes")
-            {
-              return;
-            }
-            GrabEpgOnCard(card);
-          }
+          GrabEpgOnCard(card);
         }
-        catch (Exception ex)
-        {
-          Log.Write(ex);
-        }
-        finally
-        {
-          _reEntrant = false;
-        }
+      }
+      catch (Exception ex)
+      {
+        Log.Write(ex);
+      }
+      finally
+      {
+        _reEntrant = false;
       }
     }
 
