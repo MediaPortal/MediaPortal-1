@@ -27,8 +27,9 @@ using System.Runtime.InteropServices;
 
 namespace DirectShowLib.BDA
 {
-
   #region Declarations
+
+#if ALLOW_UNTESTED_INTERFACES
 
   /// <summary>
   /// From ProgramElement
@@ -40,9 +41,13 @@ namespace DirectShowLib.BDA
     public short wProgramMapPID;
   }
 
+#endif
+
   #endregion
 
   #region Interfaces
+
+#if ALLOW_UNTESTED_INTERFACES
 
   [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("D19BDB43-405B-4a7c-A791-C89110C33165"),
@@ -142,7 +147,10 @@ namespace DirectShowLib.BDA
     int GetLength(
       out short pwVal
       );
+
   };
+
+#endif
 
   [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("6A5918F8-A77A-4f61-AED0-5702BDCDA3E6"),
@@ -359,4 +367,5 @@ namespace DirectShowLib.BDA
   }
 
   #endregion
+
 }

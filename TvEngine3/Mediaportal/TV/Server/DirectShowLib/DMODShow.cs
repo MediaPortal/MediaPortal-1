@@ -27,7 +27,6 @@ using System.Runtime.InteropServices;
 
 namespace DirectShowLib
 {
-
   #region Interfaces
 
   [ComImport, System.Security.SuppressUnmanagedCodeSecurity,

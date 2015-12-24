@@ -28,8 +28,9 @@ using System.Runtime.InteropServices;
 
 namespace DirectShowLib
 {
-
   #region Declarations
+
+#if ALLOW_UNTESTED_INTERFACES
 
   /// <summary>
   /// From VMRPresentationFlags
@@ -95,6 +96,7 @@ namespace DirectShowLib
     public Size szNativeSize;
   }
 
+#endif
 
   /// <summary>
   /// From VMRDeinterlaceTech
@@ -324,6 +326,8 @@ namespace DirectShowLib
 
   #region Interfaces
 
+#if ALLOW_UNTESTED_INTERFACES
+
   [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("CE704FE7-E71E-41fb-BAA2-C4403E1182F5"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
@@ -452,6 +456,7 @@ namespace DirectShowLib
       );
   }
 
+#endif
 
   [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("9e5530c5-7034-48b4-bb46-0b8a6efc8e36"),

@@ -27,8 +27,9 @@ using System.Runtime.InteropServices;
 
 namespace DirectShowLib.BDA
 {
-
   #region Declarations
+
+#if ALLOW_UNTESTED_INTERFACES
 
   /// <summary>
   /// From BDA_EVENT_ID
@@ -172,6 +173,8 @@ namespace DirectShowLib.BDA
     SCTE28Undesignated,
     SCTE28Reserved,
   }
+
+#endif
 
   /// <summary>
   /// From FECMethod
@@ -416,6 +419,7 @@ namespace DirectShowLib.BDA
     ExcludeTSFromTR = 0x00000001, // BDACOMP_EXCLUDE_TS_FROM_TR
     IncludeLocatorInTR = 0x00000002, // BDACOMP_INCLUDE_LOCATOR_IN_TR
   }
+
 
   #endregion
 }

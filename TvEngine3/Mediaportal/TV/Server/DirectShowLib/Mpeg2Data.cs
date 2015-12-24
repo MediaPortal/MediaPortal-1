@@ -27,7 +27,6 @@ using System.Runtime.InteropServices;
 
 namespace DirectShowLib
 {
-
   #region Declarations
 
   /// <summary>
@@ -72,20 +71,28 @@ namespace DirectShowLib
   [StructLayout(LayoutKind.Sequential, Pack = 1)]
   public struct DSMCCFilterOptions
   {
-    [MarshalAs(UnmanagedType.Bool)] public bool fSpecifyProtocol;
+    [MarshalAs(UnmanagedType.Bool)]
+    public bool fSpecifyProtocol;
     public byte Protocol;
-    [MarshalAs(UnmanagedType.Bool)] public bool fSpecifyType;
+    [MarshalAs(UnmanagedType.Bool)]
+    public bool fSpecifyType;
     public byte Type;
-    [MarshalAs(UnmanagedType.Bool)] public bool fSpecifyMessageId;
+    [MarshalAs(UnmanagedType.Bool)]
+    public bool fSpecifyMessageId;
     public short MessageId;
-    [MarshalAs(UnmanagedType.Bool)] public bool fSpecifyTransactionId;
-    [MarshalAs(UnmanagedType.Bool)] public bool fUseTrxIdMessageIdMask;
+    [MarshalAs(UnmanagedType.Bool)]
+    public bool fSpecifyTransactionId;
+    [MarshalAs(UnmanagedType.Bool)]
+    public bool fUseTrxIdMessageIdMask;
     public int TransactionId;
-    [MarshalAs(UnmanagedType.Bool)] public bool fSpecifyModuleVersion;
+    [MarshalAs(UnmanagedType.Bool)]
+    public bool fSpecifyModuleVersion;
     public byte ModuleVersion;
-    [MarshalAs(UnmanagedType.Bool)] public bool fSpecifyBlockNumber;
+    [MarshalAs(UnmanagedType.Bool)]
+    public bool fSpecifyBlockNumber;
     public short BlockNumber;
-    [MarshalAs(UnmanagedType.Bool)] public bool fGetModuleCall;
+    [MarshalAs(UnmanagedType.Bool)]
+    public bool fGetModuleCall;
     public short NumberOfBlocksInModule;
   }
 
@@ -95,7 +102,8 @@ namespace DirectShowLib
   [StructLayout(LayoutKind.Sequential, Pack = 1)]
   public struct ATSCFilterOptions
   {
-    [MarshalAs(UnmanagedType.Bool)] public bool fSpecifyEtmId;
+    [MarshalAs(UnmanagedType.Bool)]
+    public bool fSpecifyEtmId;
     public int EtmId;
   }
 
@@ -107,21 +115,33 @@ namespace DirectShowLib
   {
     public byte bVersionNumber;
     public short wFilterSize;
-    [MarshalAs(UnmanagedType.Bool)] public bool fUseRawFilteringBits;
-    [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)] public byte[] Filter;
-    [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)] public byte[] Mask;
-    [MarshalAs(UnmanagedType.Bool)] public bool fSpecifyTableIdExtension;
+    [MarshalAs(UnmanagedType.Bool)]
+    public bool fUseRawFilteringBits;
+    [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
+    public byte[] Filter;
+    [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
+    public byte[] Mask;
+    [MarshalAs(UnmanagedType.Bool)]
+    public bool fSpecifyTableIdExtension;
     public short TableIdExtension;
-    [MarshalAs(UnmanagedType.Bool)] public bool fSpecifyVersion;
+    [MarshalAs(UnmanagedType.Bool)]
+    public bool fSpecifyVersion;
     public byte Version;
-    [MarshalAs(UnmanagedType.Bool)] public bool fSpecifySectionNumber;
+    [MarshalAs(UnmanagedType.Bool)]
+    public bool fSpecifySectionNumber;
     public byte SectionNumber;
-    [MarshalAs(UnmanagedType.Bool)] public bool fSpecifyCurrentNext;
-    [MarshalAs(UnmanagedType.Bool)] public bool fNext;
-    [MarshalAs(UnmanagedType.Bool)] public bool fSpecifyDsmccOptions;
-    [MarshalAs(UnmanagedType.Struct)] public DSMCCFilterOptions Dsmcc;
-    [MarshalAs(UnmanagedType.Bool)] public bool fSpecifyAtscOptions;
-    [MarshalAs(UnmanagedType.Struct)] public ATSCFilterOptions Atsc;
+    [MarshalAs(UnmanagedType.Bool)]
+    public bool fSpecifyCurrentNext;
+    [MarshalAs(UnmanagedType.Bool)]
+    public bool fNext;
+    [MarshalAs(UnmanagedType.Bool)]
+    public bool fSpecifyDsmccOptions;
+    [MarshalAs(UnmanagedType.Struct)]
+    public DSMCCFilterOptions Dsmcc;
+    [MarshalAs(UnmanagedType.Bool)]
+    public bool fSpecifyAtscOptions;
+    [MarshalAs(UnmanagedType.Struct)]
+    public ATSCFilterOptions Atsc;
   }
 
   /// <summary>
@@ -153,8 +173,10 @@ namespace DirectShowLib
   public struct MPEGContextUnion
   {
     // Fields
-    [FieldOffset(0)] public BCSDeMux Demux;
-    [FieldOffset(0)] public MPEGWinSock Winsock;
+    [FieldOffset(0)]
+    public BCSDeMux Demux;
+    [FieldOffset(0)]
+    public MPEGWinSock Winsock;
   }
 
   /// <summary>
@@ -202,6 +224,8 @@ namespace DirectShowLib
 
   #region Interfaces
 
+#if ALLOW_UNTESTED_INTERFACES
+
   [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown),
    Guid("BDCDD913-9ECD-4fb2-81AE-ADF747EA75A5")]
@@ -242,8 +266,10 @@ namespace DirectShowLib
       byte tid,
       short eid
       );
+
   }
 
+#endif
 
   [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown),

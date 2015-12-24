@@ -28,7 +28,6 @@ using System.Runtime.InteropServices;
 
 namespace DirectShowLib
 {
-
   #region Declarations
 
   /// <summary>
@@ -355,6 +354,8 @@ namespace DirectShowLib
 
   #region Interfaces
 
+#if ALLOW_UNTESTED_INTERFACES
+
   [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("dfc581a1-6e1f-4c3a-8d0a-5e9792ea2afc"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
@@ -373,6 +374,7 @@ namespace DirectShowLib
     int GetSurface([Out, MarshalAs(UnmanagedType.IUnknown)] out object lplpSurface);
   }
 
+#endif
 
   [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("69188c61-12a3-40f0-8ffc-342e7b433fd7"),
@@ -387,6 +389,7 @@ namespace DirectShowLib
 
     [PreserveSig]
     int PresentImage([In] IntPtr dwUserID, [In] ref VMR9PresentationInfo lpPresInfo);
+
   }
 
   [ComImport, System.Security.SuppressUnmanagedCodeSecurity,

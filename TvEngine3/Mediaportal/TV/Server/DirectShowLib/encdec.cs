@@ -97,6 +97,8 @@ namespace DirectShowLib.BDA
 
   #region Declarations
 
+#if ALLOW_UNTESTED_INTERFACES
+
   /// <summary>
   /// From FormatNotSupportedEvents
   /// </summary>
@@ -112,8 +114,7 @@ namespace DirectShowLib.BDA
   [StructLayout(LayoutKind.Sequential)]
   public struct WMDRMProtectionInfo
   {
-    [MarshalAs(UnmanagedType.LPWStr, SizeConst = 25)]
-    string wszKID;
+    [MarshalAs(UnmanagedType.LPWStr, SizeConst = 25)] string wszKID;
     public long qwCounter;
     public long qwIndex;
     public byte bOffset;
@@ -241,6 +242,8 @@ namespace DirectShowLib.BDA
     Undefined = 2
   }
 
+#endif
+
   /// <summary>
   /// From ProtType
   /// </summary>
@@ -262,93 +265,74 @@ namespace DirectShowLib.BDA
   static public class EventID
   {
     /// <summary> EVENTID_XDSCodecNewXDSRating </summary>
-    public static readonly Guid XDSCodecNewXDSRating = new Guid(0xC4C4C4E0, 0x0049, 0x4E2B, 0x98, 0xFB, 0x95, 0x37, 0xF6,
-                                                                0xCE, 0x51, 0x6D);
+    public static readonly Guid XDSCodecNewXDSRating = new Guid(0xC4C4C4E0, 0x0049, 0x4E2B, 0x98, 0xFB, 0x95, 0x37, 0xF6, 0xCE, 0x51, 0x6D);
 
     /// <summary> EVENTID_XDSCodecDuplicateXDSRating </summary>
-    public static readonly Guid XDSCodecDuplicateXDSRating = new Guid(0xC4C4C4DF, 0x0049, 0x4E2B, 0x98, 0xFB, 0x95, 0x37,
-                                                                      0xF6, 0xCE, 0x51, 0x6D);
+    public static readonly Guid XDSCodecDuplicateXDSRating = new Guid(0xC4C4C4DF, 0x0049, 0x4E2B, 0x98, 0xFB, 0x95, 0x37, 0xF6, 0xCE, 0x51, 0x6D);
 
     /// <summary> EVENTID_XDSCodecNewXDSPacket </summary>
-    public static readonly Guid XDSCodecNewXDSPacket = new Guid(0xC4C4C4E1, 0x0049, 0x4E2B, 0x98, 0xFB, 0x95, 0x37, 0xF6,
-                                                                0xCE, 0x51, 0x6D);
+    public static readonly Guid XDSCodecNewXDSPacket = new Guid(0xC4C4C4E1, 0x0049, 0x4E2B, 0x98, 0xFB, 0x95, 0x37, 0xF6, 0xCE, 0x51, 0x6D);
 
     /// <summary> EVENTID_DTFilterRatingChange </summary>
-    public static readonly Guid DTFilterRatingChange = new Guid(0xC4C4C4E2, 0x0049, 0x4E2B, 0x98, 0xFB, 0x95, 0x37, 0xF6,
-                                                                0xCE, 0x51, 0x6D);
+    public static readonly Guid DTFilterRatingChange = new Guid(0xC4C4C4E2, 0x0049, 0x4E2B, 0x98, 0xFB, 0x95, 0x37, 0xF6, 0xCE, 0x51, 0x6D);
 
     /// <summary> EVENTID_DTFilterRatingsBlock </summary>
-    public static readonly Guid DTFilterRatingsBlock = new Guid(0xC4C4C4E3, 0x0049, 0x4E2B, 0x98, 0xFB, 0x95, 0x37, 0xF6,
-                                                                0xCE, 0x51, 0x6D);
+    public static readonly Guid DTFilterRatingsBlock = new Guid(0xC4C4C4E3, 0x0049, 0x4E2B, 0x98, 0xFB, 0x95, 0x37, 0xF6, 0xCE, 0x51, 0x6D);
 
     /// <summary> EVENTID_DTFilterRatingsUnblock </summary>
-    public static readonly Guid DTFilterRatingsUnblock = new Guid(0xC4C4C4E4, 0x0049, 0x4E2B, 0x98, 0xFB, 0x95, 0x37, 0xF6,
-                                                                  0xCE, 0x51, 0x6D);
+    public static readonly Guid DTFilterRatingsUnblock = new Guid(0xC4C4C4E4, 0x0049, 0x4E2B, 0x98, 0xFB, 0x95, 0x37, 0xF6, 0xCE, 0x51, 0x6D);
 
     /// <summary> EVENTID_DTFilterXDSPacket </summary>
-    public static readonly Guid DTFilterXDSPacket = new Guid(0xC4C4C4E5, 0x0049, 0x4E2B, 0x98, 0xFB, 0x95, 0x37, 0xF6, 0xCE,
-                                                              0x51, 0x6D);
+    public static readonly Guid DTFilterXDSPacket = new Guid(0xC4C4C4E5, 0x0049, 0x4E2B, 0x98, 0xFB, 0x95, 0x37, 0xF6, 0xCE, 0x51, 0x6D);
 
     /// <summary> EVENTID_ETFilterEncryptionOn </summary>
-    public static readonly Guid ETFilterEncryptionOn = new Guid(0xC4C4C4E6, 0x0049, 0x4E2B, 0x98, 0xFB, 0x95, 0x37, 0xF6,
-                                                                0xCE, 0x51, 0x6D);
+    public static readonly Guid ETFilterEncryptionOn = new Guid(0xC4C4C4E6, 0x0049, 0x4E2B, 0x98, 0xFB, 0x95, 0x37, 0xF6, 0xCE, 0x51, 0x6D);
 
     /// <summary> EVENTID_ETFilterEncryptionOff </summary>
-    public static readonly Guid ETFilterEncryptionOff = new Guid(0xC4C4C4E7, 0x0049, 0x4E2B, 0x98, 0xFB, 0x95, 0x37, 0xF6,
-                                                                  0xCE, 0x51, 0x6D);
+    public static readonly Guid ETFilterEncryptionOff = new Guid(0xC4C4C4E7, 0x0049, 0x4E2B, 0x98, 0xFB, 0x95, 0x37, 0xF6, 0xCE, 0x51, 0x6D);
 
     /// <summary> EVENTID_DTFilterCOPPUnblock </summary>
-    public static readonly Guid DTFilterCOPPUnblock = new Guid(0xC4C4C4E8, 0x0049, 0x4E2B, 0x98, 0xFB, 0x95, 0x37, 0xF6,
-                                                                0xCE, 0x51, 0x6D);
+    public static readonly Guid DTFilterCOPPUnblock = new Guid(0xC4C4C4E8, 0x0049, 0x4E2B, 0x98, 0xFB, 0x95, 0x37, 0xF6, 0xCE, 0x51, 0x6D);
 
     /// <summary> EVENTID_EncDecFilterError </summary>
-    public static readonly Guid EncDecFilterError = new Guid(0xC4C4C4E9, 0x0049, 0x4E2B, 0x98, 0xFB, 0x95, 0x37, 0xF6, 0xCE,
-                                                              0x51, 0x6D);
+    public static readonly Guid EncDecFilterError = new Guid(0xC4C4C4E9, 0x0049, 0x4E2B, 0x98, 0xFB, 0x95, 0x37, 0xF6, 0xCE, 0x51, 0x6D);
 
     /// <summary> EVENTID_DTFilterCOPPBlock </summary>
-    public static readonly Guid DTFilterCOPPBlock = new Guid(0xC4C4C4EA, 0x0049, 0x4E2B, 0x98, 0xFB, 0x95, 0x37, 0xF6, 0xCE,
-                                                              0x51, 0x6D);
+    public static readonly Guid DTFilterCOPPBlock = new Guid(0xC4C4C4EA, 0x0049, 0x4E2B, 0x98, 0xFB, 0x95, 0x37, 0xF6, 0xCE, 0x51, 0x6D);
 
     /// <summary> EVENTID_ETFilterCopyOnce </summary>
-    public static readonly Guid ETFilterCopyOnce = new Guid(0xC4C4C4EB, 0x0049, 0x4E2B, 0x98, 0xFB, 0x95, 0x37, 0xF6, 0xCE,
-                                                            0x51, 0x6D);
+    public static readonly Guid ETFilterCopyOnce = new Guid(0xC4C4C4EB, 0x0049, 0x4E2B, 0x98, 0xFB, 0x95, 0x37, 0xF6, 0xCE, 0x51, 0x6D);
 
     /// <summary> EVENTID_ETFilterCopyNever </summary>
-    public static readonly Guid ETFilterCopyNever = new Guid(0xC4C4C4F0, 0x0049, 0x4E2B, 0x98, 0xFB, 0x95, 0x37, 0xF6, 0xCE,
-                                                              0x51, 0x6D);
+    public static readonly Guid ETFilterCopyNever = new Guid(0xC4C4C4F0, 0x0049, 0x4E2B, 0x98, 0xFB, 0x95, 0x37, 0xF6, 0xCE, 0x51, 0x6D);
 
     /// <summary> EVENTID_DTFilterDataFormatOK </summary>
-    public static readonly Guid DTFilterDataFormatOK = new Guid(0xC4C4C4EC, 0x0049, 0x4E2B, 0x98, 0xFB, 0x95, 0x37, 0xF6,
-                                                                0xCE, 0x51, 0x6D);
+    public static readonly Guid DTFilterDataFormatOK = new Guid(0xC4C4C4EC, 0x0049, 0x4E2B, 0x98, 0xFB, 0x95, 0x37, 0xF6, 0xCE, 0x51, 0x6D);
 
     /// <summary> EVENTID_DTFilterDataFormatFailure </summary>
-    public static readonly Guid DTFilterDataFormatFailure = new Guid(0xC4C4C4ED, 0x0049, 0x4E2B, 0x98, 0xFB, 0x95, 0x37,
-                                                                      0xF6, 0xCE, 0x51, 0x6D);
+    public static readonly Guid DTFilterDataFormatFailure = new Guid(0xC4C4C4ED, 0x0049, 0x4E2B, 0x98, 0xFB, 0x95, 0x37, 0xF6, 0xCE, 0x51, 0x6D);
 
     /// <summary> EVENTID_ETDTFilterLicenseOK </summary>
-    public static readonly Guid ETDTFilterLicenseOK = new Guid(0xC4C4C4EE, 0x0049, 0x4E2B, 0x98, 0xFB, 0x95, 0x37, 0xF6,
-                                                                0xCE, 0x51, 0x6D);
+    public static readonly Guid ETDTFilterLicenseOK = new Guid(0xC4C4C4EE, 0x0049, 0x4E2B, 0x98, 0xFB, 0x95, 0x37, 0xF6, 0xCE, 0x51, 0x6D);
 
     /// <summary> EVENTID_ETDTFilterLicenseFailure </summary>
-    public static readonly Guid ETDTFilterLicenseFailure = new Guid(0xC4C4C4EF, 0x0049, 0x4E2B, 0x98, 0xFB, 0x95, 0x37,
-                                                                    0xF6, 0xCE, 0x51, 0x6D);
+    public static readonly Guid ETDTFilterLicenseFailure = new Guid(0xC4C4C4EF, 0x0049, 0x4E2B, 0x98, 0xFB, 0x95, 0x37, 0xF6, 0xCE, 0x51, 0x6D);
 
     /// <summary> EVENTID_EncDecFilterEvent </summary>
-    public static readonly Guid EncDecFilterEvent = new Guid(0x4a1b465b, 0xfb9, 0x4159, 0xaf, 0xbd, 0xe3, 0x30, 0x6, 0xa0,
-                                                              0xf9, 0xf4);
+    public static readonly Guid EncDecFilterEvent = new Guid(0x4a1b465b, 0xfb9, 0x4159, 0xaf, 0xbd, 0xe3, 0x30, 0x6, 0xa0, 0xf9, 0xf4);
 
     /// <summary> EVENTID_FormatNotSupportedEvent </summary>
-    public static readonly Guid FormatNotSupportedEvent = new Guid(0x24b2280a, 0xb2aa, 0x4777, 0xbf, 0x65, 0x63, 0xf3, 0x5e,
-                                                                    0x7b, 0x2, 0x4a);
+    public static readonly Guid FormatNotSupportedEvent = new Guid(0x24b2280a, 0xb2aa, 0x4777, 0xbf, 0x65, 0x63, 0xf3, 0x5e, 0x7b, 0x2, 0x4a);
 
     /// <summary> EVENTID_DemultiplexerFilterDiscontinuity </summary>
-    public static readonly Guid DemultiplexerFilterDiscontinuity = new Guid(0x16155770, 0xaed5, 0x475c, 0xbb, 0x98, 0x95,
-                                                                            0xa3, 0x30, 0x70, 0xdf, 0xc);
+    public static readonly Guid DemultiplexerFilterDiscontinuity = new Guid(0x16155770, 0xaed5, 0x475c, 0xbb, 0x98, 0x95, 0xa3, 0x30, 0x70, 0xdf, 0xc);
   }
 
   #endregion
 
   #region Interfaces
+
+#if ALLOW_UNTESTED_INTERFACES
 
   [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("FAF37694-909C-49cd-886F-C7382E5DB596"),
@@ -369,6 +353,7 @@ namespace DirectShowLib.BDA
     int GetOverlay(
       out int pdwOverlayCause
       );
+
   }
 
   [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
@@ -474,6 +459,7 @@ namespace DirectShowLib.BDA
     int GetLastErrorCode();
   }
 
+#endif
 
   [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("C4C4C4D3-0049-4E2B-98FB-9537F6CE516D"),
@@ -548,6 +534,7 @@ namespace DirectShowLib.BDA
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IDTFilter2 : IDTFilter
   {
+
     #region IDTFilter methods
 
     [PreserveSig]
@@ -611,6 +598,7 @@ namespace DirectShowLib.BDA
 
     [PreserveSig]
     int GetLastErrorCode();
+
   }
 
   [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
@@ -645,6 +633,7 @@ namespace DirectShowLib.BDA
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IDTFilter3 : IDTFilter2
   {
+
     #region IDTFilter methods
 
     [PreserveSig]
@@ -730,4 +719,5 @@ namespace DirectShowLib.BDA
   }
 
   #endregion
+
 }

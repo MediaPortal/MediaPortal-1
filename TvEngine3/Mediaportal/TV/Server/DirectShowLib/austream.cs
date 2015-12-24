@@ -27,8 +27,9 @@ using System.Runtime.InteropServices;
 
 namespace DirectShowLib.MultimediaStreaming
 {
-
   #region Interfaces
+
+#if ALLOW_UNTESTED_INTERFACES
 
   [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown),
@@ -142,6 +143,8 @@ namespace DirectShowLib.MultimediaStreaming
   }
 
 
+#endif
+
   [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown),
    Guid("F7537560-A3BE-11D0-8212-00C04FC32C45")]
@@ -201,12 +204,13 @@ namespace DirectShowLib.MultimediaStreaming
       [In] int dwFlags,
       [MarshalAs(UnmanagedType.Interface)] out IAudioStreamSample ppSample
 #else
-            [In, MarshalAs(UnmanagedType.Interface)] object pAudioData,
-            [In] int dwFlags,
-            [MarshalAs(UnmanagedType.Interface)] out object ppSample
+      [In, MarshalAs(UnmanagedType.Interface)] object pAudioData,
+      [In] int dwFlags,
+      [MarshalAs(UnmanagedType.Interface)] out object ppSample
 #endif
       );
   }
+
 
   #endregion
 }

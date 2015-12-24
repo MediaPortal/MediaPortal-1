@@ -28,8 +28,9 @@ using System.Runtime.InteropServices;
 
 namespace DirectShowLib
 {
-
   #region Declarations
+
+#if ALLOW_UNTESTED_INTERFACES
 
   /// <summary>
   /// From AMVPSIZE
@@ -88,6 +89,7 @@ namespace DirectShowLib
     public Rectangle rcValidRegion;
   }
 
+#endif
 
   /// <summary>
   /// From AMVP_MODE
@@ -104,6 +106,8 @@ namespace DirectShowLib
   #endregion
 
   #region Interfaces
+
+#if ALLOW_UNTESTED_INTERFACES
 
   [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IVPBaseConfig
@@ -350,6 +354,7 @@ namespace DirectShowLib
       );
 
     #endregion
+
   }
 
   [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
@@ -363,8 +368,10 @@ namespace DirectShowLib
     new int RenegotiateVPParameters();
 
     #endregion
+
   }
 
+#endif
 
   [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IVPBaseNotify
@@ -431,6 +438,7 @@ namespace DirectShowLib
     int GetVPSyncMaster(
       [MarshalAs(UnmanagedType.Bool)] out bool pbVPSyncMaster
       );
+
   }
 
   #endregion

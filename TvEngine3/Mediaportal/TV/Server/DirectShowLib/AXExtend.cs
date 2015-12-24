@@ -25,16 +25,17 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 using System;
 using System.Drawing;
 using System.Runtime.InteropServices;
-using System.Runtime.InteropServices.ComTypes;
 using System.Text;
-#if !USING_NET11
 
+#if !USING_NET11
+using System.Runtime.InteropServices.ComTypes;
 #endif
 
 namespace DirectShowLib
 {
-
   #region Declarations
+
+#if ALLOW_UNTESTED_INTERFACES
 
   /// <summary>
   /// From VideoCopyProtectionType
@@ -105,8 +106,8 @@ namespace DirectShowLib
     ColorKey = 0x4,
     Position = 0x8,
     DisplayChange = 0x10,
-    All = Clipping | Palette | ColorKey | Position,
-    All2 = All | DisplayChange
+    All = Advise.Clipping | Advise.Palette | Advise.ColorKey | Advise.Position,
+    All2 = Advise.All | Advise.DisplayChange
   }
 
   // ------------------------------------------------------------------------
@@ -298,6 +299,8 @@ namespace DirectShowLib
     public int cbSizeData;
     [MarshalAs(UnmanagedType.ByValArray, ArraySubType = UnmanagedType.I1, SizeConst = 4076)] public byte[] COPPStatus;
   }
+
+#endif
 
   /// <summary>
   /// From _AM_FILTER_MISC_FLAGS
@@ -1348,6 +1351,8 @@ namespace DirectShowLib
 
   #region Interfaces
 
+#if ALLOW_UNTESTED_INTERFACES
+
   [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("D8D715A0-6E5E-11D0-B3F0-00AA003761C5"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
@@ -2122,10 +2127,14 @@ namespace DirectShowLib
   public interface ICodecAPI
   {
     [PreserveSig]
-    int IsSupported([In, MarshalAs(UnmanagedType.LPStruct)] Guid Api);
+    int IsSupported(
+      [In, MarshalAs(UnmanagedType.LPStruct)] Guid Api
+      );
 
     [PreserveSig]
-    int IsModifiable([In, MarshalAs(UnmanagedType.LPStruct)] Guid Api);
+    int IsModifiable(
+      [In, MarshalAs(UnmanagedType.LPStruct)] Guid Api
+      );
 
     [PreserveSig]
     int GetParameterRange(
@@ -2167,7 +2176,9 @@ namespace DirectShowLib
       );
 
     [PreserveSig]
-    int UnregisterForEvent([In, MarshalAs(UnmanagedType.LPStruct)] Guid Api);
+    int UnregisterForEvent(
+      [In, MarshalAs(UnmanagedType.LPStruct)] Guid Api
+      );
 
     [PreserveSig]
     int SetAllDefaults();
@@ -2188,14 +2199,14 @@ namespace DirectShowLib
 
     [PreserveSig]
 #if USING_NET11
-        int GetAllSettings([In] UCOMIStream pStream);
+    int GetAllSettings([In] UCOMIStream pStream);
 #else
     int GetAllSettings([In] IStream pStream);
 #endif
 
     [PreserveSig]
 #if USING_NET11
-        int SetAllSettings([In] UCOMIStream pStream);
+    int SetAllSettings([In] UCOMIStream pStream);
 #else
     int SetAllSettings([In] IStream pStream);
 #endif
@@ -2203,7 +2214,7 @@ namespace DirectShowLib
     [PreserveSig]
     int SetAllSettingsWithNotify(
 #if USING_NET11
-            [In] UCOMIStream pStream,
+      [In] UCOMIStream pStream,
 #else
       [In] IStream pStream,
 #endif
@@ -2218,20 +2229,18 @@ namespace DirectShowLib
   [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("70423839-6ACC-4b23-B079-21DBF08156A5"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-  [Obsolete(
-    "This interface is deprecated and is maintained for backward compatibility only. New applications and drivers should use the ICodecAPI interface."
-    )]
+  [Obsolete("This interface is deprecated and is maintained for backward compatibility only. New applications and drivers should use the ICodecAPI interface.")]
   public interface IEncoderAPI
   {
     [PreserveSig]
-    int IsSupported([In] Guid Api);
+    int IsSupported([In, MarshalAs(UnmanagedType.LPStruct)] Guid Api);
 
     [PreserveSig]
-    int IsAvailable([In] Guid Api);
+    int IsAvailable([In, MarshalAs(UnmanagedType.LPStruct)] Guid Api);
 
     [PreserveSig]
     int GetParameterRange(
-      [In] Guid Api,
+      [In, MarshalAs(UnmanagedType.LPStruct)] Guid Api,
       [Out] out object ValueMin,
       [Out] out object ValueMax,
       [Out] out object SteppingDelta
@@ -2239,26 +2248,26 @@ namespace DirectShowLib
 
     [PreserveSig]
     int GetParameterValues(
-      [In] Guid Api,
+      [In, MarshalAs(UnmanagedType.LPStruct)] Guid Api,
       [Out] out object[] Values,
       [Out] out int ValuesCount
       );
 
     [PreserveSig]
     int GetDefaultValue(
-      [In] Guid Api,
+      [In, MarshalAs(UnmanagedType.LPStruct)] Guid Api,
       [Out] out object Value
       );
 
     [PreserveSig]
     int GetValue(
-      [In] Guid Api,
+      [In, MarshalAs(UnmanagedType.LPStruct)] Guid Api,
       [Out] out object Value
       );
 
     [PreserveSig]
     int SetValue(
-      [In] Guid Api,
+      [In, MarshalAs(UnmanagedType.LPStruct)] Guid Api,
       [In] object Value
       );
   }
@@ -2271,14 +2280,14 @@ namespace DirectShowLib
     #region IEncoderAPI Methods
 
     [PreserveSig]
-    new int IsSupported([In, MarshalAs(UnmanagedType.LPStruct)] Guid Api);
+    new int IsSupported([In] Guid Api);
 
     [PreserveSig]
-    new int IsAvailable([In, MarshalAs(UnmanagedType.LPStruct)] Guid Api);
+    new int IsAvailable([In] Guid Api);
 
     [PreserveSig]
     new int GetParameterRange(
-      [In, MarshalAs(UnmanagedType.LPStruct)] Guid Api,
+      [In] Guid Api,
       [Out] out object ValueMin,
       [Out] out object ValueMax,
       [Out] out object SteppingDelta
@@ -2286,26 +2295,26 @@ namespace DirectShowLib
 
     [PreserveSig]
     new int GetParameterValues(
-      [In, MarshalAs(UnmanagedType.LPStruct)] Guid Api,
+      [In] Guid Api,
       [Out] out object[] Values,
       [Out] out int ValuesCount
       );
 
     [PreserveSig]
     new int GetDefaultValue(
-      [In, MarshalAs(UnmanagedType.LPStruct)] Guid Api,
+      [In] Guid Api,
       [Out] out object Value
       );
 
     [PreserveSig]
     new int GetValue(
-      [In, MarshalAs(UnmanagedType.LPStruct)] Guid Api,
+      [In] Guid Api,
       [Out] out object Value
       );
 
     [PreserveSig]
     new int SetValue(
-      [In, MarshalAs(UnmanagedType.LPStruct)] Guid Api,
+      [In] Guid Api,
       [In] object Value
       );
 
@@ -2336,6 +2345,8 @@ namespace DirectShowLib
       [Out] out AMCOPPStatusOutput pStatusOutput
       );
   }
+
+#endif
 
   [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("56a868ab-0ad4-11ce-b03a-0020af0ba770"),
@@ -2530,7 +2541,8 @@ namespace DirectShowLib
     new int ConnectDirect(
       [In] IPin ppinOut,
       [In] IPin ppinIn,
-      [In, MarshalAs(UnmanagedType.LPStruct)] AMMediaType pmt
+      [In, MarshalAs(UnmanagedType.LPStruct)]
+      AMMediaType pmt
       );
 
     [PreserveSig]
@@ -2605,7 +2617,8 @@ namespace DirectShowLib
     new int ConnectDirect(
       [In] IPin ppinOut,
       [In] IPin ppinIn,
-      [In, MarshalAs(UnmanagedType.LPStruct)] AMMediaType pmt
+      [In, MarshalAs(UnmanagedType.LPStruct)]
+      AMMediaType pmt
       );
 
     [PreserveSig]
@@ -2657,8 +2670,8 @@ namespace DirectShowLib
     [PreserveSig]
     int AddSourceFilterForMoniker(
 #if USING_NET11
-            [In] UCOMIMoniker pMoniker,
-            [In] UCOMIBindCtx pCtx,
+      [In] UCOMIMoniker pMoniker,
+      [In] UCOMIBindCtx pCtx,
 #else
       [In] IMoniker pMoniker,
       [In] IBindCtx pCtx,
@@ -3617,7 +3630,7 @@ namespace DirectShowLib
       [In] Guid clsidFilter,
       [In, MarshalAs(UnmanagedType.LPWStr)] string Name,
 #if USING_NET11
-            [In, Out] UCOMIMoniker ppMoniker,
+      [In, Out] UCOMIMoniker ppMoniker,
 #else
       [In, Out] IMoniker ppMoniker,
 #endif
@@ -3626,14 +3639,14 @@ namespace DirectShowLib
 #if ALLOW_UNTESTED_INTERFACES
       [In] RegFilter2 prf2
 #else
- [In] object prf2
+      [In] object prf2
 #endif
       );
 
     [PreserveSig]
     int EnumMatchingFilters(
 #if USING_NET11
-            [Out] out UCOMIEnumMoniker ppEnum,
+      [Out] out UCOMIEnumMoniker ppEnum,
 #else
       [Out] out IEnumMoniker ppEnum,
 #endif
@@ -3681,7 +3694,7 @@ namespace DirectShowLib
       [In] Guid clsidFilter,
       [In, MarshalAs(UnmanagedType.LPWStr)] string Name,
 #if USING_NET11
-            [In, Out] UCOMIMoniker ppMoniker,
+      [In, Out] UCOMIMoniker ppMoniker,
 #else
       [In, Out] IMoniker ppMoniker,
 #endif
@@ -3690,14 +3703,14 @@ namespace DirectShowLib
 #if ALLOW_UNTESTED_INTERFACES
       [In] RegFilter2 prf2
 #else
- [In] object prf2
+      [In] object prf2
 #endif
       );
 
     [PreserveSig]
     new int EnumMatchingFilters(
 #if USING_NET11
-            [Out] out UCOMIEnumMoniker ppEnum,
+      [Out] out UCOMIEnumMoniker ppEnum,
 #else
       [Out] out IEnumMoniker ppEnum,
 #endif
@@ -3963,7 +3976,7 @@ namespace DirectShowLib
   {
     [PreserveSig]
 #if USING_NET11
-        int SelectedFilter([In] UCOMIMoniker pMon);
+    int SelectedFilter([In] UCOMIMoniker pMon);
 #else
     int SelectedFilter([In] IMoniker pMon);
 #endif
@@ -4153,7 +4166,8 @@ namespace DirectShowLib
     new int ConnectDirect(
       [In] IPin ppinOut,
       [In] IPin ppinIn,
-      [In, MarshalAs(UnmanagedType.LPStruct)] AMMediaType pmt
+      [In, MarshalAs(UnmanagedType.LPStruct)]
+      AMMediaType pmt
       );
 
     [PreserveSig]
@@ -4207,8 +4221,8 @@ namespace DirectShowLib
     [PreserveSig]
     new int AddSourceFilterForMoniker(
 #if USING_NET11
-            [In] UCOMIMoniker pMoniker,
-            [In] UCOMIBindCtx pCtx,
+      [In] UCOMIMoniker pMoniker,
+      [In] UCOMIBindCtx pCtx,
 #else
       [In] IMoniker pMoniker,
       [In] IBindCtx pCtx,
@@ -4238,6 +4252,7 @@ namespace DirectShowLib
       IReferenceClock pClockForFilter,
       IBaseFilter pFilter
       );
+
   }
 
   [ComImport, System.Security.SuppressUnmanagedCodeSecurity,

@@ -24,15 +24,13 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 using System;
 using System.Runtime.InteropServices;
-using System.Runtime.InteropServices.ComTypes;
 
 #if !USING_NET11
-
+using System.Runtime.InteropServices.ComTypes;
 #endif
 
 namespace DirectShowLib.BDA
 {
-
   #region Declarations
 
   /// <summary>
@@ -46,6 +44,8 @@ namespace DirectShowLib.BDA
   #endregion
 
   #region Interfaces
+
+#if ALLOW_UNTESTED_INTERFACES
 
   [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("DFEF4A68-EE61-415f-9CCB-CD95F2F98A3A"),
@@ -240,7 +240,7 @@ namespace DirectShowLib.BDA
 
     [PreserveSig]
 #if USING_NET11
-        int GetGuideProgramIDs([Out] out UCOMIEnumVARIANT pEnumPrograms);
+    int GetGuideProgramIDs([Out] out UCOMIEnumVARIANT pEnumPrograms);
 #else
     int GetGuideProgramIDs([Out] out IEnumVARIANT pEnumPrograms);
 #endif
@@ -253,7 +253,7 @@ namespace DirectShowLib.BDA
 
     [PreserveSig]
 #if USING_NET11
-        int GetScheduleEntryIDs([Out] out UCOMIEnumVARIANT pEnumScheduleEntries);
+    int GetScheduleEntryIDs([Out] out UCOMIEnumVARIANT pEnumScheduleEntries);
 #else
     int GetScheduleEntryIDs([Out] out IEnumVARIANT pEnumScheduleEntries);
 #endif
@@ -361,6 +361,8 @@ namespace DirectShowLib.BDA
       [MarshalAs(UnmanagedType.Bool)] out bool bRunning
       );
   }
+
+#endif
 
   #endregion
 }

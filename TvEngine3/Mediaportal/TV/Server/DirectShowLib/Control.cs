@@ -27,7 +27,6 @@ using System.Runtime.InteropServices;
 
 namespace DirectShowLib
 {
-
   #region Declarations
 
   /// <summary>
@@ -145,6 +144,8 @@ namespace DirectShowLib
   #endregion
 
   #region Interfaces
+
+#if ALLOW_UNTESTED_INTERFACES
 
   [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("56a868b9-0ad4-11ce-b03a-0020af0ba770"),
@@ -268,6 +269,8 @@ namespace DirectShowLib
     [PreserveSig]
     int Render();
   }
+
+#endif
 
   [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("bc9bcf80-dcd2-11d2-abf6-00a0c905f375"),

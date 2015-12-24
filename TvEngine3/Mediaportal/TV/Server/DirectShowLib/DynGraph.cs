@@ -27,7 +27,6 @@ using System.Runtime.InteropServices;
 
 namespace DirectShowLib
 {
-
   #region Declarations
 
   /// <summary>
@@ -128,6 +127,7 @@ namespace DirectShowLib
       IntPtr pvContext, // PVOID
       int dwFlags
       );
+
   }
 
   [ComImport, System.Security.SuppressUnmanagedCodeSecurity,

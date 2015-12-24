@@ -28,7 +28,6 @@ using System.Text;
 
 namespace DirectShowLib.SBE
 {
-
   #region Declarations
 
   /// <summary>
@@ -84,7 +83,7 @@ namespace DirectShowLib.SBE
   /// <summary>
   /// From g_wszStreamBufferRecording* static const WCHAR
   /// </summary>
-  public sealed class StreamBufferRecording
+  sealed public class StreamBufferRecording
   {
     private StreamBufferRecording()
     {
@@ -219,24 +218,19 @@ namespace DirectShowLib.SBE
   public sealed class SBEEvent
   {
     /// <summary> EVENTID_SBE2RecControlStarted </summary>
-    public static readonly Guid RecControlStarted = new Guid(0x8966a89e, 0xf83e, 0x4c0e, 0xbc, 0x3b, 0xbf, 0xa7, 0x64,
-                                                              0x9e, 0x4, 0xcb);
+    public static readonly Guid RecControlStarted = new Guid(0x8966a89e, 0xf83e, 0x4c0e, 0xbc, 0x3b, 0xbf, 0xa7, 0x64, 0x9e, 0x4, 0xcb);
 
     /// <summary> EVENTID_SBE2RecControlStopped </summary>
-    public static readonly Guid RecControlStopped = new Guid(0x454b1ec8, 0xc9b, 0x4caa, 0xb1, 0xa1, 0x1e, 0x7a, 0x26,
-                                                              0x66, 0xf6, 0xc3);
+    public static readonly Guid RecControlStopped = new Guid(0x454b1ec8, 0xc9b, 0x4caa, 0xb1, 0xa1, 0x1e, 0x7a, 0x26, 0x66, 0xf6, 0xc3);
 
     /// <summary> SBE2_STREAM_DESC_EVENT </summary>
-    public static readonly Guid StreamDescEvent = new Guid(0x2313a4ed, 0xbf2d, 0x454f, 0xad, 0x8a, 0xd9, 0x5b, 0xa7, 0xf9,
-                                                            0x1f, 0xee);
+    public static readonly Guid StreamDescEvent = new Guid(0x2313a4ed, 0xbf2d, 0x454f, 0xad, 0x8a, 0xd9, 0x5b, 0xa7, 0xf9, 0x1f, 0xee);
 
     /// <summary> SBE2_V1_STREAMS_CREATION_EVENT </summary>
-    public static readonly Guid V1StreamsCreationEvent = new Guid(0xfcf09, 0x97f5, 0x46ac, 0x97, 0x69, 0x7a, 0x83, 0xb3,
-                                                                  0x53, 0x84, 0xfb);
+    public static readonly Guid V1StreamsCreationEvent = new Guid(0xfcf09, 0x97f5, 0x46ac, 0x97, 0x69, 0x7a, 0x83, 0xb3, 0x53, 0x84, 0xfb);
 
     /// <summary> SBE2_V2_STREAMS_CREATION_EVENT </summary>
-    public static readonly Guid V2StreamsCreationEvent = new Guid(0xa72530a3, 0x344, 0x4cab, 0xa2, 0xd0, 0xfe, 0x93, 0x7d,
-                                                                  0xbd, 0xca, 0xb3);
+    public static readonly Guid V2StreamsCreationEvent = new Guid(0xa72530a3, 0x344, 0x4cab, 0xa2, 0xd0, 0xfe, 0x93, 0x7d, 0xbd, 0xca, 0xb3);
   }
 
   /// <summary>

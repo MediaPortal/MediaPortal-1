@@ -27,8 +27,9 @@ using System.Runtime.InteropServices;
 
 namespace DirectShowLib
 {
-
   #region Declarations
+
+#if ALLOW_UNTESTED_INTERFACES
 
   /// <summary>
   /// From AMPlayListItemFlags
@@ -50,9 +51,13 @@ namespace DirectShowLib
     ForceBanner = 0x2
   }
 
+#endif
+
   #endregion
 
   #region Interfaces
+
+#if ALLOW_UNTESTED_INTERFACES
 
   [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("56a868ff-0ad4-11ce-b03a-0020af0ba770"),
@@ -160,7 +165,9 @@ namespace DirectShowLib
   public interface IAMRebuild
   {
     int RebuildNow();
-  } ;
+  };
+
+#endif
 
   #endregion
 }

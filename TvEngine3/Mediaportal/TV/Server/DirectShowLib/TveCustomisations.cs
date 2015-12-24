@@ -409,14 +409,14 @@ namespace DirectShowLib
   public class DsDevice : IDisposable
   {
 #if USING_NET11
-        private UCOMIMoniker m_Mon;
+    private UCOMIMoniker m_Mon;
 #else
     private IMoniker m_Mon;
 #endif
     private string m_Name;
 
 #if USING_NET11
-        public DsDevice(UCOMIMoniker Mon)
+    public DsDevice(UCOMIMoniker Mon)
 #else
     public DsDevice(IMoniker Mon)
 #endif
@@ -426,7 +426,7 @@ namespace DirectShowLib
     }
 
 #if USING_NET11
-        public UCOMIMoniker Mon
+    public UCOMIMoniker Mon
 #else
     public IMoniker Mon
 #endif
@@ -972,7 +972,7 @@ namespace DirectShowLib
       DsDevice[] devret;
       ArrayList devs = new ArrayList();
 #if USING_NET11
-            UCOMIEnumMoniker enumMon;
+      UCOMIEnumMoniker enumMon;
 #else
       IEnumMoniker enumMon;
 #endif
@@ -989,14 +989,14 @@ namespace DirectShowLib
           try
           {
 #if USING_NET11
-                        UCOMIMoniker[] mon = new UCOMIMoniker[1];
+            UCOMIMoniker[] mon = new UCOMIMoniker[1];
 #else
             IMoniker[] mon = new IMoniker[1];
 #endif
 
 #if USING_NET11
-                        int j;
-                        while ((enumMon.Next(1, mon, out j) == 0))
+            int j;
+            while ((enumMon.Next(1, mon, out j) == 0))
 #else
             while ((enumMon.Next(1, mon, IntPtr.Zero) == 0))
 #endif

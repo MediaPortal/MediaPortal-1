@@ -24,15 +24,13 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 using System;
 using System.Runtime.InteropServices;
-using System.Runtime.InteropServices.ComTypes;
-using EXCEPINFO = System.Runtime.InteropServices.ComTypes.EXCEPINFO;
-#if !USING_NET11
 
+#if !USING_NET11
+using System.Runtime.InteropServices.ComTypes;
 #endif
 
 namespace DirectShowLib
 {
-
   #region Declarations
 
   /// <summary>
@@ -67,7 +65,7 @@ namespace DirectShowLib
 
     [PreserveSig]
 #if USING_NET11
-        int Load([In] UCOMIStream pStm);
+    int Load([In] UCOMIStream pStm);
 #else
     int Load([In] IStream pStm);
 #endif
@@ -75,7 +73,7 @@ namespace DirectShowLib
     [PreserveSig]
     int Save(
 #if USING_NET11
-            [In] UCOMIStream pStm,
+      [In] UCOMIStream pStm,
 #else
       [In] IStream pStm,
 #endif
@@ -144,9 +142,9 @@ namespace DirectShowLib
     int AddError(
       [In, MarshalAs(UnmanagedType.LPWStr)] string pszPropName,
 #if USING_NET11
-            [In] EXCEPINFO pExcepInfo);
-#else
       [In] EXCEPINFO pExcepInfo);
+#else
+      [In] System.Runtime.InteropServices.ComTypes.EXCEPINFO pExcepInfo);
 #endif
   }
 

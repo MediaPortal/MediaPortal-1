@@ -24,15 +24,13 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 using System;
 using System.Runtime.InteropServices;
-using System.Runtime.InteropServices.ComTypes;
 
 #if !USING_NET11
-
+using System.Runtime.InteropServices.ComTypes;
 #endif
 
 namespace DirectShowLib.BDA
 {
-
   #region Declarations
 
   [ComImport, Guid("5FFDC5E6-B83A-4b55-B6E8-C69E765FE9DB")]
@@ -210,6 +208,8 @@ namespace DirectShowLib.BDA
   {
   }
 
+#if ALLOW_UNTESTED_INTERFACES
+
   [ComImport, Guid("6E50CC0D-C19B-4BF6-810B-5BD60761F5CC")]
   public class DigitalLocator
   {
@@ -264,9 +264,13 @@ namespace DirectShowLib.BDA
     MAX
   }
 
+#endif
+
   #endregion
 
   #region Interfaces
+
+#if ALLOW_UNTESTED_INTERFACES
 
   [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("BAD7753B-6B37-4810-AE57-3CE0C4A9E6CB"),
@@ -506,73 +510,45 @@ namespace DirectShowLib.BDA
   public interface IDVBSLocator2 : IDVBSLocator
   {
     [DispId(1)]
-    int CarrierFrequency
-    {
-      [PreserveSig, DispId(1)]
-      get;
-      [param: In]
-      [PreserveSig, DispId(1)]
-      set;
+    int CarrierFrequency {
+      [PreserveSig, DispId(1)] get;
+      [param: In] [PreserveSig, DispId(1)] set;
     }
 
     [DispId(2)]
-    FECMethod InnerFEC
-    {
-      [PreserveSig, DispId(2)]
-      get;
-      [param: In]
-      [PreserveSig, DispId(2)]
-      set;
+    FECMethod InnerFEC {
+      [PreserveSig, DispId(2)] get;
+      [param: In] [PreserveSig, DispId(2)] set;
     }
 
     [DispId(3)]
-    BinaryConvolutionCodeRate InnerFECRate
-    {
-      [PreserveSig, DispId(3)]
-      get;
-      [param: In]
-      [PreserveSig, DispId(3)]
-      set;
+    BinaryConvolutionCodeRate InnerFECRate {
+      [PreserveSig, DispId(3)] get;
+      [param: In] [PreserveSig, DispId(3)] set;
     }
 
     [DispId(4)]
-    FECMethod OuterFEC
-    {
-      [PreserveSig, DispId(4)]
-      get;
-      [param: In]
-      [PreserveSig, DispId(4)]
-      set;
+    FECMethod OuterFEC {
+      [PreserveSig, DispId(4)] get;
+      [param: In] [PreserveSig, DispId(4)] set;
     }
 
     [DispId(5)]
-    BinaryConvolutionCodeRate OuterFECRate
-    {
-      [PreserveSig, DispId(5)]
-      get;
-      [param: In]
-      [PreserveSig, DispId(5)]
-      set;
+    BinaryConvolutionCodeRate OuterFECRate {
+      [PreserveSig, DispId(5)] get;
+      [param: In] [PreserveSig, DispId(5)] set;
     }
 
     [DispId(6)]
-    ModulationType Modulation
-    {
-      [PreserveSig, DispId(6)]
-      get;
-      [param: In]
-      [PreserveSig, DispId(6)]
-      set;
+    ModulationType Modulation {
+      [PreserveSig, DispId(6)] get;
+      [param: In] [PreserveSig, DispId(6)] set;
     }
 
     [DispId(7)]
-    int SymbolRate
-    {
-      [PreserveSig, DispId(7)]
-      get;
-      [param: In]
-      [PreserveSig, DispId(7)]
-      set;
+    int SymbolRate {
+      [PreserveSig, DispId(7)] get;
+      [param: In] [PreserveSig, DispId(7)] set;
     }
 
     [return: MarshalAs(UnmanagedType.Interface)]
@@ -580,124 +556,77 @@ namespace DirectShowLib.BDA
     ILocator Clone();
 
     [DispId(0x191)]
-    Polarisation SignalPolarisation
-    {
-      [PreserveSig, DispId(0x191)]
-      get;
-      [param: In]
-      [PreserveSig, DispId(0x191)]
-      set;
+    Polarisation SignalPolarisation {
+      [PreserveSig, DispId(0x191)] get;
+      [param: In] [PreserveSig, DispId(0x191)] set;
     }
 
     [DispId(0x192)]
-    bool WestPosition
-    {
-      [PreserveSig, DispId(0x192)]
-      get;
-      [param: In]
-      [PreserveSig, DispId(0x192)]
-      set;
+    bool WestPosition {
+      [PreserveSig, DispId(0x192)] get;
+      [param: In] [PreserveSig, DispId(0x192)] set;
     }
 
     [DispId(0x193)]
-    int OrbitalPosition
-    {
-      [PreserveSig, DispId(0x193)]
-      get;
-      [param: In]
-      [PreserveSig, DispId(0x193)]
-      set;
+    int OrbitalPosition {
+      [PreserveSig, DispId(0x193)] get;
+      [param: In] [PreserveSig, DispId(0x193)] set;
     }
 
     [DispId(0x194)]
-    int Azimuth
-    {
-      [PreserveSig, DispId(0x194)]
-      get;
-      [param: In]
-      [PreserveSig, DispId(0x194)]
-      set;
+    int Azimuth {
+      [PreserveSig, DispId(0x194)] get;
+      [param: In] [PreserveSig, DispId(0x194)] set;
     }
 
     [DispId(0x195)]
-    int Elevation
-    {
-      [PreserveSig, DispId(0x195)]
-      get;
-      [param: In]
-      [PreserveSig, DispId(0x195)]
-      set;
+    int Elevation {
+      [PreserveSig, DispId(0x195)] get;
+      [param: In] [PreserveSig, DispId(0x195)] set;
     }
 
     [DispId(0x196)]
-    LNB_Source DiseqLNBSource
-    {
-      [PreserveSig, DispId(0x196)]
-      get;
-      [param: In]
-      [PreserveSig, DispId(0x196)]
-      set;
+    LNB_Source DiseqLNBSource {
+      [PreserveSig, DispId(0x196)] get;
+      [param: In] [PreserveSig, DispId(0x196)] set;
     }
 
     [DispId(0x197)]
-    int LocalOscillatorOverrideLow
-    {
-      [PreserveSig, DispId(0x197)]
-      get;
-      [param: In]
-      [PreserveSig, DispId(0x197)]
-      set;
+    int LocalOscillatorOverrideLow {
+      [PreserveSig, DispId(0x197)] get;
+      [param: In] [PreserveSig, DispId(0x197)] set;
     }
 
     [DispId(0x198)]
-    int LocalOscillatorOverrideHigh
-    {
-      [PreserveSig, DispId(0x198)]
-      get;
-      [param: In]
-      [PreserveSig, DispId(0x198)]
-      set;
+    int LocalOscillatorOverrideHigh {
+      [PreserveSig, DispId(0x198)] get;
+      [param: In] [PreserveSig, DispId(0x198)] set;
     }
 
     [DispId(0x199)]
-    int LocalLNBSwitchOverride
-    {
-      [PreserveSig, DispId(0x199)]
-      get;
-      [param: In]
-      [PreserveSig, DispId(0x199)]
-      set;
+    int LocalLNBSwitchOverride {
+      [PreserveSig, DispId(0x199)] get;
+      [param: In] [PreserveSig, DispId(0x199)] set;
     }
 
     [DispId(410)]
-    SpectralInversion LocalSpectralInversionOverride
-    {
-      [PreserveSig, DispId(410)]
-      get;
-      [param: In]
-      [PreserveSig, DispId(410)]
-      set;
+    SpectralInversion LocalSpectralInversionOverride {
+      [PreserveSig, DispId(410)] get;
+      [param: In] [PreserveSig, DispId(410)] set;
     }
 
     [DispId(0x19b)]
-    RollOff SignalRollOff
-    {
-      [PreserveSig, DispId(0x19b)]
-      get;
-      [param: In]
-      [PreserveSig, DispId(0x19b)]
-      set;
+    RollOff SignalRollOff {
+      [PreserveSig, DispId(0x19b)] get;
+      [param: In] [PreserveSig, DispId(0x19b)] set;
     }
 
     [DispId(0x19c)]
-    Pilot SignalPilot
-    {
-      [PreserveSig, DispId(0x19c)]
-      get;
-      [param: In]
-      [PreserveSig, DispId(0x19c)]
-      set;
+    Pilot SignalPilot {
+      [PreserveSig, DispId(0x19c)] get;
+      [param: In] [PreserveSig, DispId(0x19c)] set;
     }
+
   }
 
   [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
@@ -728,6 +657,7 @@ namespace DirectShowLib.BDA
 
     [PreserveSig]
     int GetDialogNumber();
+
   }
 
   [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
@@ -751,6 +681,7 @@ namespace DirectShowLib.BDA
     [return: MarshalAs(UnmanagedType.BStr)]
     [PreserveSig]
     string GetStringData();
+
   }
 
   [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
@@ -761,6 +692,7 @@ namespace DirectShowLib.BDA
     [return: MarshalAs(UnmanagedType.Interface)]
     [PreserveSig]
     IESEvent CreateESEvent([In, MarshalAs(UnmanagedType.IUnknown)] object pServiceProvider, [In] int dwEventId, [In] Guid guidEventType, [In] int dwEventDataLength, [In] ref byte pEventData, [In, MarshalAs(UnmanagedType.BStr)] string bstrBaseUrl, [In, MarshalAs(UnmanagedType.IUnknown)] object pInitContext);
+
   }*/
 
   [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
@@ -770,6 +702,7 @@ namespace DirectShowLib.BDA
   {
     [PreserveSig]
     int OnESEventReceived([In] Guid guidEventType, [In, MarshalAs(UnmanagedType.Interface)] IESEvent pESEvent);
+
   }
 
   [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
@@ -779,6 +712,7 @@ namespace DirectShowLib.BDA
   {
     [PreserveSig]
     int FireESEvent([MarshalAs(UnmanagedType.Interface)] IESEvent pESEvent);
+
   }
 
   [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
@@ -803,6 +737,7 @@ namespace DirectShowLib.BDA
 
     [PreserveSig]
     int RemoveGraph([MarshalAs(UnmanagedType.Interface)] IFilterGraph pGraph);
+
   }
 
   /*
@@ -851,6 +786,7 @@ namespace DirectShowLib.BDA
 
     [PreserveSig]
     int DoesExpireAfterFirstUse();
+
   }
 
   [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
@@ -891,6 +827,7 @@ namespace DirectShowLib.BDA
     [return: MarshalAs(UnmanagedType.SafeArray, SafeArraySubType = VarEnum.VT_UI1)]
     [PreserveSig]
     byte[] GetResponseData();
+
   }
 
   [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
@@ -954,6 +891,7 @@ namespace DirectShowLib.BDA
 
     [PreserveSig]
     long GetExpiryDate();
+
   }
 
   [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
@@ -995,6 +933,7 @@ namespace DirectShowLib.BDA
     [return: MarshalAs(UnmanagedType.BStr)]
     [PreserveSig]
     string GetDialogStringData([MarshalAs(UnmanagedType.BStr)] out string pbstrBaseUrl);
+
   }
 
   [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
@@ -1034,6 +973,7 @@ namespace DirectShowLib.BDA
 
     [PreserveSig]
     int GetEstimatedTime();
+
   }
 
   [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
@@ -1065,6 +1005,7 @@ namespace DirectShowLib.BDA
     [return: MarshalAs(UnmanagedType.SafeArray, SafeArraySubType = VarEnum.VT_BSTR)]
     [PreserveSig]
     string[] GetValueNames();
+   
   }*/
 
   [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
@@ -1075,6 +1016,7 @@ namespace DirectShowLib.BDA
     [return: MarshalAs(UnmanagedType.BStr)]
     [PreserveSig]
     string GetValueUpdateName();
+
   }
 
   [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
@@ -1083,73 +1025,45 @@ namespace DirectShowLib.BDA
   public interface IISDBSLocator : IDVBSLocator
   {
     [DispId(1)]
-    int CarrierFrequency
-    {
-      [PreserveSig, DispId(1)]
-      get;
-      [param: In]
-      [PreserveSig, DispId(1)]
-      set;
+    int CarrierFrequency {
+      [PreserveSig, DispId(1)] get;
+      [param: In] [PreserveSig, DispId(1)] set;
     }
 
     [DispId(2)]
-    FECMethod InnerFEC
-    {
-      [PreserveSig, DispId(2)]
-      get;
-      [param: In]
-      [PreserveSig, DispId(2)]
-      set;
+    FECMethod InnerFEC {
+      [PreserveSig, DispId(2)] get;
+      [param: In] [PreserveSig, DispId(2)] set;
     }
 
     [DispId(3)]
-    BinaryConvolutionCodeRate InnerFECRate
-    {
-      [PreserveSig, DispId(3)]
-      get;
-      [param: In]
-      [PreserveSig, DispId(3)]
-      set;
+    BinaryConvolutionCodeRate InnerFECRate {
+      [PreserveSig, DispId(3)] get;
+      [param: In] [PreserveSig, DispId(3)] set;
     }
 
     [DispId(4)]
-    FECMethod OuterFEC
-    {
-      [PreserveSig, DispId(4)]
-      get;
-      [param: In]
-      [PreserveSig, DispId(4)]
-      set;
+    FECMethod OuterFEC {
+      [PreserveSig, DispId(4)] get;
+      [param: In] [PreserveSig, DispId(4)] set;
     }
 
     [DispId(5)]
-    BinaryConvolutionCodeRate OuterFECRate
-    {
-      [PreserveSig, DispId(5)]
-      get;
-      [param: In]
-      [PreserveSig, DispId(5)]
-      set;
+    BinaryConvolutionCodeRate OuterFECRate {
+      [PreserveSig, DispId(5)] get;
+      [param: In] [PreserveSig, DispId(5)] set;
     }
 
     [DispId(6)]
-    ModulationType Modulation
-    {
-      [PreserveSig, DispId(6)]
-      get;
-      [param: In]
-      [PreserveSig, DispId(6)]
-      set;
+    ModulationType Modulation {
+      [PreserveSig, DispId(6)] get;
+      [param: In] [PreserveSig, DispId(6)] set;
     }
 
     [DispId(7)]
-    int SymbolRate
-    {
-      [PreserveSig, DispId(7)]
-      get;
-      [param: In]
-      [PreserveSig, DispId(7)]
-      set;
+    int SymbolRate {
+      [PreserveSig, DispId(7)] get;
+      [param: In] [PreserveSig, DispId(7)] set;
     }
 
     [return: MarshalAs(UnmanagedType.Interface)]
@@ -1157,54 +1071,35 @@ namespace DirectShowLib.BDA
     ILocator Clone();
 
     [DispId(0x191)]
-    Polarisation SignalPolarisation
-    {
-      [PreserveSig, DispId(0x191)]
-      get;
-      [param: In]
-      [PreserveSig, DispId(0x191)]
-      set;
+    Polarisation SignalPolarisation {
+      [PreserveSig, DispId(0x191)] get;
+      [param: In] [PreserveSig, DispId(0x191)] set;
     }
 
     [DispId(0x192)]
-    bool WestPosition
-    {
-      [PreserveSig, DispId(0x192)]
-      get;
-      [param: In]
-      [PreserveSig, DispId(0x192)]
-      set;
+    bool WestPosition {
+      [PreserveSig, DispId(0x192)] get;
+      [param: In] [PreserveSig, DispId(0x192)] set;
     }
 
     [DispId(0x193)]
-    int OrbitalPosition
-    {
-      [PreserveSig, DispId(0x193)]
-      get;
-      [param: In]
-      [PreserveSig, DispId(0x193)]
-      set;
+    int OrbitalPosition {
+      [PreserveSig, DispId(0x193)] get;
+      [param: In] [PreserveSig, DispId(0x193)] set;
     }
 
     [DispId(0x194)]
-    int Azimuth
-    {
-      [PreserveSig, DispId(0x194)]
-      get;
-      [param: In]
-      [PreserveSig, DispId(0x194)]
-      set;
+    int Azimuth {
+      [PreserveSig, DispId(0x194)] get;
+      [param: In] [PreserveSig, DispId(0x194)] set;
     }
 
     [DispId(0x195)]
-    int Elevation
-    {
-      [PreserveSig, DispId(0x195)]
-      get;
-      [param: In]
-      [PreserveSig, DispId(0x195)]
-      set;
+    int Elevation {
+      [PreserveSig, DispId(0x195)] get;
+      [param: In] [PreserveSig, DispId(0x195)] set;
     }
+
   }
 
   [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
@@ -1213,11 +1108,10 @@ namespace DirectShowLib.BDA
   public interface ITunerCapEx
   {
     [DispId(0x60010000)]
-    bool Has608_708Caption
-    {
-      [PreserveSig]
-      get;
+    bool Has608_708Caption {
+      [PreserveSig] get;
     }
+
   }
 
   [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
@@ -1331,6 +1225,7 @@ namespace DirectShowLib.BDA
       );
   }
 
+#endif
 
   [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("061C6E30-E622-11d2-9493-00C04F72D980"),
@@ -1372,7 +1267,7 @@ namespace DirectShowLib.BDA
 
     [PreserveSig]
 #if USING_NET11
-        int EnumDeviceMonikers([Out] out UCOMIEnumMoniker ppEnum);
+    int EnumDeviceMonikers([Out] out UCOMIEnumMoniker ppEnum);
 #else
     int EnumDeviceMonikers([Out] out IEnumMoniker ppEnum);
 #endif
@@ -1583,7 +1478,7 @@ namespace DirectShowLib.BDA
 
     [PreserveSig]
 #if USING_NET11
-        new int EnumDeviceMonikers([Out] out UCOMIEnumMoniker ppEnum);
+    new int EnumDeviceMonikers([Out] out UCOMIEnumMoniker ppEnum);
 #else
     new int EnumDeviceMonikers([Out] out IEnumMoniker ppEnum);
 #endif
@@ -1755,7 +1650,7 @@ namespace DirectShowLib.BDA
 
     [PreserveSig]
 #if USING_NET11
-        new int EnumDeviceMonikers([Out] out UCOMIEnumMoniker ppEnum);
+    new int EnumDeviceMonikers([Out] out UCOMIEnumMoniker ppEnum);
 #else
     new int EnumDeviceMonikers([Out] out IEnumMoniker ppEnum);
 #endif
@@ -1832,7 +1727,7 @@ namespace DirectShowLib.BDA
 
     [PreserveSig]
 #if USING_NET11
-        new int EnumDeviceMonikers([Out] out UCOMIEnumMoniker ppEnum);
+    new int EnumDeviceMonikers([Out] out UCOMIEnumMoniker ppEnum);
 #else
     new int EnumDeviceMonikers([Out] out IEnumMoniker ppEnum);
 #endif
@@ -1909,7 +1804,7 @@ namespace DirectShowLib.BDA
 
     [PreserveSig]
 #if USING_NET11
-        int get__NewEnum([Out] out UCOMIEnumVARIANT ppNewEnum);
+    int get__NewEnum([Out] out UCOMIEnumVARIANT ppNewEnum);
 #else
     int get__NewEnum([Out] out IEnumVARIANT ppNewEnum);
 #endif
@@ -1979,7 +1874,7 @@ namespace DirectShowLib.BDA
 
     [PreserveSig]
 #if USING_NET11
-        int get__NewEnum([Out] out UCOMIEnumVARIANT ppNewEnum);
+    int get__NewEnum([Out] out UCOMIEnumVARIANT ppNewEnum);
 #else
     int get__NewEnum([Out] out IEnumVARIANT ppNewEnum);
 #endif
@@ -2256,7 +2151,7 @@ namespace DirectShowLib.BDA
     [PreserveSig]
     int get__NewEnum(
 #if USING_NET11
-            [Out] out UCOMIEnumVARIANT ppNewEnum
+      [Out] out UCOMIEnumVARIANT ppNewEnum
 #else
       [Out] out IEnumVARIANT ppNewEnum
 #endif
@@ -2306,7 +2201,7 @@ namespace DirectShowLib.BDA
 
     [PreserveSig]
 #if USING_NET11
-        int get__NewEnum([Out] out UCOMIEnumVARIANT ppNewEnum);
+    int get__NewEnum([Out] out UCOMIEnumVARIANT ppNewEnum);
 #else
     int get__NewEnum([Out] out IEnumVARIANT ppNewEnum);
 #endif
@@ -2452,7 +2347,7 @@ namespace DirectShowLib.BDA
     [PreserveSig]
     int get__NewEnum(
 #if USING_NET11
-            [Out] out UCOMIEnumVARIANT ppNewEnum
+      [Out] out UCOMIEnumVARIANT ppNewEnum
 #else
       [Out] out IEnumVARIANT ppNewEnum
 #endif
@@ -2528,7 +2423,7 @@ namespace DirectShowLib.BDA
 
     [PreserveSig]
 #if USING_NET11
-        new int EnumDeviceMonikers([Out] out UCOMIEnumMoniker ppEnum);
+    new int EnumDeviceMonikers([Out] out UCOMIEnumMoniker ppEnum);
 #else
     new int EnumDeviceMonikers([Out] out IEnumMoniker ppEnum);
 #endif
@@ -2715,7 +2610,6 @@ namespace DirectShowLib.BDA
   public interface IATSCLocator : IDigitalLocator
   {
     #region ILocator Methods
-
     [PreserveSig]
     new int get_CarrierFrequency([Out] out int Frequency);
 
@@ -2818,7 +2712,7 @@ namespace DirectShowLib.BDA
 
     [PreserveSig]
 #if USING_NET11
-        new int EnumDeviceMonikers([Out] out UCOMIEnumMoniker ppEnum);
+    new int EnumDeviceMonikers([Out] out UCOMIEnumMoniker ppEnum);
 #else
     new int EnumDeviceMonikers([Out] out IEnumMoniker ppEnum);
 #endif
@@ -3171,7 +3065,7 @@ namespace DirectShowLib.BDA
 
     [PreserveSig]
 #if USING_NET11
-        new int EnumDeviceMonikers([Out] out UCOMIEnumMoniker ppEnum);
+    new int EnumDeviceMonikers([Out] out UCOMIEnumMoniker ppEnum);
 #else
     new int EnumDeviceMonikers([Out] out IEnumMoniker ppEnum);
 #endif
@@ -3458,7 +3352,7 @@ namespace DirectShowLib.BDA
 
     [PreserveSig]
 #if USING_NET11
-        new int EnumDeviceMonikers([Out] out UCOMIEnumMoniker ppEnum);
+    new int EnumDeviceMonikers([Out] out UCOMIEnumMoniker ppEnum);
 #else
     new int EnumDeviceMonikers([Out] out IEnumMoniker ppEnum);
 #endif
@@ -3547,7 +3441,7 @@ namespace DirectShowLib.BDA
 
     [PreserveSig]
 #if USING_NET11
-        new int EnumDeviceMonikers([Out] out UCOMIEnumMoniker ppEnum);
+    new int EnumDeviceMonikers([Out] out UCOMIEnumMoniker ppEnum);
 #else
     new int EnumDeviceMonikers([Out] out IEnumMoniker ppEnum);
 #endif
@@ -3725,7 +3619,7 @@ namespace DirectShowLib.BDA
 
     [PreserveSig]
 #if USING_NET11
-        new int EnumDeviceMonikers([Out] out UCOMIEnumMoniker ppEnum);
+    new int EnumDeviceMonikers([Out] out UCOMIEnumMoniker ppEnum);
 #else
     new int EnumDeviceMonikers([Out] out IEnumMoniker ppEnum);
 #endif
@@ -4050,7 +3944,7 @@ namespace DirectShowLib.BDA
 
     [PreserveSig]
 #if USING_NET11
-      new int EnumDeviceMonikers([Out] out UCOMIEnumMoniker ppEnum);
+    new int EnumDeviceMonikers([Out] out UCOMIEnumMoniker ppEnum);
 #else
     new int EnumDeviceMonikers([Out] out IEnumMoniker ppEnum);
 #endif

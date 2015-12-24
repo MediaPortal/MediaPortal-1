@@ -27,10 +27,9 @@ using System.Runtime.InteropServices;
 
 namespace DirectShowLib.DMO
 {
-
   #region Declarations
 
-  public sealed class MediaParamTimeFormat
+  sealed public class MediaParamTimeFormat
   {
     private MediaParamTimeFormat()
     {
@@ -38,16 +37,13 @@ namespace DirectShowLib.DMO
     }
 
     /// <summary> GUID_TIME_REFERENCE </summary>
-    public static readonly Guid Reference = new Guid(0x93ad712b, 0xdaa0, 0x4ffe, 0xbc, 0x81, 0xb0, 0xce, 0x50, 0x0f,
-                                                     0xcd, 0xd9);
+    public static readonly Guid Reference = new Guid(0x93ad712b, 0xdaa0, 0x4ffe, 0xbc, 0x81, 0xb0, 0xce, 0x50, 0x0f, 0xcd, 0xd9);
 
     /// <summary> GUID_TIME_MUSIC </summary>
-    public static readonly Guid Music = new Guid(0x0574c49d, 0x5b04, 0x4b15, 0xa5, 0x42, 0xae, 0x28, 0x20, 0x30, 0x11,
-                                                 0x7b);
+    public static readonly Guid Music = new Guid(0x0574c49d, 0x5b04, 0x4b15, 0xa5, 0x42, 0xae, 0x28, 0x20, 0x30, 0x11, 0x7b);
 
     /// <summary> GUID_TIME_SAMPLES, audio capture category </summary>
-    public static readonly Guid Samples = new Guid(0xa8593d05, 0x0c43, 0x4984, 0x9a, 0x63, 0x97, 0xaf, 0x9e, 0x02, 0xc4,
-                                                   0xc0);
+    public static readonly Guid Samples = new Guid(0xa8593d05, 0x0c43, 0x4984, 0x9a, 0x63, 0x97, 0xaf, 0x9e, 0x02, 0xc4, 0xc0);
   }
 
   /// <summary>
@@ -124,8 +120,10 @@ namespace DirectShowLib.DMO
     public MPData mpdMinValue;
     public MPData mpdMaxValue;
     public MPData mpdNeutralValue;
-    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 0x20)] public string szUnitText;
-    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 0x20)] public string szLabel;
+    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 0x20)]
+    public string szUnitText;
+    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 0x20)]
+    public string szLabel;
   }
 
   #endregion

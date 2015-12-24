@@ -24,14 +24,14 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 using System;
 using System.Runtime.InteropServices;
+using DirectShowLib;
 using System.Text;
 
 namespace DirectShowLib.DES
 {
-
   #region Utility Classes
 
-  public sealed class DESResults
+  sealed public class DESResults
   {
     private DESResults()
     {
@@ -47,7 +47,7 @@ namespace DirectShowLib.DES
   }
 
 
-  public sealed class DESError
+  sealed public class DESError
   {
     private DESError()
     {
@@ -113,6 +113,7 @@ namespace DirectShowLib.DES
       }
     }
   }
+
 
   #endregion
 
@@ -278,9 +279,12 @@ namespace DirectShowLib.DES
   {
   }
 
+
   #endregion
 
   #region Declarations
+
+#if ALLOW_UNTESTED_INTERFACES
 
   /// <summary>
   /// From unnamed enum
@@ -293,6 +297,9 @@ namespace DirectShowLib.DES
     Alpha,
     Hue
   }
+
+
+#endif
 
   /// <summary>
   /// From TIMELINE_MAJOR_TYPE
@@ -450,9 +457,12 @@ namespace DirectShowLib.DES
     InterfaceError = 1429
   }
 
+
   #endregion
 
   #region Interfaces
+
+#if ALLOW_UNTESTED_INTERFACES
 
   [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown),
@@ -956,6 +966,8 @@ namespace DirectShowLib.DES
     [PreserveSig]
     int DoConnectionsNow();
   }
+
+#endif
 
   [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown),
@@ -2123,7 +2135,7 @@ namespace DirectShowLib.DES
 #if ALLOW_UNTESTED_INTERFACES
       IGrfCache pCallback
 #else
-            object pCallback
+      object pCallback
 #endif
       );
 
@@ -2180,7 +2192,7 @@ namespace DirectShowLib.DES
 #if ALLOW_UNTESTED_INTERFACES
       IFindCompressorCB pCallback
 #else
-            object pCallback
+      object pCallback
 #endif
       );
   }

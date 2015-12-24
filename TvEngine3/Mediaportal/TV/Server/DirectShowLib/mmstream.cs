@@ -27,10 +27,9 @@ using System.Runtime.InteropServices;
 
 namespace DirectShowLib.MultimediaStreaming
 {
-
   #region Utility classes
 
-  public sealed class MsResults
+  sealed public class MsResults
   {
     private MsResults()
     {
@@ -52,7 +51,7 @@ namespace DirectShowLib.MultimediaStreaming
     public const int E_NotRunning = unchecked((int) 0x8004040a);
   }
 
-  public sealed class MsError
+  sealed public class MsError
   {
     private MsError()
     {
@@ -75,8 +74,7 @@ namespace DirectShowLib.MultimediaStreaming
           sRet = "End of stream. Sample not updated.";
           break;
         case MsResults.E_SampleAlloc:
-          sRet =
-            "An IMediaStream object could not be removed from an IMultiMediaStream object because it still contains at least one allocated sample.";
+          sRet = "An IMediaStream object could not be removed from an IMultiMediaStream object because it still contains at least one allocated sample.";
           break;
         case MsResults.E_PurposeId:
           sRet = "The specified purpose ID can't be used for the call.";
@@ -247,7 +245,7 @@ namespace DirectShowLib.MultimediaStreaming
 
   #region GUIDS
 
-  public sealed class MSPID
+  sealed public class MSPID
   {
     private MSPID()
     {
@@ -255,12 +253,10 @@ namespace DirectShowLib.MultimediaStreaming
     }
 
     /// <summary> MSPID_PrimaryVideo </summary>
-    public static readonly Guid PrimaryVideo = new Guid(0xa35ff56a, 0x9fda, 0x11d0, 0x8f, 0xdf, 0x0, 0xc0, 0x4f, 0xd9,
-                                                        0x18, 0x9d);
+    public static readonly Guid PrimaryVideo = new Guid(0xa35ff56a, 0x9fda, 0x11d0, 0x8f, 0xdf, 0x0, 0xc0, 0x4f, 0xd9, 0x18, 0x9d);
 
     /// <summary> MSPID_PrimaryAudio </summary>
-    public static readonly Guid PrimaryAudio = new Guid(0xa35ff56b, 0x9fda, 0x11d0, 0x8f, 0xdf, 0x0, 0xc0, 0x4f, 0xd9,
-                                                        0x18, 0x9d);
+    public static readonly Guid PrimaryAudio = new Guid(0xa35ff56b, 0x9fda, 0x11d0, 0x8f, 0xdf, 0x0, 0xc0, 0x4f, 0xd9, 0x18, 0x9d);
   }
 
   #endregion

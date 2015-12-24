@@ -27,8 +27,9 @@ using System.Runtime.InteropServices;
 
 namespace DirectShowLib.BDA
 {
-
   #region Declarations
+
+#if ALLOW_UNTESTED_INTERFACES
 
   /// <summary>
   /// From KSPROPERTY_IPSINK
@@ -122,8 +123,10 @@ namespace DirectShowLib.BDA
   {
     public ApplicationTypeType ApplicationType;
     public short ApplicationVersion;
-    [MarshalAs(UnmanagedType.BStr)] public string pbstrApplicationName;
-    [MarshalAs(UnmanagedType.BStr)] public string pbstrApplicationURL;
+    [MarshalAs(UnmanagedType.BStr)]
+    public string pbstrApplicationName;
+    [MarshalAs(UnmanagedType.BStr)]
+    public string pbstrApplicationURL;
   }
 
   /// <summary>
@@ -198,6 +201,8 @@ namespace DirectShowLib.BDA
     public int ulTuningTimeoutMs;
   }
 
+#endif
+
   /// <summary>
   /// From BDA_CHANGE_STATE
   /// </summary>
@@ -262,6 +267,8 @@ namespace DirectShowLib.BDA
   #endregion
 
   #region Interfaces
+
+#if ALLOW_UNTESTED_INTERFACES
 
   [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("fd501041-8ebe-11ce-8183-00aa00577da2"),
@@ -1332,6 +1339,8 @@ namespace DirectShowLib.BDA
     );
   }
 
+#endif
+
   [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("1347D106-CF3A-428a-A5CB-AC0D9A2A4338"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
@@ -1392,8 +1401,7 @@ namespace DirectShowLib.BDA
       [In] int ulNodeType,
       [Out] out int pulcInterfaces,
       [In] int ulcInterfacesMax,
-      [Out, MarshalAs(UnmanagedType.LPArray, ArraySubType = UnmanagedType.LPStruct, SizeParamIndex = 2)] Guid[]
-        rgguidInterfaces
+      [Out, MarshalAs(UnmanagedType.LPArray, ArraySubType = UnmanagedType.LPStruct, SizeParamIndex = 2)] Guid[] rgguidInterfaces
       );
 
     [PreserveSig]
@@ -1444,6 +1452,7 @@ namespace DirectShowLib.BDA
       [In] int ulNodeType,
       [Out, MarshalAs(UnmanagedType.IUnknown)] out object ppControlNode // IUnknown
       );
+
   }
 
   [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
@@ -1481,6 +1490,7 @@ namespace DirectShowLib.BDA
       [Out] out int pulCount,
       [Out] out IntPtr ppulList
       );
+
   }
 
   [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
@@ -1584,6 +1594,7 @@ namespace DirectShowLib.BDA
     [PreserveSig]
     int GetMulticastMode(
       out MulticastMode pulModeMask);
+
   }
 
   [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
@@ -1631,8 +1642,7 @@ namespace DirectShowLib.BDA
   [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("3F4DC8E2-4050-11d3-8F4B-00C04F7971E2"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown),
-   Obsolete(
-     "IBDA_IPSinkControl is no longer being supported for Ring 3 clients. Use the BDA_IPSinkInfo interface instead.")]
+   Obsolete("IBDA_IPSinkControl is no longer being supported for Ring 3 clients. Use the BDA_IPSinkInfo interface instead.")]
   public interface IBDA_IPSinkControl
   {
     [PreserveSig]
@@ -1691,6 +1701,7 @@ namespace DirectShowLib.BDA
     [PreserveSig]
     int GetMulticastMode(
       out MulticastMode pulModeMask);
+
   }
 
   [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
@@ -1768,8 +1779,9 @@ namespace DirectShowLib.BDA
 #if ALLOW_UNTESTED_INTERFACES
     int EnumPIDMap([Out] out IEnumPIDMap pIEnumPIDMap);
 #else
-        int EnumPIDMap([Out] out object pIEnumPIDMap);
+    int EnumPIDMap([Out] out object pIEnumPIDMap);
 #endif
+
   }
 
   [ComImport, System.Security.SuppressUnmanagedCodeSecurity,

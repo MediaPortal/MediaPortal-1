@@ -27,7 +27,6 @@ using System.Runtime.InteropServices;
 
 namespace DirectShowLib.BDA
 {
-
   #region Declarations
 
   // From Mpeg2Bits.h
@@ -104,6 +103,7 @@ namespace DirectShowLib.BDA
     }
   }
 
+#if ALLOW_UNTESTED_INTERFACES
 
   /// <summary>
   /// From MPEG_CURRENT_NEXT_BIT, MPEG_SECTION_IS_*
@@ -179,7 +179,8 @@ namespace DirectShowLib.BDA
   public struct MpegRqstPacket
   {
     public int dwLength;
-    [MarshalAs(UnmanagedType.LPStruct)] public Section pSection;
+    [MarshalAs(UnmanagedType.LPStruct)]
+    public Section pSection;
   }
 
   /// <summary>
@@ -230,10 +231,14 @@ namespace DirectShowLib.BDA
   {
     public short wPidValue;
     public int dwFilterSize;
-    [MarshalAs(UnmanagedType.Bool)] public bool fCrcEnabled;
-    [MarshalAs(UnmanagedType.ByValArray, ArraySubType = UnmanagedType.U1, SizeConst = 16)] public byte[] rgchFilter;
-    [MarshalAs(UnmanagedType.ByValArray, ArraySubType = UnmanagedType.U1, SizeConst = 16)] public byte[] rgchMask;
+    [MarshalAs(UnmanagedType.Bool)]
+    public bool fCrcEnabled;
+    [MarshalAs(UnmanagedType.ByValArray, ArraySubType = UnmanagedType.U1, SizeConst = 16)]
+    public byte[] rgchFilter;
+    [MarshalAs(UnmanagedType.ByValArray, ArraySubType = UnmanagedType.U1, SizeConst = 16)]
+    public byte[] rgchMask;
   }
+#endif
 
   /// <summary>
   /// From MPEG_DURATION & MPEG_TIME
@@ -300,6 +305,10 @@ namespace DirectShowLib.BDA
   #endregion
 
   #region Interfaces
+
+#if ALLOW_UNTESTED_INTERFACES
+
+#endif
 
   #endregion
 }

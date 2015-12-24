@@ -23,14 +23,15 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #endregion
 
 using System;
+using System.Text;
 using System.Runtime.InteropServices;
 using System.Security;
-using System.Text;
 
 namespace DirectShowLib.DMO
 {
-
   #region Declarations
+
+#if ALLOW_UNTESTED_INTERFACES
 
   /// <summary>
   /// From DMO_QUALITY_STATUS_FLAGS
@@ -42,6 +43,7 @@ namespace DirectShowLib.DMO
     Enabled = 0x1
   }
 
+#endif
 
   /// <summary>
   /// From _DMO_OUTPUT_DATA_BUFFER_FLAGS
@@ -55,7 +57,6 @@ namespace DirectShowLib.DMO
     TimeLength = 0x4,
     InComplete = 0x1000000
   } ;
-
   /// <summary>
   /// From DMO_ENUM_FLAGS
   /// </summary>
@@ -74,8 +75,7 @@ namespace DirectShowLib.DMO
   {
     None = 0,
     IsKeyed = 0x00000001
-  } ;
-
+  };
   /// <summary>
   /// From DMO_PROCESS_OUTPUT_FLAGS
   /// </summary>
@@ -183,17 +183,19 @@ namespace DirectShowLib.DMO
   [StructLayout(LayoutKind.Sequential, Pack = 8)]
   public struct DMOOutputDataBuffer
   {
-    [MarshalAs(UnmanagedType.Interface)] public IMediaBuffer pBuffer;
+    [MarshalAs(UnmanagedType.Interface)]
+    public IMediaBuffer pBuffer;
     public DMOOutputDataBufferFlags dwStatus;
     public long rtTimestamp;
     public long rtTimelength;
   }
 
+
   #endregion
 
   #region GUIDS
 
-  public sealed class DMOCategory
+  sealed public class DMOCategory
   {
     private DMOCategory()
     {
@@ -201,39 +203,32 @@ namespace DirectShowLib.DMO
     }
 
     /// <summary> DMOCATEGORY_AUDIO_DECODER </summary>
-    public static readonly Guid AudioDecoder = new Guid(0x57f2db8b, 0xe6bb, 0x4513, 0x9d, 0x43, 0xdc, 0xd2, 0xa6, 0x59,
-                                                        0x31, 0x25);
+    public static readonly Guid AudioDecoder = new Guid(0x57f2db8b, 0xe6bb, 0x4513, 0x9d, 0x43, 0xdc, 0xd2, 0xa6, 0x59, 0x31, 0x25);
 
     /// <summary> DMOCATEGORY_AUDIO_ENCODER </summary>
-    public static readonly Guid AudioEncoder = new Guid(0x33D9A761, 0x90C8, 0x11d0, 0xBD, 0x43, 0x00, 0xA0, 0xC9, 0x11,
-                                                        0xCE, 0x86);
+    public static readonly Guid AudioEncoder = new Guid(0x33D9A761, 0x90C8, 0x11d0, 0xBD, 0x43, 0x00, 0xA0, 0xC9, 0x11, 0xCE, 0x86);
 
     /// <summary> DMOCATEGORY_VIDEO_DECODER </summary>
-    public static readonly Guid VideoDecoder = new Guid(0x4a69b442, 0x28be, 0x4991, 0x96, 0x9c, 0xb5, 0x00, 0xad, 0xf5,
-                                                        0xd8, 0xa8);
+    public static readonly Guid VideoDecoder = new Guid(0x4a69b442, 0x28be, 0x4991, 0x96, 0x9c, 0xb5, 0x00, 0xad, 0xf5, 0xd8, 0xa8);
 
     /// <summary> DMOCATEGORY_VIDEO_ENCODER </summary>
-    public static readonly Guid VideoEncoder = new Guid(0x33D9A760, 0x90C8, 0x11d0, 0xBD, 0x43, 0x00, 0xA0, 0xC9, 0x11,
-                                                        0xCE, 0x86);
+    public static readonly Guid VideoEncoder = new Guid(0x33D9A760, 0x90C8, 0x11d0, 0xBD, 0x43, 0x00, 0xA0, 0xC9, 0x11, 0xCE, 0x86);
 
     /// <summary> DMOCATEGORY_AUDIO_EFFECT </summary>
-    public static readonly Guid AudioEffect = new Guid(0xf3602b3f, 0x0592, 0x48df, 0xa4, 0xcd, 0x67, 0x47, 0x21, 0xe7,
-                                                       0xeb, 0xeb);
+    public static readonly Guid AudioEffect = new Guid(0xf3602b3f, 0x0592, 0x48df, 0xa4, 0xcd, 0x67, 0x47, 0x21, 0xe7, 0xeb, 0xeb);
 
     /// <summary> DMOCATEGORY_VIDEO_EFFECT </summary>
-    public static readonly Guid VideoEffect = new Guid(0xd990ee14, 0x776c, 0x4723, 0xbe, 0x46, 0x3d, 0xa2, 0xf5, 0x6f,
-                                                       0x10, 0xb9);
+    public static readonly Guid VideoEffect = new Guid(0xd990ee14, 0x776c, 0x4723, 0xbe, 0x46, 0x3d, 0xa2, 0xf5, 0x6f, 0x10, 0xb9);
 
     /// <summary> DMOCATEGORY_AUDIO_CAPTURE_EFFECT </summary>
-    public static readonly Guid AudioCaptureEffect = new Guid(0xf665aaba, 0x3e09, 0x4920, 0xaa, 0x5f, 0x21, 0x98, 0x11,
-                                                              0x14, 0x8f, 0x09);
+    public static readonly Guid AudioCaptureEffect = new Guid(0xf665aaba, 0x3e09, 0x4920, 0xaa, 0x5f, 0x21, 0x98, 0x11, 0x14, 0x8f, 0x09);
   }
 
   #endregion
 
   #region API Declares
 
-  public sealed class DMOUtils
+  sealed public class DMOUtils
   {
     [DllImport("msdmo.dll", ExactSpelling = true), SuppressUnmanagedCodeSecurity]
     public static extern int DMOEnum(
@@ -248,7 +243,7 @@ namespace DirectShowLib.DMO
 
     [DllImport("msdmo.dll", ExactSpelling = true), SuppressUnmanagedCodeSecurity]
     public static extern int MoInitMediaType(
-      [Out] AMMediaType pmt,
+      [Out] DirectShowLib.AMMediaType pmt,
       int i
       );
 
@@ -259,7 +254,7 @@ namespace DirectShowLib.DMO
       );
 
     [DllImport("MSDmo.dll", CharSet = CharSet.Unicode, ExactSpelling = true), SuppressUnmanagedCodeSecurity]
-    public static extern int DMORegister(
+    static extern public int DMORegister(
       [MarshalAs(UnmanagedType.LPWStr)] string szName,
       [In, MarshalAs(UnmanagedType.LPStruct)] Guid clsidDMO,
       [In, MarshalAs(UnmanagedType.LPStruct)] Guid DMOCategory,
@@ -271,19 +266,19 @@ namespace DirectShowLib.DMO
       );
 
     [DllImport("MSDmo.dll", ExactSpelling = true), SuppressUnmanagedCodeSecurity]
-    public static extern int DMOUnregister(
+    static extern public int DMOUnregister(
       [In, MarshalAs(UnmanagedType.LPStruct)] Guid clsidDMO,
       [In, MarshalAs(UnmanagedType.LPStruct)] Guid guidCategory
       );
 
     [DllImport("MSDmo.dll", CharSet = CharSet.Unicode, ExactSpelling = true), SuppressUnmanagedCodeSecurity]
-    public static extern int DMOGetName(
+    static extern public int DMOGetName(
       [In, MarshalAs(UnmanagedType.LPStruct)] Guid clsidDMO,
       [Out, MarshalAs(UnmanagedType.LPWStr, SizeConst = 80)] StringBuilder szName
       );
 
     [DllImport("MSDmo.dll", ExactSpelling = true), SuppressUnmanagedCodeSecurity]
-    public static extern int DMOGetTypes(
+    static extern public int DMOGetTypes(
       [In, MarshalAs(UnmanagedType.LPStruct)] Guid clsidDMO,
       int ulInputTypesRequested,
       out int pulInputTypesSupplied,
@@ -302,7 +297,7 @@ namespace DirectShowLib.DMO
 
   #region Utility Classes
 
-  public sealed class DMOResults
+  sealed public class DMOResults
   {
     private DMOResults()
     {
@@ -317,7 +312,7 @@ namespace DirectShowLib.DMO
     public const int E_NoMoreItems = unchecked((int) 0x80040206);
   }
 
-  public sealed class DMOError
+  sealed public class DMOError
   {
     private DMOError()
     {
@@ -337,12 +332,10 @@ namespace DirectShowLib.DMO
           sRet = "Invalid media type.";
           break;
         case DMOResults.E_TypeNotSet:
-          sRet =
-            "Media type was not set. One or more streams require a media type before this operation can be performed.";
+          sRet = "Media type was not set. One or more streams require a media type before this operation can be performed.";
           break;
         case DMOResults.E_NotAccepting:
-          sRet =
-            "Data cannot be accepted on this stream. You might need to process more output data; see IMediaObject::ProcessInput.";
+          sRet = "Data cannot be accepted on this stream. You might need to process more output data; see IMediaObject::ProcessInput.";
           break;
         case DMOResults.E_TypeNotAccepted:
           sRet = "Media type was not accepted.";
@@ -386,9 +379,12 @@ namespace DirectShowLib.DMO
     }
   }
 
+
   #endregion
 
   #region Interfaces
+
+#if ALLOW_UNTESTED_INTERFACES
 
   [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("65ABEA96-CF36-453F-AF8A-705E98F16260"),
@@ -411,6 +407,7 @@ namespace DirectShowLib.DMO
       );
   }
 
+#endif
 
   [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown),

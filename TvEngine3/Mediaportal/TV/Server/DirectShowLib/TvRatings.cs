@@ -27,8 +27,9 @@ using System.Runtime.InteropServices;
 
 namespace DirectShowLib.BDA
 {
-
   #region Declarations
+
+#if ALLOW_UNTESTED_INTERFACES
 
   /// <summary>
   /// From EnTvRat_MPAA
@@ -144,6 +145,7 @@ namespace DirectShowLib.BDA
   {
   }
 
+#endif
 
   /// <summary>
   /// From EnTvRat_System
@@ -223,6 +225,8 @@ namespace DirectShowLib.BDA
 
   #region Interfaces
 
+#if ALLOW_UNTESTED_INTERFACES
+
   [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("C5C5C5B0-3ABC-11D6-B25B-00C04FA0C026"),
    InterfaceType(ComInterfaceType.InterfaceIsDual)]
@@ -241,6 +245,7 @@ namespace DirectShowLib.BDA
       );
   }
 
+#endif
 
   [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("C5C5C5B1-3ABC-11D6-B25B-00C04FA0C026"),

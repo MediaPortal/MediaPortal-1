@@ -27,7 +27,6 @@ using System.Runtime.InteropServices;
 
 namespace DirectShowLib
 {
-
   #region Declarations
 
   /// <summary>
@@ -45,6 +44,8 @@ namespace DirectShowLib
   #endregion
 
   #region Interfaces
+
+#if ALLOW_UNTESTED_INTERFACES
 
   [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown),
@@ -713,6 +714,7 @@ namespace DirectShowLib
     int put_KsControl([In] IntPtr pKsControl); // PVOID
   }
 
+#endif
 
   [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("720D4AC0-7533-11D0-A5D6-28DB04C10000"),

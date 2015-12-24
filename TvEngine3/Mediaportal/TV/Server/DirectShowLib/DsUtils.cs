@@ -25,21 +25,21 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #endregion
 
 using System;
-using System.Diagnostics;
+using System.Collections;
 using System.Drawing;
-using System.Reflection;
 using System.Runtime.InteropServices;
-using System.Runtime.InteropServices.ComTypes;
-using System.Security;
 using System.Text;
-using DirectShowLib.Dvd;
-#if !USING_NET11
+using System.Reflection;
+using System.Security;
 
+using DirectShowLib.Dvd;
+
+#if !USING_NET11
+using System.Runtime.InteropServices.ComTypes;
 #endif
 
 namespace DirectShowLib
 {
-
   #region Declarations
 
   /// <summary>
@@ -240,7 +240,8 @@ namespace DirectShowLib
   [StructLayout(LayoutKind.Explicit)]
   public class DsGuid
   {
-    [FieldOffset(0)] private Guid guid;
+    [FieldOffset(0)]
+    private Guid guid;
 
     public static readonly DsGuid Empty = Guid.Empty;
 
@@ -747,9 +748,7 @@ namespace DirectShowLib
     public override bool Equals(object obj)
     {
       if (!(obj is NormalizedRect))
-      {
         return false;
-      }
 
       NormalizedRect other = (NormalizedRect) obj;
       return (this == other);
@@ -771,7 +770,7 @@ namespace DirectShowLib
 
   #region Utility Classes
 
-  public static class DsResults
+  static public class DsResults
   {
     public const int E_InvalidMediaType = unchecked((int) 0x80040200);
     public const int E_InvalidSubType = unchecked((int) 0x80040201);
@@ -919,7 +918,7 @@ namespace DirectShowLib
   }
 
 
-  public static class DsError
+  static public class DsError
   {
     [DllImport("quartz.dll", CharSet = CharSet.Unicode, ExactSpelling = true, EntryPoint = "AMGetErrorTextW"),
      SuppressUnmanagedCodeSecurity]
@@ -976,7 +975,7 @@ namespace DirectShowLib
   }
 
 
-  public static class DsUtils
+  static public class DsUtils
   {
     /// <summary>
     /// Returns the PinCategory of the specified pin.  Usually a member of PinCategory.  Not all pins have a category.
@@ -1052,6 +1051,7 @@ namespace DirectShowLib
         pinInfo.filter = null;
       }
     }
+
   }
 
 
@@ -1067,29 +1067,27 @@ namespace DirectShowLib
     private int m_cookie = 0;
 
     #region APIs
-
     [DllImport("ole32.dll", ExactSpelling = true), SuppressUnmanagedCodeSecurity]
 #if USING_NET11
-        private static extern int GetRunningObjectTable(int r, out UCOMIRunningObjectTable pprot);
+    private static extern int GetRunningObjectTable(int r, out UCOMIRunningObjectTable pprot);
 #else
     private static extern int GetRunningObjectTable(int r, out IRunningObjectTable pprot);
 #endif
 
     [DllImport("ole32.dll", CharSet = CharSet.Unicode, ExactSpelling = true), SuppressUnmanagedCodeSecurity]
 #if USING_NET11
-        private static extern int CreateItemMoniker(string delim, string item, out UCOMIMoniker ppmk);
+    private static extern int CreateItemMoniker(string delim, string item, out UCOMIMoniker ppmk);
 #else
     private static extern int CreateItemMoniker(string delim, string item, out IMoniker ppmk);
 #endif
-
     #endregion
 
     public DsROTEntry(IFilterGraph graph)
     {
       int hr = 0;
 #if USING_NET11
-            UCOMIRunningObjectTable rot = null;
-            UCOMIMoniker mk = null;
+      UCOMIRunningObjectTable rot = null;
+      UCOMIMoniker mk = null;
 #else
       IRunningObjectTable rot = null;
       IMoniker mk = null;
@@ -1101,7 +1099,7 @@ namespace DirectShowLib
         DsError.ThrowExceptionForHR(hr);
 
         // Build up the object to add to the table
-        int id = Process.GetCurrentProcess().Id;
+        int id = System.Diagnostics.Process.GetCurrentProcess().Id;
         IntPtr iuPtr = Marshal.GetIUnknownForObject(graph);
         string s;
         try
@@ -1122,7 +1120,7 @@ namespace DirectShowLib
 
         // Add the object to the table
 #if USING_NET11
-                rot.Register((int)ROTFlags.RegistrationKeepsAlive, graph, mk, out m_cookie);
+        rot.Register((int)ROTFlags.RegistrationKeepsAlive, graph, mk, out m_cookie);
 #else
         m_cookie = rot.Register((int) ROTFlags.RegistrationKeepsAlive, graph, mk);
 #endif
@@ -1153,7 +1151,7 @@ namespace DirectShowLib
       {
         GC.SuppressFinalize(this);
 #if USING_NET11
-                UCOMIRunningObjectTable rot = null;
+        UCOMIRunningObjectTable rot = null;
 #else
         IRunningObjectTable rot = null;
 #endif
@@ -1177,20 +1175,21 @@ namespace DirectShowLib
     }
   }
 
+
   /*
    * Redefined in TveCustomisations.cs.
    * 
   public class DsDevice : IDisposable
   {
 #if USING_NET11
-        private UCOMIMoniker m_Mon;
+    private UCOMIMoniker m_Mon;
 #else
     private IMoniker m_Mon;
 #endif
     private string m_Name;
 
 #if USING_NET11
-        public DsDevice(UCOMIMoniker Mon)
+    public DsDevice(UCOMIMoniker Mon)
 #else
     public DsDevice(IMoniker Mon)
 #endif
@@ -1200,12 +1199,15 @@ namespace DirectShowLib
     }
 
 #if USING_NET11
-        public UCOMIMoniker Mon
+    public UCOMIMoniker Mon
 #else
     public IMoniker Mon
 #endif
     {
-      get { return m_Mon; }
+      get
+      {
+        return m_Mon;
+      }
     }
 
     public string Name
@@ -1256,6 +1258,7 @@ namespace DirectShowLib
       }
     }
 
+
     /// <summary>
     /// Returns an array of DsDevices of type devcat.
     /// </summary>
@@ -1268,7 +1271,7 @@ namespace DirectShowLib
       DsDevice[] devret;
       ArrayList devs = new ArrayList();
 #if USING_NET11
-            UCOMIEnumMoniker enumMon;
+      UCOMIEnumMoniker enumMon;
 #else
       IEnumMoniker enumMon;
 #endif
@@ -1285,14 +1288,14 @@ namespace DirectShowLib
           try
           {
 #if USING_NET11
-                        UCOMIMoniker[] mon = new UCOMIMoniker[1];
+            UCOMIMoniker[] mon = new UCOMIMoniker[1];
 #else
             IMoniker[] mon = new IMoniker[1];
 #endif
 
 #if USING_NET11
-                        int j;
-                        while ((enumMon.Next(1, mon, out j) == 0))
+            int j;
+            while ((enumMon.Next(1, mon, out j) == 0))
 #else
             while ((enumMon.Next(1, mon, IntPtr.Zero) == 0))
 #endif
@@ -1390,7 +1393,7 @@ namespace DirectShowLib
   }*/
 
 
-  public static class DsFindPin
+  static public class DsFindPin
   {
     /// <summary>
     /// Scans a filter's pins looking for a pin in the specified direction
@@ -1550,7 +1553,6 @@ namespace DirectShowLib
 
       return pRet;
     }
-
     /// <summary>
     /// Scans a filter's pins looking for a pin with the specified connection status
     /// </summary>
@@ -1620,7 +1622,7 @@ namespace DirectShowLib
   }
 
 
-  public static class DsToString
+  static public class DsToString
   {
     /// <summary>
     /// Produces a usable string that describes the MediaType object
@@ -1681,6 +1683,7 @@ namespace DirectShowLib
     {
       // Walk the FormatType class looking for a match
       return WalkClass(typeof(FormatType), guid);
+
     }
 
     /// <summary>
@@ -1720,16 +1723,14 @@ namespace DirectShowLib
   // called after.  This allows for allocating a correctly sized memory block for the COM call,
   // then to break up the memory block and build an object that c# can digest.
 
-  internal abstract class DsMarshaler : ICustomMarshaler
+  abstract internal class DsMarshaler : ICustomMarshaler
   {
     #region Data Members
-
     // The cookie isn't currently being used.
     protected string m_cookie;
 
     // The managed object passed in to MarshalManagedToNative, and modified in MarshalNativeToManaged
     protected object m_obj;
-
     #endregion
 
     // The constructor.  This is called from GetInstance (below)
@@ -1741,7 +1742,7 @@ namespace DirectShowLib
 
     // Called just before invoking the COM method.  The returned IntPtr is what goes on the stack
     // for the COM call.  The input arg is the parameter that was passed to the method.
-    public virtual IntPtr MarshalManagedToNative(object managedObj)
+    virtual public IntPtr MarshalManagedToNative(object managedObj)
     {
       // Save off the passed-in value.  Safe since we just checked the type.
       m_obj = managedObj;
@@ -1761,13 +1762,13 @@ namespace DirectShowLib
 
     // Called just after invoking the COM method.  The IntPtr is the same one that just got returned
     // from MarshalManagedToNative.  The return value is unused.
-    public virtual object MarshalNativeToManaged(IntPtr pNativeData)
+    virtual public object MarshalNativeToManaged(IntPtr pNativeData)
     {
       return m_obj;
     }
 
     // Release the (now unused) buffer
-    public virtual void CleanUpNativeData(IntPtr pNativeData)
+    virtual public void CleanUpNativeData(IntPtr pNativeData)
     {
       if (pNativeData != IntPtr.Zero)
       {
@@ -1776,13 +1777,13 @@ namespace DirectShowLib
     }
 
     // Release the (now unused) managed object
-    public virtual void CleanUpManagedData(object managedObj)
+    virtual public void CleanUpManagedData(object managedObj)
     {
       m_obj = null;
     }
 
     // This routine is (apparently) never called by the marshaler.  However it can be useful.
-    public abstract int GetNativeDataSize();
+    abstract public int GetNativeDataSize();
 
     // GetInstance is called by the marshaler in preparation to doing custom marshaling.  The (optional)
     // cookie is the value specified in MarshalCookie="asdf", or "" is none is specified.
@@ -1796,14 +1797,13 @@ namespace DirectShowLib
 
   internal class EMTMarshaler : DsMarshaler
   {
-    public EMTMarshaler(string cookie)
-      : base(cookie)
+    public EMTMarshaler(string cookie) : base(cookie)
     {
     }
 
     // Called just after invoking the COM method.  The IntPtr is the same one that just got returned
     // from MarshalManagedToNative.  The return value is unused.
-    public override object MarshalNativeToManaged(IntPtr pNativeData)
+    override public object MarshalNativeToManaged(IntPtr pNativeData)
     {
       AMMediaType[] emt = m_obj as AMMediaType[];
 
@@ -1825,7 +1825,7 @@ namespace DirectShowLib
     }
 
     // The number of bytes to marshal out
-    public override int GetNativeDataSize()
+    override public int GetNativeDataSize()
     {
       // Get the array size
       int i = ((Array) m_obj).Length;
@@ -1859,14 +1859,13 @@ namespace DirectShowLib
 
   internal class DTAMarshaler : DsMarshaler
   {
-    public DTAMarshaler(string cookie)
-      : base(cookie)
+    public DTAMarshaler(string cookie) : base(cookie)
     {
     }
 
     // Called just after invoking the COM method.  The IntPtr is the same one that just got returned
     // from MarshalManagedToNative.  The return value is unused.
-    public override object MarshalNativeToManaged(IntPtr pNativeData)
+    override public object MarshalNativeToManaged(IntPtr pNativeData)
     {
       DvdTitleAttributes dta = m_obj as DvdTitleAttributes;
 
@@ -1902,8 +1901,7 @@ namespace DirectShowLib
         for (int y = 0; y < 8; y++)
         {
           // Copy in the value, and advance the pointer
-          dta.MultichannelAudioAttributes[x].Info[y] =
-            (DvdMUAMixingInfo)Marshal.PtrToStructure(pNativeData, typeof(DvdMUAMixingInfo));
+          dta.MultichannelAudioAttributes[x].Info[y] = (DvdMUAMixingInfo)Marshal.PtrToStructure(pNativeData, typeof(DvdMUAMixingInfo));
           pNativeData = (IntPtr)(pNativeData.ToInt64() + Marshal.SizeOf(typeof(DvdMUAMixingInfo)));
         }
 
@@ -1912,8 +1910,7 @@ namespace DirectShowLib
         for (int y = 0; y < 8; y++)
         {
           // Copy in the value, and advance the pointer
-          dta.MultichannelAudioAttributes[x].Coeff[y] =
-            (DvdMUACoeff)Marshal.PtrToStructure(pNativeData, typeof(DvdMUACoeff));
+          dta.MultichannelAudioAttributes[x].Coeff[y] = (DvdMUACoeff)Marshal.PtrToStructure(pNativeData, typeof(DvdMUACoeff));
           pNativeData = (IntPtr)(pNativeData.ToInt64() + Marshal.SizeOf(typeof(DvdMUACoeff)));
         }
       }
@@ -1930,8 +1927,7 @@ namespace DirectShowLib
       for (int x = 0; x < 32; x++)
       {
         // Copy in the value, and advance the pointer
-        dta.SubpictureAttributes[x] =
-          (DvdSubpictureAttributes)Marshal.PtrToStructure(pNativeData, typeof(DvdSubpictureAttributes));
+        dta.SubpictureAttributes[x] = (DvdSubpictureAttributes)Marshal.PtrToStructure(pNativeData, typeof(DvdSubpictureAttributes));
         pNativeData = (IntPtr)(pNativeData.ToInt64() + Marshal.SizeOf(typeof(DvdSubpictureAttributes)));
       }
 
@@ -1941,7 +1937,7 @@ namespace DirectShowLib
     }
 
     // The number of bytes to marshal out
-    public override int GetNativeDataSize()
+    override public int GetNativeDataSize()
     {
       // This is the actual size of a DvdTitleAttributes structure
       return 3208;
@@ -1960,14 +1956,13 @@ namespace DirectShowLib
   internal class DKAMarshaler : DsMarshaler
   {
     // The constructor.  This is called from GetInstance (below)
-    public DKAMarshaler(string cookie)
-      : base(cookie)
+    public DKAMarshaler(string cookie) : base(cookie)
     {
     }
 
     // Called just after invoking the COM method.  The IntPtr is the same one that just got returned
     // from MarshalManagedToNative.  The return value is unused.
-    public override object MarshalNativeToManaged(IntPtr pNativeData)
+    override public object MarshalNativeToManaged(IntPtr pNativeData)
     {
       DvdKaraokeAttributes dka = m_obj as DvdKaraokeAttributes;
 
@@ -1988,9 +1983,7 @@ namespace DirectShowLib
 
       // Copy in the value, and advance the pointer
       dka.ChannelAssignment = (DvdKaraokeAssignment)Marshal.ReadInt32(pNativeData);
-      pNativeData =
-        (IntPtr)
-        (pNativeData.ToInt64() + Marshal.SizeOf(DvdKaraokeAssignment.GetUnderlyingType(typeof(DvdKaraokeAssignment))));
+      pNativeData = (IntPtr)(pNativeData.ToInt64() + Marshal.SizeOf(DvdKaraokeAssignment.GetUnderlyingType(typeof(DvdKaraokeAssignment))));
 
       // Allocate a large enough array to hold all the returned structs.
       dka.wChannelContents = new DvdKaraokeContents[8];
@@ -1998,16 +1991,14 @@ namespace DirectShowLib
       {
         // Copy in the value, and advance the pointer
         dka.wChannelContents[x] = (DvdKaraokeContents)Marshal.ReadInt16(pNativeData);
-        pNativeData =
-          (IntPtr)
-          (pNativeData.ToInt64() + Marshal.SizeOf(DvdKaraokeContents.GetUnderlyingType(typeof(DvdKaraokeContents))));
+        pNativeData = (IntPtr)(pNativeData.ToInt64() + Marshal.SizeOf(DvdKaraokeContents.GetUnderlyingType(typeof(DvdKaraokeContents))));
       }
 
       return null;
     }
 
     // The number of bytes to marshal out
-    public override int GetNativeDataSize()
+    override public int GetNativeDataSize()
     {
       // This is the actual size of a DvdKaraokeAttributes structure.
       return 32;

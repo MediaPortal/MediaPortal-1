@@ -27,8 +27,9 @@ using System.Runtime.InteropServices;
 
 namespace DirectShowLib.BDA
 {
-
   #region Declarations
+
+#if ALLOW_UNTESTED_INTERFACES
 
   /// <summary>
   /// Defines
@@ -206,9 +207,13 @@ namespace DirectShowLib.BDA
     public long qwLiveTime;
   }
 
+#endif
+
   #endregion
 
   #region Interfaces
+
+#if ALLOW_UNTESTED_INTERFACES
 
   [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("583ec3cc-4960-4857-982b-41a33ea0a006"),
@@ -247,5 +252,8 @@ namespace DirectShowLib.BDA
       );
   }
 
+#endif
+
   #endregion
+
 }

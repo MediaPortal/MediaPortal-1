@@ -28,8 +28,9 @@ using System.Runtime.InteropServices;
 
 namespace DirectShowLib
 {
-
   #region Declarations
+
+#if ALLOW_UNTESTED_INTERFACES
 
   /// <summary>
   /// From AMDDS_* defines
@@ -97,9 +98,13 @@ namespace DirectShowLib
     public long AvgTimePerFrame;
   }
 
+#endif
+
   #endregion
 
   #region Interfaces
+
+#if ALLOW_UNTESTED_INTERFACES
 
   [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("36d39eb0-dd75-11ce-bf0e-00aa0055595a"),
@@ -211,6 +216,7 @@ namespace DirectShowLib
 
     [PreserveSig]
     int SetDefault();
+
   }
 
   [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
@@ -271,7 +277,6 @@ namespace DirectShowLib
 
     [PreserveSig]
     new int SetDefault();
-
     #endregion
 
     [PreserveSig]
@@ -285,6 +290,7 @@ namespace DirectShowLib
 
     [PreserveSig]
     int IsKeepPixelAspectRatio(out int pKeepAspect);
+
   }
 
   [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
@@ -314,6 +320,7 @@ namespace DirectShowLib
     int SetClockPeriod(int bValue);
   }
 
+#endif
 
   [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("1bd0ecb0-f8e2-11ce-aac6-0020af0b99a3"),
@@ -337,6 +344,7 @@ namespace DirectShowLib
 
     [PreserveSig]
     int get_DevSyncOffset(out int piDev);
+
   }
 
   #endregion

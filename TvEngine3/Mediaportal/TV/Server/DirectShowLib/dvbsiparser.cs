@@ -29,6 +29,8 @@ namespace DirectShowLib.BDA
 {
   #region Declarations
 
+#if ALLOW_UNTESTED_INTERFACES
+
   /// <summary>
   /// From DVB_STRCONV_MODE
   /// </summary>
@@ -39,6 +41,9 @@ namespace DirectShowLib.BDA
     DVB_WITHOUT_EMPHASIS = (DVB_EMPHASIS + 1),
     ISDB = (DVB_WITHOUT_EMPHASIS + 1)
   }
+
+#endif
+
 
   /// <summary>
   /// Define possible values for a running_status field according to ETSI EN 300 468
@@ -59,6 +64,8 @@ namespace DirectShowLib.BDA
   #endregion
 
   #region Interfaces
+
+#if ALLOW_UNTESTED_INTERFACES
 
   [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("B758A7BD-14DC-449d-B828-35909ACB3B1E"),
@@ -3390,6 +3397,8 @@ namespace DirectShowLib.BDA
         );
 
   };
+
+#endif
 
   [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("C64935F4-29E4-4e22-911A-63F7F55CB097"),

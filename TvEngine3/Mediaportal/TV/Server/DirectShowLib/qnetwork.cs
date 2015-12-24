@@ -27,7 +27,6 @@ using System.Runtime.InteropServices;
 
 namespace DirectShowLib
 {
-
   #region Declarations
 
   /// <summary>
@@ -49,6 +48,8 @@ namespace DirectShowLib
   #endregion
 
   #region Interfaces
+
+#if ALLOW_UNTESTED_INTERFACES
 
   [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("FA2AA8F1-8B62-11D0-A520-000000000000"),
@@ -120,6 +121,7 @@ namespace DirectShowLib
 
     [PreserveSig]
     int put_EnableHTTP([MarshalAs(UnmanagedType.VariantBool)] bool EnableHTTP);
+
   }
 
   [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
@@ -144,6 +146,7 @@ namespace DirectShowLib
 
     [PreserveSig]
     int get_ContactEmail([MarshalAs(UnmanagedType.BStr)] out string pbstrContactEmail);
+
   }
 
   [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
@@ -171,6 +174,7 @@ namespace DirectShowLib
 
     [PreserveSig]
     int get_BufferingProgress(out int pBufferingProgress);
+
   }
 
   [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
@@ -204,6 +208,7 @@ namespace DirectShowLib
 
     [PreserveSig]
     int get_SourceLink([MarshalAs(UnmanagedType.BStr)] out string pbstrSourceLink);
+
   }
 
   [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
@@ -219,6 +224,7 @@ namespace DirectShowLib
 
     [PreserveSig]
     int get_ErrorCode(out int pErrorCode);
+
   }
 
   [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
@@ -231,6 +237,7 @@ namespace DirectShowLib
 
     [PreserveSig]
     int get_Preroll([MarshalAs(UnmanagedType.VariantBool)] out bool pfPreroll);
+
   }
 
   [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
@@ -243,8 +250,10 @@ namespace DirectShowLib
 
     [PreserveSig]
     int get_UserAgent([MarshalAs(UnmanagedType.BStr)] out string pUserAgent);
+
   }
 
+#endif
 
   [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("FA2AA8F4-8B62-11D0-A520-000000000000"),
@@ -289,6 +298,7 @@ namespace DirectShowLib
 
     [PreserveSig]
     int get_MoreInfoText([MarshalAs(UnmanagedType.BStr)] out string pbstrMoreInfoText);
+
   }
 
   [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
@@ -319,6 +329,7 @@ namespace DirectShowLib
 
     [PreserveSig]
     int get_PlaybackSpeed(out double pSpeed);
+
   }
 
   [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
@@ -327,14 +338,14 @@ namespace DirectShowLib
   public interface IAMMediaContent2
   {
     [PreserveSig]
-    int get_MediaParameter(int EntryNum, [MarshalAs(UnmanagedType.BStr)] string bstrName,
-                           [MarshalAs(UnmanagedType.BStr)] out string pbstrValue);
+    int get_MediaParameter(int EntryNum, [MarshalAs(UnmanagedType.BStr)] string bstrName, [MarshalAs(UnmanagedType.BStr)] out string pbstrValue);
 
     [PreserveSig]
     int get_MediaParameterName(int EntryNum, int Index, [MarshalAs(UnmanagedType.BStr)] out string pbstrName);
 
     [PreserveSig]
     int get_PlaylistCount(out int pNumberEntries);
+
   }
 
   #endregion

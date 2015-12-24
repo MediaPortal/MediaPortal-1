@@ -25,12 +25,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 using System;
 using System.Drawing;
 using System.Runtime.InteropServices;
-using System.Text;
 
 namespace DirectShowLib.Dvd
 {
-
   #region Declarations
+
+#if ALLOW_UNTESTED_INTERFACES
 
   /// <summary>
   /// From DVD_NavCmdType
@@ -90,6 +90,8 @@ namespace DirectShowLib.Dvd
     public int ChapterNum;
     public int TimeCode;
   }
+
+#endif
 
   /// <summary>
   /// From DVD_DOMAIN
@@ -608,9 +610,7 @@ namespace DirectShowLib.Dvd
   [StructLayout(LayoutKind.Sequential)]
   public struct DvdMultichannelAudioAttributes
   {
-    [MarshalAs(UnmanagedType.ByValArray, ArraySubType = UnmanagedType.Struct, SizeConst = 8)] public DvdMUAMixingInfo[]
-      Info;
-
+    [MarshalAs(UnmanagedType.ByValArray, ArraySubType = UnmanagedType.Struct, SizeConst = 8)] public DvdMUAMixingInfo[] Info;
     [MarshalAs(UnmanagedType.ByValArray, ArraySubType = UnmanagedType.Struct, SizeConst = 8)] public DvdMUACoeff[] Coeff;
   }
 
@@ -624,9 +624,7 @@ namespace DirectShowLib.Dvd
     public bool fMasterOfCeremoniesInGuideVocal1;
     public bool fDuet;
     public DvdKaraokeAssignment ChannelAssignment;
-
-    [MarshalAs(UnmanagedType.ByValArray, ArraySubType = UnmanagedType.I2, SizeConst = 8)] public DvdKaraokeContents[]
-      wChannelContents;
+    [MarshalAs(UnmanagedType.ByValArray, ArraySubType = UnmanagedType.I2, SizeConst = 8)] public DvdKaraokeContents[] wChannelContents;
   }
 
   /// <summary>
@@ -671,17 +669,10 @@ namespace DirectShowLib.Dvd
     public DvdTitleAppMode AppMode;
     public DvdVideoAttributes VideoAttributes;
     public int ulNumberOfAudioStreams;
-
-    [MarshalAs(UnmanagedType.ByValArray, ArraySubType = UnmanagedType.Struct, SizeConst = 8)] public
-      DvdAudioAttributes[] AudioAttributes;
-
-    [MarshalAs(UnmanagedType.ByValArray, ArraySubType = UnmanagedType.Struct, SizeConst = 8)] public
-      DvdMultichannelAudioAttributes[] MultichannelAudioAttributes;
-
+    [MarshalAs(UnmanagedType.ByValArray, ArraySubType = UnmanagedType.Struct, SizeConst = 8)] public DvdAudioAttributes[] AudioAttributes;
+    [MarshalAs(UnmanagedType.ByValArray, ArraySubType = UnmanagedType.Struct, SizeConst = 8)] public DvdMultichannelAudioAttributes[] MultichannelAudioAttributes;
     public int ulNumberOfSubpictureStreams;
-
-    [MarshalAs(UnmanagedType.ByValArray, ArraySubType = UnmanagedType.Struct, SizeConst = 32)] public
-      DvdSubpictureAttributes[] SubpictureAttributes;
+    [MarshalAs(UnmanagedType.ByValArray, ArraySubType = UnmanagedType.Struct, SizeConst = 32)] public DvdSubpictureAttributes[] SubpictureAttributes;
   }
 
   /// <summary>
@@ -690,9 +681,7 @@ namespace DirectShowLib.Dvd
   [StructLayout(LayoutKind.Sequential)]
   public struct DvdMenuAttributes
   {
-    [MarshalAs(UnmanagedType.ByValArray, ArraySubType = UnmanagedType.Bool, SizeConst = 8)] public bool[]
-      fCompatibleRegion;
-
+    [MarshalAs(UnmanagedType.ByValArray, ArraySubType = UnmanagedType.Bool, SizeConst = 8)] public bool[] fCompatibleRegion;
     public DvdVideoAttributes VideoAttributes;
     [MarshalAs(UnmanagedType.Bool)] public bool fAudioPresent;
     public DvdAudioAttributes AudioAttributes;
@@ -739,6 +728,8 @@ namespace DirectShowLib.Dvd
   #endregion
 
   #region Interfaces
+
+#if ALLOW_UNTESTED_INTERFACES
 
   [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("A70EFE61-E2A3-11d0-A9BE-00AA0061BE93"),
@@ -1062,6 +1053,7 @@ namespace DirectShowLib.Dvd
       [In] int dwARHeight
       );
   }
+#endif
 
   [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("FCC152B6-F372-11d0-8E00-00C04FD7C08B"),
@@ -1373,8 +1365,7 @@ namespace DirectShowLib.Dvd
     int GetTitleAttributes(
       [In] int ulTitle,
       [Out] out DvdMenuAttributes pMenu,
-      [In, Out, MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(DTAMarshaler))] DvdTitleAttributes
-        pTitle
+      [In, Out, MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(DTAMarshaler))] DvdTitleAttributes pTitle
       );
 
     [PreserveSig]
@@ -1392,8 +1383,7 @@ namespace DirectShowLib.Dvd
     [PreserveSig]
     int GetKaraokeAttributes(
       [In] int ulStream,
-      [In, Out, MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(DKAMarshaler))] DvdKaraokeAttributes
-        pAttributes
+      [In, Out, MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(DKAMarshaler))] DvdKaraokeAttributes pAttributes
       );
 
     [PreserveSig]
@@ -1425,7 +1415,7 @@ namespace DirectShowLib.Dvd
     int GetDVDTextStringAsNative(
       [In] int ulLangIndex,
       [In] int ulStringIndex,
-      [MarshalAs(UnmanagedType.LPStr)] StringBuilder pbBuffer,
+      [MarshalAs(UnmanagedType.LPStr)] System.Text.StringBuilder pbBuffer,
       [In] int ulMaxBufferSize,
       [Out] out int pulActualSize,
       [Out] out DvdTextStringType pType
@@ -1435,7 +1425,7 @@ namespace DirectShowLib.Dvd
     int GetDVDTextStringAsUnicode(
       [In] int ulLangIndex,
       [In] int ulStringIndex,
-      StringBuilder pchwBuffer,
+      System.Text.StringBuilder pchwBuffer,
       [In] int ulMaxBufferSize,
       [Out] out int pulActualSize,
       [Out] out DvdTextStringType pType
@@ -1461,7 +1451,7 @@ namespace DirectShowLib.Dvd
 
     [PreserveSig]
     int GetDVDDirectory(
-      StringBuilder pszwPath,
+      System.Text.StringBuilder pszwPath,
       [In] int ulMaxSize,
       [Out] out int pulActualSize
       );

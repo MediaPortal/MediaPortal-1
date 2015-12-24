@@ -27,8 +27,9 @@ using System.Runtime.InteropServices;
 
 namespace DirectShowLib.BDA
 {
-
   #region Declarations
+
+#if ALLOW_UNTESTED_INTERFACES
 
   /// <summary>
   /// From ATSC_ETM_LOCATION_*
@@ -41,9 +42,13 @@ namespace DirectShowLib.BDA
     Reserved = 0x03,
   }
 
+#endif
+
   #endregion
 
   #region Interfaces
+
+#if ALLOW_UNTESTED_INTERFACES
 
   [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("B2C98995-5EB2-4fb1-B406-F3E8E2026A9A"),
@@ -717,5 +722,8 @@ namespace DirectShowLib.BDA
 
   };
 
+#endif
+
   #endregion
+
 }
