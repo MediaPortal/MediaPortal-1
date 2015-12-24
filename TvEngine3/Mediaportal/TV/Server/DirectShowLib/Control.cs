@@ -811,7 +811,7 @@ namespace DirectShowLib
     new int GetEventHandle([Out] out IntPtr hEvent); // HEVENT
 
     [PreserveSig]
-    int GetEvent(
+    new int GetEvent(
       [Out] out EventCode lEventCode,
       [Out] out IntPtr lParam1,
       [Out] out IntPtr lParam2,
@@ -831,7 +831,7 @@ namespace DirectShowLib
     new int RestoreDefaultHandling([In] EventCode lEvCode);
 
     [PreserveSig]
-    int FreeEventParams(
+    new int FreeEventParams(
       [In] EventCode lEvCode,
       [In] IntPtr lParam1,
       [In] IntPtr lParam2

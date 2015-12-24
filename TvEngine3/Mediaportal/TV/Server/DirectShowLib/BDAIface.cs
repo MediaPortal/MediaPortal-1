@@ -319,7 +319,7 @@ namespace DirectShowLib.BDA
   }
 
   /*
-   * Interface redefined in MediaPortalCustomisations.
+   * Redefined in TveCustomisations.cs.
    * 
   [ComImport, SuppressUnmanagedCodeSecurity,
    Guid("afb6c2a2-2c41-11d3-8a60-0000f81e0e4a"),
@@ -330,7 +330,7 @@ namespace DirectShowLib.BDA
     int Next(
       [In] int cRequest,
       [Out, MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 0, ArraySubType = UnmanagedType.Struct)] PIDMap[] pPIDMap,
-      [Out] out IntPtr pcReceived
+      [In] IntPtr pcReceived
       );
 
     [PreserveSig]
@@ -412,7 +412,7 @@ namespace DirectShowLib.BDA
   }
 
   /*
-   * Interface redefined in MediaPortalCustomisations.
+   * Redefined in TveCustomisations.cs.
    * 
   [ComImport, SuppressUnmanagedCodeSecurity,
    Guid("CD51F1E0-7BE9-4123-8482-A2A796C0A6B0"),

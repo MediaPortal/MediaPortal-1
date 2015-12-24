@@ -1179,7 +1179,7 @@ namespace DirectShowLib
   }
 
   /*
-   * Redefined in MediaPortalCustomisations.
+   * Redefined in TveCustomisations.cs.
    * 
   public class DsDevice : IDisposable
   {

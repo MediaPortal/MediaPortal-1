@@ -498,7 +498,7 @@ namespace DirectShowLib.BDA
   }
 
   /*
-   * Interface redefined in MediaPortalCustomisations.
+   * Redefined in TveCustomisations.cs.
    * 
   [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("6044634A-1733-4F99-B982-5FB12AFCE4F0"),
@@ -806,7 +806,7 @@ namespace DirectShowLib.BDA
   }
 
   /*
-   * Interface redefined in MediaPortalCustomisations.
+   * Redefined in TveCustomisations.cs.
    * 
   [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("BA9EDCB6-4D36-4CFE-8C56-87A6B0CA48E1"),
@@ -1649,13 +1649,11 @@ namespace DirectShowLib.BDA
     [PreserveSig]
     int put_LNBSwitch([In] int LNBSwitch);
 
-     [PreserveSig]
-    //int get_InputRange([Out, MarshalAs(UnmanagedType.BStr)] out string InputRange);
-    int get_InputRange([Out] out long InputRange);
+    [PreserveSig]
+    int get_InputRange([Out, MarshalAs(UnmanagedType.BStr)] out string InputRange);
 
     [PreserveSig]
-    //int put_InputRange([Out, MarshalAs(UnmanagedType.BStr)] string InputRange);
-    int put_InputRange([In] long InputRange);
+    int put_InputRange([Out, MarshalAs(UnmanagedType.BStr)] string InputRange);
 
     [PreserveSig]
     int get_SpectralInversion([Out] out SpectralInversion SpectralInversionVal);
@@ -1880,7 +1878,7 @@ namespace DirectShowLib.BDA
   }
 
   /*
-   * Interface redefined in MediaPortalCustomisations.
+   * Redefined in TveCustomisations.cs.
    * 
   [ComImport, SuppressUnmanagedCodeSecurity,
    Guid("8B8EB248-FC2B-11d2-9D8C-00C04F72D980"),
@@ -1890,7 +1888,7 @@ namespace DirectShowLib.BDA
     int Next(
       [In] int celt,
       [Out, MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 0)] ITuningSpace[] rgelt,
-      [Out] out IntPtr pceltFetched
+      [In] IntPtr pceltFetched
       );
 
     int Skip([In] int celt);

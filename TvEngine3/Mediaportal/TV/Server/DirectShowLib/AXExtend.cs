@@ -717,11 +717,8 @@ namespace DirectShowLib
     LangA = 0x0010,
     LangB = 0x0020,
     LangC = 0x0040,
-  }*/
+  }
 
-  /*
-   * Redefined in TveCustomisations.cs.
-   * 
   /// <summary>
   /// From VideoProcAmpProperty
   /// </summary>
@@ -2142,7 +2139,7 @@ namespace DirectShowLib
     [PreserveSig]
     int GetParameterValues(
       [In, MarshalAs(UnmanagedType.LPStruct)] Guid Api,
-      [Out] out IntPtr Values,
+      out IntPtr ip,
       [Out] out int ValuesCount
       );
 
@@ -2211,13 +2208,13 @@ namespace DirectShowLib
 #else
       [In] IStream pStream,
 #endif
-      [Out, MarshalAs(UnmanagedType.LPStruct)] out Guid[] ChangedParam,
+      [Out] out Guid[] ChangedParam,
       [Out] out int ChangedParamCount
       );
   }
 
   /*
-   * Interface redefined in MediaPortalCustomisations.
+   * Interface redefined in TveCustomisations.cs.
    * 
   [ComImport, SuppressUnmanagedCodeSecurity,
    Guid("70423839-6ACC-4b23-B079-21DBF08156A5"),
@@ -2228,14 +2225,14 @@ namespace DirectShowLib
   public interface IEncoderAPI
   {
     [PreserveSig]
-    int IsSupported([In, MarshalAs(UnmanagedType.LPStruct)] Guid Api);
+    int IsSupported([In] Guid Api);
 
     [PreserveSig]
-    int IsAvailable([In, MarshalAs(UnmanagedType.LPStruct)] Guid Api);
+    int IsAvailable([In] Guid Api);
 
     [PreserveSig]
     int GetParameterRange(
-      [In, MarshalAs(UnmanagedType.LPStruct)] Guid Api,
+      [In] Guid Api,
       [Out] out object ValueMin,
       [Out] out object ValueMax,
       [Out] out object SteppingDelta
@@ -2243,33 +2240,30 @@ namespace DirectShowLib
 
     [PreserveSig]
     int GetParameterValues(
-      [In, MarshalAs(UnmanagedType.LPStruct)] Guid Api,
+      [In] Guid Api,
       [Out] out object[] Values,
       [Out] out int ValuesCount
       );
 
     [PreserveSig]
     int GetDefaultValue(
-      [In, MarshalAs(UnmanagedType.LPStruct)] Guid Api,
+      [In] Guid Api,
       [Out] out object Value
       );
 
     [PreserveSig]
     int GetValue(
-      [In, MarshalAs(UnmanagedType.LPStruct)] Guid Api,
+      [In] Guid Api,
       [Out] out object Value
       );
 
     [PreserveSig]
     int SetValue(
-      [In, MarshalAs(UnmanagedType.LPStruct)] Guid Api,
+      [In] Guid Api,
       [In] object Value
       );
-  }*/
+  }
 
-  /*
-   * Interface redefined in MediaPortalCustomisations.
-   * 
   [ComImport, SuppressUnmanagedCodeSecurity,
   Guid("02997C3B-8E1B-460e-9270-545E0DE9563E"),
   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
@@ -2286,35 +2280,35 @@ namespace DirectShowLib
     [PreserveSig]
     new int GetParameterRange(
       [In, MarshalAs(UnmanagedType.LPStruct)] Guid Api,
-        [Out] out object ValueMin,
-        [Out] out object ValueMax,
-        [Out] out object SteppingDelta
-        );
+      [Out] out object ValueMin,
+      [Out] out object ValueMax,
+      [Out] out object SteppingDelta
+      );
 
     [PreserveSig]
     new int GetParameterValues(
       [In, MarshalAs(UnmanagedType.LPStruct)] Guid Api,
-        [Out] out object[] Values,
-        [Out] out int ValuesCount
-        );
+      [Out] out object[] Values,
+      [Out] out int ValuesCount
+      );
 
     [PreserveSig]
     new int GetDefaultValue(
       [In, MarshalAs(UnmanagedType.LPStruct)] Guid Api,
-        [Out] out object Value
-        );
+      [Out] out object Value
+      );
 
     [PreserveSig]
     new int GetValue(
       [In, MarshalAs(UnmanagedType.LPStruct)] Guid Api,
-        [Out] out object Value
-        );
+      [Out] out object Value
+      );
 
     [PreserveSig]
     new int SetValue(
       [In, MarshalAs(UnmanagedType.LPStruct)] Guid Api,
       [In] object Value
-        );
+      );
 
     #endregion
   }*/

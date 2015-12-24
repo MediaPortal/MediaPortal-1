@@ -35,6 +35,79 @@ using System.Text.RegularExpressions;
 /// when it comes to upgrading the DirectShow.NET library.
 /// </summary>
 
+  #region AxCore.cs
+
+namespace DirectShowLib
+{
+  [ComImport, SuppressUnmanagedCodeSecurity,
+   Guid("56a86893-0ad4-11ce-b03a-0020af0ba770"),
+   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+  public interface IEnumFilters
+  {
+    [PreserveSig]
+    int Next(
+      [In] int cFilters,
+      [Out, MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 0)] IBaseFilter[] ppFilter,
+      [Out] out int pcFetched   // *** Changed from "[In] IntPtr" to "[Out] out int". ***
+      );
+
+    [PreserveSig]
+    int Skip([In] int cFilters);
+
+    [PreserveSig]
+    int Reset();
+
+    [PreserveSig]
+    int Clone([Out] out IEnumFilters ppEnum);
+  }
+
+  [ComImport, SuppressUnmanagedCodeSecurity,
+   Guid("56a86892-0ad4-11ce-b03a-0020af0ba770"),
+   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+  public interface IEnumPins
+  {
+    [PreserveSig]
+    int Next(
+      [In] int cPins,
+      [Out, MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 0)] IPin[] ppPins,
+      [Out] out int pcFetched   // *** Changed from "[In] IntPtr" to "[Out] out int". ***
+      );
+
+    [PreserveSig]
+    int Skip([In] int cPins);
+
+    [PreserveSig]
+    int Reset();
+
+    [PreserveSig]
+    int Clone([Out] out IEnumPins ppEnum);
+  }
+
+  [ComImport, SuppressUnmanagedCodeSecurity,
+   Guid("89c31040-846b-11ce-97d3-00aa0055595a"),
+   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+  public interface IEnumMediaTypes
+  {
+    [PreserveSig]
+    int Next(
+      [In] int cMediaTypes,
+      [In, Out, MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(EMTMarshaler), SizeParamIndex = 0)] AMMediaType[] ppMediaTypes,
+      [Out] out int pcFetched   // *** Changed from "[In] IntPtr" to "[Out] out int". ***
+      );
+
+    [PreserveSig]
+    int Skip([In] int cMediaTypes);
+
+    [PreserveSig]
+    int Reset();
+
+    [PreserveSig]
+    int Clone([Out] out IEnumMediaTypes ppEnum);
+  }
+}
+
+  #endregion
+
   #region AXExtend.cs
 
 namespace DirectShowLib
@@ -42,7 +115,7 @@ namespace DirectShowLib
   /// <summary>
   /// From KSPROPERTY_SUPPORT_* defines
   /// </summary>
-  [Flags]     // added this flags attribute
+  [Flags]     // Added this attribute.
   public enum KSPropertySupport
   {
     Get = 1,
@@ -149,7 +222,7 @@ namespace DirectShowLib
     [PreserveSig]
     int GetParameterValues(
       [In, MarshalAs(UnmanagedType.LPStruct)] Guid Api,
-      [Out] out IntPtr Values,  // *** Changed from object[] to IntPtr. ***
+      [Out] out IntPtr Values,  // *** Changed from object[] to IntPtr to manage memory manually and ensure no leaks. ***
       [Out] out int ValuesCount
       );
 
@@ -180,6 +253,7 @@ namespace DirectShowLib
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IVideoEncoder : IEncoderAPI
   {
+    // *** Changed all "[In] Guid" to "[In, MarshalAs(UnmanagedType.LPStruct)] Guid". ***
     #region IEncoderAPI Methods
 
     [PreserveSig]
@@ -199,7 +273,7 @@ namespace DirectShowLib
     [PreserveSig]
     new int GetParameterValues(
       [In, MarshalAs(UnmanagedType.LPStruct)] Guid Api,
-      [Out] out IntPtr Values,  // *** Changed from object[] to IntPtr. ***
+      [Out] out IntPtr Values,  // *** Changed from object[] to IntPtr to manage memory manually and ensure no leaks. ***
       [Out] out int ValuesCount
       );
 
@@ -241,7 +315,7 @@ namespace DirectShowLib.BDA
     int Next(
       [In] int cRequest,
       [Out, MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 0, ArraySubType = UnmanagedType.Struct)] PIDMap[] pPIDMap,
-      [Out] out int pcReceived  // *** Changed from IntPtr to int. ***
+      [Out] out int pcReceived  // *** Changed from "[In] IntPtr" to "[Out] out int". ***
       );
 
     [PreserveSig]
@@ -280,7 +354,7 @@ namespace DirectShowLib.BDA
 
     [PreserveSig]
     int get_SmartCardApplications(
-      [Out] out int pulcApplications,   // *** Changed from in/out ref to out. ***
+      [Out] out int pulcApplications,   // *** Changed from "[In, Out] ref" to "[Out] out". ***
       [In] int ulcApplicationsMax,
       [Out, MarshalAs(UnmanagedType.LPArray, ArraySubType = UnmanagedType.LPStruct, SizeParamIndex = 1)] SmartCardApplication[] rgApplications  // *** Changed from in/out to out with marshaling parameters. ***
       );
@@ -1038,7 +1112,7 @@ namespace DirectShowLib.BDA
     int Next(
       [In] int celt,
       [Out, MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 0)] ITuningSpace[] rgelt,
-      [Out] out int pceltFetched    // *** Changed from IntPtr to int. ***
+      [Out] out int pceltFetched    // *** Changed from "[In] IntPtr" to "[Out] out int". ***
       );
 
     int Skip([In] int celt);

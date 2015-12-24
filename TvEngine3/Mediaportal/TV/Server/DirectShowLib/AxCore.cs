@@ -644,6 +644,9 @@ namespace DirectShowLib
     int SetDefaultSyncSource();
   }
 
+  /*
+   * Redefined in TveCustomisations.cs.
+   *
   [ComImport, SuppressUnmanagedCodeSecurity,
    Guid("56a86893-0ad4-11ce-b03a-0020af0ba770"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
@@ -653,7 +656,7 @@ namespace DirectShowLib
     int Next(
       [In] int cFilters,
       [Out, MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 0)] IBaseFilter[] ppFilter,
-      [Out] out int pcFetched
+      [In] IntPtr pcFetched
       );
 
     [PreserveSig]
@@ -675,7 +678,7 @@ namespace DirectShowLib
     int Next(
       [In] int cPins,
       [Out, MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 0)] IPin[] ppPins,
-      [Out] out int pcFetched
+      [In] IntPtr pcFetched
       );
 
     [PreserveSig]
@@ -686,7 +689,7 @@ namespace DirectShowLib
 
     [PreserveSig]
     int Clone([Out] out IEnumPins ppEnum);
-  }
+  }*/
 
   [ComImport, SuppressUnmanagedCodeSecurity,
    Guid("56a86897-0ad4-11ce-b03a-0020af0ba770"),
@@ -716,6 +719,9 @@ namespace DirectShowLib
     int Unadvise([In] int dwAdviseCookie);
   }
 
+  /*
+   * Redefined in TveCustomisations.cs.
+   *
   [ComImport, SuppressUnmanagedCodeSecurity,
    Guid("89c31040-846b-11ce-97d3-00aa0055595a"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
@@ -725,7 +731,7 @@ namespace DirectShowLib
     int Next(
       [In] int cMediaTypes,
       [In, Out, MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(EMTMarshaler), SizeParamIndex = 0)] AMMediaType[] ppMediaTypes,
-      [Out] out int pcFetched
+      [In] IntPtr pcFetched
       );
 
     [PreserveSig]
@@ -736,7 +742,7 @@ namespace DirectShowLib
 
     [PreserveSig]
     int Clone([Out] out IEnumMediaTypes ppEnum);
-  }
+  }*/
 
   [ComImport, SuppressUnmanagedCodeSecurity,
    Guid("36b73884-c2c8-11cf-8b46-00805f6cef60"),
