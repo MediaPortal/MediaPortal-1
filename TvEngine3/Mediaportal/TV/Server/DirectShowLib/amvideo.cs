@@ -25,7 +25,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 using System;
 using System.Drawing;
 using System.Runtime.InteropServices;
-using System.Security;
 
 namespace DirectShowLib
 {
@@ -102,7 +101,7 @@ namespace DirectShowLib
 
   #region Interfaces
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("36d39eb0-dd75-11ce-bf0e-00aa0055595a"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IDirectDrawVideo
@@ -156,7 +155,7 @@ namespace DirectShowLib
     int WillUseFullScreen(out int UseWhenFullScreen);
   }
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("dd1d7110-7836-11cf-bf47-00aa0055595a"),
    Obsolete("This interface has been deprecated.", false),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
@@ -214,7 +213,7 @@ namespace DirectShowLib
     int SetDefault();
   }
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("53479470-f1dd-11cf-bc42-00aa00ac74f6"),
    Obsolete("This interface has been deprecated.", false),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
@@ -288,7 +287,7 @@ namespace DirectShowLib
     int IsKeepPixelAspectRatio(out int pKeepAspect);
   }
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("61ded640-e912-11ce-a099-00aa00479a58"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IBaseVideoMixer
@@ -316,7 +315,7 @@ namespace DirectShowLib
   }
 
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("1bd0ecb0-f8e2-11ce-aac6-0020af0b99a3"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IQualProp

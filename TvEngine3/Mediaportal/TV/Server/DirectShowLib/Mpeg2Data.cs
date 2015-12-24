@@ -24,7 +24,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 using System;
 using System.Runtime.InteropServices;
-using System.Security;
 
 namespace DirectShowLib
 {
@@ -203,7 +202,7 @@ namespace DirectShowLib
 
   #region Interfaces
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown),
    Guid("BDCDD913-9ECD-4fb2-81AE-ADF747EA75A5")]
   public interface IMpeg2TableFilter
@@ -246,7 +245,7 @@ namespace DirectShowLib
   }
 
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown),
    Guid("9B396D40-F380-4E3C-A514-1A82BF6EBFE6")]
   public interface IMpeg2Data
@@ -279,7 +278,7 @@ namespace DirectShowLib
       );
   }
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("400CC286-32A0-4CE4-9041-39571125A635"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IMpeg2Stream
@@ -301,7 +300,7 @@ namespace DirectShowLib
       );
   }
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("AFEC1EB5-2A64-46C6-BF4B-AE3CCB6AFDB0"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface ISectionList

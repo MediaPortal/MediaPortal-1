@@ -24,7 +24,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 using System;
 using System.Runtime.InteropServices;
-using System.Security;
 
 namespace DirectShowLib.BDA
 {
@@ -46,7 +45,7 @@ namespace DirectShowLib.BDA
 
   #region Interfaces
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("B2C98995-5EB2-4fb1-B406-F3E8E2026A9A"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IAtscPsipParser
@@ -109,7 +108,7 @@ namespace DirectShowLib.BDA
       );
   }
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("8877dabd-c137-4073-97e3-779407a5d87a"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IATSC_MGT
@@ -185,7 +184,7 @@ namespace DirectShowLib.BDA
       );
   }
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("26879a18-32f9-46c6-91f0-fb6479270e8c"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IATSC_VCT
@@ -335,7 +334,7 @@ namespace DirectShowLib.BDA
       );
   }
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("d7c212d7-76a2-4b4b-aa56-846879a80096"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IATSC_EIT
@@ -411,7 +410,7 @@ namespace DirectShowLib.BDA
       );
   }
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("5a142cc9-b8cf-4a86-a040-e9cadf3ef3e7"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IATSC_ETT
@@ -437,7 +436,7 @@ namespace DirectShowLib.BDA
       );
   }
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("6bf42423-217d-4d6f-81e1-3a7b360ec896"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IATSC_STT
@@ -477,7 +476,7 @@ namespace DirectShowLib.BDA
       );
   }
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("1FF544D6-161D-4fae-9FAA-4F9F492AE999"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface ISCTE_EAS
@@ -596,7 +595,7 @@ namespace DirectShowLib.BDA
       );
   }
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("FF76E60C-0283-43ea-BA32-B422238547EE"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IAtscContentAdvisoryDescriptor
@@ -644,7 +643,7 @@ namespace DirectShowLib.BDA
       );
   }
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("40834007-6834-46f0-BD45-D5F6A6BE258C"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface ICaptionServiceDescriptor
@@ -683,7 +682,7 @@ namespace DirectShowLib.BDA
       );
   }
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("58C3C827-9D91-4215-BFF3-820A49F0904C"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IServiceLocationDescriptor

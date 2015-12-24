@@ -24,7 +24,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 using System;
 using System.Runtime.InteropServices;
-using System.Security;
 
 namespace DirectShowLib
 {
@@ -77,7 +76,7 @@ namespace DirectShowLib
 
   #region Interfaces
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("c56e9858-dbf3-4f6b-8119-384af2060deb"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IPinFlowControl
@@ -89,7 +88,7 @@ namespace DirectShowLib
       );
   }
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("DCFBDCF6-0DC2-45f5-9AB2-7C330EA09C29"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IFilterChain
@@ -119,7 +118,7 @@ namespace DirectShowLib
       );
   }
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("ade0fd60-d19d-11d2-abf6-00a0c905f375"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IGraphConfigCallback
@@ -131,7 +130,7 @@ namespace DirectShowLib
       );
   }
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("03A1EB8E-32BF-4245-8502-114D08A9CB88"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IGraphConfig
@@ -200,7 +199,7 @@ namespace DirectShowLib
       );
   }
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("4a9a62d3-27d4-403d-91e9-89f540e55534"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IPinConnection

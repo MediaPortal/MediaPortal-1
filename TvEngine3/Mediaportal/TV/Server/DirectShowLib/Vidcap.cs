@@ -24,7 +24,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 using System;
 using System.Runtime.InteropServices;
-using System.Security;
 
 namespace DirectShowLib
 {
@@ -47,7 +46,7 @@ namespace DirectShowLib
 
   #region Interfaces
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown),
    Guid("4050560E-42A7-413a-85C2-09269A2D0F44")]
   public interface IVideoProcAmp
@@ -328,7 +327,7 @@ namespace DirectShowLib
       );
   }
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown),
    Guid("2BA1785D-4D1B-44EF-85E8-C7F1D3F20184")]
   public interface ICameraControl
@@ -687,7 +686,7 @@ namespace DirectShowLib
       );
   }
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("1ABDAECA-68B6-4F83-9371-B413907C7B9F"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface ISelector
@@ -702,7 +701,7 @@ namespace DirectShowLib
     int put_SourceNodeId([In] int dwPinId);
   }
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("11737C14-24A7-4bb5-81A0-0D003813B0C4"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IKsNodeControl
@@ -715,7 +714,7 @@ namespace DirectShowLib
   }
 
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("720D4AC0-7533-11D0-A5D6-28DB04C10000"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IKsTopologyInfo

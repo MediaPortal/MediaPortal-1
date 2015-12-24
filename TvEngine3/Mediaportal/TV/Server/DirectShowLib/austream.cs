@@ -24,14 +24,13 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 using System;
 using System.Runtime.InteropServices;
-using System.Security;
 
 namespace DirectShowLib.MultimediaStreaming
 {
 
   #region Interfaces
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown),
    Guid("327FC560-AF60-11D0-8212-00C04FC32C45")]
   public interface IMemoryData
@@ -56,7 +55,7 @@ namespace DirectShowLib.MultimediaStreaming
       );
   }
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown),
    Guid("54C719C0-AF60-11D0-8212-00C04FC32C45")]
   public interface IAudioData : IMemoryData
@@ -95,7 +94,7 @@ namespace DirectShowLib.MultimediaStreaming
       );
   }
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown),
    Guid("345FEE00-ABA5-11D0-8212-00C04FC32C45")]
   public interface IAudioStreamSample : IStreamSample
@@ -143,7 +142,7 @@ namespace DirectShowLib.MultimediaStreaming
   }
 
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown),
    Guid("F7537560-A3BE-11D0-8212-00C04FC32C45")]
   public interface IAudioMediaStream : IMediaStream

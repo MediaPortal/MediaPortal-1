@@ -25,7 +25,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 using System;
 using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.ComTypes;
-using System.Security;
+
 #if !USING_NET11
 
 #endif
@@ -47,7 +47,7 @@ namespace DirectShowLib.BDA
 
   #region Interfaces
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("DFEF4A68-EE61-415f-9CCB-CD95F2F98A3A"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IBDA_TIF_REGISTRATION
@@ -63,7 +63,7 @@ namespace DirectShowLib.BDA
     int UnregisterTIF([In] int pvRegistrationContext);
   }
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("F9BAC2F9-4149-4916-B2EF-FAA202326862"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IMPEG2_TIF_CONTROL
@@ -99,7 +99,7 @@ namespace DirectShowLib.BDA
       );
   }
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("A3B152DF-7A90-4218-AC54-9830BEE8C0B6"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface ITuneRequestInfo
@@ -138,7 +138,7 @@ namespace DirectShowLib.BDA
       );
   }
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("EFDA0C80-F395-42c3-9B3C-56B37DEC7BB7"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IGuideDataEvent
@@ -165,7 +165,7 @@ namespace DirectShowLib.BDA
     int ScheduleDeleted([In] object varProgramDescriptionID);
   }
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("88EC5E58-BB73-41d6-99CE-66C524B8B591"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IGuideDataProperty
@@ -180,7 +180,7 @@ namespace DirectShowLib.BDA
     int get_Value([Out] out object pvar);
   }
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("AE44423B-4571-475c-AD2C-F40A771D80EF"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IEnumGuideDataProperties
@@ -202,7 +202,7 @@ namespace DirectShowLib.BDA
     int Clone([Out] out IEnumGuideDataProperties ppenum);
   }
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("1993299C-CED6-4788-87A3-420067DCE0C7"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IEnumTuneRequests
@@ -224,7 +224,7 @@ namespace DirectShowLib.BDA
     int Clone([Out] out IEnumTuneRequests ppenum);
   }
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("61571138-5B01-43cd-AEAF-60B784A0BF93"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IGuideData
@@ -265,7 +265,7 @@ namespace DirectShowLib.BDA
       );
   }
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("4764ff7c-fa95-4525-af4d-d32236db9e38"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IGuideDataLoader
@@ -277,7 +277,7 @@ namespace DirectShowLib.BDA
     int Terminate();
   }
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("EE957C52-B0D0-4e78-8DD1-B87A08BFD893"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface ITuneRequestInfoEx : ITuneRequestInfo
@@ -332,7 +332,7 @@ namespace DirectShowLib.BDA
       );
   }
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("7E47913A-5A89-423d-9A2B-E15168858934"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface ISIInbandEPGEvent
@@ -345,7 +345,7 @@ namespace DirectShowLib.BDA
       );
   }
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("F90AD9D0-B854-4b68-9CC1-B2CC96119D85"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface ISIInbandEPG

@@ -25,7 +25,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 using System;
 using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.ComTypes;
-using System.Security;
+
 #if !USING_NET11
 
 #endif
@@ -76,7 +76,7 @@ namespace DirectShowLib.MultimediaStreaming
 
   #region Interfaces
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("BEBE595D-9A6F-11D0-8FDE-00C04FD9189D"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IAMMediaStream : IMediaStream
@@ -149,7 +149,7 @@ namespace DirectShowLib.MultimediaStreaming
       );
   }
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown),
    Guid("BEBE595C-9A6F-11D0-8FDE-00C04FD9189D")]
   public interface IAMMultiMediaStream : IMultiMediaStream
@@ -255,7 +255,7 @@ namespace DirectShowLib.MultimediaStreaming
       );
   }
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown),
    Guid("AB6B4AFA-F6E4-11D0-900D-00C04FD9189D")]
   public interface IAMMediaTypeStream : IMediaStream
@@ -331,7 +331,7 @@ namespace DirectShowLib.MultimediaStreaming
       );
   }
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown),
    Guid("AB6B4AFB-F6E4-11D0-900D-00C04FD9189D")]
   public interface IAMMediaTypeSample : IStreamSample
@@ -453,7 +453,7 @@ namespace DirectShowLib.MultimediaStreaming
       );
   }
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("BEBE595E-9A6F-11D0-8FDE-00C04FD9189D"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IMediaStreamFilter : IBaseFilter

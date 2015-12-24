@@ -21,7 +21,6 @@
 using System;
 using System.Collections;
 using System.ComponentModel;
-using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.ComTypes;
 using System.Security;
@@ -1123,7 +1122,7 @@ namespace DirectShowLib.BDA
   }
 
   // *** The methods in this interface had been converted to properties. ***
-  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
+  [ComImport, SuppressUnmanagedCodeSecurity,
    Guid("6044634A-1733-4F99-B982-5FB12AFCE4F0"),
    InterfaceType(ComInterfaceType.InterfaceIsDual)]
   public interface IDVBSLocator2 : IDVBSLocator
@@ -1258,7 +1257,7 @@ namespace DirectShowLib.BDA
 
   // *** The Get***() methods in these interfaces incorrectly applied the PreserveSig attribute. ***
 
-  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
+  [ComImport, SuppressUnmanagedCodeSecurity,
    Guid("6B80E96F-55E2-45AA-B754-0C23C8E7D5C1"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IESCloseMmiEvent : IESEvent
@@ -1286,7 +1285,7 @@ namespace DirectShowLib.BDA
     int GetDialogNumber([Out] out int pDialogNumber);
   }
 
-  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
+  [ComImport, SuppressUnmanagedCodeSecurity,
    Guid("1F0E5357-AF43-44E6-8547-654C645145D2"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IESEvent
@@ -1307,7 +1306,7 @@ namespace DirectShowLib.BDA
     int GetStringData([Out, MarshalAs(UnmanagedType.BStr)] out string pbstrData);
   }
 
-  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
+  [ComImport, SuppressUnmanagedCodeSecurity,
    Guid("506A09B8-7F86-4E04-AC05-3303BFE8FC49"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IESEventFactory
@@ -1316,7 +1315,7 @@ namespace DirectShowLib.BDA
     int CreateESEvent([In, MarshalAs(UnmanagedType.IUnknown)] object pServiceProvider, [In] int dwEventId, [In] Guid guidEventType, [In] int dwEventDataLength, [In, MarshalAs(UnmanagedType.LPArray, ArraySubType = UnmanagedType.U1)] byte[] pEventData, [In, MarshalAs(UnmanagedType.BStr)] string bstrBaseUrl, [In, MarshalAs(UnmanagedType.IUnknown)] object pInitContext, [Out, MarshalAs(UnmanagedType.Interface)] out IESEvent ppESEvent);
   }
 
-  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
+  [ComImport, SuppressUnmanagedCodeSecurity,
    Guid("BA9EDCB6-4D36-4CFE-8C56-87A6B0CA48E1"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IESFileExpiryDateEvent : IESEvent
@@ -1359,7 +1358,7 @@ namespace DirectShowLib.BDA
     int DoesExpireAfterFirstUse([Out, MarshalAs(UnmanagedType.Bool)] out bool pfExpireAfterFirstUse);
   }
 
-  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
+  [ComImport, SuppressUnmanagedCodeSecurity,
    Guid("2017CB03-DC0F-4C24-83CA-36307B2CD19F"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IESIsdbCasResponseEvent : IESEvent
@@ -1396,7 +1395,7 @@ namespace DirectShowLib.BDA
     int GetResponseData([Out, MarshalAs(UnmanagedType.SafeArray, SafeArraySubType = VarEnum.VT_UI1)] out byte[] pbData);
   }
 
-  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
+  [ComImport, SuppressUnmanagedCodeSecurity,
    Guid("D5A48EF5-A81B-4DF0-ACAA-5E35E7EA45D4"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IESLicenseRenewalResultEvent : IESEvent
@@ -1454,7 +1453,7 @@ namespace DirectShowLib.BDA
     int GetExpiryDate([Out] out long pqwExpiryDate);
   }
 
-  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
+  [ComImport, SuppressUnmanagedCodeSecurity,
    Guid("BA4B6526-1A35-4635-8B56-3EC612746A8C"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IESOpenMmiEvent : IESEvent
@@ -1491,7 +1490,7 @@ namespace DirectShowLib.BDA
     int GetDialogStringData([Out, MarshalAs(UnmanagedType.BStr)] out string pbstrBaseUrl, [Out, MarshalAs(UnmanagedType.BStr)] out string pbstrData);
   }
 
-  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
+  [ComImport, SuppressUnmanagedCodeSecurity,
    Guid("54C7A5E8-C3BB-4F51-AF14-E0E2C0E34C6D"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IESRequestTunerEvent : IESEvent
@@ -1528,7 +1527,7 @@ namespace DirectShowLib.BDA
     int GetEstimatedTime([Out] out int pdwEstimatedTime);
   }
 
-  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
+  [ComImport, SuppressUnmanagedCodeSecurity,
    Guid("8A24C46E-BB63-4664-8602-5D9C718C146D"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IESValueUpdatedEvent : IESEvent

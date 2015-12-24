@@ -24,7 +24,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 using System;
 using System.Runtime.InteropServices;
-using System.Security;
 
 namespace DirectShowLib.BDA
 {
@@ -61,7 +60,7 @@ namespace DirectShowLib.BDA
 
   #region Interfaces
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("B758A7BD-14DC-449d-B828-35909ACB3B1E"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IDvbSiParser
@@ -147,7 +146,7 @@ namespace DirectShowLib.BDA
       );
   }
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("F47DCD04-1E23-4fb7-9F96-B40EEAD10B2B"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IDVB_RST
@@ -189,7 +188,7 @@ namespace DirectShowLib.BDA
       );
   }
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("4D5B9F23-2A02-45de-BCDA-5D5DBFBFBE62"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IDVB_ST
@@ -204,7 +203,7 @@ namespace DirectShowLib.BDA
     int GetData([Out] out IntPtr ppData);
   }
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("0780DC7D-D55C-4aef-97E6-6B75906E2796"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IDVB_TDT
@@ -217,7 +216,7 @@ namespace DirectShowLib.BDA
   }
 
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("91BFFDF9-9432-410f-86EF-1C228ED0AD70"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IDVB_DIT
@@ -229,7 +228,7 @@ namespace DirectShowLib.BDA
     int GetTransitionFlag([Out, MarshalAs(UnmanagedType.Bool)] out bool pfVal);
   }
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("68CDCE53-8BEA-45c2-9D9D-ACF575A089B5"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IDVB_SIT
@@ -315,7 +314,7 @@ namespace DirectShowLib.BDA
     int ConvertNextToCurrent();
   }
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("DFB98E36-9E1A-4862-9946-993A4E59017B"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IDvbCableDeliverySystemDescriptor
@@ -356,7 +355,7 @@ namespace DirectShowLib.BDA
         );
   }
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("1CADB613-E1DD-4512-AFA8-BB7A007EF8B1"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IDvbFrequencyListDescriptor
@@ -388,7 +387,7 @@ namespace DirectShowLib.BDA
       );
   }
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("F9C7FBCF-E2D6-464d-B32D-2EF526E49290"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IDvbServiceDescriptor
@@ -434,7 +433,7 @@ namespace DirectShowLib.BDA
         );
   }
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("91E405CF-80E7-457F-9096-1B9D1CE32141"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IDvbComponentDescriptor
@@ -477,7 +476,7 @@ namespace DirectShowLib.BDA
 
   }
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("2E883881-A467-412A-9D63-6F2B6DA05BF0"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IDvbContentDescriptor
@@ -513,7 +512,7 @@ namespace DirectShowLib.BDA
 
   }
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("05E0C1EA-F661-4053-9FBF-D93B28359838"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown), ComConversionLoss]
   public interface IDvbContentIdentifierDescriptor
@@ -544,7 +543,7 @@ namespace DirectShowLib.BDA
 
   }
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("D1EBC1D6-8B60-4C20-9CAF-E59382E7C400"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IDvbDataBroadcastDescriptor
@@ -598,7 +597,7 @@ namespace DirectShowLib.BDA
 
   }
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown),
    Guid("5F26F518-65C8-4048-91F2-9290F59F7B90")]
   public interface IDvbDataBroadcastIDDescriptor
@@ -626,7 +625,7 @@ namespace DirectShowLib.BDA
 
   }
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown),
    Guid("05EC24D1-3A31-44E7-B408-67C60A352276")]
   public interface IDvbDefaultAuthorityDescriptor
@@ -649,7 +648,7 @@ namespace DirectShowLib.BDA
 
   }
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("C9B22ECA-85F4-499F-B1DB-EFA93A91EE57"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IDvbExtendedEventDescriptor
@@ -722,7 +721,7 @@ namespace DirectShowLib.BDA
 
   }
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("43ACA974-4BE8-4b98-BC17-9EAFD788B1D7"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IDvbLogicalChannelDescriptor2 : IDvbLogicalChannelDescriptor
@@ -764,7 +763,7 @@ namespace DirectShowLib.BDA
         out short pwVal);
   }
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("1EA8B738-A307-4680-9E26-D0A908C824F4"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IDvbHDSimulcastLogicalChannelDescriptor : IDvbLogicalChannelDescriptor2
@@ -811,7 +810,7 @@ namespace DirectShowLib.BDA
 
   }
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("1CDF8B31-994A-46FC-ACFD-6A6BE8934DD5"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IDvbLinkageDescriptor
@@ -859,7 +858,7 @@ namespace DirectShowLib.BDA
 
   }
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("F69C3747-8A30-4980-998C-01FE7F0BA35A"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IDvbLogicalChannel2Descriptor : IDvbLogicalChannelDescriptor2
@@ -957,7 +956,7 @@ namespace DirectShowLib.BDA
 
   }
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("2D80433B-B32C-47EF-987F-E78EBB773E34"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IDvbMultilingualServiceNameDescriptor
@@ -998,7 +997,7 @@ namespace DirectShowLib.BDA
 
   }
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("5B2A80CF-35B9-446C-B3E4-048B761DBC51"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IDvbNetworkNameDescriptor
@@ -1026,7 +1025,7 @@ namespace DirectShowLib.BDA
 
   }
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown),
    Guid("3AD9DDE1-FB1B-4186-937F-22E6B5A72A10")]
   public interface IDvbParentalRatingDescriptor
@@ -1055,7 +1054,7 @@ namespace DirectShowLib.BDA
 
   }
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("5660A019-E75A-4B82-9B4C-ED2256D165A2"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IDvbPrivateDataSpecifierDescriptor
@@ -1077,7 +1076,7 @@ namespace DirectShowLib.BDA
 
   }
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("0F37BD92-D6A1-4854-B950-3A969D27F30E"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IDvbServiceAttributeDescriptor
@@ -1117,7 +1116,7 @@ namespace DirectShowLib.BDA
 
   }
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("D6C76506-85AB-487C-9B2B-36416511E4A2"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IDvbServiceDescriptor2 : IDvbServiceDescriptor
@@ -1180,7 +1179,7 @@ namespace DirectShowLib.BDA
 
   }
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("05DB0D8F-6008-491A-ACD3-7090952707D0"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IDvbServiceListDescriptor
@@ -1214,7 +1213,7 @@ namespace DirectShowLib.BDA
 
   }
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("B170BE92-5B75-458E-9C6E-B0008231491A"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IDvbShortEventDescriptor
@@ -1248,7 +1247,7 @@ namespace DirectShowLib.BDA
 
   }
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("0AC5525F-F816-42F4-93BA-4C0F32F46E54"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IDvbSiParser2 : IDvbSiParser
@@ -1357,7 +1356,7 @@ namespace DirectShowLib.BDA
 
   }
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("9B25FE1D-FA23-4E50-9784-6DF8B26F8A49"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IDvbSubtitlingDescriptor
@@ -1403,7 +1402,7 @@ namespace DirectShowLib.BDA
 
   }
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("9CD29D47-69C6-4F92-98A9-210AF1B7303A"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IDvbTeletextDescriptor
@@ -1449,7 +1448,7 @@ namespace DirectShowLib.BDA
 
   }
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("537CD71E-0E46-4173-9001-BA043F3E49E2"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IISDB_BIT
@@ -1530,7 +1529,7 @@ namespace DirectShowLib.BDA
 
   }
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("25FA92C2-8B80-4787-A841-3A0E8F17984B"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IISDB_CDT
@@ -1602,7 +1601,7 @@ namespace DirectShowLib.BDA
 
   }
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("0EDB556D-43AD-4938-9668-321B2FFECFD3"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IISDB_EMM
@@ -1648,7 +1647,7 @@ namespace DirectShowLib.BDA
 
   }
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("141A546B-02FF-4FB9-A3A3-2F074B74A9A9"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IISDB_LDT
@@ -1718,7 +1717,7 @@ namespace DirectShowLib.BDA
 
   }
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("1B1863EF-08F1-40B7-A559-3B1EFF8CAFA6"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IISDB_NBIT
@@ -1814,7 +1813,7 @@ namespace DirectShowLib.BDA
 
   }
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("3F3DC9A2-BB32-4FB9-AE9E-D856848927A3"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IISDB_SDT : IDVB_SDT
@@ -1915,7 +1914,7 @@ namespace DirectShowLib.BDA
 
   }
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("EE60EF2D-813A-4DC7-BF92-EA13DAC85313"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IISDB_SDTT
@@ -2040,7 +2039,7 @@ namespace DirectShowLib.BDA
 
   }
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("679D2002-2425-4BE4-A4C7-D6632A574F4D"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IIsdbAudioComponentDescriptor
@@ -2118,7 +2117,7 @@ namespace DirectShowLib.BDA
 
   }
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("08E18B25-A28F-4E92-821E-4FCED5CC2291"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IIsdbCAContractInformationDescriptor
@@ -2173,7 +2172,7 @@ namespace DirectShowLib.BDA
 
   }
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("0570AA47-52BC-42AE-8CA5-969F41E81AEA"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IIsdbCADescriptor
@@ -2211,7 +2210,7 @@ namespace DirectShowLib.BDA
 
   }
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("39CBEB97-FF0B-42A7-9AB9-7B9CFE70A77A"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IIsdbCAServiceDescriptor
@@ -2249,7 +2248,7 @@ namespace DirectShowLib.BDA
 
   }
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("A494F17F-C592-47D8-8943-64C9A34BE7B9"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IIsdbComponentGroupDescriptor
@@ -2323,7 +2322,7 @@ namespace DirectShowLib.BDA
 
   }
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("A428100A-E646-4BD6-AA14-6087BDC08CD5"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IIsdbDataContentDescriptor
@@ -2383,7 +2382,7 @@ namespace DirectShowLib.BDA
 
   }
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("1A28417E-266A-4BB8-A4BD-D782BCFB8161"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IIsdbDigitalCopyControlDescriptor
@@ -2423,7 +2422,7 @@ namespace DirectShowLib.BDA
 
   }
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("5298661E-CB88-4F5F-A1DE-5F440C185B92"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IIsdbDownloadContentDescriptor
@@ -2524,7 +2523,7 @@ namespace DirectShowLib.BDA
 
   }
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("BA6FA681-B973-4DA1-9207-AC3E7F0341EB"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IIsdbEmergencyInformationDescriptor
@@ -2571,7 +2570,7 @@ namespace DirectShowLib.BDA
 
   }
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("94B06780-2E2A-44DC-A966-CC56FDABC6C2"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IIsdbEventGroupDescriptor
@@ -2619,7 +2618,7 @@ namespace DirectShowLib.BDA
 
   }
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("B7B3AE90-EE0B-446D-8769-F7E2AA266AA6"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IIsdbHierarchicalTransmissionDescriptor
@@ -2656,7 +2655,7 @@ namespace DirectShowLib.BDA
 
   }
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("E0103F49-4AE1-4F07-9098-756DB1FA88CD"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IIsdbLogoTransmissionDescriptor
@@ -2699,7 +2698,7 @@ namespace DirectShowLib.BDA
 
   }
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("07EF6370-1660-4F26-87FC-614ADAB24B11"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IIsdbSeriesDescriptor
@@ -2753,7 +2752,7 @@ namespace DirectShowLib.BDA
 
   }
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("F837DC36-867C-426A-9111-F62093951A45"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IIsdbSIParameterDescriptor
@@ -2804,7 +2803,7 @@ namespace DirectShowLib.BDA
 
   }
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("900E4BB7-18CD-453F-98BE-3BE6AA211772"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IIsdbSiParser2 : IDvbSiParser2
@@ -2967,7 +2966,7 @@ namespace DirectShowLib.BDA
 
   }
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("39FAE0A6-D151-44DD-A28A-765DE5991670"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IIsdbTerrestrialDeliverySystemDescriptor
@@ -3010,7 +3009,7 @@ namespace DirectShowLib.BDA
 
   }
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("D7AD183E-38F5-4210-B55F-EC8D601BBD47"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IIsdbTSInformationDescriptor
@@ -3062,7 +3061,7 @@ namespace DirectShowLib.BDA
 
   }
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("A35F2DEA-098F-4EBD-984C-2BD4C3C8CE0A"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IPBDA_EIT
@@ -3134,7 +3133,7 @@ namespace DirectShowLib.BDA
 
   }
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("944EAB37-EED4-4850-AFD2-77E7EFEB4427"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IPBDA_Services
@@ -3158,7 +3157,7 @@ namespace DirectShowLib.BDA
 
   }
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("313B3620-3263-45A6-9533-968BEFBEAC03"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IPBDAAttributesDescriptor
@@ -3181,7 +3180,7 @@ namespace DirectShowLib.BDA
 
   }
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("22632497-0DE3-4587-AADC-D8D99017E760"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IPBDAEntitlementDescriptor
@@ -3204,7 +3203,7 @@ namespace DirectShowLib.BDA
 
   }
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("9DE49A74-ABA2-4A18-93E1-21F17F95C3C3"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IPBDASiParser
@@ -3230,7 +3229,7 @@ namespace DirectShowLib.BDA
 
   }
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("20EE9BE9-CD57-49ab-8F6E-1D07AEB8E482"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IDvbTerrestrial2DeliverySystemDescriptor
@@ -3276,7 +3275,7 @@ namespace DirectShowLib.BDA
 
   };
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("61A389E0-9B9E-4ba0-AEEA-5DDD159820EA"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IDVB_EIT2 : IDVB_EIT
@@ -3392,7 +3391,7 @@ namespace DirectShowLib.BDA
 
   };
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("C64935F4-29E4-4e22-911A-63F7F55CB097"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IDVB_NIT
@@ -3477,7 +3476,7 @@ namespace DirectShowLib.BDA
     int GetVersionHash([Out] out int pdwVersionHash);
   }
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("ECE9BB0C-43B6-4558-A0EC-1812C34CD6CA"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IDVB_BAT
@@ -3558,7 +3557,7 @@ namespace DirectShowLib.BDA
     int ConvertNextToCurrent();
   }
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("ED7E1B91-D12E-420c-B41D-A49D84FE1823"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IDvbTerrestrialDeliverySystemDescriptor
@@ -3597,7 +3596,7 @@ namespace DirectShowLib.BDA
     int GetOtherFrequencyFlag([Out] out byte pbVal);
   }
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("442DB029-02CB-4495-8B92-1C13375BCE99"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IDVB_EIT
@@ -3696,7 +3695,7 @@ namespace DirectShowLib.BDA
     int GetVersionHash([Out] out int pdwVersionHash);
   }
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("02F2225A-805B-4ec5-A9A6-F9B5913CD470"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IDvbSatelliteDeliverySystemDescriptor
@@ -3729,7 +3728,7 @@ namespace DirectShowLib.BDA
     int GetFECInner([Out] out byte pbVal);
   }
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("02CAD8D3-FE43-48e2-90BD-450ED9A8A5FD"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IDVB_SDT
@@ -3820,7 +3819,7 @@ namespace DirectShowLib.BDA
 
   }
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("CF1EDAFF-3FFD-4cf7-8201-35756ACBF85F"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IDvbLogicalChannelDescriptor
@@ -3847,7 +3846,7 @@ namespace DirectShowLib.BDA
       );
   }
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("83295D6A-FABA-4ee1-9B15-8067696910AE"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IDVB_TOT

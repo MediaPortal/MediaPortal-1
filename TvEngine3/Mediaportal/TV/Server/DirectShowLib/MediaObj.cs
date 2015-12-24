@@ -390,7 +390,7 @@ namespace DirectShowLib.DMO
 
   #region Interfaces
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("65ABEA96-CF36-453F-AF8A-705E98F16260"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IDMOQualityControl
@@ -412,7 +412,7 @@ namespace DirectShowLib.DMO
   }
 
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown),
    Guid("2C3CD98A-2BFA-4A53-9C27-5249BA64BA0F")]
   public interface IEnumDMO
@@ -439,7 +439,7 @@ namespace DirectShowLib.DMO
       );
   }
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown),
    Guid("651B9AD0-0FC7-4AA9-9538-D89931010741")]
   public interface IMediaObjectInPlace
@@ -463,7 +463,7 @@ namespace DirectShowLib.DMO
       );
   }
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("59EFF8B9-938C-4A26-82F2-95CB84CDC837"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IMediaBuffer
@@ -485,7 +485,7 @@ namespace DirectShowLib.DMO
       );
   }
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("D8AD0F58-5494-4102-97C5-EC798E59BCF4"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IMediaObject
@@ -618,7 +618,7 @@ namespace DirectShowLib.DMO
       );
   }
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("BE8F4F4E-5B16-4D29-B350-7F6B5D9298AC"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IDMOVideoOutputOptimizations

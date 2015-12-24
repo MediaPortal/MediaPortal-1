@@ -24,7 +24,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 using System;
 using System.Runtime.InteropServices;
-using System.Security;
 
 namespace DirectShowLib.BDA
 {
@@ -264,7 +263,7 @@ namespace DirectShowLib.BDA
 
   #region Interfaces
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("fd501041-8ebe-11ce-8183-00aa00577da2"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IBDA_NetworkProvider
@@ -294,7 +293,7 @@ namespace DirectShowLib.BDA
     int UnRegisterDeviceFilter([In] int pvRegistrationContext);
   }
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("71985F46-1CA1-11d3-9CC8-00C04F7971E0"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IBDA_VoidTransform
@@ -306,7 +305,7 @@ namespace DirectShowLib.BDA
     int Stop();
   }
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("DDF15B0D-BD25-11d2-9CA0-00C04F7971E0"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IBDA_NullTransform
@@ -321,7 +320,7 @@ namespace DirectShowLib.BDA
   /*
    * Redefined in TveCustomisations.cs.
    * 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("afb6c2a2-2c41-11d3-8a60-0000f81e0e4a"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IEnumPIDMap
@@ -343,7 +342,7 @@ namespace DirectShowLib.BDA
     int Clone([Out] out IEnumPIDMap ppIEnumPIDMap);
   }*/
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("0DED49D5-A8B7-4d5d-97A1-12B0C195874D"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IBDA_PinControl
@@ -358,7 +357,7 @@ namespace DirectShowLib.BDA
     int RegistrationContext([Out] out int pulRegistrationCtx);
   }
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("34518D13-1182-48e6-B28F-B24987787326"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IBDA_AutoDemodulateEx : IBDA_AutoDemodulate
@@ -390,7 +389,7 @@ namespace DirectShowLib.BDA
       );
   }
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("D806973D-3EBE-46de-8FBB-6358FE784208"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IBDA_EasMessage
@@ -402,7 +401,7 @@ namespace DirectShowLib.BDA
       );
   }
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("8E882535-5F86-47AB-86CF-C281A72A0549"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IBDA_TransportStreamInfo
@@ -414,7 +413,7 @@ namespace DirectShowLib.BDA
   /*
    * Redefined in TveCustomisations.cs.
    * 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("CD51F1E0-7BE9-4123-8482-A2A796C0A6B0"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IBDA_ConditionalAccess
@@ -476,14 +475,14 @@ namespace DirectShowLib.BDA
       );
   }*/
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("20e80cb5-c543-4c1b-8eb3-49e719eee7d4"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IBDA_DiagnosticProperties : IPropertyBag
   {
   }
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("F98D88B0-1992-4cd6-A6D9-B9AFAB99330D"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IBDA_DRM
@@ -498,7 +497,7 @@ namespace DirectShowLib.BDA
     int PerformDRMPairing([In, MarshalAs(UnmanagedType.Bool)] bool fSync);
   }
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("7DEF4C09-6E66-4567-A819-F0E17F4A81AB"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IBDA_AUX
@@ -519,7 +518,7 @@ namespace DirectShowLib.BDA
       );
   }
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("497C3418-23CB-44BA-BB62-769F506FCEA7"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IBDA_ConditionalAccessEx
@@ -562,7 +561,7 @@ namespace DirectShowLib.BDA
       );
   }
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown),
    Guid("525ED3EE-5CF3-4E1E-9A06-5368A84F9A6E")]
   public interface IBDA_DigitalDemodulator2 : IBDA_DigitalDemodulator
@@ -682,7 +681,7 @@ namespace DirectShowLib.BDA
       );
   }
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("F84E2AB0-3C6B-45E3-A0FC-8669D4B81F11"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IBDA_DiseqCommand
@@ -722,7 +721,7 @@ namespace DirectShowLib.BDA
       );
   }
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("1F9BC2A5-44A3-4C52-AAB1-0BBCE5A1381D"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IBDA_DRIDRMService
@@ -744,7 +743,7 @@ namespace DirectShowLib.BDA
       );
   }
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("05C690F8-56DB-4BB2-B053-79C12098BB26"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IBDA_DRIWMDRMSession
@@ -793,7 +792,7 @@ namespace DirectShowLib.BDA
       );
   }
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("BFF6B5BB-B0AE-484C-9DCA-73528FB0B46E"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IBDA_DRMService
@@ -810,7 +809,7 @@ namespace DirectShowLib.BDA
       );
   }
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("3A8BAD59-59FE-4559-A0BA-396CFAA98AE3"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IBDA_Encoder
@@ -878,7 +877,7 @@ namespace DirectShowLib.BDA
       );
   }
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("207C413F-00DC-4C61-BAD6-6FEE1FF07064"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IBDA_EventingService
@@ -890,7 +889,7 @@ namespace DirectShowLib.BDA
       );
   }
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("138ADC7E-58AE-437F-B0B4-C9FE19D5B4AC"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IBDA_FDC
@@ -942,7 +941,7 @@ namespace DirectShowLib.BDA
       );
   }
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("C0AFCB73-23E7-4BC6-BAFA-FDC167B4719F"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IBDA_GuideDataDeliveryService
@@ -980,7 +979,7 @@ namespace DirectShowLib.BDA
       );
   }
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("5E68C627-16C2-4E6C-B1E2-D00170CDAA0F"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IBDA_ISDBConditionalAccess
@@ -993,7 +992,7 @@ namespace DirectShowLib.BDA
       );
   }
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("942AAFEC-4C05-4C74-B8EB-8706C2A4943F"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IBDA_MUX
@@ -1011,7 +1010,7 @@ namespace DirectShowLib.BDA
       );
   }
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("7F0B3150-7B81-4AD4-98E3-7E9097094301"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IBDA_NameValueService
@@ -1039,7 +1038,7 @@ namespace DirectShowLib.BDA
       );
   }
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("1DCFAFE9-B45E-41B3-BB2A-561EB129AE98"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IBDA_TransportStreamSelector
@@ -1056,7 +1055,7 @@ namespace DirectShowLib.BDA
       );
   }
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("53B14189-E478-4B7A-A1FF-506DB4B99DFE"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IBDA_UserActivityService
@@ -1075,7 +1074,7 @@ namespace DirectShowLib.BDA
     int UserActivityDetected();
   }
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("4BE6FA3D-07CD-4139-8B80-8C18BA3AEC88"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IBDA_WMDRMSession
@@ -1143,7 +1142,7 @@ namespace DirectShowLib.BDA
       );
   }
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("86D979CF-A8A7-4F94-B5FB-14C0ACA68FE6"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IBDA_WMDRMTuner
@@ -1189,7 +1188,7 @@ namespace DirectShowLib.BDA
       );
   }
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("13F19604-7D32-4359-93A2-A05205D90AC9"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IBDA_DigitalDemodulator3 : IBDA_DigitalDemodulator2
@@ -1333,7 +1332,7 @@ namespace DirectShowLib.BDA
     );
   }
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("1347D106-CF3A-428a-A5CB-AC0D9A2A4338"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IBDA_SignalStatistics
@@ -1369,7 +1368,7 @@ namespace DirectShowLib.BDA
     int get_SampleTime([Out] out int plmsSampleTime);
   }
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("79B56888-7FEA-4690-B45D-38FD3C7849BE"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IBDA_Topology
@@ -1447,7 +1446,7 @@ namespace DirectShowLib.BDA
       );
   }
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("06FB45C1-693C-4ea7-B79F-7A6A54D8DEF2"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IFrequencyMap
@@ -1484,7 +1483,7 @@ namespace DirectShowLib.BDA
       );
   }
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("DDF15B12-BD25-11d2-9CA0-00C04F7971E0"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IBDA_AutoDemodulate
@@ -1493,7 +1492,7 @@ namespace DirectShowLib.BDA
     int put_AutoDemodulate();
   }
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("FD0A5AF3-B41D-11d2-9C95-00C04F7971E0"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IBDA_DeviceControl
@@ -1511,7 +1510,7 @@ namespace DirectShowLib.BDA
     int GetChangeState([Out] out BDAChangeState pState);
   }
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("EF30F379-985B-4d10-B640-A79D5E04E1E0"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IBDA_DigitalDemodulator
@@ -1559,7 +1558,7 @@ namespace DirectShowLib.BDA
     int get_SpectralInversion([Out] out SpectralInversion pSpectralInversion);
   }
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("71985F43-1CA1-11d3-9CC8-00C04F7971E0"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IBDA_EthernetFilter
@@ -1587,7 +1586,7 @@ namespace DirectShowLib.BDA
       out MulticastMode pulModeMask);
   }
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("71985F47-1CA1-11d3-9CC8-00C04F7971E0"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IBDA_FrequencyFilter
@@ -1629,7 +1628,7 @@ namespace DirectShowLib.BDA
     int get_FrequencyMultiplier([Out] out int pulMultiplier);
   }
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("3F4DC8E2-4050-11d3-8F4B-00C04F7971E2"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown),
    Obsolete(
@@ -1647,7 +1646,7 @@ namespace DirectShowLib.BDA
       out IntPtr pbBuffer); // BYTE **
   }
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("A750108F-492E-4d51-95F7-649B23FF7AD7"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IBDA_IPSinkInfo
@@ -1666,7 +1665,7 @@ namespace DirectShowLib.BDA
       [MarshalAs(UnmanagedType.BStr)] out string pbstrBuffer);
   }
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("71985F44-1CA1-11d3-9CC8-00C04F7971E0"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IBDA_IPV4Filter
@@ -1694,7 +1693,7 @@ namespace DirectShowLib.BDA
       out MulticastMode pulModeMask);
   }
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("E1785A74-2A23-4fb3-9245-A8F88017EF33"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IBDA_IPV6Filter
@@ -1722,7 +1721,7 @@ namespace DirectShowLib.BDA
       out MulticastMode pulModeMask);
   }
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("992CF102-49F9-4719-A664-C4F23E2408F4"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IBDA_LNBInfo
@@ -1746,7 +1745,7 @@ namespace DirectShowLib.BDA
     int get_HighLowSwitchFrequency([Out] out int pulSwitchFrequency);
   }
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("afb6c2a1-2c41-11d3-8a60-0000f81e0e4a"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IMPEG2PIDMap
@@ -1773,7 +1772,7 @@ namespace DirectShowLib.BDA
 #endif
   }
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("D2F1644B-B409-11d2-BC69-00A0C9EE9E16"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IBDA_SignalProperties
@@ -1797,7 +1796,7 @@ namespace DirectShowLib.BDA
     int GetTuningSpace([Out] out Guid pguidTuingSpace);
   }
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
+  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
    Guid("4B2BD7EA-8347-467b-8DBF-62F784929CC3"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface ICCSubStreamFiltering
