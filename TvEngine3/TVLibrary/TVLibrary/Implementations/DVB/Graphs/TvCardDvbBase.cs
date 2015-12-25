@@ -2439,13 +2439,19 @@ namespace TvLibrary.Implementations.DVB
     /// <summary>
     /// Aborts grabbing the epg
     /// </summary>
-    public void AbortGrabbing()
+    public void AbortGrabbing(bool StopTimeshiftTimer)
     {
       Log.Log.Write("dvb:abort grabbing epg");
       if (_interfaceEpgGrabber != null)
         _interfaceEpgGrabber.AbortGrabbing();
       if (_timeshiftingEPGGrabber != null)
         _timeshiftingEPGGrabber.OnEpgCancelled();
+      if (StopTimeshiftTimer)
+      {
+        Log.Log.Write("dvb:abort grabbing timeshift epg");
+        if (_timeshiftingEPGGrabber != null)
+          _timeshiftingEPGGrabber.StopTimer();
+      }
     }
 
     /// <summary>

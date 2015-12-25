@@ -87,17 +87,20 @@ namespace TvLibrary
 
     private void _epgTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
     {
-      TimeSpan ts = DateTime.Now - _grabStartTime;
+      var ts = DateTime.Now - _grabStartTime;
       Log.Log.Epg("TimeshiftingEpgGrabber: timeout after {0} mins", ts.TotalMinutes);
       _epgTimer.Enabled = false;
-      _card.AbortGrabbing();
+      _card.AbortGrabbing(false);
     }
 
     private void _epgTimerRefresh_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
     {
-      TimeSpan ts = DateTime.Now - _grabStartTimeRefresh;
+      var ts = DateTime.Now - _grabStartTimeRefresh;
       Log.Log.Epg("TimeshiftingEpgGrabber: refresh EPG while timeshift after {0} mins", ts.TotalMinutes);
-      _card.GrabEpg();
+      if (!_card.IsEpgGrabbing)
+      {
+        _card.GrabEpg();
+      }
     }
 
     #region BaseEpgGrabber implementation
@@ -111,6 +114,16 @@ namespace TvLibrary
       Log.Log.Info("Timeshifting epg grabber stopped.");
       _card.IsEpgGrabbing = false;
       _epgTimer.Enabled = false;
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
+    public void StopTimer()
+    {
+      Log.Log.Info("Timeshifting epg grabber timer stopped.");
+      _epgTimerRefresh.Enabled = false;
     }
 
     /// <summary>
@@ -140,9 +153,11 @@ namespace TvLibrary
         Log.Log.Epg("TimeshiftingEpgGrabber: No epg received.");
       else
       {
-        Thread workerThread = new Thread(UpdateDatabaseThread);
-        workerThread.IsBackground = true;
-        workerThread.Name = "EPG Update thread";
+        var workerThread = new Thread(UpdateDatabaseThread)
+        {
+          IsBackground = true,
+          Name = "EPG Update thread"
+        };
         workerThread.Start();
       }
       _epgTimer.Enabled = false;
@@ -161,7 +176,7 @@ namespace TvLibrary
       _updateThreadRunning = true;
       Thread.CurrentThread.Priority = ThreadPriority.Lowest;
       _dbUpdater.ReloadConfig();
-      foreach (EpgChannel epgChannel in _epg)
+      foreach (var epgChannel in _epg)
       {
         _dbUpdater.UpdateEpgForChannel(epgChannel);
       }

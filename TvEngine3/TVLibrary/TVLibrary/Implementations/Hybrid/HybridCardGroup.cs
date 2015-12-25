@@ -182,7 +182,7 @@ namespace TvLibrary.Implementations.Hybrid
     /// </summary>
     public void AbortGrabbing()
     {
-      _cards[_currentCardIndex].AbortGrabbing();
+      _cards[_currentCardIndex].AbortGrabbing(false);
     }
 
     /// <summary>

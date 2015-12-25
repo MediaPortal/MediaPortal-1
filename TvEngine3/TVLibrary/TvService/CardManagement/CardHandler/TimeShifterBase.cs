@@ -267,6 +267,20 @@ namespace TvService
       }
     }
 
+    protected void StopTimeShiftingEPGgrabber(IUser user)
+    {
+      if (_timeshiftingEpgGrabberEnabled)
+      {
+        Channel channel = Channel.Retrieve(user.IdChannel);
+        Card card = Card.Retrieve(user.CardId);
+        if (card.GrabEPG || channel.GrabEpg)
+        {
+          _cardHandler.Card.AbortGrabbing(true);
+          Log.Info("TimeshiftingEPG: stop timeshift EPG elapted timer for card [{0}] and channel [{1}]");
+        }
+      }
+    }
+
     protected TvResult GetFailedTvResult(bool isScrambled)
     {
       TvResult result;    

@@ -181,8 +181,9 @@ namespace TvLibrary.Interfaces
 
     /// <summary>
     /// Aborts grabbing the epg. This also triggers the OnEpgReceived callback.
+    /// StopTimeshiftTimer is to stop timeshifter timer
     /// </summary>
-    void AbortGrabbing();
+    void AbortGrabbing(bool StopTimeshiftTimer);
 
     /// <summary>
     /// returns a list of all epg data for each channel found.

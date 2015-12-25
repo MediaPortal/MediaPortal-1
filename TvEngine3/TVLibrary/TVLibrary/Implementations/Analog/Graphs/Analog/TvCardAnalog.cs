@@ -241,7 +241,7 @@ namespace TvLibrary.Implementations.Analog
     /// <summary>
     /// Aborts grabbing the epg. This also triggers the OnEpgReceived callback.
     /// </summary>
-    public void AbortGrabbing() {}
+    public void AbortGrabbing(bool StopTimeshiftTimer) {}
 
     /// <summary>
     /// returns a list of all epg data for each channel found.

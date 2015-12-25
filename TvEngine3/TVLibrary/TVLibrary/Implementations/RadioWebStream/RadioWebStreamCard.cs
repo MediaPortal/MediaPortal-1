@@ -174,7 +174,7 @@ namespace TvLibrary.Implementations.RadioWebStream
     /// <summary>
     /// Aborts grabbing the epg
     /// </summary>
-    public void AbortGrabbing()
+    public void AbortGrabbing(bool StopTimeshiftTimer)
     {
       return;
     }

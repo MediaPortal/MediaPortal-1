@@ -207,8 +207,10 @@ namespace TvService
               if (stop)
               {
                 SetContextOwnerToNextRecUser(context);
-              }  
-            }                      
+              }
+              // Stop refresh EPG Timer
+              StopTimeShiftingEPGgrabber(user);
+            }
           }
           else
           {

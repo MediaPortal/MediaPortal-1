@@ -48,8 +48,6 @@ namespace TvService
     /// <param name="cardHandler">The card handler.</param>
     public TimeShifter(ITvCardHandler cardHandler) : base(cardHandler)
     {
-      
-
       _cardHandler = cardHandler;
       var layer = new TvBusinessLayer();
       _linkageScannerEnabled = (layer.GetSetting("linkageScannerEnabled", "no").Value == "yes");
@@ -419,6 +417,8 @@ namespace TvService
             }
             context.Remove(user);
             stop = true;
+            // Stop refresh EPG Timer
+            StopTimeShiftingEPGgrabber(user);
           }
         }
       }

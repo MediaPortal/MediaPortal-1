@@ -327,7 +327,7 @@ namespace TvLibrary.Implementations.Hybrid
     /// <summary>
     /// Aborts grabbing the epg
     /// </summary>
-    public void AbortGrabbing()
+    public void AbortGrabbing(bool StopTimeshiftTimer)
     {
       _group.AbortGrabbing();
     }
