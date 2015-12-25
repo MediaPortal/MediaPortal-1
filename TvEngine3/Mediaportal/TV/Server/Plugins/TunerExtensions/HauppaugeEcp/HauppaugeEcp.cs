@@ -363,6 +363,16 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeEcp
         {
           values = Marshal.GetObjectsForNativeVariants(valuesPtr, valuesCount);
           this.LogDebug("Hauppauge ECP: result = success, values = {0}", string.Join(", ", values));
+
+          // Free memory. Each variant in the array must be VariantClear()'d
+          // and then the variant array itself must be freed.
+          IntPtr valuePtr = valuesPtr;
+          for (int v = 0; v < valuesCount; v++)
+          {
+            NativeMethods.VariantClear(valuePtr);
+            valuePtr = IntPtr.Add(valuePtr, 16);    // 16 = sizeof(VARIANT)
+          }
+          Marshal.FreeCoTaskMem(valuesPtr);
           return true;
         }
         this.LogError("Hauppauge ECP: failed to get values for parameter {0}, hr = 0x{1:x}", parameterId, hr);

@@ -386,6 +386,18 @@ namespace MediaPortal.Common.Utils
 
     #endregion
 
+    #region oleaut32.dll
+
+    /// <summary>
+    /// Clears a variant.
+    /// </summary>
+    /// <param name="pvarg">The variant to clear.</param>
+    /// <returns>This function can return one of these values: S_OK, DISP_E_ARRAYISLOCKED, DISP_E_BADVARTYPE, E_INVALIDARG.</returns>
+    [DllImport("oleaut32.dll", SetLastError = true, CallingConvention = CallingConvention.StdCall)]
+    public static extern int VariantClear(IntPtr pvarg);
+
+    #endregion
+
     #region SetupAPI.h
 
     public const int LINE_LEN = 256;

@@ -431,6 +431,16 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftEncoder
             values = Marshal.GetObjectsForNativeVariants(valuesPtr, valuesCount);
             this.LogDebug("Microsoft encoder: interface {0}, values = {1}", i, string.Join(", ", values));
             success = true;
+
+            // Free memory. Each variant in the array must be VariantClear()'d
+            // and then the variant array itself must be freed.
+            IntPtr valuePtr = valuesPtr;
+            for (int v = 0; v < valuesCount; v++)
+            {
+              NativeMethods.VariantClear(valuePtr);
+              valuePtr = IntPtr.Add(valuePtr, 16);    // 16 = sizeof(VARIANT)
+            }
+            Marshal.FreeCoTaskMem(valuesPtr);
           }
           else
           {
