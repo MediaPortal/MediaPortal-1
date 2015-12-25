@@ -32,9 +32,17 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeBlaster
     private enum HcwResult : int
     {
       Success = 0,
-      Fail = 1,
-      InvalidParameter = 10,
-      NotOpened = 11
+      Fail,
+      DeviceNotInDatabase,
+      CodeNotInDatabase,
+      KeyNotInDatabase,
+      NotSupported,
+      CorruptDataReceived,
+      TimeOut,
+      ChecksumFailed,
+      FirmwareIncompatible,
+      InvalidParameter,
+      NotInitialised
     }
 
     #endregion
