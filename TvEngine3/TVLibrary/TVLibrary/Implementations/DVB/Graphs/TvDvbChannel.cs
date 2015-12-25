@@ -1235,7 +1235,7 @@ namespace TvLibrary.Implementations.DVB
             int pmtProgramNumber = (_pmtData[3] << 8) + _pmtData[4];
             Log.Log.Info("subch:{0} SendPmt:{1:X} {2:X} {3:X} {4:X}", _subChannelId, pmtProgramNumber, channel.ServiceId,
                          _pmtVersion, version);
-            if (pmtProgramNumber != channel.ServiceId && dvbipChannel != null)
+            if (pmtProgramNumber != channel.ServiceId) // && dvbipChannel != null) // it can happen also on DVBs Channem
             {
               Log.Log.Info("Service ID mismatch {0} != {1} try with detected Service ID", channel.ServiceId,
                 pmtProgramNumber);
