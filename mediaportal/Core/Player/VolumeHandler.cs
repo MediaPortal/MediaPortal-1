@@ -34,6 +34,8 @@ namespace MediaPortal.Player
   {
     #region Vars
 
+    static HideVolumeOSD.HideVolumeOSDLib VolumeOSD;
+
     #endregion
 
     #region Constructors
@@ -79,6 +81,16 @@ namespace MediaPortal.Player
         catch (Exception ex)
         {
           Log.Error("VolumeHandler: Mixer exception when init {0}", ex);
+        }
+
+        if (_showVolumeOSD && OSInfo.OSInfo.Win8OrLater())
+        {
+          try
+          {
+            VolumeOSD = new HideVolumeOSD.HideVolumeOSDLib();
+            VolumeOSD.HideOSD();
+          }
+          catch { }
         }
       }
       else
@@ -155,6 +167,11 @@ namespace MediaPortal.Player
       }
       _instance = null;
       GUIGraphicsContext.VolumeHandler = null;
+
+      if (_showVolumeOSD && OSInfo.OSInfo.Win8OrLater() && VolumeOSD != null)
+      {
+        VolumeOSD.ShowOSD();
+      }
     }
 
     public virtual void UnMute()
@@ -391,7 +408,7 @@ namespace MediaPortal.Player
 
     private int[] _volumeTable;
     private int _startupVolume;
-    private bool _showVolumeOSD;
+    private static bool _showVolumeOSD;
 
     #endregion Fields
   }
