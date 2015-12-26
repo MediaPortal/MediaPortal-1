@@ -2411,35 +2411,41 @@ namespace TvPlugin
       dlg.Reset();
       dlg.SetHeading(200052); // Active Recordings
 
-      List<int> disallowedChannels = ListDisallowedChannelsById();
-      IList<Recording> activeRecordings = Recording.ListAllActive();
+      var disallowedChannels = ListDisallowedChannelsById();
+      var activeRecordings = Recording.ListAllActive();
       if (activeRecordings != null && activeRecordings.Count > 0)
       {
-        foreach (Recording activeRecording in activeRecordings)
+        int addedItems = 0;
+        foreach (var activeRecording in activeRecordings)
         {
-          if (!ignoreActiveRecordings.Contains(activeRecording) && !disallowedChannels.Contains(activeRecording.IdChannel))
+          if (ignoreActiveRecordings.Contains(activeRecording) || disallowedChannels.Contains(activeRecording.IdChannel))
           {
-            GUIListItem item = new GUIListItem();
-            string channelName = activeRecording.ReferencedChannel().DisplayName;
-            string programTitle = activeRecording.Title.Trim(); // default is current EPG info
-
-            item.Label = channelName;
-            item.Label2 = programTitle;
-
-            string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, channelName);
-            if (string.IsNullOrEmpty(strLogo))
-            {
-              strLogo = "defaultVideoBig.png";
-            }
-
-            item.IconImage = strLogo;
-            item.IconImageBig = strLogo;
-            item.PinImage = "";
-            dlg.Add(item);
+            continue;
           }
+          GUIListItem item = new GUIListItem();
+          string channelName = activeRecording.ReferencedChannel().DisplayName;
+          string programTitle = activeRecording.Title.Trim(); // default is current EPG info
+
+          item.Label = channelName;
+          item.Label2 = programTitle;
+
+          string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, channelName);
+          if (string.IsNullOrEmpty(strLogo))
+          {
+            strLogo = "defaultVideoBig.png";
+          }
+
+          item.IconImage = strLogo;
+          item.IconImageBig = strLogo;
+          item.PinImage = "";
+          dlg.Add(item);
+          addedItems++;
         }
 
-        dlg.SelectedLabel = activeRecordings.Count;
+        if (addedItems > 0)
+        {
+          dlg.SelectedLabel = activeRecordings.Count;
+        }
 
         dlg.DoModal(this.GetID);
         if (dlg.SelectedLabel < 0)
