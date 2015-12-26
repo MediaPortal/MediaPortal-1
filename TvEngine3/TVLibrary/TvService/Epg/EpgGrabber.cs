@@ -248,7 +248,7 @@ namespace TvService
 
         // Check current grabbing card
         int cardGrabbing = 0;
-        Log.Epg("Grab EPG for limited concurrent card to {0}", _numericEpgCardLimit);
+        //Log.Epg("Grab EPG for limited concurrent card to {0}", _numericEpgCardLimit);
         foreach (var card in _epgCards)
         {
           CardType type = _tvController.Type(card.Card.IdCard);
@@ -284,7 +284,7 @@ namespace TvService
             // card is grabbing (increment counter to only know how many card we will start)
             cardGrabbing++;
             GrabEpgOnCard(card);
-            Log.Epg("Grab EPG for limited card:#{0}", card.Card.IdCard);
+            //Log.Epg("Grab EPG for limited card:#{0}", card.Card.IdCard);
           }
         }
       }
