@@ -87,6 +87,8 @@ namespace SetupTv.Sections
       numScheduler.Value = ValueSanityCheck(
         Convert.ToDecimal(layer.GetSetting(UserFactory.SCHEDULER_TAGNAME, UserFactory.SCHEDULER_PRIORITY.ToString()).Value), 1, 100);
 
+      numVirtualuser.Value = Convert.ToInt32(layer.GetSetting("VirtualUserIdleTime", "5").Value);
+
       Setting setting = layer.GetSetting(UserFactory.CUSTOM_TAGNAME, "");
       gridUserPriorities.Rows.Clear();
       string[] users = setting.Value.Split(';');
@@ -115,6 +117,10 @@ namespace SetupTv.Sections
 
       s = layer.GetSetting("PriorityScheduler", UserFactory.SCHEDULER_PRIORITY.ToString());
       s.Value = numScheduler.Value.ToString();
+      s.Persist();
+
+      s = layer.GetSetting("VirtualUserIdleTime", "5");
+      s.Value = numVirtualuser.Value.ToString();
       s.Persist();
 
       Setting setting = layer.GetSetting("PrioritiesCustom", "");
@@ -174,6 +180,11 @@ namespace SetupTv.Sections
     }
 
     private void numScheduler_ValueChanged(object sender, EventArgs e)
+    {
+      _needRestart = true;
+    }
+
+    private void numVirtualUserIdleTime_ValueChanged(object sender, EventArgs e)
     {
       _needRestart = true;
     }

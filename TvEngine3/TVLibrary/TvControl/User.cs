@@ -44,6 +44,7 @@ namespace TvControl
     private object _history;
     private Dictionary<int, ChannelState> _channelStates; //used primarily for miniepg.
     private int? _priority;
+    private double _TimeshiftPosition;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="User"/> class.
@@ -57,6 +58,7 @@ namespace TvControl
       _failedCardId = -1;
       _idChannel = -1;
       _subChannel = -1;
+      _TimeshiftPosition = 0;
       _lastHeartBeat = DateTime.MinValue;
       _timeshiftStoppedReason = TvStoppedReason.UnknownReason;
       _channelStates = new Dictionary<int, ChannelState>();
@@ -108,6 +110,15 @@ namespace TvControl
       _subChannel = -1;
       _timeshiftStoppedReason = TvStoppedReason.UnknownReason;
       _priority = priority;
+    }
+
+    /// <summary>
+    /// Get, Set TimeshiftPosition for placeshift
+    /// </summary>
+    public double TimeshiftPosition
+    {
+      get { return _TimeshiftPosition; }
+      set { _TimeshiftPosition = value; }
     }
 
     /// <summary>

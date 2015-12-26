@@ -31,14 +31,13 @@ namespace SetupTv.Sections
       this.components = new System.ComponentModel.Container();
       System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ChannelsInGroupControl));
       this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
-	  this.addToFavoritesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+      this.addToFavoritesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.removeChannelFromGroup = new System.Windows.Forms.ToolStripMenuItem();
-	  this.deleteThisChannelToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-	  this.editChannelToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+      this.deleteThisChannelToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+      this.editChannelToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.imageList1 = new System.Windows.Forms.ImageList(this.components);
-      this.listView1 = new MediaPortal.UserInterface.Controls.MPListView();
-      this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
-      this.columnHeader2 = new System.Windows.Forms.ColumnHeader();
+      this.textBoxPinCode = new System.Windows.Forms.TextBox();
+      this.labelPinCode = new System.Windows.Forms.Label();
       this.mpGroupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.mpButtonOrderByNumber = new MediaPortal.UserInterface.Controls.MPButton();
       this.mpButtonOrderByName = new MediaPortal.UserInterface.Controls.MPButton();
@@ -46,6 +45,9 @@ namespace SetupTv.Sections
       this.mpButtonUp = new MediaPortal.UserInterface.Controls.MPButton();
       this.mpButtonPreview = new MediaPortal.UserInterface.Controls.MPButton();
       this.mpButtonDel = new MediaPortal.UserInterface.Controls.MPButton();
+      this.listView1 = new MediaPortal.UserInterface.Controls.MPListView();
+      this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+      this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
       this.contextMenuStrip1.SuspendLayout();
       this.mpGroupBox1.SuspendLayout();
       this.SuspendLayout();
@@ -53,17 +55,17 @@ namespace SetupTv.Sections
       // contextMenuStrip1
       // 
       this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-			this.addToFavoritesToolStripMenuItem,
-			this.removeChannelFromGroup,
-			this.deleteThisChannelToolStripMenuItem,
-			this.editChannelToolStripMenuItem});
+            this.addToFavoritesToolStripMenuItem,
+            this.removeChannelFromGroup,
+            this.deleteThisChannelToolStripMenuItem,
+            this.editChannelToolStripMenuItem});
       this.contextMenuStrip1.Name = "contextMenuStrip1";
       this.contextMenuStrip1.Size = new System.Drawing.Size(183, 92);
       // 
       // addToFavoritesToolStripMenuItem
       // 
       this.addToFavoritesToolStripMenuItem.Name = "addToFavoritesToolStripMenuItem";
-      this.addToFavoritesToolStripMenuItem.Size = new System.Drawing.Size(181, 22);
+      this.addToFavoritesToolStripMenuItem.Size = new System.Drawing.Size(182, 22);
       this.addToFavoritesToolStripMenuItem.Text = "Copy to group";
       this.addToFavoritesToolStripMenuItem.Click += new System.EventHandler(this.addToFavoritesToolStripMenuItem_Click);
       // 
@@ -77,14 +79,14 @@ namespace SetupTv.Sections
       // deleteThisChannelToolStripMenuItem
       // 
       this.deleteThisChannelToolStripMenuItem.Name = "deleteThisChannelToolStripMenuItem";
-      this.deleteThisChannelToolStripMenuItem.Size = new System.Drawing.Size(181, 22);
+      this.deleteThisChannelToolStripMenuItem.Size = new System.Drawing.Size(182, 22);
       this.deleteThisChannelToolStripMenuItem.Text = "Delete this channel";
       this.deleteThisChannelToolStripMenuItem.Click += new System.EventHandler(this.deleteThisChannelToolStripMenuItem_Click);
       // 
       // editChannelToolStripMenuItem
       // 
       this.editChannelToolStripMenuItem.Name = "editChannelToolStripMenuItem";
-      this.editChannelToolStripMenuItem.Size = new System.Drawing.Size(181, 22);
+      this.editChannelToolStripMenuItem.Size = new System.Drawing.Size(182, 22);
       this.editChannelToolStripMenuItem.Text = "Edit channel";
       this.editChannelToolStripMenuItem.Click += new System.EventHandler(this.editChannelToolStripMenuItem_Click);
       // 
@@ -99,45 +101,28 @@ namespace SetupTv.Sections
       this.imageList1.Images.SetKeyName(4, "tv_scrambled.png");
       this.imageList1.Images.SetKeyName(5, "icon.tv_scrambled_and_fta.png");
       // 
-      // listView1
+      // textBoxPinCode
       // 
-      this.listView1.AllowDrop = true;
-      this.listView1.AllowRowReorder = true;
-      this.listView1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.listView1.CheckBoxes = true;
-      this.listView1.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.columnHeader1,
-            this.columnHeader2});
-      this.listView1.ContextMenuStrip = this.contextMenuStrip1;
-      this.listView1.FullRowSelect = true;
-      this.listView1.HideSelection = false;
-      this.listView1.IsChannelListView = false;
-      this.listView1.LabelEdit = true;
-      this.listView1.LargeImageList = this.imageList1;
-      this.listView1.Location = new System.Drawing.Point(0, 0);
-      this.listView1.Name = "listView1";
-      this.listView1.Size = new System.Drawing.Size(439, 273);
-      this.listView1.SmallImageList = this.imageList1;
-      this.listView1.TabIndex = 0;
-      this.listView1.UseCompatibleStateImageBehavior = false;
-      this.listView1.View = System.Windows.Forms.View.Details;
-      this.listView1.SelectedIndexChanged += new System.EventHandler(this.listView1_SelectedIndexChanged);
-      this.listView1.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.listView1_ColumnClick);
-      this.listView1.ItemDrag += new System.Windows.Forms.ItemDragEventHandler(this.listView1_ItemDrag);
-      this.listView1.AfterLabelEdit += new System.Windows.Forms.LabelEditEventHandler(this.listView1_AfterLabelEdit);
-      this.listView1.ItemChecked += new System.Windows.Forms.ItemCheckedEventHandler(this.listView1_ItemChecked);
+      this.textBoxPinCode.Location = new System.Drawing.Point(300, 325);
+      this.textBoxPinCode.MaxLength = 5;
+      this.textBoxPinCode.Name = "textBoxPinCode";
+      this.textBoxPinCode.PasswordChar = '*';
+      this.textBoxPinCode.Size = new System.Drawing.Size(60, 20);
+      this.textBoxPinCode.TabIndex = 7;
+      this.textBoxPinCode.Visible = false;
+      this.textBoxPinCode.TextChanged += new System.EventHandler(this.textBoxPinCode_TextChanged);
+      this.textBoxPinCode.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBoxPinCode_KeyPress);
       // 
-      // columnHeader1
+      // labelPinCode
       // 
-      this.columnHeader1.Text = "Name";
-      this.columnHeader1.Width = 300;
-      // 
-      // columnHeader2
-      // 
-      this.columnHeader2.Text = "Channel number";
-      this.columnHeader2.Width = 120;
+      this.labelPinCode.AutoSize = true;
+      this.labelPinCode.Location = new System.Drawing.Point(299, 305);
+      this.labelPinCode.Name = "labelPinCode";
+      this.labelPinCode.Size = new System.Drawing.Size(53, 13);
+      this.labelPinCode.TabIndex = 8;
+      this.labelPinCode.Text = "PIN Code";
+      this.labelPinCode.Visible = false;
+      this.labelPinCode.Click += new System.EventHandler(this.label1_Click);
       // 
       // mpGroupBox1
       // 
@@ -226,10 +211,52 @@ namespace SetupTv.Sections
       this.mpButtonDel.UseVisualStyleBackColor = true;
       this.mpButtonDel.Click += new System.EventHandler(this.removeChannelFromGroup_Click);
       // 
+      // listView1
+      // 
+      this.listView1.AllowDrop = true;
+      this.listView1.AllowRowReorder = true;
+      this.listView1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+      this.listView1.CheckBoxes = true;
+      this.listView1.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.columnHeader1,
+            this.columnHeader2});
+      this.listView1.ContextMenuStrip = this.contextMenuStrip1;
+      this.listView1.FullRowSelect = true;
+      this.listView1.HideSelection = false;
+      this.listView1.IsChannelListView = false;
+      this.listView1.LabelEdit = true;
+      this.listView1.LargeImageList = this.imageList1;
+      this.listView1.Location = new System.Drawing.Point(0, 0);
+      this.listView1.Name = "listView1";
+      this.listView1.Size = new System.Drawing.Size(439, 273);
+      this.listView1.SmallImageList = this.imageList1;
+      this.listView1.TabIndex = 0;
+      this.listView1.UseCompatibleStateImageBehavior = false;
+      this.listView1.View = System.Windows.Forms.View.Details;
+      this.listView1.AfterLabelEdit += new System.Windows.Forms.LabelEditEventHandler(this.listView1_AfterLabelEdit);
+      this.listView1.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.listView1_ColumnClick);
+      this.listView1.ItemChecked += new System.Windows.Forms.ItemCheckedEventHandler(this.listView1_ItemChecked);
+      this.listView1.ItemDrag += new System.Windows.Forms.ItemDragEventHandler(this.listView1_ItemDrag);
+      this.listView1.SelectedIndexChanged += new System.EventHandler(this.listView1_SelectedIndexChanged);
+      // 
+      // columnHeader1
+      // 
+      this.columnHeader1.Text = "Name";
+      this.columnHeader1.Width = 300;
+      // 
+      // columnHeader2
+      // 
+      this.columnHeader2.Text = "Channel number";
+      this.columnHeader2.Width = 120;
+      // 
       // ChannelsInGroupControl
       // 
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Inherit;
       this.BackColor = System.Drawing.Color.Transparent;
+      this.Controls.Add(this.labelPinCode);
+      this.Controls.Add(this.textBoxPinCode);
       this.Controls.Add(this.mpGroupBox1);
       this.Controls.Add(this.listView1);
       this.Name = "ChannelsInGroupControl";
@@ -238,6 +265,7 @@ namespace SetupTv.Sections
       this.contextMenuStrip1.ResumeLayout(false);
       this.mpGroupBox1.ResumeLayout(false);
       this.ResumeLayout(false);
+      this.PerformLayout();
 
     }
 
@@ -259,5 +287,7 @@ namespace SetupTv.Sections
     private MediaPortal.UserInterface.Controls.MPButton mpButtonPreview;
     private MediaPortal.UserInterface.Controls.MPButton mpButtonDel;
     private System.Windows.Forms.ColumnHeader columnHeader2;
+    private System.Windows.Forms.TextBox textBoxPinCode;
+    private System.Windows.Forms.Label labelPinCode;
   }
 }

@@ -146,7 +146,6 @@
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="CardManagement\CardHandler\TvCardHandler.cs" />
-    <Compile Include="TsCopier.cs" />
     <Compile Include="TvCardContext.cs" />
     <Compile Include="TVController.cs" />
     <Compile Include="UserFactory.cs" />
@@ -208,6 +207,9 @@
       <DependentUpon>Service1.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="TvService.exe.manifest" />
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

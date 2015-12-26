@@ -48,6 +48,11 @@ namespace TvControl
     int FailedCardId { get; set; }
 
     /// <summary>
+    /// Get, Set TimeshiftPosition for placeshift
+    /// </summary>
+    double TimeshiftPosition { get; set; }
+
+    /// <summary>
     /// Gets or sets the card id.
     /// </summary>
     /// <value>The card id.</value>

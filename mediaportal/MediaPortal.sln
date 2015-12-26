@@ -1,5 +1,7 @@
-Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual Studio 2010
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.40629.0
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Plugins", "Plugins", "{D214B2BD-4CA7-45CD-9EC5-CF7CC244C03A}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "HcwHelper", "HcwHelper", "{D213045F-E672-421B-B92A-78F512AAF784}"
@@ -519,5 +521,8 @@ Global
 		{03FEC69F-6D10-46FB-A0CA-4D266E4A21E2} = {40801059-099F-44C5-9802-3A926EF0FE87}
 		{06741964-B339-4FCF-B6E5-E0D32A434DA2} = {D214B2BD-4CA7-45CD-9EC5-CF7CC244C03A}
 		{C430B2F0-CD3A-4BD5-B6C2-1DE2BDC68C86} = {06741964-B339-4FCF-B6E5-E0D32A434DA2}
+	EndGlobalSection
+	GlobalSection(Performance) = preSolution
+		HasPerformanceSessions = true
 	EndGlobalSection
 EndGlobal

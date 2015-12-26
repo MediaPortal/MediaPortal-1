@@ -109,6 +109,8 @@ namespace SetupTv.Sections
       this.label22 = new System.Windows.Forms.Label();
       this.labelCardPriority = new System.Windows.Forms.Label();
       this.groupBox11 = new System.Windows.Forms.GroupBox();
+      this.numVirtualuser = new System.Windows.Forms.NumericUpDown();
+      this.labelVirtualuser = new System.Windows.Forms.Label();
       this.numDefaultUser = new System.Windows.Forms.NumericUpDown();
       this.lblUsers = new System.Windows.Forms.Label();
       this.numScheduler = new System.Windows.Forms.NumericUpDown();
@@ -145,6 +147,7 @@ namespace SetupTv.Sections
       this.groupBox3.SuspendLayout();
       this.tpTimeshifing.SuspendLayout();
       this.groupBox11.SuspendLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.numVirtualuser)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.numDefaultUser)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.numScheduler)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.numEpgGrabber)).BeginInit();
@@ -171,8 +174,8 @@ namespace SetupTv.Sections
       // 
       // groupBox8
       // 
-      this.groupBox8.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox8.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox8.Controls.Add(this.lblPriority);
       this.groupBox8.Controls.Add(this.mpComboBoxPrio);
       this.groupBox8.Location = new System.Drawing.Point(6, 6);
@@ -237,8 +240,8 @@ namespace SetupTv.Sections
       // 
       // groupBox6
       // 
-      this.groupBox6.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox6.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox6.Controls.Add(this.label45);
       this.groupBox6.Controls.Add(this.label44);
       this.groupBox6.Controls.Add(this.delayDetectUpDown);
@@ -251,14 +254,14 @@ namespace SetupTv.Sections
       // 
       // label45
       // 
-      this.label45.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.label45.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.label45.Location = new System.Drawing.Point(6, 27);
       this.label45.Name = "label45";
       this.label45.Size = new System.Drawing.Size(452, 35);
       this.label45.TabIndex = 80;
       this.label45.Text = "Some cards (i.e. Hauppauge Nova-T 500) take a long time to initialize after stand" +
-          "by. Therefore use this option below to force a delay should it be required.";
+    "by. Therefore use this option below to force a delay should it be required.";
       // 
       // label44
       // 
@@ -574,8 +577,8 @@ namespace SetupTv.Sections
       // 
       // groupBox9
       // 
-      this.groupBox9.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox9.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox9.Controls.Add(this.textBox1);
       this.groupBox9.Controls.Add(this.edTitleTemplate);
       this.groupBox9.Controls.Add(this.label27);
@@ -596,8 +599,8 @@ namespace SetupTv.Sections
       // 
       // textBox1
       // 
-      this.textBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.textBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.textBox1.BorderStyle = System.Windows.Forms.BorderStyle.None;
       this.textBox1.Location = new System.Drawing.Point(333, 80);
       this.textBox1.Multiline = true;
@@ -606,13 +609,13 @@ namespace SetupTv.Sections
       this.textBox1.Size = new System.Drawing.Size(125, 148);
       this.textBox1.TabIndex = 37;
       this.textBox1.Text = "%TITLE%\r\n%DESCRIPTION%\r\n%GENRE%\r\n%STARRATING%\r\n%STARRATING_STR%\r\n%CLASSIFICATION%" +
-          "\r\n%PARENTALRATING%\r\n%NEWLINE%";
+    "\r\n%PARENTALRATING%\r\n%NEWLINE%";
       this.textBox1.WordWrap = false;
       // 
       // edTitleTemplate
       // 
-      this.edTitleTemplate.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.edTitleTemplate.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.edTitleTemplate.Location = new System.Drawing.Point(75, 19);
       this.edTitleTemplate.Name = "edTitleTemplate";
       this.edTitleTemplate.Size = new System.Drawing.Size(252, 20);
@@ -648,8 +651,8 @@ namespace SetupTv.Sections
       // 
       // edDescriptionTemplate
       // 
-      this.edDescriptionTemplate.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.edDescriptionTemplate.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.edDescriptionTemplate.Location = new System.Drawing.Point(75, 45);
       this.edDescriptionTemplate.Name = "edDescriptionTemplate";
       this.edDescriptionTemplate.Size = new System.Drawing.Size(252, 20);
@@ -666,8 +669,8 @@ namespace SetupTv.Sections
       // 
       // edTitleTest
       // 
-      this.edTitleTest.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.edTitleTest.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.edTitleTest.Location = new System.Drawing.Point(75, 100);
       this.edTitleTest.Name = "edTitleTest";
       this.edTitleTest.ReadOnly = true;
@@ -685,9 +688,9 @@ namespace SetupTv.Sections
       // 
       // edDescriptionTest
       // 
-      this.edDescriptionTest.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.edDescriptionTest.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.edDescriptionTest.Location = new System.Drawing.Point(75, 126);
       this.edDescriptionTest.Multiline = true;
       this.edDescriptionTest.Name = "edDescriptionTest";
@@ -707,8 +710,8 @@ namespace SetupTv.Sections
       // 
       // groupBox7
       // 
-      this.groupBox7.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox7.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox7.Controls.Add(this.checkBoxAlwaysUpdate);
       this.groupBox7.Controls.Add(this.checkBoxAlwaysFillHoles);
       this.groupBox7.Location = new System.Drawing.Point(6, 6);
@@ -755,8 +758,8 @@ namespace SetupTv.Sections
       // 
       // numericUpDownTSEpgTimeout
       // 
-      this.numericUpDownTSEpgTimeout.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.numericUpDownTSEpgTimeout.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.numericUpDownTSEpgTimeout.Location = new System.Drawing.Point(70, 42);
       this.numericUpDownTSEpgTimeout.Maximum = new decimal(new int[] {
             3600,
@@ -1067,6 +1070,8 @@ namespace SetupTv.Sections
       // 
       // groupBox11
       // 
+      this.groupBox11.Controls.Add(this.numVirtualuser);
+      this.groupBox11.Controls.Add(this.labelVirtualuser);
       this.groupBox11.Controls.Add(this.numDefaultUser);
       this.groupBox11.Controls.Add(this.lblUsers);
       this.groupBox11.Controls.Add(this.numScheduler);
@@ -1075,10 +1080,43 @@ namespace SetupTv.Sections
       this.groupBox11.Controls.Add(this.lblEPG);
       this.groupBox11.Location = new System.Drawing.Point(6, 151);
       this.groupBox11.Name = "groupBox11";
-      this.groupBox11.Size = new System.Drawing.Size(445, 100);
+      this.groupBox11.Size = new System.Drawing.Size(445, 119);
       this.groupBox11.TabIndex = 18;
       this.groupBox11.TabStop = false;
       this.groupBox11.Text = "System Priorities";
+      // 
+      // numVirtualuser
+      // 
+      this.numVirtualuser.Location = new System.Drawing.Point(207, 93);
+      this.numVirtualuser.Maximum = new decimal(new int[] {
+            120,
+            0,
+            0,
+            0});
+      this.numVirtualuser.Minimum = new decimal(new int[] {
+            5,
+            0,
+            0,
+            0});
+      this.numVirtualuser.Name = "numVirtualuser";
+      this.numVirtualuser.Size = new System.Drawing.Size(88, 20);
+      this.numVirtualuser.TabIndex = 38;
+      this.numVirtualuser.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+      this.numVirtualuser.Value = new decimal(new int[] {
+            5,
+            0,
+            0,
+            0});
+      this.numVirtualuser.ValueChanged += new System.EventHandler(this.numVirtualUserIdleTime_ValueChanged);
+      // 
+      // labelVirtualuser
+      // 
+      this.labelVirtualuser.AutoSize = true;
+      this.labelVirtualuser.Location = new System.Drawing.Point(7, 93);
+      this.labelVirtualuser.Name = "labelVirtualuser";
+      this.labelVirtualuser.Size = new System.Drawing.Size(159, 13);
+      this.labelVirtualuser.TabIndex = 37;
+      this.labelVirtualuser.Text = "Virtual user idle time (in minutes):";
       // 
       // numDefaultUser
       // 
@@ -1172,7 +1210,7 @@ namespace SetupTv.Sections
       // groupBox10
       // 
       this.groupBox10.Controls.Add(this.gridUserPriorities);
-      this.groupBox10.Location = new System.Drawing.Point(6, 257);
+      this.groupBox10.Location = new System.Drawing.Point(6, 276);
       this.groupBox10.Name = "groupBox10";
       this.groupBox10.Size = new System.Drawing.Size(445, 114);
       this.groupBox10.TabIndex = 17;
@@ -1231,9 +1269,9 @@ namespace SetupTv.Sections
       // 
       // tabControl1
       // 
-      this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.tabControl1.Controls.Add(this.tpTimeshifing);
       this.tabControl1.Location = new System.Drawing.Point(3, 3);
       this.tabControl1.Name = "tabControl1";
@@ -1285,6 +1323,7 @@ namespace SetupTv.Sections
       this.tpTimeshifing.PerformLayout();
       this.groupBox11.ResumeLayout(false);
       this.groupBox11.PerformLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.numVirtualuser)).EndInit();
       ((System.ComponentModel.ISupportInitialize)(this.numDefaultUser)).EndInit();
       ((System.ComponentModel.ISupportInitialize)(this.numScheduler)).EndInit();
       ((System.ComponentModel.ISupportInitialize)(this.numEpgGrabber)).EndInit();
@@ -1385,5 +1424,7 @@ namespace SetupTv.Sections
     private System.Windows.Forms.Label label26;
     private System.Windows.Forms.Label label22;
     private System.Windows.Forms.Label labelCardPriority;
+    private System.Windows.Forms.Label labelVirtualuser;
+    private System.Windows.Forms.NumericUpDown numVirtualuser;
   }
 }

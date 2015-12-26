@@ -554,6 +554,7 @@ namespace TvPlugin
 
     private void LoadDirectory()
     {
+      List<int> disallowedChannels = TVHome.ListDisallowedChannelsById();
       IList<Conflict> conflictsList = Conflict.ListAll();
       btnConflicts.Visible = conflictsList.Count > 0;
       GUIControl.ClearControl(GetID, listSchedules.GetID);
@@ -574,6 +575,10 @@ namespace TvPlugin
 
         foreach (Schedule schedule in seriesList)
         {
+          if (disallowedChannels.Contains(schedule.IdChannel))
+          {
+            continue;
+          }
           if (DateTime.Now > schedule.EndTime)
           {
             continue;
@@ -593,6 +598,11 @@ namespace TvPlugin
       {
         foreach (Schedule rec in schedulesList)
         {
+          if (disallowedChannels.Contains(rec.IdChannel))
+          {
+            continue;
+          }
+
           GUIListItem item = new GUIListItem();
           if (rec.ScheduleType != (int)ScheduleRecordingType.Once)
           {

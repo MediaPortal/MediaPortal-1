@@ -1184,12 +1184,15 @@
     <String id="1977">File system</String>
     <String id="1978">Virtual Memory</String>
     <String id="1984">Refresh video thumb</String>
+    <String id="1986">Switch to an another client (Placeshift)</String>
+    <String id="1987">Connect to live stream</String>
+    <String id="1988">Do you want to connect to the existing stream?</String>
     <String id="1989">There is read only file in the folder!</String>
     <String id="1990">Wake Up Server</String>
     <String id="1991">Please wait until the server is waking up</String>
     <String id="1992">The server is not available.</String>
     <String id="1993">Check the network connection or increase the timeout value.</String>
-    <String id="1994">Wait until the share comes online.</String>
+    <String id="1994">Wait until the share cames online.</String>
     <String id="1995">Create folder thumb from thumbnails</String>
     <String id="1999">Name with Duration</String>
     <String id="2000">The song is read only!</String>

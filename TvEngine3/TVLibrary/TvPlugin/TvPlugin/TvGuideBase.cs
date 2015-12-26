@@ -1000,8 +1000,10 @@ namespace TvPlugin
       if (TVHome.Navigator.Groups.Count > 1 && !_singleChannelView)
       {
         int prevGroup = TVHome.Navigator.CurrentGroup.IdGroup;
-
-        TVHome.OnSelectGroup();
+        if (!TVHome.OnUnlockChannelGroup())
+        {
+          TVHome.OnSelectGroup();
+        }
 
         if (prevGroup != TVHome.Navigator.CurrentGroup.IdGroup)
         {

@@ -1610,6 +1610,11 @@ namespace TvPlugin
       }
       dlg.AddLocalizedString(368); // IMDB
       dlg.AddLocalizedString(970); // Previous window
+      
+      if (!g_Player.IsTVRecording)
+      {
+        dlg.AddLocalizedString(1986); // Placeshift
+      }
 
       _isDialogVisible = true;
 
@@ -1714,7 +1719,39 @@ namespace TvPlugin
         case 200073:
           ShowPostProcessingMenu();
           break;
+
+        case 1986:
+          StartPlaceshift();
+          break;
       }
+    }
+
+    private void StartPlaceshift()
+    {
+      User myUser = new User();
+      string HostName = myUser.Name;
+
+      if (TVHome.inPlaceShift)
+      {
+        myUser.Name = "Placeshift Virtual User-" + TVHome.vPlaceshiftCard.IdChannel;
+        myUser.CardId = TVHome.vPlaceshiftCard.Id;
+
+        RemoteControl.Instance.ReplaceTimeshiftUser(TVHome.vPlaceshiftCard.Id, myUser, HostName);
+        RemoteControl.Instance.SetTimeshiftPosition(TVHome.vPlaceshiftCard.Id, myUser, g_Player.CurrentPosition);
+
+        Log.Info("StartPlaceshift: myUser.Name: {0}, vPlaceshiftCard.Id: {1}, TimeshiftPosition: {2}", myUser.Name, TVHome.vPlaceshiftCard.Id, g_Player.CurrentPosition);
+      }
+      else
+      {
+        myUser.Name = "Placeshift Virtual User-" + TVHome.Card.IdChannel;
+        myUser.CardId = TVHome.Card.Id;
+
+        RemoteControl.Instance.ReplaceTimeshiftUser(TVHome.Card.Id, myUser, HostName);
+        RemoteControl.Instance.SetTimeshiftPosition(TVHome.Card.Id, myUser, g_Player.CurrentPosition);
+
+        Log.Info("StartPlaceshift: myUser.Name: {0}, Card.Id: {1}, TimeshiftPosition: {2}", myUser.Name, TVHome.Card.Id, g_Player.CurrentPosition);
+      }
+      g_Player.Stop();
     }
 
     private void ShowChapterStreamsMenu()

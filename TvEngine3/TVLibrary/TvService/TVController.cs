@@ -420,6 +420,62 @@ namespace TvService
       return user;
     }
 
+    public double GetTimeshiftPosition(int cardId, IUser user)
+    {
+      if (ValidateTvControllerParams(cardId))
+        return 0;
+
+      ITvCardHandler tvcard = _cards[cardId];
+      if (tvcard.DataBaseCard.Enabled == false)
+        return 0;
+
+      Log.Write("GetTimeshiftPosition: cardId: {0}, user.Name: {1}, user.CardId: {2}, TimeshiftPosition: {3}",
+        cardId, user.Name, user.CardId, tvcard.Users.GetTimeshiftPosition(user));
+
+      return tvcard.Users.GetTimeshiftPosition(user);
+
+    }
+
+    public void SetTimeshiftPosition(int cardId, IUser user, double TimeshiftPosition)
+    {
+      if (ValidateTvControllerParams(cardId))
+        return;
+
+      ITvCardHandler tvcard = _cards[cardId];
+      if (tvcard.DataBaseCard.Enabled == false)
+        return;
+
+      Log.Write("SetTimeshiftPosition: cardId: {0}, user.Name: {1}, user.CardId: {2}, TimeshiftPosition: {3}",
+        cardId, user.Name, user.CardId, TimeshiftPosition);
+
+      tvcard.Users.SetTimeshiftPosition(user, TimeshiftPosition);
+
+      return;
+    }
+
+    /// <summary>
+    /// Replace Timeshift User
+    /// </summary>
+    /// <param name="cardId"></param>
+    /// <param name="newuser"></param>
+    /// <param name="HostName"></param>
+    public void ReplaceTimeshiftUser(int cardId, IUser newuser, string HostName)
+    {
+        if (ValidateTvControllerParams(cardId))
+          return;
+
+        ITvCardHandler tvcard = _cards[cardId];
+        if (tvcard.DataBaseCard.Enabled == false)
+          return;
+
+        Log.Write("ReplaceTimeshiftUser: cardId: {0}, newuser.Name: {1}, user.CardId: {2}",                  
+          cardId, newuser.Name, newuser.CardId);
+
+        tvcard.Users.ReplaceTimeshiftUser(newuser, HostName);
+      
+      return;
+    }
+
     /// <summary>
     /// Locks the card for the specified user
     /// </summary>
@@ -1345,22 +1401,6 @@ namespace TvService
     }
 
     /// <summary>
-    /// Copies the time shift buffer files to the currently started recording 
-    /// </summary>
-    /// <param name="position1">start offset in first ts buffer file </param>
-    /// <param name="bufferFile1">ts buffer file to start with</param>
-    /// <param name="position2">end offset in last ts buffer file</param>
-    /// <param name="bufferFile2">ts buffer file to stop at</param>
-    /// <param name="recordingFile">filename of the recording</param>
-    public void CopyTimeShiftFile(Int64 position1, string bufferFile1, Int64 position2, string bufferFile2,
-                                  string recordingFile)
-    {
-      TsCopier copier = new TsCopier(position1, bufferFile1, position2, bufferFile2, recordingFile);
-      Thread worker = new Thread(new ThreadStart(copier.DoCopy));
-      worker.Start();
-    }
-
-    /// <summary>
     /// Returns whether the channel to which the card is tuned is
     /// scrambled or not.
     /// </summary>
@@ -1789,7 +1829,7 @@ namespace TvService
         int cardId = user.CardId;
         ITvCardHandler tvcard = _cards[cardId];
         if (tvcard.DataBaseCard.Enabled == false)
-          return true;        
+          return true;
 
         if (false == tvcard.IsLocal)
         {
@@ -4116,8 +4156,11 @@ namespace TvService
 
     private void HeartBeatMonitor()
     {
-      Log.Info("Controller: Heartbeat Monitor initiated, max timeout allowed is {0} sec.",
-               HEARTBEAT_MAX_SECS_EXCEED_ALLOWED);
+      int VirtualUserIdleTime = Convert.ToInt32(_layer.GetSetting("VirtualUserIdleTime", "5").Value);
+
+      Log.Info("Controller: Heartbeat Monitor initiated, max timeout allowed for normal user is {0} sec, for Virtual user is {1} mins.",
+                HEARTBEAT_MAX_SECS_EXCEED_ALLOWED, VirtualUserIdleTime);
+
       while (true)
       {
         Dictionary<int, ITvCardHandler>.Enumerator enumerator = _cards.GetEnumerator();
@@ -4139,8 +4182,17 @@ namespace TvService
                 DateTime now = DateTime.Now;
                 TimeSpan ts = tmpUser.HeartBeat - now;
 
+                if (tmpUser.Name.Contains("Placeshift Virtual User") || tmpUser.Name == "aMPdroid")
+                {
+
+                  if (ts.TotalSeconds < (-1 * VirtualUserIdleTime * 60))
+                  {
+                    Log.Write("Controller: Heartbeat Monitor - kicking the {0}", tmpUser.Name);
+                    StopTimeShifting(ref tmpUser, TvStoppedReason.HeartBeatTimeOut);
+                  }
+                }
                 // more than 30 seconds have elapsed since last heartbeat was received. lets kick the client
-                if (ts.TotalSeconds < (-1 * HEARTBEAT_MAX_SECS_EXCEED_ALLOWED))
+                else if (ts.TotalSeconds < (-1 * HEARTBEAT_MAX_SECS_EXCEED_ALLOWED))
                 {
                   Log.Write("Controller: Heartbeat Monitor - kicking idle user {0}", tmpUser.Name);
                   StopTimeShifting(ref tmpUser, TvStoppedReason.HeartBeatTimeOut);

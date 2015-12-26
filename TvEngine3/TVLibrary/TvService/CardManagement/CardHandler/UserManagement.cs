@@ -70,6 +70,63 @@ namespace TvService
     }
 
     /// <summary>
+    /// GetTimeshiftPosition for placeshift
+    /// </summary>
+    /// <param name="user"></param>
+    /// <param name="TimeshiftPosition"></param>
+    public double GetTimeshiftPosition(IUser user)
+    {
+      if (_cardHandler.Card != null)
+      {
+        ITvCardContext context = _cardHandler.Card.Context as ITvCardContext;
+
+        Log.Write("GetTimeshiftPosition: user: {0}, position: {1}", user.Name, context.GetTimeshiftPosition(user));
+
+        return context.GetTimeshiftPosition(user);
+      }
+      return 0;
+    }
+
+    /// <summary>
+    /// SetTimeshiftPosition for placeshift
+    /// </summary>
+    /// <param name="user"></param>
+    /// <param name="TimeshiftPosition"></param>
+    public void SetTimeshiftPosition(IUser user, double TimeshiftPosition)
+    {
+      if (_cardHandler.Card != null)
+      {
+        ITvCardContext context = _cardHandler.Card.Context as ITvCardContext;
+
+        Log.Write("SetTimeshiftPosition: user: {0}, position: {1}", user.Name, TimeshiftPosition);
+
+        context.SetTimeshiftPosition(user, TimeshiftPosition);
+        return;
+      }
+      return;
+    }
+
+    /// <summary>
+    /// Replace Timeshift User
+    /// </summary>
+    /// <param name="newuser"></param>
+    /// <param name="HostName"></param>
+    public void ReplaceTimeshiftUser(IUser newuser, string HostName)
+    {
+      if (_cardHandler.Card != null)
+      {
+        ITvCardContext context = _cardHandler.Card.Context as ITvCardContext;
+
+        Log.Write("ReplaceTimeshiftUser: old user: {0}, new user: {1}", HostName, newuser.Name);
+
+        context.Replace(HostName, newuser);
+        context.Owner = newuser;
+        return;
+      }
+      return;
+    }
+
+    /// <summary>
     /// Determines whether the specified user is owner of this card
     /// </summary>
     /// <param name="user">The user.</param>

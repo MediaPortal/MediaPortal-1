@@ -200,13 +200,14 @@ namespace TvPlugin
           IList<GroupMap> allgroupMaps = GroupMap.ListAll();
 
           bool hideAllChannelsGroup = false;
+          bool hidePinProtectedChannelsGroup = false;
+
           using (
-            Settings xmlreader =
-              new MPSettings())
+            Settings xmlreader = new MPSettings())
           {
             hideAllChannelsGroup = xmlreader.GetValueAsBool("mytv", "hideAllChannelsGroup", false);
+            hidePinProtectedChannelsGroup = xmlreader.GetValueAsBool("mytv", "hidePinProtectedChannelsGroup", false);
           }
-
 
           foreach (ChannelGroup group in groups)
           {
@@ -248,6 +249,10 @@ namespace TvPlugin
             {
               continue;
             }
+            if (hidePinProtectedChannelsGroup && !string.IsNullOrEmpty(group.PinCode) && groups.Count > 2)
+            {
+              continue;
+            }
             m_groups.Add(group);
           }
           Log.Info("loaded {0} tv groups", m_groups.Count);
@@ -282,6 +287,13 @@ namespace TvPlugin
         return m_currentChannel.DisplayName;
       }
     }
+
+    public void setChannel(Channel channel)
+    {
+      m_currentChannel = channel; 
+      return;
+    }
+
 
     public Channel Channel
     {
@@ -902,6 +914,36 @@ namespace TvPlugin
 
     #region Serialization
 
+    public int CompareChannelGroupSortOrder(ChannelGroup g1, ChannelGroup g2)
+    {
+      int result;
+
+      if (g1.SortOrder> g2.SortOrder)
+      {
+        result = 1;
+      }
+      else if (g1.SortOrder< g2.SortOrder)
+      {
+        result = -1;
+      }
+      else
+      {
+        if (g1.IdGroup > g2.IdGroup)
+        {
+          result = 1;
+        }
+        else if (g1.IdGroup < g2.IdGroup)
+        {
+          result = -1;
+        }
+        else
+        {
+          result = 0;
+        }
+      }
+      return result;
+    }
+
     public void LoadSettings(Settings xmlreader)
     {
       Log.Info("ChannelNavigator::LoadSettings()");
@@ -914,80 +956,116 @@ namespace TvPlugin
         m_currentgroup = 0;
       }
 
-      m_currentChannel = GetChannel(currentchannelName);
-
-      if (m_currentChannel == null)
+      // check if we need to select a new group instead of a pin protected
+      if (!CheckAndSelectAnUnprotectedGroup())
       {
-        if (m_currentgroup < m_groups.Count)
+        m_currentChannel = GetChannel(currentchannelName);
+
+        if (m_currentChannel == null)
         {
-          ChannelGroup group = (ChannelGroup)m_groups[m_currentgroup];
-          if (group.ReferringGroupMap().Count > 0)
+          if (m_currentgroup < m_groups.Count)
           {
-            GroupMap gm = (GroupMap)group.ReferringGroupMap()[0];
-            m_currentChannel = gm.ReferencedChannel();
+            ChannelGroup group = (ChannelGroup)m_groups[m_currentgroup];
+            if (group.ReferringGroupMap().Count > 0)
+            {
+              GroupMap gm = (GroupMap)group.ReferringGroupMap()[0];
+              m_currentChannel = gm.ReferencedChannel();
+            }
           }
         }
-      }
 
-      //check if the channel does indeed belong to the group read from the XML setup file ?
+        //check if the channel does indeed belong to the group read from the XML setup file ?
 
 
-      bool foundMatchingGroupName = false;
+        bool foundMatchingGroupName = false;
 
-      if (m_currentChannel != null)
-      {
-        foreach (GroupMap groupMap in m_currentChannel.ReferringGroupMap())
+        if (m_currentChannel != null)
         {
-          foundMatchingGroupName = DoesGroupNameContainGroupName(groupMap, groupname);
-          if (foundMatchingGroupName)
+          foreach (GroupMap groupMap in m_currentChannel.ReferringGroupMap())
           {
-            break;
-          }          
-        }
-      }
-
-      //if we still havent found the right group, then iterate through the selected group and find the channelname.      
-      if (!foundMatchingGroupName && m_currentChannel != null && m_groups != null)
-      {
-        foreach (GroupMap groupMap in ((ChannelGroup)m_groups[m_currentgroup]).ReferringGroupMap())
-        {
-          if (groupMap.ReferencedChannel().DisplayName == currentchannelName)
-          {
-            foundMatchingGroupName = true;
-            m_currentChannel = GetChannel(groupMap.ReferencedChannel().IdChannel);
-            break;
+            foundMatchingGroupName = DoesGroupNameContainGroupName(groupMap, groupname);
+            if (foundMatchingGroupName)
+            {
+              break;
+            }
           }
         }
-      }
 
-
-      // if the groupname does not match any of the groups assigned to the channel, then find the last group avail. (avoiding the all "channels group") for that channel and set is as the new currentgroup
-      if (!foundMatchingGroupName && m_currentChannel != null && m_currentChannel.ReferringGroupMap().Count > 0)
-      {
-        GroupMap groupMap =
-          (GroupMap) m_currentChannel.ReferringGroupMap()[m_currentChannel.ReferringGroupMap().Count - 1];
-
-        ChannelGroup group = groupMap.ReferencedChannelGroup();        
-
-        if (group != null)
+        //if we still havent found the right group, then iterate through the selected group and find the channelname.      
+        if (!foundMatchingGroupName && m_currentChannel != null && m_groups != null)
         {
-          m_currentgroup = GetGroupIndex(group.GroupName);
+          foreach (GroupMap groupMap in ((ChannelGroup)m_groups[m_currentgroup]).ReferringGroupMap())
+          {
+            if (groupMap.ReferencedChannel().DisplayName == currentchannelName)
+            {
+              foundMatchingGroupName = true;
+              m_currentChannel = GetChannel(groupMap.ReferencedChannel().IdChannel);
+              break;
+            }
+          }
+        }
 
-          if (m_currentgroup < 0 || m_currentgroup >= m_groups.Count) // Group no longer exists?
+
+        // if the groupname does not match any of the groups assigned to the channel, then find the last group avail. (avoiding the all "channels group") for that channel and set is as the new currentgroup
+        if (!foundMatchingGroupName && m_currentChannel != null && m_currentChannel.ReferringGroupMap().Count > 0)
+        {
+          GroupMap groupMap =
+            (GroupMap)m_currentChannel.ReferringGroupMap()[m_currentChannel.ReferringGroupMap().Count - 1];
+
+          ChannelGroup group = groupMap.ReferencedChannelGroup();
+
+          if (group != null)
+          {
+            m_currentgroup = GetGroupIndex(group.GroupName);
+
+            if (m_currentgroup < 0 || m_currentgroup >= m_groups.Count) // Group no longer exists?
+            {
+              m_currentgroup = 0;
+            }
+          }
+          else
           {
             m_currentgroup = 0;
           }
         }
-        else
-        {
-          m_currentgroup = 0;
-        }        
-      }
 
-      if (m_currentChannel != null)
-      {
-        m_currentChannel.CurrentGroup = CurrentGroup;
+        if (m_currentChannel != null)
+        {
+          m_currentChannel.CurrentGroup = CurrentGroup;
+        }
       }
+    }
+
+    private bool CheckAndSelectAnUnprotectedGroup()
+    {
+      if (string.IsNullOrEmpty(m_groups[m_currentgroup].PinCode))
+      {
+        Log.Debug("ChannelNavigator: The last channelgroup was not pin protected.");
+        return false;
+      }
+      Log.Debug("ChannelNavigator: The last channelgroup was pin protected.");
+
+      m_groups.Sort(CompareChannelGroupSortOrder);
+
+      int i = 0;
+      foreach (ChannelGroup group in m_groups)
+      {
+        if (string.IsNullOrEmpty(group.PinCode))
+        {
+          m_currentgroup = i;
+          ChannelGroup agroup = (ChannelGroup)m_groups[i];
+          if (agroup.ReferringGroupMap().Count > 0)
+          {
+            GroupMap gm = (GroupMap)agroup.ReferringGroupMap()[0];
+            m_currentChannel = gm.ReferencedChannel();
+          }
+          m_currentChannel.CurrentGroup = group;
+          Log.Debug("ChannelNavigator: the selected unprotected group is {0}, ch.name {1}", m_currentChannel.CurrentGroup.GroupName, m_currentChannel.DisplayName);
+          break;
+        }
+        i++;
+      }
+      return true;
     }
 
     public void SaveSettings(Settings xmlwriter)

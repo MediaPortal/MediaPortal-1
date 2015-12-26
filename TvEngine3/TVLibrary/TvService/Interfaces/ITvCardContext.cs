@@ -78,6 +78,27 @@ namespace TvService
     /// <param name = "user">The user.</param>
     void Remove(IUser user);
 
+    /// <summary>
+    /// Replace user name
+    /// </summary>
+    /// <param name="olduser"></param>
+    /// <param name="newuser"></param>
+    void Replace(string olduser, IUser newuser);
+
+    /// <summary>
+    /// GetTimeshiftPosition for placeshift
+    /// </summary>
+    /// <param name="user"></param>
+    /// <returns></returns>
+    double GetTimeshiftPosition(IUser user);
+
+    /// <summary>
+    /// SetTimeshiftPosition for placeshift
+    /// </summary>
+    /// <param name="user"></param>
+    /// <param name="TimeshiftPosition"></param>
+    void SetTimeshiftPosition(IUser user, double TimeshiftPosition);
+
     void HeartBeatUser(IUser user);
 
     /// <summary>

@@ -187,7 +187,6 @@
     <Compile Include="TvSetupForm.Designer.cs">
       <DependentUpon>TvSetupForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="TvTimeShiftPositionWatcher.cs" />
     <Compile Include="TVTuningDetails.cs" />
     <Compile Include="TVUtil.cs" />
     <Compile Include="TVZapOSD.cs" />

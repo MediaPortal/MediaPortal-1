@@ -158,6 +158,57 @@ namespace TvService
     }
 
     /// <summary>
+    /// GetTimeshiftPosition for placeshift
+    /// </summary>
+    /// <param name="user"></param>
+    /// <returns></returns>
+    public double GetTimeshiftPosition(IUser user)
+    {
+      for (int i = 0; i < _users.Count; i++)
+      {
+        if (_users[i].Name == user.Name)
+        {
+          return _users[i].TimeshiftPosition;
+        }
+      }
+      return 0;
+    }
+
+    /// <summary>
+    /// SetTimeshiftPosition for placeshift
+    /// </summary>
+    /// <param name="user"></param>
+    /// <param name="TimeshiftPosition"></param>
+    public void SetTimeshiftPosition(IUser user, double TimeshiftPosition)
+    {
+      for (int i = 0; i < _users.Count; i++)
+      {
+        if (_users[i].Name == user.Name)
+        {
+          _users[i].TimeshiftPosition = TimeshiftPosition;
+          break;
+        }
+      }
+    }
+
+    /// <summary>
+    /// Replace user name
+    /// </summary>
+    /// <param name="olduser"></param>
+    /// <param name="newuser"></param>
+    public void Replace(string olduser, IUser newuser)
+    {
+      for (int i = 0; i < _users.Count; i++)
+      {
+        if (_users[i].Name == olduser)
+        {
+          _users[i].Name = newuser.Name;
+          break;
+        }
+      }
+    }
+
+    /// <summary>
     ///   Removes the specified user.
     /// </summary>
     /// <param name = "user">The user.</param>

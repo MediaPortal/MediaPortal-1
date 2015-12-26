@@ -101,6 +101,8 @@ namespace TvPlugin
       SeekToEndAfterPlayback = 8
     }
 
+    public static VirtualCard vPlaceshiftCard = null;
+    public static bool inPlaceShift = false;
     private static readonly SynchronizationContext _mainThreadContext = SynchronizationContext.Current;
     private Channel _resumeChannel = null;
     private Thread heartBeatTransmitterThread = null;
@@ -430,6 +432,52 @@ namespace TvPlugin
       GUIWindowManager.Receivers -= new SendMessageHandler(OnGlobalMessage);
     }
 
+    /// <summary>
+    /// List channels wich are allowed to current user (the PIN protected channels filtered)
+    /// </summary>
+    /// <returns></returns>
+    public static List<int> ListDisallowedChannelsById()
+    {
+      bool hidePinProtectedChannelsGroup = false;
+      bool hideAllChannelsGroup = false;
+
+      using (Settings xmlreader = new MPSettings())
+      {
+        hideAllChannelsGroup = xmlreader.GetValueAsBool("mytv", "hideAllChannelsGroup", false);
+        hidePinProtectedChannelsGroup = xmlreader.GetValueAsBool("mytv", "hidePinProtectedChannelsGroup", false);
+      }
+
+      IList<ChannelGroup> groups = ChannelGroup.ListAll();
+
+      List<int> disallowedGroups = new List<int>();
+
+      foreach (ChannelGroup group in groups)
+      {
+        if (hidePinProtectedChannelsGroup && !string.IsNullOrEmpty(group.PinCode)
+          || !string.IsNullOrEmpty(group.PinCode) && TVHome.Navigator.CurrentGroup.IdGroup != group.IdGroup)
+        {
+          disallowedGroups.Add(group.IdGroup);
+        }
+      }
+
+      List<Channel> channels = Channel.ListAll().ToList();
+      IList<GroupMap> allgroupMaps = GroupMap.ListAll();
+      List<int> disAllowedChannels = new List<int>();
+
+      foreach (Channel ch in channels)
+      {
+        foreach (GroupMap gm in allgroupMaps)
+        {
+          if (ch.IdChannel == gm.IdChannel && disallowedGroups.Contains(gm.IdGroup))
+          {
+            disAllowedChannels.Add(ch.IdChannel);
+            Log.Debug("TvRecorded: Disallowed Channel {0}", ch.DisplayName);
+          }
+        }
+      }
+      return disAllowedChannels;
+    }
+
     public override bool SupportsDelayedLoad
     {
       get { return false; }
@@ -530,6 +578,10 @@ namespace TvPlugin
         m_navigator.ReLoad();
         LoadSettings(false);
       }
+      else
+      {
+        LoadSettings(true); // needs for PIN protection function avoid to start tvhome with a protected group
+      }
 
       if (m_navigator == null)
       {
@@ -567,7 +619,7 @@ namespace TvPlugin
 
       if (channel != null)
       {
-        Log.Info("tv home init:{0}", channel.DisplayName);
+        Log.Info("tv home init: ch {0}, gr {1}", channel.DisplayName, Navigator.CurrentGroup.GroupName);
         if (!_suspended)
         {
           AutoTurnOnTv(channel);
@@ -1479,6 +1531,9 @@ namespace TvPlugin
     {
       try
       {
+        if (inPlaceShift)
+          vPlaceshiftCard.StopTimeShifting();
+
         if (Card.IsTimeShifting)
         {
           Card.User.Name = new User().Name;
@@ -1513,7 +1568,7 @@ namespace TvPlugin
               RefreshConnectionState();
             if (Connected && !_suspended)
             {
-              bool isTS = (Card != null && Card.IsTimeShifting);
+              bool isTS = ((Card != null && Card.IsTimeShifting) || inPlaceShift);
               if (Connected && isTS)
               {
                 // send heartbeat to tv server each 5 sec.
@@ -1524,7 +1579,11 @@ namespace TvPlugin
 #if !DEBUG
             try
             {
-              RemoteControl.Instance.HeartBeat(Card.User);
+              if (inPlaceShift)
+                RemoteControl.Instance.HeartBeat(vPlaceshiftCard.User);
+
+              if (Card.IsTimeShifting)
+                RemoteControl.Instance.HeartBeat(Card.User);
             }
             catch (Exception e)
             {
@@ -1656,6 +1715,80 @@ namespace TvPlugin
 
     #endregion
 
+    public static bool OnUnlockChannelGroup()
+    {
+      bool needUnlock = false;
+      
+      for (int i = 0; i < Navigator.Groups.Count; ++i)
+      {
+        if (!string.IsNullOrEmpty(Navigator.Groups[i].PinCode))
+        {
+          needUnlock = true;
+        }
+      }
+
+      if (!needUnlock)
+      {
+        Log.Debug("No need to unlock: {0}", Navigator.CurrentGroup.GroupName);
+        return false;
+      }
+
+      Log.Debug("OnUnlockChannelGroup: {0}", Navigator.CurrentGroup.GroupName);
+      GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_MENU);
+
+      if (dlg == null)
+      {
+        return true;
+      }
+
+      dlg.Reset();
+      dlg.SetHeading(971); // group
+      int selected = 0;
+
+      for (int i = 0; i < Navigator.Groups.Count; ++i)
+      {
+        dlg.Add(Navigator.Groups[i].GroupName);
+
+        if (Navigator.Groups[i].GroupName == Navigator.CurrentGroup.GroupName)
+        {
+          selected = i;
+        }
+      }
+
+      dlg.SelectedLabel = selected;
+      dlg.DoModal(GUIWindowManager.ActiveWindow);
+
+      if (dlg.SelectedLabel < 0)
+      {
+        return true;
+      }
+
+      if (!string.IsNullOrEmpty(Navigator.Groups[dlg.SelectedId - 1].PinCode))
+      {
+        VirtualKeyboard keyboard = (VirtualKeyboard)GUIWindowManager.GetWindow((int)Window.WINDOW_VIRTUAL_KEYBOARD);
+
+        if (null == keyboard)
+        {
+          return true;
+        }
+
+        keyboard.IsSearchKeyboard = true;
+        keyboard.Reset();
+        keyboard.Password = true;
+        keyboard.Text = string.Empty;
+        keyboard.DoModal(GUIWindowManager.ActiveWindow); // show it...
+
+        if (!keyboard.IsConfirmed || keyboard.IsConfirmed && keyboard.Text != Navigator.Groups[dlg.SelectedId - 1].PinCode)
+        {
+          return true;
+        }
+      }
+      Navigator.SetCurrentGroup(dlg.SelectedLabelText);
+      GUIPropertyManager.SetProperty("#TV.Guide.Group", dlg.SelectedLabelText);
+      return true;
+    }
+
+
     public static void OnSelectGroup()
     {
       GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_MENU);
@@ -1687,7 +1820,7 @@ namespace TvPlugin
       GUIPropertyManager.SetProperty("#TV.Guide.Group", dlg.SelectedLabelText);
     }
 
-    private void OnSelectChannel()
+    public void OnSelectChannel()
     {
       Stopwatch benchClock = null;
       benchClock = Stopwatch.StartNew();
@@ -1761,6 +1894,11 @@ namespace TvPlugin
 
       try
       {
+        if (inPlaceShift)
+        {
+          vPlaceshiftCard.StopTimeShifting();
+          inPlaceShift = false;
+        }
         if (Card.IsTimeShifting)
         {
           Card.User.Name = new User().Name;
@@ -1905,7 +2043,6 @@ namespace TvPlugin
             {
               Card.StopTimeShifting();
             }
-            ;
             break;
           }
         case GUIMessage.MessageType.GUI_MSG_NOTIFY_REC:
@@ -2054,6 +2191,11 @@ namespace TvPlugin
       {
         Card.StopTimeShifting();
       }
+      if (inPlaceShift)
+      {
+        vPlaceshiftCard.StopTimeShifting();
+        inPlaceShift = false;
+      }
     }
 
     private void OnPlayBackStopped(g_Player.MediaType type, int stoptime, string filename)
@@ -2076,19 +2218,22 @@ namespace TvPlugin
         _recoverTV = true;
         return;
       }
-      if (Card.IsTimeShifting == false)
+      if (Card.IsTimeShifting || inPlaceShift)
       {
-        return;
+
+        //tv off
+        Log.Info("TVHome:turn tv off");
+        SaveSettings();
+        if (inPlaceShift)
+          vPlaceshiftCard.StopTimeShifting();
+        
+        inPlaceShift = false;
+        Card.User.Name = new User().Name;
+        Card.StopTimeShifting();
+        inPlaceShift = false;
+        _recoverTV = false;
+        _playbackStopped = true;
       }
-
-      //tv off
-      Log.Info("TVHome:turn tv off");
-      SaveSettings();
-      Card.User.Name = new User().Name;
-      Card.StopTimeShifting();
-
-      _recoverTV = false;
-      _playbackStopped = true;
       ChannelTvOnOff(false);
     }
 
@@ -2133,12 +2278,7 @@ namespace TvPlugin
             pDlgOK.Reset();
             pDlgOK.SetHeading(605); //my tv
             pDlgOK.AddLocalizedString(875); //current program
-
-            bool doesManuelScheduleAlreadyExist = DoesManualScheduleAlreadyExist(channel);
-            if (!doesManuelScheduleAlreadyExist)
-            {
-              pDlgOK.AddLocalizedString(876); //till manual stop
-            }
+            pDlgOK.AddLocalizedString(876); //till manual stop
             pDlgOK.DoModal(GUIWindowManager.ActiveWindow);
             switch (pDlgOK.SelectedId)
             {
@@ -2151,9 +2291,14 @@ namespace TvPlugin
 
               case 876:
                 //manual
-                StartRecordingSchedule(channel, true);
-                return true;
-             }
+                bool doesManuelScheduleAlreadyExist = DoesManualScheduleAlreadyExist(channel);
+                if (!doesManuelScheduleAlreadyExist)
+                {
+                  StartRecordingSchedule(channel, true);
+                  return true;
+                }
+                break;
+            }
           }
         }
         else
@@ -2266,12 +2411,13 @@ namespace TvPlugin
       dlg.Reset();
       dlg.SetHeading(200052); // Active Recordings
 
+      List<int> disallowedChannels = ListDisallowedChannelsById();
       IList<Recording> activeRecordings = Recording.ListAllActive();
       if (activeRecordings != null && activeRecordings.Count > 0)
       {
         foreach (Recording activeRecording in activeRecordings)
         {
-          if (!ignoreActiveRecordings.Contains(activeRecording))
+          if (!ignoreActiveRecordings.Contains(activeRecording) && !disallowedChannels.Contains(activeRecording.IdChannel))
           {
             GUIListItem item = new GUIListItem();
             string channelName = activeRecording.ReferencedChannel().DisplayName;
@@ -2316,6 +2462,12 @@ namespace TvPlugin
         if (deleted && !ignoreActiveRecordings.Contains(selectedRecording))
         {
           ignoreActiveRecordings.Add(selectedRecording);
+
+        /*  if (DebugSettings.EnableRecordingFromTimeshift)
+          {
+            Log.Debug("MergeTSbufferToRecordedFile: {0}", selectedRecording.FileName);
+            RemoteControl.Instance.MergeTSbufferToRecordedFile(selectedRecording.FileName);
+          } regeszter */
         }
         OnActiveRecordings(ignoreActiveRecordings); //keep on showing the list until --> 1) user leaves menu, 2) no more active recordings
       }
@@ -2332,6 +2484,33 @@ namespace TvPlugin
       }
     }
 
+    private bool OnShareTsBuffer()
+    {
+      GUIDialogYesNo dlg = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_YES_NO);
+      if (dlg == null)
+      {
+        return false;
+      }
+      while (true)
+      {
+        dlg.SetHeading(1987);
+        dlg.SetLine(1, 1988);
+        dlg.SetYesLabel(GUILocalizeStrings.Get(107)); //Yes
+        dlg.SetNoLabel(GUILocalizeStrings.Get(106)); //No
+        dlg.SetDefaultToYes(true);
+        dlg.DoModal(GUIWindowManager.ActiveWindow);
+
+        if (dlg.IsConfirmed)
+        {
+          return true;
+        }
+        else
+        {
+          return false;
+        }
+      }
+    }
+
     private void OnActiveStreams()
     {
       GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_MENU);
@@ -2342,7 +2521,7 @@ namespace TvPlugin
       dlg.Reset();
       dlg.SetHeading(692); // Active Tv Streams
       int selected = 0;
-
+      string remoteHostName = string.Empty;
       IList<Card> cards = TvDatabase.Card.ListAll();
       List<Channel> channels = new List<Channel>();
       int count = 0;
@@ -2366,6 +2545,7 @@ namespace TvPlugin
         for (int i = 0; i < users.Length; ++i)
         {
           IUser user = users[i];
+          Log.Debug("rtsp url: {0}, {1}", user, RemoteControl.Instance.GetStreamingUrl(user));
           if (card.IdCard != user.CardId)
           {
             continue;
@@ -2418,9 +2598,78 @@ namespace TvPlugin
         return;
       }
 
+      string selectedUrl = RemoteControl.Instance.GetStreamingUrl(_users[dlg.SelectedLabel]);
       VirtualCard vCard = new VirtualCard(_users[dlg.SelectedLabel], RemoteControl.HostName);
       Channel channel = Navigator.GetChannel(vCard.IdChannel);
-      ViewChannel(channel);
+      User myUser = new User();
+
+      /// Connect to the virtual user and play
+      if (_users[dlg.SelectedLabel].Name.Contains("Placeshift Virtual User") || _users[dlg.SelectedLabel].Name == "aMPdroid")
+      {
+        if (inPlaceShift)
+        {
+          vPlaceshiftCard.StopTimeShifting();
+        }
+        else if (Card.IsTimeShifting)
+        {
+          Card.StopTimeShifting();
+        }
+
+        myUser.CardId = vCard.Id;
+
+        // Replace the virtual user to local user
+        RemoteControl.Instance.ReplaceTimeshiftUser(vCard.Id, myUser, _users[dlg.SelectedLabel].Name);
+
+        // Send heartbeat ASAP
+        RemoteControl.Instance.HeartBeat(myUser);
+
+        if (!g_Player.Play(selectedUrl, g_Player.MediaType.TV, null, false))
+        {
+          StopPlayback();
+        }
+
+        // Seek to same position as the TV was stopped on another client.
+        double TimeshiftPosition = RemoteControl.Instance.GetTimeshiftPosition(vCard.Id, myUser);
+        g_Player.SeekAbsolute(TimeshiftPosition);
+
+        Navigator.setChannel(channel);
+        UpdateCurrentChannel();
+
+        Log.Debug("placeshift selected active rtspUrl: {0} for channel: {1}, user: {2}, vCard.Id: {3}, TimeshiftPosition: {4}", 
+          selectedUrl, channel.DisplayName, _users[dlg.SelectedLabel].Name, vCard.Id, TimeshiftPosition);
+
+        // Setup vPlaceshiftCard for stoptimeshift
+        vPlaceshiftCard = vCard;
+        vPlaceshiftCard.User.Name = myUser.Name;
+        inPlaceShift = true;
+      }
+      else
+      {
+        if (myUser.Name != _users[dlg.SelectedLabel].Name && OnShareTsBuffer())
+        {
+          if (inPlaceShift)
+          {
+            vPlaceshiftCard.StopTimeShifting();
+          }
+          else if (Card.IsTimeShifting)
+          {
+            Card.StopTimeShifting();
+          }
+
+          if (!g_Player.Play(selectedUrl, g_Player.MediaType.TV, null, false))
+          {
+            StopPlayback();
+          }
+
+          Navigator.setChannel(channel);
+          UpdateCurrentChannel();
+
+        }
+        else
+        {
+         ViewChannel(channel);
+        }
+      }
     }
 
     private void OnRecord()
@@ -3934,8 +4183,16 @@ namespace TvPlugin
           // if needed seek to end
           if (_status.IsSet(LiveTvStatus.SeekToEndAfterPlayback))
           {
-            double dTime = g_Player.Duration - 5;
-            g_Player.SeekAbsolute(dTime);
+            if (inPlaceShift)
+            {
+              double dTime = g_Player.Duration;
+              g_Player.SeekAbsolute(dTime);
+            }
+            else
+            {
+              double dTime = g_Player.Duration - 5;
+              g_Player.SeekAbsolute(dTime);
+            }
           }
           if (_autoFullScreen || (GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_TVGUIDE))
           {
@@ -3943,15 +4200,8 @@ namespace TvPlugin
           }
           StopRenderBlackImage();
         }
-        try
-        {
-          TvTimeShiftPositionWatcher.SetNewChannel(channel.IdChannel);
-        }
-        catch
-        {
-          //ignore, error already logged
-        }
         _doingChannelChange = false;
+        inPlaceShift = false;
       }
     }
 

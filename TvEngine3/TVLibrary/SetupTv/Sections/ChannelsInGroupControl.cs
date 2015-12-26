@@ -98,6 +98,14 @@ namespace SetupTv.Sections
         bool isAllChannelsGroup = (_channelGroup.GroupName == TvConstants.TvGroupNames.AllChannels);
         removeChannelFromGroup.Enabled = !isAllChannelsGroup;
         mpButtonDel.Enabled = !isAllChannelsGroup;
+
+        if (_channelGroup.GroupName != TvConstants.TvGroupNames.AllChannels)
+        {
+          labelPinCode.Visible = true;
+          textBoxPinCode.Visible = true;
+          textBoxPinCode.Text = _channelGroup.PinCode;
+        }
+
       }
       catch (Exception exp)
       {
@@ -544,6 +552,25 @@ namespace SetupTv.Sections
     private void mpButtonOrderByNumber_Click(object sender, EventArgs e)
     {
       this.listView1_ColumnClick(null, new ColumnClickEventArgs(1));
+    }
+
+    private void label1_Click(object sender, EventArgs e)
+    {
+
+    }
+
+    private void textBoxPinCode_TextChanged(object sender, EventArgs e)
+    {
+      _channelGroup.PinCode = textBoxPinCode.Text;
+      _channelGroup.Persist();
+    }
+
+    private void textBoxPinCode_KeyPress(object sender, KeyPressEventArgs e)
+    {
+      if (!Char.IsDigit(e.KeyChar) && !(e.KeyChar == 8))
+      {
+        e.Handled = true;
+      }
     }
   }
 }

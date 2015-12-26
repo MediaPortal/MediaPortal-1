@@ -34,6 +34,7 @@ using MediaPortal.Profile;
 using MediaPortal.Util;
 using TvControl;
 using TvDatabase;
+using TvLibrary.Interfaces;
 using Action = MediaPortal.GUI.Library.Action;
 using Layout = MediaPortal.GUI.Library.GUIFacadeControl.Layout;
 
@@ -706,6 +707,8 @@ namespace TvPlugin
       {
         GUIControl.ClearControl(GetID, facadeLayout.GetID);
 
+        List<int> disallowedChannels = TVHome.ListDisallowedChannelsById();
+
         SwitchLayout();
 
         // lookup radio channel ID in radio group map (smallest table that could identify a radio channel) to remove radiochannels from recording list
@@ -713,8 +716,19 @@ namespace TvPlugin
         Log.Debug("LoadDirectory() - finished loading '" + radiogroupIDs.Count() + "' radiogroupIDs after '{0}' ms.", watch.ElapsedMilliseconds);
 
         //List<Recording> recordings = (from r in Recording.ListAll()where !(from rad in radiogroups select rad.IdChannel).Contains(r.IdChannel)select r).ToList();
-        List<Recording> recordings = Recording.ListAll().Where(rec => radiogroupIDs.All(id => rec.IdChannel != id)).ToList();
-        Log.Debug("LoadDirectory() - finished loading '" + recordings.Count + "' recordings after '{0}' ms.", watch.ElapsedMilliseconds);
+        List<Recording> allRecordings = Recording.ListAll().Where(rec => radiogroupIDs.All(id => rec.IdChannel != id)).ToList();
+        Log.Debug("LoadDirectory() - finished loading '" + allRecordings.Count + "' recordings after '{0}' ms.", watch.ElapsedMilliseconds);
+
+        List<Recording> recordings = new List<Recording>();
+
+        // skip recording if it was recorded from a disallowed (PIN protected) channel
+        foreach (Recording rec in allRecordings)
+        {
+          if (!disallowedChannels.Contains(rec.IdChannel))
+          {
+            recordings.Add(rec);
+          }
+        }
 
         // load the active channels only once to save multiple requests later when retrieving related channel
         List<Channel> channels = Channel.ListAll().ToList();
