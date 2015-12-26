@@ -211,13 +211,12 @@ namespace TvService
       {
         if (!(args != null && args.Length > 0 && args[0] == "/DEBUG"))
         {
-          RequestAdditionalTime(60000); // starting database can be slow so increase default timeout        
+          RequestAdditionalTime(60000); // starting database can be slow so increase default timeout
         }
         TvServiceThread tvServiceThread = new TvServiceThread();
         ThreadStart tvServiceThreadStart = new ThreadStart(tvServiceThread.OnStart);
-        _tvServiceThread = new Thread(tvServiceThreadStart);
+        _tvServiceThread = new Thread(tvServiceThreadStart) {IsBackground = false};
 
-        _tvServiceThread.IsBackground = false;
 
         // apply process priority on initial service start.
         if (!_priorityApplied)

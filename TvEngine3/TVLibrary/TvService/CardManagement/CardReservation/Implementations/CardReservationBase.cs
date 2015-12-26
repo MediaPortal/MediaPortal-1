@@ -211,7 +211,7 @@ namespace TvService
             {
               tvcard.Tuner.CardTuneState = CardTuneState.TuneCancelled;
             }
-          }          
+          }
         }
       }
       Log.Debug("RequestCardTuneReservation2");
@@ -232,8 +232,8 @@ namespace TvService
       lock (tvcard.Tuner.CardReservationsLock)
       {
         if (isCardAvail)
-        {          
-          tvcard.Tuner.CardTuneState = CardTuneState.TunePending;            
+        {
+          tvcard.Tuner.CardTuneState = CardTuneState.TunePending;
           bool isTunedToTransponder = IsTunedToTransponder(tvcard, tuningDetail);
 
           /*if (isTunedToTransponder)
@@ -267,7 +267,7 @@ namespace TvService
             context.GetUser(ref user);
             hasUserHighestPriority = context.HasUserHighestPriority(user);
             hasUserEqualOrHigherPriority = context.HasUserEqualOrHigherPriority(user);
-          }          
+          }
 
           int currentChannelId = tvcard.CurrentDbChannel(ref user);
 
@@ -302,7 +302,7 @@ namespace TvService
                 inactiveUsers.Add(actualUser);
               }
               else
-              {                
+              {
                 if (userDVBchannel != null)
                 {
                   actualUser.IdChannel = layer.GetTuningDetail(userDVBchannel).IdChannel;
@@ -328,8 +328,8 @@ namespace TvService
                       {
                         ownerSubchannel = actualUser.SubChannel;
                       }
-                    }                    
-                  }                  
+                    }
+                  }
                 }
               }
             }
@@ -372,14 +372,14 @@ namespace TvService
               hasUserHighestPriority,
               hasUserEqualOrHigherPriority);
           tvcard.Tuner.ActiveCardTuneReservationTicket = cardTuneReservationTicket;
-          tvcard.Tuner.ReservationsForTune.Add(cardTuneReservationTicket);          
+          tvcard.Tuner.ReservationsForTune.Add(cardTuneReservationTicket);
         }
 
-        cardTuneState = tvcard.Tuner.CardTuneState;        
+        cardTuneState = tvcard.Tuner.CardTuneState;
         if (tvcard.Tuner.ActiveCardTuneReservationTicket != null)
         {
-          ticketId = tvcard.Tuner.ActiveCardTuneReservationTicket.Id;  
-        }        
+          ticketId = tvcard.Tuner.ActiveCardTuneReservationTicket.Id;
+        }
       }
 
 
@@ -395,9 +395,9 @@ namespace TvService
         }
         else
         {
-          Log.Debug("CardReservationBase.RequestCardTuneReservation: failed reservation tuningdetails={0}, res id blocking={1}, state={2}", tuningDetail, "n/a", cardTuneState);          
+          Log.Debug("CardReservationBase.RequestCardTuneReservation: failed reservation tuningdetails={0}, res id blocking={1}, state={2}", tuningDetail, "n/a", cardTuneState);
         }
-      }              
+      }
       return cardTuneReservationTicket;
     }    
 

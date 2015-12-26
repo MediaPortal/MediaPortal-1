@@ -41,7 +41,6 @@
       this.edDescriptionTest = new System.Windows.Forms.TextBox();
       this.btnTest = new System.Windows.Forms.Button();
       this.groupBox2 = new System.Windows.Forms.GroupBox();
-      this.checkBoxEnableEPGWhileIdleOnAllTuners = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.numericUpDownEpgRefresh = new System.Windows.Forms.NumericUpDown();
       this.numericUpDownEpgTimeOut = new System.Windows.Forms.NumericUpDown();
       this.checkBoxEnableEPGWhileIdle = new MediaPortal.UserInterface.Controls.MPCheckBox();
@@ -49,6 +48,7 @@
       this.label14 = new System.Windows.Forms.Label();
       this.label8 = new System.Windows.Forms.Label();
       this.label7 = new System.Windows.Forms.Label();
+      this.checkBoxEnableEPGWhileIdleOnAllTuners = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.groupBox5 = new System.Windows.Forms.GroupBox();
       this.numericUpDownTSEpgTimeout = new System.Windows.Forms.NumericUpDown();
       this.checkBoxEnableEpgWhileTimeshifting = new MediaPortal.UserInterface.Controls.MPCheckBox();
@@ -62,6 +62,8 @@
       this.checkBoxAlwaysFillHoles = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.tabPage1 = new System.Windows.Forms.TabPage();
       this.tabControlEpg = new System.Windows.Forms.TabControl();
+      this.numericEpgCardLimit = new System.Windows.Forms.NumericUpDown();
+      this.label2 = new System.Windows.Forms.Label();
       this.groupBox9.SuspendLayout();
       this.groupBox2.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownEpgRefresh)).BeginInit();
@@ -71,6 +73,7 @@
       this.groupBox7.SuspendLayout();
       this.tabPage1.SuspendLayout();
       this.tabControlEpg.SuspendLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.numericEpgCardLimit)).BeginInit();
       this.SuspendLayout();
       // 
       // groupBox9
@@ -221,18 +224,6 @@
       this.groupBox2.TabStop = false;
       this.groupBox2.Text = "EPG grabbing while idle";
       // 
-      // checkBoxEnableEPGWhileIdleOnAllTuners
-      // 
-      this.checkBoxEnableEPGWhileIdleOnAllTuners.AutoSize = true;
-      this.checkBoxEnableEPGWhileIdleOnAllTuners.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.checkBoxEnableEPGWhileIdleOnAllTuners.Location = new System.Drawing.Point(11, 87);
-      this.checkBoxEnableEPGWhileIdleOnAllTuners.Name = "checkBoxEnableEPGWhileIdleOnAllTuners";
-      this.checkBoxEnableEPGWhileIdleOnAllTuners.Size = new System.Drawing.Size(71, 17);
-      this.checkBoxEnableEPGWhileIdleOnAllTuners.TabIndex = 12;
-      this.checkBoxEnableEPGWhileIdleOnAllTuners.Text = "Multi-EPG";
-      this.checkBoxEnableEPGWhileIdleOnAllTuners.UseVisualStyleBackColor = true;
-      this.checkBoxEnableEPGWhileIdleOnAllTuners.CheckedChanged += new System.EventHandler(this.mpCheckBox1_CheckedChanged);
-      // 
       // numericUpDownEpgRefresh
       // 
       this.numericUpDownEpgRefresh.Location = new System.Drawing.Point(86, 63);
@@ -294,7 +285,7 @@
       this.label14.AutoSize = true;
       this.label14.Location = new System.Drawing.Point(7, 65);
       this.label14.Name = "label14";
-      this.label14.Size = new System.Drawing.Size(73, 13);
+      this.label14.Size = new System.Drawing.Size(76, 13);
       this.label14.TabIndex = 5;
       this.label14.Text = "Refresh every:";
       // 
@@ -316,6 +307,18 @@
       this.label7.TabIndex = 2;
       this.label7.Text = "Timeout:";
       // 
+      // checkBoxEnableEPGWhileIdleOnAllTuners
+      // 
+      this.checkBoxEnableEPGWhileIdleOnAllTuners.AutoSize = true;
+      this.checkBoxEnableEPGWhileIdleOnAllTuners.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.checkBoxEnableEPGWhileIdleOnAllTuners.Location = new System.Drawing.Point(11, 87);
+      this.checkBoxEnableEPGWhileIdleOnAllTuners.Name = "checkBoxEnableEPGWhileIdleOnAllTuners";
+      this.checkBoxEnableEPGWhileIdleOnAllTuners.Size = new System.Drawing.Size(71, 17);
+      this.checkBoxEnableEPGWhileIdleOnAllTuners.TabIndex = 12;
+      this.checkBoxEnableEPGWhileIdleOnAllTuners.Text = "Multi-EPG";
+      this.checkBoxEnableEPGWhileIdleOnAllTuners.UseVisualStyleBackColor = true;
+      this.checkBoxEnableEPGWhileIdleOnAllTuners.CheckedChanged += new System.EventHandler(this.mpCheckBox1_CheckedChanged);
+      // 
       // groupBox5
       // 
       this.groupBox5.Controls.Add(this.numericUpDownTSEpgTimeout);
@@ -333,7 +336,7 @@
       // 
       this.numericUpDownTSEpgTimeout.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-      this.numericUpDownTSEpgTimeout.Location = new System.Drawing.Point(70, 39);
+      this.numericUpDownTSEpgTimeout.Location = new System.Drawing.Point(81, 37);
       this.numericUpDownTSEpgTimeout.Maximum = new decimal(new int[] {
             3600,
             0,
@@ -353,7 +356,7 @@
       // 
       this.checkBoxEnableEpgWhileTimeshifting.AutoSize = true;
       this.checkBoxEnableEpgWhileTimeshifting.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.checkBoxEnableEpgWhileTimeshifting.Location = new System.Drawing.Point(9, 17);
+      this.checkBoxEnableEpgWhileTimeshifting.Location = new System.Drawing.Point(11, 19);
       this.checkBoxEnableEpgWhileTimeshifting.Name = "checkBoxEnableEpgWhileTimeshifting";
       this.checkBoxEnableEpgWhileTimeshifting.Size = new System.Drawing.Size(63, 17);
       this.checkBoxEnableEpgWhileTimeshifting.TabIndex = 9;
@@ -373,16 +376,19 @@
       // label23
       // 
       this.label23.AutoSize = true;
-      this.label23.Location = new System.Drawing.Point(6, 41);
+      this.label23.Location = new System.Drawing.Point(8, 39);
       this.label23.Name = "label23";
       this.label23.Size = new System.Drawing.Size(48, 13);
       this.label23.TabIndex = 5;
       this.label23.Text = "Timeout:";
+      this.label23.Click += new System.EventHandler(this.label23_Click);
       // 
       // groupBox7
       // 
       this.groupBox7.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox7.Controls.Add(this.label2);
+      this.groupBox7.Controls.Add(this.numericEpgCardLimit);
       this.groupBox7.Controls.Add(this.checkBoxEnableEPGWhileIdleOnAllTuners);
       this.groupBox7.Controls.Add(this.checkboxSameTransponder);
       this.groupBox7.Controls.Add(this.label1);
@@ -477,6 +483,36 @@
       this.tabControlEpg.Size = new System.Drawing.Size(474, 436);
       this.tabControlEpg.TabIndex = 1;
       // 
+      // numericEpgCardLimit
+      // 
+      this.numericEpgCardLimit.Location = new System.Drawing.Point(140, 87);
+      this.numericEpgCardLimit.Maximum = new decimal(new int[] {
+            3600,
+            0,
+            0,
+            0});
+      this.numericEpgCardLimit.Name = "numericEpgCardLimit";
+      this.numericEpgCardLimit.Size = new System.Drawing.Size(86, 20);
+      this.numericEpgCardLimit.TabIndex = 11;
+      this.numericEpgCardLimit.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+      this.numericEpgCardLimit.Value = new decimal(new int[] {
+            2,
+            0,
+            0,
+            0});
+      this.numericEpgCardLimit.ValueChanged += new System.EventHandler(this.numericEpgCardLimit_ValueChanged);
+      // 
+      // label2
+      // 
+      this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.label2.AutoSize = true;
+      this.label2.Location = new System.Drawing.Point(229, 91);
+      this.label2.Name = "label2";
+      this.label2.Size = new System.Drawing.Size(111, 13);
+      this.label2.TabIndex = 11;
+      this.label2.Text = "Number(s) card to use";
+      this.label2.Click += new System.EventHandler(this.label2_Click);
+      // 
       // Epg
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -497,6 +533,7 @@
       this.groupBox7.PerformLayout();
       this.tabPage1.ResumeLayout(false);
       this.tabControlEpg.ResumeLayout(false);
+      ((System.ComponentModel.ISupportInitialize)(this.numericEpgCardLimit)).EndInit();
       this.ResumeLayout(false);
 
     }
@@ -537,5 +574,7 @@
     private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxEnableCRCCheck;
     private MediaPortal.UserInterface.Controls.MPCheckBox checkboxSameTransponder;
     private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxEnableEPGWhileIdleOnAllTuners;
+    private System.Windows.Forms.NumericUpDown numericEpgCardLimit;
+    private System.Windows.Forms.Label label2;
   }
 }

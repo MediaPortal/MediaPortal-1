@@ -53,6 +53,7 @@ namespace TvService
     #region variables
 
     private int _epgReGrabAfter = 4 * 60; //hours
+    private int _numericEpgCardLimit = 1;
     private readonly System.Timers.Timer _epgTimer = new System.Timers.Timer();
 
     private bool _disposed;
@@ -114,6 +115,13 @@ namespace TvService
       {
         _epgReGrabAfter = 240;
       }
+
+      s = layer.GetSetting("numericEpgCardLimit", "1");
+      if (Int32.TryParse(s.Value, out _numericEpgCardLimit) == false)
+      {
+        _numericEpgCardLimit = 1;
+      }
+
       TransponderList.Instance.RefreshTransponders();
       if (TransponderList.Instance.Count == 0)
       {
@@ -237,8 +245,25 @@ namespace TvService
         {
           return;
         }
-        foreach (EpgCard card in _epgCards)
+
+        // Check current grabbing card
+        int cardGrabbing = 0;
+        Log.Epg("Grab EPG for limited concurrent card to {0}", _numericEpgCardLimit);
+        foreach (var card in _epgCards)
         {
+          CardType type = _tvController.Type(card.Card.IdCard);
+          //skip analog and webstream cards 
+          if (type == CardType.Analog || type == CardType.RadioWebStream)
+          {
+            continue;
+          }
+
+          //if (IsCardIdle(Card.IdCard) == false)
+          //{
+          //  Log.Epg("Epg: card:{0} atsc card is not idle", Card.IdCard);
+          //  return false; //card is busy
+          //}
+
           //Log.Epg("card:{0} grabbing:{1}", card.Card.IdCard, card.IsGrabbing);
           if (!_isRunning)
           {
@@ -246,6 +271,7 @@ namespace TvService
           }
           if (card.IsGrabbing)
           {
+            cardGrabbing++;
             continue;
           }
           // Multi-EPG Grabbing
@@ -253,7 +279,13 @@ namespace TvService
           {
             return;
           }
-          GrabEpgOnCard(card);
+          if (cardGrabbing < _numericEpgCardLimit)
+          {
+            // card is grabbing (increment counter to only know how many card we will start)
+            cardGrabbing++;
+            GrabEpgOnCard(card);
+            Log.Epg("Grab EPG for limited card:#{0}", card.Card.IdCard);
+          }
         }
       }
       catch (Exception ex)

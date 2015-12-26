@@ -267,6 +267,8 @@ namespace TvLibrary.Implementations.DVB
 
     protected bool _cancelTune;
 
+    private readonly object _lock = new object();
+
     #endregion
 
     #region ctor
@@ -908,10 +910,35 @@ namespace TvLibrary.Implementations.DVB
       }
     }
 
+    private void InitializePauseGraph()
+    {
+      if (_isInitializedPauseGraph)
+      {
+        return;
+      }
+
+      lock (_lock)
+      {
+        if (!_isInitializedPauseGraph)
+        {
+          _isInitializedPauseGraph = true;
+          StopGraphThread();
+          _isInitializedStopGraph = false;
+        }
+      }
+    }
+
+    private bool _isInitializedPauseGraph = false;
+
+    public override void PauseGraph()
+    {
+      InitializePauseGraph();
+    }
+
     /// <summary>
     /// Methods which pauses the graph
     /// </summary>
-    public override void PauseGraph()
+    public void PauseGraphThread()
     {
       Log.Log.WriteFile("dvb:PauseGraph called");
       if (!CheckThreadId())
@@ -926,29 +953,59 @@ namespace TvLibrary.Implementations.DVB
       if (_graphBuilder == null)
         return;
 
-      FilterState state;
-      ((IMediaControl)_graphBuilder).GetState(10, out state);
+      FilterState state = FilterState.Stopped;
+      var control = _graphBuilder as IMediaControl;
+      if (control != null) control.GetState(10, out state);
       if (state != FilterState.Running)
       {
         Log.Log.WriteFile("dvb:PauseGraph filterstate already paused, returning.");
         return;
       }
       Log.Log.WriteFile("dvb:PauseGraph");
-      int hr = ((IMediaControl)_graphBuilder).Pause();
-      if (hr < 0 || hr > 1)
+      var mediaControl = _graphBuilder as IMediaControl;
+      if (mediaControl != null)
       {
-        Log.Log.Error("dvb:PauseGraph returns:0x{0:X}", hr);
-        throw new TvException("Unable to pause graph");
+        int hr = mediaControl.Pause();
+        if (hr < 0 || hr > 1)
+        {
+          Log.Log.Error("dvb:PauseGraph returns:0x{0:X}", hr);
+          throw new TvException("Unable to pause graph");
+        }
       }
       _graphState = GraphState.Created;
     }
 
     public abstract bool CanTune(IChannel channel);
 
+    private void InitializeStopGraph()
+    {
+      if (_isInitializedStopGraph)
+      {
+        return;
+      }
+
+      lock (_lock)
+      {
+        if (!_isInitializedStopGraph)
+        {
+          _isInitializedStopGraph = true;
+          StopGraphThread();
+          _isInitializedStopGraph = false;
+        }
+      }
+    }
+
+    private bool _isInitializedStopGraph;
+
+    public override void StopGraph()
+    {
+      InitializeStopGraph();
+    }
+
     /// <summary>
     /// Methods which stops the graph
     /// </summary>
-    public override void StopGraph()
+    private void StopGraphThread()
     {
       Log.Log.WriteFile("dvb:StopGraph called");
       if (!CheckThreadId())

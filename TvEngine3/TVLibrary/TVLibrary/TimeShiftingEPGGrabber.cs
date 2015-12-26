@@ -99,6 +99,7 @@ namespace TvLibrary
       Log.Log.Epg("TimeshiftingEpgGrabber: refresh EPG while timeshift after {0} mins", ts.TotalMinutes);
       if (!_card.IsEpgGrabbing)
       {
+        _card.IsEpgGrabbing = true;
         _card.GrabEpg();
       }
     }
@@ -124,6 +125,7 @@ namespace TvLibrary
     {
       Log.Log.Info("Timeshifting epg grabber timer stopped.");
       _epgTimerRefresh.Enabled = false;
+      _card.IsEpgGrabbing = false;
     }
 
     /// <summary>

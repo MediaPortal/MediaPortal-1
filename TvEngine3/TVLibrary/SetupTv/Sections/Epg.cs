@@ -57,6 +57,8 @@ namespace SetupTv.Sections
                                                     "yes");
       numericUpDownTSEpgTimeout.Value = Convert.ToDecimal(layer.GetSetting("timeshiftingEpgGrabberTimeout", "2").Value);
 
+      numericEpgCardLimit.Value = Convert.ToDecimal(layer.GetSetting("numericEpgCardLimit", "1").Value);
+
       edTitleTemplate.Text = layer.GetSetting("epgTitleTemplate", "%TITLE%").Value;
       edDescriptionTemplate.Text = layer.GetSetting("epgDescriptionTemplate", "%DESCRIPTION%").Value;
     }
@@ -111,6 +113,10 @@ namespace SetupTv.Sections
       s = layer.GetSetting("epgDescriptionTemplate", "%DESCRIPTION%");
       s.Value = edDescriptionTemplate.Text;
       s.Persist();
+
+      s = layer.GetSetting("numericEpgCardLimit", "1");
+      s.Value = numericEpgCardLimit.Value.ToString();
+      s.Persist();
     }
 
     private static string EvalTemplate(string template, NameValueCollection values)
@@ -137,6 +143,21 @@ namespace SetupTv.Sections
     }
 
     private void mpCheckBox1_CheckedChanged(object sender, EventArgs e)
+    {
+
+    }
+
+    private void label23_Click(object sender, EventArgs e)
+    {
+
+    }
+
+    private void label2_Click(object sender, EventArgs e)
+    {
+
+    }
+
+    private void numericEpgCardLimit_ValueChanged(object sender, EventArgs e)
     {
 
     }
