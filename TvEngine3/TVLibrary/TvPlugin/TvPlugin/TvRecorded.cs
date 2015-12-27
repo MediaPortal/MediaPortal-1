@@ -277,6 +277,7 @@ namespace TvPlugin
       {
         _showAllRecording = false;
         _allowProtectedRecord = false;
+        TVHome.LoadSettings(true);
       }
 
       _iSelectedItem = GetSelectedItemNo();
