@@ -1813,6 +1813,7 @@ public class MediaPortalApp : D3D, IRender
           // Suspending GUIGraphicsContext when going to S3
           if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.RUNNING)
           {
+            Log.Debug("Main: PBT_APMSUSPEND - set GUIGraphicsContext.State.SUSPENDING");
             GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.SUSPENDING;
           }
 
@@ -1975,6 +1976,17 @@ public class MediaPortalApp : D3D, IRender
             {
               case 0:
                 Log.Info("Main: User is providing input to the session");
+                if (_suspended && _resumedAutomatic && !_resumedSuspended)
+                {
+                  // Resume operation of user interface for PBT_APMRESUMEAUTOMATIC without PBT_APMRESUMESUSPEND.
+                  Log.Info("Main: Providing input - Resuming operation of user interface");
+                  OnResumeSuspend();
+                  msg.WParam = new IntPtr((int)PBT_EVENT.PBT_APMRESUMESUSPEND);
+                  PluginManager.WndProc(ref msg);
+                  msg.WParam = new IntPtr((int)PBT_EVENT.PBT_POWERSETTINGCHANGE);
+                  _resumedSuspended = true;
+                  _suspended = false;
+                }
                 IsUserPresent = true;
                 ShowMouseCursor(false);
                 break;
@@ -2747,6 +2759,7 @@ public class MediaPortalApp : D3D, IRender
   {
     // Make sure that plugins cannot open dialog when system is entering standby
     _ignoreContextMenuAction = true;
+    Log.Debug("Main: PrepareSuspend - set GUIGraphicsContext.State.SUSPENDING");
     GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.SUSPENDING;
   }
 
@@ -2878,7 +2891,7 @@ public class MediaPortalApp : D3D, IRender
     RestoreFromTray();
 
     // Force focus after resume done (really weird sequence) disable for now
-    //ForceMPFocus();
+    ForceMPFocus();
 
     Log.Info("Main: OnResumeSuspend - Done");
   }
