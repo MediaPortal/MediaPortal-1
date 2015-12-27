@@ -2601,78 +2601,82 @@ namespace TvPlugin
         return;
       }
 
-      string selectedUrl = RemoteControl.Instance.GetStreamingUrl(_users[dlg.SelectedLabel]);
+      //string selectedUrl = RemoteControl.Instance.GetStreamingUrl(_users[dlg.SelectedLabel]);
       VirtualCard vCard = new VirtualCard(_users[dlg.SelectedLabel], RemoteControl.HostName);
       Channel channel = Navigator.GetChannel(vCard.IdChannel);
-      User myUser = new User();
 
-      /// Connect to the virtual user and play
-      if (_users[dlg.SelectedLabel].Name.Contains("Placeshift Virtual User") || _users[dlg.SelectedLabel].Name == "aMPdroid")
-      {
-        if (inPlaceShift)
-        {
-          vPlaceshiftCard.StopTimeShifting();
-        }
-        else if (Card.IsTimeShifting)
-        {
-          Card.StopTimeShifting();
-        }
+      // Disable Placeshift feature (not working)
+      ViewChannel(channel);
 
-        myUser.CardId = vCard.Id;
+      //User myUser = new User();
 
-        // Replace the virtual user to local user
-        RemoteControl.Instance.ReplaceTimeshiftUser(vCard.Id, myUser, _users[dlg.SelectedLabel].Name);
+      //// Connect to the virtual user and play
+      //if (_users[dlg.SelectedLabel].Name.Contains("Placeshift Virtual User") || _users[dlg.SelectedLabel].Name == "aMPdroid")
+      //{
+      //  if (inPlaceShift)
+      //  {
+      //    vPlaceshiftCard.StopTimeShifting();
+      //  }
+      //  else if (Card != null && Card.IsTimeShifting)
+      //  {
+      //    Card.StopTimeShifting();
+      //  }
 
-        // Send heartbeat ASAP
-        RemoteControl.Instance.HeartBeat(myUser);
+      //  myUser.CardId = vCard.Id;
 
-        if (!g_Player.Play(selectedUrl, g_Player.MediaType.TV, null, false))
-        {
-          StopPlayback();
-        }
+      //  // Replace the virtual user to local user
+      //  RemoteControl.Instance.ReplaceTimeshiftUser(vCard.Id, myUser, _users[dlg.SelectedLabel].Name);
 
-        // Seek to same position as the TV was stopped on another client.
-        double TimeshiftPosition = RemoteControl.Instance.GetTimeshiftPosition(vCard.Id, myUser);
-        g_Player.SeekAbsolute(TimeshiftPosition);
+      //  // Send heartbeat ASAP
+      //  RemoteControl.Instance.HeartBeat(myUser);
 
-        Navigator.setChannel(channel);
-        UpdateCurrentChannel();
+      //  if (!g_Player.Play(selectedUrl, g_Player.MediaType.TV, null, false))
+      //  {
+      //    StopPlayback();
+      //  }
 
-        Log.Debug("placeshift selected active rtspUrl: {0} for channel: {1}, user: {2}, vCard.Id: {3}, TimeshiftPosition: {4}", 
-          selectedUrl, channel.DisplayName, _users[dlg.SelectedLabel].Name, vCard.Id, TimeshiftPosition);
+      //  // Seek to same position as the TV was stopped on another client.
+      //  double TimeshiftPosition = RemoteControl.Instance.GetTimeshiftPosition(vCard.Id, myUser);
+      //  g_Player.SeekAbsolute(TimeshiftPosition);
 
-        // Setup vPlaceshiftCard for stoptimeshift
-        vPlaceshiftCard = vCard;
-        vPlaceshiftCard.User.Name = myUser.Name;
-        inPlaceShift = true;
-      }
-      else
-      {
-        if (myUser.Name != _users[dlg.SelectedLabel].Name && OnShareTsBuffer())
-        {
-          if (inPlaceShift)
-          {
-            vPlaceshiftCard.StopTimeShifting();
-          }
-          else if (Card.IsTimeShifting)
-          {
-            Card.StopTimeShifting();
-          }
+      //  Navigator.setChannel(channel);
+      //  UpdateCurrentChannel();
 
-          if (!g_Player.Play(selectedUrl, g_Player.MediaType.TV, null, false))
-          {
-            StopPlayback();
-          }
+      //  Log.Debug("placeshift selected active rtspUrl: {0} for channel: {1}, user: {2}, vCard.Id: {3}, TimeshiftPosition: {4}", 
+      //    selectedUrl, channel.DisplayName, _users[dlg.SelectedLabel].Name, vCard.Id, TimeshiftPosition);
 
-          Navigator.setChannel(channel);
-          UpdateCurrentChannel();
+      //  // Setup vPlaceshiftCard for stoptimeshift
+      //  vPlaceshiftCard = vCard;
+      //  vPlaceshiftCard.User.Name = myUser.Name;
+      //  inPlaceShift = true;
+      //}
+      //else
+      //{
+      //  if (myUser.Name != _users[dlg.SelectedLabel].Name && OnShareTsBuffer())
+      //  {
+      //    if (inPlaceShift)
+      //    {
+      //      vPlaceshiftCard.StopTimeShifting();
+      //    }
+      //    else if (Card != null && Card.IsTimeShifting)
+      //    {
+      //      Card.StopTimeShifting();
+      //    }
 
-        }
-        else
-        {
-         ViewChannel(channel);
-        }
-      }
+      //    if (!g_Player.Play(selectedUrl, g_Player.MediaType.TV, null, false))
+      //    {
+      //      StopPlayback();
+      //    }
+
+      //    Navigator.setChannel(channel);
+      //    UpdateCurrentChannel();
+
+      //  }
+      //  else
+      //  {
+      //   ViewChannel(channel);
+      //  }
+      //}
     }
 
     private void OnRecord()
@@ -4218,7 +4222,7 @@ namespace TvPlugin
 
     public static void ViewChannel(Channel channel)
     {
-      ViewChannelAndCheck(channel);      
+      ViewChannelAndCheck(channel);
       UpdateProgressPercentageBar();
       return;
     }
