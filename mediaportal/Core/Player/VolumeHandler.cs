@@ -47,6 +47,8 @@ namespace MediaPortal.Player
       public static extern int CM_Reenumerate_DevNode(int dnDevInst, int ulFlags);
     }
 
+    static HideVolumeOSD.HideVolumeOSDLib VolumeOSD;
+
     #endregion
 
     #region Constructors
@@ -103,6 +105,16 @@ namespace MediaPortal.Player
           {
             Log.Error("VolumeHandler: Audio device not refreshed when init {0}", ex);
           }
+        }
+
+        if (_showVolumeOSD && OSInfo.OSInfo.Win8OrLater())
+        {
+          try
+          {
+            VolumeOSD = new HideVolumeOSD.HideVolumeOSDLib();
+            VolumeOSD.HideOSD();
+          }
+          catch { }
         }
       }
       else
@@ -179,6 +191,11 @@ namespace MediaPortal.Player
       }
       _instance = null;
       GUIGraphicsContext.VolumeHandler = null;
+
+      if (_showVolumeOSD && OSInfo.OSInfo.Win8OrLater() && VolumeOSD != null)
+      {
+        VolumeOSD.ShowOSD();
+      }
     }
 
     public virtual void UnMute()
@@ -415,7 +432,7 @@ namespace MediaPortal.Player
 
     private int[] _volumeTable;
     private int _startupVolume;
-    private bool _showVolumeOSD;
+    private static bool _showVolumeOSD;
 
     #endregion Fields
   }
