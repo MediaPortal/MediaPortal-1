@@ -5543,6 +5543,22 @@ namespace MediaPortal.Util
       return true;
     }
 
+    /// <summary>
+    /// Focus Mediaportal is visible.
+    /// </summary>
+    public static void SwitchFocus()
+    {
+      // Focus only when MP is not minimize and when SplashScreen is close
+      // Make MediaPortal window normal ( if minimized )
+      Win32API.ShowWindow(GUIGraphicsContext.ActiveForm, Win32API.ShowWindowFlags.ShowNormal);
+
+      // Make Mediaportal window focused
+      if (Win32API.SetForegroundWindow(GUIGraphicsContext.ActiveForm, true))
+      {
+        Log.Info("Util: Successfully switched focus.");
+      }
+    }
+
     public static string GetThumbnailPathname(string basePath, string file, string formatString)
     {
       file = EncryptLine(file);
