@@ -216,6 +216,7 @@ namespace TvPlugin
           }
           // needs for PIN protection function avoid to start tvhome with a protected group
           TVHome._allowProtectedItem = false;
+          TVHome._showAllRecording = false;
           TVHome.LoadSettings(true);
         }
       }

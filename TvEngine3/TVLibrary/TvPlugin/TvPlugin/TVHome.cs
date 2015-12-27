@@ -140,6 +140,7 @@ namespace TvPlugin
     private static TvServer _server;
     internal static bool firstNotLoaded = true;
     internal static bool _allowProtectedItem;
+    internal static bool _showAllRecording;
 
     private static ManualResetEvent _waitForBlackScreen = null;
     private static ManualResetEvent _waitForVideoReceived = null;
@@ -621,16 +622,19 @@ namespace TvPlugin
 
       if (channel != null)
       {
-        Log.Info("tv home init: ch {0}, gr {1}", channel.DisplayName, Navigator.CurrentGroup.GroupName);
-        if (!_suspended)
+        if (Navigator.CurrentGroup != null)
         {
-          AutoTurnOnTv(channel);
+          Log.Info("tv home init: ch {0}, gr {1}", channel.DisplayName, Navigator.CurrentGroup.GroupName);
+          if (!_suspended)
+          {
+            AutoTurnOnTv(channel);
+          }
+          else
+          {
+            _resumeChannel = channel;
+          }
+          GUIPropertyManager.SetProperty("#TV.Guide.Group", Navigator.CurrentGroup.GroupName);
         }
-        else
-        {
-          _resumeChannel = channel;
-        }
-        GUIPropertyManager.SetProperty("#TV.Guide.Group", Navigator.CurrentGroup.GroupName);
         Log.Info("tv home init:{0} done", channel.DisplayName);
       }
 
@@ -706,6 +710,7 @@ namespace TvPlugin
       if (!GUIGraphicsContext.IsTvWindow(newWindowId))
       {
         // needs for PIN protection function avoid to start tvhome with a protected group
+        TVHome._showAllRecording = false;
         TVHome._allowProtectedItem = false;
         LoadSettings(true);
         //and we're not playing which means we dont timeshift tv
@@ -1790,7 +1795,7 @@ namespace TvPlugin
         _allowProtectedItem = true;
       }
       Navigator.SetCurrentGroup(dlg.SelectedLabelText);
-      GUIPropertyManager.SetProperty("#TV.Guide.Group", dlg.SelectedLabelText);      
+      GUIPropertyManager.SetProperty("#TV.Guide.Group", dlg.SelectedLabelText);
       return true;
     }
 
@@ -2627,82 +2632,82 @@ namespace TvPlugin
         return;
       }
 
-      //string selectedUrl = RemoteControl.Instance.GetStreamingUrl(_users[dlg.SelectedLabel]);
+      string selectedUrl = RemoteControl.Instance.GetStreamingUrl(_users[dlg.SelectedLabel]);
       VirtualCard vCard = new VirtualCard(_users[dlg.SelectedLabel], RemoteControl.HostName);
       Channel channel = Navigator.GetChannel(vCard.IdChannel);
 
-      // Disable Placeshift feature (not working)
-      ViewChannel(channel);
+      User myUser = new User();
 
-      //User myUser = new User();
+      // Connect to the virtual user and play
+      if (_users[dlg.SelectedLabel].Name.Contains("Placeshift Virtual User") || _users[dlg.SelectedLabel].Name == "aMPdroid")
+      {
+        if (inPlaceShift)
+        {
+          vPlaceshiftCard.StopTimeShifting();
+        }
+        else if (Card != null && Card.IsTimeShifting)
+        {
+          Card.StopTimeShifting();
+        }
 
-      //// Connect to the virtual user and play
-      //if (_users[dlg.SelectedLabel].Name.Contains("Placeshift Virtual User") || _users[dlg.SelectedLabel].Name == "aMPdroid")
-      //{
-      //  if (inPlaceShift)
-      //  {
-      //    vPlaceshiftCard.StopTimeShifting();
-      //  }
-      //  else if (Card != null && Card.IsTimeShifting)
-      //  {
-      //    Card.StopTimeShifting();
-      //  }
+        myUser.CardId = vCard.Id;
 
-      //  myUser.CardId = vCard.Id;
+        // Replace the virtual user to local user
+        RemoteControl.Instance.ReplaceTimeshiftUser(vCard.Id, myUser, _users[dlg.SelectedLabel].Name);
 
-      //  // Replace the virtual user to local user
-      //  RemoteControl.Instance.ReplaceTimeshiftUser(vCard.Id, myUser, _users[dlg.SelectedLabel].Name);
+        // Send heartbeat ASAP
+        RemoteControl.Instance.HeartBeat(myUser);
 
-      //  // Send heartbeat ASAP
-      //  RemoteControl.Instance.HeartBeat(myUser);
+        if (!g_Player.Play(selectedUrl, g_Player.MediaType.TV, null, false))
+        {
+          StopPlayback();
+        }
 
-      //  if (!g_Player.Play(selectedUrl, g_Player.MediaType.TV, null, false))
-      //  {
-      //    StopPlayback();
-      //  }
+        // Seek to same position as the TV was stopped on another client.
+        double TimeshiftPosition = RemoteControl.Instance.GetTimeshiftPosition(vCard.Id, myUser);
+        g_Player.SeekAbsolute(TimeshiftPosition);
 
-      //  // Seek to same position as the TV was stopped on another client.
-      //  double TimeshiftPosition = RemoteControl.Instance.GetTimeshiftPosition(vCard.Id, myUser);
-      //  g_Player.SeekAbsolute(TimeshiftPosition);
+        Navigator.setChannel(channel);
+        UpdateCurrentChannel();
 
-      //  Navigator.setChannel(channel);
-      //  UpdateCurrentChannel();
+        Log.Debug("placeshift selected active rtspUrl: {0} for channel: {1}, user: {2}, vCard.Id: {3}, TimeshiftPosition: {4}",
+          selectedUrl, channel.DisplayName, _users[dlg.SelectedLabel].Name, vCard.Id, TimeshiftPosition);
 
-      //  Log.Debug("placeshift selected active rtspUrl: {0} for channel: {1}, user: {2}, vCard.Id: {3}, TimeshiftPosition: {4}", 
-      //    selectedUrl, channel.DisplayName, _users[dlg.SelectedLabel].Name, vCard.Id, TimeshiftPosition);
+        // Setup vPlaceshiftCard for stoptimeshift
+        vPlaceshiftCard = vCard;
+        vPlaceshiftCard.User.Name = myUser.Name;
+        inPlaceShift = true;
+      }
+      else
+      {
+        VirtualCard tvcard = new VirtualCard(_users[dlg.SelectedLabel], RemoteControl.HostName);
+        var isRecording = tvcard.IsRecording;
 
-      //  // Setup vPlaceshiftCard for stoptimeshift
-      //  vPlaceshiftCard = vCard;
-      //  vPlaceshiftCard.User.Name = myUser.Name;
-      //  inPlaceShift = true;
-      //}
-      //else
-      //{
-      //  if (myUser.Name != _users[dlg.SelectedLabel].Name && OnShareTsBuffer())
-      //  {
-      //    if (inPlaceShift)
-      //    {
-      //      vPlaceshiftCard.StopTimeShifting();
-      //    }
-      //    else if (Card != null && Card.IsTimeShifting)
-      //    {
-      //      Card.StopTimeShifting();
-      //    }
+        if (myUser.Name != _users[dlg.SelectedLabel].Name && !isRecording && OnShareTsBuffer())
+        {
+          if (inPlaceShift)
+          {
+            vPlaceshiftCard.StopTimeShifting();
+          }
+          else if (Card != null && Card.IsTimeShifting)
+          {
+            Card.StopTimeShifting();
+          }
 
-      //    if (!g_Player.Play(selectedUrl, g_Player.MediaType.TV, null, false))
-      //    {
-      //      StopPlayback();
-      //    }
+          if (!g_Player.Play(selectedUrl, g_Player.MediaType.TV, null, false))
+          {
+            StopPlayback();
+          }
 
-      //    Navigator.setChannel(channel);
-      //    UpdateCurrentChannel();
+          Navigator.setChannel(channel);
+          UpdateCurrentChannel();
 
-      //  }
-      //  else
-      //  {
-      //   ViewChannel(channel);
-      //  }
-      //}
+        }
+        else
+        {
+          ViewChannel(channel);
+        }
+      }
     }
 
     private void OnRecord()

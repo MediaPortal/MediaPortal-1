@@ -81,7 +81,6 @@ namespace TvPlugin
     private bool _resetSMSsearch = false;
     private bool _oldStateSMSsearch;
     private DateTime _resetSMSsearchDelay;
-    private bool _showAllRecording;
 
     [SkinControl(6)]
     protected GUIButtonControl btnCleanup = null;
@@ -275,7 +274,7 @@ namespace TvPlugin
       // if we're switching to another plugin
       if (!GUIGraphicsContext.IsTvWindow(newWindowId) && newWindowId != (int)Window.WINDOW_FULLSCREEN_VIDEO)
       {
-        _showAllRecording = false;
+        TVHome._showAllRecording = false;
         TVHome._allowProtectedItem = false;
         TVHome.LoadSettings(true);
       }
@@ -736,7 +735,7 @@ namespace TvPlugin
         Log.Debug("LoadDirectory() - finished loading '" + allRecordings.Count + "' recordings after '{0}' ms.", watch.ElapsedMilliseconds);
 
         // skip recording if it was recorded from a disallowed (PIN protected) channel
-        var recordings = !_showAllRecording ? allRecordings.Where(rec => !disallowedChannels.Contains(rec.IdChannel)).ToList() : allRecordings;
+        var recordings = !TVHome._showAllRecording ? allRecordings.Where(rec => !disallowedChannels.Contains(rec.IdChannel)).ToList() : allRecordings;
 
         // load the active channels only once to save multiple requests later when retrieving related channel
         List<Channel> channels = Channel.ListAll().ToList();
@@ -1502,13 +1501,13 @@ namespace TvPlugin
               {
                 return;
               }
-              _showAllRecording = true;
+              TVHome._showAllRecording = true;
               TVHome._allowProtectedItem = true;
             }
           }
           else
           {
-            _showAllRecording = false;
+            TVHome._showAllRecording = false;
             TVHome._allowProtectedItem = false;
           }
         }
