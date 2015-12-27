@@ -830,7 +830,7 @@ namespace MediaPortal
         Log.Debug("D3D: Testing cooperation level of device");
         try
         {
-          GUIGraphicsContext.DX9Device.TestCooperativeLevel();
+          if (GUIGraphicsContext.DX9Device != null) GUIGraphicsContext.DX9Device.TestCooperativeLevel();
         }
         catch (DeviceLostException)
         {
@@ -1429,7 +1429,10 @@ namespace MediaPortal
         catch (Exception ex)
         {
           Log.Error("D3D: InitializeDeviceObjects - Exception: {0}", ex.ToString());
-          GUIGraphicsContext.DX9Device.Dispose();
+          if (GUIGraphicsContext.DX9Device != null)
+          {
+            GUIGraphicsContext.DX9Device.Dispose();
+          }
           GUIGraphicsContext.DX9Device = null;
         }
       }

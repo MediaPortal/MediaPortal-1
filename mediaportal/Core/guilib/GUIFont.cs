@@ -29,6 +29,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.Text;
 using DShowNET.Helper;
 using MediaPortal.ExtensionMethods;
 using Microsoft.DirectX.Direct3D;
@@ -1261,11 +1262,17 @@ namespace MediaPortal.GUI.Library
           catch (Exception) {}
         }
 
-
-        _textureFont.Disposing -= new EventHandler(_textureFont_Disposing);
-        _textureFont.Disposing += new EventHandler(_textureFont_Disposing);
-        SetFontEgine();
-        _d3dxFont = new Microsoft.DirectX.Direct3D.Font(GUIGraphicsContext.DX9Device, _systemFont);
+        try
+        {
+          _textureFont.Disposing -= new EventHandler(_textureFont_Disposing);
+          _textureFont.Disposing += new EventHandler(_textureFont_Disposing);
+          SetFontEgine();
+          _d3dxFont = new Microsoft.DirectX.Direct3D.Font(GUIGraphicsContext.DX9Device, _systemFont);
+        }
+        catch (Exception)
+        {
+          Log.Error("GUIFont: Failed to D3D...");
+        }
       }
       finally
       {
