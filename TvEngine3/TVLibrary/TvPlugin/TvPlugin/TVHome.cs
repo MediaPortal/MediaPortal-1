@@ -2545,9 +2545,9 @@ namespace TvPlugin
         {
           return;
         }
-        for (int i = 0; i < users.Length; ++i)
+        foreach (var t in users.ToList())
         {
-          IUser user = users[i];
+          var user = t;
           Log.Debug("rtsp url: {0}, {1}", user, RemoteControl.Instance.GetStreamingUrl(user));
           if (card.IdCard != user.CardId)
           {
