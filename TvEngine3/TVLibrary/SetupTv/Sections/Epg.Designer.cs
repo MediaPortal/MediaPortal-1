@@ -55,6 +55,8 @@
       this.label22 = new System.Windows.Forms.Label();
       this.label23 = new System.Windows.Forms.Label();
       this.groupBox7 = new System.Windows.Forms.GroupBox();
+      this.label2 = new System.Windows.Forms.Label();
+      this.numericEpgCardLimit = new System.Windows.Forms.NumericUpDown();
       this.checkboxSameTransponder = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.label1 = new System.Windows.Forms.Label();
       this.checkBoxEnableCRCCheck = new MediaPortal.UserInterface.Controls.MPCheckBox();
@@ -62,8 +64,6 @@
       this.checkBoxAlwaysFillHoles = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.tabPage1 = new System.Windows.Forms.TabPage();
       this.tabControlEpg = new System.Windows.Forms.TabControl();
-      this.numericEpgCardLimit = new System.Windows.Forms.NumericUpDown();
-      this.label2 = new System.Windows.Forms.Label();
       this.groupBox9.SuspendLayout();
       this.groupBox2.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownEpgRefresh)).BeginInit();
@@ -71,9 +71,9 @@
       this.groupBox5.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTSEpgTimeout)).BeginInit();
       this.groupBox7.SuspendLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.numericEpgCardLimit)).BeginInit();
       this.tabPage1.SuspendLayout();
       this.tabControlEpg.SuspendLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.numericEpgCardLimit)).BeginInit();
       this.SuspendLayout();
       // 
       // groupBox9
@@ -264,7 +264,7 @@
       // 
       this.checkBoxEnableEPGWhileIdle.AutoSize = true;
       this.checkBoxEnableEPGWhileIdle.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.checkBoxEnableEPGWhileIdle.Location = new System.Drawing.Point(10, 17);
+      this.checkBoxEnableEPGWhileIdle.Location = new System.Drawing.Point(10, 19);
       this.checkBoxEnableEPGWhileIdle.Name = "checkBoxEnableEPGWhileIdle";
       this.checkBoxEnableEPGWhileIdle.Size = new System.Drawing.Size(63, 17);
       this.checkBoxEnableEPGWhileIdle.TabIndex = 11;
@@ -402,6 +402,36 @@
       this.groupBox7.TabStop = false;
       this.groupBox7.Text = "General";
       // 
+      // label2
+      // 
+      this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.label2.AutoSize = true;
+      this.label2.Location = new System.Drawing.Point(229, 91);
+      this.label2.Name = "label2";
+      this.label2.Size = new System.Drawing.Size(141, 13);
+      this.label2.TabIndex = 11;
+      this.label2.Text = "Number of tuners to be used";
+      this.label2.Click += new System.EventHandler(this.label2_Click);
+      // 
+      // numericEpgCardLimit
+      // 
+      this.numericEpgCardLimit.Location = new System.Drawing.Point(140, 87);
+      this.numericEpgCardLimit.Maximum = new decimal(new int[] {
+            3600,
+            0,
+            0,
+            0});
+      this.numericEpgCardLimit.Name = "numericEpgCardLimit";
+      this.numericEpgCardLimit.Size = new System.Drawing.Size(86, 20);
+      this.numericEpgCardLimit.TabIndex = 11;
+      this.numericEpgCardLimit.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+      this.numericEpgCardLimit.Value = new decimal(new int[] {
+            2,
+            0,
+            0,
+            0});
+      this.numericEpgCardLimit.ValueChanged += new System.EventHandler(this.numericEpgCardLimit_ValueChanged);
+      // 
       // checkboxSameTransponder
       // 
       this.checkboxSameTransponder.AutoSize = true;
@@ -483,36 +513,6 @@
       this.tabControlEpg.Size = new System.Drawing.Size(474, 436);
       this.tabControlEpg.TabIndex = 1;
       // 
-      // numericEpgCardLimit
-      // 
-      this.numericEpgCardLimit.Location = new System.Drawing.Point(140, 87);
-      this.numericEpgCardLimit.Maximum = new decimal(new int[] {
-            3600,
-            0,
-            0,
-            0});
-      this.numericEpgCardLimit.Name = "numericEpgCardLimit";
-      this.numericEpgCardLimit.Size = new System.Drawing.Size(86, 20);
-      this.numericEpgCardLimit.TabIndex = 11;
-      this.numericEpgCardLimit.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-      this.numericEpgCardLimit.Value = new decimal(new int[] {
-            2,
-            0,
-            0,
-            0});
-      this.numericEpgCardLimit.ValueChanged += new System.EventHandler(this.numericEpgCardLimit_ValueChanged);
-      // 
-      // label2
-      // 
-      this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.label2.AutoSize = true;
-      this.label2.Location = new System.Drawing.Point(229, 91);
-      this.label2.Name = "label2";
-      this.label2.Size = new System.Drawing.Size(111, 13);
-      this.label2.TabIndex = 11;
-      this.label2.Text = "Number(s) card to use";
-      this.label2.Click += new System.EventHandler(this.label2_Click);
-      // 
       // Epg
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -531,9 +531,9 @@
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTSEpgTimeout)).EndInit();
       this.groupBox7.ResumeLayout(false);
       this.groupBox7.PerformLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.numericEpgCardLimit)).EndInit();
       this.tabPage1.ResumeLayout(false);
       this.tabControlEpg.ResumeLayout(false);
-      ((System.ComponentModel.ISupportInitialize)(this.numericEpgCardLimit)).EndInit();
       this.ResumeLayout(false);
 
     }
