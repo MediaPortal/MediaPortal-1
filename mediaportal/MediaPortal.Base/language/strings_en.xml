@@ -1119,7 +1119,7 @@
     <String id="1508">Channel not mapped to any card</String>
     <String id="1509">No tuning details for the channel</String>
     <String id="1510">Connection to TV service lost</String>
-    <String id="1511">No active streams</String>
+    <String id="1511">No active streams or protected</String>
     <String id="1512">Tune previous ch.?</String>
     <String id="1513">Timeshifting stopped due to a scheduled\rrecording</String>
     <String id="1514">Timeshifting stopped by an\radministrator</String>
@@ -2100,7 +2100,7 @@
     <String id="200050">This will delete your recordings from hard drive</String>
     <String id="200051">Delete this episode?</String>
     <String id="200052">Active recordings</String>
-    <String id="200053">No active recordings</String>
+    <String id="200053">No active recordings or protected</String>
     <String id="200054">Could not delete TV recording.</String>
     <String id="200055">Live TV viewing might be disrupted.</String>
     <String id="200059">Audio Dual Mono Mode</String>

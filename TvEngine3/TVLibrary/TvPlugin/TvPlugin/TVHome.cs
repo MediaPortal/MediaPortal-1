@@ -139,6 +139,7 @@ namespace TvPlugin
     private static bool _isAnyCardRecording = false;
     private static TvServer _server;
     internal static bool firstNotLoaded = true;
+    internal static bool _allowProtectedItem;
 
     private static ManualResetEvent _waitForBlackScreen = null;
     private static ManualResetEvent _waitForVideoReceived = null;
@@ -449,16 +450,11 @@ namespace TvPlugin
 
       IList<ChannelGroup> groups = ChannelGroup.ListAll();
 
-      List<int> disallowedGroups = new List<int>();
-
-      foreach (ChannelGroup group in groups)
-      {
-        if (hidePinProtectedChannelsGroup && !string.IsNullOrEmpty(group.PinCode)
-          || !string.IsNullOrEmpty(group.PinCode) && TVHome.Navigator.CurrentGroup.IdGroup != group.IdGroup)
-        {
-          disallowedGroups.Add(group.IdGroup);
-        }
-      }
+      var disallowedGroups = (from @group in groups
+        where
+          hidePinProtectedChannelsGroup && !string.IsNullOrEmpty(@group.PinCode) ||
+          !string.IsNullOrEmpty(@group.PinCode) && TVHome.Navigator.CurrentGroup.IdGroup != @group.IdGroup
+        select @group.IdGroup).ToList();
 
       List<Channel> channels = Channel.ListAll().ToList();
       IList<GroupMap> allgroupMaps = GroupMap.ListAll();
@@ -1782,9 +1778,10 @@ namespace TvPlugin
         {
           return true;
         }
+        _allowProtectedItem = true;
       }
       Navigator.SetCurrentGroup(dlg.SelectedLabelText);
-      GUIPropertyManager.SetProperty("#TV.Guide.Group", dlg.SelectedLabelText);
+      GUIPropertyManager.SetProperty("#TV.Guide.Group", dlg.SelectedLabelText);      
       return true;
     }
 
@@ -2342,7 +2339,7 @@ namespace TvPlugin
 
     private void OnChannelTvOnOff(bool buttonTvOnOff)
     {
-      if (btnTvOnOff.Selected != buttonTvOnOff)
+      if (btnTvOnOff != null && btnTvOnOff.Selected != buttonTvOnOff)
       {
         btnTvOnOff.Selected = buttonTvOnOff;
       }
@@ -2350,7 +2347,7 @@ namespace TvPlugin
 
     private void UpdateGUIonPlaybackStateChange(bool playbackStarted)
     {
-      if (btnTvOnOff.Selected != playbackStarted)
+      if (btnTvOnOff != null && btnTvOnOff.Selected != playbackStarted)
       {
         btnTvOnOff.Selected = playbackStarted;
       }
@@ -2358,7 +2355,7 @@ namespace TvPlugin
       UpdateProgressPercentageBar();
 
       bool hasTeletext = (!Connected || Card.HasTeletext) && (playbackStarted);
-      btnTeletext.IsVisible = hasTeletext;
+      if (btnTeletext != null) btnTeletext.IsVisible = hasTeletext;
     }
 
     private void UpdateGUIonPlaybackStateChange()
@@ -2366,7 +2363,7 @@ namespace TvPlugin
       bool isTimeShiftingTV = (Connected && Card.IsTimeShifting && g_Player.IsTV);
       if (!_tunePending)
       {
-        if (btnTvOnOff.Selected != isTimeShiftingTV)
+        if (btnTvOnOff != null && btnTvOnOff.Selected != isTimeShiftingTV)
         {
           btnTvOnOff.Selected = isTimeShiftingTV;
         }
@@ -2375,7 +2372,7 @@ namespace TvPlugin
       UpdateProgressPercentageBar();
 
       bool hasTeletext = (!Connected || Card.HasTeletext) && (isTimeShiftingTV);
-      btnTeletext.IsVisible = hasTeletext;
+      if (btnTeletext != null) btnTeletext.IsVisible = hasTeletext;
     }
 
     private void UpdateCurrentChannel()
@@ -2448,8 +2445,17 @@ namespace TvPlugin
         }
 
         dlg.DoModal(this.GetID);
-        if (dlg.SelectedLabel < 0)
+        activeRecordings = activeRecordings.Where(stream => !disallowedChannels.Contains(stream.IdChannel)).ToList();
+        if (activeRecordings.Count == 0)
         {
+          GUIDialogOK pDlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_OK);
+          if (pDlgOK != null)
+          {
+            pDlgOK.SetHeading(200052); //my tv
+            pDlgOK.SetLine(1, GUILocalizeStrings.Get(200053)); // No Active recordings
+            pDlgOK.SetLine(2, "");
+            pDlgOK.DoModal(this.GetID);
+          }
           return;
         }
 
@@ -2530,6 +2536,10 @@ namespace TvPlugin
       int count = 0;
       TvServer server = new TvServer();
       List<IUser> _users = new List<IUser>();
+
+      // Display only protected stream if we are in a protected group
+      List<int> disallowedChannels = TVHome.ListDisallowedChannelsById();
+
       foreach (Card card in cards)
       {
         if (card.Enabled == false)
@@ -2561,27 +2571,34 @@ namespace TvPlugin
             int idChannel = tvcard.IdChannel;
             user = tvcard.User;
             Channel ch = Channel.Retrieve(idChannel);
-            channels.Add(ch);
-            GUIListItem item = new GUIListItem();
-            item.Label = ch.DisplayName;
-            item.Label2 = user.Name;
-            string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, ch.DisplayName);
-            if (string.IsNullOrEmpty(strLogo))
+            if (!disallowedChannels.Contains(ch.IdChannel))
             {
-              strLogo = "defaultVideoBig.png";
+              channels.Add(ch);
+              GUIListItem item = new GUIListItem();
+              item.Label = ch.DisplayName;
+              item.Label2 = user.Name;
+              string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, ch.DisplayName);
+              if (string.IsNullOrEmpty(strLogo))
+              {
+                strLogo = "defaultVideoBig.png";
+              }
+              item.IconImage = strLogo;
+              item.PinImage = isRecording ? Thumbs.TvRecordingIcon : "";
+              dlg.Add(item);
+              _users.Add(user);
+              if (Card != null && Card.IdChannel == idChannel)
+              {
+                selected = count;
+              }
+              count++;
             }
-            item.IconImage = strLogo;
-            item.PinImage = isRecording ? Thumbs.TvRecordingIcon : "";
-            dlg.Add(item);
-            _users.Add(user);
-            if (Card != null && Card.IdChannel == idChannel)
-            {
-              selected = count;
-            }
-            count++;
           }
         }
       }
+
+      // Display only protected stream if we are in a protected group
+      channels = channels.Where(stream => !disallowedChannels.Contains(stream.IdChannel)).ToList();
+
       if (channels.Count == 0)
       {
         GUIDialogOK pDlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_OK);

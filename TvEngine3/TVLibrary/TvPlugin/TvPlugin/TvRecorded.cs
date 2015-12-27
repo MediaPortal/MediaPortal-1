@@ -81,7 +81,6 @@ namespace TvPlugin
     private bool _resetSMSsearch = false;
     private bool _oldStateSMSsearch;
     private DateTime _resetSMSsearchDelay;
-    private bool _allowProtectedRecord;
     private bool _showAllRecording;
 
     [SkinControl(6)]
@@ -276,7 +275,7 @@ namespace TvPlugin
       if (newWindowId != (int)Window.WINDOW_FULLSCREEN_VIDEO)
       {
         _showAllRecording = false;
-        _allowProtectedRecord = false;
+        TVHome._allowProtectedItem = false;
         TVHome.LoadSettings(true);
       }
 
@@ -1473,7 +1472,7 @@ namespace TvPlugin
           return;
         }
         dlgYesNo.SetHeading(1657); // Unhide/hide protected recording
-        if (_allowProtectedRecord)
+        if (TVHome._allowProtectedItem)
         {
           dlgYesNo.SetLine(1, 1659); // Do you want to hide them?
           hideItems = true;
@@ -1503,13 +1502,13 @@ namespace TvPlugin
                 return;
               }
               _showAllRecording = true;
-              _allowProtectedRecord = true;
+              TVHome._allowProtectedItem = true;
             }
           }
           else
           {
             _showAllRecording = false;
-            _allowProtectedRecord = false;
+            TVHome._allowProtectedItem = false;
           }
         }
         LoadDirectory();
