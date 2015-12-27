@@ -214,6 +214,9 @@ namespace TvPlugin
               TVHome.Card.StopTimeShifting();
             }
           }
+          // needs for PIN protection function avoid to start tvhome with a protected group
+          TVHome._allowProtectedItem = false;
+          TVHome.LoadSettings(true);
         }
       }
     }

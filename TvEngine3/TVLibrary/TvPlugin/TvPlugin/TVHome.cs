@@ -576,7 +576,13 @@ namespace TvPlugin
       }
       else
       {
-        LoadSettings(true); // needs for PIN protection function avoid to start tvhome with a protected group
+        // needs for PIN protection function avoid to start tvhome with a protected group
+        var previousWindowId = GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow).PreviousWindowId;
+        if (previousWindowId == (int)Window.WINDOW_HOME ||
+            previousWindowId == (int)Window.WINDOW_SECOND_HOME)
+        {
+          LoadSettings(true);
+        }
       }
 
       if (m_navigator == null)
@@ -699,6 +705,9 @@ namespace TvPlugin
       // if we're switching to another plugin
       if (!GUIGraphicsContext.IsTvWindow(newWindowId))
       {
+        // needs for PIN protection function avoid to start tvhome with a protected group
+        TVHome._allowProtectedItem = false;
+        LoadSettings(true);
         //and we're not playing which means we dont timeshift tv
         //g_Player.Stop();
       }

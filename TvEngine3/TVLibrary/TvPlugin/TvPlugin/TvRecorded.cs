@@ -271,8 +271,9 @@ namespace TvPlugin
       g_Player.PlayBackStarted -= new g_Player.StartedHandler(OnPlayRecordingBackStarted);
       g_Player.PlayBackChanged -= new g_Player.ChangedHandler(OnPlayRecordingBackChanged);*/
 
-      // Reset disallowed recorded items only we didn't start or stop the video.
-      if (newWindowId != (int)Window.WINDOW_FULLSCREEN_VIDEO)
+      // Reset disallowed recorded items only when we didn't start or stop the video.
+      // if we're switching to another plugin
+      if (!GUIGraphicsContext.IsTvWindow(newWindowId) && newWindowId != (int)Window.WINDOW_FULLSCREEN_VIDEO)
       {
         _showAllRecording = false;
         TVHome._allowProtectedItem = false;
