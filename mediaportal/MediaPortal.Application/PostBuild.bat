@@ -141,6 +141,7 @@ xcopy %1\MPE\MpeMaker\bin\%2\MpeMaker.* . /Y /D
 REM Nuget 
 xcopy %1\Databases\bin\%2\HtmlAgilityPack.* . /Y /D
 xcopy %1\..\Packages\MediaInfo.0.7.72\MediaInfo.dll . /Y /D
+xcopy %1\..\Packages\Sqlite.3.9.2\sqlite.dll . /Y /D
 
 REM ffmpeg 
 xcopy %1\..\Packages\ffmpeg.2.7.1\ffmpeg.exe MovieThumbnailer\ /Y /D
