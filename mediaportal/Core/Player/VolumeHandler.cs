@@ -87,7 +87,7 @@ namespace MediaPortal.Player
         {
           try
           {
-            VolumeOSD = new HideVolumeOSD.HideVolumeOSDLib();
+            VolumeOSD = new HideVolumeOSD.HideVolumeOSDLib(IsMuted);
             VolumeOSD.HideOSD();
           }
           catch { }

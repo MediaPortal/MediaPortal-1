@@ -53,14 +53,22 @@ namespace HideVolumeOSD
 
 		IntPtr hWndInject = IntPtr.Zero;
 
-    public HideVolumeOSDLib()
+    public HideVolumeOSDLib(bool IsMuted)
 		{
       hWndInject = FindOSDWindow();
       
 			if (hWndInject == IntPtr.Zero)
 			{
-				keybd_event((byte)Keys.VolumeUp, 0, 0, 0);
-				keybd_event((byte)Keys.VolumeDown, 0, 0, 0);
+        if (IsMuted)
+        {
+          keybd_event((byte)Keys.VolumeMute, 0, 0, 0);
+          keybd_event((byte)Keys.VolumeMute, 0, 0, 0);
+        }
+        else
+        {
+          keybd_event((byte)Keys.VolumeUp, 0, 0, 0);
+          keybd_event((byte)Keys.VolumeDown, 0, 0, 0);
+        }
 
 				hWndInject = FindOSDWindow();
 
@@ -109,11 +117,6 @@ namespace HideVolumeOSD
 		public void HideOSD()
 		{
 			ShowWindow(hWndInject, 6); // SW_MINIMIZE
-
-			// show window on the screen
-
-			keybd_event((byte)Keys.VolumeUp, 0, 0, 0); 
-			keybd_event((byte)Keys.VolumeDown, 0, 0, 0); 
 		}
 
 		public void ShowOSD()
