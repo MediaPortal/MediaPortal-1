@@ -545,10 +545,10 @@ Section "MediaPortal core files (required)" SecCore
   File "${git_MP}\WindowPlugins\Common.GUIPlugins\bin\${BUILD_TYPE}\Common.GUIPlugins.dll"
   ; ffmpeg
   SetOutPath "$MPdir.Base\MovieThumbnailer"
-  File "${git_ROOT}\Packages\ffmpeg.2.1.1\ffmpeg.exe"
+  File "${git_ROOT}\Packages\ffmpeg.2.7.1\ffmpeg.exe"
   ; NuGet binaries MediaInfo
   SetOutPath "$MPdir.Base\"
-  File "${git_ROOT}\Packages\MediaInfo.0.7.69\MediaInfo.dll"
+  File "${git_ROOT}\Packages\MediaInfo.0.7.72\MediaInfo.dll"
   ; NuGet binaries
   ; Bass Core
   SetOutPath "$MPdir.Base\"
