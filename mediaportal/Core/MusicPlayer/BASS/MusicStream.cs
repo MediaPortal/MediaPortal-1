@@ -381,6 +381,9 @@ namespace MediaPortal.MusicPlayer.BASS
       {
         SetReplayGain();
       }
+
+      SetGuiProperties();
+
       Log.Info("BASS: Successfully created BASS audio stream");
       Log.Info("BASS: ---------------------------------------------");
     }
@@ -610,6 +613,169 @@ namespace MediaPortal.MusicPlayer.BASS
           }
           break;
       }
+    }
+
+    /// <summary>
+    /// Sets the GUI Properties from the Channel Information
+    /// </summary>
+    private void SetGuiProperties()
+    {
+      string audiotexture = string.Empty;
+      switch (_channelInfo.ctype)
+      {
+        case (BASSChannelType.BASS_CTYPE_MUSIC_IT):
+          audiotexture = "IT";
+          break;
+
+        case (BASSChannelType.BASS_CTYPE_MUSIC_MO3):
+          audiotexture = "MO3";
+          break;
+
+        case (BASSChannelType.BASS_CTYPE_MUSIC_MOD):
+          audiotexture = "MOD";
+          break;
+
+        case (BASSChannelType.BASS_CTYPE_MUSIC_MTM):
+          audiotexture = "MTM";
+          break;
+
+        case (BASSChannelType.BASS_CTYPE_MUSIC_S3M):
+          audiotexture = "S3M";
+          break;
+
+        case (BASSChannelType.BASS_CTYPE_MUSIC_XM):
+          audiotexture = "XM";
+          break;
+
+        case (BASSChannelType.BASS_CTYPE_RECORD):
+          audiotexture = "Recording";
+          break;
+
+        case (BASSChannelType.BASS_CTYPE_SAMPLE):
+          audiotexture = "Sample";
+          break;
+
+        case (BASSChannelType.BASS_CTYPE_STREAM):
+          audiotexture = "User Stream";
+          break;
+
+        case (BASSChannelType.BASS_CTYPE_STREAM_AAC):
+          audiotexture = "AAC";
+          break;
+
+        case (BASSChannelType.BASS_CTYPE_STREAM_AC3):
+          audiotexture = "AC3";
+          break;
+
+        case (BASSChannelType.BASS_CTYPE_STREAM_ADX):
+          audiotexture = "ADX";
+          break;
+
+        case (BASSChannelType.BASS_CTYPE_STREAM_AIFF):
+          audiotexture = "AIFF";
+          break;
+
+        case (BASSChannelType.BASS_CTYPE_STREAM_AIX):
+          audiotexture = "AIX";
+          break;
+
+        case (BASSChannelType.BASS_CTYPE_STREAM_ALAC):
+          audiotexture = "AAC";
+          break;
+
+        case (BASSChannelType.BASS_CTYPE_STREAM_APE):
+          audiotexture = "APE";
+          break;
+
+        case (BASSChannelType.BASS_CTYPE_STREAM_CA):
+          audiotexture = "Core Audio";
+          break;
+
+        case (BASSChannelType.BASS_CTYPE_STREAM_CD):
+          audiotexture = "CD";
+          break;
+
+        case (BASSChannelType.BASS_CTYPE_STREAM_FLAC):
+          audiotexture = "FLAC";
+          break;
+
+        case (BASSChannelType.BASS_CTYPE_STREAM_FLAC_OGG):
+          audiotexture = "OGG";
+          break;
+
+        case (BASSChannelType.BASS_CTYPE_STREAM_MF):
+          audiotexture = "MF";
+          break;
+
+        case (BASSChannelType.BASS_CTYPE_STREAM_MIDI):
+          audiotexture = "Midi";
+          break;
+
+        case (BASSChannelType.BASS_CTYPE_STREAM_MP1):
+          audiotexture = "MP1";
+          break;
+
+        case (BASSChannelType.BASS_CTYPE_STREAM_MP2):
+          audiotexture = "MP2";
+          break;
+
+        case (BASSChannelType.BASS_CTYPE_STREAM_MP3):
+          audiotexture = "MP3";
+          break;
+
+        case (BASSChannelType.BASS_CTYPE_STREAM_MP4):
+          audiotexture = "MP4";
+          break;
+
+        case (BASSChannelType.BASS_CTYPE_STREAM_MPC):
+          audiotexture = "Musepack";
+          break;
+
+        case (BASSChannelType.BASS_CTYPE_STREAM_OFR):
+          audiotexture = "OptimFROG";
+          break;
+
+        case (BASSChannelType.BASS_CTYPE_STREAM_OPUS):
+          audiotexture = "Opus";
+          break;
+
+        case (BASSChannelType.BASS_CTYPE_STREAM_OGG):
+          audiotexture = "Ogg";
+          break;
+
+        case (BASSChannelType.BASS_CTYPE_STREAM_SPX):
+          audiotexture = "SPX";
+          break;
+
+        case (BASSChannelType.BASS_CTYPE_STREAM_TTA):
+          audiotexture = "TTA";
+          break;
+
+        case (BASSChannelType.BASS_CTYPE_STREAM_WAV_PCM):
+        case (BASSChannelType.BASS_CTYPE_STREAM_WAV_FLOAT):
+        case (BASSChannelType.BASS_CTYPE_STREAM_WAV):
+          audiotexture = "WAV";
+          var extension = System.IO.Path.GetExtension(_filePath);
+          if (extension != null && extension.ToLower() == ".dts")
+          {
+            audiotexture = "DTS";
+          }
+          break;
+
+        case (BASSChannelType.BASS_CTYPE_STREAM_WMA):
+        case (BASSChannelType.BASS_CTYPE_STREAM_WMA_MP3):
+          audiotexture = "WMA";
+          break;
+
+        case (BASSChannelType.BASS_CTYPE_STREAM_WV):
+        case (BASSChannelType.BASS_CTYPE_STREAM_WV_H):
+        case (BASSChannelType.BASS_CTYPE_STREAM_WV_L):
+        case (BASSChannelType.BASS_CTYPE_STREAM_WV_LH):
+          audiotexture = "Wavpack";
+          break;
+      }
+
+      GUIPropertyManager.SetProperty("#Play.Current.AudioCodec.Texture", audiotexture);
     }
 
     #endregion
