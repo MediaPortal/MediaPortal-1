@@ -35,9 +35,9 @@ namespace MediaPortal.Configuration.Sections
 {
   public partial class Music : SectionSettings
   {
-    #region Variables
+		#region Variables
 
-    private const string JumpToValue0 = "none";
+		private const string JumpToValue0 = "none";
     private const string JumpToValue1 = "nowPlayingAlways";
     private const string JumpToValue2 = "nowPlayingMultipleItems";
     private const string JumpToValue3 = "currentPlaylistAlways";
@@ -119,11 +119,18 @@ namespace MediaPortal.Configuration.Sections
 
     private bool _initialising = true;
 
-    #endregion
+		#region Delegates
 
-    #region ctor
+	  delegate int GetValueCallback();
+		delegate string GetSoundDeviceSelectedCallback();
+		delegate void SetValueCallback(int value);
 
-    public Music()
+		#endregion
+		#endregion
+
+		#region ctor
+
+		public Music()
       : this("Music")
     {
     }
@@ -728,17 +735,17 @@ namespace MediaPortal.Configuration.Sections
                           BASS_INFO info = Bass.BASS_GetInfo();
                           if (info != null)
                           {
-                            int currentBuffer = trackBarBuffering.Value;
+                            int currentBuffer = GetTrackBarValue();
                             if (currentBuffer < info.minbuf)
                             {
-                              trackBarBuffering.Value = info.minbuf;
+                              SetTrackbarValue(info.minbuf);
                             }
-                            trackBarBuffering.Minimum = info.minbuf;
+	                          SetTrackbarMinValue(info.minbuf);
                           }
                         }
 
                         // Detect WASAPI Speaker Setup
-                        if (audioPlayerComboBox.SelectedIndex == 2)
+                        if (GetAudioPlayerSelected() == 2)
                         {
                           Bass.BASS_Free();
                           Bass.BASS_Init(0, 48000, 0, IntPtr.Zero, Guid.Empty); // No sound device
@@ -748,7 +755,7 @@ namespace MediaPortal.Configuration.Sections
                           // Check if the WASAPI device read is amongst the one retrieved
                           for (i = 0; i < wasapiDevices.Length; i++)
                           {
-                            if (wasapiDevices[i].name == soundDeviceComboBox.Text)
+                            if (wasapiDevices[i].name == GetSoundDeviceSelected())
                             {
                               sounddevice = i;
                               break;
@@ -769,28 +776,28 @@ namespace MediaPortal.Configuration.Sections
                               channels = c;
                             }
                           }
-                          if (channels > WasApiSpeakersCombo.SelectedIndex + 1)
+                          if (channels > GeWasApiSpeakerSelected() + 1)
                           {
                             switch (channels)
                             {
                               case 1:
-                                WasApiSpeakersCombo.SelectedIndex = 0;
+																SetWasApiSpeakerValue(0);
                                 break;
 
                               case 2:
-                                WasApiSpeakersCombo.SelectedIndex = 1;
+																SetWasApiSpeakerValue(1);
                                 break;
 
                               case 4:
-                                WasApiSpeakersCombo.SelectedIndex = 2;
+																SetWasApiSpeakerValue(2);
                                 break;
 
                               case 6:
-                                WasApiSpeakersCombo.SelectedIndex = 3;
+																SetWasApiSpeakerValue(3);
                                 break;
 
                               case 8:
-                                WasApiSpeakersCombo.SelectedIndex = 4;
+																SetWasApiSpeakerValue(4);
                                 break;
                             }
                           }
@@ -800,12 +807,132 @@ namespace MediaPortal.Configuration.Sections
         ).Start();
     }
 
-    /// <summary>
-    /// Show the ASIO Devices Control Panel
-    /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="e"></param>
-    private void btAsioDeviceSettings_Click(object sender, EventArgs e)
+		#region ThreadSafe Methods
+
+		/// <summary>
+		/// Thread Safe Method to return the value of the Buffering Track Bar
+		/// </summary>
+		/// <returns></returns>
+		private int GetTrackBarValue()
+	  {
+		  if (trackBarBuffering.InvokeRequired)
+		  {
+			  GetValueCallback d = GetTrackBarValue;
+			  Invoke(d);
+			  return 0;
+		  }
+
+		  return trackBarBuffering.Value;
+	  }
+
+		/// <summary>
+		/// Thread Safe Method to return the selected index of the Audio Player Combobox
+		/// </summary>
+		/// <returns></returns>
+		private int GetAudioPlayerSelected()
+		{
+			if (audioPlayerComboBox.InvokeRequired)
+			{
+				GetValueCallback d = GetAudioPlayerSelected;
+				Invoke(d);
+				return 0;
+			}
+
+			return audioPlayerComboBox.SelectedIndex;
+		}
+
+		/// <summary>
+		/// Thread Safe Method to return the selected index of the WasAPi Speaker Combobox
+		/// </summary>
+		/// <returns></returns>
+		private int GeWasApiSpeakerSelected()
+		{
+			if (WasApiSpeakersCombo.InvokeRequired)
+			{
+				GetValueCallback d = GeWasApiSpeakerSelected;
+				Invoke(d);
+				return 0;
+			}
+
+			return WasApiSpeakersCombo.SelectedIndex;
+		}
+
+
+		/// <summary>
+		/// Thread Safe Method to return the text of the selected sound device
+		/// </summary>
+		/// <returns></returns>
+		private string GetSoundDeviceSelected()
+		{
+			if (soundDeviceComboBox.InvokeRequired)
+			{
+				GetSoundDeviceSelectedCallback d = GetSoundDeviceSelected;
+				Invoke(d);
+				return string.Empty;
+			}
+
+			return soundDeviceComboBox.Text;
+		}
+
+		/// <summary>
+		/// Thread Safe Method to set the value of the Buffering Track Bar
+		/// </summary>
+		/// <param name="value"></param>
+		private void SetTrackbarValue(int value)
+	  {
+		  if (trackBarBuffering.InvokeRequired)
+		  {
+				SetValueCallback d = SetTrackbarValue;
+			  Invoke(d, new object[] {value});
+		  }
+		  else
+		  {
+			  trackBarBuffering.Value = value;
+		  }
+	  }
+
+		/// <summary>
+		/// Thread Safe Method to set the minimum value of the Buffering Track Bar
+		/// </summary>
+		/// <param name="minValue"></param>
+		private void SetTrackbarMinValue(int minValue)
+		{
+			if (trackBarBuffering.InvokeRequired)
+			{
+				SetValueCallback d = SetTrackbarMinValue;
+				Invoke(d, new object[] { minValue });
+			}
+			else
+			{
+				trackBarBuffering.Value = minValue;
+			}
+		}
+
+		/// <summary>
+		/// Thread Safe Method to set the selected index of Wasapi Speakers
+		/// </summary>
+		/// <param name="value"></param>
+		private void SetWasApiSpeakerValue(int value)
+		{
+			if (WasApiSpeakersCombo.InvokeRequired)
+			{
+				SetValueCallback d = SetWasApiSpeakerValue;
+				Invoke(d, new object[] { value });
+			}
+			else
+			{
+				WasApiSpeakersCombo.SelectedIndex = value;
+			}
+		}
+
+		#endregion
+
+		/// <summary>
+		/// Show the ASIO Devices Control Panel
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		private void btAsioDeviceSettings_Click(object sender, EventArgs e)
     {
       // Free ASIO and reinit it again
       BassAsio.BASS_ASIO_Free();
