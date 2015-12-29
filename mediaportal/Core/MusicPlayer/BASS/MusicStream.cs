@@ -755,6 +755,10 @@ namespace MediaPortal.MusicPlayer.BASS
 				case (BASSChannelType.BASS_CTYPE_STREAM_WAV_FLOAT):
 				case (BASSChannelType.BASS_CTYPE_STREAM_WAV):
 					audiotexture = "WAV";
+					if (System.IO.Path.GetExtension(_filePath)?.ToLower() == ".dts")
+					{
+						audiotexture = "DTS";
+					}
 					break;
 
 				case (BASSChannelType.BASS_CTYPE_STREAM_WMA):
