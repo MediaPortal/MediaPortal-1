@@ -81,37 +81,40 @@ namespace HideVolumeOSD
 
 		private IntPtr FindOSDWindow()
 		{
-			IntPtr childWindow = IntPtr.Zero;
+      IntPtr hwndRet = IntPtr.Zero;
+      IntPtr hwndHost = IntPtr.Zero;
 
-			// search for window with class 'NativeHWNDHost'
+      // search for window with class 'NativeHWNDHost'
 
-			while ((childWindow = FindWindowEx(IntPtr.Zero, childWindow, "NativeHWNDHost", "")) != IntPtr.Zero)
-			{
-				// if this window has a child with class 'DirectUIHWND' it should be the volume OSD
+      int pairCount = 0;
 
-				if (FindWindowEx(childWindow, IntPtr.Zero, "DirectUIHWND", "") != IntPtr.Zero)
-				{
-					// as a final check we test position and size range for normal or minimized osd window					
+      while ((hwndHost = FindWindowEx(IntPtr.Zero, hwndHost, "NativeHWNDHost", "")) != IntPtr.Zero)
+      {
+        // if this window has a child with class 'DirectUIHWND' it should be the volume OSD
 
-					RECT rect;
-					GetWindowRect(childWindow, out rect);
+        if (FindWindowEx(hwndHost, IntPtr.Zero, "DirectUIHWND", "") != IntPtr.Zero)
+        {
+          if (pairCount == 0)
+          {
+            hwndRet = hwndHost;
+          }
 
-					int width = rect.right - rect.left;
-					int height = rect.bottom - rect.top;
+          pairCount++;
 
-					// 50,60 -> Size 65,140 / 69,144 / 160,28
+          if (pairCount > 1)
+          {
+            MessageBox.Show("Severe error: Multiple pairs found!", "HideVolumeOSD");
+            return IntPtr.Zero;
+          }
+        }
+      }
 
-					if (rect.left == 50 && rect.top == 60 &&
-						((width >= 60 && width <= 80 && height >= 140 && height <= 150) || // normal
-						 (width >= 160 && width <= 170 && height >= 25 && height <= 30)))  // minimized
-					{
-						// we have it!
-						return childWindow;                        
-					}
-				}
-			}
+      if (hwndRet == IntPtr.Zero)
+      {
+        MessageBox.Show("Severe error: OSD window not found!", "HideVolumeOSD");
+      }
 
-			return IntPtr.Zero;
+      return hwndRet;
 		}
 
 		public void HideOSD()
