@@ -46,9 +46,6 @@ namespace HideVolumeOSD
 		}
 
 		[DllImport("user32.dll", SetLastError = true)]
-		static extern bool GetWindowRect(IntPtr hwnd, out RECT lpRect);
-
-		[DllImport("user32.dll", SetLastError = true)]
 		static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
 
 		IntPtr hWndInject = IntPtr.Zero;
@@ -103,7 +100,7 @@ namespace HideVolumeOSD
 
           if (pairCount > 1)
           {
-            MessageBox.Show("Severe error: Multiple pairs found!", "HideVolumeOSD");
+            Log.Error("HideVolumeOSD: Multiple pairs found!");
             return IntPtr.Zero;
           }
         }
@@ -111,7 +108,7 @@ namespace HideVolumeOSD
 
       if (hwndRet == IntPtr.Zero)
       {
-        MessageBox.Show("Severe error: OSD window not found!", "HideVolumeOSD");
+        Log.Error("HideVolumeOSD: OSD window not found!");
       }
 
       return hwndRet;
