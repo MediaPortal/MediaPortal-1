@@ -23,12 +23,10 @@ using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
-using System.Threading;
 using System.Windows.Forms;
 using MediaPortal.GUI.Library;
 using MediaPortal.Music.Database;
 using MediaPortal.Profile;
-using MediaPortal.TagReader;
 using MediaPortal.UserInterface.Controls;
 
 #pragma warning disable 108
@@ -62,7 +60,7 @@ namespace MediaPortal.Configuration.Sections
     private MediaPortal.Music.Database.MusicDatabase m_dbs = MediaPortal.Music.Database.MusicDatabase.Instance;
 
     private List<BaseShares.ShareData> sharesData = null;
-    private Thread _scanThread = null;
+    private BackgroundWorker _scanThread = null;
     private MPComboBox comboBoxDateAdded;
     private MPLabel lblDate;
     private bool _scanRunning = false;
@@ -564,24 +562,29 @@ namespace MediaPortal.Configuration.Sections
     /// 
     private void SetStatus(object sender, DatabaseReorgEventArgs e)
     {
-      fileLabel.Text = e.phase;
-      Application.DoEvents();
+      _scanThread.ReportProgress(e.progress, e.phase);
     }
 
     private void startButton_Click(object sender, EventArgs e)
     {
-      ThreadStart ts = new ThreadStart(FolderScanThread);
-      _scanThread = new Thread(ts);
-      _scanThread.Name = "MusicScan";
-      _scanThread.Start();
-    }
+      groupBox1.Enabled = false;
+      groupBox2.Enabled = true;
+      // Now create a Settings Object with the Settings checked to pass to the Import
+      MusicDatabaseSettings setting = new MusicDatabaseSettings
+      {
+        CreateMissingFolderThumb = checkBoxCreateFolderThumb.Checked,
+        ExtractEmbeddedCoverArt = buildThumbsCheckBox.Checked,
+        StripArtistPrefixes = checkBoxStripArtistPrefix.Checked,
+        TreatFolderAsAlbum = folderAsAlbumCheckBox.Checked,
+        UseFolderThumbs = checkBoxUseFolderThumb.Checked,
+        UseAllImages = checkBoxAllImages.Checked,
+        CreateArtistPreviews = checkBoxCreateArtist.Checked,
+        CreateGenrePreviews = checkBoxCreateGenre.Checked,
+        UseLastImportDate = checkBoxUpdateSinceLastImport.Checked,
+        ExcludeHiddenFiles = false,
+        DateAddedValue = comboBoxDateAdded.SelectedIndex
+      };
 
-    /// <summary>
-    /// Thread to scan the Shares
-    /// </summary>
-    private void FolderScanThread()
-    {
-      _scanRunning = true;
       ArrayList shares = new ArrayList();
       for (int index = 0; index < sharesListBox.CheckedIndices.Count; index++)
       {
@@ -597,21 +600,21 @@ namespace MediaPortal.Configuration.Sections
               driveName = path;
             }
 
-            ulong FreeBytesAvailable = Util.Utils.GetFreeDiskSpace(driveName);
+            ulong freeBytesAvailable = Util.Utils.GetFreeDiskSpace(driveName);
 
-            if (FreeBytesAvailable > 0)
+            if (freeBytesAvailable > 0)
             {
-              ulong DiskSpace = FreeBytesAvailable / 1048576;
-              if (DiskSpace > 100) // > 100MB left for creation of thumbs, etc
+              ulong diskSpace = freeBytesAvailable / 1048576;
+              if (diskSpace > 100) // > 100MB left for creation of thumbs, etc
               {
                 Log.Info("MusicDatabase: adding share {0} for scanning - available disk space: {1} MB", path,
-                         DiskSpace.ToString());
+                         diskSpace.ToString());
                 shares.Add(path);
               }
               else
               {
                 Log.Warn("MusicDatabase: NOT scanning share {0} because of low disk space: {1} MB", path,
-                         DiskSpace.ToString());
+                         diskSpace.ToString());
               }
             }
           }
@@ -621,23 +624,28 @@ namespace MediaPortal.Configuration.Sections
           }
         }
       }
-      MediaPortal.Music.Database.MusicDatabase.DatabaseReorgChanged +=
-        new MusicDBReorgEventHandler(SetStatus);
-      groupBox1.Enabled = false;
-      groupBox2.Enabled = true;
-      // Now create a Settings Object with the Settings checked to pass to the Import
-      MusicDatabaseSettings setting = new MusicDatabaseSettings();
-      setting.CreateMissingFolderThumb = checkBoxCreateFolderThumb.Checked;
-      setting.ExtractEmbeddedCoverArt = buildThumbsCheckBox.Checked;
-      setting.StripArtistPrefixes = checkBoxStripArtistPrefix.Checked;
-      setting.TreatFolderAsAlbum = folderAsAlbumCheckBox.Checked;
-      setting.UseFolderThumbs = checkBoxUseFolderThumb.Checked;
-      setting.UseAllImages = checkBoxAllImages.Checked;
-      setting.CreateArtistPreviews = checkBoxCreateArtist.Checked;
-      setting.CreateGenrePreviews = checkBoxCreateGenre.Checked;
-      setting.UseLastImportDate = checkBoxUpdateSinceLastImport.Checked;
-      setting.ExcludeHiddenFiles = false;
-      setting.DateAddedValue = comboBoxDateAdded.SelectedIndex;
+
+      _scanThread = new BackgroundWorker();
+      _scanThread.WorkerReportsProgress = true;
+      _scanThread.DoWork += FolderScan;
+      _scanThread.RunWorkerCompleted += FolderScanCompleted;
+      _scanThread.ProgressChanged += FolderScanProgress;
+      _scanThread.RunWorkerAsync(new object[] { shares, setting });
+    }
+
+    /// <summary>
+    /// Backgroundworker to scan folders
+    /// </summary>
+    private void FolderScan(object sender, DoWorkEventArgs e)
+    {
+      _scanRunning = true;
+
+      // Get the arguments
+      object[] args = e.Argument as object[];
+      var shares = args[0] as ArrayList;
+      var setting = args[1] as MusicDatabaseSettings;
+
+      MediaPortal.Music.Database.MusicDatabase.DatabaseReorgChanged += SetStatus;
 
       try
       {
@@ -648,6 +656,18 @@ namespace MediaPortal.Configuration.Sections
         Log.Error("Folder Scan: Exception during processing: ", ex.Message);
         _scanRunning = false;
       }
+    }
+
+    /// <summary>
+    /// Backgroundworker ended
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private void FolderScanCompleted(object sender, RunWorkerCompletedEventArgs e)
+    {
+      _scanRunning = false;
+      groupBox1.Enabled = true;
+      groupBox2.Enabled = false;
 
       using (Settings xmlreader = new MPSettings())
       {
@@ -655,10 +675,12 @@ namespace MediaPortal.Configuration.Sections
                                                            xmlreader.GetValueAsString("musicfiles", "lastImport",
                                                                                       "1900-01-01 00:00:00"));
       }
+    }
 
-      _scanRunning = false;
-      groupBox1.Enabled = true;
-      groupBox2.Enabled = false;
+    private void FolderScanProgress(object sender, ProgressChangedEventArgs e)
+    {
+      fileLabel.Text = e.UserState as string;
+      Application.DoEvents();
     }
 
     /// <summary>
