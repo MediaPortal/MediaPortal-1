@@ -579,10 +579,15 @@ namespace TvPlugin
       {
         // needs for PIN protection function avoid to start tvhome with a protected group
         var previousWindowId = GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow).PreviousWindowId;
-        if (previousWindowId == (int)Window.WINDOW_HOME ||
-            previousWindowId == (int)Window.WINDOW_SECOND_HOME)
+        if (previousWindowId == (int) Window.WINDOW_HOME ||
+            previousWindowId == (int) Window.WINDOW_SECOND_HOME)
         {
-          LoadSettings(true);
+          if (m_navigator != null && (m_navigator.CheckIfProtectedGroup() || _allowProtectedItem))
+          {
+            _allowProtectedItem = false;
+            _showAllRecording = false;
+            LoadSettings(true);
+          }
         }
       }
 
@@ -707,7 +712,7 @@ namespace TvPlugin
     protected override void OnPageDestroy(int newWindowId)
     {
       // if we're switching to another plugin
-      if (!GUIGraphicsContext.IsTvWindow(newWindowId))
+      if (!GUIGraphicsContext.IsTvWindow(newWindowId) && m_navigator.CheckIfProtectedGroup())
       {
         // needs for PIN protection function avoid to start tvhome with a protected group
         TVHome._showAllRecording = false;

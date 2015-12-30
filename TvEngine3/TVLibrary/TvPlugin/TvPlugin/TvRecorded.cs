@@ -274,9 +274,12 @@ namespace TvPlugin
       // if we're switching to another plugin
       if (!GUIGraphicsContext.IsTvWindow(newWindowId) && newWindowId != (int)Window.WINDOW_FULLSCREEN_VIDEO)
       {
-        TVHome._showAllRecording = false;
-        TVHome._allowProtectedItem = false;
-        TVHome.LoadSettings(true);
+        if (TVHome.m_navigator.CheckIfProtectedGroup() || TVHome._allowProtectedItem)
+        {
+          TVHome._showAllRecording = false;
+          TVHome._allowProtectedItem = false;
+          TVHome.LoadSettings(true);
+        }
       }
 
       _iSelectedItem = GetSelectedItemNo();

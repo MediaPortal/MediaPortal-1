@@ -75,7 +75,7 @@ namespace TvPlugin
 
     #region Private members
 
-    private List<ChannelGroup> m_groups = new List<ChannelGroup>();
+    internal List<ChannelGroup> m_groups = new List<ChannelGroup>();
     // Contains all channel groups (including an "all channels" group)
 
     private int m_currentgroup = 0;
@@ -1034,6 +1034,17 @@ namespace TvPlugin
           m_currentChannel.CurrentGroup = CurrentGroup;
         }
       }
+    }
+
+    internal bool CheckIfProtectedGroup()
+    {
+      if (string.IsNullOrEmpty(m_groups[m_currentgroup].PinCode))
+      {
+        Log.Debug("ChannelNavigator: The last channelgroup was not pin protected.");
+        return false;
+      }
+      Log.Debug("ChannelNavigator: The last channelgroup was pin protected.");
+      return true;
     }
 
     private bool CheckAndSelectAnUnprotectedGroup()
