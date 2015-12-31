@@ -398,7 +398,6 @@ Section "MediaPortal core files (required)" SecCore
   #CONFIG FILES ARE ALWAYS INSTALLED by GIT and FINAL releases, BECAUSE of the config dir location
   #MediaPortal Paths should not be overwritten
   !define EXCLUDED_CONFIG_FILES "\
-    /x 'eHome Infrared Transceiver List XP.xml' \
     /x keymap.xml \
     /x MediaPortalDirs.xml \
     /x wikipedia.xml \
@@ -458,7 +457,6 @@ Section "MediaPortal core files (required)" SecCore
 
   ; Config Files
   SetOutPath "$MPdir.Config"
-  File /nonfatal "${MEDIAPORTAL.BASE}\eHome Infrared Transceiver List XP.xml"
   File /nonfatal "${MEDIAPORTAL.BASE}\keymap.xml"
   File /nonfatal "${MEDIAPORTAL.BASE}\wikipedia.xml"
 
@@ -588,7 +586,10 @@ Section "MediaPortal core files (required)" SecCore
   File "${git_ROOT}\Packages\MediaPortal.TagLib.2.0.3.8\lib\taglib-sharp.dll"
   ; SharpLibHid
   SetOutPath "$MPdir.Base\"
-  File "${git_ROOT}\Packages\SharpLibHid.1.1.0\lib\net20\SharpLibHid.dll"
+  File "${git_ROOT}\Packages\SharpLibHid.1.3.0\lib\net20\SharpLibHid.dll"
+  ; SharpLibWin32
+  SetOutPath "$MPdir.Base\"
+  File "${git_ROOT}\Packages\SharpLibWin32.0.0.7\lib\net20\SharpLibWin32.dll"
   ; Doc
   SetOutPath "$MPdir.Base\Docs"
   File "${git_MP}\Docs\BASS License.txt"
@@ -699,7 +700,6 @@ SectionEnd
 
   ; Config Files
   Delete "$MPdir.Config\CaptureCardDefinitions.xml"
-  Delete "$MPdir.Config\eHome Infrared Transceiver List XP.xml"
   ; Don't delete this file (needed for manual user input)
   ;Delete "$MPdir.Config\keymap.xml"
   Delete "$MPdir.Config\wikipedia.xml"
