@@ -375,7 +375,7 @@ namespace TvControl
       finally
       {
         benchClock.Stop();
-        if (sock.Connected)
+        if (sock != null && sock.Connected)
         {
           Log.Debug("RemoteControl: TCP connect took : {0}", benchClock.ElapsedMilliseconds);
         }

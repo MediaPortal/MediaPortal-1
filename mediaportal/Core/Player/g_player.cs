@@ -3106,7 +3106,10 @@ namespace MediaPortal.Player
       }
       Visible = (FullScreen || GUIGraphicsContext.Overlay ||
                  windowId == (int)GUIWindow.Window.WINDOW_SCHEDULER || inTV);
-      SetVideoWindow();
+      GUIWindow._mainThreadContext.Post(delegate
+      {
+        SetVideoWindow();
+      }, null);
     }
 
     /// <summary>

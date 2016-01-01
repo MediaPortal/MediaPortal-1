@@ -1885,7 +1885,6 @@ namespace MediaPortal.GUI.Library
     public virtual int GetVisibleCondition()
     {
       return _visibleCondition;
-      ;
     }
 
     public virtual List<VisualEffect> GetAnimations(AnimationType type, bool checkConditions /* = true */)

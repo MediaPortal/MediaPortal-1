@@ -59,42 +59,48 @@ namespace MediaPortal.Util
 
       try
       {
-        var deviceInterface = (DEV_BROADCAST_DEVICEINTERFACE)Marshal.PtrToStructure(msg.LParam, typeof(DEV_BROADCAST_DEVICEINTERFACE));
-
-        // get friendly device name
-        string deviceName = String.Empty;
-        string[] values = deviceInterface.dbcc_name.Split('#');
-        if (values.Length >= 3)
+        if (msg.LParam != IntPtr.Zero)
         {
-          string deviceType = values[0].Substring(values[0].IndexOf(@"?\", StringComparison.Ordinal) + 2);
-          string deviceInstanceID = values[1];
-          string deviceUniqueID = values[2];
-          string regPath = @"SYSTEM\CurrentControlSet\Enum\" + deviceType + "\\" + deviceInstanceID + "\\" + deviceUniqueID;
-          Microsoft.Win32.RegistryKey regKey = Microsoft.Win32.Registry.LocalMachine.OpenSubKey(regPath);
-          if (regKey != null)
+          var deviceInterface = (DEV_BROADCAST_DEVICEINTERFACE) Marshal.PtrToStructure(msg.LParam, typeof (DEV_BROADCAST_DEVICEINTERFACE));
+
+          // get friendly device name
+          string deviceName = String.Empty;
+          string[] values = deviceInterface.dbcc_name.Split('#');
+          if (values.Length >= 3)
           {
-            // use the friendly name if it exists
-            object result = regKey.GetValue("FriendlyName");
-            if (result != null)
+            string deviceType = values[0].Substring(values[0].IndexOf(@"?\", StringComparison.Ordinal) + 2);
+            string deviceInstanceID = values[1];
+            string deviceUniqueID = values[2];
+            string regPath = @"SYSTEM\CurrentControlSet\Enum\" + deviceType + "\\" + deviceInstanceID + "\\" +
+                             deviceUniqueID;
+            Microsoft.Win32.RegistryKey regKey = Microsoft.Win32.Registry.LocalMachine.OpenSubKey(regPath);
+            if (regKey != null)
             {
-              deviceName = result.ToString();
-            }
-            // if not use the device description's last part
-            else
-            {
-              result = regKey.GetValue("DeviceDesc");
+              // use the friendly name if it exists
+              object result = regKey.GetValue("FriendlyName");
               if (result != null)
               {
-                deviceName = result.ToString().Contains(@"%;") ? result.ToString().Substring(result.ToString().IndexOf(@"%;", StringComparison.Ordinal) + 2) : result.ToString();
+                deviceName = result.ToString();
+              }
+              // if not use the device description's last part
+              else
+              {
+                result = regKey.GetValue("DeviceDesc");
+                if (result != null)
+                {
+                  deviceName = result.ToString().Contains(@"%;")
+                    ? result.ToString().Substring(result.ToString().IndexOf(@"%;", StringComparison.Ordinal) + 2)
+                    : result.ToString();
+                }
               }
             }
           }
-        }
-        if (!string.IsNullOrEmpty(deviceName) && deviceName.Contains("Microsoft Virtual DVD-ROM"))
-        {
-          Log.Debug("Ignoring Microsoft Virtual DVD-ROM device change event");
+          if (!string.IsNullOrEmpty(deviceName) && deviceName.Contains("Microsoft Virtual DVD-ROM"))
+          {
+            Log.Debug("Ignoring Microsoft Virtual DVD-ROM device change event");
 
-          return true;
+            return true;
+          }
         }
       }
       catch
