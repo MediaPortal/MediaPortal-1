@@ -19,11 +19,9 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Windows.Forms;
 using MediaPortal.MusicPlayer.BASS;
-using MediaPortal.Player;
 using MediaPortal.Profile;
 using Un4seen.Bass;
 using Un4seen.BassAsio;
@@ -35,9 +33,9 @@ namespace MediaPortal.Configuration.Sections
 {
   public partial class Music : SectionSettings
   {
-		#region Variables
+    #region Variables
 
-		private const string JumpToValue0 = "none";
+    private const string JumpToValue0 = "none";
     private const string JumpToValue1 = "nowPlayingAlways";
     private const string JumpToValue2 = "nowPlayingMultipleItems";
     private const string JumpToValue3 = "currentPlaylistAlways";
@@ -105,10 +103,10 @@ namespace MediaPortal.Configuration.Sections
                                              LyricsOption2
                                            };
 
-    private string[] MonoUpmix = new string[] {"None", "Stereo", "QuadraphonicPhonic", "5.1 Surround", "7.1 Surround"};
-    private string[] StereoUpmix = new string[] {"None", "QuadraphonicPhonic", "5.1 Surround", "7.1 Surround"};
-    private string[] QuadroPhonicUpmix = new string[] {"None", "5.1 Surround", "7.1 Surround"};
-    private string[] FiveDotOneUpmix = new string[] {"None", "7.1 Surround"};
+    private string[] MonoUpmix = new string[] { "None", "Stereo", "QuadraphonicPhonic", "5.1 Surround", "7.1 Surround" };
+    private string[] StereoUpmix = new string[] { "None", "QuadraphonicPhonic", "5.1 Surround", "7.1 Surround" };
+    private string[] QuadroPhonicUpmix = new string[] { "None", "5.1 Surround", "7.1 Surround" };
+    private string[] FiveDotOneUpmix = new string[] { "None", "7.1 Surround" };
 
     private const string VUMeterValue0 = "none";
     private const string VUMeterValue1 = "analog";
@@ -119,13 +117,6 @@ namespace MediaPortal.Configuration.Sections
 
     private bool _initialising = true;
 
-    #region Delegates
-
-    delegate int GetValueCallback();
-    delegate string GetSoundDeviceSelectedCallback();
-    delegate void SetValueCallback(int value);
-
-    #endregion
     #endregion
 
     #region ctor
@@ -183,6 +174,7 @@ namespace MediaPortal.Configuration.Sections
       trackBarCrossfade_Scroll(null, null);
       audioPlayerComboBox_SelectedIndexChanged(null, null);
       GaplessPlaybackChkBox_CheckedChanged(null, null);
+      _initialising = false;
     }
 
     public override void OnSectionActivated()
@@ -205,7 +197,7 @@ namespace MediaPortal.Configuration.Sections
         _soundDeviceID = xmlreader.GetValueAsString("audioplayer", "sounddeviceid", "");
 
         string strAudioPlayer = xmlreader.GetValueAsString("audioplayer", "playerId", "0");
-        int audioPlayer = (int) AudioPlayer.Bass; // Default to BASS Player
+        int audioPlayer = (int)AudioPlayer.Bass; // Default to BASS Player
         try
         {
           audioPlayer = Convert.ToInt16(strAudioPlayer);
@@ -214,7 +206,11 @@ namespace MediaPortal.Configuration.Sections
         {
         }
 
+        // Disable Selected Index Change Handler to prevent calling the logic for Buffer calculation
+        audioPlayerComboBox.SelectedIndexChanged -= audioPlayerComboBox_SelectedIndexChanged;
         audioPlayerComboBox.SelectedIndex = audioPlayer;
+        // Enable it again
+        audioPlayerComboBox.SelectedIndexChanged += audioPlayerComboBox_SelectedIndexChanged;
 
         #region General Bass Player Settings
 
@@ -234,7 +230,7 @@ namespace MediaPortal.Configuration.Sections
 
         trackBarCrossfade.Value = crossFadeMS;
 
-        int bufferingMS = xmlreader.GetValueAsInt("audioplayer", "buffering", 500);
+        int bufferingMS = xmlreader.GetValueAsInt("audioplayer", "buffering", 100);
 
         if (bufferingMS < trackBarBuffering.Minimum)
         {
@@ -252,7 +248,7 @@ namespace MediaPortal.Configuration.Sections
         GaplessPlaybackChkBox.Checked = xmlreader.GetValueAsBool("audioplayer", "gaplessPlayback", false);
         UseSkipStepsCheckBox.Checked = xmlreader.GetValueAsBool("audioplayer", "useSkipSteps", false);
         FadeOnStartStopChkbox.Checked = xmlreader.GetValueAsBool("audioplayer", "fadeOnStartStop", true);
-        StreamOutputLevelNud.Value = (decimal) xmlreader.GetValueAsInt("audioplayer", "streamOutputLevel", 100);
+        StreamOutputLevelNud.Value = (decimal)xmlreader.GetValueAsInt("audioplayer", "streamOutputLevel", 100);
 
         cbUpmixMono.SelectedIndex = xmlreader.GetValueAsInt("audioplayer", "upMixMono", 0);
         cbUpmixStereo.SelectedIndex = xmlreader.GetValueAsInt("audioplayer", "upMixStereo", 0);
@@ -299,8 +295,8 @@ namespace MediaPortal.Configuration.Sections
             }
             catch (Exception)
             {
+            }
           }
-        }
         }
 
         repeatPlaylistCheckBox.Checked = xmlreader.GetValueAsBool("musicfiles", "repeat", false);
@@ -309,6 +305,7 @@ namespace MediaPortal.Configuration.Sections
         SavePlaylistOnExitChkBox.Checked = xmlreader.GetValueAsBool("musicfiles", "savePlaylistOnExit", true);
         ResumePlaylistChkBox.Checked = xmlreader.GetValueAsBool("musicfiles", "resumePlaylistOnMusicEnter", true);
         PlaylistCurrentCheckBox.Checked = xmlreader.GetValueAsBool("musicfiles", "playlistIsCurrent", true);
+        PlayListUTF8CheckBox.Checked = xmlreader.GetValueAsBool("musicfiles", "savePlaylistUTF8", false);
 
         String strSelectOption = xmlreader.GetValueAsString("musicfiles", "selectOption", "play");
         cmbSelectOption.Text = strSelectOption == "play" ? "Play" : "Queue";
@@ -426,6 +423,7 @@ namespace MediaPortal.Configuration.Sections
         xmlwriter.SetValueAsBool("musicfiles", "savePlaylistOnExit", SavePlaylistOnExitChkBox.Checked);
         xmlwriter.SetValueAsBool("musicfiles", "resumePlaylistOnMusicEnter", ResumePlaylistChkBox.Checked);
         xmlwriter.SetValueAsBool("musicfiles", "playlistIsCurrent", PlaylistCurrentCheckBox.Checked);
+        xmlwriter.SetValueAsBool("musicfiles", "savePlaylistUTF8", PlayListUTF8CheckBox.Checked);
 
         //Play behaviour
         xmlwriter.SetValue("musicfiles", "selectOption", cmbSelectOption.Text.ToLowerInvariant());
@@ -490,7 +488,7 @@ namespace MediaPortal.Configuration.Sections
 
         #endregion
       }
-      }
+    }
 
     #endregion
 
@@ -627,8 +625,8 @@ namespace MediaPortal.Configuration.Sections
     {
       switch (player)
       {
-        case (int) AudioPlayer.Bass:
-        case (int) AudioPlayer.DShow:
+        case (int)AudioPlayer.Bass:
+        case (int)AudioPlayer.DShow:
 
           // Get all available devices and add them to the combo box
           BASS_DEVICEINFO[] soundDevices = Bass.BASS_GetDeviceInfos();
@@ -651,7 +649,7 @@ namespace MediaPortal.Configuration.Sections
 
           break;
 
-        case (int) AudioPlayer.Asio:
+        case (int)AudioPlayer.Asio:
 
           // Get all available ASIO devices and add them to the combo box
           BASS_ASIO_DEVICEINFO[] asioDevices = BassAsio.BASS_ASIO_GetDeviceInfos();
@@ -673,7 +671,7 @@ namespace MediaPortal.Configuration.Sections
 
           break;
 
-        case (int) AudioPlayer.WasApi:
+        case (int)AudioPlayer.WasApi:
           // Get all available ASIO devices and add them to the combo box
           BASS_WASAPI_DEVICEINFO[] wasapiDevices = BassWasapi.BASS_WASAPI_GetDeviceInfos();
           if (wasapiDevices.Length == 0)
@@ -723,207 +721,89 @@ namespace MediaPortal.Configuration.Sections
         }
       }
 
-      // Run the following code in a Thread to avoid delays, when entering the Music screen
-      new System.Threading.Thread(() =>
-                      {
-                        // Find out the minimum Buffer length possible
-                        Bass.BASS_Free();
-                        if (Bass.BASS_Init(sounddevice, 48000, BASSInit.BASS_DEVICE_LATENCY, IntPtr.Zero, Guid.Empty))
-                        {
-                          BASS_INFO info = Bass.BASS_GetInfo();
-                          if (info != null)
-                          {
-                            int currentBuffer = GetTrackBarValue();
-                            if (currentBuffer < info.minbuf)
-                            {
-                              SetTrackbarValue(info.minbuf);
-                            }
-                            SetTrackbarMinValue(info.minbuf);
-                          }
-                        }
+      // No need to check buffer size on Initialize of the Screen. 
+      // Should only be done when really changing the combo box
+      if (_initialising)
+      {
+        return;
+      }
 
-                        // Detect WASAPI Speaker Setup
-                        if (GetAudioPlayerSelected() == 2)
-                        {
-                          Bass.BASS_Free();
-                          Bass.BASS_Init(0, 48000, 0, IntPtr.Zero, Guid.Empty); // No sound device
-                          BASS_WASAPI_DEVICEINFO[] wasapiDevices = BassWasapi.BASS_WASAPI_GetDeviceInfos();
+      // Find out the minimum Buffer length possible
+      Bass.BASS_Free();
+      if (Bass.BASS_Init(sounddevice, 48000, BASSInit.BASS_DEVICE_LATENCY, IntPtr.Zero, Guid.Empty))
+      {
+        BASS_INFO info = Bass.BASS_GetInfo();
+        if (info != null)
+        {
+          int currentBuffer = trackBarBuffering.Value;
+          if (currentBuffer < info.minbuf)
+          {
+            trackBarBuffering.Value = info.minbuf;
+          }
+          trackBarBuffering.Minimum = info.minbuf;
+        }
+      }
 
-                          int i = 0;
-                          // Check if the WASAPI device read is amongst the one retrieved
-                          for (i = 0; i < wasapiDevices.Length; i++)
-                          {
-                            if (wasapiDevices[i].name == GetSoundDeviceSelected())
-                            {
-                              sounddevice = i;
-                              break;
-                            }
-                          }
+      // Detect WASAPI Speaker Setup
+      if (audioPlayerComboBox.SelectedIndex == 2)
+      {
+        Bass.BASS_Free();
+        Bass.BASS_Init(0, 48000, 0, IntPtr.Zero, Guid.Empty); // No sound device
+        BASS_WASAPI_DEVICEINFO[] wasapiDevices = BassWasapi.BASS_WASAPI_GetDeviceInfos();
 
-                          int channels = 0;
+        int i = 0;
+        // Check if the WASAPI device read is amongst the one retrieved
+        for (i = 0; i < wasapiDevices.Length; i++)
+        {
+          if (wasapiDevices[i].name == soundDeviceComboBox.Text)
+          {
+            sounddevice = i;
+            break;
+          }
+        }
 
-                          // Let's assume a maximum of 8 speakers attached to the device
-                          for (int c = 1; c < 9; c++)
-                          {
-                            BASSWASAPIFormat format = BassWasapi.BASS_WASAPI_CheckFormat(sounddevice, 44100, c,
-                                                                                         BASSWASAPIInit.
-                                                                                           BASS_WASAPI_SHARED);
+        int channels = 0;
 
-                            if (format != BASSWASAPIFormat.BASS_WASAPI_FORMAT_UNKNOWN)
-                            {
-                              channels = c;
-                            }
-                          }
-                          if (channels > GeWasApiSpeakerSelected() + 1)
-                          {
-                            switch (channels)
-                            {
-                              case 1:
-                                SetWasApiSpeakerValue(0);
-                                break;
+        // Let's assume a maximum of 8 speakers attached to the device
+        for (int c = 1; c < 9; c++)
+        {
+          BASSWASAPIFormat format = BassWasapi.BASS_WASAPI_CheckFormat(sounddevice, 44100, c,
+                                         BASSWASAPIInit.
+                                           BASS_WASAPI_SHARED);
 
-                              case 2:
-                                SetWasApiSpeakerValue(1);
-                                break;
+          if (format != BASSWASAPIFormat.BASS_WASAPI_FORMAT_UNKNOWN)
+          {
+            channels = c;
+          }
+        }
+        if (channels > WasApiSpeakersCombo.SelectedIndex + 1)
+        {
+          switch (channels)
+          {
+            case 1:
+              WasApiSpeakersCombo.SelectedIndex = 0;
+              break;
 
-                              case 4:
-                                SetWasApiSpeakerValue(2);
-                                break;
+            case 2:
+              WasApiSpeakersCombo.SelectedIndex = 1;
+              break;
 
-                              case 6:
-                                SetWasApiSpeakerValue(3);
-                                break;
+            case 4:
+              WasApiSpeakersCombo.SelectedIndex = 2;
+              break;
 
-                              case 8:
-                                SetWasApiSpeakerValue(4);
-                                break;
-                            }
-                          }
-                        }
-                        Bass.BASS_Free();
-                      }
-        ).Start();
+            case 6:
+              WasApiSpeakersCombo.SelectedIndex = 3;
+              break;
+
+            case 8:
+              WasApiSpeakersCombo.SelectedIndex = 4;
+              break;
+          }
+        }
+      }
+      Bass.BASS_Free();
     }
-
-    #region ThreadSafe Methods
-
-    /// <summary>
-    /// Thread Safe Method to return the value of the Buffering Track Bar
-    /// </summary>
-    /// <returns></returns>
-    private int GetTrackBarValue()
-    {
-      if (trackBarBuffering.InvokeRequired)
-      {
-        GetValueCallback d = GetTrackBarValue;
-        Invoke(d);
-        return 0;
-      }
-
-      return trackBarBuffering.Value;
-    }
-
-    /// <summary>
-    /// Thread Safe Method to return the selected index of the Audio Player Combobox
-    /// </summary>
-    /// <returns></returns>
-    private int GetAudioPlayerSelected()
-    {
-      if (audioPlayerComboBox.InvokeRequired)
-      {
-        GetValueCallback d = GetAudioPlayerSelected;
-        Invoke(d);
-        return 0;
-      }
-
-      return audioPlayerComboBox.SelectedIndex;
-    }
-
-    /// <summary>
-    /// Thread Safe Method to return the selected index of the WasAPi Speaker Combobox
-    /// </summary>
-    /// <returns></returns>
-    private int GeWasApiSpeakerSelected()
-    {
-      if (WasApiSpeakersCombo.InvokeRequired)
-      {
-        GetValueCallback d = GeWasApiSpeakerSelected;
-        Invoke(d);
-        return 0;
-      }
-
-      return WasApiSpeakersCombo.SelectedIndex;
-    }
-
-
-    /// <summary>
-    /// Thread Safe Method to return the text of the selected sound device
-    /// </summary>
-    /// <returns></returns>
-    private string GetSoundDeviceSelected()
-    {
-      if (soundDeviceComboBox.InvokeRequired)
-      {
-        GetSoundDeviceSelectedCallback d = GetSoundDeviceSelected;
-        Invoke(d);
-        return string.Empty;
-      }
-
-      return soundDeviceComboBox.Text;
-    }
-
-    /// <summary>
-    /// Thread Safe Method to set the value of the Buffering Track Bar
-    /// </summary>
-    /// <param name="value"></param>
-    private void SetTrackbarValue(int value)
-    {
-      if (trackBarBuffering.InvokeRequired)
-      {
-        SetValueCallback d = SetTrackbarValue;
-        Invoke(d, new object[] {value});
-      }
-      else
-      {
-        trackBarBuffering.Value = value;
-      }
-    }
-
-    /// <summary>
-    /// Thread Safe Method to set the minimum value of the Buffering Track Bar
-    /// </summary>
-    /// <param name="minValue"></param>
-    private void SetTrackbarMinValue(int minValue)
-    {
-      if (trackBarBuffering.InvokeRequired)
-      {
-        SetValueCallback d = SetTrackbarMinValue;
-        Invoke(d, new object[] {minValue});
-      }
-      else
-      {
-        trackBarBuffering.Value = minValue;
-      }
-    }
-
-    /// <summary>
-    /// Thread Safe Method to set the selected index of Wasapi Speakers
-    /// </summary>
-    /// <param name="value"></param>
-    private void SetWasApiSpeakerValue(int value)
-    {
-      if (WasApiSpeakersCombo.InvokeRequired)
-      {
-        SetValueCallback d = SetWasApiSpeakerValue;
-        Invoke(d, new object[] {value});
-      }
-      else
-      {
-        WasApiSpeakersCombo.SelectedIndex = value;
-      }
-    }
-
-    #endregion
 
     /// <summary>
     /// Show the ASIO Devices Control Panel
@@ -956,19 +836,19 @@ namespace MediaPortal.Configuration.Sections
     /// <param name="e"></param>
     private void hScrollBarBalance_ValueChanged(object sender, EventArgs e)
     {
-      double balance = (double) hScrollBarBalance.Value/100.0;
+      double balance = (double)hScrollBarBalance.Value / 100.0;
       lbBalance.Text = String.Format("{0}", balance);
     }
 
     private void trackBarCrossfade_Scroll(object sender, EventArgs e)
     {
-      float xFadeSecs = (float) trackBarCrossfade.Value/1000f;
+      float xFadeSecs = (float)trackBarCrossfade.Value / 1000f;
       CrossFadeSecondsLbl.Text = string.Format("{0:f2} Seconds", xFadeSecs);
     }
 
     private void trackBarBuffering_Scroll(object sender, EventArgs e)
     {
-      float bufferingSecs = (float) trackBarBuffering.Value/1000f;
+      float bufferingSecs = (float)trackBarBuffering.Value / 1000f;
       BufferingSecondsLbl.Text = string.Format("{0:f2} Seconds", bufferingSecs);
     }
 
@@ -1001,25 +881,25 @@ namespace MediaPortal.Configuration.Sections
 
     #endregion
 
-  /// <summary>
-  /// Class used to display the Sound Device Information in the Combo Box 
-  /// </summary>
-  public class SoundDeviceItem
-  {
-    public string Name;
-    public string ID;
-
-    public SoundDeviceItem(string name, string id)
+    /// <summary>
+    /// Class used to display the Sound Device Information in the Combo Box 
+    /// </summary>
+    public class SoundDeviceItem
     {
-      Name = name;
-      ID = id;
-    }
+      public string Name;
+      public string ID;
 
-    public override string ToString()
-    {
-      // Generates the text shown in the combo box
-      return Name;
+      public SoundDeviceItem(string name, string id)
+      {
+        Name = name;
+        ID = id;
+      }
+
+      public override string ToString()
+      {
+        // Generates the text shown in the combo box
+        return Name;
+      }
     }
-  }
   }
 }
