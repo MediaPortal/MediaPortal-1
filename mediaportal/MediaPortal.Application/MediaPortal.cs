@@ -133,7 +133,7 @@ public class MediaPortalApp : D3D, IRender
   private bool                  _resumedSuspended;
   private bool                  _delayedResume;
   private readonly Object       _delayedResumeLock = new Object();
-  private bool                  _keepstartfullscreen;
+  private readonly bool         _ignoreFullscreenResolutionChanges;
   private int                   _locationX;
   private int                   _locationY;
   private bool                  _firstRestoreScreen = true;
@@ -1268,16 +1268,9 @@ public class MediaPortalApp : D3D, IRender
     CheckSkinVersion();
     using (Settings xmlreader = new MPSettings())
     {
-      _keepstartfullscreen = xmlreader.GetValueAsBool("general", "keepstartfullscreen", false);
+      _ignoreFullscreenResolutionChanges = xmlreader.GetValueAsBool("general", "ignorefullscreenresolutionchanges", false);
       var startFullscreen = !WindowedOverride && (FullscreenOverride || xmlreader.GetValueAsBool("general", "startfullscreen", false));
-      if (_keepstartfullscreen)
-      {
-        Windowed = !_keepstartfullscreen;
-      }
-      else
-      {
-        Windowed = !startFullscreen;
-      }
+      Windowed = !startFullscreen;
     }
 
     DoStartupJobs();
@@ -1567,7 +1560,7 @@ public class MediaPortalApp : D3D, IRender
 
         // set maximum and minimum form size in windowed mode
         case WM_GETMINMAXINFO:
-          if (!_keepstartfullscreen)
+          if (Windowed || !_ignoreFullscreenResolutionChanges)
           {
             if (!_suspended)
             {
@@ -1595,7 +1588,7 @@ public class MediaPortalApp : D3D, IRender
 
         // verify window size in case it was not resized by the user
         case WM_SIZE:
-          if (!_keepstartfullscreen)
+          if (Windowed || !_ignoreFullscreenResolutionChanges)
           {
             OnSize(ref msg);
             WndProcPlugin(ref msg, false);
@@ -1604,7 +1597,7 @@ public class MediaPortalApp : D3D, IRender
 
         // aspect ratio save window resizing
         case WM_SIZING:
-          if (!_keepstartfullscreen)
+          if (Windowed || !_ignoreFullscreenResolutionChanges)
           {
             OnSizing(ref msg);
             WndProcPlugin(ref msg, false);
@@ -1613,7 +1606,7 @@ public class MediaPortalApp : D3D, IRender
 
         // handle display changes
         case WM_DISPLAYCHANGE:
-          if (!_keepstartfullscreen)
+          if (Windowed || !_ignoreFullscreenResolutionChanges)
           {
             OnDisplayChange(ref msg);
             WndProcPlugin(ref msg, false);
@@ -1622,7 +1615,7 @@ public class MediaPortalApp : D3D, IRender
 
         // handle device changes
         case WM_DEVICECHANGE:
-          if (!_keepstartfullscreen)
+          if (Windowed || !_ignoreFullscreenResolutionChanges)
           {
             OnDeviceChange(ref msg);
             WndProcPlugin(ref msg, false);
@@ -2209,7 +2202,7 @@ public class MediaPortalApp : D3D, IRender
               try
               {
                 GUIGraphicsContext.DeviceVideoConnected++;
-                if (!_keepstartfullscreen)
+                if (Windowed || !_ignoreFullscreenResolutionChanges)
                 {
                   OnDisplayChange(ref msg);
                 }
@@ -4120,10 +4113,7 @@ public class MediaPortalApp : D3D, IRender
 
         // toggle between windowed and fullscreen mode
         case Action.ActionType.ACTION_TOGGLE_WINDOWED_FULLSCREEN:
-          if (!_keepstartfullscreen)
-          {
-            ToggleFullscreen();
-          }
+          ToggleFullscreen();
           return;
 
         // mute or unmute audio

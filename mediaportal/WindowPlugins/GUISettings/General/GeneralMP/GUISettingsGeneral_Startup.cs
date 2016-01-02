@@ -35,7 +35,7 @@ namespace MediaPortal.GUI.Settings
   {
     [SkinControl(10)] private readonly GUICheckButton _cmStartfullscreen = null;
     [SkinControl(11)] private readonly GUICheckButton _cmUsefullscreensplash = null;
-    [SkinControl(11)] private readonly GUICheckButton _cmkeepstartfullscreen = null;
+    [SkinControl(11)] private readonly GUICheckButton _cmIgnorefullscreenresolutionchanges = null;
     [SkinControl(12)] private readonly GUICheckButton _cmAlwaysontop = null;
     [SkinControl(13)] private readonly GUICheckButton _cmHidetaskbar = null;
     [SkinControl(14)] private readonly GUICheckButton _cmAutostart = null;
@@ -62,7 +62,7 @@ namespace MediaPortal.GUI.Settings
         // startup settings
         _cmStartfullscreen.Selected = xmlreader.GetValueAsBool("general", "startfullscreen", true);
         _cmUsefullscreensplash.Selected = xmlreader.GetValueAsBool("general", "usefullscreensplash", true);
-        _cmkeepstartfullscreen.Selected = xmlreader.GetValueAsBool("general", "keepstartfullscreen", false);
+        _cmIgnorefullscreenresolutionchanges.Selected = xmlreader.GetValueAsBool("general", "ignorefullscreenresolutionchanges", false);
         _cmAlwaysontop.Selected = xmlreader.GetValueAsBool("general", "alwaysontop", false);
         _cmHidetaskbar.Selected = xmlreader.GetValueAsBool("general", "hidetaskbar", false);
         _cmAutostart.Selected = xmlreader.GetValueAsBool("general", "autostart", false);
@@ -78,7 +78,7 @@ namespace MediaPortal.GUI.Settings
       {
         xmlwriter.SetValueAsBool("general", "startfullscreen", _cmStartfullscreen.Selected);
         xmlwriter.SetValueAsBool("general", "usefullscreensplash", _cmUsefullscreensplash.Selected);
-        xmlwriter.SetValueAsBool("general", "keepstartfullscreen", _cmkeepstartfullscreen.Selected);
+        xmlwriter.SetValueAsBool("general", "ignorefullscreenresolutionchanges", _cmIgnorefullscreenresolutionchanges.Selected);
         xmlwriter.SetValueAsBool("general", "alwaysontop", _cmAlwaysontop.Selected);
         try
         {
@@ -183,7 +183,7 @@ namespace MediaPortal.GUI.Settings
       {
         SettingsChanged(true);
       }
-      if (control == _cmkeepstartfullscreen)
+      if (control == _cmIgnorefullscreenresolutionchanges)
       {
         SettingsChanged(true);
       }
