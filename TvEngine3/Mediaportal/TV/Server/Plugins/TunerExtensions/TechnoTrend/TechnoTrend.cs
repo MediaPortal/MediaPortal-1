@@ -854,7 +854,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
     /// Invoked by the tuner driver when a remote control key press is detected.
     /// </summary>
     /// <param name="context">The optional context passed to the interface when the interface was opened.</param>
-    /// <param name="code">The key code. If the code is an RC5 code then it can be found in the lower 2 bytes. RC6 codes use 4 bytes.</param>
+    /// <param name="code">The key code. If the code is an RC-5 code then it can be found in the lower 2 bytes. RC-6 codes use 4 bytes.</param>
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     private delegate void OnTtRemoteControlKeyPress(IntPtr context, ref int code);
 
@@ -1285,7 +1285,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
     /// Invoked by the tuner driver when a remote control key press is detected.
     /// </summary>
     /// <param name="context">The optional context passed to the interface when the interface was opened.</param>
-    /// <param name="code">The key code. If the code is an RC5 code then it can be found in the lower 2 bytes. RC6 codes use 4 bytes.</param>
+    /// <param name="code">The key code. If the code is an RC-5 code then it can be found in the lower 2 bytes. RC-6 codes use 4 bytes.</param>
     private void OnRemoteControlKeyPress(IntPtr context, ref int code)
     {
       if ((code & 0xffffc000) == 0)
@@ -1293,8 +1293,8 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
         int fieldBit = (code & 0x1000) >> 12;
         int toggleBit = (code & 0x800) >> 11;
         int systemAddress = (code & 0x7c0) >> 6;
-        int rc5Code = code & 0x3f;
-        this.LogDebug("TechnoTrend: RC-5 remote control key press, field bit = {0}, toggle bit = {1} system address = {2}, code = {3}", fieldBit, toggleBit, systemAddress, rc5Code);
+        int command = code & 0x3f;
+        this.LogDebug("TechnoTrend: RC-5 remote control key press, field bit = {0}, toggle bit = {1} system address = {2}, command = {3}", fieldBit, toggleBit, systemAddress, command);
       }
       else
       {

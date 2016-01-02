@@ -241,8 +241,8 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Turbosight.RemoteControl
         uint fieldBit = (keyCode & 0x1000) >> 12;
         uint toggleBit = (keyCode & 0x800) >> 11;
         uint systemAddress = (keyCode & 0x7c0) >> 6;
-        uint rc5Code = keyCode & 0x3f;
-        this.LogDebug("Turbosight NXP RC: RC-5 remote control key press, field bit = {0}, toggle bit = {1} system address = {2}, code = {3}", fieldBit, toggleBit, systemAddress, rc5Code);
+        uint command = keyCode & 0x3f;
+        this.LogDebug("Turbosight NXP RC: RC-5 remote control key press, field bit = {0}, toggle bit = {1} system address = {2}, command = {3}", fieldBit, toggleBit, systemAddress, command);
       }
       else if (protocol == NxpRemoteControlProtocol.Rc6)
       {

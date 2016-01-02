@@ -379,25 +379,25 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DvbSky
             int code = Marshal.ReadInt32(_remoteControlBuffer, 0);
             if ((code & 0xff) != 0xff)
             {
-              // Standard RC-5 code structure.
+              // Standard RC-5 code word structure.
               int fieldBit = (code & 0x1000) >> 12;
               int toggleBit = (code & 0x800) >> 11;
               int systemAddress = (code & 0x7c0) >> 6;
-              int rc5Code = code & 0x3f;
-              string codeName;
+              int command = code & 0x3f;
+              string commandName;
               if (systemAddress == (int)DvbSkyRemoteType.TechnoTrend)
               {
-                codeName = ((DvbSkyRemoteCodeTechnoTrend)rc5Code).ToString();
+                commandName = ((DvbSkyRemoteCodeTechnoTrend)command).ToString();
               }
               else if (systemAddress == (int)DvbSkyRemoteType.DvbSky)
               {
-                codeName = ((DvbSkyRemoteCodeDvbSky)rc5Code).ToString();
+                commandName = ((DvbSkyRemoteCodeDvbSky)command).ToString();
               }
               else
               {
-                codeName = rc5Code.ToString();
+                commandName = command.ToString();
               }
-              this.LogDebug("DVBSky: remote control key press, field bit = {0}, toggle bit = {1} system address = {2}, code = {3}", fieldBit, toggleBit, systemAddress, codeName);
+              this.LogDebug("DVBSky: remote control key press, field bit = {0}, toggle bit = {1} system address = {2}, command = {3}", fieldBit, toggleBit, systemAddress, commandName);
             }
           }
         }
