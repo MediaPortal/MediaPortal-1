@@ -568,7 +568,7 @@ namespace MediaPortal.Util
     private static DateTime _examineCDTime = new DateTime();
     private static DateTime _volumeRemovalTime = new DateTime();
     private static DateTime _volumeInsertTime = new DateTime();
-    private static int _volumeRemovalDelay = 5000; // In milliseconds
+    private static int _volumeRemovalDelay = 15000; // In milliseconds
 
     #endregion
 
