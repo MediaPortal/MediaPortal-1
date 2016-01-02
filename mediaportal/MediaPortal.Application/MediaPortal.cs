@@ -1948,11 +1948,13 @@ public class MediaPortalApp : D3D, IRender
           if (!_resumedSuspended)
           {
             // Resume operation of user interface
-            Log.Info("Main:  PBT_APMRESUMESUSPEND Resuming operation of user interface");
+            _resumedSuspended = true;
+            Log.Info("Main: Resuming operation of user interface");
             OnResumeSuspend();
             msg.WParam = new IntPtr((int)PBT_EVENT.PBT_APMRESUMESUSPEND);
             WndProcPlugin(ref msg, true);
-            _resumedSuspended = true;
+            _suspended = false;
+            Log.Debug("Main: PBT_APMRESUMESUSPEND - suspended is false");
           }
           else
           {
@@ -1964,9 +1966,6 @@ public class MediaPortalApp : D3D, IRender
           {
             GUIGraphicsContext.DX9Device.DeviceLost += OnDeviceLost;
           }
-
-          _suspended = false;
-          Log.Debug("Main: PBT_APMRESUMESUSPEND - suspended is false");
 
           // force form dimensions to screen size to compensate for HDMI hot plug problems (e.g. WM_DiSPLAYCHANGE reported 1920x1080 but system is still in 1024x768 mode).
           if (GUIGraphicsContext.currentScreen.Bounds.Width == 1024 &&
@@ -2033,12 +2032,12 @@ public class MediaPortalApp : D3D, IRender
                 if (_suspended && _resumedAutomatic && !_resumedSuspended)
                 {
                   // Resume operation of user interface for PBT_APMRESUMEAUTOMATIC without PBT_APMRESUMESUSPEND.
+                  _resumedSuspended = true;
                   Log.Info("Main: Providing input - Resuming operation of user interface");
                   OnResumeSuspend();
                   msg.WParam = new IntPtr((int)PBT_EVENT.PBT_APMRESUMESUSPEND);
                   WndProcPlugin(ref msg, false);
                   msg.WParam = new IntPtr((int)PBT_EVENT.PBT_POWERSETTINGCHANGE);
-                  _resumedSuspended = true;
                   _suspended = false;
                   Log.Debug("Main: Providing input - suspended is false");
                 }
