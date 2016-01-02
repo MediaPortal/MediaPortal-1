@@ -107,7 +107,7 @@ namespace MediaPortal.Player
           }
         }
 
-        if (_showVolumeOSD && OSInfo.OSInfo.Win8OrLater())
+        if (OSInfo.OSInfo.Win8OrLater())
         {
           try
           {
@@ -192,7 +192,7 @@ namespace MediaPortal.Player
       _instance = null;
       GUIGraphicsContext.VolumeHandler = null;
 
-      if (_showVolumeOSD && OSInfo.OSInfo.Win8OrLater() && VolumeOSD != null)
+      if (OSInfo.OSInfo.Win8OrLater() && VolumeOSD != null)
       {
         VolumeOSD.ShowOSD();
       }
