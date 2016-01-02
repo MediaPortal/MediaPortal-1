@@ -135,7 +135,7 @@ namespace MediaPortal.GUI.Music
     private DirectoryHistory _dirHistory = new DirectoryHistory();
     private GUIListItem _selectedListItem = null;
     private static VirtualDirectory _virtualDirectory;
-
+    private static Thread _removableDrivesHandlerThread;
     private int _selectedAlbum = -1;
     private int _selectedItem = -1;
     private string _discId = string.Empty;
@@ -347,6 +347,14 @@ namespace MediaPortal.GUI.Music
       _virtualDirectory.AddDrives();
       _virtualDirectory.SetExtensions(Util.Utils.AudioExtensions);
 
+      _removableDrivesHandlerThread = new Thread(ListRemovableDrives);
+      _removableDrivesHandlerThread.IsBackground = true;
+      _removableDrivesHandlerThread.Name = "MusicRemovableDrivesHandlerThread";
+      _removableDrivesHandlerThread.Start();
+    }
+
+    private void ListRemovableDrives()
+    {
       RemovableDrivesHandler.ListRemovableDrives(_virtualDirectory.GetDirectoryExt(string.Empty));
     }
 
@@ -527,6 +535,7 @@ namespace MediaPortal.GUI.Music
 
         currentFolder = strNewDirectory;
 
+        _removableDrivesHandlerThread.Join();
         List<GUIListItem> itemlist = _virtualDirectory.GetDirectoryExt(currentFolder);
 
         if (currentFolder == string.Empty)
@@ -670,6 +679,10 @@ namespace MediaPortal.GUI.Music
             {
               _virtualDirectory.AddRemovableDrive(message.Label, message.Label2);
             }
+          }
+          if (_removableDrivesHandlerThread != null)
+          {
+            _removableDrivesHandlerThread.Join();
           }
           RemovableDrivesHandler.ListRemovableDrives(_virtualDirectory.GetDirectoryExt(string.Empty));
           LoadDirectory(currentFolder);
@@ -889,17 +902,20 @@ namespace MediaPortal.GUI.Music
           break;
 
         case 607: // Load (only CDROM)
-          Util.Utils.CloseCDROM(Path.GetPathRoot(item.Path));
+          if (item != null)
+          {
+            Util.Utils.CloseCDROM(Path.GetPathRoot(item.Path));
+          }
           break;
 
         case 654: // Eject
-          if (Util.Utils.getDriveType(item.Path) != 5)
+          if (item != null && Util.Utils.getDriveType(item.Path) != 5)
           {
             Util.Utils.EjectCDROM();
           }
           else
           {
-            if (item.Path != null)
+            if (item != null && item.Path != null)
             {
               var driveInfo = new DriveInfo(Path.GetPathRoot(item.Path));
 
@@ -977,7 +993,7 @@ namespace MediaPortal.GUI.Music
             for (int x = 0; x < handler.Views.Count; ++x)
             {
               ViewDefinition view = (ViewDefinition)handler.Views[x];
-              if (view.Name.ToLowerInvariant().IndexOf("artist") >= 0)
+              if (view.Name.ToLowerInvariant().IndexOf("artist", StringComparison.Ordinal) >= 0)
               {
                 viewNr = x;
               }
@@ -1013,7 +1029,7 @@ namespace MediaPortal.GUI.Music
         case 831:
           string message = string.Empty;
 
-          if (Util.Utils.IsUsbHdd(item.Path) || Util.Utils.IsRemovableUsbDisk(item.Path))
+          if (item != null && (Util.Utils.IsUsbHdd(item.Path) || Util.Utils.IsRemovableUsbDisk(item.Path)))
           {
           if (!RemovableDriveHelper.EjectDrive(item.Path, out message))
           {
@@ -1032,7 +1048,7 @@ namespace MediaPortal.GUI.Music
             pDlgOK.DoModal(GUIWindowManager.ActiveWindow);
           }
           }
-          else if (!RemovableDriveHelper.EjectMedia(item.Path, out message))
+          else if (item != null && !RemovableDriveHelper.EjectMedia(item.Path, out message))
           {
             GUIDialogOK pDlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_OK);
             pDlgOK.SetHeading(831);
