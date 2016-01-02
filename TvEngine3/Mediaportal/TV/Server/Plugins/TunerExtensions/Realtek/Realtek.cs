@@ -497,7 +497,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Realtek
         IntPtr irCodeSize = new IntPtr(4);    // size of irCode
         while (!_remoteControlListenerThreadStopEvent.WaitOne(REMOTE_CONTROL_LISTENER_THREAD_WAIT_TIME))
         {
-          if (_getIrCode(out isIrCodeAvailable, out irCode, irCodeSize))
+          if (!_getIrCode(out isIrCodeAvailable, out irCode, irCodeSize))
           {
             this.LogError("Realtek: failed to read remote code");
           }
