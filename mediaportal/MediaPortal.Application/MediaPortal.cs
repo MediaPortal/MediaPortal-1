@@ -133,7 +133,7 @@ public class MediaPortalApp : D3D, IRender
   private bool                  _resumedSuspended;
   private bool                  _delayedResume;
   private readonly Object       _delayedResumeLock = new Object();
-  private bool                  _keepstartfullscreen;
+  private readonly bool         _ignoreFullscreenResolutionChanges;
   private int                   _locationX;
   private int                   _locationY;
   private bool                  _firstRestoreScreen = true;
@@ -1258,16 +1258,9 @@ public class MediaPortalApp : D3D, IRender
     CheckSkinVersion();
     using (Settings xmlreader = new MPSettings())
     {
-      _keepstartfullscreen = xmlreader.GetValueAsBool("general", "keepstartfullscreen", false);
+      _ignoreFullscreenResolutionChanges = xmlreader.GetValueAsBool("general", "ignorefullscreenresolutionchanges", false);
       var startFullscreen = !WindowedOverride && (FullscreenOverride || xmlreader.GetValueAsBool("general", "startfullscreen", false));
-      if (_keepstartfullscreen)
-      {
-        Windowed = !_keepstartfullscreen;
-      }
-      else
-      {
-        Windowed = !startFullscreen;
-      }
+      Windowed = !startFullscreen;
     }
 
     DoStartupJobs();
@@ -1552,7 +1545,7 @@ public class MediaPortalApp : D3D, IRender
 
         // set maximum and minimum form size in windowed mode
         case WM_GETMINMAXINFO:
-          if (!_keepstartfullscreen)
+          if (Windowed || !_ignoreFullscreenResolutionChanges)
           {
             if (!_suspended)
             {
@@ -1580,7 +1573,7 @@ public class MediaPortalApp : D3D, IRender
 
         // verify window size in case it was not resized by the user
         case WM_SIZE:
-          if (!_keepstartfullscreen)
+          if (Windowed || !_ignoreFullscreenResolutionChanges)
           {
             OnSize(ref msg);
             PluginManager.WndProc(ref msg);
@@ -1589,7 +1582,7 @@ public class MediaPortalApp : D3D, IRender
 
         // aspect ratio save window resizing
         case WM_SIZING:
-          if (!_keepstartfullscreen)
+          if (Windowed || !_ignoreFullscreenResolutionChanges)
           {
             OnSizing(ref msg);
             PluginManager.WndProc(ref msg);
@@ -1598,7 +1591,7 @@ public class MediaPortalApp : D3D, IRender
 
         // handle display changes
         case WM_DISPLAYCHANGE:
-          if (!_keepstartfullscreen)
+          if (Windowed || !_ignoreFullscreenResolutionChanges)
           {
             OnDisplayChange(ref msg);
             PluginManager.WndProc(ref msg);
@@ -1607,7 +1600,7 @@ public class MediaPortalApp : D3D, IRender
 
         // handle device changes
         case WM_DEVICECHANGE:
-          if (!_keepstartfullscreen)
+          if (Windowed || !_ignoreFullscreenResolutionChanges)
           {
             OnDeviceChange(ref msg);
             PluginManager.WndProc(ref msg);
@@ -2134,7 +2127,7 @@ public class MediaPortalApp : D3D, IRender
               try
               {
                 GUIGraphicsContext.DeviceVideoConnected++;
-                if (!_keepstartfullscreen)
+                if (Windowed || !_ignoreFullscreenResolutionChanges)
                 {
                   OnDisplayChange(ref msg);
                 }
@@ -2383,38 +2376,41 @@ public class MediaPortalApp : D3D, IRender
       Screen screen = Screen.FromControl(this);
       Rectangle currentBounds = GUIGraphicsContext.currentScreen.Bounds;
       Rectangle newBounds = screen.Bounds;
-      string adapterOrdinalScreenName = Manager.Adapters[GUIGraphicsContext.DX9Device.DeviceCaps.AdapterOrdinal].Information.DeviceName;
-
-      if ((!Equals(screen, GUIGraphicsContext.currentScreen) || (!Equals(GetCleanDisplayName(GUIGraphicsContext.currentScreen), GetCleanDisplayName(screen)))) && !_firstLoadedScreen && !_restoreLoadedScreen)
+      if (GUIGraphicsContext.DX9Device != null)
       {
-        Log.Info("Main: Screen MP OnGetMinMaxInfo is displayed on changed from {0} to {1}", GetCleanDisplayName(GUIGraphicsContext.currentScreen), GetCleanDisplayName(screen));
-        if (screen.Bounds != GUIGraphicsContext.currentScreen.Bounds)
+        string adapterOrdinalScreenName = Manager.Adapters[GUIGraphicsContext.DX9Device.DeviceCaps.AdapterOrdinal].Information.DeviceName;
+
+        if ((!Equals(screen, GUIGraphicsContext.currentScreen) || (!Equals(GetCleanDisplayName(GUIGraphicsContext.currentScreen), GetCleanDisplayName(screen)))) && !_firstLoadedScreen && !_restoreLoadedScreen)
         {
-          Log.Info("Main: OnGetMinMaxInfo Bounds of display changed from {0}x{1} @ {2},{3} to {4}x{5} @ {6},{7}",
-                   currentBounds.Width, currentBounds.Height, currentBounds.X, currentBounds.Y, newBounds.Width, newBounds.Height, newBounds.X, newBounds.Y);
+          Log.Info("Main: Screen MP OnGetMinMaxInfo is displayed on changed from {0} to {1}", GetCleanDisplayName(GUIGraphicsContext.currentScreen), GetCleanDisplayName(screen));
+          if (screen.Bounds != GUIGraphicsContext.currentScreen.Bounds)
+          {
+            Log.Info("Main: OnGetMinMaxInfo Bounds of display changed from {0}x{1} @ {2},{3} to {4}x{5} @ {6},{7}",
+              currentBounds.Width, currentBounds.Height, currentBounds.X, currentBounds.Y, newBounds.Width, newBounds.Height, newBounds.X, newBounds.Y);
+          }
+          _changeScreen = true;
         }
-        _changeScreen = true;
-      }
 
-      if (!Equals(currentBounds.Size, newBounds.Size) && !_firstLoadedScreen && !_restoreLoadedScreen)
-      {
-        // Check if start screen is equal to device screen and check if current screen bond differ from current detected screen bond then recreate swap chain.
-        Log.Debug("Main: Screen MP OnGetMinMaxInfo Information.DeviceName Manager.Adapters                {0}", adapterOrdinalScreenName);
-        Log.Debug("Main: Screen MP OnGetMinMaxInfo current screen detected                                {0}", GetCleanDisplayName(screen));
-        Log.Debug("Main: Screen MP OnGetMinMaxInfo current screen                                         {0}", GetCleanDisplayName(GUIGraphicsContext.currentScreen));
-        Log.Debug("Main: Screen MP OnGetMinMaxInfo start screen                                           {0}", GetCleanDisplayName(GUIGraphicsContext.currentStartScreen));
-        Log.Debug("Main: Screen MP OnGetMinMaxInfo change current screen {0} with current detected screen {1}", GetCleanDisplayName(GUIGraphicsContext.currentScreen), GetCleanDisplayName(screen));
-        GUIGraphicsContext.currentScreen = screen;
-        Log.Debug("Main: Screen MP OnGetMinMaxInfo set current screen bounds {0} to Bounds {1}", GUIGraphicsContext.currentScreen.Bounds, Bounds);
-        Bounds = screen.Bounds;
-        Log.Debug("Main: Screen MP OnGetMinMaxInfo recreate swap chain");
-        NeedRecreateSwapChain = true;
-        RecreateSwapChain(false);
-        _changeScreen = true;
-
-        if (!Windowed)
+        if (!Equals(currentBounds.Size, newBounds.Size) && !_firstLoadedScreen && !_restoreLoadedScreen)
         {
-          SetBounds(GUIGraphicsContext.currentScreen.Bounds.X, GUIGraphicsContext.currentScreen.Bounds.Y, GUIGraphicsContext.currentScreen.Bounds.Width, GUIGraphicsContext.currentScreen.Bounds.Height);
+          // Check if start screen is equal to device screen and check if current screen bond differ from current detected screen bond then recreate swap chain.
+          Log.Debug("Main: Screen MP OnGetMinMaxInfo Information.DeviceName Manager.Adapters                {0}", adapterOrdinalScreenName);
+          Log.Debug("Main: Screen MP OnGetMinMaxInfo current screen detected                                {0}", GetCleanDisplayName(screen));
+          Log.Debug("Main: Screen MP OnGetMinMaxInfo current screen                                         {0}", GetCleanDisplayName(GUIGraphicsContext.currentScreen));
+          Log.Debug("Main: Screen MP OnGetMinMaxInfo start screen                                           {0}", GetCleanDisplayName(GUIGraphicsContext.currentStartScreen));
+          Log.Debug("Main: Screen MP OnGetMinMaxInfo change current screen {0} with current detected screen {1}", GetCleanDisplayName(GUIGraphicsContext.currentScreen), GetCleanDisplayName(screen));
+          GUIGraphicsContext.currentScreen = screen;
+          Log.Debug("Main: Screen MP OnGetMinMaxInfo set current screen bounds {0} to Bounds {1}", GUIGraphicsContext.currentScreen.Bounds, Bounds);
+          Bounds = screen.Bounds;
+          Log.Debug("Main: Screen MP OnGetMinMaxInfo recreate swap chain");
+          NeedRecreateSwapChain = true;
+          RecreateSwapChain(false);
+          _changeScreen = true;
+
+          if (!Windowed)
+          {
+            SetBounds(GUIGraphicsContext.currentScreen.Bounds.X, GUIGraphicsContext.currentScreen.Bounds.Y, GUIGraphicsContext.currentScreen.Bounds.Width, GUIGraphicsContext.currentScreen.Bounds.Height);
+          }
         }
       }
 
@@ -3447,7 +3443,7 @@ public class MediaPortalApp : D3D, IRender
     Log.Info("Startup: Activating Window Manager");
     if ((_startWithBasicHome) && (File.Exists(GUIGraphicsContext.GetThemedSkinFile(@"\basichome.xml"))))
     {
-      GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_SECOND_HOME);
+      GUIWindowManager.ActivateWindow((int) GUIWindow.Window.WINDOW_SECOND_HOME);
     }
     else
     {
@@ -3511,14 +3507,7 @@ public class MediaPortalApp : D3D, IRender
     Log.Warn("Main: OnDeviceLost()");
     if (!Created || !AppActive)
     {
-      if (!Created)
-      {
-        Log.Debug("Main: Form not created yet - ignoring Event");
-      }
-      else
-      {
-        Log.Debug("Main: Application not ready - ignoring Event");
-      }
+      Log.Debug(!Created ? "Main: Form not created yet - ignoring Event" : "Main: Application not ready - ignoring Event");
       return;
     }
     GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.LOST;
@@ -4024,10 +4013,7 @@ public class MediaPortalApp : D3D, IRender
 
         // toggle between windowed and fullscreen mode
         case Action.ActionType.ACTION_TOGGLE_WINDOWED_FULLSCREEN:
-          if (!_keepstartfullscreen)
-          {
-            ToggleFullscreen();
-          }
+          ToggleFullscreen();
           return;
 
         // mute or unmute audio
