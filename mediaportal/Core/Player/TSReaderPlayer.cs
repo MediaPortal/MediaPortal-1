@@ -816,8 +816,6 @@ namespace MediaPortal.Player
       GUIWindowManager.SendMessage(msg);
     }
 
-    private object lockObj = new object();
-
     private void Cleanup()
     {
       lock (lockObj)
