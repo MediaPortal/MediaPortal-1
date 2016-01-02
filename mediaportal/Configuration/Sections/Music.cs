@@ -204,6 +204,7 @@ namespace MediaPortal.Configuration.Sections
         }
         catch (Exception) // We end up here in the conversion Phase, where we have still a string ioncluded
         {
+          // ignored
         }
 
         // Disable Selected Index Change Handler to prevent calling the logic for Buffer calculation
@@ -386,8 +387,12 @@ namespace MediaPortal.Configuration.Sections
         #region Player Settings
 
         xmlwriter.SetValue("audioplayer", "playerId", audioPlayerComboBox.SelectedIndex);
-        xmlwriter.SetValue("audioplayer", "sounddevice", (soundDeviceComboBox.SelectedItem as SoundDeviceItem).Name);
-        xmlwriter.SetValue("audioplayer", "sounddeviceid", (soundDeviceComboBox.SelectedItem as SoundDeviceItem).ID);
+        var deviceItem = soundDeviceComboBox.SelectedItem as SoundDeviceItem;
+        if (deviceItem != null)
+          xmlwriter.SetValue("audioplayer", "sounddevice", deviceItem.Name);
+        var soundDeviceItem = soundDeviceComboBox.SelectedItem as SoundDeviceItem;
+        if (soundDeviceItem != null)
+          xmlwriter.SetValue("audioplayer", "sounddeviceid", soundDeviceItem.ID);
 
         xmlwriter.SetValue("audioplayer", "crossfade", trackBarCrossfade.Value);
         xmlwriter.SetValue("audioplayer", "buffering", trackBarBuffering.Value);
