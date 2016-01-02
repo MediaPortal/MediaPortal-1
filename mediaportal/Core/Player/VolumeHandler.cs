@@ -83,7 +83,7 @@ namespace MediaPortal.Player
           Log.Error("VolumeHandler: Mixer exception when init {0}", ex);
         }
 
-        if (_showVolumeOSD && OSInfo.OSInfo.Win8OrLater())
+        if (OSInfo.OSInfo.Win8OrLater())
         {
           try
           {
@@ -168,7 +168,7 @@ namespace MediaPortal.Player
       _instance = null;
       GUIGraphicsContext.VolumeHandler = null;
 
-      if (_showVolumeOSD && OSInfo.OSInfo.Win8OrLater() && VolumeOSD != null)
+      if (OSInfo.OSInfo.Win8OrLater() && VolumeOSD != null)
       {
         VolumeOSD.ShowOSD();
       }
