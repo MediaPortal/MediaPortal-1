@@ -83,7 +83,7 @@ namespace MediaPortal.InputDevices
         {
           if (device.WndProc(ref msg, out action, out key, out keyCode))
           {
-            //First come, first serve, stop message propagation then.
+            //First come, first served, stop message propagation then.
             return true;
           }
         }
