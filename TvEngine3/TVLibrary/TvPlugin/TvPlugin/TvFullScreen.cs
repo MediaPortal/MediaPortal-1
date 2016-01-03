@@ -1749,6 +1749,22 @@ namespace TvPlugin
         {
           item.Label = (String.Format("{0} #{1}", GUILocalizeStrings.Get(200091), (i + 1)));
           item.Label2 = MediaPortal.Util.Utils.SecondsToHMSString((int)chaptersList[i]);
+
+          if (i < chaptersList.Length - 1)
+          {
+            if (g_Player.CurrentPosition >= chaptersList[i] && g_Player.CurrentPosition < chaptersList[i + 1])
+            {
+              item.Selected = true;
+            }
+          }
+          else
+          {
+            if (g_Player.CurrentPosition >= chaptersList[i])
+            {
+              item.Selected = true;
+            }
+          }
+
           dlg.Add(item);
         }
         else
@@ -1757,14 +1773,28 @@ namespace TvPlugin
           {
             item.Label = (String.Format("{0} #{1}", GUILocalizeStrings.Get(200091), (i + 1)));
             item.Label2 = MediaPortal.Util.Utils.SecondsToHMSString((int)chaptersList[i]);
-            dlg.Add(item);
           }
           else
           {
             item.Label = (String.Format("{0} #{1}: {2}", GUILocalizeStrings.Get(200091), (i + 1), chaptersname[i]));
             item.Label2 = MediaPortal.Util.Utils.SecondsToHMSString((int)chaptersList[i]);
-            dlg.Add(item);
           }
+          if (i < chaptersList.Length - 1)
+          {
+            if (g_Player.CurrentPosition >= chaptersList[i] && g_Player.CurrentPosition < chaptersList[i + 1])
+            {
+              item.Selected = true;
+            }
+          }
+          else
+          {
+            if (g_Player.CurrentPosition >= chaptersList[i])
+            {
+              item.Selected = true;
+            }
+          }
+
+          dlg.Add(item);
         }
       }
 
