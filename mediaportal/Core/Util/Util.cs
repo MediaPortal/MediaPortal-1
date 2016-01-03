@@ -4911,8 +4911,6 @@ namespace MediaPortal.Util
       catch (Exception) {}
     }
 
-    //void DeleteOldTimeShiftFiles(string path)
-
     public static void DeleteRecording(string recordingFilename)
     {
       Utils.FileDelete(recordingFilename);
@@ -4932,13 +4930,8 @@ namespace MediaPortal.Util
         {
           try
           {
-            if (fileName.ToLowerInvariant().IndexOf(filename) >= 0)
+            if (fileName.ToLowerInvariant().IndexOf(filename.ToLowerInvariant()) >= 0)
             {
-              //delete all Timeshift buffer files
-              if (fileName.ToLowerInvariant().IndexOf(".sbe") >= 0)
-              {
-                File.Delete(fileName);
-              }
               //delete Thumbnails
               if (fileName.ToLowerInvariant().IndexOf(".jpg") >= 0)
               {
@@ -4951,6 +4944,10 @@ namespace MediaPortal.Util
               }
               //delete Matroska tag file
               if (fileName.ToLowerInvariant().IndexOf(".xml") >= 0)
+              {
+                File.Delete(fileName);
+              }
+              if (fileName.ToLowerInvariant().IndexOf(".nfo") >= 0)
               {
                 File.Delete(fileName);
               }
