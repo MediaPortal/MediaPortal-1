@@ -548,6 +548,12 @@
       <sound />
       <description>Create Bookmark</description>
     </action>
+    <action>
+      <id>1985</id>
+      <key>T</key>
+      <sound />
+      <description>Slow Speed</description>
+    </action>
   </window>
   <window>
     <id>2</id>
@@ -1105,6 +1111,12 @@
       <key>L</key>
       <sound />
       <description>Next subtitle</description>
+    </action>
+    <action>
+      <id>1985</id>
+      <key>T</key>
+      <sound />
+      <description>Slow Play</description>
     </action>
   </window>
   <window>

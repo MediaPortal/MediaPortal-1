@@ -3715,11 +3715,11 @@ public class MediaPortalApp : D3D, IRender
       {
         GUIPropertyManager.SetProperty("#playlogo", "logo_pause.png");
       }
-      else if (g_Player.Speed > 1)
+      else if (g_Player.RealSpeed > 1)
       {
         GUIPropertyManager.SetProperty("#playlogo", "logo_fastforward.png");
       }
-      else if (g_Player.Speed < 1)
+      else if (g_Player.RealSpeed < 0)
       {
         GUIPropertyManager.SetProperty("#playlogo", "logo_rewind.png");
       }
@@ -3798,7 +3798,7 @@ public class MediaPortalApp : D3D, IRender
         GUIPropertyManager.SetProperty("#jumppoints", string.Empty);
       }
 
-      GUIPropertyManager.SetProperty("#playspeed", g_Player.Speed.ToString(CultureInfo.InvariantCulture));
+      GUIPropertyManager.SetProperty("#playspeed", g_Player.RealSpeed.ToString(CultureInfo.InvariantCulture));
     }
     else
     {
@@ -4376,16 +4376,16 @@ public class MediaPortalApp : D3D, IRender
           case Action.ActionType.ACTION_PLAY:
           case Action.ActionType.ACTION_MUSIC_PLAY:
             // Don't start playing from the beginning if we press play to return to normal speed
-            if (g_Player.IsMusic && g_Player.Speed != 1 &&
+            if (g_Player.IsMusic && g_Player.RealSpeed != 1 &&
                 (GUIWindowManager.ActiveWindow != (int) GUIWindow.Window.WINDOW_MUSIC_FILES &&
                  GUIWindowManager.ActiveWindow != (int) GUIWindow.Window.WINDOW_MUSIC_GENRE))
             {
-              g_Player.Speed = 1;
+              g_Player.RealSpeed = 1;
               break;
             }
 
             g_Player.StepNow();
-            g_Player.Speed = 1;
+            g_Player.RealSpeed = 1;
 
             if (g_Player.Paused)
             {
@@ -4413,8 +4413,48 @@ public class MediaPortalApp : D3D, IRender
               if (g_Player.Paused)
               {
                 g_Player.Pause();
+
+                if (g_Player._mediaInfo != null && g_Player._mediaInfo.Framerate == 24)
+                {
+                  g_Player.RealSpeed = 0.25;
+                }
+                else
+                {
+                  g_Player.RealSpeed = 0.2;
+                }
               }
-              g_Player.Speed = Utils.GetNextForwardSpeed(g_Player.Speed);
+              else
+              {
+                g_Player.RealSpeed = Utils.GetNextForwardSpeed(g_Player.RealSpeed);
+              }
+              break;
+            }
+
+          case Action.ActionType.ACTION_SLOW_PLAY:
+            {
+              // We don't want to slow play in Music
+              if (!g_Player.IsMusic)
+              {
+                if (g_Player.Paused)
+                {
+                  g_Player.Pause();
+                }
+                if (g_Player.RealSpeed < 0 || g_Player.RealSpeed >= 1)
+                {
+                  if (g_Player._mediaInfo != null && g_Player._mediaInfo.Framerate == 24)
+                  {
+                    g_Player.RealSpeed = 0.25;
+                  }
+                  else
+                  {
+                    g_Player.RealSpeed = 0.2;
+                  }
+                }
+                else
+                {
+                  g_Player.RealSpeed = 1;
+                }
+              }
               break;
             }
 
@@ -4431,7 +4471,7 @@ public class MediaPortalApp : D3D, IRender
               }
               if (!MediaPortal.MusicPlayer.BASS.Config.UseSkipSteps)
               {
-                g_Player.Speed = Utils.GetNextForwardSpeed(g_Player.Speed);
+                g_Player.RealSpeed = Utils.GetNextForwardSpeed(g_Player.RealSpeed);
               }
             }
             break;
@@ -4443,7 +4483,7 @@ public class MediaPortalApp : D3D, IRender
               {
                 g_Player.Pause();
               }
-              g_Player.Speed = Utils.GetNextRewindSpeed(g_Player.Speed);
+              g_Player.RealSpeed = Utils.GetNextRewindSpeed(g_Player.RealSpeed);
               break;
             }
 
@@ -4460,7 +4500,7 @@ public class MediaPortalApp : D3D, IRender
               }
               if (!MediaPortal.MusicPlayer.BASS.Config.UseSkipSteps)
               {
-                g_Player.Speed = Utils.GetNextRewindSpeed(g_Player.Speed);
+                g_Player.RealSpeed = Utils.GetNextRewindSpeed(g_Player.RealSpeed);
               }
             }
             break;

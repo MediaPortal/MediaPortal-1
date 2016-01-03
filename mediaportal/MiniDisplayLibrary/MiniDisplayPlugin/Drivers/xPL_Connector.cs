@@ -313,7 +313,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           }
           else
           {
-            int num;
+            double num;
             switch (e.XplMsg.GetParam(1, "command").ToLowerInvariant())
             {
               case "record":
@@ -399,20 +399,20 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
                     num = int.Parse(str4.Replace("x", ""));
                     break;
                   }
-                  num = g_Player.Speed * 2;
+                  num = g_Player.RealSpeed * 2;
                   break;
                 }
               case "rewind":
                 {
                   string str5 = e.XplMsg.GetParam(1, "speed").ToLowerInvariant();
-                  int num2 = 0;
+                  double num2 = 0;
                   if (!str5.Equals(string.Empty))
                   {
                     num2 = int.Parse(str5.Replace("x", ""));
                   }
                   else
                   {
-                    num2 = Math.Abs(g_Player.Speed) * 2;
+                    num2 = Math.Abs(g_Player.RealSpeed) * 2;
                   }
                   if (num2 > 0x20)
                   {
@@ -423,7 +423,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
                     Log.Info("xPLConnector_Listener_XplMessageReceived: Received media.basic rewind ({0}x) command",
                              new object[] {num2});
                   }
-                  g_Player.Speed = -num2;
+                  g_Player.RealSpeed = -num2;
                   return;
                 }
               case "next":
@@ -528,7 +528,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
               Log.Info("xPLConnector_Listener_XplMessageReceived: Received media.basic play forward ({0}x) command",
                        new object[] {num});
             }
-            g_Player.Speed = num;
+            g_Player.RealSpeed = num;
           }
         }
       }

@@ -185,7 +185,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         }
 
         // Show rewind icon if speed is negative
-        if (g_Player.Speed < 0)
+        if (g_Player.RealSpeed < 0)
         {
           icons += (uint)Icon.Rewind;
         }
@@ -197,7 +197,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         }
 
         // Show play icon if playing with speed 1 and not paused and not in DVD menu
-        if (g_Player.Playing & !g_Player.Paused & (g_Player.Speed == 1) & !g_Player.IsDVDMenu)
+        if (g_Player.Playing & !g_Player.Paused & (g_Player.RealSpeed == 1) & !g_Player.IsDVDMenu)
         {
           icons += (uint)Icon.Play;
         }
@@ -215,7 +215,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         }
 
         // Show forward icon if speed is greater 1
-        if (g_Player.Speed > 1)
+        if (g_Player.RealSpeed > 1)
         {
           icons += (uint)Icon.Forward;
         }

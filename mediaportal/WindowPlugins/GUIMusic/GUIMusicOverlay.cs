@@ -243,13 +243,13 @@ namespace MediaPortal.GUI.Music
         int mm = (int)((lPTS1 / 60) % 60);
         int ss = (int)((lPTS1 / 1) % 60);
 
-        int iSpeed = g_Player.Speed;
+        double iSpeed = g_Player.RealSpeed;
         if (hh == 0 && mm == 0 && ss < 5)
         {
-          if (iSpeed < 1)
+          if (iSpeed < 0)
           {
             iSpeed = 1;
-            g_Player.Speed = iSpeed;
+            g_Player.RealSpeed = iSpeed;
             g_Player.SeekAbsolute(0.0d);
           }
         }
@@ -266,12 +266,12 @@ namespace MediaPortal.GUI.Music
 
         if (_imageFastForward != null)
         {
-          _imageFastForward.Visible = (g_Player.Speed > 1);
+          _imageFastForward.Visible = (g_Player.RealSpeed > 1);
         }
 
         if (_imageRewind != null)
         {
-          _imageRewind.Visible = (g_Player.Speed < 0);
+          _imageRewind.Visible = (g_Player.RealSpeed < 0);
         }
 
         if (_imageNormal != null)

@@ -119,7 +119,7 @@ namespace MediaPortal.Player
     protected IBasicAudio _basicAudio = null;
     protected IMediaPosition _mediaPos = null;
 
-    protected int _speed = 1;
+    protected double _speed = 1;
     protected double _currentTime = 0;
     protected bool _visible = true;
     protected bool _started = false;
@@ -214,7 +214,6 @@ namespace MediaPortal.Player
       _defaultSubtitleLanguage = null;
       _forceSubtitles = true;
       _aspectRatio = Geometry.Type.Normal;
-      _speed = 1;
       _currentTime = 0;
       _visible = true;
       _started = false;
@@ -738,9 +737,9 @@ namespace MediaPortal.Player
           switch (code)
           {
             case EventCode.DvdPlaybackRateChange:
-              if (_speed != p1 / 10000)
+              if (_speed != (double)p1 / 10000)
               {
-                _speed = p1 / 10000; // if RWD reaches start then PlaybackRate is changing automaticly 
+                _speed = (double)p1 / 10000; // if RWD reaches start then PlaybackRate is changing automaticly 
               }
               break;
 
@@ -1122,15 +1121,32 @@ namespace MediaPortal.Player
 
     public override int Speed
     {
-      get { return _speed; }
+      get
+      {
+        return (int)RealSpeed;
+      }
+      set
+      {
+        RealSpeed = (double)value;
+      }
+    }
+
+    public override double RealSpeed
+    {
+      get
+      {
+        Log.Error("get dvd {0}", _speed);
+        return _speed; }
       set
       {
         if (_state != PlayState.Init)
         {
+          
           try
           {
             _speed = value;
-            if (_speed >= 1)
+            Log.Error("set dvd {0}", _speed);
+            if (_speed > 0)
             {
               _dvdCtrl.PlayForwards((double)_speed, DvdCmdFlags.Flush, out _cmdOption);
             }

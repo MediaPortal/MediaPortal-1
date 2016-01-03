@@ -265,10 +265,20 @@ namespace MediaPortal.Player
       set { }
     }
 
+    [Obsolete("This method is obsolete; use method RealSpeed() instead.")]
     /// <summary>
     /// Property to set the playback speed (-32x,-16x,-8x,-4x,-2x,1x,2x,4x,8x,16x)
     /// </summary>
     public virtual int Speed
+    {
+      get { return 1; }
+      set { }
+    }
+
+    /// <summary>
+    /// Property to set the playback speed (-32x,-16x,-8x,-4x,-2x,1x,2x,4x,8x,16x,0.25x)
+    /// </summary>
+    public virtual double RealSpeed
     {
       get { return 1; }
       set { }

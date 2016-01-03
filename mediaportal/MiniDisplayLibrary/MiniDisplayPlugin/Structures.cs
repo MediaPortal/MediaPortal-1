@@ -231,7 +231,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
     public bool Media_IsTimeshifting;
     public double Media_CurrentPosition;
     public double Media_Duration;
-    public int Media_Speed;
+    public double Media_Speed;
     public bool _AudioIsMixing;
     public bool _AudioUseASIO;
     public bool _AudioUseMasterVolume;
