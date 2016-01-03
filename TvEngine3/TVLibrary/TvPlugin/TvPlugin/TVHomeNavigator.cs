@@ -1049,6 +1049,9 @@ namespace TvPlugin
 
     private bool CheckAndSelectAnUnprotectedGroup()
     {
+      // validate SetProperty to enable RecordedDisAllowed in TvRecorded skin
+      GUIPropertyManager.SetProperty("#TVPinCode.enabled", "true");
+
       if (string.IsNullOrEmpty(m_groups[m_currentgroup].PinCode))
       {
         Log.Debug("ChannelNavigator: The last channelgroup was not pin protected.");
