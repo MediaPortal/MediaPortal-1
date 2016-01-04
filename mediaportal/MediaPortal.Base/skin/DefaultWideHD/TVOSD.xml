@@ -15,7 +15,8 @@
       <height>417</height>
       <width>1745</width>
       <texture>OSDBG2.png</texture>
-      <colordiffuse>eeffffff</colordiffuse>
+      <colordiffuse>ddffffff</colordiffuse>
+      <visible>!control.hasfocus(1237)+!control.hasfocus(1238)</visible>
     </control>
     <control>
       <description>Time BG</description>
@@ -27,19 +28,19 @@
       <height>52</height>
       <texture>button_focus.png</texture>
       <colordiffuse>ffffffff</colordiffuse>
-      
+      <visible>!control.hasfocus(1237)+!control.hasfocus(1238)</visible>
     </control>
     <control>
       <description>Time Info</description>
       <type>label</type>
       <id>110</id>
       <posX>1768</posX>
-      <posY>715</posY>
+      <posY>711</posY>
       <label>#time</label>
       <align>right</align>
       <font>font16</font>
       <textcolor>ivory</textcolor>
-      
+      <visible>!control.hasfocus(1237)+!control.hasfocus(1238)</visible>
     </control>
     <control>
       <description>TV Logo</description>
@@ -52,7 +53,7 @@
       <texture>#TV.View.thumb</texture>
       <centered>yes</centered>
       <keepaspectratio>yes</keepaspectratio>
-      <visible>yes</visible>
+      <visible>!control.hasfocus(1237)+!control.hasfocus(1238)</visible>
     </control>
     <control>
       <description>Current channel</description>
@@ -157,8 +158,8 @@
       <description>End of progressbar</description>
       <type>label</type>
       <id>1</id>
-      <posX>1607</posX>
-      <posY>842</posY>
+      <posX>1605</posX>
+      <posY>839</posY>
       <label>|</label>
       <align>left</align>
       <font>font10</font>
@@ -175,7 +176,7 @@
       <width>75</width>
       <height>75</height>
       <texture>recording.png</texture>
-      <animation effect="zoom" start="100,100" end="110,110" time="500" condition="true" pulse="true">conditional</animation>
+      <animation effect="fade" start="100,100" end="110,110" time="500" condition="true" pulse="true">conditional</animation>
     </control>
     <control>
       <description>On tv NEXT</description>
@@ -205,121 +206,148 @@
       <textcolor>ivory</textcolor>
       <visible>!control.hasfocus(1237)+!control.hasfocus(1238)+![control.isvisible(400)|control.isvisible(800)|control.isvisible(550)|control.isvisible(700)|control.isvisible(600)]</visible>
     </control>
+    <!-- ***************************************************************************************************** -->
+    <!-- *****************************         INFO DISPLAY ON TV NOW/NEXT      ****************************** -->
+    <!-- ***************************************************************************************************** -->
     <control>
       <description>background</description>
       <type>image</type>
       <id>1236</id>
-      <posX>280</posX>
-      <posY>380</posY>
-      <height>630</height>
-      <width>1310</width>
-      <texture>osd_details.png</texture>
+      <posX>90</posX>
+      <posY>505</posY>
+      <height>590</height>
+      <width>1745</width>
+      <texture>osdbg2.png</texture>
+      <colordiffuse>ccffffff</colordiffuse>
       <visible>control.hasfocus(1237)|control.hasfocus(1238)</visible>
-      <animation effect="zoom" start="1,1" end="100,100" time="200" center="990,650" reversible="true">visiblechange</animation>
+      <animation effect="fade" start="0" end="100" time="170" reversible="true">visiblechange</animation>
+    </control>
+    <control>
+      <description>TV Logo</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>175</posX>
+      <posY>872</posY>
+      <width>57</width>
+      <height>57</height>
+      <texture>#TV.View.thumb</texture>
+      <centered>yes</centered>
+      <keepaspectratio>yes</keepaspectratio>
+      <visible>control.hasfocus(1237)|control.hasfocus(1238)</visible>
+      <animation effect="fade" start="0" end="100" time="170" reversible="true">visiblechange</animation>
+    </control>
+    <control>
+      <description>divider horizontal</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>175</posX>
+      <posY>862</posY>
+      <width>1590</width>
+      <height>1</height>
+      <texture>horizontal_bar.png</texture>
+      <colordiffuse>40ffffff</colordiffuse>
+      <animation effect="fade" start="0" end="100" time="170" reversible="true">visiblechange</animation>
+      <visible>control.hasfocus(1237)|control.hasfocus(1238)</visible>
+    </control>
+    <control>
+      <description>divider horizontal</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>175</posX>
+      <posY>937</posY>
+      <width>1590</width>
+      <height>1</height>
+      <texture>horizontal_bar.png</texture>
+      <colordiffuse>40ffffff</colordiffuse>
+      <animation effect="fade" start="0" end="100" time="150" reversible="true">visiblechange</animation>
+      <visible>control.hasfocus(1237)|control.hasfocus(1238)</visible>
     </control>
     <control>
       <description>Program Info</description>
       <id>0</id>
       <type>fadelabel</type>
-      <posX>327</posX>
-      <posY>430</posY>
+      <posX>175</posX>
+      <posY>560</posY>
       <height>57</height>
-      <width>1213</width>
+      <width>1600</width>
       <align>center</align>
-      <textcolor>ff000000</textcolor>
+      <textcolor>dodgerblue</textcolor>
       <font>Label</font>
       <label>#TV.View.title  (#TV.View.start - #TV.View.stop)</label>
       <shadowAngle>90</shadowAngle>
       <shadowDistance>1</shadowDistance>
       <visible>control.hasfocus(1237)</visible>
-      <animation effect="zoom" start="1,1" end="100,100" time="200" center="990,650" reversible="true">visiblechange</animation>
+      <animation effect="fade" start="0" end="100" time="170" reversible="true">visiblechange</animation>
     </control>
     <control>
       <description>Plot</description>
       <type>textboxscrollup</type>
       <id>1</id>
-      <posX>358</posX>
-      <posY>485</posY>
-      <height>350</height>
-      <width>1166</width>
+      <posX>175</posX>
+      <posY>625</posY>
+      <height>230</height>
+      <width>1600</width>
       <align>left</align>
       <label>#TV.View.description</label>
-      <font>Label</font>
-      <textcolor>black</textcolor>
-      <visible>control.hasfocus(1237)+!skin.hassetting(#skin.tv.streaminfo)</visible>
+      <font>RSS</font>
+      <textcolor>lightskyblue</textcolor>
+      <visible>control.hasfocus(1237)</visible>
       <shadowAngle>0</shadowAngle>
       <shadowDistance>0</shadowDistance>
-      <animation effect="zoom" start="1,1" end="100,100" time="200" center="990,650" reversible="true">visiblechange</animation>
-    </control>
-    <control>
-      <description>Plot</description>
-      <type>textboxscrollup</type>
-      <id>1</id>
-      <posX>358</posX>
-      <posY>485</posY>
-      <height>435</height>
-      <width>1166</width>
-      <align>left</align>
-      <label>#TV.View.description</label>
-      <font>Label</font>
-      <textcolor>black</textcolor>
-      <visible>control.hasfocus(1237)+skin.hassetting(#skin.tv.streaminfo)</visible>
-      <shadowAngle>0</shadowAngle>
-      <shadowDistance>0</shadowDistance>
-      <animation effect="zoom" start="1,1" end="100,100" time="200" center="990,650" reversible="true">visiblechange</animation>
+      <animation effect="fade" start="0" end="100" time="170" reversible="true">visiblechange</animation>
     </control>
     <!-- Here are the infos for the next program -->
     <control>
       <description>Info Preview coming next button</description>
       <type>button</type>
       <id>1238</id>
-      <posX>1480</posX>
-      <posY>440</posY>
+      <posX>1722</posX>
+      <posY>880</posY>
       <width>45</width>
       <height>45</height>
-      <textureFocus>nextinfo.png</textureFocus>
-      <textureNoFocus>nextinfo.png</textureNoFocus>
+      <textureFocus>scroll-up-focus.png</textureFocus>
+      <textureNoFocus>scroll-up.png</textureNoFocus>
       <label>-</label>
       <onleft>1237</onleft>
       <onright>1237</onright>
       <onup>12371</onup>
       <ondown>1237</ondown>
       <visible>control.hasfocus(1237)|control.hasfocus(1238)</visible>
-      <animation effect="zoom" start="1,1" end="100,100" time="200" center="990,650" reversible="true">visiblechange</animation>
+      <animation effect="fade" start="0" end="100" time="170" reversible="true">visiblechange</animation>
     </control>
     <control>
       <description>Next Program Info</description>
       <id>0</id>
       <type>fadelabel</type>
-      <posX>327</posX>
-      <posY>430</posY>
+      <posX>175</posX>
+      <posY>560</posY>
       <height>57</height>
-      <width>1213</width>
+      <width>1600</width>
       <align>center</align>
-      <textcolor>ff000000</textcolor>
+      <textcolor>dodgerblue</textcolor>
       <font>Label</font>
       <label>#TV.Next.title  (#TV.Next.start - #TV.Next.stop)</label>
       <shadowAngle>90</shadowAngle>
       <shadowDistance>1</shadowDistance>
       <visible>control.hasfocus(1238)</visible>
-      <animation effect="zoom" start="1,1" end="100,100" time="200" center="990,650" reversible="true">visiblechange</animation>
+      <animation effect="fade" start="0" end="100" time="170" reversible="true">visiblechange</animation>
     </control>
     <control>
       <description>Next Plot</description>
       <type>textboxscrollup</type>
       <id>1</id>
-      <posX>358</posX>
-      <posY>485</posY>
-      <height>435</height>
-      <width>1166</width>
+      <posX>175</posX>
+      <posY>625</posY>
+      <height>230</height>
+      <width>1600</width>
       <align>left</align>
       <label>#TV.Next.description</label>
-      <font>Label</font>
-      <textcolor>black</textcolor>
+      <font>RSS</font>
+      <textcolor>lightskyblue</textcolor>
       <visible>control.hasfocus(1238)</visible>
       <shadowAngle>0</shadowAngle>
       <shadowDistance>0</shadowDistance>
-      <animation effect="zoom" start="1,1" end="100,100" time="200" center="990,650" reversible="true">visiblechange</animation>
+      <animation effect="fade" start="0" end="100" time="170" reversible="true">visiblechange</animation>
     </control>
     <import>common.osd.buttons.xml</import>
     <import>tvOSD.mediainfo.xml</import>
@@ -327,7 +355,7 @@
       <description>Channel Button Up</description>
       <type>button</type>
       <id>31</id>
-      <posX>660</posX>
+      <posX>665</posX>
       <posY>945</posY>
       <width>50</width>
       <height>50</height>
@@ -355,7 +383,7 @@
       <description>Channel Button Down</description>
       <type>button</type>
       <id>32</id>
-      <posX>660</posX>
+      <posX>665</posX>
       <posY>975</posY>
       <width>50</width>
       <height>50</height>
@@ -400,7 +428,7 @@
       <height>0</height>
       <align>left</align>
       <label>#TV.View.description</label>
-      <font>font12</font>
+      <font>RSS</font>
       <textcolor>black</textcolor>
       <shadowAngle>0</shadowAngle>
       <shadowDistance>0</shadowDistance>
