@@ -119,7 +119,7 @@ namespace MediaPortal.Player
     #region variables
 
     protected ITSReader _ireader = null;
-    protected int iSpeed = 1;
+    protected double iSpeed = 1;
     protected IBaseFilter _fileSource = null;
     protected int _curAudioStream = 0;
     protected int _positionX = 0;
@@ -881,6 +881,18 @@ namespace MediaPortal.Player
     {
       get
       {
+        return (int)RealSpeed;
+      }
+      set
+      {
+        RealSpeed = (double)value;
+      }
+    }
+
+    public override double RealSpeed
+    {
+      get
+      {
         if (_state == PlayState.Init)
         {
           return 1;
@@ -893,6 +905,12 @@ namespace MediaPortal.Player
         {
           return iSpeed;
         }
+
+        if (g_Player._mediaInfo != null && _speedRate == 5000 && g_Player._mediaInfo.Framerate == 24)
+        {
+          return 0.25;
+        }
+
         switch (_speedRate)
         {
           case -10000:
@@ -917,6 +935,8 @@ namespace MediaPortal.Player
             return 8;
           case 60000:
             return 16;
+          case 5000:
+            return 0.2;
           default:
             return 32;
         }
@@ -936,7 +956,7 @@ namespace MediaPortal.Player
             if (iSpeed != value)
             {
               _usingFastSeeking = true;
-              int previousSpeed = iSpeed;
+              double previousSpeed = iSpeed;
               iSpeed = value;
 
               int hr = _mediaSeeking.SetRate((double)iSpeed);
@@ -978,7 +998,7 @@ namespace MediaPortal.Player
               }
               else
               {
-                // mute audio during > 1.0x playback
+                // mute audio during <> 1.0x playback
                 if (_volumeBeforeSeeking == 0)
                 {
                   _volumeBeforeSeeking = Volume;
@@ -989,6 +1009,11 @@ namespace MediaPortal.Player
           }
           if (!_CodecSupportsFastSeeking || setRateFailed)
           {
+            if (value == 0.25 || value == 0.2)
+            {
+              _speedRate = 5000;
+            }
+            else
             switch ((int)value)
             {
               case -1:

@@ -45,7 +45,7 @@ namespace MediaPortal.GUI.Video
     private class FullScreenState
     {
       public int SeekStep = 1;
-      public int Speed = 1;
+      public double Speed = 1;
       public bool OsdVisible = false;
       public bool PauseOsdVisible = false;
       public bool Paused = false;
@@ -1960,9 +1960,9 @@ namespace MediaPortal.GUI.Video
         updateGUI = true;
       }
 
-      if (g_Player.Speed != screenState.Speed)
+      if (g_Player.RealSpeed != screenState.Speed)
       {
-        screenState.Speed = g_Player.Speed;
+        screenState.Speed = g_Player.RealSpeed;
         updateGUI = true;
       }
       if (g_Player.Paused != screenState.Paused)
@@ -2041,7 +2041,7 @@ namespace MediaPortal.GUI.Video
 
     private void UpdateGUI()
     {
-      int iSpeed = g_Player.Speed;
+      double iSpeed = g_Player.RealSpeed;
       HideControl(GetID, (int)Control.IMG_2X);
       HideControl(GetID, (int)Control.IMG_4X);
       HideControl(GetID, (int)Control.IMG_8X);
@@ -2055,7 +2055,7 @@ namespace MediaPortal.GUI.Video
 
       if (!_showStep)
       {
-        switch (iSpeed)
+        switch ((int)iSpeed)
         {
           case 2:
             ShowControl(GetID, (int)Control.IMG_2X);

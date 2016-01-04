@@ -214,7 +214,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
         {
           CurrentStatus.Media_CurrentPosition = g_Player.CurrentPosition;
           CurrentStatus.Media_Duration = g_Player.Duration;
-          CurrentStatus.Media_Speed = g_Player.Speed;
+          CurrentStatus.Media_Speed = g_Player.RealSpeed;
         }
         catch (Exception ex)
         {
@@ -876,11 +876,11 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
             MPStatus.MediaPlayer_Playing = true;
             MPStatus.TimePlayingStateChanged = DateTime.Now;
         }
-        if (g_Player.Speed > 1)
+        if (g_Player.RealSpeed > 1)
         {
           num |= (ulong)0x20000000000L;
         }
-        else if (g_Player.Speed < 0)
+        else if (g_Player.RealSpeed < 0)
         {
           num |= (ulong)0x10000000000L;
         }
@@ -1046,9 +1046,9 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       return g_Player.Paused;
     }
 
-    public static int xPlayer_Speed()
+    public static double xPlayer_Speed()
     {
-      return g_Player.Speed;
+      return g_Player.RealSpeed;
     }
 
     public static string Plugin_Version
