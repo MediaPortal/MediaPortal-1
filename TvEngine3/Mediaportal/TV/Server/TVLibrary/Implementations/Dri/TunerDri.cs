@@ -181,6 +181,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
 
     private void ReadDeviceInfo()
     {
+      string firmwareVersion = string.Empty;
       try
       {
         this.LogDebug("DRI CableCARD: diagnostic parameters...");
@@ -190,6 +191,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
         {
           _serviceDiag.GetParameter(p, out value, out isVolatile);
           this.LogDebug("  {0}{1} = {2}", p.ToString(), isVolatile ? " [volatile]" : string.Empty, value);
+          if (p == DiagParameterDri.HostFirmware)
+          {
+            firmwareVersion = value;
+          }
         }
         if (_isCetonDevice)
         {
@@ -227,6 +232,31 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
       {
         this.LogError(ex, "DRI CableCARD: failed to read device info");
         throw;
+      }
+
+      // Check SiliconDust and Hauppauge firmware version to ensure they
+      // meet minimum compatibility requirements. Examples:
+      // HDHR3-CC 20130708beta1
+      // WinTV-DCR-2650 20130117
+      // All Ceton firmware seems to be compatible.
+      if (!_isCetonDevice)
+      {
+        Match m = Regex.Match(firmwareVersion, @"20(\d{6})");
+        if (!m.Success)
+        {
+          this.LogWarn("DRI CableCARD: failed to check firmware version compatibility, version = {0}", firmwareVersion);
+        }
+        else
+        {
+          int versionNumber = int.Parse(m.Groups[1].Captures[0].Value);
+          if (
+            (firmwareVersion.StartsWith("HDHR") && versionNumber < 130708) ||
+            (firmwareVersion.StartsWith("WinTV") && versionNumber < 140121)
+          )
+          {
+            throw new TvException("Please update the tuner's firmware. The current version - {0} - is not compatible.", firmwareVersion);
+          }
+        }
       }
     }
 
