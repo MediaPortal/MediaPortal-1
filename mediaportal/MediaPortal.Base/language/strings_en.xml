@@ -1142,6 +1142,9 @@
     <String id="1654">Wind Speed Units</String>
     <String id="1655">Refresh Interval</String>
     <String id="1656">mins</String>    
+    <String id="1657">Unhide/hide protected recording</String> 
+    <String id="1658">Do you want to show them?</String>
+    <String id="1659">Do you want to hide them?</String>
     <String id="1900">Outdated Skin</String>
     <String id="1901">Your currently selected skin ({0}) is outdated. This could cause problems while using MediaPortal. For this reason MediaPortal has temporarily switched to the default skin. If however you would like to try using the outdated skin, press the 'Ignore and try' button, but remember: Do NOT file a bug report using this skin!
 (to dismiss this warning either wait until it closes automatically or press Back/ESC on you remote)</String>
@@ -1189,7 +1192,7 @@
     <String id="1991">Please wait until the server is waking up</String>
     <String id="1992">The server is not available.</String>
     <String id="1993">Check the network connection or increase the timeout value.</String>
-    <String id="1994">Wait until the share comes online.</String>
+    <String id="1994">Wait until the share cames online.</String>
     <String id="1995">Create folder thumb from thumbnails</String>
     <String id="1999">Name with Duration</String>
     <String id="2000">The song is read only!</String>
@@ -2398,5 +2401,6 @@
     <String id="350036">MultiShortcut3</String>
     <String id="350037">MovingPictures</String>
     <String id="350038">HTPCinfo</String>
+	<String id="350039">Emulators2</String>
    </Section>
 </Language>
