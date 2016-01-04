@@ -531,6 +531,7 @@
     <Compile Include="TagReader\CUE\CueTrackFileStringBuilder.cs" />
     <Compile Include="TagReader\CUE\CueUtil.cs" />
     <Compile Include="TagReader\CUE\ICueTrackFileBuilder.cs" />
+    <Compile Include="TagReader\CUE\TagCache.cs" />
     <Compile Include="TagReader\ITag.cs" />
     <Compile Include="TagReader\Utils.cs" />
     <Compile Include="Transcoding\TSReader2WMV.cs" />
