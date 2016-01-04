@@ -44,23 +44,7 @@ public:
   // @return : MSHS download response
   CMshsDownloadResponse *GetMshsDownloadResponse(void);
 
-  // gets owner of MSHS CURL instance
-  // @return : reference to owner of MSHS CURL instance (if locked), NULL otherwise
-  void *GetOwner(void);
-
-  // gets owner lock count of MSHS CURL instance
-  // @return : owner lock count of MSHS CURL instance, zero if not locked
-  unsigned int GetOwnerLockCount(void);
-
-  // gets MSHS CURL instance connection state
-  // @return : connection state
-  ProtocolConnectionState GetConnectionState(void);
-
   /* set methods */
-
-  // sets AFHS CURL instance connection state
-  // @param connectionState : the connection state to set
-  void SetConnectionState(ProtocolConnectionState connectionState);
 
   /* other methods */
 
@@ -68,27 +52,6 @@ public:
   // @param downloadRequest : download request
   // @return : true if successful, false otherwise
   virtual HRESULT Initialize(CDownloadRequest *downloadRequest);
-
-  // lock MSHS CURL instance for specific owner
-  // only owner can unlock instance for other use
-  // @param owner : the requested owner to lock instance
-  // @return : S_OK if locked, S_FALSE if already locked by same owner, E_FAIL if locked by another owner
-  HRESULT LockCurlInstance(void *owner);
-
-  // unlocks MSHS CURL instance for specific owner
-  // only owner can unlock instance for other use
-  // @param owner : the requested owner to unlock instance
-  // @return : S_OK if unlocked, S_FALSE if still locked by same owner, E_FAIL if locked by another owner or instance not locked
-  HRESULT UnlockCurlInstance(void *owner);
-
-  // tests if MSHS CURL instance is locked
-  // @return : true if instance is locked, false otherwise
-  bool IsLockedCurlInstance(void);
-
-  // tests if MSHS CURL instance is locked by specified owner
-  // @param owner : the owner to test lock
-  // @return : true if instance is locked by owner, false otherwise
-  bool IsLockedCurlInstanceByOwner(void *owner);
 
   // clears session
   virtual void ClearSession(void);
@@ -100,14 +63,6 @@ protected:
 
   // holds MSHS download response
   CMshsDownloadResponse *mshsDownloadResponse;
-
-  // holds owner of MSHS CURL instance (if locked)
-  void *owner;
-  // holds owner lock count (zero if not locked, more than zero if locked)
-  unsigned int ownerLockCount;
-
-  // holds connection state
-  ProtocolConnectionState connectionState;
 
   /* methods */
 

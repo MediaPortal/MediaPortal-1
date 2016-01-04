@@ -36,6 +36,11 @@ CInitializationVectorAttribute::~CInitializationVectorAttribute(void)
 
 /* get methods */
 
+const uint8_t *CInitializationVectorAttribute::GetInitializationVector(void)
+{
+  return this->iv;
+}
+
 /* set methods */
 
 /* other methods */

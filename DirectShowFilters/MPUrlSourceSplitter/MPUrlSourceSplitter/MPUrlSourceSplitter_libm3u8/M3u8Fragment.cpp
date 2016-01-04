@@ -30,11 +30,19 @@ CM3u8Fragment::CM3u8Fragment(HRESULT *result)
   this->uri = NULL;
   this->offset = OFFSET_NOT_SPECIFED;
   this->length = LENGTH_NOT_SPECIFIED;
+  this->encryption = NULL;
+
+  if ((result != NULL) && (SUCCEEDED(*result)))
+  {
+    this->encryption = new CM3u8FragmentEncryption(result);
+    CHECK_POINTER_HRESULT(*result, this->encryption, *result, E_OUTOFMEMORY);
+  }
 }
 
 CM3u8Fragment::~CM3u8Fragment(void)
 {
   FREE_MEM(this->uri);
+  FREE_MEM_CLASS(this->encryption);
 }
 
 /* get methods */
@@ -62,6 +70,11 @@ unsigned int CM3u8Fragment::GetOffset(void)
 unsigned int CM3u8Fragment::GetLength(void)
 {
   return this->length;
+}
+
+CM3u8FragmentEncryption *CM3u8Fragment::GetFragmentEncryption(void)
+{
+  return this->encryption;
 }
 
 /* set methods */
@@ -97,12 +110,6 @@ void CM3u8Fragment::SetDiscontinuity(bool discontinuity)
   this->flags |= discontinuity ? M3U8_FRAGMENT_FLAG_DISCONTINUITY : M3U8_FRAGMENT_FLAG_NONE;
 }
 
-void CM3u8Fragment::SetEncrypted(bool ecnrypted)
-{
-  this->flags &= ~M3U8_FRAGMENT_FLAG_ENCRYPTED;
-  this->flags |= ecnrypted ? M3U8_FRAGMENT_FLAG_ENCRYPTED : M3U8_FRAGMENT_FLAG_NONE;
-}
-
 void CM3u8Fragment::SetEndOfStream(bool endOfStream)
 {
   this->flags &= ~M3U8_FRAGMENT_FLAG_END_OF_STREAM;
@@ -114,11 +121,6 @@ void CM3u8Fragment::SetEndOfStream(bool endOfStream)
 bool CM3u8Fragment::IsDiscontinuity(void)
 {
   return this->IsSetFlags(M3U8_FRAGMENT_FLAG_DISCONTINUITY);
-}
-
-bool CM3u8Fragment::IsEncrypted(void)
-{
-  return this->IsSetFlags(M3U8_FRAGMENT_FLAG_ENCRYPTED);
 }
 
 bool CM3u8Fragment::IsEndOfStream(void)

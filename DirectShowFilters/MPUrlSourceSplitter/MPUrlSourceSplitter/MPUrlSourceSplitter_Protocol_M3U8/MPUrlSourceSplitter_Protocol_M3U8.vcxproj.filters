@@ -27,24 +27,6 @@
     <ClInclude Include="MPUrlSourceSplitter_Protocol_M3u8.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="M3u8StreamFragment.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="M3u8StreamFragmentCollection.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="M3u8CurlInstance.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="M3u8DownloadRequest.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="M3u8DownloadResponse.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="M3u8DumpBox.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -54,24 +36,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="MPUrlSourceSplitter_Protocol_M3u8.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="M3u8StreamFragment.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="M3u8StreamFragmentCollection.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="M3u8CurlInstance.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="M3u8DownloadRequest.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="M3u8DownloadResponse.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="M3u8DumpBox.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

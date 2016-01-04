@@ -35,6 +35,11 @@ CUriAttribute::~CUriAttribute(void)
 
 /* get methods */
 
+const wchar_t *CUriAttribute::GetUri(void)
+{
+  return this->uri;
+}
+
 /* set methods */
 
 /* other methods */

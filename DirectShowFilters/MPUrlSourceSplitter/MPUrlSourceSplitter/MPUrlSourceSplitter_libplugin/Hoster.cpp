@@ -89,6 +89,35 @@ CHoster::~CHoster(void)
 
 /* other methods */
 
+HRESULT CHoster::InitializePlugins(CParameterCollection *configuration)
+{
+  HRESULT result = S_OK;
+  CHECK_POINTER_DEFAULT_HRESULT(result, configuration);
+
+  if (SUCCEEDED(result))
+  {
+    for (unsigned int i = 0; (SUCCEEDED(result) && (i < this->hosterPluginMetadataCollection->Count())); i++)
+    {
+      CHosterPluginMetadata *metadata = (CHosterPluginMetadata *)this->hosterPluginMetadataCollection->GetItem(i);
+      CPlugin *plugin = metadata->GetPlugin();
+
+      // initialize plugin
+      CPluginConfiguration *pluginConfiguration = this->CreatePluginConfiguration(&result, configuration);
+      CHECK_POINTER_HRESULT(result, pluginConfiguration, result, E_OUTOFMEMORY);
+
+      CHECK_CONDITION_EXECUTE_RESULT(SUCCEEDED(result), plugin->Initialize(pluginConfiguration), result);
+
+      FREE_MEM_CLASS(pluginConfiguration);
+
+      wchar_t *guid = ConvertGuidToString(plugin->GetInstanceId());
+      this->logger->Log(SUCCEEDED(result) ? LOGGER_INFO : LOGGER_ERROR, SUCCEEDED(result) ? L"%s: %s: plugin '%s' successfully initialized, id: %s" : L"%s: %s: plugin '%s' not initialized, id: %s, error: 0x%08X", this->hosterName, METHOD_INITIALIZE_PLUGINS_NAME, plugin->GetName(), guid, result);
+      FREE_MEM(guid);
+    }
+  }
+
+  return result;
+}
+
 HRESULT CHoster::LoadPlugins(void)
 {
   HRESULT result = ((this->logger != NULL) && (this->configuration != NULL) && (this->hosterName != NULL) && (this->hosterSearchPattern != NULL) && (this->hosterPluginMetadataCollection != NULL)) ? S_OK : E_NOT_VALID_STATE;
@@ -145,32 +174,9 @@ HRESULT CHoster::LoadPlugins(void)
             CHECK_POINTER_HRESULT(result, hosterPluginMetadata, result, E_OUTOFMEMORY);
 
             CHECK_CONDITION_EXECUTE(SUCCEEDED(result), result = hosterPluginMetadata->CheckPlugin());
+            CHECK_CONDITION_HRESULT(result, this->hosterPluginMetadataCollection->Add(hosterPluginMetadata), result, E_OUTOFMEMORY);
 
-            if (SUCCEEDED(result))
-            {
-              // initialize plugin
-              CPluginConfiguration *pluginConfiguration = this->CreatePluginConfiguration(&result, this->configuration);
-              CHECK_POINTER_HRESULT(result, pluginConfiguration, result, E_OUTOFMEMORY);
-
-              CHECK_CONDITION_EXECUTE_RESULT(SUCCEEDED(result), hosterPluginMetadata->GetPlugin()->Initialize(pluginConfiguration), result);
-
-              FREE_MEM_CLASS(pluginConfiguration);
-
-              CHECK_CONDITION_HRESULT(result, this->hosterPluginMetadataCollection->Add(hosterPluginMetadata), result, E_OUTOFMEMORY);
-
-              if (SUCCEEDED(result))
-              {
-                wchar_t *guid = ConvertGuidToString(hosterPluginMetadata->GetPlugin()->GetInstanceId());
-                this->logger->Log(LOGGER_INFO, L"%s: %s: plugin '%s' successfully initialized, id: %s", this->hosterName, METHOD_LOAD_PLUGINS_NAME, hosterPluginMetadata->GetPlugin()->GetName(), guid);
-                FREE_MEM(guid);
-              }
-              else
-              {
-                this->logger->Log(LOGGER_INFO, L"%s: %s: plugin '%s' not initialized, error: 0x%08X", this->hosterName, METHOD_LOAD_PLUGINS_NAME, hosterPluginMetadata->GetPlugin()->GetName(), result);
-                FREE_MEM_CLASS(hosterPluginMetadata);
-              }
-            }
-            else if (result == E_INVALID_PLUGIN_TYPE)
+            if (result == E_INVALID_PLUGIN_TYPE)
             {
               // plugin type is invalid for hoster, probably is valid for other hoster
               // we can continue
@@ -179,6 +185,8 @@ HRESULT CHoster::LoadPlugins(void)
               FREE_MEM_CLASS(hosterPluginMetadata);
               result = S_OK;
             }
+
+            CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(hosterPluginMetadata));
 
             FREE_MEM(pluginLibraryFileName);
 
@@ -199,6 +207,8 @@ HRESULT CHoster::LoadPlugins(void)
       }
     }
   }
+
+  CHECK_HRESULT_EXECUTE(result, this->InitializePlugins(configuration));
 
   return result;
 }

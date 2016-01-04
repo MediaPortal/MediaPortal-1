@@ -29,6 +29,7 @@
 #include "CacheFile.h"
 #include "M3u8StreamFragmentCollection.h"
 #include "MediaPlaylist.h"
+#include "M3u8DecryptionHoster.h"
 
 #define PROTOCOL_NAME                                                         L"M3U8"
 
@@ -144,16 +145,15 @@ public:
   // @return : reference to null-terminated string
   virtual const wchar_t *GetName(void);
 
-  // get plugin instance ID
-  // @return : GUID, which represents instance identifier or GUID_NULL if error
-  virtual GUID GetInstanceId(void);
-
   // initialize plugin implementation with configuration parameters
   // @param configuration : the reference to additional configuration parameters (created by plugin's hoster class)
   // @return : S_OK if successfull, error code otherwise
   virtual HRESULT Initialize(CPluginConfiguration *configuration);
 
 protected:
+  // holds decryption hoster
+  CM3u8DecryptionHoster *decryptionHoster;
+
   // mutex for locking access to file, buffer, ...
   HANDLE lockMutex;
   // mutex for locking access to internal buffer of CURL instance
@@ -193,6 +193,10 @@ protected:
   unsigned int currentProcessedSize;
 
   /* methods */
+
+  // get module name for Initialize() method
+  // @return : module name
+  virtual const wchar_t *GetModuleName(void);
 
   // gets store file name part
   // @return : store file name part or NULL if error

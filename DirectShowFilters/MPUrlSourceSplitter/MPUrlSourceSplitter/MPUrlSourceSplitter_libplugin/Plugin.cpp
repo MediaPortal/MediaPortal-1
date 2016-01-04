@@ -26,28 +26,68 @@
 #pragma warning(disable:4005)
 
 #include "Plugin.h"
+#include "Parameters.h"
 
 #pragma warning(pop)
 
 CPlugin::CPlugin(HRESULT *result, CLogger *logger, CParameterCollection *configuration)
   : CFlags()
 {
+  this->logger = NULL;
+  this->configuration = NULL;
+
   if ((result != NULL) && (SUCCEEDED(*result)))
   {
     CHECK_POINTER_DEFAULT_HRESULT(*result, logger);
     CHECK_POINTER_DEFAULT_HRESULT(*result, configuration);
+
+    this->logger = new CLogger(result, logger);
+    this->configuration = new CParameterCollection(result);
+
+    CHECK_POINTER_HRESULT(*result, this->logger, *result, E_OUTOFMEMORY);
+    CHECK_POINTER_HRESULT(*result, this->configuration, *result, E_OUTOFMEMORY);
+
+    CHECK_CONDITION_HRESULT(*result, this->configuration->Append(configuration), *result, E_OUTOFMEMORY);
   }
 }
 
 CPlugin::~CPlugin(void)
 {
+  FREE_MEM_CLASS(this->configuration);
+  FREE_MEM_CLASS(this->logger);
 }
 
 /* get methods */
 
+GUID CPlugin::GetInstanceId(void)
+{
+  return this->logger->GetLoggerInstanceId();
+}
+
 /* set methods */
 
 /* other methods */
+
+HRESULT CPlugin::Initialize(CPluginConfiguration *configuration)
+{
+  HRESULT result = ((this->configuration != NULL) && (this->logger != NULL)) ? S_OK : E_NOT_VALID_STATE;
+  CHECK_POINTER_HRESULT(result, configuration, result, E_INVALIDARG);
+
+  if (SUCCEEDED(result))
+  {
+    this->configuration->Clear();
+
+    CHECK_CONDITION_HRESULT(result, this->configuration->Append(configuration->GetConfiguration()), result, E_OUTOFMEMORY);
+
+    this->configuration->LogCollection(this->logger, LOGGER_VERBOSE, this->GetModuleName(), METHOD_INITIALIZE_NAME);
+
+    this->flags |= this->configuration->GetValueBool(PARAMETER_NAME_SPLITTER, true, PARAMETER_NAME_SPLITTER_DEFAULT) ? PLUGIN_FLAG_SPLITTER : PLUGIN_FLAG_NONE;
+    this->flags |= this->configuration->GetValueBool(PARAMETER_NAME_IPTV, true, PARAMETER_NAME_IPTV_DEFAULT) ? PLUGIN_FLAG_IPTV : PLUGIN_FLAG_NONE;
+  }
+
+  return result;
+}
+
 
 bool CPlugin::IsSplitter(void)
 {
@@ -61,7 +101,7 @@ bool CPlugin::IsIptv(void)
 
 void CPlugin::ClearSession(void)
 {
-  this->flags &= ~(PLUGIN_FLAG_SPLITTER | PLUGIN_FLAG_IPTV);
+  this->flags = PLUGIN_FLAG_NONE;
 }
 
 /* protected methods */

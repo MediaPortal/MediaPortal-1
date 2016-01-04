@@ -235,7 +235,7 @@ HRESULT CMPUrlSourceSplitter_Parser_Mpeg2TS::GetParserResult(void)
                   this->parserResult = IS_MPEG2TS_ERROR(package->GetError()) ? package->GetError() : PARSER_RESULT_NOT_KNOWN;
                 }
 
-                if (SUCCEEDED(this->parserResult) && (response != NULL))
+                if ((this->parserResult == PARSER_RESULT_PENDING) && (response != NULL) && (response->GetBuffer()->GetBufferOccupiedSpace() > 0))
                 {
                   receivedSameLength = (response->GetBuffer()->GetBufferOccupiedSpace() == this->lastReceivedLength);
                   if (!receivedSameLength)
@@ -264,12 +264,17 @@ HRESULT CMPUrlSourceSplitter_Parser_Mpeg2TS::GetParserResult(void)
                     requestLength *= 2;
                   }
 
-                  if (response->IsNoMoreDataAvailable() && (this->parserResult == PARSER_RESULT_PENDING))
+                  if ((response->IsNoMoreDataAvailable() || response->IsConnectionLostCannotReopen()) && (this->parserResult == PARSER_RESULT_PENDING))
                   {
                     this->parserResult = PARSER_RESULT_NOT_KNOWN;
                   }
 
                   this->lastReceivedLength = response->GetBuffer()->GetBufferOccupiedSpace();
+                }
+                else
+                {
+                  // no data received
+                  break;
                 }
               }
             }
@@ -405,24 +410,6 @@ HRESULT CMPUrlSourceSplitter_Parser_Mpeg2TS::GetIptvSection(unsigned int index, 
 const wchar_t *CMPUrlSourceSplitter_Parser_Mpeg2TS::GetName(void)
 {
   return PARSER_NAME;
-}
-
-HRESULT CMPUrlSourceSplitter_Parser_Mpeg2TS::Initialize(CPluginConfiguration *configuration)
-{
-  HRESULT result = __super::Initialize(configuration);
-
-  if (SUCCEEDED(result))
-  {
-    CParserPluginConfiguration *parserConfiguration = (CParserPluginConfiguration *)configuration;
-    CHECK_POINTER_HRESULT(result, parserConfiguration, result, E_INVALIDARG);
-  }
-
-  if (SUCCEEDED(result))
-  {
-    this->configuration->LogCollection(this->logger, LOGGER_VERBOSE, PARSER_IMPLEMENTATION_NAME, METHOD_INITIALIZE_NAME);
-  }
-
-  return result;
 }
 
 // ISeeking interface
@@ -730,6 +717,11 @@ void CMPUrlSourceSplitter_Parser_Mpeg2TS::ClearSession(void)
 // IProtocol interface
 
 /* protected methods */
+
+const wchar_t *CMPUrlSourceSplitter_Parser_Mpeg2TS::GetModuleName(void)
+{
+  return PARSER_IMPLEMENTATION_NAME;
+}
 
 const wchar_t *CMPUrlSourceSplitter_Parser_Mpeg2TS::GetStoreFileNamePart(void)
 {

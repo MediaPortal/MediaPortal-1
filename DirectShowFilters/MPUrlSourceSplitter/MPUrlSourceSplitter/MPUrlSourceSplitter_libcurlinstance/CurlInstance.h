@@ -29,6 +29,7 @@
 #include "DownloadResponse.h"
 #include "Flags.h"
 #include "DumpFile.h"
+#include "IProtocol.h"
 
 #include <curl/curl.h>
 
@@ -98,6 +99,18 @@ public:
   // @return : dump file name or NULL if error or not set
   virtual const wchar_t *GetDumpFile(void);
 
+  // gets owner of CURL instance
+  // @return : reference to owner of M3U8 CURL instance (if locked), NULL otherwise
+  virtual void *GetOwner(void);
+
+  // gets owner lock count of CURL instance
+  // @return : owner lock count of CURL instance, zero if not locked
+  virtual unsigned int GetOwnerLockCount(void);
+
+  // gets CURL instance connection state
+  // @return : connection state
+  virtual ProtocolConnectionState GetConnectionState(void);
+
   /* set methods */
 
   // sets dump file name
@@ -113,6 +126,10 @@ public:
   // @return : true to set, false otherwise
   virtual void SetDumpOutputData(bool dumpOutputData);
 
+  // sets CURL instance connection state
+  // @param connectionState : the connection state to set
+  virtual void SetConnectionState(ProtocolConnectionState connectionState);
+
   /* other methods */
 
   // initializes CURL instance
@@ -127,6 +144,27 @@ public:
   // stops receiving data
   // @return : true if successful, false otherwise
   virtual HRESULT StopReceivingData(void);
+
+  // lock CURL instance for specific owner
+  // only owner can unlock instance for other use
+  // @param owner : the requested owner to lock instance
+  // @return : S_OK if locked, S_FALSE if already locked by same owner, E_FAIL if locked by another owner
+  virtual HRESULT LockCurlInstance(void *owner);
+
+  // unlocks CURL instance for specific owner
+  // only owner can unlock instance for other use
+  // @param owner : the requested owner to unlock instance
+  // @return : S_OK if unlocked, S_FALSE if still locked by same owner, E_FAIL if locked by another owner or instance not locked
+  virtual HRESULT UnlockCurlInstance(void *owner);
+
+  // tests if CURL instance is locked
+  // @return : true if instance is locked, false otherwise
+  virtual bool IsLockedCurlInstance(void);
+
+  // tests if CURL instance is locked by specified owner
+  // @param owner : the owner to test lock
+  // @return : true if instance is locked by owner, false otherwise
+  virtual bool IsLockedCurlInstanceByOwner(void *owner);
 
   // sets string to CURL option
   // @param curl : curl handle to set CURL option
@@ -208,6 +246,14 @@ protected:
 
   // holds dump file
   CDumpFile *dumpFile;
+
+  // holds owner of CURL instance (if locked)
+  void *owner;
+  // holds owner lock count (zero if not locked, more than zero if locked)
+  unsigned int ownerLockCount;
+
+  // holds connection state
+  ProtocolConnectionState connectionState;
 
   /* methods */
 

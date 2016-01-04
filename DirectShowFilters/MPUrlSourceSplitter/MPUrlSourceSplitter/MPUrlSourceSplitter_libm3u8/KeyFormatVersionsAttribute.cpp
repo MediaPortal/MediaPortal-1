@@ -35,6 +35,11 @@ CKeyFormatVersionsAttribute::~CKeyFormatVersionsAttribute(void)
 
 /* get methods */
 
+const wchar_t *CKeyFormatVersionsAttribute::GetKeyFormatVersions(void)
+{
+  return this->keyFormatVersions;
+}
+
 /* set methods */
 
 /* other methods */

@@ -58,7 +58,7 @@ public:
 
   // get plugin instance ID
   // @return : GUID, which represents instance identifier or GUID_NULL if error
-  virtual GUID GetInstanceId(void) = 0;
+  virtual GUID GetInstanceId(void);
 
   /* set methods */
 
@@ -75,14 +75,22 @@ public:
   // initialize plugin implementation with configuration parameters
   // @param configuration : the reference to additional configuration parameters (created by plugin's hoster class)
   // @return : S_OK if successfull, error code otherwise
-  virtual HRESULT Initialize(CPluginConfiguration *configuration) = 0;
+  virtual HRESULT Initialize(CPluginConfiguration *configuration);
 
   // clears current session
   virtual void ClearSession(void);
 
 protected:
+  // holds logger instance
+  CLogger *logger;
+  // holds configuration
+  CParameterCollection *configuration;
 
   /* methods */
+
+  // get module name for Initialize() method
+  // @return : module name
+  virtual const wchar_t *GetModuleName(void) = 0;
 };
 
 extern "C"

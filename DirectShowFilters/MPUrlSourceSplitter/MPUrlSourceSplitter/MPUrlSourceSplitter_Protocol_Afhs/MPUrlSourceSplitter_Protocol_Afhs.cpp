@@ -316,7 +316,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs::ReceiveData(CStreamPackage *streamPa
       // some segment fragments are decrypted
 
       CIndexedAfhsSegmentFragmentCollection *indexedDecryptedSegmentFragments = new CIndexedAfhsSegmentFragmentCollection(&result);
-      CHECK_CONDITION_EXECUTE(SUCCEEDED(result), result = this->segmentFragments->GetDecryptedStreamFragments(indexedDecryptedSegmentFragments));
+      CHECK_CONDITION_EXECUTE(SUCCEEDED(result), result = this->segmentFragments->GetDecryptedSegmentFragments(indexedDecryptedSegmentFragments));
 
       for (unsigned int i = 0; (SUCCEEDED(result) && (i < indexedDecryptedSegmentFragments->Count())); i++)
       {
@@ -1134,7 +1134,6 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs::ReceiveData(CStreamPackage *streamPa
               this->logger->Log(LOGGER_VERBOSE, L"%s: %s: connection lost, no more data available, request '%u', start '%lld', size '%u', stream length: '%lld'", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, dataRequest->GetId(), dataRequest->GetStart(), dataRequest->GetLength(), this->streamLength);
 
               dataResponse->SetConnectionLostCannotReopen(true);
-              streamPackage->SetCompleted(S_OK);
             }
             else if (this->IsEndOfStreamReached() && ((dataRequest->GetStart() + dataRequest->GetLength()) >= this->streamLength))
             {
@@ -1142,8 +1141,10 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs::ReceiveData(CStreamPackage *streamPa
               this->logger->Log(LOGGER_VERBOSE, L"%s: %s: no more data available, request '%u', start '%lld', size '%u', stream length: '%lld'", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, dataRequest->GetId(), dataRequest->GetStart(), dataRequest->GetLength(), this->streamLength);
 
               dataResponse->SetNoMoreDataAvailable(true);
-              streamPackage->SetCompleted(S_OK);
             }
+
+            // request can be completed with any length of available data
+            streamPackage->SetCompleted(S_OK);
           }
           else
           {
@@ -1581,11 +1582,6 @@ const wchar_t *CMPUrlSourceSplitter_Protocol_Afhs::GetName(void)
   return PROTOCOL_NAME;
 }
 
-GUID CMPUrlSourceSplitter_Protocol_Afhs::GetInstanceId(void)
-{
-  return this->logger->GetLoggerInstanceId();
-}
-
 HRESULT CMPUrlSourceSplitter_Protocol_Afhs::Initialize(CPluginConfiguration *configuration)
 {
   HRESULT result = __super::Initialize(configuration);
@@ -1593,10 +1589,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs::Initialize(CPluginConfiguration *con
   CHECK_POINTER_HRESULT(result, protocolConfiguration, result, E_INVALIDARG);
   CHECK_POINTER_HRESULT(result, this->lockMutex, result, E_NOT_VALID_STATE);
 
-  if (SUCCEEDED(result))
-  {
-    this->configuration->LogCollection(this->logger, LOGGER_VERBOSE, PROTOCOL_IMPLEMENTATION_NAME, METHOD_INITIALIZE_NAME);
-  }
+  CHECK_HRESULT_EXECUTE(result, this->decryptionHoster->InitializePlugins(protocolConfiguration->GetConfiguration()));
 
   if (SUCCEEDED(result))
   {
@@ -1633,6 +1626,11 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs::Initialize(CPluginConfiguration *con
 }
 
 /* protected methods */
+
+const wchar_t *CMPUrlSourceSplitter_Protocol_Afhs::GetModuleName(void)
+{
+  return PROTOCOL_IMPLEMENTATION_NAME;
+}
 
 const wchar_t *CMPUrlSourceSplitter_Protocol_Afhs::GetStoreFileNamePart(void)
 {

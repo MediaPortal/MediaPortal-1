@@ -127,7 +127,7 @@ HRESULT CMPUrlSourceSplitter_Parser_Mshs::GetParserResult(void)
           {
             request->SetStart(0);
             request->SetLength(requestLength);
-            request->SetAnyNonZeroDataLength(true);
+            request->SetAnyDataLength(true);
 
             package->SetRequest(request);
           }
@@ -147,7 +147,7 @@ HRESULT CMPUrlSourceSplitter_Parser_Mshs::GetParserResult(void)
               this->parserResult = PARSER_RESULT_NOT_KNOWN;
             }
 
-            if (response != NULL)
+            if ((this->parserResult == PARSER_RESULT_PENDING) && (response != NULL) && (response->GetBuffer()->GetBufferOccupiedSpace() > 0))
             {
               receivedSameLength = (response->GetBuffer()->GetBufferOccupiedSpace() == this->lastReceivedLength);
               if (!receivedSameLength)
@@ -506,6 +506,11 @@ HRESULT CMPUrlSourceSplitter_Parser_Mshs::GetParserResult(void)
 
               this->lastReceivedLength = response->GetBuffer()->GetBufferOccupiedSpace();
             }
+            else
+            {
+              // no data received
+              break;
+            }
           }
         }
       }
@@ -541,24 +546,6 @@ const wchar_t *CMPUrlSourceSplitter_Parser_Mshs::GetName(void)
   return PARSER_NAME;
 }
 
-HRESULT CMPUrlSourceSplitter_Parser_Mshs::Initialize(CPluginConfiguration *configuration)
-{
-  HRESULT result = __super::Initialize(configuration);
-
-  if (SUCCEEDED(result))
-  {
-    CParserPluginConfiguration *parserConfiguration = (CParserPluginConfiguration *)configuration;
-    CHECK_POINTER_HRESULT(result, parserConfiguration, result, E_INVALIDARG);
-  }
-
-  if (SUCCEEDED(result))
-  {
-    this->configuration->LogCollection(this->logger, LOGGER_VERBOSE, PARSER_IMPLEMENTATION_NAME, METHOD_INITIALIZE_NAME);
-  }
-
-  return result;
-}
-
 // ISeeking interface
 
 // IDemuxerOwner interface
@@ -575,6 +562,11 @@ void CMPUrlSourceSplitter_Parser_Mshs::ClearSession(void)
 // IProtocol interface
 
 /* protected methods */
+
+const wchar_t *CMPUrlSourceSplitter_Parser_Mshs::GetModuleName(void)
+{
+  return PARSER_IMPLEMENTATION_NAME;
+}
 
 const wchar_t *CMPUrlSourceSplitter_Parser_Mshs::GetStoreFileNamePart(void)
 {

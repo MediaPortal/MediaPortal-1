@@ -145,6 +145,7 @@
     </ClInclude>
     <ClInclude Include="LanguageAttribute.h" />
     <ClInclude Include="M3u8FragmentCollection.h" />
+    <ClInclude Include="M3u8FragmentEncryption.h" />
     <ClInclude Include="MapTag.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
     </ClInclude>
@@ -280,6 +281,7 @@
     </ClCompile>
     <ClCompile Include="LanguageAttribute.cpp" />
     <ClCompile Include="M3u8FragmentCollection.cpp" />
+    <ClCompile Include="M3u8FragmentEncryption.cpp" />
     <ClCompile Include="MapTag.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
     </ClCompile>

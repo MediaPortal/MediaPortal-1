@@ -296,7 +296,7 @@ void CStreamFragmentCollection::RecalculateProcessedStreamFragmentStartPosition(
     CStreamFragment *fragment = this->GetItem(i);
     CStreamFragment *previousFragment = (i > 0) ? this->GetItem(i - 1) : NULL;
 
-    if (fragment->IsDownloaded())
+    if (fragment->IsProcessed())
     {
       if ((previousFragment != NULL) && (previousFragment->IsProcessed()))
       {

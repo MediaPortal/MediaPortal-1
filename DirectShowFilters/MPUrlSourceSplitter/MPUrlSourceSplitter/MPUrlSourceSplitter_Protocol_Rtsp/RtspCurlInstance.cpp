@@ -251,7 +251,10 @@ HRESULT CRtspCurlInstance::Initialize(CDownloadRequest *downloadRequest)
   this->state = CURL_STATE_CREATED;
 
   this->lastSequenceNumber = 1;
-  this->flags &= ~(RTSP_CURL_INSTANCE_FLAG_REQUEST_COMMAND_FINISHED | RTSP_CURL_INSTANCE_FLAG_SERVER_LIVE555 | RTSP_CURL_INSTANCE_FLAG_SERVER_FREEBOX | RTSP_CURL_INSTANCE_FLAG_SERVER_LIBCETON);
+  this->flags &= ~(RTSP_CURL_INSTANCE_FLAG_REQUEST_COMMAND_FINISHED | RTSP_CURL_INSTANCE_FLAG_SERVER_LIVE555 | RTSP_CURL_INSTANCE_FLAG_SERVER_FREEBOX | RTSP_CURL_INSTANCE_FLAG_SERVER_LIBCETON | RTSP_CURL_INSTANCE_FLAG_SERVER_HDHOMERUN);
+
+  this->flags |= RTSP_CURL_INSTANCE_FLAG_SERVER_HDHOMERUN;
+
   this->rtspDownloadRequest = dynamic_cast<CRtspDownloadRequest  *>(this->downloadRequest);
   this->rtspDownloadResponse = dynamic_cast<CRtspDownloadResponse *>(this->downloadResponse);
 
@@ -350,6 +353,7 @@ HRESULT CRtspCurlInstance::Initialize(CDownloadRequest *downloadRequest)
 
             this->flags |= (IndexOf(serverHeader->GetValue(), SERVER_FREEBOX) != (-1)) ? RTSP_CURL_INSTANCE_FLAG_SERVER_FREEBOX : RTSP_CURL_INSTANCE_FLAG_NONE;
             this->flags |= (IndexOf(serverHeader->GetValue(), SERVER_LIBCETON) != (-1)) ? RTSP_CURL_INSTANCE_FLAG_SERVER_LIBCETON : RTSP_CURL_INSTANCE_FLAG_NONE;
+            this->flags |= (IndexOf(serverHeader->GetValue(), SERVER_HDHOMERUN) != (-1)) ? RTSP_CURL_INSTANCE_FLAG_SERVER_HDHOMERUN : RTSP_CURL_INSTANCE_FLAG_NONE;
           }
         }
       }
@@ -423,6 +427,7 @@ HRESULT CRtspCurlInstance::Initialize(CDownloadRequest *downloadRequest)
 
             this->flags |= (IndexOf(serverHeader->GetValue(), SERVER_FREEBOX) != (-1)) ? RTSP_CURL_INSTANCE_FLAG_SERVER_FREEBOX : RTSP_CURL_INSTANCE_FLAG_NONE;
             this->flags |= (IndexOf(serverHeader->GetValue(), SERVER_LIBCETON) != (-1)) ? RTSP_CURL_INSTANCE_FLAG_SERVER_LIBCETON : RTSP_CURL_INSTANCE_FLAG_NONE;
+            this->flags |= (IndexOf(serverHeader->GetValue(), SERVER_HDHOMERUN) != (-1)) ? RTSP_CURL_INSTANCE_FLAG_SERVER_HDHOMERUN : RTSP_CURL_INSTANCE_FLAG_NONE;
           }
         }
       }
@@ -1403,9 +1408,11 @@ HRESULT CRtspCurlInstance::ProcessReceivedBaseRtpPackets(CRtspTrack *track, unsi
           CRtpPacket *clone = rtpPacket->Clone();
           CHECK_POINTER_HRESULT(result, clone, result, E_OUTOFMEMORY);
 
-          if (SUCCEEDED(result) && this->IsSetFlags(RTSP_CURL_INSTANCE_FLAG_SERVER_FREEBOX))
+          if (SUCCEEDED(result) && this->IsSetAnyOfFlags(RTSP_CURL_INSTANCE_FLAG_SERVER_FREEBOX | RTSP_CURL_INSTANCE_FLAG_SERVER_HDHOMERUN))
           {
             // Freebox RTSP server doesn't compute RTP packet timestamps
+            // HDHomeRun RTSP server doesn't compute RTP packet timestamps
+
             // before processing we must compute timestamp based on their receive time - we don't have anything better
 
             clone->SetTimestamp(track->GetRtpPacketTimestamp(GetTickCount()));

@@ -25,9 +25,13 @@
 #include "DurationTitleFloatingTag.h"
 #include "DiscontinuityTag.h"
 #include "KeyTag.h"
+#include "UriAttribute.h"
 #include "MethodAttribute.h"
 #include "EndListTag.h"
 #include "ByteRangeTag.h"
+#include "InitializationVectorAttribute.h"
+#include "KeyFormatAttribute.h"
+#include "KeyFormatVersionsAttribute.h"
 
 CMediaPlaylistV07::CMediaPlaylistV07(HRESULT *result)
   : CMediaPlaylist(result)
@@ -100,12 +104,22 @@ HRESULT CMediaPlaylistV07::ParseTagsAndPlaylistItemsInternal(void)
 
           if (key != NULL)
           {
+            CUriAttribute *keyUri = dynamic_cast<CUriAttribute *>(key->GetAttributes()->GetAttribute(URI_ATTRIBUTE_NAME, true));
             CMethodAttribute *method = dynamic_cast<CMethodAttribute *>(key->GetAttributes()->GetAttribute(METHOD_ATTRIBUTE_NAME, true));
-            CHECK_POINTER_HRESULT(result, method, result, E_M3U8_NOT_VALID_PLAYLIST);
+            CInitializationVectorAttribute *initializationVector = dynamic_cast<CInitializationVectorAttribute *>(key->GetAttributes()->GetAttribute(INITIALIZATION_VECTOR_ATTRIBUTE_NAME, true));
+            CKeyFormatAttribute *keyFormat = dynamic_cast<CKeyFormatAttribute *>(key->GetAttributes()->GetAttribute(KEY_FORMAT_ATTRIBUTE_NAME, true));
+            CKeyFormatVersionsAttribute *keyFormatVersions = dynamic_cast<CKeyFormatVersionsAttribute *>(key->GetAttributes()->GetAttribute(KEY_FORMAT_VERSIONS_ATTRIBUTE_NAME, true));
 
             if (SUCCEEDED(result))
             {
-              fragment->SetEncrypted(!method->IsNone());
+              fragment->GetFragmentEncryption()->SetEncryptionNone(method->IsNone());
+              fragment->GetFragmentEncryption()->SetEncryptionAes128(method->IsAes128());
+              fragment->GetFragmentEncryption()->SetEncryptionSampleAes(method->IsSampleAes());
+
+              CHECK_CONDITION_HRESULT(result, fragment->GetFragmentEncryption()->SetEncryptionKeyUri((keyUri != NULL) ? keyUri->GetUri() : NULL), result, E_OUTOFMEMORY);
+              CHECK_CONDITION_HRESULT(result, fragment->GetFragmentEncryption()->SetEncryptionInitializationVector((initializationVector != NULL) ? initializationVector->GetInitializationVector() : NULL), result, E_OUTOFMEMORY);
+              CHECK_CONDITION_HRESULT(result, fragment->GetFragmentEncryption()->SetEncryptionKeyFormat((keyFormat != NULL) ? keyFormat->GetKeyFormat() : NULL), result, E_OUTOFMEMORY);
+              CHECK_CONDITION_HRESULT(result, fragment->GetFragmentEncryption()->SetEncryptionKeyFormatVersions((keyFormatVersions != NULL) ? keyFormatVersions->GetKeyFormatVersions() : NULL), result, E_OUTOFMEMORY);
             }
           }
 

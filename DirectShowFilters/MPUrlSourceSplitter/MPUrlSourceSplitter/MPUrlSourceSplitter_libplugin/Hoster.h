@@ -32,6 +32,7 @@
 
 #define METHOD_LOAD_PLUGINS_NAME                                              L"LoadPlugins()"
 #define METHOD_CLEAR_SESSION_NAME                                             L"ClearSession()"
+#define METHOD_INITIALIZE_PLUGINS_NAME                                        L"InitializePlugins()"
 
 // maximum count of plugins
 #define MAX_PLUGINS_DEFAULT                                                   256
@@ -51,6 +52,11 @@ public:
   /* set methods */
 
   /* other methods */
+
+  // initializes plugins with specified configuration
+  // @param configuration : the configuration parameters
+  // @return : S_OK if successful, error code otherwise
+  virtual HRESULT InitializePlugins(CParameterCollection *configuration);
 
   // loads plugins from directory
   // @return : S_OK if successful, error code otherwise

@@ -616,7 +616,7 @@ STDMETHODIMP CMPUrlSourceSplitter::Load(LPCOLESTR pszFileName, const AM_MEDIA_TY
         result = this->configuration->Add(PARAMETER_NAME_URL, url) ? result : E_OUTOFMEMORY;
       }
     }
-    
+
     // in IPTV case we open connection in Run() method, because Load() method is intened to only parse and cache stream URL
     // in splitter case we open connection now and report any error code
     if (SUCCEEDED(result) && this->IsSplitter())

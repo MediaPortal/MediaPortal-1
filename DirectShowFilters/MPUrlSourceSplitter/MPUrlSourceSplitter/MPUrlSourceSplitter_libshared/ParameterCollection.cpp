@@ -100,27 +100,27 @@ CParameter *CParameterCollection::GetParameter(const wchar_t *name, bool invaria
   return this->GetItem(name, (void *)&invariant);
 }
 
-void CParameterCollection::LogCollection(CLogger *logger, unsigned int loggerLevel, const wchar_t *protocolName, const wchar_t *functionName)
+void CParameterCollection::LogCollection(CLogger *logger, unsigned int loggerLevel, const wchar_t *moduleName, const wchar_t *functionName)
 {
   unsigned int count = this->Count();
-  if (protocolName == NULL)
+  if (moduleName == NULL)
   {
     logger->Log(loggerLevel, L"%s: configuration parameters: %u", functionName, count);
   }
   else
   {
-    logger->Log(loggerLevel, L"%s: %s: configuration parameters: %u", protocolName, functionName, count);
+    logger->Log(loggerLevel, L"%s: %s: configuration parameters: %u", moduleName, functionName, count);
   }
   for (unsigned int i = 0; i < count; i++)
   {
     CParameter *parameter = this->GetParameter(i);
-    if (protocolName == NULL)
+    if (moduleName == NULL)
     {
       logger->Log(loggerLevel, L"%s: parameter %u, name: '%s', value: '%s'", functionName, i + 1, parameter->GetName(), parameter->GetValue());
     }
     else
     {
-      logger->Log(loggerLevel, L"%s: %s: parameter %u, name: '%s', value: '%s'", protocolName, functionName, i + 1, parameter->GetName(), parameter->GetValue());
+      logger->Log(loggerLevel, L"%s: %s: parameter %u, name: '%s', value: '%s'", moduleName, functionName, i + 1, parameter->GetName(), parameter->GetValue());
     }
   }
 }

@@ -26,10 +26,10 @@
 #pragma warning(disable:4005)
 
 #include "MPUrlSourceSplitter_Protocol_M3u8.h"
+#include "MPUrlSourceSplitter_Protocol_M3u8_Parameters.h"
 #include "Utilities.h"
 #include "LockMutex.h"
 #include "VersionInfo.h"
-#include "MPUrlSourceSplitter_Protocol_M3u8_Parameters.h"
 #include "Parameters.h"
 #include "ProtocolPluginConfiguration.h"
 #include "ErrorCodes.h"
@@ -39,6 +39,7 @@
 #include "compress_zlib.h"
 #include "base64.h"
 #include "formatUrl.h"
+#include "M3u8DecryptionPluginConfiguration.h"
 
 #include <WinInet.h>
 #include <stdio.h>
@@ -86,6 +87,7 @@ CMPUrlSourceSplitter_Protocol_M3u8::CMPUrlSourceSplitter_Protocol_M3u8(HRESULT *
   this->lastMediaPlaylistUpdateTime = 0;
   this->lastProcessedSize = 0;
   this->currentProcessedSize = 0;
+  this->decryptionHoster = NULL;
   
   if ((result != NULL) && (SUCCEEDED(*result)))
   {
@@ -95,11 +97,15 @@ CMPUrlSourceSplitter_Protocol_M3u8::CMPUrlSourceSplitter_Protocol_M3u8(HRESULT *
     this->lockCurlMutex = CreateMutex(NULL, FALSE, NULL);
     this->cacheFile = new CCacheFile(result);
     this->streamFragments = new CM3u8StreamFragmentCollection(result);
+    this->decryptionHoster = new CM3u8DecryptionHoster(result, logger, configuration);
 
     CHECK_POINTER_HRESULT(*result, this->lockMutex, *result, E_OUTOFMEMORY);
     CHECK_POINTER_HRESULT(*result, this->lockCurlMutex, *result, E_OUTOFMEMORY);
     CHECK_POINTER_HRESULT(*result, this->cacheFile, *result, E_OUTOFMEMORY);
     CHECK_POINTER_HRESULT(*result, this->streamFragments, *result, E_OUTOFMEMORY);
+    CHECK_POINTER_HRESULT(*result, this->decryptionHoster, *result, E_OUTOFMEMORY);
+
+    CHECK_CONDITION_EXECUTE_RESULT(SUCCEEDED(*result), this->decryptionHoster->LoadPlugins(), *result);
 
     // create CURL instance
     this->mainCurlInstance = new CM3u8CurlInstance(result, this->logger, this->lockCurlMutex, PROTOCOL_IMPLEMENTATION_NAME, L"Main");
@@ -127,8 +133,13 @@ CMPUrlSourceSplitter_Protocol_M3u8::~CMPUrlSourceSplitter_Protocol_M3u8()
 {
   CHECK_CONDITION_NOT_NULL_EXECUTE(this->logger, this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_DESTRUCTOR_NAME));
 
+  // because stream fragments can be changed in decryption hoster, collection of stream fragments have to be released before decryption hoster
+  // in other case it can lead to access violation exception, due to virtual function table is allocated in memory space of decryption hoster
+  // same for CURL instance
   FREE_MEM_CLASS(this->streamFragments);
   FREE_MEM_CLASS(this->mainCurlInstance);
+
+  FREE_MEM_CLASS(this->decryptionHoster);
 
   FREE_MEM_CLASS(this->cacheFile);
 
@@ -271,6 +282,58 @@ HRESULT CMPUrlSourceSplitter_Protocol_M3u8::ReceiveData(CStreamPackage *streamPa
       }
     }
 
+    if (SUCCEEDED(result) && (this->streamFragments->HasEncryptedStreamFragments()))
+    {
+      CM3u8DecryptionContext *decryptionContext = new CM3u8DecryptionContext(&result);
+      CHECK_CONDITION_HRESULT(result, decryptionContext, result, E_OUTOFMEMORY);
+
+      if (SUCCEEDED(result))
+      {
+        decryptionContext->SetCurlInstance(this->mainCurlInstance);
+        decryptionContext->SetStreamFragmentDownloading(this->streamFragmentDownloading);
+        decryptionContext->SetStreamFragmentProcessing(this->streamFragmentProcessing);
+        decryptionContext->SetStreamFragmentToDownload(this->streamFragmentToDownload);
+        decryptionContext->SetStreamFragments(this->streamFragments);
+        decryptionContext->SetPlaylistUrl(this->configuration->GetValue(PARAMETER_NAME_M3U8_PLAYLIST_URL, true, NULL));
+        decryptionContext->SetConfiguration(this->configuration);
+      }
+
+      CHECK_CONDITION_EXECUTE_RESULT(SUCCEEDED(result), this->decryptionHoster->DecryptStreamFragments(decryptionContext), result);
+      CHECK_CONDITION_EXECUTE(FAILED(result), this->logger->Log(LOGGER_ERROR, L"%s: %s: decryption of stream fragments failed, error: 0x%08X", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, result));
+      FREE_MEM_CLASS(decryptionContext);
+    }
+
+    if (SUCCEEDED(result) && (this->streamFragments->HasDecryptedStreamFragments()))
+    {
+      // some stream fragments are decrypted
+
+      CIndexedM3u8StreamFragmentCollection *indexedDecryptedStreamFragments = new CIndexedM3u8StreamFragmentCollection(&result);
+      CHECK_CONDITION_EXECUTE(SUCCEEDED(result), result = this->streamFragments->GetDecryptedStreamFragments(indexedDecryptedStreamFragments));
+
+      for (unsigned int i = 0; (SUCCEEDED(result) && (i < indexedDecryptedStreamFragments->Count())); i++)
+      {
+        CIndexedM3u8StreamFragment *indexedDecryptedStreamFragment = indexedDecryptedStreamFragments->GetItem(i);
+        CM3u8StreamFragment *currentDecryptingFragment = indexedDecryptedStreamFragment->GetItem();
+
+        // we can process stream fragment
+        // after processing we mark fragment as downloaded = it is ready for filter
+
+          if (SUCCEEDED(result))
+          {
+            currentDecryptingFragment->SetLoadedToMemoryTime(GetTickCount(), UINT_MAX);
+            currentDecryptingFragment->SetDecrypted(false, UINT_MAX);
+            currentDecryptingFragment->SetProcessed(true, UINT_MAX);
+
+            this->streamFragments->UpdateIndexes(indexedDecryptedStreamFragment->GetItemIndex(), 1);
+
+            // recalculate start position of all processed stream fragments until first not processed stream fragment
+            this->streamFragments->RecalculateProcessedStreamFragmentStartPosition(indexedDecryptedStreamFragment->GetItemIndex());
+          }
+      }
+
+      FREE_MEM_CLASS(indexedDecryptedStreamFragments);
+    }
+
     if (SUCCEEDED(result) && (this->mainCurlInstance->GetConnectionState() == Initializing) && (!this->IsWholeStreamDownloaded()) && (!this->mainCurlInstance->IsLockedCurlInstance()) && (!this->IsSetFlags(MP_URL_SOURCE_SPLITTER_PROTOCOL_M3U8_UPDATE_STREAM_FRAGMENTS)))
     {
       if (this->streamFragments->Count() == 0)
@@ -312,12 +375,6 @@ HRESULT CMPUrlSourceSplitter_Protocol_M3u8::ReceiveData(CStreamPackage *streamPa
                   CHECK_POINTER_HRESULT(result, parsedStreamFragments, result, E_M3U8_CANNOT_GET_STREAM_FRAGMENTS_FROM_MEDIA_PLAYLIST);
 
                   CHECK_CONDITION_HRESULT(result, this->streamFragments->Append(parsedStreamFragments), result, E_OUTOFMEMORY);
-                  for (unsigned int i = 0; (SUCCEEDED(result) && (i < this->streamFragments->Count())); i++)
-                  {
-                    CM3u8StreamFragment *fragment = this->streamFragments->GetItem(i);
-
-                    CHECK_CONDITION_HRESULT(result, !fragment->IsEncrypted(), result, E_DRM_PROTECTED);
-                  }
 
                   // check last stream fragment for end of stream flag
                   CM3u8StreamFragment *fragment = this->streamFragments->GetItem(this->streamFragments->Count() - 1);
@@ -660,7 +717,6 @@ HRESULT CMPUrlSourceSplitter_Protocol_M3u8::ReceiveData(CStreamPackage *streamPa
                       CM3u8StreamFragment *fragment = parsedStreamFragments->GetItem(i);
 
                       CHECK_CONDITION_EXECUTE(SUCCEEDED(result), this->logger->Log(LOGGER_VERBOSE, L"%s: %s: added new stream fragment, fragment %u, timestamp: %lld, duration: %u (ms)", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, fragment->GetFragment(), fragment->GetFragmentTimestamp(), fragment->GetDuration()));
-                      CHECK_CONDITION_HRESULT(result, !fragment->IsEncrypted(), result, E_DRM_PROTECTED);
                     }
 
                     FREE_MEM_CLASS(parsedStreamFragments);
@@ -718,16 +774,13 @@ HRESULT CMPUrlSourceSplitter_Protocol_M3u8::ReceiveData(CStreamPackage *streamPa
 
           CHECK_CONDITION_HRESULT(result, currentDownloadingFragment->GetBuffer()->AddToBufferWithResize(this->mainCurlInstance->GetM3u8DownloadResponse()->GetReceivedData()) == this->mainCurlInstance->GetM3u8DownloadResponse()->GetReceivedData()->GetBufferOccupiedSpace(), result, E_OUTOFMEMORY);
 
+          // segment fragment is by default encrypted, until decryptor sets state to decrypted
           if (SUCCEEDED(result))
           {
             currentDownloadingFragment->SetDownloaded(true, UINT_MAX);
-            currentDownloadingFragment->SetProcessed(true, UINT_MAX);
-            currentDownloadingFragment->SetLoadedToMemoryTime(true, UINT_MAX);
+            currentDownloadingFragment->SetEncrypted(true, UINT_MAX);
 
             this->streamFragments->UpdateIndexes(this->streamFragmentDownloading, 1);
-
-            // recalculate start position of all processed stream fragments until first not processed stream fragment
-            this->streamFragments->RecalculateProcessedStreamFragmentStartPosition(this->streamFragmentDownloading);
           }
 
           if (SUCCEEDED(result))
@@ -1022,7 +1075,6 @@ HRESULT CMPUrlSourceSplitter_Protocol_M3u8::ReceiveData(CStreamPackage *streamPa
               this->logger->Log(LOGGER_VERBOSE, L"%s: %s: connection lost, no more data available, request '%u', start '%lld', size '%u', stream length: '%lld'", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, dataRequest->GetId(), dataRequest->GetStart(), dataRequest->GetLength(), this->streamLength);
 
               dataResponse->SetConnectionLostCannotReopen(true);
-              streamPackage->SetCompleted(S_OK);
             }
             else if (this->IsEndOfStreamReached() && ((dataRequest->GetStart() + dataRequest->GetLength()) >= this->streamLength))
             {
@@ -1030,8 +1082,10 @@ HRESULT CMPUrlSourceSplitter_Protocol_M3u8::ReceiveData(CStreamPackage *streamPa
               this->logger->Log(LOGGER_VERBOSE, L"%s: %s: no more data available, request '%u', start '%lld', size '%u', stream length: '%lld'", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, dataRequest->GetId(), dataRequest->GetStart(), dataRequest->GetLength(), this->streamLength);
 
               dataResponse->SetNoMoreDataAvailable(true);
-              streamPackage->SetCompleted(S_OK);
             }
+
+            // request can be completed with any length of available data
+            streamPackage->SetCompleted(S_OK);
           }
           else
           {
@@ -1319,6 +1373,7 @@ void CMPUrlSourceSplitter_Protocol_M3u8::ClearSession(void)
 
   __super::ClearSession();
  
+  this->decryptionHoster->ClearSession();
   this->streamLength = 0;
   this->mainCurlInstance->ClearSession();
 
@@ -1469,11 +1524,6 @@ const wchar_t *CMPUrlSourceSplitter_Protocol_M3u8::GetName(void)
   return PROTOCOL_NAME;
 }
 
-GUID CMPUrlSourceSplitter_Protocol_M3u8::GetInstanceId(void)
-{
-  return this->logger->GetLoggerInstanceId();
-}
-
 HRESULT CMPUrlSourceSplitter_Protocol_M3u8::Initialize(CPluginConfiguration *configuration)
 {
   HRESULT result = __super::Initialize(configuration);
@@ -1481,10 +1531,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_M3u8::Initialize(CPluginConfiguration *con
   CHECK_POINTER_HRESULT(result, protocolConfiguration, result, E_INVALIDARG);
   CHECK_POINTER_HRESULT(result, this->lockMutex, result, E_NOT_VALID_STATE);
 
-  if (SUCCEEDED(result))
-  {
-    this->configuration->LogCollection(this->logger, LOGGER_VERBOSE, PROTOCOL_IMPLEMENTATION_NAME, METHOD_INITIALIZE_NAME);
-  }
+  CHECK_HRESULT_EXECUTE(result, this->decryptionHoster->InitializePlugins(protocolConfiguration->GetConfiguration()));
 
   if (SUCCEEDED(result))
   {
@@ -1521,6 +1568,11 @@ HRESULT CMPUrlSourceSplitter_Protocol_M3u8::Initialize(CPluginConfiguration *con
 }
 
 /* protected methods */
+
+const wchar_t *CMPUrlSourceSplitter_Protocol_M3u8::GetModuleName(void)
+{
+  return PROTOCOL_IMPLEMENTATION_NAME;
+}
 
 const wchar_t *CMPUrlSourceSplitter_Protocol_M3u8::GetStoreFileNamePart(void)
 {
@@ -1593,17 +1645,13 @@ CM3u8StreamFragmentCollection *CMPUrlSourceSplitter_Protocol_M3u8::GetStreamFrag
 
           if (SUCCEEDED(result))
           {
-            CM3u8StreamFragment *fragment = new CM3u8StreamFragment(&result, uri, frag->GetSequenceNumber(), timestamp, frag->GetDuration());
+            CM3u8StreamFragment *fragment = new CM3u8StreamFragment(&result, uri, frag->GetSequenceNumber(), timestamp, frag->GetDuration(), (frag->GetOffset() != OFFSET_NOT_SPECIFED) ? frag->GetOffset() : UINT_MAX, (frag->GetLength() != LENGTH_NOT_SPECIFIED) ? frag->GetLength() : UINT_MAX, frag->GetFragmentEncryption());
             CHECK_POINTER_HRESULT(result, fragment, result, E_OUTOFMEMORY);
 
             if (SUCCEEDED(result))
             {
               fragment->SetDiscontinuity(frag->IsDiscontinuity(), UINT_MAX);
-              fragment->SetEncrypted(frag->IsEncrypted());
               fragment->SetEndOfStream(frag->IsEndOfStream());
-
-              fragment->SetByteRangeOffset((frag->GetOffset() != OFFSET_NOT_SPECIFED) ? frag->GetOffset() : UINT_MAX);
-              fragment->SetByteRangeLength((frag->GetLength() != LENGTH_NOT_SPECIFIED) ? frag->GetLength() : UINT_MAX);
             }
 
             CHECK_CONDITION_HRESULT(result, streamFragments->Add(fragment), result, E_OUTOFMEMORY);

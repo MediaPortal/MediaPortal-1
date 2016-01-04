@@ -39,6 +39,10 @@ public:
 
   /* get methods */
 
+  // gets key format
+  // @return : key format or NULL if not specified
+  const wchar_t *GetKeyFormat(void);
+
   /* set methods */
 
   /* other methods */

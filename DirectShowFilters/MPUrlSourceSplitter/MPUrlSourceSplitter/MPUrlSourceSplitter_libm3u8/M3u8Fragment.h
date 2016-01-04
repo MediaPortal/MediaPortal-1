@@ -24,14 +24,14 @@
 #define __M3U8_FRAGMENT_DEFINED
 
 #include "Flags.h"
+#include "M3u8FragmentEncryption.h"
 
 #define M3U8_FRAGMENT_FLAG_NONE                                       FLAGS_NONE
 
 #define M3U8_FRAGMENT_FLAG_DISCONTINUITY                              (1 << (FLAGS_LAST + 0))
-#define M3U8_FRAGMENT_FLAG_ENCRYPTED                                  (1 << (FLAGS_LAST + 1))
-#define M3U8_FRAGMENT_FLAG_END_OF_STREAM                              (1 << (FLAGS_LAST + 2))
+#define M3U8_FRAGMENT_FLAG_END_OF_STREAM                              (1 << (FLAGS_LAST + 1))
 
-#define M3U8_FRAGMENT_FLAG_LAST                                       (FLAGS_LAST + 3)
+#define M3U8_FRAGMENT_FLAG_LAST                                       (FLAGS_LAST + 2)
 
 #define SEQUENCE_NUMBER_NOT_SPECIFIED                                 UINT_MAX
 #define DURATION_NOT_SPECIFIED                                        UINT_MAX
@@ -66,6 +66,10 @@ public:
   // @return : length or LENGTH_NOT_SPECIFIED if not specified
   unsigned int GetLength(void);
 
+  // gets fragment encryption
+  // @return : fragment encryption
+  CM3u8FragmentEncryption *GetFragmentEncryption(void);
+
   /* set methods */
 
   // sets sequence number
@@ -93,10 +97,6 @@ public:
   // @param discontinuity : true if after fragment is discontinuity, false otherwise
   void SetDiscontinuity(bool discontinuity);
 
-  // sets if fragment is encrypted
-  // @param encrypted : true if after fragment is discontinuity, false otherwise
-  void SetEncrypted(bool ecnrypted);
-
   // sets if fragment is end of stream
   // @param endOfStream : true if after fragment is end of stream, false otherwise
   void SetEndOfStream(bool endOfStream);
@@ -106,10 +106,6 @@ public:
   // tests if after fragment is discontinuity
   // @return : true if after fragment is discontinuity, false otherwise
   bool IsDiscontinuity(void);
-
-  // tests if fragment is encrypted
-  // @return : true if encrypted, false otherwise
-  bool IsEncrypted(void);
 
   // tests if fragment is end of stream
   // @return : true if end of stream, false otherwise
@@ -131,6 +127,9 @@ protected:
 
   // holds length of range request
   unsigned int length;
+
+  // holds fragment encryption
+  CM3u8FragmentEncryption *encryption;
 
   /* methods */
 };

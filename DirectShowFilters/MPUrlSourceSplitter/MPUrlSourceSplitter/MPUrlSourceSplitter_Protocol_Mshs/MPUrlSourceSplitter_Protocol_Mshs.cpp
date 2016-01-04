@@ -1007,7 +1007,6 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mshs::ReceiveData(CStreamPackage *streamPa
               this->logger->Log(LOGGER_VERBOSE, L"%s: %s: connection lost, no more data available, request '%u', start '%lld', size '%u', stream length: '%lld'", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, dataRequest->GetId(), dataRequest->GetStart(), dataRequest->GetLength(), this->streamLength);
 
               dataResponse->SetConnectionLostCannotReopen(true);
-              streamPackage->SetCompleted(S_OK);
             }
             else if (this->IsEndOfStreamReached() && ((dataRequest->GetStart() + dataRequest->GetLength()) >= this->streamLength))
             {
@@ -1015,8 +1014,10 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mshs::ReceiveData(CStreamPackage *streamPa
               this->logger->Log(LOGGER_VERBOSE, L"%s: %s: no more data available, request '%u', start '%lld', size '%u', stream length: '%lld'", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, dataRequest->GetId(), dataRequest->GetStart(), dataRequest->GetLength(), this->streamLength);
 
               dataResponse->SetNoMoreDataAvailable(true);
-              streamPackage->SetCompleted(S_OK);
             }
+
+            // request can be completed with any length of available data
+            streamPackage->SetCompleted(S_OK);
           }
           else
           {
@@ -1480,22 +1481,12 @@ const wchar_t *CMPUrlSourceSplitter_Protocol_Mshs::GetName(void)
   return PROTOCOL_NAME;
 }
 
-GUID CMPUrlSourceSplitter_Protocol_Mshs::GetInstanceId(void)
-{
-  return this->logger->GetLoggerInstanceId();
-}
-
 HRESULT CMPUrlSourceSplitter_Protocol_Mshs::Initialize(CPluginConfiguration *configuration)
 {
   HRESULT result = __super::Initialize(configuration);
   CProtocolPluginConfiguration *protocolConfiguration = (CProtocolPluginConfiguration *)configuration;
   CHECK_POINTER_HRESULT(result, protocolConfiguration, result, E_INVALIDARG);
   CHECK_POINTER_HRESULT(result, this->lockMutex, result, E_NOT_VALID_STATE);
-
-  if (SUCCEEDED(result))
-  {
-    this->configuration->LogCollection(this->logger, LOGGER_VERBOSE, PROTOCOL_IMPLEMENTATION_NAME, METHOD_INITIALIZE_NAME);
-  }
 
   if (SUCCEEDED(result))
   {
@@ -1532,6 +1523,11 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mshs::Initialize(CPluginConfiguration *con
 }
 
 /* protected methods */
+
+const wchar_t *CMPUrlSourceSplitter_Protocol_Mshs::GetModuleName(void)
+{
+  return PROTOCOL_IMPLEMENTATION_NAME;
+}
 
 const wchar_t *CMPUrlSourceSplitter_Protocol_Mshs::GetStoreFileNamePart(void)
 {
