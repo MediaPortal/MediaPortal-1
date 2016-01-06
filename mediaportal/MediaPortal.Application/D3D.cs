@@ -138,8 +138,8 @@ namespace MediaPortal
     protected Point                LastCursorPosition;       // tracks last cursor position during window moving
     protected static SplashScreen  SplashScreen;             // splash screen object
     protected GraphicsAdapterInfo  AdapterInfo;              // hold adapter info for the selected display on startup of MP
-    protected int MouseTimeOutMP;                            // Mouse activity timeout while in MP in seconds
-    protected int MouseTimeOutFullscreen;                    // Mouse activity timeout while in Fullscreen in seconds
+    protected int                  MouseTimeOutMP;           // Mouse activity timeout while in MP in seconds
+    protected int                  MouseTimeOutFullscreen;   // Mouse activity timeout while in Fullscreen in seconds
 
     #endregion
 
@@ -199,7 +199,6 @@ namespace MediaPortal
     protected static Screen            _screenFocus;              // Screen Focus when minimize / restore to systray
     protected static Screen            _backupscreen;             // Screen Focus when minimize / restore to systray
     protected static Rectangle         _backupBounds;             // Bounds backup
-    protected static bool              _keepstartfullscreen;
 
     #endregion
 
@@ -249,7 +248,6 @@ namespace MediaPortal
         _alwaysOnTop             = xmlreader.GetValueAsBool("general", "alwaysontop", false);
         _reduceFrameRate         = xmlreader.GetValueAsBool("gui", "reduceframerate", false);
         _doNotWaitForVSync       = xmlreader.GetValueAsBool("debug", "donotwaitforvsync", false);
-        _keepstartfullscreen = xmlreader.GetValueAsBool("general", "keepstartfullscreen", false);
       }
 
       _useExclusiveDirectXMode = !UseEnhancedVideoRenderer && _useExclusiveDirectXMode;
@@ -484,99 +482,99 @@ namespace MediaPortal
     /// </summary>
     protected void ToggleFullscreen()
     {
-      if (!_keepstartfullscreen)
+      Log.Debug("D3D: ToggleFullScreen()");
+
+      // disable event handlers
+      if (GUIGraphicsContext.DX9Device != null)
       {
-        Log.Debug("D3D: ToggleFullScreen()");
+        GUIGraphicsContext.DX9Device.DeviceLost -= OnDeviceLost;
+      }
 
-        // disable event handlers
-        if (GUIGraphicsContext.DX9Device != null)
+      // Reset DialogMenu to avoid freeze when going to fullscreen/windowed
+      var dialogMenu = (GUIDialogMenu) GUIWindowManager.GetWindow((int) GUIWindow.Window.WINDOW_DIALOG_MENU);
+      if (dialogMenu != null &&
+          (GUIWindowManager.RoutedWindow == (int) GUIWindow.Window.WINDOW_DIALOG_MENU ||
+           GUIWindowManager.RoutedWindow == (int) GUIWindow.Window.WINDOW_DIALOG_OK))
+      {
+        dialogMenu.Dispose();
+        GUIWindowManager.UnRoute(); // only unroute if we still the routed window
+      }
+
+      // reset device if necessary
+      Windowed = !Windowed;
+      RecreateSwapChain(false);
+      Windowed = !Windowed;
+
+      // adjust form sizes and properties
+      if (Windowed)
+      {
+        Log.Info("D3D: Switching from windowed mode to full screen");
+
+        if (AutoHideTaskbar)
         {
-          GUIGraphicsContext.DX9Device.DeviceLost -= OnDeviceLost;
+          HideTaskBar(true);
         }
 
-        // Reset DialogMenu to avoid freeze when going to fullscreen/windowed
-        var dialogMenu = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
-        if (dialogMenu != null && (GUIWindowManager.RoutedWindow == (int)GUIWindow.Window.WINDOW_DIALOG_MENU || GUIWindowManager.RoutedWindow == (int)GUIWindow.Window.WINDOW_DIALOG_OK))
+        // exist miniTVMode
+        if (_menuItemMiniTv.Checked)
         {
-          dialogMenu.Dispose();
-          GUIWindowManager.UnRoute(); // only unroute if we still the routed window
+          ToggleMiniTV();
         }
 
-        // reset device if necessary
-        Windowed = !Windowed;
-        RecreateSwapChain(false);
-        Windowed = !Windowed;
+        _oldClientRectangle.Location = Location;
+        _oldClientRectangle.Size = ClientSize;
 
-        // adjust form sizes and properties
-        if (Windowed)
+        WindowState = FormWindowState.Normal;
+        FormBorderStyle = FormBorderStyle.None;
+        MaximizeBox = false;
+        MinimizeBox = false;
+        Menu = null;
+        Windowed = false;
+        Location = new Point(GUIGraphicsContext.currentScreen.Bounds.X, GUIGraphicsContext.currentScreen.Bounds.Y);
+        ClientSize = GUIGraphicsContext.currentScreen.Bounds.Size;
+      }
+      else
+      {
+        Log.Info("D3D: Switching from full screen to windowed mode");
+
+        if (AutoHideTaskbar)
         {
-          Log.Info("D3D: Switching from windowed mode to full screen");
+          HideTaskBar(false);
+        }
 
-          if (AutoHideTaskbar)
-          {
-            HideTaskBar(true);
-          }
+        WindowState = FormWindowState.Normal;
+        FormBorderStyle = FormBorderStyle.Sizable;
+        MaximizeBox = true;
+        MinimizeBox = true;
+        Menu = _menuStripMain;
+        Windowed = true;
 
-          // exist miniTVMode
-          if (_menuItemMiniTv.Checked)
-          {
-            ToggleMiniTV();
-          }
-
-          _oldClientRectangle.Location = Location;
-          _oldClientRectangle.Size = ClientSize;
-
-          WindowState = FormWindowState.Normal;
-          FormBorderStyle = FormBorderStyle.None;
-          MaximizeBox = false;
-          MinimizeBox = false;
-          Menu = null;
-          Windowed = false;
+        if (_oldClientRectangle.IsEmpty)
+        {
           Location = new Point(GUIGraphicsContext.currentScreen.Bounds.X, GUIGraphicsContext.currentScreen.Bounds.Y);
-          ClientSize = GUIGraphicsContext.currentScreen.Bounds.Size;
+          ClientSize = CalcMaxClientArea();
         }
         else
         {
-          Log.Info("D3D: Switching from full screen to windowed mode");
-
-          if (AutoHideTaskbar)
-          {
-            HideTaskBar(false);
-          }
-
-          WindowState = FormWindowState.Normal;
-          FormBorderStyle = FormBorderStyle.Sizable;
-          MaximizeBox = true;
-          MinimizeBox = true;
-          Menu = _menuStripMain;
-          Windowed = true;
-
-          if (_oldClientRectangle.IsEmpty)
-          {
-            Location = new Point(GUIGraphicsContext.currentScreen.Bounds.X, GUIGraphicsContext.currentScreen.Bounds.Y);
-            ClientSize = CalcMaxClientArea();
-          }
-          else
-          {
-            Location = _oldClientRectangle.Location;
-            ClientSize = _oldClientRectangle.Size;
-          }
-
-          LastRect.top = Location.Y;
-          LastRect.left = Location.X;
-          LastRect.bottom = Size.Height;
-          LastRect.right = Size.Width;
+          Location = _oldClientRectangle.Location;
+          ClientSize = _oldClientRectangle.Size;
         }
 
-        Update();
-        Log.Info("D3D: Client Size: {0}x{1}", ClientSize.Width, ClientSize.Height);
-        Log.Info("D3D: Screen size: {0}x{1}", GUIGraphicsContext.currentScreen.Bounds.Width, GUIGraphicsContext.currentScreen.Bounds.Height);
+        LastRect.top = Location.Y;
+        LastRect.left = Location.X;
+        LastRect.bottom = Size.Height;
+        LastRect.right = Size.Width;
+      }
 
-        // enable event handlers
-        if (GUIGraphicsContext.DX9Device != null)
-        {
-          GUIGraphicsContext.DX9Device.DeviceLost += OnDeviceLost;
-        }
+      Update();
+      Log.Info("D3D: Client Size: {0}x{1}", ClientSize.Width, ClientSize.Height);
+      Log.Info("D3D: Screen size: {0}x{1}", GUIGraphicsContext.currentScreen.Bounds.Width,
+        GUIGraphicsContext.currentScreen.Bounds.Height);
+
+      // enable event handlers
+      if (GUIGraphicsContext.DX9Device != null)
+      {
+        GUIGraphicsContext.DX9Device.DeviceLost += OnDeviceLost;
       }
     }
 
@@ -621,65 +619,69 @@ namespace MediaPortal
         GUIWindowManager.Dispose();
         GUIFontManager.Dispose();
         GUITextureManager.Dispose();
-        GUIGraphicsContext.DX9Device.EvictManagedResources();
+        if (GUIGraphicsContext.DX9Device != null)
+        {
+          GUIGraphicsContext.DX9Device.EvictManagedResources();
 
-        if (useBackup)
-        {
-          try
+          if (useBackup)
           {
-            Log.Debug("Main: RecreateSwapChain() by restoring startup DirectX values");
-            GUIGraphicsContext.DirectXPresentParameters = _presentParamsBackup;
-            GUIGraphicsContext.DX9Device.Reset(_presentParamsBackup);
+            try
+            {
+              Log.Debug("Main: RecreateSwapChain() by restoring startup DirectX values");
+              GUIGraphicsContext.DirectXPresentParameters = _presentParamsBackup;
+              GUIGraphicsContext.DX9Device.Reset(_presentParamsBackup);
+            }
+            catch (InvalidCallException)
+            {
+              Log.Error("D3D: D3DERR_INVALIDCALL - presentation parameters might contain an invalid value");
+            }
+            catch (DeviceLostException)
+            {
+              Log.Error("D3D: D3DERR_DEVICELOST - device is lost but cannot be reset at this time");
+            }
+            catch (DriverInternalErrorException)
+            {
+              Log.Error("D3D: D3DERR_DRIVERINTERNALERROR - internal driver error");
+            }
+            catch (OutOfVideoMemoryException)
+            {
+              Log.Error("D3D: D3DERR_OUTOFVIDEOMEMORY - not enough available display memory to perform the operation");
+            }
+            catch (OutOfMemoryException)
+            {
+              Log.Error("D3D: D3DERR_OUTOFMEMORY - could not allocate sufficient memory to complete the call");
+            }
           }
-          catch (InvalidCallException)
+          else
           {
-            Log.Error("D3D: D3DERR_INVALIDCALL - presentation parameters might contain an invalid value");
-          }
-          catch (DeviceLostException)
-          {
-            Log.Error("D3D: D3DERR_DEVICELOST - device is lost but cannot be reset at this time");
-          }
-          catch (DriverInternalErrorException)
-          {
-            Log.Error("D3D: D3DERR_DRIVERINTERNALERROR - internal driver error");
-          }
-          catch (OutOfVideoMemoryException)
-          {
-            Log.Error("D3D: D3DERR_OUTOFVIDEOMEMORY - not enough available display memory to perform the operation");
-          }
-          catch (OutOfMemoryException)
-          {
-            Log.Error("D3D: D3DERR_OUTOFMEMORY - could not allocate sufficient memory to complete the call");
-          }
-        }
-        else
-        {
-          // build new D3D presentation parameters and reset device
-          Log.Debug("Main: RecreateSwapChain() by rebuild PresentParams");
-          BuildPresentParams(Windowed);
-          try
-          {
-            GUIGraphicsContext.DX9Device.Reset(_presentParams);
-          }
-          catch (InvalidCallException)
-          {
-            Log.Error("D3D: D3DERR_INVALIDCALL - presentation parametters might contain an invalid value");
-          }
-          catch (DeviceLostException)
-          {
-            Log.Error("D3D: D3DERR_DEVICELOST - device is lost but cannot be reset at this time");
-          }
-          catch (DriverInternalErrorException)
-          {
-            Log.Error("D3D: D3DERR_DRIVERINTERNALERROR - internal driver error");
-          }
-          catch (OutOfVideoMemoryException)
-          {
-            Log.Error("D3D: D3DERR_OUTOFVIDEOMEMORY - not enough available display memory to perform the operation");
-          }
-          catch (OutOfMemoryException)
-          {
-            Log.Error("D3D: D3DERR_OUTOFMEMORY - could not allocate sufficient memory to complete the call");
+            // build new D3D presentation parameters and reset device
+            Log.Debug("Main: RecreateSwapChain() by rebuild PresentParams");
+            BuildPresentParams(Windowed);
+            try
+            {
+              GUIGraphicsContext.DX9Device.Reset(_presentParams);
+            }
+            catch (InvalidCallException)
+            {
+              Log.Error("D3D: D3DERR_INVALIDCALL - presentation parametters might contain an invalid value");
+            }
+            catch (DeviceLostException)
+            {
+              // Indicate that the device has been lost
+              Log.Error("D3D: D3DERR_DEVICELOST - device is lost but cannot be reset at this time");
+            }
+            catch (DriverInternalErrorException)
+            {
+              Log.Error("D3D: D3DERR_DRIVERINTERNALERROR - internal driver error");
+            }
+            catch (OutOfVideoMemoryException)
+            {
+              Log.Error("D3D: D3DERR_OUTOFVIDEOMEMORY - not enough available display memory to perform the operation");
+            }
+            catch (OutOfMemoryException)
+            {
+              Log.Error("D3D: D3DERR_OUTOFMEMORY - could not allocate sufficient memory to complete the call");
+            }
           }
         }
 
