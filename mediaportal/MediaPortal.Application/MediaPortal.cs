@@ -1903,11 +1903,12 @@ public class MediaPortalApp : D3D, IRender
           if (!_resumedSuspended)
           {
             // Resume operation of user interface
+            _resumedSuspended = true;
             Log.Info("Main: Resuming operation of user interface");
             OnResumeSuspend();
             msg.WParam = new IntPtr((int)PBT_EVENT.PBT_APMRESUMESUSPEND);
             PluginManager.WndProc(ref msg);
-            _resumedSuspended = true;
+            _suspended = false;
           }
           else
           {
@@ -1919,8 +1920,6 @@ public class MediaPortalApp : D3D, IRender
           {
             GUIGraphicsContext.DX9Device.DeviceLost += OnDeviceLost;
           }
-
-          _suspended = false;
 
           // force form dimensions to screen size to compensate for HDMI hot plug problems (e.g. WM_DiSPLAYCHANGE reported 1920x1080 but system is still in 1024x768 mode).
           if (GUIGraphicsContext.currentScreen.Bounds.Width == 1024 &&
@@ -1979,12 +1978,12 @@ public class MediaPortalApp : D3D, IRender
                 if (_suspended && _resumedAutomatic && !_resumedSuspended)
                 {
                   // Resume operation of user interface for PBT_APMRESUMEAUTOMATIC without PBT_APMRESUMESUSPEND.
+                  _resumedSuspended = true;
                   Log.Info("Main: Providing input - Resuming operation of user interface");
                   OnResumeSuspend();
                   msg.WParam = new IntPtr((int)PBT_EVENT.PBT_APMRESUMESUSPEND);
                   PluginManager.WndProc(ref msg);
                   msg.WParam = new IntPtr((int)PBT_EVENT.PBT_POWERSETTINGCHANGE);
-                  _resumedSuspended = true;
                   _suspended = false;
                 }
                 IsUserPresent = true;
