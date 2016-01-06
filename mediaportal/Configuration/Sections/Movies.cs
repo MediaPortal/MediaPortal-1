@@ -19,7 +19,6 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.Globalization;
 using System.IO;
@@ -27,7 +26,6 @@ using System.Windows.Forms;
 using MediaPortal.GUI.Library;
 using MediaPortal.Profile;
 using MediaPortal.UserInterface.Controls;
-using MediaPortal.Util;
 using DShowNET.Helper;
 using System.Runtime.InteropServices;
 using DirectShowLib;
@@ -102,7 +100,6 @@ namespace MediaPortal.Configuration.Sections
     private MPLabel percentPlayedLabel;
     private NumericUpDown playedPercentageTB;
     private MPCheckBox chbKeepFoldersTogether;
-    private List<LanguageInfo> ISOLanguagePairs = new List<LanguageInfo>();
 
     //private int 
 

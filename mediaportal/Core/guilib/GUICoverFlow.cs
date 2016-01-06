@@ -1573,12 +1573,6 @@ namespace MediaPortal.GUI.Library
         spinningCard.expected = 0.0f;
     }
 
-    private void QueueAction(Action action)
-    {
-      // Queue the user action.
-      _queuedAction = action;
-    }
-
     /// <summary>
     /// Renders cards to the right of the flow, does not render the selected card once animation has stopped.
     /// </summary>

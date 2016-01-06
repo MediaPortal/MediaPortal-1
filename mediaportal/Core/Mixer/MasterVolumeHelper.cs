@@ -703,15 +703,6 @@ namespace MediaPortal.Mixer
     public float fMasterVolume;
     public uint nChannels;
     public float ChannelVolume;
-
-    private void FixCS0649()
-    {
-      guidEventContext = Guid.Empty;
-      bMuted = false;
-      fMasterVolume = 0;
-      nChannels = 0;
-      ChannelVolume = 0;
-    }
   }
 
   internal class AudioEndpointVolumeCallback : IAudioEndpointVolumeCallback

@@ -67,14 +67,6 @@ namespace MediaPortal.GUI.Library
       return false;
     }
 
-    private void OnPostRender(int level, float timePassed)
-    {
-      if (DoesPostRender())
-      {
-        PostRender(timePassed, level);
-      }
-    }
-
     private int OnPostRenderAction(Action action, GUIMessage msg, bool focus)
     {
       if (msg != null)

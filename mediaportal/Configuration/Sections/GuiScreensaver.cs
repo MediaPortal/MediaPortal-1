@@ -23,7 +23,6 @@ using MediaPortal.GUI.Library;
 using MediaPortal.Player;
 using MediaPortal.Profile;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
@@ -37,7 +36,7 @@ namespace MediaPortal.Configuration.Sections
   public partial class GuiScreensaver : SectionSettings
   {
     #region ctor    
-    private ArrayList availablePlugins = new ArrayList();
+
     private BindingList<ItemTag> loadedPlugins = new BindingList<ItemTag>();
     public GuiScreensaver()
       : this("Screensaver") { }

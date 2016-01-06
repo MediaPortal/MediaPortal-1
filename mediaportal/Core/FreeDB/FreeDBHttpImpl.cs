@@ -384,11 +384,6 @@ namespace MediaPortal.Freedb
       return m_code;
     }
 
-    private string ParseSingleLine(StreamReader streamReader)
-    {
-      return streamReader.ReadLine().Trim();
-    }
-
     private string[] ParseMultiLine(StreamReader streamReader)
     {
       ArrayList strarray = new ArrayList();

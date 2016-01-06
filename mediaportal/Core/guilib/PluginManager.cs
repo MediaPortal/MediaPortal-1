@@ -26,7 +26,6 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
-using System.Threading;
 using System.Windows.Forms;
 using System.Xml;
 using MediaPortal.Configuration;
@@ -324,77 +323,6 @@ namespace MediaPortal.GUI.Library
       }
     }
 
-
-    /// <summary>
-    /// 
-    /// </summary>
-    private static void LoadWindowPluginsThreaded()
-    {
-      if (_windowPluginsLoaded)
-      {
-        return;
-      }
-
-      Log.Debug("PlugInManager: LoadWindowPlugins()");
-
-      _windowPluginsLoaded = true;
-      try
-      {
-        Directory.CreateDirectory(Config.GetFolder(Config.Dir.Plugins));
-        Directory.CreateDirectory(Config.GetSubFolder(Config.Dir.Plugins, "windows"));
-      }
-      // ReSharper disable EmptyGeneralCatchClause
-      catch (Exception) { }
-      // ReSharper restore EmptyGeneralCatchClause
-
-      string[] strFiles = MediaPortal.Util.Utils.GetFiles(Config.GetSubFolder(Config.Dir.Plugins, "windows"), "dll");
-
-      int pluginsToLoad = strFiles.Length;
-      using (var resetEvent = new ManualResetEvent(false))
-      {
-        // initialize state list
-        var states = new List<int>();
-        for (int i = 0; i < strFiles.Length; i++)
-        {
-          states.Add(i);
-        }
-
-        // load all window plugins using available worker threads
-        for (int i = 0; i < strFiles.Length; i++)
-        {
-          string file = strFiles[i];
-          DateTime queueTime = DateTime.Now;
-          ThreadPool.QueueUserWorkItem(x =>
-          {
-            // get relative plugin file name
-            string removeString = Config.GetFolder(Config.Dir.Plugins);
-            int index = file.IndexOf(removeString, StringComparison.Ordinal);
-            string pluginFile = (index < 0) ? file : file.Remove(index, removeString.Length);
-
-            DateTime startTime = DateTime.Now;
-            TimeSpan delay = startTime - queueTime;
-            Log.Debug("PluginManager: Begin loading '{0}' ({1} ms thread delay)", pluginFile, delay.TotalMilliseconds);
-
-            LoadWindowPlugin(file);
-
-            DateTime endTime = DateTime.Now;
-            TimeSpan runningTime = endTime - startTime;
-            Log.Debug("PluginManager: End loading '{0}' ({1} ms running time)", pluginFile, runningTime.TotalMilliseconds);
-
-            // safely decrement the counter
-            if (Interlocked.Decrement(ref pluginsToLoad) == 0)
-            {
-              // ReSharper disable AccessToDisposedClosure
-              resetEvent.Set();
-              // ReSharper restore AccessToDisposedClosure
-            }
-          }, states[i]);
-        }
-
-        // wait until all worker threads are finished
-        resetEvent.WaitOne();
-      }      
-    }
 
     /// <summary>
     /// 

@@ -103,8 +103,6 @@ namespace MediaPortal.MusicPlayer.BASS
 
     private delegate void InitializeControlsDelegate();
 
-    private delegate void ShowVisualizationWindowDelegate(bool visible);
-
     private Thread _commandThread = null;
     private List<QueueItem> _commandQueue = new List<QueueItem>();
 

@@ -65,18 +65,6 @@ namespace MediaPortal.InputDevices
 
     private string[] soundList = new string[] {"none", "back.wav", "click.wav", "cursor.wav"};
 
-    private string[] keyList = new string[]
-                                 {
-                                   "{BACKSPACE}", "{BREAK}", "{CAPSLOCK}", "{DELETE}", "{DOWN}", "{END}", "{ENTER}",
-                                   "{ESC}",
-                                   "{HELP}", "{HOME}", "{INSERT}", "{LEFT}", "{NUMLOCK}", "{PGDN}", "{PGUP}", "{PRTSC}",
-                                   "{RIGHT}", "{SCROLLLOCK}", "{TAB}", "{UP}", "{F1}", "{F2}", "{F3}", "{F4}", "{F5}",
-                                   "{F6}",
-                                   "{F7}", "{F8}", "{F9}", "{F10}", "{F11}", "{F12}", "{F13}", "{F14}", "{F15}", "{F16}"
-                                   ,
-                                   "{ADD}", "{SUBTRACT}", "{MULTIPLY}", "{DIVIDE}"
-                                 };
-
     private string inputClassName;
     private bool changedSettings = false;
 

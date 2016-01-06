@@ -205,11 +205,6 @@ namespace MediaPortal.Configuration.Sections
       }
     }
 
-    private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
-    {
-      Process.Start((string)e.Link.LinkData);
-    }
-
     #region Designer generated code
 
     /// <summary>

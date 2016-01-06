@@ -94,11 +94,6 @@ namespace GUIRSSFeed
       //
     }
 
-    private void saveInfo(object obj, EventArgs ea)
-    {
-      SaveSettings();
-    }
-
     private void browseFile(object obj, EventArgs e)
     {
       OpenFileDialog dlg = new OpenFileDialog();
