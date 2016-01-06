@@ -2799,14 +2799,14 @@ namespace MediaPortal.Player
       }
     }
 
-    public static string VideoLanguage(int iStream)
+    public static string VideoName(int iStream)
     {
       if (_player == null)
       {
         return Strings.Unknown;
       }
 
-      string stream = _player.VideoLanguage(iStream);
+      string stream = _player.VideoName(iStream);
       return Util.Utils.TranslateLanguageString(stream);
     }
 
