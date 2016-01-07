@@ -1360,7 +1360,7 @@ namespace MediaPortal.MusicPlayer.BASS
           // If audio file is not changed, just set new start/end position and reset pause
           string audioFilePath = System.IO.Path.GetDirectoryName(cueFakeTrack.CueFileName) +
                                  System.IO.Path.DirectorySeparatorChar + track.DataFile.Filename;
-          if (audioFilePath.CompareTo(_filePath) == 0 /* && StreamIsPlaying(stream)*/)
+          if (audioFilePath.CompareTo(_filePath) == 0)
           {
             SetCueTrackEndPosition(GetCurrentStream(), endOnly);
             return true;
@@ -1548,9 +1548,18 @@ namespace MediaPortal.MusicPlayer.BASS
           // Cue support
           if ((currentStream != null && currentStream.IsPlaying))
           {
-            if (HandleCueFile(ref filePath, false))
+            if (CueUtil.isCueFakeTrackFile(filePath))
             {
-              return true;
+              // Only process the CUE file here, if the song belongs to the same CUE file
+              // When the CUE file has changed, we handle that in PlayInternal
+              CueFakeTrack cueFakeTrack = CueUtil.parseCueFakeTrackFileName(filePath);
+              if (cueFakeTrack.CueFileName.Equals(_currentCueFileName))
+              {
+                if (HandleCueFile(ref filePath, false))
+                {
+                  return true;
+                }
+              }
             }
           }
         }
