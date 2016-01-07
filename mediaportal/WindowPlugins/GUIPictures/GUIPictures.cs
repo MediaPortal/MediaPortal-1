@@ -419,7 +419,6 @@ namespace MediaPortal.GUI.Pictures
     [SkinControl(6)] protected GUIButtonControl btnSlideShow = null;
     [SkinControl(7)] protected GUIButtonControl btnSlideShowRecursive = null;
 
-    private const int MAX_PICS_PER_DATE = 1000;
     private PicturesFolderWatcherHelper _pictureFolderWatcher;
     public static HashSet<string> thumbCreationPaths = new HashSet<string>();
     private int selectedItemIndex = -1;
@@ -3492,24 +3491,6 @@ namespace MediaPortal.GUI.Pictures
       }
 
       return Util.Utils.GetPicturesLargeThumbPathname(fileName);
-    }
-
-    private bool GetUserInputString(ref string sString)
-    {
-      VirtualKeyboard keyboard = (VirtualKeyboard)GUIWindowManager.GetWindow((int)Window.WINDOW_VIRTUAL_KEYBOARD);
-      if (null == keyboard)
-      {
-        return false;
-      }
-      keyboard.IsSearchKeyboard = true;
-      keyboard.Reset();
-      keyboard.Text = sString;
-      keyboard.DoModal(GetID); // show it...
-      if (keyboard.IsConfirmed)
-      {
-        sString = keyboard.Text;
-      }
-      return keyboard.IsConfirmed;
     }
 
     private bool GetUserPasswordString(ref string sString)

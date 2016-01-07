@@ -838,10 +838,6 @@ namespace MediaPortal.GUI.Video
       }
     }
 
-    private void OnInfoFile(GUIListItem item) {}
-
-    private void OnInfoFolder(GUIListItem item) {}
-
     protected override void OnInfo(int iItem) {}
 
     protected virtual void AddItemToPlayList(GUIListItem pItem)

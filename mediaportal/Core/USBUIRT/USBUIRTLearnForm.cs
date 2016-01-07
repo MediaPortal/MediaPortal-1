@@ -1673,27 +1673,11 @@ namespace MediaPortal.IR
         StbCommandsChkLst.SetItemChecked(StbCommandsChkLst.Items.Count - 1, false);
     }
 
-    private void LoadBasicCommandSet()
-    {
-      for (int i = 0; i < ActionsCheckList.Items.Count; i++)
-      {
-        ActionsCheckList.SetItemChecked(i, (i < 16) ? true : false);
-      }
-    }
-
     private void LoadDefaultCommandSet()
     {
       for (int i = 0; i < ActionsCheckList.Items.Count; i++)
       {
         ActionsCheckList.SetItemChecked(i, (i < 31) ? true : false);
-      }
-    }
-
-    private void LoadAllCommandSet()
-    {
-      for (int i = 0; i < ActionsCheckList.Items.Count; i++)
-      {
-        ActionsCheckList.SetItemChecked(i, true);
       }
     }
 

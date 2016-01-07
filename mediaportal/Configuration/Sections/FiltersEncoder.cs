@@ -18,8 +18,6 @@
 
 #endregion
 
-using System.ComponentModel;
-using System.Drawing;
 using MediaPortal.UserInterface.Controls;
 
 namespace MediaPortal.Configuration.Sections
@@ -32,31 +30,6 @@ namespace MediaPortal.Configuration.Sections
     //private System.ComponentModel.IContainer components = null;
 
     public EncoderFiltersSection() : this("Encoder Filters") {}
-
-    private void InitializeComponent()
-    {
-      ComponentResourceManager resources = new ComponentResourceManager(typeof (EncoderFiltersSection));
-      this.mpLabel1 = new MPLabel();
-      this.SuspendLayout();
-      // 
-      // mpLabel1
-      // 
-      this.mpLabel1.AutoSize = true;
-      this.mpLabel1.Location = new Point(42, 51);
-      this.mpLabel1.MaximumSize = new Size(400, 0);
-      this.mpLabel1.Name = "mpLabel1";
-      this.mpLabel1.Size = new Size(385, 52);
-      this.mpLabel1.TabIndex = 0;
-      this.mpLabel1.Text = resources.GetString("mpLabel1.Text");
-      // 
-      // EncoderFiltersSection
-      // 
-      this.Controls.Add(this.mpLabel1);
-      this.Name = "EncoderFiltersSection";
-      this.Size = new Size(472, 408);
-      this.ResumeLayout(false);
-      this.PerformLayout();
-    }
 
     public EncoderFiltersSection(string name) : base(name) {}
   }

@@ -40,8 +40,6 @@ namespace MediaPortal.Player
   /// </summary>
   public class DVDPlayer9 : DVDPlayer
   {
-    private const uint VFW_E_DVD_DECNOTENOUGH = 0x8004027B;
-    private const uint VFW_E_DVD_RENDERFAIL = 0x8004027A;
     private const int WM_GRAPHNOTIFY = 0x00008001;
 
     private VMR9Util _vmr9 = null;

@@ -266,9 +266,6 @@ namespace MediaPortal.RedEyeIR
     }
 
     private bool ignore = true;
-    private DateTime timestamp = DateTime.Now;
-
-    private DateTime bytetimestamp = DateTime.Now;
 
     protected override void OnRxChar(byte ch)
     {
