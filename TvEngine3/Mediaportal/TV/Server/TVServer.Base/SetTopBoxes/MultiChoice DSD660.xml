@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<SetTopBoxProfile xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Name>MultiChoice DSD660</Name>
+  <Digit0>5000 0073 0000 0001 0018 0000</Digit>
+  <Digit1>5000 0000 0000 0001 0018 0001</Digit>
+  <Digit2>5000 0073 0000 0001 0018 0002</Digit>
+  <Digit3>5000 0073 0000 0001 0018 0003</Digit>
+  <Digit4>5000 0073 0000 0001 0018 0004</Digit>
+  <Digit5>5000 0073 0000 0001 0018 0005</Digit>
+  <Digit6>5000 0073 0000 0001 0018 0006</Digit>
+  <Digit7>5000 0073 0000 0001 0018 0007</Digit>
+  <Digit8>5000 0073 0000 0001 0018 0008</Digit>
+  <Digit9>5000 0073 0000 0001 0018 0009</Digit>
+  <Separator></Separator>
+  <Enter></Enter>
+  <PreChange></PreChange>
+  <CommandDelay>250</CommandDelay>
+  <PowerOn></PowerOn>
+  <PowerOff></PowerOff>
+  <PowerToggle>5000 0073 0000 0001 0018 000C</PowerToggle>
+  <PowerChangeDelay>3000</PowerChangeDelay>
+</SetTopBoxProfile>
