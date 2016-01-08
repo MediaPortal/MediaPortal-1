@@ -1,7 +1,7 @@
 The LIVE555 Streaming Media library is used as the basis for our RTSP streaming
 server, and in our DirectShow IPTV soure filter's RTSP support library.
 
-We use a very slightly modified version based on 2009.09.04.
+We use a very slightly modified version based on 2015.07.31.
 
 
 Copyright Live Networks, Inc. All Rights Reserved.
