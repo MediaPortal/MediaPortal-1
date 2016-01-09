@@ -305,6 +305,15 @@ namespace MediaPortal.GUI.Music
     {
       try
       {
+        for (int i = 0; i < facadeLayout.Count; i++)
+        {
+          if (facadeLayout[i].Path == path)
+          {
+            Log.Debug("GUIMusicFiles.AddItem Duplivated item found: {0}", path);
+            return;
+          }
+        }
+        
         FileInformation fi = new FileInformation();
         if (File.Exists(path))
         {

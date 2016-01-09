@@ -1470,7 +1470,7 @@ namespace MediaPortal.GUI.Pictures
       }
       catch (Exception ex)
       {
-        Log.Error("GUIMusicFiles.DeleteItem Exception: {0}", ex.Message);
+        Log.Error("GUIPictures.DeleteItem Exception: {0}", ex.Message);
       }
       return oldItem;
     }
@@ -1479,6 +1479,15 @@ namespace MediaPortal.GUI.Pictures
     {
       try
       {
+        for (int i = 0; i < facadeLayout.Count; i++)
+        {
+          if (facadeLayout[i].Path == path)
+          {
+            Log.Debug("GUIPictures.AddItem Duplivated item found: {0}", path);
+            return;
+          }
+        }
+        
         FileInformation fi = new FileInformation();
         if (File.Exists(path))
         {

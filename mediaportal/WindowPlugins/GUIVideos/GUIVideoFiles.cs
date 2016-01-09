@@ -3614,6 +3614,15 @@ namespace MediaPortal.GUI.Video
     {
       try
       {
+        for (int i = 0; i < facadeLayout.Count; i++)
+        {
+          if (facadeLayout[i].Path == path)
+          {
+            Log.Debug("GUIVideoFiles.AddItem Duplivated item found: {0}", path);
+            return;
+          }
+        }
+        
         ISelectDVDHandler selectDvdHandler = GetSelectDvdHandler();
         ISelectBDHandler selectBDHandler = GetSelectBDHandler();
         FileInformation fi = new FileInformation();
