@@ -274,7 +274,7 @@ namespace TvPlugin
       // if we're switching to another plugin
       if (!GUIGraphicsContext.IsTvWindow(newWindowId) && newWindowId != (int)Window.WINDOW_FULLSCREEN_VIDEO)
       {
-        if (TVHome.m_navigator.CheckIfProtectedGroup() || TVHome._allowProtectedItem)
+        if (TVHome.m_navigator != null && (TVHome.m_navigator.CheckIfProtectedGroup() || TVHome._allowProtectedItem || TVHome._showAllRecording))
         {
           TVHome._showAllRecording = false;
           TVHome._allowProtectedItem = false;

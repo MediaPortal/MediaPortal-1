@@ -582,7 +582,7 @@ namespace TvPlugin
         if (previousWindowId == (int) Window.WINDOW_HOME ||
             previousWindowId == (int) Window.WINDOW_SECOND_HOME)
         {
-          if (m_navigator != null && (m_navigator.CheckIfProtectedGroup() || _allowProtectedItem))
+          if (m_navigator != null && (m_navigator.CheckIfProtectedGroup() || _allowProtectedItem || _showAllRecording))
           {
             _allowProtectedItem = false;
             _showAllRecording = false;
@@ -712,11 +712,11 @@ namespace TvPlugin
     protected override void OnPageDestroy(int newWindowId)
     {
       // if we're switching to another plugin
-      if (!GUIGraphicsContext.IsTvWindow(newWindowId) && m_navigator.CheckIfProtectedGroup())
+      if (m_navigator != null && (!GUIGraphicsContext.IsTvWindow(newWindowId) && (m_navigator.CheckIfProtectedGroup() || _allowProtectedItem || _showAllRecording)))
       {
         // needs for PIN protection function avoid to start tvhome with a protected group
-        TVHome._showAllRecording = false;
-        TVHome._allowProtectedItem = false;
+        _showAllRecording = false;
+        _allowProtectedItem = false;
         LoadSettings(true);
         //and we're not playing which means we dont timeshift tv
         //g_Player.Stop();

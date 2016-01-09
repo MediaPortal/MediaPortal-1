@@ -175,15 +175,11 @@
     <Compile Include="teletext\TvTeletext.cs" />
     <Compile Include="TvRecordingSettings.cs" />
     <Compile Include="TvSetup.cs" />
-    <Compile Include="TvSetupAudioLanguageForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Include="TvSetupAudioLanguageForm.cs" />
     <Compile Include="TvSetupAudioLanguageForm.Designer.cs">
       <DependentUpon>TvSetupAudioLanguageForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="TvSetupForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Include="TvSetupForm.cs" />
     <Compile Include="TvSetupForm.Designer.cs">
       <DependentUpon>TvSetupForm.cs</DependentUpon>
     </Compile>

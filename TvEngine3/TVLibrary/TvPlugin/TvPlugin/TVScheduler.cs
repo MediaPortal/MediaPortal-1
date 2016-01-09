@@ -215,7 +215,7 @@ namespace TvPlugin
             }
           }
           // needs for PIN protection function avoid to start tvhome with a protected group
-          if (TVHome.m_navigator.CheckIfProtectedGroup() || TVHome._allowProtectedItem)
+          if (TVHome.m_navigator != null && (TVHome.m_navigator.CheckIfProtectedGroup() || TVHome._allowProtectedItem || TVHome._showAllRecording))
           {
             TVHome._allowProtectedItem = false;
             TVHome._showAllRecording = false;
