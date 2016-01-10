@@ -172,7 +172,7 @@ void StreamRemove(char* id)
   }
 
   LogDebug(L"stream server: remove stream, ID = %S", id);
-  m_rtspServer->removeServerMediaSession(id);
+  m_rtspServer->deleteServerMediaSession(id);
 }
 
 unsigned short ClientGetCount()
