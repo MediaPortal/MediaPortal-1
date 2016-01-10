@@ -264,7 +264,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
     private class GraphJob
     {
       public GraphJobType JobType;
-      public string MethodName;     // optional
+      public string MethodName;     // Only used for TsWriterMethod* jobs.
       public object[] Parameters;
       public object ReturnValue;
       public Exception ThrownException;
@@ -370,7 +370,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
         }
         _graphThreadWaitEvent.Set();
 
-        job.WaitEvent.WaitOne();
+        // Wait for the job to complete. The time limit is arbitrary. Normally
+        // we'd expect a job to complete within a few seconds at most. Mainly
+        // we just have to be careful to avoid causing deadlock.
+        if (!job.WaitEvent.WaitOne(60000))
+        {
+          throw new TvException("RTL283x job failed to complete within a reasonable time, job type = {0}, method name = {1}.", jobType, methodName ?? string.Empty);
+        }
         job.WaitEvent.Close();
         if (job.ThrownException != null)
         {
@@ -609,7 +615,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
       // special mode. The driver selects this tuner by first match on a list
       // of friendly names located in the registry. We manipulate the registry
       // list and tuner name to ensure the driver matches this tuner. In theory
-      // this should allow multiple tuners to operate in special modes
+      // this should enable multiple tuners to operate in special modes
       // simultaneously.
       string originalListTunerName = null;
       string originalTunerName = _mainTunerDevice.Name;
