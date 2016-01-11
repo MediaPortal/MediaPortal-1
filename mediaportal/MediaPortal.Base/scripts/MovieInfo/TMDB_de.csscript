@@ -1,0 +1,684 @@
+//css_reference "core.dll";
+//css_reference "Databases.dll";
+//css_reference "utils.dll";
+
+// ---------------------------------------------------------
+// TMDB_de_v095.csscript
+// Version : 095
+// Author  : Baserunner
+// Date    : 2015-09-26
+// ---------------------------------------------------------
+// History
+// v09   : TMDB_fr_MP13x.csscript, Version 1.1.0 by Fred777 at 2013-04-23
+// v091  : Refreshed and adapted for German fit by Baserunner
+// v092  : Fixed a problem when there is more than one director
+//         Changed the way the Runtime is fetched
+//         Writing credits are now fetched from TMDB
+//         Improved robustness
+//         Included userReviews in English
+//         Changed getName to see Version Number in MP Config
+// v093  : Fetches all TMDB pages the search URL returns
+//         Returns the complete cast
+//         Fixes a problem when the search URL returns original titles
+// v094  : Adaptions in FindFilm() function because of changes at TMDB
+// v094a : Adaptions in FindFilm() function because of changes at TMDB
+// v094b : Fills movieDetails.FanartURL()
+// v095  : FindFilm() accepts IMDB number as search string now as well
+//         
+// --------------------------------------------------------
+
+using System;
+using System.Text;
+using System.IO;
+using System.Collections;
+using System.Collections.Generic;
+using System.Net;
+using System.Web;
+using MediaPortal.Util;
+using MediaPortal.Video.Database;
+using System.Windows.Forms;
+using System.Globalization;
+using System.Text.RegularExpressions;
+
+
+public class Grabber : MarshalByRefObject, IIMDBScriptGrabber
+{
+    const string DATABASE_NAME = "TMDB_de_v095";
+	// get the list on find films specified by the title
+    public void FindFilm(string strSearch, int iLimit, ArrayList elements)
+    {
+        if (Regex.Match(strSearch, @"tt\d{7}").Success)
+        {
+            string ttNumber = Regex.Match(strSearch, @"(?<imdbID>tt\d{7})").Groups["imdbID"].Value;
+            string imdbUrl = string.Format("http://www.imdb.com/title/{0}", ttNumber);
+            string imdbPage = GetHtmlPage(imdbUrl);
+            strSearch = GetTitleIMDB(imdbPage);
+        }
+
+        MediaPortal.GUI.Library.Log.Info("{0}: Searching %%{1}%%, iLimit={2}", DATABASE_NAME, strSearch, iLimit);
+        try
+        {            
+            int nPage = 1;
+            int nPage_old = nPage;
+            string searchURL = "";
+            string strPage = "";
+
+            // find strURL, strTitle, strYear            
+            while (elements.Count < iLimit && nPage != 0)
+            {             
+                // only load the page when necessary
+                if ((nPage != nPage_old) || (nPage == 1))
+                {
+                    searchURL = string.Format("http://www.themoviedb.org/search/movie?query={0}&page={1}", strSearch, nPage);
+                    MediaPortal.GUI.Library.Log.Info("{0}: Searching {1}", DATABASE_NAME, searchURL);
+                    strPage = GetHtmlPage(searchURL);
+                    nPage_old = nPage;
+                }
+                
+                //<div class="info">.*?\n.*?\n.*?class="title result".*?href="(?<url>.*?)".*?title="(?<title>.*?)".*?\n.*?\n.*?\n.*?\n.*?class="release_date".*(?<year>\d{4})
+                //<div class="info">.*?\n.*?<p>.*?\n.*?href="(?<url>.*?)".*?title="(?<title>.*?)".*?\n.*?<span.*?\n.*?<\/p.*?\n.*?<p.*?\n.*?release_date">.*?(?<year>\d{4}).*?<span
+	            Match match = Regex.Match(strPage, @"<div class=""info"">.*?\n.*?<p>.*?\n.*?href=""(?<url>.*?)"".*?title=""(?<title>.*?)"".*?\n.*?<span.*?\n.*?<\/p.*?\n.*?<p.*?\n.*?release_date"">.*?(?<year>\d{4}).*?<span");
+                while (match.Success) 
+                {
+                    string strURL = match.Groups["url"].Value;
+                    string strTitle = match.Groups["title"].Value;
+                    string strYear = match.Groups["year"].Value;
+
+                    if (strYear.Length > 0)
+                    {
+                        strTitle += " (" + strYear + ")";
+
+                        string strMovieURL = string.Format("http://www.themoviedb.org{0}", strURL);
+                        IMDB.IMDBUrl url = new IMDB.IMDBUrl(strMovieURL, strTitle, DATABASE_NAME);
+                        elements.Add(url);
+                        MediaPortal.GUI.Library.Log.Debug("{0}: Added URL {1} with title %%{2}%%", DATABASE_NAME, url.URL, strTitle);
+
+                        if (elements.Count == iLimit)
+                            break;
+                    }
+                    match = match.NextMatch();
+                }
+                
+                MediaPortal.GUI.Library.Log.Info("{0}: Found {1} matching movies for {2}.", DATABASE_NAME, elements.Count, strSearch);
+                         
+                if (elements.Count <= iLimit)
+                {
+                    if (nextPageExists(strPage))                        
+                    {
+                        nPage++;
+                        // MediaPortal.GUI.Library.Log.Debug("{0}: Found a next page ({1})", DATABASE_NAME, nPage);
+                    }
+                    else
+                    {
+                        nPage = 0;
+                    }                    
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            MediaPortal.GUI.Library.Log.Error("{0}: Exception for research of {1} err:{2} stack:{3}", DATABASE_NAME, strSearch, ex.Message, ex.StackTrace);
+        }
+    }
+
+    // helper for findFilms: Check if next page exits
+    private static bool nextPageExists(string page)
+    {        
+        //<a href="/search/movie?query=die insel&page=2">Next →</a></p>
+        Match match = Regex.Match(page, @"<a href="".*?"">Next.*?</a></p>");
+        if (match.Success)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }        
+    }
+
+	// get movie detail from a url
+	public bool GetDetails(IMDB.IMDBUrl url, ref IMDBMovie movieDetails)
+	{
+        try
+        {
+            movieDetails.Reset();
+            movieDetails.Database = DATABASE_NAME;
+
+            MediaPortal.GUI.Library.Log.Debug("{0}: Fetching TMDB details at url.URL {1} ", DATABASE_NAME, url.URL);
+            string tmdbPage = GetHtmlPage(url.URL);
+
+            // Check that page has been translated
+            if (tmdbPage.IndexOf("has not yet been translated") != -1)
+                return false;
+
+            movieDetails.Title = GetTitle(tmdbPage);
+            movieDetails.Year = GetYear(tmdbPage);
+            movieDetails.Plot = GetPlot(tmdbPage);
+            movieDetails.PlotOutline = movieDetails.Plot;
+            movieDetails.TagLine = GetTagLine(tmdbPage);
+            movieDetails.Genre = GetGenres(tmdbPage);
+            movieDetails.ThumbURL = GetThumbURL(tmdbPage);
+            // movieDetails.FanartURL = GetFanartURL(tmdbPage);
+            movieDetails.Director = GetDirectorTMDB(tmdbPage);
+            string originalTitle = GetOriginalTitle(tmdbPage);
+
+            if (originalTitle == string.Empty)
+                originalTitle = movieDetails.Title;
+
+            movieDetails.IMDBNumber = GetIMDBNumber(originalTitle, movieDetails.Year);
+
+            // string castURL = url.URL.Insert(url.URL.IndexOf('?'), "/cast");
+            string castURL = url.URL + "/cast#cast";
+            string castPage = GetHtmlPage(castURL);
+            movieDetails.Cast = GetCastTMDB(castPage);
+            movieDetails.RunTime = GetRuntimeTMDB(tmdbPage);
+            movieDetails.WritingCredits = GetWritingCreditsTMDB(tmdbPage);
+            // movieDetails.Studios = GetStudiosTMDB(tmdbPage);
+
+            if (movieDetails.IMDBNumber != string.Empty)
+            {
+                string ratingsURL = string.Format("http://www.imdb.com/title/{0}/ratings", movieDetails.IMDBNumber);
+                // MediaPortal.GUI.Library.Log.Debug("{0}: Fetching IMDB ratings at {1} ", DATABASE_NAME, ratingsURL);
+                string ratingsPage = GetHtmlPage(ratingsURL);
+                string detailsURL = string.Format("http://www.imdb.com/title/{0}/", movieDetails.IMDBNumber);
+                // MediaPortal.GUI.Library.Log.Debug("{0}: Fetching IMDB details at {1} ", DATABASE_NAME, detailsURL);
+                string detailsPage = GetHtmlPage(detailsURL);
+               
+                string reviewURL = string.Format("http://www.imdb.com/title/{0}/reviews?ref_=tt_urv", movieDetails.IMDBNumber);
+                string reviewPage = GetHtmlPage(reviewURL);
+            
+
+                movieDetails.Rating = GetRatingIMDB(ratingsPage);
+                movieDetails.Votes = GetVotesIMDB(ratingsPage);
+                movieDetails.MPARating = GetMPARating(movieDetails.IMDBNumber);
+                movieDetails.Country = GetCountry(detailsPage);
+                movieDetails.Language = GetLanguage(detailsPage);
+                movieDetails.Studios = GetStudiosIMDB(detailsPage);
+                movieDetails.UserReview = GetUserReviewIMDB(reviewPage);
+
+                if (String.IsNullOrEmpty(movieDetails.WritingCredits)) 
+                {
+                    movieDetails.WritingCredits = GetWritingCreditsIMDB(detailsPage);
+                }
+
+                if (String.IsNullOrEmpty(movieDetails.Director))
+                {
+                    movieDetails.Director = GetDirectorIMDB(detailsPage);
+                }
+
+                if (String.IsNullOrEmpty(movieDetails.Cast))
+                {
+                    movieDetails.Cast = GetCastIMDB(detailsPage);
+                }
+
+                if (movieDetails.RunTime == 0)
+                {
+                    movieDetails.RunTime = GetRuntimeIMDB(detailsPage);
+                }
+            }            
+            return true;
+        }
+        catch (Exception ex)
+        {
+            MediaPortal.GUI.Library.Log.Error("{0}: Exception for lookup of {1} err:{2} stack:{3}", DATABASE_NAME, url.URL, ex.Message, ex.StackTrace);
+        }
+
+        return false;
+    }
+
+
+
+	// name of grabber
+	public string GetName()
+	{
+		return "v095 TMDB/IMDB Grabber";
+	}
+
+	// language of grabbed side
+	public string GetLanguage()
+	{
+		return "DE";
+	}
+
+    private static string GetTitle(string page)
+    {
+        return HttpUtility.HtmlDecode(FindTextInPage("<h2 id=\"title\">", "<span itemprop=\"name\">", "</span>", page));
+    }
+
+    private static string GetTitleIMDB(string page)
+    {
+        //<title>Matrix (1999) - IMDb</title>
+        try
+        {
+            //<title>(?<title>.*?)\(.*?</title>
+            string pattern = @"<title>(?<title>.*?)\(.*?</title>";
+            string imdbTitle = Regex.Match(page, pattern).Groups["title"].Value;
+            return imdbTitle.Trim();
+        }
+        catch (Exception)
+        {
+            MediaPortal.GUI.Library.Log.Debug("{0}: Problems with GetTitleIMDB ", DATABASE_NAME);
+            return "";
+        }
+        
+    }
+
+    private static int GetYear(string page)
+    {
+        return int.Parse(FindTextInPage("<h2 id=\"title\">", "<h3 id=\"year\">(", ")</h3>", page));
+    }
+
+    private static int GetRuntimeIMDB(string page)
+    {
+        try
+        {            
+            // <time itemprop="duration".*>\n?.*?(?<runtime>\d+).*min\n?</time>
+            string pattern = @"<time itemprop=""duration"".*>\n?.*?(?<runtime>\d+).*min\n?</time>";   
+            string myRuntime = Regex.Match(page, pattern).Groups["runtime"].Value;
+            return int.Parse(myRuntime);
+        }
+        catch (Exception)
+        {
+            MediaPortal.GUI.Library.Log.Debug("{0}: Problems with RuntimeIMDB ", DATABASE_NAME);
+            return 0;
+        }
+    }
+
+    private static int GetRuntimeTMDB(string page)
+    {
+        try
+        {
+            // Runtime.*?duration.*?/>(?<runtime>\d+)</
+            string pattern = @"Runtime.*?duration.*?/>(?<runtime>\d+)</";
+            string myRuntime = Regex.Match(page, pattern).Groups["runtime"].Value;
+            return int.Parse(myRuntime);
+        }
+        catch (Exception)
+        {
+            MediaPortal.GUI.Library.Log.Debug("{0}: Problems with RuntimeTMDB ", DATABASE_NAME);
+            return 0;
+        }
+    }
+
+    private static float GetRatingIMDB(string page)
+    {
+        string myFloat = String.Empty;
+
+        CultureInfo culture = new CultureInfo("en-US");
+        myFloat = FindTextInPage("", "<a href=\"/search/title?user_rating=", "\">", page);
+
+       try 
+       {        
+            return float.Parse(myFloat, culture);
+       }
+        catch (Exception)
+        {
+            // to do
+            return 0;
+        }
+    }
+
+    private static float GetRatingTMDB(string page)
+    {
+        CultureInfo culture = new CultureInfo("en-US");
+        return float.Parse(FindTextInPage("<div class=\"movierating\">", "<span id=\"rating_hint\" itemprop=\"ratingValue\">", "</span>", page), culture);
+    }
+
+    private static string GetVotesIMDB(string page)
+    {
+        return FindTextInPage("<h3><a rel=\"login\" href=\"/register/?why=vote\">login to vote</a></h3>", "<br /><p>", " IMDb users", page);
+    }
+
+    private static string GetVotesTMDB(string page)
+    {
+        return FindTextInPage("<div class=\"movierating\">", "<span itemprop=\"ratingCount\">", "</span>", page);
+    }
+    // <h3>Overview</h3>\n+.*?description">(?<description>.*?)</p>.*
+
+    private static string GetPlot(string page)
+    {
+        return Regex.Match(page, @"<h3>Overview</h3>\n+.*?description"">(?<description>.*?)</p>.*").Groups["description"].Value;
+    }
+
+    private static string GetTagLine(string page)
+    {
+        return HttpUtility.HtmlDecode(FindTextInPage("<h3>Tagline</h3>", "<span itemprop=\"headline\">", "</span>", page));
+    }
+
+    private static string GetThumbURL(string page)
+    {
+        string thumbURL = FindTextInPage("<img itemprop=\"image\" id=\"upload_poster\"", "src=\"", "\"", page).Replace("/w185/", "/w500/");
+        return thumbURL.Replace("https", "http");
+    }
+
+    private static string GetFanartURL(string page)
+    {
+        //returns randomly the FanartURL
+        MatchCollection matches = Regex.Matches(page, @"class=""lightbox"".*?src=""(?<fanartURL>.*?)""");
+        Random rnd = new Random();
+        int match_number = rnd.Next(0, matches.Count);
+        string fanartURL = matches[match_number].Groups["fanartURL"].Value;
+        return fanartURL.Replace("https", "http").Replace("w300", "original");
+    }
+
+    private static string GetOriginalTitle(string page)
+    {
+        return HttpUtility.HtmlDecode(FindTextInPage("<h3>Original Title</h3>", "<p>", "</p>", page));
+    }
+
+    private static string GetStudiosIMDB(string page)
+    {
+        string section = FindTextInPage("<h4 class=\"inline\">Production Co:</h4>", "<span itemprop=\"creator\" itemscope itemtype=\"http://schema.org/Organization\">", "</div>", page);
+
+        string studios = string.Empty;
+        string separator = "</span>,";
+        int startPosition = 0;
+
+        while (startPosition != -1)
+        {
+            string studio = HttpUtility.HtmlDecode(FindTextInPage("", "itemprop=\"name\">", "</span>", section));
+
+            if (studios.Length > 0)
+                studios += " / ";
+
+            studios += studio;
+            startPosition = section.IndexOf(separator);
+
+            if (startPosition != -1)
+            {
+                startPosition += separator.Length;
+                section = section.Substring(startPosition);
+            }
+        }
+
+        return HttpUtility.HtmlDecode(studios);
+    }
+
+    private static string GetStudiosTMDB(string page)
+    {
+        string section = FindTextInPage("<h3>Production Companies</h3>", "<p itemscope itemtype=\"http://schema.org/Organization\">", "</p>", page);
+
+        string studios = string.Empty;
+        string separator = "</a>,";
+        int startPosition = 0;
+
+        while (startPosition != -1)
+        {
+            string studio = HttpUtility.HtmlDecode(FindTextInPage("", "<span itemprop=\"name\">", "</span>", section));
+
+            if (studios.Length > 0)
+                studios += " / ";
+
+            studios += studio;
+            startPosition = section.IndexOf(separator);
+
+            if (startPosition != -1)
+            {
+                startPosition += separator.Length;
+                section = section.Substring(startPosition);
+            }
+        }
+
+        return studios;
+    }
+
+    private static string GetWritingCreditsIMDB(string page)
+    {
+        string section = FindTextInPage("", "<h4 class=\"inline\">Writer", "</div>", page);
+
+        string writingCredits = string.Empty;
+        string separator = "</a>";
+        int startPosition = 0;
+
+        while (startPosition != -1)
+        {
+            string writer = HttpUtility.HtmlDecode(FindTextInPage("", "<span class=\"itemprop\" itemprop=\"name\">", "</span>", section));
+
+            if (writingCredits.Length > 0 && writer.Length > 0)
+                writingCredits += " / ";
+
+            writingCredits += writer;
+            startPosition = section.IndexOf(separator);
+
+            if (startPosition != -1)
+            {
+                startPosition += separator.Length;
+                section = section.Substring(startPosition);
+            }
+        }
+
+        return writingCredits;
+    }
+
+    private static string GetWritingCreditsTMDB(string page)
+    {
+        string writingCredit_string = string.Empty; //can be one or more
+        //itemprop="author".*?itemprop="name">(?<author>.*?)</span>
+        Match match = Regex.Match(page, @"itemprop=""author"".*?itemprop=""name"">(?<author>.*?)</span>");
+        while (match.Success)
+        {
+            if (writingCredit_string != string.Empty)
+                writingCredit_string = writingCredit_string + " / " + match.Groups["author"].Value;
+            else
+                writingCredit_string = match.Groups["author"].Value;
+            match = match.NextMatch();
+        }
+        return writingCredit_string;
+    }
+
+    private static string GetDirectorIMDB(string page)
+    {
+        return HttpUtility.HtmlDecode(FindTextInPage("<h4 class=\"inline\">Director", "<span class=\"itemprop\" itemprop=\"name\">", "</span>", page));
+    }
+
+    private static string GetDirectorTMDB(string page)
+    {
+        string director_string = string.Empty; //can be one or more
+        //itemprop="director".*?itemprop="name">(?<director>.*?)</span>
+        Match match = Regex.Match(page, @"itemprop=""director"".*?itemprop=""name"">(?<director>.*?)</span>");
+        while (match.Success)
+        {
+            if (director_string != string.Empty)
+                director_string = director_string + " / " + match.Groups["director"].Value;
+            else
+                director_string = match.Groups["director"].Value;            
+            match = match.NextMatch();
+        }
+        return director_string;
+    }
+
+    private static string GetDirectorTMDB_org(string page)
+    {
+        return HttpUtility.HtmlDecode(FindTextInPage("<td class=\"job\">Director", "<span itemprop=\"name\">", "</span>", page));
+    }
+
+    private static string GetCastIMDB(string page)
+    {        
+        string casts = string.Empty;
+        //"itemprop" itemprop="name">(?<actor>.*?)</span>\n.*?\n.*?\n.*?\n.*?\n.*?<td class="character">.*?\n.*?\n\s*(?<character>.*)\s
+        Match match = Regex.Match(page, @"""itemprop"" itemprop=""name"">(?<actor>.*?)</span>\n.*?\n.*?\n.*?\n.*?\n.*?<td class=""character"">.*?\n.*?\n\s*(?<character>.*)\s");
+        while (match.Success)
+        {
+            string character = Regex.Replace(match.Groups["character"].Value, @"<.*?>(?<replacement>.*?)</a>", "${replacement}");
+            string cast = match.Groups["actor"].Value + " als " + character +"\n";
+            casts += cast;
+            match = match.NextMatch();
+        }
+        return casts;
+    }
+
+    private static string GetCastTMDB(string page)
+    {
+        // First get castTable
+        //(?<castTable><table id="castTable" class="cast".*?</table>)
+        string castTable = Regex.Match(page, @"(?<castTable><table id=""castTable"" class=""cast"".*?</table>)", RegexOptions.Singleline).Value;
+
+        //Danach <td class="person">.*?>(?<actor>.*?)</a></td>\n.*?<td class="character">.*">(?<character>.*?)</span></td>
+        string casts = string.Empty;
+        Match match = Regex.Match(page, @"<td class=""person"">.*?>(?<actor>.*?)</a></td>\n.*?<td class=""character"">.*"">(?<character>.*?)</span></td>");
+        while (match.Success)
+        {
+            string cast = match.Groups["actor"].Value + " als " + match.Groups["character"].Value + "\n";
+            casts += cast;
+            match = match.NextMatch();
+        }
+        return casts;
+    }
+
+    //itemprop="genre">(?<genre>.*?)<
+
+    private static string GetGenres(string page)
+    {
+        string genres = string.Empty;
+        Match match = Regex.Match(page, @"itemprop=""genre"">(?<genre>.*?)<");
+        while (match.Success)
+        {
+            string genre = match.Groups["genre"].Value;
+
+            if (genres.Length > 0)
+                genres += " / ";
+
+            genres += genre;
+            match = match.NextMatch();
+        }
+        
+        return genres;
+    }
+
+    private static string GetIMDBNumber(string originalTitle, int year)
+    {
+        IMDBResult[] imdbResults = GetIMDBResults(HttpUtility.UrlEncode(originalTitle), year);
+
+        foreach (IMDBResult imdbResult in imdbResults)
+        {
+            if (imdbResult.imdbNumber != String.Empty)
+                // simply returns the first match which matches most of the time
+                // as the search page returns the most popular title first
+                return imdbResult.imdbNumber;
+        }      
+        return string.Empty;
+    }
+
+    public string GetUserReviewIMDB(string reviewPage)
+    {
+        // <div>.*?review useful.*?</div>.*?<p>\n+(?<userReview>.*?)</p>
+        Match match = Regex.Match(reviewPage, @"<div>.*?review useful.*?</div>.*?<p>\n+(?<userReview>.*?)</p>", RegexOptions.Singleline);
+        string userReview = match.Groups["userReview"].Value; // simply take the first (and most helpful one)
+        userReview = HttpUtility.HtmlDecode(userReview);
+        userReview = userReview.Replace("\n", " ");
+        userReview = userReview.Replace(@"<br>", "\n");
+        userReview = userReview + "\n";
+        return userReview;
+    }
+
+    private static string GetMPARating(string imdbNumber)
+    //<a href="/search/title\?certificates=.*?Germany:(?<rating>.*?)</a>
+    {
+        string pageURL = string.Format("http://www.imdb.com/title/{0}/parentalguide", imdbNumber);
+        string page = GetHtmlPage(pageURL);
+        string returnString = Regex.Match(page, @"<a href=""/search/title\?certificates=.*?Germany:(?<rating>.*?)</a>").Groups["rating"].Value;
+        if (returnString.Equals("o.Al."))
+        {
+            return "0";
+        }
+        else 
+        {
+           return returnString;
+        }        
+    }
+
+    private static string GetCountry(string page)
+    {
+        return HttpUtility.HtmlDecode(FindTextInPage("<h4 class=\"inline\">Country:</h4>", "itemprop='url'>", "</a>", page));
+    }
+
+    private static string GetLanguage(string page)
+    {
+        return HttpUtility.HtmlDecode(FindTextInPage("<h4 class=\"inline\">Language:</h4>", "itemprop='url'>", "</a>", page));
+    }
+
+    private static string FindTextInPage(string sectionTag, string startTag, string endTag, string page)
+    {
+        int startPosition;
+        int endPosition;
+
+        startPosition = page.IndexOf(sectionTag);
+
+        if (startPosition == -1)
+            return string.Empty;
+
+        startPosition += sectionTag.Length;
+        startPosition = page.IndexOf(startTag, startPosition);
+
+        if (startPosition == -1)
+            return string.Empty;
+
+        startPosition += startTag.Length;
+        endPosition = page.IndexOf(endTag, startPosition);
+
+        if (endPosition == -1)
+            return string.Empty;
+
+        return page.Substring(startPosition, endPosition - startPosition);
+    }
+
+	// Get HTML page
+    private static string GetHtmlPage(string strPageURL)
+    {
+        HttpWebRequest request = WebRequest.Create(strPageURL) as HttpWebRequest;
+        //Get the headers associated with the request.
+        WebHeaderCollection myWebHeaderCollection = request.Headers;
+        //Add the Accept-Language header (for German) in the request.
+        //Otherwise you will get English in the middle of the request
+        //Browser (Google Chrome) seems to have implemented the header
+        myWebHeaderCollection.Add("Accept-Language:de");
+
+        HttpWebResponse response = request.GetResponse() as HttpWebResponse;
+        string strPage = string.Empty;
+
+        if (response.StatusCode != HttpStatusCode.OK)
+            throw new Exception(String.Format("Server error (HTTP {0}: {1}).", response.StatusCode, response.StatusDescription));
+
+        using (StreamReader reader = new StreamReader(response.GetResponseStream()))
+        {
+            strPage = reader.ReadToEnd();
+        }
+
+        return strPage;
+    }
+
+    private static IMDBResult[] GetIMDBResults(string originalTitle, int year)
+    {
+        List<IMDBResult> results = new List<IMDBResult>();
+        string oriTitle = originalTitle.Replace(" ", "").Replace(":", "-").Replace("-", "").ToLower();        
+        string searchURL = string.Format("http://www.imdb.com/search/title?release_date={0}-01-01,{0}-12-31&title={1}", year, originalTitle);        
+        string page = GetHtmlPage(searchURL);
+        
+        //<a href="/title/tt(?<imdb_number>\d+)/">(?<title>.*?)</a>\n.*"year_type">\((?<year>\d+)\)
+
+        Match match = Regex.Match(page, @"<a href=""/title/(?<imdb_number>tt\d+)/"">(?<title>.*?)</a>\n.*""year_type"">\((?<year>\d+)[\)|\s]");
+        while (match.Success)
+        {
+            IMDBResult imdbResult = new IMDBResult();
+            imdbResult.title = match.Groups["title"].Value;
+            imdbResult.year = year;
+            imdbResult.aka = String.Empty;
+            imdbResult.category = String.Empty;
+            imdbResult.imdbNumber = match.Groups["imdb_number"].Value;
+            results.Add(imdbResult);
+            match = match.NextMatch();
+        }
+ 
+        return results.ToArray();
+    }
+
+    private struct IMDBResult
+    {
+        public string title;
+        public string aka;
+        public int year;
+        public string imdbNumber;
+        public string category;
+    }
+}
+

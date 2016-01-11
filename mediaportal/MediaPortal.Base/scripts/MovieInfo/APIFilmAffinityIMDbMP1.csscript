@@ -1,0 +1,1882 @@
+//css_reference "core.dll";
+//css_reference "Databases.dll";
+//css_reference "utils.dll";
+//css_reference "System.Core.dll";
+
+/*
+ * Script Name:     APIFilmAffinityIMDbMP1.csscript
+ * version:         1.1.0.0
+ * Developper:      mOrfiUs
+ * e-mail:          apifilmaffinityimdb@gmail.com
+ * web:             https://sourceforge.net/projects/apifilmaffinityimdb/
+ * Forum post:      http://forum.team-mediaportal.com/posts/1093423/
+ * Description:     API FIlmAffinity & IMDb script for Media Portal 1
+ * IMDbScrapper original from Abhinay
+ */
+
+using System;
+using System.Collections;
+using System.Reflection;
+using System.Web;
+using System.Diagnostics;
+using System.Text.RegularExpressions;
+using MediaPortal.Video.Database;
+using MediaPortal.Util;
+using MediaPortal.GUI.Library;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net;
+using System.IO;
+using System.Text;
+using System.Runtime.InteropServices;
+using System.ComponentModel;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Xml.Serialization;
+using System.Xml;
+
+public class Grabber : MarshalByRefObject, IIMDBScriptGrabber
+{
+    private const string _APIFAdb = "APIFilmAffinityIMDbMP1";//el script debe tener el mismo nombre con extensión .csscript
+
+    private string getCast(paramPeli m)
+    {//SIN USO en MP1
+        string sIntérpretesIMDb = string.Empty;
+        if (m.IntérpretesIMDb != null)
+            foreach (string[] Intérprete in m.IntérpretesIMDb)
+                sIntérpretesIMDb += string.Join("_-_", Intérprete) + Environment.NewLine;
+        return Regex.Replace(sIntérpretesIMDb, Environment.NewLine + "$", "").Replace(Environment.NewLine, "_~_");
+    }
+
+    public bool GetDetails(IMDB.IMDBUrl url, ref IMDBMovie movieDetails)
+    {
+        if (!Win32API.IsConnectedToInternet())
+            return false;
+        movieDetails.Reset();
+        movieDetails.Database = _APIFAdb;
+        //movieDetails.ID es generado automáticamente, creo, NO ASIGNARLO causa incongruencias
+        Functions f = new Functions();
+        paramPeli m = new paramPeli();
+        m.idFA = f.idFromUrlFA(url.URL);
+        Log.Info(_APIFAdb + " obteniendo detalles de " + url.URL);
+        bool bgetMovieFA = false;
+        bgetMovieFA = !f.getMovieFA(ref m, true, false, false, false, true);
+        if (bgetMovieFA)
+        {
+            Log.Warn(_APIFAdb + " getMovieFA devolvió false");
+            return false;
+        }
+        movieDetails.Top250 = m.Top250;
+        movieDetails.IMDBNumber = m.idIMDb;
+        movieDetails.ThumbURL = m.Carátula;//por defecto la de filmaffinity aunque devuelve (falta WebClient.Header[User-Agent]) Error 403 Forbidden [2014-07-27 11:28:50,171] [Config ] [Config Main] [INFO ] - Utils: DownLoadImage http://pics.filmaffinity.com/Braveheart-898928745-large.jpg failed:The remote server returned an error: (403) Forbidden.
+        string sThumbURL = (!string.IsNullOrEmpty(m.CarátulaIMDb)) ? m.CarátulaIMDb + "._V1._SX400.jpg" : string.Empty;//resolución máxima 400
+        if (!string.IsNullOrEmpty(sThumbURL))
+            movieDetails.ThumbURL = sThumbURL;//si encontró en IMDb, devuelve esa
+        movieDetails.TagLine = m.Lema;
+        movieDetails.MPARating = m.CalificaciónMPAA;
+        movieDetails.IsEmpty = false;
+        movieDetails.Language = "es";
+        movieDetails.Genre = m.Géneros.Replace(Environment.NewLine, "/");//use "/" as genre separator)
+        movieDetails.Country = m.País;
+        movieDetails.Director = m.Directores.Replace(Environment.NewLine, "/");//use "/" as Director separator);;
+        movieDetails.RunTime = m.Duración;
+        movieDetails.PlotOutline = m.Argumento;
+        movieDetails.Rating = m.Calificación;
+        movieDetails.SearchString = m.Buscado;
+        movieDetails.SingleGenre = m.Género;
+        movieDetails.SortTitle = m.TítuloOriginal;
+        movieDetails.Studios = m.Productora.Replace(Environment.NewLine, "/");//use "/" as Studios separator);
+        movieDetails.Title = m.Título;
+        m.Críticas = Regex.Replace(m.Críticas, @"http.*?" + Environment.NewLine, string.Empty).Replace(Environment.NewLine + Environment.NewLine, Environment.NewLine);//quitamos los links de las críticas
+        movieDetails.UserReview = m.Críticas;
+        movieDetails.Votes = m.Votos.ToString();
+        movieDetails.WritingCredits = m.Guión;
+        movieDetails.Year = m.Año;
+        m.Productores = m.Productores.Replace(Environment.NewLine, "/");//use "/" as Productores separator);
+        movieDetails.Cast = getCast(m);
+        string sENL_ = Environment.NewLine + "---------------" + Environment.NewLine;
+        PropertyInfo[] pi = ((object)m).GetType().GetProperties();
+        string sGetAll = (!string.IsNullOrEmpty(m.Lema)) ? "Lema: " + m.Lema + sENL_ : string.Empty;
+        foreach (var p in pi)
+            if ("ArgumentoMúsicaFotografíaPremiosAKACríticasProductores".IndexOf(p.Name) > -1)
+                if (!string.IsNullOrEmpty(p.GetValue(m, null).ToString()))
+                    sGetAll += p.Name + ": " + p.GetValue(m, null).ToString() + sENL_;
+        sGetAll += "idFilmAffinity: " + m.idFA;
+        movieDetails.Plot = sGetAll;
+        Log.Info(_APIFAdb + " detalles completos para " + movieDetails.Title);
+        return true;
+    }
+
+    public void FindFilm(string m, int iLimit, ArrayList elements)
+    {
+        if (!Win32API.IsConnectedToInternet())
+            return;
+        string idFA = string.Empty;
+        string buscado = string.Empty;
+        ArrayList pelisMP = new ArrayList();
+        Functions f = new Functions();
+        m = HttpUtility.UrlDecode(m, System.Text.Encoding.UTF8);
+        Log.Info(_APIFAdb + " buscando " + m);
+        int año = f.getYearFromTitle(m);
+        m = f.cleanTitle(m);
+        if (!f.findMovieFA(m, ref idFA, ref buscado, año, 0, false, pelisMP))
+        {
+            Log.Warn(_APIFAdb +
+                (!string.IsNullOrEmpty(idFA) ?
+                    (idFA == "-1" ?
+                        " Error Forbidden " + m + ": " + idFA :
+                        " demasiados resulltados para la peli " + m + ": " + idFA + " resultados.") :
+                    " sin resultados para la peli " + m));
+            return;
+        }
+        foreach (string[] item in pelisMP)
+            if (elements.Count < iLimit)
+                elements.Add(new IMDB.IMDBUrl(item[0], item[1] + " [" + _APIFAdb + "]", _APIFAdb));
+        Log.Info(_APIFAdb + " encontrado(s) " + pelisMP.Count + " resultado(s); añadido(s) " + elements.Count + " elemento(s); iLimit=" + iLimit);
+    }
+
+    public string GetName()
+    {
+        return _APIFAdb + " grabber";
+    }
+
+    public string GetLanguage()
+    {
+        return "es";
+    }
+
+}
+internal class IMDb
+{
+    #region public & private definitions
+    public bool status { get; set; }
+    public string Id { get; set; }
+    public string Title { get; set; }
+    public string OriginalTitle { get; set; }
+    public string Year { get; set; }
+    public string Rating { get; set; }
+    public ArrayList Genres { get; set; }
+    public ArrayList Directors { get; set; }
+    public ArrayList Writers { get; set; }
+    public ArrayList namesCast { get; set; }
+    public ArrayList FullCast { get; set; }
+    public ArrayList Producers { get; set; }
+    public ArrayList Musicians { get; set; }
+    public ArrayList Cinematographers { get; set; }
+    public ArrayList Editors { get; set; }
+    public string MpaaRating { get; set; }
+    public string ReleaseDate { get; set; }
+    public string Plot { get; set; }
+    public ArrayList PlotKeywords { get; set; }
+    public string Poster { get; set; }
+    public string Runtime { get; set; }
+    public string Top250 { get; set; }
+    public string Oscars { get; set; }
+    public string Awards { get; set; }
+    public string Nominations { get; set; }
+    public string Tagline { get; set; }
+    public string Votes { get; set; }
+    public ArrayList Languages { get; set; }
+    public ArrayList Countries { get; set; }
+    public ArrayList ReleaseDates { get; set; }
+    public string MediaImages { get; set; }
+    public ArrayList MediaVideos { get; set; }
+    public string ImdbURL { get; set; }
+
+    private string GoogleSearch = "http://www.google.com/search?q=imdb+";
+    private string BingSearch = "http://www.bing.com/search?q=imdb+";
+    private string AskSearch = "http://www.ask.com/web?q=imdb+";
+
+    private string wIMDbtitle = "http://www.imdb.com/title/";
+    #endregion public & private definitions
+
+    /// <summary>
+    /// Constructor
+    /// </summary>
+    /// <param name="MovieName">file:// or http://www.imdb.com/title/tt, parse directly. Returns (ref) ImdbURL </param>
+    /// <param name="refineSearch">If not empty, show a Dialog for refine. If false, return first result. </param>
+    public IMDb(object pbSplash, ref string MovieName, string refineSearch = "", bool bMP = false, bool mostrarAvisos = false)
+    {
+        if (!((MovieName.StartsWith("file:")) || (MovieName.StartsWith(wIMDbtitle + "tt"))))
+        {
+            string html = getHtmlFromEngine(MovieName);
+            if (!string.IsNullOrEmpty(html))
+                MovieName = getIMDbUrl(html, MovieName, refineSearch, bMP, mostrarAvisos);
+        }
+        /*activando este bloque sólo busca ImdbURL, sin parsear la página en IMDb
+        if (bMP)
+            return;
+         */
+        if (!string.IsNullOrEmpty(MovieName))
+            parseIMDbPage(MovieName);
+    }
+
+    internal string getHtmlFromEngine(string MovieName, string searchEngine = "google")
+    {
+        if (string.IsNullOrEmpty(MovieName))
+            return string.Empty;
+        Functions f = new Functions();
+        string url = GoogleSearch + MovieName;
+        if (searchEngine.ToLower().Equals("bing"))
+            url = BingSearch + MovieName;
+        if (searchEngine.ToLower().Equals("ask"))
+            url = AskSearch + MovieName;
+        string html = f.getDataWebR(url);
+
+        if (!string.IsNullOrEmpty(html))
+            return html;
+        else if (searchEngine.ToLower().Equals("google"))
+            return getHtmlFromEngine(MovieName, "bing");
+        else if (searchEngine.ToLower().Equals("bing"))
+            return getHtmlFromEngine(MovieName, "ask");
+        else //search fails
+            return string.Empty;
+    }
+
+    internal string getIMDbUrl(string html, string MovieName, string refineSearch, bool bMP = false, bool mostrarAvisos = false, string searchEngine = "google")
+    {
+        Functions f = new Functions();
+        int nMaxIDMDb = 8;//recupera sólo los nMaxIDMDb primeros, posteriormente distinctMatches extrae los distintos; es una forma de optimizar la búsqueda
+        var distinctMatches = f.matchAll(@"/(tt\d{7})/", html, 1, nMaxIDMDb).OfType<System.String>().Select(x => x).Distinct();//sólo busca @"/(tt\d{7})/ quito wIMDbtitle a ver que tal, por problema con Matrix reloaded
+        List<string> imdbUrls = new List<string>();
+        foreach (string item in distinctMatches)
+            imdbUrls.Add(item);
+        string imdbUrl = string.Empty;
+        if (imdbUrls.Count > 0)
+        {
+            imdbUrl = imdbUrls[0].ToString();
+            if (!string.IsNullOrEmpty(refineSearch) && (!bMP))
+            {
+                List<string[]> ListMovies = new List<string[]>();
+                foreach (string item in imdbUrls)
+                    ListMovies.Add(new string[] { wIMDbtitle + item + "/", item, "", "", "", "", "", "" });
+            }
+            return wIMDbtitle + imdbUrl + "/"; //return first IMDb result
+        }
+        return string.Empty;
+    }
+
+    internal void parseIMDbPage(string imdbUrlPage)
+    {
+        Functions f = new Functions();
+        string html = string.Empty;
+        if (!imdbUrlPage.StartsWith("file:"))
+            imdbUrlPage = imdbUrlPage + "combined";
+        html = f.getDataWebR(imdbUrlPage);
+        Id = f.match(@"<link rel=""canonical"" href=""" + wIMDbtitle + @"(tt\d{7})/combined"" />", html);
+        if (!string.IsNullOrEmpty(Id))
+        {
+            status = true;
+            ArrayList am = f.matchAll(@"src=""(.*?)._V1", f.match(@"<td><div class=""media_strip_thumbs"">(.*?)</div></td>", html));
+            MediaImages = string.Join(Environment.NewLine, (string[])am.ToArray(Type.GetType("System.String")));
+            MediaVideos = getMediaVideost(f, f.matchAll(@"href=""/video(.*?)<noscript><img", f.match(@"<tr><td><div class=""media_strip_thumbs"">(.*?)</div></td></tr>", html, 1)));
+            FullCast = getFullCast(f, f.matchAll(@"<tr class=(.*?)</tr>", f.match(@"<h3>Cast</h3>(.*?)</table>", html)));
+            Title = f.match(@"<title>(IMDb \- )*(.*?) \(.*?</title>", html, 2);
+            OriginalTitle = f.match(@"title-extra"">(.*?)<", html);
+            if (html.IndexOf("(????)") < 0)//infinite loop for IMBd no year TODO add time span to regex
+                Year = f.match(@"<title>.*?\(.*?(\d{4}).*?\).*?</title>", html);
+            Rating = f.match(@"<b>(\d.\d)/10</b>", html);
+            Genres = f.matchAll(@"<a.*?>(.*?)</a>", f.match(@"Genre.?:(.*?)(</div>|See more)", html));
+            Directors = f.matchAll(@"<td valign=""top""><a.*?href=""/name/.*?/"">(.*?)</a>", f.match(@"Directed by</a></h5>(.*?)</table>", html));
+            Writers = f.matchAll(@"<td valign=""top""><a.*?href=""/name/.*?/"">(.*?)</a>", f.match(@"Writing credits</a></h5>(.*?)</table>", html));
+            Producers = f.matchAll(@"<td valign=""top""><a.*?href=""/name/.*?/"">(.*?)</a>", f.match(@"Produced by</a></h5>(.*?)</table>", html));
+            Musicians = f.matchAll(@"<td valign=""top""><a.*?href=""/name/.*?/"">(.*?)</a>", f.match(@"Original Music by</a></h5>(.*?)</table>", html));
+            Cinematographers = f.matchAll(@"<td valign=""top""><a.*?href=""/name/.*?/"">(.*?)</a>", f.match(@"Cinematography by</a></h5>(.*?)</table>", html));
+            Editors = f.matchAll(@"<td valign=""top""><a.*?href=""/name/.*?/"">(.*?)</a>", f.match(@"Film Editing by</a></h5>(.*?)</table>", html));
+            namesCast = f.matchAll(@"<td class=""nm""><a.*?href=""/name/.*?/"".*?>(.*?)</a>", f.match(@"<h3>Cast</h3>(.*?)</table>", html));
+            //*[@id="tn15content"]/div[4]/h5/text()  
+            string MOVIEmeter = f.match(@"MOVIEmeter:.*?<div class=""info-content""><b>(.*?)</b>", html);
+            //if (string.IsNullOrEmpty(MOVIEmeter))                    Debugger.Break();
+            Plot = f.match(@"Plot:</h5>.*?<div class=""info-content"">(.*?)(<a|</div)", html);//TODO fails if plot have a link, ex. gandhi
+            PlotKeywords = f.matchAll(@"<a.*?>(.*?)</a>", f.match(@"Plot Keywords:</h5>.*?<div class=""info-content"">(.*?)</div", html));
+            ReleaseDate = f.match(@"Release Date:</h5>.*?<div class=""info-content"">.*?(\d{1,2} (January|February|March|April|May|June|July|August|September|October|November|December) (19|20)\d{2})", html);
+            Runtime = f.match(@"Runtime:</h5><div class=""info-content"">(\d{1,4}) min[\s]*.*?</div>", html);
+            Top250 = f.match(@"Top 250: #(\d{1,3})<", html);
+            Oscars = f.match(@"Won (\d+) Oscars?\.", html);
+            if (string.IsNullOrEmpty(Oscars) && "Won Oscar.".Equals(f.match(@"(Won Oscar\.)", html))) Oscars = "1";
+            Awards = f.match(@"(\d{1,4}) wins", html);
+            Nominations = f.match(@"(\d{1,4}) nominations", html);
+            Tagline = f.match(@"Tagline:</h5>.*?<div class=""info-content"">(.*?)(<a|</div)", html);
+            MpaaRating = f.match(@"MPAA</a>:</h5><div class=""info-content"">Rated (G|PG|PG-13|PG-14|R|NC-17|X) ", html);
+            Votes = f.match(@">(\d+,?\d*) votes<", html);
+            Languages = f.matchAll(@"<a.*?>(.*?)</a>", f.match(@"Language.?:(.*?)(</div>|>.?and )", html));
+            Countries = f.matchAll(@"<a.*?>(.*?)</a>", f.match(@"Country:(.*?)(</div>|>.?and )", html));
+            Poster = f.match(@"<div class=""photo"">.*?<a name=""poster"".*?><img.*?src=""(.*?)"".*?</div>", html);
+            if (!string.IsNullOrEmpty(Poster) && Poster.IndexOf("media-imdb.com") > 0)
+                Poster = Regex.Replace(Poster, @"._V1.*?.jpg", string.Empty);
+            ImdbURL = wIMDbtitle + Id + "/";
+        }
+    }
+
+    private ArrayList getMediaVideost(Functions f, ArrayList alMediaVideos)
+    {
+        ArrayList alTemp = new ArrayList();
+        foreach (string rowVideos in alMediaVideos)
+        {
+            string sLink = f.match(@"/(.*?)/""", rowVideos);
+            string sImg = f.match(@"loadlate=""(.*?)._V1_", rowVideos);
+            string sThumb = f.match(@"loadlate=""(.*?)""", rowVideos);
+            string sName = f.match(@"_ZA(.*?),", sThumb);
+            sName = Regex.Replace(sName, @"(%\d{4})", " ");//"Full%2520Episode"
+            if (string.IsNullOrEmpty(sName))
+                sName = "Vídeo " + (alTemp.Count + 1).ToString();
+            alTemp.Add(new string[4] { sName, sImg, sThumb, "http://www.imdb.com/video/" + sLink });
+        }
+
+        return alTemp;
+    }
+
+    private ArrayList getFullCast(Functions f, ArrayList alCast)
+    {
+        ArrayList alTemp = new ArrayList();
+        foreach (string rowCast in alCast)
+        {
+            string sLink = f.match(@"/name/(nm\d{7})/", rowCast);
+            string sImg = string.Empty;
+            string sImgJPG = f.match(@"<img src=""(.*?)""", rowCast);
+            string sName = f.match(@"<td class=""nm""><a.*?href=""/name/.*?/"".*?>(.*?)</a>", rowCast);
+            string sAKA = f.match(@"</a> \(as (.*?)\)</td>", rowCast);
+            if (string.IsNullOrEmpty(sAKA))
+                sAKA = f.match(@"\(as (.*?)\)</td>", rowCast);
+            //ArrayList listAs = new ArrayList();
+            Array listAs = null;
+            List<string> listAsClean = new List<string>();
+            string rowListAs = f.match(@"<td class=""char"">(.*?)(</td>| \(as )", rowCast);
+            if (!string.IsNullOrEmpty(rowListAs))
+                listAs = rowListAs.Split(new string[] { " / " }, StringSplitOptions.RemoveEmptyEntries);
+            if (listAs == null)
+                listAs = rowListAs.Split(new string[] { "" }, StringSplitOptions.RemoveEmptyEntries);
+            if (listAs != null)
+                foreach (string item in listAs)
+                    listAsClean.Add(Regex.Replace(item, @"(<a.*?href=""/character/.*?/"".*?>)|(</a>)", ""));
+            string sChar = string.Empty;
+            if (listAsClean != null)
+                sChar = string.Join(" / ", listAsClean.ToArray());
+            int iPos = sImgJPG.IndexOf("._V1");
+            if (iPos > -1)
+                //http://ia.media-imdb.com/images/M/MV5BODI2MTk5NjIxOV5BMl5BanBnXkFtZTcwMTYzMDc0Mw@@._V1._SX23_SY30_.jpg
+                sImg = sImgJPG.Substring(0, iPos);
+            alTemp.Add(new string[5] { sName, sChar, sImg, "http://www.imdb.com/name/" + sLink + "/", sAKA });
+        }
+        return alTemp;
+    }
+
+}
+
+/// <summary>
+/// La clase implementa el interface, de tal forma que COM sólo mostrará estas clases
+/// Esta clase aglutina las funciones utilizadas
+/// </summary>
+public class Functions
+{
+    #region internal const
+    internal const string wwwFA = "http://www.filmaffinity.com";
+    internal const string wwwIMDb = "http://www.imdb.com";
+    internal const string wIMDbTitle = "http://www.imdb.com/title/";
+    internal const string wFAFilm = "http://www.filmaffinity.com/es/film";
+    private int acceptableDifYear = 4;
+    #endregion internal const
+
+    /// <summary>
+    /// función que se puede emplear como chequeo del funcionamiento
+    /// </summary>
+    /// <returns>la versión de la librería</returns>
+    //[DllExport("add", CallingConvention = CallingConvention.Cdecl)]
+    public string getDLLversion()
+    {
+        return System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
+    }
+
+    /// <summary>
+    /// elimina publicidad, calidad, etc. del nombre de una película. Devuelve el mismo nombre si tras la limpieza se queda en empty
+    /// </summary>
+    /// <param name="sNormalize">ej. Titanic HDRip www.hazclick.com (1997).avi</param>
+    /// <returns>nombre normalizado, ej. Titanic</returns>
+    public string cleanTitle(string s)
+    {
+        string sTemp = s.ToLower();
+        string[] arrRx = new string[] { @"(19\d{2}|20\d{2})(.*?|$)", @"\.(19\d{2}|20\d{2})\.", @"\.", @"(\(|\[|\{).*?(\)|\]|\})", @"(720p|1080p|dual|full|bluray|screener|dts|bdrip|subt|hdrip|dvdrip).*?", @"\s+" };
+        foreach (string rx in arrRx)
+            sTemp = Regex.Replace(sTemp, rx, ((rx == @"\.") || (rx == @"\s+")) ? " " : string.Empty, RegexOptions.IgnoreCase);
+        sTemp = sTemp.Trim();
+        return string.IsNullOrEmpty(sTemp) ? s : sTemp;
+    }
+
+    /// <summary>
+    /// busca el año en un string
+    /// </summary>
+    /// <param name="s">ej. Titanic (1997)</param>
+    /// <returns>Cero o el año encontrado</returns>
+    public int getYearFromTitle(string s)
+    {
+        int iAño = 0;
+        string sAño = match(@"(\.|\[|\()(19\d{2}|20\d{2})(\)|\]|\.)", s, 2);
+        if (Int32.TryParse(sAño, out iAño))
+            return iAño;
+        sAño = match(@".*?(19\d{2}|20\d{2})(.*?|$)", cleanTitle(s), 1);
+        if (Int32.TryParse(sAño, out iAño))
+            return iAño;
+        sAño = match(@"(19\d{2}|20\d{2})(.*?|$)", s, 0);
+        if (Int32.TryParse(sAño, out iAño))
+            return iAño;
+        sAño = match(@".*?(19\d{2}|20\d{2})(.*?|$)", s, 1);
+        Int32.TryParse(sAño, out iAño);
+        return iAño;
+    }
+
+    public string urlFromIdFA(string idFA)
+    {
+        return Regex.IsMatch(idFA, @"[1-9]\d{5}") ? wFAFilm + idFA + ".html" : string.Empty;
+    }
+
+    public string urlFromIdIMDb(string idIMDb)
+    {
+        return Regex.IsMatch(idIMDb, @"\d{7}") ? wIMDbTitle + idIMDb + "/" : string.Empty;
+    }
+
+    public string idFromUrlFA(string urlFA)
+    {
+        return match(wFAFilm + @"([1-9]\d{5}).html", urlFA);
+    }
+
+    public string idFromUrlIMDb(string urlIMDb)
+    {
+        return match(wIMDbTitle + @"(tt\d{7})/", urlIMDb);
+    }
+
+
+    internal string match(string regex, string html, int i = 1)
+    {
+        return new Regex(regex, RegexOptions.Multiline).Match(html).Groups[i].Value.Trim();
+    }
+
+    /// <summary>
+    /// Busca todas las coincidencias de una cadena en otra
+    /// </summary>
+    /// <param name="regex">Patrón de búsqueda</param>
+    /// <param name="html">Cadena en la que se realiza la busqueda</param>
+    /// <param name="i">Grupo de búsqueda</param>
+    /// <param name="iMaxReturns">Máximo número de resultados a devolver</param>
+    /// <returns>Lista con los resultados</returns>
+    internal ArrayList matchAll(string regex, string html, int i = 1, int iMaxReturns = 1000)
+    {
+        ArrayList list = new ArrayList();
+        int iCount = 0;
+        foreach (Match m in new Regex(regex, RegexOptions.Multiline).Matches(html))
+        {
+            if (++iCount > iMaxReturns)
+                break;
+            list.Add(m.Groups[i].Value.Trim());
+        }
+        return list;
+    }
+
+    private string removeLastCrLf(string s)
+    {
+        return Regex.Replace(s, Environment.NewLine + "$", "");
+    }
+
+    internal bool getMovieFA(ref paramPeli peli, bool bIMDb = false, bool refineSearchIMDb = false, bool getDownLinks = false, bool mostrarAvisos = false, bool bMP = false, string fileLocal = "", int iErrorforbidden = 0, object sender = null)
+    {
+
+        bool bIdFA = Regex.IsMatch(peli.idFA, @"[1-9]\d{5}");
+        if (!bIdFA && (string.IsNullOrEmpty(fileLocal)))
+        {//aquí no debiera entrar
+            return false;
+        }
+
+        string html = string.IsNullOrEmpty(fileLocal) ? getDataWebR(urlFromIdFA(peli.idFA)) : getDataWebR(fileLocal);
+        if (html != null)
+            if (html == "-1")//si devuelve -1 anulo
+            {
+                return false;
+            }
+        if (string.IsNullOrEmpty(html))
+        {
+            if (iErrorforbidden > 2)
+            {
+                return false;
+            }
+            //Log.Warn("ERROR document null getMovieFA " + peli.idFA + " iErrorforbidden=" + iErrorforbidden);
+            System.Threading.Thread.Sleep(2000);
+            paramPeli peliError = new paramPeli();
+            peliError.idFA = peli.idFA;
+            if (getMovieFA(ref peliError, bIMDb, refineSearchIMDb, getDownLinks, mostrarAvisos, bMP, fileLocal, ++iErrorforbidden))
+            {
+                Log.Info("ARREGLADO document null getMovieFA " + peliError.idFA + " iErrorforbidden=" + iErrorforbidden);
+                peli = peliError;
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+
+        }
+        //CORREGIDO peli.Título = match(@"<span itemprop=""name"">(.*?)</span></a></h1>", html, 1);
+        peli.Título = match(@"<span itemprop=""name"">(.*?)</span></h1>", html, 1);
+        peli.Título = Regex.Replace(peli.Título, @"\s+", " ").Trim();//dobles espacios
+
+        List<string> lTipos = new List<string>() { " (C)", " (Serie de TV)", " (TV)" };
+        foreach (string Tipo in lTipos)
+            if (peli.Título.IndexOf(Tipo) > 0)
+            {
+                peli.Título = peli.Título.Replace(Tipo, string.Empty);
+                peli.Tipo += Tipo.Replace(" (", string.Empty).Replace(")", string.Empty) + Environment.NewLine;
+            }
+        peli.Tipo = removeLastCrLf(peli.Tipo.Replace("C", "Cortometraje"));
+        string sCalificación = match(@"<div id=""movie-rat-avg"" itemprop=""ratingValue"">(.*?)</div>", html).Trim();
+        string sVotos = match(@"<span itemprop=""ratingCount"">(.*?)</span>", html).Trim().Replace(".", string.Empty);
+        string sCarátula = match(@"<a class=""lightbox"" href=""(.*?)"" title", html).Trim();
+        if (string.IsNullOrEmpty(sCarátula))
+            sCarátula = match(@"<div id=""movie-main-image-container"">(.*?)"">", html).Trim().Replace(@"<img src=""", string.Empty).Trim();//días azules 2005
+        if ((!string.IsNullOrEmpty(sCarátula)) && (sCarátula != wwwFA + "/imgs/movies/noimgfull.jpg"))
+            peli.Carátula = sCarátula;
+        peli.Premios = removeLastCrLf(string.Join(Environment.NewLine, (string[])(matchAll(@"<div  class=""margin-bottom"">.*?"">(.*?)</div>", match(@"<dd class=""award"">(.*?)</dd>", html))).ToArray(Type.GetType("System.String"))).Replace("</a>", string.Empty));
+        peli.Críticas = getCríticas(html);
+        processMovieInfo(ref peli, matchAll(@"<dt>(.*?)</dd>", match(@"<dl class=""movie-info"">(.*?)</dl>", html)), mostrarAvisos);
+
+        int nCheck = peli.Votos;
+        if (System.Int32.TryParse(sVotos, out nCheck))
+            peli.Votos = nCheck;
+
+        double dCheck = peli.Calificación;
+        if (System.Double.TryParse(sCalificación, out dCheck))
+            peli.Calificación = (float)dCheck;
+
+        getAKA(ref peli);
+        if (bIMDb)
+        {
+            getIMDbInfo((object)null, ref peli, refineSearchIMDb, bMP, mostrarAvisos);
+        }
+
+        string sIntérpretesIMDb = string.Empty;
+        if (peli.IntérpretesIMDb != null)
+            foreach (string[] Intérprete in peli.IntérpretesIMDb)
+                sIntérpretesIMDb += string.Join("_-_", Intérprete) + Environment.NewLine;
+        sIntérpretesIMDb = removeLastCrLf(sIntérpretesIMDb).Replace(Environment.NewLine, "_~_");
+
+        string MediaVideos = string.Empty;
+        if (peli.MediaVideos != null)
+            foreach (string[] MediaVideo in peli.MediaVideos)
+                MediaVideos += string.Join("_-_", MediaVideo) + Environment.NewLine;
+        MediaVideos = removeLastCrLf(MediaVideos).Replace(Environment.NewLine, "_~_");
+        peli.DownLinks = "https://mega.co.nz/SeNecesitaCuentaGratuitaEnAlgúnPortalDeDescargas#F!dYfCfJJg!yflCsfwqGz_BfTlaL21OJXg";
+        PropertyInfo[] pi = ((object)peli).GetType().GetProperties();
+        string sGetAll = string.Empty;
+        foreach (var p in pi)
+            if (!"GetAll IntérpretesIMDb MediaVideos ".Contains(p.Name + " "))
+                sGetAll += p.Name + " = " + p.GetValue(peli, null).ToString().Replace(Environment.NewLine, "_~_") + Environment.NewLine;
+        sGetAll += "MediaVideos = " + MediaVideos + Environment.NewLine;
+        sGetAll += "IntérpretesIMDb = " + sIntérpretesIMDb;//sin Environment.NewLine final
+        peli.GetAll = sGetAll;
+        checkMovieValues(ref peli, mostrarAvisos);//se puede usar como filtro de valores correctos
+        return true;
+    }
+
+    public string getIdIMDbFromTitle(string MovieName, bool refineSearchIMDb, string MovieTranslatedName, int Year)
+    {
+        /*
+         * Searches for both actors and movies
+         * "http://www.imdb.com/xml/find?json=1&nr=1&tt=on&nm=on&q=%s"
+         * Searches for movies
+         * "http://www.imdb.com/xml/find?json=1&nr=1&tt=on&q=%s"
+         * Searches for actors
+         * "http://www.imdb.com/xml/find?json=1&nr=1&nm=on&q=%s"
+         * http://pastebin.com/6C0hgPXt
+         * $url = "http://www.deanclatworthy.com/imdb/?q=".urlencode($name) Closed down until further notice. Blame 46.236.93.102 for traffic overload. I am vacationing and cannot fix the server resources until August
+         * http://data.linkedmdb.org/
+         * http://imdbapi.poromenos.org/ muy interesante
+         * http://www.omdbapi.com/?t={0}?y={1}&r=XML", MovieName, Year)
+         * http://www.omdbapi.com/?t=All%20Is%20Lost&y=2013&r=XML");
+         * http://www.imdb.com/xml/find?xml=1&nr=1&tt=on&q=" + MovieName
+         */
+        IMDbResults results = new IMDbResults();
+        List<IMDbFindMovie> lFindIMDb = new List<IMDbFindMovie>();
+        XmlSerializer serializer = new XmlSerializer(typeof(IMDbResults));
+        string sgetDataWebR = getDataWebR("http://www.imdb.com/xml/find?xml=1&nr=1&tt=on&q=" + MovieName.Replace("&", " "), true);
+        //using (StreamWriter sw = new StreamWriter(@"c:\temp.xml")) sw.Write(sgetDataWebR);
+        using (Stream tr = streamFromString(sgetDataWebR))
+        {
+            results = (IMDbResults)serializer.Deserialize(tr);
+            if (results == null)
+                return string.Empty;
+            if (results.ResultSet == null)
+                return string.Empty;
+            string firstIdIDMDb = string.Empty;
+            foreach (IMDbResultsResultSet ResultSet in results.ResultSet)
+            {
+                foreach (IMDbResultsResultSetImdbEntity ImdbEntity in ResultSet.ImdbEntity)
+                {
+                    IMDbFindMovie m = new IMDbFindMovie();
+                    if (ImdbEntity != null)
+                        m.idIMDb = ImdbEntity.id;
+                    if (ImdbEntity != null)
+                        if (ImdbEntity.Text != null)
+                            m.Title = ImdbEntity.Text[0];
+                    if (ImdbEntity.Description.Text != null)
+                    {
+                        string[] s = (ImdbEntity.Description.Text[0].Split(','));
+                        int year = 0;
+                        string sVoid = string.Empty;
+                        if (s[0].Length > 3)
+                            if (Int32.TryParse(s[0].Substring(0, 4), out year))
+                                m.Year = year;
+                        if (s[0].Length > 5)
+                            m.Type = s[0].Substring(5);
+                        if (s.Length > 1)
+                            if (s[1].Trim().Length > 0)
+                                sVoid = s[1].Trim();
+                    }
+                    if (ImdbEntity.Description.a != null)
+                    {
+                        m.Director = ImdbEntity.Description.a.Value;
+                        m.idDirector = ImdbEntity.Description.a.href.Replace("/name/", "").Replace("/", "");
+                    }
+                    m.ResultType = ResultSet.type;
+                    if (string.IsNullOrEmpty(firstIdIDMDb))
+                        firstIdIDMDb = m.idIMDb;
+                    lFindIMDb.Add(m);
+                }
+            }
+            List<IMDbFindMovie> lMatchYear = new List<IMDbFindMovie>();
+            bool bFirstIdIDMDb = false;
+            foreach (IMDbFindMovie movie in lFindIMDb)
+                if (Year == movie.Year)
+                    if ((movie.Title.Contains(MovieName)) || (MovieName.Contains(movie.Title)) || (MovieName.Contains("&")))
+                    {
+                        if (!bFirstIdIDMDb)
+                        {
+                            bFirstIdIDMDb = true;
+                            firstIdIDMDb = movie.idIMDb;
+                        }
+                        lMatchYear.Add(movie);
+                    }
+            if (lMatchYear.Count != 1)
+            {
+                foreach (IMDbFindMovie movie in lFindIMDb)
+                    if ((Year > 0) && (movie.Year > 0))
+                        if ((Math.Abs(Year - movie.Year) < acceptableDifYear))
+                            if (movie.ResultType.Contains("exact"))
+                                lMatchYear.Add(movie);
+                foreach (IMDbFindMovie movie in lMatchYear.Count > 0 ? lMatchYear : lFindIMDb)
+                {
+                    string sOmdbApi = getDataWebR("http://www.omdbapi.com/?r=xml&i=" + movie.idIMDb);
+                    if (!string.IsNullOrEmpty(sOmdbApi))
+                    {
+                        string country = match(@""" country=""(.*?)""", sOmdbApi);
+                        if (!string.IsNullOrEmpty(country))
+                            movie.Country = country;
+                        string imdbRating = match(@""" imdbRating=""(.*?)""", sOmdbApi);
+                        if (!string.IsNullOrEmpty(imdbRating))
+                            movie.imdbRating = imdbRating;
+                        string poster = match(@""" poster=""(.*?)\._V1", sOmdbApi);
+                        if (!string.IsNullOrEmpty(poster))
+                            movie.Poster = poster + "._V1_SX200.jpg";
+                    }
+                }
+            }
+
+            foreach (IMDbFindMovie movie in lMatchYear)
+            {
+                PropertyInfo[] pi = movie.GetType().GetProperties();
+                foreach (var p in pi)
+                {
+                    string name = p.Name;
+                    var value = p.GetValue(movie, null);
+                    if (!"Year".Contains(name))
+                        p.SetValue(movie, value == null ? "" : HttpUtility.HtmlDecode(value.ToString()), null);
+                }
+            }
+            if (!refineSearchIMDb)
+                return firstIdIDMDb;
+
+            List<string[]> ListMovies = new List<string[]>();
+            foreach (IMDbFindMovie movie in lMatchYear)
+                ListMovies.Add(new string[8] { movie.Title, movie.idIMDb, movie.Year.ToString(), movie.Director, movie.Country, movie.imdbRating, movie.Type, movie.Poster });
+            return firstIdIDMDb;
+        }
+    }
+
+    private void getIMDbInfo(object pbSplash, ref paramPeli peli, bool refineSearchIMDb, bool bMP, bool mostrarAvisos = false)
+    {
+        string IntérpretPrincipal = cleanTitle(peli.IntérpretPrincipal);
+        string sTONormalizado = Regex.Replace(peli.TítuloOriginal, @"(/.*?)$", string.Empty);//cambiado para nymphomaniac por "/"
+        if (!peli.TítuloOriginal.StartsWith("("))
+            sTONormalizado = Regex.Replace(sTONormalizado, @" \(.*?\)", string.Empty);
+        string sBuscaIMDB = "\"" + string.Join("\" \"", new string[] { sTONormalizado, peli.Año.ToString() }) + "\"";
+        string sSearchIMDb = string.Empty;
+        if (refineSearchIMDb)
+            sSearchIMDb = peli.Título;
+        peli.Buscado = sBuscaIMDB;
+        string idIMDb = getIdIMDbFromTitle(sTONormalizado, refineSearchIMDb, peli.Título, peli.Año);
+        string wIMDbtitle = "http://www.imdb.com/title/";
+        if (!string.IsNullOrEmpty(idIMDb))
+            sBuscaIMDB = wIMDbtitle + idIMDb + "/";
+        IMDb PeliIMDb = new IMDb(pbSplash, ref sBuscaIMDB, sSearchIMDb, bMP, mostrarAvisos);
+        /*activando este bloque sólo busca ImdbURL en google, sin parsear la página en IMDb
+        if (bMP)//para MP sólo necesitaríamos el idIMDb
+        {
+            peli.idIMDb = idFromUrlIMDb(sBuscaIMDB);
+            return;
+        }*/
+        if (!string.IsNullOrEmpty(PeliIMDb.Id))
+        {
+            checkCoherencia(peli, PeliIMDb, mostrarAvisos, bMP);
+            peli.Lema = PeliIMDb.Tagline;
+            peli.CarátulaIMDb = PeliIMDb.Poster;
+            peli.ArgumentoIMDb = PeliIMDb.Plot;
+            peli.idIMDb = PeliIMDb.Id;
+            peli.CalificaciónMPAA = getMpaaRating(PeliIMDb.MpaaRating);
+            peli.MediaImages = PeliIMDb.MediaImages;
+            peli.IntérpretesIMDb = PeliIMDb.FullCast;
+            peli.MediaVideos = PeliIMDb.MediaVideos;
+            peli.Productores = string.Join(Environment.NewLine, (string[])PeliIMDb.Producers.ToArray(Type.GetType("System.String")));
+            peli.Oscars = PeliIMDb.Oscars;
+            peli.Awards = PeliIMDb.Awards;
+            peli.Nominations = PeliIMDb.Nominations;
+            int nCheck = peli.Top250;
+            if (System.Int32.TryParse(PeliIMDb.Top250, out nCheck))
+                peli.Top250 = nCheck;
+        }
+    }
+
+    private void processMovieInfo(ref paramPeli peli, ArrayList movieinfo, bool mostrarAvisos = false)
+    {
+        List<string> ListCheck = new List<string> { "Título original", "Año", "Duración", "País", "Director", "Reparto", "Género", "Sinopsis", "Guión", "Música", "Fotografía", "Productora", "Web oficial" };
+        List<string[]> ListOk = new List<string[]>();
+        foreach (string sCheck in movieinfo)
+        {
+            string[] sNameValue = Regex.Split(sCheck, @"</dt>(.*?)<dd?.", RegexOptions.None);
+            ListOk.Add(new string[] { sNameValue[0], sNameValue[2] });
+        }
+        foreach (string item in ListCheck)
+        {
+            string sValue = string.Empty;
+            foreach (string[] sCheck in ListOk)
+                if (item == sCheck[0])
+                {
+                    sValue = sCheck[1];
+                    break;
+                }
+            if (!string.IsNullOrEmpty(sValue))
+            {
+                switch (item)
+                {
+                    case "Título original":
+                        List<string> lATipos = new List<string>() { " (S)", " (TV Series)", " (TV)" };
+                        foreach (string Tipo in lATipos)
+                            sValue = sValue.Replace(Tipo, string.Empty);
+                        peli.TítuloOriginal = Regex.Replace(sValue, @"\s+", " ").Trim();//dobles espacios
+                        break;
+                    case "Año":
+                        string sAño = sValue;
+                        int nCheck = peli.Año;
+                        if (System.Int32.TryParse(sAño, out nCheck))
+                            peli.Año = nCheck;
+                        break;
+                    case "Duración":
+                        string sDuración = sValue.Replace(" min.", string.Empty);
+                        nCheck = peli.Duración;
+                        if (System.Int32.TryParse(sDuración, out nCheck))
+                            peli.Duración = nCheck;
+                        break;
+                    case "País":
+                        peli.País = match(@"title=""(.*)""></span>", sValue);
+                        break;
+                    case "Sinopsis":
+                        peli.Argumento = Regex.Replace(sValue, @"<br.*?>", Environment.NewLine);
+                        break;//
+                    case "Guión":
+                        peli.Guión = sValue.Trim();
+                        break;
+                    case "Música":
+                        peli.Música = sValue.Trim();
+                        break;
+                    case "Fotografía":
+                        peli.Fotografía = sValue.Trim();
+                        break;
+                    case "Productora":
+                        peli.Productora = sValue.Trim().Replace(" / ", Environment.NewLine).Replace("; ", Environment.NewLine);
+                        break;
+                    case "Web oficial":
+                        peli.WebOficial = match(@""">(.*)</a>", sValue.Replace(@"class=""web-url"">", string.Empty), 1);
+                        break;
+                    case "Director":
+                        ArrayList ad = matchAll(@""">(.*?)</a>", sValue);
+                        string sDirectores = string.Join(Environment.NewLine, (string[])ad.ToArray(Type.GetType("System.String")));
+                        peli.Directores = sDirectores.Replace(" (Creator)", string.Empty);
+                        if (!string.IsNullOrEmpty(peli.Directores))
+                            peli.Director = peli.Directores.Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries)[0].ToString().Trim();
+                        break;
+                    case "Reparto":
+                        ArrayList ar = matchAll(@""">(.*?)</a>", sValue);
+                        string sIntérpretes = string.Join(Environment.NewLine, (string[])ar.ToArray(Type.GetType("System.String")));
+                        sIntérpretes = sIntérpretes.Replace("Documentary", string.Empty).Replace("Animation", string.Empty);
+                        if (sIntérpretes.IndexOf(Environment.NewLine) == 0)
+                            sIntérpretes = sIntérpretes.Substring(Environment.NewLine.Length);//eliminar Environment.NewLine, ej Cosmos 1980
+                        peli.Intérpretes = removeLastCrLf(sIntérpretes);
+                        if (!string.IsNullOrEmpty(sIntérpretes))
+                            peli.IntérpretPrincipal = sIntérpretes.Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries)[0].ToString().Trim();
+                        break;
+                    case "Género":
+                        string[] splitGéneros = sValue.Split("|".ToCharArray());
+                        if (splitGéneros.Length > 0)
+                        {
+                            ArrayList ag = matchAll(@""">(.*?)</a>", splitGéneros[0]);
+                            peli.Géneros = removeLastCrLf(string.Join(Environment.NewLine, (string[])ag.ToArray(Type.GetType("System.String"))));
+                            if (!string.IsNullOrEmpty(peli.Géneros))
+                                peli.Género = removeLastCrLf(peli.Géneros.Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries)[0].ToString().Trim());
+                        }
+                        if (splitGéneros.Length > 1)
+                        {
+                            ArrayList atg = matchAll(@""">(.*?)</a>", splitGéneros[1]);
+                            peli.TagGéneros = string.Join(Environment.NewLine, (string[])atg.ToArray(Type.GetType("System.String")));
+                        }
+                        break;
+                    default:
+                        //aquí no debiera llegar nunca
+                        break;
+                }
+            }
+        }
+    }
+
+    public string getCríticas(string html)
+    {
+        ArrayList alCríticas = matchAll(@"<div class=""pro-review"">(.*?)</li>", match(@"<ul id=""pro-reviews"">(.*?)</ul>", html));
+        if (alCríticas != null)
+        {
+            string sCríticas = string.Empty;
+            foreach (string review in alCríticas)
+            {
+                //FIXED 20141204 string sCríticaTexto = match(@"<div>(.*?)(<img|</div>)", review);
+                string sCríticaTexto = match(@"<div>(.*?)(<img|</div>| <i class='fa fa-external-link'>)", review);
+                //FIXED 20141204 string sCríticaAutor = match(@"<div class=""pro-crit-med"">(.*?)<img", review);
+                string sCríticaAutor = match(@"<div class=""pro-crit-med"">(.*?) <i alt=""", review);
+                string sCríticaLink = match(@"href=""(.*?)""", review);
+                //FIXED 20141204 string sCríticaTipo = match(@" title='(.*?)' src", review);
+                string sCríticaTipo = match(@" <i alt=""(.*?)"" title=""", review);
+                if (!string.IsNullOrEmpty(sCríticaTipo))
+                    sCríticaTipo = " (" + sCríticaTipo.Replace("crítica ", string.Empty).Replace("positiva", "+").Replace("negativa", "-").Replace("neutral", "=") + ")";
+                sCríticas += string.Join(Environment.NewLine, new string[] { "\t" + sCríticaTexto, sCríticaAutor + sCríticaTipo, sCríticaLink, Environment.NewLine });
+            }
+            sCríticas = Regex.Replace(sCríticas, @"<br.*?>", Environment.NewLine);
+            sCríticas = Regex.Replace(sCríticas, @"★", "*");
+            sCríticas = Regex.Replace(sCríticas, Environment.NewLine + Environment.NewLine + Environment.NewLine, Environment.NewLine + Environment.NewLine);
+            return removeLastCrLf(sCríticas);
+        }
+        return string.Empty;
+    }
+
+    internal void getAKA(ref paramPeli movieFA)
+    {
+        string rx = @"\(AKA(.*?)\)";
+        ArrayList al = matchAll(rx, movieFA.Título + movieFA.TítuloOriginal);
+        movieFA.AKA = string.Join(Environment.NewLine, (string[])al.ToArray(Type.GetType("System.String")));
+        rx = @"\(AKA.*?\)";
+        movieFA.Título = Regex.Replace(movieFA.Título, rx, string.Empty).Trim();
+        movieFA.TítuloOriginal = Regex.Replace(movieFA.TítuloOriginal, rx, string.Empty).Trim();
+    }
+
+    public string getMpaaRating(string MpaaRating)
+    {
+        //http://www.mecd.gob.es/cultura-mecd/areas-cultura/cine/conceptos-cine-y-audiovisual/calificacion-de-peliculas.html
+        List<string> lEng = new List<string>() { "NC-17", "R", "PG-13", "PG", "G" };
+        List<string> lSpa = new List<string>() { ">18", ">16", ">12", ">7", "TP" };
+        string sMpaaRating = "NC";
+        if (!string.IsNullOrEmpty(MpaaRating))
+            for (int i = 0; i < lEng.Count; i++)
+                if (lEng[i].Contains(MpaaRating))
+                    return lSpa[i];
+        return sMpaaRating;
+    }
+
+    private bool checkCoherencia(paramPeli movieFA, IMDb movieIMDb, bool mostrarAvisos, bool bMP)
+    {//TODO This regex finds last coma: (,)[^,]*$
+        string[] specialChars = @"¡ ! \ / : * & ¿ ? "" < > | ( ) = ' , [ ] _".Split(' ');//eliminamos todo menos los guiones
+
+        List<string> lTO = new List<string>() { Regex.Replace(movieFA.TítuloOriginal, @"\(.*?\)", ""), movieIMDb.Title, movieIMDb.OriginalTitle };
+        List<string> l = new List<string>();
+        string rx = @"\(.*?\)";
+        foreach (string TO in lTO)
+        {
+            string s = TO;
+            foreach (string specialChar in specialChars)
+                s = s.Replace(specialChar, string.Empty);
+            s = Regex.Replace(s, @"-.*?$", "");//desde guión hasta final de palabra
+            l.Add(Regex.Replace(s.Replace(" ", string.Empty), rx, string.Empty).Trim());
+        }
+        bool bTO1 = false;
+        bool bTO2 = false;
+        if (l.Count == 3)
+        {
+            bTO1 = String.Equals(l[0], l[1], StringComparison.CurrentCultureIgnoreCase);
+            bTO2 = String.Equals(l[0], l[2], StringComparison.CurrentCultureIgnoreCase);
+        }
+        int iYear = 0;
+        bool bTO = (bTO1 | bTO2);
+
+        Int32.TryParse(movieIMDb.Year, out iYear);
+        bool bDif = false;
+        if ((movieFA.Año > 1900) && (iYear > 1900))
+            bDif = Math.Abs(movieFA.Año - iYear) > acceptableDifYear;
+        if (!bDif && bTO)
+            return true;
+        return false;
+    }
+
+    internal bool checkMovieValues(ref paramPeli movie, bool mostrarAvisos)
+    {
+        bool bRes = true;
+        PropertyInfo[] pi = ((object)movie).GetType().GetProperties();
+        foreach (var p in pi)
+        {
+            string name = p.Name;
+            var value = p.GetValue(movie, null);
+            if (p.PropertyType.FullName == "System.String")
+            {
+                //bloque deshabilitado, solo cambia bRes a False
+                if ((string.IsNullOrEmpty((string)value)))
+                    if ("ArgumentoIntérpretesTítuloDirectorGénero".IndexOf(p.Name) > -1)//campos que no pueden ser empty
+                        bRes = false;//p.SetValue(movie, "SinDatos", null);
+
+                string s = (string)value;
+                //sólo se permiten ciertos campos con más de 255 caractéres
+                if ((s.Length > 254) && ("ArgumentoIntérpretesCríticasPremiosGetAllIntérpretesIMDbMediaVideosMediaImagesDownLinks".IndexOf(p.Name) < 0))
+                {//TODO  REGEX
+                    s = s.Remove(254);
+                    int iLastComma = s.LastIndexOf(",");
+                    int iLastNewLine = s.LastIndexOf(Environment.NewLine);
+                    int iLast = iLastNewLine + iLastComma + 1;
+                    if (iLast > -1)
+                        s = s.Remove(iLast);
+                    bRes = false;
+                    p.SetValue(movie, s, null);
+                }
+            }
+        }
+        return bRes;
+    }
+
+    public bool findMovieFA(string peli, ref string idFA, ref string buscado, int año = 0, int precisión = 0, bool mostrarAvisos = false, object pelisMP = null, int iErrorforbidden = 0, object sender = null)
+    {
+        idFA = string.Empty;
+        buscado = peli;
+        int AñoMax = año + precisión;
+        int AñoMin = año - precisión;
+        if (AñoMin < precisión)
+        {
+            AñoMax = 0;
+            AñoMin = 0;
+        }
+        string urlSearchMovie = wwwFA + "/es/advsearch.php?stext=" + HttpUtility.UrlEncode(peli, Encoding.UTF8) + "&stype=title&fromyear=" + AñoMin + "&toyear=" + AñoMax;
+        string document = getDataWebR(urlSearchMovie);
+        if (string.IsNullOrEmpty(document))
+        {
+            if (iErrorforbidden > 2)
+            {
+                idFA = "-1";
+                return false;
+            }
+            //Log.Warn("ERROR document null buscando " + peli + " iErrorforbidden=" + iErrorforbidden);
+            System.Threading.Thread.Sleep(2000);
+            string idFAError = string.Empty;
+            ArrayList pelisMPError = null;
+            if (pelisMP != null)
+                pelisMPError = new ArrayList();
+            if (findMovieFA(peli, ref idFAError, ref buscado, año, precisión, mostrarAvisos, pelisMPError, ++iErrorforbidden))
+            {
+                Log.Info("ARREGLADO document null buscando " + peli + " iErrorforbidden=" + iErrorforbidden);
+                idFA = idFAError;
+                if (pelisMP != null)
+                    if (pelisMPError.Count > 0)
+                        foreach (string[] item in pelisMPError)
+                            ((ArrayList)pelisMP).Add(item);
+                return true;
+            }
+            else
+            {
+                idFA = "-1";
+                return false;
+            }
+        }
+        bool bNotFound = false;
+        if (document.IndexOf(@"<div id=""adv-search-no-results"">") > -1)
+            // sin resultado 'No hay resultados exactos'                //<b>No se han encontrado coincidencias.</b></div>
+            bNotFound = true;
+        if (document.IndexOf(@"<div id=""adv-search-pager-info"">") < -1)
+            // por algún motivo, no se encuentra 'adv-search-pager-info'
+            bNotFound = true;
+        if (bNotFound)
+        {
+            return false;
+        }
+        string resultados = string.Empty;
+        //FIXED 2014-12-04 resultados = match(@"<div style=""float: right;""><b>(.*?)</b>", document);
+        resultados = match(@"<div class=""float-right""><b>(.*?)</b>", document);
+        int nResultados = 0;
+        Int32.TryParse(resultados, out nResultados);
+        if ((nResultados > 50) || (nResultados == 0))
+        {
+            //se devuelve el nº de resultados encontrados o string.empty
+            if (nResultados > 0)
+                idFA = nResultados.ToString();
+            return false;
+        }
+
+        List<string[]> lPelis = new List<string[]>();
+        recursiveSearch(null, lPelis, document);
+
+        if (pelisMP != null)
+        {
+            if (lPelis.Count > 0)
+                idFA = lPelis[0][1];//asigna idFA al primer valor de la Lista, así se puede usar desde COM, si sólo se quiere un valor y no una lista
+            foreach (string[] miniPeli in lPelis)
+            {
+                string sParam = string.Empty;
+                for (int i = 2; i < 5; i++)
+                    if (!string.IsNullOrEmpty(miniPeli[i]))
+                        sParam += "-" + miniPeli[i];
+                ((ArrayList)pelisMP).Add(new string[2] { urlFromIdFA(miniPeli[1]), miniPeli[0] + " " + sParam });
+            }
+            return true;
+        }
+        string sAño = año > 0 ? "(" + año + ") " : string.Empty;
+        return !string.IsNullOrEmpty(idFA);
+    }
+
+    private void processMiniInfo(List<string[]> lPelis, string document)
+    {
+        //FIXED 2014-12-04 ArrayList cTitles = matchAll(@"<div class=""movie-card movie-card-1"" data-movie-id(.*?)</div></div></div>", document);//"//div[@class='mc-title']") amplio a las imágenes
+        ArrayList cTitles = matchAll(@"<div class=""movie-card movie-card-1"" data-movie-id=(.*?)</div></div>	</div>", document);
+
+
+        if (cTitles == null)//si llegó aquí es página no encontrada Forbidden, Acceso denegado, etc
+            return;
+        foreach (string title in cTitles)//cada título de la página de resultados se añade a una lista
+        {
+            //FIXED 2014-12-04                 string mcinfocontainer = match(@"<div class=""mc-info-container"">(.*?)</div></div>", title);
+            string mcinfocontainer = match(@"<div class=""mc-info-container"">(.*?)</div>    </div>", title);
+            string mctitle = match(@"<div class=""mc-title"">(.*?)</div>", title);
+            string buscado = match(@".html"">(.*?)</a>", mctitle).Trim();
+            string País = match(@"title=""(.*?)"">", mctitle).Trim();
+            string Año = match(@"</a>(.*?)<img src", mctitle).Trim();
+            string lsidFA = match(@"<a href=""/es/film(.*?).html"">", mctitle).Trim();
+            string urlImg = match(@" src=""http://pics.filmaffinity.com/(.*?).jpg""", title).Trim();
+            if (!string.IsNullOrEmpty(urlImg))
+                urlImg = "http://pics.filmaffinity.com/" + urlImg + ".jpg";
+
+            string mcdirector = match(@"<div class=""mc-director"">(.*?)</div>", title);
+            string Director = match(@""">(.*?)</a>", mcdirector).Trim();
+            string mcratings = match(@"/imgs/ratings(.*?)"" >", title);
+            string Estrellas = match(@"/(.*?).png""", mcratings).Trim();
+            string Calificación = match(@"alt=""(.*?)$", mcratings).Trim();
+            string mccast = match(@"<div class=""mc-cast"">(.*?)</div>", title);
+            string Intérprete = match(@""">(.*?)</a>", mccast).Trim();
+            lPelis.Add(new string[8] { buscado, lsidFA, getYearFromTitle(Año).ToString(), Director, Intérprete, Calificación, Estrellas, urlImg });
+        }
+    }
+
+    private void recursiveSearch(object pbSplash, List<string[]> lPelis, string document)
+    {
+        string pager = match(@"<div class=""pager"">(.*?)</div>", document);
+        ArrayList cPager = matchAll(@"<a href=""(.*?)"">", pager);
+        if (cPager.Count > 0)
+        {//actualiza el nodo de la página recién cargada
+            if (pager.Contains(">>>"))// corresponde a "&gt;&gt;" OR CONTADOR > 20
+            {
+                processMiniInfo(lPelis, document);//si no lo agrego aqui se pone en orden inverso
+                string urlSearchMovie = wwwFA + "/es/" + cPager[cPager.Count - 1].ToString();//el último ítem tiene el enlace a la página siguiente
+                document = getDataWebR(urlSearchMovie);
+                recursiveSearch(pbSplash, lPelis, document);
+                return;
+            }
+        }
+        processMiniInfo(lPelis, document);
+        return;
+    }
+
+    public string getDataWebR(string url, bool fPlainHTML = false, bool secondTry = false, string userPass = "")
+    {
+        Uri uri = new Uri(url);
+        HttpWebRequest wReq = (HttpWebRequest)WebRequest.Create(uri);
+        List<string[]> lValues = new List<string[]>();
+        setHeadersValues(lValues);
+        int iHeaders = 0;
+        for (iHeaders = 0; iHeaders < (lValues.Count - 3); iHeaders++)
+            wReq.Headers[lValues[iHeaders][0]] = lValues[iHeaders][1];
+        wReq.Accept = lValues[iHeaders++][1];
+        wReq.Referer = lValues[iHeaders++][1];
+        wReq.UserAgent = lValues[iHeaders][1];
+        if (!string.IsNullOrEmpty(userPass))
+        {
+            wReq.Headers.Add("Authorization", "Basic " + Convert.ToBase64String(ASCIIEncoding.ASCII.GetBytes(userPass)));
+
+            if (userPass.Contains("popcorn"))
+            {
+                wReq.Headers.Add("id", "10");
+                wReq.Method = "POST";
+            }
+        }
+        wReq.Timeout = 10000;
+        wReq.Proxy.Credentials = CredentialCache.DefaultCredentials;
+        wReq.ReadWriteTimeout = 10000;
+        try
+        {
+            string sRet = string.Empty;
+            using (HttpWebResponse wr = (HttpWebResponse)wReq.GetResponse())
+            using (Stream st = wr.GetResponseStream())
+                sRet = getStream(st, fPlainHTML);
+            return string.IsNullOrEmpty(sRet) ? "-1" : sRet;//páginas en blanco sin error -> "-1", así no lo intenta más
+            /*
+            WebResponse wResponse = wReq.GetResponse();
+            Stream st = wResponse.GetResponseStream();
+            string sRet = getStream(st, fPlainHTML);*/
+
+        }
+        catch (System.Net.WebException eWebException)
+        {
+            if (secondTry)
+                return string.Empty;
+            return getDataWebR(url, fPlainHTML, true);
+            //string s = string.Empty;
+            //using (var stream = eWebException.Response.GetResponseStream())                using (var reader = new StreamReader(stream))                    s += reader.ReadToEnd();
+            //if (!url.Contains("google"))                    //Log.Info(" eWebException " + url + " " + eWebException.Message);//google Error en el servidor remoto: (503) Servidor no disponible//Se excedió el tiempo de espera de la operación
+            //if (!string.IsNullOrEmpty(s))                    //Log.Warn(" " + s);
+        }
+        catch (System.Threading.ThreadAbortException exThreadAbortException)
+        {
+            StackTrace st = new StackTrace(true);
+            for (int iError = 0; iError < st.FrameCount; iError++)
+            {
+                // Note that high up the call stack, there is only one stack frame.
+                StackFrame sf = st.GetFrame(iError);
+                if (sf.GetFileLineNumber() > 0)
+                {
+                    ////Log.Error(" exThreadAbortException Method: {0}", sf.GetMethod());
+                    //Log.Error(" exThreadAbortException Line Number: {0}", sf.GetFileLineNumber().ToString());
+                }
+            }
+            //Log.Error(" exThreadAbortException inesperado en getDataWebR con: " + url + " - " + exThreadAbortException.Message + " - " + exThreadAbortException.Source);
+        }
+        catch (Exception exOther)
+        {
+            StackTrace st = new StackTrace(true);
+            for (int iError = 0; iError < st.FrameCount; iError++)
+            {
+                // Note that high up the call stack, there is only one stack frame.
+                StackFrame sf = st.GetFrame(iError);
+                if (sf.GetFileLineNumber() > 0)
+                {
+                    //Log.Error(" eWebExceptionOther Method: {0}", sf.GetMethod());
+                    //Log.Error(" eWebExceptionOther Line Number: {0}", sf.GetFileLineNumber().ToString());
+                }
+            }
+            //Log.Error(" eWebExceptionOther inesperado en getDataWebR con: " + url + " - " + exOther.Message + " - " + exOther.Source);
+        }
+        return string.Empty;
+    }
+
+    public Stream streamFromString(string s)
+    {
+        MemoryStream ms = new MemoryStream();
+        StreamWriter sw = new StreamWriter(ms);
+        sw.Write(s);
+        sw.Flush();
+        ms.Position = 0;
+        //sw.Close(); DONT USE
+        return ms;
+    }
+
+    public string OLDgetDataWebC(string url, bool fIMDb = false)
+    {//idéntica utilizando la clase WebClient NO USADA, salvo para fileLocal
+        WebClient wClient = new WebClient();
+        List<string[]> lHeadersValues = new List<string[]>();
+        setHeadersValues(lHeadersValues);
+        foreach (string[] sHeadersValue in lHeadersValues)
+            wClient.Headers[sHeadersValue[0]] = sHeadersValue[1];
+        using (Stream st = wClient.OpenRead(url))
+            return getStream(st, false);
+    }
+
+    public void setHeadersValues(List<string[]> lHeadersValues)
+    {
+        Random r = new Random(DateTime.Now.Millisecond);
+        //lHeadersValues.Add(new string[] { "X-Forwarded-For", r.Next(0, 255) + "." + r.Next(0, 255) + "." + r.Next(0, 255) + "." + r.Next(0, 255) });
+        lHeadersValues.Add(new string[] { "X-Forwarded-For", "172.10" + "." + r.Next(0, 255) + "." + r.Next(0, 255) });
+        lHeadersValues.Add(new string[] { "Accept-Language", "es" });//MP usa "en-US,en;q=0.5", sin resultados aparentemente distintos
+        lHeadersValues.Add(new string[] { "Accept", "*/*" });
+        lHeadersValues.Add(new string[] { "Referer", wwwFA });
+        lHeadersValues.Add(new string[] { "User-Agent", "Mozilla/" + r.Next(10, 11) + ".0 (Windows NT " + r.Next(6, 7) + "." + r.Next(0, 2) + "; rv:2.0.1) Gecko/20140101 Firefox/" + r.Next(3, 5) + "." + r.Next(0, 5) + "." + r.Next(0, 5) });
+    }
+
+    internal string getStream(Stream st, bool fPlainHTML)
+    {
+        StreamReader sr = null;
+        string sDecode = string.Empty;
+        using (sr = new StreamReader(st))
+        {
+            StringBuilder sb = new StringBuilder();
+            while (!sr.EndOfStream)
+                sb.Append(sr.ReadLine());
+            sDecode = sb.ToString();
+        }
+        if (!fPlainHTML)
+            sDecode = HttpUtility.HtmlDecode(sDecode);
+        return sDecode;
+    }
+
+    public void ForceForegroundWindow(IntPtr hWnd)
+    {
+        uint foreThread = GetWindowThreadProcessId(GetForegroundWindow(),
+            IntPtr.Zero);
+        uint appThread = GetCurrentThreadId();
+        const uint SW_SHOW = 5;
+
+        if (foreThread != appThread)
+        {
+            AttachThreadInput(foreThread, appThread, true);
+            BringWindowToTop(hWnd);
+            ShowWindow(hWnd, SW_SHOW);
+            AttachThreadInput(foreThread, appThread, false);
+        }
+        else
+        {
+            BringWindowToTop(hWnd);
+            ShowWindow(hWnd, SW_SHOW);
+        }
+    }
+
+    #region NativeWindows
+    [StructLayout(LayoutKind.Sequential)]
+    [ComVisible(false)]
+    public struct FLASHWINFO
+    {
+        public UInt32 cbSize;
+        public IntPtr hwnd;
+        public UInt32 dwFlags;
+        public UInt32 uCount;
+        public UInt32 dwTimeout;
+    }
+
+    [ComVisible(false)]
+    public enum FlashWindow : int
+    {
+        /// <summary>
+        /// Stop flashing. The system restores the window to its original state. 
+        /// </summary>    
+        FLASHW_STOP = 0,
+
+        /// <summary>
+        /// Flash the window caption 
+        /// </summary>
+        FLASHW_CAPTION = 1,
+
+        /// <summary>
+        /// Flash the taskbar button. 
+        /// </summary>
+        FLASHW_TRAY = 2,
+
+        /// <summary>
+        /// Flash both the window caption and taskbar button.
+        /// This is equivalent to setting the FLASHW_CAPTION | FLASHW_TRAY flags. 
+        /// </summary>
+        FLASHW_ALL = 3,
+
+        /// <summary>
+        /// Flash continuously, until the FLASHW_STOP flag is set.
+        /// </summary>
+        FLASHW_TIMER = 4,
+
+        /// <summary>
+        /// Flash continuously until the window comes to the foreground. 
+        /// </summary>
+        FLASHW_TIMERNOFG = 12
+    }
+
+    [DllImport("user32.dll")]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    protected static extern bool FlashWindowEx(ref FLASHWINFO pwfi);
+
+    [DllImport("user32.dll")]
+    protected static extern bool SetForegroundWindow(IntPtr hWnd);
+
+    [DllImport("user32.dll", SetLastError = true)]
+    protected static extern uint GetWindowThreadProcessId(IntPtr hWnd, out uint lpdwProcessId);
+
+    // When you don't want the ProcessId, use this overload and pass 
+    // IntPtr.Zero for the second parameter
+    [DllImport("user32.dll")]
+    protected static extern uint GetWindowThreadProcessId(IntPtr hWnd, IntPtr ProcessId);
+
+    [DllImport("kernel32.dll")]
+    protected static extern uint GetCurrentThreadId();
+
+    /// The GetForegroundWindow function returns a handle to the 
+    /// foreground window.
+    [DllImport("user32.dll")]
+    protected static extern IntPtr GetForegroundWindow();
+
+    [DllImport("user32.dll")]
+    protected static extern bool AttachThreadInput(uint idAttach, uint idAttachTo, bool fAttach);
+
+    [DllImport("user32.dll", SetLastError = true)]
+    protected static extern bool BringWindowToTop(IntPtr hWnd);
+
+    [DllImport("user32.dll", SetLastError = true)]
+    protected static extern bool BringWindowToTop(HandleRef hWnd);
+
+    [DllImport("user32.dll")]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    protected static extern bool SetWindowPos(IntPtr hWnd, Int32 hWndInsertAfter, Int32 X, Int32 Y, Int32 cx, Int32 cy, uint uFlags);
+
+    [DllImport("user32.dll")]
+    protected static extern bool ShowWindow(IntPtr hWnd, uint nCmdShow);
+    #endregion NativeWindows
+
+}
+
+internal class paramPeli
+{
+    #region private def
+    private int _mID = -1;
+    private string _Directores = string.Empty;
+    private string _Director = string.Empty;
+    private string _Género = string.Empty;
+    private string _Argumento = string.Empty;
+    private string _Carátula = string.Empty;
+    private string _sTítuloOriginal = string.Empty;
+    private string _sTítulo = string.Empty;
+    private string _idFA = string.Empty;
+    private string _Intérpretes = string.Empty;
+    private string _Buscado = string.Empty;
+    private int _Año = 1900;
+    private int _Duración = 0;
+    private int _idGénero = -1;
+    private string _Géneros = string.Empty;
+    private string _País = string.Empty;
+    private string _Guión = string.Empty;
+    private string _Música = string.Empty;
+    private string _Fotografía = string.Empty;
+    private string _Productora = string.Empty;
+    private string _Premios = string.Empty;
+    private string _Críticas = string.Empty;
+    private int _Votos = 0;
+    private float _Calificación = -1;
+    private string _WebOficial = string.Empty;
+    private string _TagGéneros = string.Empty;
+    private string _Lema = string.Empty;
+    private string _CalificaciónMPAA = string.Empty;
+    private string _idIMDb = string.Empty;
+    private string _CarátulaIMDb = string.Empty;
+    private string _ArgumentoIMDb = string.Empty;
+    private string _MediaImages = string.Empty;
+    private string _IntérpretPrincipal = string.Empty;
+    private string _DownLinks = string.Empty;
+    private string _Tipo = string.Empty;
+    private string _AKA = string.Empty;
+    private string _Productores = string.Empty;
+    private string _Cinematographers = string.Empty;
+    private string _Editors = string.Empty;
+    private string _Oscars = string.Empty;
+    private string _Awards = string.Empty;
+    private string _Nominations = string.Empty;
+    private int _Top250 = 0;
+    private string _GetAll = string.Empty;
+
+    #endregion
+
+    #region public def
+    public int ID
+    {
+        get { return _mID; }
+        set { _mID = value; }
+    }
+
+    public int idGénero
+    {
+        get { return _idGénero; }
+        set { _idGénero = value; }
+    }
+
+    public string Géneros
+    {
+        get { return _Géneros; }
+        set { _Géneros = value; }
+    }
+
+    public int Duración
+    {
+        get { return _Duración; }
+        set { _Duración = value; }
+    }
+
+    public string Directores
+    {
+        get { return _Directores; }
+        set { _Directores = value; }
+    }
+
+    public string Director
+    {
+        get { return _Director; }
+        set { _Director = value; }
+    }
+
+    public string Género
+    {
+        get { return _Género; }
+        set { _Género = value; }
+    }
+
+    public string Carátula
+    {
+        get { return _Carátula; }
+        set { _Carátula = value; }
+    }
+
+    public string Título
+    {
+        get { return _sTítuloOriginal; }
+        set { _sTítuloOriginal = value; }
+    }
+
+    public string TítuloOriginal
+    {
+        get { return _sTítulo; }
+        set { _sTítulo = value; }
+    }
+
+    public string Argumento
+    {
+        get { return _Argumento; }
+        set { _Argumento = value; }
+    }
+
+    public string Intérpretes
+    {
+        get { return _Intérpretes; }
+        set { _Intérpretes = value; }
+    }
+
+    public string Buscado
+    {
+        get { return _Buscado; }
+        set { _Buscado = value; }
+    }
+
+    public string idFA
+    {
+        get { return _idFA; }
+        set { _idFA = value; }
+    }
+
+    public int Año
+    {
+        get { return _Año; }
+        set { _Año = value; }
+    }
+
+    public string País
+    {
+        get { return _País; }
+        set { _País = value; }
+    }
+
+    public string Guión
+    {
+        get { return _Guión; }
+        set { _Guión = value; }
+    }
+
+    public string Música
+    {
+        get { return _Música; }
+        set { _Música = value; }
+    }
+
+    public string Fotografía
+    {
+        get { return _Fotografía; }
+        set { _Fotografía = value; }
+    }
+
+    public string Productora
+    {
+        get { return _Productora; }
+        set { _Productora = value; }
+    }
+
+    public string Premios
+    {
+        get { return _Premios; }
+        set { _Premios = value; }
+    }
+
+    public string Críticas
+    {
+        get { return _Críticas; }
+        set { _Críticas = value; }
+    }
+
+    public float Calificación
+    {
+        get { return _Calificación; }
+        set { _Calificación = value; }
+    }
+
+    public int Votos
+    {
+        get { return _Votos; }
+        set { _Votos = value; }
+    }
+
+    public string WebOficial
+    {
+        get { return _WebOficial; }
+        set { _WebOficial = value; }
+    }
+
+    public string TagGéneros
+    {
+        get { return _TagGéneros; }
+        set { _TagGéneros = value; }
+    }
+
+    public string Lema
+    {
+        get { return _Lema; }
+        set { _Lema = value; }
+    }
+
+    public string CalificaciónMPAA
+    {
+        get { return _CalificaciónMPAA; }
+        set { _CalificaciónMPAA = value; }
+    }
+
+    public string idIMDb
+    {
+        get { return _idIMDb; }
+        set { _idIMDb = value; }
+    }
+
+    public string CarátulaIMDb
+    {
+        get { return _CarátulaIMDb; }
+        set { _CarátulaIMDb = value; }
+    }
+
+    public string ArgumentoIMDb
+    {
+        get { return _ArgumentoIMDb; }
+        set { _ArgumentoIMDb = value; }
+    }
+
+    public string MediaImages
+    {
+        get { return _MediaImages; }
+        set { _MediaImages = value; }
+    }
+
+    public string IntérpretPrincipal
+    {
+        get { return _IntérpretPrincipal; }
+        set { _IntérpretPrincipal = value; }
+    }
+
+    public string DownLinks
+    {
+        get { return _DownLinks; }
+        set { _DownLinks = value; }
+    }
+
+    public string Tipo
+    {
+        get { return _Tipo; }
+        set { _Tipo = value; }
+    }
+
+    public string AKA
+    {
+        get { return _AKA; }
+        set { _AKA = value; }
+    }
+
+    public string Productores
+    {
+        get { return _Productores; }
+        set { _Productores = value; }
+    }
+
+    public string Cinematographers
+    {
+        get { return _Cinematographers; }
+        set { _Cinematographers = value; }
+    }
+
+    public string Editors
+    {
+        get { return _Editors; }
+        set { _Editors = value; }
+    }
+
+    public string Oscars
+    {
+        get { return _Oscars; }
+        set { _Oscars = value; }
+    }
+
+    public string Awards
+    {
+        get { return _Awards; }
+        set { _Awards = value; }
+    }
+
+    public string Nominations
+    {
+        get { return _Nominations; }
+        set { _Nominations = value; }
+    }
+
+    public int Top250
+    {
+        get { return _Top250; }
+        set { _Top250 = value; }
+    }
+
+    public ArrayList MediaVideos { get; set; }
+
+    public ArrayList IntérpretesIMDb { get; set; }
+
+    public string GetAll
+    {
+        get { return _GetAll; }
+        set { _GetAll = value; }
+    }
+    #endregion
+}
+
+#region XmlIMDb
+[System.SerializableAttribute()]
+[System.Diagnostics.DebuggerStepThroughAttribute()]
+[System.ComponentModel.DesignerCategoryAttribute("code")]
+[System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
+[System.Xml.Serialization.XmlRootAttribute(Namespace = "", IsNullable = false)]
+[ComVisible(false)]
+public partial class IMDbResults
+{
+
+    private IMDbResultsResultSet[] resultSetField;
+
+    /// <comentarios/>
+    [System.Xml.Serialization.XmlElementAttribute("ResultSet")]
+    public IMDbResultsResultSet[] ResultSet
+    {
+        get
+        {
+            return this.resultSetField;
+        }
+        set
+        {
+            this.resultSetField = value;
+        }
+    }
+}
+
+[System.SerializableAttribute()]
+[System.Diagnostics.DebuggerStepThroughAttribute()]
+[System.ComponentModel.DesignerCategoryAttribute("code")]
+[System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
+[ComVisible(false)]
+public partial class IMDbResultsResultSet
+{
+
+    private IMDbResultsResultSetImdbEntity[] imdbEntityField;
+
+    private string typeField;
+
+    /// <comentarios/>
+    [System.Xml.Serialization.XmlElementAttribute("ImdbEntity")]
+    public IMDbResultsResultSetImdbEntity[] ImdbEntity
+    {
+        get
+        {
+            return this.imdbEntityField;
+        }
+        set
+        {
+            this.imdbEntityField = value;
+        }
+    }
+
+    /// <comentarios/>
+    [System.Xml.Serialization.XmlAttributeAttribute()]
+    public string type
+    {
+        get
+        {
+            return this.typeField;
+        }
+        set
+        {
+            this.typeField = value;
+        }
+    }
+}
+
+[System.SerializableAttribute()]
+[System.Diagnostics.DebuggerStepThroughAttribute()]
+[System.ComponentModel.DesignerCategoryAttribute("code")]
+[System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
+[ComVisible(false)]
+public partial class IMDbResultsResultSetImdbEntity
+{
+
+    private IMDbResultsResultSetImdbEntityDescription descriptionField;
+
+    private string[] textField;
+
+    private string idField;
+
+    /// <comentarios/>
+    public IMDbResultsResultSetImdbEntityDescription Description
+    {
+        get
+        {
+            return this.descriptionField;
+        }
+        set
+        {
+            this.descriptionField = value;
+        }
+    }
+
+    /// <comentarios/>
+    [System.Xml.Serialization.XmlTextAttribute()]
+    public string[] Text
+    {
+        get
+        {
+            return this.textField;
+        }
+        set
+        {
+            this.textField = value;
+        }
+    }
+
+    /// <comentarios/>
+    [System.Xml.Serialization.XmlAttributeAttribute()]
+    public string id
+    {
+        get
+        {
+            return this.idField;
+        }
+        set
+        {
+            this.idField = value;
+        }
+    }
+}
+
+[System.SerializableAttribute()]
+[System.Diagnostics.DebuggerStepThroughAttribute()]
+[System.ComponentModel.DesignerCategoryAttribute("code")]
+[System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
+[ComVisible(false)]
+public partial class IMDbResultsResultSetImdbEntityDescription
+{
+
+    private IMDbResultsResultSetImdbEntityDescriptionA aField;
+
+    private string[] textField;
+
+    /// <comentarios/>
+    public IMDbResultsResultSetImdbEntityDescriptionA a
+    {
+        get
+        {
+            return this.aField;
+        }
+        set
+        {
+            this.aField = value;
+        }
+    }
+
+    /// <comentarios/>
+    [System.Xml.Serialization.XmlTextAttribute()]
+    public string[] Text
+    {
+        get
+        {
+            return this.textField;
+        }
+        set
+        {
+            this.textField = value;
+        }
+    }
+}
+
+[System.SerializableAttribute()]
+[System.Diagnostics.DebuggerStepThroughAttribute()]
+[System.ComponentModel.DesignerCategoryAttribute("code")]
+[System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
+[ComVisible(false)]
+public partial class IMDbResultsResultSetImdbEntityDescriptionA
+{
+
+    private string hrefField;
+
+    private string valueField;
+
+    /// <comentarios/>
+    [System.Xml.Serialization.XmlAttributeAttribute()]
+    public string href
+    {
+        get
+        {
+            return this.hrefField;
+        }
+        set
+        {
+            this.hrefField = value;
+        }
+    }
+
+    /// <comentarios/>
+    [System.Xml.Serialization.XmlTextAttribute()]
+    public string Value
+    {
+        get
+        {
+            return this.valueField;
+        }
+        set
+        {
+            this.valueField = value;
+        }
+    }
+}
+
+[ComVisible(false)]
+public class IMDbFindMovie
+{
+    public string idIMDb { get; set; }
+    public string Title { get; set; }
+    public int Year { get; set; }
+    public string idDirector { get; set; }
+    public string Director { get; set; }
+    public string Type { get; set; }
+    public string ResultType { get; set; }
+    public string Poster { get; set; }
+    public string Country { get; set; }
+    public string imdbRating { get; set; }
+
+}
+
+#endregion XmlIMDb
