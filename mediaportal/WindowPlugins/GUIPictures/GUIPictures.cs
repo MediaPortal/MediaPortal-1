@@ -1483,7 +1483,7 @@ namespace MediaPortal.GUI.Pictures
         {
           if (facadeLayout[i].Path == path)
           {
-            Log.Debug("GUIPictures.AddItem Duplivated item found: {0}", path);
+            Log.Debug("GUIPictures.AddItem Duplicated item found: {0}", path);
             return;
           }
         }

@@ -309,7 +309,7 @@ namespace MediaPortal.GUI.Music
         {
           if (facadeLayout[i].Path == path)
           {
-            Log.Debug("GUIMusicFiles.AddItem Duplivated item found: {0}", path);
+            Log.Debug("GUIMusicFiles.AddItem Duplicated item found: {0}", path);
             return;
           }
         }

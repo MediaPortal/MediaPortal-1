@@ -3618,7 +3618,7 @@ namespace MediaPortal.GUI.Video
         {
           if (facadeLayout[i].Path == path)
           {
-            Log.Debug("GUIVideoFiles.AddItem Duplivated item found: {0}", path);
+            Log.Debug("GUIVideoFiles.AddItem Duplicated item found: {0}", path);
             return;
           }
         }
