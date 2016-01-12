@@ -36,15 +36,6 @@ namespace HideVolumeOSD
 		[DllImport("user32.dll", SetLastError = true)]
 		static extern IntPtr FindWindowEx(IntPtr hwndParent, IntPtr hwndChildAfter, string lpszClass, string lpszWindow);
 
-		[StructLayout(LayoutKind.Sequential)]
-		public struct RECT
-		{
-			public int left;        // x position of upper-left corner
-			public int top;         // y position of upper-left corner
-			public int right;       // x position of lower-right corner
-			public int bottom;      // y position of lower-right corner
-		}
-
 		[DllImport("user32.dll", SetLastError = true)]
 		static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
 
