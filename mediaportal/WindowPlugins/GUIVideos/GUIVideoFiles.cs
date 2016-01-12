@@ -131,7 +131,6 @@ namespace MediaPortal.GUI.Video
     private static PlayListPlayer _playlistPlayer;
     private static PlayListType _currentPlaylistType;
     private static int _currentPlaylistIndex = -1;
-    private VideoFolderWatcherHelper _videoFolderWatcher;
     private static Thread _removableDrivesHandlerThread;
     private VideoFolderWatcherHelper _videoFolderWatcher;
     private MapSettings _mapSettings = new MapSettings();

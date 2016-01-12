@@ -135,7 +135,6 @@ namespace MediaPortal.GUI.Music
     private DirectoryHistory _dirHistory = new DirectoryHistory();
     private GUIListItem _selectedListItem = null;
     private static VirtualDirectory _virtualDirectory;
-    private MusicFolderWatcherHelper _musicFolderWatcher;
     private static Thread _removableDrivesHandlerThread;
     private MusicFolderWatcherHelper _musicFolderWatcher;
     private int _selectedAlbum = -1;
