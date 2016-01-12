@@ -368,7 +368,7 @@ namespace MediaPortal.Mixer
         {
           if (OSInfo.OSInfo.VistaOrLater() && (_componentType == MixerComponentType.DestinationSpeakers))
           {
-            if (_audioDefaultDevice.Muted != null)
+            if (_audioDefaultDevice != null)
             {
               _audioDefaultDevice.Muted = value;
             }
@@ -379,7 +379,7 @@ namespace MediaPortal.Mixer
             SetValue(_mixerControlDetailsMute, value);
             if (_waveVolume && OSInfo.OSInfo.Win8OrLater())
             {
-              if (_audioDefaultDevice.Muted != null)
+              if (_audioDefaultDevice != null)
               {
                 _audioDefaultDevice.Muted = value;
               }
@@ -399,7 +399,7 @@ namespace MediaPortal.Mixer
         {
           if (OSInfo.OSInfo.VistaOrLater() && (_componentType == MixerComponentType.DestinationSpeakers))
           {
-            if (_audioDefaultDevice.MasterVolume != null)
+            if (_audioDefaultDevice != null)
             {
               _audioDefaultDevice.MasterVolume = (float) ((float) (value)/(float) (this.VolumeMaximum));
             }
@@ -410,7 +410,7 @@ namespace MediaPortal.Mixer
             SetValue(_mixerControlDetailsVolume, Math.Max(this.VolumeMinimum, Math.Min(this.VolumeMaximum, value)));
             if (_waveVolume && OSInfo.OSInfo.Win8OrLater())
             {
-              if (_audioDefaultDevice.MasterVolume != null)
+              if (_audioDefaultDevice != null)
               {
                 _audioDefaultDevice.MasterVolume = (float) ((float) (value)/(float) (this.VolumeMaximum));
               }

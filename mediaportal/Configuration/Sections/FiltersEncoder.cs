@@ -24,11 +24,6 @@ namespace MediaPortal.Configuration.Sections
 {
   public class EncoderFiltersSection : SectionSettings
   {
-    private MPLabel mpLabel1;
-    //private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog;
-    //private MediaPortal.UserInterface.Controls.MPLabel label4;
-    //private System.ComponentModel.IContainer components = null;
-
     public EncoderFiltersSection() : this("Encoder Filters") {}
 
     public EncoderFiltersSection(string name) : base(name) {}
