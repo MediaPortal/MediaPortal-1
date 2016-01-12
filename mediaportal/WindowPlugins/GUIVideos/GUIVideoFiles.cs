@@ -133,6 +133,7 @@ namespace MediaPortal.GUI.Video
     private static int _currentPlaylistIndex = -1;
     private VideoFolderWatcherHelper _videoFolderWatcher;
     private static Thread _removableDrivesHandlerThread;
+    private VideoFolderWatcherHelper _videoFolderWatcher;
     private MapSettings _mapSettings = new MapSettings();
     private DirectoryHistory _history = new DirectoryHistory();
     private string _virtualStartDirectory = string.Empty;
@@ -3614,6 +3615,15 @@ namespace MediaPortal.GUI.Video
     {
       try
       {
+        for (int i = 0; i < facadeLayout.Count; i++)
+        {
+          if (facadeLayout[i].Path == path)
+          {
+            Log.Debug("GUIVideoFiles.AddItem Duplicated item found: {0}", path);
+            return;
+          }
+        }
+        
         ISelectDVDHandler selectDvdHandler = GetSelectDvdHandler();
         ISelectBDHandler selectBDHandler = GetSelectBDHandler();
         FileInformation fi = new FileInformation();

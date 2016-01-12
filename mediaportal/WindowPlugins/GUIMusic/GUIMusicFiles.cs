@@ -137,6 +137,7 @@ namespace MediaPortal.GUI.Music
     private static VirtualDirectory _virtualDirectory;
     private MusicFolderWatcherHelper _musicFolderWatcher;
     private static Thread _removableDrivesHandlerThread;
+    private MusicFolderWatcherHelper _musicFolderWatcher;
     private int _selectedAlbum = -1;
     private int _selectedItem = -1;
     private string _discId = string.Empty;
@@ -305,6 +306,15 @@ namespace MediaPortal.GUI.Music
     {
       try
       {
+        for (int i = 0; i < facadeLayout.Count; i++)
+        {
+          if (facadeLayout[i].Path == path)
+          {
+            Log.Debug("GUIMusicFiles.AddItem Duplicated item found: {0}", path);
+            return;
+          }
+        }
+        
         FileInformation fi = new FileInformation();
         if (File.Exists(path))
         {
