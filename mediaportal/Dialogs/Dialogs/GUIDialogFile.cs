@@ -930,7 +930,7 @@ namespace MediaPortal.Dialogs
               }
             }
           }
-          catch (Exception ex) { }
+          catch (Exception) { }
         }
       }
       catch (Exception) { }
