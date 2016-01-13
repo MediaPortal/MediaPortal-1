@@ -1135,7 +1135,6 @@ namespace MediaPortal.Player
     {
       get
       {
-        Log.Error("get dvd {0}", _speed);
         return _speed; }
       set
       {
@@ -1145,7 +1144,6 @@ namespace MediaPortal.Player
           try
           {
             _speed = value;
-            Log.Error("set dvd {0}", _speed);
             if (_speed > 0)
             {
               _dvdCtrl.PlayForwards((double)_speed, DvdCmdFlags.Flush, out _cmdOption);
