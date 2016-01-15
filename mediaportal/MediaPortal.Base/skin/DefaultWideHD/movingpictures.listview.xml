@@ -34,7 +34,7 @@
       <width>97</width>
       <height>90</height>
       <texture>watched_BG.png</texture>
-      <visible>facadeview.list+!control.isvisible(51)</visible>
+      <visible>facadeview.list+!control.isvisible(51)+!control.isvisible(888)</visible>
     </control>
     <control>
       <description>Video Watched Count Label</description>
@@ -48,7 +48,7 @@
       <font>Label</font>
       <align>center</align>
       <textcolor>ff6FAFE1</textcolor>
-      <visible>facadeview.list+!control.isvisible(51)</visible>
+      <visible>facadeview.list+!control.isvisible(51)+!control.isvisible(888)</visible>
     </control>
     <control>
       <description>Watched Logo</description>
@@ -60,7 +60,7 @@
       <height>80</height>
       <texture>watched_#(string.format('{0:000}',mul(math.round(div(cint(#MovingPictures.UserMovieSettings.Progress),5)),5))).png</texture>
       <keepaspectratio>yes</keepaspectratio>
-      <visible>facadeview.list+!control.isvisible(51)</visible>
+      <visible>facadeview.list+!control.isvisible(51)+!control.isvisible(888)</visible>
     </control>
     <control>
       <description>Genres Label</description>
