@@ -12,6 +12,7 @@ public:
   DWORD setFilePointer(__int64 llDistanceToMove, DWORD dwMoveMethod);
   bool IsBuffer(){return true;};
   int HasData();
+	void SetStopping(BOOL isStopping);
 private:
   CMemoryBuffer& m_buffer;
 };

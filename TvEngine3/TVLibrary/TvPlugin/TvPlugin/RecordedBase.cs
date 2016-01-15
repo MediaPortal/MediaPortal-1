@@ -1,5 +1,6 @@
 ﻿using System;
 using MediaPortal.GUI.Library;
+using MediaPortal.Dialogs;
 using TvDatabase;
 using Common.GUIPlugins;
 using Action = MediaPortal.GUI.Library.Action;
@@ -78,6 +79,29 @@ namespace TvPlugin
         return GUILocalizeStrings.Get(6080); // "Last year";
       else
         return GUILocalizeStrings.Get(6090); // "Older"
+    }
+
+    protected bool GetUserPasswordString(ref string sString)
+    {
+      VirtualKeyboard keyboard = (VirtualKeyboard)GUIWindowManager.GetWindow((int)Window.WINDOW_VIRTUAL_KEYBOARD);
+
+      if (null == keyboard)
+      {
+        return false;
+      }
+
+      keyboard.IsSearchKeyboard = true;
+      keyboard.Reset();
+      keyboard.Password = true;
+      keyboard.Text = sString;
+      keyboard.DoModal(GetID); // show it...
+
+      if (keyboard.IsConfirmed)
+      {
+        sString = keyboard.Text;
+      }
+
+      return keyboard.IsConfirmed;
     }
 
     protected abstract bool OnSelectedRecording(int iItem);

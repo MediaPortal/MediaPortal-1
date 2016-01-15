@@ -36,6 +36,8 @@
 // For more details for memory leak detection see the alloctracing.h header
 #include "..\..\alloctracing.h"
 
+extern void LogDebug(const char *fmt, ...) ;
+
 /*
 void TSThreadThreadProc(void *pParam)
 {
@@ -80,8 +82,11 @@ HRESULT TSThread::StartThread()
 
 	m_threadHandle = (HANDLE)_beginthread(&TSThread::thread_function, 0, (void *) this);
 	if (m_threadHandle == INVALID_HANDLE_VALUE)
+	{
+    LogDebug("TSThread::StartThread failed !!");
 		return E_FAIL;
-
+	}
+	
 	return S_OK;
 }
 

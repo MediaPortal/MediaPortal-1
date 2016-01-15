@@ -21,10 +21,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Web.UI.WebControls;
-using System.Windows.Forms;
 using System.Xml;
-using MediaPortal.ServiceImplementations;
 
 namespace MediaPortal.Configuration
 {
@@ -52,7 +49,7 @@ namespace MediaPortal.Configuration
     #region Variables
 
     private static Dictionary<Dir, string> directories;
-    private static string skinName = "DefaultWide";
+    private static string skinName = "Titan";
 
     #endregion
 
@@ -80,23 +77,7 @@ namespace MediaPortal.Configuration
       {
         throw new ArgumentException("The passed file name cannot start with a slash or backslash", "fileName");
       }
-      string filemanPath = Path.Combine(Get(directory), fileName);
-      XMLValidator XMLCheck = new XMLValidator(filemanPath);
-      if (!fileName.ToLowerInvariant().EndsWith(".xml") || !File.Exists(filemanPath))
-      {
-        return Path.Combine(Get(directory), fileName);
-      }
-      if (XMLCheck.Validate())
-      {
-        return Path.Combine(Get(directory), fileName);
-      }
-      MessageBox.Show(
-        "The passed file : " + filemanPath +
-        " is not valid, application will shutdown, you need to replace/correct the file.", "MediaPortal Information",
-        MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-      Log.Error("The passed file : " + filemanPath + " is not valid, application will shutdown, you need to replace/correct the file.");
-      Environment.Exit(0);
-      return null;
+      return Path.Combine(Get(directory), fileName);
     }
 
     /// <summary>
@@ -363,7 +344,7 @@ namespace MediaPortal.Configuration
       Set(Dir.Plugins, Path.Combine(baseDir, @"plugins\"));
       Set(Dir.Skin, Path.Combine(commonAppData, @"skin\"));
       Set(Dir.Thumbs, Path.Combine(commonAppData, @"thumbs\"));
-      Set(Dir.Weather, Path.Combine(commonAppData, @"skin\Default\Media\Weather\")); //will be 'fixed' and set to correct path as soon as available
+      Set(Dir.Weather, Path.Combine(commonAppData, @"skin\DefaultWide HD\Media\Weather\")); //will be 'fixed' and set to correct path as soon as available
     }
 
 

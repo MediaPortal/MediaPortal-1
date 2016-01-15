@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!--version="1.0" encoding="utf-8" standalone="yes"-->
+<window>
+  <id>3002</id>
+  <defaultcontrol>2</defaultcontrol>
+  <allowoverlay>no</allowoverlay>
+  <controls>
+    <control>
+      <description>rec logo</description>
+      <type>image</type>
+      <id>4</id>
+      <posX>930</posX>
+      <posY>15</posY>
+      <width>60</width>
+      <height>60</height>
+      <texture>rec.png</texture>
+      <animation effect="zoom" start="100,100" end="110,110" time="500" condition="true" pulse="true">conditional</animation>
+      <visible>!window.isvisible(0)+!window.isvisible(34)+!window.isvisible(2007)</visible>
+    </control>
+    <control>
+      <description>rec logo</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>1170</posX>
+      <posY>15</posY>
+      <width>60</width>
+      <height>60</height>
+      <texture>rec.png</texture>
+      <animation effect="zoom" start="100,100" end="110,110" time="500" condition="true" pulse="true">conditional</animation>
+      <visible>window.isvisible(0)|window.isvisible(34)+!window.isvisible(2007)</visible>
+    </control>
+  </controls>
+</window>

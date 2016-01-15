@@ -20,6 +20,7 @@
 
 using System;
 using System.IO;
+using System.Collections;
 using System.Xml.Serialization;
 using MediaPortal.Configuration;
 using MediaPortal.Database;
@@ -35,6 +36,7 @@ namespace Databases.Folders
   public class FolderSettingsSqlLite : IFolderSettings, IDisposable
   {
     public SQLiteClient m_db = null;
+    private bool _dbHealth = false;
 
     public FolderSettingsSqlLite()
     {
@@ -43,6 +45,8 @@ namespace Databases.Folders
         // Open database
         Log.Info("open folderdatabase");
         m_db = new SQLiteClient(Config.GetFile(Config.Dir.Database, "FolderDatabase3.db3"));
+
+        _dbHealth = DatabaseUtility.IntegrityCheck(m_db);
 
         DatabaseUtility.SetPragmas(m_db);
         DatabaseUtility.AddTable(m_db, "tblPath", "CREATE TABLE tblPath ( idPath integer primary key, strPath text)");
@@ -149,6 +153,40 @@ namespace Databases.Folders
         Log.Error(ex);
       }
       return -1;
+    }
+
+    public void GetPath(string strPath, ref ArrayList strPathList, string strKey)
+    {
+      try
+      {
+        if (m_db == null)
+        {
+          return;
+        }
+        if (strKey == string.Empty)
+        {
+          return;
+        }
+
+        string sql = string.Format(
+          "SELECT strPath from tblPath where strPath like '{0}%' and idPath in (SELECT idPath from tblSetting where tblSetting.idPath = tblPath.idPath and tblSetting.tagName = '{1}')"
+          , strPath, strKey);
+
+        SQLiteResultSet results = m_db.Execute(sql);
+
+        if (results.Rows.Count == 0)
+        {
+          return;
+        }
+        for (int iRow = 0; iRow < results.Rows.Count; iRow++)
+        {
+          strPathList.Add(DatabaseUtility.Get(results, iRow, "strPath"));
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Error("Lolderdatabase.GetPath() exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+      }
     }
 
     public void DeleteFolderSetting(string strPath, string Key)
@@ -307,10 +345,27 @@ namespace Databases.Folders
         results = m_db.Execute(strSQL);
         if (results.Rows.Count == 0)
         {
+          int pos = strPathFiltered.LastIndexOf(@"\");
+          if ((strPathFiltered.Substring(1, 1) == ":" && pos > 1) || (strPathFiltered.Substring(0, 1) == "\\" && pos > 5))
+          {
+            string folderName;
+            folderName = strPathFiltered.Substring(0, pos);
+
+            Log.Debug("GetFolderSetting: {1} not found, trying the parent {0}", folderName, strPathFiltered);
+            GetFolderSetting(folderName, Key, type, out Value);
+            return;
+          }
+          if (strPathFiltered != "root")
+          {
+            Log.Debug("GetFolderSetting: {0} parent not found. Trying the root.", strPathFiltered);
+            GetFolderSetting("root", Key, type, out Value);
+            return;
+          }
+          Log.Debug("GetFolderSetting: {0} parent not found. Will use the default share settings.", strPathFiltered);
           return;
         }
         string strValue = Get(results, 0, "tagValue");
-
+        Log.Debug("GetFolderSetting: {0} found.", strPathFiltered);
         //deserialize...
 
         using (MemoryStream strm = new MemoryStream())
@@ -335,6 +390,14 @@ namespace Databases.Folders
       catch (Exception ex)
       {
         Log.Error(ex);
+      }
+    }
+
+    public bool DbHealth
+    {
+      get
+      {
+        return _dbHealth;
       }
     }
 

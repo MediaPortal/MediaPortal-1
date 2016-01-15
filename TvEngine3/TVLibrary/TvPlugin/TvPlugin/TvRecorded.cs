@@ -303,47 +303,15 @@ namespace TvPlugin
       base.OnPageLoad();
       InitViewSelections();
 
-      // launch DeleteInvalidRecordings async for instant start of GUI screen - refresh GUI later, if recordings have been deleted
-      bool recordingsDeleted = false;
-      Object loadFacadeLock = new Object();
+      //DeleteInvalidRecordings();
 
-      new Thread(delegate()
+      if (btnCompress != null)
       {
-        {
-          try
-          {
-            recordingsDeleted = DeleteInvalidRecordings();
-          }
-          catch (Exception ex)
-          {
-            Log.Debug("DeleteInvalidRecordings - error: " + ex.Message);
-          }
-        }
-        GUIWindowManager.SendThreadCallbackAndWait((p1, p2, data) =>
-        {
-          {
-            if (recordingsDeleted)
-            {
-              Log.Debug("TvRecorded: recordings were deleted -> now update GUI");
-              lock (loadFacadeLock)
-              {
-                UpdateGUI();
-              }
-            }
-            else
-            {
-              Log.Debug("TvRecorded: no recordings were deleted -> skip GUI update");
-            }
-          }
-          return 0;
-        }, 0, 0, null);
-      }) { Name = "DeleteInvalidRecordings", IsBackground = true, Priority = ThreadPriority.BelowNormal }.Start();
+        btnCompress.Visible = false;
+      }
 
       LoadSettings();
-      lock (loadFacadeLock)
-      {
-        LoadDirectory();
-      }
+      LoadDirectory();
 
       while (_iSelectedItem >= GetItemCount() && _iSelectedItem > 0)
       {
@@ -1219,6 +1187,22 @@ namespace TvPlugin
 
     private void OnDeleteRecording(int iItem)
     {
+      string userCode = string.Empty;
+      string _fileMenuPinCode = string.Empty;
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.MPSettings())
+      {
+        _fileMenuPinCode = Utils.DecryptPassword(xmlreader.GetValueAsString("filemenu", "pincode", string.Empty));
+      }
+
+      if (!string.IsNullOrEmpty(_fileMenuPinCode))
+      {
+        GetUserPasswordString(ref userCode);
+        if (userCode != _fileMenuPinCode)
+        {
+          return;
+        }
+      }
+      
       _iSelectedItem = GetSelectedItemNo();
       GUIListItem pItem = GetItem(iItem);
       if (pItem == null)

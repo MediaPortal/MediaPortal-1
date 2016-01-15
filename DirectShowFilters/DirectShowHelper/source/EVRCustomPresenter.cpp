@@ -21,7 +21,6 @@
 #include <d3dx9.h>
 #include <dvdmedia.h>
 #include <mfapi.h>
-#include <mferror.h>
 #include <afxtempl.h> // CMap
 #include <dwmapi.h>
 
@@ -944,7 +943,6 @@ HRESULT MPEVRCustomPresenter::GetCurrentMediaType(IMFVideoMediaType** ppMediaTyp
   Log("GetCurrentMediaType done");
   return hr;
 }
-
 
 HRESULT MPEVRCustomPresenter::TrackSample(IMFSample *pSample)
 {

@@ -317,6 +317,7 @@ namespace SetupTv
                       using (SqlCommand cmd = new SqlCommand(SqlStmt, connect))
                       {
                         Log.Write("  Exec SQL: {0}", SqlStmt);
+                        cmd.CommandTimeout = 60;    // extra long 60 second timeout needed for long-running upgrade statements
                         cmd.ExecuteNonQuery();
                       }
                     }
@@ -353,6 +354,7 @@ namespace SetupTv
                       using (MySqlCommand cmd = new MySqlCommand(SqlStmt, connect))
                       {
                         Log.Write("  Exec SQL: {0}", SqlStmt);
+                        cmd.CommandTimeout = 60;    // extra long 60 second timeout needed for long-running upgrade statements
                         cmd.ExecuteNonQuery();
                       }
                     }

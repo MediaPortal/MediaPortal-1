@@ -1111,7 +1111,7 @@ namespace MediaPortal.Music.Database
       try
       {
         string ext = Path.GetExtension(file).ToLowerInvariant();
-        if (ext == ".m3u")
+        if (ext == ".m3u" || ext == ".m3u8")
         {
           return false;
         }

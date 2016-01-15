@@ -42,10 +42,8 @@ namespace MediaPortal.DeployTool.Sections
     public override void UpdateUI()
     {
       lblLAV.Text = Localizer.GetBestTranslation("ExtensionChoice_LAV");
-      lblTitan.Text = Localizer.GetBestTranslation("ExtensionChoice_Titan");
       linkExtensions.Text = Localizer.GetBestTranslation("ExtensionChoice_OtherExtensions");
       linkLAV.Text = Localizer.GetBestTranslation("ExtensionChoice_MoreInfo");
-      linkTitan.Text = Localizer.GetBestTranslation("ExtensionChoice_MoreInfo");
       lblRecommended.Text = Localizer.GetBestTranslation("ExtensionChoice_Title");
     }
 
@@ -56,12 +54,6 @@ namespace MediaPortal.DeployTool.Sections
       if (result.state == CheckState.INSTALLED)
       {
         this.chkLAV.Checked = false;
-      }
-      package = new TitanExtensionInstall();
-      result = package.CheckStatus();
-      if (result.state == CheckState.INSTALLED)
-      {
-        this.chkTitan.Checked = false;
       }
     }
 
@@ -77,7 +69,6 @@ namespace MediaPortal.DeployTool.Sections
 
     public override void SetProperties()
     {
-      InstallationProperties.Instance.Set("ConfigureMediaPortalTitanExt", chkTitan.Checked ? "Yes" : "No");
       InstallationProperties.Instance.Set("ConfigureMediaPortalLAV", chkLAV.Checked ? "1" : "0");
     }
 

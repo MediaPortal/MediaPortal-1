@@ -230,6 +230,7 @@
     <Compile Include="..\..\..\Common-MP-TVE3\SolutionInfo.cs">
       <Link>SolutionInfo.cs</Link>
     </Compile>
+    <Compile Include="FolderSetting.cs" />
     <Compile Include="GUIVideoArtistInfo.cs" />
     <Compile Include="GUIVideoBaseWindow.cs" />
     <Compile Include="GUIVideoFiles.cs" />

@@ -4,13 +4,13 @@
 		<Frequency>506000</Frequency>
 		<BandWidth>8</BandWidth>
 		<Offset>0</Offset>
-	<DVBTTuning>
+	</DVBTTuning>
+    <DVBTTuning>
 		<Frequency>690000</Frequency>
 		<BandWidth>8</BandWidth>
 		<Offset>0</Offset>
 	</DVBTTuning>
-	</DVBTTuning>
-		<DVBTTuning>
+    <DVBTTuning>
 		<Frequency>642000</Frequency>
 		<BandWidth>8</BandWidth>
 		<Offset>0</Offset>

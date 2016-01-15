@@ -1262,7 +1262,6 @@ namespace MediaPortal.GUI.Library
           {
             if (m_iSelect == GUIListControl.ListType.CONTROL_LIST)
             {
-              _searchString = "";
               GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_CLICKED, WindowId, GetID, ParentID,
                                               (int)action.wID, 0, null);
               GUIGraphicsContext.SendMessage(msg);

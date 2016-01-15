@@ -653,6 +653,7 @@
       <height>7</height>
       <imagepath>Animations\LedVu</imagepath>
       <texture>#VUMeterL</texture>
+      <shouldCache>true</shouldCache>
       <visible>Player.playing+!Player.paused</visible>
     </control>
     <control>
@@ -674,6 +675,7 @@
       <height>7</height>
       <imagepath>Animations\LedVu</imagepath>
       <texture>#VUMeterR</texture>
+      <shouldCache>true</shouldCache>
       <visible>Player.playing+!Player.paused</visible>
     </control>
 			

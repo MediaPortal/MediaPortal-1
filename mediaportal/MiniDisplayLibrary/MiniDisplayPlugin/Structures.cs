@@ -205,11 +205,20 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
   {
     public Status CurrentPluginStatus;
     public ulong CurrentIconMask;
+    /// <summary>
+    /// Can be true or false while playing.
+    /// </summary>
+    public bool UserIsIdle;
+    /// <summary>
+    /// This idle state is set to false when playing.
+    /// </summary>
     public bool MP_Is_Idle;
+    public DateTime TimeIdleStateChanged;
     public int SystemVolumeLevel;
     public bool IsMuted;
     public bool MediaPlayer_Active;
     public bool MediaPlayer_Playing;
+    public DateTime TimePlayingStateChanged;
     public bool MediaPlayer_Paused;
     public bool Media_IsRecording;
     public bool Media_IsTV;

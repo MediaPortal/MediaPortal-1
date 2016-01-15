@@ -74,6 +74,10 @@ namespace TvEngine.PowerScheduler
       _standbyHandlers.Add(standbyHandler);
       standbyHandler = new ActiveSharesStandbyHandler();
       _standbyHandlers.Add(standbyHandler);
+      standbyHandler = new PingStandbyHandler();
+      _standbyHandlers.Add(standbyHandler);
+      standbyHandler = new ActivePortsHandler();
+      _standbyHandlers.Add(standbyHandler);
 
       // Add handlers for resuming from standby
       IWakeupHandler wakeupHandler;

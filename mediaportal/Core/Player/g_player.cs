@@ -34,7 +34,6 @@ using MediaPortal.Playlists;
 using MediaPortal.Profile;
 using MediaPortal.Subtitle;
 using MediaPortal.Util;
-using MediaPortal.Visualization;
 using Un4seen.Bass;
 using Un4seen.Bass.AddOn.Cd;
 using Action = MediaPortal.GUI.Library.Action;
@@ -160,7 +159,7 @@ namespace MediaPortal.Player
       _factory = new PlayerFactory();
     }
 
-    static g_Player() {}
+    static g_Player() { }
 
     public static IPlayer Player
     {
@@ -207,6 +206,18 @@ namespace MediaPortal.Player
     {
       get { return _currentMediaInfoFilePlaying; }
       set { _currentMediaInfoFilePlaying = value; }
+    }
+
+    public static bool ExternalController
+    {
+      get;
+      set;
+    }
+
+    public static bool ForcePauseWebStream
+    {
+      get;
+      set;
     }
 
     #endregion
@@ -703,7 +714,144 @@ namespace MediaPortal.Player
         }
       }
     }
-    
+
+    public static void UpdateMediaInfoProperties()
+    {
+      int currAudio = g_Player.CurrentAudioStream;
+
+      if (currAudio < 0)
+      {
+        return;
+      }
+
+      VideoStreamFormat videoFormat = g_Player.GetVideoFormat();
+
+      if (videoFormat.IsValid && (g_Player.IsTimeShifting || g_Player.IsTVRecording))
+      {
+        GUIPropertyManager.SetProperty("#Play.Current.VideoCodec.Texture", string.Empty);
+        GUIPropertyManager.SetProperty("#Play.Current.VideoResolution", string.Empty);
+        GUIPropertyManager.SetProperty("#Play.Current.AudioCodec.Texture", string.Empty);
+        GUIPropertyManager.SetProperty("#Play.Current.AudioChannels", string.Empty);
+        GUIPropertyManager.SetProperty("#Play.Current.AspectRatio", string.Empty);
+
+        if (g_Player.SubtitleStreams > 0 || g_Player.SupportsCC)
+        {
+          GUIPropertyManager.SetProperty("#Play.Current.HasSubtitles", "True");
+        }
+        else
+        {
+          GUIPropertyManager.SetProperty("#Play.Current.HasSubtitles", "False");
+        }
+
+        string videoResolution;
+
+        GUIPropertyManager.SetProperty("#Play.Current.VideoCodec.Texture", videoFormat.streamType.ToString());
+
+        if (videoFormat.width >= 1280 || videoFormat.height >= 720)
+        {
+          videoResolution = "HD";
+        }
+        else
+        {
+          videoResolution = "SD";
+        }
+
+        if (videoResolution == "HD")
+        {
+          if ((videoFormat.width >= 7680 || videoFormat.height >= 4320) && !videoFormat.isInterlaced)
+          {
+            if (File.Exists(GUIGraphicsContext.GetThemedSkinFile(@"\Media\Logos\4320P.png")) ||
+              File.Exists(GUIGraphicsContext.GetThemedSkinFile(@"\Media\Logos\resolution\4320P.png")))
+            {
+              videoResolution = "4320P";
+            }
+          }
+          else if ((videoFormat.width >= 3840 || videoFormat.height >= 2160) && !videoFormat.isInterlaced)
+          {
+            if (File.Exists(GUIGraphicsContext.GetThemedSkinFile(@"\Media\Logos\2160P.png")) ||
+             File.Exists(GUIGraphicsContext.GetThemedSkinFile(@"\Media\Logos\resolution\2160P.png")))
+            {
+              videoResolution = "2160P";
+            }
+          }
+          else if ((videoFormat.width >= 1920 || videoFormat.height >= 1080) && videoFormat.isInterlaced)
+          {
+            videoResolution = "1080I";
+          }
+          else if ((videoFormat.width >= 1920 || videoFormat.height >= 1080) && !videoFormat.isInterlaced)
+          {
+            videoResolution = "1080P";
+          }
+          else if ((videoFormat.width >= 1280 || videoFormat.height >= 720) && !videoFormat.isInterlaced)
+          {
+            videoResolution = "720P";
+          }
+        }
+        else
+        {
+          if (videoFormat.height >= 576)
+          {
+            if (File.Exists(GUIGraphicsContext.GetThemedSkinFile(@"\Media\Logos\576.png")) ||
+              File.Exists(GUIGraphicsContext.GetThemedSkinFile(@"\Media\Logos\resolution\576.png")))
+            {
+              videoResolution = "576";
+            }
+          }
+          else if (videoFormat.height >= 480)
+          {
+            if (File.Exists(GUIGraphicsContext.GetThemedSkinFile(@"\Media\Logos\480.png")) ||
+              File.Exists(GUIGraphicsContext.GetThemedSkinFile(@"\Media\Logos\resolution\480.png")))
+            {
+              videoResolution = "480";
+            }
+          }
+        }
+
+        GUIPropertyManager.SetProperty("#Play.Current.VideoResolution", videoResolution);
+
+        string AudioCodec = string.Empty;
+        string streamType = g_Player.AudioType(currAudio);
+
+        switch (streamType)
+        {
+          case "AC3":
+          case "AC3plus": // just for the time being use the same icon for AC3 & AC3plus
+            AudioCodec = "AC-3";
+            break;
+
+          case "Mpeg1":
+            AudioCodec = "MP1";
+            break;
+
+          case "Mpeg2":
+            AudioCodec = "MP2";
+            break;
+
+          case "AAC":
+            AudioCodec = "AAC";
+            break;
+
+          case "LATMAAC":
+            AudioCodec = "AAC";
+            break;
+        }
+        GUIPropertyManager.SetProperty("#Play.Current.AudioCodec.Texture", AudioCodec);
+
+        string aspectRatio;
+        double ar = (double)videoFormat.arX / (double)videoFormat.arY;
+
+        if (ar < 1.4)
+        {
+          aspectRatio = "fullscreen";
+        }
+        else
+        {
+          aspectRatio = "widescreen";
+        }
+        GUIPropertyManager.SetProperty("#Play.Current.AspectRatio", aspectRatio);
+      }
+    }
+
     public static bool IsBDDirectory(string path)
     {
       if (File.Exists(path + @"\BDMV\index.bdmv"))
@@ -1415,7 +1563,14 @@ namespace MediaPortal.Player
             if (_player != null)
             {
               _player.Stop();
+              
+              if (BassMusicPlayer.IsDefaultMusicPlayer && type != MediaType.Music)
+              {
+                // This would be better to be handled in a new Stop() parameter, but it would break the interface compatibility
+                BassMusicPlayer.Player.FreeBass();
+              }
             }
+
             CachePlayer();
             _player = null;
           }
@@ -1504,17 +1659,6 @@ namespace MediaPortal.Player
             {
               bool bInternal = xmlreader.GetValueAsBool("movieplayer", "internal", true);
               bool bInternalDVD = xmlreader.GetValueAsBool("dvdplayer", "internal", true);
-
-              // check if we are running from Images / Discs
-              string pathRoot = Path.GetPathRoot(strFile);
-              if (Util.Utils.getDriveType(pathRoot) == 5 && !bInternalDVD)
-              {
-                bInternalDVD = false;
-              }
-              else
-              {
-                bInternalDVD = true;
-              }
 
               // External player extension filter
               _externalPlayerExtensions = xmlreader.GetValueAsString("movieplayer", "extensions", "");
@@ -2655,14 +2799,14 @@ namespace MediaPortal.Player
       }
     }
 
-    public static string VideoLanguage(int iStream)
+    public static string VideoName(int iStream)
     {
       if (_player == null)
       {
         return Strings.Unknown;
       }
 
-      string stream = _player.VideoLanguage(iStream);
+      string stream = _player.VideoName(iStream);
       return Util.Utils.TranslateLanguageString(stream);
     }
 
@@ -2962,7 +3106,10 @@ namespace MediaPortal.Player
       }
       Visible = (FullScreen || GUIGraphicsContext.Overlay ||
                  windowId == (int)GUIWindow.Window.WINDOW_SCHEDULER || inTV);
-      SetVideoWindow();
+      GUIWindow._mainThreadContext.Post(delegate
+      {
+        SetVideoWindow();
+      }, null);
     }
 
     /// <summary>
@@ -3551,23 +3698,15 @@ namespace MediaPortal.Player
           return true;
         }
 
-        // When we don't have any Visualisation, switch to Now Playing, instead of showing a black screen
-        if (BassMusicPlayer.Player.IVizManager.CurrentVisualizationType == VisualizationInfo.PluginType.None)
+        if (GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_MUSIC_PLAYING_NOW)
         {
-          if (GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_MUSIC_PLAYING_NOW)
-          {
-            GUIWindowManager.ShowPreviousWindow();
-            return true;
-          }
-
-          Log.Info("g_Player: ShowFullScreenWindow: No Visualisation defined. Switching to Now Playing");
-          GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_MUSIC_PLAYING_NOW);
-          BassMusicPlayer.Player.VisualizationWindow.Size = new Size(1, 1); // Hide the Vis Window
+          GUIWindowManager.ShowPreviousWindow();
           return true;
         }
 
-        Log.Info("g_Player: ShowFullScreenWindow switching to fullscreen music");
-        GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_FULLSCREEN_MUSIC);
+        Log.Info("g_Player: ShowFullScreenWindow: No Visualisation defined. Switching to Now Playing");
+        GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_MUSIC_PLAYING_NOW);
+        return true;
       }
       else
       {

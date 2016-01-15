@@ -1,0 +1,362 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <id>8888</id>
+  <defaultcontrol>2</defaultcontrol>
+  <allowoverlay>no</allowoverlay>
+  <disabletopbar>no</disabletopbar>
+  <define>#header.label:Games</define>
+  <define>#header.hover:hover_tetris.png</define>
+  <define>#itemcount:</define>
+  <controls>
+    <control>
+      <type>image</type>
+      <description>background</description>
+      <id>1</id>
+      <width>1920</width>
+      <height>1080</height>
+      <texture>gamebg.jpg</texture>
+    </control>
+    <!-- ******************************************* Here are the buttons ************************ -->
+    <control>
+      <type>label</type>
+      <id>1</id>
+      <posX>45</posX>
+      <posY>15</posY>
+      <label>#header.label</label>
+      <font>Label</font>
+      <align>left</align>
+      <textcolor>ff6FAFE1</textcolor>
+    </control>
+    <control>
+      <description>Button background</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>750</posX>
+      <posY>140</posY>
+      <height>870</height>
+      <width>520</width>
+      <texture>black.png</texture>
+      <colordiffuse>50ffffff</colordiffuse>
+      <animation effect="slide" time="400" start="-300,0">WindowOpen</animation>
+      <animation effect="slide" time="400" end="0,-300">WindowClose</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+    </control>
+    <control>
+      <type>group</type>
+      <description>group element</description>
+      <layout>StackLayout</layout>
+      <posX>820</posX>
+      <posY>170</posY>
+      <animation effect="slide" time="400" start="-300,0">WindowOpen</animation>
+      <animation effect="slide" time="400" end="0,-300">WindowClose</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <control Style="GamesMenuButton">
+        <description>Tetris push button</description>
+        <type>button</type>
+        <id>2</id>
+        <hyperlink>7776</hyperlink>
+        <label>19001</label>
+        <onup>17</onup>
+      </control>
+      <control Style="GamesMenuButton">
+        <description>Sudoku push button</description>
+        <type>button</type>
+        <id>3</id>
+        <hyperlink>7777</hyperlink>
+        <label>19101</label>
+      </control>
+      <control Style="GamesMenuButton">
+        <description>Mastermind push button</description>
+        <type>button</type>
+        <id>4</id>
+        <hyperlink>567834</hyperlink>
+        <label>Mastermind</label>
+      </control>
+      <control Style="GamesMenuButton">
+        <description>Chess push button</description>
+        <type>button</type>
+        <id>5</id>
+        <hyperlink>36453969</hyperlink>
+        <label>Chess</label>
+      </control>
+      <control Style="GamesMenuButton">
+        <description>Pipes push button</description>
+        <type>button</type>
+        <id>6</id>
+        <hyperlink>426144</hyperlink>
+        <label>Pipes</label>
+      </control>
+      <control Style="GamesMenuButton">
+        <description>Frustration push button</description>
+        <type>button</type>
+        <id>7</id>
+        <hyperlink>32647501</hyperlink>
+        <label>Frustration</label>
+      </control>
+      <control Style="GamesMenuButton">
+        <description>Yahtzee push button</description>
+        <type>button</type>
+        <id>8</id>
+        <hyperlink>22031923</hyperlink>
+        <label>Yahtzee</label>
+      </control>
+      <control Style="GamesMenuButton">
+        <description>clickmania push button</description>
+        <type>button</type>
+        <id>9</id>
+        <hyperlink>5555</hyperlink>
+        <label>ClickMania</label>
+      </control>
+      <control Style="GamesMenuButton">
+        <description>connect 4 push button</description>
+        <type>button</type>
+        <id>10</id>
+        <hyperlink>22031969</hyperlink>
+        <label>Connect 4</label>
+      </control>
+      <control Style="GamesMenuButton">
+        <description>hexxagon push button</description>
+        <type>button</type>
+        <id>11</id>
+        <hyperlink>1234711</hyperlink>
+        <label>Hexxagon</label>
+      </control>
+      <control Style="GamesMenuButton">
+        <description>minesweeper push button</description>
+        <type>button</type>
+        <id>12</id>
+        <!--onclick>#(skin.setfocus(32327500,2)</onclick-->
+        <hyperlink>32327501</hyperlink>
+        <label>Minesweeper</label>
+      </control>
+      <control Style="GamesMenuButton">
+        <description>Emulators push button</description>
+        <type>button</type>
+        <id>13</id>
+        <hyperlink>7942</hyperlink>
+        <label>Emulators</label>
+        <ondown>14</ondown>
+      </control>
+      <control Style="GamesMenuButton">
+        <description>Flash Games push button</description>
+        <type>button</type>
+        <id>14</id>
+        <hyperlink>8796</hyperlink>
+        <label>Flash Games</label>
+        <ondown>2</ondown>
+      </control>
+    </control>
+    <control>
+      <description>hovers</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>84</posX>
+      <posY>281</posY>
+      <width>548</width>
+      <height>379</height>
+      <texture mask="picturecase_mask.png">hover_tetris.png</texture>
+      <animation effect="slide" time="400" start="-300,0">WindowOpen</animation>
+      <animation effect="slide" time="400" end="0,-300">WindowClose</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <visible>control.hasfocus(2)</visible>
+    </control>
+    <control>
+      <description>hovers</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>84</posX>
+      <posY>281</posY>
+      <width>548</width>
+      <height>379</height>
+      <texture mask="picturecase_mask.png">hover_mynumberplace.png</texture>
+      <animation effect="slide" time="400" start="-300,0">WindowOpen</animation>
+      <animation effect="slide" time="400" end="0,-300">WindowClose</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <visible>control.hasfocus(3)</visible>
+    </control>
+    <control>
+      <description>hovers</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>84</posX>
+      <posY>281</posY>
+      <width>548</width>
+      <height>379</height>
+      <texture mask="picturecase_mask.png">hover_my mastermind.png</texture>
+      <animation effect="slide" time="400" start="-300,0">WindowOpen</animation>
+      <animation effect="slide" time="400" end="0,-300">WindowClose</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <visible>control.hasfocus(4)</visible>
+    </control>
+    <control>
+      <description>hovers</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>84</posX>
+      <posY>281</posY>
+      <width>548</width>
+      <height>379</height>
+      <texture mask="picturecase_mask.png">hover_my_chess.png</texture>
+      <animation effect="slide" time="400" start="-300,0">WindowOpen</animation>
+      <animation effect="slide" time="400" end="0,-300">WindowClose</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <visible>control.hasfocus(5)</visible>
+    </control>
+    <control>
+      <description>hovers</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>84</posX>
+      <posY>281</posY>
+      <width>548</width>
+      <height>379</height>
+      <texture mask="picturecase_mask.png">hover_pipes.png</texture>
+      <animation effect="slide" time="400" start="-300,0">WindowOpen</animation>
+      <animation effect="slide" time="400" end="0,-300">WindowClose</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <visible>control.hasfocus(6)</visible>
+    </control>
+    <control>
+      <description>hovers</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>84</posX>
+      <posY>281</posY>
+      <width>548</width>
+      <height>379</height>
+      <texture mask="picturecase_mask.png">hover_my frustration.png</texture>
+      <animation effect="slide" time="400" start="-300,0">WindowOpen</animation>
+      <animation effect="slide" time="400" end="0,-300">WindowClose</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <visible>control.hasfocus(7)</visible>
+    </control>
+    <control>
+      <description>hovers</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>84</posX>
+      <posY>281</posY>
+      <width>548</width>
+      <height>379</height>
+      <texture mask="picturecase_mask.png">hover_my yahtzee.png</texture>
+      <animation effect="slide" time="400" start="-300,0">WindowOpen</animation>
+      <animation effect="slide" time="400" end="0,-300">WindowClose</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <visible>control.hasfocus(8)</visible>
+    </control>
+    <control>
+      <description>hovers</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>84</posX>
+      <posY>281</posY>
+      <width>548</width>
+      <height>379</height>
+      <texture mask="picturecase_mask.png">hover_clickmania.png</texture>
+      <animation effect="slide" time="400" start="-300,0">WindowOpen</animation>
+      <animation effect="slide" time="400" end="0,-300">WindowClose</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <visible>control.hasfocus(9)</visible>
+    </control>
+    <control>
+      <description>hovers</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>84</posX>
+      <posY>281</posY>
+      <width>548</width>
+      <height>379</height>
+      <texture mask="picturecase_mask.png">hover_my connect4.png</texture>
+      <animation effect="slide" time="400" start="-300,0">WindowOpen</animation>
+      <animation effect="slide" time="400" end="0,-300">WindowClose</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <visible>control.hasfocus(10)</visible>
+    </control>
+    <control>
+      <description>hovers</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>84</posX>
+      <posY>281</posY>
+      <width>548</width>
+      <height>379</height>
+      <texture mask="picturecase_mask.png">hover_my hexxagon.png</texture>
+      <animation effect="slide" time="400" start="-300,0">WindowOpen</animation>
+      <animation effect="slide" time="400" end="0,-300">WindowClose</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <visible>control.hasfocus(11)</visible>
+    </control>
+    <control>
+      <description>hovers</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>84</posX>
+      <posY>281</posY>
+      <width>548</width>
+      <height>379</height>
+      <texture mask="picturecase_mask.png">hover_my minesweeper.png</texture>
+      <animation effect="slide" time="400" start="-300,0">WindowOpen</animation>
+      <animation effect="slide" time="400" end="0,-300">WindowClose</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <visible>control.hasfocus(12)</visible>
+    </control>
+    <control>
+      <description>hovers</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>84</posX>
+      <posY>281</posY>
+      <width>548</width>
+      <height>379</height>
+      <texture mask="picturecase_mask.png">hover_emulators 2.png</texture>
+      <animation effect="slide" time="400" start="-300,0">WindowOpen</animation>
+      <animation effect="slide" time="400" end="0,-300">WindowClose</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <visible>control.hasfocus(13)</visible>
+    </control>
+    <control>
+      <description>hovers</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>84</posX>
+      <posY>281</posY>
+      <width>548</width>
+      <height>379</height>
+      <texture mask="picturecase_mask.png">hover_Flash Games.png</texture>
+      <animation effect="slide" time="400" start="-300,0">WindowOpen</animation>
+      <animation effect="slide" time="400" end="0,-300">WindowClose</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <visible>control.hasfocus(14)</visible>
+    </control>
+    <control>
+      <description>hover frame</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>84</posX>
+      <posY>281</posY>
+      <width>592</width>
+      <height>417</height>
+      <texture>picturecase_shadow.png</texture>
+      <animation effect="slide" time="400" start="-300,0">WindowOpen</animation>
+      <animation effect="slide" time="400" end="0,-300">WindowClose</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+    </control>
+    <import>common.time.xml</import>
+  </controls>
+</window>

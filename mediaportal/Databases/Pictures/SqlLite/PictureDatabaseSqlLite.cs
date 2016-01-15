@@ -42,6 +42,7 @@ namespace MediaPortal.Picture.Database
     private SQLiteClient m_db = null;
     private bool _useExif = true;
     private bool _usePicasa = false;
+    private bool _dbHealth = false;
 
     public PictureDatabaseSqlLite()
     {
@@ -76,6 +77,8 @@ namespace MediaPortal.Picture.Database
         m_db.BusyRetries = 10;
         // Wait 100 ms between each try (default 10)
         m_db.BusyRetryDelay = 100;
+
+        _dbHealth = DatabaseUtility.IntegrityCheck(m_db);
 
         DatabaseUtility.SetPragmas(m_db);
         CreateTables();
@@ -343,8 +346,8 @@ namespace MediaPortal.Picture.Database
 
         if (_useExif)
         {
-          iRotation = Util.Picture.GetRotateByExif(strPic);
-          Log.Debug("PictureDatabaseSqlLite: GetRotateByExif = {0} for {1}", iRotation, strPic);
+          iRotation = Util.Picture.GetRotateByExif(strPicture);
+          Log.Debug("PictureDatabaseSqlLite: GetRotateByExif = {0} for {1}", iRotation, strPicture);
         }
 
         AddPicture(strPicture, iRotation);
@@ -559,6 +562,14 @@ namespace MediaPortal.Picture.Database
           Open();
         }
         return Count;
+      }
+    }
+
+    public bool DbHealth
+    {
+      get
+      {
+        return _dbHealth;
       }
     }
 

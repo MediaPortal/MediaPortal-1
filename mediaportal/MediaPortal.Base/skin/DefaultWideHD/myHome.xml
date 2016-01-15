@@ -1,0 +1,467 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <id>0</id>
+  <defaultcontrol>50</defaultcontrol>
+  <allowoverlay>no</allowoverlay>
+  <disabletopbar>yes</disabletopbar>
+  <define>#selecteditem:</define>
+  <define>#selectedindex:</define>
+  <define>#indexcount:</define>
+  <controls>
+    <control>
+      <description>background image</description>
+      <type>image</type>
+      <id>1</id>
+      <width>1920</width>
+      <height>1080</height>
+      <texture>BH Home2.jpg</texture>
+    </control>
+    <import>common.window.xml</import>
+    <control>
+      <description>General Overlay</description>
+      <id>0</id>
+      <type>image</type>
+      <posX>0</posX>
+      <posY>45</posY>
+      <width>1920</width>
+      <height>1080</height>
+      <texture>general_overlay.png</texture>
+    </control>
+    <control>
+      <description>background selecteditem</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>-20</posX>
+      <posY>97</posY>
+      <width>2025</width>
+      <height>90</height>
+      <texture>general_overlay_selecteditem.png</texture>
+      <colordiffuse>bbffffff</colordiffuse>
+    </control>
+    <control>
+      <description>background image</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>800</posX>
+      <posY>260</posY>
+      <width>944</width>
+      <height>648</height>
+      <texture>MPLogo.png</texture>
+    </control>
+    <control>
+      <description>Menu</description>
+      <type>menu</type>
+      <animation effect="fade" time="300">WindowOpen</animation>
+      <animation effect="fade" time="300">WindowClose</animation>
+      <id>50</id>
+      <posX>180</posX>
+      <posY>260</posY>
+      <width>450</width>
+      <height>500</height>
+      <textAlign>center</textAlign>
+      <textcolor>ffffffff</textcolor>
+      <textColorNoFocus>aaffffff</textColorNoFocus>
+      <dimColor>ffffffff</dimColor>
+      <buttonTextXOff>0</buttonTextXOff>
+      <buttonTextYOff>0</buttonTextYOff>
+      <buttonOffset>0</buttonOffset>
+      <buttonFont>Menutitle</buttonFont>
+      <buttonHeight>65</buttonHeight>
+      <buttonWidth>375</buttonWidth>
+      <spaceBetweenButtons>0</spaceBetweenButtons>
+      <numberOfButtons>10</numberOfButtons>
+      <textureButtonFocus>button_focus.png</textureButtonFocus>
+      <textureButtonNoFocus />
+      <hoverX>800</hoverX>
+      <hoverY>260</hoverY>
+      <hoverWidth>944</hoverWidth>
+      <hoverHeight>648</hoverHeight>
+      <hoverKeepAspectratio>yes</hoverKeepAspectratio>
+      <scrollTime>150</scrollTime>
+      <scrollTimeMin>150</scrollTimeMin>
+      <mouseScrollTime>900</mouseScrollTime>
+      <mouseScrollTimeMin>450</mouseScrollTimeMin>
+      <textureBackground>-</textureBackground>
+      <onright>50</onright>
+      <onleft>9997</onleft>
+      <onup>50</onup>
+      <ondown>50</ondown>
+      <horizontal>no</horizontal>
+      <animation effect="fade" time="150" delay="100">windowopen</animation>
+      <animation effect="fade" time="150" delay="100">windowclose</animation>
+    </control>
+    
+    <control>
+      <description>EXIT</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>15</posX>
+      <posY>425</posY>
+      <height>50</height>
+      <width>50</width>
+      <texture>exit2.png</texture>
+      <colordiffuse>90ffffff</colordiffuse>
+      <visible>!control.isvisible(9997)+!control.isvisible(9998)+!control.isvisible(9999)</visible>
+      <animation effect="fade" time="150" delay="100">windowopen</animation>
+      <animation effect="fade" time="150" delay="100">windowclose</animation>
+    </control>
+    <!-- ******************************************************************************************* -->
+    <!-- ************************************** EXIT BUTTONS *************************************** -->
+    <!-- ******************************************************************************************* -->
+    <control>
+      <type>group</type>
+      <description>group element</description>
+      <layout>StackLayout(2, Vertical, true)</layout>
+      <animation effect="fade" time="150" delay="100">windowopen</animation>
+      <animation effect="fade" time="150" delay="100">windowclose</animation>
+      <posX>14</posX>
+      <posY>400</posY>
+      <visible>!control.hasfocus(50)+!control.hasfocus(1111)</visible>
+      <control>
+        <description>hidden button for EXIT to BasicHome</description>
+        <type>button</type>
+        <id>9997</id>
+        <width>56</width>
+        <height>56</height>
+        <textureFocus>tb_back.png</textureFocus>
+        <textureNoFocus>tb_backNF.png</textureNoFocus>
+        <label>-</label>
+        <action>10</action>
+        <onright>50</onright>
+        <onleft>9997</onleft>
+        <onup>9998</onup>
+        <ondown>9999</ondown>
+        <animation effect="fade" time="150" delay="100">windowopen</animation>
+        <animation effect="fade" time="150" delay="100">windowclose</animation>
+        <animation effect="zoom" time="50" start="100,100" end="130,120">focus</animation>
+      </control>
+      <control>
+        <description>hidden button for EXIT</description>
+        <type>button</type>
+        <id>9999</id>
+        <width>56</width>
+        <height>56</height>
+        <textureFocus>tb_exit.png</textureFocus>
+        <textureNoFocus>tb_exitNF.png</textureNoFocus>
+        <label>-</label>
+        <action>97</action>
+        <onright>50</onright>
+        <onleft>9999</onleft>
+        <onup>9997</onup>
+        <ondown>9998</ondown>
+        <animation effect="fade" time="150" delay="100">windowopen</animation>
+        <animation effect="fade" time="150" delay="100">windowclose</animation>
+        <animation effect="zoom" time="50" start="100,100" end="130,120">focus</animation>
+      </control>
+      <control>
+        <description>hidden button for SHUTDOWN</description>
+        <type>button</type>
+        <id>9998</id>
+        <width>56</width>
+        <height>56</height>
+        <textureFocus>tb_shutdown.png</textureFocus>
+        <textureNoFocus>tb_shutdownNF.png</textureNoFocus>
+        <label>-</label>
+        <action>99</action>
+        <onright>50</onright>
+        <onleft>9998</onleft>
+        <onup>9999</onup>
+        <ondown>9997</ondown>
+        <animation effect="fade" time="150" delay="100">windowopen</animation>
+        <animation effect="fade" time="150" delay="100">windowclose</animation>
+        <animation effect="zoom" time="50" start="100,100" end="130,120">focus</animation>
+      </control>
+    </control>
+    
+    
+    <control>
+      <description>Date Time</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>1866</posX>
+      <posY>15</posY>
+      <label>#date | #time</label>
+      <align>right</align>
+      <font>Label</font>
+      <textcolor>ff6FAFE1</textcolor>
+      <visible>!player.hasaudio+!player.hasvideo</visible>
+    </control>
+    <control>
+      <description>background image</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>800</posX>
+      <posY>260</posY>
+      <width>944</width>
+      <height>648</height>
+      <texture>hover_overlay.png</texture>
+    </control>
+  
+  <!--     *******************************************************************************************  -->
+    <!--     *******************************    NOW PLAYING AUDIO   ************************************  -->
+    <!--     *******************************************************************************************  -->
+    <control>
+      <type>group</type>
+      <description>group element</description>
+      <visible>Player.HasAudio+!Player.HasVideo</visible>
+      <control>
+        <description>music logo when no thumb</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>907</posX>
+        <posY>82</posY>
+        <width>105</width>
+        <height>105</height>
+        <centered>no</centered>
+        <keepaspectratio>no</keepaspectratio>
+        <visible>Player.HasAudio+!Player.HasVideo+!control.hasthumb(12345)+!control.hasthumb(777)</visible>
+        <texture mask="cdthumbmask.png">defaultArtistBig.png</texture>
+      </control>
+      <control>
+        <description>music logo</description>
+        <type>image</type>
+        <id>12345</id>
+        <posX>907</posX>
+        <posY>82</posY>
+        <width>105</width>
+        <height>105</height>
+        <centered>no</centered>
+        <keepaspectratio>no</keepaspectratio>
+        <texture mask="cdthumbmask.png">#Play.Current.Thumb</texture>
+      </control>
+      <control>
+        <description>music logo</description>
+        <type>image</type>
+        <id>777</id>
+        <posX>907</posX>
+        <posY>82</posY>
+        <width>105</width>
+        <height>105</height>
+        <centered>no</centered>
+        <keepaspectratio>no</keepaspectratio>
+        <texture mask="cdthumbmask.png">#Play.Current.ArtistThumb</texture>
+        <visible>Player.HasAudio+!Player.HasVideo+!control.hasthumb(12345)</visible>
+      </control>
+      <control>
+        <description>CD Cover</description>
+        <type>image</type>
+        <id>790</id>
+        <posX>907</posX>
+        <posY>82</posY>
+        <width>105</width>
+        <height>105</height>
+        <centered>no</centered>
+        <texture>cdthumbframe.png</texture>
+      </control>
+      <control>
+        <type>fadelabel</type>
+        <id>0</id>
+        <posX>877</posX>
+        <posY>106</posY>
+        <width>840</width>
+        <label>#(L(171)) #Play.Current.Artist</label>
+        <align>right</align>
+        <font>font11</font>
+        <textcolor>ivory</textcolor>
+      </control>
+      <control>
+        <type>fadelabel</type>
+        <id>0</id>
+        <posX>877</posX>
+        <posY>142</posY>
+        <label>#(L(179)): #Play.Current.Title</label>
+        <width>840</width>
+        <align>right</align>
+        <font>font11</font>
+        <textcolor>ivory</textcolor>
+      </control>
+      <control>
+        <type>fadelabel</type>
+        <id>0</id>
+        <posX>1042</posX>
+        <posY>106</posY>
+        <width>840</width>
+        <label>#(L(170)) #Play.Current.Album</label>
+        <align>left</align>
+        <textcolor>ivory</textcolor>
+        <font>font11</font>
+      </control>
+      <control>
+        <type>fadelabel</type>
+        <id>0</id>
+        <posX>1042</posX>
+        <posY>142</posY>
+        <width>840</width>
+        <label>#(L(435)) #Play.Current.Track  |  #(L(436)) #Play.Current.Year  |  #currentplaytime &gt; #currentremaining</label>
+        <align>left</align>
+        <textcolor>ivory</textcolor>
+        <font>font11</font>
+        <visible>Player.HasAudio+!Player.HasVideo+string.equals(#Play.Current.Lastfm.CurrentStream,)</visible>
+      </control>
+      <control>
+        <type>fadelabel</type>
+        <id>0</id>
+        <posX>1042</posX>
+        <posY>142</posY>
+        <width>840</width>
+        <label>#Play.Current.Lastfm.CurrentStream  |  #currentplaytime &gt; #currentremaining</label>
+        <align>left</align>
+        <textcolor>ivory</textcolor>
+        <font>font11</font>
+        <visible>Player.HasAudio+!Player.HasVideo+!string.equals(#Play.Current.Lastfm.CurrentStream,)</visible>
+      </control>
+    </control>
+    <!--     *******************************************************************************************  -->
+    <!--     *******************************    NOW PLAYING VIDEO  *************************************  -->
+    <!--     *******************************************************************************************  -->
+    <control>
+      <type>group</type>
+      <description>group element</description>
+      <visible>Player.HasVideo</visible>
+      <control>
+        <description>NowPlaying Background TV/Video</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>871</posX>
+        <posY>83</posY>
+        <width>175</width>
+        <height>105</height>
+        <texture>LCD.png</texture>
+        <colordiffuse>ffffffff</colordiffuse>
+      </control>
+      <control>
+        <description>video preview window</description>
+        <type>videowindow</type>
+        <id>0</id>
+        <posX>879</posX>
+        <posY>91</posY>
+        <width>160</width>
+        <height>90</height>
+        <action>18</action>
+        <textureFocus>tv_green_border.png</textureFocus>
+      </control>
+      <control>
+        <description>scrolling info label Video</description>
+        <type>fadelabel</type>
+        <id>0</id>
+        <posX>847</posX>
+        <posY>106</posY>
+        <width>720</width>
+        <align>right</align>
+        <font>font11</font>
+        <textcolor>ivory</textcolor>
+        <label>#Play.Current.Title</label>
+        <wrapString>:.:</wrapString>
+      </control>
+      <control>
+        <description>scrolling info label Video</description>
+        <type>fadelabel</type>
+        <id>0</id>
+        <posX>847</posX>
+        <posY>142</posY>
+        <width>720</width>
+        <align>right</align>
+        <font>font11</font>
+        <textcolor>ivory</textcolor>
+        <label>#Play.Current.Genre</label>
+        <wrapString>:.:</wrapString>
+      </control>
+      <control>
+        <description>scrolling info label Video</description>
+        <type>fadelabel</type>
+        <id>0</id>
+        <posX>1072</posX>
+        <posY>106</posY>
+        <width>825</width>
+        <align>left</align>
+        <font>font11</font>
+        <textcolor>ivory</textcolor>
+        <label>#Play.Current.Year</label>
+        <wrapString>:.:</wrapString>
+      </control>
+      <control>
+        <description>scrolling info label Video</description>
+        <type>fadelabel</type>
+        <id>0</id>
+        <posX>1072</posX>
+        <posY>142</posY>
+        <width>825</width>
+        <align>left</align>
+        <font>font11</font>
+        <textcolor>ivory</textcolor>
+        <label>#Play.Current.Director</label>
+        <wrapString>:.:</wrapString>
+      </control>
+    </control>
+    <!--     *******************************************************************************************  -->
+    <!--     *************************   RSS-FEED ON BASIC HOME   **************************************  -->
+    <!--     *******************************************************************************************  -->
+    <control>
+      <description>RSS Feed Background</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>0</posX>
+      <posY>1023</posY>
+      <width>1920</width>
+      <height>49</height>
+      <texture>menubar_text.png</texture>
+      <visible>[plugin.isenabled(InfoService)|plugin.isenabled(World News)]+[string.equals(#infoservice.feed.enabled, true)|skin.hassetting(#skin.worldnewsticker)]</visible>
+    </control>
+    <control>
+      <description>Feed items</description>
+      <type>fadelabel</type>
+      <id>1</id>
+      <posX>130</posX>
+      <posY>1026</posY>
+      <width>1780</width>
+      <align>left</align>
+      <font>font12</font>
+      <textcolor>ivory</textcolor>
+      <label>#infoservice.feed.titles</label>
+      <wrapString> :-: </wrapString>
+      <shadowAngle>0</shadowAngle>
+      <shadowDistance>0</shadowDistance>
+      <shadowColor />
+      <visible>plugin.isenabled(InfoService)+string.equals(#infoservice.feed.enabled, true)+!skin.hassetting(#skin.worldnewsticker)</visible>
+    </control>
+    <control>
+      <description>Feed items</description>
+      <type>fadelabel</type>
+      <id>1</id>
+      <posX>130</posX>
+      <posY>1026</posY>
+      <width>1780</width>
+      <align>left</align>
+      <font>font12</font>
+      <textcolor>ivory</textcolor>
+      <label>#WorldNews.NewsTicker</label>
+      <wrapString> :-: </wrapString>
+      <shadowAngle>0</shadowAngle>
+      <shadowDistance>0</shadowDistance>
+      <shadowColor />
+      <visible>plugin.isenabled(World News)+skin.hassetting(#skin.worldnewsticker)</visible>
+    </control>
+    <control>
+      <description>RSS Image</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>10</posX>
+      <posY>1027</posY>
+      <width>100</width>
+      <height>41</height>
+      <texture>#infoservice.feed.img</texture>
+      <visible>plugin.isenabled(InfoService)+string.equals(#infoservice.feed.enabled, true)+!skin.hassetting(#skin.worldnewsticker)</visible>
+    </control>
+    <control>
+      <description>RSS Image</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>10</posX>
+      <posY>1027</posY>
+      <width>100</width>
+      <height>41</height>
+      <texture>#WorldNews.NewsImage</texture>
+      <visible>plugin.isenabled(World News)+skin.hassetting(#skin.worldnewsticker)</visible>
+    </control>
+  </controls>
+</window>

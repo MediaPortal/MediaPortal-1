@@ -224,6 +224,7 @@
     <Compile Include="..\..\..\Common-MP-TVE3\SolutionInfo.cs">
       <Link>SolutionInfo.cs</Link>
     </Compile>
+    <Compile Include="FolderSetting.cs" />
     <Compile Include="GUIPictures.cs" />
     <Compile Include="GUISlidePicture.cs" />
     <Compile Include="GUISlideShow.cs" />

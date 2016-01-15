@@ -82,7 +82,7 @@ namespace MediaPortal.Configuration.Sections
       {
         checkBoxEnableScreensaver.Checked = xmlreader.GetValueAsBool("general", "IdleTimer", true);
         numericUpDownDelay.Value = xmlreader.GetValueAsInt("general", "IdleTimeValue", 300);
-        radioBtnBlankScreen.Checked = xmlreader.GetValueAsBool("general", "IdleBlanking", false);
+        radioBtnBlankScreen.Checked = xmlreader.GetValueAsBool("general", "IdleBlanking", true);
         radioButtonLoadPlugin.Checked = xmlreader.GetValueAsBool("general", "IdlePlugin", false);
         windowid = xmlreader.GetValueAsInt("general", "IdlePluginWindow", 0);
       }    

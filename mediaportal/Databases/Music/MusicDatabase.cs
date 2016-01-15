@@ -60,6 +60,7 @@ namespace MediaPortal.Music.Database
     private static DateTime _lastImport;
     private static DateTime _currentDate = DateTime.Now;
     private static int _dateAddedValue;
+    private bool _dbHealth = false;
 
     #endregion
 
@@ -106,9 +107,34 @@ namespace MediaPortal.Music.Database
       _dateAddedValue = 0;
 
       LoadDBSettings();
+
+      // Create Temp Folder, which we can use for all purposes. e.g. Storing temporary folder thumbs
+      var tmpFolder = Path.Combine(Path.GetTempPath(), "TeamMediaPortal");
+      if (!Directory.Exists(tmpFolder))
+      {
+        Directory.CreateDirectory(tmpFolder);
+      }
     }
 
-    ~MusicDatabase() { }
+    ~MusicDatabase()
+    {
+      // Cleanup Temp folder
+      var tmpFolder = Path.Combine(Path.GetTempPath(), "TeamMediaPortal");
+      if (Directory.Exists(tmpFolder))
+      {
+        foreach (var file in Directory.GetFiles(tmpFolder))
+        {
+          try
+          {
+            File.Delete(file);
+          }
+          catch (IOException)
+          {
+            // Don't need to report anything, if we couldn't delete a temp file
+          }
+        }
+      }
+    }
 
     public static void ReOpen()
     {
@@ -593,6 +619,14 @@ namespace MediaPortal.Music.Database
     }
 
     #endregion
+
+    public bool DbHealth
+    {
+      get
+      {
+        return _dbHealth;
+      }
+    }
 
     #region Transactions
 

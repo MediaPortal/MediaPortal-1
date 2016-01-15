@@ -21,6 +21,7 @@
 using System;
 using MediaPortal.GUI.Library;
 using MediaPortal.GUI.View;
+using MediaPortal.Dialogs;
 using Action = MediaPortal.GUI.Library.Action;
 
 namespace Common.GUIPlugins
@@ -332,7 +333,11 @@ namespace Common.GUIPlugins
       } while (shouldContinue);
 
       CurrentLayout = (GUIFacadeControl.Layout)iSelectedLayout;
+
       SwitchLayout();
+
+      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LAYOUT_CHANGED, 0, 0, 0, 0, 0, 0);
+      GUIWindowManager.SendMessage(msg);
     }
 
     protected virtual void SetView(int selectedViewId) {}
@@ -356,6 +361,22 @@ namespace Common.GUIPlugins
     {
       get { return m_bSortAscending; }
       set { m_bSortAscending = value; }
+    }
+
+    public bool OnResetFolderSettings()
+    {
+      GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_YES_NO);
+      if (null == dlgYesNo)
+      {
+        return false;
+      }
+
+      dlgYesNo.SetHeading(2149);
+      dlgYesNo.SetLine(1, 2148);
+
+      dlgYesNo.DoModal(GUIWindowManager.ActiveWindow);
+
+      return dlgYesNo.IsConfirmed;
     }
   }
 }

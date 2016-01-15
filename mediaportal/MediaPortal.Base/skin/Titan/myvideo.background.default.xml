@@ -37,7 +37,7 @@
 		<posY>252</posY>
 		<width>1903</width>
 		<height>790</height>
-		<texture>panel_thumbs.png</texture>
+		<texture>panel_thumbs2.png</texture>
 		<visible>[facadeview.smallicons | facadeview.largeicons] + Control.IsVisible(50)</visible>
 		<animation effect="fade" time="250">WindowOpen</animation>
 		<animation effect="fade" time="250">WindowClose</animation>

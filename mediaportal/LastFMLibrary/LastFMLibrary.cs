@@ -26,6 +26,7 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Xml.Linq;
+using MediaPortal.Util;
 
 namespace MediaPortal.LastFM
 {
@@ -215,59 +216,6 @@ namespace MediaPortal.LastFM
 
     #endregion
 
-    #region radio methods
-
-    /// <summary>
-    /// Tune to a radio station.   After runing call GetRadioPlaylist to get the track listing
-    /// </summary>
-    /// <param name="stationURL"></param>
-    public static bool TuneRadio(string stationURL)
-    {
-      var parms = new Dictionary<string, string>();
-      const string methodName = "radio.tune";
-      parms.Add("station", stationURL);
-      parms.Add("sk", _sessionKey);
-
-      var buildLastFMString = LastFMHelper.LastFMHelper.BuildLastFMString(parms, methodName, true);
-      GetXml(buildLastFMString, "POST", false);
-
-      return true;
-    }
-
-    /// <summary>
-    /// Gets the playlist of radio station (will only be a small number of tracks)
-    /// </summary>
-    /// <returns>A list of tracks</returns>
-    public static List<LastFMStreamingTrack> GetRadioPlaylist()
-    {
-      var parms = new Dictionary<string, string>();
-      const string methodName = "radio.getPlaylist";
-      parms.Add("bitrate", "128");
-      parms.Add("sk", _sessionKey);
-
-      var buildLastFMString = LastFMHelper.LastFMHelper.BuildLastFMString(parms, methodName, true);
-      var xDoc = GetXml(buildLastFMString, "GET", false);
-
-      if (xDoc != null)
-      {
-        XNamespace ns = "http://xspf.org/ns/0/";
-        var tracks = (from a in xDoc.Descendants(ns + "track")
-                      select new LastFMStreamingTrack
-                               {
-                                 ArtistName = (string) a.Element(ns + "creator"),
-                                 TrackTitle = (string) a.Element(ns + "title"),
-                                 TrackStreamingURL = (string) a.Element(ns + "location"),
-                                 Duration = Int32.Parse((string) a.Element(ns + "duration"))/1000,
-                                 Identifier = Int32.Parse((string) a.Element(ns + "identifier")),
-                                 ImageURL = (string) a.Element(ns + "image")
-                               }).ToList();
-        return tracks;
-      }
-      return null;
-    }
-
-    #endregion
-
     #region track methods
 
     /// <summary>
@@ -313,86 +261,6 @@ namespace MediaPortal.LastFM
         return LastFMSimilarTrack.GetSimilarTracks(xDoc);
       }
       return null;
-    }
-
-    /// <summary>
-    /// Marks a track as loved on last.fm
-    /// </summary>
-    /// <param name="artist">Artist Name</param>
-    /// <param name="track">Track Title</param>
-    /// <returns>True if successful</returns>
-    public static bool LoveTrack(string artist, string track)
-    {
-      var parms = new Dictionary<string, string>();
-      const string methodName = "track.love";
-      parms.Add("artist", artist);
-      parms.Add("track", track);
-      parms.Add("sk", _sessionKey);
-
-      var buildLastFMString = LastFMHelper.LastFMHelper.BuildLastFMString(parms, methodName, true);
-      GetXml(buildLastFMString, "POST", false);
-
-      return true;
-    }
-
-    /// <summary>
-    /// Unmarks a track as loved on last.fm
-    /// </summary>
-    /// <param name="artist">Artist Name</param>
-    /// <param name="track">Track Title</param>
-    /// <returns>True if successful</returns>
-    public static bool UnLoveTrack(string artist, string track)
-    {
-      var parms = new Dictionary<string, string>();
-      const string methodName = "track.unlove";
-      parms.Add("artist", artist);
-      parms.Add("track", track);
-      parms.Add("sk", _sessionKey);
-
-      var buildLastFMString = LastFMHelper.LastFMHelper.BuildLastFMString(parms, methodName, true);
-      GetXml(buildLastFMString, "POST", false);
-
-      return true;
-    }
-
-    /// <summary>
-    /// Marks track as banned on last.fm
-    /// </summary>
-    /// <param name="artist">Artist Name</param>
-    /// <param name="track">Track Title</param>
-    /// <returns>True if successful</returns>
-    public static bool BanTrack(string artist, string track)
-    {
-      var parms = new Dictionary<string, string>();
-      const string methodName = "track.ban";
-      parms.Add("artist", artist);
-      parms.Add("track", track);
-      parms.Add("sk", _sessionKey);
-
-      var buildLastFMString = LastFMHelper.LastFMHelper.BuildLastFMString(parms, methodName, true);
-      GetXml(buildLastFMString, "POST", false);
-
-      return true;
-    }
-
-    /// <summary>
-    /// Unmarks a track as banned on last.fm
-    /// </summary>
-    /// <param name="artist">Artist Name</param>
-    /// <param name="track">Track Title</param>
-    /// <returns>True if successful</returns>
-    public static bool UnBanTrack(string artist, string track)
-    {
-      var parms = new Dictionary<string, string>();
-      const string methodName = "track.unban";
-      parms.Add("artist", artist);
-      parms.Add("track", track);
-      parms.Add("sk", _sessionKey);
-
-      var buildLastFMString = LastFMHelper.LastFMHelper.BuildLastFMString(parms, methodName, true);
-      GetXml(buildLastFMString, "POST", false);
-
-      return true;
     }
 
     #endregion
@@ -514,60 +382,80 @@ namespace MediaPortal.LastFM
     /// <exception cref="LastFMException">Details of last.fm error or will wrap actual exception as inner exception</exception>
     private static XDocument GetXml(string querystring, string httpMethod, bool useHttps)
     {
-      HttpWebResponse response;
-      XDocument xDoc;
-      var url = useHttps ? BaseURLHttps : BaseURL;
-      if (httpMethod == "GET")
+      if (Win32API.IsConnectedToInternet())
       {
-        url = url + "?" + querystring;
-      }
-
-      bool webExceptionStatus = false;
-      var postArray = Encoding.UTF8.GetBytes(querystring);
-      var request = (HttpWebRequest) WebRequest.Create(url);
-      request.Method = httpMethod;
-      request.ServicePoint.Expect100Continue = false;
-      if (httpMethod == "POST")
-      {
-        request.ContentType = "application/x-www-form-urlencoded";
-        request.ContentLength = postArray.Length;
-        var s = request.GetRequestStream();
-        s.Write(postArray, 0, postArray.Length);
-        s.Close();
-      }
-      try
-      {
-        response = (HttpWebResponse) request.GetResponse();
-      }
-      catch (WebException ex)
-      {
-        if (ex.Status == WebExceptionStatus.ProtocolError)
+        HttpWebResponse response;
+        XDocument xDoc = null;
+        var url = useHttps ? BaseURLHttps : BaseURL;
+        if (httpMethod == "GET")
         {
-          // errors on last.fm side such as invalid API key, are returned as HTTP errors
-          // just process these as a standard return
-          response = (HttpWebResponse) ex.Response;
-          //webExceptionStatus = true;
+          url = url + "?" + querystring;
         }
-        else
-        {
-          throw;
-        }
-      }
 
-      if (!webExceptionStatus)
-      {
+        bool webExceptionStatus = false;
+        var postArray = Encoding.UTF8.GetBytes(querystring);
+        var request = (HttpWebRequest) WebRequest.Create(url);
+        request.Method = httpMethod;
+        request.ServicePoint.Expect100Continue = false;
+        if (httpMethod == "POST")
+        {
+          try
+          {
+            request.ContentType = "application/x-www-form-urlencoded";
+            request.ContentLength = postArray.Length;
+            var s = request.GetRequestStream();
+            s.Write(postArray, 0, postArray.Length);
+            s.Close();
+          }
+          catch (Exception)
+          {
+            return null;
+          }
+        }
+        try
+        {
+          response = (HttpWebResponse) request.GetResponse();
+        }
+        catch (WebException ex)
+        {
+          if (ex.Status == WebExceptionStatus.ProtocolError)
+          {
+            // errors on last.fm side such as invalid API key, are returned as HTTP errors
+            // just process these as a standard return
+            response = (HttpWebResponse) ex.Response;
+            //webExceptionStatus = true;
+          }
+          else
+          {
+            return null;
+          }
+        }
+
         using (var stream = response.GetResponseStream())
         using (var reader = new StreamReader(stream, Encoding.UTF8))
         {
-          var resp = reader.ReadToEnd();
-          xDoc = XDocument.Parse(resp);
+          try
+          {
+            var resp = reader.ReadToEnd();
+            if (!string.IsNullOrEmpty(resp))
+            {
+              xDoc = XDocument.Parse(resp);
+            }
+          }
+          catch (Exception)
+          {
+            return null;
+          }
         }
 
-        if ((string) xDoc.Root.Attribute("status") != "ok")
+        if (xDoc != null && (string) xDoc.Root.Attribute("status") != "ok")
         {
           throw GetLastFMException(xDoc);
         }
-        return xDoc;
+        if (xDoc != null)
+        {
+          return xDoc;
+        }
       }
       return null;
     }

@@ -221,7 +221,7 @@ namespace TvPlugin
         {
           btnLetter.AddSubItem(k.ToString());
         }
-        //btnLetter.AddSubItem("#");  // => will be everything beside a-z
+        btnLetter.AddSubItem("#");
       }
       Update();
 
@@ -476,66 +476,52 @@ namespace TvPlugin
       }
       else
       {
-        if (filterLetter != "#")
+        listView.IsVisible = false;
+        titleView.IsVisible = true;
+        GUIControl.FocusControl(GetID, titleView.GetID);
+
+        if (filterShow == String.Empty)
         {
-          listView.IsVisible = false;
-          titleView.IsVisible = true;
-          GUIControl.FocusControl(GetID, titleView.GetID);
-
-          if (filterShow == String.Empty)
-          {
-            if (imgChannelLogo != null)
-            {
-              imgChannelLogo.IsVisible = false;
-            }
-            if (titleView.SubItemCount == 2)
-            {
-              string subItem = (string)titleView.GetSubItem(1);
-              int h = Int32.Parse(subItem.Substring(1));
-              GUIGraphicsContext.ScaleVertical(ref h);
-              titleView.Height = h;
-              h = Int32.Parse(subItem.Substring(1));
-              h -= 55;
-              GUIGraphicsContext.ScaleVertical(ref h);
-              titleView.SpinY = titleView.YPosition + h;
-              titleView.Dispose();
-              titleView.AllocResources();
-            }
-          }
-          else
-          {
-            if (imgChannelLogo != null)
-            {
-              imgChannelLogo.IsVisible = true;
-            }
-            if (titleView.SubItemCount == 2)
-            {
-              string subItem = (string)titleView.GetSubItem(0);
-              int h = Int32.Parse(subItem.Substring(1));
-              GUIGraphicsContext.ScaleVertical(ref h);
-              titleView.Height = h;
-
-              h = Int32.Parse(subItem.Substring(1));
-              h -= 50;
-              GUIGraphicsContext.ScaleVertical(ref h);
-              titleView.SpinY = titleView.YPosition + h;
-
-              titleView.Dispose();
-              titleView.AllocResources();
-            }
-            lblNumberOfItems.YPosition = titleView.SpinY;
-          }
-        }
-        else
-        {
-          listView.IsVisible = true;
-          titleView.IsVisible = false;
-          GUIControl.FocusControl(GetID, listView.GetID);
-
           if (imgChannelLogo != null)
           {
             imgChannelLogo.IsVisible = false;
           }
+          if (titleView.SubItemCount == 2)
+          {
+            string subItem = (string)titleView.GetSubItem(1);
+            int h = Int32.Parse(subItem.Substring(1));
+            GUIGraphicsContext.ScaleVertical(ref h);
+            titleView.Height = h;
+            h = Int32.Parse(subItem.Substring(1));
+            h -= 55;
+            GUIGraphicsContext.ScaleVertical(ref h);
+            titleView.SpinY = titleView.YPosition + h;
+            titleView.Dispose();
+            titleView.AllocResources();
+          }
+        }
+        else
+        {
+          if (imgChannelLogo != null)
+          {
+            imgChannelLogo.IsVisible = true;
+          }
+          if (titleView.SubItemCount == 2)
+          {
+            string subItem = (string)titleView.GetSubItem(0);
+            int h = Int32.Parse(subItem.Substring(1));
+            GUIGraphicsContext.ScaleVertical(ref h);
+            titleView.Height = h;
+
+            h = Int32.Parse(subItem.Substring(1));
+            h -= 50;
+            GUIGraphicsContext.ScaleVertical(ref h);
+            titleView.SpinY = titleView.YPosition + h;
+
+            titleView.Dispose();
+            titleView.AllocResources();
+          }
+          lblNumberOfItems.YPosition = titleView.SpinY;
         }
 
         if (currentSearchMode != SearchMode.Genre)
@@ -715,8 +701,7 @@ namespace TvPlugin
             {
               if (filterShow == String.Empty)
               {
-                titles = layer.SearchPrograms("%[^a-z]",ChannelType.Radio);
-                //titles = layer.SearchPrograms("");
+                titles = layer.SearchPrograms("[0-9]", ChannelType.Radio);
               }
               else
               {
@@ -736,7 +721,7 @@ namespace TvPlugin
             }
             foreach (Program program in titles)
             {
-              if (filterLetter != "#")
+              if (filterLetter != "0")
               {
                 bool add = true;
                 foreach (Program prog in programs)
@@ -762,7 +747,7 @@ namespace TvPlugin
                     episodes.Add(program);
                   }
                 }
-              } //if (filterLetter!="#")
+              }
               else
               {
                 bool add = true;
@@ -854,7 +839,7 @@ namespace TvPlugin
             long end = Utils.datetolong(DateTime.Now.AddMonths(1));
             TvBusinessLayer layer = new TvBusinessLayer();
 
-            if (filterLetter == "#")
+            if (filterLetter == "0")
             {
               if (filterShow == String.Empty)
               {
@@ -882,7 +867,7 @@ namespace TvPlugin
               {
                 continue;
               }
-              if (filterLetter != "#")
+              if (filterLetter != "0")
               {
                 programs.Add(program);
                 
@@ -1110,7 +1095,7 @@ namespace TvPlugin
         case SearchMode.Genre:
           if (currentLevel == 0)
           {
-            filterLetter = "#";
+            filterLetter = "0";
             filterShow = String.Empty;
             filterEpisode = String.Empty;
             currentGenre = item.Label;

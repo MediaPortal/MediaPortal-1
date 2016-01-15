@@ -155,10 +155,10 @@ namespace PowerScheduler.Setup
       buttonApply.Location = new Point(413, 300);      // Move 4 px (original pos is 409, 296)
       buttonApply.Size = new Size(75, 23);             // Reset to original size (undo autosize)
 
-      // Ok-Button, no EPG / Legacy tab, no server only options and no status 
+      // Ok-Button, no EPG / Ping Monitor tab, no server only options and no status 
       buttonApply.Text = "Ok";
       tabControl.Controls.Remove(tabPageEPG);
-      tabControl.Controls.Remove(tabPageLegacy);
+      tabControl.Controls.Remove(tabPagePingMonitor);
       checkBoxMPClientRunning.Visible = false;
       checkBoxReinitializeController.Visible = false;
       groupBoxStatus.Visible = false;
@@ -181,14 +181,6 @@ namespace PowerScheduler.Setup
         checkBoxNetworkAwayMode.Text = "Prevent the user from putting the computer to sleep";
         checkBoxSharesAwayMode.Text = "Prevent the user from putting the computer to sleep";
       }
-#if SERVER
-
-      // Start the RefeshStatusThread responsible for refreshing status information
-      _setupTvThread = Thread.CurrentThread;
-      _refreshStatusThread = new Thread(RefreshStatusThread);
-      _refreshStatusThread.Name = "RefreshStatusThread";
-      _refreshStatusThread.Start();
-#endif
 #if CLIENT
       
       LoadSettings();
@@ -246,9 +238,10 @@ namespace PowerScheduler.Setup
           
           tabControl.Controls.Remove(tabPageReboot);
           tabControl.Controls.Remove(tabPageProcesses);
-          tabControl.Controls.Remove(tabPageNetwork);
           tabControl.Controls.Remove(tabPageShares);
+          tabControl.Controls.Remove(tabPageNetwork);
           tabControl.Controls.Remove(tabPageAdvanced);
+          tabControl.Controls.Remove(tabPageLegacy);
 
           checkBoxHomeOnly.Checked = Convert.ToBoolean(GetSetting("HomeOnly", "false"));
           textBoxCommand.Text = GetSetting("Command", string.Empty);
@@ -306,6 +299,9 @@ namespace PowerScheduler.Setup
           tabControl.Controls.Remove(tabPageProcesses);
           tabControl.Controls.Remove(tabPageShares);
           tabControl.Controls.Remove(tabPageNetwork);
+#if SERVER
+          tabControl.Controls.Remove(tabPagePingMonitor);
+#endif
           tabControl.Controls.Remove(tabPageAdvanced);
           tabControl.Controls.Remove(tabPageLegacy);
 
@@ -474,6 +470,27 @@ namespace PowerScheduler.Setup
 
         checkBoxNetworkAwayMode.Checked = Convert.ToBoolean(GetSetting("NetworkMonitorAwayMode", "false"));
 
+        // Ping Monitor
+        checkBoxPingMonitorEnabled.Checked = Convert.ToBoolean(GetSetting("PingMonitorEnabled", "false"));
+        if (!checkBoxPingMonitorEnabled.Checked)
+        {
+          checkBoxPingMonitorAwayMode.Enabled = false;
+          buttonAdd.Enabled = false;
+          buttonDelete.Enabled = false;
+        }
+
+        checkBoxPingMonitorAwayMode.Checked = Convert.ToBoolean(GetSetting("PingMonitorAwayMode", "false"));
+
+        listBoxHosts.Items.Clear();
+        string str = GetSetting("PingMonitorHosts", "");
+        if (str != "")
+        {
+          foreach (string str2 in str.Split(";".ToCharArray()))
+          {
+            this.listBoxHosts.Items.Add(str2);
+          }
+        }
+
         // Advanced
 #if SERVER
         checkBoxReinitializeController.Checked = Convert.ToBoolean(GetSetting("ReinitializeController", "false"));
@@ -503,13 +520,20 @@ namespace PowerScheduler.Setup
 
         numericUpDownStandbyHoursFrom.Value = Convert.ToInt32(GetSetting("StandbyHoursFrom", "0"));
         numericUpDownStandbyHoursTo.Value = Convert.ToInt32(GetSetting("StandbyHoursTo", "24"));
-
+        numericUpDownStandbyHoursOnWeekendFrom.Value = Convert.ToInt32(GetSetting("StandbyHoursOnWeekendFrom", "0"));
+        numericUpDownStandbyHoursOnWeekendTo.Value = Convert.ToInt32(GetSetting("StandbyHoursOnWeekendTo", "24"));
 
         buttonApply.Enabled = buttonApplyEnabled;
+
       }
 #if SERVER
-      
-      RefreshStatus();
+
+      // Start the RefeshStatusThread responsible for refreshing status information
+      _setupTvThread = Thread.CurrentThread;
+      _refreshStatusThread = new Thread(RefreshStatusThread);
+      _refreshStatusThread.Name = "RefreshStatusThread";
+      _refreshStatusThread.IsBackground = true;
+      _refreshStatusThread.Start();
 #endif
     }
 
@@ -698,6 +722,20 @@ namespace PowerScheduler.Setup
 
         SetSetting("NetworkMonitorAwayMode", checkBoxNetworkAwayMode.Checked.ToString());
 
+        // Ping Monitor
+
+        SetSetting("PingMonitorEnabled", checkBoxPingMonitorEnabled.Checked.ToString());
+        SetSetting("PingMonitorAwayMode", checkBoxPingMonitorAwayMode.Checked.ToString());
+
+        string str = "";
+        for (int i = 0; i < this.listBoxHosts.Items.Count; i++)
+        {
+          str = str + this.listBoxHosts.Items[i].ToString() + ";";
+        }
+        str = str.TrimEnd(";".ToCharArray());
+
+        SetSetting("PingMonitorHosts", str);
+
         // Advanced
 #if SERVER
         SetSetting("ReinitializeController", checkBoxReinitializeController.Checked.ToString());
@@ -718,6 +756,8 @@ namespace PowerScheduler.Setup
 
         SetSetting("StandbyHoursFrom", numericUpDownStandbyHoursFrom.Value.ToString());
         SetSetting("StandbyHoursTo", numericUpDownStandbyHoursTo.Value.ToString());
+        SetSetting("StandbyHoursOnWeekendFrom", numericUpDownStandbyHoursOnWeekendFrom.Value.ToString());
+        SetSetting("StandbyHoursOnWeekendTo", numericUpDownStandbyHoursOnWeekendTo.Value.ToString());
 
         // Power settings
         if (checkBoxAutoPowerSettings.Checked)
@@ -834,8 +874,8 @@ namespace PowerScheduler.Setup
     {
       while (_setupTvThread.IsAlive)
       {
-        Thread.Sleep(5000);
         RefreshStatus();
+        Thread.Sleep(5000);
       }
     }
 
@@ -888,7 +928,7 @@ namespace PowerScheduler.Setup
     #region Forms Control Events
 
     #region MasterSetup
-
+    
     private void buttonApply_Click(object sender, EventArgs e)
     {
       buttonApply.Enabled = false;
@@ -938,6 +978,10 @@ namespace PowerScheduler.Setup
       checkBoxNetworkEnabled.Checked = false;
       checkBoxNetworkAwayMode.Checked = false;
 
+      // Ping Monitor
+      checkBoxPingMonitorEnabled.Checked = false;
+      checkBoxPingMonitorAwayMode.Checked = false;
+
       // Advanced
       checkBoxReinitializeController.Checked = false;
       textBoxCommand.Text = "";
@@ -947,9 +991,7 @@ namespace PowerScheduler.Setup
       // Legacy
       numericUpDownPreWakeupTime.Value = 60;
       numericUpDownPreNoStandbyTime.Value = 300;
-      numericUpDownStandbyHoursFrom.Value = 0;
-      numericUpDownStandbyHoursTo.Value = 24;
-      
+
       // Power Settings
       _recommendedSettingsAC = _defaultSettingsDesktopAC;
       _recommendedSettingsDC = _defaultSettingsDesktopDC;
@@ -1068,6 +1110,9 @@ namespace PowerScheduler.Setup
         tabControl.Controls.Remove(tabPageProcesses);
         tabControl.Controls.Remove(tabPageShares);
         tabControl.Controls.Remove(tabPageNetwork);
+#if SERVER
+        tabControl.Controls.Remove(tabPagePingMonitor);
+#endif
         tabControl.Controls.Remove(tabPageAdvanced);
         tabControl.Controls.Remove(tabPageLegacy);
 
@@ -1095,6 +1140,9 @@ namespace PowerScheduler.Setup
         tabControl.Controls.Add(tabPageProcesses);
         tabControl.Controls.Add(tabPageShares);
         tabControl.Controls.Add(tabPageNetwork);
+#if SERVER
+        tabControl.Controls.Add(tabPagePingMonitor);
+#endif
         tabControl.Controls.Add(tabPageAdvanced);
         tabControl.Controls.Add(tabPageLegacy);
       }
@@ -1260,6 +1308,56 @@ namespace PowerScheduler.Setup
 
     #endregion
 
+    # region Ping Monitor tab
+
+    private void checkBoxPingMonitorEnable_CheckedChanged(object sender, EventArgs e)
+    {
+      buttonApply.Enabled = true;
+      if (checkBoxPingMonitorEnabled.Checked)
+      {
+        checkBoxPingMonitorAwayMode.Enabled = true;
+        buttonAdd.Enabled = true;
+        buttonDelete.Enabled = true;
+      }
+      else
+      {
+        checkBoxPingMonitorAwayMode.Enabled = false;
+        checkBoxPingMonitorAwayMode.Checked = false;
+        buttonAdd.Enabled = false;
+        buttonDelete.Enabled = false;
+      }
+    }
+
+    private void buttonAdd_Click(object sender, EventArgs e)
+    {
+      if (textBoxEditHost.Text == "")
+      {
+        MessageBox.Show("No Hostname entered");
+      }
+      else
+      {
+        for (int i = 0; i < listBoxHosts.Items.Count; i++)
+        {
+          if (listBoxHosts.Items[i].ToString().ToLower() == textBoxEditHost.Text.ToLower())
+          {
+            MessageBox.Show("Host already in List");
+            return;
+          }
+        }
+        listBoxHosts.Items.Add(textBoxEditHost.Text);
+        textBoxEditHost.Text = "";
+        buttonApply.Enabled = true;
+      }
+    }
+
+    private void buttonDelete_Click(object sender, EventArgs e)
+    {
+      listBoxHosts.Items.Remove(listBoxHosts.SelectedItem);
+      buttonApply.Enabled = true;
+    }
+
+    #endregion
+
     #region Advanced tab
 
     private void buttonStandbyWakeupCommand_Click(object sender, EventArgs e)
@@ -1332,6 +1430,5 @@ namespace PowerScheduler.Setup
     #endregion
 
     #endregion
-
   }
 }

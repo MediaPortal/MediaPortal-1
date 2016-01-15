@@ -202,7 +202,29 @@ namespace MediaPortal.Database
       int returnValue = -1;
       try
       {
-        returnValue = Int32.Parse(result);
+        //Remove decimal from string
+        try
+        {
+          if (result.Length > 1)
+          {
+            int slashPos = result.IndexOf(".", StringComparison.Ordinal);
+            if (slashPos > 0)
+            {
+              result = result.Substring(0, result.IndexOf('.', 0));
+            }
+          }
+        }
+        catch (Exception)
+        {
+          // Can't convert or remove decimal from the string
+        }
+
+        int numValue;
+        bool parsed = Int32.TryParse(result, out numValue);
+        if (parsed)
+        {
+          returnValue = Int32.Parse(result);
+        }
       }
       catch (Exception)
       {
@@ -341,7 +363,7 @@ namespace MediaPortal.Database
         //strLine = strLine.Replace("''","'");
         return strLine;
       }
-      int pos = strColum.IndexOf(".");
+      int pos = strColum.IndexOf(".", StringComparison.Ordinal);
       if (pos < 0)
       {
         return string.Empty;
@@ -392,6 +414,34 @@ namespace MediaPortal.Database
       strTxt = strTxt.Replace("'", "''").Trim();
 
       return strTxt;
+    }
+
+    public static bool IntegrityCheck(SQLiteClient m_db)
+    {
+      SQLiteResultSet results;
+      if (m_db == null)
+      {
+        return false;
+      }
+
+      results = m_db.Execute("PRAGMA integrity_check;");
+      if (results != null)
+      {
+        if (results.Rows.Count == 1)
+        {
+          SQLiteResultSet.Row arr = results.Rows[0];
+          if (arr.fields.Count == 1)
+          {
+            if (arr.fields[0] == "ok")
+            {
+              Log.Debug("IntegrityCheck: the {0} is OK", m_db.DatabaseName);
+              return true;
+            }
+          }
+        }
+      }
+      Log.Error("IntegrityCheck: the {0} is corrupt.", m_db.DatabaseName);
+      return false;
     }
 
     public static void Split(string strFileNameAndPath, out string strPath, out string strFileName)

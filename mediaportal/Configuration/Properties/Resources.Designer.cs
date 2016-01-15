@@ -183,6 +183,46 @@ namespace MediaPortal.Configuration.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap gamepad_LogitechCordlessRumblePad2 {
+            get {
+                object obj = ResourceManager.GetObject("gamepad_LogitechCordlessRumblePad2", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap gamepad_LogitechWirelessGamepadF710 {
+            get {
+                object obj = ResourceManager.GetObject("gamepad_LogitechWirelessGamepadF710", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap gamepad_MicrosoftXbox360WirelessController {
+            get {
+                object obj = ResourceManager.GetObject("gamepad_MicrosoftXbox360WirelessController", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap k60_media_keys {
+            get {
+                object obj = ResourceManager.GetObject("k60_media_keys", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap logo_PayPal {
             get {
                 object obj = ResourceManager.GetObject("logo_PayPal", resourceCulture);
@@ -213,6 +253,16 @@ namespace MediaPortal.Configuration.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap ms_wed_7000 {
+            get {
+                object obj = ResourceManager.GetObject("ms_wed_7000", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap remote_Centarea {
             get {
                 object obj = ResourceManager.GetObject("remote_Centarea", resourceCulture);
@@ -233,16 +283,6 @@ namespace MediaPortal.Configuration.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap remote_HidKeys {
-            get {
-                object obj = ResourceManager.GetObject("remote_HidKeys", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
         internal static System.Drawing.Bitmap remote_Mce2004 {
             get {
                 object obj = ResourceManager.GetObject("remote_Mce2004", resourceCulture);
@@ -256,6 +296,16 @@ namespace MediaPortal.Configuration.Properties {
         internal static System.Drawing.Bitmap remote_Mce2005 {
             get {
                 object obj = ResourceManager.GetObject("remote_Mce2005", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap remote_MceHp {
+            get {
+                object obj = ResourceManager.GetObject("remote_MceHp", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

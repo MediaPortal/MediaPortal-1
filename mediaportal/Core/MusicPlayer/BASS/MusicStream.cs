@@ -66,6 +66,14 @@ namespace MediaPortal.MusicPlayer.BASS
       Freed,
     }
 
+    public enum TAGINFOEncoding
+    {
+      Ansi = 0,
+      Latin1 = 1,
+      Utf8 = 2,
+      Utf8OrLatin1 = 3
+    }
+
     #endregion
 
     #region Structs
@@ -304,7 +312,7 @@ namespace MediaPortal.MusicPlayer.BASS
         case FileMainType.MODFile:
           _stream = Bass.BASS_MusicLoad(_filePath, 0, 0,
                              BASSFlag.BASS_SAMPLE_SOFTWARE | BASSFlag.BASS_SAMPLE_FLOAT |
-                             BASSFlag.BASS_MUSIC_AUTOFREE | BASSFlag.BASS_MUSIC_PRESCAN |
+                             BASSFlag.BASS_MUSIC_DECODE | BASSFlag.BASS_MUSIC_PRESCAN |
                              BASSFlag.BASS_MUSIC_RAMP, 0);
           break;
 
@@ -921,7 +929,7 @@ namespace MediaPortal.MusicPlayer.BASS
       new Thread(() =>
                    {
                      // BASS_SYNC_META is triggered on meta changes of SHOUTcast streams
-                     if (_tagInfo.UpdateFromMETA(Bass.BASS_ChannelGetTags(channel, BASSTag.BASS_TAG_META), false,
+                     if (_tagInfo.UpdateFromMETA(Bass.BASS_ChannelGetTags(channel, BASSTag.BASS_TAG_META), true,
                                                  false))
                      {
                        GetMetaTags();
@@ -940,6 +948,16 @@ namespace MediaPortal.MusicPlayer.BASS
       string title = _tagInfo.title;
       int streamUrlIndex = title.IndexOf("';StreamUrl=");
       if (streamUrlIndex > -1)
+      {
+        title = _tagInfo.title.Substring(0, streamUrlIndex);
+      }
+      streamUrlIndex = title.IndexOf("';");
+      if (streamUrlIndex == title.Length - 2)
+      {
+        title = _tagInfo.title.Substring(0, streamUrlIndex);
+      }
+      streamUrlIndex = title.IndexOf(";");
+      if (streamUrlIndex == title.Length - 1)
       {
         title = _tagInfo.title.Substring(0, streamUrlIndex);
       }

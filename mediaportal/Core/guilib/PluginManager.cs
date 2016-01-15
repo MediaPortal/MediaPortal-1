@@ -278,17 +278,7 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     public static void LoadWindowPlugins()
     {
-      using (Settings xmlreader = new MPSettings())
-      {
-        if (xmlreader.GetValueAsBool("general", "threadedstartup", false))
-        {
-          LoadWindowPluginsThreaded();
-        }
-        else
-        {
-          LoadWindowPluginsNonThreaded();
-        }
-      }
+      LoadWindowPluginsNonThreaded();
     }
 
     /// <summary>
@@ -533,10 +523,10 @@ namespace MediaPortal.GUI.Library
       }
       catch (Exception ex)
       {
-        Log.Info(
+        Log.Error(
           "PluginManager: Plugin file {0} is broken or incompatible with the current MediaPortal version and won't be loaded!",
           strFile.Substring(strFile.LastIndexOf(@"\", StringComparison.Ordinal) + 1));
-        Log.Info("PluginManager: Exception: {0}", ex);
+        Log.Error("PluginManager: Exception: {0}", ex);
       }
     }
 

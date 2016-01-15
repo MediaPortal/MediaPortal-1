@@ -1,0 +1,541 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <id>35</id>
+  <defaultcontrol>810000</defaultcontrol>
+  <allowoverlay>no</allowoverlay>
+  <define>#header.label:</define>
+  <define>#usePlayFanart:Yes</define>
+  <!--rememberLastFocusedControl>yes</rememberLastFocusedControl-->
+<controls>
+   <control>
+    <description>Background</description>
+    <type>image</type>
+    <id>1</id>
+    <posX>0</posX>
+    <posY>0</posY>
+    <width>1920</width>
+    <height>1080</height>
+    <texture>background.jpg</texture>
+  </control>
+    <include condition="#(eq(#hedit.mode,'Horizontal Text only'))">BasicHomeFanArt.xml</include>
+    <include condition="#(eq(#hedit.mode,'Horizontal Text only'))">BasicHomeWeather.xml</include>
+  
+  <!--     *******************************************************************************************  -->
+  <!--     **************************************  MENU BUTTONS  *************************************  -->
+  <!--     *******************************************************************************************  -->
+  <include>BasicHomeEditor.main.calc.xml</include>
+  <include>BasicHomeEditor.sub.calc.xml</include>
+  <include condition="#(eq(#hedit.mode,'Carousel'))">BasicHomeEditor.main.Carousel.xml</include>
+  <include condition="#(eq(#hedit.mode,'Carousel'))">BasicHomeEditor.sub.Carousel.xml</include>
+  <include condition="#(eq(#hedit.mode,'Horizontal (scroll)'))">BasicHomeEditor.main.horz.xml</include>
+  <include condition="#(eq(#hedit.mode,'Horizontal (scroll)'))">BasicHomeEditor.sub.horz.xml</include>
+  <include condition="#(eq(#hedit.mode,'Horizontal Text only'))">BasicHomeEditor.main.text.xml</include>
+  <include condition="#(eq(#hedit.mode,'Horizontal Text only'))">BasicHomeEditor.sub.text.xml</include>
+  <include condition="#(neq(#hedit.mode,'Horizontal Text only'))">BasicHomeInfoRecentlyAdded.xml</include>
+  <include condition="#(eq(#hedit.mode,'Horizontal Text only'))">BasicHomeInfoRecentlyAddedText.xml</include>
+  <import>BasicHomeEditorDefines.xml</import>
+  
+  <control>
+      <description>Date Time</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>1866</posX>
+      <posY>15</posY>
+      <label>#date | #time</label>
+      <align>right</align>
+      <font>Label</font>
+      <textcolor>ff6FAFE1</textcolor>
+      <visible>!skin.hastheme(Xmas)+!player.hasaudio+!player.hasvideo</visible>
+    </control>
+  <control>
+      <description>Date Time</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>1866</posX>
+      <posY>15</posY>
+      <label>#date | #time</label>
+      <align>right</align>
+      <font>Label</font>
+      <textcolor>gold</textcolor>
+      <visible>skin.hastheme(Xmas)+!player.hasaudio+!player.hasvideo</visible>
+    </control>
+    <!-- ******************************************************************************************* -->
+    <!-- *************************** INFOS ON BASIC HOME (NOW PLAYING AUDIO) *********************** -->
+    <!-- ******************************************************************************************* -->
+    <control>
+      <description>background</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>1240</posX>
+      <posY>-6</posY>
+      <height>140</height>
+      <width>680</width>
+      <texture>osdbg2.png</texture>
+      <colordiffuse>ffffffff</colordiffuse>
+      <visible>player.hasaudio+!player.hasvideo</visible>
+    </control>
+    <control>
+      <description>music logo</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>1270</posX>
+      <posY>12</posY>
+      <width>102</width>
+      <height>101</height>
+      <keepaspectratio>no</keepaspectratio>
+      <texture mask="cdcase_mask.png">missing_coverart.png</texture>
+      <visible>string.equals(#Play.Current.Thumb,)+player.hasaudio+!player.hasvideo</visible>
+    </control>
+    <control>
+      <description>music logo</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>1270</posX>
+      <posY>12</posY>
+      <width>102</width>
+      <height>101</height>
+      <centered>yes</centered>
+      <keepaspectratio>yes</keepaspectratio>
+      <texture mask="cdcase_mask.png">#Play.Current.Thumb</texture>
+      <visible>player.hasaudio+!player.hasvideo</visible>
+    </control>
+    <control>
+      <description>dummy label for changing Artist Thumb every 15 secs</description>
+      <type>label</type>
+      <id>66900</id>
+      <label />
+      <animation effect="fade" delay="15000" time="0">hidden</animation>
+      <visible>!control.isvisible(66901)+player.hasaudio+!player.hasvideo</visible>
+    </control>
+    <control>
+      <description>dummy label for changing Artist Thumb every 15 secs</description>
+      <type>label</type>
+      <id>66901</id>
+      <label />
+      <animation effect="fade" delay="15000" time="0">hidden</animation>
+      <visible>control.isvisible(66900)+player.hasaudio+!player.hasvideo</visible>
+    </control>
+    <control>
+      <description>music logo</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>1270</posX>
+      <posY>12</posY>
+      <width>102</width>
+      <height>101</height>
+      <centered>yes</centered>
+      <keepaspectratio>no</keepaspectratio>
+      <texture mask="cdcase_mask.png">..\..\..\Thumbs\Music\Artists\#Play.Current.ArtistL.jpg</texture>
+      <visible>control.isvisible(66900)+player.hasaudio+!player.hasvideo</visible>
+      <animation effect="fade" time="2000" condition="control.isvisible(66900)" reversible="true">conditional</animation>
+    </control>
+    <control>
+      <description>CD Cover</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>1270</posX>
+      <posY>12</posY>
+      <width>102</width>
+      <height>101</height>
+      <keepaspectratio>no</keepaspectratio>
+      <centered>yes</centered>
+      <texture>cdcase.png</texture>
+      <visible>player.hasaudio+!player.hasvideo</visible>
+    </control>
+    <control>
+      <type>image</type>
+      <id>0</id>
+      <posX>1484</posX>
+      <posY>94</posY>
+      <width>283</width>
+      <height>19</height>
+      <texture>osd_progress_background_medium.png</texture>
+      <visible>Player.HasAudio+!Player.HasVideo+string.equals(#duration)</visible>
+    </control>
+    <control>
+      <description>Progress Bar</description>
+      <type>progress</type>
+      <id>0</id>
+      <posX>1473</posX>
+      <posY>96</posY>
+      <width>281</width>
+      <height>16</height>
+      <label>#percentage</label>
+      <texturebg>-</texturebg>
+      <onlymidtexture>no</onlymidtexture>
+      <midwidth>281</midwidth>
+      <midheight>16</midheight>
+      <midoffsetX>0</midoffsetX>
+      <midoffsetY>0</midoffsetY>
+      <lefttexture>osd_progress_left.png</lefttexture>
+      <midtexture>osd_progress_mid.png</midtexture>
+      <righttexture>osd_progress_right.png</righttexture>
+      <visible>Player.HasAudio+!Player.HasVideo+string.equals(#duration)</visible>
+    </control>
+    <control>
+      <description>play time label</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>1474</posX>
+      <posY>88</posY>
+      <label>#currentplaytime</label>
+      <font>font10</font>
+      <align>right</align>
+      <textcolor>ivory</textcolor>
+      <visible>player.hasaudio+!player.hasvideo</visible>
+    </control>
+    <control>
+      <type>label</type>
+      <description>track duration label</description>
+      <id>0</id>
+      <posX>1778</posX>
+      <posY>88</posY>
+      <label>#currentremaining</label>
+      <align>left</align>
+      <font>font10</font>
+      <textcolor>ivory</textcolor>
+      <visible>Player.HasAudio+!Player.HasVideo+string.equals(#duration)</visible>
+    </control>
+    <control>
+      <description>scrolling info label</description>
+      <type>fadelabel</type>
+      <id>0</id>
+      <width>500</width>
+      <posX>1398</posX>
+      <posY>12</posY>
+      <font>font12</font>
+      <label>#Play.Current.Title  ~  #Play.Current.Artist</label>
+      <textcolor>ivory</textcolor>
+      <visible>player.hasaudio+!player.hasvideo</visible>
+    </control>
+    <control>
+      <description>scrolling info label</description>
+      <type>fadelabel</type>
+      <id>0</id>
+      <width>500</width>
+      <posX>1398</posX>
+      <posY>48</posY>
+      <font>font12</font>
+      <label>#Play.Current.Album  ~  # #Play.Current.Track</label>
+      <textcolor>ivory</textcolor>
+      <visible>Player.HasAudio+!Player.HasVideo+string.equals(#duration)</visible>
+    </control>
+    <control>
+      <description>scrolling info label</description>
+      <type>fadelabel</type>
+      <id>0</id>
+      <width>500</width>
+      <posX>1398</posX>
+      <posY>48</posY>
+      <font>font12</font>
+      <label>#(L(34043)) #Play.Current.Album</label>
+      <textcolor>ivory</textcolor>
+      <visible>Player.HasAudio+!Player.HasVideo+!string.equals(#duration)</visible>
+    </control>
+    <!-- ******************************************************************************************* -->
+    <!-- *************************** INFOS ON BASIC HOME (NOW PLAYING VIDEO) *********************** -->
+    <!-- ******************************************************************************************* -->
+    <control>
+      <description>background</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>1070</posX>
+      <posY>-6</posY>
+      <height>145</height>
+      <width>855</width>
+      <texture>osdbg2.png</texture>
+      <visible>player.hasvideo</visible>
+      <colordiffuse>ffffffff</colordiffuse>
+    </control>
+    <control>
+      <description>play time label</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>1474</posX>
+      <posY>88</posY>
+      <label>#currentplaytime</label>
+      <font>font10</font>
+      <align>right</align>
+      <textcolor>ivory</textcolor>
+      <visible>player.hasvideo+!string.contains(#Play.Current.File,tsbuffer)</visible>
+    </control>
+    <control>
+      <type>label</type>
+      <description>track duration label</description>
+      <id>0</id>
+      <posX>1778</posX>
+      <posY>88</posY>
+      <label>#duration</label>
+      <align>left</align>
+      <font>font10</font>
+      <textcolor>ivory</textcolor>
+      <visible>player.hasvideo+!string.contains(#Play.Current.File,tsbuffer)</visible>
+    </control>
+    <control>
+      <description>scrolling info label</description>
+      <type>fadelabel</type>
+      <id>0</id>
+      <width>500</width>
+      <posX>1398</posX>
+      <posY>12</posY>
+      <font>font12</font>
+      <label>#Play.Current.Title  ~  #Play.Current.Director</label>
+      <textcolor>ivory</textcolor>
+      
+      <visible>player.hasvideo+!string.contains(#Play.Current.File,tsbuffer)</visible>
+    </control>
+    <control>
+      <description>scrolling info label</description>
+      <type>fadelabel</type>
+      <id>0</id>
+      <width>500</width>
+      <posX>1398</posX>
+      <posY>48</posY>
+      <font>font12</font>
+      <label>#Play.Current.Year  ~  #Play.Current.Genre</label>
+      <textcolor>ivory</textcolor>
+      
+      <visible>player.hasvideo+!string.contains(#Play.Current.File,tsbuffer)</visible>
+    </control>
+    <control>
+      <description>scrolling info label</description>
+      <type>fadelabel</type>
+      <id>0</id>
+      <width>500</width>
+      <posX>1398</posX>
+      <posY>12</posY>
+      <font>font12</font>
+      <label>#TV.View.title</label>
+      <textcolor>ivory</textcolor>
+      
+      <visible>player.hasvideo+string.contains(#Play.Current.File,tsbuffer)</visible>
+    </control>
+    <control>
+      <description>scrolling info label</description>
+      <type>fadelabel</type>
+      <id>0</id>
+      <width>500</width>
+      <posX>1398</posX>
+      <posY>48</posY>
+      <font>font12</font>
+      <label>#TV.View.channel    #TV.View.start - #TV.View.stop</label>
+      <textcolor>ivory</textcolor>
+      
+      <visible>player.hasvideo+string.contains(#Play.Current.File,tsbuffer)</visible>
+    </control>
+    <control>
+      <description>scrolling info label</description>
+      <type>fadelabel</type>
+      <id>0</id>
+      <width>500</width>
+      <posX>1398</posX>
+      <posY>84</posY>
+      <font>font12</font>
+      <label>#TV.View.genre</label>
+      <textcolor>ivory</textcolor>
+      
+      <visible>player.hasvideo+string.contains(#Play.Current.File,tsbuffer)</visible>
+    </control>
+    <control>
+      <type>image</type>
+      <id>0</id>
+      <posX>1484</posX>
+      <posY>94</posY>
+      <width>283</width>
+      <height>19</height>
+      <texture>osd_progress_background_medium.png</texture>
+      <visible>player.hasvideo+!string.contains(#Play.Current.File,tsbuffer)</visible>
+    </control>
+    <control>
+      <description>Progress Bar</description>
+      <type>progress</type>
+      <id>0</id>
+      <posX>1473</posX>
+      <posY>96</posY>
+      <width>281</width>
+      <height>16</height>
+      <label>#percentage</label>
+      <texturebg>-</texturebg>
+      <onlymidtexture>no</onlymidtexture>
+      <midwidth>281</midwidth>
+      <midheight>16</midheight>
+      <midoffsetX>0</midoffsetX>
+      <midoffsetY>0</midoffsetY>
+      <lefttexture>overlay_progress_left.png</lefttexture>
+      <midtexture>overlay_progress_mid.png</midtexture>
+      <righttexture>overlay_progress_right.png</righttexture>
+      <visible>player.hasvideo+!string.contains(#Play.Current.File,tsbuffer)</visible>
+    </control>
+    <control>
+      <description>TV logo</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>1283</posX>
+      <posY>25</posY>
+      <width>73</width>
+      <height>73</height>
+      <keepaspectratio>no</keepaspectratio>
+      <centered>yes</centered>
+      <texture>#TV.View.thumb</texture>
+      <visible>player.hasvideo+string.contains(#Play.Current.File,tsbuffer)</visible>
+    </control>
+    <control>
+      <description>DVD logo</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>1283</posX>
+      <posY>14</posY>
+      <width>73</width>
+      <height>102</height>
+      <keepaspectratio>no</keepaspectratio>
+      <centered>yes</centered>
+      <texture mask="dvdcase_mask.png">#Play.Current.Thumb</texture>
+      <visible>player.hasvideo</visible>
+    </control>
+    <control>
+      <description>DVD Cover</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>1283</posX>
+      <posY>14</posY>
+      <width>73</width>
+      <height>102</height>
+      <keepaspectratio>no</keepaspectratio>
+      <centered>yes</centered>
+      <texture>DVDCase.png</texture>
+      <visible>player.hasvideo+!string.equals(#Play.Current.Thumb,)</visible>
+    </control>
+    <control>
+      <description>LCD</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>1100</posX>
+      <posY>16</posY>
+      <width>168</width>
+      <height>98</height>
+      <keepaspectratio>no</keepaspectratio>
+      <centered>yes</centered>
+      <texture>LCD.png</texture>
+      <visible>player.hasvideo</visible>
+    </control>
+    <control>
+      <description>video preview window</description>
+      <type>videowindow</type>
+      <id>99</id>
+      <posX>1104</posX>
+      <posY>20</posY>
+      <width>160</width>
+      <height>90</height>
+      <keepaspectratio>yes</keepaspectratio>
+      <centered>yes</centered>
+      <action>18</action>
+      <textureFocus>tv_green_border.png</textureFocus>
+      <visible>player.hasvideo</visible>
+    </control>
+    <!--     *******************************************************************************************  -->
+    <!--     *************************   RSS-FEED ON BASIC HOME   **************************************  -->
+    <!--     *******************************************************************************************  -->
+    <control>
+      <description>RSS Feed Background</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>0</posX>
+      <posY>1023</posY>
+      <width>1920</width>
+      <height>49</height>
+      <texture>menubar_text.png</texture>
+      <visible>[plugin.isenabled(InfoService)|plugin.isenabled(World News)]+[string.equals(#infoservice.feed.enabled, true)|skin.hassetting(#skin.worldnewsticker)]</visible>
+    </control>
+    <control>
+      <description>Feed items</description>
+      <type>fadelabel</type>
+      <id>1</id>
+      <posX>130</posX>
+      <posY>1026</posY>
+      <width>1780</width>
+      <align>left</align>
+      <font>font12</font>
+      <textcolor>ivory</textcolor>
+      <label>#infoservice.feed.titles</label>
+      <wrapString> :-: </wrapString>
+      <shadowAngle>0</shadowAngle>
+      <shadowDistance>0</shadowDistance>
+      <shadowColor />
+      <visible>plugin.isenabled(InfoService)+string.equals(#infoservice.feed.enabled, true)+!skin.hassetting(#skin.worldnewsticker)</visible>
+    </control>
+    <control>
+      <description>Feed items</description>
+      <type>fadelabel</type>
+      <id>1</id>
+      <posX>130</posX>
+      <posY>1026</posY>
+      <width>1780</width>
+      <align>left</align>
+      <font>font12</font>
+      <textcolor>ivory</textcolor>
+      <label>#WorldNews.NewsTicker</label>
+      <wrapString> :-: </wrapString>
+      <shadowAngle>0</shadowAngle>
+      <shadowDistance>0</shadowDistance>
+      <shadowColor />
+      <visible>plugin.isenabled(World News)+skin.hassetting(#skin.worldnewsticker)</visible>
+    </control>
+    <control>
+      <description>RSS Image</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>10</posX>
+      <posY>1027</posY>
+      <width>100</width>
+      <height>41</height>
+      <texture>#infoservice.feed.img</texture>
+      <visible>plugin.isenabled(InfoService)+string.equals(#infoservice.feed.enabled, true)+!skin.hassetting(#skin.worldnewsticker)</visible>
+    </control>
+    <control>
+      <description>RSS Image</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>10</posX>
+      <posY>1027</posY>
+      <width>100</width>
+      <height>41</height>
+      <texture>#WorldNews.NewsImage</texture>
+      <visible>plugin.isenabled(World News)+skin.hassetting(#skin.worldnewsticker)</visible>
+    </control>
+    <control>
+      <description>RSS Image Button Background</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>10</posX>
+      <posY>1027</posY>
+      <width>100</width>
+      <height>41</height>
+      <texture>black.png</texture>
+      <visible>control.hasFocus(1111)</visible>
+    </control>
+    <control Style="NoShadow">
+      <description>RSS Image Button</description>
+      <type>button</type>
+      <id>1111</id>
+      <posX>10</posX>
+      <posY>1027</posY>
+      <width>100</width>
+      <height>41</height>
+      <label>RSS</label>
+      <textcolor>white</textcolor>
+      <textcolorNoFocus></textcolorNoFocus>
+      <font>font12</font>
+      <onleft>1111</onleft>
+      <onright>1111</onright>
+      <onup>810101</onup>
+      <ondown>1111</ondown>
+      <textXOff>14</textXOff>
+      <textYOff>3</textYOff>
+      <hyperlink>#(iif(eq(#skin.worldnewsticker,'True'),'7979','16001'))</hyperlink>
+      <textureFocus>button_focus.png</textureFocus>
+      <textureNoFocus />
+      <visible>[plugin.isenabled(InfoService)+string.equals(#infoservice.feed.enabled, true)]|[plugin.isenabled(World News)+skin.hassetting(#skin.worldnewsticker)]</visible>
+    </control>
+    
+</controls>
+</window>

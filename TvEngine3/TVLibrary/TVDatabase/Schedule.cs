@@ -1071,7 +1071,7 @@ namespace TvDatabase
           if (program.Title == ProgramName && program.IdChannel == IdChannel &&
               StartTime.DayOfWeek == program.StartTime.DayOfWeek)
           {
-            if (filterCanceledRecordings && IsSerieIsCanceled(program.StartTime))
+            if (filterCanceledRecordings && IsSerieIsCanceled(GetSchedStartTimeForProg(program), program.IdChannel))
             {
               return false;
             }
@@ -1215,11 +1215,16 @@ namespace TvDatabase
     /// <returns>The start time of the episode within a schedule that overlaps with program</returns>
     public DateTime GetSchedStartTimeForProg(Program prog)
     {
-      DateTime dtSchedStart;
-      DateTime dtSchedEnd;
-      if (GetAdjustedScheduleTimeRange(prog, out dtSchedStart, out dtSchedEnd))
+      if ((ScheduleRecordingType)this.scheduleType != ScheduleRecordingType.EveryTimeOnEveryChannel
+        && (ScheduleRecordingType)this.scheduleType != ScheduleRecordingType.EveryTimeOnThisChannel
+        && (ScheduleRecordingType)this.scheduleType != ScheduleRecordingType.WeeklyEveryTimeOnThisChannel)
       {
-        return dtSchedStart;
+        DateTime dtSchedStart;
+        DateTime dtSchedEnd;
+        if (GetAdjustedScheduleTimeRange(prog, out dtSchedStart, out dtSchedEnd))
+        {
+          return dtSchedStart;
+        }
       }
       return prog.StartTime;
     }
@@ -1364,29 +1369,6 @@ namespace TvDatabase
           (End2 > Start1 && End2 <= End1))
       {
         return true;
-      }
-      return false;
-    }
-
-    /// <summary>
-    /// checks if 2 schedules have a common Transponder
-    /// depending on tuningdetails of their respective channels
-    /// </summary>
-    /// <param name="schedule"></param>
-    /// <returns>True if a common transponder exists</returns>
-    public bool isSameTransponder(Schedule schedule)
-    {
-      IList<TuningDetail> tuningList1 = ReferencedChannel().ReferringTuningDetail();
-      IList<TuningDetail> tuningList2 = schedule.ReferencedChannel().ReferringTuningDetail();
-      foreach (TuningDetail tun1 in tuningList1)
-      {
-        foreach (TuningDetail tun2 in tuningList2)
-        {
-          if (tun1.Frequency == tun2.Frequency)
-          {
-            return true;
-          }
-        }
       }
       return false;
     }

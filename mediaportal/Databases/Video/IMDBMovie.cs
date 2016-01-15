@@ -599,7 +599,7 @@ namespace MediaPortal.Video.Database
       GUIPropertyManager.SetProperty("#credits", WritingCredits.Replace(" /", ","));
       GUIPropertyManager.SetProperty("#thumb", strThumb);
       GUIPropertyManager.SetProperty("#title", Title);
-      GUIPropertyManager.SetProperty("#year", Year.ToString());
+      GUIPropertyManager.SetProperty("#year", ((Year <= 1900) ? string.Empty : Year.ToString()));
       // MPAA rating
       MPARating = Util.Utils.MakeFileName(MPARating);
       GUIPropertyManager.SetProperty("#mpaarating", MPARating);
@@ -698,12 +698,19 @@ namespace MediaPortal.Video.Database
         RunTime = movie.RunTime;
       }
 
-      GUIPropertyManager.SetProperty("#runtime", RunTime + 
-                              " " +
-                              GUILocalizeStrings.Get(2998) +
-                              " (" + 
-                              Util.Utils.SecondsToHMString(RunTime * 60) + 
-                              ")");
+      if (RunTime <=0)
+      {
+        GUIPropertyManager.SetProperty("#runtime", string.Empty);
+      }
+      else
+      {
+        GUIPropertyManager.SetProperty("#runtime", RunTime + 
+                                " " +
+                                GUILocalizeStrings.Get(2998) +
+                                " (" + 
+                                Util.Utils.SecondsToHMString(RunTime * 60) + 
+                                ")");
+      }
 
       if (Duration <= 0)
       {
@@ -763,7 +770,7 @@ namespace MediaPortal.Video.Database
     private void SetMovieIDProperty(string file, bool isFolder)
     {
       VirtualDirectory vDir = new VirtualDirectory();
-      int pin = 0;
+      string pin = string.Empty;
       vDir.LoadSettings("movies");
 
       if (isFolder && !vDir.IsProtectedShare(file, out pin))
@@ -907,7 +914,7 @@ namespace MediaPortal.Video.Database
           int rndMovieId = -1;
 
           VirtualDirectory vDir = new VirtualDirectory();
-          int pin = 0;
+          string pin = string.Empty;
           vDir.LoadSettings("movies");
 
           if (!vDir.IsProtectedShare(path, out pin))
@@ -1692,6 +1699,7 @@ namespace MediaPortal.Video.Database
     {
       try
       {
+        GUIPropertyManager.SetProperty("#isfolder", item.IsFolder.ToString());
         IMDBMovie info = item.AlbumInfoTag as IMDBMovie;
 
         if (info == null)
@@ -1726,7 +1734,7 @@ namespace MediaPortal.Video.Database
         GUIPropertyManager.SetProperty("#credits", info.WritingCredits.Replace(" /", ","));
         GUIPropertyManager.SetProperty("#thumb", strThumb);
         GUIPropertyManager.SetProperty("#title", info.Title);
-        GUIPropertyManager.SetProperty("#year", info.Year.ToString());
+        GUIPropertyManager.SetProperty("#year", ((info.Year <= 1900) ? string.Empty : info.Year.ToString()));
         // MPAA
         info.MPARating = Util.Utils.MakeFileName(info.MPARating);
         GUIPropertyManager.SetProperty("#mpaarating", info.MPARating);
@@ -1757,10 +1765,17 @@ namespace MediaPortal.Video.Database
             GUIPropertyManager.SetProperty("#hideinfo", "false");
           }
 
-          GUIPropertyManager.SetProperty("#runtime", info.RunTime +
-                                " " +
-                                GUILocalizeStrings.Get(2998) +
-                                " (" + Util.Utils.SecondsToHMString(info.RunTime * 60) + ")");
+          if (info.RunTime <= 0)
+          {
+            GUIPropertyManager.SetProperty("#runtime", string.Empty);
+          }
+          else
+          {
+            GUIPropertyManager.SetProperty("#runtime", info.RunTime +
+                                  " " +
+                                  GUILocalizeStrings.Get(2998) +
+                                  " (" + Util.Utils.SecondsToHMString(info.RunTime * 60) + ")");
+          }
 
           if (info.Duration <= 0)
           {
@@ -1774,10 +1789,18 @@ namespace MediaPortal.Video.Database
         else
         {
           GUIPropertyManager.SetProperty("#hideinfo", "false");
-          GUIPropertyManager.SetProperty("#runtime", info.RunTime +
-                                " " +
-                                GUILocalizeStrings.Get(2998) +
-                                " (" + Util.Utils.SecondsToHMString(info.RunTime * 60) + ")");
+
+          if (info.RunTime <= 0)
+          {
+            GUIPropertyManager.SetProperty("#runtime", string.Empty);
+          }
+          else
+          {
+            GUIPropertyManager.SetProperty("#runtime", info.RunTime +
+                                  " " +
+                                  GUILocalizeStrings.Get(2998) +
+                                  " (" + Util.Utils.SecondsToHMString(info.RunTime * 60) + ")");
+          }
 
           if (info.Duration <= 0)
           {
@@ -1828,7 +1851,6 @@ namespace MediaPortal.Video.Database
         GUIPropertyManager.SetProperty("#HasSubtitles", hasSubtitles);
         GUIPropertyManager.SetProperty("#AspectRatio", info.MediaInfo.AspectRatio);
         GUIPropertyManager.SetProperty("#myvideosuserfanart", info.UserFanart);
-
         
       }
       catch (Exception ex)

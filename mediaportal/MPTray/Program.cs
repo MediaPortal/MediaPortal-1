@@ -22,20 +22,46 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows.Forms;
-using MediaPortal.Hardware;
 using MediaPortal.Hooks;
 using MediaPortal.Util;
 using Microsoft.Win32;
+//
+using Hid = SharpLib.Hid;
+using SharpLib.Win32;
 
 namespace MPTray
 {
-  public class ShellApplication
+  public class ShellApplication : IMessageFilter
   {
     private NotifyIcon _systemNotificationAreaIcon;
+    private Hid.Handler _hidHandler;
 
     #region Methods
+
+    public bool PreFilterMessage(ref Message message)
+    {
+      //Delay registering for HID events until we get our hWnd
+      if (_hidHandler == null)
+      {
+        RegisterHidDevices(message.HWnd);
+      }
+
+      switch (message.Msg)
+      {
+          case Const.WM_INPUT:
+              //Returning zero means we processed that message.
+              //message.Result = new IntPtr(0);
+              _hidHandler.ProcessInput(ref message);
+              break;
+      }
+
+      //Should we somehow determine if we received start button and return true then?
+      //Would that change anything? Guess not.
+      return false;
+    }
 
     private void InstallKeyboardHook()
     {
@@ -46,6 +72,9 @@ namespace MPTray
       _keyboardHook.IsEnabled = true;
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
     private static void SwitchFocus()
     {
       Log.Write("MPTray: SwitchFocus");
@@ -71,14 +100,67 @@ namespace MPTray
       }
     }
 
-    private static void OnClick(object sender, RemoteEventArgs e)
+    /// <summary>
+    /// Register HID devices so that we receive corresponding WM_INPUT messages.
+    /// </summary>
+    protected void RegisterHidDevices(IntPtr aHwnd)
     {
-      Log.Write("MPTray: OnClick");
-      if (e.Button != RemoteButton.Start)
+      // Register the input device to receive the commands from the
+      // remote device. See http://msdn.microsoft.com/library/default.asp?url=/library/en-us/dnwmt/html/remote_control.asp
+      // for the vendor defined usage page.
+
+      RAWINPUTDEVICE[] rid = new RAWINPUTDEVICE[1];
+
+      int i = 0;
+      rid[i].usUsagePage = (ushort)SharpLib.Hid.UsagePage.WindowsMediaCenterRemoteControl;
+      rid[i].usUsage = (ushort)SharpLib.Hid.UsageCollection.WindowsMediaCenter.WindowsMediaCenterRemoteControl;
+      rid[i].dwFlags = Const.RIDEV_INPUTSINK;
+      rid[i].hwndTarget = aHwnd; //Process.GetCurrentProcess().MainWindowHandle;
+
+      _hidHandler = new SharpLib.Hid.Handler(rid);
+      if (!_hidHandler.IsRegistered)
       {
+        Log.Write("Failed to register raw input devices: " + Marshal.GetLastWin32Error().ToString());
+      }
+      _hidHandler.OnHidEvent += HandleHidEvent;
+    }
+
+    /// <summary>
+    /// Here we receive HID events from our HID library.
+    /// </summary>
+    /// <param name="aSender"></param>
+    /// <param name="aHidEvent"></param>
+    public void HandleHidEvent(object aSender, SharpLib.Hid.Event aHidEvent)
+    {
+      Log.Write("MPTray: HandleHidEvent");
+
+      if (aHidEvent.IsStray)
+      {
+        //Stray event just ignore it
         return;
       }
 
+      
+        //We are in the proper thread
+        if (!(aHidEvent.Usages.Count > 0
+            && aHidEvent.UsagePage == (ushort)Hid.UsagePage.WindowsMediaCenterRemoteControl
+            && aHidEvent.Usages[0] == (ushort)Hid.Usage.WindowsMediaCenterRemoteControl.GreenStart))
+        //&& aHidEvent.UsagePage == (ushort)Hid.UsagePage.Consumer
+        //&& aHidEvent.Usages[0] == (ushort)Hid.Usage.ConsumerControl.ThinkPadFullscreenMagnifier)
+        {
+          //Discard anything but the Green Start Button
+          return;
+        }
+
+      DoStart();
+
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    private void DoStart()
+    {
       Process[] processes = Process.GetProcessesByName("mediaportal");
 
       if (processes.Length != 0)
@@ -102,14 +184,14 @@ namespace MPTray
           Uri uri = new Uri(Assembly.GetExecutingAssembly().GetName().CodeBase);
 
           Process process = new Process
-                              {
-                                StartInfo =
-                                  {
-                                    FileName = "mediaportal.exe",
-                                    WorkingDirectory = Path.GetDirectoryName(uri.LocalPath),
-                                    UseShellExecute = true
-                                  }
-                              };
+          {
+            StartInfo =
+            {
+              FileName = "mediaportal.exe",
+              WorkingDirectory = Path.GetDirectoryName(uri.LocalPath),
+              UseShellExecute = true
+            }
+          };
 
           Log.Write("MPTray: starting MediaPortal");
           process.Start();
@@ -119,18 +201,14 @@ namespace MPTray
           Log.Write("MPTray: Error starting MediaPortal {0}", ex.Message);
         }
       }
+
     }
 
-    private static void OnDeviceArrival(object sender, EventArgs e)
-    {
-      Log.Write("MPTray: Device installed");
-    }
-
-    private static void OnDeviceRemoval(object sender, EventArgs e)
-    {
-      Log.Write("MPTray: Device removed");
-    }
-
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
     private void OnKeyDown(object sender, KeyEventArgs e)
     {
       Log.Write("MPTray: OnKeyDown");
@@ -149,7 +227,7 @@ namespace MPTray
 
       if (_windowsKeyPressed && e.KeyCode == Keys.S)
       {
-        OnClick(null, new RemoteEventArgs(RemoteButton.Start));
+        DoStart();
         e.Handled = true;
       }
 
@@ -194,6 +272,11 @@ namespace MPTray
         Process.Start("taskmgr.exe");
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
     private void OnKeyUp(object sender, KeyEventArgs e)
     {
       Log.Write("MPTray: OnKeyUp");
@@ -201,6 +284,11 @@ namespace MPTray
         _windowsKeyPressed = false;
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="register"></param>
+    /// <param name="hive"></param>
     private static void Register(bool register, RegistryKey hive)
     {
       Log.Write("MPTray: Register");
@@ -229,6 +317,9 @@ namespace MPTray
       }
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
     private void Run()
     {
       try
@@ -247,17 +338,14 @@ namespace MPTray
           Log.Write("MPTray: Terminating running instance(s) of ehtray.exe");
         }
 
-        Remote.Click += OnClick;
-        Device.DeviceArrival += OnDeviceArrival;
-        Device.DeviceRemoval += OnDeviceRemoval;
-
         // reduce the memory footprint of the app
         Process process = Process.GetCurrentProcess();
 
         process.MaxWorkingSet = (IntPtr)900000;
         process.MinWorkingSet = (IntPtr)300000;
 
-        InitTrayIcon();
+        InitTrayIcon();        
+        Application.AddMessageFilter(this);
         Application.Run();
       }
       catch (Exception e)
@@ -274,6 +362,11 @@ namespace MPTray
       Log.Write("MPTray: Exiting...");
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="processName"></param>
+    /// <returns></returns>
     private static bool TerminateProcess(string processName)
     {
       Log.Write("MPTray: TerminateProcess");
@@ -308,7 +401,7 @@ namespace MPTray
 
     /// <summary>
     /// The main entry point for the application.
-    /// </summary>
+    /// </summary> 
     [STAThread]
     private static void Main(string[] args)
     {
@@ -371,6 +464,9 @@ namespace MPTray
       handler.Run();
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
     private void InitTrayIcon()
     {
       Log.Write("MPTray: InitTrayIcon");
@@ -404,6 +500,11 @@ namespace MPTray
       }
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
     private void MenuItem1Click(object sender, EventArgs e)
     {
       Log.Write("MPTray: MenuItem1Click");
@@ -423,10 +524,17 @@ namespace MPTray
 
     #region Log
 
+    /// <summary>
+    /// 
+    /// </summary>
     public class Log
     {
       private static StreamWriter _streamWriter;
 
+      /// <summary>
+      /// 
+      /// </summary>
+      /// <param name="fileName"></param>
       public static void Open(string fileName)
       {
         if (_streamWriter != null)
@@ -468,6 +576,10 @@ namespace MPTray
         catch {}
       }
 
+      /// <summary>
+      /// 
+      /// </summary>
+      /// <param name="fileName"></param>
       public static void ReOpen(string fileName)
       {
         if (_streamWriter != null)
@@ -489,6 +601,9 @@ namespace MPTray
         catch {}
       }
 
+      /// <summary>
+      /// 
+      /// </summary>
       public static void Close()
       {
         if (_streamWriter == null)
@@ -499,6 +614,11 @@ namespace MPTray
         _streamWriter = null;
       }
 
+      /// <summary>
+      /// 
+      /// </summary>
+      /// <param name="format"></param>
+      /// <param name="args"></param>
       public static void Write(string format, params object[] args)
       {
         Log.ReOpen("MPTray.log");

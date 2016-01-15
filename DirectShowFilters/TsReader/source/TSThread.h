@@ -40,6 +40,7 @@ public:
 
 	BOOL ThreadIsStopping(DWORD dwTimeoutMilliseconds);
   BOOL IsThreadRunning();
+
 protected:
 	virtual void InternalThreadProc();
 	HANDLE m_hDoneEvent;

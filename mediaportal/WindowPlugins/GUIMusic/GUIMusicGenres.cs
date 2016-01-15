@@ -22,6 +22,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using DShowNET.Helper;
 using MediaPortal.Configuration;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
@@ -528,12 +529,26 @@ namespace MediaPortal.GUI.Music
             }
             break;
 
-          case "disc#":
           case "track":
+            // If we want to get the Cover from embedded cover arts, we need to re-read the Tag from the file, 
+            // since the database query didn't return a cover
+            if (_useEmbeddedCover)
+            {
+              tag = item.MusicTag as MusicTag;
+              if (tag != null && tag.CoverArtImageBytes == null)
+              {
+                item.MusicTag = TagReader.TagReader.ReadTag(item.Path);
+              }
+            }
+            base.OnRetrieveCoverArt(item);
+            break;
+          }
+
+          case "disc#":
           case "album":
 
             bool thumbFound = false;
-            MusicTag tag = item.MusicTag as MusicTag;
+            tag = item.MusicTag as MusicTag;
             strThumb = Util.Utils.GetAlbumThumbName(tag.Artist, tag.Album);
             if (Util.Utils.FileExistsInCache(strThumb))
             {
@@ -901,17 +916,12 @@ namespace MediaPortal.GUI.Music
           {
             if (song.FileName.Contains(share.Path)) // compare it with shares
             {
-              if (share.Pincode != -1) // does it have a pincode?
+              if (share.Pincode != string.Empty) // does it have a pincode?
               {
                 GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_GET_PASSWORD, 0, 0, 0, 0, 0, 0);
                 GUIWindowManager.SendMessage(msg); // ask for the userinput
-                int iPincode = -1;
-                try
-                {
-                  iPincode = Int32.Parse(msg.Label);
-                }
-                catch (Exception) { }
-                if (iPincode != share.Pincode)
+
+                if (msg.Label != share.Pincode)
                 {
                   songs.Clear();
                 }
@@ -934,6 +944,9 @@ namespace MediaPortal.GUI.Music
         itemsToAdd.Add(pItem);
       }
 
+      // Get current Filter used
+      var currentFilter = (FilterDefinition)handler.View.Filters[handler.CurrentLevel];
+
       for (int i = 0; i < songs.Count; ++i)
       {
         Song song = songs[i];
@@ -953,7 +966,17 @@ namespace MediaPortal.GUI.Music
         {
           item.IsFolder = true;
           item.Label = MusicViewHandler.GetFieldValue(song, handler.CurrentLevelWhere);
-          SetSortLabel(ref item, CurrentSortMethod, handler.CurrentLevelWhere);
+
+          // If we are grouping on a specific value, we have in the Duration field the number of items
+          // Use this in the sort field
+          if (currentFilter.SqlOperator == "group")
+          {
+            item.Label2 = tag.Duration.ToString();
+          }
+          else
+          {
+            SetSortLabel(ref item, CurrentSortMethod, handler.CurrentLevelWhere);  
+          }
         }
         else
         {

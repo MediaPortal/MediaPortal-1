@@ -156,6 +156,12 @@ namespace MediaPortal.Util
         Duration = MediaInfo.VideoDuration/1000;
       }
 
+      if (Duration == 0)
+      {
+        Log.Debug("VideoThumbCreator: the {0} is corrupt.", aVideoPath);
+        return false;
+      }
+
       if (preGapSec > Duration)
       {
         preGapSec = ( Duration / 100 ) * 20; // 20% of the duration

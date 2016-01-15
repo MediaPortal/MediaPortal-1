@@ -536,7 +536,7 @@ namespace MediaPortal.Player
     /// <summary>
     /// Property to get the name for an Video stream
     /// </summary>
-    public virtual string VideoLanguage(int iStream)
+    public virtual string VideoName(int iStream)
     {
       return Strings.Unknown;
     }

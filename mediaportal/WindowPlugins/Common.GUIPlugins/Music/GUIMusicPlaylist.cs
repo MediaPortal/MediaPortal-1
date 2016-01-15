@@ -23,6 +23,7 @@ using System.ComponentModel;
 using System.IO;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
+using MediaPortal.Music.Database;
 using MediaPortal.Player;
 using MediaPortal.Playlists;
 using MediaPortal.TagReader;
@@ -44,6 +45,7 @@ namespace MediaPortal.GUI.Music
     private string _playlistFolder = string.Empty;
     private string m_strCurrentFile = string.Empty;
     private bool _savePlaylistOnExit = false;
+    private bool _savePlaylistAsUtf8 = false;
     private bool _resumePlaylistOnEnter = false;
     private string _defaultPlaylist = "default.m3u";
     private WaitCursor waitCursor;
@@ -78,11 +80,16 @@ namespace MediaPortal.GUI.Music
         _playlistFolder = xmlreader.GetValueAsString("music", "playlists", string.Empty);
         _savePlaylistOnExit = xmlreader.GetValueAsBool("musicfiles", "savePlaylistOnExit", false);
         _resumePlaylistOnEnter = xmlreader.GetValueAsBool("musicfiles", "resumePlaylistOnMusicEnter", false);
+        _savePlaylistAsUtf8 = xmlreader.GetValueAsBool("musicfiles", "savePlaylistUTF8", false);
         playlistPlayer.RepeatPlaylist = xmlreader.GetValueAsBool("musicfiles", "repeat", true);
       }
 
       if (_resumePlaylistOnEnter)
       {
+        if (_savePlaylistAsUtf8)
+        {
+          _defaultPlaylist = string.Format("{0}.m3u8", Path.GetFileNameWithoutExtension(_defaultPlaylist));
+        }
         Log.Info("GUIMusicPlaylist: Loading default playlist {0}", _defaultPlaylist);
         bw = new BackgroundWorker();
         bw.WorkerSupportsCancellation = true;
@@ -248,7 +255,14 @@ namespace MediaPortal.GUI.Music
       currentLayout = Layout.Playlist;
       facadeLayout.CurrentLayout = Layout.Playlist;
 
-      LoadFacade();
+      Log.Debug("GUIMusicPlaylist: Loading playlist facade in background");
+      bw = new BackgroundWorker();
+      bw.WorkerSupportsCancellation = true;
+      bw.WorkerReportsProgress = false;
+      bw.DoWork += new DoWorkEventHandler(bw_DoWorkFacade);
+      bw.RunWorkerCompleted += new RunWorkerCompletedEventHandler(bw_RunWorkerCompleted);
+      bw.RunWorkerAsync();
+
       if (m_iItemSelected >= 0)
       {
         GUIControl.SelectItemControl(GetID, facadeLayout.GetID, m_iItemSelected);
@@ -390,6 +404,7 @@ namespace MediaPortal.GUI.Music
       playlistPlayer.Play(iItem);
       SelectCurrentPlayingSong();
       UpdateButtonStates();
+      DoPlayNowJumpTo(facadeLayout.Count);
     }
 
     public override void Process()
@@ -431,6 +446,7 @@ namespace MediaPortal.GUI.Music
     {
       TimeSpan totalPlayingTime = new TimeSpan();
       PlayList pl = playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC);
+      Song song = new Song();
 
       if (facadeLayout != null)
       {
@@ -440,8 +456,25 @@ namespace MediaPortal.GUI.Music
       for (int i = 0; i < pl.Count; i++)
       {
         PlayListItem pi = pl[i];
+        if (PlayListFactory.IsPlayList(pi.FileName))
+        {
+          pl.Remove(pi.FileName, false);
+          LoadPlayList(pi.FileName, false, false, false, false);
+        }
+        // refresh pi if .m3u are cleaned up
+        pi = pl[i];
         GUIListItem pItem = new GUIListItem(pi.Description);
-        MusicTag tag = (MusicTag)pi.MusicTag;
+        MusicTag tag = new MusicTag();
+        if (m_database.GetSongByFileName(pi.FileName, ref song))
+        {
+          tag = song.ToMusicTag();
+          pi.MusicTag = tag;
+        }
+        else
+        {
+          tag = TagReader.TagReader.ReadTag(pi.FileName);
+          pi.MusicTag = tag;
+        }
         bool dirtyTag = false;
         if (tag != null)
         {
@@ -745,7 +778,7 @@ namespace MediaPortal.GUI.Music
           PlayListItem newItem = new PlayListItem();
           newItem.FileName = pItem.Path;
           newItem.Description = pItem.Label;
-          newItem.Duration = pItem.Duration;
+          newItem.Duration = (pItem.MusicTag == null) ? pItem.Duration : (pItem.MusicTag as MusicTag).Duration;
           newItem.Type = PlayListItem.PlayListItemType.Audio;
           playlist.Add(newItem);
         }
@@ -877,7 +910,14 @@ namespace MediaPortal.GUI.Music
 
     private void bw_DoWork(object sender, DoWorkEventArgs e)
     {
-      LoadPlayList(Path.Combine(_playlistFolder, _defaultPlaylist), false, true, true);
+      LoadPlayList(Path.Combine(_playlistFolder, _defaultPlaylist), false, true, true, true);
+      if (null != bw && bw.CancellationPending)
+        e.Cancel = true;
+    }
+
+    private void bw_DoWorkFacade(object sender, DoWorkEventArgs e)
+    {
+      LoadFacade();
       if (null != bw && bw.CancellationPending)
         e.Cancel = true;
     }

@@ -24,6 +24,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Globalization;
+using System.IO;
 using System.Timers;
 using System.Windows.Forms;
 using Gentle.Common;
@@ -347,7 +348,7 @@ namespace TvPlugin
     {
       _needToClearScreen = true;
 
-      if (action.wID == Action.ActionType.ACTION_SHOW_VOLUME)
+      if (action.wID == Action.ActionType.ACTION_SHOW_VOLUME && !File.Exists(GUIGraphicsContext.Skin + @"\VolumeOverlay.xml"))
       {
         _volumeTimer = DateTime.Now;
         _isVolumeVisible = true;
@@ -1748,6 +1749,22 @@ namespace TvPlugin
         {
           item.Label = (String.Format("{0} #{1}", GUILocalizeStrings.Get(200091), (i + 1)));
           item.Label2 = MediaPortal.Util.Utils.SecondsToHMSString((int)chaptersList[i]);
+
+          if (i < chaptersList.Length - 1)
+          {
+            if (g_Player.CurrentPosition >= chaptersList[i] && g_Player.CurrentPosition < chaptersList[i + 1])
+            {
+              item.Selected = true;
+            }
+          }
+          else
+          {
+            if (g_Player.CurrentPosition >= chaptersList[i])
+            {
+              item.Selected = true;
+            }
+          }
+
           dlg.Add(item);
         }
         else
@@ -1756,14 +1773,28 @@ namespace TvPlugin
           {
             item.Label = (String.Format("{0} #{1}", GUILocalizeStrings.Get(200091), (i + 1)));
             item.Label2 = MediaPortal.Util.Utils.SecondsToHMSString((int)chaptersList[i]);
-            dlg.Add(item);
           }
           else
           {
             item.Label = (String.Format("{0} #{1}: {2}", GUILocalizeStrings.Get(200091), (i + 1), chaptersname[i]));
             item.Label2 = MediaPortal.Util.Utils.SecondsToHMSString((int)chaptersList[i]);
-            dlg.Add(item);
           }
+          if (i < chaptersList.Length - 1)
+          {
+            if (g_Player.CurrentPosition >= chaptersList[i] && g_Player.CurrentPosition < chaptersList[i + 1])
+            {
+              item.Selected = true;
+            }
+          }
+          else
+          {
+            if (g_Player.CurrentPosition >= chaptersList[i])
+            {
+              item.Selected = true;
+            }
+          }
+
+          dlg.Add(item);
         }
       }
 

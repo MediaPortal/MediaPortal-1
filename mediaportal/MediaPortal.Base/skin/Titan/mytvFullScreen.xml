@@ -133,11 +133,11 @@
 			<description>Start Time Info</description>
 			<type>label</type>
 			<id>106</id>
-    		<posX>484</posX>
+    		<posX>564</posX>
     		<posY>899</posY>
 			<label>#TV.View.start</label>
     		<textcolor>ff00b7ff</textcolor>
-    		<align>left</align>
+    		<align>right</align>
     		<font>font11</font>
 			<visible>control.isVisible(111)|control.isVisible(10)|control.isVisible(11)|control.isVisible(12)</visible>
 		</control>
@@ -146,11 +146,11 @@
 			<description>Remaining time</description>
 			<type>label</type>
 			<id>107</id>
-    		<posX>1415</posX>
+    		<posX>1350</posX>
     		<posY>899</posY>
 			<label>#TV.View.stop</label>
     		<textcolor>ff00b7ff</textcolor>
-    		<align>right</align>
+    		<align>left</align>
     		<font>font11</font>
 			<visible>control.isVisible(111)|control.isVisible(10)|control.isVisible(11)|control.isVisible(12)</visible>
 		</control>

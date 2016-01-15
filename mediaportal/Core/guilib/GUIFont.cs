@@ -19,14 +19,17 @@
 #endregion
 
 using System;
+using System.Collections;
 using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.Drawing.Text;
 using System.IO;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.Text;
 using DShowNET.Helper;
 using MediaPortal.ExtensionMethods;
 using Microsoft.DirectX.Direct3D;
@@ -104,6 +107,18 @@ namespace MediaPortal.GUI.Library
     private int _StartCharacter = 32;
     private int _EndCharacter = 255;
     private Microsoft.DirectX.Direct3D.Font _d3dxFont;
+    private static ArrayList _outOfBoundsChar = new ArrayList {
+                                         (char) 8211, // 0x2013 // –
+                                         (char) 8212, // 0x2014 // —
+                                         (char) 8216, // 0x2018 // ’
+                                         (char) 8217, // 0x2019 // ‘
+                                         (char) 8220, // 0x201C // “
+                                         (char) 8221, // 0x201D // ”
+                                         (char) 8222, // 0x201E // „
+                                         (char) 8223, // 0x201F // ‟
+                                         (char) 8226, // 0x2022 // •
+                                         (char) 8230  // 0x2026 // …
+                                       };
 
     #endregion
 
@@ -238,7 +253,11 @@ namespace MediaPortal.GUI.Library
         char c = text[i];
         if ((c < _StartCharacter || c >= _EndCharacter) && c != '\n')
         {
-          return true;
+          // Check some OutOfBoundsChar as valid to avoid overlap this will be displayed/used from replacement in fontEngine c++
+          if (!_outOfBoundsChar.Contains(c))
+          {
+            return true;
+          }
         }
       }
       return false;
@@ -1243,11 +1262,17 @@ namespace MediaPortal.GUI.Library
           catch (Exception) {}
         }
 
-
-        _textureFont.Disposing -= new EventHandler(_textureFont_Disposing);
-        _textureFont.Disposing += new EventHandler(_textureFont_Disposing);
-        SetFontEgine();
-        _d3dxFont = new Microsoft.DirectX.Direct3D.Font(GUIGraphicsContext.DX9Device, _systemFont);
+        try
+        {
+          _textureFont.Disposing -= new EventHandler(_textureFont_Disposing);
+          _textureFont.Disposing += new EventHandler(_textureFont_Disposing);
+          SetFontEgine();
+          _d3dxFont = new Microsoft.DirectX.Direct3D.Font(GUIGraphicsContext.DX9Device, _systemFont);
+        }
+        catch (Exception)
+        {
+          Log.Error("GUIFont: Failed to D3D...");
+        }
       }
       finally
       {

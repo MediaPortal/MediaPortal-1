@@ -42,6 +42,7 @@ namespace MediaPortal.DeployTool.InstallationChecks
 
     private static bool MySQL51 = false;
     private static string strMySQL = "";
+    private static string strMySQLData = "";
 
     private void PrepareMyIni(string iniFile)
     {
@@ -106,6 +107,7 @@ namespace MediaPortal.DeployTool.InstallationChecks
         strMySQL = key.GetValue("Location").ToString();
         if (Utils.CheckTargetDir(strMySQL) && strMySQL.Contains("MySQL Server 5.1"))
         {
+          strMySQLData = key.GetValue("DataLocation").ToString();
           key.Close();
           return true;
         }
@@ -115,8 +117,28 @@ namespace MediaPortal.DeployTool.InstallationChecks
 
     public bool BackupDB()
     {
-      if (string.IsNullOrEmpty(strMySQL))
+      if (!string.IsNullOrEmpty(strMySQL) && !string.IsNullOrEmpty(strMySQLData))
       {
+        const string ServiceName = "MySQL";
+        ServiceController ctrl = new ServiceController(ServiceName);
+        // Check if MySQL is running and try to start it if not
+        if (!ctrl.Status.Equals(ServiceControllerStatus.Running))
+        {
+          try
+          {
+            ctrl.Start();
+          }
+          catch (Exception)
+          {
+            MessageBox.Show("MySQL - start backup DB service exception");
+            return false;
+          }
+        }
+
+        ctrl.WaitForStatus(ServiceControllerStatus.Running);
+        // Service is running, but on slow machines still take some time to answer network queries
+        System.Threading.Thread.Sleep(5000);
+
         string strMySqlDump = null;
         strMySqlDump = "\"" + strMySQL + "bin\\mysqldump.exe" + "\"";
         string cmdLine = "-uroot -p" + InstallationProperties.Instance["DBMSPassword"] +
@@ -135,22 +157,21 @@ namespace MediaPortal.DeployTool.InstallationChecks
           return false;
         }
 
-        const string ServiceName = "MySQL";
-        ServiceController ctrl = new ServiceController(ServiceName);
+        // Try to stop MySQL service
         try
         {
           ctrl.Stop();
         }
         catch (Exception)
         {
-          MessageBox.Show("MySQL - stop service exception");
+          MessageBox.Show("MySQL - stop backup DB service exception");
           //return false;
         }
 
         string cmdExe = Environment.SystemDirectory + "\\sc.exe";
         string cmdParam = "delete " + ServiceName; // +"\"";
 #if DEBUG
-        string ff = "c:\\mysql-srv.bat";
+        string ff = "c:\\mysql-srv-delete.bat";
         StreamWriter a = new StreamWriter(ff);
         a.WriteLine("@echo off");
         a.WriteLine(cmdExe + " " + cmdParam);
@@ -163,8 +184,9 @@ namespace MediaPortal.DeployTool.InstallationChecks
         {
           svcInstaller.WaitForExit();
         }
+        return true;
       }
-      return true;
+      return false;
     }
 
     public bool RestoreDB()
@@ -213,12 +235,28 @@ namespace MediaPortal.DeployTool.InstallationChecks
     public bool Install()
     {
       MySQL51 = IsMySQL51Installed();
-
+      bool IsBackupDB = false;
       if (MySQL51)
       {
         // Backup MySQL 5.1 Database and uninstall current MySQL 5.1
-        BackupDB();
+        IsBackupDB = BackupDB();
         Utils.UninstallMSI("{561AB451-B967-475C-80E0-3B6679C38B52}");
+        Utils.UninstallMSI("{291D8FE1-ED05-4934-80CE-A5F6B7A8718D}");
+      }
+
+      if (!IsBackupDB)
+      {
+        // Try to stop actual MySQL Service
+        const string OldServiceName = "MySQL";
+        ServiceController ctrlMySQL = new ServiceController(OldServiceName);
+        try
+        {
+          ctrlMySQL.Stop();
+        }
+        catch (Exception)
+        {
+          // Catch if service can't be stopped or didn't exist
+        }
       }
 
       string cmdLine = "/i \"" + _fileName + "\"";

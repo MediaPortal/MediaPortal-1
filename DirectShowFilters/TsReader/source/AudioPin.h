@@ -23,7 +23,7 @@
 #include "tsreader.h"
 #include "mediaseeking.h"
 
-#define NB_ASDSIZE 8
+//#define NB_ASDSIZE 8
 
 class CAudioPin : public CSourceStream, public CSourceSeeking
 {
@@ -61,8 +61,6 @@ public:
   bool HasDeliveredSample();
   void SetDiscontinuity(bool onOff);
   void SetAddPMT();
-  LONGLONG m_sampleDuration;
-  //DWORD    m_sampleSleepTime;
   DWORD    m_FillBuffSleepTime;
 
 protected:
@@ -76,17 +74,7 @@ protected:
   bool      m_bPresentSample;
   bool      m_bInFillBuffer;
   bool      m_bDownstreamFlush;
-  
-  void     ClearAverageSampleDur();
-  LONGLONG GetAverageSampleDur (LONGLONG timeStamp);
     
-  LONGLONG  m_pllASD [NB_ASDSIZE];   // timestamp buffer for average Audio sample duration calculation
-  LONGLONG  m_llLastASDts;
-  int       m_nNextASD;
-	LONGLONG  m_fASDMean;
-	LONGLONG  m_llASDSumAvg;	
-  LONGLONG  m_llLastComp;
-  
   DWORD m_LastFillBuffTime;
   int   m_sampleCount;
   bool  m_bPinNoAddPMT;

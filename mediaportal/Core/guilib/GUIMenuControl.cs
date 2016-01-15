@@ -253,6 +253,10 @@ namespace MediaPortal.GUI.Library
         }
         return;
       }
+      if (_buttonList.Count == 0)
+      {
+        return;
+      }
       _buttonList[_focusPosition].Focus = false; // hide button focus for animation
       if (!_horizontal)
       {
@@ -281,6 +285,10 @@ namespace MediaPortal.GUI.Library
         {
           _animationTime -= 5;
         }
+        return;
+      }
+      if (_buttonList.Count == 0)
+      {
         return;
       }
       _buttonList[_focusPosition].Focus = false; // hide button focus for animation

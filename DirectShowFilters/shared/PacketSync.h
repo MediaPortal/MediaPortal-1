@@ -33,6 +33,7 @@ public:
   void OnRawData(byte* pData, int nDataLen);
   void OnRawData2(byte* pData, int nDataLen);
   virtual void OnTsPacket(byte* tsPacket);
+  virtual void OnTsPacket(byte* tsPacket, int bufferOffset, int bufferLength);
   void Reset(void);
 
 private:

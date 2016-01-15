@@ -18,8 +18,10 @@
 
 #include <queue>
 #include <dxva2api.h>
+#include <mfidl.h>
 #include <evr.h>
 #include <Mferror.h>
+#include "IMF.h"
 #include "OuterEVR.h"
 #include "IAVSyncClock.h"
 #include "callback.h"
@@ -637,3 +639,4 @@ protected:
   }
   
 };
+

@@ -307,6 +307,8 @@ namespace MediaPortal.GUI.Music
       // TODO: Handle the Special Case of a Top Level View with an Index
 
       switch (table.ToLower())
+        DatabaseUtility.RemoveInvalidChars(ref selectedValue);
+
       {
         case "artist":
           break;
