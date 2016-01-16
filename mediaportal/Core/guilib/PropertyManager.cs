@@ -34,8 +34,8 @@ namespace MediaPortal.GUI.Library
   public class GUIPropertyManager
   {
     // pattern that matches a property tag, e.g. '#myproperty' or '#some.property_string'
-    private static Regex propertyExpr = new Regex(@"#[a-z0-9\._]+", RegexOptions.IgnoreCase | RegexOptions.Compiled);
-    private static Dictionary<string, string> _properties = new Dictionary<string, string>();
+    private static readonly Regex propertyExpr = new Regex(@"#[a-z0-9\._]+", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+    private static readonly Dictionary<string, string> _properties = new Dictionary<string, string>();
     private static bool _isChanged = false;
 
     public delegate void OnPropertyChangedHandler(string tag, string tagValue);
@@ -451,7 +451,10 @@ namespace MediaPortal.GUI.Library
     /// <returns></returns>
     public static bool PropertyIsDefined(string tag)
     {
-      return _properties.ContainsKey(tag);
+      lock (_properties)
+      {
+        return _properties.ContainsKey(tag);
+      }
     }
 
     /// <summary>
@@ -617,7 +620,7 @@ namespace MediaPortal.GUI.Library
         string tag = property.Substring(0, i);
         lock (_properties)
         {
-          string propertyValue = string.Empty;
+          string propertyValue;
           if (_properties.TryGetValue(tag, out propertyValue))
           {
             return property.Replace(tag, propertyValue);
@@ -634,12 +637,14 @@ namespace MediaPortal.GUI.Library
     /// <param name="tag">name of the property</param>
     public static void RemoveProperty(string tag)
     {
-      string property = string.Empty;
-      if (tag != null && tag.IndexOf('#') > -1 && _properties.ContainsKey(tag))
+      lock (_properties)
       {
-        lock (_properties)
+        if (_properties != null && (tag != null && tag.IndexOf('#') > -1 && _properties.ContainsKey(tag)))
         {
-          _properties.Remove(tag);
+          lock (_properties)
+          {
+            _properties.Remove(tag);
+          }
         }
       }
     }
