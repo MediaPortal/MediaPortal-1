@@ -715,13 +715,24 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan.RemoteControl
 
         // Start the listener thread.
         ManualResetEvent startEvent = new ManualResetEvent(false);
-        _listenerThread = new Thread(new ParameterizedThreadStart(Listener));
-        _listenerThread.Name = "Twinhan HID remote control listener";
-        _listenerThread.IsBackground = true;
-        _listenerThread.Priority = ThreadPriority.Lowest;
-        _listenerThread.Start(startEvent);
-        startEvent.WaitOne();
-        startEvent.Close();
+        try
+        {
+          _listenerThread = new Thread(new ParameterizedThreadStart(Listener));
+          _listenerThread.Name = "Twinhan HID remote control listener";
+          _listenerThread.IsBackground = true;
+          _listenerThread.Priority = ThreadPriority.Lowest;
+          _listenerThread.Start(startEvent);
+          if (!startEvent.WaitOne(5000))
+          {
+            this.LogWarn("Twinhan HID RC: failed to receive remote control listener thread start event, assuming error occurred");
+            _isInterfaceOpen = false;
+          }
+        }
+        finally
+        {
+          startEvent.Close();
+          startEvent.Dispose();
+        }
 
         if (_isInterfaceOpen)
         {
@@ -774,7 +785,11 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan.RemoteControl
       if (_listenerThread != null && _listenerThreadId > 0)
       {
         NativeMethods.PostThreadMessage(_listenerThreadId, NativeMethods.WindowsMessage.WM_QUIT, IntPtr.Zero, IntPtr.Zero);
-        _listenerThread.Join();
+        if (!_listenerThread.Join(500))
+        {
+          this.LogWarn("Twinhan HID RC: failed to join remote control listener thread, aborting thread");
+          _listenerThread.Abort();
+        }
         _listenerThreadId = 0;
         _listenerThread = null;
       }
