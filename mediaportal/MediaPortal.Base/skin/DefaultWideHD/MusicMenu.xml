@@ -33,10 +33,10 @@
       <id>1</id>
       <posX>750</posX>
       <posY>140</posY>
-      <height>870</height>
+      <height>850</height>
       <width>520</width>
-      <texture>black.png</texture>
-      <colordiffuse>50ffffff</colordiffuse>
+      <texture>am-background.png</texture>
+      <colordiffuse>70ffffff</colordiffuse>
       <animation effect="slide" time="400" start="-300,0">WindowOpen</animation>
       <animation effect="slide" time="400" end="0,-300">WindowClose</animation>
       <animation effect="fade" time="500">WindowClose</animation>
@@ -59,6 +59,7 @@
         <hyperlink>7776</hyperlink>
         <label>19001</label>
         <onup>17</onup>
+        <visible>plugin.isenabled(Tetris)</visible>
       </control>
       <control Style="GamesMenuButton">
         <description>Sudoku push button</description>
@@ -66,6 +67,7 @@
         <id>3</id>
         <hyperlink>7777</hyperlink>
         <label>19101</label>
+        <visible>plugin.isenabled(Sudoku)</visible>
       </control>
       <control Style="GamesMenuButton">
         <description>Mastermind push button</description>
@@ -73,6 +75,7 @@
         <id>4</id>
         <hyperlink>567834</hyperlink>
         <label>Mastermind</label>
+        <visible>plugin.isenabled(Mastermind)</visible>
       </control>
       <control Style="GamesMenuButton">
         <description>Chess push button</description>
@@ -80,6 +83,7 @@
         <id>5</id>
         <hyperlink>36453969</hyperlink>
         <label>Chess</label>
+        <visible>plugin.isenabled(Chess)</visible>
       </control>
       <control Style="GamesMenuButton">
         <description>Pipes push button</description>
@@ -87,6 +91,7 @@
         <id>6</id>
         <hyperlink>426144</hyperlink>
         <label>Pipes</label>
+        <visible>plugin.isenabled(Pipes)</visible>
       </control>
       <control Style="GamesMenuButton">
         <description>Frustration push button</description>
@@ -94,6 +99,7 @@
         <id>7</id>
         <hyperlink>32647501</hyperlink>
         <label>Frustration</label>
+        <visible>plugin.isenabled(Frustration)</visible>
       </control>
       <control Style="GamesMenuButton">
         <description>Yahtzee push button</description>
@@ -101,6 +107,7 @@
         <id>8</id>
         <hyperlink>22031923</hyperlink>
         <label>Yahtzee</label>
+        <visible>plugin.isenabled(Yahtzee)</visible>
       </control>
       <control Style="GamesMenuButton">
         <description>clickmania push button</description>
@@ -108,6 +115,7 @@
         <id>9</id>
         <hyperlink>5555</hyperlink>
         <label>ClickMania</label>
+        <visible>plugin.isenabled(ClickMania)</visible>
       </control>
       <control Style="GamesMenuButton">
         <description>connect 4 push button</description>
@@ -115,6 +123,7 @@
         <id>10</id>
         <hyperlink>22031969</hyperlink>
         <label>Connect 4</label>
+        <visible>plugin.isenabled(Connect4)</visible>
       </control>
       <control Style="GamesMenuButton">
         <description>hexxagon push button</description>
@@ -122,14 +131,15 @@
         <id>11</id>
         <hyperlink>1234711</hyperlink>
         <label>Hexxagon</label>
+        <visible>plugin.isenabled(Hexxagon)</visible>
       </control>
       <control Style="GamesMenuButton">
         <description>minesweeper push button</description>
         <type>button</type>
         <id>12</id>
-        <!--onclick>#(skin.setfocus(32327500,2)</onclick-->
         <hyperlink>32327501</hyperlink>
         <label>Minesweeper</label>
+        <visible>plugin.isenabled(Minesweeper)</visible>
       </control>
       <control Style="GamesMenuButton">
         <description>Emulators push button</description>
@@ -138,6 +148,7 @@
         <hyperlink>7942</hyperlink>
         <label>Emulators</label>
         <ondown>14</ondown>
+        <visible>plugin.isenabled(Emulators 2)</visible>
       </control>
       <control Style="GamesMenuButton">
         <description>Flash Games push button</description>
@@ -146,6 +157,7 @@
         <hyperlink>8796</hyperlink>
         <label>Flash Games</label>
         <ondown>2</ondown>
+        <visible>plugin.isenabled(Flash Games)</visible>
       </control>
     </control>
     <control>

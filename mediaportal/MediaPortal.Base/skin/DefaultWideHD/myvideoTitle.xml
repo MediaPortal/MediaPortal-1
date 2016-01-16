@@ -508,7 +508,8 @@
         <width>85</width>
         <height>55</height>
         <texture>#fanarthandler.movie.studios.selected</texture>
-        <keepaspectratio>yes</keepaspectratio>        
+        <keepaspectratio>yes</keepaspectratio>
+        <visible>facadeview.list</visible>        
     </control>
       <control>
         <description>Video codec</description>
