@@ -85,27 +85,31 @@ namespace MediaPortal.GUI.Library
         }
 
         // cache the styles
-        foreach (XmlNode node in doc.DocumentElement.SelectNodes("/controls/style"))
-        {
-          XmlAttribute styleNameAttribute = node.Attributes["Name"];
-
-          if (styleNameAttribute != null)
+        var selectNodes = doc.DocumentElement.SelectNodes("/controls/style");
+        if (selectNodes != null)
+          foreach (XmlNode node in selectNodes)
           {
-            _cachedStyleNodes[styleNameAttribute.Value] = node;
+            XmlAttribute styleNameAttribute = node.Attributes["Name"];
+
+            if (styleNameAttribute != null)
+            {
+              _cachedStyleNodes[styleNameAttribute.Value] = node;
+            }
           }
-        }
 
         // cache the defines
-        foreach (XmlNode node in doc.DocumentElement.SelectNodes("/controls/define"))
-        {
-          string[] tokens = node.InnerText.Split(':');
-
-          if (tokens.Length < 2)
+        var xmlNodeList = doc.DocumentElement.SelectNodes("/controls/define");
+        if (xmlNodeList != null)
+          foreach (XmlNode node in xmlNodeList)
           {
-            continue;
+            string[] tokens = node.InnerText.Split(':');
+
+            if (tokens.Length < 2)
+            {
+              continue;
+            }
+            _cachedDefines[tokens[0]] = tokens[1];
           }
-          _cachedDefines[tokens[0]] = tokens[1];
-        }
       }
       catch (Exception ex)
       {
@@ -151,7 +155,7 @@ namespace MediaPortal.GUI.Library
     /// updatable field, indexed by their corresponding Xml Element name. </returns>
     private static IDictionary<string, MemberInfo> GetMembersToUpdate(Type guiControlType)
     {
-      // Lazy Initializiation...      
+      // Lazy Initializiation...
 
       IDictionary<string, MemberInfo> getMembersToUpdate = null;
       if (m_reflectionCacheByControlType.TryGetValue(guiControlType, out getMembersToUpdate))
@@ -228,9 +232,9 @@ namespace MediaPortal.GUI.Library
     {
       if (type == typeof (bool))
       {
-        if (string.Compare(valueText, "off", true) == 0 ||
-            string.Compare(valueText, "no", true) == 0 ||
-            string.Compare(valueText, "disabled", true) == 0)
+        if (String.Compare(valueText, "off", StringComparison.OrdinalIgnoreCase) == 0 ||
+            String.Compare(valueText, "no", StringComparison.OrdinalIgnoreCase) == 0 ||
+            String.Compare(valueText, "disabled", StringComparison.OrdinalIgnoreCase) == 0)
         {
           return false;
         }
@@ -254,9 +258,9 @@ namespace MediaPortal.GUI.Library
 
         if (type == typeof (int) || type == typeof (long))
         {
-          if (string.Compare(valueName, "textcolor", true) == 0 ||
-              string.Compare(valueName, "colorkey", true) == 0 ||
-              string.Compare(valueName, "colordiffuse", true) == 0)
+          if (String.Compare(valueName, "textcolor", StringComparison.OrdinalIgnoreCase) == 0 ||
+              String.Compare(valueName, "colorkey", StringComparison.OrdinalIgnoreCase) == 0 ||
+              String.Compare(valueName, "colordiffuse", StringComparison.OrdinalIgnoreCase) == 0)
           {
             if (valueText.Length > 0)
             {
@@ -322,11 +326,11 @@ namespace MediaPortal.GUI.Library
 
         if (type == typeof (int))
         {
-          if (valueText.CompareTo("-") == 0)
+          if (valueText != null && String.Compare(valueText, "-", StringComparison.Ordinal) == 0)
           {
             return 0;
           }
-          if (valueText.CompareTo("") == 0)
+          if (valueText != null && String.Compare(valueText, "", StringComparison.Ordinal) == 0)
           {
             return 0;
           }
@@ -342,11 +346,11 @@ namespace MediaPortal.GUI.Library
         }
         if (type == typeof (long))
         {
-          if (valueText.CompareTo("-") == 0)
+          if (valueText != null && String.Compare(valueText, "-", StringComparison.Ordinal) == 0)
           {
             return 0;
           }
-          if (valueText.CompareTo("") == 0)
+          if (valueText != null && String.Compare(valueText, "", StringComparison.Ordinal) == 0)
           {
             return 0;
           }
@@ -405,15 +409,18 @@ namespace MediaPortal.GUI.Library
           UpdateControlWithXmlData(control, typeOfControlToCreate, referenceNode, defines, filename);
         }
 
-        XmlAttribute styleAttribute = pControlNode.Attributes["Style"];
-
-        if (styleAttribute != null)
+        if (pControlNode.Attributes != null)
         {
-          XmlNode styleNode = _cachedStyleNodes[styleAttribute.Value];
+          XmlAttribute styleAttribute = pControlNode.Attributes["Style"];
 
-          if (styleNode != null)
+          if (styleAttribute != null)
           {
-            UpdateControlWithXmlData(control, typeOfControlToCreate, styleNode, defines, filename);
+            XmlNode styleNode = _cachedStyleNodes[styleAttribute.Value];
+
+            if (styleNode != null)
+            {
+              UpdateControlWithXmlData(control, typeOfControlToCreate, styleNode, defines, filename);
+            }
           }
         }
 
@@ -425,52 +432,55 @@ namespace MediaPortal.GUI.Library
 
         if (control is IAddChild)
         {
-          foreach (XmlNode subControlNode in pControlNode.SelectNodes("control"))
-          {
-            ((IAddChild)control).AddChild(Create(dwParentId, subControlNode, defines, filename));
-          }
+          var subControlNodes = pControlNode.SelectNodes("control");
+          if (subControlNodes != null)
+            foreach (XmlNode subControlNode in subControlNodes)
+            {
+              ((IAddChild)control).AddChild(Create(dwParentId, subControlNode, defines, filename));
+            }
         }
 
         if (typeOfControlToCreate == typeof (GUIFacadeControl))
         {
           GUIFacadeControl facade = (GUIFacadeControl)control;
           XmlNodeList nodeList = pControlNode.SelectNodes("control");
-          foreach (XmlNode subControlNode in nodeList)
-          {
-            GUIControl subControl = Create(dwParentId, subControlNode, defines, filename);
+          if (nodeList != null)
+            foreach (XmlNode subControlNode in nodeList)
+            {
+              GUIControl subControl = Create(dwParentId, subControlNode, defines, filename);
 
-            if (subControl is GUIPlayListItemListControl)
-            {
-              GUIPlayListItemListControl list = subControl as GUIPlayListItemListControl;
-              facade.PlayListLayout = list;
-            }
+              if (subControl is GUIPlayListItemListControl)
+              {
+                GUIPlayListItemListControl list = subControl as GUIPlayListItemListControl;
+                facade.PlayListLayout = list;
+              }
 
-            else if (subControl is GUIListControl)
-            {
-              GUIListControl list = subControl as GUIListControl;
-              if (list.SubType == "album")
+              else if (subControl is GUIListControl)
               {
-                facade.AlbumListLayout = list;
+                GUIListControl list = subControl as GUIListControl;
+                if (list.SubType == "album")
+                {
+                  facade.AlbumListLayout = list;
+                }
+                else
+                {
+                  facade.ListLayout = list;
+                }
               }
-              else
+              if (subControl is GUIThumbnailPanel)
               {
-                facade.ListLayout = list;
+                facade.ThumbnailLayout = subControl as GUIThumbnailPanel;
               }
+              if (subControl is GUIFilmstripControl)
+              {
+                facade.FilmstripLayout = subControl as GUIFilmstripControl;
+              }
+              if (subControl is GUICoverFlow)
+              {
+                facade.CoverFlowLayout = subControl as GUICoverFlow;
+              }
+              //UpdateControlWithXmlData(subControl, subControl.GetType(), subControlNode, defines);
             }
-            if (subControl is GUIThumbnailPanel)
-            {
-              facade.ThumbnailLayout = subControl as GUIThumbnailPanel;
-            }
-            if (subControl is GUIFilmstripControl)
-            {
-              facade.FilmstripLayout = subControl as GUIFilmstripControl;
-            }
-            if (subControl is GUICoverFlow)
-            {
-              facade.CoverFlowLayout = subControl as GUICoverFlow;
-            }
-            //UpdateControlWithXmlData(subControl, subControl.GetType(), subControlNode, defines);
-          }
         }
 
         //				if(control is ISupportInitialize)
@@ -491,13 +501,16 @@ namespace MediaPortal.GUI.Library
       condition = GUIInfoManager.TranslateString(element.InnerText);
 
       // allowhiddenfocus (defaults to false)
-      XmlNode nodeAttribute = element.Attributes.GetNamedItem("allowhiddenfocus");
-      if (nodeAttribute != null)
+      if (element.Attributes != null)
       {
-        string allow = nodeAttribute.Value;
-        if (String.Compare(allow, "true") == 0)
+        XmlNode nodeAttribute = element.Attributes.GetNamedItem("allowhiddenfocus");
+        if (nodeAttribute != null)
         {
-          allowHiddenFocus = true;
+          string allow = nodeAttribute.Value;
+          if (String.CompareOrdinal(allow, "true") == 0)
+          {
+            allowHiddenFocus = true;
+          }
         }
       }
 
@@ -703,8 +716,8 @@ namespace MediaPortal.GUI.Library
         {
           string text = element.InnerText;
 
-          // Window defines (passed in) override references defines (cached) and don't transform tag (#...) to text for text "textboxscrollup"
-          if (text.Length > 0 && text[0] == '#' && control.Type != "textboxscrollup")
+          // Window defines (passed in) override references defines (cached).
+          if (text.Length > 0 && text[0] == '#')
           {
             string foundDefine = null;
 
@@ -773,11 +786,11 @@ namespace MediaPortal.GUI.Library
 
             string xml = element.OuterXml;
 
-            if (xml.IndexOf("Button.") != -1)
+            if (xml.IndexOf("Button.", StringComparison.Ordinal) != -1)
             {
               xml = xml.Replace("Button.", "GUIControl.");
             }
-            else if (xml.IndexOf("Window.") != -1)
+            else if (xml.IndexOf("Window.", StringComparison.Ordinal) != -1)
             {
               xml = xml.Replace("Window.", "GUIWindow.");
             }
@@ -828,15 +841,18 @@ namespace MediaPortal.GUI.Library
     private static string GetVisibleConditionXML(XmlNode pControlNode)
     {
       string result = string.Empty;
-      XmlAttribute styleAttribute = pControlNode.Attributes["Style"];
-
-      if (styleAttribute != null)
+      if (pControlNode.Attributes != null)
       {
-        XmlNode styleNode = _cachedStyleNodes[styleAttribute.Value];
+        XmlAttribute styleAttribute = pControlNode.Attributes["Style"];
 
-        if (styleNode != null)
+        if (styleAttribute != null)
         {
-          result = GetVisibleConditionXML(styleNode);
+          XmlNode styleNode = _cachedStyleNodes[styleAttribute.Value];
+
+          if (styleNode != null)
+          {
+            result = GetVisibleConditionXML(styleNode);
+          }
         }
       }
       XmlNodeList childNodes = pControlNode.ChildNodes;
@@ -844,17 +860,14 @@ namespace MediaPortal.GUI.Library
       {
         if (element.Name == "visible")
         {
-          if (element.InnerText != null)
+          if (element.InnerText != "yes" && element.InnerText != "no")
           {
-            if (element.InnerText != "yes" && element.InnerText != "no")
+            if (element.InnerText.Length != 0)
             {
-              if (element.InnerText.Length != 0)
-              {
-                if (result == string.Empty)
-                  result = element.InnerText;
-                else
-                  result += "[+" + element.InnerText + "]";
-              }
+              if (result == string.Empty)
+                result = element.InnerText;
+              else
+                result += "[+" + element.InnerText + "]";
             }
           }
         }
@@ -865,15 +878,16 @@ namespace MediaPortal.GUI.Library
     private static void AddSubitemsToControl(XmlNode subItemsNode, GUIControl control)
     {
       XmlNodeList subNodes = subItemsNode.SelectNodes("subitems/subitem/text()");
-      foreach (XmlNode subNode in subNodes)
-      {
-        string strSubItem = subNode.Value;
-        if (Char.IsDigit(strSubItem[0]))
+      if (subNodes != null)
+        foreach (XmlNode subNode in subNodes)
         {
-          GUILocalizeStrings.LocalizeLabel(ref strSubItem);
+          string strSubItem = subNode.Value;
+          if (Char.IsDigit(strSubItem[0]))
+          {
+            GUILocalizeStrings.LocalizeLabel(ref strSubItem);
+          }
+          control.AddSubItem(strSubItem);
         }
-        control.AddSubItem(strSubItem);
-      }
     }
 
     private static Type GetControlType(XmlNode controlNode)

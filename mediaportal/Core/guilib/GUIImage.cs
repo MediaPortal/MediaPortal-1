@@ -328,7 +328,7 @@ namespace MediaPortal.GUI.Library
 
       m_iRenderWidth = _width;
       m_iRenderHeight = _height;
-      if (_textureFileNameTag != null && _textureFileNameTag.IndexOf("#") >= 0)
+      if (_textureFileNameTag != null && _textureFileNameTag.IndexOf("#", StringComparison.Ordinal) >= 0)
       {
         _containsProperty = true;
       }
