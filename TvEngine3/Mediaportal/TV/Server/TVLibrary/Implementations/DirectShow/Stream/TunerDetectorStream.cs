@@ -18,6 +18,7 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
 using System.IO;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
@@ -36,8 +37,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Stream
   {
     #region variables
 
-    // key = name
-    private IDictionary<string, IList<ITuner>> _knownTuners = new Dictionary<string, IList<ITuner>>();
+    private IDictionary<string, IList<ITuner>> _knownTuners = new Dictionary<string, IList<ITuner>>();    // key = name
 
     #endregion
 
@@ -52,6 +52,18 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Stream
       {
         return "stream";
       }
+    }
+
+    /// <summary>
+    /// Detect and instanciate the compatible tuners exposed by a system device
+    /// interface.
+    /// </summary>
+    /// <param name="classGuid">The identifier for the interface's class.</param>
+    /// <param name="devicePath">The interface's device path.</param>
+    /// <returns>the compatible tuners exposed by the interface</returns>
+    public ICollection<ITuner> DetectTuners(Guid classGuid, string devicePath)
+    {
+      return new List<ITuner>(0);
     }
 
     /// <summary>

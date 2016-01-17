@@ -43,6 +43,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
   {
     private static readonly HashSet<TunerModulation> MANDATORY_MODULATION_SCHEMES = new HashSet<TunerModulation> { TunerModulation.Qam64, TunerModulation.Qam256 };
 
+    #region ITunerDetectorUpnp members
+
     /// <summary>
     /// Get the detector's name.
     /// </summary>
@@ -128,6 +130,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
       }
       return tuners;
     }
+
+    #endregion
 
     private static void GetDriDeviceSupportedModulationSchemes(DeviceDescriptor deviceDescriptor, UPnPControlPoint controlPoint, out ICollection<TunerModulation> supportedModulationSchemes)
     {

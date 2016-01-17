@@ -21,6 +21,7 @@
 using System;
 using System.IO;
 using System.Runtime.InteropServices;
+using System.Runtime.InteropServices.ComTypes;
 using System.Text;
 using Microsoft.Win32.SafeHandles;
 
@@ -147,6 +148,279 @@ namespace MediaPortal.Common.Utils
       CR_INVALID_CONFLICT_LIST = 0x00000039,
       CR_INVALID_INDEX = 0x0000003a,
       CR_INVALID_STRUCTURE_SIZE = 0x0000003b
+    }
+
+    #endregion
+
+    #region Dbt.h
+
+    public enum DBT_DEVICE_TYPE : int
+    {
+      /// <summary>
+      /// OEM- or IHV-defined device type. This structure is a DEV_BROADCAST_OEM structure.
+      /// </summary>
+      DBT_DEVTYP_OEM = 0,
+      DBT_DEVTYP_DEVNODE = 1,
+      /// <summary>
+      /// Logical volume. This structure is a DEV_BROADCAST_VOLUME structure.
+      /// </summary>
+      DBT_DEVTYP_VOLUME = 2,
+      /// <summary>
+      /// Port device (serial or parallel). This structure is a DEV_BROADCAST_PORT structure.
+      /// </summary>
+      DBT_DEVTYP_PORT = 3,
+      DBT_DEVTYP_NET = 4,
+      /// <summary>
+      /// Class of devices. This structure is a DEV_BROADCAST_DEVICEINTERFACE structure.
+      /// </summary>
+      DBT_DEVTYP_DEVICEINTERFACE = 5,
+      /// <summary>
+      /// File system handle. This structure is a DEV_BROADCAST_HANDLE structure.
+      /// </summary>
+      DBT_DEVTYP_HANDLE = 6,
+      DBT_DEVTYP_DEVINST = 7
+    }
+
+    [Flags]
+    public enum DBT_FLAG : short
+    {
+      /// <summary>
+      /// Change affects media in drive. If not set, change affects physical device or drive.
+      /// </summary>
+      DBTF_MEDIA = 1,
+      /// <summary>
+      /// Indicated logical volume is a network volume.
+      /// </summary>
+      DBTF_NET = 2
+    }
+
+    public enum DBT_MANAGEMENT_EVENT
+    {
+      /// <summary>
+      /// The system broadcasts the DBT_DEVNODES_CHANGED device event when a device has been added to or removed from the system. Applications that maintain lists of devices in the system should refresh their lists.
+      /// </summary>
+      DBT_DEVNODES_CHANGED = 0x0007,
+
+      /// <summary>
+      /// The system broadcasts the DBT_QUERYCHANGECONFIG device event to request permission to change the current configuration (dock or undock). Any application can deny this request and cancel the change.
+      /// </summary>
+      DBT_QUERYCHANGECONFIG = 0x0017,
+      /// <summary>
+      /// The system broadcasts the DBT_CONFIGCHANGED device event to indicate that the current configuration has changed, due to a dock or undock. An application or driver that stores data in the registry under the HKEY_CURRENT_CONFIG key should update the data.
+      /// </summary>
+      DBT_CONFIGCHANGED,
+      /// <summary>
+      /// The system broadcasts the DBT_CONFIGCHANGECANCELED device event when a request to change the current configuration (dock or undock) has been canceled.
+      /// </summary>
+      DBT_CONFIGCHANGECANCELED,
+
+      /// <summary>
+      /// The system broadcasts the DBT_DEVICEARRIVAL device event when a device or piece of media has been inserted and becomes available.
+      /// </summary>
+      DBT_DEVICEARRIVAL = 0x8000,
+      /// <summary>
+      /// The system broadcasts the DBT_DEVICEQUERYREMOVE device event to request permission to remove a device or piece of media. This message is the last chance for applications and drivers to prepare for this removal. However, any application can deny this request and cancel the operation.
+      /// </summary>
+      DBT_DEVICEQUERYREMOVE,
+      /// <summary>
+      /// The system broadcasts the DBT_DEVICEQUERYREMOVEFAILED device event when a request to remove a device or piece of media has been canceled.
+      /// </summary>
+      DBT_DEVICEQUERYREMOVEFAILED,
+      /// <summary>
+      /// The system broadcasts the DBT_DEVICEREMOVEPENDING device event when a device or piece of media is being removed and is no longer available for use.
+      /// </summary>
+      DBT_DEVICEREMOVEPENDING,
+      /// <summary>
+      /// The system broadcasts the DBT_DEVICEREMOVECOMPLETE device event when a device or piece of media has been physically removed.
+      /// </summary>
+      DBT_DEVICEREMOVECOMPLETE,
+      /// <summary>
+      /// The system broadcasts the DBT_DEVICETYPESPECIFIC device event when a device-specific event occurs.
+      /// </summary>
+      DBT_DEVICETYPESPECIFIC,
+      /// <summary>
+      /// The system sends the DBT_CUSTOMEVENT device event when a driver-defined custom event has occurred.
+      /// </summary>
+      DBT_CUSTOMEVENT
+    }
+
+    /// <summary>
+    /// Contains information about a class of devices.
+    /// </summary>
+    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+    public struct DEV_BROADCAST_DEVICEINTERFACE
+    {
+      /// <summary>
+      /// The size of this structure, in bytes. This is the size of the members plus the actual length of the dbcc_name string (the null character is accounted for by the declaration of dbcc_name as a one-character array.)
+      /// </summary>
+      public int dbcc_size;
+      /// <summary>
+      /// Set to DBT_DEVTYP_DEVICEINTERFACE.
+      /// </summary>
+      public DBT_DEVICE_TYPE dbcc_devicetype;
+      /// <summary>
+      /// Reserved; do not use.
+      /// </summary>
+      public int dbcc_reserved;
+      /// <summary>
+      /// The GUID for the interface device class.
+      /// </summary>
+      public Guid dbcc_classguid;
+      /// <summary>
+      /// A null-terminated string that specifies the name of the device.
+      /// When this structure is returned to a window through the WM_DEVICECHANGE message, the dbcc_name string is converted to ANSI as appropriate. Services always receive a Unicode string, whether they call RegisterDeviceNotificationW or RegisterDeviceNotificationA.
+      /// </summary>
+      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
+      public string dbcc_name;
+    }
+
+    /// <summary>
+    /// Contains information about a file system handle.
+    /// </summary>
+    [StructLayout(LayoutKind.Sequential)]
+    public struct DEV_BROADCAST_HANDLE
+    {
+      /// <summary>
+      /// The size of this structure, in bytes.
+      /// </summary>
+      public int dbch_size;
+      /// <summary>
+      /// Set to DBT_DEVTYP_HANDLE.
+      /// </summary>
+      public DBT_DEVICE_TYPE dbch_devicetype;
+      /// <summary>
+      /// Reserved; do not use.
+      /// </summary>
+      public int dbch_reserved;
+      /// <summary>
+      /// A handle to the device to be checked.
+      /// </summary>
+      public IntPtr dbch_handle;
+      /// <summary>
+      /// A handle to the device notification. This handle is returned by RegisterDeviceNotification.
+      /// </summary>
+      public IntPtr dbch_hdevnotify;
+      /// <summary>
+      /// The GUID for the custom event. For more information, see Device Events. Valid only for DBT_CUSTOMEVENT.
+      /// </summary>
+      public Guid dbch_eventguid;
+      /// <summary>
+      /// The offset of an optional string buffer. Valid only for DBT_CUSTOMEVENT.
+      /// </summary>
+      public int dbch_nameoffset;
+      /// <summary>
+      /// Optional binary data. This member is valid only for DBT_CUSTOMEVENT.
+      /// </summary>
+      public byte dbch_data;
+    }
+
+    /// <summary>
+    /// Serves as a standard header for information related to a device event reported through the WM_DEVICECHANGE message.
+    /// The members of the DEV_BROADCAST_HDR structure are contained in each device management structure. To determine which structure you have received through WM_DEVICECHANGE, treat the structure as a DEV_BROADCAST_HDR structure and check its dbch_devicetype member.
+    /// </summary>
+    [StructLayout(LayoutKind.Sequential)]
+    public struct DEV_BROADCAST_HDR
+    {
+      /// <summary>
+      /// The size of this structure, in bytes. If this is a user-defined event, this member must be the size of this header, plus the size of the variable-length data in the _DEV_BROADCAST_USERDEFINED structure.
+      /// </summary>
+      public int dbch_size;
+      /// <summary>
+      /// The device type, which determines the event-specific information that follows the first three members. This member can be one of the following values.
+      /// DBT_DEVTYP_DEVICEINTERFACE: Class of devices. This structure is a DEV_BROADCAST_DEVICEINTERFACE structure.
+      /// DBT_DEVTYP_HANDLE: File system handle. This structure is a DEV_BROADCAST_HANDLE structure.
+      /// DBT_DEVTYP_OEM: OEM- or IHV-defined device type. This structure is a DEV_BROADCAST_OEM structure.
+      /// DBT_DEVTYP_PORT: Port device (serial or parallel). This structure is a DEV_BROADCAST_PORT structure.
+      /// DBT_DEVTYP_VOLUME: Logical volume. This structure is a DEV_BROADCAST_VOLUME structure.
+      /// </summary>
+      public DBT_DEVICE_TYPE dbch_devicetype;
+      /// <summary>
+      /// Reserved; do not use.
+      /// </summary>
+      public int dbch_reserved;
+    }
+
+    /// <summary>
+    /// Contains information about a OEM-defined device type.
+    /// </summary>
+    [StructLayout(LayoutKind.Sequential)]
+    public struct DEV_BROADCAST_OEM
+    {
+      /// <summary>
+      /// The size of this structure, in bytes.
+      /// </summary>
+      public int dbco_size;
+      /// <summary>
+      /// Set to DBT_DEVTYP_OEM.
+      /// </summary>
+      public DBT_DEVICE_TYPE dbco_devicetype;
+      /// <summary>
+      /// Reserved; do not use.
+      /// </summary>
+      public int dbco_reserved;
+      /// <summary>
+      /// The OEM-specific identifier for the device.
+      /// </summary>
+      public int dbco_identifier;
+      /// <summary>
+      /// The OEM-specific function value. Possible values depend on the device.
+      /// </summary>
+      public int dbco_suppfunc;
+    }
+
+    /// <summary>
+    /// Contains information about a modem, serial, or parallel port.
+    /// </summary>
+    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+    public struct DEV_BROADCAST_PORT
+    {
+      /// <summary>
+      /// The size of this structure, in bytes. This is the size of the members plus the actual length of the dbcp_name string (the null character is accounted for by the declaration of dbcp_name as a one-character array.)
+      /// </summary>
+      public int dbcp_size;
+      /// <summary>
+      /// Set to DBT_DEVTYP_PORT.
+      /// </summary>
+      public DBT_DEVICE_TYPE dbcp_devicetype;
+      /// <summary>
+      /// Reserved; do not use.
+      /// </summary>
+      public int dbcp_reserved;
+      /// <summary>
+      /// A null-terminated string specifying the friendly name of the port or the device connected to the port. Friendly names are intended to help the user quickly and accurately identify the device—for example, "COM1" and "Standard 28800 bps Modem" are considered friendly names.
+      /// </summary>
+      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
+      public string dbcp_name;
+    }
+
+    /// <summary>
+    /// Contains information about a logical volume.
+    /// </summary>
+    [StructLayout(LayoutKind.Sequential)]
+    public struct DEV_BROADCAST_VOLUME
+    {
+      /// <summary>
+      /// The size of this structure, in bytes.
+      /// </summary>
+      public int dbcv_size;
+      /// <summary>
+      /// Set to DBT_DEVTYP_VOLUME (2).
+      /// </summary>
+      public DBT_DEVICE_TYPE dbcv_devicetype;
+      /// <summary>
+      /// Reserved; do not use.
+      /// </summary>
+      public int dbcv_reserved;
+      /// <summary>
+      /// The logical unit mask identifying one or more logical units. Each bit in the mask corresponds to one logical drive. Bit 0 represents drive A, bit 1 represents drive B, and so on.
+      /// </summary>
+      public int dbcv_unitmask;
+      /// <summary>
+      /// This parameter can be one of the following values.
+      /// DBTF_MEDIA: Change affects media in drive. If not set, change affects physical device or drive.
+      /// DBTF_NET: Indicated logical volume is a network volume.
+      /// </summary>
+      public DBT_FLAG dbcv_flags;
     }
 
     #endregion
@@ -307,7 +581,7 @@ namespace MediaPortal.Common.Utils
     /// The FreeLibrary function decrements the reference count of the loaded dynamic-link library (DLL). When the reference count reaches zero, the module is unmapped from the address space of the calling process and the handle is no longer valid.
     /// </summary>
     /// <param name="hLibModule">Handle to the loaded DLL module. The LoadLibrary or GetModuleHandle function returns this handle.</param>
-    /// <returns>If the function succeeds, the return value is nonzero.<br></br><br>If the function fails, the return value is zero. To get extended error information, call Marshal.GetLastWin32Error.</br></returns>
+    /// <returns>If the function succeeds, the return value is nonzero. If the function fails, the return value is zero. To get extended error information, call Marshal.GetLastWin32Error.</returns>
     [DllImport("kernel32.dll", SetLastError = true)]
     [return: MarshalAs(UnmanagedType.Bool)]
     public static extern bool FreeLibrary(IntPtr hLibModule);
@@ -316,7 +590,7 @@ namespace MediaPortal.Common.Utils
     /// Retrieves a module handle for the specified module. The module must have been loaded by the calling process.
     /// </summary>
     /// <param name="lpModuleName">The name of the loaded module (either a .dll or .exe file).</param>
-    /// <returns>If the function succeeds, the return value is a handle to the module.<br></br><br>If the function fails, the return value is NULL. To get extended error information, call Marshal.GetLastWin32Error.</br></returns>
+    /// <returns>If the function succeeds, the return value is a handle to the module. If the function fails, the return value is NULL. To get extended error information, call Marshal.GetLastWin32Error.</returns>
     [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
     public static extern IntPtr GetModuleHandle(string lpModuleName);
 
@@ -325,7 +599,7 @@ namespace MediaPortal.Common.Utils
     /// </summary>
     /// <param name="hModule">Handle to the DLL module that contains the function or variable. The LoadLibrary or GetModuleHandle function returns this handle.</param>
     /// <param name="lpProcName">Pointer to a null-terminated string containing the function or variable name, or the function's ordinal value. If this parameter is an ordinal value, it must be in the low-order word; the high-order word must be zero.</param>
-    /// <returns>If the function succeeds, the return value is the address of the exported function or variable.<br></br><br>If the function fails, the return value is NULL. To get extended error information, call Marshal.GetLastWin32Error.</br></returns>
+    /// <returns>If the function succeeds, the return value is the address of the exported function or variable. If the function fails, the return value is NULL. To get extended error information, call Marshal.GetLastWin32Error.</returns>
     [DllImport("kernel32.dll", CharSet = CharSet.Ansi, SetLastError = true)]
     public static extern IntPtr GetProcAddress(IntPtr hModule, string lpProcName);
 
@@ -341,7 +615,7 @@ namespace MediaPortal.Common.Utils
     /// </summary>
     /// <param name="hProcess">A handle to the process. The handle must have the PROCESS_QUERY_INFORMATION or PROCESS_QUERY_LIMITED_INFORMATION access right.</param>
     /// <param name="Wow64Process">A pointer to a value that is set to TRUE if the process is running under WOW64. If the process is running under 32-bit Windows, the value is set to FALSE. If the process is a 64-bit application running under 64-bit Windows, the value is also set to FALSE.</param>
-    /// <returns>If the function succeeds, the return value is nonzero.<br></br><br>If the function fails, the return value is zero. To get extended error information, call Marshal.GetLastWin32Error.</br></returns>
+    /// <returns>If the function succeeds, the return value is nonzero. If the function fails, the return value is zero. To get extended error information, call Marshal.GetLastWin32Error.</returns>
     [DllImport("kernel32.dll", SetLastError = true)]
     [return: MarshalAs(UnmanagedType.Bool)]
     public static extern bool IsWow64Process(IntPtr hProcess, out bool Wow64Process);
@@ -350,7 +624,7 @@ namespace MediaPortal.Common.Utils
     /// The LoadLibrary function maps the specified executable module into the address space of the calling process.
     /// </summary>
     /// <param name="lpLibFileName">Pointer to a null-terminated string that names the executable module (either a .dll or .exe file). The name specified is the file name of the module and is not related to the name stored in the library module itself, as specified by the LIBRARY keyword in the module-definition (.def) file.</param>
-    /// <returns>If the function succeeds, the return value is a handle to the module.<br></br><br>If the function fails, the return value is NULL. To get extended error information, call Marshal.GetLastWin32Error.</br></returns>
+    /// <returns>If the function succeeds, the return value is a handle to the module. If the function fails, the return value is NULL. To get extended error information, call Marshal.GetLastWin32Error.</returns>
     [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
     public static extern IntPtr LoadLibrary(string lpLibFileName);
 
@@ -358,7 +632,7 @@ namespace MediaPortal.Common.Utils
     /// The SetDllDirectory function adds a directory to the search path used to locate DLLs for the application.
     /// </summary>
     /// <param name="PathName">Pointer to a null-terminated string that specifies the directory to be added to the search path.</param>
-    /// <returns>If the function succeeds, the return value is nonzero.<br></br><br>If the function fails, the return value is zero. To get extended error information, call Marshal.GetLastWin32Error.</br></returns>
+    /// <returns>If the function succeeds, the return value is nonzero. If the function fails, the return value is zero. To get extended error information, call Marshal.GetLastWin32Error.</returns>
     [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
     [return: MarshalAs(UnmanagedType.Bool)]
     public static extern bool SetDllDirectory(string PathName);
@@ -1074,6 +1348,49 @@ namespace MediaPortal.Common.Utils
 
     #region user32.dll
 
+    #region device notification
+
+    /// <summary>
+    /// Registers the device or type of device for which a window will receive notifications.
+    /// </summary>
+    /// <param name="hRecipient">A handle to the window or service that will receive device events for the devices specified in the NotificationFilter parameter. The same window handle can be used in multiple calls to RegisterDeviceNotification.</param>
+    /// <param name="NotificationFilter">A pointer to a block of data that specifies the type of device for which notifications should be sent. This block always begins with the DEV_BROADCAST_HDR structure. The data following this header is dependent on the value of the dbch_devicetype member, which can be DBT_DEVTYP_DEVICEINTERFACE or DBT_DEVTYP_HANDLE. For more information, see Remarks.</param>
+    /// <param name="Flags">This parameter can be one of the following values.
+    /// DEVICE_NOTIFY_WINDOW_HANDLE: The hRecipient parameter is a window handle.
+    /// DEVICE_NOTIFY_SERVICE_HANDLE: The hRecipient parameter is a service status handle.
+    /// 
+    /// In addition, you can specify the following value.
+    /// DEVICE_NOTIFY_ALL_INTERFACE_CLASSES: Notifies the recipient of device interface events for all device interface classes. (The dbcc_classguid member is ignored.) This value can be used only if the dbch_devicetype member is DBT_DEVTYP_DEVICEINTERFACE.</param>
+    /// <returns>If the function succeeds, the return value is a device notification handle. If the function fails, the return value is NULL. To get extended error information, call GetLastError.</returns>
+    [DllImport("user32.dll", SetLastError = true)]
+    public static extern IntPtr RegisterDeviceNotification(IntPtr hRecipient, ref DEV_BROADCAST_HANDLE NotificationFilter, DEVICE_NOTIFY_FLAGS Flags);
+
+    /// <summary>
+    /// Registers the device or type of device for which a window will receive notifications.
+    /// </summary>
+    /// <param name="hRecipient">A handle to the window or service that will receive device events for the devices specified in the NotificationFilter parameter. The same window handle can be used in multiple calls to RegisterDeviceNotification.</param>
+    /// <param name="NotificationFilter">A pointer to a block of data that specifies the type of device for which notifications should be sent. This block always begins with the DEV_BROADCAST_HDR structure. The data following this header is dependent on the value of the dbch_devicetype member, which can be DBT_DEVTYP_DEVICEINTERFACE or DBT_DEVTYP_HANDLE. For more information, see Remarks.</param>
+    /// <param name="Flags">This parameter can be one of the following values.
+    /// DEVICE_NOTIFY_WINDOW_HANDLE: The hRecipient parameter is a window handle.
+    /// DEVICE_NOTIFY_SERVICE_HANDLE: The hRecipient parameter is a service status handle.
+    /// 
+    /// In addition, you can specify the following value.
+    /// DEVICE_NOTIFY_ALL_INTERFACE_CLASSES: Notifies the recipient of device interface events for all device interface classes. (The dbcc_classguid member is ignored.) This value can be used only if the dbch_devicetype member is DBT_DEVTYP_DEVICEINTERFACE.</param>
+    /// <returns>If the function succeeds, the return value is a device notification handle. If the function fails, the return value is NULL. To get extended error information, call GetLastError.</returns>
+    [DllImport("user32.dll", SetLastError = true)]
+    public static extern IntPtr RegisterDeviceNotification(IntPtr hRecipient, ref DEV_BROADCAST_DEVICEINTERFACE NotificationFilter, DEVICE_NOTIFY_FLAGS flags);
+
+    /// <summary>
+    /// Closes the specified device notification handle.
+    /// </summary>
+    /// <param name="Handle">Device notification handle returned by the RegisterDeviceNotification function.</param>
+    /// <returns>If the function succeeds, the return value is nonzero. If the function fails, the return value is zero. To get extended error information, call GetLastError.</returns>
+    [DllImport("user32.dll")]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    public static extern bool UnregisterDeviceNotification(IntPtr Handle);
+
+    #endregion
+
     #region raw input
 
     [DllImport("user32.dll", SetLastError = true)]
@@ -1367,6 +1684,72 @@ namespace MediaPortal.Common.Utils
     #endregion
 
     #region WinUser.h
+
+    [Flags]
+    public enum DEVICE_NOTIFY_FLAGS
+    {
+      /// <summary>
+      /// The hRecipient parameter is a window handle.
+      /// </summary>
+      DEVICE_NOTIFY_WINDOW_HANDLE = 0,
+      /// <summary>
+      /// The hRecipient parameter is a service status handle.
+      /// </summary>
+      DEVICE_NOTIFY_SERVICE_HANDLE = 1,
+      /// <summary>
+      /// Notifies the recipient of device interface events for all device interface classes. (The dbcc_classguid member is ignored.)
+      /// This value can be used only if the dbch_devicetype member is DBT_DEVTYP_DEVICEINTERFACE.
+      /// </summary>
+      DEVICE_NOTIFY_ALL_INTERFACE_CLASSES = 4
+    }
+
+    public enum PBT_MANAGEMENT_EVENT
+    {
+      /// <summary>
+      /// Request for permission to suspend. In Windows Server 2008 and Windows Vista, use the SetThreadExecutionState function instead.
+      /// </summary>
+      PBT_APMQUERYSUSPEND = 0,
+      PBT_APMQUERYSTANDBY = 1,
+      /// <summary>
+      /// Suspension request denied. In Windows Server 2008 and Windows Vista, use SetThreadExecutionState instead.
+      /// </summary>
+      PBT_APMQUERYSUSPENDFAILED = 2,
+      PBT_APMQUERYSTANDBYFAILED = 3,
+      /// <summary>
+      /// System is suspending operation.
+      /// </summary>
+      PBT_APMSUSPEND = 4,
+      PBT_APMSTANDBY = 5,
+      /// <summary>
+      /// Operation resuming after critical suspension. In Windows Server 2008 and Windows Vista, use PBT_APMRESUMEAUTOMATIC instead.
+      /// </summary>
+      PBT_APMRESUMECRITICAL = 6,
+      /// <summary>
+      /// Operation is resuming from a low-power state. This message is sent after PBT_APMRESUMEAUTOMATIC if the resume is triggered by user input, such as pressing a key.
+      /// </summary>
+      PBT_APMRESUMESUSPEND = 7,
+      PBT_APMRESUMESTANDBY = 8,
+      /// <summary>
+      /// Battery power is low. In Windows Server 2008 and Windows Vista, use PBT_APMPOWERSTATUSCHANGE instead.
+      /// </summary>
+      PBT_APMBATTERYLOW = 9,
+      /// <summary>
+      /// Power status has changed.
+      /// </summary>
+      PBT_APMPOWERSTATUSCHANGE = 10,
+      /// <summary>
+      /// OEM-defined event occurred. In Windows Server 2008 and Windows Vista, this event is not available because these operating systems support only ACPI; APM BIOS events are not supported.
+      /// </summary>
+      PBT_APMOEMEVENT = 11,
+      /// <summary>
+      /// Operation is resuming automatically from a low-power state. This message is sent every time the system resumes.
+      /// </summary>
+      PBT_APMRESUMEAUTOMATIC = 18,
+      /// <summary>
+      /// A power setting change event has been received.
+      /// </summary>
+      PBT_POWERSETTINGCHANGE = 32787
+    }
 
     #region raw input data
 
@@ -1868,7 +2251,9 @@ namespace MediaPortal.Common.Utils
     {
       WM_QUIT = 0x0012,
       WM_INPUT = 0x00ff,
-      WM_TIMER = 0x0113
+      WM_TIMER = 0x0113,
+      WM_POWERBROADCAST = 0x0218,
+      WM_DEVICECHANGE = 0x0219
     }
 
     [Flags]

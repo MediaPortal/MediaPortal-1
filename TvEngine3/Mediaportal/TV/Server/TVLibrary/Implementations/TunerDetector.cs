@@ -21,7 +21,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Management;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -35,6 +34,7 @@ using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
 using Mediaportal.TV.Server.TVLibrary.Implementations.Upnp;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Helper;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Tuner;
 using MediaPortal.Common.Utils;
@@ -78,22 +78,16 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
 
     private bool _isStarted = false;
 
-    // Used for detecting and communicating with UPnP devices.
+    // Used for detecting UPnP devices.
     private CPData _upnpControlPointData = null;
     private UPnPNetworkTracker _upnpAgent = null;
     private UPnPControlPoint _upnpControlPoint = null;
     private List<ITunerDetectorUpnp> _upnpDetectors = new List<ITunerDetectorUpnp>();
 
-    // Used for detecting and communicating with devices that are directly
-    // connected to the system.
-    private ManagementEventWatcher _systemDeviceChangeEventWatcher = null;
-    private DateTime _previousSystemDeviceChangeEvent = DateTime.MinValue;
+    // Used for detecting devices that are directly connected to the system.
+    private SystemChangeNotifier _systemChangeNotifier = null;
     private IList<DeviceInfo> _systemDeviceDriverInfo = null;
     private IList<ITunerDetectorSystem> _systemDetectors = new List<ITunerDetectorSystem>();
-
-    // Used for detecting power management events.
-    private ManagementEventWatcher _systemPowerManagementEventWatcher = null;
-    private DateTime _previousSystemPowerManagementEvent = DateTime.MinValue;
 
     private HashSet<string> _firstDetectionTuners = new HashSet<string>();  // external IDs
     private HashSet<string> _knownUpnpRootDevices = new HashSet<string>();  // UUIDs
@@ -124,10 +118,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       _eventListener = listener;
 
       // Setup power event handling.
-      _systemPowerManagementEventWatcher = new ManagementEventWatcher();
-      _systemPowerManagementEventWatcher.Query = new WqlEventQuery("SELECT * FROM Win32_PowerManagementEvent");
-      _systemPowerManagementEventWatcher.EventArrived += OnSystemPowerManagementEvent;
-      _systemPowerManagementEventWatcher.Start();
+      _systemChangeNotifier = new SystemChangeNotifier();
+      _systemChangeNotifier.OnPowerBroadcastDelegate += OnSystemPowerManagementEvent;
 
       // Setup UPnP tuner detection.
       UPnPConfiguration.LOGGER = new Logger();
@@ -136,19 +128,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       _upnpAgent.RootDeviceAdded += OnUpnpRootDeviceAdded;
       _upnpAgent.RootDeviceRemoved += OnUpnpRootDeviceRemoved;
       _upnpControlPoint = new UPnPControlPoint(_upnpAgent);
-
-      // Setup system tuner detection.
-      // EventType 2 and 3 are device arrival and removal. See:
-      // http://msdn.microsoft.com/en-us/library/windows/desktop/aa394124%28v=vs.85%29.aspx
-      // You'd think checking for arrival and removal would be enough, but in
-      // practice it seems we need to be looking at configuration change events
-      // (EventType 1) more than anything else. Configuration changes are
-      // triggered [for example] on disabling or enabling a device in device
-      // manager, and replugging a tuner for which a driver is already
-      // installed.
-      _systemDeviceChangeEventWatcher = new ManagementEventWatcher();
-      _systemDeviceChangeEventWatcher.Query = new WqlEventQuery("SELECT * FROM Win32_DeviceChangeEvent");
-      _systemDeviceChangeEventWatcher.EventArrived += OnSystemDeviceChangeEvent;
 
       this.LogInfo("detector: loading detectors");
       Assembly a = Assembly.GetExecutingAssembly();
@@ -202,18 +181,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
         ThreadPool.QueueUserWorkItem(
           delegate
           {
-            DoDelayedSystemTunerDetection();
+            DetectSystemTuners();
           }
         );
-        try
-        {
-          _systemDeviceChangeEventWatcher.Start();
-        }
-        catch
-        {
-          // Fails on Windows Media Center 2005 (ManagementException "unsupported", despite MS documentation).
-          this.LogWarn("detector: failed to start device change event watcher, you'll have to restart the TV Engine to detect new tuners");
-        }
+        _systemChangeNotifier.OnDeviceInterfaceChange += OnSystemDeviceChangeEvent;
 
         // Start detecting UPnP tuners.
         // IMPORTANT: this parameter must be set to allow devices with many
@@ -248,6 +219,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
 
         // 1. Force-detect tuner changes.
         DetectSystemTuners();
+        SearchForSupportedUpnpDevices();
 
         // 2. Remove old groups.
         HashSet<int> currentGroupIds = new HashSet<int>(_configuredTunerGroups.Keys);
@@ -472,7 +444,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
         this.LogInfo("detector: stopping tuner detection...");
         _upnpAgent.Close();
         _upnpControlPoint.Close();
-        _systemDeviceChangeEventWatcher.Stop();
+        _systemChangeNotifier.OnDeviceInterfaceChange -= OnSystemDeviceChangeEvent;
         _isStarted = false;
       }
     }
@@ -531,16 +503,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
         _upnpAgent.Dispose();
         _upnpAgent = null;
       }
-      if (_systemDeviceChangeEventWatcher != null)
+
+      if (_systemChangeNotifier != null)
       {
-        _systemDeviceChangeEventWatcher.Dispose();
-        _systemDeviceChangeEventWatcher = null;
-      }
-      if (_systemPowerManagementEventWatcher != null)
-      {
-        _systemPowerManagementEventWatcher.Stop();
-        _systemPowerManagementEventWatcher.Dispose();
-        _systemPowerManagementEventWatcher = null;
+        _systemChangeNotifier.OnPowerBroadcastDelegate -= OnSystemPowerManagementEvent;
+        _systemChangeNotifier.Dispose();
+        _systemChangeNotifier = null;
       }
     }
 
@@ -548,38 +516,32 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
 
     #region power event handling
 
-    private void OnSystemPowerManagementEvent(object sender, EventArrivedEventArgs e)
+    private void OnSystemPowerManagementEvent(NativeMethods.PBT_MANAGEMENT_EVENT eventType)
     {
-      foreach (PropertyData property in e.NewEvent.Properties)
+      if (eventType == NativeMethods.PBT_MANAGEMENT_EVENT.PBT_APMSUSPEND)
       {
-        if (string.Equals(property.Name, "EventType"))
-        {
-          int eventType = (ushort)property.Value;
-          if (eventType == 4)       // suspend
+        this.LogInfo("detector: suspending...");
+        Stop();
+        RemoveAllTuners();
+      }
+      else if (
+        !_isStarted &&
+        (
+          eventType == NativeMethods.PBT_MANAGEMENT_EVENT.PBT_APMRESUMEAUTOMATIC ||
+          eventType == NativeMethods.PBT_MANAGEMENT_EVENT.PBT_APMRESUMECRITICAL ||
+          eventType == NativeMethods.PBT_MANAGEMENT_EVENT.PBT_APMRESUMESUSPEND
+        )
+      )
+      {
+        ThreadPool.QueueUserWorkItem(
+          delegate
           {
-            ThreadPool.QueueUserWorkItem(
-              delegate
-              {
-                this.LogInfo("detector: suspending...");
-                Stop();
-                RemoveAllTuners();
-              }
-            );
+            this.LogInfo("detector: resuming...");
+            Start();
+            Thread.Sleep(10000);
+            SearchForSupportedUpnpDevices();
           }
-          else if (eventType == 18) // resume automatic
-          {
-            ThreadPool.QueueUserWorkItem(
-              delegate
-              {
-                this.LogInfo("detector: resuming...");
-                Start();
-                Thread.Sleep(10000);
-                SearchForSupportedUpnpDevices();
-              }
-            );
-          }
-          break;
-        }
+        );
       }
     }
 
@@ -587,40 +549,74 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
 
     #region system device detection
 
-    private void OnSystemDeviceChangeEvent(object sender, EventArrivedEventArgs e)
+    private void OnSystemDeviceChangeEvent(NativeMethods.DBT_MANAGEMENT_EVENT eventType, Guid classGuid, string devicePath)
     {
-      // Often several events will be triggered within a very short period of
-      // time when a device is added/removed. Those events are probably related
-      // to device interfaces. We only want to check for new tuners once per
-      // burst.
-      if ((DateTime.Now - _previousSystemDeviceChangeEvent).TotalMilliseconds < 10000)
+      if (!_isStarted || string.IsNullOrEmpty(devicePath))
       {
         return;
       }
-      _previousSystemDeviceChangeEvent = DateTime.Now;
 
-      // Do our processing in a different thread to ensure we don't cause
-      // problems like this:
+      // https://msdn.microsoft.com/en-us/library/windows/desktop/aa363431%28v=vs.85%29.aspx
+      // Be sure to handle Plug and Play device events as quickly as possible.
+      // Otherwise, the system may become unresponsive. If your event handler
+      // is to perform an operation that may block execution (such as I/O), it
+      // is best to start another thread to perform the operation
+      // asynchronously.
+      //
+      // We don't want to cause problems like this:
       // http://www.codeproject.com/Articles/35212/WM-DEVICECHANGE-problem
-      ThreadPool.QueueUserWorkItem(
-        delegate
-        {
-          // Give the driver time to load. Hopefully 10 seconds will be enough.
-          Thread.Sleep(10000);
-          DoDelayedSystemTunerDetection();
-        }
-      );
-    }
-
-    private void DoDelayedSystemTunerDetection()
-    {
-      // Configurable extra delay for slow-loading drivers.
-      int delayDetect = SettingsManagement.GetValue("tunerDetectionDelay", 0);
-      if (delayDetect >= 1)
+      if (eventType == NativeMethods.DBT_MANAGEMENT_EVENT.DBT_DEVICEARRIVAL)
       {
-        Thread.Sleep(delayDetect);
+        ThreadPool.QueueUserWorkItem(
+          delegate
+          {
+            foreach (ITunerDetectorSystem detector in _systemDetectors)
+            {
+              ICollection<ITuner> tuners = detector.DetectTuners(classGuid, devicePath);
+              if (tuners == null || tuners.Count == 0)
+              {
+                continue;
+              }
+              lock (_tuners)
+              {
+                UpdateSystemDeviceInfo();
+                foreach (ITuner tuner in tuners)
+                {
+                  if (_tuners.ContainsKey(tuner.ExternalId))
+                  {
+                    // Not a new tuner.
+                    continue;
+                  }
+                  OnTunerDetected(tuner);
+                  _knownSystemTuners.Add(tuner.ExternalId);
+                }
+              }
+            }
+          }
+        );
       }
-      DetectSystemTuners();
+      else if (eventType == NativeMethods.DBT_MANAGEMENT_EVENT.DBT_DEVICEREMOVECOMPLETE)
+      {
+        ThreadPool.QueueUserWorkItem(
+          delegate
+          {
+            lock (_tuners)
+            {
+              ITuner tuner;
+              HashSet<string> removedTunerExternalIds = new HashSet<string>();
+              foreach (string tunerExternalId in _knownSystemTuners)
+              {
+                if (tunerExternalId.ToLowerInvariant().Contains(devicePath.ToLowerInvariant()) && _tuners.TryGetValue(tunerExternalId, out tuner))
+                {
+                  OnTunerRemoved(tuner);
+                  removedTunerExternalIds.Add(tunerExternalId);
+                }
+              }
+              _knownSystemTuners.ExceptWith(removedTunerExternalIds);
+            }
+          }
+        );
+      }
     }
 
     private void DetectSystemTuners()
@@ -638,15 +634,18 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
         foreach (ITunerDetectorSystem detector in _systemDetectors)
         {
           ICollection<ITuner> tuners = detector.DetectTuners();
-          foreach (ITuner tuner in tuners)
+          if (tuners != null && tuners.Count > 0)
           {
-            currentSystemTuners.Add(tuner.ExternalId);
-            if (_tuners.ContainsKey(tuner.ExternalId))
+            foreach (ITuner tuner in tuners)
             {
-              // Not a new tuner.
-              continue;
+              currentSystemTuners.Add(tuner.ExternalId);
+              if (_tuners.ContainsKey(tuner.ExternalId))
+              {
+                // Not a new tuner.
+                continue;
+              }
+              OnTunerDetected(tuner);
             }
-            OnTunerDetected(tuner);
           }
         }
 
@@ -698,7 +697,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
           foreach (ITunerDetectorUpnp detector in _upnpDetectors)
           {
             ICollection<ITuner> tuners = detector.DetectTuners(rootDeviceDescriptor, _upnpControlPoint);
-            if (tuners.Count > 0)
+            if (tuners != null && tuners.Count > 0)
             {
               LogUpnpDeviceInfo(rootDeviceDescriptor);
               HashSet<string> tunerExternalIds = new HashSet<string>();

@@ -84,6 +84,7 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ServiceModel" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
@@ -125,6 +126,7 @@
     <Compile Include="Implementations\Helper\ComHelper.cs" />
     <Compile Include="Implementations\Helper\Dump.cs" />
     <Compile Include="Implementations\Dvb\DvbMmiHandler.cs" />
+    <Compile Include="Implementations\Helper\SystemChangeNotifier.cs" />
     <Compile Include="Implementations\Mpeg2Ts\TableConditionalAccess.cs" />
     <Compile Include="Implementations\Mpeg2Ts\ConditionalAccessDescriptor.cs" />
     <Compile Include="Implementations\Mpeg2Ts\StreamTypeHelper.cs" />

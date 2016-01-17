@@ -51,10 +51,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog
 
     #region variables
 
-    // key = device path
-    private IDictionary<string, ITuner> _knownTuners = new Dictionary<string, ITuner>();
+    private IDictionary<string, ITuner> _knownTuners = new Dictionary<string, ITuner>();    // key = device path
+    private HashSet<string> _crossbarProductIds = new HashSet<string>();
 
     #endregion
+
+    #region ITunerDetectorSystem members
 
     /// <summary>
     /// Get the detector's name.
@@ -68,6 +70,48 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog
     }
 
     /// <summary>
+    /// Detect and instanciate the compatible tuners exposed by a system device
+    /// interface.
+    /// </summary>
+    /// <param name="classGuid">The identifier for the interface's class.</param>
+    /// <param name="devicePath">The interface's device path.</param>
+    /// <returns>the compatible tuners exposed by the interface</returns>
+    public ICollection<ITuner> DetectTuners(Guid classGuid, string devicePath)
+    {
+      ICollection<ITuner> tuners = new List<ITuner>(1);
+
+      // Is the interface a WDM crossbar or capture interface?
+      if ((classGuid != FilterCategory.AMKSCapture && classGuid != FilterCategory.AMKSCrossbar) || string.IsNullOrEmpty(devicePath))
+      {
+        return tuners;
+      }
+
+      // If the interface is a capture interface, delay for long enough to
+      // ensure any associated crossbar is detected first.
+      if (classGuid != FilterCategory.AMKSCapture)
+      {
+        System.Threading.Thread.Sleep(2000);
+      }
+
+      // Detect the tuners associated with the device interface.
+      DsDevice device = DsDevice.FromDevicePath(devicePath);
+      if (device == null)
+      {
+        return tuners;
+      }
+      ITuner tuner = DetectTunerForDevice(device, classGuid, _crossbarProductIds);
+      if (tuners == null || tuners.Count == 0)
+      {
+        device.Dispose();
+        return tuners;
+      }
+
+      this.LogInfo("WDM detector: tuner added");
+      _knownTuners[devicePath] = tuner;
+      return tuners;
+    }
+
+    /// <summary>
     /// Detect and instanciate the compatible tuners connected to the system.
     /// </summary>
     /// <returns>the tuners that are currently available</returns>
@@ -77,94 +121,92 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog
       List<ITuner> tuners = new List<ITuner>();
       IDictionary<string, ITuner> knownTuners = new Dictionary<string, ITuner>();
       HashSet<string> crossbarProductIds = new HashSet<string>();
-      string productInstanceId;
-      string tunerInstanceId;
 
-      DsDevice[] devices = DsDevice.GetDevicesOfCat(FilterCategory.AMKSCrossbar);
-      foreach (DsDevice device in devices)
+      Guid[] categories = new Guid[2] { FilterCategory.AMKSCrossbar, FilterCategory.AMKSCapture };  // order important
+      foreach (Guid category in categories)
       {
-        string name = device.Name;
-        string devicePath = device.DevicePath;
-        if (string.IsNullOrEmpty(name) || string.IsNullOrEmpty(devicePath))
+        DsDevice[] devices = DsDevice.GetDevicesOfCat(category);
+        foreach (DsDevice device in devices)
         {
-          device.Dispose();
-          continue;
-        }
-
-        // Is this a new device?
-        ITuner tuner;
-        if (_knownTuners.TryGetValue(devicePath, out tuner))
-        {
-          device.Dispose();
-          tuners.Add(tuner);
-          knownTuners.Add(devicePath, tuner);
-          if (tuner.ProductInstanceId != null)
+          // Is this a new device?
+          string devicePath = device.DevicePath;
+          ITuner tuner = null;
+          if (!string.IsNullOrEmpty(devicePath) && _knownTuners.TryGetValue(devicePath, out tuner))
           {
-            crossbarProductIds.Add(tuner.ProductInstanceId);
+            // No. Reuse the tuner instance we've previously created.
+            device.Dispose();
+            if (tuner != null)
+            {
+              tuners.Add(tuner);
+            }
+            knownTuners.Add(devicePath, tuner);
+
+            if (category == FilterCategory.AMKSCrossbar && tuner.ProductInstanceId != null)
+            {
+              crossbarProductIds.Add(tuner.ProductInstanceId);
+            }
+            continue;
           }
-          continue;
-        }
 
-        this.LogDebug("WDM detector: crossbar, name = {0}, device path = {1}", name, devicePath);
-
-        // We have to do some graph work to figure out identifiers and
-        // supported broadcast standards.
-        BroadcastStandard supportedBroadcastStandards;
-        GetCrossbarInfo(device, out productInstanceId, out tunerInstanceId, out supportedBroadcastStandards);
-
-        tuner = new TunerAnalog(device, FilterCategory.AMKSCrossbar, tunerInstanceId, productInstanceId, supportedBroadcastStandards);
-        tuners.Add(tuner);
-        knownTuners.Add(devicePath, tuner);
-        if (tuner.ProductInstanceId != null)
-        {
-          crossbarProductIds.Add(tuner.ProductInstanceId);
-        }
-      }
-
-      devices = DsDevice.GetDevicesOfCat(FilterCategory.AMKSCapture);
-      foreach (DsDevice device in devices)
-      {
-        string name = device.Name;
-        string devicePath = device.DevicePath;
-        if (string.IsNullOrEmpty(name) || string.IsNullOrEmpty(devicePath) || CAPTURE_DEVICE_BLACKLIST.Contains(name))
-        {
-          device.Dispose();
-          continue;
-        }
-
-        // Is this a new device?
-        ITuner tuner;
-        if (_knownTuners.TryGetValue(devicePath, out tuner))
-        {
-          device.Dispose();
+          tuner = DetectTunerForDevice(device, category, crossbarProductIds);
+          knownTuners.Add(devicePath, tuner);
           if (tuner != null)
           {
             tuners.Add(tuner);
           }
-          knownTuners.Add(devicePath, tuner);
-          continue;
+          else
+          {
+            device.Dispose();
+          }
         }
+      }
 
+      _knownTuners = knownTuners;
+      _crossbarProductIds = crossbarProductIds;
+      return tuners;
+    }
+
+    #endregion
+
+    private static ITuner DetectTunerForDevice(DsDevice device, Guid category, HashSet<string> crossbarProductIds)
+    {
+      string name = device.Name;
+      string devicePath = device.DevicePath;
+      if (string.IsNullOrEmpty(name) || string.IsNullOrEmpty(devicePath) || (category == FilterCategory.AMKSCapture && CAPTURE_DEVICE_BLACKLIST.Contains(name)))
+      {
+        return null;
+      }
+
+      string productInstanceId;
+      string tunerInstanceId;
+      BroadcastStandard supportedBroadcastStandards;
+      if (category == FilterCategory.AMKSCrossbar)
+      {
+        // We have to do some graph work to figure out identifiers and
+        // supported broadcast standards.
+        Log.Debug("WDM detector: crossbar, name = {0}, device path = {1}", name, devicePath);
+        GetCrossbarInfo(device, out productInstanceId, out tunerInstanceId, out supportedBroadcastStandards);
+        if (productInstanceId != null)
+        {
+          crossbarProductIds.Add(productInstanceId);
+        }
+      }
+      else
+      {
         // We don't want to add duplicate entries for multi-input capture
         // devices (already detected via crossbar).
-        this.LogDebug("WDM detector: capture, name = {0}, device path = {1}", name, devicePath);
+        Log.Debug("WDM detector: capture, name = {0}, device path = {1}", name, devicePath);
         GetIdentifiersForDevice(device, out productInstanceId, out tunerInstanceId);
         if (productInstanceId != null && crossbarProductIds.Contains(productInstanceId))
         {
           // This source has a crossbar, so don't create a capture tuner too.
-          this.LogDebug("  already detected crossbar");
-          device.Dispose();
-          knownTuners.Add(devicePath, null);
-          continue;
+          Log.Debug("  already detected crossbar");
+          return null;
         }
-
-        tuner = new TunerAnalog(device, FilterCategory.AMKSCapture, tunerInstanceId, productInstanceId, BroadcastStandard.ExternalInput);
-        tuners.Add(tuner);
-        knownTuners.Add(devicePath, tuner);
+        supportedBroadcastStandards = BroadcastStandard.ExternalInput;
       }
 
-      _knownTuners = knownTuners;
-      return tuners;
+      return new TunerAnalog(device, category, tunerInstanceId, productInstanceId, supportedBroadcastStandards);
     }
 
     private static void GetCrossbarInfo(DsDevice device, out string productInstanceId, out string tunerInstanceId, out BroadcastStandard supportedBroadcastStandards)

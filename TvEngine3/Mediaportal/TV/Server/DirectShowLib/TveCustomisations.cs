@@ -20,6 +20,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.ComTypes;
@@ -509,6 +510,35 @@ namespace DirectShowLib
 
     #endregion
 
+    #region ole32.dll
+
+    /// <summary>
+    /// Returns a pointer to an implementation of IBindCtx (a bind context object). This object stores information about a particular moniker-binding operation.
+    /// </summary>
+    /// <param name="reserved">This parameter is reserved and must be 0.</param>
+    /// <param name="ppbc">Address of an IBindCtx* pointer variable that receives the interface pointer to the new bind context object. When the function is successful, the caller is responsible for calling Release on the bind context. A NULL value for the bind context indicates that an error occurred.</param>
+    /// <returns>This function can return the standard return values E_OUTOFMEMORY and S_OK.</returns>
+    [DllImport("ole32.dll")]
+    private static extern int CreateBindCtx(uint reserved, out IBindCtx ppbc);
+
+    /// <summary>
+    /// Converts a string into a moniker that identifies the object named by the string.
+    /// This function is the inverse of the IMoniker::GetDisplayName operation, which retrieves the display name associated with a moniker.
+    /// </summary>
+    /// <param name="pbc">A pointer to the IBindCtx interface on the bind context object to be used in this binding operation.</param>
+    /// <param name="szUserName">A pointer to the display name to be parsed.</param>
+    /// <param name="pchEaten">A pointer to the number of characters of szUserName that were consumed. If the function is successful, *pchEaten is the length of szUserName; otherwise, it is the number of characters successfully parsed.</param>
+    /// <param name="ppmk">The address of the IMoniker* pointer variable that receives the interface pointer to the moniker that was built from szUserName. When successful, the function has called AddRef on the moniker and the caller is responsible for calling Release. If an error occurs, the specified interface pointer will contain as much of the moniker that the method was able to create before the error occurred.</param>
+    /// <returns>
+    /// This function can return the standard return value E_OUTOFMEMORY, as well as the following values.
+    /// S_OK: The parse operation was successful and the moniker was created.
+    /// MK_E_SYNTAX: Error in the syntax of a file name or an error in the syntax of the resulting composite moniker.
+    /// </returns>
+    [DllImport("ole32.dll", CharSet = CharSet.Unicode)]
+    private static extern int MkParseDisplayName(IBindCtx pbc, string szUserName, ref int pchEaten, out IMoniker ppmk);
+
+    #endregion
+
     #region setupapi.dll
 
     private const uint MAX_DEVICE_ID_LEN = 200;
@@ -596,6 +626,12 @@ namespace DirectShowLib
     private static extern bool SetupDiGetDeviceInstanceId(IntPtr DeviceInfoSet, ref SP_DEVINFO_DATA DeviceInfoData, StringBuilder DeviceInstanceId, uint DeviceInstanceIdSize, out uint RequiredSize);
 
     #endregion
+
+    private static readonly Guid RTL283X_BDA_EXTENSION_PROPERTY_SET = new Guid(0xbb992b31, 0x931d, 0x41b1, 0x85, 0xea, 0xa0, 0x1b, 0x4e, 0x30, 0x6c, 0xa5);
+    private const int RTL283X_BDA_EXTENSION_TEST_SUPPORT_PROPERTY = 2;    // get demod supported modes
+
+    private static IDictionary<string, int> _rtl283xTunerInstanceIds = new Dictionary<string, int>();
+    private static int _nextRtl283xTunerInstanceId = 1;
 
     private bool _readProductInstanceId = false;
     private string _productInstanceId = null;
@@ -918,11 +954,58 @@ namespace DirectShowLib
         // indicate hardware grouping to the OS. It is related to W7 container
         // IDs:
         // http://msdn.microsoft.com/en-us/library/windows/hardware/ff540024%28v=vs.85%29.aspx
-        object id = GetPropBagValue("TunerInstanceID");
-        if (id != null)
+        object registryId = GetPropBagValue("TunerInstanceID");
+        if (registryId != null)
         {
-          _tunerInstanceId = (int)id;
+          try
+          {
+            return (int)registryId;
+          }
+          catch
+          {
+          }
         }
+
+        //-----------------------------------
+        // Realtek RTL283x fall-back method.
+        //-----------------------------------
+        int rtl283xId;
+        if (_rtl283xTunerInstanceIds.TryGetValue(devicePath, out rtl283xId))
+        {
+          return rtl283xId;
+        }
+        Guid filterClsid = typeof(IBaseFilter).GUID;
+        object obj = null;
+        try
+        {
+          m_Mon.BindToObject(null, null, ref filterClsid, out obj);
+        }
+        catch
+        {
+          return _tunerInstanceId;
+        }
+
+        try
+        {
+          IKsPropertySet ps = obj as IKsPropertySet;
+          if (ps == null)
+          {
+            return _tunerInstanceId;
+          }
+          KSPropertySupport support;
+          int hr = ps.QuerySupported(RTL283X_BDA_EXTENSION_PROPERTY_SET, RTL283X_BDA_EXTENSION_TEST_SUPPORT_PROPERTY, out support);
+          if (hr == 0 && support.HasFlag(KSPropertySupport.Get))
+          {
+            // New RTL283x-based tuner identified.
+            _tunerInstanceId = _nextRtl283xTunerInstanceId++;
+            _rtl283xTunerInstanceIds[devicePath] = _tunerInstanceId;
+          }
+        }
+        finally
+        {
+          Marshal.ReleaseComObject(obj);
+        }
+
         return _tunerInstanceId;
       }
     }
@@ -955,6 +1038,46 @@ namespace DirectShowLib
           Marshal.ReleaseComObject(bagObj);
           bagObj = null;
         }
+      }
+    }
+
+    /// <summary>
+    /// Create a <see cref="DsDevice"/> instance from a device path.
+    /// </summary>
+    /// <param name="devicePath">The device path.</param>
+    /// <returns>the instance if successful, otherwise <c>null</c></returns>
+    public static DsDevice FromDevicePath(string devicePath)
+    {
+      // We need a bind context in order to create a moniker.
+      IBindCtx bindContext;
+      int hr = CreateBindCtx(0, out bindContext);
+      if (hr != 0 || bindContext == null)
+      {
+        return null;
+      }
+
+      devicePath = devicePath.ToLowerInvariant();
+      try
+      {
+        // Create the moniker associated with the device path.
+        int consumedCharCount = 0;
+        IMoniker moniker;
+        hr = MkParseDisplayName(bindContext, devicePath, ref consumedCharCount, out moniker);
+        if (hr != 0 && !devicePath.StartsWith("@device:pnp:"))
+        {
+          devicePath.Insert(0, "@device:pnp:");
+          hr = MkParseDisplayName(bindContext, devicePath, ref consumedCharCount, out moniker);
+        }
+        if (hr != 0 || moniker == null)
+        {
+          return null;
+        }
+
+        return new DsDevice(moniker);
+      }
+      finally
+      {
+        Marshal.ReleaseComObject(bindContext);
       }
     }
 

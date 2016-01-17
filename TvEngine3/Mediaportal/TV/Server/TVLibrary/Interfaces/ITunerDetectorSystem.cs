@@ -18,6 +18,7 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Tuner;
 
@@ -35,6 +36,15 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces
     {
       get;
     }
+
+    /// <summary>
+    /// Detect and instanciate the compatible tuners exposed by a system device
+    /// interface.
+    /// </summary>
+    /// <param name="classGuid">The identifier for the interface's class.</param>
+    /// <param name="devicePath">The interface's device path.</param>
+    /// <returns>the compatible tuners exposed by the interface</returns>
+    ICollection<ITuner> DetectTuners(Guid classGuid, string devicePath);
 
     /// <summary>
     /// Detect and instanciate the compatible tuners connected to the system.

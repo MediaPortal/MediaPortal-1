@@ -38,10 +38,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
   /// </summary>
   internal class TunerDetectorB2c2 : ITunerDetectorSystem
   {
-    private static readonly int DEVICE_INFO_SIZE = Marshal.SizeOf(typeof(DeviceInfo));                // 416
+    private static readonly int DEVICE_INFO_SIZE = Marshal.SizeOf(typeof(DeviceInfo));    // 416
 
-    // key = device path
-    private IDictionary<uint, ITuner> _knownTuners = new Dictionary<uint, ITuner>();
+    private IDictionary<uint, ITuner> _knownTuners = new Dictionary<uint, ITuner>();      // key = B2C2 device ID
+
+    #region ITunerDetectorSystem members
 
     /// <summary>
     /// Get the detector's name.
@@ -52,6 +53,18 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
       {
         return "B2C2";
       }
+    }
+
+    /// <summary>
+    /// Detect and instanciate the compatible tuners exposed by a system device
+    /// interface.
+    /// </summary>
+    /// <param name="classGuid">The identifier for the interface's class.</param>
+    /// <param name="devicePath">The interface's device path.</param>
+    /// <returns>the compatible tuners exposed by the interface</returns>
+    public ICollection<ITuner> DetectTuners(Guid classGuid, string devicePath)
+    {
+      return new List<ITuner>(0);
     }
 
     /// <summary>
@@ -107,6 +120,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
             ITuner t;
             if (_knownTuners.TryGetValue(d.DeviceId, out t))
             {
+              // No. Reuse the tuner instance we've previously created.
               tuners.Add(t);
               knownTuners.Add(d.DeviceId, t);
               continue;
@@ -162,5 +176,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
       _knownTuners = knownTuners;
       return tuners;
     }
+
+    #endregion
   }
 }
