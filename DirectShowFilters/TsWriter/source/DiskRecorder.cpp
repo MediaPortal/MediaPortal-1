@@ -596,7 +596,7 @@ void CDiskRecorder::OnTsPacket(CTsHeader& header, unsigned char* tsPacket)
         CTimeUtils::ElapsedMillis(m_videoAudioStartTimeStamp) > 100
       )
       {
-        WriteLog(L"timeout waiting for PCR, generate PCR from PTS");
+        WriteLog(L"PCR wait time limit reached, generate PCR from PTS");
         m_generatePcrFromPts = true;
         m_fakePcrPid = PID_PCR;
       }
@@ -615,7 +615,7 @@ void CDiskRecorder::OnTsPacket(CTsHeader& header, unsigned char* tsPacket)
         {
           if (expectingPcrOrContinuityCounterJump)
           {
-            WriteLog(L"PID %hu signaled continuity jump, value = %hhu, previous = %hhu",
+            WriteLog(L"PID %hu signaled discontinuity, value = %hhu, previous = %hhu",
                       header.Pid, header.ContinuityCounter,
                       info.PrevContinuityCounter);
           }
@@ -1308,7 +1308,7 @@ void CDiskRecorder::PatchPcr(unsigned char* tsPacket, CTsHeader& header)
     else
     {
       // Adjust the PCR compensation in such a way that we get a smooth transition without jumps.
-      UINT64 predictedNextPcrOldStream = (m_prevPcr.PcrReferenceBase + (UINT64)m_averagePcrSpeed) & MAX_PCR_BASE;
+      unsigned long long predictedNextPcrOldStream = (m_prevPcr.PcrReferenceBase + (unsigned long long)m_averagePcrSpeed) & MAX_PCR_BASE;
       m_pcrCompensation = (m_pcrCompensation + predictedNextPcrOldStream - pcrNew.PcrReferenceBase) & MAX_PCR_BASE;
     }
     m_prevPcr = pcrNew;
@@ -1466,15 +1466,15 @@ void CDiskRecorder::PatchPtsDts(unsigned char* pesHeader, PidInfo& pidInfo)
 
     // Patch the PTS with the PCR compensation. This seems to be enough to avoid freezes & crashes.
     long long ptsPatched = (pts.PcrReferenceBase + m_pcrCompensation) & MAX_PCR_BASE;
-    pesHeader[13] = (byte)((ptsPatched & 0x7f) << 1) + 1;
+    pesHeader[13] = (unsigned char)((ptsPatched & 0x7f) << 1) + 1;
     ptsPatched >>= 7;
-    pesHeader[12] = (byte)(ptsPatched & 0xff);
+    pesHeader[12] = (unsigned char)(ptsPatched & 0xff);
     ptsPatched >>= 8;
-    pesHeader[11] = (byte)((ptsPatched & 0x7f) << 1) + 1;
+    pesHeader[11] = (unsigned char)((ptsPatched & 0x7f) << 1) + 1;
     ptsPatched >>= 7;
-    pesHeader[10] = (byte)(ptsPatched & 0xff);
+    pesHeader[10] = (unsigned char)(ptsPatched & 0xff);
     ptsPatched >>= 8;
-    pesHeader[9] = (byte)((ptsPatched & 7) << 1) + 0x21;
+    pesHeader[9] = (unsigned char)((ptsPatched & 7) << 1) + 0x21;
 
     pidInfo.PrevPts = pts.PcrReferenceBase;
     pidInfo.PrevPtsTimeStamp = timeStamp;
@@ -1501,15 +1501,15 @@ void CDiskRecorder::PatchPtsDts(unsigned char* pesHeader, PidInfo& pidInfo)
       }*/
 
       long long dtsPatched = (dts.PcrReferenceBase + m_pcrCompensation) & MAX_PCR_BASE;
-      pesHeader[18] = (byte)((dtsPatched & 0x7f) << 1) + 1;
+      pesHeader[18] = (unsigned char)((dtsPatched & 0x7f) << 1) + 1;
       dtsPatched >>= 7;
-      pesHeader[17] = (byte)(dtsPatched & 0xff);
+      pesHeader[17] = (unsigned char)(dtsPatched & 0xff);
       dtsPatched >>= 8;
-      pesHeader[16] = (byte)((dtsPatched & 0x7f) << 1) + 1;
+      pesHeader[16] = (unsigned char)((dtsPatched & 0x7f) << 1) + 1;
       dtsPatched >>= 7;
-      pesHeader[15] = (byte)((dtsPatched & 0xff));
+      pesHeader[15] = (unsigned char)((dtsPatched & 0xff));
       dtsPatched >>= 8;
-      pesHeader[14] = (byte)((dtsPatched & 7) << 1) + 0x31;
+      pesHeader[14] = (unsigned char)((dtsPatched & 7) << 1) + 0x31;
 
       pidInfo.PrevDts = dts.PcrReferenceBase;
       pidInfo.PrevDtsTimeStamp = timeStamp;
