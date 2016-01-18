@@ -1210,6 +1210,7 @@ void CParserEitDvb::OnNewSection(int pid, int tableId, CSection& section)
       return;
     }
 
+    bool isPremiereTable = false;
     switch (pid)
     {
       case PID_EIT_DVB:
@@ -1251,6 +1252,7 @@ void CParserEitDvb::OnNewSection(int pid, int tableId, CSection& section)
         {
           return;
         }
+        isPremiereTable = true;
         break;
       default:
         // Freesat
@@ -1263,8 +1265,8 @@ void CParserEitDvb::OnNewSection(int pid, int tableId, CSection& section)
 
     if (
       section.section_length > 4093 ||
-      (tableId == TABLE_ID_EIT_PREMIERE && section.section_length < 9) ||   // Note: Premiere *may* use the least significant 15 (out of 16) bits.
-      (tableId != TABLE_ID_EIT_PREMIERE && section.section_length < 15)
+      (isPremiereTable && section.section_length < 9) ||    // Note: Premiere *may* use the least significant 15 (out of 16) bits.
+      (!isPremiereTable && section.section_length < 15)
     )
     {
       LogDebug(L"EIT DVB: invalid section, length = %d, table ID = 0x%x, PID = %d",
@@ -1278,7 +1280,7 @@ void CParserEitDvb::OnNewSection(int pid, int tableId, CSection& section)
     unsigned short originalNetworkId = 0;
     unsigned char segmentLastSectionNumber = 0;
     unsigned char lastTableId = 0;
-    if (tableId != TABLE_ID_EIT_PREMIERE)
+    if (!isPremiereTable)
     {
       transportStreamId = (data[8] << 8) | data[9];
       originalNetworkId = (data[10] << 8) | data[11];
@@ -1293,7 +1295,7 @@ void CParserEitDvb::OnNewSection(int pid, int tableId, CSection& section)
     //          segmentLastSectionNumber, lastTableId);
 
     CEnterCriticalSection lock(m_section);
-    CRecordEitService* service = GetOrCreateService(tableId == TABLE_ID_EIT_PREMIERE,
+    CRecordEitService* service = GetOrCreateService(isPremiereTable,
                                                     originalNetworkId,
                                                     transportStreamId,
                                                     serviceId,
@@ -1379,7 +1381,7 @@ void CParserEitDvb::OnNewSection(int pid, int tableId, CSection& section)
       bool isSingleTableGroup = (
         tableId == TABLE_ID_EIT_DVB_PF_ACTUAL ||
         tableId == TABLE_ID_EIT_DVB_PF_OTHER ||
-        tableId == TABLE_ID_EIT_PREMIERE
+        isPremiereTable
       );
       vector<unsigned char> erasedTableIds;
       RemoveExpiredEntries(service->UnseenSections,
@@ -1400,7 +1402,7 @@ void CParserEitDvb::OnNewSection(int pid, int tableId, CSection& section)
       bool isChange = erasedTableIds.size() > 0;
       erasedTableIds.clear();
 
-      if (tableId != TABLE_ID_EIT_PREMIERE)
+      if (!isPremiereTable)
       {
         RemoveExpiredEntries(service->UnseenTables,
                               true,
@@ -1488,7 +1490,7 @@ void CParserEitDvb::OnNewSection(int pid, int tableId, CSection& section)
         m_isSeen = true;
       }
 
-      if (tableId == TABLE_ID_EIT_PREMIERE)
+      if (isPremiereTable)
       {
         unsigned long baseKey = sectionKey & 0xffffff00;
         for (unsigned char s = 0; s <= section.LastSectionNumber; s++)
@@ -1558,7 +1560,7 @@ void CParserEitDvb::OnNewSection(int pid, int tableId, CSection& section)
     unsigned short pointer;                                   // points to the first byte in the event loop
     unsigned short endOfSection = section.section_length - 1; // points to the first byte in the CRC
     unsigned char eventByteCount;
-    if (tableId == TABLE_ID_EIT_PREMIERE)
+    if (isPremiereTable)
     {
       pointer = 8;
       eventByteCount = 9;
@@ -1596,7 +1598,7 @@ void CParserEitDvb::OnNewSection(int pid, int tableId, CSection& section)
         return;
       }
 
-      if (tableId == TABLE_ID_EIT_PREMIERE)
+      if (isPremiereTable)
       {
         CreatePremiereEvents(*event, premiereShowings);
         delete event;
@@ -1619,7 +1621,7 @@ void CParserEitDvb::OnNewSection(int pid, int tableId, CSection& section)
     service->SeenSections.push_back(sectionKey);
     service->UnseenSections.erase(sectionIt);
     m_unseenSectionCount--;
-    if (tableId != TABLE_ID_EIT_PREMIERE)
+    if (!isPremiereTable)
     {
       vector<unsigned char>::const_iterator tableIt = find(service->UnseenTables.begin(),
                                                             service->UnseenTables.end(),
@@ -2123,7 +2125,7 @@ bool CParserEitDvb::DecodeEventRecord(unsigned char* sectionData,
 {
   try
   {
-    if (event.TableId == TABLE_ID_EIT_PREMIERE)
+    if (event.TableId == TABLE_ID_EIT_PREMIERE && event.OriginalNetworkId == 0)
     {
       if (pointer + 9 > endOfSection)
       {
@@ -2572,7 +2574,7 @@ bool CParserEitDvb::DecodeEventDescriptors(unsigned char* sectionData,
             }
             eventText->DescriptionShort = text;
           }
-        }      
+        }
       }
       else if (tag == 0x94) // Dish episode information descriptor
       {
