@@ -272,11 +272,15 @@ CTsWriter::CTsWriter(LPUNKNOWN unk, HRESULT* hr)
   }
 
   m_nextChannelId = 0;
+
   m_openTvEpgServiceId = 0;
   m_isOpenTvEpgServiceRunning = false;
   m_openTvEpgPmtPid = 0;
-  m_freesatPmtPid = 0;
+
+  m_checkedIsFreesatTransportStream = false;
   m_isFreesatTransportStream = false;
+  m_freesatPmtPid = 0;
+
   m_isRunning = false;
   m_checkSectionCrcs = true;
   m_observer = NULL;
@@ -506,8 +510,9 @@ STDMETHODIMP_(void) CTsWriter::Stop()
   m_atscEpgPidsEtt.clear();
   m_scteEpgPids.clear();
 
-  m_freesatPmtPid = 0;
+  m_checkedIsFreesatTransportStream = false;
   m_isFreesatTransportStream = false;
+  m_freesatPmtPid = 0;
 
   m_encryptionAnalyser.Reset();
 }
@@ -1147,7 +1152,7 @@ void CTsWriter::OnSdtRunningStatus(unsigned short serviceId, unsigned char runni
       m_observer->OnProgramDetail(serviceId, 0, false, NULL, 0);
     }
 
-    if (!m_openTvEpgServiceId == serviceId)
+    if (m_openTvEpgServiceId != serviceId)
     {
       return;
     }
@@ -1357,7 +1362,7 @@ void CTsWriter::OnPatProgramReceived(unsigned short programNumber, unsigned shor
       m_grabberEpgOpenTv->SetPmtPid(pmtPid);
     }
   }
-  else if (m_freesatPmtPid == 0 && !m_isFreesatTransportStream)
+  else if (!m_checkedIsFreesatTransportStream && m_freesatPmtPid == 0)
   {
     m_freesatPmtPid = pmtPid;
     m_grabberEpgDvb->SetFreesatPmtPid(pmtPid);
@@ -1432,7 +1437,12 @@ void CTsWriter::OnPmtReceived(unsigned short programNumber,
 
   // Since we've received PMT, we now know whether this is a Freesat transport
   // stream or not. Therefore we no longer need the Freesat PMT PID.
-  m_grabberEpgDvb->SetFreesatPmtPid(0);
+  if (!m_checkedIsFreesatTransportStream)
+  {
+    m_checkedIsFreesatTransportStream = true;
+    m_freesatPmtPid = 0;
+    m_grabberEpgDvb->SetFreesatPmtPid(0);
+  }
 
   // If this is the PMT for the OpenTV EPG service candidate, we can determine
   // whether the service is really an EPG service or not.

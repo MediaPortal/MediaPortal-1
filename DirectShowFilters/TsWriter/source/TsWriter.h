@@ -266,8 +266,9 @@ class CTsWriter
     vector<unsigned short> m_atscEpgPidsEtt;
     vector<unsigned short> m_scteEpgPids;
 
-    unsigned short m_freesatPmtPid;
+    bool m_checkedIsFreesatTransportStream;
     bool m_isFreesatTransportStream;
+    unsigned short m_freesatPmtPid;
 
     bool m_isRunning;
     bool m_checkSectionCrcs;
