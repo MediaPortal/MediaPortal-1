@@ -1889,6 +1889,7 @@ void CParserNitDvb::AddLogicalChannelNumber(unsigned short serviceId,
     return;
   }
 
+  serviceLcns = it->second;
   unsigned short currentLcn = (*serviceLcns)[regionId];
   if (currentLcn == 0 || currentLcn == 0xfff || currentLcn == 0xffff)
   {
