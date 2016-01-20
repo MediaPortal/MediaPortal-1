@@ -929,8 +929,19 @@ namespace MediaPortal.InputDevices
       catch (Exception ex)
       {
         Log.Error(ex);
-        File.Delete(pathCustom);
-        LoadMapping(xmlFile, true);
+        //Force loading defaults if we were not already doing it
+        if (!defaults)
+        {
+          //Possibly corrupted custom configuration
+          //Try loading the defaults then
+          LoadMapping(xmlFile, true);
+        }
+        else
+        {
+          //Loading the default configuration failed
+          //Just propagate our exception then
+          throw ex;
+        }        
       }
     }
 
