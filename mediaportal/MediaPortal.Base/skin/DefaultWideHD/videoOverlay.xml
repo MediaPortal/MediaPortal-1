@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <!--version="1.0" encoding="utf-8" standalone="yes"-->
 <window>
   <id>3000</id>
@@ -46,7 +46,7 @@
       <id>5</id>
       <posX>847</posX>
       <posY>982</posY>
-      <width>720</width>
+      <width>825</width>
       <align>right</align>
       <font>font11</font>
       <textcolor>ivory</textcolor>
@@ -59,7 +59,7 @@
       <id>5</id>
       <posX>847</posX>
       <posY>1018</posY>
-      <width>720</width>
+      <width>825</width>
       <align>right</align>
       <font>font11</font>
       <textcolor>ivory</textcolor>

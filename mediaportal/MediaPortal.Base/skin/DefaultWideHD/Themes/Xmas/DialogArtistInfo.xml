@@ -1,0 +1,286 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!--version="1.0" encoding="utf-8" standalone="yes"-->
+<window>
+  <id>2011</id>
+  <defaultcontrol>5</defaultcontrol>
+  <allowoverlay>no</allowoverlay>
+  <define>#selecteditem:</define>
+  <define>#useSelectedFanart:Yes</define>
+  <controls>
+    <control>
+      <description>background image</description>
+      <type>image</type>
+      <id>0</id>
+      <width>1920</width>
+      <height>1080</height>
+      <texture>BH Music.jpg</texture>
+    </control>
+    <import>common.music.fanart.xml</import>
+    <import>common.window.xml</import>
+    <import>common.time.xml</import>
+    <control>
+      <description>General Overlay</description>
+      <id>0</id>
+      <type>image</type>
+      <posX>0</posX>
+      <posY>45</posY>
+      <width>1920</width>
+      <height>1080</height>
+      <texture>general_overlay.png</texture>
+    </control>
+    <control>
+      <description>Overlay album info</description>
+      <id>0</id>
+      <type>image</type>
+      <posX>397</posX>
+      <posY>234</posY>
+      <width>1080</width>
+      <height>697</height>
+      <texture mask="cdthumbmask.png">black.png</texture>
+      <colordiffuse>60ffffff</colordiffuse>
+    </control>
+    <control Style="NoShadow">
+      <description>Artist value</description>
+      <type>fadelabel</type>
+      <id>0</id>
+      <posX>0</posX>
+      <posY>139</posY>
+      <width>1920</width>
+      <align>center</align>
+      <label>#ArtistInfo.Artist</label>
+      <font>Menutitle</font>
+      <textcolor>ffffd700</textcolor>
+    </control>
+    <control Style="NoShadow">
+      <description>Born</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>427</posX>
+      <posY>270</posY>
+      <label>686</label>
+      <font>font13</font>
+      <align>left</align>
+      <textcolor>ffffd700</textcolor>
+    </control>
+    <control Style="NoShadow">
+      <description>Years Active</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>427</posX>
+      <posY>307</posY>
+      <label>687</label>
+      <font>font13</font>
+      <align>left</align>
+      <textcolor>ffffd700</textcolor>
+    </control>
+    <control Style="NoShadow">
+      <description>Genres</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>427</posX>
+      <posY>345</posY>
+      <label>135</label>
+      <font>font13</font>
+      <align>left</align>
+      <textcolor>ffffd700</textcolor>
+    </control>
+    <control Style="NoShadow">
+      <description>Tones</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>427</posX>
+      <posY>382</posY>
+      <label>175</label>
+      <font>font13</font>
+      <align>left</align>
+      <textcolor>ffffd700</textcolor>
+    </control>
+    <control Style="NoShadow">
+      <description>Styles</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>427</posX>
+      <posY>420</posY>
+      <label>176</label>
+      <font>font13</font>
+      <align>left</align>
+      <textcolor>ffffd700</textcolor>
+    </control>
+    <control Style="NoShadow">
+      <description>Instruments</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>427</posX>
+      <posY>457</posY>
+      <label>688</label>
+      <font>font13</font>
+      <align>left</align>
+      <textcolor>ffffd700</textcolor>
+    </control>
+    <control Style="NoShadow">
+      <description>Born value</description>
+      <type>fadelabel</type>
+      <id>0</id>
+      <posX>727</posX>
+      <posY>270</posY>
+      <label>#ArtistInfo.Born</label>
+      <font>font13</font>
+      <width>720</width>
+      <textcolor>ffffd700</textcolor>
+    </control>
+    <control Style="NoShadow">
+      <description>Years Active value</description>
+      <type>fadelabel</type>
+      <id>0</id>
+      <posX>727</posX>
+      <posY>307</posY>
+      <label>#ArtistInfo.YearsActive</label>
+      <font>font13</font>
+      <width>720</width>
+      <textcolor>ffffd700</textcolor>
+    </control>
+    <control Style="NoShadow">
+      <description>Genres value</description>
+      <type>fadelabel</type>
+      <id>0</id>
+      <posX>727</posX>
+      <posY>345</posY>
+      <label>#ArtistInfo.Genres</label>
+      <width>720</width>
+      <font>font13</font>
+      <textcolor>ffffd700</textcolor>
+    </control>
+    <control Style="NoShadow">
+      <description>Tones value</description>
+      <type>fadelabel</type>
+      <id>0</id>
+      <posX>727</posX>
+      <posY>382</posY>
+      <width>720</width>
+      <label>#ArtistInfo.Tones</label>
+      <font>font13</font>
+      <textcolor>ffffd700</textcolor>
+    </control>
+    <control Style="NoShadow">
+      <description>Styles value</description>
+      <type>fadelabel</type>
+      <id>0</id>
+      <posX>727</posX>
+      <posY>420</posY>
+      <width>720</width>
+      <label>#ArtistInfo.Styles</label>
+      <font>font13</font>
+      <textcolor>ffffd700</textcolor>
+    </control>
+    <control Style="NoShadow">
+      <description>Instruments value</description>
+      <type>fadelabel</type>
+      <id>0</id>
+      <posX>727</posX>
+      <posY>457</posY>
+      <label>#ArtistInfo.Instruments</label>
+      <width>720</width>
+      <font>font13</font>
+      <textcolor>ffffd700</textcolor>
+    </control>
+    <control>
+      <id>0</id>
+      <type>image</type>
+      <posX>1500</posX>
+      <posY>270</posY>
+      <width>360</width>
+      <height>360</height>
+      <keepaspectratio>yes</keepaspectratio>
+      <centered>yes</centered>
+      <texture mask="cdthumbmask.png">missing_coverart.png</texture>
+      <zoom>yes</zoom>
+    </control>
+    <control>
+      <description>artist image (Thumb)</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>1500</posX>
+      <posY>270</posY>
+      <width>360</width>
+      <height>360</height>
+      <keepaspectratio>yes</keepaspectratio>
+      <centered>yes</centered>
+      <texture mask="picturethumbmask.png">#ArtistInfo.Thumb</texture>
+      <zoom>yes</zoom>
+      <colorkey>FFFFFFFF</colorkey>
+    </control>
+    <control>
+      <id>0</id>
+      <type>image</type>
+      <posX>1500</posX>
+      <posY>270</posY>
+      <width>360</width>
+      <height>360</height>
+      <texture>cdthumbframe.png</texture>
+    </control>
+    <control Style="NoShadow">
+      <description>textarea</description>
+      <type>textboxscrollup</type>
+      <id>0</id>
+      <posX>427</posX>
+      <posY>525</posY>
+      <height>375</height>
+      <width>1020</width>
+      <onleft>5</onleft>
+      <onright>5</onright>
+      <onup>5</onup>
+      <ondown>5</ondown>
+      <font>font13</font>
+      <spinPosX>1320</spinPosX>
+      <spinPosY>885</spinPosY>
+      <label>#ArtistInfo.Bio</label>
+      <visible>!skin.hassetting(#ArtistInfo.ShowAlbums)</visible>
+    </control>
+    <control Style="NoShadow">
+      <description>textarea</description>
+      <type>textboxscrollup</type>
+      <id>0</id>
+      <posX>427</posX>
+      <posY>525</posY>
+      <height>375</height>
+      <width>1020</width>
+      <onleft>5</onleft>
+      <onright>5</onright>
+      <onup>5</onup>
+      <ondown>5</ondown>
+      <font>font13</font>
+      <spinPosX>1320</spinPosX>
+      <spinPosY>885</spinPosY>
+      <label>#ArtistInfo.Albums</label>
+      <visible>skin.hassetting(#ArtistInfo.ShowAlbums)</visible>
+    </control>
+    <control Style="NoShadow">
+      <description>Bio/Albums</description>
+      <type>button</type>
+      <id>5</id>
+      <posX>75</posX>
+      <posY>270</posY>
+      <width>300</width>
+      <label>#(L(689)) / #(L(132))</label>
+      <onleft>4</onleft>
+      <onright>4</onright>
+      <onup>6</onup>
+      <ondown>6</ondown>
+      <onclick>#(skin.togglesetting('#ArtistInfo.ShowAlbums'))</onclick>
+    </control>
+    <control Style="NoShadow">
+      <description>Refresh</description>
+      <type>button</type>
+      <id>6</id>
+      <posX>75</posX>
+      <posY>330</posY>
+      <width>300</width>
+      <label>184</label>
+      <font>font13</font>
+      <onleft>4</onleft>
+      <onright>4</onright>
+      <onup>5</onup>
+      <ondown>5</ondown>
+    </control>
+  </controls>
+</window>

@@ -25,7 +25,7 @@
       <posY>810</posY>
       <width>216</width>
       <height>52</height>
-      <texture>buttonfocus.png</texture>
+      <texture>button_focus.png</texture>
       <colordiffuse>90ffffff</colordiffuse>
       <!--visible>!skin.hassetting(#skin.analogosd)</visible-->
     </control>

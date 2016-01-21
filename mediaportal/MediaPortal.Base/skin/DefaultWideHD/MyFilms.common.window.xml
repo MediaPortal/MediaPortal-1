@@ -33,7 +33,7 @@
       <posY>52</posY>
       <label>#selectedindex/#myfilms.nbobjects.value #itemtype</label>
       <align>left</align>
-      <textcolor>ivory</textcolor>
+      <textcolor>ff6FAFE1</textcolor>
       <font>font10</font>
       <visible>string.equals(#selectedindex)+string.equals(#itemcount)</visible>
     </control>
@@ -46,7 +46,7 @@
       <width>750</width>
       <align>right</align>
       <font>font10</font>
-      <textcolor>ivory</textcolor>
+      <textcolor>ff6FAFE1</textcolor>
       <label>#myfilms.config.currentconfig#(iif(neq(#myfilms.user.name.value,''),': #myfilms.user.name.value',''))#(iif(eq(#myfilms.user.onlinestatus,'online'),' (Trakt)',''))#(iif(neq(#myfilms.config.pluginmode,'normal'),' | #myfilms.config.pluginmode mode',''))</label>
     </control>
     <!-- GLOBAL FILTERS -->

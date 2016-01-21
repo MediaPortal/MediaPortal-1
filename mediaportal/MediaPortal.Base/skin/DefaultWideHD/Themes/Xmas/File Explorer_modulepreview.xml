@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!--version="1.0" encoding="utf-8" standalone="yes"-->
+<!--version="1.0" encoding="utf-8" standalone="yes"-->
+<window>
+  <id>557313</id>
+  <defaultcontrol>10</defaultcontrol>
+  <allowoverlay>no</allowoverlay>
+  <controls>
+    <control>
+      <type>image</type>
+      <id>0</id>
+      <posX>247</posX>
+      <posY>315</posY>
+      <width>573</width>
+      <height>283</height>
+      <texture>dialog_background.png</texture>
+    </control>
+    <control>
+      <description>dialog Heading</description>
+      <type>label</type>
+      <id>2</id>
+      <posX>267</posX>
+      <posY>322</posY>
+      <label />
+      <font>font13</font>
+      <textcolor>ffffd700</textcolor>
+    </control>
+    <control>
+      <description>dialog line 1</description>
+      <type>label</type>
+      <id>3</id>
+      <posX>267</posX>
+      <posY>364</posY>
+      <label />
+      <font>font13</font>
+      <textcolor>ffffd700</textcolor>
+    </control>
+    <control>
+      <description>dialog line 2</description>
+      <type>label</type>
+      <id>4</id>
+      <posX>267</posX>
+      <posY>393</posY>
+      <label />
+      <font>font13</font>
+      <textcolor>ffffd700</textcolor>
+    </control>
+    <control>
+      <description>OK button</description>
+      <type>button</type>
+      <id>10</id>
+      <posX>610</posX>
+      <posY>498</posY>
+      <textXOff>13</textXOff>
+      <textYOff>9</textYOff>
+      <width>147</width>
+      <height>52</height>
+      <textureFocus>small_button_focus.png</textureFocus>
+      <textureNoFocus>small_button_nofocus.png</textureNoFocus>
+      <label>186</label>
+      <onleft>10</onleft>
+      <onright>10</onright>
+      <onup>10</onup>
+      <ondown>10</ondown>
+    </control>
+  </controls>
+</window>

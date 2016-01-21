@@ -295,6 +295,7 @@ ShowUninstDetails show
   !insertmacro RemoveTTFFont "Titan.ttf"
   !insertmacro RemoveTTFFont "TitanLight.ttf"
   !insertmacro RemoveTTFFont "TitanMedium.ttf"
+  !insertmacro RemoveTTFFont "NotoSans-Regular.ttf"
   SendMessage ${HWND_BROADCAST} ${WM_FONTCHANGE} 0 0 /TIMEOUT=1000
 !macroend
 
@@ -635,18 +636,18 @@ Section "MediaPortal core files (required)" SecCore
 
   ; delete font for proper reinstallation for Default and Titan Skin Font
   !insertmacro un.Fonts
-  Delete "$FONT\TitanSmall.ttf"
-  Delete "$FONT\Titan.ttf"
-  Delete "$FONT\TitanLight.ttf"
-  Delete "$FONT\TitanMedium.ttf"
-  Delete "$FONT\Lato-Medium.ttf"
-  Delete "$FONT\Lato-Light.ttf"
+  Delete "${MEDIAPORTAL.BASE}\skin\Titan\Fonts\TitanSmall.ttf"
+  Delete "${MEDIAPORTAL.BASE}\skin\Titan\Fonts\Titan.ttf"
+  Delete "${MEDIAPORTAL.BASE}\skin\Titan\Fonts\TitanLight.ttf"
+  Delete "${MEDIAPORTAL.BASE}\skin\Titan\Fonts\TitanMedium.ttf"
+  Delete "${MEDIAPORTAL.BASE}\skin\DefaultWideHD\MPDefaultFonts\Lato-Medium.ttf"
+  Delete "${MEDIAPORTAL.BASE}\skin\DefaultWideHD\MPDefaultFonts\Lato-Light.ttf"
+  Delete "${MEDIAPORTAL.BASE}\skin\DefaultWideHD\MPDefaultFonts\NotoSans-Regular.ttf"
 
   ; used for Default and Titan Skin Font
   StrCpy $FONT_DIR $FONTS
 
-  !insertmacro InstallTTFFont "${MEDIAPORTAL.BASE}\skin\DefaultWideHD\MPDefaultFonts\Lato-Medium.ttf"
-  !insertmacro InstallTTFFont "${MEDIAPORTAL.BASE}\skin\DefaultWideHD\MPDefaultFonts\Lato-Light.ttf"
+  !insertmacro InstallTTFFont "${MEDIAPORTAL.BASE}\skin\DefaultWideHD\MPDefaultFonts\NotoSans-Regular.ttf"
   !insertmacro InstallTTFFont "${MEDIAPORTAL.BASE}\skin\Titan\Fonts\TitanSmall.ttf"
   !insertmacro InstallTTFFont "${MEDIAPORTAL.BASE}\skin\Titan\Fonts\Titan.ttf"
   !insertmacro InstallTTFFont "${MEDIAPORTAL.BASE}\skin\Titan\Fonts\TitanLight.ttf"

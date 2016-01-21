@@ -1,0 +1,1217 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <controls>
+    <control>
+      <description>divider</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>1249</posX>
+      <posY>190</posY>
+      <height>815</height>
+      <width>0</width>
+      <texture>slider_vertical.png</texture>
+      <colordiffuse>40ffffff</colordiffuse>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)</visible>
+    </control>
+    <!-- ** Current Weather Information with feed ** -->
+    <control>
+      <description>current weather icon</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>465</posX>
+      <posY>170</posY>
+      <width>294</width>
+      <height>202</height>
+      <texture>#WorldWeather.TodayIconImage</texture>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)</visible>
+    </control>
+    <control>
+      <description>current moon icon</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>1000</posX>
+      <posY>230</posY>
+      <width>100</width>
+      <height>100</height>
+      <texture>#WorldWeather.LocationMoonPhaseImage</texture>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)</visible>
+    </control>
+    <control>
+      <description>current temp label</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>470</posX>
+      <posY>230</posY>
+      <height>108</height>
+      <width>780</width>
+      <align>center</align>
+      <label>#WorldWeather.TodayTemperature</label>
+      <font>Menutitle</font>
+      <textcolor>ffffd700</textcolor>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)</visible>
+      <animation effect="zoom" start="100,100" end="150,150" time="0" condition="true">conditional</animation>
+    </control>
+    <control>
+      <description>Current Condition Label</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>470</posX>
+      <posY>360</posY>
+      <width>780</width>
+      <label>#WorldWeather.TodayCondition</label>
+      <align>center</align>
+      <font>Menutitle</font>
+      <textcolor>ffffd700</textcolor>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)</visible>
+    </control>
+    <control>
+      <description>Actual Weather Feed</description>
+      <type>textboxscrollup</type>
+      <id>0</id>
+      <posX>500</posX>
+      <posY>840</posY>
+      <width>730</width>
+      <height>158</height>
+      <label>#WorldWeather.Feed0Text</label>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)</visible>
+      <font>font10</font>
+      <textcolor>ffffd700</textcolor>
+    </control>
+    <!-- ** Weather Charts (Days and Hours)) ** -->
+    <!--control>
+    <description>Chart Background Image 1</description>
+    <type>image</type>
+    <id>0</id>
+    <posX>80</posX>
+    <posY>510</posY>
+    <width>340</width>
+    <height>290</height>
+    <texture>settingsbg.png</texture>
+    <colordiffuse>ddffffff</colordiffuse>
+    <visible>string.equals(#WorldWeather.View,Condition)+!string.equals(#WorldWeather.ForecastDayTemperatureChart,)+string.equals(#WorldWeather.ConditionView,Normal)</visible>
+  </control>
+  <control>
+    <description>Chart Background Image 2</description>
+    <type>image</type>
+    <id>0</id>
+    <posX>80</posX>
+    <posY>780</posY>
+    <width>340</width>
+    <height>290</height>
+    <texture>settingsbg.png</texture>
+    <colordiffuse>ddffffff</colordiffuse>
+    <visible>string.equals(#WorldWeather.View,Condition)+!string.equals(#WorldWeather.ForecastDayTemperatureChart,)+string.equals(#WorldWeather.ConditionView,Normal)</visible>
+  </control>
+  <control>
+    <description>chart image</description>
+    <type>image</type>
+    <id>0</id>
+    <posX>100</posX>
+    <posY>530</posY>
+    <width>300</width>
+    <height>250</height>
+    <texture>#WorldWeather.ForecastDayTemperatureChart</texture>
+    <colordiffuse>ffffffff</colordiffuse>
+    <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)</visible>
+  </control>
+  <control>
+    <description>chart image</description>
+    <type>image</type>
+    <id>0</id>
+    <posX>100</posX>
+    <posY>800</posY>
+    <width>300</width>
+    <height>250</height>
+    <texture>#WorldWeather.ForecastHourTemperatureChart</texture>
+    <colordiffuse>ffffffff</colordiffuse>
+    <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)</visible>
+  </control-->
+  <control>
+    <type>group</type>
+    <description>group element</description>
+    <layout>StackLayout(0, Vertical, true)</layout>
+    <posX>500</posX>
+    <posY>400</posY>
+    <!-- *** preicipitation label *** -->
+    <control>
+      <description>Current Precipitation static label</description>
+      <type>label</type>
+      <id>0</id>
+      <label>#WorldWeather.TranslationPrecipitation:</label>
+      <font>font11</font>
+      <height>35</height>
+      <textcolor>ffffd700</textcolor>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)+!string.equals(#WorldWeather.TodayPrecipitation, )</visible>
+    </control>
+    <!-- *** Current visibility label *** -->
+    <control>
+      <description>current visibility label</description>
+      <type>label</type>
+      <id>0</id>
+      <label>#WorldWeather.TranslationVisibility:</label>
+      <font>font11</font>
+      <height>35</height>
+      <textcolor>ffffd700</textcolor>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)+!string.equals(#WorldWeather.TodayVisibility, )</visible>
+    </control>
+    <!-- *** Current cloud coverage label *** -->
+    <control>
+      <description>current visibility label</description>
+      <type>label</type>
+      <id>0</id>
+      <label>#WorldWeather.TranslationCloudCoverage:</label>
+      <font>font11</font>
+      <height>35</height>
+      <textcolor>ffffd700</textcolor>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)+!string.equals(#WorldWeather.TodayCloudCoverage, )</visible>
+    </control>
+    <!-- *** Current wind label *** -->
+    <control>
+      <description>current wind static label</description>
+      <type>label</type>
+      <id>0</id>
+      <label>#WorldWeather.TranslationWind:</label>
+      <font>font11</font>
+      <height>35</height>
+      <textcolor>ffffd700</textcolor>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)</visible>
+    </control>
+    <!-- *** Current humidity label *** -->
+    <control>
+      <description>current humidity static label</description>
+      <type>label</type>
+      <id>0</id>
+      <label>#WorldWeather.TranslationHumidity:</label>
+      <font>font11</font>
+      <height>35</height>
+      <textcolor>ffffd700</textcolor>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)</visible>
+    </control>
+    <!-- *** Current pressure label *** -->
+    <control>
+      <description>current humidity static label</description>
+      <type>label</type>
+      <id>0</id>
+      <label>#WorldWeather.TranslationPressure:</label>
+      <font>font11</font>
+      <height>35</height>
+      <textcolor>ffffd700</textcolor>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)+!string.equals(#WorldWeather.TodayPressure, )</visible>
+    </control>
+    <!-- *** Dewpoint label *** -->
+    <control>
+      <description>Current Dewpoint label</description>
+      <type>label</type>
+      <id>0</id>
+      <label>#WorldWeather.TranslationDewPoint:</label>
+      <font>font11</font>
+      <height>35</height>
+      <textcolor>ffffd700</textcolor>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)+!string.equals(#WorldWeather.TodayDewPoint, )</visible>
+    </control>
+    <!-- *** Current sunrise label *** -->
+    <control>
+      <description>current sunrise static label</description>
+      <type>label</type>
+      <id>0</id>
+      <label>#WorldWeather.TranslationSunrise:</label>
+      <font>font11</font>
+      <height>35</height>
+      <textcolor>ffffd700</textcolor>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)</visible>
+    </control>
+    <!-- *** Current sunset label *** -->
+    <control>
+      <description>current sunset static label</description>
+      <type>label</type>
+      <id>0</id>
+      <label>#WorldWeather.TranslationSunset:</label>
+      <font>font11</font>
+      <height>35</height>
+      <textcolor>ffffd700</textcolor>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)</visible>
+    </control>
+    <!-- *** Current moonphase label *** -->
+    <control>
+      <description>current moonphase static label</description>
+      <type>label</type>
+      <id>0</id>
+      <label>#WorldWeather.TranslationMoonPhase:</label>
+      <font>font11</font>
+      <height>35</height>
+      <textcolor>ffffd700</textcolor>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)</visible>
+    </control>
+    <!-- *** Current moonphase label *** -->
+    <control>
+      <description>current moonphase static label</description>
+      <type>label</type>
+      <id>0</id>
+      <label>#WorldWeather.TranslationMoonrise:</label>
+      <font>font11</font>
+      <height>35</height>
+      <textcolor>ffffd700</textcolor>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)</visible>
+    </control>
+    <!-- *** Current moonphase label *** -->
+    <control>
+      <description>current moonphase static label</description>
+      <type>label</type>
+      <id>0</id>
+      <label>#WorldWeather.TranslationMoonset:</label>
+      <font>font11</font>
+      <height>35</height>
+      <textcolor>ffffd700</textcolor>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)</visible>
+    </control>
+  </control>
+  <control>
+    <type>group</type>
+    <description>group element</description>
+    <layout>StackLayout(0, Vertical, true)</layout>
+    <posX>825</posX>
+    <posY>400</posY>
+    <control>
+      <description>Current Precipitation label</description>
+      <type>label</type>
+      <id>0</id>
+      <label>#WorldWeather.TodayPrecipitation</label>
+      <font>font11</font>
+      <height>35</height>
+      <textcolor>ffffd700</textcolor>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)+!string.equals(#WorldWeather.TodayPrecipitation, )</visible>
+    </control>
+    <control>
+      <description>current visibility label</description>
+      <type>label</type>
+      <id>0</id>
+      <label>#WorldWeather.TodayVisibility</label>
+      <font>font11</font>
+      <height>35</height>
+      <textcolor>ffffd700</textcolor>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)+!string.equals(#WorldWeather.TodayVisibility, )</visible>
+    </control>
+    <control>
+      <description>current cloud coverage label</description>
+      <type>label</type>
+      <id>0</id>
+      <label>#WorldWeather.TodayCloudCoverage</label>
+      <font>font11</font>
+      <height>35</height>
+      <textcolor>ffffd700</textcolor>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)+!string.equals(#WorldWeather.TodayCloudCoverage, )</visible>
+    </control>
+    <control>
+      <description>current wind label</description>
+      <type>label</type>
+      <id>0</id>
+      <label>#WorldWeather.TodayWindDirection - #WorldWeather.TodayWindSpeed</label>
+      <font>font11</font>
+      <height>35</height>
+      <textcolor>ffffd700</textcolor>
+      <width>702</width>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)+string.equals(#WorldWeather.TodayWindDirectionDegree, )</visible>
+    </control>
+    <control>
+      <description>current wind label</description>
+      <type>label</type>
+      <id>0</id>
+      <label>#WorldWeather.TodayWindDirection (#WorldWeather.TodayWindDirectionDegree) - #WorldWeather.TodayWindSpeed</label>
+      <font>font11</font>
+      <height>35</height>
+      <textcolor>ffffd700</textcolor>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)+!string.equals(#WorldWeather.TodayWindDirectionDegree, )</visible>
+    </control>
+    <control>
+      <description>current humidity label</description>
+      <type>label</type>
+      <id>0</id>
+      <label>#WorldWeather.TodayHumidity</label>
+      <font>font11</font>
+      <height>35</height>
+      <textcolor>ffffd700</textcolor>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)</visible>
+    </control>
+    <control>
+      <description>current pressure label</description>
+      <type>fadelabel</type>
+      <id>0</id>
+      <label>#WorldWeather.TodayPressure  #WorldWeather.TodayBarometricPressure</label>
+      <font>font11</font>
+      <height>35</height>
+      <width>380</width>
+      <textcolor>ffffd700</textcolor>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)+!string.equals(#WorldWeather.TodayPressure, )</visible>
+    </control>
+    <control>
+      <description>current dewpoint label</description>
+      <type>label</type>
+      <id>0</id>
+      <label>#WorldWeather.TodayDewPoint</label>
+      <font>font11</font>
+      <height>35</height>
+      <textcolor>ffffd700</textcolor>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)+!string.equals(#WorldWeather.TodayDewPoint, )</visible>
+    </control>
+    <control>
+      <description>Current sunrise label</description>
+      <type>label</type>
+      <id>0</id>
+      <label>#WorldWeather.LocationSunriseTime</label>
+      <font>font11</font>
+      <height>35</height>
+      <textcolor>ffffd700</textcolor>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)</visible>
+    </control>
+    <control>
+      <description>Current sunset label</description>
+      <type>label</type>
+      <id>0</id>
+      <label>#WorldWeather.LocationSunsetTime  (#WorldWeather.LocationSunshineDuration)</label>
+      <font>font11</font>
+      <height>35</height>
+      <textcolor>ffffd700</textcolor>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)</visible>
+    </control>
+    <control>
+      <description>current moonphase label</description>
+      <type>label</type>
+      <id>0</id>
+      <label>#WorldWeather.LocationMoonPhase</label>
+      <font>font11</font>
+      <height>35</height>
+      <textcolor>ffffd700</textcolor>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)</visible>
+    </control>
+    <control>
+      <description>current moonphase label</description>
+      <type>label</type>
+      <id>0</id>
+      <label>#WorldWeather.LocationMoonriseTime</label>
+      <font>font11</font>
+      <height>35</height>
+      <textcolor>ffffd700</textcolor>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)</visible>
+    </control>
+    <control>
+      <description>current moonphase label</description>
+      <type>label</type>
+      <id>0</id>
+      <label>#WorldWeather.LocationMoonsetTime</label>
+      <font>font11</font>
+      <height>35</height>
+      <textcolor>ffffd700</textcolor>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)</visible>
+    </control>
+  </control>
+  <!--  *************************************************************************************************-->
+  <!--  **************************  Weather Forecast for all except Wetter.com   ************************-->
+  <!--  *************************************************************************************************-->
+  <control>
+    <type>group</type>
+    <description>group element</description>
+    <layout>StackLayout(142, Vertical, true)</layout>
+    <posX>1270</posX>
+    <posY>274</posY>
+    <visible>string.equals(#WorldWeather.View,Condition)+!string.equals(#WorldWeather.ForecastProvider,wetter.com)+string.equals(#WorldWeather.ConditionView,Normal)</visible>
+    <control>
+      <description>DAY 0 LABEL</description>
+      <type>label</type>
+      <id>0</id>
+      <width>780</width>
+      <align>center</align>
+      <label>#WorldWeather.ForecastDay0Day, #WorldWeather.ForecastDay0Date</label>
+      <font>font11</font>
+      <textcolor>ffffd700</textcolor>
+    </control>
+    <control>
+      <description>DAY 1 LABEL</description>
+      <type>label</type>
+      <id>0</id>
+      <width>780</width>
+      <align>center</align>
+      <label>#WorldWeather.ForecastDay1Day, #WorldWeather.ForecastDay1Date</label>
+      <font>font11</font>
+      <textalign>left</textalign>
+      <textcolor>ffffd700</textcolor>
+    </control>
+    <control>
+      <description>DAY 2 LABEL</description>
+      <type>label</type>
+      <id>0</id>
+      <width>780</width>
+      <align>center</align>
+      <label>#WorldWeather.ForecastDay2Day, #WorldWeather.ForecastDay2Date</label>
+      <font>font11</font>
+      <textalign>left</textalign>
+      <textcolor>ffffd700</textcolor>
+    </control>
+    <control>
+      <description>DAY 3 LABEL</description>
+      <type>label</type>
+      <id>0</id>
+      <width>780</width>
+      <align>center</align>
+      <label>#WorldWeather.ForecastDay3Day, #WorldWeather.ForecastDay3Date</label>
+      <font>font11</font>
+      <textalign>left</textalign>
+      <textcolor>ffffd700</textcolor>
+    </control>
+    <control>
+      <description>DAY 4 LABEL</description>
+      <type>label</type>
+      <id>0</id>
+      <width>780</width>
+      <align>center</align>
+      <label>#WorldWeather.ForecastDay4Day, #WorldWeather.ForecastDay4Date</label>
+      <font>font11</font>
+      <textalign>left</textalign>
+      <textcolor>ffffd700</textcolor>
+    </control>
+  </control>
+  <control>
+    <type>group</type>
+    <description>group element</description>
+    <layout>StackLayout(20, Vertical, true)</layout>
+    <posX>1300</posX>
+    <posY>250</posY>
+    <visible>string.equals(#WorldWeather.View,Condition)+!string.equals(#WorldWeather.ForecastProvider,wetter.com)+string.equals(#WorldWeather.ConditionView,Normal)</visible>
+    <control>
+      <description>DAY 0 ICON</description>
+      <type>image</type>
+      <id>0</id>
+      <width>197</width>
+      <height>122</height>
+      <texture>#WorldWeather.ForecastDay0IconImage</texture>
+    </control>
+    <control>
+      <description>DAY 1 ICON</description>
+      <type>image</type>
+      <id>0</id>
+      <width>197</width>
+      <height>122</height>
+      <texture>#WorldWeather.ForecastDay1IconImage</texture>
+    </control>
+    <control>
+      <description>DAY 2 ICON</description>
+      <type>image</type>
+      <id>0</id>
+      <width>197</width>
+      <height>122</height>
+      <texture>#WorldWeather.ForecastDay2IconImage</texture>
+    </control>
+    <control>
+      <description>DAY 3 ICON</description>
+      <type>image</type>
+      <id>0</id>
+      <width>197</width>
+      <height>122</height>
+      <texture>#WorldWeather.ForecastDay3IconImage</texture>
+    </control>
+    <control>
+      <description>DAY 4 ICON</description>
+      <type>image</type>
+      <id>0</id>
+      <width>197</width>
+      <height>122</height>
+      <texture>#WorldWeather.ForecastDay4IconImage</texture>
+    </control>
+  </control>
+  <control>
+    <type>group</type>
+    <description>group element</description>
+    <layout>StackLayout(142, Vertical, true)</layout>
+    <posX>1660</posX>
+    <posY>290</posY>
+    <visible>string.equals(#WorldWeather.View,Condition)+!string.equals(#WorldWeather.ForecastProvider,wetter.com)+string.equals(#WorldWeather.ConditionView,Normal)</visible>
+    <control>
+      <description>DAY 0 MIN VALUE</description>
+      <type>label</type>
+      <id>0</id>
+      <font>font14</font>
+      <align>right</align>
+      <label>#WorldWeather.ForecastDay0Low   |</label>
+      <textcolor>ffffd700</textcolor>
+    </control>
+    <control>
+      <description>DAY 1 MIN VALUE</description>
+      <type>label</type>
+      <id>0</id>
+      <align>right</align>
+      <label>#WorldWeather.ForecastDay1Low   |</label>
+      <font>font14</font>
+      <textcolor>ffffd700</textcolor>
+    </control>
+    <control>
+      <description>DAY 2 MIN VALUE</description>
+      <type>label</type>
+      <id>0</id>
+      <align>right</align>
+      <label>#WorldWeather.ForecastDay2Low   |</label>
+      <font>font14</font>
+      <textcolor>ffffd700</textcolor>
+    </control>
+    <control>
+      <description>DAY 3 MIN VALUE</description>
+      <type>label</type>
+      <id>0</id>
+      <align>right</align>
+      <label>#WorldWeather.ForecastDay3Low   |</label>
+      <font>font14</font>
+      <textcolor>ffffd700</textcolor>
+    </control>
+    <control>
+      <description>DAY 4 MIN VALUE</description>
+      <type>label</type>
+      <id>0</id>
+      <align>right</align>
+      <label>#WorldWeather.ForecastDay4Low   |</label>
+      <font>font14</font>
+      <textcolor>ffffd700</textcolor>
+    </control>
+  </control>
+  <control>
+    <type>group</type>
+    <description>group element</description>
+    <layout>StackLayout(142, Vertical, true)</layout>
+    <posX>1690</posX>
+    <posY>290</posY>
+    <visible>string.equals(#WorldWeather.View,Condition)+!string.equals(#WorldWeather.ForecastProvider,wetter.com)+string.equals(#WorldWeather.ConditionView,Normal)</visible>
+    <control>
+      <description>DAY 0 MAX VALUE</description>
+      <type>label</type>
+      <id>0</id>
+      <align>left</align>
+      <label>#WorldWeather.ForecastDay0High</label>
+      <font>font15</font>
+      <textcolor>coral</textcolor>
+    </control>
+    <control>
+      <description>DAY 1 MAX VALUE</description>
+      <type>label</type>
+      <id>0</id>
+      <align>left</align>
+      <label>#WorldWeather.ForecastDay1High</label>
+      <font>font14</font>
+      <textcolor>coral</textcolor>
+    </control>
+    <control>
+      <description>DAY 2 MAX VALUE</description>
+      <type>label</type>
+      <id>0</id>
+      <align>left</align>
+      <label>#WorldWeather.ForecastDay2High</label>
+      <font>font14</font>
+      <textcolor>coral</textcolor>
+    </control>
+    <control>
+      <description>DAY 3 MAX VALUE</description>
+      <type>label</type>
+      <id>0</id>
+      <align>left</align>
+      <label>#WorldWeather.ForecastDay3High</label>
+      <font>font14</font>
+      <textcolor>coral</textcolor>
+    </control>
+    <control>
+      <description>DAY 4 MAX VALUE</description>
+      <type>label</type>
+      <id>0</id>
+      <align>left</align>
+      <label>#WorldWeather.ForecastDay4High</label>
+      <font>font14</font>
+      <textcolor>coral</textcolor>
+    </control>
+  </control>
+  <control>
+    <type>group</type>
+    <description>group element</description>
+    <layout>StackLayout(142, Vertical, true)</layout>
+    <posX>1270</posX>
+    <posY>360</posY>
+    <visible>string.equals(#WorldWeather.View,Condition)+!string.equals(#WorldWeather.ForecastProvider,wetter.com)+string.equals(#WorldWeather.ConditionView,Normal)</visible>
+    <control>
+      <description>DAY 0 GENERAL WEATHER</description>
+      <type>label</type>
+      <id>0</id>
+      <width>780</width>
+      <align>center</align>
+      <label>#WorldWeather.ForecastDay0Condition</label>
+      <font>Label</font>
+      <textcolor>ffffd700</textcolor>
+    </control>
+    <control>
+      <description>DAY 1 GENERAL WEATHER</description>
+      <type>label</type>
+      <id>0</id>
+      <width>780</width>
+      <align>center</align>
+      <label>#WorldWeather.ForecastDay1Condition</label>
+      <font>Label</font>
+      <textcolor>ffffd700</textcolor>
+    </control>
+    <control>
+      <description>DAY 2 GENERAL WEATHER</description>
+      <type>label</type>
+      <id>0</id>
+      <width>780</width>
+      <align>center</align>
+      <label>#WorldWeather.ForecastDay2Condition</label>
+      <font>Label</font>
+      <textcolor>ffffd700</textcolor>
+    </control>
+    <control>
+      <description>DAY 3 GENERAL WEATHER</description>
+      <type>label</type>
+      <id>0</id>
+      <width>780</width>
+      <align>center</align>
+      <label>#WorldWeather.ForecastDay3Condition</label>
+      <font>Label</font>
+      <textcolor>ffffd700</textcolor>
+    </control>
+    <control>
+      <description>DAY 4 General Weather</description>
+      <type>label</type>
+      <id>0</id>
+      <width>780</width>
+      <align>center</align>
+      <label>#WorldWeather.ForecastDay4Condition</label>
+      <font>Label</font>
+      <textcolor>ffffd700</textcolor>
+    </control>
+  </control>
+  <control>
+    <type>group</type>
+    <description>group element</description>
+    <layout>StackLayout(141, Vertical, true)</layout>
+    <posX>1320</posX>
+    <posY>248</posY>
+    <visible>string.equals(#WorldWeather.View,Condition)+!string.equals(#WorldWeather.ForecastProvider,wetter.com)+string.equals(#WorldWeather.ConditionView,Normal)</visible>
+    <control>
+      <description>horizontal separator</description>
+      <type>image</type>
+      <id>0</id>
+      <width>550</width>
+      <height>1</height>
+      <colordiffuse>60ffffff</colordiffuse>
+      <texture>horizontal_bar.png</texture>
+    </control>
+    <control>
+      <description>horizontal separator</description>
+      <type>image</type>
+      <id>0</id>
+      <width>550</width>
+      <height>1</height>
+      <colordiffuse>60ffffff</colordiffuse>
+      <texture>horizontal_bar.png</texture>
+    </control>
+    <control>
+      <description>horizontal separator</description>
+      <type>image</type>
+      <id>0</id>
+      <width>550</width>
+      <height>1</height>
+      <colordiffuse>60ffffff</colordiffuse>
+      <texture>horizontal_bar.png</texture>
+    </control>
+    <control>
+      <description>horizontal separator</description>
+      <type>image</type>
+      <id>0</id>
+      <width>550</width>
+      <height>1</height>
+      <colordiffuse>60ffffff</colordiffuse>
+      <texture>horizontal_bar.png</texture>
+    </control>
+    <control>
+      <description>horizontal separator</description>
+      <type>image</type>
+      <id>0</id>
+      <width>550</width>
+      <height>1</height>
+      <colordiffuse>60ffffff</colordiffuse>
+      <texture>horizontal_bar.png</texture>
+    </control>
+    <control>
+      <description>horizontal separator</description>
+      <type>image</type>
+      <id>0</id>
+      <width>550</width>
+      <height>1</height>
+      <colordiffuse>60ffffff</colordiffuse>
+      <texture>horizontal_bar.png</texture>
+    </control>
+  </control>
+  <!--  *************************************************************************************************-->
+  <!--  *********************************  Weather Forecast for Wetter.com  *****************************-->
+  <!--  *************************************************************************************************-->
+  <control>
+    <type>group</type>
+    <description>group element</description>
+    <layout>StackLayout(115, Vertical, true)</layout>
+    <posX>1270</posX>
+    <posY>210</posY>
+    <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ForecastProvider,wetter.com)+string.equals(#WorldWeather.ConditionView,Normal)</visible>
+    <control>
+      <description>DAY 0 LABEL</description>
+      <type>label</type>
+      <id>0</id>
+      <width>780</width>
+      <align>center</align>
+      <label>#WorldWeather.ForecastDay0Day, #WorldWeather.ForecastDay0Date</label>
+      <font>font11</font>
+      <textcolor>ffffd700</textcolor>
+    </control>
+    <control>
+      <description>DAY 1 LABEL</description>
+      <type>label</type>
+      <id>0</id>
+      <width>780</width>
+      <align>center</align>
+      <label>#WorldWeather.ForecastDay1Day, #WorldWeather.ForecastDay1Date</label>
+      <font>font11</font>
+      <textalign>left</textalign>
+      <textcolor>ffffd700</textcolor>
+    </control>
+    <control>
+      <description>DAY 2 LABEL</description>
+      <type>label</type>
+      <id>0</id>
+      <width>780</width>
+      <align>center</align>
+      <label>#WorldWeather.ForecastDay2Day, #WorldWeather.ForecastDay2Date</label>
+      <font>font11</font>
+      <textalign>left</textalign>
+      <textcolor>ffffd700</textcolor>
+    </control>
+    <control>
+      <description>DAY 3 LABEL</description>
+      <type>label</type>
+      <id>0</id>
+      <width>780</width>
+      <align>center</align>
+      <label>#WorldWeather.ForecastDay3Day, #WorldWeather.ForecastDay3Date</label>
+      <font>font11</font>
+      <textalign>left</textalign>
+      <textcolor>ffffd700</textcolor>
+    </control>
+    <control>
+      <description>DAY 4 LABEL</description>
+      <type>label</type>
+      <id>0</id>
+      <width>780</width>
+      <align>center</align>
+      <label>#WorldWeather.ForecastDay4Day, #WorldWeather.ForecastDay4Date</label>
+      <font>font11</font>
+      <textalign>left</textalign>
+      <textcolor>ffffd700</textcolor>
+    </control>
+    <control>
+      <description>DAY 5 LABEL</description>
+      <type>label</type>
+      <id>0</id>
+      <width>780</width>
+      <align>center</align>
+      <label>#WorldWeather.ForecastDay5Day, #WorldWeather.ForecastDay5Date</label>
+      <font>font11</font>
+      <textalign>left</textalign>
+      <textcolor>ffffd700</textcolor>
+    </control>
+    <control>
+      <description>DAY 6 LABEL</description>
+      <type>label</type>
+      <id>0</id>
+      <width>780</width>
+      <align>center</align>
+      <label>#WorldWeather.ForecastDay6Day, #WorldWeather.ForecastDay6Date</label>
+      <font>font11</font>
+      <textalign>left</textalign>
+      <textcolor>ffffd700</textcolor>
+    </control>
+  </control>
+  <control>
+    <type>group</type>
+    <description>group element</description>
+    <layout>StackLayout(15, Vertical, true)</layout>
+    <posX>1310</posX>
+    <posY>190</posY>
+    <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ForecastProvider,wetter.com)+string.equals(#WorldWeather.ConditionView,Normal)</visible>
+    <control>
+      <description>DAY 0 ICON</description>
+      <type>image</type>
+      <id>0</id>
+      <width>150</width>
+      <height>100</height>
+      <texture>#WorldWeather.ForecastDay0IconImage</texture>
+    </control>
+    <control>
+      <description>DAY 1 ICON</description>
+      <type>image</type>
+      <id>0</id>
+      <width>150</width>
+      <height>100</height>
+      <texture>#WorldWeather.ForecastDay1IconImage</texture>
+    </control>
+    <control>
+      <description>DAY 2 ICON</description>
+      <type>image</type>
+      <id>0</id>
+      <width>150</width>
+      <height>100</height>
+      <texture>#WorldWeather.ForecastDay2IconImage</texture>
+    </control>
+    <control>
+      <description>DAY 3 ICON</description>
+      <type>image</type>
+      <id>0</id>
+      <width>150</width>
+      <height>100</height>
+      <texture>#WorldWeather.ForecastDay3IconImage</texture>
+    </control>
+    <control>
+      <description>DAY 4 ICON</description>
+      <type>image</type>
+      <id>0</id>
+      <width>150</width>
+      <height>100</height>
+      <texture>#WorldWeather.ForecastDay4IconImage</texture>
+    </control>
+    <control>
+      <description>DAY 5 ICON</description>
+      <type>image</type>
+      <id>0</id>
+      <width>150</width>
+      <height>100</height>
+      <texture>#WorldWeather.ForecastDay5IconImage</texture>
+    </control>
+    <control>
+      <description>DAY 6 ICON</description>
+      <type>image</type>
+      <id>0</id>
+      <width>150</width>
+      <height>100</height>
+      <texture>#WorldWeather.ForecastDay6IconImage</texture>
+    </control>
+  </control>
+  <control>
+    <type>group</type>
+    <description>group element</description>
+    <layout>StackLayout(115, Vertical, true)</layout>
+    <posX>1660</posX>
+    <posY>225</posY>
+    <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ForecastProvider,wetter.com)+string.equals(#WorldWeather.ConditionView,Normal)</visible>
+    <control>
+      <description>DAY 0 MIN VALUE</description>
+      <type>label</type>
+      <id>0</id>
+      <font>font12</font>
+      <align>right</align>
+      <label>#WorldWeather.ForecastDay0Low   |</label>
+      <textcolor>ffffd700</textcolor>
+    </control>
+    <control>
+      <description>DAY 1 MIN VALUE</description>
+      <type>label</type>
+      <id>0</id>
+      <align>right</align>
+      <label>#WorldWeather.ForecastDay1Low   |</label>
+      <font>font12</font>
+      <textcolor>ffffd700</textcolor>
+    </control>
+    <control>
+      <description>DAY 2 MIN VALUE</description>
+      <type>label</type>
+      <id>0</id>
+      <align>right</align>
+      <label>#WorldWeather.ForecastDay2Low   |</label>
+      <font>font12</font>
+      <textcolor>ffffd700</textcolor>
+    </control>
+    <control>
+      <description>DAY 3 MIN VALUE</description>
+      <type>label</type>
+      <id>0</id>
+      <align>right</align>
+      <label>#WorldWeather.ForecastDay3Low   |</label>
+      <font>font12</font>
+      <textcolor>ffffd700</textcolor>
+    </control>
+    <control>
+      <description>DAY 4 MIN VALUE</description>
+      <type>label</type>
+      <id>0</id>
+      <align>right</align>
+      <label>#WorldWeather.ForecastDay4Low   |</label>
+      <font>font12</font>
+      <textcolor>ffffd700</textcolor>
+    </control>
+    <control>
+      <description>DAY 5 MIN VALUE</description>
+      <type>label</type>
+      <id>0</id>
+      <align>right</align>
+      <label>#WorldWeather.ForecastDay5Low   |</label>
+      <font>font12</font>
+      <textcolor>ffffd700</textcolor>
+    </control>
+    <control>
+      <description>DAY 6 MIN VALUE</description>
+      <type>label</type>
+      <id>0</id>
+      <align>right</align>
+      <label>#WorldWeather.ForecastDay6Low   |</label>
+      <font>font12</font>
+      <textcolor>ffffd700</textcolor>
+    </control>
+  </control>
+  <control>
+    <type>group</type>
+    <description>group element</description>
+    <layout>StackLayout(115, Vertical, true)</layout>
+    <posX>1690</posX>
+    <posY>225</posY>
+    <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ForecastProvider,wetter.com)+string.equals(#WorldWeather.ConditionView,Normal)</visible>
+    <control>
+      <description>DAY 0 MAX VALUE</description>
+      <type>label</type>
+      <id>0</id>
+      <align>left</align>
+      <label>#WorldWeather.ForecastDay0High</label>
+      <font>font12</font>
+      <textcolor>coral</textcolor>
+    </control>
+    <control>
+      <description>DAY 1 MAX VALUE</description>
+      <type>label</type>
+      <id>0</id>
+      <align>left</align>
+      <label>#WorldWeather.ForecastDay1High</label>
+      <font>font12</font>
+      <textcolor>coral</textcolor>
+    </control>
+    <control>
+      <description>DAY 2 MAX VALUE</description>
+      <type>label</type>
+      <id>0</id>
+      <align>left</align>
+      <label>#WorldWeather.ForecastDay2High</label>
+      <font>font12</font>
+      <textcolor>coral</textcolor>
+    </control>
+    <control>
+      <description>DAY 3 MAX VALUE</description>
+      <type>label</type>
+      <id>0</id>
+      <align>left</align>
+      <label>#WorldWeather.ForecastDay3High</label>
+      <font>font12</font>
+      <textcolor>coral</textcolor>
+    </control>
+    <control>
+      <description>DAY 4 MAX VALUE</description>
+      <type>label</type>
+      <id>0</id>
+      <align>left</align>
+      <label>#WorldWeather.ForecastDay4High</label>
+      <font>font12</font>
+      <textcolor>coral</textcolor>
+    </control>
+    <control>
+      <description>DAY 5 MAX VALUE</description>
+      <type>label</type>
+      <id>0</id>
+      <align>left</align>
+      <label>#WorldWeather.ForecastDay5High</label>
+      <font>font12</font>
+      <textcolor>coral</textcolor>
+    </control>
+    <control>
+      <description>DAY 6 MAX VALUE</description>
+      <type>label</type>
+      <id>0</id>
+      <align>left</align>
+      <label>#WorldWeather.ForecastDay6High</label>
+      <font>font12</font>
+      <textcolor>coral</textcolor>
+    </control>
+  </control>
+  <control>
+    <type>group</type>
+    <description>group element</description>
+    <layout>StackLayout(115, Vertical, true)</layout>
+    <posX>1270</posX>
+    <posY>280</posY>
+    <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ForecastProvider,wetter.com)+string.equals(#WorldWeather.ConditionView,Normal)</visible>
+    <control>
+      <description>DAY 0 GENERAL WEATHER</description>
+      <type>label</type>
+      <id>0</id>
+      <width>780</width>
+      <align>center</align>
+      <label>#WorldWeather.ForecastDay0Condition</label>
+      <font>font12</font>
+      <textcolor>ffffd700</textcolor>
+    </control>
+    <control>
+      <description>DAY 1 GENERAL WEATHER</description>
+      <type>label</type>
+      <id>0</id>
+      <width>780</width>
+      <align>center</align>
+      <label>#WorldWeather.ForecastDay1Condition</label>
+      <font>font12</font>
+      <textcolor>ffffd700</textcolor>
+    </control>
+    <control>
+      <description>DAY 2 GENERAL WEATHER</description>
+      <type>label</type>
+      <id>0</id>
+      <width>780</width>
+      <align>center</align>
+      <label>#WorldWeather.ForecastDay2Condition</label>
+      <font>font12</font>
+      <textcolor>ffffd700</textcolor>
+    </control>
+    <control>
+      <description>DAY 3 GENERAL WEATHER</description>
+      <type>label</type>
+      <id>0</id>
+      <width>780</width>
+      <align>center</align>
+      <label>#WorldWeather.ForecastDay3Condition</label>
+      <font>font12</font>
+      <textcolor>ffffd700</textcolor>
+    </control>
+    <control>
+      <description>DAY 4 General Weather</description>
+      <type>label</type>
+      <id>0</id>
+      <width>780</width>
+      <align>center</align>
+      <label>#WorldWeather.ForecastDay4Condition</label>
+      <font>font12</font>
+      <textcolor>ffffd700</textcolor>
+    </control>
+    <control>
+      <description>DAY 5 GENERAL WEATHER</description>
+      <type>label</type>
+      <id>0</id>
+      <width>780</width>
+      <align>center</align>
+      <label>#WorldWeather.ForecastDay5Condition</label>
+      <font>font12</font>
+      <textcolor>ffffd700</textcolor>
+    </control>
+    <control>
+      <description>DAY 6 General Weather</description>
+      <type>label</type>
+      <id>0</id>
+      <width>780</width>
+      <align>center</align>
+      <label>#WorldWeather.ForecastDay6Condition</label>
+      <font>font12</font>
+      <textcolor>ffffd700</textcolor>
+    </control>
+  </control>
+  <control>
+    <type>group</type>
+    <description>group element</description>
+    <layout>StackLayout(114, Vertical, true)</layout>
+    <posX>1320</posX>
+    <posY>303</posY>
+    <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ForecastProvider,wetter.com)+string.equals(#WorldWeather.ConditionView,Normal)</visible>
+    <control>
+      <description>horizontal separator</description>
+      <type>image</type>
+      <id>0</id>
+      <width>550</width>
+      <height>1</height>
+      <colordiffuse>60ffffff</colordiffuse>
+      <texture>horizontal_bar.png</texture>
+    </control>
+    <control>
+      <description>horizontal separator</description>
+      <type>image</type>
+      <id>0</id>
+      <width>550</width>
+      <height>1</height>
+      <colordiffuse>60ffffff</colordiffuse>
+      <texture>horizontal_bar.png</texture>
+    </control>
+    <control>
+      <description>horizontal separator</description>
+      <type>image</type>
+      <id>0</id>
+      <width>550</width>
+      <height>1</height>
+      <colordiffuse>60ffffff</colordiffuse>
+      <texture>horizontal_bar.png</texture>
+    </control>
+    <control>
+      <description>horizontal separator</description>
+      <type>image</type>
+      <id>0</id>
+      <width>550</width>
+      <height>1</height>
+      <colordiffuse>60ffffff</colordiffuse>
+      <texture>horizontal_bar.png</texture>
+    </control>
+    <control>
+      <description>horizontal separator</description>
+      <type>image</type>
+      <id>0</id>
+      <width>550</width>
+      <height>1</height>
+      <colordiffuse>60ffffff</colordiffuse>
+      <texture>horizontal_bar.png</texture>
+    </control>
+    <control>
+      <description>horizontal separator</description>
+      <type>image</type>
+      <id>0</id>
+      <width>550</width>
+      <height>1</height>
+      <colordiffuse>60ffffff</colordiffuse>
+      <texture>horizontal_bar.png</texture>
+    </control>
+  </control>
+  <!--  *************************************************************************************************-->
+  <!--  *********************************  Weather Images in Menu  **************************************-->
+  <!--  *************************************************************************************************-->
+  <control>
+    <type>group</type>
+    <description>group element</description>
+    <layout>StackLayout(0, Vertical, true)</layout>
+    <posX>80</posX>
+    <posY>480</posY>
+    <control>
+      <description>ImageWeather1</description>
+      <type>image</type>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)</visible>
+      <width>306</width>
+      <height>180</height>
+      <keepaspectratio>yes</keepaspectratio>
+      <texture mask="picturecase_mask.png">#WorldWeather.ImageWeather0</texture>
+    </control>
+    <control>
+      <description>ImageWeather2</description>
+      <type>image</type>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)</visible>
+      <width>306</width>
+      <height>180</height>
+      <keepaspectratio>yes</keepaspectratio>
+      <texture mask="picturecase_mask.png">#WorldWeather.ImageWeather1</texture>
+    </control>
+    <control>
+      <description>ImageWeather3</description>
+      <type>image</type>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)</visible>
+      <width>306</width>
+      <height>180</height>
+      <keepaspectratio>yes</keepaspectratio>
+      <texture mask="picturecase_mask.png">#WorldWeather.ImageWeather2</texture>
+    </control>
+  </control>
+  </controls>
+</window>

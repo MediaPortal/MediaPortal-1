@@ -1,0 +1,311 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+
+<!--
+
+ Pog: onX [Online Xtra]
+
+-->
+
+<!--
+ MP sets #currentmoduleid to the current window id after the window is running and onX needs this during init.
+ In general a dialog menu is used after the window is running but this is not the case when a user jumps to fullsceen tv/video.
+ To get around this a check for the fullscreen window module name is used.
+-->
+
+  <define property="true" evaluateNow="true">#onx.mod:#(iif(eq(#currentmodule,L(100602)),602,#currentmoduleid))</define>
+
+<!-- groups -->
+
+<!-- #onx.grp.[id]:[module]|[unused]|a[button1]ab[button2]bc[button3]cd[button4]de[button5]ef[button6]fg[button7]gh[button8]hi[button9]i -->
+
+  <define property="true" evaluateNow="true">#onx.grp.0:0|0|a1ab2bc3cd0de0ef0fg0gh0hi0i</define>
+
+<!-- buttons -->
+
+<!-- #onx.btn.[id]:[type]|[unused]|[hyperlink] -->
+<!-- #onx.prm.[id].[opt]:[parameter]           -->
+<!-- #onx.ste.[id]:[site]                      -->
+<!-- #onx.ico.[id]:[icon]                      -->
+
+  <define property="true" evaluateNow="true">#onx.btn.0:#(string.format('{0}|{1}|{2}','0','0',#onx.mod))</define>
+  <define property="true" evaluateNow="true">#onx.prm.0.1:</define>
+  <define property="true" evaluateNow="true">#onx.prm.0.2:</define>
+  <define property="true" evaluateNow="true">#onx.ste.0:</define>
+  <define property="true" evaluateNow="true">#onx.ico.0:onx.icon.empty.png</define>
+
+<!-- options -->
+
+<!-- #onx.[item].[id].[opt].[opt] -->
+
+  <define property="true" evaluateNow="true">#onx.xgrp.n:#(switch(eq(string.format('{0}',#colon),''),#onx.grp.0, eq(#onx.mod,string.formatcount(0,#onx.grp.1)),#onx.grp.1, eq(#onx.mod,string.formatcount(0,#onx.grp.2)),#onx.grp.2, eq(#onx.mod,string.formatcount(0,#onx.grp.3)),#onx.grp.3, eq(#onx.mod,string.formatcount(0,#onx.grp.4)),#onx.grp.4, eq(#onx.mod,string.formatcount(0,#onx.grp.5)),#onx.grp.5, eq(#onx.mod,string.formatcount(0,#onx.grp.6)),#onx.grp.6, eq(#onx.mod,string.formatcount(0,#onx.grp.7)),#onx.grp.7, eq(#onx.mod,string.formatcount(0,#onx.grp.8)),#onx.grp.8, eq(#onx.mod,string.formatcount(0,#onx.grp.9)),#onx.grp.9, eq(#onx.mod,string.formatcount(0,#onx.grp.10)),#onx.grp.10, eq(#onx.mod,string.formatcount(0,#onx.grp.11)),#onx.grp.11, eq(#onx.mod,string.formatcount(0,#onx.grp.12)),#onx.grp.12, eq(#onx.mod,string.formatcount(0,#onx.grp.13)),#onx.grp.13, eq(#onx.mod,string.formatcount(0,#onx.grp.14)),#onx.grp.14, eq(#onx.mod,string.formatcount(0,#onx.grp.15)),#onx.grp.15, eq(#onx.mod,string.formatcount(0,#onx.grp.16)),#onx.grp.16, eq(#onx.mod,string.formatcount(0,#onx.grp.17)),#onx.grp.17, eq(#onx.mod,string.formatcount(0,#onx.grp.18)),#onx.grp.18, eq(#onx.mod,string.formatcount(0,#onx.grp.19)),#onx.grp.19, eq(#onx.mod,string.formatcount(0,#onx.grp.20)),#onx.grp.20, eq(#onx.mod,string.formatcount(0,#onx.grp.21)),#onx.grp.21, eq(#onx.mod,string.formatcount(0,#onx.grp.22)),#onx.grp.22, eq(#onx.mod,string.formatcount(0,#onx.grp.23)),#onx.grp.23, eq(#onx.mod,string.formatcount(0,#onx.grp.24)),#onx.grp.24, eq(#onx.mod,string.formatcount(0,#onx.grp.25)),#onx.grp.25, eq(#onx.mod,string.formatcount(0,#onx.grp.26)),#onx.grp.26, eq(#onx.mod,string.formatcount(0,#onx.grp.27)),#onx.grp.27, eq(#onx.mod,string.formatcount(0,#onx.grp.28)),#onx.grp.28, eq(#onx.mod,string.formatcount(0,#onx.grp.29)),#onx.grp.29, eq(#onx.mod,string.formatcount(0,#onx.grp.30)),#onx.grp.30, eq(1,1),#onx.grp.0 ))</define>
+
+  <define property="true" evaluateNow="true">#onx.visible:#(iif(eq(#onx.xgrp.n,#onx.grp.0),'',' '))</define>
+
+  <define property="true" evaluateNow="true">#onx.xgrp.1:#(string.trim(string.trim(#onx.xgrp.n,'b,c,d,e,f,g,h,i,0,1,2,3,4,5,6,7,8,9,|'),'a'))</define>
+  <define property="true" evaluateNow="true">#onx.xgrp.2:#(string.trim(string.trim(#onx.xgrp.n,'a,c,d,e,f,g,h,i,0,1,2,3,4,5,6,7,8,9,|'),'b'))</define>
+  <define property="true" evaluateNow="true">#onx.xgrp.3:#(string.trim(string.trim(#onx.xgrp.n,'a,b,d,e,f,g,h,i,0,1,2,3,4,5,6,7,8,9,|'),'c'))</define>
+  <define property="true" evaluateNow="true">#onx.xgrp.4:#(string.trim(string.trim(#onx.xgrp.n,'a,b,c,e,f,g,h,i,0,1,2,3,4,5,6,7,8,9,|'),'d'))</define>
+  <define property="true" evaluateNow="true">#onx.xgrp.5:#(string.trim(string.trim(#onx.xgrp.n,'a,b,c,d,f,g,h,i,0,1,2,3,4,5,6,7,8,9,|'),'e'))</define>
+  <define property="true" evaluateNow="true">#onx.xgrp.6:#(string.trim(string.trim(#onx.xgrp.n,'a,b,c,d,e,g,h,i,0,1,2,3,4,5,6,7,8,9,|'),'f'))</define>
+  <define property="true" evaluateNow="true">#onx.xgrp.7:#(string.trim(string.trim(#onx.xgrp.n,'a,b,c,d,e,f,h,i,0,1,2,3,4,5,6,7,8,9,|'),'g'))</define>
+  <define property="true" evaluateNow="true">#onx.xgrp.8:#(string.trim(string.trim(#onx.xgrp.n,'a,b,c,d,e,f,g,i,0,1,2,3,4,5,6,7,8,9,|'),'h'))</define>
+  <define property="true" evaluateNow="true">#onx.xgrp.9:#(string.trim(string.trim(#onx.xgrp.n,'a,b,c,d,e,f,g,h,0,1,2,3,4,5,6,7,8,9,|'),'i'))</define>
+
+  <define property="true" evaluateNow="true">#onx.xbtn.1:#(choose(cint(#onx.xgrp.1),#onx.btn.0,#onx.btn.1,#onx.btn.2,#onx.btn.3,#onx.btn.4,#onx.btn.5,#onx.btn.6,#onx.btn.7,#onx.btn.8,#onx.btn.9,#onx.btn.10,#onx.btn.11,#onx.btn.12,#onx.btn.13,#onx.btn.14,#onx.btn.15,#onx.btn.16,#onx.btn.17,#onx.btn.18,#onx.btn.19,#onx.btn.20,#onx.btn.21,#onx.btn.22,#onx.btn.23,#onx.btn.24,#onx.btn.25,#onx.btn.26,#onx.btn.27,#onx.btn.28,#onx.btn.29,#onx.btn.30))</define>
+  <define property="true" evaluateNow="true">#onx.xgrp.1:#(iif(eq(string.formatcount(1,#onx.xbtn.1),'0'),#onx.xgrp.1,iif(plugin.isenabled(string.formatcount(1,#onx.xbtn.1)),#onx.xgrp.1,0)))</define>
+  <define property="true" evaluateNow="true">#onx.xbtn.1:#(iif(eq(#onx.xgrp.1,'0'),#onx.btn.0,#onx.xbtn.1))</define>
+  <define property="true" evaluateNow="true">#onx.xprm.1.1:#(string.format('#onx.prm.{0}.1',#onx.xgrp.1))</define>
+  <define property="true" evaluateNow="true">#onx.xprm.1.2:#(string.format('#onx.prm.{0}.2',#onx.xgrp.1))</define>
+  <define property="true" evaluateNow="true">#onx.xste.1:#(string.format('#onx.ste.{0}',#onx.xgrp.1))</define>
+  <define property="true" evaluateNow="true">#onx.xico.1:#(string.format('#onx.ico.{0}',#onx.xgrp.1))</define>
+
+  <define property="true" evaluateNow="true">#onx.xbtn.2:#(choose(cint(#onx.xgrp.2),#onx.btn.0,#onx.btn.1,#onx.btn.2,#onx.btn.3,#onx.btn.4,#onx.btn.5,#onx.btn.6,#onx.btn.7,#onx.btn.8,#onx.btn.9,#onx.btn.10,#onx.btn.11,#onx.btn.12,#onx.btn.13,#onx.btn.14,#onx.btn.15,#onx.btn.16,#onx.btn.17,#onx.btn.18,#onx.btn.19,#onx.btn.20,#onx.btn.21,#onx.btn.22,#onx.btn.23,#onx.btn.24,#onx.btn.25,#onx.btn.26,#onx.btn.27,#onx.btn.28,#onx.btn.29,#onx.btn.30))</define>
+  <define property="true" evaluateNow="true">#onx.xgrp.2:#(iif(eq(string.formatcount(1,#onx.xbtn.2),'0'),#onx.xgrp.2,iif(plugin.isenabled(string.formatcount(1,#onx.xbtn.2)),#onx.xgrp.2,0)))</define>
+  <define property="true" evaluateNow="true">#onx.xbtn.2:#(iif(eq(#onx.xgrp.2,'0'),#onx.btn.0,#onx.xbtn.2))</define>
+  <define property="true" evaluateNow="true">#onx.xprm.2.1:#(string.format('#onx.prm.{0}.1',#onx.xgrp.2))</define>
+  <define property="true" evaluateNow="true">#onx.xprm.2.2:#(string.format('#onx.prm.{0}.2',#onx.xgrp.2))</define>
+  <define property="true" evaluateNow="true">#onx.xste.2:#(string.format('#onx.ste.{0}',#onx.xgrp.2))</define>
+  <define property="true" evaluateNow="true">#onx.xico.2:#(string.format('#onx.ico.{0}',#onx.xgrp.2))</define>
+
+  <define property="true" evaluateNow="true">#onx.xbtn.3:#(choose(cint(#onx.xgrp.3),#onx.btn.0,#onx.btn.1,#onx.btn.2,#onx.btn.3,#onx.btn.4,#onx.btn.5,#onx.btn.6,#onx.btn.7,#onx.btn.8,#onx.btn.9,#onx.btn.10,#onx.btn.11,#onx.btn.12,#onx.btn.13,#onx.btn.14,#onx.btn.15,#onx.btn.16,#onx.btn.17,#onx.btn.18,#onx.btn.19,#onx.btn.20,#onx.btn.21,#onx.btn.22,#onx.btn.23,#onx.btn.24,#onx.btn.25,#onx.btn.26,#onx.btn.27,#onx.btn.28,#onx.btn.29,#onx.btn.30))</define>
+  <define property="true" evaluateNow="true">#onx.xgrp.3:#(iif(eq(string.formatcount(1,#onx.xbtn.3),'0'),#onx.xgrp.3,iif(plugin.isenabled(string.formatcount(1,#onx.xbtn.3)),#onx.xgrp.3,0)))</define>
+  <define property="true" evaluateNow="true">#onx.xbtn.3:#(iif(eq(#onx.xgrp.3,'0'),#onx.btn.0,#onx.xbtn.3))</define>
+  <define property="true" evaluateNow="true">#onx.xprm.3.1:#(string.format('#onx.prm.{0}.1',#onx.xgrp.3))</define>
+  <define property="true" evaluateNow="true">#onx.xprm.3.2:#(string.format('#onx.prm.{0}.2',#onx.xgrp.3))</define>
+  <define property="true" evaluateNow="true">#onx.xste.3:#(string.format('#onx.ste.{0}',#onx.xgrp.3))</define>
+  <define property="true" evaluateNow="true">#onx.xico.3:#(string.format('#onx.ico.{0}',#onx.xgrp.3))</define>
+
+  <define property="true" evaluateNow="true">#onx.xbtn.4:#(choose(cint(#onx.xgrp.4),#onx.btn.0,#onx.btn.1,#onx.btn.2,#onx.btn.3,#onx.btn.4,#onx.btn.5,#onx.btn.6,#onx.btn.7,#onx.btn.8,#onx.btn.9,#onx.btn.10,#onx.btn.11,#onx.btn.12,#onx.btn.13,#onx.btn.14,#onx.btn.15,#onx.btn.16,#onx.btn.17,#onx.btn.18,#onx.btn.19,#onx.btn.20,#onx.btn.21,#onx.btn.22,#onx.btn.23,#onx.btn.24,#onx.btn.25,#onx.btn.26,#onx.btn.27,#onx.btn.28,#onx.btn.29,#onx.btn.30))</define>
+  <define property="true" evaluateNow="true">#onx.xgrp.4:#(iif(eq(string.formatcount(1,#onx.xbtn.4),'0'),#onx.xgrp.4,iif(plugin.isenabled(string.formatcount(1,#onx.xbtn.4)),#onx.xgrp.4,0)))</define>
+  <define property="true" evaluateNow="true">#onx.xbtn.4:#(iif(eq(#onx.xgrp.4,'0'),#onx.btn.0,#onx.xbtn.4))</define>
+  <define property="true" evaluateNow="true">#onx.xprm.4.1:#(string.format('#onx.prm.{0}.1',#onx.xgrp.4))</define>
+  <define property="true" evaluateNow="true">#onx.xprm.4.2:#(string.format('#onx.prm.{0}.2',#onx.xgrp.4))</define>
+  <define property="true" evaluateNow="true">#onx.xste.4:#(string.format('#onx.ste.{0}',#onx.xgrp.4))</define>
+  <define property="true" evaluateNow="true">#onx.xico.4:#(string.format('#onx.ico.{0}',#onx.xgrp.4))</define>
+
+  <define property="true" evaluateNow="true">#onx.xbtn.5:#(choose(cint(#onx.xgrp.5),#onx.btn.0,#onx.btn.1,#onx.btn.2,#onx.btn.3,#onx.btn.4,#onx.btn.5,#onx.btn.6,#onx.btn.7,#onx.btn.8,#onx.btn.9,#onx.btn.10,#onx.btn.11,#onx.btn.12,#onx.btn.13,#onx.btn.14,#onx.btn.15,#onx.btn.16,#onx.btn.17,#onx.btn.18,#onx.btn.19,#onx.btn.20,#onx.btn.21,#onx.btn.22,#onx.btn.23,#onx.btn.24,#onx.btn.25,#onx.btn.26,#onx.btn.27,#onx.btn.28,#onx.btn.29,#onx.btn.30))</define>
+  <define property="true" evaluateNow="true">#onx.xgrp.5:#(iif(eq(string.formatcount(1,#onx.xbtn.5),'0'),#onx.xgrp.5,iif(plugin.isenabled(string.formatcount(1,#onx.xbtn.5)),#onx.xgrp.5,0)))</define>
+  <define property="true" evaluateNow="true">#onx.xbtn.5:#(iif(eq(#onx.xgrp.5,'0'),#onx.btn.0,#onx.xbtn.5))</define>
+  <define property="true" evaluateNow="true">#onx.xprm.5.1:#(string.format('#onx.prm.{0}.1',#onx.xgrp.5))</define>
+  <define property="true" evaluateNow="true">#onx.xprm.5.2:#(string.format('#onx.prm.{0}.2',#onx.xgrp.5))</define>
+  <define property="true" evaluateNow="true">#onx.xste.5:#(string.format('#onx.ste.{0}',#onx.xgrp.5))</define>
+  <define property="true" evaluateNow="true">#onx.xico.5:#(string.format('#onx.ico.{0}',#onx.xgrp.5))</define>
+
+  <define property="true" evaluateNow="true">#onx.xbtn.6:#(choose(cint(#onx.xgrp.6),#onx.btn.0,#onx.btn.1,#onx.btn.2,#onx.btn.3,#onx.btn.4,#onx.btn.5,#onx.btn.6,#onx.btn.7,#onx.btn.8,#onx.btn.9,#onx.btn.10,#onx.btn.11,#onx.btn.12,#onx.btn.13,#onx.btn.14,#onx.btn.15,#onx.btn.16,#onx.btn.17,#onx.btn.18,#onx.btn.19,#onx.btn.20,#onx.btn.21,#onx.btn.22,#onx.btn.23,#onx.btn.24,#onx.btn.25,#onx.btn.26,#onx.btn.27,#onx.btn.28,#onx.btn.29,#onx.btn.30))</define>
+  <define property="true" evaluateNow="true">#onx.xgrp.6:#(iif(eq(string.formatcount(1,#onx.xbtn.6),'0'),#onx.xgrp.6,iif(plugin.isenabled(string.formatcount(1,#onx.xbtn.6)),#onx.xgrp.6,0)))</define>
+  <define property="true" evaluateNow="true">#onx.xbtn.6:#(iif(eq(#onx.xgrp.6,'0'),#onx.btn.0,#onx.xbtn.6))</define>
+  <define property="true" evaluateNow="true">#onx.xprm.6.1:#(string.format('#onx.prm.{0}.1',#onx.xgrp.6))</define>
+  <define property="true" evaluateNow="true">#onx.xprm.6.2:#(string.format('#onx.prm.{0}.2',#onx.xgrp.6))</define>
+  <define property="true" evaluateNow="true">#onx.xste.6:#(string.format('#onx.ste.{0}',#onx.xgrp.6))</define>
+  <define property="true" evaluateNow="true">#onx.xico.6:#(string.format('#onx.ico.{0}',#onx.xgrp.6))</define>
+
+  <define property="true" evaluateNow="true">#onx.xbtn.7:#(choose(cint(#onx.xgrp.7),#onx.btn.0,#onx.btn.1,#onx.btn.2,#onx.btn.3,#onx.btn.4,#onx.btn.5,#onx.btn.6,#onx.btn.7,#onx.btn.8,#onx.btn.9,#onx.btn.10,#onx.btn.11,#onx.btn.12,#onx.btn.13,#onx.btn.14,#onx.btn.15,#onx.btn.16,#onx.btn.17,#onx.btn.18,#onx.btn.19,#onx.btn.20,#onx.btn.21,#onx.btn.22,#onx.btn.23,#onx.btn.24,#onx.btn.25,#onx.btn.26,#onx.btn.27,#onx.btn.28,#onx.btn.29,#onx.btn.30))</define>
+  <define property="true" evaluateNow="true">#onx.xgrp.7:#(iif(eq(string.formatcount(1,#onx.xbtn.7),'0'),#onx.xgrp.7,iif(plugin.isenabled(string.formatcount(1,#onx.xbtn.7)),#onx.xgrp.7,0)))</define>
+  <define property="true" evaluateNow="true">#onx.xbtn.7:#(iif(eq(#onx.xgrp.7,'0'),#onx.btn.0,#onx.xbtn.7))</define>
+  <define property="true" evaluateNow="true">#onx.xprm.7.1:#(string.format('#onx.prm.{0}.1',#onx.xgrp.7))</define>
+  <define property="true" evaluateNow="true">#onx.xprm.7.2:#(string.format('#onx.prm.{0}.2',#onx.xgrp.7))</define>
+  <define property="true" evaluateNow="true">#onx.xste.7:#(string.format('#onx.ste.{0}',#onx.xgrp.7))</define>
+  <define property="true" evaluateNow="true">#onx.xico.7:#(string.format('#onx.ico.{0}',#onx.xgrp.7))</define>
+
+  <define property="true" evaluateNow="true">#onx.xbtn.8:#(choose(cint(#onx.xgrp.8),#onx.btn.0,#onx.btn.1,#onx.btn.2,#onx.btn.3,#onx.btn.4,#onx.btn.5,#onx.btn.6,#onx.btn.7,#onx.btn.8,#onx.btn.9,#onx.btn.10,#onx.btn.11,#onx.btn.12,#onx.btn.13,#onx.btn.14,#onx.btn.15,#onx.btn.16,#onx.btn.17,#onx.btn.18,#onx.btn.19,#onx.btn.20,#onx.btn.21,#onx.btn.22,#onx.btn.23,#onx.btn.24,#onx.btn.25,#onx.btn.26,#onx.btn.27,#onx.btn.28,#onx.btn.29,#onx.btn.30))</define>
+  <define property="true" evaluateNow="true">#onx.xgrp.8:#(iif(eq(string.formatcount(1,#onx.xbtn.8),'0'),#onx.xgrp.8,iif(plugin.isenabled(string.formatcount(1,#onx.xbtn.8)),#onx.xgrp.8,0)))</define>
+  <define property="true" evaluateNow="true">#onx.xbtn.8:#(iif(eq(#onx.xgrp.8,'0'),#onx.btn.0,#onx.xbtn.8))</define>
+  <define property="true" evaluateNow="true">#onx.xprm.8.1:#(string.format('#onx.prm.{0}.1',#onx.xgrp.8))</define>
+  <define property="true" evaluateNow="true">#onx.xprm.8.2:#(string.format('#onx.prm.{0}.2',#onx.xgrp.8))</define>
+  <define property="true" evaluateNow="true">#onx.xste.8:#(string.format('#onx.ste.{0}',#onx.xgrp.8))</define>
+  <define property="true" evaluateNow="true">#onx.xico.8:#(string.format('#onx.ico.{0}',#onx.xgrp.8))</define>
+
+  <define property="true" evaluateNow="true">#onx.xbtn.9:#(choose(cint(#onx.xgrp.9),#onx.btn.0,#onx.btn.1,#onx.btn.2,#onx.btn.3,#onx.btn.4,#onx.btn.5,#onx.btn.6,#onx.btn.7,#onx.btn.8,#onx.btn.9,#onx.btn.10,#onx.btn.11,#onx.btn.12,#onx.btn.13,#onx.btn.14,#onx.btn.15,#onx.btn.16,#onx.btn.17,#onx.btn.18,#onx.btn.19,#onx.btn.20,#onx.btn.21,#onx.btn.22,#onx.btn.23,#onx.btn.24,#onx.btn.25,#onx.btn.26,#onx.btn.27,#onx.btn.28,#onx.btn.29,#onx.btn.30))</define>
+  <define property="true" evaluateNow="true">#onx.xgrp.9:#(iif(eq(string.formatcount(1,#onx.xbtn.9),'0'),#onx.xgrp.9,iif(plugin.isenabled(string.formatcount(1,#onx.xbtn.9)),#onx.xgrp.9,0)))</define>
+  <define property="true" evaluateNow="true">#onx.xbtn.9:#(iif(eq(#onx.xgrp.9,'0'),#onx.btn.0,#onx.xbtn.9))</define>
+  <define property="true" evaluateNow="true">#onx.xprm.9.1:#(string.format('#onx.prm.{0}.1',#onx.xgrp.9))</define>
+  <define property="true" evaluateNow="true">#onx.xprm.9.2:#(string.format('#onx.prm.{0}.2',#onx.xgrp.9))</define>
+  <define property="true" evaluateNow="true">#onx.xste.9:#(string.format('#onx.ste.{0}',#onx.xgrp.9))</define>
+  <define property="true" evaluateNow="true">#onx.xico.9:#(string.format('#onx.ico.{0}',#onx.xgrp.9))</define>
+
+<!-- Build Types -->
+
+  <define property="true" evaluateNow="true">#onx.type.1:#(string.formatcount(0,#onx.xbtn.1))</define>
+  <define property="true" evaluateNow="true">#onx.type.2:#(string.formatcount(0,#onx.xbtn.2))</define>
+  <define property="true" evaluateNow="true">#onx.type.3:#(string.formatcount(0,#onx.xbtn.3))</define>
+  <define property="true" evaluateNow="true">#onx.type.4:#(string.formatcount(0,#onx.xbtn.4))</define>
+  <define property="true" evaluateNow="true">#onx.type.5:#(string.formatcount(0,#onx.xbtn.5))</define>
+  <define property="true" evaluateNow="true">#onx.type.6:#(string.formatcount(0,#onx.xbtn.6))</define>
+  <define property="true" evaluateNow="true">#onx.type.7:#(string.formatcount(0,#onx.xbtn.7))</define>
+  <define property="true" evaluateNow="true">#onx.type.8:#(string.formatcount(0,#onx.xbtn.8))</define>
+  <define property="true" evaluateNow="true">#onx.type.9:#(string.formatcount(0,#onx.xbtn.9))</define>
+
+<!-- Build Links -->
+
+  <define property="true" evaluateNow="true">#onx.link.1:#(string.formatcount(2,#onx.xbtn.1))</define>
+  <define property="true" evaluateNow="true">#onx.link.2:#(string.formatcount(2,#onx.xbtn.2))</define>
+  <define property="true" evaluateNow="true">#onx.link.3:#(string.formatcount(2,#onx.xbtn.3))</define>
+  <define property="true" evaluateNow="true">#onx.link.4:#(string.formatcount(2,#onx.xbtn.4))</define>
+  <define property="true" evaluateNow="true">#onx.link.5:#(string.formatcount(2,#onx.xbtn.5))</define>
+  <define property="true" evaluateNow="true">#onx.link.6:#(string.formatcount(2,#onx.xbtn.6))</define>
+  <define property="true" evaluateNow="true">#onx.link.7:#(string.formatcount(2,#onx.xbtn.7))</define>
+  <define property="true" evaluateNow="true">#onx.link.8:#(string.formatcount(2,#onx.xbtn.8))</define>
+  <define property="true" evaluateNow="true">#onx.link.9:#(string.formatcount(2,#onx.xbtn.9))</define>
+
+<!-- Build Icons -->
+
+  <define property="true" evaluateNow="true">#onx.icon.1:#(#onx.xico.1)</define>
+  <define property="true" evaluateNow="true">#onx.icon.2:#(#onx.xico.2)</define>
+  <define property="true" evaluateNow="true">#onx.icon.3:#(#onx.xico.3)</define>
+  <define property="true" evaluateNow="true">#onx.icon.4:#(#onx.xico.4)</define>
+  <define property="true" evaluateNow="true">#onx.icon.5:#(#onx.xico.5)</define>
+  <define property="true" evaluateNow="true">#onx.icon.6:#(#onx.xico.6)</define>
+  <define property="true" evaluateNow="true">#onx.icon.7:#(#onx.xico.7)</define>
+  <define property="true" evaluateNow="true">#onx.icon.8:#(#onx.xico.8)</define>
+  <define property="true" evaluateNow="true">#onx.icon.9:#(#onx.xico.9)</define>
+
+<!-- Build Link Parameters -->
+
+<!--
+
+Window Module IDs
+
+504       Music                      song=#music.artist,#music.title album=#music.albumArtist,#music.album artist=#music.albumArtist item=#selecteditem
+510       Music Fullscreen           artist=#Play.Current.Artist
+600       Tv Guide                   item=#TV.Guide.Title
+602       Tv Fullscreen              item=#TV.View.title
+603       Tv Recorded                item=#selecteditem
+601       Tv Scheduled               item=#selecteditem
+96742     Moving Pictures            movie=#MovingPictures.SelectedMovie.title item=#MovingPictures.SelectedNode.name
+9811      TvSeries                   show=#TVSeries.Series.Pretty_Name episode=#TVSeries.Series.Pretty_Name,#TVSeries.Episode.LocalEpisodeName
+9816      TvSeries Actors            actor=#TVSeries.Actor.Name actor+role=#selecteditem
+7942      Emulators                  item=#selecteditem
+4755      Online Videos              item=#selecteditem
+801       Extensions                 item=#selecteditem
+70943676  TvWishList                 item=#title.label
+87259     Trakt calendar             show=#Trakt.Show.Title episode=#Trakt.Episode.Title
+87262     Trakt recommended shows    show=#selecteditem
+87263     Trakt recommended movies   movie=#selecteditem
+87265     Trakt trend shows          show=#selecteditem
+87266     Trakt trend movies         movie=#selecteditem
+87268     Trakt watchlist shows      show=#selecteditem
+87269     Trakt watchlist episodes   show=#Trakt.Show.Title episode=#Trakt.Episode.Title
+87270     Trakt watchlist movies     movie=#selecteditem
+87276     Trakt watchlist list       show=#Trakt.Show.Title episode=#Trakt.Episode.Title
+87281     Trakt season               show=#Trakt.Show.Title
+87282     Trakt episode              show=#Trakt.Show.Title episode=#Trakt.Episode.Title
+7977      Weather                    view=#WorldWeather.View (Condition/Image/Geoclock/Astronomy/Calendar) location=#WorldWeather.Location,#WorldWeather.LocationCountry
+
+-->
+
+<!-- #onx.[item].[id].[opt].[opt] -->
+
+  <define property="true" evaluateNow="false">#onx.parm.1:#(string.format('{0}{1}{2}{3}',#onx.xprm.1.1,#onx.xprm.1.2,#onx.xste.1,switch( eq(#onx.type.1,'0'),'', and(eq(#onx.mod,'504'),neq(#music.title,'')),' #music.artist #music.title', and(eq(#onx.mod,'504'),neq(#music.album,'')),' #music.albumArtist #music.album', and(eq(#onx.mod,'504'),neq(#music.albumArtist,'')),' #music.albumArtist', eq(#onx.mod,'510'),'#Play.Current.Artist', and(eq(#onx.mod,'96742'),neq(#MovingPictures.Coverart,'-')),' #MovingPictures.SelectedMovie.title', and(eq(#onx.mod,'96742'),neq(#MovingPictures.SelectedNode.name,'')),' #MovingPictures.SelectedNode.name', and(eq(#onx.mod,'9811'),neq(#TVSeries.Episode.LocalEpisodeName,' ')),' #TVSeries.Series.Pretty_Name #TVSeries.Episode.LocalEpisodeName', and(eq(#onx.mod,'9811'),neq(#TVSeries.Series.Pretty_Name,'')),' #TVSeries.Series.Pretty_Name', eq(#onx.mod,'9816'),' #TVSeries.Actor.Name', and(eq(#onx.mod,'600'),neq(#TV.Guide.Title,'')),' #TV.Guide.Title', eq(#onx.mod,'602'),' #TV.View.title', or(eq(#onx.mod,'87259'),eq(#onx.mod,'87269'),eq(#onx.mod,'87276'),eq(#onx.mod,'87281'),eq(#onx.mod,'87282')),' #Trakt.Show.Title #Trakt.Episode.Title', eq(#onx.mod,'70943676'),' #title.label', and(eq(#onx.mod,'7977'),or(eq(#WorldWeather.View,'Image'))),' #selecteditem #WorldWeather.LocationCountry', eq(#onx.mod,'7977'),' #WorldWeather.Location', eq(1,1),' #selecteditem' )))</define>
+  <define property="true" evaluateNow="false">#onx.parm.2:#(string.format('{0}{1}{2}{3}',#onx.xprm.2.1,#onx.xprm.2.2,#onx.xste.2,switch( eq(#onx.type.2,'0'),'', and(eq(#onx.mod,'504'),neq(#music.title,'')),' #music.artist #music.title', and(eq(#onx.mod,'504'),neq(#music.album,'')),' #music.albumArtist #music.album', and(eq(#onx.mod,'504'),neq(#music.albumArtist,'')),' #music.albumArtist', eq(#onx.mod,'510'),'#Play.Current.Artist', and(eq(#onx.mod,'96742'),neq(#MovingPictures.Coverart,'-')),' #MovingPictures.SelectedMovie.title', and(eq(#onx.mod,'96742'),neq(#MovingPictures.SelectedNode.name,'')),' #MovingPictures.SelectedNode.name', and(eq(#onx.mod,'9811'),neq(#TVSeries.Episode.LocalEpisodeName,' ')),' #TVSeries.Series.Pretty_Name #TVSeries.Episode.LocalEpisodeName', and(eq(#onx.mod,'9811'),neq(#TVSeries.Series.Pretty_Name,'')),' #TVSeries.Series.Pretty_Name', eq(#onx.mod,'9816'),' #TVSeries.Actor.Name', and(eq(#onx.mod,'600'),neq(#TV.Guide.Title,'')),' #TV.Guide.Title', eq(#onx.mod,'602'),' #TV.View.title', or(eq(#onx.mod,'87259'),eq(#onx.mod,'87269'),eq(#onx.mod,'87276'),eq(#onx.mod,'87281'),eq(#onx.mod,'87282')),' #Trakt.Show.Title #Trakt.Episode.Title', eq(#onx.mod,'70943676'),' #title.label', and(eq(#onx.mod,'7977'),or(eq(#WorldWeather.View,'Image'))),' #selecteditem #WorldWeather.LocationCountry', eq(#onx.mod,'7977'),' #WorldWeather.Location', eq(1,1),' #selecteditem' )))</define>
+  <define property="true" evaluateNow="false">#onx.parm.3:#(string.format('{0}{1}{2}{3}',#onx.xprm.3.1,#onx.xprm.3.2,#onx.xste.3,switch( eq(#onx.type.3,'0'),'', and(eq(#onx.mod,'504'),neq(#music.title,'')),' #music.artist #music.title', and(eq(#onx.mod,'504'),neq(#music.album,'')),' #music.albumArtist #music.album', and(eq(#onx.mod,'504'),neq(#music.albumArtist,'')),' #music.albumArtist', eq(#onx.mod,'510'),'#Play.Current.Artist', and(eq(#onx.mod,'96742'),neq(#MovingPictures.Coverart,'-')),' #MovingPictures.SelectedMovie.title', and(eq(#onx.mod,'96742'),neq(#MovingPictures.SelectedNode.name,'')),' #MovingPictures.SelectedNode.name', and(eq(#onx.mod,'9811'),neq(#TVSeries.Episode.LocalEpisodeName,' ')),' #TVSeries.Series.Pretty_Name #TVSeries.Episode.LocalEpisodeName', and(eq(#onx.mod,'9811'),neq(#TVSeries.Series.Pretty_Name,'')),' #TVSeries.Series.Pretty_Name', eq(#onx.mod,'9816'),' #TVSeries.Actor.Name', and(eq(#onx.mod,'600'),neq(#TV.Guide.Title,'')),' #TV.Guide.Title', eq(#onx.mod,'602'),' #TV.View.title', or(eq(#onx.mod,'87259'),eq(#onx.mod,'87269'),eq(#onx.mod,'87276'),eq(#onx.mod,'87281'),eq(#onx.mod,'87282')),' #Trakt.Show.Title #Trakt.Episode.Title', eq(#onx.mod,'70943676'),' #title.label', and(eq(#onx.mod,'7977'),or(eq(#WorldWeather.View,'Image'))),' #selecteditem #WorldWeather.LocationCountry', eq(#onx.mod,'7977'),' #WorldWeather.Location', eq(1,1),' #selecteditem' )))</define>
+  <define property="true" evaluateNow="false">#onx.parm.4:#(string.format('{0}{1}{2}{3}',#onx.xprm.4.1,#onx.xprm.4.2,#onx.xste.4,switch( eq(#onx.type.4,'0'),'', and(eq(#onx.mod,'504'),neq(#music.title,'')),' #music.artist #music.title', and(eq(#onx.mod,'504'),neq(#music.album,'')),' #music.albumArtist #music.album', and(eq(#onx.mod,'504'),neq(#music.albumArtist,'')),' #music.albumArtist', eq(#onx.mod,'510'),'#Play.Current.Artist', and(eq(#onx.mod,'96742'),neq(#MovingPictures.Coverart,'-')),' #MovingPictures.SelectedMovie.title', and(eq(#onx.mod,'96742'),neq(#MovingPictures.SelectedNode.name,'')),' #MovingPictures.SelectedNode.name', and(eq(#onx.mod,'9811'),neq(#TVSeries.Episode.LocalEpisodeName,' ')),' #TVSeries.Series.Pretty_Name #TVSeries.Episode.LocalEpisodeName', and(eq(#onx.mod,'9811'),neq(#TVSeries.Series.Pretty_Name,'')),' #TVSeries.Series.Pretty_Name', eq(#onx.mod,'9816'),' #TVSeries.Actor.Name', and(eq(#onx.mod,'600'),neq(#TV.Guide.Title,'')),' #TV.Guide.Title', eq(#onx.mod,'602'),' #TV.View.title', or(eq(#onx.mod,'87259'),eq(#onx.mod,'87269'),eq(#onx.mod,'87276'),eq(#onx.mod,'87281'),eq(#onx.mod,'87282')),' #Trakt.Show.Title #Trakt.Episode.Title', eq(#onx.mod,'70943676'),' #title.label', and(eq(#onx.mod,'7977'),or(eq(#WorldWeather.View,'Image'))),' #selecteditem #WorldWeather.LocationCountry', eq(#onx.mod,'7977'),' #WorldWeather.Location', eq(1,1),' #selecteditem' )))</define>
+  <define property="true" evaluateNow="false">#onx.parm.5:#(string.format('{0}{1}{2}{3}',#onx.xprm.5.1,#onx.xprm.5.2,#onx.xste.5,switch( eq(#onx.type.5,'0'),'', and(eq(#onx.mod,'504'),neq(#music.title,'')),' #music.artist #music.title', and(eq(#onx.mod,'504'),neq(#music.album,'')),' #music.albumArtist #music.album', and(eq(#onx.mod,'504'),neq(#music.albumArtist,'')),' #music.albumArtist', eq(#onx.mod,'510'),'#Play.Current.Artist', and(eq(#onx.mod,'96742'),neq(#MovingPictures.Coverart,'-')),' #MovingPictures.SelectedMovie.title', and(eq(#onx.mod,'96742'),neq(#MovingPictures.SelectedNode.name,'')),' #MovingPictures.SelectedNode.name', and(eq(#onx.mod,'9811'),neq(#TVSeries.Episode.LocalEpisodeName,' ')),' #TVSeries.Series.Pretty_Name #TVSeries.Episode.LocalEpisodeName', and(eq(#onx.mod,'9811'),neq(#TVSeries.Series.Pretty_Name,'')),' #TVSeries.Series.Pretty_Name', eq(#onx.mod,'9816'),' #TVSeries.Actor.Name', and(eq(#onx.mod,'600'),neq(#TV.Guide.Title,'')),' #TV.Guide.Title', eq(#onx.mod,'602'),' #TV.View.title', or(eq(#onx.mod,'87259'),eq(#onx.mod,'87269'),eq(#onx.mod,'87276'),eq(#onx.mod,'87281'),eq(#onx.mod,'87282')),' #Trakt.Show.Title #Trakt.Episode.Title', eq(#onx.mod,'70943676'),' #title.label', and(eq(#onx.mod,'7977'),or(eq(#WorldWeather.View,'Image'))),' #selecteditem #WorldWeather.LocationCountry', eq(#onx.mod,'7977'),' #WorldWeather.Location', eq(1,1),' #selecteditem' )))</define>
+  <define property="true" evaluateNow="false">#onx.parm.6:#(string.format('{0}{1}{2}{3}',#onx.xprm.6.1,#onx.xprm.6.2,#onx.xste.6,switch( eq(#onx.type.6,'0'),'', and(eq(#onx.mod,'504'),neq(#music.title,'')),' #music.artist #music.title', and(eq(#onx.mod,'504'),neq(#music.album,'')),' #music.albumArtist #music.album', and(eq(#onx.mod,'504'),neq(#music.albumArtist,'')),' #music.albumArtist', eq(#onx.mod,'510'),'#Play.Current.Artist', and(eq(#onx.mod,'96742'),neq(#MovingPictures.Coverart,'-')),' #MovingPictures.SelectedMovie.title', and(eq(#onx.mod,'96742'),neq(#MovingPictures.SelectedNode.name,'')),' #MovingPictures.SelectedNode.name', and(eq(#onx.mod,'9811'),neq(#TVSeries.Episode.LocalEpisodeName,' ')),' #TVSeries.Series.Pretty_Name #TVSeries.Episode.LocalEpisodeName', and(eq(#onx.mod,'9811'),neq(#TVSeries.Series.Pretty_Name,'')),' #TVSeries.Series.Pretty_Name', eq(#onx.mod,'9816'),' #TVSeries.Actor.Name', and(eq(#onx.mod,'600'),neq(#TV.Guide.Title,'')),' #TV.Guide.Title', eq(#onx.mod,'602'),' #TV.View.title', or(eq(#onx.mod,'87259'),eq(#onx.mod,'87269'),eq(#onx.mod,'87276'),eq(#onx.mod,'87281'),eq(#onx.mod,'87282')),' #Trakt.Show.Title #Trakt.Episode.Title', eq(#onx.mod,'70943676'),' #title.label', and(eq(#onx.mod,'7977'),or(eq(#WorldWeather.View,'Image'))),' #selecteditem #WorldWeather.LocationCountry', eq(#onx.mod,'7977'),' #WorldWeather.Location', eq(1,1),' #selecteditem' )))</define>
+  <define property="true" evaluateNow="false">#onx.parm.7:#(string.format('{0}{1}{2}{3}',#onx.xprm.7.1,#onx.xprm.7.2,#onx.xste.7,switch( eq(#onx.type.7,'0'),'', and(eq(#onx.mod,'504'),neq(#music.title,'')),' #music.artist #music.title', and(eq(#onx.mod,'504'),neq(#music.album,'')),' #music.albumArtist #music.album', and(eq(#onx.mod,'504'),neq(#music.albumArtist,'')),' #music.albumArtist', eq(#onx.mod,'510'),'#Play.Current.Artist', and(eq(#onx.mod,'96742'),neq(#MovingPictures.Coverart,'-')),' #MovingPictures.SelectedMovie.title', and(eq(#onx.mod,'96742'),neq(#MovingPictures.SelectedNode.name,'')),' #MovingPictures.SelectedNode.name', and(eq(#onx.mod,'9811'),neq(#TVSeries.Episode.LocalEpisodeName,' ')),' #TVSeries.Series.Pretty_Name #TVSeries.Episode.LocalEpisodeName', and(eq(#onx.mod,'9811'),neq(#TVSeries.Series.Pretty_Name,'')),' #TVSeries.Series.Pretty_Name', eq(#onx.mod,'9816'),' #TVSeries.Actor.Name', and(eq(#onx.mod,'600'),neq(#TV.Guide.Title,'')),' #TV.Guide.Title', eq(#onx.mod,'602'),' #TV.View.title', or(eq(#onx.mod,'87259'),eq(#onx.mod,'87269'),eq(#onx.mod,'87276'),eq(#onx.mod,'87281'),eq(#onx.mod,'87282')),' #Trakt.Show.Title #Trakt.Episode.Title', eq(#onx.mod,'70943676'),' #title.label', and(eq(#onx.mod,'7977'),or(eq(#WorldWeather.View,'Image'))),' #selecteditem #WorldWeather.LocationCountry', eq(#onx.mod,'7977'),' #WorldWeather.Location', eq(1,1),' #selecteditem' )))</define>
+  <define property="true" evaluateNow="false">#onx.parm.8:#(string.format('{0}{1}{2}{3}',#onx.xprm.8.1,#onx.xprm.8.2,#onx.xste.8,switch( eq(#onx.type.8,'0'),'', and(eq(#onx.mod,'504'),neq(#music.title,'')),' #music.artist #music.title', and(eq(#onx.mod,'504'),neq(#music.album,'')),' #music.albumArtist #music.album', and(eq(#onx.mod,'504'),neq(#music.albumArtist,'')),' #music.albumArtist', eq(#onx.mod,'510'),'#Play.Current.Artist', and(eq(#onx.mod,'96742'),neq(#MovingPictures.Coverart,'-')),' #MovingPictures.SelectedMovie.title', and(eq(#onx.mod,'96742'),neq(#MovingPictures.SelectedNode.name,'')),' #MovingPictures.SelectedNode.name', and(eq(#onx.mod,'9811'),neq(#TVSeries.Episode.LocalEpisodeName,' ')),' #TVSeries.Series.Pretty_Name #TVSeries.Episode.LocalEpisodeName', and(eq(#onx.mod,'9811'),neq(#TVSeries.Series.Pretty_Name,'')),' #TVSeries.Series.Pretty_Name', eq(#onx.mod,'9816'),' #TVSeries.Actor.Name', and(eq(#onx.mod,'600'),neq(#TV.Guide.Title,'')),' #TV.Guide.Title', eq(#onx.mod,'602'),' #TV.View.title', or(eq(#onx.mod,'87259'),eq(#onx.mod,'87269'),eq(#onx.mod,'87276'),eq(#onx.mod,'87281'),eq(#onx.mod,'87282')),' #Trakt.Show.Title #Trakt.Episode.Title', eq(#onx.mod,'70943676'),' #title.label', and(eq(#onx.mod,'7977'),or(eq(#WorldWeather.View,'Image'))),' #selecteditem #WorldWeather.LocationCountry', eq(#onx.mod,'7977'),' #WorldWeather.Location', eq(1,1),' #selecteditem' )))</define>
+  <define property="true" evaluateNow="false">#onx.parm.9:#(string.format('{0}{1}{2}{3}',#onx.xprm.9.1,#onx.xprm.9.2,#onx.xste.9,switch( eq(#onx.type.9,'0'),'', and(eq(#onx.mod,'504'),neq(#music.title,'')),' #music.artist #music.title', and(eq(#onx.mod,'504'),neq(#music.album,'')),' #music.albumArtist #music.album', and(eq(#onx.mod,'504'),neq(#music.albumArtist,'')),' #music.albumArtist', eq(#onx.mod,'510'),'#Play.Current.Artist', and(eq(#onx.mod,'96742'),neq(#MovingPictures.Coverart,'-')),' #MovingPictures.SelectedMovie.title', and(eq(#onx.mod,'96742'),neq(#MovingPictures.SelectedNode.name,'')),' #MovingPictures.SelectedNode.name', and(eq(#onx.mod,'9811'),neq(#TVSeries.Episode.LocalEpisodeName,' ')),' #TVSeries.Series.Pretty_Name #TVSeries.Episode.LocalEpisodeName', and(eq(#onx.mod,'9811'),neq(#TVSeries.Series.Pretty_Name,'')),' #TVSeries.Series.Pretty_Name', eq(#onx.mod,'9816'),' #TVSeries.Actor.Name', and(eq(#onx.mod,'600'),neq(#TV.Guide.Title,'')),' #TV.Guide.Title', eq(#onx.mod,'602'),' #TV.View.title', or(eq(#onx.mod,'87259'),eq(#onx.mod,'87269'),eq(#onx.mod,'87276'),eq(#onx.mod,'87281'),eq(#onx.mod,'87282')),' #Trakt.Show.Title #Trakt.Episode.Title', eq(#onx.mod,'70943676'),' #title.label', and(eq(#onx.mod,'7977'),or(eq(#WorldWeather.View,'Image'))),' #selecteditem #WorldWeather.LocationCountry', eq(#onx.mod,'7977'),' #WorldWeather.Location', eq(1,1),' #selecteditem' )))</define>
+
+<!-- colon fix check -->
+
+  <define property="true" evaluateNow="true">#onx.presets:#(iif(eq(string.format('{0}',#colon),''),0,1))</define>
+
+<!-- Main -->
+
+  <controls>
+
+    <control>
+      <description>POG: fix for colon use in defines</description>
+      <type>label</type>
+      <label>#(iif(neq(#colon,':'),skin.setstring('#colon',':'),''))</label>
+      <visible>no</visible>
+    </control>
+
+<!-- Debug -->
+
+<!--
+    <control>
+      <type>label</type>
+      <posX>50</posX>
+      <posY>40</posY>
+      <label>#onx.parm.1</label>
+    </control>
+    <control>
+      <type>label</type>
+      <posX>50</posX>
+      <posY>60</posY>
+      <label>#onx.parm.2</label>
+    </control>
+    <control>
+      <type>label</type>
+      <posX>50</posX>
+      <posY>80</posY>
+      <label>#onx.parm.3</label>
+    </control>
+    <control>
+      <type>label</type>
+      <posX>50</posX>
+      <posY>100</posY>
+      <label>[#WorldWeather.View] [#WorldWeather.Location] [#WorldWeather.LocationCountry] [#WorldWeather.LocationCoordinates]</label>
+    </control>
+    <control>
+      <type>label</type>
+      <posX>50</posX>
+      <posY>120</posY>
+      <label>[#onx.xbtn.1] [#onx.xprm.1.1] [#onx.xprm.1.2] [#onx.xste.1] [#onx.xico.1] [#onx.xtag.1.1] [#onx.xtag.1.2] [#onx.xtag.1.3] [#onx.xtag.1.4]</label>
+    </control>
+    <control>
+      <type>label</type>
+      <posX>50</posX>
+      <posY>140</posY>
+      <label>[#onx.presets] [#currentmoduleid] [#onx.mod] [#selecteditem] [#selecteditem2] [#facadeview.layout] [#MovingPictures.SelectedMovie.title] [#MovingPictures.SelectedNode.name] [#MovingPictures.Coverart] [#MovingPictures.SelectedNode.FileFriendlyName]</label>
+    </control>
+-->
+
+<!--
+    <control>
+      <type>label</type>
+      <posX>100</posX>
+      <posY>40</posY>
+      <label>1:#selecteditem 2:#selecteditem2 3:#selectedindex 4:#selectedthumb</label>
+    </control>
+    <control>
+      <type>label</type>
+      <posX>100</posX>
+      <posY>60</posY>
+      <label>1:#music.artist 2:#music.album 3:#music.title 4:#music.genre 5:#music.albumArtist 6:#music.year</label>
+    </control>
+    <control>
+      <type>label</type>
+      <posX>100</posX>
+      <posY>80</posY>
+      <label>1:#TV.View.title 2:#TV.RecordedTV.Title 3:#TV.Guide.Title 4:#TV.Guide.Time 5:#TV.Guide.CompositeTitle 6:TV.Guide.thumb</label>
+    </control>
+    <control>
+      <type>label</type>
+      <posX>100</posX>
+      <posY>100</posY>
+      <label>1:#TV.RecordedTV.Title 2:#TV.Scheduled.Title 3:#TV.Guide.Episode 4:#TV.Guide.Date 5:TV.Guide.Day 6:#TV.Guide.Group</label>
+    </control>
+    <control>
+      <type>label</type>
+      <posX>100</posX>
+      <posY>120</posY>
+      <label>1:#TVSeries.Title 2:#TVSeries.Series.Pretty_Name 3:#TVSeries.Episode.LocalEpisodeName 4:#TVSeries.Episode.DataPanelLine4Value 5:#TVSeries.Actor.Name</label>
+    </control>
+    <control>
+      <type>label</type>
+      <posX>100</posX>
+      <posY>140</posY>
+      <label>1:#Trakt.Show.Title 2:#Trakt.Episode.Title 3:#title.label</label>
+    </control>
+    <control>
+      <type>label</type>
+      <posX>100</posX>
+      <posY>160</posY>
+      <label>1:#itemtype 2:#currentmodule 3:#currentmoduleid 4:#currentmodulefullscreenstate 5:#highlightedbutton 6:#facadeview.layout</label>
+    </control>
+-->
+
+  </controls>
+</window>

@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!--version="1.0" encoding="utf-8" standalone="yes"-->
+<window>
+  <id>874002</id>
+  <defaultcontrol>50</defaultcontrol>
+  <allowoverlay>yes</allowoverlay>
+  <define>#Fanart.1:#Trakt.SearchEpisodes.Fanart.1</define>
+  <define>#Fanart.2:#Trakt.SearchEpisodes.Fanart.2</define>
+  <controls>
+    <control>
+      <description>BG</description>
+      <type>image</type>
+      <id>1</id>
+      <texture>BH Trakt.jpg</texture>
+      <width>1920</width>
+      <height>1080</height>
+      <colordiffuse>90ffffff</colordiffuse>
+    </control>
+    <import>Trakt.Common.Fanart.xml</import>
+    <import>common.window.xml</import>
+    <import>common.time.xml</import>
+    <control>
+      <description>General Overlay</description>
+      <id>0</id>
+      <type>image</type>
+      <posX>0</posX>
+      <posY>45</posY>
+      <width>1920</width>
+      <height>1080</height>
+      <texture>general_overlay.png</texture>
+    </control>
+    <control>
+      <description>Current View</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>45</posX>
+      <posY>15</posY>
+      <width>1299</width>
+      <font>Label</font>
+      <textcolor>ffffd700</textcolor>
+      <label>#Trakt.Translation.SearchEpisodes.Label | #Trakt.Search.SearchTerm</label>
+      <align>left</align>
+    </control>
+    <import>Trakt.Common.Facade.Episodes.xml</import>
+    <!-- Hidden Menu -->
+    <control>
+      <type>actiongroup</type>
+      <description>action menu</description>
+      <defaultcontrol>2</defaultcontrol>
+      <onexit>50</onexit>
+      <buttonX>0</buttonX>
+      <buttonY>-60</buttonY>
+      <buttonwidth>157</buttonwidth>
+      <buttonheight>1080</buttonheight>
+      <textureFocus>-</textureFocus>
+      <textureNoFocus>Action_nofocus.png</textureNoFocus>
+      <width>411</width>
+      <height>1350</height>
+      <dimColor>00ffffff</dimColor>
+      <control>
+        <type>image</type>
+        <id>0</id>
+        <width>1920</width>
+        <height>1080</height>
+        <texture>white.png</texture>
+        <colordiffuse>50005eef</colordiffuse>
+      </control>
+      <control>
+        <type>image</type>
+        <posX>37</posX>
+        <posY>117</posY>
+        <width>559</width>
+        <height>886</height>
+        <texture>Backslide.png</texture>
+        <colorDiffuse>ffffffff</colorDiffuse>
+        <visible>!Control.HasFocus(50)</visible>
+        <animation effect="slide" time="70" start="-300,0" reversible="false">visible</animation>
+        <animation effect="slide" time="70" end="-300,0" reversible="false">hidden</animation>
+      </control>
+      <control>
+        <description>group element</description>
+        <type>group</type>
+        <animation effect="slide" time="70" start="-300,0" reversible="false">visible</animation>
+        <animation effect="slide" time="70" end="-300,0" reversible="false">hidden</animation>
+        <visible>!Control.HasFocus(50)</visible>
+        <posX>73</posX>
+        <posY>181</posY>
+        <layout>StackLayout</layout>
+        <visible>!Control.HasFocus(50)</visible>
+        <control>
+          <description>button group</description>
+          <type>group</type>
+          <posX>90</posX>
+          <posY>181</posY>
+          <width>439</width>
+          <layout>StackLayout</layout>
+          <visible>!Control.HasFocus(50)</visible>
+          <animation effect="slide" time="70" start="-300,0" reversible="false">visible</animation>
+          <animation effect="slide" time="70" end="-300,0" reversible="false">hidden</animation>
+          <control>
+            <description>Change Layout</description>
+            <type>button</type>
+            <id>2</id>
+            <width>439</width>
+            <label>Change Layout</label>
+            <onleft>50</onleft>
+            <onright>50</onright>
+            <onup>21</onup>
+          </control>
+        </control>
+      </control>
+    </control>
+    <import>Trakt.Common.Properties.Episodes.xml</import>
+  </controls>
+</window>

@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <!--version="1.0" encoding="utf-8" standalone="yes"-->
 <window>
   <controls>
@@ -6,12 +6,8 @@
       <description>group element</description>
       <type>group</type>
       <visible>!Control.HasFocus(50)</visible>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="250">WindowClose</animation>
-      <animation effect="slide" time="150" start="0,-300">WindowOpen</animation>
-      <animation effect="slide" time="250" end="800,0">WindowClose</animation>
-      <animation effect="rotatey" start="20" end="0" center="525,0" tween="back" ease="easeout" time="300" reversible="false">hidden</animation>
-      <animation effect="rotatey" start="0" end="20" center="525,0" tween="back" ease="easeout" time="300" reversible="false">visible</animation>
+      <animation effect="fade" start="0" end="100" time="200">WindowOpen</animation>
+      <animation effect="fade" start="100" end="0" time="200">WindowClose</animation>
       <control>
         <description>composite control consisting of a list control and a thumbnail panel</description>
         <type>facadeview</type>
@@ -19,67 +15,67 @@
         <control>
           <description>listcontrol</description>
           <type>listcontrol</type>
+          <dimColor>90ffffff</dimColor>
           <id>50</id>
-          <posX>120</posX>
-          <width>1680</width>
-          <posY>127</posY>
-          <height>765</height>
           <onleft>2</onleft>
           <onright>2</onright>
-          <spinPosX>1770</spinPosX>
-          <spinPoxY>670</spinPoxY>
           <scrollOffset>2</scrollOffset>
-          <font2>font9</font2>
-          <textYOff2>12</textYOff2>
-          <PinIconWidth>32</PinIconWidth>
-          <PinIconHeight>32</PinIconHeight>
-          <PinIconXOff>1575</PinIconXOff>
-          <PinIconYOff>0</PinIconYOff>
+          <unfocusedAlpha>160</unfocusedAlpha>
         </control>
         <control>
           <description>Thumbnail Panel</description>
           <type>thumbnailpanel</type>
+          <dimColor>90ffffff</dimColor>
           <id>50</id>
-          <posX>120</posX>
-          <width>1680</width>
-          <posY>127</posY>
-          <height>810</height>
+          <posX>90</posX>
+          <posY>270</posY>
+          <width>1350</width>
+          <height>640</height>
           <scrollOffset>1</scrollOffset>
           <onleft>2</onleft>
-          <onright>50</onright>
+          <onright>2</onright>
+          <itemWidth>217</itemWidth>
+          <itemHeight>157</itemHeight>
+          <textureWidth>195</textureWidth>
+          <textureHeight>135</textureHeight>
+          <thumbWidth>195</thumbWidth>
+          <thumbHeight>135</thumbHeight>
+          <thumbPosX>0</thumbPosX>
+          <thumbPosY>0</thumbPosY>
+          <keepaspectratio>yes</keepaspectratio>
+          <itemWidthBig>300</itemWidthBig>
+          <itemHeightBig>210</itemHeightBig>
+          <textureWidthBig>285</textureWidthBig>
+          <textureHeightBig>202</textureHeightBig>
+          <thumbWidthBig>285</thumbWidthBig>
+          <thumbHeightBig>202</thumbHeightBig>
+          <thumbPosXBig>0</thumbPosXBig>
+          <thumbPosYBig>0</thumbPosYBig>
+          <zoomXPixels>20</zoomXPixels>
+          <zoomYPixels>20</zoomYPixels>
+          <hideUnfocusTexture>yes</hideUnfocusTexture>
           <renderFocusText>no</renderFocusText>
           <renderUnfocusText>no</renderUnfocusText>
+          <showFrame>true</showFrame>
           <textureMask>Picturethumbmask.png</textureMask>
           <frameNoFocus>Picturethumbframe.png</frameNoFocus>
-          <frameFocus>OnlineVideos\Picturethumbmask.png</frameFocus>
-          <showFrame>true</showFrame>
-          <enableFocusZoom>no</enableFocusZoom>
-          <imageFolderFocus>OnlineVideos\thumbborder2.png</imageFolderFocus>
-          <thumbZoom>no</thumbZoom>
-          <zoomXPixels>35</zoomXPixels>
-          <zoomYPixels>35</zoomYPixels>
-          <!-- smallicons -->
-          <itemWidth>240</itemWidth>
-          <itemHeight>175</itemHeight>
-          <textureWidth>240</textureWidth>
-          <textureHeight>175</textureHeight>
-          <thumbWidth>225</thumbWidth>
-          <thumbHeight>160</thumbHeight>
-          <thumbPosX>7</thumbPosX>
-          <thumbPosY>7</thumbPosY>
-          <!-- largeicons -->
-          <itemWidthBig>334</itemWidthBig>
-          <itemHeightBig>234</itemHeightBig>
-          <textureWidthBig>334</textureWidthBig>
-          <textureHeightBig>234</textureHeightBig>
-          <thumbWidthBig>301</thumbWidthBig>
-          <thumbHeightBig>204</thumbHeightBig>
-          <thumbPosXBig>16</thumbPosXBig>
-          <thumbPosYBig>13</thumbPosYBig>
+          <frameFocus>Picturethumbframe.png</frameFocus>
+          <imageFolder>-</imageFolder>
+          <imageFolderFocus>-</imageFolderFocus>
+          <keepaspectratio>yes</keepaspectratio>
+          <font>font10</font>
           <spinCanFocus>no</spinCanFocus>
-          <spinPosX>1770</spinPosX>
-          <spinPoxY>680</spinPoxY>
+          <dimColor>ffffffff</dimColor>
+          <scrollbarHeight>400</scrollbarHeight>
+          <scrollbarbg>bar_vert.png</scrollbarbg>
+          <scrollbartop>mouse_left_horizontal.png</scrollbartop>
+          <scrollbarbottom>mouse_right_horizontal.png</scrollbarbottom>
+          <scrollbarXOff>-35</scrollbarXOff>
+          <scrollbarYOff>0</scrollbarYOff>
+          <showScrollbar>yes</showScrollbar>
+          <scrollbarwidth>20</scrollbarwidth>
         </control>
+        
       </control>
     </control>
   </controls>

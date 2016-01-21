@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <id>2821976</id>
+  <defaultcontrol>0</defaultcontrol>
+  <allowoverlay>no</allowoverlay>
+  <controls>
+    <control>
+      <type>image</type>
+      <id>1</id>
+      <width>1920</width>
+      <height>1080</height>
+      <texture>white.png</texture>
+        <colordiffuse>50005eef</colordiffuse>
+      <visible>!window.isvisible(602)+!window.isvisible(2005)</visible>
+    </control>
+    <control>
+      <type>image</type>
+      <id>1</id>
+      <posX>421</posX>
+      <posY>202</posY>
+      <width>1048</width>
+      <height>717</height>
+      <texture>listbg.png</texture>
+      <colordiffuse>ffffffff</colordiffuse>
+      <visible>!window.isvisible(602)+!window.isvisible(2005)</visible>
+    </control>
+    <control>
+      <type>image</type>
+      <id>1</id>
+      <posX>421</posX>
+      <posY>202</posY>
+      <width>1048</width>
+      <height>717</height>
+      <texture>listbg.png</texture>
+      <colordiffuse>ccffffff</colordiffuse>
+      <visible>window.isvisible(602)|window.isvisible(2005)</visible>
+    </control>
+    <control>
+      <description>Heading text label</description>
+      <type>label</type>
+      <id>4</id>
+      <posX>560</posX>
+      <posY>239</posY>
+      <width>843</width>
+      <label>181</label>
+      <align>left</align>
+      <textcolor>ffffd700</textcolor>
+      <font>Menutitle</font>
+    </control>
+    <control>
+      <description>GFX-Heading "menu" text label</description>
+      <type>label</type>
+      <id>5</id>
+      <posX>2491</posX>
+      <posY>259</posY>
+      <width>843</width>
+      <label>924</label>
+      <font>font12</font>
+      <textcolor>ffffd700</textcolor>
+    </control>
+    <control>
+      <description>Exit button</description>
+      <type>button</type>
+      <id>2</id>
+      <posX>1384</posX>
+      <posY>244</posY>
+      <width>35</width>
+      <height>35</height>
+      <textureFocus>tb_exit.png</textureFocus>
+      <textureNoFocus>tb_exitNF.png</textureNoFocus>
+      <label>-</label>
+      <onleft>3</onleft>
+      <onright>3</onright>
+      <onup>3</onup>
+      <ondown>3</ondown>
+    </control>
+
+    <control>
+      <type>group</type>
+      <description>list view group</description>
+      <visible>string.equals(#ShortCuter.Navigator.DialogView,List)</visible>
+
+      <control>
+        <description>links list</description>
+        <type>listcontrol</type>
+        <id>3</id>
+        <posX>491</posX>
+        <posY>302</posY>
+        <width>870</width>
+        <height>590</height>
+        <onleft>2</onleft>
+        <onright>2</onright>
+      </control>
+      <!--control>
+        <description>selected icon</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>2295</posX>
+        <posY>280</posY>
+        <width>100</width>
+        <height>100</height>
+        <texture>#ShortCuter.Navigator.SelectedIcon</texture>
+      </control-->
+    </control>
+
+    <control>
+      <type>group</type>
+      <description>panel view group</description>
+      <visible>string.equals(#ShortCuter.Navigator.DialogView,Panel)</visible>
+      <control>
+        <description>links panel</description>
+        <type>thumbnailpanel</type>
+        <id>6</id>
+        <posX>500</posX>
+        <posY>340</posY>
+        <width>870</width>
+        <height>590</height>
+        <scrollOffset>1</scrollOffset>
+        <onup>2</onup>
+        <ondown>2</ondown>
+        <onleft>2</onleft>
+        <onright>2</onright>
+        <itemWidthBig>145</itemWidthBig>
+        <itemHeightBig>130</itemHeightBig>
+        <thumbWidthBig>90</thumbWidthBig>
+        <thumbHeightBig>90</thumbHeightBig>
+        <textureWidthBig>100</textureWidthBig>
+        <textureHeightBig>100</textureHeightBig>
+        <thumbPosXBig>3</thumbPosXBig>
+        <thumbPosYBig>3</thumbPosYBig>
+        <unfocusedAlpha>120</unfocusedAlpha>
+        <hideUnfocusTexture>no</hideUnfocusTexture>
+        <renderFocusText>yes</renderFocusText>
+        <renderUnfocusText>yes</renderUnfocusText>
+        <imageFolder>-</imageFolder>
+        <imageFolderFocus>-</imageFolderFocus>
+        <textXOff>3</textXOff>
+        <textYOff>5</textYOff>
+        <showFrame>true</showFrame>
+        <frameNoFocus>-</frameNoFocus>
+        <frameFocus>tb_leer.png</frameFocus>
+        <keepaspectratio>yes</keepaspectratio>
+        <centered>yes</centered>
+        <spinCanFocus>no</spinCanFocus>
+        <spinPosX>2940</spinPosX>
+        <spinPosY>550</spinPosY>
+      </control>
+    </control>
+
+    <control>
+      <description>skin navigator logo</description>
+      <type>image</type>
+      <id>10</id>
+      <posX>491</posX>
+      <posY>239</posY>
+      <width>60</width>
+      <height>60</height>
+    </control>
+  </controls>
+</window>
