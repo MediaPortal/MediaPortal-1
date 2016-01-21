@@ -584,7 +584,7 @@ Section "MediaPortal core files (required)" SecCore
   File "${git_ROOT}\Packages\bass.dsd.0.0.1\bassdsd.dll"
   ; taglib-sharp
   SetOutPath "$MPdir.Base\"
-  File "${git_ROOT}\Packages\MediaPortal.TagLib.2.0.3.8\lib\taglib-sharp.dll"
+  File "${git_ROOT}\Packages\MediaPortal.TagLib.2.1.0.1\lib\net40\taglib-sharp.dll"
   ; SharpLibHid
   SetOutPath "$MPdir.Base\"
   File "${git_ROOT}\Packages\SharpLibHid.1.3.1\lib\net20\SharpLibHid.dll"
