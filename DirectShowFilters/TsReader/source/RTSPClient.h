@@ -17,11 +17,11 @@ class CRTSPClient: public TSThread
     CRTSPClient(CMemoryBuffer& buffer);
     virtual ~CRTSPClient(void);
 
-	  long Duration();
+    long Duration();
 
     bool OpenStream(char* url);
     bool Play(double start,double duration);
-	  void Continue();
+    void Continue();
     bool IsPaused();
     bool Pause();
     bool UpdateDuration();
@@ -42,17 +42,17 @@ class CRTSPClient: public TSThread
     int m_durationDescribeResponseResultCode;
     char m_durationDescribeResponseResultString[MAX_DURATION_DESCRIBE_RESPONSE_BYTE_COUNT];
     static void OnDurationDescribeResponseReceived(RTSPClient* client, int resultCode, char* resultString);
-	
-	  void StartBufferThread();
-	  void StopBufferThread();
-	  virtual void ThreadProc();
+
+    void StartBufferThread();
+    void StopBufferThread();
+    virtual void ThreadProc();
 
     CMemoryBuffer& m_buffer;
-	  UsageEnvironment* m_env;
-	  MPRTSPClient* m_client;
-	  MediaSession* m_session;
-	  long m_duration;
-	  char m_url[2048];
+    UsageEnvironment* m_env;
+    MPRTSPClient* m_client;
+    MediaSession* m_session;
+    long m_duration;
+    char m_url[2048];
     bool m_isSetup;
     volatile bool m_isBufferThreadActive;
     bool m_isPaused;
