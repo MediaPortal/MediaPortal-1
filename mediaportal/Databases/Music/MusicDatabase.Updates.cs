@@ -1548,27 +1548,40 @@ namespace MediaPortal.Music.Database
         previousArtist = map.m_song.Artist;
       }
 
-      // All Artists are the same and we have an empty Album Artist, so we will 
-      // use the ArtistName as AlbumArtist
-      if (!needVariousArtist && string.IsNullOrEmpty(previousAlbumArtist))
+      if (songs.Count > 0)
       {
-        var artistId = AddArtist(previousArtist);
+        var artistId = 0;
+        var albumId = songs[0].m_song.AlbumId;
+        // All Artists are the same 
+        if (!needVariousArtist)
         {
-          strSQL = string.Format("insert or ignore into AlbumArtist values ({0}, {1})", artistId, songs[0].m_song.AlbumId);
-          ExecuteNonQuery(strSQL);
+          if (string.IsNullOrEmpty(previousAlbumArtist))
+          {
+            // We have an empty Album Artist, so we will use the ArtistName as AlbumArtist
+            artistId = AddArtist(previousArtist);
+          }
+          else
+          {
+            // use the Album Artist
+            artistId = AddArtist(previousAlbumArtist);
+          }
         }
-      }
+        else
+        {
+          if (string.IsNullOrEmpty(previousAlbumArtist))
+          {
+            // We have an empty Album Artist, so we will use the Various Artists
+            artistId = AddArtist(GUILocalizeStrings.Get(340));
+          }
+          else
+          {
+            // use the Album Artist
+            artistId = AddArtist(previousAlbumArtist);
+          }
+        }
 
-      if (needVariousArtist || string.IsNullOrEmpty(previousAlbumArtist))
-      {
-        var variousArtistId = AddArtist(GUILocalizeStrings.Get(340));
-        foreach (var map in songs)
-        {
-          strSQL = string.Format("Delete from AlbumArtist where IdAlbum = {0}", map.m_song.AlbumId);
-          ExecuteNonQuery(strSQL);
-          strSQL = string.Format("insert or ignore into AlbumArtist values ({0}, {1})", variousArtistId, map.m_song.AlbumId);
-          ExecuteNonQuery(strSQL);
-        }
+        strSQL = string.Format("insert or ignore into AlbumArtist values ({0}, {1})", artistId, albumId);
+        ExecuteNonQuery(strSQL);
       }
     }
     #endregion
@@ -1922,7 +1935,9 @@ namespace MediaPortal.Music.Database
     {
       // Cleanup Artist Table, which contains Artists, Composers and Conductors
       strSQL = "delete from Artist where IdArtist not in " + 
-               "(select distinct IdArtist from ArtistSong " + 
+               "(select distinct IdArtist from ArtistSong " +
+               " union " +
+               "select distinct IdArtist from AlbumArtist " +
                " union " + 
                "select distinct IdComposer from ComposerSong " +
                " union " +
