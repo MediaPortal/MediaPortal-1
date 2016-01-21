@@ -170,6 +170,14 @@ namespace MediaPortal.Configuration
       string strLanguage;
       using (Settings xmlreader = new MPSettings())
       {
+        this.Width = xmlreader.GetValueAsInt("Configuration", "FormWidth", this.Width);
+        this.Height = xmlreader.GetValueAsInt("Configuration", "FormHeight", this.Height);
+
+        if (xmlreader.GetValueAsBool("Configuration", "FormMaximized", false))
+        {
+          this.WindowState = FormWindowState.Maximized;
+        }
+
         strLanguage = xmlreader.GetValueAsString("gui", "language", "English");
         hintShowCount = xmlreader.GetValueAsInt("general", "ConfigModeHintCount", 0);
 
@@ -1138,5 +1146,22 @@ namespace MediaPortal.Configuration
       ToggleSectionVisibility(toolStripButtonSwitchAdvanced.Checked);
       toolStripButtonSwitchAdvanced.Text = AdvancedMode ? "Switch to standard mode" : "Switch to expert mode";
     }
+
+    protected override void OnClosing(CancelEventArgs e)
+    {
+      base.OnClosing(e);
+
+      using (Settings writer = new MPSettings())
+      {
+      if (this.WindowState == FormWindowState.Normal)
+      {
+        writer.SetValue("Configuration", "FormWidth", this.Width);
+        writer.SetValue("Configuration", "FormHeight", this.Height);
+      }
+
+      writer.SetValueAsBool("Configuration", "FormMaximized", this.WindowState == FormWindowState.Maximized);
+    }
+
+    Settings.SaveCache();
   }
 }
