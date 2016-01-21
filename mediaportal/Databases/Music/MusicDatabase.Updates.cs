@@ -866,21 +866,11 @@ namespace MediaPortal.Music.Database
         _currentShare = share;
         try
         {
-          var maxThreads = 0;
-          var maxComplThreads = 0;
-          ThreadPool.GetAvailableThreads(out maxThreads, out maxComplThreads);
-
-          ThreadPool.SetMaxThreads(Environment.ProcessorCount, maxComplThreads);
-          _scanFoldersFinishedEvent = new ManualResetEvent(false);
-
           var di = new DirectoryInfo(share);
           foreach (var folder in GetFolders(di))
           {
-            ThreadPool.QueueUserWorkItem(new WaitCallback(ProcessFolder), folder);
-            _folderQueueLength++;
+            ProcessFolder(folder);
           }
-
-          _scanFoldersFinishedEvent.WaitOne();
         }
         catch (Exception ex)
         {
@@ -981,12 +971,6 @@ namespace MediaPortal.Music.Database
       if (_useFolderThumbs)
       {
         CreateFolderThumbs(di);
-      }
-
-      Interlocked.Decrement(ref _folderQueueLength);
-      if (_folderQueueLength == 0)
-      {
-        _scanFoldersFinishedEvent.Set();
       }
     }
 
@@ -1547,14 +1531,16 @@ namespace MediaPortal.Music.Database
 
       var needVariousArtist = false;
       var previousArtist = "";
+      var previousAlbumArtist = "";
       if (songs.Count > 0)
       {
-        previousArtist = songs[0].m_song.AlbumArtist;
+        previousArtist = songs[0].m_song.Artist;
+        previousAlbumArtist = songs[0].m_song.AlbumArtist; 
       }
 
       foreach (var map in songs)
       {
-        if (previousArtist != map.m_song.AlbumArtist)
+        if (previousArtist != map.m_song.Artist)
         {
           needVariousArtist = true;
           break;
@@ -1562,7 +1548,18 @@ namespace MediaPortal.Music.Database
         previousArtist = map.m_song.Artist;
       }
 
-      if (needVariousArtist)
+      // All Artists are the same and we have an empty Album Artist, so we will 
+      // use the ArtistName as AlbumArtist
+      if (!needVariousArtist && string.IsNullOrEmpty(previousAlbumArtist))
+      {
+        var artistId = AddArtist(previousArtist);
+        {
+          strSQL = string.Format("insert or ignore into AlbumArtist values ({0}, {1})", artistId, songs[0].m_song.AlbumId);
+          ExecuteNonQuery(strSQL);
+        }
+      }
+
+      if (needVariousArtist || string.IsNullOrEmpty(previousAlbumArtist))
       {
         var variousArtistId = AddArtist(GUILocalizeStrings.Get(340));
         foreach (var map in songs)
