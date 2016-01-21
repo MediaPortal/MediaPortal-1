@@ -62,6 +62,7 @@ namespace MediaPortal.Configuration.Sections
                                       "ComposerIndex",
                                       "ConductorIndex",
                                       "GenreIndex",
+                                      "Song"
                                     };
 
     private string[] viewsAs = new string[]

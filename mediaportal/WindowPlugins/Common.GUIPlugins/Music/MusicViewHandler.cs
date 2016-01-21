@@ -238,7 +238,7 @@ namespace MediaPortal.GUI.Music
         }
         _filterClause += currentLevelFilter;
 
-        sql = BuildQuery(selectionField);
+        sql = BuildQuery(selectionField, false);
 
         _database.GetSongsByFilter(sql, out songs, selectionField);
       }
@@ -247,14 +247,19 @@ namespace MediaPortal.GUI.Music
         var defCurrent = currentView.Levels[CurrentLevel];
         var selectionField = GetField(defCurrent.Selection);
 
-        sql = BuildQuery(selectionField);
+        sql = BuildQuery(selectionField, false);
 
         _database.GetSongsByFilter(sql, out songs, selectionField);
 
       }
       else
       {
+        var defCurrent = currentView.Levels[CurrentLevel];
+        var selectionField = GetField(defCurrent.Selection);
 
+        sql = BuildQuery(selectionField, true);
+
+        _database.GetSongsByFilter(sql, out songs, selectionField);
       }
      
       if (songs.Count == 1 && level.SkipLevel)
@@ -287,7 +292,7 @@ namespace MediaPortal.GUI.Music
 
     #region Private Methods
 
-    private string BuildQuery(string selectionField)
+    private string BuildQuery(string selectionField, bool isLowestLevel)
     {
       var sql = ""; 
       if (IsNotSongTable(selectionField))
@@ -317,6 +322,11 @@ namespace MediaPortal.GUI.Music
         sql += _filterClause;
       }
 
+      if (!isLowestLevel)
+      {
+        sql += string.Format(" group by {0} ", selectionField);
+      }
+      
       if (!string.IsNullOrEmpty(_orderClause))
       {
         sql += _orderClause;
@@ -377,7 +387,15 @@ namespace MediaPortal.GUI.Music
         }
 
         // use like for case insensitivity
-        _whereClause += string.Format("{0} like '{1}'", GetField(level.Selection), selectedValue);
+        // if selectedValue is "0" it might be a datbase Null field, so we need to check for NULL in an OR condition
+        if (selectedValue == "0")
+        {
+          _whereClause += string.Format(" ({0} like '{1}' or {0} is Null) ", GetField(level.Selection), selectedValue);
+        }
+        else
+        {
+          _whereClause += string.Format("{0} like '{1}'", GetField(level.Selection), selectedValue);
+        }
       }
     }
 
@@ -524,7 +542,7 @@ namespace MediaPortal.GUI.Music
           return "SampleRate";
       }
 
-      return null;
+      return "Song";
     }
 
     private bool IsNotSongTable(string selection)
