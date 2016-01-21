@@ -144,7 +144,7 @@ namespace MediaPortal.Configuration
     #endregion
 
     public SettingsForm()
-      : this(false) {}
+      : this(false) { }
 
     public SettingsForm(bool showDebugOptions)
     {
@@ -306,7 +306,7 @@ namespace MediaPortal.Configuration
           {
             FiltersWinDVD7Decoder windvdConfig = new FiltersWinDVD7Decoder();
             AddSection(new ConfigPage(filterSection, windvdConfig, true));
-          }          
+          }
           if (filter.Equals("DScaler Audio Decoder"))
           {
             FiltersDScalerAudio dscalerConfig = new FiltersDScalerAudio();
@@ -365,7 +365,7 @@ namespace MediaPortal.Configuration
       //AddSection(new ConfigPage(filterSection, renderConfig, true));
 
       //Look for Audio Encoders, if exist assume encoders are installed & present config option
-      string[] audioEncoders = new string[] {"InterVideo Audio Encoder"};
+      string[] audioEncoders = new string[] { "InterVideo Audio Encoder" };
       FilterCollection legacyFilters = Filters.LegacyFilters;
       foreach (Filter audioCodec in legacyFilters)
       {
@@ -1036,9 +1036,9 @@ namespace MediaPortal.Configuration
               {
                 if (parentNode.Text == "TV/Radio")
                 {
-                      sectionTree.SelectedNode = parentNode;
-                      parentNode.EnsureVisible();
-                      return false;
+                  sectionTree.SelectedNode = parentNode;
+                  parentNode.EnsureVisible();
+                  return false;
                 }
               }
               return false;
@@ -1092,7 +1092,7 @@ namespace MediaPortal.Configuration
           }
         }
       }
-      catch (Exception) {}
+      catch (Exception) { }
 
       SaveAllSettings();
     }
@@ -1153,15 +1153,16 @@ namespace MediaPortal.Configuration
 
       using (Settings writer = new MPSettings())
       {
-      if (this.WindowState == FormWindowState.Normal)
-      {
-        writer.SetValue("Configuration", "FormWidth", this.Width);
-        writer.SetValue("Configuration", "FormHeight", this.Height);
+        if (this.WindowState == FormWindowState.Normal)
+        {
+          writer.SetValue("Configuration", "FormWidth", this.Width);
+          writer.SetValue("Configuration", "FormHeight", this.Height);
+        }
+
+        writer.SetValueAsBool("Configuration", "FormMaximized", this.WindowState == FormWindowState.Maximized);
       }
 
-      writer.SetValueAsBool("Configuration", "FormMaximized", this.WindowState == FormWindowState.Maximized);
+      Settings.SaveCache();
     }
-
-    Settings.SaveCache();
   }
 }
