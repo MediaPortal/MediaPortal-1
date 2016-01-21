@@ -288,11 +288,6 @@ namespace MediaPortal.Music.Database
         DatabaseUtility.RemoveInvalidChars(ref strTmp);
         album.Tracks = strTmp == "unknown" ? "" : strTmp;
 
-        if (null == MusicDbClient)
-        {
-          return;
-        }
-
         strSQL = String.Format("delete from albuminfo where strAlbum like '{0}' and strArtist like '{1}%'", album.Album,
                                album.Artist);
         ExecuteNonQuery(strSQL);
@@ -382,11 +377,6 @@ namespace MediaPortal.Music.Database
         strTmp = artist.Misc;
         DatabaseUtility.RemoveInvalidChars(ref strTmp);
         artist.Misc = strTmp == "unknown" ? "" : strTmp;
-
-        if (null == MusicDbClient)
-        {
-          return;
-        }
 
         strSQL = String.Format("delete from artistinfo where strArtist like '{0}%'", artist.Artist);
         ExecuteNonQuery(strSQL);
@@ -1974,8 +1964,7 @@ namespace MediaPortal.Music.Database
       strSQL = String.Format("select idTrack from tracks where strPath like '{0}'",
                              strFileName);
 
-      SQLiteResultSet results;
-      results = MusicDbClient.Execute(strSQL);
+      var results = ExecuteQuery(strSQL);
       if (results.Rows.Count > 0)
       {
         // Found
@@ -2011,8 +2000,7 @@ namespace MediaPortal.Music.Database
                                  strNewFileName,
                                  strOldFileName);
 
-          SQLiteResultSet results;
-          results = MusicDbClient.Execute(strSQL);
+          var results = ExecuteQuery(strSQL);
           return true;
         }
         else
@@ -2033,7 +2021,7 @@ namespace MediaPortal.Music.Database
             strSQL = String.Format("select idTrack, strPath from tracks where strPath like '{0}%'",
                                    strOldFileName);
 
-            results = MusicDbClient.Execute(strSQL);
+            results = ExecuteQuery(strSQL);
             if (results.Rows.Count > 0)
             {
               try
@@ -2052,7 +2040,7 @@ namespace MediaPortal.Music.Database
                                          strTmpPath,
                                          idTrack);
 
-                  MusicDbClient.Execute(strSQL);
+                  DirectExecute(strSQL);
                 }
                 CommitTransaction();
                 return true;
@@ -2094,7 +2082,7 @@ namespace MediaPortal.Music.Database
 
       try
       {
-        MusicDbClient.Execute(strSQL);
+        DirectExecute(strSQL);
       }
       catch (Exception)
       {

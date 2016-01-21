@@ -45,7 +45,6 @@ namespace MediaPortal.Music.Database
     private const int DATABASE_VERSION = 1;
 
     private SQLiteConnection _dbConnection = null;
-    private SQLiteClient MusicDbClient = null;
 
     private static bool _dbIsOpened = false;
     private static bool _treatFolderAsAlbum;
@@ -60,7 +59,7 @@ namespace MediaPortal.Music.Database
     private static DateTime _lastImport;
     private static DateTime _currentDate = DateTime.Now;
     private static int _dateAddedValue;
-    private bool _dbHealth = false;
+    private bool _dbHealth = true;
 
     #endregion
 
@@ -149,12 +148,6 @@ namespace MediaPortal.Music.Database
         Instance._dbConnection.Dispose();
       }
       Instance._dbConnection = null;
-
-      if (Instance.MusicDbClient != null)
-      {
-        Instance.MusicDbClient.Dispose();
-      }
-      Instance.MusicDbClient = null;
     }
 
     #endregion
@@ -606,7 +599,7 @@ namespace MediaPortal.Music.Database
         // Song Information View
         ExecuteNonQuery("CREATE VIEW SongView as " +
                         "select distinct Song.*, Album.*, " +
-                        "( select group_concat(aname, ' | ') from (select distinct(Artist.ArtistName) as aname from artist join artistsong on artistsong.idsong = song.IdSong and artistsong.idartist = artist.idartist)) as ArtistName, " +
+                        "( select group_concat(aname, ' | ') from (select distinct(Artist.ArtistName) as aname from artist join artistsong on artistsong.idsong = song.IdSong and artistsong.idartist = artist.idartist)) as Artist, " +
                         "( select Artist.ArtistName from artist join albumartist on albumartist.idalbum = Album.IdAlbum and albumartist.IdArtist = artist.idartist) as AlbumArtist, " +
                         "( select group_concat(genrename, ' | ') from (select distinct genrename from Genre join genresong on genresong.idsong = song.idsong and genresong.idgenre = genre.idgenre)) as Genre, " +
                         "( select group_concat(composername, ' | ') from (select distinct artist.artistname as composername from artist join composersong on composersong.idsong = song.idsong and composersong.idcomposer = artist.idartist)) as Composer, " +

@@ -313,37 +313,7 @@ namespace MediaPortal.Music.Database
         {
           var song = new Song();
           var fields = results.Rows[i];
-          int columnIndex = 0;
-          if (aFilter == "artist")
-          {
-            columnIndex = (int)results.ColumnIndices["strArtist"];
-            song.Artist = fields.fields[columnIndex].Trim(trimChars);
-          }
-          else if (aFilter == "albumartist")
-          {
-            song.SelectedId = Convert.ToInt32(results.Rows[i].fields[0]);
-            song.AlbumArtist = results.Rows[i].fields[1].Trim(trimChars);
-          }
-          else if (aFilter == "album")
-          {
-            AssignAllSongFieldsFromResultSet(ref song, results, i);
-          }
-          else if (aFilter == "genre")
-          {
-            AssignAllSongFieldsFromResultSet(ref song, results, i);
-            columnIndex = (int)results.ColumnIndices["strGenre"];
-            song.Genre = fields.fields[columnIndex].Trim(trimChars);
-          }
-          else if (aFilter == "composer")
-          {
-            AssignAllSongFieldsFromResultSet(ref song, results, i);
-            columnIndex = (int)results.ColumnIndices["strComposer"];
-            song.Composer = fields.fields[columnIndex].Trim(trimChars);
-          }
-          else if (aFilter == "tracks")
-          {
-            AssignAllSongFieldsFromResultSet(ref song, results, i);
-          }
+          AssignAllSongFieldsFromResultSet(ref song, results, i);
 
           // Now set the fields when we had grouping
           if (aGrouping && aSearchField != string.Empty)
@@ -1369,7 +1339,7 @@ namespace MediaPortal.Music.Database
         }
         strSQL += " GROUP BY strAlbum";
 
-        SQLiteResultSet results = DirectExecute(strSQL);
+        var results = DirectExecute(strSQL);
         if (results.Rows.Count == 0)
         {
           return false;
@@ -1411,8 +1381,7 @@ namespace MediaPortal.Music.Database
         string strSQL;
         strSQL = String.Format("select * from albuminfo where strArtist like '{0}%' and strAlbum  like '{1}'", strArtist,
                                strAlbum);
-        SQLiteResultSet results;
-        results = MusicDbClient.Execute(strSQL);
+        var results = DirectExecute(strSQL);
         if (results.Rows.Count != 0)
         {
           aAlbumInfo.Rating = DatabaseUtility.GetAsInt(results, 0, "albuminfo.iRating");
@@ -1445,10 +1414,8 @@ namespace MediaPortal.Music.Database
       {
         string strArtist = aArtist;
         DatabaseUtility.RemoveInvalidChars(ref strArtist);
-        string strSQL;
-        strSQL = String.Format("select * from artistinfo where strArtist like '{0}'", strArtist);
-        SQLiteResultSet results;
-        results = MusicDbClient.Execute(strSQL);
+        string strSQL = String.Format("select * from artistinfo where strArtist like '{0}'", strArtist);
+        var results = DirectExecute(strSQL);
         if (results.Rows.Count != 0)
         {
           aArtistInfo.Artist = DatabaseUtility.Get(results, 0, "artistinfo.strArtist");
@@ -1487,7 +1454,7 @@ namespace MediaPortal.Music.Database
 
         var strSQL = string.Format("select DISTINCT artist.idArtist from artist where artist.strArtist LIKE '{0}'",
           strArtist);
-        var results = MusicDbClient.Execute(strSQL);
+        var results = DirectExecute(strSQL);
         if (results.Rows.Count == 0)
         {
           return -1;

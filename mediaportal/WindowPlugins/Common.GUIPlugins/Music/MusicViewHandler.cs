@@ -21,6 +21,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Soap;
@@ -48,20 +49,6 @@ namespace MediaPortal.GUI.Music
 
     private readonly MusicDatabase _database;
     private Song _currentSong = null; // holds the current Song selected in the list
-
-    private const string StrSongSelect = "select Song.*, Album.*, " +
-                                    "( select group_concat(aname, ' | ') from (select distinct(Artist.ArtistName) as aname from artist join artistsong on artistsong.idsong = song.IdSong and artistsong.idartist = artist.IdArtist)) as Artist," +
-                                    "( select Artist.ArtistName from artist join albumartist on albumartist.idalbum = Album.IdAlbum and albumartist.idartist = artist.idArtist) as AlbumArtist," +
-                                    "( select group_concat(genrename, ' | ') from (select distinct genrename from Genre join genresong on genresong.idsong = song.idSong and genresong.idgenre = genre.idGenre order by genrename)) as Genre," +
-                                    "( select group_concat(composername, ' | ') from (select distinct artist.artistname as composername from artist join composersong on composersong.idsong = song.idSong and composersong.idcomposer = artist.idArtist order by composername)) as composer," +
-                                    "(share.ShareName || folder.FolderName || song.FileName) as Path ";
-
-    private const string StrSongFrom = "from Song ";
-
-    private const string StrSongJoin = "join Album on Album.IdAlbum = Song.IdAlbum " +
-                            "join folder on folder.idFolder = song.idfolder " +
-                            "join share on share.IdShare = folder.IdShare " +
-                            "join artistsong on artistsong.idsong = song.Idsong and artistsong.idartist = artist.idartist ";
 
     private string _whereClause = "";
     private string _orderClause = "";
@@ -240,9 +227,9 @@ namespace MediaPortal.GUI.Music
       if (CurrentLevel == 0)
       {
         var levelRoot = currentView.Levels[0];
-        string selection = levelRoot.Selection.ToLower();
-        string table = GetTable(selection);
-        
+        var selection = levelRoot.Selection.ToLower();
+        var selectionField = GetField(selection);
+
 
         var currentLevelFilter = "";
         if (currentView.Filters.Count > 0)
@@ -251,25 +238,25 @@ namespace MediaPortal.GUI.Music
         }
         _filterClause += currentLevelFilter;
 
-        sql = BuildTopLevelQuery(table);
-        
-        _database.GetSongsByFilter(sql, out songs, table);
+        sql = BuildQuery(selectionField);
+
+        _database.GetSongsByFilter(sql, out songs, selectionField);
       }
       else if (CurrentLevel < MaxLevels - 1)
       {
         var defCurrent = currentView.Levels[CurrentLevel];
-        string table = GetTable(defCurrent.Selection.ToLower());
+        var selectionField = GetField(defCurrent.Selection);
 
-        sql = BuildLowerLevelQuery(table);
+        sql = BuildQuery(selectionField);
 
-        _database.GetSongsByFilter(sql, out songs, table);
+        _database.GetSongsByFilter(sql, out songs, selectionField);
 
       }
       else
       {
-        
-      }
 
+      }
+     
       if (songs.Count == 1 && level.SkipLevel)
       {
         if (currentLevel < MaxLevels - 1)
@@ -300,39 +287,36 @@ namespace MediaPortal.GUI.Music
 
     #region Private Methods
 
-    private string BuildTopLevelQuery(string table)
+    private string BuildQuery(string selectionField)
     {
-      string sql = string.Empty;
-      return "";
-    }
-
-    private string BuildLowerLevelQuery(string table)
-    {
-      string sql = string.Empty;
-
-      // TODO: Handle the Special Case of a Lower Level View with an Index
-
-      switch (table.ToLower())
+      var sql = ""; 
+      if (IsNotSongTable(selectionField))
       {
-        case "artist":
-          break;
-
-        case "albumartist":
-          break;
-
-        case "genre":
-        case "composer":
-          break;
-
-        case "album":
-          sql = "select distinct Album.IdALbum, Album.ALbumNAme, Album.AlbumSortName, Year from Album join AlbumArtist on AlbumArtist.IdAlbum = Album.IdAlbum";
-          break;
+        sql = string.Format("select distinct {0} from SongView ", selectionField);
+      }
+      else
+      {
+        sql = "select * from SongView ";
       }
 
       if (!string.IsNullOrEmpty(_whereClause))
       {
         sql += _whereClause;
       }
+
+      if (!string.IsNullOrEmpty(_filterClause))
+      {
+        if (string.IsNullOrEmpty(_whereClause))
+        {
+          sql += " where ";
+        }
+        else
+        {
+          sql += " and ";
+        }
+        sql += _filterClause;
+      }
+
       if (!string.IsNullOrEmpty(_orderClause))
       {
         sql += _orderClause;
@@ -341,6 +325,35 @@ namespace MediaPortal.GUI.Music
       return sql;
     }
 
+    private string BuildLowerLevelQuery(string selectionField)
+    {
+      string sql = "select * from SongView ";
+
+      if (!string.IsNullOrEmpty(_whereClause))
+      {
+        sql += _whereClause;
+      }
+
+      if (!string.IsNullOrEmpty(_filterClause))
+      {
+        if (string.IsNullOrEmpty(_whereClause))
+        {
+          sql += " where ";
+        }
+        else
+        {
+          sql += " and ";
+        }
+        sql += _filterClause;
+      }
+
+      if (!string.IsNullOrEmpty(_orderClause))
+      {
+        sql += _orderClause;
+      }
+
+      return sql;
+    }
 
     private void BuildWhere(DatabaseFilterLevel level, ref string _whereClause, int currentLevel)
     {
@@ -363,15 +376,8 @@ namespace MediaPortal.GUI.Music
           selectedValue = "";
         }
 
-        if (level.SelectedId > -1)
-        {
-          _whereClause += String.Format("{0} = {1} ", GetIndexField(level.Selection), level.SelectedId);
-        }
-        else
-        {
-          // use like for case insensitivity
-          _whereClause += String.Format("{0} like '{1}'", GetField(level.Selection), selectedValue);
-        }
+        // use like for case insensitivity
+        _whereClause += string.Format("{0} like '{1}'", GetField(level.Selection), selectedValue);
       }
     }
 
@@ -421,150 +427,107 @@ namespace MediaPortal.GUI.Music
       }
     }
 
-    /// <summary>
-    /// Check, if this is a field with multiple values, for which we need to compare with Like %value% instead of equals
-    /// </summary>
-    /// <param name="field"></param>
-    /// <returns></returns>
-    private bool IsMultipleValueField(string field)
-    {
-      switch (field)
-      {
-        case "strArtist":
-        case "strAlbumArtist":
-        case "strGenre":
-        case "strComposer":
-          return true;
-
-        default:
-          return false;
-      }
-    }
-
-    private string GetTable(string selection)
-    {
-      switch (selection.ToLower())
-      {
-        case "artist":
-        case "artistindex":
-          return "artist";
-
-        case "albumartist":
-        case "albumartistindex":
-          return "albumartist";
-
-        case "composer":
-        case "composerindex":
-          return "composer";
-
-        case "genre":
-        case "genreindex":
-          return "genre";
-
-        case "album":
-          return "album";
-
-        default:
-          return "tracks";
-      }
-    }
-
     private string GetField(string selection)
     {
       switch (selection.ToLower())
       {
         case "path":
-          return "strPath";
+          return "Path";
 
         case "artist":
         case "artistindex":
+          return "Artist";
+
         case "albumartist":
         case "albumartistindex":
+          return "AlbumArtist";
+
         case "composer":
         case "composerindex":
+          return "Composer";
+
         case "conductor":
         case "conductorindex":
-          return "Artist.ArtistName";
+          return "Conductor";
 
         case "album":
           return "AlbumName";
 
         case "genre":
         case "genreindex":
-          return "GenreName";
+          return "Genre";
 
         case "title":
           return "Title";
-
 
         case "year":
           return "Year";
 
         case "track#":
-          return "iTrack";
+          return "Track";
 
         case "numtracks":
-          return "iNumTracks";
+          return "TrackCount";
 
         case "timesplayed":
-          return "iTimesPlayed";
+          return "TimesPlayed";
 
         case "rating":
-          return "iRating";
+          return "Rating";
 
         case "favorites":
-          return "iFavorite";
+          return "Favorite";
 
         case "dateadded":
-          return "dateAdded";
+          return "DateAdded";
 
         case "datelastplayed":
-          return "dateLastPlayed";
+          return "DateLastPlayed";
 
         case "disc#":
-          return "iDisc";
+          return "Disc";
 
         case "numdiscs":
-          return "iNumDiscs";
+          return "DiscCount";
 
         case "duration":
-          return "iDuration";
+          return "Duration";
 
         case "resumeat":
-          return "iResumeAt";
+          return "ResumeAt";
 
         case "lyrics":
-          return "strLyrics";
+          return "Lyrics";
 
         case "comment":
-          return "strComment";
+          return "Comment";
 
         case "filetype":
-          return "strFileType";
+          return "FileType";
 
         case "fullcodec":
-          return "strFullCodec";
+          return "Codec";
 
         case "bitratemode":
-          return "strBitRateMode";
+          return "BitRateMode";
 
         case "bpm":
-          return "iBPM";
+          return "BPM";
 
         case "bitrate":
-          return "iBitRate";
+          return "BitRate";
 
         case "channels":
-          return "iChannels";
+          return "Channels";
 
         case "samplerate":
-          return "iSampleRate";
+          return "SampleRate";
       }
 
       return null;
     }
 
-    private string GetIndexField(string selection)
+    private bool IsNotSongTable(string selection)
     {
       switch (selection.ToLower())
       {
@@ -576,18 +539,13 @@ namespace MediaPortal.GUI.Music
         case "composerindex":
         case "conductor":
         case "conductorindex":
-          return "IdArtist";
-
-        case "album":
-          return "IdAlbum";
-
+        case "albumname":
         case "genre":
         case "genreindex":
-          return "IdGenre";
-
+          return true;
       }
 
-      return null;
+      return false;
     }
 
     public static string GetFieldValue(Song song, string selection)
@@ -719,15 +677,15 @@ namespace MediaPortal.GUI.Music
       }
       if (filter.SortBy == "Duration")
       {
-        return "iDuration";
+        return "Duration";
       }
       if (filter.SortBy == "disc#")
       {
-        return "iDisc";
+        return "Disc";
       }
       if (filter.SortBy == "Track")
       {
-        return "iDisc|iTrack"; // We need to sort on Discid + Track
+        return "Disc|Track"; // We need to sort on Discid + Track
       }
       return GetField(filter.Selection);
     }
