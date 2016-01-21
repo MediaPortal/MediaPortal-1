@@ -456,6 +456,7 @@ namespace MediaPortal.GUI.Pictures
     private GUIDialogProgress _progressDialogForRefreshThumbnails;
     private static bool _refreshThumbnailsThreadAbort = false;
     private static Thread _removableDrivesHandlerThread;
+    private static bool _autoCreateThumbs = true;
 
     #endregion
 
@@ -475,6 +476,7 @@ namespace MediaPortal.GUI.Pictures
       using (Profile.Settings xmlreader = new Profile.MPSettings())
       {
         _autocreateLargeThumbs = !xmlreader.GetValueAsBool("thumbnails", "picturenolargethumbondemand", false);
+        _autoCreateThumbs = xmlreader.GetValueAsBool("thumbnails", "pictureAutoCreateThumbs", true);
         _useDayGrouping = xmlreader.GetValueAsBool("pictures", "useDayGrouping", false);
         _enableVideoPlayback = xmlreader.GetValueAsBool("pictures", "enableVideoPlayback", false);
         _playVideosInSlideshows = xmlreader.GetValueAsBool("pictures", "playVideosInSlideshows", false);
@@ -1816,7 +1818,9 @@ namespace MediaPortal.GUI.Pictures
         {
           string thumbnailImage = GetThumbnail(item.Path);
           string thumbnailLargeImage = GetLargeThumbnail(item.Path);
-          if (!Util.Utils.FileExistsInCache(thumbnailImage) && Util.Utils.IsPicture(item.Path))
+          MediaPortal.Util.Utils.SetDefaultIcons(item);
+
+          if (!Util.Utils.FileExistsInCache(thumbnailImage) && Util.Utils.IsPicture(item.Path) && _autoCreateThumbs)
           {
             ThreadPool.QueueUserWorkItem(delegate
                                            {
@@ -1833,7 +1837,6 @@ namespace MediaPortal.GUI.Pictures
           }
           else
           {
-            MediaPortal.Util.Utils.SetDefaultIcons(item);
             if (Util.Utils.FileExistsInCache(thumbnailImage))
             {
               if (_autocreateLargeThumbs && Util.Utils.FileExistsInCache(thumbnailLargeImage))
@@ -2701,7 +2704,12 @@ namespace MediaPortal.GUI.Pictures
         }
 
         Filter(ref itemlist);
-        MissingThumbCacher ThumbWorker = new MissingThumbCacher(currentFolder, _autocreateLargeThumbs, false, true);
+
+        if (_autoCreateThumbs)
+        {
+          MissingThumbCacher ThumbWorker = new MissingThumbCacher(currentFolder, _autocreateLargeThumbs, false, true);
+        }
+
         // int itemIndex = 0;
         CountOfNonImageItems = 0;
         foreach (GUIListItem item in itemlist)
