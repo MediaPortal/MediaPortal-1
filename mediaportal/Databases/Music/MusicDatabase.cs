@@ -552,12 +552,16 @@ namespace MediaPortal.Music.Database
                                  "Primary Key(IdArtist, IdAlbum)" +
                                  ")");
 
+        ExecuteNonQuery("CREATE INDEX IdxAlbumArtist_Album ON AlbumArtist(IdAlbum ASC)");
+
         // ArtistSong: Relation between Artist - Song  
         ExecuteNonQuery("CREATE TABLE ArtistSong (" +
                                  "IdArtist integer not null," +
                                  "IdSong integer not null," +
                                  "Primary Key(IdArtist, IdSong)" +
                                  ")");
+
+        ExecuteNonQuery("CREATE INDEX IdxArtist_Song ON ArtistSong(IdSong ASC)");
 
         // GenreSong: Relation between Genre - Song  
         ExecuteNonQuery("CREATE TABLE GenreSong (" +
@@ -566,6 +570,8 @@ namespace MediaPortal.Music.Database
                                  "Primary Key(IdGenre, IdSong)" +
                                  ")");
 
+        ExecuteNonQuery("CREATE INDEX IdxGenre_Song ON GenreSong(IdSong ASC)");
+
         // ComposerSong: Relation between Composer - Song  
         ExecuteNonQuery("CREATE TABLE ComposerSong (" +
                                  "IdComposer integer not null," +
@@ -573,12 +579,16 @@ namespace MediaPortal.Music.Database
                                  "Primary Key(IdComposer, IdSong)" +
                                  ")");
 
+        ExecuteNonQuery("CREATE INDEX IdxComposer_Song ON ComposerSong(IdSong ASC)");
+
         // ConductorSong: Relation between Conductor - Song  
         ExecuteNonQuery("CREATE TABLE ConductorSong (" +
                                  "IdConductor integer not null," +
                                  "IdSong integer not null," +
                                  "Primary Key(IdConductor, IdSong)" +
                                  ")");
+
+        ExecuteNonQuery("CREATE INDEX IdxConductor_Song ON ConductorSong(IdSong ASC)");
 
         // Artist Info and Album Info
         ExecuteNonQuery("CREATE TABLE albuminfo ( idAlbumInfo integer primary key autoincrement, strAlbum text, strArtist text, strAlbumArtist text,iYear integer, idGenre integer, strTones text, strStyles text, strReview text, strImage text, strTracks text, iRating integer)");
