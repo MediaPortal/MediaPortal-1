@@ -102,18 +102,15 @@ namespace MediaPortal.Music.Database
     private Hashtable _allFiles;
     private int _processCount = 0;
     private int _songsSkipped = 0;
-    private int _allFilesCount = 0;
     private int _songsProcessed = 0;
     private int _songsAdded = 0;
     private int _songsUpdated = 0;
     private bool _updateSinceLastImport = false;
     private bool _excludeHiddenFiles = false;
     private bool _singleFolderScan = false;
-    private int _folderQueueLength = 0;
 
     private Thread _scanThread = null;
     private ManualResetEvent _scanSharesFinishedEvent = null;
-    private ManualResetEvent _scanFoldersFinishedEvent = null;
     private DatabaseReorgEventArgs _myArgs = null;
 
     private readonly char[] trimChars = { ' ', '\x00', '|' };
@@ -935,23 +932,21 @@ namespace MediaPortal.Music.Database
       {
         foreach (FileInformation file in GetFiles(di))
         {
-          Interlocked.Increment(ref _allFilesCount);
-
-          if (_allFilesCount % 1000 == 0)
-          {
-            Log.Info("MusicDBReorg: Procesing file {0}", _allFilesCount);
-          }
-
-          _myArgs.progress = 4;
-          _myArgs.phase = String.Format("Processing file {0}", _allFilesCount);
-          OnDatabaseReorgChanged(_myArgs);
-
           if (!CheckFileForInclusion(file))
           {
             continue;
           }
 
           Interlocked.Increment(ref _processCount);
+
+          if (_processCount % 1000 == 0)
+          {
+            Log.Info("MusicDBReorg: Procesing file {0}", _processCount);
+          }
+
+          _myArgs.progress = 4;
+          _myArgs.phase = String.Format("Processing file {0}", _processCount);
+          OnDatabaseReorgChanged(_myArgs);
 
           AddUpdateSong(file.Name);
         }
