@@ -1863,7 +1863,7 @@
           <font>font10</font>
           <width>410</width>
           <textcolor>ivory</textcolor>
-          <label>#WorldWeather.ForecastDay1Low ~ #WorldWeather.ForecastDay1High</label>
+          <label>#WorldWeather.ForecastDay1Low | #WorldWeather.ForecastDay1High</label>
         </control>
         <control>
           <description>Temperature</description>
@@ -1872,7 +1872,7 @@
           <font>font10</font>
           <width>410</width>
           <textcolor>ivory</textcolor>
-          <label>#WorldWeather.ForecastDay2Low ~ #WorldWeather.ForecastDay2High</label>
+          <label>#WorldWeather.ForecastDay2Low | #WorldWeather.ForecastDay2High</label>
         </control>
         <control>
           <description>Temperature</description>
@@ -1881,7 +1881,7 @@
           <font>font10</font>
           <width>410</width>
           <textcolor>ivory</textcolor>
-          <label>#WorldWeather.ForecastDay3Low ~ #WorldWeather.ForecastDay3High</label>
+          <label>#WorldWeather.ForecastDay3Low | #WorldWeather.ForecastDay3High</label>
         </control>
         <control>
           <description>Temperature</description>
@@ -1890,7 +1890,7 @@
           <width>410</width>
           <font>font10</font>
           <textcolor>ivory</textcolor>
-          <label>#WorldWeather.ForecastDay4Low ~ #WorldWeather.ForecastDay4High</label>
+          <label>#WorldWeather.ForecastDay4Low | #WorldWeather.ForecastDay4High</label>
         </control>
       </control>
       <control>
