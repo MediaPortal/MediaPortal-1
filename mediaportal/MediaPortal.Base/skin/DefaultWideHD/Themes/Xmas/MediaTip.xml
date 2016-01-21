@@ -1,0 +1,613 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!--version="1.0" encoding="utf-8" standalone="yes"-->
+<window>
+  <id>7980</id>
+  <defaultcontrol>2</defaultcontrol>
+  <allowoverlay>no</allowoverlay>
+  <define>#header.label:MediaTip</define>
+  <define>#header.hover:hover_mediatip.png</define>
+  <define>#itemcount:</define>
+  <controls>
+    <control>
+      <description>background image</description>
+      <type>image</type>
+      <id>1</id>
+      <width>1920</width>
+      <height>1080</height>
+      <texture>BH music.jpg</texture>
+      <colordiffuse>ffffffff</colordiffuse>
+    </control>
+    <control>
+      <description>General Overlay</description>
+      <id>0</id>
+      <type>image</type>
+      <posX>0</posX>
+      <posY>45</posY>
+      <width>1920</width>
+      <height>1080</height>
+      <texture>general_overlay.png</texture>
+    </control>
+    <control>
+      <description>Header</description>
+      <type>fadelabel</type>
+      <posX>45</posX>
+      <posY>15</posY>
+      <width>525</width>
+      <font>Label</font>
+      <align>left</align>
+      <textcolor>ffffd700</textcolor>
+      <label>MediaTip</label>
+    </control>
+    <import>common.window.xml</import>
+    <import>common.time.xml</import>
+    <!-- *** Button *** -->
+    <control>
+      <type>group</type>
+      <description>group element</description>
+      <posX>49</posX>
+      <posY>237</posY>
+      <layout>StackLayout</layout>
+      <control>
+        <description>Refresh Information</description>
+        <type>button</type>
+        <id>2</id>
+        <label>Refresh Information</label>
+        <onup>3</onup>
+        <ondown>3</ondown>
+      </control>
+      <control>
+        <description>Reorganize Music Database</description>
+        <type>button</type>
+        <id>3</id>
+        <label>Reorganize Music Database</label>
+        <onup>2</onup>
+        <ondown>2</ondown>
+      </control>
+    </control>
+    <!-- *** Action *** -->
+    <control>
+      <description>Action</description>
+      <type>fadelabel</type>
+      <id>0</id>
+      <posX>375</posX>
+      <posY>100</posY>
+      <width>983</width>
+      <label>#MediaTip.Action</label>
+      <font>font10</font>
+      <align>left</align>
+    </control>
+    <!-- *** Refresh Action *** -->
+    <control>
+      <description>Refresh Action</description>
+      <type>fadelabel</type>
+      <id>0</id>
+      <posX>575</posX>
+      <posY>100</posY>
+      <width>983</width>
+      <label>#MediaTip.RefreshAction</label>
+      <font>font10</font>
+      <align>left</align>
+    </control>
+    <!-- *** Reorganize Action *** -->
+    <control>
+      <description>Reorganize Action</description>
+      <type>fadelabel</type>
+      <id>0</id>
+      <posX>575</posX>
+      <posY>100</posY>
+      <width>983</width>
+      <label>#MediaTip.ReorganizeAction</label>
+      <font>font10</font>
+      <align>left</align>
+    </control>
+    <!-- *** Music Overview *** -->
+    <control>
+      <description>Music</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>576</posX>
+      <posY>175</posY>
+      <width>44</width>
+      <height>45</height>
+      <texture>mediatip_music.png</texture>
+    </control>
+    <control>
+      <description>Music</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>632</posX>
+      <posY>182</posY>
+      <label>Machine</label>
+      <font>Label</font>
+      <label>#MediaTip.MusicHeadline</label>
+    </control>
+    <control>
+      <description>Music Directory Name/Size Label</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>632</posX>
+      <posY>217</posY>
+      <label>Directory</label>
+      <font>font11</font>
+      <textcolor>ffffd700</textcolor>
+    </control>
+    <control>
+      <description>Music Directory Name/Size Value</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>871</posX>
+      <posY>217</posY>
+      <font>font11</font>
+      <label>#MediaTip.MusicDirectory0Name - #MediaTip.MusicDirectorySize, #MediaTip.MusicDirectoryFileCount file(s)</label>
+    </control>
+    <control>
+      <description>Music Song Count Label</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>632</posX>
+      <posY>246</posY>
+      <label>Songs</label>
+      <font>font11</font>
+      <textcolor>ffffd700</textcolor>
+    </control>
+    <control>
+      <description>Music Song Count Value</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>871</posX>
+      <posY>246</posY>
+      <font>font11</font>
+      <label>#MediaTip.MusicSongCount in #MediaTip.MusicGenreCount genre(s)</label>
+    </control>
+    <control>
+      <description>Music Album Artist Label</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>632</posX>
+      <posY>274</posY>
+      <label>Album Artists</label>
+      <font>font11</font>
+      <textcolor>ffffd700</textcolor>
+    </control>
+    <control>
+      <description>Music Album Artist Value</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>871</posX>
+      <posY>274</posY>
+      <font>font11</font>
+      <label>#MediaTip.MusicAlbumArtistCount</label>
+    </control>
+    <control>
+      <description>Music Artist Label</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>632</posX>
+      <posY>302</posY>
+      <label>Artists</label>
+      <font>font11</font>
+      <textcolor>ffffd700</textcolor>
+    </control>
+    <control>
+      <description>Music Artist Value</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>871</posX>
+      <posY>302</posY>
+      <font>font11</font>
+      <label>#MediaTip.MusicArtistCount</label>
+    </control>
+    <!-- *** Music Genre Overview *** -->
+    <control>
+      <description>Music Genre Icon</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>632</posX>
+      <posY>344</posY>
+      <width>30</width>
+      <height>30</height>
+      <texture>logos\genre\music\#MediaTip.MusicGenre0Name.png</texture>
+      <visible>!string.equals(#MediaTip.MusicGenre0Count, )</visible>
+    </control>
+    <control>
+      <description>Music Genre Value</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>674</posX>
+      <posY>344</posY>
+      <font>font10</font>
+      <label>#MediaTip.MusicGenre0Count #MediaTip.MusicGenre0Name song(s)</label>
+      <visible>!string.equals(#MediaTip.MusicGenre0Count, )</visible>
+    </control>
+    <control>
+      <description>Music Genre Value</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>962</posX>
+      <posY>344</posY>
+      <font>font10</font>
+      <label>#MediaTip.MusicGenre1Count #MediaTip.MusicGenre1Name song(s)</label>
+      <visible>!string.equals(#MediaTip.MusicGenre1Count, )</visible>
+    </control>
+    <control>
+      <description>Music Genre Value</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>1250</posX>
+      <posY>344</posY>
+      <font>font10</font>
+      <label>#MediaTip.MusicGenre2Count #MediaTip.MusicGenre2Name song(s)</label>
+      <visible>!string.equals(#MediaTip.MusicGenre2Count, )</visible>
+    </control>
+    <control>
+      <description>Music Genre Value</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>1539</posX>
+      <posY>344</posY>
+      <font>font10</font>
+      <label>#MediaTip.MusicGenre3Count #MediaTip.MusicGenre3Name song(s)</label>
+      <visible>!string.equals(#MediaTip.MusicGenre3Count, )</visible>
+    </control>
+    <control>
+      <description>Music Genre Value</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>674</posX>
+      <posY>386</posY>
+      <font>font10</font>
+      <label>#MediaTip.MusicGenre4Count #MediaTip.MusicGenre4Name song(s)</label>
+      <visible>!string.equals(#MediaTip.MusicGenre4Count, )</visible>
+    </control>
+    <control>
+      <description>Music Genre Value</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>962</posX>
+      <posY>386</posY>
+      <font>font10</font>
+      <label>#MediaTip.MusicGenre5Count #MediaTip.MusicGenre5Name song(s)</label>
+      <visible>!string.equals(#MediaTip.MusicGenre5Count, )</visible>
+    </control>
+    <control>
+      <description>Music Genre Value</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>1250</posX>
+      <posY>386</posY>
+      <font>font10</font>
+      <label>#MediaTip.MusicGenre6Count #MediaTip.MusicGenre6Name song(s)</label>
+      <visible>!string.equals(#MediaTip.MusicGenre6Count, )</visible>
+    </control>
+    <control>
+      <description>Music Genre Value</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>1539</posX>
+      <posY>386</posY>
+      <font>font10</font>
+      <label>#MediaTip.MusicGenre7Count #MediaTip.MusicGenre7Name song(s)</label>
+      <visible>!string.equals(#MediaTip.MusicGenre7Count, )</visible>
+    </control>
+    <control>
+      <description>Music Genre Value</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>674</posX>
+      <posY>428</posY>
+      <font>font10</font>
+      <label>#MediaTip.MusicGenre8Count #MediaTip.MusicGenre8Name song(s)</label>
+      <visible>!string.equals(#MediaTip.MusicGenre8Count, )</visible>
+    </control>
+    <control>
+      <description>Music Genre Value</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>962</posX>
+      <posY>428</posY>
+      <font>font10</font>
+      <label>#MediaTip.MusicGenre9Count #MediaTip.MusicGenre9Name song(s)</label>
+      <visible>!string.equals(#MediaTip.MusicGenre9Count, )</visible>
+    </control>
+    <control>
+      <description>Music Genre Value</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>1250</posX>
+      <posY>428</posY>
+      <font>font10</font>
+      <label>#MediaTip.MusicGenre10Count #MediaTip.MusicGenre10Name song(s)</label>
+      <visible>!string.equals(#MediaTip.MusicGenre10Count, )</visible>
+    </control>
+    <control>
+      <description>Music Genre Value</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>1539</posX>
+      <posY>428</posY>
+      <font>font10</font>
+      <label>#MediaTip.MusicGenre11Count #MediaTip.MusicGenre11Name song(s)</label>
+      <visible>!string.equals(#MediaTip.MusicGenre11Count, )</visible>
+    </control>
+    <control>
+      <description>Music Genre Value</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>674</posX>
+      <posY>471</posY>
+      <font>font10</font>
+      <label>#MediaTip.MusicGenre12Count #MediaTip.MusicGenre12Name song(s)</label>
+      <visible>!string.equals(#MediaTip.MusicGenre12Count, )</visible>
+    </control>
+    <control>
+      <description>Music Genre Value</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>962</posX>
+      <posY>471</posY>
+      <font>font10</font>
+      <label>#MediaTip.MusicGenre13Count #MediaTip.MusicGenre13Name song(s)</label>
+      <visible>!string.equals(#MediaTip.MusicGenre13Count, )</visible>
+    </control>
+    <control>
+      <description>Music Genre Value</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>1250</posX>
+      <posY>471</posY>
+      <font>font10</font>
+      <label>#MediaTip.MusicGenre14Count #MediaTip.MusicGenre14Name song(s)</label>
+      <visible>!string.equals(#MediaTip.MusicGenre14Count, )</visible>
+    </control>
+    <control>
+      <description>Music Genre Value</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>1539</posX>
+      <posY>471</posY>
+      <font>font10</font>
+      <label>#MediaTip.MusicGenre15Count #MediaTip.MusicGenre15Name song(s)</label>
+      <visible>!string.equals(#MediaTip.MusicGenre15Count, )</visible>
+    </control>
+    <control>
+      <description>Music Genre Value</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>674</posX>
+      <posY>513</posY>
+      <font>font10</font>
+      <label>#MediaTip.MusicGenre16Count #MediaTip.MusicGenre16Name song(s)</label>
+      <visible>!string.equals(#MediaTip.MusicGenre16Count, )</visible>
+    </control>
+    <control>
+      <description>Music Genre Value</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>962</posX>
+      <posY>513</posY>
+      <font>font10</font>
+      <label>#MediaTip.MusicGenre17Count #MediaTip.MusicGenre17Name song(s)</label>
+      <visible>!string.equals(#MediaTip.MusicGenre17Count, )</visible>
+    </control>
+    <control>
+      <description>Music Genre Value</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>1250</posX>
+      <posY>513</posY>
+      <font>font10</font>
+      <label>#MediaTip.MusicGenre18Count #MediaTip.MusicGenre18Name song(s)</label>
+      <visible>!string.equals(#MediaTip.MusicGenre18Count, )</visible>
+    </control>
+    <control>
+      <description>Music Genre Value</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>1539</posX>
+      <posY>513</posY>
+      <font>font10</font>
+      <label>#MediaTip.MusicGenre19Count #MediaTip.MusicGenre19Name song(s)</label>
+      <visible>!string.equals(#MediaTip.MusicGenre19Count, )</visible>
+    </control>
+    <!-- *** Video Overview *** -->
+    <control>
+      <description>Video</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>576</posX>
+      <posY>569</posY>
+      <width>44</width>
+      <height>45</height>
+      <texture>mediatip_video.png</texture>
+    </control>
+    <control>
+      <description>Videos</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>632</posX>
+      <posY>569</posY>
+      <label>#MediaTip.VideoHeadline</label>
+      <font>Label</font>
+    </control>
+    <control>
+      <description>Video Directory Name/Size Label</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>632</posX>
+      <posY>604</posY>
+      <label>Directory</label>
+      <font>font11</font>
+      <textcolor>ffffd700</textcolor>
+    </control>
+    <control>
+      <description>Video Directory Name/Size Value</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>871</posX>
+      <posY>604</posY>
+      <font>font11</font>
+      <label>#MediaTip.VideoDirectory0Name - #MediaTip.VideoDirectorySize, #MediaTip.VideoDirectoryFileCount file(s)</label>
+    </control>
+    <control>
+      <description>Video Count Label</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>632</posX>
+      <posY>632</posY>
+      <label>Videos</label>
+      <font>font11</font>
+      <textcolor>ffffd700</textcolor>
+    </control>
+    <control>
+      <description>Video Count Value</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>871</posX>
+      <posY>632</posY>
+      <font>font11</font>
+      <label>#MediaTip.VideoCount in #MediaTip.VideoGenreCount genre(s)</label>
+    </control>
+    <!-- *** Video Genre Overview *** -->
+    <control>
+      <description>Video Genre Music Icon</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>632</posX>
+      <posY>675</posY>
+      <width>30</width>
+      <height>30</height>
+      <texture>logos\genre\movie\#MediaTip.VideoGenre7Name.png</texture>
+      <visible>!string.equals(#MediaTip.VideoGenre7Count, )</visible>
+    </control>
+    <control>
+      <description>Video Genre Music Value</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>674</posX>
+      <posY>675</posY>
+      <font>font10</font>
+      <label>#MediaTip.VideoGenre7Count #MediaTip.VideoGenre7Name video(s)</label>
+      <visible>!string.equals(#MediaTip.VideoGenre7Count, )</visible>
+    </control>
+    <control>
+      <description>Video Genre Musical Icon</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>892</posX>
+      <posY>675</posY>
+      <width>30</width>
+      <height>30</height>
+      <texture>logos\genre\movie\#MediaTip.VideoGenre8Name.png</texture>
+      <visible>!string.equals(#MediaTip.VideoGenre8Count, )</visible>
+    </control>
+    <control>
+      <description>Video Genre Musical Value</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>962</posX>
+      <posY>675</posY>
+      <font>font10</font>
+      <label>#MediaTip.VideoGenre8Count #MediaTip.VideoGenre8Name video(s)</label>
+      <visible>!string.equals(#MediaTip.VideoGenre8Count, )</visible>
+    </control>
+    <control>
+      <description>Video Genre Documentary Icon</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>1208</posX>
+      <posY>675</posY>
+      <width>30</width>
+      <height>30</height>
+      <texture>logos\genre\movie\#MediaTip.VideoGenre4Name.png</texture>
+      <visible>!string.equals(#MediaTip.VideoGenre4Count, )</visible>
+    </control>
+    <control>
+      <description>Video Genre Documentary Value</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>1250</posX>
+      <posY>675</posY>
+      <font>font10</font>
+      <label>#MediaTip.VideoGenre4Count #MediaTip.VideoGenre4Name video(s)</label>
+      <visible>!string.equals(#MediaTip.VideoGenre4Count, )</visible>
+    </control>
+    <!-- *** Picture Overview *** -->
+    <control>
+      <description>Picture</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>576</posX>
+      <posY>731</posY>
+      <width>44</width>
+      <height>45</height>
+      <texture>mediatip_picture.png</texture>
+    </control>
+    <control>
+      <description>Picture</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>632</posX>
+      <posY>738</posY>
+      <label>#MediaTip.PictureHeadline</label>
+      <font>Label</font>
+    </control>
+    <control>
+      <description>Picture Directory Name/Size Label</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>632</posX>
+      <posY>773</posY>
+      <label>Directory</label>
+      <font>font11</font>
+      <textcolor>ffffd700</textcolor>
+    </control>
+    <control>
+      <description>Picture Directory Name/Size Value</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>871</posX>
+      <posY>773</posY>
+      <font>font11</font>
+      <label>#MediaTip.PictureDirectory0Name - #MediaTip.PictureDirectorySize, #MediaTip.PictureDirectoryFileCount file(s)</label>
+    </control>
+    <!-- *** Additional Directory 1 Overview *** -->
+    <control>
+      <description>Additional</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>576</posX>
+      <posY>829</posY>
+      <width>44</width>
+      <height>45</height>
+      <texture>mediatip_additional.png</texture>
+    </control>
+    <control>
+      <description>Additional</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>632</posX>
+      <posY>836</posY>
+      <label>#MediaTip.AdditionalDirectory0Headline</label>
+      <font>Label</font>
+    </control>
+    <control>
+      <description>Additional Directory Name/Size Label</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>632</posX>
+      <posY>871</posY>
+      <label>Directory</label>
+      <font>font11</font>
+      <textcolor>ffffd700</textcolor>
+    </control>
+    <control>
+      <description>Additional Directory Name/Size Value</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>871</posX>
+      <posY>871</posY>
+      <font>font11</font>
+      <label>#MediaTip.AdditionalDirectory0Name - #MediaTip.AdditionalDirectory0Size, #MediaTip.AdditionalDirectory0FileCount file(s)</label>
+    </control>
+  </controls>
+</window>

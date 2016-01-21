@@ -89,12 +89,6 @@ namespace MediaPortal.Util
     private int references_count = 0;
     private string references;
 
-    private string[] schemes = {
-                                 "ftp://", "file://", "http://", "gopher://", "mailto:", "news:", "nntp://", "telnet://"
-                                 ,
-                                 "wais://", "prospero://"
-                               };
-
     private char bullet_style = ' ';
 
     private int definition_list = 0;
@@ -2187,11 +2181,6 @@ namespace MediaPortal.Util
 
     // ------------------------------------------------
 
-    private void status()
-    {
-      //	printf(" paragraph: %d; div_test: %d; align[align_nr]: %d; z_o: %d\n",paragraph, div_test, get_align(), line_len_old);
-    }
-
     // ------------------------------------------------
 
     private void line_plus_word(string s, int wl, int wp)
@@ -2213,21 +2202,6 @@ namespace MediaPortal.Util
     // end line_plus_word
 
     // ------------------------------------------------
-
-    private void word_plus_string_nocount(string s)
-    {
-      int len = s.Length,
-          i = word_pos,
-          j = 0;
-
-      while (i < word_pos + len)
-      {
-        word += s[j];
-        j++;
-        i++;
-      }
-      word_pos += len;
-    }
 
     // end word_plus_string_nocount
 

@@ -1,0 +1,427 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!--version="1.0" encoding="utf-8" standalone="yes"-->
+<window>
+  <id>2014</id>
+  <defaultcontrol>6</defaultcontrol>
+  <allowoverlay>no</allowoverlay>
+  <controls>
+    <control>
+      <type>group</type>
+      <description>group element</description>
+      <animation effect="zoom" start="1,1" end="100,100" time="300" center="810,540" reversible="true">visiblechange</animation>
+      <control>
+        <type>image</type>
+        <id>1</id>
+        <width>1920</width>
+        <height>1080</height>
+        <texture>white.png</texture>
+        <colordiffuse>50005eef</colordiffuse>
+      </control>
+      <control>
+        <description>background image</description>
+        <type>image</type>
+        <id>1</id>
+        <posX>100</posX>
+        <posY>83</posY>
+        <width>1731</width>
+        <height>900</height>
+        <texture>black.png</texture>
+      </control>
+      <control>
+        <description>Image label</description>
+        <type>label</type>
+        <id>20</id>
+        <posX>129</posX>
+        <posY>154</posY>
+        <width>1661</width>
+        <label>-</label>
+        <font>font16</font>
+        <textcolor>ffffd700</textcolor>
+        <align>center</align>
+      </control>
+      <control>
+        <description>Image</description>
+        <type>image</type>
+        <id>3</id>
+        <posX>3766</posX>
+        <posY>253</posY>
+        <width>660</width>
+        <height>590</height>
+        <texture>-</texture>
+        <keepaspectratio>yes</keepaspectratio>
+      </control>
+      <control>
+        <description>Image</description>
+        <type>image</type>
+        <id>1</id>
+        <posX>630</posX>
+        <posY>210</posY>
+        <width>632</width>
+        <height>421</height>
+        <keepaspectratio>yes</keepaspectratio>
+        <centered>yes</centered>
+        <texture mask="picturecase_mask.png">#selectedthumb</texture>
+      </control>
+      <control>
+        <description>Image</description>
+        <type>image</type>
+        <id>1</id>
+        <posX>630</posX>
+        <posY>210</posY>
+        <width>632</width>
+        <height>421</height>
+        <texture>picturecase.png</texture>
+        <keepaspectratio>no</keepaspectratio>
+      </control>
+      <control>
+        <type>group</type>
+        <description>group element</description>
+        <layout>StackLayout(41, Vertical, true)</layout>
+        <posX>188</posX>
+        <posY>680</posY>
+        <control>
+          <description>Dimensions txt</description>
+          <type>label</type>
+          <id>1</id>
+          <label>9000</label>
+          <font>font12</font>
+          <textcolor>ffffd700</textcolor>
+        </control>
+        <control>
+          <description>Resolution txt</description>
+          <type>label</type>
+          <id>1</id>
+          <label>9001</label>
+          <font>font12</font>
+          <textcolor>ffffd700</textcolor>
+        </control>
+        <control>
+          <description>Flash txt</description>
+          <type>label</type>
+          <id>1</id>
+          <label>9002</label>
+          <font>font12</font>
+          <textcolor>ffffd700</textcolor>
+        </control>
+        <control>
+          <description>Metering mode txt</description>
+          <type>label</type>
+          <id>1</id>
+          <label>9003</label>
+          <font>font12</font>
+          <textcolor>ffffd700</textcolor>
+        </control>
+        <control>
+          <description>Exposure Compensation txt</description>
+          <type>label</type>
+          <id>1</id>
+          <label>9004</label>
+          <font>font12</font>
+          <textcolor>ffffd700</textcolor>
+        </control>
+        <control>
+          <description>Shutterspeed txt</description>
+          <type>label</type>
+          <id>1</id>
+          <label>9005</label>
+          <font>font12</font>
+          <textcolor>ffffd700</textcolor>
+        </control>
+      </control>
+      <control>
+        <type>group</type>
+        <description>group element</description>
+        <layout>StackLayout(0, Vertical, true)</layout>
+        <posX>560</posX>
+        <posY>682</posY>
+        <control>
+          <description>Image Dimensions value</description>
+          <type>label</type>
+          <id>21</id>
+          <width>365</width>
+          <height>41</height>
+          <label>-</label>
+          <font>font12</font>
+          <textcolor>ffffd700</textcolor>
+        </control>
+        <control>
+          <description>Resolutions value</description>
+          <type>label</type>
+          <id>22</id>
+          <width>365</width>
+          <height>41</height>
+          <label>-</label>
+          <font>font12</font>
+          <textcolor>ffffd700</textcolor>
+        </control>
+        <control>
+          <description>Flash value</description>
+          <type>fadelabel</type>
+          <id>23</id>
+          <width>365</width>
+          <height>41</height>
+          <label>-</label>
+          <font>font12</font>
+          <textcolor>ffffd700</textcolor>
+        </control>
+        <control>
+          <description>Metering Mode value</description>
+          <type>fadelabel</type>
+          <id>24</id>
+          <width>365</width>
+          <height>41</height>
+          <label>-</label>
+          <font>font12</font>
+          <textcolor>ffffd700</textcolor>
+        </control>
+        <control>
+          <description>Exposure Compensation value</description>
+          <type>fadelabel</type>
+          <id>25</id>
+          <width>365</width>
+          <height>41</height>
+          <label>-</label>
+          <font>font12</font>
+          <textcolor>ffffd700</textcolor>
+        </control>
+        <control>
+          <description>Shutter Speed value</description>
+          <type>fadelabel</type>
+          <id>26</id>
+          <width>365</width>
+          <height>41</height>
+          <label>-</label>
+          <font>font12</font>
+          <textcolor>ffffd700</textcolor>
+        </control>
+      </control>
+      <control>
+        <type>group</type>
+        <description>group element</description>
+        <layout>StackLayout(41, Vertical, true)</layout>
+        <posX>900</posX>
+        <posY>680</posY>>
+        <control>
+          <description>Date Taken txt</description>
+          <type>label</type>
+          <id>1</id>
+          <label>9006</label>
+          <font>font12</font>
+          <textcolor>ffffd700</textcolor>
+        </control>
+        <control>
+          <description>Fstop txt</description>
+          <type>label</type>
+          <id>1</id>
+          <label>9007</label>
+          <font>font12</font>
+          <textcolor>ffffd700</textcolor>
+        </control>
+        <control>
+          <description>Exposure Time txt</description>
+          <type>label</type>
+          <id>1</id>
+          <label>9008</label>
+          <font>font12</font>
+          <textcolor>ffffd700</textcolor>
+        </control>
+        <control>
+          <description>Camera Model txt</description>
+          <type>label</type>
+          <id>1</id>
+          <label>9009</label>
+          <font>font12</font>
+          <textcolor>ffffd700</textcolor>
+        </control>
+        <control>
+          <description>Equipment make txt</description>
+          <type>label</type>
+          <id>1</id>
+          <label>9010</label>
+          <font>font12</font>
+          <textcolor>ffffd700</textcolor>
+        </control>
+        <control>
+          <description>View Comment txt</description>
+          <type>label</type>
+          <id>1</id>
+          <label>9011</label>
+          <font>font12</font>
+          <textcolor>ffffd700</textcolor>
+        </control>
+      </control>
+      <control>
+        <type>group</type>
+        <description>group element</description>
+        <layout>StackLayout(0, Vertical, true)</layout>
+        <posX>1260</posX>
+        <posY>682</posY>
+        <control>
+          <description>Date Taken value</description>
+          <type>label</type>
+          <id>27</id>
+          <width>420</width>
+          <height>41</height>
+          <label>-</label>
+          <font>font12</font>
+          <textcolor>ffffd700</textcolor>
+        </control>
+        <control>
+          <description>Fstop value</description>
+          <type>label</type>
+          <id>28</id>
+          <width>420</width>
+          <height>41</height>
+          <label>-</label>
+          <font>font12</font>
+          <textcolor>ffffd700</textcolor>
+        </control>
+        <control>
+          <description>Exposure Time value</description>
+          <type>label</type>
+          <id>29</id>
+          <width>420</width>
+          <height>41</height>
+          <label>-</label>
+          <font>font12</font>
+          <textcolor>ffffd700</textcolor>
+        </control>
+        <control>
+          <description>Camera Model value</description>
+          <type>fadelabel</type>
+          <id>30</id>
+          <width>420</width>
+          <height>41</height>
+          <label>-</label>
+          <font>font12</font>
+          <textcolor>ffffd700</textcolor>
+        </control>
+        <control>
+          <description>Equipment Make value</description>
+          <type>fadelabel</type>
+          <id>31</id>
+          <width>420</width>
+          <height>41</height>
+          <label>-</label>
+          <font>font12</font>
+          <textcolor>ffffd700</textcolor>
+        </control>
+        <control>
+          <description>View Comments value</description>
+          <type>label</type>
+          <id>32</id>
+          <width>420</width>
+          <height>41</height>
+          <label>-</label>
+          <font>font12</font>
+          <textcolor>ffffd700</textcolor>
+        </control>
+      </control>
+      <!-- **************************  Separator lines   ***************************-->&gt;
+      <control>
+        <type>group</type>
+        <description>group element</description>
+        <layout>StackLayout(40, Vertical, true)</layout>
+        <posX>188</posX>
+        <posY>720</posY>
+        <control>
+          <description>divider horizontal</description>
+          <type>image</type>
+          <id>0</id>
+          <width>650</width>
+          <height>1</height>
+          <texture>horizontal_bar.png</texture>
+          <colordiffuse>60ffffff</colordiffuse>
+        </control>
+        <control>
+          <description>divider horizontal</description>
+          <type>image</type>
+          <id>0</id>
+          <width>650</width>
+          <height>1</height>
+          <texture>horizontal_bar.png</texture>
+          <colordiffuse>60ffffff</colordiffuse>
+        </control>
+        <control>
+          <description>divider horizontal</description>
+          <type>image</type>
+          <id>0</id>
+          <width>650</width>
+          <height>1</height>
+          <texture>horizontal_bar.png</texture>
+          <colordiffuse>60ffffff</colordiffuse>
+        </control>
+        <control>
+          <description>divider horizontal</description>
+          <type>image</type>
+          <id>0</id>
+          <width>650</width>
+          <height>1</height>
+          <texture>horizontal_bar.png</texture>
+          <colordiffuse>60ffffff</colordiffuse>
+        </control>
+        <control>
+          <description>divider horizontal</description>
+          <type>image</type>
+          <id>0</id>
+          <width>650</width>
+          <height>1</height>
+          <texture>horizontal_bar.png</texture>
+          <colordiffuse>60ffffff</colordiffuse>
+        </control>
+      </control>
+      <control>
+        <type>group</type>
+        <description>group element</description>
+        <layout>StackLayout(40, Vertical, true)</layout>
+        <posX>900</posX>
+        <posY>720</posY>
+        <control>
+          <description>divider horizontal</description>
+          <type>image</type>
+          <id>0</id>
+          <width>840</width>
+          <height>1</height>
+          <texture>horizontal_bar.png</texture>
+          <colordiffuse>60ffffff</colordiffuse>
+        </control>
+        <control>
+          <description>divider horizontal</description>
+          <type>image</type>
+          <id>0</id>
+          <width>840</width>
+          <height>1</height>
+          <texture>horizontal_bar.png</texture>
+          <colordiffuse>60ffffff</colordiffuse>
+        </control>
+        <control>
+          <description>divider horizontal</description>
+          <type>image</type>
+          <id>0</id>
+          <width>840</width>
+          <height>1</height>
+          <texture>horizontal_bar.png</texture>
+          <colordiffuse>60ffffff</colordiffuse>
+        </control>
+        <control>
+          <description>divider horizontal</description>
+          <type>image</type>
+          <id>0</id>
+          <width>840</width>
+          <height>1</height>
+          <texture>horizontal_bar.png</texture>
+          <colordiffuse>60ffffff</colordiffuse>
+        </control>
+        <control>
+          <description>divider horizontal</description>
+          <type>image</type>
+          <id>0</id>
+          <width>840</width>
+          <height>1</height>
+          <texture>horizontal_bar.png</texture>
+          <colordiffuse>60ffffff</colordiffuse>
+        </control>
+      </control>
+    </control>
+  </controls>
+</window>

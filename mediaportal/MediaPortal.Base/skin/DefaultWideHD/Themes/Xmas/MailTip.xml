@@ -1,0 +1,256 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!--version="1.0" encoding="utf-8" standalone="yes"-->
+<window>
+  <id>7970</id>
+  <defaultcontrol>2</defaultcontrol>
+  <allowoverlay>no</allowoverlay>
+  <define>#itemcount:</define>
+  <controls>
+    <control>
+      <description>background image</description>
+      <type>image</type>
+      <id>1</id>
+      <width>1920</width>
+      <height>1080</height>
+      <texture>blue.png</texture>
+      <colordiffuse>ffffffff</colordiffuse>
+    </control>
+    <control>
+      <description>General Overlay</description>
+      <id>0</id>
+      <type>image</type>
+      <posX>0</posX>
+      <posY>45</posY>
+      <width>1920</width>
+      <height>1080</height>
+      <texture>general_overlay.png</texture>
+    </control>
+    <import>common.window.xml</import>
+    <import>common.time.xml</import>
+    <control>
+      <type>label</type>
+      <id>1</id>
+      <posX>45</posX>
+      <posY>15</posY>
+      <label>MailTip  #MailTip.MailboxDescription</label>
+      <font>Label</font>
+      <align>left</align>
+      <textcolor>ffffd700</textcolor>
+    </control>
+    <control>
+      <description>Mail Provider Image</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>45</posX>
+      <posY>120</posY>
+      <width>49</width>
+      <height>49</height>
+      <keepaspectratio>yes</keepaspectratio>
+      <texture>#MailTip.MailboxProviderImage</texture>
+      <align>left</align>
+    </control>
+    <!-- *** Button *** -->
+    <control>
+      <type>group</type>
+      <description>group element</description>
+      <posX>60</posX>
+      <posY>270</posY>
+      <layout>StackLayout</layout>
+      <control>
+        <description>Mailbox</description>
+        <type>button</type>
+        <id>2</id>
+        <label>Mailbox...</label>
+        <onup>9</onup>
+        <ondown>3</ondown>
+        <onleft>50</onleft>
+        <onright>50</onright>
+      </control>
+      <control>
+        <description>Delete/Trash</description>
+        <type>button</type>
+        <id>3</id>
+        <label>Delete/Trash messages</label>
+        <onup>2</onup>
+        <ondown>4</ondown>
+        <onleft>50</onleft>
+        <onright>50</onright>
+      </control>
+      <control>
+        <description>Delete/Trash All</description>
+        <type>button</type>
+        <id>4</id>
+        <label>Delete/Trash all messages</label>
+        <onup>3</onup>
+        <ondown>5</ondown>
+        <onleft>50</onleft>
+        <onright>50</onright>
+      </control>
+      <control>
+        <description>Save attachments</description>
+        <type>button</type>
+        <id>5</id>
+        <label>Save attachments</label>
+        <onup>4</onup>
+        <ondown>9</ondown>
+        <onleft>50</onleft>
+        <onright>50</onright>
+      </control>
+      <control>
+        <description>Synchronize</description>
+        <type>button</type>
+        <id>9</id>
+        <label>Synchronize</label>
+        <onup>5</onup>
+        <ondown>2</ondown>
+        <onleft>50</onleft>
+        <onright>50</onright>
+      </control>
+    </control>
+    <!-- *** Action *** -->
+    <control>
+      <description>Action</description>
+      <type>fadelabel</type>
+      <id>0</id>
+      <posX>45</posX>
+      <posY>52</posY>
+      <width>1509</width>
+      <align>left</align>
+      <font>font10</font>
+      <shadowAngle>45</shadowAngle>
+      <shadowDistance>3</shadowDistance>
+      <shadowColor>ff202020</shadowColor>
+      <textcolor>ffffd700</textcolor>
+      <colordiffuse>ffffffff</colordiffuse>
+      <label>#MailTip.TranslationAction</label>
+      <visible>![control.isvisible(12)|control.isvisible(13)]+string.equals(#MailTip.MailSender, )</visible>
+    </control>
+    <!-- *** Progress *** -->
+    <control>
+      <description>Progress Text</description>
+      <type>label</type>
+      <id>12</id>
+      <posX>45</posX>
+      <posY>52</posY>
+      <width>1509</width>
+      <align>left</align>
+      <font>font10</font>
+      <shadowAngle>45</shadowAngle>
+      <shadowDistance>3</shadowDistance>
+      <shadowColor>ff202020</shadowColor>
+      <textcolor>ffffd700</textcolor>
+      <colordiffuse>ffffffff</colordiffuse>
+      <label>#MailTip.TranslationAction #MailTip.ReceiveProgress...</label>
+      <visible>string.equals(#MailTip.Action,Receive)+string.equals(#MailTip.MailSender, )</visible>
+    </control>
+    <!-- *** List *** -->
+    <control>
+      <description>listcontrol</description>
+      <type>listcontrol</type>
+      <id>50</id>
+      <posX>505</posX>
+      <posY>270</posY>
+      <width>1264</width>
+      <height>709</height>
+      <PinIconXOff>6</PinIconXOff>
+      <PinIconYOff>1</PinIconYOff>
+      <PinIconWidth>32</PinIconWidth>
+      <PinIconHeight>32</PinIconHeight>
+      <onleft>2</onleft>
+      <visible>string.equals(#MailTip.Action,Idle)</visible>
+    </control>
+    <!-- *** Item Selection Mail Priority *** -->
+    <!--control>
+			<type>image</type>
+			<id>0</id>
+			<posX>410</posX>
+			<posY>600</posY>
+			<width>64</width>
+			<height>64</height>
+			<keepaspectratio>yes</keepaspectratio>
+			<texture>#MailTip.MailEnvelopeImage</texture>
+			<visible>!string.equals(#MailTip.MailSender, )</visible>
+		</control-->
+    <!-- *** Item Selection Mail Description *** -->
+    <control>
+      <type>label</type>
+      <id>0</id>
+      <posX>45</posX>
+      <posY>52</posY>
+      <width>1509</width>
+      <align>left</align>
+      <font>font10</font>
+      <shadowAngle>45</shadowAngle>
+      <shadowDistance>3</shadowDistance>
+      <shadowColor>ff202020</shadowColor>
+      <textcolor>ffffd700</textcolor>
+      <colordiffuse>ffffffff</colordiffuse>
+      <label>#MailTip.MailSender, #MailTip.MailDate #MailTip.MailTime, #MailTip.TranslationPriority: #MailTip.MailPriority (#MailTip.MailSize)</label>
+      <visible>!string.equals(#MailTip.MailSender, )</visible>
+    </control>
+    <!-- *** Item Selection Mail Number *** -->
+    <control>
+      <type>label</type>
+      <id>0</id>
+      <posX>1869</posX>
+      <posY>52</posY>
+      <align>right</align>
+      <font>font11</font>
+      <textcolor>ffffd700</textcolor>
+      <shadowAngle>45</shadowAngle>
+      <shadowDistance>3</shadowDistance>
+      <shadowColor>ff202020</shadowColor>
+      <label>#MailTip.MailNumber #MailTip.TranslationOf #MailTip.MailCount</label>
+      <visible>!string.equals(#MailTip.MailSender, )</visible>
+    </control>
+    <!-- *** Item Selection Mail Text *** -->
+    <!--control>
+      <description>text background image</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>470</posX>
+      <posY>657</posY>
+      <width>1370</width>
+      <height>396</height>
+      <texture>osd-background.png</texture>
+    </control>
+    <control>
+      <description>Text</description>
+      <type>textboxscrollup</type>
+      <id>0</id>
+      <posX>506</posX>
+      <posY>678</posY>
+      <width>1265</width>
+      <height>354</height>
+      <align>left</align>
+      <font>font11</font>
+      <label>#MailTip.MailText</label>
+      <visible>!string.equals(#MailTip.MailSender, )</visible>
+    </control-->
+    <control>
+      <description>Empty Mailbox Text</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>799</posX>
+      <posY>349</posY>
+      <width>759</width>
+      <label>#MailTip.TranslationMailboxEmpty</label>
+      <align>center</align>
+      <font>font16</font>
+      <visible>!string.equals(#MailTip.MailboxIncomingHost, )+string.equals(#MailTip.MailCount,0)</visible>
+    </control>
+    <!-- *** Undefined Mailbox Text *** -->
+    <control>
+      <description>Undefined Mailbox Text</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>799</posX>
+      <posY>349</posY>
+      <width>759</width>
+      <label>#MailTip.TranslationMailboxUndefined</label>
+      <align>center</align>
+      <font>font16</font>
+      <visible>string.equals(#MailTip.MailboxIncomingHost, )+string.equals(#MailTip.MailCount, )</visible>
+    </control>
+  </controls>
+</window>

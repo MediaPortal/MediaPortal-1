@@ -32,7 +32,7 @@
         <posY>114</posY>
         <width>1030</width>
         <label>#Trakt.Translation.TrendingMovies.Label:</label>
-        <font>font11</font>
+        <font>RSS</font>
         <textcolor>ivory</textcolor>
         <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
         <visible>plugin.isenabled(Trakt)+string.contains(#highlightedbutton,TRAKT)+window.isvisible(35)|[Control.isvisible(61150)]|[Control.hasfocus(98302)|Control.hasfocus(98301)]</visible>
@@ -45,7 +45,7 @@
         <posY>114</posY>
         <width>590</width>
         <label>#Trakt.Translation.TrendingShows.Label:</label>
-        <font>font11</font>
+        <font>RSS</font>
         <textcolor>ivory</textcolor>
         <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
         <visible>plugin.isenabled(Trakt)+string.contains(#highlightedbutton,TRAKT)+window.isvisible(35)|[Control.isvisible(61150)]|[Control.hasfocus(98302)|Control.hasfocus(98301)]</visible>
@@ -58,7 +58,7 @@
         <posY>114</posY>
         <width>580</width>
         <label>#selecteditem</label>
-        <font>font11</font>
+        <font>RSS</font>
         <textcolor>ivory</textcolor>
         <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
         <visible>Control.hasfocus(98302)</visible>
@@ -71,7 +71,7 @@
         <posY>114</posY>
         <width>580</width>
         <label>#selecteditem</label>
-        <font>font11</font>
+        <font>RSS</font>
         <textcolor>ivory</textcolor>
         <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
         <visible>Control.hasfocus(98301)</visible>
@@ -190,7 +190,7 @@
           <posX>124</posX>
           <posY>114</posY>
           <width>1750</width>
-          <font>font11</font>
+          <font>RSS</font>
           <label>#latestMediaHandler.tvseries.latest.type  #latestMediaHandler.tvseries.selected.serieName  S#latestMediaHandler.tvseries.selected.seasonIndexE#latestMediaHandler.tvseries.selected.episodeIndex: #latestMediaHandler.tvseries.selected.episodeName (#latestMediaHandler.tvseries.selected.dateAdded)</label>
           <align>left</align>
           <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
@@ -220,7 +220,7 @@
           <thumbHeight>167</thumbHeight>
           <thumbPosX>0</thumbPosX>
           <thumbPosY>0</thumbPosY>
-          <thumbVAlign>middle</thumbVAlign>>
+          <thumbVAlign>middle</thumbVAlign>
           <keepaspectratio>yes</keepaspectratio>
           <thumbs mask="picturecase_mask.png" />
           <imageFolder></imageFolder>
@@ -256,32 +256,6 @@
           <animation effect="fade" delay="1000" time="500">visible</animation>
           <visible>control.hasfocus(919199940)</visible>
         </control>
-        <!--control>
-          <description>Plot Image</description>
-          <type>image</type>
-          <id>0</id>
-          <posX>130</posX>
-          <posY>390</posY>
-          <width>284</width>
-          <height>160</height>
-          <texture>#latestMediaHandler.tvseries.selected.thumb</texture>
-          <animation effect="fade" delay="1000" time="500">visible</animation>
-          <visible>control.hasfocus(919199940)+!string.equals(#latestMediaHandler.tvseries.latest.mode,episodes)</visible>
-        </control-->
-        <!--control>
-          <description>music artistbio 1</description>
-          <type>textboxscrollup</type>
-          <id>0</id>
-          <posX>450</posX>
-          <posY>390</posY>
-          <width>1350</width>
-          <height>165</height>
-          <font>font10</font>
-          <textcolor>ffffffff</textcolor>
-          <label>#latestMediaHandler.tvseries.selected.plot</label>
-          <visible>control.hasfocus(919199940)+!string.equals(#latestMediaHandler.tvseries.latest.mode,episodes)</visible>
-          <animation effect="fade" delay="1000" time="500">visible</animation>
-        </control-->
         <control>
           <description>music artistbio 1</description>
           <type>textboxscrollup</type>
@@ -289,7 +263,7 @@
           <posX>140</posX>
           <posY>390</posY>
           <width>1650</width>
-          <height>165</height>
+          <height>150</height>
           <font>font10</font>
           <textcolor>ffffffff</textcolor>
           <label>#latestMediaHandler.tvseries.selected.plot</label>
@@ -303,9 +277,9 @@
           <description>background for recently added files</description>
           <type>image</type>
           <id>0</id>
-          <posX>70</posX>
+          <posX>160</posX>
           <posY>90</posY>
-          <width>1770</width>
+          <width>1590</width>
           <height>275</height>
           <texture>osdbg2.png</texture>
           <colordiffuse>ffffffff</colordiffuse>
@@ -316,10 +290,10 @@
           <description>Updates label</description>
           <type>label</type>
           <id>0</id>
-          <posX>124</posX>
+          <posX>214</posX>
           <posY>114</posY>
-          <width>1750</width>
-          <font>font11</font>
+          <width>1590</width>
+          <font>RSS</font>
           <label>#SkinTranslation.Translations.NewFilms.Label:  #latestMediaHandler.movingpicture.selected.title  ~ #latestMediaHandler.movingpicture.selected.genre  (#latestMediaHandler.movingpicture.selected.dateAdded)</label>
           <align>left</align>
           <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
@@ -333,7 +307,7 @@
           <description>Filmstrip view</description>
           <type>filmstrip</type>
           <id>919199910</id>
-          <posX>124</posX>
+          <posX>214</posX>
           <posY>159</posY>
           <width>1850</width>
           <height>140</height>
@@ -375,9 +349,9 @@
           <description>Plot Background</description>
           <type>image</type>
           <id>0</id>
-          <posX>70</posX>
+          <posX>160</posX>
           <posY>360</posY>
-          <width>1770</width>
+          <width>1590</width>
           <height>225</height>
           <texture>osdbg2.png</texture>
           <colordiffuse>ffffffff</colordiffuse>
@@ -388,10 +362,10 @@
           <description>MovPic Plot</description>
           <type>textboxscrollup</type>
           <id>0</id>
-          <posX>140</posX>
+          <posX>214</posX>
           <posY>390</posY>
-          <width>1650</width>
-          <height>165</height>
+          <width>1500</width>
+          <height>150</height>
           <font>font10</font>
           <textcolor>ffffffff</textcolor>
           <label>#latestMediaHandler.movingpicture.selected.plot</label>
@@ -421,7 +395,7 @@
           <posX>124</posX>
           <posY>114</posY>
           <width>1750</width>
-          <font>font11</font>
+          <font>RSS</font>
           <label>#SkinTranslation.Translations.NewRecordings.Label:  #latestMediaHandler.tvrecordings.selected.title (#latestMediaHandler.tvrecordings.selected.dateAdded)</label>
           <align>left</align>
           <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
@@ -435,7 +409,7 @@
           <description>Filmstrip view</description>
           <type>filmstrip</type>
           <id>919199840</id>
-          <posX>124</posX>
+          <posX>134</posX>
           <posY>165</posY>
           <width>1700</width>
           <height>140</height>
@@ -443,12 +417,12 @@
           <onright>919199840</onright>
           <onup>17</onup>
           <ondown>820101</ondown>
-          <itemWidth>208</itemWidth>
+          <itemWidth>240</itemWidth>
           <itemHeight>130</itemHeight>
-          <textureWidth>188</textureWidth>
-          <textureHeight>118</textureHeight>
-          <thumbWidth>188</thumbWidth>
-          <thumbHeight>118</thumbHeight>
+          <textureWidth>201</textureWidth>
+          <textureHeight>113</textureHeight>
+          <thumbWidth>201</thumbWidth>
+          <thumbHeight>113</thumbHeight>
           <thumbPosX>0</thumbPosX>
           <thumbPosY>0</thumbPosY>
           <keepaspectratio>no</keepaspectratio>
@@ -478,7 +452,7 @@
           <type>image</type>
           <id>0</id>
           <posX>70</posX>
-          <posY>360</posY>
+          <posY>330</posY>
           <width>1770</width>
           <height>225</height>
           <texture>osdbg2.png</texture>
@@ -491,9 +465,9 @@
           <type>textboxscrollup</type>
           <id>0</id>
           <posX>140</posX>
-          <posY>390</posY>
+          <posY>360</posY>
           <width>1650</width>
-          <height>165</height>
+          <height>150</height>
           <font>font10</font>
           <textcolor>ffffffff</textcolor>
           <label>#latestMediaHandler.tvrecordings.selected.summary</label>
@@ -507,9 +481,9 @@
           <description>background for recently added files</description>
           <type>image</type>
           <id>0</id>
-          <posX>70</posX>
+          <posX>160</posX>
           <posY>90</posY>
-          <width>1770</width>
+          <width>1590</width>
           <height>245</height>
           <texture>osdbg2.png</texture>
           <colordiffuse>ffffffff</colordiffuse>
@@ -520,10 +494,10 @@
           <description>Updates label</description>
           <type>label</type>
           <id>0</id>
-          <posX>124</posX>
+          <posX>214</posX>
           <posY>114</posY>
-          <width>1750</width>
-          <font>font11</font>
+          <width>1590</width>
+          <font>RSS</font>
           <label>#latestMediaHandler.music.label  #latestMediaHandler.music.selected.artist ~ #latestMediaHandler.music.selected.album  (#latestMediaHandler.music.selected.dateAdded)</label>
           <align>left</align>
           <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
@@ -537,7 +511,7 @@
           <description>Filmstrip view</description>
           <type>filmstrip</type>
           <id>919199970</id>
-          <posX>124</posX>
+          <posX>214</posX>
           <posY>159</posY>
           <width>1850</width>
           <height>140</height>
@@ -580,9 +554,9 @@
           <description>Plot Background</description>
           <type>image</type>
           <id>0</id>
-          <posX>70</posX>
+          <posX>160</posX>
           <posY>330</posY>
-          <width>1770</width>
+          <width>1590</width>
           <height>225</height>
           <texture>osdbg2.png</texture>
           <colordiffuse>ffffffff</colordiffuse>
@@ -593,10 +567,10 @@
           <description>music artistbio 1</description>
           <type>textboxscrollup</type>
           <id>0</id>
-          <posX>140</posX>
+          <posX>214</posX>
           <posY>360</posY>
-          <width>1650</width>
-          <height>165</height>
+          <width>1500</width>
+          <height>150</height>
           <font>font10</font>
           <textcolor>ffffffff</textcolor>
           <label>#latestMediaHandler.music.selected.artistbio</label>
@@ -613,7 +587,7 @@
           <posX>70</posX>
           <posY>90</posY>
           <width>1770</width>
-          <height>245</height>
+          <height>275</height>
           <texture>osdbg2.png</texture>
           <colordiffuse>ffffffff</colordiffuse>
           <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
@@ -626,7 +600,7 @@
           <posX>124</posX>
           <posY>114</posY>
           <width>1750</width>
-          <font>font11</font>
+          <font>RSS</font>
           <label>#SkinTranslation.Translations.NewPictures.Label:  #latestMediaHandler.picture.selected.title  (#latestMediaHandler.picture.selected.dateAdded)</label>
           <align>left</align>
           <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
@@ -648,19 +622,20 @@
           <onright>919199710</onright>
           <onup>17</onup>
           <ondown>820101</ondown>
-          <itemWidth>208</itemWidth>
-          <itemHeight>130</itemHeight>
-          <textureWidth>188</textureWidth>
-          <textureHeight>118</textureHeight>
-          <thumbWidth>188</thumbWidth>
-          <thumbHeight>118</thumbHeight>
+          <itemWidth>210</itemWidth>
+          <itemHeight>170</itemHeight>
+          <textureWidth>195</textureWidth>
+          <textureHeight>167</textureHeight>
+          <thumbWidth>195</thumbWidth>
+          <thumbHeight>167</thumbHeight>
           <thumbPosX>0</thumbPosX>
           <thumbPosY>0</thumbPosY>
-          <keepaspectratio>no</keepaspectratio>
+          <thumbVAlign>middle</thumbVAlign>
+          <keepaspectratio>yes</keepaspectratio>
           <thumbs mask="picturecase_mask.png" />
           <imageFolder></imageFolder>
           <imageFolderFocus></imageFolderFocus>
-          <frameFocus>picturecase-focus.png</frameFocus>
+          <frameFocus>tvseries-focus.png</frameFocus>
           <showFrame>yes</showFrame>
           <showFolder>yes</showFolder>
           <showBackGround>no</showBackGround>
@@ -678,7 +653,6 @@
           <visible>plugin.isenabled(Latest Media Handler)+plugin.isenabled(Pictures)+string.equals(#latestMediaHandler.picture.latest.enabled,true)+!string.equals(#latestMediaHandler.picture.latest1.title,)+[string.contains(#highlightedbutton,PICTURE)|Control.hasfocus(919199710)]</visible>
         </control>
         </control>
-        
       <!-- ******************************************************************************************** -->
       <!-- ******************************* RECENTLY ADDED MYFILMS *********************************** -->
       <!-- ******************************************************************************************* -->
@@ -686,9 +660,9 @@
           <description>background for recently added files</description>
           <type>image</type>
           <id>0</id>
-          <posX>70</posX>
+          <posX>160</posX>
           <posY>90</posY>
-          <width>1770</width>
+          <width>1590</width>
           <height>275</height>
           <texture>osdbg2.png</texture>
           <colordiffuse>ffffffff</colordiffuse>
@@ -699,10 +673,10 @@
           <description>Updates label</description>
           <type>label</type>
           <id>0</id>
-          <posX>124</posX>
+          <posX>214</posX>
           <posY>114</posY>
-          <width>1750</width>
-          <font>font11</font>
+          <width>1500</width>
+          <font>RSS</font>
           <label>#SkinTranslation.Translations.NewFilms.Label:  #latestMediaHandler.myfilms.selected.title  ~ #latestMediaHandler.myfilms.selected.genre  (#latestMediaHandler.myfilms.selected.dateAdded)</label>
           <align>left</align>
           <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
@@ -716,7 +690,7 @@
           <description>Filmstrip view</description>
           <type>filmstrip</type>
           <id>919199880</id>
-          <posX>124</posX>
+          <posX>214</posX>
           <posY>159</posY>
           <width>1850</width>
           <height>140</height>
@@ -781,7 +755,7 @@
           <posX>124</posX>
           <posY>114</posY>
           <width>1030</width>
-          <font>font11</font>
+          <font>RSS</font>
           <label>#SkinTranslation.Translations.NewYouTubeVideos.Label:</label>
           <align>left</align>
           <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
@@ -793,7 +767,7 @@
           <posX>742</posX>
           <posY>166</posY>
           <width>1030</width>
-          <font>font11</font>
+          <font>RSS</font>
           <label>#OnlineVideos.LatestVideo1.Title ~ #OnlineVideos.LatestVideo1.Duration ~ #OnlineVideos.LatestVideo1.Aired (#OnlineVideos.LatestVideo1.Site)</label>
           <align>left</align>
           <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
@@ -805,7 +779,7 @@
           <posX>742</posX>
           <posY>201</posY>
           <width>1030</width>
-          <font>font11</font>
+          <font>RSS</font>
           <label>#OnlineVideos.LatestVideo2.Title ~ #OnlineVideos.LatestVideo2.Duration ~ #OnlineVideos.LatestVideo2.Aired (#OnlineVideos.LatestVideo2.Site)</label>
           <align>left</align>
           <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
@@ -817,7 +791,7 @@
           <posX>742</posX>
           <posY>236</posY>
           <width>1030</width>
-          <font>font11</font>
+          <font>RSS</font>
           <label>#OnlineVideos.LatestVideo3.Title ~ #OnlineVideos.LatestVideo3.Duration ~ #OnlineVideos.LatestVideo3.Aired (#OnlineVideos.LatestVideo3.Site)</label>
           <align>left</align>
           <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
@@ -835,6 +809,7 @@
             <id>0</id>
             <width>188</width>
             <height>118</height>
+            <thumbVAlign>middle</thumbVAlign>
             <keepaspectratio>yes</keepaspectratio>
             <texture mask="picturecase_mask.png">#OnlineVideos.LatestVideo1.Thumb</texture>
           </control>
@@ -865,9 +840,9 @@
           <description>background for recently added files</description>
           <type>image</type>
           <id>0</id>
-          <posX>70</posX>
+          <posX>160</posX>
           <posY>90</posY>
-          <width>1770</width>
+          <width>1590</width>
           <height>275</height>
           <texture>osdbg2.png</texture>
           <colordiffuse>ffffffff</colordiffuse>
@@ -878,10 +853,10 @@
           <description>Updates label</description>
           <type>label</type>
           <id>0</id>
-          <posX>124</posX>
+          <posX>214</posX>
           <posY>114</posY>
-          <width>1750</width>
-          <font>font11</font>
+          <width>1500</width>
+          <font>RSS</font>
           <label>#SkinTranslation.Translations.NewFilms.Label:  #latestMediaHandler.myvideo.selected.title  ~ #latestMediaHandler.myvideo.selected.genre  (#latestMediaHandler.myvideo.selected.dateAdded)</label>
           <align>left</align>
           <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
@@ -895,7 +870,7 @@
           <description>Filmstrip view</description>
           <type>filmstrip</type>
           <id>919198710</id>
-          <posX>124</posX>
+          <posX>214</posX>
           <posY>159</posY>
           <width>1850</width>
           <height>140</height>
@@ -937,9 +912,9 @@
           <description>Plot Background</description>
           <type>image</type>
           <id>0</id>
-          <posX>70</posX>
+          <posX>160</posX>
           <posY>360</posY>
-          <width>1770</width>
+          <width>1590</width>
           <height>225</height>
           <texture>osdbg2.png</texture>
           <colordiffuse>ffffffff</colordiffuse>
@@ -950,10 +925,10 @@
           <description>VIDEO1 Plot</description>
           <type>textboxscrollup</type>
           <id>0</id>
-          <posX>140</posX>
+          <posX>214</posX>
           <posY>390</posY>
-          <width>1650</width>
-          <height>165</height>
+          <width>1500</width>
+          <height>150</height>
           <font>font10</font>
           <textcolor>ffffffff</textcolor>
           <label>#latestMediaHandler.myvideo.selected.plot</label>
@@ -986,7 +961,7 @@
           <posX>124</posX>
           <posY>114</posY>
           <width>1030</width>
-          <font>font11</font>
+          <font>RSS</font>
           <label>Heutige Film-Highlights:</label>
           <align>left</align>
           <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
@@ -998,7 +973,7 @@
           <posX>742</posX>
           <posY>166</posY>
           <width>1050</width>
-          <font>font11</font>
+          <font>RSS</font>
           <label>#ClickfinderPG.Movie1.Title ~ #ClickfinderPG.Movie1.Genre (#ClickfinderPG.Movie1.Channel - #ClickfinderPG.Movie1.Time)</label>
           <align>left</align>
           <visible>!string.equals(#ClickfinderPG.Movie1.Title,)</visible>
@@ -1011,7 +986,7 @@
           <posX>742</posX>
           <posY>201</posY>
           <width>1050</width>
-          <font>font11</font>
+          <font>RSS</font>
           <label>#ClickfinderPG.Movie2.Title ~ #ClickfinderPG.Movie2.Genre (#ClickfinderPG.Movie2.Channel - #ClickfinderPG.Movie2.Time)</label>
           <align>left</align>
           <visible>!string.equals(#ClickfinderPG.Movie2.Title,)</visible>
@@ -1024,7 +999,7 @@
           <posX>742</posX>
           <posY>236</posY>
           <width>1050</width>
-          <font>font11</font>
+          <font>RSS</font>
           <label>#ClickfinderPG.Movie3.Title ~ #ClickfinderPG.Movie3.Genre (#ClickfinderPG.Movie3.Channel - #ClickfinderPG.Movie3.Time)</label>
           <align>left</align>
           <visible>!string.equals(#ClickfinderPG.Movie3.Title,)</visible>
@@ -1127,7 +1102,7 @@
           <posX>124</posX>
           <posY>114</posY>
           <width>1030</width>
-          <font>font11</font>
+          <font>RSS</font>
           <label>#(L(603)):</label>
           <align>left</align>
           <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
@@ -1179,7 +1154,7 @@
           <width>1500</width>
           <label>#latestMediaHandler.tvrecordings.scheduled1.title (#latestMediaHandler.tvrecordings.scheduled1.channel)      #latestMediaHandler.tvrecordings.scheduled1.startDate  ~  #latestMediaHandler.tvrecordings.scheduled1.startTime-#latestMediaHandler.tvrecordings.scheduled1.endTime</label>
           <align>left</align>
-          <font>font11</font>
+          <font>RSS</font>
           <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
           <textcolor>ivory</textcolor>
           <visible>!string.equals(#latestMediaHandler.tvrecordings.scheduled1.title,)</visible>
@@ -1194,7 +1169,7 @@
           <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
           <label>#latestMediaHandler.tvrecordings.scheduled2.title (#latestMediaHandler.tvrecordings.scheduled2.channel)      #latestMediaHandler.tvrecordings.scheduled2.startDate  ~  #latestMediaHandler.tvrecordings.scheduled2.startTime-#latestMediaHandler.tvrecordings.scheduled2.endTime</label>
           <align>left</align>
-          <font>font11</font>
+          <font>RSS</font>
           <textcolor>ivory</textcolor>
           <visible>!string.equals(#latestMediaHandler.tvrecordings.scheduled2.title,)</visible>
         </control>
@@ -1208,7 +1183,7 @@
           <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
           <label>#latestMediaHandler.tvrecordings.scheduled3.title (#latestMediaHandler.tvrecordings.scheduled3.channel)      #latestMediaHandler.tvrecordings.scheduled3.startDate  ~  #latestMediaHandler.tvrecordings.scheduled3.startTime-#latestMediaHandler.tvrecordings.scheduled3.endTime</label>
           <align>left</align>
-          <font>font11</font>
+          <font>RSS</font>
           <textcolor>ivory</textcolor>
           <visible>!string.equals(#latestMediaHandler.tvrecordings.scheduled3.title,)</visible>
         </control>
@@ -1250,7 +1225,7 @@
           <id>0</id>
           <posX>1387</posX>
           <posY>128</posY>
-          <font>font11</font>
+          <font>RSS</font>
           <label>#(L(158)): #DriveFreeSpace.AvailableSpace.Percentage%</label>
           <font>Label</font>
           <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
@@ -1304,7 +1279,7 @@
           <posX>124</posX>
           <posY>114</posY>
           <width>1030</width>
-          <font>font11</font>
+          <font>RSS</font>
           <label>#(L(603)):</label>
           <align>left</align>
           <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
@@ -1356,7 +1331,7 @@
           <width>1177</width>
           <label>#latestMediaHandler.tvrecordings.scheduled1.title (#latestMediaHandler.tvrecordings.scheduled1.channel)      #latestMediaHandler.tvrecordings.scheduled1.startDate  ~  #latestMediaHandler.tvrecordings.scheduled1.startTime-#latestMediaHandler.tvrecordings.scheduled1.endTime</label>
           <align>left</align>
-          <font>font11</font>
+          <font>RSS</font>
           <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
           <textcolor>ivory</textcolor>
           <visible>!string.equals(#latestMediaHandler.tvrecordings.scheduled1.title,)</visible>
@@ -1371,7 +1346,7 @@
           <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
           <label>#latestMediaHandler.tvrecordings.scheduled2.title (#latestMediaHandler.tvrecordings.scheduled2.channel)      #latestMediaHandler.tvrecordings.scheduled2.startDate  ~  #latestMediaHandler.tvrecordings.scheduled2.startTime-#latestMediaHandler.tvrecordings.scheduled2.endTime</label>
           <align>left</align>
-          <font>font11</font>
+          <font>RSS</font>
           <textcolor>ivory</textcolor>
           <visible>!string.equals(#latestMediaHandler.tvrecordings.scheduled2.title,)</visible>
         </control>
@@ -1385,7 +1360,7 @@
           <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
           <label>#latestMediaHandler.tvrecordings.scheduled3.title (#latestMediaHandler.tvrecordings.scheduled3.channel)      #latestMediaHandler.tvrecordings.scheduled3.startDate  ~  #latestMediaHandler.tvrecordings.scheduled3.startTime-#latestMediaHandler.tvrecordings.scheduled3.endTime</label>
           <align>left</align>
-          <font>font11</font>
+          <font>RSS</font>
           <textcolor>ivory</textcolor>
           <visible>!string.equals(#latestMediaHandler.tvrecordings.scheduled3.title,)</visible>
         </control>
@@ -1415,7 +1390,7 @@
           <posX>124</posX>
           <posY>114</posY>
           <width>1030</width>
-          <font>font11</font>
+          <font>RSS</font>
           <label>#(L(200052)):</label>
           <align>left</align>
           <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
@@ -1467,7 +1442,7 @@
           <width>1500</width>
           <label>#latestMediaHandler.tvrecordings.active1.title (#latestMediaHandler.tvrecordings.active1.channel)      #latestMediaHandler.tvrecordings.active1.startDate  ~  #latestMediaHandler.tvrecordings.active1.startTime-#latestMediaHandler.tvrecordings.active1.endTime</label>
           <align>left</align>
-          <font>font11</font>
+          <font>RSS</font>
           <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
           <textcolor>ivory</textcolor>
           <visible>!string.equals(#latestMediaHandler.tvrecordings.active1.title,)</visible>
@@ -1482,7 +1457,7 @@
           <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
           <label>#latestMediaHandler.tvrecordings.active2.title (#latestMediaHandler.tvrecordings.active2.channel)      #latestMediaHandler.tvrecordings.active2.startDate  ~  #latestMediaHandler.tvrecordings.active2.startTime-#latestMediaHandler.tvrecordings.active2.endTime</label>
           <align>left</align>
-          <font>font11</font>
+          <font>RSS</font>
           <textcolor>ivory</textcolor>
           <visible>!string.equals(#latestMediaHandler.tvrecordings.active2.title,)</visible>
         </control>
@@ -1496,7 +1471,7 @@
           <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
           <label>#latestMediaHandler.tvrecordings.active3.title (#latestMediaHandler.tvrecordings.active3.channel)      #latestMediaHandler.tvrecordings.active3.startDate  ~  #latestMediaHandler.tvrecordings.active3.startTime-#latestMediaHandler.tvrecordings.active3.endTime</label>
           <align>left</align>
-          <font>font11</font>
+          <font>RSS</font>
           <textcolor>ivory</textcolor>
           <visible>!string.equals(#latestMediaHandler.tvrecordings.active3.title,)</visible>
         </control>
@@ -1537,7 +1512,7 @@
           <id>0</id>
           <posX>1387</posX>
           <posY>128</posY>
-          <font>font11</font>
+          <font>RSS</font>
           <label>#(L(158)): #DriveFreeSpace.AvailableSpace.Percentage%</label>
           <font>Label</font>
           <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
@@ -1591,7 +1566,7 @@
           <posX>124</posX>
           <posY>114</posY>
           <width>1030</width>
-          <font>font11</font>
+          <font>RSS</font>
           <label>#(L(200052)):</label>
           <align>left</align>
           <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
@@ -1643,7 +1618,7 @@
           <width>1177</width>
           <label>#latestMediaHandler.tvrecordings.active1.title (#latestMediaHandler.tvrecordings.active1.channel)      #latestMediaHandler.tvrecordings.active1.startDate  ~  #latestMediaHandler.tvrecordings.active1.startTime-#latestMediaHandler.tvrecordings.active1.endTime</label>
           <align>left</align>
-          <font>font11</font>
+          <font>RSS</font>
           <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
           <textcolor>ivory</textcolor>
           <visible>!string.equals(#latestMediaHandler.tvrecordings.active1.title,)</visible>
@@ -1658,7 +1633,7 @@
           <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
           <label>#latestMediaHandler.tvrecordings.active2.title (#latestMediaHandler.tvrecordings.active2.channel)      #latestMediaHandler.tvrecordings.active2.startDate  ~  #latestMediaHandler.tvrecordings.active2.startTime-#latestMediaHandler.tvrecordings.active2.endTime</label>
           <align>left</align>
-          <font>font11</font>
+          <font>RSS</font>
           <textcolor>ivory</textcolor>
           <visible>!string.equals(#latestMediaHandler.tvrecordings.active2.title,)</visible>
         </control>
@@ -1672,7 +1647,7 @@
           <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
           <label>#latestMediaHandler.tvrecordings.active3.title (#latestMediaHandler.tvrecordings.active3.channel)      #latestMediaHandler.tvrecordings.active3.startDate  ~  #latestMediaHandler.tvrecordings.active3.startTime-#latestMediaHandler.tvrecordings.active3.endTime</label>
           <align>left</align>
-          <font>font11</font>
+          <font>RSS</font>
           <textcolor>ivory</textcolor>
           <visible>!string.equals(#latestMediaHandler.tvrecordings.active3.title,)</visible>
         </control>
@@ -1684,9 +1659,9 @@
           <description>background for recently added files</description>
           <type>image</type>
           <id>0</id>
-          <posX>70</posX>
+          <posX>160</posX>
           <posY>90</posY>
-          <width>1770</width>
+          <width>1590</width>
           <height>245</height>
           <texture>osdbg2.png</texture>
           <colordiffuse>ffffffff</colordiffuse>
@@ -1697,10 +1672,10 @@
           <description>Updates label</description>
           <type>label</type>
           <id>0</id>
-          <posX>124</posX>
+          <posX>214</posX>
           <posY>114</posY>
-          <width>1750</width>
-          <font>font11</font>
+          <width>1590</width>
+          <font>RSS</font>
           <label>#latestMediaHandler.mvcentral.label  #latestMediaHandler.mvcentral.selected.artist ~ #latestMediaHandler.mvcentral.selected.album  (#latestMediaHandler.mvcentral.selected.dateAdded)</label>
           <align>left</align>
           <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
@@ -1714,7 +1689,7 @@
           <description>Filmstrip view</description>
           <type>filmstrip</type>
           <id>919299280</id>
-          <posX>124</posX>
+          <posX>214</posX>
           <posY>159</posY>
           <width>1850</width>
           <height>140</height>
@@ -1757,9 +1732,9 @@
           <description>Plot Background</description>
           <type>image</type>
           <id>0</id>
-          <posX>70</posX>
+          <posX>160</posX>
           <posY>330</posY>
-          <width>1770</width>
+          <width>1590</width>
           <height>225</height>
           <texture>osdbg2.png</texture>
           <colordiffuse>ffffffff</colordiffuse>
@@ -1770,10 +1745,10 @@
           <description>music artistbio 1</description>
           <type>textboxscrollup</type>
           <id>0</id>
-          <posX>140</posX>
+          <posX>214</posX>
           <posY>360</posY>
-          <width>1650</width>
-          <height>165</height>
+          <width>1500</width>
+          <height>150</height>
           <font>font10</font>
           <textcolor>ffffffff</textcolor>
           <label>#latestMediaHandler.mvcentral.selected.artistbio</label>
@@ -1806,7 +1781,7 @@
       <posY>125</posY>
       <width>1660</width>
       <height>230</height>
-      <font>font11</font>
+      <font>RSS</font>
       <label>#Play.Current.Lyrics</label>
       <visible>plugin.isenabled(My Lyrics)+string.contains(#highlightedbutton,AUDIO8)+Player.HasAudio+!Player.HasVideo</visible>
       <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
@@ -1888,7 +1863,7 @@
           <font>font10</font>
           <width>410</width>
           <textcolor>ivory</textcolor>
-          <label>#WorldWeather.ForecastDay1Low ~ #WorldWeather.ForecastDay1High</label>
+          <label>#WorldWeather.ForecastDay1Low | #WorldWeather.ForecastDay1High</label>
         </control>
         <control>
           <description>Temperature</description>
@@ -1897,7 +1872,7 @@
           <font>font10</font>
           <width>410</width>
           <textcolor>ivory</textcolor>
-          <label>#WorldWeather.ForecastDay2Low ~ #WorldWeather.ForecastDay2High</label>
+          <label>#WorldWeather.ForecastDay2Low | #WorldWeather.ForecastDay2High</label>
         </control>
         <control>
           <description>Temperature</description>
@@ -1906,7 +1881,7 @@
           <font>font10</font>
           <width>410</width>
           <textcolor>ivory</textcolor>
-          <label>#WorldWeather.ForecastDay3Low ~ #WorldWeather.ForecastDay3High</label>
+          <label>#WorldWeather.ForecastDay3Low | #WorldWeather.ForecastDay3High</label>
         </control>
         <control>
           <description>Temperature</description>
@@ -1915,7 +1890,7 @@
           <width>410</width>
           <font>font10</font>
           <textcolor>ivory</textcolor>
-          <label>#WorldWeather.ForecastDay4Low ~ #WorldWeather.ForecastDay4High</label>
+          <label>#WorldWeather.ForecastDay4Low | #WorldWeather.ForecastDay4High</label>
         </control>
       </control>
       <control>

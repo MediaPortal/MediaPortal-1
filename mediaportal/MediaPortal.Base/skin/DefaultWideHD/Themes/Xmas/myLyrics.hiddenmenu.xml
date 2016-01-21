@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!--version="1.0" encoding="utf-8"-->
+<!--            :: HIDDEN MENU ::            -->
+<window>
+  <controls>
+    <control>
+      <id>901</id>
+      <description>dummy button</description>
+      <label>Dummy</label>
+      <type>button</type>
+      <posX>30</posX>
+      <posY>-100</posY>
+      <width>90</width>
+      <height>36</height>
+      <onright>1957</onright>
+      <onleft>1957</onleft>
+      <onup>901</onup>
+      <ondown>901</ondown>
+      <visible allowhiddenfocus="true">![Control.HasFocus(1956)|Control.HasFocus(1957)|Control.HasFocus(1958)|Control.HasFocus(1959)]</visible>
+    </control>
+    <control>
+      <type>actiongroup</type>
+      <description>action menu</description>
+      <defaultcontrol>1957</defaultcontrol>
+      <onexit>1701</onexit>
+      <buttonX>0</buttonX>
+      <buttonY>-80</buttonY>
+      <buttonwidth>159</buttonwidth>
+      <buttonheight>1080</buttonheight>
+      <textureFocus>-</textureFocus>
+      <textureNoFocus>Action_nofocus.png</textureNoFocus>
+      <width>412</width>
+      <height>1080</height>
+      <dimColor>00ffffff</dimColor>
+      <control>
+        <type>image</type>
+        <id>0</id>
+        <width>1920</width>
+        <height>1080</height>
+        <texture>white.png</texture>
+        <colordiffuse>50005eef</colordiffuse>
+      </control>
+      <control>
+        <type>image</type>
+        <posX>39</posX>
+        <posY>117</posY>
+        <width>480</width>
+        <height>735</height>
+        <texture>Backslide.png</texture>
+        <colorDiffuse>fffffffff</colorDiffuse>
+        <visible>!Control.HasFocus(901)</visible>
+        <animation effect="slide" time="70" start="-300,0" reversible="false">visible</animation>
+        <animation effect="slide" time="70" end="-300,0" reversible="false">hidden</animation>
+      </control>
+      <control>
+        <description>group element</description>
+        <type>group</type>
+        <animation effect="slide" time="70" start="-300,0" reversible="false">visible</animation>
+        <animation effect="slide" time="70" end="-300,0" reversible="false">hidden</animation>
+        <posX>75</posX>
+        <posY>181</posY>
+        <visible>!Control.HasFocus(901)</visible>
+        <control>
+          <description>button group</description>
+          <type>group</type>
+          <animation effect="slide" time="70" start="-300,0" reversible="false">visible</animation>
+          <animation effect="slide" time="70" end="-300,0" reversible="false">hidden</animation>
+          <posX>75</posX>
+          <posY>181</posY>
+          <layout>StackLayout</layout>
+          <visible>!Control.HasFocus(901)</visible>
+          <control>
+            <description>Current Playlist Button</description>
+            <type>button</type>
+            <id>1957</id>
+            <label>4555</label>
+            <hyperlink>500</hyperlink>
+            <onright>901</onright>
+            <onleft>901</onleft>
+            <onup>17</onup>
+            <ondown>1958</ondown>
+          </control>
+          <control>
+            <description>My Music</description>
+            <type>button</type>
+            <id>1958</id>
+            <label>My Music</label>
+            <hyperlink>504</hyperlink>
+            <onright>901</onright>
+            <onleft>901</onleft>
+            <onup>1957</onup>
+            <ondown>1956</ondown>
+            <visible>plugin.isenabled(My Lyrics)</visible>
+          </control>
+          <control>
+            <description>Now playing</description>
+            <type>button</type>
+            <id>1956</id>
+            <label>Now Playing</label>
+            <hyperlink>510</hyperlink>
+            <onright>901</onright>
+            <onleft>901</onleft>
+            <onup>1958</onup>
+            <ondown>1959</ondown>
+          </control>
+          <control>
+            <description>Global Search Music Button</description>
+            <type>button</type>
+            <id>1959</id>
+            <label>Search Music</label>
+            <onright>901</onright>
+            <onleft>901</onleft>
+            <onup>1956</onup>
+            <ondown>1957</ondown>
+            <hyperlink>30885</hyperlink>
+            <visible>plugin.isenabled(Search music)</visible>
+          </control>
+        </control>
+      </control>
+    </control>
+  </controls>
+</window>

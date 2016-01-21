@@ -1,0 +1,256 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!--version="1.0" encoding="utf-8" standalone="yes"-->
+<!-- myEmulators skin for StreamdMP fanart oriented by hulkhaugen -->
+<window>
+  <id>7942</id>
+  <defaultcontrol>50</defaultcontrol>
+  <allowoverlay>no</allowoverlay>
+  <!-- Shadows under blue/grey text -->
+  <define>#shadow.dark:ff111111</define>
+  <!-- Shadows under white text -->
+  <define>#shadow.light:ff222222</define>
+  <controls>
+    <import>Emulators2.dummy.xml</import>
+    <!--::::::::::::::::::::::::
+    :: FANART AND BACKGROUNDS ::
+    :::::::::::::::::::::::::-->
+    <control>
+      <description>Default Background</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>1920</width>
+      <height>1080</height>
+      <texture>BH Emulators.jpg</texture>
+    </control>
+    <control>
+      <description>FanArt Background</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>1920</width>
+      <height>1080</height>
+      <texture>#Emulators2.CurrentItem.fanartpath</texture>
+      <animation effect="fade" start="0" end="100" time="3000">WindowOpen</animation>
+      <animation effect="fade" start="0" end="100" time="200">Visible</animation>
+      <animation effect="fade" start="100" end="0" time="200" delay="200">Hidden</animation>
+      <visible>control.isvisible(1230)</visible>
+    </control>
+    <control>
+      <description>FanArt Background 2</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>1920</width>
+      <height>1080</height>
+      <texture>#Emulators2.CurrentItem.fanartpath2</texture>
+      <animation effect="fade" start="0" end="100" time="200">Visible</animation>
+      <animation effect="fade" start="100" end="0" time="200" delay="200">Hidden</animation>
+      <visible>control.isvisible(1231)</visible>
+    </control>
+    <!--:::::::::::::::::::::::::::::
+    :: TOP BAR :: TIME :: LOCATION ::
+    ::::::::::::::::::::::::::::::-->
+    <control>
+      <description>background top overlay</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>1920</width>
+      <height>405</height>
+      <texture>overlay_top.png</texture>
+      <colordiffuse>ccffffff</colordiffuse>
+    </control>
+    <control>
+      <type>label</type>
+      <id>1</id>
+      <posX>45</posX>
+      <posY>15</posY>
+      <label>#(iif(and(neq(L(102012), #currentmodule), neq(L(102002), #currentmodule), neq(L(100100), #currentmodule), neq(L(102015), #currentmodule)), #currentmodule, ' '))</label>
+      <font>Label</font>
+      <align>left</align>
+      <textcolor>ffffd700</textcolor>
+    </control>
+    <control>
+      <description>background selecteditem</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>-20</posX>
+      <posY>97</posY>
+      <width>2025</width>
+      <height>90</height>
+      <texture>general_overlay_selecteditem.png</texture>
+      <colordiffuse>bbffffff</colordiffuse>
+    </control>
+    <control>
+      <description>Selected item Label</description>
+      <type>fadelabel</type>
+      <id>1</id>
+      <posX>0</posX>
+      <posY>142</posY>
+      <width>1920</width>
+      <label>#Emulators2.CurrentItem.title</label>
+      <font>Menutitle</font>
+      <align>center</align>
+      <textcolor>ffffd700</textcolor>
+    </control>
+    <import>common.time.xml</import>
+    <control>
+      <description>General Overlay</description>
+      <id>0</id>
+      <type>image</type>
+      <posX>0</posX>
+      <posY>45</posY>
+      <width>1920</width>
+      <height>1080</height>
+      <texture>general_overlay.png</texture>
+    </control>
+    <control>
+      <description>General Overlay</description>
+      <id>0</id>
+      <type>image</type>
+      <posX>0</posX>
+      <posY>45</posY>
+      <width>1920</width>
+      <height>1080</height>
+      <texture>general_overlay.png</texture>
+      <colordiffuse>90ffffff</colordiffuse>
+    </control>
+    <import>Emulators2.facade.xml</import>
+    <import>Emulators2.listview.xml</import>
+    <import>Emulators2.detailsview.xml</import>
+    <control>
+      <description>Current Filter</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>45</posX>
+      <posY>52</posY>
+      <width>1350</width>
+      <font>font11</font>
+      <label>#Emulators2.currentfilter</label>
+      <textcolor>ffa9d0f7</textcolor>
+      <visible>control.isvisible(50)</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <!--::::::::::::::
+    :: SIDE BUTTONS :: (Not visible)
+    ::::::::::::::::::-->
+    <control>
+      <type>image</type>
+      <posX>0</posX>
+      <posY>108</posY>
+      <width>159</width>
+      <height>864</height>
+      <texture>Action_nofocus.png</texture>
+      <colorDiffuse>fffffffff</colorDiffuse>
+      <visible>control.isvisible(50)+control.hasfocus(50)+[facadeview.list|facadeview.smallicons|facadeview.largeicons]</visible>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <type>actiongroup</type>
+      <description>action menu</description>
+      <defaultcontrol>10</defaultcontrol>
+      <onexit>50</onexit>
+      <buttonX>0</buttonX>
+      <buttonY>0</buttonY>
+      <buttonwidth>159</buttonwidth>
+      <buttonheight>1080</buttonheight>
+      <textureFocus>-</textureFocus>
+      <textureNoFocus>-</textureNoFocus>
+      <width>852</width>
+      <height>1350</height>
+      <dimColor>00ffffff</dimColor>
+      <control>
+        <type>image</type>
+        <id>1</id>
+        <width>1920</width>
+        <height>1080</height>
+        <texture>white.png</texture>
+        <colordiffuse>50005eef</colordiffuse>
+      </control>
+      <control>
+        <type>image</type>
+        <posX>39</posX>
+        <posY>117</posY>
+        <width>532</width>
+        <height>886</height>
+        <texture>Backslide.png</texture>
+        <colorDiffuse>fffffffff</colorDiffuse>
+        <visible>!Control.HasFocus(50)+control.isvisible(50)</visible>
+        <animation effect="slide" time="70" start="-300,0" reversible="false">visible</animation>
+        <animation effect="slide" time="70" end="-300,0" reversible="false">hidden</animation>
+      </control>
+      <control>
+        <description>group element</description>
+        <type>group</type>
+        <animation effect="slide" time="70" start="-300,0" reversible="false">visible</animation>
+        <animation effect="slide" time="70" end="-300,0" reversible="false">hidden</animation>
+        <visible>!Control.HasFocus(50)+control.isvisible(50)</visible>
+        <control>
+          <description>button group</description>
+          <type>group</type>
+          <animation effect="slide" time="70" start="-300,0" reversible="false">visible</animation>
+          <animation effect="slide" time="70" end="-300,0" reversible="false">hidden</animation>
+          <posX>106</posX>
+          <posY>181</posY>
+          <layout>StackLayout</layout>
+          <visible>!Control.HasFocus(50)+control.isvisible(50)</visible>
+          <control>
+            <description>View-As button</description>
+            <type>button</type>
+            <id>10</id>
+            <label>#Emulators2.Label.currentlayout</label>
+            <onright>50</onright>
+            <onup>13</onup>
+            <ondown>12</ondown>
+          </control>
+          <control>
+            <description>Views button</description>
+            <type>button</type>
+            <id>12</id>
+            <label>#Emulators2.Label.switchview</label>
+            <onright>50</onright>
+            <onup>10</onup>
+            <ondown>11</ondown>
+          </control>
+          <control>
+            <description>Sort button</description>
+            <type>sortbutton</type>
+            <id>11</id>
+            <label>#Emulators2.sortlabel</label>
+            <onright>50</onright>
+            <onup>12</onup>
+            <ondown>13</ondown>
+          </control>
+          <control>
+            <description>Import button</description>
+            <type>button</type>
+            <id>13</id>
+            <label>#Emulators2.Label.runimport</label>
+            <onright>50</onright>
+            <onup>11</onup>
+            <ondown>10</ondown>
+          </control>
+        </control>
+      </control>
+    </control>
+    <control>
+      <description>Working Animation</description>
+      <type>animation</type>
+      <id>0</id>
+      <posX>942</posX>
+      <posY>22</posY>
+      <width>36</width>
+      <height>36</height>
+      <textures>common.waiting.1.png;common.waiting.2.png;common.waiting.3.png;common.waiting.4.png;common.waiting.5.png;common.waiting.6.png;common.waiting.7.png;common.waiting.8.png</textures>
+      <Duration>0:0:01.5</Duration>
+      <visible>string.contains(#Emulators2.Importer.working,yes)</visible>
+      <keepaspectratio>yes</keepaspectratio>
+    </control>
+  </controls>
+</window>

@@ -66,7 +66,7 @@
       <label>#date | #time</label>
       <align>right</align>
       <font>Label</font>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ffffd700</textcolor>
       <visible>!skin.hastheme(Xmas)+!player.hasaudio+!player.hasvideo</visible>
     </control>
   <control>
@@ -203,7 +203,7 @@
       <label>#currentplaytime</label>
       <font>font10</font>
       <align>right</align>
-      <textcolor>ivory</textcolor>
+      <textcolor>ffffd700</textcolor>
       <visible>player.hasaudio+!player.hasvideo</visible>
     </control>
     <control>
@@ -215,7 +215,7 @@
       <label>#currentremaining</label>
       <align>left</align>
       <font>font10</font>
-      <textcolor>ivory</textcolor>
+      <textcolor>ffffd700</textcolor>
       <visible>Player.HasAudio+!Player.HasVideo+string.equals(#duration)</visible>
     </control>
     <control>
@@ -227,7 +227,7 @@
       <posY>12</posY>
       <font>font12</font>
       <label>#Play.Current.Title  ~  #Play.Current.Artist</label>
-      <textcolor>ivory</textcolor>
+      <textcolor>ffffd700</textcolor>
       <visible>player.hasaudio+!player.hasvideo</visible>
     </control>
     <control>
@@ -239,7 +239,7 @@
       <posY>48</posY>
       <font>font12</font>
       <label>#Play.Current.Album  ~  # #Play.Current.Track</label>
-      <textcolor>ivory</textcolor>
+      <textcolor>ffffd700</textcolor>
       <visible>Player.HasAudio+!Player.HasVideo+string.equals(#duration)</visible>
     </control>
     <control>
@@ -251,7 +251,7 @@
       <posY>48</posY>
       <font>font12</font>
       <label>#(L(34043)) #Play.Current.Album</label>
-      <textcolor>ivory</textcolor>
+      <textcolor>ffffd700</textcolor>
       <visible>Player.HasAudio+!Player.HasVideo+!string.equals(#duration)</visible>
     </control>
     <!-- ******************************************************************************************* -->
@@ -278,7 +278,7 @@
       <label>#currentplaytime</label>
       <font>font10</font>
       <align>right</align>
-      <textcolor>ivory</textcolor>
+      <textcolor>ffffd700</textcolor>
       <visible>player.hasvideo+!string.contains(#Play.Current.File,tsbuffer)</visible>
     </control>
     <control>
@@ -290,7 +290,7 @@
       <label>#duration</label>
       <align>left</align>
       <font>font10</font>
-      <textcolor>ivory</textcolor>
+      <textcolor>ffffd700</textcolor>
       <visible>player.hasvideo+!string.contains(#Play.Current.File,tsbuffer)</visible>
     </control>
     <control>
@@ -302,7 +302,7 @@
       <posY>12</posY>
       <font>font12</font>
       <label>#Play.Current.Title  ~  #Play.Current.Director</label>
-      <textcolor>ivory</textcolor>
+      <textcolor>ffffd700</textcolor>
       
       <visible>player.hasvideo+!string.contains(#Play.Current.File,tsbuffer)</visible>
     </control>
@@ -315,7 +315,7 @@
       <posY>48</posY>
       <font>font12</font>
       <label>#Play.Current.Year  ~  #Play.Current.Genre</label>
-      <textcolor>ivory</textcolor>
+      <textcolor>ffffd700</textcolor>
       
       <visible>player.hasvideo+!string.contains(#Play.Current.File,tsbuffer)</visible>
     </control>
@@ -328,7 +328,7 @@
       <posY>12</posY>
       <font>font12</font>
       <label>#TV.View.title</label>
-      <textcolor>ivory</textcolor>
+      <textcolor>ffffd700</textcolor>
       
       <visible>player.hasvideo+string.contains(#Play.Current.File,tsbuffer)</visible>
     </control>
@@ -341,7 +341,7 @@
       <posY>48</posY>
       <font>font12</font>
       <label>#TV.View.channel    #TV.View.start - #TV.View.stop</label>
-      <textcolor>ivory</textcolor>
+      <textcolor>ffffd700</textcolor>
       
       <visible>player.hasvideo+string.contains(#Play.Current.File,tsbuffer)</visible>
     </control>
@@ -354,7 +354,7 @@
       <posY>84</posY>
       <font>font12</font>
       <label>#TV.View.genre</label>
-      <textcolor>ivory</textcolor>
+      <textcolor>ffffd700</textcolor>
       
       <visible>player.hasvideo+string.contains(#Play.Current.File,tsbuffer)</visible>
     </control>
@@ -477,7 +477,7 @@
       <width>1780</width>
       <align>left</align>
       <font>font12</font>
-      <textcolor>ivory</textcolor>
+      <textcolor>ffffd700</textcolor>
       <label>#infoservice.feed.titles</label>
       <wrapString> :-: </wrapString>
       <shadowAngle>0</shadowAngle>
@@ -494,7 +494,7 @@
       <width>1780</width>
       <align>left</align>
       <font>font12</font>
-      <textcolor>ivory</textcolor>
+      <textcolor>ffffd700</textcolor>
       <label>#WorldNews.NewsTicker</label>
       <wrapString> :-: </wrapString>
       <shadowAngle>0</shadowAngle>

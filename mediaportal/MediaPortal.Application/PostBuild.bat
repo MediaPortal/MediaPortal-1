@@ -141,7 +141,7 @@ xcopy %1\MPE\MpeMaker\bin\%2\MpeMaker.* . /Y /D
 REM Nuget 
 xcopy %1\Databases\bin\%2\HtmlAgilityPack.* . /Y /D
 xcopy %1\..\Packages\MediaInfo.0.7.72\MediaInfo.dll . /Y /D
-xcopy %1\..\Packages\Sqlite.3.9.2\sqlite.dll . /Y /D
+xcopy %1\..\Packages\Sqlite.3.10.0\sqlite.dll . /Y /D
 
 REM ffmpeg 
 xcopy %1\..\Packages\ffmpeg.2.7.1\ffmpeg.exe MovieThumbnailer\ /Y /D
@@ -184,7 +184,7 @@ xcopy %1\..\Packages\MediaPortal-iMON-Display.1.1.0\lib\iMONDisplay.dll . /Y /D
 xcopy %1\..\Packages\MediaPortal-iMON-Display.1.1.0\lib\iMONDisplayWrapper.dll . /Y /D
 
 REM taglib-sharp
-xcopy %1\..\Packages\MediaPortal.TagLib.2.0.3.8\lib\taglib-sharp.dll ./Y /D
+xcopy %1\..\Packages\MediaPortal.TagLib.2.1.0.1\lib\net40\taglib-sharp.dll ./Y /D
 
 REM SharpLibHid
 xcopy %1\..\Packages\SharpLibHid.1.3.0\lib\net20\SharpLibHid.dll . /Y /D

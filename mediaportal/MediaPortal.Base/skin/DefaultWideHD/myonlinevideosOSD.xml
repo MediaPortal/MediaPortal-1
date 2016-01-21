@@ -9,40 +9,44 @@
       <type>image</type>
       <id>1</id>
       <posX>90</posX>
-      <posY>657</posY>
-      <height>427</height>
+      <posY>647</posY>
+      <height>437</height>
       <width>1755</width>
       <texture>OSDBG2.png</texture>
-      <colordiffuse>eeffffff</colordiffuse>
+      <colordiffuse>ddffffff</colordiffuse>
+      <visible>!control.hasfocus(1237)</visible>
     </control>
     <control>
       <description>Time BG</description>
       <type>image</type>
       <id>0</id>
       <posX>1556</posX>
-      <posY>704</posY>
+      <posY>694</posY>
       <width>237</width>
       <height>52</height>
       <texture>button_focus.png</texture>
       <colordiffuse>ffffffff</colordiffuse>
+      <visible>control.isvisible(110)</visible>
+      <visible>!control.hasfocus(1237)</visible>
     </control>
     <control>
       <description>Time Info</description>
       <type>label</type>
       <id>110</id>
       <posX>1768</posX>
-      <posY>705</posY>
+      <posY>691</posY>
       <label>#time</label>
       <align>right</align>
       <font>font16</font>
       <textcolor>ivory</textcolor>
+      <visible>!control.hasfocus(1237)</visible>
     </control>
     <control>
       <description>background</description>
       <type>image</type>
       <id>0</id>
       <posX>327</posX>
-      <posY>836</posY>
+      <posY>841</posY>
       <width>1183</width>
       <height>28</height>
       <texture>osd_progress_background.png</texture>
@@ -53,24 +57,24 @@
       <type>tvprogress</type>
       <id>1</id>
       <posX>328</posX>
-      <posY>838</posY>
+      <posY>844</posY>
       <width>1180</width>
-      <height>25</height>
-      <toptexture>osd_progress_indicator.png</toptexture>
-      <TextureOffsetY>25</TextureOffsetY>
+      <height>23</height>
+      <toptexture>osd_progress_right.png</toptexture>
+      <TextureOffsetY>24</TextureOffsetY>
       <bottomtexture>-</bottomtexture>
       <texturetick>-</texturetick>
-      <lefttexture>osd_progress_left.png</lefttexture>
+      <lefttexture>osd_progress_left_tv.png</lefttexture>
       <midtexture>-</midtexture>
       <righttexture>-</righttexture>
       <logotexture>-</logotexture>
       <fillbackgroundtexture>-</fillbackgroundtexture>
       <fillbgxoff>-3</fillbgxoff>
       <fillbgyoff>0</fillbgyoff>
-      <filltexture1>osd_progress_mid.png</filltexture1>
-      <filltexture2>osd_progress_mid.png</filltexture2>
-      <filltexture3>osd_progress_mid_orange.png</filltexture3>
-      <fillheight>25</fillheight>
+      <filltexture1>osd_progress_mid_tv.png</filltexture1>
+      <filltexture2>osd_progress_mid_tv.png</filltexture2>
+      <filltexture3>osd_progress_mid_orange_tv.png</filltexture3>
+      <fillheight>24</fillheight>
       <label>#percentage</label>
       <label1>#percentage</label1>
       <label2>#TV.Record.percent3</label2>
@@ -82,10 +86,47 @@
       <visible>!control.hasfocus(1237)</visible>
     </control>
     <control>
+      <type>image</type>
+      <id>1</id>
+      <posX>175</posX>
+      <posY>705</posY>
+      <height>40</height>
+      <keepaspectratio>yes</keepaspectratio>
+      <texture>#OnlineVideos.HeaderImage</texture>
+      <visible>!control.hasfocus(1237)</visible>
+    </control>
+    <control>
+      <description>OV Infos</description>
+      <id>0</id>
+      <type>fadelabel</type>
+      <posX>175</posX>
+      <posY>715</posY>
+      <width>1400</width>
+      <align>center</align>
+      <textcolor>ffffffff</textcolor>
+      <font>Label</font>
+      <label>#OnlineVideos.HeaderLabel</label>
+      <textcolor>dodgerblue</textcolor>
+      <visible>!control.hasfocus(1237)</visible>
+    </control>
+    <control>
+      <description>Movie Name</description>
+      <id>36</id>
+      <type>fadelabel</type>
+      <posX>175</posX>
+      <posY>770</posY>
+      <width>1600</width>
+      <align>center</align>
+      <textcolor>ffffffff</textcolor>
+      <font>Label</font>
+      <label>#Play.Current.Title</label>
+      <visible>!control.hasfocus(1237)</visible>
+    </control>
+    <control>
       <description>End Time Info</description>
       <type>label</type>
       <id>101</id>
-      <posX>1550</posX>
+      <posX>1530</posX>
       <posY>824</posY>
       <label>#currentremaining</label>
       <align>left</align>
@@ -97,66 +138,77 @@
       <description>Start Time Info</description>
       <type>label</type>
       <id>101</id>
-      <posX>196</posX>
+      <posX>311</posX>
       <posY>824</posY>
       <label>#currentplaytime</label>
-      <align>left</align>
+      <align>right</align>
       <font>font16</font>
       <textcolor>ffffffff</textcolor>
       <visible>!control.hasfocus(1237)</visible>
     </control>
-    <control>
-      <description>Movie Name</description>
-      <id>36</id>
-      <type>fadelabel</type>
-      <posX>196</posX>
-      <posY>747</posY>
-      <width>1293</width>
-      <height>56</height>
-      <align>left</align>
-      <textcolor>ffffffff</textcolor>
-      <font>font16</font>
-      <label>#Play.Current.Title</label>
-      <visible>!control.hasfocus(1237)</visible>
-    </control>
+    
+    <!-- ***************************************************************************************************** -->
+    <!-- *****************************         INFO DISPLAY ON TV NOW/NEXT      ****************************** -->
+    <!-- ***************************************************************************************************** -->
     <control>
       <description>background</description>
       <type>image</type>
-      <id>1</id>
-      <posX>280</posX>
-      <posY>380</posY>
-      <height>630</height>
-      <width>1310</width>
-      <texture>osd_details.png</texture>
+      <id>1236</id>
+      <posX>90</posX>
+      <posY>505</posY>
+      <height>590</height>
+      <width>1745</width>
+      <texture>osdbg2.png</texture>
+      <colordiffuse>ccffffff</colordiffuse>
       <visible>control.hasfocus(1237)</visible>
-      <colordiffuse>dde6e6e6</colordiffuse>
-      <animation effect="zoom" start="1,1" end="100,100" time="200" center="990,650" reversible="true">visiblechange</animation>
+      <animation effect="fade" start="0" end="100" time="170" reversible="true">visiblechange</animation>
+    </control>
+    <control>
+      <description>Movie Name</description>
+      <id>0</id>
+      <type>fadelabel</type>
+      <posX>175</posX>
+      <posY>555</posY>
+      <height>57</height>
+      <width>1600</width>
+      <align>center</align>
+      <textcolor>dodgerblue</textcolor>
+      <font>Label</font>
+      <label>#Play.Current.Title</label>
+      <shadowAngle>90</shadowAngle>
+      <shadowDistance>1</shadowDistance>
+      <visible>control.hasfocus(1237)</visible>
+      <animation effect="fade" start="0" end="100" time="150" reversible="true">visiblechange</animation>
     </control>
     <control Style="NoShadow">
       <description>Plot</description>
       <type>textboxscrollup</type>
       <id>1</id>
-      <posX>358</posX>
-      <posY>457</posY>
-      <height>466</height>
-      <width>1166</width>
+      <posX>175</posX>
+      <posY>615</posY>
+      <height>230</height>
+      <width>1600</width>
       <align>left</align>
-      <font>Label</font>
+      <font>RSS</font>
       <label>#Play.Current.Plot</label>
       <visible>control.hasfocus(1237)</visible>
-      <textcolor>black</textcolor>
-      <animation effect="zoom" start="1,1" end="100,100" time="200" center="990,650" reversible="true">visiblechange</animation>
+      <textcolor>lightskyblue</textcolor>
+      <animation effect="fade" start="0" end="100" time="150" reversible="true">visiblechange</animation>
     </control>
     <import>common.osd.buttons.xml</import>
+    <!--import>tvOSD.mediainfo.xml</import-->
     <!-- **************************** PAUSE, REWIND ETC.********************************** -->
     <control>
       <description>Pause image</description>
       <type>image</type>
       <id>16</id>
-      <posX>750</posX>
-      <posY>428</posY>
+      <posX>1546</posX>
+      <posY>970</posY>
+      <width>168</width>
+      <height>56</height>
       <visible>player.paused</visible>
       <texture>video-pause.png</texture>
+      <animation effect="zoom" start="100,100" end="115,115" time="500" condition="true" pulse="true">conditional</animation>
     </control>
     <control>
       <description>2x image</description>

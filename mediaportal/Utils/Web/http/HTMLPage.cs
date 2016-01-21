@@ -33,7 +33,6 @@ namespace MediaPortal.Utils.Web
   {
     #region Variables
 
-    private string _strPageHead = string.Empty;
     private string _strPageSource = string.Empty;
     private string _defaultEncode = "iso-8859-1";
     private string _pageEncodingMessage = string.Empty;

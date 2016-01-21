@@ -24,7 +24,6 @@ namespace MediaPortal.GUI.Library
 {
   public class TransformMatrix : ICloneable
   {
-    private const float DEGREE_TO_RADIAN = 0.01745329f;
     private float[,] m = new float[3,4];
     private float alpha;
 
@@ -273,32 +272,6 @@ namespace MediaPortal.GUI.Library
       float newY = m[1, 0] * x + m[1, 1] * y + m[1, 2] * z + m[1, 3];
       z = m[2, 0] * x + m[2, 1] * y + m[2, 2] * z + m[2, 3];
       y = newY;
-      x = newX;
-    }
-
-    private void TransformPositionUnscaled(ref float x, ref float y, ref float z)
-    {
-      float n;
-      // calculate the norm of the transformed (but not translated) vectors involved
-      n = (float)Math.Sqrt(m[0, 0] * m[0, 0] + m[0, 1] * m[0, 1] + m[0, 2] * m[0, 2]);
-      float newX = (m[0, 0] * x + m[0, 1] * y + m[0, 2] * z) / n + m[0, 3];
-      n = (float)Math.Sqrt(m[1, 0] * m[1, 0] + m[1, 1] * m[1, 1] + m[1, 2] * m[1, 2]);
-      float newY = (m[1, 0] * x + m[1, 1] * y + m[1, 2] * z) / n + m[1, 3];
-      n = (float)Math.Sqrt(m[2, 0] * m[2, 0] + m[2, 1] * m[2, 1] + m[2, 2] * m[2, 2]);
-      float newZ = (m[2, 0] * x + m[2, 1] * y + m[2, 2] * z) / n + m[2, 3];
-      z = newZ;
-      y = newY;
-      x = newX;
-    }
-
-    private void InverseTransformPosition(ref float x, ref float y)
-    {
-      // used for mouse - no way to find z
-      x -= m[0, 3];
-      y -= m[1, 3];
-      float detM = m[0, 0] * m[1, 1] - m[0, 1] * m[1, 0];
-      float newX = (m[1, 1] * x - m[0, 1] * y) / detM;
-      y = (-m[1, 0] * x + m[0, 0] * y) / detM;
       x = newX;
     }
 

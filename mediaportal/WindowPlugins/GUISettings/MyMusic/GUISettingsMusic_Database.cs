@@ -59,7 +59,6 @@ namespace MediaPortal.GUI.Settings
     private int _dateAddedSelectedIndex = 0;
     private ArrayList _dateAdded = new ArrayList();
     private Thread _scanThread = null;
-    private bool _scanRunning = false;
     private int _scanShare = 0;
 
     private String _defaultShare;
@@ -348,7 +347,6 @@ namespace MediaPortal.GUI.Settings
     
     private void FolderScanThread()
     {
-      _scanRunning = true;
       ArrayList shares = new ArrayList();
       ArrayList scanShares = new ArrayList();
       
@@ -422,13 +420,11 @@ namespace MediaPortal.GUI.Settings
       catch (Exception ex)
       {
         Log.Error("Folder Scan: Exception during processing: ", ex.Message);
-        _scanRunning = false;
       }
 
       var lastImportDate = _dataBase.GetLastImportDate().ToString();
       _updateSinceLastImport = String.Format(GUILocalizeStrings.Get(300232), lastImportDate);
       
-      _scanRunning = false;
       EnableControls(true);
       SetProperties();
 

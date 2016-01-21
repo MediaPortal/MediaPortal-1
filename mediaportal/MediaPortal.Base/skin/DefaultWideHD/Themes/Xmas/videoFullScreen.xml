@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <id>2005</id>
+  <defaultcontrol>13</defaultcontrol>
+  <allowoverlay>no</allowoverlay>
+  <disabletopbar>false</disabletopbar>
+  <controls>
+    <control>
+      <description>background image</description>
+      <type>image</type>
+      <id>105</id>
+      <posX>3062</posX>
+      <posY>924</posY>
+      <width>1404</width>
+      <height>120</height>
+      <texture mask="OSDBG.png">black.png</texture>
+      <colordiffuse>White</colordiffuse>
+      <visible>window.ispauseosdvisible|player.rewinding|player.forwarding</visible>
+    </control>
+    <control>
+      <description>background image</description>
+      <type>image</type>
+      <id>111</id>
+      <posX>126</posX>
+      <posY>867</posY>
+      <height>207</height>
+      <width>1632</width>
+      <texture>OSDBG2.png</texture>
+      <colordiffuse>eeffffff</colordiffuse>
+      <visible>!window.isosdvisible+[window.ispauseosdvisible+player.paused|player.rewinding|player.forwarding|control.isVisible(10)|control.isVisible(11)|control.isVisible(12)]</visible>
+    </control>
+    <control>
+      <description>Time BG</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>1500</posX>
+      <posY>895</posY>
+      <width>216</width>
+      <height>52</height>
+      <texture>button_focus.png</texture>
+      <colordiffuse>90ffffff</colordiffuse>
+      <visible>control.isVisible(111)</visible>
+    </control>
+    <control>
+      <description>Time Info</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>1685</posX>
+      <posY>897</posY>
+      <label>#time</label>
+      <align>right</align>
+      <font>font16</font>
+      <textcolor>ffffd700</textcolor>
+      <visible>control.isVisible(111)</visible>
+    </control>
+    <control>
+      <description>Movie Name</description>
+      <id>0</id>
+      <type>fadelabel</type>
+      <posX>195</posX>
+      <posY>897</posY>
+      <width>1080</width>
+      <height>54</height>
+      <label>-</label>
+      <align>left</align>
+      <textcolor>ffffd700</textcolor>
+      <font>font16</font>
+      <label>#Play.Current.Title</label>
+      <visible>control.isVisible(111)</visible>
+    </control>
+    <control>
+      <description>background</description>
+      <type>image</type>
+      <id>104</id>
+      <posX>361</posX>
+      <posY>975</posY>
+      <width>940</width>
+      <height>26</height>
+      <texture>osd_progress_background.png</texture>
+      <visible>control.isVisible(111)</visible>
+    </control>
+    <control>
+      <description>Start Time Info</description>
+      <type>label</type>
+      <id>101</id>
+      <posX>195</posX>
+      <posY>966</posY>
+      <label>#currentplaytime</label>
+      <align>left</align>
+      <font>font16</font>
+      <textcolor>ffffd700</textcolor>
+      <visible>control.isVisible(111)</visible>
+    </control>
+    <control>
+      <description>Remaining time</description>
+      <type>label</type>
+      <id>102</id>
+      <posX>1468</posX>
+      <posY>966</posY>
+      <label>#currentremaining</label>
+      <align>right</align>
+      <font>font16</font>
+      <textcolor>ffffd700</textcolor>
+      <visible>control.isVisible(111)</visible>
+    </control>
+    <control>
+      <description>Progress Bar</description>
+      <type>progress</type>
+      <id>1</id>
+      <posX>362</posX>
+      <posY>977</posY>
+      <width>937</width>
+      <offset>0</offset>
+      <height>23</height>
+      <innerheight>23</innerheight>
+      <lefttexture>osd_progress_left.png</lefttexture>
+      <midtexture>osd_progress_mid.png</midtexture>
+      <righttexture>osd_progress_right.png</righttexture>
+      <label>#percentage</label>
+      <visible>control.isVisible(111)</visible>
+    </control>
+    <import>common.play.xml</import>
+    <control>
+      <description>Progress Bar</description>
+      <type>tvprogress</type>
+      <id>1</id>
+      <posX>362</posX>
+      <posY>977</posY>
+      <width>937</width>
+      <height>23</height>
+      <toptexture></toptexture>
+      <TextureOffsetY>29</TextureOffsetY>
+      <lefttexture>osd_progress_left.png</lefttexture>
+      <fillbgxoff>-3</fillbgxoff>
+      <fillbgyoff>0</fillbgyoff>
+      <filltexture1>osd_progress_mid.png</filltexture1>
+      <filltexture2>osd_progress_mid.png</filltexture2>
+      <filltexture3>osd_progress_mid_orange.png</filltexture3>
+      <markertexture>osd_progress_mid_orange.png</markertexture>
+      <fillheight>23</fillheight>
+      <label>#percentage</label>
+      <labelmarkerstarts>#jumppoints</labelmarkerstarts>
+      <labelmarkerends>#chapters</labelmarkerends>
+      <visible>control.isVisible(111)</visible>
+    </control>
+  </controls>
+</window>
