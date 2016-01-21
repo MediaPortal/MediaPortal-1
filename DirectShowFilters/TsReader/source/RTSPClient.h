@@ -57,4 +57,5 @@ class CRTSPClient: public TSThread
     volatile bool m_isBufferThreadActive;
     bool m_isPaused;
     volatile bool m_updateDuration;
+    volatile bool m_recreateUpdateDurationClient;
 };

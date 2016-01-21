@@ -30,6 +30,7 @@ CRTSPClient::CRTSPClient(CMemoryBuffer& buffer)
   m_isBufferThreadActive = false;
   m_isPaused = false;
   m_updateDuration = false;
+  m_recreateUpdateDurationClient = false;
 
   m_genericResponseEvent = CreateEvent(NULL, TRUE, FALSE, NULL);
   m_durationDescribeResponseEvent = CreateEvent(NULL, TRUE, FALSE, NULL);
@@ -327,17 +328,33 @@ void CRTSPClient::ThreadProc()
   m_isBufferThreadActive = true;
   ::SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_ABOVE_NORMAL);
   LogDebug("CRTSPClient::ThreadProc(): thread started, thread ID = %d", GetCurrentThreadId());
-  MPRTSPClient* client = MPRTSPClient::createNew(this, *m_env, m_url, 0/*verbosity level*/, "TSFileSource");
-  if (client == NULL)
-  {
-    LogDebug("CRTSPClient::UpdateDuration(): failed to create RTSP client");
-    return;
-  }
+  MPRTSPClient* client = NULL;
 
   while (m_env != NULL && !ThreadIsStopping(1))
   {
     if (m_updateDuration)
     {
+      if (client == NULL || m_recreateUpdateDurationClient)
+      {
+        if (client != NULL)
+        {
+          LogDebug("CRTSPClient::ThreadProc(): recreate RTSP client");
+          Medium::close(client);
+        }
+        else
+        {
+          LogDebug("CRTSPClient::ThreadProc(): create RTSP client");
+        }
+
+        client = MPRTSPClient::createNew(this, *m_env, m_url, 0/*verbosity level*/, "TSFileSource");
+        if (client == NULL)
+        {
+          LogDebug("CRTSPClient::UpdateDuration(): failed to create RTSP client");
+          break;
+        }
+        m_recreateUpdateDurationClient = false;
+      }
+
       // Unfortunately we must reset the URL before each request. LIVE55
       // updates the URL from the DESCRIBE response Content-Base header. That
       // header contains an undesirable trailing slash.
@@ -361,7 +378,10 @@ void CRTSPClient::ThreadProc()
   }
 
   LogDebug("CRTSPClient::ThreadProc(): thread stopping, thread ID = %d", GetCurrentThreadId());
-  Medium::close(client);
+  if (client != NULL)
+  {
+    Medium::close(client);
+  }
   m_isBufferThreadActive = false;
   return;
 }
@@ -503,6 +523,7 @@ bool CRTSPClient::UpdateDuration()
   if (WaitForSingleObject(m_durationDescribeResponseEvent, 500) == WAIT_TIMEOUT)
   {
     LogDebug("CRTSPClient::UpdateDuration(): RTSP DESCRIBE timed out, message = %s", m_env->getResultMsg());
+    m_recreateUpdateDurationClient = true;
     return false;
   }
 
