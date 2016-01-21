@@ -35,6 +35,7 @@
 #include "IGrabberEpgDvb.h"
 #include "IRecord.h"
 #include "RecordStore.h"
+#include "TextUtil.h"
 #include "Utils.h"
 
 using namespace MediaPortal;
@@ -295,13 +296,57 @@ class CParserEitDvb : public CUnknown, public IGrabberEpgDvb, ISectionCallback
           return Language;
         }
 
+        void Decompress(char* inputText, char** outputText, const wchar_t* textType) const
+        {
+          // Dish Network text is compressed to minimise memory usage. It must
+          // be decompressed before we can display it.
+          if (inputText == NULL || inputText[0] != 0x1f)
+          {
+            *outputText = inputText;
+            return;
+          }
+
+          unsigned char tableId = (unsigned char)inputText[1];
+          unsigned char dataLength = (unsigned char)inputText[2];
+          unsigned char* data = (unsigned char*)&inputText[3];
+          if (!CTextUtil::DishTextToString(data, dataLength, tableId, outputText))
+          {
+            LogDebug(L"EIT DVB: invalid Dish event %s, length = %hhu, table ID = 0x%hhx, byte 1 = %hhu, byte 2 = %hhu",
+                      textType, dataLength, tableId, data[0],
+                      dataLength > 1 ? data[1] : 0xff);
+          }
+          else if (*outputText == NULL)
+          {
+            LogDebug(L"EIT DVB: failed to allocate Dish event %s, length = %hhu, byte 1 = %hhu, byte 2 = %hhu",
+                      textType, dataLength, data[0],
+                      dataLength > 1 ? data[1] : 0xff);
+          }
+        }
+
         void Debug(const wchar_t* situation) const
         {
+          // Dish Network text is compressed to minimise memory usage. It must
+          // be decompressed before we can display it.
+          char* tempTitle = NULL;
+          Decompress(Title, &tempTitle, L"name");
+          char* tempDescription = NULL;
+          Decompress(DescriptionShort, &tempDescription, L"description");
+
           LogDebug(L"EIT DVB: text %s, code = %S, title = %S, short description = %S, extended description = %S, item count = %llu",
-                    situation, (char*)&Language, Title == NULL ? "" : Title,
-                    DescriptionShort == NULL ? "" : DescriptionShort,
+                    situation, (char*)&Language,
+                    tempTitle == NULL ? "" : tempTitle,
+                    tempDescription == NULL ? "" : tempDescription,
                     DescriptionExtended == NULL ? "" : DescriptionExtended,
                     (unsigned long long)DescriptionItems.size());
+
+          if (tempTitle != NULL && tempTitle != Title)
+          {
+            delete[] tempTitle;
+          }
+          if (tempDescription != NULL && tempDescription != DescriptionShort)
+          {
+            delete[] tempDescription;
+          }
 
           map<unsigned short, CRecordEitEventDescriptionItem*>::const_iterator it = DescriptionItems.begin();
           for ( ; it != DescriptionItems.end(); it++)
@@ -320,10 +365,13 @@ class CParserEitDvb : public CUnknown, public IGrabberEpgDvb, ISectionCallback
         map<unsigned short, CRecordEitEventDescriptionItem*> DescriptionItems;
     };
 
-    class CRecordEitEvent : public IRecord
+    // This implementation is currently used only for Dish Network events.
+    // Storing Dish's 9 day guide for ~7250 channels in memory while staying
+    // within a 32 bit process memory limit requires extraordinary care.
+    class CRecordEitEventMinimal : public IRecord
     {
       public:
-        CRecordEitEvent(void)
+        CRecordEitEventMinimal(void)
         {
           TableId = 0;
           OriginalNetworkId = 0;
@@ -334,14 +382,9 @@ class CParserEitDvb : public CUnknown, public IGrabberEpgDvb, ISectionCallback
           Duration = 0;
           RunningStatus = 0;
           FreeCaMode = false;
-          ReferenceServiceId = 0;
-          ReferenceEventId = 0;
           AreSeriesAndEpisodeIdsCrids = false;
           SeriesId = NULL;
           EpisodeId = NULL;
-          IsHighDefinition = false;
-          IsStandardDefinition = false;
-          IsThreeDimensional = false;
           IsPreviouslyShown = false;
           StarRating = 0;             // default: [not available]
           MpaaClassification = 0xff;  // default: [not available]
@@ -349,7 +392,7 @@ class CParserEitDvb : public CUnknown, public IGrabberEpgDvb, ISectionCallback
           VchipRating = 0xff;         // default: [not available]
         }
 
-        ~CRecordEitEvent(void)
+        virtual ~CRecordEitEventMinimal(void)
         {
           if (SeriesId != NULL)
           {
@@ -374,9 +417,9 @@ class CParserEitDvb : public CUnknown, public IGrabberEpgDvb, ISectionCallback
           Texts.clear();
         }
 
-        bool Equals(const IRecord* record) const
+        virtual bool Equals(const IRecord* record) const
         {
-          const CRecordEitEvent* recordEvent = dynamic_cast<const CRecordEitEvent*>(record);
+          const CRecordEitEventMinimal* recordEvent = dynamic_cast<const CRecordEitEventMinimal*>(record);
           if (
             recordEvent == NULL ||
             TableId != recordEvent->TableId ||
@@ -385,18 +428,11 @@ class CParserEitDvb : public CUnknown, public IGrabberEpgDvb, ISectionCallback
             Duration != recordEvent->Duration ||
             RunningStatus != recordEvent->RunningStatus ||
             FreeCaMode != recordEvent->FreeCaMode ||
-            ReferenceServiceId != recordEvent->ReferenceServiceId ||
-            ReferenceEventId != recordEvent->ReferenceEventId ||
+            AreSeriesAndEpisodeIdsCrids != recordEvent->AreSeriesAndEpisodeIdsCrids ||
             !CUtils::CompareStrings(SeriesId, recordEvent->SeriesId) ||
             !CUtils::CompareStrings(EpisodeId, recordEvent->EpisodeId) ||
-            IsHighDefinition != recordEvent->IsHighDefinition ||
-            IsStandardDefinition != recordEvent->IsStandardDefinition ||
-            IsThreeDimensional != recordEvent->IsThreeDimensional ||
             IsPreviouslyShown != recordEvent->IsPreviouslyShown ||
-            !CUtils::CompareVectors(AudioLanguages, recordEvent->AudioLanguages) ||
-            !CUtils::CompareVectors(SubtitlesLanguages, recordEvent->SubtitlesLanguages) ||
             !CUtils::CompareVectors(DvbContentTypeIds, recordEvent->DvbContentTypeIds) ||
-            DvbParentalRatings.size() != recordEvent->DvbParentalRatings.size() ||
             StarRating != recordEvent->StarRating ||
             MpaaClassification != recordEvent->MpaaClassification ||
             DishBevAdvisories != recordEvent->DishBevAdvisories ||
@@ -405,15 +441,6 @@ class CParserEitDvb : public CUnknown, public IGrabberEpgDvb, ISectionCallback
           )
           {
             return false;
-          }
-
-          map<unsigned long, unsigned char>::const_iterator prIt = DvbParentalRatings.begin();
-          for ( ; prIt != DvbParentalRatings.end(); prIt++)
-          {
-            if (recordEvent->DvbParentalRatings.find(prIt->first) == recordEvent->DvbParentalRatings.end())
-            {
-              return false;
-            }
           }
 
           map<unsigned long, CRecordEitEventText*>::const_iterator textIt1 = Texts.begin();
@@ -448,6 +475,102 @@ class CParserEitDvb : public CUnknown, public IGrabberEpgDvb, ISectionCallback
         unsigned long long GetExpiryKey() const
         {
           return TableId;
+        }
+
+        virtual void Debug(const wchar_t* situation) const
+        {
+          LogDebug(L"EIT DVB: event %s, table ID = 0x%hhx, ONID = %hu, TSID = %hu, service ID = %hu, event ID = %llu, start date/time = %llu, duration = %hu m, running status = %hhu, free CA mode = %d, series ID = %S, episode ID = %S, is previously shown = %d, DVB content type count = %llu, star rating = %hhu, MPAA classification = %hhu, Dish/BEV advisories = %hu, V-CHIP rating = %hhu, text count = %llu",
+                    situation, TableId, OriginalNetworkId, TransportStreamId,
+                    ServiceId, EventId, StartDateTime, Duration, RunningStatus,
+                    FreeCaMode, SeriesId == NULL ? "" : SeriesId,
+                    EpisodeId == NULL ? "" : EpisodeId, IsPreviouslyShown,
+                    (unsigned long long)DvbContentTypeIds.size(),
+                    StarRating, MpaaClassification, DishBevAdvisories,
+                    VchipRating, (unsigned long long)Texts.size());
+
+          CUtils::DebugVector(DvbContentTypeIds, L"DVB content type ID(s)", false);
+
+          map<unsigned long, CRecordEitEventText*>::const_iterator textIt = Texts.begin();
+          for ( ; textIt != Texts.end(); textIt++)
+          {
+            if (textIt->second != NULL)
+            {
+              textIt->second->Debug(situation);
+            }
+          }
+        }
+
+        // Ordered to minimise memory usage (8-byte aligned).
+        unsigned short OriginalNetworkId;
+        unsigned short TransportStreamId;
+
+        unsigned long long EventId;
+        unsigned long long StartDateTime; // unit = UTC epoch
+
+        unsigned short ServiceId;
+        unsigned short Duration;          // unit = minutes
+        unsigned char TableId;
+        unsigned char RunningStatus;
+        bool FreeCaMode;
+        bool AreSeriesAndEpisodeIdsCrids;
+
+        char* SeriesId;
+        char* EpisodeId;
+
+        bool IsPreviouslyShown;
+        unsigned char StarRating;
+        unsigned char MpaaClassification;
+        unsigned char VchipRating;
+        unsigned short DishBevAdvisories;
+
+        vector<unsigned short> DvbContentTypeIds;
+        map<unsigned long, CRecordEitEventText*> Texts;
+    };
+
+    class CRecordEitEvent : public CRecordEitEventMinimal
+    {
+      public:
+        CRecordEitEvent(void)
+        {
+          ReferenceServiceId = 0;
+          ReferenceEventId = 0;
+          IsHighDefinition = false;
+          IsStandardDefinition = false;
+          IsThreeDimensional = false;
+        }
+
+        bool Equals(const IRecord* record) const
+        {
+          if (!CRecordEitEventMinimal::Equals(record))
+          {
+            return false;
+          }
+
+          const CRecordEitEvent* recordEvent = dynamic_cast<const CRecordEitEvent*>(record);
+          if (
+            recordEvent == NULL ||
+            ReferenceServiceId != recordEvent->ReferenceServiceId ||
+            ReferenceEventId != recordEvent->ReferenceEventId ||
+            IsHighDefinition != recordEvent->IsHighDefinition ||
+            IsStandardDefinition != recordEvent->IsStandardDefinition ||
+            IsThreeDimensional != recordEvent->IsThreeDimensional ||
+            !CUtils::CompareVectors(AudioLanguages, recordEvent->AudioLanguages) ||
+            !CUtils::CompareVectors(SubtitlesLanguages, recordEvent->SubtitlesLanguages) ||
+            DvbParentalRatings.size() != recordEvent->DvbParentalRatings.size()
+          )
+          {
+            return false;
+          }
+
+          map<unsigned long, unsigned char>::const_iterator prIt = DvbParentalRatings.begin();
+          for ( ; prIt != DvbParentalRatings.end(); prIt++)
+          {
+            if (recordEvent->DvbParentalRatings.find(prIt->first) == recordEvent->DvbParentalRatings.end())
+            {
+              return false;
+            }
+          }
+          return true;
         }
 
         void Debug(const wchar_t* situation) const
@@ -499,33 +622,14 @@ class CParserEitDvb : public CUnknown, public IGrabberEpgDvb, ISectionCallback
           }
         }
 
-        unsigned char TableId;
-        unsigned short OriginalNetworkId;
-        unsigned short TransportStreamId;
-        unsigned short ServiceId;
-        unsigned long long EventId;
-        unsigned long long StartDateTime; // unit = UTC epoch
-        unsigned short Duration;          // unit = minutes
-        unsigned char RunningStatus;
-        bool FreeCaMode;
         unsigned short ReferenceServiceId;
         unsigned long long ReferenceEventId;
-        bool AreSeriesAndEpisodeIdsCrids;
-        char* SeriesId;
-        char* EpisodeId;
         bool IsHighDefinition;
         bool IsStandardDefinition;
         bool IsThreeDimensional;
-        bool IsPreviouslyShown;
         vector<unsigned long> AudioLanguages;
         vector<unsigned long> SubtitlesLanguages;
-        vector<unsigned short> DvbContentTypeIds;
         map<unsigned long, unsigned char> DvbParentalRatings;   // country code => rating
-        unsigned char StarRating;
-        unsigned char MpaaClassification;
-        unsigned short DishBevAdvisories;
-        unsigned char VchipRating;
-        map<unsigned long, CRecordEitEventText*> Texts;
     };
 
     class CRecordEitService
@@ -581,8 +685,8 @@ class CParserEitDvb : public CUnknown, public IGrabberEpgDvb, ISectionCallback
                                           unsigned short transportStreamId,
                                           unsigned short serviceId,
                                           bool doNotCreate);
-    static CRecordEitEventText* GetOrCreateText(CRecordEitEvent& event, unsigned long language);
-    static void CreateDescriptionItem(CRecordEitEvent& event,
+    static CRecordEitEventText* GetOrCreateText(CRecordEitEventMinimal& event, unsigned long language);
+    static void CreateDescriptionItem(CRecordEitEventMinimal& event,
                                       unsigned long language,
                                       unsigned char index,
                                       const char* description,
@@ -592,12 +696,12 @@ class CParserEitDvb : public CUnknown, public IGrabberEpgDvb, ISectionCallback
     static bool DecodeEventRecord(unsigned char* sectionData,
                                   unsigned short& pointer,
                                   unsigned short endOfSection,
-                                  CRecordEitEvent& event,
+                                  CRecordEitEventMinimal& event,
                                   map<unsigned long long, vector<unsigned long long>*>& premiereShowings);
     static bool DecodeEventDescriptors(unsigned char* sectionData,
                                         unsigned short& pointer,
                                         unsigned short endOfDescriptorLoop,
-                                        CRecordEitEvent& event,
+                                        CRecordEitEventMinimal& event,
                                         map<unsigned long long, vector<unsigned long long>*>& premiereShowings);
 
     static bool DecodeShortEventDescriptor(unsigned char* data,
@@ -700,9 +804,11 @@ class CParserEitDvb : public CUnknown, public IGrabberEpgDvb, ISectionCallback
 
     CRecordEitService* m_currentService;
     unsigned short m_currentServiceIndex;
-    CRecordEitEvent* m_currentEvent;
+    CRecordEitEventMinimal* m_currentEvent;
     unsigned short m_currentEventIndex;
     CRecordEitEventText* m_currentEventText;
     unsigned char m_currentEventTextIndex;
     CRecordEitEvent* m_referenceEvent;
+    unsigned short m_referenceServiceId;
+    unsigned long long m_referenceEventId;
 };

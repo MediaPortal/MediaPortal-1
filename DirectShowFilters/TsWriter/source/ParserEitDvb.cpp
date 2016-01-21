@@ -22,13 +22,13 @@
 #include <cstring>      // memcpy(), strcmp(), strlen(), strncpy()
 #include <iomanip>
 #include <time.h>       // gmtime(), mktime(), time_t, tm
+#include <typeinfo>     // bad_cast
 #include "..\..\shared\TimeUtils.h"
 #include "EnterCriticalSection.h"
 #include "ParserBat.h"
 #include "ParserNitDvb.h"
 #include "ParserSdt.h"
 #include "PidUsage.h"
-#include "TextUtil.h"
 #include "Utils.h"
 
 
@@ -98,6 +98,8 @@ CParserEitDvb::CParserEitDvb(ICallBackPidConsumer* callBack,
   m_currentEventText = NULL;
   m_currentEventTextIndex = 0;
   m_referenceEvent = NULL;
+  m_referenceServiceId = 0;
+  m_referenceEventId = 0;
 }
 
 CParserEitDvb::~CParserEitDvb(void)
@@ -576,19 +578,34 @@ STDMETHODIMP_(bool) CParserEitDvb::GetEvent(unsigned short serviceIndex,
   *duration = m_currentEvent->Duration;
   *runningStatus = m_currentEvent->RunningStatus;
   *freeCaMode = m_currentEvent->FreeCaMode;
-  *referenceServiceId = m_currentEvent->ReferenceServiceId;
-  *referenceEventId = m_currentEvent->ReferenceEventId;
+  *referenceServiceId = m_referenceServiceId;
+  *referenceEventId = m_referenceEventId;
 
   // Assumption: for time-shifted/NVOD services/events, all other details are
   // kept with the reference event.
-  CRecordEitEvent* recordEvent = m_currentEvent;
+  CRecordEitEventMinimal* recordEvent = m_currentEvent;
+  CRecordEitEvent* recordEventFull = dynamic_cast<CRecordEitEvent*>(m_currentEvent);
   if (m_referenceEvent != NULL)
   {
     recordEvent = m_referenceEvent;
+    recordEventFull = dynamic_cast<CRecordEitEvent*>(m_referenceEvent);
   }
-  *isHighDefinition = recordEvent->IsHighDefinition;
-  *isStandardDefinition = recordEvent->IsStandardDefinition;
-  *isThreeDimensional = recordEvent->IsThreeDimensional;
+  if (recordEventFull != NULL)
+  {
+    *isHighDefinition = recordEventFull->IsHighDefinition;
+    *isStandardDefinition = recordEventFull->IsStandardDefinition;
+    *isThreeDimensional = recordEventFull->IsThreeDimensional;
+  }
+  else
+  {
+    *isHighDefinition = false;
+    *isStandardDefinition = false;
+    *isThreeDimensional = false;
+
+    *audioLanguageCount = 0;
+    *subtitlesLanguageCount = 0;
+    *dvbParentalRatingCount = 0;
+  }
   *isPreviouslyShown = recordEvent->IsPreviouslyShown;
   *starRating = recordEvent->StarRating;
   *mpaaClassification = recordEvent->MpaaClassification;
@@ -621,8 +638,8 @@ STDMETHODIMP_(bool) CParserEitDvb::GetEvent(unsigned short serviceIndex,
                   m_currentService->OriginalNetworkId,
                   m_currentService->TransportStreamId,
                   m_currentService->ServiceId, eventIndex,
-                  m_currentEvent->EventId, m_currentEvent->ReferenceServiceId,
-                  m_currentEvent->ReferenceEventId);
+                  m_currentEvent->EventId, *referenceServiceId,
+                  *referenceEventId);
       }
       else if (!m_defaultAuthorityProvider->GetDefaultAuthority(m_currentService->OriginalNetworkId,
                                                                 m_currentService->TransportStreamId,
@@ -634,8 +651,8 @@ STDMETHODIMP_(bool) CParserEitDvb::GetEvent(unsigned short serviceIndex,
                   serviceIndex, m_currentService->OriginalNetworkId,
                   m_currentService->TransportStreamId,
                   m_currentService->ServiceId, eventIndex,
-                  m_currentEvent->EventId, m_currentEvent->ReferenceServiceId,
-                  m_currentEvent->ReferenceEventId);
+                  m_currentEvent->EventId, *referenceServiceId,
+                  *referenceEventId);
       }
     }
 
@@ -670,9 +687,8 @@ STDMETHODIMP_(bool) CParserEitDvb::GetEvent(unsigned short serviceIndex,
                     m_currentService->OriginalNetworkId,
                     m_currentService->TransportStreamId,
                     m_currentService->ServiceId, eventIndex,
-                    m_currentEvent->EventId,
-                    m_currentEvent->ReferenceServiceId,
-                    m_currentEvent->ReferenceEventId);
+                    m_currentEvent->EventId, *referenceServiceId,
+                    *referenceEventId);
         }
         else
         {
@@ -720,9 +736,8 @@ STDMETHODIMP_(bool) CParserEitDvb::GetEvent(unsigned short serviceIndex,
                     m_currentService->OriginalNetworkId,
                     m_currentService->TransportStreamId,
                     m_currentService->ServiceId, eventIndex,
-                    m_currentEvent->EventId,
-                    m_currentEvent->ReferenceServiceId,
-                    m_currentEvent->ReferenceEventId);
+                    m_currentEvent->EventId, *referenceServiceId,
+                    *referenceEventId);
         }
         else
         {
@@ -755,10 +770,8 @@ STDMETHODIMP_(bool) CParserEitDvb::GetEvent(unsigned short serviceIndex,
     LogDebug(L"EIT DVB: insufficient series ID buffer size, service index = %hu, ONID = %hu, TSID = %hu, service ID = %hu, event index = %hu, event ID = %llu, reference service ID = %hu, reference event ID = %llu, required size = %hu, actual size = %hu",
               serviceIndex, m_currentService->OriginalNetworkId,
               m_currentService->TransportStreamId, m_currentService->ServiceId,
-              eventIndex, m_currentEvent->EventId,
-              m_currentEvent->ReferenceServiceId,
-              m_currentEvent->ReferenceEventId, requiredBufferSize,
-              *seriesIdBufferSize);
+              eventIndex, m_currentEvent->EventId, *referenceServiceId,
+              *referenceEventId, requiredBufferSize, *seriesIdBufferSize);
   }
   if (seriesIdSource != NULL && seriesIdSource != recordEvent->SeriesId)
   {
@@ -772,10 +785,8 @@ STDMETHODIMP_(bool) CParserEitDvb::GetEvent(unsigned short serviceIndex,
     LogDebug(L"EIT DVB: insufficient episode ID buffer size, service index = %hu, ONID = %hu, TSID = %hu, service ID = %hu, event index = %hu, event ID = %llu, reference service ID = %hu, reference event ID = %llu, required size = %hu, actual size = %hu",
               serviceIndex, m_currentService->OriginalNetworkId,
               m_currentService->TransportStreamId, m_currentService->ServiceId,
-              eventIndex, m_currentEvent->EventId,
-              m_currentEvent->ReferenceServiceId,
-              m_currentEvent->ReferenceEventId, requiredBufferSize,
-              *episodeIdBufferSize);
+              eventIndex, m_currentEvent->EventId, *referenceServiceId,
+              *referenceEventId, requiredBufferSize, *episodeIdBufferSize);
   }
   if (episodeIdSource != NULL && episodeIdSource != recordEvent->EpisodeId)
   {
@@ -783,31 +794,32 @@ STDMETHODIMP_(bool) CParserEitDvb::GetEvent(unsigned short serviceIndex,
   }
 
   unsigned char requiredCount = 0;
-  if (!CUtils::CopyVectorToArray(recordEvent->AudioLanguages,
-                                  audioLanguages,
-                                  *audioLanguageCount,
-                                  requiredCount))
+  if (recordEventFull != NULL)
   {
-    LogDebug(L"EIT DVB: insufficient audio language array size, service index = %hu, ONID = %hu, TSID = %hu, service ID = %hu, event index = %hu, event ID = %llu, reference service ID = %hu, reference event ID = %llu, required size = %hhu, actual size = %hhu",
-              serviceIndex, m_currentService->OriginalNetworkId,
-              m_currentService->TransportStreamId, m_currentService->ServiceId,
-              eventIndex, m_currentEvent->EventId,
-              m_currentEvent->ReferenceServiceId,
-              m_currentEvent->ReferenceEventId, requiredCount,
-              *audioLanguageCount);
-  }
-  if (!CUtils::CopyVectorToArray(recordEvent->SubtitlesLanguages,
-                                  subtitlesLanguages,
-                                  *subtitlesLanguageCount,
-                                  requiredCount))
-  {
-    LogDebug(L"EIT DVB: insufficient subtitles language array size, service index = %hu, ONID = %hu, TSID = %hu, service ID = %hu, event index = %hu, event ID = %llu, reference service ID = %hu, reference event ID = %llu, required size = %hhu, actual size = %hhu",
-              serviceIndex, m_currentService->OriginalNetworkId,
-              m_currentService->TransportStreamId, m_currentService->ServiceId,
-              eventIndex, m_currentEvent->EventId,
-              m_currentEvent->ReferenceServiceId,
-              m_currentEvent->ReferenceEventId, requiredCount,
-              *subtitlesLanguageCount);
+    if (!CUtils::CopyVectorToArray(recordEventFull->AudioLanguages,
+                                    audioLanguages,
+                                    *audioLanguageCount,
+                                    requiredCount))
+    {
+      LogDebug(L"EIT DVB: insufficient audio language array size, service index = %hu, ONID = %hu, TSID = %hu, service ID = %hu, event index = %hu, event ID = %llu, reference service ID = %hu, reference event ID = %llu, required size = %hhu, actual size = %hhu",
+                serviceIndex, m_currentService->OriginalNetworkId,
+                m_currentService->TransportStreamId,
+                m_currentService->ServiceId, eventIndex,
+                m_currentEvent->EventId, *referenceServiceId,
+                *referenceEventId, requiredCount, *audioLanguageCount);
+    }
+    if (!CUtils::CopyVectorToArray(recordEventFull->SubtitlesLanguages,
+                                    subtitlesLanguages,
+                                    *subtitlesLanguageCount,
+                                    requiredCount))
+    {
+      LogDebug(L"EIT DVB: insufficient subtitles language array size, service index = %hu, ONID = %hu, TSID = %hu, service ID = %hu, event index = %hu, event ID = %llu, reference service ID = %hu, reference event ID = %llu, required size = %hhu, actual size = %hhu",
+                serviceIndex, m_currentService->OriginalNetworkId,
+                m_currentService->TransportStreamId,
+                m_currentService->ServiceId, eventIndex,
+                m_currentEvent->EventId, *referenceServiceId,
+                *referenceEventId, requiredCount, *subtitlesLanguageCount);
+    }
   }
   if (!CUtils::CopyVectorToArray(recordEvent->DvbContentTypeIds,
                                   dvbContentTypeIds,
@@ -817,13 +829,16 @@ STDMETHODIMP_(bool) CParserEitDvb::GetEvent(unsigned short serviceIndex,
     LogDebug(L"EIT DVB: insufficient DVB content type ID array size, service index = %hu, ONID = %hu, TSID = %hu, service ID = %hu, event index = %hu, event ID = %llu, reference service ID = %hu, reference event ID = %llu, required size = %hhu, actual size = %hhu",
               serviceIndex, m_currentService->OriginalNetworkId,
               m_currentService->TransportStreamId, m_currentService->ServiceId,
-              eventIndex, m_currentEvent->EventId,
-              m_currentEvent->ReferenceServiceId,
-              m_currentEvent->ReferenceEventId, requiredCount,
-              *dvbContentTypeIdCount);
+              eventIndex, m_currentEvent->EventId, *referenceServiceId,
+              *referenceEventId, requiredCount, *dvbContentTypeIdCount);
   }
 
-  requiredCount = recordEvent->DvbParentalRatings.size();
+  if (recordEventFull == NULL)
+  {
+    return true;
+  }
+
+  requiredCount = recordEventFull->DvbParentalRatings.size();
   if (requiredCount == 0)
   {
     *dvbParentalRatingCount = 0;
@@ -838,10 +853,8 @@ STDMETHODIMP_(bool) CParserEitDvb::GetEvent(unsigned short serviceIndex,
     LogDebug(L"EIT DVB: insufficient DVB parental ratings array size, service index = %hu, ONID = %hu, TSID = %hu, service ID = %hu, event index = %hu, event ID = %llu, reference service ID = %hu, reference event ID = %llu, required size = %hhu, actual size = %hhu",
               serviceIndex, m_currentService->OriginalNetworkId,
               m_currentService->TransportStreamId, m_currentService->ServiceId,
-              eventIndex, m_currentEvent->EventId,
-              m_currentEvent->ReferenceServiceId,
-              m_currentEvent->ReferenceEventId, requiredCount,
-              *dvbParentalRatingCount);
+              eventIndex, m_currentEvent->EventId, *referenceServiceId,
+              *referenceEventId, requiredCount, *dvbParentalRatingCount);
     if (dvbParentalRatingCountryCodes == NULL || dvbParentalRatings == NULL)
     {
       *dvbParentalRatingCount = 0;
@@ -852,7 +865,7 @@ STDMETHODIMP_(bool) CParserEitDvb::GetEvent(unsigned short serviceIndex,
   {
     *dvbParentalRatingCount = requiredCount;
   }
-  map<unsigned long, unsigned char>::const_iterator it = recordEvent->DvbParentalRatings.begin();
+  map<unsigned long, unsigned char>::const_iterator it = recordEventFull->DvbParentalRatings.begin();
   for (unsigned char i = 0; i < *dvbParentalRatingCount; i++, it++)
   {
     dvbParentalRatingCountryCodes[i] = it->first;
@@ -893,7 +906,12 @@ STDMETHODIMP_(bool) CParserEitDvb::GetEventText(unsigned short serviceIndex,
   *descriptionItemCount = (unsigned char)m_currentEventText->DescriptionItems.size();
 
   unsigned short requiredBufferSize = 0;
-  if (!CUtils::CopyStringToBuffer(m_currentEventText->Title,
+
+  char* tempTitle = NULL;
+  m_currentEventText->Decompress(m_currentEventText->Title,
+                                  &tempTitle,
+                                  L"name");
+  if (!CUtils::CopyStringToBuffer(tempTitle,
                                   title,
                                   *titleBufferSize,
                                   requiredBufferSize))
@@ -901,12 +919,20 @@ STDMETHODIMP_(bool) CParserEitDvb::GetEventText(unsigned short serviceIndex,
     LogDebug(L"EIT DVB: insufficient title buffer size, service index = %hu, ONID = %hu, TSID = %hu, service ID = %hu, event index = %hu, event ID = %llu, reference service ID = %hu, reference event ID = %llu, text index = %hhu, language = %S, required size = %hu, actual size = %hu",
               serviceIndex, m_currentService->OriginalNetworkId,
               m_currentService->TransportStreamId, m_currentService->ServiceId,
-              eventIndex, m_currentEvent->EventId,
-              m_currentEvent->ReferenceServiceId,
-              m_currentEvent->ReferenceEventId, textIndex, (char*)language,
+              eventIndex, m_currentEvent->EventId, m_referenceServiceId,
+              m_referenceEventId, textIndex, (char*)language,
               requiredBufferSize, *titleBufferSize);
   }
-  if (!CUtils::CopyStringToBuffer(m_currentEventText->DescriptionShort,
+  if (tempTitle != NULL && tempTitle != m_currentEventText->Title)
+  {
+    delete[] tempTitle;
+  }
+
+  char* tempDescription = NULL;
+  m_currentEventText->Decompress(m_currentEventText->DescriptionShort,
+                                  &tempDescription,
+                                  L"description");
+  if (!CUtils::CopyStringToBuffer(tempDescription,
                                   shortDescription,
                                   *shortDescriptionBufferSize,
                                   requiredBufferSize))
@@ -914,11 +940,15 @@ STDMETHODIMP_(bool) CParserEitDvb::GetEventText(unsigned short serviceIndex,
     LogDebug(L"EIT DVB: insufficient short description buffer size, service index = %hu, ONID = %hu, TSID = %hu, service ID = %hu, event index = %hu, event ID = %llu, reference service ID = %hu, reference event ID = %llu, text index = %hhu, language = %S, required size = %hu, actual size = %hu",
               serviceIndex, m_currentService->OriginalNetworkId,
               m_currentService->TransportStreamId, m_currentService->ServiceId,
-              eventIndex, m_currentEvent->EventId,
-              m_currentEvent->ReferenceServiceId,
-              m_currentEvent->ReferenceEventId, textIndex, (char*)language,
+              eventIndex, m_currentEvent->EventId, m_referenceServiceId,
+              m_referenceEventId, textIndex, (char*)language,
               requiredBufferSize, *shortDescriptionBufferSize);
   }
+  if (tempDescription != NULL && tempDescription != m_currentEventText->DescriptionShort)
+  {
+    delete[] tempDescription;
+  }
+
   if (!CUtils::CopyStringToBuffer(m_currentEventText->DescriptionExtended,
                                   extendedDescription,
                                   *extendedDescriptionBufferSize,
@@ -927,9 +957,8 @@ STDMETHODIMP_(bool) CParserEitDvb::GetEventText(unsigned short serviceIndex,
     LogDebug(L"EIT DVB: insufficient extended description buffer size, service index = %hu, ONID = %hu, TSID = %hu, service ID = %hu, event index = %hu, event ID = %llu, reference service ID = %hu, reference event ID = %llu, text index = %hhu, language = %S, required size = %hu, actual size = %hu",
               serviceIndex, m_currentService->OriginalNetworkId,
               m_currentService->TransportStreamId, m_currentService->ServiceId,
-              eventIndex, m_currentEvent->EventId,
-              m_currentEvent->ReferenceServiceId,
-              m_currentEvent->ReferenceEventId, textIndex, (char*)language,
+              eventIndex, m_currentEvent->EventId, m_referenceServiceId,
+              m_referenceEventId, textIndex, (char*)language,
               requiredBufferSize, *extendedDescriptionBufferSize);
   }
 
@@ -966,9 +995,8 @@ STDMETHODIMP_(bool) CParserEitDvb::GetEventDescriptionItem(unsigned short servic
     LogDebug(L"EIT DVB: invalid description item index, service index = %hu, ONID = %hu, TSID = %hu, service ID = %hu, event index = %hu, event ID = %llu, reference service ID = %hu, reference event ID = %llu, text index = %hhu, text count = %lu, item index = %hhu, item count = %llu",
               serviceIndex, m_currentService->OriginalNetworkId,
               m_currentService->TransportStreamId, m_currentService->ServiceId,
-              eventIndex, m_currentEvent->EventId,
-              m_currentEvent->ReferenceServiceId,
-              m_currentEvent->ReferenceEventId, textIndex,
+              eventIndex, m_currentEvent->EventId, m_referenceServiceId,
+              m_referenceEventId, textIndex,
               (char*)&(m_currentEventText->Language), itemIndex,
               (unsigned long long)m_currentEventText->DescriptionItems.size());
     return false;
@@ -991,9 +1019,8 @@ STDMETHODIMP_(bool) CParserEitDvb::GetEventDescriptionItem(unsigned short servic
     LogDebug(L"EIT DVB: invalid description item record, service index = %hu, ONID = %hu, TSID = %hu, service ID = %hu, event index = %hu, event ID = %llu, reference service ID = %hu, reference event ID = %llu, text index = %hhu, text count = %lu, item index = %hhu",
               serviceIndex, m_currentService->OriginalNetworkId,
               m_currentService->TransportStreamId, m_currentService->ServiceId,
-              eventIndex, m_currentEvent->EventId,
-              m_currentEvent->ReferenceServiceId,
-              m_currentEvent->ReferenceEventId, textIndex,
+              eventIndex, m_currentEvent->EventId, m_referenceServiceId,
+              m_referenceEventId, textIndex,
               (char*)&(m_currentEventText->Language), itemIndex);
     return false;
   }
@@ -1007,9 +1034,8 @@ STDMETHODIMP_(bool) CParserEitDvb::GetEventDescriptionItem(unsigned short servic
     LogDebug(L"EIT DVB: insufficient item description buffer size, service index = %hu, ONID = %hu, TSID = %hu, service ID = %hu, event index = %hu, event ID = %llu, reference service ID = %hu, reference event ID = %llu, text index = %hhu, language = %S, item index = %hhu, required size = %hu, actual size = %hu",
               serviceIndex, m_currentService->OriginalNetworkId,
               m_currentService->TransportStreamId, m_currentService->ServiceId,
-              eventIndex, m_currentEvent->EventId,
-              m_currentEvent->ReferenceServiceId,
-              m_currentEvent->ReferenceEventId, textIndex,
+              eventIndex, m_currentEvent->EventId, m_referenceServiceId,
+              m_referenceEventId, textIndex,
               (char*)&(m_currentEventText->Language), itemIndex,
               requiredBufferSize, *descriptionBufferSize);
   }
@@ -1018,9 +1044,8 @@ STDMETHODIMP_(bool) CParserEitDvb::GetEventDescriptionItem(unsigned short servic
     LogDebug(L"EIT DVB: insufficient item text buffer size, service index = %hu, ONID = %hu, TSID = %hu, service ID = %hu, event index = %hu, event ID = %llu, reference service ID = %hu, reference event ID = %llu, text index = %hhu, language = %S, item index = %hhu, required size = %hu, actual size = %hu",
               serviceIndex, m_currentService->OriginalNetworkId,
               m_currentService->TransportStreamId, m_currentService->ServiceId,
-              eventIndex, m_currentEvent->EventId,
-              m_currentEvent->ReferenceServiceId,
-              m_currentEvent->ReferenceEventId, textIndex,
+              eventIndex, m_currentEvent->EventId, m_referenceServiceId,
+              m_referenceEventId, textIndex,
               (char*)&(m_currentEventText->Language), itemIndex,
               requiredBufferSize, *textBufferSize);
   }
@@ -1066,6 +1091,8 @@ bool CParserEitDvb::SelectServiceRecordByIndex(unsigned short index)
   m_currentEventText = NULL;
   m_currentEventTextIndex = 0;
   m_referenceEvent = NULL;
+  m_referenceServiceId = 0;
+  m_referenceEventId = 0;
   return true;
 }
 
@@ -1085,7 +1112,7 @@ bool CParserEitDvb::SelectEventRecordByIndex(unsigned short index)
               index, m_currentService->Events.GetRecordCount());
     return false;
   }
-  m_currentEvent = dynamic_cast<CRecordEitEvent*>(record);
+  m_currentEvent = dynamic_cast<CRecordEitEventMinimal*>(record);
   if (m_currentEvent == NULL)
   {
     LogDebug(L"EIT DVB: invalid event record, service index = %hu, ONID = %hu, TSID = %hu, service ID = %hu, event index = %hu",
@@ -1099,8 +1126,16 @@ bool CParserEitDvb::SelectEventRecordByIndex(unsigned short index)
   m_currentEventText = NULL;
   m_currentEventTextIndex = 0;
   m_referenceEvent = NULL;
+  m_referenceServiceId = 0;
+  m_referenceEventId = 0;
 
-  if (m_currentEvent->ReferenceServiceId == 0 || m_currentEvent->ReferenceEventId == 0)
+  CRecordEitEvent* recordEventFull = dynamic_cast<CRecordEitEvent*>(m_currentEvent);
+  if (recordEventFull != NULL)
+  {
+    m_referenceServiceId = recordEventFull->ReferenceServiceId;
+    m_referenceEventId = recordEventFull->ReferenceEventId;
+  }
+  if (m_referenceServiceId == 0 || m_referenceEventId == 0)
   {
     return true;
   }
@@ -1108,30 +1143,28 @@ bool CParserEitDvb::SelectEventRecordByIndex(unsigned short index)
   CRecordEitService* referenceService = GetOrCreateService(m_currentService->IsPremiereService,
                                                             m_currentService->OriginalNetworkId,
                                                             m_currentService->TransportStreamId,
-                                                            m_currentEvent->ReferenceServiceId,
+                                                            m_referenceServiceId,
                                                             true);
   if (referenceService == NULL)
   {
     LogDebug(L"EIT DVB: invalid reference service record, service index = %hu, ONID = %hu, TSID = %hu, service ID = %hu, event index = %hu, event ID = %llu, reference service ID = %hu, reference event ID = %llu",
               m_currentServiceIndex, m_currentEvent->OriginalNetworkId,
               m_currentEvent->TransportStreamId, m_currentEvent->ServiceId,
-              index, m_currentEvent->EventId,
-              m_currentEvent->ReferenceServiceId,
-              m_currentEvent->ReferenceEventId);
+              index, m_currentEvent->EventId, m_referenceServiceId,
+              m_referenceEventId);
     return true;
   }
 
   if (
-    !referenceService->Events.GetRecordByKey(m_currentEvent->ReferenceEventId, &record) ||
+    !referenceService->Events.GetRecordByKey(m_referenceEventId, &record) ||
     record == NULL
   )
   {
     LogDebug(L"EIT DVB: invalid reference event key, service index = %hu, ONID = %hu, TSID = %hu, service ID = %hu, event index = %hu, event ID = %llu, reference service ID = %hu, reference event ID = %llu",
               m_currentServiceIndex, m_currentEvent->OriginalNetworkId,
               m_currentEvent->TransportStreamId, m_currentEvent->ServiceId,
-              index, m_currentEvent->EventId,
-              m_currentEvent->ReferenceServiceId,
-              m_currentEvent->ReferenceEventId);
+              index, m_currentEvent->EventId, m_referenceServiceId,
+              m_referenceEventId);
     return true;
   }
 
@@ -1141,9 +1174,8 @@ bool CParserEitDvb::SelectEventRecordByIndex(unsigned short index)
     LogDebug(L"EIT DVB: invalid reference event record, service index = %hu, ONID = %hu, TSID = %hu, service ID = %hu, event index = %hu, event ID = %llu, reference service ID = %hu, reference event ID = %llu",
               m_currentServiceIndex, m_currentEvent->OriginalNetworkId,
               m_currentEvent->TransportStreamId, m_currentEvent->ServiceId,
-              index, m_currentEvent->EventId,
-              m_currentEvent->ReferenceServiceId,
-              m_currentEvent->ReferenceEventId);
+              index, m_currentEvent->EventId, m_referenceServiceId,
+              m_referenceEventId);
   }
   return true;
 }
@@ -1155,7 +1187,7 @@ bool CParserEitDvb::SelectTextRecordByIndex(unsigned char index)
     return true;
   }
 
-  CRecordEitEvent* recordEvent = m_currentEvent;
+  CRecordEitEventMinimal* recordEvent = m_currentEvent;
   if (m_referenceEvent != NULL)
   {
     recordEvent = m_referenceEvent;
@@ -1167,8 +1199,7 @@ bool CParserEitDvb::SelectTextRecordByIndex(unsigned char index)
               m_currentServiceIndex, m_currentService->OriginalNetworkId,
               m_currentService->TransportStreamId, m_currentService->ServiceId,
               m_currentEventIndex, m_currentEvent->EventId,
-              m_currentEvent->ReferenceServiceId,
-              m_currentEvent->ReferenceEventId, index,
+              m_referenceServiceId, m_referenceEventId, index,
               (unsigned long long)m_currentEvent->Texts.size(),
               (m_referenceEvent == NULL ? 0 : (unsigned char)m_referenceEvent->Texts.size()));
     return false;
@@ -1192,8 +1223,7 @@ bool CParserEitDvb::SelectTextRecordByIndex(unsigned char index)
               m_currentServiceIndex, m_currentService->OriginalNetworkId,
               m_currentService->TransportStreamId, m_currentService->ServiceId,
               m_currentEventIndex, m_currentEvent->EventId,
-              m_currentEvent->ReferenceServiceId,
-              m_currentEvent->ReferenceEventId, index);
+              m_referenceServiceId, m_referenceEventId, index);
     return false;
   }
 
@@ -1570,9 +1600,29 @@ void CParserEitDvb::OnNewSection(int pid, int tableId, CSection& section)
       pointer = 14;
       eventByteCount = 12;
     }
+    bool isDishOrBellData = false;
+    if (
+      pid == PID_EIT_DISH ||
+      pid == PID_EIT_BELL_EXPRESSVU ||
+      (originalNetworkId >= ORIGINAL_NETWORK_ID_DISH_START && originalNetworkId <= ORIGINAL_NETWORK_ID_DISH_END)
+    )
+    {
+      isDishOrBellData = true;
+    }
     while (pointer + eventByteCount - 1 < endOfSection)
     {
-      CRecordEitEvent* event = new CRecordEitEvent();
+      // Create a minimal event for Dish Network and Bell TV; otherwise create
+      // a full event. Using smaller events enables us to stay within the 32
+      // bit process memory limit.
+      CRecordEitEventMinimal* event = NULL;
+      if (isDishOrBellData)
+      {
+        event = new CRecordEitEventMinimal();
+      }
+      else
+      {
+        event = new CRecordEitEvent();
+      }
       if (event == NULL)
       {
         LogDebug(L"EIT DVB: failed to allocate event record, PID = %d, table ID = 0x%x, service ID = %hu, TSID = %hu, ONID = %hu, version number = %d, section number = %d",
@@ -1600,7 +1650,24 @@ void CParserEitDvb::OnNewSection(int pid, int tableId, CSection& section)
 
       if (isPremiereTable)
       {
-        CreatePremiereEvents(*event, premiereShowings);
+        CRecordEitEvent* eventFull = dynamic_cast<CRecordEitEvent*>(event);
+        if (eventFull == NULL)
+        {
+          LogDebug(L"EIT DVB: unexpected Premiere data");
+          map<unsigned long long, vector<unsigned long long>*>::iterator premiereEventIt = premiereShowings.begin();
+          for ( ; premiereEventIt != premiereShowings.end(); premiereEventIt++)
+          {
+            if (premiereEventIt->second != NULL)
+            {
+              delete premiereEventIt->second;
+            }
+          }
+          premiereShowings.clear();
+        }
+        else
+        {
+          CreatePremiereEvents(*eventFull, premiereShowings);
+        }
         delete event;
       }
       else
@@ -2034,7 +2101,7 @@ CParserEitDvb::CRecordEitService* CParserEitDvb::GetOrCreateService(bool isPremi
   return service;
 }
 
-CParserEitDvb::CRecordEitEventText* CParserEitDvb::GetOrCreateText(CRecordEitEvent& event,
+CParserEitDvb::CRecordEitEventText* CParserEitDvb::GetOrCreateText(CRecordEitEventMinimal& event,
                                                                     unsigned long language)
 {
   map<unsigned long, CRecordEitEventText*>::const_iterator it = event.Texts.find(language);
@@ -2056,7 +2123,7 @@ CParserEitDvb::CRecordEitEventText* CParserEitDvb::GetOrCreateText(CRecordEitEve
   return t;
 }
 
-void CParserEitDvb::CreateDescriptionItem(CRecordEitEvent& event,
+void CParserEitDvb::CreateDescriptionItem(CRecordEitEventMinimal& event,
                                           unsigned long language,
                                           unsigned char index,
                                           const char* description,
@@ -2120,7 +2187,7 @@ void CParserEitDvb::CopyString(const char* input, char** output, wchar_t* debug)
 bool CParserEitDvb::DecodeEventRecord(unsigned char* sectionData,
                                       unsigned short& pointer,
                                       unsigned short endOfSection,
-                                      CRecordEitEvent& event,
+                                      CRecordEitEventMinimal& event,
                                       map<unsigned long long, vector<unsigned long long>*>& premiereShowings)
 {
   try
@@ -2197,7 +2264,7 @@ bool CParserEitDvb::DecodeEventRecord(unsigned char* sectionData,
 bool CParserEitDvb::DecodeEventDescriptors(unsigned char* sectionData,
                                             unsigned short& pointer,
                                             unsigned short endOfDescriptorLoop,
-                                            CRecordEitEvent& event,
+                                            CRecordEitEventMinimal& event,
                                             map<unsigned long long, vector<unsigned long long>*>& premiereShowings)
 {
   unsigned long privateDataSpecifier = 0;
@@ -2383,12 +2450,20 @@ bool CParserEitDvb::DecodeEventDescriptors(unsigned char* sectionData,
     }
     else if (tag == 0x4f) // time-shifted event descriptor
     {
-      unsigned short referenceEventId;
-      result = DecodeTimeShiftedEventDescriptor(&sectionData[pointer],
-                                                length,
-                                                event.ReferenceServiceId,
-                                                referenceEventId);
-      event.ReferenceEventId = referenceEventId;
+      try
+      {
+        CRecordEitEvent& eventFull = dynamic_cast<CRecordEitEvent&>(event);
+        unsigned short referenceEventId;
+        result = DecodeTimeShiftedEventDescriptor(&sectionData[pointer],
+                                                  length,
+                                                  eventFull.ReferenceServiceId,
+                                                  referenceEventId);
+        eventFull.ReferenceEventId = referenceEventId;
+      }
+      catch (bad_cast&)
+      {
+        LogDebug(L"EIT DVB: unexpected time-shifted event descriptor");
+      }
     }
     else if (tag == 0x50) // component descriptor
     {
@@ -2408,24 +2483,32 @@ bool CParserEitDvb::DecodeEventDescriptors(unsigned char* sectionData,
                                           language);
       if (result)
       {
-        event.IsHighDefinition |= isHighDefinition;
-        event.IsStandardDefinition |= isStandardDefinition;
-        event.IsThreeDimensional |= isThreeDimensional;
-        if (
-          isAudio &&
-          language != 0 &&
-          find(event.AudioLanguages.begin(), event.AudioLanguages.end(), language) == event.AudioLanguages.end()
-        )
+        try
         {
-          event.AudioLanguages.push_back(language);
+          CRecordEitEvent& eventFull = dynamic_cast<CRecordEitEvent&>(event);
+          eventFull.IsHighDefinition |= isHighDefinition;
+          eventFull.IsStandardDefinition |= isStandardDefinition;
+          eventFull.IsThreeDimensional |= isThreeDimensional;
+          if (
+            isAudio &&
+            language != 0 &&
+            find(eventFull.AudioLanguages.begin(), eventFull.AudioLanguages.end(), language) == eventFull.AudioLanguages.end()
+          )
+          {
+            eventFull.AudioLanguages.push_back(language);
+          }
+          else if (
+            isSubtitles &&
+            language != 0 &&
+            find(eventFull.SubtitlesLanguages.begin(), eventFull.SubtitlesLanguages.end(), language) == eventFull.SubtitlesLanguages.end()
+          )
+          {
+            eventFull.SubtitlesLanguages.push_back(language);
+          }
         }
-        else if (
-          isSubtitles &&
-          language != 0 &&
-          find(event.SubtitlesLanguages.begin(), event.SubtitlesLanguages.end(), language) == event.SubtitlesLanguages.end()
-        )
+        catch (bad_cast&)
         {
-          event.SubtitlesLanguages.push_back(language);
+          LogDebug(L"EIT DVB: unexpected component descriptor");
         }
       }
     }
@@ -2435,9 +2518,17 @@ bool CParserEitDvb::DecodeEventDescriptors(unsigned char* sectionData,
     }
     else if (tag == 0x55) // parental rating descriptor
     {
-      result = DecodeParentalRatingDescriptor(&sectionData[pointer],
-                                              length,
-                                              event.DvbParentalRatings);
+      try
+      {
+        CRecordEitEvent& eventFull = dynamic_cast<CRecordEitEvent&>(event);
+        result = DecodeParentalRatingDescriptor(&sectionData[pointer],
+                                                length,
+                                                eventFull.DvbParentalRatings);
+      }
+      catch (bad_cast&)
+      {
+        LogDebug(L"EIT DVB: unexpected parental rating descriptor");
+      }
     }
     else if (tag == 0x5f) // private data specifier descriptor
     {
@@ -2510,7 +2601,15 @@ bool CParserEitDvb::DecodeEventDescriptors(unsigned char* sectionData,
         unsigned char tagExtension = sectionData[pointer];
         if (tagExtension == 0x10) // video depth range descriptor
         {
-          event.IsThreeDimensional = true;
+          try
+          {
+            CRecordEitEvent& eventFull = dynamic_cast<CRecordEitEvent&>(event);
+            eventFull.IsThreeDimensional = true;
+          }
+          catch (bad_cast&)
+          {
+            LogDebug(L"EIT DVB: unexpected video depth range descriptor");
+          }
         }
       }
     }
@@ -2715,9 +2814,17 @@ bool CParserEitDvb::DecodeEventDescriptors(unsigned char* sectionData,
                                                             &text);
         if (result)
         {
-          // The rating is DVB-compatible (age minus 3 years). Assume it applies
-          // to Germany, since Premiere is now Sky Deutchland.
-          event.DvbParentalRatings[COUNTRY_DEU] = rating;
+          try
+          {
+            // The rating is DVB-compatible (age minus 3 years). Assume it
+            // applies to Germany, since Premiere is now Sky Deutchland.
+            CRecordEitEvent& eventFull = dynamic_cast<CRecordEitEvent&>(event);
+            eventFull.DvbParentalRatings[COUNTRY_DEU] = rating;
+          }
+          catch (bad_cast&)
+          {
+            LogDebug(L"EIT DVB: unexpected Premiere parent information descriptor");
+          }
 
           if (text != NULL)
           {
@@ -3399,21 +3506,43 @@ bool CParserEitDvb::DecodeDishTextDescriptor(unsigned char* data,
   }
   try
   {
-    if (!CTextUtil::DishTextToString(data, dataLength, tableId, text))
+    // Delay decompression until retrieval to minimise memory usage.
+    *text = new char[dataLength + 3];
+    if (*text == NULL)
+    {
+      LogDebug(L"EIT DVB: failed to allocate Dish event name or description, descriptor length = %hhu",
+                dataLength);
+    }
+    else
+    {
+      (*text)[0] = 0x1f;
+      (*text)[1] = tableId;
+      (*text)[2] = dataLength;
+      memcpy(&(*text)[3], data, dataLength);
+    }
+    return true;
+
+    /*char* temp;
+    if (!CTextUtil::DishTextToString(data, dataLength, tableId, &temp))
     {
       LogDebug(L"EIT DVB: invalid Dish event name/description descriptor, length = %hhu, table ID = 0x%hhx, byte 1 = %hhu, byte 2 = %hhu",
                 dataLength, tableId, data[0], dataLength > 1 ? data[1] : 0xff);
       return false;
     }
-    if (*text == NULL)
+    if (temp == NULL)
     {
       LogDebug(L"EIT DVB: failed to allocate Dish event name or description, descriptor length = %hhu, byte 1 = %hhu, byte 2 = %hhu",
                 dataLength, data[0], dataLength > 1 ? data[1] : 0xff);
     }
 
-    //LogDebug(L"EIT DVB: Dish event name/description descriptor, text = %S",
-    //          *text == NULL ? "" : *text);
-    return true;
+    LogDebug(L"EIT DVB: Dish event name/description descriptor, text = %S",
+              temp == NULL ? "" : temp);
+
+    if (temp != NULL)
+    {
+      delete[] temp;
+    }
+    return true;*/
   }
   catch (...)
   {
