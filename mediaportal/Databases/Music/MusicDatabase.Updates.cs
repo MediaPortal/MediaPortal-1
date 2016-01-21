@@ -1558,11 +1558,13 @@ namespace MediaPortal.Music.Database
           if (string.IsNullOrEmpty(previousAlbumArtist))
           {
             // We have an empty Album Artist, so we will use the ArtistName as AlbumArtist
+            DatabaseUtility.RemoveInvalidChars(ref previousArtist);
             artistId = AddArtist(previousArtist);
           }
           else
           {
             // use the Album Artist
+            DatabaseUtility.RemoveInvalidChars(ref previousAlbumArtist);
             artistId = AddArtist(previousAlbumArtist);
           }
         }
@@ -1576,6 +1578,7 @@ namespace MediaPortal.Music.Database
           else
           {
             // use the Album Artist
+            DatabaseUtility.RemoveInvalidChars(ref previousAlbumArtist);
             artistId = AddArtist(previousAlbumArtist);
           }
         }
