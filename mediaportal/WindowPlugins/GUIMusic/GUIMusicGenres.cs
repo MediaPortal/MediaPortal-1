@@ -27,6 +27,7 @@ using MediaPortal.Configuration;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
 using MediaPortal.GUI.DatabaseViews;
+using MediaPortal.GUI.View;
 using MediaPortal.Music.Database;
 using MediaPortal.Player;
 using MediaPortal.Playlists;
@@ -504,6 +505,7 @@ namespace MediaPortal.GUI.Music
       }
       else
       {
+        MusicTag tag;
         switch (filter.Selection)
         {
           case "genre":
@@ -530,6 +532,7 @@ namespace MediaPortal.GUI.Music
             break;
 
           case "track":
+            { 
             // If we want to get the Cover from embedded cover arts, we need to re-read the Tag from the file, 
             // since the database query didn't return a cover
             if (_useEmbeddedCover)
@@ -945,7 +948,7 @@ namespace MediaPortal.GUI.Music
       }
 
       // Get current Filter used
-      var currentFilter = (FilterDefinition)handler.View.Filters[handler.CurrentLevel];
+      var currentFilter = (DatabaseFilterDefinition)handler.View.Filters[handler.CurrentLevel];
 
       for (int i = 0; i < songs.Count; ++i)
       {

@@ -303,42 +303,7 @@ namespace MediaPortal.GUI.Music
     private string BuildTopLevelQuery(string table)
     {
       string sql = string.Empty;
-
-      // TODO: Handle the Special Case of a Top Level View with an Index
-
-      switch (table.ToLower())
-        DatabaseUtility.RemoveInvalidChars(ref selectedValue);
-
-      {
-        case "artist":
-          break;
-
-        case "albumartist":
-          sql = "select distinct Artist.IdArtist, Artist.ArtistName from artist, album join albumartist on albumartist.idalbum = Album.IdAlbum and albumartist.IdArtist = artist.idartist";
-          break;
-
-        case "genre":
-        case "composer":
-          break;
-
-        case "album":
-          break;
-      }
-
-      if (!string.IsNullOrEmpty(_whereClause) || !string.IsNullOrEmpty(_filterClause))
-      {
-        sql += " where ";
-      }
-      if (!string.IsNullOrEmpty(_whereClause))
-      {
-        sql += _whereClause;
-      }
-      if (!string.IsNullOrEmpty(_orderClause))
-      {
-        sql += _orderClause;
-      }
-
-      return sql;
+      return "";
     }
 
     private string BuildLowerLevelQuery(string table)

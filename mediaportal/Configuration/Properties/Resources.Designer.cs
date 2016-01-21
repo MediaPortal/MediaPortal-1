@@ -83,6 +83,36 @@ namespace MediaPortal.Configuration.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap gamepad_LogitechCordlessRumblePad2 {
+            get {
+                object obj = ResourceManager.GetObject("gamepad_LogitechCordlessRumblePad2", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap gamepad_LogitechWirelessGamepadF710 {
+            get {
+                object obj = ResourceManager.GetObject("gamepad_LogitechWirelessGamepadF710", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap gamepad_MicrosoftXbox360WirelessController {
+            get {
+                object obj = ResourceManager.GetObject("gamepad_MicrosoftXbox360WirelessController", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap icon_add_view {
             get {
                 object obj = ResourceManager.GetObject("icon_add_view", resourceCulture);
@@ -176,36 +206,6 @@ namespace MediaPortal.Configuration.Properties {
         internal static System.Drawing.Bitmap icon_up_view {
             get {
                 object obj = ResourceManager.GetObject("icon_up_view", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap gamepad_LogitechCordlessRumblePad2 {
-            get {
-                object obj = ResourceManager.GetObject("gamepad_LogitechCordlessRumblePad2", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap gamepad_LogitechWirelessGamepadF710 {
-            get {
-                object obj = ResourceManager.GetObject("gamepad_LogitechWirelessGamepadF710", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap gamepad_MicrosoftXbox360WirelessController {
-            get {
-                object obj = ResourceManager.GetObject("gamepad_MicrosoftXbox360WirelessController", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

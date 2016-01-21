@@ -1482,19 +1482,12 @@ namespace MediaPortal.Music.Database
     {
       try
       {
-        if (MusicDbClient == null)
-        {
-          return -1;
-        }
-
         string strArtist = aArtist;
         DatabaseUtility.RemoveInvalidChars(ref strArtist);
 
-        string strSQL;
-        strSQL = String.Format("select DISTINCT artist.idArtist from artist where artist.strArtist LIKE '{0}'",
-                               strArtist);
-        SQLiteResultSet results;
-        results = MusicDbClient.Execute(strSQL);
+        var strSQL = string.Format("select DISTINCT artist.idArtist from artist where artist.strArtist LIKE '{0}'",
+          strArtist);
+        var results = MusicDbClient.Execute(strSQL);
         if (results.Rows.Count == 0)
         {
           return -1;
@@ -1523,7 +1516,7 @@ namespace MediaPortal.Music.Database
       {
         genres.Clear();
         
-        var strSQL = String.Format("SELECT GenreName FROM genre ORDER BY GenreName");
+        var strSQL = string.Format("SELECT GenreName FROM genre ORDER BY GenreName");
         var results = ExecuteQuery(strSQL);
         if (results.Rows.Count == 0)
         {
