@@ -91,7 +91,7 @@ namespace MediaPortal.GUI.Library
       _imageNonFocused.ColourDiffuse = ColourDiffuse;
 
       _isOverlayAllowed = false;
-      if ((_allowOverlayString != null) && (_allowOverlayString.Length > 0))
+      if (!string.IsNullOrEmpty(_allowOverlayString))
       {
         _allowOverlayString = _allowOverlayString.ToLowerInvariant();
         if (_allowOverlayString.Equals("yes") || _allowOverlayString.Equals("true"))

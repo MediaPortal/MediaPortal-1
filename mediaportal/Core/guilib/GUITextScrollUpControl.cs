@@ -127,19 +127,16 @@ namespace MediaPortal.GUI.Library
         else
           _frameLimiter = 1;
 
-        if (_containsProperty)
+        var strText = _containsProperty ? GUIPropertyManager.Parse(_property) : _property;
+
+        strText = strText.Replace("\\r", "\r");
+        if (strText != _previousProperty)
         {
-          string strText = GUIPropertyManager.Parse(_property);
+          // Reset the scrolling position - e.g. if we switch in TV Guide between various items
+          ClearOffsets();
 
-          strText = strText.Replace("\\r", "\r");
-          if (strText != _previousProperty)
-          {
-            // Reset the scrolling position - e.g. if we switch in TV Guide between various items
-            ClearOffsets();
-
-            _previousProperty = strText;
-            SetText(strText);
-          }
+          _previousProperty = strText;
+          SetText(strText);
         }
 
         if (GUIGraphicsContext.graphics != null)
@@ -574,8 +571,7 @@ namespace MediaPortal.GUI.Library
           {
             if (szLine.Length > 0 || _listItems.Count > 0)
             {
-              GUIListItem item = new GUIListItem(szLine);
-              item.DimColor = DimColor;
+              GUIListItem item = new GUIListItem(szLine) {DimColor = DimColor};
               _listItems.Add(item);
             }
             iLastSpace = -1;
@@ -609,8 +605,7 @@ namespace MediaPortal.GUI.Library
               }
               if (szLine.Length > 0 || _listItems.Count > 0)
               {
-                GUIListItem item = new GUIListItem(szLine);
-                item.DimColor = DimColor;
+                GUIListItem item = new GUIListItem(szLine) {DimColor = DimColor};
                 _listItems.Add(item);
               }
               iLastSpaceInLine = -1;
@@ -670,7 +665,7 @@ namespace MediaPortal.GUI.Library
       set
       {
         _property = value;
-        if (_property.IndexOf("#") >= 0)
+        if (_property.IndexOf("#", StringComparison.Ordinal) >= 0)
         {
           _containsProperty = true;
         }
