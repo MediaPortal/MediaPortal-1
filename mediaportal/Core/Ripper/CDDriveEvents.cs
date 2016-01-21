@@ -201,14 +201,6 @@ namespace MediaPortal.Ripper
       CreateHandle(Params);
     }
 
-    private void OnCDChange(DeviceChangeEventArgs ea)
-    {
-      if (DeviceChange != null)
-      {
-        DeviceChange(this, ea);
-      }
-    }
-
     private void OnDeviceChange(DEV_BROADCAST_VOLUME DevDesc, DeviceChangeEventType EventType)
     {
       if (DeviceChange != null)

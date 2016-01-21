@@ -249,7 +249,7 @@ namespace MediaPortal.Util
           }
 
         }
-        catch (Exception ex)
+        catch (Exception)
         {
         }
 

@@ -661,35 +661,6 @@ namespace MediaPortal.Configuration.Sections
       groupBox2.Enabled = false;
     }
 
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="e"></param>
-    private void cancelButton_Click(object sender, EventArgs e)
-    {
-      //Not yet an option to stop rebuildin the database
-      //stopRebuild = true;
-    }
-
-    private void clearButton_Click(object sender, EventArgs e)
-    {
-      DialogResult dialogResult = MessageBox.Show("Are you sure you want to delete the entire music database?",
-                                                  "Information", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-
-      if (dialogResult == DialogResult.Yes)
-      {
-        string database = Config.GetFile(Config.Dir.Config, "MusicDatabaseV7.db3");
-
-        if (File.Exists(database))
-        {
-          File.Delete(database);
-        }
-
-        MessageBox.Show("Music database has been cleared");
-      }
-    }
-
     private void folderAsAlbumCheckBox_CheckedChanged(object sender, EventArgs e)
     {
       if (folderAsAlbumCheckBox.Checked)

@@ -672,18 +672,6 @@ namespace Rss
     /// <param name="localName">the localname of the element</param>
     /// <param name="input">the value of the element</param>
     /// <param name="required">boolean that determines if input cannot be null</param>
-    private void WriteAttribute(string localName, DateTime input, bool required)
-    {
-      if (input != RssDefault.DateTime)
-      {
-        writer.WriteAttributeString(localName, XmlConvert.ToString(input, DateTimeFormatString));
-      }
-      else if (required)
-      {
-        throw new ArgumentException(localName + " can not be null.");
-      }
-    }
-
     /// <summary>Writes an attribute with the specified local name and value</summary>
     /// <param name="localName">the localname of the element</param>
     /// <param name="input">the value of the element</param>

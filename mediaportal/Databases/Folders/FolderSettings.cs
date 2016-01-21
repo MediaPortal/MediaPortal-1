@@ -19,8 +19,6 @@
 #endregion
 
 using System;
-using System.IO;
-using System.Threading;
 using System.Collections;
 using Databases.Folders;
 
@@ -44,26 +42,6 @@ namespace MediaPortal.Database
       }
 
       _database = null;
-    }
-
-    private static bool WaitForPath(string pathName)
-    {
-      // while waking up from hibernation it can take a while before a network drive is accessible.   
-      int count = 0;
-
-      if (pathName.Length == 0 || pathName == "root")
-      {
-        return true;
-      }
-
-      //we cant be sure if pathName is a file or a folder, so we look for both.      
-      while ((!Directory.Exists(pathName) && !File.Exists(pathName)) && count < 10)
-      {
-        Thread.Sleep(250);
-        count++;
-      }
-
-      return (count < 10);
     }
 
     public static void GetPath(string strPath, ref ArrayList strPathList, string strKey)

@@ -247,39 +247,6 @@ namespace MediaPortal.Mixer
       return 30000;
     }
 
-    private void SetValue(MixerComponentType componentType, MixerControlType controlType, bool controlValue)
-    {
-      MixerNativeMethods.MixerLine mixerLine = new MixerNativeMethods.MixerLine(componentType);
-
-      if (MixerNativeMethods.mixerGetLineInfoA(_handle, ref mixerLine, MixerLineFlags.ComponentType) != MixerError.None)
-      {
-        throw new InvalidOperationException("Mixer.SetValue.1");
-      }
-
-      using (
-        MixerNativeMethods.MixerLineControls mixerLineControls =
-          new MixerNativeMethods.MixerLineControls(mixerLine.LineId, controlType))
-      {
-        if (MixerNativeMethods.mixerGetLineControlsA(_handle, mixerLineControls, MixerLineControlFlags.OneByType) !=
-            MixerError.None)
-        {
-          throw new InvalidOperationException("Mixer.SetValue.2");
-        }
-
-        MixerNativeMethods.MixerControl mixerControl =
-          (MixerNativeMethods.MixerControl)
-          Marshal.PtrToStructure(mixerLineControls.Data, typeof (MixerNativeMethods.MixerControl));
-
-        using (
-          MixerNativeMethods.MixerControlDetails mixerControlDetails =
-            new MixerNativeMethods.MixerControlDetails(mixerControl.ControlId))
-        {
-          Marshal.WriteInt32(mixerControlDetails.Data, controlValue ? 1 : 0);
-          MixerNativeMethods.mixerSetControlDetails(_handle, mixerControlDetails, 0);
-        }
-      }
-    }
-
     private void SetValue(MixerNativeMethods.MixerControlDetails control, bool value)
     {
       if (control == null)
@@ -300,39 +267,6 @@ namespace MediaPortal.Mixer
 
       Marshal.WriteInt32(control.Data, value);
       MixerNativeMethods.mixerSetControlDetails(_handle, control, 0);
-    }
-
-    private void SetValue(MixerComponentType componentType, MixerControlType controlType, int controlValue)
-    {
-      MixerNativeMethods.MixerLine mixerLine = new MixerNativeMethods.MixerLine(componentType);
-
-      if (MixerNativeMethods.mixerGetLineInfoA(_handle, ref mixerLine, MixerLineFlags.ComponentType) != MixerError.None)
-      {
-        throw new InvalidOperationException("Mixer.SetValue.1");
-      }
-
-      using (
-        MixerNativeMethods.MixerLineControls mixerLineControls =
-          new MixerNativeMethods.MixerLineControls(mixerLine.LineId, controlType))
-      {
-        if (MixerNativeMethods.mixerGetLineControlsA(_handle, mixerLineControls, MixerLineControlFlags.OneByType) !=
-            MixerError.None)
-        {
-          throw new InvalidOperationException("Mixer.SetValue.2");
-        }
-
-        MixerNativeMethods.MixerControl mixerControl =
-          (MixerNativeMethods.MixerControl)
-          Marshal.PtrToStructure(mixerLineControls.Data, typeof (MixerNativeMethods.MixerControl));
-
-        using (
-          MixerNativeMethods.MixerControlDetails mixerControlDetails =
-            new MixerNativeMethods.MixerControlDetails(mixerControl.ControlId))
-        {
-          Marshal.WriteInt32(mixerControlDetails.Data, controlValue);
-          MixerNativeMethods.mixerSetControlDetails(_handle, mixerControlDetails, 0);
-        }
-      }
     }
 
     private void OnLineChanged(object sender, MixerEventArgs e)
@@ -390,7 +324,7 @@ namespace MediaPortal.Mixer
         {
           if (OSInfo.OSInfo.VistaOrLater() && (_componentType == MixerComponentType.DestinationSpeakers))
           {
-            if (_audioDefaultDevice.Muted != null)
+            if (_audioDefaultDevice != null)
             {
               _audioDefaultDevice.Muted = value;
             }
@@ -401,7 +335,7 @@ namespace MediaPortal.Mixer
             SetValue(_mixerControlDetailsMute, value);
             if (_waveVolume && OSInfo.OSInfo.Win8OrLater())
             {
-              if (_audioDefaultDevice.Muted != null)
+              if (_audioDefaultDevice != null)
               {
                 _audioDefaultDevice.Muted = value;
               }
@@ -421,7 +355,7 @@ namespace MediaPortal.Mixer
         {
           if (OSInfo.OSInfo.VistaOrLater() && (_componentType == MixerComponentType.DestinationSpeakers))
           {
-            if (_audioDefaultDevice.MasterVolume != null)
+            if (_audioDefaultDevice != null)
             {
               _audioDefaultDevice.MasterVolume = (float) ((float) (value)/(float) (this.VolumeMaximum));
             }
@@ -432,7 +366,7 @@ namespace MediaPortal.Mixer
             SetValue(_mixerControlDetailsVolume, Math.Max(this.VolumeMinimum, Math.Min(this.VolumeMaximum, value)));
             if (_waveVolume && OSInfo.OSInfo.Win8OrLater())
             {
-              if (_audioDefaultDevice.MasterVolume != null)
+              if (_audioDefaultDevice != null)
               {
                 _audioDefaultDevice.MasterVolume = (float) ((float) (value)/(float) (this.VolumeMaximum));
               }

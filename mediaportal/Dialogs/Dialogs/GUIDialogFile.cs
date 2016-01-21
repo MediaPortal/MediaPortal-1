@@ -58,7 +58,6 @@ namespace MediaPortal.Dialogs
     private int m_iNrOfItems = 0;
     private long m_dwTotalSize = 0;
     private int m_iFileNr = 0;
-    private DirectoryHistory m_history = new DirectoryHistory();
     private string sourceFolder = string.Empty;
     private string destinationFolder = string.Empty;
     private VirtualDirectory m_directory = null;
@@ -931,7 +930,7 @@ namespace MediaPortal.Dialogs
               }
             }
           }
-          catch (Exception ex) { }
+          catch (Exception) { }
         }
       }
       catch (Exception) { }

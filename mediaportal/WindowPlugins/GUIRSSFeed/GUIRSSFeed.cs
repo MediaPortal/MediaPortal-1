@@ -26,7 +26,6 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Web;
-using System.Xml;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
@@ -261,8 +260,6 @@ namespace MediaPortal.GUI.RSS
       base.Process();
     }
 
-
-    private void RefreshNews(object sender, EventArgs e) {}
 
     private void UpdateNews(bool bShowWarning)
     {
@@ -562,44 +559,6 @@ namespace MediaPortal.GUI.RSS
       }
 
       return true;
-    }
-
-    private void GetString(XmlNode pRootElement, string strTagName, out string szValue, string strDefaultValue)
-    {
-      szValue = "";
-
-      XmlNode node = pRootElement.SelectSingleNode(strTagName);
-      if (node != null)
-      {
-        if (node.InnerText != null)
-        {
-          if (node.InnerText != "-")
-          {
-            szValue = node.InnerText;
-          }
-        }
-      }
-      if (szValue.Length == 0)
-      {
-        szValue = strDefaultValue;
-      }
-    }
-
-    private void GetInteger(XmlNode pRootElement, string strTagName, out int iValue)
-    {
-      iValue = 0;
-      XmlNode node = pRootElement.SelectSingleNode(strTagName);
-      if (node != null)
-      {
-        if (node.InnerText != null)
-        {
-          try
-          {
-            iValue = Int32.Parse(node.InnerText);
-          }
-          catch (Exception) {}
-        }
-      }
     }
 
     private GUIListItem GetSelectedItem()
