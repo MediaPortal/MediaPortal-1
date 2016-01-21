@@ -657,8 +657,6 @@ namespace MediaPortal.Configuration.Sections
         _scanRunning = false;
       }
 
-      var lastImportDate = _dataBase.GetLastImportDate().ToString();
-      checkBoxUpdateSinceLastImport.Text = String.Format("Only update new / changed files after {0}", lastImportDate);
     }
 
     /// <summary>
@@ -672,12 +670,8 @@ namespace MediaPortal.Configuration.Sections
       groupBox1.Enabled = true;
       groupBox2.Enabled = false;
 
-      using (Settings xmlreader = new MPSettings())
-      {
-        checkBoxUpdateSinceLastImport.Text = String.Format("Only update new / changed files after {0}",
-                                                           xmlreader.GetValueAsString("musicfiles", "lastImport",
-                                                                                      "1900-01-01 00:00:00"));
-      }
+      var lastImportDate = _dataBase.GetLastImportDate().ToString(CultureInfo.InvariantCulture);
+      checkBoxUpdateSinceLastImport.Text = string.Format("Only update new / changed files after {0}", lastImportDate);
     }
 
     private void FolderScanProgress(object sender, ProgressChangedEventArgs e)
