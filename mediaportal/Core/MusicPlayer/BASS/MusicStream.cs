@@ -66,6 +66,14 @@ namespace MediaPortal.MusicPlayer.BASS
       Freed,
     }
 
+    public enum TAGINFOEncoding
+    {
+      Ansi = 0,
+      Latin1 = 1,
+      Utf8 = 2,
+      Utf8OrLatin1 = 3
+    }
+
     #endregion
 
     #region Structs
@@ -921,7 +929,7 @@ namespace MediaPortal.MusicPlayer.BASS
       new Thread(() =>
                    {
                      // BASS_SYNC_META is triggered on meta changes of SHOUTcast streams
-                     if (_tagInfo.UpdateFromMETA(Bass.BASS_ChannelGetTags(channel, BASSTag.BASS_TAG_META), false,
+                     if (_tagInfo.UpdateFromMETA(Bass.BASS_ChannelGetTags(channel, BASSTag.BASS_TAG_META), true,
                                                  false))
                      {
                        GetMetaTags();
@@ -938,8 +946,18 @@ namespace MediaPortal.MusicPlayer.BASS
       // There seems to be an issue with setting correctly the title via taginfo
       // So let's filter it out ourself
       string title = _tagInfo.title;
-      int streamUrlIndex = title.IndexOf("';StreamUrl=");
+      int streamUrlIndex = title.IndexOf("';StreamUrl=", StringComparison.Ordinal);
       if (streamUrlIndex > -1)
+      {
+        title = _tagInfo.title.Substring(0, streamUrlIndex);
+      }
+      streamUrlIndex = title.IndexOf("';", StringComparison.Ordinal);
+      if (streamUrlIndex > -1 && streamUrlIndex == title.Length - 2)
+      {
+        title = _tagInfo.title.Substring(0, streamUrlIndex);
+      }
+      streamUrlIndex = title.IndexOf(";", StringComparison.Ordinal);
+      if (streamUrlIndex > -1 && streamUrlIndex == title.Length - 1)
       {
         title = _tagInfo.title.Substring(0, streamUrlIndex);
       }

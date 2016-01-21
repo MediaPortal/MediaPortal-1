@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!--version="1.0" encoding="utf-8" standalone="yes"-->
+<window>
+  <id>4071975</id>
+  <defaultcontrol>2</defaultcontrol>
+  <allowoverlay>no</allowoverlay>
+  <autohidetopbar>yes</autohidetopbar>
+  <define>#header.label:Simon Says</define>
+  <define>#header.hover:hover_my simon.png</define>
+  <define>#itemcount:</define>
+  <controls>
+    <control>
+      <description>background image</description>
+      <type>image</type>
+      <id>1</id>
+      <width>1920</width>
+      <height>1080</height>
+      <texture>gamebg.jpg</texture>
+      <colordiffuse>ffffffff</colordiffuse>
+    </control>
+    <import>common.window.xml</import>
+    <import>common.time.xml</import>
+    <control>
+      <type>group</type>
+      <description>group element</description>
+      <layout>StackLayout</layout>
+      <posX>70</posX>
+      <posY>225</posY>
+      <control>
+        <description>Start</description>
+        <type>button</type>
+        <id>2</id>
+        <onleft>2</onleft>
+        <onright>2</onright>
+        <onup>21</onup>
+        <ondown>3</ondown>
+      </control>
+      <control>
+        <description>Level</description>
+        <type>button</type>
+        <id>3</id>
+        <onleft>3</onleft>
+        <onright>3</onright>
+        <onup>2</onup>
+        <ondown>4</ondown>
+      </control>
+      <control>
+        <description>Sounds</description>
+        <type>checkbutton</type>
+        <id>4</id>
+        <onleft>4</onleft>
+        <onright>4</onright>
+        <onup>3</onup>
+        <ondown>6</ondown>
+      </control>
+      <control>
+        <description>What is this?</description>
+        <type>button</type>
+        <id>6</id>
+        <onleft>6</onleft>
+        <onright>6</onright>
+        <onup>4</onup>
+        <ondown>2</ondown>
+      </control>
+      <control>
+        <description>Round</description>
+        <type>button</type>
+        <id>1</id>
+        <label>#Round</label>
+        <font>font12</font>
+        <enabled>false</enabled>
+        <textureFocus>-</textureFocus>
+        <textureNoFocus>-</textureNoFocus>
+      </control>
+      <control>
+        <description>Player: / GameOver</description>
+        <type>button</type>
+        <id>1</id>
+        <label>#Player</label>
+        <font>font12</font>
+        <enabled>false</enabled>
+        <textureFocus>-</textureFocus>
+        <textureNoFocus>-</textureNoFocus>
+      </control>
+    </control>
+    <control>
+      <type>button</type>
+      <id>101</id>
+      <posX>674</posX>
+      <posY>225</posY>
+      <width>241</width>
+      <height>192</height>
+      <textureFocus>#Senso1</textureFocus>
+      <textureNoFocus>#Senso1</textureNoFocus>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="slide" time="400" start="0,-300">WindowOpen</animation>
+      <animation effect="slide" time="400" end="800,0">WindowClose</animation>
+    </control>
+    <control>
+      <type>button</type>
+      <id>102</id>
+      <posX>795</posX>
+      <posY>295</posY>
+      <width>192</width>
+      <height>241</height>
+      <textureFocus>#Senso2</textureFocus>
+      <textureNoFocus>#Senso2</textureNoFocus>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="slide" time="400" start="0,-300">WindowOpen</animation>
+      <animation effect="slide" time="400" end="800,0">WindowClose</animation>
+    </control>
+    <control>
+      <type>button</type>
+      <id>103</id>
+      <posX>602</posX>
+      <posY>296</posY>
+      <width>192</width>
+      <height>241</height>
+      <textureFocus>#Senso3</textureFocus>
+      <textureNoFocus>#Senso3</textureNoFocus>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="slide" time="400" start="0,-300">WindowOpen</animation>
+      <animation effect="slide" time="400" end="800,0">WindowClose</animation>
+    </control>
+    <control>
+      <type>button</type>
+      <id>104</id>
+      <posX>674</posX>
+      <posY>417</posY>
+      <width>241</width>
+      <height>192</height>
+      <textureFocus>#Senso4</textureFocus>
+      <textureNoFocus>#Senso4</textureNoFocus>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="slide" time="400" start="0,-300">WindowOpen</animation>
+      <animation effect="slide" time="400" end="800,0">WindowClose</animation>
+    </control>
+  </controls>
+</window>

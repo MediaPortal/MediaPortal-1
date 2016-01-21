@@ -1571,16 +1571,6 @@ namespace MediaPortal.GUI.Library
       _spinControl.SetRange(iStart, iEnd);
     }
 
-    private int SpinMaxValue()
-    {
-      return _spinControl.GetMaximum();
-    }
-
-    private int SpinMinValue()
-    {
-      return _spinControl.GetMinimum();
-    }
-
     /// <summary>
     /// Offsets the default X position of the spin control in the button.
     /// </summary>

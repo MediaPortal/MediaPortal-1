@@ -2,7 +2,6 @@
 .\$MPdir.Base\scripts
 .\$MPdir.Base\xmltv
 $MPdir.Base\CaptureCardDefinitions.xml
-$MPdir.Base\eHome Infrared Transceiver List XP.xml
 $MPdir.Base\HelpReferences.xml
 $MPdir.Base\ISDNCodes.xml
 $MPdir.Base\keymap.xml

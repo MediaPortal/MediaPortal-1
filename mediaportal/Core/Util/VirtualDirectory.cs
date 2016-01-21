@@ -1466,7 +1466,7 @@ namespace MediaPortal.Util
     /// </returns>
     public List<GUIListItem> GetRootExt()
     {
-      previousShare = string.Empty;
+      List<string> ignoredItems = new List<string>();
 
       List<GUIListItem> items = new List<GUIListItem>();
       foreach (Share share in m_shares)
@@ -1509,8 +1509,28 @@ namespace MediaPortal.Util
             item.IsRemote = true;
           }
           Utils.SetDefaultIcons(item);
+          bool isUNCNetwork = false;
+          string serverName = Util.Utils.GetServerNameFromUNCPath(Util.Utils.FindUNCPaths(item.Path)).ToLower();
 
-          pathOnline = Util.Utils.CheckServerStatus(item.Path);
+          if (ignoredItems.Contains(serverName))
+          {
+            Log.Debug("GetRootExt(): '{0}' is offline. Skip checking of {1}", serverName, item.Path);
+
+            isUNCNetwork = true;
+          }
+          else
+          {
+            isUNCNetwork = Util.Utils.IsUNCNetwork(Util.Utils.FindUNCPaths(item.Path));
+
+            pathOnline = !isUNCNetwork || UNCTools.IsUNCFileFolderOnline(item.Path);
+
+            if (!pathOnline)
+            {
+              ignoredItems.Add(serverName);
+              Log.Debug("GetRootExt(): '{0}' is offline. Added to the ignored list.", serverName);
+            }
+          }
+
           if ((share.Pincode == string.Empty || !share.DonotFolderJpgIfPin) && pathOnline)
           {
             string coverArt = Utils.GetCoverArtName(item.Path, "folder");
@@ -1535,19 +1555,21 @@ namespace MediaPortal.Util
           }
           else
           {
-            if ((Util.Utils.IsUNCNetwork(item.Path) || Util.Utils.IsUNCNetwork(Util.Utils.FindUNCPaths(item.Path))) &&
+            if (isUNCNetwork && !pathOnline &&
                 Util.Utils.FileExistsInCache(GUIGraphicsContext.GetThemedSkinFile("\\Media\\defaultNetworkOffline.png")))
             {
               item.IconImage = "defaultNetworkOffline.png";
               item.IconImageBig = "defaultNetworkBigOffline.png";
               item.ThumbnailImage = "defaultNetworkBigOffline.png";
-              Log.Debug("GetRootExt(): Path = {0}, IconImage = {1}", item.Path, item.IconImage);
             }
           }
-          if (!UNCTools.UNCFileFolderExists(item.Path) && !share.ShareWakeOnLan && !Util.Utils.IsDVD(item.Path))
+          
+          if (!pathOnline && !share.ShareWakeOnLan && !Util.Utils.IsDVD(item.Path))
           {
             share.ShareOffline = true;
-            Log.Debug("GetRootExt(): ShareOffline : '{0}' doesn't exists or host is offline, don't use it for later or enable WOL feature", share.Path);
+
+            Log.Debug("GetRootExt(): ShareOffline : '{0}' doesn't exists or offline, enable WOL feature for permanent loading", share.Path);
+            Log.Debug("GetRootExt(): ShareOffline : '{0}' can be refreshed from context menu in share view mode", share.Path);
           }
           else
           {
@@ -1633,7 +1655,7 @@ namespace MediaPortal.Util
         fd.cFileName = new String(' ', 256);
         fd.cAlternate = new String(' ', 14);
         // http://msdn.microsoft.com/en-us/library/aa364418%28VS.85%29.aspx
-        bool available = Util.Utils.CheckServerStatus(aDirectory);
+        bool available = UNCTools.UNCFileFolderExists(aDirectory);
         if (available)
         {
           handle = Win32API.FindFirstFile(aDirectory + @"\*.*", out fd);

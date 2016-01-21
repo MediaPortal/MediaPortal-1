@@ -476,16 +476,6 @@ namespace System.Windows.Serialization
       return extension.ProvideValue(_target, value);
     }
 
-    private void ReadNamespace(string name, string value)
-    {
-      string ns = string.Empty;
-
-      int nameIndex = _reader.Name.IndexOf(':');
-
-      if (nameIndex != -1)
-        ns = _reader.Name.Substring(nameIndex);
-    }
-
     private object WalkStackForSubclassOf(Type typeWanted)
     {
       foreach (object target in _elementStack)

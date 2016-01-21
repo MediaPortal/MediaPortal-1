@@ -1187,6 +1187,22 @@ namespace TvPlugin
 
     private void OnDeleteRecording(int iItem)
     {
+      string userCode = string.Empty;
+      string _fileMenuPinCode = string.Empty;
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.MPSettings())
+      {
+        _fileMenuPinCode = Utils.DecryptPassword(xmlreader.GetValueAsString("filemenu", "pincode", string.Empty));
+      }
+
+      if (!string.IsNullOrEmpty(_fileMenuPinCode))
+      {
+        GetUserPasswordString(ref userCode);
+        if (userCode != _fileMenuPinCode)
+        {
+          return;
+        }
+      }
+      
       _iSelectedItem = GetSelectedItemNo();
       GUIListItem pItem = GetItem(iItem);
       if (pItem == null)

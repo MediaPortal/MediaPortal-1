@@ -167,7 +167,10 @@ namespace MediaPortal.GUI.Library
         _parameters = parameters;
         foreach (Expression param in _parameters)
         {
-          param.AddDependency(this);
+          if (param != null)
+          {
+            param.AddDependency(this);
+          }
         }
       }
 
@@ -180,9 +183,20 @@ namespace MediaPortal.GUI.Library
           object[] paramValues = new object[paramCount];
           for (int i = 0; i < paramCount; i++)
           {
-            paramValues[i] = _parameters[i].Evaluate(options);
+            if (_parameters[i] != null)
+            {
+              paramValues[i] = _parameters[i].Evaluate(options);
+            }
+            else
+            {
+              return 0;
+            }
           }
           _value = _func.Invoke(paramValues);
+          if (_value == null)
+          {
+            return 0;
+          }
           IsValid = true;
         }
         return _value;
@@ -311,7 +325,7 @@ namespace MediaPortal.GUI.Library
 
     public static string Parse(string line, ExpressionOptions options)
     {
-      if (line.IndexOf("#(") > -1)
+      if (line.IndexOf("#(", StringComparison.Ordinal) > -1)
       {
         MatchCollection matches = _exprTriggerRegEx.Matches(line);
         int offset = 0;

@@ -19,7 +19,6 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.Globalization;
 using System.IO;
@@ -27,7 +26,6 @@ using System.Windows.Forms;
 using MediaPortal.GUI.Library;
 using MediaPortal.Profile;
 using MediaPortal.UserInterface.Controls;
-using MediaPortal.Util;
 using DShowNET.Helper;
 using System.Runtime.InteropServices;
 using DirectShowLib;
@@ -102,7 +100,6 @@ namespace MediaPortal.Configuration.Sections
     private MPLabel percentPlayedLabel;
     private NumericUpDown playedPercentageTB;
     private MPCheckBox chbKeepFoldersTogether;
-    private List<LanguageInfo> ISOLanguagePairs = new List<LanguageInfo>();
 
     //private int 
 
@@ -282,18 +279,28 @@ namespace MediaPortal.Configuration.Sections
         {
           xmlwriter.SetValueAsBool("subtitles", "selectionoff", true);
           xmlwriter.SetValueAsBool("subtitles", "enabled", false);
+          xmlwriter.SetValueAsBool("subtitles", "autoloadSubtitle", false);
           xmlwriter.SetValue("subtitles", "selection", subtitlesSelectionComboBox.SelectedItem);
         }
         else if (subtitlesSelectionComboBox.SelectedIndex == 1) //"Subtitles will be auto loaded by language preference"
         {
           xmlwriter.SetValueAsBool("subtitles", "selectionoff", false);
           xmlwriter.SetValueAsBool("subtitles", "enabled", true);
+          xmlwriter.SetValueAsBool("subtitles", "autoloadSubtitle", false);
           xmlwriter.SetValue("subtitles", "selection", subtitlesSelectionComboBox.SelectedItem);
         }
-        else if (subtitlesSelectionComboBox.SelectedIndex == 2) //"Subtitles will only display forced subtitles *"
+        else if (subtitlesSelectionComboBox.SelectedIndex == 2) //"Subtitles will be auto loaded by first available"
+        {
+          xmlwriter.SetValueAsBool("subtitles", "selectionoff", false);
+          xmlwriter.SetValueAsBool("subtitles", "enabled", true);
+          xmlwriter.SetValueAsBool("subtitles", "autoloadSubtitle", true);
+          xmlwriter.SetValue("subtitles", "selection", subtitlesSelectionComboBox.SelectedItem);
+        }
+        else if (subtitlesSelectionComboBox.SelectedIndex == 3) //"Subtitles will only display forced subtitles *"
         {
           xmlwriter.SetValueAsBool("subtitles", "selectionoff", false);
           xmlwriter.SetValueAsBool("subtitles", "enabled", false);
+          xmlwriter.SetValueAsBool("subtitles", "autoloadSubtitle", false);
           xmlwriter.SetValue("subtitles", "selection", subtitlesSelectionComboBox.SelectedItem);
         }
       }
@@ -503,6 +510,7 @@ namespace MediaPortal.Configuration.Sections
       this.subtitlesSelectionComboBox.Items.AddRange(new object[] {
             "Subtitles won\'t be auto loaded",
             "Subtitles will be auto loaded by language preference",
+            "Subtitles will be auto loaded by first available",
             "Subtitles will only display forced subtitles *"});
       this.subtitlesSelectionComboBox.Location = new System.Drawing.Point(16, 39);
       this.subtitlesSelectionComboBox.Name = "subtitlesSelectionComboBox";

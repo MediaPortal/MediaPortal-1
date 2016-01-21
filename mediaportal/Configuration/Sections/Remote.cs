@@ -42,9 +42,6 @@ namespace MediaPortal.Configuration.Sections
     #region Fields & Constants
 
     private FireDTVControl fireDTV = null;
-
-    private MPCheckBox checkBoxMceEnabled;
-    private PictureBox pictureBoxMce2005;
     private MPGroupBox groupBoxHcwSettings;
     private MPLabel labelHcwButtonRelease;
     private MPCheckBox checkBoxHcwAllowExternal;
@@ -54,7 +51,6 @@ namespace MediaPortal.Configuration.Sections
     private MPCheckBox checkBoxHcwEnabled;
     private MPLabel labelHcwDriverStatus;
     private MPGroupBox groupBoxHcwStatus;
-    private MPTabPage tabPageMce;
     private MPTabPage tabPageHcw;
     private MPLabel labelHcw1000msec;
     private MPLabel labelHcw20msec;
@@ -94,8 +90,6 @@ namespace MediaPortal.Configuration.Sections
     private MPGroupBox groupBoxHidGeneral;
     private MPButton buttonHidMapping;
     private MPCheckBox checkBoxHidEnabled;
-    private MPGroupBox groupBoxMceGeneral;
-    private MPButton buttonMceMapping;
     private MPTabPage tabPageIrTrans;
     private MPGroupBox groupBoxIrTransGeneral;
     private MPCheckBox checkBoxIrTransEnabled;
@@ -146,8 +140,6 @@ namespace MediaPortal.Configuration.Sections
     private Button HCWLearn;
     private MPLabel LabelChannelNumber;
     private MPTextBox TextBoxChannelNumber;
-    private MPCheckBox checkBoxMceExtendedLogging;
-    private PictureBox pictureBoxMCE2004;
     private MPCheckBox checkBoxHidExtendedLogging;
     private PictureBox pictureBox2;
     private PictureBox pictureBox3;
@@ -162,7 +154,6 @@ namespace MediaPortal.Configuration.Sections
     private MPButton mpButton1;
     private MPCheckBox checkBoxCentareaReMapMouseButton;
     private MPCheckBox checkBoxMapJoystick;
-    private PictureBox pictureBoxMceVista;
     private MPGroupBox groupBox_x64;
     private LinkLabel linkLabel_x64;
     private PictureBox pictureBox1;
@@ -183,7 +174,6 @@ namespace MediaPortal.Configuration.Sections
     private LinkLabel linkLabelDocumentation;
     private LinkLabel linkLabelMediaDocumentation;
     private Label labelMediaWarning;
-    private Label labelMceWarning;
     private Label labelRepeatSpeed;
     private Label labelRepeatDelay;
     private NumericUpDown numericRepeatSpeed;
@@ -225,12 +215,6 @@ namespace MediaPortal.Configuration.Sections
     {
       using (Settings xmlreader = new MPSettings())
       {
-        #region MCE
-
-        checkBoxMceEnabled.Checked = xmlreader.GetValueAsBool("remote", "MCE", false);
-        checkBoxMceExtendedLogging.Checked = xmlreader.GetValueAsBool("remote", "MCEVerboseLog", false);
-
-        #endregion
 
         #region HCW
 
@@ -397,15 +381,17 @@ namespace MediaPortal.Configuration.Sections
 
         #region Generic HID
 
-        checkBoxHidEnabled.Checked = xmlreader.GetValueAsBool("remote", "HidEnabled", false);
-        checkBoxHidExtendedLogging.Checked = xmlreader.GetValueAsBool("remote", "HidVerbose", false);
+        //We want HID to be enabled by default
+        //HID is also using MCE legacy setting for a smooth transition from MCE to HID
+        checkBoxHidEnabled.Checked = xmlreader.GetValueAsBool("remote", "HidEnabled", true) || xmlreader.GetValueAsBool("remote", "MCE", false);
+        checkBoxHidExtendedLogging.Checked = xmlreader.GetValueAsBool("remote", "HidVerbose", false) || xmlreader.GetValueAsBool("remote", "MCEVerboseLog", false);
         numericRepeatDelay.Value = xmlreader.GetValueAsInt("remote", "HidRepeatDelayInMs", -1);
         numericRepeatSpeed.Value = xmlreader.GetValueAsInt("remote", "HidRepeatSpeedInMs", -1);        
         buttonHidMapping.Enabled = checkBoxHidEnabled.Checked;
 
         #endregion
 
-        #region Generic HID
+        #region AppCommand
 
         mpCheckBoxAppCommandEnabled.Checked = xmlreader.GetValueAsBool("remote", "AppCommand", false);
         mpCheckBoxAppCommandVerbose.Checked = xmlreader.GetValueAsBool("remote", "AppCommandVerbose", false);
@@ -517,15 +503,6 @@ namespace MediaPortal.Configuration.Sections
     {
       using (Settings xmlwriter = new MPSettings())
       {
-        #region MCE
-
-        xmlwriter.SetValueAsBool("remote", "MCE", checkBoxMceEnabled.Checked);
-        xmlwriter.SetValueAsBool("remote", "MCEVerboseLog", checkBoxMceExtendedLogging.Checked);
-
-        //xmlwriter.SetValueAsBool("remote", "mce2005", checkBoxMceEnabled.Checked);
-        //xmlwriter.SetValueAsBool("remote", "USAModel", radioButtonMceUsa.Checked);
-
-        #endregion
 
         #region HCW
 
@@ -665,15 +642,6 @@ namespace MediaPortal.Configuration.Sections
       this.mpButtonAppCommandMapping = new MediaPortal.UserInterface.Controls.MPButton();
       this.mpCheckBoxAppCommandEnabled = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.pictureBox7 = new System.Windows.Forms.PictureBox();
-      this.tabPageMce = new MediaPortal.UserInterface.Controls.MPTabPage();
-      this.labelMceWarning = new System.Windows.Forms.Label();
-      this.pictureBoxMceVista = new System.Windows.Forms.PictureBox();
-      this.pictureBoxMCE2004 = new System.Windows.Forms.PictureBox();
-      this.groupBoxMceGeneral = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.checkBoxMceExtendedLogging = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.checkBoxMceEnabled = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.buttonMceMapping = new MediaPortal.UserInterface.Controls.MPButton();
-      this.pictureBoxMce2005 = new System.Windows.Forms.PictureBox();
       this.tabPageCentarea = new System.Windows.Forms.TabPage();
       this.groupBoxCentareaOptions = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.checkBoxMapJoystick = new MediaPortal.UserInterface.Controls.MPCheckBox();
@@ -773,11 +741,6 @@ namespace MediaPortal.Configuration.Sections
       ((System.ComponentModel.ISupportInitialize)(this.pictureBox8)).BeginInit();
       this.mpGroupBox1.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.pictureBox7)).BeginInit();
-      this.tabPageMce.SuspendLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.pictureBoxMceVista)).BeginInit();
-      ((System.ComponentModel.ISupportInitialize)(this.pictureBoxMCE2004)).BeginInit();
-      this.groupBoxMceGeneral.SuspendLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.pictureBoxMce2005)).BeginInit();
       this.tabPageCentarea.SuspendLayout();
       this.groupBoxCentareaOptions.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.pictureBoxCentarea)).BeginInit();
@@ -826,7 +789,6 @@ namespace MediaPortal.Configuration.Sections
             | System.Windows.Forms.AnchorStyles.Right)));
       this.tabControlRemotes.Controls.Add(this.tabPageHid);
       this.tabControlRemotes.Controls.Add(this.tabPageAppCommand);
-      this.tabControlRemotes.Controls.Add(this.tabPageMce);
       this.tabControlRemotes.Controls.Add(this.tabPageCentarea);
       this.tabControlRemotes.Controls.Add(this.tabPageFireDtv);
       this.tabControlRemotes.Controls.Add(this.tabPageX10);
@@ -1169,110 +1131,6 @@ namespace MediaPortal.Configuration.Sections
       this.pictureBox7.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
       this.pictureBox7.TabIndex = 6;
       this.pictureBox7.TabStop = false;
-      // 
-      // tabPageMce
-      // 
-      this.tabPageMce.Controls.Add(this.labelMceWarning);
-      this.tabPageMce.Controls.Add(this.pictureBoxMceVista);
-      this.tabPageMce.Controls.Add(this.pictureBoxMCE2004);
-      this.tabPageMce.Controls.Add(this.groupBoxMceGeneral);
-      this.tabPageMce.Controls.Add(this.pictureBoxMce2005);
-      this.tabPageMce.Location = new System.Drawing.Point(4, 22);
-      this.tabPageMce.Name = "tabPageMce";
-      this.tabPageMce.Size = new System.Drawing.Size(472, 422);
-      this.tabPageMce.TabIndex = 0;
-      this.tabPageMce.Text = "Microsoft MCE";
-      this.tabPageMce.UseVisualStyleBackColor = true;
-      // 
-      // labelMceWarning
-      // 
-      this.labelMceWarning.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-      this.labelMceWarning.ForeColor = System.Drawing.Color.Red;
-      this.labelMceWarning.Location = new System.Drawing.Point(3, 374);
-      this.labelMceWarning.Name = "labelMceWarning";
-      this.labelMceWarning.Size = new System.Drawing.Size(459, 48);
-      this.labelMceWarning.TabIndex = 9;
-      this.labelMceWarning.Text = "Deprecated use HID instead.\r\nIt could be removed in upcoming MediaPortal release." +
-    "\r\n\r\n\r\n\r\n";
-      // 
-      // pictureBoxMceVista
-      // 
-      this.pictureBoxMceVista.Image = global::MediaPortal.Configuration.Properties.Resources.remote_MceVista;
-      this.pictureBoxMceVista.Location = new System.Drawing.Point(338, 86);
-      this.pictureBoxMceVista.Name = "pictureBoxMceVista";
-      this.pictureBoxMceVista.Size = new System.Drawing.Size(122, 222);
-      this.pictureBoxMceVista.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-      this.pictureBoxMceVista.TabIndex = 5;
-      this.pictureBoxMceVista.TabStop = false;
-      // 
-      // pictureBoxMCE2004
-      // 
-      this.pictureBoxMCE2004.Image = global::MediaPortal.Configuration.Properties.Resources.remote_Mce2004;
-      this.pictureBoxMCE2004.Location = new System.Drawing.Point(12, 86);
-      this.pictureBoxMCE2004.Name = "pictureBoxMCE2004";
-      this.pictureBoxMCE2004.Size = new System.Drawing.Size(122, 222);
-      this.pictureBoxMCE2004.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-      this.pictureBoxMCE2004.TabIndex = 4;
-      this.pictureBoxMCE2004.TabStop = false;
-      // 
-      // groupBoxMceGeneral
-      // 
-      this.groupBoxMceGeneral.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-      this.groupBoxMceGeneral.Controls.Add(this.checkBoxMceExtendedLogging);
-      this.groupBoxMceGeneral.Controls.Add(this.checkBoxMceEnabled);
-      this.groupBoxMceGeneral.Controls.Add(this.buttonMceMapping);
-      this.groupBoxMceGeneral.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.groupBoxMceGeneral.Location = new System.Drawing.Point(12, 8);
-      this.groupBoxMceGeneral.Name = "groupBoxMceGeneral";
-      this.groupBoxMceGeneral.Size = new System.Drawing.Size(448, 72);
-      this.groupBoxMceGeneral.TabIndex = 2;
-      this.groupBoxMceGeneral.TabStop = false;
-      // 
-      // checkBoxMceExtendedLogging
-      // 
-      this.checkBoxMceExtendedLogging.AutoSize = true;
-      this.checkBoxMceExtendedLogging.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.checkBoxMceExtendedLogging.Location = new System.Drawing.Point(16, 47);
-      this.checkBoxMceExtendedLogging.Name = "checkBoxMceExtendedLogging";
-      this.checkBoxMceExtendedLogging.Size = new System.Drawing.Size(106, 17);
-      this.checkBoxMceExtendedLogging.TabIndex = 4;
-      this.checkBoxMceExtendedLogging.Text = "Extended logging";
-      this.checkBoxMceExtendedLogging.UseVisualStyleBackColor = true;
-      // 
-      // checkBoxMceEnabled
-      // 
-      this.checkBoxMceEnabled.AutoSize = true;
-      this.checkBoxMceEnabled.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.checkBoxMceEnabled.Location = new System.Drawing.Point(16, 24);
-      this.checkBoxMceEnabled.Name = "checkBoxMceEnabled";
-      this.checkBoxMceEnabled.Size = new System.Drawing.Size(209, 17);
-      this.checkBoxMceEnabled.TabIndex = 0;
-      this.checkBoxMceEnabled.Text = "Use Microsoft MCE remote or keyboard";
-      this.checkBoxMceEnabled.UseVisualStyleBackColor = true;
-      this.checkBoxMceEnabled.CheckedChanged += new System.EventHandler(this.checkBoxMceEnabled_CheckedChanged);
-      // 
-      // buttonMceMapping
-      // 
-      this.buttonMceMapping.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.buttonMceMapping.Enabled = false;
-      this.buttonMceMapping.Location = new System.Drawing.Point(359, 21);
-      this.buttonMceMapping.Name = "buttonMceMapping";
-      this.buttonMceMapping.Size = new System.Drawing.Size(72, 22);
-      this.buttonMceMapping.TabIndex = 1;
-      this.buttonMceMapping.Text = "Mapping";
-      this.buttonMceMapping.UseVisualStyleBackColor = true;
-      this.buttonMceMapping.Click += new System.EventHandler(this.buttonMceMapping_Click);
-      // 
-      // pictureBoxMce2005
-      // 
-      this.pictureBoxMce2005.Image = global::MediaPortal.Configuration.Properties.Resources.remote_Mce2005;
-      this.pictureBoxMce2005.Location = new System.Drawing.Point(179, 86);
-      this.pictureBoxMce2005.Name = "pictureBoxMce2005";
-      this.pictureBoxMce2005.Size = new System.Drawing.Size(122, 222);
-      this.pictureBoxMce2005.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-      this.pictureBoxMce2005.TabIndex = 3;
-      this.pictureBoxMce2005.TabStop = false;
       // 
       // tabPageCentarea
       // 
@@ -2252,12 +2110,6 @@ namespace MediaPortal.Configuration.Sections
       this.mpGroupBox1.ResumeLayout(false);
       this.mpGroupBox1.PerformLayout();
       ((System.ComponentModel.ISupportInitialize)(this.pictureBox7)).EndInit();
-      this.tabPageMce.ResumeLayout(false);
-      ((System.ComponentModel.ISupportInitialize)(this.pictureBoxMceVista)).EndInit();
-      ((System.ComponentModel.ISupportInitialize)(this.pictureBoxMCE2004)).EndInit();
-      this.groupBoxMceGeneral.ResumeLayout(false);
-      this.groupBoxMceGeneral.PerformLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.pictureBoxMce2005)).EndInit();
       this.tabPageCentarea.ResumeLayout(false);
       this.groupBoxCentareaOptions.ResumeLayout(false);
       this.groupBoxCentareaOptions.PerformLayout();
@@ -2301,67 +2153,6 @@ namespace MediaPortal.Configuration.Sections
 
     #endregion
 
-    #region Form control commands MCE
-
-    //
-    // Use Microsoft MCE remote
-    //
-    private void checkBoxMceEnabled_CheckedChanged(object sender, EventArgs e)
-    {
-      buttonMceMapping.Enabled = checkBoxMceEnabled.Checked;
-    }
-
-    private void buttonMceDefaults_Click(object sender, EventArgs e)
-    {
-      checkBoxMceExtendedLogging.Checked = false;
-    }
-
-    private void buttonMceMapping_Click(object sender, EventArgs e)
-    {
-      InputMappingForm dlg;
-
-      dlg = new InputMappingForm("Microsoft MCE");
-
-      dlg.ShowDialog(this);
-    }
-
-    #region Helper methods/commands MCE
-
-    public static bool IsMceRemoteInstalled(IntPtr hwnd)
-    {
-        try
-        {
-            Win32API.RAWINPUTDEVICE[] rid1 = new Win32API.RAWINPUTDEVICE[1];
-
-            rid1[0].usUsagePage = 0xFFBC;
-            rid1[0].usUsage = 0x88;
-            rid1[0].dwFlags = 0;
-            rid1[0].hwndTarget = hwnd;
-            bool Success = Win32API.RegisterRawInputDevices(rid1, (uint)rid1.Length, (uint)Marshal.SizeOf(rid1[0]));
-            if (Success)
-            {
-                return true;
-            }
-
-            rid1[0].usUsagePage = 0x0C;
-            rid1[0].usUsage = 0x01;
-            rid1[0].dwFlags = 0;
-            rid1[0].hwndTarget = hwnd;
-            Success = Win32API.RegisterRawInputDevices(rid1, (uint)rid1.Length, (uint)Marshal.SizeOf(rid1[0]));
-            if (Success)
-            {
-                return true;
-            }
-        }
-        catch (Exception) {}
-
-        return false;
-    }
-
-    #endregion
-
-    #endregion
-
     #region Form control commands HCW
 
     //
@@ -2394,12 +2185,6 @@ namespace MediaPortal.Configuration.Sections
       hScrollBarHcwRepeatFilter.Value = 2;
       hScrollBarHcwRepeatSpeed.Value = 0;
       checkBoxHcwFilterDoubleKlicks.Checked = false;
-    }
-
-    private void buttonHcwMapping_Click(object sender, EventArgs e)
-    {
-      InputMappingForm dlg = new InputMappingForm("Hauppauge HCW");
-      dlg.ShowDialog(this);
     }
 
     private void hScrollBarHcwButtonRelease_ValueChanged(object sender, EventArgs e)

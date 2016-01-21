@@ -33,6 +33,18 @@ namespace MediaPortal.Util
   /// </summary>
   public class RemovableDriveHelper
   {
+    // http://msdn.microsoft.com/en-us/library/windows/desktop/aa363244(v=vs.85).aspx
+    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+    public struct DEV_BROADCAST_DEVICEINTERFACE
+    {
+      public int dbcc_size;
+      public int dbcc_devicetype;
+      public int dbcc_reserved;
+      public Guid dbcc_classguid;
+      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 255)]
+      public string dbcc_name;
+    }
+
     #region public methods
 
     /// <summary>
@@ -44,6 +56,49 @@ namespace MediaPortal.Util
     {
       DEV_BROADCAST_HDR hdr = new DEV_BROADCAST_HDR();
       DEV_BROADCAST_VOLUME vol = new DEV_BROADCAST_VOLUME();
+
+      try
+      {
+        var deviceInterface = (DEV_BROADCAST_DEVICEINTERFACE)Marshal.PtrToStructure(msg.LParam, typeof(DEV_BROADCAST_DEVICEINTERFACE));
+
+        // get friendly device name
+        string deviceName = String.Empty;
+        string[] values = deviceInterface.dbcc_name.Split('#');
+        if (values.Length >= 3)
+        {
+          string deviceType = values[0].Substring(values[0].IndexOf(@"?\", StringComparison.Ordinal) + 2);
+          string deviceInstanceID = values[1];
+          string deviceUniqueID = values[2];
+          string regPath = @"SYSTEM\CurrentControlSet\Enum\" + deviceType + "\\" + deviceInstanceID + "\\" + deviceUniqueID;
+          Microsoft.Win32.RegistryKey regKey = Microsoft.Win32.Registry.LocalMachine.OpenSubKey(regPath);
+          if (regKey != null)
+          {
+            // use the friendly name if it exists
+            object result = regKey.GetValue("FriendlyName");
+            if (result != null)
+            {
+              deviceName = result.ToString();
+            }
+            // if not use the device description's last part
+            else
+            {
+              result = regKey.GetValue("DeviceDesc");
+              if (result != null)
+              {
+                deviceName = result.ToString().Contains(@"%;") ? result.ToString().Substring(result.ToString().IndexOf(@"%;", StringComparison.Ordinal) + 2) : result.ToString();
+              }
+            }
+          }
+        }
+        if (!string.IsNullOrEmpty(deviceName) && deviceName.Contains("Microsoft Virtual DVD-ROM"))
+        {
+          Log.Debug("Ignoring Microsoft Virtual DVD-ROM device change event");
+
+          return true;
+        }
+      }
+      catch
+      { }
 
       try
       {
@@ -286,7 +341,13 @@ namespace MediaPortal.Util
     {
       char volumeLetter = GetVolumeLetter(volumeInformation.UnitMask);
       string path = (volumeLetter + @":").ToUpperInvariant();
-      
+
+      if (DaemonTools.GetLastVirtualDrive() == path)
+      {
+        Log.Debug("Ignoring Microsoft Virtual DVD-ROM device change event. Drive letter: {0}", path);
+        return true;
+      }
+
       _volumeRemovalTime = DateTime.Now;
       TimeSpan tsMount = DateTime.Now - _mountTime;
       TimeSpan tsExamineCD = DateTime.Now - _examineCDTime;
@@ -557,14 +618,6 @@ namespace MediaPortal.Util
       ref int pdnDevInst,
       int dnDevInst,
       int ulFlags);
-
-    [DllImport("setupapi.dll", CharSet = CharSet.Auto)]
-    private static extern int CM_Get_Device_ID(
-      IntPtr dnDevInst,
-      IntPtr Buffer,
-      int BufferLen,
-      int ulFlags
-      );
 
     [DllImport("setupapi.dll")]
     private static extern int CM_Request_Device_Eject(

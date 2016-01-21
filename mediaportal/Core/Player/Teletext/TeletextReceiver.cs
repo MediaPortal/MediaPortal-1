@@ -28,18 +28,6 @@ namespace MediaPortal.Player.Teletext
 {
   internal class TeletextReceiver
   {
-    private struct Packet
-    {
-      public Packet(byte[] buf, UInt64 release)
-      {
-        buffer = buf;
-        releaseTime = release;
-      }
-
-      public byte[] buffer;
-      public UInt64 releaseTime;
-    }
-
     private void assert(bool ok, string msg)
     {
       if (!ok)

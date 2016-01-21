@@ -115,13 +115,6 @@ namespace MediaPortal.Util
       [MarshalAs(System.Runtime.InteropServices.UnmanagedType.ByValArray, SizeConst = 520)] public byte[] cStr;
     }
 
-    [StructLayout(LayoutKind.Explicit, CharSet = CharSet.Auto)]
-    private struct STRRET_ANY
-    {
-      [FieldOffset(0)] public ESTRRET uType;
-      [FieldOffset(4)] public IntPtr pOLEString;
-    }
-
     [StructLayoutAttribute(LayoutKind.Sequential)]
     private struct SIZE
     {

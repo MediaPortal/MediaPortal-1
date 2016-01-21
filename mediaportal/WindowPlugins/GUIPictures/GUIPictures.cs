@@ -419,8 +419,6 @@ namespace MediaPortal.GUI.Pictures
     [SkinControl(6)] protected GUIButtonControl btnSlideShow = null;
     [SkinControl(7)] protected GUIButtonControl btnSlideShowRecursive = null;
 
-    private const int MAX_PICS_PER_DATE = 1000;
-
     public static HashSet<string> thumbCreationPaths = new HashSet<string>();
     private int selectedItemIndex = -1;
     private GUIListItem selectedListItem = null;
@@ -457,6 +455,8 @@ namespace MediaPortal.GUI.Pictures
     private Thread _refreshThumbnailsThread;
     private GUIDialogProgress _progressDialogForRefreshThumbnails;
     private static bool _refreshThumbnailsThreadAbort = false;
+    private static Thread _removableDrivesHandlerThread;
+    private static bool _autoCreateThumbs = true;
 
     #endregion
 
@@ -476,6 +476,7 @@ namespace MediaPortal.GUI.Pictures
       using (Profile.Settings xmlreader = new Profile.MPSettings())
       {
         _autocreateLargeThumbs = !xmlreader.GetValueAsBool("thumbnails", "picturenolargethumbondemand", false);
+        _autoCreateThumbs = xmlreader.GetValueAsBool("thumbnails", "pictureAutoCreateThumbs", true);
         _useDayGrouping = xmlreader.GetValueAsBool("pictures", "useDayGrouping", false);
         _enableVideoPlayback = xmlreader.GetValueAsBool("pictures", "enableVideoPlayback", false);
         _playVideosInSlideshows = xmlreader.GetValueAsBool("pictures", "playVideosInSlideshows", false);
@@ -577,6 +578,14 @@ namespace MediaPortal.GUI.Pictures
       }
       GUIWindowManager.Receivers += new SendMessageHandler(GUIWindowManager_OnNewMessage);
 
+      _removableDrivesHandlerThread = new Thread(ListRemovableDrives);
+      _removableDrivesHandlerThread.IsBackground = true;
+      _removableDrivesHandlerThread.Name = "PictureRemovableDrivesHandlerThread";
+      _removableDrivesHandlerThread.Start();
+    }
+
+    private void ListRemovableDrives()
+    {
       RemovableDrivesHandler.ListRemovableDrives(_virtualDirectory.GetDirectoryExt(string.Empty));
     }
 
@@ -980,6 +989,10 @@ namespace MediaPortal.GUI.Pictures
               _virtualDirectory.AddRemovableDrive(message.Label, message.Label2);
             }
           }
+          if (_removableDrivesHandlerThread != null)
+          {
+            _removableDrivesHandlerThread.Join();
+          }
           RemovableDrivesHandler.ListRemovableDrives(_virtualDirectory.GetDirectoryExt(string.Empty));
           LoadDirectory(currentFolder);
           break;
@@ -1231,27 +1244,27 @@ namespace MediaPortal.GUI.Pictures
           }
           break;
         case 190001: // Create missing thumbnails (incl. subfolders)
-          if (item.IsFolder)
+          if (item != null && item.IsFolder)
           {
             OnCreateAllThumbs(item, false, true);
           }
           break;
         case 200047: // Recreate all thumbnails (incl. subfolders)
-          if (item.IsFolder)
+          if (item != null && item.IsFolder)
           {
             OnCreateAllThumbs(item, true, true);
           }
           break;
         case 200048: // Regenerate Thumbnails
-          if (item.IsFolder)
+          if (item != null && item.IsFolder)
           {
             OnCreateAllThumbs(item, true, false);
           }
           break;
         case 831:
-          string message = string.Empty;
+          string message;
 
-          if (Util.Utils.IsUsbHdd(item.Path) || Util.Utils.IsRemovableUsbDisk(item.Path))
+          if (item != null && (Util.Utils.IsUsbHdd(item.Path) || Util.Utils.IsRemovableUsbDisk(item.Path)))
           {
             if (!RemovableDriveHelper.EjectDrive(item.Path, out message))
             {
@@ -1270,7 +1283,7 @@ namespace MediaPortal.GUI.Pictures
               pDlgOK.DoModal(GUIWindowManager.ActiveWindow);
             }
           }
-          else if (!RemovableDriveHelper.EjectMedia(item.Path, out message))
+          else if (item != null && !RemovableDriveHelper.EjectMedia(item.Path, out message))
           {
             GUIDialogOK pDlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_OK);
             pDlgOK.SetHeading(831);
@@ -1288,16 +1301,19 @@ namespace MediaPortal.GUI.Pictures
           }
           break;
         case 607: // Load (only CDROM)
-          Util.Utils.CloseCDROM(Path.GetPathRoot(item.Path));
+          if (item != null)
+          {
+            Util.Utils.CloseCDROM(Path.GetPathRoot(item.Path));
+          }
           break;
         case 654: // Eject
-          if (Util.Utils.getDriveType(item.Path) != 5)
+          if (item != null && Util.Utils.getDriveType(item.Path) != 5)
           {
             Util.Utils.EjectCDROM();
           }
           else
           {
-            if (item.Path != null)
+            if (item != null && item.Path != null)
             {
               var driveInfo = new DriveInfo(Path.GetPathRoot(item.Path));
 
@@ -1802,7 +1818,9 @@ namespace MediaPortal.GUI.Pictures
         {
           string thumbnailImage = GetThumbnail(item.Path);
           string thumbnailLargeImage = GetLargeThumbnail(item.Path);
-          if (!Util.Utils.FileExistsInCache(thumbnailImage) && Util.Utils.IsPicture(item.Path))
+          MediaPortal.Util.Utils.SetDefaultIcons(item);
+
+          if (!Util.Utils.FileExistsInCache(thumbnailImage) && Util.Utils.IsPicture(item.Path) && _autoCreateThumbs)
           {
             ThreadPool.QueueUserWorkItem(delegate
                                            {
@@ -1819,7 +1837,6 @@ namespace MediaPortal.GUI.Pictures
           }
           else
           {
-            MediaPortal.Util.Utils.SetDefaultIcons(item);
             if (Util.Utils.FileExistsInCache(thumbnailImage))
             {
               if (_autocreateLargeThumbs && Util.Utils.FileExistsInCache(thumbnailLargeImage))
@@ -2677,6 +2694,8 @@ namespace MediaPortal.GUI.Pictures
 
       if (disp == Display.Files)
       {
+        _removableDrivesHandlerThread.Join();
+        
         itemlist = _virtualDirectory.GetDirectoryExt(currentFolder);
 
         if (currentFolder == string.Empty)
@@ -2685,7 +2704,12 @@ namespace MediaPortal.GUI.Pictures
         }
 
         Filter(ref itemlist);
-        MissingThumbCacher ThumbWorker = new MissingThumbCacher(currentFolder, _autocreateLargeThumbs, false, true);
+
+        if (_autoCreateThumbs)
+        {
+          MissingThumbCacher ThumbWorker = new MissingThumbCacher(currentFolder, _autocreateLargeThumbs, false, true);
+        }
+
         // int itemIndex = 0;
         CountOfNonImageItems = 0;
         foreach (GUIListItem item in itemlist)
@@ -3213,24 +3237,6 @@ namespace MediaPortal.GUI.Pictures
       }
 
       return Util.Utils.GetPicturesLargeThumbPathname(fileName);
-    }
-
-    private bool GetUserInputString(ref string sString)
-    {
-      VirtualKeyboard keyboard = (VirtualKeyboard)GUIWindowManager.GetWindow((int)Window.WINDOW_VIRTUAL_KEYBOARD);
-      if (null == keyboard)
-      {
-        return false;
-      }
-      keyboard.IsSearchKeyboard = true;
-      keyboard.Reset();
-      keyboard.Text = sString;
-      keyboard.DoModal(GetID); // show it...
-      if (keyboard.IsConfirmed)
-      {
-        sString = keyboard.Text;
-      }
-      return keyboard.IsConfirmed;
     }
 
     private bool GetUserPasswordString(ref string sString)

@@ -163,15 +163,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
                     //UV Meter or UV Meter: unused
                     iSettings.iEq.Render_MaxValue = 80;
                     iSettings.iEq.Render_BANDS = 1;
-                    if (/*(_DisplayType == DisplayType.LCD) || (_DisplayType == DisplayType.LCD2)*/ false)
-                    {
-                        iSettings.iEq.Render_MaxValue = 0x60;
-                        if (iSettings.iEq._useVUindicators)
-                        {
-                            iSettings.iEq.Render_MaxValue = 0x60;
-                        }
-                    }
-                    else if (iSettings.iEq._useVUindicators)
+
+                    if (iSettings.iEq._useVUindicators)
                     {
                         iSettings.iEq.Render_MaxValue = 0x4b;
                     }

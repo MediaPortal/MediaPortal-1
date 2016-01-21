@@ -1396,22 +1396,5 @@ namespace MediaPortal.Player
       TS.formatPtr = IntPtr.Zero;
       return TS;
     }
-
-    private AMMediaType GetSubtitleMedia()
-    {
-      AMMediaType mediaSubtitle = new AMMediaType();
-      mediaSubtitle.majorType = MediaType.Null;
-      mediaSubtitle.subType = MediaSubType.Null;
-      mediaSubtitle.formatType = FormatType.Null;
-      mediaSubtitle.formatPtr = IntPtr.Zero;
-      mediaSubtitle.sampleSize = 1;
-      mediaSubtitle.temporalCompression = false;
-      mediaSubtitle.fixedSizeSamples = true;
-      mediaSubtitle.unkPtr = IntPtr.Zero;
-      mediaSubtitle.formatType = FormatType.None;
-      mediaSubtitle.formatSize = 0;
-      mediaSubtitle.formatPtr = IntPtr.Zero;
-      return mediaSubtitle;
-    }
   }
 }

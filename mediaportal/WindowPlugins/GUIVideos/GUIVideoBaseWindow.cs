@@ -498,6 +498,18 @@ namespace MediaPortal.GUI.Video
         isShareView = true;
       }
 
+      _currentFolder = GUIVideoFiles.GetCurrentFolder;
+      object o;
+      bool _stackedFolder = true;
+      MediaPortal.Database.FolderSettings.GetFolderSetting(_currentFolder, "VideoFiles", typeof(GUIVideoFiles.MapSettings), out o);
+
+      if (o != null)
+      {
+        GUIVideoFiles.MapSettings mapSettings = o as GUIVideoFiles.MapSettings;
+
+        _stackedFolder = mapSettings.Stack;
+      }
+
       for (int i = 0; i < facadeLayout.Count; ++i)
       {
         GUIListItem item = facadeLayout[i];
@@ -593,8 +605,16 @@ namespace MediaPortal.GUI.Video
           }
           if (CurrentSortMethod == VideoSort.SortMethod.Name_With_Duration && !item.IsFolder && item.Label != "..")
           {
-            int newMovieId = VideoDatabase.GetMovieId(item.Path);
-            item.Duration = VideoDatabase.GetMovieDuration(newMovieId);
+            if (_stackedFolder)
+            {
+              int newMovieId = VideoDatabase.GetMovieId(item.Path);
+              item.Duration = VideoDatabase.GetMovieDuration(newMovieId);
+            }
+            else
+            {
+              int fileID = VideoDatabase.GetFileId(item.Path);
+              item.Duration = VideoDatabase.GetVideoDuration(fileID);
+            }
 
             if (item.Duration > 0)
             {
@@ -817,10 +837,6 @@ namespace MediaPortal.GUI.Video
         dlgOK.DoModal(GetID);
       }
     }
-
-    private void OnInfoFile(GUIListItem item) {}
-
-    private void OnInfoFolder(GUIListItem item) {}
 
     protected override void OnInfo(int iItem) {}
 

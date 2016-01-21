@@ -290,17 +290,6 @@ namespace MediaPortal.GUI.Pictures
       }
     }
 
-    private void InvalidateCurrentSlide()
-    {
-      if (_slideList.Count == 0)
-      {
-        return;
-      }
-      string slideFilePath = _slideList[_currentSlideIndex];
-
-      InvalidateSlide(slideFilePath);
-    }
-
     private void InvalidateSlide(string slideFilePath)
     {
       _slideCache.InvalidateSlide(slideFilePath);
@@ -1548,34 +1537,6 @@ namespace MediaPortal.GUI.Pictures
     }
 
     #region render transition methods
-
-    //pan from left->right
-    private bool RenderKenBurns(float zoom, float pan, DirectionType direction)
-    {
-      //zoom (75%-100%)
-      if (zoom < 75)
-      {
-        zoom = 75;
-      }
-      if (zoom > 100)
-      {
-        zoom = 100;
-      }
-
-      //pan 75%-125%
-      if (pan < 75)
-      {
-        pan = 75;
-      }
-      if (pan > 125)
-      {
-        pan = 125;
-      }
-
-      //direction (left,right,up,down)
-
-      return true;
-    }
 
     // Select transition based upon picture width/height
     private int InitKenBurnsTransition()

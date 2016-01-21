@@ -43,6 +43,11 @@ struct SubPicDesc {
 };
 #pragma pack(pop)
 
+enum RelativeTo {
+  WINDOW,
+  VIDEO
+};
+
 //
 // ISubPic
 //

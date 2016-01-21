@@ -257,6 +257,10 @@
     <Reference Include="System.Management">
       <Name>System.Management</Name>
     </Reference>
+    <Reference Include="System.Management.Automation">
+      <HintPath>..\..\Packages\System.Management.Automation.6.1.7601.17515\lib\net40\System.Management.Automation.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System.Runtime.Serialization.Formatters.Soap">
       <Name>System.Runtime.Serialization.Formatters.Soap</Name>
     </Reference>
@@ -276,9 +280,9 @@
     <Reference Include="System.Xml">
       <Name>System.XML</Name>
     </Reference>
-    <Reference Include="taglib-sharp, Version=2.0.3.8, Culture=neutral, PublicKeyToken=db62eba44689b5b0, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Packages\MediaPortal.TagLib.2.0.3.8\lib\taglib-sharp.dll</HintPath>
+    <Reference Include="taglib-sharp, Version=2.1.0.1, Culture=neutral, PublicKeyToken=db62eba44689b5b0, processorArchitecture=x86">
+      <HintPath>..\..\Packages\MediaPortal.TagLib.2.1.0.1\lib\net40\taglib-sharp.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="WindowsBase" />
   </ItemGroup>
@@ -527,6 +531,7 @@
     <Compile Include="TagReader\CUE\CueTrackFileStringBuilder.cs" />
     <Compile Include="TagReader\CUE\CueUtil.cs" />
     <Compile Include="TagReader\CUE\ICueTrackFileBuilder.cs" />
+    <Compile Include="TagReader\CUE\TagCache.cs" />
     <Compile Include="TagReader\ITag.cs" />
     <Compile Include="TagReader\Utils.cs" />
     <Compile Include="Transcoding\TSReader2WMV.cs" />

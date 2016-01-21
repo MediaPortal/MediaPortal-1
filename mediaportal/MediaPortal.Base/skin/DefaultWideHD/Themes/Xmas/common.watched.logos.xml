@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!--version="1.0" encoding="utf-8" standalone="yes"-->
+<window>
+  <controls>
+    <control>
+      <description>BG for watched count/watched percent</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>1492</posX>
+      <posY>577</posY>
+      <width>97</width>
+      <height>90</height>
+      <texture>watched_BG.png</texture>
+      <visible>facadeview.list+!string.equals(#watchedcount, -1)</visible>
+    </control>
+    <control>
+      <description>Video Watched Count Label</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>1501</posX>
+      <posY>587</posY>
+      <width>75</width>
+      <height>75</height>
+      <label>#watchedcount</label>
+      <font>Label</font>
+      <align>center</align>
+      <textcolor>ffffd700</textcolor>
+      <visible>facadeview.list+!string.equals(#watchedcount, -1)</visible>
+    </control>
+    <control>
+      <description>Watched Logo</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>1500</posX>
+      <posY>585</posY>
+      <width>80</width>
+      <height>80</height>
+      <texture>watched_#(string.format('{0:000}',mul(math.round(div(cint(#watchedpercent),5)),5))).png</texture>
+      <keepaspectratio>yes</keepaspectratio>
+      <visible>facadeview.list+!string.equals(#watchedcount, -1)</visible>
+    </control>
+  </controls>
+</window>
