@@ -1,0 +1,629 @@
+//css_reference "core.dll";
+//css_reference "Databases.dll";
+//css_reference "utils.dll";
+
+
+// Version 7 04/08/2013
+// Primero busca informaciÃ³n en filmffinity y posteriormente completa la informaciÃ³n con el API veriosn 3 de themoviedb.org
+
+
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Text;
+using System.Windows.Forms;
+using System.IO;
+using System.Net;
+using System.Collections;
+using System.Web;
+using System.Xml;
+using System.Text.RegularExpressions;
+using MediaPortal.Util;
+
+class Grabber : MarshalByRefObject, MediaPortal.Video.Database.IIMDBScriptGrabber
+{
+	int logs = 1; // *************  Poner a 1 para tener logs y a 0 para no tener logs **************
+
+	public Grabber() { }
+
+	private string Normalize(string strValue)
+	{
+		// UTF8 to ASCII
+		strValue = strValue.Replace("%c3%a1","a").Replace("%c3%a9","e").Replace("%c3%ad","i").Replace("%c3%b3","o").Replace("%c3%ba","u").Replace("%c3%b1","n").Replace("%c3%91","N").Replace("%c3%81","a").Replace("%c3%89","e").Replace("%c3%8d","i").Replace("%c3%93","o").Replace("%c3%9a","u");
+		if (logs == 1) MediaPortal.GUI.Library.Log.Info("UTF8 to ASCII: {0}", strValue);
+		// Elimina el aÃ±o "solo" entre parentesis o corchetes
+		strValue = Regex.Replace(strValue, @"(\%5b|\()+\d{4}(\%5d|\))+", "");    
+		if (logs == 1) MediaPortal.GUI.Library.Log.Info("Despues de limpieza del aÃ±o: {0}", strValue);  
+		//Elimina informacion entre corchetes
+		strValue = Regex.Replace(strValue,@"%5b.*%5d","");
+		if (logs == 1) MediaPortal.GUI.Library.Log.Info("Despues de limpieza de corchetes: {0}", strValue);  
+		//Elimina informacion de capitulos
+		strValue = Regex.Replace(strValue,@"\b\d+x\d+\b","");
+		strValue = Regex.Replace(strValue,@"\b\d+X\d+\b","");
+		if (logs == 1) MediaPortal.GUI.Library.Log.Info("Despues de limpieza de capitulo: {0}", strValue); 
+		//Elimina despues de guion o palabras clave
+		strValue = Regex.Replace(strValue,@"\+(\-|Dual|Sub|BDrip|Subt|DD5\+1|Subs|HDiT-TB).*","");
+		if (logs == 1) MediaPortal.GUI.Library.Log.Info("Despues de Normalizacion: {0}", strValue);
+		return strValue.Replace("%2b", "");
+	}
+
+	private int BuscarYear(string strValue)
+	{
+		int year = 0; // Usamos 0 para AÃ±o no encontrado
+
+		// Buscamos el aÃ±o "solo" entre corchetes o parentesis
+		Regex rx = new Regex(@"(\%5b|\()(19\d{2}|20\d{2})(\%5d|\))");
+		Match match = rx.Match(strValue);
+
+		if (match.Success) year = int.Parse(match.Groups[2].Value);
+		
+		// Si no se encuentra, trata de encontrarlo de otra manera alternativa
+		if (year == 0)
+		{
+			rx = new Regex(@"\+(\d\d\d\d$)");
+			MatchCollection mcYear = rx.Matches(strValue);
+			if (mcYear.Count > 0)
+			{
+				int lastIndex = mcYear.Count - 1;
+				year = Convert.ToInt32(mcYear[lastIndex].Value);
+			}
+		}
+
+		if (logs == 1) MediaPortal.GUI.Library.Log.Info("AÃ±o Encontrado: {0}", year);
+		return year;
+	}
+
+	void MediaPortal.Video.Database.IIMDBScriptGrabber.FindFilm(string strSearch, int iLimit, ArrayList elements)
+	
+	// FunciÃ³n para buscar la Pelicula
+	
+	{
+		int iCount = 0;
+		int year = 0;
+		string strYear = string.Empty;
+		string strTitle = string.Empty;
+		string strURL = string.Empty;
+		string resultados = string.Empty;
+		int num_resultados = 0;
+
+		try
+		{
+			string absoluteUri;
+			if (logs == 1) MediaPortal.GUI.Library.Log.Info("Original: {0}", strSearch);
+			strSearch = Normalize(strSearch);
+			
+			year = BuscarYear(strSearch);
+			if (year!=0) 
+			{
+				int year_menos = year-1;
+				int year_mas = year+1;
+				strYear = "&fromyear=" + year_menos + "&toyear=" + year_mas;
+			}
+			
+			if (logs == 1) MediaPortal.GUI.Library.Log.Info("WEB de busqueda: {0}", "http://www.filmaffinity.com/es/advsearch.php?stext=" + strSearch + "&stype%5B%5D=title" + strYear);
+			strURL = "http://www.filmaffinity.com/es/advsearch.php?stext=" + strSearch + "&stype%5B%5D=title" + strYear;
+			string strBody = GetPage(strURL, "ISO-8859-1", out absoluteUri);
+			
+			HTMLParser r = new HTMLParser(strBody);
+			if (r.skipToEndOfNoCase("adv-search-pager-info") &&
+			r.skipToEndOfNoCase("<div style=\"float: right;\"><b>"))
+			{
+				r.extractTo("</b>", ref resultados);
+				num_resultados=Convert.ToInt32(resultados);
+				if ( logs == 1 ) MediaPortal.GUI.Library.Log.Info("FilmAffinity:resultados:{0}", num_resultados);
+			}
+			
+			if ( num_resultados == 1 )
+			{
+			// Coincidencia exacta
+				if ( logs == 1 ) MediaPortal.GUI.Library.Log.Info("Coincidencia Exacta");
+				
+				HTMLParser  p= new HTMLParser(strBody);
+				if (p.skipToEndOfNoCase("mc-title") &&
+				p.skipToEndOfNoCase("href=\"") &&
+				p.extractTo("\"", ref strURL))
+				{
+					strURL = String.Format("http://www.filmaffinity.com{0}", strURL);
+					if ( logs == 1 ) MediaPortal.GUI.Library.Log.Info("FilmAffinity:Un Resultado: strURL:{0}", strURL);
+				
+					if (p.skipToEndOfNoCase(">") &&
+					p.extractTo("<img", ref strTitle))
+					{
+						strTitle = HTMLParser.removeHtml(strTitle);
+						HTMLUtil htmlUtil = new HTMLUtil();
+						htmlUtil.ConvertHTMLToAnsi(strTitle, out strTitle);
+						if ( logs == 1 ) MediaPortal.GUI.Library.Log.Info("FilmAffinity:Un Resultado: Title:{0}", strTitle);
+						MediaPortal.Video.Database.IMDB.IMDBUrl url = new MediaPortal.Video.Database.IMDB.IMDBUrl(strURL, strTitle + " (filmaffinity)", "FilmAffinity_es");
+						elements.Add(url);
+						return;
+					}
+				}
+			}
+			// Varias Opciones
+			
+			if ( logs == 1 ) MediaPortal.GUI.Library.Log.Info("{0} Opciones", num_resultados);
+
+			HTMLParser parser = new HTMLParser(strBody);
+			parser.skipToEndOf("resultados.");
+			while ((parser.Position < strBody.Length) && (iCount < iLimit))
+			{
+				// Se aÃ±aden a la lista todas las encontradas hasta ellimite establecido.
+
+				if (parser.skipToEndOfNoCase("mc-title") &&
+				parser.skipToEndOfNoCase("href=\"") &&
+				parser.extractTo("\"", ref strURL))
+				{
+					strURL = String.Format("http://www.filmaffinity.com{0}", strURL);
+					if (parser.skipToEndOfNoCase(">") &&
+					parser.extractTo("<img", ref strTitle))
+					{
+						strTitle = HTMLParser.removeHtml(strTitle);
+						HTMLUtil htmlUtil = new HTMLUtil();
+						htmlUtil.ConvertHTMLToAnsi(strTitle, out strTitle);
+						MediaPortal.Video.Database.IMDB.IMDBUrl url = new MediaPortal.Video.Database.IMDB.IMDBUrl(strURL, strTitle + " (FilmAffinity)", "FilmAffinity_es");
+						elements.Add(url);
+						iCount++;
+					}
+				}
+				else
+				{
+					break;
+				}
+			}
+		}
+		catch (Exception ex)
+		{
+			MediaPortal.GUI.Library.Log.Error("exception for filmaffinity lookup of {0} err:{1} stack:{2}", strURL, ex.Message, ex.StackTrace);
+		}
+	}
+
+	bool MediaPortal.Video.Database.IIMDBScriptGrabber.GetDetails(MediaPortal.Video.Database.IMDB.IMDBUrl url, ref MediaPortal.Video.Database.IMDBMovie movieDetails)
+		// Funcion para obtener los detalles.
+	{
+		try
+		{
+			movieDetails.Reset();
+			movieDetails.Database = "FilmAffinity";
+			HTMLUtil htmlUtil = new HTMLUtil();
+			string strAbsURL;
+			string strBody = GetPage(url.URL, "ISO-8859-1", out strAbsURL);
+			if (strBody == null || strBody.Length == 0) return false;
+
+			HTMLParser parser = new HTMLParser(strBody);
+			if (parser.skipToEndOfNoCase("id=\"main-title\"><a href=\"") &&
+			parser.skipToEndOfNoCase("html\">"))
+			{
+				string strTitle = string.Empty;
+				string strOTitle = string.Empty;
+				string strYear = string.Empty;
+				string runtime = string.Empty;
+				string strDirector = string.Empty;
+				string strWriting = string.Empty;
+				string strCast = string.Empty;
+				string strGenre = string.Empty;
+				string strPlot = string.Empty;
+				string strNumber = string.Empty;
+				string strThumb = string.Empty;
+				string strRating = string.Empty;
+				string strVotes = string.Empty;
+				string strUserReview = string.Empty;
+				string strStudio = string.Empty;
+				string strCountry = string.Empty;
+				string strPremios = string.Empty;
+
+				// TITULO
+
+				parser.extractTo("</a>", ref strTitle);
+				if ( logs == 1 ) MediaPortal.GUI.Library.Log.Info("FilmAffinity:Title:{0}", strTitle);
+				strTitle = MediaPortal.Util.Utils.stripHTMLtags(strTitle);
+				movieDetails.Title = strTitle;
+				
+				// CARATULA
+
+				if (parser.skipToEndOfNoCase("<div id=\"movie-main-image-container\">") &&
+				parser.skipToEndOfNoCase("<a class=\"lightbox\" href=\"") &&
+				parser.extractTo("\"", ref strThumb))
+				{
+					if ( logs == 1 ) MediaPortal.GUI.Library.Log.Info("FilmAffinity:Thumb:{0}", strThumb);
+					if (strThumb != "http://www.filmaffinity.com/imgs/movies/noimgfull.jpg")
+					{
+						movieDetails.ThumbURL = strThumb;
+					}
+				}
+			
+				// VALORACION
+
+				if (parser.skipToEndOfNoCase("<div id=\"movie-rat-avg\" itemprop=\"ratingValue\">") &&	    
+				parser.extractTo("</div>", ref strRating))
+				{
+					if ( logs == 1 ) MediaPortal.GUI.Library.Log.Info("FilmAffinity:Rating:{0}", strRating);
+					try
+					{
+						movieDetails.Rating = (float)System.Double.Parse(strRating);
+					}
+					catch (Exception)
+					{
+						movieDetails.Rating = 0;
+					}
+				}
+
+				// NUMERO DE VOTOS
+
+				if (parser.skipToEndOfNoCase("<div id=\"movie-count-rat\">") &&
+				parser.skipToEndOfNoCase("ratingCount\">") &&
+				parser.extractTo("<", ref strVotes))
+				{
+					if ( logs == 1 ) MediaPortal.GUI.Library.Log.Info("FilmAffinity:Votes:{0}", strVotes);
+					movieDetails.Votes = strVotes;
+				}
+				
+				// TITULO ORIGINAL
+
+				if (parser.skipToEndOfNoCase("tulo original</dt>") &&
+				parser.skipToEndOfNoCase("<dd>") &&
+				parser.extractTo("</dd>", ref strOTitle))
+				{
+					if ( logs == 1 ) MediaPortal.GUI.Library.Log.Info("FilmAffinity:Original Title:{0}", strOTitle);
+					movieDetails.TagLine = "\"" + strOTitle + "\"";
+				}
+
+
+				// AÃ‘O
+
+				if (parser.skipToEndOfNoCase("<dt>A&ntilde;o</dt>") &&
+				parser.skipToEndOfNoCase("<dd>") &&       
+				parser.extractTo("</dd>", ref strYear))
+				{
+					if ( logs == 1 ) MediaPortal.GUI.Library.Log.Info("FilmAffinity:Year:{0}", strYear);
+					try
+					{
+						movieDetails.Year = System.Int32.Parse(strYear);
+						movieDetails.Title = strTitle + " (" + strYear + ")";
+					}
+					catch (Exception)
+					{
+						movieDetails.Year=1970;
+					}
+				}
+
+				// DURACION
+
+				if (parser.skipToEndOfNoCase("<dt>Duraci&oacute;n</dt>") &&
+				parser.skipToEndOfNoCase("<dd>") &&
+				parser.extractTo("&", ref runtime))
+				{
+					if ( logs == 1 ) MediaPortal.GUI.Library.Log.Info("FilmAffinity:RunTime:{0}", runtime);
+					try
+					{
+						movieDetails.RunTime = Int32.Parse(runtime);
+					}
+					catch (Exception)
+					{
+						movieDetails.RunTime=0;
+					}
+				}
+
+				// PAIS
+
+				if (parser.skipToEndOfNoCase("<dt>Pa&iacute;s</dt>") &&
+					parser.skipToEndOfNoCase("title=\"") &&
+					parser.extractTo("\" border=", ref strCountry))
+				{
+					if ( logs == 1 ) MediaPortal.GUI.Library.Log.Info("FilmAffinity:Country:{0}", strCountry);
+					movieDetails.Country = strCountry;
+				}
+
+				// DIRECTOR
+
+				if (parser.skipToEndOfNoCase("<dt>Director</dt>") &&
+				parser.skipToEndOfNoCase("<dd>") &&
+				parser.skipToEndOfNoCase("<a") &&
+				parser.skipToEndOfNoCase(">") &&
+				parser.extractTo("</a></dd>", ref strDirector))
+				{
+					strDirector = HTMLParser.removeHtml(strDirector);
+					if ( logs == 1 ) MediaPortal.GUI.Library.Log.Info("FilmAffinity:Director:{0}", strDirector);
+					movieDetails.Director = strDirector;
+				}
+
+				// GUIONISTA
+
+				if (parser.skipToEndOfNoCase("<dt>Gui&oacute;n</dt>") &&
+				parser.skipToEndOfNoCase("<dd>") &&
+				parser.extractTo("</dd>", ref strWriting))
+				{
+					strWriting = HTMLParser.removeHtml(strWriting);
+					if ( logs == 1 ) MediaPortal.GUI.Library.Log.Info("FilmAffinity:Writing:{0}", strWriting);
+					movieDetails.WritingCredits = strWriting;
+				}
+
+				// ACTORES
+
+				if (parser.skipToEndOfNoCase("<dt>Reparto</dt>") &&
+				parser.skipToEndOfNoCase("<dd>") &&
+				parser.extractTo("</dd>", ref strCast))
+				{
+					strCast = HTMLParser.removeHtml(strCast);
+					if ( logs == 1 ) MediaPortal.GUI.Library.Log.Info("FilmAffinity:Cast:{0}", strCast);
+					movieDetails.Cast = strCast;
+				}
+
+				// PRODUCTORA
+
+				if (parser.skipToEndOfNoCase("<dt>Productora</dt>") &&
+				parser.skipToEndOfNoCase("<dd>") &&
+				parser.extractTo("</dd>", ref strStudio))
+				{
+					strStudio = HTMLParser.removeHtml(strStudio);
+					if ( logs == 1 ) MediaPortal.GUI.Library.Log.Info("FilmAffinity:Studio:{0}", strStudio);
+					movieDetails.Studios = strStudio;
+				}
+
+				// GENERO
+
+				if (parser.skipToEndOfNoCase("<dt>G&eacute;nero") &&
+				parser.skipToEndOfNoCase("<dd>") &&
+				parser.extractTo("</dd>", ref strGenre))
+				{
+					strGenre = HTMLParser.removeHtml(strGenre);
+					strGenre = strGenre.Replace("|", " / ");
+					strGenre = strGenre.Replace(".", " / ");
+					if ( logs == 1 ) MediaPortal.GUI.Library.Log.Info("FilmAffinity:Genre:{0}", strGenre);
+					movieDetails.Genre = strGenre;
+				}
+
+				// SINOPSIS
+				
+				if (parser.skipToEndOfNoCase("<dt>Sinopsis</dt>") &&
+				parser.extractTo("</dd>", ref strPlot))
+				{
+					strPlot = HTMLParser.removeHtml(strPlot);
+					movieDetails.PlotOutline = strPlot;
+				}
+				
+				// PREMIOS
+				
+				if (parser.skipToEndOfNoCase("Premios") &&
+				parser.extractTo("</dd>", ref strPremios))
+				{
+					strPremios = HTMLParser.removeHtml(strPremios);
+					strPremios = Regex.Replace(strPremios, @"Mostrar.*m&aacute;s", "");
+					strPremios = Regex.Replace(strPremios, @"\s{2,30}", "\n\n");	
+				}
+				
+				// CRITICAS
+				
+				if (parser.skipToEndOfNoCase("ticas") &&
+				parser.extractTo("</dl>", ref strUserReview))
+				{
+					strUserReview = HTMLParser.removeHtml(strUserReview);
+					strUserReview = Regex.Replace(strUserReview, @"Mostrar.*m&aacute;s", "");
+					strUserReview = Regex.Replace(strUserReview, @"\s{2,30}", "\n\n");	
+					movieDetails.UserReview = strUserReview.Trim();
+				}
+				
+				//PLOT
+				
+				movieDetails.Plot =  "SINOPSIS:\n"  + strPlot + "\n\nPREMIOS:\n" + strPremios + "\n\nCRITICAS:\n" + strUserReview;
+			
+				// IDENTIFICADOR 
+
+				if (parser.skipToEndOfNoCase("<dt>Tu cr&iacute;tica</dt>") &&
+				parser.skipToEndOfNoCase("<a href=\"/es/addreview.php?movie_id=") &&
+				parser.extractTo("\"", ref strNumber))
+				{
+					if ( logs == 1 ) MediaPortal.GUI.Library.Log.Info("FilmAffinity:Number:{0}", strNumber);
+					movieDetails.IMDBNumber = strNumber;
+				}
+
+				// MPARating.
+
+				movieDetails.MPARating = "NC";
+
+				//TMDB
+				
+				strTitle = strTitle.Replace("?","");
+				strOTitle = strOTitle.Replace("?","");
+				GetTMDB(strTitle,strOTitle,movieDetails.Year,ref movieDetails);
+			}
+			return true;
+		}
+		catch (Exception ex)
+		{
+			MediaPortal.GUI.Library.Log.Error("exception for filmaffinity lookup of {0} err:{1} stack:{2}", url.URL, ex.Message, ex.StackTrace);
+		}
+		return false;
+	}
+
+	string MediaPortal.Video.Database.IIMDBScriptGrabber.GetName()
+	{
+		return "FilmAffinity";
+	}
+	  
+	string MediaPortal.Video.Database.IIMDBScriptGrabber.GetLanguage()
+	{
+		return "ES";
+	}
+
+	private string GetTMDBPage(string URL)
+	{
+		HttpWebRequest myRequest = (HttpWebRequest)WebRequest.Create(URL);
+		myRequest.Method = "GET";
+		myRequest.Accept="application/json";
+		WebResponse myResponse = myRequest.GetResponse();
+		StreamReader sr = new StreamReader(myResponse.GetResponseStream(), System.Text.Encoding.UTF8);
+		string result = sr.ReadToEnd();
+		sr.Close();
+		myResponse.Close();
+		return result;
+	}
+	
+	private string GetPage(string strURL, string strEncode, out string absoluteUri)
+	{
+		string strBody = "";
+		absoluteUri = String.Empty;
+		Stream ReceiveStream = null;
+		StreamReader sr = null;
+		WebResponse result = null;
+		try
+		{
+			// Make the Webrequest
+			WebRequest req = WebRequest.Create(strURL);
+
+			result = req.GetResponse();
+			ReceiveStream = result.GetResponseStream();
+
+			// Encoding: depends on selected page
+			Encoding encode = System.Text.Encoding.GetEncoding(strEncode);
+			sr = new StreamReader(ReceiveStream, encode);
+			strBody = sr.ReadToEnd();
+
+			absoluteUri = result.ResponseUri.AbsoluteUri;
+		}
+		catch (Exception ex)
+		{
+			MediaPortal.GUI.Library.Log.Error("Error retreiving WebPage: {0} Encoding:{1} err:{2} stack:{3}", strURL, strEncode, ex.Message, ex.StackTrace);
+		}
+		finally
+		{
+			if (sr != null)
+			{
+				try
+				{
+					sr.Close();
+				}
+				catch (Exception)
+				{
+				}
+			}
+			if (ReceiveStream != null)
+			{
+				try
+				{
+					ReceiveStream.Close();
+				}
+				catch (Exception)
+				{
+				}
+			}
+			if (result != null)
+			{
+				try
+				{
+					result.Close();
+				}
+				catch (Exception)
+				{
+				}
+			}
+		}
+		return strBody;
+	}
+  
+	private bool GetTMDB(string strTitle, string strOTitle, int year, ref MediaPortal.Video.Database.IMDBMovie movieDetails)
+	{
+
+		try
+		{
+			string strUrlTMDB = string.Empty;
+			string strID = string.Empty;
+			string strTTNUMBER = string.Empty;
+			string strCAR = string.Empty;
+			string strMPA = string.Empty;
+			string strTAG = string.Empty;
+			string strBody = string.Empty;
+			string	RESULTS = string.Empty;
+			
+			strTitle = Regex.Replace(strTitle, @"\(.*\)", "");
+			strOTitle = Regex.Replace(strOTitle, @"\(.*\)", "");
+			if ( logs == 1 ) MediaPortal.GUI.Library.Log.Info("TMDB Search Spanish Title: {0}", strTitle);
+			if ( logs == 1 ) MediaPortal.GUI.Library.Log.Info("TMDB Search Original Title: {0}", strOTitle);
+			strUrlTMDB = "http://api.themoviedb.org/3/search/movie?api_key=2ed40b5d82aa804a2b1fcedb5ca8d97a&language=es&query="  + strOTitle + " &year=" +year;
+			if ( logs == 1 ) MediaPortal.GUI.Library.Log.Info("TMDB Search Origial Url: {0}", strUrlTMDB);
+			strBody = GetTMDBPage(strUrlTMDB);	
+			HTMLParser test = new HTMLParser(strBody);
+			if (test.skipToEndOfNoCase("\"total_results\":") &&
+			test.extractTo("}", ref RESULTS))
+			{
+				if (RESULTS == "0" )
+				{
+					strUrlTMDB = "http://api.themoviedb.org/3/search/movie?api_key=2ed40b5d82aa804a2b1fcedb5ca8d97a&language=es&query="  + strTitle + " &year=" +year;
+					if ( logs == 1 ) MediaPortal.GUI.Library.Log.Info("TMDB Search Spanish Url: {0}", strUrlTMDB);
+					strBody = GetTMDBPage(strUrlTMDB);	
+					HTMLParser test2 = new HTMLParser(strBody);
+					if (test2.skipToEndOfNoCase("\"total_results\":") &&
+					test2.extractTo("}", ref RESULTS))
+					{	
+						if (RESULTS == "0" )
+						{
+							strUrlTMDB = "http://api.themoviedb.org/3/search/movie?api_key=2ed40b5d82aa804a2b1fcedb5ca8d97a&language=es&query="  + strOTitle;
+							if ( logs == 1 ) MediaPortal.GUI.Library.Log.Info("TMDB Search Original sin AÃ±o Url: {0}", strUrlTMDB);
+							strBody = GetTMDBPage(strUrlTMDB);	
+							HTMLParser test3 = new HTMLParser(strBody);
+							if (test3.skipToEndOfNoCase("\"total_results\":") &&
+							test3.extractTo("}", ref RESULTS))
+							{	
+								if (RESULTS == "0" )
+								{
+									strUrlTMDB = "http://api.themoviedb.org/3/search/movie?api_key=2ed40b5d82aa804a2b1fcedb5ca8d97a&language=es&query="  + strTitle;
+									if ( logs == 1 ) MediaPortal.GUI.Library.Log.Info("TMDB Search EspaÃ±ol sin AÃ±o Url: {0}", strUrlTMDB);
+								}									
+							}
+						}
+					}
+				}
+			}
+			strBody = GetTMDBPage(strUrlTMDB);	
+			HTMLParser parser = new HTMLParser(strBody);
+			if (parser.skipToEndOfNoCase("\"id\":") &&
+			parser.extractTo(",", ref strID))
+			{
+				if ( logs == 1 ) MediaPortal.GUI.Library.Log.Info("TMDB Movie ID: {0}", strID);
+				strUrlTMDB = "http://api.themoviedb.org/3/movie/" + strID + "?api_key=2ed40b5d82aa804a2b1fcedb5ca8d97a&language=es&append_to_response=releases";
+				if ( logs == 1 ) MediaPortal.GUI.Library.Log.Info("TMDB Movie url: {0}", strUrlTMDB);
+				strBody = GetTMDBPage(strUrlTMDB);	
+				HTMLParser parser2 = new HTMLParser(strBody);
+				
+				// TTNUMBER
+				if (parser2.skipToEndOfNoCase("\"imdb_id\":\"") &&
+				parser2.extractTo("\"", ref strTTNUMBER))
+				{
+					if ( logs == 1 ) MediaPortal.GUI.Library.Log.Info("TMDB TTNumber: {0}", strTTNUMBER);
+					movieDetails.IMDBNumber = strTTNUMBER;
+				}
+				
+				// CARATULA
+				if (parser2.skipToEndOfNoCase("\"poster_path\":\"") &&
+				parser2.extractTo("\"", ref strCAR))
+				{
+					strCAR = "http://d3gtl9l2a4fn1j.cloudfront.net/t/p/w500" + strCAR;
+					if ( logs == 1 ) MediaPortal.GUI.Library.Log.Info("TMDB Caratula: {0}", strCAR);
+					if (strCAR != "") movieDetails.ThumbURL = strCAR;
+				}
+				
+				//TAGLINE
+				if (parser2.skipToEndOfNoCase("\"tagline\":\"") &&
+				parser2.extractTo("\"", ref strTAG))
+				{
+					if ( logs == 1 ) MediaPortal.GUI.Library.Log.Info("TMDB TagLine: {0}", strTAG);
+					movieDetails.TagLine = movieDetails.TagLine + ". " + strTAG;
+				}
+				
+				//MPA RATING
+				if (parser2.skipToEndOfNoCase("\"US\",\"certification\":\"") &&
+				parser2.extractTo("\"", ref strMPA))
+				{
+					if ( logs == 1 ) MediaPortal.GUI.Library.Log.Info("TMDB MPA Rating: {0}", strMPA);
+					if (strMPA != "") movieDetails.MPARating = strMPA.Replace("NC-17","+18").Replace("NR","NC").Replace("PG-13","+12").Replace("PG","+7").Replace("G","TP").Replace("R","+16");
+				}	
+			}
+		}
+		catch (Exception ex)
+		{
+			MediaPortal.GUI.Library.Log.Error("exception for imdb lookup of {0} err:{1} stack:{2}", strTitle, ex.Message, ex.StackTrace);
+		}
+		return false;
+	}
+}
