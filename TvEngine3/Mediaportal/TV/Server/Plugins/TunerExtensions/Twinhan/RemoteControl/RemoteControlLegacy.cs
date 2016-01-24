@@ -32,7 +32,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan.RemoteControl
   /// <summary>
   /// A class for handling legacy remote control support for Twinhan tuners.
   /// </summary>
-  public class RemoteControlLegacy : ITwinhanRemoteControl
+  internal class RemoteControlLegacy : ITwinhanRemoteControl
   {
     #region constants
 

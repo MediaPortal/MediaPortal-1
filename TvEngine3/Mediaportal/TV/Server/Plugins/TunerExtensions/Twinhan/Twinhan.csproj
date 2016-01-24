@@ -59,6 +59,7 @@
     <Compile Include="..\..\..\..\..\..\..\Common-MP-TVE3\SolutionInfo.cs">
       <Link>SolutionInfo.cs</Link>
     </Compile>
+    <Compile Include="RemoteControl\HidListener.cs" />
     <Compile Include="RemoteControl\RemoteControlLegacy.cs" />
     <Compile Include="RemoteControl\Enum\HidConsumerUsage.cs" />
     <Compile Include="RemoteControl\Enum\MceRemoteUsage.cs" />

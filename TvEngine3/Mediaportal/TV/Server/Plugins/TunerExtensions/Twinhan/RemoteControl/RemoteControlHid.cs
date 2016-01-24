@@ -23,8 +23,6 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading;
-using System.Windows.Forms;
 using DirectShowLib;
 using Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan.Enum;
 using Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan.RemoteControl.Enum;
@@ -38,7 +36,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan.RemoteControl
   /// A class for handling HID remote controls for Twinhan tuners, including clones from TerraTec,
   /// TechniSat and Digital Rise.
   /// </summary>
-  public class RemoteControlHid : ITwinhanRemoteControl
+  internal class RemoteControlHid : ITwinhanRemoteControl
   {
     #region enums
 
@@ -590,6 +588,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan.RemoteControl
     #region variables
 
     private static HashSet<string> _openProducts = new HashSet<string>();
+    private static HidListener _listener = new HidListener();
 
     private bool _isInterfaceOpen = false;
     private string _tunerExternalId = string.Empty;
@@ -606,9 +605,6 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan.RemoteControl
 
     private string _hidId = string.Empty;
     private IDictionary<IntPtr, HumanInterfaceDevice> _devices = null;
-
-    private Thread _listenerThread = null;
-    private uint _listenerThreadId;
 
     #endregion
 
@@ -713,26 +709,9 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan.RemoteControl
           }
         }
 
-        // Start the listener thread.
-        ManualResetEvent startEvent = new ManualResetEvent(false);
-        try
-        {
-          _listenerThread = new Thread(new ParameterizedThreadStart(Listener));
-          _listenerThread.Name = "Twinhan HID remote control listener";
-          _listenerThread.IsBackground = true;
-          _listenerThread.Priority = ThreadPriority.Lowest;
-          _listenerThread.Start(startEvent);
-          if (!startEvent.WaitOne(5000))
-          {
-            this.LogWarn("Twinhan HID RC: failed to receive remote control listener thread start event, assuming error occurred");
-            _isInterfaceOpen = false;
-          }
-        }
-        finally
-        {
-          startEvent.Close();
-          startEvent.Dispose();
-        }
+        // Register to receive input from the HIDs.
+        _listener.OnInput += OnInput;
+        _listener.RegisterHids(_devices.Values);
 
         if (_isInterfaceOpen)
         {
@@ -781,25 +760,19 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan.RemoteControl
         Marshal.FreeCoTaskMem(buffer);
       }
 
-      // Stop the listener thread.
-      if (_listenerThread != null && _listenerThreadId > 0)
-      {
-        NativeMethods.PostThreadMessage(_listenerThreadId, NativeMethods.WindowsMessage.WM_QUIT, IntPtr.Zero, IntPtr.Zero);
-        if (!_listenerThread.Join(500))
-        {
-          this.LogWarn("Twinhan HID RC: failed to join remote control listener thread, aborting thread");
-          _listenerThread.Abort();
-        }
-        _listenerThreadId = 0;
-        _listenerThread = null;
-      }
+      // Unregister to stop receiving input from the HIDs.
+      _listener.OnInput -= OnInput;
+      _listener.UnregisterHids(_devices.Values);
 
       // Close the HIDs.
-      foreach (HumanInterfaceDevice hid in _devices.Values)
+      if (_devices != null)
       {
-        hid.Close();
+        foreach (HumanInterfaceDevice hid in _devices.Values)
+        {
+          hid.Close();
+        }
+        _devices.Clear();
       }
-      _devices.Clear();
 
       _openProducts.Remove(_productInstanceId);
       _ioControl = null;
@@ -1187,157 +1160,9 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan.RemoteControl
       return mappingTable;
     }
 
-    /// <summary>
-    /// Assemble a distinct array of usage registrations for a set of HIDs.
-    /// </summary>
-    private NativeMethods.RAWINPUTDEVICE[] GetRegistrationsForHids(ICollection<HumanInterfaceDevice> devices, IntPtr windowHandle)
-    {
-      int count = 0;
-      Dictionary<ushort, HashSet<ushort>> usagePairs = new Dictionary<ushort, HashSet<ushort>>(6);
-      foreach (HumanInterfaceDevice d in devices)
-      {
-        if (d.UsagePage == 0)
-        {
-          continue;
-        }
-        HashSet<ushort> usages;
-        if (!usagePairs.TryGetValue((ushort)d.UsagePage, out usages))
-        {
-          usages = new HashSet<ushort>();
-          usages.Add(d.Usage);
-          usagePairs.Add((ushort)d.UsagePage, usages);
-          count++;
-        }
-        else
-        {
-          if (usages.Add(d.Usage))
-          {
-            count++;
-          }
-        }
-      }
-
-      NativeMethods.RAWINPUTDEVICE[] registrations = new NativeMethods.RAWINPUTDEVICE[count];
-      count = 0;
-      foreach (KeyValuePair<ushort, HashSet<ushort>> pair in usagePairs)
-      {
-        foreach (ushort usage in pair.Value)
-        {
-          NativeMethods.RAWINPUTDEVICE r = new NativeMethods.RAWINPUTDEVICE();
-          r.dwFlags = NativeMethods.RawInputDeviceFlag.RIDEV_INPUTSINK;
-          r.usUsagePage = pair.Key;
-          r.usUsage = usage;
-          r.hwndTarget = windowHandle;
-          registrations[count++] = r;
-        }
-      }
-      return registrations;
-    }
-
     #endregion
 
     #region input handling
-
-    #region listener window class
-
-    private delegate void OnInputDelegate(IntPtr input);
-
-    private class ListenerWindow : NativeWindow
-    {
-      private OnInputDelegate _inputDelegate = null;
-
-      public ListenerWindow(OnInputDelegate inputDelegate)
-      {
-        _inputDelegate = inputDelegate;
-      }
-
-      protected override void WndProc(ref Message m)
-      {
-        if (m.Msg == (int)NativeMethods.WindowsMessage.WM_INPUT && m.LParam != null && m.LParam != IntPtr.Zero)
-        {
-          _inputDelegate(m.LParam);
-        }
-        base.WndProc(ref m);
-      }
-    }
-
-    #endregion
-
-    private void Listener(object eventParam)
-    {
-      this.LogDebug("Twinhan HID RC: starting listener thread");
-
-      // Be ***very*** careful if you modify this code. For more info about how
-      // NativeWindow should be used:
-      // http://stackoverflow.com/questions/2443867/message-pump-in-net-windows-service
-      Thread.BeginThreadAffinity();
-      ListenerWindow listenerWindow = null;
-      NativeMethods.RAWINPUTDEVICE[] registrations = null;
-      try
-      {
-        try
-        {
-          listenerWindow = new ListenerWindow(OnInput);
-          try
-          {
-            listenerWindow.CreateHandle(new CreateParams()
-            {
-              Style = unchecked((int)NativeMethods.WindowStyle.WS_POPUP),
-              ExStyle = (int)NativeMethods.WindowStyleEx.WS_EX_TOOLWINDOW,
-            });
-          }
-          catch (Exception ex)
-          {
-            this.LogError(ex, "Twinhan HID RC: failed to create keypress listener window");
-            listenerWindow = null;
-            _isInterfaceOpen = false;
-            return;
-          }
-
-          registrations = GetRegistrationsForHids(_devices.Values, listenerWindow.Handle);
-          if (!NativeMethods.RegisterRawInputDevices(registrations, (uint)registrations.Length, (uint)Marshal.SizeOf(typeof(NativeMethods.RAWINPUTDEVICE))))
-          {
-            this.LogError("Twinhan HID RC: failed to register for keypress events, error = {0}", Marshal.GetLastWin32Error());
-            registrations = null;
-            _isInterfaceOpen = false;
-            return;
-          }
-        }
-        finally
-        {
-          ((ManualResetEvent)eventParam).Set();
-        }
-
-        _listenerThreadId = NativeMethods.GetCurrentThreadId();
-        // This call will block and pump messages to the listener window
-        // until the listener window is closed. Without this, the window won't
-        // receive WM_INPUT.
-        Application.Run();
-
-        this.LogDebug("Twinhan HID RC: stopping listener thread");
-      }
-      finally
-      {
-        if (listenerWindow != null)
-        {
-          if (registrations != null)
-          {
-            for (int i = 0; i < registrations.Length; i++)
-            {
-              registrations[i].dwFlags = NativeMethods.RawInputDeviceFlag.RIDEV_REMOVE;
-              registrations[i].hwndTarget = IntPtr.Zero;
-            }
-            if (!NativeMethods.RegisterRawInputDevices(registrations, (uint)registrations.Length, (uint)Marshal.SizeOf(typeof(NativeMethods.RAWINPUTDEVICE))))
-            {
-              this.LogWarn("Twinhan HID RC: failed to unregister for keypress events, error = {0}", Marshal.GetLastWin32Error());
-            }
-          }
-
-          listenerWindow.DestroyHandle();
-        }
-        Thread.EndThreadAffinity();
-      }
-    }
 
     private void OnInput(IntPtr input)
     {

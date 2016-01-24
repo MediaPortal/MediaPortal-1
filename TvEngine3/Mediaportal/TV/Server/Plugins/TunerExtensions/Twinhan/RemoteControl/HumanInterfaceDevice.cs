@@ -61,7 +61,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan.RemoteControl
     private IntPtr _handle = IntPtr.Zero;
     private IntPtr _preParsedData = IntPtr.Zero;
     private HidUsagePage _usagePage = HidUsagePage.Consumer;
-    private ushort _usage = 1;
+    private ushort _usageCollection = 1;
     private VirtualKeyModifier _modifiers = 0;
     private bool _isOpen = false;
 
@@ -114,11 +114,11 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan.RemoteControl
       }
     }
 
-    public ushort Usage
+    public ushort UsageCollection
     {
       get
       {
-        return _usage;
+        return _usageCollection;
       }
     }
 
@@ -126,6 +126,11 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan.RemoteControl
 
     public bool Open()
     {
+      if (_isOpen)
+      {
+        return true;
+      }
+
       this.LogDebug("Twinhan HID: open");
       this.LogDebug("  ID           = {0}", _id);
       this.LogDebug("  name         = {0}", _name);
@@ -163,7 +168,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan.RemoteControl
           this.LogDebug("  sample rate  = {0}", info.mouse.dwSampleRate);
           this.LogDebug("  hor. wheel?  = {0}", info.mouse.fHasHorizontalWheel);
           _usagePage = HidUsagePage.GenericDesktopControl;
-          _usage = 2;
+          _usageCollection = 2;
         }
         else if (_type == NativeMethods.RawInputDeviceType.RIM_TYPEKEYBOARD)
         {
@@ -174,7 +179,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan.RemoteControl
           this.LogDebug("  # indicators = {0}", info.keyboard.dwNumberOfIndicators);
           this.LogDebug("  # keys total = {0}", info.keyboard.dwNumberOfKeysTotal);
           _usagePage = HidUsagePage.GenericDesktopControl;
-          _usage = 6;
+          _usageCollection = 6;
         }
         else if (_type == NativeMethods.RawInputDeviceType.RIM_TYPEHID)
         {
@@ -182,10 +187,10 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan.RemoteControl
           this.LogDebug("  vendor ID    = 0x{0:x}", info.hid.dwVendorId);
           this.LogDebug("  product ID   = 0x{0:x}", info.hid.dwProductId);
           this.LogDebug("  version      = 0x{0:x}", info.hid.dwVersionNumber);
-          this.LogDebug("  usage page   = {0}", p);
-          this.LogDebug("  usage        = 0x{0:x2}", info.hid.usUsage);
+          this.LogDebug("  page         = {0}", p);
+          this.LogDebug("  collection   = 0x{0:x2}", info.hid.usUsage);
           _usagePage = p;
-          _usage = info.hid.usUsage;
+          _usageCollection = info.hid.usUsage;
           //DebugCapabilities();
         }
         else
@@ -213,6 +218,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan.RemoteControl
           Marshal.FreeHGlobal(_preParsedData);
           _preParsedData = IntPtr.Zero;
         }
+        _isOpen = false;
       }
     }
 
