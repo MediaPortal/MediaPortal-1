@@ -117,23 +117,23 @@ namespace MediaPortal.GUI.Music
       // Save the default Playlist
       if (_savePlaylistOnExit)
       {
-          Log.Info("Playlist: Saving default playlist {0}", _defaultPlaylist);
-          IPlayListIO saver = new PlayListM3uIO();
-          PlayList playlist = playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC);
-          PlayList playlistTmp = new PlayList();
-          // Sort out Playlist Items residing on a CD, as they are gonna most likely to change
-          foreach (PlayListItem item in playlist)
+        Log.Info("Playlist: Saving default playlist {0}", _defaultPlaylist);
+        IPlayListIO saver = new PlayListM3uIO();
+        PlayList playlist = playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC);
+        PlayList playlistTmp = new PlayList();
+        // Sort out Playlist Items residing on a CD, as they are gonna most likely to change
+        foreach (PlayListItem item in playlist)
+        {
+          if (Path.GetExtension(item.FileName) != ".cda")
           {
-              if (Path.GetExtension(item.FileName) != ".cda")
-              {
-                  playlistTmp.Add(item);
-              }
+            playlistTmp.Add(item);
           }
+        }
 
-          if (playlistTmp.Count > 0)
-          {
-              saver.Save(playlistTmp, Path.Combine(_playlistFolder, _defaultPlaylist));
-          }
+        if (playlistTmp.Count > 0)
+        {
+          saver.Save(playlistTmp, Path.Combine(_playlistFolder, _defaultPlaylist));
+        }
       }
 
       base.DeInit();
