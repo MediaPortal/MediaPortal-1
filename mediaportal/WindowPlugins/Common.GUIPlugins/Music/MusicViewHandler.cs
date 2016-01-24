@@ -53,6 +53,7 @@ namespace MediaPortal.GUI.Music
     private string _whereClause = "";
     private string _orderClause = "";
     private string _filterClause = "";
+    private List<string> _previousSelections = new List<string>();
 
     #endregion
 
@@ -187,6 +188,7 @@ namespace MediaPortal.GUI.Music
       _whereClause = "";
       _orderClause = "";
       _filterClause = "";
+
       var level = currentView.Levels[CurrentLevel];
 
       if (!string.IsNullOrEmpty(currentView.Parent))
@@ -210,6 +212,7 @@ namespace MediaPortal.GUI.Music
       {
         BuildWhere(currentView.Levels[i], ref _whereClause, i);
         BuildFilter(currentView.Levels[i].Filters, ref _filterClause);
+        _previousSelections.Add(currentView.Levels[i].Selection);
       }
       BuildOrder(currentView.Levels[CurrentLevel], ref _orderClause);
 
@@ -294,10 +297,17 @@ namespace MediaPortal.GUI.Music
 
     private string BuildQuery(string selectionField, bool isLowestLevel)
     {
-      var sql = ""; 
+      // We need to add the previously selected fields to the query, to be able to retrieve the albumcover
+      var selections = selectionField;
+      foreach (var selection in _previousSelections)
+      {
+        selections += string.Format(", {0}", selection);
+      }
+
+      var sql = "";
       if (IsNotSongTable(selectionField))
       {
-        sql = string.Format("select distinct {0} from SongView ", selectionField);
+        sql = string.Format("select distinct {0} from SongView ", selections);
       }
       else
       {

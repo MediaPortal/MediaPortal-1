@@ -1199,6 +1199,10 @@ namespace MediaPortal.GUI.Music
         {
           strArtistName = tag.Artist;
         }
+        else if (!string.IsNullOrEmpty(tag.AlbumArtist))
+        {
+          strArtistName = tag.AlbumArtist;
+        }
 
         // attempt to pick up album thumb if already scanned 
         var strThumb = Util.Utils.GetAlbumThumbName(strArtistName, strAlbumName);

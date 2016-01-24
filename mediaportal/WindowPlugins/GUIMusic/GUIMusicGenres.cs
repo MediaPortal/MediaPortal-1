@@ -492,7 +492,7 @@ namespace MediaPortal.GUI.Music
 
       // Get Cover Art for Index display
       var filter = handler.View.Levels[handler.CurrentLevel];
-      if (filter.Selection.EndsWith("index"))
+      if (filter.Selection.ToLowerInvariant().EndsWith("index"))
       {
         strThumb = GUIGraphicsContext.GetThemedSkinFile(@"\media\alpha\" + item.Label + @".png");
         if (Util.Utils.FileExistsInCache(strThumb))
@@ -506,7 +506,7 @@ namespace MediaPortal.GUI.Music
       else
       {
         MusicTag tag;
-        switch (filter.Selection)
+        switch (filter.Selection.ToLowerInvariant())
         {
           case "genre":
             strThumb = Util.Utils.GetCoverArt(Thumbs.MusicGenre, item.Label);
@@ -531,7 +531,7 @@ namespace MediaPortal.GUI.Music
             }
             break;
 
-          case "track":
+          case "song":
             { 
             // If we want to get the Cover from embedded cover arts, we need to re-read the Tag from the file, 
             // since the database query didn't return a cover
@@ -552,7 +552,7 @@ namespace MediaPortal.GUI.Music
 
             bool thumbFound = false;
             tag = item.MusicTag as MusicTag;
-            strThumb = Util.Utils.GetAlbumThumbName(tag.Artist, tag.Album);
+            strThumb = Util.Utils.GetAlbumThumbName(tag.Artist == "" ? tag.AlbumArtist : tag.Artist , tag.Album);
             if (Util.Utils.FileExistsInCache(strThumb))
             {
               item.IconImage = strThumb;
