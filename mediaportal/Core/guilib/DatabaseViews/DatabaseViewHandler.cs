@@ -145,7 +145,7 @@ namespace MediaPortal.GUI.DatabaseViews
             searchViews = views;
             foreach (DatabaseViewDefinition view in views)
             {
-              if (view.LocalizedName == splitView[0])
+              if (view.Name == splitView[0])
               {
                 if (view.SubViews.Count > 0)
                 {
@@ -158,7 +158,7 @@ namespace MediaPortal.GUI.DatabaseViews
           }
           foreach (DatabaseViewDefinition view in searchViews)
           {
-            if (view.LocalizedName == splitView[searchIndex])
+            if (view.Name == splitView[searchIndex])
             {
               currentView = view;
               CurrentLevel = 0;
@@ -170,7 +170,7 @@ namespace MediaPortal.GUI.DatabaseViews
         // Is the selected View a Main View
         foreach (DatabaseViewDefinition view in views)
         {
-          if (view.LocalizedName == value)
+          if (view.Name == value)
           {
             currentView = view;
             CurrentLevel = 0;
@@ -183,7 +183,7 @@ namespace MediaPortal.GUI.DatabaseViews
           searchViews = currentView.SubViews;
           foreach (DatabaseViewDefinition view in searchViews)
           {
-            if (view.LocalizedName == value)
+            if (view.Name == value)
             {
               currentView = view;
               CurrentLevel = 0;
