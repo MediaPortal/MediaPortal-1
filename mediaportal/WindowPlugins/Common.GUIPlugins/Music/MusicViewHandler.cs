@@ -208,6 +208,7 @@ namespace MediaPortal.GUI.Music
         }
       }
 
+      _previousSelections.Clear();
       for (int i = 0; i < CurrentLevel; ++i)
       {
         BuildWhere(currentView.Levels[i], ref _whereClause, i);
@@ -337,36 +338,6 @@ namespace MediaPortal.GUI.Music
         sql += string.Format(" group by {0} ", selectionField);
       }
       
-      if (!string.IsNullOrEmpty(_orderClause))
-      {
-        sql += _orderClause;
-      }
-
-      return sql;
-    }
-
-    private string BuildLowerLevelQuery(string selectionField)
-    {
-      string sql = "select * from SongView ";
-
-      if (!string.IsNullOrEmpty(_whereClause))
-      {
-        sql += _whereClause;
-      }
-
-      if (!string.IsNullOrEmpty(_filterClause))
-      {
-        if (string.IsNullOrEmpty(_whereClause))
-        {
-          sql += " where ";
-        }
-        else
-        {
-          sql += " and ";
-        }
-        sql += _filterClause;
-      }
-
       if (!string.IsNullOrEmpty(_orderClause))
       {
         sql += _orderClause;
@@ -787,7 +758,7 @@ namespace MediaPortal.GUI.Music
 
         case "in":
         case "not in":
-          string[] splitValues = filterValue.Split(',');
+          string[] splitValues = filter.WhereValue.Split(',');
           filterValue = "(";
 
           foreach (string splitValue in splitValues)
