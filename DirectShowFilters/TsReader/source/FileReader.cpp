@@ -38,10 +38,19 @@ FileReader::FileReader() :
 	m_pFileName(0),
   m_bUseDummyWrites(FALSE),
   m_bUseRandomAccess(FALSE),
-  m_bIsStopping(FALSE)
+  m_bIsStopping(FALSE),
+  m_pKernel32LibHandle(NULL),
+  m_pCancelSynchronousIoProcHandle(NULL)
 {
-  IsVistaOrLater();
-  //LogDebug("FileReader::ctor, IsVistaOrLater: %d", m_bIsVistaOrLater);
+  if (IsVistaOrLater())
+  {
+    m_pKernel32LibHandle = LoadLibraryW(L"Kernel32.dll");
+    if (m_pKernel32LibHandle != NULL)
+    {
+      m_pCancelSynchronousIoProcHandle = (CancelSynchronousIoFn)GetProcAddress(m_pKernel32LibHandle, "CancelSynchronousIo");
+    }
+  }
+  //LogDebug("FileReader::ctor, IsVistaOrLater: %d, got CancelSynchronousIo handle: %d", m_bIsVistaOrLater, m_pCancelSynchronousIoProcHandle != NULL);
 }
 
 FileReader::~FileReader()
@@ -54,6 +63,13 @@ FileReader::~FileReader()
   
   if (m_pFileName)
     delete m_pFileName;
+    
+  if (m_pKernel32LibHandle != NULL)
+  {
+    FreeLibrary(m_pKernel32LibHandle);
+    m_pKernel32LibHandle = NULL;
+    m_pCancelSynchronousIoProcHandle = NULL;
+  }
 }
 
 
@@ -469,14 +485,14 @@ void FileReader::CancelPendingIO()
     if (m_accessLock.TryLock()==FALSE) 
     {
       //Something else is holding the lock, so may have outstanding IO requests
-    	if (m_accessLock.GetThreadID() != 0) //Valid thread ID
-    	{    	
+    	if (m_pCancelSynchronousIoProcHandle != NULL && m_accessLock.GetThreadID() != 0) //Valid thread ID
+    	{
       	HANDLE threadHandle = ::OpenThread(THREAD_ALL_ACCESS, FALSE, m_accessLock.GetThreadID());    
       	
       	if (threadHandle != NULL)
       	{
           LogDebug("FileReader::CancelPendingIO() - start, threadID: %x", m_accessLock.GetThreadID());
-      	  ::CancelSynchronousIo(threadHandle);
+      	  (m_pCancelSynchronousIoProcHandle)(threadHandle);
       	  ::CloseHandle(threadHandle);
           LogDebug("FileReader::CancelPendingIO() - end");
       	}        	
