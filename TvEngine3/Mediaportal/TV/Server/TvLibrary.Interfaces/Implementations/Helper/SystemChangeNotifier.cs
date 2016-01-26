@@ -139,13 +139,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Helper
       }
     }
 
-    private bool _isNotifierRunning = false;
     private Thread _notifierThread = null;
     private uint _notifierThreadId = 0;
 
-    /// <summary>
-    /// Constructor, private since this is a singleton class.
-    /// </summary>
     public SystemChangeNotifier()
     {
       // Start the listener thread.
@@ -160,7 +156,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Helper
         if (!startEvent.WaitOne(5000))
         {
           this.LogWarn("system change notifier: failed to receive notifier thread start event, assuming error occurred");
-          _isNotifierRunning = false;
         }
       }
       finally
@@ -223,19 +218,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Helper
       {
         try
         {
-          try
-          {
-            notifierWindow = new NotifierWindow(OnDeviceInterfaceChange, OnPowerBroadcastDelegate);
-          }
-          catch (System.Exception ex)
-          {
-            this.LogError(ex, "system change notifier: failed to create notifier window");
-            notifierWindow = null;
-            _isNotifierRunning = false;
-            return;
-          }
-
-          _isNotifierRunning = true;
+          notifierWindow = new NotifierWindow(OnDeviceInterfaceChange, OnPowerBroadcastDelegate);
+        }
+        catch (System.Exception ex)
+        {
+          this.LogError(ex, "system change notifier: failed to create notifier window");
+          notifierWindow = null;
+          return;
         }
         finally
         {

@@ -23,9 +23,11 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 using DirectShowLib;
 using Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan.Enum;
 using Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan.RemoteControl.Enum;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Helper;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using MediaPortal.Common.Utils;
 using Microsoft.Win32;
@@ -588,7 +590,9 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan.RemoteControl
     #region variables
 
     private static HashSet<string> _openProducts = new HashSet<string>();
-    private static HidListener _listener = new HidListener();
+    private static object _lockListenerNotifier = new object();
+    private static HidListener _listener = null;
+    private static SystemChangeNotifier _systemChangeNotifier = null;
 
     private bool _isInterfaceOpen = false;
     private string _tunerExternalId = string.Empty;
@@ -604,7 +608,8 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan.RemoteControl
     private IDictionary<int, byte> _customMappingTable = new Dictionary<int, byte>(64);
 
     private string _hidId = string.Empty;
-    private IDictionary<IntPtr, HumanInterfaceDevice> _devices = null;
+    private object _lockDevices = new object();
+    private IList<HumanInterfaceDevice> _devices = null;
 
     #endregion
 
@@ -678,11 +683,14 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan.RemoteControl
       }
       this.LogDebug("Twinhan HID RC: root HID ID         = {0}", rootHidId);
 
-      if (!LoadHids(hidIds, _isTerraTecDriver, out _devices))
+      lock (_devices)
       {
-        return false;
+        if (!LoadHids(hidIds, _isTerraTecDriver, out _devices))
+        {
+          return false;
+        }
+        this.LogDebug("Twinhan HID RC: child HID count     = {0}", _devices.Count);
       }
-      this.LogDebug("Twinhan HID RC: child HID count     = {0}", _devices.Count);
 
       // Load driver configuration.
       if (!ReadConfig(_ioControl, out _remoteControlType, out _remoteControlMapping))
@@ -696,39 +704,50 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan.RemoteControl
       // mappings) to be checked.
       _customMappingTable = ReadCustomMapping(rootHidId);
 
-      _isInterfaceOpen = true;
-      try
+      lock (_lockDevices)
       {
         // Open the HIDs.
-        foreach (HumanInterfaceDevice hid in _devices.Values)
+        foreach (HumanInterfaceDevice d in _devices)
         {
-          if (!hid.Open())
+          if (!d.Open())
           {
-            _isInterfaceOpen = false;
+            foreach (HumanInterfaceDevice d2 in _devices)
+            {
+              if (d == d2)
+              {
+                break;
+              }
+              d.Close();
+            }
             return false;
           }
         }
-
-        // Register to receive input from the HIDs.
-        _listener.OnInput += OnInput;
-        _listener.RegisterHids(_devices.Values);
-
-        if (_isInterfaceOpen)
-        {
-          _openProducts.Add(_productInstanceId);
-        }
-        return _isInterfaceOpen;
       }
-      finally
+
+      lock (_lockListenerNotifier)
       {
-        if (!_isInterfaceOpen)
+        // Register to receive input from the HIDs.
+        if (_listener == null)
         {
-          foreach (HumanInterfaceDevice hid in _devices.Values)
-          {
-            hid.Close();
-          }
+          _listener = new HidListener();
         }
+        _listener.OnInput += OnInput;
+        lock (_lockDevices)
+        {
+          _listener.RegisterHids(_devices);
+        }
+
+        // Register to be notified if any of the HIDs are removed.
+        if (_systemChangeNotifier == null)
+        {
+          _systemChangeNotifier = new SystemChangeNotifier();
+        }
+        _systemChangeNotifier.OnDeviceInterfaceChange += OnDeviceChange;
       }
+
+      _openProducts.Add(_productInstanceId);
+      _isInterfaceOpen = true;
+      return true;
     }
 
     /// <summary>
@@ -760,21 +779,70 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan.RemoteControl
         Marshal.FreeCoTaskMem(buffer);
       }
 
-      // Unregister to stop receiving input from the HIDs.
-      _listener.OnInput -= OnInput;
-      _listener.UnregisterHids(_devices.Values);
+      lock (_lockListenerNotifier)
+      {
+        // Unregister for HID removal notification.
+        if (_systemChangeNotifier != null)
+        {
+          _systemChangeNotifier.OnDeviceInterfaceChange -= OnDeviceChange;
+        }
+
+        // Unregister for receiving input from the HIDs.
+        if (_listener != null)
+        {
+          _listener.OnInput -= OnInput;
+
+          lock (_lockDevices)
+          {
+            if (_devices != null)
+            {
+              List<HumanInterfaceDevice> openDevices = new List<HumanInterfaceDevice>(_devices.Count);
+              foreach (HumanInterfaceDevice d in _devices)
+              {
+                if (d.IsOpen)
+                {
+                  openDevices.Add(d);
+                }
+              }
+              _listener.UnregisterHids(openDevices);
+            }
+          }
+        }
+      }
 
       // Close the HIDs.
-      if (_devices != null)
+      lock (_lockDevices)
       {
-        foreach (HumanInterfaceDevice hid in _devices.Values)
+        if (_devices != null)
         {
-          hid.Close();
+          foreach (HumanInterfaceDevice hid in _devices)
+          {
+            hid.Close();
+            hid.Dispose();
+          }
+          _devices.Clear();
         }
-        _devices.Clear();
       }
 
       _openProducts.Remove(_productInstanceId);
+      if (_openProducts.Count == 0)
+      {
+        lock (_lockListenerNotifier)
+        {
+          if (_listener != null)
+          {
+            _listener.Dispose();
+            _listener = null;
+          }
+
+          if (_systemChangeNotifier != null)
+          {
+            _systemChangeNotifier.Dispose();
+            _systemChangeNotifier = null;
+          }
+        }
+      }
+
       _ioControl = null;
       _isInterfaceOpen = false;
       return true;
@@ -818,8 +886,8 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan.RemoteControl
           // Is this the tuner we're looking for?
           // Device ID example:         PCI\VEN_1822&DEV_4E35&SUBSYS_00031AE4&REV_01\4&CF81C54&0&00F0
           // Tuner external ID example: @device:pnp:\\?\pci#ven_1822&dev_4e35&subsys_00031ae4&rev_01#4&cf81c54&0&00f0#{71985f48-1ca1-11d3-9cc8-00c04f7971e0}\{acec2d03-bdec-44c0-9a97-c577f6ee2602}
-          string tempId = deviceId.ToString().Replace("\\", "#").ToLowerInvariant();
-          if (tunerExternalId.Contains(tempId))
+          string tempId = deviceId.ToString();
+          if (tunerExternalId.ToLowerInvariant().Contains(tempId.Replace("\\", "#").ToLowerInvariant()))
           {
             id = tempId;
             devInst = devInfo.DevInst;
@@ -914,9 +982,9 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan.RemoteControl
     /// <summary>
     /// Load the raw input devices associated with a set of HID identifiers.
     /// </summary>
-    private bool LoadHids(ICollection<string> hidIds, bool isTerraTecDriver, out IDictionary<IntPtr, HumanInterfaceDevice> devices)
+    private bool LoadHids(ICollection<string> hidIds, bool isTerraTecDriver, out IList<HumanInterfaceDevice> devices)
     {
-      devices = new Dictionary<IntPtr, HumanInterfaceDevice>(15);
+      devices = new List<HumanInterfaceDevice>(15);
 
       // Get the raw input device list size.
       uint deviceCount = 0;
@@ -954,7 +1022,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan.RemoteControl
           {
             if (name.ToLowerInvariant().Contains(hidId.Replace("\\", "#").ToLowerInvariant()))
             {
-              devices.Add(d.hDevice, new HumanInterfaceDevice(hidId, name, d.dwType, isTerraTecDriver, d.hDevice));
+              devices.Add(new HumanInterfaceDevice(hidId, name, d.dwType, isTerraTecDriver, d.hDevice));
               missingHidIds.Remove(hidId);
               break;
             }
@@ -1185,21 +1253,34 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan.RemoteControl
           return;
         }
 
-        // Convert device specific raw input to device independent "usages".
         NativeMethods.RAWINPUT rawInput = (NativeMethods.RAWINPUT)Marshal.PtrToStructure(dataPtr, typeof(NativeMethods.RAWINPUT));
-        HumanInterfaceDevice device;
-        if (!_devices.TryGetValue(rawInput.header.hDevice, out device))
-        {
-          // Not one of the tuner's HID devices.
-          return;
-        }
 
+        HumanInterfaceDevice device = null;
         TwinhanUsageType usageType;
         int usage;
         string usageName;
-        if (!device.GetUsageFromRawInput(rawInput, dataPtr, out usageType, out usage, out usageName))
+        lock (_lockDevices)
         {
-          return;
+          // Determine whether the input was received from one of the tuner's
+          // HIDs.
+          foreach (HumanInterfaceDevice d in _devices)
+          {
+            if (d.Handle == rawInput.header.hDevice)
+            {
+              device = d;
+              break;
+            }
+          }
+          if (device == null)
+          {
+            return;
+          }
+
+          // Convert device specific raw input to device independent "usages".
+          if (!device.GetUsageFromRawInput(rawInput, dataPtr, out usageType, out usage, out usageName))
+          {
+            return;
+          }
         }
 
         // Reverse-convert device independent usages back to remote control buttons.
@@ -1272,5 +1353,111 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan.RemoteControl
     }
 
     #endregion
+
+    private void OnDeviceChange(NativeMethods.DBT_MANAGEMENT_EVENT eventType, Guid classGuid, string devicePath)
+    {
+      // Find the HID associated with this event, if any.
+      if (
+        string.IsNullOrEmpty(devicePath) ||
+        (
+          classGuid != NativeMethods.GUID_DEVINTERFACE_HID &&
+          classGuid != NativeMethods.GUID_DEVINTERFACE_KEYBOARD &&
+          classGuid != NativeMethods.GUID_DEVINTERFACE_MOUSE
+        )
+      )
+      {
+        return;
+      }
+
+      devicePath = devicePath.ToLowerInvariant();
+
+      ThreadPool.QueueUserWorkItem(delegate
+      {
+        HumanInterfaceDevice device = null;
+        lock (_lockDevices)
+        {
+          if (_devices != null)
+          {
+            foreach (HumanInterfaceDevice d in _devices)
+            {
+              // Note: I'm not actually sure what the device path will look like,
+              // so the ID vs. device path check may fail (=> fix it!).
+              if (
+                d.Id.ToLowerInvariant().Contains(devicePath) &&
+                (
+                  (d.DeviceType == NativeMethods.RawInputDeviceType.RIM_TYPEHID && classGuid == NativeMethods.GUID_DEVINTERFACE_HID) ||
+                  (d.DeviceType == NativeMethods.RawInputDeviceType.RIM_TYPEKEYBOARD && classGuid == NativeMethods.GUID_DEVINTERFACE_KEYBOARD) ||
+                  (d.DeviceType == NativeMethods.RawInputDeviceType.RIM_TYPEMOUSE && classGuid == NativeMethods.GUID_DEVINTERFACE_MOUSE)
+                )
+              )
+              {
+                device = d;
+                break;
+              }
+            }
+          }
+        }
+        if (device == null)
+        {
+          return;
+        }
+
+        // This change affects one of our HIDs.
+        this.LogInfo("Twinhan HID RC: on device change, event type = {0}, device path = {1}, HID = {2}", eventType, devicePath, device.Id);
+        if (eventType != NativeMethods.DBT_MANAGEMENT_EVENT.DBT_DEVICEARRIVAL && eventType != NativeMethods.DBT_MANAGEMENT_EVENT.DBT_DEVICEREMOVECOMPLETE)
+        {
+          return;
+        }
+
+        // Close the device if it's open.
+        lock (_lockListenerNotifier)
+        {
+          lock (_lockDevices)
+          {
+            if (device.IsOpen)
+            {
+              if (_listener != null)
+              {
+                _listener.UnregisterHids(new List<HumanInterfaceDevice> { device });
+              }
+              device.Close();
+            }
+          }
+        }
+        if (eventType == NativeMethods.DBT_MANAGEMENT_EVENT.DBT_DEVICEREMOVECOMPLETE)
+        {
+          return;
+        }
+
+        // Reload and reopen the device on arrival. We reload because we don't
+        // want to assume that the previous handle is still valid.
+        IList<HumanInterfaceDevice> newDevices;
+        if (LoadHids(new List<string> { device.Id }, _isTerraTecDriver, out newDevices) && newDevices.Count == 1)
+        {
+          lock (_lockDevices)
+          {
+            device.Dispose();
+            _devices.Remove(device);
+          }
+
+          device = newDevices[0];
+          if (device.Open())
+          {
+            lock (_lockListenerNotifier)
+            {
+              if (_listener != null)
+              {
+                _listener.RegisterHids(newDevices);
+              }
+            }
+          }
+
+          lock (_lockDevices)
+          {
+            _devices.Add(device);
+          }
+        }
+      });
+    }
   }
 }

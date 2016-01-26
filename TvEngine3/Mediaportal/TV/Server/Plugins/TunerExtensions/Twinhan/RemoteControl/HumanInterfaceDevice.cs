@@ -106,6 +106,22 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan.RemoteControl
       }
     }
 
+    public NativeMethods.RawInputDeviceType DeviceType
+    {
+      get
+      {
+        return _type;
+      }
+    }
+
+    public IntPtr Handle
+    {
+      get
+      {
+        return _handle;
+      }
+    }
+
     public HidUsagePage UsagePage
     {
       get
@@ -119,6 +135,14 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan.RemoteControl
       get
       {
         return _usageCollection;
+      }
+    }
+
+    public bool IsOpen
+    {
+      get
+      {
+        return _isOpen;
       }
     }
 
