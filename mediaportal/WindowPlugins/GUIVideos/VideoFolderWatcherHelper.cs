@@ -85,6 +85,29 @@ namespace MediaPortal.GUI.Video
       }
     }
 
+    public void PauseMonitoring(bool status)
+    {
+      if (!status)
+      {
+        if (_Timer != null)
+        {
+          _Timer.Start();
+        }
+      }
+      else
+      {
+        if (_Timer != null)
+        {
+          _Timer.Stop();
+        }
+      }
+    }
+
+    public int GetPendingEventsCount
+    {
+      get { return _Events.Count; }
+    }
+
     public void ChangeMonitoring(bool status)
     {
       if (status)

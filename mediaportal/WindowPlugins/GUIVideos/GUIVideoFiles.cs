@@ -557,7 +557,7 @@ namespace MediaPortal.GUI.Video
 
       if (_videoFolderWatcher != null)
       {
-        _videoFolderWatcher.ChangeMonitoring(false);
+        _videoFolderWatcher.PauseMonitoring(true);
       }
 
       if (_setThumbs != null && _setThumbs.IsAlive)
@@ -3063,6 +3063,11 @@ namespace MediaPortal.GUI.Video
       }
 
       GUIWaitCursor.Show();
+
+      if (_videoFolderWatcher != null && _videoFolderWatcher.GetPendingEventsCount > 0)
+      {
+        useCache = false;
+      }
 
       if (_videoFolderWatcher != null)
       {
