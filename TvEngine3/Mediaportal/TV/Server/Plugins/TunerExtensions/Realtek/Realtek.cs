@@ -226,7 +226,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Realtek
     {
       string originalListTunerName = null;
       List<RegistryView> views = new List<RegistryView>() { RegistryView.Default };
-      if (OSInfo.OSInfo.Is64BitOs() && IntPtr.Size != 8)
+      if (Environment.Is64BitOperatingSystem && !Environment.Is64BitProcess)
       {
         views.Add(RegistryView.Registry64);
       }
@@ -270,7 +270,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Realtek
       }
 
       List<RegistryView> views = new List<RegistryView>() { RegistryView.Default };
-      if (OSInfo.OSInfo.Is64BitOs() && IntPtr.Size != 8)
+      if (Environment.Is64BitOperatingSystem && !Environment.Is64BitProcess)
       {
         views.Add(RegistryView.Registry64);
       }

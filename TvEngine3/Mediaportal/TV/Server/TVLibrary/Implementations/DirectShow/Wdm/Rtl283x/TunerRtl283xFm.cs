@@ -621,7 +621,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
       string originalTunerName = _mainTunerDevice.Name;
       string fakeUniqueTunerName = "MediaPortal FM Tuner " + TunerId;
       List<RegistryView> views = new List<RegistryView>() { RegistryView.Default };
-      if (OSInfo.OSInfo.Is64BitOs() && IntPtr.Size != 8)
+      if (Environment.Is64BitOperatingSystem && !Environment.Is64BitProcess)
       {
         views.Add(RegistryView.Registry64);
       }

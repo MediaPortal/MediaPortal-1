@@ -127,7 +127,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
         // When running under WOW64 we must explicitly set 64 bit registry
         // key values for drivers. Refer to JIRA 2959 (mantis 3956).
         FREQUENCY_OVERRIDE_REGISTRY_VIEWS.Add(RegistryView.Default);
-        if (OSInfo.OSInfo.Is64BitOs() && IntPtr.Size != 8)
+        if (Environment.Is64BitOperatingSystem && !Environment.Is64BitProcess)
         {
           FREQUENCY_OVERRIDE_REGISTRY_VIEWS.Add(RegistryView.Registry64);
         }

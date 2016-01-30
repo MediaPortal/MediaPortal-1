@@ -19,9 +19,7 @@
 #endregion
 
 using System;
-using System.Diagnostics;
 using System.Runtime.InteropServices;
-using MediaPortal.Common.Utils;
 
 namespace OSInfo
 {
@@ -741,47 +739,6 @@ namespace OSInfo
     public static int OsVersionInt()
     {
       return (OSMajorVersion * 10 + OSMinorVersion);
-    }
-
-    /// <summary>
-    /// This function determines whether the operating system is a 64 bit operating system.
-    /// </summary>
-    /// <returns><c>true</c> if the operating system is a 64 bit operating system, otherwise <c>false</c></returns>
-    public static bool Is64BitOs()
-    {
-      if (IntPtr.Size == 8)
-      {
-        // 64 bit process under 64 bit operating system
-        return true;
-      }
-
-      // This isn't a 64 bit process, but it could be a 32 bit process under a 64 bit operating system.
-      // If the IsWow64Process() function isn't present in kernel32.dll then the OS doesn't have 64 bit
-      // support.
-      IntPtr moduleHandle = NativeMethods.GetModuleHandle("kernel32.dll");
-      if (moduleHandle == IntPtr.Zero)
-      {
-        // This is an error. Something very strange is going on if this ever happens.
-        throw new Exception("Failed to get kernel32.dll handle.");
-      }
-      IntPtr functionHandle = NativeMethods.GetProcAddress(moduleHandle, "IsWow64Process");
-      moduleHandle = IntPtr.Zero;
-      if (functionHandle == IntPtr.Zero)
-      {
-        // Pre-WOW64 OS - must be 32 or even 16 bit.
-        return false;
-      }
-      functionHandle = IntPtr.Zero;
-
-      bool is64bitOs = false;
-      if (NativeMethods.IsWow64Process(Process.GetCurrentProcess().Handle, out is64bitOs))
-      {
-        return is64bitOs;
-      }
-      else
-      {
-        throw new Exception("Call to IsWow64Process() returned false.");
-      }
     }
 
     #endregion

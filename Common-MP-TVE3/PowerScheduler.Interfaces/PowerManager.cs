@@ -571,7 +571,7 @@ namespace TvEngine.PowerScheduler.Interfaces
 
       // Disable WOW64 redirection for this thread on 64-bit systems to call the 64-bit powercfg
       IntPtr oldValue = IntPtr.Zero;
-      if (OSInfo.OSInfo.Is64BitOs() && IntPtr.Size != 8)
+      if (Environment.Is64BitOperatingSystem && !Environment.Is64BitProcess)
       {
         Wow64DisableWow64FsRedirection(ref oldValue);
       }
@@ -594,7 +594,7 @@ namespace TvEngine.PowerScheduler.Interfaces
       }
 
       // Re-enable WOW64 redirection
-      if (OSInfo.OSInfo.Is64BitOs() && IntPtr.Size != 8)
+      if (Environment.Is64BitOperatingSystem && !Environment.Is64BitProcess)
       {
         Wow64RevertWow64FsRedirection(oldValue);
       }

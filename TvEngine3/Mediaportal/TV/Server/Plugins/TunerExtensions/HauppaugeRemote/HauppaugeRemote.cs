@@ -436,7 +436,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeRemote
     private string GetIr32InstallPath()
     {
       List<RegistryView> views = new List<RegistryView>() { RegistryView.Default };
-      if (OSInfo.OSInfo.Is64BitOs() && IntPtr.Size != 8)
+      if (Environment.Is64BitOperatingSystem && !Environment.Is64BitProcess)
       {
         views.Add(RegistryView.Registry64);
       }
@@ -772,7 +772,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeRemote
       bool foundRegKey = false;
       _remoteControlListenerThreadWaitTime = DEFAULT_REMOTE_CONTROL_LISTENER_THREAD_WAIT_TIME;
       List<RegistryView> views = new List<RegistryView>() { RegistryView.Default };
-      if (OSInfo.OSInfo.Is64BitOs() && IntPtr.Size != 8)
+      if (Environment.Is64BitOperatingSystem && !Environment.Is64BitProcess)
       {
         views.Add(RegistryView.Registry64);
       }

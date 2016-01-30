@@ -1145,7 +1145,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan.RemoteControl
     {
       IDictionary<int, byte> mappingTable = new Dictionary<int, byte>(64);
       RegistryView view = RegistryView.Registry64;
-      if (!OSInfo.OSInfo.Is64BitOs())
+      if (!Environment.Is64BitOperatingSystem)
       {
         view = RegistryView.Registry32;
       }
