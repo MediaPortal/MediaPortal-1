@@ -21,7 +21,6 @@
 using System;
 using System.IO;
 using System.Runtime.InteropServices;
-using System.Runtime.InteropServices.ComTypes;
 using System.Text;
 using Microsoft.Win32.SafeHandles;
 
@@ -427,6 +426,7 @@ namespace MediaPortal.Common.Utils
 
     #region devguid.h
 
+    public static readonly Guid GUID_DEVCLASS_HIDCLASS = new Guid(0x745a17a0, 0x74d3, 0x11d0, 0xb6, 0xfe, 0x00, 0xa0, 0xc9, 0x0f, 0x57, 0xda);
     public static readonly Guid GUID_DEVCLASS_MEDIA = new Guid(0x4d36e96c, 0xe325, 0x11ce, 0xbf, 0xc1, 0x08, 0x00, 0x2b, 0xe1, 0x03, 0x18);
 
     #endregion
@@ -657,6 +657,14 @@ namespace MediaPortal.Common.Utils
     public static extern int KsSynchronousDeviceControl(IntPtr Handle, uint IoControl,
                                                         IntPtr InBuffer, uint InLength,
                                                         IntPtr OutBuffer, uint OutLength, out uint BytesReturned);
+
+    #endregion
+
+    #region Ntddmou.h
+
+    public static readonly Guid GUID_DEVINTERFACE_HID = new Guid(0x4d1e55b2, 0xf16f, 0x11cf, 0x88, 0xcb, 0x00, 0x11, 0x11, 0x00, 0x00, 0x30);
+    public static readonly Guid GUID_DEVINTERFACE_KEYBOARD = new Guid(0x884b96c3, 0x56ef, 0x11d1, 0xbc, 0x8c, 0x00, 0xa0, 0xc9, 0x14, 0x05, 0xdd);
+    public static readonly Guid GUID_DEVINTERFACE_MOUSE = new Guid(0x378de44c, 0x56ef, 0x11d1, 0xbc, 0x8c, 0x00, 0xa0, 0xc9, 0x14, 0x05, 0xdd);
 
     #endregion
 
