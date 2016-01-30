@@ -525,7 +525,28 @@ unsigned int WINAPI CProtocolHoster::StartReceiveDataWorker(LPVOID lpParam)
     Sleep(1);
   }
 
-  CHECK_CONDITION_EXECUTE(FAILED(caller->protocolError), caller->StopReceivingData());
+  // we can't call directly StopReeceivingData()
+  // StopReceivingData() method tries to stop StartReceiveDataWorker thread, which is not possible
+
+  if (FAILED(caller->protocolError))
+  {
+    // stop receive data worker
+    caller->DestroyReceiveDataWorker();
+
+    caller->pauseSeekStopMode = PAUSE_SEEK_STOP_MODE_NONE;
+    caller->finishTime = 0;
+    caller->startReceivingData = false;
+
+    // close active protocol connection
+    if (caller->activeProtocol != NULL)
+    {
+      if (caller->activeProtocol->GetConnectionState() == Opened)
+      {
+        caller->activeProtocol->StopReceivingData();
+      }
+    }
+  }
+
   CHECK_CONDITION_HRESULT(caller->protocolError, (!caller->activeProtocol->IsConnectionLostCannotReopen()) && (GetTickCount() <= caller->finishTime) && (!caller->startReceiveDataWorkerShouldExit), caller->protocolError, E_CONNECTION_LOST_CANNOT_REOPEN);
   caller->startReceivingData = false;
 
