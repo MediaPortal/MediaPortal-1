@@ -206,6 +206,12 @@ namespace MediaPortal.Util
       /// <returns>BOOL</returns>
       public static bool UNCFileFolderExists(string strFile)
       {
+        // Check if UNC strFile was already tested avoid another check
+        if (VirtualDirectory.detectedItemsPath.Contains(strFile))
+        {
+          return true;
+        }
+
         string strUNCPath;
         bool bolExist = false;
         string strType = "";
@@ -250,6 +256,11 @@ namespace MediaPortal.Util
         }
         catch (Exception)
         {
+        }
+
+        if (!VirtualDirectory.detectedItemsPath.Contains(strFile))
+        {
+          VirtualDirectory.detectedItemsPath.Add(strFile);
         }
 
         //Return the flag

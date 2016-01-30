@@ -1414,7 +1414,7 @@ namespace MediaPortal.GUI.Video
 
         dlg.AddLocalizedString(1299); // Refresh current directory
 
-        if (_virtualDirectory.IsShareOfflineDetected())
+        if (_virtualDirectory.IsRootShare(item.Path) || _virtualDirectory.IsShareOfflineDetected())
         {
           dlg.AddLocalizedString(868); // Force reset virtual directory if user want to refresh offline share
         }
