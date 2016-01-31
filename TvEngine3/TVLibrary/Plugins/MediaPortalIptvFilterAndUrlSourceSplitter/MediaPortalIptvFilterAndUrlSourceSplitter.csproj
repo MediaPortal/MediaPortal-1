@@ -131,6 +131,7 @@
     <Compile Include="ProtocolSettings.cs" />
     <Compile Include="Url\ProgramElement.cs" />
     <Compile Include="Url\ProgramElementCollection.cs" />
+    <Compile Include="Url\ProxyServerType.cs" />
     <Compile Include="Url\RtmpArbitraryData.cs" />
     <Compile Include="Url\RtmpArbitraryDataCollection.cs" />
     <Compile Include="Url\RtmpArbitraryDataCollectionEditor.cs" />

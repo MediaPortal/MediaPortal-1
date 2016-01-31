@@ -33,7 +33,7 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter.Url
         /// <overloads>
         /// Initializes a new instance of <see cref="SimpleUrl"/> class.
         /// </overloads>
-        public SimpleUrl(String url)
+        protected SimpleUrl(String url)
             : this(new Uri(url))
         {
         }
@@ -45,7 +45,7 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter.Url
         /// <exception cref="ArgumentNullException">
         /// <para>The <paramref name="uri"/> is <see langword="null"/>.</para>
         /// </exception>
-        public SimpleUrl(Uri uri)
+        protected SimpleUrl(Uri uri)
         {
             this.Uri = uri;
         }

@@ -534,6 +534,32 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter.Url
             }
         }
 
+        public override void ApplyDefaultUserSettings(ProtocolSettings previousSettings, ProtocolSettings currentSettings)
+        {
+            base.ApplyDefaultUserSettings(previousSettings, currentSettings);
+
+            RtmpProtocolSettings rtmpPreviousSettings = (RtmpProtocolSettings)previousSettings;
+            RtmpProtocolSettings rtmpCurrentSettings = (RtmpProtocolSettings)currentSettings;
+
+            if ((this.OpenConnectionTimeout == RtmpUrl.DefaultRtmpOpenConnectionTimeout) ||
+                (this.OpenConnectionTimeout == rtmpPreviousSettings.OpenConnectionTimeout))
+            {
+                this.OpenConnectionTimeout = rtmpCurrentSettings.OpenConnectionTimeout;
+            }
+
+            if ((this.OpenConnectionSleepTime == RtmpUrl.DefaultRtmpOpenConnectionSleepTime) ||
+                (this.OpenConnectionSleepTime == rtmpPreviousSettings.OpenConnectionSleepTime))
+            {
+                this.OpenConnectionSleepTime = rtmpCurrentSettings.OpenConnectionSleepTime;
+            }
+
+            if ((this.TotalReopenConnectionTimeout == RtmpUrl.DefaultRtmpTotalReopenConnectionTimeout) ||
+                (this.TotalReopenConnectionTimeout == rtmpPreviousSettings.TotalReopenConnectionTimeout))
+            {
+                this.TotalReopenConnectionTimeout = rtmpCurrentSettings.TotalReopenConnectionTimeout;
+            }
+        }
+
         #endregion
 
         #region Constants
