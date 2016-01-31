@@ -229,10 +229,10 @@ namespace MediaPortal.Configuration.Sections
         streamLAVSelectionCheckBox.Checked = xmlreader.GetValueAsBool("movieplayer", "streamlavselection", false);
 
         // Set Source Splitter check for first init to true.
-        if (MovieCodec._forceSourceSplitter && ((MovieCodec._splitterFilter == "LAV Splitter Source" || MovieCodec._splitterFileFilter == "LAV Splitter")))
+        if (MovieCodec._forceSourceSplitter && (MovieCodec._splitterFilter == "LAV Splitter Source" || MovieCodec._splitterFileFilter == "LAV Splitter"))
         {
           audioDefaultCheckBox.Enabled = true;
-          streamLAVSelectionCheckBox.Enabled = true;
+          streamLAVSelectionCheckBox.Enabled=true;
         }
         else
         {
