@@ -31,8 +31,19 @@
 #define HTTP_DOWNLOAD_REQUEST_FLAG_NONE                               DOWNLOAD_REQUEST_FLAG_NONE
 
 #define HTTP_DOWNLOAD_REQUEST_FLAG_IGNORE_CONTENT_LENGTH              (1 << (DOWNLOAD_REQUEST_FLAG_LAST + 0))
+#define HTTP_DOWNLOAD_REQUEST_FLAG_AUTHENTICATE                       (1 << (DOWNLOAD_REQUEST_FLAG_LAST + 1))
+#define HTTP_DOWNLOAD_REQUEST_FLAG_PROXY_AUTHENTICATE                 (1 << (DOWNLOAD_REQUEST_FLAG_LAST + 2))
 
-#define HTTP_DOWNLOAD_REQUEST_FLAG_LAST                               (DOWNLOAD_REQUEST_FLAG_LAST + 1)
+#define HTTP_DOWNLOAD_REQUEST_FLAG_LAST                               (DOWNLOAD_REQUEST_FLAG_LAST + 3)
+
+// proxy types
+#define HTTP_PROXY_TYPE_NONE                                          0
+#define HTTP_PROXY_TYPE_HTTP                                          1
+#define HTTP_PROXY_TYPE_HTTP_1_0                                      2
+#define HTTP_PROXY_TYPE_SOCKS4                                        3
+#define HTTP_PROXY_TYPE_SOCKS5                                        4
+#define HTTP_PROXY_TYPE_SOCKS4A                                       5
+#define HTTP_PROXY_TYPE_SOCKS5_HOSTNAME                               6
 
 class CHttpDownloadRequest : public CDownloadRequest
 {
@@ -64,7 +75,7 @@ public:
 
   // gets HTTP version
   // @return : HTTP version
-  virtual int GetHttpVersion(void);
+  virtual unsigned int GetHttpVersion(void);
 
   // gets ignore content length
   // @return : ignore content length
@@ -73,6 +84,34 @@ public:
   // gets additional headers to sent to server
   // @return : collection of additional headers
   virtual CHttpHeaderCollection *GetHeaders(void);
+
+  // gets remote server user name
+  // @return : remote server user name
+  virtual const wchar_t *GetServerUserName(void);
+
+  // gets remote server password
+  // @return : remote server password
+  virtual const wchar_t *GetServerPassword(void);
+
+  // gets proxy server
+  // @return : proxy server
+  virtual const wchar_t *GetProxyServer(void);
+
+  // gets proxy server port
+  // @return : proxy server port
+  virtual unsigned short GetProxyServerPort(void);
+
+  // gets proxy server user name
+  // @return : proxy server user name
+  virtual const wchar_t *GetProxyServerUserName(void);
+
+  // gets proxy server password
+  // @return : proxy server password
+  virtual const wchar_t *GetProxyServerPassword(void);
+
+  // gets proxy server type
+  // @return : proxy server type
+  virtual unsigned int GetProxyServerType(void);
 
   /* set methods */
 
@@ -101,11 +140,28 @@ public:
 
   // sets HTTP version
   // @param httpVersion : HTTP version to set
-  virtual void SetHttpVersion(int httpVersion);
+  virtual void SetHttpVersion(unsigned int httpVersion);
 
   // sets ignore content length
   // @param ignoreContentLength : ignore content length to set
   virtual void SetIgnoreContentLength(bool ignoreContentLength);
+
+  // sets remote server authentication
+  // @param authenticate : true if authentication is enabled, false otherwise
+  // @param serverUserName : server user name
+  // @param serverPassword : server password
+  // @return : true if successful, false otherwise
+  virtual bool SetAuthentication(bool authenticate, const wchar_t *serverUserName, const wchar_t *serverPassword);
+
+  // sets proxy authentication
+  // @param authenticate : true if proxy authentication is enabled, false otherwise
+  // @param proxyServer : proxy server hostname or IP address
+  // @param proxyServerPort : proxy server port
+  // @param proxyServerType : proxy server type (one of HTTP_PROXY_TYPE values)
+  // @param proxyServerUserName : proxy server user name
+  // @param proxyServerPassword : proxy server password
+  // @return : true if successful, false otherwise
+  virtual bool SetProxyAuthentication(bool authenticate, const wchar_t *proxyServer, unsigned short proxyServerPort, unsigned int proxyServerType, const wchar_t *proxyServerUserName, const wchar_t *proxyServerPassword);
 
   /* other methods */
 
@@ -125,10 +181,23 @@ protected:
   wchar_t *cookie;
 
   // the HTTP protocol version
-  int httpVersion;
+  unsigned int httpVersion;
 
   // holds collection of additional headers to set to server
   CHttpHeaderCollection *headers;
+
+  /* authentication */
+
+  wchar_t *serverUserName;
+  wchar_t *serverPassword;
+
+  /* proxy server and authentication */
+
+  wchar_t *proxyServer;
+  unsigned short proxyServerPort;
+  wchar_t *proxyServerUserName;
+  wchar_t *proxyServerPassword;
+  unsigned int proxyServerType;
 
   /* methods */
 

@@ -387,13 +387,39 @@ HRESULT CMPUrlSourceSplitter_Protocol_Http::ReceiveData(CStreamPackage *streamPa
           int64_t endStreamPosition = (nextFragment != NULL) ? (nextFragment->GetFragmentStartPosition() - 1) : startStreamPosition;
 
           request->SetCookie(this->configuration->GetValue(PARAMETER_NAME_HTTP_COOKIE, true, NULL));
-          request->SetHttpVersion(this->configuration->GetValueLong(PARAMETER_NAME_HTTP_VERSION, true, HTTP_VERSION_DEFAULT));
-          request->SetIgnoreContentLength((this->configuration->GetValueLong(PARAMETER_NAME_HTTP_IGNORE_CONTENT_LENGTH, true, HTTP_IGNORE_CONTENT_LENGTH_DEFAULT) == 1L));
+          request->SetHttpVersion(this->configuration->GetValueUnsignedInt(PARAMETER_NAME_HTTP_VERSION, true, HTTP_VERSION_DEFAULT));
+          request->SetIgnoreContentLength((this->configuration->GetValueBool(PARAMETER_NAME_HTTP_IGNORE_CONTENT_LENGTH, true, HTTP_IGNORE_CONTENT_LENGTH_DEFAULT)));
           request->SetReferer(this->configuration->GetValue(PARAMETER_NAME_HTTP_REFERER, true, NULL));
           request->SetUrl(this->configuration->GetValue(PARAMETER_NAME_URL, true, NULL));
           request->SetUserAgent(this->configuration->GetValue(PARAMETER_NAME_HTTP_USER_AGENT, true, NULL));
           request->SetStartPosition(this->IsLiveStreamDetected() ? 0 : startStreamPosition);
           request->SetEndPosition(this->IsLiveStreamDetected() ? 0 : endStreamPosition);
+
+          if (this->configuration->GetValueBool(PARAMETER_NAME_HTTP_SERVER_AUTHENTICATE, true, HTTP_SERVER_AUTHENTICATE_DEFAULT))
+          {
+            const wchar_t *serverUserName = this->configuration->GetValue(PARAMETER_NAME_HTTP_SERVER_USER_NAME, true, NULL);
+            const wchar_t *serverPassword = this->configuration->GetValue(PARAMETER_NAME_HTTP_SERVER_PASSWORD, true, NULL);
+
+            CHECK_POINTER_HRESULT(result, serverUserName, result, E_AUTH_NO_SERVER_USER_NAME);
+            CHECK_POINTER_HRESULT(result, serverUserName, result, E_AUTH_NO_SERVER_PASSWORD);
+
+            CHECK_CONDITION_HRESULT(result, request->SetAuthentication(true, serverUserName, serverPassword), result, E_OUTOFMEMORY);
+          }
+
+          if (this->configuration->GetValueBool(PARAMETER_NAME_HTTP_PROXY_SERVER_AUTHENTICATE, true, HTTP_PROXY_SERVER_AUTHENTICATE_DEFAULT))
+          {
+            const wchar_t *proxyServer = this->configuration->GetValue(PARAMETER_NAME_HTTP_PROXY_SERVER, true, NULL);
+            const wchar_t *proxyServerUserName = this->configuration->GetValue(PARAMETER_NAME_HTTP_PROXY_SERVER_USER_NAME, true, NULL);
+            const wchar_t *proxyServerPassword = this->configuration->GetValue(PARAMETER_NAME_HTTP_PROXY_SERVER_PASSWORD, true, NULL);
+            unsigned short proxyServerPort = (unsigned short)this->configuration->GetValueUnsignedInt(PARAMETER_NAME_HTTP_PROXY_SERVER_PORT, true, HTTP_PROXY_SERVER_PORT_DEFAULT);
+            unsigned int proxyServerType = this->configuration->GetValueUnsignedInt(PARAMETER_NAME_HTTP_PROXY_SERVER_TYPE, true, HTTP_PROXY_SERVER_TYPE_DEFAULT);
+
+            CHECK_POINTER_HRESULT(result, proxyServer, result, E_AUTH_NO_PROXY_SERVER);
+            CHECK_POINTER_HRESULT(result, proxyServerUserName, result, E_AUTH_NO_SERVER_USER_NAME);
+            CHECK_POINTER_HRESULT(result, proxyServerPassword, result, E_AUTH_NO_SERVER_PASSWORD);
+
+            CHECK_CONDITION_HRESULT(result, request->SetProxyAuthentication(true, proxyServer, proxyServerPort, proxyServerType, proxyServerUserName, proxyServerPassword), result, E_OUTOFMEMORY);
+          }
 
           // apply custom headers (if any)
 
@@ -429,7 +455,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Http::ReceiveData(CStreamPackage *streamPa
 
           this->currentStreamPosition = startStreamPosition;
 
-          if (SUCCEEDED(this->mainCurlInstance->Initialize(request)))
+          if (SUCCEEDED(result) && (SUCCEEDED(this->mainCurlInstance->Initialize(request))))
           {
             // all parameters set
             // start receiving data

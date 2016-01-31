@@ -91,7 +91,7 @@ ErrorMessage ERROR_MESSAGES[] = {
   { E_F4M_NO_PIECE_OF_MEDIA, L"No stream to play." },
   { E_F4M_NO_MEDIA_URL, L"Stream URL is not specified." },
   { E_F4M_NO_BOOTSTRAP_INFO, L"No bootstrap info to get stream fragments." },
-  { E_F4M_NO_BOOTSTRAP_INFO_VALUE, L"No bootstrap info value to get stream fragments." },
+  { E_F4M_NO_BOOTSTRAP_INFO_VALUE_OR_URL, L"No bootstrap info value or url to get stream fragments." },
   { E_F4M_CANNOT_PARSE_BOOTSTRAP_INFO_BOX, L"Cannot parse bootstrap info." },
   { E_F4M_ONLY_HTTP_PROTOCOL_SUPPORTED_IN_BASE_URL, L"Only HTTP protocol is supported for Adobe HTTP Dynamic Streaming." },
 
@@ -127,6 +127,12 @@ ErrorMessage ERROR_MESSAGES[] = {
   { E_M3U8_NOT_SUPPORTED_PLAYLIST_ITEM, L"Playlist item is not support in specified playlist version." },
   { E_M3U8_NOT_SUPPORTED_TAG, L"Tag is not support in specified playlist version." },
   { E_M3U8_TAG_IS_NOT_OF_SPECIFIED_TYPE, L"Tag is not of specified type." },
+
+  // authentication error codes
+
+  { E_AUTH_NO_SERVER_USER_NAME, L"Remote server or proxy server account user name is not specified." },
+  { E_AUTH_NO_SERVER_PASSWORD, L"Remote server or proxy server account password is not specified." },
+  { E_AUTH_NO_PROXY_SERVER, L"Proxy server is not specified." },
 
   // specific protocol error codes
 

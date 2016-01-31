@@ -307,6 +307,139 @@ HRESULT CHttpCurlInstance::Initialize(CDownloadRequest *downloadRequest)
       CHECK_CONDITION_EXECUTE(FAILED(result), this->logger->Log(LOGGER_ERROR, L"%s: %s: error while setting range: 0x%08X", this->protocolName, METHOD_INITIALIZE_NAME, result));
     }
 
+    if (SUCCEEDED(result) && (this->httpDownloadRequest->IsSetFlags(HTTP_DOWNLOAD_REQUEST_FLAG_AUTHENTICATE)))
+    {
+      // remote server authentication, user name and password
+
+      if (SUCCEEDED(result))
+      {
+        char *curlUserName = ConvertToMultiByte(this->httpDownloadRequest->GetServerUserName());
+        CHECK_POINTER_HRESULT(result, curlUserName, result, E_CONVERT_STRING_ERROR);
+
+        CHECK_CONDITION_EXECUTE_RESULT(SUCCEEDED(result), HRESULT_FROM_CURL_CODE(curl_easy_setopt(this->curl, CURLOPT_USERNAME, curlUserName)), result);
+        FREE_MEM(curlUserName);
+
+        CHECK_CONDITION_EXECUTE(FAILED(result), this->logger->Log(LOGGER_ERROR, L"%s: %s: error while setting user name: 0x%08X", this->protocolName, METHOD_INITIALIZE_NAME, result));
+      }
+
+      if (SUCCEEDED(result))
+      {
+        char *curlPassword = ConvertToMultiByte(this->httpDownloadRequest->GetServerPassword());
+        CHECK_POINTER_HRESULT(result, curlPassword, result, E_CONVERT_STRING_ERROR);
+
+        CHECK_CONDITION_EXECUTE_RESULT(SUCCEEDED(result), HRESULT_FROM_CURL_CODE(curl_easy_setopt(this->curl, CURLOPT_PASSWORD, curlPassword)), result);
+        FREE_MEM(curlPassword);
+
+        CHECK_CONDITION_EXECUTE(FAILED(result), this->logger->Log(LOGGER_ERROR, L"%s: %s: error while setting password: 0x%08X", this->protocolName, METHOD_INITIALIZE_NAME, result));
+      }
+
+      if (SUCCEEDED(result))
+      {
+        CHECK_CONDITION_EXECUTE_RESULT(SUCCEEDED(result), HRESULT_FROM_CURL_CODE(curl_easy_setopt(this->curl, CURLOPT_HTTPAUTH, (long)CURLAUTH_ANY)), result);
+        CHECK_CONDITION_EXECUTE(FAILED(result), this->logger->Log(LOGGER_ERROR, L"%s: %s: error while setting authentication: 0x%08X", this->protocolName, METHOD_INITIALIZE_NAME, result));
+      }
+    }
+
+    if (SUCCEEDED(result) && (this->httpDownloadRequest->IsSetFlags(HTTP_DOWNLOAD_REQUEST_FLAG_PROXY_AUTHENTICATE)))
+    {
+      // proxy server
+
+      if (SUCCEEDED(result))
+      {
+        char *proxyServer = ConvertToMultiByte(this->httpDownloadRequest->GetProxyServer());
+        CHECK_POINTER_HRESULT(result, proxyServer, result, E_CONVERT_STRING_ERROR);
+
+        CHECK_CONDITION_EXECUTE_RESULT(SUCCEEDED(result), HRESULT_FROM_CURL_CODE(curl_easy_setopt(this->curl, CURLOPT_PROXY, proxyServer)), result);
+        FREE_MEM(proxyServer);
+
+        CHECK_CONDITION_EXECUTE(FAILED(result), this->logger->Log(LOGGER_ERROR, L"%s: %s: error while setting proxy server: 0x%08X", this->protocolName, METHOD_INITIALIZE_NAME, result));
+      }
+
+      if (SUCCEEDED(result))
+      {
+        long proxyServerPort = this->httpDownloadRequest->GetProxyServerPort();
+        CHECK_CONDITION_EXECUTE_RESULT(SUCCEEDED(result), HRESULT_FROM_CURL_CODE(curl_easy_setopt(this->curl, CURLOPT_PROXYPORT, proxyServerPort)), result);
+
+        CHECK_CONDITION_EXECUTE(FAILED(result), this->logger->Log(LOGGER_ERROR, L"%s: %s: error while setting proxy server port: 0x%08X", this->protocolName, METHOD_INITIALIZE_NAME, result));
+      }
+
+      if (SUCCEEDED(result))
+      {
+        char *proxyServerUserName = ConvertToMultiByte(this->httpDownloadRequest->GetProxyServerUserName());
+        CHECK_POINTER_HRESULT(result, proxyServerUserName, result, E_CONVERT_STRING_ERROR);
+
+        CHECK_CONDITION_EXECUTE_RESULT(SUCCEEDED(result), HRESULT_FROM_CURL_CODE(curl_easy_setopt(this->curl, CURLOPT_PROXYUSERNAME, proxyServerUserName)), result);
+        FREE_MEM(proxyServerUserName);
+
+        CHECK_CONDITION_EXECUTE(FAILED(result), this->logger->Log(LOGGER_ERROR, L"%s: %s: error while setting proxy server user name: 0x%08X", this->protocolName, METHOD_INITIALIZE_NAME, result));
+      }
+
+      if (SUCCEEDED(result))
+      {
+        char *proxyServerPassword = ConvertToMultiByte(this->httpDownloadRequest->GetProxyServerPassword());
+        CHECK_POINTER_HRESULT(result, proxyServerPassword, result, E_CONVERT_STRING_ERROR);
+
+        CHECK_CONDITION_EXECUTE_RESULT(SUCCEEDED(result), HRESULT_FROM_CURL_CODE(curl_easy_setopt(this->curl, CURLOPT_PROXYPASSWORD, proxyServerPassword)), result);
+        FREE_MEM(proxyServerPassword);
+
+        CHECK_CONDITION_EXECUTE(FAILED(result), this->logger->Log(LOGGER_ERROR, L"%s: %s: error while setting proxy server password: 0x%08X", this->protocolName, METHOD_INITIALIZE_NAME, result));
+      }
+
+      if (SUCCEEDED(result))
+      {
+        long proxyServerType = CURLPROXY_HTTP;
+
+        switch (this->httpDownloadRequest->GetProxyServerType())
+        {
+        case HTTP_PROXY_TYPE_HTTP:
+          {
+            proxyServerType = CURLPROXY_HTTP;
+          }
+          break;
+        case HTTP_PROXY_TYPE_HTTP_1_0:
+          {
+            proxyServerType = CURLPROXY_HTTP_1_0;
+          }
+          break;
+        case HTTP_PROXY_TYPE_SOCKS4:
+          {
+            proxyServerType = CURLPROXY_SOCKS4;
+          }
+          break;
+        case HTTP_PROXY_TYPE_SOCKS5:
+          {
+            proxyServerType = CURLPROXY_SOCKS5;
+          }
+          break;
+        case HTTP_PROXY_TYPE_SOCKS4A:
+          {
+            proxyServerType = CURLPROXY_SOCKS4A;
+          }
+          break;
+        case HTTP_PROXY_TYPE_SOCKS5_HOSTNAME:
+          {
+            proxyServerType = CURLPROXY_SOCKS5_HOSTNAME;
+          }
+          break;
+        default:
+          {
+            proxyServerType = CURLPROXY_HTTP;
+          }
+          break;
+        }
+
+        CHECK_CONDITION_EXECUTE_RESULT(SUCCEEDED(result), HRESULT_FROM_CURL_CODE(curl_easy_setopt(this->curl, CURLOPT_PROXYTYPE, proxyServerType)), result);
+
+        CHECK_CONDITION_EXECUTE(FAILED(result), this->logger->Log(LOGGER_ERROR, L"%s: %s: error while setting proxy server type: 0x%08X", this->protocolName, METHOD_INITIALIZE_NAME, result));
+      }
+
+      if (SUCCEEDED(result))
+      {
+        CHECK_CONDITION_EXECUTE_RESULT(SUCCEEDED(result), HRESULT_FROM_CURL_CODE(curl_easy_setopt(this->curl, CURLOPT_HTTPAUTH, (long)CURLAUTH_ANY)), result);
+        CHECK_CONDITION_EXECUTE(FAILED(result), this->logger->Log(LOGGER_ERROR, L"%s: %s: error while setting proxy server authentication: 0x%08X", this->protocolName, METHOD_INITIALIZE_NAME, result));
+      }
+    }
+
     if (SUCCEEDED(result))
     {
       this->ClearHeaders();

@@ -201,15 +201,41 @@ HRESULT CMPUrlSourceSplitter_Protocol_M3u8_Decryption_Aes128::DecryptStreamFragm
                 }
 
                 request->SetFinishTime(finishTime);
-                request->SetReceivedDataTimeout(decryptionContext->GetConfiguration()->GetValueUnsignedInt(PARAMETER_NAME_M3U8_OPEN_CONNECTION_TIMEOUT, true, this->IsIptv() ? M3U8_OPEN_CONNECTION_TIMEOUT_DEFAULT_IPTV : M3U8_OPEN_CONNECTION_TIMEOUT_DEFAULT_SPLITTER));
+                request->SetReceivedDataTimeout(decryptionContext->GetConfiguration()->GetValueUnsignedInt(PARAMETER_NAME_HTTP_OPEN_CONNECTION_TIMEOUT, true, this->IsIptv() ? HTTP_OPEN_CONNECTION_TIMEOUT_DEFAULT_IPTV : HTTP_OPEN_CONNECTION_TIMEOUT_DEFAULT_SPLITTER));
                 request->SetNetworkInterfaceName(decryptionContext->GetConfiguration()->GetValue(PARAMETER_NAME_INTERFACE, true, NULL));
 
                 CHECK_CONDITION_HRESULT(result, request->SetUrl(currentEncryptedFragment->GetFragmentEncryption()->GetEncryptionKeyUri()), result, E_OUTOFMEMORY);
-                CHECK_CONDITION_HRESULT(result, request->SetCookie(decryptionContext->GetConfiguration()->GetValue(PARAMETER_NAME_M3U8_COOKIE, true, NULL)), result, E_OUTOFMEMORY);
-                request->SetHttpVersion(decryptionContext->GetConfiguration()->GetValueLong(PARAMETER_NAME_M3U8_VERSION, true, HTTP_VERSION_DEFAULT));
-                request->SetIgnoreContentLength((decryptionContext->GetConfiguration()->GetValueLong(PARAMETER_NAME_M3U8_IGNORE_CONTENT_LENGTH, true, HTTP_IGNORE_CONTENT_LENGTH_DEFAULT) == 1L));
-                CHECK_CONDITION_HRESULT(result, request->SetReferer(decryptionContext->GetConfiguration()->GetValue(PARAMETER_NAME_M3U8_REFERER, true, NULL)), result, E_OUTOFMEMORY);
-                CHECK_CONDITION_HRESULT(result, request->SetUserAgent(decryptionContext->GetConfiguration()->GetValue(PARAMETER_NAME_M3U8_USER_AGENT, true, NULL)), result, E_OUTOFMEMORY);
+                CHECK_CONDITION_HRESULT(result, request->SetCookie(decryptionContext->GetConfiguration()->GetValue(PARAMETER_NAME_HTTP_COOKIE, true, NULL)), result, E_OUTOFMEMORY);
+                request->SetHttpVersion(decryptionContext->GetConfiguration()->GetValueLong(PARAMETER_NAME_HTTP_VERSION, true, HTTP_VERSION_DEFAULT));
+                request->SetIgnoreContentLength((decryptionContext->GetConfiguration()->GetValueLong(PARAMETER_NAME_HTTP_IGNORE_CONTENT_LENGTH, true, HTTP_IGNORE_CONTENT_LENGTH_DEFAULT) == 1L));
+                CHECK_CONDITION_HRESULT(result, request->SetReferer(decryptionContext->GetConfiguration()->GetValue(PARAMETER_NAME_HTTP_REFERER, true, NULL)), result, E_OUTOFMEMORY);
+                CHECK_CONDITION_HRESULT(result, request->SetUserAgent(decryptionContext->GetConfiguration()->GetValue(PARAMETER_NAME_HTTP_USER_AGENT, true, NULL)), result, E_OUTOFMEMORY);
+
+                if (decryptionContext->GetConfiguration()->GetValueBool(PARAMETER_NAME_HTTP_SERVER_AUTHENTICATE, true, HTTP_SERVER_AUTHENTICATE_DEFAULT))
+                {
+                  const wchar_t *serverUserName = decryptionContext->GetConfiguration()->GetValue(PARAMETER_NAME_HTTP_SERVER_USER_NAME, true, NULL);
+                  const wchar_t *serverPassword = decryptionContext->GetConfiguration()->GetValue(PARAMETER_NAME_HTTP_SERVER_PASSWORD, true, NULL);
+
+                  CHECK_POINTER_HRESULT(result, serverUserName, result, E_AUTH_NO_SERVER_USER_NAME);
+                  CHECK_POINTER_HRESULT(result, serverUserName, result, E_AUTH_NO_SERVER_PASSWORD);
+
+                  CHECK_CONDITION_HRESULT(result, request->SetAuthentication(true, serverUserName, serverPassword), result, E_OUTOFMEMORY);
+                }
+
+                if (decryptionContext->GetConfiguration()->GetValueBool(PARAMETER_NAME_HTTP_PROXY_SERVER_AUTHENTICATE, true, HTTP_PROXY_SERVER_AUTHENTICATE_DEFAULT))
+                {
+                  const wchar_t *proxyServer = decryptionContext->GetConfiguration()->GetValue(PARAMETER_NAME_HTTP_PROXY_SERVER, true, NULL);
+                  const wchar_t *proxyServerUserName = decryptionContext->GetConfiguration()->GetValue(PARAMETER_NAME_HTTP_PROXY_SERVER_USER_NAME, true, NULL);
+                  const wchar_t *proxyServerPassword = decryptionContext->GetConfiguration()->GetValue(PARAMETER_NAME_HTTP_PROXY_SERVER_PASSWORD, true, NULL);
+                  unsigned short proxyServerPort = (unsigned short)decryptionContext->GetConfiguration()->GetValueUnsignedInt(PARAMETER_NAME_HTTP_PROXY_SERVER_PORT, true, HTTP_PROXY_SERVER_PORT_DEFAULT);
+                  unsigned int proxyServerType = decryptionContext->GetConfiguration()->GetValueUnsignedInt(PARAMETER_NAME_HTTP_PROXY_SERVER_TYPE, true, HTTP_PROXY_SERVER_TYPE_DEFAULT);
+
+                  CHECK_POINTER_HRESULT(result, proxyServer, result, E_AUTH_NO_PROXY_SERVER);
+                  CHECK_POINTER_HRESULT(result, proxyServerUserName, result, E_AUTH_NO_SERVER_USER_NAME);
+                  CHECK_POINTER_HRESULT(result, proxyServerPassword, result, E_AUTH_NO_SERVER_PASSWORD);
+
+                  CHECK_CONDITION_HRESULT(result, request->SetProxyAuthentication(true, proxyServer, proxyServerPort, proxyServerType, proxyServerUserName, proxyServerPassword), result, E_OUTOFMEMORY);
+                }
 
                 if (SUCCEEDED(result))
                 {

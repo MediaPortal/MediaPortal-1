@@ -92,7 +92,7 @@ FORCEINLINE bool IS_OUR_ERROR(HRESULT error) { return (((error & 0xFFFFF000) == 
 #define E_F4M_NO_PIECE_OF_MEDIA                                                 -62
 #define E_F4M_NO_MEDIA_URL                                                      -63
 #define E_F4M_NO_BOOTSTRAP_INFO                                                 -64
-#define E_F4M_NO_BOOTSTRAP_INFO_VALUE                                           -65
+#define E_F4M_NO_BOOTSTRAP_INFO_VALUE_OR_URL                                    -65
 #define E_F4M_CANNOT_PARSE_BOOTSTRAP_INFO_BOX                                   -66
 #define E_F4M_ONLY_HTTP_PROTOCOL_SUPPORTED_IN_BASE_URL                          -67
 
@@ -138,6 +138,12 @@ FORCEINLINE bool IS_M3U8_PARSE_ERROR(HRESULT error) { return ((error >= E_M3U8_N
 FORCEINLINE bool IS_M3U8_PLAYLIST_ERROR(HRESULT error) { return ((error >= E_M3U8_TAG_IS_NOT_OF_SPECIFIED_TYPE) && (error <= E_M3U8_NOT_PLAYLIST)); }
 
 FORCEINLINE bool IS_M3U8_ERROR(HRESULT error) { return (IS_M3U8_PARSE_ERROR(error) || IS_M3U8_PLAYLIST_ERROR(error)); }
+
+// authentication error codes
+
+#define E_AUTH_NO_SERVER_USER_NAME                                              -95
+#define E_AUTH_NO_SERVER_PASSWORD                                               -96
+#define E_AUTH_NO_PROXY_SERVER                                                  -97
 
 // specific protocol error codes
 

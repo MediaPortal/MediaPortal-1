@@ -23,15 +23,8 @@
 #ifndef __MP_URL_SOURCE_SPLITTER_PROTOCOL_AFHS_PARAMETERS_DEFINED
 #define __MP_URL_SOURCE_SPLITTER_PROTOCOL_AFHS_PARAMETERS_DEFINED
 
-#define PARAMETER_NAME_AFHS_OPEN_CONNECTION_TIMEOUT                   L"AfhsOpenConnectionTimeout"
-#define PARAMETER_NAME_AFHS_OPEN_CONNECTION_SLEEP_TIME                L"AfhsOpenConnectionSleepTime"
-#define PARAMETER_NAME_AFHS_TOTAL_REOPEN_CONNECTION_TIMEOUT           L"AfhsTotalReopenConnectionTimeout"
+#include "MPUrlSourceSplitter_Protocol_Http_Parameters.h"
 
-#define PARAMETER_NAME_AFHS_REFERER                                   L"AfhsReferer"
-#define PARAMETER_NAME_AFHS_USER_AGENT                                L"AfhsUserAgent"
-#define PARAMETER_NAME_AFHS_COOKIE                                    L"AfhsCookie"
-#define PARAMETER_NAME_AFHS_VERSION                                   L"AfhsVersion"
-#define PARAMETER_NAME_AFHS_IGNORE_CONTENT_LENGTH                     L"AfhsIgnoreContentLength"
 #define PARAMETER_NAME_AFHS_SEGMENT_FRAGMENT_URL_EXTRA_PARAMETERS     L"AfhsSegmentFragmentUrlExtraParameters"
 
 #define PARAMETER_NAME_AFHS_BOOTSTRAP_INFO                            L"AfhsBootstrapInfo"
@@ -41,18 +34,5 @@
 #define PARAMETER_NAME_AFHS_BOOTSTRAP_INFO_URL                        L"AfhsMediaBootstrapInfoUrl"
 #define PARAMETER_NAME_AFHS_MANIFEST_URL                              L"AfhsManifestUrl"
 #define PARAMETER_NAME_AFHS_MANIFEST_CONTENT                          L"AfhsManifestContent"
-
-#define PARAMETER_NAME_AFHS_COOKIES_COUNT                             L"AfhsCookiesCount"
-#define AFHS_COOKIE_FORMAT_PARAMETER_NAME                             L"AfhsCookie%08u"
-
-// we should get data in twenty seconds (splitter)
-#define AFHS_OPEN_CONNECTION_TIMEOUT_DEFAULT_SPLITTER                 20000
-#define AFHS_OPEN_CONNECTION_SLEEP_TIME_DEFAULT_SPLITTER              0
-#define AFHS_TOTAL_REOPEN_CONNECTION_TIMEOUT_DEFAULT_SPLITTER         60000
-
-// we should get data in twenty seconds (iptv)
-#define AFHS_OPEN_CONNECTION_TIMEOUT_DEFAULT_IPTV                     20000
-#define AFHS_OPEN_CONNECTION_SLEEP_TIME_DEFAULT_IPTV                  0
-#define AFHS_TOTAL_REOPEN_CONNECTION_TIMEOUT_DEFAULT_IPTV             60000
 
 #endif

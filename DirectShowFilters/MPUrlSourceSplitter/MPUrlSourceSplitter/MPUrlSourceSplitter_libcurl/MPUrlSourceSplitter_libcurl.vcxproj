@@ -54,7 +54,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;BUILDING_LIBCURL;CURL_DISABLE_TFTP;CURL_DISABLE_FTP;CURL_DISABLE_LDAP;CURL_DISABLE_TELNET;CURL_DISABLE_DICT;CURL_DISABLE_FILE;CURL_DISABLE_POP3;CURL_DISABLE_IMAP;CURL_DISABLE_SMTP;CURL_DISABLE_RTMP;CURL_DISABLE_GOPHER;USE_IPV6;USE_SSLEAY;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;BUILDING_LIBCURL;CURL_DISABLE_TFTP;CURL_DISABLE_FTP;CURL_DISABLE_LDAP;CURL_DISABLE_TELNET;CURL_DISABLE_DICT;CURL_DISABLE_FILE;CURL_DISABLE_POP3;CURL_DISABLE_IMAP;CURL_DISABLE_SMTP;CURL_DISABLE_RTMP;CURL_DISABLE_GOPHER;USE_IPV6;USE_SSLEAY;USE_WINDOWS_SSPI;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>..\..\OpenSSL\include;..\..\OpenSSL\include\openssl;.\include;.\include\curl;.\include\vtls;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <FunctionLevelLinking>false</FunctionLevelLinking>
     </ClCompile>
@@ -77,7 +77,7 @@ copy /Y "$(TargetDir)$(TargetName).pdb" "$(SolutionDir)bin_$(PlatformName)d\$(Ta
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;BUILDING_LIBCURL;CURL_DISABLE_TFTP;CURL_DISABLE_FTP;CURL_DISABLE_LDAP;CURL_DISABLE_TELNET;CURL_DISABLE_DICT;CURL_DISABLE_FILE;CURL_DISABLE_POP3;CURL_DISABLE_IMAP;CURL_DISABLE_SMTP;CURL_DISABLE_RTMP;CURL_DISABLE_GOPHER;USE_IPV6;USE_SSLEAY;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;BUILDING_LIBCURL;CURL_DISABLE_TFTP;CURL_DISABLE_FTP;CURL_DISABLE_LDAP;CURL_DISABLE_TELNET;CURL_DISABLE_DICT;CURL_DISABLE_FILE;CURL_DISABLE_POP3;CURL_DISABLE_IMAP;CURL_DISABLE_SMTP;CURL_DISABLE_RTMP;CURL_DISABLE_GOPHER;USE_IPV6;USE_SSLEAY;USE_WINDOWS_SSPI;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>..\..\OpenSSL\include;..\..\OpenSSL\include\openssl;.\include;.\include\curl;.\include\vtls;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>

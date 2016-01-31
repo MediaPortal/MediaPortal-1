@@ -33,6 +33,13 @@ CHttpDownloadRequest::CHttpDownloadRequest(HRESULT *result)
   this->userAgent = NULL;
   this->httpVersion = HTTP_VERSION_DEFAULT;
   this->headers = NULL;
+  this->serverUserName = NULL;
+  this->serverPassword = NULL;
+  this->proxyServer = NULL;
+  this->proxyServerPort = 0;
+  this->proxyServerUserName = NULL;
+  this->proxyServerPassword = NULL;
+  this->proxyServerType = HTTP_PROXY_TYPE_NONE;
 
   if ((result != NULL) && (SUCCEEDED(*result)))
   {
@@ -47,6 +54,11 @@ CHttpDownloadRequest::~CHttpDownloadRequest(void)
   FREE_MEM(this->referer);
   FREE_MEM(this->userAgent);
   FREE_MEM_CLASS(this->headers);
+  FREE_MEM(this->serverUserName);
+  FREE_MEM(this->serverPassword);
+  FREE_MEM(this->proxyServer);
+  FREE_MEM(this->proxyServerUserName);
+  FREE_MEM(this->proxyServerPassword);
 }
 
 /* get methods */
@@ -76,7 +88,7 @@ const wchar_t *CHttpDownloadRequest::GetUserAgent(void)
   return this->userAgent;
 }
 
-int CHttpDownloadRequest::GetHttpVersion(void)
+unsigned int CHttpDownloadRequest::GetHttpVersion(void)
 {
   return this->httpVersion;
 }
@@ -89,6 +101,41 @@ bool CHttpDownloadRequest::GetIgnoreContentLength(void)
 CHttpHeaderCollection *CHttpDownloadRequest::GetHeaders(void)
 {
   return this->headers;
+}
+
+const wchar_t *CHttpDownloadRequest::GetServerUserName(void)
+{
+  return this->serverUserName;
+}
+
+const wchar_t *CHttpDownloadRequest::GetServerPassword(void)
+{
+  return this->serverPassword;
+}
+
+const wchar_t *CHttpDownloadRequest::GetProxyServer(void)
+{
+  return this->proxyServer;
+}
+
+unsigned short CHttpDownloadRequest::GetProxyServerPort(void)
+{
+  return this->proxyServerPort;
+}
+
+const wchar_t *CHttpDownloadRequest::GetProxyServerUserName(void)
+{
+  return this->proxyServerUserName;
+}
+
+const wchar_t *CHttpDownloadRequest::GetProxyServerPassword(void)
+{
+  return this->proxyServerPassword;
+}
+
+unsigned int CHttpDownloadRequest::GetProxyServerType(void)
+{
+  return this->proxyServerType;
 }
 
 /* set methods */
@@ -118,7 +165,7 @@ bool CHttpDownloadRequest::SetUserAgent(const wchar_t *userAgent)
   SET_STRING_RETURN_WITH_NULL(this->userAgent, userAgent);
 }
 
-void CHttpDownloadRequest::SetHttpVersion(int httpVersion)
+void CHttpDownloadRequest::SetHttpVersion(unsigned int httpVersion)
 {
   this->httpVersion = httpVersion;
 }
@@ -127,6 +174,42 @@ void CHttpDownloadRequest::SetIgnoreContentLength(bool ignoreContentLength)
 {
   this->flags &= ~HTTP_DOWNLOAD_REQUEST_FLAG_IGNORE_CONTENT_LENGTH;
   this->flags |= (ignoreContentLength) ? HTTP_DOWNLOAD_REQUEST_FLAG_IGNORE_CONTENT_LENGTH : HTTP_DOWNLOAD_REQUEST_FLAG_NONE;
+}
+
+bool CHttpDownloadRequest::SetAuthentication(bool authenticate, const wchar_t *serverUserName, const wchar_t *serverPassword)
+{
+  bool result = true;
+  this->flags &= ~HTTP_DOWNLOAD_REQUEST_FLAG_AUTHENTICATE;
+
+  if (authenticate)
+  {
+    this->flags |= HTTP_DOWNLOAD_REQUEST_FLAG_AUTHENTICATE;
+
+    SET_STRING_AND_RESULT_WITH_NULL(this->serverUserName, serverUserName, result);
+    SET_STRING_AND_RESULT_WITH_NULL(this->serverPassword, serverPassword, result);
+  }
+
+  return result;
+}
+
+bool CHttpDownloadRequest::SetProxyAuthentication(bool authenticate, const wchar_t *proxyServer, unsigned short proxyServerPort, unsigned int proxyServerType, const wchar_t *proxyServerUserName, const wchar_t *proxyServerPassword)
+{
+  bool result = true;
+  this->flags &= ~HTTP_DOWNLOAD_REQUEST_FLAG_PROXY_AUTHENTICATE;
+
+  if (authenticate)
+  {
+    this->flags |= HTTP_DOWNLOAD_REQUEST_FLAG_PROXY_AUTHENTICATE;
+    result &= (proxyServerType > HTTP_PROXY_TYPE_NONE) && (proxyServerType <= HTTP_PROXY_TYPE_SOCKS5_HOSTNAME);
+
+    SET_STRING_AND_RESULT_WITH_NULL(this->proxyServer, proxyServer, result);
+    SET_STRING_AND_RESULT_WITH_NULL(this->proxyServerUserName, proxyServerUserName, result);
+    SET_STRING_AND_RESULT_WITH_NULL(this->proxyServerPassword, proxyServerPassword, result);
+    this->proxyServerPort = proxyServerPort;
+    this->proxyServerType = proxyServerType;
+  }
+
+  return result;
 }
 
 /* other methods */
@@ -151,19 +234,24 @@ bool CHttpDownloadRequest::CloneInternal(CDownloadRequest *clone)
   {
     CHttpDownloadRequest *request = dynamic_cast<CHttpDownloadRequest *>(clone);
 
-    request->cookie = Duplicate(this->cookie);
     request->endPosition = this->endPosition;
     request->httpVersion = this->httpVersion;
-    request->referer = Duplicate(this->referer);
     request->startPosition = this->startPosition;
-    request->userAgent = Duplicate(this->userAgent);
+    request->proxyServerPort = this->proxyServerPort;
+    request->proxyServerType = this->proxyServerType;
+
+    SET_STRING_AND_RESULT_WITH_NULL(request->cookie, this->cookie, result);
+    SET_STRING_AND_RESULT_WITH_NULL(request->referer, this->referer, result);
+    SET_STRING_AND_RESULT_WITH_NULL(request->userAgent, this->userAgent, result);
+    SET_STRING_AND_RESULT_WITH_NULL(request->serverUserName, this->serverUserName, result);
+    SET_STRING_AND_RESULT_WITH_NULL(request->serverPassword, this->serverPassword, result);
+    SET_STRING_AND_RESULT_WITH_NULL(request->proxyServer, this->proxyServer, result);
+    SET_STRING_AND_RESULT_WITH_NULL(request->proxyServerUserName, this->proxyServerUserName, result);
+    SET_STRING_AND_RESULT_WITH_NULL(request->proxyServerPassword, this->proxyServerPassword, result);
 
     request->headers->Clear();
 
     result &= request->headers->Append(this->headers);
-    result &= TEST_STRING_WITH_NULL(request->cookie, this->cookie);
-    result &= TEST_STRING_WITH_NULL(request->referer, this->referer);
-    result &= TEST_STRING_WITH_NULL(request->userAgent, this->userAgent);
   }
 
   return result;

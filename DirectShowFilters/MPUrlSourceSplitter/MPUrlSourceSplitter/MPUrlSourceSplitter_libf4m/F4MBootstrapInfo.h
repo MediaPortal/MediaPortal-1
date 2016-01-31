@@ -53,22 +53,6 @@ public:
   // @return : bootstrap info BASE64 encoded value (can be NULL if URL specified)
   const wchar_t *GetValue(void);
 
-  // gets decoding result of BASE64 encoded value
-  // @return : E_NOT_VALID_STATE if value is NULL or result from base64_decode() method
-  HRESULT GetDecodeResult(void);
-
-  // gets decoded value
-  // @return : decoded value or NULL if error
-  const unsigned char *GetDecodedValue(void);
-
-  // gets decoded value length
-  // @return : decoded value length, UINT_MAX if error
-  unsigned int GetDecodedValueLength(void);
-
-  // gets bootstrap info base URL
-  // @return : bootstrap info base URL
-  const wchar_t *GetBaseUrl(void);
-
   /* set methods */
 
   // sets ID of bootstrap info
@@ -91,11 +75,6 @@ public:
   // @return : true if successful, false otherwise
   bool SetValue(const wchar_t *value);
 
-  // sets bootstrap info base URL
-  // @param baseUrl : bootstrap info base URL to set
-  // @return : true if set, false otherwise
-  bool SetBaseUrl(const wchar_t *baseUrl);
-
   /* other methods */
 
   // tests if instance is valid
@@ -110,18 +89,6 @@ public:
   // @return : true if value is specified
   bool HasValue(void);
 
-  // downloads bootstrap info
-  // @param : logger for logging purposes
-  // @param protocolName : the protocol name instantiating
-  // @param finishTime : time when HTTP request timeout
-  // @param referer : referer for HTTP request
-  // @param userAgent : user agent for HTTP request
-  // @param cookie : cookie for HTTP request
-  // @param cookies : cookies for HTTP request, collection of cookies is updated after receving response
-  // @param networkInterfaceName : the name of network interface to make HTTP request (can be NULL)
-  // @return : S_OK if successfully downloaded, error code otherwise
-  HRESULT DownloadBootstrapInfo(CLogger *logger, const wchar_t *protocolName, unsigned int finishTime, const wchar_t *referer, const wchar_t *userAgent, const wchar_t *cookie, CParameterCollection *cookies, const wchar_t *networkInterfaceName);
-
   // clears current instance to default state
   void Clear(void);
 
@@ -134,15 +101,6 @@ private:
   wchar_t *url;
   // stores boostrap info BASE64 encoded value
   wchar_t *value;
-
-  // stores result of BASE64 decoding
-  HRESULT decodeResult;
-  // stores decoded value
-  unsigned char *decodedValue;
-  // stores length of decoded value
-  unsigned int decodedLength;
-  // stores base url for bootstrap info
-  wchar_t *baseUrl;
 };
 
 #endif
