@@ -1,14 +1,13 @@
 using System;
 using System.IO;
 using System.Management;
-using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
-using System.Text;
 using System.Net;
 using MediaPortal.GUI.Library;
-using MediaPortal.Services;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using System.Threading;
@@ -258,78 +257,129 @@ namespace MediaPortal.Util
 
       }
 
-        /// <summary>
-        /// Check if the host of an UNC file/folder is online, (with user defined ping timeout)
-        /// On local files/folders (ex.: c:\temp\1.txt) will be returned true
-        /// ex.: strUNCPath = UNCFileFolderOnline("C:\mydir\myfile.ext");
-        /// ex.: strUNCPath = UNCFileFolderOnline("C:\mydir\");/// 
-        /// </summary>
-        /// <param name="strFile"></param>
-        /// <returns>the converted UNC Path as string when the file/folder is online</returns>
-        /// <returns>empty string when the file/folder is offline</returns>
-        public static string UNCFileFolderOnline(string strFile)
+      /// <summary>
+      /// Check if the host of an UNC file/folder is online, (with user defined ping timeout)
+      /// On local files/folders (ex.: c:\temp\1.txt) will be returned true
+      /// ex.: strUNCPath = UNCFileFolderOnline("C:\mydir\myfile.ext");
+      /// ex.: strUNCPath = UNCFileFolderOnline("C:\mydir\");/// 
+      /// </summary>
+      /// <param name="strFile"></param>
+      /// <returns>the converted UNC Path as string when the file/folder is online</returns>
+      /// <returns>empty string when the file/folder is offline</returns>
+      public static string UNCFileFolderOnline(string strFile)
+      {
+        //Resolve given path to UNC
+        var strUNCPath = ResolveToUNC(strFile);
+
+        //Get Host name
+        var uri = new Uri(strUNCPath);
+
+        //ping the Host
+        if (uri.Host == "") return strUNCPath;
+        //We have an host -> try to ping it
+
+        var iPingAnswers = PingHost(uri.Host, 200, 2);
+        if (iPingAnswers != 0) return strUNCPath;
+        if (CheckNetworkPath(strFile))
         {
-            string strUNCPath;
-            int iPingAnswers = 0;
-
-            //Resolve given path to UNC
-            strUNCPath = ResolveToUNC(strFile);
-
-            //Get Host name
-            Uri uri = new Uri(strUNCPath);
-
-            //ping the Host
-            if (uri.Host != "")
-            {
-                //We have an host -> try to ping it
-
-                iPingAnswers = PingHost(uri.Host, 200, 2);
-                if (iPingAnswers == 0)
-                {
-                    //We DONT have received an answer
-                    Log.Debug("UNCTools: UNCFileFolderOnline: host '" + uri.Host + "' is not reachable!! , File/Folder '" + strFile + "'");
-                    return "";
-                }
-            }
-
-            //UNC device is online or local file/folder
-            return strUNCPath;
+          return strUNCPath;
         }
+        //We DONT have received an answer
+        Log.Debug("UNCTools: UNCFileFolderOnline: host '" + uri.Host + "' is not reachable!! , File/Folder '" + strFile + "'");
+        return "";
 
-        public static bool IsUNCFileFolderOnline(string strFile)
+        //UNC device is online or local file/folder
+      }
+
+      public static bool IsUNCFileFolderOnline(string strFile)
+      {
+        return UNCFileFolderOnline(strFile) != string.Empty;
+      }
+
+      [MethodImpl(MethodImplOptions.Synchronized)]
+      public static bool CheckNetworkPath(string path)
+      {
+        if (string.IsNullOrEmpty(path)) return false;
+        var pathRoot = Path.GetPathRoot(path);
+        if (string.IsNullOrEmpty(pathRoot)) return false;
+
+        // Part 1 : try to delete share
+        var pinfo = new ProcessStartInfo("net", "use " + "\"" + path + "\"" + " /DELETE")
         {
-          if (UNCFileFolderOnline(strFile) == string.Empty)
+          CreateNoWindow = true,
+          RedirectStandardOutput = true,
+          UseShellExecute = false
+        };
+        using (var p = Process.Start(pinfo))
+        {
+          if (p != null)
           {
-            return false;
+            p.WaitForExit(200);
+            Log.Debug("UNCTools: CheckNetworkPath: try to delete share : {0}", path);
           }
-          return true;
         }
 
-        //Method UNCCopyFile copies a remote file (strSourceFile) to the given strDestFile
-        public static void UNCCopyFile(string strSourceFile, string strDestFile)
+        // Part 2 : try to add share
+        pinfo = new ProcessStartInfo("net", "use " + "\"" + path + "\"")
         {
-            //CopyDB
-            try
-            {
-                if (UNCTools.UNCFileFolderExists(strSourceFile))
-                {
-                    //UNC host is online and file exists
-                    File.Copy(strSourceFile, strDestFile, true);
-                    Log.Info("UNCTools: UNCCopyFile: '{0}' to '{1}' ok!", strSourceFile, strDestFile);
-                }
-                else
-                {
-                    //UNC host is offline or file doesnt exists
-                    Log.Warn("UNCTools: UNCCopyFile: '{0}' DOESNT exists or host is offline! File copy skipped!", strSourceFile);
-                }
-            }
-            catch (Exception ex)
-            {
-                Log.Error("UNCTools: UNCCopyFile: exception on copy database: '{0}' to '{1}, ex:{2} stack:{3}", strSourceFile, strDestFile, ex.Message, ex.StackTrace);
-            }
+          CreateNoWindow = true,
+          RedirectStandardOutput = true,
+          UseShellExecute = false
+        };
+        using (var p = Process.Start(pinfo))
+        {
+          if (p != null)
+          {
+            p.WaitForExit(200);
+            Log.Debug("UNCTools: CheckNetworkPath: try to connect share : {0}", path);
+          }
         }
 
-        #endregion
+        // Part 3 : Analyse if share connected
+        pinfo = new ProcessStartInfo("net", "use")
+        {
+          CreateNoWindow = true,
+          RedirectStandardOutput = true,
+          UseShellExecute = false
+        };
+        string output = null;
+        using (var p = Process.Start(pinfo))
+        {
+          if (p != null)
+          {
+            output = p.StandardOutput.ReadToEnd();
+            p.WaitForExit(200);
+          }
+        }
+        return output != null && output.Split('\n').Any(line => line.Contains(pathRoot) && line.StartsWith("OK"));
+      }
+
+      //Method UNCCopyFile copies a remote file (strSourceFile) to the given strDestFile
+      public static void UNCCopyFile(string strSourceFile, string strDestFile)
+      {
+        //CopyDB
+        try
+        {
+          if (UNCTools.UNCFileFolderExists(strSourceFile))
+          {
+            //UNC host is online and file exists
+            File.Copy(strSourceFile, strDestFile, true);
+            Log.Info("UNCTools: UNCCopyFile: '{0}' to '{1}' ok!", strSourceFile, strDestFile);
+          }
+          else
+          {
+            //UNC host is offline or file doesnt exists
+            Log.Warn("UNCTools: UNCCopyFile: '{0}' DOESNT exists or host is offline! File copy skipped!", strSourceFile);
+          }
+        }
+        catch (Exception ex)
+        {
+          Log.Error("UNCTools: UNCCopyFile: exception on copy database: '{0}' to '{1}, ex:{2} stack:{3}", strSourceFile,
+            strDestFile, ex.Message, ex.StackTrace);
+        }
+      }
+
+      #endregion
 
         #region Private functions
 
@@ -380,7 +430,7 @@ namespace MediaPortal.Util
                         PingReply pingReply = ping.Send(address, iTimeoutMilliseonds, buffer, pingOptions);
 
                         //make sure we dont have a null reply
-                        if (!(pingReply == null))
+                        if (pingReply != null)
                         {
                             switch (pingReply.Status)
                             {
