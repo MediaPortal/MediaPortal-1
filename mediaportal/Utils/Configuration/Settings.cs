@@ -125,7 +125,10 @@ namespace MediaPortal.Profile
     public Settings(string fileName, bool isCached)
     {
       // Each skin may have its own SkinSettings.xml file so we need to use the entire path to detect a cache hit.
-      _xmlFileName = Path.GetFullPath(fileName).ToLowerInvariant();
+      // Adding a check when plugin send only the filename for mediaportal.xml instead of the full path and filename.
+      _xmlFileName = fileName.ToLowerInvariant() == "mediaportal.xml"
+        ? Config.GetFile(Config.Dir.Config, "MediaPortal.xml").ToLowerInvariant()
+        : Path.GetFullPath(fileName).ToLowerInvariant();
 
       _isCached = isCached;
 
