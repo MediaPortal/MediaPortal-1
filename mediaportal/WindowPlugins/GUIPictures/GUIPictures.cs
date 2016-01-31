@@ -1215,7 +1215,10 @@ namespace MediaPortal.GUI.Pictures
           dlg.AddLocalizedString(831);
         }
 
-        dlg.AddLocalizedString(868); // Force reset virtual directory if user want to refresh offline share
+        if (_virtualDirectory.IsRootShare(item.Path) || _virtualDirectory.IsShareOfflineDetected())
+        {
+          dlg.AddLocalizedString(868); // Force reset virtual directory if user want to refresh offline share
+        }
 
         #endregion
       }
