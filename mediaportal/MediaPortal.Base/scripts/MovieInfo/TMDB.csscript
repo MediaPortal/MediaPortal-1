@@ -71,6 +71,7 @@ internal class Grabber : MarshalByRefObject, MediaPortal.Video.Database.IIMDBScr
     // movieDetails.Cast
     // movieDetails.RunTime = ....
     // movieDetails.MPARating = ......
+    // movieDetails.MovieCollection = ......
 
     //Log.Debug("Grabber.GetDetails("+url.URL+")");
     System.Threading.Thread.Sleep(1000);
@@ -132,6 +133,8 @@ internal class Grabber : MarshalByRefObject, MediaPortal.Video.Database.IIMDBScr
       movieDetails.Votes = adetails.Votes.ToString();
       movieDetails.ThumbURL = adetails.ThumbURL;
       movieDetails.FanartURL = adetails.FanartURL;
+      movieDetails.MovieCollection = adetails.Collection;
+      movieDetails.TMDBNumber = adetails.ID.ToString();
 
       //MePo stuff
       if (string.IsNullOrEmpty(movieDetails.PlotOutline))
@@ -142,6 +145,20 @@ internal class Grabber : MarshalByRefObject, MediaPortal.Video.Database.IIMDBScr
       if (movieDetails.Rating > 10.0f)
       {
         movieDetails.Rating /= 10.0f;
+      }
+
+      // Collection cover and backdrop download
+      if (!string.IsNullOrEmpty(adetails.CollectionCover))
+      {
+        IMDBFetcher.DownloadCoverArt(Thumbs.MovieCollection, adetails.CollectionCover, adetails.Collection);
+      }
+      if (!string.IsNullOrEmpty(adetails.CollectionBackdrop))
+      {
+        string fanartFilename = FanArt.SetFanArtFileName(adetails.Collection, 0);
+        if (!string.IsNullOrEmpty(fanartFilename) && !File.Exists(fanartFilename))
+        {
+          MediaPortal.Util.Utils.DownLoadImage(adetails.CollectionBackdrop, fanartFilename);
+        }
       }
 
       Log.Info("Grabber.GetDetails(" + url.URL + ") succeded");
@@ -230,7 +247,7 @@ internal class Grabber : MarshalByRefObject, MediaPortal.Video.Database.IIMDBScr
     string sReponseDetails = GetWebServerResponse(sRequest);
     Log.Debug("GetTitles(" + title + ") TMDB Response = " + sReponseDetails);
 
-    string sFilter = @"{([\d\p{L}\s\-_"",\\'\/.!?:\(\);\[\]]*)}";
+    string sFilter = @"{""adult"":([\d\p{L}\s\-_"",\\'\/.!?:\(\);\[\]]*)}";
     System.Text.RegularExpressions.MatchCollection tMatches = System.Text.RegularExpressions.Regex.Matches(sReponseDetails, sFilter);
     foreach (System.Text.RegularExpressions.Match aMovie in tMatches)
     {
@@ -309,7 +326,7 @@ internal class Grabber : MarshalByRefObject, MediaPortal.Video.Database.IIMDBScr
     Log.Debug("GetTMDBDetails url = {0}, sReponseDetails = {1}", url, sReponseDetails);
     try
     {
-      System.Text.RegularExpressions.Regex rx = new System.Text.RegularExpressions.Regex(@"""imdb_id"":""(?<code>[\w\s',‚Ä¶.:;-]*)""");
+      System.Text.RegularExpressions.Regex rx = new System.Text.RegularExpressions.Regex(@"""imdb_id"":""(?<code>[\w\s',Ö.:;-]*)""");
       System.Text.RegularExpressions.Match aMatchDetails = rx.Match(sReponseDetails);
       if (aMatchDetails != null)
       {
@@ -317,14 +334,14 @@ internal class Grabber : MarshalByRefObject, MediaPortal.Video.Database.IIMDBScr
       }
 
 
-      rx = new System.Text.RegularExpressions.Regex(@"""overview"":""(?<code>[\d\p{L}\s\\'‚Äô,‚Äì‚Ä¶.:;\(\)!?‚Äú‚Äù‚Ä≥¬´¬ª""-]*)"",");
+      rx = new System.Text.RegularExpressions.Regex(@"""overview"":""(?<code>[\d\p{L}\s\\'í,ñÖ.:;\(\)!?ìî?´ª""-]*)"",");
       aMatchDetails = rx.Match(sReponseDetails);
       if (aMatchDetails != null)
       {
         oReturn.Plot = aMatchDetails.Groups["code"].Value.Replace("\\\"", "\"").Trim();
       }
 
-      rx = new System.Text.RegularExpressions.Regex(@"""tagline"":""(?<code>[\w\s',‚Ä¶.:;-]*)""");
+      rx = new System.Text.RegularExpressions.Regex(@"""tagline"":""(?<code>[\w\s',Ö.:;-]*)""");
       aMatchDetails = rx.Match(sReponseDetails);
       if (aMatchDetails != null)
       {
@@ -349,7 +366,7 @@ internal class Grabber : MarshalByRefObject, MediaPortal.Video.Database.IIMDBScr
         oReturn.Rating = (float)faverage;
       }
 
-      string sFilter = @"""genres"":\[([\p{L}{\"":\d,}-]*)]";
+      string sFilter = @"""genres"":\[([\p{L}{"+"\""+@":\d,}-]*)]";
       System.Text.RegularExpressions.MatchCollection tMatches = System.Text.RegularExpressions.Regex.Matches(sReponseDetails, sFilter);
       foreach (System.Text.RegularExpressions.Match aMovie in tMatches)
       {
@@ -452,6 +469,30 @@ internal class Grabber : MarshalByRefObject, MediaPortal.Video.Database.IIMDBScr
       else
       {
         oReturn.FanartURL = string.Empty;
+      }
+
+      // Movie Collection
+      rx = new System.Text.RegularExpressions.Regex(@"name.:"+"\""+@"(?<Collection>.+?)"+"\""+@".+?poster_path.:"+"\""+@"(?<Poster>.+?)"+"\""+@".+?backdrop_path.:"+"\""+@"(?<Backdrop>.+?)"+"\"");
+      aMatchDetails = rx.Match(sReponseDetails);
+      if (aMatchDetails != null)
+      {
+        oReturn.Collection = aMatchDetails.Groups["Collection"].Value;
+        oReturn.CollectionCover = aMatchDetails.Groups["Poster"].Value;
+        if (!string.IsNullOrEmpty(oReturn.CollectionCover))
+        {
+          oReturn.CollectionCover = "http://image.tmdb.org/t/p/w500" + oReturn.CollectionCover;
+        }
+        oReturn.CollectionBackdrop = aMatchDetails.Groups["Backdrop"].Value;
+        if (!string.IsNullOrEmpty(oReturn.CollectionBackdrop))
+        {
+          oReturn.CollectionBackdrop = "http://image.tmdb.org/t/p/w1920" + oReturn.CollectionBackdrop;
+        }
+      }
+      else
+      {
+        oReturn.Collection = string.Empty;
+        oReturn.CollectionCover = string.Empty;
+        oReturn.CollectionBackdrop = string.Empty;
       }
 
     }
@@ -674,6 +715,10 @@ internal class Grabber : MarshalByRefObject, MediaPortal.Video.Database.IIMDBScr
 
     //Tagline
     public string TagLine;
+
+    public string Collection;
+    public string CollectionCover;
+    public string CollectionBackdrop;
 
     // SYNOPSIS COURT
     public string Plot;

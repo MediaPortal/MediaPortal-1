@@ -1077,6 +1077,10 @@ namespace MediaPortal.GUI.Library
           label = item.Rating.ToString(CultureInfo.InvariantCulture);
           break;
 
+        case "#userrating":
+          label = item.UserRating.ToString(CultureInfo.InvariantCulture);
+          break;
+
         case "#duration":
           if (item.Duration == 0)
           {

@@ -1094,6 +1094,11 @@
     <String id="1321">Auto Decoder Selection</String>
     <String id="1322">Force Source filter</String>
     <String id="1323">Video Codecs for .TS files</String>
+    <String id="1324">Movie collection</String>
+    <String id="1325">Only User groups</String>
+    <String id="1326">Only Movie collection</String>
+    <String id="1327">Add Movie to Collection</String>
+    <String id="1328">Remove selected movie from Collection</String>
     <String id="1440" prefix="My ">Teletext</String>
     <String id="1441">Teletext</String>
     <String id="1442">Scroll speed (horizontal)</String>

@@ -170,6 +170,7 @@ namespace MediaPortal.Video.Database
     private int _mITop250;
     private int _mIYear = 1900;
     private float _mFRating;
+    private int _mIRating; // User rating for Trakt.tv and other
     private string _mStrMpaRating = string.Empty;
     private int _mIRunTime;
     private int _mIWatched;
@@ -187,6 +188,12 @@ namespace MediaPortal.Video.Database
     private string _mStrCountry= string.Empty;
     private string _mStrLanguage = string.Empty;
     private string _lastUpdate = string.Empty;
+    private string _mStrTMDBNumber = string.Empty; // Store IDs of themoviedb.org
+    private string _mStrLocalDBNumber = string.Empty; // Store IDs of local grabber site, for example kinopoisk.ru
+    private string _mStrMovieCollection = string.Empty;  // Movie Collection 
+    private string _mStrSingleMovieCollection = string.Empty; // Movie collection name for ViewHandler
+    private int _mMovieCollectionID = -1; // Movie collection ID for ViewHandler
+    private string _mStrUserGroup = string.Empty; // User Groups
     private bool _isEmpty = true;
     // Variables for sharev view properties
     private VideoFilesMediaInfo _mediaInfo = new VideoFilesMediaInfo();
@@ -415,6 +422,12 @@ namespace MediaPortal.Video.Database
       set { _mFRating = value; }
     }
 
+    public int UserRating
+    {
+      get { return _mIRating; }
+      set { _mIRating = value; }
+    }
+
     public string Database
     {
       get { return _mStrDatabase; }
@@ -455,6 +468,42 @@ namespace MediaPortal.Video.Database
     {
       get { return _lastUpdate; }
       set { _lastUpdate = value; }
+    }
+
+    public string TMDBNumber
+    {
+      get { return _mStrTMDBNumber; }
+      set { _mStrTMDBNumber = value; }
+    }
+
+    public string LocalDBNumber
+    {
+      get { return _mStrLocalDBNumber; }
+      set { _mStrLocalDBNumber = value; }
+    }
+
+    public string MovieCollection
+    {
+      get { return _mStrMovieCollection; }
+      set { _mStrMovieCollection = value; }
+    }
+
+    public string SingleMovieCollection
+    {
+      get { return _mStrSingleMovieCollection; }
+      set { _mStrSingleMovieCollection = value; }
+    }
+
+    public int MovieCollectionID
+    {
+      get { return _mMovieCollectionID; }
+      set { _mMovieCollectionID = value; }
+    }
+
+    public string UserGroup
+    {
+      get { return _mStrUserGroup; }
+      set { _mStrUserGroup = value; }
     }
 
     public VideoFilesMediaInfo MediaInfo
@@ -540,6 +589,7 @@ namespace MediaPortal.Video.Database
       _mITop250 = 0;
       _mIYear = 1900;
       _mFRating = 0.0f;
+      _mIRating = 0;
       _mStrDatabase = string.Empty;
       _mStrMpaRating = string.Empty;
       _mIRunTime = 0;
@@ -550,6 +600,11 @@ namespace MediaPortal.Video.Database
       _mStrCountry = string.Empty;
       _mStrLanguage = string.Empty;
       _lastUpdate = string.Empty;
+      _mStrTMDBNumber = string.Empty;
+      _mStrLocalDBNumber = string.Empty;
+      _mStrMovieCollection = string.Empty;
+      _mStrSingleMovieCollection = string.Empty;
+      _mStrUserGroup = string.Empty;
       _isEmpty = true;
       _duration = 0;
       _watchedPercent = 0;
@@ -582,6 +637,7 @@ namespace MediaPortal.Video.Database
       GUIPropertyManager.SetProperty("#plotoutline", PlotOutline);
       GUIPropertyManager.SetProperty("#userreview", UserReview); // Added
       GUIPropertyManager.SetProperty("#rating", Rating.ToString());
+      GUIPropertyManager.SetProperty("#userrating", UserRating.ToString());
       GUIPropertyManager.SetProperty("#strrating", Rating.ToString(CultureInfo.CurrentCulture) + "/10");
       GUIPropertyManager.SetProperty("#tagline", TagLine);
       GUIPropertyManager.SetProperty("#myvideosuserfanart", UserFanart);
@@ -606,6 +662,10 @@ namespace MediaPortal.Video.Database
       GUIPropertyManager.SetProperty("#studios", Studios.Replace(" /", ","));
       GUIPropertyManager.SetProperty("#country", Country);
       GUIPropertyManager.SetProperty("#language", Language);
+      GUIPropertyManager.SetProperty("#tmdbnumber", TMDBNumber);
+      GUIPropertyManager.SetProperty("#localdbnumber", LocalDBNumber);
+      GUIPropertyManager.SetProperty("#moviecollection", MovieCollection.Replace(" /", ","));
+      GUIPropertyManager.SetProperty("#usergroups", UserGroup.Replace(" /", ","));
       DateTime lastUpdate;
       DateTime.TryParseExact(LastUpdate, "yyyy-MM-dd HH:mm:ss", 
                              CultureInfo.CurrentCulture, 
@@ -751,6 +811,7 @@ namespace MediaPortal.Video.Database
       GUIPropertyManager.SetProperty("#Play.Current.PlotOutline", PlotOutline);
       GUIPropertyManager.SetProperty("#Play.Current.UserReview", UserReview); // Added
       GUIPropertyManager.SetProperty("#Play.Current.Rating", Rating.ToString());
+      GUIPropertyManager.SetProperty("#Play.Current.UserRating", UserRating.ToString());
       GUIPropertyManager.SetProperty("#Play.Current.TagLine", TagLine);
       GUIPropertyManager.SetProperty("#Play.Current.Votes", Votes);
       GUIPropertyManager.SetProperty("#Play.Current.Credits", WritingCredits);
@@ -759,6 +820,7 @@ namespace MediaPortal.Video.Database
       GUIPropertyManager.SetProperty("#Play.Current.Year", Year.ToString());
       GUIPropertyManager.SetProperty("#Play.Current.Runtime", RunTime.ToString());
       GUIPropertyManager.SetProperty("#Play.Current.MPAARating", MPARating);
+      GUIPropertyManager.SetProperty("#Play.Current.MovieCollection", MovieCollection);
       string strValue = "no";
       if (Watched > 0)
       {
@@ -1005,6 +1067,10 @@ namespace MediaPortal.Video.Database
               GetUserFanart(item, ref info);
             }
           }
+          catch (ThreadAbortException) 
+          {
+            Log.Debug("IMDBMovie.ThreadAbortException SetMovieData (GetMovieInfo) error.");
+          }
           catch (Exception ex)
           {
             Log.Error("IMDBMovie Set user fanart file property error: {0}", ex.Message);
@@ -1012,11 +1078,19 @@ namespace MediaPortal.Video.Database
 
           item.AlbumInfoTag = info;
         }
+        catch (ThreadAbortException) 
+        {
+          Log.Debug("IMDBMovie.ThreadAbortException SetMovieData (GetMovieInfo) error.");
+        }
         catch (Exception ex)
         {
           Log.Error("IMDBMovie SetMovieData (GetMovieInfo) error: {0}", ex.Message);
           item.AlbumInfoTag = info;
         }
+      }
+      catch (ThreadAbortException)
+      {
+        Log.Debug("IMDBMovie.ThreadAbortException SetMovieData error.");
       }
       catch (Exception ex)
       {
@@ -1221,11 +1295,14 @@ namespace MediaPortal.Video.Database
           {
             string genre = string.Empty;
             string cast = string.Empty;
+            string movieCollection = string.Empty;
+            string userGroup = string.Empty;
 
             #region nodes
 
             XmlNode nodeTitle = nodeMovie.SelectSingleNode("title");
             XmlNode nodeRating = nodeMovie.SelectSingleNode("rating");
+            XmlNode nodeUserRating = nodeMovie.SelectSingleNode("userrating");
             XmlNode nodeYear = nodeMovie.SelectSingleNode("year");
             XmlNode nodeDuration = nodeMovie.SelectSingleNode("runtime");
             XmlNode nodePlotShort = nodeMovie.SelectSingleNode("outline");
@@ -1243,7 +1320,8 @@ namespace MediaPortal.Video.Database
             XmlNode nodeCountry = nodeMovie.SelectSingleNode("country");
             XmlNode nodeReview = nodeMovie.SelectSingleNode("review");
             XmlNode nodeCredits = nodeMovie.SelectSingleNode("credits");
-
+            XmlNode nodeTMDBNumber = nodeMovie.SelectSingleNode("tmdb");
+            XmlNode nodeLocalDBNumber = nodeMovie.SelectSingleNode("localdb");
 
             #endregion
 
@@ -1282,6 +1360,48 @@ namespace MediaPortal.Video.Database
 
             // Genre
             movie.Genre = genre;
+
+            #endregion
+
+            #region Movie Collections / Set
+
+            XmlNodeList movieCollections = nodeMovie.SelectNodes("set");
+
+            foreach (XmlNode nodeMovieCollection in movieCollections)
+            {
+              XmlNode nodeSetName = nodeMovieCollection.SelectSingleNode("setname");
+              if (nodeSetName == null)
+              {
+                if (nodeMovieCollection.InnerText != null)
+                {
+                  movieCollection += (string.IsNullOrEmpty(movieCollection) ? "" : " / ") + nodeMovieCollection.InnerText;
+                }
+              }
+            }
+
+            // Movie Collections / Set
+            movie.MovieCollection = movieCollection;
+
+            #endregion
+
+            #region UserGroups
+
+            XmlNodeList userGroups = nodeMovie.SelectNodes("set");
+
+            foreach (XmlNode nodeUserGroup in userGroups)
+            {
+              XmlNode nodeSetName = nodeUserGroup.SelectSingleNode("setname");
+              if (nodeSetName != null)
+              {
+                if (nodeSetName.InnerText != null)
+                {
+                  userGroup += (string.IsNullOrEmpty(userGroup) ? "" : " / ") + nodeSetName.InnerText;
+                }
+              }
+            }
+
+            // UserGroups
+            movie.UserGroup = userGroup;
 
             #endregion
 
@@ -1512,6 +1632,20 @@ namespace MediaPortal.Video.Database
 
             #endregion
 
+            #region UserRating
+
+            // User Rating
+            if (nodeUserRating != null)
+            {
+              int userrating = 0;
+              if (int.TryParse(nodeUserRating.InnerText, out userrating))
+              {
+                movie.UserRating = (int)userrating;
+              }
+            }
+
+            #endregion
+
             #region Duration
 
             // Duration
@@ -1565,6 +1699,26 @@ namespace MediaPortal.Video.Database
             if (nodeTagline != null)
             {
               movie.TagLine = nodeTagline.InnerText;
+            }
+
+            #endregion
+
+            #region TMDB Number
+
+            // TMDB Number
+            if (nodeTMDBNumber != null)
+            {
+              movie.TMDBNumber = nodeTMDBNumber.InnerText;
+            }
+
+            #endregion
+
+            #region LocalDB Number
+
+            // LocalDB Number
+            if (nodeLocalDBNumber != null)
+            {
+              movie.LocalDBNumber = nodeLocalDBNumber.InnerText;
             }
 
             #endregion
@@ -1720,6 +1874,7 @@ namespace MediaPortal.Video.Database
         GUIPropertyManager.SetProperty("#plotoutline", info.PlotOutline);
         GUIPropertyManager.SetProperty("#userreview", info.UserReview);
         GUIPropertyManager.SetProperty("#rating", info.Rating.ToString());
+        GUIPropertyManager.SetProperty("#userrating", info.UserRating.ToString());
         GUIPropertyManager.SetProperty("#strrating", info.Rating.ToString(CultureInfo.CurrentCulture) + "/10");
         GUIPropertyManager.SetProperty("#tagline", info.TagLine);
         //Votes
@@ -1742,6 +1897,11 @@ namespace MediaPortal.Video.Database
         GUIPropertyManager.SetProperty("#studios", info.Studios.Replace(" /", ","));
         GUIPropertyManager.SetProperty("#country", info.Country);
         GUIPropertyManager.SetProperty("#language", info.Language);
+        //
+        GUIPropertyManager.SetProperty("#tmdbnumber", info.TMDBNumber);
+        GUIPropertyManager.SetProperty("#localdbnumber", info.LocalDBNumber);
+        GUIPropertyManager.SetProperty("#moviecollection", info.MovieCollection.Replace(" /", ","));
+        GUIPropertyManager.SetProperty("#usergroups", info.UserGroup.Replace(" /", ","));
         // Last update date
         DateTime lastUpdate;
         DateTime.TryParseExact(info.LastUpdate, "yyyy-MM-dd HH:mm:ss", CultureInfo.CurrentCulture, DateTimeStyles.None, out lastUpdate);
@@ -1871,6 +2031,7 @@ namespace MediaPortal.Video.Database
       GUIPropertyManager.SetProperty("#plotoutline", string.Empty);
       GUIPropertyManager.SetProperty("#userreview", string.Empty);
       GUIPropertyManager.SetProperty("#rating", string.Empty);
+      GUIPropertyManager.SetProperty("#userrating", string.Empty);
       GUIPropertyManager.SetProperty("#strrating", string.Empty);
       GUIPropertyManager.SetProperty("#tagline", string.Empty);
       GUIPropertyManager.SetProperty("#votes", string.Empty);
@@ -1898,6 +2059,10 @@ namespace MediaPortal.Video.Database
       GUIPropertyManager.SetProperty("#HasSubtitles", string.Empty);
       GUIPropertyManager.SetProperty("#AspectRatio", string.Empty);
       GUIPropertyManager.SetProperty("#myvideosuserfanart", string.Empty);
+      GUIPropertyManager.SetProperty("#usergroups", string.Empty);
+      GUIPropertyManager.SetProperty("#tmdbnumber", string.Empty);
+      GUIPropertyManager.SetProperty("#localdbnumber", string.Empty);
+      GUIPropertyManager.SetProperty("#moviecollection", string.Empty);
     }
 
     #endregion
