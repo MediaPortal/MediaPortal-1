@@ -23,9 +23,9 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter
 
         #region Properties
 
-        public Section Section { get; protected set; }
+        public Section Section { get; private set; }
 
-        public StreamSectionCollection StreamSections { get; protected set; }
+        public StreamSectionCollection StreamSections { get; private set; }
 
         #endregion
 

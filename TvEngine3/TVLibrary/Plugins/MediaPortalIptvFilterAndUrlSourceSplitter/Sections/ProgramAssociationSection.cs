@@ -148,7 +148,7 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter.Sections
         public static readonly uint CurrentNextIndicatorMask = 0x00000001;
         public const int CurrentNextIndicatorShift = 0;
 
-        public static readonly uint HeaderSize = 5;
+        public new static readonly uint HeaderSize = 5;
         public static readonly uint ProgramSize = 4;
 
         public static readonly uint ProgramMapPIDMask = 0x00001FFF;
