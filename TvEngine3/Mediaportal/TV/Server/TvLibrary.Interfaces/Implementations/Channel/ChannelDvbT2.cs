@@ -45,7 +45,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channel
     #region properties
 
     /// <summary>
-    /// Get/set the channel transmitter's carrier frequency. The frequency unit is kHz.
+    /// Get/set the channel transmitter's carrier frequency. The frequency unit is kilo-Hertz (kHz).
     /// </summary>
     public int Frequency
     {
@@ -60,7 +60,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channel
     }
 
     /// <summary>
-    /// Get/set the channel transmitter's bandwidth. The bandwidth unit is kHz.
+    /// Get/set the channel transmitter's bandwidth. The bandwidth unit is kilo-Hertz (kHz).
     /// </summary>
     public int Bandwidth
     {

@@ -563,7 +563,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Mpeg2Ts
     /// Generate a conditional access program map command suitable for passing
     /// to an EN 50221 compliant conditional access module.
     /// </summary>
-    /// <param name="listAction">The context of the command (in terms of other programs that the conditional access module will need to deal with.</param>
+    /// <param name="listAction">The context of the command (in terms of other programs that the conditional access module will need to deal with).</param>
     /// <param name="command">The type of conditional access command.</param>
     /// <returns></returns>
     public byte[] GetCaPmt(CaPmtListManagementAction listAction, CaPmtCommand command)

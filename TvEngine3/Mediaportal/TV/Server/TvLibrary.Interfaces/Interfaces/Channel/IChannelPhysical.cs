@@ -27,7 +27,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Channel
   public interface IChannelPhysical : IChannel
   {
     /// <summary>
-    /// Get/set the channel transmitter's carrier frequency. The frequency unit is kHz.
+    /// Get/set the channel transmitter's carrier frequency. The frequency unit is kilo-Hertz (kHz).
     /// </summary>
     int Frequency
     {

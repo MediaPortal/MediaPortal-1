@@ -47,11 +47,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri.Service
     /// <summary>
     /// The SetTunerParameters action SHALL return tuning status in less than 2s per modulations attempt.
     /// </summary>
-    /// <param name="newFrequency">This argument set the Frequency state variable to the selected frequency. The unit is kHz.</param>
+    /// <param name="newFrequency">This argument set the Frequency state variable to the selected frequency. The unit is kilo-Hertz (kHz).</param>
     /// <param name="newModulationList">This argument sets the Modulation state variable to the last in a list of selected
     ///   modulation types if no demodulation was achieved or to the modulation as reported by demodulator in case of
     ///   successful demodulation.</param>
-    /// <param name="currentFrequency">This argument provides the value in Frequency state variable when the action response is created. The unit is kHz.</param>
+    /// <param name="currentFrequency">This argument provides the value in Frequency state variable when the action response is created. The unit is kilo-Hertz (kHz).</param>
     /// <param name="currentModulation">This argument provides the value of the Modulation state variable when the action response is created.</param>
     /// <param name="pcrLockStatus">This argument provides the value of the PCRLock state variable when the action response is created.</param>
     public void SetTunerParameters(uint newFrequency, IList<TunerModulation> newModulationList,
@@ -72,11 +72,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri.Service
     /// The GetTunerParameters action SHALL return tuning status in less than 1s.
     /// </summary>
     /// <param name="currentCarrierLock">This argument provides the value of the CarrierLock state variable when the action response is created.</param>
-    /// <param name="currentFrequency">This argument provides the value of the Frequency state variable when the action response is created. The unit is kHz.</param>
+    /// <param name="currentFrequency">This argument provides the value of the Frequency state variable when the action response is created. The unit is kilo-Hertz (kHz).</param>
     /// <param name="currentModulation">This argument provides the value of the Modulation state variable when the action response is created.</param>
     /// <param name="currentPcrLock">This argument provides the value of the PCRLock state variable when the action response is created.</param>
-    /// <param name="currentSignalLevel">This argument provides the value of the SignalLevel state variable when the action response is created. The unit is dBmV.</param>
-    /// <param name="currentSnr">This argument provides the value of the SNR state variable when the action response is created. The unit is dB.</param>
+    /// <param name="currentSignalLevel">This argument provides the value of the SignalLevel state variable when the action response is created. The unit is decibel milli-Volts (dBmV).</param>
+    /// <param name="currentSnr">This argument provides the value of the SNR state variable when the action response is created. The unit is decibels (dB).</param>
     public void GetTunerParameters(out bool currentCarrierLock, out uint currentFrequency,
                                   out TunerModulation currentModulation, out bool currentPcrLock,
                                   out int currentSignalLevel, out uint currentSnr)

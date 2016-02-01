@@ -963,9 +963,9 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
     /// <param name="context">The optional context passed to the interface when the interface was opened.</param>
     /// <param name="slotIndex">The index of the CI slot containing the CAM.</param>
     /// <param name="bufferSize"></param>
-    /// <param name="timeout">A timeout in units of ten milliseconds.</param>
+    /// <param name="timeOut">A time-out. The unit is ten milli-seconds.</param>
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    private delegate void OnTtLscSetParams(IntPtr context, byte slotIndex, byte bufferSize, byte timeout);
+    private delegate void OnTtLscSetParams(IntPtr context, byte slotIndex, byte bufferSize, byte timeOut);
 
     /// <summary>
     /// ???
@@ -1575,10 +1575,10 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
     /// <param name="context">The optional context passed to the interface when the interface was opened.</param>
     /// <param name="slotIndex">The index of the CI slot containing the CAM.</param>
     /// <param name="bufferSize"></param>
-    /// <param name="timeout">A timeout in units of ten milliseconds.</param>
-    private void OnLscSetParams(IntPtr context, byte slotIndex, byte bufferSize, byte timeout)
+    /// <param name="timeOut">A time-out. The unit is ten milli-seconds.</param>
+    private void OnLscSetParams(IntPtr context, byte slotIndex, byte bufferSize, byte timeOut)
     {
-      this.LogDebug("TechnoTrend: low speed communication set parameters call back, slot = {0}, buffer size = {1}, timeout = {2}", slotIndex, bufferSize, timeout);
+      this.LogDebug("TechnoTrend: low speed communication set parameters call back, slot = {0}, buffer size = {1}, time-out = {2}", slotIndex, bufferSize, timeout);
     }
 
     /// <summary>

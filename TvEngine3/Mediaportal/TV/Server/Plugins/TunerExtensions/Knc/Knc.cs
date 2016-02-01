@@ -410,7 +410,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Knc
     /// Invoked by the tuner driver when the CAM wants to close the menu.
     /// </summary>
     /// <param name="slotIndex">The index of the CI slot containing the CAM.</param>
-    /// <param name="delay">The delay (in milliseconds) after which the menu should be closed.</param>
+    /// <param name="delay">The delay after which the menu should be closed. The unit is milli-seconds (ms).</param>
     /// <param name="context">The optional context passed to the interface when the interface was opened.</param>
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     private delegate void OnKncCiCloseDisplay(byte slotIndex, uint delay, IntPtr context);
@@ -836,11 +836,11 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Knc
     /// Invoked by the tuner driver when the CAM wants to close the menu.
     /// </summary>
     /// <param name="slotIndex">The index of the CI slot containing the CAM.</param>
-    /// <param name="delay">The delay (in milliseconds) after which the menu should be closed.</param>
+    /// <param name="delay">The delay after which the menu should be closed. The unit is milli-seconds (ms).</param>
     /// <param name="context">The optional context passed to the interface when the interface was opened.</param>
     private void OnCiCloseDisplay(byte slotIndex, uint delay, IntPtr context)
     {
-      this.LogInfo("KNC: CI close menu call back, slot = {0}, delay = {1}", slotIndex, delay);
+      this.LogInfo("KNC: CI close menu call back, slot = {0}, delay = {1} ms", slotIndex, delay);
       lock (_caMenuCallBackLock)
       {
         if (_caMenuCallBack != null)

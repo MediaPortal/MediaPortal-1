@@ -65,7 +65,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channel
     }
 
     /// <summary>
-    /// Get/set the channel transmitter's carrier frequency. The frequency unit is kHz.
+    /// Get/set the channel transmitter's carrier frequency. The frequency unit is kilo-Hertz (kHz).
     /// </summary>
     /// <remarks>
     /// This is the center frequency. BDA needs the analog video carrier
@@ -99,7 +99,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channel
     }
 
     /// <summary>
-    /// Get the channel transmitter's symbol rate. The symbol rate unit is ks/s.
+    /// Get the channel transmitter's symbol rate. The symbol rate unit is kilo-symbols per second (ks/s).
     /// </summary>
     /// <remarks>
     /// This parameter is typically not needed for tuning.
@@ -248,8 +248,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channel
     /// Calculate the physical channel number corresponding with a centre
     /// frequency in any one of the US FCC cable frequency plans.
     /// </summary>
-    /// <param name="carrierFrequency">The centre frequency, in kHz.</param>
-    /// <returns>the physical channel number corresponding with <paramref name="carrierFrequency"/></returns>
+    /// <param name="carrierFrequency">The centre frequency. The unit is kilo-Hertz (kHz).</param>
+    /// <returns>the physical channel number corresponding with <paramref name="carrierFrequency">the carrier frequency</paramref>></returns>
     public static short GetPhysicalChannelNumberForFrequency(int carrierFrequency)
     {
       if (carrierFrequency >= 648000)

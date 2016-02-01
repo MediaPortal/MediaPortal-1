@@ -147,7 +147,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
       /// <remarks>
       /// The tuner will switch to direct-tuning mode.
       /// </remarks>
-      /// <param name="frequency">The frequency to tune to, in kHz.</param>
+      /// <param name="frequency">The frequency to tune to. The unit is kilo-Hertz (kHz).</param>
       /// <returns><c>RtlFmResult.Success</c> if successful, otherwise <c>RtlFmResult.Fail</c></returns>
       [PreserveSig]
       Rtl283xFmResult SetFrequency(int frequency);
@@ -159,7 +159,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
       /// <remarks>
       /// The tuner will switch to scan-tuning mode.
       /// </remarks>
-      /// <param name="startFrequency">The frequency to start scanning from, in kHz.</param>
+      /// <param name="startFrequency">The frequency to start scanning from. The unit is kilo-Hertz (kHz).</param>
       /// <param name="stepSize">The scan step size.</param>
       /// <param name="direction">The direction for the scan search relative to the start frequency.</param>
       /// <param name="maxSteps">The maximum number of frequencies to check.</param>
@@ -175,8 +175,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
       /// <remarks>
       /// Doesn't work. The values returned are always zero.
       /// </remarks>
-      /// <param name="lowerLimit">The lower limit of the tuner's range, in kHz.</param>
-      /// <param name="upperLimit">The upper limit of the tuner's range, in kHz.</param>
+      /// <param name="lowerLimit">The lower limit of the tuner's range. The unit is kilo-Hertz (kHz).</param>
+      /// <param name="upperLimit">The upper limit of the tuner's range. The unit is kilo-Hertz (kHz).</param>
       /// <returns><c>RtlFmResult.Success</c> if successful, otherwise <c>RtlFmResult.Fail</c></returns>
       [PreserveSig]
       Rtl283xFmResult GetTunerRange(out int lowerLimit, out int upperLimit);

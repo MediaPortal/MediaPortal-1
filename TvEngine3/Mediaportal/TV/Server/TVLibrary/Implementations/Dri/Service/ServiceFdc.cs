@@ -45,9 +45,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri.Service
     /// <summary>
     /// Upon receipt of the GetFDCStatus action, the DRIT SHALL return tuning status in less than 1s.
     /// </summary>
-    /// <param name="currentBitrate">This argument provides the value of the Bitrate state variable when the action response is created. The unit is kbps.</param>
+    /// <param name="currentBitrate">This argument provides the value of the Bitrate state variable when the action response is created. The unit is kilo-bits per second (kb/s).</param>
     /// <param name="currentCarrierLock">This argument provides the value of the CarrierLock state variable when the action response is created.</param>
-    /// <param name="currentFrequency">This argument provides the value of the Frequency state variable when the action response is created. The unit is kHz.</param>
+    /// <param name="currentFrequency">This argument provides the value of the Frequency state variable when the action response is created. The unit is kilo-Hertz (kHz).</param>
     /// <param name="currentSpectrumInversion">This argument provides the value of the SpectrumInversion state variable when the action response is created.</param>
     /// <param name="currentPidList">This argument provides the value of the PidList state variable when the action response is created.</param>
     public void GetFdcStatus(out uint currentBitrate, out bool currentCarrierLock, out uint currentFrequency,

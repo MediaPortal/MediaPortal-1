@@ -105,7 +105,7 @@ namespace Mediaportal.TV.Server.Thumbnailer
             Log.Error("media info: failed to interpret duration, duration = {0}, file name = {1}", durationString, fileName);
             return 0;
           }
-          return duration;  // unit = milliseconds
+          return duration;  // unit = milli-seconds
         }
         finally
         {

@@ -91,10 +91,10 @@ namespace Mediaportal.TV.Server.TVControl
     /// Get the local LNB-dependent tuning parameters for a satellite
     /// transponder.
     /// </summary>
-    /// <param name="transponderFrequency">The LNB-independent transponder frequency (unit = kHz).</param>
+    /// <param name="transponderFrequency">The LNB-independent transponder frequency. The unit is kilo-Hertz (kHz).</param>
     /// <param name="transponderPolarisation">The LNB-independent transponder polarisation.</param>
     /// <param name="lnbSelectionTone">The 22 kHz tone state needed to switch/connect to the LNB.</param>
-    /// <param name="localOscillatorFrequency">The local oscillator frequency that the LNB will use for downconversion (unit = kHz).</param>
+    /// <param name="localOscillatorFrequency">The local oscillator frequency that the LNB will use for downconversion. The unit is kilo-Hertz (kHz).</param>
     /// <param name="bandSelectionTone">The 22 kHz tone that must be supplied to the LNB to select the correct local oscillator.</param>
     /// <param name="bandSelectionPolarisation">The polarisation (voltage) that must be supplied to the LNB to select the correct local oscillator and band.</param>
     public void GetTuningParameters(int transponderFrequency, Polarisation transponderPolarisation, Tone22kState lnbSelectionTone, out int localOscillatorFrequency, out Tone22kState bandSelectionTone, out Polarisation bandSelectionPolarisation)
@@ -163,11 +163,11 @@ namespace Mediaportal.TV.Server.TVControl
     /// Get the local LNB-dependent tuning parameters for a satellite
     /// transponder.
     /// </summary>
-    /// <param name="transponderFrequency">The LNB-independent transponder frequency (unit = kHz).</param>
+    /// <param name="transponderFrequency">The LNB-independent transponder frequency. The unit is kilo-Hertz (kHz).</param>
     /// <param name="transponderPolarisation">The LNB-independent transponder polarisation.</param>
     /// <param name="lnbSelectionTone">The 22 kHz tone state needed to switch/connect to the LNB.</param>
-    /// <param name="localOscillatorFrequency">The local oscillator frequency that the LNB will use for downconversion (unit = kHz).</param>
-    /// <param name="oscillatorSwitchFrequency">The LNB's oscillator switch frequency (unit = kHz).</param>
+    /// <param name="localOscillatorFrequency">The local oscillator frequency that the LNB will use for downconversion. The unit is kilo-Hertz (kHz).</param>
+    /// <param name="oscillatorSwitchFrequency">The LNB's oscillator switch frequency. The unit is kilo-Hertz (kHz).</param>
     /// <param name="bandSelectionTone">The 22 kHz tone that must be supplied to the LNB to select the correct local oscillator.</param>
     /// <param name="bandSelectionPolarisation">The polarisation (voltage) that must be supplied to the LNB to select the correct local oscillator and band.</param>
     public void GetTuningParameters(int transponderFrequency, Polarisation transponderPolarisation, Tone22kState lnbSelectionTone, out int localOscillatorFrequency, out int oscillatorSwitchFrequency, out Tone22kState bandSelectionTone, out Polarisation bandSelectionPolarisation)
@@ -201,12 +201,12 @@ namespace Mediaportal.TV.Server.TVControl
     /// Get the local LNB-dependent tuning parameters for a satellite
     /// transponder.
     /// </summary>
-    /// <param name="transponderFrequency">The LNB-independent transponder frequency (unit = kHz).</param>
+    /// <param name="transponderFrequency">The LNB-independent transponder frequency. The unit is kilo-Hertz (kHz).</param>
     /// <param name="transponderPolarisation">The LNB-independent transponder polarisation.</param>
     /// <param name="lnbSelectionTone">The 22 kHz tone state needed to switch/connect to the LNB.</param>
-    /// <param name="localOscillatorFrequencyLow">The LNB's first local oscillator frequency (unit = kHz).</param>
-    /// <param name="localOscillatorFrequencyLow">The LNB's second local oscillator frequency (unit = kHz).</param>
-    /// <param name="oscillatorSwitchFrequency">The LNB's oscillator switch frequency (unit = kHz).</param>
+    /// <param name="localOscillatorFrequencyLow">The LNB's first local oscillator frequency. The unit is kilo-Hertz (kHz).</param>
+    /// <param name="localOscillatorFrequencyLow">The LNB's second local oscillator frequency. The unit is kilo-Hertz (kHz).</param>
+    /// <param name="oscillatorSwitchFrequency">The LNB's oscillator switch frequency. The unit is kilo-Hertz (kHz).</param>
     /// <param name="bandSelectionTone">The 22 kHz tone that must be supplied to the LNB to select the correct local oscillator.</param>
     /// <param name="bandSelectionPolarisation">The polarisation (voltage) that must be supplied to the LNB to select the correct local oscillator and band.</param>
     public void GetTuningParameters(int transponderFrequency, Polarisation transponderPolarisation, Tone22kState lnbSelectionTone, out int localOscillatorFrequencyLow, out int localOscillatorFrequencyHigh, out int oscillatorSwitchFrequency, out Tone22kState bandSelectionTone, out Polarisation bandSelectionPolarisation)

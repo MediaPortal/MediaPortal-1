@@ -64,7 +64,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channel
     }
 
     /// <summary>
-    /// Get/set the channel transmitter's carrier frequency. The frequency unit is kHz.
+    /// Get/set the channel transmitter's carrier frequency. The frequency unit is kilo-Hertz (kHz).
     /// </summary>
     public int Frequency
     {
@@ -220,8 +220,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channel
     /// Calculate the physical channel number corresponding with a centre or
     /// analog video carrier frequency in the US FCC broadcast frequency plan.
     /// </summary>
-    /// <param name="carrierFrequency">The carrier frequency, in kHz.</param>
-    /// <returns>the physical channel number corresponding with <paramref name="carrierFrequency"/></returns>
+    /// <param name="carrierFrequency">The centre frequency. The unit is kilo-Hertz (kHz).</param>
+    /// <returns>the physical channel number corresponding with <paramref name="carrierFrequency">the carrier frequency</paramref>></returns>
     public static short GetPhysicalChannelNumberForFrequency(int carrierFrequency)
     {
       // Between 2 and 69, or zero if invalid.

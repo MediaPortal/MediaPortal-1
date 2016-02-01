@@ -27,7 +27,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Channel
   public interface IChannelOfdm : IChannel, IChannelPhysical
   {
     /// <summary>
-    /// Get/set the channel transmitter's bandwidth. The bandwidth unit is kHz.
+    /// Get/set the channel transmitter's bandwidth. The bandwidth unit is kilo-Hertz (kHz).
     /// </summary>
     int Bandwidth
     {
