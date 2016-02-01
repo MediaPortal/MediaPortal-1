@@ -36,7 +36,23 @@
         {
             this.components = new System.ComponentModel.Container();
             this.tabPageHttp = new System.Windows.Forms.TabPage();
-            this.groupBoxCommonParametersHttp = new System.Windows.Forms.GroupBox();
+            this.groupBoxHttpProxyServerAuthentication = new System.Windows.Forms.GroupBox();
+            this.labelHttpProxyType = new System.Windows.Forms.Label();
+            this.comboBoxHttpProxyServerType = new System.Windows.Forms.ComboBox();
+            this.labelHttpProxyServerPassword = new System.Windows.Forms.Label();
+            this.labelHttpProxyServerUserName = new System.Windows.Forms.Label();
+            this.labelHttpProxyServerPort = new System.Windows.Forms.Label();
+            this.labelHttpProxyServer = new System.Windows.Forms.Label();
+            this.textBoxHttpProxyServerPassword = new System.Windows.Forms.TextBox();
+            this.textBoxHttpProxyServerUserName = new System.Windows.Forms.TextBox();
+            this.textBoxHttpProxyServerPort = new System.Windows.Forms.TextBox();
+            this.textBoxHttpProxyServer = new System.Windows.Forms.TextBox();
+            this.groupBoxHttpServerAuthentication = new System.Windows.Forms.GroupBox();
+            this.labelHttpServerPassword = new System.Windows.Forms.Label();
+            this.textBoxHttpServerPassword = new System.Windows.Forms.TextBox();
+            this.textBoxHttpServerUserName = new System.Windows.Forms.TextBox();
+            this.labelHttpServerUserName = new System.Windows.Forms.Label();
+            this.groupBoxHttpCommonParameters = new System.Windows.Forms.GroupBox();
             this.label25 = new System.Windows.Forms.Label();
             this.label22 = new System.Windows.Forms.Label();
             this.label20 = new System.Windows.Forms.Label();
@@ -49,7 +65,7 @@
             this.labelHttpNetworkInterface = new System.Windows.Forms.Label();
             this.comboBoxHttpPreferredNetworkInterface = new System.Windows.Forms.ComboBox();
             this.tabPageRtmp = new System.Windows.Forms.TabPage();
-            this.groupBoxCommonParametersRtmp = new System.Windows.Forms.GroupBox();
+            this.groupBoxRtmpCommonParameters = new System.Windows.Forms.GroupBox();
             this.label17 = new System.Windows.Forms.Label();
             this.label18 = new System.Windows.Forms.Label();
             this.label19 = new System.Windows.Forms.Label();
@@ -62,10 +78,9 @@
             this.labelRtmpNetworkInterface = new System.Windows.Forms.Label();
             this.comboBoxRtmpPreferredNetworkInterface = new System.Windows.Forms.ComboBox();
             this.tabPageRtsp = new System.Windows.Forms.TabPage();
-            this.groupBoxCommonParametersRtsp = new System.Windows.Forms.GroupBox();
+            this.groupBoxRtspCommonParameters = new System.Windows.Forms.GroupBox();
             this.labelRtspIgnoreRtpPayloadType = new System.Windows.Forms.Label();
             this.checkBoxRtspIgnoreRtpPayloadType = new System.Windows.Forms.CheckBox();
-            this.rtspConnectionPreference = new TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter.Url.RtspConnectionPreference();
             this.labelRtspConnectionPreference = new System.Windows.Forms.Label();
             this.label59 = new System.Windows.Forms.Label();
             this.textBoxRtspClientPortMax = new System.Windows.Forms.TextBox();
@@ -83,7 +98,7 @@
             this.labelRtspNetworkInterface = new System.Windows.Forms.Label();
             this.comboBoxRtspPreferredNetworkInterface = new System.Windows.Forms.ComboBox();
             this.tabPageUdpRtp = new System.Windows.Forms.TabPage();
-            this.groupBoxCommonParametersUdpRtp = new System.Windows.Forms.GroupBox();
+            this.groupBoxUdpRtpCommonParameters = new System.Windows.Forms.GroupBox();
             this.label56 = new System.Windows.Forms.Label();
             this.labelUdpRtpReceiveDataCheckInterval = new System.Windows.Forms.Label();
             this.textBoxUdpRtpReceiveDataCheckInterval = new System.Windows.Forms.TextBox();
@@ -125,30 +140,37 @@
             this.dataGridViewImageColumn2 = new System.Windows.Forms.DataGridViewImageColumn();
             this.propertyGridDatabase = new System.Windows.Forms.PropertyGrid();
             this.tabPageSettings = new System.Windows.Forms.TabPage();
+            this.groupBoxStreamAnalysis = new System.Windows.Forms.GroupBox();
+            this.checkBoxStreamAnalysis = new System.Windows.Forms.CheckBox();
             this.labelStreamAnalysisTimeout = new System.Windows.Forms.Label();
             this.tabPageGeneral = new System.Windows.Forms.TabPage();
             this.buttonUpdateDatabase = new System.Windows.Forms.Button();
             this.dataGridViewImageColumn1 = new System.Windows.Forms.DataGridViewImageColumn();
             this.buttonStoreChanges = new System.Windows.Forms.Button();
             this.buttonSetMpeg2TSParser = new System.Windows.Forms.Button();
-            this.groupBoxStreamAnalysis = new System.Windows.Forms.GroupBox();
-            this.checkBoxStreamAnalysis = new System.Windows.Forms.CheckBox();
+            this.checkBoxHttpServerAuthentication = new System.Windows.Forms.CheckBox();
+            this.checkBoxHttpProxyServerAuthentication = new System.Windows.Forms.CheckBox();
+            this.rtspConnectionPreference = new TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter.Url.RtspConnectionPreference();
             this.tabPageHttp.SuspendLayout();
-            this.groupBoxCommonParametersHttp.SuspendLayout();
+            this.groupBoxHttpProxyServerAuthentication.SuspendLayout();
+            this.groupBoxHttpServerAuthentication.SuspendLayout();
+            this.groupBoxHttpCommonParameters.SuspendLayout();
             this.tabPageRtmp.SuspendLayout();
-            this.groupBoxCommonParametersRtmp.SuspendLayout();
+            this.groupBoxRtmpCommonParameters.SuspendLayout();
             this.tabPageRtsp.SuspendLayout();
-            this.groupBoxCommonParametersRtsp.SuspendLayout();
+            this.groupBoxRtspCommonParameters.SuspendLayout();
             this.tabPageUdpRtp.SuspendLayout();
-            this.groupBoxCommonParametersUdpRtp.SuspendLayout();
+            this.groupBoxUdpRtpCommonParameters.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).BeginInit();
             this.tabPagePlaylistEditor.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainerPlaylist)).BeginInit();
             this.splitContainerPlaylist.Panel1.SuspendLayout();
             this.splitContainerPlaylist.Panel2.SuspendLayout();
             this.splitContainerPlaylist.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewPlaylist)).BeginInit();
             this.tabProtocols.SuspendLayout();
             this.tabPageDatabaseEditor.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainerDatabase)).BeginInit();
             this.splitContainerDatabase.Panel1.SuspendLayout();
             this.splitContainerDatabase.Panel2.SuspendLayout();
             this.splitContainerDatabase.SuspendLayout();
@@ -159,7 +181,9 @@
             // 
             // tabPageHttp
             // 
-            this.tabPageHttp.Controls.Add(this.groupBoxCommonParametersHttp);
+            this.tabPageHttp.Controls.Add(this.groupBoxHttpProxyServerAuthentication);
+            this.tabPageHttp.Controls.Add(this.groupBoxHttpServerAuthentication);
+            this.tabPageHttp.Controls.Add(this.groupBoxHttpCommonParameters);
             this.tabPageHttp.Location = new System.Drawing.Point(4, 22);
             this.tabPageHttp.Name = "tabPageHttp";
             this.tabPageHttp.Padding = new System.Windows.Forms.Padding(3);
@@ -168,25 +192,187 @@
             this.tabPageHttp.Text = "HTTP";
             this.tabPageHttp.UseVisualStyleBackColor = true;
             // 
-            // groupBoxCommonParametersHttp
+            // groupBoxHttpProxyServerAuthentication
             // 
-            this.groupBoxCommonParametersHttp.Controls.Add(this.label25);
-            this.groupBoxCommonParametersHttp.Controls.Add(this.label22);
-            this.groupBoxCommonParametersHttp.Controls.Add(this.label20);
-            this.groupBoxCommonParametersHttp.Controls.Add(this.labelHttpTotalReopenConnectionTimeout);
-            this.groupBoxCommonParametersHttp.Controls.Add(this.labelHttpOpenConnectionSleepTime);
-            this.groupBoxCommonParametersHttp.Controls.Add(this.textBoxHttpTotalReopenConnectionTimeout);
-            this.groupBoxCommonParametersHttp.Controls.Add(this.textBoxHttpOpenConnectionSleepTime);
-            this.groupBoxCommonParametersHttp.Controls.Add(this.textBoxHttpOpenConnectionTimeout);
-            this.groupBoxCommonParametersHttp.Controls.Add(this.labelHttpOpenConnectionTimeout);
-            this.groupBoxCommonParametersHttp.Controls.Add(this.labelHttpNetworkInterface);
-            this.groupBoxCommonParametersHttp.Controls.Add(this.comboBoxHttpPreferredNetworkInterface);
-            this.groupBoxCommonParametersHttp.Location = new System.Drawing.Point(6, 10);
-            this.groupBoxCommonParametersHttp.Name = "groupBoxCommonParametersHttp";
-            this.groupBoxCommonParametersHttp.Size = new System.Drawing.Size(464, 129);
-            this.groupBoxCommonParametersHttp.TabIndex = 0;
-            this.groupBoxCommonParametersHttp.TabStop = false;
-            this.groupBoxCommonParametersHttp.Text = "Common configuration parameters for HTTP protocol";
+            this.groupBoxHttpProxyServerAuthentication.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBoxHttpProxyServerAuthentication.Controls.Add(this.checkBoxHttpProxyServerAuthentication);
+            this.groupBoxHttpProxyServerAuthentication.Controls.Add(this.labelHttpProxyType);
+            this.groupBoxHttpProxyServerAuthentication.Controls.Add(this.comboBoxHttpProxyServerType);
+            this.groupBoxHttpProxyServerAuthentication.Controls.Add(this.labelHttpProxyServerPassword);
+            this.groupBoxHttpProxyServerAuthentication.Controls.Add(this.labelHttpProxyServerUserName);
+            this.groupBoxHttpProxyServerAuthentication.Controls.Add(this.labelHttpProxyServerPort);
+            this.groupBoxHttpProxyServerAuthentication.Controls.Add(this.labelHttpProxyServer);
+            this.groupBoxHttpProxyServerAuthentication.Controls.Add(this.textBoxHttpProxyServerPassword);
+            this.groupBoxHttpProxyServerAuthentication.Controls.Add(this.textBoxHttpProxyServerUserName);
+            this.groupBoxHttpProxyServerAuthentication.Controls.Add(this.textBoxHttpProxyServerPort);
+            this.groupBoxHttpProxyServerAuthentication.Controls.Add(this.textBoxHttpProxyServer);
+            this.groupBoxHttpProxyServerAuthentication.Location = new System.Drawing.Point(7, 228);
+            this.groupBoxHttpProxyServerAuthentication.Name = "groupBoxHttpProxyServerAuthentication";
+            this.groupBoxHttpProxyServerAuthentication.Size = new System.Drawing.Size(463, 134);
+            this.groupBoxHttpProxyServerAuthentication.TabIndex = 2;
+            this.groupBoxHttpProxyServerAuthentication.TabStop = false;
+            this.groupBoxHttpProxyServerAuthentication.Text = "Proxy server authentication";
+            // 
+            // labelHttpProxyType
+            // 
+            this.labelHttpProxyType.AutoSize = true;
+            this.labelHttpProxyType.Location = new System.Drawing.Point(8, 97);
+            this.labelHttpProxyType.Name = "labelHttpProxyType";
+            this.labelHttpProxyType.Size = new System.Drawing.Size(56, 13);
+            this.labelHttpProxyType.TabIndex = 9;
+            this.labelHttpProxyType.Text = "Proxy type";
+            // 
+            // comboBoxHttpProxyServerType
+            // 
+            this.comboBoxHttpProxyServerType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBoxHttpProxyServerType.FormattingEnabled = true;
+            this.comboBoxHttpProxyServerType.Items.AddRange(new object[] {
+            "HTTP",
+            "HTTP 1.0",
+            "SOCKS4",
+            "SOCKS5",
+            "SOCKS4A",
+            "SOCKS5 with hostname"});
+            this.comboBoxHttpProxyServerType.Location = new System.Drawing.Point(89, 94);
+            this.comboBoxHttpProxyServerType.Name = "comboBoxHttpProxyServerType";
+            this.comboBoxHttpProxyServerType.Size = new System.Drawing.Size(182, 21);
+            this.comboBoxHttpProxyServerType.TabIndex = 10;
+            // 
+            // labelHttpProxyServerPassword
+            // 
+            this.labelHttpProxyServerPassword.AutoSize = true;
+            this.labelHttpProxyServerPassword.Location = new System.Drawing.Point(245, 71);
+            this.labelHttpProxyServerPassword.Name = "labelHttpProxyServerPassword";
+            this.labelHttpProxyServerPassword.Size = new System.Drawing.Size(53, 13);
+            this.labelHttpProxyServerPassword.TabIndex = 7;
+            this.labelHttpProxyServerPassword.Text = "Password";
+            // 
+            // labelHttpProxyServerUserName
+            // 
+            this.labelHttpProxyServerUserName.AutoSize = true;
+            this.labelHttpProxyServerUserName.Location = new System.Drawing.Point(8, 71);
+            this.labelHttpProxyServerUserName.Name = "labelHttpProxyServerUserName";
+            this.labelHttpProxyServerUserName.Size = new System.Drawing.Size(58, 13);
+            this.labelHttpProxyServerUserName.TabIndex = 5;
+            this.labelHttpProxyServerUserName.Text = "User name";
+            // 
+            // labelHttpProxyServerPort
+            // 
+            this.labelHttpProxyServerPort.AutoSize = true;
+            this.labelHttpProxyServerPort.Location = new System.Drawing.Point(375, 45);
+            this.labelHttpProxyServerPort.Name = "labelHttpProxyServerPort";
+            this.labelHttpProxyServerPort.Size = new System.Drawing.Size(26, 13);
+            this.labelHttpProxyServerPort.TabIndex = 3;
+            this.labelHttpProxyServerPort.Text = "Port";
+            // 
+            // labelHttpProxyServer
+            // 
+            this.labelHttpProxyServer.AutoSize = true;
+            this.labelHttpProxyServer.Location = new System.Drawing.Point(8, 45);
+            this.labelHttpProxyServer.Name = "labelHttpProxyServer";
+            this.labelHttpProxyServer.Size = new System.Drawing.Size(65, 13);
+            this.labelHttpProxyServer.TabIndex = 1;
+            this.labelHttpProxyServer.Text = "Proxy server";
+            // 
+            // textBoxHttpProxyServerPassword
+            // 
+            this.textBoxHttpProxyServerPassword.Location = new System.Drawing.Point(307, 68);
+            this.textBoxHttpProxyServerPassword.Name = "textBoxHttpProxyServerPassword";
+            this.textBoxHttpProxyServerPassword.Size = new System.Drawing.Size(150, 20);
+            this.textBoxHttpProxyServerPassword.TabIndex = 8;
+            // 
+            // textBoxHttpProxyServerUserName
+            // 
+            this.textBoxHttpProxyServerUserName.Location = new System.Drawing.Point(89, 68);
+            this.textBoxHttpProxyServerUserName.Name = "textBoxHttpProxyServerUserName";
+            this.textBoxHttpProxyServerUserName.Size = new System.Drawing.Size(150, 20);
+            this.textBoxHttpProxyServerUserName.TabIndex = 6;
+            // 
+            // textBoxHttpProxyServerPort
+            // 
+            this.errorProvider.SetIconPadding(this.textBoxHttpProxyServerPort, 2);
+            this.textBoxHttpProxyServerPort.Location = new System.Drawing.Point(407, 42);
+            this.textBoxHttpProxyServerPort.Name = "textBoxHttpProxyServerPort";
+            this.textBoxHttpProxyServerPort.Size = new System.Drawing.Size(47, 20);
+            this.textBoxHttpProxyServerPort.TabIndex = 4;
+            // 
+            // textBoxHttpProxyServer
+            // 
+            this.textBoxHttpProxyServer.Location = new System.Drawing.Point(89, 42);
+            this.textBoxHttpProxyServer.Name = "textBoxHttpProxyServer";
+            this.textBoxHttpProxyServer.Size = new System.Drawing.Size(267, 20);
+            this.textBoxHttpProxyServer.TabIndex = 2;
+            // 
+            // groupBoxHttpServerAuthentication
+            // 
+            this.groupBoxHttpServerAuthentication.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBoxHttpServerAuthentication.Controls.Add(this.checkBoxHttpServerAuthentication);
+            this.groupBoxHttpServerAuthentication.Controls.Add(this.labelHttpServerPassword);
+            this.groupBoxHttpServerAuthentication.Controls.Add(this.textBoxHttpServerPassword);
+            this.groupBoxHttpServerAuthentication.Controls.Add(this.textBoxHttpServerUserName);
+            this.groupBoxHttpServerAuthentication.Controls.Add(this.labelHttpServerUserName);
+            this.groupBoxHttpServerAuthentication.Location = new System.Drawing.Point(7, 148);
+            this.groupBoxHttpServerAuthentication.Name = "groupBoxHttpServerAuthentication";
+            this.groupBoxHttpServerAuthentication.Size = new System.Drawing.Size(463, 74);
+            this.groupBoxHttpServerAuthentication.TabIndex = 1;
+            this.groupBoxHttpServerAuthentication.TabStop = false;
+            this.groupBoxHttpServerAuthentication.Text = "Remote server authentication";
+            // 
+            // labelHttpServerPassword
+            // 
+            this.labelHttpServerPassword.AutoSize = true;
+            this.labelHttpServerPassword.Location = new System.Drawing.Point(245, 45);
+            this.labelHttpServerPassword.Name = "labelHttpServerPassword";
+            this.labelHttpServerPassword.Size = new System.Drawing.Size(53, 13);
+            this.labelHttpServerPassword.TabIndex = 3;
+            this.labelHttpServerPassword.Text = "Password";
+            // 
+            // textBoxHttpServerPassword
+            // 
+            this.textBoxHttpServerPassword.Location = new System.Drawing.Point(304, 42);
+            this.textBoxHttpServerPassword.Name = "textBoxHttpServerPassword";
+            this.textBoxHttpServerPassword.Size = new System.Drawing.Size(150, 20);
+            this.textBoxHttpServerPassword.TabIndex = 4;
+            // 
+            // textBoxHttpServerUserName
+            // 
+            this.textBoxHttpServerUserName.Location = new System.Drawing.Point(89, 42);
+            this.textBoxHttpServerUserName.Name = "textBoxHttpServerUserName";
+            this.textBoxHttpServerUserName.Size = new System.Drawing.Size(150, 20);
+            this.textBoxHttpServerUserName.TabIndex = 2;
+            // 
+            // labelHttpServerUserName
+            // 
+            this.labelHttpServerUserName.AutoSize = true;
+            this.labelHttpServerUserName.Location = new System.Drawing.Point(6, 45);
+            this.labelHttpServerUserName.Name = "labelHttpServerUserName";
+            this.labelHttpServerUserName.Size = new System.Drawing.Size(58, 13);
+            this.labelHttpServerUserName.TabIndex = 1;
+            this.labelHttpServerUserName.Text = "User name";
+            // 
+            // groupBoxHttpCommonParameters
+            // 
+            this.groupBoxHttpCommonParameters.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBoxHttpCommonParameters.Controls.Add(this.label25);
+            this.groupBoxHttpCommonParameters.Controls.Add(this.label22);
+            this.groupBoxHttpCommonParameters.Controls.Add(this.label20);
+            this.groupBoxHttpCommonParameters.Controls.Add(this.labelHttpTotalReopenConnectionTimeout);
+            this.groupBoxHttpCommonParameters.Controls.Add(this.labelHttpOpenConnectionSleepTime);
+            this.groupBoxHttpCommonParameters.Controls.Add(this.textBoxHttpTotalReopenConnectionTimeout);
+            this.groupBoxHttpCommonParameters.Controls.Add(this.textBoxHttpOpenConnectionSleepTime);
+            this.groupBoxHttpCommonParameters.Controls.Add(this.textBoxHttpOpenConnectionTimeout);
+            this.groupBoxHttpCommonParameters.Controls.Add(this.labelHttpOpenConnectionTimeout);
+            this.groupBoxHttpCommonParameters.Controls.Add(this.labelHttpNetworkInterface);
+            this.groupBoxHttpCommonParameters.Controls.Add(this.comboBoxHttpPreferredNetworkInterface);
+            this.groupBoxHttpCommonParameters.Location = new System.Drawing.Point(6, 6);
+            this.groupBoxHttpCommonParameters.Name = "groupBoxHttpCommonParameters";
+            this.groupBoxHttpCommonParameters.Size = new System.Drawing.Size(464, 136);
+            this.groupBoxHttpCommonParameters.TabIndex = 0;
+            this.groupBoxHttpCommonParameters.TabStop = false;
+            this.groupBoxHttpCommonParameters.Text = "Common configuration parameters for HTTP protocol";
             // 
             // label25
             // 
@@ -286,7 +472,7 @@
             // 
             // tabPageRtmp
             // 
-            this.tabPageRtmp.Controls.Add(this.groupBoxCommonParametersRtmp);
+            this.tabPageRtmp.Controls.Add(this.groupBoxRtmpCommonParameters);
             this.tabPageRtmp.Location = new System.Drawing.Point(4, 22);
             this.tabPageRtmp.Name = "tabPageRtmp";
             this.tabPageRtmp.Padding = new System.Windows.Forms.Padding(3);
@@ -295,25 +481,27 @@
             this.tabPageRtmp.Text = "RTMP (Real Time Messaging Protocol)";
             this.tabPageRtmp.UseVisualStyleBackColor = true;
             // 
-            // groupBoxCommonParametersRtmp
+            // groupBoxRtmpCommonParameters
             // 
-            this.groupBoxCommonParametersRtmp.Controls.Add(this.label17);
-            this.groupBoxCommonParametersRtmp.Controls.Add(this.label18);
-            this.groupBoxCommonParametersRtmp.Controls.Add(this.label19);
-            this.groupBoxCommonParametersRtmp.Controls.Add(this.labelRtmpTotalReopenConnectionTimeout);
-            this.groupBoxCommonParametersRtmp.Controls.Add(this.labelRtmpOpenConnectionSleepTime);
-            this.groupBoxCommonParametersRtmp.Controls.Add(this.textBoxRtmpTotalReopenConnectionTimeout);
-            this.groupBoxCommonParametersRtmp.Controls.Add(this.textBoxRtmpOpenConnectionSleepTime);
-            this.groupBoxCommonParametersRtmp.Controls.Add(this.textBoxRtmpOpenConnectionTimeout);
-            this.groupBoxCommonParametersRtmp.Controls.Add(this.labelRtmpOpenConnectionTimeout);
-            this.groupBoxCommonParametersRtmp.Controls.Add(this.labelRtmpNetworkInterface);
-            this.groupBoxCommonParametersRtmp.Controls.Add(this.comboBoxRtmpPreferredNetworkInterface);
-            this.groupBoxCommonParametersRtmp.Location = new System.Drawing.Point(6, 10);
-            this.groupBoxCommonParametersRtmp.Name = "groupBoxCommonParametersRtmp";
-            this.groupBoxCommonParametersRtmp.Size = new System.Drawing.Size(464, 129);
-            this.groupBoxCommonParametersRtmp.TabIndex = 0;
-            this.groupBoxCommonParametersRtmp.TabStop = false;
-            this.groupBoxCommonParametersRtmp.Text = "Common configuration parameters for RTMP protocol";
+            this.groupBoxRtmpCommonParameters.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBoxRtmpCommonParameters.Controls.Add(this.label17);
+            this.groupBoxRtmpCommonParameters.Controls.Add(this.label18);
+            this.groupBoxRtmpCommonParameters.Controls.Add(this.label19);
+            this.groupBoxRtmpCommonParameters.Controls.Add(this.labelRtmpTotalReopenConnectionTimeout);
+            this.groupBoxRtmpCommonParameters.Controls.Add(this.labelRtmpOpenConnectionSleepTime);
+            this.groupBoxRtmpCommonParameters.Controls.Add(this.textBoxRtmpTotalReopenConnectionTimeout);
+            this.groupBoxRtmpCommonParameters.Controls.Add(this.textBoxRtmpOpenConnectionSleepTime);
+            this.groupBoxRtmpCommonParameters.Controls.Add(this.textBoxRtmpOpenConnectionTimeout);
+            this.groupBoxRtmpCommonParameters.Controls.Add(this.labelRtmpOpenConnectionTimeout);
+            this.groupBoxRtmpCommonParameters.Controls.Add(this.labelRtmpNetworkInterface);
+            this.groupBoxRtmpCommonParameters.Controls.Add(this.comboBoxRtmpPreferredNetworkInterface);
+            this.groupBoxRtmpCommonParameters.Location = new System.Drawing.Point(6, 10);
+            this.groupBoxRtmpCommonParameters.Name = "groupBoxRtmpCommonParameters";
+            this.groupBoxRtmpCommonParameters.Size = new System.Drawing.Size(464, 129);
+            this.groupBoxRtmpCommonParameters.TabIndex = 0;
+            this.groupBoxRtmpCommonParameters.TabStop = false;
+            this.groupBoxRtmpCommonParameters.Text = "Common configuration parameters for RTMP protocol";
             // 
             // label17
             // 
@@ -413,7 +601,7 @@
             // 
             // tabPageRtsp
             // 
-            this.tabPageRtsp.Controls.Add(this.groupBoxCommonParametersRtsp);
+            this.tabPageRtsp.Controls.Add(this.groupBoxRtspCommonParameters);
             this.tabPageRtsp.Location = new System.Drawing.Point(4, 22);
             this.tabPageRtsp.Name = "tabPageRtsp";
             this.tabPageRtsp.Padding = new System.Windows.Forms.Padding(3);
@@ -422,33 +610,35 @@
             this.tabPageRtsp.Text = "RTSP (Real Time Streaming Protocol)";
             this.tabPageRtsp.UseVisualStyleBackColor = true;
             // 
-            // groupBoxCommonParametersRtsp
+            // groupBoxRtspCommonParameters
             // 
-            this.groupBoxCommonParametersRtsp.Controls.Add(this.labelRtspIgnoreRtpPayloadType);
-            this.groupBoxCommonParametersRtsp.Controls.Add(this.checkBoxRtspIgnoreRtpPayloadType);
-            this.groupBoxCommonParametersRtsp.Controls.Add(this.rtspConnectionPreference);
-            this.groupBoxCommonParametersRtsp.Controls.Add(this.labelRtspConnectionPreference);
-            this.groupBoxCommonParametersRtsp.Controls.Add(this.label59);
-            this.groupBoxCommonParametersRtsp.Controls.Add(this.textBoxRtspClientPortMax);
-            this.groupBoxCommonParametersRtsp.Controls.Add(this.labelRtspConnectionRange);
-            this.groupBoxCommonParametersRtsp.Controls.Add(this.textBoxRtspClientPortMin);
-            this.groupBoxCommonParametersRtsp.Controls.Add(this.label26);
-            this.groupBoxCommonParametersRtsp.Controls.Add(this.label27);
-            this.groupBoxCommonParametersRtsp.Controls.Add(this.label28);
-            this.groupBoxCommonParametersRtsp.Controls.Add(this.labelRtspTotalReopenConnectionTimeout);
-            this.groupBoxCommonParametersRtsp.Controls.Add(this.labelRtspOpenConnectionSleepTime);
-            this.groupBoxCommonParametersRtsp.Controls.Add(this.textBoxRtspTotalReopenConnectionTimeout);
-            this.groupBoxCommonParametersRtsp.Controls.Add(this.textBoxRtspOpenConnectionSleepTime);
-            this.groupBoxCommonParametersRtsp.Controls.Add(this.textBoxRtspOpenConnectionTimeout);
-            this.groupBoxCommonParametersRtsp.Controls.Add(this.labelRtspOpenConnectionTimeout);
-            this.groupBoxCommonParametersRtsp.Controls.Add(this.labelRtspNetworkInterface);
-            this.groupBoxCommonParametersRtsp.Controls.Add(this.comboBoxRtspPreferredNetworkInterface);
-            this.groupBoxCommonParametersRtsp.Location = new System.Drawing.Point(6, 10);
-            this.groupBoxCommonParametersRtsp.Name = "groupBoxCommonParametersRtsp";
-            this.groupBoxCommonParametersRtsp.Size = new System.Drawing.Size(464, 235);
-            this.groupBoxCommonParametersRtsp.TabIndex = 0;
-            this.groupBoxCommonParametersRtsp.TabStop = false;
-            this.groupBoxCommonParametersRtsp.Text = "Common configuration parameters for RTSP protocol";
+            this.groupBoxRtspCommonParameters.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBoxRtspCommonParameters.Controls.Add(this.labelRtspIgnoreRtpPayloadType);
+            this.groupBoxRtspCommonParameters.Controls.Add(this.checkBoxRtspIgnoreRtpPayloadType);
+            this.groupBoxRtspCommonParameters.Controls.Add(this.rtspConnectionPreference);
+            this.groupBoxRtspCommonParameters.Controls.Add(this.labelRtspConnectionPreference);
+            this.groupBoxRtspCommonParameters.Controls.Add(this.label59);
+            this.groupBoxRtspCommonParameters.Controls.Add(this.textBoxRtspClientPortMax);
+            this.groupBoxRtspCommonParameters.Controls.Add(this.labelRtspConnectionRange);
+            this.groupBoxRtspCommonParameters.Controls.Add(this.textBoxRtspClientPortMin);
+            this.groupBoxRtspCommonParameters.Controls.Add(this.label26);
+            this.groupBoxRtspCommonParameters.Controls.Add(this.label27);
+            this.groupBoxRtspCommonParameters.Controls.Add(this.label28);
+            this.groupBoxRtspCommonParameters.Controls.Add(this.labelRtspTotalReopenConnectionTimeout);
+            this.groupBoxRtspCommonParameters.Controls.Add(this.labelRtspOpenConnectionSleepTime);
+            this.groupBoxRtspCommonParameters.Controls.Add(this.textBoxRtspTotalReopenConnectionTimeout);
+            this.groupBoxRtspCommonParameters.Controls.Add(this.textBoxRtspOpenConnectionSleepTime);
+            this.groupBoxRtspCommonParameters.Controls.Add(this.textBoxRtspOpenConnectionTimeout);
+            this.groupBoxRtspCommonParameters.Controls.Add(this.labelRtspOpenConnectionTimeout);
+            this.groupBoxRtspCommonParameters.Controls.Add(this.labelRtspNetworkInterface);
+            this.groupBoxRtspCommonParameters.Controls.Add(this.comboBoxRtspPreferredNetworkInterface);
+            this.groupBoxRtspCommonParameters.Location = new System.Drawing.Point(6, 10);
+            this.groupBoxRtspCommonParameters.Name = "groupBoxRtspCommonParameters";
+            this.groupBoxRtspCommonParameters.Size = new System.Drawing.Size(464, 235);
+            this.groupBoxRtspCommonParameters.TabIndex = 0;
+            this.groupBoxRtspCommonParameters.TabStop = false;
+            this.groupBoxRtspCommonParameters.Text = "Common configuration parameters for RTSP protocol";
             // 
             // labelRtspIgnoreRtpPayloadType
             // 
@@ -456,7 +646,7 @@
             this.labelRtspIgnoreRtpPayloadType.Location = new System.Drawing.Point(6, 213);
             this.labelRtspIgnoreRtpPayloadType.Name = "labelRtspIgnoreRtpPayloadType";
             this.labelRtspIgnoreRtpPayloadType.Size = new System.Drawing.Size(125, 13);
-            this.labelRtspIgnoreRtpPayloadType.TabIndex = 16;
+            this.labelRtspIgnoreRtpPayloadType.TabIndex = 17;
             this.labelRtspIgnoreRtpPayloadType.Text = "Ignore RTP payload type";
             // 
             // checkBoxRtspIgnoreRtpPayloadType
@@ -465,18 +655,8 @@
             this.checkBoxRtspIgnoreRtpPayloadType.Location = new System.Drawing.Point(172, 213);
             this.checkBoxRtspIgnoreRtpPayloadType.Name = "checkBoxRtspIgnoreRtpPayloadType";
             this.checkBoxRtspIgnoreRtpPayloadType.Size = new System.Drawing.Size(15, 14);
-            this.checkBoxRtspIgnoreRtpPayloadType.TabIndex = 17;
+            this.checkBoxRtspIgnoreRtpPayloadType.TabIndex = 18;
             this.checkBoxRtspIgnoreRtpPayloadType.UseVisualStyleBackColor = true;
-            // 
-            // rtspConnectionPreference
-            // 
-            this.rtspConnectionPreference.Location = new System.Drawing.Point(172, 150);
-            this.rtspConnectionPreference.MulticastPreference = 2;
-            this.rtspConnectionPreference.Name = "rtspConnectionPreference";
-            this.rtspConnectionPreference.SameConnectionPreference = 0;
-            this.rtspConnectionPreference.Size = new System.Drawing.Size(126, 56);
-            this.rtspConnectionPreference.TabIndex = 15;
-            this.rtspConnectionPreference.UdpPreference = 1;
             // 
             // labelRtspConnectionPreference
             // 
@@ -484,7 +664,7 @@
             this.labelRtspConnectionPreference.Location = new System.Drawing.Point(6, 153);
             this.labelRtspConnectionPreference.Name = "labelRtspConnectionPreference";
             this.labelRtspConnectionPreference.Size = new System.Drawing.Size(115, 13);
-            this.labelRtspConnectionPreference.TabIndex = 14;
+            this.labelRtspConnectionPreference.TabIndex = 15;
             this.labelRtspConnectionPreference.Text = "Connection preference";
             // 
             // label59
@@ -493,7 +673,7 @@
             this.label59.Location = new System.Drawing.Point(278, 127);
             this.label59.Name = "label59";
             this.label59.Size = new System.Drawing.Size(10, 13);
-            this.label59.TabIndex = 18;
+            this.label59.TabIndex = 13;
             this.label59.Text = "-";
             // 
             // textBoxRtspClientPortMax
@@ -502,7 +682,7 @@
             this.textBoxRtspClientPortMax.Location = new System.Drawing.Point(294, 124);
             this.textBoxRtspClientPortMax.Name = "textBoxRtspClientPortMax";
             this.textBoxRtspClientPortMax.Size = new System.Drawing.Size(100, 20);
-            this.textBoxRtspClientPortMax.TabIndex = 13;
+            this.textBoxRtspClientPortMax.TabIndex = 14;
             // 
             // labelRtspConnectionRange
             // 
@@ -619,7 +799,7 @@
             // 
             // tabPageUdpRtp
             // 
-            this.tabPageUdpRtp.Controls.Add(this.groupBoxCommonParametersUdpRtp);
+            this.tabPageUdpRtp.Controls.Add(this.groupBoxUdpRtpCommonParameters);
             this.tabPageUdpRtp.Location = new System.Drawing.Point(4, 22);
             this.tabPageUdpRtp.Name = "tabPageUdpRtp";
             this.tabPageUdpRtp.Padding = new System.Windows.Forms.Padding(3);
@@ -628,28 +808,30 @@
             this.tabPageUdpRtp.Text = "UDP or RTP";
             this.tabPageUdpRtp.UseVisualStyleBackColor = true;
             // 
-            // groupBoxCommonParametersUdpRtp
+            // groupBoxUdpRtpCommonParameters
             // 
-            this.groupBoxCommonParametersUdpRtp.Controls.Add(this.label56);
-            this.groupBoxCommonParametersUdpRtp.Controls.Add(this.labelUdpRtpReceiveDataCheckInterval);
-            this.groupBoxCommonParametersUdpRtp.Controls.Add(this.textBoxUdpRtpReceiveDataCheckInterval);
-            this.groupBoxCommonParametersUdpRtp.Controls.Add(this.label37);
-            this.groupBoxCommonParametersUdpRtp.Controls.Add(this.label54);
-            this.groupBoxCommonParametersUdpRtp.Controls.Add(this.label55);
-            this.groupBoxCommonParametersUdpRtp.Controls.Add(this.labelUdpRtpTotalReopenConnectionTimeout);
-            this.groupBoxCommonParametersUdpRtp.Controls.Add(this.labelUdpRtpOpenConnectionSleepTime);
-            this.groupBoxCommonParametersUdpRtp.Controls.Add(this.textBoxUdpRtpTotalReopenConnectionTimeout);
-            this.groupBoxCommonParametersUdpRtp.Controls.Add(this.textBoxUdpRtpOpenConnectionSleepTime);
-            this.groupBoxCommonParametersUdpRtp.Controls.Add(this.textBoxUdpRtpOpenConnectionTimeout);
-            this.groupBoxCommonParametersUdpRtp.Controls.Add(this.labelUdpRtpOpenConnectionTimeout);
-            this.groupBoxCommonParametersUdpRtp.Controls.Add(this.labelUdpRtpNetworkInterface);
-            this.groupBoxCommonParametersUdpRtp.Controls.Add(this.comboBoxUdpRtpPreferredNetworkInterface);
-            this.groupBoxCommonParametersUdpRtp.Location = new System.Drawing.Point(6, 10);
-            this.groupBoxCommonParametersUdpRtp.Name = "groupBoxCommonParametersUdpRtp";
-            this.groupBoxCommonParametersUdpRtp.Size = new System.Drawing.Size(464, 153);
-            this.groupBoxCommonParametersUdpRtp.TabIndex = 0;
-            this.groupBoxCommonParametersUdpRtp.TabStop = false;
-            this.groupBoxCommonParametersUdpRtp.Text = "Common configuration parameters for UDP or RTP protocol";
+            this.groupBoxUdpRtpCommonParameters.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBoxUdpRtpCommonParameters.Controls.Add(this.label56);
+            this.groupBoxUdpRtpCommonParameters.Controls.Add(this.labelUdpRtpReceiveDataCheckInterval);
+            this.groupBoxUdpRtpCommonParameters.Controls.Add(this.textBoxUdpRtpReceiveDataCheckInterval);
+            this.groupBoxUdpRtpCommonParameters.Controls.Add(this.label37);
+            this.groupBoxUdpRtpCommonParameters.Controls.Add(this.label54);
+            this.groupBoxUdpRtpCommonParameters.Controls.Add(this.label55);
+            this.groupBoxUdpRtpCommonParameters.Controls.Add(this.labelUdpRtpTotalReopenConnectionTimeout);
+            this.groupBoxUdpRtpCommonParameters.Controls.Add(this.labelUdpRtpOpenConnectionSleepTime);
+            this.groupBoxUdpRtpCommonParameters.Controls.Add(this.textBoxUdpRtpTotalReopenConnectionTimeout);
+            this.groupBoxUdpRtpCommonParameters.Controls.Add(this.textBoxUdpRtpOpenConnectionSleepTime);
+            this.groupBoxUdpRtpCommonParameters.Controls.Add(this.textBoxUdpRtpOpenConnectionTimeout);
+            this.groupBoxUdpRtpCommonParameters.Controls.Add(this.labelUdpRtpOpenConnectionTimeout);
+            this.groupBoxUdpRtpCommonParameters.Controls.Add(this.labelUdpRtpNetworkInterface);
+            this.groupBoxUdpRtpCommonParameters.Controls.Add(this.comboBoxUdpRtpPreferredNetworkInterface);
+            this.groupBoxUdpRtpCommonParameters.Location = new System.Drawing.Point(6, 10);
+            this.groupBoxUdpRtpCommonParameters.Name = "groupBoxUdpRtpCommonParameters";
+            this.groupBoxUdpRtpCommonParameters.Size = new System.Drawing.Size(464, 153);
+            this.groupBoxUdpRtpCommonParameters.TabIndex = 0;
+            this.groupBoxUdpRtpCommonParameters.TabStop = false;
+            this.groupBoxUdpRtpCommonParameters.Text = "Common configuration parameters for UDP or RTP protocol";
             // 
             // label56
             // 
@@ -795,7 +977,7 @@
             this.textBoxStreamAnalysisTimeout.Location = new System.Drawing.Point(194, 37);
             this.textBoxStreamAnalysisTimeout.Name = "textBoxStreamAnalysisTimeout";
             this.textBoxStreamAnalysisTimeout.Size = new System.Drawing.Size(81, 20);
-            this.textBoxStreamAnalysisTimeout.TabIndex = 1;
+            this.textBoxStreamAnalysisTimeout.TabIndex = 2;
             // 
             // tabPagePlaylistEditor
             // 
@@ -1078,13 +1260,37 @@
             this.tabPageSettings.Text = "Settings";
             this.tabPageSettings.UseVisualStyleBackColor = true;
             // 
+            // groupBoxStreamAnalysis
+            // 
+            this.groupBoxStreamAnalysis.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBoxStreamAnalysis.Controls.Add(this.checkBoxStreamAnalysis);
+            this.groupBoxStreamAnalysis.Controls.Add(this.labelStreamAnalysisTimeout);
+            this.groupBoxStreamAnalysis.Controls.Add(this.textBoxStreamAnalysisTimeout);
+            this.groupBoxStreamAnalysis.Location = new System.Drawing.Point(6, 6);
+            this.groupBoxStreamAnalysis.Name = "groupBoxStreamAnalysis";
+            this.groupBoxStreamAnalysis.Size = new System.Drawing.Size(464, 66);
+            this.groupBoxStreamAnalysis.TabIndex = 0;
+            this.groupBoxStreamAnalysis.TabStop = false;
+            this.groupBoxStreamAnalysis.Text = "Stream analysis";
+            // 
+            // checkBoxStreamAnalysis
+            // 
+            this.checkBoxStreamAnalysis.AutoSize = true;
+            this.checkBoxStreamAnalysis.Location = new System.Drawing.Point(7, 20);
+            this.checkBoxStreamAnalysis.Name = "checkBoxStreamAnalysis";
+            this.checkBoxStreamAnalysis.Size = new System.Drawing.Size(99, 17);
+            this.checkBoxStreamAnalysis.TabIndex = 0;
+            this.checkBoxStreamAnalysis.Text = "Stream analysis";
+            this.checkBoxStreamAnalysis.UseVisualStyleBackColor = true;
+            // 
             // labelStreamAnalysisTimeout
             // 
             this.labelStreamAnalysisTimeout.AutoSize = true;
             this.labelStreamAnalysisTimeout.Location = new System.Drawing.Point(6, 40);
             this.labelStreamAnalysisTimeout.Name = "labelStreamAnalysisTimeout";
             this.labelStreamAnalysisTimeout.Size = new System.Drawing.Size(182, 13);
-            this.labelStreamAnalysisTimeout.TabIndex = 0;
+            this.labelStreamAnalysisTimeout.TabIndex = 1;
             this.labelStreamAnalysisTimeout.Text = "Stream analysis timeout (milliseconds)";
             // 
             // tabPageGeneral
@@ -1144,29 +1350,35 @@
             this.buttonSetMpeg2TSParser.Visible = false;
             this.buttonSetMpeg2TSParser.Click += new System.EventHandler(this.buttonSetMpeg2TSParser_Click);
             // 
-            // groupBoxStreamAnalysis
+            // checkBoxHttpServerAuthentication
             // 
-            this.groupBoxStreamAnalysis.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.groupBoxStreamAnalysis.Controls.Add(this.checkBoxStreamAnalysis);
-            this.groupBoxStreamAnalysis.Controls.Add(this.labelStreamAnalysisTimeout);
-            this.groupBoxStreamAnalysis.Controls.Add(this.textBoxStreamAnalysisTimeout);
-            this.groupBoxStreamAnalysis.Location = new System.Drawing.Point(6, 6);
-            this.groupBoxStreamAnalysis.Name = "groupBoxStreamAnalysis";
-            this.groupBoxStreamAnalysis.Size = new System.Drawing.Size(464, 66);
-            this.groupBoxStreamAnalysis.TabIndex = 2;
-            this.groupBoxStreamAnalysis.TabStop = false;
-            this.groupBoxStreamAnalysis.Text = "Stream analysis";
+            this.checkBoxHttpServerAuthentication.AutoSize = true;
+            this.checkBoxHttpServerAuthentication.Location = new System.Drawing.Point(11, 19);
+            this.checkBoxHttpServerAuthentication.Name = "checkBoxHttpServerAuthentication";
+            this.checkBoxHttpServerAuthentication.Size = new System.Drawing.Size(161, 17);
+            this.checkBoxHttpServerAuthentication.TabIndex = 0;
+            this.checkBoxHttpServerAuthentication.Text = "Enable server authentication";
+            this.checkBoxHttpServerAuthentication.UseVisualStyleBackColor = true;
             // 
-            // checkBoxStreamAnalysis
+            // checkBoxHttpProxyServerAuthentication
             // 
-            this.checkBoxStreamAnalysis.AutoSize = true;
-            this.checkBoxStreamAnalysis.Location = new System.Drawing.Point(7, 20);
-            this.checkBoxStreamAnalysis.Name = "checkBoxStreamAnalysis";
-            this.checkBoxStreamAnalysis.Size = new System.Drawing.Size(99, 17);
-            this.checkBoxStreamAnalysis.TabIndex = 2;
-            this.checkBoxStreamAnalysis.Text = "Stream analysis";
-            this.checkBoxStreamAnalysis.UseVisualStyleBackColor = true;
+            this.checkBoxHttpProxyServerAuthentication.AutoSize = true;
+            this.checkBoxHttpProxyServerAuthentication.Location = new System.Drawing.Point(11, 19);
+            this.checkBoxHttpProxyServerAuthentication.Name = "checkBoxHttpProxyServerAuthentication";
+            this.checkBoxHttpProxyServerAuthentication.Size = new System.Drawing.Size(189, 17);
+            this.checkBoxHttpProxyServerAuthentication.TabIndex = 0;
+            this.checkBoxHttpProxyServerAuthentication.Text = "Enable proxy server authentication";
+            this.checkBoxHttpProxyServerAuthentication.UseVisualStyleBackColor = true;
+            // 
+            // rtspConnectionPreference
+            // 
+            this.rtspConnectionPreference.Location = new System.Drawing.Point(172, 150);
+            this.rtspConnectionPreference.MulticastPreference = 2;
+            this.rtspConnectionPreference.Name = "rtspConnectionPreference";
+            this.rtspConnectionPreference.SameConnectionPreference = 0;
+            this.rtspConnectionPreference.Size = new System.Drawing.Size(126, 56);
+            this.rtspConnectionPreference.TabIndex = 16;
+            this.rtspConnectionPreference.UdpPreference = 1;
             // 
             // Editor
             // 
@@ -1182,27 +1394,33 @@
             this.Name = "Editor";
             this.Size = new System.Drawing.Size(484, 426);
             this.tabPageHttp.ResumeLayout(false);
-            this.groupBoxCommonParametersHttp.ResumeLayout(false);
-            this.groupBoxCommonParametersHttp.PerformLayout();
+            this.groupBoxHttpProxyServerAuthentication.ResumeLayout(false);
+            this.groupBoxHttpProxyServerAuthentication.PerformLayout();
+            this.groupBoxHttpServerAuthentication.ResumeLayout(false);
+            this.groupBoxHttpServerAuthentication.PerformLayout();
+            this.groupBoxHttpCommonParameters.ResumeLayout(false);
+            this.groupBoxHttpCommonParameters.PerformLayout();
             this.tabPageRtmp.ResumeLayout(false);
-            this.groupBoxCommonParametersRtmp.ResumeLayout(false);
-            this.groupBoxCommonParametersRtmp.PerformLayout();
+            this.groupBoxRtmpCommonParameters.ResumeLayout(false);
+            this.groupBoxRtmpCommonParameters.PerformLayout();
             this.tabPageRtsp.ResumeLayout(false);
-            this.groupBoxCommonParametersRtsp.ResumeLayout(false);
-            this.groupBoxCommonParametersRtsp.PerformLayout();
+            this.groupBoxRtspCommonParameters.ResumeLayout(false);
+            this.groupBoxRtspCommonParameters.PerformLayout();
             this.tabPageUdpRtp.ResumeLayout(false);
-            this.groupBoxCommonParametersUdpRtp.ResumeLayout(false);
-            this.groupBoxCommonParametersUdpRtp.PerformLayout();
+            this.groupBoxUdpRtpCommonParameters.ResumeLayout(false);
+            this.groupBoxUdpRtpCommonParameters.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).EndInit();
             this.tabPagePlaylistEditor.ResumeLayout(false);
             this.splitContainerPlaylist.Panel1.ResumeLayout(false);
             this.splitContainerPlaylist.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainerPlaylist)).EndInit();
             this.splitContainerPlaylist.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewPlaylist)).EndInit();
             this.tabProtocols.ResumeLayout(false);
             this.tabPageDatabaseEditor.ResumeLayout(false);
             this.splitContainerDatabase.Panel1.ResumeLayout(false);
             this.splitContainerDatabase.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainerDatabase)).EndInit();
             this.splitContainerDatabase.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewDatabase)).EndInit();
             this.tabPageSettings.ResumeLayout(false);
@@ -1215,7 +1433,7 @@
         #endregion
 
         private System.Windows.Forms.TabPage tabPageHttp;
-        private System.Windows.Forms.GroupBox groupBoxCommonParametersHttp;
+        private System.Windows.Forms.GroupBox groupBoxHttpCommonParameters;
         private System.Windows.Forms.Label label25;
         private System.Windows.Forms.Label label22;
         private System.Windows.Forms.Label label20;
@@ -1228,7 +1446,7 @@
         private System.Windows.Forms.Label labelHttpNetworkInterface;
         private System.Windows.Forms.ComboBox comboBoxHttpPreferredNetworkInterface;
         private System.Windows.Forms.TabPage tabPageRtmp;
-        private System.Windows.Forms.GroupBox groupBoxCommonParametersRtmp;
+        private System.Windows.Forms.GroupBox groupBoxRtmpCommonParameters;
         private System.Windows.Forms.Label label17;
         private System.Windows.Forms.Label label18;
         private System.Windows.Forms.Label label19;
@@ -1241,7 +1459,7 @@
         private System.Windows.Forms.Label labelRtmpNetworkInterface;
         private System.Windows.Forms.ComboBox comboBoxRtmpPreferredNetworkInterface;
         private System.Windows.Forms.TabPage tabPageRtsp;
-        private System.Windows.Forms.GroupBox groupBoxCommonParametersRtsp;
+        private System.Windows.Forms.GroupBox groupBoxRtspCommonParameters;
         private System.Windows.Forms.Label label59;
         private System.Windows.Forms.TextBox textBoxRtspClientPortMax;
         private System.Windows.Forms.Label labelRtspConnectionRange;
@@ -1258,7 +1476,7 @@
         private System.Windows.Forms.Label labelRtspNetworkInterface;
         private System.Windows.Forms.ComboBox comboBoxRtspPreferredNetworkInterface;
         private System.Windows.Forms.TabPage tabPageUdpRtp;
-        private System.Windows.Forms.GroupBox groupBoxCommonParametersUdpRtp;
+        private System.Windows.Forms.GroupBox groupBoxUdpRtpCommonParameters;
         private System.Windows.Forms.Label label56;
         private System.Windows.Forms.Label labelUdpRtpReceiveDataCheckInterval;
         private System.Windows.Forms.TextBox textBoxUdpRtpReceiveDataCheckInterval;
@@ -1312,5 +1530,23 @@
         private System.Windows.Forms.Label labelStreamAnalysisTimeout;
         private System.Windows.Forms.GroupBox groupBoxStreamAnalysis;
         private System.Windows.Forms.CheckBox checkBoxStreamAnalysis;
+        private System.Windows.Forms.GroupBox groupBoxHttpProxyServerAuthentication;
+        private System.Windows.Forms.GroupBox groupBoxHttpServerAuthentication;
+        private System.Windows.Forms.Label labelHttpServerPassword;
+        private System.Windows.Forms.TextBox textBoxHttpServerPassword;
+        private System.Windows.Forms.TextBox textBoxHttpServerUserName;
+        private System.Windows.Forms.Label labelHttpServerUserName;
+        private System.Windows.Forms.Label labelHttpProxyServerPassword;
+        private System.Windows.Forms.Label labelHttpProxyServerUserName;
+        private System.Windows.Forms.Label labelHttpProxyServerPort;
+        private System.Windows.Forms.Label labelHttpProxyServer;
+        private System.Windows.Forms.TextBox textBoxHttpProxyServerPassword;
+        private System.Windows.Forms.TextBox textBoxHttpProxyServerUserName;
+        private System.Windows.Forms.TextBox textBoxHttpProxyServerPort;
+        private System.Windows.Forms.TextBox textBoxHttpProxyServer;
+        private System.Windows.Forms.ComboBox comboBoxHttpProxyServerType;
+        private System.Windows.Forms.Label labelHttpProxyType;
+        private System.Windows.Forms.CheckBox checkBoxHttpServerAuthentication;
+        private System.Windows.Forms.CheckBox checkBoxHttpProxyServerAuthentication;
     }
 }

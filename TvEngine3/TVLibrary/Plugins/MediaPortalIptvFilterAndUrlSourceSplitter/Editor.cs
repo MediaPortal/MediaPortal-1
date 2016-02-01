@@ -163,6 +163,17 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter
             this.textBoxHttpOpenConnectionSleepTime.Text = this.settings.Http.OpenConnectionSleepTime.ToString();
             this.textBoxHttpTotalReopenConnectionTimeout.Text = this.settings.Http.TotalReopenConnectionTimeout.ToString();
 
+            this.checkBoxHttpServerAuthentication.Checked = this.settings.Http.EnableServerAuthentication;
+            this.textBoxHttpServerUserName.Text = this.settings.Http.ServerUserName;
+            this.textBoxHttpServerPassword.Text = this.settings.Http.ServerPassword;
+
+            this.checkBoxHttpProxyServerAuthentication.Checked = this.settings.Http.EnableProxyServerAuthentication;
+            this.textBoxHttpProxyServer.Text = this.settings.Http.ProxyServer;
+            this.textBoxHttpProxyServerPort.Text = this.settings.Http.ProxyServerPort.ToString();
+            this.textBoxHttpProxyServerUserName.Text = this.settings.Http.ProxyServerUserName;
+            this.textBoxHttpProxyServerPassword.Text = this.settings.Http.ProxyServerPassword;
+            this.comboBoxHttpProxyServerType.SelectedIndex = ((int)this.settings.Http.ProxyServerType - 1);
+
             this.textBoxRtmpOpenConnectionTimeout.Text = this.settings.Rtmp.OpenConnectionTimeout.ToString();
             this.textBoxRtmpOpenConnectionSleepTime.Text = this.settings.Rtmp.OpenConnectionSleepTime.ToString();
             this.textBoxRtmpTotalReopenConnectionTimeout.Text = this.settings.Rtmp.TotalReopenConnectionTimeout.ToString();
@@ -379,6 +390,28 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter
                 this.errorProvider.SetError(this.textBoxHttpTotalReopenConnectionTimeout, ex.Message);
                 error = true;
             }
+
+            currentSettings.Http.EnableServerAuthentication = this.checkBoxHttpServerAuthentication.Checked;
+            currentSettings.Http.ServerUserName = this.textBoxHttpServerUserName.Text;
+            currentSettings.Http.ServerPassword = this.textBoxHttpServerPassword.Text;
+
+            currentSettings.Http.EnableProxyServerAuthentication = this.checkBoxHttpProxyServerAuthentication.Checked;
+            currentSettings.Http.ProxyServer = this.textBoxHttpProxyServer.Text;
+
+            try
+            {
+                currentSettings.Http.ProxyServerPort = int.Parse(this.textBoxHttpProxyServerPort.Text);
+                this.errorProvider.SetError(this.textBoxHttpProxyServerPort, "");
+            }
+            catch (Exception ex)
+            {
+                this.errorProvider.SetError(this.textBoxHttpProxyServerPort, ex.Message);
+                error = true;
+            }
+
+            currentSettings.Http.ProxyServerUserName = this.textBoxHttpProxyServerUserName.Text;
+            currentSettings.Http.ProxyServerPassword = this.textBoxHttpProxyServerPassword.Text;
+            currentSettings.Http.ProxyServerType = (ProxyServerType)(this.comboBoxHttpProxyServerType.SelectedIndex + 1);
 
             // RTMP
             currentSettings.Rtmp.NetworkInterface = (String)this.comboBoxRtmpPreferredNetworkInterface.SelectedItem;

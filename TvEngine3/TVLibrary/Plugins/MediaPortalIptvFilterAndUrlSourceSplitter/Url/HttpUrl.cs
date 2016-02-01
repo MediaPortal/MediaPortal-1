@@ -613,6 +613,64 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter.Url
             {
                 this.TotalReopenConnectionTimeout = httpCurrentSettings.TotalReopenConnectionTimeout;
             }
+
+            /* server authentication */
+
+            if ((this.ServerAuthenticate == HttpUrl.DefaultHttpServerAuthenticate) ||
+                (this.ServerAuthenticate == httpPreviousSettings.EnableServerAuthentication))
+            {
+                this.ServerAuthenticate = httpCurrentSettings.EnableServerAuthentication;
+            }
+
+            if ((this.ServerUserName == HttpUrl.DefaultHttpServerUserName) ||
+                (this.ServerUserName == httpPreviousSettings.ServerUserName))
+            {
+                this.ServerUserName = httpCurrentSettings.ServerUserName;
+            }
+
+            if ((this.ServerPassword == HttpUrl.DefaultHttpServerPassword) ||
+                (this.ServerPassword == httpPreviousSettings.ServerPassword))
+            {
+                this.ServerPassword = httpCurrentSettings.ServerPassword;
+            }
+
+            /* proxy server authentication */
+
+            if ((this.ProxyServerAuthenticate == HttpUrl.DefaultHttpProxyServerAuthenticate) ||
+                (this.ProxyServerAuthenticate == httpPreviousSettings.EnableProxyServerAuthentication))
+            {
+                this.ProxyServerAuthenticate = httpCurrentSettings.EnableProxyServerAuthentication;
+            }
+
+            if ((this.ProxyServer == HttpUrl.DefaultHttpProxyServer) ||
+                (this.ProxyServer == httpPreviousSettings.ProxyServer))
+            {
+                this.ProxyServer = httpCurrentSettings.ProxyServer;
+            }
+
+            if ((this.ProxyServerPort == HttpUrl.DefaultHttpProxyServerPort) ||
+                (this.ProxyServerPort == httpPreviousSettings.ProxyServerPort))
+            {
+                this.ProxyServerPort = httpCurrentSettings.ProxyServerPort;
+            }
+
+            if ((this.ProxyServerUserName == HttpUrl.DefaultHttpProxyServerUserName) ||
+                (this.ProxyServerUserName == httpPreviousSettings.ProxyServerUserName))
+            {
+                this.ProxyServerUserName = httpCurrentSettings.ProxyServerUserName;
+            }
+
+            if ((this.ProxyServerPassword == HttpUrl.DefaultHttpProxyServerPassword) ||
+                (this.ProxyServerPassword == httpPreviousSettings.ProxyServerPassword))
+            {
+                this.ProxyServerPassword = httpCurrentSettings.ProxyServerPassword;
+            }
+
+            if ((this.ProxyServerType == HttpUrl.DefaultHttpProxyServerType) ||
+                (this.ProxyServerType == httpPreviousSettings.ProxyServerType))
+            {
+                this.ProxyServerType = httpCurrentSettings.ProxyServerType;
+            }
         }
 
         #endregion
