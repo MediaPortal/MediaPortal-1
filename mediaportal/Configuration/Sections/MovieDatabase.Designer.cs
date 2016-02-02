@@ -2227,7 +2227,7 @@ namespace MediaPortal.Configuration.Sections
       this.btCollectionThumbAdd.Size = new System.Drawing.Size(84, 23);
       this.btCollectionThumbAdd.TabIndex = 49;
       this.btCollectionThumbAdd.Text = "Add";
-      this.toolTipMPvdb.SetToolTip(this.btCollectionThumbAdd, "Local image browsing.\r\n(Use local image for genre thumb).");
+      this.toolTipMPvdb.SetToolTip(this.btCollectionThumbAdd, "Local image browsing.\r\n(Use local image for collection thumb).");
       this.btCollectionThumbAdd.UseVisualStyleBackColor = true;
       this.btCollectionThumbAdd.Click += new System.EventHandler(this.btCollectionThumbAdd_Click);
       // 
@@ -2299,7 +2299,7 @@ namespace MediaPortal.Configuration.Sections
       this.btRemoveCollectionToMovie.Size = new System.Drawing.Size(36, 22);
       this.btRemoveCollectionToMovie.TabIndex = 2;
       this.btRemoveCollectionToMovie.Text = "<<";
-      this.toolTipMPvdb.SetToolTip(this.btRemoveCollectionToMovie, "Remove selected Genre(s) from movie");
+      this.toolTipMPvdb.SetToolTip(this.btRemoveCollectionToMovie, "Remove selected Collection(s) from movie");
       this.btRemoveCollectionToMovie.UseVisualStyleBackColor = true;
       this.btRemoveCollectionToMovie.Click += new System.EventHandler(this.btRemoveCollectionToMovie_Click);
       // 
@@ -2313,7 +2313,7 @@ namespace MediaPortal.Configuration.Sections
       this.btAddCollectionToMovie.Size = new System.Drawing.Size(36, 22);
       this.btAddCollectionToMovie.TabIndex = 1;
       this.btAddCollectionToMovie.Text = ">>";
-      this.toolTipMPvdb.SetToolTip(this.btAddCollectionToMovie, "Add selected Genre(s) to movie");
+      this.toolTipMPvdb.SetToolTip(this.btAddCollectionToMovie, "Add selected Collection(s) to movie");
       this.btAddCollectionToMovie.UseVisualStyleBackColor = true;
       this.btAddCollectionToMovie.Click += new System.EventHandler(this.btAddCollectionToMovie_Click);
       // 
@@ -2421,7 +2421,7 @@ namespace MediaPortal.Configuration.Sections
       this.tbCollectionDescription.ScrollBars = System.Windows.Forms.ScrollBars.Both;
       this.tbCollectionDescription.Size = new System.Drawing.Size(447, 218);
       this.tbCollectionDescription.TabIndex = 75;
-      this.toolTipMPvdb.SetToolTip(this.tbCollectionDescription, "Add optional group description which will be visible \r\non group select in movie p" +
+      this.toolTipMPvdb.SetToolTip(this.tbCollectionDescription, "Add optional collection description which will be visible \r\non collection select in movie p" +
         "lot area in GUI.\r\n");
       // 
       // cbCollectionsMisc

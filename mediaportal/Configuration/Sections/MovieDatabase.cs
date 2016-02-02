@@ -2017,9 +2017,9 @@ namespace MediaPortal.Configuration.Sections
       {
         AddThumbImage(lvAllCollection, Thumbs.MovieCollection, pbCollectionImage);
       }
-      if (lvAllCollection.SelectedItems.Count == 1)
+      if (lvMovieCollection.SelectedItems.Count == 1)
       {
-        AddThumbImage(lvAllCollection, Thumbs.MovieCollection, pbCollectionImage);
+        AddThumbImage(lvMovieCollection, Thumbs.MovieCollection, pbCollectionImage);
       }
     }
 
