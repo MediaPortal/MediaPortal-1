@@ -23,30 +23,9 @@
 #ifndef __MP_URL_SOURCE_SPLITTER_PROTOCOL_MSHS_PARAMETERS_DEFINED
 #define __MP_URL_SOURCE_SPLITTER_PROTOCOL_MSHS_PARAMETERS_DEFINED
 
-#define PARAMETER_NAME_MSHS_REFERER                                   L"MshsReferer"
-#define PARAMETER_NAME_MSHS_USER_AGENT                                L"MshsUserAgent"
-#define PARAMETER_NAME_MSHS_COOKIE                                    L"MshsCookie"
-#define PARAMETER_NAME_MSHS_VERSION                                   L"MshsVersion"
-#define PARAMETER_NAME_MSHS_IGNORE_CONTENT_LENGTH                     L"MshsIgnoreContentLength"
+#include "MPUrlSourceSplitter_Protocol_Http_Parameters.h"
 
 #define PARAMETER_NAME_MSHS_BASE_URL                                  L"MshsBaseUrl"
 #define PARAMETER_NAME_MSHS_MANIFEST                                  L"MshsManifest"
-
-#define PARAMETER_NAME_MSHS_OPEN_CONNECTION_TIMEOUT                   L"MshsOpenConnectionTimeout"
-#define PARAMETER_NAME_MSHS_OPEN_CONNECTION_SLEEP_TIME                L"MshsOpenConnectionSleepTime"
-#define PARAMETER_NAME_MSHS_TOTAL_REOPEN_CONNECTION_TIMEOUT           L"MshsTotalReopenConnectionTimeout"
-
-#define PARAMETER_NAME_MSHS_COOKIES_COUNT                             L"MshsCookiesCount"
-#define MSHS_COOKIE_FORMAT_PARAMETER_NAME                             L"MshsCookie%08u"
-
-// we should get data in twenty seconds (splitter)
-#define MSHS_OPEN_CONNECTION_TIMEOUT_DEFAULT_SPLITTER                 20000
-#define MSHS_OPEN_CONNECTION_SLEEP_TIME_DEFAULT_SPLITTER              0
-#define MSHS_TOTAL_REOPEN_CONNECTION_TIMEOUT_DEFAULT_SPLITTER         60000
-
-// we should get data in twenty seconds (iptv)
-#define MSHS_OPEN_CONNECTION_TIMEOUT_DEFAULT_IPTV                     20000
-#define MSHS_OPEN_CONNECTION_SLEEP_TIME_DEFAULT_IPTV                  0
-#define MSHS_TOTAL_REOPEN_CONNECTION_TIMEOUT_DEFAULT_IPTV             60000
 
 #endif

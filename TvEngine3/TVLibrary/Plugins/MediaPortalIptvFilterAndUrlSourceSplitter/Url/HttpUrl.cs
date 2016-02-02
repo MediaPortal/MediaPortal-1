@@ -18,11 +18,19 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter.Url
         private String referer = HttpUrl.DefaultHttpReferer;
         private String userAgent = HttpUrl.DefaultHttpUserAgent;
         Version version = HttpUrl.DefaultHttpVersion;
-        private bool ignoreContentLength = HttpUrl.DefaultHttpIgnoreContentLength;
         private int openConnectionTimeout = HttpUrl.DefaultHttpOpenConnectionTimeout;
         private int openConnectionSleepTime = HttpUrl.DefaultHttpOpenConnectionSleepTime;
         private int totalReopenConnectionTimeout = HttpUrl.DefaultHttpTotalReopenConnectionTimeout;
         private String cookie = HttpUrl.DefaultHttpCookie;
+
+        private String serverUserName = HttpUrl.DefaultHttpServerUserName;
+        private String serverPassword = HttpUrl.DefaultHttpServerPassword;
+
+        private String proxyServer = HttpUrl.DefaultHttpProxyServer;
+        private int proxyServerPort = HttpUrl.DefaultHttpProxyServerPort;
+        private String proxyServerUserName = HttpUrl.DefaultHttpProxyServerUserName;
+        private String proxyServerPassword = HttpUrl.DefaultHttpProxyServerPassword;
+        private ProxyServerType proxyServerType = HttpUrl.DefaultHttpProxyServerType;
 
         #endregion
 
@@ -47,8 +55,21 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter.Url
         public HttpUrl(Uri uri)
             : base(uri)
         {
+            this.Uri = new Uri(uri.GetComponents(UriComponents.AbsoluteUri & ~UriComponents.UserInfo, UriFormat.UriEscaped));
             this.SeekingSupported = HttpUrl.DefaultHttpSeekingSupported;
             this.SeekingSupportDetection = HttpUrl.DefaultHttpSeekingSupportDetection;
+
+            if (!String.IsNullOrWhiteSpace(uri.UserInfo))
+            {
+                String[] userNamePassword = uri.UserInfo.Split(new String[] { ":" }, StringSplitOptions.RemoveEmptyEntries);
+
+                if (userNamePassword.Length == 2)
+                {
+                    this.ServerAuthenticate = true;
+                    this.ServerUserName = userNamePassword[0];
+                    this.ServerPassword = userNamePassword[1];
+                }
+            }
         }
 
         #endregion
@@ -121,14 +142,7 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter.Url
         /// This is useful to set for Apache 1.x (and similar servers) which will report incorrect content length for files over 2 gigabytes.
         /// </remarks>
         [Category("HTTP"), Description("Specifies if content length HTTP header have to be ignored (e.g. because server reports bad content length)."), DefaultValue(HttpUrl.DefaultHttpIgnoreContentLength)]
-        public Boolean IgnoreContentLength
-        {
-            get { return this.ignoreContentLength; }
-            set
-            {
-                this.ignoreContentLength = value;
-            }
-        }
+        public Boolean IgnoreContentLength { get; set; }
 
         /// <summary>
         /// Gets or sets HTTP cookie header.
@@ -226,6 +240,153 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter.Url
         [Category("HTTP"), Description("Enables or disables automatic detection of seeking support."), DefaultValue(HttpUrl.DefaultHttpSeekingSupportDetection)]
         public Boolean SeekingSupportDetection { get; set; }
 
+        /// <summary>
+        /// Specifies if filter has to authenticate against remote server.
+        /// </summary>
+        [Category("Server authentication"), Description("Specifies if filter has to authenticate against remote server."), DefaultValue(HttpUrl.DefaultHttpServerAuthenticate)]
+        public Boolean ServerAuthenticate { get; set; }
+
+        /// <summary>
+        /// Gets or sets the remote server user name.
+        /// </summary>
+        [Category("Server authentication"), Description("The remote server user name."), DefaultValue(HttpUrl.DefaultHttpServerUserName)]
+        public String ServerUserName
+        {
+            get { return this.serverUserName; }
+            set
+            {
+                if (value == null)
+                {
+                    throw new ArgumentNullException("ServerUserName");
+                }
+
+                this.serverUserName = value;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the remote server password.
+        /// </summary>
+        [Category("Server authentication"), Description("The remote server password."), DefaultValue(HttpUrl.DefaultHttpServerPassword)]
+        public String ServerPassword
+        {
+            get { return this.serverPassword; }
+            set
+            {
+                if (value == null)
+                {
+                    throw new ArgumentNullException("ServerPassword");
+                }
+
+                this.serverPassword = value;
+            }
+        }
+
+        /// <summary>
+        /// Specifies if filter has to authenticate against proxy server.
+        /// </summary>
+        [Category("Proxy server authentication"), Description("Specifies if filter has to authenticate against proxy server."), DefaultValue(HttpUrl.DefaultHttpProxyServerAuthenticate)]
+        public Boolean ProxyServerAuthenticate { get; set; }
+
+        /// <summary>
+        /// Gets or sets the proxy server.
+        /// </summary>
+        [Category("Proxy server authentication"), Description("The proxy server."), DefaultValue(HttpUrl.DefaultHttpProxyServer)]
+        public String ProxyServer
+        {
+            get { return this.proxyServer; }
+            set
+            {
+                if (value == null)
+                {
+                    throw new ArgumentNullException("ProxyServer");
+                }
+
+                this.proxyServer = value;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the proxy server port.
+        /// </summary>
+        [Category("Proxy server authentication"), Description("The proxy server port."), DefaultValue(HttpUrl.DefaultHttpProxyServerPort)]
+        public int ProxyServerPort
+        {
+            get { return this.proxyServerPort; }
+            set
+            {
+                if ((value < 0) || (value > 65535))
+                {
+                    throw new ArgumentOutOfRangeException("ProxyServerPort", value, "Must be greater than or equal to zero and lower than 65536.");
+                }
+
+                this.proxyServerPort = value;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the proxy server user name.
+        /// </summary>
+        [Category("Proxy server authentication"), Description("The proxy server user name."), DefaultValue(HttpUrl.DefaultHttpProxyServerUserName)]
+        public String ProxyServerUserName
+        {
+            get { return this.proxyServerUserName; }
+            set
+            {
+                if (value == null)
+                {
+                    throw new ArgumentNullException("ProxyServerUserName");
+                }
+
+                this.proxyServerUserName = value;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the proxy server password.
+        /// </summary>
+        [Category("Proxy server authentication"), Description("The proxy server password."), DefaultValue(HttpUrl.DefaultHttpProxyServerPassword)]
+        public String ProxyServerPassword
+        {
+            get { return this.proxyServerPassword; }
+            set
+            {
+                if (value == null)
+                {
+                    throw new ArgumentNullException("ProxyServerPassword");
+                }
+
+                this.proxyServerPassword = value;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the proxy server type.
+        /// </summary>
+        [Category("Proxy server authentication"), Description("The proxy server type."), DefaultValue(HttpUrl.DefaultHttpProxyServerType)]
+        public ProxyServerType ProxyServerType
+        {
+            get { return this.proxyServerType; }
+            set
+            {
+                switch (value)
+                {
+                    case ProxyServerType.None:
+                    case ProxyServerType.HTTP:
+                    case ProxyServerType.HTTP_1_0:
+                    case ProxyServerType.SOCKS4:
+                    case ProxyServerType.SOCKS5:
+                    case ProxyServerType.SOCKS4A:
+                    case ProxyServerType.SOCKS5_HOSTNAME:
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException("ProxyServerType", value, "The proxy server type value is unknown.");
+                }
+
+                this.proxyServerType = value;
+            }
+        }
+
         #endregion
 
         #region Methods
@@ -287,6 +448,23 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter.Url
             if (this.SeekingSupportDetection != HttpUrl.DefaultHttpSeekingSupportDetection)
             {
                 parameters.Add(new Parameter(HttpUrl.ParameterHttpSeekingSupportDetection, this.SeekingSupportDetection ? SimpleUrl.DefaultTrue : SimpleUrl.DefaultFalse));
+            }
+
+            if (this.ServerAuthenticate != HttpUrl.DefaultHttpServerAuthenticate)
+            {
+                parameters.Add(new Parameter(HttpUrl.ParameterHttpServerAuthenticate, this.ServerAuthenticate ? SimpleUrl.DefaultTrue : SimpleUrl.DefaultFalse));
+                parameters.Add(new Parameter(HttpUrl.ParameterHttpServerUserName, this.ServerUserName));
+                parameters.Add(new Parameter(HttpUrl.ParameterHttpServerPassword, this.ServerPassword));
+            }
+
+            if (this.ProxyServerAuthenticate != HttpUrl.DefaultHttpProxyServerAuthenticate)
+            {
+                parameters.Add(new Parameter(HttpUrl.ParameterHttpProxyServerAuthenticate, this.ProxyServerAuthenticate ? SimpleUrl.DefaultTrue : SimpleUrl.DefaultFalse));
+                parameters.Add(new Parameter(HttpUrl.ParameterHttpProxyServer, this.ProxyServer));
+                parameters.Add(new Parameter(HttpUrl.ParameterHttpProxyServerPort, this.ProxyServerPort.ToString()));
+                parameters.Add(new Parameter(HttpUrl.ParameterHttpProxyServerUserName, this.ProxyServerUserName));
+                parameters.Add(new Parameter(HttpUrl.ParameterHttpProxyServerPassword, this.ProxyServerPassword));
+                parameters.Add(new Parameter(HttpUrl.ParameterHttpProxyServerType, ((int)this.ProxyServerType).ToString()));
             }
 
             // return formatted connection string
@@ -359,12 +537,147 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter.Url
                 {
                     this.SeekingSupportDetection = (String.CompareOrdinal(param.Value, SimpleUrl.DefaultTrue) == 0);
                 }
+
+                /* server authentication */
+
+                if (String.CompareOrdinal(param.Name, HttpUrl.ParameterHttpServerAuthenticate) == 0)
+                {
+                    this.ServerAuthenticate = (String.CompareOrdinal(param.Value, SimpleUrl.DefaultTrue) == 0);
+                }
+
+                if (String.CompareOrdinal(param.Name, HttpUrl.ParameterHttpServerUserName) == 0)
+                {
+                    this.ServerUserName = param.Value;
+                }
+
+                if (String.CompareOrdinal(param.Name, HttpUrl.ParameterHttpServerPassword) == 0)
+                {
+                    this.ServerPassword = param.Value;
+                }
+
+                /* proxy server authentication */
+
+                if (String.CompareOrdinal(param.Name, HttpUrl.ParameterHttpProxyServerAuthenticate) == 0)
+                {
+                    this.ProxyServerAuthenticate = (String.CompareOrdinal(param.Value, SimpleUrl.DefaultTrue) == 0);
+                }
+
+                if (String.CompareOrdinal(param.Name, HttpUrl.ParameterHttpProxyServer) == 0)
+                {
+                    this.ProxyServer = param.Value;
+                }
+
+                if (String.CompareOrdinal(param.Name, HttpUrl.ParameterHttpProxyServerPort) == 0)
+                {
+                    this.ProxyServerPort = int.Parse(param.Value);
+                }
+
+                if (String.CompareOrdinal(param.Name, HttpUrl.ParameterHttpProxyServerUserName) == 0)
+                {
+                    this.ProxyServerUserName = param.Value;
+                }
+
+                if (String.CompareOrdinal(param.Name, HttpUrl.ParameterHttpProxyServerPassword) == 0)
+                {
+                    this.ProxyServerPassword = param.Value;
+                }
+
+                if (String.CompareOrdinal(param.Name, HttpUrl.ParameterHttpProxyServerType) == 0)
+                {
+                    this.ProxyServerType = (ProxyServerType)int.Parse(param.Value);
+                }
+            }
+        }
+
+        public override void ApplyDefaultUserSettings(ProtocolSettings previousSettings, ProtocolSettings currentSettings)
+        {
+            base.ApplyDefaultUserSettings(previousSettings, currentSettings);
+
+            HttpProtocolSettings httpPreviousSettings = (HttpProtocolSettings)previousSettings;
+            HttpProtocolSettings httpCurrentSettings = (HttpProtocolSettings)currentSettings;
+
+            if ((this.OpenConnectionTimeout == HttpUrl.DefaultHttpOpenConnectionTimeout) ||
+                (this.OpenConnectionTimeout == httpPreviousSettings.OpenConnectionTimeout))
+            {
+                this.OpenConnectionTimeout = httpCurrentSettings.OpenConnectionTimeout;
+            }
+
+            if ((this.OpenConnectionSleepTime == HttpUrl.DefaultHttpOpenConnectionSleepTime) ||
+                (this.OpenConnectionSleepTime == httpPreviousSettings.OpenConnectionSleepTime))
+            {
+                this.OpenConnectionSleepTime = httpCurrentSettings.OpenConnectionSleepTime;
+            }
+
+            if ((this.TotalReopenConnectionTimeout == HttpUrl.DefaultHttpTotalReopenConnectionTimeout) ||
+                (this.TotalReopenConnectionTimeout == httpPreviousSettings.TotalReopenConnectionTimeout))
+            {
+                this.TotalReopenConnectionTimeout = httpCurrentSettings.TotalReopenConnectionTimeout;
+            }
+
+            /* server authentication */
+
+            if ((this.ServerAuthenticate == HttpUrl.DefaultHttpServerAuthenticate) ||
+                (this.ServerAuthenticate == httpPreviousSettings.EnableServerAuthentication))
+            {
+                this.ServerAuthenticate = httpCurrentSettings.EnableServerAuthentication;
+            }
+
+            if ((this.ServerUserName == HttpUrl.DefaultHttpServerUserName) ||
+                (this.ServerUserName == httpPreviousSettings.ServerUserName))
+            {
+                this.ServerUserName = httpCurrentSettings.ServerUserName;
+            }
+
+            if ((this.ServerPassword == HttpUrl.DefaultHttpServerPassword) ||
+                (this.ServerPassword == httpPreviousSettings.ServerPassword))
+            {
+                this.ServerPassword = httpCurrentSettings.ServerPassword;
+            }
+
+            /* proxy server authentication */
+
+            if ((this.ProxyServerAuthenticate == HttpUrl.DefaultHttpProxyServerAuthenticate) ||
+                (this.ProxyServerAuthenticate == httpPreviousSettings.EnableProxyServerAuthentication))
+            {
+                this.ProxyServerAuthenticate = httpCurrentSettings.EnableProxyServerAuthentication;
+            }
+
+            if ((this.ProxyServer == HttpUrl.DefaultHttpProxyServer) ||
+                (this.ProxyServer == httpPreviousSettings.ProxyServer))
+            {
+                this.ProxyServer = httpCurrentSettings.ProxyServer;
+            }
+
+            if ((this.ProxyServerPort == HttpUrl.DefaultHttpProxyServerPort) ||
+                (this.ProxyServerPort == httpPreviousSettings.ProxyServerPort))
+            {
+                this.ProxyServerPort = httpCurrentSettings.ProxyServerPort;
+            }
+
+            if ((this.ProxyServerUserName == HttpUrl.DefaultHttpProxyServerUserName) ||
+                (this.ProxyServerUserName == httpPreviousSettings.ProxyServerUserName))
+            {
+                this.ProxyServerUserName = httpCurrentSettings.ProxyServerUserName;
+            }
+
+            if ((this.ProxyServerPassword == HttpUrl.DefaultHttpProxyServerPassword) ||
+                (this.ProxyServerPassword == httpPreviousSettings.ProxyServerPassword))
+            {
+                this.ProxyServerPassword = httpCurrentSettings.ProxyServerPassword;
+            }
+
+            if ((this.ProxyServerType == HttpUrl.DefaultHttpProxyServerType) ||
+                (this.ProxyServerType == httpPreviousSettings.ProxyServerType))
+            {
+                this.ProxyServerType = httpCurrentSettings.ProxyServerType;
             }
         }
 
         #endregion
 
         #region Constants
+
+        /* parameters */
 
         /// <summary>
         /// Specifies open connection timeout in milliseconds.
@@ -432,6 +745,53 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter.Url
         protected static readonly String ParameterHttpSeekingSupportDetection = "HttpSeekingSupportDetection";
 
         /// <summary>
+        /// Specifies if filter has to authenticate against remote server.
+        /// </summary>
+        protected static readonly String ParameterHttpServerAuthenticate = "HttpServerAuthenticate";
+
+        /// <summary>
+        /// Specifies the value of remote server user name to authenticate.
+        /// </summary>
+        protected static readonly String ParameterHttpServerUserName = "HttpServerUserName";
+
+        /// <summary>
+        /// Specifies the value of remote server password to authenticate.
+        /// </summary>
+        protected static readonly String ParameterHttpServerPassword = "HttpServerPassword";
+
+        /// <summary>
+        /// Specifies if filter has to authenticate against proxy server.
+        /// </summary>
+        protected static readonly String ParameterHttpProxyServerAuthenticate = "HttpProxyServerAuthenticate";
+
+        /// <summary>
+        /// Specifies the value of proxy server.
+        /// </summary>
+        protected static readonly String ParameterHttpProxyServer = "HttpProxyServer";
+
+        /// <summary>
+        /// Specifies the value of proxy server port.
+        /// </summary>
+        protected static readonly String ParameterHttpProxyServerPort = "HttpProxyServerPort";
+
+        /// <summary>
+        /// Specifies the value of remote server user name to authenticate.
+        /// </summary>
+        protected static readonly String ParameterHttpProxyServerUserName = "HttpProxyServerUserName";
+
+        /// <summary>
+        /// Specifies the value of remote server password to authenticate.
+        /// </summary>
+        protected static readonly String ParameterHttpProxyServerPassword = "HttpProxyServerPassword";
+
+        /// <summary>
+        /// Specifies the value of proxy server type.
+        /// </summary>
+        protected static readonly String ParameterHttpProxyServerType = "HttpProxyServerType";
+
+        /* default values */
+
+        /// <summary>
         /// Default value for <see cref="ParameterHttpOpenConnectionTimeout"/>.
         /// </summary>
         public const int DefaultHttpOpenConnectionTimeout = 5000;
@@ -480,6 +840,51 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter.Url
         /// Default value for <see cref="ParameterHttpSeekingSupportDetection"/>.
         /// </summary>
         public const Boolean DefaultHttpSeekingSupportDetection = true;
+
+        /// <summary>
+        /// Default value for <see cref="ParameterHttpServerAuthenticate"/>.
+        /// </summary>
+        public const Boolean DefaultHttpServerAuthenticate = false;
+
+        /// <summary>
+        /// Default value for <see cref="ParameterHttpServerUserName"/>.
+        /// </summary>
+        public const String DefaultHttpServerUserName = "";
+
+        /// <summary>
+        /// Default value for <see cref="ParameterHttpServerPassword"/>.
+        /// </summary>
+        public const String DefaultHttpServerPassword = "";
+
+        /// <summary>
+        /// Default value for <see cref="ParameterHttpProxyServerAuthenticate"/>.
+        /// </summary>
+        public const Boolean DefaultHttpProxyServerAuthenticate = false;
+
+        /// <summary>
+        /// Default value for <see cref="ParameterHttpProxyServer"/>.
+        /// </summary>
+        public const String DefaultHttpProxyServer = "";
+
+        /// <summary>
+        /// Default value for <see cref="ParameterHttpProxyServerPort"/>.
+        /// </summary>
+        public const int DefaultHttpProxyServerPort = 1080;
+
+        /// <summary>
+        /// Default value for <see cref="ParameterHttpProxyServerUserName"/>.
+        /// </summary>
+        public const String DefaultHttpProxyServerUserName = "";
+
+        /// <summary>
+        /// Default value for <see cref="ParameterHttpProxyServerPassword"/>.
+        /// </summary>
+        public const String DefaultHttpProxyServerPassword = "";
+
+        /// <summary>
+        /// Default value for <see cref="ParameterHttpProxyServerType"/>.
+        /// </summary>
+        public const ProxyServerType DefaultHttpProxyServerType = ProxyServerType.HTTP;
 
         #endregion
     }

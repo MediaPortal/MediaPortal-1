@@ -484,216 +484,264 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs::ReceiveData(CStreamPackage *streamPa
       FREE_MEM_CLASS(indexedDecryptedSegmentFragments);
     }
 
-    if (SUCCEEDED(result) && (this->mainCurlInstance->GetConnectionState() == Initializing) && (!this->IsWholeStreamDownloaded()) && (!this->mainCurlInstance->IsLockedCurlInstance()) && (!this->IsSetFlags(MP_URL_SOURCE_SPLITTER_PROTOCOL_AFHS_UPDATE_SEGMENT_FRAGMENTS)))
+    if (SUCCEEDED(result) && (this->mainCurlInstance->GetConnectionState() == Initializing) && (!this->IsWholeStreamDownloaded()) && (!this->mainCurlInstance->IsLockedCurlInstance()) && (!this->IsSetAnyOfFlags(MP_URL_SOURCE_SPLITTER_PROTOCOL_AFHS_UPDATE_SEGMENT_FRAGMENTS | MP_URL_SOURCE_SPLITTER_PROTOCOL_AFHS_DOWNLOAD_BOOTSTRAP_INFO)))
     {
       if (this->segmentFragments->Count() == 0)
       {
         CBootstrapInfoBox *bootstrapInfoBox = new CBootstrapInfoBox(&result);
         CHECK_POINTER_HRESULT(result, bootstrapInfoBox, result, E_OUTOFMEMORY);
 
-        char *bootstrapInfoBase64Encoded = ConvertToMultiByteW(this->configuration->GetValue(PARAMETER_NAME_AFHS_BOOTSTRAP_INFO, true, NULL));
-        CHECK_POINTER_HRESULT(result, bootstrapInfoBase64Encoded, result, E_CONVERT_STRING_ERROR);
-
-        if (SUCCEEDED(result))
+        const wchar_t *bootstrapInfo = this->configuration->GetValue(PARAMETER_NAME_AFHS_BOOTSTRAP_INFO, true, NULL);
+        if (bootstrapInfo == NULL)
         {
-          // bootstrap info is BASE64 encoded
-          unsigned char *bootstrapInfo = NULL;
-          unsigned int bootstrapInfoLength = 0;
+          // we need to download bootstrap info
 
-          result = base64_decode(bootstrapInfoBase64Encoded, &bootstrapInfo, &bootstrapInfoLength);
-          CHECK_CONDITION_HRESULT(result, bootstrapInfoBox->Parse(bootstrapInfo, bootstrapInfoLength), result, E_AFHS_CANNOT_PARSE_BOOTSTRAP_INFO_BOX);
+          this->logger->Log(LOGGER_INFO, L"%s: %s: bootstrap info doesn't have value but has url, we need to download bootstrap info from '%s'", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->configuration->GetValue(PARAMETER_NAME_AFHS_BOOTSTRAP_INFO_URL, true, NULL));
+          this->flags |= MP_URL_SOURCE_SPLITTER_PROTOCOL_AFHS_DOWNLOAD_BOOTSTRAP_INFO;
         }
 
-        // we must have F4M manifest, we can't be here without it
-
-        if (SUCCEEDED(result))
+        if (!this->IsSetFlags(MP_URL_SOURCE_SPLITTER_PROTOCOL_AFHS_DOWNLOAD_BOOTSTRAP_INFO))
         {
-          // we have bootstrap info box successfully parsed
-          this->flags |= bootstrapInfoBox->IsLive() ? PROTOCOL_PLUGIN_FLAG_LIVE_STREAM_DETECTED : PROTOCOL_PLUGIN_FLAG_NONE;
-
-          uint64_t currentMediaTime = (bootstrapInfoBox->GetCurrentMediaTime() > 0) ? (bootstrapInfoBox->GetCurrentMediaTime() - 1): 0;
-
-          CAfhsSegmentFragmentCollection *parsedSegmentsFragments = this->GetSegmentsFragmentsFromBootstrapInfoBox(bootstrapInfoBox, false, this->IsLiveStreamDetected() ? currentMediaTime : 0);
-          CHECK_POINTER_HRESULT(result, parsedSegmentsFragments, result, E_AFHS_CANNOT_GET_SEGMENT_FRAGMENTS_FROM_BOOTSTRAP_INFO_BOX);
-
-          CHECK_CONDITION_HRESULT(result, this->segmentFragments->Append(parsedSegmentsFragments), result, E_OUTOFMEMORY);
-
-          CHECK_CONDITION_HRESULT(result, this->segmentFragments->SetBaseUrl(parsedSegmentsFragments->GetBaseUrl()), result, E_OUTOFMEMORY);
-          CHECK_CONDITION_HRESULT(result, this->segmentFragments->SetSegmentFragmentUrlExtraParameters(parsedSegmentsFragments->GetSegmentFragmentUrlExtraParameters()), result, E_OUTOFMEMORY);
-
-          this->segmentFragmentProcessing = 0;
-
-          if (SUCCEEDED(result) && this->IsLiveStreamDetected())
-          {
-            // in case of live stream check current media time and choose right segment and fragment
-            // this download one fragment before current media time
-
-            // find segment and fragment to process
-            result = E_AFHS_NOT_FOUND_SEGMENT_FRAGMENT_IN_LIVE_STREAM;
-
-            for (unsigned int i = 0; i < this->segmentFragments->Count(); i++)
-            {
-              CAfhsSegmentFragment *segFrag = this->segmentFragments->GetItem(i);
-
-              if (segFrag->GetFragmentTimestamp() <= (int64_t)currentMediaTime)
-              {
-                this->segmentFragmentProcessing = i;
-                result = S_OK;
-              }
-            }
-
-            // the segments and fragments before this->segmentFragmentProcessing are not needed
-            if (SUCCEEDED(result) && (this->segmentFragmentProcessing > 0))
-            {
-              this->segmentFragments->Remove(0, this->segmentFragmentProcessing - 1);
-
-              this->segmentFragmentProcessing = 0;
-            }
-          }
+          char *bootstrapInfoBase64Encoded = ConvertToMultiByteW(this->configuration->GetValue(PARAMETER_NAME_AFHS_BOOTSTRAP_INFO, true, NULL));
+          CHECK_POINTER_HRESULT(result, bootstrapInfoBase64Encoded, result, E_CONVERT_STRING_ERROR);
 
           if (SUCCEEDED(result))
           {
-            // set start searching index to current processing segment fragment
-            this->segmentFragments->SetStartSearchingIndex(this->segmentFragmentProcessing);
-            // set count of fragments to search for specific position
-            unsigned int firstNotDownloadedFragmentIndex = this->segmentFragments->GetFirstNotDownloadedStreamFragmentIndex(this->segmentFragmentProcessing);
-            this->segmentFragments->SetSearchCount(((firstNotDownloadedFragmentIndex == UINT_MAX) ? this->segmentFragments->Count() : firstNotDownloadedFragmentIndex) - this->segmentFragmentProcessing);
+            // bootstrap info is BASE64 encoded
+            unsigned char *bootstrapInfo = NULL;
+            unsigned int bootstrapInfoLength = 0;
 
-            this->segmentFragmentToDownload = 0;
+            result = base64_decode(bootstrapInfoBase64Encoded, &bootstrapInfo, &bootstrapInfoLength);
+            CHECK_CONDITION_HRESULT(result, bootstrapInfoBox->Parse(bootstrapInfo, bootstrapInfoLength), result, E_AFHS_CANNOT_PARSE_BOOTSTRAP_INFO_BOX);
+          }
+
+          // we must have F4M manifest, we can't be here without it
+
+          if (SUCCEEDED(result))
+          {
+            // we have bootstrap info box successfully parsed
+            this->flags |= bootstrapInfoBox->IsLive() ? PROTOCOL_PLUGIN_FLAG_LIVE_STREAM_DETECTED : PROTOCOL_PLUGIN_FLAG_NONE;
+
+            uint64_t currentMediaTime = (bootstrapInfoBox->GetCurrentMediaTime() > 0) ? (bootstrapInfoBox->GetCurrentMediaTime() - 1) : 0;
+
+            CAfhsSegmentFragmentCollection *parsedSegmentsFragments = this->GetSegmentsFragmentsFromBootstrapInfoBox(bootstrapInfoBox, false, this->IsLiveStreamDetected() ? currentMediaTime : 0);
+            CHECK_POINTER_HRESULT(result, parsedSegmentsFragments, result, E_AFHS_CANNOT_GET_SEGMENT_FRAGMENTS_FROM_BOOTSTRAP_INFO_BOX);
+
+            CHECK_CONDITION_HRESULT(result, this->segmentFragments->Append(parsedSegmentsFragments), result, E_OUTOFMEMORY);
+
+            CHECK_CONDITION_HRESULT(result, this->segmentFragments->SetBaseUrl(parsedSegmentsFragments->GetBaseUrl()), result, E_OUTOFMEMORY);
+            CHECK_CONDITION_HRESULT(result, this->segmentFragments->SetSegmentFragmentUrlExtraParameters(parsedSegmentsFragments->GetSegmentFragmentUrlExtraParameters()), result, E_OUTOFMEMORY);
+
+            this->segmentFragmentProcessing = 0;
+
+            if (SUCCEEDED(result) && this->IsLiveStreamDetected())
+            {
+              // in case of live stream check current media time and choose right segment and fragment
+              // this download one fragment before current media time
+
+              // find segment and fragment to process
+              result = E_AFHS_NOT_FOUND_SEGMENT_FRAGMENT_IN_LIVE_STREAM;
+
+              for (unsigned int i = 0; i < this->segmentFragments->Count(); i++)
+              {
+                CAfhsSegmentFragment *segFrag = this->segmentFragments->GetItem(i);
+
+                if (segFrag->GetFragmentTimestamp() <= (int64_t)currentMediaTime)
+                {
+                  this->segmentFragmentProcessing = i;
+                  result = S_OK;
+                }
+              }
+
+              // the segments and fragments before this->segmentFragmentProcessing are not needed
+              if (SUCCEEDED(result) && (this->segmentFragmentProcessing > 0))
+              {
+                this->segmentFragments->Remove(0, this->segmentFragmentProcessing - 1);
+
+                this->segmentFragmentProcessing = 0;
+              }
+            }
+
+            if (SUCCEEDED(result))
+            {
+              // set start searching index to current processing segment fragment
+              this->segmentFragments->SetStartSearchingIndex(this->segmentFragmentProcessing);
+              // set count of fragments to search for specific position
+              unsigned int firstNotDownloadedFragmentIndex = this->segmentFragments->GetFirstNotDownloadedStreamFragmentIndex(this->segmentFragmentProcessing);
+              this->segmentFragments->SetSearchCount(((firstNotDownloadedFragmentIndex == UINT_MAX) ? this->segmentFragments->Count() : firstNotDownloadedFragmentIndex) - this->segmentFragmentProcessing);
+
+              this->segmentFragmentToDownload = 0;
+            }
+          }
+
+          FREE_MEM_CLASS(bootstrapInfoBox);
+          FREE_MEM(bootstrapInfoBase64Encoded);
+
+          if (this->segmentFragments->Count() != 0)
+          {
+            this->segmentFragments->GetItem(0)->SetFragmentStartPosition(0);
+
+            // set segment fragment zero timestamp as first segment fragment timestamp
+            this->segmentFragmentZeroTimestamp = this->segmentFragments->GetItem(0)->GetFragmentTimestamp();
+          }
+        }
+      }
+
+      if (!this->IsSetFlags(MP_URL_SOURCE_SPLITTER_PROTOCOL_AFHS_DOWNLOAD_BOOTSTRAP_INFO))
+      {
+        // if not set fragment to download, then set fragment to download (get next not downloaded fragment after current processed fragment)
+        this->segmentFragmentToDownload = (this->segmentFragmentToDownload == UINT_MAX) ? this->segmentFragments->GetFirstNotDownloadedStreamFragmentIndex(this->segmentFragmentProcessing) : this->segmentFragmentToDownload;
+        // if not set fragment to download, then set fragment to download (get next not downloaded fragment from first fragment)
+        this->segmentFragmentToDownload = (this->segmentFragmentToDownload == UINT_MAX) ? this->segmentFragments->GetFirstNotDownloadedStreamFragmentIndex(0) : this->segmentFragmentToDownload;
+        // fragment to download still can be UINT_MAX = no fragment to download
+
+        unsigned int finishTime = UINT_MAX;
+        if (SUCCEEDED(result))
+        {
+          finishTime = this->configuration->GetValueUnsignedInt(PARAMETER_NAME_FINISH_TIME, true, UINT_MAX);
+          if (finishTime != UINT_MAX)
+          {
+            unsigned int currentTime = GetTickCount();
+            this->logger->Log(LOGGER_VERBOSE, L"%s: %s: finish time specified, current time: %u, finish time: %u, diff: %u (ms)", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, currentTime, finishTime, finishTime - currentTime);
+            this->configuration->Remove(PARAMETER_NAME_FINISH_TIME, true);
           }
         }
 
-        FREE_MEM_CLASS(bootstrapInfoBox);
-        FREE_MEM(bootstrapInfoBase64Encoded);
-
-        if (this->segmentFragments->Count() != 0)
-        {
-          this->segmentFragments->GetItem(0)->SetFragmentStartPosition(0);
-
-          // set segment fragment zero timestamp as first segment fragment timestamp
-          this->segmentFragmentZeroTimestamp = this->segmentFragments->GetItem(0)->GetFragmentTimestamp();
-        }
-      }
-
-      // if not set fragment to download, then set fragment to download (get next not downloaded fragment after current processed fragment)
-      this->segmentFragmentToDownload = (this->segmentFragmentToDownload == UINT_MAX) ? this->segmentFragments->GetFirstNotDownloadedStreamFragmentIndex(this->segmentFragmentProcessing) : this->segmentFragmentToDownload;
-      // if not set fragment to download, then set fragment to download (get next not downloaded fragment from first fragment)
-      this->segmentFragmentToDownload = (this->segmentFragmentToDownload == UINT_MAX) ? this->segmentFragments->GetFirstNotDownloadedStreamFragmentIndex(0) : this->segmentFragmentToDownload;
-      // fragment to download still can be UINT_MAX = no fragment to download
-
-      unsigned int finishTime = UINT_MAX;
-      if (SUCCEEDED(result))
-      {
-        finishTime = this->configuration->GetValueUnsignedInt(PARAMETER_NAME_FINISH_TIME, true, UINT_MAX);
-        if (finishTime != UINT_MAX)
-        {
-          unsigned int currentTime = GetTickCount();
-          this->logger->Log(LOGGER_VERBOSE, L"%s: %s: finish time specified, current time: %u, finish time: %u, diff: %u (ms)", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, currentTime, finishTime, finishTime - currentTime);
-          this->configuration->Remove(PARAMETER_NAME_FINISH_TIME, true);
-        }
-      }
-
-      if (SUCCEEDED(result))
-      {
-        if (this->IsDumpInputData() || this->IsDumpOutputData())
-        {
-          wchar_t *storeFilePath = this->GetDumpFile();
-          CHECK_CONDITION_NOT_NULL_EXECUTE(storeFilePath, this->mainCurlInstance->SetDumpFile(storeFilePath));
-          FREE_MEM(storeFilePath);
-
-          this->mainCurlInstance->SetDumpInputData(this->IsDumpInputData());
-          this->mainCurlInstance->SetDumpOutputData(this->IsDumpOutputData());
-        }
-      }
-
-      if (SUCCEEDED(result) && (this->segmentFragmentToDownload != UINT_MAX))
-      {
-        CAfhsDownloadRequest *request = new CAfhsDownloadRequest(&result);
-        CHECK_POINTER_HRESULT(result, request, result, E_OUTOFMEMORY);
-
         if (SUCCEEDED(result))
         {
-          // set finish time, all methods must return before finish time
-          request->SetFinishTime(finishTime);
-          request->SetReceivedDataTimeout(this->configuration->GetValueUnsignedInt(PARAMETER_NAME_AFHS_OPEN_CONNECTION_TIMEOUT, true, this->IsIptv() ? AFHS_OPEN_CONNECTION_TIMEOUT_DEFAULT_IPTV : AFHS_OPEN_CONNECTION_TIMEOUT_DEFAULT_SPLITTER));
-          request->SetNetworkInterfaceName(this->configuration->GetValue(PARAMETER_NAME_INTERFACE, true, NULL));
-
-          CAfhsSegmentFragment *fragment = this->segmentFragments->GetItem(this->segmentFragmentToDownload);
-          // clear fragment buffer
-          fragment->GetBuffer()->ClearBuffer();
-
-          this->logger->Log(LOGGER_VERBOSE, L"%s: %s: starting receiving data for segment: %u, fragment: %u, timestamp: %lld, original timestamp: %lld", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, fragment->GetSegment(), fragment->GetFragment(), fragment->GetFragmentTimestamp() - this->segmentFragmentZeroTimestamp, fragment->GetFragmentTimestamp());
-
-          wchar_t *url = this->segmentFragments->GetSegmentFragmentUrl(fragment);
-          CHECK_POINTER_HRESULT(result, url, result, E_OUTOFMEMORY);
-
-          CHECK_CONDITION_HRESULT(result, request->SetUrl(url), result, E_OUTOFMEMORY);
-          CHECK_CONDITION_HRESULT(result, request->SetCookie(this->configuration->GetValue(PARAMETER_NAME_AFHS_COOKIE, true, NULL)), result, E_OUTOFMEMORY);
-          request->SetHttpVersion(this->configuration->GetValueLong(PARAMETER_NAME_AFHS_VERSION, true, HTTP_VERSION_DEFAULT));
-          request->SetIgnoreContentLength((this->configuration->GetValueLong(PARAMETER_NAME_AFHS_IGNORE_CONTENT_LENGTH, true, HTTP_IGNORE_CONTENT_LENGTH_DEFAULT) == 1L));
-          CHECK_CONDITION_HRESULT(result, request->SetReferer(this->configuration->GetValue(PARAMETER_NAME_AFHS_REFERER, true, NULL)), result, E_OUTOFMEMORY);
-          CHECK_CONDITION_HRESULT(result, request->SetUserAgent(this->configuration->GetValue(PARAMETER_NAME_AFHS_USER_AGENT, true, NULL)), result, E_OUTOFMEMORY);
-
-          FREE_MEM(url);
-          
-          if (SUCCEEDED(this->mainCurlInstance->LockCurlInstance(this)))
+          if (this->IsDumpInputData() || this->IsDumpOutputData())
           {
-            // apply cookies
+            wchar_t *storeFilePath = this->GetDumpFile();
+            CHECK_CONDITION_NOT_NULL_EXECUTE(storeFilePath, this->mainCurlInstance->SetDumpFile(storeFilePath));
+            FREE_MEM(storeFilePath);
 
-            unsigned int cookiesCount = this->configuration->GetValueUnsignedInt(PARAMETER_NAME_AFHS_COOKIES_COUNT, true, 0);
+            this->mainCurlInstance->SetDumpInputData(this->IsDumpInputData());
+            this->mainCurlInstance->SetDumpOutputData(this->IsDumpOutputData());
+          }
+        }
 
-            if (cookiesCount != 0)
+        if (SUCCEEDED(result) && (this->segmentFragmentToDownload != UINT_MAX))
+        {
+          CAfhsDownloadRequest *request = new CAfhsDownloadRequest(&result);
+          CHECK_POINTER_HRESULT(result, request, result, E_OUTOFMEMORY);
+
+          if (SUCCEEDED(result))
+          {
+            // set finish time, all methods must return before finish time
+            request->SetFinishTime(finishTime);
+            request->SetReceivedDataTimeout(this->configuration->GetValueUnsignedInt(PARAMETER_NAME_HTTP_OPEN_CONNECTION_TIMEOUT, true, this->IsIptv() ? HTTP_OPEN_CONNECTION_TIMEOUT_DEFAULT_IPTV : HTTP_OPEN_CONNECTION_TIMEOUT_DEFAULT_SPLITTER));
+            request->SetNetworkInterfaceName(this->configuration->GetValue(PARAMETER_NAME_INTERFACE, true, NULL));
+
+            CAfhsSegmentFragment *fragment = this->segmentFragments->GetItem(this->segmentFragmentToDownload);
+            // clear fragment buffer
+            fragment->GetBuffer()->ClearBuffer();
+
+            this->logger->Log(LOGGER_VERBOSE, L"%s: %s: starting receiving data for segment: %u, fragment: %u, timestamp: %lld, original timestamp: %lld", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, fragment->GetSegment(), fragment->GetFragment(), fragment->GetFragmentTimestamp() - this->segmentFragmentZeroTimestamp, fragment->GetFragmentTimestamp());
+
+            wchar_t *url = this->segmentFragments->GetSegmentFragmentUrl(fragment);
+            CHECK_POINTER_HRESULT(result, url, result, E_OUTOFMEMORY);
+
+            CHECK_CONDITION_HRESULT(result, request->SetUrl(url), result, E_OUTOFMEMORY);
+            CHECK_CONDITION_HRESULT(result, request->SetCookie(this->configuration->GetValue(PARAMETER_NAME_HTTP_COOKIE, true, NULL)), result, E_OUTOFMEMORY);
+            request->SetHttpVersion(this->configuration->GetValueLong(PARAMETER_NAME_HTTP_VERSION, true, HTTP_VERSION_DEFAULT));
+            request->SetIgnoreContentLength((this->configuration->GetValueLong(PARAMETER_NAME_HTTP_IGNORE_CONTENT_LENGTH, true, HTTP_IGNORE_CONTENT_LENGTH_DEFAULT) == 1L));
+            CHECK_CONDITION_HRESULT(result, request->SetReferer(this->configuration->GetValue(PARAMETER_NAME_HTTP_REFERER, true, NULL)), result, E_OUTOFMEMORY);
+            CHECK_CONDITION_HRESULT(result, request->SetUserAgent(this->configuration->GetValue(PARAMETER_NAME_HTTP_USER_AGENT, true, NULL)), result, E_OUTOFMEMORY);
+
+            if (this->configuration->GetValueBool(PARAMETER_NAME_HTTP_SERVER_AUTHENTICATE, true, HTTP_SERVER_AUTHENTICATE_DEFAULT))
             {
-              CParameterCollection *cookies = new CParameterCollection(&result);
-              CHECK_POINTER_HRESULT(result, cookies, result, E_OUTOFMEMORY);
+              const wchar_t *serverUserName = this->configuration->GetValue(PARAMETER_NAME_HTTP_SERVER_USER_NAME, true, NULL);
+              const wchar_t *serverPassword = this->configuration->GetValue(PARAMETER_NAME_HTTP_SERVER_PASSWORD, true, NULL);
 
-              for (unsigned int i = 0; (SUCCEEDED(result) && (i < cookiesCount)); i++)
-              {
-                wchar_t *httpCookieName = FormatString(AFHS_COOKIE_FORMAT_PARAMETER_NAME, i);
-                CHECK_POINTER_HRESULT(result, httpCookieName, result, E_OUTOFMEMORY);
+              CHECK_POINTER_HRESULT(result, serverUserName, result, E_AUTH_NO_SERVER_USER_NAME);
+              CHECK_POINTER_HRESULT(result, serverUserName, result, E_AUTH_NO_SERVER_PASSWORD);
 
-                if (SUCCEEDED(result))
-                {
-                  const wchar_t *cookieValue = this->configuration->GetValue(httpCookieName, true, NULL);
-                  CHECK_POINTER_HRESULT(result, cookieValue, result, E_OUTOFMEMORY);
-
-                  CHECK_CONDITION_HRESULT(result, cookies->Add(L"", cookieValue), result, E_OUTOFMEMORY);
-                }
-
-                FREE_MEM(httpCookieName);
-              }
-
-              CHECK_CONDITION_HRESULT(result, this->mainCurlInstance->AddCookies(cookies), result, E_OUTOFMEMORY);
-              FREE_MEM_CLASS(cookies);
-
-              // clear set cookies to avoid adding same cookies
-              for (unsigned int i = 0; (SUCCEEDED(result) && (i < cookiesCount)); i++)
-              {
-                wchar_t *httpCookieName = FormatString(AFHS_COOKIE_FORMAT_PARAMETER_NAME, i);
-                CHECK_POINTER_HRESULT(result, httpCookieName, result, E_OUTOFMEMORY);
-
-                CHECK_CONDITION_EXECUTE(SUCCEEDED(result), this->configuration->Remove(httpCookieName, true));
-                FREE_MEM(httpCookieName);
-              }
-
-              this->configuration->Remove(PARAMETER_NAME_AFHS_COOKIES_COUNT, true);
+              CHECK_CONDITION_HRESULT(result, request->SetAuthentication(true, serverUserName, serverPassword), result, E_OUTOFMEMORY);
             }
 
-            if (SUCCEEDED(this->mainCurlInstance->Initialize(request)))
+            if (this->configuration->GetValueBool(PARAMETER_NAME_HTTP_PROXY_SERVER_AUTHENTICATE, true, HTTP_PROXY_SERVER_AUTHENTICATE_DEFAULT))
             {
-              // all parameters set
-              // start receiving data
+              const wchar_t *proxyServer = this->configuration->GetValue(PARAMETER_NAME_HTTP_PROXY_SERVER, true, NULL);
+              const wchar_t *proxyServerUserName = this->configuration->GetValue(PARAMETER_NAME_HTTP_PROXY_SERVER_USER_NAME, true, NULL);
+              const wchar_t *proxyServerPassword = this->configuration->GetValue(PARAMETER_NAME_HTTP_PROXY_SERVER_PASSWORD, true, NULL);
+              unsigned short proxyServerPort = (unsigned short)this->configuration->GetValueUnsignedInt(PARAMETER_NAME_HTTP_PROXY_SERVER_PORT, true, HTTP_PROXY_SERVER_PORT_DEFAULT);
+              unsigned int proxyServerType = this->configuration->GetValueUnsignedInt(PARAMETER_NAME_HTTP_PROXY_SERVER_TYPE, true, HTTP_PROXY_SERVER_TYPE_DEFAULT);
 
-              if (SUCCEEDED(this->mainCurlInstance->StartReceivingData()))
+              CHECK_POINTER_HRESULT(result, proxyServer, result, E_AUTH_NO_PROXY_SERVER);
+              CHECK_POINTER_HRESULT(result, proxyServerUserName, result, E_AUTH_NO_SERVER_USER_NAME);
+              CHECK_POINTER_HRESULT(result, proxyServerPassword, result, E_AUTH_NO_SERVER_PASSWORD);
+
+              CHECK_CONDITION_HRESULT(result, request->SetProxyAuthentication(true, proxyServer, proxyServerPort, proxyServerType, proxyServerUserName, proxyServerPassword), result, E_OUTOFMEMORY);
+            }
+
+            FREE_MEM(url);
+
+            if (SUCCEEDED(this->mainCurlInstance->LockCurlInstance(this)))
+            {
+              // apply cookies
+
+              unsigned int cookiesCount = this->configuration->GetValueUnsignedInt(PARAMETER_NAME_HTTP_COOKIES_COUNT, true, 0);
+
+              if (cookiesCount != 0)
               {
-                this->mainCurlInstance->SetConnectionState(Opening);
+                CParameterCollection *cookies = new CParameterCollection(&result);
+                CHECK_POINTER_HRESULT(result, cookies, result, E_OUTOFMEMORY);
 
-                this->segmentFragmentDownloading = this->segmentFragmentToDownload;
-                this->segmentFragmentToDownload = UINT_MAX;
+                for (unsigned int i = 0; (SUCCEEDED(result) && (i < cookiesCount)); i++)
+                {
+                  wchar_t *httpCookieName = FormatString(HTTP_COOKIE_FORMAT_PARAMETER_NAME, i);
+                  CHECK_POINTER_HRESULT(result, httpCookieName, result, E_OUTOFMEMORY);
+
+                  if (SUCCEEDED(result))
+                  {
+                    const wchar_t *cookieValue = this->configuration->GetValue(httpCookieName, true, NULL);
+                    CHECK_POINTER_HRESULT(result, cookieValue, result, E_OUTOFMEMORY);
+
+                    CHECK_CONDITION_HRESULT(result, cookies->Add(L"", cookieValue), result, E_OUTOFMEMORY);
+                  }
+
+                  FREE_MEM(httpCookieName);
+                }
+
+                CHECK_CONDITION_HRESULT(result, this->mainCurlInstance->AddCookies(cookies), result, E_OUTOFMEMORY);
+                FREE_MEM_CLASS(cookies);
+
+                // clear set cookies to avoid adding same cookies
+                for (unsigned int i = 0; (SUCCEEDED(result) && (i < cookiesCount)); i++)
+                {
+                  wchar_t *httpCookieName = FormatString(HTTP_COOKIE_FORMAT_PARAMETER_NAME, i);
+                  CHECK_POINTER_HRESULT(result, httpCookieName, result, E_OUTOFMEMORY);
+
+                  CHECK_CONDITION_EXECUTE(SUCCEEDED(result), this->configuration->Remove(httpCookieName, true));
+                  FREE_MEM(httpCookieName);
+                }
+
+                this->configuration->Remove(PARAMETER_NAME_HTTP_COOKIES_COUNT, true);
+              }
+
+              if (SUCCEEDED(this->mainCurlInstance->Initialize(request)))
+              {
+                // all parameters set
+                // start receiving data
+
+                if (SUCCEEDED(this->mainCurlInstance->StartReceivingData()))
+                {
+                  this->mainCurlInstance->SetConnectionState(Opening);
+
+                  this->segmentFragmentDownloading = this->segmentFragmentToDownload;
+                  this->segmentFragmentToDownload = UINT_MAX;
+                }
+                else
+                {
+                  this->mainCurlInstance->SetConnectionState(OpeningFailed);
+
+                  // we must unlock CURL instance, because we don't use it more
+                  this->mainCurlInstance->UnlockCurlInstance(this);
+                }
               }
               else
               {
-                this->mainCurlInstance->SetConnectionState(OpeningFailed);
+                this->mainCurlInstance->SetConnectionState(InitializeFailed);
 
                 // we must unlock CURL instance, because we don't use it more
                 this->mainCurlInstance->UnlockCurlInstance(this);
@@ -702,33 +750,31 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs::ReceiveData(CStreamPackage *streamPa
             else
             {
               this->mainCurlInstance->SetConnectionState(InitializeFailed);
-
-              // we must unlock CURL instance, because we don't use it more
-              this->mainCurlInstance->UnlockCurlInstance(this);
+              this->logger->Log(LOGGER_WARNING, L"%s: %s: cannot lock CURL instance, owner: 0x%p, lock count: %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->mainCurlInstance->GetOwner(), this->mainCurlInstance->GetOwnerLockCount());
             }
           }
-          else
-          {
-            this->mainCurlInstance->SetConnectionState(InitializeFailed);
-            this->logger->Log(LOGGER_WARNING, L"%s: %s: cannot lock CURL instance, owner: 0x%p, lock count: %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->mainCurlInstance->GetOwner(), this->mainCurlInstance->GetOwnerLockCount());
-          }
-        }
 
-        FREE_MEM_CLASS(request);
+          FREE_MEM_CLASS(request);
+        }
       }
     }
 
-    if (SUCCEEDED(result) && (this->mainCurlInstance->GetConnectionState() == Initializing) && (!this->IsWholeStreamDownloaded()) && (!this->mainCurlInstance->IsLockedCurlInstance()) && (this->IsSetFlags(MP_URL_SOURCE_SPLITTER_PROTOCOL_AFHS_UPDATE_SEGMENT_FRAGMENTS)))
+    if (SUCCEEDED(result) && (this->mainCurlInstance->GetConnectionState() == Initializing) && (!this->IsWholeStreamDownloaded()) && (!this->mainCurlInstance->IsLockedCurlInstance()) && (this->IsSetAnyOfFlags(MP_URL_SOURCE_SPLITTER_PROTOCOL_AFHS_UPDATE_SEGMENT_FRAGMENTS | MP_URL_SOURCE_SPLITTER_PROTOCOL_AFHS_DOWNLOAD_BOOTSTRAP_INFO)))
     {
       // wait time between updating bootstrap info should be half of time between two segment fragments
-      unsigned int waitTime = UINT_MAX;
+      unsigned int waitTime = 0;
 
-      CAfhsSegmentFragment *lastFragment = this->segmentFragments->GetItem(this->segmentFragments->Count() - 1);
-      CAfhsSegmentFragment *previousFragment = this->segmentFragments->GetItem(this->segmentFragments->Count() - 2);
+      // in case of MP_URL_SOURCE_SPLITTER_PROTOCOL_AFHS_DOWNLOAD_BOOTSTRAP_INFO download bootstrap info immediately
 
-      if ((lastFragment != NULL) && (previousFragment != NULL))
+      if (this->IsSetFlags(MP_URL_SOURCE_SPLITTER_PROTOCOL_AFHS_UPDATE_SEGMENT_FRAGMENTS))
       {
-        waitTime = ((unsigned int)min(INT32_MAX, lastFragment->GetFragmentTimestamp() - previousFragment->GetFragmentTimestamp())) / 2;
+        CAfhsSegmentFragment *lastFragment = this->segmentFragments->GetItem(this->segmentFragments->Count() - 1);
+        CAfhsSegmentFragment *previousFragment = this->segmentFragments->GetItem(this->segmentFragments->Count() - 2);
+
+        if ((lastFragment != NULL) && (previousFragment != NULL))
+        {
+          waitTime = ((unsigned int)min(INT32_MAX, lastFragment->GetFragmentTimestamp() - previousFragment->GetFragmentTimestamp())) / 2;
+        }
       }
 
       if (waitTime < (GetTickCount() - this->lastBootstrapInfoUpdateTime))
@@ -770,15 +816,41 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs::ReceiveData(CStreamPackage *streamPa
           {
             // set finish time, all methods must return before finish time
             request->SetFinishTime(finishTime);
-            request->SetReceivedDataTimeout(this->configuration->GetValueUnsignedInt(PARAMETER_NAME_AFHS_OPEN_CONNECTION_TIMEOUT, true, this->IsIptv() ? AFHS_OPEN_CONNECTION_TIMEOUT_DEFAULT_IPTV : AFHS_OPEN_CONNECTION_TIMEOUT_DEFAULT_SPLITTER));
+            request->SetReceivedDataTimeout(this->configuration->GetValueUnsignedInt(PARAMETER_NAME_HTTP_OPEN_CONNECTION_TIMEOUT, true, this->IsIptv() ? HTTP_OPEN_CONNECTION_TIMEOUT_DEFAULT_IPTV : HTTP_OPEN_CONNECTION_TIMEOUT_DEFAULT_SPLITTER));
             request->SetNetworkInterfaceName(this->configuration->GetValue(PARAMETER_NAME_INTERFACE, true, NULL));
 
             CHECK_CONDITION_HRESULT(result, request->SetUrl(bootstrapInfoUrl), result, E_OUTOFMEMORY);
-            CHECK_CONDITION_HRESULT(result, request->SetCookie(this->configuration->GetValue(PARAMETER_NAME_AFHS_COOKIE, true, NULL)), result, E_OUTOFMEMORY);
-            request->SetHttpVersion(this->configuration->GetValueLong(PARAMETER_NAME_AFHS_VERSION, true, HTTP_VERSION_DEFAULT));
-            request->SetIgnoreContentLength((this->configuration->GetValueLong(PARAMETER_NAME_AFHS_IGNORE_CONTENT_LENGTH, true, HTTP_IGNORE_CONTENT_LENGTH_DEFAULT) == 1L));
-            CHECK_CONDITION_HRESULT(result, request->SetReferer(this->configuration->GetValue(PARAMETER_NAME_AFHS_REFERER, true, NULL)), result, E_OUTOFMEMORY);
-            CHECK_CONDITION_HRESULT(result, request->SetUserAgent(this->configuration->GetValue(PARAMETER_NAME_AFHS_USER_AGENT, true, NULL)), result, E_OUTOFMEMORY);
+            CHECK_CONDITION_HRESULT(result, request->SetCookie(this->configuration->GetValue(PARAMETER_NAME_HTTP_COOKIE, true, NULL)), result, E_OUTOFMEMORY);
+            request->SetHttpVersion(this->configuration->GetValueLong(PARAMETER_NAME_HTTP_VERSION, true, HTTP_VERSION_DEFAULT));
+            request->SetIgnoreContentLength((this->configuration->GetValueLong(PARAMETER_NAME_HTTP_IGNORE_CONTENT_LENGTH, true, HTTP_IGNORE_CONTENT_LENGTH_DEFAULT) == 1L));
+            CHECK_CONDITION_HRESULT(result, request->SetReferer(this->configuration->GetValue(PARAMETER_NAME_HTTP_REFERER, true, NULL)), result, E_OUTOFMEMORY);
+            CHECK_CONDITION_HRESULT(result, request->SetUserAgent(this->configuration->GetValue(PARAMETER_NAME_HTTP_USER_AGENT, true, NULL)), result, E_OUTOFMEMORY);
+
+            if (this->configuration->GetValueBool(PARAMETER_NAME_HTTP_SERVER_AUTHENTICATE, true, HTTP_SERVER_AUTHENTICATE_DEFAULT))
+            {
+              const wchar_t *serverUserName = this->configuration->GetValue(PARAMETER_NAME_HTTP_SERVER_USER_NAME, true, NULL);
+              const wchar_t *serverPassword = this->configuration->GetValue(PARAMETER_NAME_HTTP_SERVER_PASSWORD, true, NULL);
+
+              CHECK_POINTER_HRESULT(result, serverUserName, result, E_AUTH_NO_SERVER_USER_NAME);
+              CHECK_POINTER_HRESULT(result, serverUserName, result, E_AUTH_NO_SERVER_PASSWORD);
+
+              CHECK_CONDITION_HRESULT(result, request->SetAuthentication(true, serverUserName, serverPassword), result, E_OUTOFMEMORY);
+            }
+
+            if (this->configuration->GetValueBool(PARAMETER_NAME_HTTP_PROXY_SERVER_AUTHENTICATE, true, HTTP_PROXY_SERVER_AUTHENTICATE_DEFAULT))
+            {
+              const wchar_t *proxyServer = this->configuration->GetValue(PARAMETER_NAME_HTTP_PROXY_SERVER, true, NULL);
+              const wchar_t *proxyServerUserName = this->configuration->GetValue(PARAMETER_NAME_HTTP_PROXY_SERVER_USER_NAME, true, NULL);
+              const wchar_t *proxyServerPassword = this->configuration->GetValue(PARAMETER_NAME_HTTP_PROXY_SERVER_PASSWORD, true, NULL);
+              unsigned short proxyServerPort = (unsigned short)this->configuration->GetValueUnsignedInt(PARAMETER_NAME_HTTP_PROXY_SERVER_PORT, true, HTTP_PROXY_SERVER_PORT_DEFAULT);
+              unsigned int proxyServerType = this->configuration->GetValueUnsignedInt(PARAMETER_NAME_HTTP_PROXY_SERVER_TYPE, true, HTTP_PROXY_SERVER_TYPE_DEFAULT);
+
+              CHECK_POINTER_HRESULT(result, proxyServer, result, E_AUTH_NO_PROXY_SERVER);
+              CHECK_POINTER_HRESULT(result, proxyServerUserName, result, E_AUTH_NO_SERVER_USER_NAME);
+              CHECK_POINTER_HRESULT(result, proxyServerPassword, result, E_AUTH_NO_SERVER_PASSWORD);
+
+              CHECK_CONDITION_HRESULT(result, request->SetProxyAuthentication(true, proxyServer, proxyServerPort, proxyServerType, proxyServerUserName, proxyServerPassword), result, E_OUTOFMEMORY);
+            }
 
             if (SUCCEEDED(this->mainCurlInstance->LockCurlInstance(this)))
             {
@@ -824,7 +896,29 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs::ReceiveData(CStreamPackage *streamPa
 
     if (SUCCEEDED(result) && (!this->IsWholeStreamDownloaded()) && (this->mainCurlInstance->IsLockedCurlInstanceByOwner(this)) && (this->mainCurlInstance->GetCurlState() == CURL_STATE_RECEIVED_ALL_DATA))
     {
-      if (this->IsSetFlags(MP_URL_SOURCE_SPLITTER_PROTOCOL_AFHS_UPDATE_SEGMENT_FRAGMENTS))
+      if (this->IsSetFlags(MP_URL_SOURCE_SPLITTER_PROTOCOL_AFHS_DOWNLOAD_BOOTSTRAP_INFO))
+      {
+        // copy received data for parsing
+
+        unsigned int bootstrapInfoDataLength = this->mainCurlInstance->GetHttpDownloadResponse()->GetReceivedData()->GetBufferOccupiedSpace();
+        char *base64EncodedValue = NULL;
+        wchar_t *bootstrapInfoData = NULL;
+
+        result = base64_encode(this->mainCurlInstance->GetHttpDownloadResponse()->GetReceivedData()->GetInternalBuffer(), bootstrapInfoDataLength, &base64EncodedValue);
+        bootstrapInfoData = ConvertToUnicodeA(base64EncodedValue);
+        CHECK_POINTER_HRESULT(result, bootstrapInfoData, result, E_CONVERT_STRING_ERROR);
+
+        CHECK_CONDITION_HRESULT(result, this->configuration->Add(PARAMETER_NAME_AFHS_BOOTSTRAP_INFO, bootstrapInfoData), result, E_OUTOFMEMORY);
+
+        FREE_MEM(bootstrapInfoData);
+        FREE_MEM(base64EncodedValue);
+
+        this->flags &= ~MP_URL_SOURCE_SPLITTER_PROTOCOL_AFHS_DOWNLOAD_BOOTSTRAP_INFO;
+
+        // stop receiving data and restart downloading of segment fragments
+        this->flags |= MP_URL_SOURCE_SPLITTER_PROTOCOL_AFHS_FLAG_CLOSE_CURL_INSTANCE | MP_URL_SOURCE_SPLITTER_PROTOCOL_AFHS_FLAG_STOP_RECEIVING_DATA;
+      }
+      else if (this->IsSetFlags(MP_URL_SOURCE_SPLITTER_PROTOCOL_AFHS_UPDATE_SEGMENT_FRAGMENTS))
       {
         // bootstrap info received, check for error
         this->lastBootstrapInfoUpdateTime = GetTickCount();
@@ -1345,17 +1439,17 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs::GetConnectionParameters(CParameterCo
 
 unsigned int CMPUrlSourceSplitter_Protocol_Afhs::GetOpenConnectionTimeout(void)
 {
-  return this->configuration->GetValueUnsignedInt(PARAMETER_NAME_AFHS_OPEN_CONNECTION_TIMEOUT, true, this->IsIptv() ? AFHS_OPEN_CONNECTION_TIMEOUT_DEFAULT_IPTV : AFHS_OPEN_CONNECTION_TIMEOUT_DEFAULT_SPLITTER);
+  return this->configuration->GetValueUnsignedInt(PARAMETER_NAME_HTTP_OPEN_CONNECTION_TIMEOUT, true, this->IsIptv() ? HTTP_OPEN_CONNECTION_TIMEOUT_DEFAULT_IPTV : HTTP_OPEN_CONNECTION_TIMEOUT_DEFAULT_SPLITTER);
 }
 
 unsigned int CMPUrlSourceSplitter_Protocol_Afhs::GetOpenConnectionSleepTime(void)
 {
-  return this->configuration->GetValueUnsignedInt(PARAMETER_NAME_AFHS_OPEN_CONNECTION_SLEEP_TIME, true, this->IsIptv() ? AFHS_OPEN_CONNECTION_SLEEP_TIME_DEFAULT_IPTV : AFHS_OPEN_CONNECTION_SLEEP_TIME_DEFAULT_SPLITTER);
+  return this->configuration->GetValueUnsignedInt(PARAMETER_NAME_HTTP_OPEN_CONNECTION_SLEEP_TIME, true, this->IsIptv() ? HTTP_OPEN_CONNECTION_SLEEP_TIME_DEFAULT_IPTV : HTTP_OPEN_CONNECTION_SLEEP_TIME_DEFAULT_SPLITTER);
 }
 
 unsigned int CMPUrlSourceSplitter_Protocol_Afhs::GetTotalReopenConnectionTimeout(void)
 {
-  return this->configuration->GetValueUnsignedInt(PARAMETER_NAME_AFHS_TOTAL_REOPEN_CONNECTION_TIMEOUT, true, this->IsIptv() ? AFHS_TOTAL_REOPEN_CONNECTION_TIMEOUT_DEFAULT_IPTV : AFHS_TOTAL_REOPEN_CONNECTION_TIMEOUT_DEFAULT_SPLITTER);
+  return this->configuration->GetValueUnsignedInt(PARAMETER_NAME_HTTP_TOTAL_REOPEN_CONNECTION_TIMEOUT, true, this->IsIptv() ? HTTP_TOTAL_REOPEN_CONNECTION_TIMEOUT_DEFAULT_IPTV : HTTP_TOTAL_REOPEN_CONNECTION_TIMEOUT_DEFAULT_SPLITTER);
 }
 
 HRESULT CMPUrlSourceSplitter_Protocol_Afhs::StartReceivingData(CParameterCollection *parameters)
@@ -1598,12 +1692,12 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs::Initialize(CPluginConfiguration *con
 
     if (SUCCEEDED(result))
     {
-      unsigned int currentCookiesCount = this->configuration->GetValueUnsignedInt(PARAMETER_NAME_AFHS_COOKIES_COUNT, true, 0);
+      unsigned int currentCookiesCount = this->configuration->GetValueUnsignedInt(PARAMETER_NAME_HTTP_COOKIES_COUNT, true, 0);
       if (currentCookiesCount != 0)
       {
         for (unsigned int i = 0; (SUCCEEDED(result) & (i < currentCookiesCount)); i++)
         {
-          wchar_t *cookieName = FormatString(AFHS_COOKIE_FORMAT_PARAMETER_NAME, i);
+          wchar_t *cookieName = FormatString(HTTP_COOKIE_FORMAT_PARAMETER_NAME, i);
           CHECK_POINTER_HRESULT(result, cookieName, result, E_OUTOFMEMORY);
 
           if (SUCCEEDED(result))

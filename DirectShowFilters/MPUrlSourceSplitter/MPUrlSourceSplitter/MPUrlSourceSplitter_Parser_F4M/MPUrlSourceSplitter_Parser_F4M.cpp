@@ -193,40 +193,6 @@ HRESULT CMPUrlSourceSplitter_Parser_F4M::GetParserResult(void)
                       // parse bootstrap info
                       // bootstrap info should have information about segments, fragments and seeking information
 
-                      // extract cookies from current protocol connection parameters
-                      CParameterCollection *usedCookies = new CParameterCollection(&this->parserResult);
-                      CHECK_POINTER_HRESULT(this->parserResult, usedCookies, this->parserResult, E_OUTOFMEMORY);
-                      
-                      if (SUCCEEDED(this->parserResult))
-                      {
-                        CParameterCollection *protocolConnectionParameters = new CParameterCollection(&this->parserResult);
-                        CHECK_POINTER_HRESULT(this->parserResult, protocolConnectionParameters, this->parserResult, E_OUTOFMEMORY);
-                        CHECK_CONDITION_EXECUTE(SUCCEEDED(this->parserResult), this->parserResult = this->protocolHoster->GetConnectionParameters(protocolConnectionParameters));
-
-                        if (SUCCEEDED(protocolConnectionParameters))
-                        {
-                          unsigned int currentCookiesCount = protocolConnectionParameters->GetValueUnsignedInt(PARAMETER_NAME_HTTP_COOKIES_COUNT, true, 0);
-
-                          for (unsigned int i = 0; (SUCCEEDED(this->parserResult) && (i < currentCookiesCount)); i++)
-                          {
-                            wchar_t *httpCookieName = FormatString(HTTP_COOKIE_FORMAT_PARAMETER_NAME, i);
-                            CHECK_POINTER_HRESULT(this->parserResult, httpCookieName, this->parserResult, E_OUTOFMEMORY);
-
-                            if (SUCCEEDED(this->parserResult))
-                            {
-                              const wchar_t *cookieValue = protocolConnectionParameters->GetValue(httpCookieName, true, NULL);
-                              CHECK_POINTER_HRESULT(this->parserResult, cookieValue, this->parserResult, E_OUTOFMEMORY);
-
-                              CHECK_CONDITION_HRESULT(this->parserResult, usedCookies->Add(L"", cookieValue), this->parserResult, E_OUTOFMEMORY);
-                            }
-
-                            FREE_MEM(httpCookieName);
-                          }
-                        }
-
-                        FREE_MEM_CLASS(protocolConnectionParameters);
-                      }
-
                       if (SUCCEEDED(this->parserResult))
                       {
                         wchar_t *baseUrl = GetBaseUrl(this->connectionParameters->GetValue(PARAMETER_NAME_URL, true, NULL));
@@ -398,63 +364,21 @@ HRESULT CMPUrlSourceSplitter_Parser_F4M::GetParserResult(void)
                                 CF4MBootstrapInfo *bootstrapInfo = bootstrapInfoCollection->GetBootstrapInfo(mediaWithHighestBitstream->GetBootstrapInfoId(), false);
                                 CHECK_POINTER_HRESULT(this->parserResult, bootstrapInfo, this->parserResult, E_F4M_NO_BOOTSTRAP_INFO);
 
-                                if (SUCCEEDED(this->parserResult))
+                                CHECK_CONDITION_HRESULT(this->parserResult, (bootstrapInfo->GetValue() == NULL) && (bootstrapInfo->GetUrl() == NULL), E_F4M_NO_BOOTSTRAP_INFO_VALUE_OR_URL, this->parserResult);
+
+                                if (bootstrapInfo->GetUrl() != NULL)
                                 {
-                                  CHECK_POINTER_HRESULT(this->parserResult, bootstrapInfo->GetValue(), this->parserResult, E_F4M_NO_BOOTSTRAP_INFO_VALUE);
+                                  wchar_t *bootstrapInfoUrl = FormatAbsoluteUrl(baseUrl, bootstrapInfo->GetUrl());
+                                  CHECK_POINTER_HRESULT(this->parserResult, bootstrapInfoUrl, this->parserResult, E_OUTOFMEMORY);
 
-                                  if (FAILED(this->parserResult) && (bootstrapInfo->GetUrl() != NULL))
-                                  {
-                                    this->logger->Log(LOGGER_INFO, L"%s: %s: bootstrap info doesn't have value but has url, we need to download bootstrap info from '%s'", PARSER_IMPLEMENTATION_NAME, METHOD_GET_PARSER_RESULT_NAME, bootstrapInfo->GetUrl());
-
-                                    this->parserResult = bootstrapInfo->SetBaseUrl(baseUrl) ? PARSER_RESULT_KNOWN : E_OUTOFMEMORY;
-
-                                    if (SUCCEEDED(this->parserResult))
-                                    {
-                                      HRESULT downloadResult = bootstrapInfo->DownloadBootstrapInfo(
-                                        this->logger,
-                                        PARSER_IMPLEMENTATION_NAME,
-                                        this->connectionParameters->GetValueUnsignedInt(PARAMETER_NAME_FINISH_TIME, true, GetTickCount() + this->connectionParameters->GetValueUnsignedInt(PARAMETER_NAME_HTTP_OPEN_CONNECTION_TIMEOUT, true, this->IsIptv() ? HTTP_OPEN_CONNECTION_TIMEOUT_DEFAULT_IPTV : HTTP_OPEN_CONNECTION_TIMEOUT_DEFAULT_SPLITTER)),
-                                        this->connectionParameters->GetValue(PARAMETER_NAME_HTTP_REFERER, true, NULL),
-                                        this->connectionParameters->GetValue(PARAMETER_NAME_HTTP_USER_AGENT, true, NULL),
-                                        this->connectionParameters->GetValue(PARAMETER_NAME_HTTP_COOKIE, true, NULL),
-                                        usedCookies,
-                                        this->connectionParameters->GetValue(PARAMETER_NAME_INTERFACE, true, NULL)
-                                        );
-
-                                      this->logger->Log(LOGGER_INFO, L"%s: %s: bootstrap info download result: 0x%08X", PARSER_IMPLEMENTATION_NAME, METHOD_GET_PARSER_RESULT_NAME, downloadResult);
-                                      CHECK_CONDITION_EXECUTE(SUCCEEDED(downloadResult), this->logger->Log(LOGGER_INFO, L"%s: %s: bootstrap info BASE64 encoded value: '%s'", PARSER_IMPLEMENTATION_NAME, METHOD_GET_PARSER_RESULT_NAME, bootstrapInfo->GetValue()));
-                                      CHECK_CONDITION_EXECUTE(FAILED(downloadResult), this->parserResult = downloadResult);
-                                    }
-                                  }
-
-                                  if (SUCCEEDED(this->parserResult))
-                                  {
-                                    // but before adding, decode bootstrap info (just for sure if it is valid)
-                                    HRESULT decodeResult = bootstrapInfo->GetDecodeResult();
-                                    CHECK_CONDITION_EXECUTE(FAILED(decodeResult), this->parserResult = decodeResult);
-
-                                    if (SUCCEEDED(this->parserResult))
-                                    {
-                                      CBootstrapInfoBox *bootstrapInfoBox = new CBootstrapInfoBox(&this->parserResult);
-                                      CHECK_POINTER_HRESULT(this->parserResult, bootstrapInfoBox, this->parserResult, E_OUTOFMEMORY);
-
-                                      CHECK_CONDITION_HRESULT(this->parserResult, bootstrapInfoBox->Parse(bootstrapInfo->GetDecodedValue(), bootstrapInfo->GetDecodedValueLength()), this->parserResult, E_F4M_CANNOT_PARSE_BOOTSTRAP_INFO_BOX);
-                                      CHECK_CONDITION_HRESULT(this->parserResult, this->connectionParameters->Add(PARAMETER_NAME_AFHS_BOOTSTRAP_INFO, bootstrapInfo->GetValue()), this->parserResult, E_OUTOFMEMORY);
-
-                                      if (SUCCEEDED(this->parserResult) && bootstrapInfo->HasUrl())
-                                      {
-                                        wchar_t *bootstrapInfoUrl = FormatAbsoluteUrl(baseUrl, bootstrapInfo->GetUrl());
-                                        CHECK_POINTER_HRESULT(this->parserResult, bootstrapInfoUrl, this->parserResult, E_OUTOFMEMORY);
-
-                                        CHECK_CONDITION_HRESULT(this->parserResult, this->connectionParameters->Add(PARAMETER_NAME_AFHS_BOOTSTRAP_INFO_URL, bootstrapInfoUrl), this->parserResult, E_OUTOFMEMORY);
-                                        FREE_MEM(bootstrapInfoUrl);
-                                      }
-
-                                      FREE_MEM_CLASS(bootstrapInfoBox);
-                                    }
-                                  }
+                                  CHECK_CONDITION_HRESULT(this->parserResult, this->connectionParameters->Add(PARAMETER_NAME_AFHS_BOOTSTRAP_INFO_URL, bootstrapInfoUrl), this->parserResult, E_OUTOFMEMORY);
+                                  FREE_MEM(bootstrapInfoUrl);
                                 }
-                              
+                                if (bootstrapInfo->GetValue() != NULL)
+                                {
+                                  CHECK_CONDITION_HRESULT(this->parserResult, this->connectionParameters->Add(PARAMETER_NAME_AFHS_BOOTSTRAP_INFO, bootstrapInfo->GetValue()), this->parserResult, E_OUTOFMEMORY);
+                                }
+
                                 CHECK_CONDITION_HRESULT(this->parserResult, this->connectionParameters->Add(PARAMETER_NAME_AFHS_BASE_URL, baseUrl), this->parserResult, E_OUTOFMEMORY);
                                 if (SUCCEEDED(this->parserResult))
                                 {
@@ -462,39 +386,8 @@ HRESULT CMPUrlSourceSplitter_Parser_F4M::GetParserResult(void)
                                   CHECK_POINTER_HRESULT(this->parserResult, replacedUrl, this->parserResult, E_OUTOFMEMORY);
                                   CHECK_POINTER_HRESULT(this->parserResult, wcsstr(replacedUrl, L"afhs://"), this->parserResult, E_F4M_ONLY_HTTP_PROTOCOL_SUPPORTED_IN_BASE_URL);
 
-                                  CHECK_CONDITION_HRESULT(this->parserResult, this->connectionParameters->CopyParameter(PARAMETER_NAME_HTTP_COOKIE, true, PARAMETER_NAME_AFHS_COOKIE), this->parserResult, E_OUTOFMEMORY);
-                                  CHECK_CONDITION_HRESULT(this->parserResult, this->connectionParameters->CopyParameter(PARAMETER_NAME_HTTP_IGNORE_CONTENT_LENGTH, true, PARAMETER_NAME_AFHS_IGNORE_CONTENT_LENGTH), this->parserResult, E_OUTOFMEMORY);
-                                  CHECK_CONDITION_HRESULT(this->parserResult, this->connectionParameters->CopyParameter(PARAMETER_NAME_HTTP_OPEN_CONNECTION_TIMEOUT, true, PARAMETER_NAME_AFHS_OPEN_CONNECTION_TIMEOUT), this->parserResult, E_OUTOFMEMORY);
-                                  CHECK_CONDITION_HRESULT(this->parserResult, this->connectionParameters->CopyParameter(PARAMETER_NAME_HTTP_OPEN_CONNECTION_SLEEP_TIME, true, PARAMETER_NAME_AFHS_OPEN_CONNECTION_SLEEP_TIME), this->parserResult, E_OUTOFMEMORY);
-                                  CHECK_CONDITION_HRESULT(this->parserResult, this->connectionParameters->CopyParameter(PARAMETER_NAME_HTTP_TOTAL_REOPEN_CONNECTION_TIMEOUT, true, PARAMETER_NAME_AFHS_TOTAL_REOPEN_CONNECTION_TIMEOUT), this->parserResult, E_OUTOFMEMORY);
-                                  CHECK_CONDITION_HRESULT(this->parserResult, this->connectionParameters->CopyParameter(PARAMETER_NAME_HTTP_REFERER, true, PARAMETER_NAME_AFHS_REFERER), this->parserResult, E_OUTOFMEMORY);
-                                  CHECK_CONDITION_HRESULT(this->parserResult, this->connectionParameters->CopyParameter(PARAMETER_NAME_HTTP_USER_AGENT, true, PARAMETER_NAME_AFHS_USER_AGENT), this->parserResult, E_OUTOFMEMORY);
-                                  CHECK_CONDITION_HRESULT(this->parserResult, this->connectionParameters->CopyParameter(PARAMETER_NAME_HTTP_VERSION, true, PARAMETER_NAME_AFHS_VERSION), this->parserResult, E_OUTOFMEMORY);
                                   CHECK_CONDITION_HRESULT(this->parserResult, this->connectionParameters->CopyParameter(PARAMETER_NAME_URL, true, PARAMETER_NAME_AFHS_MANIFEST_URL), this->parserResult, E_OUTOFMEMORY);
-
                                   CHECK_CONDITION_HRESULT(this->parserResult, this->connectionParameters->Update(PARAMETER_NAME_URL, true, replacedUrl), this->parserResult, E_OUTOFMEMORY);
-
-                                  // copy current cookies parameters
-                                  if (SUCCEEDED(this->parserResult) && (usedCookies != NULL) && (usedCookies->Count() != 0))
-                                  {
-                                    // first add count of cookies
-                                    wchar_t *cookiesCountValue = FormatString(L"%u", usedCookies->Count());
-                                    CHECK_POINTER_HRESULT(this->parserResult, cookiesCountValue, this->parserResult, E_OUTOFMEMORY);
-
-                                    CHECK_CONDITION_HRESULT(this->parserResult, this->connectionParameters->Update(PARAMETER_NAME_AFHS_COOKIES_COUNT, true, cookiesCountValue), this->parserResult, E_OUTOFMEMORY);
-                                    for (unsigned int i = 0; (SUCCEEDED(this->parserResult) && (i < usedCookies->Count())); i++)
-                                    {
-                                      CParameter *cookie = usedCookies->GetItem(i);
-
-                                      wchar_t *name = FormatString(AFHS_COOKIE_FORMAT_PARAMETER_NAME, i);
-                                      CHECK_POINTER_HRESULT(this->parserResult, name, this->parserResult, E_OUTOFMEMORY);
-
-                                      CHECK_CONDITION_HRESULT(this->parserResult, this->connectionParameters->Update(name, true, cookie->GetValue()), this->parserResult, E_OUTOFMEMORY);
-                                      FREE_MEM(name);
-                                    }
-
-                                    FREE_MEM(cookiesCountValue);
-                                  }
 
                                   if (SUCCEEDED(this->parserResult))
                                   {
@@ -521,20 +414,8 @@ HRESULT CMPUrlSourceSplitter_Parser_F4M::GetParserResult(void)
                                 this->connectionParameters->Remove(PARAMETER_NAME_AFHS_BOOTSTRAP_INFO, true);
                                 this->connectionParameters->Remove(PARAMETER_NAME_AFHS_BOOTSTRAP_INFO_URL, true);
 
-                                this->connectionParameters->Remove(PARAMETER_NAME_AFHS_COOKIE, true);
-                                this->connectionParameters->Remove(PARAMETER_NAME_AFHS_IGNORE_CONTENT_LENGTH, true);
-
-                                this->connectionParameters->Remove(PARAMETER_NAME_AFHS_OPEN_CONNECTION_TIMEOUT, true);
-                                this->connectionParameters->Remove(PARAMETER_NAME_AFHS_OPEN_CONNECTION_SLEEP_TIME, true);
-                                this->connectionParameters->Remove(PARAMETER_NAME_AFHS_TOTAL_REOPEN_CONNECTION_TIMEOUT, true);
-
-                                this->connectionParameters->Remove(PARAMETER_NAME_AFHS_REFERER, true);
-                                this->connectionParameters->Remove(PARAMETER_NAME_AFHS_USER_AGENT, true);
-                                this->connectionParameters->Remove(PARAMETER_NAME_AFHS_VERSION, true);
                                 this->connectionParameters->Remove(PARAMETER_NAME_AFHS_MANIFEST_URL, true);
                                 this->connectionParameters->Remove(PARAMETER_NAME_AFHS_MANIFEST_CONTENT, true);
-
-                                this->connectionParameters->Remove(PARAMETER_NAME_AFHS_COOKIES_COUNT, true);
                               }
                               else
                               {
@@ -550,7 +431,7 @@ HRESULT CMPUrlSourceSplitter_Parser_F4M::GetParserResult(void)
                         FREE_MEM_CLASS(mediaCollection);
                       }
 
-                      FREE_MEM_CLASS(usedCookies);
+                      //FREE_MEM_CLASS(usedCookies);
                     }
                     else if (manifest->IsXml() && (manifest->GetParseError() != 0))
                     {

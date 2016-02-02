@@ -250,39 +250,8 @@ HRESULT CMPUrlSourceSplitter_Parser_M3U8::GetParserResult(void)
                                   wchar_t *replacedUrl = ReplaceSchema(this->connectionParameters->GetValue(PARAMETER_NAME_URL, true, NULL), L"m3u8");
                                   CHECK_POINTER_HRESULT(this->parserResult, replacedUrl, this->parserResult, E_OUTOFMEMORY);
 
-                                  CHECK_CONDITION_HRESULT(this->parserResult, this->connectionParameters->CopyParameter(PARAMETER_NAME_HTTP_COOKIE, true, PARAMETER_NAME_M3U8_COOKIE), this->parserResult, E_OUTOFMEMORY);
-                                  CHECK_CONDITION_HRESULT(this->parserResult, this->connectionParameters->CopyParameter(PARAMETER_NAME_HTTP_IGNORE_CONTENT_LENGTH, true, PARAMETER_NAME_M3U8_IGNORE_CONTENT_LENGTH), this->parserResult, E_OUTOFMEMORY);
-                                  CHECK_CONDITION_HRESULT(this->parserResult, this->connectionParameters->CopyParameter(PARAMETER_NAME_HTTP_OPEN_CONNECTION_TIMEOUT, true, PARAMETER_NAME_M3U8_OPEN_CONNECTION_TIMEOUT), this->parserResult, E_OUTOFMEMORY);
-                                  CHECK_CONDITION_HRESULT(this->parserResult, this->connectionParameters->CopyParameter(PARAMETER_NAME_HTTP_OPEN_CONNECTION_SLEEP_TIME, true, PARAMETER_NAME_M3U8_OPEN_CONNECTION_SLEEP_TIME), this->parserResult, E_OUTOFMEMORY);
-                                  CHECK_CONDITION_HRESULT(this->parserResult, this->connectionParameters->CopyParameter(PARAMETER_NAME_HTTP_TOTAL_REOPEN_CONNECTION_TIMEOUT, true, PARAMETER_NAME_M3U8_TOTAL_REOPEN_CONNECTION_TIMEOUT), this->parserResult, E_OUTOFMEMORY);
-                                  CHECK_CONDITION_HRESULT(this->parserResult, this->connectionParameters->CopyParameter(PARAMETER_NAME_HTTP_REFERER, true, PARAMETER_NAME_M3U8_REFERER), this->parserResult, E_OUTOFMEMORY);
-                                  CHECK_CONDITION_HRESULT(this->parserResult, this->connectionParameters->CopyParameter(PARAMETER_NAME_HTTP_USER_AGENT, true, PARAMETER_NAME_M3U8_USER_AGENT), this->parserResult, E_OUTOFMEMORY);
-                                  CHECK_CONDITION_HRESULT(this->parserResult, this->connectionParameters->CopyParameter(PARAMETER_NAME_HTTP_VERSION, true, PARAMETER_NAME_M3U8_VERSION), this->parserResult, E_OUTOFMEMORY);
                                   CHECK_CONDITION_HRESULT(this->parserResult, this->connectionParameters->CopyParameter(PARAMETER_NAME_URL, true, PARAMETER_NAME_M3U8_PLAYLIST_URL), this->parserResult, E_OUTOFMEMORY);
-
                                   CHECK_CONDITION_HRESULT(this->parserResult, this->connectionParameters->Update(PARAMETER_NAME_URL, true, replacedUrl), this->parserResult, E_OUTOFMEMORY);
-
-                                  // copy current cookies parameters
-                                  if (SUCCEEDED(this->parserResult) && (usedCookies != NULL) && (usedCookies->Count() != 0))
-                                  {
-                                    // first add count of cookies
-                                    wchar_t *cookiesCountValue = FormatString(L"%u", usedCookies->Count());
-                                    CHECK_POINTER_HRESULT(this->parserResult, cookiesCountValue, this->parserResult, E_OUTOFMEMORY);
-
-                                    CHECK_CONDITION_HRESULT(this->parserResult, this->connectionParameters->Update(PARAMETER_NAME_M3U8_COOKIES_COUNT, true, cookiesCountValue), this->parserResult, E_OUTOFMEMORY);
-                                    for (unsigned int i = 0; (SUCCEEDED(this->parserResult) && (i < usedCookies->Count())); i++)
-                                    {
-                                      CParameter *cookie = usedCookies->GetItem(i);
-
-                                      wchar_t *name = FormatString(M3U8_COOKIE_FORMAT_PARAMETER_NAME, i);
-                                      CHECK_POINTER_HRESULT(this->parserResult, name, this->parserResult, E_OUTOFMEMORY);
-
-                                      CHECK_CONDITION_HRESULT(this->parserResult, this->connectionParameters->Update(name, true, cookie->GetValue()), this->parserResult, E_OUTOFMEMORY);
-                                      FREE_MEM(name);
-                                    }
-
-                                    FREE_MEM(cookiesCountValue);
-                                  }
 
                                   // add playlist content to connection parameters
 

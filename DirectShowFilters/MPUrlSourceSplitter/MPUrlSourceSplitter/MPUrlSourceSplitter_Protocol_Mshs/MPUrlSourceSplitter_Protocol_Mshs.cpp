@@ -671,7 +671,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mshs::ReceiveData(CStreamPackage *streamPa
         {
           // set finish time, all methods must return before finish time
           request->SetFinishTime(finishTime);
-          request->SetReceivedDataTimeout(this->configuration->GetValueUnsignedInt(PARAMETER_NAME_MSHS_OPEN_CONNECTION_TIMEOUT, true, this->IsIptv() ? MSHS_OPEN_CONNECTION_TIMEOUT_DEFAULT_IPTV : MSHS_OPEN_CONNECTION_TIMEOUT_DEFAULT_SPLITTER));
+          request->SetReceivedDataTimeout(this->configuration->GetValueUnsignedInt(PARAMETER_NAME_HTTP_OPEN_CONNECTION_TIMEOUT, true, this->IsIptv() ? HTTP_OPEN_CONNECTION_TIMEOUT_DEFAULT_IPTV : HTTP_OPEN_CONNECTION_TIMEOUT_DEFAULT_SPLITTER));
           request->SetNetworkInterfaceName(this->configuration->GetValue(PARAMETER_NAME_INTERFACE, true, NULL));
 
           CMshsStreamFragment *fragment = this->streamFragments->GetItem(this->streamFragmentToDownload);
@@ -681,17 +681,43 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mshs::ReceiveData(CStreamPackage *streamPa
           this->logger->Log(LOGGER_VERBOSE, L"%s: %s: starting receiving data, timestamp: %lld", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, fragment->GetFragmentTimestamp());
 
           CHECK_CONDITION_HRESULT(result, request->SetUrl(fragment->GetUrl()), result, E_OUTOFMEMORY);
-          CHECK_CONDITION_HRESULT(result, request->SetCookie(this->configuration->GetValue(PARAMETER_NAME_MSHS_COOKIE, true, NULL)), result, E_OUTOFMEMORY);
-          request->SetHttpVersion(this->configuration->GetValueLong(PARAMETER_NAME_MSHS_VERSION, true, HTTP_VERSION_DEFAULT));
-          request->SetIgnoreContentLength((this->configuration->GetValueLong(PARAMETER_NAME_MSHS_IGNORE_CONTENT_LENGTH, true, HTTP_IGNORE_CONTENT_LENGTH_DEFAULT) == 1L));
-          CHECK_CONDITION_HRESULT(result, request->SetReferer(this->configuration->GetValue(PARAMETER_NAME_MSHS_REFERER, true, NULL)), result, E_OUTOFMEMORY);
-          CHECK_CONDITION_HRESULT(result, request->SetUserAgent(this->configuration->GetValue(PARAMETER_NAME_MSHS_USER_AGENT, true, NULL)), result, E_OUTOFMEMORY);
+          CHECK_CONDITION_HRESULT(result, request->SetCookie(this->configuration->GetValue(PARAMETER_NAME_HTTP_COOKIE, true, NULL)), result, E_OUTOFMEMORY);
+          request->SetHttpVersion(this->configuration->GetValueLong(PARAMETER_NAME_HTTP_VERSION, true, HTTP_VERSION_DEFAULT));
+          request->SetIgnoreContentLength((this->configuration->GetValueLong(PARAMETER_NAME_HTTP_IGNORE_CONTENT_LENGTH, true, HTTP_IGNORE_CONTENT_LENGTH_DEFAULT) == 1L));
+          CHECK_CONDITION_HRESULT(result, request->SetReferer(this->configuration->GetValue(PARAMETER_NAME_HTTP_REFERER, true, NULL)), result, E_OUTOFMEMORY);
+          CHECK_CONDITION_HRESULT(result, request->SetUserAgent(this->configuration->GetValue(PARAMETER_NAME_HTTP_USER_AGENT, true, NULL)), result, E_OUTOFMEMORY);
+
+          if (this->configuration->GetValueBool(PARAMETER_NAME_HTTP_SERVER_AUTHENTICATE, true, HTTP_SERVER_AUTHENTICATE_DEFAULT))
+          {
+            const wchar_t *serverUserName = this->configuration->GetValue(PARAMETER_NAME_HTTP_SERVER_USER_NAME, true, NULL);
+            const wchar_t *serverPassword = this->configuration->GetValue(PARAMETER_NAME_HTTP_SERVER_PASSWORD, true, NULL);
+
+            CHECK_POINTER_HRESULT(result, serverUserName, result, E_AUTH_NO_SERVER_USER_NAME);
+            CHECK_POINTER_HRESULT(result, serverUserName, result, E_AUTH_NO_SERVER_PASSWORD);
+
+            CHECK_CONDITION_HRESULT(result, request->SetAuthentication(true, serverUserName, serverPassword), result, E_OUTOFMEMORY);
+          }
+
+          if (this->configuration->GetValueBool(PARAMETER_NAME_HTTP_PROXY_SERVER_AUTHENTICATE, true, HTTP_PROXY_SERVER_AUTHENTICATE_DEFAULT))
+          {
+            const wchar_t *proxyServer = this->configuration->GetValue(PARAMETER_NAME_HTTP_PROXY_SERVER, true, NULL);
+            const wchar_t *proxyServerUserName = this->configuration->GetValue(PARAMETER_NAME_HTTP_PROXY_SERVER_USER_NAME, true, NULL);
+            const wchar_t *proxyServerPassword = this->configuration->GetValue(PARAMETER_NAME_HTTP_PROXY_SERVER_PASSWORD, true, NULL);
+            unsigned short proxyServerPort = (unsigned short)this->configuration->GetValueUnsignedInt(PARAMETER_NAME_HTTP_PROXY_SERVER_PORT, true, HTTP_PROXY_SERVER_PORT_DEFAULT);
+            unsigned int proxyServerType = this->configuration->GetValueUnsignedInt(PARAMETER_NAME_HTTP_PROXY_SERVER_TYPE, true, HTTP_PROXY_SERVER_TYPE_DEFAULT);
+
+            CHECK_POINTER_HRESULT(result, proxyServer, result, E_AUTH_NO_PROXY_SERVER);
+            CHECK_POINTER_HRESULT(result, proxyServerUserName, result, E_AUTH_NO_SERVER_USER_NAME);
+            CHECK_POINTER_HRESULT(result, proxyServerPassword, result, E_AUTH_NO_SERVER_PASSWORD);
+
+            CHECK_CONDITION_HRESULT(result, request->SetProxyAuthentication(true, proxyServer, proxyServerPort, proxyServerType, proxyServerUserName, proxyServerPassword), result, E_OUTOFMEMORY);
+          }
 
           if (SUCCEEDED(this->mainCurlInstance->LockCurlInstance(this)))
           {
             // apply cookies
 
-            unsigned int cookiesCount = this->configuration->GetValueUnsignedInt(PARAMETER_NAME_MSHS_COOKIES_COUNT, true, 0);
+            unsigned int cookiesCount = this->configuration->GetValueUnsignedInt(PARAMETER_NAME_HTTP_COOKIES_COUNT, true, 0);
 
             if (cookiesCount != 0)
             {
@@ -700,7 +726,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mshs::ReceiveData(CStreamPackage *streamPa
 
               for (unsigned int i = 0; (SUCCEEDED(result) && (i < cookiesCount)); i++)
               {
-                wchar_t *httpCookieName = FormatString(MSHS_COOKIE_FORMAT_PARAMETER_NAME, i);
+                wchar_t *httpCookieName = FormatString(HTTP_COOKIE_FORMAT_PARAMETER_NAME, i);
                 CHECK_POINTER_HRESULT(result, httpCookieName, result, E_OUTOFMEMORY);
 
                 if (SUCCEEDED(result))
@@ -720,14 +746,14 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mshs::ReceiveData(CStreamPackage *streamPa
               // clear set cookies to avoid adding same cookies
               for (unsigned int i = 0; (SUCCEEDED(result) && (i < cookiesCount)); i++)
               {
-                wchar_t *httpCookieName = FormatString(MSHS_COOKIE_FORMAT_PARAMETER_NAME, i);
+                wchar_t *httpCookieName = FormatString(HTTP_COOKIE_FORMAT_PARAMETER_NAME, i);
                 CHECK_POINTER_HRESULT(result, httpCookieName, result, E_OUTOFMEMORY);
 
                 CHECK_CONDITION_EXECUTE(SUCCEEDED(result), this->configuration->Remove(httpCookieName, true));
                 FREE_MEM(httpCookieName);
               }
 
-              this->configuration->Remove(PARAMETER_NAME_MSHS_COOKIES_COUNT, true);
+              this->configuration->Remove(PARAMETER_NAME_HTTP_COOKIES_COUNT, true);
             }
 
             if (SUCCEEDED(this->mainCurlInstance->Initialize(request)))
@@ -1216,17 +1242,17 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mshs::GetConnectionParameters(CParameterCo
 
 unsigned int CMPUrlSourceSplitter_Protocol_Mshs::GetOpenConnectionTimeout(void)
 {
-  return this->configuration->GetValueUnsignedInt(PARAMETER_NAME_MSHS_OPEN_CONNECTION_TIMEOUT, true, this->IsIptv() ? MSHS_OPEN_CONNECTION_TIMEOUT_DEFAULT_IPTV : MSHS_OPEN_CONNECTION_TIMEOUT_DEFAULT_SPLITTER);
+  return this->configuration->GetValueUnsignedInt(PARAMETER_NAME_HTTP_OPEN_CONNECTION_TIMEOUT, true, this->IsIptv() ? HTTP_OPEN_CONNECTION_TIMEOUT_DEFAULT_IPTV : HTTP_OPEN_CONNECTION_TIMEOUT_DEFAULT_SPLITTER);
 }
 
 unsigned int CMPUrlSourceSplitter_Protocol_Mshs::GetOpenConnectionSleepTime(void)
 {
-  return this->configuration->GetValueUnsignedInt(PARAMETER_NAME_MSHS_OPEN_CONNECTION_SLEEP_TIME, true, this->IsIptv() ? MSHS_OPEN_CONNECTION_SLEEP_TIME_DEFAULT_IPTV : MSHS_OPEN_CONNECTION_SLEEP_TIME_DEFAULT_SPLITTER);
+  return this->configuration->GetValueUnsignedInt(PARAMETER_NAME_HTTP_OPEN_CONNECTION_SLEEP_TIME, true, this->IsIptv() ? HTTP_OPEN_CONNECTION_SLEEP_TIME_DEFAULT_IPTV : HTTP_OPEN_CONNECTION_SLEEP_TIME_DEFAULT_SPLITTER);
 }
 
 unsigned int CMPUrlSourceSplitter_Protocol_Mshs::GetTotalReopenConnectionTimeout(void)
 {
-  return this->configuration->GetValueUnsignedInt(PARAMETER_NAME_MSHS_TOTAL_REOPEN_CONNECTION_TIMEOUT, true, this->IsIptv() ? MSHS_TOTAL_REOPEN_CONNECTION_TIMEOUT_DEFAULT_IPTV : MSHS_TOTAL_REOPEN_CONNECTION_TIMEOUT_DEFAULT_SPLITTER);
+  return this->configuration->GetValueUnsignedInt(PARAMETER_NAME_HTTP_TOTAL_REOPEN_CONNECTION_TIMEOUT, true, this->IsIptv() ? HTTP_TOTAL_REOPEN_CONNECTION_TIMEOUT_DEFAULT_IPTV : HTTP_TOTAL_REOPEN_CONNECTION_TIMEOUT_DEFAULT_SPLITTER);
 }
 
 HRESULT CMPUrlSourceSplitter_Protocol_Mshs::StartReceivingData(CParameterCollection *parameters)
@@ -1495,12 +1521,12 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mshs::Initialize(CPluginConfiguration *con
 
     if (SUCCEEDED(result))
     {
-      unsigned int currentCookiesCount = this->configuration->GetValueUnsignedInt(PARAMETER_NAME_MSHS_COOKIES_COUNT, true, 0);
+      unsigned int currentCookiesCount = this->configuration->GetValueUnsignedInt(PARAMETER_NAME_HTTP_COOKIES_COUNT, true, 0);
       if (currentCookiesCount != 0)
       {
         for (unsigned int i = 0; (SUCCEEDED(result) & (i < currentCookiesCount)); i++)
         {
-          wchar_t *cookieName = FormatString(MSHS_COOKIE_FORMAT_PARAMETER_NAME, i);
+          wchar_t *cookieName = FormatString(HTTP_COOKIE_FORMAT_PARAMETER_NAME, i);
           CHECK_POINTER_HRESULT(result, cookieName, result, E_OUTOFMEMORY);
 
           if (SUCCEEDED(result))

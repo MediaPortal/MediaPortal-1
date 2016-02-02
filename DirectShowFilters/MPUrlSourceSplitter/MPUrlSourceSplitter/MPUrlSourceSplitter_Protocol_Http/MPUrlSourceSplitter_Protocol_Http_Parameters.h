@@ -46,6 +46,17 @@
 // special parameter for enabling (by default) or disabling detection of seeking support
 #define PARAMETER_NAME_HTTP_SEEKING_SUPPORT_DETECTION                 L"HttpSeekingSupportDetection"
 
+#define PARAMETER_NAME_HTTP_SERVER_AUTHENTICATE                       L"HttpServerAuthenticate"
+#define PARAMETER_NAME_HTTP_SERVER_USER_NAME                          L"HttpServerUserName"
+#define PARAMETER_NAME_HTTP_SERVER_PASSWORD                           L"HttpServerPassword"
+
+#define PARAMETER_NAME_HTTP_PROXY_SERVER_AUTHENTICATE                 L"HttpProxyServerAuthenticate"
+#define PARAMETER_NAME_HTTP_PROXY_SERVER                              L"HttpProxyServer"
+#define PARAMETER_NAME_HTTP_PROXY_SERVER_PORT                         L"HttpProxyServerPort"
+#define PARAMETER_NAME_HTTP_PROXY_SERVER_USER_NAME                    L"HttpProxyServerUserName"
+#define PARAMETER_NAME_HTTP_PROXY_SERVER_PASSWORD                     L"HttpProxyServerPassword"
+#define PARAMETER_NAME_HTTP_PROXY_SERVER_TYPE                         L"HttpProxyServerType"
+
 // we should get data in twenty seconds (splitter)
 #define HTTP_OPEN_CONNECTION_TIMEOUT_DEFAULT_SPLITTER                 20000
 #define HTTP_OPEN_CONNECTION_SLEEP_TIME_DEFAULT_SPLITTER              0
@@ -58,5 +69,11 @@
 
 #define HTTP_SEEKING_SUPPORTED_DEFAULT                                false
 #define HTTP_SEEKING_SUPPORT_DETECTION_DEFAULT                        true
+
+#define HTTP_SERVER_AUTHENTICATE_DEFAULT                              false
+#define HTTP_PROXY_SERVER_AUTHENTICATE_DEFAULT                        false
+
+#define HTTP_PROXY_SERVER_PORT_DEFAULT                                1080
+#define HTTP_PROXY_SERVER_TYPE_DEFAULT                                HTTP_PROXY_TYPE_HTTP
 
 #endif

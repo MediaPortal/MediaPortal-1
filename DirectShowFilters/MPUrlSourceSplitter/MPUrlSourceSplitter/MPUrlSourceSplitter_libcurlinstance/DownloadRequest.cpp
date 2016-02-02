@@ -114,7 +114,6 @@ bool CDownloadRequest::CloneInternal(CDownloadRequest *clone)
   if (result)
   {
     clone->flags = this->flags;
-    clone->url = Duplicate(this->url);
     clone->finishTime = this->finishTime;
     clone->receiveDataTimeout = this->receiveDataTimeout;
 
