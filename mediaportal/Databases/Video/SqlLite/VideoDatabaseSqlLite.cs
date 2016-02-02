@@ -1801,8 +1801,6 @@ namespace MediaPortal.Video.Database
         Log.Error("videodatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
         Open();
       }
-
-      DeleteEmptyCollections();
     }
 
     public string GetCollectionsForMovie(int lMovieId)      
@@ -3012,6 +3010,7 @@ namespace MediaPortal.Video.Database
         {
           AddCollectionToMovie(lMovieId, (int)vecCollections[i]);
         }
+        DeleteEmptyCollections();
 
         string strRating = String.Format("{0}", details1.Rating);
         

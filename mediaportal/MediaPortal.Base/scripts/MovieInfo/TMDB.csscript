@@ -209,6 +209,7 @@ internal class Grabber : MarshalByRefObject, MediaPortal.Video.Database.IIMDBScr
   public const string API_LatestMovie = API_BaseUrl + "latest/movie";
   public const string API_Keywords = API_BaseUrl + "movie/{0}/keywords";
   public const string API_Translations = API_BaseUrl + "movie/{0}/translations";
+  public const string API_Collection = API_BaseUrl + "collection/{0}";
 
   #endregion<<TMDB_CONST>>
 
@@ -247,7 +248,7 @@ internal class Grabber : MarshalByRefObject, MediaPortal.Video.Database.IIMDBScr
     string sReponseDetails = GetWebServerResponse(sRequest);
     Log.Debug("GetTitles(" + title + ") TMDB Response = " + sReponseDetails);
 
-    string sFilter = @"{""adult"":([\d\p{L}\s\-_"",\\'\/.!?:\(\);\[\]]*)}";
+    string sFilter = @"""adult"":([^}]+?)}";
     System.Text.RegularExpressions.MatchCollection tMatches = System.Text.RegularExpressions.Regex.Matches(sReponseDetails, sFilter);
     foreach (System.Text.RegularExpressions.Match aMovie in tMatches)
     {
@@ -472,7 +473,7 @@ internal class Grabber : MarshalByRefObject, MediaPortal.Video.Database.IIMDBScr
       }
 
       // Movie Collection
-      rx = new System.Text.RegularExpressions.Regex(@"name.:"+"\""+@"(?<Collection>.+?)"+"\""+@".+?poster_path.:"+"\""+@"(?<Poster>.+?)"+"\""+@".+?backdrop_path.:"+"\""+@"(?<Backdrop>.+?)"+"\"");
+      rx = new System.Text.RegularExpressions.Regex(@"id.:(?<colID>\d{1,}).*?name.:"+"\""+@"(?<Collection>.+?)"+"\""+@".+?poster_path.:"+"\""+@"(?<Poster>.+?)"+"\""+@".+?backdrop_path.:"+"\""+@"(?<Backdrop>.+?)"+"\"");
       aMatchDetails = rx.Match(sReponseDetails);
       if (aMatchDetails != null)
       {
@@ -486,6 +487,13 @@ internal class Grabber : MarshalByRefObject, MediaPortal.Video.Database.IIMDBScr
         if (!string.IsNullOrEmpty(oReturn.CollectionBackdrop))
         {
           oReturn.CollectionBackdrop = "http://image.tmdb.org/t/p/w1920" + oReturn.CollectionBackdrop;
+        }
+
+        int iMovieColID = -1;
+        int.TryParse(aMatchDetails.Groups["colID"].Value, out iMovieColID);
+        if (iMovieColID > 0)
+        {
+          AddTMDBCollections(iMovieColID);
         }
       }
       else
@@ -622,6 +630,45 @@ internal class Grabber : MarshalByRefObject, MediaPortal.Video.Database.IIMDBScr
     return sRequest;
   }
 
+  private static void AddTMDBCollections(int iCollection)
+  {
+    if (iCollection <= 0)
+    {
+      return;
+    }
+
+    string sReponseDetails = string.Empty;
+    string sRequest = API_Collection.Replace("{0}", iCollection.ToString().Trim()) + "?api_key=" + Grabber.API_KEY;
+    if (!string.IsNullOrEmpty(API_LANG))
+    {
+      sRequest += "&language=" + API_LANG;
+    }
+
+    try
+    {
+      sReponseDetails = GetWebServerResponse(sRequest);
+    }
+    catch { return; }
+    Log.Debug("GetTMDCollections url = {0}, sReponseDetails = {1}", sRequest, sReponseDetails);
+    try
+    {
+      System.Text.RegularExpressions.Regex rx = new System.Text.RegularExpressions.Regex(@"id.:(?<colID>\d{1,}).*?name.:"+"\""+@"(?<Collection>.+?)"+"\""+@".+?overview.:"+"\""+@"(?<Overview>.*?)"+"\"");
+      System.Text.RegularExpressions.Match aMatchDetails = rx.Match(sReponseDetails);
+      if (aMatchDetails != null)
+      {
+        string strCollection = aMatchDetails.Groups["Collection"].Value;
+        string strOverview = aMatchDetails.Groups["Overview"].Value;
+        if (!string.IsNullOrEmpty(strCollection) && !string.IsNullOrEmpty(strOverview))
+        {
+          int idCollection = VideoDatabase.AddCollection(strCollection);
+          VideoDatabase.AddCollectionDescription(strCollection, strOverview);
+          Log.Debug("GetTMDCollections added collection with description: {0}:{1} - {2}", idCollection, strCollection, strOverview);
+        }
+      }
+    }
+    catch { }
+  }
+
   private static string GetWebServerResponse(string srequest)
   {
     string sReturn = string.Empty;
@@ -716,6 +763,7 @@ internal class Grabber : MarshalByRefObject, MediaPortal.Video.Database.IIMDBScr
     //Tagline
     public string TagLine;
 
+    // Collection
     public string Collection;
     public string CollectionCover;
     public string CollectionBackdrop;
