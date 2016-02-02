@@ -29,6 +29,8 @@ namespace MediaPortal.Util
         [DllImport("wininet", CharSet = CharSet.Auto)]
         static extern bool InternetGetConnectedState(ref ConnectionStatusEnum flags, int dw);
 
+        static string HostDetectMethod = "Ping";
+
         /// <summary>
         /// enum to hold the possible connection states
         /// </summary>
@@ -44,6 +46,15 @@ namespace MediaPortal.Util
         }
 
         #endregion
+
+        static UNCTools()
+        {
+          using (Profile.Settings xmlreader = new Profile.MPSettings())
+          {
+            HostDetectMethod = xmlreader.GetValueAsString("general", "HostDetectMethod", "Ping");
+          }
+        }
+
 
         #region Public functions
 
@@ -281,23 +292,30 @@ namespace MediaPortal.Util
       {
         //Resolve given path to UNC
         var strUNCPath = ResolveToUNC(strFile);
-
         //Get Host name
         var uri = new Uri(strUNCPath);
-
-        //ping the Host
-        if (uri.Host == "") return strUNCPath;
-        //We have an host -> try to ping it
-
-        var iPingAnswers = PingHost(uri.Host, 200, 2);
-        if (iPingAnswers != 0) return strUNCPath;
-        if (CheckNetworkPath(strFile))
+          
+        if (HostDetectMethod == "Ping")
         {
-          return strUNCPath;
+          //ping the Host
+          if (uri.Host == "") return strUNCPath;
+          //We have an host -> try to ping it
+
+          var iPingAnswers = PingHost(uri.Host, 200, 2);
+          if (iPingAnswers != 0) 
+            return strUNCPath;
         }
+        else
+        {
+          if (CheckNetworkPath(strFile))
+          {
+            return strUNCPath;
+          }
+        }
+
         //We DONT have received an answer
         Log.Debug("UNCTools: UNCFileFolderOnline: host '" + uri.Host + "' is not reachable!! , File/Folder '" + strFile + "'");
-        return "";
+        return string.Empty;
 
         //UNC device is online or local file/folder
       }
