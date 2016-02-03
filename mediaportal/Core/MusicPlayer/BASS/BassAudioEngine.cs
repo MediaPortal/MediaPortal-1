@@ -21,12 +21,14 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
 using MediaPortal.ExtensionMethods;
 using MediaPortal.GUI.Library;
 using MediaPortal.Player;
 using MediaPortal.Player.DSP;
+using MediaPortal.Player.MediaInfo;
 using MediaPortal.TagReader;
 using Un4seen.Bass;
 using Un4seen.Bass.AddOn.Cd;
@@ -43,7 +45,7 @@ namespace MediaPortal.MusicPlayer.BASS
   /// <summary>
   /// Handles playback of Audio files and Internet streams via the BASS Audio Engine.
   /// </summary>
-  public class BassAudioEngine : IPlayer
+  public class BassAudioEngine : BaseAudioPlayer
   {
     #region Enums
 
@@ -409,6 +411,7 @@ namespace MediaPortal.MusicPlayer.BASS
     public override int CurrentAudioStream
     {
       get { return _mixer.BassStream; }
+      set { }
     }
 
     #endregion
@@ -2087,6 +2090,33 @@ namespace MediaPortal.MusicPlayer.BASS
         msg.Label = CurrentFile;
         GUIWindowManager.SendThreadMessage(msg);
       }
+    }
+
+    public override int AudioStreams { get { return _streams.Count; } }
+
+    public override AudioStream CurrentAudio { get { return MusicToAudioStream(GetCurrentStream()); } }
+
+    public override AudioStream BestAudio
+    {
+      get
+      {
+        return MusicToAudioStream(_streams.OrderByDescending(x => x.StreamTags.channelinfo.chans * 10000000 + x.StreamTags.bitrate).FirstOrDefault());
+      }
+    }
+
+    private static AudioStream MusicToAudioStream(MusicStream source)
+    {
+      if (source == null) return null;
+      return new AudioStream(source.BassStream)
+      {
+        Bitrate = source.StreamTags.bitrate * 1000,
+        Channel = source.StreamTags.channelinfo.chans,
+        SamplingRate = source.StreamTags.channelinfo.sample,
+        Name = source.StreamTags.title,
+        Duration = TimeSpan.FromSeconds(source.StreamElapsedTime),
+        Language = "English",
+        Lcid = 0x1033
+      };
     }
 
     #endregion

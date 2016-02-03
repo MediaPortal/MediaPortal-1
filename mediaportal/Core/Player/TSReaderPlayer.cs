@@ -548,6 +548,12 @@ namespace MediaPortal.Player
             Cleanup();
             return false;
           }
+          DirectShowHelper.AnalyseStreams(_graphBuilder);
+          // TsReader filter does not report about video streams
+          if (VideoStreams == 0)
+          {
+            AddCustomVideoStream(MediaInfo.BestVideoStream, 0, "TsReader");
+          }
           DirectShowUtil.EnableDeInterlace(_graphBuilder);
           if (_vmr9 != null)
           {
@@ -850,7 +856,8 @@ namespace MediaPortal.Player
             }
             _mediaCtrl = null;
           }
-
+          
+          ClearStreams();
           if (_vmr9 != null)
           {
             _vmr9.Enable(false);
@@ -875,6 +882,7 @@ namespace MediaPortal.Player
           _basicAudio = null;
           _basicVideo = null;
           _ireader = null;
+          ClearStreams();
 
           if (filterCodec != null && filterCodec._audioRendererFilter != null)
           {

@@ -35,7 +35,10 @@ namespace MediaPortal.Player
     private VMR9Util _vmr9 = null;
     private IPin _pinVmr9ConnectedTo = null;
 
-    public StreamBufferPlayer9() {}
+    public StreamBufferPlayer9() 
+        : base()
+    {
+    }
 
     protected override void OnInitialized()
     {
@@ -233,6 +236,7 @@ namespace MediaPortal.Player
         }
         _pinVmr9ConnectedTo = _vmr9.PinConnectedTo;
         _vmr9.SetDeinterlaceMode();
+        
         return true;
       }
       catch (Exception ex)
@@ -298,6 +302,7 @@ namespace MediaPortal.Player
         _basicVideo = null;
         _bufferSource = null;
         _pinVmr9ConnectedTo = null;
+        ClearStreams();
 
         if (_pinVmr9ConnectedTo != null)
         {

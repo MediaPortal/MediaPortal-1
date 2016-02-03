@@ -30,6 +30,7 @@ using MediaPortal.Configuration;
 using MediaPortal.Database;
 using MediaPortal.GUI.Library;
 using MediaPortal.Player;
+using MediaPortal.Player.MediaInfo;
 using MediaPortal.Util;
 using SQLite.NET;
 using MediaPortal.Profile;
@@ -966,15 +967,10 @@ namespace MediaPortal.Video.Database
         }
 
         // Set currentMediaInfoFilePlaying for later use if it's the same media to play (it will cache mediainfo data)
-        MediaInfoWrapper mInfo = null;
-        if (!string.IsNullOrEmpty(g_Player.currentMediaInfoFilePlaying) && (g_Player.currentMediaInfoFilePlaying == strFilenameAndPath))
-        {
-          mInfo = g_Player._mediaInfo;
-        }
-        else
+        var mediaInfo = new MediaInfoWrapper(strFilenameAndPath);
+        if (string.IsNullOrEmpty(g_Player.currentMediaInfoFilePlaying) || g_Player.currentMediaInfoFilePlaying != strFilenameAndPath)
         {
           g_Player.currentMediaInfoFilePlaying = strFilenameAndPath;
-          mInfo = g_Player._mediaInfo = new MediaInfoWrapper(strFilenameAndPath);
         }
 
         if (isImage && DaemonTools.IsMounted(strFilenameAndPath))
@@ -989,46 +985,34 @@ namespace MediaPortal.Video.Database
 
         int subtitles = 0;
 
-        if (mInfo.HasSubtitles)
+        if (mediaInfo.HasSubtitles)
         {
           subtitles = 1;
         }
 
         try
         {
-          if (results.Rows.Count == 0)
+          var audio = mediaInfo.BestAudioStream;
+          var video = mediaInfo.BestVideoStream;
+          if (video == null || string.IsNullOrEmpty(video.Format))
           {
-            strSQL = String.Format(
-              "INSERT INTO filesmediainfo (idFile, videoCodec, videoResolution, aspectRatio, hasSubtitles, audioCodec, audioChannels) VALUES({0},'{1}','{2}','{3}',{4},'{5}','{6}')",
-              fileID,
-              Util.Utils.MakeFileName(mInfo.VideoCodec),
-              mInfo.VideoResolution,
-              mInfo.AspectRatio,
-              subtitles,
-              Util.Utils.MakeFileName(mInfo.AudioCodec),
-              mInfo.AudioChannelsFriendly);
-          }
-          else
-          {
-            strSQL = String.Format(
-              "UPDATE filesmediainfo SET videoCodec='{1}', videoResolution='{2}', aspectRatio='{3}', hasSubtitles='{4}', audioCodec='{5}', audioChannels='{6}' WHERE idFile={0}",
-              fileID,
-              Util.Utils.MakeFileName(mInfo.VideoCodec),
-              mInfo.VideoResolution,
-              mInfo.AspectRatio,
-              subtitles,
-              Util.Utils.MakeFileName(mInfo.AudioCodec),
-              mInfo.AudioChannelsFriendly);
+              return;
           }
 
-          // Prevent empty record for future or unknown codecs
-          if (mInfo.VideoCodec == string.Empty)
-          {
-            return;
-          }
+          strSQL = string.Format(results.Rows.Count == 0 ? 
+                "INSERT INTO filesmediainfo (idFile, videoCodec, videoResolution, aspectRatio, hasSubtitles, audioCodec, audioChannels) VALUES({0},'{1}','{2}','{3}',{4},'{5}','{6}')" : 
+                "UPDATE filesmediainfo SET videoCodec='{1}', videoResolution='{2}', aspectRatio='{3}', hasSubtitles='{4}', audioCodec='{5}', audioChannels='{6}' WHERE idFile={0}",
+                fileID, 
+                Util.Utils.MakeFileName(video.Format), 
+                video.Resolution, 
+                video.AspectRatio, 
+                subtitles, 
+                Util.Utils.MakeFileName(audio != null ? audio.Format : string.Empty), 
+                audio != null ? audio.AudioChannelsFriendly : "Mono");
 
+            // Prevent empty record for future or unknown codecs
           m_db.Execute(strSQL);
-          SetVideoDuration(fileID, mInfo.VideoDuration / 1000);
+          SetVideoDuration(fileID, mediaInfo.VideoDuration / 1000);
           ArrayList movieFiles = new ArrayList();
           int movieId = VideoDatabase.GetMovieId(strFilenameAndPath);
           VideoDatabase.GetFilesForMovie(movieId, ref movieFiles);

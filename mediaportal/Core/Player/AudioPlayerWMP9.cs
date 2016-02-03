@@ -26,6 +26,7 @@ using System.Windows.Forms;
 using AxWMPLib;
 using MediaPortal.Configuration;
 using MediaPortal.GUI.Library;
+using MediaPortal.Player.MediaInfo;
 using MediaPortal.Profile;
 using Microsoft.Win32;
 using WMPLib;
@@ -34,7 +35,7 @@ using _WMPOCXEvents_PlayStateChangeEventHandler = AxWMPLib._WMPOCXEvents_PlaySta
 
 namespace MediaPortal.Player
 {
-  public class AudioPlayerWMP9 : IPlayer
+  public class AudioPlayerWMP9 : BaseAudioPlayer
   {
     public enum PlayState
     {
@@ -847,6 +848,73 @@ namespace MediaPortal.Player
             VMR9Util.g_vmr9.EVRProvidePlaybackRate((double)value);
           }
         }
+      }
+    }
+
+    public override int AudioStreams
+    {
+      get 
+      {
+        return IsMediaAvailable ? 1 : 0; 
+      }
+    }
+
+    public override int CurrentAudioStream
+    {
+      get { return 0; }
+      set { }
+    }
+
+    public override AudioStream CurrentAudio
+    {
+      get { return IsMediaAvailable ? GetCurrentAudioStream() : null; }
+    }
+
+    public override AudioStream BestAudio
+    {
+      get { return IsMediaAvailable ? GetCurrentAudioStream() : null; }
+    }
+
+    private static double AttributeToDouble(string attributeName, double defaultValue)
+    {
+      double result;
+      var attributeValue = _wmp10Player.currentMedia.getItemInfo(attributeName);
+      return !string.IsNullOrEmpty(attributeValue) && double.TryParse(attributeValue, out result)
+                 ? result
+                 : defaultValue;
+    }
+
+    private static int AttributeToInt(string attributeName, int defaultValue)
+    {
+      int result;
+      var attributeValue = _wmp10Player.currentMedia.getItemInfo(attributeName);
+      return !string.IsNullOrEmpty(attributeValue) && int.TryParse(attributeValue, out result)
+                 ? result
+                 : defaultValue;
+    }
+
+    private AudioStream GetCurrentAudioStream()
+    {
+      return new AudioStream(1)
+      {
+        Duration = TimeSpan.FromSeconds(_wmp10Player.currentMedia.duration),
+        Bitrate = AttributeToDouble("Bitrate", 44100),
+        Channel = AttributeToInt("Channels", 1),
+        Name = _wmp10Player.currentMedia.getItemInfo("Title"),
+        Format = _wmp10Player.currentMedia.getItemInfo("AudioFormat"),
+        Language = _wmp10Player.currentMedia.getItemInfo("WM/Language")
+      };
+    }
+
+    private bool IsMediaAvailable
+    {
+      get
+      {
+        return !string.IsNullOrEmpty(_currentFile) && 
+            _wmp10Player != null && 
+            _wmp10Player.currentMedia != null && 
+            !string.IsNullOrEmpty(_wmp10Player.currentMedia.sourceURL) && 
+            (_wmp10Player.Error == null || _wmp10Player.Error.errorCount == 0);
       }
     }
   }

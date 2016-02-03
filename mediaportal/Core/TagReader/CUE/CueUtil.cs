@@ -23,6 +23,7 @@ using System.Collections.Generic;
 using System.IO;
 using MediaPortal.GUI.Library;
 using MediaPortal.Player;
+using MediaPortal.Player.MediaInfo;
 
 namespace MediaPortal.TagReader
 {
@@ -309,7 +310,7 @@ namespace MediaPortal.TagReader
         {
           try
           {
-            MediaInfo mi = new MediaInfo();
+            var mi = new MediaInfo();
             mi.Open(fname);
             int durationms = 0;
             int.TryParse(mi.Get(StreamKind.General, 0, "Duration"), out durationms);

@@ -140,7 +140,10 @@ xcopy %1\MPE\MpeMaker\bin\%2\MpeMaker.* . /Y /D
 
 REM Nuget 
 xcopy %1\Databases\bin\%2\HtmlAgilityPack.* . /Y /D
-xcopy %1\..\Packages\MediaInfo.0.7.69\MediaInfo.dll . /Y /D
+xcopy %1\MediaPortal.Base\MediaInfo.dll . /Y /D
+xcopy %1\MediaPortal.Base\libeay32.dll . /Y /D
+xcopy %1\MediaPortal.Base\ssleay32.dll . /Y /D
+xcopy %1\MediaPortal.Base\libcurl.dll . /Y /D
 xcopy %1\..\Packages\Sqlite.3.10.0\sqlite.dll . /Y /D
 
 REM ffmpeg 

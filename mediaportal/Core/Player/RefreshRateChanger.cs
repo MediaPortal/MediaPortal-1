@@ -32,6 +32,8 @@ using Microsoft.DirectX.Direct3D;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
+using MediaPortal.Player.MediaInfo;
+
 #endregion
 
 namespace MediaPortal.Player
@@ -841,7 +843,7 @@ namespace MediaPortal.Player
     }
 
     // change screen refresh rate based on media framerate
-    public static void AdaptRefreshRate(string strFile, MediaType type)
+    public static void AdaptRefreshRate(MediaInfoWrapper info, string strFile, MediaType type)
     {
       if (_refreshrateChangePending)
       {
@@ -891,9 +893,9 @@ namespace MediaPortal.Player
 
       if ((isVideo || isDVD) && (!isRTSP && !isTV))
       {
-        if (g_Player.MediaInfo != null)
+        if (info != null)
         {
-          fps = g_Player.MediaInfo.Framerate;
+          fps = info.BestVideoStream.FrameRate;
         }
         else
         {

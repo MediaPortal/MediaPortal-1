@@ -23,6 +23,7 @@ using iTunesLib;
 using MediaPortal.Configuration;
 using MediaPortal.GUI.Library;
 using MediaPortal.Player;
+using MediaPortal.Player.MediaInfo;
 using MediaPortal.Profile;
 
 namespace MediaPortal.ITunesPlayer
@@ -31,7 +32,7 @@ namespace MediaPortal.ITunesPlayer
   /// Summary description for ITunesPlugin.
   /// </summary>
   [PluginIcons("ExternalPlayers.Itunes.iTunesLogo.png", "ExternalPlayers.Itunes.iTunesLogoDisabled.png")]
-  public class ITunesPlugin : IExternalPlayer
+  public class ITunesPlugin : BaseExternalAudioPlayer
   {
     private iTunesAppClass _iTunesApplication = null;
     private IITUserPlaylist _playList;
@@ -605,6 +606,60 @@ namespace MediaPortal.ITunesPlayer
         msg.Label = CurrentFile;
         GUIWindowManager.SendThreadMessage(msg);
       }
+    }
+    public override int AudioStreams
+    {
+        get { return 1; }
+    }
+
+    public override AudioStream BestAudio
+    {
+        get
+        {
+            if (_iTunesApplication != null)
+            {
+                return new AudioStream(1)
+                {
+                    Bitrate = _iTunesApplication.CurrentTrack.BitRate * 1000,
+                    Language = "English",
+                    Lcid = 0x1033,
+                    Name = _iTunesApplication.CurrentTrack.Name,
+                    Duration = TimeSpan.FromSeconds(_iTunesApplication.CurrentTrack.Duration),
+                    Channel = 2,
+                    SamplingRate = _iTunesApplication.CurrentTrack.SampleRate
+                };
+            }
+
+            return null;
+        }
+    }
+
+    public override AudioStream CurrentAudio
+    {
+        get
+        {
+            if (_iTunesApplication != null)
+            {
+                return new AudioStream(1)
+                {
+                    Bitrate = _iTunesApplication.CurrentTrack.BitRate * 1000,
+                    Language = "English",
+                    Lcid = 0x1033,
+                    Name = _iTunesApplication.CurrentTrack.Name,
+                    Duration = TimeSpan.FromSeconds(_iTunesApplication.CurrentTrack.Duration),
+                    Channel = 2,
+                    SamplingRate = _iTunesApplication.CurrentTrack.SampleRate
+                };
+            }
+
+            return null;
+        }
+    }
+
+    public override int CurrentAudioStream
+    {
+        get { return 0; }
+        set { }
     }
   }
 }

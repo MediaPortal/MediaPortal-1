@@ -23,6 +23,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
 using DirectShowLib;
@@ -548,7 +549,7 @@ namespace MediaPortal.Player
         // after enabeling exclusive mode, if done first it causes MediPortal to minimize if for example the "Windows key" is pressed while playing a video
         if (File.Exists(m_strCurrentFile) && extension != ".dts" && extension != ".mp3" && extension != ".mka" && extension != ".ac3")
         {
-          if (g_Player._mediaInfo != null && !g_Player._mediaInfo.MediaInfoNotloaded && !g_Player._mediaInfo.hasVideo)
+          if (MediaInfo != null && !MediaInfo.MediaInfoNotloaded && !MediaInfo.HasVideo)
           {
             AudioOnly = true;
           }
@@ -1211,24 +1212,42 @@ namespace MediaPortal.Player
       }
 
       //Detection of Interlaced Video, true for all type except .bdmv .mpls
-      if (g_Player.MediaInfo != null)
+      if (MediaInfo != null)
       {
-        if (g_Player.MediaInfo.IsInterlaced && (string.Equals(g_Player.MediaInfo.VideoCodec, VC1Codec)))
+        var videoStream = MediaInfo.VideoStreams.FirstOrDefault();
+        if (videoStream != null)
         {
-          vc1ICodec = true;
-          vc1Codec = false;
+          var forcedStream = MediaInfo.VideoStreams.FirstOrDefault(x => x.Forced);
+          if (forcedStream != null)
+          {
+            videoStream = forcedStream;
+          }
+          else
+          {
+            var defaultStream = MediaInfo.VideoStreams.FirstOrDefault(x => x.Default);
+            if (defaultStream != null)
+            {
+              videoStream = defaultStream;
+            }
+          }
+
+          if (videoStream.Interlaced && (string.Equals(videoStream.Format, VC1Codec)))
+          {
+            vc1ICodec = true;
+            vc1Codec = false;
+          }
+            //Detection of VC1 Video if Splitter detection Failed, true for all type except .bdmv .mpls
+          else if (string.Equals(videoStream.Format, VC1Codec))
+            vc1Codec = true;
+          //Detection of AAC Audio //Disable the Detection to enable correct audio filter detection rules.
+          //if (_mediaInfo.AudioCodec.Contains(AACCodec))
+          //aacCodec = true;
+          if (videoStream.Format.Contains("AVC"))
+            h264Codec = true;
+          if (videoStream.Format.Contains("XVID") || videoStream.Format.Contains("DIVX") ||
+              videoStream.Format.Contains("DX50"))
+            xvidCodec = true;
         }
-          //Detection of VC1 Video if Splitter detection Failed, true for all type except .bdmv .mpls
-        else if (string.Equals(g_Player.MediaInfo.VideoCodec, VC1Codec))
-          vc1Codec = true;
-        //Detection of AAC Audio //Disable the Detection to enable correct audio filter detection rules.
-        //if (_mediaInfo.AudioCodec.Contains(AACCodec))
-        //aacCodec = true;
-        if (g_Player.MediaInfo.VideoCodec.Contains("AVC"))
-          h264Codec = true;
-        if (g_Player.MediaInfo.VideoCodec.Contains("XVID") || g_Player.MediaInfo.VideoCodec.Contains("DIVX") ||
-            g_Player.MediaInfo.VideoCodec.Contains("DX50"))
-          xvidCodec = true;
       }
 
       //Video Part

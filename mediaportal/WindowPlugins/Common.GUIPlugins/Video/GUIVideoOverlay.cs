@@ -270,14 +270,22 @@ namespace MediaPortal.GUI.Video
       GUIPropertyManager.SetProperty("#Play.Current.File", Util.Utils.GetFileNameWithExtension(fileName));
 
       // Set audio / video properties
-      if ((g_Player.IsVideo || g_Player.IsDVD) && !g_Player.IsTV && g_Player.MediaInfo != null)
+      if ((g_Player.IsVideo || g_Player.IsDVD) && !g_Player.IsTV)
       {
-        GUIPropertyManager.SetProperty("#Play.Current.VideoCodec.Texture", Util.Utils.MakeFileName(g_Player.MediaInfo.VideoCodec));
-        GUIPropertyManager.SetProperty("#Play.Current.VideoResolution", g_Player.MediaInfo.VideoResolution);
-        GUIPropertyManager.SetProperty("#Play.Current.AudioCodec.Texture", Util.Utils.MakeFileName(g_Player.MediaInfo.AudioCodec));
-        GUIPropertyManager.SetProperty("#Play.Current.AudioChannels", g_Player.MediaInfo.AudioChannelsFriendly);
-        GUIPropertyManager.SetProperty("#Play.Current.HasSubtitles", g_Player.MediaInfo.HasSubtitles.ToString());
-        GUIPropertyManager.SetProperty("#Play.Current.AspectRatio", g_Player.MediaInfo.AspectRatio);
+        var video = g_Player.CurrentVideo;
+        var audio = g_Player.CurrentAudio;
+        if (video != null)
+        {
+          if (!string.IsNullOrEmpty(video.Format)) GUIPropertyManager.SetProperty("#Play.Current.VideoCodec.Texture", Util.Utils.MakeFileName(video.Format));
+          GUIPropertyManager.SetProperty("#Play.Current.VideoResolution", video.Resolution);
+          GUIPropertyManager.SetProperty("#Play.Current.AspectRatio", video.AspectRatio.ToString());
+        }
+        if (audio != null)
+        {
+          if (!string.IsNullOrEmpty(audio.Format)) GUIPropertyManager.SetProperty("#Play.Current.AudioCodec.Texture", Util.Utils.MakeFileName(audio.Format));
+          GUIPropertyManager.SetProperty("#Play.Current.AudioChannels", audio.AudioChannelsFriendly);
+        }
+        GUIPropertyManager.SetProperty("#Play.Current.HasSubtitles", g_Player.HasSubs.ToString());
       }
 
       // Set the properties and thumb path for movies played with the tv plugin
