@@ -1,4 +1,4 @@
-//css_reference "core.dll";
+ï»¿//css_reference "core.dll";
 //css_reference "Databases.dll";
 //css_reference "utils.dll";
 
@@ -71,7 +71,8 @@ internal class Grabber : MarshalByRefObject, MediaPortal.Video.Database.IIMDBScr
     // movieDetails.Cast
     // movieDetails.RunTime = ....
     // movieDetails.MPARating = ......
-    // movieDetails.MovieCollection = ......
+    // movieDetails.MovieCollection = // MP1-4761
+    // movieDetails.TMDBNumber = // MP1-4761
 
     //Log.Debug("Grabber.GetDetails("+url.URL+")");
     System.Threading.Thread.Sleep(1000);
@@ -100,13 +101,16 @@ internal class Grabber : MarshalByRefObject, MediaPortal.Video.Database.IIMDBScr
       {
         foreach (Grabber.TMDBPerson apers in adetails.Crew)
         {
-          if (apers.As.Contains("Direct"))
+          if (!string.IsNullOrEmpty(apers.Name))
           {
-            sDirector = " / " + apers.Name + " (" + apers.As + ")";
-          }
-          else if (apers.As.Contains("Writ"))
-          {
-            sWriters += " / " + apers.Name + " (" + apers.As + ")";
+            if (apers.As.Contains("Direct"))
+            {
+              sDirector = " / " + apers.Name; // + " (" + apers.As + ")";
+            }
+            else if (apers.As.Contains("Writ"))
+            {
+              sWriters += " / " + apers.Name; // + " (" + apers.As + ")";
+            }
           }
         }
       }
@@ -117,13 +121,14 @@ internal class Grabber : MarshalByRefObject, MediaPortal.Video.Database.IIMDBScr
       movieDetails.IMDBNumber = adetails.IMDBNumber.ToString();
       //movieDetails.ID = adetails.ID; // Do not fill 
       movieDetails.Year = adetails.Year;
-      movieDetails.Language = API_LANG;
+      movieDetails.Language = adetails.Language; // API_LANG;
       movieDetails.Plot = adetails.Plot.Replace("...", "").Trim();
       movieDetails.Rating = adetails.Rating;
       movieDetails.RunTime = adetails.RunTime;
       movieDetails.TagLine = adetails.TagLine;
       movieDetails.Year = adetails.Year;
       movieDetails.Studios = adetails.Studios;
+      movieDetails.Country = adetails.Country;
       movieDetails.Genre = adetails.Genre;
       movieDetails.Cast = sActors;
       movieDetails.Director = sDirector.Replace("...", "").Trim();
@@ -133,8 +138,8 @@ internal class Grabber : MarshalByRefObject, MediaPortal.Video.Database.IIMDBScr
       movieDetails.Votes = adetails.Votes.ToString();
       movieDetails.ThumbURL = adetails.ThumbURL;
       movieDetails.FanartURL = adetails.FanartURL;
-      movieDetails.MovieCollection = adetails.Collection;
-      movieDetails.TMDBNumber = adetails.ID.ToString();
+      movieDetails.MovieCollection = adetails.Collection; // MP1-4761
+      movieDetails.TMDBNumber = adetails.ID.ToString(); // MP1-4761
 
       //MePo stuff
       if (string.IsNullOrEmpty(movieDetails.PlotOutline))
@@ -147,10 +152,10 @@ internal class Grabber : MarshalByRefObject, MediaPortal.Video.Database.IIMDBScr
         movieDetails.Rating /= 10.0f;
       }
 
-      // Collection cover and backdrop download
+      // Collection cover and backdrop download 
       if (!string.IsNullOrEmpty(adetails.CollectionCover))
       {
-        IMDBFetcher.DownloadCoverArt(Thumbs.MovieCollection, adetails.CollectionCover, adetails.Collection);
+        IMDBFetcher.DownloadCoverArt(Thumbs.MovieCollection, adetails.CollectionCover, adetails.Collection); // MP1-4761
       }
       if (!string.IsNullOrEmpty(adetails.CollectionBackdrop))
       {
@@ -190,6 +195,13 @@ internal class Grabber : MarshalByRefObject, MediaPortal.Video.Database.IIMDBScr
   private const string API_BaseUrl = "http://api.themoviedb.org/3/";
 
   #endregion<<TMDB_PARAMETERS>>
+
+  #region<<TMDB_TITLE>>
+
+  public const string TITLE_MASK = "{0}{1}{2}"; // {0} - Title {1} - Separator {2} - Original Title {3} - Year
+  public const string TITLE_SEPARATOR = " / ";
+
+  #endregion<<TMDB_TITLE>>
 
   #region<<TMDB_CONST>>
 
@@ -262,7 +274,7 @@ internal class Grabber : MarshalByRefObject, MediaPortal.Video.Database.IIMDBScr
       }
 
       string sTitle = "";
-      rx = new System.Text.RegularExpressions.Regex(@"""title"":""(?<code>[\p{L}\d\s',:;\-._]*)""");
+      rx = new System.Text.RegularExpressions.Regex(@"""title"":""(?<code>[^}]*?)""[,}]");
       aMatchDetails = rx.Match(sJSONMovie);
       if (aMatchDetails != null)
       {
@@ -270,7 +282,7 @@ internal class Grabber : MarshalByRefObject, MediaPortal.Video.Database.IIMDBScr
       }
 
       string sOriginal_title = "";
-      rx = new System.Text.RegularExpressions.Regex(@"""original_title"":""(?<code>[\p{L}\d\s',:;\-._]*)""");
+      rx = new System.Text.RegularExpressions.Regex(@"""original_title"":""(?<code>[^}]*?)""[,}]");
       aMatchDetails = rx.Match(sJSONMovie);
       if (aMatchDetails != null)
       {
@@ -327,7 +339,7 @@ internal class Grabber : MarshalByRefObject, MediaPortal.Video.Database.IIMDBScr
     Log.Debug("GetTMDBDetails url = {0}, sReponseDetails = {1}", url, sReponseDetails);
     try
     {
-      System.Text.RegularExpressions.Regex rx = new System.Text.RegularExpressions.Regex(@"""imdb_id"":""(?<code>[\w\s',….:;-]*)""");
+      System.Text.RegularExpressions.Regex rx = new System.Text.RegularExpressions.Regex(@"""imdb_id"":""(?<code>[^}]*?)""[,}]");
       System.Text.RegularExpressions.Match aMatchDetails = rx.Match(sReponseDetails);
       if (aMatchDetails != null)
       {
@@ -335,14 +347,14 @@ internal class Grabber : MarshalByRefObject, MediaPortal.Video.Database.IIMDBScr
       }
 
 
-      rx = new System.Text.RegularExpressions.Regex(@"""overview"":""(?<code>[\d\p{L}\s\\'’,–….:;\(\)!?“”?«»""-]*)"",");
+      rx = new System.Text.RegularExpressions.Regex(@"""overview"":""(?<code>[^}]*?)""[,}]");
       aMatchDetails = rx.Match(sReponseDetails);
       if (aMatchDetails != null)
       {
         oReturn.Plot = aMatchDetails.Groups["code"].Value.Replace("\\\"", "\"").Trim();
       }
 
-      rx = new System.Text.RegularExpressions.Regex(@"""tagline"":""(?<code>[\w\s',….:;-]*)""");
+      rx = new System.Text.RegularExpressions.Regex(@"""tagline"":""(?<code>[^}]*?)""[,}]");
       aMatchDetails = rx.Match(sReponseDetails);
       if (aMatchDetails != null)
       {
@@ -367,17 +379,16 @@ internal class Grabber : MarshalByRefObject, MediaPortal.Video.Database.IIMDBScr
         oReturn.Rating = (float)faverage;
       }
 
-      string sFilter = @"""genres"":\[([\p{L}{"+"\""+@":\d,}-]*)]";
+      string sFilter = @"""genres"":\[([^\]]*?)\][,}]";
       System.Text.RegularExpressions.MatchCollection tMatches = System.Text.RegularExpressions.Regex.Matches(sReponseDetails, sFilter);
       foreach (System.Text.RegularExpressions.Match aMovie in tMatches)
       {
-        string sFilter2 = @"{""id"":(?<id>[\d]*),""name"":""(?<name>[\p{L}-]*)""";
+        string sFilter2 = @"{""id"":(?<id>[\d]*),""name"":""(?<name>[^}]*?)""";
         System.Text.RegularExpressions.MatchCollection tMatches2 = System.Text.RegularExpressions.Regex.Matches(aMovie.Value, sFilter2);
         foreach (System.Text.RegularExpressions.Match aGenre in tMatches2)
         {
           oReturn.Genre += " / " + aGenre.Groups["name"].Value;
         }
-
       }
       if (!string.IsNullOrEmpty(oReturn.Genre))
       {
@@ -391,6 +402,61 @@ internal class Grabber : MarshalByRefObject, MediaPortal.Video.Database.IIMDBScr
         oReturn.Genre = string.Empty;
       }
 
+      sFilter = @"""spoken_languages"":\[([^\]]*?)\][,}]";
+      tMatches = System.Text.RegularExpressions.Regex.Matches(sReponseDetails, sFilter);
+      foreach (System.Text.RegularExpressions.Match aMovie in tMatches)
+      {
+        string sFilter2 = @"{""iso_639_1"":""(?<id>[^}]*?)"",""name"":""(?<name>[^}]*?)""";
+        System.Text.RegularExpressions.MatchCollection tMatches2 = System.Text.RegularExpressions.Regex.Matches(aMovie.Value, sFilter2);
+        foreach (System.Text.RegularExpressions.Match aLanguage in tMatches2)
+        {
+          oReturn.Language += ", " + aLanguage.Groups["name"].Value;
+        }
+      }
+      if (!string.IsNullOrEmpty(oReturn.Language))
+      {
+        if (oReturn.Language.StartsWith(", "))
+        {
+          oReturn.Language = oReturn.Language.Substring(2);
+        }
+      }
+      else
+      {
+        rx = new System.Text.RegularExpressions.Regex(@"""original_language"":""(?<code>[^}]*?)");
+        aMatchDetails = rx.Match(sReponseDetails);
+        if (aMatchDetails != null)
+        {
+          oReturn.Language = aMatchDetails.Groups["code"].Value.ToUpper();
+        }
+        if (string.IsNullOrEmpty(oReturn.Language))
+        {
+          oReturn.Language = API_LANG;
+        }
+      }
+
+      sFilter = @"""production_countries"":\[([^\]]*?)\][,}]";
+      tMatches = System.Text.RegularExpressions.Regex.Matches(sReponseDetails, sFilter);
+      foreach (System.Text.RegularExpressions.Match aMovie in tMatches)
+      {
+        string sFilter2 = @"{""iso_3166_1"":""(?<id>[^}]*?)"",""name"":""(?<name>[^}]*?)""";
+        System.Text.RegularExpressions.MatchCollection tMatches2 = System.Text.RegularExpressions.Regex.Matches(aMovie.Value, sFilter2);
+        foreach (System.Text.RegularExpressions.Match aCountry in tMatches2)
+        {
+          oReturn.Country += ", " + aCountry.Groups["name"].Value;
+        }
+      }
+      if (!string.IsNullOrEmpty(oReturn.Country))
+      {
+        if (oReturn.Country.StartsWith(", "))
+        {
+          oReturn.Country = oReturn.Country.Substring(2);
+          oReturn.Country = oReturn.Country.Trim();
+        }
+      }
+      else
+      {
+        oReturn.Country = string.Empty;
+      }
 
       rx = new System.Text.RegularExpressions.Regex(@"""release_date"":""(?<code>[\d]*)");
       aMatchDetails = rx.Match(sReponseDetails);
@@ -419,16 +485,23 @@ internal class Grabber : MarshalByRefObject, MediaPortal.Video.Database.IIMDBScr
         oReturn.Votes = iVotes;
       }
 
-      rx = new System.Text.RegularExpressions.Regex(@"""title"":""(?<code>[\p{L}\d\s',:;\-._]*)""");
+      rx = new System.Text.RegularExpressions.Regex(@"""title"":""(?<code>[^}]*?)""[,}]");
       aMatchDetails = rx.Match(sReponseDetails);
       if (aMatchDetails != null)
       {
         oReturn.Title = aMatchDetails.Groups["code"].Value;
       }
 
+      rx = new System.Text.RegularExpressions.Regex(@"""original_title"":""(?<code>[^}]*?)""[,}]");
+      aMatchDetails = rx.Match(sReponseDetails);
+      if (aMatchDetails != null)
+      {
+        oReturn.OriginalTitle = aMatchDetails.Groups["code"].Value;
+      }
+
       if (string.IsNullOrEmpty(oReturn.Title))
       {
-        rx = new System.Text.RegularExpressions.Regex(@"""original_title"":""(?<code>[\p{L}\d\s',:;\-._]*)""");
+        rx = new System.Text.RegularExpressions.Regex(@"""original_title"":""(?<code>[^}]*?)""[,}]");
         aMatchDetails = rx.Match(sReponseDetails);
         if (aMatchDetails != null)
         {
@@ -436,14 +509,31 @@ internal class Grabber : MarshalByRefObject, MediaPortal.Video.Database.IIMDBScr
         }
       }
 
+      /*
       rx = new System.Text.RegularExpressions.Regex(@"""production_companies"":\[{""name"":""(?<code>[\p{L}\d\s',:;\-_!]*)"",""id"":([\d]*)}");
       aMatchDetails = rx.Match(sReponseDetails);
       if (aMatchDetails != null)
       {
         oReturn.Studios = aMatchDetails.Groups["code"].Value;
       }
-
-      rx = new System.Text.RegularExpressions.Regex(@"""poster_path"":""(?<code>[/\w\d.]*)""");
+      */
+      sFilter = @"""production_companies"":\[([^\]]*?)\][,}]";
+      tMatches = System.Text.RegularExpressions.Regex.Matches(sReponseDetails, sFilter);
+      foreach (System.Text.RegularExpressions.Match aMovie in tMatches)
+      {                   
+        string sFilter2 = @"{""name"":""(?<name>[^}\]]*?)"",""id"":([\d]*)}";
+        System.Text.RegularExpressions.MatchCollection tMatches2 = System.Text.RegularExpressions.Regex.Matches(aMovie.Value, sFilter2);
+        foreach (System.Text.RegularExpressions.Match aCompanie in tMatches2)
+        {
+          oReturn.Studios += aCompanie.Groups["name"].Value + " / ";
+        }
+      }
+      if (!string.IsNullOrEmpty(oReturn.Studios))
+      {
+        oReturn.Studios = oReturn.Studios.Remove(oReturn.Studios.LastIndexOf(" / "));
+      }
+                                                    
+      rx = new System.Text.RegularExpressions.Regex(@"(?:poster_path)*.*?""poster_path"":""(?<code>[^}]*?)""");
       System.Text.RegularExpressions.MatchCollection tMatchesposter = rx.Matches(sReponseDetails);
       foreach (System.Text.RegularExpressions.Match aMovie in tMatchesposter)
       {
@@ -459,13 +549,13 @@ internal class Grabber : MarshalByRefObject, MediaPortal.Video.Database.IIMDBScr
         oReturn.ThumbURL = string.Empty;
       }
 
-      rx = new System.Text.RegularExpressions.Regex(@"""backdrop_path"":""(?<code>[/\w\d.]*)""");
+      rx = new System.Text.RegularExpressions.Regex(@"""backdrop_path"":""(?<code>[^}]*?)""");
       aMatchDetails = rx.Match(sReponseDetails);
       if (aMatchDetails != null)
       {
         oReturn.FanartURL = aMatchDetails.Groups["code"].Value;
         if (!string.IsNullOrEmpty(oReturn.FanartURL))
-          oReturn.FanartURL = "http://image.tmdb.org/t/p/w500" + oReturn.FanartURL;
+          oReturn.FanartURL = "http://image.tmdb.org/t/p/w1920" + oReturn.FanartURL;
       }
       else
       {
@@ -503,6 +593,25 @@ internal class Grabber : MarshalByRefObject, MediaPortal.Video.Database.IIMDBScr
         oReturn.CollectionBackdrop = string.Empty;
       }
 
+      // Title
+      // TITLE_MASK {0} - Title {1} - Separator {2} - Original Title {3} - Year
+      string ResultTitleMask = TITLE_MASK;
+      if (!string.IsNullOrEmpty(ResultTitleMask))
+      {
+        if (oReturn.Title.Equals(oReturn.OriginalTitle, StringComparison.CurrentCultureIgnoreCase))
+        {
+          ResultTitleMask = ResultTitleMask.Replace("{1}","").Replace("{2}","").Trim();
+        }
+        if (string.IsNullOrEmpty(oReturn.Title) || string.IsNullOrEmpty(oReturn.OriginalTitle))
+        {
+          ResultTitleMask = ResultTitleMask.Replace("{1}","").Trim();
+        }
+        oReturn.Title = string.Format(ResultTitleMask, oReturn.Title, TITLE_SEPARATOR, oReturn.OriginalTitle, oReturn.Year);
+        if (!string.IsNullOrEmpty(oReturn.Title))
+        {
+          oReturn.Title = oReturn.Title.Trim();
+        }
+      }
     }
     catch { }
 
@@ -521,16 +630,36 @@ internal class Grabber : MarshalByRefObject, MediaPortal.Video.Database.IIMDBScr
       }
       sRequest = sRequest.Replace("{0}", movie.ID.ToString());
       string sReponseDetails = GetWebServerResponse(sRequest);
+      string sMPAARegexp = @"""certification"":""(?<code>[^}]*?)"",""iso_3166_1"":""";
       Log.Debug("GetTMDBRelease {0}", sReponseDetails );
       string sCertification = string.Empty;
-//      System.Text.RegularExpressions.Regex rx = new System.Text.RegularExpressions.Regex(@"""iso_3166_1"":""" + API_LANG.ToUpper() + @""",""certification"":""(?<code>[\(\)\w\d-+ ]*)"",");
 
-      System.Text.RegularExpressions.Regex rx = new System.Text.RegularExpressions.Regex(@"""certification"":""(?<code>[\(\)\w\d-+ ]*)"",""iso_3166_1"":"""+ API_LANG);
-
+      System.Text.RegularExpressions.Regex rx = new System.Text.RegularExpressions.Regex(sMPAARegexp + API_LANG);
       System.Text.RegularExpressions.Match aMatchCast = rx.Match(sReponseDetails);
       if (aMatchCast != null)
       {
         sCertification = aMatchCast.Groups["code"].Value;
+        Log.Debug("MPAA {0}: {1}", API_LANG, sCertification);
+      }
+      if (string.IsNullOrEmpty(sCertification))
+      {
+        rx = new System.Text.RegularExpressions.Regex(sMPAARegexp + "US");
+        aMatchCast = rx.Match(sReponseDetails);
+        if (aMatchCast != null)
+        {
+          sCertification = aMatchCast.Groups["code"].Value;
+          Log.Debug("MPAA US: {0}", sCertification);
+        }
+      }
+      if (string.IsNullOrEmpty(sCertification))
+      {
+        rx = new System.Text.RegularExpressions.Regex(sMPAARegexp + "GB");
+        aMatchCast = rx.Match(sReponseDetails);
+        if (aMatchCast != null)
+        {
+          sCertification = aMatchCast.Groups["code"].Value;
+          Log.Debug("MPAA UK: {0}", sCertification);
+        }
       }
       movie.MPARating = sCertification;
     }
@@ -563,7 +692,7 @@ internal class Grabber : MarshalByRefObject, MediaPortal.Video.Database.IIMDBScr
     try
     {
       string sCast = string.Empty;
-      System.Text.RegularExpressions.Regex rx = new System.Text.RegularExpressions.Regex(@"""cast"":\[([{}\p{L}\s#""':;,-./\(\)]*)\]");
+      System.Text.RegularExpressions.Regex rx = new System.Text.RegularExpressions.Regex(@"""cast"":\[([^\]]*?)\][,}]");
       System.Text.RegularExpressions.Match aMatchCast = rx.Match(sReponseDetails);
       if (aMatchCast != null)
       {
@@ -571,8 +700,8 @@ internal class Grabber : MarshalByRefObject, MediaPortal.Video.Database.IIMDBScr
       }
 
       if (!string.IsNullOrEmpty(sCast))
-      {
-        string sFilter = @"{""id"":(?<id>[\d]*),""name"":""(?<name>[\w\s'-.]*)"",""character"":""(?<as>[\w\s'.//-]*)";
+      {                  
+        string sFilter = @"{[^}]*?""character"":""(?<as>[^}]*?)""[,}].*?""id"":(?<id>[\d]*),""name"":""(?<name>[^}]*?)""[,}]";
         System.Text.RegularExpressions.MatchCollection tMatches = System.Text.RegularExpressions.Regex.Matches(sReponseDetails, sFilter);
         foreach (System.Text.RegularExpressions.Match matchPerson in tMatches)
         {
@@ -591,26 +720,26 @@ internal class Grabber : MarshalByRefObject, MediaPortal.Video.Database.IIMDBScr
     {
       tReturn = new List<TMDBPerson>();
       string sCrew = string.Empty;
-      System.Text.RegularExpressions.Regex rx = new System.Text.RegularExpressions.Regex(@"""crew"":\[([{}\w\s""':;,-./\(\)]*)\]");
+      System.Text.RegularExpressions.Regex rx = new System.Text.RegularExpressions.Regex(@"""crew"":\[([^\]]*?)\][,}]");
       System.Text.RegularExpressions.Match aMatchCrew = rx.Match(sReponseDetails);
       if (aMatchCrew != null)
       {
         sCrew = aMatchCrew.Value;
+        // Log.Debug("ajs: {0}", sCrew);
       }
 
       if (!string.IsNullOrEmpty(sCrew))
       {
-        //string sFilter = @"{""id"":(?<id>[\d]*),""name"":""(?<name>[\w\s'-.]*)"",""department"":""(?<as>[\w\s'.//-]*)";
-        string sFilter = @"""id"":(?<id>[\d]*),""job"":""(?<as>[\w\s'.\/\/-]*)"",""name"":""(?<name>[\w\s'-.]*)";
+        string sFilter = @"""id"":(?<id>[\d]*),""job"":""(?<as>[^}]*?)"",""name"":""(?<name>[^}]*?)""[,}]";
 
         System.Text.RegularExpressions.MatchCollection tMatches = System.Text.RegularExpressions.Regex.Matches(sCrew, sFilter);
-        foreach (System.Text.RegularExpressions.Match matchPerson in tMatches)
+        foreach (System.Text.RegularExpressions.Match matchCrew in tMatches)
         {
           TMDBPerson aPerson = new TMDBPerson();
-          aPerson.Id = matchPerson.Groups["id"].Value;
-          aPerson.Name = matchPerson.Groups["name"].Value;
-          aPerson.As = matchPerson.Groups["as"].Value;
-          //Log.Debug("regeszter {0} as {1}", aPerson.Name, aPerson.As);
+          aPerson.Id = matchCrew.Groups["id"].Value;
+          aPerson.Name = matchCrew.Groups["name"].Value;
+          aPerson.As = matchCrew.Groups["as"].Value;
+          // Log.Debug("regeszter {0} as {1}", aPerson.Name, aPerson.As);
           tReturn.Add(aPerson);
         }
         movie.Crew = tReturn.ToArray();
@@ -660,8 +789,8 @@ internal class Grabber : MarshalByRefObject, MediaPortal.Video.Database.IIMDBScr
         string strOverview = aMatchDetails.Groups["Overview"].Value;
         if (!string.IsNullOrEmpty(strCollection) && !string.IsNullOrEmpty(strOverview))
         {
-          int idCollection = VideoDatabase.AddCollection(strCollection);
-          VideoDatabase.AddCollectionDescription(strCollection, strOverview);
+          int idCollection = VideoDatabase.AddCollection(strCollection); // MP1-4761
+          VideoDatabase.AddCollectionDescription(strCollection, strOverview); // MP1-4761
           Log.Debug("GetTMDCollections added collection with description: {0}:{1} - {2}", idCollection, strCollection, strOverview);
         }
       }
@@ -720,6 +849,11 @@ internal class Grabber : MarshalByRefObject, MediaPortal.Video.Database.IIMDBScr
     ///  TITRE
     /// </summary>
     public string Title;
+
+    /// <summary>
+    ///  ORIGINAL TITRE
+    /// </summary>
+    public string OriginalTitle;
 
     public int ID;
 

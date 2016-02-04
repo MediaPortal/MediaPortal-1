@@ -1,4 +1,4 @@
-//css_reference "core.dll";
+﻿//css_reference "core.dll";
 //css_reference "Databases.dll";
 //css_reference "utils.dll";
 //css_reference "Common.Utils.dll";
@@ -20,7 +20,7 @@ using MediaPortal.Video.Database;
 
 class Grabber : MarshalByRefObject, MediaPortal.Video.Database.IIMDBScriptGrabber
 {
-    const string strKinopoiskVersion = "20160131.01 by ajs";
+    const string strKinopoiskVersion = "20160204.01 by ajs";
 
     public Grabber()
     {
@@ -147,7 +147,7 @@ class Grabber : MarshalByRefObject, MediaPortal.Video.Database.IIMDBScriptGrabbe
         // Kinopoisk.ru MovieID
         string rx_movie_id       = @"(?<movieID>[0-9]+)(?<imdbID>(tt\d{7})?)";
         string movieID           = ParseSingleValue(url.URL, rx_movie_id, "movieID", true);
-        movieDetails.LocalDBNumber = "KP" + movieID;
+        movieDetails.LocalDBNumber = "KP" + movieID; // MP1-4761
         // IMDB MovieID
         movieDetails.IMDBNumber =  ParseSingleValue(url.URL, rx_movie_id, "imdbID", true);
         // URL
@@ -415,36 +415,48 @@ class Grabber : MarshalByRefObject, MediaPortal.Video.Database.IIMDBScriptGrabbe
               WebSession aiimdbSession = new WebSession();
               if (aiimdbSession.Retrieve(aiimdbURL, Encoding.GetEncoding("UTF-8"), out aiimdbPage)) 
               {
-                  string regexBlockPattern = string.Empty;
-                  string regexPattern = string.Empty;
-                  string block = string.Empty;
+                string regexBlockPattern = string.Empty;
+                string regexPattern = string.Empty;
+                string block = string.Empty;
 
-                  // If Kinopoisk Studios empty try retrive Studios from IMDB
-                  if (string.IsNullOrEmpty(movieDetails.Studios))
-                  {
-                      regexBlockPattern = @"<h4\sclass=""inline"">Production\sCo:</h4>.*?href=""companycredits";
-                      regexPattern = @"href=""/company[^""]+""\s+.*?>(?<movieStudios>.*?)</a>";
-                      block = Regex.Match(aiimdbPage, regexBlockPattern, RegexOptions.Singleline).Value;
-                      MatchCollection mcStudios = Regex.Matches(block, regexPattern, RegexOptions.Singleline);
-                      string studio = string.Empty;
+                // If Kinopoisk Studios empty try retrive Studios from IMDB
+                if (string.IsNullOrEmpty(movieDetails.Studios))
+                {
+                    regexBlockPattern = @"<h4\sclass=""inline"">Production\sCo:</h4>.*?href=""companycredits";
+                    regexPattern = @"href=""/company[^""]+""\s+.*?>(?<movieStudios>.*?)</a>";
+                    block = Regex.Match(aiimdbPage, regexBlockPattern, RegexOptions.Singleline).Value;
+                    MatchCollection mcStudios = Regex.Matches(block, regexPattern, RegexOptions.Singleline);
+                    string studio = string.Empty;
 
-                      foreach (Match ms in mcStudios)
-                      {
-                        studio = studio + Utils.stripHTMLtags(ms.Groups["movieStudios"].Value) + " / ";
-                      }
+                    foreach (Match ms in mcStudios)
+                    {
+                      studio = studio + Utils.stripHTMLtags(ms.Groups["movieStudios"].Value) + " / ";
+                    }
 
-                      if (!string.IsNullOrEmpty(studio))
-                      {
-                        movieDetails.Studios = HtmlDecode(studio.Remove(studio.LastIndexOf(" / ")));
-                    Log.Debug("Studios: {0}", movieDetails.Studios);
-                      }
-                  }
+                    if (!string.IsNullOrEmpty(studio))
+                    {
+                      movieDetails.Studios = HtmlDecode(studio.Remove(studio.LastIndexOf(" / ")));
+                      Log.Debug("Studios: {0}", movieDetails.Studios);
+                    }
+                }
 
-                  // Language from IMDB
-                  regexPattern = @"href=./language/[^>]+>(?<language>[^<]+)</a>";
-                  string language = Regex.Match(aiimdbPage, regexPattern).Groups["language"].Value;
-                  movieDetails.Language = language;
-                Log.Debug("Languages: {0}", movieDetails.Language);
+                // Language from IMDB
+                regexBlockPattern = @"<h4\sclass=""inline"">Language:</h4>.*?</div>";
+                regexPattern = @"href=./language/[^>]+>(?<language>[^<]+)</a>";
+                block = Regex.Match(aiimdbPage, regexBlockPattern, RegexOptions.Singleline).Value;
+                MatchCollection mcLanguages = Regex.Matches(block, regexPattern, RegexOptions.Singleline);
+                string languages = string.Empty;
+
+                foreach (Match ml in mcLanguages)
+                {
+                  languages = languages + Utils.stripHTMLtags(ml.Groups["language"].Value) + ", ";
+                }
+
+                if (!string.IsNullOrEmpty(languages))
+                {
+                  movieDetails.Language = HtmlDecode(languages.Remove(languages.LastIndexOf(", ")));
+                  Log.Debug("Languages: {0}", movieDetails.Language);
+                }
 
                 // MPAA Description
                 regexPattern = @"MPAA[\s\S]+?contentRating.>(?<CertDesc>[^<]+?)<";
@@ -527,7 +539,7 @@ class Grabber : MarshalByRefObject, MediaPortal.Video.Database.IIMDBScriptGrabbe
                   }
 
                   // TMDB ID
-                  movieDetails.TMDBNumber = ParseSingleIntValue(tmdbPage, @"id.:(?<code>\d{1,}),", "code").ToString();
+                  movieDetails.TMDBNumber = ParseSingleIntValue(tmdbPage, @"id.:(?<code>\d{1,}),", "code").ToString(); // MP1-4761
                 } 
                 else 
                 {
@@ -622,7 +634,6 @@ class Grabber : MarshalByRefObject, MediaPortal.Video.Database.IIMDBScriptGrabbe
                 Log.Info("Picture URL for Mediaportal: {0}", movieDetails.ThumbURL);
             }
 
-            movieDetails.MovieCollection = string.Empty;
             if (detailsConfig.TMDBGroups && !string.IsNullOrEmpty(movieDetails.IMDBNumber) && !string.IsNullOrEmpty(detailsConfig.TMDbApiKey))
             {
           	  // Lists from themoviedb
@@ -654,7 +665,7 @@ class Grabber : MarshalByRefObject, MediaPortal.Video.Database.IIMDBScriptGrabbe
                     if (!string.IsNullOrEmpty(strL))
                     {
                       // movieDetails.SingleUserGroup += (string.IsNullOrEmpty(movieDetails.SingleUserGroup) ? "" : "|") + strL;
-                      movieDetails.MovieCollection += (string.IsNullOrEmpty(movieDetails.MovieCollection) ? "" : "|") + strL;
+                      movieDetails.MovieCollection += (string.IsNullOrEmpty(movieDetails.MovieCollection) ? "" : "|") + strL; // MP1-4761
 
                       int.TryParse(mL.Groups["colID"].Value, out iMovieColID);
                       // Collection Description
@@ -670,8 +681,8 @@ class Grabber : MarshalByRefObject, MediaPortal.Video.Database.IIMDBScriptGrabbe
                           string CollDesc = ParseSingleValue(tmdbColPage, matchCollection, "Overview", true);
                           if (!string.IsNullOrEmpty(CollDesc))
                           {
-                            int idCollection = VideoDatabase.AddCollection(strL);
-                            VideoDatabase.AddCollectionDescription(strL, CollDesc);
+                            int idCollection = VideoDatabase.AddCollection(strL); // MP1-4761
+                            VideoDatabase.AddCollectionDescription(strL, CollDesc); // MP1-4761
                             DebugLog(detailsConfig.Debug, "Movie collection description: {0}:{1} - {2}", idCollection, strL, CollDesc);
                           }
                         }
@@ -683,7 +694,7 @@ class Grabber : MarshalByRefObject, MediaPortal.Video.Database.IIMDBScriptGrabbe
                         {
                           strP = string.Format("http://image.tmdb.org/t/p/w1000/{0}", strP); // w500 or w1000 or w1280 or w1920 (image width)
                           // IMDBFetcher.DownloadCoverArt(Thumbs.MovieUserGroups, strP, strL);
-                          IMDBFetcher.DownloadCoverArt(Thumbs.MovieCollection, strP, strL);
+                          IMDBFetcher.DownloadCoverArt(Thumbs.MovieCollection, strP, strL); // MP1-4761
                         }
                         if (!string.IsNullOrEmpty(strB))
                         {
@@ -699,11 +710,11 @@ class Grabber : MarshalByRefObject, MediaPortal.Video.Database.IIMDBScriptGrabbe
                   }
                 }
                 // TMDB ID
-                movieDetails.TMDBNumber = ParseSingleIntValue(tmdbPage, @"""id"":(?<code>[\d]*),""imdb_id""", "code").ToString();
+                movieDetails.TMDBNumber = ParseSingleIntValue(tmdbPage, @"""id"":(?<code>[\d]*),""imdb_id""", "code").ToString(); // MP1-4761
               }
             }
             DebugLog(detailsConfig.Debug, "Movie groups: {0}", movieDetails.SingleUserGroup);
-            DebugLog(detailsConfig.Debug, "Movie collection: {0}", movieDetails.MovieCollection);
+            DebugLog(detailsConfig.Debug, "Movie collection: {0}", movieDetails.MovieCollection); // MP1-4761
             return true;
         }
         return false;
