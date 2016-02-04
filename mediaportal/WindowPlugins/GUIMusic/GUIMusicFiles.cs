@@ -1098,7 +1098,7 @@ namespace MediaPortal.GUI.Music
           dlg.AddLocalizedString(831);
         }
 
-        if (_virtualDirectory.IsShareOfflineDetected())
+        if (_virtualDirectory.IsRootShare(item.Path) || _virtualDirectory.IsShareOfflineDetected())
         {
           dlg.AddLocalizedString(868); // Force reset virtual directory if user want to refresh offline share
         }
