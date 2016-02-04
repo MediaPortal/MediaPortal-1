@@ -591,6 +591,9 @@ Section "MediaPortal core files (required)" SecCore
   ; SharpLibWin32
   SetOutPath "$MPdir.Base\"
   File "${git_ROOT}\Packages\SharpLibWin32.0.0.7\lib\net20\SharpLibWin32.dll"
+  ; SharpLibDisplay
+  SetOutPath "$MPdir.Base\"
+  File "${git_ROOT}\Packages\SharpLibDisplay.0.2.5\lib\net40\SharpLibDisplay.dll"
   ; Doc
   SetOutPath "$MPdir.Base\Docs"
   File "${git_MP}\Docs\BASS License.txt"

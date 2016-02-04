@@ -24,6 +24,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Timers;
+using System.Threading;
 using System.Windows.Forms;
 using System.Xml;
 using MediaPortal.ExtensionMethods;
@@ -1765,6 +1766,29 @@ namespace MediaPortal.GUI.Library
       }
     }
 
+    public virtual int RemoveItem(int iItem)
+    {
+      if (iItem < 0 || iItem > _listItems.Count)
+      {
+        return -1;
+      }
+
+      try
+      {
+        Monitor.Enter(this);
+        _listItems.RemoveAt(iItem);
+      }
+      catch (Exception ex)
+      {
+        Log.Error("GUICoverFlow.RemoveItem caused an exception: {0}", ex.Message);
+      }
+      finally
+      {
+        Monitor.Exit(this);
+      }
+      return SelectedListItemIndex;
+    }
+
     public override void Render(float timePassed)
     {
       if (!IsVisible)
@@ -2529,6 +2553,14 @@ namespace MediaPortal.GUI.Library
     public void Insert(int index, GUIListItem card)
     {
       AddCard(card, index);
+    }
+
+    public void Replace(int index, GUIListItem item)
+    {
+      if (item != null && index >= 0 && index < _listItems.Count)
+      {
+        _listItems[index] = item;
+      }
     }
 
     public void Clear()
