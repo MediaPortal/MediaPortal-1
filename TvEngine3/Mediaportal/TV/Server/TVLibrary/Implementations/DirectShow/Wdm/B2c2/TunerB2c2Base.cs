@@ -98,7 +98,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
     // remote control variables
     private bool _isRemoteControlInterfaceOpen = false;
     private Thread _remoteControlListenerThread = null;
-    private AutoResetEvent _remoteControlListenerThreadStopEvent = null;
+    private ManualResetEvent _remoteControlListenerThreadStopEvent = null;
 
     #endregion
 
@@ -257,7 +257,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
       if (_remoteControlListenerThread == null)
       {
         this.LogDebug("B2C2 base: starting new remote control listener thread");
-        _remoteControlListenerThreadStopEvent = new AutoResetEvent(false);
+        _remoteControlListenerThreadStopEvent = new ManualResetEvent(false);
         _remoteControlListenerThread = new Thread(new ThreadStart(RemoteControlListener));
         _remoteControlListenerThread.Name = "B2C2 remote control listener";
         _remoteControlListenerThread.IsBackground = true;

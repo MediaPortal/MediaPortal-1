@@ -374,7 +374,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
     private IList<string> _rootMenuChoices = null;                            // The device paths of each of the CI slots which have an entry in the root menu.
 
     private Thread _mmiHandlerThread = null;
-    private AutoResetEvent _mmiHandlerThreadStopEvent = null;
+    private ManualResetEvent _mmiHandlerThreadStopEvent = null;
     private object _mmiLock = new object();
     private IConditionalAccessMenuCallBack _caMenuCallBack = null;
     private object _caMenuCallBackLock = new object();
@@ -412,7 +412,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
         if (_mmiHandlerThread == null)
         {
           this.LogDebug("Digital Devices: starting new MMI handler thread");
-          _mmiHandlerThreadStopEvent = new AutoResetEvent(false);
+          _mmiHandlerThreadStopEvent = new ManualResetEvent(false);
           _mmiHandlerThread = new Thread(new ThreadStart(MmiHandler));
           _mmiHandlerThread.Name = "Digital Devices MMI handler";
           _mmiHandlerThread.IsBackground = true;

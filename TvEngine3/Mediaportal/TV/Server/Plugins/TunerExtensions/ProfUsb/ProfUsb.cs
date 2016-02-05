@@ -291,7 +291,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.ProfUsb
     private bool _isRemoteControlInterfaceOpen = false;
     private IntPtr _remoteControlBuffer = IntPtr.Zero;
     private Thread _remoteControlListenerThread = null;
-    private AutoResetEvent _remoteControlListenerThreadStopEvent = null;
+    private ManualResetEvent _remoteControlListenerThreadStopEvent = null;
 
     #endregion
 
@@ -380,7 +380,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.ProfUsb
       if (_remoteControlListenerThread == null)
       {
         this.LogDebug("Prof USB: starting new remote control listener thread");
-        _remoteControlListenerThreadStopEvent = new AutoResetEvent(false);
+        _remoteControlListenerThreadStopEvent = new ManualResetEvent(false);
         _remoteControlListenerThread = new Thread(new ThreadStart(RemoteControlListener));
         _remoteControlListenerThread.Name = "Prof USB remote control listener";
         _remoteControlListenerThread.IsBackground = true;

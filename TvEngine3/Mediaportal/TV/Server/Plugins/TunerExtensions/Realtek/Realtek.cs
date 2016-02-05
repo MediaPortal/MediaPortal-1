@@ -183,7 +183,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Realtek
     private bool _isRemoteControlInterfaceOpen = false;
     private RtlIrType _irType = RtlIrType.Nec;
     private Thread _remoteControlListenerThread = null;
-    private AutoResetEvent _remoteControlListenerThreadStopEvent = null;
+    private ManualResetEvent _remoteControlListenerThreadStopEvent = null;
 
     // This variable tracks the number of open remote control API instances which corresponds with used DLL indices.
     private static int _remoteControlApiCount = 0;
@@ -445,7 +445,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Realtek
       if (_remoteControlListenerThread == null)
       {
         this.LogDebug("Realtek: starting new remote control listener thread");
-        _remoteControlListenerThreadStopEvent = new AutoResetEvent(false);
+        _remoteControlListenerThreadStopEvent = new ManualResetEvent(false);
         _remoteControlListenerThread = new Thread(new ThreadStart(RemoteControlListener));
         _remoteControlListenerThread.Name = "Realtek remote control listener";
         _remoteControlListenerThread.IsBackground = true;

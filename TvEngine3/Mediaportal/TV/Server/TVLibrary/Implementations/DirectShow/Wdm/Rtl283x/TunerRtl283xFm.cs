@@ -268,7 +268,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
       public object[] Parameters;
       public object ReturnValue;
       public Exception ThrownException;
-      public AutoResetEvent WaitEvent;
+      public ManualResetEvent WaitEvent;
     }
 
     #region constants
@@ -362,7 +362,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
         job.JobType = jobType;
         job.MethodName = methodName;
         job.Parameters = parameters;
-        job.WaitEvent = new AutoResetEvent(false);
+        job.WaitEvent = new ManualResetEvent(false);
 
         lock (_jobQueueLock)
         {
@@ -473,15 +473,18 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Rtl283x
                     job.ReturnValue = InternalInvokeTsWriterMethod(typeof(IGrabberSiMpeg), job.MethodName, ref job.Parameters);
                     break;
                 }
-                job.WaitEvent.Set();
               }
-              catch (ThreadAbortException)
+              catch (ThreadAbortException ex)
               {
+                job.ThrownException = ex;
                 throw;
               }
               catch (Exception ex)
               {
                 job.ThrownException = ex;
+              }
+              finally
+              {
                 job.WaitEvent.Set();
               }
             }

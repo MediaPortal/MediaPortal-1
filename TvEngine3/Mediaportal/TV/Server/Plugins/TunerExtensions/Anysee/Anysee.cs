@@ -775,7 +775,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
       private IntPtr _libHandle = IntPtr.Zero;
 
       private Thread _apiAccessThread = null;
-      private AutoResetEvent _apiAccessThreadStopEvent = null;
+      private ManualResetEvent _apiAccessThreadStopEvent = null;
 
       #endregion
 
@@ -970,7 +970,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
         // to create the CI API instance, hold it open until it is no longer
         // needed, and finally destroy it.
         this.LogDebug("Anysee: starting CI API access thread");
-        _apiAccessThreadStopEvent = new AutoResetEvent(false);
+        _apiAccessThreadStopEvent = new ManualResetEvent(false);
         _apiAccessThread = new Thread(new ThreadStart(AccessThread));
         _apiAccessThread.Name = string.Format("Anysee API {0} Access", _apiCount);
         _apiAccessThread.IsBackground = true;
@@ -1242,7 +1242,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
 
     private bool _isRemoteControlInterfaceOpen = false;
     private Thread _remoteControlListenerThread = null;
-    private AutoResetEvent _remoteControlListenerThreadStopEvent = null;
+    private ManualResetEvent _remoteControlListenerThreadStopEvent = null;
 
     #endregion
 
@@ -1642,7 +1642,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
       if (_remoteControlListenerThread == null)
       {
         this.LogDebug("Anysee: starting new remote control listener thread");
-        _remoteControlListenerThreadStopEvent = new AutoResetEvent(false);
+        _remoteControlListenerThreadStopEvent = new ManualResetEvent(false);
         _remoteControlListenerThread = new Thread(new ThreadStart(RemoteControlListener));
         _remoteControlListenerThread.Name = "Anysee remote control listener";
         _remoteControlListenerThread.IsBackground = true;

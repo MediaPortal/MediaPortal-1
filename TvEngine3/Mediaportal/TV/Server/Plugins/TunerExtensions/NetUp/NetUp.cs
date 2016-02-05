@@ -219,7 +219,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
     private IKsPropertySet _propertySet = null;
 
     private Thread _mmiHandlerThread = null;
-    private AutoResetEvent _mmiHandlerThreadStopEvent = null;
+    private ManualResetEvent _mmiHandlerThreadStopEvent = null;
     private object _mmiLock = new object();
     private IConditionalAccessMenuCallBack _caMenuCallBack = null;
     private object _caMenuCallBackLock = new object();
@@ -468,7 +468,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
         if (_mmiHandlerThread == null)
         {
           this.LogDebug("NetUP: starting new MMI handler thread");
-          _mmiHandlerThreadStopEvent = new AutoResetEvent(false);
+          _mmiHandlerThreadStopEvent = new ManualResetEvent(false);
           _mmiHandlerThread = new Thread(new ThreadStart(MmiHandler));
           _mmiHandlerThread.Name = "NetUP MMI handler";
           _mmiHandlerThread.IsBackground = true;

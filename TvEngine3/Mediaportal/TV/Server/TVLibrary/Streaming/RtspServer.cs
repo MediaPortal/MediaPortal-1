@@ -93,7 +93,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Streaming
       public ServerJobType JobType;
       public object[] Parameters;
       public bool WasSuccessful;
-      public AutoResetEvent WaitEvent;
+      public ManualResetEvent WaitEvent;
     }
 
     #region variables
@@ -106,7 +106,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Streaming
     private object _serverThreadLock = new object();
     private Thread _serverThread = null;
     private bool _isServerThreadStarted = false;
-    private AutoResetEvent _serverThreadStopEvent = null;
+    private ManualResetEvent _serverThreadStopEvent = null;
 
     private object _jobQueueLock = new object();
     private Queue<ServerJob> _jobs = new Queue<ServerJob>();
@@ -209,7 +209,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Streaming
         ManualResetEvent startEvent = new ManualResetEvent(false);
         try
         {
-          _serverThreadStopEvent = new AutoResetEvent(false);
+          _serverThreadStopEvent = new ManualResetEvent(false);
           _serverThread = new Thread(new ParameterizedThreadStart(ServerThread));
           _serverThread.Name = "RTSP server";
           _serverThread.SetApartmentState(ApartmentState.STA);
@@ -469,16 +469,19 @@ namespace Mediaportal.TV.Server.TVLibrary.Streaming
                     ServerThreadReconfigureServer();
                     break;
                 }
-                job.WaitEvent.Set();
               }
               catch (ThreadAbortException)
               {
+                job.WasSuccessful = false;
                 throw;
               }
               catch (Exception ex)
               {
                 this.LogError(ex, "RTSP: unexpected server thread job exception, job type = {0}", job.JobType);
                 job.WasSuccessful = false;
+              }
+              finally
+              {
                 job.WaitEvent.Set();
               }
             }
@@ -522,7 +525,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Streaming
         ServerJob job = new ServerJob();
         job.JobType = jobType;
         job.Parameters = parameters;
-        job.WaitEvent = new AutoResetEvent(false);
+        job.WaitEvent = new ManualResetEvent(false);
 
         lock (_jobQueueLock)
         {

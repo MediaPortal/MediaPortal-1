@@ -424,7 +424,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeRemote
 
     private volatile bool _isRemoteControlInterfaceOpen = false;
     private Thread _remoteControlListenerThread = null;
-    private AutoResetEvent _remoteControlListenerThreadStopEvent = null;
+    private ManualResetEvent _remoteControlListenerThreadStopEvent = null;
     private int _remoteControlListenerThreadWaitTime = DEFAULT_REMOTE_CONTROL_LISTENER_THREAD_WAIT_TIME;
 
     #endregion
@@ -507,7 +507,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeRemote
       if (_remoteControlListenerThread == null)
       {
         this.LogDebug("Hauppauge remote: starting new remote control listener thread");
-        _remoteControlListenerThreadStopEvent = new AutoResetEvent(false);
+        _remoteControlListenerThreadStopEvent = new ManualResetEvent(false);
         _remoteControlListenerThread = new Thread(new ThreadStart(RemoteControlListener));
         _remoteControlListenerThread.Name = "Hauppauge remote control listener";
         _remoteControlListenerThread.IsBackground = true;

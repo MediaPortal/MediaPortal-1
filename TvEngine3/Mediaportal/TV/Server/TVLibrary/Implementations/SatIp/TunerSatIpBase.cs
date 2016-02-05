@@ -107,7 +107,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.SatIp
     /// <summary>
     /// An event, used to stop the streaming keep-alive thread.
     /// </summary>
-    private AutoResetEvent _streamingKeepAliveThreadStopEvent = null;
+    private ManualResetEvent _streamingKeepAliveThreadStopEvent = null;
 
     /// <summary>
     /// A thread, used to listen for RTCP reports containing signal status
@@ -118,7 +118,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.SatIp
     /// <summary>
     /// An event, used to stop the RTCP listener thread.
     /// </summary>
-    private AutoResetEvent _rtcpListenerThreadStopEvent = null;
+    private ManualResetEvent _rtcpListenerThreadStopEvent = null;
 
     /// <summary>
     /// The port on which the RTCP listener thread listens.
@@ -393,7 +393,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.SatIp
       if (_streamingKeepAliveThread == null)
       {
         this.LogDebug("SAT>IP base: starting new streaming keep-alive thread");
-        _streamingKeepAliveThreadStopEvent = new AutoResetEvent(false);
+        _streamingKeepAliveThreadStopEvent = new ManualResetEvent(false);
         _streamingKeepAliveThread = new Thread(new ThreadStart(StreamingKeepAlive));
         _streamingKeepAliveThread.Name = string.Format("SAT>IP tuner {0} streaming keep-alive", TunerId);
         _streamingKeepAliveThread.IsBackground = true;
@@ -470,7 +470,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.SatIp
       if (_rtcpListenerThread == null)
       {
         this.LogDebug("SAT>IP base: starting new RTCP listener thread");
-        _rtcpListenerThreadStopEvent = new AutoResetEvent(false);
+        _rtcpListenerThreadStopEvent = new ManualResetEvent(false);
         _rtcpListenerThread = new Thread(new ThreadStart(RtcpListener));
         _rtcpListenerThread.Name = string.Format("SAT>IP tuner {0} RTCP listener", TunerId);
         _rtcpListenerThread.IsBackground = true;

@@ -585,7 +585,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
     private int _mmiDataSize = DEFAULT_MMI_DATA_SIZE;
 
     private Thread _mmiHandlerThread = null;
-    private AutoResetEvent _mmiHandlerThreadStopEvent = null;
+    private ManualResetEvent _mmiHandlerThreadStopEvent = null;
     private object _mmiLock = new object();
     private IConditionalAccessMenuCallBack _caMenuCallBack = null;
     private object _caMenuCallBackLock = new object();
@@ -853,7 +853,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
         if (_mmiHandlerThread == null)
         {
           this.LogDebug("Twinhan: starting new MMI handler thread");
-          _mmiHandlerThreadStopEvent = new AutoResetEvent(false);
+          _mmiHandlerThreadStopEvent = new ManualResetEvent(false);
           _mmiHandlerThread = new Thread(new ThreadStart(MmiHandler));
           _mmiHandlerThread.Name = "Twinhan MMI handler";
           _mmiHandlerThread.IsBackground = true;

@@ -348,7 +348,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Turbosight
     private bool _isNbcParamPropertySupported = false;
 
     private Thread _mmiHandlerThread = null;
-    private AutoResetEvent _mmiHandlerThreadStopEvent = null;
+    private ManualResetEvent _mmiHandlerThreadStopEvent = null;
     private object _mmiLock = new object();
     private IConditionalAccessMenuCallBack _caMenuCallBack = null;
     private object _caMenuCallBackLock = new object();
@@ -548,7 +548,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Turbosight
           {
             Marshal.WriteByte(_mmiResponseBuffer, i, 0);
           }
-          _mmiHandlerThreadStopEvent = new AutoResetEvent(false);
+          _mmiHandlerThreadStopEvent = new ManualResetEvent(false);
           _mmiHandlerThread = new Thread(new ThreadStart(MmiHandler));
           _mmiHandlerThread.Name = "Turbosight MMI handler";
           _mmiHandlerThread.IsBackground = true;

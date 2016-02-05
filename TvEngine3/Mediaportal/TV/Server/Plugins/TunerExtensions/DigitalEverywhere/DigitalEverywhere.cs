@@ -615,7 +615,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
     private BroadcastStandard _tunerSupportedBroadcastStandards = BroadcastStandard.Unknown;
 
     private Thread _mmiHandlerThread = null;
-    private AutoResetEvent _mmiHandlerThreadStopEvent = null;
+    private ManualResetEvent _mmiHandlerThreadStopEvent = null;
     private object _mmiLock = new object();
     private IConditionalAccessMenuCallBack _caMenuCallBack = null;
     private object _caMenuCallBackLock = new object();
@@ -623,7 +623,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
     private bool _isRemoteControlInterfaceOpen = false;
     private IntPtr _remoteControlBuffer = IntPtr.Zero;
     private Thread _remoteControlListenerThread = null;
-    private AutoResetEvent _remoteControlListenerThreadStopEvent = null;
+    private ManualResetEvent _remoteControlListenerThreadStopEvent = null;
 
     #endregion
 
@@ -891,7 +891,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
         if (_mmiHandlerThread == null)
         {
           this.LogDebug("Digital Everywhere: starting new MMI handler thread");
-          _mmiHandlerThreadStopEvent = new AutoResetEvent(false);
+          _mmiHandlerThreadStopEvent = new ManualResetEvent(false);
           _mmiHandlerThread = new Thread(new ThreadStart(MmiHandler));
           _mmiHandlerThread.Name = "Digital Everywhere MMI handler";
           _mmiHandlerThread.IsBackground = true;
@@ -1072,7 +1072,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
       if (_remoteControlListenerThread == null)
       {
         this.LogDebug("Digital Everywhere: starting new remote control listener thread");
-        _remoteControlListenerThreadStopEvent = new AutoResetEvent(false);
+        _remoteControlListenerThreadStopEvent = new ManualResetEvent(false);
         _remoteControlListenerThread = new Thread(new ThreadStart(RemoteControlListener));
         _remoteControlListenerThread.Name = "Digital Everywhere remote control listener";
         _remoteControlListenerThread.IsBackground = true;

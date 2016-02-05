@@ -224,7 +224,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DvbSky
     private bool _isRemoteControlInterfaceOpen = false;
     private IntPtr _remoteControlBuffer = IntPtr.Zero;
     private Thread _remoteControlListenerThread = null;
-    private AutoResetEvent _remoteControlListenerThreadStopEvent = null;
+    private ManualResetEvent _remoteControlListenerThreadStopEvent = null;
 
     #endregion
 
@@ -310,7 +310,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DvbSky
       if (_remoteControlListenerThread == null)
       {
         this.LogDebug("DVBSky: starting new remote control listener thread");
-        _remoteControlListenerThreadStopEvent = new AutoResetEvent(false);
+        _remoteControlListenerThreadStopEvent = new ManualResetEvent(false);
         _remoteControlListenerThread = new Thread(new ThreadStart(RemoteControlListener));
         _remoteControlListenerThread.Name = "DVBSky remote control listener";
         _remoteControlListenerThread.IsBackground = true;

@@ -79,7 +79,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Turbosight.RemoteControl
     private IKsPropertySet _propertySet = null;
 
     private Thread _listenerThread = null;
-    private AutoResetEvent _listenerThreadStopEvent = null;
+    private ManualResetEvent _listenerThreadStopEvent = null;
 
     #endregion
 
@@ -271,7 +271,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Turbosight.RemoteControl
       if (_listenerThread == null)
       {
         this.LogDebug("Turbosight Conexant RC: starting new listener thread");
-        _listenerThreadStopEvent = new AutoResetEvent(false);
+        _listenerThreadStopEvent = new ManualResetEvent(false);
         _listenerThread = new Thread(new ThreadStart(Listener));
         _listenerThread.Name = "Turbosight Conexant remote control listener";
         _listenerThread.IsBackground = true;
