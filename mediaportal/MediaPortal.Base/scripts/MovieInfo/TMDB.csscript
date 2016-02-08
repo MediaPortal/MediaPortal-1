@@ -252,13 +252,13 @@ internal class Grabber : MarshalByRefObject, MediaPortal.Video.Database.IIMDBScr
     string sRequest = Grabber.API_SearchMovie + "?api_key=" + Grabber.API_KEY;
     if (!string.IsNullOrEmpty(API_LANG))
     {
-      sRequest += "&language=" + API_LANG;
+      sRequest += "&language=" + API_LANG.ToLower();
     }
     //sRequest += "&query='" + Encoder.Encode(title) + "'";
     sRequest += "&query='" + title + "'";
 
     string sReponseDetails = GetWebServerResponse(sRequest);
-    Log.Debug("GetTitles(" + title + ") TMDB Response = " + sReponseDetails);
+    // Log.Debug("GetTitles(" + title + ") TMDB Response = " + sReponseDetails);
 
     string sFilter = @"""adult"":([^}]+?)}";
     System.Text.RegularExpressions.MatchCollection tMatches = System.Text.RegularExpressions.Regex.Matches(sReponseDetails, sFilter);
@@ -301,9 +301,9 @@ internal class Grabber : MarshalByRefObject, MediaPortal.Video.Database.IIMDBScr
       {
         sTitle = sOriginal_title;
       }
-      if (sTitle != sOriginal_title)
+      if (!sTitle.Equals(sOriginal_title, StringComparison.CurrentCultureIgnoreCase))
       {
-        sTitle += " as " + sOriginal_title;
+        sTitle += " / " + sOriginal_title;
       }
 
       sTitle += " (" + (sYear ?? "Inconnu") + ")";
@@ -626,7 +626,7 @@ internal class Grabber : MarshalByRefObject, MediaPortal.Video.Database.IIMDBScr
       string sRequest = Grabber.API_ReleaseInfo + "?api_key=" + Grabber.API_KEY;
       if (!string.IsNullOrEmpty(API_LANG))
       {
-        sRequest += "&language=" + API_LANG;
+        sRequest += "&language=" + API_LANG.ToLower();
       }
       sRequest = sRequest.Replace("{0}", movie.ID.ToString());
       string sReponseDetails = GetWebServerResponse(sRequest);
@@ -682,7 +682,7 @@ internal class Grabber : MarshalByRefObject, MediaPortal.Video.Database.IIMDBScr
       string sRequest = Grabber.API_Casts.Replace("{0}", movie.ID.ToString()) + "?api_key=" + Grabber.API_KEY;
       if (!string.IsNullOrEmpty(API_LANG))
       {
-        sRequest += "&language=" + API_LANG;
+        sRequest += "&language=" + API_LANG.ToLower();
       }
       //Log.Debug("GetCast " + sRequest);
       sReponseDetails = GetWebServerResponse(sRequest);
@@ -754,7 +754,7 @@ internal class Grabber : MarshalByRefObject, MediaPortal.Video.Database.IIMDBScr
     string sRequest = API_MovieInfo.Replace("{0}", url) + "?api_key=" + Grabber.API_KEY;
     if (!string.IsNullOrEmpty(API_LANG))
     {
-      sRequest += "&language=" + API_LANG;
+      sRequest += "&language=" + API_LANG.ToLower();
     }
     return sRequest;
   }
@@ -770,7 +770,7 @@ internal class Grabber : MarshalByRefObject, MediaPortal.Video.Database.IIMDBScr
     string sRequest = API_Collection.Replace("{0}", iCollection.ToString().Trim()) + "?api_key=" + Grabber.API_KEY;
     if (!string.IsNullOrEmpty(API_LANG))
     {
-      sRequest += "&language=" + API_LANG;
+      sRequest += "&language=" + API_LANG.ToLower();
     }
 
     try
