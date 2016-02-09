@@ -392,7 +392,7 @@ bool CDemuxer::FFmpegLog(CFFmpegLogger *ffmpegLogger, CFFmpegContext *context, v
   AVFormatContext *formatContext = (AVFormatContext *)ffmpegPtr;
   CDemuxer *demuxer = NULL;
 
-  if ((formatContext != NULL) && (formatContext->pb != NULL) && (formatContext->pb->opaque != NULL))
+  if ((ffmpegPtr == this->formatContext) && (formatContext != NULL) && (formatContext->pb != NULL) && (formatContext->pb->opaque != NULL))
   {
     demuxer = (CDemuxer *)(formatContext->pb->opaque);
 
