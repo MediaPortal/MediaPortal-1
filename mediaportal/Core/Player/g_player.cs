@@ -1637,14 +1637,7 @@ namespace MediaPortal.Player
             IsExtTS = true;
           }
           // Set bool to know if video if we force play
-          if (forcePlay)
-          {
-            ForcePlay = true;
-          }
-          else
-          {
-            ForcePlay = false;
-          }
+          ForcePlay = forcePlay;
         }
 
         // Set currentMedia needed for correct detection when BASS Engine is doing a Stop

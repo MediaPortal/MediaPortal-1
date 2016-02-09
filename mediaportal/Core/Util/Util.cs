@@ -2414,7 +2414,7 @@ namespace MediaPortal.Util
             {
               // %root% argument handling (TMT can only play BD/DVD/VCD images using root directory)
               // other video files will go to the player with full path
-              if (strParams.IndexOf("%root%") >= 0)
+              if (strParams.IndexOf("%root%", System.StringComparison.Ordinal) >= 0)
               {
                 DirectoryInfo dirInfo = new DirectoryInfo(strFile);
 
@@ -2478,10 +2478,7 @@ namespace MediaPortal.Util
               }
               return true;
             }
-            else
-            {
-              Log.Warn("Util: External player {0} does not exists", strPath);
-            }
+            Log.Warn("Util: External player {0} does not exists", strPath);
           }
         }
       }
