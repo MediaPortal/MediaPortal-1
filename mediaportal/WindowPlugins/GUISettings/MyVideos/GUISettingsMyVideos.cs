@@ -50,6 +50,8 @@ namespace WindowPlugins.GUISettings.TV
     [SkinControl(44)] protected GUICheckButton btnautoDecoderSettings = null;
     [SkinControl(45)] protected GUICheckButton btnForceSourceSplitter = null;
     [SkinControl(46)] protected GUICheckButton btnUseMovieCodects = null;
+    [SkinControl(47)] protected GUICheckButton btnUseAudioDefaultCheckBox = null;
+    [SkinControl(48)] protected GUICheckButton btnUseSstreamLAVSelection = null;
 
     private bool _subtitleSettings;
     private int _selectedOption;
@@ -74,6 +76,8 @@ namespace WindowPlugins.GUISettings.TV
     private bool _autoDecoderSettings;
     private bool _ForceSourceSplitter;
     private bool _mpCheckBoxTS;
+    private bool _audioDefaultCheckBox;
+    private bool _streamLAVSelectionCheckBox;
     
 
     private class CultureComparer : IComparer
@@ -134,6 +138,23 @@ namespace WindowPlugins.GUISettings.TV
         btnForceSourceSplitter.Selected = _ForceSourceSplitter;
         btnUseMovieCodects.Selected = _mpCheckBoxTS;
         btnautoDecoderSettings.Selected = _autoDecoderSettings;
+        _audioDefaultCheckBox = xmlreader.GetValueAsBool("movieplayer", "audiodefaultlanguage", false);
+        _streamLAVSelectionCheckBox = xmlreader.GetValueAsBool("movieplayer", "streamlavselection", false);
+        btnUseAudioDefaultCheckBox.Selected = _audioDefaultCheckBox;
+        btnUseSstreamLAVSelection.Selected = _streamLAVSelectionCheckBox;
+        // Set Source Splitter check for first init to true.
+        if (btnForceSourceSplitter.Selected && (_strSplitterFilter == "LAV Splitter Source" || _strSplitterFilter == "LAV Splitter"))
+        {
+          btnUseAudioDefaultCheckBox.IsEnabled = true;
+          btnUseSstreamLAVSelection.IsEnabled = true;
+        }
+        else
+        {
+          btnUseAudioDefaultCheckBox.IsEnabled = false;
+          btnUseSstreamLAVSelection.IsEnabled = false;
+          btnUseAudioDefaultCheckBox.Selected = false;
+          btnUseSstreamLAVSelection.Selected = false;
+        }
       }
     }
 
@@ -157,6 +178,8 @@ namespace WindowPlugins.GUISettings.TV
         xmlwriter.SetValueAsBool("movieplayer", "autodecodersettings", btnautoDecoderSettings.Selected);
         xmlwriter.SetValueAsBool("movieplayer", "forcesourcesplitter", btnForceSourceSplitter.Selected);
         xmlwriter.SetValueAsBool("movieplayer", "usemoviecodects", btnUseMovieCodects.Selected);
+        xmlwriter.SetValueAsBool("movieplayer", "audiodefaultlanguage", btnUseAudioDefaultCheckBox.Selected);
+        xmlwriter.SetValueAsBool("movieplayer", "streamlavselection", btnUseSstreamLAVSelection.Selected);
 
         if (_info != null)
         {
@@ -249,6 +272,17 @@ namespace WindowPlugins.GUISettings.TV
         SaveSettings();
         LoadSettings();
       }
+      if (control == btnUseAudioDefaultCheckBox)
+      {
+        SaveSettings();
+        LoadSettings();
+      }
+      if (control == btnUseSstreamLAVSelection)
+      {
+        btnAudio.IsEnabled = !btnUseSstreamLAVSelection.Selected;
+        SaveSettings();
+        LoadSettings();
+      }
 
       base.OnClicked(controlId, control, actionType);
     }
@@ -297,6 +331,20 @@ namespace WindowPlugins.GUISettings.TV
           dlg.SelectedLabel = _selectedOption;
 
         dlg.DoModal(GetID);
+
+        // Set Source Splitter check for first init to true.
+        if (btnForceSourceSplitter.Selected && (_strSplitterFilter == "LAV Splitter Source" || _strSplitterFilter == "LAV Splitter"))
+        {
+          btnUseAudioDefaultCheckBox.IsEnabled = true;
+          btnUseSstreamLAVSelection.IsEnabled = true;
+        }
+        else
+        {
+          btnUseAudioDefaultCheckBox.IsEnabled = false;
+          btnUseSstreamLAVSelection.IsEnabled = false;
+          btnUseAudioDefaultCheckBox.Selected = false;
+          btnUseSstreamLAVSelection.Selected = false;
+        }
 
         if (dlg.SelectedId == -1)
         {
