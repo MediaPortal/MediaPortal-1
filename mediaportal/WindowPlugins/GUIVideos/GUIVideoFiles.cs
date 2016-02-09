@@ -3542,10 +3542,12 @@ namespace MediaPortal.GUI.Video
 
         // The last _getMediaInfoThread is closed we can start a new one
         _getMediaInfoThreadNumber++;
-        _getMediaInfoThread = new Thread(GetMediaInfoThread);
-        _getMediaInfoThread.Priority = ThreadPriority.Lowest;
-        _getMediaInfoThread.IsBackground = true;
-        _getMediaInfoThread.Name = "GetMediaInfoThread " + _getMediaInfoThreadNumber;
+        _getMediaInfoThread = new Thread(GetMediaInfoThread)
+        {
+          Priority = ThreadPriority.Lowest,
+          IsBackground = true,
+          Name = "GetMediaInfoThread " + _getMediaInfoThreadNumber
+        };
         _getMediaInfoThread.Start(itemlist2);
       }
 
@@ -3753,6 +3755,11 @@ namespace MediaPortal.GUI.Video
         if (_getMediaInfoThreadAbort)
         {
           Log.Debug("GetMediaInfoThread: finished with _getMediaInfoThreadAbort signal.");
+          return;
+        }
+        if (VirtualDirectory.IsImageFile(Path.GetExtension(item.Path)))
+        {
+          Log.Debug("GetMediaInfoThread: abort ISO scan.");
           return;
         }
         try
