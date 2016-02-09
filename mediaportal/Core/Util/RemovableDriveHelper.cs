@@ -303,25 +303,36 @@ namespace MediaPortal.Util
       string driveName = Utils.GetDriveName(path);
 
       _volumeInsertTime = DateTime.Now;
-      TimeSpan tsMount = DateTime.Now - _mountTime;
+      TimeSpan tsMount;
+      if (_mountTime == _mountDetectedTime) // Time not init
+      {
+        tsMount = DateTime.Now - _volumeInsertTime;
+      }
+      else
+      {
+        tsMount = DateTime.Now - _mountTime;
+      }
+      
       TimeSpan tsExamineCD = DateTime.Now - _examineCDTime;
       TimeSpan tsVolumeRemoval = DateTime.Now - _volumeRemovalTime;
 
       if (Utils.IsRemovable(path) || Utils.IsHD(path))
       {
         Log.Debug("Detected new device: {0}", volumeLetter);
-        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ADD_REMOVABLE_DRIVE, 0, 0, 0, 0, 0, 0);
-        msg.Label = path;
-        msg.Label2 = String.Format("({0}) {1}", path, driveName);
+        var msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ADD_REMOVABLE_DRIVE, 0, 0, 0, 0, 0, 0)
+        {
+          Label = path,
+          Label2 = String.Format("({0}) {1}", path, driveName)
+        };
         GUIGraphicsContext.SendMessage(msg);
         return true;
       }
-      else if (Utils.IsDVD(path))
+      if (Utils.IsDVD(path))
       {
         // AnyDVD is causing media removed & inserted events when waking up from S3/S4 
         // We need to filter out those as it could trigger false autoplay event 
         if (tsExamineCD.TotalMilliseconds < _volumeRemovalDelay
-          || (tsVolumeRemoval.TotalMilliseconds < _volumeRemovalDelay || tsMount.TotalMilliseconds < _volumeRemovalDelay))
+            || (tsVolumeRemoval.TotalMilliseconds < _volumeRemovalDelay || tsMount.TotalMilliseconds < _volumeRemovalDelay))
         {
           Log.Debug("Ignoring volume inserted event - drive {0} - timespan mount {1} s",
             volumeLetter, tsMount.TotalMilliseconds / 1000);
@@ -330,8 +341,7 @@ namespace MediaPortal.Util
         }
 
         Log.Debug("Detected new optical media: {0}", volumeLetter);
-        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_VOLUME_INSERTED, 0, 0, 0, 0, 0, 0);
-        msg.Label = path;
+        var msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_VOLUME_INSERTED, 0, 0, 0, 0, 0, 0) {Label = path};
         GUIGraphicsContext.SendMessage(msg);
         return true;
       }
@@ -355,34 +365,42 @@ namespace MediaPortal.Util
       }
 
       _volumeRemovalTime = DateTime.Now;
-      TimeSpan tsMount = DateTime.Now - _mountTime;
+      TimeSpan tsMount;
+      if (_mountTime == _mountDetectedTime) // Time not init
+      {
+        tsMount = DateTime.Now - _volumeInsertTime;
+      }
+      else
+      {
+        tsMount = DateTime.Now - _mountTime;
+      }
       TimeSpan tsExamineCD = DateTime.Now - _examineCDTime;
       TimeSpan tsVolumeInsert = DateTime.Now - _volumeInsertTime;
             
       if (!Utils.IsDVD(path))
       {
         Log.Debug("Detected device remove: {0}", volumeLetter);
-        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_REMOVE_REMOVABLE_DRIVE, 0, 0, 0, 0, 0, 0);
-        msg.Label = path;
-        msg.Label2 = String.Format("({0})", path);
+        var msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_REMOVE_REMOVABLE_DRIVE, 0, 0, 0, 0, 0, 0)
+        {
+          Label = path,
+          Label2 = String.Format("({0})", path)
+        };
         GUIGraphicsContext.SendMessage(msg);
         return true;
       }
-      else if (Utils.IsDVD(path))
+      if (Utils.IsDVD(path))
       {
 
         // AnyDVD is causing media removed & inserted events when Mount/Unmount Volume
         // We need to filter out those as it could trigger false autoplay event
         if (tsExamineCD.TotalMilliseconds < _volumeRemovalDelay || tsMount.TotalMilliseconds < _volumeRemovalDelay || tsVolumeInsert.TotalMilliseconds < _volumeRemovalDelay)
         { 
-          Log.Debug("Ignoring volume removed event - drive {0} - time after Mount {1} s",
-            volumeLetter, tsMount.TotalMilliseconds / 1000);
+          Log.Debug("Ignoring volume removed event - drive {0} - time after Mount {1} s", volumeLetter, tsMount.TotalMilliseconds / 1000);
           return false;
         }
         Log.Debug("Detected optical media removal: {0}", volumeLetter);
         Log.Debug("  time after ExamineCD {0} s", tsExamineCD.TotalMilliseconds / 1000);
-        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_VOLUME_REMOVED, 0, 0, 0, 0, 0, 0);
-        msg.Label = path;
+        var msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_VOLUME_REMOVED, 0, 0, 0, 0, 0, 0) {Label = path};
         GUIGraphicsContext.SendMessage(msg);
         return true;
       }
@@ -401,7 +419,7 @@ namespace MediaPortal.Util
       if (h.ToInt32() != INVALID_HANDLE_VALUE)
       {
         int requiredSize;
-        STORAGE_DEVICE_NUMBER Sdn = new STORAGE_DEVICE_NUMBER();
+        var Sdn = new STORAGE_DEVICE_NUMBER();
         int nBytes = Marshal.SizeOf(Sdn);
         IntPtr ptrSdn = Marshal.AllocHGlobal(nBytes);
 
@@ -427,28 +445,28 @@ namespace MediaPortal.Util
     private static SP_DEVINFO_DATA GetDevInfoForDeviceNumber(long DeviceNumber)
     {
       SP_DEVINFO_DATA result = null;
-      Guid guid = new Guid(GUID_DEVINTERFACE_DISK);
+      var guid = new Guid(GUID_DEVINTERFACE_DISK);
 
       IntPtr _deviceInfoSet = SetupDiGetClassDevs(ref guid, 0, IntPtr.Zero, DIGCF_PRESENT | DIGCF_DEVICEINTERFACE);
 
       if (_deviceInfoSet.ToInt32() == INVALID_HANDLE_VALUE)
       {
-        return result;
+        return null;
       }
       int index = 0;
       while (true)
       {
-        SP_DEVICE_INTERFACE_DATA interfaceData = new SP_DEVICE_INTERFACE_DATA();
+        var interfaceData = new SP_DEVICE_INTERFACE_DATA();
 
         if (!SetupDiEnumDeviceInterfaces(_deviceInfoSet, null, ref guid, index, interfaceData))
         {
-          int error = Marshal.GetLastWin32Error();
+          var error = Marshal.GetLastWin32Error();
           if (error != ERROR_NO_MORE_ITEMS)
             throw new Win32Exception(error);
           break;
         }
 
-        SP_DEVINFO_DATA devData = new SP_DEVINFO_DATA();
+        var devData = new SP_DEVINFO_DATA();
         int size = 0;
         if (!SetupDiGetDeviceInterfaceDetail(_deviceInfoSet, interfaceData, IntPtr.Zero, 0, ref size, devData))
         {
@@ -458,8 +476,10 @@ namespace MediaPortal.Util
         }
 
         IntPtr buffer = Marshal.AllocHGlobal(size);
-        SP_DEVICE_INTERFACE_DETAIL_DATA detailData = new SP_DEVICE_INTERFACE_DETAIL_DATA();
-        detailData.cbSize = Marshal.SizeOf(typeof (SP_DEVICE_INTERFACE_DETAIL_DATA));
+        var detailData = new SP_DEVICE_INTERFACE_DETAIL_DATA
+        {
+          cbSize = Marshal.SizeOf(typeof (SP_DEVICE_INTERFACE_DETAIL_DATA))
+        };
         Marshal.StructureToPtr(detailData, buffer, false);
 
         if (!SetupDiGetDeviceInterfaceDetail(_deviceInfoSet, interfaceData, buffer, size, ref size, devData))
@@ -468,7 +488,7 @@ namespace MediaPortal.Util
           throw new Win32Exception(Marshal.GetLastWin32Error());
         }
 
-        IntPtr pDevicePath = (IntPtr)((int)buffer + Marshal.SizeOf(typeof (int)));
+        var pDevicePath = (IntPtr)((int)buffer + Marshal.SizeOf(typeof (int)));
         string devicePath = Marshal.PtrToStringAuto(pDevicePath);
         Marshal.FreeHGlobal(buffer);
         if (GetDeviceNumber(devicePath) == DeviceNumber)
@@ -564,7 +584,8 @@ namespace MediaPortal.Util
     private const int IOCTL_STORAGE_MEDIA_REMOVAL = unchecked((int)0x002D4804);
 
     // For event filtering
-    private static DateTime _mountTime = new DateTime();    
+    private static DateTime _mountTime = new DateTime();
+    private static DateTime _mountDetectedTime = new DateTime();
     private static DateTime _examineCDTime = new DateTime();
     private static DateTime _volumeRemovalTime = new DateTime();
     private static DateTime _volumeInsertTime = new DateTime();
