@@ -207,6 +207,8 @@ namespace MediaPortal.Player
     public TVFilterConfig filterConfig;
     public FilterCodec filterCodec;
 
+    protected object lockObj = new object();
+
     #endregion
 
     #region ctor/dtor
@@ -646,97 +648,100 @@ namespace MediaPortal.Player
 
     public override void SetVideoWindow()
     {
-      if (GUIGraphicsContext.IsFullScreenVideo != _isFullscreen)
+      lock (lockObj)
       {
-        _isFullscreen = GUIGraphicsContext.IsFullScreenVideo;
-        _updateNeeded = true;
-      }
+        if (GUIGraphicsContext.IsFullScreenVideo != _isFullscreen)
+        {
+          _isFullscreen = GUIGraphicsContext.IsFullScreenVideo;
+          _updateNeeded = true;
+        }
 
-      if (!_updateNeeded)
-      {
-        return;
-      }
-      _updateNeeded = false;
-      _isStarted = true;
-      float x = _positionX;
-      float y = _positionY;
-      int nw = _width;
-      int nh = _height;
-      if (nw > GUIGraphicsContext.OverScanWidth)
-      {
-        nw = GUIGraphicsContext.OverScanWidth;
-      }
-      if (nh > GUIGraphicsContext.OverScanHeight)
-      {
-        nh = GUIGraphicsContext.OverScanHeight;
-      }
-      if (GUIGraphicsContext.IsFullScreenVideo)
-      {
-        x = _positionX = GUIGraphicsContext.OverScanLeft;
-        y = _positionY = GUIGraphicsContext.OverScanTop;
-        nw = _width = GUIGraphicsContext.OverScanWidth;
-        nh = _height = GUIGraphicsContext.OverScanHeight;
-      }
-      /*			Log.Info("{0},{1}-{2},{3}  vidwin:{4},{5}-{6},{7} fs:{8}", x,y,nw,nh, 
+        if (!_updateNeeded)
+        {
+          return;
+        }
+        _updateNeeded = false;
+        _isStarted = true;
+        float x = _positionX;
+        float y = _positionY;
+        int nw = _width;
+        int nh = _height;
+        if (nw > GUIGraphicsContext.OverScanWidth)
+        {
+          nw = GUIGraphicsContext.OverScanWidth;
+        }
+        if (nh > GUIGraphicsContext.OverScanHeight)
+        {
+          nh = GUIGraphicsContext.OverScanHeight;
+        }
+        if (GUIGraphicsContext.IsFullScreenVideo)
+        {
+          x = _positionX = GUIGraphicsContext.OverScanLeft;
+          y = _positionY = GUIGraphicsContext.OverScanTop;
+          nw = _width = GUIGraphicsContext.OverScanWidth;
+          nh = _height = GUIGraphicsContext.OverScanHeight;
+        }
+        /*			Log.Info("{0},{1}-{2},{3}  vidwin:{4},{5}-{6},{7} fs:{8}", x,y,nw,nh, 
               GUIGraphicsContext.VideoWindow.Left,
               GUIGraphicsContext.VideoWindow.Top,
               GUIGraphicsContext.VideoWindow.Right,
               GUIGraphicsContext.VideoWindow.Bottom,
               GUIGraphicsContext.IsFullScreenVideo);*/
-      if (nw <= 0 || nh <= 0)
-      {
-        return;
+        if (nw <= 0 || nh <= 0)
+        {
+          return;
+        }
+        if (x < 0 || y < 0)
+        {
+          return;
+        }
+        int aspectX, aspectY;
+        if (_basicVideo != null)
+        {
+          _basicVideo.GetVideoSize(out _videoWidth, out _videoHeight);
+        }
+        aspectX = _videoWidth;
+        aspectY = _videoHeight;
+        if (_basicVideo != null)
+        {
+          _basicVideo.GetPreferredAspectRatio(out aspectX, out aspectY);
+        }
+        GUIGraphicsContext.VideoSize = new Size(_videoWidth, _videoHeight);
+        _aspectX = aspectX;
+        _aspectY = aspectY;
+        Geometry m_geometry = new Geometry();
+        Rectangle rSource, rDest;
+        m_geometry.ImageWidth = _videoWidth;
+        m_geometry.ImageHeight = _videoHeight;
+        m_geometry.ScreenWidth = nw;
+        m_geometry.ScreenHeight = nh;
+        m_geometry.ARType = GUIGraphicsContext.ARType;
+        m_geometry.PixelRatio = GUIGraphicsContext.PixelRatio;
+        m_geometry.GetWindow(aspectX, aspectY, out rSource, out rDest);
+        rDest.X += (int) x;
+        rDest.Y += (int) y;
+        Log.Info("overlay: video WxH  : {0}x{1}", _videoWidth, _videoHeight);
+        Log.Info("overlay: video AR   : {0}:{1}", aspectX, aspectY);
+        Log.Info("overlay: screen WxH : {0}x{1}", nw, nh);
+        Log.Info("overlay: AR type    : {0}", GUIGraphicsContext.ARType);
+        Log.Info("overlay: PixelRatio : {0}", GUIGraphicsContext.PixelRatio);
+        Log.Info("overlay: src        : ({0},{1})-({2},{3})",
+          rSource.X, rSource.Y, rSource.X + rSource.Width, rSource.Y + rSource.Height);
+        Log.Info("overlay: dst        : ({0},{1})-({2},{3})",
+          rDest.X, rDest.Y, rDest.X + rDest.Width, rDest.Y + rDest.Height);
+        Log.Info("TSStreamBufferPlayer:Window ({0},{1})-({2},{3}) - ({4},{5})-({6},{7})",
+          rSource.X, rSource.Y, rSource.Right, rSource.Bottom,
+          rDest.X, rDest.Y, rDest.Right, rDest.Bottom);
+        if (rSource.Y == 0)
+        {
+          rSource.Y += 5;
+          rSource.Height -= 10;
+        }
+        SetSourceDestRectangles(rSource, rDest);
+        SetVideoPosition(rDest);
+        _sourceRectangle = rSource;
+        _videoRectangle = rDest;
       }
-      if (x < 0 || y < 0)
-      {
-        return;
-      }
-      int aspectX, aspectY;
-      if (_basicVideo != null)
-      {
-        _basicVideo.GetVideoSize(out _videoWidth, out _videoHeight);
-      }
-      aspectX = _videoWidth;
-      aspectY = _videoHeight;
-      if (_basicVideo != null)
-      {
-        _basicVideo.GetPreferredAspectRatio(out aspectX, out aspectY);
-      }
-      GUIGraphicsContext.VideoSize = new Size(_videoWidth, _videoHeight);
-      _aspectX = aspectX;
-      _aspectY = aspectY;
-      Geometry m_geometry = new Geometry();
-      Rectangle rSource, rDest;
-      m_geometry.ImageWidth = _videoWidth;
-      m_geometry.ImageHeight = _videoHeight;
-      m_geometry.ScreenWidth = nw;
-      m_geometry.ScreenHeight = nh;
-      m_geometry.ARType = GUIGraphicsContext.ARType;
-      m_geometry.PixelRatio = GUIGraphicsContext.PixelRatio;
-      m_geometry.GetWindow(aspectX, aspectY, out rSource, out rDest);
-      rDest.X += (int)x;
-      rDest.Y += (int)y;
-      Log.Info("overlay: video WxH  : {0}x{1}", _videoWidth, _videoHeight);
-      Log.Info("overlay: video AR   : {0}:{1}", aspectX, aspectY);
-      Log.Info("overlay: screen WxH : {0}x{1}", nw, nh);
-      Log.Info("overlay: AR type    : {0}", GUIGraphicsContext.ARType);
-      Log.Info("overlay: PixelRatio : {0}", GUIGraphicsContext.PixelRatio);
-      Log.Info("overlay: src        : ({0},{1})-({2},{3})",
-               rSource.X, rSource.Y, rSource.X + rSource.Width, rSource.Y + rSource.Height);
-      Log.Info("overlay: dst        : ({0},{1})-({2},{3})",
-               rDest.X, rDest.Y, rDest.X + rDest.Width, rDest.Y + rDest.Height);
-      Log.Info("TSStreamBufferPlayer:Window ({0},{1})-({2},{3}) - ({4},{5})-({6},{7})",
-               rSource.X, rSource.Y, rSource.Right, rSource.Bottom,
-               rDest.X, rDest.Y, rDest.Right, rDest.Bottom);
-      if (rSource.Y == 0)
-      {
-        rSource.Y += 5;
-        rSource.Height -= 10;
-      }
-      SetSourceDestRectangles(rSource, rDest);
-      SetVideoPosition(rDest);
-      _sourceRectangle = rSource;
-      _videoRectangle = rDest;
     }
 
     public override bool Ended
@@ -946,7 +951,7 @@ namespace MediaPortal.Player
               if (hr != 0)
               {
                 IMediaSeeking oldMediaSeek = _graphBuilder as IMediaSeeking;
-                hr = oldMediaSeek.SetRate((double)iSpeed);
+                if (oldMediaSeek != null) hr = oldMediaSeek.SetRate((double)iSpeed);
 
                 setRateFailed = true;
                 _usingFastSeeking = false;
@@ -1901,7 +1906,7 @@ namespace MediaPortal.Player
           PostProcessFilterVideo.Clear();
           Log.Info("TSReaderPlayer: UpdateFilters Cleanup PostProcessVideo");
         }
-        if (filterConfig != null && filterConfig.enableCCSubtitles)
+        if (VMR9Util.g_vmr9 != null && filterConfig != null && filterConfig.enableCCSubtitles)
         {
           ReleaseCC();
           ReleaseCC2();
@@ -1994,7 +1999,7 @@ namespace MediaPortal.Player
         }
         filterCodec.VideoCodec = DirectShowUtil.AddFilterToGraph(this._graphBuilder, MatchFilters(selection));
 
-        if (filterConfig != null && selection == "Video" && filterConfig.enableCCSubtitles)
+        if (VMR9Util.g_vmr9 != null && filterConfig != null && selection == "Video" && filterConfig.enableCCSubtitles)
         {
           CoreCCPresent = false;
           CoreCCParserCheck();

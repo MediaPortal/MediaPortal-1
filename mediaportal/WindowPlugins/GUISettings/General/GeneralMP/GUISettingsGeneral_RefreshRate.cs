@@ -618,14 +618,6 @@ namespace WindowPlugins.GUISettings
       _action = RefreshRateData(_selectedRefreshRateListItem).Action;
     }
 
-    private void SetRefreshRateData()
-    {
-      RefreshRateData(_selectedRefreshRateListItem).Name = _name;
-      RefreshRateData(_selectedRefreshRateListItem).FrameRate = _framerate;
-      RefreshRateData(_selectedRefreshRateListItem).Refreshrate = _refreshrate;
-      RefreshRateData(_selectedRefreshRateListItem).Action = _action;
-    }
-
     private void GetStringFromKeyboard(ref string strLine, int maxLenght)
     {
       VirtualKeyboard keyboard = (VirtualKeyboard)GUIWindowManager.GetWindow((int)Window.WINDOW_VIRTUAL_KEYBOARD);

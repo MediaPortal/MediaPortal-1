@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <id>2345</id>
+  <defaultcontrol>50</defaultcontrol>
+  <allowoverlay>no</allowoverlay>
+  <define>#header.label:#currentmodule</define>
+  <define>#selecteditem:#Play.Current.Title - #Play.Current.Artist</define>
+  <define>#header.hover:hover_shoutcast.png</define>
+  <define>#itemcount:</define>
+  <define>#usePlayFanart:Yes</define>
+  <controls>
+    <control>
+      <description>background image</description>
+      <type>image</type>
+      <id>1</id>
+      <width>1920</width>
+      <height>1080</height>
+      <texture>bh radio.jpg</texture>
+      <colordiffuse>ffffffff</colordiffuse>
+    </control>
+    <import>common.lyrics.play.fanart.xml</import>
+    <import>common.window.xml</import>
+    <import>common.time.xml</import>
+    <control>
+      <description>General Overlay</description>
+      <id>0</id>
+      <type>image</type>
+      <posX>0</posX>
+      <posY>45</posY>
+      <width>1920</width>
+      <height>1080</height>
+      <texture>general_overlay.png</texture>
+    </control>
+    <control>
+      <description>Header</description>
+      <type>fadelabel</type>
+      <posX>45</posX>
+      <posY>15</posY>
+      <width>525</width>
+      <font>Label</font>
+      <align>left</align>
+      <textcolor>ffffd700</textcolor>
+      <label>Shoutcast</label>
+    </control>
+    <control>
+      <type>group</type>
+      <description>group element</description>
+      <posX>50</posX>
+      <posY>237</posY>
+      <layout>StackLayout</layout>
+      <control>
+        <description>Sort Button</description>
+        <type>sortbutton</type>
+        <id>2</id>
+        <label />
+        <onright>50</onright>
+        <onup>17</onup>
+        <ondown>3</ondown>
+      </control>
+      <control>
+        <description>Starts with Button</description>
+        <type>selectbutton</type>
+        <id>3</id>
+        <label>800</label>
+        <onright>50</onright>
+        <onup>2</onup>
+        <ondown>4</ondown>
+      </control>
+      <control>
+        <description>Bitrate Button</description>
+        <type>selectbutton</type>
+        <id>4</id>
+        <label />
+        <onright>50</onright>
+        <onup>3</onup>
+        <ondown>5</ondown>
+      </control>
+      <control>
+        <description>Search Button</description>
+        <type>button</type>
+        <id>5</id>
+        <label>#(L(137)) #(L(666))</label>
+        <onright>50</onright>
+        <onup>4</onup>
+        <ondown>6</ondown>
+      </control>
+      <control>
+        <description>Favorites Button</description>
+        <type>button</type>
+        <id>6</id>
+        <label />
+        <onright>50</onright>
+        <onup>5</onup>
+        <ondown>7</ondown>
+      </control>
+      <control>
+        <description>NowPlaying</description>
+        <type>button</type>
+        <id>7</id>
+        <hyperlink>510</hyperlink>
+        <label>4540</label>
+        <onup>6</onup>
+        <ondown>8</ondown>
+      </control>
+      <control>
+        <description>Lyrics</description>
+        <type>button</type>
+        <id>8</id>
+        <hyperlink>90478</hyperlink>
+        <label>Lyrics</label>
+        <onup>7</onup>
+        <ondown>2</ondown>
+      </control>
+    </control>
+    <control>
+      <description>meta label</description>
+      <type>label</type>
+      <id>48</id>
+      <posX>70</posX>
+      <posY>772</posY>
+      <label>#meta</label>
+      <font>font12</font>
+      <align>left</align>
+      <textcolor>ffffd700</textcolor>
+    </control>
+    <control>
+      <description>listeners label</description>
+      <type>label</type>
+      <id>48</id>
+      <posX>70</posX>
+      <posY>821</posY>
+      <label>#listeners</label>
+      <font>font12</font>
+      <align>left</align>
+      <textcolor>ffffd700</textcolor>
+    </control>
+    <control>
+      <description>track label</description>
+      <type>label</type>
+      <id>49</id>
+      <posX>70</posX>
+      <posY>871</posY>
+      <width>1124</width>
+      <height>281</height>
+      <label>#genre</label>
+      <font>font12</font>
+      <align>left</align>
+      <textcolor>ffffd700</textcolor>
+    </control>
+    <control>
+      <description>listcontrol</description>
+      <type>listcontrol</type>
+      <id>50</id>
+      <posX>562</posX>
+      <posY>261</posY>
+      <height>705</height>
+      <width>1236</width>
+      <folderPrefix />
+      <folderSuffix />
+      <scrollOffset>2</scrollOffset>
+      <onleft>2</onleft>
+      <onright>2</onright>
+      <spinPosX>3696</spinPosX>
+      <spinPosY>984</spinPosY>
+      <scrollbarHeight>400</scrollbarHeight>
+      <scrollbarbg>bar_vert.png</scrollbarbg>
+      <scrollbartop>mouse_left_horizontal.png</scrollbartop>
+      <scrollbarbottom>mouse_right_horizontal.png</scrollbarbottom>
+      <scrollbarXOff>15</scrollbarXOff>
+      <scrollbarYOff>0</scrollbarYOff>
+      <showScrollbar>yes</showScrollbar>
+      <scrollbarwidth>20</scrollbarwidth>
+    </control>
+  </controls>
+</window>

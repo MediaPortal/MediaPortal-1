@@ -133,12 +133,19 @@ namespace WatchDog
       base.setAction("Creating ZIP Archive with gathered information...");
       try
       {
-        // Get config file also to help debugging
-        File.Copy(Config.GetFolder(Config.Dir.Config) + @"\\MediaPortal.xml", _tmpDir + @"\\MediaPortal.xml", true);
-        //Add client gentle.config if it exists
-        if (File.Exists(Config.GetFolder(Config.Dir.Config) + @"\\Gentle.config"))
+        // Get config file to help debugging. It may not exist if MediaPortal Configuration
+        // has not been used yet.
+        string fileName = Config.GetFolder(Config.Dir.Config) + @"\\MediaPortal.xml";
+        if (File.Exists(fileName))
         {
-          File.Copy(Config.GetFolder(Config.Dir.Config) + @"\\Gentle.config", _tmpDir + @"\\Client_Gentle.config", true);
+          File.Copy(fileName, _tmpDir + @"\\MediaPortal.xml", true);
+        }
+
+        //Add client gentle.config if it exists
+        fileName = Config.GetFolder(Config.Dir.Config) + @"\\Gentle.config";
+        if (File.Exists(fileName))
+        {
+          File.Copy(fileName, _tmpDir + @"\\Client_Gentle.config", true);
         }
 
         if (File.Exists(_zipFile))

@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <id>1599</id>
+  <defaultcontrol>50</defaultcontrol>
+  <allowoverlay>yes</allowoverlay>
+  <define>#header.label:MusicInfo   #selecteditem</define>
+  <define>#header.hover:hover_my music.png</define>
+  <define>#usePlayFanart:Yes</define>
+  <define>#useSelectedFanart:Yes</define>
+  <controls>
+    <control>
+      <description>background image</description>
+      <type>image</type>
+      <id>1</id>
+      <width>1920</width>
+      <height>1080</height>
+      <texture>bh music.jpg</texture>
+      
+      <colordiffuse>ffffffff</colordiffuse>
+    </control>
+    <import>common.music.fanart.xml</import>
+    <import>common.window.xml</import>
+    <import>common.time.xml</import>
+    <control>
+      <description>General Overlay</description>
+      <id>0</id>
+      <type>image</type>
+      <posX>0</posX>
+      <posY>45</posY>
+      <width>1920</width>
+      <height>1080</height>
+      <texture>general_overlay.png</texture>
+    </control>
+    <control>
+      <description>Header</description>
+      <type>fadelabel</type>
+      <posX>45</posX>
+      <posY>15</posY>
+      <width>525</width>
+      <font>Label</font>
+      <align>left</align>
+      <textcolor>ff6FAFE1</textcolor>
+      <label>MusicInfo Handler</label>
+    </control>
+    <control>
+      <id>988</id>
+      <type>image</type>
+      <posX>1401</posX>
+      <posY>223</posY>
+      <width>458</width>
+      <height>458</height>
+      <keepaspectratio>no</keepaspectratio>
+      <texture mask="cdcase_mask.png">#selectedthumb</texture>
+      <visible>facadeview.list</visible></control>
+    <control>
+      <id>1</id>
+      <type>image</type>
+      <posX>1401</posX>
+      <posY>223</posY>
+      <width>458</width>
+      <height>458</height>
+      <colordiffuse>ffffffff</colordiffuse>
+      <texture>cdcase.png</texture>
+      <visible>facadeview.list+control.hasthumb(988)</visible></control>
+    <import>common.facade.music.xml</import>
+  </controls>
+</window>

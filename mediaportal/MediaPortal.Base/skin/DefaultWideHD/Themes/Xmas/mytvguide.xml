@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!--version="1.0" encoding="utf-8" standalone="yes"-->
+<window>
+  <id>600</id>
+  <defaultcontrol>2</defaultcontrol>
+  <allowoverlay>no</allowoverlay>
+  <controls>
+    <include condition="#(eq(#skin.tvguide.rows,' 9'))">mytvguide.9lines.xml</include>
+    <include condition="#(eq(#skin.tvguide.rows,' 12'))">mytvguide.12lines.xml</include>
+    <include condition="#(skin.hassetting('#skin.tvguide.usecolorsforbuttons'))">mytvguide.colors.xml</include>
+  </controls>
+</window>

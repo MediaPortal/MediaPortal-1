@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!--version="1.0" encoding="utf-8" standalone="yes"-->
+<window>
+  <controls>
+    <control>
+      <description>BG</description>
+      <type>image</type>
+      <id>1</id>
+      <texture>BH Settings.jpg</texture>
+      <width>1920</width>
+      <height>1080</height>
+      <colordiffuse>ffffffff</colordiffuse>
+    </control>
+    <control>
+      <description>Dummy image</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>1920</width>
+      <height>1080</height>
+      <texture>falling_snow.gif</texture>
+      <colordiffuse>60ffffff</colordiffuse>
+      <visible>skin.hassetting(#skin.falling.snow)</visible>
+    </control>
+    <control>
+      <description>General Overlay</description>
+      <id>0</id>
+      <type>image</type>
+      <posX>0</posX>
+      <posY>45</posY>
+      <width>1920</width>
+      <height>1080</height>
+      <texture>general_overlay.png</texture>
+    </control>
+    <control>
+      <type>label</type>
+      <id>1</id>
+      <posX>45</posX>
+      <posY>15</posY>
+      <label>#(iif(and(neq(L(102012), #currentmodule), neq(L(102002), #currentmodule), neq(L(100100), #currentmodule), neq(L(102015), #currentmodule)), #currentmodule, ' '))</label>
+      <font>Label</font>
+      <align>left</align>
+      <textcolor>gold</textcolor>
+    </control>
+  </controls>
+</window>

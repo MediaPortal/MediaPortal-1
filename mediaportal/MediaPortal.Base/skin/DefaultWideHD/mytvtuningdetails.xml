@@ -1,0 +1,557 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!--version="1.0" encoding="utf-8" standalone="yes"-->
+<window>
+  <id>3012</id>
+  <defaultcontrol>99</defaultcontrol>
+  <allowoverlay>yes</allowoverlay>
+  <define>#header.label:200041</define>
+  <define>#selecteditem:#TV.TuningDetails.ChannelName</define>
+  <define>#header.hover:hover_my tv.png</define>
+  <controls>
+    <control>
+      <description>background image</description>
+      <type>image</type>
+      <id>1</id>
+      <width>1920</width>
+      <height>1080</height>
+      <texture>blue.png</texture>
+      <colordiffuse>ffffffff</colordiffuse>
+    </control>
+    <control>
+      <description>General Overlay</description>
+      <id>0</id>
+      <type>image</type>
+      <posX>0</posX>
+      <posY>45</posY>
+      <width>1920</width>
+      <height>1080</height>
+      <texture>general_overlay.png</texture>
+    </control>
+    <control>
+      <description>General Overlay</description>
+      <id>0</id>
+      <type>image</type>
+      <posX>0</posX>
+      <posY>45</posY>
+      <width>1920</width>
+      <height>1080</height>
+      <texture>general_overlay.png</texture>
+    </control>
+    <import>common.window.xml</import>
+    <import>common.time.xml</import>
+    <control>
+      <description>Channel</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>159</posX>
+      <posY>273</posY>
+      <label>Channel Name:</label>
+      <font>font12</font>
+      <textcolor>ff6FAFE1</textcolor>
+    </control>
+    <control>
+      <description>Channel name</description>
+      <type>label</type>
+      <id>2</id>
+      <posX>532</posX>
+      <posY>273</posY>
+      <label>#TV.TuningDetails.ChannelName</label>
+      <font>font12</font>
+    </control>
+    <control>
+      <description>Provider</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>159</posX>
+      <posY>309</posY>
+      <label>Provider:</label>
+      <font>font12</font>
+      <textcolor>ff6FAFE1</textcolor>
+    </control>
+    <control>
+      <description>Provider name</description>
+      <type>label</type>
+      <id>3</id>
+      <posX>532</posX>
+      <posY>309</posY>
+      <label>#TV.TuningDetails.Provider</label>
+      <font>font12</font>
+    </control>
+    <control>
+      <description>RTSP URL</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>159</posX>
+      <posY>345</posY>
+      <width>1066</width>
+      <textcolor>ff6FAFE1</textcolor>
+      <label>RTSP URL:</label>
+      <font>font12</font>
+    </control>
+    <control>
+      <description>RTSP URL value</description>
+      <type>label</type>
+      <id>4</id>
+      <posX>532</posX>
+      <posY>345</posY>
+      <label>#TV.TuningDetails.RTSPURL</label>
+      <font>font12</font>
+    </control>
+    <control>
+      <description>Signal level</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>159</posX>
+      <posY>433</posY>
+      <label>Signal Level: #TV.TuningDetails.SignalLevel</label>
+      <font>font12</font>
+      <textcolor>ff6FAFE1</textcolor>
+    </control>
+    <control>
+      <description>Signal level 0</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>522</posX>
+      <posY>400</posY>
+      <label> 0</label>
+      <font>font11</font>
+      <textcolor>white</textcolor>
+    </control>
+    <control>
+      <description>Signal level 50</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>1104</posX>
+      <posY>400</posY>
+      <label> 50</label>
+      <font>font11</font>
+      <textcolor>white</textcolor>
+    </control>
+    <control>
+      <description>Signal level 100</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>1752</posX>
+      <posY>400</posY>
+      <label> 100</label>
+      <font>font11</font>
+      <align>right</align>
+      <textcolor>white</textcolor>
+    </control>
+    <control>
+      <description>Progress background</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>532</posX>
+      <posY>439</posY>
+      <width>1183</width>
+      <height>28</height>
+      <texture>osd_progress_background.png</texture>
+    </control>
+    <control>
+      <description>Signal level progress bar</description>
+      <type>progress</type>
+      <id>23</id>
+      <posX>516</posX>
+      <posY>441</posY>
+      <width>1215</width>
+      <height>25</height>
+      <label>#TV.TuningDetails.SignalLevel</label>
+      <texturebg>-</texturebg>
+      <lefttexture>osd_progress_left.png</lefttexture>
+      <midtexture>osd_progress_mid.png</midtexture>
+      <righttexture>osd_progress_right.png</righttexture>
+      <visible>yes</visible>
+    </control>
+    <control>
+      <description>Signal level Bar 50</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>1123</posX>
+      <posY>426</posY>
+      <label>|</label>
+      <font>font16</font>
+      <textcolor>white</textcolor>
+      <shadowAngle>0</shadowAngle>
+      <shadowDistance>0</shadowDistance>
+      <shadowColor />
+    </control>
+    <control>
+      <description>Signal Quality</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>159</posX>
+      <posY>490</posY>
+      <label>Signal Quality:  #TV.TuningDetails.SignalQuality</label>
+      <font>font12</font>
+      <textcolor>ff6FAFE1</textcolor>
+    </control>
+    <control>
+      <description>Progress background</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>532</posX>
+      <posY>496</posY>
+      <width>1183</width>
+      <height>28</height>
+      <texture>osd_progress_background.png</texture>
+    </control>
+    <control>
+      <description>Signal level progress bar</description>
+      <type>progress</type>
+      <id>23</id>
+      <posX>516</posX>
+      <posY>498</posY>
+      <width>1215</width>
+      <height>25</height>
+      <label>#TV.TuningDetails.SignalQuality</label>
+      <texturebg>-</texturebg>
+      <lefttexture>osd_progress_left.png</lefttexture>
+      <midtexture>osd_progress_mid.png</midtexture>
+      <righttexture>osd_progress_right.png</righttexture>
+      <visible>yes</visible>
+    </control>
+    <control>
+      <description>Signal level Bar 50</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>1123</posX>
+      <posY>483</posY>
+      <label>|</label>
+      <font>font16</font>
+      <textcolor>white</textcolor>
+      <shadowAngle>0</shadowAngle>
+      <shadowDistance>0</shadowDistance>
+      <shadowColor />
+    </control>
+    <control>
+      <type>group</type>
+      <description>group element</description>
+      <layout>StackLayout(35, Vertical, true)</layout>
+      <posX>159</posX>
+      <posY>555</posY>
+      <control>
+        <description>Band</description>
+        <type>label</type>
+        <id>0</id>
+        <textcolor>ff6FAFE1</textcolor>
+        <label>Band:</label>
+        <font>font12</font>
+      </control>
+      <control>
+        <description>Band width</description>
+        <type>label</type>
+        <id>0</id>
+        <textcolor>ff6FAFE1</textcolor>
+        <label>Bandwidth:</label>
+        <font>font12</font>
+      </control>
+      <control>
+        <description>Channel type</description>
+        <type>label</type>
+        <id>0</id>
+        <textcolor>ff6FAFE1</textcolor>
+        <label>Channel Type:</label>
+        <font>font12</font>
+      </control>
+      <control>
+        <description>Country id</description>
+        <type>label</type>
+        <id>0</id>
+        <textcolor>ff6FAFE1</textcolor>
+        <label>Country ID:</label>
+        <font>font12</font>
+      </control>
+      <control>
+        <description>Free to air</description>
+        <type>label</type>
+        <id>0</id>
+        <textcolor>ff6FAFE1</textcolor>
+        <label>Free to Air:</label>
+        <font>font12</font>
+      </control>
+      <control>
+        <description>Frequency</description>
+        <type>label</type>
+        <id>0</id>
+        <textcolor>ff6FAFE1</textcolor>
+        <label>Frequency:</label>
+        <font>font12</font>
+      </control>
+      <control>
+        <description>InnerFecRate</description>
+        <type>label</type>
+        <id>0</id>
+        <textcolor>ff6FAFE1</textcolor>
+        <label>Inner FEC Rate:</label>
+        <font>font12</font>
+      </control>
+      <control>
+        <description>Modulation</description>
+        <type>label</type>
+        <id>0</id>
+        <textcolor>ff6FAFE1</textcolor>
+        <label>Modulation:</label>
+        <font>font12</font>
+      </control>
+      <control>
+        <description>NetworkId</description>
+        <type>label</type>
+        <id>0</id>
+        <textcolor>ff6FAFE1</textcolor>
+        <label>Network ID:</label>
+        <font>font12</font>
+      </control>
+      <control>
+		    <description>RawResolution</description>
+		    <type>label</type>
+		    <id>21</id>
+		    <textcolor>ff6FAFE1</textcolor>
+		    <label>Video Resolution:</label>
+        <font>font12</font>
+	     </control>
+    </control>
+    <control>
+      <type>group</type>
+      <description>group element</description>
+      <layout>StackLayout(35, Vertical, true)</layout>
+      <posX>532</posX>
+      <posY>555</posY>
+      <control>
+        <description>Band value</description>
+        <type>label</type>
+        <id>5</id>
+        <label>#TV.TuningDetails.Band</label>
+        <font>font12</font>
+      </control>
+      <control>
+        <description>Band width value</description>
+        <type>label</type>
+        <id>6</id>
+        <label>#TV.TuningDetails.BandWidth</label>
+        <font>font12</font>
+      </control>
+      <control>
+        <description>Channel type value</description>
+        <type>label</type>
+        <id>7</id>
+        <label>#TV.TuningDetails.ChannelType</label>
+        <font>font12</font>
+      </control>
+      <control>
+        <description>Country id value</description>
+        <type>label</type>
+        <id>8</id>
+        <label>#TV.TuningDetails.CountryId</label>
+        <font>font12</font>
+      </control>
+      <control>
+        <description>Free to air value</description>
+        <type>label</type>
+        <id>9</id>
+        <label>#TV.TuningDetails.FreeToAir</label>
+        <font>font12</font>
+      </control>
+      <control>
+        <description>Frequency value</description>
+        <type>label</type>
+        <id>10</id>
+        <label>#TV.TuningDetails.Frequency</label>
+        <font>font12</font>
+      </control>
+      <control>
+        <description>InnerFecRate value</description>
+        <type>label</type>
+        <id>11</id>
+        <label>#TV.TuningDetails.InnerFecRate</label>
+        <font>font12</font>
+      </control>
+      <control>
+        <description>Modulation value</description>
+        <type>label</type>
+        <id>12</id>
+        <label>#TV.TuningDetails.Modulation</label>
+        <font>font12</font>
+      </control>
+      <control>
+        <description>NetworkId value</description>
+        <type>label</type>
+        <id>13</id>
+        <label>#TV.TuningDetails.NetworkId</label>
+        <font>font12</font>
+      </control>
+      <control>
+		    <description>Video Resolution value</description>
+		    <type>label</type>
+		    <id>5</id>
+		    <label>#Play.Current.VideoFormat.RawResolution</label>
+        <font>font12</font>
+  	  </control>
+    </control>
+    <control>
+      <type>group</type>
+      <description>group element</description>
+      <layout>StackLayout(35, Vertical, true)</layout>
+      <posX>937</posX>
+      <posY>555</posY>
+      <control>
+        <description>PcrPid</description>
+        <type>label</type>
+        <id>0</id>
+        <textcolor>ff6FAFE1</textcolor>
+        <label>PCR PID:</label>
+        <font>font12</font>
+      </control>
+      <control>
+        <description>PmtPid</description>
+        <type>label</type>
+        <id>0</id>
+        <textcolor>ff6FAFE1</textcolor>
+        <label>PMT PID:</label>
+        <font>font12</font>
+      </control>
+      <control>
+        <description>AudioPid</description>
+        <type>label</type>
+        <id>0</id>
+        <textcolor>ff6FAFE1</textcolor>
+        <label>Audio PID:</label>
+        <font>font12</font>
+      </control>
+      <control>
+        <description>VideoPid</description>
+        <type>label</type>
+        <id>0</id>
+        <textcolor>ff6FAFE1</textcolor>
+        <label>Video PID:</label>
+        <font>font12</font>
+      </control>
+      <control>
+        <description>Polarisation</description>
+        <type>label</type>
+        <id>0</id>
+        <textcolor>ff6FAFE1</textcolor>
+        <label>Polarisation:</label>
+        <font>font12</font>
+      </control>
+      <control>
+        <description>Service id</description>
+        <type>label</type>
+        <id>0</id>
+        <textcolor>ff6FAFE1</textcolor>
+        <label>Service ID:</label>
+        <font>font12</font>
+      </control>
+      <control>
+        <description>Symbol rate</description>
+        <type>label</type>
+        <id>0</id>
+        <textcolor>ff6FAFE1</textcolor>
+        <label>Symbol Rate:</label>
+        <font>font12</font>
+      </control>
+      <control>
+        <description>TransportId</description>
+        <type>label</type>
+        <id>0</id>
+        <textcolor>ff6FAFE1</textcolor>
+        <label>Transport ID:</label>
+        <font>font12</font>
+      </control>
+      <control>
+        <description>Has CI Menu</description>
+        <type>label</type>
+        <id>0</id>
+        <label>CI Menu supported:</label>
+        <font>font12</font>
+        <textcolor>ff6FAFE1</textcolor>
+      </control>
+      <control>
+		    <description>TS BitRate</description>
+		    <type>label</type>
+		    <id>21</id>
+		    <textcolor>ff6FAFE1</textcolor>
+		    <label>Stream BitRate:</label>
+        <font>font12</font>
+	     </control>
+    </control>
+    <control>
+      <type>group</type>
+      <description>group element</description>
+      <layout>StackLayout(35, Vertical, true)</layout>
+      <posX>1354</posX>
+      <posY>555</posY>
+      <control>
+        <description>PcrPid value</description>
+        <type>label</type>
+        <id>14</id>
+        <label>#TV.TuningDetails.PcrPid</label>
+        <font>font12</font>
+      </control>
+      <control>
+        <description>PmtPid value</description>
+        <type>label</type>
+        <id>15</id>
+        <label>#TV.TuningDetails.PmtPid</label>
+        <font>font12</font>
+      </control>
+      <control>
+        <description>AudioPid value</description>
+        <type>label</type>
+        <id>16</id>
+        <label>#TV.TuningDetails.AudioPid</label>
+        <font>font12</font>
+      </control>
+      <control>
+        <description>VideoPid value</description>
+        <type>label</type>
+        <id>17</id>
+        <label>#TV.TuningDetails.VideoPid</label>
+        <font>font12</font>
+      </control>
+      <control>
+        <description>Polarisation value</description>
+        <type>label</type>
+        <id>18</id>
+        <label>#TV.TuningDetails.Polarisation</label>
+        <font>font12</font>
+      </control>
+      <control>
+        <description>Service id value</description>
+        <type>label</type>
+        <id>19</id>
+        <label>#TV.TuningDetails.ServiceId</label>
+        <font>font12</font>
+      </control>
+      <control>
+        <description>Symbol rate value</description>
+        <type>label</type>
+        <id>20</id>
+        <label>#TV.TuningDetails.SymbolRate</label>
+        <font>font12</font>
+      </control>
+      <control>
+        <description>TransportId value</description>
+        <type>label</type>
+        <id>21</id>
+        <label>#TV.TuningDetails.TransportId</label>
+        <font>font12</font>
+      </control>
+      <control>
+        <description>Has CI Menu</description>
+        <type>label</type>
+        <id>26</id>
+        <label>#TV.TuningDetails.HasCiMenuSupport</label>
+        <font>font12</font>
+      </control>
+      <control>
+		    <description>TS BitRate value</description>
+		    <type>label</type>
+		    <id>5</id>
+		    <label>#Play.Current.TSBitRate Mbit/s</label>
+        <font>font12</font>
+        <textcolor>ivory</textcolor>
+	    </control>
+    </control>
+  </controls>
+</window>

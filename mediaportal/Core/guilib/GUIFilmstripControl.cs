@@ -21,6 +21,7 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Threading;
 using System.Windows.Forms;
 using MediaPortal.Drawing;
 using Microsoft.DirectX.Direct3D;
@@ -2942,6 +2943,38 @@ namespace MediaPortal.GUI.Library
         _upDownControl.Value = 1;
       }
       _refresh = true;
+    }
+
+    public virtual int RemoveItem(int iItem)
+    {
+      if (iItem < 0 || iItem > _listItems.Count)
+      {
+        return -1;
+      }
+
+      try
+      {
+        Monitor.Enter(this);
+        _listItems.RemoveAt(iItem);
+      }
+      catch (Exception ex)
+      {
+        Log.Error("GUIFilmstripControl.RemoveItem caused an exception: {0}", ex.Message);
+      }
+      finally
+      {
+        Monitor.Exit(this);
+      }
+      _refresh = true;
+      return SelectedListItemIndex;
+    }
+
+    public void Replace(int index, GUIListItem item)
+    {
+      if (item != null && index >= 0 && index < _listItems.Count)
+      {
+        _listItems[index] = item;
+      }
     }
 
     public void Insert(int index, GUIListItem item)

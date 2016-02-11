@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <id>1914</id>
+  <defaultcontrol>2</defaultcontrol>
+  <allowoverlay>yes</allowoverlay>
+  <define>#header.label:Skype  #Skype.History.ListName</define>
+  <define>#header.hover:hover_skype4mp.png</define>
+  <controls>
+    <control>
+      <description>background image</description>
+      <type>image</type>
+      <id>1</id>
+      <width>1920</width>
+      <height>1080</height>
+      <texture>blue.png</texture>
+      <colordiffuse>ffffffff</colordiffuse>
+    </control>
+    <!-- *** HEADER *** -->
+    <import>common.window.xml</import>
+    <import>common.time.xml</import>
+    <control>
+      <description>General Overlay</description>
+      <id>0</id>
+      <type>image</type>
+      <posX>0</posX>
+      <posY>45</posY>
+      <width>1920</width>
+      <height>1080</height>
+      <texture>general_overlay.png</texture>
+    </control>
+    <control>
+      <description>Selected item Label</description>
+      <type>fadelabel</type>
+      <id>1</id>
+      <posX>30</posX>
+      <posY>22</posY>
+      <width>1920</width>
+      <label>Skype  #Skype.History.ListName</label>
+      <font>font12</font>
+      <align>left</align>
+      <textcolor>ffffd700</textcolor>
+    </control>
+    <control>
+      <type>actiongroup</type>
+      <description>action menu</description>
+      <defaultcontrol>2</defaultcontrol>
+      <onexit>12</onexit>
+      <buttonX>0</buttonX>
+      <buttonY>69</buttonY>
+      <buttonwidth>139</buttonwidth>
+      <buttonheight>984</buttonheight>
+      <textureFocus>-</textureFocus>
+      <textureNoFocus>Action_nofocus.png</textureNoFocus>
+      <width>168</width>
+      <height>798</height>
+      <dimColor>00ffffff</dimColor>
+      <control>
+        <type>image</type>
+        <id>1</id>
+        <width>1920</width>
+        <height>1080</height>
+        <texture>white.png</texture>
+        <colordiffuse>50005eef</colordiffuse>
+      </control>
+      <control>
+        <type>image</type>
+        <posX>-10</posX>
+        <posY>171</posY>
+        <width>489</width>
+        <height>855</height>
+        <texture>backslide.png</texture>
+        <colordiffuse>ffffffff</colordiffuse>
+        <animation effect="slide" time="70" start="-335,0" reversible="true">visiblechange</animation>
+        <visible>!Control.HasFocus(12)</visible>
+      </control>
+      <control>
+        <type>group</type>
+        <description>group element</description>
+        <animation effect="slide" time="70" start="-335,0" reversible="true">visiblechange</animation>
+        <visible>!Control.HasFocus(12)</visible>
+        <layout>StackLayout(0, Vertical, true)</layout>
+        <posX>48</posX>
+        <posY>216</posY>
+        <visible>!Control.HasFocus(12)</visible>
+        <control>
+          <description>status button</description>
+          <type>selectbutton</type>
+          <id>3</id>
+          <label>View</label>
+          <onup>27</onup>
+          <ondown>2</ondown>
+          <subitems>
+            <subitem>Missed</subitem>
+            <subitem>Incoming</subitem>
+            <subitem>Outgoing</subitem>
+          </subitems>
+        </control>
+        <control>
+          <description>Purge missed calls Button</description>
+          <type>button</type>
+          <id>2</id>
+          <label>Purge history</label>
+          <onup>3</onup>
+          <ondown>3</ondown>
+          <onleft>12</onleft>
+          <onright>12</onright>
+        </control>
+      </control>
+    </control>
+    <control>
+      <description>missed calls listcontrol</description>
+      <type>listcontrol</type>
+      <id>12</id>
+      <posX>139</posX>
+      <posY>261</posY>
+      <height>705</height>
+      <width>1423</width>
+      <textXOff>4</textXOff>
+      <IconXOff>-50</IconXOff>
+      <folderPrefix />
+      <folderSuffix />
+      <scrollOffset>2</scrollOffset>
+      <spinPosX>3625</spinPosX>
+      <spinPosY>984</spinPosY>
+      <scrollbarHeight>400</scrollbarHeight>
+      <scrollbarbg>bar_vert.png</scrollbarbg>
+      <scrollbartop>mouse_left_horizontal.png</scrollbartop>
+      <scrollbarbottom>mouse_right_horizontal.png</scrollbarbottom>
+      <scrollbarXOff>15</scrollbarXOff>
+      <scrollbarYOff>0</scrollbarYOff>
+      <showScrollbar>yes</showScrollbar>
+      <scrollbarwidth>10</scrollbarwidth>
+      <unfocusedAlpha applyToAll="true">130</unfocusedAlpha>
+      <scrollOffset>2</scrollOffset>
+      <onleft>2</onleft>
+      <onright>2</onright>
+      <onup>12</onup>
+      <ondown>12</ondown>
+    </control>
+  </controls>
+</window>

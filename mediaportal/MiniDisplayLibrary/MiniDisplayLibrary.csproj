@@ -72,6 +72,10 @@
       <Name>LibDriverCoreClient</Name>
       <HintPath>..\MediaPortal.Base\LibDriverCoreClient.dll</HintPath>
     </Reference>
+    <Reference Include="SharpLibDisplay, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\Packages\SharpLibDisplay.0.2.5\lib\net40\SharpLibDisplay.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System">
       <Name>System</Name>
     </Reference>
@@ -133,7 +137,14 @@
     <Compile Include="MiniDisplayPlugin\Drivers\iMON\SoundGraphImonSettingsForm.designer.cs">
       <DependentUpon>SoundGraphImonSettingsForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="MiniDisplayPlugin\Drivers\SharpDisplayManager\SharpDisplayManager.cs" />
+    <Compile Include="MiniDisplayPlugin\Drivers\SharpLibDisplay\SharpLibDisplay.cs" />
+    <Compile Include="MiniDisplayPlugin\Drivers\SharpLibDisplay\SharpLibDisplaySettings.cs" />
+    <Compile Include="MiniDisplayPlugin\Drivers\SharpLibDisplay\SharpLibDisplaySettingsForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MiniDisplayPlugin\Drivers\SharpLibDisplay\SharpLibDisplaySettingsForm.designer.cs">
+      <DependentUpon>SharpLibDisplaySettingsForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="MiniDisplayPlugin\Drivers\ShuttlePF27.cs" />
     <Compile Include="MiniDisplayPlugin\Drivers\DM140GINK.cs" />
     <Compile Include="MiniDisplayPlugin\Drivers\FicSpectra.cs" />
@@ -379,6 +390,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="MiniDisplayPlugin\Drivers\iMON\SoundGraphImonSettingsForm.resx">
       <DependentUpon>SoundGraphImonSettingsForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MiniDisplayPlugin\Drivers\SharpLibDisplay\SharpLibDisplaySettingsForm.resx">
+      <DependentUpon>SharpLibDisplaySettingsForm.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

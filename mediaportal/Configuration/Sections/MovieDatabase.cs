@@ -3449,10 +3449,6 @@ namespace MediaPortal.Configuration.Sections
     //}
 
     // Prefer filename rather than folder name
-    private void preferFileNameCheckBox_CheckedChanged(object sender, EventArgs e)
-    {
-      SaveSettings();
-    }
 
     // Refresh movie by IMDB ID checkbox
     private void cbRefreshByTT_CheckedChanged(object sender, EventArgs e)

@@ -444,48 +444,10 @@ namespace MediaPortal.Freedb
       return 0;
     }
 
-    private int parseRevision()
-    {
-      string pattern = @"\s*Revision:\s*(\d*)\s*\r\n";
-      string val = parseTag(pattern);
-      try
-      {
-        return Convert.ToInt32(val);
-      }
-      catch {}
-      return 0;
-    }
-
-    private string readSubmitter()
-    {
-      string pattern = @"\s*Submitted\svia:\s*(.*)\s*\n";
-      return parseTag(pattern);
-    }
-
-    private string parseProcessedBy()
-    {
-      string pattern = @"\s*Processed\sby:\s*(.*)\s*\n";
-      return parseTag(pattern);
-    }
-
     private string parseTitle()
     {
       string pattern = @"\s*DTITLE\s*=\s*(.*)\s*\n";
       return parseTag(pattern);
-    }
-
-    private string parseCDTitle()
-    {
-      String title = parseTitle();
-      int i = title.IndexOf(" / ");
-      if (i < 0)
-      {
-        return title;
-      }
-      else
-      {
-        return title.Substring(i + 3);
-      }
     }
 
     private string parseArtist()
@@ -601,19 +563,6 @@ namespace MediaPortal.Freedb
       }
     }
 
-    private string parseTrackArtist(int i, string title)
-    {
-      int j = title.IndexOf(" / ");
-      if (j > 0)
-      {
-        return title.Substring(0, j);
-      }
-      else
-      {
-        return m_artist;
-      }
-    }
-
     private string parseTrackExtension(int i)
     {
       string pattern = @"\s*EXTT" + i + @"\s*=\s*(.*)\s*\n";
@@ -643,31 +592,6 @@ namespace MediaPortal.Freedb
     {
       string pattern = @"\s*DISCID\s*=\s*(\w*)";
       return parseMultiResultTag(pattern);
-    }
-
-    private string getTagText(String key)
-    {
-      String search = "\n" + key + "=";
-      int i = m_content.IndexOf(search);
-      if (i < 0)
-      {
-        return null;
-      }
-      string s2 = "";
-      for (; i > -1; i = m_content.IndexOf(search, i + key.Length + 2))
-      {
-        s2 += " " + m_content.Substring(i + key.Length + 2, m_content.IndexOf("\n", i + key.Length + 2)).Trim();
-      }
-
-      return translate(s2.Trim());
-    }
-
-    private string translate(string str)
-    {
-      str = str.Replace("\\n", "\n");
-      str = str.Replace("\\t", "\t");
-      str = str.Replace("\\\\", "\\");
-      return str;
     }
 
     private string[] parseMultiResultTag(string pattern)
@@ -702,24 +626,6 @@ namespace MediaPortal.Freedb
 
       Match match = tag.Match(m_content);
       return match.Groups[1].ToString().Trim();
-    }
-
-    private string parseTag(String beg, String end, int i)
-    {
-      int j = m_content.IndexOf(beg);
-      if (j < 1)
-      {
-        return null;
-      }
-      int k = m_content.IndexOf(beg, j + beg.Length);
-      if (k < 1)
-      {
-        return null;
-      }
-      else
-      {
-        return m_content.Substring(j + beg.Length, k).Trim();
-      }
     }
 
     public static string createXMCD(CDInfoDetail cdinfo)

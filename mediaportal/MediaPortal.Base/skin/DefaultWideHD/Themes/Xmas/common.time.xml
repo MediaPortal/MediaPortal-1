@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <controls>
+    <control>
+      <description>Date Time</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>1866</posX>
+      <posY>15</posY>
+      <label>#date | #time</label>
+      <align>right</align>
+      <font>Label</font>
+      <textcolor>gold</textcolor>
+      <visible>!window.isvisible(35)|!window.isvisible(0)|!window.isvisible(34)</visible>
+    </control>
+    <control>
+      <description>Dummy image</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>1920</width>
+      <height>1080</height>
+      <texture>falling_snow.gif</texture>
+      <colordiffuse>60ffffff</colordiffuse>
+      <visible>skin.hassetting(#skin.falling.snow)</visible>
+    </control>
+  </controls>
+</window>

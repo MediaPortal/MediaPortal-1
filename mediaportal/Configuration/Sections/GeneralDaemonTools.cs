@@ -19,7 +19,9 @@
 #endregion
 
 using System;
+using System.Collections;
 using System.ComponentModel;
+using System.IO;
 using System.Windows.Forms;
 using MediaPortal.Profile;
 using MediaPortal.UserInterface.Controls;
@@ -58,18 +60,7 @@ namespace MediaPortal.Configuration.Sections
     {
       // This call is required by the Windows Form Designer.
       InitializeComponent();
-      try
-      {
-        System.IO.DriveInfo[] drives = System.IO.DriveInfo.GetDrives();
-        foreach (System.IO.DriveInfo drive in drives)
-        {
-          if (drive.DriveType == System.IO.DriveType.CDRom)
-          {
-            this.comboBoxDrive.Items.Add(String.Format("{0}", drive.RootDirectory)[0] + ":");
-          }
-        }
-      }
-      catch (Exception) {}
+      comboBoxDriveCheck();
     }
 
 
@@ -93,17 +84,38 @@ namespace MediaPortal.Configuration.Sections
     /// </summary>
     public override void LoadSettings()
     {
+      if (OSInfo.OSInfo.Win8OrLater())
+      {
+        comboDriveType.Items.AddRange(new object[] {
+            "dt",
+            "scsi",
+            "ide",
+            "vcd",
+            "native"});
+      }
+      else
+      {
+        comboDriveType.Items.AddRange(new object[] {
+            "dt",
+            "scsi",
+            "ide",
+            "vcd"});
+      }
+      
       using (Settings xmlreader = new MPSettings())
       {
         checkBoxDaemonTools.Checked = xmlreader.GetValueAsBool("daemon", "enabled", false);
         textBoxDaemonTools.Text = xmlreader.GetValueAsString("daemon", "path", "");
         textBoxExtensions.Text = xmlreader.GetValueAsString("daemon", "extensions", Util.Utils.ImageExtensionsDefault);
-        comboBoxDrive.SelectedItem = xmlreader.GetValueAsString("daemon", "drive", "E:");
         comboDriveNo.SelectedItem = xmlreader.GetValueAsInt("daemon", "driveNo", 0).ToString();
         comboDriveType.SelectedItem = xmlreader.GetValueAsString("daemon", "driveType", "");
         checkBoxAskBeforePlaying.Checked = xmlreader.GetValueAsBool("daemon", "askbeforeplaying", false);
+        // Need to detect letter to fill the correct letter.
+        comboBoxDriveCheck();
+        comboBoxDrive.SelectedItem = xmlreader.GetValueAsString("daemon", "drive", "E:");
       }
       checkBoxDaemonTools_CheckedChanged(null, null);
+      comboDriveType_SelectionChangeCommitted(null, null);
 
       if (textBoxDaemonTools.Text.Length == 0)
       {
@@ -137,7 +149,7 @@ namespace MediaPortal.Configuration.Sections
           {
             if (skName.ToLowerInvariant().Contains(Search.ToLowerInvariant()))
             {
-              SoftwarePath = rk.GetValue(skName).ToString().Replace("\"", "");              
+              SoftwarePath = rk.GetValue(skName).ToString().Replace("\"", "");
 
               //Old versions of DaemonTools and VirtualCloneDrive
               SoftwarePath = SoftwarePath.Substring(0, SoftwarePath.LastIndexOf(@"\")) + @"\daemon.exe";
@@ -182,6 +194,8 @@ namespace MediaPortal.Configuration.Sections
     private void InitializeComponent()
     {
       this.groupBox2 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.comboDriveType = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.mpLabel3 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.resetButton = new MediaPortal.UserInterface.Controls.MPButton();
       this.mpLabel2 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.textBoxExtensions = new MediaPortal.UserInterface.Controls.MPTextBox();
@@ -195,8 +209,6 @@ namespace MediaPortal.Configuration.Sections
       this.label1 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.checkBoxDaemonTools = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.checkBoxAskBeforePlaying = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.comboDriveType = new MediaPortal.UserInterface.Controls.MPComboBox();
-      this.mpLabel3 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.groupBox2.SuspendLayout();
       this.SuspendLayout();
       // 
@@ -227,6 +239,27 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox2.TabStop = false;
       this.groupBox2.Text = "Settings";
       // 
+      // comboDriveType
+      // 
+      this.comboDriveType.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+      this.comboDriveType.BorderColor = System.Drawing.Color.Empty;
+      this.comboDriveType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.comboDriveType.Location = new System.Drawing.Point(168, 118);
+      this.comboDriveType.Name = "comboDriveType";
+      this.comboDriveType.Size = new System.Drawing.Size(288, 21);
+      this.comboDriveType.TabIndex = 14;
+      this.comboDriveType.SelectionChangeCommitted += new System.EventHandler(this.comboDriveType_SelectionChangeCommitted);
+      // 
+      // mpLabel3
+      // 
+      this.mpLabel3.AutoSize = true;
+      this.mpLabel3.Location = new System.Drawing.Point(16, 121);
+      this.mpLabel3.Name = "mpLabel3";
+      this.mpLabel3.Size = new System.Drawing.Size(62, 13);
+      this.mpLabel3.TabIndex = 13;
+      this.mpLabel3.Text = "Drive Type:";
+      // 
       // resetButton
       // 
       this.resetButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
@@ -243,9 +276,9 @@ namespace MediaPortal.Configuration.Sections
       this.mpLabel2.AutoSize = true;
       this.mpLabel2.Location = new System.Drawing.Point(16, 206);
       this.mpLabel2.Name = "mpLabel2";
-      this.mpLabel2.Size = new System.Drawing.Size(264, 13);
+      this.mpLabel2.Size = new System.Drawing.Size(367, 13);
       this.mpLabel2.TabIndex = 11;
-      this.mpLabel2.Text = "Supported tools: Virtual CloneDrive and Daemon Tools";
+      this.mpLabel2.Text = "Supported tools: Windows native ISO, Virtual CloneDrive and Daemon Tools";
       // 
       // textBoxExtensions
       // 
@@ -365,32 +398,6 @@ namespace MediaPortal.Configuration.Sections
       this.checkBoxAskBeforePlaying.Text = "Ask before playing image files";
       this.checkBoxAskBeforePlaying.UseVisualStyleBackColor = true;
       // 
-      // comboDriveType
-      // 
-      this.comboDriveType.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-      this.comboDriveType.BorderColor = System.Drawing.Color.Empty;
-      this.comboDriveType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.comboDriveType.Items.AddRange(new object[] {
-            "dt",
-            "scsi",
-            "ide",
-            DaemonTools.VirtualCloneDrive
-       });
-      this.comboDriveType.Location = new System.Drawing.Point(168, 118);
-      this.comboDriveType.Name = "comboDriveType";
-      this.comboDriveType.Size = new System.Drawing.Size(288, 21);
-      this.comboDriveType.TabIndex = 14;
-      // 
-      // mpLabel3
-      // 
-      this.mpLabel3.AutoSize = true;
-      this.mpLabel3.Location = new System.Drawing.Point(16, 121);
-      this.mpLabel3.Name = "mpLabel3";
-      this.mpLabel3.Size = new System.Drawing.Size(62, 13);
-      this.mpLabel3.TabIndex = 13;
-      this.mpLabel3.Text = "Drive Type:";
-      // 
       // GeneralDaemonTools
       // 
       this.BackColor = System.Drawing.SystemColors.Control;
@@ -427,14 +434,27 @@ namespace MediaPortal.Configuration.Sections
 
     private void checkBoxDaemonTools_CheckedChanged(object sender, EventArgs e)
     {
+      comboBoxDriveCheck();
       if (checkBoxDaemonTools.Checked)
       {
-        textBoxDaemonTools.Enabled = true;
-        comboBoxDrive.Enabled = true;
-        buttonSelectFolder.Enabled = true;
-        comboDriveNo.Enabled = true;
-        checkBoxAskBeforePlaying.Enabled = true;
-        comboDriveType.Enabled = true;
+        if (comboDriveType.SelectedItem != null && (comboDriveType.SelectedItem.ToString() == "native"))
+        {
+          textBoxDaemonTools.Enabled = false;
+          comboBoxDrive.Enabled = true;
+          buttonSelectFolder.Enabled = false;
+          comboDriveNo.Enabled = false;
+          textBoxExtensions.Enabled = false;
+          comboDriveType.Enabled = true;
+        }
+        else
+        {
+          textBoxDaemonTools.Enabled = true;
+          comboBoxDrive.Enabled = true;
+          buttonSelectFolder.Enabled = true;
+          comboDriveNo.Enabled = true;
+          checkBoxAskBeforePlaying.Enabled = true;
+          comboDriveType.Enabled = true;
+        }
       }
       else
       {
@@ -455,6 +475,85 @@ namespace MediaPortal.Configuration.Sections
           == DialogResult.No) return;
 
       textBoxExtensions.Text = Util.Utils.ImageExtensionsDefault;
+    }
+
+    private void comboDriveType_SelectionChangeCommitted(object sender, EventArgs e)
+    {
+      comboBoxDriveCheck();
+      if (comboDriveType.SelectedItem != null && (comboDriveType.SelectedItem.ToString() == "native"))
+      {
+        textBoxDaemonTools.Enabled = false;
+        comboBoxDrive.Enabled = true;
+        buttonSelectFolder.Enabled = false;
+        comboDriveNo.Enabled = false;
+        textBoxExtensions.Enabled = false;
+      }
+      else if (checkBoxDaemonTools.Checked)
+      {
+        textBoxDaemonTools.Enabled = true;
+        comboBoxDrive.Enabled = true;
+        buttonSelectFolder.Enabled = true;
+        comboDriveNo.Enabled = true;
+        textBoxExtensions.Enabled = true;
+        comboDriveType.Enabled = true;
+      }
+    }
+
+    private void comboBoxDriveCheck()
+    {
+      try
+      {
+        // Clear all item to do a proper filled
+        this.comboBoxDrive.Items.Clear();
+        System.IO.DriveInfo[] drives = System.IO.DriveInfo.GetDrives();
+        foreach (System.IO.DriveInfo drive in drives)
+        {
+          if (drive.DriveType == System.IO.DriveType.CDRom)
+          {
+            if (comboDriveType.SelectedItem != null && (comboDriveType.SelectedItem.ToString() != "native"))
+            {
+              if (!this.comboBoxDrive.Items.Contains(String.Format("{0}", drive.RootDirectory)[0] + ":"))
+              {
+                this.comboBoxDrive.Items.Add(String.Format("{0}", drive.RootDirectory)[0] + ":");
+              }
+            }
+            else
+            {
+              // native (remove all fixed CDROM drive
+              this.comboBoxDrive.Items.Remove(String.Format("{0}", drive.RootDirectory)[0] + ":");
+            }
+          }
+        }
+        if (comboDriveType.SelectedItem != null && (comboDriveType.SelectedItem.ToString() == "native"))
+        {
+          ArrayList driveLetters = new ArrayList(26); // Allocate space for alphabet
+          for (int i = 65; i < 91; i++) // increment from ASCII values for A-Z
+          {
+            driveLetters.Add(Convert.ToChar(i)); // Add uppercase letters to possible drive letters
+          }
+
+          foreach (string drive in Directory.GetLogicalDrives())
+          {
+            driveLetters.Remove(drive[0]); // removed used drive letters from possible drive letters
+          }
+
+          foreach (char drive in driveLetters)
+          {
+            if (!this.comboBoxDrive.Items.Contains(drive))
+            {
+              this.comboBoxDrive.Items.Add(drive + ":"); // add unused drive letters to the combo box
+            }
+          }
+        }
+        using (Settings xmlreader = new MPSettings())
+        {
+          // Need to detect letter to fill the correct letter.
+          comboBoxDrive.SelectedItem = xmlreader.GetValueAsString("daemon", "drive", "E:");
+        }
+      }
+      catch (Exception)
+      {
+      }
     }
   }
 }

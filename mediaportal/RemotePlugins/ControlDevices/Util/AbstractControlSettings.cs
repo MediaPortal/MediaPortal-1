@@ -38,8 +38,6 @@ namespace MediaPortal.ControlDevices
     /// </summary>
     private bool _verbose;
 
-    private AbstractControlSettings() {}
-
     public AbstractControlSettings(IControlPlugin plugin, string prefix)
     {
       _plugin = plugin;

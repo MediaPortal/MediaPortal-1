@@ -571,10 +571,13 @@ void CSubManager::LoadExternalSubtitles(const wchar_t* filename, const wchar_t* 
 			if(!pSubStream)
 			{
 				CAutoPtr<CRenderedTextSubtitle> pRTS(new CRenderedTextSubtitle(&m_csSubLock));
-				if(pRTS && pRTS->Open(ret[i].fn, DEFAULT_CHARSET) && pRTS->GetStreamCount() > 0) {
-					ApplyStyle(pRTS);
-					pSubStream = pRTS.Detach();
-				}
+        if (CString(CPath(ret[i].fn).GetExtension()).MakeLower() != _T(".sub"))
+        {
+          if (pRTS && pRTS->Open(ret[i].fn, DEFAULT_CHARSET) && pRTS->GetStreamCount() > 0) {
+            ApplyStyle(pRTS);
+            pSubStream = pRTS.Detach();
+          }
+        }
 			}
 			if (pSubStream)
 			{

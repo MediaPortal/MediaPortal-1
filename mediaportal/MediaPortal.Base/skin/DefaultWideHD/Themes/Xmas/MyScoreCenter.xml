@@ -1,0 +1,370 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!--version="1.0" encoding="utf-8" standalone="yes"-->
+<window>
+  <id>42000</id>
+  <defaultcontrol>10</defaultcontrol>
+  <allowoverlay>no</allowoverlay>
+  <define>#currentmodule:ScoreCenter</define>
+  <define>#selecteditem:</define>
+  <define>#header.hover:hover_Score Center.png</define>
+  <controls>
+    <control>
+      <description>background image</description>
+      <type>image</type>
+      <id>1</id>
+      <width>1920</width>
+      <height>1080</height>
+      <texture>BH Scorecenter.jpg</texture>
+      <colordiffuse>aaffffff</colordiffuse>
+    </control>
+    <import>common.window.xml</import>
+    <import>common.time.xml</import>
+    <control>
+      <type>label</type>
+      <id>1</id>
+      <posX>45</posX>
+      <posY>15</posY>
+      <label>#ScoreCenter.Title</label>
+      <font>Label</font>
+      <align>left</align>
+      <textcolor>ffffd700</textcolor>
+    </control>
+    <control>
+      <description>General Overlay</description>
+      <id>0</id>
+      <type>image</type>
+      <posX>0</posX>
+      <posY>45</posY>
+      <width>1920</width>
+      <height>1185</height>
+      <texture>general_overlay.png</texture>
+    </control>
+    <control>
+      <description>Current Category Image</description>
+      <type>image</type>
+      <posX>69</posX>
+      <posY>120</posY>
+      <width>48</width>
+      <height>48</height>
+      <texture>#ScoreCenter.Ico1</texture>
+      <keepaspectratio>yes</keepaspectratio>
+      <centered>yes</centered>
+    </control>
+    <control>
+      <description>Current League Image</description>
+      <type>image</type>
+      <posX>147</posX>
+      <posY>120</posY>
+      <width>48</width>
+      <height>48</height>
+      <texture>#ScoreCenter.Ico2</texture>
+      <keepaspectratio>yes</keepaspectratio>
+      <centered>yes</centered>
+    </control>
+    <control>
+      <description>Current Score Image</description>
+      <type>image</type>
+      <posX>223</posX>
+      <posY>120</posY>
+      <width>42</width>
+      <height>42</height>
+      <texture>#ScoreCenter.Ico3</texture>
+      <keepaspectratio>yes</keepaspectratio>
+      <centered>yes</centered>
+    </control>
+    <control>
+      <description>Current Score Image</description>
+      <type>image</type>
+      <posX>294</posX>
+      <posY>120</posY>
+      <width>42</width>
+      <height>42</height>
+      <texture>#ScoreCenter.Ico4</texture>
+      <keepaspectratio>yes</keepaspectratio>
+      <centered>yes</centered>
+    </control>
+    <control>
+      <description>Current Category</description>
+      <type>label</type>
+      <posX>0</posX>
+      <posY>142</posY>
+      <width>1920</width>
+      <label>#ScoreCenter.Results</label>
+      <font>font14</font>
+      <align>center</align>
+      <textcolor>ffffd700</textcolor>
+    </control>
+    <control>
+      <description>Scores</description>
+      <type>listcontrol</type>
+      <id>10</id>
+      <posX>75</posX>
+      <posY>265</posY>
+      <width>351</width>
+      <height>720</height>
+      <textvisible2>no</textvisible2>
+      <textvisible3>no</textvisible3>
+      <spaceBetweenItems>1</spaceBetweenItems>
+      <keepaspectratio>no</keepaspectratio>
+      <spinPosX>3049</spinPosX>
+      <spinPosY>913</spinPosY>
+      <onup>17</onup>
+      <onleft>70</onleft>
+      <onright>70</onright>
+      <PinIconXOff>267</PinIconXOff>
+      <PinIconYOff>9</PinIconYOff>
+      <PinIconWidth>57</PinIconWidth>
+      <PinIconHeight>20</PinIconHeight>
+    </control>
+    <control>
+      <type>group</type>
+      <description>group element</description>
+      <layout>StackLayout(38, Vertical, true)</layout>
+      <posX>576</posX>
+      <posY>294</posY>
+      <visible>Control.isVisible(20)</visible>
+      <control>
+        <description>divider horizontal</description>
+        <type>image</type>
+        <id>0</id>
+        <width>1278</width>
+        <height>0</height>
+        <texture>hbar1white.png</texture>
+        <colordiffuse>40ffffff</colordiffuse>
+      </control>
+      <control>
+        <description>divider horizontal</description>
+        <type>image</type>
+        <id>0</id>
+        <width>1278</width>
+        <height>0</height>
+        <texture>hbar1white.png</texture>
+        <colordiffuse>40ffffff</colordiffuse>
+      </control>
+      <control>
+        <description>divider horizontal</description>
+        <type>image</type>
+        <id>0</id>
+        <width>1278</width>
+        <height>0</height>
+        <texture>hbar1white.png</texture>
+        <colordiffuse>40ffffff</colordiffuse>
+      </control>
+      <control>
+        <description>divider horizontal</description>
+        <type>image</type>
+        <id>0</id>
+        <width>1278</width>
+        <height>0</height>
+        <texture>hbar1white.png</texture>
+        <colordiffuse>40ffffff</colordiffuse>
+      </control>
+      <control>
+        <description>divider horizontal</description>
+        <type>image</type>
+        <id>0</id>
+        <width>1278</width>
+        <height>0</height>
+        <texture>hbar1white.png</texture>
+        <colordiffuse>40ffffff</colordiffuse>
+      </control>
+      <control>
+        <description>divider horizontal</description>
+        <type>image</type>
+        <id>0</id>
+        <width>1278</width>
+        <height>0</height>
+        <texture>hbar1white.png</texture>
+        <colordiffuse>40ffffff</colordiffuse>
+      </control>
+      <control>
+        <description>divider horizontal</description>
+        <type>image</type>
+        <id>0</id>
+        <width>1278</width>
+        <height>0</height>
+        <texture>hbar1white.png</texture>
+        <colordiffuse>40ffffff</colordiffuse>
+      </control>
+      <control>
+        <description>divider horizontal</description>
+        <type>image</type>
+        <id>0</id>
+        <width>1278</width>
+        <height>0</height>
+        <texture>hbar1white.png</texture>
+        <colordiffuse>40ffffff</colordiffuse>
+      </control>
+      <control>
+        <description>divider horizontal</description>
+        <type>image</type>
+        <id>0</id>
+        <width>1278</width>
+        <height>0</height>
+        <texture>hbar1white.png</texture>
+        <colordiffuse>40ffffff</colordiffuse>
+      </control>
+      <control>
+        <description>divider horizontal</description>
+        <type>image</type>
+        <id>0</id>
+        <width>1278</width>
+        <height>0</height>
+        <texture>hbar1white.png</texture>
+        <colordiffuse>40ffffff</colordiffuse>
+      </control>
+      <control>
+        <description>divider horizontal</description>
+        <type>image</type>
+        <id>0</id>
+        <width>1278</width>
+        <height>0</height>
+        <texture>hbar1white.png</texture>
+        <colordiffuse>40ffffff</colordiffuse>
+      </control>
+      <control>
+        <description>divider horizontal</description>
+        <type>image</type>
+        <id>0</id>
+        <width>1278</width>
+        <height>0</height>
+        <texture>hbar1white.png</texture>
+        <colordiffuse>40ffffff</colordiffuse>
+      </control>
+      <control>
+        <description>divider horizontal</description>
+        <type>image</type>
+        <id>0</id>
+        <width>1278</width>
+        <height>0</height>
+        <texture>hbar1white.png</texture>
+        <colordiffuse>40ffffff</colordiffuse>
+      </control>
+      <control>
+        <description>divider horizontal</description>
+        <type>image</type>
+        <id>0</id>
+        <width>1278</width>
+        <height>0</height>
+        <texture>hbar1white.png</texture>
+        <colordiffuse>40ffffff</colordiffuse>
+      </control>
+      <control>
+        <description>divider horizontal</description>
+        <type>image</type>
+        <id>0</id>
+        <width>1278</width>
+        <height>0</height>
+        <texture>hbar1white.png</texture>
+        <colordiffuse>40ffffff</colordiffuse>
+      </control>
+      <control>
+        <description>divider horizontal</description>
+        <type>image</type>
+        <id>0</id>
+        <width>1278</width>
+        <height>0</height>
+        <texture>hbar1white.png</texture>
+        <colordiffuse>40ffffff</colordiffuse>
+      </control>
+      <control>
+        <description>divider horizontal</description>
+        <type>image</type>
+        <id>0</id>
+        <width>1278</width>
+        <height>0</height>
+        <texture>hbar1white.png</texture>
+        <colordiffuse>40ffffff</colordiffuse>
+      </control>
+      <control>
+        <description>divider horizontal</description>
+        <type>image</type>
+        <id>0</id>
+        <width>1278</width>
+        <height>0</height>
+        <texture>hbar1white.png</texture>
+        <colordiffuse>40ffffff</colordiffuse>
+      </control>
+    </control>
+    <control>
+      <description>Results</description>
+      <type>textboxscrollup</type>
+      <id>20</id>
+      <posX>576</posX>
+      <posY>256</posY>
+      <visible>yes</visible>
+      <width>1348</width>
+      <height>730</height>
+      <font>font12</font>
+      <textcolor>ffffd700</textcolor>
+    </control>
+    <control>
+      <description>Next Button</description>
+      <type>button</type>
+      <id>40</id>
+      <posX>97</posX>
+      <posY>955</posY>
+      <width>280</width>
+      <label>2553</label>
+      <onup>10</onup>
+      <ondown>10</ondown>
+      <onleft>40</onleft>
+      <onright>40</onright>
+    </control>
+    <control>
+      <description>Live Status</description>
+      <type>label</type>
+      <posX>0</posX>
+      <posY>87</posY>
+      <width>1920</width>
+      <font>font11</font>
+      <textcolor>ffffd700</textcolor>
+      <align>center</align>
+      <label>#ScoreCenter.Live</label>
+    </control>
+    <control>
+      <id>70</id>
+      <description>Prev Score Button</description>
+      <type>button</type>
+      <onleft>10</onleft>
+      <onright>80</onright>
+      <onup>10</onup>
+      <ondown>10</ondown>
+      <visible>no</visible>
+      <posX>591</posX>
+      <posY>195</posY>
+      <width>31</width>
+      <height>42</height>
+      <textureFocus>arrow_round_left_focus.png</textureFocus>
+      <textureNoFocus>arrow_round_left_nofocus.png</textureNoFocus>
+      <textalign>LEFT</textalign>
+    </control>
+    <control>
+      <id>80</id>
+      <description>Next Score Button</description>
+      <type>button</type>
+      <onleft>70</onleft>
+      <onright>10</onright>
+      <onup>10</onup>
+      <ondown>10</ondown>
+      <visible>no</visible>
+      <posX>624</posX>
+      <posY>195</posY>
+      <width>31</width>
+      <height>42</height>
+      <textureFocus>arrow_round_right_focus.png</textureFocus>
+      <textureNoFocus>arrow_round_right_nofocus.png</textureNoFocus>
+    </control>
+    <control>
+      <description>round</description>
+      <type>label</type>
+      <posX>657</posX>
+      <posY>195</posY>
+      <width>702</width>
+      <font>font12</font>
+      <align>LEFT</align>
+      <label>#ScoreCenter.Round</label>
+      <textcolor>ffffd700</textcolor>
+    </control>
+  </controls>
+</window>

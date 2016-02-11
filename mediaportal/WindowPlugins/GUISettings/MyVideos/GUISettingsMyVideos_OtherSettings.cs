@@ -183,9 +183,5 @@ namespace MediaPortal.GUI.Settings
     {
       
     }
-
-    private void OnItemSelected(GUIListItem item, GUIControl parent)
-    {
-    }
   }
 }

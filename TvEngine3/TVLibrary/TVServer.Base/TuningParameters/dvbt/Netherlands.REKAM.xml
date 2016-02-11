@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ArrayOfDVBTTuning>
+  <!--Created on 2015-05-16 23:48-->
+  <DVBTTuning>
+    <!--Transponder ID 101-->
+    <!--TV: [1] NPO 1 [2] NPO 2 [3] NPO 3 [11] Nickelodeon [12] Gouwestad [13] TV West [18] Informatiekanaal-->
+    <Frequency>722000</Frequency>
+    <BandWidth>8</BandWidth>
+    <Offset>0</Offset>
+  </DVBTTuning>
+  <DVBTTuning>
+    <!--Transponder ID 102-->
+    <!--TV: [4] RTL 4 [5] RTL 5 [6] SBS 6 [7] RTL 7 [9] NET 5 [10] RTL 8-->
+    <Frequency>762000</Frequency>
+    <BandWidth>8</BandWidth>
+    <Offset>0</Offset>
+  </DVBTTuning>
+  <DVBTTuning>
+    <!--Transponder ID 103-->
+    <!--TV: [8] Veronica/DisneyXD [14] Comedy Central [15] MTV [16] EEN [17] Canvas/Ketnet-->
+    <Frequency>818000</Frequency>
+    <BandWidth>8</BandWidth>
+    <Offset>0</Offset>
+  </DVBTTuning>
+</ArrayOfDVBTTuning>
