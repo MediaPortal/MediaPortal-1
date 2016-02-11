@@ -70,7 +70,7 @@ namespace MediaPortal.GUI.Music
     /// <summary>
     /// Returns the Current View Level
     /// </summary>
-    public override string CurrentView
+    public override Guid CurrentView
     {
       get
       {
@@ -140,7 +140,7 @@ namespace MediaPortal.GUI.Music
     {
       if (currentView.Levels.Count == 0)
       {
-        CurrentView = song.Title;
+        CurrentView = new Guid(song.Album); // We have the ID of the view in the Album Name
       }
       else
       {
@@ -178,6 +178,7 @@ namespace MediaPortal.GUI.Music
         {
           Song song = new Song();
           song.Title = subview.LocalizedName;
+          song.Album = subview.Id.ToString();  // Add the Id of the view to Album
           songs.Add(song);
         }
 
@@ -196,7 +197,7 @@ namespace MediaPortal.GUI.Music
         var parentFilter = new List<DatabaseFilterDefinition>();
         foreach (DatabaseViewDefinition view in views)
         {
-          if (currentView.Parent == view.LocalizedName)
+          if (new Guid(currentView.Parent) == view.Id)
           {
             parentFilter = view.Filters;
             break;

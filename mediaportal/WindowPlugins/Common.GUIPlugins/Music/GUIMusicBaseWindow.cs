@@ -214,7 +214,7 @@ namespace MediaPortal.GUI.Music
       using (Profile.Settings xmlreader = new Profile.MPSettings())
       {
         MusicState.StartWindow = xmlreader.GetValueAsInt("music", "startWindow", GetID);
-        MusicState.View = xmlreader.GetValueAsString("music", "startview", string.Empty);
+        MusicState.View = xmlreader.GetValueAsString("music", "startview", Guid.Empty.ToString());
         MusicState.AutoDJEnabled = xmlreader.GetValueAsBool("lastfm:test", "autoDJ", false);
         _createMissingFolderThumbCache = xmlreader.GetValueAsBool("thumbnails", "musicfolderondemand", true);
         _createMissingFolderThumbs = xmlreader.GetValueAsBool("musicfiles", "createMissingFolderThumbs", false);
@@ -762,8 +762,8 @@ namespace MediaPortal.GUI.Music
         default: // a db view
           {
             var selectedView = (DatabaseViewDefinition)handler.Views[selectedViewId - 1];
-            handler.CurrentView = selectedView.Name;
-            MusicState.View = selectedView.Name;
+            handler.CurrentView = selectedView.Id;
+            MusicState.View = selectedView.Id.ToString();
             int nNewWindow = (int)Window.WINDOW_MUSIC_GENRE;
             if (GetID != nNewWindow)
             {

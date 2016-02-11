@@ -208,7 +208,7 @@ namespace MediaPortal.Configuration.Sections
         foreach (DatabaseViewDefinition subView in view.SubViews)
         {
           TreeNode subNode = new TreeNode(subView.LocalizedName);
-          subView.Parent = view.LocalizedName;
+          subView.Parent = view.Id.ToString();
           subNode.Tag = subView;
           SetNodeColor(subNode);
           node.Nodes.Add(subNode);
@@ -358,9 +358,8 @@ namespace MediaPortal.Configuration.Sections
 
       StoreGridInView(); // Save possible pending changes in current Node
 
-      var view = new DatabaseViewDefinition();
-      var treeNode = new TreeNode("New View");
-      treeNode.Tag = view;
+      var view = new DatabaseViewDefinition {Id = Guid.NewGuid()};
+      var treeNode = new TreeNode("New View") {Tag = view};
       treeViewMenu.Nodes.Add(treeNode);
       treeViewMenu.SelectedNode = treeNode;
 
@@ -793,7 +792,7 @@ namespace MediaPortal.Configuration.Sections
       {
         // Add new Node to Root of Treeview
         var view = (DatabaseViewDefinition)newNode.Tag;
-        view.Parent = "";
+        view.Parent = Guid.Empty.ToString();
         newNode.Tag = view;
         treeViewMenu.Nodes.Add(newNode);
       }

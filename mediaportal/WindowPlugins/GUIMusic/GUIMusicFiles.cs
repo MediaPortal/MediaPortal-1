@@ -254,7 +254,7 @@ namespace MediaPortal.GUI.Music
         currentSortMethod = (MusicSort.SortMethod)xmlreader.GetValueAsInt(SerializeName, "sortmethod", (int)MusicSort.SortMethod.Name);
         _stripArtistPrefixes = xmlreader.GetValueAsBool("musicfiles", "stripartistprefixes", false);
         MusicState.StartWindow = xmlreader.GetValueAsInt("music", "startWindow", GetID);
-        MusicState.View = xmlreader.GetValueAsString("music", "startview", string.Empty);
+        MusicState.View = xmlreader.GetValueAsString("music", "startview", Guid.Empty.ToString());
         _useFileMenu = xmlreader.GetValueAsBool("filemenu", "enabled", true);
         _fileMenuPinCode = Util.Utils.DecryptPassword(xmlreader.GetValueAsString("filemenu", "pincode", string.Empty));
         _wolTimeout = xmlreader.GetValueAsInt("WOL", "WolTimeout", 10);
@@ -339,7 +339,7 @@ namespace MediaPortal.GUI.Music
       using (Profile.Settings xmlreader = new Profile.MPSettings())
       {
         MusicState.StartWindow = xmlreader.GetValueAsInt("music", "startWindow", GetID);
-        MusicState.View = xmlreader.GetValueAsString("music", "startview", string.Empty);
+        MusicState.View = xmlreader.GetValueAsString("music", "startview", Guid.Empty.ToString());
       }
       GUIWindowManager.OnNewAction += new OnActionHandler(GUIWindowManager_OnNewAction);
       GUIWindowManager.Receivers += new SendMessageHandler(GUIWindowManager_OnNewMessage);
@@ -1003,8 +1003,8 @@ namespace MediaPortal.GUI.Music
               return;
             }
             var selectedView = handler.Views[viewNr];
-            handler.CurrentView = selectedView.Name;
-            MusicState.View = selectedView.Name;
+            handler.CurrentView = selectedView.Id;
+            MusicState.View = selectedView.Id.ToString();
             GUIMusicGenres.SelectArtist(artist);
             int nNewWindow = (int)Window.WINDOW_MUSIC_GENRE;
             if (GetID != nNewWindow)

@@ -90,6 +90,18 @@ namespace MediaPortal.GUI.DatabaseViews
       }
     }
 
+    public virtual string CurrentViewName
+    {
+      get
+      {
+        if (currentView == null)
+        {
+          return string.Empty;
+        }
+        return currentView.Name;
+      }
+    }
+
     /// <summary>
     /// Property for the view level name as localized string
     /// This will return the view level (ie. the where in view
@@ -120,72 +132,34 @@ namespace MediaPortal.GUI.DatabaseViews
       return lvlName;
     }
 
-    public virtual string CurrentView
+    public virtual Guid CurrentView
     {
       get
       {
         if (currentView == null)
         {
-          return string.Empty;
+          return Guid.Empty;
         }
-        return currentView.ToString();
+        return currentView.Id;
       }
       set
       {
         var searchViews = new List<DatabaseViewDefinition>();
-        int searchIndex = 0;
-
-        string[] splitView = value.Split('/');
-
-        // currentView is null on startup. Parse t
-        if (currentView == null)
-        {
-          if (splitView.GetUpperBound(0) > 0)
-          {
-            searchViews = views;
-            foreach (DatabaseViewDefinition view in views)
-            {
-              if (view.Name == splitView[0])
-              {
-                if (view.SubViews.Count > 0)
-                {
-                  searchViews = view.SubViews;
-                  searchIndex = 1;
-                }
-                break;
-              }
-            }
-          }
-          foreach (DatabaseViewDefinition view in searchViews)
-          {
-            if (view.Name == splitView[searchIndex])
-            {
-              currentView = view;
-              CurrentLevel = 0;
-              return;
-            }
-          }
-        }
-
-        // Is the selected View a Main View
+        
         foreach (DatabaseViewDefinition view in views)
         {
-          if (view.Name == value)
+          // Do we have a Main View
+          if (view.Id == value)
           {
             currentView = view;
             CurrentLevel = 0;
             return;
           }
-        }
-
-        if (currentView != null && currentView.SubViews.Count > 0)
-        {
-          searchViews = currentView.SubViews;
-          foreach (DatabaseViewDefinition view in searchViews)
+          foreach (var subview in view.SubViews)
           {
-            if (view.Name == value)
+            if (subview.Id == value)
             {
-              currentView = view;
+              currentView = subview;
               CurrentLevel = 0;
               return;
             }

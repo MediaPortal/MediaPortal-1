@@ -38,12 +38,23 @@ namespace MediaPortal.GUI.DatabaseViews
     protected List<DatabaseFilterDefinition> _listFilters = new List<DatabaseFilterDefinition>();
     private string _name;
     private string _parent;
+    private Guid _id;
 
     #endregion
 
     #region ctor
     public DatabaseViewDefinition() {}
     #endregion
+
+    /// <summary>
+    /// Unique ID of the View
+    /// </summary>
+    [XmlElement("Id")]
+    public Guid Id
+    {
+      get { return _id; }
+      set { _id = value; }
+    }
 
     /// <summary>
     /// Internal Name of the View
@@ -126,6 +137,7 @@ namespace MediaPortal.GUI.DatabaseViews
     public object Clone()
     {
       var clonedView = new DatabaseViewDefinition();
+      clonedView._id = Guid.NewGuid();
       clonedView.Name = Name;
       clonedView.Parent = null;
       clonedView.Filters = Filters.GetRange(0, Filters.Count);

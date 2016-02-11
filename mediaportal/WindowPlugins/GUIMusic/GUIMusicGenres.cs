@@ -330,7 +330,7 @@ namespace MediaPortal.GUI.Music
         {
           if (v.Name == _loadParameter)
           {
-            MusicState.View = v.Name; //don't just set _currentView as this is used below
+            MusicState.View = v.Id.ToString(); //don't just set _currentView as this is used below
             m_iItemSelected = -1; //remove any selected item from previous selection
             viewFound = true;
           }
@@ -345,13 +345,13 @@ namespace MediaPortal.GUI.Music
 
       InitLayoutAndSort();
 
-      string view = MusicState.View;
-      if (view == string.Empty)
+      var view = new Guid(MusicState.View);
+      if (view == Guid.Empty)
       {
-        view = handler.Views[0].Name;
+        view = handler.Views[0].Id;
       }
 
-      if (_currentView != null && _currentView.Name == view)
+      if (_currentView != null && _currentView.Id == view)
       {
         ((MusicViewHandler)handler).Restore(_currentView, _currentLevel);
       }
@@ -635,7 +635,7 @@ namespace MediaPortal.GUI.Music
         {
           // this is a level in the view above the bottom
           ((MusicViewHandler)handler).Select(item.AlbumInfoTag as Song);
-          MusicState.View = handler.CurrentView;
+          MusicState.View = handler.CurrentView.ToString();
         }
 
         m_iItemSelected = -1;
@@ -708,7 +708,7 @@ namespace MediaPortal.GUI.Music
           dlg.AddLocalizedString(931); //Rating
         }
       }
-      if (handler.CurrentView == "271")
+      if (handler.CurrentViewName == "271")
       {
         dlg.AddLocalizedString(718); //Clear top100
       }
