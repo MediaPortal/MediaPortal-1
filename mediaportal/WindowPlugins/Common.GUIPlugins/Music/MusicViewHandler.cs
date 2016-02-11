@@ -19,19 +19,14 @@
 #endregion
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Globalization;
 using System.IO;
-using System.Runtime.Serialization.Formatters.Soap;
 using System.Xml.Serialization;
 using MediaPortal.Configuration;
 using MediaPortal.Database;
 using MediaPortal.GUI.Library;
 using MediaPortal.GUI.DatabaseViews;
 using MediaPortal.Music.Database;
-using SQLite.NET;
 
 namespace MediaPortal.GUI.Music
 {
@@ -48,7 +43,6 @@ namespace MediaPortal.GUI.Music
     private int _previousLevel = 0;
 
     private readonly MusicDatabase _database;
-    private Song _currentSong = null; // holds the current Song selected in the list
 
     private string _whereClause = "";
     private string _orderClause = "";
@@ -152,7 +146,6 @@ namespace MediaPortal.GUI.Music
           currentLevel++;
         }
       }
-      _currentSong = song;
     }
 
     /// <summary>
@@ -228,45 +221,20 @@ namespace MediaPortal.GUI.Music
       }
 
       //execute the query
-      var sql = "";
-      if (CurrentLevel == 0)
+      var selectionField = GetField(currentView.Levels[CurrentLevel].Selection);
+
+      // Build Filters
+      var currentLevelFilter = "";
+      if (currentView.Filters.Count > 0)
       {
-        var levelRoot = currentView.Levels[0];
-        var selection = levelRoot.Selection.ToLower();
-        var selectionField = GetField(selection);
-
-
-        var currentLevelFilter = "";
-        if (currentView.Filters.Count > 0)
-        {
-          BuildFilter(currentView.Filters, ref currentLevelFilter);
-        }
-        _filterClause += currentLevelFilter;
-
-        sql = BuildQuery(selectionField, false);
-
-        _database.GetSongsByFilter(sql, out songs, selectionField);
+        BuildFilter(currentView.Filters, ref currentLevelFilter);
       }
-      else if (CurrentLevel < MaxLevels - 1)
-      {
-        var defCurrent = currentView.Levels[CurrentLevel];
-        var selectionField = GetField(defCurrent.Selection);
+      _filterClause += currentLevelFilter;
 
-        sql = BuildQuery(selectionField, false);
-
-        _database.GetSongsByFilter(sql, out songs, selectionField);
-
-      }
-      else
-      {
-        var defCurrent = currentView.Levels[CurrentLevel];
-        var selectionField = GetField(defCurrent.Selection);
-
-        sql = BuildQuery(selectionField, true);
-
-        _database.GetSongsByFilter(sql, out songs, selectionField);
-      }
-     
+      var lastLevel = CurrentLevel == MaxLevels - 1;
+      var sql = BuildQuery(selectionField, lastLevel);
+      _database.GetSongsByFilter(sql, out songs, selectionField);
+   
       if (songs.Count == 1 && level.SkipLevel)
       {
         if (currentLevel < MaxLevels - 1)
