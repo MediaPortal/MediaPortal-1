@@ -102,6 +102,27 @@ namespace MediaPortal.GUI.DatabaseViews
       }
     }
 
+    public virtual string CurrentViewParentName
+    {
+      get
+      {
+        if (currentView == null)
+        {
+          return string.Empty;
+        }
+        var parentName = string.Empty;
+        foreach (DatabaseViewDefinition view in views)
+        {
+          // Do we have a Main View
+          if (view.Id == new Guid(currentView.Parent))
+          {
+            parentName = view.Name;
+          }
+        }
+        return parentName;
+      }
+    }
+
     /// <summary>
     /// Property for the view level name as localized string
     /// This will return the view level (ie. the where in view

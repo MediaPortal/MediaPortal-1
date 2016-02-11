@@ -169,7 +169,7 @@ namespace MediaPortal.GUI.Music
             string viewName = string.Format("{0}/{1}", handler.View.LocalizedName, handler.CurrentLevel);
             if (!string.IsNullOrEmpty(handler.View.Parent))
             {
-              viewName = string.Format("{0}/{1}", handler.View.Parent, viewName);
+              viewName = string.Format("{0}/{1}", handler.CurrentViewParentName, viewName);
             }
             return viewDefaultLayouts[viewName];
           }
@@ -186,7 +186,7 @@ namespace MediaPortal.GUI.Music
         string viewName = string.Format("{0}/{1}", handler.View.LocalizedName, handler.CurrentLevel);
         if (!string.IsNullOrEmpty(handler.View.Parent))
         {
-          viewName = string.Format("{0}/{1}", handler.View.Parent, viewName);
+          viewName = string.Format("{0}/{1}", handler.CurrentViewParentName, viewName);
         }
         viewDefaultLayouts[viewName] = value;
       }
@@ -203,7 +203,7 @@ namespace MediaPortal.GUI.Music
             string viewName = string.Format("{0}/{1}", handler.View.LocalizedName, handler.CurrentLevel);
             if (!string.IsNullOrEmpty(handler.View.Parent))
             {
-              viewName = string.Format("{0}/{1}", handler.View.Parent, viewName);
+              viewName = string.Format("{0}/{1}", handler.CurrentViewParentName, viewName);
             }
             return sortasc[viewName];
           }
@@ -219,7 +219,7 @@ namespace MediaPortal.GUI.Music
         string viewName = string.Format("{0}/{1}", handler.View.LocalizedName, handler.CurrentLevel);
         if (!string.IsNullOrEmpty(handler.View.Parent))
         {
-          viewName = string.Format("{0}/{1}", handler.View.Parent, viewName);
+          viewName = string.Format("{0}/{1}", handler.CurrentViewParentName, viewName);
         }
         sortasc[viewName] = value;
       }
@@ -236,7 +236,7 @@ namespace MediaPortal.GUI.Music
             string viewName = string.Format("{0}/{1}", handler.View.LocalizedName, handler.CurrentLevel);
             if (!string.IsNullOrEmpty(handler.View.Parent))
             {
-              viewName = string.Format("{0}/{1}", handler.View.Parent, viewName);
+              viewName = string.Format("{0}/{1}", handler.CurrentViewParentName, viewName);
             }
             return sortby[viewName];
           }
@@ -255,7 +255,7 @@ namespace MediaPortal.GUI.Music
         string viewName = string.Format("{0}/{1}", handler.View.LocalizedName, handler.CurrentLevel);
         if (!string.IsNullOrEmpty(handler.View.Parent))
         {
-          viewName = string.Format("{0}/{1}", handler.View.Parent, viewName);
+          viewName = string.Format("{0}/{1}", handler.CurrentViewParentName, viewName);
         }
 
         var def = handler.View.Levels[handler.CurrentLevel];
