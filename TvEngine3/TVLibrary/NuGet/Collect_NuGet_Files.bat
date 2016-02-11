@@ -101,8 +101,17 @@ REM #######################################
 REM 	ProgramData base files
 REM #######################################
 
+:zip
+rmdir /S /Q _tmpzip
+mkdir _tmpzip
+xcopy /S /Q "..\..\TvServer.Base\TuningParameters" _tmpzip\TuningParameters\*.*
+xcopy /S /Q "..\..\TvServer.Base\WebEPG" _tmpzip\WebEPG\*.*
+xcopy /S /Q "..\..\TvServer.Base\xmltv" _tmpzip\xmltv\*.*
+xcopy /S /Q "..\..\..\..\DirectShowFilters\MPIPTVSource\MPIPTVSource\MPIPTVSource.ini" _tmpzip\*.*
+xcopy /S /Q "content\References\gentle.config" _tmpzip\*.*
 del content\References\ProgramData\ProgramData.zip
-"c:\Program Files\7-Zip\7z.exe" a -r content\References\ProgramData\ProgramData.zip "..\..\TvServer.Base\TuningParameters" "..\..\TvServer.Base\WebEPG" "..\..\TvServer.Base\xmltv" "..\..\..\..\DirectShowFilters\MPIPTVSource\MPIPTVSource\MPIPTVSource.ini" ".\content\References\gentle.config"
+powershell.exe -nologo -noprofile -command "& { Add-Type -A 'System.IO.Compression.FileSystem'; [IO.Compression.ZipFile]::CreateFromDirectory('_tmpzip', 'content\References\ProgramData\ProgramData.zip'); }"
+rmdir /S /Q _tmpzip
 
 nuget pack MediaPortal.TvEngine.Core3.nuspec -OutputDirectory ..
 cd ..
