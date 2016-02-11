@@ -224,12 +224,10 @@ namespace MediaPortal.GUI.Music
       var selectionField = GetField(currentView.Levels[CurrentLevel].Selection);
 
       // Build Filters
-      var currentLevelFilter = "";
       if (currentView.Filters.Count > 0)
       {
-        BuildFilter(currentView.Filters, ref currentLevelFilter);
+        BuildFilter(currentView.Filters, ref _filterClause);
       }
-      _filterClause += currentLevelFilter;
 
       var lastLevel = CurrentLevel == MaxLevels - 1;
       var sql = BuildQuery(selectionField, lastLevel);
