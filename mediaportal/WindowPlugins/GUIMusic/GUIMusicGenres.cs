@@ -629,6 +629,13 @@ namespace MediaPortal.GUI.Music
         {
           // we have clicked on the ".." entry
           // so go up a level in view
+          if (handler.CurrentLevel == 0 && handler.View.Parent != null)
+          {
+            // check if we're on a subview and should go up 1 level
+            handler.CurrentView = new Guid(handler.View.Parent);
+            MusicState.View = handler.CurrentView.ToString();
+          }
+
           handler.CurrentLevel--;
         }
         else
@@ -937,9 +944,9 @@ namespace MediaPortal.GUI.Music
 
       #endregion
 
-      if (handler.CurrentLevel > 0)
+      if (handler.CurrentLevel > 0 || handler.View.Parent != null)
       {
-        // add ".." folder item if not at bottom level of view
+        // add ".." folder item if not at top level of view
         GUIListItem pItem = new GUIListItem("..");
         pItem.Path = string.Empty;
         pItem.IsFolder = true;
