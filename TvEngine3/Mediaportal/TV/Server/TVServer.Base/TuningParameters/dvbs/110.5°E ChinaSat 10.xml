@@ -1,57 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ArrayOfTuningDetail xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <TuningDetail>
-    <BroadcastStandard>DvbS2</BroadcastStandard>
-    <SatellitePosition>1105</SatellitePosition>
-    <Frequency>3650000</Frequency>
-    <SymbolRate>6200</SymbolRate>
-    <Polarisation>LinearVertical</Polarisation>
-    <ModulationScheme>Psk8</ModulationScheme>
-    <FecCodeRate>Rate5_6</FecCodeRate>
-    <PilotTonesState>On</PilotTonesState>
-    <RollOffFactor>ThirtyFive</RollOffFactor>
-    <StreamId>0</StreamId>
-  </TuningDetail>
-  <TuningDetail>
-    <BroadcastStandard>DvbS2</BroadcastStandard>
-    <SatellitePosition>1105</SatellitePosition>
-    <Frequency>3660000</Frequency>
-    <SymbolRate>6200</SymbolRate>
-    <Polarisation>LinearVertical</Polarisation>
-    <ModulationScheme>Psk8</ModulationScheme>
-    <FecCodeRate>Rate5_6</FecCodeRate>
-    <PilotTonesState>On</PilotTonesState>
-    <RollOffFactor>ThirtyFive</RollOffFactor>
-    <StreamId>0</StreamId>
-  </TuningDetail>
-  <TuningDetail>
-    <BroadcastStandard>DvbS2</BroadcastStandard>
-    <SatellitePosition>1105</SatellitePosition>
-    <Frequency>3698000</Frequency>
-    <SymbolRate>2000</SymbolRate>
-    <Polarisation>LinearVertical</Polarisation>
-    <ModulationScheme>Psk8</ModulationScheme>
-    <FecCodeRate>Rate3_4</FecCodeRate>
-    <PilotTonesState>On</PilotTonesState>
-    <RollOffFactor>ThirtyFive</RollOffFactor>
-    <StreamId>0</StreamId>
-  </TuningDetail>
-  <TuningDetail>
     <BroadcastStandard>DvbS</BroadcastStandard>
     <SatellitePosition>1105</SatellitePosition>
-    <Frequency>3984000</Frequency>
-    <SymbolRate>3617</SymbolRate>
+    <Frequency>3706000</Frequency>
     <Polarisation>LinearVertical</Polarisation>
     <ModulationScheme>Psk4</ModulationScheme>
+    <SymbolRate>4340</SymbolRate>
     <FecCodeRate>Rate3_4</FecCodeRate>
   </TuningDetail>
   <TuningDetail>
     <BroadcastStandard>DvbS</BroadcastStandard>
     <SatellitePosition>1105</SatellitePosition>
     <Frequency>4134000</Frequency>
-    <SymbolRate>4340</SymbolRate>
     <Polarisation>LinearVertical</Polarisation>
     <ModulationScheme>Psk4</ModulationScheme>
+    <SymbolRate>4340</SymbolRate>
     <FecCodeRate>Rate3_4</FecCodeRate>
   </TuningDetail>
 </ArrayOfTuningDetail>

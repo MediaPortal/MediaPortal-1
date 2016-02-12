@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ArrayOfTuningDetail xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <TuningDetail>
+    <BroadcastStandard>DvbS2</BroadcastStandard>
+    <SatellitePosition>585</SatellitePosition>
+    <Frequency>12531000</Frequency>
+    <Polarisation>LinearVertical</Polarisation>
+    <ModulationScheme>Psk8</ModulationScheme>
+    <SymbolRate>45000</SymbolRate>
+    <FecCodeRate>Rate5_6</FecCodeRate>
+    <PilotTonesState>On</PilotTonesState>
+    <RollOffFactor>ThirtyFive</RollOffFactor>
+    <StreamId>-1</StreamId>
+  </TuningDetail>
+</ArrayOfTuningDetail>

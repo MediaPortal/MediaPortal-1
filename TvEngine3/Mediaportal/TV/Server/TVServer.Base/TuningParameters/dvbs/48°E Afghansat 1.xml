@@ -3,10 +3,10 @@
   <TuningDetail>
     <BroadcastStandard>DvbS</BroadcastStandard>
     <SatellitePosition>480</SatellitePosition>
-    <Frequency>11231000</Frequency>
-    <SymbolRate>27500</SymbolRate>
+    <Frequency>11293000</Frequency>
     <Polarisation>LinearVertical</Polarisation>
     <ModulationScheme>Psk4</ModulationScheme>
-    <FecCodeRate>Rate5_6</FecCodeRate>
+    <SymbolRate>27500</SymbolRate>
+    <FecCodeRate>Rate3_4</FecCodeRate>
   </TuningDetail>
 </ArrayOfTuningDetail>
