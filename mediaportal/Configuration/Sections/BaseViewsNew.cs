@@ -689,6 +689,7 @@ namespace MediaPortal.Configuration.Sections
       {
         dataGrid.CommitEdit(DataGridViewDataErrorContexts.Commit);
       }
+      _settingsChanged = true;
     }
 
     /// <summary>
