@@ -205,14 +205,7 @@ namespace MediaPortal.Configuration.Sections
         node.Text = view.LocalizedName;
         node.Tag = view;
         SetNodeColor(node);
-        foreach (DatabaseViewDefinition subView in view.SubViews)
-        {
-          TreeNode subNode = new TreeNode(subView.LocalizedName);
-          subView.Parent = view.Id.ToString();
-          subNode.Tag = subView;
-          SetNodeColor(subNode);
-          node.Nodes.Add(subNode);
-        }
+        AddSubNodes(ref node, view);
         treeViewMenu.Nodes.Add(node);
       }
 
@@ -222,6 +215,24 @@ namespace MediaPortal.Configuration.Sections
       lblActionCodes.Hide();
       _updating = false;
 
+    }
+
+    /// <summary>
+    /// Add the subnodes recusrively
+    /// </summary>
+    /// <param name="parentNode"></param>
+    /// <param name="view"></param>
+    private void AddSubNodes(ref TreeNode parentNode, DatabaseViewDefinition view)
+    {
+      foreach (DatabaseViewDefinition subView in view.SubViews)
+      {
+        TreeNode subNode = new TreeNode(subView.LocalizedName);
+        subView.Parent = view.Id.ToString();
+        subNode.Tag = subView;
+        SetNodeColor(subNode);
+        AddSubNodes(ref subNode, subView);
+        parentNode.Nodes.Add(subNode);
+      }
     }
 
     #endregion
@@ -776,18 +787,11 @@ namespace MediaPortal.Configuration.Sections
 
       if (targetNode != null)
       {
-        // Are we at a root node?
-
-        if (targetNode.Parent == null)
-        {
-          // Add Node to Root Node
-          targetNode.Nodes.Add(newNode);
-        }
-        else
-        {
-          // Insert node after the Node selected
-          targetNode.Parent.Nodes.Insert(targetNode.Parent.Nodes.IndexOf(targetNode) + 1, newNode);
-        }
+        var parentView = (DatabaseViewDefinition)targetNode.Tag;
+        var view = (DatabaseViewDefinition)newNode.Tag;
+        view.Parent = parentView.Id.ToString();
+        newNode.Tag = view;
+        targetNode.Nodes.Add(newNode);
       }
       else
       {
@@ -1027,10 +1031,7 @@ namespace MediaPortal.Configuration.Sections
         {
           var view = (DatabaseViewDefinition)node.Tag;
           view.SubViews.Clear();
-          foreach (TreeNode subNode in node.Nodes)
-          {
-            view.SubViews.Add((DatabaseViewDefinition)subNode.Tag);
-          }
+          view.SubViews = GetSubNodes(node);
           _views.Add(view);
         }
 
@@ -1049,6 +1050,27 @@ namespace MediaPortal.Configuration.Sections
         writer.Close();
       }
     }
+
+    /// <summary>
+    /// Loop recursive through the Treeview to get all the subnodes
+    /// </summary>
+    /// <param name="node"></param>
+    /// <returns></returns>
+    private List<DatabaseViewDefinition> GetSubNodes(TreeNode node)
+    {
+      var subViews = new List<DatabaseViewDefinition>();
+      if (node.Nodes.Count > 0)
+      {
+        foreach (TreeNode subNode in node.Nodes)
+        {
+          var view = (DatabaseViewDefinition) subNode.Tag;
+          view.SubViews = GetSubNodes(subNode);
+          subViews.Add(view);
+        }
+      }
+
+      return subViews;
+    } 
 
     #endregion
   }
