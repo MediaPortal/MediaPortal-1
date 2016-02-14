@@ -683,10 +683,6 @@ namespace MediaPortal.GUI.Video
 
           if (imgCoverArt != null) imgCoverArt.IsVisible = true;
 
-          if (lblDisc != null) lblDisc.IsVisible = false;
-
-          if (spinDisc != null) spinDisc.IsVisible = false;
-
           if (btnPlot != null) btnPlot.Selected = false;
 
           if (btnReview != null) btnReview.Selected = false;
@@ -733,10 +729,6 @@ namespace MediaPortal.GUI.Video
 
           if (imgCoverArt != null) imgCoverArt.IsVisible = true;
 
-          if (lblDisc != null) lblDisc.IsVisible = true;
-
-          if (spinDisc != null) spinDisc.IsVisible = true;
-
           if (btnPlot != null) btnPlot.Selected = true;
 
           if (btnReview != null) btnReview.Selected = false;
@@ -762,10 +754,6 @@ namespace MediaPortal.GUI.Video
           if (tbCastTextArea != null) tbCastTextArea.IsVisible = false;
 
           if (imgCoverArt != null) imgCoverArt.IsVisible = true;
-
-          if (lblDisc != null) lblDisc.IsVisible = true;
-
-          if (spinDisc != null) spinDisc.IsVisible = true;
 
           if (btnPlot != null) btnPlot.Selected = false;
 

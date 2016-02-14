@@ -36,6 +36,9 @@ namespace MediaPortal.Configuration.Sections
   {
     private bool _init = false;
     private bool settingLAVSlitter;
+    public static bool _forceSourceSplitter = false;
+    public static string _splitterFilter = "";
+    public static string _splitterFileFilter = "";
 
     /// <summary>
     /// 
@@ -188,6 +191,10 @@ namespace MediaPortal.Configuration.Sections
       {
         ForceSourceSplitter.Enabled = true;
       }
+      _forceSourceSplitter = ForceSourceSplitter.Checked;
+      _splitterFilter = SplitterComboBox.Text;
+      _splitterFileFilter = SplitterFileComboBox.Text;
+      Movies.UpdateDecoderSettings();
     }
 
     /// <summary>
@@ -301,6 +308,7 @@ namespace MediaPortal.Configuration.Sections
         CheckBoxValid(audioRendererComboBox);
         CheckBoxValid(SplitterComboBox);
         CheckBoxValid(SplitterFileComboBox);
+        UpdateDecoderSettings();
       }
     }
 
