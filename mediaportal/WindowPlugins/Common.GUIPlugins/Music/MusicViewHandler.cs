@@ -40,7 +40,7 @@ namespace MediaPortal.GUI.Music
     private readonly string _defaultMusicViews = Path.Combine(DefaultsDirectory, "MusicViews.xml");
     private readonly string _customMusicViews = Config.GetFile(Config.Dir.Config, "MusicViews.xml");
 
-    private int _previousLevel = 0;
+    private int _previousLevel;
 
     private readonly MusicDatabase _database;
 
@@ -97,7 +97,10 @@ namespace MediaPortal.GUI.Music
           fileStream.Close();
         }
       }
-      catch (Exception) { }
+      catch (Exception)
+      {
+        // We might get all kind of IO Errors reading the custom view file
+      }
 
       _database = MusicDatabase.Instance;
     }
@@ -113,8 +116,8 @@ namespace MediaPortal.GUI.Music
     /// <param name="level"></param>
     public void Restore(DatabaseViewDefinition view, int level)
     {
-      currentView = view;
-      currentLevel = level;
+      _currentView = view;
+      _currentLevel = level;
     }
 
     /// <summary>
@@ -123,7 +126,7 @@ namespace MediaPortal.GUI.Music
     /// <returns></returns>
     public DatabaseViewDefinition GetView()
     {
-      return currentView;
+      return _currentView;
     }
     
     /// <summary>
@@ -132,18 +135,18 @@ namespace MediaPortal.GUI.Music
     /// <param name="song"></param>
     public void Select(Song song)
     {
-      if (currentView.Levels.Count == 0)
+      if (_currentView.Levels.Count == 0)
       {
         CurrentView = new Guid(song.Album); // We have the ID of the view in the Album Name
       }
       else
       {
-        var level = currentView.Levels[CurrentLevel];
+        var level = _currentView.Levels[CurrentLevel];
         level.SelectedValue = GetFieldValue(song, level.Selection);
         level.SelectedId = song.SelectedId;
-        if (currentLevel < currentView.Levels.Count)
+        if (_currentLevel < _currentView.Levels.Count)
         {
-          currentLevel++;
+          _currentLevel++;
         }
       }
     }
@@ -155,7 +158,7 @@ namespace MediaPortal.GUI.Music
     /// <returns></returns>
     public bool Execute(out List<Song> songs)
     {
-      if (currentLevel < 0)
+      if (_currentLevel < 0)
       {
         _previousLevel = -1;
         songs = new List<Song>();
@@ -165,9 +168,9 @@ namespace MediaPortal.GUI.Music
       songs = new List<Song>();
 
       // We're on a root view, so just list the subviews
-      if (currentView.Levels.Count == 0)
+      if (_currentView.Levels.Count == 0)
       {
-        foreach (DatabaseViewDefinition subview in currentView.SubViews)
+        foreach (DatabaseViewDefinition subview in _currentView.SubViews)
         {
           Song song = new Song();
           song.Title = subview.LocalizedName;
@@ -175,7 +178,7 @@ namespace MediaPortal.GUI.Music
           songs.Add(song);
         }
 
-        _previousLevel = currentLevel;
+        _previousLevel = _currentLevel;
         return true;
       }
 
@@ -183,14 +186,14 @@ namespace MediaPortal.GUI.Music
       _orderClause = "";
       _filterClause = "";
 
-      var level = currentView.Levels[CurrentLevel];
+      var level = _currentView.Levels[CurrentLevel];
 
-      if (!string.IsNullOrEmpty(currentView.Parent))
+      if (!string.IsNullOrEmpty(_currentView.Parent))
       {
         var parentFilter = new List<DatabaseFilterDefinition>();
         foreach (DatabaseViewDefinition view in views)
         {
-          if (new Guid(currentView.Parent) == view.Id)
+          if (new Guid(_currentView.Parent) == view.Id)
           {
             parentFilter = view.Filters;
             break;
@@ -205,11 +208,11 @@ namespace MediaPortal.GUI.Music
       _previousSelections.Clear();
       for (int i = 0; i < CurrentLevel; ++i)
       {
-        BuildWhere(currentView.Levels[i], ref _whereClause, i);
-        BuildFilter(currentView.Levels[i].Filters, ref _filterClause);
-        _previousSelections.Add(currentView.Levels[i].Selection);
+        BuildWhere(_currentView.Levels[i], ref _whereClause, i);
+        BuildFilter(_currentView.Levels[i].Filters, ref _filterClause);
+        _previousSelections.Add(_currentView.Levels[i].Selection);
       }
-      BuildOrder(currentView.Levels[CurrentLevel], ref _orderClause);
+      BuildOrder(_currentView.Levels[CurrentLevel], ref _orderClause);
 
       if (CurrentLevel > 0)
       {
@@ -221,12 +224,12 @@ namespace MediaPortal.GUI.Music
       }
 
       //execute the query
-      var selectionField = GetField(currentView.Levels[CurrentLevel].Selection);
+      var selectionField = GetField(_currentView.Levels[CurrentLevel].Selection);
 
       // Build Filters
-      if (currentView.Filters.Count > 0)
+      if (_currentView.Filters.Count > 0)
       {
-        BuildFilter(currentView.Filters, ref _filterClause);
+        BuildFilter(_currentView.Filters, ref _filterClause);
       }
 
       var lastLevel = CurrentLevel == MaxLevels - 1;
@@ -235,17 +238,17 @@ namespace MediaPortal.GUI.Music
    
       if (songs.Count == 1 && level.SkipLevel)
       {
-        if (currentLevel < MaxLevels - 1)
+        if (_currentLevel < MaxLevels - 1)
         {
-          if (_previousLevel < currentLevel)
+          if (_previousLevel < _currentLevel)
           {
-            var fd = currentView.Levels[currentLevel];
+            var fd = _currentView.Levels[_currentLevel];
             fd.SelectedValue = GetFieldValue(songs[0], fd.Selection);
-            currentLevel = currentLevel + 1;
+            _currentLevel = _currentLevel + 1;
           }
           else
           {
-            currentLevel = currentLevel - 1;
+            _currentLevel = _currentLevel - 1;
           }
           if (!Execute(out songs))
           {
@@ -254,7 +257,7 @@ namespace MediaPortal.GUI.Music
         }
       }
 
-      _previousLevel = currentLevel;
+      _previousLevel = _currentLevel;
 
       return true;
     }
@@ -272,7 +275,7 @@ namespace MediaPortal.GUI.Music
         selections += string.Format(", {0}", selection);
       }
 
-      var sql = "";
+      string sql;
       if (IsNotSongTable(selectionField))
       {
         sql = string.Format("select distinct {0} from SongView ", selections);

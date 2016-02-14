@@ -28,9 +28,10 @@ namespace MediaPortal.GUI.DatabaseViews
   {
     #region Fields
 
-    protected DatabaseViewDefinition currentView;
-    protected int currentLevel = 0;
+    protected DatabaseViewDefinition _currentView;
+    protected int _currentLevel = 0;
     protected List<DatabaseViewDefinition> views = new List<DatabaseViewDefinition>();
+    private bool _foundView;
 
     #endregion
 
@@ -50,26 +51,26 @@ namespace MediaPortal.GUI.DatabaseViews
 
     public virtual int MaxLevels
     {
-      get { return currentView.Levels.Count; }
+      get { return _currentView.Levels.Count; }
     }
 
     public virtual int CurrentLevel
     {
-      get { return currentLevel; }
+      get { return _currentLevel; }
       set
       {
-        if (value < 0 || value >= currentView.Levels.Count)
+        if (value < 0 || value >= _currentView.Levels.Count)
         {
           return;
         }
-        currentLevel = value;
+        _currentLevel = value;
       }
     }
 
     public virtual DatabaseViewDefinition View
     {
-      get { return currentView; }
-      set { currentView = value; }
+      get { return _currentView; }
+      set { _currentView = value; }
     }
 
     public virtual List<DatabaseViewDefinition> Views
@@ -82,11 +83,11 @@ namespace MediaPortal.GUI.DatabaseViews
     {
       get
       {
-        if (currentView == null)
+        if (_currentView == null)
         {
           return string.Empty;
         }
-        return currentView.LocalizedName;
+        return _currentView.LocalizedName;
       }
     }
 
@@ -94,11 +95,11 @@ namespace MediaPortal.GUI.DatabaseViews
     {
       get
       {
-        if (currentView == null)
+        if (_currentView == null)
         {
           return string.Empty;
         }
-        return currentView.Name;
+        return _currentView.Name;
       }
     }
 
@@ -106,7 +107,7 @@ namespace MediaPortal.GUI.DatabaseViews
     {
       get
       {
-        if (currentView == null)
+        if (_currentView == null)
         {
           return string.Empty;
         }
@@ -114,7 +115,7 @@ namespace MediaPortal.GUI.DatabaseViews
         foreach (DatabaseViewDefinition view in views)
         {
           // Do we have a Main View
-          if (view.Id == new Guid(currentView.Parent))
+          if (view.Id == new Guid(_currentView.Parent))
           {
             parentName = view.Name;
           }
@@ -132,17 +133,17 @@ namespace MediaPortal.GUI.DatabaseViews
     {
       get
       {
-        if (currentView == null)
+        if (_currentView == null)
         {
           return string.Empty;
         }
 
-        if (currentView.Levels.Count == 0)
+        if (_currentView.Levels.Count == 0)
         {
-          return currentView.LocalizedName;
+          return _currentView.LocalizedName;
         }
 
-        var def = currentView.Levels[currentLevel];
+        var def = _currentView.Levels[_currentLevel];
 
         return (GetLocalizedViewLevel(def.Selection));
       }
@@ -157,53 +158,64 @@ namespace MediaPortal.GUI.DatabaseViews
     {
       get
       {
-        if (currentView == null)
+        if (_currentView == null)
         {
           return Guid.Empty;
         }
-        return currentView.Id;
+        return _currentView.Id;
       }
       set
       {
-        var searchViews = new List<DatabaseViewDefinition>();
-        
+        _foundView = false;
         foreach (DatabaseViewDefinition view in views)
         {
           // Do we have a Main View
           if (view.Id == value)
           {
-            currentView = view;
-            CurrentLevel = 0;
+            _currentView = view;
+            _currentLevel = 0;
             return;
           }
-          foreach (var subview in view.SubViews)
+          SearchSubViews(view, value);
+          if (_foundView)
           {
-            if (subview.Id == value)
-            {
-              currentView = subview;
-              CurrentLevel = 0;
-              return;
-            }
+            return;
           }
         }
 
-        if (views.Count > 0)
+        if (views.Count > 0 && !_foundView)
         {
-          currentView = views[0];
+          _currentView = views[0];
+          _currentLevel = 0;
         }
+      }
+    }
+
+    private void SearchSubViews(DatabaseViewDefinition view, Guid id)
+    {
+      foreach (var subview in view.SubViews)
+      {
+        if (subview.Id == id)
+        {
+          _currentView = subview;
+          _currentLevel = 0;
+          _foundView = true;
+          return;
+        }
+        SearchSubViews(subview, id);
       }
     }
 
     public virtual int CurrentViewIndex
     {
-      get { return views.IndexOf(currentView); }
+      get { return views.IndexOf(_currentView); }
     }
 
     public virtual string CurrentLevelWhere
     {
       get
       {
-        var level = currentView.Levels[CurrentLevel];
+        var level = _currentView.Levels[CurrentLevel];
         if (level == null)
         {
           return string.Empty;
