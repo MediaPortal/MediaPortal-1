@@ -37,7 +37,6 @@ namespace MediaPortal.GUI.DatabaseViews
     protected string selectedValue = "";
     protected int selectedId = -1;
     protected string defaultView = "List";
-    protected List<DatabaseFilterDefinition> _listFilters = new List<DatabaseFilterDefinition>();
 
     public DatabaseFilterLevel() { }
     
@@ -74,13 +73,6 @@ namespace MediaPortal.GUI.DatabaseViews
     {
       get { return skipLevel; }
       set { skipLevel = value; }
-    }
-   
-    [XmlElement("Filters")]
-    public List<DatabaseFilterDefinition> Filters
-    {
-      get { return _listFilters; }
-      set { _listFilters = value; }
     }
 
     public string SelectedValue

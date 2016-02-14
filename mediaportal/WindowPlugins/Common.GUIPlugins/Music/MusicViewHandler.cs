@@ -209,7 +209,6 @@ namespace MediaPortal.GUI.Music
       for (int i = 0; i < CurrentLevel; ++i)
       {
         BuildWhere(_currentView.Levels[i], ref _whereClause, i);
-        BuildFilter(_currentView.Levels[i].Filters, ref _filterClause);
         _previousSelections.Add(_currentView.Levels[i].Selection);
       }
       BuildOrder(_currentView.Levels[CurrentLevel], ref _orderClause);

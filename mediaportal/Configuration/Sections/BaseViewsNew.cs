@@ -39,7 +39,6 @@ namespace MediaPortal.Configuration.Sections
     #region Variables
 
     private DataTable _datasetLevels;
-    private List<List<DatabaseFilterDefinition>> _filters;
     private DatabaseViewDefinition _currentView;
     private List<DatabaseViewDefinition> _views;
     private bool _updating = false;
@@ -146,8 +145,6 @@ namespace MediaPortal.Configuration.Sections
         dgSortBy.Items.Add(strText);
       }
 
-      _filters = new List<List<DatabaseFilterDefinition>>();
-
       //Create the String array object, initialize the array with the column
       //names to be displayed
       arrColumnNames = new string[3];
@@ -245,7 +242,6 @@ namespace MediaPortal.Configuration.Sections
     private void FillViewGrid()
     {
       _datasetLevels.Clear();
-      _filters.Clear();
       if (_currentView == null)
       {
         return;
@@ -264,8 +260,6 @@ namespace MediaPortal.Configuration.Sections
               level.SkipLevel,
             }
           );
-
-        _filters.Add(level.Filters);
       }
       dataGrid.DataSource = _datasetLevels;
     }
@@ -298,16 +292,9 @@ namespace MediaPortal.Configuration.Sections
         level.SortBy = (string)row[2];
         level.SortAscending = (bool)row[3];
         level.SkipLevel = (bool)row[4];
-
-        if (i < _filters.Count)
-        {
-          level.Filters = _filters[i];
-        }
         _currentView.Levels.Add(level);
         i++;
       }
-
-      _filters.Clear();
     }
 
     /// <summary>
@@ -324,7 +311,7 @@ namespace MediaPortal.Configuration.Sections
 
       if (view.Filters.Count > 0 )
       {
-        node.BackColor = Color.Aquamarine;
+        node.BackColor = Color.Yellow;
       }
       else
       {
@@ -360,9 +347,6 @@ namespace MediaPortal.Configuration.Sections
       row[3] = true;
       row[4] = false;
       _datasetLevels.Rows.Add(row);
-
-      _filters.Clear();
-      _filters.Add(new List<DatabaseFilterDefinition>());
 
       btnDeleteView.Enabled = false;
       btnEditFilter.Enabled = false;
@@ -844,11 +828,6 @@ namespace MediaPortal.Configuration.Sections
                 _dragDropTargetIndex--;
 
               _datasetLevels.Rows.InsertAt(row, _dragDropTargetIndex);
-
-              // Handle also the filters, which are on this level
-              List<DatabaseFilterDefinition> filter = _filters[_dragDropSourceIndex];
-              _filters.RemoveAt(_dragDropSourceIndex);
-              _filters.Insert(_dragDropTargetIndex, filter);
             }
 
             dgV.ClearSelection();
