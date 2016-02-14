@@ -14,24 +14,25 @@
       System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
       System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(BaseViewsNew));
       this.groupBox = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.mpLabel1 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.btnCopyView = new MediaPortal.UserInterface.Controls.MPButton();
       this.btnDownView = new MediaPortal.UserInterface.Controls.MPButton();
       this.btnUpView = new MediaPortal.UserInterface.Controls.MPButton();
       this.dataGrid = new System.Windows.Forms.DataGridView();
-      this.dgSelection = new System.Windows.Forms.DataGridViewComboBoxColumn();
-      this.dgViewAs = new System.Windows.Forms.DataGridViewComboBoxColumn();
-      this.dgSortBy = new System.Windows.Forms.DataGridViewComboBoxColumn();
-      this.dgSortAsc = new System.Windows.Forms.DataGridViewCheckBoxColumn();
-      this.dgSkip = new System.Windows.Forms.DataGridViewCheckBoxColumn();
-      this.dgEditFilter = new System.Windows.Forms.DataGridViewButtonColumn();
       this.lblActionCodes = new MediaPortal.UserInterface.Controls.MPLabel();
       this.treeViewMenu = new System.Windows.Forms.TreeView();
       this.btnEditFilter = new MediaPortal.UserInterface.Controls.MPButton();
       this.btnSetDefaults = new MediaPortal.UserInterface.Controls.MPButton();
       this.btnAddView = new MediaPortal.UserInterface.Controls.MPButton();
       this.btnDeleteView = new MediaPortal.UserInterface.Controls.MPButton();
+      this.mpLabel1 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.toolTipViewButtons = new System.Windows.Forms.ToolTip(this.components);
+      this.dgSelection = new System.Windows.Forms.DataGridViewComboBoxColumn();
+      this.dgViewAs = new System.Windows.Forms.DataGridViewComboBoxColumn();
+      this.dgSortBy = new System.Windows.Forms.DataGridViewComboBoxColumn();
+      this.dgSortAsc = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+      this.dgSkip = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+      this.dgColAdd = new System.Windows.Forms.DataGridViewImageColumn();
+      this.dgColDelete = new System.Windows.Forms.DataGridViewImageColumn();
       this.groupBox.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.dataGrid)).BeginInit();
       this.SuspendLayout();
@@ -58,17 +59,6 @@
       this.groupBox.Size = new System.Drawing.Size(462, 408);
       this.groupBox.TabIndex = 0;
       this.groupBox.TabStop = false;
-      // 
-      // mpLabel1
-      // 
-      this.mpLabel1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-      this.mpLabel1.Location = new System.Drawing.Point(16, 227);
-      this.mpLabel1.Name = "mpLabel1";
-      this.mpLabel1.Size = new System.Drawing.Size(430, 29);
-      this.mpLabel1.TabIndex = 17;
-      this.mpLabel1.Text = "Drag the rows to change order. Drag on a Root node to create a subview";
-      this.mpLabel1.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
       // 
       // btnCopyView
       // 
@@ -135,7 +125,8 @@
             this.dgSortBy,
             this.dgSortAsc,
             this.dgSkip,
-            this.dgEditFilter});
+            this.dgColAdd,
+            this.dgColDelete});
       this.dataGrid.Location = new System.Drawing.Point(16, 254);
       this.dataGrid.MultiSelect = false;
       this.dataGrid.Name = "dataGrid";
@@ -148,56 +139,8 @@
       this.dataGrid.DataError += new System.Windows.Forms.DataGridViewDataErrorEventHandler(this.dataGrid_DataError);
       this.dataGrid.DragDrop += new System.Windows.Forms.DragEventHandler(this.dataGrid_OnDragDrop);
       this.dataGrid.DragOver += new System.Windows.Forms.DragEventHandler(this.dataGrid_OnDragOver);
-      this.dataGrid.KeyDown += new System.Windows.Forms.KeyEventHandler(this.dataGrid_KeyDown);
       this.dataGrid.MouseDown += new System.Windows.Forms.MouseEventHandler(this.dataGrid_OnMouseDown);
       this.dataGrid.MouseMove += new System.Windows.Forms.MouseEventHandler(this.dataGrid_OnMouseMove);
-      // 
-      // dgSelection
-      // 
-      this.dgSelection.HeaderText = "Selection";
-      this.dgSelection.Name = "dgSelection";
-      this.dgSelection.ToolTipText = "Select the field that should be retrieved from the database";
-      this.dgSelection.Width = 140;
-      // 
-      // dgViewAs
-      // 
-      this.dgViewAs.HeaderText = "Layout";
-      this.dgViewAs.Name = "dgViewAs";
-      this.dgViewAs.ToolTipText = "Select how the returned data should be shown";
-      this.dgViewAs.Width = 90;
-      // 
-      // dgSortBy
-      // 
-      this.dgSortBy.HeaderText = "SortBy";
-      this.dgSortBy.Name = "dgSortBy";
-      this.dgSortBy.ToolTipText = "Choose the sort field";
-      this.dgSortBy.Width = 90;
-      // 
-      // dgSortAsc
-      // 
-      this.dgSortAsc.FalseValue = "false";
-      this.dgSortAsc.HeaderText = "Asc";
-      this.dgSortAsc.Name = "dgSortAsc";
-      this.dgSortAsc.ToolTipText = "Chose sort direction";
-      this.dgSortAsc.TrueValue = "true";
-      this.dgSortAsc.Width = 30;
-      // 
-      // dgSkip
-      // 
-      this.dgSkip.FalseValue = "false";
-      this.dgSkip.HeaderText = "Skip";
-      this.dgSkip.Name = "dgSkip";
-      this.dgSkip.ToolTipText = "Don\'t display this level, if only 1 row is returned";
-      this.dgSkip.TrueValue = "true";
-      this.dgSkip.Width = 30;
-      // 
-      // dgEditFilter
-      // 
-      this.dgEditFilter.HeaderText = "Filter";
-      this.dgEditFilter.Name = "dgEditFilter";
-      this.dgEditFilter.Text = "Edit";
-      this.dgEditFilter.UseColumnTextForButtonValue = true;
-      this.dgEditFilter.Width = 50;
       // 
       // lblActionCodes
       // 
@@ -207,8 +150,7 @@
       this.lblActionCodes.Name = "lblActionCodes";
       this.lblActionCodes.Size = new System.Drawing.Size(430, 29);
       this.lblActionCodes.TabIndex = 12;
-      this.lblActionCodes.Text = "Use the \"Ins\" and \"Del\" key to insert and delete lines. Drag the rows to change o" +
-    "rder";
+      this.lblActionCodes.Text = "Drag & Drop the rows to change order";
       this.lblActionCodes.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
       // 
       // treeViewMenu
@@ -276,6 +218,73 @@
       this.btnDeleteView.UseVisualStyleBackColor = true;
       this.btnDeleteView.Click += new System.EventHandler(this.btnDelete_Click);
       // 
+      // mpLabel1
+      // 
+      this.mpLabel1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpLabel1.Location = new System.Drawing.Point(16, 227);
+      this.mpLabel1.Name = "mpLabel1";
+      this.mpLabel1.Size = new System.Drawing.Size(430, 29);
+      this.mpLabel1.TabIndex = 17;
+      this.mpLabel1.Text = "Drag the rows to change order. Drag on a Root node to create a subview";
+      this.mpLabel1.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+      // 
+      // dgSelection
+      // 
+      this.dgSelection.HeaderText = "Selection";
+      this.dgSelection.Name = "dgSelection";
+      this.dgSelection.ToolTipText = "Select the field that should be retrieved from the database";
+      this.dgSelection.Width = 140;
+      // 
+      // dgViewAs
+      // 
+      this.dgViewAs.HeaderText = "Layout";
+      this.dgViewAs.Name = "dgViewAs";
+      this.dgViewAs.ToolTipText = "Select how the returned data should be shown";
+      this.dgViewAs.Width = 90;
+      // 
+      // dgSortBy
+      // 
+      this.dgSortBy.HeaderText = "SortBy";
+      this.dgSortBy.Name = "dgSortBy";
+      this.dgSortBy.ToolTipText = "Choose the sort field";
+      this.dgSortBy.Width = 90;
+      // 
+      // dgSortAsc
+      // 
+      this.dgSortAsc.FalseValue = "false";
+      this.dgSortAsc.HeaderText = "Asc";
+      this.dgSortAsc.Name = "dgSortAsc";
+      this.dgSortAsc.ToolTipText = "Chose sort direction";
+      this.dgSortAsc.TrueValue = "true";
+      this.dgSortAsc.Width = 30;
+      // 
+      // dgSkip
+      // 
+      this.dgSkip.FalseValue = "false";
+      this.dgSkip.HeaderText = "Skip";
+      this.dgSkip.Name = "dgSkip";
+      this.dgSkip.ToolTipText = "Don\'t display this level, if only 1 row is returned";
+      this.dgSkip.TrueValue = "true";
+      this.dgSkip.Width = 30;
+      // 
+      // dgColAdd
+      // 
+      this.dgColAdd.HeaderText = "";
+      this.dgColAdd.Image = global::MediaPortal.Configuration.Properties.Resources.icon_add_view;
+      this.dgColAdd.Name = "dgColAdd";
+      this.dgColAdd.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+      this.dgColAdd.ToolTipText = "Add line after selected";
+      this.dgColAdd.Width = 25;
+      // 
+      // dgColDelete
+      // 
+      this.dgColDelete.HeaderText = "";
+      this.dgColDelete.Image = global::MediaPortal.Configuration.Properties.Resources.icon_delete_view;
+      this.dgColDelete.Name = "dgColDelete";
+      this.dgColDelete.ToolTipText = "Delete line";
+      this.dgColDelete.Width = 25;
+      // 
       // BaseViewsNew
       // 
       this.Controls.Add(this.groupBox);
@@ -296,17 +305,18 @@
     private System.Windows.Forms.TreeView treeViewMenu;
     private UserInterface.Controls.MPLabel lblActionCodes;
     private System.Windows.Forms.DataGridView dataGrid;
-    private System.Windows.Forms.DataGridViewComboBoxColumn dgSelection;
-    private System.Windows.Forms.DataGridViewComboBoxColumn dgViewAs;
-    private System.Windows.Forms.DataGridViewComboBoxColumn dgSortBy;
-    private System.Windows.Forms.DataGridViewCheckBoxColumn dgSortAsc;
-    private System.Windows.Forms.DataGridViewCheckBoxColumn dgSkip;
-    private System.Windows.Forms.DataGridViewButtonColumn dgEditFilter;
     private System.Windows.Forms.ToolTip toolTipViewButtons;
     private System.ComponentModel.IContainer components;
     private UserInterface.Controls.MPButton btnUpView;
     private UserInterface.Controls.MPButton btnCopyView;
     private UserInterface.Controls.MPButton btnDownView;
     private UserInterface.Controls.MPLabel mpLabel1;
+    private System.Windows.Forms.DataGridViewComboBoxColumn dgSelection;
+    private System.Windows.Forms.DataGridViewComboBoxColumn dgViewAs;
+    private System.Windows.Forms.DataGridViewComboBoxColumn dgSortBy;
+    private System.Windows.Forms.DataGridViewCheckBoxColumn dgSortAsc;
+    private System.Windows.Forms.DataGridViewCheckBoxColumn dgSkip;
+    private System.Windows.Forms.DataGridViewImageColumn dgColAdd;
+    private System.Windows.Forms.DataGridViewImageColumn dgColDelete;
   }
 }

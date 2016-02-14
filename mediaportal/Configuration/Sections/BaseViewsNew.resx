@@ -112,48 +112,50 @@
     <value>2.0</value>
   </resheader>
   <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <metadata name="toolTipViewButtons.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+  <metadata name="toolTipViewButtons.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
   </metadata>
-  <metadata name="dgSelection.UserAddedColumn" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+  <metadata name="dgSelection.UserAddedColumn" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
   </metadata>
-  <metadata name="dgViewAs.UserAddedColumn" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+  <metadata name="dgViewAs.UserAddedColumn" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
   </metadata>
-  <metadata name="dgSortBy.UserAddedColumn" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+  <metadata name="dgSortBy.UserAddedColumn" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
   </metadata>
-  <metadata name="dgSortAsc.UserAddedColumn" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+  <metadata name="dgSortAsc.UserAddedColumn" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
   </metadata>
-  <metadata name="dgSkip.UserAddedColumn" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+  <metadata name="dgSkip.UserAddedColumn" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
   </metadata>
-  <metadata name="dgEditFilter.UserAddedColumn" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+  <metadata name="dgColAdd.UserAddedColumn" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
   </metadata>
-  <assembly alias="System.Drawing" name="System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <metadata name="dgColDelete.UserAddedColumn" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="btnAddView.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
-        iVBORw0KGgoAAAANSUhEUgAAAA8AAAAPCAYAAAA71pVKAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
-        YQUAAAAJcEhZcwAADrwAAA68AZW8ckkAAAAadEVYdFNvZnR3YXJlAFBhaW50Lk5FVCB2My41LjEwMPRy
-        oQAAAklJREFUOE+d09tP0mEYB/Bn87aNq267K1drinQQZ4ppmmgGGAIeQFEL0WQ4p22mNU/DnOgUyzyk
-        RWqm04rSDmZpOZaIgPoLEc9mrbYu/APavpFuNpoXrIvvu/fms+fdu+9DAOh/Q+tbP2l54wctrHwjZnGL
-        HM5NyjLJoX6fuZOcd0oUjORiem6VwhOveg0i99p3ci59pTnXF5ph1mnKsULZw3L0LLXuRTushmV2xS9U
-        qPbGjNszbWGTrPNr9Mm2TB+n3azMoZQd2O1uhdHVjNRuMWzMGkuhqfLGNmaDLI5VMs8s04epRRozO1mK
-        ASmMi7fR6WxE21wdZJ2iP89mmd5MemO7c+NQxkAyFP0yyB9JIO9N8tylaJ/Xo8WuQ6O1HNJ2ARIN8Xah
-        nm8V6fm/BLWxnj8G0dtJ5qDyaQoeultw32VAB1OPFkcNmqyVqJu6Dt1kEcrH81EyehmFIwrkP5Mgrjpq
-        F7+esLDkfUno+NyAu7O1MMxUod5ShhpzMSrGNSgdVaHoZTo0JhlUg0Io+2IRUxK+iz3HAVmXCM32ajRY
-        buKW+RoqJ7QoG1Oj+JUS2ufJyB0SIesxH2k9kZB0hSJCy93DdEEXvR1fHWWNq4i0nr8RYY4p5aHgRSpy
-        n1xCdn88wvJO4UzOSYSqTiAkmwNuBvsv/rdhZwtDcGUgAem90ZA9CPOAoO39WrhfNf14ecFINvIgvsfF
-        xbYgnJYH+IxZXCUbgjYO+HeO41zTYXDEx3zHwWlsBCUeRaDAHwEJRxAo9PcZ+7xlvwGBM06fjfKXGQAA
-        AABJRU5ErkJggg==
+        iVBORw0KGgoAAAANSUhEUgAAAA8AAAAPCAYAAAA71pVKAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAO
+        vAAADrwBlbxySQAAABp0RVh0U29mdHdhcmUAUGFpbnQuTkVUIHYzLjUuMTAw9HKhAAACRElEQVQ4T53O
+        20/SYRzH8Wfzto2rbrsrV2uKdhBHimmaSAaYIh5+KEohmgzntM205mmaE51imYe0SM1kWlHawSwtxgI5
+        qb8QUTxlrbYu/APaPv3SzUZ1wbp4f/fs2fPa9yEA/juyvvWdrGx8I4u+L4Re2iIu9ybJN1JQvc3bqeCN
+        HCUThZidXyXRKZf9sXftK3Evfybznk/ETq8Ti8tHFOMUBpe79tKMq2Cd8wVxRSp/THuZbYubxLawRj44
+        Vsj7WS8rbyxzBw14u6D3dCBrIBUOeo0lU9f5Ywe9QayuVWK2r5B3liUyZXazZIZ06Jduos/dhu75Zkj7
+        xL++zTK+Mvljp3vjQK4hA7IRKagHElBDacw5HT0LWnQ6G9Bmq0Z6jxApOoFTpOXbxFr+D2FTImMZ/NpE
+        75c/zsR9byfuenTopVvQ6WpEu60WzZaraDCVoXq6GBWTF1E6IUPxEwmS6uN28csZK4saTkPvx1bcnmuC
+        zl6HFmsVGs3lqJlWo3JSibLnOVAbpVCOiiAfTkRCRfQuZsY+ab8YHc56tFqv44b5CmpnNKiaUqH8hRya
+        pxkoHBMj/yEf2YOxkPRzEaPh7GFyriF+W1AfZ0uqibWdvRZjTqjkoeRZFgofXYBiRICoohM4VXAcXOUx
+        RCrCwcll/8Z/dro0EpcMycgZiof0XhQDwrb/9e6vC6YgXlEEMvQ8pN7h4Hx3GE5SIQFjFkfOhrA7HPxb
+        R3Gm/SDCU48EjiOy2QhLOYxQYTBCkg8hVBQcMA4wkJ+BM06f5+uF3gAAAABJRU5ErkJggg==
 </value>
   </data>
 </root>

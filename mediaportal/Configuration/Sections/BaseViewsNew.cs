@@ -268,7 +268,6 @@ namespace MediaPortal.Configuration.Sections
         _filters.Add(level.Filters);
       }
       dataGrid.DataSource = _datasetLevels;
-      UpdateGridColors();
     }
 
     /// <summary>
@@ -330,27 +329,6 @@ namespace MediaPortal.Configuration.Sections
       else
       {
         node.BackColor = Color.White;
-      }
-    }
-
-    /// <summary>
-    /// Change the Color of the Edit Filter Button, if a filter exists
-    /// </summary>
-    private void UpdateGridColors()
-    {
-      for (int i = 0; i < _filters.Count; i++)
-      {
-        DataGridViewButtonCell c = (DataGridViewButtonCell)dataGrid.Rows[i].Cells[5];
-        if (_filters[i].Count > 0)
-        {
-          c.FlatStyle = FlatStyle.Popup;
-          c.Style.BackColor = Color.Aquamarine;
-        }
-        else
-        {
-          c.Style.BackColor = SystemColors.Control;
-          c.FlatStyle = FlatStyle.Standard;         
-        }
       }
     }
 
@@ -635,33 +613,36 @@ namespace MediaPortal.Configuration.Sections
     #region Filter Grid
 
     /// <summary>
-    /// Handle the click on the Button column
+    /// Handle the click on the Add / Delete Button columns
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="e"></param>
     private void dataGrid_CellClick(object sender, DataGridViewCellEventArgs e)
     {
       // Ignore clicks that are not on button cells.
-      if (e.RowIndex < 0 || e.ColumnIndex != dataGrid.Columns["dgEditFilter"].Index)
+      if (e.ColumnIndex < 5)
       {
         return;
       }
 
-      if (e.RowIndex > _currentView.Levels.Count)
+      switch (e.ColumnIndex)
       {
-        return;
+        case 5: // Add
+          DataRow row = _datasetLevels.NewRow();
+          row[0] = "";
+          row[1] = ViewsAs[0]; // Set default Value
+          row[2] = SortBy[0];  // Set default Value
+          row[3] = true;
+          row[4] = false;
+          _datasetLevels.Rows.InsertAt(row, e.RowIndex + 1);
+          break;
+
+        case 6: // Delete
+          _datasetLevels.Rows.RemoveAt(e.RowIndex);
+          break;
       }
-      
-      BaseViewsFilter filterForm = new BaseViewsFilter(this);
-      filterForm.Filter = _filters[e.RowIndex];
-      if (filterForm.ShowDialog() == DialogResult.OK)
-      {
-        _filters[e.RowIndex] = filterForm.Filter;
-        treeViewMenu.SelectedNode.Tag = _currentView;
-        UpdateGridColors();
-        filterForm.Dispose();
-        _settingsChanged = true;
-      }
+
+      _settingsChanged = true;
     }
 
     /// <summary>
@@ -701,47 +682,6 @@ namespace MediaPortal.Configuration.Sections
         dataGrid.CommitEdit(DataGridViewDataErrorContexts.Commit);
       }
       _settingsChanged = true;
-    }
-
-    /// <summary>
-    /// Handle the Keypress for the Filter Datagrid
-    /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="e"></param>
-    private void dataGrid_KeyDown(object sender, KeyEventArgs e)
-    {
-      int rowSelected = -1;
-      if (dataGrid.CurrentRow != null)
-      {
-        rowSelected = dataGrid.CurrentRow.Index;
-      }
-
-      switch (e.KeyCode)
-      {
-        case System.Windows.Forms.Keys.Insert:
-          DataRow row = _datasetLevels.NewRow();
-          row[0] = "";
-          row[1] = ViewsAs[0]; // Set default Value
-          row[2] = SortBy[0];  // Set default Value
-          row[3] = true;
-          row[4] = false;
-          if (rowSelected == -1)
-          {
-            rowSelected = 0;
-          }
-          _datasetLevels.Rows.InsertAt(row, rowSelected + 1);
-          e.Handled = true;
-          _settingsChanged = true;
-          break;
-        case System.Windows.Forms.Keys.Delete:
-          if (rowSelected > -1)
-          {
-            _datasetLevels.Rows.RemoveAt(rowSelected);
-          }
-          e.Handled = true;
-          _settingsChanged = true;
-          break;
-      }
     }
 
     #endregion

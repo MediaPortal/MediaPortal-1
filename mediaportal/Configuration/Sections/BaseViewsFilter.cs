@@ -146,36 +146,28 @@ namespace MediaPortal.Configuration.Sections
     #region Grid
 
     /// <summary>
-    /// Handle the Keypress for the Filter Datagrid
+    /// Handle the click on the Add / Delete Button columns
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="e"></param>
-    private void dataGrid_KeyDown(object sender, KeyEventArgs e)
+    private void dataGrid_CellClick(object sender, DataGridViewCellEventArgs e)
     {
-      int rowSelected = -1;
-      if (dataGrid.CurrentRow != null)
+      // Ignore clicks that are not on button cells.
+      if (e.ColumnIndex < 4)
       {
-        rowSelected = dataGrid.CurrentRow.Index;
+        return;
       }
 
-      switch (e.KeyCode)
+      switch (e.ColumnIndex)
       {
-        case System.Windows.Forms.Keys.Insert:
+        case 4: // Add
           DataRow row = _datasetFilters.NewRow();
           row[0] = row[1] = row[2] = row[3] = "";
-          if (rowSelected == -1)
-          {
-            rowSelected = 0;
-          }
-          _datasetFilters.Rows.InsertAt(row, rowSelected + 1);
-          e.Handled = true;
+          _datasetFilters.Rows.InsertAt(row, e.RowIndex + 1);
           break;
-        case System.Windows.Forms.Keys.Delete:
-          if (rowSelected > -1)
-          {
-            _datasetFilters.Rows.RemoveAt(rowSelected);
-          }
-          e.Handled = true;
+
+        case 5: // Delete
+          _datasetFilters.Rows.RemoveAt(e.RowIndex);
           break;
       }
     }

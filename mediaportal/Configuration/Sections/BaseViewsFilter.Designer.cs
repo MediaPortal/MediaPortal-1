@@ -30,25 +30,25 @@
     {
       this.mpGroupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.dataGrid = new System.Windows.Forms.DataGridView();
+      this.btSave = new MediaPortal.UserInterface.Controls.MPButton();
+      this.btCancel = new MediaPortal.UserInterface.Controls.MPButton();
       this.dgColField = new System.Windows.Forms.DataGridViewComboBoxColumn();
       this.dgColOperator = new System.Windows.Forms.DataGridViewComboBoxColumn();
       this.dgColSelectionValue = new System.Windows.Forms.DataGridViewTextBoxColumn();
       this.dgColAndOr = new System.Windows.Forms.DataGridViewComboBoxColumn();
-      this.btSave = new MediaPortal.UserInterface.Controls.MPButton();
-      this.btCancel = new MediaPortal.UserInterface.Controls.MPButton();
-      this.lblActionCodes = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.dgColAdd = new System.Windows.Forms.DataGridViewImageColumn();
+      this.dgColDelete = new System.Windows.Forms.DataGridViewImageColumn();
       this.mpGroupBox1.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.dataGrid)).BeginInit();
       this.SuspendLayout();
       // 
       // mpGroupBox1
       // 
-      this.mpGroupBox1.Controls.Add(this.lblActionCodes);
       this.mpGroupBox1.Controls.Add(this.dataGrid);
       this.mpGroupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.mpGroupBox1.Location = new System.Drawing.Point(17, 22);
       this.mpGroupBox1.Name = "mpGroupBox1";
-      this.mpGroupBox1.Size = new System.Drawing.Size(743, 263);
+      this.mpGroupBox1.Size = new System.Drawing.Size(725, 263);
       this.mpGroupBox1.TabIndex = 0;
       this.mpGroupBox1.TabStop = false;
       this.mpGroupBox1.Text = "Filter Definition";
@@ -65,13 +65,36 @@
             this.dgColField,
             this.dgColOperator,
             this.dgColSelectionValue,
-            this.dgColAndOr});
+            this.dgColAndOr,
+            this.dgColAdd,
+            this.dgColDelete});
       this.dataGrid.Location = new System.Drawing.Point(22, 30);
       this.dataGrid.Name = "dataGrid";
       this.dataGrid.RowHeadersVisible = false;
-      this.dataGrid.Size = new System.Drawing.Size(685, 188);
+      this.dataGrid.Size = new System.Drawing.Size(685, 214);
       this.dataGrid.TabIndex = 2;
-      this.dataGrid.KeyDown += new System.Windows.Forms.KeyEventHandler(this.dataGrid_KeyDown);
+      this.dataGrid.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGrid_CellClick);
+      // 
+      // btSave
+      // 
+      this.btSave.Location = new System.Drawing.Point(42, 292);
+      this.btSave.Name = "btSave";
+      this.btSave.Size = new System.Drawing.Size(75, 23);
+      this.btSave.TabIndex = 1;
+      this.btSave.Text = "Save";
+      this.btSave.UseVisualStyleBackColor = true;
+      this.btSave.Click += new System.EventHandler(this.btSave_Click);
+      // 
+      // btCancel
+      // 
+      this.btCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+      this.btCancel.Location = new System.Drawing.Point(150, 291);
+      this.btCancel.Name = "btCancel";
+      this.btCancel.Size = new System.Drawing.Size(75, 23);
+      this.btCancel.TabIndex = 2;
+      this.btCancel.Text = "Cancel";
+      this.btCancel.UseVisualStyleBackColor = true;
+      this.btCancel.Click += new System.EventHandler(this.btCancel_Click);
       // 
       // dgColField
       // 
@@ -104,7 +127,7 @@
       // 
       this.dgColSelectionValue.HeaderText = "Selection Value";
       this.dgColSelectionValue.Name = "dgColSelectionValue";
-      this.dgColSelectionValue.Width = 400;
+      this.dgColSelectionValue.Width = 350;
       // 
       // dgColAndOr
       // 
@@ -116,44 +139,28 @@
       this.dgColAndOr.Name = "dgColAndOr";
       this.dgColAndOr.Width = 50;
       // 
-      // btSave
+      // dgColAdd
       // 
-      this.btSave.Location = new System.Drawing.Point(42, 325);
-      this.btSave.Name = "btSave";
-      this.btSave.Size = new System.Drawing.Size(75, 23);
-      this.btSave.TabIndex = 1;
-      this.btSave.Text = "Save";
-      this.btSave.UseVisualStyleBackColor = true;
-      this.btSave.Click += new System.EventHandler(this.btSave_Click);
+      this.dgColAdd.HeaderText = "";
+      this.dgColAdd.Image = global::MediaPortal.Configuration.Properties.Resources.icon_add_view;
+      this.dgColAdd.Name = "dgColAdd";
+      this.dgColAdd.ToolTipText = "Add line after selected line";
+      this.dgColAdd.Width = 25;
       // 
-      // btCancel
+      // dgColDelete
       // 
-      this.btCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-      this.btCancel.Location = new System.Drawing.Point(150, 324);
-      this.btCancel.Name = "btCancel";
-      this.btCancel.Size = new System.Drawing.Size(75, 23);
-      this.btCancel.TabIndex = 2;
-      this.btCancel.Text = "Cancel";
-      this.btCancel.UseVisualStyleBackColor = true;
-      this.btCancel.Click += new System.EventHandler(this.btCancel_Click);
-      // 
-      // lblActionCodes
-      // 
-      this.lblActionCodes.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-      this.lblActionCodes.Location = new System.Drawing.Point(19, 221);
-      this.lblActionCodes.Name = "lblActionCodes";
-      this.lblActionCodes.Size = new System.Drawing.Size(430, 29);
-      this.lblActionCodes.TabIndex = 13;
-      this.lblActionCodes.Text = "Use the \"Ins\" and \"Del\" key to insert and delete lines.";
-      this.lblActionCodes.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+      this.dgColDelete.HeaderText = "";
+      this.dgColDelete.Image = global::MediaPortal.Configuration.Properties.Resources.icon_delete_view;
+      this.dgColDelete.Name = "dgColDelete";
+      this.dgColDelete.ToolTipText = "Delete line";
+      this.dgColDelete.Width = 25;
       // 
       // BaseViewsFilter
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
       this.CancelButton = this.btCancel;
-      this.ClientSize = new System.Drawing.Size(784, 379);
+      this.ClientSize = new System.Drawing.Size(762, 331);
       this.ControlBox = false;
       this.Controls.Add(this.btCancel);
       this.Controls.Add(this.btSave);
@@ -179,6 +186,7 @@
     private System.Windows.Forms.DataGridViewComboBoxColumn dgColOperator;
     private System.Windows.Forms.DataGridViewTextBoxColumn dgColSelectionValue;
     private System.Windows.Forms.DataGridViewComboBoxColumn dgColAndOr;
-    private UserInterface.Controls.MPLabel lblActionCodes;
+    private System.Windows.Forms.DataGridViewImageColumn dgColAdd;
+    private System.Windows.Forms.DataGridViewImageColumn dgColDelete;
   }
 }
