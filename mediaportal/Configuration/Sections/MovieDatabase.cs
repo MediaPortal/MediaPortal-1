@@ -1950,6 +1950,18 @@ namespace MediaPortal.Configuration.Sections
           }
         }
         
+        foreach (ListViewItem item in lvMovieCollections.Items)
+        {
+          if (movie.MovieCollection  == string.Empty)
+          {
+            movie.MovieCollection  = item.Text;
+          }
+          else
+          {
+            movie.MovieCollection  += " / " + item.Text;
+          }
+        }
+        
         foreach (ListViewItem item in listViewMovieActors.Items)
         {
           string actor = item.SubItems[0].Text;
