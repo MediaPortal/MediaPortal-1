@@ -1420,8 +1420,8 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
         Marshal.WriteByte(_generalBuffer, 0, (byte)DeLnbPower.Off);
       }
       hr = _propertySet.Set(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.LnbPower,
-        _generalBuffer, sizeof(Byte),
-        _generalBuffer, sizeof(Byte)
+        _generalBuffer, sizeof(byte),
+        _generalBuffer, sizeof(byte)
       );
       if (hr == (int)NativeMethods.HResult.S_OK)
       {

@@ -400,7 +400,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DvbWorld
             int code = Marshal.ReadInt32(_remoteControlBuffer, 0);
             if (code != 0xff && code != unchecked((int)0xffffffee))
             {
-              this.LogDebug("DVB World: remote control keypress, code = {0:x8}", code);
+              this.LogDebug("DVB World: remote control keypress, code = 0x{0:x8}", code);
             }
           }
         }

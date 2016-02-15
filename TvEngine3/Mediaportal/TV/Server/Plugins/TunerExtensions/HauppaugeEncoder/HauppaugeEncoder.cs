@@ -34,7 +34,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeEncoder
 {
   /// <summary>
   /// A class that implements encoder control for newer Hauppauge capture devices based on ViXS
-  /// encoder chips. At present this includes the Colossus and HD-PVR 2 variants. Note HD-PVR 1 is
+  /// encoder chips. At present this includes the Colossus and HD-PVR 2 variants. Note HD-PVR 1
   /// supports standard Microsoft encoder interfaces.
   /// </summary>
   public class HauppaugeEncoder : BaseTunerExtension, IDisposable, IEncoder

@@ -115,7 +115,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Kworld
       data.Property.Set = BDA_EXTENSION_PROPERTY_SET;
       data.Property.Id = (int)property;
       data.Property.Flags = propertyFlag;
-      data.Operation = (int)operation;
+      data.Operation = operation;
       data.Address = address;
       data.Value = value;
       Marshal.StructureToPtr(data, _buffer, false);

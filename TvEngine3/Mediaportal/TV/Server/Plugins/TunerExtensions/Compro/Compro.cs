@@ -201,7 +201,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Compro
 
       hr = _propertySet.Set(BDA_EXTENSION_DISEQC_PROPERTY_SET, (int)BdaExtensionDiseqcProperty.TonePower,
         IntPtr.Zero, 0,
-        _commandBuffer, sizeof(Byte)
+        _commandBuffer, sizeof(byte)
       );
       if (hr == (int)NativeMethods.HResult.S_OK)
       {
