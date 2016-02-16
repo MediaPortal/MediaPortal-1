@@ -36,6 +36,7 @@ using MediaPortal.Configuration;
 using MediaPortal.Database;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
+using MediaPortal.GUI.View;
 using MediaPortal.Player;
 using MediaPortal.Playlists;
 using MediaPortal.Services;
@@ -430,13 +431,13 @@ namespace MediaPortal.GUI.Video
     protected override void SaveSettings()
     {
       base.SaveSettings();
-      
-      using (Profile.Settings xmlwriter = new MPSettings())
-      {
-        xmlwriter.SetValue(SerializeName, "layout", (int) currentLayout);
-        xmlwriter.SetValueAsBool(SerializeName, "sortasc", m_bSortAscending);
+
+        using (Profile.Settings xmlwriter = new MPSettings())
+        {
+          xmlwriter.SetValue(SerializeName, "layout", (int)currentLayout);
+          xmlwriter.SetValueAsBool(SerializeName, "sortasc", m_bSortAscending);
+        }
       }
-    }
 
     #endregion
 
@@ -504,7 +505,61 @@ namespace MediaPortal.GUI.Video
       }
 
       base.LoadSettings();
-      
+      bool result = false;
+
+      if (_loadParameter != null && _loadParameter != string.Empty)
+      {
+        foreach (GUIListItem item in VirtualDirectories.Instance.Movies.GetRootExt())
+        {
+          if (item.Label.ToUpper() == _loadParameter.ToUpper())
+          {
+            _currentFolder = item.Path;
+            result = true;
+            base.SetView(0);
+          }
+        }
+        if (!result)
+        {
+          if (_loadParameter == "134")
+          {
+            base.SetView(0);
+            Log.Debug("GUIVideoFiles.OnPageLoad: selectedView.Name = share");
+          }
+          else
+          {
+            try
+            {
+              string selectedView;
+
+              try
+              {
+                selectedView = GUILocalizeStrings.Get(Convert.ToInt32(_loadParameter));
+              }
+              catch
+              {
+                selectedView = _loadParameter;
+              }
+
+              for (int i = 0; i < handler.Views.Count; i++)
+              {
+                if (handler.Views[i].LocalizedName == selectedView)
+                {
+                  Log.Debug("GUIVideoFiles.OnPageLoad: selectedView.Name = {0}", handler.Views[i].LocalizedName);
+
+                  base.SetView(i + 1);
+
+                  break;
+                }
+              }
+            }
+            catch (Exception ex)
+            {
+              Log.Error("GUIVideoFiles.OnPageLoad: Exception {0}", ex);
+            }
+          }
+        }
+      }
+
       // This can't be in LoadSettings beacuse settings are loaded on MP start and it will disable SortTitle setting always
       using (Profile.Settings xmlreader = new Profile.MPSettings())
       {
