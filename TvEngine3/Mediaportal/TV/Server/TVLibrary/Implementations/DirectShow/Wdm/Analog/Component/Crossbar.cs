@@ -20,6 +20,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using DirectShowLib;
 using Mediaportal.TV.Server.Common.Types.Enum;
 using Mediaportal.TV.Server.TVLibrary.Implementations.Helper;
@@ -27,7 +28,6 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces.Channel;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channel;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Exception;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
-using MediaType = Mediaportal.TV.Server.Common.Types.Enum.MediaType;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.Component
 {
@@ -36,6 +36,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
   /// </summary>
   internal class Crossbar
   {
+    #region constants
+
+    private static readonly Regex DEVICE_ID_HAUPPAUGE_COLOSSUS = new Regex("pci#ven_1745&dev_3000&subsys_([0-9a-f]{8})");
+    private static readonly Regex DEVICE_ID_HAUPPAUGE_HDPVR2 = new Regex("usb#vid_2040&pid_([0-9a-f]{4})");
+
+    #endregion
+
     #region variables
 
     /// <summary>
@@ -261,10 +268,16 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
         }
       }
 
+      bool isHauppaugeColossus = false;
+      bool isHauppaugeHdPvr2 = false;
+      bool isHauppaugeHdPvr60 = false;
+      IsHauppaugeProduct(_device, out isHauppaugeColossus, out isHauppaugeHdPvr2, out isHauppaugeHdPvr60);
+
       int countAudioLine = 0;
       int countAudioSpdif = 0;
       int countAudioAuxiliary = 0;
       int countAudioAes = 0;
+      int countAudioHdmi = 0;
       int countVideoComposite = 0;
       int countVideoSvideo = 0;
       int countVideoYryby = 0;
@@ -317,6 +330,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
             }
             break;
           case PhysicalConnectorType.Audio_SPDIFDigital:
+            if (countAudioHdmi == 0 && (isHauppaugeColossus || isHauppaugeHdPvr60))
+            {
+              countAudioHdmi = 1;
+              _pinMapAudio.Add(CaptureSourceAudio.Hdmi1, i);
+              break;
+            }
+
             countAudioSpdif++;
             switch (countAudioSpdif)
             {
@@ -353,17 +373,24 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
             }
             break;
           case PhysicalConnectorType.Audio_AESDigital:
+            if (isHauppaugeHdPvr2 && countAudioHdmi == 0)
+            {
+              countAudioHdmi++;
+              _pinMapAudio.Add(CaptureSourceAudio.Hdmi1, i);
+              break;
+            }
+
             countAudioAes++;
             switch (countAudioAes)
             {
               case 1:
-                _pinMapAudio.Add(CaptureSourceAudio.Aes1, i);
+                _pinMapAudio.Add(CaptureSourceAudio.AesEbu1, i);
                 break;
               case 2:
-                _pinMapAudio.Add(CaptureSourceAudio.Aes2, i);
+                _pinMapAudio.Add(CaptureSourceAudio.AesEbu2, i);
                 break;
               case 3:
-                _pinMapAudio.Add(CaptureSourceAudio.Aes3, i);
+                _pinMapAudio.Add(CaptureSourceAudio.AesEbu3, i);
                 break;
               default:
                 this.LogWarn("WDM analog crossbar: {0} AES audio inputs detected, not supported", countAudioAes);
@@ -455,6 +482,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
             }
             break;
           case PhysicalConnectorType.Video_SerialDigital:
+          case PhysicalConnectorType.Video_ParallelDigital:
+            if (connectorType == PhysicalConnectorType.Video_ParallelDigital && !isHauppaugeHdPvr60)
+            {
+              this.LogWarn("WDM analog crossbar: unsupported input type {0} detected", connectorType);
+              break;
+            }
+
             countVideoHdmi++;
             switch (countVideoHdmi)
             {
@@ -471,7 +505,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
                 _pinMapVideoDefaultAudio.Add(CaptureSourceVideo.Hdmi3, relatedPinIndex);
                 break;
               default:
-                this.LogWarn("WDM analog crossbar: {0} HDMI video inputs detected, not supported", countVideoHdmi);
+                this.LogWarn("WDM analog crossbar: {0} serial digital (HDMI) video inputs detected, not supported", countVideoHdmi);
                 break;
             }
             break;
@@ -591,6 +625,55 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
         // Do NOT Dispose() or set the crossbar device to NULL. We would be
         // unable to reload. The tuner instance that instanciated this crossbar
         // is responsible for disposing it.
+      }
+    }
+
+    private static void IsHauppaugeProduct(DsDevice device, out bool isHauppaugeColossus, out bool isHauppaugeHdPvr2, out bool isHauppaugeHdPvr60)
+    {
+      isHauppaugeColossus = false;
+      isHauppaugeHdPvr2 = false;
+      isHauppaugeHdPvr60 = false;
+      if (device == null || string.IsNullOrEmpty(device.DevicePath))
+      {
+        return;
+      }
+
+      string devicePath = device.DevicePath.ToLowerInvariant();
+      if (devicePath.Contains("usb#vid_048d&pid_9517") || devicePath.Contains("usb#vid_2040&pid_f810"))
+      {
+        isHauppaugeHdPvr60 = true;
+        return;
+      }
+
+      Match m = DEVICE_ID_HAUPPAUGE_COLOSSUS.Match(devicePath);
+      if (m.Success)
+      {
+        string subsys = m.Groups[1].Captures[0].Value;
+        if (
+          subsys.Equals("d1000070") || subsys.Equals("d1010070") ||
+          subsys.Equals("d1800070") || subsys.Equals("d1810070") ||
+          subsys.Equals("30001745")
+        )
+        {
+          isHauppaugeColossus = true;
+        }
+        return;
+      }
+
+      m = DEVICE_ID_HAUPPAUGE_HDPVR2.Match(devicePath);
+      if (m.Success)
+      {
+        string pid = m.Groups[1].Captures[0].Value;
+        if (
+          pid.Equals("e500") || pid.Equals("e501") || pid.Equals("e502") ||
+          pid.Equals("e504") || pid.Equals("e505") || pid.Equals("e50a") ||
+          pid.Equals("e514") || pid.Equals("e515") ||
+          pid.Equals("e524") || pid.Equals("e525") ||
+          pid.Equals("e52c") || pid.Equals("e554") || pid.Equals("e585")
+        )
+        {
+          isHauppaugeHdPvr2 = true;
+        }
       }
     }
   }

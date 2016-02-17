@@ -92,19 +92,34 @@ namespace Mediaportal.TV.Server.Common.Types.Enum
     [Description("S/PDIF #3")]
     Spdif3 = 0x0800,
     /// <summary>
-    /// AES input #1.
+    /// AES/EBU input #1.
     /// </summary>
-    [Description("AES #1")]
-    Aes1 = 0x1000,
+    [Description("AES/EBU #1")]
+    AesEbu1 = 0x1000,
     /// <summary>
-    /// AES input #2.
+    /// AES/EBU input #2.
     /// </summary>
-    [Description("AES #2")]
-    Aes2 = 0x2000,
+    [Description("AES/EBU #2")]
+    AesEbu2 = 0x2000,
     /// <summary>
-    /// AES input #3.
+    /// AES/EBU input #3.
     /// </summary>
-    [Description("AES #3")]
-    Aes3 = 0x4000
+    [Description("AES/EBU #3")]
+    AesEbu3 = 0x4000,
+    /// <summary>
+    /// HDMI input #1.
+    /// </summary>
+    [Description("HDMI #1")]
+    Hdmi1 = 0x8000,
+    /// <summary>
+    /// HDMI input #2.
+    /// </summary>
+    [Description("HDMI #2")]
+    Hdmi2 = 0x010000,
+    /// <summary>
+    /// HDMI input #3.
+    /// </summary>
+    [Description("HDMI #3")]
+    Hdmi3 = 0x020000
   }
 }
