@@ -98,6 +98,10 @@
     <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Interop.WUApiLib">
+      <HintPath>..\..\Common-MP-TVE3\Common.Utils\obj\x86\Debug\Interop.WUApiLib.dll</HintPath>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </Reference>
     <Reference Include="log4net">
       <HintPath>..\MediaPortal.Base\log4net.dll</HintPath>
     </Reference>

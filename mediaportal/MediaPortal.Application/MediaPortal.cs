@@ -724,41 +724,6 @@ public class MediaPortalApp : D3D, IRender
       // Check for unsupported operating systems
       OSPrerequisites.OSPrerequisites.OsCheck(false);
 
-      // Log last install of WindowsUpdate patches
-      string lastSuccessTime = "NEVER !!!";
-      UIntPtr res;
-
-      int options = Convert.ToInt32(Reg.RegistryRights.ReadKey);
-      if (OSInfo.OSInfo.Xp64OrLater())
-      {
-        options = options | Convert.ToInt32(Reg.RegWow64Options.KEY_WOW64_64KEY);
-      }
-      var rKey = new UIntPtr(Convert.ToUInt32(Reg.RegistryRoot.HKLM));
-      int lastError;
-      int retval = Reg.RegOpenKeyEx(rKey, "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\WindowsUpdate\\Auto Update\\Results\\Install", 0, options, out res);
-      if (retval == 0)
-      {
-        uint tKey;
-        uint lKey = 100;
-        var sKey = new StringBuilder((int)lKey);
-        retval = Reg.RegQueryValueEx(res, "LastSuccessTime", 0, out tKey, sKey, ref lKey);
-        if (retval == 0)
-        {
-          lastSuccessTime = sKey.ToString();
-        }
-        else
-        {
-          lastError = Marshal.GetLastWin32Error();
-          Log.Debug("RegQueryValueEx retval=<{0}>, lastError=<{1}>", retval, lastError);
-        }
-      }
-      else
-      {
-        lastError = Marshal.GetLastWin32Error();
-        Log.Debug("RegOpenKeyEx retval=<{0}>, lastError=<{1}>", retval, lastError);
-      }
-      Log.Info("Main: Last install from WindowsUpdate is dated {0}", lastSuccessTime);
-
       Log.Debug("Disabling process window ghosting");
       DisableProcessWindowsGhosting();
 
