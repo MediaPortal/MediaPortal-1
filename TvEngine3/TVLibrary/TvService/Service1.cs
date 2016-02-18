@@ -915,6 +915,8 @@ namespace TvService
           FileVersionInfo versionInfo = FileVersionInfo.GetVersionInfo(Application.ExecutablePath);
           Log.WriteFile("TVService v" + versionInfo.FileVersion + " is starting up on " +
             OSInfo.OSInfo.GetOSDisplayVersion());
+          Log.Info(OSInfo.OSInfo.GetLastInstalledWindowsUpdateTimestampAsString());
+          Log.Info("Windows Media Player: [{0}]", OSInfo.OSInfo.GetWMPVersion());
 
           // Warn about unsupported operating systems
           OSPrerequisites.OSPrerequisites.OsCheck(false);
