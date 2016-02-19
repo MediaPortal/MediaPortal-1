@@ -1514,9 +1514,9 @@ namespace MediaPortal.Player
         {
           if (currentMediaInfoFilePlaying != strFile)
           {
-          _mediaInfo = new MediaInfoWrapper(strFile);
+            _mediaInfo = new MediaInfoWrapper(strFile);
             currentMediaInfoFilePlaying = strFile;
-        }
+          }
         }
 
         // back to previous Windows if we are only in video fullscreen to do a proper release when next item is music only
