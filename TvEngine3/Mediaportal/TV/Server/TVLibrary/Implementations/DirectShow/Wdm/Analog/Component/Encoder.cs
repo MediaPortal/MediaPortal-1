@@ -152,6 +152,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
     #region settings
 
     /// <summary>
+    /// Enable or disable vertical blanking interval data handling.
+    /// </summary>
+    private bool _isVbiEnabled = true;
+
+    /// <summary>
     /// The preferred software video encoder.
     /// </summary>
     private VideoEncoder _encoderVideo = null;
@@ -190,8 +195,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
     /// <summary>
     /// Initialise a new instance of the <see cref="Encoder"/> class.
     /// </summary>
-    public Encoder()
+    /// <param name="isVbiEnabled"><c>True</c> if the vertical blanking interval data source should be detected and connected.</param>
+    public Encoder(bool isVbiEnabled = true)
     {
+      _isVbiEnabled = isVbiEnabled;
+
       if (MEDIA_TYPES_CAPTURE.Count != 0)
       {
         return;
@@ -287,7 +295,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
         // Add a VBI splitter/decoder for teletext and
         // closed caption support.
         // ------------------------------------------------
-        if (capture.VideoFilter != null)
+        if (_isVbiEnabled && capture.VideoFilter != null)
         {
           IPin vbiPin = null;
           if (FindPinByCategoryOrMediaType(capture.VideoFilter, PinCategory.VBI, MEDIA_TYPES_VBI, out vbiPin))

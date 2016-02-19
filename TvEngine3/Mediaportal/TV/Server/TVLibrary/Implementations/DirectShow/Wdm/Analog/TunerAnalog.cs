@@ -36,6 +36,7 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension;
 using MediaPortal.Common.Utils.ExtensionMethods;
 using AnalogVideoStandard = Mediaportal.TV.Server.Common.Types.Enum.AnalogVideoStandard;
 using MediaType = Mediaportal.TV.Server.Common.Types.Enum.MediaType;
+using Regex = System.Text.RegularExpressions.Regex;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog
 {
@@ -45,6 +46,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog
   /// </summary>
   internal class TunerAnalog : TunerDirectShowMpeg2TsBase
   {
+    #region constants
+
+    private static readonly Regex HAUPPAUGE_HVR22XX_DEVICE_ID = new Regex("pci#ven_1131&dev_7164&subsys_[0-9a-f]{4}0070");
+
+    #endregion
+
     #region variables
 
     private Tuner _tuner = null;
@@ -90,7 +97,18 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog
       {
         _capture = new Capture(device);
       }
-      _encoder = new Encoder();
+
+      // Hauppauge currently have a bug in the driver for their HVR-22**
+      // products. The bug causes a BSOD when the capture filter's VBI output
+      // pin is connected and the tuner transitions from being locked onto
+      // signal to unlocked. Due to the nature of the pre-conditions, the bug
+      // mainly affects scanning:
+      // http://forum.team-mediaportal.com/threads/hvr-2250-scanning-channels-causes-crash.102858/
+      // http://forum.team-mediaportal.com/threads/bsod-when-scanning-channels-analog-cable-hvr-2255-f111.132566/
+      //
+      // However it can potentially hit at any time. We work-around the bug by
+      // not connecting the capture filter VBI output pin for HVR-22** tuners.
+      _encoder = new Encoder(!HAUPPAUGE_HVR22XX_DEVICE_ID.Match(device.DevicePath.ToLowerInvariant()).Success);
     }
 
     #endregion
