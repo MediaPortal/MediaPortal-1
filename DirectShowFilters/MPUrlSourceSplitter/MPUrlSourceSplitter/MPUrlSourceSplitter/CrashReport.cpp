@@ -204,70 +204,52 @@ HRESULT CCrashReport::ChangeParameters(CParameterCollection *configuration)
     CHECK_CONDITION_HRESULT(result, this->crashReporting->InitCrashRpt(this->applicationInfo, this->handlerSettings, TRUE), result, E_CANNOT_INITIALIZE_CRASH_REPORTING);
 
     // remove dump files out of retain period
+    wchar_t *existingDumpFilePattern = GetCrashFilePath(L"*.dmp");
+    CHECK_POINTER_HRESULT(result, existingDumpFilePattern, result, E_OUTOFMEMORY);
 
-    for (unsigned int i = 0; (SUCCEEDED(result) && (i < staticLogger->GetLoggerContexts()->Count())); i++)
+    if (SUCCEEDED(result))
     {
-      CLoggerContext *context = staticLogger->GetLoggerContexts()->GetItem(i);
+      WIN32_FIND_DATA existingDumpFileInfo;
 
-      if (context->GetLoggerFile() != NULL)
+      HANDLE existingDumpFileHandle = FindFirstFile(existingDumpFilePattern, &existingDumpFileInfo);
+
+      if (existingDumpFileHandle != INVALID_HANDLE_VALUE)
       {
-        wchar_t *contextLogFilePath = Duplicate(context->GetLoggerFile()->GetLogFile());
-        CHECK_POINTER_HRESULT(result, contextLogFilePath, result, E_OUTOFMEMORY);
+        // last write file time is in UTC
+        // current system time is in UTC, decrease current system time by retain days
+        SYSTEMTIME currentSystemTime;
+        FILETIME currentSystemFileTime;
 
-        if (SUCCEEDED(result))
+        GetSystemTime(&currentSystemTime);
+        CHECK_CONDITION_HRESULT(result, SystemTimeToFileTime(&currentSystemTime, &currentSystemFileTime) != 0, result, E_FAIL);
+
+        ULARGE_INTEGER retainFileTime;
+        retainFileTime.LowPart = currentSystemFileTime.dwLowDateTime;
+        retainFileTime.HighPart = currentSystemFileTime.dwHighDateTime;
+
+        retainFileTime.QuadPart -= ((ULONGLONG)HUNDRED_NANOSECONDS_IN_DAY) * ((ULONGLONG)this->maximumRetainDays);
+
+        do
         {
-          PathRemoveFileSpec(contextLogFilePath);
-          wchar_t *existingDumpFilePattern = FormatString(L"%s\\*.dmp", contextLogFilePath);
-          CHECK_POINTER_HRESULT(result, existingDumpFilePattern, result, E_OUTOFMEMORY);
+          ULARGE_INTEGER fileTime;
+          fileTime.LowPart = existingDumpFileInfo.ftLastWriteTime.dwLowDateTime;
+          fileTime.HighPart = existingDumpFileInfo.ftLastWriteTime.dwHighDateTime;
 
-          if (SUCCEEDED(result))
+          if (fileTime.QuadPart < retainFileTime.QuadPart)
           {
-            WIN32_FIND_DATA existingDumpFileInfo;
+            // file is older than specified retain interval, delete file
 
-            HANDLE existingDumpFileHandle = FindFirstFile(existingDumpFilePattern, &existingDumpFileInfo);
-
-            if (existingDumpFileHandle != INVALID_HANDLE_VALUE)
-            {
-              // last write file time is in UTC
-              // current system time is in UTC, decrease current system time by retain days
-              SYSTEMTIME currentSystemTime;
-              FILETIME currentSystemFileTime;
-
-              GetSystemTime(&currentSystemTime);
-              CHECK_CONDITION_HRESULT(result, SystemTimeToFileTime(&currentSystemTime, &currentSystemFileTime) != 0, result, E_FAIL);
-
-              ULARGE_INTEGER retainFileTime;
-              retainFileTime.LowPart = currentSystemFileTime.dwLowDateTime;
-              retainFileTime.HighPart = currentSystemFileTime.dwHighDateTime;
-
-              retainFileTime.QuadPart -= ((ULONGLONG)HUNDRED_NANOSECONDS_IN_DAY) * ((ULONGLONG)this->maximumRetainDays);
-
-              do
-              {
-                ULARGE_INTEGER fileTime;
-                fileTime.LowPart = existingDumpFileInfo.ftLastWriteTime.dwLowDateTime;
-                fileTime.HighPart = existingDumpFileInfo.ftLastWriteTime.dwHighDateTime;
-
-                if (fileTime.QuadPart < retainFileTime.QuadPart)
-                {
-                  // file is older than specified retain interval, delete file
-
-                  wchar_t *fileToDelete = FormatString(L"%s\\%s", contextLogFilePath, existingDumpFileInfo.cFileName);
-                  CHECK_CONDITION_NOT_NULL_EXECUTE(fileToDelete, DeleteFile(fileToDelete));
-                  FREE_MEM(fileToDelete);
-                }
-              } while (FindNextFile(existingDumpFileHandle, &existingDumpFileInfo));
-
-              FindClose(existingDumpFileHandle);
-            }
+            wchar_t *fileToDelete = GetCrashFilePath(existingDumpFileInfo.cFileName);
+            CHECK_CONDITION_NOT_NULL_EXECUTE(fileToDelete, DeleteFile(fileToDelete));
+            FREE_MEM(fileToDelete);
           }
+        } while (FindNextFile(existingDumpFileHandle, &existingDumpFileInfo));
 
-          FREE_MEM(existingDumpFilePattern);
-        }
-
-        FREE_MEM(contextLogFilePath);
+        FindClose(existingDumpFileHandle);
       }
     }
+
+    FREE_MEM(existingDumpFilePattern);
   }
 
   return result;
@@ -332,209 +314,193 @@ crash_rpt::CrashProcessingCallbackResult CALLBACK CCrashReport::HandleException(
     {
       if (caller->IsCrashReportingEnabled())
       {
+        HRESULT res = S_OK;
         HMODULE exceptionModule = GetModuleHandleByAddress(exceptionInfo->ExceptionPointers->ExceptionRecord->ExceptionAddress);
 
-        if (exceptionModule != NULL)
+        CHECK_POINTER_HRESULT(res, exceptionModule, res, E_FAIL);
+        ALLOC_MEM_DEFINE_SET(exceptionModuleFileName, wchar_t, MAX_PATH, 0);
+        CHECK_POINTER_HRESULT(res, exceptionModuleFileName, res, E_OUTOFMEMORY);
+        CHECK_CONDITION_HRESULT(res, GetModuleFileName(exceptionModule, exceptionModuleFileName, MAX_PATH) != 0, res, E_FAIL);
+
+        if (SUCCEEDED(res))
         {
-          ALLOC_MEM_DEFINE_SET(exceptionModuleFileName, wchar_t, MAX_PATH, 0);
-
-          if (exceptionModuleFileName != NULL)
+          // we have exception module file name
+          if (staticLogger->IsRegisteredModule(exceptionModuleFileName))
           {
-            if (GetModuleFileName(exceptionModule, exceptionModuleFileName, MAX_PATH) != 0)
+            // exception occured in one of our registered modules
+            // dump crash file
+
+            SYSTEMTIME currentLocalTime;
+            MINIDUMP_EXCEPTION_INFORMATION minidumpException;
+            GetLocalTime(&currentLocalTime);
+
+            // dump file will be created in location of crash folder
+
+            wchar_t *dumpFileName = FormatString(L"MPUrlSourceSplitter-%04.4d-%02.2d-%02.2d-%02.2d-%02.2d-%02.2d-%03.3d.dmp",
+              currentLocalTime.wYear, currentLocalTime.wMonth, currentLocalTime.wDay,
+              currentLocalTime.wHour, currentLocalTime.wMinute, currentLocalTime.wSecond, currentLocalTime.wMilliseconds);
+            CHECK_POINTER_HRESULT(res, dumpFileName, res, E_OUTOFMEMORY);
+
+            wchar_t *fullDumpFileName = NULL;
+            wchar_t *guid = ConvertGuidToString(GUID_NULL);
+            wchar_t *message = NULL;
+
+            CHECK_POINTER_HRESULT(res, guid, res, E_OUTOFMEMORY);
+            CHECK_CONDITION_EXECUTE(SUCCEEDED(res), fullDumpFileName = GetCrashFilePath(dumpFileName));
+            CHECK_POINTER_HRESULT(res, fullDumpFileName, res, E_OUTOFMEMORY);
+
+            CHECK_CONDITION_EXECUTE(SUCCEEDED(res), message = FormatString(L"%02.2d-%02.2d-%04.4d %02.2d:%02.2d:%02.2d.%03.3d [%4x] [%s] %s %s\r\n",
+              currentLocalTime.wDay, currentLocalTime.wMonth, currentLocalTime.wYear,
+              currentLocalTime.wHour, currentLocalTime.wMinute, currentLocalTime.wSecond,
+              currentLocalTime.wMilliseconds,
+              GetCurrentThreadId(),
+              guid,
+              L"[Error]  ",
+              fullDumpFileName));
+            CHECK_POINTER_HRESULT(res, message, res, E_OUTOFMEMORY);
+
+            if (SUCCEEDED(res))
             {
-              // we have exception module file name
-              if (staticLogger->IsRegisteredModule(exceptionModuleFileName))
+              HANDLE dumpFile = CreateFile(fullDumpFileName, GENERIC_READ | GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE, 0, CREATE_ALWAYS, 0, 0);
+              CHECK_CONDITION_HRESULT(res, dumpFile != INVALID_HANDLE_VALUE, res, E_FAIL);
+
+              if (SUCCEEDED(res))
               {
-                // exception occured in one of our registered modules
-                // dump crash file
+                minidumpException.ThreadId = GetCurrentThreadId();
+                minidumpException.ExceptionPointers = exceptionInfo->ExceptionPointers;
+                minidumpException.ClientPointers = TRUE;
 
-                SYSTEMTIME currentLocalTime;
-                MINIDUMP_EXCEPTION_INFORMATION minidumpException;
-                GetLocalTime(&currentLocalTime);
+                MINIDUMP_TYPE miniDumpType = (MINIDUMP_TYPE)
+                  (MiniDumpWithFullMemory | MiniDumpWithDataSegs | MiniDumpIgnoreInaccessibleMemory);
 
-                // dump file will be created in location of first log file
+                CHECK_CONDITION_HRESULT(res, MiniDumpWriteDump(GetCurrentProcess(), GetCurrentProcessId(), dumpFile, miniDumpType, &minidumpException, NULL, NULL) == TRUE, res, E_FAIL);
 
-                wchar_t *dumpFileName = NULL;
-                wchar_t *guid = ConvertGuidToString(GUID_NULL);
-                wchar_t *message = NULL;
-
-                if (guid != NULL)
+                if (SUCCEEDED(res))
                 {
-                  for (unsigned int i = 0; i < staticLogger->GetLoggerContexts()->Count(); i++)
-                  {
-                    CLoggerContext *context = staticLogger->GetLoggerContexts()->GetItem(i);
-
-                    if (context->GetLoggerFile() != NULL)
-                    {
-                      if (dumpFileName == NULL)
-                      {
-                        wchar_t *contextLogFilePath = Duplicate(context->GetLoggerFile()->GetLogFile());
-
-                        if (contextLogFilePath != NULL)
-                        {
-                          PathRemoveFileSpec(contextLogFilePath);
-
-                          // files with 'dmp' extension are known for Visual Studio
-
-                          dumpFileName = FormatString(L"%s\\MPUrlSourceSplitter-%04.4d-%02.2d-%02.2d-%02.2d-%02.2d-%02.2d-%03.3d.dmp", contextLogFilePath,
-                            currentLocalTime.wYear, currentLocalTime.wMonth, currentLocalTime.wDay,
-                            currentLocalTime.wHour, currentLocalTime.wMinute, currentLocalTime.wSecond, currentLocalTime.wMilliseconds);
-
-                          if (dumpFileName != NULL)
-                          {
-                            message = FormatString(L"%02.2d-%02.2d-%04.4d %02.2d:%02.2d:%02.2d.%03.3d [%4x] [%s] %s %s\r\n",
-                              currentLocalTime.wDay, currentLocalTime.wMonth, currentLocalTime.wYear,
-                              currentLocalTime.wHour, currentLocalTime.wMinute, currentLocalTime.wSecond,
-                              currentLocalTime.wMilliseconds,
-                              GetCurrentThreadId(),
-                              guid,
-                              L"[Error]  ",
-                              dumpFileName);
-
-                            if (message != NULL)
-                            {
-                              HANDLE dumpFile = CreateFile(dumpFileName, GENERIC_READ | GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE, 0, CREATE_ALWAYS, 0, 0);
-
-                              if (dumpFile != INVALID_HANDLE_VALUE)
-                              {
-                                minidumpException.ThreadId = GetCurrentThreadId();
-                                minidumpException.ExceptionPointers = exceptionInfo->ExceptionPointers;
-                                minidumpException.ClientPointers = TRUE;
-
-                                MINIDUMP_TYPE miniDumpType = (MINIDUMP_TYPE)
-                                  (MiniDumpWithFullMemory | MiniDumpWithDataSegs | MiniDumpIgnoreInaccessibleMemory);
-
-                                if (MiniDumpWriteDump(GetCurrentProcess(), GetCurrentProcessId(), dumpFile, miniDumpType, &minidumpException, NULL, NULL) == TRUE)
-                                {
-                                  staticLogger->LogMessage(i, LOGGER_ERROR, message);
-                                  staticLogger->Flush();
-
-                                  // add user info to report (crash dump file name, )
-                                  caller->crashReporting->AddUserInfoToReport(L"CrashDumpFileName", dumpFileName);
-
-                                  // add log files to report (splitter or IPTV log files) 
-                                  caller->crashReporting->AddFileToReport(context->GetLoggerFile()->GetLogFile(), NULL);
-                                  caller->crashReporting->AddFileToReport(context->GetLoggerFile()->GetLogBackupFile(), NULL);
-
-                                  // remove exceeding dump files from log folder
-
-                                  wchar_t *existingDumpFilePattern = FormatString(L"%s\\*.dmp", contextLogFilePath);                                  
-                                  WIN32_FIND_DATA existingDumpFileInfo;
-
-                                  // newest dump files will be in beginning of array
-                                  ALLOC_MEM_DEFINE_SET(preservingDumpFiles, FileNameAndCreationDateTime, caller->maximumDumpFiles, 0);
-
-                                  if (existingDumpFilePattern != NULL)
-                                  {
-                                    HANDLE existingDumpFileHandle = FindFirstFile(existingDumpFilePattern, &existingDumpFileInfo);
-
-                                    if (existingDumpFileHandle != INVALID_HANDLE_VALUE)
-                                    {
-                                      do
-                                      {
-                                        ULARGE_INTEGER creationTime;
-
-                                        creationTime.LowPart = existingDumpFileInfo.ftLastWriteTime.dwLowDateTime;
-                                        creationTime.HighPart = existingDumpFileInfo.ftLastWriteTime.dwHighDateTime;
-
-                                        // find place for current dump file in preservingDumpFiles
-                                        unsigned int insertIndex = 0;
-                                        for (insertIndex = 0; insertIndex < caller->maximumDumpFiles; insertIndex++)
-                                        {
-                                          if ((*(preservingDumpFiles + insertIndex)).creationDateTime.QuadPart < creationTime.QuadPart)
-                                          {
-                                            break;
-                                          }
-                                        }
-
-                                        if (insertIndex >= caller->maximumDumpFiles)
-                                        {
-                                          // delete file, surely exceeded
-
-                                          wchar_t *fileToDelete = FormatString(L"%s\\%s", contextLogFilePath, existingDumpFileInfo.cFileName);
-                                          CHECK_CONDITION_NOT_NULL_EXECUTE(fileToDelete, DeleteFile(fileToDelete));
-                                          FREE_MEM(fileToDelete);
-                                        }
-                                        else
-                                        {
-                                          // we remove last item from array
-                                          FileNameAndCreationDateTime *file = (FileNameAndCreationDateTime *)(preservingDumpFiles + (caller->maximumDumpFiles - 1));
-
-                                          CHECK_CONDITION_NOT_NULL_EXECUTE(file->fileName, DeleteFile(file->fileName));
-                                          FREE_MEM(file->fileName);
-
-                                          // move everything from insertIndex till end of array
-                                          if (insertIndex < (caller->maximumDumpFiles - 1))
-                                          {
-                                            memmove(preservingDumpFiles + insertIndex + 1, preservingDumpFiles + insertIndex, (caller->maximumDumpFiles - 1 - insertIndex) * sizeof(FileNameAndCreationDateTime));
-                                          }
-
-                                          // insert file in insertIndex
-                                          FileNameAndCreationDateTime *insertFile = (FileNameAndCreationDateTime *)(preservingDumpFiles + insertIndex);
-
-                                          insertFile->creationDateTime = creationTime;
-                                          insertFile->fileName = FormatString(L"%s\\%s", contextLogFilePath, existingDumpFileInfo.cFileName);
-                                        }
-                                      } while (FindNextFile(existingDumpFileHandle, &existingDumpFileInfo));
-
-                                      FindClose(existingDumpFileHandle);
-                                    }
-                                  }
-
-                                  // free allocated memory for dump files
-                                  for (unsigned int i = 0; i < caller->maximumDumpFiles; i++)
-                                  {
-                                    FileNameAndCreationDateTime *file = (FileNameAndCreationDateTime *)(preservingDumpFiles + i);
-
-                                    FREE_MEM(file->fileName);
-                                  }
-
-                                  FREE_MEM(preservingDumpFiles);
-                                  FREE_MEM(existingDumpFilePattern);
-                                }
-
-                                CloseHandle(dumpFile);
-                              }
-                              else
-                              {
-                                FREE_MEM(dumpFileName);
-                                FREE_MEM(message);
-                              }
-                            }
-                          }
-                        }
-
-                        FREE_MEM(contextLogFilePath);
-                      }
-                      else if (message != NULL)
-                      {
-                        staticLogger->LogMessage(i, LOGGER_ERROR, message);
-                        staticLogger->Flush();
-                      }
-                    }
-                  }
+                  // add user info to report (crash dump file name, )
+                  caller->crashReporting->AddUserInfoToReport(L"CrashDumpFileName", fullDumpFileName);
                 }
 
-                FREE_MEM(dumpFileName);
-                FREE_MEM(guid);
-                FREE_MEM(message);
-
-                // add user name (if any)
-                if (caller->userName != NULL)
-                {
-                  caller->crashReporting->AddUserInfoToReport(L"UserName", caller->userName);
-                }
-#ifdef _DEBUG
-                result = crash_rpt::CrashProcessingCallbackResult::SkipSendReportReturnDefaultResult;
-#else
-                result = caller->IsSendingCrashReportEnabled() ? crash_rpt::CrashProcessingCallbackResult::DoDefaultActions : crash_rpt::CrashProcessingCallbackResult::SkipSendReportReturnDefaultResult;
-#endif
+                CloseHandle(dumpFile);
               }
             }
-          }
 
-          FREE_MEM(exceptionModuleFileName);
+            // dump logs, add files to report
+            for (unsigned int i = 0; (SUCCEEDED(res) && (i < staticLogger->GetLoggerContexts()->Count())); i++)
+            {
+              CLoggerContext *context = staticLogger->GetLoggerContexts()->GetItem(i);
+
+              if (context->GetLoggerFile() != NULL)
+              {
+                staticLogger->LogMessage(i, LOGGER_ERROR, message);
+                staticLogger->Flush();
+
+                // add log files to report (splitter or IPTV log files) 
+                caller->crashReporting->AddFileToReport(context->GetLoggerFile()->GetLogFile(), NULL);
+                caller->crashReporting->AddFileToReport(context->GetLoggerFile()->GetLogBackupFile(), NULL);
+              }
+            }
+
+            // remove exceeding dump files from crash folder
+            if (SUCCEEDED(res))
+            {
+              wchar_t *existingDumpFilePattern = GetCrashFilePath(L"*.dmp");
+              WIN32_FIND_DATA existingDumpFileInfo;
+
+              // newest dump files will be in beginning of array
+              ALLOC_MEM_DEFINE_SET(preservingDumpFiles, FileNameAndCreationDateTime, caller->maximumDumpFiles, 0);
+              CHECK_POINTER_HRESULT(res, existingDumpFilePattern, res, E_OUTOFMEMORY);
+              CHECK_POINTER_HRESULT(res, preservingDumpFiles, res, E_OUTOFMEMORY);
+
+              if (SUCCEEDED(res))
+              {
+                HANDLE existingDumpFileHandle = FindFirstFile(existingDumpFilePattern, &existingDumpFileInfo);
+                CHECK_CONDITION_HRESULT(res, existingDumpFileHandle != INVALID_HANDLE_VALUE, res, E_FAIL);
+
+                if (SUCCEEDED(res))
+                {
+                  do
+                  {
+                    ULARGE_INTEGER creationTime;
+
+                    creationTime.LowPart = existingDumpFileInfo.ftLastWriteTime.dwLowDateTime;
+                    creationTime.HighPart = existingDumpFileInfo.ftLastWriteTime.dwHighDateTime;
+
+                    // find place for current dump file in preservingDumpFiles
+                    unsigned int insertIndex = 0;
+                    for (insertIndex = 0; insertIndex < caller->maximumDumpFiles; insertIndex++)
+                    {
+                      if ((*(preservingDumpFiles + insertIndex)).creationDateTime.QuadPart < creationTime.QuadPart)
+                      {
+                        break;
+                      }
+                    }
+
+                    if (insertIndex >= caller->maximumDumpFiles)
+                    {
+                      // delete file, surely exceeded
+
+                      wchar_t *fileToDelete = GetCrashFilePath(existingDumpFileInfo.cFileName);
+                      CHECK_CONDITION_NOT_NULL_EXECUTE(fileToDelete, DeleteFile(fileToDelete));
+                      FREE_MEM(fileToDelete);
+                    }
+                    else
+                    {
+                      // we remove last item from array
+                      FileNameAndCreationDateTime *file = (FileNameAndCreationDateTime *)(preservingDumpFiles + (caller->maximumDumpFiles - 1));
+
+                      CHECK_CONDITION_NOT_NULL_EXECUTE(file->fileName, DeleteFile(file->fileName));
+                      FREE_MEM(file->fileName);
+
+                      // move everything from insertIndex till end of array
+                      if (insertIndex < (caller->maximumDumpFiles - 1))
+                      {
+                        memmove(preservingDumpFiles + insertIndex + 1, preservingDumpFiles + insertIndex, (caller->maximumDumpFiles - 1 - insertIndex) * sizeof(FileNameAndCreationDateTime));
+                      }
+
+                      // insert file in insertIndex
+                      FileNameAndCreationDateTime *insertFile = (FileNameAndCreationDateTime *)(preservingDumpFiles + insertIndex);
+
+                      insertFile->creationDateTime = creationTime;
+                      insertFile->fileName = GetCrashFilePath(existingDumpFileInfo.cFileName);
+                    }
+                  } while (FindNextFile(existingDumpFileHandle, &existingDumpFileInfo));
+
+                  FindClose(existingDumpFileHandle);
+                }
+              }
+
+              // free allocated memory for dump files
+              for (unsigned int i = 0; i < caller->maximumDumpFiles; i++)
+              {
+                FileNameAndCreationDateTime *file = (FileNameAndCreationDateTime *)(preservingDumpFiles + i);
+
+                FREE_MEM(file->fileName);
+              }
+
+              FREE_MEM(existingDumpFilePattern);
+              FREE_MEM(preservingDumpFiles);
+            }
+
+            FREE_MEM(dumpFileName);
+            FREE_MEM(fullDumpFileName);
+            FREE_MEM(guid);
+            FREE_MEM(message);
+          }
         }
+
+        FREE_MEM(exceptionModuleFileName);
+
+        // add user name (if any)
+        if (caller->userName != NULL)
+        {
+          caller->crashReporting->AddUserInfoToReport(L"UserName", caller->userName);
+        }
+#ifdef _DEBUG
+        result = crash_rpt::CrashProcessingCallbackResult::SkipSendReportReturnDefaultResult;
+#else
+        result = (SUCCEEDED(res) && caller->IsSendingCrashReportEnabled()) ? crash_rpt::CrashProcessingCallbackResult::DoDefaultActions : crash_rpt::CrashProcessingCallbackResult::SkipSendReportReturnDefaultResult;
+#endif
       }
 
       staticLogger->Flush();

@@ -230,6 +230,21 @@ CMPUrlSourceSplitter::CMPUrlSourceSplitter(LPCSTR pName, LPUNKNOWN pUnk, const I
     this->logger = new CLogger(phr, staticLogger, loggerParameters);
     CHECK_POINTER_HRESULT(*phr, this->logger, *phr, E_OUTOFMEMORY);
   }
+
+#pragma warning(push)
+  // disable warning: 'ApplicationInfo': was declared deprecated
+  // disable warning: 'HandlerSettings': was declared deprecated
+#pragma warning(disable:4996)
+
+  if (crashReport == NULL)
+  {
+    crashReport = new CCrashReport(phr);
+    CHECK_CONDITION_HRESULT(*phr, crashReport, *phr, E_OUTOFMEMORY);
+
+    CHECK_CONDITION_EXECUTE(FAILED(*phr), FREE_MEM_CLASS(crashReport));
+  }
+
+#pragma warning(pop)
   
   if (SUCCEEDED(*phr))
   {
@@ -2461,7 +2476,7 @@ unsigned int WINAPI CMPUrlSourceSplitter::LoadAsyncWorker(LPVOID lpParam)
 
 #pragma warning(pop)
   }
-
+  
   if (SUCCEEDED(caller->loadAsyncResult))
   {
     if (caller->IsSetFlags(MP_URL_SOURCE_SPLITTER_FLAG_AS_IPTV))
