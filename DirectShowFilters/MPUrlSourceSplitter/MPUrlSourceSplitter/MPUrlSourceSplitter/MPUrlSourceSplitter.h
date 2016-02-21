@@ -29,7 +29,6 @@
 #include "IDemuxerOwner.h"
 #include "MPUrlSourceSplitterOutputPinCollection.h"
 #include "ParserHoster.h"
-#include "MediaPacketCollection.h"
 #include "DemuxerCollection.h"
 #include "Flags.h"
 

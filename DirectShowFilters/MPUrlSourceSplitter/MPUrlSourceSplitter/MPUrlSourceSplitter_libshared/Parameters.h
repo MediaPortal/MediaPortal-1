@@ -41,6 +41,13 @@
 
 #define PARAMETER_NAME_FINISH_TIME                                            L"FinishTime"
 
+#define PARAMETER_NAME_CRASH_REPORT                                           L"CrashReport"
+#define PARAMETER_NAME_CRASH_REPORT_SEND_CRASH                                L"CrashReportSendCrash"
+#define PARAMETER_NAME_CRASH_REPORT_MAX_DUMP_FILES                            L"CrashReportMaxDumpFiles"
+#define PARAMETER_NAME_CRASH_REPORT_MAX_RETAIN_DAYS                           L"CrashReportMaxRetainDays"
+#define PARAMETER_NAME_CRASH_REPORT_MODE                                      L"CrashReportMode"
+#define PARAMETER_NAME_CRASH_REPORT_USER_NAME                                 L"CrashReportUserName"
+
 #define PARAMETER_NAME_LIVE_STREAM_DEFAULT                                    false
 #define PARAMETER_NAME_DUMP_PROTOCOL_INPUT_DATA_DEFAULT                       false
 #define PARAMETER_NAME_DUMP_PROTOCOL_OUTPUT_DATA_DEFAULT                      false
@@ -50,6 +57,15 @@
 
 #define LOG_MAX_SIZE_DEFAULT                                                  10485760
 #define LOG_VERBOSITY_DEFAULT                                                 LOGGER_VERBOSE
+
+#define CRASH_REPORT_MODE_BASIC                                               0
+#define CRASH_REPORT_MODE_FULL                                                1
+
+#define PARAMETER_NAME_CRASH_REPORT_DEFAULT                                   true
+#define PARAMETER_NAME_CRASH_REPORT_SEND_CRASH_DEFAULT                        true
+#define PARAMETER_NAME_CRASH_REPORT_MAX_DUMP_FILES_DEFAULT                    3
+#define PARAMETER_NAME_CRASH_REPORT_MAX_RETAIN_DAYS_DEFAULT                   14
+#define PARAMETER_NAME_CRASH_REPORT_MODE_DEFAULT                              CRASH_REPORT_MODE_BASIC
 
 // internal filter parameters, they can't be set from external source
 

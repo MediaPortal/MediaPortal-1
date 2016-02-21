@@ -53,6 +53,7 @@ ErrorMessage ERROR_MESSAGES[] = {
   { E_PARSE_PARAMETERS_NOT_ENOUGH_MEMORY_FOR_PARAMETER_NAME, L"Not enough memory for parameter name." },
   { E_PARSE_PARAMETERS_NOT_ENOUGH_MEMORY_FOR_PARAMETER_VALUE, L"Not enough memory for parameter value." },
   { E_PARSE_PARAMETERS_CANNOT_GET_UNESCAPED_VALUE, L"Cannot unescape parameter value." },
+  { E_CANNOT_INITIALIZE_CRASH_REPORTING, L"Cannot initialize crash reporting." },
 
   // parser general error codes
 

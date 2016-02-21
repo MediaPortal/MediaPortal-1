@@ -36,19 +36,7 @@
     <ClInclude Include="Parameter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ReceiveData.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Utilities.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="EndOfStreamReached.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SetTotalLength.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="StreamAvailableLength.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Parameters.h">
@@ -58,9 +46,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="moreuuids.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="StreamReceiveData.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="StreamProgress.h">
@@ -90,9 +75,6 @@
     <ClInclude Include="KeyedCollection.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="MediaPacketCollection.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="MediaTypeCollection.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -100,9 +82,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="StreamPackageCollection.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="StreamReceiveDataColletion.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="StreamInformation.h">
@@ -158,19 +137,7 @@
     <ClCompile Include="Parameter.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ReceiveData.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Utilities.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="EndOfStreamReached.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SetTotalLength.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="StreamAvailableLength.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="StreamProgress.cpp">
@@ -185,9 +152,6 @@
     <ClCompile Include="StreamPackageResponse.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="StreamReceiveData.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="StreamPackageDataRequest.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -197,9 +161,6 @@
     <ClCompile Include="Flags.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="MediaPacketCollection.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="MediaTypeCollection.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -207,9 +168,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="StreamPackageCollection.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="StreamReceiveDataColletion.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="StreamInformation.cpp">

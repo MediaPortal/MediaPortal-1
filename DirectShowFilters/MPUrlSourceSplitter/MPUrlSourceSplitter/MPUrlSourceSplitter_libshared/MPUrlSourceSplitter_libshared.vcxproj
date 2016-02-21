@@ -84,9 +84,6 @@
   <ItemGroup>
     <ClInclude Include="BufferHelper.h" />
     <ClInclude Include="Collection.h" />
-    <ClInclude Include="EndOfStreamReached.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-    </ClInclude>
     <ClInclude Include="FastSearchItem.h" />
     <ClInclude Include="FastSearchItemCollection.h" />
     <ClInclude Include="Flags.h" />
@@ -100,24 +97,12 @@
     <ClInclude Include="LinearBuffer.h" />
     <ClInclude Include="LockMutex.h" />
     <ClInclude Include="MediaPacket.h" />
-    <ClInclude Include="MediaPacketCollection.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-    </ClInclude>
     <ClInclude Include="MediaTypeCollection.h" />
     <ClInclude Include="moreuuids.h" />
     <ClInclude Include="Parameter.h" />
     <ClInclude Include="ParameterCollection.h" />
     <ClInclude Include="Parameters.h" />
-    <ClInclude Include="ReceiveData.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-    </ClInclude>
-    <ClInclude Include="SetTotalLength.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-    </ClInclude>
     <ClInclude Include="stdafx.h" />
-    <ClInclude Include="StreamAvailableLength.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-    </ClInclude>
     <ClInclude Include="StreamFragment.h" />
     <ClInclude Include="StreamFragmentCollection.h" />
     <ClInclude Include="StreamInformation.h" />
@@ -131,17 +116,10 @@
     <ClInclude Include="StreamPackageRequest.h" />
     <ClInclude Include="StreamPackageResponse.h" />
     <ClInclude Include="StreamProgress.h" />
-    <ClInclude Include="StreamReceiveData.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-    </ClInclude>
-    <ClInclude Include="StreamReceiveDataColletion.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="Utilities.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="EndOfStreamReached.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-    </ClCompile>
     <ClCompile Include="FastSearchItem.cpp" />
     <ClCompile Include="FastSearchItemCollection.cpp" />
     <ClCompile Include="Flags.cpp" />
@@ -152,26 +130,12 @@
     <ClCompile Include="IndexedStreamFragmentCollection.cpp" />
     <ClCompile Include="LinearBuffer.cpp" />
     <ClCompile Include="MediaPacket.cpp" />
-    <ClCompile Include="MediaPacketCollection.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-    </ClCompile>
     <ClCompile Include="MediaTypeCollection.cpp" />
     <ClCompile Include="Parameter.cpp" />
     <ClCompile Include="ParameterCollection.cpp" />
-    <ClCompile Include="ReceiveData.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="SetTotalLength.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-    </ClCompile>
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="StreamAvailableLength.cpp">
-      <FileType>CppCode</FileType>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="StreamFragment.cpp" />
     <ClCompile Include="StreamFragmentCollection.cpp" />
@@ -186,12 +150,6 @@
     <ClCompile Include="StreamPackageRequest.cpp" />
     <ClCompile Include="StreamPackageResponse.cpp" />
     <ClCompile Include="StreamProgress.cpp" />
-    <ClCompile Include="StreamReceiveData.cpp">
-      <FileType>CppCode</FileType>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="StreamReceiveDataColletion.cpp" />
     <ClCompile Include="Utilities.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

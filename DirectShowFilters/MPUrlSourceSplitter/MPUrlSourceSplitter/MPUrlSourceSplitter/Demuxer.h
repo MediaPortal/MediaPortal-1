@@ -28,7 +28,6 @@
 #include "StreamCollection.h"
 #include "IDemuxerOwner.h"
 #include "OutputPinPacketCollection.h"
-#include "MediaPacketCollection.h"
 #include "IPacketDemuxer.h"
 #include "CacheFile.h"
 #include "PacketInputFormat.h"

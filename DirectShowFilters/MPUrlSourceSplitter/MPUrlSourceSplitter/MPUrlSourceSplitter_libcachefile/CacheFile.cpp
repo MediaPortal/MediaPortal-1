@@ -135,15 +135,15 @@ bool CCacheFile::LoadItems(CCacheFileItemCollection *collection, unsigned int in
             size.QuadPart = 0;
 
             // open or create file
-            HANDLE hCacheFile = CreateFile(this->GetCacheFile(), GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
-            CHECK_CONDITION_HRESULT(result, hCacheFile != INVALID_HANDLE_VALUE, result, E_NOT_VALID_STATE);
+            HANDLE cacheFile = CreateFile(this->GetCacheFile(), GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+            CHECK_CONDITION_HRESULT(result, cacheFile != INVALID_HANDLE_VALUE, result, E_NOT_VALID_STATE);
 
             if (SUCCEEDED(result))
             {
               LONG distanceToMoveLow = (LONG)(item->GetCacheFilePosition());
               LONG distanceToMoveHigh = (LONG)(item->GetCacheFilePosition() >> 32);
               LONG distanceToMoveHighResult = distanceToMoveHigh;
-              DWORD setFileResult = SetFilePointer(hCacheFile, distanceToMoveLow, &distanceToMoveHighResult, FILE_BEGIN);
+              DWORD setFileResult = SetFilePointer(cacheFile, distanceToMoveLow, &distanceToMoveHighResult, FILE_BEGIN);
               if (setFileResult == INVALID_SET_FILE_POINTER)
               {
                 CHECK_CONDITION_HRESULT(result, GetLastError() == NO_ERROR, result, E_NOT_VALID_STATE);
@@ -153,12 +153,12 @@ bool CCacheFile::LoadItems(CCacheFileItemCollection *collection, unsigned int in
               {
                 DWORD read = 0;
 
-                CHECK_CONDITION_HRESULT(result, ReadFile(hCacheFile, buffer, totalSizeToReload, &read, NULL) != 0, result, E_FAIL);
+                CHECK_CONDITION_HRESULT(result, ReadFile(cacheFile, buffer, totalSizeToReload, &read, NULL) != 0, result, E_FAIL);
                 CHECK_CONDITION_HRESULT(result, read == totalSizeToReload, result, E_FAIL);
               }
 
-              CloseHandle(hCacheFile);
-              hCacheFile = INVALID_HANDLE_VALUE;
+              CloseHandle(cacheFile);
+              cacheFile = INVALID_HANDLE_VALUE;
             }
 
 
@@ -210,8 +210,8 @@ bool CCacheFile::StoreItems(CCacheFileItemCollection *collection, unsigned int l
     if (collection->Count() > 0)
     {
       // open or create file
-      HANDLE hCacheFile = CreateFile(this->GetCacheFile(), GENERIC_WRITE, FILE_SHARE_READ, NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
-      CHECK_CONDITION_HRESULT(result, hCacheFile != INVALID_HANDLE_VALUE, result, E_NOT_VALID_STATE); 
+      HANDLE cacheFile = CreateFile(this->GetCacheFile(), GENERIC_WRITE, FILE_SHARE_READ, NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+      CHECK_CONDITION_HRESULT(result, cacheFile != INVALID_HANDLE_VALUE, result, E_NOT_VALID_STATE);
 
       if (SUCCEEDED(result))
       {
@@ -329,7 +329,7 @@ bool CCacheFile::StoreItems(CCacheFileItemCollection *collection, unsigned int l
                 LONG distanceToMoveLow = (LONG)(size.QuadPart);
                 LONG distanceToMoveHigh = (LONG)(size.QuadPart >> 32);
                 LONG distanceToMoveHighResult = distanceToMoveHigh;
-                DWORD setFileResult = SetFilePointer(hCacheFile, distanceToMoveLow, &distanceToMoveHighResult, FILE_BEGIN);
+                DWORD setFileResult = SetFilePointer(cacheFile, distanceToMoveLow, &distanceToMoveHighResult, FILE_BEGIN);
                 if (setFileResult == INVALID_SET_FILE_POINTER)
                 {
                   CHECK_CONDITION_HRESULT(result, GetLastError() == NO_ERROR, result, E_FAIL);
@@ -340,7 +340,7 @@ bool CCacheFile::StoreItems(CCacheFileItemCollection *collection, unsigned int l
               {
                 // write prepared buffer to file
                 DWORD written = 0;
-                CHECK_CONDITION_HRESULT(result, WriteFile(hCacheFile, buffer, bufferPosition, &written, NULL) != 0, result, E_FAIL);
+                CHECK_CONDITION_HRESULT(result, WriteFile(cacheFile, buffer, bufferPosition, &written, NULL) != 0, result, E_FAIL);
                 CHECK_CONDITION_HRESULT(result, bufferPosition == written, result, E_FAIL);
 
                 if (SUCCEEDED(result) && (this->freeSpaces != NULL) && (freeSpaceIndex != FREE_SPACE_NOT_FOUND))
@@ -404,8 +404,8 @@ bool CCacheFile::StoreItems(CCacheFileItemCollection *collection, unsigned int l
 
         FREE_MEM(buffer);
 
-        CloseHandle(hCacheFile);
-        hCacheFile = INVALID_HANDLE_VALUE;
+        CloseHandle(cacheFile);
+        cacheFile = INVALID_HANDLE_VALUE;
       }
     }
   }

@@ -21,7 +21,7 @@
 #include "StdAfx.h"
 
 #include "RtspSupportedPayloadTypeCollection.h"
-#include "StreamReceiveData.h"
+#include "StreamInformation.h"
 
 CRtspSupportedPayloadTypeCollection::CRtspSupportedPayloadTypeCollection(HRESULT *result)
   : CCollection(result)

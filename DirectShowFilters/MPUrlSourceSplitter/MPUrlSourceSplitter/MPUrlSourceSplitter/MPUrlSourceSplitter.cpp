@@ -36,6 +36,7 @@
 #include "CurlInstance.h"
 #include "conversions.h"
 #include "ErrorMessages.h"
+#include "CrashReport.h"
 
 #include <crtdbg.h>
 #include <process.h>
@@ -127,6 +128,7 @@ const wchar_t *REPLACE_PARAMETER_NAME_STOCK_FILTER[PARAMETER_NAME_STOCK_FILTER_T
 #define SECONDS_IN_DAY                                            86400
 
 extern "C++" CStaticLogger *staticLogger;
+extern "C++" CCrashReport *crashReport;
 
 #define SHOW_VERSION                                              2
 #define SHOW_CONFIG                                               4
@@ -213,7 +215,7 @@ CMPUrlSourceSplitter::CMPUrlSourceSplitter(LPCSTR pName, LPUNKNOWN pUnk, const I
 {
   CParameterCollection *loggerParameters = new CParameterCollection(phr);
   CHECK_POINTER_HRESULT(*phr, loggerParameters, *phr, E_OUTOFMEMORY);
-
+  
   if (SUCCEEDED(*phr))
   {
 #ifdef _DEBUG
@@ -228,7 +230,7 @@ CMPUrlSourceSplitter::CMPUrlSourceSplitter(LPCSTR pName, LPUNKNOWN pUnk, const I
     this->logger = new CLogger(phr, staticLogger, loggerParameters);
     CHECK_POINTER_HRESULT(*phr, this->logger, *phr, E_OUTOFMEMORY);
   }
-
+  
   if (SUCCEEDED(*phr))
   {
     this->logger->Log(LOGGER_INFO, METHOD_CONSTRUCTOR_START_FORMAT, MODULE_NAME, METHOD_CONSTRUCTOR_NAME, this);
@@ -583,10 +585,23 @@ STDMETHODIMP CMPUrlSourceSplitter::Load(LPCOLESTR pszFileName, const AM_MEDIA_TY
 {
   // reset all internal properties to default values (except configuration parameters)
   this->ClearSession(true);
-
+  
   this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, MODULE_NAME, METHOD_LOAD_NAME);
   HRESULT result = S_OK;
   CHECK_POINTER_DEFAULT_HRESULT(result, pszFileName);
+
+  //// check log file parameter, if not set, add default
+  //if (!this->configuration->Contains(PARAMETER_NAME_LOG_FILE_NAME, true))
+  //{
+  //  wchar_t *logFile = this->IsIptv() ? GetTvServerFilePath(MP_IPTV_SOURCE_LOG_FILE) : GetMediaPortalFilePath(MP_URL_SOURCE_SPLITTER_LOG_FILE);
+  //  CHECK_POINTER_HRESULT(result, logFile, result, E_OUTOFMEMORY);
+
+  //  CHECK_CONDITION_HRESULT(result, this->configuration->Add(PARAMETER_NAME_LOG_FILE_NAME, logFile), result, E_OUTOFMEMORY);
+  //  FREE_MEM(logFile);
+  //}
+
+  // set logger parameters
+  //this->logger->SetParameters(this->configuration);
 
   if (SUCCEEDED(result))
   {
@@ -2420,6 +2435,28 @@ unsigned int WINAPI CMPUrlSourceSplitter::LoadAsyncWorker(LPVOID lpParam)
 
   if (SUCCEEDED(caller->loadAsyncResult))
   {
+    // check log file parameter, if not set, add default
+    if (!caller->configuration->Contains(PARAMETER_NAME_LOG_FILE_NAME, true))
+    {
+      wchar_t *logFile = caller->IsIptv() ? GetTvServerFilePath(MP_IPTV_SOURCE_LOG_FILE) : GetMediaPortalFilePath(MP_URL_SOURCE_SPLITTER_LOG_FILE);
+      CHECK_POINTER_HRESULT(caller->loadAsyncResult, logFile, caller->loadAsyncResult, E_OUTOFMEMORY);
+
+      CHECK_CONDITION_HRESULT(caller->loadAsyncResult, caller->configuration->Add(PARAMETER_NAME_LOG_FILE_NAME, logFile), caller->loadAsyncResult, E_OUTOFMEMORY);
+      FREE_MEM(logFile);
+    }
+
+    // set logger parameters
+    caller->logger->SetParameters(caller->configuration);
+  }
+
+  // change parameters of crash reporting by parameters passed by url
+  if (SUCCEEDED(caller->loadAsyncResult))
+  {
+    CHECK_HRESULT_EXECUTE(caller->loadAsyncResult, crashReport->ChangeParameters(caller->configuration));
+  }
+
+  if (SUCCEEDED(caller->loadAsyncResult))
+  {
     if (caller->IsSetFlags(MP_URL_SOURCE_SPLITTER_FLAG_AS_IPTV))
     {
       // FAKE for UDP protocol request from MediaPortal
@@ -2493,22 +2530,6 @@ unsigned int WINAPI CMPUrlSourceSplitter::LoadAsyncWorker(LPVOID lpParam)
       CHECK_CONDITION_EXECUTE(SUCCEEDED(caller->loadAsyncResult), caller->configuration->Remove(PARAMETER_NAME_SPLITTER, true));
       CHECK_CONDITION_HRESULT(caller->loadAsyncResult, caller->configuration->Add(PARAMETER_NAME_SPLITTER, L"1"), caller->loadAsyncResult, E_OUTOFMEMORY);
     }
-  }
-
-  if (SUCCEEDED(caller->loadAsyncResult))
-  {
-    // check log file parameter, if not set, add default
-    if (!caller->configuration->Contains(PARAMETER_NAME_LOG_FILE_NAME, true))
-    {
-      wchar_t *logFile = caller->IsIptv() ? GetTvServerFilePath(MP_IPTV_SOURCE_LOG_FILE) : GetMediaPortalFilePath(MP_URL_SOURCE_SPLITTER_LOG_FILE);
-      CHECK_POINTER_HRESULT(caller->loadAsyncResult, logFile, caller->loadAsyncResult, E_OUTOFMEMORY);
-
-      CHECK_CONDITION_HRESULT(caller->loadAsyncResult, caller->configuration->Add(PARAMETER_NAME_LOG_FILE_NAME, logFile), caller->loadAsyncResult, E_OUTOFMEMORY);
-      FREE_MEM(logFile);
-    }
-
-    // set logger parameters
-    caller->logger->SetParameters(caller->configuration);
   }
 
   if (SUCCEEDED(caller->loadAsyncResult))
