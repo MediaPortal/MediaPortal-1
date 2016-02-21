@@ -170,10 +170,17 @@ BOOL APIENTRY DllMain(HMODULE hModule,
 
       if (SUCCEEDED(result))
       {
+#pragma warning(push)
+        // disable warning: 'ApplicationInfo': was declared deprecated
+        // disable warning: 'HandlerSettings': was declared deprecated
+#pragma warning(disable:4996)
+
         crashReport = new CCrashReport(&result);
         CHECK_CONDITION_HRESULT(result, crashReport, result, E_OUTOFMEMORY);
 
         CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(crashReport));
+
+#pragma warning(pop)
 
         if (SUCCEEDED(result))
         {
