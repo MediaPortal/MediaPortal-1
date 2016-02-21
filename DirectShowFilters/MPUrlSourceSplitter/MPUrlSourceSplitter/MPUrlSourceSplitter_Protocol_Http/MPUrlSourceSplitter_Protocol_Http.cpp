@@ -237,7 +237,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Http::ReceiveData(CStreamPackage *streamPa
 {
   HRESULT result = S_OK;
   CHECK_POINTER_DEFAULT_HRESULT(result, streamPackage);
-
+  
   if (SUCCEEDED(result))
   {
     LOCK_MUTEX(this->lockMutex, INFINITE)

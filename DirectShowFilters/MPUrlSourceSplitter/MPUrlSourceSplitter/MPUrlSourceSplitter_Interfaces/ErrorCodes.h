@@ -54,6 +54,7 @@ FORCEINLINE bool IS_OUR_ERROR(HRESULT error) { return (((error & 0xFFFFF000) == 
 #define E_PARSE_PARAMETERS_NOT_ENOUGH_MEMORY_FOR_PARAMETER_NAME                 -16
 #define E_PARSE_PARAMETERS_NOT_ENOUGH_MEMORY_FOR_PARAMETER_VALUE                -17
 #define E_PARSE_PARAMETERS_CANNOT_GET_UNESCAPED_VALUE                           -18
+#define E_CANNOT_INITIALIZE_CRASH_REPORTING                                     -19
 
 // parser general error codes
 

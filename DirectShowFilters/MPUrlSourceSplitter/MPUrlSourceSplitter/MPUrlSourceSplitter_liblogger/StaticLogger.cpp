@@ -413,21 +413,21 @@ HRESULT CStaticLogger::FlushContext(unsigned int contextHandle)
     {
       if (context->GetLoggerFile()->GetLogFile() != NULL)
       {
-        HANDLE hLogFile = CreateFile(context->GetLoggerFile()->GetLogFile(), GENERIC_READ | GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_ALWAYS, FILE_FLAG_WRITE_THROUGH, NULL);
-        if (hLogFile != INVALID_HANDLE_VALUE)
+        HANDLE logFile = CreateFile(context->GetLoggerFile()->GetLogFile(), GENERIC_READ | GENERIC_WRITE, FILE_SHARE_READ, NULL, OPEN_ALWAYS, FILE_FLAG_WRITE_THROUGH, NULL);
+        if (logFile != INVALID_HANDLE_VALUE)
         {
           // move to end of log file
           LARGE_INTEGER distanceToMove;
           LARGE_INTEGER size;
 
           distanceToMove.QuadPart = 0;
-          if (!GetFileSizeEx(hLogFile, &size))
+          if (!GetFileSizeEx(logFile, &size))
           {
             // error occured while getting file size
             size.QuadPart = 0;
           }
 
-          SetFilePointerEx(hLogFile, distanceToMove, NULL, FILE_END);
+          SetFilePointerEx(logFile, distanceToMove, NULL, FILE_END);
 
           unsigned int bufferSize = context->GetLoggerFile()->GetMaxLogSize();
           unsigned int bufferOccupied = 0;
@@ -444,12 +444,12 @@ HRESULT CStaticLogger::FlushContext(unsigned int contextHandle)
               {
                 // write data to log file
                 DWORD written = 0;
-                WriteFile(hLogFile, buffer, bufferOccupied, &written, NULL);
+                WriteFile(logFile, buffer, bufferOccupied, &written, NULL);
 
                 size.QuadPart = 0;
 
-                CloseHandle(hLogFile);
-                hLogFile = INVALID_HANDLE_VALUE;
+                CloseHandle(logFile);
+                logFile = INVALID_HANDLE_VALUE;
                 bufferOccupied = 0;
                 memset(buffer, 0, bufferSize);
 
@@ -457,8 +457,8 @@ HRESULT CStaticLogger::FlushContext(unsigned int contextHandle)
                 DeleteFile(context->GetLoggerFile()->GetLogBackupFile());
                 MoveFile(context->GetLoggerFile()->GetLogFile(), context->GetLoggerFile()->GetLogBackupFile());
 
-                hLogFile = CreateFile(context->GetLoggerFile()->GetLogFile(), GENERIC_READ | GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_ALWAYS, FILE_FLAG_WRITE_THROUGH, NULL);
-                if (hLogFile == INVALID_HANDLE_VALUE)
+                logFile = CreateFile(context->GetLoggerFile()->GetLogFile(), GENERIC_READ | GENERIC_WRITE, FILE_SHARE_READ, NULL, OPEN_ALWAYS, FILE_FLAG_WRITE_THROUGH, NULL);
+                if (logFile == INVALID_HANDLE_VALUE)
                 {
                   messagesCount = j;
                   break;
@@ -473,13 +473,13 @@ HRESULT CStaticLogger::FlushContext(unsigned int contextHandle)
             {
               // write data to log file
               DWORD written = 0;
-              WriteFile(hLogFile, buffer, bufferOccupied, &written, NULL);
+              WriteFile(logFile, buffer, bufferOccupied, &written, NULL);
             }
           }
           FREE_MEM(buffer);
 
-          CHECK_CONDITION_EXECUTE(hLogFile != INVALID_HANDLE_VALUE, CloseHandle(hLogFile));
-          hLogFile = INVALID_HANDLE_VALUE;
+          CHECK_CONDITION_EXECUTE(logFile != INVALID_HANDLE_VALUE, CloseHandle(logFile));
+          logFile = INVALID_HANDLE_VALUE;
         }
       }
 

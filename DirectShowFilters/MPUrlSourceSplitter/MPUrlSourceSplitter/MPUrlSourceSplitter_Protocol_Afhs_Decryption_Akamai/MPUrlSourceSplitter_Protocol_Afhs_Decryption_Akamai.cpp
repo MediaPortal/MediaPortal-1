@@ -194,7 +194,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs_Decryption_Akamai::DecryptSegmentFrag
       if (SUCCEEDED(result))
       {
         // open or create file
-        HANDLE akamaiSwfFile = CreateFile(this->akamaiSwfFileName, GENERIC_READ | GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_ALWAYS, FILE_FLAG_WRITE_THROUGH, NULL);
+        HANDLE akamaiSwfFile = CreateFile(this->akamaiSwfFileName, GENERIC_READ | GENERIC_WRITE, FILE_SHARE_READ, NULL, OPEN_ALWAYS, FILE_FLAG_WRITE_THROUGH, NULL);
         CHECK_CONDITION_HRESULT(result, akamaiSwfFile != INVALID_HANDLE_VALUE, result, E_AFHS_AKAMAI_DECRYPTOR_CANNOT_SAVE_DECRYPTOR);
 
         if (SUCCEEDED(result))

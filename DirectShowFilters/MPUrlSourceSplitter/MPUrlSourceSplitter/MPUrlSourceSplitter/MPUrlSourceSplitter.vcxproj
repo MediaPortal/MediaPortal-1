@@ -174,6 +174,8 @@ echo #endif &gt;&gt; VersionInfo.h</Command>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="ByteParser.h" />
+    <ClInclude Include="CrashReport.h" />
+    <ClInclude Include="CrashRpt.h" />
     <ClInclude Include="Demuxer.h" />
     <ClInclude Include="DemuxerAudioHelper.h" />
     <ClInclude Include="DemuxerCollection.h" />
@@ -205,6 +207,7 @@ echo #endif &gt;&gt; VersionInfo.h</Command>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ByteParser.cpp" />
+    <ClCompile Include="CrashReport.cpp" />
     <ClCompile Include="Demuxer.cpp" />
     <ClCompile Include="DemuxerAudioHelper.cpp" />
     <ClCompile Include="DemuxerCollection.cpp" />

@@ -111,6 +111,12 @@
     <ClInclude Include="OutputPinMetadataBox.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="CrashRpt.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CrashReport.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -195,6 +201,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="OutputPinMetadataBox.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CrashReport.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
