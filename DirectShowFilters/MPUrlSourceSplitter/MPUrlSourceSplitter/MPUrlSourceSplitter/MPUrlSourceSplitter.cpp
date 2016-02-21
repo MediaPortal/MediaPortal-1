@@ -2476,7 +2476,7 @@ unsigned int WINAPI CMPUrlSourceSplitter::LoadAsyncWorker(LPVOID lpParam)
 
 #pragma warning(pop)
   }
-  *((int*)0) = 0;
+  
   if (SUCCEEDED(caller->loadAsyncResult))
   {
     if (caller->IsSetFlags(MP_URL_SOURCE_SPLITTER_FLAG_AS_IPTV))
