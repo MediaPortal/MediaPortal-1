@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!--version="1.0" encoding="utf-8" standalone="yes"-->
+<window>
+  <controls>
+    <control>
+      <type>image</type>
+      <description>movie poster</description>
+      <id>24</id>
+      <posX>1590</posX>
+      <posY>300</posY>
+      <width>270</width>
+      <height>375</height>
+      <texture mask="videothumbmask.png">#OnlineVideos.Details.Poster</texture>
+      <visible>string.equals(#OnlineVideos.state, details)</visible>
+    </control>
+    <control>
+      <type>image</type>
+      <id>1</id>
+      <posX>1590</posX>
+      <posY>300</posY>
+      <width>270</width>
+      <height>375</height>
+      <texture>Videothumbframe.png</texture>
+      <visible>string.equals(#OnlineVideos.state, details)</visible>
+    </control>
+    <control>
+      <type>listcontrol</type>
+      <description>videolist</description>
+      <id>51</id>
+      <width>825</width>
+      <height>660</height>
+      <playedColor>ffffffff</playedColor>
+      <playedColor2>ffffffff</playedColor2>
+      <textcolor>ff99f9ff</textcolor>
+      <textcolorNoFocus>ff99f9ff</textcolorNoFocus>
+      <textXOff2>825</textXOff2>
+      <textYOff2>3</textYOff2>
+      <textXOff3>3817</textXOff3>
+      <textYOff3>12</textYOff3>
+      <textalign3>right</textalign3>
+      <font3>font9</font3>
+      <scrollOffset>2</scrollOffset>
+      <onright>97258</onright>
+      <onleft>97258</onleft>
+      <onup>51</onup>
+      <ondown>51</ondown>
+      <visible>string.equals(#OnlineVideos.state, details)</visible>
+    </control>
+    <control>
+      <description>Add to Trakt Movie/Show Watch List</description>
+      <type>button</type>
+      <id>97258</id>
+      <label>#Trakt.Translation.AddToWatchList.Label</label>
+      <onup>51</onup>
+      <ondown>51</ondown>
+      <onright>51</onright>
+      <onleft>51</onleft>
+      <posX>150</posX>
+      <posY>855</posY>
+      <width>510</width>
+      <height>52</height>
+      <font>font11</font>
+      <visible>string.equals(#OnlineVideos.state,details)+[string.equals(#OnlineVideos.selectedSiteUtil,IMDB)|string.equals(#OnlineVideos.selectedSiteUtil,ITMovieTrailers)]+plugin.isenabled(Trakt)</visible>
+    </control>
+    <control>
+      <type>label</type>
+      <description>Release date txt</description>
+      <id>56</id>
+      <posX>1095</posX>
+      <posY>280</posY>
+      <font>font10</font>
+      <label>#OnlineVideos.Translation.DateOfRelease.Label</label>
+      <visible>string.equals(#OnlineVideos.state, details) + [string.equals(#OnlineVideos.selectedSiteUtil, ITMovieTrailers) | string.equals(#OnlineVideos.selectedSiteUtil, IMDb)]</visible>
+      <textcolor>ffffd700</textcolor>
+    </control>
+    <control>
+      <type>label</type>
+      <description>Realease date value</description>
+      <id>57</id>
+      <posX>1095</posX>
+      <posY>309</posY>
+      <font>font12</font>
+      <label>#OnlineVideos.Details.ReleaseDate</label>
+      <visible>string.equals(#OnlineVideos.state, details) + [string.equals(#OnlineVideos.selectedSiteUtil, ITMovieTrailers) | string.equals(#OnlineVideos.selectedSiteUtil, IMDb)]</visible>
+      <textcolor>ffffd700</textcolor>
+    </control>
+    <control>
+      <type>label</type>
+      <description>Genre txt</description>
+      <id>58</id>
+      <posX>1095</posX>
+      <posY>346</posY>
+      <font>font10</font>
+      <label>#OnlineVideos.Translation.Genre.Label</label>
+      <visible>string.equals(#OnlineVideos.state, details) + [string.equals(#OnlineVideos.selectedSiteUtil, ITMovieTrailers) | string.equals(#OnlineVideos.selectedSiteUtil, IMDb)]</visible>
+      <textcolor>ffffd700</textcolor>
+    </control>
+    <control>
+      <type>fadelabel</type>
+      <description>genre value</description>
+      <id>59</id>
+      <posX>1095</posX>
+      <posY>375</posY>
+      <width>420</width>
+      <label>#OnlineVideos.Details.Genres</label>
+      <font>font12</font>
+      <visible>string.equals(#OnlineVideos.state, details) + [string.equals(#OnlineVideos.selectedSiteUtil, ITMovieTrailers) | string.equals(#OnlineVideos.selectedSiteUtil, IMDb)]</visible>
+      <disabledcolor>ff808080</disabledcolor>
+    </control>
+    <control>
+      <type>label</type>
+      <description>Certificate txt</description>
+      <posX>1095</posX>
+      <posY>412</posY>
+      <label>173</label>
+      <font>font10</font>
+      <visible>string.equals(#OnlineVideos.state, details) + [string.equals(#OnlineVideos.selectedSiteUtil, ITMovieTrailers) | string.equals(#OnlineVideos.selectedSiteUtil, IMDb)]</visible>
+      <textcolor>ffffd700</textcolor>
+    </control>
+    <control>
+      <type>fadelabel</type>
+      <description>Certificate value</description>
+      <posX>1095</posX>
+      <posY>441</posY>
+      <width>420</width>
+      <label>#OnlineVideos.Details.Certificate</label>
+      <font>font12</font>
+      <visible>string.equals(#OnlineVideos.state, details) + [string.equals(#OnlineVideos.selectedSiteUtil, ITMovieTrailers) | string.equals(#OnlineVideos.selectedSiteUtil, IMDb)]</visible>
+      <disabledcolor>ff808080</disabledcolor>
+    </control>
+    <control>
+      <type>label</type>
+      <description>Directors txt</description>
+      <id>54</id>
+      <posX>1095</posX>
+      <posY>478</posY>
+      <font>font10</font>
+      <label>#OnlineVideos.Translation.Directors.Label</label>
+      <visible>string.equals(#OnlineVideos.state, details) + [string.equals(#OnlineVideos.selectedSiteUtil, ITMovieTrailers) | string.equals(#OnlineVideos.selectedSiteUtil, IMDb)]</visible>
+      <textcolor>ffffd700</textcolor>
+    </control>
+    <control>
+      <type>fadelabel</type>
+      <description>Directors value</description>
+      <id>55</id>
+      <posX>1095</posX>
+      <posY>507</posY>
+      <width>420</width>
+      <label>#OnlineVideos.Details.Directors</label>
+      <font>font12</font>
+      <visible>string.equals(#OnlineVideos.state, details) + [string.equals(#OnlineVideos.selectedSiteUtil, ITMovieTrailers) | string.equals(#OnlineVideos.selectedSiteUtil, IMDb)]</visible>
+      <textcolor>ffffd700</textcolor>
+    </control>
+    <control>
+      <type>label</type>
+      <description>Cast txt</description>
+      <id>52</id>
+      <posX>1095</posX>
+      <posY>544</posY>
+      <font>font10</font>
+      <label>#OnlineVideos.Translation.Actors.Label</label>
+      <visible>string.equals(#OnlineVideos.state, details) + [string.equals(#OnlineVideos.selectedSiteUtil, ITMovieTrailers) | string.equals(#OnlineVideos.selectedSiteUtil, IMDb)]</visible>
+      <textcolor>ffffd700</textcolor>
+    </control>
+    <control>
+      <type>textboxscrollup</type>
+      <description>cast value</description>
+      <id>53</id>
+      <posX>1095</posX>
+      <posY>588</posY>
+      <width>420</width>
+      <height>82</height>
+      <font>font11</font>
+      <label>#OnlineVideos.Details.Actors</label>
+      <visible>string.equals(#OnlineVideos.state, details) + [string.equals(#OnlineVideos.selectedSiteUtil, ITMovieTrailers) | string.equals(#OnlineVideos.selectedSiteUtil, IMDb)]</visible>
+      <disabledcolor>ff808080</disabledcolor>
+    </control>
+    <control>
+      <description>Separator Line</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>1095</posX>
+      <posY>690</posY>
+      <width>750</width>
+      <height>1</height>
+      <texture>hbar1white.png</texture>
+      <colordiffuse>60ffffff</colordiffuse>
+      <visible>string.equals(#OnlineVideos.state, details) + [string.equals(#OnlineVideos.selectedSiteUtil, ITMovieTrailers) | string.equals(#OnlineVideos.selectedSiteUtil, IMDb)]</visible>
+    </control>
+    <control>
+      <type>label</type>
+      <description>Plot txt</description>
+      <id>60</id>
+      <posX>4095</posX>
+      <posY>705</posY>
+      <width>780</width>
+      <height>157</height>
+      <visible>string.equals(#OnlineVideos.state, details) + [string.equals(#OnlineVideos.selectedSiteUtil, ITMovieTrailers) | string.equals(#OnlineVideos.selectedSiteUtil, IMDb)]</visible>
+      <label>#OnlineVideos.Translation.PlotOutline.Label</label>
+      <textcolor>ffffd700</textcolor>
+    </control>
+    <control>
+      <type>textboxscrollup</type>
+      <description>Plot value</description>
+      <id>61</id>
+      <posX>1095</posX>
+      <posY>705</posY>
+      <width>780</width>
+      <height>157</height>
+      <colordiffuse>ffffffff</colordiffuse>
+      <visible>string.equals(#OnlineVideos.state, details) + [string.equals(#OnlineVideos.selectedSiteUtil, ITMovieTrailers) | string.equals(#OnlineVideos.selectedSiteUtil, IMDb)]</visible>
+      <font>font11</font>
+      <label>#OnlineVideos.Details.Plot</label>
+      <textcolor>ffffd700</textcolor>
+    </control>
+  </controls>
+</window>

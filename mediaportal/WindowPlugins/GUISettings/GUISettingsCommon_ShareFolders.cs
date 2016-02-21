@@ -916,38 +916,6 @@ namespace MediaPortal.GUI.Settings
       OnAddPath();
     }
 
-    private void OnAddLayout()
-    {
-      GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_MENU);
-      if (dlg != null)
-      {
-        dlg.Reset();
-        dlg.SetHeading(GUILocalizeStrings.Get(496)); //Menu
-
-        foreach (string layout in _layouts)
-        {
-          dlg.Add(layout);
-        }
-
-        if (_folderDefaultLayoutIndex >= 0)
-        {
-          dlg.SelectedLabel = _folderDefaultLayoutIndex;
-        }
-
-        dlg.DoModal(GetID);
-
-        if (dlg.SelectedId == -1)
-        {
-          OnAddEditFolder();
-          return;
-        }
-
-        _folderDefaultLayout = dlg.SelectedLabelText;
-        _folderDefaultLayoutIndex = dlg.SelectedLabel;
-      }
-      OnAddEditFolder();
-    }
-
     private void OnAddPin()
     {
       if (_folderPin != string.Empty)

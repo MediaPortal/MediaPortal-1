@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <controls>
+    <control Style="NoShadow">
+      <type>textbox</type>
+      <id>912</id>
+      <posX>534</posX>
+      <posY>253</posY>
+      <width>1194</width>
+      <height>703</height>
+      <label>#SubCentral.About</label>
+      <font>font11</font>
+      <onup>912</onup>
+      <ondown>912</ondown>
+      <onleft>202</onleft>
+      <onright>50</onright>
+      <spinWidth>42</spinWidth>
+      <spinHeight>42</spinHeight>
+      <spinPosX>1075</spinPosX>
+      <spinPosY>907</spinPosY>
+      <spinAlign>left</spinAlign>
+      <spinCanFocus>yes</spinCanFocus>
+      <visible>Control.IsVisible(101)</visible>
+    </control>
+    <control>
+      <description>Dummy Button</description>
+      <type>button</type>
+      <id>500</id>
+      <label>-</label>
+      <onup>500</onup>
+      <ondown>500</ondown>
+      <onleft>202</onleft>
+      <onright>50</onright>
+      <textureFocus>-</textureFocus>
+      <textureNoFocus>-</textureNoFocus>
+      <visible>no</visible>
+    </control>
+  </controls>
+</window>

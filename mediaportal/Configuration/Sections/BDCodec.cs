@@ -295,31 +295,6 @@ namespace MediaPortal.Configuration.Sections
     */
     }
 
-    private void vc1videoCodecComboBox_SelectedIndexChanged(object sender, System.EventArgs e)
-    {
-      /*
-      videoCodecComboBox.SelectedIndexChanged -= videoCodecComboBox_SelectedIndexChanged;
-      if (h264videoCodecComboBox.Text.Contains(Windows7Codec))
-      {
-        videoCodecComboBox.SelectedItem = Windows7Codec;
-      }
-      else
-      {
-        if (videoCodecComboBox.Text.Contains(Windows7Codec))
-        {
-          for (int i = 0; i < videoCodecComboBox.Items.Count; i++)
-          {
-            string listedCodec = videoCodecComboBox.Items[i].ToString();
-            if (listedCodec == Windows7Codec) continue;
-            videoCodecComboBox.SelectedItem = listedCodec;
-            break;
-          }
-        }
-      }
-      videoCodecComboBox.SelectedIndexChanged += videoCodecComboBox_SelectedIndexChanged;
-    */
-    }
-
     private void RegMPtoConfig(string subkeysource)
     {
       using (RegistryKey subkey = Registry.CurrentUser.CreateSubKey(subkeysource))

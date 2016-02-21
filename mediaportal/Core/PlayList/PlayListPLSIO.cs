@@ -28,7 +28,6 @@ namespace MediaPortal.Playlists
   public class PlayListPLSIO : IPlayListIO
   {
     private const string START_PLAYLIST_MARKER = "[playlist]";
-    private const string PLAYLIST_NAME = "PlaylistName";
 
     public bool Load(PlayList playlist, string fileName)
     {

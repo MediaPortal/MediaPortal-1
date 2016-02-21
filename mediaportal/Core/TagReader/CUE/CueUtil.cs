@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2016 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2016 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -19,14 +19,10 @@
 #endregion
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Text;
 using System.IO;
 using MediaPortal.GUI.Library;
 using MediaPortal.Player;
-using MediaPortal.TagReader;
-using TagLib;
 
 namespace MediaPortal.TagReader
 {
@@ -52,7 +48,7 @@ namespace MediaPortal.TagReader
     private static CueSheet cueSheetCache = null;
     private static MusicTag musicTagCache = null;
     private static string cacheFName = null;
-    private static TagLib.File tagCache = null;
+    private static TagCache tagCache = null;
     private static Object cacheLock = new Object();
 
     #endregion
@@ -228,7 +224,7 @@ namespace MediaPortal.TagReader
     {
       lock (cacheLock)
       {
-        // This metod called twice for each one file. So, cache data!
+        // This metod called twice for each single file. So, cache data!
         if (cueFakeTrackFileName == cueFakeTrackFileNameCache)
         {
           return musicTagCache;
@@ -259,26 +255,52 @@ namespace MediaPortal.TagReader
         {
           if (fname != cacheFName)
           {
-            tagCache = TagLib.File.Create(fname);
+            TagLib.File file = TagLib.File.Create(fname);
+            tagCache = new TagCache();
+            tagCache.CopyTags(file);
           }
           cacheFName = fname;
 
-          musicTagCache.FileType = tagCache.MimeType;
-          musicTagCache.Year = (int)tagCache.Tag.Year;
-          musicTagCache.BitRate = tagCache.Properties.AudioBitrate;
-          musicTagCache.DiscID = (int)tagCache.Tag.Disc;
-          musicTagCache.DiscTotal = (int)tagCache.Tag.DiscCount;
-          ;
+          musicTagCache.FileType = tagCache.FileType;
+          musicTagCache.Codec = tagCache.Codec;
+          musicTagCache.Year = tagCache.Year;
+          musicTagCache.BitRate = tagCache.BitRate;
+          musicTagCache.DiscID = tagCache.DiscId;
+          musicTagCache.DiscTotal = tagCache.DiscTotal;
+          musicTagCache.Channels = tagCache.Channels;
+          musicTagCache.SampleRate = tagCache.SampleRate;
+          musicTagCache.BitRateMode = tagCache.BitRateMode;
 
           if (musicTagCache.Duration == 0)
           {
-            musicTagCache.Duration = (int)tagCache.Properties.Duration.TotalSeconds -
-                                     cueIndexToIntTime(track.Indices[0]);
+            musicTagCache.Duration = tagCache.Duration - cueIndexToIntTime(track.Indices[0]);
           }
         }
-        catch (Exception ex)
+        catch (Exception)
         {
-          Log.Warn("CueFakeTrackFile2MusicTag: Exception reading file {0}. {1}", fname, ex.Message);
+          // If we end up here this means that we were not able to read the file
+          // Most probably because of taglib-sharp not supporting the audio file
+          // For example DTS file format has no Tags, but can be replayed by BASS
+          // Use MediaInfo to read the properties
+          if (fname != cacheFName)
+          {
+            tagCache = new TagCache();
+            if (tagCache.CopyMediaInfo(fname))
+            {
+              musicTagCache.FileType = tagCache.FileType;
+              musicTagCache.Codec = tagCache.Codec;
+              musicTagCache.BitRate = tagCache.BitRate;
+              musicTagCache.Channels = tagCache.Channels;
+              musicTagCache.SampleRate = tagCache.SampleRate;
+              musicTagCache.BitRateMode = tagCache.BitRateMode;
+
+              if (musicTagCache.Duration == 0)
+              {
+                musicTagCache.Duration = tagCache.Duration - cueIndexToIntTime(track.Indices[0]);
+              }
+            }
+          }
+          cacheFName = fname;
         }
 
         // In case of having a multi file Cue sheet, we're not able to get the duration
@@ -352,8 +374,16 @@ namespace MediaPortal.TagReader
           musicTagCache.Composer = cueSheetCache.Songwriter;
         }
 
-
-        //musicTagCache.CoverArtImageBytes = pics[0].Data.Data;
+        // in case we were not able to read the file type via taglib, we will get it vai extension
+        if (string.IsNullOrEmpty(musicTagCache.FileType))
+        {
+          var extension = Path.GetExtension(fname);
+          if (extension != null)
+          {
+            musicTagCache.FileType = extension.Substring(1).ToLowerInvariant();
+          }
+        }
+        
         musicTagCache.FileName = cueFakeTrackFileName;
         musicTagCache.Title = track.Title;
         musicTagCache.Track = track.TrackNumber;

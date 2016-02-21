@@ -1,11 +1,111 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <window>
-<id>508</id>
-<defaultcontrol>20</defaultcontrol>
-<allowoverlay>no</allowoverlay>
-<controls>
+  <id>508</id>
+  <defaultcontrol>20</defaultcontrol>
+  <allowoverlay>no</allowoverlay>
+  <controls>
+    <control>
+      <description>BG</description>
+      <type>image</type>
+      <id>1</id>
+      <texture>background.png</texture>
+      <width>1920</width>
+      <height>1080</height>
+    </control>
+	
+	<control>
+		<description>Number of Files Label</description>
+		<type>label</type>
+		<id>1</id>
+		<posX>110</posX>
+		<posY>997</posY>
+		<align>left</align>
+		<font>TitanLight12</font>
+		<textcolor>black</textcolor>
+		<label>#currentmodule: #itemcount</label>
+		<visible>[facadeview.list|facadeview.smallicons|facadeview.largeicons|facadeview.filmstrip]+Control.IsVisible(50)</visible>
+	</control>	
+    	<control>
+      	<id>0</id>
+        <type>label</type>
+        <posX>144</posX>
+        <posY>38</posY>
+        <width>855</width>
+        <font>TitanLight22</font>
+        <textcolor>ffffff</textcolor>
+        <label>Results</label>
+		<align>left</align>
+		<visible>[window.isvisible(35) | window.isvisible(0)] | [!window.isvisible(35) + !window.isvisible(0) + !window.isvisible(96742) + !window.isvisible(7111992)] | [window.isvisible(96742) + Control.IsVisible(50)] | [window.isvisible(96742) + Control.IsVisible(51)]</visible>
+  		</control>
+      
+		<control>
+      	<id>0</id>
+        <type>label</type>
+        <posX>1848</posX>
+        <posY>36</posY>
+        <width>555</width>
+        <font>TitanLight22</font>
+        <textcolor>ffffff</textcolor>
+        <label>#time</label>
+		<align>right</align>
+		<visible>[window.isvisible(35) | window.isvisible(0)] | [!window.isvisible(35) + !window.isvisible(0) + !window.isvisible(96742) + !window.isvisible(7111992)] | [window.isvisible(96742) + Control.IsVisible(50)] | [window.isvisible(96742) + Control.IsVisible(51)]</visible>
+  		</control>
+      
+      
+		<control>
+      	<description>Date</description>
+      	<id>0</id>
+        <type>label</type>
+        <posX>1845</posX>
+        <posY>96</posY>
+        <font>TitanLight12</font>
+        <textcolor>ffffff</textcolor>
+        <label>#date</label>
+		<align>right</align>
+		<visible>[[window.isvisible(35) | window.isvisible(0)] | [!window.isvisible(35) + !window.isvisible(0) + !window.isvisible(96742) + !window.isvisible(7111992)] | [window.isvisible(96742) + Control.IsVisible(50)] | [window.isvisible(96742) + Control.IsVisible(51)]] + !plugin.isenabled(World Weather)</visible>
+   		</control>
+	<import>common.window.music.xml</import>
+	
+    <control>
+	 <id>0</id>
+     <type>image</type>
+     <posX>66</posX>
+     <posY>39</posY>
+     <width>60</width>
+	 <height>56</height>
+     <texture>icon_music.png</texture>
+     <visible>control.isvisible(50)</visible>
+    </control>
 
-  <import>common.window.music.xml</import>
+	
+  <control>
+		<description>background listview</description>
+		<type>image</type>
+		<id>0</id>
+		<posX>10</posX>
+		<posY>252</posY>
+		<width>1903</width>
+		<height>790</height>
+		<texture>panel_list_music.png</texture>
+		<visible>facadeview.list + Control.IsVisible(50)</visible>
+	</control>	
+	
+
+    <control>
+      <description>Album Title</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>3135</posX>
+      <posY>95</posY>
+      <label>#AlbumInfo.Title</label>
+      <align>left</align>
+      <font>font10</font>
+      <textcolor>eaeaea</textcolor>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+
+	
 
 	<control>
 		<description>Poster shadow</description>
@@ -17,94 +117,97 @@
 		<height>605</height>
 		<texture>list_poster_shadow_music.png</texture>
 		<visible>Control.hasthumb(10)</visible>
-		<animation effect="fade" time="250">WindowOpen</animation>
-		<animation effect="fade" time="250">WindowClose</animation>
-	</control>	
+	</control>  	
 
-	<control>
-		<id>10</id>
-		<type>Album Art image</type>
+
+    <control>
+      <type>image</type>
+      <description>Album Art image</description>
+      <id>10</id>
 		<posX>121</posX>
 		<posY>362</posY>
 		<width>556</width>
 		<height>556</height>
-		<texture>-</texture>
- 		<animation effect="fade" time="250">WindowOpen</animation>
-		<animation effect="fade" time="250">WindowClose</animation>
-	</control>
+      <keepaspectratio>yes</keepaspectratio>
+      <centered>yes</centered>
+      <texture>#AlbumInfo.Thumb</texture>      
+      <zoom>yes</zoom>
+      <colorkey>FFFFFFFF</colorkey>
+    </control>	
+	
+	
+    <control>
+      <type>image</type>
+      <description>Amazon Logo image</description>
+      <id>30</id>
+      <posX>3169</posX>
+      <posY>930</posY>
+      <width>250</width>
+      <height>84</height>
+      <texture>amazonlogo.png</texture>
+      <centered>yes</centered>
+      <keepaspectratio>yes</keepaspectratio>
+    </control>
+    <control>
+      <type>label</type>
+      <description>Album Cover Art Label</description>
+      <id>11</id>
+      <posX>3560</posX>
+      <posY>675</posY>
+      <label>4519</label>
+      <font>font12</font>
+      <textcolor>ff6FAFE1</textcolor>
+    </control>
+    <control>
+      <type>fadelabel</type>
+      <description>Artist value</description>
+      <id>12</id>
+      <posX>3672</posX>
+      <posY>250</posY>
+      <width>1200</width>
+      <label>-</label>
+      <font>font16</font>
+      <textcolor>ffffffff</textcolor>
+    </control>
+    <control>
+      <type>fadelabel</type>
+      <description>Album value</description>
+      <id>13</id>
+      <posX>3672</posX>
+      <posY>195</posY>
+      <width>1200</width>
+      <label>-</label>
+      <font>font16</font>
+      <textcolor>ffffffff</textcolor>
+    </control>
+    <control>
+      <type>label</type>
+      <description>Release year value</description>
+      <id>14</id>
+      <posX>3660</posX>
+      <posY>300</posY>
+      <label>-</label>
+      <font>font16</font>
+      <textcolor>ffffffff</textcolor>
+    </control>
+    <control>
+      <type>label</type>
+      <description>No matches label</description>
+      <id>15</id>
+      <posX>0</posX>
+      <posY>300</posY>
+      <width>1920</width>
+      <align>center</align>
+      <label>4516</label>
+      <visible>false</visible>
+      <font>font18</font>
+      <textcolor>ffffffff</textcolor>
+    </control>
+	
 
 
-	<control>
-		<type>image</type>
-		<description>Amazon Logo image</description>
-		<id>30</id>
-		<posX>-2000</posX>
-		<posY>620</posY>
-		<width>167</width>
-		<height>56</height>
-		<texture>amazonlogo.png</texture>
-		<centered>yes</centered>
-		<keepaspectratio>yes</keepaspectratio>
-	</control>
-
-	<control>
-		<type>label</type>
-		<description>Album Cover Art Label</description>
-		<id>11</id>
-		<posX>113</posX>
-		<posY>288</posY>
-		<label>4519</label>
-		<font>font10</font>
-		<textcolor>ffb2d4f5</textcolor>
-	</control>
-
-	<control>
-		<type>fadelabel</type>
-		<description>Artist value</description>
-		<id>12</id>
-		<posX>448</posX>
-		<posY>167</posY>
-		<width>800</width>
-		<label>-</label>
-		<font>font16</font>
-		<textcolor>ffffffff</textcolor>
-	</control>
-
-	<control>
-		<type>fadelabel</type>
-		<description>Album value</description>
-		<id>13</id>
-		<posX>448</posX>
-		<posY>130</posY>
-		<width>800</width>
-		<label>-</label>
-		<font>font16</font>
-		<textcolor>ffffffff</textcolor>
-	</control>
-
-	<control>
-		<type>label</type>
-		<description>Release year value</description>
-		<id>14</id>
-		<posX>440</posX>
-		<posY>200</posY>
-		<label>-</label>
-		<font>font16</font>
-		<textcolor>ffffffff</textcolor>
-	</control>
-
-	<control>
-		<type>label</type>
-		<description>No matches label</description>
-		<id>15</id>
-		<posX>640</posX>
-		<posY>400</posY>
-		<label>4516</label>
-		<font>font18</font>
-		<textcolor>ffffffff</textcolor>
-	</control>
-
-  <control>
+	
+   <control>
     <description>album view listcontrol</description>
     <type>listcontrol</type>
     <subtype>album</subtype>
@@ -141,33 +244,39 @@
     <spinPosY>1000</spinPosY>
     <dimColor>ffffffff</dimColor>
 	</control>
+	
 	<control>
-		<type>button</type>
-		<description>Skip button</description>
-		<id>20</id>
-		<posX>113</posX>
-		<posY>520</posY>
-		<onleft>20</onleft>
-		<onright>25</onright>
-		<onup>20</onup>
-		<ondown>21</ondown>
-		<label>4520</label>
-		<width>224</width>
+      <description>group element</description>
+      <type>group</type>
+      <layout>StackLayout(2, Vertical, false)</layout>
+      <posX>130</posX>
+      <posY>150</posY>
+    <control>
+      <type>button</type>
+      <description>Skip button</description>
+      <id>20</id>
+      <posX>600</posX>
+      <posY>840</posY>
+      <onleft>20</onleft>
+      <onright>25</onright>
+      <onup>20</onup>
+      <ondown>21</ondown>
+      <label>4520</label>
+      <width>400</width>
+    </control>
+    <control>
+      <type>button</type>
+      <description>Cancel button</description>
+      <id>21</id>
+      <posX>169</posX>
+      <posY>840</posY>
+      <onleft>21</onleft>
+      <onright>25</onright>
+      <onup>20</onup>
+      <ondown>21</ondown>
+      <label>222</label>
+      <width>400</width>
+    </control>
 	</control>
-
-	<control>
-		<type>button</type>
-		<description>Cancel button</description>
-		<id>21</id>
-		<posX>113</posX>
-		<posY>560</posY>
-		<onleft>21</onleft>
-		<onright>25</onright>
-		<onup>20</onup>
-		<ondown>21</ondown>
-		<label>222</label>
-		<width>224</width>
-	</control>
-
-</controls>
+  </controls>
 </window>

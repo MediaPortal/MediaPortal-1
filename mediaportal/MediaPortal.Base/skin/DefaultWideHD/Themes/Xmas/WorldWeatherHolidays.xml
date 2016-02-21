@@ -1,0 +1,653 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!--version="1.0" encoding="utf-8" standalone="yes"-->
+<!--version="1.0" encoding="utf-8" standalone="yes"-->
+<window>
+  <allowoverlay>yes</allowoverlay>
+  <controls>
+    <!-- *** HOLIDAYS *** -->
+    <control>
+      <description>Location label</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>45</posX>
+      <posY>15</posY>
+      <width>900</width>
+      <label>#(L(8))  #WorldWeather.TranslationHoliday/#WorldWeather.TranslationSeason</label>
+      <font>Label</font>
+      <align>left</align>
+      <textcolor>ffffd700</textcolor>
+      <visible>string.equals(#WorldWeather.View,Calendar)</visible>
+    </control>
+    <!--     *******************************************************************************************  -->
+    <!--     ********************************      Holidays Label      *********************************  -->
+    <!--     *******************************************************************************************  -->
+    <control>
+      <type>group</type>
+      <description>group element</description>
+      <layout>StackLayout(10, Vertical, true)</layout>
+      <posX>200</posX>
+      <posY>300</posY>
+      <visible>string.equals(#WorldWeather.View,Calendar)</visible>
+      <control>
+        <description>Current NewYear static label</description>
+        <type>label</type>
+        <id>0</id>
+        <height>35</height>
+        <label>#WorldWeather.TranslationNewYear:</label>
+        <font>font12</font>
+        <textcolor>ffffd700</textcolor>
+        <visible>string.equals(#WorldWeather.View,Calendar)</visible>
+      </control>
+      <control>
+        <description>current epiphany static label</description>
+        <type>label</type>
+        <id>0</id>
+        <height>35</height>
+        <label>#WorldWeather.TranslationEpiphany:</label>
+        <font>font12</font>
+        <textcolor>ffffd700</textcolor>
+      </control>
+      <control>
+        <description>current HolyThursday static label</description>
+        <type>label</type>
+        <id>0</id>
+        <height>35</height>
+        <label>#WorldWeather.TranslationHolyThursday:</label>HolyThursday
+        <font>font12</font>
+        <textcolor>ffffd700</textcolor>
+      </control>
+      <control>
+        <description>current GoodFriday static label</description>
+        <type>label</type>
+        <id>0</id>
+        <height>35</height>
+        <label>#WorldWeather.TranslationGoodFriday:</label>
+        <font>font12</font>
+        <textcolor>ffffd700</textcolor>
+      </control>
+      <control>
+        <description>current EasterSunday static label</description>
+        <type>label</type>
+        <id>0</id>
+        <height>35</height>
+        <label>#WorldWeather.TranslationEasterSunday:</label>
+        <font>font12</font>
+        <textcolor>ffffd700</textcolor>
+      </control>
+      <control>
+        <description>current AscensionDay static label</description>
+        <type>label</type>
+        <id>0</id>
+        <height>35</height>
+        <label>#WorldWeather.TranslationAscensionDay:</label>
+        <font>font12</font>
+        <textcolor>ffffd700</textcolor>
+      </control>
+      <control>
+        <description>current WhitSunday static label</description>
+        <type>label</type>
+        <id>0</id>
+        <height>35</height>
+        <label>#WorldWeather.TranslationWhitSunday:</label>
+        <font>font12</font>
+        <textcolor>ffffd700</textcolor>
+      </control>
+      <control>
+        <description>current CorpusChristi static label</description>
+        <type>label</type>
+        <id>0</id>
+        <height>35</height>
+        <label>#WorldWeather.TranslationCorpusChristi:</label>
+        <font>font12</font>
+        <textcolor>ffffd700</textcolor>
+      </control>
+      <control>
+        <description>current AssumptionDay static label</description>
+        <type>label</type>
+        <id>0</id>
+        <height>35</height>
+        <label>#WorldWeather.TranslationAssumptionDay:</label>
+        <font>font12</font>
+        <textcolor>ffffd700</textcolor>
+      </control>
+      <control>
+        <description>current ReformationDay static label</description>
+        <type>label</type>
+        <id>0</id>
+        <height>35</height>
+        <label>#WorldWeather.TranslationReformationDay:</label>
+        <font>font12</font>
+        <textcolor>ffffd700</textcolor>
+      </control>
+      <control>
+        <description>current AllSaintsDay static label</description>
+        <type>label</type>
+        <id>0</id>
+        <height>35</height>
+        <label>#WorldWeather.TranslationAllSaintsDay:</label>
+        <font>font12</font>
+        <textcolor>ffffd700</textcolor>
+      </control>
+    </control>
+    <!--     *******************************************************************************************  -->
+    <!--     ********************************      Holidays Values      ********************************  -->
+    <!--     *******************************************************************************************  -->
+    <control>
+      <type>group</type>
+      <description>group element</description>
+      <layout>StackLayout(10, Vertical, true)</layout>
+      <posX>700</posX>
+      <posY>300</posY>
+      <visible>string.equals(#WorldWeather.View,Calendar)</visible>
+      <control>
+        <description>current NewYear label</description>
+        <type>label</type>
+        <id>0</id>
+        <height>35</height>
+        <label>#WorldWeather.CalendarNewYear</label>
+        <font>font12</font>
+      </control>
+      <control>
+        <description>current Epiphany label</description>
+        <type>label</type>
+        <id>0</id>
+        <height>35</height>
+        <label>#WorldWeather.CalendarEpiphany</label>
+        <font>font12</font>
+      </control>
+      <control>
+        <description>current HolyThursday label</description>
+        <type>label</type>
+        <id>0</id>
+        <height>35</height>
+        <label>#WorldWeather.CalendarHolyThursday</label>
+        <font>font12</font>
+      </control>
+      <control>
+        <description>current GoodFriday label</description>
+        <type>label</type>
+        <id>0</id>
+        <height>35</height>
+        <label>#WorldWeather.CalendarGoodFriday</label>
+        <font>font12</font>
+      </control>
+      <control>
+        <description>current EasterSunday label</description>
+        <type>label</type>
+        <id>0</id>
+        <height>35</height>
+        <label>#WorldWeather.CalendarEasterSunday</label>
+        <font>font12</font>
+      </control>
+      <control>
+        <description>current AscensionDay label</description>
+        <type>label</type>
+        <id>0</id>
+        <height>35</height>
+        <label>#WorldWeather.CalendarAscensionDay</label>
+        <font>font12</font>
+      </control>
+      <control>
+        <description>current WhitSunday label</description>
+        <type>label</type>
+        <id>0</id>
+        <height>35</height>
+        <label>#WorldWeather.CalendarWhitSunday</label>
+        <font>font12</font>
+      </control>
+      <control>
+        <description>current CorpusChristi label</description>
+        <type>label</type>
+        <id>0</id>
+        <height>35</height>
+        <label>#WorldWeather.CalendarCorpusChristi</label>
+        <font>font12</font>
+      </control>
+      <control>
+        <description>current AssumptionDay label</description>
+        <type>label</type>
+        <id>0</id>
+        <height>35</height>
+        <label>#WorldWeather.CalendarAssumptionDay</label>
+        <font>font12</font>
+      </control>
+      <control>
+        <description>current ReformationDay label</description>
+        <type>label</type>
+        <id>0</id>
+        <height>35</height>
+        <label>#WorldWeather.CalendarReformationDay</label>
+        <font>font12</font>
+      </control>
+      <control>
+        <description>current AllSaintsDay label</description>
+        <type>label</type>
+        <id>0</id>
+        <height>35</height>
+        <label>#WorldWeather.CalendarAllSaintsDay</label>
+        <font>font12</font>
+      </control>
+    </control>
+    <!--     *******************************************************************************************  -->
+    <!--     ********************************      Holidays Separator      *****************************  -->
+    <!--     *******************************************************************************************  -->
+    <control>
+      <type>group</type>
+      <description>group element</description>
+      <layout>StackLayout(44, Vertical, true)</layout>
+      <posX>200</posX>
+      <posY>341</posY>
+      <visible>string.equals(#WorldWeather.View,Calendar)</visible>
+      <control>
+        <description>divider horizontal</description>
+        <type>image</type>
+        <id>0</id>
+        <width>670</width>
+        <height>0</height>
+        <texture>hbar1white.png</texture>
+        <colordiffuse>40ffffff</colordiffuse>
+      </control>
+      <control>
+        <description>divider horizontal</description>
+        <type>image</type>
+        <id>0</id>
+        <width>670</width>
+        <height>0</height>
+        <texture>hbar1white.png</texture>
+        <colordiffuse>40ffffff</colordiffuse>
+      </control>
+      <control>
+        <description>divider horizontal</description>
+        <type>image</type>
+        <id>0</id>
+        <width>670</width>
+        <height>0</height>
+        <texture>hbar1white.png</texture>
+        <colordiffuse>40ffffff</colordiffuse>
+      </control>
+      <control>
+        <description>divider horizontal</description>
+        <type>image</type>
+        <id>0</id>
+        <width>670</width>
+        <height>0</height>
+        <texture>hbar1white.png</texture>
+        <colordiffuse>40ffffff</colordiffuse>
+      </control>
+      <control>
+        <description>divider horizontal</description>
+        <type>image</type>
+        <id>0</id>
+        <width>670</width>
+        <height>0</height>
+        <texture>hbar1white.png</texture>
+        <colordiffuse>40ffffff</colordiffuse>
+      </control>
+      <control>
+        <description>divider horizontal</description>
+        <type>image</type>
+        <id>0</id>
+        <width>670</width>
+        <height>0</height>
+        <texture>hbar1white.png</texture>
+        <colordiffuse>40ffffff</colordiffuse>
+      </control>
+      <control>
+        <description>divider horizontal</description>
+        <type>image</type>
+        <id>0</id>
+        <width>670</width>
+        <height>0</height>
+        <texture>hbar1white.png</texture>
+        <colordiffuse>40ffffff</colordiffuse>
+      </control>
+      <control>
+        <description>divider horizontal</description>
+        <type>image</type>
+        <id>0</id>
+        <width>670</width>
+        <height>0</height>
+        <texture>hbar1white.png</texture>
+        <colordiffuse>40ffffff</colordiffuse>
+      </control>
+      <control>
+        <description>divider horizontal</description>
+        <type>image</type>
+        <id>0</id>
+        <width>670</width>
+        <height>0</height>
+        <texture>hbar1white.png</texture>
+        <colordiffuse>40ffffff</colordiffuse>
+      </control>
+      <control>
+        <description>divider horizontal</description>
+        <type>image</type>
+        <id>0</id>
+        <width>670</width>
+        <height>0</height>
+        <texture>hbar1white.png</texture>
+        <colordiffuse>40ffffff</colordiffuse>
+      </control>
+    </control>
+    <!--     *******************************************************************************************  -->
+    <!--     ********************************      Seasons Label      **********************************  -->
+    <!--     *******************************************************************************************  -->
+    <control>
+      <type>group</type>
+      <description>group element</description>
+      <layout>StackLayout(10, Vertical, true)</layout>
+      <posX>1050</posX>
+      <posY>300</posY>
+      <visible>string.equals(#WorldWeather.View,Calendar)</visible>
+      <control>
+        <description>current SpringSeason static label</description>
+        <type>label</type>
+        <id>0</id>
+        <height>35</height>
+        <label>#WorldWeather.TranslationSpringSeason:</label>
+        <font>font12</font>
+        <textcolor>ffffd700</textcolor>
+      </control>
+      <control>
+        <description>current SummerSeason static label</description>
+        <type>label</type>
+        <id>0</id>
+        <height>35</height>
+        <label>#WorldWeather.TranslationSummerSeason:</label>
+        <font>font12</font>
+        <textcolor>ffffd700</textcolor>
+      </control>
+      <control>
+        <description>current AutumnSeason static label</description>
+        <type>label</type>
+        <id>0</id>
+        <height>35</height>
+        <label>#WorldWeather.TranslationAutumnSeason:</label>
+        <font>font12</font>
+        <textcolor>ffffd700</textcolor>
+      </control>
+      <control>
+        <description>current WinterSeason static label</description>
+        <type>label</type>
+        <id>0</id>
+        <height>35</height>
+        <label>#WorldWeather.TranslationWinterSeason:</label>
+        <font>font12</font>
+        <textcolor>ffffd700</textcolor>
+      </control>
+    </control>
+    <!--     *******************************************************************************************  -->
+    <!--     ********************************      Seasons Values     **********************************  -->
+    <!--     *******************************************************************************************  -->
+    <control>
+      <type>group</type>
+      <description>group element</description>
+      <layout>StackLayout(10, Vertical, true)</layout>
+      <posX>1550</posX>
+      <posY>300</posY>
+      <visible>string.equals(#WorldWeather.View,Calendar)</visible>
+      <control>
+        <description>current SpringSeason label</description>
+        <type>label</type>
+        <id>0</id>
+        <height>35</height>
+        <label>#WorldWeather.CalendarSpringSeason</label>
+        <font>font12</font>
+      </control>
+      <control>
+        <description>current SummerSeason label</description>
+        <type>label</type>
+        <id>0</id>
+        <height>35</height>
+        <label>#WorldWeather.CalendarSummerSeason</label>
+        <font>font12</font>
+      </control>
+      <control>
+        <description>current AutumnSeason label</description>
+        <type>label</type>
+        <id>0</id>
+        <height>35</height>
+        <label>#WorldWeather.CalendarAutumnSeason</label>
+        <font>font12</font>
+      </control>
+      <control>
+        <description>current WinterSeason label</description>
+        <type>label</type>
+        <id>0</id>
+        <height>35</height>
+        <label>#WorldWeather.CalendarWinterSeason</label>
+        <font>font12</font>
+      </control>
+    </control>
+    <!--     *******************************************************************************************  -->
+    <!--     ********************************      Seasons Separator      ******************************  -->
+    <!--     *******************************************************************************************  -->
+    <control>
+      <type>group</type>
+      <description>group element</description>
+      <layout>StackLayout(44, Vertical, true)</layout>
+      <posX>1050</posX>
+      <posY>341</posY>
+      <visible>string.equals(#WorldWeather.View,Calendar)</visible>
+      <control>
+        <description>divider horizontal</description>
+        <type>image</type>
+        <id>0</id>
+        <width>670</width>
+        <height>0</height>
+        <texture>hbar1white.png</texture>
+        <colordiffuse>40ffffff</colordiffuse>
+      </control>
+      <control>
+        <description>divider horizontal</description>
+        <type>image</type>
+        <id>0</id>
+        <width>670</width>
+        <height>0</height>
+        <texture>hbar1white.png</texture>
+        <colordiffuse>40ffffff</colordiffuse>
+      </control>
+      <control>
+        <description>divider horizontal</description>
+        <type>image</type>
+        <id>0</id>
+        <width>670</width>
+        <height>0</height>
+        <texture>hbar1white.png</texture>
+        <colordiffuse>40ffffff</colordiffuse>
+      </control>
+    </control>
+    <!--     *******************************************************************************************  -->
+    <!--     ****************************      Daylight and Week/Weekday      **************************  -->
+    <!--     *******************************************************************************************  -->
+    <control>
+      <description>current Daylight static label</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>0</posX>
+      <posY>880</posY>
+      <width>1920</width>
+      <align>center</align>
+      <label>#WorldWeather.TranslationDaylight:   #WorldWeather.LocationDaylightStart  -  #WorldWeather.LocationDaylightEnd</label>
+      <font>font12</font>
+      <textcolor>ffffd700</textcolor>
+      <visible>string.equals(#WorldWeather.View,Calendar)</visible>
+    </control>
+   <control>
+      <description>current Calendar Week/Calendar Day label</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>0</posX>
+      <posY>830</posY>
+      <width>1920</width>
+      <align>center</align>
+      <label>#WorldWeather.TranslationWeek #WorldWeather.CalendarWeek - #WorldWeather.TranslationDay #WorldWeather.CalendarDay</label>
+      <font>font12</font>
+      <visible>string.equals(#WorldWeather.View,Calendar)</visible>
+    </control>
+    <!--     *******************************************************************************************  -->
+    <!--     *******************************      Self-Defined Label      ******************************  -->
+    <!--     *******************************************************************************************  -->
+    <control>
+      <type>group</type>
+      <description>group element</description>
+      <layout>StackLayout(10, Vertical, true)</layout>
+      <posX>1050</posX>
+      <posY>570</posY>
+      <visible>string.equals(#WorldWeather.View,Calendar)</visible>
+      <control>
+        <description>Self-defined1 static label</description>
+        <type>label</type>
+        <id>0</id>
+        <height>35</height>
+        <label>#WorldWeather.CalendarSelfDefined0DayDescription:</label>
+        <font>font12</font>
+        <textcolor>ffffd700</textcolor>
+        <visible>string.equals(#WorldWeather.View,Calendar)+!string.equals(#WorldWeather.CalendarSelfDefined0DayDescription, )</visible>
+      </control>
+      <control>
+        <description>Self-defined2 static label</description>
+        <type>label</type>
+        <id>0</id>
+        <height>35</height>
+        <label>#WorldWeather.CalendarSelfDefined1DayDescription:</label>
+        <font>font12</font>
+        <textcolor>ffffd700</textcolor>
+        <visible>string.equals(#WorldWeather.View,Calendar)+!string.equals(#WorldWeather.CalendarSelfDefined1DayDescription, )</visible>
+      </control>
+      <control>
+        <description>Selfdefined3 static label</description>
+        <type>label</type>
+        <id>0</id>
+        <height>35</height>
+        <label>#WorldWeather.CalendarSelfDefined2DayDescription:</label>
+        <font>font12</font>
+        <textcolor>ffffd700</textcolor>
+        <visible>string.equals(#WorldWeather.View,Calendar)+!string.equals(#WorldWeather.CalendarSelfDefined2DayDescription, )</visible>
+      </control>
+      <control>
+        <description>Selfdefined4 static label</description>
+        <type>label</type>
+        <id>0</id>
+        <height>35</height>
+        <label>#WorldWeather.CalendarSelfDefined3DayDescription:</label>
+        <font>font12</font>
+        <textcolor>ffffd700</textcolor>
+        <visible>string.equals(#WorldWeather.View,Calendar)+!string.equals(#WorldWeather.CalendarSelfDefined3DayDescription, )</visible>
+      </control>
+      <control>
+        <description>Selfdefined5 static label</description>
+        <type>label</type>
+        <id>0</id>
+        <height>35</height>
+        <label>#WorldWeather.CalendarSelfDefined4DayDescription:</label>
+        <font>font12</font>
+        <textcolor>ffffd700</textcolor>
+        <visible>string.equals(#WorldWeather.View,Calendar)+!string.equals(#WorldWeather.CalendarSelfDefined4DayDescription, )</visible>
+      </control>
+    </control>
+    <!--     *******************************************************************************************  -->
+    <!--     *******************************      Self-Defined Values      *****************************  -->
+    <!--     *******************************************************************************************  -->
+    <control>
+      <type>group</type>
+      <description>group element</description>
+      <layout>StackLayout(10, Vertical, true)</layout>
+      <posX>1550</posX>
+      <posY>570</posY>
+      <visible>string.equals(#WorldWeather.View,Calendar)</visible>
+      <control>
+        <description>Self-defined1 label</description>
+        <type>label</type>
+        <id>0</id>
+        <height>35</height>
+        <label>#WorldWeather.CalendarSelfDefined0Day</label>
+        <font>font12</font>
+        <visible>string.equals(#WorldWeather.View,Calendar)+!string.equals(#WorldWeather.CalendarSelfDefined0DayDescription, )</visible>
+      </control>
+      <control>
+        <description>Self-defined2 label</description>
+        <type>label</type>
+        <id>0</id>
+        <height>35</height>
+        <label>#WorldWeather.CalendarSelfDefined1Day</label>
+        <font>font12</font>
+        <visible>string.equals(#WorldWeather.View,Calendar)+!string.equals(#WorldWeather.CalendarSelfDefined1DayDescription, )</visible>
+      </control>
+      <control>
+        <description>Selfdefined3 label</description>
+        <type>label</type>
+        <id>0</id>
+        <height>35</height>
+        <label>#WorldWeather.CalendarSelfDefined2Day</label>
+        <font>font12</font>
+        <visible>string.equals(#WorldWeather.View,Calendar)+!string.equals(#WorldWeather.CalendarSelfDefined2DayDescription, )</visible>
+      </control>
+      <control>
+        <description>Selfdefined4 label</description>
+        <type>label</type>
+        <id>0</id>
+        <height>35</height>
+        <label>#WorldWeather.CalendarSelfDefined3Day</label>
+        <font>font12</font>
+        <visible>string.equals(#WorldWeather.View,Calendar)+!string.equals(#WorldWeather.CalendarSelfDefined3DayDescription, )</visible>
+      </control>
+      <control>
+        <description>Selfdefined5 label</description>
+        <type>label</type>
+        <id>0</id>
+        <height>35</height>
+        <label>#WorldWeather.CalendarSelfDefined4Day</label>
+        <font>font12</font>
+        <visible>string.equals(#WorldWeather.View,Calendar)+!string.equals(#WorldWeather.CalendarSelfDefined4DayDescription, )</visible>
+      </control>
+    </control>
+    <!--     *******************************************************************************************  -->
+    <!--     *******************************     Self-Defined Separator      ***************************  -->
+    <!--     *******************************************************************************************  -->
+    <control>
+      <type>group</type>
+      <description>group element</description>
+      <layout>StackLayout(44, Vertical, true)</layout>
+      <posX>1050</posX>
+      <posY>611</posY>
+      <visible>string.equals(#WorldWeather.View,Calendar)</visible>
+      <control>
+        <description>divider horizontal</description>
+        <type>image</type>
+        <id>0</id>
+        <width>670</width>
+        <height>0</height>
+        <texture>hbar1white.png</texture>
+        <colordiffuse>40ffffff</colordiffuse>
+      </control>
+      <control>
+        <description>divider horizontal</description>
+        <type>image</type>
+        <id>0</id>
+        <width>670</width>
+        <height>0</height>
+        <texture>hbar1white.png</texture>
+        <colordiffuse>40ffffff</colordiffuse>
+      </control>
+      <control>
+        <description>divider horizontal</description>
+        <type>image</type>
+        <id>0</id>
+        <width>670</width>
+        <height>0</height>
+        <texture>hbar1white.png</texture>
+        <colordiffuse>40ffffff</colordiffuse>
+      </control>
+      <control>
+        <description>divider horizontal</description>
+        <type>image</type>
+        <id>0</id>
+        <width>670</width>
+        <height>0</height>
+        <texture>hbar1white.png</texture>
+        <colordiffuse>40ffffff</colordiffuse>
+      </control>
+    </control>
+  </controls>
+</window>

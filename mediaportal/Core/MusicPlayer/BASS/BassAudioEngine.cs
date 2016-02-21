@@ -103,8 +103,6 @@ namespace MediaPortal.MusicPlayer.BASS
 
     private delegate void InitializeControlsDelegate();
 
-    private delegate void ShowVisualizationWindowDelegate(bool visible);
-
     private Thread _commandThread = null;
     private List<QueueItem> _commandQueue = new List<QueueItem>();
 
@@ -523,7 +521,13 @@ namespace MediaPortal.MusicPlayer.BASS
       {
         return;
       }
+
       MusicStream musicStream = (MusicStream)sender;
+
+      // we want gapless playback for external controller (aka UPnP Controller)
+      // therefore we use the same mechanism
+      if (g_Player.ExternalController && action == MusicStream.StreamAction.InternetStreamChanged)
+        action = MusicStream.StreamAction.Crossfading;
 
       switch (action)
       {
@@ -531,7 +535,9 @@ namespace MediaPortal.MusicPlayer.BASS
           break;
 
         case MusicStream.StreamAction.Crossfading:
+
           string nextSong = Playlists.PlayListPlayer.SingletonPlayer.GetNextSong();
+
           if (nextSong != string.Empty)
           {
             g_Player.OnChanged(nextSong);
@@ -550,6 +556,7 @@ namespace MediaPortal.MusicPlayer.BASS
           break;
 
         case MusicStream.StreamAction.InternetStreamChanged:
+
           _tagInfo = musicStream.StreamTags;
           if (InternetStreamSongChanged != null)
           {
@@ -1351,7 +1358,7 @@ namespace MediaPortal.MusicPlayer.BASS
           // If audio file is not changed, just set new start/end position and reset pause
           string audioFilePath = System.IO.Path.GetDirectoryName(cueFakeTrack.CueFileName) +
                                  System.IO.Path.DirectorySeparatorChar + track.DataFile.Filename;
-          if (audioFilePath.CompareTo(_filePath) == 0 /* && StreamIsPlaying(stream)*/)
+          if (audioFilePath.CompareTo(_filePath) == 0)
           {
             SetCueTrackEndPosition(GetCurrentStream(), endOnly);
             return true;
@@ -1539,9 +1546,18 @@ namespace MediaPortal.MusicPlayer.BASS
           // Cue support
           if ((currentStream != null && currentStream.IsPlaying))
           {
-            if (HandleCueFile(ref filePath, false))
+            if (CueUtil.isCueFakeTrackFile(filePath))
             {
-              return true;
+              // Only process the CUE file here, if the song belongs to the same CUE file
+              // When the CUE file has changed, we handle that in PlayInternal
+              CueFakeTrack cueFakeTrack = CueUtil.parseCueFakeTrackFileName(filePath);
+              if (cueFakeTrack.CueFileName.Equals(_currentCueFileName))
+              {
+                if (HandleCueFile(ref filePath, false))
+                {
+                  return true;
+                }
+              }
             }
           }
         }
@@ -1662,7 +1678,7 @@ namespace MediaPortal.MusicPlayer.BASS
         {
           // The connection of a Webstream may have timed out, during Pause.
           // The only way to resolve this is to Stop the Stream and restart it
-          if (stream.Filetype.FileMainType == FileMainType.WebStream)
+          if (stream.Filetype.FileMainType == FileMainType.WebStream && !g_Player.ForcePauseWebStream) // in case of UPnP Renderer we want support pause
           {
             _state = PlayState.Ended;
             var filePath = stream.FilePath;
@@ -2218,7 +2234,10 @@ namespace MediaPortal.MusicPlayer.BASS
       }
       else
       {
-        level = BassMix.BASS_Mixer_ChannelGetLevel(stream.BassStream);
+        if (stream != null)
+        {
+          level = BassMix.BASS_Mixer_ChannelGetLevel(stream.BassStream);
+        }
       }
 
       if (Config.MusicPlayer != AudioPlayer.Asio) // For Asio, we already got the peaklevel above

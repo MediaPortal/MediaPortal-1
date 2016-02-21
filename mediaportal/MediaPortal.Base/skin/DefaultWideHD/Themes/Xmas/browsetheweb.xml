@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!--version="1.0" encoding="utf-8" standalone="yes"-->
+<window>
+  <id>54537689</id>
+  <defaultcontrol>2</defaultcontrol>
+  <allowoverlay>no</allowoverlay>
+  <disabletopbar>true</disabletopbar>
+  <controls>
+    <control>
+      <description>background image</description>
+      <type>image</type>
+      <id>1</id>
+      <width>1920</width>
+      <height>1080</height>
+    </control>
+    <control>
+      <description>Placeholder for browser component. If statusvisible=true, then bottom coordinate is decreased by the height of control with id of 545376891</description>
+      <type>image</type>
+      <id>545376890</id>
+      <width>1920</width>
+      <height>1080</height>
+    </control>
+    <control>
+      <description>Status label</description>
+      <type>label</type>
+      <id>545376891</id>
+      <posX>10</posX>
+      <posY>1035</posY>
+      <label>#btWeb.status</label>
+      <font>font12</font>
+      <align>left</align>
+      <textcolor>ffffd700</textcolor>
+      <height>54</height>
+      <visible>string.equals(#btWeb.statusvisible, true)</visible>
+    </control>
+    <control>
+      <description>Link id label</description>
+      <type>label</type>
+      <id>9</id>
+      <posX>1905</posX>
+      <posY>1035</posY>
+      <label>#btWeb.linkid</label>
+      <font>font10</font>
+      <align>right</align>
+      <textcolor>ffffd700</textcolor>
+      <height>54</height>
+      <visible>string.equals(#btWeb.statusvisible, true)</visible>
+    </control>
+  </controls>
+</window>

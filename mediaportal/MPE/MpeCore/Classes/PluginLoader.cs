@@ -279,35 +279,6 @@ namespace MpeCore.Classes
       }
 
       #endregion
-
-      /// <summary>
-      /// Search for namespace into local assembly file.
-      /// </summary>
-      private static bool IsNamespaceDefinedInAssembly(string asmFileName, string namespaceStr)
-      {
-        if (File.Exists(asmFileName))
-        {
-          try
-          {
-            Assembly assembly = Assembly.LoadFrom(asmFileName);
-            if (assembly != null)
-            {
-              foreach (Module m in assembly.GetModules())
-              {
-                foreach (Type t in m.GetTypes())
-                {
-                  if (namespaceStr == t.Namespace)
-                  {
-                    return true;
-                  }
-                }
-              }
-            }
-          }
-          catch {}
-        }
-        return false;
-      }
     }
   }
 }

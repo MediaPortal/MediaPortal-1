@@ -27,6 +27,7 @@ using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using System.Xml;
 using MediaPortal.GUI.Library;
+using MediaPortal.Profile;
 using Win32;
 using Hid=SharpLib.Hid;
 
@@ -384,12 +385,20 @@ namespace MediaPortal.InputDevices
       {
         rid[i].usUsagePage = entry.Value.UsagePage;
         rid[i].usUsage = entry.Value.UsageCollection;
-        rid[i].dwFlags = (entry.Value.HandleHidEventsWhileInBackground ? Const.RIDEV_EXINPUTSINK : 0);
+        rid[i].dwFlags = (entry.Value.HandleHidEventsWhileInBackground ? Const.RIDEV_INPUTSINK : 0);
         rid[i].hwndTarget = aHWND;
         i++;
       }
 
-      _handler = new SharpLib.Hid.Handler(rid, true);
+      int repeatDelay = -1;
+      int repeatSpeed = -1;
+      using (Settings settings = new MPSettings())
+      {
+        repeatDelay = settings.GetValueAsInt("remote", "HidRepeatDelayInMs", repeatDelay);
+        repeatSpeed = settings.GetValueAsInt("remote", "HidRepeatSpeedInMs", repeatSpeed);
+      }
+
+      _handler = new SharpLib.Hid.Handler(rid, true, repeatDelay, repeatSpeed);
       if (!_handler.IsRegistered)
       {
         Log.Info("Failed to register raw input devices: " + Marshal.GetLastWin32Error().ToString());

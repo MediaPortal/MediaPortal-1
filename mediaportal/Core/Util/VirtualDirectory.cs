@@ -57,6 +57,9 @@ namespace MediaPortal.Util
 
     private List<GUIListItem> _cachedItems = new List<GUIListItem>();
     private string _cachedDir = null;
+    private List<string> ignoredItems = new List<string>();
+    private List<string> detectedItems = new List<string>();
+    internal static List<string> detectedItemsPath = new List<string>();
 
     public void LoadSettings(string section)
     {
@@ -186,6 +189,9 @@ namespace MediaPortal.Util
       currentShare = string.Empty;
       previousShare = string.Empty;
       m_strPreviousDir = string.Empty;
+      ignoredItems.Clear();
+      detectedItems.Clear();
+      detectedItemsPath.Clear();
     }
 
     public bool RequestPin(string folder)
@@ -487,6 +493,25 @@ namespace MediaPortal.Util
       return false;
     }
 
+        /// <summary>
+    /// This method checks if the specified at least one share is offline
+    /// </summary>
+    /// <returns>
+    /// true : if at least one share is offline
+    /// false: none share is offline
+    /// </returns>
+    public bool IsShareOfflineDetected()
+    {
+      foreach (var share in m_shares)
+      {
+        if (share.ShareOffline)
+        {
+          return true;
+        }
+      }
+      return false;
+    }
+
     public void SetCurrentShare(string strDir)
     {
       //Setting current share;
@@ -617,6 +642,14 @@ namespace MediaPortal.Util
         return false;
       
       return shareName.ShareWakeOnLan;
+    }
+
+    public bool IsShareOffline(Share shareName)
+    {
+      if (shareName == null)
+        return false;
+
+      return shareName.ShareOffline;
     }
 
     public string GetShareRemoteURL(Share shareName)
@@ -1439,77 +1472,128 @@ namespace MediaPortal.Util
     /// </returns>
     public List<GUIListItem> GetRootExt()
     {
-      previousShare = string.Empty;
-
       List<GUIListItem> items = new List<GUIListItem>();
       foreach (Share share in m_shares)
       {
+        bool pathOnline = false;
         GUIListItem item = new GUIListItem();
         item.Label = share.Name;
         item.Path = share.Path;
-        if (Utils.IsRemovable(item.Path) && Directory.Exists(item.Path))
+        if (share.ShareOffline && !share.ShareWakeOnLan)
         {
-          string driveName = Utils.GetDriveName(item.Path);
-          if (driveName == "") driveName = GUILocalizeStrings.Get(1061);
-          item.Label = String.Format("({0}) {1}", item.Path, driveName);
-        }
-        if (Utils.IsDVD(item.Path))
-        {
-          item.DVDLabel = Utils.GetDriveName(item.Path);
-          item.DVDLabel = item.DVDLabel.Replace('_', ' ');
-        }
-
-        if (item.DVDLabel != "")
-        {
-          item.Label = String.Format("({0}) {1}", item.Path, item.DVDLabel);
+          Log.Debug("GetRootExt(): Path = {0} is offline and WOL not enabled", item.Path);
         }
         else
-          item.Label = share.Name;
-        item.IsFolder = true;
-
-        if (share.IsFtpShare)
         {
-          //item.Path = String.Format("remote:{0}?{1}?{2}?{3}?{4}",
-          //      share.FtpServer, share.FtpPort, share.FtpLoginName, share.FtpPassword, Utils.RemoveTrailingSlash(share.FtpFolder));
-          item.Path = GetShareRemoteURL(share);
-          item.IsRemote = true;
-        }
-        Utils.SetDefaultIcons(item);
-
-        bool pathOnline = Util.Utils.CheckServerStatus(item.Path);
-
-        if (Util.Utils.IsUNCNetwork(item.Path) && !pathOnline && Util.Utils.FileExistsInCache(GUIGraphicsContext.GetThemedSkinFile("\\Media\\defaultNetworkOffline.png")))
-        {
-          item.IconImage = "defaultNetworkOffline.png";
-          item.IconImageBig = "defaultNetworkBigOffline.png";
-          item.ThumbnailImage = "defaultNetworkBigOffline.png";
-          Log.Debug("GetRootExt(): Path = {0}, IconImage = {1}", item.Path, item.IconImage);
-        }
-
-        if ((share.Pincode == string.Empty || !share.DonotFolderJpgIfPin) && pathOnline)
-        {
-          string coverArt = Utils.GetCoverArtName(item.Path, "folder");
-          string largeCoverArt = Utils.GetLargeCoverArtName(item.Path, "folder");
-          bool coverArtExists = false;
-          if (Util.Utils.FileExistsInCache(coverArt))
+          if (Utils.IsRemovable(item.Path) && Directory.Exists(item.Path))
           {
-            item.IconImage = coverArt;
-            coverArtExists = true;
+            string driveName = Utils.GetDriveName(item.Path);
+            if (driveName == "") driveName = GUILocalizeStrings.Get(1061);
+            item.Label = String.Format("({0}) {1}", item.Path, driveName);
           }
-          if (Util.Utils.FileExistsInCache(largeCoverArt))
+          if (Utils.IsDVD(item.Path))
           {
-            item.IconImageBig = largeCoverArt;
+            item.DVDLabel = Utils.GetDriveName(item.Path);
+            item.DVDLabel = item.DVDLabel.Replace('_', ' ');
           }
 
-            // Fix for Mantis issue 0001465: folder.jpg in main shares view only displayed when list view is used
-          else if (coverArtExists)
+          if (item.DVDLabel != "")
           {
-            item.IconImageBig = coverArt;
-            item.ThumbnailImage = coverArt;
+            item.Label = String.Format("({0}) {1}", item.Path, item.DVDLabel);
+          }
+          else
+            item.Label = share.Name;
+          item.IsFolder = true;
+
+          if (share.IsFtpShare)
+          {
+            //item.Path = String.Format("remote:{0}?{1}?{2}?{3}?{4}",
+            //      share.FtpServer, share.FtpPort, share.FtpLoginName, share.FtpPassword, Utils.RemoveTrailingSlash(share.FtpFolder));
+            item.Path = GetShareRemoteURL(share);
+            item.IsRemote = true;
+          }
+          Utils.SetDefaultIcons(item);
+          bool isUNCNetwork = false;
+          string serverName = Util.Utils.GetServerNameFromUNCPath(Util.Utils.FindUNCPaths(item.Path)).ToLower();
+
+          if (ignoredItems.Contains(serverName))
+          {
+            Log.Debug("GetRootExt(): '{0}' is offline. Skip checking of {1}", serverName, item.Path);
+
+            isUNCNetwork = true;
+          }
+          else
+          {
+            isUNCNetwork = Util.Utils.IsUNCNetwork(Util.Utils.FindUNCPaths(item.Path));
+
+            if (!detectedItems.Contains(serverName))
+            {
+              pathOnline = !isUNCNetwork || UNCTools.IsUNCFileFolderOnline(item.Path);
+            }
+            else
+            {
+              pathOnline = true;
+            }
+
+            if (!pathOnline)
+            {
+              if (!ignoredItems.Contains(serverName))
+              {
+                ignoredItems.Add(serverName);
+                Log.Debug("GetRootExt(): '{0}' is offline. Added to the ignored list.", serverName);
+              }
+            }
+            else if (!detectedItems.Contains(serverName))
+            {
+              detectedItems.Add(serverName);
+            }
+          }
+
+          if ((share.Pincode == string.Empty || !share.DonotFolderJpgIfPin) && pathOnline)
+          {
+            string coverArt = Utils.GetCoverArtName(item.Path, "folder");
+            string largeCoverArt = Utils.GetLargeCoverArtName(item.Path, "folder");
+            bool coverArtExists = false;
+            if (Util.Utils.FileExistsInCache(coverArt))
+            {
+              item.IconImage = coverArt;
+              coverArtExists = true;
+            }
+            if (Util.Utils.FileExistsInCache(largeCoverArt))
+            {
+              item.IconImageBig = largeCoverArt;
+            }
+
+              // Fix for Mantis issue 0001465: folder.jpg in main shares view only displayed when list view is used
+            else if (coverArtExists)
+            {
+              item.IconImageBig = coverArt;
+              item.ThumbnailImage = coverArt;
+            }
+          }
+          else
+          {
+            if (isUNCNetwork && !pathOnline &&
+                Util.Utils.FileExistsInCache(GUIGraphicsContext.GetThemedSkinFile("\\Media\\defaultNetworkOffline.png")))
+            {
+              item.IconImage = "defaultNetworkOffline.png";
+              item.IconImageBig = "defaultNetworkBigOffline.png";
+              item.ThumbnailImage = "defaultNetworkBigOffline.png";
+            }
+          }
+          
+          if (!pathOnline && !share.ShareWakeOnLan && !Util.Utils.IsDVD(item.Path))
+          {
+            share.ShareOffline = true;
+
+            Log.Debug("GetRootExt(): ShareOffline : '{0}' doesn't exists or offline, enable WOL feature for permanent loading", share.Path);
+            Log.Debug("GetRootExt(): ShareOffline : '{0}' can be refreshed from context menu in share view mode", share.Path);
+          }
+          else
+          {
+            items.Add(item);
           }
         }
-
-        items.Add(item);
       }
 
       // add removable drives with media
@@ -1584,11 +1668,16 @@ namespace MediaPortal.Util
 
       try
       {
+        IntPtr handle = new IntPtr(-1);
         Win32API.WIN32_FIND_DATA fd = new Win32API.WIN32_FIND_DATA();
         fd.cFileName = new String(' ', 256);
         fd.cAlternate = new String(' ', 14);
         // http://msdn.microsoft.com/en-us/library/aa364418%28VS.85%29.aspx
-        IntPtr handle = Win32API.FindFirstFile(aDirectory + @"\*.*", out fd);
+        bool available = UNCTools.UNCFileFolderExists(aDirectory);
+        if (available)
+        {
+          handle = Win32API.FindFirstFile(aDirectory + @"\*.*", out fd);
+        }
 
         int count = 0;
         do

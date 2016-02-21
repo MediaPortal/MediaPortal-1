@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!--version="1.0" encoding="utf-8" standalone="yes"-->
+<window>
+  <id>464554871</id>
+  <defaultcontrol>50</defaultcontrol>
+  <allowoverlay>yes</allowoverlay>
+  <define>#header.label:FRITZ!Box Manager</define>
+  <define>#header.hover:hover_fritzbox.png</define>
+  <controls>
+    <control>
+      <description>Background</description>
+      <type>image</type>
+      <id>1</id>
+      <texture>blue.png</texture>
+      <width>1920</width>
+      <height>1080</height>
+    </control>
+    <import>common.window.xml</import>
+    <import>common.time.xml</import>
+    <control>
+      <description>General Overlay</description>
+      <id>0</id>
+      <type>image</type>
+      <posX>0</posX>
+      <posY>45</posY>
+      <width>1920</width>
+      <height>1080</height>
+      <texture>general_overlay.png</texture>
+    </control>
+    <control>
+      <type>actiongroup</type>
+      <description>action menu</description>
+      <defaultcontrol>2</defaultcontrol>
+      <onexit>0</onexit>
+      <buttonX>0</buttonX>
+      <buttonY>-60</buttonY>
+      <buttonwidth>159</buttonwidth>
+      <buttonheight>1080</buttonheight>
+      <textureFocus>-</textureFocus>
+      <textureNoFocus>Action_nofocus.png</textureNoFocus>
+      <width>412</width>
+      <height>1080</height>
+      <dimColor>00ffffff</dimColor>
+      <control>
+        <type>image</type>
+        <id>0</id>
+        <width>1920</width>
+        <height>1080</height>
+        <texture>white.png</texture>
+        <colordiffuse>50005eef</colordiffuse>
+      </control>
+      <control>
+        <type>image</type>
+        <posX>39</posX>
+        <posY>117</posY>
+        <width>480</width>
+        <height>886</height>
+        <texture>Backslide.png</texture>
+        <colorDiffuse>fffffffff</colorDiffuse>
+        <visible>!Control.HasFocus(50)</visible>
+        <animation effect="slide" time="70" start="-300,0" reversible="false">visible</animation>
+        <animation effect="slide" time="70" end="-300,0" reversible="false">hidden</animation>
+      </control>
+      <control>
+        <description>group element</description>
+        <type>group</type>
+        <animation effect="slide" time="70" start="-300,0" reversible="false">visible</animation>
+        <animation effect="slide" time="70" end="-300,0" reversible="false">hidden</animation>
+        <layout>StackLayout(0, Vertical, true)</layout>
+        <posX>75</posX>
+        <posY>181</posY>
+        <visible>!Control.HasFocus(50)</visible>
+        <control>
+          <id>2</id>
+          <description>View as</description>
+          <type>button</type>
+          <onright>50</onright>
+          <onup>9</onup>
+          <label>100</label>
+        </control>
+        <control>
+          <id>3</id>
+          <description>Sort</description>
+          <type>sortbutton</type>
+          <onright>50</onright>
+          <ondown>4</ondown>
+        </control>
+        <control>
+          <id>4</id>
+          <description>Mode</description>
+          <type>button</type>
+          <onright>50</onright>
+          <ondown>9</ondown>
+          <label>Mode</label>
+        </control>
+        <control>
+          <id>9</id>
+          <description>Update list</description>
+          <type>button</type>
+          <onright>50</onright>
+          <ondown>2</ondown>
+          <label>Update</label>
+        </control>
+      </control>
+    </control>
+    <import>common.facade.pictures.xml</import>
+    <control>
+      <description>Contact picture</description>
+      <id>500</id>
+      <type>image</type>
+      <posX>1425</posX>
+      <posY>255</posY>
+      <width>250</width>
+      <height>213</height>
+      <keepaspectratio>yes</keepaspectratio>
+      <centered>yes</centered>
+      <texture flipY="true" diffuse="Thumb_Mask.png">#selectedthumb</texture>
+      <visible>yes</visible>
+      <animation effect="fade" time="450" reversible="false">visible</animation>
+    </control>
+    <control>
+      <description>Header</description>
+      <type>fadelabel</type>
+      <posX>45</posX>
+      <posY>15</posY>
+      <width>525</width>
+      <font>Label</font>
+      <align>left</align>
+      <textcolor>ff6FAFE1</textcolor>
+      <label>FRITZ!Box Manager</label>
+    </control>
+  </controls>
+</window>

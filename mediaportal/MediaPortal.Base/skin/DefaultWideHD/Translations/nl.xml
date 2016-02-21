@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Skin translation file -->
+<!-- Dutch (nl) -->
+<strings>
+  <string Field="WorldNewsTicker">Activeren WorldNews ticker</string>
+  <string Field="MusicNowPlayingFanart">Fanart voor actuele titels in BasicHome</string>
+  <string Field="MusicFanart">Toevallige muziek fanart in BasicHome</string>
+  <string Field="VideoFanart">Toevallige video fanart in BasicHome</string>
+  <string Field="TVGuideRows">Aantal lijnen in de TV-gids</string>
+  <string Field="Background">Achtergrond</string>
+  <string Field="Games">Spele</string>
+  <string Field="NewEpisodes">Recent toegevoegde afleveringen</string>
+  <string Field="NewRecordings">Recent toegevoegde tv-opnamen</string>
+  <string Field="NewVideos">Recent toegevoegde videos</string>
+  <string Field="NewYouTubeVideos">Recent toegevoegde Online Videos</string>
+  <string Field="NewFilms">Recent toegevoegde films</string>
+  <string Field="LastPlayed">Laatst gespeelde muziek</string>
+  <string Field="NewPictures">Recent toegevoegde foto's</string>
+  <string Field="NowRecording">Actieve opnames</string>
+  <string Field="Timer">#(L(603))</string>
+  <string Field="tvstreaminfo">TV OSD kanaal info altijd zichtbaar</string>
+</strings>

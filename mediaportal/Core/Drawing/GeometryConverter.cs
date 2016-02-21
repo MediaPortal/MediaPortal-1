@@ -138,12 +138,5 @@ namespace MediaPortal.Drawing
 
     #endregion Methods
 
-    #region Fields
-
-    // These regexs are courtesy of SharpVectorGraphics
-    private static Regex _pathRegex = new Regex(@"(?=[A-Za-z])");
-    private static Regex _argsRegex = new Regex(@"(\s*,\s*)|(\s+)|((?<=[0-9])(?=-))", RegexOptions.ExplicitCapture);
-
-    #endregion Fields
   }
 }

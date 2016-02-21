@@ -358,12 +358,23 @@ namespace MediaPortal.Util
 
     public static string GetServerNameFromUNCPath(string sFilePath)
     {
-      Uri uri = new Uri(sFilePath);
-      
-      if (!uri.IsUnc)
-        return string.Empty;
+      try
+      {
+        if (!string.IsNullOrEmpty(sFilePath))
+        {
+          Uri uri = new Uri(sFilePath);
 
-      return uri.Host;
+          if (!uri.IsUnc)
+            return string.Empty;
+
+          return uri.Host;
+        }
+        return sFilePath;
+      }
+      catch
+      {
+        return sFilePath;
+      }
     }
 
     public static long GetDiskSize(string drive)
@@ -592,27 +603,6 @@ namespace MediaPortal.Util
         if (extensionFile == ".lnk") return true;
       }
       catch (Exception) {}
-      return false;
-    }
-
-    public static bool CheckServerStatus(string folderName)
-    {
-      if (!Util.Utils.IsUNCNetwork(folderName))
-        return true;
-      
-      string serverName = string.Empty;
-      
-      try
-      {
-        serverName = Util.Utils.GetServerNameFromUNCPath(folderName);
-      }
-      catch { }
-      
-      if (!string.IsNullOrEmpty(serverName))
-      {
-        WakeOnLanManager wakeOnLanManager = new WakeOnLanManager();
-        return wakeOnLanManager.Ping(serverName, 100);
-      }
       return false;
     }
 
@@ -1496,6 +1486,67 @@ namespace MediaPortal.Util
       return false;
     }
 
+    public static string FindUNCPaths(string strDrive)
+    {
+      DriveInfo[] dis = DriveInfo.GetDrives();
+      foreach (DriveInfo di in dis)
+      {
+        if (di.DriveType == DriveType.Network && strDrive.ToLowerInvariant().StartsWith(di.Name.ToLowerInvariant()) &&
+            !string.IsNullOrEmpty(strDrive))
+        {
+          DirectoryInfo dir = di.RootDirectory;
+          string UNCPathResult = FindNetworkPath(strDrive);
+          if (IsUNCNetwork(UNCPathResult))
+          {
+            return UNCPathResult;
+          }
+          return GetUNCPath(dir.FullName.Substring(0, 2));
+        }
+      }
+      return strDrive;
+    }
+
+    public static string FindNetworkPath(string path)
+    {
+      if (string.IsNullOrEmpty(path)) return path;
+      string pathRoot = Path.GetPathRoot(path);
+      if (string.IsNullOrEmpty(pathRoot)) return path;
+      ProcessStartInfo pinfo = new ProcessStartInfo("net", "use");
+      pinfo.CreateNoWindow = true;
+      pinfo.RedirectStandardOutput = true;
+      pinfo.UseShellExecute = false;
+      string output;
+      using (Process p = Process.Start(pinfo))
+      {
+        output = p.StandardOutput.ReadToEnd();
+      }
+      //if we have a folder like D:\ then remove the \
+      if (pathRoot.EndsWith(@"\"))
+      {
+        pathRoot = pathRoot.Substring(0, pathRoot.Length - 1);
+      }
+      string line = output;
+      if (line.Contains(pathRoot))
+      {
+        try
+        {
+          string UNCPath = line;
+          string UNCPathSubstring = UNCPath.Substring(UNCPath.LastIndexOf(pathRoot));
+          int Pos1 = UNCPathSubstring.IndexOf(pathRoot) + pathRoot.Length;
+          int Pos2 = UNCPathSubstring.IndexOf("Microsoft Windows Network");
+          string result = UNCPathSubstring.Substring(Pos1, Pos2 - Pos1);
+          result = result.TrimStart();
+          result = Path.GetFullPath(result);
+          return result;
+        }
+        catch (Exception)
+        {
+          return path;
+        }
+      }
+      return path;
+    }
+
     public static bool IsPersistentNetwork(string strPath)
     {
       //IsNetwork doesn't work correctly, when the drive is disconnected (for whatever reason)
@@ -1690,7 +1741,8 @@ namespace MediaPortal.Util
     public static bool IsISOImage(string fileName)
     {
       string extension = Path.GetExtension(fileName).ToLowerInvariant();
-      if (string.IsNullOrEmpty(fileName) || !File.Exists(fileName) || (extension == ".tsbuffer" || extension == ".ts"))
+      // check for "http" to prevent exception
+      if (string.IsNullOrEmpty(fileName) || fileName.StartsWith("http://") || !File.Exists(fileName) || (extension == ".tsbuffer" || extension == ".ts")) 
         return false;
 
       string vDrive = DaemonTools.GetVirtualDrive();
@@ -4162,7 +4214,7 @@ namespace MediaPortal.Util
           {
             using (Profile.Settings xmlreader = new Profile.MPSettings())
             {
-              currentSkin = Config.Dir.Config + @"\skin\" + xmlreader.GetValueAsString("skin", "name", "Default");
+              currentSkin = Config.Dir.Config + @"\skin\" + xmlreader.GetValueAsString("skin", "name", "Titan");
             }
             defaultBackground = currentSkin + @"\media\previewbackground.png";
           }
@@ -4338,7 +4390,7 @@ namespace MediaPortal.Util
           {
             using (Profile.Settings xmlreader = new Profile.MPSettings())
             {
-              currentSkin = Config.Dir.Config + @"\skin\" + xmlreader.GetValueAsString("skin", "name", "Default");
+              currentSkin = Config.Dir.Config + @"\skin\" + xmlreader.GetValueAsString("skin", "name", "Titan");
             }
             defaultBackground = currentSkin + @"\media\previewbackground.png";
           }
@@ -4859,8 +4911,6 @@ namespace MediaPortal.Util
       catch (Exception) {}
     }
 
-    //void DeleteOldTimeShiftFiles(string path)
-
     public static void DeleteRecording(string recordingFilename)
     {
       Utils.FileDelete(recordingFilename);
@@ -4880,13 +4930,8 @@ namespace MediaPortal.Util
         {
           try
           {
-            if (fileName.ToLowerInvariant().IndexOf(filename) >= 0)
+            if (fileName.ToLowerInvariant().IndexOf(filename.ToLowerInvariant()) >= 0)
             {
-              //delete all Timeshift buffer files
-              if (fileName.ToLowerInvariant().IndexOf(".sbe") >= 0)
-              {
-                File.Delete(fileName);
-              }
               //delete Thumbnails
               if (fileName.ToLowerInvariant().IndexOf(".jpg") >= 0)
               {
@@ -4899,6 +4944,10 @@ namespace MediaPortal.Util
               }
               //delete Matroska tag file
               if (fileName.ToLowerInvariant().IndexOf(".xml") >= 0)
+              {
+                File.Delete(fileName);
+              }
+              if (fileName.ToLowerInvariant().IndexOf(".nfo") >= 0)
               {
                 File.Delete(fileName);
               }
@@ -5464,6 +5513,22 @@ namespace MediaPortal.Util
       }
 
       return true;
+    }
+
+    /// <summary>
+    /// Focus Mediaportal is visible.
+    /// </summary>
+    public static void SwitchFocus()
+    {
+      // Focus only when MP is not minimize and when SplashScreen is close
+      // Make MediaPortal window normal ( if minimized )
+      Win32API.ShowWindow(GUIGraphicsContext.ActiveForm, Win32API.ShowWindowFlags.ShowNormal);
+
+      // Make Mediaportal window focused
+      if (Win32API.SetForegroundWindow(GUIGraphicsContext.ActiveForm, true))
+      {
+        Log.Info("Util: Successfully switched focus.");
+      }
     }
 
     public static string GetThumbnailPathname(string basePath, string file, string formatString)
