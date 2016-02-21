@@ -125,10 +125,10 @@ CCrashReport::CCrashReport(HRESULT *result)
         this->crashReporting = new crash_rpt::CrashRpt(crashrptPath, this->applicationInfo, this->handlerSettings, TRUE);
         CHECK_CONDITION_HRESULT(*result, this->crashReporting, *result, E_OUTOFMEMORY);
         CHECK_CONDITION_HRESULT(*result, this->crashReporting->IsCrashHandlingEnabled(), *result, E_CANNOT_INITIALIZE_CRASH_REPORTING);
-
-        FREE_MEM(crashrptPath);
       }
     }
+
+    FREE_MEM(crashrptPath);
 
     if (FAILED(*result))
     {
