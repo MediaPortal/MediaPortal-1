@@ -2452,7 +2452,14 @@ unsigned int WINAPI CMPUrlSourceSplitter::LoadAsyncWorker(LPVOID lpParam)
   // change parameters of crash reporting by parameters passed by url
   if (SUCCEEDED(caller->loadAsyncResult))
   {
+#pragma warning(push)
+    // disable warning: 'ApplicationInfo': was declared deprecated
+    // disable warning: 'HandlerSettings': was declared deprecated
+#pragma warning(disable:4996)
+
     CHECK_HRESULT_EXECUTE(caller->loadAsyncResult, crashReport->ChangeParameters(caller->configuration));
+
+#pragma warning(pop)
   }
 
   if (SUCCEEDED(caller->loadAsyncResult))
