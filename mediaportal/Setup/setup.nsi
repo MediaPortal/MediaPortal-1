@@ -628,6 +628,9 @@ Section "MediaPortal core files (required)" SecCore
   File "${git_DirectShowFilters}\bin_Win32\avcodec-mpurlsourcesplitter-54.dll"
   File "${git_DirectShowFilters}\bin_Win32\avformat-mpurlsourcesplitter-54.dll"
   File "${git_DirectShowFilters}\bin_Win32\avutil-mpurlsourcesplitter-51.dll" 
+  File "${git_DirectShowFilters}\bin_Win32\crashrpt.dll"
+  File "${git_DirectShowFilters}\bin_Win32\dbghelp.dll"
+  File "${git_DirectShowFilters}\bin_Win32\sendrpt.exe"
   
   ; libbluray
   ;SetOutPath "$MPdir.Base\lib"
@@ -756,6 +759,9 @@ SectionEnd
   Delete "$MPdir.Base\avcodec-mpurlsourcesplitter-54.dll"
   Delete "$MPdir.Base\avformat-mpurlsourcesplitter-54.dll"
   Delete "$MPdir.Base\avutil-mpurlsourcesplitter-51.dll" 
+  Delete "$MPdir.Base\crashrpt.dll"
+  Delete "$MPdir.Base\dbghelp.dll"
+  Delete "$MPdir.Base\sendrpt.exe"
 
   ; MediaPortal.exe
   Delete "$MPdir.Base\MediaPortal.exe"
