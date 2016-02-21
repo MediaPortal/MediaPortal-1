@@ -51,6 +51,7 @@
 
 extern "C++" CFFmpegLogger *ffmpegLogger = NULL;
 extern "C++" CStaticLogger *staticLogger = NULL;
+
 CCrashReport *crashReport = NULL;
 
 // Filter setup data
@@ -170,54 +171,39 @@ BOOL APIENTRY DllMain(HMODULE hModule,
 
       if (SUCCEEDED(result))
       {
-#pragma warning(push)
-        // disable warning: 'ApplicationInfo': was declared deprecated
-        // disable warning: 'HandlerSettings': was declared deprecated
-#pragma warning(disable:4996)
+        staticLogger = new CStaticLogger(&result);
+        ffmpegLogger = new CFFmpegLogger(&result, staticLogger);
+        curl_global_init(CURL_GLOBAL_ALL);
 
-        crashReport = new CCrashReport(&result);
-        CHECK_CONDITION_HRESULT(result, crashReport, result, E_OUTOFMEMORY);
-
-        CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(crashReport));
-
-#pragma warning(pop)
+        CHECK_CONDITION_HRESULT(result, staticLogger, result, E_OUTOFMEMORY);
+        CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(staticLogger));
 
         if (SUCCEEDED(result))
         {
-          staticLogger = new CStaticLogger(&result);
-          ffmpegLogger = new CFFmpegLogger(&result, staticLogger);
-          curl_global_init(CURL_GLOBAL_ALL);
+          ALLOC_MEM_DEFINE_SET(moduleFileName, wchar_t, MAX_PATH, 0);
+          CHECK_POINTER_HRESULT(result, moduleFileName, result, E_OUTOFMEMORY);
 
-          CHECK_CONDITION_HRESULT(result, staticLogger, result, E_OUTOFMEMORY);
-          CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(staticLogger));
+          CHECK_CONDITION_HRESULT(result, GetModuleFileName(GetModuleHandle(MODULE_FILE_NAME), moduleFileName, MAX_PATH) != 0, result, E_CANNOT_GET_MODULE_FILE_NAME);
+          CHECK_CONDITION_HRESULT(result, staticLogger->RegisterModule(moduleFileName), result, E_OUTOFMEMORY);
+          memset(moduleFileName, 0, MAX_PATH * sizeof(wchar_t));
 
-          if (SUCCEEDED(result))
-          {
-            ALLOC_MEM_DEFINE_SET(moduleFileName, wchar_t, MAX_PATH, 0);
-            CHECK_POINTER_HRESULT(result, moduleFileName, result, E_OUTOFMEMORY);
+          CHECK_CONDITION_HRESULT(result, GetModuleFileName(GetModuleHandle(AVCODED_MODULE_FILE_NAME), moduleFileName, MAX_PATH) != 0, result, E_CANNOT_GET_MODULE_FILE_NAME);
+          CHECK_CONDITION_HRESULT(result, staticLogger->RegisterModule(moduleFileName), result, E_OUTOFMEMORY);
+          memset(moduleFileName, 0, MAX_PATH * sizeof(wchar_t));
 
-            CHECK_CONDITION_HRESULT(result, GetModuleFileName(GetModuleHandle(MODULE_FILE_NAME), moduleFileName, MAX_PATH) != 0, result, E_CANNOT_GET_MODULE_FILE_NAME);
-            CHECK_CONDITION_HRESULT(result, staticLogger->RegisterModule(moduleFileName), result, E_OUTOFMEMORY);
-            memset(moduleFileName, 0, MAX_PATH * sizeof(wchar_t));
+          CHECK_CONDITION_HRESULT(result, GetModuleFileName(GetModuleHandle(AVFORMAT_MODULE_FILE_NAME), moduleFileName, MAX_PATH) != 0, result, E_CANNOT_GET_MODULE_FILE_NAME);
+          CHECK_CONDITION_HRESULT(result, staticLogger->RegisterModule(moduleFileName), result, E_OUTOFMEMORY);
+          memset(moduleFileName, 0, MAX_PATH * sizeof(wchar_t));
 
-            CHECK_CONDITION_HRESULT(result, GetModuleFileName(GetModuleHandle(AVCODED_MODULE_FILE_NAME), moduleFileName, MAX_PATH) != 0, result, E_CANNOT_GET_MODULE_FILE_NAME);
-            CHECK_CONDITION_HRESULT(result, staticLogger->RegisterModule(moduleFileName), result, E_OUTOFMEMORY);
-            memset(moduleFileName, 0, MAX_PATH * sizeof(wchar_t));
+          CHECK_CONDITION_HRESULT(result, GetModuleFileName(GetModuleHandle(AVUTIL_MODULE_FILE_NAME), moduleFileName, MAX_PATH) != 0, result, E_CANNOT_GET_MODULE_FILE_NAME);
+          CHECK_CONDITION_HRESULT(result, staticLogger->RegisterModule(moduleFileName), result, E_OUTOFMEMORY);
+          memset(moduleFileName, 0, MAX_PATH * sizeof(wchar_t));
 
-            CHECK_CONDITION_HRESULT(result, GetModuleFileName(GetModuleHandle(AVFORMAT_MODULE_FILE_NAME), moduleFileName, MAX_PATH) != 0, result, E_CANNOT_GET_MODULE_FILE_NAME);
-            CHECK_CONDITION_HRESULT(result, staticLogger->RegisterModule(moduleFileName), result, E_OUTOFMEMORY);
-            memset(moduleFileName, 0, MAX_PATH * sizeof(wchar_t));
+          CHECK_CONDITION_HRESULT(result, GetModuleFileName(GetModuleHandle(LIBCULR_MODULE_FILE_NAME), moduleFileName, MAX_PATH) != 0, result, E_CANNOT_GET_MODULE_FILE_NAME);
+          CHECK_CONDITION_HRESULT(result, staticLogger->RegisterModule(moduleFileName), result, E_OUTOFMEMORY);
+          memset(moduleFileName, 0, MAX_PATH * sizeof(wchar_t));
 
-            CHECK_CONDITION_HRESULT(result, GetModuleFileName(GetModuleHandle(AVUTIL_MODULE_FILE_NAME), moduleFileName, MAX_PATH) != 0, result, E_CANNOT_GET_MODULE_FILE_NAME);
-            CHECK_CONDITION_HRESULT(result, staticLogger->RegisterModule(moduleFileName), result, E_OUTOFMEMORY);
-            memset(moduleFileName, 0, MAX_PATH * sizeof(wchar_t));
-
-            CHECK_CONDITION_HRESULT(result, GetModuleFileName(GetModuleHandle(LIBCULR_MODULE_FILE_NAME), moduleFileName, MAX_PATH) != 0, result, E_CANNOT_GET_MODULE_FILE_NAME);
-            CHECK_CONDITION_HRESULT(result, staticLogger->RegisterModule(moduleFileName), result, E_OUTOFMEMORY);
-            memset(moduleFileName, 0, MAX_PATH * sizeof(wchar_t));
-
-            FREE_MEM(moduleFileName);
-          }
+          FREE_MEM(moduleFileName);
         }
       }
     }

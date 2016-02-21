@@ -28,12 +28,16 @@
 #include <WinInet.h>
 
 // get Tv Server folder
-// @return : reference to null terminated string with path of Tv Server ended with '\' or NULL if error occured
+// @return : reference to null terminated string with path of Tv Server folder ended with '\' or NULL if error occured
 wchar_t *GetTvServerFolder(void);
 
 // get MediaPortal folder
-// @return : reference to null terminated string with path of MediaPortal ended with '\' or NULL if error occured
+// @return : reference to null terminated string with path of MediaPortal folder ended with '\' or NULL if error occured
 wchar_t *GetMediaPortalFolder(void);
+
+// get crash folder
+// @return : reference to null terminated string with path of crash folder ended with '\' or NULL if error occured
+wchar_t *GetCrashFolder(void);
 
 // get path to file in Tv Server folder
 // Tv Server folder always ended with '\'
@@ -46,6 +50,11 @@ wchar_t *GetTvServerFilePath(const wchar_t *filePath);
 // @param filePath : the file path in MediaPortal folder
 // @return : reference to null terminated string with path of file or NULL if error occured
 wchar_t *GetMediaPortalFilePath(const wchar_t *filePath);
+
+// get path to file in crash folder
+// @param filePath : the file path in crash folder
+// @return : reference to null terminated string with path of file or NULL if error occured
+wchar_t *GetCrashFilePath(const wchar_t *filePath);
 
 // clear url components
 // @param url : url components to clear

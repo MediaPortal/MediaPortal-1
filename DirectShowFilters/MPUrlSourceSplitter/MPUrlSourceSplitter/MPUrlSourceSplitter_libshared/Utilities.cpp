@@ -36,19 +36,13 @@ wchar_t *GetTvServerFilePath(const wchar_t *filePath)
 {
   wchar_t *result = NULL;
   ALLOC_MEM_DEFINE_SET(folder, wchar_t, MAX_PATH, 0);
+
   if (folder != NULL)
   {
     // get common application data folder
     SHGetSpecialFolderPath(NULL, folder, CSIDL_COMMON_APPDATA, FALSE);
 
-    if (filePath == NULL)
-    {
-      result = FormatString(L"%s\\Team MediaPortal\\MediaPortal TV Server\\", folder);
-    }
-    else
-    {
-      result = FormatString(L"%s\\Team MediaPortal\\MediaPortal TV Server\\%s", folder, filePath);
-    }
+    result = FormatString(L"%s\\Team MediaPortal\\MediaPortal TV Server\\%s", folder, (filePath == NULL) ? L"" : filePath);
   }
 
   FREE_MEM(folder);
@@ -65,18 +59,42 @@ wchar_t *GetMediaPortalFilePath(const wchar_t *filePath)
 {
   wchar_t *result = NULL;
   ALLOC_MEM_DEFINE_SET(folder, wchar_t, MAX_PATH, 0);
+
   if (folder != NULL)
   {
     // get common application data folder
     SHGetSpecialFolderPath(NULL, folder, CSIDL_COMMON_APPDATA, FALSE);
 
-    if (filePath == NULL)
+    result = FormatString(L"%s\\Team MediaPortal\\MediaPortal\\%s", folder, (filePath == NULL) ? L"" : filePath);
+  }
+
+  FREE_MEM(folder);
+
+  return result;
+}
+
+wchar_t *GetCrashFolder(void)
+{
+  return GetCrashFilePath(NULL);
+}
+
+wchar_t *GetCrashFilePath(const wchar_t *filePath)
+{
+  wchar_t *result = NULL;
+  ALLOC_MEM_DEFINE_SET(folder, wchar_t, MAX_PATH, 0);
+
+  if (folder != NULL)
+  {
+    // get common application data folder
+    SHGetSpecialFolderPath(NULL, folder, CSIDL_COMMON_APPDATA, FALSE);
+
+    wcscat_s(folder, MAX_PATH, L"\\Team MediaPortal\\MPUrlSourceSplitterCrash\\");
+
+    // create directory path
+    int error = SHCreateDirectory(NULL, folder);
+    if ((error == ERROR_SUCCESS) || (error == ERROR_FILE_EXISTS) || (error == ERROR_ALREADY_EXISTS))
     {
-      result = FormatString(L"%s\\Team MediaPortal\\MediaPortal\\", folder);
-    }
-    else
-    {
-      result = FormatString(L"%s\\Team MediaPortal\\MediaPortal\\%s", folder, filePath);
+      result = FormatString(L"%s%s", folder, (filePath == NULL) ? L"" : filePath);
     }
   }
 
