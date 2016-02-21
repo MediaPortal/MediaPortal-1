@@ -510,9 +510,17 @@ ${MementoSection} "MediaPortal TV Server" SecServer
 
   ; protocol implementations for MPUrlSourceSplitter.ax
   File "${git_DirectShowFilters}\bin_Win32\MPUrlSourceSplitter*"
+  File "${git_DirectShowFilters}\bin_Win32\MPUrlSourceSplitter_Parser_Default*"
+  File "${git_DirectShowFilters}\bin_Win32\MPUrlSourceSplitter_Protocol_Http*"
+  File "${git_DirectShowFilters}\bin_Win32\MPUrlSourceSplitter_Protocol_Rtsp*"
+  File "${git_DirectShowFilters}\bin_Win32\MPUrlSourceSplitter_Protocol_Udp*"
+  File "${git_DirectShowFilters}\bin_Win32\MPUrlSourceSplitter_libcurl*"
   File "${git_DirectShowFilters}\bin_Win32\avcodec-mpurlsourcesplitter-54.dll"
   File "${git_DirectShowFilters}\bin_Win32\avformat-mpurlsourcesplitter-54.dll"
-  File "${git_DirectShowFilters}\bin_Win32\avutil-mpurlsourcesplitter-51.dll"  
+  File "${git_DirectShowFilters}\bin_Win32\avutil-mpurlsourcesplitter-51.dll"
+  File "${git_DirectShowFilters}\bin_Win32\crashrpt.dll"
+  File "${git_DirectShowFilters}\bin_Win32\dbghelp.dll"
+  File "${git_DirectShowFilters}\bin_Win32\sendrpt.exe"
 
   File "${git_DirectShowFilters}\StreamingServer\bin\${BUILD_TYPE}\StreamingServer.dll"
   
@@ -699,10 +707,18 @@ ${MementoSectionEnd}
   Delete "$INSTDIR\MPIPTV_UDP.dll"  
 
   ; protocol implementations for MPUrlSourceSplitter.ax
+  Delete "$INSTDIR\MPUrlSourceSplitter_Parser_Default*"
+  Delete "$INSTDIR\MPUrlSourceSplitter_Protocol_Http*"
+  Delete "$INSTDIR\MPUrlSourceSplitter_Protocol_Rtsp*"
+  Delete "$INSTDIR\MPUrlSourceSplitter_Protocol_Udp*"
+  Delete "$INSTDIR\MPUrlSourceSplitter_libcurl*"
   Delete "$INSTDIR\MPUrlSourceSplitter*"
   Delete "$INSTDIR\avcodec-mpurlsourcesplitter-54.dll"
   Delete "$INSTDIR\avformat-mpurlsourcesplitter-54.dll"
-  Delete "$INSTDIR\avutil-mpurlsourcesplitter-51.dll" 
+  Delete "$INSTDIR\avutil-mpurlsourcesplitter-51.dll"
+  Delete "$INSTDIR\crashrpt.dll"
+  Delete "$INSTDIR\dbghelp.dll"
+  Delete "$INSTDIR\sendrpt.exe"
 
   ; remove Start Menu shortcuts
   Delete "${STARTMENU_GROUP}\TV-Server Configuration.lnk"

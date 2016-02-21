@@ -557,9 +557,16 @@ Section "MediaPortal core files (required)" SecCore
   
   ; protocol implementations for MPUrlSourceSplitter.ax
   File "${git_DirectShowFilters}\bin_Win32\MPUrlSourceSplitter*"
+  File "${git_DirectShowFilters}\bin_Win32\MPUrlSourceSplitter_Parser*"
+  File "${git_DirectShowFilters}\bin_Win32\MPUrlSourceSplitter_Protocol*"
+  File "${git_DirectShowFilters}\bin_Win32\MPUrlSourceSplitter_libcurl*"
   File "${git_DirectShowFilters}\bin_Win32\avcodec-mpurlsourcesplitter-54.dll"
   File "${git_DirectShowFilters}\bin_Win32\avformat-mpurlsourcesplitter-54.dll"
   File "${git_DirectShowFilters}\bin_Win32\avutil-mpurlsourcesplitter-51.dll" 
+  File "${git_DirectShowFilters}\bin_Win32\crashrpt.dll"
+  File "${git_DirectShowFilters}\bin_Win32\dbghelp.dll"
+  File "${git_DirectShowFilters}\bin_Win32\sendrpt.exe"
+  
 
   #---------------------------------------------------------------------------
   # FILTER REGISTRATION
@@ -658,15 +665,23 @@ SectionEnd
   Delete "$MPdir.Config\scripts\MovieInfo\IMDB_MP13x.csscript"
   RMDir "$MPdir.Config\scripts\MovieInfo"
   Delete "$MPdir.Config\scripts\InternalActorMoviesGrabber.csscript"
-	Delete "$MPdir.Config\scripts\InternalMovieImagesGrabber.csscript"
+  Delete "$MPdir.Config\scripts\InternalMovieImagesGrabber.csscript"
   Delete "$MPdir.Config\scripts\VDBParserStrings.xml"
   RMDir "$MPdir.Config\scripts"
 
   ; protocol implementations for MPUrlSourceSplitter.ax
+  Delete "$MPdir.Base\MPUrlSourceSplitter_Parser_Default*"
+  Delete "$MPdir.Base\MPUrlSourceSplitter_Protocol_Http*"
+  Delete "$MPdir.Base\MPUrlSourceSplitter_Protocol_Rtsp*"
+  Delete "$MPdir.Base\MPUrlSourceSplitter_Protocol_Udp*"
+  Delete "$MPdir.Base\MPUrlSourceSplitter_libcurl*"
   Delete "$MPdir.Base\MPUrlSourceSplitter*"
   Delete "$MPdir.Base\avcodec-mpurlsourcesplitter-54.dll"
   Delete "$MPdir.Base\avformat-mpurlsourcesplitter-54.dll"
   Delete "$MPdir.Base\avutil-mpurlsourcesplitter-51.dll" 
+  Delete "$MPdir.Base\crashrpt.dll"
+  Delete "$MPdir.Base\dbghelp.dll"
+  Delete "$MPdir.Base\sendrpt.exe"
 
   ; MediaPortal.exe
   Delete "$MPdir.Base\MediaPortal.exe"
