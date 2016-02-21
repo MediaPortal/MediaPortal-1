@@ -66,6 +66,8 @@ namespace MediaPortal.Player
     private bool _hasSubtitles = false;
     private static HashSet<string> _subTitleExtensions = new HashSet<string>();
 
+    private bool _mediaInfoNotloaded = false;
+
     #endregion
 
     #region ctor's
@@ -85,6 +87,7 @@ namespace MediaPortal.Player
     {
       if (!MediaInfoExist())
       {
+        _mediaInfoNotloaded = true;
         return;
       }
 
@@ -107,6 +110,14 @@ namespace MediaPortal.Player
         Log.Debug("MediaInfoWrapper: isTv:{0}, isRadio:{1}, isRTSP:{2}, isAVStream:{3}", isTV, isRadio, isRTSP,
                   isAVStream);
         Log.Debug("MediaInfoWrapper: disabled for this content");
+        _mediaInfoNotloaded = true;
+        return;
+      }
+
+      if (strFile.ToLowerInvariant().EndsWith(".wtv"))
+      {
+        Log.Debug("MediaInfoWrapper: WTV file is not handled");
+        _mediaInfoNotloaded = true;
         return;
       }
 
@@ -122,6 +133,7 @@ namespace MediaPortal.Player
       {
         Log.Debug("MediaInfoWrapper: isVideo:{0}, isDVD:{1}[enabled:{2}]", isVideo, isDVD, _DVDenabled);
         Log.Debug("MediaInfoWrapper: disabled for this content");
+        _mediaInfoNotloaded = true;
         return;
       }
 
@@ -139,7 +151,10 @@ namespace MediaPortal.Player
             strFile = Util.DaemonTools.GetVirtualDrive() + @"\BDMV\index.bdmv";
 
             if (!File.Exists(strFile))
+            {
+              _mediaInfoNotloaded = true;
               return;
+            }
           }
         }
         
@@ -175,6 +190,7 @@ namespace MediaPortal.Player
         }
         else
         {
+          _mediaInfoNotloaded = true;
           return;
         }
 
@@ -600,6 +616,11 @@ namespace MediaPortal.Player
     public bool HasSubtitles
     {
       get { return _hasSubtitles; }
+    }
+
+    public bool MediaInfoNotloaded
+    {
+      get { return _mediaInfoNotloaded; }
     }
 
     #endregion
