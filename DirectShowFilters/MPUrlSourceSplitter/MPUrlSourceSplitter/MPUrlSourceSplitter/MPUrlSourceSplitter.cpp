@@ -1978,19 +1978,28 @@ DWORD CMPUrlSourceSplitter::ThreadProc()
         sleepMode = SLEEP_MODE_LONG;
       }
 
-      if (this->CanReportStreamTime() && (!this->IsDownloadingFile()) && ((GetTickCount() - lastReportStreamTime) > 1000))
+      if (this->CanReportStreamTime() && ((GetTickCount() - lastReportStreamTime) > 1000))
       {
         // report stream time to demuxers, parsers and protocols
         lastReportStreamTime = GetTickCount();
 
-        CRefTime refTime;
-        if (SUCCEEDED(this->StreamTime(refTime)))
+        if (this->IsDownloadingFile())
         {
-          if (refTime.Millisecs() > 0)
-          {
-            uint64_t streamTime = (uint64_t)(this->demuxStart / (DSHOW_TIME_BASE / 1000) + refTime.Millisecs());
+          uint64_t streamTime = (uint64_t)(this->demuxStart / (DSHOW_TIME_BASE / 1000));
 
-            this->parserHoster->ReportStreamTime(streamTime, (this->demuxers->Count() == 1) ? this->demuxers->GetItem(0)->GetPositionForStreamTime(streamTime) : 0);
+          this->parserHoster->ReportStreamTime(streamTime, (this->demuxers->Count() == 1) ? this->demuxers->GetItem(0)->GetPositionForStreamTime(streamTime) : 0);
+        }
+        else
+        {
+          CRefTime refTime;
+          if (SUCCEEDED(this->StreamTime(refTime)))
+          {
+            if (refTime.Millisecs() > 0)
+            {
+              uint64_t streamTime = (uint64_t)(this->demuxStart / (DSHOW_TIME_BASE / 1000) + refTime.Millisecs());
+
+              this->parserHoster->ReportStreamTime(streamTime, (this->demuxers->Count() == 1) ? this->demuxers->GetItem(0)->GetPositionForStreamTime(streamTime) : 0);
+            }
           }
         }
       }
@@ -2476,7 +2485,7 @@ unsigned int WINAPI CMPUrlSourceSplitter::LoadAsyncWorker(LPVOID lpParam)
 
 #pragma warning(pop)
   }
-  
+
   if (SUCCEEDED(caller->loadAsyncResult))
   {
     if (caller->IsSetFlags(MP_URL_SOURCE_SPLITTER_FLAG_AS_IPTV))

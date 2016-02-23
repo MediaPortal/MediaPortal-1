@@ -68,8 +68,6 @@ CParserHoster::~CParserHoster(void)
   CHECK_CONDITION_NOT_NULL_EXECUTE(this->logger, this->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, MODULE_PARSER_HOSTER_NAME, METHOD_DESTRUCTOR_NAME));
 }
 
-// ISeeking interface implementation
-
 unsigned int CParserHoster::GetSeekingCapabilities(void)
 {
   return (this->activeParser != NULL) ? this->activeParser->GetSeekingCapabilities() : SEEKING_METHOD_NONE;
@@ -83,23 +81,6 @@ int64_t CParserHoster::SeekToTime(unsigned int streamId, int64_t time)
 void CParserHoster::SetPauseSeekStopMode(unsigned int pauseSeekStopMode)
 {
   CHECK_CONDITION_NOT_NULL_EXECUTE(this->activeParser, this->activeParser->SetPauseSeekStopMode(pauseSeekStopMode));
-}
-
-// ISimpleProtocol implementation
-
-unsigned int CParserHoster::GetOpenConnectionTimeout(void)
-{
-  return (this->activeParser != NULL) ? this->activeParser->GetOpenConnectionTimeout() : UINT_MAX;
-}
-
-unsigned int CParserHoster::GetOpenConnectionSleepTime(void)
-{
-  return (this->activeParser != NULL) ? this->activeParser->GetOpenConnectionSleepTime() : 0;
-}
-
-unsigned int CParserHoster::GetTotalReopenConnectionTimeout(void)
-{
-  return (this->activeParser != NULL) ? this->activeParser->GetTotalReopenConnectionTimeout() : UINT_MAX;
 }
 
 HRESULT CParserHoster::StartReceivingData(CParameterCollection *parameters)
@@ -178,8 +159,6 @@ HRESULT CParserHoster::GetStreamInformation(CStreamInformationCollection *stream
 {
   return (this->activeParser != NULL) ? this->activeParser->GetStreamInformation(streams) : E_NO_ACTIVE_PARSER;
 }
-
-// IDemuxerOwner interface
 
 HRESULT CParserHoster::ProcessStreamPackage(CStreamPackage *streamPackage)
 {

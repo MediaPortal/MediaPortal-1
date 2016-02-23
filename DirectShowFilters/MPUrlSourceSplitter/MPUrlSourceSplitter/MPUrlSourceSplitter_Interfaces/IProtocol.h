@@ -23,13 +23,28 @@
 #ifndef __IPROTOCOL_DEFINED
 #define __IPROTOCOL_DEFINED
 
-#include "ISimpleProtocol.h"
+#include "ISeeking.h"
+#include "ParameterCollection.h"
+#include "StreamProgress.h"
+#include "StreamInformationCollection.h"
 #include "StreamPackage.h"
 
 #include <streams.h>
 
 #define METHOD_PARSE_URL_NAME                                                 L"ParseUrl()"
 #define METHOD_RECEIVE_DATA_NAME                                              L"ReceiveData()"
+
+#define METHOD_START_RECEIVING_DATA_NAME                                      L"StartReceivingData()"
+#define METHOD_STOP_RECEIVING_DATA_NAME                                       L"StopReceivingData()"
+#define METHOD_QUERY_STREAM_PROGRESS_NAME                                     L"QueryStreamProgress()"
+#define METHOD_CLEAR_SESSION_NAME                                             L"ClearSession()"
+
+#ifndef DURATION_UNSPECIFIED
+
+#define DURATION_UNSPECIFIED                                                  -2
+#define DURATION_LIVE_STREAM                                                  -1
+
+#endif
 
 enum ProtocolConnectionState
 {
@@ -44,7 +59,7 @@ enum ProtocolConnectionState
 };
 
 // defines interface for stream protocol implementation
-struct IProtocol : virtual public ISimpleProtocol
+struct IProtocol : virtual public ISeeking
 {
 public:
   // gets connection state
@@ -67,6 +82,51 @@ public:
   // @param parameters : the reference to parameter collection to be filled with connection parameters
   // @return : S_OK if successful, error code otherwise
   virtual HRESULT GetConnectionParameters(CParameterCollection *parameters) = 0;
+
+  // gets timeout (in ms) for opening connection
+  // @return : timeout (in ms) for opening connection
+  virtual unsigned int GetOpenConnectionTimeout(void) = 0;
+
+  // gets sleep time (in ms) for opening connection
+  // some protocols may need some sleep before loading (e.g. multicast UDP protocol needs some time between unsubscribing and subscribing in multicast groups)
+  // @return : sleep time (in ms) for opening connection
+  virtual unsigned int GetOpenConnectionSleepTime(void) = 0;
+
+  // gets total timeout (in ms) for re-opening connection (opening connection after lost connection)
+  // re-open connection total timeout should be much more greater (e.g. 3 - 5 times) in order to allow more opening requests
+  // @return : total timeout (in ms) for re-opening connection
+  virtual unsigned int GetTotalReopenConnectionTimeout(void) = 0;
+
+  // starts receiving data from specified url and configuration parameters
+  // @param parameters : the url and parameters used for connection
+  // @return : S_OK if url is loaded, error code otherwise
+  virtual HRESULT StartReceivingData(CParameterCollection *parameters) = 0;
+
+  // request protocol implementation to cancel the stream reading operation
+  // @return : S_OK if successful
+  virtual HRESULT StopReceivingData(void) = 0;
+
+  // retrieves the progress of the stream reading operation
+  // @param streamProgress : reference to instance of class that receives the stream progress
+  // @return : S_OK if successful, VFW_S_ESTIMATED if returned values are estimates, E_INVALIDARG if stream ID is unknown, E_UNEXPECTED if unexpected error
+  virtual HRESULT QueryStreamProgress(CStreamProgress *streamProgress) = 0;
+
+  // clears current session
+  virtual void ClearSession(void) = 0;
+
+  // gets duration of stream in ms
+  // @return : stream duration in ms or DURATION_LIVE_STREAM in case of live stream or DURATION_UNSPECIFIED if duration is unknown
+  virtual int64_t GetDuration(void) = 0;
+
+  // reports actual stream time to protocol
+  // @param streamTime : the actual stream time in ms to report to protocol
+  // @param streamPosition : the actual stream position (related to stream time) to report to protocol
+  virtual void ReportStreamTime(uint64_t streamTime, uint64_t streamPosition) = 0;
+
+  // gets information about streams
+  // receiving data is disabled until protocol reports valid stream count (at least one)
+  // @return : S_OK if successful, E_STREAM_COUNT_UNKNOWN if stream count is unknown, error code otherwise
+  virtual HRESULT GetStreamInformation(CStreamInformationCollection *streams) = 0;
 };
 
 #endif

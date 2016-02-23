@@ -1159,65 +1159,82 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mshs::ReceiveData(CStreamPackage *streamPa
       }
       this->currentProcessedSize = 0;
 
-      if (this->streamFragments->Count() > 0)
+      unsigned int fragmentRemoveStart = (this->streamFragments->GetStartSearchingIndex() == 0) ? 1 : 0;
+      unsigned int fragmentRemoveCount = 0;
+
+      if (this->IsDownloading() && (this->reportedStreamPosition > 0))
+      {
+        // in case of downloading stream remove all downloaded and processed stream fragments before reported stream position
+
+        while (((fragmentRemoveStart + fragmentRemoveCount) < this->streamFragmentProcessing) && ((fragmentRemoveStart + fragmentRemoveCount) < this->streamFragments->Count()))
+        {
+          CMshsStreamFragment *fragment = this->streamFragments->GetItem(fragmentRemoveStart + fragmentRemoveCount);
+
+          if (((fragmentRemoveStart + fragmentRemoveCount) != this->streamFragments->GetStartSearchingIndex()) && fragment->IsProcessed() && ((fragment->GetFragmentStartPosition() + (int64_t)fragment->GetLength()) < (int64_t)this->reportedStreamPosition))
+          {
+            // fragment will be removed
+            fragmentRemoveCount++;
+          }
+          else
+          {
+            break;
+          }
+        }
+      }
+      else if (this->IsLiveStream() && (this->reportedStreamTime > 0))
       {
         // in case of live stream remove all downloaded and processed stream fragments before reported stream time
-        if ((this->IsLiveStream()) && (this->reportedStreamTime > 0))
+
+        while (((fragmentRemoveStart + fragmentRemoveCount) < this->streamFragmentProcessing) && ((fragmentRemoveStart + fragmentRemoveCount) < this->streamFragments->Count()))
         {
-          unsigned int fragmentRemoveStart = (this->streamFragments->GetStartSearchingIndex() == 0) ? 1 : 0;
-          unsigned int fragmentRemoveCount = 0;
+          CMshsStreamFragment *fragment = this->streamFragments->GetItem(fragmentRemoveStart + fragmentRemoveCount);
 
-          while ((fragmentRemoveStart + fragmentRemoveCount) < this->streamFragmentProcessing)
+          if (((fragmentRemoveStart + fragmentRemoveCount) != this->streamFragments->GetStartSearchingIndex()) && fragment->IsProcessed() && (fragment->GetFragmentTimestamp() < (int64_t)this->reportedStreamTime))
           {
-            CMshsStreamFragment *fragment = this->streamFragments->GetItem(fragmentRemoveStart + fragmentRemoveCount);
-
-            if (((fragmentRemoveStart + fragmentRemoveCount) != this->streamFragments->GetStartSearchingIndex()) && fragment->IsProcessed() && (fragment->GetFragmentTimestamp()  < (int64_t)this->reportedStreamTime))
-            {
-              // fragment will be removed
-              fragmentRemoveCount++;
-            }
-            else
-            {
-              break;
-            }
+            // fragment will be removed
+            fragmentRemoveCount++;
           }
-
-          if ((fragmentRemoveCount > 0) && (this->cacheFile->RemoveItems(this->streamFragments, fragmentRemoveStart, fragmentRemoveCount)))
+          else
           {
-            unsigned int startSearchIndex = (fragmentRemoveCount > this->streamFragments->GetStartSearchingIndex()) ? 0 : (this->streamFragments->GetStartSearchingIndex() - fragmentRemoveCount);
-            unsigned int searchCountDecrease = (fragmentRemoveCount > this->streamFragments->GetStartSearchingIndex()) ? (fragmentRemoveCount - this->streamFragments->GetStartSearchingIndex()) : 0;
-
-            this->streamFragments->SetStartSearchingIndex(startSearchIndex);
-            this->streamFragments->SetSearchCount(this->streamFragments->GetSearchCount() - searchCountDecrease);
-
-            this->streamFragments->Remove(fragmentRemoveStart, fragmentRemoveCount);
-
-            this->streamFragmentProcessing -= fragmentRemoveCount;
-
-            if (this->streamFragmentDownloading != UINT_MAX)
-            {
-              this->streamFragmentDownloading -= fragmentRemoveCount;
-            }
-
-            if (this->streamFragmentToDownload != UINT_MAX)
-            {
-              this->streamFragmentToDownload -= fragmentRemoveCount;
-            }
+            break;
           }
         }
+      }
 
-        if (this->cacheFile->GetCacheFile() == NULL)
+      if ((fragmentRemoveCount > 0) && (this->cacheFile->RemoveItems(this->streamFragments, fragmentRemoveStart, fragmentRemoveCount)))
+      {
+        unsigned int startSearchIndex = (fragmentRemoveCount > this->streamFragments->GetStartSearchingIndex()) ? 0 : (this->streamFragments->GetStartSearchingIndex() - fragmentRemoveCount);
+        unsigned int searchCountDecrease = (fragmentRemoveCount > this->streamFragments->GetStartSearchingIndex()) ? (fragmentRemoveCount - this->streamFragments->GetStartSearchingIndex()) : 0;
+
+        this->streamFragments->SetStartSearchingIndex(startSearchIndex);
+        this->streamFragments->SetSearchCount(this->streamFragments->GetSearchCount() - searchCountDecrease);
+
+        this->streamFragments->Remove(fragmentRemoveStart, fragmentRemoveCount);
+
+        this->streamFragmentProcessing -= fragmentRemoveCount;
+
+        if (this->streamFragmentDownloading != UINT_MAX)
         {
-          wchar_t *storeFilePath = this->GetCacheFile(NULL);
-          CHECK_CONDITION_NOT_NULL_EXECUTE(storeFilePath, this->cacheFile->SetCacheFile(storeFilePath));
-          FREE_MEM(storeFilePath);
+          this->streamFragmentDownloading -= fragmentRemoveCount;
         }
 
-        // store all segment fragments (which are not stored) to file
-        if ((this->cacheFile->GetCacheFile() != NULL) && (this->streamFragments->Count() != 0) && (this->streamFragments->GetLoadedToMemorySize() > CACHE_FILE_RELOAD_SIZE))
+        if (this->streamFragmentToDownload != UINT_MAX)
         {
-          this->cacheFile->StoreItems(this->streamFragments, this->lastStoreTime, false, this->IsWholeStreamDownloaded());
+          this->streamFragmentToDownload -= fragmentRemoveCount;
         }
+      }
+
+      if (this->cacheFile->GetCacheFile() == NULL)
+      {
+        wchar_t *storeFilePath = this->GetCacheFile(NULL);
+        CHECK_CONDITION_NOT_NULL_EXECUTE(storeFilePath, this->cacheFile->SetCacheFile(storeFilePath));
+        FREE_MEM(storeFilePath);
+      }
+
+      // store all segment fragments (which are not stored) to file
+      if ((this->cacheFile->GetCacheFile() != NULL) && (this->streamFragments->Count() != 0) && (this->streamFragments->GetLoadedToMemorySize() > CACHE_FILE_RELOAD_SIZE))
+      {
+        this->cacheFile->StoreItems(this->streamFragments, this->lastStoreTime, false, this->IsWholeStreamDownloaded());
       }
     }
 

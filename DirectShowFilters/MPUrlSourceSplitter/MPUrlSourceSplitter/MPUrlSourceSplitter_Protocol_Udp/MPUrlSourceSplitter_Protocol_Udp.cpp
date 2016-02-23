@@ -655,9 +655,9 @@ HRESULT CMPUrlSourceSplitter_Protocol_Udp::ReceiveData(CStreamPackage *streamPac
         FREE_MEM(storeFilePath);
       }
 
-      // in case of live stream remove all downloaded and processed stream fragments before reported stream time, they will not be needed (after created demuxer and started playing)
+      // in case of live stream or downloading file remove all downloaded and processed stream fragments before reported stream time, they will not be needed (after created demuxer and started playing)
       // processed stream fragments means that all data from stream fragment were requested
-      if ((this->IsLiveStream()) && (this->reportedStreamTime > 0) && (this->reportedStreamPosition > 0))
+      if ((this->IsLiveStream() || this->IsDownloading()) && (this->reportedStreamPosition > 0))
       {
         unsigned int fragmentRemoveStart = (this->streamFragments->GetStartSearchingIndex() == 0) ? 1 : 0;
         unsigned int fragmentRemoveCount = 0;

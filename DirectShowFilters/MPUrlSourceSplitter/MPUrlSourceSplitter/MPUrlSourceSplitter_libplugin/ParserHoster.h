@@ -26,7 +26,6 @@
 #include "Hoster.h"
 #include "ProtocolHoster.h"
 #include "ParserPlugin.h"
-#include "IDemuxerOwner.h"
 
 #define MODULE_PARSER_HOSTER_NAME                                     L"ParserHoster"
 
@@ -34,13 +33,11 @@
 
 #define PARSER_HOSTER_FLAG_LAST                                       (HOSTER_FLAG_LAST + 0)
 
-class CParserHoster : public CHoster, virtual public IDemuxerOwner, virtual public ISimpleProtocol
+class CParserHoster : public CHoster
 {
 public:
   CParserHoster(HRESULT *result, CLogger *logger, CParameterCollection *configuration);
   virtual ~CParserHoster(void);
-
-  // ISeeking interface implementation
 
   // gets seeking capabilities of protocol
   // @return : bitwise combination of SEEKING_METHOD flags
@@ -57,22 +54,6 @@ public:
   // in such mode are reading operations disabled
   // @param pauseSeekStopMode : one of PAUSE_SEEK_STOP_MODE values
   void SetPauseSeekStopMode(unsigned int pauseSeekStopMode);
-
-  // ISimpleProtocol interface implementation
-
-  // gets timeout (in ms) for opening connection
-  // @return : timeout (in ms) for opening connection
-  unsigned int GetOpenConnectionTimeout(void);
-
-  // gets sleep time (in ms) for opening connection
-  // some protocols may need some sleep before loading (e.g. multicast UDP protocol needs some time between unsubscribing and subscribing in multicast groups)
-  // @return : sleep time (in ms) for opening connection
-  unsigned int GetOpenConnectionSleepTime(void);
-
-  // gets total timeout (in ms) for re-opening connection (opening connection after lost connection)
-  // re-open connection total timeout should be much more greater (e.g. 3 - 5 times) in order to allow more opening requests
-  // @return : total timeout (in ms) for re-opening connection
-  unsigned int GetTotalReopenConnectionTimeout(void);
 
   // starts receiving data from specified url and configuration parameters
   // @param parameters : the url and parameters used for connection
@@ -105,8 +86,6 @@ public:
   // receiving data is disabled until protocol reports valid stream count (at least one)
   // @return : S_OK if successful, E_STREAM_COUNT_UNKNOWN if stream count is unknown, error code otherwise
   HRESULT GetStreamInformation(CStreamInformationCollection *streams);
-
-  // IDemuxerOwner interface implementation
 
   // process stream package request
   // @param streamPackage : the stream package request to process

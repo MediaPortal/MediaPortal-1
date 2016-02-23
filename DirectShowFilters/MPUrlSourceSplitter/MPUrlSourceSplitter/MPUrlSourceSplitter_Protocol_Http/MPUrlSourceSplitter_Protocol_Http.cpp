@@ -1011,12 +1011,12 @@ HRESULT CMPUrlSourceSplitter_Protocol_Http::ReceiveData(CStreamPackage *streamPa
         FREE_MEM(storeFilePath);
       }
 
-      // in case of live stream remove all downloaded and processed stream fragments before reported stream time
-      if ((this->IsLiveStream()) && (this->reportedStreamTime > 0))
+      // in case of live stream or downloading file remove all downloaded and processed stream fragments before reported stream time
+      if ((this->IsLiveStream() || this->IsDownloading()) && (this->reportedStreamPosition > 0))
       {
         unsigned int fragmentRemoveStart = (this->streamFragments->GetStartSearchingIndex() == 0) ? 1 : 0;
         unsigned int fragmentRemoveCount = 0;
-
+        
         while ((fragmentRemoveStart + fragmentRemoveCount) < this->streamFragments->Count())
         {
           CHttpStreamFragment *fragment = this->streamFragments->GetItem(fragmentRemoveStart + fragmentRemoveCount);

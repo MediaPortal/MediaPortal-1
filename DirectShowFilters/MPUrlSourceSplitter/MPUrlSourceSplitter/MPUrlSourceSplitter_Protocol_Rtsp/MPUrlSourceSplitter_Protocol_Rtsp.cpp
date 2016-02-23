@@ -1262,18 +1262,42 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtsp::ReceiveData(CStreamPackage *streamPa
           }
           track->SetCurrentProcessedSize(0);
 
-          // in case of live stream remove all downloaded and processed stream fragments before reported stream time
-          if ((this->IsLiveStream()) && (this->reportedStreamTime > 0))
+          unsigned int fragmentRemoveStart = (track->GetStreamFragments()->GetStartSearchingIndex() == 0) ? 1 : 0;
+          unsigned int fragmentRemoveCount = 0;
+
+          if (this->IsDownloading() && (this->streamTracks->Count() == 1) && (this->reportedStreamPosition > 0))
           {
+            // in case of downloading stream remove all downloaded and processed stream fragments before reported stream position
+            // we can remove fragments only in case of one track, because position is reported only for one track
+
+            // we must preserve stream fragment which is on start searching index position
+            // this fragment is used as zero position fragment in searching for specific position
+
+            while (((fragmentRemoveStart + fragmentRemoveCount) < track->GetStreamFragmentProcessing()) && ((fragmentRemoveStart + fragmentRemoveCount) < track->GetStreamFragments()->Count()))
+            {
+              CRtspStreamFragment *fragment = track->GetStreamFragments()->GetItem(fragmentRemoveStart + fragmentRemoveCount);
+              
+              if (((fragmentRemoveStart + fragmentRemoveCount) != track->GetStreamFragments()->GetStartSearchingIndex()) && fragment->IsProcessed() && ((fragment->GetFragmentStartPosition() + (int64_t)fragment->GetLength()) < (int64_t)this->reportedStreamPosition))
+              {
+                // fragment will be removed
+                fragmentRemoveCount++;
+              }
+              else
+              {
+                break;
+              }
+            }
+          }
+          else if ((this->IsLiveStream()) && (this->reportedStreamTime > 0))
+          {
+            // in case of live stream remove all downloaded and processed stream fragments before reported stream time
+
             int64_t reportedStreamTimeRtpTimestamp = (int64_t)this->reportedStreamTime * track->GetClockFrequency() / 1000;
 
             // we must preserve stream fragment which is on start searching index position
             // this fragment is used as zero position fragment in searching for specific position
 
-            unsigned int fragmentRemoveStart = (track->GetStreamFragments()->GetStartSearchingIndex() == 0) ? 1 : 0;
-            unsigned int fragmentRemoveCount = 0;
-
-            while ((fragmentRemoveStart + fragmentRemoveCount) < track->GetStreamFragmentProcessing())
+            while (((fragmentRemoveStart + fragmentRemoveCount) < track->GetStreamFragmentProcessing()) && ((fragmentRemoveStart + fragmentRemoveCount) < track->GetStreamFragments()->Count()))
             {
               CRtspStreamFragment *fragment = track->GetStreamFragments()->GetItem(fragmentRemoveStart + fragmentRemoveCount);
 
@@ -1287,28 +1311,28 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtsp::ReceiveData(CStreamPackage *streamPa
                 break;
               }
             }
+          }
 
-            if ((fragmentRemoveCount > 0) && (track->GetCacheFile()->RemoveItems(track->GetStreamFragments(), fragmentRemoveStart, fragmentRemoveCount)))
+          if ((fragmentRemoveCount > 0) && (track->GetCacheFile()->RemoveItems(track->GetStreamFragments(), fragmentRemoveStart, fragmentRemoveCount)))
+          {
+            unsigned int startSearchIndex = (fragmentRemoveCount > track->GetStreamFragments()->GetStartSearchingIndex()) ? 0 : (track->GetStreamFragments()->GetStartSearchingIndex() - fragmentRemoveCount);
+            unsigned int searchCountDecrease = (fragmentRemoveCount > track->GetStreamFragments()->GetStartSearchingIndex()) ? (fragmentRemoveCount - track->GetStreamFragments()->GetStartSearchingIndex()) : 0;
+
+            track->GetStreamFragments()->SetStartSearchingIndex(startSearchIndex);
+            track->GetStreamFragments()->SetSearchCount(track->GetStreamFragments()->GetSearchCount() - searchCountDecrease);
+
+            track->GetStreamFragments()->Remove(fragmentRemoveStart, fragmentRemoveCount);
+
+            track->SetStreamFragmentProcessing(track->GetStreamFragmentProcessing() - fragmentRemoveCount);
+
+            if (track->GetStreamFragmentDownloading() != UINT_MAX)
             {
-              unsigned int startSearchIndex = (fragmentRemoveCount > track->GetStreamFragments()->GetStartSearchingIndex()) ? 0 : (track->GetStreamFragments()->GetStartSearchingIndex() - fragmentRemoveCount);
-              unsigned int searchCountDecrease = (fragmentRemoveCount > track->GetStreamFragments()->GetStartSearchingIndex()) ? (fragmentRemoveCount - track->GetStreamFragments()->GetStartSearchingIndex()) : 0;
+              track->SetStreamFragmentDownloading(track->GetStreamFragmentDownloading() - fragmentRemoveCount);
+            }
 
-              track->GetStreamFragments()->SetStartSearchingIndex(startSearchIndex);
-              track->GetStreamFragments()->SetSearchCount(track->GetStreamFragments()->GetSearchCount() - searchCountDecrease);
-
-              track->GetStreamFragments()->Remove(fragmentRemoveStart, fragmentRemoveCount);
-
-              track->SetStreamFragmentProcessing(track->GetStreamFragmentProcessing() - fragmentRemoveCount);
-
-              if (track->GetStreamFragmentDownloading() != UINT_MAX)
-              {
-                track->SetStreamFragmentDownloading(track->GetStreamFragmentDownloading() - fragmentRemoveCount);
-              }
-
-              if (track->GetStreamFragmentToDownload() != UINT_MAX)
-              {
-                track->SetStreamFragmentToDownload(track->GetStreamFragmentToDownload() - fragmentRemoveCount);
-              }
+            if (track->GetStreamFragmentToDownload() != UINT_MAX)
+            {
+              track->SetStreamFragmentToDownload(track->GetStreamFragmentToDownload() - fragmentRemoveCount);
             }
           }
 
