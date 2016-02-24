@@ -1328,6 +1328,8 @@ namespace MediaPortal.GUI.Video
         dlg.AddLocalizedString(1064); // Bookmarks
       }
 
+      g_Player.OnPopupMenuCreate(dlg);
+
       _IsDialogVisible = true;
       dlg.DoModal(GetID);
       _IsDialogVisible = false;
