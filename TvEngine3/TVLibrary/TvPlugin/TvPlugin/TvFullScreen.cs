@@ -24,6 +24,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Globalization;
+using System.IO;
 using System.Timers;
 using System.Windows.Forms;
 using Gentle.Common;
@@ -347,7 +348,7 @@ namespace TvPlugin
     {
       _needToClearScreen = true;
 
-      if (action.wID == Action.ActionType.ACTION_SHOW_VOLUME)
+      if (action.wID == Action.ActionType.ACTION_SHOW_VOLUME && !File.Exists(GUIGraphicsContext.Skin + @"\VolumeOverlay.xml"))
       {
         _volumeTimer = DateTime.Now;
         _isVolumeVisible = true;

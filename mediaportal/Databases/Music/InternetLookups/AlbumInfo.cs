@@ -23,41 +23,41 @@ using System;
 namespace MediaPortal.Music.Database
 {
   /// <summary>
-  /// 
+  /// Database object for album details
   /// </summary>
   [Serializable()]
   public class AlbumInfo
   {
-    private string m_strAlbum = "";
-    private string m_strAsin = "";
-    private string m_strArtist = "";
-    private string m_strAlbumArtist = "";
-    private string m_strGenre = "";
-    private string m_strTones = "";
-    private string m_strStyles = "";
-    private string m_strReview = "";
-    private string m_strImage = "";
-    private string m_strTracks = "";
+    private string m_strAlbum = string.Empty;
+    private string m_strAsin = string.Empty;
+    private string m_strArtist = string.Empty;
+    private string m_strAlbumArtist = string.Empty;
+    private string m_strGenre = string.Empty;
+    private string m_strTones = string.Empty;
+    private string m_strStyles = string.Empty;
+    private string m_strReview = string.Empty;
+    private string m_strImage = string.Empty;
+    private string m_strTracks = string.Empty;
     private int m_iRating = 0;
     private int m_iYear = 0;
 
 
-    public AlbumInfo() {}
-
     public AlbumInfo Clone()
     {
-      AlbumInfo newalbum = new AlbumInfo();
-      newalbum.Album = Album;
-      newalbum.Asin = Asin;
-      newalbum.Artist = Artist;
-      newalbum.Genre = Genre;
-      newalbum.Image = Image;
-      newalbum.Rating = Rating;
-      newalbum.Review = Review;
-      newalbum.Styles = Styles;
-      newalbum.Tones = Tones;
-      newalbum.Tracks = Tracks;
-      newalbum.Year = Year;
+      var newalbum = new AlbumInfo
+        {
+          Album = Album,
+          Asin = Asin,
+          Artist = Artist,
+          Genre = Genre,
+          Image = Image,
+          Rating = Rating,
+          Review = Review,
+          Styles = Styles,
+          Tones = Tones,
+          Tracks = Tracks,
+          Year = Year
+        };
       return newalbum;
     }
 

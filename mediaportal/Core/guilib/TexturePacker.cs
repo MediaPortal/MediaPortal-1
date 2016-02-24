@@ -499,7 +499,7 @@ namespace MediaPortal.GUI.Library
           if (bigOne.textureNo >= 0)
           {
             Log.Info("TexturePacker: disposing texture:{0}", bigOne.textureNo);
-            DXNative.FontEngineRemoveTexture(bigOne.textureNo);
+            DXNative.FontEngineRemoveTextureSync(bigOne.textureNo);
             if (Disposing != null)
             {
               Disposing(this, bigOne.textureNo);
@@ -646,7 +646,7 @@ namespace MediaPortal.GUI.Library
           unsafe
           {
             IntPtr ptr = DirectShowUtil.GetUnmanagedTexture(bigOne.texture);
-            bigOne.textureNo = DXNative.FontEngineAddTexture(ptr.ToInt32(), true, ptr.ToPointer());
+            bigOne.textureNo = DXNative.FontEngineAddTextureSync(ptr.ToInt32(), true, ptr.ToPointer());
             Log.Info("TexturePacker: fontengine add texure:{0}", bigOne.textureNo);
           }
         }
@@ -672,7 +672,7 @@ namespace MediaPortal.GUI.Library
           if (bigOne.textureNo >= 0)
           {
             Log.Info("TexturePacker: remove texture:{0}", bigOne.textureNo);
-            DXNative.FontEngineRemoveTexture(bigOne.textureNo);
+            DXNative.FontEngineRemoveTextureSync(bigOne.textureNo);
             if (Disposing != null)
             {
               Disposing(this, bigOne.textureNo);

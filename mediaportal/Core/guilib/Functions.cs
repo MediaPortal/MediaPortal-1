@@ -154,7 +154,7 @@ namespace MediaPortal.GUI.Library
     [XMLSkinFunction("string.rtrim")]
     public static string RightTrimString(string text)
     {
-      return text.TrimEnd();
+      return text != null ? text.TrimEnd() : "";
     }
 
     [XMLSkinFunction("string.rtrim")]
@@ -182,19 +182,27 @@ namespace MediaPortal.GUI.Library
     [XMLSkinFunction("cint")]
     public static int ConvertToInt(object value)
     {
-      return Convert.ToInt32(value);
+      if (value is int) return (int)value;
+      if (value is float) return (int)((float)value);
+      int result;
+      return ((value is string) && (int.TryParse((string)value, out result))) ? result : 0;
     }
 
     [XMLSkinFunction("cflt")]
     public static float ConvertToFloat(object value)
     {
-      return Convert.ToSingle(value);
+      if (value is float) return (float)value;
+      if (value is int) return (float)((int)value);
+      float result;
+      return ((value is string) && (float.TryParse((string)value, out result))) ? result : 0;
     }
 
     [XMLSkinFunction("cdate")]
     public static DateTime ConvertToDate(object value)
     {
-      return Convert.ToDateTime(value);
+      if (value is DateTime) return (DateTime)value;
+      DateTime result;
+      return ((value is string) && (DateTime.TryParse((string)value, out result))) ? result : DateTime.MinValue;
     }
 
     #endregion

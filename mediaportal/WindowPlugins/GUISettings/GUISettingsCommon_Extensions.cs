@@ -23,7 +23,6 @@ using System.Collections;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
 using MediaPortal.GUI.Music;
-using MediaPortal.GUI.Pictures;
 using MediaPortal.GUI.Video;
 using MediaPortal.Profile;
 using MediaPortal.Util;
@@ -233,7 +232,7 @@ namespace MediaPortal.GUI.Settings
           GUIMusicFiles.ResetExtensions(aExtensions);
           break;
         case "pictures":
-          GUIPictures.ResetExtensions(aExtensions);
+          Pictures.GUIPictures.ResetExtensions(aExtensions);
           break;
       }
     }

@@ -355,13 +355,13 @@ bool CRTSPClient::OpenStream(char* url)
         {
           // Because we're saving the incoming data, rather than playing
           // it in real time, allow an especially large time threshold
-          // (1 second) for reordering misordered incoming packets:
+          // (0.5 second) for reordering misordered incoming packets:
           
           int socketNum= subsession->rtpSource()->RTPgs()->socketNum();
           LogDebug("rtsp:increaseReceiveBufferTo to 2000000 for s:%d",socketNum);
           increaseReceiveBufferTo( *m_env, socketNum, 2000000 );
 
-          unsigned const thresh = 1000000; // 1 second 
+          unsigned const thresh = 500000; // 0.5 second 
           subsession->rtpSource()->setPacketReorderingThresholdTime(thresh);
 
           if (socketInputBufferSize > 0) 
@@ -498,7 +498,7 @@ void CRTSPClient::ThreadProc()
   m_bRunning=true;
   ::SetThreadPriority(GetCurrentThread(),THREAD_PRIORITY_ABOVE_NORMAL);
   LogDebug("CRTSPClient:: thread started:%d", GetCurrentThreadId());
-  while (m_env!=NULL && !ThreadIsStopping(0))
+  while (m_env!=NULL && !ThreadIsStopping(1))
   {
     for (int i=0; i < 10;++i)
     {
@@ -618,6 +618,8 @@ bool CRTSPClient::UpdateDuration()
 
       //LogDebug("rangestart:%f rangeend:%f", Start,End);
       m_duration=((End-Start)*1000.0);
+      return true;
     }
   }
+  return false;
 }

@@ -33,7 +33,7 @@ namespace MediaPortal.GUI.Video
   /// <summary>
   /// Adds "Play DVD" button to homescreen
   /// </summary>
-  [PluginIcons("WindowPlugins.GUIDVD.DVD.gif", "WindowPlugins.GUIDVD.DVDDisabled.gif")]
+  [PluginIcons("GUIDVD.DVD.gif", "GUIDVD.DVDDisabled.gif")]
   public class GUIDVDFullscreen : GUIWindow, ISetupForm, IShowPlugin
   {
     private bool bINIT_from_MyVideosFullScreen = false;

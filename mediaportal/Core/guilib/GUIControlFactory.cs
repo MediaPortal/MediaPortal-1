@@ -703,8 +703,8 @@ namespace MediaPortal.GUI.Library
         {
           string text = element.InnerText;
 
-          // Window defines (passed in) override references defines (cached).
-          if (text.Length > 0 && text[0] == '#')
+          // Window defines (passed in) override references defines (cached) and don't transform tag (#...) to text for text "textboxscrollup"
+          if (text.Length > 0 && text[0] == '#' && control.Type != "textboxscrollup")
           {
             string foundDefine = null;
 

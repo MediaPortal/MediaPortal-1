@@ -36,11 +36,6 @@ namespace MediaPortal.Configuration.Sections
     private MPLabel _labelName;
     private MPTextBox _textBoxGenreName;
 
-    /// <summary>
-    /// Required designer variable.
-    /// </summary>
-    private Container _components = null;
-
     public DlgAddGenre()
     {
       InitializeComponent();

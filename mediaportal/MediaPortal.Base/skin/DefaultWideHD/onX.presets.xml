@@ -1,0 +1,326 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+
+<!--
+
+ Pog: onX [Online Xtra]
+
+ onX groups and buttons presets
+
+-->
+
+<!-- location -->
+
+<!--
+
+ For Cinema / Movies listings and other location based searches add your town and country.
+ Example = <define property="true" evaluateNow="true">#onx.location:london england</define>
+ 
+-->
+
+  <define property="true" evaluateNow="true">#onx.location:</define>
+
+<!-- language -->
+
+  <define property="true" evaluateNow="true">#onx.google:#(switch( eq(L(11),'Montag'),'www.google.de', eq(L(11),'maandag'),'www.google.nl', eq(L(11),'Lunes'),'www.google.es',  eq(L(11),'Lundi'),'www.google.fr',  eq(L(11),'понедельник'),'www.google.ru', eq(L(11),'Mandag'),'www.google.dk', eq(L(11),'Segunda-Feira'),'www.google.pt', eq(L(11),'Lunedì'),'www.google.it', eq(0,0),'www.google.com' ))</define>
+  <define property="true" evaluateNow="true">#onx.wiki:#(switch( eq(L(11),'Montag'),'de.wikipedia.org', eq(L(11),'maandag'),'nl.wikipedia.org', eq(L(11),'Lunes'),'es.wikipedia.org',  eq(L(11),'Lundi'),'fr.wikipedia.org',  eq(L(11),'понедельник'),'ru.wikipedia.org', eq(L(11),'Mandag'),'da.wikipedia.org', eq(L(11),'Segunda-Feira'),'pt.wikipedia.org', eq(L(11),'Lunedì'),'it.wikipedia.org', eq(0,0),'en.wikipedia.org' ))</define>
+
+<!--
+
+ Automatic selection for:
+
+  English
+  German
+  Dutch
+  Spanish
+  French
+  Russian
+  Danish
+  Portuguese
+  Italian
+
+ Google/Wiki can be made specific to your country/language. 
+ To override use these lines and change url addresses:
+
+  <define property="true" evaluateNow="true">#onx.google:www.google.com</define>
+  <define property="true" evaluateNow="true">#onx.wiki:en.wikipedia.org</define>
+
+-->
+
+<!-- menu -->
+
+  <define property="true" evaluateNow="true">#onx.menutag:yes</define>
+
+<!-- search parameters -->
+
+  <define property="true" evaluateNow="true">#onx.search:#(string.format('{0}','/search?q='))</define>
+  <define property="true" evaluateNow="true">#onx.site:#(string.format('{0}{1}','/search?&amp;btnI&amp;q=site',#colon))</define>
+  <define property="true" evaluateNow="true">#onx.onvid:#(string.format('{0}{1}{2}{3}{4}{5}','return',#colon,'Locked|site',#colon,'YouTube|search',#colon))</define>
+  <define property="true" evaluateNow="true">#onx.movie:#(string.format('{0}','/movies?near='))</define>
+  <define property="true" evaluateNow="true">#onx.news:#(string.format('{0}','/news?q='))</define>
+
+<!-- groups -->
+
+<!-- #onx.grp.[id]:[module]|[unused]|a[button1]ab[button2]bc[button3]cd[button4]de[button5]ef[button6]fg[button7]gh[button8]hi[button9]i -->
+
+  <define property="true" evaluateNow="true">#onx.grp.1:504|0|a1ab2bc3cd4de5ef6fg0gh0hi11i</define>
+  <define property="true" evaluateNow="true">#onx.grp.2:510|0|a1ab2bc3cd4de5ef6fg0gh0hi11i</define>
+
+  <define property="true" evaluateNow="true">#onx.grp.3:600|0|a1ab2bc3cd7de8ef9fg10gh16hi11i</define>
+  <define property="true" evaluateNow="true">#onx.grp.4:601|0|a1ab2bc3cd7de8ef9fg10gh16hi11i</define>
+  <define property="true" evaluateNow="true">#onx.grp.5:602|0|a1ab2bc3cd7de8ef9fg10gh16hi11i</define>
+  <define property="true" evaluateNow="true">#onx.grp.6:603|0|a1ab2bc3cd7de8ef9fg10gh16hi11i</define>
+
+  <define property="true" evaluateNow="true">#onx.grp.7:96742|0|a1ab2bc3cd7de8ef9fg17gh16hi11i</define>
+
+  <define property="true" evaluateNow="true">#onx.grp.8:9811|0|a1ab2bc3cd7de8ef9fg10gh0hi11i</define>
+  <define property="true" evaluateNow="true">#onx.grp.9:9816|0|a1ab2bc3cd7de0ef0fg0gh0hi11i</define>
+
+  <define property="true" evaluateNow="true">#onx.grp.10:7942|0|a1ab2bc3cd13de14ef0fg0gh0hi11i</define>
+
+  <define property="true" evaluateNow="true">#onx.grp.11:4755|0|a1ab2bc3cd7de8ef9fg17gh0hi11i</define>
+
+  <define property="true" evaluateNow="true">#onx.grp.12:87259|0|a1ab2bc3cd7de8ef9fg10gh0hi11i</define>
+  <define property="true" evaluateNow="true">#onx.grp.13:87262|0|a1ab2bc3cd7de8ef9fg10gh0hi11i</define>
+  <define property="true" evaluateNow="true">#onx.grp.14:87263|0|a1ab2bc3cd7de8ef9fg10gh17hi11i</define>
+  <define property="true" evaluateNow="true">#onx.grp.15:87265|0|a1ab2bc3cd7de8ef9fg10gh0hi11i</define>
+  <define property="true" evaluateNow="true">#onx.grp.16:87266|0|a1ab2bc3cd7de8ef9fg10gh17hi11i</define>
+  <define property="true" evaluateNow="true">#onx.grp.17:87268|0|a1ab2bc3cd7de8ef9fg10gh0hi11i</define>
+  <define property="true" evaluateNow="true">#onx.grp.18:87269|0|a1ab2bc3cd7de8ef9fg10gh0hi11i</define>
+  <define property="true" evaluateNow="true">#onx.grp.19:87270|0|a1ab2bc3cd7de8ef9fg10gh17hi11i</define>
+  <define property="true" evaluateNow="true">#onx.grp.20:87276|0|a1ab2bc3cd7de8ef9fg10gh0hi11i</define>
+  <define property="true" evaluateNow="true">#onx.grp.21:87281|0|a1ab2bc3cd7de8ef9fg10gh0hi11i</define>
+  <define property="true" evaluateNow="true">#onx.grp.22:87282|0|a1ab2bc3cd7de8ef9fg10gh0hi11i</define>
+
+  <define property="true" evaluateNow="true">#onx.grp.23:801|0|a1ab15bc0cd0de0ef0fg0gh0hi11i</define>
+
+  <define property="true" evaluateNow="true">#onx.grp.24:70943676|0|a1ab2bc3cd7de8ef9fg0gh0hi11i</define>
+
+  <define property="true" evaluateNow="true">#onx.grp.25:7977|0|a1ab2bc3cd18de19ef20fg0gh0hi11i</define>
+
+  <define property="true" evaluateNow="true">#onx.grp.26:0|0|a0ab0bc0cd0de0ef0fg0gh0hi0i</define>
+  <define property="true" evaluateNow="true">#onx.grp.27:0|0|a0ab0bc0cd0de0ef0fg0gh0hi0i</define>
+  <define property="true" evaluateNow="true">#onx.grp.28:0|0|a0ab0bc0cd0de0ef0fg0gh0hi0i</define>
+  <define property="true" evaluateNow="true">#onx.grp.29:0|0|a0ab0bc0cd0de0ef0fg0gh0hi0i</define>
+  <define property="true" evaluateNow="true">#onx.grp.30:0|0|a0ab0bc0cd0de0ef0fg0gh0hi0i</define>
+
+<!--
+
+Window Module IDs
+
+504       Music
+510       Music Fullscreen
+600       Tv Guide
+602       Tv Fullscreen
+603       Tv Recorded
+601       Tv Scheduled
+96742     Moving Pictures
+9811      TvSeries
+9816      TvSeries Actors
+7942      Emulators
+4755      Online Videos
+801       Extensions
+70943676  TvWishList
+87259     Trakt calendar
+87262     Trakt recommended shows
+87263     Trakt recommended movies
+87265     Trakt trend shows
+87266     Trakt trend movies
+87268     Trakt watchlist shows
+87269     Trakt watchlist episodes
+87270     Trakt watchlist movies
+87276     Trakt watchlist list
+87281     Trakt season
+87282     Trakt episode
+7977      Weather
+
+-->
+
+<!-- buttons -->
+
+<!-- #onx.btn.[id]:[type]|[plugin]|[hyperlink] -->
+<!-- #onx.prm.[id].[opt]:[parameter]           -->
+<!-- #onx.ste.[id]:[site]                      -->
+<!-- #onx.ico.[id]:[icon]                      -->
+
+  <define property="true" evaluateNow="true">#onx.btn.1:1|BrowseTheWeb|54537689</define>
+  <define property="true" evaluateNow="true">#onx.prm.1.1:#(#onx.google)</define>
+  <define property="true" evaluateNow="true">#onx.prm.1.2:#(#onx.search)</define>
+  <define property="true" evaluateNow="true">#onx.ste.1:</define>
+  <define property="true" evaluateNow="true">#onx.ico.1:onx.icon.google.png</define>
+
+  <define property="true" evaluateNow="true">#onx.btn.2:1|OnlineVideos|4755</define>
+  <define property="true" evaluateNow="true">#onx.prm.2.1:#(#onx.onvid)</define>
+  <define property="true" evaluateNow="true">#onx.prm.2.2:</define>
+  <define property="true" evaluateNow="true">#onx.ste.2:</define>
+  <define property="true" evaluateNow="true">#onx.ico.2:onx.icon.youtube.png</define>
+
+  <define property="true" evaluateNow="true">#onx.btn.3:1|BrowseTheWeb|54537689</define>
+  <define property="true" evaluateNow="true">#onx.prm.3.1:#(#onx.google)</define>
+  <define property="true" evaluateNow="true">#onx.prm.3.2:#(#onx.site)</define>
+  <define property="true" evaluateNow="true">#onx.ste.3:#(#onx.wiki)</define>
+  <define property="true" evaluateNow="true">#onx.ico.3:onx.icon.wiki.png</define>
+
+  <define property="true" evaluateNow="true">#onx.btn.4:1|BrowseTheWeb|54537689</define>
+  <define property="true" evaluateNow="true">#onx.prm.4.1:#(#onx.google)</define>
+  <define property="true" evaluateNow="true">#onx.prm.4.2:#(#onx.site)</define>
+  <define property="true" evaluateNow="true">#onx.ste.4:www.last.fm</define>
+  <define property="true" evaluateNow="true">#onx.ico.4:onx.icon.lastfm.png</define>
+
+  <define property="true" evaluateNow="true">#onx.btn.5:1|BrowseTheWeb|54537689</define>
+  <define property="true" evaluateNow="true">#onx.prm.5.1:#(#onx.google)</define>
+  <define property="true" evaluateNow="true">#onx.prm.5.2:#(#onx.site)</define>
+  <define property="true" evaluateNow="true">#onx.ste.5:www.allmusic.com</define>
+  <define property="true" evaluateNow="true">#onx.ico.5:onx.icon.amg.png</define>
+
+  <define property="true" evaluateNow="true">#onx.btn.6:1|BrowseTheWeb|54537689</define>
+  <define property="true" evaluateNow="true">#onx.prm.6.1:#(#onx.google)</define>
+  <define property="true" evaluateNow="true">#onx.prm.6.2:#(#onx.site)</define>
+  <define property="true" evaluateNow="true">#onx.ste.6:www.discogs.com</define>
+  <define property="true" evaluateNow="true">#onx.ico.6:onx.icon.discogs.png</define>
+
+  <define property="true" evaluateNow="true">#onx.btn.7:1|BrowseTheWeb|54537689</define>
+  <define property="true" evaluateNow="true">#onx.prm.7.1:#(#onx.google)</define>
+  <define property="true" evaluateNow="true">#onx.prm.7.2:#(#onx.site)</define>
+  <define property="true" evaluateNow="true">#onx.ste.7:www.imdb.com</define>
+  <define property="true" evaluateNow="true">#onx.ico.7:onx.icon.imdb.png</define>
+
+  <define property="true" evaluateNow="true">#onx.btn.8:1|BrowseTheWeb|54537689</define>
+  <define property="true" evaluateNow="true">#onx.prm.8.1:#(#onx.google)</define>
+  <define property="true" evaluateNow="true">#onx.prm.8.2:#(#onx.site)</define>
+  <define property="true" evaluateNow="true">#onx.ste.8:www.rottentomatoes.com</define>
+  <define property="true" evaluateNow="true">#onx.ico.8:onx.icon.rottentomatoes.png</define>
+
+  <define property="true" evaluateNow="true">#onx.btn.9:1|BrowseTheWeb|54537689</define>
+  <define property="true" evaluateNow="true">#onx.prm.9.1:#(#onx.google)</define>
+  <define property="true" evaluateNow="true">#onx.prm.9.2:#(#onx.site)</define>
+  <define property="true" evaluateNow="true">#onx.ste.9:www.metacritic.com</define>
+  <define property="true" evaluateNow="true">#onx.ico.9:onx.icon.metacritic.png</define>
+
+  <define property="true" evaluateNow="true">#onx.btn.10:1|TvWishListMP|70943675</define>
+  <define property="true" evaluateNow="true">#onx.prm.10.1:NEWTVWISH//TITLE=</define>
+  <define property="true" evaluateNow="true">#onx.prm.10.2:</define>
+  <define property="true" evaluateNow="true">#onx.ste.10:</define>
+  <define property="true" evaluateNow="true">#onx.ico.10:onx.icon.tvwish.png</define>
+
+  <define property="true" evaluateNow="true">#onx.btn.11:0|0|4</define>
+  <define property="true" evaluateNow="true">#onx.prm.11.1:</define>
+  <define property="true" evaluateNow="true">#onx.prm.11.2:</define>
+  <define property="true" evaluateNow="true">#onx.ste.11:</define>
+  <define property="true" evaluateNow="true">#onx.ico.11:onx.icon.settings.png</define>
+
+  <define property="true" evaluateNow="true">#onx.btn.12:1|BrowseTheWeb|54537689</define>
+  <define property="true" evaluateNow="true">#onx.prm.12.1:trakt.tv</define>
+  <define property="true" evaluateNow="true">#onx.prm.12.2:#(#onx.search)</define>
+  <define property="true" evaluateNow="true">#onx.ste.12:</define>
+  <define property="true" evaluateNow="true">#onx.ico.12:onx.icon.hover_trakt.png</define>
+
+  <define property="true" evaluateNow="true">#onx.btn.13:1|BrowseTheWeb|54537689</define>
+  <define property="true" evaluateNow="true">#onx.prm.13.1:#(#onx.google)</define>
+  <define property="true" evaluateNow="true">#onx.prm.13.2:#(#onx.site)</define>
+  <define property="true" evaluateNow="true">#onx.ste.13:www.gamefaqs.com</define>
+  <define property="true" evaluateNow="true">#onx.ico.13:onx.icon.gamefaqs.png</define>
+
+  <define property="true" evaluateNow="true">#onx.btn.14:1|BrowseTheWeb|54537689</define>
+  <define property="true" evaluateNow="true">#onx.prm.14.1:#(#onx.google)</define>
+  <define property="true" evaluateNow="true">#onx.prm.14.2:#(#onx.site)</define>
+  <define property="true" evaluateNow="true">#onx.ste.14:www.arcade-museum.com</define>
+  <define property="true" evaluateNow="true">#onx.ico.14:onx.icon.arcade.png</define>
+
+  <define property="true" evaluateNow="true">#onx.btn.15:1|BrowseTheWeb|54537689</define>
+  <define property="true" evaluateNow="true">#onx.prm.15.1:#(#onx.google)</define>
+  <define property="true" evaluateNow="true">#onx.prm.15.2:#(#onx.site)</define>
+  <define property="true" evaluateNow="true">#onx.ste.15:forum.team-mediaportal.com plugins</define>
+  <define property="true" evaluateNow="true">#onx.ico.15:onx.icon.mpforum.png</define>
+
+  <define property="true" evaluateNow="true">#onx.btn.16:0|BrowseTheWeb|54537689</define>
+  <define property="true" evaluateNow="true">#onx.prm.16.1:#(#onx.google)</define>
+  <define property="true" evaluateNow="true">#onx.prm.16.2:#(#onx.movie)</define>
+  <define property="true" evaluateNow="true">#onx.ste.16:#(#onx.location)</define>
+  <define property="true" evaluateNow="true">#onx.ico.16:onx.icon.popcorn.png</define>
+
+  <define property="true" evaluateNow="true">#onx.btn.17:1|BrowseTheWeb|54537689</define>
+  <define property="true" evaluateNow="true">#onx.prm.17.1:#(#onx.google)</define>
+  <define property="true" evaluateNow="true">#onx.prm.17.2:#(#onx.movie)</define>
+  <define property="true" evaluateNow="true">#onx.ste.17:#(string.format('{0} &amp;q=',#onx.location))</define>
+  <define property="true" evaluateNow="true">#onx.ico.17:onx.icon.cinemasearch.png</define>
+
+  <define property="true" evaluateNow="true">#onx.btn.18:1|BrowseTheWeb|54537689</define>
+  <define property="true" evaluateNow="true">#onx.prm.18.1:#(#onx.google)</define>
+  <define property="true" evaluateNow="true">#onx.prm.18.2:#(#onx.search)</define>
+  <define property="true" evaluateNow="true">#onx.ste.18:weather</define>
+  <define property="true" evaluateNow="true">#onx.ico.18:onx.icon.weather.png</define>
+  
+  <define property="true" evaluateNow="true">#onx.btn.19:1|BrowseTheWeb|54537689</define>
+  <define property="true" evaluateNow="true">#onx.prm.19.1:#(#onx.google)</define>
+  <define property="true" evaluateNow="true">#onx.prm.19.2:#(#onx.news)</define>
+  <define property="true" evaluateNow="true">#onx.ste.19:</define>
+  <define property="true" evaluateNow="true">#onx.ico.19:onx.icon.news.png</define>
+
+  <define property="true" evaluateNow="true">#onx.btn.20:1|BrowseTheWeb|54537689</define>
+  <define property="true" evaluateNow="true">#onx.prm.20.1:#(#onx.google)</define>
+  <define property="true" evaluateNow="true">#onx.prm.20.2:#(#onx.site)</define>
+  <define property="true" evaluateNow="true">#onx.ste.20:www.timeanddate.com calendar OR</define>
+  <define property="true" evaluateNow="true">#onx.ico.20:onx.icon.time.png</define>
+
+  <define property="true" evaluateNow="true">#onx.btn.21:0|0|0</define>
+  <define property="true" evaluateNow="true">#onx.prm.21.1:</define>
+  <define property="true" evaluateNow="true">#onx.prm.21.2:</define>
+  <define property="true" evaluateNow="true">#onx.ste.21:</define>
+  <define property="true" evaluateNow="true">#onx.ico.21:</define>
+
+  <define property="true" evaluateNow="true">#onx.btn.22:0|0|0</define>
+  <define property="true" evaluateNow="true">#onx.prm.22.1:</define>
+  <define property="true" evaluateNow="true">#onx.prm.22.2:</define>
+  <define property="true" evaluateNow="true">#onx.ste.22:</define>
+  <define property="true" evaluateNow="true">#onx.ico.22:</define>
+
+  <define property="true" evaluateNow="true">#onx.btn.23:0|0|0</define>
+  <define property="true" evaluateNow="true">#onx.prm.23.1:</define>
+  <define property="true" evaluateNow="true">#onx.prm.23.2:</define>
+  <define property="true" evaluateNow="true">#onx.ste.23:</define>
+  <define property="true" evaluateNow="true">#onx.ico.23:</define>
+
+  <define property="true" evaluateNow="true">#onx.btn.24:0|0|0</define>
+  <define property="true" evaluateNow="true">#onx.prm.24.1:</define>
+  <define property="true" evaluateNow="true">#onx.prm.24.2:</define>
+  <define property="true" evaluateNow="true">#onx.ste.24:</define>
+  <define property="true" evaluateNow="true">#onx.ico.24:</define>
+
+  <define property="true" evaluateNow="true">#onx.btn.25:0|0|0</define>
+  <define property="true" evaluateNow="true">#onx.prm.25.1:</define>
+  <define property="true" evaluateNow="true">#onx.prm.25.2:</define>
+  <define property="true" evaluateNow="true">#onx.ste.25:</define>
+  <define property="true" evaluateNow="true">#onx.ico.25:</define>
+
+  <define property="true" evaluateNow="true">#onx.btn.26:0|0|0</define>
+  <define property="true" evaluateNow="true">#onx.prm.26.1:</define>
+  <define property="true" evaluateNow="true">#onx.prm.26.2:</define>
+  <define property="true" evaluateNow="true">#onx.ste.26:</define>
+  <define property="true" evaluateNow="true">#onx.ico.26:</define>
+
+  <define property="true" evaluateNow="true">#onx.btn.27:0|0|0</define>
+  <define property="true" evaluateNow="true">#onx.prm.27.1:</define>
+  <define property="true" evaluateNow="true">#onx.prm.27.2:</define>
+  <define property="true" evaluateNow="true">#onx.ste.27:</define>
+  <define property="true" evaluateNow="true">#onx.ico.27:</define>
+
+  <define property="true" evaluateNow="true">#onx.btn.28:0|0|0</define>
+  <define property="true" evaluateNow="true">#onx.prm.28.1:</define>
+  <define property="true" evaluateNow="true">#onx.prm.28.2:</define>
+  <define property="true" evaluateNow="true">#onx.ste.28:</define>
+  <define property="true" evaluateNow="true">#onx.ico.28:</define>
+
+  <define property="true" evaluateNow="true">#onx.btn.29:0|0|0</define>
+  <define property="true" evaluateNow="true">#onx.prm.29.1:</define>
+  <define property="true" evaluateNow="true">#onx.prm.29.2:</define>
+  <define property="true" evaluateNow="true">#onx.ste.29:</define>
+  <define property="true" evaluateNow="true">#onx.ico.29:</define>
+
+  <define property="true" evaluateNow="true">#onx.btn.30:0|0|0</define>
+  <define property="true" evaluateNow="true">#onx.prm.30.1:</define>
+  <define property="true" evaluateNow="true">#onx.prm.30.2:</define>
+  <define property="true" evaluateNow="true">#onx.ste.30:</define>
+  <define property="true" evaluateNow="true">#onx.ico.30:</define>
+
+</window>

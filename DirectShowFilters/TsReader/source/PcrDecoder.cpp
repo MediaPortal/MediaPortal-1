@@ -44,7 +44,6 @@ double CPcrDecoder::GetPcr(bool fromEnd)
 	byte buffer[8192];
 
 	ULONG bytesRead;
-	__int64 pos=m_reader.GetFilePointer();
 	m_reader.Read(buffer,sizeof(buffer),&bytesRead);
 	if (bytesRead==0) return 0;
 	if (fromEnd)

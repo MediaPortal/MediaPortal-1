@@ -5,27 +5,22 @@
 <allowoverlay>yes</allowoverlay>
 <define>#header.label:665</define>
 <controls>
-
 	<import>common.window.radio.xml</import>
-	
-    <control>
+	<control>
 		<id>0</id>
-        <type>image</type>
-        <posX>66</posX>
-        <posY>10</posY>
-        <width>65</width>
+    <type>image</type>
+    <posX>66</posX>
+    <posY>10</posY>
+    <width>65</width>
 		<height>85</height>
-        <texture>icon_radio.png</texture>
-        <visible>control.isvisible(50)</visible>
-	    <animation effect="fade" time="250">WindowOpen</animation>
-	    <animation effect="fade" time="250">WindowClose</animation>
-    </control>
-
-    <import>common.time.xml</import>
+    <texture>icon_radio.png</texture>
+    <visible>control.isvisible(50)</visible>
+	  <animation effect="fade" time="250">WindowOpen</animation>
+	  <animation effect="fade" time="250">WindowClose</animation>
+  </control>
+	<import>common.time.xml</import>
 	<import>common.facade.radio.xml</import>
-	
 	<!--            :: LISTVIEW ::            -->
-	
 	<control>
 		<description>Poster shadow</description>
 		<type>image</type>
@@ -38,34 +33,7 @@
 		<visible>facadeview.list+Control.IsVisible(50)</visible>
 		<animation effect="fade" time="250">WindowOpen</animation>
 		<animation effect="fade" time="250">WindowClose</animation>
-	</control>	
-
-	<control>
-		<id>0</id>
-		<type>image</type>
-		<posX>121</posX>
-		<posY>362</posY>
-		<width>556</width>
-		<height>556</height>
-		<visible>[facadeview.list+!control.hasthumb(500)+!string.contains(#selecteditem, ..)]</visible>
-		<texture>DefaultMyradioBig.png</texture>
- 		<animation effect="fade" time="250">WindowOpen</animation>
-		<animation effect="fade" time="250">WindowClose</animation>
 	</control>
-	
-	<control>
-		<id>0</id>
-		<type>image</type>
-		<posX>121</posX>
-		<posY>362</posY>
-		<width>556</width>
-		<height>556</height>
-		<texture>DefaultMyradioBackBig.png</texture>
-		<visible>[facadeview.list+string.contains(#selecteditem, ..)]</visible>
-  		<animation effect="fade" time="250">WindowOpen</animation>
-		<animation effect="fade" time="250">WindowClose</animation>
-	</control>
-	
 	<control>
 		<description>Cover Art</description>
 		<type>image</type>
@@ -76,11 +44,10 @@
 		<height>556</height>
 		<texture>#selectedthumb</texture>
 		<visible>facadeview.list+Control.IsVisible(50)</visible>
-  		<animation effect="fade" time="250">WindowOpen</animation>
+  	<animation effect="fade" time="250">WindowOpen</animation>
 		<animation effect="fade" time="250">WindowClose</animation>
 	</control>
-
-<import>common.overlay.xml</import>
-<import>myradio.hiddenmenu.xml</import>		
+	<import>common.overlay.xml</import>
+	<import>myradio.hiddenmenu.xml</import>		
 </controls>
 </window>

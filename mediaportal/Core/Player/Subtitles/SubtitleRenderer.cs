@@ -580,10 +580,20 @@ namespace MediaPortal.Player.Subtitles
 
     public static Bitmap RenderText(LineContent[] lc)
     {
-      int w = 720;
-      int h = 576;
+      float w = 720;
+      float h = 576;
+      // With DPIAware setting baseSize need to be kept
+      // adjust for different DPI settings (96dpi = 100%)
+      using (Graphics graphics = GUIGraphicsContext.form.CreateGraphics())
+      {
+        if (Environment.OSVersion.Version.Major >= 6 && graphics.DpiY != 96.0)
+        {
+          w *= graphics.DpiX/96;
+          h *= graphics.DpiY/96;
+        }
+      }
 
-      Bitmap bmp = new Bitmap(w, h);
+      Bitmap bmp = new Bitmap((int)w, (int)h);
 
       using (Graphics gBmp = Graphics.FromImage(bmp))
       {
@@ -597,7 +607,7 @@ namespace MediaPortal.Player.Subtitles
               using (Font fnt = new Font("Courier", (lc[i].doubleHeight ? 22 : 15), FontStyle.Bold))
                 // fixed width font!
               {
-                int vertOffset = (h / lc.Length) * i;
+                int vertOffset = ((int)h / lc.Length) * i;
 
                 SizeF size = gBmp.MeasureString(lc[i].line, fnt);
                 //gBmp.FillRectangle(new SolidBrush(Color.Pink), new Rectangle(0, 0, w, h));
@@ -782,12 +792,23 @@ namespace MediaPortal.Player.Subtitles
           VMR9Util.g_vmr9.GetVideoWindows(out src, out dst);
 
           rationH = dst.Height / (float)_currentSubtitle.screenHeight;
-          rationW = dst.Width / (float)_currentSubtitle.screenWidth;
-          wx = dst.X + (int)(rationW * (float)_currentSubtitle.horizontalPosition);
-          wy = dst.Y + (int)(rationH * (float)_currentSubtitle.firstScanLine);          
-          wwidth = (int)((float)_currentSubtitle.width * rationW);
-          wheight = (int)((float)_currentSubtitle.height * rationH);
-          
+
+          // Get the location to render the subtitle to for blu-ray
+          if (_currentSubtitle.horizontalPosition != 0)
+          {
+            rationW = dst.Width / (float)_currentSubtitle.screenWidth;
+            wx = dst.X + (int)(rationW * (float)_currentSubtitle.horizontalPosition);
+          }
+          else
+          {
+            rationW = rationH;
+            wx = dst.X + (int)((dst.Width - _currentSubtitle.width * rationW) / 2);
+          }
+          wy = dst.Y + (int)(rationH * _currentSubtitle.firstScanLine);
+
+          wwidth = (int)(_currentSubtitle.width * rationW);
+          wheight = (int)(_currentSubtitle.height * rationH);
+
           // make sure the vertex buffer is ready and correct for the coordinates
           CreateVertexBuffer(wx, wy, wwidth, wheight);
 

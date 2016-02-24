@@ -1,0 +1,449 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <id>1911</id>
+  <defaultcontrol>300</defaultcontrol>
+  <allowoverlay>no</allowoverlay>
+  <!--define>#header.label:Skype        #Skype4MP.User.Name - #Skype4MP.User.Status</define>
+  <define>#header.hover:hover_skype4mp.png</define-->
+  <controls>
+    <control>
+      <description>background image</description>
+      <type>image</type>
+      <id>1</id>
+      <width>1920</width>
+      <height>1080</height>
+      <texture>blue.png</texture>
+      <colordiffuse>ffffffff</colordiffuse>
+    </control>
+    <!-- *** HEADER *** -->
+    <import>common.window.xml</import>
+    <import>common.time.xml</import>
+    <control>
+      <description>General Overlay</description>
+      <id>0</id>
+      <type>image</type>
+      <posX>0</posX>
+      <posY>45</posY>
+      <width>1920</width>
+      <height>1080</height>
+      <texture>general_overlay.png</texture>
+    </control>
+    <control>
+      <description>Selected item Label</description>
+      <type>fadelabel</type>
+      <id>1</id>
+      <posX>30</posX>
+      <posY>22</posY>
+      <width>1920</width>
+      <label>Skype        #Skype4MP.User.Name - #Skype4MP.User.Status</label>
+      <font>font12</font>
+      <align>left</align>
+      <textcolor>ff6FAFE1</textcolor>
+    </control>
+    <control>
+      <id>1</id>
+      <description>User Status Image</description>
+      <type>image</type>
+      <posX>142</posX>
+      <posY>24</posY>
+      <width>39</width>
+      <height>39</height>
+      <keepaspectratio>yes</keepaspectratio>
+      <texture>#Skype4MP.User.Status.Image</texture>
+    </control>
+    <control>
+      <type>fadelabel</type>
+      <id>1</id>
+      <posX>30</posX>
+      <posY>67</posY>
+      <width>1800</width>
+      <align>left</align>
+      <font>font10</font>
+      <label>#Skype4MP.User.MoodText</label>
+      <textcolor>ff6FAFE1</textcolor>
+    </control>
+    <!-- *** FACADE *** -->
+    <control>
+      <description>group element</description>
+      <type>group</type>
+      <control>
+        <description>composite control consisting of a list control and a thumbnail panel</description>
+        <type>facadeview</type>
+        <id>300</id>
+        <control>
+          <id>300</id>
+          <description>Contacts List</description>
+          <type>listcontrol</type>
+          <onleft>201</onleft>
+          <onright>41</onright>
+          <posX>139</posX>
+          <posY>261</posY>
+          <height>705</height>
+          <width>823</width>
+          <IconXOff>60</IconXOff>
+          <PinIconXOff>4</PinIconXOff>
+          <PinIconYOff>4</PinIconYOff>
+          <PinIconWidth>39</PinIconWidth>
+          <PinIconHeight>39</PinIconHeight>
+          <textXOff>60</textXOff>
+          <folderPrefix />
+          <folderSuffix />
+          <scrollOffset>2</scrollOffset>
+          <spinPosX>3625</spinPosX>
+          <spinPosY>984</spinPosY>
+          <scrollbarHeight>400</scrollbarHeight>
+          <scrollbarbg>bar_vert.png</scrollbarbg>
+          <scrollbartop>mouse_left_horizontal.png</scrollbartop>
+          <scrollbarbottom>mouse_right_horizontal.png</scrollbarbottom>
+          <scrollbarXOff>15</scrollbarXOff>
+          <scrollbarYOff>0</scrollbarYOff>
+          <showScrollbar>yes</showScrollbar>
+          <scrollbarwidth>10</scrollbarwidth>
+          <unfocusedAlpha applyToAll="true">130</unfocusedAlpha>
+          <scrollOffset>2</scrollOffset>
+        </control>
+      </control>
+    </control>
+    <!-- *** HIDDEN MENU *** -->
+    <control>
+      <type>actiongroup</type>
+      <description>action menu</description>
+      <defaultcontrol>201</defaultcontrol>
+      <onexit>300</onexit>
+      <buttonX>0</buttonX>
+      <buttonY>69</buttonY>
+      <buttonwidth>139</buttonwidth>
+      <buttonheight>984</buttonheight>
+      <textureFocus>-</textureFocus>
+      <textureNoFocus>Action_nofocus.png</textureNoFocus>
+      <width>168</width>
+      <height>798</height>
+      <dimColor>00ffffff</dimColor>
+      <control>
+        <type>image</type>
+        <id>1</id>
+        <width>1920</width>
+        <height>1080</height>
+        <texture>white.png</texture>
+        <colordiffuse>50005eef</colordiffuse>
+      </control>
+      <control>
+        <type>image</type>
+        <posX>-10</posX>
+        <posY>171</posY>
+        <width>489</width>
+        <height>855</height>
+        <texture>Backslide.png</texture>
+        <colordiffuse>ffffffff</colordiffuse>
+        <animation effect="slide" time="70" start="-335,0" reversible="true">visiblechange</animation>
+        <visible>!Control.HasFocus(300)|!Control.isvisible(300)</visible>
+      </control>
+      <control>
+        <type>group</type>
+        <description>group element</description>
+        <animation effect="slide" time="70" start="-335,0" reversible="true">visiblechange</animation>
+        <visible>!Control.HasFocus(300)|!Control.isvisible(300)</visible>
+        <layout>StackLayout(0, Vertical, true)</layout>
+        <posX>33</posX>
+        <posY>216</posY>
+        <control>
+          <description>Change User Status</description>
+          <id>201</id>
+          <type>button</type>
+          <onright>300</onright>
+          <onup>27</onup>
+          <ondown>207</ondown>
+          <label></label>
+          <height>54</height>
+          <textYOff>3</textYOff>
+        </control>
+        <control>
+          <description>Change Sort Order</description>
+          <id>207</id>
+          <type>selectbutton</type>
+          <onright>300</onright>
+          <onup>201</onup>
+          <ondown>205</ondown>
+          <height>54</height>
+          <textYOff>3</textYOff>
+        </control>
+        <control>
+          <description>History</description>
+          <id>205</id>
+          <type>button</type>
+          <onright>300</onright>
+          <onup>207</onup>
+          <ondown>202</ondown>
+          <label>History</label>
+          <hyperlink>1914</hyperlink>
+          <height>54</height>
+          <textYOff>3</textYOff>
+        </control>
+        <control>
+          <description>Skype On/Off</description>
+          <id>202</id>
+          <type>checkbutton</type>
+          <onright>300</onright>
+          <onup>205</onup>
+          <ondown>204</ondown>
+          <height>54</height>
+          <textYOff>3</textYOff>
+        </control>
+        <control>
+          <description>Settings</description>
+          <id>204</id>
+          <type>button</type>
+          <onright>300</onright>
+          <onup>202</onup>
+          <ondown>201</ondown>
+          <label></label>
+          <height>54</height>
+          <textYOff>3</textYOff>
+        </control>
+      </control>
+    </control>
+    <!-- Selected Contact Details -->
+    <control>
+      <description>Avatar image</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>1099</posX>
+      <posY>354</posY>
+      <width>199</width>
+      <height>199</height>
+      <texture mask="cdthumbmask.png">black.png</texture>
+    </control>
+    <control>
+      <description>Avatar image</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>1099</posX>
+      <posY>354</posY>
+      <width>199</width>
+      <height>199</height>
+      <texture mask="cdthumbmask.png">#selectedthumb</texture>
+    </control>
+    <control>
+      <description>Avatar image Overlay</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>1099</posX>
+      <posY>354</posY>
+      <width>199</width>
+      <height>199</height>
+      <texture mask="cdthumbmask.png">cdthumbframe.png</texture>
+    </control>
+    <!--control>
+      <description>LCD image</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>896</posX>
+      <posY>203</posY>
+      <width>243</width>
+      <height>140</height>
+      <texture>LCD.png</texture>
+    </control>
+    <control>
+      <id>80</id>
+      <description>VideoBlackBox</description>
+      <type>image</type>
+      <posX>900</posX>
+      <posY>206</posY>
+      <width>236</width>
+      <height>133</height>
+      <visible>yes</visible>
+    </control-->
+    <control>
+      <description>Contact Name Lib</description>
+      <type>fadelabel</type>
+      <id>1</id>
+      <posX>1099</posX>
+      <posY>255</posY>
+      <width>750</width>
+      <label>#Skype.ContactInfos.Name</label>
+      <font>font12</font>
+      <align>left</align>
+      <textcolor>ff6FAFE1</textcolor>
+    </control>
+    <control>
+      <description>Contact Mood Text</description>
+      <type>fadelabel</type>
+      <id>1</id>
+      <posX>1099</posX>
+      <posY>294</posY>
+      <width>750</width>
+      <label>#Skype4MP.ContactInfos.MoodText</label>
+      <font>font11</font>
+      <align>left</align>
+      <textcolor>ivory</textcolor>
+    </control>
+    <control>
+      <type>group</type>
+      <description>group element</description>
+      <layout>StackLayout(2, Vertical, true)</layout>
+      <posX>1099</posX>
+      <posY>574</posY>
+      <control>
+        <description>Birthdate Label</description>
+        <type>label</type>
+        <id>0</id>
+        <label>686</label>
+        <font>font11</font>
+        <height>34</height>
+        <textcolor>ff6FAFE1</textcolor>
+      </control>
+      <control>
+        <description>Country Label</description>
+        <type>label</type>
+        <id>0</id>
+        <label>
+          <label>1276</label>
+        </label>
+        <font>font11</font>
+        <height>34</height>
+        <textcolor>ff6FAFE1</textcolor>
+      </control>
+      <control>
+        <description>City Label</description>
+        <type>label</type>
+        <id>0</id>
+        <label>#(L(1028)):</label>
+        <font>font11</font>
+        <height>34</height>
+        <textcolor>ff6FAFE1</textcolor>
+      </control>
+      <control>
+        <description>Province Label</description>
+        <type>label</type>
+        <id>0</id>
+        <label>Province:</label>
+        <font>font11</font>
+        <height>34</height>
+        <textcolor>ff6FAFE1</textcolor>
+      </control>
+      <control>
+        <description>Gender Label</description>
+        <type>label</type>
+        <id>0</id>
+        <label>Gender:</label>
+        <font>font11</font>
+        <height>34</height>
+        <textcolor>ff6FAFE1</textcolor>
+      </control>
+      <control>
+        <description>Homepage Label</description>
+        <type>label</type>
+        <id>0</id>
+        <label>Homepage:</label>
+        <font>font11</font>
+        <height>34</height>
+        <textcolor>ff6FAFE1</textcolor>
+      </control>
+      <control>
+        <description>Status Label</description>
+        <type>label</type>
+        <id>0</id>
+        <label>#(L(126)):</label>
+        <font>font11</font>
+        <height>34</height>
+        <textcolor>ff6FAFE1</textcolor>
+      </control>
+    </control>
+    <control>
+      <type>group</type>
+      <description>group element</description>
+      <layout>StackLayout(2, Vertical, true)</layout>
+      <posX>1324</posX>
+      <posY>574</posY>
+      <control>
+        <description>Birthdate</description>
+        <type>label</type>
+        <id>0</id>
+        <label>#Skype.ContactInfos.Birthdate</label>
+        <font>font11</font>
+        <height>34</height>
+        <textcolor>ivory</textcolor>
+      </control>
+      <control>
+        <description>Country</description>
+        <type>label</type>
+        <id>0</id>
+        <label>#Skype.ContactInfos.Country</label>
+        <font>font11</font>
+        <height>34</height>
+        <textcolor>ivory</textcolor>
+      </control>
+      <control>
+        <description>City</description>
+        <type>label</type>
+        <id>0</id>
+        <label>#Skype.ContactInfos.City</label>
+        <font>font11</font>
+        <height>34</height>
+        <textcolor>ivory</textcolor>
+      </control>
+      <control>
+        <description>Province</description>
+        <type>label</type>
+        <id>0</id>
+        <label>#Skype.ContactInfos.Province</label>
+        <font>font11</font>
+        <height>34</height>
+        <textcolor>ivory</textcolor>
+        <width>702</width>
+      </control>
+      <control>
+        <description>Gender</description>
+        <type>label</type>
+        <id>0</id>
+        <label>#Skype.ContactInfos.Sex</label>
+        <font>font11</font>
+        <height>34</height>
+        <textcolor>ivory</textcolor>
+      </control>
+      <control>
+        <description>homepage</description>
+        <type>label</type>
+        <id>0</id>
+        <label>#Skype.ContactInfos.HomePage</label>
+        <font>font11</font>
+        <height>34</height>
+        <textcolor>ivory</textcolor>
+      </control>
+      <control>
+        <description>Status</description>
+        <type>fadelabel</type>
+        <id>0</id>
+        <label>     #Skype.ContactInfos.Status</label>
+        <font>font11</font>
+        <height>34</height>
+        <width>379</width>
+        <textcolor>ivory</textcolor>
+      </control>
+    </control>
+    <control>
+      <type>image</type>
+      <id>10</id>
+      <posX>1324</posX>
+      <posY>790</posY>
+      <width>36</width>
+      <height>36</height>
+      <texture>#Skype.Image.UserStatus</texture>
+    </control>
+    <control>
+      <type>listcontrol</type>
+      <description>current calls list</description>
+      <id>41</id>
+      <textXOff2>739</textXOff2>
+      <scrollOffset>2</scrollOffset>
+      <posX>1099</posX>
+      <posY>819</posY>
+      <height>150</height>
+      <width>729</width>
+      <onright>300</onright>
+      <onleft>300</onleft>
+      <onup>51</onup>
+      <ondown>51</ondown>
+    </control>
+  </controls>
+</window>

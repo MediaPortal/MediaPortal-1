@@ -90,7 +90,8 @@ CDiskRecorder::CDiskRecorder(RecordingMode mode)
 	m_params.minFiles=6;
 
 	m_iPmtPid=-1;
-	m_pcrPid=-1;
+	m_iOriginalPcrPid=-1;
+	m_iFakePcrPid=DR_FAKE_PCR_PID;
 	m_iServiceId=-1;
 
 	m_bRunning=false;
@@ -190,7 +191,8 @@ void CDiskRecorder::SetFileNameW(wchar_t* pwszFileName)
 	{
 		m_iPacketCounter=0;
 		m_iPmtPid=-1;
-		m_pcrPid=-1;
+		m_iOriginalPcrPid=-1;
+		m_iFakePcrPid=DR_FAKE_PCR_PID;
 		m_vecPids.clear();
 		m_AudioOrVideoSeen=false ;
 		m_bStartPcrFound=false;
@@ -341,7 +343,7 @@ void CDiskRecorder::Reset()
 	{
 		WriteLog("Reset");
 		m_iPmtPid=-1;
-		m_pcrPid=-1;
+		m_iOriginalPcrPid=-1;
 		m_bDetermineNewStartPcr=false;
 		m_bStartPcrFound=false;
 		m_vecPids.clear();
@@ -355,6 +357,7 @@ void CDiskRecorder::Reset()
 		DR_FAKE_VIDEO_PID    = 0x30;
 		DR_FAKE_AUDIO_PID    = 0x40;
 		DR_FAKE_SUBTITLE_PID = 0x50;
+		m_iFakePcrPid=DR_FAKE_PCR_PID;
 		m_iPacketCounter=0;
 		m_bPaused=FALSE;
 		m_mapLastPtsDts.clear();
@@ -767,7 +770,7 @@ void CDiskRecorder::SetPcrPid(int pcrPid)
 		m_bDetermineNewStartPcr=true;
 		m_mapLastPtsDts.clear();
 	}
-	m_pcrPid=pcrPid;
+	m_iOriginalPcrPid=pcrPid;
 	m_vecPids.clear();
 	m_AudioOrVideoSeen=false ;
 	DR_FAKE_NETWORK_ID   = 0x456;
@@ -778,6 +781,7 @@ void CDiskRecorder::SetPcrPid(int pcrPid)
 	DR_FAKE_VIDEO_PID    = 0x30;
 	DR_FAKE_AUDIO_PID    = 0x40;
 	DR_FAKE_SUBTITLE_PID = 0x50;
+	m_iFakePcrPid=DR_FAKE_PCR_PID;
 	m_iPatVersion++;
 	if (m_iPatVersion>15) 
 		m_iPatVersion=0;
@@ -864,8 +868,8 @@ void CDiskRecorder::AddStream(PidInfo2 pidInfo)
 			WriteLog("add subtitle stream pid: 0x%x fake pid: 0x%x stream type: 0x%x logical type: 0x%x descriptor length: %d",pidInfo.elementaryPid,pi.fakePid,pidInfo.streamType,pidInfo.logicalStreamType,pidInfo.rawDescriptorSize);
 		}
 
-		if (pi.elementaryPid==m_pcrPid)
-			DR_FAKE_PCR_PID=pi.fakePid;
+		if (pi.elementaryPid==m_iOriginalPcrPid)
+			m_iFakePcrPid=pi.fakePid;
 	}
 	else
 		WriteLog("stream rejected - pid: 0x%x stream type: 0x%x logical type: 0x%x descriptor length: %d",pidInfo.elementaryPid,pidInfo.streamType,pidInfo.logicalStreamType,pidInfo.rawDescriptorSize);
@@ -987,7 +991,7 @@ void CDiskRecorder::WriteTs(byte* tsPacket)
 	try{
 		m_TsPacketCount++;
 		if (m_TsPacketCount < IGNORE_AFTER_TUNE) return;
-		if (m_pcrPid<0 || m_vecPids.size()==0 || m_iPmtPid<0) return;
+		if (m_iOriginalPcrPid<0 || m_vecPids.size()==0 || m_iPmtPid<0) return;
 
 		m_tsHeader.Decode(tsPacket);
 		if (m_tsHeader.TScrambling)
@@ -1104,36 +1108,64 @@ void CDiskRecorder::WriteTs(byte* tsPacket)
 						else return ;
 					}                        
 				}
-	 
-        if (m_tsHeader.Pid == m_pcrPid)
+
+
+        //---------------------------------------------------------------------
+        // Handling for PCR timestamps when they are carried in one of the main
+        // streams.
+
+        // If the channel PMT indicates there is no PCR PID (see ISO 13818-1
+        // MPEG 2 TS spec page 47, TS_program_map_section, PCR_PID) then check
+        // if this packet contains PCR that we can use. We do this as a last
+        // resort. Without PCR, we currently can't timeshift/record the stream.
+        // See http://forum.team-mediaportal.com/threads/dvb-c-radio-not-working.118141/
+        if (m_iOriginalPcrPid == 0x1fff && m_tsHeader.HasAdaptionField && m_tsHeader.AdaptionFieldLength >= 7 && (info.m_Pkt[ADAPTION_FIELD_FLAG_OFFSET] & PCR_FLAG_BIT) != 0)
         {
-          // Overwrite the PCR timestamps.
+          WriteLog("currently no PCR PID, PID 0x%x appears to have PCR so we'll attempt to use it", m_tsHeader.Pid);
+          m_iOriginalPcrPid = m_tsHeader.Pid;
+          m_iFakePcrPid = info.fakePid;
+        }
+
+        // Normal case: PCR timestamps carried in a main stream.
+        if (m_tsHeader.Pid == m_iOriginalPcrPid)
+        {
+          // Overwrite the PCR timestamp.
           PatchPcr(info.m_Pkt, m_tsHeader);
         }
-        else if (info.fakePid == DR_FAKE_PCR_PID && m_tsHeader.HasAdaptionField && m_tsHeader.AdaptionFieldLength >= 7 && (info.m_Pkt[ADAPTION_FIELD_FLAG_OFFSET] & PCR_FLAG_BIT) != 0)
+        // Edge case: undesirable PCR timestamps.
+        else if (info.fakePid == m_iFakePcrPid && m_tsHeader.HasAdaptionField && m_tsHeader.AdaptionFieldLength >= 7 && (info.m_Pkt[ADAPTION_FIELD_FLAG_OFFSET] & PCR_FLAG_BIT) != 0)
         {
-          // If this packet is from the stream that we are *inserting* PCR timestamps
-          // into then we need to make sure that we don't leave random PCR timestamps
-          // from the broadcaster in the the adaption field. If we don't remove them,
-          // it messes up TsReader's ability to skip, fast-forward and rewind.
-          // If we get to here then we've found a PCR timestamp that needs to be wiped...
+          // If we get to here then we've found a PCR timestamp in a packet
+          // that is not expected to contain PCR timestamps. That isn't a
+          // problem unless this packet comes from the stream that we are
+          // *inserting* PCR timestamps into (see below). We have identified
+          // such a problem here!
+          // If we don't do anything about the problem, it will break
+          // TsReader's ability to skip, fast-forward and rewind.
+          // The solution is simple: remove the PCR timestamp from the adaption
+          // field!
 
           // Clear the PCR flag.
           info.m_Pkt[ADAPTION_FIELD_FLAG_OFFSET] &= (~PCR_FLAG_BIT);
-          // Overwrite the PCR with the rest of the adaption field. The -1 is for the adaption field flag byte.
+          // Overwrite the PCR timestamp with the rest of the adaption field.
+          // The -1 is for the adaption field flag byte.
           memcpy(&info.m_Pkt[PCR_OFFSET], &tsPacket[PCR_OFFSET + PCR_LENGTH], m_tsHeader.AdaptionFieldLength - PCR_LENGTH - 1);
           // The end of the adaption field is now stuffing.
           memset(&info.m_Pkt[PCR_OFFSET + m_tsHeader.AdaptionFieldLength - PCR_LENGTH - 1], 0xff, PCR_LENGTH);
         }
+        //---------------------------------------------------------------------
 
-	      if (!m_bDetermineNewStartPcr && m_bStartPcrFound) 
-				{
+
+        //---------------------------------------------------------------------
+        // Handling for regular packets from one of the main streams.
+        if (!m_bDetermineNewStartPcr && m_bStartPcrFound) 
+        {
           // Overwrite the PID.
           int pid = info.fakePid;
-					info.m_Pkt[1] = (PayLoadUnitStart << 6) + ((pid >> 8) & 0x1f);
-					info.m_Pkt[2] = (pid & 0xff);
+          info.m_Pkt[1] = (PayLoadUnitStart << 6) + ((pid >> 8) & 0x1f);
+          info.m_Pkt[2] = (pid & 0xff);
 
-				  if (info.seenStart && (PayLoadUnitStart || info.NPktQ))
+          if (info.seenStart && (PayLoadUnitStart || info.NPktQ))
           {
             int i = 0;
             switch (GetPesHeader(info.m_Pkt, m_tsHeader, info))
@@ -1159,29 +1191,38 @@ void CDiskRecorder::WriteTs(byte* tsPacket)
           }
         }
         return;
-			}
-			++it;
-		}
-	
-		if ((m_tsHeader.Pid==m_pcrPid) && m_AudioOrVideoSeen)
-		{
-			byte pkt[200];
-			memcpy(pkt,tsPacket,188);
-			int pid=DR_FAKE_PCR_PID;
-			PatchPcr(pkt,m_tsHeader);
-			pkt[1]=( (pid>>8) & 0x1f);
-			pkt[2]=(pid&0xff);
-			pkt[3]=(2<<4);// Adaption Field Control==adaptation field only, no payload
-			pkt[4]=0xb7;
-	
-			if (m_bDetermineNewStartPcr==false && m_bStartPcrFound) 
-			{						
-				Write(pkt,188);
-				m_iPacketCounter++;
-			}
-			return;
-		}
-	} catch (...) { WriteLog("Exception in WriteTs");}
+        //---------------------------------------------------------------------
+      }
+      ++it;
+    }
+
+    //-------------------------------------------------------------------------
+    // Handling for PCR timestamps when they are *not* carried in one of the
+    // main streams.
+    if (m_tsHeader.Pid == m_iOriginalPcrPid && m_AudioOrVideoSeen)
+    {
+      // Insert a PCR timestamp in a fresh packet.
+      byte pkt[200];
+      memcpy(pkt, tsPacket, 188);
+      PatchPcr(pkt, m_tsHeader);
+      pkt[1] = ((m_iFakePcrPid >> 8) & 0x1f);
+      pkt[2] = (m_iFakePcrPid & 0xff);
+      pkt[3] = (2 << 4);// Adaption Field Control==adaptation field only, no payload
+      pkt[4] = 0xb7;
+
+      if (!m_bDetermineNewStartPcr && m_bStartPcrFound) 
+      {            
+        Write(pkt,188);
+        m_iPacketCounter++;
+      }
+      return;
+    }
+    //-------------------------------------------------------------------------
+  }
+  catch (...)
+  {
+    WriteLog("Exception in WriteTs");
+  }
 }
 
 void CDiskRecorder::WriteFakePAT()
@@ -1265,8 +1306,8 @@ void CDiskRecorder::WriteFakePMT()
 	pmt[10]=((m_iPmtVersion&0x1f)<<1)+current_next_indicator;
 	pmt[11]=section_number;
 	pmt[12]=last_section_number;
-	pmt[13]=(DR_FAKE_PCR_PID>>8)&0xff;
-	pmt[14]=(DR_FAKE_PCR_PID)&0xff;
+	pmt[13]=(m_iFakePcrPid>>8)&0xff;
+	pmt[14]=(m_iFakePcrPid)&0xff;
 	pmt[15]=(program_info_length>>8)&0xff;
 	pmt[16]=(program_info_length)&0xff;
 

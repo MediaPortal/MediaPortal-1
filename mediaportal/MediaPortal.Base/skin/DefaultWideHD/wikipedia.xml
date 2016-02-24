@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!--version="1.0" encoding="utf-8" standalone="yes"-->
+<window>
+  <id>4711</id>
+  <defaultcontrol>10</defaultcontrol>
+  <allowoverlay>yes</allowoverlay>
+  <controls>
+    <control>
+      <description>BG</description>
+      <type>image</type>
+      <id>1</id>
+      <texture>blue.png</texture>
+      <width>1920</width>
+      <height>1080</height>
+    </control>
+    <import>common.window.xml</import>
+    <import>common.time.xml</import>
+    <control>
+      <description>General Overlay</description>
+      <id>0</id>
+      <type>image</type>
+      <posX>0</posX>
+      <posY>45</posY>
+      <width>1920</width>
+      <height>1080</height>
+      <texture>general_overlay.png</texture>
+    </control>
+    <control>
+      <type>group</type>
+      <description>group element</description>
+      <animation effect="slide" time="70" start="-300,0">WindowOpen</animation>
+      <animation effect="slide" time="70" end="0,-300">WindowClose</animation>
+      <layout>StackLayout(0, Vertical, true)</layout>
+      <posX>75</posX>
+      <posY>255</posY>
+      <control>
+        <description>Search Button</description>
+        <type>button</type>
+        <id>10</id>
+        <onup>17</onup>
+        <label>137</label>
+      </control>
+      <control>
+        <description>Select local Wikipedia Button</description>
+        <type>button</type>
+        <id>11</id>
+        <label>200025</label>
+      </control>
+      <control>
+        <description>Back to the text (when viewing an image)</description>
+        <type>button</type>
+        <id>14</id>
+        <label>2514</label>
+        <visible>no</visible>
+      </control>
+      <control>
+        <description>Links Button</description>
+        <type>button</type>
+        <id>12</id>
+        <label>2511</label>
+      </control>
+      <control>
+        <description>Images Button</description>
+        <type>button</type>
+        <id>13</id>
+        <ondown>99</ondown>
+        <label>2515</label>
+      </control>
+    </control>
+    <control>
+      <description>Article title/searchterm</description>
+      <type>label</type>
+      <id>4</id>
+      <posX>0</posX>
+      <posY>150</posY>
+      <visible>no</visible>
+      <label>Article title/searchterm</label>
+      <font>Menutitle</font>
+      <align>center</align>
+      <width>1920</width>
+      <textcolor>ff6FAFE1</textcolor>
+    </control>
+    <control>
+      <description>Image description</description>
+      <type>label</type>
+      <id>5</id>
+      <posX>0</posX>
+      <posY>150</posY>
+      <visible>no</visible>
+      <label>Image description</label>
+      <font>Menutitle</font>
+      <align>center</align>
+      <width>1920</width>
+      <textcolor>ff6FAFE1</textcolor>
+    </control>
+    <control style="NoShadow">
+      <description>Here is the article text displayed</description>
+      <type>textbox</type>
+      <id>20</id>
+      <posX>600</posX>
+      <posY>255</posY>
+      <visible>no</visible>
+      <width>1200</width>
+      <height>675</height>
+      <spinWidth>43</spinWidth>
+      <spinHeight>43</spinHeight>
+      <spinPosX>1680</spinPosX>
+      <spinPosY>885</spinPosY>
+      <textcolor>ivory</textcolor>
+    </control>
+    <control>
+      <description>Article Image</description>
+      <type>image</type>
+      <id>25</id>
+      <posX>600</posX>
+      <posY>255</posY>
+      <visible>no</visible>
+      <width>1200</width>
+      <height>675</height>
+      <texture />
+      <centered>yes</centered>
+      <keepaspectratio>yes</keepaspectratio>
+    </control>
+  </controls>
+</window>

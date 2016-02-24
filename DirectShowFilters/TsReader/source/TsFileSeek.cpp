@@ -31,6 +31,9 @@
 // For more details for memory leak detection see the alloctracing.h header
 #include "..\..\alloctracing.h"
 
+//~65ms of data @ 8Mbit/s
+#define SEEK_READ_SIZE (65536)
+
 const double SEEKING_ACCURACY = (double)0.24; // 1/25 *6 (6 frames in PAL)
 const int MAX_SEEKING_ITERATIONS = 30;
 const int MAX_BUFFER_ITERATIONS = 100;
@@ -39,10 +42,21 @@ extern void LogDebug(const char *fmt, ...) ;
 CTsFileSeek::CTsFileSeek( CTsDuration& duration)
 :m_duration(duration)
 {
+  m_pFileReadBuffer = NULL;
+  m_pFileReadBuffer = new byte[SEEK_READ_SIZE];
 }
 
 CTsFileSeek::~CTsFileSeek(void)
 {
+  if (m_pFileReadBuffer)
+  {
+    delete [] m_pFileReadBuffer;
+    m_pFileReadBuffer = NULL;
+  }
+  else
+  {
+    LogDebug("CTsFileSeek::dtor - ERROR m_pFileReadBuffer is NULL !!");
+  }
 }
 
 void CTsFileSeek::SetFileReader(FileReader* reader)
@@ -59,6 +73,12 @@ void CTsFileSeek::SetFileReader(FileReader* reader)
 //
 bool CTsFileSeek::Seek(CRefTime refTime)
 {
+  if (!m_pFileReadBuffer)
+  {
+    LogDebug("CTsFileSeek::Seek() - ERROR no buffer !!");
+    return true; //EOF
+  }
+
   double fileDuration=(double)m_duration.Duration().Millisecs();
   double seekTimeStamp=(double)refTime.Millisecs();
   
@@ -78,7 +98,6 @@ bool CTsFileSeek::Seek(CRefTime refTime)
   m_seekPid=m_duration.GetPid();
   LogDebug("FileSeek: seek to %f filepos:%x pid:%x", seekTimeStamp,(DWORD)filePos, m_seekPid);
   
-  byte buffer[188*10];
   __int64 binaryMax=m_reader->GetFileSize();
   __int64 binaryMin=0;
   __int64 lastFilePos=0;
@@ -98,7 +117,7 @@ bool CTsFileSeek::Seek(CRefTime refTime)
       m_reader->SetFilePointer(0,FILE_BEGIN);
       return false;
     }
-    if (filePos+sizeof(buffer) > m_reader->GetFileSize())
+    if (filePos+SEEK_READ_SIZE > m_reader->GetFileSize())
     {
       //no need to seek when we want to seek to end of file
       //simply set the pointer at the end of the file
@@ -111,7 +130,7 @@ bool CTsFileSeek::Seek(CRefTime refTime)
 
     //read buffer from file at position filePos
     DWORD dwBytesRead;
-    if (!SUCCEEDED(m_reader->Read(buffer, sizeof(buffer),&dwBytesRead)))
+    if (!SUCCEEDED(m_reader->Read(m_pFileReadBuffer, SEEK_READ_SIZE,&dwBytesRead)))
     {
       LogDebug("FileSeek: read failed at filePos: %x - target time: %f, iterations: %d", (DWORD)filePos, seekTimeStamp, seekingIteration);
       return true;
@@ -123,7 +142,7 @@ bool CTsFileSeek::Seek(CRefTime refTime)
     }
     //process data
     m_pcrFound.Reset();
-    OnRawData2(buffer,dwBytesRead);
+    OnRawData2(m_pFileReadBuffer,dwBytesRead);
 
     //did we find a pcr?
     if (m_pcrFound.IsValid)
@@ -189,7 +208,7 @@ bool CTsFileSeek::Seek(CRefTime refTime)
     else // no first PCR
     {
       //move filepointer forward and continue searching for a PCR
-      filePos += sizeof(buffer);
+      filePos += SEEK_READ_SIZE;
       noPCRIteration++;
       if (noPCRIteration > MAX_BUFFER_ITERATIONS)
       {
@@ -216,12 +235,12 @@ bool CTsFileSeek::Seek(CRefTime refTime)
 
 //*********************************************************
 // Callback method. This method gets called via
-// CTsFileSeek::Seek()->OnRawData2(buffer,dwBytesRead)
+// CTsFileSeek::Seek()->OnRawData2(m_pFileReadBuffer,dwBytesRead)
 // tsPacket : pointer to 188 byte Transport Stream packet
 //
 // This method checks if the ts packet contains a PCR timestamp
 // and ifso sets the PCR timestamp in m_pcrFound;
-void CTsFileSeek::OnTsPacket(byte* tsPacket)
+void CTsFileSeek::OnTsPacket(byte* tsPacket, int bufferOffset, int bufferLength)
 {
   if (m_pcrFound.IsValid) return ;
 

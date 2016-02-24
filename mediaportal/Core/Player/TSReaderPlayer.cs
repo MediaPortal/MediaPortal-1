@@ -47,7 +47,7 @@ namespace MediaPortal.Player
     protected ITeletextSource _teletextSource = null;
     
     //Set to false to use normal CoreCCParser - Set to true for using CoreCCParser H264 Build Test
-    protected bool CoreCCParserH264 = false;
+    protected bool CoreCCParserH264 = true;
 
     #endregion
 
@@ -346,7 +346,7 @@ namespace MediaPortal.Player
 
         // does .ts file contain video?
         // default is _isRadio=false which prevents recorded radio file playing
-        if (!_videoFormat.IsValid)
+        if (!_videoFormat.IsValid && g_Player.AudioStreams == 1)
         {
           Log.Debug("TSReaderPlayer: Stream is Radio");
           _isRadio = true;
@@ -354,9 +354,12 @@ namespace MediaPortal.Player
 
         if (!_isRadio)
         {
-          _vmr9 = new VMR9Util();
-          _vmr9.AddVMR9(_graphBuilder);
-          _vmr9.Enable(false);
+          if (_videoFormat.IsValid)
+          {
+            _vmr9 = new VMR9Util();
+            _vmr9.AddVMR9(_graphBuilder);
+            _vmr9.Enable(false);
+          }
 
           // Add preferred video filters
           UpdateFilters("Video");
@@ -396,7 +399,7 @@ namespace MediaPortal.Player
         #region render TsReader output pins
 
         Log.Info("TSReaderPlayer: Render TsReader outputs");
-        if (_isRadio)
+        if (_isRadio && g_Player.AudioStreams == 1)
         {
           IEnumPins enumPins;
           hr = _fileSource.EnumPins(out enumPins);
@@ -461,7 +464,7 @@ namespace MediaPortal.Player
 
         if (!_isRadio)
         {
-          if (filterConfig != null && filterConfig.enableDVBTtxtSubtitles || filterConfig.enableDVBBitmapSubtitles)
+          if (filterConfig != null && (filterConfig != null && filterConfig.enableDVBTtxtSubtitles || filterConfig.enableDVBBitmapSubtitles))
           {
             try
             {
@@ -521,7 +524,7 @@ namespace MediaPortal.Player
         }
         if (!_isRadio)
         {
-          if (filterConfig != null && filterConfig.enableCCSubtitles)
+          if (_vmr9 != null && filterConfig != null && filterConfig.enableCCSubtitles)
           {
             CleanupCC();
             ReleaseCC();
@@ -539,21 +542,31 @@ namespace MediaPortal.Player
               Log.Debug("TSReaderPlayer: EnableCC2");
             }
           }
-          if (!_vmr9.IsVMR9Connected)
+          if (_vmr9 != null && !_vmr9.IsVMR9Connected)
           {
             Log.Error("TSReaderPlayer: Failed vmr9 not connected");
             Cleanup();
             return false;
           }
           DirectShowUtil.EnableDeInterlace(_graphBuilder);
-          _vmr9.SetDeinterlaceMode();
+          if (_vmr9 != null)
+          {
+            _vmr9.SetDeinterlaceMode();
+          }
         }
 
         using (MPSettings xmlreader = new MPSettings())
         {
-          int lastSubIndex = xmlreader.GetValueAsInt("tvservice", "lastsubtitleindex", 0);
-          Log.Debug("TSReaderPlayer: Last subtitle index: {0}", lastSubIndex);
-          CurrentSubtitleStream = lastSubIndex;
+          if (filterConfig.autoShowSubWhenTvStarts && SupportsCC && CurrentSubtitleStream == 0)
+          {
+            CurrentSubtitleStream = -1;
+          }
+          else
+          {
+            int lastSubIndex = xmlreader.GetValueAsInt("tvservice", "lastsubtitleindex", 0);
+            Log.Debug("TSReaderPlayer: Last subtitle index: {0}", lastSubIndex);
+            CurrentSubtitleStream = lastSubIndex;
+          }
         }
 
         if (filterConfig != null && !filterConfig.autoShowSubWhenTvStarts)

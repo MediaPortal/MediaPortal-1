@@ -48,6 +48,9 @@ namespace MediaPortal.Player
     [PreserveSig]
     int OnVideoFormatChanged(int streamType, int width, int height, int aspectRatioX, int aspectRatioY, int bitrate,
                              int isInterlaced);
+
+    [PreserveSig]
+    int OnBitRateChanged(int bitrate);
   }
 
   [ComVisible(true), ComImport,
@@ -1570,6 +1573,13 @@ namespace MediaPortal.Player
       return 0;
     }
 
+    public int OnBitRateChanged(int bitrate)
+    {
+      _videoFormat.bitrate = bitrate;
+      //Log.Debug("TsReaderPlayer:OnBitRateChanged - {0} b/s", bitrate);
+      return 0;
+    }
+
     public int OnRequestAudioChange()
     {
       if (Thread.CurrentThread.Name == "MPMain")
@@ -1891,7 +1901,7 @@ namespace MediaPortal.Player
           PostProcessFilterVideo.Clear();
           Log.Info("TSReaderPlayer: UpdateFilters Cleanup PostProcessVideo");
         }
-        if (filterConfig != null && filterConfig.enableCCSubtitles)
+        if (VMR9Util.g_vmr9 != null && filterConfig != null && filterConfig.enableCCSubtitles)
         {
           ReleaseCC();
           ReleaseCC2();
@@ -1984,7 +1994,7 @@ namespace MediaPortal.Player
         }
         filterCodec.VideoCodec = DirectShowUtil.AddFilterToGraph(this._graphBuilder, MatchFilters(selection));
 
-        if (filterConfig != null && selection == "Video" && filterConfig.enableCCSubtitles)
+        if (VMR9Util.g_vmr9 != null && filterConfig != null && selection == "Video" && filterConfig.enableCCSubtitles)
         {
           CoreCCPresent = false;
           CoreCCParserCheck();

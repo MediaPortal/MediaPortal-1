@@ -109,7 +109,7 @@ namespace MediaPortal.GUI.Settings
                                                                      btnTreatFolderAsAlbum.Selected);
         btnMonitorShares.Selected = xmlreader.GetValueAsBool("musicfiles", "monitorShares", false);
         btnUpdateSinceLastImport.Selected = xmlreader.GetValueAsBool("musicfiles", "updateSinceLastImport", true);
-        _updateSinceLastImport = String.Format("Only update files after {0}",
+        _updateSinceLastImport = String.Format(GUILocalizeStrings.Get(300232),
                                                            xmlreader.GetValueAsString("musicfiles", "lastImport",
                                                                                       "1900-01-01 00:00:00"));
         btnStripartistprefixes.Selected = xmlreader.GetValueAsBool("musicfiles", "stripartistprefixes", false);
@@ -427,7 +427,7 @@ namespace MediaPortal.GUI.Settings
 
       using (Profile.Settings xmlreader = new Profile.MPSettings())
       {
-        _updateSinceLastImport = String.Format("Only update files after {0}",
+        _updateSinceLastImport = String.Format(GUILocalizeStrings.Get(300232),
                                                            xmlreader.GetValueAsString("musicfiles", "lastImport",
                                                                                       "1900-01-01 00:00:00"));
       }
@@ -436,14 +436,9 @@ namespace MediaPortal.GUI.Settings
       EnableControls(true);
       SetProperties();
 
-      GUIDialogNotify dlgNotify =
-        (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
-      if (null != dlgNotify)
-      {
-        dlgNotify.SetHeading(GUILocalizeStrings.Get(1020)); // Information
-        dlgNotify.SetText(GUILocalizeStrings.Get(300024)); // Scan finished
-        dlgNotify.DoModal(GetID);
-      }
+      // We can't send the message from here as this will result to run the dislog in a wrong thread
+      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_DATABASE_SCAN_ENDED, 0, 0, 0, 0, 0, null);
+      GUIWindowManager.SendThreadMessage(msg);
     }
 
     private void SetStatus(object sender, DatabaseReorgEventArgs e)

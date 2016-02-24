@@ -1090,6 +1090,22 @@ namespace TvPlugin
 
     private void OnDeleteRecording(int iItem)
     {
+      string userCode = string.Empty;
+      string _fileMenuPinCode = string.Empty;
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.MPSettings())
+      {
+        _fileMenuPinCode = Utils.DecryptPassword(xmlreader.GetValueAsString("filemenu", "pincode", string.Empty));
+      }
+
+      if (!string.IsNullOrEmpty(_fileMenuPinCode))
+      {
+        GetUserPasswordString(ref userCode);
+        if (userCode != _fileMenuPinCode)
+        {
+          return;
+        }
+      }
+      
       _iSelectedItem = GetSelectedItemNo();
       GUIListItem pItem = GetItem(iItem);
       if (pItem == null)
@@ -1303,11 +1319,6 @@ namespace TvPlugin
         {
           GUIPropertyManager.SetProperty("#selectedthumb", String.Empty);
           SetProperties(null);
-          if (pItem.IsFolder && pItem.Label == "..")
-          {
-            MediaPortal.Util.Utils.SetDefaultIcons(pItem);
-            GUIPropertyManager.SetProperty("#selectedthumb", pItem.IconImageBig);
-          }
           return;
         }
         rec = pItem.TVTag as Recording;
@@ -1460,7 +1471,7 @@ namespace TvPlugin
         }
         if (item2.IsFolder && item2.Label == "..")
         {
-          return -1;
+          return 1;
         }
         if (item1.IsFolder && !item2.IsFolder)
         {

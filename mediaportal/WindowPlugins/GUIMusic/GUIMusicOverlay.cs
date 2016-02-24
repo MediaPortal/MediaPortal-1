@@ -420,6 +420,10 @@ namespace MediaPortal.GUI.Music
         if (tag != null)
         {
           tag.Artist = Util.Utils.FormatMultiItemMusicStringTrim(tag.Artist, _stripArtistPrefixes);
+          if (item != null)
+          {
+            item.MusicTag = tag;
+          }
         }
       }
 
@@ -431,7 +435,7 @@ namespace MediaPortal.GUI.Music
       var thumb = string.Empty;
       if (tag != null)
       {
-        string strThumb = Util.Utils.GetAlbumThumbName(tag.Artist, tag.Album);
+        string strThumb = GUIMusicBaseWindow.GetCoverArt(false, fileName, tag);
         if (Util.Utils.FileExistsInCache(strThumb))
         {
           thumb = strThumb;
@@ -450,7 +454,10 @@ namespace MediaPortal.GUI.Music
           thumb = strLarge;
         }
 
-        GUIPropertyManager.SetProperty("#Play.Current.Thumb", thumb);
+        if (!Util.Utils.IsLastFMStream(fileName))
+        {
+          GUIPropertyManager.SetProperty("#Play.Current.Thumb", thumb);
+        }
 
         // non-text values default to 0 and datetime.minvalue so
         // set the appropriate properties to string.empty
@@ -574,7 +581,7 @@ namespace MediaPortal.GUI.Music
       var thumb = string.Empty;
       if (tag != null)
       {
-        string strThumb = Util.Utils.GetAlbumThumbName(tag.Artist, tag.Album);
+        string strThumb = GUIMusicBaseWindow.GetCoverArt(false, fileName, tag);
         if (Util.Utils.FileExistsInCache(strThumb))
         {
           thumb = strThumb;
@@ -698,7 +705,8 @@ namespace MediaPortal.GUI.Music
       // but user can udpate the playlist without firing g_player events
       // make sure the next track details shown are correct
       if ((_playlistIsCurrent && nPlayList == PlayListType.PLAYLIST_MUSIC) ||
-          (!_playlistIsCurrent && nPlayList == PlayListType.PLAYLIST_MUSIC_TEMP))
+          (!_playlistIsCurrent && nPlayList == PlayListType.PLAYLIST_MUSIC_TEMP) ||
+          (nPlayList == PlayListType.PLAYLIST_LAST_FM))
       {
         var nextFilename = playlistPlayer.GetNext();
         if (!string.IsNullOrEmpty(nextFilename))
@@ -716,15 +724,10 @@ namespace MediaPortal.GUI.Music
 
     private void DoOnStarted(g_Player.MediaType type, string filename)
     {
-      var isInternetStream = Util.Utils.IsAVStream(filename);
+      var isInternetStream = Util.Utils.IsAVStream(filename) && !Util.Utils.IsLastFMStream(filename);
       MusicTag tag;
 
       if (string.IsNullOrEmpty(filename))
-      {
-        return;
-      }
-      // last.fm radio sets properties manually therefore do not overwrite them.
-      if (Util.Utils.IsLastFMStream(filename))
       {
         return;
       }

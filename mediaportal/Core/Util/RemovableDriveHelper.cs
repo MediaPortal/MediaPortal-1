@@ -33,6 +33,18 @@ namespace MediaPortal.Util
   /// </summary>
   public class RemovableDriveHelper
   {
+    // http://msdn.microsoft.com/en-us/library/windows/desktop/aa363244(v=vs.85).aspx
+    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+    public struct DEV_BROADCAST_DEVICEINTERFACE
+    {
+      public int dbcc_size;
+      public int dbcc_devicetype;
+      public int dbcc_reserved;
+      public Guid dbcc_classguid;
+      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 255)]
+      public string dbcc_name;
+    }
+
     #region public methods
 
     /// <summary>
@@ -44,6 +56,49 @@ namespace MediaPortal.Util
     {
       DEV_BROADCAST_HDR hdr = new DEV_BROADCAST_HDR();
       DEV_BROADCAST_VOLUME vol = new DEV_BROADCAST_VOLUME();
+
+      try
+      {
+        var deviceInterface = (DEV_BROADCAST_DEVICEINTERFACE)Marshal.PtrToStructure(msg.LParam, typeof(DEV_BROADCAST_DEVICEINTERFACE));
+
+        // get friendly device name
+        string deviceName = String.Empty;
+        string[] values = deviceInterface.dbcc_name.Split('#');
+        if (values.Length >= 3)
+        {
+          string deviceType = values[0].Substring(values[0].IndexOf(@"?\", StringComparison.Ordinal) + 2);
+          string deviceInstanceID = values[1];
+          string deviceUniqueID = values[2];
+          string regPath = @"SYSTEM\CurrentControlSet\Enum\" + deviceType + "\\" + deviceInstanceID + "\\" + deviceUniqueID;
+          Microsoft.Win32.RegistryKey regKey = Microsoft.Win32.Registry.LocalMachine.OpenSubKey(regPath);
+          if (regKey != null)
+          {
+            // use the friendly name if it exists
+            object result = regKey.GetValue("FriendlyName");
+            if (result != null)
+            {
+              deviceName = result.ToString();
+            }
+            // if not use the device description's last part
+            else
+            {
+              result = regKey.GetValue("DeviceDesc");
+              if (result != null)
+              {
+                deviceName = result.ToString().Contains(@"%;") ? result.ToString().Substring(result.ToString().IndexOf(@"%;", StringComparison.Ordinal) + 2) : result.ToString();
+              }
+            }
+          }
+        }
+        if (!string.IsNullOrEmpty(deviceName) && deviceName.Contains("Microsoft Virtual DVD-ROM"))
+        {
+          Log.Debug("Ignoring Microsoft Virtual DVD-ROM device change event");
+
+          return true;
+        }
+      }
+      catch
+      { }
 
       try
       {
@@ -136,6 +191,78 @@ namespace MediaPortal.Util
       _examineCDTime = ExamineCDTime;
     }
 
+    // http://support.microsoft.com/kb/165721
+    public static bool EjectMedia(string path, out String message)
+    {
+      bool driveReady = false;
+      bool ejectSuccesfull = false;
+      message = string.Empty;
+      string sPhysicalDrive = @"\\.\" + path.Substring(0, 1) + ":";
+
+      // Open drive (prepare for eject)
+      IntPtr handle = CreateFile(sPhysicalDrive, GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_WRITE,
+        IntPtr.Zero, OPEN_EXISTING, 0, IntPtr.Zero);
+
+      if (handle.ToInt32() == INVALID_HANDLE_VALUE)
+      {
+        message = "Media eject failed. Drive not ready or in use!";
+        return false;
+      }
+
+      while (true)
+      {
+        // Lock Volume (retry 10 times - 5 seconds)
+        for (int i = 0; i < 10; i++)
+        {
+          int nout = 0;
+          driveReady = DeviceIoControl(handle, FSCTL_LOCK_VOLUME, null, 0, null, 0, out nout, IntPtr.Zero);
+
+          if (driveReady)
+          {
+            break;
+          }
+          Thread.Sleep(500);
+        }
+
+        if (!driveReady)
+        {
+          message = "Media eject failed. Drive not ready or in use!";
+          break;
+        }
+
+        // Volume dismount
+        int xout = 0;
+        driveReady = DeviceIoControl(handle, FSCTL_DISMOUNT_VOLUME, null, 0, null, 0, out xout, IntPtr.Zero);
+
+        if (!driveReady)
+        {
+          message = "Media eject failed. Drive not ready or in use!";
+          break;
+        }
+
+        // Prevent Removal Of Volume
+        byte[] flag = new byte[1];
+        flag[0] = 0; // 0 = false
+        int yout = 0;
+        driveReady = DeviceIoControl(handle, IOCTL_STORAGE_MEDIA_REMOVAL, flag, 1, null, 0, out yout, IntPtr.Zero);
+
+        if (!driveReady)
+        {
+          message = "Media eject failed. Drive not ready or in use!";
+          break;
+        }
+
+        // Eject Media
+        driveReady = DeviceIoControl(handle, IOCTL_STORAGE_EJECT_MEDIA, null, 0, null, 0, out xout, IntPtr.Zero);
+        break;
+      }
+
+      // Close Handle
+      driveReady = CloseHandle(handle);
+      ejectSuccesfull = driveReady;
+      return ejectSuccesfull;
+    }
+
     #endregion
 
     #region private methods
@@ -214,7 +341,13 @@ namespace MediaPortal.Util
     {
       char volumeLetter = GetVolumeLetter(volumeInformation.UnitMask);
       string path = (volumeLetter + @":").ToUpperInvariant();
-      
+
+      if (DaemonTools.GetLastVirtualDrive() == path)
+      {
+        Log.Debug("Ignoring Microsoft Virtual DVD-ROM device change event. Drive letter: {0}", path);
+        return true;
+      }
+
       _volumeRemovalTime = DateTime.Now;
       TimeSpan tsMount = DateTime.Now - _mountTime;
       TimeSpan tsExamineCD = DateTime.Now - _examineCDTime;
@@ -414,6 +547,16 @@ namespace MediaPortal.Util
     private const int DBT_DEVICEREMOVECOMPLETE = 0x8004;
     private const int DBT_DEVTYPE_VOLUME = 2;
 
+    // For eject media from drive
+    private const int GENERIC_READ = unchecked((int)0x80000000);
+    private const int GENERIC_WRITE = unchecked((int)0x40000000);
+    private const int FILE_SHARE_READ = unchecked((int)0x00000001);
+    private const int FILE_SHARE_WRITE = unchecked((int)0x00000002);
+    private const int FSCTL_LOCK_VOLUME = unchecked((int)0x00090018);
+    private const int FSCTL_DISMOUNT_VOLUME = unchecked((int)0x00090020);
+    private const int IOCTL_STORAGE_EJECT_MEDIA = unchecked((int)0x002D4808);
+    private const int IOCTL_STORAGE_MEDIA_REMOVAL = unchecked((int)0x002D4804);
+
     // For event filtering
     private static DateTime _mountTime = new DateTime();    
     private static DateTime _examineCDTime = new DateTime();
@@ -515,6 +658,18 @@ namespace MediaPortal.Util
       IntPtr lpOutBuffer,
       int nOutBufferSize,
       out int lpBytesReturned,
+      IntPtr lpOverlapped);
+
+    
+    [DllImport("kernel32.dll", ExactSpelling = true, SetLastError = true)]
+    private static extern bool DeviceIoControl(
+      IntPtr hDevice, 
+      int dwIoControlCode, 
+      byte[] lpInBuffer,
+      int nInBufferSize, 
+      byte[] lpOutBuffer, 
+      int nOutBufferSize, 
+      out int lpBytesReturned, 
       IntPtr lpOverlapped);
 
     #endregion

@@ -433,6 +433,7 @@ namespace MediaPortal.GUI.Library
         //UnspinCard();
         if (action.wID == Action.ActionType.ACTION_SHOW_INFO)
         {
+          ResetSearchString();
           OnDefaultAction(action);
           UnspinCard();
           return;
@@ -751,7 +752,13 @@ namespace MediaPortal.GUI.Library
 
       if ((bItemFound) && (iItem >= 0 && iItem < _listItems.Count))
       {
+        string searchstring = _searchString;
+        char previousKey = _previousKey;
+        char currentKey = _currentKey;
         SelectCardIndex(iItem);
+        _searchString = searchstring;
+        _previousKey = previousKey;
+        _currentKey = currentKey;
       }
       UpdateProperties();
     }
@@ -2158,7 +2165,6 @@ namespace MediaPortal.GUI.Library
         GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_CLICKED, WindowId, GetID, ParentID,
                                         (int)action.wID, 0, null);
         GUIGraphicsContext.SendMessage(msg);
-        ResetSearchString();
     }
 
     private void ResetSearchString()

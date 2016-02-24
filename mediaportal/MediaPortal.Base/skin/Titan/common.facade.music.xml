@@ -1,10 +1,8 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <window>
 <controls>
-
 	<!--            :: List Scrolling Popup ::            -->
-    
-	<control>
+  <control>
   	<description>listscroller bg</description>
     <type>image</type>
     <id>1</id>
@@ -17,7 +15,6 @@
     <animation effect="fade" time="250">Visible</animation>
     <animation effect="fade" time="0">Hidden</animation>
   </control>
-    
   <control>
   	<type>label</type>
     <id>1</id>
@@ -34,9 +31,7 @@
     <animation effect="fade" time="250">Visible</animation>
     <animation effect="fade" time="0">Hidden</animation>
   </control>
-
 	<!--            :: Count ::            -->
-
 	<control>
 		<description>Number of Files Label</description>
 		<type>label</type>
@@ -51,9 +46,7 @@
 	  <animation effect="fade" time="250">WindowOpen</animation>
 	  <animation effect="fade" time="250">WindowClose</animation>
 	</control>
-
 	<!--            :: Listview Lines ::            -->
-
 	<control>
   	<description>List Lines</description>
     <type>image</type>
@@ -67,8 +60,7 @@
 		<animation effect="fade" time="250">WindowOpen</animation>
 		<animation effect="fade" time="250">WindowClose</animation>
   </control>
-
-  <control>
+	<control>
   	<description>List Lines</description>
     <type>image</type>
     <id>1</id>
@@ -81,7 +73,6 @@
 		<animation effect="fade" time="250">WindowOpen</animation>
 		<animation effect="fade" time="250">WindowClose</animation>
   </control>
-
 	<control>
 		<description>group element</description>
 		<type>group</type>
@@ -109,7 +100,6 @@
 	        <spinPosX>1828</spinPosX>
 	        <spinPosY>1000</spinPosY>
 				</control>
-
         <control>
         	<description>album view listcontrol</description>
           <type>listcontrol</type>
@@ -147,7 +137,6 @@
           <spinPosY>1000</spinPosY>
           <dimColor>ffffffff</dimColor>
 				</control>
-			
 				<control>
 					<description>Thumbnail Panel</description>
 					<type>thumbnailpanel</type>
@@ -183,8 +172,8 @@
 					<thumbPosYBig>0</thumbPosYBig>
 					<thumbZoom>no</thumbZoom>
 					<enableFocusZoom>no</enableFocusZoom>
-					<zoomXPixels>40</zoomXPixels>
-					<zoomYPixels>40</zoomYPixels>
+					<zoomXPixels>0</zoomXPixels>
+					<zoomYPixels>0</zoomYPixels>
 					<hideUnfocusTexture>no</hideUnfocusTexture>
 					<renderFocusText>no</renderFocusText>
 					<renderUnfocusText>no</renderUnfocusText>
@@ -197,11 +186,11 @@
 					<frameNoFocus>-</frameNoFocus>
 					<frameFocus>music_thumb_focus.png</frameFocus>
 					<textureMask>music_thumb_mask.png</textureMask>
-					<keepaspectratio>yes</keepaspectratio>
+					<keepaspectratio>no</keepaspectratio>
 	        <spinPosX>1828</spinPosX>
 	        <spinPosY>1000</spinPosY>
+					<unfocusedAlpha>100</unfocusedAlpha>
 				</control>
-
 				<control>
 					<description>Filmstrip view</description>
 					<type>filmstrip</type>
@@ -231,7 +220,7 @@
 					<showFolder>no</showFolder>
 					<showBackGround>no</showBackGround>
 					<showInfoImage>no</showInfoImage>
-					<keepaspectratio>yes</keepaspectratio>
+					<keepaspectratio>no</keepaspectratio>
 				  <scrollbarBackground>scrollbar_bg_hor.png</scrollbarBackground>
 				  <scrollbarLeft>scrollbar_left_hor.png</scrollbarLeft>
 				  <scrollbarRight>scrollbar_right_hor.png</scrollbarRight>
@@ -242,7 +231,6 @@
 					<thumbAnimation effect="zoom" acceleration="-2" start="100,100" reversible="false" end="128,128" center="0,700" time="200">focus</thumbAnimation>
 					<thumbAnimation effect="zoom" start="128,128" reversible="false" end="100,100" center="0,700" time="100">unfocus</thumbAnimation>
 				</control>
-			
 		   	<control>
 			  	<description>Cover Flow view</description>
 			  	<type>coverflow</type>
@@ -297,11 +285,10 @@
 		      <scrollbarWidth>717</scrollbarWidth>
 					<scrollbarHeight>8</scrollbarHeight>
 		      <scrollbarYOff>370</scrollbarYOff>
-				  <keepaspectratio>yes</keepaspectratio>
+				  <keepaspectratio>no</keepaspectratio>
 				  <cards flipY="yes" diffuse="Thumb_Mask_test.png" mask="music_filmstrip_mask.png"></cards>
 				  <camera xpos="0" ypos="200">yes</camera>
 				</control>
-
 				<control>
 					<description>playlist listcontrol</description>
 					<type>playlistcontrol</type>
@@ -321,10 +308,7 @@
 	        <spinPosX>1828</spinPosX>
 	        <spinPosY>1000</spinPosY>
 				</control>
-
-		</control>
-
+			</control>
 	</control>
-
 </controls>
 </window>

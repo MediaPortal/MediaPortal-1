@@ -763,6 +763,11 @@ namespace MediaPortal.GUI.Library
       }
     }
 
+    public static void ResetWindowsHistory()
+    {
+      _listHistory.Clear();
+    }
+
     private static void ActivateWindow(int newWindowId, bool replaceWindow, bool skipHistory, String loadParameter)
     {
       ActivateWindow(newWindowId, replaceWindow, skipHistory, loadParameter, false, -1);

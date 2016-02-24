@@ -48,6 +48,8 @@
 !define git_InstallScripts "${git_ROOT}\Tools\InstallationScripts"
 # common script init
 !include "${git_InstallScripts}\include\MediaPortalScriptInit.nsh"
+# NET4.0 Checking
+!include "${git_InstallScripts}\include\DotNetSearch.nsh"
 
 # additional path definitions
 !ifdef GIT_BUILD
@@ -103,6 +105,9 @@ Var EXPRESS_UPDATE
 Var frominstall
 
 Var MPTray_Running
+
+Var PREVIOUS_SKINSETTINGS_TITAN_CONFIG
+Var PREVIOUS_SKINSETTINGS_DEFAULTWIDEHD_CONFIG
 
 #---------------------------------------------------------------------------
 # INCLUDE FILES
@@ -281,6 +286,44 @@ ShowUninstDetails show
   ${EndIf}
 !macroend
 
+!macro un.Fonts
+  ; used for Default and Titan Skin Font
+  StrCpy $FONT_DIR $FONTS
+  !insertmacro RemoveTTFFont "Lato-Medium.ttf"
+  !insertmacro RemoveTTFFont "Lato-Light.ttf"
+  !insertmacro RemoveTTFFont "TitanSmall.ttf"
+  !insertmacro RemoveTTFFont "Titan.ttf"
+  !insertmacro RemoveTTFFont "TitanLight.ttf"
+  !insertmacro RemoveTTFFont "TitanMedium.ttf"
+  SendMessage ${HWND_BROADCAST} ${WM_FONTCHANGE} 0 0 /TIMEOUT=1000
+!macroend
+
+!macro BackupSkinSettings
+  ${If} ${FileExists} "${COMMON_APPDATA}\skin\DefaultWideHD\SkinSettings.xml"
+    GetTempFileName $PREVIOUS_SKINSETTINGS_DEFAULTWIDEHD_CONFIG
+    ${LOG_TEXT} "INFO" "Backup SkinSettings.xml for DefaultWideHD (${COMMON_APPDATA}\skin\DefaultWideHD\SkinSettings.xml)"
+    CopyFiles /SILENT /FILESONLY "${COMMON_APPDATA}\skin\DefaultWideHD\SkinSettings.xml" "$PREVIOUS_SKINSETTINGS_DEFAULTWIDEHD_CONFIG"
+  ${EndIf}
+  
+  ${If} ${FileExists} "${COMMON_APPDATA}\skin\Titan\SkinSettings.xml"
+    GetTempFileName $PREVIOUS_SKINSETTINGS_TITAN_CONFIG
+    ${LOG_TEXT} "INFO" "Backup SkinSettings.xml for Titan (${COMMON_APPDATA}\skin\Titan\SkinSettings.xml)"
+    CopyFiles /SILENT /FILESONLY "${COMMON_APPDATA}\skin\Titan\SkinSettings.xml" "$PREVIOUS_SKINSETTINGS_TITAN_CONFIG"
+  ${EndIf}
+!macroend
+
+!macro RestoreSkinSettings
+  ${If} ${FileExists} "$PREVIOUS_SKINSETTINGS_DEFAULTWIDEHD_CONFIG"
+    ${LOG_TEXT} "INFO" "Restore SkinSettings.xml for DefaultWideHD (${COMMON_APPDATA}\skin\DefaultWideHD\SkinSettings.xml)"
+    CopyFiles /SILENT /FILESONLY "$PREVIOUS_SKINSETTINGS_DEFAULTWIDEHD_CONFIG" "${COMMON_APPDATA}\skin\DefaultWideHD\SkinSettings.xml" 
+  ${EndIf}
+
+  ${If} ${FileExists} "$PREVIOUS_SKINSETTINGS_TITAN_CONFIG"
+    ${LOG_TEXT} "INFO" "Restore SkinSettings.xml for Titan (${COMMON_APPDATA}\skin\Titan\SkinSettings.xml)"
+    CopyFiles /SILENT /FILESONLY "$PREVIOUS_SKINSETTINGS_TITAN_CONFIG" "${COMMON_APPDATA}\skin\Titan\SkinSettings.xml" 
+  ${EndIf}  
+!macroend
+
 Function RunUninstaller
 
 !ifndef GIT_BUILD
@@ -304,6 +347,7 @@ Section "-prepare" SecPrepare
   ${ReadMediaPortalDirs} "$INSTDIR"
 
   !insertmacro ShutdownRunningMediaPortalApplications
+  !insertmacro BackupSkinSettings
 
   ${LOG_TEXT} "INFO" "Deleting SkinCache..."
   RMDir /r "$MPdir.Cache"
@@ -400,6 +444,10 @@ Section "MediaPortal core files (required)" SecCore
   File /nonfatal /r /x .git "${MEDIAPORTAL.BASE}\thumbs\*"
 ### AUTO-GENERATED   UNINSTALLATION CODE   END ###
 
+  ; remve Default and DefautWide skins (were used before 1.13)
+  RMDir /r "$MPdir.Skin\Default"
+  RMDir /r "$MPdir.Skin\DefaultWide"
+
   ; create empty folders
   SetOutPath "$MPdir.Config"
   CreateDirectory "$MPdir.Config"
@@ -422,6 +470,7 @@ Section "MediaPortal core files (required)" SecCore
   
   SetOutPath "$MPdir.Config\scripts"
   File /nonfatal "${MEDIAPORTAL.BASE}\scripts\InternalActorMoviesGrabber.csscript"
+	File /nonfatal "${MEDIAPORTAL.BASE}\scripts\InternalMovieImagesGrabber.csscript"
   File /nonfatal "${MEDIAPORTAL.BASE}\scripts\VDBParserStrings.xml"
   
   SetOutPath "$MPdir.Base"
@@ -443,6 +492,9 @@ Section "MediaPortal core files (required)" SecCore
   File "${git_DirectShowFilters}\mpc-hc_subs\bin\${BUILD_TYPE}\mpcSubs.dll"
   File "${git_DirectShowFilters}\DXErr9\bin\${BUILD_TYPE}\Dxerr9.dll"
   File "${git_MP}\MiniDisplayLibrary\bin\${BUILD_TYPE}\MiniDisplayLibrary.dll"
+  ; iMON VFD/LCD
+  File "${git_ROOT}\Packages\MediaPortal-iMON-Display.1.1.0\lib\iMONDisplay.dll"
+  File "${git_ROOT}\Packages\MediaPortal-iMON-Display.1.1.0\lib\iMONDisplayWrapper.dll"
   ; Utils
   File "${git_MP}\Utils\bin\${BUILD_TYPE}\Utils.dll"
   ; Common Utils
@@ -451,6 +503,7 @@ Section "MediaPortal core files (required)" SecCore
   File "${git_MP}\MediaPortal.Support\bin\${BUILD_TYPE}\MediaPortal.Support.dll"
   ; Databases
   File "${git_MP}\databases\bin\${BUILD_TYPE}\Databases.dll"
+  File "${git_MP}\databases\bin\${BUILD_TYPE}\HtmlAgilityPack.dll"
   ; MusicShareWatcher
   File "${git_MP}\ProcessPlugins\MusicShareWatcher\MusicShareWatcher\bin\${BUILD_TYPE}\MusicShareWatcher.exe"
   File "${git_MP}\ProcessPlugins\MusicShareWatcher\MusicShareWatcherHelper\bin\${BUILD_TYPE}\MusicShareWatcherHelper.dll"
@@ -470,20 +523,84 @@ Section "MediaPortal core files (required)" SecCore
   File "${git_MP}\ExternalPlayers\bin\${BUILD_TYPE}\ExternalPlayers.dll"
   SetOutPath "$MPdir.Plugins\process"
   File "${git_MP}\ProcessPlugins\bin\${BUILD_TYPE}\ProcessPlugins.dll"
+  File "${git_MP}\ProcessPlugins\MiniDisplay\bin\${BUILD_TYPE}\MiniDisplayPlugin.dll"
   SetOutPath "$MPdir.Plugins\subtitle"
   File "${git_MP}\SubtitlePlugins\bin\${BUILD_TYPE}\SubtitlePlugins.dll"
   SetOutPath "$MPdir.Plugins\Windows"
   File "${git_MP}\Dialogs\bin\${BUILD_TYPE}\Dialogs.dll"
-  File "${git_MP}\WindowPlugins\bin\${BUILD_TYPE}\WindowPlugins.dll"
+  ; Window Plugins
+  File "${git_MP}\WindowPlugins\GUIDisc\bin\${BUILD_TYPE}\GUIDisc.dll"
+  File "${git_MP}\WindowPlugins\GUIDVD\bin\${BUILD_TYPE}\GUIDVD.dll"
+  File "${git_MP}\WindowPlugins\GUIHome\bin\${BUILD_TYPE}\GUIHome.dll"
+  File "${git_MP}\WindowPlugins\GUIMusic\bin\${BUILD_TYPE}\GUIMusic.dll"
+  File "${git_MP}\WindowPlugins\GUISudoku\bin\${BUILD_TYPE}\GUISudoku.dll"
+  File "${git_MP}\WindowPlugins\GUIPictures\bin\${BUILD_TYPE}\GUIPictures.dll"
+  File "${git_MP}\WindowPlugins\GUIRSSFeed\bin\${BUILD_TYPE}\GUIRSSFeed.dll"
+  File "${git_MP}\WindowPlugins\GUISettings\bin\${BUILD_TYPE}\GUISettings.dll"
+  File "${git_MP}\WindowPlugins\GUITetris\bin\${BUILD_TYPE}\GUITetris.dll"
+  File "${git_MP}\WindowPlugins\GUITopbar\bin\${BUILD_TYPE}\GUITopbar.dll"
+  File "${git_MP}\WindowPlugins\GUIVideos\bin\${BUILD_TYPE}\GUIVideos.dll"
+  File "${git_MP}\WindowPlugins\GUIWikipedia\bin\${BUILD_TYPE}\GUIWikipedia.dll"
+  ; Common Plugins
+  File "${git_MP}\WindowPlugins\Common.GUIPlugins\bin\${BUILD_TYPE}\Common.GUIPlugins.dll"
+  ; ffmpeg
+  SetOutPath "$MPdir.Base\MovieThumbnailer"
+  File "${git_ROOT}\Packages\ffmpeg.2.1.1\ffmpeg.exe"
+  ; NuGet binaries MediaInfo
+  SetOutPath "$MPdir.Base\"
+  File "${git_ROOT}\Packages\MediaInfo.0.7.69\MediaInfo.dll"
+  ; NuGet binaries
+  ; Bass Core
+  SetOutPath "$MPdir.Base\"
+  File "${git_ROOT}\Packages\BASS.2.4.10\bass.dll"
+  File "${git_ROOT}\Packages\BASS.NET.2.4.10.3\lib\net40\Bass.Net.dll"
+  File "${git_ROOT}\Packages\System.Management.Automation.6.1.7601.17515\lib\net40\System.Management.Automation.dll"
+  ; Bass Addons
+  SetOutPath "$MPdir.Base\"
+  File "${git_ROOT}\Packages\bass.asio.1.3.0.2\bassasio.dll"
+  File "${git_ROOT}\Packages\bass.fx.2.4.10.1\bass_fx.dll"
+  File "${git_ROOT}\Packages\bass.mix.2.4.7.2\bassmix.dll"
+  File "${git_ROOT}\Packages\bass.vst.2.4.5\bass_vst.dll"
+  File "${git_ROOT}\Packages\bass.wadsp.2.4.1\bass_wadsp.dll"
+  File "${git_ROOT}\Packages\bass.wasapi.2.4.0.2\basswasapi.dll"
+  File "${git_ROOT}\Packages\bass.ofr.2.4.0.2\OptimFROG.dll"
+  ; Bass AudioDecoders
+  SetOutPath "$MPdir.Base\MusicPlayer\plugins\audio decoders"
+  File "${git_ROOT}\Packages\bass.aac.2.4.4.4\bass_aac.dll"
+  File "${git_ROOT}\Packages\bass.ac3.2.4.0.3\bass_ac3.dll"
+  File "${git_ROOT}\Packages\bass.alac.2.4.3\bass_alac.dll"
+  File "${git_ROOT}\Packages\bass.ape.2.4.1\bass_ape.dll"
+  File "${git_ROOT}\Packages\bass.mpc.2.4.1.1\bass_mpc.dll"
+  File "${git_ROOT}\Packages\bass.ofr.2.4.0.2\bass_ofr.dll"
+  File "${git_ROOT}\Packages\bass.spx.2.4.2\bass_spx.dll"
+  File "${git_ROOT}\Packages\bass.tta.2.4.0\bass_tta.dll"
+  File "${git_ROOT}\Packages\bass.cd.2.4.5\basscd.dll"
+  File "${git_ROOT}\Packages\bass.flac.2.4.1\bassflac.dll"
+  File "${git_ROOT}\Packages\bass.midi.2.4.8\bassmidi.dll"
+  File "${git_ROOT}\Packages\bass.opus.2.4.1.3\bassopus.dll"
+  File "${git_ROOT}\Packages\bass.wma.2.4.4\basswma.dll"
+  File "${git_ROOT}\Packages\bass.wv.2.4.4\basswv.dll"
+  File "${git_ROOT}\Packages\bass.dsd.0.0.1\bassdsd.dll"
+  ; taglib-sharp
+  SetOutPath "$MPdir.Base\"
+  File "${git_ROOT}\Packages\MediaPortal.TagLib.2.0.3.8\lib\taglib-sharp.dll"
+  ; SharpLibHid
+  SetOutPath "$MPdir.Base\"
+  File "${git_ROOT}\Packages\SharpLibHid.1.1.0\lib\net20\SharpLibHid.dll"
   ; Doc
   SetOutPath "$MPdir.Base\Docs"
   File "${git_MP}\Docs\BASS License.txt"
   File "${git_MP}\Docs\MediaPortal License.rtf"
   ; libbluray
   SetOutPath "$MPdir.Base"
-  File /oname=bluray.dll "${git_DirectShowFilters}\bin_Win32\libbluray\libbluray.dll"
+  !if ${BUILD_TYPE} == "Debug"       # it's an debug build
+    File /oname=bluray.dll "${git_DirectShowFilters}\bin_Win32d\libbluray.dll"
+  !else
+    File /oname=bluray.dll "${git_DirectShowFilters}\bin_Win32\libbluray\libbluray.dll"
+  !endif
   ; TvLibrary for Genre
   File "${git_TVServer}\TvLibrary.Interfaces\bin\${BUILD_TYPE}\TvLibrary.Interfaces.dll"
+  File "${git_MP}\LastFMLibrary\bin\${BUILD_TYPE}\LastFMLibrary.dll"
   ; MediaPortal.exe
   
   #---------------------------------------------------------------------------
@@ -497,6 +614,7 @@ Section "MediaPortal core files (required)" SecCore
   !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${git_DirectShowFilters}\MPAudioswitcher\bin\${BUILD_TYPE}\MPAudioSwitcher.ax"  "$MPdir.Base\MPAudioSwitcher.ax"  "$MPdir.Base"
   ; used for digital tv
   !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${git_DirectShowFilters}\TsReader\bin\${BUILD_TYPE}\TsReader.ax"                "$MPdir.Base\TsReader.ax"         "$MPdir.Base"
+  !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${git_DirectShowFilters}\Core-CC-Parser\CCCP\${BUILD_TYPE}\cccp.ax"             "$MPdir.Base\cccp.ax"             "$MPdir.Base"
   WriteRegStr HKCR "Media Type\Extensions\.ts"        "Source Filter" "{b9559486-e1bb-45d3-a2a2-9a7afe49b23f}"
   WriteRegStr HKCR "Media Type\Extensions\.tp"        "Source Filter" "{b9559486-e1bb-45d3-a2a2-9a7afe49b23f}"
   WriteRegStr HKCR "Media Type\Extensions\.tsbuffer"  "Source Filter" "{b9559486-e1bb-45d3-a2a2-9a7afe49b23f}"
@@ -512,15 +630,28 @@ Section "MediaPortal core files (required)" SecCore
     !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${git_DirectShowFilters}\MPAudioRenderer\bin\${BUILD_TYPE}\mpaudiorenderer.ax"                "$MPdir.Base\mpaudiorenderer.ax"         "$MPdir.Base"
   ${EndIf}
 
+  ; delete font for proper reinstallation for Default and Titan Skin Font
+  !insertmacro un.Fonts
+  Delete "$FONT\TitanSmall.ttf"
+  Delete "$FONT\Titan.ttf"
+  Delete "$FONT\TitanLight.ttf"
+  Delete "$FONT\TitanMedium.ttf"
+  Delete "$FONT\Lato-Medium.ttf"
+  Delete "$FONT\Lato-Light.ttf"
+
   ; used for Default and Titan Skin Font
   StrCpy $FONT_DIR $FONTS
-  !insertmacro InstallTTFFont "${MEDIAPORTAL.BASE}\skin\DefaultWide\MPDefaultFonts\MediaPortalDefault.ttf"
+
+  !insertmacro InstallTTFFont "${MEDIAPORTAL.BASE}\skin\DefaultWideHD\MPDefaultFonts\Lato-Medium.ttf"
+  !insertmacro InstallTTFFont "${MEDIAPORTAL.BASE}\skin\DefaultWideHD\MPDefaultFonts\Lato-Light.ttf"
   !insertmacro InstallTTFFont "${MEDIAPORTAL.BASE}\skin\Titan\Fonts\TitanSmall.ttf"
   !insertmacro InstallTTFFont "${MEDIAPORTAL.BASE}\skin\Titan\Fonts\Titan.ttf"
   !insertmacro InstallTTFFont "${MEDIAPORTAL.BASE}\skin\Titan\Fonts\TitanLight.ttf"
   !insertmacro InstallTTFFont "${MEDIAPORTAL.BASE}\skin\Titan\Fonts\TitanMedium.ttf"
   SendMessage ${HWND_BROADCAST} ${WM_FONTCHANGE} 0 0 /TIMEOUT=1000
   
+  !insertmacro RestoreSkinSettings
+
 SectionEnd
 !macro Remove_${SecCore}
   ${LOG_TEXT} "INFO" "Uninstalling MediaPortal core files..."
@@ -543,6 +674,7 @@ SectionEnd
   !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED "$MPdir.Base\MPAudioSwitcher.ax"
   ; used for digital tv
   !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED "$MPdir.Base\TsReader.ax"
+  !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED "$MPdir.Base\cccp.ax"
   ; used for Blu-ray
   !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED "$MPdir.Base\BDReader.ax"
   !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED "$MPdir.Base\DVBSub3.ax"
@@ -576,6 +708,7 @@ SectionEnd
   Delete "$MPdir.Config\scripts\MovieInfo\IMDB_MP13x.csscript"
   RMDir "$MPdir.Config\scripts\MovieInfo"
   Delete "$MPdir.Config\scripts\InternalActorMoviesGrabber.csscript"
+  Delete "$MPdir.Config\scripts\InternalMovieImagesGrabber.csscript"
   Delete "$MPdir.Config\scripts\VDBParserStrings.xml"
   RMDir "$MPdir.Config\scripts"
 
@@ -597,6 +730,10 @@ SectionEnd
   Delete "$MPdir.Base\Dxerr9.dll"
   Delete "$MPdir.Base\mpcSubs.dll"
   Delete "$MPdir.Base\MiniDisplayLibrary.dll"
+  Delete "$MPdir.Base\System.Management.Automation.dll"
+  ; iMON VFD/LCD
+  Delete "$MPdir.Base\iMONDisplay.dll"
+  Delete "$MPdir.Base\iMONDisplayWrapper.dll"
   ; Utils
   Delete "$MPdir.Base\Utils.dll"
   ; Common Utils
@@ -605,6 +742,7 @@ SectionEnd
   Delete "$MPdir.Base\MediaPortal.Support.dll"
   ; Databases
   Delete "$MPdir.Base\Databases.dll"
+  Delete "$MPdir.Base\\HtmlAgilityPack.dll"
   ; MusicShareWatcher
   Delete "$MPdir.Base\MusicShareWatcher.exe"
   Delete "$MPdir.Base\MusicShareWatcherHelper.dll"
@@ -625,11 +763,24 @@ SectionEnd
   Delete "$MPdir.Plugins\ExternalPlayers\ExternalPlayers.dll"
   RMDir "$MPdir.Plugins\ExternalPlayers"
   Delete "$MPdir.Plugins\process\ProcessPlugins.dll"
+  Delete "$MPdir.Plugins\process\MiniDisplayPlugin.dll"
   RMDir "$MPdir.Plugins\process"
   Delete "$MPdir.Plugins\subtitle\SubtitlePlugins.dll"
   RMDir "$MPdir.Plugins\subtitle"
   Delete "$MPdir.Plugins\Windows\Dialogs.dll"
-  Delete "$MPdir.Plugins\Windows\WindowPlugins.dll"
+  Delete "$MPdir.Plugins\Windows\GUIDisc.dll"
+  Delete "$MPdir.Plugins\Windows\GUIDVD.dll"
+  Delete "$MPdir.Plugins\Windows\GUIHome.dll"
+  Delete "$MPdir.Plugins\Windows\GUIMusic.dll"
+  Delete "$MPdir.Plugins\Windows\GUISudoku.dll"
+  Delete "$MPdir.Plugins\Windows\GUIPictures.dll"
+  Delete "$MPdir.Plugins\Windows\GUIRSSFeed.dll"
+  Delete "$MPdir.Plugins\Windows\GUISettings.dll"
+  Delete "$MPdir.Plugins\Windows\GUITetris.dll"
+  Delete "$MPdir.Plugins\Windows\GUITopbar.dll"
+  Delete "$MPdir.Plugins\Windows\GUIVideos.dll"
+  Delete "$MPdir.Plugins\Windows\GUIWikipedia.dll"
+  Delete "$MPdir.Plugins\Windows\Common.GUIPlugins.dll"
   RMDir "$MPdir.Plugins\Windows"
   RMDir "$MPdir.Plugins"
   ; Doc
@@ -660,8 +811,8 @@ SectionEnd
   Delete "$MPdir.Plugins\Process\PowerSchedulerClientPlugin.dll"
 !macroend
 
-Section "-MediaPortal Extension Installer" SecMpeInstaller
-  ${LOG_TEXT} "INFO" "MediaPortal Extension Installer..."
+Section "-MediaPortal Extension Manager" SecMpeInstaller
+  ${LOG_TEXT} "INFO" "MediaPortal Extension Manager..."
 
   ; install files
   SetOutPath "$MPdir.Base"
@@ -669,12 +820,17 @@ Section "-MediaPortal Extension Installer" SecMpeInstaller
   File "${git_MP}\MPE\MpeInstaller\bin\${BUILD_TYPE}\MpeInstaller.exe"
   File "${git_MP}\MPE\MpeMaker\bin\${BUILD_TYPE}\MpeMaker.exe"
 
+  ; remove shortcuts on upgrade (MP1-4540 / MP1-4544)
+  Delete "$DESKTOP\MediaPortal Extension Installer.lnk"
+  Delete "${STARTMENU_GROUP}\MediaPortal Extension Installer.lnk"
+  Delete "${STARTMENU_GROUP}\MediaPortal Debug-Mode.lnk"
+  
   ; create startmenu shortcuts
   ${If} $noDesktopSC != 1
-    CreateShortCut "$DESKTOP\MediaPortal Extension Installer.lnk" "$MPdir.Base\MpeInstaller.exe"  ""  "$MPdir.Base\MpeInstaller.exe"  0 "" "" "MediaPortal Extension Installer"
+    CreateShortCut "$DESKTOP\MediaPortal Extension Manager.lnk" "$MPdir.Base\MpeInstaller.exe"  ""  "$MPdir.Base\MpeInstaller.exe"  0 "" "" "MediaPortal Extension Manager"
   ${EndIf}
   CreateDirectory "${STARTMENU_GROUP}"
-  CreateShortCut "${STARTMENU_GROUP}\MediaPortal Extension Installer.lnk" "$MPdir.Base\MpeInstaller.exe"  ""  "$MPdir.Base\MpeInstaller.exe"  0 "" "" "MediaPortal Extension Installer"
+  CreateShortCut "${STARTMENU_GROUP}\MediaPortal Extension Manager.lnk" "$MPdir.Base\MpeInstaller.exe"  ""  "$MPdir.Base\MpeInstaller.exe"  0 "" "" "MediaPortal Extension Manager"
   CreateShortCut "${STARTMENU_GROUP}\MediaPortal Extension Maker.lnk"     "$MPdir.Base\MpeMaker.exe"      ""  "$MPdir.Base\MpeMaker.exe"      0 "" "" "MediaPortal Extension Maker"
 
   ; associate file extensions
@@ -684,7 +840,7 @@ Section "-MediaPortal Extension Installer" SecMpeInstaller
   ${RefreshShellIcons}
 SectionEnd
 !macro Remove_${SecMpeInstaller}
-  ${LOG_TEXT} "INFO" "Uninstalling MediaPortal Extension Installer..."
+  ${LOG_TEXT} "INFO" "Uninstalling MediaPortal Extension Manager..."
 
   ; remove files
   Delete "$MPdir.Base\MpeCore.dll"
@@ -693,7 +849,9 @@ SectionEnd
 
   ; remove startmenu shortcuts
   Delete "$DESKTOP\MediaPortal Extension Installer.lnk"
+  Delete "$DESKTOP\MediaPortal Extension Manager.lnk"
   Delete "${STARTMENU_GROUP}\MediaPortal Extension Installer.lnk"
+  Delete "${STARTMENU_GROUP}\MediaPortal Extension Manager.lnk"
   Delete "${STARTMENU_GROUP}\MediaPortal Extension Maker.lnk"
 
   ; unassociate file extensions
@@ -715,7 +873,7 @@ SectionGroupEnd
 ${MementoSectionDone}
 
 #---------------------------------------------------------------------------
-# This Section is executed after the Main secxtion has finished and writes Uninstall information into the registry
+# This Section is executed after the Main section has finished and writes Uninstall information into the registry
 Section -Post
   ${LOG_TEXT} "INFO" "Doing post installation stuff..."
 
@@ -737,7 +895,6 @@ Section -Post
   ; removing old externaldisplay files - requested by chemelli
   ${LOG_TEXT} "INFO" "Removing obsolete (External/Mini/Cybr)Display files"
   Delete "$MPdir.Plugins\process\ExternalDisplayPlugin.dll"
-  Delete "$MPdir.Plugins\process\MiniDisplayPlugin.dll"
   Delete "$MPdir.Plugins\process\CybrDisplayPlugin.dll"
   Delete "$MPdir.Plugins\windows\CybrDisplayPlugin.dll"
 
@@ -745,6 +902,14 @@ Section -Post
   ${LOG_TEXT} "INFO" "Removing obsolete BASS 2.3 files"
   Delete "$MPdir.Base\MusicPlayer\plugins\audio decoders\bass_wv.dll"
 
+  ; MP1-4315 Blow windowplugins dll to separate plugin dlls
+  ${LOG_TEXT} "INFO" "Removing obsolete WindowPlugins.dll"
+  Delete "$MPdir.Plugins\Windows\WindowPlugins.dll"
+  
+  ; MP1-4463 LastFM Radio plugin dll
+  ${LOG_TEXT} "INFO" "Removing obsolete GUILastFMRadio.dll"
+  Delete "$MPdir.Plugins\Windows\GUILastFMRadio.dll"
+  
   ; removing old shortcut
   ${LOG_TEXT} "INFO" "Removing obsolete startmenu shortcuts"
   Delete "${STARTMENU_GROUP}\MediaPortal Logs Collector.lnk"
@@ -753,6 +918,7 @@ Section -Post
   ${If} $noDesktopSC != 1
     CreateShortCut "$DESKTOP\MediaPortal.lnk"               "$MPdir.Base\MediaPortal.exe"      "" "$MPdir.Base\MediaPortal.exe"   0 "" "" "MediaPortal"
     CreateShortCut "$DESKTOP\MediaPortal Configuration.lnk" "$MPdir.Base\Configuration.exe"    "" "$MPdir.Base\Configuration.exe" 0 "" "" "MediaPortal Configuration"
+    CreateShortCut "$DESKTOP\MediaPortal WatchDog.lnk"      "$MPdir.Base\WatchDog.exe"         "" "$MPdir.Base\WatchDog.exe"      0 "" "" "MediaPortal WatchDog"
   ${EndIf}
 
   ; create startmenu shortcuts
@@ -761,7 +927,7 @@ Section -Post
       CreateDirectory "${STARTMENU_GROUP}"
       CreateShortCut "${STARTMENU_GROUP}\MediaPortal.lnk"                            "$MPdir.Base\MediaPortal.exe"   ""      "$MPdir.Base\MediaPortal.exe"   0 "" "" "MediaPortal"
       CreateShortCut "${STARTMENU_GROUP}\MediaPortal Configuration.lnk"              "$MPdir.Base\Configuration.exe" ""      "$MPdir.Base\Configuration.exe" 0 "" "" "MediaPortal Configuration"
-      CreateShortCut "${STARTMENU_GROUP}\MediaPortal Debug-Mode.lnk"                 "$MPdir.Base\WatchDog.exe"      ""      "$MPdir.Base\WatchDog.exe"   0 "" "" "MediaPortal Debug-Mode"
+      CreateShortCut "${STARTMENU_GROUP}\MediaPortal WatchDog.lnk"                   "$MPdir.Base\WatchDog.exe"      ""      "$MPdir.Base\WatchDog.exe"      0 "" "" "MediaPortal WatchDog"
       CreateShortCut "${STARTMENU_GROUP}\uninstall MediaPortal.lnk"                  "$MPdir.Base\uninstall-mp.exe"
       CreateShortCut "${STARTMENU_GROUP}\User Files.lnk"                             "$MPdir.Config"                 ""      "$MPdir.Config"                 0 "" "" "Browse you config files, databases, thumbs, logs, ..."
 
@@ -820,6 +986,7 @@ Section Uninstall
   Delete "${STARTMENU_GROUP}\MediaPortal.lnk"
   Delete "${STARTMENU_GROUP}\MediaPortal Configuration.lnk"
   Delete "${STARTMENU_GROUP}\MediaPortal Debug-Mode.lnk"
+  Delete "${STARTMENU_GROUP}\MediaPortal WatchDog.lnk"
   Delete "${STARTMENU_GROUP}\MediaPortal Log-Files.lnk"
   Delete "${STARTMENU_GROUP}\MediaPortal TestTool.lnk"
   Delete "${STARTMENU_GROUP}\MediaPortal Logs Collector.lnk"
@@ -835,6 +1002,7 @@ Section Uninstall
   ; remove Desktop shortcuts
   Delete "$DESKTOP\MediaPortal.lnk"
   Delete "$DESKTOP\MediaPortal Configuration.lnk"
+  Delete "$DESKTOP\MediaPortal WatchDog.lnk"
 
   ; remove last files and instdir
   Delete "$MPdir.Base\uninstall-mp.exe"
@@ -906,6 +1074,9 @@ FunctionEnd
 Function .onInit
   ${LOG_OPEN}
   ${LOG_TEXT} "DEBUG" "FUNCTION .onInit"
+
+  !insertmacro MediaPortalNetFrameworkCheck
+  !insertmacro MediaPortalNet4FrameworkCheck
 
   StrCpy $MPTray_Running 0
 

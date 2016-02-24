@@ -91,14 +91,6 @@ namespace MediaPortal.GUI.Library
       get { return RenderLock; }
     }
 
-    public static void ReleaseUnmanagedResources()
-    {
-      unsafe
-      {
-        DXNative.FontEngineSetDevice(null);
-      }
-    }
-
     /// <summary>
     /// Loads the fonts from a file.
     /// </summary>
@@ -167,8 +159,14 @@ namespace MediaPortal.GUI.Library
                 float baseSize = 576;
 
                 // adjust for different DPI settings (96dpi = 100%)
-                Graphics graphics = GUIGraphicsContext.form.CreateGraphics();
-                baseSize *= graphics.DpiY / 96;
+                using (Graphics graphics = GUIGraphicsContext.form.CreateGraphics())
+                {
+                  // With DPIAware setting baseSize need to be kept
+                  if (Environment.OSVersion.Version.Major >= 6 && graphics.DpiY != 96.0)
+                  {
+                    baseSize *= graphics.DpiY/96;
+                  }
+                }
 
                 float fPercent = (GUIGraphicsContext.Height * GUIGraphicsContext.ZoomVertical) / baseSize;
                 fPercent *= iHeight;
@@ -629,6 +627,15 @@ namespace MediaPortal.GUI.Library
       }
     }
 
+    public static void SetDeviceNull()
+    {
+      Log.Debug("GUIFontManager SetDeviceNull()");
+      unsafe
+      {
+        DXNative.FontEngineSetDevice(null);
+      }
+    }
+
     /// <summary>
     /// Initializes the device objects of the GUIFonts.
     /// </summary>
@@ -645,7 +652,14 @@ namespace MediaPortal.GUI.Library
         }
         foreach (GUIFont font in ListFonts)
         {
-          font.InitializeDeviceObjects();
+          try
+          {
+            font.InitializeDeviceObjects();
+          }
+          catch (Exception ex)
+          {
+            Log.Error("GUIFontManager InitializeDeviceObjects() exception {0}", ex);
+          }
         }
       }
     }

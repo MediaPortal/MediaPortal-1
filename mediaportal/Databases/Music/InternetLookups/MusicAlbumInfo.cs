@@ -22,14 +22,16 @@ using System;
 using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
+using HtmlAgilityPack;
 
 namespace MediaPortal.Music.Database
 {
   /// <summary>
-  /// 
+  /// Class that converts data scraped from allmusic.com into database objects <see cref="AlbumInfo"/>
   /// </summary>
   public class MusicAlbumInfo
   {
+
     #region Variables
 
     private string _artist = string.Empty;
@@ -43,50 +45,9 @@ namespace MediaPortal.Music.Database
     private string _strImageURL = string.Empty;
     private string _albumUrl = string.Empty;
     private string _strAlbumPath = string.Empty;
-    private int _iRating = 0;
+    private int _iRating;
     private string _strTracks = string.Empty;
-    private bool _bLoaded = false;
-    private Match _match = null;
-
-    #endregion
-
-    #region regexps
-
-    // album regular expressions
-    private const string ArtistRegExp = @"<div class=""album-artist""><a href="".*?"">(?<artist>.*?)</a></div>";
-    private static Regex ArtistRegEx = new Regex(ArtistRegExp, RegexOptions.IgnoreCase | RegexOptions.Singleline | RegexOptions.Compiled);
-    private const string AlbumRegExp = @"<div class=""album-title"">(?<album>.*?)<";
-    private static readonly Regex AlbumRegEx = new Regex(AlbumRegExp, RegexOptions.IgnoreCase | RegexOptions.Singleline | RegexOptions.Compiled);
-    private const string AlbumImgURLRegExp = @"<div class=""image-container"" data-large="".*?http(?<imageURL>.*?)&quot;,&quot;author";
-    private static readonly Regex AlbumImgURLRegEx = new Regex(AlbumImgURLRegExp, RegexOptions.IgnoreCase | RegexOptions.Singleline | RegexOptions.Compiled);
-    private const string AlbumRatingRegExp = @"<span class=""hidden"" itemprop=""rating"">(?<rating>.*?)</span>";
-    private static readonly Regex AlbumRatingRegEx = new Regex(AlbumRatingRegExp, RegexOptions.IgnoreCase | RegexOptions.Singleline | RegexOptions.Compiled);
-    private const string AlbumYearRegExp = @"<dd class=""release-date"">.*(?<year>\d{4}?)</dd>";
-    private static readonly Regex AlbumYearRegEx = new Regex(AlbumYearRegExp, RegexOptions.IgnoreCase | RegexOptions.Singleline | RegexOptions.Compiled);
-    private const string AlbumGenreRegExp = @"<dd class=""genres"">\s*<ul>(?<genres>.*?)</ul>";
-    private static readonly Regex AlbumGenreRegEx = new Regex(AlbumGenreRegExp, RegexOptions.IgnoreCase | RegexOptions.Singleline | RegexOptions.Compiled);
-    private const string AlbumStylesRegExp = @"<dd class=""styles"">\s*<ul>(?<styles>.*?)</ul>.*</dl>";
-    private static readonly Regex AlbumStylesRegEx = new Regex(AlbumStylesRegExp, RegexOptions.IgnoreCase | RegexOptions.Singleline | RegexOptions.Compiled);
-    private const string AlbumMoodsRegExp = @"<h4>album moods</h4>\s*<ul>(?<moods>.*?)</ul>";
-    private static readonly Regex AlbumMoodsRegEx = new Regex(AlbumMoodsRegExp, RegexOptions.IgnoreCase | RegexOptions.Singleline | RegexOptions.Compiled);
-    private const string AlbumReviewRegExp = @"<div class=""editorial-text collapsible-content"" itemprop=""description"">(?<review>.*?)</div>";
-    private static readonly Regex AlbumReviewRegEx = new Regex(AlbumReviewRegExp, RegexOptions.IgnoreCase | RegexOptions.Singleline | RegexOptions.Compiled);
-    private const string AlbumTracksRegExp = @"<div id=""tracks"">.*?<tbody>(?<tracks>.*?)</tbody>";
-    private static readonly Regex AlbumTracksRegEx = new Regex(AlbumTracksRegExp, RegexOptions.IgnoreCase | RegexOptions.Singleline | RegexOptions.Compiled);
-    private const string TrackRegExp = @"<tr>.*?<td class=""tracknum"">(?<trackNo>.*?)</td>.*?<div class=""title"">\s*<a.*?>\s*(?<title>.*?)?\s*</a>.*?<td class=""time"">\s*(?<time>.*?)\s*</td>.*?</tr>";
-    private static readonly Regex TrackRegEx = new Regex(TrackRegExp, RegexOptions.Singleline | RegexOptions.Compiled | RegexOptions.IgnoreCase);
-
-    // general regular expressions
-    private const string HTMLListRegExp = @"<li>.*?</li>";
-    private static readonly Regex HTMLListRegEx = new Regex(HTMLListRegExp, RegexOptions.Singleline | RegexOptions.IgnoreCase);
-    private const string HTMLRegExp = @"<.*?>";
-    private static readonly Regex HTMLRegEx = new Regex(HTMLRegExp, RegexOptions.Singleline | RegexOptions.Compiled);
-
-    #endregion
-
-    #region ctor
-
-    public MusicAlbumInfo() {}
+    private bool _bLoaded;
 
     #endregion
 
@@ -207,101 +168,55 @@ namespace MediaPortal.Music.Database
 
     #endregion
 
-    #region Private Methods
-
-    /// <summary>
-    /// Do a Regex search with the given pattern and fill the Match object
-    /// </summary>
-    /// <param name="pattern"></param>
-    /// <param name="searchString"></param>
-    /// <returns></returns>
-    private bool FindPattern(string pattern, string searchString)
-    {
-      Regex itemsFound = new Regex(
-        pattern,
-        RegexOptions.IgnoreCase
-        | RegexOptions.Multiline
-        | RegexOptions.IgnorePatternWhitespace
-        | RegexOptions.Compiled
-        );
-
-      _match = itemsFound.Match(searchString);
-      if (_match.Success)
-      {
-        return true;
-      }
-
-      return false;
-    }
-
-    #endregion
-
     #region Public Methods
 
-    public bool Parse(string html)
+    /// <summary>
+    /// Take URL of an album details page and scrape details
+    /// </summary>
+    /// <param name="strUrl">URL of album details page</param>
+    /// <returns>True if scrape was successful</returns>
+    public bool Parse(string strUrl)
     {
-      // artist
-      var strAlbumArtist = string.Empty;
-      var artistMatch = ArtistRegEx.Match(html);
-      if (artistMatch.Success)
-      {
-        strAlbumArtist = artistMatch.Groups["artist"].Value.Trim();
-      }
+      var albumPage = new HtmlWeb().Load(strUrl);
 
+      // artist
+      var strAlbumArtist = AllmusicSiteScraper.CleanInnerText(albumPage.DocumentNode.SelectSingleNode(@"//h3[@class=""album-artist""]/span/a"));
+      
       // album
-      var strAlbum = string.Empty;
-      var albumMatch = AlbumRegEx.Match(html);
-      if (albumMatch.Success)
-      {
-        strAlbum = albumMatch.Groups["album"].Value.Trim();
-      }
+      var strAlbum = AllmusicSiteScraper.CleanInnerText(albumPage.DocumentNode.SelectSingleNode(@"//h2[@class=""album-title""]"));
 
       // Image URL
-      var imgURL = string.Empty;
-      var imgMatch = AlbumImgURLRegEx.Match(html);
-      if (imgMatch.Success)
-      {
-        imgURL = imgMatch.Groups["imageURL"].Value;
-        imgURL = imgURL.Replace(@"\", @"");
-        if (!string.IsNullOrEmpty(imgURL))
-        {
-          imgURL = "http" + imgURL;
-        }
-      }
-
+      var imgURL =
+        AllmusicSiteScraper.CleanAttribute(
+          albumPage.DocumentNode.SelectSingleNode(@"//div[@class=""album-cover""]/div[@class=""album-contain""]/img"),
+          "src");
+    
       // Rating
-      var dRating = 0.0;
-      var ratingMatch = AlbumRatingRegEx.Match(html);
-      if (ratingMatch.Success)
-      {
-        double.TryParse(ratingMatch.Groups["rating"].Value.Trim(), out dRating);  
-      }
+      var iRating = 0;
+      var ratingMatch = AllmusicSiteScraper.CleanInnerText(albumPage.DocumentNode.SelectSingleNode(@"//div[starts-with(@class,""allmusic-rating rating-allmusic"")]"));
+      int.TryParse(ratingMatch, out iRating);  
       
       // year
       var iYear = 0;
-      var yearMatch = AlbumYearRegEx.Match(html);
-      if (yearMatch.Success)
-      {
-        int.TryParse(yearMatch.Groups["year"].Value.Trim(), out iYear);
-      }
+      var yearMatch = AllmusicSiteScraper.CleanInnerText(albumPage.DocumentNode.SelectSingleNode(@"//div[@class=""release-date""]/span"));
+      yearMatch = Regex.Replace(yearMatch, @".*(\d{4})", @"$1");
+      int.TryParse(yearMatch, out iYear);
 
       // review
-      var reviewMatch = AlbumReviewRegEx.Match(html);
-      var strReview = string.Empty;
-      if (reviewMatch.Success)
-      {
-        strReview = HTMLRegEx.Replace(reviewMatch.Groups["review"].Value.Trim(), "");
-      }
+      var strReview = AllmusicSiteScraper.CleanInnerText(albumPage.DocumentNode.SelectSingleNode(@"//div[@itemprop=""reviewBody""]"));
 
       // build up track listing into one string
       var strTracks = string.Empty;
-      var trackMatch = AlbumTracksRegEx.Match(html);
-      if (trackMatch.Success)
+      var trackNodes = albumPage.DocumentNode.SelectNodes(@"//tr[@itemprop=""track""]");
+      if (trackNodes != null)
       {
-        var tracks = TrackRegEx.Matches(trackMatch.Groups["tracks"].Value.Trim());
-        foreach (Match track in tracks)
+        foreach (var track in trackNodes)
         {
-          var strDuration = track.Groups["time"].Value;
+          var trackNo = AllmusicSiteScraper.CleanInnerText(track.SelectSingleNode(@"td[@class=""tracknum""]"));
+          var title =
+            AllmusicSiteScraper.CleanInnerText(
+              track.SelectSingleNode(@"td[@class=""title-composer""]/div[@class=""title""]/a"));
+          var strDuration = AllmusicSiteScraper.CleanInnerText(track.SelectSingleNode(@"td[@class=""time""]"));
           var iDuration = 0;
           var iPos = strDuration.IndexOf(":", StringComparison.Ordinal);
           if (iPos >= 0)
@@ -314,51 +229,35 @@ namespace MediaPortal.Music.Database
             iDuration = (iMin*60) + iSec;
           }
 
-          strTracks += track.Groups["trackNo"].Value + "@" + track.Groups["title"].Value + "@" +
-                       iDuration.ToString(CultureInfo.InvariantCulture) + "|";
+          strTracks += trackNo + "@" + title + "@" + iDuration.ToString(CultureInfo.InvariantCulture) + "|";
         }
       }
 
-      // build up genres into one string
+      // genres
       var strGenres = string.Empty;
-      var genreMatch = AlbumGenreRegEx.Match(html);
-      if (genreMatch.Success)
+      var genreNodes = albumPage.DocumentNode.SelectNodes(@"//section[@class=""basic-info""]/div[@class=""genre""]/div/a");
+      if (genreNodes != null)
       {
-        var genres = HTMLListRegEx.Matches(genreMatch.Groups["genres"].Value.Trim());
-        foreach (var genre in genres)
-        {
-          var cleanGenre = HTMLRegEx.Replace(genre.ToString(), "");
-          strGenres += cleanGenre + ", ";
-        }
-        strGenres = strGenres.TrimEnd(new[] {' ', ','});
+        strGenres = genreNodes.Aggregate(strGenres, (current, genre) => current + (AllmusicSiteScraper.CleanInnerText(genre) + ", "));
+        strGenres = strGenres.TrimEnd(new[] { ',', ' ' }); // remove trailing ", "        
       }
 
       // build up styles into one string
-      var strStyles = string.Empty;
-      var styleMatch = AlbumStylesRegEx.Match(html);
-      if (styleMatch.Success)
+      var strThemes = string.Empty;
+      var themeNodes = albumPage.DocumentNode.SelectNodes(@"//section[@class=""themes""]/div/span[@class=""theme""]/a");
+      if (themeNodes != null)
       {
-        var styles = HTMLListRegEx.Matches(styleMatch.Groups["styles"].Value.Trim());
-        foreach (var style in styles)
-        {
-          var cleanStyle = HTMLRegEx.Replace(style.ToString(), "");
-          strStyles += cleanStyle + ", ";
-        }
-        strStyles = strStyles.TrimEnd(new[] {' ', ','});
+        strThemes = themeNodes.Aggregate(strThemes, (current, theme) => current + (AllmusicSiteScraper.CleanInnerText(theme) + ", "));
+        strThemes = strThemes.TrimEnd(new[] { ',', ' ' }); // remove trailing ", "
       }
 
       // build up moods into one string
       var strMoods = string.Empty;
-      var moodMatch = AlbumMoodsRegEx.Match(html);
-      if (moodMatch.Success)
+      var moodNodes = albumPage.DocumentNode.SelectNodes(@"//section[@class=""moods""]/div/span[@class=""mood""]/a");
+      if (moodNodes != null)
       {
-        var moods = HTMLListRegEx.Matches(moodMatch.Groups["moods"].Value.Trim());
-        foreach (var mood in moods)
-        {
-          var cleanMood = HTMLRegEx.Replace(mood.ToString(), "");
-          strMoods += cleanMood + ", ";
-        }
-        strMoods = strMoods.TrimEnd(new[] {' ', ','});
+        strMoods = moodNodes.Aggregate(strMoods, (current, mood) => current + (AllmusicSiteScraper.CleanInnerText(mood) + ", "));
+        strMoods = strMoods.TrimEnd(new[] { ',', ' ' }); // remove trailing ", "
       }
 
       var album = new AlbumInfo
@@ -367,10 +266,10 @@ namespace MediaPortal.Music.Database
         Artist = strAlbumArtist,
         Genre = strGenres,
         Tones = strMoods,
-        Styles = strStyles,
+        Styles = strThemes,
         Review = strReview,
         Image = imgURL,
-        Rating = (int)(dRating * 2),
+        Rating = iRating,
         Tracks = strTracks,
         AlbumArtist = strAlbumArtist,
         Year = iYear

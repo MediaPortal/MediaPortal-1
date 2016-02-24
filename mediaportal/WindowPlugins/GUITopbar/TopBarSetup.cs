@@ -27,7 +27,7 @@ namespace MediaPortal.Topbar
   /// <summary>
   /// Displays a bar which holds basic playback control elements
   /// </summary>
-  [PluginIcons("WindowPlugins.GUITopbar.Topbar.gif", "WindowPlugins.GUITopbar.Topbar_disabled.gif")]
+  [PluginIcons("GUITopbar.Topbar.gif", "GUITopbar.Topbar_disabled.gif")]
   public class TopBarSetup : ISetupForm, IShowPlugin
   {
     public TopBarSetup() {}

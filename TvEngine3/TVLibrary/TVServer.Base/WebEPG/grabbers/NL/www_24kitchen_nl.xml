@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Grabber>
+	<Info availableDays="7" timezone="W. Europe Standard Time" version="2.0" />
+	<Channels>
+		<Channel id="24Kitchen" siteId="1" />
+	</Channels>
+	<Listing type="Html">
+		<Site url="http://www.24kitchen.nl/tvprogram/[YYYY]-[MM]-[DD]" post="" external="false" encoding="" />
+		<Html>
+			<Template name="default">
+				<SectionTemplate tags="SD">
+					<TemplateText>
+						&lt;span class="date-display-single"&gt;&lt;#START&gt;&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;div class="right-side"&gt;&lt;div&gt;&lt;strong class="field-content event_title" style="display:inline;"&gt;&lt;#TITLE&gt;&lt;/strong&gt;&lt;a class="it-remindme-2636-107770-220000 ReminderLink sprite-reminderIcon sprites" style="float: right;"&gt;&lt;/a&gt;&lt;span id="text-it-remindme-2636-107770-220000" class="field-content text-it-reminder" style="float:right; margin-right: 10px; display:none;"&gt;
+            Voeg een reminder toe
+        &lt;/a&gt;&lt;/span&gt;&lt;div style="display: none;"&gt;&lt;script type="text/javascript"&gt;
+            jQuery stuff
+        &lt;/script&gt;&lt;/div&gt;&lt;div id="it-remindme-form-2636-107770-220000" class="remindme-form" style="display: none;"&gt;&lt;span class="ReminderOverlay"&gt;&lt;div&gt;&lt;/div&gt;&lt;span class="SetReminder"&gt;&lt;span class="reminderForm"&gt;&lt;span class="Error" style="display: none;color:red;"&gt;Ongeldig&lt;/span&gt;&lt;span&gt;Vul je e-mailadres in en we sturen je een reminder wanneer het programma begint.&lt;/span&gt;&lt;br/&gt;&lt;input type="email" id="email-2636-107770-220000" onblur="if(this.value == '') value='name@mail.com';" onclick="if(this.value == 'name@mail.com') value='';" value="name@mail.com" maxlength="255" class="EmailTxt"&gt;&lt;span class="Buttons"&gt;&lt;a id="it-remindme-remind-2636-107770-220000"&gt;Verstuur&lt;/a&gt;&lt;/span&gt;&lt;span class="Buttons"&gt;&lt;a id="it-remindme-cancel-2636-107770-220000"&gt;Annuleer&lt;/a&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="reminderText"&gt;&lt;span style="color: #7A6C65;"&gt;We zullen je een reminder sturen voor dit programma!&lt;/span&gt;&lt;span class="Buttons"&gt;&lt;a id="it-remindme-done-2636-107770-220000" class="Done"&gt;Sluiten&lt;/a&gt;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/div&gt;&lt;div style="display:none;"&gt;&lt;script type="text/javascript"&gt;
+            jQuery stuff
+        &lt;/script&gt;&lt;/div&gt;&lt;/div&gt;&lt;div class="views-field views-field-tfk-show-description" style="clear:both;"&gt;&lt;div class="field-content"&gt;&lt;#DESCRIPTION&gt;&lt;/div&gt;
+					</TemplateText>
+				</SectionTemplate>
+			</Template>
+		</Html>
+	</Listing>
+</Grabber>

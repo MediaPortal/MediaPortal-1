@@ -212,14 +212,14 @@ namespace SetupTv.Sections
           {
             if (RemoteControl.Instance.TunerLocked(_cardNumber) == false)
             {
-              line = String.Format("{0}- {1} :No Signal", 1 + index, tuneChannel.Url);
+              line = String.Format("{0}- {1} - {2} :No Signal", 1 + index, tuneChannel.Url, tuneChannel.Name);
               item.Text = line;
               item.ForeColor = Color.Red;
               continue;
             }
             else
             {
-              line = String.Format("{0}- {1} :Nothing found", 1 + index, tuneChannel.Url);
+              line = String.Format("{0}- {1} - {2} :Nothing found", 1 + index, tuneChannel.Url, tuneChannel.Name);
               item.Text = line;
               item.ForeColor = Color.Red;
               continue;

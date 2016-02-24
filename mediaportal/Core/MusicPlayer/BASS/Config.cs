@@ -287,7 +287,7 @@ namespace MediaPortal.MusicPlayer.BASS
 
         if (doGaplessPlayback)
         {
-          _crossFadeIntervalMs = 200;
+          _crossFadeIntervalMs = 0; 
           _playBackType = PlayBackType.GAPLESS;
         }
         else

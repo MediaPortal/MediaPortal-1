@@ -153,6 +153,7 @@ namespace MediaPortal.Util
     private static HashSet<string> m_ImageExtensions = new HashSet<string>();
 
     private static string[] _artistNamePrefixes;
+    protected static string _artistPrefixes;
     
     private static bool m_bHideExtensions = false;
     private static bool enableGuiSounds;
@@ -166,7 +167,7 @@ namespace MediaPortal.Util
     public static string AudioExtensionsDefault =
         ".asx,.dts," +
         // Playlists
-        ".m3u,.pls,.b4s,.wpl,.cue," +
+        ".m3u,.m3u8,.pls,.b4s,.wpl,.cue," +
         // Bass Standard
         ".mod,.mo3,.s3m,.xm,.it,.mtm,.umx,.mdz,.s3z,.itz,.xmz," +
         ".mp3,.ogg,.wav,.mp2,.mp1,.aiff,.m2a,.mpa,.m1a,.swa,.aif,.mp3pro," +
@@ -176,10 +177,10 @@ namespace MediaPortal.Util
         ".aac,.mp4,.m4a,.m4b,.m4p," +
         // BassAc3
         ".ac3," +
-        // BassAlac
-        ".m4a,.aac,.mp4," +
         // BassApe
         ".ape,.apl," +
+        // BassDSD
+        ".dsf," +
         // BassFlac
         ".flac," +
         // BassMidi
@@ -213,6 +214,7 @@ namespace MediaPortal.Util
         m_bHideExtensions = xmlreader.GetValueAsBool("gui", "hideextensions", true);
         string artistNamePrefixes = xmlreader.GetValueAsString("musicfiles", "artistprefixes", "The, Les, Die");
         _artistNamePrefixes = artistNamePrefixes.Split(',');
+        _artistPrefixes = xmlreader.GetValueAsString("musicfiles", "artistprefixes", "The, Les, Die");
 
         string strTmp = xmlreader.GetValueAsString("music", "extensions", AudioExtensionsDefault);
         Tokens tok = new Tokens(strTmp, new[] {','});
@@ -354,6 +356,20 @@ namespace MediaPortal.Util
       return sFilePath;
     }
 
+    public static string GetServerNameFromUNCPath(string sFilePath)
+    {
+      if (!string.IsNullOrEmpty(sFilePath))
+      {
+        Uri uri = new Uri(sFilePath);
+
+        if (!uri.IsUnc)
+          return string.Empty;
+
+        return uri.Host;
+      }
+      return sFilePath;
+    }
+
     public static long GetDiskSize(string drive)
     {
       long diskSize = 0;
@@ -474,12 +490,9 @@ namespace MediaPortal.Util
     {
       try
       {
-        if (aPath.StartsWith(@"http://"))
+        if (aPath.StartsWith(@"http://play.last.fm"))
         {
-          if (aPath.Contains(@"/last.mp3?") || aPath.Contains(@"last.fm/"))
-          {
-            return true;
-          }
+          return true;
         }
       }
       catch (Exception ex)
@@ -540,6 +553,7 @@ namespace MediaPortal.Util
     private static bool IsPlayListExtension(string extensionFile)
     {
       if (extensionFile == ".m3u") return true;
+      if (extensionFile == ".m3u8") return true;
       if (extensionFile == ".pls") return true;
       if (extensionFile == ".b4s") return true;
       if (extensionFile == ".wpl") return true;
@@ -585,8 +599,43 @@ namespace MediaPortal.Util
       return false;
     }
 
+    public static bool CheckServerStatus(string folderName)
+    {
+      if (!Util.Utils.IsUNCNetwork(folderName))
+      {
+        // Check if letter drive is a network drive
+        string detectedFolderName = FindUNCPaths(folderName);
+        if (Util.Utils.IsUNCNetwork(detectedFolderName))
+        {
+          folderName = detectedFolderName;
+        }
+        else
+        {
+          return true;
+        }
+      }
+      
+      string serverName = string.Empty;
+      
+      try
+      {
+        serverName = Util.Utils.GetServerNameFromUNCPath(folderName);
+      }
+      catch { }
+      
+      if (!string.IsNullOrEmpty(serverName))
+      {
+        WakeOnLanManager wakeOnLanManager = new WakeOnLanManager();
+        return wakeOnLanManager.Ping(serverName, 100);
+      }
+      return false;
+    }
+
     public static void SetDefaultIcons(GUIListItem item)
     {
+      string filename = String.Empty;
+      string filenameBig = String.Empty;
+
       if (item == null)
       {
         return;
@@ -595,8 +644,28 @@ namespace MediaPortal.Util
       {
         if (IsPlayList(item.Path))
         {
-          item.IconImage = "DefaultPlaylist.png";
-          item.IconImageBig = "DefaultPlaylistBig.png";
+          switch (GUIWindowManager.ActiveWindow)
+          {
+            case (int)GUIWindow.Window.WINDOW_MUSIC_PLAYLIST:
+              filename = GUIGraphicsContext.GetThemedSkinFile(@"\media\DefaultPlaylistMusic.png");
+              filenameBig = GUIGraphicsContext.GetThemedSkinFile(@"\media\DefaultPlaylistBigMusic.png");
+              break;
+            case (int)GUIWindow.Window.WINDOW_VIDEO_PLAYLIST:
+              filename = GUIGraphicsContext.GetThemedSkinFile(@"\media\DefaultPlaylistVideo.png");
+              filenameBig = GUIGraphicsContext.GetThemedSkinFile(@"\media\DefaultPlaylistBigVideo.png");
+              break;
+          }
+
+          if (File.Exists(filename) && File.Exists(filenameBig))
+          {
+            item.IconImage = filename;
+            item.IconImageBig = filenameBig;
+          }
+          else
+          {
+            item.IconImage = "DefaultPlaylist.png";
+            item.IconImageBig = "DefaultPlaylistBig.png";
+          }
         }
         else if (IsVideo(item.Path))
         {
@@ -633,43 +702,241 @@ namespace MediaPortal.Util
       {
         if (item.Label == "..")
         {
-          item.IconImage = "defaultFolderBack.png";
-          item.IconImageBig = "defaultFolderBackBig.png";
+          switch (GUIWindowManager.ActiveWindow)
+          {
+            case (int)GUIWindow.Window.WINDOW_MUSIC_FILES:
+              filename = GUIGraphicsContext.GetThemedSkinFile(@"\media\defaultFolderBackMusic.png");
+              filenameBig = GUIGraphicsContext.GetThemedSkinFile(@"\media\defaultFolderBackBigMusic.png");
+              break;
+            case (int)GUIWindow.Window.WINDOW_VIDEOS:
+              filename = GUIGraphicsContext.GetThemedSkinFile(@"\media\defaultFolderBackVideo.png");
+              filenameBig = GUIGraphicsContext.GetThemedSkinFile(@"\media\defaultFolderBackBigVideo.png");
+              break;
+            case (int)GUIWindow.Window.WINDOW_PICTURES:
+              filename = GUIGraphicsContext.GetThemedSkinFile(@"\media\defaultFolderBackPictures.png");
+              filenameBig = GUIGraphicsContext.GetThemedSkinFile(@"\media\defaultFolderBackBigPictures.png");
+              break;
+            case (int)GUIWindow.Window.WINDOW_RADIO:
+              filename = GUIGraphicsContext.GetThemedSkinFile(@"\media\defaultFolderBackRadio.png");
+              filenameBig = GUIGraphicsContext.GetThemedSkinFile(@"\media\defaultFolderBackBigRadio.png");
+              break;
+          }
+
+          if (File.Exists(filename) && File.Exists(filenameBig))
+          {
+
+            item.IconImage = filename;
+            item.IconImageBig = filenameBig;
+          }
+          else
+          {
+            item.IconImage = "defaultFolderBack.png";
+            item.IconImageBig = "defaultFolderBackBig.png";
+          }
         }
         else
         {
           if (IsNetwork(item.Path))
           {
-            item.IconImage = "defaultNetwork.png";
-            item.IconImageBig = "defaultNetworkBig.png";
+            switch (GUIWindowManager.ActiveWindow)
+            {
+              case (int)GUIWindow.Window.WINDOW_MUSIC_FILES:
+                filename = GUIGraphicsContext.GetThemedSkinFile(@"\media\defaultNetworkMusic.png");
+                filenameBig = GUIGraphicsContext.GetThemedSkinFile(@"\media\defaultNetworkBigMusic.png");
+                break;
+              case (int)GUIWindow.Window.WINDOW_VIDEOS:
+                filename = GUIGraphicsContext.GetThemedSkinFile(@"\media\defaultNetworkVideo.png");
+                filenameBig = GUIGraphicsContext.GetThemedSkinFile(@"\media\defaultNetworkBigVideo.png");
+                break;
+              case (int)GUIWindow.Window.WINDOW_PICTURES:
+                filename = GUIGraphicsContext.GetThemedSkinFile(@"\media\defaultNetworkPictures.png");
+                filenameBig = GUIGraphicsContext.GetThemedSkinFile(@"\media\defaultNetworkBigPictures.png");
+                break;
+              case (int)GUIWindow.Window.WINDOW_RADIO:
+                filename = GUIGraphicsContext.GetThemedSkinFile(@"\media\defaultNetworkRadio.png");
+                filenameBig = GUIGraphicsContext.GetThemedSkinFile(@"\media\defaultNetworkBigRadio.png");
+                break;
+            }
+
+            if (File.Exists(filename) && File.Exists(filenameBig))
+            {
+
+              item.IconImage = filename;
+              item.IconImageBig = filenameBig;
+            }
+            else
+            {
+              item.IconImage = "defaultNetwork.png";
+              item.IconImageBig = "defaultNetworkBig.png";
+            }
           }
           else if (item.Path.Length <= 3)
           {
             if (IsDVD(item.Path))
             {
-              item.IconImage = "defaultDVDRom.png";
-              item.IconImageBig = "defaultDVDRomBig.png";
+              switch (GUIWindowManager.ActiveWindow)
+              {
+                case (int)GUIWindow.Window.WINDOW_MUSIC_FILES:
+                  filename = GUIGraphicsContext.GetThemedSkinFile(@"\media\defaultDVDRomMusic.png");
+                  filenameBig = GUIGraphicsContext.GetThemedSkinFile(@"\media\defaultDVDRomBigMusic.png");
+                  break;
+                case (int)GUIWindow.Window.WINDOW_VIDEOS:
+                  filename = GUIGraphicsContext.GetThemedSkinFile(@"\media\defaultDVDRomVideo.png");
+                  filenameBig = GUIGraphicsContext.GetThemedSkinFile(@"\media\defaultDVDRomBigVideo.png");
+                  break;
+                case (int)GUIWindow.Window.WINDOW_PICTURES:
+                  filename = GUIGraphicsContext.GetThemedSkinFile(@"\media\defaultDVDRomPictures.png");
+                  filenameBig = GUIGraphicsContext.GetThemedSkinFile(@"\media\defaultDVDRomBigPictures.png");
+                  break;
+                case (int)GUIWindow.Window.WINDOW_RADIO:
+                  filename = GUIGraphicsContext.GetThemedSkinFile(@"\media\defaultDVDRomRadio.png");
+                  filenameBig = GUIGraphicsContext.GetThemedSkinFile(@"\media\defaultDVDRomBigRadio.png");
+                  break;
+              }
+
+              if (File.Exists(filename) && File.Exists(filenameBig))
+              {
+                item.IconImage = filename;
+                item.IconImageBig = filenameBig;
+              }
+              else
+              {
+                item.IconImage = "defaultDVDRom.png";
+                item.IconImageBig = "defaultDVDRomBig.png";
+              }
             }
             else if (IsHD(item.Path))
             {
-              item.IconImage = "defaultHardDisk.png";
-              item.IconImageBig = "defaultHardDiskBig.png";
+              switch (GUIWindowManager.ActiveWindow)
+              {
+                case (int)GUIWindow.Window.WINDOW_MUSIC_FILES:
+                  filename = GUIGraphicsContext.GetThemedSkinFile(@"\media\defaultHardDiskMusic.png");
+                  filenameBig = GUIGraphicsContext.GetThemedSkinFile(@"\media\defaultHardDiskBigMusic.png");
+                  break;
+                case (int)GUIWindow.Window.WINDOW_VIDEOS:
+                  filename = GUIGraphicsContext.GetThemedSkinFile(@"\media\defaultHardDiskVideo.png");
+                  filenameBig = GUIGraphicsContext.GetThemedSkinFile(@"\media\defaultHardDiskBigVideo.png");
+                  break;
+                case (int)GUIWindow.Window.WINDOW_PICTURES:
+                  filename = GUIGraphicsContext.GetThemedSkinFile(@"\media\defaultHardDiskPictures.png");
+                  filenameBig = GUIGraphicsContext.GetThemedSkinFile(@"\media\defaultHardDiskBigPictures.png");
+                  break;
+                case (int)GUIWindow.Window.WINDOW_RADIO:
+                  filename = GUIGraphicsContext.GetThemedSkinFile(@"\media\defaultHardDiskRadio.png");
+                  filenameBig = GUIGraphicsContext.GetThemedSkinFile(@"\media\defaultHardDiskBigRadio.png");
+                  break;
+              }
+
+              if (File.Exists(filename) && File.Exists(filenameBig))
+              {
+                item.IconImage = filename;
+                item.IconImageBig = filenameBig;
+              }
+              else
+              {
+                item.IconImage = "defaultHardDisk.png";
+                item.IconImageBig = "defaultHardDiskBig.png";
+              }
             }
             else if (IsRemovable(item.Path))
             {
-              item.IconImage = "defaultRemovable.png";
-              item.IconImageBig = "defaultRemovableBig.png";
+              switch (GUIWindowManager.ActiveWindow)
+              {
+                case (int)GUIWindow.Window.WINDOW_MUSIC_FILES:
+                  filename = GUIGraphicsContext.GetThemedSkinFile(@"\media\defaultRemovableMusic.png");
+                  filenameBig = GUIGraphicsContext.GetThemedSkinFile(@"\media\defaultRemovableBigMusic.png");
+                  break;
+                case (int)GUIWindow.Window.WINDOW_VIDEOS:
+                  filename = GUIGraphicsContext.GetThemedSkinFile(@"\media\defaultRemovableVideo.png");
+                  filenameBig = GUIGraphicsContext.GetThemedSkinFile(@"\media\defaultRemovableBigVideo.png");
+                  break;
+                case (int)GUIWindow.Window.WINDOW_PICTURES:
+                  filename = GUIGraphicsContext.GetThemedSkinFile(@"\media\defaultRemovablePictures.png");
+                  filenameBig = GUIGraphicsContext.GetThemedSkinFile(@"\media\defaultRemovableBigPictures.png");
+                  break;
+                case (int)GUIWindow.Window.WINDOW_RADIO:
+                  filename = GUIGraphicsContext.GetThemedSkinFile(@"\media\defaultRemovableRadio.png");
+                  filenameBig = GUIGraphicsContext.GetThemedSkinFile(@"\media\defaultRemovableBigRadio.png");
+                  break;
+              }
+
+              if (File.Exists(filename) && File.Exists(filenameBig))
+              {
+                item.IconImage = filename;
+                item.IconImageBig = filenameBig;
+              }
+              else
+              {
+                item.IconImage = "defaultRemovable.png";
+                item.IconImageBig = "defaultRemovableBig.png";
+              }
+            }
+            else
+            {
+              switch (GUIWindowManager.ActiveWindow)
+              {
+                case (int)GUIWindow.Window.WINDOW_MUSIC_FILES:
+                  filename = GUIGraphicsContext.GetThemedSkinFile(@"\media\defaultFolderMusic.png");
+                  filenameBig = GUIGraphicsContext.GetThemedSkinFile(@"\media\defaultFolderBigMusic.png");
+                  break;
+                case (int)GUIWindow.Window.WINDOW_VIDEOS:
+                  filename = GUIGraphicsContext.GetThemedSkinFile(@"\media\defaultFolderVideo.png");
+                  filenameBig = GUIGraphicsContext.GetThemedSkinFile(@"\media\defaultFolderBigVideo.png");
+                  break;
+                case (int)GUIWindow.Window.WINDOW_PICTURES:
+                  filename = GUIGraphicsContext.GetThemedSkinFile(@"\media\defaultFolderPictures.png");
+                  filenameBig = GUIGraphicsContext.GetThemedSkinFile(@"\media\defaultFolderBigPictures.png");
+                  break;
+                case (int)GUIWindow.Window.WINDOW_RADIO:
+                  filename = GUIGraphicsContext.GetThemedSkinFile(@"\media\defaultFolderRadio.png");
+                  filenameBig = GUIGraphicsContext.GetThemedSkinFile(@"\media\defaultFolderBigRadio.png");
+                  break;
+              }
+
+              if (File.Exists(filename) && File.Exists(filenameBig))
+              {
+                item.IconImage = filename;
+                item.IconImageBig = filenameBig;
+              }
+              else
+              {
+                item.IconImage = "defaultFolder.png";
+                item.IconImageBig = "defaultFolderBig.png";
+              }
+            }
+          }
+          else
+          {
+            switch (GUIWindowManager.ActiveWindow)
+            {
+              case (int)GUIWindow.Window.WINDOW_MUSIC_FILES:
+                filename = GUIGraphicsContext.GetThemedSkinFile(@"\media\defaultFolderMusic.png");
+                filenameBig = GUIGraphicsContext.GetThemedSkinFile(@"\media\defaultFolderBigMusic.png");
+                break;
+              case (int)GUIWindow.Window.WINDOW_VIDEOS:
+                filename = GUIGraphicsContext.GetThemedSkinFile(@"\media\defaultFolderVideo.png");
+                filenameBig = GUIGraphicsContext.GetThemedSkinFile(@"\media\defaultFolderBigVideo.png");
+                break;
+              case (int)GUIWindow.Window.WINDOW_PICTURES:
+                filename = GUIGraphicsContext.GetThemedSkinFile(@"\media\defaultFolderPictures.png");
+                filenameBig = GUIGraphicsContext.GetThemedSkinFile(@"\media\defaultFolderBigPictures.png");
+                break;
+              case (int)GUIWindow.Window.WINDOW_RADIO:
+                filename = GUIGraphicsContext.GetThemedSkinFile(@"\media\defaultFolderRadio.png");
+                filenameBig = GUIGraphicsContext.GetThemedSkinFile(@"\media\defaultFolderBigRadio.png");
+                break;
+            }
+
+            if (File.Exists(filename) && File.Exists(filenameBig))
+            {
+              item.IconImage = filename;
+              item.IconImageBig = filenameBig;
             }
             else
             {
               item.IconImage = "defaultFolder.png";
               item.IconImageBig = "defaultFolderBig.png";
             }
-          }
-          else
-          {
-            item.IconImage = "defaultFolder.png";
-            item.IconImageBig = "defaultFolderBig.png";
           }
         }
       }
@@ -697,10 +964,10 @@ namespace MediaPortal.Util
         }
 
         string[] thumbs = {
+                            Util.Utils.GetVideosThumbPathname(item.Path),
                             Path.ChangeExtension(item.Path, ".jpg"),
                             Path.ChangeExtension(item.Path, ".tbn"),
-                            Path.ChangeExtension(item.Path, ".png"),
-                            Util.Utils.GetVideosThumbPathname(item.Path)
+                            Path.ChangeExtension(item.Path, ".png")
                           };
 
         bool foundVideoThumb = false;
@@ -799,6 +1066,7 @@ namespace MediaPortal.Util
         if (FileExistsInCache(strThumb) && strThumb != item.ThumbnailImage)
         {
           item.ThumbnailImage = strThumb;
+          item.IconImageBig = strThumb;
         }
       }
     }
@@ -1033,7 +1301,7 @@ namespace MediaPortal.Util
 
     public static string SecondsToHMSString(TimeSpan timespan)
     {
-      return SecondsToHMSString(timespan.Seconds);
+      return SecondsToHMSString(Convert.ToInt32(timespan.TotalSeconds));
     }
 
     public static string SecondsToHMSString(int lSeconds)
@@ -1235,6 +1503,75 @@ namespace MediaPortal.Util
       return false;
     }
 
+    public static bool IsUNCNetwork(string strPath)
+    {
+      if (strPath == null) return false;
+      if (strPath.Length < 2) return false;
+      if (strPath.StartsWith(@"\\")) return true;
+      return false;
+    }
+
+    public static string FindUNCPaths(string strDrive)
+    {
+      DriveInfo[] dis = DriveInfo.GetDrives();
+      foreach (DriveInfo di in dis)
+      {
+        if (di.DriveType == DriveType.Network && strDrive.ToLowerInvariant().StartsWith(di.Name.ToLowerInvariant()) &&
+            !string.IsNullOrEmpty(strDrive))
+        {
+          DirectoryInfo dir = di.RootDirectory;
+          string UNCPathResult = FindNetworkPath(strDrive);
+          if (IsUNCNetwork(UNCPathResult))
+          {
+            return UNCPathResult;
+          }
+          return GetUNCPath(dir.FullName.Substring(0, 2));
+        }
+      }
+      return strDrive;
+    }
+
+    public static string FindNetworkPath(string path)
+    {
+      if (string.IsNullOrEmpty(path)) return path;
+      string pathRoot = Path.GetPathRoot(path);
+      if (string.IsNullOrEmpty(pathRoot)) return path;
+      ProcessStartInfo pinfo = new ProcessStartInfo("net", "use");
+      pinfo.CreateNoWindow = true;
+      pinfo.RedirectStandardOutput = true;
+      pinfo.UseShellExecute = false;
+      string output;
+      using (Process p = Process.Start(pinfo))
+      {
+        output = p.StandardOutput.ReadToEnd();
+      }
+      //if we have a folder like D:\ then remove the \
+      if (pathRoot.EndsWith(@"\"))
+      {
+        pathRoot = pathRoot.Substring(0, pathRoot.Length - 1);
+      }
+      string line = output;
+      if (line.Contains(pathRoot))
+      {
+        try
+        {
+          string UNCPath = line;
+          string UNCPathSubstring = UNCPath.Substring(UNCPath.LastIndexOf(pathRoot));
+          int Pos1 = UNCPathSubstring.IndexOf(pathRoot) + pathRoot.Length;
+          int Pos2 = UNCPathSubstring.IndexOf("Microsoft Windows Network");
+          string result = UNCPathSubstring.Substring(Pos1, Pos2 - Pos1);
+          result = result.TrimStart();
+          result = Path.GetFullPath(result);
+          return result;
+        }
+        catch (Exception)
+        {
+          return path;
+        }
+      }
+      return path;
+    }
+
     public static bool IsPersistentNetwork(string strPath)
     {
       //IsNetwork doesn't work correctly, when the drive is disconnected (for whatever reason)
@@ -1403,11 +1740,34 @@ namespace MediaPortal.Util
       return false;
     }
 
+    public static bool IsUsbHdd(string path)
+    {
+      if (path == null) return false;
+      if (path.Length < 2) return false;
+      List<string> usbHdds = new List<string>();
+      usbHdds = GetAvailableUsbHardDisks();
+      string strDrive = path.Substring(0, 2);
+      if (usbHdds.Contains(strDrive)) return true;
+      return false;
+    }
+
+    public static bool IsRemovableUsbDisk(string path)
+    {
+      if (path == null) return false;
+      if (path.Length < 2) return false;
+      List<string> usbDisks = new List<string>();
+      usbDisks = GetRemovableUsbDisks();
+      string strDrive = path.Substring(0, 2);
+      if (usbDisks.Contains(strDrive)) return true;
+      return false;
+    }
+
     // Check if filename is from mounted ISO image
     public static bool IsISOImage(string fileName)
     {
       string extension = Path.GetExtension(fileName).ToLowerInvariant();
-      if (string.IsNullOrEmpty(fileName) || !File.Exists(fileName) || (extension == ".tsbuffer" || extension == ".ts"))
+      // check for "http" to prevent exception
+      if (string.IsNullOrEmpty(fileName) || fileName.StartsWith("http://") || !File.Exists(fileName) || (extension == ".tsbuffer" || extension == ".ts")) 
         return false;
 
       string vDrive = DaemonTools.GetVirtualDrive();
@@ -1735,7 +2095,12 @@ namespace MediaPortal.Util
 
     public static void EjectCDROM()
     {
-      mciSendString("set cdaudio door open", null, 0, IntPtr.Zero);
+      EjectCDROM(string.Empty);
+    }
+    
+    public static void CloseCDROM(string driveLetter)
+    {
+      mciSendString(string.Format("set CDAudio!{0} door closed", driveLetter), null, 127, IntPtr.Zero);
     }
 
     public static Process StartProcess(ProcessStartInfo procStartInfo, bool bWaitForExit)
@@ -2258,17 +2623,27 @@ namespace MediaPortal.Util
 
     public static bool FileDelete(string strFile)
     {
-      if (String.IsNullOrEmpty(strFile)) return true;
+      if (String.IsNullOrEmpty(strFile)) return false;
       try
       {
         if (!File.Exists(strFile))
-          return true;
+        {
+          return false;
+        }
+
         File.Delete(strFile);
+
+        if (File.Exists(strFile))
+        {
+          Log.Debug("Util: FileDelete {0} error. The file is in used.", strFile);
+          return false;
+        }
+
         return true;
       }
       catch (Exception ex)
       {
-        Log.Error("Util: FileDelete(string strFile) error: {0}", ex.Message);
+        Log.Error("Util: FileDelete {0} error: {1}", strFile, ex.Message);
       }
       return false;
     }
@@ -2320,7 +2695,7 @@ namespace MediaPortal.Util
         }
         catch (Exception ex)
         {
-          Log.Info("Utils: DownLoadImage {1} failed: {0}", ex.Message, strURL);
+          Log.Error("Utils: DownLoadImage {1} failed: {0}", ex.Message, strURL);
         }
       }
     }
@@ -2339,8 +2714,12 @@ namespace MediaPortal.Util
         try
         {
           File.Copy(file, strFile, true);
+          Log.Debug("Util DownLoadAndCacheImage: Copying previously cached image {0} to {1}", file, strFile);
         }
-        catch (Exception) {}
+        catch (Exception ex)
+        {
+          Log.Error("Util DownLoadAndCacheImage: error copying cached image {0} to {1} - {2}", file, strFile, ex.Message);
+        }
         return;
       }
       DownLoadImage(strURL, file);
@@ -2353,10 +2732,11 @@ namespace MediaPortal.Util
           //string strFileL = ConvertToLargeCoverArt(strFile);
           //Util.Picture.CreateThumbnail(file, strFileL, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0);
           File.Copy(file, strFile, true);
+          Log.Debug("Util DownLoadAndCacheImage: Copying downloaded image {0} to {1}", file, strFile);
         }
         catch (Exception ex)
         {
-          Log.Warn("Util: error after downloading thumbnail {0} - {1}", strFile, ex.Message);
+          Log.Error("Util DownLoadAndCacheImage: error copying downloaded image {0} to {1} - {2}", file, strFile, ex.Message);
         }
       }
     }
@@ -2376,6 +2756,7 @@ namespace MediaPortal.Util
       string url = String.Format("mpcache-{0}", EncryptLine(strURL));
 
       string file = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.InternetCache), url);
+      FileDelete(file);
       DownLoadImage(strURL, file);
       
       if (File.Exists(file))
@@ -2386,7 +2767,7 @@ namespace MediaPortal.Util
         }
         catch (Exception ex)
         {
-          Log.Warn("Util: error after downloading thumbnail {0} - {1}", strFile, ex.Message);
+          Log.Error("Util DownLoadAndOverwriteCachedImage: error copying downloaded image {0} to {1} - {2}", file, strFile, ex.Message);
         }
       }
     }
@@ -2399,7 +2780,7 @@ namespace MediaPortal.Util
       try
       {
         HttpWebRequest wr = (HttpWebRequest)WebRequest.Create(strURL);
-        wr.Timeout = 5000;
+        wr.Timeout = 20000;
         try
         {
           // Use the current user in case an NTLM Proxy or similar is used.
@@ -2635,6 +3016,7 @@ namespace MediaPortal.Util
       if (bNoStop) Snd_Options += SND_NOSTOP;
       try
       {
+        sndPlaySoundA(null, Snd_Options); // terminate a currently active sound output
         return sndPlaySoundA(sSoundFile, Snd_Options);
       }
       catch (Exception ex)
@@ -3429,6 +3811,45 @@ namespace MediaPortal.Util
       }
     }
 
+    /// <summary>
+    /// taken from audioscrobbler plugin code to reverse where prefix has been swapped 
+    /// eg. The Beatles => Beatles, The or Die Toten Hosen => Toten Hosen ,Die
+    /// and will change back to the artist name
+    /// </summary>
+    /// <param name="aStrippedArtist">Value stored in database with prefix at the end</param>
+    /// <returns>What should be actual string in tag</returns>
+    public static string UndoArtistPrefix(string aStrippedArtist)
+    {
+      try
+      {
+        string[] allPrefixes = null;
+        allPrefixes = _artistPrefixes.Split(',');
+        if (allPrefixes.Length > 0)
+        {
+          for (int i = 0; i < allPrefixes.Length; i++)
+          {
+            string cpyPrefix = allPrefixes[i];
+            if (!aStrippedArtist.ToLowerInvariant().EndsWith(cpyPrefix.ToLowerInvariant())) continue;
+            // strip the separating "," as well
+            int prefixPos = aStrippedArtist.IndexOf(',');
+            if (prefixPos <= 0) continue;
+            aStrippedArtist = aStrippedArtist.Remove(prefixPos);
+            cpyPrefix = cpyPrefix.Trim(new char[] { ' ', ',' });
+            aStrippedArtist = cpyPrefix + " " + aStrippedArtist;
+            // abort here since artists should only have one prefix stripped
+            return aStrippedArtist;
+          }
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Error("An error occured undoing prefix strip for artist: {0} - {1}", aStrippedArtist,
+                  ex.Message);
+      }
+
+      return aStrippedArtist;
+    }
+
     private static void AddWatcher(string dir, int buffersize)
     {
       AddWatcher(dir);
@@ -3791,9 +4212,20 @@ namespace MediaPortal.Util
 
     public static bool CreateFolderPreviewThumb(List<string> aPictureList, string aThumbPath)
     {
+      return CreateFolderPreviewThumb(aPictureList, aThumbPath, true);
+    }
+
+    public static bool CreateFolderPreviewThumb(List<string> aPictureList, string aThumbPath, bool needBorder)
+    {
       bool result = false;
       Stopwatch benchClock = new Stopwatch();
       benchClock.Start();
+      int border = 0;
+
+      if (needBorder)
+      {
+        border = 10;
+      }
 
       if (aPictureList.Count > 0)
       {
@@ -3807,7 +4239,7 @@ namespace MediaPortal.Util
           {
             using (Profile.Settings xmlreader = new Profile.MPSettings())
             {
-              currentSkin = Config.Dir.Config + @"\skin\" + xmlreader.GetValueAsString("skin", "name", "Default");
+              currentSkin = Config.Dir.Config + @"\skin\" + xmlreader.GetValueAsString("skin", "name", "Titan");
             }
             defaultBackground = currentSkin + @"\media\previewbackground.png";
           }
@@ -3824,18 +4256,18 @@ namespace MediaPortal.Util
               int width = imgFolder.Width;
               int height = imgFolder.Height;
 
-              int thumbnailWidth = 256;
-              int thumbnailHeight = 256;
+              int thumbnailWidth = (int)Thumbs.ThumbLargeResolution;
+              int thumbnailHeight = (int)Thumbs.ThumbLargeResolution;
               // draw a fullsize thumb if only 1 pic is available
               if (aPictureList.Count == 1)
               {
-                thumbnailWidth = (width - 20);
-                thumbnailHeight = (height - 20);
+                thumbnailWidth = (width - border * 2);
+                thumbnailHeight = (height - border * 2);
               }
               else
               {
-                thumbnailWidth = (width - 30) / 2;
-                thumbnailHeight = (height - 30) / 2;
+                thumbnailWidth = (width - border * 3) / 2;
+                thumbnailHeight = (height - border * 3) / 2;
               }
 
               using (Bitmap bmp = new Bitmap(width, height))
@@ -3855,24 +4287,24 @@ namespace MediaPortal.Util
                   //Load first of 4 images for the folder thumb.                  
                   try
                   {
-                    AddPicture(g, (string)aPictureList[0], x + 10, y + 10, w, h);
+                    AddPicture(g, (string)aPictureList[0], x + border, y + border, w, h);
 
                     //If exists load second of 4 images for the folder thumb.
                     if (aPictureList.Count > 1)
                     {
-                      AddPicture(g, (string)aPictureList[1], x + thumbnailWidth + 20, y + 10, w, h);
+                      AddPicture(g, (string)aPictureList[1], x + thumbnailWidth + border * 2, y + border, w, h);
                     }
 
                     //If exists load third of 4 images for the folder thumb.
                     if (aPictureList.Count > 2)
                     {
-                      AddPicture(g, (string)aPictureList[2], x + 10, y + thumbnailHeight + 20, w, h);
+                      AddPicture(g, (string)aPictureList[2], x + border, y + thumbnailHeight + border * 2, w, h);
                     }
 
                     //If exists load fourth of 4 images for the folder thumb.
                     if (aPictureList.Count > 3)
                     {
-                      AddPicture(g, (string)aPictureList[3], x + thumbnailWidth + 20, y + thumbnailHeight + 20, w, h);
+                      AddPicture(g, (string)aPictureList[3], x + thumbnailWidth + border * 2, y + thumbnailHeight + border * 2, w, h);
                     }
                   }
                   catch (Exception ex)
@@ -3983,7 +4415,7 @@ namespace MediaPortal.Util
           {
             using (Profile.Settings xmlreader = new Profile.MPSettings())
             {
-              currentSkin = Config.Dir.Config + @"\skin\" + xmlreader.GetValueAsString("skin", "name", "Default");
+              currentSkin = Config.Dir.Config + @"\skin\" + xmlreader.GetValueAsString("skin", "name", "Titan");
             }
             defaultBackground = currentSkin + @"\media\previewbackground.png";
           }
@@ -4602,6 +5034,30 @@ namespace MediaPortal.Util
       }
     }
 
+    public static string EncryptPassword(string code)
+    {
+      string result = string.Empty;
+      try
+      {
+        byte[] codeTextBytes = Encoding.UTF8.GetBytes(code);
+        result = Convert.ToBase64String(codeTextBytes);
+      }
+      catch { }
+      return result;
+    }
+
+    public static string DecryptPassword(string code)
+    {
+      string result = string.Empty;
+      try
+      {
+        byte[] codeTextBytes = Convert.FromBase64String(code);
+        result = Encoding.UTF8.GetString(codeTextBytes);
+      }
+      catch { }
+      return result;
+    }
+
     public static string EncryptPin(string code)
     {
       string result = string.Empty;
@@ -4963,6 +5419,94 @@ namespace MediaPortal.Util
       return false;
     }
 
+    /// <summary>
+    /// Returns connected USB hard disk drives letters
+    /// Works only from Vista and above
+    /// </summary>
+    /// <returns></returns>
+    public static List<string> GetAvailableUsbHardDisks()
+    {
+      List<string> disks = new List<string>();
+      
+      try
+      {
+        // browse all USB WMI physical disks
+        foreach (ManagementObject drive in
+          new ManagementObjectSearcher(
+            "select DeviceID, Model from Win32_DiskDrive where InterfaceType='USB' AND MediaType LIKE '%hard disk%'").
+            Get())
+        {
+          // associate physical disks with partitions
+          ManagementObject partition = new ManagementObjectSearcher(String.Format(
+            "associators of {{Win32_DiskDrive.DeviceID='{0}'}} where AssocClass = Win32_DiskDriveToDiskPartition",
+            drive["DeviceID"])).First();
+
+          if (partition != null)
+          {
+            // associate partitions with logical disks (drive letter volumes)
+            ManagementObject logical = new ManagementObjectSearcher(String.Format(
+              "associators of {{Win32_DiskPartition.DeviceID='{0}'}} where AssocClass = Win32_LogicalDiskToPartition",
+              partition["DeviceID"])).First();
+
+            if (logical != null)
+            {
+              disks.Add(logical["Name"].ToString());
+            }
+          }
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Error("Utils: GetUsbHardDisks Error: {0}", ex.Message);
+      }
+
+      return disks;
+    }
+
+    /// <summary>
+    /// Returns connected USB removable disk drives letters
+    /// Works only from Vista and above
+    /// </summary>
+    /// <returns></returns>
+    public static List<string> GetRemovableUsbDisks()
+    {
+      List<string> disks = new List<string>();
+
+      try
+      {
+        // browse all USB WMI physical disks
+        foreach (ManagementObject drive in
+          new ManagementObjectSearcher(
+            "select DeviceID, Model from Win32_DiskDrive where InterfaceType='USB' AND MediaType LIKE '%removable%' AND Model LIKE '%disk%'").
+            Get())
+        {
+          // associate physical disks with partitions
+          ManagementObject partition = new ManagementObjectSearcher(String.Format(
+            "associators of {{Win32_DiskDrive.DeviceID='{0}'}} where AssocClass = Win32_DiskDriveToDiskPartition",
+            drive["DeviceID"])).First();
+
+          if (partition != null)
+          {
+            // associate partitions with logical disks (drive letter volumes)
+            ManagementObject logical = new ManagementObjectSearcher(String.Format(
+              "associators of {{Win32_DiskPartition.DeviceID='{0}'}} where AssocClass = Win32_LogicalDiskToPartition",
+              partition["DeviceID"])).First();
+
+            if (logical != null)
+            {
+              disks.Add(logical["Name"].ToString());
+            }
+          }
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Error("Utils: GetUsbHardDisks Error: {0}", ex.Message);
+      }
+
+      return disks;
+    }
+
     public static string GetTreePath(string filename, int depth, int step)
     {
       string basename = Path.GetFileNameWithoutExtension(filename) ?? "";
@@ -4972,7 +5516,7 @@ namespace MediaPortal.Util
       while ((i-=step)>=0 && depth-->0)
       {
         tree += basename.Substring(i, step) + @"\";
-      }
+  }
       return tree;
     }
 

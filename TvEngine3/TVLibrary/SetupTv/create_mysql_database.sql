@@ -34,7 +34,7 @@ CREATE TABLE "CanceledSchedule" (
   "cancelDateTime" datetime NOT NULL,
   PRIMARY KEY  ("idCanceledSchedule"),
   KEY "FK_CanceledSchedule_Schedule" ("idSchedule")
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
+) ENGINE=INNODB DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
 #
 
 --
@@ -51,16 +51,16 @@ CREATE TABLE "Card" (
   "priority" int(11) NOT NULL,
   "grabEPG" bit(1) NOT NULL,
   "lastEpgGrab" datetime NOT NULL,
-  "recordingFolder" varchar(256) NOT NULL,
+  "recordingFolder" varchar(255) NOT NULL,
   "idServer" int(11) NOT NULL,
   "enabled" bit(1) NOT NULL,
   "camType" int(11) NOT NULL,
-  "timeshiftingFolder" varchar(256) NOT NULL,
+  "timeshiftingFolder" varchar(255) NOT NULL,
   "recordingFormat" int(11) NOT NULL,
   "decryptLimit" int(11) NOT NULL,
   PRIMARY KEY  ("idCard"),
   KEY "FK_Card_Server" ("idServer")
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
+) ENGINE=INNODB DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
 #
 
 --
@@ -74,7 +74,7 @@ CREATE TABLE "CardGroup" (
   "idCardGroup" int(11) NOT NULL auto_increment,
   "name" varchar(255) NOT NULL,
   PRIMARY KEY  ("idCardGroup")
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
+) ENGINE=INNODB DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
 #
 
 --
@@ -91,7 +91,7 @@ CREATE TABLE "CardGroupMap" (
   PRIMARY KEY  ("idMapping"),
   KEY "FK_CardGroupMap_Card" ("idCard"),
   KEY "FK_CardGroupMap_CardGroup" ("idCardGroup")
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
+) ENGINE=INNODB DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
 #
 
 --
@@ -119,7 +119,7 @@ CREATE TABLE "Channel" (
   PRIMARY KEY  ("idChannel"),
   KEY "idxChannel" ("isTv","sortOrder"),
   KEY "idxChannelRadio" ("isRadio")
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
+) ENGINE=INNODB DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
 #
 
 --
@@ -136,7 +136,7 @@ CREATE TABLE "ChannelGroup" (
   "sortOrder" int(11) NOT NULL,
   PRIMARY KEY  ("idGroup"),
   KEY "IDX_ChannelGroup" ("sortOrder")
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
+) ENGINE=INNODB DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
 #
 
 --
@@ -151,7 +151,7 @@ CREATE TABLE "ChannelLinkageMap" (
   "idPortalChannel" int(11) NOT NULL,
   "idLinkedChannel" int(11) NOT NULL,
   PRIMARY KEY  ("idMapping")
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
+) ENGINE=INNODB DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
 #
 
 --
@@ -169,7 +169,7 @@ CREATE TABLE "ChannelMap" (
   PRIMARY KEY  ("idChannelMap"),
   KEY "FK_ChannelMap_Cards" ("idCard"),
   KEY "FK_ChannelMap_Channels" ("idChannel")
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
+) ENGINE=INNODB DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
 #
 
 --
@@ -191,7 +191,7 @@ CREATE TABLE "Conflict" (
   KEY "FK_Conflict_Channel" ("idChannel"),
   KEY "FK_Conflict_Schedule" ("idSchedule"),
   KEY "FK_Conflict_Schedule1" ("idConflictingSchedule")
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
+) ENGINE=INNODB DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
 #
 
 --
@@ -209,7 +209,7 @@ CREATE TABLE "DiSEqCMotor" (
   PRIMARY KEY  ("idDiSEqCMotor"),
   KEY "FK_DisEqcMotor_Satellite" ("idSatellite"),
   KEY "FK_DisEqcMotor_Card" ("idCard")
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
+) ENGINE=INNODB DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
 #
 
 --
@@ -226,7 +226,7 @@ CREATE TABLE "Favorite" (
   "timesWatched" int(11) NOT NULL,
   PRIMARY KEY  ("idFavorite"),
   KEY "FK_Favorites_Programs" ("idProgram")
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
+) ENGINE=INNODB DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
 #
 
 --
@@ -244,7 +244,7 @@ CREATE TABLE "GroupMap" (
   PRIMARY KEY  ("idMap"),
   KEY "FK_GroupMap_Channel" ("idChannel"),
   KEY "FK_GroupMap_ChannelGroup" ("idGroup")
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
+) ENGINE=INNODB DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
 #
 
 --
@@ -266,7 +266,7 @@ CREATE TABLE "History" (
   "watched" int(11) NOT NULL,
   PRIMARY KEY  ("idHistory"),
   KEY "FK_History_Channel" ("idChannel")
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
+) ENGINE=INNODB DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
 #
 
 --
@@ -283,7 +283,7 @@ CREATE TABLE "Keyword" (
   "autoRecord" bit(1) NOT NULL,
   "searchIn" int(11) NOT NULL,
   PRIMARY KEY  ("idKeyword")
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
+) ENGINE=INNODB DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
 #
 
 --
@@ -298,7 +298,7 @@ CREATE TABLE "KeywordMap" (
   "idKeyword" int(11) NOT NULL,
   "idChannelGroup" int(11) NOT NULL,
   PRIMARY KEY  ("idKeywordMap")
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
+) ENGINE=INNODB DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
 #
 
 --
@@ -313,7 +313,7 @@ CREATE TABLE "PersonalTVGuideMap" (
   "idKeyword" int(11) NOT NULL,
   "idProgram" int(11) NOT NULL,
   PRIMARY KEY  ("idPersonalTVGuideMap")
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
+) ENGINE=INNODB DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
 #
 
 --
@@ -340,7 +340,7 @@ CREATE TABLE "Program" (
   "parentalRating" int(11) NOT NULL,
   PRIMARY KEY  ("idProgram"),
   UNIQUE KEY "idProgramBeginEnd" ("idChannel","startTime","endTime")
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
+) ENGINE=INNODB DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
 #
 
 --
@@ -356,7 +356,7 @@ CREATE TABLE "RadioChannelGroup" (
   "sortOrder" int(11) NOT NULL,
   PRIMARY KEY  ("idGroup"),
   KEY "IDX_RadioChannelGroup" ("sortOrder")
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
+) ENGINE=INNODB DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
 #
 
 --
@@ -375,7 +375,7 @@ CREATE TABLE "RadioGroupMap" (
   KEY "FK_RadioGroupMap_Channel" ("idChannel"),
   KEY "FK_RadioGroupMap_ChannelGroup" ("idGroup"),
   KEY "IDX_RadioGroupMap_SortOrder" ("SortOrder")
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
+) ENGINE=INNODB DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
 #
 
 --
@@ -402,7 +402,7 @@ CREATE TABLE "Recording" (
   PRIMARY KEY  ("idRecording"),
   KEY "FK_Recording_Server" ("idServer"),
   KEY "FK_Recordings_Channels" ("idChannel")
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
+) ENGINE=INNODB DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
 #
 
 --
@@ -417,7 +417,7 @@ CREATE TABLE "Satellite" (
   "satelliteName" varchar(200) NOT NULL,
   "transponderFileName" varchar(200) NOT NULL,
   PRIMARY KEY  ("idSatellite")
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
+) ENGINE=INNODB DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
 #
 
 --
@@ -431,7 +431,7 @@ CREATE TABLE "Schedule" (
   "id_Schedule" int(11) NOT NULL auto_increment,
   "idChannel" int(11) NOT NULL,
   "scheduleType" int(11) NOT NULL,
-  "programName" varchar(256) NOT NULL,
+  "programName" varchar(255) NOT NULL,
   "startTime" datetime NOT NULL,
   "endTime" datetime NOT NULL,
   "maxAirings" int(11) NOT NULL,
@@ -450,7 +450,7 @@ CREATE TABLE "Schedule" (
   KEY "IDX_Schedule_ProgramName" ("programName"),
   KEY "IDX_Schedule_StartTime" ("startTime"),
   KEY "IDX_Schedule_EndTime" ("endTime")
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
+) ENGINE=INNODB DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
 #
 
 --
@@ -463,9 +463,9 @@ CREATE TABLE "Schedule" (
 CREATE TABLE "Server" (
   "idServer" int(11) NOT NULL auto_increment,
   "isMaster" bit(1) NOT NULL,
-  "hostName" varchar(256) NOT NULL,
+  "hostName" varchar(255) NOT NULL,
   PRIMARY KEY  ("idServer")
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
+) ENGINE=INNODB DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
 #
 
 --
@@ -481,7 +481,7 @@ CREATE TABLE "Setting" (
   "value" varchar(4096) NOT NULL,
   PRIMARY KEY  ("idSetting"),
   KEY "IDX_Setting_Tag" ("tag")
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
+) ENGINE=INNODB DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
 #
 
 --
@@ -498,7 +498,7 @@ CREATE TABLE "Timespan" (
   "endTime" datetime NOT NULL,
   "dayOfWeek" int(11) NOT NULL,
   PRIMARY KEY  ("idTimespan")
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
+) ENGINE=INNODB DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
 #
 
 --
@@ -547,7 +547,7 @@ CREATE TABLE "TuningDetail" (
   PRIMARY KEY  ("idTuning"),
   KEY "IDX_TuningDetail1" ("idChannel"),
   KEY "IDX_TuningDetail_Edit" ("networkId","transportId","serviceId")
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
+) ENGINE=INNODB DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
 #
 
 --
@@ -565,7 +565,7 @@ CREATE TABLE "TvMovieMapping" (
   "timeSharingEnd" varchar(200) NOT NULL,
   PRIMARY KEY  ("idMapping"),
   KEY "FK_TvMovieMapping_Channel" ("idChannel")
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
+) ENGINE=INNODB DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
 #
 
 --
@@ -579,7 +579,7 @@ CREATE TABLE "Version" (
   "idVersion" int(11) NOT NULL auto_increment,
   "versionNumber" int(11) NOT NULL,
   PRIMARY KEY  ("idVersion")
-) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
+) ENGINE=INNODB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
 #
 
 --

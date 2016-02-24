@@ -530,8 +530,6 @@ namespace MediaPortal.Player
 
         string extension = Path.GetExtension(m_strCurrentFile).ToLowerInvariant();
 
-        //Get video/audio Info
-        _mediaInfo = new MediaInfoWrapper(m_strCurrentFile);
 
         GUIMessage msg;
         if (extension == ".mpls" || extension == ".bdmv")
@@ -548,11 +546,18 @@ namespace MediaPortal.Player
 
         // add the VMR9 in the graph
         // after enabeling exclusive mode, if done first it causes MediPortal to minimize if for example the "Windows key" is pressed while playing a video
-        Vmr9 = new VMR9Util();
         if (File.Exists(m_strCurrentFile) && extension != ".dts" && extension != ".mp3" && extension != ".mka" && extension != ".ac3")
         {
-          Vmr9.AddVMR9(graphBuilder);
-          Vmr9.Enable(false);
+          if (g_Player._mediaInfo != null && !g_Player._mediaInfo.hasVideo)
+          {
+            AudioOnly = true;
+          }
+          else
+          {
+            Vmr9 = new VMR9Util();
+            Vmr9.AddVMR9(graphBuilder);
+            Vmr9.Enable(false);
+          }
         }
         else
         {
@@ -842,7 +847,7 @@ namespace MediaPortal.Player
 
         //EnableClock();
 
-        if (Vmr9 == null || !Vmr9.IsVMR9Connected && !AudioOnly)
+        if ((Vmr9 == null || !Vmr9.IsVMR9Connected) && !AudioOnly)
         {
           Log.Error("VideoPlayer9: Failed to render file -> vmr9");
           mediaCtrl = null;
@@ -856,9 +861,12 @@ namespace MediaPortal.Player
         mediaPos = (IMediaPosition) graphBuilder;
         basicAudio = (IBasicAudio) graphBuilder;
         videoWin = (IVideoWindow) graphBuilder;
-        m_iVideoWidth = Vmr9.VideoWidth;
-        m_iVideoHeight = Vmr9.VideoHeight;
-        Vmr9.SetDeinterlaceMode();
+        if (Vmr9 != null)
+        {
+          m_iVideoWidth = Vmr9.VideoWidth;
+          m_iVideoHeight = Vmr9.VideoHeight;
+          Vmr9.SetDeinterlaceMode();
+        }
         return true;
       }
       catch (Exception ex)
@@ -1186,36 +1194,42 @@ namespace MediaPortal.Player
 
     protected string MatchFilters(string format)
     {
-      string AACCodec = "AAC";
       string VC1Codec = "VC-1";
 
       //Set codec bool to false
       ResetCodecBool();
 
-      IPin pPin = FileSync ? DirectShowUtil.FindPin(Splitter, PinDirection.Output, format) : DirectShowUtil.FindPin(_interfaceSourceFilter, PinDirection.Output, format);
+      IPin pPin = FileSync
+                    ? DirectShowUtil.FindPin(Splitter, PinDirection.Output, format)
+                    : DirectShowUtil.FindPin(_interfaceSourceFilter, PinDirection.Output, format);
 
       if (pPin != null)
       {
         RebuildMediaType(pPin);
-        DirectShowUtil.ReleaseComObject(pPin); pPin = null;
+        DirectShowUtil.ReleaseComObject(pPin);
+        pPin = null;
       }
 
       //Detection of Interlaced Video, true for all type except .bdmv .mpls
-      if (_mediaInfo.IsInterlaced && (string.Equals(_mediaInfo.VideoCodec, VC1Codec)))
+      if (g_Player.MediaInfo != null)
       {
-        vc1ICodec = true;
-        vc1Codec = false;
-      }
-      //Detection of VC1 Video if Splitter detection Failed, true for all type except .bdmv .mpls
-      else if (string.Equals(_mediaInfo.VideoCodec, VC1Codec))
-        vc1Codec = true;
-      //Detection of AAC Audio //Disable the Detection to enable correct audio filter detection rules.
-      //if (_mediaInfo.AudioCodec.Contains(AACCodec))
+        if (g_Player.MediaInfo.IsInterlaced && (string.Equals(g_Player.MediaInfo.VideoCodec, VC1Codec)))
+        {
+          vc1ICodec = true;
+          vc1Codec = false;
+        }
+          //Detection of VC1 Video if Splitter detection Failed, true for all type except .bdmv .mpls
+        else if (string.Equals(g_Player.MediaInfo.VideoCodec, VC1Codec))
+          vc1Codec = true;
+        //Detection of AAC Audio //Disable the Detection to enable correct audio filter detection rules.
+        //if (_mediaInfo.AudioCodec.Contains(AACCodec))
         //aacCodec = true;
-      if (_mediaInfo.VideoCodec.Equals("AVC"))
-        h264Codec = true;
-      if (_mediaInfo.VideoCodec.Equals("XVID") || _mediaInfo.VideoCodec.Equals("DIVX") || _mediaInfo.VideoCodec.Equals("DX50"))
-        xvidCodec = true;
+        if (g_Player.MediaInfo.VideoCodec.Contains("AVC"))
+          h264Codec = true;
+        if (g_Player.MediaInfo.VideoCodec.Contains("XVID") || g_Player.MediaInfo.VideoCodec.Contains("DIVX") ||
+            g_Player.MediaInfo.VideoCodec.Contains("DX50"))
+          xvidCodec = true;
+      }
 
       //Video Part
       if (format == "Video")
@@ -1330,11 +1344,9 @@ namespace MediaPortal.Player
 
     protected override void OnProcess()
     {
-      if (Vmr9 != null)
-      {
-        m_iVideoWidth = Vmr9.VideoWidth;
-        m_iVideoHeight = Vmr9.VideoHeight;
-      }
+      if (Vmr9 == null) return;
+      m_iVideoWidth = Vmr9.VideoWidth;
+      m_iVideoHeight = Vmr9.VideoHeight;
     }
 
     /// <summary> do cleanup and release DirectShow. </summary>

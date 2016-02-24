@@ -45,7 +45,7 @@ namespace MediaPortal.Profile
       }
       set
       {
-        if (string.IsNullOrEmpty(_configPathName))
+        if (string.IsNullOrEmpty(_configPathName) || AlternateConfig)
         {
           _configPathName = value;
           if (!Path.IsPathRooted(_configPathName))
@@ -59,6 +59,8 @@ namespace MediaPortal.Profile
         }
       }
     }
+
+    public static bool AlternateConfig { get; set; }
 
     private static MPSettings _instance;
 

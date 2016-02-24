@@ -120,9 +120,9 @@ namespace MediaPortal.Configuration.Sections
                                             new string[] {"gui", "enableguisounds", "true"},
                                             // 5 Show special mouse controls (scrollbars, etc)      
                                             new string[] {"gui", "mousesupport", "false"},
-                                            // 5 Reduce frame rate when not in focus     
+                                            // 6 Reduce frame rate when not in focus     
                                             new string[] {"gui", "reduceframerate", "false"},
-
+                                            new string[] {"gui", "addVideoFilesToDb", "false"},
                                           };
 
     /// <summary> 
@@ -178,16 +178,11 @@ namespace MediaPortal.Configuration.Sections
         }
 
         // Load skin settings.
-        string currentSkin = xmlreader.GetValueAsString("skin", "name", "NoSkin");
+        string currentSkin = xmlreader.GetValueAsString("skin", "name", "Titan");
 
         float screenHeight = GUIGraphicsContext.currentScreen.Bounds.Height;
         float screenWidth = GUIGraphicsContext.currentScreen.Bounds.Width;
         float screenRatio = (screenWidth / screenHeight);
-        if (currentSkin == "NoSkin")
-        {
-          //Change default skin based on screen aspect ratio
-          currentSkin = screenRatio > 1.5 ? "DefaultWide" : "Default";
-        }
 
         //
         // Make sure the skin actually exists before setting it as the current skin
@@ -224,7 +219,7 @@ namespace MediaPortal.Configuration.Sections
         }
 
         // Save skin settings.
-        string prevSkin = xmlwriter.GetValueAsString("skin", "name", "DefaultWide");
+        string prevSkin = xmlwriter.GetValueAsString("skin", "name", "Titan");
         string selectedSkin = prevSkin;
         try
         {

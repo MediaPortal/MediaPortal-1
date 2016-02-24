@@ -131,9 +131,9 @@ namespace MediaPortal.WebEPG
       {
           // Start of a new day - need to work out if the listings start in the morning or afternoon
         case Expect.Start:
-          if (OnPerviousDay(guideStartTime.Hour))
+          if (OnPreviousDay(guideStartTime.Hour))
           {
-            return false; // Guide starts on pervious day ignore these listings.
+            return false; // Guide starts on previous day ignore these listings.
           }
 
           if (_newDay)
@@ -294,13 +294,13 @@ namespace MediaPortal.WebEPG
     #region Private Methods
 
     /// <summary>
-    /// Tests if program is on pervious day
+    /// Tests if program is on previous day
     /// </summary>
     /// <param name="programStartHour">The program start hour.</param>
-    /// <returns>true if program starts on perious day otherwise false.</returns>
-    private bool OnPerviousDay(int programStartHour)
+    /// <returns>true if program starts on previous day otherwise false.</returns>
+    private bool OnPreviousDay(int programStartHour)
     {
-      // check if program starts late on the pervious day
+      // check if program starts late on the previous day
       if (programStartHour >= 21)
       {
         // program starts after grab time -> site filters programs based on current time

@@ -138,6 +138,9 @@ namespace MediaPortal.Configuration.Sections
         case 4:
           Thumbs.Quality = Thumbs.ThumbQuality.highest;
           break;
+        case 5:
+          Thumbs.Quality = Thumbs.ThumbQuality.uhd;
+          break;
       }
       setThumbQualityLabels();
     }
@@ -184,7 +187,15 @@ namespace MediaPortal.Configuration.Sections
           labelCurrentCompositing.Text = "High Quality";
           labelCurrentInterpolation.Text = "High Quality Bicubic";
           labelCurrentSmoothing.Text = "High Quality";
-          labelRecommendedCurrent.Text = "Very large LCDs, Projectors";
+          labelRecommendedCurrent.Text = "Large LCDs, Plasmas";
+          break;
+        case 5:
+          labelCurrentResolution.Text = Convert.ToString((int)Thumbs.ThumbResolution) + " + " +
+                                        Convert.ToString((int)Thumbs.ThumbLargeResolution);
+          labelCurrentCompositing.Text = "High Quality";
+          labelCurrentInterpolation.Text = "High Quality Bicubic";
+          labelCurrentSmoothing.Text = "High Quality";
+          labelRecommendedCurrent.Text = "UHD TVs, Projectors";
           break;
       }
     }
@@ -639,7 +650,7 @@ namespace MediaPortal.Configuration.Sections
       this.trackBarQuality.Anchor = System.Windows.Forms.AnchorStyles.None;
       this.trackBarQuality.LargeChange = 2;
       this.trackBarQuality.Location = new System.Drawing.Point(197, 35);
-      this.trackBarQuality.Maximum = 4;
+      this.trackBarQuality.Maximum = 5;
       this.trackBarQuality.Name = "trackBarQuality";
       this.trackBarQuality.Orientation = System.Windows.Forms.Orientation.Vertical;
       this.trackBarQuality.Size = new System.Drawing.Size(45, 116);

@@ -379,7 +379,15 @@ namespace MediaPortal.Common.Utils
     {
       { new Version("1.1.6.27644"), "1.2.0 Beta" },
       { new Version("1.2.100.0"), "1.3.0 Alpha" },
-      { new Version("1.3.100.0"), "1.4.0 Pre Release" }
+      { new Version("1.3.100.0"), "1.4.0 Pre Release" },
+      { new Version("1.4.100.0"), "1.5.0 Pre Release" },
+      { new Version("1.5.100.0"), "1.6.0 Pre Release" },
+      { new Version("1.6.100.0"), "1.7.0 Pre Release" },
+      { new Version("1.7.100.0"), "1.8.0 Pre Release" },
+      { new Version("1.8.100.0"), "1.9.0 Pre Release" },
+      { new Version("1.9.100.0"), "1.10.0 Pre Release" },
+      { new Version("1.10.100.0"), "1.11.0 Pre Release" },
+      { new Version("1.11.100.0"), "1.12.0 Pre Release" }
     };
 
     public static string MediaPortalReleaseForApiVersion(Version apiVersion)

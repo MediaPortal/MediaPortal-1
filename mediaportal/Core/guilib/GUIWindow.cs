@@ -23,6 +23,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Reflection;
+using System.Threading;
 using System.Windows.Media.Animation;
 using System.Windows.Serialization;
 using System.Xml;
@@ -75,7 +76,6 @@ namespace MediaPortal.GUI.Library
       WINDOW_SETTINGS_SLIDESHOW = 12,
       WINDOW_SETTINGS_PICTURES = 12,
       WINDOW_SETTINGS_MUSIC = 14,
-      WINDOW_SETTINGS_WEATHER = 17,
       WINDOW_SCRIPTS = 20,
       WINDOW_VIDEO_TITLE = 25,
       WINDOW_VIDEO_PLAYLIST = 28,
@@ -170,13 +170,13 @@ namespace MediaPortal.GUI.Library
       WINDOW_DIALOG_TVNOTIFYYESNO = 2019,
       WINDOW_DIALOG_OLD_SKIN = 2020,
       WINDOW_DIALOG_INCOMPATIBLE_PLUGINS = 2021,
-      WINDOW_WEATHER = 2600,
       WINDOW_SCREENSAVER = 2900,
       WINDOW_OSD = 2901,
       WINDOW_VIDEO_OVERLAY = 3000,
       WINDOW_DVD = 3001, // for keymapping
       WINDOW_TV_OVERLAY = 3002,
       WINDOW_TVOSD = 3003,
+      WINDOW_GUI_VOLUME_OVERLAY = 3004,
       WINDOW_TOPBAR = 3005,
       WINDOW_TVZAPOSD = 3007,
       WINDOW_VIDEO_OVERLAY_TOP = 3008,
@@ -189,7 +189,7 @@ namespace MediaPortal.GUI.Library
       WINDOW_FULLSCREEN_TELETEXT = 7701,
       WINDOW_DIALOG_TEXT = 7900,
       WINDOW_TETRIS = 7776,
-      WINDOW_NUMBERPLACE = 7777, // rtv - sudoku clone
+      WINDOW_SUDOKU = 7777, // rtv - sudoku clone
       WINDOW_RADIO_LASTFM = 7890,
       WINDOW_MUSIC_MENU = 8888, // for harley
       WINDOW_SEARCH_RADIO = 8900 // gemx
@@ -246,16 +246,19 @@ namespace MediaPortal.GUI.Library
     private bool _hasRendered = false;
     private bool _windowLoaded = false;
     private static bool _hasWindowVisibilityUpdated;
+    protected int _volumeOverlayOffsetX = 0; // default x offset for volume overlay is 0
+    protected int _volumeOverlayOffsetY = 0; // default y offset for volume overlay is 0
 
     private VisualEffect _showAnimation = new VisualEffect(); // for dialogs
     private VisualEffect _closeAnimation = new VisualEffect();
+    public static readonly SynchronizationContext _mainThreadContext = SynchronizationContext.Current;
 
     #endregion
 
     #region ctor
 
     /// <summary>
-    /// The (emtpy) constructur of the GUIWindow
+    /// The (empty) constructor of the GUIWindow
     /// </summary>
     public GUIWindow() {}
 
@@ -471,7 +474,11 @@ namespace MediaPortal.GUI.Library
       }
 
       // else load xml file now
-      LoadSkin();
+      GUIWindow._mainThreadContext.Send(delegate
+      {
+        LoadSkin();
+      }, null);
+
       if (!_windowAllocated)
       {
         AllocResources();
@@ -489,13 +496,18 @@ namespace MediaPortal.GUI.Library
     {
 
       // add thread check to log calls not running in main thread/GUI
-      #if DEBUG
-      int iCurrentThread = System.Threading.Thread.CurrentThread.ManagedThreadId;
-      if (iCurrentThread != 1)
+      String threadName = Thread.CurrentThread.Name;
+      if (threadName != "MPMain" && threadName != "Config Main")
       {
-        Log.Error("LoadSkin: Running on thread <{0}> instead of main thread - StackTrace: '{1}'", iCurrentThread, Environment.StackTrace);
+        if (threadName != null)
+        {
+          Log.Error("LoadSkin: Running on wrong thread name [{0}] - StackTrace: '{1}'", threadName, Environment.StackTrace);
+        }
+        else
+        {
+          Log.Error("LoadSkin: Running on wrong thread - StackTrace: '{0}'", Environment.StackTrace);
+        }
       }
-      #endif
 
       _lastSkin = GUIGraphicsContext.Skin;
       // no filename is configured
@@ -518,6 +530,7 @@ namespace MediaPortal.GUI.Library
       //string strReferenceFile = _windowXmlFileName.Substring(0, iPos);
       _windowXmlFileName = GUIGraphicsContext.GetThemedSkinFile(_windowXmlFileName.Substring(_windowXmlFileName.LastIndexOf("\\")));
       string strReferenceFile = GUIGraphicsContext.GetThemedSkinFile(@"\references.xml");
+
       GUIControlFactory.LoadReferences(strReferenceFile);
 
       try
@@ -656,6 +669,36 @@ namespace MediaPortal.GUI.Library
             _disableTopBar = true;
           }
         }
+
+
+        XmlNode nodeVolumeOverlayOffsetX = doc.DocumentElement.SelectSingleNode("/window/volumeoverlayoffsetx");
+        _volumeOverlayOffsetX = 0;
+        if (nodeVolumeOverlayOffsetX != null)
+        {
+          if (nodeVolumeOverlayOffsetX.InnerText != null)
+          {
+            string value = nodeVolumeOverlayOffsetX.InnerText.ToLower();
+            if (!Int32.TryParse(value, out _volumeOverlayOffsetX))
+            {
+              _volumeOverlayOffsetX = 0;
+            }
+          }
+        }
+
+        XmlNode nodeVolumeOverlayOffsetY = doc.DocumentElement.SelectSingleNode("/window/volumeoverlayoffsety");
+        _volumeOverlayOffsetY = 0;
+        if (nodeVolumeOverlayOffsetY != null)
+        {
+          if (nodeVolumeOverlayOffsetY.InnerText != null)
+          {
+            string value = nodeVolumeOverlayOffsetY.InnerText.ToLower();
+            if (!Int32.TryParse(value, out _volumeOverlayOffsetY))
+            {
+              _volumeOverlayOffsetY = 0;
+            }
+          }
+        }
+
         _rememberLastFocusedControl = false;
         if (GUIGraphicsContext.AllowRememberLastFocusedItem)
         {
@@ -831,7 +874,8 @@ namespace MediaPortal.GUI.Library
         if (xmlNodeList != null)
           foreach (XmlNode node in xmlNodeList)
           {
-            string[] tokens = node.InnerText.Split(':');
+            // Split only fisrt ':' otherwise full path can like (C:\) will be split too
+            string[] tokens = node.InnerText.Split(new[] { ':' }, 2);
 
             if (tokens.Length < 2)
             {
@@ -1028,7 +1072,10 @@ namespace MediaPortal.GUI.Library
     {
       if (_isSkinLoaded && (_lastSkin != GUIGraphicsContext.Skin))
       {
-        LoadSkin();
+        GUIWindow._mainThreadContext.Send(delegate
+        {
+          LoadSkin();
+        }, null);
       }
 
       if (_rememberLastFocusedControl && _rememberLastFocusedControlId >= 0)
@@ -1156,7 +1203,12 @@ namespace MediaPortal.GUI.Library
         }
 
         Dispose();
-        LoadSkin();
+
+        GUIWindow._mainThreadContext.Send(delegate
+        {
+          LoadSkin();
+        }, null);
+
         HashSet<int> faultyControl = new HashSet<int>();
         // tell every control we're gonna alloc the resources next
         for (int i = 0; i < Children.Count; i++)
@@ -1510,12 +1562,52 @@ namespace MediaPortal.GUI.Library
       }
       if (action.wID == Action.ActionType.ACTION_CONTEXT_MENU)
       {
-        OnShowContextMenu();
+        // send the action to the control which has the focus, if there is an override
+        int id;
+        GUIControl cntlFoc = GetControl(GetFocusControlId());
+        if (cntlFoc != null && cntlFoc.OnInfo.Length > 0)
+        {
+          id = GetFocusControlId();
+          if (id >= 0)
+          {
+            _previousFocusedControlId = id;
+          }
+          cntlFoc.OnAction(action);
+          id = GetFocusControlId();
+          if (id >= 0)
+          {
+            _previousFocusedControlId = id;
+          }
+        }
+        else
+        {
+          OnShowContextMenu();
+        }
         return;
       }
       if (action.wID == Action.ActionType.ACTION_PREVIOUS_MENU)
       {
-        OnPreviousWindow();
+        // send the action to the control which has the focus, if there is an override
+        int id;
+        GUIControl cntlFoc = GetControl(GetFocusControlId());
+        if (cntlFoc != null && cntlFoc.OnESC.Length > 0)
+        {
+          id = GetFocusControlId();
+          if (id >= 0)
+          {
+            _previousFocusedControlId = id;
+          }
+          cntlFoc.OnAction(action);
+          id = GetFocusControlId();
+          if (id >= 0)
+          {
+            _previousFocusedControlId = id;
+          }
+        }
+        else
+        {
+          OnPreviousWindow();
+        }
         return;
       }
 
@@ -1660,7 +1752,11 @@ namespace MediaPortal.GUI.Library
               }
               else
               {
-                LoadSkin();
+                GUIWindow._mainThreadContext.Send(delegate
+                {
+                  LoadSkin();
+                }, null);
+
                 if (!_windowAllocated)
                 {
                   AllocResources();
@@ -1687,6 +1783,8 @@ namespace MediaPortal.GUI.Library
               GUIGraphicsContext.AutoHideTopBar = _autoHideTopbar;
               GUIGraphicsContext.TopBarHidden = _autoHideTopbar;
               GUIGraphicsContext.DisableTopBar = _disableTopBar;
+              GUIGraphicsContext.VolumeOverlayOffsetX = _volumeOverlayOffsetX;
+              GUIGraphicsContext.VolumeOverlayOffsetY = _volumeOverlayOffsetY;
 
               if (message.Param1 != (int) Window.WINDOW_INVALID && message.Param1 != GetID)
               {
@@ -1795,6 +1893,10 @@ namespace MediaPortal.GUI.Library
           {
             _previousFocusedControlId = id;
           }
+        }
+        catch (ThreadAbortException)
+        {
+          Log.Debug("OnMessage.ThreadAbortException exception.");
         }
         catch (Exception ex)
         {

@@ -1,0 +1,633 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <controls>
+    <!-- *************************************************************************************************** -->
+    <!-- *************************** Rotating CD and Flipping Cover  *************************************** -->
+    <!-- ******************  ANIMATIONS BASED ON AN IDEA OF KIWIJUNGLIST AND POG! ************************** -->
+    <!-- *************************************************************************************************** -->
+    <control>
+      <type>group</type>
+      <description>group element</description>
+      <visible>player.hasaudio+!player.hasvideo</visible>
+      <!-- Shadow for case -->
+      <control>
+        <type>image</type>
+        <posX>1300</posX>
+        <posY>240</posY>
+        <width>420</width>
+        <height>420</height>
+        <texture>cdcase_shadow.png</texture>
+        <visible>[string.equals(#currentplaytime,0:05)|string.equals(#currentplaytime,0:06)|string.equals(#currentplaytime,0:07)|string.equals(#currentplaytime,0:08)|string.equals(#currentplaytime,0:09)|string.equals(#currentplaytime,0:10)]</visible>
+      </control>
+      <control>
+        <type>image</type>
+        <posX>900</posX>
+        <posY>240</posY>
+        <width>420</width>
+        <height>420</height>
+        <texture>cdcase_shadow.png</texture>
+        <animation effect="rotatey" time="1000" center="1300,0" start="-180" end="0" condition="string.equals(#currentplaytime,0:05)|string.equals(#currentplaytime,0:06)|string.equals(#currentplaytime,0:07)">conditional</animation>
+        <animation effect="fade" delay="450" time="100" start="0" end="100" condition="string.equals(#currentplaytime,0:05)|string.equals(#currentplaytime,0:06)">conditional</animation>
+        <visible>string.equals(#currentplaytime,0:05)|string.equals(#currentplaytime,0:06)</visible>
+      </control>
+      <control>
+        <type>image</type>
+        <posX>900</posX>
+        <posY>240</posY>
+        <width>420</width>
+        <height>420</height>
+        <texture>cdcase_shadow.png</texture>
+        <visible>string.equals(#currentplaytime,0:07)|string.equals(#currentplaytime,0:08)|string.equals(#currentplaytime,0:09)</visible>
+      </control>
+      <control>
+        <type>image</type>
+        <posX>900</posX>
+        <posY>240</posY>
+        <width>420</width>
+        <height>420</height>
+        <texture>cdcase_shadow.png</texture>
+        <animation effect="rotatey" time="1000" center="1300,0" start="0" end="-180" condition="string.equals(#currentplaytime,0:10)|string.equals(#currentplaytime,0:11)">conditional</animation>
+        <animation effect="fade" delay="450" time="100" start="100" end="0" condition="string.equals(#currentplaytime,0:10)|string.equals(#currentplaytime,0:11)">conditional</animation>
+        <visible>string.equals(#currentplaytime,0:10)|string.equals(#currentplaytime,0:11)</visible>
+      </control>
+      <!-- Inside of case -->
+      <control>
+        <type>image</type>
+        <posX>900</posX>
+        <posY>240</posY>
+        <width>800</width>
+        <height>400</height>
+        <zoom>true</zoom>
+        <keepaspectratio>true</keepaspectratio>
+        <texture mask="case-mask1.png">hover_mpnzb.png</texture>
+        <visible>string.equals(#currentplaytime,0:05)|string.equals(#currentplaytime,0:06)|string.equals(#currentplaytime,0:07)|string.equals(#currentplaytime,0:08)|string.equals(#currentplaytime,0:09)|string.equals(#currentplaytime,0:10)|string.equals(#currentplaytime,0:11)</visible>
+      </control>
+      <control>
+        <type>image</type>
+        <posX>900</posX>
+        <posY>240</posY>
+        <width>800</width>
+        <height>400</height>
+        <zoom>true</zoom>
+        <keepaspectratio>true</keepaspectratio>
+        <texture mask="case-mask1.png">#fanarthandler.music.backdrop1.play</texture>
+        <visible>[string.equals(#currentplaytime,0:05)|string.equals(#currentplaytime,0:06)|string.equals(#currentplaytime,0:07)|string.equals(#currentplaytime,0:08)|string.equals(#currentplaytime,0:09)|string.equals(#currentplaytime,0:10)|string.equals(#currentplaytime,0:11)]+[control.isvisible(91919295)+control.isvisible(91919294)]</visible>
+      </control>
+      <control>
+        <type>image</type>
+        <posX>900</posX>
+        <posY>240</posY>
+        <width>800</width>
+        <height>400</height>
+        <zoom>true</zoom>
+        <keepaspectratio>true</keepaspectratio>
+        <texture mask="case-mask1.png">#fanarthandler.music.backdrop2.play</texture>
+        <visible>[string.equals(#currentplaytime,0:05)|string.equals(#currentplaytime,0:06)|string.equals(#currentplaytime,0:07)|string.equals(#currentplaytime,0:08)|string.equals(#currentplaytime,0:09)|string.equals(#currentplaytime,0:10)|string.equals(#currentplaytime,0:11)]+[control.isvisible(91919296)+control.isvisible(91919294)]</visible>
+      </control>
+      <control>
+        <type>image</type>
+        <posX>900</posX>
+        <posY>240</posY>
+        <width>800</width>
+        <height>400</height>
+        <zoom>true</zoom>
+        <keepaspectratio>true</keepaspectratio>
+        <texture mask="case-mask1.png">overlay_left.png</texture>
+        <visible>[string.equals(#currentplaytime,0:05)|string.equals(#currentplaytime,0:06)|string.equals(#currentplaytime,0:07)|string.equals(#currentplaytime,0:08)|string.equals(#currentplaytime,0:09)|string.equals(#currentplaytime,0:10)|string.equals(#currentplaytime,0:11)]+[control.isvisible(91919296)|control.isvisible(91919295)]</visible>
+        <colordiffuse>ddffffff</colordiffuse>
+      </control>
+      <!-- Rotating CD -->
+      <control>
+        <type>image</type>
+        <posX>1504</posX>
+        <posY>244</posY>
+        <width>411</width>
+        <height>411</height>
+        <texture>cd_shadow.png</texture>
+        <animation effect="slide" start="0,0" end="-200,0" time="250">hidden</animation>
+        <visible>![string.equals(#currentplaytime,0:00)|string.equals(#currentplaytime,0:01)|string.equals(#currentplaytime,0:02)|string.equals(#currentplaytime,0:03)|string.equals(#currentplaytime,0:04)|string.equals(#currentplaytime,0:05)|string.equals(#currentplaytime,0:06)|string.equals(#currentplaytime,0:07)|string.equals(#currentplaytime,0:08)|string.equals(#currentplaytime,0:09)|string.equals(#currentplaytime,0:10)|string.equals(#currentplaytime,0:11)]</visible>
+      </control>
+      <control>
+        <type>image</type>
+        <posX>1504</posX>
+        <posY>244</posY>
+        <width>392</width>
+        <height>392</height>
+        <colordiffuse>FFE0E0E0</colordiffuse>
+        <texture mask="cd_mask.png">cd.png</texture>
+        <animation effect="rotate" time="2500" end="-360" loop="true" condition="!player.paused+![string.equals(#currentplaytime,0:00)|string.equals(#currentplaytime,0:01)|string.equals(#currentplaytime,0:02)|string.equals(#currentplaytime,0:03)|string.equals(#currentplaytime,0:04)|string.equals(#currentplaytime,0:05)|string.equals(#currentplaytime,0:06)|string.equals(#currentplaytime,0:07)|string.equals(#currentplaytime,0:08)]">conditional</animation>
+        <animation effect="slide" start="0,0" end="-200,0" time="250">hidden</animation>
+        <visible>![string.equals(#currentplaytime,0:00)|string.equals(#currentplaytime,0:01)|string.equals(#currentplaytime,0:02)|string.equals(#currentplaytime,0:03)|string.equals(#currentplaytime,0:04)|string.equals(#currentplaytime,0:05)|string.equals(#currentplaytime,0:06)|string.equals(#currentplaytime,0:07)|string.equals(#currentplaytime,0:08)|string.equals(#currentplaytime,0:09)|string.equals(#currentplaytime,0:10)|string.equals(#currentplaytime,0:11)]</visible>
+      </control>
+      <control>
+        <id>10000</id>
+        <type>image</type>
+        <posX>1504</posX>
+        <posY>244</posY>
+        <width>392</width>
+        <height>392</height>
+        <colordiffuse>FFE0E0E0</colordiffuse>
+        <texture mask="cd_mask.png">..\..\..\Thumbs\music\cdart\#Play.Current.AlbumArtist - #Play.Current.Album.png</texture>
+        <animation effect="rotate" time="2500" end="-360" loop="true" condition="!player.paused+![string.equals(#currentplaytime,0:00)|string.equals(#currentplaytime,0:01)|string.equals(#currentplaytime,0:02)|string.equals(#currentplaytime,0:03)|string.equals(#currentplaytime,0:04)|string.equals(#currentplaytime,0:05)|string.equals(#currentplaytime,0:06)|string.equals(#currentplaytime,0:07)|string.equals(#currentplaytime,0:08)]">conditional</animation>
+        <animation effect="slide" start="0,0" end="-200,0" time="250">hidden</animation>
+        <visible>![string.equals(#currentplaytime,0:00)|string.equals(#currentplaytime,0:01)|string.equals(#currentplaytime,0:02)|string.equals(#currentplaytime,0:03)|string.equals(#currentplaytime,0:04)|string.equals(#currentplaytime,0:05)|string.equals(#currentplaytime,0:06)|string.equals(#currentplaytime,0:07)|string.equals(#currentplaytime,0:08)|string.equals(#currentplaytime,0:09)|string.equals(#currentplaytime,0:10)|string.equals(#currentplaytime,0:11)]</visible>
+      </control>
+      <control>
+        <id>0</id>
+        <type>image</type>
+        <posX>1504</posX>
+        <posY>244</posY>
+        <width>392</width>
+        <height>392</height>
+        <colordiffuse>FFE0E0E0</colordiffuse>
+        <texture mask="cd_mask.png">#Play.Current.Thumb</texture>
+        <animation effect="rotate" time="2500" end="-360" loop="true" condition="!player.paused+![string.equals(#currentplaytime,0:00)|string.equals(#currentplaytime,0:01)|string.equals(#currentplaytime,0:02)|string.equals(#currentplaytime,0:03)|string.equals(#currentplaytime,0:04)|string.equals(#currentplaytime,0:05)|string.equals(#currentplaytime,0:06)|string.equals(#currentplaytime,0:07)|string.equals(#currentplaytime,0:08)]">conditional</animation>
+        <animation effect="slide" start="0,0" end="-200,0" time="250">hidden</animation>
+        <visible>![string.equals(#currentplaytime,0:00)|string.equals(#currentplaytime,0:01)|string.equals(#currentplaytime,0:02)|string.equals(#currentplaytime,0:03)|string.equals(#currentplaytime,0:04)|string.equals(#currentplaytime,0:05)|string.equals(#currentplaytime,0:06)|string.equals(#currentplaytime,0:07)|string.equals(#currentplaytime,0:08)|string.equals(#currentplaytime,0:09)|string.equals(#currentplaytime,0:10)|string.equals(#currentplaytime,0:11)]+!control.hasthumb(10000)</visible>
+      </control>
+      <!-- CD Just before sliding up -->
+      <control>
+      <id>10001</id>
+        <type>image</type>
+        <posX>1304</posX>
+        <posY>244</posY>
+        <width>392</width>
+        <height>392</height>
+        <colordiffuse>FFE0E0E0</colordiffuse>
+        <texture mask="cd_mask.png">..\..\..\Thumbs\music\cdart\#Play.Current.AlbumArtist - #Play.Current.Album.png</texture>
+        <visible>string.equals(#currentplaytime,0:05)|string.equals(#currentplaytime,0:06)</visible>
+      </control>
+      <control>
+        <type>image</type>
+        <posX>1304</posX>
+        <posY>244</posY>
+        <width>392</width>
+        <height>392</height>
+        <colordiffuse>FFE0E0E0</colordiffuse>
+        <texture mask="cd_mask.png">#Play.Current.Thumb</texture>
+        <visible>[string.equals(#currentplaytime,0:05)|string.equals(#currentplaytime,0:06)]+!control.hasthumb(10001)</visible>
+      </control>
+      <!-- CD sliding up out of case -->
+      <control>
+        <type>image</type>
+        <posX>1304</posX>
+        <posY>244</posY>
+        <width>411</width>
+        <height>411</height>
+        <texture>cd_shadow.png</texture>
+        <animation effect="slide" start="0,0" end="200,0" time="1000" reversible="false">visible</animation>
+        <visible>string.equals(#currentplaytime,0:07)|string.equals(#currentplaytime,0:08)|string.equals(#currentplaytime,0:09)|string.equals(#currentplaytime,0:10)|string.equals(#currentplaytime,0:11)</visible>
+      </control>
+      <control>
+        <type>image</type>
+        <posX>1304</posX>
+        <posY>244</posY>
+        <width>392</width>
+        <height>392</height>
+        <colordiffuse>FFE0E0E0</colordiffuse>
+        <texture mask="cd_mask.png">cd.png</texture>
+        <animation effect="slide" start="0,0" end="200,0" time="1000" reversible="false">visible</animation>
+        <visible>string.equals(#currentplaytime,0:07)|string.equals(#currentplaytime,0:08)|string.equals(#currentplaytime,0:09)|string.equals(#currentplaytime,0:10)|string.equals(#currentplaytime,0:11)</visible>
+        <animation effect="rotate" time="2500" end="-360" loop="true" condition="![string.equals(#currentplaytime,0:00)|string.equals(#currentplaytime,0:01)|string.equals(#currentplaytime,0:02)|string.equals(#currentplaytime,0:03)|string.equals(#currentplaytime,0:04)|string.equals(#currentplaytime,0:05)|string.equals(#currentplaytime,0:06)|string.equals(#currentplaytime,0:07)|string.equals(#currentplaytime,0:08)]">conditional</animation>
+      </control>
+      <control>
+      <id>10002</id>
+        <type>image</type>
+        <posX>1304</posX>
+        <posY>244</posY>
+        <width>392</width>
+        <height>392</height>
+        <colordiffuse>FFE0E0E0</colordiffuse>
+        <texture mask="cd_mask.png">..\..\..\Thumbs\music\cdart\#Play.Current.AlbumArtist - #Play.Current.Album.png</texture>
+        <animation effect="slide" start="0,0" end="200,0" time="1000" reversible="false">visible</animation>
+        <visible>string.equals(#currentplaytime,0:07)|string.equals(#currentplaytime,0:08)|string.equals(#currentplaytime,0:09)|string.equals(#currentplaytime,0:10)|string.equals(#currentplaytime,0:11)</visible>
+        <animation effect="rotate" time="2500" end="-360" loop="true" condition="![string.equals(#currentplaytime,0:00)|string.equals(#currentplaytime,0:01)|string.equals(#currentplaytime,0:02)|string.equals(#currentplaytime,0:03)|string.equals(#currentplaytime,0:04)|string.equals(#currentplaytime,0:05)|string.equals(#currentplaytime,0:06)|string.equals(#currentplaytime,0:07)|string.equals(#currentplaytime,0:08)]">conditional</animation>
+      </control>
+      <control>
+        <type>image</type>
+        <posX>1304</posX>
+        <posY>244</posY>
+        <width>392</width>
+        <height>392</height>
+        <colordiffuse>FFE0E0E0</colordiffuse>
+        <texture mask="cd_mask.png">#Play.Current.Thumb</texture>
+        <animation effect="slide" start="0,0" end="200,0" time="1000" reversible="false">visible</animation>
+        <visible>[string.equals(#currentplaytime,0:07)|string.equals(#currentplaytime,0:08)|string.equals(#currentplaytime,0:09)|string.equals(#currentplaytime,0:10)|string.equals(#currentplaytime,0:11)]+!control.hasthumb(10002)</visible>
+        <animation effect="rotate" time="2500" end="-360" loop="true" condition="![string.equals(#currentplaytime,0:00)|string.equals(#currentplaytime,0:01)|string.equals(#currentplaytime,0:02)|string.equals(#currentplaytime,0:03)|string.equals(#currentplaytime,0:04)|string.equals(#currentplaytime,0:05)|string.equals(#currentplaytime,0:06)|string.equals(#currentplaytime,0:07)|string.equals(#currentplaytime,0:08)]">conditional</animation>
+      </control>
+      <control>
+        <type>image</type>
+        <posX>1300</posX>
+        <posY>240</posY>
+        <width>400</width>
+        <height>400</height>
+        <texture>case-shadow-front.png</texture>
+        <visible>string.equals(#currentplaytime,0:05)|string.equals(#currentplaytime,0:06)|string.equals(#currentplaytime,0:07)|string.equals(#currentplaytime,0:08)|string.equals(#currentplaytime,0:09)|string.equals(#currentplaytime,0:10)</visible>
+      </control>
+      <!-- Front Cover ontop of Rotating CD -->
+      <control>
+        <type>image</type>
+        <posX>1300</posX>
+        <posY>240</posY>
+        <width>420</width>
+        <height>420</height>
+        <texture>cdcase_shadow.png</texture>
+        <visible>![string.equals(#currentplaytime,0:00)|string.equals(#currentplaytime,0:01)|string.equals(#currentplaytime,0:02)|string.equals(#currentplaytime,0:03)|string.equals(#currentplaytime,0:04)|string.equals(#currentplaytime,0:05)|string.equals(#currentplaytime,0:06)|string.equals(#currentplaytime,0:07)|string.equals(#currentplaytime,0:08)|string.equals(#currentplaytime,0:09)|string.equals(#currentplaytime,0:10)]</visible>
+      </control>
+      <control>
+        <id>112</id>
+        <type>image</type>
+        <posX>1300</posX>
+        <posY>240</posY>
+        <width>400</width>
+        <height>400</height>
+        <texture mask="cdcase_mask.png">#Play.Current.Thumb</texture>
+        <visible>![string.equals(#currentplaytime,0:00)|string.equals(#currentplaytime,0:01)|string.equals(#currentplaytime,0:02)|string.equals(#currentplaytime,0:03)|string.equals(#currentplaytime,0:04)|string.equals(#currentplaytime,0:05)|string.equals(#currentplaytime,0:06)|string.equals(#currentplaytime,0:07)|string.equals(#currentplaytime,0:08)|string.equals(#currentplaytime,0:09)|string.equals(#currentplaytime,0:10)]</visible>
+      </control>
+      <!-- Inside of case CD Insert overlay-->
+      <control>
+        <type>image</type>
+        <posX>900</posX>
+        <posY>240</posY>
+        <width>800</width>
+        <height>400</height>
+        <zoom>true</zoom>
+        <keepaspectratio>true</keepaspectratio>
+        <texture mask="case-mask3.png">hover_mpnzb.png</texture>
+        <visible>string.equals(#currentplaytime,0:05)|string.equals(#currentplaytime,0:06)|string.equals(#currentplaytime,0:07)|string.equals(#currentplaytime,0:08)|string.equals(#currentplaytime,0:09)|string.equals(#currentplaytime,0:10)</visible>
+      </control>
+      <control>
+        <type>image</type>
+        <posX>900</posX>
+        <posY>240</posY>
+        <width>800</width>
+        <height>400</height>
+        <zoom>true</zoom>
+        <keepaspectratio>true</keepaspectratio>
+        <texture mask="case-mask3.png">#fanarthandler.music.backdrop1.play</texture>
+        <visible>[string.equals(#currentplaytime,0:05)|string.equals(#currentplaytime,0:06)|string.equals(#currentplaytime,0:07)|string.equals(#currentplaytime,0:08)|string.equals(#currentplaytime,0:09)|string.equals(#currentplaytime,0:10)]+[control.isvisible(91919295)+control.isvisible(91919294)]</visible>
+      </control>
+      <control>
+        <type>image</type>
+        <posX>900</posX>
+        <posY>240</posY>
+        <width>800</width>
+        <height>400</height>
+        <zoom>true</zoom>
+        <keepaspectratio>true</keepaspectratio>
+        <texture mask="case-mask3.png">#fanarthandler.music.backdrop2.play</texture>
+        <visible>[string.equals(#currentplaytime,0:05)|string.equals(#currentplaytime,0:06)|string.equals(#currentplaytime,0:07)|string.equals(#currentplaytime,0:08)|string.equals(#currentplaytime,0:09)|string.equals(#currentplaytime,0:10)]+[control.isvisible(91919296)+control.isvisible(91919294)]</visible>
+      </control>
+      <control>
+        <type>image</type>
+        <posX>900</posX>
+        <posY>240</posY>
+        <width>800</width>
+        <height>400</height>
+        <zoom>true</zoom>
+        <keepaspectratio>true</keepaspectratio>
+        <texture mask="case-mask3.png">overlay_left.png</texture>
+        <visible>[string.equals(#currentplaytime,0:05)|string.equals(#currentplaytime,0:06)|string.equals(#currentplaytime,0:07)|string.equals(#currentplaytime,0:08)|string.equals(#currentplaytime,0:09)|string.equals(#currentplaytime,0:10)]+[control.isvisible(91919296)|control.isvisible(91919295)]</visible>
+        <colordiffuse>ddffffff</colordiffuse>
+      </control>
+      <!-- open front cover at 0:05 -->
+      <control>
+        <type>image</type>
+        <posX>1300</posX>
+        <posY>240</posY>
+        <width>400</width>
+        <height>400</height>
+        <texture>#Play.Current.Thumb</texture>
+        <animation effect="rotatey" time="1000" center="1300,0" start="0" end="180" condition="string.equals(#currentplaytime,0:05)|string.equals(#currentplaytime,0:06)">conditional</animation>
+        <animation effect="fade" delay="450" time="100" start="100" end="0" condition="string.equals(#currentplaytime,0:05)|string.equals(#currentplaytime,0:06)">conditional</animation>
+        <visible>string.equals(#currentplaytime,0:05)|string.equals(#currentplaytime,0:06)</visible>
+      </control>
+      <!-- open inside cover at 0:05 -->
+      <control>
+        <type>image</type>
+        <posX>900</posX>
+        <posY>240</posY>
+        <width>800</width>
+        <height>400</height>
+        <zoom>true</zoom>
+        <keepaspectratio>true</keepaspectratio>
+        <texture mask="case-mask2.png">hover_mpnzb.png</texture>
+        <animation effect="rotatey" time="1000" center="1300,0" start="-180" end="0" condition="string.equals(#currentplaytime,0:05)|string.equals(#currentplaytime,0:06)|string.equals(#currentplaytime,0:07)">conditional</animation>
+        <animation effect="fade" delay="450" time="100" start="0" end="100" condition="string.equals(#currentplaytime,0:05)|string.equals(#currentplaytime,0:06)">conditional</animation>
+        <visible>string.equals(#currentplaytime,0:05)|string.equals(#currentplaytime,0:06)|string.equals(#currentplaytime,0:07)|string.equals(#currentplaytime,0:08)|string.equals(#currentplaytime,0:09)</visible>
+      </control>
+      <control>
+        <type>image</type>
+        <posX>900</posX>
+        <posY>240</posY>
+        <width>800</width>
+        <height>400</height>
+        <zoom>true</zoom>
+        <keepaspectratio>true</keepaspectratio>
+        <texture mask="case-mask2.png">#fanarthandler.music.backdrop1.play</texture>
+        <animation effect="rotatey" time="1000" center="1300,0" start="-180" end="0" condition="string.equals(#currentplaytime,0:05)|string.equals(#currentplaytime,0:06)|string.equals(#currentplaytime,0:07)">conditional</animation>
+        <animation effect="fade" delay="450" time="100" start="0" end="100" condition="string.equals(#currentplaytime,0:05)|string.equals(#currentplaytime,0:06)">conditional</animation>
+        <visible>[string.equals(#currentplaytime,0:05)|string.equals(#currentplaytime,0:06)|string.equals(#currentplaytime,0:07)|string.equals(#currentplaytime,0:08)|string.equals(#currentplaytime,0:09)]+[control.isvisible(91919295)+control.isvisible(91919294)]</visible>
+      </control>
+      <control>
+        <type>image</type>
+        <posX>900</posX>
+        <posY>240</posY>
+        <width>800</width>
+        <height>400</height>
+        <zoom>true</zoom>
+        <keepaspectratio>true</keepaspectratio>
+        <texture mask="case-mask2.png">#fanarthandler.music.backdrop2.play</texture>
+        <animation effect="rotatey" time="1000" center="1300,0" start="-180" end="0" condition="string.equals(#currentplaytime,0:05)|string.equals(#currentplaytime,0:06)|string.equals(#currentplaytime,0:07)">conditional</animation>
+        <animation effect="fade" delay="450" time="100" start="0" end="100" condition="string.equals(#currentplaytime,0:05)|string.equals(#currentplaytime,0:06)">conditional</animation>
+        <visible>[string.equals(#currentplaytime,0:05)|string.equals(#currentplaytime,0:06)|string.equals(#currentplaytime,0:07)|string.equals(#currentplaytime,0:08)|string.equals(#currentplaytime,0:09)]+[control.isvisible(91919296)+control.isvisible(91919294)]</visible>
+      </control>
+      <control>
+        <type>image</type>
+        <posX>900</posX>
+        <posY>240</posY>
+        <width>800</width>
+        <height>400</height>
+        <zoom>true</zoom>
+        <keepaspectratio>true</keepaspectratio>
+        <texture mask="case-mask2.png">overlay_left.png</texture>
+        <animation effect="rotatey" time="1000" center="1300,0" start="-180" end="0" condition="string.equals(#currentplaytime,0:05)|string.equals(#currentplaytime,0:06)|string.equals(#currentplaytime,0:07)">conditional</animation>
+        <animation effect="fade" delay="450" time="100" start="0" end="100" condition="string.equals(#currentplaytime,0:05)|string.equals(#currentplaytime,0:06)">conditional</animation>
+        <visible>[string.equals(#currentplaytime,0:05)|string.equals(#currentplaytime,0:06)|string.equals(#currentplaytime,0:07)|string.equals(#currentplaytime,0:08)|string.equals(#currentplaytime,0:09)]+[control.isvisible(91919296)|control.isvisible(91919295)]</visible>
+        <colordiffuse>ddffffff</colordiffuse>
+      </control>
+      <!-- Close inside at 0:11 -->
+      <control>
+        <type>image</type>
+        <posX>900</posX>
+        <posY>240</posY>
+        <width>800</width>
+        <height>400</height>
+        <zoom>true</zoom>
+        <keepaspectratio>true</keepaspectratio>
+        <texture mask="case-mask2.png">hover_mpnzb.png</texture>
+        <animation effect="rotatey" time="1000" center="1300,0" start="0" end="-180" condition="string.equals(#currentplaytime,0:10)|string.equals(#currentplaytime,0:11)">conditional</animation>
+        <animation effect="fade" delay="450" time="100" start="100" end="0" condition="string.equals(#currentplaytime,0:10)|string.equals(#currentplaytime,0:11)">conditional</animation>
+        <visible>string.equals(#currentplaytime,0:07)|string.equals(#currentplaytime,0:08)|string.equals(#currentplaytime,0:09)|string.equals(#currentplaytime,0:10)|string.equals(#currentplaytime,0:11)</visible>
+      </control>
+      <control>
+        <type>image</type>
+        <posX>900</posX>
+        <posY>240</posY>
+        <width>800</width>
+        <height>400</height>
+        <zoom>true</zoom>
+        <keepaspectratio>true</keepaspectratio>
+        <texture mask="case-mask2.png">#fanarthandler.music.backdrop1.play</texture>
+        <animation effect="rotatey" time="1000" center="1300,0" start="0" end="-180" condition="string.equals(#currentplaytime,0:10)|string.equals(#currentplaytime,0:11)">conditional</animation>
+        <animation effect="fade" delay="450" time="100" start="100" end="0" condition="string.equals(#currentplaytime,0:10)|string.equals(#currentplaytime,0:11)">conditional</animation>
+        <visible>[string.equals(#currentplaytime,0:07)|string.equals(#currentplaytime,0:08)|string.equals(#currentplaytime,0:09)|string.equals(#currentplaytime,0:10)|string.equals(#currentplaytime,0:11)]+[control.isvisible(91919295)+control.isvisible(91919294)]</visible>
+      </control>
+      <control>
+        <type>image</type>
+        <posX>900</posX>
+        <posY>240</posY>
+        <width>800</width>
+        <height>400</height>
+        <zoom>true</zoom>
+        <keepaspectratio>true</keepaspectratio>
+        <texture mask="case-mask2.png">#fanarthandler.music.backdrop2.play</texture>
+        <animation effect="rotatey" time="1000" center="1300,0" start="0" end="-180" condition="string.equals(#currentplaytime,0:10)|string.equals(#currentplaytime,0:11)">conditional</animation>
+        <animation effect="fade" delay="450" time="100" start="100" end="0" condition="string.equals(#currentplaytime,0:10)|string.equals(#currentplaytime,0:11)">conditional</animation>
+        <visible>[string.equals(#currentplaytime,0:07)|string.equals(#currentplaytime,0:08)|string.equals(#currentplaytime,0:09)|string.equals(#currentplaytime,0:10)|string.equals(#currentplaytime,0:11)]+[control.isvisible(91919296)+control.isvisible(91919294)]</visible>
+      </control>
+      <control>
+        <type>image</type>
+        <posX>900</posX>
+        <posY>240</posY>
+        <width>800</width>
+        <height>400</height>
+        <zoom>true</zoom>
+        <keepaspectratio>true</keepaspectratio>
+        <texture mask="case-mask2.png">overlay_left.png</texture>
+        <animation effect="rotatey" time="1000" center="1300,0" start="0" end="-180" condition="string.equals(#currentplaytime,0:10)|string.equals(#currentplaytime,0:11)">conditional</animation>
+        <animation effect="fade" delay="450" time="100" start="100" end="0" condition="string.equals(#currentplaytime,0:10)|string.equals(#currentplaytime,0:11)">conditional</animation>
+        <visible>[string.equals(#currentplaytime,0:07)|string.equals(#currentplaytime,0:08)|string.equals(#currentplaytime,0:09)|string.equals(#currentplaytime,0:10)|string.equals(#currentplaytime,0:11)]+[control.isvisible(91919296)|control.isvisible(91919295)]</visible>
+        <colordiffuse>ddffffff</colordiffuse>
+      </control>
+      <control>
+        <type>image</type>
+        <posX>908</posX>
+        <posY>240</posY>
+        <width>400</width>
+        <height>400</height>
+        <texture>case-shadow-left.png</texture>
+        <animation effect="fade" delay="450" time="450" start="0" end="100" condition="string.equals(#currentplaytime,0:05)|string.equals(#currentplaytime,0:06)|string.equals(#currentplaytime,0:07)|string.equals(#currentplaytime,0:08)|string.equals(#currentplaytime,0:09)|string.equals(#currentplaytime,0:10)">conditional</animation>
+        <visible>string.equals(#currentplaytime,0:05)|string.equals(#currentplaytime,0:06)|string.equals(#currentplaytime,0:07)|string.equals(#currentplaytime,0:08)|string.equals(#currentplaytime,0:09)|string.equals(#currentplaytime,0:10)</visible>
+      </control>
+      <!-- Close front at 0:11 -->
+      <control>
+        <type>image</type>
+        <posX>1300</posX>
+        <posY>240</posY>
+        <width>400</width>
+        <height>400</height>
+        <texture mask="cdcase_mask.png">#Play.Current.Thumb</texture>
+        <animation effect="rotatey" time="1000" center="1300,0" start="180" end="0" condition="string.equals(#currentplaytime,0:10)|string.equals(#currentplaytime,0:11)|string.equals(#currentplaytime,0:12)">conditional</animation>
+        <animation effect="fade" delay="450" time="100" start="0" end="100" condition="string.equals(#currentplaytime,0:10)|string.equals(#currentplaytime,0:11)|string.equals(#currentplaytime,0:12)">conditional</animation>
+        <visible>string.equals(#currentplaytime,0:10)|string.equals(#currentplaytime,0:11)|string.equals(#currentplaytime,0:12)</visible>
+      </control>
+      <!-- front cover spin first part-->
+      <control>
+        <type>image</type>
+        <posX>1300</posX>
+        <posY>240</posY>
+        <width>420</width>
+        <height>420</height>
+        <texture>cdcase_shadow.png</texture>
+        <animation effect="rotatey" time="2000" center="1500,0" start="0" end="360" condition="string.equals(#currentplaytime,0:03)|string.equals(#currentplaytime,0:04)">conditional</animation>
+        <visible>string.equals(#currentplaytime,0:00)|string.equals(#currentplaytime,0:01)|string.equals(#currentplaytime,0:02)|string.equals(#currentplaytime,0:03)|string.equals(#currentplaytime,0:04)</visible>
+      </control>
+      <control>
+        <type>image</type>
+        <posX>1300</posX>
+        <posY>240</posY>
+        <width>400</width>
+        <height>400</height>
+        <texture mask="cdcase_mask.png">#Play.Current.Thumb</texture>
+        <animation effect="rotatey" time="2000" center="1500,0" start="0" end="360" condition="string.equals(#currentplaytime,0:03)|string.equals(#currentplaytime,0:04)">conditional</animation>
+        <visible>string.equals(#currentplaytime,0:00)|string.equals(#currentplaytime,0:01)|string.equals(#currentplaytime,0:02)|string.equals(#currentplaytime,0:03)|string.equals(#currentplaytime,0:04)</visible>
+      </control>
+      <!-- rear cover spin middle part-->
+      <control>
+        <type>image</type>
+        <posX>1300</posX>
+        <posY>240</posY>
+        <width>400</width>
+        <height>400</height>
+        <texture mask="cdcase_mask.png">..\..\..\Thumbs\Music\Artists\#Play.Current.ArtistL.jpg</texture>
+        <animation effect="rotatey" time="2000" center="1500,0" start="-180" end="180" condition="string.equals(#currentplaytime,0:03)|string.equals(#currentplaytime,0:04)">conditional</animation>
+        <animation effect="fade" time="100" delay="450" condition="string.equals(#currentplaytime,0:03)|string.equals(#currentplaytime,0:04)">conditional</animation>
+        <visible>string.equals(#currentplaytime,0:03)|string.equals(#currentplaytime,0:04)</visible>
+      </control>
+      <!-- front cover spin last part-->
+      <control>
+        <type>image</type>
+        <posX>1300</posX>
+        <posY>240</posY>
+        <width>400</width>
+        <height>400</height>
+        <texture mask="cdcase_mask.png">#Play.Current.Thumb</texture>
+        <animation effect="rotatey" time="2000" center="1500,0" start="0" end="360" condition="string.equals(#currentplaytime,0:03)|string.equals(#currentplaytime,0:04)">conditional</animation>
+        <animation effect="fade" time="100" delay="1450" condition="string.equals(#currentplaytime,0:03)|string.equals(#currentplaytime,0:04)">conditional</animation>
+        <visible>string.equals(#currentplaytime,0:00)|string.equals(#currentplaytime,0:01)|string.equals(#currentplaytime,0:02)|string.equals(#currentplaytime,0:03)|string.equals(#currentplaytime,0:04)</visible>
+      </control>
+      <!-- Inside Text: Title, Artist, Album -->
+      <control>
+        <type>label</type>
+        <posX>920</posX>
+        <posY>260</posY>
+        <width>760</width>
+        <font>font9</font>
+        <align>left</align>
+        <label>#Play.Current.Album</label>
+        <textcolor>ffffffff</textcolor>
+        <visible>string.equals(#currentplaytime,0:06)|string.equals(#currentplaytime,0:07)|string.equals(#currentplaytime,0:08)|string.equals(#currentplaytime,0:09)</visible>
+      </control>
+      <control>
+        <type>label</type>
+        <posX>920</posX>
+        <posY>290</posY>
+        <width>760</width>
+        <font>font9</font>
+        <align>left</align>
+        <label>#Play.Current.Artist</label>
+        <textcolor>ffffffff</textcolor>
+        <visible>string.equals(#currentplaytime,0:06)|string.equals(#currentplaytime,0:07)|string.equals(#currentplaytime,0:08)|string.equals(#currentplaytime,0:09)</visible>
+      </control>
+      <control>
+        <type>label</type>
+        <posX>920</posX>
+        <posY>320</posY>
+        <width>760</width>
+        <font>font9</font>
+        <align>left</align>
+        <label>#Play.Current.Track.  #Play.Current.Title</label>
+        <textcolor>ffffffff</textcolor>
+        <visible>string.equals(#currentplaytime,0:06)|string.equals(#currentplaytime,0:07)|string.equals(#currentplaytime,0:08)|string.equals(#currentplaytime,0:09)</visible>
+      </control>
+      <control>
+        <type>label</type>
+        <posX>920</posX>
+        <posY>350</posY>
+        <width>760</width>
+        <font>font9</font>
+        <align>left</align>
+        <label>#Play.Next.Track.  #Play.Next.Title</label>
+        <textcolor>ffffffff</textcolor>
+        <visible>string.equals(#currentplaytime,0:06)|string.equals(#currentplaytime,0:07)|string.equals(#currentplaytime,0:08)|string.equals(#currentplaytime,0:09)</visible>
+      </control>
+      <!-- Open Inside Text: Title, Artist, Album -->
+      <control>
+        <type>label</type>
+        <posX>920</posX>
+        <posY>260</posY>
+        <width>760</width>
+        <font>font9</font>
+        <align>left</align>
+        <label>#Play.Current.Album</label>
+        <textcolor>ffffffff</textcolor>
+        <animation effect="rotatey" time="1000" center="1300,0" start="-180" end="0" condition="string.equals(#currentplaytime,0:05)|string.equals(#currentplaytime,0:06)|string.equals(#currentplaytime,0:07)">conditional</animation>
+        <animation effect="fade" delay="450" time="100" start="0" end="100" condition="string.equals(#currentplaytime,0:05)|string.equals(#currentplaytime,0:06)">conditional</animation>
+        <visible>string.equals(#currentplaytime,0:05)|string.equals(#currentplaytime,0:06)|string.equals(#currentplaytime,0:07)|string.equals(#currentplaytime,0:08)|string.equals(#currentplaytime,0:09)</visible>
+      </control>
+      <control>
+        <type>label</type>
+        <posX>920</posX>
+        <posY>290</posY>
+        <width>760</width>
+        <font>font9</font>
+        <align>left</align>
+        <label>#Play.Current.Artist</label>
+        <textcolor>ffffffff</textcolor>
+        <animation effect="rotatey" time="1000" center="1300,0" start="-180" end="0" condition="string.equals(#currentplaytime,0:05)|string.equals(#currentplaytime,0:06)|string.equals(#currentplaytime,0:07)">conditional</animation>
+        <animation effect="fade" delay="450" time="100" start="0" end="100" condition="string.equals(#currentplaytime,0:05)|string.equals(#currentplaytime,0:06)">conditional</animation>
+        <visible>string.equals(#currentplaytime,0:05)|string.equals(#currentplaytime,0:06)|string.equals(#currentplaytime,0:07)|string.equals(#currentplaytime,0:08)|string.equals(#currentplaytime,0:09)</visible>
+      </control>
+      <control>
+        <type>label</type>
+        <posX>920</posX>
+        <posY>320</posY>
+        <width>760</width>
+        <font>font9</font>
+        <align>left</align>
+        <label>#Play.Current.Track.  #Play.Current.Title</label>
+        <textcolor>ffffffff</textcolor>
+        <animation effect="rotatey" time="1000" center="1300,0" start="-180" end="0" condition="string.equals(#currentplaytime,0:05)|string.equals(#currentplaytime,0:06)|string.equals(#currentplaytime,0:07)">conditional</animation>
+        <animation effect="fade" delay="450" time="100" start="0" end="100" condition="string.equals(#currentplaytime,0:05)|string.equals(#currentplaytime,0:06)">conditional</animation>
+        <visible>string.equals(#currentplaytime,0:05)|string.equals(#currentplaytime,0:06)|string.equals(#currentplaytime,0:07)|string.equals(#currentplaytime,0:08)|string.equals(#currentplaytime,0:09)</visible>
+      </control>
+      <control>
+        <type>label</type>
+        <posX>920</posX>
+        <posY>350</posY>
+        <width>760</width>
+        <font>font9</font>
+        <align>left</align>
+        <label>#Play.Next.Track.  #Play.Next.Title</label>
+        <textcolor>ffffffff</textcolor>
+        <animation effect="rotatey" time="1000" center="1300,0" start="-180" end="0" condition="string.equals(#currentplaytime,0:05)|string.equals(#currentplaytime,0:06)|string.equals(#currentplaytime,0:07)">conditional</animation>
+        <animation effect="fade" delay="450" time="100" start="0" end="100" condition="string.equals(#currentplaytime,0:05)|string.equals(#currentplaytime,0:06)">conditional</animation>
+        <visible>string.equals(#currentplaytime,0:05)|string.equals(#currentplaytime,0:06)|string.equals(#currentplaytime,0:07)|string.equals(#currentplaytime,0:08)|string.equals(#currentplaytime,0:09)</visible>
+      </control>
+      <!-- Close Inside Text: Title, Artist, Album -->
+      <control>
+        <type>label</type>
+        <posX>920</posX>
+        <posY>260</posY>
+        <width>760</width>
+        <font>font9</font>
+        <align>left</align>
+        <label>#Play.Current.Album</label>
+        <textcolor>ffffffff</textcolor>
+        <animation effect="rotatey" time="1000" center="1300,0" start="0" end="-180" condition="string.equals(string.equals(#currentplaytime,0:09)|string.equals(#currentplaytime,0:10)">conditional</animation>
+        <animation effect="fade" delay="450" time="100" start="100" end="0" condition="string.equals(string.equals(#currentplaytime,0:09)|string.equals(#currentplaytime,0:10)">conditional</animation>
+        <visible>string.equals(#currentplaytime,0:08)|string.equals(#currentplaytime,0:09)|string.equals(#currentplaytime,0:10)</visible>
+      </control>
+      <control>
+        <type>label</type>
+        <posX>920</posX>
+        <posY>290</posY>
+        <width>760</width>
+        <font>font9</font>
+        <align>left</align>
+        <label>#Play.Current.Artist</label>
+        <textcolor>ffffffff</textcolor>
+        <animation effect="rotatey" time="1000" center="1300,0" start="0" end="-180" condition="string.equals(string.equals(#currentplaytime,0:09)|string.equals(#currentplaytime,0:10)">conditional</animation>
+        <animation effect="fade" delay="450" time="100" start="100" end="0" condition="string.equals(string.equals(#currentplaytime,0:09)|string.equals(#currentplaytime,0:10)">conditional</animation>
+        <visible>string.equals(#currentplaytime,0:08)|string.equals(#currentplaytime,0:09)|string.equals(#currentplaytime,0:10)</visible>
+      </control>
+      <control>
+        <type>label</type>
+        <posX>920</posX>
+        <posY>320</posY>
+        <width>760</width>
+        <font>font9</font>
+        <align>left</align>
+        <label>#Play.Current.Track.  #Play.Current.Title</label>
+        <textcolor>ffffffff</textcolor>
+        <animation effect="rotatey" time="1000" center="1300,0" start="0" end="-180" condition="string.equals(string.equals(#currentplaytime,0:09)|string.equals(#currentplaytime,0:10)">conditional</animation>
+        <animation effect="fade" delay="450" time="100" start="100" end="0" condition="string.equals(string.equals(#currentplaytime,0:09)|string.equals(#currentplaytime,0:10)">conditional</animation>
+        <visible>string.equals(#currentplaytime,0:08)|string.equals(#currentplaytime,0:09)|string.equals(#currentplaytime,0:10)</visible>
+      </control>
+      <control>
+        <type>label</type>
+        <posX>920</posX>
+        <posY>350</posY>
+        <width>760</width>
+        <font>font9</font>
+        <align>left</align>
+        <label>#Play.Next.Track.  #Play.Next.Title</label>
+        <textcolor>ffffffff</textcolor>
+        <animation effect="rotatey" time="1000" center="1300,0" start="0" end="-180" condition="string.equals(string.equals(#currentplaytime,0:09)|string.equals(#currentplaytime,0:10)">conditional</animation>
+        <animation effect="fade" delay="450" time="100" start="100" end="0" condition="string.equals(string.equals(#currentplaytime,0:09)|string.equals(#currentplaytime,0:10)">conditional</animation>
+        <visible>string.equals(#currentplaytime,0:08)|string.equals(#currentplaytime,0:09)|string.equals(#currentplaytime,0:10)</visible>
+      </control>
+    </control>
+  </controls>
+</window>

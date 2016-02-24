@@ -1,0 +1,458 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!--version="1.0" encoding="utf-8" standalone="yes"-->
+<window>
+  <id>5670</id>
+  <defaultcontrol>50</defaultcontrol>
+  <allowoverlay>yes</allowoverlay>
+  <define>#useSelectedFanart:Yes</define>
+  <define>#header.label:666</define>
+  <define>#header.hover:hover_my radio.png</define>
+  <controls>
+    <control>
+      <description>BG</description>
+      <type>image</type>
+      <id>1</id>
+      <texture>BH Webradio.jpg</texture>
+      <width>1920</width>
+      <height>1080</height>
+      <colordiffuse>90ffffff</colordiffuse>
+    </control>
+    <import>common.time.xml</import>
+    <import>common.music.play.fanart.xml</import>
+    <control>
+      <description>General Overlay</description>
+      <id>0</id>
+      <type>image</type>
+      <posX>0</posX>
+      <posY>45</posY>
+      <width>1920</width>
+      <height>1080</height>
+      <texture>general_overlay.png</texture>
+    </control>
+    <control>
+      <description>background selecteditem</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>-20</posX>
+      <posY>97</posY>
+      <width>2025</width>
+      <height>90</height>
+      <texture>general_overlay_selecteditem.png</texture>
+      <colordiffuse>bbffffff</colordiffuse>
+      <visible>!window.isvisible(0)+!window.isvisible(34)</visible>
+    </control>
+    <control>
+      <type>label</type>
+      <id>1</id>
+      <posX>45</posX>
+      <posY>15</posY>
+      <label>#stream.sort</label>
+      <font>Label</font>
+      <align>left</align>
+      <textcolor>ff6FAFE1</textcolor>
+    </control>
+    <control>
+      <description>Number of Files Label</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>45</posX>
+      <posY>52</posY>
+      <label>#selectedindex/#itemcount #(iif(and(neq(L(102012), #currentmodule), neq(L(102002), #currentmodule), neq(L(100100), #currentmodule), neq(L(102015), #currentmodule)), #currentmodule, ' '))</label>
+      <align>left</align>
+      <textcolor>ivory</textcolor>
+      <font>font10</font>
+      <visible>string.equals(#selectedindex)+string.equals(#itemcount)</visible>
+    </control>
+    <control>
+      <description>Selected item Label</description>
+      <type>fadelabel</type>
+      <id>1</id>
+      <posX>0</posX>
+      <posY>142</posY>
+      <width>1920</width>
+      <label>#active.Station</label>
+      <font>Menutitle</font>
+      <align>center</align>
+      <textcolor>ff6FAFE1</textcolor>
+      <visible>Player.HasAudio+!Player.HasVideo+string.equals(#Play.Current.Lastfm.CurrentStream,)+!window.isvisible(1)+!window.isvisible(614)+!window.isvisible(2003)+!window.isvisible(0)+!window.isvisible(34)</visible>
+    </control>
+    <control>
+      <description>Selected item Label</description>
+      <type>fadelabel</type>
+      <id>1</id>
+      <posX>1245</posX>
+      <posY>262</posY>
+      <width>615</width>
+      <label>#selecteditem</label>
+      <font>Menutitle</font>
+      <align>center</align>
+      <textcolor>ff6FAFE1</textcolor>
+      <visible>!window.isvisible(6)+!window.isvisible(25)+!window.isvisible(0)+!window.isvisible(34)</visible>
+    </control>
+    <!--     *******************************************************************************************  -->
+    <!--     *******************************       ************************************  -->
+    <!--     *******************************************************************************************  -->
+    <control>
+      <type>actiongroup</type>
+      <description>action menu</description>
+      <defaultcontrol>2</defaultcontrol>
+      <onexit>50</onexit>
+      <buttonX>0</buttonX>
+      <buttonY>-60</buttonY>
+      <buttonwidth>159</buttonwidth>
+      <buttonheight>1080</buttonheight>
+      <textureFocus>-</textureFocus>
+      <textureNoFocus>Action_nofocus.png</textureNoFocus>
+      <width>852</width>
+      <height>1350</height>
+      <dimColor>00ffffff</dimColor>
+      <control>
+        <type>image</type>
+        <id>0</id>
+        <width>1920</width>
+        <height>1080</height>
+        <texture>white.png</texture>
+        <colordiffuse>50005eef</colordiffuse>
+      </control>
+      <control>
+        <type>image</type>
+        <posX>39</posX>
+        <posY>117</posY>
+        <width>480</width>
+        <height>886</height>
+        <texture>Backslide.png</texture>
+        <colorDiffuse>fffffffff</colorDiffuse>
+        <visible>!Control.HasFocus(50)</visible>
+        <animation effect="slide" time="70" start="-300,0" reversible="false">visible</animation>
+        <animation effect="slide" time="70" end="-300,0" reversible="false">hidden</animation>
+      </control>
+      <control>
+        <description>group element</description>
+        <type>group</type>
+        <animation effect="slide" time="70" start="-300,0" reversible="false">visible</animation>
+        <animation effect="slide" time="70" end="-300,0" reversible="false">hidden</animation>
+        <posX>75</posX>
+        <posY>181</posY>
+        <onright>50</onright>
+        <layout>StackLayout</layout>
+        <visible>!Control.HasFocus(50)</visible>
+        <control>
+          <description>View-As</description>
+          <type>menubutton</type>
+          <id>2</id>
+          <label />
+          <onright>50</onright>
+          <onup>19</onup>
+          <mode>dialoglist</mode>
+          <dialogTitle>792</dialogTitle>
+          <valueTextInButton>yes</valueTextInButton>
+          <valuePrefixText>95</valuePrefixText>
+        </control>
+        <control>
+          <description>Set Filter</description>
+          <type>button</type>
+          <id>6</id>
+          <label>19149</label>
+          <onright>50</onright>
+        </control>
+        <control>
+          <description>Favorites</description>
+          <type>button</type>
+          <id>11</id>
+          <label>932</label>
+          <onright>50</onright>
+          <onup>6</onup>
+        </control>
+        <control>
+          <description>Add to Favorites</description>
+          <type>button</type>
+          <id>12</id>
+          <label>930</label>
+          <onright>50</onright>
+          <onup>11</onup>
+        </control>
+        <control>
+          <description>Remove from Favorites</description>
+          <type>button</type>
+          <id>13</id>
+          <label>933</label>
+          <onright>50</onright>
+          <onup>12</onup>
+          <visible>control.hasthumb(611)</visible>
+        </control>
+        <control>
+          <description>Suchen</description>
+          <type>button</type>
+          <id>14</id>
+          <label>2051</label>
+          <onright>50</onright>
+          <onup>13</onup>
+        </control>
+        <control>
+          <description>remove</description>
+          <type>button</type>
+          <id>15</id>
+          <label>805</label>
+          <onright>50</onright>
+          <onup>14</onup>
+        </control>
+        <control>
+          <description>settings</description>
+          <type>button</type>
+          <id>18</id>
+          <label>1957</label>
+          <onright>50</onright>
+          <onup>15</onup>
+          <hyperlink>5671</hyperlink>
+        </control>
+        <control>
+          <description>reset</description>
+          <type>button</type>
+          <id>19</id>
+          <label>972</label>
+          <onright>50</onright>
+          <onup>18</onup>
+          <ondown>6</ondown>
+        </control>
+      </control>
+    </control>
+    <control>
+      <description>composite control consisting of a list control and athumbnail panel</description>
+      <type>facadeview</type>
+      <id>50</id>
+      <control>
+        <description>listcontrol</description>
+        <type>listcontrol</type>
+        <id>50</id>
+        <scrollOffset>2</scrollOffset>
+        <onleft>2</onleft>
+        <onright>611</onright>
+        <width>900</width>
+      </control>
+      <control>
+        <description>Thumbnail Panel</description>
+        <type>thumbnailpanel</type>
+        <id>50</id>
+        <posY>255</posY>
+        <width>1200</width>
+        <height>750</height>
+        <scrollOffset>0</scrollOffset>
+        <onleft>2</onleft>
+        <onright>2</onright>
+        <onup>2</onup>
+        <ondown>2</ondown>
+      </control>
+      <control>
+        <description>Filmstrip view</description>
+        <type>filmstrip</type>
+        <id>50</id>
+        <onleft>2</onleft>
+        <onright>611</onright>
+        <onup>2</onup>
+        <ondown>2</ondown>
+      </control>
+      <control>
+        <description>playlist listcontrol</description>
+        <type>playlistcontrol</type>
+        <id>50</id>
+        <scrollOffset>1</scrollOffset>
+      </control>
+    </control>
+    <!--     *******************************************************************************************  -->
+    <!--     *******************************       STREAM INFO      ************************************  -->
+    <!--     *******************************************************************************************  -->
+    <!-- Logo -->
+    <control>
+      <type>image</type>
+      <id>601</id>
+      <posX>1590</posX>
+      <posY>360</posY>
+      <width>270</width>
+      <height>270</height>
+      <border position="CenterControl">10</border>
+      <texture mask="cdthumbmask.png">#selectedthumb</texture>
+    </control>
+    <!-- Playcount -->
+    <control>
+      <type>imagelist</type>
+      <id>1</id>
+      <posX>1245</posX>
+      <posY>307</posY>
+      <width>453</width>
+      <height>55</height>
+      <textureWidth>25</textureWidth>
+      <textureHeight>25</textureHeight>
+      <subitems>
+        <subitem>greystar.png</subitem>
+        <subitem>star.png</subitem>
+      </subitems>
+      <orientation>horizontal</orientation>
+      <align>left</align>
+      <imagesToDraw>10</imagesToDraw>
+      <percentage>#stream.rating</percentage>
+    </control>
+    <control>
+      <description>Playcount</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>1590</posX>
+      <posY>303</posY>
+      <label>#stream.playcount</label>
+      <font>font11</font>
+      <align>left</align>
+      <textcolor>ivory</textcolor>
+    </control>
+    <!-- Genre -->
+    <control>
+      <description>Genre txt</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>1245</posX>
+      <posY>343</posY>
+      <label>135</label>
+      <font>font10</font>
+      <align>left</align>
+      <textcolor>ff6FAFE1</textcolor>
+    </control>
+    <control>
+      <description>Genre value</description>
+      <type>fadelabel</type>
+      <id>1</id>
+      <posX>1245</posX>
+      <posY>372</posY>
+      <width>330</width>
+      <label>#stream.genre</label>
+      <font>font12</font>
+      <textcolor>ivory</textcolor>
+    </control>
+    <!-- Bitrate -->
+    <control>
+      <description>Bitrate txt</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>1245</posX>
+      <posY>415</posY>
+      <label>670</label>
+      <font>font10</font>
+      <align>left</align>
+      <textcolor>ff6FAFE1</textcolor>
+    </control>
+    <control>
+      <description>Country value</description>
+      <type>fadelabel</type>
+      <id>1</id>
+      <posX>1245</posX>
+      <posY>444</posY>
+      <label>#stream.bitrate</label>
+      <font>font12</font>
+      <width>330</width>
+      <textcolor>ivory</textcolor>
+    </control>
+    <!-- Country -->
+    <control>
+      <description>Country txt</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>1245</posX>
+      <posY>487</posY>
+      <label>200026</label>
+      <font>font10</font>
+      <align>left</align>
+      <textcolor>ff6FAFE1</textcolor>
+    </control>
+    <control>
+      <description>Country value</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>1245</posX>
+      <posY>516</posY>
+      <width>330</width>
+      <label>#stream.country</label>
+      <font>font12</font>
+      <textcolor>ivory</textcolor>
+    </control>
+    <!-- City -->
+    <control>
+      <description>City txt</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>1245</posX>
+      <posY>559</posY>
+      <label>1028</label>
+      <font>font10</font>
+      <textcolor>ff6FAFE1</textcolor>
+      <visible>control.hastext(555)</visible>
+    </control>
+    <control>
+      <description>City value</description>
+      <type>label</type>
+      <id>555</id>
+      <posX>1245</posX>
+      <posY>588</posY>
+      <width>330</width>
+      <label>#stream.city</label>
+      <font>font12</font>
+      <textcolor>ivory</textcolor>
+    </control>
+    <!-- Description -->
+    <control>
+      <description>Separator Line</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>1245</posX>
+      <posY>660</posY>
+      <width>615</width>
+      <height>1</height>
+      <texture>hbar1white.png</texture>
+      <colordiffuse>60ffffff</colordiffuse>
+    </control>
+    <control Style="NoShadow">
+      <description>Plot value</description>
+      <type>textboxscrollup</type>
+      <id>1</id>
+      <posX>1245</posX>
+      <posY>675</posY>
+      <width>615</width>
+      <height>157</height>
+      <label>#stream.description</label>
+      <font>font11</font>
+      <textcolor>ivory</textcolor>
+    </control>
+    <control>
+      <description>Separator Line</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>1245</posX>
+      <posY>855</posY>
+      <width>615</width>
+      <height>1</height>
+      <texture>hbar1white.png</texture>
+      <colordiffuse>60ffffff</colordiffuse>
+    </control>
+    <!-- Social Network and Specials -->
+    <!-- LoveIt -->
+    <control>
+      <description>Love It</description>
+      <type>image</type>
+      <id>611</id>
+      <posX>1245</posX>
+      <posY>870</posY>
+      <width>90</width>
+      <height>55</height>
+      <texture mask="cdthumbmask.png">#stream.love</texture>
+      <keepaspectratio>yes</keepaspectratio>
+    </control>
+    <!-- WWW -->
+    <control>
+      <description>WWW</description>
+      <type>image</type>
+      <id>612</id>
+      <posX>1350</posX>
+      <posY>870</posY>
+      <width>90</width>
+      <height>55</height>
+      <texture mask="cdthumbmask.png">#stream.www</texture>
+      <keepaspectratio>yes</keepaspectratio>
+    </control>
+  </controls>
+</window>

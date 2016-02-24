@@ -30,7 +30,6 @@ using System.Xml;
 using System.Xml.Serialization;
 using MediaPortal.Configuration;
 using MediaPortal.GUI.Library;
-using MediaPortal.Hardware;
 using MediaPortal.InputDevices;
 using MediaPortal.Player;
 using MediaPortal.ProcessPlugins.MiniDisplayPlugin.xPL;
@@ -38,7 +37,7 @@ using Action = MediaPortal.GUI.Library.Action;
 
 namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 {
-  public class xPL_Connector : BaseDisplay, IDisplay
+  public class xPL_Connector : BaseDisplay
   {
     private bool _BlankDisplayOnExit;
     private bool _DisplayChanged;
@@ -57,7 +56,6 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     private SystemStatus MPStatus = new SystemStatus();
     private SystemStatus MPStatus_old = new SystemStatus();
     private readonly string mVendorID = "mportal";
-    private InputHandler rHandler;
     private DateTime SettingsLastModTime;
 
     private void AdvancedSettings_OnSettingsChanged()
@@ -73,7 +71,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       this.Initialize();
     }
 
-    public void CleanUp()
+    public override void CleanUp()
     {
       AdvancedSettings.OnSettingsChanged -=
         new AdvancedSettings.OnSettingsChangedHandler(this.AdvancedSettings_OnSettingsChanged);
@@ -84,18 +82,18 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
     private void Clear() {}
 
-    public void Configure()
+    public override void Configure()
     {
       Form form = new xPL_Connector_AdvancedSetupForm();
       form.ShowDialog();
       form.Dispose();
     }
 
-    public void Dispose() {}
+    public override void Dispose() { }
 
-    public void DrawImage(Bitmap bitmap) {}
+    public override void DrawImage(Bitmap bitmap) { }
 
-    public void Initialize()
+    public override void Initialize()
     {
       if (this._IsDisabled)
       {
@@ -241,26 +239,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
                       return;
                     }
                   }
-                  foreach (string str10 in Enum.GetNames(typeof (RemoteButton)))
-                  {
-                    if (str10.ToLowerInvariant().Equals(str9.ToLowerInvariant()) || str9.ToLowerInvariant().Equals("remote_" + str10.ToLowerInvariant()))
-                    {
-                      if (this.DoDebug)
-                      {
-                        Log.Info(
-                          "xPL_Connector.Listener_XplMessageReceived(): Received remote.basic remote key name \"{0}\"",
-                          new object[] {str9});
-                      }
-                      this.XPL_Send_Remote_Confirm_Message(e);
-                      if (!this.rHandler.MapAction((int)Enum.Parse(typeof (RemoteButton), str10)) && this.DoDebug)
-                      {
-                        Log.Info(
-                          "xPL_Connector.Listener_XplMessageReceived(): COULD NOT FIRE REMOTE ACTION (isLoaded = {0})",
-                          new object[] {this.rHandler.IsLoaded});
-                      }
-                      break;
-                    }
-                  }
+
                   int result = 0;
                   int.TryParse(str9, out result);
                   if (result != 0)
@@ -567,9 +546,9 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       this.LastSettingsCheck = DateTime.Now;
     }
 
-    public void SetCustomCharacters(int[][] customCharacters) {}
+    public override void SetCustomCharacters(int[][] customCharacters) { }
 
-    public void SetLine(int line, string message)
+    public override void SetLine(int line, string message, ContentAlignment aAlignment)
     {
       if (this._IsDisabled)
       {
@@ -598,7 +577,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       }
     }
 
-    public void Setup(string _port, int _lines, int _cols, int _delay, int _linesG, int _colsG, int _delayG,
+    public override void Setup(string _port, int _lines, int _cols, int _delay, int _linesG, int _colsG, int _delayG,
                       bool _backLight, int _backLightLevel, bool _contrast, int _contrastLevel, bool _blankOnExit)
     {
       this.DoDebug = Assembly.GetEntryAssembly().FullName.Contains("Configuration") | Settings.Instance.ExtensiveLogging;
@@ -609,16 +588,6 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       this._Trows = _lines;
       this._Tcols = _cols;
       this._IsConnected = false;
-      Log.Info("xPL_Connector.Setup(): Loading MCE Remote mapping file");
-      this.rHandler = new InputHandler("Microsoft MCE");
-      if (this.rHandler.IsLoaded)
-      {
-        Log.Info("xPL_Connector.Setup(): MCE Remote mapping file loaded!");
-      }
-      else
-      {
-        Log.Info("xPL_Connector.Setup(): ERROR Could not Load MCE Remote mapping file");
-      }
       Log.Info("xPL_Connector.Setup(): completed");
     }
 
@@ -890,32 +859,32 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       strMessage = string.Empty;
     }
 
-    public string Description
+    public override string Description
     {
       get { return "xPL_Connector driver v05_05_2008"; }
     }
 
-    public string ErrorMessage
+    public override string ErrorMessage
     {
       get { return this._ErrorMessage; }
     }
 
-    public bool IsDisabled
+    public override bool IsDisabled
     {
       get { return this._IsDisabled; }
     }
 
-    public string Name
+    public override string Name
     {
       get { return "xPL_Connector"; }
     }
 
-    public bool SupportsGraphics
+    public override bool SupportsGraphics
     {
       get { return false; }
     }
 
-    public bool SupportsText
+    public override bool SupportsText
     {
       get { return true; }
     }

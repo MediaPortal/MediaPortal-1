@@ -21,6 +21,7 @@
 using System;
 using System.ComponentModel;
 using System.Drawing;
+using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows.Forms;
 using MediaPortal.GUI.Library;
@@ -47,6 +48,9 @@ namespace MediaPortal
     private FullScreenSplashScreen _frmFull;
     private string _info;
     internal static Screen CurrentDisplay;
+
+    [DllImport("user32.dll")]
+    public static extern bool EnumDisplayDevices(string lpDevice, int iDevNum, [In, Out] MediaPortalApp.DISPLAY_DEVICE lpDisplayDevice, int dwFlags);
 
     /// <summary>
     /// Starts the splash screen.
@@ -94,6 +98,9 @@ namespace MediaPortal
         bool useFullScreenSplash;
         bool startFullScreen;
         int screenNumber;
+        string _screenDisplayName;
+        bool _usePrimaryScreen;
+        string screenDeviceId;
 
         using (Settings xmlreader = new MPSettings())
         {
@@ -101,19 +108,77 @@ namespace MediaPortal
           startFullScreen = !D3D.WindowedOverride && (D3D.FullscreenOverride || xmlreader.GetValueAsBool("general", "startfullscreen", true));
           screenNumber = xmlreader.GetValueAsInt("screenselector", "screennumber", 0);
           _alwaysOnTop = xmlreader.GetValueAsBool("general", "alwaysontop", false);
+          _usePrimaryScreen = xmlreader.GetValueAsBool("general", "useprimaryscreen", false);
+          _screenDisplayName = xmlreader.GetValueAsString("screenselector", "screendisplayname", "");
+          screenDeviceId = xmlreader.GetValueAsString("screenselector", "screendeviceid", "");
         }
-        
+
         if (D3D.ScreenNumberOverride >= 0)
         {
           screenNumber = D3D.ScreenNumberOverride;
+          if (screenNumber < 0 || screenNumber >= Screen.AllScreens.Length)
+          {
+            screenNumber = 0;
+          }
+          CurrentDisplay = Screen.AllScreens[screenNumber];
         }
-
-        if (screenNumber < 0 || screenNumber >= Screen.AllScreens.Length)
+        else
         {
-          screenNumber = 0;
+          foreach (Screen screen in Screen.AllScreens)
+          {
+            const int dwf = 0;
+            var info = new MediaPortalApp.DISPLAY_DEVICE();
+            string monitorname = null;
+            string deviceId = null;
+            info.cb = Marshal.SizeOf(info);
+            if (EnumDisplayDevices(screen.DeviceName, 0, info, dwf))
+            {
+              monitorname = info.DeviceString;
+              deviceId = info.DeviceID;
+            }
+            if (monitorname == null)
+            {
+              monitorname = "";
+            }
+            if (deviceId == null)
+            {
+              deviceId = "";
+            }
+
+            if (_usePrimaryScreen)
+            {
+              if (screen.Primary)
+              {
+                CurrentDisplay = screen;
+                break;
+              }
+            }
+            else
+            {
+              if (!string.IsNullOrEmpty(deviceId))
+              {
+                if (deviceId.Equals(screenDeviceId))
+                {
+                  CurrentDisplay = screen;
+                  break;
+                }
+              }
+              else
+              {
+                if (screen.DeviceName.Equals(_screenDisplayName))
+                {
+                  CurrentDisplay = screen;
+                  break;
+                }
+              }
+            }
+          }
+          if (CurrentDisplay == null)
+          {
+            CurrentDisplay = screenNumber >= Screen.AllScreens.Length ? Screen.AllScreens[0] : Screen.AllScreens[screenNumber];
+          }
         }
 
-        CurrentDisplay = Screen.AllScreens[screenNumber];
         Log.Info("SplashScreen: Splash screen is using screen: {0} (Position: {1},{2} Dimensions: {3}x{4})",
           GetCleanDisplayName(CurrentDisplay), CurrentDisplay.Bounds.Location.X, CurrentDisplay.Bounds.Location.Y, CurrentDisplay.Bounds.Width, CurrentDisplay.Bounds.Height);
 
@@ -345,8 +410,8 @@ namespace MediaPortal
            (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
              | System.Windows.Forms.AnchorStyles.Right)));
         this._informationLabel.BackColor = System.Drawing.Color.Transparent;
-        this._informationLabel.Font = new System.Drawing.Font("Arial", 8.25F, System.Drawing.FontStyle.Bold,
-                                                             System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+        this._informationLabel.Font = new System.Drawing.Font("Arial", 11.25F, System.Drawing.FontStyle.Bold,
+                                                             System.Drawing.GraphicsUnit.Pixel, ((byte)(0)));
         this._informationLabel.ForeColor = System.Drawing.Color.White;
         this._informationLabel.Location = new System.Drawing.Point(11, 138);
         this._informationLabel.Name = "_informationLabel";

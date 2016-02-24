@@ -144,10 +144,6 @@ namespace MediaPortal.GUI.Library
     public const int PLAYER_MUTED = 33;
     public const int PLAYER_HASDURATION = 34;
 
-    public const int WEATHER_CONDITIONS = 100;
-    public const int WEATHER_TEMPERATURE = 101;
-    public const int WEATHER_LOCATION = 102;
-    public const int WEATHER_IS_FETCHED = 103;
 
     public const int SYSTEM_TIME = 110;
     public const int SYSTEM_TIME_IS_BETWEEN = 1100;
@@ -252,12 +248,6 @@ namespace MediaPortal.GUI.Library
     public const int VIDEOPLAYER_HASMENU = 261;
     public const int VIDEOPLAYER_PLAYLISTLEN = 262;
     public const int VIDEOPLAYER_PLAYLISTPOS = 263;
-
-    public const int AUDIOSCROBBLER_ENABLED = 300;
-    public const int AUDIOSCROBBLER_CONN_STATE = 301;
-    public const int AUDIOSCROBBLER_SUBMIT_INT = 302;
-    public const int AUDIOSCROBBLER_FILES_CACHED = 303;
-    public const int AUDIOSCROBBLER_SUBMIT_STATE = 304;
 
     public const int LISTITEM_START = 310;
     public const int LISTITEM_THUMB = 310;
@@ -367,6 +357,8 @@ namespace MediaPortal.GUI.Library
 
     public const int TOPBAR_HAS_FOCUS = 30002;
     public const int TOPBAR_IS_VISIBLE = 30003;
+
+    public const int VOLUMEOVERLAY_IS_VISIBLE = 30004;
 
     // static string VERSION_STRING = "2.0.0";
 
@@ -491,6 +483,13 @@ namespace MediaPortal.GUI.Library
         else if (strTest == "topbar.visible")
         {
           ret = TOPBAR_IS_VISIBLE;
+        }
+      }
+      else if (strCategory == "volumeoverlay")
+      {
+        if (strTest == "volumeoverlay.visible")
+        {
+          ret = VOLUMEOVERLAY_IS_VISIBLE;
         }
       }
       else if (strCategory == "player")
@@ -630,25 +629,6 @@ namespace MediaPortal.GUI.Library
         else if (strTest == "player.hasduration")
         {
           ret = PLAYER_HASDURATION;
-        }
-      }
-      else if (strCategory == "weather")
-      {
-        if (strTest == "weather.conditions")
-        {
-          ret = WEATHER_CONDITIONS;
-        }
-        else if (strTest == "weather.temperature")
-        {
-          ret = WEATHER_TEMPERATURE;
-        }
-        else if (strTest == "weather.location")
-        {
-          ret = WEATHER_LOCATION;
-        }
-        else if (strTest == "weather.isfetched")
-        {
-          ret = WEATHER_IS_FETCHED;
         }
       }
       else if (strCategory == "system")
@@ -1096,29 +1076,6 @@ namespace MediaPortal.GUI.Library
         else if (strTest == "musicpartymode.randomsongspicked")
         {
           ret = MUSICPM_RANDOMSONGSPICKED;
-        }
-      }
-      else if (strCategory == "audioscrobbler")
-      {
-        if (strTest == "audioscrobbler.enabled")
-        {
-          ret = AUDIOSCROBBLER_ENABLED;
-        }
-        else if (strTest == "audioscrobbler.connectstate")
-        {
-          ret = AUDIOSCROBBLER_CONN_STATE;
-        }
-        else if (strTest == "audioscrobbler.submitinterval")
-        {
-          ret = AUDIOSCROBBLER_SUBMIT_INT;
-        }
-        else if (strTest == "audioscrobbler.filescached")
-        {
-          ret = AUDIOSCROBBLER_FILES_CACHED;
-        }
-        else if (strTest == "audioscrobbler.submitstate")
-        {
-          ret = AUDIOSCROBBLER_SUBMIT_STATE;
         }
       }
       else if (strCategory.StartsWith("container"))
@@ -1876,8 +1833,6 @@ namespace MediaPortal.GUI.Library
       {
         wWindowID = (int)GUIWindow.Window.WINDOW_SETTINGS_PICTURES;
       }
-        //else if (strWindow.Equals("myprogramssettings")) wWindowID = (int)GUIWindow.Window.WINDOW_SETTINGS_MYPROGRAMS;
-        //else if (strWindow.Equals("myweathersettings")) wWindowID = (int)GUIWindow.Window.WINDOW_SETTINGS_MYWEATHER;
       else if (strWindow.Equals("mymusicsettings"))
       {
         wWindowID = (int)GUIWindow.Window.WINDOW_SETTINGS_MUSIC;
@@ -1983,11 +1938,6 @@ namespace MediaPortal.GUI.Library
       {
         wWindowID = (int)GUIWindow.Window.WINDOW_DIALOG_FILESTACKING;
       }
-      else if (strWindow.Equals("weather"))
-      {
-        wWindowID = (int)GUIWindow.Window.WINDOW_WEATHER;
-      }
-        //else if (strWindow.Equals("xlinkkai")) wWindowID = (int)GUIWindow.Window.WINDOW_BUDDIES;
       else if (strWindow.Equals("screensaver"))
       {
         wWindowID = (int)GUIWindow.Window.WINDOW_SCREENSAVER;
@@ -2155,10 +2105,6 @@ namespace MediaPortal.GUI.Library
       {
         bReturn = false; //bReturn = g_settings.bUseLoginScreen;
       }
-      else if (condition == WEATHER_IS_FETCHED)
-      {
-        bReturn = false; //bReturn = g_weatherManager.IsFetched();
-      }
       else if (condition == SYSTEM_INTERNET_STATE)
       {
         bReturn = false; //bReturn = SystemHasInternet();
@@ -2199,17 +2145,24 @@ namespace MediaPortal.GUI.Library
       }
       else if (condition == TOPBAR_HAS_FOCUS)
       {
-        GUIWindow wnd = GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_TOPBAR);
-        if (wnd != null)
+        if (PluginManager.IsPluginNameEnabled("Topbar"))
         {
-          if (!GUIGraphicsContext.TopBarHidden && wnd.GetFocusControlId() > 0)
-            return true;
+          GUIWindow wnd = GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_TOPBAR);
+          if (wnd != null)
+          {
+            if (!GUIGraphicsContext.TopBarHidden && wnd.GetFocusControlId() > 0)
+              return true;
+          }
         }
         return false;
       }
       else if (condition == TOPBAR_IS_VISIBLE)
       {
         return !GUIGraphicsContext.TopBarHidden;
+      }
+      else if (condition == VOLUMEOVERLAY_IS_VISIBLE)
+      {
+        return GUIGraphicsContext.VolumeOverlay;
       }
       else if (g_Player.Playing)
       {
@@ -2299,10 +2252,6 @@ namespace MediaPortal.GUI.Library
             break;
           case MUSICPM_ENABLED:
             //bReturn = g_partyModeManager.IsEnabled();
-            bReturn = false;
-            break;
-          case AUDIOSCROBBLER_ENABLED:
-            //bReturn = g_guiSettings.GetBool("lastfm.enable");
             bReturn = false;
             break;
           case VIDEOPLAYER_USING_OVERLAYS:

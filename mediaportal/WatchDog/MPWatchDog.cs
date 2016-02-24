@@ -40,7 +40,7 @@ namespace WatchDog
   {
     #region Constants
 
-    private const string Default4To3Skin = "Default";
+    private const string Default4To3Skin = "Titan";
     private const string Default16To9Skin = "Titan";
 
     #endregion
@@ -96,11 +96,11 @@ namespace WatchDog
       _tempConfig = CreateTemporaryConfiguration();
       if (_safeMode)
       {
-        return String.Format("/skin={0} /safelist=\"{1}\\BuiltInPlugins.xml\" /config=\"{2}\"",
+        return String.Format("/skin={0} /safelist=\"{1}\\BuiltInPlugins.xml\" /config=\"{2}\" /NoTheme",
                              GetScreenAspect() <= 1.5 ? Default4To3Skin : Default16To9Skin,
                              Application.StartupPath, _tempConfig);
       }
-      return String.Format("/config=\"{0}\"", _tempConfig);
+      return String.Format("/config=\"{0}\" /NoTheme", _tempConfig);
     }
 
     private string CreateTemporaryConfiguration()

@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <window>
-<id>7900</id>
-<defaultcontrol>3</defaultcontrol>
-<allowoverlay>no</allowoverlay>
-<controls>
-
+	<id>7900</id>
+	<defaultcontrol>3</defaultcontrol>
+	<allowoverlay>no</allowoverlay>
+	<controls>
 		<control>
 			<type>image</type>
 			<id>0</id>
@@ -14,14 +13,12 @@
 			<animation effect="fade" time="400">windowopen</animation>
 			<animation effect="fade" time="400">windowclose</animation>
 		</control>
-		
     <control>
     	<description>group element</description>
       <type>group</type>
 			<animation effect="fade" time="250">WindowOpen</animation>
 			<animation effect="fade" time="0">WindowClose</animation>
 			<animation effect="slide" start="0,200" end="0,0" tween="quadratic" easing="in" time="150" delay="0">WindowOpen</animation>
-
       <control>
       	<id>0</id>
         <type>image</type>
@@ -31,7 +28,6 @@
         <height>679</height>
         <texture>context_background.png</texture>
       </control>
-			
       <control>
       	<id>4</id>
         <description>Heading text label</description>
@@ -43,13 +39,12 @@
         <textcolor>ff393939</textcolor>
         <label>181</label>
       </control>
-
 			<control>
 				<description>textarea</description>
 				<type>textbox</type>
 				<id>3</id>
 				<posX>560</posX>
-				<posY>583</posY>
+				<posY>483</posY>
 				<width>820</width>
 				<height>300</height>
 				<onleft>2</onleft>

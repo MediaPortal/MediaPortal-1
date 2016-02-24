@@ -87,7 +87,7 @@ namespace MediaPortal.GUI.Library
       _properties["#music.duration"] = string.Empty;
       _properties["#music.comment"] = string.Empty;
       _properties["#music.genre"] = string.Empty;
-      _properties["music.year"] = string.Empty;
+      _properties["#music.year"] = string.Empty;
       _properties["#music.albumartist"] = string.Empty;
       _properties["#music.bitrate"] = string.Empty;
       _properties["#music.composer"] = string.Empty;
@@ -126,6 +126,8 @@ namespace MediaPortal.GUI.Library
       _properties["#shortcurrentplaytime"] = string.Empty;
       _properties["#duration"] = string.Empty;
       _properties["#shortduration"] = string.Empty;
+      _properties["#chapters"] = string.Empty;
+      _properties["#jumppoints"] = string.Empty;
       _properties["#playlogo"] = string.Empty;
       _properties["#playspeed"] = string.Empty;
       _properties["#percentage"] = string.Empty;
@@ -552,6 +554,8 @@ namespace MediaPortal.GUI.Library
       SetProperty("#duration", string.Empty);
       SetProperty("#shortduration", string.Empty);
       SetProperty("#percentage", "0,0");
+      SetProperty("#chapters", string.Empty);
+      SetProperty("#jumppoints", string.Empty);
       
       _isChanged = true;
     }

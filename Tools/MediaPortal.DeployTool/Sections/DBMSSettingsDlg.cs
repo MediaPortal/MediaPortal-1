@@ -33,7 +33,7 @@ namespace MediaPortal.DeployTool.Sections
         textBoxDir.Text = installationPath = InstallationProperties.Instance["ProgramFiles"] + "\\Microsoft SQL Server";
       else
         textBoxDir.Text =
-          installationPath = InstallationProperties.Instance["ProgramFiles"] + "\\MySQL\\MySQL Server 5.1";
+          installationPath = InstallationProperties.Instance["ProgramFiles"] + "\\MySQL\\MySQL Server 5.6";
       UpdateUI();
     }
 

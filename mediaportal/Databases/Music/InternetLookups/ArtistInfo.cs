@@ -23,43 +23,43 @@ using System;
 namespace MediaPortal.Music.Database
 {
   /// <summary>
-  /// 
+  /// Database object for artist info details
   /// </summary>
   [Serializable()]
   public class ArtistInfo
   {
-    private string m_strArtist = "";
-    private string m_strBorn = "";
-    private string m_strYearsActive = "";
-    private string m_strGenres = "";
-    private string m_strTones = "";
-    private string m_strStyles = "";
-    private string m_strInstruments = "";
-    private string m_strAMGBio = "";
-    private string m_strImage = "";
-    private string m_strAlbums = "";
-    private string m_strCompilations = "";
-    private string m_strSingles = "";
-    private string m_strMisc = "";
-
-    public ArtistInfo() {}
+    private string m_strArtist = string.Empty;
+    private string m_strBorn = string.Empty;
+    private string m_strYearsActive = string.Empty;
+    private string m_strGenres = string.Empty;
+    private string m_strTones = string.Empty;
+    private string m_strStyles = string.Empty;
+    private string m_strInstruments = string.Empty;
+    private string m_strAMGBio = string.Empty;
+    private string m_strImage = string.Empty;
+    private string m_strAlbums = string.Empty;
+    private string m_strCompilations = string.Empty;
+    private string m_strSingles = string.Empty;
+    private string m_strMisc = string.Empty;
 
     public ArtistInfo Clone()
     {
-      ArtistInfo newartist = new ArtistInfo();
-      newartist.Artist = Artist;
-      newartist.Born = Born;
-      newartist.YearsActive = YearsActive;
-      newartist.Genres = Genres;
-      newartist.Tones = Tones;
-      newartist.Styles = Styles;
-      newartist.Image = Image;
-      newartist.Instruments = Instruments;
-      newartist.AMGBio = AMGBio;
-      newartist.Albums = Albums;
-      newartist.Compilations = Compilations;
-      newartist.Singles = Singles;
-      newartist.Misc = Misc;
+      var newartist = new ArtistInfo
+        {
+          Artist = Artist,
+          Born = Born,
+          YearsActive = YearsActive,
+          Genres = Genres,
+          Tones = Tones,
+          Styles = Styles,
+          Image = Image,
+          Instruments = Instruments,
+          AMGBio = AMGBio,
+          Albums = Albums,
+          Compilations = Compilations,
+          Singles = Singles,
+          Misc = Misc
+        };
       return newartist;
     }
 

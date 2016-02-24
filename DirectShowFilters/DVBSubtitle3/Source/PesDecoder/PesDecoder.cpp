@@ -190,6 +190,13 @@ bool CPesDecoder::OnTsPacket( byte* tsPacket )
   //LogDebug(" pes %x copy:%x len:%x maxlen:%x start:%d", m_iStreamId,m_iWritePos,(188-pos),m_iMaxLength,m_bStart);
   //LogDebug( "m_iPesLenght %d  m_iWritePos %d  diff is %d", m_iPesLenght, m_iWritePos, m_iPesLenght - m_iWritePos );
 
+  // Packet is less than 188 bytes, don't need to assemble
+  if (m_iWritePos>m_iPesLength)
+  {
+    m_iWritePos = m_iPesLength;
+    LogDebug("Small PES Packet, m_iPesLength=%i", m_iPesLength);
+  }
+
   if ( m_iPesLength == m_iWritePos  ) // we have the expected data
   {
     if ( m_iWritePos>0 && m_pCallback != NULL )

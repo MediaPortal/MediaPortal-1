@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Skin translation file -->
+<!-- English (US) -->
+<strings>
+  <string Field="WorldNewsTicker">Показать бегущую строку WorldNews</string>
+  <string Field="MusicNowPlayingFanart">Фан-арт музыки "Сейчас играет" для Главного экрана</string>
+  <string Field="MusicFanart">Случайный фан-арт музыки для Главного экрана</string>
+  <string Field="VideoFanart">Случайный фан-арт видео для Главного экрана</string>
+  <string Field="TVGuideRows">Кол-во строк в ТВ-программе</string>
+  <string Field="Games">Игры</string>
+  <string Field="NewEpisodes">недавно добавленные серии</string>
+  <string Field="NewRecordings">Недавно записанные ТВ-передачи</string>
+  <string Field="NewVideos">Недавно добавленные видео</string>
+  <string Field="NewYouTubeVideos">Недавно добавленные видео с YouTube</string>
+  <string Field="NewFilms">Недавно добавленные фильмы</string>
+  <string Field="LastPlayed">Последним проигрывалось</string>
+  <string Field="NewPictures">Недавно добавленные изображения</string>
+  <string Field="NowRecording">Активные записи</string>
+  <string Field="Timer">#(L(603))</string>
+  <string Field="tvstreaminfo">Всегда показывать инфо о ТВ-потоке в инфо-окне</string>
+</strings>

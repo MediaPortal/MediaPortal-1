@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <Language name="Spanish" characters="255">
   <Section name="unmapped">
     <String id="0" prefix="Mis ">Programas</String>
@@ -2218,7 +2218,7 @@
     <String id="300116">Clásico (lineal)</String>
     <String id="300117">Logarítmico</String>
     <String id="300118">Windows Vista/Win7</String>
-    <String id="300119">Mostrar OSD del volumen por defecto en vídeo a pantalla completa</String>
+    <String id="300119">Activar indicador de volumen</String>
     <String id="300120">Skin</String>
     <String id="300121">Visualización en pantalla</String>
     <String id="300122">Permitir recordar el último elemento seleccionado</String>

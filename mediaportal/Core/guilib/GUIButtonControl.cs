@@ -36,11 +36,11 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("textcolor")] protected long _textColor = 0xFFFFFFFF;
     [XMLSkinElement("textcolorNoFocus")] protected long _textColorNoFocus = 0xFFFFFFFF;
     [XMLSkinElement("disabledcolor")] protected long _disabledColor = 0xFF606060;
-    [XMLSkinElement("hyperlink")] protected int _hyperLinkWindowId = -1;
+    [XMLSkinElement("hyperlink")] protected string _hyperLinkWindow = ""; //Changed to string to allow for properties
     //string parameter that will be passed to the plugin when plugin is opened
     [XMLSkinElement("hyperlinkParameter")] protected string _hyperLinkParameter = "";
     [XMLSkin("hyperlink", "history")] protected bool _addToHistory = true;
-    [XMLSkinElement("action")] protected int _actionId = -1;
+    [XMLSkinElement("action")] protected string _action = ""; //Changed to string to allow for properties
     [XMLSkinElement("script")] protected string _scriptAction = "";
     [XMLSkinElement("onclick")] protected string _onclick = "";
     [XMLSkinElement("textXOff")] protected int _textOffsetX = 0;
@@ -457,17 +457,17 @@ namespace MediaPortal.GUI.Library
           }
 
           // If this links to another window go to the window.
-          if (_hyperLinkWindowId >= 0)
+          if (HyperLink >= 0)
           {
             if (_hyperLinkParameter != null && !_hyperLinkParameter.Equals(""))
             {
               // The link also contains a parameter that we want to pass to the plugin
-              GUIWindowManager.ActivateWindow(_hyperLinkWindowId, GUIPropertyManager.Parse(_hyperLinkParameter),
+              GUIWindowManager.ActivateWindow(HyperLink, GUIPropertyManager.Parse(_hyperLinkParameter),
                                               !_addToHistory);
             }
             else
             {
-              GUIWindowManager.ActivateWindow(_hyperLinkWindowId, !_addToHistory);
+              GUIWindowManager.ActivateWindow(HyperLink, !_addToHistory);
             }
             return;
           }
@@ -751,8 +751,29 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     public int HyperLink
     {
-      get { return _hyperLinkWindowId; }
-      set { _hyperLinkWindowId = value; }
+      get
+      {
+        int r = -1;
+        if (int.TryParse(_hyperLinkWindow,out r))
+        {
+          return r;
+        }
+        else
+        {
+          string parsed = GUIPropertyManager.Parse(_hyperLinkWindow);
+          Log.Debug("GUIButtonControl.HyperLink: Trying to use parsed string, original {0}, parsed {1}", _hyperLinkWindow, parsed);
+          if (int.TryParse(parsed, out r))
+          {
+            return r;
+          }
+          else
+          {
+            return -1;
+          }
+        }
+      }
+      set 
+        { _hyperLinkWindow = string.Format("{0}",value); }
     }
 
     /// <summary>
@@ -776,8 +797,28 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     public int ActionID
     {
-      get { return _actionId; }
-      set { _actionId = value; }
+      get 
+      {
+        int r = -1;
+        if (int.TryParse(_action, out r))
+        {
+          return r;
+        }
+        else
+        {
+          string parsed = GUIPropertyManager.Parse(_action);
+          Log.Debug("GUIButtonControl.ActionID: Trying to use parsed string, original {0}, parsed {1}", _action, parsed);
+          if (int.TryParse(parsed, out r))
+          {
+            return r;
+          }
+          else
+          {
+            return -1;
+          }
+        }
+      }
+      set { _action = string.Format("{0}",value); }
     }
 
     /// <summary>

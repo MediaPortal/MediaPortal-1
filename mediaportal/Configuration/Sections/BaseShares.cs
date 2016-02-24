@@ -51,6 +51,8 @@ namespace MediaPortal.Configuration.Sections
       public bool ScanShare = false;
       public bool CreateThumbs = true;
       public bool EachFolderIsMovie = false;
+      public bool EnableWakeOnLan = false;
+      public bool DonotFolderJpgIfPin = true;
       
       public bool HasPinCode
       {
@@ -81,6 +83,8 @@ namespace MediaPortal.Configuration.Sections
     private MPCheckBox checkBoxSwitchRemovableDrive;
     private ColumnHeader columnHeader4;
     private IContainer components = null;
+    private MPButton mpButtonWOL;
+    private ColumnHeader columnHeader5;
 
     private string selectedSection = string.Empty;
 
@@ -126,6 +130,7 @@ namespace MediaPortal.Configuration.Sections
     private void InitializeComponent()
     {
       this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.mpButtonWOL = new MediaPortal.UserInterface.Controls.MPButton();
       this.checkBoxSwitchRemovableDrive = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.checkBoxAddOpticalDiskDrives = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.checkBoxRemember = new MediaPortal.UserInterface.Controls.MPCheckBox();
@@ -133,20 +138,20 @@ namespace MediaPortal.Configuration.Sections
       this.editButton = new MediaPortal.UserInterface.Controls.MPButton();
       this.addButton = new MediaPortal.UserInterface.Controls.MPButton();
       this.sharesListView = new MediaPortal.UserInterface.Controls.MPListView();
-      this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
-      this.columnHeader3 = new System.Windows.Forms.ColumnHeader();
-      this.columnHeader2 = new System.Windows.Forms.ColumnHeader();
-      this.columnHeader4 = new System.Windows.Forms.ColumnHeader();
+      this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+      this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+      this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+      this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+      this.columnHeader5 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
       this.groupBox1.SuspendLayout();
       this.SuspendLayout();
       // 
       // groupBox1
       // 
-      this.groupBox1.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         ((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-            | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox1.Controls.Add(this.mpButtonWOL);
       this.groupBox1.Controls.Add(this.checkBoxSwitchRemovableDrive);
       this.groupBox1.Controls.Add(this.checkBoxAddOpticalDiskDrives);
       this.groupBox1.Controls.Add(this.checkBoxRemember);
@@ -161,11 +166,20 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1.TabIndex = 0;
       this.groupBox1.TabStop = false;
       // 
+      // mpButtonWOL
+      // 
+      this.mpButtonWOL.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpButtonWOL.Location = new System.Drawing.Point(342, 359);
+      this.mpButtonWOL.Name = "mpButtonWOL";
+      this.mpButtonWOL.Size = new System.Drawing.Size(104, 23);
+      this.mpButtonWOL.TabIndex = 7;
+      this.mpButtonWOL.Text = "WOL parameters";
+      this.mpButtonWOL.UseVisualStyleBackColor = true;
+      this.mpButtonWOL.Click += new System.EventHandler(this.mpButtonWOL_Click);
+      // 
       // checkBoxSwitchRemovableDrive
       // 
-      this.checkBoxSwitchRemovableDrive.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.checkBoxSwitchRemovableDrive.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
       this.checkBoxSwitchRemovableDrive.AutoSize = true;
       this.checkBoxSwitchRemovableDrive.Checked = true;
       this.checkBoxSwitchRemovableDrive.CheckState = System.Windows.Forms.CheckState.Checked;
@@ -179,9 +193,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // checkBoxAddOpticalDiskDrives
       // 
-      this.checkBoxAddOpticalDiskDrives.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.checkBoxAddOpticalDiskDrives.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
       this.checkBoxAddOpticalDiskDrives.AutoSize = true;
       this.checkBoxAddOpticalDiskDrives.Checked = true;
       this.checkBoxAddOpticalDiskDrives.CheckState = System.Windows.Forms.CheckState.Checked;
@@ -195,9 +207,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // checkBoxRemember
       // 
-      this.checkBoxRemember.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.checkBoxRemember.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
       this.checkBoxRemember.AutoSize = true;
       this.checkBoxRemember.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.checkBoxRemember.Location = new System.Drawing.Point(16, 334);
@@ -209,9 +219,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // deleteButton
       // 
-      this.deleteButton.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.deleteButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.deleteButton.Enabled = false;
       this.deleteButton.Location = new System.Drawing.Point(374, 331);
       this.deleteButton.Name = "deleteButton";
@@ -223,9 +231,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // editButton
       // 
-      this.editButton.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.editButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.editButton.Enabled = false;
       this.editButton.Location = new System.Drawing.Point(294, 331);
       this.editButton.Name = "editButton";
@@ -237,9 +243,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // addButton
       // 
-      this.addButton.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.addButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.addButton.Location = new System.Drawing.Point(214, 331);
       this.addButton.Name = "addButton";
       this.addButton.Size = new System.Drawing.Size(72, 22);
@@ -252,17 +256,16 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.sharesListView.AllowDrop = true;
       this.sharesListView.AllowRowReorder = true;
-      this.sharesListView.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         ((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-            | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
+      this.sharesListView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.sharesListView.CheckBoxes = true;
       this.sharesListView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeader1,
             this.columnHeader3,
             this.columnHeader2,
-            this.columnHeader4});
+            this.columnHeader4,
+            this.columnHeader5});
       this.sharesListView.FullRowSelect = true;
       this.sharesListView.Location = new System.Drawing.Point(16, 24);
       this.sharesListView.Name = "sharesListView";
@@ -270,8 +273,8 @@ namespace MediaPortal.Configuration.Sections
       this.sharesListView.TabIndex = 0;
       this.sharesListView.UseCompatibleStateImageBehavior = false;
       this.sharesListView.View = System.Windows.Forms.View.Details;
-      this.sharesListView.SelectedIndexChanged += new System.EventHandler(this.sharesListView_SelectedIndexChanged);
       this.sharesListView.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.sharesListView_ItemCheck);
+      this.sharesListView.SelectedIndexChanged += new System.EventHandler(this.sharesListView_SelectedIndexChanged);
       // 
       // columnHeader1
       // 
@@ -292,6 +295,11 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.columnHeader4.Text = "Thumbs";
       // 
+      // columnHeader5
+      // 
+      this.columnHeader5.Text = "MAC Address";
+      this.columnHeader5.Width = 120;
+      // 
       // BaseShares
       // 
       this.Controls.Add(this.groupBox1);
@@ -300,6 +308,7 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1.ResumeLayout(false);
       this.groupBox1.PerformLayout();
       this.ResumeLayout(false);
+
     }
 
     #endregion
@@ -329,6 +338,7 @@ namespace MediaPortal.Configuration.Sections
         editShare.EachFolderIsMovie = false;
       }
 
+      editShare.DonotFolderJpgIfPin = true;
       DialogResult dialogResult = editShare.ShowDialog(this);
 
       if (dialogResult == DialogResult.OK)
@@ -342,6 +352,9 @@ namespace MediaPortal.Configuration.Sections
         shareData.ActiveConnection = editShare.ActiveConnection;
         shareData.RemoteFolder = editShare.RemoteFolder;
         shareData.DefaultLayout = ProperLayoutFromDefault(editShare.View);
+        shareData.EnableWakeOnLan = editShare.EnableWakeOnLan;
+        shareData.DonotFolderJpgIfPin = editShare.DonotFolderJpgIfPin;
+
         //CreateThumbs
         if (selectedSection == "movies")
         {
@@ -385,6 +398,31 @@ namespace MediaPortal.Configuration.Sections
         currentlyCheckedItem = listItem;
       }
 
+      if (!Util.Utils.IsNetwork(shareData.Folder))
+      {
+        listItem.SubItems[4].Text = string.Empty;
+      }
+      else
+      {
+        using (Profile.Settings xmlreader = new MPSettings())
+        {
+          string detectedFolderName = "";
+          if (!Util.Utils.IsUNCNetwork(shareData.Folder))
+          {
+            // Check if letter drive is a network drive
+            detectedFolderName = Util.Utils.FindUNCPaths(shareData.Folder);
+          }
+          if (Util.Utils.IsUNCNetwork(detectedFolderName))
+          {
+            listItem.SubItems[4].Text = xmlreader.GetValueAsString("macAddress", Util.Utils.GetServerNameFromUNCPath(detectedFolderName), null);
+          }
+          else if (Util.Utils.IsUNCNetwork(shareData.Folder))
+          {
+            listItem.SubItems[4].Text = xmlreader.GetValueAsString("macAddress", Util.Utils.GetServerNameFromUNCPath(shareData.Folder), null);
+          }
+        }
+      }
+
       sharesListView.Items.Add(listItem);
     }
 
@@ -410,8 +448,23 @@ namespace MediaPortal.Configuration.Sections
           editShare.PassWord = shareData.PassWord;
           editShare.RemoteFolder = shareData.RemoteFolder;
           editShare.View = ProperDefaultFromLayout(shareData.DefaultLayout);
+          editShare.EnableWakeOnLan = shareData.EnableWakeOnLan;
+          editShare.DonotFolderJpgIfPin = shareData.DonotFolderJpgIfPin;
+
           // CreateThumbs
-          int drivetype = Util.Utils.getDriveType(shareData.Folder);
+          int drivetype = 0;
+          if (!shareData.EnableWakeOnLan)
+          {
+            if (UNCTools.UNCFileFolderExists(shareData.Folder))
+            {
+              drivetype = Util.Utils.getDriveType(shareData.Folder);
+            }
+          }
+          else
+          {
+            drivetype = Util.Utils.getDriveType(shareData.Folder);
+          }
+
           if (selectedSection == "movies") // && 
                            //drivetype != 2 && 
                            //drivetype != 5)
@@ -449,6 +502,9 @@ namespace MediaPortal.Configuration.Sections
             shareData.ActiveConnection = editShare.ActiveConnection;
             shareData.RemoteFolder = editShare.RemoteFolder;
             shareData.DefaultLayout = ProperLayoutFromDefault(editShare.View);
+            shareData.EnableWakeOnLan = editShare.EnableWakeOnLan;
+            shareData.DonotFolderJpgIfPin = editShare.DonotFolderJpgIfPin;
+
             //CreateThumbs
             if (selectedSection == "movies")
             {
@@ -469,6 +525,32 @@ namespace MediaPortal.Configuration.Sections
             selectedItem.SubItems[1].Text = shareData.HasPinCode ? "Yes" : "No";
             selectedItem.SubItems[2].Text = shareData.Folder;
             selectedItem.SubItems[3].Text = shareData.CreateThumbs ? "Yes" : "No";
+
+            if (!Util.Utils.IsNetwork(shareData.Folder))
+            {
+              selectedItem.SubItems[4].Text = string.Empty;
+            }
+            else
+            {
+              using (Profile.Settings xmlreader = new MPSettings())
+              {
+                string detectedFolderName = "";
+                if (!Util.Utils.IsUNCNetwork(shareData.Folder))
+                {
+                  // Check if letter drive is a network drive
+                  detectedFolderName = Util.Utils.FindUNCPaths(shareData.Folder);
+                }
+                if (Util.Utils.IsUNCNetwork(detectedFolderName))
+                {
+                  selectedItem.SubItems[4].Text = xmlreader.GetValueAsString("macAddress", Util.Utils.GetServerNameFromUNCPath(detectedFolderName), null);
+                }
+                else if (Util.Utils.IsUNCNetwork(shareData.Folder))
+                {
+                  selectedItem.SubItems[4].Text = xmlreader.GetValueAsString("macAddress", Util.Utils.GetServerNameFromUNCPath(shareData.Folder), null);
+                }
+              }
+            }
+
             if (shareData.IsRemote)
             {
               selectedItem.SubItems[2].Text = String.Format("ftp://{0}:{1}{2}", shareData.Server, shareData.Port,
@@ -501,7 +583,7 @@ namespace MediaPortal.Configuration.Sections
           //
           // We have a new selection
           //
-          if (currentlyCheckedItem != null)
+          if (currentlyCheckedItem != null && currentlyCheckedItem.Index != -1)
           {
             currentlyCheckedItem.Checked = false;
           }
@@ -682,10 +764,12 @@ namespace MediaPortal.Configuration.Sections
           string sharePort = String.Format("shareport{0}", index);
           string shareRemotePath = String.Format("shareremotepath{0}", index);
           string shareViewPath = String.Format("shareview{0}", index);
-
+          string sharewakeonlan = String.Format("sharewakeonlan{0}", index);
+          string sharedonotfolderjpgifpin = String.Format("sharedonotfolderjpgifpin{0}", index);
+          
           string shareNameData = xmlreader.GetValueAsString(section, shareName, "");
           string sharePathData = xmlreader.GetValueAsString(section, sharePath, "");
-          string sharePinData = Util.Utils.DecryptPin(xmlreader.GetValueAsString(section, sharePin, ""));
+          string sharePinData = Util.Utils.DecryptPassword(xmlreader.GetValueAsString(section, sharePin, ""));
 
           // provide default shares
           if (index == 0 && shareNameData == string.Empty)
@@ -700,12 +784,15 @@ namespace MediaPortal.Configuration.Sections
           bool shareTypeData = xmlreader.GetValueAsBool(section, shareType, false);
           string shareServerData = xmlreader.GetValueAsString(section, shareServer, "");
           string shareLoginData = xmlreader.GetValueAsString(section, shareLogin, "");
-          string sharePwdData = xmlreader.GetValueAsString(section, sharePwd, "");
+          string sharePwdData = Util.Utils.DecryptPassword(xmlreader.GetValueAsString(section, sharePwd, ""));
           int sharePortData = xmlreader.GetValueAsInt(section, sharePort, 21);
           string shareRemotePathData = xmlreader.GetValueAsString(section, shareRemotePath, "/");
           int shareLayout = xmlreader.GetValueAsInt(section, shareViewPath,
                                                     (int)MediaPortal.GUI.Library.GUIFacadeControl.Layout.List);
 
+          bool shareWakeOnLan = xmlreader.GetValueAsBool(section, sharewakeonlan, false);
+          bool sharedonotFolderJpgIfPin = xmlreader.GetValueAsBool(section, sharedonotfolderjpgifpin, true);
+          
           // For Music Shares, we can indicate, if we want to scan them every time
           bool shareScanData = false;
           if (section == "music" || section == "movies")
@@ -735,7 +822,9 @@ namespace MediaPortal.Configuration.Sections
             newShare.Port = sharePortData;
             newShare.RemoteFolder = shareRemotePathData;
             newShare.DefaultLayout = (Layout)shareLayout;
-
+            newShare.EnableWakeOnLan = shareWakeOnLan;
+            newShare.DonotFolderJpgIfPin = sharedonotFolderJpgIfPin;
+            
             if (section == "music" || section == "movies")
             {
               newShare.ScanShare = shareScanData;
@@ -762,9 +851,9 @@ namespace MediaPortal.Configuration.Sections
         }
         else
         {
-          sharesListView.Columns[2].Width = 270;
-          if (sharesListView.Columns.Contains(columnHeader4))
-          sharesListView.Columns.Remove(columnHeader4);
+          sharesListView.Columns[3].Width = 0;
+         // if (sharesListView.Columns.Contains(columnHeader4))
+         // sharesListView.Columns.Remove(columnHeader4);
         }
       }
     }
@@ -792,7 +881,9 @@ namespace MediaPortal.Configuration.Sections
           string sharePort = String.Format("shareport{0}", index);
           string shareRemotePath = String.Format("shareremotepath{0}", index);
           string shareViewPath = String.Format("shareview{0}", index);
-
+          string sharewakeonlan = String.Format("sharewakeonlan{0}", index);
+          string sharedonotfolderjpgifpin = String.Format("sharedonotfolderjpgifpin{0}", index);
+          
           xmlwriter.RemoveEntry(section, shareName);
           xmlwriter.RemoveEntry(section, sharePath);
           xmlwriter.RemoveEntry(section, sharePin);
@@ -803,7 +894,9 @@ namespace MediaPortal.Configuration.Sections
           xmlwriter.RemoveEntry(section, sharePort);
           xmlwriter.RemoveEntry(section, shareRemotePath);
           xmlwriter.RemoveEntry(section, shareViewPath);
-
+          xmlwriter.RemoveEntry(section, sharewakeonlan);
+          xmlwriter.RemoveEntry(section, sharedonotfolderjpgifpin);
+          
           if (section == "music" || section == "movies")
           {
             string shareScan = String.Format("sharescan{0}", index);
@@ -833,6 +926,8 @@ namespace MediaPortal.Configuration.Sections
           //ThumbsCreate (default true)
           bool thumbsCreate = true;
           bool folderIsMovie = false;
+          bool shareWakeOnLan = false;
+          bool sharedonotFolderJpgIfPin = true;
 
           if (CurrentShares != null && CurrentShares.Count > index)
           {
@@ -854,6 +949,8 @@ namespace MediaPortal.Configuration.Sections
               // ThumbsCreate
               thumbsCreate = shareData.CreateThumbs;
               folderIsMovie = shareData.EachFolderIsMovie;
+              shareWakeOnLan = shareData.EnableWakeOnLan;
+              sharedonotFolderJpgIfPin = shareData.DonotFolderJpgIfPin;
 
               if (CurrentShares[index] == DefaultShare)
               {
@@ -862,14 +959,16 @@ namespace MediaPortal.Configuration.Sections
 
               xmlwriter.SetValue(section, shareName, shareNameData);
               xmlwriter.SetValue(section, sharePath, sharePathData);
-              xmlwriter.SetValue(section, sharePin, Util.Utils.EncryptPin(sharePinData));
+              xmlwriter.SetValue(section, sharePin, Util.Utils.EncryptPassword(sharePinData));
               xmlwriter.SetValueAsBool(section, shareType, shareTypeData);
               xmlwriter.SetValue(section, shareServer, shareServerData);
               xmlwriter.SetValue(section, shareLogin, shareLoginData);
-              xmlwriter.SetValue(section, sharePwd, sharePwdData);
+              xmlwriter.SetValue(section, sharePwd, Util.Utils.EncryptPassword(sharePwdData));
               xmlwriter.SetValue(section, sharePort, sharePortData.ToString());
               xmlwriter.SetValue(section, shareRemotePath, shareRemotePathData);
               xmlwriter.SetValue(section, shareViewPath, shareLayout);
+              xmlwriter.SetValueAsBool(section, sharewakeonlan, shareWakeOnLan);
+              xmlwriter.SetValueAsBool(section, sharedonotfolderjpgifpin, sharedonotFolderJpgIfPin);
 
               if (section == "music" || section == "movies")
               {
@@ -919,6 +1018,12 @@ namespace MediaPortal.Configuration.Sections
         case MediaPortal.GUI.Library.GUIFacadeControl.Layout.CoverFlow: return 5;
         default: return 0;
       }
+    }
+
+    private void mpButtonWOL_Click(object sender, EventArgs e)
+    {
+      DlgWol dlg = new DlgWol();
+      DialogResult dialogResult = dlg.ShowDialog();
     }
   }
 }

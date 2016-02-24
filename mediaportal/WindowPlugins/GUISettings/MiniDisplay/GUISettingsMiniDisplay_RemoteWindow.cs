@@ -20,7 +20,6 @@
 
 using System;
 using System.IO;
-using MediaPortal.Configuration;
 using MediaPortal.GUI.Library;
 using MediaPortal.InputDevices;
 using MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers;

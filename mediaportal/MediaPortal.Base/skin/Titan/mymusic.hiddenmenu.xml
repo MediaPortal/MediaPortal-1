@@ -322,8 +322,28 @@
 						<onright>50</onright>
 						<onleft>50</onleft>
 	          <onup>66610</onup>
-	          <ondown>200</ondown>
+	          <ondown>18</ondown>
 					</control>
+							<control>
+				  <description>AutoDJ</description>
+				 <type>checkbutton</type>
+				 <id>18</id>
+				 <width>499</width>
+				 <height>69</height>
+				 <textureFocus>hiddenmenu_item_selected.png</textureFocus>
+			     <textureNoFocus>-</textureNoFocus>
+    <font>font12</font>
+    <textcolor>FFFFFFFF</textcolor>
+    <colordiffuse>ffffffff</colordiffuse>
+    <textcolorNoFocus>ff393939</textcolorNoFocus>
+				 <label>AutoDJ</label>
+				 <onup>11</onup>
+				 <ondown>200</ondown>
+				 <onleft>50</onleft>
+				 <onright>50</onright>
+				 <textXOff>62</textXOff>
+				 <textYOff>16</textYOff>
+				</control>
 					<control>
 						<description>Search</description>
 						<type>button</type>
@@ -342,6 +362,7 @@
 	          <onup>11</onup>
 						<visible>plugin.isenabled(Search music)</visible>
 					</control>
+
 					<control>
 						<description>Lyrics</description>
 						<type>button</type>
@@ -359,8 +380,8 @@
 	          <ondown>2</ondown>
 	          <onup>200</onup>
 	          <visible>plugin.isenabled(My Lyrics)</visible>
-					</control>
 			</control>
+		</control>
 		</control>
 </controls>
 </window>

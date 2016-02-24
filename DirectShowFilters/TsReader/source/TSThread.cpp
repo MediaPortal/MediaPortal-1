@@ -36,6 +36,8 @@
 // For more details for memory leak detection see the alloctracing.h header
 #include "..\..\alloctracing.h"
 
+extern void LogDebug(const char *fmt, ...) ;
+
 /*
 void TSThreadThreadProc(void *pParam)
 {
@@ -75,17 +77,28 @@ BOOL TSThread::IsThreadRunning()
 
 HRESULT TSThread::StartThread()
 {
+  CAutoLock tLock (&m_ThreadStateLock);
 	ResetEvent(m_hStopEvent);
-	unsigned long m_threadHandle = _beginthread(&TSThread::thread_function, 0, (void *) this);
-	if (m_threadHandle == (unsigned long)INVALID_HANDLE_VALUE)
-		return E_FAIL;
 
+	m_threadHandle = (HANDLE)_beginthread(&TSThread::thread_function, 0, (void *) this);
+	if (m_threadHandle == INVALID_HANDLE_VALUE)
+	{
+    LogDebug("TSThread::StartThread failed !!");
+		return E_FAIL;
+	}
+	
 	return S_OK;
 }
 
 HRESULT TSThread::StopThread(DWORD dwTimeoutMilliseconds)
 {
+  CAutoLock tLock (&m_ThreadStateLock);
 	HRESULT hr = S_OK;
+	
+  if (m_threadHandle == INVALID_HANDLE_VALUE)
+	{
+	  return S_FALSE;
+	}
 	
 	ResetEvent(m_hDoneEvent);
   m_bThreadRunning=FALSE; //Block wake events
@@ -164,4 +177,5 @@ void TSThread::thread_function(void* p)
 {
 	TSThread *thread = reinterpret_cast<TSThread *>(p);
 	thread->InternalThreadProc();
+	_endthread();
 }

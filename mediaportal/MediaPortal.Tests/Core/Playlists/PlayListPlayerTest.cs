@@ -75,12 +75,23 @@ namespace MediaPortal.Tests.Core.Playlists
       get { return true; }
     }
 
+    public bool Paused
+    {
+      get { return Player.g_Player.Paused; }
+    }
+
     public void Release()
     {
       throw new Exception("The method or operation is not implemented.");
     }
 
     public bool Play(string strFile)
+    {
+      hasPlayBeenCalled = true;
+      return true;
+    }
+
+    public bool PlayMusic (string strFile)
     {
       hasPlayBeenCalled = true;
       return true;
