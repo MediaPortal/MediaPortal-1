@@ -666,6 +666,9 @@ namespace MediaPortal.Video.Database
       GUIPropertyManager.SetProperty("#localdbnumber", LocalDBNumber);
       GUIPropertyManager.SetProperty("#moviecollection", MovieCollection.Replace(" /", ","));
       GUIPropertyManager.SetProperty("#usergroups", UserGroup.Replace(" /", ","));
+      GUIPropertyManager.SetProperty("#moviepath", Path);
+      GUIPropertyManager.SetProperty("#isgroup", (string.IsNullOrEmpty(SingleUserGroup) ? "no" : "yes"));
+      GUIPropertyManager.SetProperty("#iscollection", (string.IsNullOrEmpty(SingleMovieCollection) ? "no" : "yes"));
       DateTime lastUpdate;
       DateTime.TryParseExact(LastUpdate, "yyyy-MM-dd HH:mm:ss", 
                              CultureInfo.CurrentCulture, 
@@ -715,7 +718,17 @@ namespace MediaPortal.Video.Database
 
       if (isFolder)
       {
-        strValue = string.Empty;
+        if (!string.IsNullOrEmpty(SingleUserGroup) || !string.IsNullOrEmpty(SingleMovieCollection))
+        {
+          if (Watched > 0)
+          {
+            strValue = "yes";
+          }
+        }
+        else
+        {
+          strValue = string.Empty;
+        }
       }
       GUIPropertyManager.SetProperty("#iswatched", strValue);
 
@@ -729,7 +742,14 @@ namespace MediaPortal.Video.Database
       }
       else
       {
-        GUIPropertyManager.SetProperty("#watchedcount", "-1");
+        if (!string.IsNullOrEmpty(SingleUserGroup) || !string.IsNullOrEmpty(SingleMovieCollection))
+        {
+          GUIPropertyManager.SetProperty("#watchedcount", "0");
+        }
+        else
+        {
+          GUIPropertyManager.SetProperty("#watchedcount", "-1");
+        }
       }
       
       // MediaInfo Properties
@@ -1902,6 +1922,9 @@ namespace MediaPortal.Video.Database
         GUIPropertyManager.SetProperty("#localdbnumber", info.LocalDBNumber);
         GUIPropertyManager.SetProperty("#moviecollection", info.MovieCollection.Replace(" /", ","));
         GUIPropertyManager.SetProperty("#usergroups", info.UserGroup.Replace(" /", ","));
+        GUIPropertyManager.SetProperty("#moviepath", info.Path); 
+        GUIPropertyManager.SetProperty("#isgroup", (string.IsNullOrEmpty(info.SingleUserGroup) ? "no" : "yes"));
+        GUIPropertyManager.SetProperty("#iscollection", (string.IsNullOrEmpty(info.SingleMovieCollection) ? "no" : "yes"));
         // Last update date
         DateTime lastUpdate;
         DateTime.TryParseExact(info.LastUpdate, "yyyy-MM-dd HH:mm:ss", CultureInfo.CurrentCulture, DateTimeStyles.None, out lastUpdate);
@@ -1990,10 +2013,19 @@ namespace MediaPortal.Video.Database
         }
         else
         {
-          // Watched percent property
-          GUIPropertyManager.SetProperty("#watchedpercent", "0");
-          // Watched count
-          GUIPropertyManager.SetProperty("#watchedcount", "-1");
+          if (!string.IsNullOrEmpty(info.SingleUserGroup) || !string.IsNullOrEmpty(info.SingleMovieCollection))
+          {
+            // Watched percent property
+            GUIPropertyManager.SetProperty("#watchedpercent", info.WatchedPercent.ToString());
+            // Watched count
+            GUIPropertyManager.SetProperty("#watchedcount", "0");
+          }
+          else
+          {
+            GUIPropertyManager.SetProperty("#watchedpercent", "0");
+            // Watched count
+            GUIPropertyManager.SetProperty("#watchedcount", "-1");
+          }
         }
         string hasSubtitles = "false";
         string videoMediaSource = string.Empty;
@@ -2027,6 +2059,7 @@ namespace MediaPortal.Video.Database
       GUIPropertyManager.SetProperty("#dvdlabel", string.Empty);
       GUIPropertyManager.SetProperty("#imdbnumber", string.Empty);
       GUIPropertyManager.SetProperty("#file", string.Empty);
+      GUIPropertyManager.SetProperty("#moviepath", string.Empty);
       GUIPropertyManager.SetProperty("#plot", string.Empty);
       GUIPropertyManager.SetProperty("#plotoutline", string.Empty);
       GUIPropertyManager.SetProperty("#userreview", string.Empty);
@@ -2063,6 +2096,9 @@ namespace MediaPortal.Video.Database
       GUIPropertyManager.SetProperty("#tmdbnumber", string.Empty);
       GUIPropertyManager.SetProperty("#localdbnumber", string.Empty);
       GUIPropertyManager.SetProperty("#moviecollection", string.Empty);
+      GUIPropertyManager.SetProperty("#moviepath", string.Empty);
+      GUIPropertyManager.SetProperty("#isgroup", string.Empty);
+      GUIPropertyManager.SetProperty("#iscollection", string.Empty);
     }
 
     #endregion

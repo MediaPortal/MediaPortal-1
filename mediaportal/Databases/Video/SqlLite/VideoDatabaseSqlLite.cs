@@ -428,7 +428,7 @@ namespace MediaPortal.Video.Database
       DatabaseUtility.AddTable(m_db, "movie",
                                "CREATE TABLE movie ( idMovie integer primary key, idPath integer, hasSubtitles integer, discid text, watched bool, timeswatched integer, iduration integer)");
       DatabaseUtility.AddTable(m_db, "movieinfo",
-                               "CREATE TABLE movieinfo ( idMovie integer, idDirector integer, strDirector text, strPlotOutline text, strPlot text, strTagLine text, strVotes text, fRating text,strCast text,strCredits text, iYear integer, strGenre text, strPictureURL text, strTitle text, IMDBID text, mpaa text,runtime integer, iswatched integer, strUserReview text, strFanartURL text, dateAdded timestamp, dateWatched timestamp, studios text, country text, language text, lastupdate timestamp, strSortTitle text, TMDBNumber text, LocalDBNumber text, iUserRating integer)");
+                               "CREATE TABLE movieinfo ( idMovie integer, idDirector integer, strDirector text, strPlotOutline text, strPlot text, strTagLine text, strVotes text, fRating text,strCast text,strCredits text, iYear integer, strGenre text, strPictureURL text, strTitle text, IMDBID text, mpaa text, runtime integer, iswatched integer, strUserReview text, strFanartURL text, dateAdded timestamp, dateWatched timestamp, studios text, country text, language text, lastupdate timestamp, strSortTitle text, TMDBNumber text, LocalDBNumber text, iUserRating integer)");
       DatabaseUtility.AddTable(m_db, "actorlinkmovie",
                                "CREATE TABLE actorlinkmovie ( idActor integer, idMovie integer, strRole text)");
       DatabaseUtility.AddTable(m_db, "actors",
@@ -1855,6 +1855,53 @@ namespace MediaPortal.Video.Database
       return;
     }
 
+    public bool GetMovieCollectionWatchedStatus(string collection, out int percent)
+    {
+      percent = 0;
+
+      if (null == m_db)
+      {
+        return false;
+      }
+
+      return GetMovieCollectionWatchedStatus(GetCollectionId(collection), out percent);
+    }
+
+    public bool GetMovieCollectionWatchedStatus(int collection, out int percent)
+    {
+      percent = 0;
+
+      if (null == m_db)
+      {
+        return false;
+      }
+
+      try
+      {
+        string strSQL = String.Format("SELECT * FROM movieinfo WHERE idMovie IN (SELECT idMovie FROM moviecollectionlinkmovie WHERE idCollection={0}) AND iswatched>0", collection);
+        SQLiteResultSet results = m_db.Execute(strSQL);
+        int watched = results.Rows.Count;
+         
+        strSQL = String.Format("SELECT * FROM movieinfo WHERE idMovie IN (SELECT idMovie FROM moviecollectionlinkmovie WHERE idCollection={0})", collection);
+        results = m_db.Execute(strSQL);
+        int total = results.Rows.Count;
+
+        percent = (total > 0) ? Convert.ToInt32((watched*100)/total) : 0;
+         
+        return (watched != 0);
+      }
+      catch (ThreadAbortException)
+      {
+        // Will be logged in thread main code
+      }
+      catch (Exception ex)
+      {
+        Log.Error("videodatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Open();
+      }
+      return false;
+    }
+
     #endregion
 
     #region UserGroups
@@ -1897,7 +1944,7 @@ namespace MediaPortal.Video.Database
       return -1;
     }
 
-    public int GetUserGroupId (string userGroup)
+    public int GetUserGroupId(string userGroup)
     {
       try
       {
@@ -2281,6 +2328,53 @@ namespace MediaPortal.Video.Database
         Log.Error("videodatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
         Open();
       }
+    }
+
+    public bool GetUserGroupWatchedStatus(string group, out int percent)
+    {
+      percent = 0;
+
+      if (null == m_db)
+      {
+        return false;
+      }
+
+      return GetUserGroupWatchedStatus(GetUserGroupId(group), out percent);
+    }
+
+    public bool GetUserGroupWatchedStatus(int group, out int percent)
+    {
+      percent = 0;
+
+      if (null == m_db)
+      {
+        return false;
+      }
+
+      try
+      {
+        string strSQL = String.Format("SELECT * FROM movieinfo WHERE idMovie IN (SELECT idMovie FROM usergrouplinkmovie WHERE idGroup={0}) AND iswatched>0", group);
+        SQLiteResultSet results = m_db.Execute(strSQL);
+        int watched = results.Rows.Count;
+
+        strSQL = String.Format("SELECT * FROM movieinfo WHERE idMovie IN (SELECT idMovie FROM usergrouplinkmovie WHERE idGroup={0})", group);
+        results = m_db.Execute(strSQL);
+        int total = results.Rows.Count;
+
+        percent = (total > 0) ? Convert.ToInt32((watched*100)/total) : 0;
+         
+        return (watched != 0);
+      }
+      catch (ThreadAbortException)
+      {
+        // Will be logged in thread main code
+      }
+      catch (Exception ex)
+      {
+        Log.Error("videodatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Open();
+      }
+      return false;
     }
 
     #endregion
@@ -4919,14 +5013,20 @@ namespace MediaPortal.Video.Database
           
           if (collectionTable && !movieinfoTable)
           {
+            int percent = 0;
             movie.SingleMovieCollection = fields.fields[1];
             movie.MovieCollectionID = (int)Math.Floor(0.5d + Double.Parse(fields.fields[0]));
+            movie.Watched = (GetMovieCollectionWatchedStatus(movie.SingleMovieCollection, out percent) ? 1 : 0);
+            movie.WatchedPercent = percent;
           }
           
           if (usergroupTable && !movieinfoTable)
           {
+            int percent = 0;
             movie.SingleUserGroup = fields.fields[1];
             movie.UserGroupID = (int)Math.Floor(0.5d + Double.Parse(fields.fields[0]));
+            movie.Watched = (GetUserGroupWatchedStatus(movie.SingleUserGroup, out percent) ? 1 : 0);
+            movie.WatchedPercent = percent;
           }
           
           if (movieinfoTable)

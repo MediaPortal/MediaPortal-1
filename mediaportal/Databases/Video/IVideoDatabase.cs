@@ -63,6 +63,8 @@ namespace MediaPortal.Video.Database
     void RemoveCollectionsForMovie(int lMovieId);
     string GetCollectionsForMovie(int lMovieId);
     void GetMovieCollections(int lMovieId, ArrayList movieCollections);
+    bool GetMovieCollectionWatchedStatus(string collection, out int percent);
+    bool GetMovieCollectionWatchedStatus(int collection, out int percent);
     
     // User groups
     int AddUserGroup(string userGroup);
@@ -81,6 +83,8 @@ namespace MediaPortal.Video.Database
     void DeleteUserGroup(string userGroup);
     void RemoveUserGroupsForMovie(int lMovieId);
     void RemoveUserGroupRule(string groupName);
+    bool GetUserGroupWatchedStatus(string group, out int percent);
+    bool GetUserGroupWatchedStatus(int group, out int percent);
     
     // Actors
     int AddActor(string strActorImdbId, string strActorName);

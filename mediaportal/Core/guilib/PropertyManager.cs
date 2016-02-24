@@ -85,6 +85,9 @@ namespace MediaPortal.GUI.Library
       _properties["#tmdbnumber"] = string.Empty; // movie TMDB ID
       _properties["#localdbnumber"] = string.Empty; // movie any Local DB ID
       _properties["#moviecollection"] = string.Empty; // movie Collestion / Set
+      _properties["#moviepath"] = string.Empty; // Movie path
+      _properties["#isgroup"] = string.Empty; // Is Groups
+      _properties["#iscollection"] = string.Empty; // Is Movie Collection
       
       _properties["#music.title"] = string.Empty;
       _properties["#music.artist"] = string.Empty;

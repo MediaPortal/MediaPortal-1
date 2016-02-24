@@ -184,11 +184,11 @@ namespace MediaPortal.GUI.Video
 
           if (table == "usergroup")
           {
-          ArrayList moviesExt = new ArrayList();
-          sql = String.Format("SELECT * FROM movieinfo WHERE idMovie NOT IN (SELECT DISTINCT idMovie FROM usergrouplinkmovie) ORDER BY strTitle");
+            ArrayList moviesExt = new ArrayList();
+            sql = String.Format("SELECT * FROM movieinfo WHERE idMovie NOT IN (SELECT DISTINCT idMovie FROM usergrouplinkmovie) ORDER BY strTitle");
             VideoDatabase.GetMoviesByFilter(sql, out moviesExt, false, true, false, false, false);
-          movies.AddRange(moviesExt);
-        }
+            movies.AddRange(moviesExt);
+          }
         }
         else if (table == "moviecollection" || table == "moviecollectiononly")
         {
@@ -330,9 +330,41 @@ namespace MediaPortal.GUI.Video
           }
         }
        
+        if (defCurrent.Where == "genre")
+        {
+          whereClause = " WHERE idGenre IN (SELECT idGenre FROM genrelinkmovie WHERE idMovie IN (SELECT movieinfo.idMovie FROM movieinfo" + fromClause + " " + whereClause + "))";
+        }
+
+        if (defCurrent.Where == "user groups" || defCurrent.Where == "user groups only")
+        {
+          whereClause = " WHERE idGroup IN (SELECT idGroup FROM usergrouplinkmovie WHERE idMovie IN (SELECT movieinfo.idMovie FROM movieinfo" + fromClause + " " + whereClause + "))";
+        }
+
+        if (defCurrent.Where == "movie collections" || defCurrent.Where == "movie collections only")
+        {
+          whereClause = " WHERE idCollection IN (SELECT idCollection FROM moviecollectionlinkmovie WHERE idMovie IN (SELECT movieinfo.idMovie FROM movieinfo" + fromClause + " " + whereClause + "))";
+        }
+
         sql = String.Format("SELECT DISTINCT {0} FROM {1} {2} {3} {4}",
                             fields, table, join, whereClause, orderClause);
         VideoDatabase.GetMoviesByFilter(sql, out movies, useActorsTable, useMovieInfoTable, useGenreTable, useUserGroupsTable, useMovieCollectionTable);
+
+        if (table == "usergroup")
+        {
+          ArrayList moviesExt = new ArrayList();
+          sql = String.Format("SELECT * FROM movieinfo WHERE idMovie NOT IN (SELECT DISTINCT idMovie FROM usergrouplinkmovie) "+
+                                                        "AND idMovie IN (SELECT movieinfo.idMovie FROM movieinfo" + fromClause + " " + whereClause + ") ORDER BY strTitle");
+          VideoDatabase.GetMoviesByFilter(sql, out moviesExt, false, true, false, false, false);
+          movies.AddRange(moviesExt);
+        }
+        if (table == "moviecollection")
+        {
+          ArrayList moviesExt = new ArrayList();
+          sql = String.Format("SELECT * FROM movieinfo WHERE idMovie NOT IN (SELECT DISTINCT idMovie FROM moviecollectionlinkmovie) "+
+                                                        "AND idMovie IN (SELECT movieinfo.idMovie FROM movieinfo" + fromClause + " " + whereClause + ") ORDER BY strTitle");
+          VideoDatabase.GetMoviesByFilter(sql, out moviesExt, false, true, false, false, false);
+          movies.AddRange(moviesExt);
+        }
       }
       else
       {

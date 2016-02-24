@@ -236,6 +236,15 @@ namespace MediaPortal.Video.Database
       _database.GetMovieCollections(lMovieId, movieCollections);
     }
 
+    public static bool GetMovieCollectionWatchedStatus(string collection, out int percent)
+    {
+      return _database.GetMovieCollectionWatchedStatus(collection, out percent);
+    }
+
+    public static bool GetMovieCollectionWatchedStatus(int collection, out int percent)
+    {
+      return _database.GetMovieCollectionWatchedStatus(collection, out percent);
+    }
     #endregion
 
     #region User groups
@@ -318,6 +327,16 @@ namespace MediaPortal.Video.Database
     public static void RemoveUserGroupRule(string groupName)
     {
       _database.RemoveUserGroupRule(groupName);
+    }
+
+    public static bool GetUserGroupWatchedStatus(string group, out int percent)
+    {
+      return _database.GetUserGroupWatchedStatus(group, out percent);
+    }
+
+    public static bool GetUserGroupWatchedStatus(int group, out int percent)
+    {
+      return _database.GetUserGroupWatchedStatus(group, out percent);
     }
 
     #endregion
