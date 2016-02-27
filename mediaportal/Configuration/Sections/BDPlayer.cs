@@ -28,7 +28,7 @@ using MediaPortal.UserInterface.Controls;
 
 namespace MediaPortal.Configuration.Sections
 {
-  public class DVDPlayer : SectionSettings
+  public class BDPlayer : SectionSettings
   {
     private MPGroupBox mpGroupBox1;
     private MPLabel label1;
@@ -41,13 +41,15 @@ namespace MediaPortal.Configuration.Sections
     private MPTextBox parametersTextBox;
     private OpenFileDialog openFileDialog;
     private MPGroupBox mpGroupBox3;
-    private MPCheckBox useExternalPlayerForDVD;
-    private CheckBox useMediaInfo;
+    private MPCheckBox useExternalPlayerForBluRay;
+    private MPCheckBox useInternalBDPlayer;
+    private MPLabel mpLabel6;
+    private CheckBox useMediaInfoBD;
 
-    public DVDPlayer()
-      : this("DVD Discs/Images Player") {}
+    public BDPlayer()
+      : this("Blu-ray Discs/Images Player") {}
 
-    public DVDPlayer(string name)
+    public BDPlayer(string name)
       : base(name)
     {
       // This call is required by the Windows Form Designer.
@@ -61,15 +63,12 @@ namespace MediaPortal.Configuration.Sections
     {
       using (Settings xmlreader = new MPSettings())
       {
-        fileNameTextBox.Text = xmlreader.GetValueAsString("dvdplayer", "path", @"");
-        parametersTextBox.Text = xmlreader.GetValueAsString("dvdplayer", "arguments", "");
-        useMediaInfo.Checked = xmlreader.GetValueAsBool("dvdplayer", "mediainfoused", false);
-        useExternalPlayerForDVD.Checked = xmlreader.GetValueAsBool("dvdplayer", "usefordvd", true);
-        //
-        // Fake a check changed to force a CheckChanged event
-        //
-        useExternalPlayerForDVD.Checked = xmlreader.GetValueAsBool("dvdplayer", "internal", true);
-        useExternalPlayerForDVD.Checked = !useExternalPlayerForDVD.Checked;
+        fileNameTextBox.Text = xmlreader.GetValueAsString("bdplayer", "path", @"");
+        parametersTextBox.Text = xmlreader.GetValueAsString("bdplayer", "arguments", "");
+        useMediaInfoBD.Checked = xmlreader.GetValueAsBool("bdplayer", "mediainfoused", false);
+        useExternalPlayerForBluRay.Checked = xmlreader.GetValueAsBool("bdplayer", "useforbluray", true);
+        useInternalBDPlayer.Checked = xmlreader.GetValueAsBool("bdplayer", "useInternalBDPlayer", true);
+        UpdatePlayerSettings();
       }
     }
 
@@ -80,24 +79,13 @@ namespace MediaPortal.Configuration.Sections
     {
       using (Settings xmlwriter = new MPSettings())
       {
-        xmlwriter.SetValue("dvdplayer", "path", fileNameTextBox.Text);
-        xmlwriter.SetValue("dvdplayer", "arguments", parametersTextBox.Text);
+        xmlwriter.SetValue("bdplayer", "path", fileNameTextBox.Text);
+        xmlwriter.SetValue("bdplayer", "arguments", parametersTextBox.Text);
 
-        xmlwriter.SetValueAsBool("dvdplayer", "internal", !useExternalPlayerForDVD.Checked);
-        xmlwriter.SetValueAsBool("dvdplayer", "mediainfoused", useMediaInfo.Checked);
-        xmlwriter.SetValueAsBool("dvdplayer", "usefordvd", useExternalPlayerForDVD.Checked);
+        xmlwriter.SetValueAsBool("bdplayer", "mediainfoused", useMediaInfoBD.Checked);
+        xmlwriter.SetValueAsBool("bdplayer", "useforbluray", useExternalPlayerForBluRay.Checked);
+        xmlwriter.SetValueAsBool("bdplayer", "useInternalBDPlayer", useInternalBDPlayer.Checked);
       }
-    }
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="e"></param>
-    private void useExternalPlayerForDVD_CheckedChanged(object sender, EventArgs e)
-    {
-      fileNameTextBox.Enabled =
-        parametersTextBox.Enabled = fileNameButton.Enabled = parametersButton.Enabled = useExternalPlayerForDVD.Checked;
     }
 
     #region Designer generated code
@@ -109,7 +97,9 @@ namespace MediaPortal.Configuration.Sections
     private void InitializeComponent()
     {
       this.mpGroupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.useExternalPlayerForDVD = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.mpLabel6 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.useInternalBDPlayer = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.useExternalPlayerForBluRay = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.parametersButton = new MediaPortal.UserInterface.Controls.MPButton();
       this.parametersTextBox = new MediaPortal.UserInterface.Controls.MPTextBox();
       this.label2 = new MediaPortal.UserInterface.Controls.MPLabel();
@@ -120,7 +110,7 @@ namespace MediaPortal.Configuration.Sections
       this.textBox1 = new MediaPortal.UserInterface.Controls.MPTextBox();
       this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
       this.mpGroupBox3 = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.useMediaInfo = new System.Windows.Forms.CheckBox();
+      this.useMediaInfoBD = new System.Windows.Forms.CheckBox();
       this.mpGroupBox1.SuspendLayout();
       this.mpGroupBox3.SuspendLayout();
       this.SuspendLayout();
@@ -129,7 +119,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.mpGroupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-      this.mpGroupBox1.Controls.Add(this.useExternalPlayerForDVD);
+      this.mpGroupBox1.Controls.Add(this.mpLabel6);
+      this.mpGroupBox1.Controls.Add(this.useInternalBDPlayer);
+      this.mpGroupBox1.Controls.Add(this.useExternalPlayerForBluRay);
       this.mpGroupBox1.Controls.Add(this.parametersButton);
       this.mpGroupBox1.Controls.Add(this.parametersTextBox);
       this.mpGroupBox1.Controls.Add(this.label2);
@@ -139,27 +131,49 @@ namespace MediaPortal.Configuration.Sections
       this.mpGroupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.mpGroupBox1.Location = new System.Drawing.Point(6, 73);
       this.mpGroupBox1.Name = "mpGroupBox1";
-      this.mpGroupBox1.Size = new System.Drawing.Size(462, 161);
+      this.mpGroupBox1.Size = new System.Drawing.Size(462, 206);
       this.mpGroupBox1.TabIndex = 1;
       this.mpGroupBox1.TabStop = false;
-      this.mpGroupBox1.Text = "External Player";
+      this.mpGroupBox1.Text = "External / Internal / Internal Menu Player";
       // 
-      // useExternalPlayerForDVD
+      // mpLabel6
       // 
-      this.useExternalPlayerForDVD.AutoSize = true;
-      this.useExternalPlayerForDVD.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.useExternalPlayerForDVD.Location = new System.Drawing.Point(168, 19);
-      this.useExternalPlayerForDVD.Name = "useExternalPlayerForDVD";
-      this.useExternalPlayerForDVD.Size = new System.Drawing.Size(277, 17);
-      this.useExternalPlayerForDVD.TabIndex = 7;
-      this.useExternalPlayerForDVD.Text = "Use external player for DVDs (replaces internal player)";
-      this.useExternalPlayerForDVD.UseVisualStyleBackColor = true;
-      this.useExternalPlayerForDVD.CheckedChanged += new System.EventHandler(this.useExternalPlayerForDVD_CheckedChanged);
+      this.mpLabel6.Location = new System.Drawing.Point(16, 157);
+      this.mpLabel6.Name = "mpLabel6";
+      this.mpLabel6.Size = new System.Drawing.Size(441, 40);
+      this.mpLabel6.TabIndex = 80;
+      this.mpLabel6.Text = "* If \'Use internal Blu-ray menu player\' is unchecked, video player will be use to" +
+    " play BD";
+      this.mpLabel6.Click += new System.EventHandler(this.mpLabel6_Click);
+      // 
+      // useInternalBDPlayer
+      // 
+      this.useInternalBDPlayer.AutoSize = true;
+      this.useInternalBDPlayer.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.useInternalBDPlayer.Location = new System.Drawing.Point(168, 32);
+      this.useInternalBDPlayer.Name = "useInternalBDPlayer";
+      this.useInternalBDPlayer.Size = new System.Drawing.Size(175, 17);
+      this.useInternalBDPlayer.TabIndex = 9;
+      this.useInternalBDPlayer.Text = "Use internal Blu-ray menu player";
+      this.useInternalBDPlayer.UseVisualStyleBackColor = true;
+      this.useInternalBDPlayer.CheckedChanged += new System.EventHandler(this.useInternalBDPlayer_CheckedChanged);
+      // 
+      // useExternalPlayerForBluRay
+      // 
+      this.useExternalPlayerForBluRay.AutoSize = true;
+      this.useExternalPlayerForBluRay.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.useExternalPlayerForBluRay.Location = new System.Drawing.Point(168, 55);
+      this.useExternalPlayerForBluRay.Name = "useExternalPlayerForBluRay";
+      this.useExternalPlayerForBluRay.Size = new System.Drawing.Size(289, 17);
+      this.useExternalPlayerForBluRay.TabIndex = 8;
+      this.useExternalPlayerForBluRay.Text = "Use external player for Blu-rays ((replaces internal player)";
+      this.useExternalPlayerForBluRay.UseVisualStyleBackColor = true;
+      this.useExternalPlayerForBluRay.CheckedChanged += new System.EventHandler(this.useExternalPlayerForBluRay_CheckedChanged);
       // 
       // parametersButton
       // 
       this.parametersButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.parametersButton.Location = new System.Drawing.Point(374, 67);
+      this.parametersButton.Location = new System.Drawing.Point(374, 103);
       this.parametersButton.Name = "parametersButton";
       this.parametersButton.Size = new System.Drawing.Size(72, 22);
       this.parametersButton.TabIndex = 6;
@@ -172,14 +186,14 @@ namespace MediaPortal.Configuration.Sections
       this.parametersTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
       this.parametersTextBox.BorderColor = System.Drawing.Color.Empty;
-      this.parametersTextBox.Location = new System.Drawing.Point(168, 68);
+      this.parametersTextBox.Location = new System.Drawing.Point(168, 104);
       this.parametersTextBox.Name = "parametersTextBox";
       this.parametersTextBox.Size = new System.Drawing.Size(198, 20);
       this.parametersTextBox.TabIndex = 5;
       // 
       // label2
       // 
-      this.label2.Location = new System.Drawing.Point(16, 72);
+      this.label2.Location = new System.Drawing.Point(16, 108);
       this.label2.Name = "label2";
       this.label2.Size = new System.Drawing.Size(72, 15);
       this.label2.TabIndex = 4;
@@ -188,7 +202,7 @@ namespace MediaPortal.Configuration.Sections
       // fileNameButton
       // 
       this.fileNameButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.fileNameButton.Location = new System.Drawing.Point(374, 43);
+      this.fileNameButton.Location = new System.Drawing.Point(374, 79);
       this.fileNameButton.Name = "fileNameButton";
       this.fileNameButton.Size = new System.Drawing.Size(72, 22);
       this.fileNameButton.TabIndex = 3;
@@ -201,14 +215,14 @@ namespace MediaPortal.Configuration.Sections
       this.fileNameTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
       this.fileNameTextBox.BorderColor = System.Drawing.Color.Empty;
-      this.fileNameTextBox.Location = new System.Drawing.Point(168, 44);
+      this.fileNameTextBox.Location = new System.Drawing.Point(168, 80);
       this.fileNameTextBox.Name = "fileNameTextBox";
       this.fileNameTextBox.Size = new System.Drawing.Size(198, 20);
       this.fileNameTextBox.TabIndex = 2;
       // 
       // label1
       // 
-      this.label1.Location = new System.Drawing.Point(16, 48);
+      this.label1.Location = new System.Drawing.Point(16, 84);
       this.label1.Name = "label1";
       this.label1.Size = new System.Drawing.Size(80, 16);
       this.label1.TabIndex = 1;
@@ -234,7 +248,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.mpGroupBox3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-      this.mpGroupBox3.Controls.Add(this.useMediaInfo);
+      this.mpGroupBox3.Controls.Add(this.useMediaInfoBD);
       this.mpGroupBox3.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.mpGroupBox3.Location = new System.Drawing.Point(6, 0);
       this.mpGroupBox3.Name = "mpGroupBox3";
@@ -243,22 +257,22 @@ namespace MediaPortal.Configuration.Sections
       this.mpGroupBox3.TabStop = false;
       this.mpGroupBox3.Text = "Settings";
       // 
-      // useMediaInfo
+      // useMediaInfoBD
       // 
-      this.useMediaInfo.AutoSize = true;
-      this.useMediaInfo.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.useMediaInfo.Location = new System.Drawing.Point(19, 30);
-      this.useMediaInfo.Name = "useMediaInfo";
-      this.useMediaInfo.Size = new System.Drawing.Size(301, 17);
-      this.useMediaInfo.TabIndex = 4;
-      this.useMediaInfo.Text = "Use MediaInfo for DVDs. This can slow down playing start!";
-      this.useMediaInfo.UseVisualStyleBackColor = true;
+      this.useMediaInfoBD.AutoSize = true;
+      this.useMediaInfoBD.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.useMediaInfoBD.Location = new System.Drawing.Point(19, 30);
+      this.useMediaInfoBD.Name = "useMediaInfoBD";
+      this.useMediaInfoBD.Size = new System.Drawing.Size(293, 17);
+      this.useMediaInfoBD.TabIndex = 4;
+      this.useMediaInfoBD.Text = "Use MediaInfo for BDs. This can slow down playing start!";
+      this.useMediaInfoBD.UseVisualStyleBackColor = true;
       // 
-      // DVDPlayer
+      // BDPlayer
       // 
       this.Controls.Add(this.mpGroupBox3);
       this.Controls.Add(this.mpGroupBox1);
-      this.Name = "DVDPlayer";
+      this.Name = "BDPlayer";
       this.Size = new System.Drawing.Size(472, 408);
       this.mpGroupBox1.ResumeLayout(false);
       this.mpGroupBox1.PerformLayout();
@@ -296,7 +310,7 @@ namespace MediaPortal.Configuration.Sections
         openFileDialog.RestoreDirectory = true;
         openFileDialog.Filter = "exe files (*.exe)|*.exe";
         openFileDialog.FilterIndex = 0;
-        openFileDialog.Title = "Select DVD player";
+        openFileDialog.Title = "Select BD player";
 
         DialogResult dialogResult = openFileDialog.ShowDialog();
 
@@ -305,6 +319,45 @@ namespace MediaPortal.Configuration.Sections
           fileNameTextBox.Text = openFileDialog.FileName;
         }
       }
+    }
+
+    public void UpdatePlayerSettings()
+    {
+      if (useExternalPlayerForBluRay.Checked)
+      {
+        useInternalBDPlayer.Enabled = false;
+        useInternalBDPlayer.Checked = false;
+      }
+      else
+      {
+        useInternalBDPlayer.Enabled = true;
+      }
+      if (useInternalBDPlayer.Checked)
+      {
+        useExternalPlayerForBluRay.Enabled = false;
+        useExternalPlayerForBluRay.Checked = false;
+      }
+      else
+      {
+        useExternalPlayerForBluRay.Enabled = true;
+      }
+      fileNameTextBox.Enabled =
+        parametersTextBox.Enabled = fileNameButton.Enabled = parametersButton.Enabled = useExternalPlayerForBluRay.Checked;
+    }
+
+    private void useExternalPlayerForBluRay_CheckedChanged(object sender, EventArgs e)
+    {
+      UpdatePlayerSettings();
+    }
+
+    private void useInternalBDPlayer_CheckedChanged(object sender, EventArgs e)
+    {
+      UpdatePlayerSettings();
+    }
+
+    private void mpLabel6_Click(object sender, EventArgs e)
+    {
+
     }
   }
 }
