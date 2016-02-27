@@ -63,6 +63,7 @@ CCritSec m_qLock;
 CCritSec m_logFileLock;
 std::queue<std::string> m_logQueue;
 BOOL m_bLoggerRunning = false;
+BOOL m_bLoggerDisabled = FALSE;
 HANDLE m_hLogger = NULL;
 CAMEvent m_EndLoggingEvent;
 
@@ -185,6 +186,7 @@ UINT CALLBACK LogThread(void* param)
 void StartLogger()
 {
   UINT id;
+  m_bLoggerDisabled = FALSE;
   m_hLogger = (HANDLE)_beginthreadex(NULL, 0, LogThread, 0, 0, &id);
   SetThreadPriority(m_hLogger, THREAD_PRIORITY_BELOW_NORMAL);
 }
@@ -195,6 +197,7 @@ void StopLogger()
   if (m_hLogger)
   {
     m_bLoggerRunning = FALSE;
+    m_bLoggerDisabled = TRUE;
     m_EndLoggingEvent.Set();
     WaitForSingleObject(m_hLogger, INFINITE);	
     m_EndLoggingEvent.Reset();
@@ -213,6 +216,10 @@ void LogDebug(const char *fmt, ...)
   va_start(ap,fmt);
 
   CAutoLock logLock(&lock);
+  
+  if (m_bLoggerDisabled)
+    return;
+    
   if (!m_hLogger) {
     m_bLoggerRunning = true;
     StartLogger();
@@ -2356,7 +2363,7 @@ void CTsReaderFilter::ReadRegistryKeyDword(HKEY hKey, LPCTSTR& lpSubKey, DWORD& 
     }
     else
     {
-      LogDebug("Faíled to create default value for: %s", T2A(lpSubKey));
+      LogDebug("FaÃ­led to create default value for: %s", T2A(lpSubKey));
     }
   }
 }
