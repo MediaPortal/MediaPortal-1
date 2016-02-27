@@ -1679,6 +1679,11 @@ namespace MediaPortal.Player
                   bInternalDVD = true;
               }
 
+              if ((bUseExternalPlayerForBluray && !isImageFile && extension == ".bdmv") ||
+                  (bUseExternalPlayerForBluray && isImageFile && Util.Utils.IsBDImage(strFile)))
+              {
+                bInternalDVD = false;
+              }
 
               if ((!bInternalDVD && !isImageFile && (extension == ".ifo" || extension == ".vob" || extension == ".bdmv")) ||
                   (!bInternalDVD && isImageFile && Util.Utils.IsDVDImage(strFile)) ||
