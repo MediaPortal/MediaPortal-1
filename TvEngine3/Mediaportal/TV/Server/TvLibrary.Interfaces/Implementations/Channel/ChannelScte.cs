@@ -34,7 +34,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channel
   {
     #region constants
 
-    private static readonly Regex LOGICAL_CHANNEL_NUMBER_FORMAT = new Regex(@"^(\d+)[^\d](\d+)$");
+    private static readonly Regex LOGICAL_CHANNEL_NUMBER_FORMAT = new Regex(@"^(\d+)([^\d](\d+))?$");
 
     #endregion
 
@@ -143,11 +143,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channel
     {
       get
       {
-        int majorChannelNumber;
-        if (int.TryParse(LogicalChannelNumber, out majorChannelNumber))
-        {
-          return majorChannelNumber;
-        }
         Match m = LOGICAL_CHANNEL_NUMBER_FORMAT.Match(LogicalChannelNumber);
         if (m.Success)
         {
@@ -165,9 +160,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channel
       get
       {
         Match m = LOGICAL_CHANNEL_NUMBER_FORMAT.Match(LogicalChannelNumber);
-        if (m.Success)
+        if (m.Success && m.Groups[3].Captures.Count != 0)
         {
-          return int.Parse(m.Groups[2].Captures[0].Value);
+          return int.Parse(m.Groups[3].Captures[0].Value);
         }
         return -1;
       }
@@ -176,6 +171,18 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channel
     #endregion
 
     #region IChannel members
+
+    /// <summary>
+    /// Get the default logical number associated with the channel.
+    /// </summary>
+    public override string DefaultLogicalChannelNumber
+    {
+      get
+      {
+        // This format is sometimes known as a QAM channel number.
+        return string.Format("{0}.{1}", PhysicalChannelNumber, ProgramNumber);
+      }
+    }
 
     /// <summary>
     /// Check if this channel and another channel are broadcast from different transmitters.

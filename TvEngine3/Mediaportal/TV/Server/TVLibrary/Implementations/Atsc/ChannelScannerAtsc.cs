@@ -541,7 +541,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Atsc
         {
           if (string.IsNullOrEmpty(c.Channel.LogicalChannelNumber))
           {
-            c.Channel.LogicalChannelNumber = GetNumberForChannel(c.Channel);
+            c.Channel.LogicalChannelNumber = c.Channel.DefaultLogicalChannelNumber;
           }
 
           if (string.IsNullOrEmpty(c.Channel.Name))
@@ -716,6 +716,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Atsc
         this.LogDebug("    subtitles language count = {0}, languages = {1}", subtitlesLanguageCount, string.Join(", ", subtitlesLanguages.Take(subtitlesLanguageCount)));
 
         ProgramInfo program = new ProgramInfo();
+        program.ProgramNumber = programNumber;
         program.PmtPid = pmtPid;
         if (isPmtReceived)
         {
@@ -1586,38 +1587,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Atsc
         return string.Format("Unknown SDV {0}", channel.LogicalChannelNumber);
       }
       return string.Format("Unknown {0}", channel.LogicalChannelNumber);
-    }
-
-    /// <summary>
-    /// Get a logical/virtual number for a channel that would otherwise be
-    /// numberless.
-    /// </summary>
-    /// <param name="channel">The numberless channel.</param>
-    /// <returns>a number for the channel</returns>
-    private string GetNumberForChannel(IChannel channel)
-    {
-      // Logical channel number not available.
-      // LCNs should always be availble unless the user is using a clear QAM
-      // tuner. We try to use a format (sometimes called QAM channel number)
-      // that will be recognisable.
-      ChannelScte scteChannel = channel as ChannelScte;
-      if (scteChannel != null)
-      {
-        return string.Format("{0}.{1}", scteChannel.PhysicalChannelNumber, scteChannel.ProgramNumber);
-      }
-
-      ChannelAtsc atscChannel = channel as ChannelAtsc;
-      if (atscChannel != null)
-      {
-        return string.Format("{0}.{1}", atscChannel.PhysicalChannelNumber, atscChannel.ProgramNumber);
-      }
-
-      // Final fallback. If we use default value zero or empty string, sorting
-      // by channel number will list these channels first, which is not what we
-      // want (assumption: channels without a channel number are less popular).
-      // Setting default channel number as below ensures these channels are
-      // listed last.
-      return "10000";
     }
 
     #endregion

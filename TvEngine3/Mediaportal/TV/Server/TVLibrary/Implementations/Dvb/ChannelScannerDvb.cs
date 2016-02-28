@@ -512,14 +512,14 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
         // Assign names and LCNs for channels that don't already have them.
         foreach (var c in finalChannels)
         {
+          if (string.IsNullOrEmpty(c.Value.Channel.LogicalChannelNumber))
+          {
+            c.Value.Channel.LogicalChannelNumber = c.Value.Channel.DefaultLogicalChannelNumber;
+          }
+
           if (string.IsNullOrEmpty(c.Value.Channel.Name))
           {
             c.Value.Channel.Name = GetNameForChannel(c.Value.Channel);
-          }
-
-          if (string.IsNullOrEmpty(c.Value.Channel.LogicalChannelNumber))
-          {
-            c.Value.Channel.LogicalChannelNumber = GetNumberForChannel(c.Value.Channel);
           }
         }
 
@@ -712,23 +712,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
       return "Unknown Non-MPEG 2";
     }
 
-    /// <summary>
-    /// Get a logical/virtual number for a channel that would otherwise be
-    /// numberless.
-    /// </summary>
-    /// <param name="channel">The numberless channel.</param>
-    /// <returns>a number for the channel</returns>
-    protected virtual string GetNumberForChannel(IChannel channel)
-    {
-      // Logical channel number not available.
-      // Assumption: such channels are not mainstream/popular. If we use
-      // default value zero or empty string, sorting by channel number
-      // will list the less popular channels first, which is not what we
-      // want. Setting default channel number as below ensures these
-      // channels are listed last.
-      return "10000";
-    }
-
     #endregion
 
     #region private functions
@@ -833,6 +816,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
         this.LogDebug("    subtitles language count = {0}, languages = {1}", subtitlesLanguageCount, string.Join(", ", subtitlesLanguages.Take(subtitlesLanguageCount)));
 
         ProgramInfo program = new ProgramInfo();
+        program.ProgramNumber = programNumber;
         program.PmtPid = pmtPid;
         if (isPmtReceived)
         {

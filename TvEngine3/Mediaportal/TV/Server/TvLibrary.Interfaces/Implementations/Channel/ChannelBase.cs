@@ -123,6 +123,20 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channel
     }
 
     /// <summary>
+    /// Get the default logical number associated with the channel.
+    /// </summary>
+    public virtual string DefaultLogicalChannelNumber
+    {
+      get
+      {
+        // If we were to use zero or empty string, sorting channel groups by
+        // number would place the channels with default numbers first. That
+        // would be undesirable.
+        return "10000";
+      }
+    }
+
+    /// <summary>
     /// Get/set the channel's media type.
     /// </summary>
     public MediaType MediaType

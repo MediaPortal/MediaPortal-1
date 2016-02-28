@@ -56,6 +56,14 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Channel
     }
 
     /// <summary>
+    /// Get the default logical number associated with the channel.
+    /// </summary>
+    string DefaultLogicalChannelNumber
+    {
+      get;
+    }
+
+    /// <summary>
     /// Get/set the channel's media type.
     /// </summary>
     MediaType MediaType

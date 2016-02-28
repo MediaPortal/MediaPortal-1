@@ -137,40 +137,16 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog
     /// <returns>a name for the channel</returns>
     protected override string GetNameForChannel(IChannel channel)
     {
-      string logicalChannelNumber = GetNumberForChannel(channel);
       if (channel is ChannelAnalogTv)
       {
-        return string.Format("Analog TV {0}", logicalChannelNumber);
+        return string.Format("Analog TV {0}", channel.LogicalChannelNumber);
       }
       if (channel is ChannelFmRadio)
       {
-        return string.Format("FM {0}", logicalChannelNumber);
+        return string.Format("FM {0}", channel.LogicalChannelNumber);
       }
 
       return base.GetNameForChannel(channel);
-    }
-
-    /// <summary>
-    /// Get a logical/virtual number for a channel that would otherwise be
-    /// numberless.
-    /// </summary>
-    /// <param name="channel">The numberless channel.</param>
-    /// <returns>a number for the channel</returns>
-    protected override string GetNumberForChannel(IChannel channel)
-    {
-      ChannelAnalogTv analogTvChannel = channel as ChannelAnalogTv;
-      if (analogTvChannel != null)
-      {
-        return analogTvChannel.PhysicalChannelNumber.ToString();
-      }
-
-      ChannelFmRadio fmRadioChannel = channel as ChannelFmRadio;
-      if (fmRadioChannel != null)
-      {
-        return string.Format("{0:#.#}", (float)fmRadioChannel.Frequency / 1000);
-      }
-
-      return base.GetNumberForChannel(channel);
     }
 
     #endregion

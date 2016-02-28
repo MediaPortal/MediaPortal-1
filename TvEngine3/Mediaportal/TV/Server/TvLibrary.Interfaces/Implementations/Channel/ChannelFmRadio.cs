@@ -41,9 +41,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channel
     /// <summary>
     /// Get/set the channel transmitter's carrier frequency. The frequency unit is kilo-Hertz (kHz).
     /// </summary>
-    /// <remarks>
-    /// Used for FM radio; analog TV is tuned by physical channel number.
-    /// </remarks>
     public int Frequency
     {
       get
@@ -59,6 +56,17 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channel
     #endregion
 
     #region IChannel members
+
+    /// <summary>
+    /// Get the default logical number associated with the channel.
+    /// </summary>
+    public override string DefaultLogicalChannelNumber
+    {
+      get
+      {
+        return string.Format("{0:#.#}", (float)Frequency / 1000);
+      }
+    }
 
     /// <summary>
     /// Check if this channel and another channel are broadcast from different transmitters.

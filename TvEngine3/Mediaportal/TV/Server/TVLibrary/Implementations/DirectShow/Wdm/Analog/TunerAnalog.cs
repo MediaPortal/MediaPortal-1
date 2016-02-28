@@ -125,7 +125,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog
         channel.AudioSource = CaptureSourceAudio.TunerDefault;
         channel.IsEncrypted = false;
         channel.IsVcrSignal = false;
-        channel.LogicalChannelNumber = "10000";
+        channel.LogicalChannelNumber = channel.DefaultLogicalChannelNumber;
         channel.Provider = "Capture";
         if (_capture.VideoFilter != null)
         {
@@ -157,7 +157,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog
             channel.VideoSource = source;
             channel.IsEncrypted = false;
             channel.IsVcrSignal = false;
-            channel.LogicalChannelNumber = "10000";
+            channel.LogicalChannelNumber = channel.DefaultLogicalChannelNumber;
             channel.Provider = "External Input";
             channels.Add(channel);
           }
@@ -179,7 +179,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog
             channel.VideoSource = CaptureSourceVideo.None;
             channel.IsEncrypted = false;
             channel.IsVcrSignal = false;
-            channel.LogicalChannelNumber = "10000";
+            channel.LogicalChannelNumber = channel.DefaultLogicalChannelNumber;
             channel.Provider = "External Input";
             channels.Add(channel);
           }

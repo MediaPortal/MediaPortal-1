@@ -71,7 +71,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channel
     /// Get/set the channel transmitter's carrier frequency. The frequency unit is kilo-Hertz (kHz).
     /// </summary>
     /// <remarks>
-    /// Used for FM radio; analog TV is tuned by physical channel number.
+    /// Used as an override for the default per-country mapping table frequency associated with the physical channel number.
     /// </remarks>
     public int Frequency
     {
@@ -89,7 +89,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channel
     /// Get/set the country that the channel is broadcast in.
     /// </summary>
     /// <remarks>
-    /// The country's identifier used to convert the physical channel number to a frequency for tuning using per-country mapping tables.
+    /// The country's identifier is used to convert the physical channel number to a frequency (using per-country mapping tables) when tuning analog TV.
     /// </remarks>
     public Country Country
     {
@@ -121,6 +121,17 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channel
     #endregion
 
     #region IChannel members
+
+    /// <summary>
+    /// Get the default logical number associated with the channel.
+    /// </summary>
+    public override string DefaultLogicalChannelNumber
+    {
+      get
+      {
+        return PhysicalChannelNumber.ToString();
+      }
+    }
 
     /// <summary>
     /// Check if this channel and another channel are broadcast from different transmitters.
