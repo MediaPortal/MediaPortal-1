@@ -421,7 +421,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
       if (fmRadioChannel != null)
       {
         bool isSupportedMode = false;
-        if (fmRadioChannel.Frequency < 30000000)
+        if (fmRadioChannel.Frequency < 30000)
         {
           if (!_supportedTuningModes.HasFlag(AMTunerModeType.AMRadio))
           {
@@ -570,7 +570,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
                 }
                 else
                 {
-                  key.SetValue(channel.PhysicalChannelNumber.ToString(), channel.Frequency, RegistryValueKind.DWord);
+                  key.SetValue(channel.PhysicalChannelNumber.ToString(), channel.Frequency * 1000, RegistryValueKind.DWord);
                 }
                 key.Close();
               }
