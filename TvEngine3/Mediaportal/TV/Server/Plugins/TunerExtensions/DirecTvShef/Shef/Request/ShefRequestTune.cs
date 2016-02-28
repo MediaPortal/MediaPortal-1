@@ -25,10 +25,12 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DirecTvShef.Shef.Request
 {
   internal class ShefRequestTune : IShefRequest
   {
+    public const int MINOR_CHANNEL_NUMBER_NOT_SET = 65535;
+
     private int _majorChannelNumber = 1;      // 1..9999
     private int _minorChannelNumber = 65535;  // 0..999
 
-    public ShefRequestTune(int majorChannelNumber, int minorChannelNumber = 65535)
+    public ShefRequestTune(int majorChannelNumber, int minorChannelNumber = MINOR_CHANNEL_NUMBER_NOT_SET)
     {
       _majorChannelNumber = majorChannelNumber;
       _minorChannelNumber = minorChannelNumber;

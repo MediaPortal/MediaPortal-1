@@ -19,6 +19,7 @@
 #endregion
 
 using System;
+using System.Text.RegularExpressions;
 using Mediaportal.TV.Server.Common.Types.Enum;
 using Mediaportal.TV.Server.Plugins.Base.Interfaces;
 using Mediaportal.TV.Server.Plugins.TunerExtension.DirecTvShef.Config;
@@ -42,6 +43,12 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DirecTvShef
   /// </summary>
   public class DirecTvShef : BaseTunerExtension, IDisposable, IPowerDevice, ITvServerPlugin, ITvServerPluginCommunication
   {
+    #region constants
+
+    private static readonly Regex LOGICAL_CHANNEL_NUMBER_FORMAT = new Regex(@"^(\d+)([^\d](\d+))?$");
+
+    #endregion
+
     #region variables
 
     private static bool _isPluginEnabled = false;
@@ -170,11 +177,18 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DirecTvShef
         this.LogDebug("DirecTV SHEF: not tuning a capture channel");
         return;
       }
-      int logicalChannelNumber;
-      if (!int.TryParse(channel.LogicalChannelNumber, out logicalChannelNumber) || logicalChannelNumber < 1)
+
+      Match m = LOGICAL_CHANNEL_NUMBER_FORMAT.Match(channel.LogicalChannelNumber);
+      if (!m.Success)
       {
         this.LogError("DirecTV SHEF: invalid channel number, channel = {0}, number = {1}", channel.Name, channel.LogicalChannelNumber);
         return;
+      }
+      int majorChannelNumber = int.Parse(m.Groups[1].Captures[0].Value);
+      int minorChannelNumber = ShefRequestTune.MINOR_CHANNEL_NUMBER_NOT_SET;
+      if (m.Groups[3].Captures.Count != 0)
+      {
+        minorChannelNumber = int.Parse(m.Groups[3].Captures[0].Value);
       }
 
       lock (_configLock)
@@ -185,10 +199,10 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DirecTvShef
           return;
         }
 
-        this.LogDebug("DirecTV SHEF: change channel, set top box = {0}, channel = {1}", _config.IpAddress, logicalChannelNumber);
-        if (!_shefClient.SendRequest(new ShefRequestTune(logicalChannelNumber)))
+        this.LogDebug("DirecTV SHEF: change channel, set top box = {0}, major channel number = {1}, minor channel number = {2}", _config.IpAddress, majorChannelNumber, minorChannelNumber);
+        if (!_shefClient.SendRequest(new ShefRequestTune(majorChannelNumber, minorChannelNumber)))
         {
-          this.LogError("DirecTV SHEF: failed to change channel, set top box = {0}, channel = {1}", _config.IpAddress, logicalChannelNumber);
+          this.LogError("DirecTV SHEF: failed to change channel, set top box = {0}, major channel number = {1}, minor channel number = {2}", _config.IpAddress, majorChannelNumber, minorChannelNumber);
         }
       }
     }
