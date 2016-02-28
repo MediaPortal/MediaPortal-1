@@ -66,7 +66,7 @@ namespace MediaPortal.Configuration.Sections
         fileNameTextBox.Text = xmlreader.GetValueAsString("bdplayer", "path", @"");
         parametersTextBox.Text = xmlreader.GetValueAsString("bdplayer", "arguments", "");
         useMediaInfoBD.Checked = xmlreader.GetValueAsBool("bdplayer", "mediainfoused", false);
-        useExternalPlayerForBluRay.Checked = xmlreader.GetValueAsBool("bdplayer", "useforbluray", true);
+        useExternalPlayerForBluRay.Checked = xmlreader.GetValueAsBool("bdplayer", "useforbluray", false);
         useInternalBDPlayer.Checked = xmlreader.GetValueAsBool("bdplayer", "useInternalBDPlayer", true);
         UpdatePlayerSettings();
       }
