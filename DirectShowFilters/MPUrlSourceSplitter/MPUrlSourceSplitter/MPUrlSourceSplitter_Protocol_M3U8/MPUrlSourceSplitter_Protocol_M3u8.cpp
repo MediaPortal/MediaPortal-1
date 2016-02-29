@@ -972,14 +972,27 @@ HRESULT CMPUrlSourceSplitter_Protocol_M3u8::ReceiveData(CStreamPackage *streamPa
     if ((!this->IsSetStreamLength()) && (this->IsWholeStreamDownloaded() || this->IsEndOfStreamReached() || this->IsConnectionLostCannotReopen()))
     {
       // reached end of stream, set stream length
+      // stream length can be set only in case when all fragments are processed
 
-      this->streamLength = this->GetBytePosition();
-      this->logger->Log(LOGGER_VERBOSE, L"%s: %s: setting total length: %llu", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->streamLength);
+      bool allFragmentsProcessed = true;
 
-      this->flags |= PROTOCOL_PLUGIN_FLAG_SET_STREAM_LENGTH;
-      this->flags &= ~PROTOCOL_PLUGIN_FLAG_STREAM_LENGTH_ESTIMATED;
+      for (unsigned int i = 0; i < this->streamFragments->Count(); i++)
+      {
+        CM3u8StreamFragment *fragment = this->streamFragments->GetItem(i);
 
-      CHECK_CONDITION_NOT_NULL_EXECUTE(this->mainCurlInstance, this->flags |= MP_URL_SOURCE_SPLITTER_PROTOCOL_M3U8_FLAG_CLOSE_CURL_INSTANCE);
+        allFragmentsProcessed &= fragment->IsProcessed();
+      }
+
+      if (allFragmentsProcessed)
+      {
+        this->streamLength = this->GetBytePosition();
+        this->logger->Log(LOGGER_VERBOSE, L"%s: %s: setting total length: %llu", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->streamLength);
+
+        this->flags |= PROTOCOL_PLUGIN_FLAG_SET_STREAM_LENGTH;
+        this->flags &= ~PROTOCOL_PLUGIN_FLAG_STREAM_LENGTH_ESTIMATED;
+
+        CHECK_CONDITION_NOT_NULL_EXECUTE(this->mainCurlInstance, this->flags |= MP_URL_SOURCE_SPLITTER_PROTOCOL_M3U8_FLAG_CLOSE_CURL_INSTANCE);
+      }
     }
 
     // process stream package (if valid)

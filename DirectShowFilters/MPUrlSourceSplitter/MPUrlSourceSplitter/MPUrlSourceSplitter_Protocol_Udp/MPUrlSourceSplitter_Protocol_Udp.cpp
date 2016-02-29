@@ -428,19 +428,34 @@ HRESULT CMPUrlSourceSplitter_Protocol_Udp::ReceiveData(CStreamPackage *streamPac
 
     if ((!this->IsSetStreamLength()) && (this->IsWholeStreamDownloaded() || this->IsEndOfStreamReached() || this->IsConnectionLostCannotReopen()))
     {
-      // get last stream fragment to get total length
-      CUdpStreamFragment *fragment = (this->streamFragments->Count() != 0) ? this->streamFragments->GetItem(this->streamFragments->Count() - 1) : NULL;
+      // reached end of stream, set stream length
+      // stream length can be set only in case when all fragments are processed
 
-      this->streamLength = (fragment != NULL) ? (fragment->GetFragmentStartPosition() + (int64_t)fragment->GetLength()) : 0;
-      this->logger->Log(LOGGER_VERBOSE, L"%s: %s: setting total length: %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->streamLength);
+      bool allFragmentsProcessed = true;
 
-      this->flags |= PROTOCOL_PLUGIN_FLAG_SET_STREAM_LENGTH;
-      this->flags &= ~PROTOCOL_PLUGIN_FLAG_STREAM_LENGTH_ESTIMATED;
+      for (unsigned int i = 0; i < this->streamFragments->Count(); i++)
+      {
+        CUdpStreamFragment *fragment = this->streamFragments->GetItem(i);
 
-      // set current stream position to stream length to get correct result in QueryStreamProgress() method
-      this->currentStreamPosition = this->streamLength;
+        allFragmentsProcessed &= fragment->IsProcessed();
+      }
 
-      FREE_MEM_CLASS(this->mainCurlInstance);
+      if (allFragmentsProcessed)
+      {
+        // get last stream fragment to get total length
+        CUdpStreamFragment *fragment = (this->streamFragments->Count() != 0) ? this->streamFragments->GetItem(this->streamFragments->Count() - 1) : NULL;
+
+        this->streamLength = (fragment != NULL) ? (fragment->GetFragmentStartPosition() + (int64_t)fragment->GetLength()) : 0;
+        this->logger->Log(LOGGER_VERBOSE, L"%s: %s: setting total length: %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->streamLength);
+
+        this->flags |= PROTOCOL_PLUGIN_FLAG_SET_STREAM_LENGTH;
+        this->flags &= ~PROTOCOL_PLUGIN_FLAG_STREAM_LENGTH_ESTIMATED;
+
+        // set current stream position to stream length to get correct result in QueryStreamProgress() method
+        this->currentStreamPosition = this->streamLength;
+
+        FREE_MEM_CLASS(this->mainCurlInstance);
+      }
     }
 
     // process stream package (if valid)

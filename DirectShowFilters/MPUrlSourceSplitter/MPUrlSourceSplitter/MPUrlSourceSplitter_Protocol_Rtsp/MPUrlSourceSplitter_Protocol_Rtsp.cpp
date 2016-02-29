@@ -868,28 +868,47 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtsp::ReceiveData(CStreamPackage *streamPa
     if ((!this->IsSetStreamLength()) && (this->IsWholeStreamDownloaded() || this->IsEndOfStreamReached() || this->IsConnectionLostCannotReopen()))
     {
       // reached end of stream, set stream length
+      // stream length can be set only in case when all fragments are processed
+
+      bool allFragmentsProcessed = true;
 
       for (unsigned int i = 0; (i < this->streamTracks->Count()); i++)
       {
+        bool trackAllFragmentsProcessed = true;
         CRtspStreamTrack *track = this->streamTracks->GetItem(i);
 
         if (!track->IsSetStreamLength())
         {
-          track->SetStreamLength(track->GetBytePosition());
-          this->logger->Log(LOGGER_VERBOSE, L"%s: %s: track %u, setting total length: %llu", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, i, track->GetStreamLength());
-          track->SetStreamLengthFlag(true);
+          for (unsigned int j = 0; (j < track->GetStreamFragments()->Count()); j++)
+          {
+            CRtspStreamFragment *fragment = track->GetStreamFragments()->GetItem(j);
+
+            trackAllFragmentsProcessed &= fragment->IsProcessed();
+          }
+
+          if (trackAllFragmentsProcessed)
+          {
+            track->SetStreamLength(track->GetBytePosition());
+            this->logger->Log(LOGGER_VERBOSE, L"%s: %s: track %u, setting total length: %llu", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, i, track->GetStreamLength());
+            track->SetStreamLengthFlag(true);
+          }
         }
 
         if (!track->IsSetEndOfStream())
         {
           track->SetEndOfStreamFlag(true);
         }
+
+        allFragmentsProcessed &= trackAllFragmentsProcessed;
       }
 
-      this->flags |= PROTOCOL_PLUGIN_FLAG_SET_STREAM_LENGTH;
-      this->flags &= ~PROTOCOL_PLUGIN_FLAG_STREAM_LENGTH_ESTIMATED;
+      if (allFragmentsProcessed)
+      {
+        this->flags |= PROTOCOL_PLUGIN_FLAG_SET_STREAM_LENGTH;
+        this->flags &= ~PROTOCOL_PLUGIN_FLAG_STREAM_LENGTH_ESTIMATED;
 
-      CHECK_CONDITION_NOT_NULL_EXECUTE(this->mainCurlInstance, this->flags |= MP_URL_SOURCE_SPLITTER_PROTOCOL_RTSP_FLAG_CLOSE_CURL_INSTANCE);
+        CHECK_CONDITION_NOT_NULL_EXECUTE(this->mainCurlInstance, this->flags |= MP_URL_SOURCE_SPLITTER_PROTOCOL_RTSP_FLAG_CLOSE_CURL_INSTANCE);
+      }
     }
 
     // process stream package (if valid)

@@ -688,19 +688,34 @@ HRESULT CMPUrlSourceSplitter_Protocol_Http::ReceiveData(CStreamPackage *streamPa
 
     if ((!this->IsSetStreamLength()) && (this->IsWholeStreamDownloaded() || this->IsEndOfStreamReached() || this->IsConnectionLostCannotReopen()))
     {
-      // get last stream fragment to get total length
-      CHttpStreamFragment *fragment = (this->streamFragments->Count() != 0) ? this->streamFragments->GetItem(this->streamFragments->Count() - 1) : NULL;
+      // reached end of stream, set stream length
+      // stream length can be set only in case when all fragments are processed
 
-      this->streamLength = (fragment != NULL) ? (fragment->GetFragmentStartPosition() + (int64_t)fragment->GetLength()) : 0;
-      this->logger->Log(LOGGER_VERBOSE, L"%s: %s: setting total length: %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->streamLength);
+      bool allFragmentsProcessed = true;
 
-      this->flags |= PROTOCOL_PLUGIN_FLAG_SET_STREAM_LENGTH;
-      this->flags &= ~PROTOCOL_PLUGIN_FLAG_STREAM_LENGTH_ESTIMATED;
+      for (unsigned int i = 0; i < this->streamFragments->Count(); i++)
+      {
+        CHttpStreamFragment *fragment = this->streamFragments->GetItem(i);
 
-      // set current stream position to stream length to get correct result in QueryStreamProgress() method
-      this->currentStreamPosition = this->streamLength;
+        allFragmentsProcessed &= fragment->IsProcessed();
+      }
 
-      CHECK_CONDITION_NOT_NULL_EXECUTE(this->mainCurlInstance, this->flags |= MP_URL_SOURCE_SPLITTER_PROTOCOL_HTTP_FLAG_CLOSE_CURL_INSTANCE);
+      if (allFragmentsProcessed)
+      {
+        // get last stream fragment to get total length
+        CHttpStreamFragment *fragment = (this->streamFragments->Count() != 0) ? this->streamFragments->GetItem(this->streamFragments->Count() - 1) : NULL;
+
+        this->streamLength = (fragment != NULL) ? (fragment->GetFragmentStartPosition() + (int64_t)fragment->GetLength()) : 0;
+        this->logger->Log(LOGGER_VERBOSE, L"%s: %s: setting total length: %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->streamLength);
+
+        this->flags |= PROTOCOL_PLUGIN_FLAG_SET_STREAM_LENGTH;
+        this->flags &= ~PROTOCOL_PLUGIN_FLAG_STREAM_LENGTH_ESTIMATED;
+
+        // set current stream position to stream length to get correct result in QueryStreamProgress() method
+        this->currentStreamPosition = this->streamLength;
+
+        CHECK_CONDITION_NOT_NULL_EXECUTE(this->mainCurlInstance, this->flags |= MP_URL_SOURCE_SPLITTER_PROTOCOL_HTTP_FLAG_CLOSE_CURL_INSTANCE);
+      }
     }
 
     // process stream package (if valid)
