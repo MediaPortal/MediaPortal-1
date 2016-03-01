@@ -1074,14 +1074,6 @@
         gg==
 </value>
   </data>
-  <data name="labelDescription.Text" xml:space="preserve">
-    <value>This plugin enables TV Server to use the built-in IR blaster on a Hauppauge tuner or capture card to control an external set top box.
-
-Download and install the latest version of Hauppauge IRBlast for your blaster from the support section of Hauppauge's website. The current version of IRBlast is 7.4.31343, but 7.4.28025 should also be compatible.
-Use BlastCfg.exe (installed by IRBlast) to configure the blaster, and learn and test commands.
-
-Due to limitations in the Hauppauge blaster driver, this plugin is only able to use the blaster on one card. When more than one card/blaster is available the driver automatically selects the card/blaster that it will use based on card install order and PCI/PCIe slot position.</value>
-  </data>
   <data name="pictureBoxTunerSelectionPort1.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         R0lGODlhIQAXAPcAAAAAAIAAAACAAICAAAAAgIAAgACAgMDAwE9lfYOZsV8/P38/P58/P78/P98/P/8/

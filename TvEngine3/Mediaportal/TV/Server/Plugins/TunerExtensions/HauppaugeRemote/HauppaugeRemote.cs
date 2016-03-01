@@ -33,8 +33,18 @@ using Microsoft.Win32;
 namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeRemote
 {
   /// <summary>
-  /// A class for receiving remote control keypresses from Hauppauge tuners.
+  /// A class for receiving remote control key-presses from Hauppauge tuners.
   /// </summary>
+  /// <remarks>
+  /// Hauppauge's IR32 application must be installed. IR32 installs
+  /// irremote.dll, which is the DLL that this class depends on.
+  /// 
+  /// Due to limitations in the Hauppauge drivers and software, this
+  /// implementation is only capable of receiving key-presses from a single
+  /// tuner/receiver. That receiver is selected automatically by irremote.dll.
+  /// We have little or no control over the selection process. For more
+  /// information, refer to the documentation for IR_Open().
+  /// </remarks>
   public class HauppaugeRemote : BaseTunerExtension, IDisposable, IRemoteControlListener
   {
     #region enums
@@ -322,7 +332,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeRemote
     #region DLL imports
 
     /*
-     * Available with version 2.66.28078:
+     * Available with IR32 version 2.66.28078:
      * - IR_Open
      * - IR_GetKeyCode [obsolete]
      * - IR_Close

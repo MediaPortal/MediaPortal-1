@@ -39,18 +39,18 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeBlaster
   /// Hauppauge products.
   /// </summary>
   /// <remarks>
-  /// Configuration including key code learning is handled by the Hauppauge
-  /// BlastCfg program which is included in their IRBlast package.
+  /// Hauppauge's IRBlast application must be installed. IRBlast installs
+  /// hcwIRblast.dll - the DLL that this class depends on - into the Windows
+  /// system32 directory. It also installs BlastCfg, which is used for blaster
+  /// configuration and key code learning.
   /// 
-  /// IRBlast should install hcwIRblast.dll into the Windows system32
-  /// directory.
+  /// Due to limitations in the Hauppauge drivers and software, this
+  /// implementation is only capable of controlling the blaster(s) on a single
+  /// card. That card is selected automatically by hcwIRblast.dll. We have
+  /// little or no control over the selection process.
   /// 
-  /// This extension has similar limitations to the Hauppauge remote extension.
-  /// Due to limitations in the Hauppauge drivers and software, it can only
-  /// control the blaster on one card. If more than one card/blaster is
-  /// present, hcwIRblast.dll automatically selects the blaster to open.
-  /// Selection seems to depend on which order cards were installed in and
-  /// possibly which PCI/PCIe slot they're placed in.
+  /// Selection seems to depend on card installation order and maybe also which
+  /// PCI/PCIe slot they're seated in.
   /// 
   /// There are 2 registry keys that may force hcwIRblast.dll to open a blaster
   /// on a particular family of cards:

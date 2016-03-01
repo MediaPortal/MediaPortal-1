@@ -207,35 +207,6 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.SmarDtvUsbCi.Config
         Controls.Add(groupBoxCiProduct);
       }
 
-      // "Tips" section heading.
-      MPLabel labelTipHeading = new MPLabel();
-      labelTipHeading.Font = new Font("Microsoft Sans Serif", 8.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
-      labelTipHeading.ForeColor = Color.Black;
-      labelTipHeading.Location = new Point(11, _productContexts.Count * (groupHeight + groupPadding));
-      labelTipHeading.Name = "labelTipHeading";
-      labelTipHeading.Size = new Size(412, 16);
-      labelTipHeading.TabIndex = (_productContexts.Count * componentCount) + 1;
-      labelTipHeading.Text = "Tips:";
-      Controls.Add(labelTipHeading);
-
-      // Tips.
-      MPLabel labelTips = new MPLabel();
-      labelTips.Anchor = AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Top;
-      labelTips.Font = new Font("Microsoft Sans Serif", 8.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
-      labelTips.ForeColor = Color.Black;
-      labelTips.Location = new Point(11, (_productContexts.Count * (groupHeight + groupPadding)) + 20);
-      labelTips.Name = "labelTips";
-      labelTips.Size = new Size(466, 105);
-      labelTips.TabIndex = (_productContexts.Count * componentCount) + 2;
-      labelTips.Text =
-        "- It is only possible to have one CI device of each type connected to a computer - this is a driver limitation." + System.Environment.NewLine +
-        "- Each CI device can only be used with one tuner at any given time - this is a driver limitation." + System.Environment.NewLine +
-        "- A TV Server restart is required to link a CI device with a different tuner." + System.Environment.NewLine +
-        "- Each CI device is only designed to work with tuner products from the CI reseller." + System.Environment.NewLine +
-        "- The BDA driver is required; the WDM driver is not supported." + System.Environment.NewLine +
-        "- Disconnecting a CI device while TV Server is running will cause a system crash.";
-      Controls.Add(labelTips);
-
       PerformLayout();
       ResumeLayout(false);
       this.LogDebug("SmarDTV USB CI config: updated user interface, product count = {0}", _productContexts.Count);

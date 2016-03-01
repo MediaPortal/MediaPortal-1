@@ -50,7 +50,6 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeBlaster.Config
     {
       System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(HauppaugeBlasterConfig));
       this.pictureBoxLogo = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPPictureBox();
-      this.labelDescription = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.labelInstallState = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.buttonBlastCfg = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
       this.comboBoxTunerSelectionPort1 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPComboBox();
@@ -74,32 +73,22 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeBlaster.Config
       this.pictureBoxLogo.TabIndex = 2;
       this.pictureBoxLogo.TabStop = false;
       // 
-      // labelDescription
-      // 
-      this.labelDescription.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.labelDescription.Location = new System.Drawing.Point(6, 81);
-      this.labelDescription.Name = "labelDescription";
-      this.labelDescription.Size = new System.Drawing.Size(468, 155);
-      this.labelDescription.TabIndex = 0;
-      this.labelDescription.Text = resources.GetString("labelDescription.Text");
-      // 
       // labelInstallState
       // 
       this.labelInstallState.AutoSize = true;
       this.labelInstallState.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-      this.labelInstallState.Location = new System.Drawing.Point(6, 236);
+      this.labelInstallState.Location = new System.Drawing.Point(6, 87);
       this.labelInstallState.Name = "labelInstallState";
       this.labelInstallState.Size = new System.Drawing.Size(125, 13);
-      this.labelInstallState.TabIndex = 1;
+      this.labelInstallState.TabIndex = 0;
       this.labelInstallState.Text = "(IRBlast install state)";
       // 
       // buttonBlastCfg
       // 
-      this.buttonBlastCfg.Location = new System.Drawing.Point(9, 376);
+      this.buttonBlastCfg.Location = new System.Drawing.Point(9, 227);
       this.buttonBlastCfg.Name = "buttonBlastCfg";
       this.buttonBlastCfg.Size = new System.Drawing.Size(100, 23);
-      this.buttonBlastCfg.TabIndex = 6;
+      this.buttonBlastCfg.TabIndex = 5;
       this.buttonBlastCfg.Text = "Run BlastCfg";
       this.buttonBlastCfg.UseVisualStyleBackColor = true;
       this.buttonBlastCfg.Click += new System.EventHandler(this.buttonBlastCfg_Click);
@@ -110,24 +99,24 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeBlaster.Config
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.comboBoxTunerSelectionPort1.DisplayMember = "Name";
       this.comboBoxTunerSelectionPort1.FormattingEnabled = true;
-      this.comboBoxTunerSelectionPort1.Location = new System.Drawing.Point(78, 282);
+      this.comboBoxTunerSelectionPort1.Location = new System.Drawing.Point(78, 133);
       this.comboBoxTunerSelectionPort1.Name = "comboBoxTunerSelectionPort1";
       this.comboBoxTunerSelectionPort1.Size = new System.Drawing.Size(386, 21);
-      this.comboBoxTunerSelectionPort1.TabIndex = 3;
+      this.comboBoxTunerSelectionPort1.TabIndex = 2;
       // 
       // labelTunerSelectionPort1
       // 
       this.labelTunerSelectionPort1.AutoSize = true;
-      this.labelTunerSelectionPort1.Location = new System.Drawing.Point(6, 258);
+      this.labelTunerSelectionPort1.Location = new System.Drawing.Point(6, 109);
       this.labelTunerSelectionPort1.Name = "labelTunerSelectionPort1";
       this.labelTunerSelectionPort1.Size = new System.Drawing.Size(235, 13);
-      this.labelTunerSelectionPort1.TabIndex = 2;
+      this.labelTunerSelectionPort1.TabIndex = 1;
       this.labelTunerSelectionPort1.Text = "Select an analog tuner to use with blaster port 1:";
       // 
       // pictureBoxTunerSelectionPort1
       // 
       this.pictureBoxTunerSelectionPort1.Image = ((System.Drawing.Image)(resources.GetObject("pictureBoxTunerSelectionPort1.Image")));
-      this.pictureBoxTunerSelectionPort1.Location = new System.Drawing.Point(26, 280);
+      this.pictureBoxTunerSelectionPort1.Location = new System.Drawing.Point(26, 131);
       this.pictureBoxTunerSelectionPort1.Name = "pictureBoxTunerSelectionPort1";
       this.pictureBoxTunerSelectionPort1.Size = new System.Drawing.Size(33, 23);
       this.pictureBoxTunerSelectionPort1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
@@ -137,7 +126,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeBlaster.Config
       // pictureBoxTunerSelectionPort2
       // 
       this.pictureBoxTunerSelectionPort2.Image = ((System.Drawing.Image)(resources.GetObject("pictureBoxTunerSelectionPort2.Image")));
-      this.pictureBoxTunerSelectionPort2.Location = new System.Drawing.Point(26, 338);
+      this.pictureBoxTunerSelectionPort2.Location = new System.Drawing.Point(26, 189);
       this.pictureBoxTunerSelectionPort2.Name = "pictureBoxTunerSelectionPort2";
       this.pictureBoxTunerSelectionPort2.Size = new System.Drawing.Size(33, 23);
       this.pictureBoxTunerSelectionPort2.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
@@ -150,18 +139,18 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeBlaster.Config
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.comboBoxTunerSelectionPort2.DisplayMember = "Name";
       this.comboBoxTunerSelectionPort2.FormattingEnabled = true;
-      this.comboBoxTunerSelectionPort2.Location = new System.Drawing.Point(78, 340);
+      this.comboBoxTunerSelectionPort2.Location = new System.Drawing.Point(78, 191);
       this.comboBoxTunerSelectionPort2.Name = "comboBoxTunerSelectionPort2";
       this.comboBoxTunerSelectionPort2.Size = new System.Drawing.Size(386, 21);
-      this.comboBoxTunerSelectionPort2.TabIndex = 5;
+      this.comboBoxTunerSelectionPort2.TabIndex = 4;
       // 
       // labelTunerSelectionPort2
       // 
       this.labelTunerSelectionPort2.AutoSize = true;
-      this.labelTunerSelectionPort2.Location = new System.Drawing.Point(6, 319);
+      this.labelTunerSelectionPort2.Location = new System.Drawing.Point(6, 170);
       this.labelTunerSelectionPort2.Name = "labelTunerSelectionPort2";
       this.labelTunerSelectionPort2.Size = new System.Drawing.Size(314, 13);
-      this.labelTunerSelectionPort2.TabIndex = 4;
+      this.labelTunerSelectionPort2.TabIndex = 3;
       this.labelTunerSelectionPort2.Text = "Select an analog tuner to use with blaster port 2 (HVR-22xx only):";
       // 
       // HauppaugeBlasterConfig
@@ -177,7 +166,6 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeBlaster.Config
       this.Controls.Add(this.comboBoxTunerSelectionPort1);
       this.Controls.Add(this.buttonBlastCfg);
       this.Controls.Add(this.labelInstallState);
-      this.Controls.Add(this.labelDescription);
       this.Controls.Add(this.pictureBoxLogo);
       this.Name = "HauppaugeBlasterConfig";
       this.Size = new System.Drawing.Size(480, 420);
@@ -192,7 +180,6 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeBlaster.Config
     #endregion
 
     private SetupControls.UserInterfaceControls.MPPictureBox pictureBoxLogo;
-    private SetupControls.UserInterfaceControls.MPLabel labelDescription;
     private SetupControls.UserInterfaceControls.MPLabel labelInstallState;
     private SetupControls.UserInterfaceControls.MPButton buttonBlastCfg;
     private SetupControls.UserInterfaceControls.MPComboBox comboBoxTunerSelectionPort1;
