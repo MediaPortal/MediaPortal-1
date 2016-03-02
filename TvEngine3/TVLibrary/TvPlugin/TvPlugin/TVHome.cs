@@ -2731,6 +2731,7 @@ namespace TvPlugin
       int idxStreamIndexAc3 = -1; // the streamindex of ac3 found based on lang. pref
       int idxStreamIndexmpeg = -1; // the streamindex of mpg found based on lang. pref   
       int idx = -1; // the chosen audio index we return
+      int idxAC3 = -1;
       int idxLangPriAc3 = -1; // the lang priority of ac3 found based on lang. pref
       int idxLangPrimpeg = -1; // the lang priority of mpg found based on lang. pref         
       string ac3BasedOnLang = ""; // for debugging, what lang. in prefs. where used to choose the ac3 audio track ?
@@ -2769,14 +2770,16 @@ namespace TvPlugin
       UpdateAudioStreamIndexesAndPrioritiesBasedOnLanguage(streams, priority, ref idxStreamIndexmpeg,
                                                            ref mpegBasedOnLang, ref idxStreamIndexAc3, idxLangPriAc3,
                                                            idxLangPrimpeg, ref ac3BasedOnLang, out dualMonoMode);
-      idx = GetAC3AudioStreamIndex(idxStreamIndexmpeg, idxStreamIndexAc3, ac3BasedOnLang, idx, idxFirstAc3);
+      idx = -1;
+      idxAC3 = GetAC3AudioStreamIndex(idxStreamIndexmpeg, idxStreamIndexAc3, ac3BasedOnLang, idx, idxFirstAc3);
+      Log.Debug("Audio stream: AC3 index {0}", idxAC3);
 
-      if (idx == -1 && _preferAC3)
+      if (idxAC3 == -1 && _preferAC3)
       {
         Log.Info("Audio stream: no preferred AC3 audio stream found, trying mpeg instead.");
       }
 
-      if (idx == -1 || !_preferAC3)
+      if (idxAC3 == -1 || !_preferAC3)
       // we end up here if ac3 selection didnt happen (no ac3 avail.) or if preferac3 is disabled.
       {
         if (IsPreferredAudioLanguageAvailable())
@@ -2794,8 +2797,16 @@ namespace TvPlugin
 
       if (idx == -1)
       {
-        idx = 0;
-        Log.Info("Audio stream: no preferred stream found - switching to audio stream 0");
+          if (idxAC3 == -1)
+          {
+              idx = 0;
+              Log.Info("Audio stream: no preferred stream found - switching to audio stream 0");
+          }
+          else
+          {
+              Log.Info("Audio stream: No preferred MPEG stream found, switching to AC3 stream {0}", idxAC3);
+              idx = idxAC3;
+          }
       }
 
       return idx;
@@ -2804,7 +2815,7 @@ namespace TvPlugin
     private static int GetAC3AudioStreamIndex(int idxStreamIndexmpeg, int idxStreamIndexAc3, string ac3BasedOnLang,
                                               int idx, int idxFirstAc3)
     {
-      if (_preferAC3)
+      //if (_preferAC3)
       {
         if (IsPreferredAudioLanguageAvailable())
         {
