@@ -2639,40 +2639,13 @@ namespace MediaPortal.Util
       catch (Exception) {}
       return false;
     }
-
+	
+    // deprecated, use DownLoadImage(string strURL, string strFile) instead
     public static void DownLoadImage(string strURL, string strFile, System.Drawing.Imaging.ImageFormat imageFormat)
     {
       if (string.IsNullOrEmpty(strURL) || string.IsNullOrEmpty(strFile))
         return;
-
-      using (WebClient client = new WebClient())
-      {
-        try
-        {
-          string extensionURL = Path.GetExtension(strURL);
-          string extensionFile = Path.GetExtension(strFile);
-          if (extensionURL.Length > 0 && extensionFile.Length > 0)
-          {
-            extensionURL = extensionURL.ToLowerInvariant();
-            extensionFile = extensionFile.ToLowerInvariant();
-            string strLogo = Path.ChangeExtension(strFile, extensionURL);
-            client.Proxy.Credentials = CredentialCache.DefaultCredentials;
-            client.DownloadFile(strURL, strLogo);
-            if (extensionURL != extensionFile)
-            {
-              using (Image imgSrc = Image.FromFile(strLogo))
-              {
-                imgSrc.Save(strFile, imageFormat);
-              }
-              Utils.FileDelete(strLogo);
-            }
-          }
-        }
-        catch (Exception ex)
-        {
-          Log.Error("Utils: DownLoadImage {1} failed: {0}", ex.Message, strURL);
-        }
-      }
+      DownLoadImage(strURL, strFile);
     }
 
     public static void DownLoadAndCacheImage(string strURL, string strFile)
@@ -2747,68 +2720,36 @@ namespace MediaPortal.Util
       }
     }
 
+    /// <summary>
+    /// Download a remote image and save it locally.
+    /// UserAgent and Accept headers are set for correct request.
+    /// Error handling is not responsibility of this method and should be done by method caller as seen fit
+    /// see http://forum.team-mediaportal.com/posts/1096988 for more details
+    /// </summary>
+    /// <param name="strURL">remote image to download</param>
+    /// <param name="strFile">local image to save</param>
     public static void DownLoadImage(string strURL, string strFile)
     {
-      if (string.IsNullOrEmpty(strURL) || string.IsNullOrEmpty(strFile))
+      if ((string.IsNullOrEmpty(strURL)) || (string.IsNullOrEmpty(strFile)))
+      {
         return;
-
-      try
-      {
-        HttpWebRequest wr = (HttpWebRequest)WebRequest.Create(strURL);
-        wr.Timeout = 20000;
-        try
-        {
-          // Use the current user in case an NTLM Proxy or similar is used.
-          // wr.Proxy = WebProxy.GetDefaultProxy();
-          wr.Proxy.Credentials = CredentialCache.DefaultCredentials;
-        }
-        catch (Exception) {}
-        HttpWebResponse ws = (HttpWebResponse)wr.GetResponse();
-        try
-        {
-          using (Stream str = ws.GetResponseStream())
-          {
-            byte[] inBuf = new byte[900000];
-            int bytesToRead = (int)inBuf.Length;
-            int bytesRead = 0;
-
-            DateTime dt = DateTime.Now;
-            while (bytesToRead > 0)
-            {
-              dt = DateTime.Now;
-              int n = str.Read(inBuf, bytesRead, bytesToRead);
-              if (n == 0)
-                break;
-              bytesRead += n;
-              bytesToRead -= n;
-              TimeSpan ts = DateTime.Now - dt;
-              if (ts.TotalSeconds >= 5)
-              {
-                throw new Exception("timeout");
-              }
-            }
-            using (FileStream fstr = new FileStream(strFile, FileMode.OpenOrCreate, FileAccess.Write))
-            {
-              fstr.Write(inBuf, 0, bytesRead);
-              str.Close();
-              fstr.Close();
-            }
-          }
-        }
-        finally
-        {
-          if (ws != null)
-          {
-            ws.Close();
-          }
-        }
       }
-      catch (Exception ex)
+      Uri uri = new Uri(strURL);
+      HttpWebRequest wReq = (HttpWebRequest)WebRequest.Create(uri);
+      wReq.Proxy.Credentials = CredentialCache.DefaultCredentials;
+      wReq.UserAgent = "Mozilla/8.0 (compatible; MSIE 9.0; Windows NT 6.1; .NET CLR 1.0.3705;)";
+      wReq.Accept = "*/*";
+      using (HttpWebResponse wr = (HttpWebResponse)wReq.GetResponse())
       {
-        Log.Info("Utils: DownLoadImage {1} failed:{0}", ex.Message, strURL);
+        using (Stream br = wr.GetResponseStream())
+        {
+          using (FileStream fs = new FileStream(strFile, FileMode.OpenOrCreate, FileAccess.Write))
+          {
+            br.CopyTo(fs);
+          }
+        }
       }
     }
-
 
     public static string RemoveTrailingSlash(string strLine)
     {
