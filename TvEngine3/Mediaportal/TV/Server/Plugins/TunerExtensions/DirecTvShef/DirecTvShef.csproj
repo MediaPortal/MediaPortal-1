@@ -70,17 +70,26 @@
     <Compile Include="Config\DirecTvShefConfig.Designer.cs">
       <DependentUpon>DirecTvShefConfig.cs</DependentUpon>
     </Compile>
+    <Compile Include="Config\SelectGenieMini.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Config\SelectGenieMini.designer.cs">
+      <DependentUpon>SelectGenieMini.cs</DependentUpon>
+    </Compile>
     <Compile Include="DirecTvShef.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Service\DirecTvShefConfigService.cs" />
     <Compile Include="Service\IDirecTvShefConfigService.cs" />
     <Compile Include="SetTopBoxConfig.cs" />
+    <Compile Include="Shef\Request\ShefRequestGetLocations.cs" />
     <Compile Include="Shef\Request\ShefRequestGetVersion.cs" />
     <Compile Include="Shef\Request\ShefRemoteKeyPress.cs" />
     <Compile Include="Shef\Request\ShefRemoteKey.cs" />
     <Compile Include="Shef\Request\ShefRequestProcessKey.cs" />
     <Compile Include="Shef\Request\IShefRequest.cs" />
     <Compile Include="Shef\Request\ShefRequestTune.cs" />
+    <Compile Include="Shef\Response\ShefLocation.cs" />
+    <Compile Include="Shef\Response\ShefResponseGetLocations.cs" />
     <Compile Include="Shef\Response\ShefResponseStatusCode.cs" />
     <Compile Include="Shef\Response\ShefResponseProcessKey.cs" />
     <Compile Include="Shef\Response\ShefResponseStatus.cs" />
@@ -126,6 +135,10 @@
   <ItemGroup>
     <EmbeddedResource Include="Config\DirecTvShefConfig.resx">
       <DependentUpon>DirecTvShefConfig.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Config\SelectGenieMini.resx">
+      <DependentUpon>SelectGenieMini.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

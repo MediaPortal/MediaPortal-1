@@ -26,6 +26,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DirecTvShef.Shef.Response
   internal class ShefResponseStatus
   {
     #pragma warning disable 0649
+
     [DataMember(Name = "code")]
     public ShefResponseStatusCode Code;
 
@@ -37,6 +38,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DirecTvShef.Shef.Response
 
     [DataMember(Name = "query")]
     public string Query;
+
     #pragma warning restore 0649
   }
 }

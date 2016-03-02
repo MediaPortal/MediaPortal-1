@@ -19,6 +19,10 @@
 #endregion
 
 using System.Collections.Generic;
+using Mediaportal.TV.Server.Plugins.TunerExtension.DirecTvShef.Shef;
+using Mediaportal.TV.Server.Plugins.TunerExtension.DirecTvShef.Shef.Request;
+using Mediaportal.TV.Server.Plugins.TunerExtension.DirecTvShef.Shef.Response;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
 namespace Mediaportal.TV.Server.Plugins.TunerExtension.DirecTvShef.Service
 {
@@ -42,6 +46,51 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DirecTvShef.Service
           OnConfigChange(config);
         }
       }
+    }
+
+    public bool GetSetTopBoxLocations(string ipAddress, out IDictionary<string, string> locations)
+    {
+      this.LogDebug("DirecTV SHEF service: get locations, IP address = {0}", ipAddress);
+      locations = new Dictionary<string, string>();
+
+      ShefClient client = new ShefClient(ipAddress);
+      IShefResponse shefResponse;
+      if (!client.SendRequest(new ShefRequestGetLocations(), out shefResponse))
+      {
+        return false;
+      }
+
+      ShefResponseGetLocations response = shefResponse as ShefResponseGetLocations;
+      if (response.Locations != null)
+      {
+        return false;
+      }
+
+      foreach (ShefLocation location in response.Locations)
+      {
+        locations.Add(location.LocationName, location.ClientAddress);
+      }
+      return true;
+    }
+
+    public bool GetSetTopBoxVersion(string ipAddress, out string accessCardId, out string receiverId, out string stbSoftwareVersion, out string shefVersion, out int systemTime)
+    {
+      this.LogDebug("DirecTV SHEF service: get version, IP address = {0}", ipAddress);
+      ShefClient client = new ShefClient(ipAddress);
+      IShefResponse shefResponse;
+      bool result = client.SendRequest(new ShefRequestGetVersion(), out shefResponse);
+      if (!result)
+      {
+        shefResponse = new ShefResponseGetVersion();
+      }
+
+      ShefResponseGetVersion response = shefResponse as ShefResponseGetVersion;
+      accessCardId = response.AccessCardId;
+      receiverId = response.ReceiverId;
+      stbSoftwareVersion = response.StbSoftwareVersion;
+      shefVersion = response.Version;
+      systemTime = response.SystemTime;
+      return result;
     }
   }
 }

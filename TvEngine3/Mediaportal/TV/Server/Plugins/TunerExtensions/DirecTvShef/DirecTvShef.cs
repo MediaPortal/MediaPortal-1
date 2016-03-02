@@ -86,7 +86,9 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DirecTvShef
         }
         _config = config;
       }
-      this.LogDebug("  IP address    = {0}", config.IpAddress ?? "[null]");
+      this.LogDebug("  IP address    = {0}", config.IpAddress);
+      this.LogDebug("  location      = {0}", config.Location);
+      this.LogDebug("  MAC address   = {0}", config.MacAddress);
       this.LogDebug("  power control = {0}", config.EnablePowerControl);
     }
 
@@ -199,10 +201,10 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DirecTvShef
           return;
         }
 
-        this.LogDebug("DirecTV SHEF: change channel, set top box = {0}, major channel number = {1}, minor channel number = {2}", _config.IpAddress, majorChannelNumber, minorChannelNumber);
-        if (!_shefClient.SendRequest(new ShefRequestTune(majorChannelNumber, minorChannelNumber)))
+        this.LogDebug("DirecTV SHEF: change channel, IP address = {0}, MAC address = {1}, location = {2}, major channel number = {3}, minor channel number = {4}", _config.IpAddress, _config.MacAddress, _config.Location, majorChannelNumber, minorChannelNumber);
+        if (!_shefClient.SendRequest(new ShefRequestTune(majorChannelNumber, minorChannelNumber, _config.MacAddress)))
         {
-          this.LogError("DirecTV SHEF: failed to change channel, set top box = {0}, major channel number = {1}, minor channel number = {2}", _config.IpAddress, majorChannelNumber, minorChannelNumber);
+          this.LogError("DirecTV SHEF: failed to change channel, IP address = {0}, MAC address = {1}, location = {2}, major channel number = {3}, minor channel number = {4}", _config.IpAddress, _config.MacAddress, _config.Location, majorChannelNumber, minorChannelNumber);
         }
       }
     }
@@ -254,9 +256,9 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DirecTvShef
         {
           key = ShefRemoteKey.PowerOff;
         }
-        if (!_shefClient.SendRequest(new ShefRequestProcessKey(key)))
+        if (!_shefClient.SendRequest(new ShefRequestProcessKey(key, ShefRemoteKeyPress.Press, _config.MacAddress)))
         {
-          this.LogError("DirecTV SHEF: failed to set power state, set top box = {0}", _config.IpAddress);
+          this.LogError("DirecTV SHEF: failed to set power state, IP address = {0}, MAC address = {1}, location = {2}", _config.IpAddress, _config.MacAddress, _config.Location);
           return false;
         }
 

@@ -19,6 +19,7 @@
 #endregion
 
 using System;
+using System.Text;
 using Mediaportal.TV.Server.Plugins.TunerExtension.DirecTvShef.Shef.Response;
 
 namespace Mediaportal.TV.Server.Plugins.TunerExtension.DirecTvShef.Shef.Request
@@ -27,18 +28,29 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DirecTvShef.Shef.Request
   {
     public const int MINOR_CHANNEL_NUMBER_NOT_SET = 65535;
 
-    private int _majorChannelNumber = 1;      // 1..9999
-    private int _minorChannelNumber = 65535;  // 0..999
+    private int _majorChannelNumber = 1;                              // 1..9999
+    private int _minorChannelNumber = MINOR_CHANNEL_NUMBER_NOT_SET;   // 0..999
+    private string _clientAddress = null;
 
-    public ShefRequestTune(int majorChannelNumber, int minorChannelNumber = MINOR_CHANNEL_NUMBER_NOT_SET)
+    public ShefRequestTune(int majorChannelNumber, int minorChannelNumber = MINOR_CHANNEL_NUMBER_NOT_SET, string clientAddress = null)
     {
       _majorChannelNumber = majorChannelNumber;
       _minorChannelNumber = minorChannelNumber;
+      _clientAddress = clientAddress;
     }
 
     public string GetQueryUri()
     {
-      return string.Format("tv/tune?major={0}&minor={1}", _majorChannelNumber, _minorChannelNumber);
+      StringBuilder uri = new StringBuilder(string.Format("tv/tune?major={0}", _majorChannelNumber));
+      if (_minorChannelNumber != MINOR_CHANNEL_NUMBER_NOT_SET)
+      {
+        uri.AppendFormat("&minor={0}", _minorChannelNumber);
+      }
+      if (!string.IsNullOrEmpty(_clientAddress))
+      {
+        uri.AppendFormat("&clientAddr={0}", _clientAddress);
+      }
+      return uri.ToString();
     }
 
     public Type GetResponseType()

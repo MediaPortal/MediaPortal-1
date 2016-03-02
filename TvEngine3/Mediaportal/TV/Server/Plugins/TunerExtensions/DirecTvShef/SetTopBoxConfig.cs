@@ -33,26 +33,48 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DirecTvShef
     /// The external identifier of the tuner that the set top box is connected to.
     /// </summary>
     [DataMember]
-    public string TunerExternalId;
+    public string TunerExternalId = string.Empty;
 
     /// <summary>
     /// The IP address of the set top box.
     /// </summary>
+    /// <remarks>
+    /// If the set top box is a Genie Mini, this should be the IP address of
+    /// the Genie that it is linked to.
+    /// </remarks>
     [DataMember]
-    public string IpAddress;
+    public string IpAddress = string.Empty;
+
+    /// <summary>
+    /// The location of the set top box.
+    /// </summary>
+    /// <remarks>
+    /// This property is only applicable for the Genie Mini set top box model.
+    /// The value is a unique, human-readable description entered by the owner
+    /// when the Genie Mini is linked to a Genie.
+    /// </remarks>
+    [DataMember]
+    public string Location = string.Empty;
+
+    /// <summary>
+    /// The MAC address of the set top box.
+    /// </summary>
+    /// <remarks>
+    /// This property is only applicable for the Genie Mini set top box model.
+    /// </remarks>
+    [DataMember]
+    public string MacAddress = string.Empty;
 
     /// <summary>
     /// <c>True</c> if this extension should turn the set top box power on and
     /// off as required.
     /// </summary>
     [DataMember]
-    public bool EnablePowerControl;
+    public bool EnablePowerControl = false;
 
-    private SetTopBoxConfig(string tunerExternalId, string ipAddress, bool enablePowerControl)
+    private SetTopBoxConfig(string tunerExternalId)
     {
       TunerExternalId = tunerExternalId;
-      IpAddress = ipAddress;
-      EnablePowerControl = enablePowerControl;
     }
 
     /// <summary>
@@ -67,15 +89,15 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DirecTvShef
         string externalId = SettingsManagement.GetValue("direcTvShefTunerExternalId" + i, string.Empty);
         if (string.IsNullOrEmpty(externalId))
         {
-          return new SetTopBoxConfig(tunerExternalId, string.Empty, true);
+          return new SetTopBoxConfig(tunerExternalId);
         }
         if (externalId.Equals(tunerExternalId))
         {
-          return new SetTopBoxConfig(
-            tunerExternalId,
-            SettingsManagement.GetValue("direcTvShefIpAddress" + i, string.Empty),
-            SettingsManagement.GetValue("direcTvShefEnablePowerControl" + i, true)
-          );
+          SetTopBoxConfig config = new SetTopBoxConfig(tunerExternalId);
+          config.IpAddress = SettingsManagement.GetValue("direcTvShefIpAddress" + i, string.Empty);
+          config.Location = SettingsManagement.GetValue("direcTvShefLocation" + i, string.Empty);
+          config.MacAddress = SettingsManagement.GetValue("direcTvShefMacAddress" + i, string.Empty);
+          config.EnablePowerControl = SettingsManagement.GetValue("direcTvShefEnablePowerControl" + i, false);
         }
         i++;
       }
@@ -94,6 +116,8 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DirecTvShef
         {
           SettingsManagement.SaveValue("direcTvShefTunerExternalId" + i, TunerExternalId);
           SettingsManagement.SaveValue("direcTvShefIpAddress" + i, IpAddress);
+          SettingsManagement.SaveValue("direcTvShefLocation" + i, Location);
+          SettingsManagement.SaveValue("direcTvShefMacAddress" + i, MacAddress);
           SettingsManagement.SaveValue("direcTvShefEnablePowerControl" + i, EnablePowerControl);
           return;
         }

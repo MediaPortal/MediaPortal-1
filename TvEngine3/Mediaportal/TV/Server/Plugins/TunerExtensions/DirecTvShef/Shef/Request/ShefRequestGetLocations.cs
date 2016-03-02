@@ -19,44 +19,20 @@
 #endregion
 
 using System;
-using System.Text;
 using Mediaportal.TV.Server.Plugins.TunerExtension.DirecTvShef.Shef.Response;
 
 namespace Mediaportal.TV.Server.Plugins.TunerExtension.DirecTvShef.Shef.Request
 {
-  internal class ShefRequestProcessKey : IShefRequest
+  internal class ShefRequestGetLocations : IShefRequest
   {
-    private ShefRemoteKey _key = null;
-    private ShefRemoteKeyPress _hold = null;
-    private string _clientAddress = null;
-
-    public ShefRequestProcessKey(ShefRemoteKey key, ShefRemoteKeyPress hold = null, string clientAddress = null)
-    {
-      _key = key;
-      if (hold == null)
-      {
-        _hold = ShefRemoteKeyPress.Press;
-      }
-      else
-      {
-        _hold = hold;
-      }
-      _clientAddress = clientAddress;
-    }
-
     public string GetQueryUri()
     {
-      StringBuilder uri = new StringBuilder(string.Format("remote/processKey?key={0}&hold={1}", _key.ToString(), _hold.ToString()));
-      if (!string.IsNullOrEmpty(_clientAddress))
-      {
-        uri.AppendFormat("&clientAddr={0}", _clientAddress);
-      }
-      return uri.ToString();
+      return "info/getLocations";
     }
 
     public Type GetResponseType()
     {
-      return typeof(ShefResponseProcessKey);
+      return typeof(ShefResponseGetLocations);
     }
   }
 }

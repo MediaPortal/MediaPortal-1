@@ -32,5 +32,11 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DirecTvShef.Service
 
     [OperationContract]
     void SaveSetTopBoxConfiguration(ICollection<SetTopBoxConfig> settings);
+
+    [OperationContract]
+    bool GetSetTopBoxLocations(string ipAddress, out IDictionary<string, string> locations);
+
+    [OperationContract]
+    bool GetSetTopBoxVersion(string ipAddress, out string accessCardId, out string receiverId, out string stbSoftwareVersion, out string shefVersion, out int systemTime);
   }
 }

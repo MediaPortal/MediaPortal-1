@@ -23,22 +23,15 @@ using System.Runtime.Serialization;
 namespace Mediaportal.TV.Server.Plugins.TunerExtension.DirecTvShef.Shef.Response
 {
   [DataContract]
-  internal class ShefResponseProcessKey : IShefResponse
+  internal class ShefLocation
   {
     #pragma warning disable 0649
 
-    [DataMember(Name = "hold")]
-    public string Hold;
+    [DataMember(Name = "clientAddr")]
+    public string ClientAddress;
 
-    [DataMember(Name = "key")]
-    public string Key;
-
-    [DataMember(Name = "status")]
-    public ShefResponseStatus Status
-    {
-      get;
-      set;
-    }
+    [DataMember(Name = "locationName")]
+    public string LocationName;
 
     #pragma warning restore 0649
   }

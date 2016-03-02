@@ -23,9 +23,6 @@ using System.Collections.Generic;
 using System.Windows.Forms;
 using Mediaportal.TV.Server.Common.Types.Enum;
 using Mediaportal.TV.Server.Plugins.TunerExtension.DirecTvShef.Service;
-using Mediaportal.TV.Server.Plugins.TunerExtension.DirecTvShef.Shef;
-using Mediaportal.TV.Server.Plugins.TunerExtension.DirecTvShef.Shef.Request;
-using Mediaportal.TV.Server.Plugins.TunerExtension.DirecTvShef.Shef.Response;
 using Mediaportal.TV.Server.SetupControls;
 using Mediaportal.TV.Server.TVControl.ServiceAgents;
 using Mediaportal.TV.Server.TVDatabase.Entities;
@@ -36,6 +33,8 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DirecTvShef.Config
 {
   internal partial class DirecTvShefConfig : SectionSettings
   {
+    private const string SELECT_GENIE_MINI_NONE = "(none)";
+
     public DirecTvShefConfig()
       : base("DirecTV SHEF")
     {
@@ -68,9 +67,12 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DirecTvShef.Config
 
         SetTopBoxConfig tunerStbConfig = ServiceAgents.Instance.PluginService<IDirecTvShefConfigService>().GetSetTopBoxConfigurationForTuner(tuner.ExternalId);
         cell = row.Cells["dataGridViewColumnSetTopBoxIpAddress"];
-        tunerStbConfig.IpAddress = tunerStbConfig.IpAddress ?? string.Empty;
         cell.Value = tunerStbConfig.IpAddress;
         cell.Tag = tunerStbConfig;
+
+        cell = row.Cells["dataGridViewColumnGenieMini"];
+        cell.Value = tunerStbConfig.Location;
+        cell.Tag = tunerStbConfig.Location;
 
         row.Cells["dataGridViewColumnPowerControl"].Value = tunerStbConfig.EnablePowerControl;
 
@@ -78,6 +80,8 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DirecTvShef.Config
         this.LogDebug("  tuner ID      = {0}", tuner.IdTuner);
         this.LogDebug("  tuner name    = {0}", tuner.Name);
         this.LogDebug("  IP address    = {0}", tunerStbConfig.IpAddress);
+        this.LogDebug("  location      = {0}", tunerStbConfig.Location);
+        this.LogDebug("  MAC address   = {0}", tunerStbConfig.MacAddress);
         this.LogDebug("  power control = {0}", tunerStbConfig.EnablePowerControl);
       }
       this.LogDebug("DirecTV SHEF config: analog tuner count = {0}", dataGridViewConfig.Rows.Count);
@@ -105,8 +109,17 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DirecTvShef.Config
         }
         if (!string.Equals(newIpAddress, tunerStbConfig.IpAddress))
         {
-          this.LogInfo("DirecTV SHEF config: IP address for tuner {0} changed from {1} to {2}", tuner.IdTuner, tunerStbConfig.IpAddress, newIpAddress);
+          this.LogInfo("DirecTV SHEF config: receiver IP address for tuner {0} changed from {1} to {2}", tuner.IdTuner, tunerStbConfig.IpAddress, newIpAddress);
           tunerStbConfig.IpAddress = newIpAddress;
+          isChanged = true;
+        }
+
+        cell = row.Cells["dataGridViewColumnGenieMini"];
+        string newGenieMini = cell.Value as string;
+        string originalGenieMini = cell.Tag as string;
+        if (!string.Equals(newGenieMini, originalGenieMini))
+        {
+          this.LogInfo("DirecTV SHEF config: Genie Mini for tuner {0} changed from {1} to {2}", tuner.IdTuner, originalGenieMini, newGenieMini);
           isChanged = true;
         }
 
@@ -133,6 +146,83 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DirecTvShef.Config
       base.OnSectionDeActivated();
     }
 
+    private void buttonSelectGenieMini_Click(object sender, EventArgs e)
+    {
+      if (dataGridViewConfig.SelectedRows.Count != 1)
+      {
+        return;
+      }
+      DataGridViewRow row = dataGridViewConfig.SelectedRows[0];
+      if (row == null)
+      {
+        return;
+      }
+      DataGridViewCell cell = row.Cells["dataGridViewColumnSetTopBoxIpAddress"];
+      string ipAddress = cell.Value as string;
+      if (string.IsNullOrWhiteSpace(ipAddress))
+      {
+        MessageBox.Show("Can't select Genie Mini without an IP address.", MESSAGE_CAPTION);
+        return;
+      }
+
+      SetTopBoxConfig tunerStbConfig = cell.Tag as SetTopBoxConfig;
+      cell = row.Cells["dataGridViewColumnTunerId"];
+      Tuner tuner = cell.Tag as Tuner;
+      this.LogInfo("DirecTV SHEF config: select Genie Mini, tuner ID = {0}, IP address = {1}, current Genie Mini = {2} ({3})", tuner.IdTuner, ipAddress, tunerStbConfig.Location, tunerStbConfig.MacAddress);
+
+      IDictionary<string, string> locations;
+      if (!ServiceAgents.Instance.PluginService<IDirecTvShefConfigService>().GetSetTopBoxLocations(ipAddress, out locations))
+      {
+        this.LogInfo("DirecTV SHEF config: get locations failed");
+        MessageBox.Show(
+          string.Format("Failed to communicate with the receiver at IP address '{0}'.", ipAddress) + Environment.NewLine +
+            "Is it possible your configuration is incorrect?" + Environment.NewLine +
+             SENTENCE_CHECK_LOG_FILES,
+          MESSAGE_CAPTION,
+          MessageBoxButtons.OK,
+          MessageBoxIcon.Error
+        );
+        return;
+      }
+
+      object[] genieMiniArray = new object[locations.Count];
+      genieMiniArray[0] = SELECT_GENIE_MINI_NONE;
+      int i = 1;
+      object currentGenieMini = SELECT_GENIE_MINI_NONE;
+      foreach (var location in locations)
+      {
+        this.LogDebug("  MAC address = {0}, location = {1}", location.Value, location.Key);
+        if (!string.Equals(location.Value, "0"))    // not main Genie location
+        {
+          genieMiniArray[i++] = location.Key;
+          if (string.Equals(location.Value, tunerStbConfig.MacAddress))
+          {
+            currentGenieMini = location.Key;
+          }
+        }
+      }
+
+      SelectGenieMini dialog = new SelectGenieMini(genieMiniArray, currentGenieMini);
+      if (dialog.ShowDialog() != DialogResult.OK)
+      {
+        return;
+      }
+
+      string selectedGenieMiniLocation = dialog.Item as string;
+      if (selectedGenieMiniLocation == null || string.Equals(selectedGenieMiniLocation, SELECT_GENIE_MINI_NONE))
+      {
+        tunerStbConfig.Location = string.Empty;
+        tunerStbConfig.MacAddress = string.Empty;
+      }
+      else
+      {
+        tunerStbConfig.Location = selectedGenieMiniLocation;
+        tunerStbConfig.MacAddress = locations[selectedGenieMiniLocation];
+      }
+      row.Cells["dataGridViewColumnGenieMini"].Value = tunerStbConfig.Location;
+      this.LogInfo("DirecTV SHEF config: select Genie Mini, location = {0}, MAC address = {1}", tunerStbConfig.Location, tunerStbConfig.MacAddress);
+    }
+
     private void buttonTest_Click(object sender, System.EventArgs e)
     {
       if (dataGridViewConfig.SelectedRows.Count != 1)
@@ -152,13 +242,16 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DirecTvShef.Config
       }
 
       this.LogInfo("DirecTV SHEF config: test, IP address = {0}", ipAddress);
-      ShefClient client = new ShefClient(ipAddress);
-      IShefResponse shefResponse;
-      if (!client.SendRequest(new ShefRequestGetVersion(), out shefResponse))
+      string accessCardId;
+      string receiverId;
+      string stbSoftwareVersion;
+      string shefVersion;
+      int systemTime;
+      if (!ServiceAgents.Instance.PluginService<IDirecTvShefConfigService>().GetSetTopBoxVersion(ipAddress, out accessCardId, out receiverId, out stbSoftwareVersion, out shefVersion, out systemTime))
       {
         this.LogInfo("DirecTV SHEF config: test failed");
         MessageBox.Show(
-          string.Format("Failed to communicate with the set top box at IP address '{0}'.", ipAddress) + Environment.NewLine +
+          string.Format("Failed to communicate with the receiver at IP address '{0}'.", ipAddress) + Environment.NewLine +
             "Is it possible your configuration is incorrect?" + Environment.NewLine +
              SENTENCE_CHECK_LOG_FILES,
           MESSAGE_CAPTION,
@@ -168,22 +261,21 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DirecTvShef.Config
         return;
       }
 
-      ShefResponseGetVersion response = shefResponse as ShefResponseGetVersion;
       MessageBox.Show("Success!" + Environment.NewLine +
-          "access card ID = " + response.AccessCardId + Environment.NewLine +
-          "receiver ID = " + response.ReceiverId + Environment.NewLine +
-          "software version = " + response.StbSoftwareVersion + Environment.NewLine +
-          "SHEF version = " + response.Version,
+          "access card ID = " + accessCardId + Environment.NewLine +
+          "receiver ID = " + receiverId + Environment.NewLine +
+          "software version = " + stbSoftwareVersion + Environment.NewLine +
+          "SHEF version = " + shefVersion,
         MESSAGE_CAPTION,
         MessageBoxButtons.OK,
         MessageBoxIcon.Information
       );
       this.LogInfo("DirecTV SHEF config: test succeeded");
-      this.LogDebug("  access card ID   = {0}", response.AccessCardId);
-      this.LogDebug("  receiver ID      = {0}", response.ReceiverId);
-      this.LogDebug("  software version = {0}", response.StbSoftwareVersion);
-      this.LogDebug("  SHEF version     = {0}", response.Version);
-      this.LogDebug("  system time      = {0}", response.SystemTime);
+      this.LogDebug("  access card ID   = {0}", accessCardId);
+      this.LogDebug("  receiver ID      = {0}", receiverId);
+      this.LogDebug("  software version = {0}", stbSoftwareVersion);
+      this.LogDebug("  SHEF version     = {0}", shefVersion);
+      this.LogDebug("  system time      = {0}", systemTime);
     }
   }
 }

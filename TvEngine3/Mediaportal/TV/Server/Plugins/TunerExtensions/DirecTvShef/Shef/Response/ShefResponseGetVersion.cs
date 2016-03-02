@@ -26,6 +26,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DirecTvShef.Shef.Response
   internal class ShefResponseGetVersion : IShefResponse
   {
     #pragma warning disable 0649
+
     [DataMember(Name = "accessCardId")]
     public string AccessCardId;
 
