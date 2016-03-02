@@ -130,6 +130,8 @@ namespace MediaPortal.Player
 
     public delegate void ChangedHandler(MediaType type, int stoptime, string filename);
 
+    public delegate void StreamChangedHandler(StreamKind kind, MediaStream oldStream, MediaStream newStream, IPlayer player);
+
     public delegate void AudioTracksReadyHandler();
 
     public delegate void TVChannelChangeHandler();
@@ -144,6 +146,7 @@ namespace MediaPortal.Player
     public static event StartedHandler PlayBackStarted;
     public static event AudioTracksReadyHandler AudioTracksReady;
     public static event TVChannelChangeHandler TVChannelChanged;
+    public static event StreamChangedHandler StreamChanged;
 
     #endregion
 
@@ -600,7 +603,15 @@ namespace MediaPortal.Player
       }
     }
 
-    //called when starting playing a file
+    private static void OnStreamChanged(StreamKind kind, MediaStream oldStream, MediaStream newStream, IPlayer player)
+    {
+      if (StreamChanged != null)
+      {
+        StreamChanged(kind, oldStream, newStream, player);
+      }
+    }
+
+      //called when starting playing a file
     public static void OnStarted()
     {
       //check if we're playing
@@ -1751,6 +1762,13 @@ namespace MediaPortal.Player
           }
           else if (_player != null && _player.Playing)
           {
+            if (_player.HasVideo)
+            {
+              OnStreamChanged(StreamKind.Video, null, _player.CurrentVideo, _player);
+            }
+
+            OnStreamChanged(StreamKind.Audio, null, _player.CurrentAudio, _player);
+
             _isInitialized = false;
             _currentFilePlaying = _player.CurrentFile;
             //if (_chapters == null)
@@ -2803,7 +2821,12 @@ namespace MediaPortal.Player
       {
         if (_player != null)
         {
-          _player.CurrentVideoStream = value;
+          if (_player.CurrentVideoStream != value)
+          {
+            var oldStream = _player.CurrentVideo;
+            _player.CurrentVideoStream = value;
+            OnStreamChanged(StreamKind.Video, oldStream, _player.CurrentVideo, _player);
+          }
         }
       }
     }
@@ -2888,7 +2911,12 @@ namespace MediaPortal.Player
       {
         if (_player != null)
         {
-          _player.CurrentAudioStream = value;
+          if (_player.CurrentAudioStream != value)
+          {
+            var oldStream = _player.CurrentAudio;
+            _player.CurrentAudioStream = value;
+            OnStreamChanged(StreamKind.Audio, oldStream, _player.CurrentAudio, _player);
+          }
         }
       }
     }
