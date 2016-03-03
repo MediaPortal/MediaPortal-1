@@ -79,6 +79,7 @@ namespace MediaPortal.WinampPlayer
     private const int WA_SETBALANCE = 123; // Sets the balance to 'data' (0 left to 255 right).
     private const int WA_PLAYLISTLEN = 124; // Returns length of the current playlist, in tracks. 
     private const int WA_PLAYLISTPOS = 125; // Returns current playlist position, in tracks. 
+    private const int WA_TRACKINFO = 126; // Retrieves info about the current playing track. Returns samplerate (i.e. 44100) if 'data' is set to 0, bitrate if 'data' is set to 1, and number of channels if 'data' is set to 2. (requires Winamp 2.05+) 
     private const int WA_RESTART = 135; // Restarts Winamp.
     private const int WA_REFRESHPLCACHE = 247; // Clear PlayList Cache
 
@@ -353,6 +354,30 @@ namespace MediaPortal.WinampPlayer
       {
         //IntPtr hwnd = FindWindow(m_windowName, null);	
         Win32API.SendMessageA(m_hwnd, WM_USER, value, WA_SETVOLUME);
+      }
+    }
+
+    public int Bitrate
+    {
+      get
+      {
+        return Win32API.SendMessageA(m_hwnd, WM_USER, 1, WA_TRACKINFO);
+      }
+    }
+
+    public int SampleRate
+    {
+      get
+      {
+        return Win32API.SendMessageA(m_hwnd, WM_USER, 0, WA_TRACKINFO);
+      }
+    }
+
+    public int Channels
+    {
+      get
+      {
+        return Win32API.SendMessageA(m_hwnd, WM_USER, 2, WA_TRACKINFO);
       }
     }
   }

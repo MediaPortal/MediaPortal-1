@@ -149,10 +149,11 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             SoundGraphDisplay.LogDebug("(IDisplay) ImonLcd.SetAspectRatio() called");
             byte newAspectRatioIcons = 0;
 
+            var video = g_Player.CurrentVideo;
             if (g_Player.Player != null && g_Player.Player.Playing &&
-                g_Player.MediaInfo != null && g_Player.IsVideo)
+                video != null && g_Player.IsVideo)
             {
-                int videoHeight = g_Player.MediaInfo.Height;
+                int videoHeight = video.Height;
 
                 if (videoHeight >= 720)
                 {
@@ -193,9 +194,10 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             SoundGraphDisplay.LogDebug("(IDisplay) ImonLcd.SetSpeakerConfig() called");
             byte newSpeakers = 0, newSpeakerRR = 0;
 
-            if (g_Player.Player != null && g_Player.Player.Playing && g_Player.MediaInfo != null)
+            var audio = g_Player.CurrentAudio;
+            if (g_Player.Player != null && g_Player.Player.Playing && audio != null)
             {
-                switch (g_Player.MediaInfo.AudioChannels)
+                switch (audio.Channel)
                 {
                     case 1: // mono
                     case 2: // stereo
@@ -274,11 +276,11 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             byte newAudioCodecs = 0;
             if (g_Player.Player != null && g_Player.Player.Playing)
             {
-                if (g_Player.MediaInfo != null && g_Player.IsVideo)
+                if (g_Player.IsVideo)
                 {
                     // video playback
-                    _videoMediaInfo.Format = g_Player.MediaInfo.VideoCodec;
-                    _audioMediaInfo.Format = g_Player.MediaInfo.AudioCodec;
+                    _videoMediaInfo.Format = g_Player.CurrentVideo.Format;
+                    _audioMediaInfo.Format = g_Player.CurrentAudio.Format;
 
                     // video stream
                     if (_videoMediaInfo.IsMpg)

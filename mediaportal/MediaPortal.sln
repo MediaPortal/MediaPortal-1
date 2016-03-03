@@ -133,6 +133,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ProcessPlugins", "ProcessPl
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MiniDisplayPlugin", "ProcessPlugins\MiniDisplay\MiniDisplayPlugin.csproj", "{C430B2F0-CD3A-4BD5-B6C2-1DE2BDC68C86}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{DBBA1161-EC08-4745-895B-160B76705D31}"
+	ProjectSection(SolutionItems) = preProject
+		.nuget\packages.config = .nuget\packages.config
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x86 = Debug|x86

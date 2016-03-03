@@ -19,8 +19,10 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows.Forms;
@@ -30,18 +32,21 @@ using DShowNET.Helper;
 using MediaPortal.Configuration;
 using MediaPortal.ExtensionMethods;
 using MediaPortal.GUI.Library;
+using MediaPortal.Player.MediaInfo;
 using MediaPortal.Profile;
 
 //using DirectX.Capture;
 
 namespace MediaPortal.Player
 {
-  public class BaseStreamBufferPlayer : IPlayer
+  public abstract class BaseStreamBufferPlayer : BaseDirectShowVideoPlayer
   {
     #region imports
 
     [ComImport, Guid("FA8A68B2-C864-4ba2-AD53-D3876A87494B")]
-    protected class StreamBufferConfig {}
+    protected class StreamBufferConfig
+    {
+    }
 
     [DllImport("advapi32", CharSet = CharSet.Auto)]
     protected static extern ulong RegOpenKeyEx(IntPtr key, string subKey, uint ulOptions, uint sam, out IntPtr resultKey);
@@ -78,7 +83,6 @@ namespace MediaPortal.Player
     protected bool _isFullscreen = true;
     protected PlayState _state = PlayState.Init;
     protected int _volume = 100;
-    protected IGraphBuilder _graphBuilder = null;
     protected IStreamBufferSource _bufferSource = null;
     protected IStreamBufferMediaSeeking _mediaSeeking = null;
     protected IStreamBufferMediaSeeking2 _mediaSeeking2 = null;
@@ -132,7 +136,10 @@ namespace MediaPortal.Player
 
     #region ctor/dtor
 
-    public BaseStreamBufferPlayer() {}
+    protected BaseStreamBufferPlayer()
+      : base()
+    {
+    }
 
     #endregion
 
@@ -177,7 +184,7 @@ namespace MediaPortal.Player
         }
       }
       iTimeShiftBuffer *= 60; //in seconds
-      _backingFileDuration = (int)(iTimeShiftBuffer / 6);
+      _backingFileDuration = (int) (iTimeShiftBuffer/6);
 
       _isVisible = false;
       _isWindowVisible = false;
@@ -188,10 +195,11 @@ namespace MediaPortal.Player
       _geometry = Geometry.Type.Normal;
 
       _updateNeeded = true;
+      MediaInfo = new MediaInfoWrapper(strFile);
       if (_bufferSource != null)
       {
         Log.Info("StreamBufferPlayer:replay {0}", strFile);
-        IFileSourceFilter fileSource = (IFileSourceFilter)_bufferSource;
+        IFileSourceFilter fileSource = (IFileSourceFilter) _bufferSource;
         fileSource.Load(strFile, null);
         ReInit();
       }
@@ -208,7 +216,7 @@ namespace MediaPortal.Player
           _currentFile = "";
           return false;
         }
-        _rotEntry = new DsROTEntry((IFilterGraph)_graphBuilder);
+        _rotEntry = new DsROTEntry((IFilterGraph) _graphBuilder);
       }
       int hr = _mediaEvt.SetNotifyWindow(GUIGraphicsContext.ActiveForm, WM_GRAPHNOTIFY, IntPtr.Zero);
       if (hr < 0)
@@ -222,7 +230,7 @@ namespace MediaPortal.Player
       {
         _videoWin.put_Owner(GUIGraphicsContext.ActiveForm);
         _videoWin.put_WindowStyle(
-          (WindowStyle)((int)WindowStyle.Child + (int)WindowStyle.ClipSiblings + (int)WindowStyle.ClipChildren));
+          (WindowStyle) ((int) WindowStyle.Child + (int) WindowStyle.ClipSiblings + (int) WindowStyle.ClipChildren));
         _videoWin.put_MessageDrain(GUIGraphicsContext.form.Handle);
       }
       if (_basicVideo != null)
@@ -266,6 +274,8 @@ namespace MediaPortal.Player
         CloseInterfaces();
         return false;
       }
+
+      DirectShowHelper.AnalyseStreams(_graphBuilder);
       GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAYBACK_STARTED, 0, 0, 0, 0, 0, null);
       msg.Label = strFile;
       GUIWindowManager.SendThreadMessage(msg);
@@ -296,11 +306,11 @@ namespace MediaPortal.Player
       else
       {
         //seek to end of file
-        long lTime = 5 * 60 * 60;
+        long lTime = 5*60*60;
         lTime *= 10000000;
         long pStop = 0;
         hr = _mediaSeeking.SetPositions(new DsLong(lTime), AMSeekingSeekingFlags.AbsolutePositioning, new DsLong(pStop),
-                                        AMSeekingSeekingFlags.NoPositioning);
+          AMSeekingSeekingFlags.NoPositioning);
         if (hr == 0)
         {
           long lStreamPos;
@@ -392,8 +402,8 @@ namespace MediaPortal.Player
       m_geometry.PixelRatio = GUIGraphicsContext.PixelRatio;
       m_geometry.GetWindow(aspectX, aspectY, out rSource, out rDest);
 
-      rDest.X += (int)x;
-      rDest.Y += (int)y;
+      rDest.X += (int) x;
+      rDest.Y += (int) y;
 
       Log.Info("overlay: video WxH  : {0}x{1}", _videoWidth, _videoHeight);
       Log.Info("overlay: video AR   : {0}:{1}", aspectX, aspectY);
@@ -401,14 +411,14 @@ namespace MediaPortal.Player
       Log.Info("overlay: AR type    : {0}", GUIGraphicsContext.ARType);
       Log.Info("overlay: PixelRatio : {0}", GUIGraphicsContext.PixelRatio);
       Log.Info("overlay: src        : ({0},{1})-({2},{3})",
-               rSource.X, rSource.Y, rSource.X + rSource.Width, rSource.Y + rSource.Height);
+        rSource.X, rSource.Y, rSource.X + rSource.Width, rSource.Y + rSource.Height);
       Log.Info("overlay: dst        : ({0},{1})-({2},{3})",
-               rDest.X, rDest.Y, rDest.X + rDest.Width, rDest.Y + rDest.Height);
+        rDest.X, rDest.Y, rDest.X + rDest.Width, rDest.Y + rDest.Height);
 
 
       Log.Info("StreamBufferPlayer:Window ({0},{1})-({2},{3}) - ({4},{5})-({6},{7})",
-               rSource.X, rSource.Y, rSource.Right, rSource.Bottom,
-               rDest.X, rDest.Y, rDest.Right, rDest.Bottom);
+        rSource.X, rSource.Y, rSource.Right, rSource.Bottom,
+        rDest.X, rDest.Y, rDest.Right, rDest.Bottom);
 
 
       if (rSource.Y == 0)
@@ -593,23 +603,23 @@ namespace MediaPortal.Player
               iSpeed = value;
               if (_mediaSeeking2 != null)
               {
-                int hr = _mediaSeeking2.SetRateEx((double)iSpeed, 25);
+                int hr = _mediaSeeking2.SetRateEx((double) iSpeed, 25);
                 //Log.Info("VideoPlayer:SetRateEx to:{0} 25fps {1:X}", iSpeed,hr);
                 if (hr != 0)
                 {
                   IMediaSeeking oldMediaSeek = _graphBuilder as IMediaSeeking;
-                  hr = oldMediaSeek.SetRate((double)iSpeed);
+                  hr = oldMediaSeek.SetRate((double) iSpeed);
                   //Log.Info("VideoPlayer:SetRateOld to:{0} {1:X}", iSpeed,hr);
                 }
               }
               else
               {
-                int hr = _mediaSeeking.SetRate((double)iSpeed);
+                int hr = _mediaSeeking.SetRate((double) iSpeed);
                 //Log.Info("VideoPlayer:SetRate to:{0} {1:X}", iSpeed,hr);
                 if (hr != 0)
                 {
                   IMediaSeeking oldMediaSeek = _graphBuilder as IMediaSeeking;
-                  hr = oldMediaSeek.SetRate((double)iSpeed);
+                  hr = oldMediaSeek.SetRate((double) iSpeed);
                   //Log.Info("VideoPlayer:SetRateOld to:{0} {1:X}", iSpeed,hr);
                 }
               }
@@ -628,7 +638,7 @@ namespace MediaPortal.Player
           }
           else
           {
-            switch ((int)value)
+            switch ((int) value)
             {
               case -1:
                 _speedRate = -10000;
@@ -914,8 +924,8 @@ namespace MediaPortal.Player
             if (_basicAudio != null)
             {
               // Divide by 100 to get equivalent decibel value. For example, –10,000 is –100 dB. 
-              float fPercent = (float)_volume / 100.0f;
-              int iVolume = (int)(5000.0f * fPercent);
+              float fPercent = (float) _volume/100.0f;
+              int iVolume = (int) (5000.0f*fPercent);
               _basicAudio.put_Volume((iVolume - 5000));
             }
           }
@@ -992,9 +1002,9 @@ namespace MediaPortal.Player
           fContentEnd = lContentEnd;
 
           dTimeInSecs += fContentStart;
-          long lTime = (long)dTimeInSecs;
+          long lTime = (long) dTimeInSecs;
           int hr = _mediaSeeking.SetPositions(new DsLong(lTime), AMSeekingSeekingFlags.AbsolutePositioning,
-                                              new DsLong(pStop), AMSeekingSeekingFlags.NoPositioning);
+            new DsLong(pStop), AMSeekingSeekingFlags.NoPositioning);
           if (hr != 0)
           {
             Log.Error("seek failed->seek to 0 0x:{0:X}", hr);
@@ -1015,9 +1025,9 @@ namespace MediaPortal.Player
           double dCurrentPos = this.CurrentPosition;
           double dDuration = Duration;
 
-          double fCurPercent = (dCurrentPos / Duration) * 100.0d;
-          double fOnePercent = Duration / 100.0d;
-          fCurPercent = fCurPercent + (double)iPercentage;
+          double fCurPercent = (dCurrentPos/Duration)*100.0d;
+          double fOnePercent = Duration/100.0d;
+          fCurPercent = fCurPercent + (double) iPercentage;
           fCurPercent *= fOnePercent;
           if (fCurPercent < 0.0d)
           {
@@ -1046,8 +1056,8 @@ namespace MediaPortal.Player
           {
             iPercentage = 100;
           }
-          double fPercent = Duration / 100.0f;
-          fPercent *= (double)iPercentage;
+          double fPercent = Duration/100.0f;
+          fPercent *= (double) iPercentage;
           SeekAbsolute(fPercent);
         }
       }
@@ -1135,7 +1145,9 @@ namespace MediaPortal.Player
       }
     }
 
-    protected virtual void OnProcess() {}
+    protected virtual void OnProcess()
+    {
+    }
 
 #if DEBUG
     private static DateTime dtStart = DateTime.Now;
@@ -1210,9 +1222,9 @@ namespace MediaPortal.Player
       object comobj = null;
       try
       {
-        _graphBuilder = (IGraphBuilder)new FilterGraph();
+        _graphBuilder = (IGraphBuilder) new FilterGraph();
 
-        _bufferSource = (IStreamBufferSource)new StreamBufferSource();
+        _bufferSource = (IStreamBufferSource) new StreamBufferSource();
 
         int hr;
         m_StreamBufferConfig = new StreamBufferConfig();
@@ -1220,8 +1232,8 @@ namespace MediaPortal.Player
         if (streamConfig2 != null)
         {
           // setting the StreamBufferEngine registry key
-          IntPtr HKEY = (IntPtr)unchecked((int)0x80000002L);
-          IStreamBufferInitialize pTemp = (IStreamBufferInitialize)streamConfig2;
+          IntPtr HKEY = (IntPtr) unchecked((int) 0x80000002L);
+          IStreamBufferInitialize pTemp = (IStreamBufferInitialize) streamConfig2;
           IntPtr subKey = IntPtr.Zero;
 
           RegOpenKeyEx(HKEY, "SOFTWARE\\MediaPortal", 0, 0x3f, out subKey);
@@ -1237,10 +1249,10 @@ namespace MediaPortal.Player
         }
 
 
-        IBaseFilter filter = (IBaseFilter)_bufferSource;
+        IBaseFilter filter = (IBaseFilter) _bufferSource;
         _graphBuilder.AddFilter(filter, "SBE SOURCE");
 
-        IFileSourceFilter fileSource = (IFileSourceFilter)_bufferSource;
+        IFileSourceFilter fileSource = (IFileSourceFilter) _bufferSource;
         hr = fileSource.Load(filename, null);
 
         // add preferred video & audio codecs
@@ -1291,11 +1303,11 @@ namespace MediaPortal.Player
         }
 
         //render outputpins of SBE
-        DirectShowUtil.RenderOutputPins(_graphBuilder, (IBaseFilter)fileSource);
+        DirectShowUtil.RenderOutputPins(_graphBuilder, (IBaseFilter) fileSource);
 
-        _mediaCtrl = (IMediaControl)_graphBuilder;
+        _mediaCtrl = (IMediaControl) _graphBuilder;
         _videoWin = _graphBuilder as IVideoWindow;
-        _mediaEvt = (IMediaEventEx)_graphBuilder;
+        _mediaEvt = (IMediaEventEx) _graphBuilder;
         _mediaSeeking = _bufferSource as IStreamBufferMediaSeeking;
         _mediaSeeking2 = _bufferSource as IStreamBufferMediaSeeking2;
         if (_mediaSeeking == null)
@@ -1372,7 +1384,7 @@ namespace MediaPortal.Player
         _basicAudio = null;
         _basicVideo = null;
         _bufferSource = null;
-
+        ClearStreams();
 
         if (_videoCodecFilter != null)
         {
@@ -1525,7 +1537,9 @@ namespace MediaPortal.Player
     }
 
 
-    protected virtual void OnInitialized() {}
+    protected virtual void OnInitialized()
+    {
+    }
 
     protected void DoFFRW()
     {
@@ -1554,13 +1568,13 @@ namespace MediaPortal.Player
       //earliest += + 30 * 10000000;
 
       // new time = current time + 2*timerinterval* (speed)
-      long lTimerInterval = (long)ts.TotalMilliseconds;
+      long lTimerInterval = (long) ts.TotalMilliseconds;
       if (lTimerInterval > 300)
       {
         lTimerInterval = 300;
       }
       lTimerInterval = 300;
-      rewind = (long)(current + (2 * (long)(lTimerInterval) * _speedRate));
+      rewind = (long) (current + (2*(long) (lTimerInterval)*_speedRate));
 
       int hr;
       pStop = 0;
@@ -1573,7 +1587,7 @@ namespace MediaPortal.Player
         rewind = earliest;
         //Log.Info(" seek back:{0}",rewind/10000000);
         hr = _mediaSeeking.SetPositions(new DsLong(rewind), AMSeekingSeekingFlags.AbsolutePositioning, new DsLong(pStop),
-                                        AMSeekingSeekingFlags.NoPositioning);
+          AMSeekingSeekingFlags.NoPositioning);
         _mediaCtrl.Run();
         return;
       }
@@ -1585,7 +1599,7 @@ namespace MediaPortal.Player
         rewind = latest - 100000;
         //Log.Info(" seek ff:{0}",rewind/10000000);
         hr = _mediaSeeking.SetPositions(new DsLong(rewind), AMSeekingSeekingFlags.AbsolutePositioning, new DsLong(pStop),
-                                        AMSeekingSeekingFlags.NoPositioning);
+          AMSeekingSeekingFlags.NoPositioning);
         _mediaCtrl.Run();
         return;
       }
@@ -1593,15 +1607,39 @@ namespace MediaPortal.Player
       //seek to new moment in time
       //Log.Info(" seek :{0}",rewind/10000000);
       hr = _mediaSeeking.SetPositions(new DsLong(rewind), AMSeekingSeekingFlags.AbsolutePositioning, new DsLong(pStop),
-                                      AMSeekingSeekingFlags.NoPositioning);
+        AMSeekingSeekingFlags.NoPositioning);
       _mediaCtrl.Pause();
 
       _elapsedTimer = DateTime.Now;
     }
 
-    protected virtual void ReInit() {}
+    protected virtual void ReInit()
+    {
+    }
 
     #endregion
+
+    public override int SubtitleStreams
+    {
+      get { return 0; }
+    }
+
+    public override int CurrentSubtitleStream
+    {
+      get { return 0; }
+      set { }
+    }
+
+    public override int EditionStreams
+    {
+      get { return 0; }
+    }
+
+    public override int CurrentEditionStream
+    {
+      get { return 0; }
+      set { }
+    }
 
     #region IDisposable Members
 

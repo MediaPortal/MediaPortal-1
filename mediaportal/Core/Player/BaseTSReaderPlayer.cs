@@ -35,6 +35,8 @@ using MediaPortal.Player.PostProcessing;
 using System.Collections;
 using System.Collections.Generic;
 
+using MediaPortal.Player.MediaInfo;
+
 namespace MediaPortal.Player
 {
   [ComVisible(true), ComImport,
@@ -62,7 +64,7 @@ namespace MediaPortal.Player
     int OnRequestAudioChange();
   }
 
-  internal class BaseTSReaderPlayer : IPlayer, ITSReaderCallback, ITSReaderCallbackAudioChange
+  internal class BaseTSReaderPlayer : BaseDirectShowVideoPlayer, ITSReaderCallback, ITSReaderCallbackAudioChange
   {
     [Guid("b9559486-E1BB-45D3-A2A2-9A7AFE49B24F"),
      InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
@@ -134,7 +136,6 @@ namespace MediaPortal.Player
     protected PlayState _state = PlayState.Init;
     protected int _volume = 100;
     protected int _volumeBeforeSeeking = 0;
-    protected IGraphBuilder _graphBuilder = null;
     protected IMediaSeeking _mediaSeeking = null;
     protected int _speed = 1;
     protected double _currentPos;
@@ -213,7 +214,8 @@ namespace MediaPortal.Player
 
     #region ctor/dtor
 
-    public BaseTSReaderPlayer()
+    public BaseTSReaderPlayer() 
+        : base()
     {
       _mediaType = g_Player.MediaType.Video;
       _videoFormat = new VideoStreamFormat();
@@ -571,6 +573,7 @@ namespace MediaPortal.Player
 
       Log.Info("TSReaderPlayer:play {0}", strFile);
       _isStarted = false;
+      MediaInfo = new MediaInfoWrapper(strFile);
       if (!GetInterfaces(strFile))
       {
         Log.Error("TSReaderPlayer:GetInterfaces() failed");
@@ -1717,7 +1720,10 @@ namespace MediaPortal.Player
     /// <summary> create the used COM components and get the interfaces. </summary>
     protected virtual bool GetInterfaces(string filename) { return true; }
 
-    protected virtual void CloseInterfaces() { }
+    protected virtual void CloseInterfaces()
+    {
+        ClearStreams();
+    }
 
     private void OnGraphNotify()
     {
@@ -2075,5 +2081,21 @@ namespace MediaPortal.Player
     }
 
     #endregion
+
+    public override int SubtitleStreams { get { return 0; } }
+
+    public override int CurrentSubtitleStream
+    {
+      get { return 0; }
+      set { }
+    }
+
+    public override int EditionStreams { get { return 0; } }
+
+    public override int CurrentEditionStream
+    {
+      get { return 0; }
+      set { }
+    }
   }
 }
