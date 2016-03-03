@@ -21,6 +21,8 @@
 using System.Reflection;
 using System.Runtime.InteropServices;
 
+using NUnit.Framework;
+
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
@@ -37,3 +39,4 @@ using System.Runtime.InteropServices;
 // The following GUID is for the ID of the typelib if this project is exposed to COM
 
 [assembly: Guid("87bc7cb7-82a0-4958-b314-1617c7f6be01")]
+[assembly: RequiresSTA]

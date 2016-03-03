@@ -38,7 +38,7 @@ namespace MediaPortal.GUI.Library
   {
     #region Variables
 
-    private static LocalisationProvider _stringProvider;
+    private static ILocalizationProvider _stringProvider;
     private static Dictionary<string, string> _cultures;
     private static string[] _languages;
 
@@ -80,6 +80,15 @@ namespace MediaPortal.GUI.Library
     #endregion
 
     #region Public Methods
+
+    /// <summary>
+    /// Sets localization provider. Uses for tests
+    /// </summary>
+    /// <param name="provider">Localization provider</param>
+    public static void SetLocalisationProvider(ILocalizationProvider provider)
+    {
+      _stringProvider = provider;
+    }
 
     /// <summary>
     /// Public method to load the text from a strings/xml file into memory
@@ -270,7 +279,7 @@ namespace MediaPortal.GUI.Library
           Load(null);
         }
 
-        CultureInfo[] cultures = _stringProvider.AvailableLanguages();
+        CultureInfo[] cultures = _stringProvider.AvailableLanguages;
 
         SortedList sortedLanguages = new SortedList();
         foreach (CultureInfo culture in cultures)

@@ -20,6 +20,8 @@
 
 using System;
 
+using MediaPortal.Player.MediaInfo;
+
 namespace MediaPortal.Player
 {
   public class DummyPlayer : IPlayer
@@ -34,6 +36,7 @@ namespace MediaPortal.Player
     private PlayerState _state = PlayerState.Idle;
     private bool _isPlaying = false;
     private bool _isPaused = false;
+    private MediaInfoWrapper _mediaInfo;
 
     public DummyPlayer(string filename) {}
 
@@ -55,6 +58,7 @@ namespace MediaPortal.Player
       _state = PlayerState.Playing;
       _isPlaying = true;
       _isPaused = false;
+      _mediaInfo = new MediaInfoWrapper(strFile);
       // Console.WriteLine(String.Format("player:{0}", strFile));
       return true;
     }
@@ -95,7 +99,7 @@ namespace MediaPortal.Player
         {
           throw new ArgumentException("state is wrong");
         }
-        return 30000d;
+        return _mediaInfo.HasVideo ? _mediaInfo.BestVideoStream.Duration.TotalSeconds : _mediaInfo.BestAudioStream != null ? _mediaInfo.BestAudioStream.Duration.TotalSeconds : 0;
       }
     }
 
@@ -145,9 +149,33 @@ namespace MediaPortal.Player
       }
     }
 
+    public override int AudioStreams { get { return _mediaInfo.AudioStreams.Count; } }
+
+    public override int CurrentAudioStream { get; set; }
+
+    public override AudioStream CurrentAudio { get { return _mediaInfo.AudioStreams[CurrentAudioStream]; } }
+
+    public override AudioStream BestAudio { get { return _mediaInfo.BestAudioStream; } }
+
+    public override int VideoStreams { get { return _mediaInfo.VideoStreams.Count; } }
+
+    public override int CurrentVideoStream { get; set; }
+
+    public override VideoStream CurrentVideo { get { return _mediaInfo.VideoStreams[CurrentVideoStream]; } }
+
+    public override VideoStream BestVideo { get { return _mediaInfo.BestVideoStream; } }
+
+    public override int SubtitleStreams { get { return _mediaInfo.Subtitles.Count; } }
+
+    public override int CurrentSubtitleStream { get; set; }
+
+    public override int EditionStreams { get { return 0; } }
+
+    public override int CurrentEditionStream { get; set; }
+
     public override bool HasVideo
     {
-      get { return IsTV; }
+      get { return _mediaInfo.HasVideo; }
     }
 
     public override void Dispose() {}
