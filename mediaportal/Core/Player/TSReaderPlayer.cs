@@ -856,7 +856,7 @@ namespace MediaPortal.Player
             }
             _mediaCtrl = null;
           }
-          
+
           ClearStreams();
           if (_vmr9 != null)
           {

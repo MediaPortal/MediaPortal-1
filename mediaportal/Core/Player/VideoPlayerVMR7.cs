@@ -132,8 +132,8 @@ namespace MediaPortal.Player
         }
         if (!streams.Any(x => x.Stream != null && x.Stream == streamInfos.Stream))
         {
-            streams[streamsCount] = streamInfos;
-            streamsCount++;
+          streams[streamsCount] = streamInfos;
+          streamsCount++;
         }
         return true;
       }
@@ -276,7 +276,6 @@ namespace MediaPortal.Player
     protected g_Player.MediaType _mediaType;
 
     protected MediaInfoWrapper MediaInfo { get { return _mediaInfo; } }
-
 
     public VideoPlayerVMR7()
     {

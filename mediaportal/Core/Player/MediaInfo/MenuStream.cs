@@ -18,8 +18,6 @@
 
 #endregion
 
-using System;
-
 namespace MediaPortal.Player.MediaInfo
 {
   public class MenuStream : MediaStream

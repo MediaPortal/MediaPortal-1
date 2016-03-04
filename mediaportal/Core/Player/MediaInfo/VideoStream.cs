@@ -86,86 +86,90 @@ namespace MediaPortal.Player.MediaInfo
 
   public class VideoStream : LanguageMediaStream
   {
-    private static readonly Dictionary<string, AspectRatio> _ratios = new Dictionary<string, AspectRatio>
+    #region match dictionaries
+
+    private static readonly Dictionary<string, AspectRatio> Ratios = new Dictionary<string, AspectRatio>
     {
-      {"1:1", AspectRatio.Opaque},
-      {"5:4", AspectRatio.HighEndDataGraphics},
-      {"1.2", AspectRatio.HighEndDataGraphics},
-      {"3:3", AspectRatio.StandartSlides},
-      {"4:3", AspectRatio.Tv},
-      {"1.334", AspectRatio.Tv},
-      {"3:2", AspectRatio.DigitalSlrCameras},
-      {"1.5", AspectRatio.DigitalSlrCameras},
-      {"16:9", AspectRatio.HighDefinitionTv},
-      {"1.778", AspectRatio.HighDefinitionTv},
-      {"16:10", AspectRatio.WideScreenDisplay},
-      {"1.6", AspectRatio.WideScreenDisplay},
-      {"1.85", AspectRatio.WideScreen},
-      {"21:9", AspectRatio.CinimaScope},
-      {"2.334", AspectRatio.CinimaScope}
+      { "1:1", AspectRatio.Opaque },
+      { "5:4", AspectRatio.HighEndDataGraphics },
+      { "1.2", AspectRatio.HighEndDataGraphics },
+      { "3:3", AspectRatio.StandartSlides },
+      { "4:3", AspectRatio.Tv },
+      { "1.334", AspectRatio.Tv },
+      { "3:2", AspectRatio.DigitalSlrCameras },
+      { "1.5", AspectRatio.DigitalSlrCameras },
+      { "16:9", AspectRatio.HighDefinitionTv },
+      { "1.778", AspectRatio.HighDefinitionTv },
+      { "16:10", AspectRatio.WideScreenDisplay },
+      { "1.6", AspectRatio.WideScreenDisplay },
+      { "1.85", AspectRatio.WideScreen },
+      { "21:9", AspectRatio.CinimaScope },
+      { "2.334", AspectRatio.CinimaScope }
     };
 
-    private static readonly Dictionary<string, StereoMode> _stereoModes = new Dictionary<string, StereoMode>
+    private static readonly Dictionary<string, StereoMode> StereoModes = new Dictionary<string, StereoMode>
     {
-      {"side by side (left eye first)", StereoMode.SideBySideLeft},
-      {"top-bottom (right eye first)", StereoMode.TopBottomRight},
-      {"top-bottom (left eye first)", StereoMode.TopBottomLeft},
-      {"checkboard (right eye first)", StereoMode.CheckboardRight},
-      {"checkboard (left eye first)", StereoMode.CheckboardLeft},
-      {"row interleaved (right eye first)", StereoMode.RowInterleavedRight},
-      {"row interleaved (left eye first)", StereoMode.RowInterleavedLeft},
-      {"column interleaved (right eye first)", StereoMode.ColumnInterleavedRight},
-      {"column interleaved (left eye first)", StereoMode.ColumnInterleavedLeft},
-      {"anaglyph (cyan/red)", StereoMode.AnaglyphCyanRed},
-      {"side by side (right eye first)", StereoMode.SideBySideRight},
-      {"anaglyph (green/magenta)", StereoMode.AnaglyphGreenMagenta},
-      {"both eyes laced in one block (left eye first)", StereoMode.BothEyesLacedLeft},
-      {"both eyes laced in one block (right eye first)", StereoMode.BothEyesLacedRight}
+      { "side by side (left eye first)", StereoMode.SideBySideLeft },
+      { "top-bottom (right eye first)", StereoMode.TopBottomRight },
+      { "top-bottom (left eye first)", StereoMode.TopBottomLeft },
+      { "checkboard (right eye first)", StereoMode.CheckboardRight },
+      { "checkboard (left eye first)", StereoMode.CheckboardLeft },
+      { "row interleaved (right eye first)", StereoMode.RowInterleavedRight },
+      { "row interleaved (left eye first)", StereoMode.RowInterleavedLeft },
+      { "column interleaved (right eye first)", StereoMode.ColumnInterleavedRight },
+      { "column interleaved (left eye first)", StereoMode.ColumnInterleavedLeft },
+      { "anaglyph (cyan/red)", StereoMode.AnaglyphCyanRed },
+      { "side by side (right eye first)", StereoMode.SideBySideRight },
+      { "anaglyph (green/magenta)", StereoMode.AnaglyphGreenMagenta },
+      { "both eyes laced in one block (left eye first)", StereoMode.BothEyesLacedLeft },
+      { "both eyes laced in one block (right eye first)", StereoMode.BothEyesLacedRight }
     };
 
-    private static readonly Dictionary<string, VideoCodec> _videoCodecs = new Dictionary<string, VideoCodec>
+    private static readonly Dictionary<string, VideoCodec> VideoCodecs = new Dictionary<string, VideoCodec>
     {
-      {"V_UNCOMPRESSED", VideoCodec.V_UNCOMPRESSED},
-      {"V_DIRAC", VideoCodec.V_DIRAC},
-      {"V_MPEG4/IS0/SP", VideoCodec.V_MPEG4_IS0_SP},
-      {"V_MPEG4/IS0/ASP", VideoCodec.V_MPEG4_IS0_ASP},
-      {"V_MPEG4/IS0/AP", VideoCodec.V_MPEG4_IS0_AP},
-      {"V_MPEG4/IS0/AVC", VideoCodec.V_MPEG4_IS0_AVC},
-      {"V_MPEG4/ISO/SP", VideoCodec.V_MPEG4_ISO_SP},
-      {"V_MPEG4/ISO/ASP", VideoCodec.V_MPEG4_ISO_ASP},
-      {"V_MPEG4/ISO/AP", VideoCodec.V_MPEG4_ISO_AP},
-      {"V_MPEG4/ISO/AVC", VideoCodec.V_MPEG4_ISO_AVC},
-      {"V_MPEGH/ISO/HEVC", VideoCodec.V_MPEGH_ISO_HEVC},
-      {"V_MPEG4/MS/V2", VideoCodec.V_MPEG4_MS_V2},
-      {"V_MPEG4/MS/V3", VideoCodec.V_MPEG4_MS_V3},
-      {"V_MPEG1", VideoCodec.V_MPEG1},
-      {"V_MPEG2", VideoCodec.V_MPEG2},
-      {"V_PRORES", VideoCodec.V_PRORES},
-      {"V_REAL/RV10", VideoCodec.V_REAL_RV10},
-      {"V_REAL/RV20", VideoCodec.V_REAL_RV20},
-      {"V_REAL/RV30", VideoCodec.V_REAL_RV30},
-      {"V_REAL/RV40", VideoCodec.V_REAL_RV40},
-      {"V_THEORA", VideoCodec.V_THEORA},
-      {"V_VP8", VideoCodec.V_VP8},
-      {"V_VP9", VideoCodec.V_VP9},
-      {"AVC1", VideoCodec.V_MPEG4_ISO_AVC},
-      {"AVC", VideoCodec.V_MPEG4_ISO_AVC},
-      {"MPEG-2V", VideoCodec.V_MPEG2},
-      {"MPEG-2", VideoCodec.V_MPEG2},
-      {"MPEG-1", VideoCodec.V_MPEG1},
-      {"MPEG-1V", VideoCodec.V_MPEG1},
-      {"VC1", VideoCodec.V_VC1},
-      {"VC-1", VideoCodec.V_VC1},
-      {"OVC1", VideoCodec.V_VC1},
+      { "V_UNCOMPRESSED", VideoCodec.V_UNCOMPRESSED },
+      { "V_DIRAC", VideoCodec.V_DIRAC },
+      { "V_MPEG4/IS0/SP", VideoCodec.V_MPEG4_IS0_SP },
+      { "V_MPEG4/IS0/ASP", VideoCodec.V_MPEG4_IS0_ASP },
+      { "V_MPEG4/IS0/AP", VideoCodec.V_MPEG4_IS0_AP },
+      { "V_MPEG4/IS0/AVC", VideoCodec.V_MPEG4_IS0_AVC },
+      { "V_MPEG4/ISO/SP", VideoCodec.V_MPEG4_ISO_SP },
+      { "V_MPEG4/ISO/ASP", VideoCodec.V_MPEG4_ISO_ASP },
+      { "V_MPEG4/ISO/AP", VideoCodec.V_MPEG4_ISO_AP },
+      { "V_MPEG4/ISO/AVC", VideoCodec.V_MPEG4_ISO_AVC },
+      { "V_MPEGH/ISO/HEVC", VideoCodec.V_MPEGH_ISO_HEVC },
+      { "V_MPEG4/MS/V2", VideoCodec.V_MPEG4_MS_V2 },
+      { "V_MPEG4/MS/V3", VideoCodec.V_MPEG4_MS_V3 },
+      { "V_MPEG1", VideoCodec.V_MPEG1 },
+      { "V_MPEG2", VideoCodec.V_MPEG2 },
+      { "V_PRORES", VideoCodec.V_PRORES },
+      { "V_REAL/RV10", VideoCodec.V_REAL_RV10 },
+      { "V_REAL/RV20", VideoCodec.V_REAL_RV20 },
+      { "V_REAL/RV30", VideoCodec.V_REAL_RV30 },
+      { "V_REAL/RV40", VideoCodec.V_REAL_RV40 },
+      { "V_THEORA", VideoCodec.V_THEORA },
+      { "V_VP8", VideoCodec.V_VP8 },
+      { "V_VP9", VideoCodec.V_VP9 },
+      { "AVC1", VideoCodec.V_MPEG4_ISO_AVC },
+      { "AVC", VideoCodec.V_MPEG4_ISO_AVC },
+      { "MPEG-2V", VideoCodec.V_MPEG2 },
+      { "MPEG-2", VideoCodec.V_MPEG2 },
+      { "MPEG-1", VideoCodec.V_MPEG1 },
+      { "MPEG-1V", VideoCodec.V_MPEG1 },
+      { "VC1", VideoCodec.V_VC1 },
+      { "VC-1", VideoCodec.V_VC1 },
+      { "OVC1", VideoCodec.V_VC1 },
     };
+
+    #endregion
 
     public VideoStream(MediaInfo info, int number)
-      : base(info, number)
+        : base(info, number)
     {
     }
 
     public VideoStream(int number)
-      : base(null, number)
+        : base(null, number)
     {
     }
 
@@ -213,8 +217,8 @@ namespace MediaPortal.Player.MediaInfo
       AspectRatio = GetAspectRatio(GetString(info, "DisplayAspectRatio"));
       Interlaced = GetInterlaced(GetString(info, "ScanType").ToLower());
       Stereoscopic = GetInt(info, "MultiView_Count") >= 2
-        ? GetStereoscopic(GetString(info, "MultiView_Layout").ToLower())
-        : StereoMode.Mono;
+                       ? GetStereoscopic(GetString(info, "MultiView_Layout").ToLower())
+                       : StereoMode.Mono;
       Format = GetString(info, "Format");
       Codec = GetCodecId(GetString(info, "CodecID"));
       if (Codec == VideoCodec.V_UNDEFINED)
@@ -229,19 +233,19 @@ namespace MediaPortal.Player.MediaInfo
     private static VideoCodec GetCodecId(string codec)
     {
       VideoCodec result;
-      return _videoCodecs.TryGetValue(codec.ToUpper(), out result) ? result : VideoCodec.V_UNDEFINED;
+      return VideoCodecs.TryGetValue(codec.ToUpper(), out result) ? result : VideoCodec.V_UNDEFINED;
     }
 
     private static VideoCodec GetCodec(string codec)
     {
       VideoCodec result;
-      return _videoCodecs.TryGetValue(codec.ToUpper(), out result) ? result : VideoCodec.V_UNDEFINED;
+      return VideoCodecs.TryGetValue(codec.ToUpper(), out result) ? result : VideoCodec.V_UNDEFINED;
     }
 
     private static StereoMode GetStereoscopic(string layout)
     {
       StereoMode result;
-      return _stereoModes.TryGetValue(layout, out result) ? result : StereoMode.Mono;
+      return StereoModes.TryGetValue(layout, out result) ? result : StereoMode.Mono;
     }
 
     private static bool GetInterlaced(string source)
@@ -252,7 +256,7 @@ namespace MediaPortal.Player.MediaInfo
     private static AspectRatio GetAspectRatio(string source)
     {
       AspectRatio result;
-      return _ratios.TryGetValue(source, out result) ? result : AspectRatio.Opaque;
+      return Ratios.TryGetValue(source, out result) ? result : AspectRatio.Opaque;
     }
 
     private string GetVideoResolution()

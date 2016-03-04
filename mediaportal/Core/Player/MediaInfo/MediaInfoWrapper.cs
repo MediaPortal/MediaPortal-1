@@ -48,8 +48,6 @@ namespace MediaPortal.Player.MediaInfo
     private bool _hasExternalSubtitles;
     private static HashSet<string> _subTitleExtensions = new HashSet<string>();
 
-    private bool _mediaInfoNotloaded = false;
-
     #endregion
 
     #region ctor's
@@ -67,13 +65,14 @@ namespace MediaPortal.Player.MediaInfo
 
     public MediaInfoWrapper(string strFile)
     {
+      MediaInfoNotloaded = false;
       _videoStreams = new List<VideoStream>();
       _audioStreams = new List<AudioStream>();
       _subtitleStreams = new List<SubtitleStream>();
 
       if (!MediaInfoExist())
       {
-        _mediaInfoNotloaded = true;
+        MediaInfoNotloaded = true;
         return;
       }
 
@@ -89,8 +88,28 @@ namespace MediaPortal.Player.MediaInfo
       bool isAVStream = Util.Utils.IsAVStream(strFile); //other AV streams
       var isNetwork = Util.Utils.IsNetwork(strFile);
 
-      NumberFormatInfo providerNumber = new NumberFormatInfo();
-      providerNumber.NumberDecimalSeparator = ".";
+      //currently disabled for all tv/radio
+      if (isTV || isRadio || isRTSP)
+      {
+        Log.Debug(
+          "MediaInfoWrapper: isTv:{0}, isRadio:{1}, isRTSP:{2}, isAVStream:{3}",
+          isTV,
+          isRadio,
+          isRTSP,
+          isAVStream);
+        Log.Debug("MediaInfoWrapper: disabled for this content");
+        MediaInfoNotloaded = true;
+        return;
+      }
+
+      if (strFile.EndsWith(".wtv", StringComparison.OrdinalIgnoreCase))
+      {
+        Log.Debug("MediaInfoWrapper: WTV file is not handled");
+        MediaInfoNotloaded = true;
+        return;
+      }
+
+      NumberFormatInfo providerNumber = new NumberFormatInfo { NumberDecimalSeparator = "." };
 
       MediaInfo mediaInfo = null;
       try
@@ -98,14 +117,8 @@ namespace MediaPortal.Player.MediaInfo
         mediaInfo = new MediaInfo();
         mediaInfo.Option("ParseSpeed", _ParseSpeed);
 
-        if (strFile.ToLowerInvariant().EndsWith(".wtv"))
-        {
-          Log.Debug("MediaInfoWrapper: WTV file is not handled");
-          _mediaInfoNotloaded = true;
-          return;
-        }
-
-        if (!(isTV || isRadio || isRTSP || isAVStream || isNetwork))
+        // Analyze local file for DVD and BD
+        if (!(isAVStream || isNetwork))
         {
           if (VirtualDirectory.IsImageFile(Path.GetExtension(strFile)))
           {
@@ -117,7 +130,7 @@ namespace MediaPortal.Player.MediaInfo
 
               if (!File.Exists(strFile))
               {
-                _mediaInfoNotloaded = true;
+                MediaInfoNotloaded = true;
                 return;
               }
             }
@@ -128,7 +141,7 @@ namespace MediaPortal.Player.MediaInfo
             var path = Path.GetDirectoryName(strFile) ?? string.Empty;
             var bups = Directory.GetFiles(path, "*.BUP", SearchOption.TopDirectoryOnly);
             var programBlocks = new List<Tuple<string, int>>();
-            foreach (string bupFile in bups)
+            foreach (var bupFile in bups)
             {
               using (var mi = new MediaInfo())
               {
@@ -137,9 +150,8 @@ namespace MediaPortal.Player.MediaInfo
                 if (profile == "Program")
                 {
                   double duration;
-                  double.TryParse(mi.Get(StreamKind.Video, 0, "Duration"), NumberStyles.AllowDecimalPoint,
-                    providerNumber, out duration);
-                  programBlocks.Add(new Tuple<string, int>(bupFile, (int) duration));
+                  double.TryParse(mi.Get(StreamKind.Video, 0, "Duration"), NumberStyles.AllowDecimalPoint, providerNumber, out duration);
+                  programBlocks.Add(new Tuple<string, int>(bupFile, (int)duration));
                 }
               }
             }
@@ -156,12 +168,12 @@ namespace MediaPortal.Player.MediaInfo
             strFile = GetLargestFileInDirectory(path, "*.m2ts");
           }
 
-          _hasExternalSubtitles = !string.IsNullOrEmpty(strFile) && checkHasExternalSubtitles(strFile);
+          _hasExternalSubtitles = !string.IsNullOrEmpty(strFile) && CheckHasExternalSubtitles(strFile);
         }
 
         if (string.IsNullOrEmpty(strFile))
         {
-          _mediaInfoNotloaded = true;
+          MediaInfoNotloaded = true;
           return;
         }
 
@@ -178,9 +190,8 @@ namespace MediaPortal.Player.MediaInfo
         if (_videoDuration == 0)
         {
           double duration;
-          double.TryParse(mediaInfo.Get(StreamKind.Video, 0, "Duration"), NumberStyles.AllowDecimalPoint, providerNumber,
-            out duration);
-          _videoDuration = (int) duration;
+          double.TryParse(mediaInfo.Get(StreamKind.Video, 0, "Duration"), NumberStyles.AllowDecimalPoint, providerNumber, out duration);
+          _videoDuration = (int)duration;
         }
 
         //Audio
@@ -197,11 +208,12 @@ namespace MediaPortal.Player.MediaInfo
         {
           _subtitleStreams.Add(new SubtitleStream(mediaInfo, i));
         }
+
+        MediaInfoNotloaded = _videoStreams.Count == 0 && _audioStreams.Count == 0 && _subtitleStreams.Count == 0;
       }
       catch (Exception e)
       {
-        Log.Error("MediaInfoWrapper.MediaInfoWrapper: Error occurred while scanning media: '{0}'. Error {1}", strFile,
-          e.Message);
+        Log.Error("MediaInfoWrapper.MediaInfoWrapper: Error occurred while scanning media: '{0}'. Error {1}", strFile, e.Message);
       }
       finally
       {
@@ -216,17 +228,17 @@ namespace MediaPortal.Player.MediaInfo
 
     #region private methods
 
-    private string GetLargestFileInDirectory(string targetDir, string fileMask)
+    private static string GetLargestFileInDirectory(string targetDir, string fileMask)
     {
       string largestFile = null;
       long largestSize = 0;
-      DirectoryInfo dir = new DirectoryInfo(targetDir);
+      var dir = new DirectoryInfo(targetDir);
       try
       {
-        FileInfo[] files = dir.GetFiles(fileMask, SearchOption.TopDirectoryOnly);
-        foreach (FileInfo file in files)
+        var files = dir.GetFiles(fileMask, SearchOption.TopDirectoryOnly);
+        foreach (var file in files)
         {
-          long fileSize = file.Length;
+          var fileSize = file.Length;
           if (fileSize > largestSize)
           {
             largestSize = fileSize;
@@ -238,10 +250,11 @@ namespace MediaPortal.Player.MediaInfo
       {
         Log.Error("Error while retrieving files for: {0} {1}" + targetDir, e.Message);
       }
+
       return largestFile;
     }
 
-    private bool checkHasExternalSubtitles(string strFile)
+    private static bool CheckHasExternalSubtitles(string strFile)
     {
       if (_subTitleExtensions.Count == 0)
       {
@@ -278,12 +291,13 @@ namespace MediaPortal.Player.MediaInfo
         _subTitleExtensions.Add(".vsf");
         _subTitleExtensions.Add(".zeg");
       }
-      string filenameNoExt = Path.GetFileNameWithoutExtension(strFile);
+
+      var filenameNoExt = Path.GetFileNameWithoutExtension(strFile);
       try
       {
         foreach (string file in Directory.GetFiles(Path.GetDirectoryName(strFile), filenameNoExt + "*"))
         {
-          System.IO.FileInfo fi = new FileInfo(file);
+          var fi = new FileInfo(file);
           if (_subTitleExtensions.Contains(fi.Extension.ToLowerInvariant()))
           {
             return true;
@@ -319,13 +333,7 @@ namespace MediaPortal.Player.MediaInfo
 
     public VideoStream BestVideoStream
     {
-      get
-      {
-        return
-          _videoStreams.OrderByDescending(
-            x => (long) x.Width*(long) x.Height*x.BitDepth*(x.Stereoscopic == StereoMode.Mono ? 1L : 2L)*x.FrameRate)
-            .FirstOrDefault();
-      }
+      get { return _videoStreams.OrderByDescending(x => (long)x.Width * (long)x.Height * x.BitDepth * (x.Stereoscopic == StereoMode.Mono ? 1L : 2L) * x.FrameRate).FirstOrDefault(); }
     }
 
     #endregion
@@ -339,7 +347,7 @@ namespace MediaPortal.Player.MediaInfo
 
     public AudioStream BestAudioStream
     {
-      get { return _audioStreams.OrderByDescending(x => x.Channel*10000000 + x.Bitrate).FirstOrDefault(); }
+      get { return _audioStreams.OrderByDescending(x => x.Channel * 10000000 + x.Bitrate).FirstOrDefault(); }
     }
 
     #endregion
@@ -361,11 +369,8 @@ namespace MediaPortal.Player.MediaInfo
       get { return _hasExternalSubtitles; }
     }
 
-    public bool MediaInfoNotloaded
-    {
-      get { return _mediaInfoNotloaded; }
-    }
-
     #endregion
+
+    public bool MediaInfoNotloaded { get; private set; }
   }
 }

@@ -27,36 +27,32 @@ using NUnit.Framework;
 
 namespace MediaPortal.Tests.Core.Player
 {
-    [TestFixture, RequiresSTA]
-    public class TSReaderPlayerTests
+  [TestFixture, RequiresSTA]
+  public class TsReaderPlayerTests
+  {
+    [Test, Explicit]
+    [TestCase(@"F:\Serials\С точки зрения науки\01. С точки зрения науки. Большой взрыв_2007_HDTV 1080i.ts")]
+    public void SimpleVideoFile1Test(string path)
     {
-        [Test, Explicit]
-        [TestCase(@"F:\Serials\С точки зрения науки\01. С точки зрения науки. Большой взрыв_2007_HDTV 1080i.ts")]
-        public void SimpleVideoFile1Test(string path)
+      using (var form = new Form { Size = new System.Drawing.Size(100, 100), Visible = false })
+      {
+        using (new DirectShowPlayerTestHelper(form))
         {
-            using (var form = new Form()
-            {
-                Size = new System.Drawing.Size(100, 100),
-                Visible = false
-            })
-            {
-                using (new DirectShowPlayerTestHelper(form))
-                {
-                    using (var player = new TSReaderPlayer())
-                    {
-                        Assert.IsTrue(player.Play(path));
-                        Application.DoEvents();
-                        Thread.Sleep(1000);
-                        Application.DoEvents();
-                        Assert.IsNotNull(player.CurrentVideo);
-                        Assert.IsNotNull(player.BestVideo);
-                        Assert.AreEqual(1, player.VideoStreams);
-                        Assert.AreEqual(1, player.AudioStreams);
-                        Assert.AreEqual(0, player.SubtitleStreams);
-                        Assert.IsNotNull(player.CurrentAudio);
-                    }
-                }
-            }
+          using (var player = new TSReaderPlayer())
+          {
+            Assert.IsTrue(player.Play(path));
+            Application.DoEvents();
+            Thread.Sleep(1000);
+            Application.DoEvents();
+            Assert.IsNotNull(player.CurrentVideo);
+            Assert.IsNotNull(player.BestVideo);
+            Assert.AreEqual(1, player.VideoStreams);
+            Assert.AreEqual(1, player.AudioStreams);
+            Assert.AreEqual(0, player.SubtitleStreams);
+            Assert.IsNotNull(player.CurrentAudio);
+          }
         }
+      }
     }
+  }
 }

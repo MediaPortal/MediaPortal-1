@@ -3309,8 +3309,8 @@ namespace MediaPortal.Player
     public override int VideoStreams { get { return 1; } }
 
     public override int CurrentVideoStream { 
-        get { return 0; }
-        set { }
+      get { return 0; }
+      set { }
     }
 
     public override VideoStream BestVideo { get { return GetCurrentVideoStream(); } }
@@ -3319,31 +3319,31 @@ namespace MediaPortal.Player
 
     private VideoStream GetCurrentVideoStream()
     {
-        BDStreamInfo clipInfo = new BDStreamInfo();
-        _ireader.GetCurrentClipStreamInfo(ref clipInfo);
+      BDStreamInfo clipInfo = new BDStreamInfo();
+      _ireader.GetCurrentClipStreamInfo(ref clipInfo);
 
-        return new VideoStream(0)
-                   {
-                       Duration = TimeSpan.FromSeconds(_duration),
-                       Format = StreamTypetoFormat(clipInfo.coding_type),
-                       Codec = StreamTypetoVideoCodec(clipInfo.coding_type),
-                       Name = string.Empty,
-                       Language = string.Empty,
-                       FrameRate = VideoRatetoDouble(clipInfo.rate),
-                       Interlaced = !IsProgressiveVideo(clipInfo.format),
-                       Height = VideoFormattoHeight(clipInfo.format),
-                       Width = VideoFormattoWidth(clipInfo.format, clipInfo.aspect),
-                       Stereoscopic = StereoMode.Mono,
-                       AspectRatio = clipInfo.aspect == 2 ? AspectRatio.Tv : AspectRatio.WideScreen
-                   };
+      return new VideoStream(0)
+               {
+                 Duration = TimeSpan.FromSeconds(_duration),
+                 Format = StreamTypetoFormat(clipInfo.coding_type),
+                 Codec = StreamTypetoVideoCodec(clipInfo.coding_type),
+                 Name = string.Empty,
+                 Language = string.Empty,
+                 FrameRate = VideoRatetoDouble(clipInfo.rate),
+                 Interlaced = !IsProgressiveVideo(clipInfo.format),
+                 Height = VideoFormattoHeight(clipInfo.format),
+                 Width = VideoFormattoWidth(clipInfo.format, clipInfo.aspect),
+                 Stereoscopic = StereoMode.Mono,
+                 AspectRatio = clipInfo.aspect == 2 ? AspectRatio.Tv : AspectRatio.WideScreen
+               };
     }
 
     public override int EditionStreams { get { return 0; } }
 
     public override int CurrentEditionStream
     {
-        get { return 0; }
-        set { }
+      get { return 0; }
+      set { }
     }
 
     #region IDisposable Members

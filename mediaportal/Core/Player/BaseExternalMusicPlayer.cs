@@ -18,7 +18,6 @@
 
 #endregion
 
-using System.Text;
 using MediaPortal.GUI.Library;
 
 namespace MediaPortal.Player
@@ -49,37 +48,18 @@ namespace MediaPortal.Player
 
     public virtual string Description()
     {
-      string[] exts = GetAllSupportedExtensions();
-
-      StringBuilder extensions = new StringBuilder();
-
-      extensions.Append("External Player for: ");
-
-      for (int i = 0; i < exts.Length; i++)
-      {
-        if (i > 0)
-        {
-          extensions.Append(',');
-        }
-
-        extensions.Append(exts[i]);
-      }
-
-      return extensions.ToString();
+      return "External Player for: " + string.Join(",", GetAllSupportedExtensions());
     }
-
 
     public string Author()
     {
       return AuthorName;
     }
 
-
     public virtual void ShowPlugin()
     {
       ; //nothing to show
     }
-
 
     public bool HasSetup()
     {
@@ -91,24 +71,17 @@ namespace MediaPortal.Player
       return true;
     }
 
-
     public virtual int GetWindowId()
     {
       return -1;
     }
 
-
-    public virtual bool GetHome(out string strButtonText, out string strButtonImage,
-      out string strButtonImageFocus, out string strPictureImage)
+    public virtual bool GetHome(out string strButtonText, out string strButtonImage, out string strButtonImageFocus, out string strPictureImage)
     {
-      strButtonText = "";
-
-      strButtonImage = "";
-
-      strButtonImageFocus = "";
-
-      strPictureImage = "";
-
+      strButtonText = string.Empty;
+      strButtonImage = string.Empty;
+      strButtonImageFocus = string.Empty;
+      strPictureImage = string.Empty;
       return false;
     }
 
@@ -142,7 +115,6 @@ namespace MediaPortal.Player
     /// </summary>
     /// <returns>array of strings of extensions in the form: .wma, .mp3, etc..</returns>
     public abstract string[] GetAllSupportedExtensions();
-
 
     /// <summary>
     /// Returns true or false depending if the filename passed is supported or not.
