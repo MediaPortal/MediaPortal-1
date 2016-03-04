@@ -89,7 +89,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DirecTvShef
       this.LogDebug("  IP address    = {0}", config.IpAddress);
       this.LogDebug("  location      = {0}", config.Location);
       this.LogDebug("  MAC address   = {0}", config.MacAddress);
-      this.LogDebug("  power control = {0}", config.EnablePowerControl);
+      this.LogDebug("  power control = {0}", config.IsPowerControlEnabled);
     }
 
     #region ITunerExtension members
@@ -241,7 +241,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DirecTvShef
           this.LogDebug("DirecTV SHEF: set top box IP address not set");
           return true;
         }
-        if (!_config.EnablePowerControl)
+        if (!_config.IsPowerControlEnabled)
         {
           this.LogDebug("DirecTV SHEF: power control disabled");
           return true;

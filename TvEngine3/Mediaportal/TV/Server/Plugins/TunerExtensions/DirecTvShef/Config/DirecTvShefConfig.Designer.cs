@@ -120,28 +120,37 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DirecTvShef.Config
       // 
       // dataGridViewColumnTunerId
       // 
+      this.dataGridViewColumnTunerId.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCellsExceptHeader;
       this.dataGridViewColumnTunerId.HeaderText = "Tuner ID";
+      this.dataGridViewColumnTunerId.MinimumWidth = 45;
       this.dataGridViewColumnTunerId.Name = "dataGridViewColumnTunerId";
       this.dataGridViewColumnTunerId.ReadOnly = true;
-      this.dataGridViewColumnTunerId.Width = 50;
+      this.dataGridViewColumnTunerId.Width = 45;
       // 
       // dataGridViewColumnTunerName
       // 
+      this.dataGridViewColumnTunerName.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+      this.dataGridViewColumnTunerName.FillWeight = 40F;
       this.dataGridViewColumnTunerName.HeaderText = "Tuner Name";
       this.dataGridViewColumnTunerName.Name = "dataGridViewColumnTunerName";
       this.dataGridViewColumnTunerName.ReadOnly = true;
-      this.dataGridViewColumnTunerName.Width = 135;
       // 
       // dataGridViewColumnSetTopBoxIpAddress
       // 
+      this.dataGridViewColumnSetTopBoxIpAddress.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+      this.dataGridViewColumnSetTopBoxIpAddress.FillWeight = 30F;
       this.dataGridViewColumnSetTopBoxIpAddress.HeaderText = "Receiver IP Address";
       this.dataGridViewColumnSetTopBoxIpAddress.Name = "dataGridViewColumnSetTopBoxIpAddress";
+      this.dataGridViewColumnSetTopBoxIpAddress.Width = 84;
       // 
       // dataGridViewColumnGenieMini
       // 
+      this.dataGridViewColumnGenieMini.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+      this.dataGridViewColumnGenieMini.FillWeight = 30F;
       this.dataGridViewColumnGenieMini.HeaderText = "Genie Mini";
       this.dataGridViewColumnGenieMini.Name = "dataGridViewColumnGenieMini";
       this.dataGridViewColumnGenieMini.ReadOnly = true;
+      this.dataGridViewColumnGenieMini.Width = 76;
       // 
       // dataGridViewColumnPowerControl
       // 

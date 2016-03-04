@@ -67,10 +67,10 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DirecTvShef
 
     /// <summary>
     /// <c>True</c> if this extension should turn the set top box power on and
-    /// off as required.
+    /// off to minimise power use.
     /// </summary>
     [DataMember]
-    public bool EnablePowerControl = false;
+    public bool IsPowerControlEnabled = false;
 
     private SetTopBoxConfig(string tunerExternalId)
     {
@@ -97,7 +97,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DirecTvShef
           config.IpAddress = SettingsManagement.GetValue("direcTvShefIpAddress" + i, string.Empty);
           config.Location = SettingsManagement.GetValue("direcTvShefLocation" + i, string.Empty);
           config.MacAddress = SettingsManagement.GetValue("direcTvShefMacAddress" + i, string.Empty);
-          config.EnablePowerControl = SettingsManagement.GetValue("direcTvShefEnablePowerControl" + i, false);
+          config.IsPowerControlEnabled = SettingsManagement.GetValue("direcTvShefIsPowerControlEnabled" + i, false);
         }
         i++;
       }
@@ -118,7 +118,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DirecTvShef
           SettingsManagement.SaveValue("direcTvShefIpAddress" + i, IpAddress);
           SettingsManagement.SaveValue("direcTvShefLocation" + i, Location);
           SettingsManagement.SaveValue("direcTvShefMacAddress" + i, MacAddress);
-          SettingsManagement.SaveValue("direcTvShefEnablePowerControl" + i, EnablePowerControl);
+          SettingsManagement.SaveValue("direcTvShefIsPowerControlEnabled" + i, IsPowerControlEnabled);
           return;
         }
         i++;

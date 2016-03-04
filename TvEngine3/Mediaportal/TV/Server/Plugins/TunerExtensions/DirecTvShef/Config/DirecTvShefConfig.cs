@@ -74,15 +74,15 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DirecTvShef.Config
         cell.Value = tunerStbConfig.Location;
         cell.Tag = tunerStbConfig.Location;
 
-        row.Cells["dataGridViewColumnPowerControl"].Value = tunerStbConfig.EnablePowerControl;
+        row.Cells["dataGridViewColumnPowerControl"].Value = tunerStbConfig.IsPowerControlEnabled;
 
         this.LogDebug("DirecTV SHEF config: tuner...");
-        this.LogDebug("  tuner ID      = {0}", tuner.IdTuner);
-        this.LogDebug("  tuner name    = {0}", tuner.Name);
-        this.LogDebug("  IP address    = {0}", tunerStbConfig.IpAddress);
-        this.LogDebug("  location      = {0}", tunerStbConfig.Location);
-        this.LogDebug("  MAC address   = {0}", tunerStbConfig.MacAddress);
-        this.LogDebug("  power control = {0}", tunerStbConfig.EnablePowerControl);
+        this.LogDebug("  tuner ID       = {0}", tuner.IdTuner);
+        this.LogDebug("  tuner name     = {0}", tuner.Name);
+        this.LogDebug("  IP address     = {0}", tunerStbConfig.IpAddress);
+        this.LogDebug("  location       = {0}", tunerStbConfig.Location);
+        this.LogDebug("  MAC address    = {0}", tunerStbConfig.MacAddress);
+        this.LogDebug("  power control? = {0}", tunerStbConfig.IsPowerControlEnabled);
       }
       this.LogDebug("DirecTV SHEF config: analog tuner count = {0}", dataGridViewConfig.Rows.Count);
 
@@ -124,11 +124,11 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DirecTvShef.Config
         }
 
         cell = row.Cells["dataGridViewColumnPowerControl"];
-        bool newPowerControl = (bool)cell.Value;
-        if (newPowerControl != tunerStbConfig.EnablePowerControl)
+        bool newIsPowerControlEnabled = (bool)cell.Value;
+        if (newIsPowerControlEnabled != tunerStbConfig.IsPowerControlEnabled)
         {
-          this.LogInfo("DirecTV SHEF config: power control for tuner {0} changed from {1} to {2}", tuner.IdTuner, tunerStbConfig.EnablePowerControl, newPowerControl);
-          tunerStbConfig.EnablePowerControl = newPowerControl;
+          this.LogInfo("DirecTV SHEF config: power control for tuner {0} changed from {1} to {2}", tuner.IdTuner, tunerStbConfig.IsPowerControlEnabled, newIsPowerControlEnabled);
+          tunerStbConfig.IsPowerControlEnabled = newIsPowerControlEnabled;
           isChanged = true;
         }
 
