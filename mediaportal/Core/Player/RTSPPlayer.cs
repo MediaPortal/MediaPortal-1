@@ -1383,90 +1383,66 @@ namespace MediaPortal.Player
 
     public override int AudioStreams
     {
-        get { throw new NotImplementedException(); }
+      get { throw new NotImplementedException(); }
     }
 
     public override int CurrentAudioStream
     {
-        get
-        {
-            throw new NotImplementedException();
-        }
-        set
-        {
-            throw new NotImplementedException();
-        }
+      get { throw new NotImplementedException(); }
+      set { throw new NotImplementedException(); }
     }
 
     public override AudioStream BestAudio
     {
-        get { throw new NotImplementedException(); }
+      get { throw new NotImplementedException(); }
     }
 
     public override AudioStream CurrentAudio
     {
-        get { throw new NotImplementedException(); }
+      get { throw new NotImplementedException(); }
     }
 
     public override int VideoStreams
     {
-        get { throw new NotImplementedException(); }
+      get { throw new NotImplementedException(); }
     }
 
     public override int CurrentVideoStream
     {
-        get
-        {
-            throw new NotImplementedException();
-        }
-        set
-        {
-            throw new NotImplementedException();
-        }
+      get { throw new NotImplementedException(); }
+      set { throw new NotImplementedException(); }
     }
 
     public override VideoStream BestVideo
     {
-        get { throw new NotImplementedException(); }
+      get { throw new NotImplementedException(); }
     }
 
     public override VideoStream CurrentVideo
     {
-        get { throw new NotImplementedException(); }
+      get { throw new NotImplementedException(); }
     }
 
     public override int SubtitleStreams
     {
-        get { throw new NotImplementedException(); }
+      get { throw new NotImplementedException(); }
     }
 
     public override int CurrentSubtitleStream
     {
-        get
-        {
-            throw new NotImplementedException();
-        }
-        set
-        {
-            throw new NotImplementedException();
-        }
+      get { throw new NotImplementedException(); }
+      set { throw new NotImplementedException(); }
     }
 
     public override int EditionStreams
     {
-        get { throw new NotImplementedException(); }
+      get { throw new NotImplementedException(); }
     }
 
     public override int CurrentEditionStream
     {
-        get
-        {
-            throw new NotImplementedException();
-        }
-        set
-        {
-            throw new NotImplementedException();
-        }
+      get { throw new NotImplementedException(); }
+      set { throw new NotImplementedException(); }
     }
 
     private AMMediaType GetTSMedia()

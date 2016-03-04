@@ -60,6 +60,7 @@ namespace MediaPortal.Player.MediaInfo
       {
         Log.Warn("MediaInfoWrapper: disabled because \"{0}\" is missing", dll);
       }
+
       return enable;
     }
 
@@ -142,7 +143,7 @@ namespace MediaPortal.Player.MediaInfo
             strFile = GetLargestFileInDirectory(path, "*.m2ts");
           }
 
-          _hasExternalSubtitles = !string.IsNullOrEmpty(strFile) && checkHasExternalSubtitles(strFile);
+          _hasExternalSubtitles = !string.IsNullOrEmpty(strFile) && CheckHasExternalSubtitles(strFile);
         }
 
         if (string.IsNullOrEmpty(strFile))
@@ -199,17 +200,17 @@ namespace MediaPortal.Player.MediaInfo
 
     #region private methods
 
-    private string GetLargestFileInDirectory(string targetDir, string fileMask)
+    private static string GetLargestFileInDirectory(string targetDir, string fileMask)
     {
       string largestFile = null;
       long largestSize = 0;
-      DirectoryInfo dir = new DirectoryInfo(targetDir);
+      var dir = new DirectoryInfo(targetDir);
       try
       {
-        FileInfo[] files = dir.GetFiles(fileMask, SearchOption.TopDirectoryOnly);
-        foreach (FileInfo file in files)
+        var files = dir.GetFiles(fileMask, SearchOption.TopDirectoryOnly);
+        foreach (var file in files)
         {
-          long fileSize = file.Length;
+          var fileSize = file.Length;
           if (fileSize > largestSize)
           {
             largestSize = fileSize;
@@ -221,10 +222,11 @@ namespace MediaPortal.Player.MediaInfo
       {
         Log.Error("Error while retrieving files for: {0} {1}" + targetDir, e.Message);
       }
+
       return largestFile;
     }
 
-    private bool checkHasExternalSubtitles(string strFile)
+    private static bool CheckHasExternalSubtitles(string strFile)
     {
       if (_subTitleExtensions.Count == 0)
       {
@@ -261,12 +263,13 @@ namespace MediaPortal.Player.MediaInfo
         _subTitleExtensions.Add(".vsf");
         _subTitleExtensions.Add(".zeg");
       }
-      string filenameNoExt = Path.GetFileNameWithoutExtension(strFile);
+
+      var filenameNoExt = Path.GetFileNameWithoutExtension(strFile);
       try
       {
         foreach (string file in Directory.GetFiles(Path.GetDirectoryName(strFile), filenameNoExt + "*"))
         {
-          System.IO.FileInfo fi = new FileInfo(file);
+          var fi = new FileInfo(file);
           if (_subTitleExtensions.Contains(fi.Extension.ToLowerInvariant()))
           {
             return true;
@@ -297,15 +300,12 @@ namespace MediaPortal.Player.MediaInfo
 
     public IList<VideoStream> VideoStreams
     {
-      get
-      {
-        return _videoStreams;
-      }
+      get { return _videoStreams; }
     }
 
     public VideoStream BestVideoStream
     {
-        get { return _videoStreams.OrderByDescending(x => (long)x.Width * (long)x.Height * x.BitDepth * (x.Stereoscopic == StereoMode.Mono ? 1L : 2L) * x.FrameRate).FirstOrDefault(); }
+      get { return _videoStreams.OrderByDescending(x => (long)x.Width * (long)x.Height * x.BitDepth * (x.Stereoscopic == StereoMode.Mono ? 1L : 2L) * x.FrameRate).FirstOrDefault(); }
     }
 
     #endregion
@@ -314,19 +314,13 @@ namespace MediaPortal.Player.MediaInfo
 
     public IList<AudioStream> AudioStreams
     {
-        get
-        {
-            return _audioStreams;
-        }
+      get { return _audioStreams; }
     }
 
-      public AudioStream BestAudioStream
-      {
-          get
-          {
-              return _audioStreams.OrderByDescending(x => x.Channel * 10000000 + x.Bitrate).FirstOrDefault();
-          }
-      }
+    public AudioStream BestAudioStream
+    {
+      get { return _audioStreams.OrderByDescending(x => x.Channel * 10000000 + x.Bitrate).FirstOrDefault(); }
+    }
 
     #endregion
 

@@ -132,8 +132,8 @@ namespace MediaPortal.Player
         }
         if (!streams.Any(x => x.Stream != null && x.Stream == streamInfos.Stream))
         {
-            streams[streamsCount] = streamInfos;
-            streamsCount++;
+          streams[streamsCount] = streamInfos;
+          streamsCount++;
         }
         return true;
       }
@@ -277,7 +277,6 @@ namespace MediaPortal.Player
 
     protected MediaInfoWrapper MediaInfo { get { return _mediaInfo; } }
 
-
     public VideoPlayerVMR7()
     {
       // Init LAV Splitter
@@ -346,7 +345,7 @@ namespace MediaPortal.Player
 
         if (FStreams == null)
         {
-            FStreams = new FilterStreams();
+          FStreams = new FilterStreams();
         }
         FStreams.DeleteAllStreams();
 

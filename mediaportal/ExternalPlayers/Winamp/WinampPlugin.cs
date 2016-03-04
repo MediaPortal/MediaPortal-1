@@ -394,52 +394,37 @@ namespace MediaPortal.WinampPlayer
 
     public override AudioStream BestAudio
     {
-        get
-        {
-            if (m_winampController != null)
-            {
-                return new AudioStream(1)
-                {
-                    Bitrate = m_winampController.Bitrate,
-                    Language = "English",
-                    Lcid = 0x1033,
-                    Name = "Winamp track",
-                    Duration = TimeSpan.FromSeconds(m_winampController.GetCurrentSongDuration()),
-                    Channel = m_winampController.Channels,
-                    SamplingRate = m_winampController.SampleRate
-                };
-            }
+      get { return GetCurrentAudioStream(); }
+    }
 
-            return null;
-        }
+    private AudioStream GetCurrentAudioStream()
+    {
+      if (m_winampController != null)
+      {
+        return new AudioStream(1)
+                 {
+                   Bitrate = m_winampController.Bitrate,
+                   Language = "English",
+                   Lcid = 0x1033,
+                   Name = "Winamp track",
+                   Duration = TimeSpan.FromSeconds(m_winampController.GetCurrentSongDuration()),
+                   Channel = m_winampController.Channels,
+                   SamplingRate = m_winampController.SampleRate
+                 };
+      }
+
+      return null;
     }
 
     public override AudioStream CurrentAudio
     {
-        get
-        {
-            if (m_winampController != null)
-            {
-                return new AudioStream(1)
-                {
-                    Bitrate = m_winampController.Bitrate,
-                    Language = "English",
-                    Lcid = 0x1033,
-                    Name = "Winamp track",
-                    Duration = TimeSpan.FromSeconds(m_winampController.GetCurrentSongDuration()),
-                    Channel = m_winampController.Channels,
-                    SamplingRate = m_winampController.SampleRate
-                };
-            }
-
-            return null;
-        }
+      get { return GetCurrentAudioStream(); }
     }
 
     public override int CurrentAudioStream
     {
-        get { return 0; }
-        set { }
+      get { return 0; }
+      set { }
     }
   }
 }

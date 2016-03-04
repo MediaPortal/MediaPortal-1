@@ -80,7 +80,7 @@ namespace MediaPortal.Player
 
     public AudioPlayerVMR7()
     {
-        _directShowHelper = new DirectShowHelper(StoreStream);
+      _directShowHelper = new DirectShowHelper(StoreStream);
     }
 
     public override bool Play(string strFile)
@@ -120,7 +120,8 @@ namespace MediaPortal.Player
           }
         }
 
-          _rotEntry = new DsROTEntry((IFilterGraph)graphBuilder);
+        _rotEntry = new DsROTEntry((IFilterGraph)graphBuilder);
+
 
         hr = mediaCtrl.Run();
         if (hr < 0)
@@ -197,17 +198,17 @@ namespace MediaPortal.Player
 
     private void StoreStream(string filterName, string name, int lcid, int id, DirectShowHelper.StreamType type, AMStreamSelectInfoFlags flag, IAMStreamSelect pStrm)
     {
-        var stream = DirectShowHelper.MatchAudioStream(_mediaInfo, filterName, name, lcid, id);
-        var mediaStream = _mediaStreams.FirstOrDefault(x => x.Id == id);
-        if (mediaStream == null)
-        {
-            _mediaStreams.Add(new AudioStreamInfo { Filter = filterName, Id = id, Stream = stream });
-        }
-        else
-        {
-            mediaStream.Filter = filterName;
-            mediaStream.Stream = stream;
-        }
+      var stream = DirectShowHelper.MatchAudioStream(_mediaInfo, filterName, name, lcid, id);
+      var mediaStream = _mediaStreams.FirstOrDefault(x => x.Id == id);
+      if (mediaStream == null)
+      {
+        _mediaStreams.Add(new AudioStreamInfo { Filter = filterName, Id = id, Stream = stream });
+      }
+      else
+      {
+        mediaStream.Filter = filterName;
+        mediaStream.Stream = stream;
+      }
     }
 
     private void MovieEnded(bool bManualStop)
@@ -643,11 +644,9 @@ namespace MediaPortal.Player
 
     private class AudioStreamInfo
     {
-        public AudioStream Stream { get; set; }
-
-        public int Id { get; set; }
-
-        public string Filter { get; set; }
+      public AudioStream Stream { get; set; }
+      public int Id { get; set; }
+      public string Filter { get; set; }
     }
   }
 }

@@ -22,77 +22,81 @@ using System.Collections.Generic;
 
 namespace MediaPortal.Player.MediaInfo
 {
-    public enum SubtitleCodec
+  public enum SubtitleCodec
+  {
+    S_UNDEFINED,
+    S_ASS,
+    S_IMAGE_BMP,
+    S_SSA,
+    S_TEXT_ASS,
+    S_TEXT_SSA,
+    S_TEXT_USF,
+    S_TEXT_UTF8,
+    S_USF,
+    S_UTF8,
+    S_VOBSUB,
+    S_HDMV_PGS,
+    S_HDMV_TEXTST
+  }
+
+  public class SubtitleStream : LanguageMediaStream
+  {
+    #region match dictionary
+
+    private static readonly Dictionary<string, SubtitleCodec> SubtitleCodecs = new Dictionary<string, SubtitleCodec>
     {
-        S_UNDEFINED,
-        S_ASS,
-        S_IMAGE_BMP,
-        S_SSA,
-        S_TEXT_ASS,
-        S_TEXT_SSA,
-        S_TEXT_USF,
-        S_TEXT_UTF8,
-        S_USF,
-        S_UTF8,
-        S_VOBSUB,
-        S_HDMV_PGS,
-        S_HDMV_TEXTST
+        { "S_ASS", SubtitleCodec.S_ASS },
+        { "S_IMAGE/BMP", SubtitleCodec.S_IMAGE_BMP },
+        { "S_SSA", SubtitleCodec.S_SSA },
+        { "S_TEXT/ASS", SubtitleCodec.S_TEXT_ASS },
+        { "S_TEXT/SSA", SubtitleCodec.S_TEXT_SSA },
+        { "S_TEXT/USF", SubtitleCodec.S_TEXT_USF },
+        { "S_TEXT/UTF8", SubtitleCodec.S_TEXT_UTF8 },
+        { "S_USF", SubtitleCodec.S_USF },
+        { "S_UTF8", SubtitleCodec.S_UTF8 },
+        { "S_VOBSUB", SubtitleCodec.S_VOBSUB },
+        { "S_HDMV/PGS", SubtitleCodec.S_HDMV_PGS },
+        { "S_HDMV/TEXTST", SubtitleCodec.S_HDMV_TEXTST }
+    };
+
+    #endregion
+
+    public SubtitleStream(MediaInfo info, int number)
+        : base(info, number)
+    {
     }
 
-    public class SubtitleStream : LanguageMediaStream
+    public string Format { get; private set; }
+
+    public SubtitleCodec Codec { get; private set; }
+
+    public bool Default { get; private set; }
+
+    public bool Forced { get; private set; }
+
+    public override MediaStreamKind Kind
     {
-        private static readonly Dictionary<string, SubtitleCodec> _subtitleCodecs = new Dictionary<string, SubtitleCodec>
-        {
-            { "S_ASS", SubtitleCodec.S_ASS },
-            { "S_IMAGE/BMP", SubtitleCodec.S_IMAGE_BMP },
-            { "S_SSA", SubtitleCodec.S_SSA },
-            { "S_TEXT/ASS", SubtitleCodec.S_TEXT_ASS },
-            { "S_TEXT/SSA", SubtitleCodec.S_TEXT_SSA },
-            { "S_TEXT/USF", SubtitleCodec.S_TEXT_USF },
-            { "S_TEXT/UTF8", SubtitleCodec.S_TEXT_UTF8 },
-            { "S_USF", SubtitleCodec.S_USF },
-            { "S_UTF8", SubtitleCodec.S_UTF8 },
-            { "S_VOBSUB", SubtitleCodec.S_VOBSUB },
-            { "S_HDMV/PGS", SubtitleCodec.S_HDMV_PGS },
-            { "S_HDMV/TEXTST", SubtitleCodec.S_HDMV_TEXTST }
-        };
-
-        public SubtitleStream(MediaInfo info, int number)
-            : base(info, number)
-        {
-        }
-
-        public string Format { get; private set; }
-
-        public SubtitleCodec Codec { get; private set; }
-
-        public bool Default { get; private set; }
-
-        public bool Forced { get; private set; }
-
-        public override MediaStreamKind Kind
-        {
-            get { return MediaStreamKind.Text; }
-        }
-
-        protected override StreamKind StreamKind
-        {
-            get { return StreamKind.Text; }
-        }
-
-        protected override void AnalyzeStreamInternal(MediaInfo info)
-        {
-            base.AnalyzeStreamInternal(info);
-            Format = GetString(info, "Format");
-            Codec = GetCodec(GetString(info, "CodecID").ToUpper());
-            Default = GetBool(info, "Default");
-            Forced = GetBool(info, "Forced");
-        }
-
-        private static SubtitleCodec GetCodec(string source)
-        {
-            SubtitleCodec result;
-            return _subtitleCodecs.TryGetValue(source, out result) ? result : SubtitleCodec.S_UNDEFINED;
-        }
+      get { return MediaStreamKind.Text; }
     }
+
+    protected override StreamKind StreamKind
+    {
+      get { return StreamKind.Text; }
+    }
+
+    protected override void AnalyzeStreamInternal(MediaInfo info)
+    {
+      base.AnalyzeStreamInternal(info);
+      Format = GetString(info, "Format");
+      Codec = GetCodec(GetString(info, "CodecID").ToUpper());
+      Default = GetBool(info, "Default");
+      Forced = GetBool(info, "Forced");
+    }
+
+    private static SubtitleCodec GetCodec(string source)
+    {
+      SubtitleCodec result;
+      return SubtitleCodecs.TryGetValue(source, out result) ? result : SubtitleCodec.S_UNDEFINED;
+    }
+  }
 }

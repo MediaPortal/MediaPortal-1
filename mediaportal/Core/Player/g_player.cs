@@ -611,7 +611,7 @@ namespace MediaPortal.Player
       }
     }
 
-      //called when starting playing a file
+    //called when starting playing a file
     public static void OnStarted()
     {
       //check if we're playing

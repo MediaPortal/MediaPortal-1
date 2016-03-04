@@ -39,7 +39,7 @@ using MediaPortal.Profile;
 
 namespace MediaPortal.Player
 {
-    public abstract class BaseStreamBufferPlayer : BaseDirectShowVideoPlayer
+  public abstract class BaseStreamBufferPlayer : BaseDirectShowVideoPlayer
   {
     #region imports
 
@@ -1607,7 +1607,7 @@ namespace MediaPortal.Player
       _elapsedTimer = DateTime.Now;
     }
 
-    protected virtual void ReInit() { }
+    protected virtual void ReInit() {}
 
     #endregion
 
@@ -1615,16 +1615,16 @@ namespace MediaPortal.Player
 
     public override int CurrentSubtitleStream
     {
-        get { return 0; }
-        set { }
+      get { return 0; }
+      set { }
     }
 
     public override int EditionStreams { get { return 0; } }
 
     public override int CurrentEditionStream
     {
-        get { return 0; }
-        set { }
+      get { return 0; }
+      set { }
     }
 
     #region IDisposable Members

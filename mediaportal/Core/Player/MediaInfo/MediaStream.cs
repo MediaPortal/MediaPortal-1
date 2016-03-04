@@ -23,88 +23,88 @@ using System.Globalization;
 
 namespace MediaPortal.Player.MediaInfo
 {
-    public enum MediaStreamKind
+  public enum MediaStreamKind
+  {
+    Video,
+    Audio,
+    Text,
+    Image,
+    Menu
+  }
+
+  public abstract class MediaStream : MarshalByRefObject
+  {
+    protected MediaStream(MediaInfo info, int number)
     {
-        Video,
-        Audio,
-        Text,
-        Image,
-        Menu
+      StreamNumber = number;
+      if (info != null)
+      {
+        AnalyzeStream(info);
+      }
     }
 
-    public abstract class MediaStream : MarshalByRefObject
+    public int Id { get; set; }
+
+    public string Name { get; set; }
+
+    public abstract MediaStreamKind Kind { get; }
+
+    protected abstract StreamKind StreamKind { get; }
+
+    public int StreamNumber { get; private set; }
+
+    protected virtual void AnalyzeStreamInternal(MediaInfo info)
     {
-        protected MediaStream(MediaInfo info, int number)
-        {
-            StreamNumber = number;
-            if (info != null)
-            {
-                AnalyzeStream(info);
-            }
-        }
-
-        public int Id { get; set; }
-
-        public string Name { get; set; }
-
-        public abstract MediaStreamKind Kind { get; }
-
-        protected abstract StreamKind StreamKind { get; }
-
-        public int StreamNumber { get; private set; }
-
-        protected virtual void AnalyzeStreamInternal(MediaInfo info)
-        {
-            Id =  GetInt(info, "ID");
-            Name = GetString(info, "Title");
-        }
-
-        private void AnalyzeStream(MediaInfo info)
-        {
-            AnalyzeStreamInternal(info);
-        }
-
-        protected long GetLong(MediaInfo info, string parameter)
-        {
-            long parsedValue;
-            var result = info.Get(StreamKind, StreamNumber, parameter);
-            return long.TryParse(result, out parsedValue) ? parsedValue : 0;
-        }
-
-        protected double GetDouble(MediaInfo info, string parameter)
-        {
-            NumberFormatInfo providerNumber = new NumberFormatInfo();
-            providerNumber.NumberDecimalSeparator = ".";
-            double parsedValue;
-            var result = info.Get(StreamKind, StreamNumber, parameter);
-            return double.TryParse(result, NumberStyles.AllowDecimalPoint, providerNumber, out parsedValue) ? parsedValue : 0;
-        }
-
-        protected int GetInt(MediaInfo info, string parameter)
-        {
-            int parsedValue;
-            var result = info.Get(StreamKind, StreamNumber, parameter);
-            return int.TryParse(result, out parsedValue) ? parsedValue : 0;
-        }
-
-        protected bool GetBool(MediaInfo info, string parameter)
-        {
-            bool parsedValue;
-            var result = info.Get(StreamKind, StreamNumber, parameter);
-            return bool.TryParse(result, out parsedValue) && parsedValue;
-        }
-
-        protected DateTime GetDateTime(MediaInfo info, string parameter)
-        {
-            DateTime parsedValue;
-            var result = info.Get(StreamKind, StreamNumber, parameter);
-            return DateTime.TryParse(result, out parsedValue) ? parsedValue : DateTime.MinValue;
-        }
-
-        protected string GetString(MediaInfo info, string parameter)
-        {
-            var result = info.Get(StreamKind, StreamNumber, parameter);
-            return result ?? string.Empty;
-        }
+      Id = GetInt(info, "ID");
+      Name = GetString(info, "Title");
     }
+
+    private void AnalyzeStream(MediaInfo info)
+    {
+      AnalyzeStreamInternal(info);
+    }
+
+    protected long GetLong(MediaInfo info, string parameter)
+    {
+      long parsedValue;
+      var result = info.Get(StreamKind, StreamNumber, parameter);
+      return long.TryParse(result, out parsedValue) ? parsedValue : 0;
+    }
+
+    protected double GetDouble(MediaInfo info, string parameter)
+    {
+      NumberFormatInfo providerNumber = new NumberFormatInfo();
+      providerNumber.NumberDecimalSeparator = ".";
+      double parsedValue;
+      var result = info.Get(StreamKind, StreamNumber, parameter);
+      return double.TryParse(result, NumberStyles.AllowDecimalPoint, providerNumber, out parsedValue) ? parsedValue : 0;
+    }
+
+    protected int GetInt(MediaInfo info, string parameter)
+    {
+      int parsedValue;
+      var result = info.Get(StreamKind, StreamNumber, parameter);
+      return int.TryParse(result, out parsedValue) ? parsedValue : 0;
+    }
+
+    protected bool GetBool(MediaInfo info, string parameter)
+    {
+      bool parsedValue;
+      var result = info.Get(StreamKind, StreamNumber, parameter);
+      return bool.TryParse(result, out parsedValue) && parsedValue;
+    }
+
+    protected DateTime GetDateTime(MediaInfo info, string parameter)
+    {
+      DateTime parsedValue;
+      var result = info.Get(StreamKind, StreamNumber, parameter);
+      return DateTime.TryParse(result, out parsedValue) ? parsedValue : DateTime.MinValue;
+    }
+
+    protected string GetString(MediaInfo info, string parameter)
+    {
+      var result = info.Get(StreamKind, StreamNumber, parameter);
+      return result ?? string.Empty;
+    }
+  }
 }

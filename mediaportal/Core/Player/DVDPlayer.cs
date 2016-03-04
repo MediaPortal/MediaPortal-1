@@ -161,33 +161,31 @@ namespace MediaPortal.Player
 
     private readonly Dictionary<DvdAudioFormat, string> _dvdAudioFormat = new Dictionary<DvdAudioFormat, string>
     {
-        { DvdAudioFormat.AC3, "AC-3" },
-        { DvdAudioFormat.DTS, "DTS" },
-        { DvdAudioFormat.LPCM, "LPCM" },
-        { DvdAudioFormat.MPEG1, "MPEG Audio" },
-        { DvdAudioFormat.MPEG1_DRC, "MPEG Audio" },
-        { DvdAudioFormat.MPEG2, "MPEG Audio" },
-        { DvdAudioFormat.MPEG2_DRC, "MPEG Audio" },
-        { DvdAudioFormat.Other, "" },
-        { DvdAudioFormat.SDDS, "SDDS" },
+      { DvdAudioFormat.AC3, "AC-3" },
+      { DvdAudioFormat.DTS, "DTS" },
+      { DvdAudioFormat.LPCM, "LPCM" },
+      { DvdAudioFormat.MPEG1, "MPEG Audio" },
+      { DvdAudioFormat.MPEG1_DRC, "MPEG Audio" },
+      { DvdAudioFormat.MPEG2, "MPEG Audio" },
+      { DvdAudioFormat.MPEG2_DRC, "MPEG Audio" },
+      { DvdAudioFormat.Other, "" },
+      { DvdAudioFormat.SDDS, "SDDS" },
     };
 
     private readonly Dictionary<DvdAudioFormat, AudioCodec> _dvdAudioCodec = new Dictionary<DvdAudioFormat, AudioCodec>
     {
-        { DvdAudioFormat.AC3, AudioCodec.A_AC3 },
-        { DvdAudioFormat.DTS, AudioCodec.A_DTS },
-        { DvdAudioFormat.LPCM, AudioCodec.A_PCM_INT_BIG },
-        { DvdAudioFormat.MPEG1, AudioCodec.A_MPEG_L1 },
-        { DvdAudioFormat.MPEG1_DRC, AudioCodec.A_MPEG_L1 },
-        { DvdAudioFormat.MPEG2, AudioCodec.A_MPEG_L2 },
-        { DvdAudioFormat.MPEG2_DRC, AudioCodec.A_MPEG_L2 },
-        { DvdAudioFormat.Other, AudioCodec.A_UNDEFINED },
-        { DvdAudioFormat.SDDS, AudioCodec.A_UNDEFINED },
+      { DvdAudioFormat.AC3, AudioCodec.A_AC3 },
+      { DvdAudioFormat.DTS, AudioCodec.A_DTS },
+      { DvdAudioFormat.LPCM, AudioCodec.A_PCM_INT_BIG },
+      { DvdAudioFormat.MPEG1, AudioCodec.A_MPEG_L1 },
+      { DvdAudioFormat.MPEG1_DRC, AudioCodec.A_MPEG_L1 },
+      { DvdAudioFormat.MPEG2, AudioCodec.A_MPEG_L2 },
+      { DvdAudioFormat.MPEG2_DRC, AudioCodec.A_MPEG_L2 },
+      { DvdAudioFormat.Other, AudioCodec.A_UNDEFINED },
+      { DvdAudioFormat.SDDS, AudioCodec.A_UNDEFINED },
     };
 
-    public DVDPlayer()
-    {
-    }
+    public DVDPlayer() {}
 
     public override void WndProc(ref Message m)
     {
@@ -2229,12 +2227,8 @@ namespace MediaPortal.Player
       get
       {
         int anglesAvailable, currentAngle;
-        int hr = _dvdInfo.GetCurrentAngle(out anglesAvailable, out currentAngle);
-        if (hr == 0)
-        {
-          return anglesAvailable;
-        }
-        return 1;
+        var hr = _dvdInfo.GetCurrentAngle(out anglesAvailable, out currentAngle);
+        return hr == 0 ? anglesAvailable : 1;
       }
     }
 
@@ -2243,18 +2237,14 @@ namespace MediaPortal.Player
       get
       {
         int anglesAvailable, currentAngle;
-        int hr = _dvdInfo.GetCurrentAngle(out anglesAvailable, out currentAngle);
-        if (hr == 0)
-        {
-          return currentAngle;
-        }
-        return 0;
+        var hr = _dvdInfo.GetCurrentAngle(out anglesAvailable, out currentAngle);
+        return hr == 0 ? currentAngle : 0;
       }
       set
       {
         try
         {
-          int hr = _dvdCtrl.SelectAngle(value, DvdCmdFlags.None, out _cmdOption);
+          var hr = _dvdCtrl.SelectAngle(value, DvdCmdFlags.None, out _cmdOption);
           if (hr != 0)
           {
             Log.Error("DVDPlayer:Failed to set angle to {0} with error code:{1}", value, hr);
@@ -2266,42 +2256,42 @@ namespace MediaPortal.Player
 
     private VideoStream GetCurrentVideo()
     {
-        DvdVideoAttributes attr;
-        var hr = _dvdInfo.GetCurrentVideoAttributes(out attr);
-        if (hr == 0)
+      DvdVideoAttributes attr;
+      var hr = _dvdInfo.GetCurrentVideoAttributes(out attr);
+      if (hr == 0)
+      {
+        return new VideoStream(CurrentAudioStream)
         {
-            return new VideoStream(CurrentAudioStream)
-            {
-                AspectRatio = attr.aspectX == 4 && attr.aspectY == 3 ? AspectRatio.Tv : AspectRatio.HighDefinitionTv,
-                Codec = attr.compression == DvdVideoCompression.Mpeg1 ? VideoCodec.V_MPEG1 : VideoCodec.V_MPEG2,
-                Format = "MPEG Video",
-                Height = attr.sourceResolutionY,
-                Width = attr.sourceResolutionX,
-                Stereoscopic = StereoMode.Mono,
-                Interlaced = attr.sourceResolutionY < 576,
-                Default = true,
-            };
-        }
+          AspectRatio = attr.aspectX == 4 && attr.aspectY == 3 ? AspectRatio.Tv : AspectRatio.HighDefinitionTv,
+          Codec = attr.compression == DvdVideoCompression.Mpeg1 ? VideoCodec.V_MPEG1 : VideoCodec.V_MPEG2,
+          Format = "MPEG Video",
+          Height = attr.sourceResolutionY,
+          Width = attr.sourceResolutionX,
+          Stereoscopic = StereoMode.Mono,
+          Interlaced = attr.sourceResolutionY < 576,
+          Default = true,
+        };
+      }
 
-        return null;
+      return null;
     }
 
     public override VideoStream BestVideo
     {
-        get { return GetCurrentVideo(); }
+      get { return GetCurrentVideo(); }
     }
 
     public override VideoStream CurrentVideo
     {
-        get { return GetCurrentVideo(); }
+      get { return GetCurrentVideo(); }
     }
 
     public override int EditionStreams { get { return 0; } }
 
     public override int CurrentEditionStream
     {
-        get { return 0; }
-        set { }
+      get { return 0; }
+      set { }
     }
   }
 }

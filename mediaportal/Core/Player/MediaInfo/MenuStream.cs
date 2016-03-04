@@ -18,25 +18,23 @@
 
 #endregion
 
-using System;
-
 namespace MediaPortal.Player.MediaInfo
 {
-    public class MenuStream : MediaStream
+  public class MenuStream : MediaStream
+  {
+    public MenuStream(MediaInfo info, int number)
+      : base(info, number)
     {
-        public MenuStream(MediaInfo info, int number)
-            : base(info, number)
-        {
-        }
-
-        public override MediaStreamKind Kind
-        {
-            get { return MediaStreamKind.Menu; }
-        }
-
-        protected override StreamKind StreamKind
-        {
-            get { return StreamKind.Menu; }
-        }
     }
+
+    public override MediaStreamKind Kind
+    {
+      get { return MediaStreamKind.Menu; }
+    }
+
+    protected override StreamKind StreamKind
+    {
+      get { return StreamKind.Menu; }
+    }
+  }
 }

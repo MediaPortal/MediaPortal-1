@@ -116,29 +116,6 @@ namespace MediaPortal.Localisation
       get { return _useRTL; }
     }
 
-    public bool IsLocalSupported
-    {
-      get { return _availableLanguages.ContainsKey(CultureInfo.CurrentCulture.Name); }
-    }
-
-    public CultureInfo[] AvailableLanguages
-    {
-      get
-      {
-        CultureInfo[] available = new CultureInfo[_availableLanguages.Count];
-
-        IDictionaryEnumerator languageEnumerator = _availableLanguages.GetEnumerator();
-
-        for (int i = 0; i < _availableLanguages.Count; i++)
-        {
-          languageEnumerator.MoveNext();
-          available[i] = (CultureInfo)languageEnumerator.Value;
-        }
-
-        return available;
-      }
-    }
-
     #endregion
 
     #region Public Methods
@@ -221,6 +198,31 @@ namespace MediaPortal.Localisation
         // Throw exception??
         return translation;
       }
+    }
+
+    public CultureInfo[] AvailableLanguages()
+    {
+      CultureInfo[] available = new CultureInfo[_availableLanguages.Count];
+
+      IDictionaryEnumerator languageEnumerator = _availableLanguages.GetEnumerator();
+
+      for (int i = 0; i < _availableLanguages.Count; i++)
+      {
+        languageEnumerator.MoveNext();
+        available[i] = (CultureInfo)languageEnumerator.Value;
+      }
+
+      return available;
+    }
+
+    public bool IsLocalSupported()
+    {
+      if (_availableLanguages.ContainsKey(CultureInfo.CurrentCulture.Name))
+      {
+        return true;
+      }
+
+      return false;
     }
 
     public CultureInfo GetBestLanguage()

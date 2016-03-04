@@ -18,138 +18,110 @@
 
 #endregion
 
-using System.Text;
 using MediaPortal.GUI.Library;
 
 namespace MediaPortal.Player
 {
-    public abstract class BaseExternalAudioPlayer : BaseAudioPlayer, ISetupForm, IExternalPlayer
+  public abstract class BaseExternalAudioPlayer : BaseAudioPlayer, ISetupForm, IExternalPlayer
+  {
+    public override bool IsExternal
     {
-        public override bool IsExternal
-        {
-            get { return true; }
-        }
-
-        public override bool HasVideo
-        {
-            get { return false; }
-        }
-
-        #region ISetupForm Members
-
-        public string PluginName()
-        {
-            return PlayerName;
-        }
-
-        public bool DefaultEnabled()
-        {
-            return false;
-        }
-
-        public virtual string Description()
-        {
-            string[] exts = GetAllSupportedExtensions();
-
-            StringBuilder extensions = new StringBuilder();
-
-            extensions.Append("External Player for: ");
-
-            for (int i = 0; i < exts.Length; i++)
-            {
-                if (i > 0)
-                {
-                    extensions.Append(',');
-                }
-
-                extensions.Append(exts[i]);
-            }
-
-            return extensions.ToString();
-        }
-
-
-        public string Author()
-        {
-            return AuthorName;
-        }
-
-
-        public virtual void ShowPlugin()
-        {
-            ; //nothing to show
-        }
-
-
-        public bool HasSetup()
-        {
-            return true;
-        }
-
-        public bool CanEnable()
-        {
-            return true;
-        }
-
-
-        public virtual int GetWindowId()
-        {
-            return -1;
-        }
-
-
-        public virtual bool GetHome(out string strButtonText, out string strButtonImage,
-                                    out string strButtonImageFocus, out string strPictureImage)
-        {
-            strButtonText = "";
-
-            strButtonImage = "";
-
-            strButtonImageFocus = "";
-
-            strPictureImage = "";
-
-            return false;
-        }
-
-        #endregion
-
-        /// <summary>
-        /// Property to enable/disable the external audio player
-        /// </summary>
-        public bool Enabled { get; set; }
-
-        /// <summary>
-        /// This method returns the name of the external player
-        /// </summary>
-        /// <returns>string representing the name of the external player</returns>
-        public abstract string PlayerName { get; }
-
-        /// <summary>
-        /// This method returns the version number of the plugin
-        /// </summary>
-        public abstract string VersionNumber { get; }
-
-        /// <summary>
-        /// This method returns the author of the external player
-        /// </summary>
-        /// <returns></returns>
-        public abstract string AuthorName { get; }
-
-        /// <summary>
-        /// Returns all the extensions that the external player supports.  
-        /// The return value is an array of extensions of the form: .wma, .mp3, etc...
-        /// </summary>
-        /// <returns>array of strings of extensions in the form: .wma, .mp3, etc..</returns>
-        public abstract string[] GetAllSupportedExtensions();
-
-
-        /// <summary>
-        /// Returns true or false depending if the filename passed is supported or not.
-        /// The filename could be just the filename or the complete path of a file.
-        /// </summary>
-        /// <param name="filename">a fully qualified path and filename or just the filename</param>
-        /// <returns>true or false if the file is supported by the player</returns>
-        public abstract bool SupportsFile(string filename);
+      get { return true; }
     }
+
+    public override bool HasVideo
+    {
+      get { return false; }
+    }
+
+    #region ISetupForm Members
+
+    public string PluginName()
+    {
+      return PlayerName;
+    }
+
+    public bool DefaultEnabled()
+    {
+      return false;
+    }
+
+    public virtual string Description()
+    {
+      return "External Player for: " + string.Join(",", GetAllSupportedExtensions());
+    }
+
+    public string Author()
+    {
+      return AuthorName;
+    }
+
+    public virtual void ShowPlugin()
+    {
+      ; //nothing to show
+    }
+
+    public bool HasSetup()
+    {
+      return true;
+    }
+
+    public bool CanEnable()
+    {
+      return true;
+    }
+
+    public virtual int GetWindowId()
+    {
+      return -1;
+    }
+
+    public virtual bool GetHome(out string strButtonText, out string strButtonImage, out string strButtonImageFocus, out string strPictureImage)
+    {
+      strButtonText = string.Empty;
+      strButtonImage = string.Empty;
+      strButtonImageFocus = string.Empty;
+      strPictureImage = string.Empty;
+      return false;
+    }
+
+    #endregion
+
+    /// <summary>
+    /// Property to enable/disable the external audio player
+    /// </summary>
+    public bool Enabled { get; set; }
+
+    /// <summary>
+    /// This method returns the name of the external player
+    /// </summary>
+    /// <returns>string representing the name of the external player</returns>
+    public abstract string PlayerName { get; }
+
+    /// <summary>
+    /// This method returns the version number of the plugin
+    /// </summary>
+    public abstract string VersionNumber { get; }
+
+    /// <summary>
+    /// This method returns the author of the external player
+    /// </summary>
+    /// <returns></returns>
+    public abstract string AuthorName { get; }
+
+    /// <summary>
+    /// Returns all the extensions that the external player supports.  
+    /// The return value is an array of extensions of the form: .wma, .mp3, etc...
+    /// </summary>
+    /// <returns>array of strings of extensions in the form: .wma, .mp3, etc..</returns>
+    public abstract string[] GetAllSupportedExtensions();
+
+    /// <summary>
+    /// Returns true or false depending if the filename passed is supported or not.
+    /// The filename could be just the filename or the complete path of a file.
+    /// </summary>
+    /// <param name="filename">a fully qualified path and filename or just the filename</param>
+    /// <returns>true or false if the file is supported by the player</returns>
+    public abstract bool SupportsFile(string filename);
+  }
 }
