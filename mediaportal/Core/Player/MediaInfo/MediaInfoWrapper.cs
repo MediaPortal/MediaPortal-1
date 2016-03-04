@@ -60,18 +60,19 @@ namespace MediaPortal.Player.MediaInfo
       {
         Log.Warn("MediaInfoWrapper: disabled because \"{0}\" is missing", dll);
       }
-
       return enable;
     }
 
     public MediaInfoWrapper(string strFile)
     {
+      MediaInfoNotloaded = false;
       _videoStreams = new List<VideoStream>();
       _audioStreams = new List<AudioStream>();
       _subtitleStreams = new List<SubtitleStream>();
 
       if (!MediaInfoExist())
       {
+        MediaInfoNotloaded = true;
         return;
       }
 
@@ -87,8 +88,28 @@ namespace MediaPortal.Player.MediaInfo
       bool isAVStream = Util.Utils.IsAVStream(strFile); //other AV streams
       var isNetwork = Util.Utils.IsNetwork(strFile);
 
-      NumberFormatInfo providerNumber = new NumberFormatInfo();
-      providerNumber.NumberDecimalSeparator = ".";
+      //currently disabled for all tv/radio
+      if (isTV || isRadio || isRTSP)
+      {
+        Log.Debug(
+          "MediaInfoWrapper: isTv:{0}, isRadio:{1}, isRTSP:{2}, isAVStream:{3}",
+          isTV,
+          isRadio,
+          isRTSP,
+          isAVStream);
+        Log.Debug("MediaInfoWrapper: disabled for this content");
+        MediaInfoNotloaded = true;
+        return;
+      }
+
+      if (strFile.EndsWith(".wtv", StringComparison.OrdinalIgnoreCase))
+      {
+        Log.Debug("MediaInfoWrapper: WTV file is not handled");
+        MediaInfoNotloaded = true;
+        return;
+      }
+
+      NumberFormatInfo providerNumber = new NumberFormatInfo { NumberDecimalSeparator = "." };
 
       MediaInfo mediaInfo = null;
       try
@@ -96,7 +117,8 @@ namespace MediaPortal.Player.MediaInfo
         mediaInfo = new MediaInfo();
         mediaInfo.Option("ParseSpeed", _ParseSpeed);
 
-        if (!(isTV || isRadio || isRTSP || isAVStream || isNetwork))
+        // Analyze local file for DVD and BD
+        if (!(isAVStream || isNetwork))
         {
           if (VirtualDirectory.IsImageFile(Path.GetExtension(strFile)))
           {
@@ -107,7 +129,10 @@ namespace MediaPortal.Player.MediaInfo
               strFile = DaemonTools.GetVirtualDrive() + @"\BDMV\index.bdmv";
 
               if (!File.Exists(strFile))
+              {
+                MediaInfoNotloaded = true;
                 return;
+              }
             }
           }
 
@@ -116,7 +141,7 @@ namespace MediaPortal.Player.MediaInfo
             var path = Path.GetDirectoryName(strFile) ?? string.Empty;
             var bups = Directory.GetFiles(path, "*.BUP", SearchOption.TopDirectoryOnly);
             var programBlocks = new List<Tuple<string, int>>();
-            foreach (string bupFile in bups)
+            foreach (var bupFile in bups)
             {
               using (var mi = new MediaInfo())
               {
@@ -148,6 +173,7 @@ namespace MediaPortal.Player.MediaInfo
 
         if (string.IsNullOrEmpty(strFile))
         {
+          MediaInfoNotloaded = true;
           return;
         }
 
@@ -158,14 +184,14 @@ namespace MediaPortal.Player.MediaInfo
         var videoStreamCount = mediaInfo.Count_Get(StreamKind.Video);
         for (var i = 0; i < videoStreamCount; ++i)
         {
-            _videoStreams.Add(new VideoStream(mediaInfo, i));
+          _videoStreams.Add(new VideoStream(mediaInfo, i));
         }
 
         if (_videoDuration == 0)
         {
-            double duration;
-            double.TryParse(mediaInfo.Get(StreamKind.Video, 0, "Duration"), NumberStyles.AllowDecimalPoint, providerNumber, out duration);
-            _videoDuration = (int)duration;
+          double duration;
+          double.TryParse(mediaInfo.Get(StreamKind.Video, 0, "Duration"), NumberStyles.AllowDecimalPoint, providerNumber, out duration);
+          _videoDuration = (int)duration;
         }
 
         //Audio
@@ -180,8 +206,10 @@ namespace MediaPortal.Player.MediaInfo
 
         for (var i = 0; i < _numsubtitles; ++i)
         {
-            _subtitleStreams.Add(new SubtitleStream(mediaInfo, i));
+          _subtitleStreams.Add(new SubtitleStream(mediaInfo, i));
         }
+
+        MediaInfoNotloaded = _videoStreams.Count == 0 && _audioStreams.Count == 0 && _subtitleStreams.Count == 0;
       }
       catch (Exception e)
       {
@@ -342,5 +370,7 @@ namespace MediaPortal.Player.MediaInfo
     }
 
     #endregion
+
+    public bool MediaInfoNotloaded { get; private set; }
   }
 }

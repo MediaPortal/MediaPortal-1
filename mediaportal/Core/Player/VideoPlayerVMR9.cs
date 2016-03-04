@@ -549,7 +549,7 @@ namespace MediaPortal.Player
         // after enabeling exclusive mode, if done first it causes MediPortal to minimize if for example the "Windows key" is pressed while playing a video
         if (File.Exists(m_strCurrentFile) && extension != ".dts" && extension != ".mp3" && extension != ".mka" && extension != ".ac3")
         {
-          if (MediaInfo != null && !MediaInfo.HasVideo)
+          if (MediaInfo != null && !MediaInfo.MediaInfoNotloaded && !MediaInfo.HasVideo)
           {
             AudioOnly = true;
           }
