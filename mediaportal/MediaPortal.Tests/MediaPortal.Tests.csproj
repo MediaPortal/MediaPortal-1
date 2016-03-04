@@ -57,7 +57,22 @@
     <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="nunit.framework, Version=2.3.6162.0, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=x86">
+    <Reference Include="Microsoft.DirectX, Version=1.0.2902.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
+      <SpecificVersion>True</SpecificVersion>
+    </Reference>
+    <Reference Include="Microsoft.DirectX.Direct3D, Version=1.0.2902.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
+      <SpecificVersion>True</SpecificVersion>
+    </Reference>
+    <Reference Include="Microsoft.DirectX.Direct3DX, Version=1.0.2911.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
+      <SpecificVersion>True</SpecificVersion>
+    </Reference>
+    <Reference Include="Microsoft.DirectX.DirectDraw, Version=1.0.2902.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
+      <SpecificVersion>True</SpecificVersion>
+    </Reference>
+    <Reference Include="Microsoft.DirectX.DirectInput, Version=1.0.2902.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
+      <SpecificVersion>True</SpecificVersion>
+    </Reference>
+    <Reference Include="nunit.framework">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>.\nunit.framework.dll</HintPath>
     </Reference>
@@ -68,6 +83,7 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Runtime.Serialization.Formatters.Soap" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
@@ -79,6 +95,15 @@
     <Compile Include="Core\guilib\SettingsTest.cs" />
     <Compile Include="Core\guilib\XmlSettingsPrefetchTest.cs" />
     <Compile Include="Core\guilib\XmlSettingsProviderTest.cs" />
+    <Compile Include="Core\Player\AudioPlayerWMP9Tests.cs" />
+    <Compile Include="Core\Player\AudioPlayerVMRTests.cs" />
+    <Compile Include="Core\Player\BaseTSReaderPlayerTests.cs" />
+    <Compile Include="Core\Player\DirectShowPlayerTestHelper.cs" />
+    <Compile Include="Core\Player\DvdPlayer9Tests.cs" />
+    <Compile Include="Core\Player\MediaInfoWrapperTests.cs" />
+    <Compile Include="Core\Player\StreamBufferPlayer9Tests.cs" />
+    <Compile Include="Core\Player\VideoPlayerVMRTests.cs" />
+    <Compile Include="Core\Player\TSReaderPlayerTests.cs" />
     <Compile Include="Core\Playlists\PlayListB4STest.cs" />
     <Compile Include="Core\Playlists\PlayListM3UTests.cs" />
     <Compile Include="Core\Playlists\PlayListPlayerTest.cs" />
@@ -120,6 +145,10 @@
       <Project>{C1BCEC3E-6074-4328-B5D9-391A457C8FFB}</Project>
       <Name>Databases</Name>
     </ProjectReference>
+    <ProjectReference Include="..\MediaPortal.Application\MediaPortal.csproj">
+      <Project>{cbdfaa0e-01f5-4331-ab55-18a4a037b5ae}</Project>
+      <Name>MediaPortal</Name>
+    </ProjectReference>
     <ProjectReference Include="..\MediaPortal.Support\MediaPortal.Support.csproj">
       <Project>{BD4A3413-C9F9-4299-BB52-ED45027EE7CC}</Project>
       <Name>MediaPortal.Support</Name>
@@ -138,6 +167,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="App.config" />
     <None Include="Core\Playlists\TestData\exampleList.b4s">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -206,9 +236,6 @@
     <Content Include="MediaPortalDirs.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="sqlite.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <None Include="TagReader\Music\DingDong.m4a">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -237,6 +264,6 @@
   </Target>
   -->
   <PropertyGroup>
-    <PostBuildEvent>"$(ProjectDir)PostBuild.bat"</PostBuildEvent>
+    <PostBuildEvent>"$(ProjectDir)PostBuild.bat" "$(SolutionDir)" $(ConfigurationName)</PostBuildEvent>
   </PropertyGroup>
 </Project>

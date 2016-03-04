@@ -36,6 +36,8 @@ using MediaPortal.Profile;
 using System.Collections.Generic;
 using System.Collections;
 
+using MediaPortal.Player.MediaInfo;
+
 namespace MediaPortal.Player
 {
   #region public structs
@@ -2993,7 +2995,7 @@ namespace MediaPortal.Player
     }
 
 
-    protected double VideoRatetoDouble(int videoRate)
+    private static double VideoRatetoDouble(int videoRate)
     {
       switch (videoRate)
       {
@@ -3014,7 +3016,7 @@ namespace MediaPortal.Player
       }
     }
 
-    protected string VideoFormattoString(int videoFormat)
+    private static string VideoFormattoString(int videoFormat)
     {
       switch (videoFormat)
       {
@@ -3026,6 +3028,8 @@ namespace MediaPortal.Player
           return "480p";
         case 4:
           return "1080i";
+        case 5:
+          return "720p";
         case 6:
           return "1080p";
         case 7:
@@ -3035,7 +3039,52 @@ namespace MediaPortal.Player
       }
     }
 
-    protected string StreamTypetoString(int stream)
+    private static int VideoFormattoHeight(int videoFormat)
+    {
+      switch (videoFormat)
+      {
+        case 2:
+        case 7:
+          return 576;
+        case 1:
+        case 3:
+          return 480;
+        case 4:
+        case 6:
+          return 1080;
+        case 5:
+          return 720;
+        default:
+          return 0;
+      }
+    }
+
+    private static int VideoFormattoWidth(int videoFormat, int aspect)
+    {
+      switch (videoFormat)
+      {
+        case 2:
+        case 7:
+          return aspect == 2 ? 720 : 1024;
+        case 1:
+        case 3:
+          return aspect == 2 ? 640 : 854;
+        case 4:
+        case 6:
+          return aspect == 2 ? 1440 : 1920;
+        case 5:
+          return aspect == 2 ? 960 : 1280;
+        default:
+          return 0;
+      }
+    }
+
+   private static bool IsProgressiveVideo(int videoFormat)
+   {
+     return videoFormat == 3 || videoFormat == 5 || videoFormat == 6 || videoFormat == 7;
+   }
+
+    private string StreamTypetoString(int stream)
     {
       switch (stream)
       { 
@@ -3065,6 +3114,82 @@ namespace MediaPortal.Player
           return "VC1";
       }
       return Strings.Unknown;
+    }
+
+    private string StreamTypetoFormat(int stream)
+    {
+      switch (stream)
+      {
+        case (int)BluRayStreamFormats.BLURAY_STREAM_TYPE_AUDIO_AC3:
+          return "AC3";
+        case (int)BluRayStreamFormats.BLURAY_STREAM_TYPE_AUDIO_AC3PLUS:
+          return "AC3";
+        case (int)BluRayStreamFormats.BLURAY_STREAM_TYPE_AUDIO_DTS:
+          return "DTS";
+        case (int)BluRayStreamFormats.BLURAY_STREAM_TYPE_AUDIO_DTSHD:
+          return "DTS";
+        case (int)BluRayStreamFormats.BLURAY_STREAM_TYPE_AUDIO_DTSHD_MASTER:
+          return "DTS";
+        case (int)BluRayStreamFormats.BLURAY_STREAM_TYPE_AUDIO_LPCM:
+          return "PCM";
+        case (int)BluRayStreamFormats.BLURAY_STREAM_TYPE_AUDIO_MPEG1:
+          return "MPEG Audio";
+        case (int)BluRayStreamFormats.BLURAY_STREAM_TYPE_VIDEO_MPEG1:
+          return "MPEG Video";
+        case (int)BluRayStreamFormats.BLURAY_STREAM_TYPE_AUDIO_MPEG2:
+          return "MPEG Audio";
+        case (int)BluRayStreamFormats.BLURAY_STREAM_TYPE_VIDEO_MPEG2:
+          return "MPEG Video";
+        case (int)BluRayStreamFormats.BLURAY_STREAM_TYPE_AUDIO_TRUHD:
+          return "TrueHD";
+        case (int)BluRayStreamFormats.BLURAY_STREAM_TYPE_VIDEO_H264:
+          return "AVC";
+        case (int)BluRayStreamFormats.BLURAY_STREAM_TYPE_VIDEO_VC1:
+          return "VC1";
+      }
+      return string.Empty;
+    }
+
+    private AudioCodec StreamTypetoAudioCodec(int stream)
+    {
+      switch (stream)
+      {
+        case (int)BluRayStreamFormats.BLURAY_STREAM_TYPE_AUDIO_AC3:
+          return MediaInfo.AudioCodec.A_AC3;
+        case (int)BluRayStreamFormats.BLURAY_STREAM_TYPE_AUDIO_AC3PLUS:
+          return MediaInfo.AudioCodec.A_AC3;
+        case (int)BluRayStreamFormats.BLURAY_STREAM_TYPE_AUDIO_DTS:
+          return MediaInfo.AudioCodec.A_DTS;
+        case (int)BluRayStreamFormats.BLURAY_STREAM_TYPE_AUDIO_DTSHD:
+          return MediaInfo.AudioCodec.A_DTS_HD;
+        case (int)BluRayStreamFormats.BLURAY_STREAM_TYPE_AUDIO_DTSHD_MASTER:
+          return MediaInfo.AudioCodec.A_DTS_HD;
+        case (int)BluRayStreamFormats.BLURAY_STREAM_TYPE_AUDIO_LPCM:
+          return MediaInfo.AudioCodec.A_PCM_INT_BIG;
+        case (int)BluRayStreamFormats.BLURAY_STREAM_TYPE_AUDIO_MPEG1:
+          return MediaInfo.AudioCodec.A_MPEG_L1;
+        case (int)BluRayStreamFormats.BLURAY_STREAM_TYPE_AUDIO_MPEG2:
+          return MediaInfo.AudioCodec.A_MPEG_L2;
+        case (int)BluRayStreamFormats.BLURAY_STREAM_TYPE_AUDIO_TRUHD:
+          return MediaInfo.AudioCodec.A_TRUEHD;
+      }
+      return MediaInfo.AudioCodec.A_UNDEFINED;
+    }
+
+    private VideoCodec StreamTypetoVideoCodec(int stream)
+    {
+      switch (stream)
+      {
+        case (int)BluRayStreamFormats.BLURAY_STREAM_TYPE_VIDEO_MPEG1:
+          return MediaInfo.VideoCodec.V_MPEG1;
+        case (int)BluRayStreamFormats.BLURAY_STREAM_TYPE_VIDEO_MPEG2:
+          return MediaInfo.VideoCodec.V_MPEG2;
+        case (int)BluRayStreamFormats.BLURAY_STREAM_TYPE_VIDEO_H264:
+          return MediaInfo.VideoCodec.V_MPEG4_ISO_AVC;
+        case (int)BluRayStreamFormats.BLURAY_STREAM_TYPE_VIDEO_VC1:
+          return MediaInfo.VideoCodec.V_VC1;
+      }
+      return MediaInfo.VideoCodec.V_UNDEFINED;
     }
 
     protected string StreamTypeAudiotoString(int stream)
@@ -3106,6 +3231,120 @@ namespace MediaPortal.Player
       }
     }
     #endregion
+
+    public override AudioStream BestAudio
+    {
+      get
+      {
+        IAMStreamSelect pStrm = _interfaceBDReader as IAMStreamSelect;
+        if (pStrm != null)
+        {
+          AMMediaType sType;
+          AMStreamSelectInfoFlags sFlag;
+          int sPDWGroup, sPLCid;
+          string sName;
+          object pppunk, ppobject;
+          var allAudioStreams = AudioStreams;
+          var currentAudioStreams = new List<Tuple<string, int, int, int>>();
+          for (var i = 0; i < allAudioStreams; ++i)
+          {
+            pStrm.Info(i, out sType, out sFlag, out sPLCid, out sPDWGroup, out sName, out pppunk, out ppobject);
+            currentAudioStreams.Add(new Tuple<string, int, int, int>(DirectShowHelper.GetLanguage(sName.Trim()), i, _ireader.GetAudioChannelCount(i), sPDWGroup));
+          }
+
+          var bestStream = currentAudioStreams.OrderByDescending(x => x.Item3 * 1000 + x.Item4).FirstOrDefault();
+          if (bestStream != null)
+          {
+            return GetStreamByParams(bestStream.Item2, bestStream.Item1, bestStream.Item3, bestStream.Item4);
+          }
+        }
+
+        return null;
+      }
+    }
+
+    public override AudioStream CurrentAudio { get { return GetCurrentAudioStream(); } }
+
+    private AudioStream GetCurrentAudioStream()
+    {
+      if (_interfaceBDReader == null)
+      {
+        Log.Warn("BDPlayer: Unable to get current audio stream -> BDReader not initialized");
+        return null;
+      }
+
+      IAMStreamSelect pStrm = _interfaceBDReader as IAMStreamSelect;
+      if (pStrm != null)
+      {
+        AMMediaType sType;
+        AMStreamSelectInfoFlags sFlag;
+        int sPDWGroup, sPLCid;
+        string sName;
+        object pppunk, ppobject;
+        var stream = CurrentAudioStream;
+        pStrm.Info(stream, out sType, out sFlag, out sPLCid, out sPDWGroup, out sName, out pppunk, out ppobject);
+          return GetStreamByParams(
+              CurrentAudioStream,
+              DirectShowHelper.GetLanguage(sName.Trim()),
+              _ireader.GetAudioChannelCount(stream),
+              sPDWGroup);
+      }
+
+      return null;
+    }
+
+    private AudioStream GetStreamByParams(int id, string language, int channelCount, int streamType)
+    {
+      return new AudioStream(id)
+      {
+        Language = DirectShowHelper.GetLanguage(language),
+        Channel = channelCount,
+        Format = StreamTypetoFormat(streamType),
+        Codec = StreamTypetoAudioCodec(streamType),
+        Name = string.Empty,
+        Duration = TimeSpan.FromSeconds(_duration)
+      };
+    }
+
+    public override int VideoStreams { get { return 1; } }
+
+    public override int CurrentVideoStream { 
+      get { return 0; }
+      set { }
+    }
+
+    public override VideoStream BestVideo { get { return GetCurrentVideoStream(); } }
+
+    public override VideoStream CurrentVideo { get { return GetCurrentVideoStream(); } }
+
+    private VideoStream GetCurrentVideoStream()
+    {
+      BDStreamInfo clipInfo = new BDStreamInfo();
+      _ireader.GetCurrentClipStreamInfo(ref clipInfo);
+
+      return new VideoStream(0)
+               {
+                 Duration = TimeSpan.FromSeconds(_duration),
+                 Format = StreamTypetoFormat(clipInfo.coding_type),
+                 Codec = StreamTypetoVideoCodec(clipInfo.coding_type),
+                 Name = string.Empty,
+                 Language = string.Empty,
+                 FrameRate = VideoRatetoDouble(clipInfo.rate),
+                 Interlaced = !IsProgressiveVideo(clipInfo.format),
+                 Height = VideoFormattoHeight(clipInfo.format),
+                 Width = VideoFormattoWidth(clipInfo.format, clipInfo.aspect),
+                 Stereoscopic = StereoMode.Mono,
+                 AspectRatio = clipInfo.aspect == 2 ? AspectRatio.Tv : AspectRatio.WideScreen
+               };
+    }
+
+    public override int EditionStreams { get { return 0; } }
+
+    public override int CurrentEditionStream
+    {
+      get { return 0; }
+      set { }
+    }
 
     #region IDisposable Members
 

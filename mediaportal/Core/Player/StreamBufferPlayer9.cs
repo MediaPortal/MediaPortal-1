@@ -298,6 +298,7 @@ namespace MediaPortal.Player
         _basicVideo = null;
         _bufferSource = null;
         _pinVmr9ConnectedTo = null;
+        ClearStreams();
 
         if (_pinVmr9ConnectedTo != null)
         {

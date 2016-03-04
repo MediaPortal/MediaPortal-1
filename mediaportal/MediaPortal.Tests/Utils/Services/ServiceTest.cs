@@ -45,7 +45,7 @@ namespace MediaPortal.Tests.Utils.Services
     [Test]
     [
       ExpectedException(typeof (ArgumentException),
-        "A service of type MediaPortal.Services.ILog is already present")]
+        ExpectedMessage = "A service of type MediaPortal.Services.ILog is already present")]
     public void TestAddDuplicateService1()
     {
       ServiceProvider provider = new ServiceProvider();

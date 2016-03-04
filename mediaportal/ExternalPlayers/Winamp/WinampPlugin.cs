@@ -22,6 +22,7 @@ using System;
 using MediaPortal.Configuration;
 using MediaPortal.GUI.Library;
 using MediaPortal.Player;
+using MediaPortal.Player.MediaInfo;
 using MediaPortal.Profile;
 
 namespace MediaPortal.WinampPlayer
@@ -30,7 +31,7 @@ namespace MediaPortal.WinampPlayer
   /// Summary description for Class1.
   /// </summary>
   [PluginIcons("ExternalPlayers.Winamp.WinampLogo.png", "ExternalPlayers.Winamp.WinampLogoDisabled.png")]
-  public class WinampPlugin : IExternalPlayer
+  public class WinampPlugin : BaseExternalAudioPlayer
   {
     private const string m_author = "int_20h";
     private const string m_player = "Winamp";
@@ -384,6 +385,46 @@ namespace MediaPortal.WinampPlayer
     public override bool IsCDA
     {
       get { return _isCDA; }
+    }
+
+    public override int AudioStreams
+    {
+        get { return 1; }
+    }
+
+    public override AudioStream BestAudio
+    {
+      get { return GetCurrentAudioStream(); }
+    }
+
+    private AudioStream GetCurrentAudioStream()
+    {
+      if (m_winampController != null)
+      {
+        return new AudioStream(1)
+                 {
+                   Bitrate = m_winampController.Bitrate,
+                   Language = "English",
+                   Lcid = 0x1033,
+                   Name = "Winamp track",
+                   Duration = TimeSpan.FromSeconds(m_winampController.GetCurrentSongDuration()),
+                   Channel = m_winampController.Channels,
+                   SamplingRate = m_winampController.SampleRate
+                 };
+      }
+
+      return null;
+    }
+
+    public override AudioStream CurrentAudio
+    {
+      get { return GetCurrentAudioStream(); }
+    }
+
+    public override int CurrentAudioStream
+    {
+      get { return 0; }
+      set { }
     }
   }
 }

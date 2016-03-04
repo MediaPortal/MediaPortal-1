@@ -19,17 +19,20 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Windows.Forms;
 using DirectShowLib;
 using DShowNET.Helper;
 using MediaPortal.Configuration;
 using MediaPortal.ExtensionMethods;
 using MediaPortal.GUI.Library;
+using MediaPortal.Player.MediaInfo;
 using MediaPortal.Profile;
 
 namespace MediaPortal.Player
 {
-  public class AudioPlayerVMR7 : IPlayer
+  public class AudioPlayerVMR7 : BaseAudioPlayer
   {
     public enum PlayState
     {
@@ -63,13 +66,22 @@ namespace MediaPortal.Player
     /// <summary> audio interface used to control volume. </summary>
     private IBasicAudio basicAudio;
 
+    private MediaInfoWrapper _mediaInfo;
+
     private const int WM_GRAPHNOTIFY = 0x00008001; // message from graph
 
     private const int WS_CHILD = 0x40000000; // attributes for video window
     private const int WS_CLIPCHILDREN = 0x02000000;
     private const int WS_CLIPSIBLINGS = 0x04000000;
 
-    public AudioPlayerVMR7() {}
+    private readonly List<AudioStreamInfo> _mediaStreams = new List<AudioStreamInfo>();
+    private int _currentAudioStream;
+    private readonly DirectShowHelper _directShowHelper;
+
+    public AudioPlayerVMR7()
+    {
+      _directShowHelper = new DirectShowHelper(StoreStream);
+    }
 
     public override bool Play(string strFile)
     {
@@ -83,6 +95,7 @@ namespace MediaPortal.Player
       lock (typeof (AudioPlayerVMR7))
       {
         CloseInterfaces();
+        _mediaInfo = new MediaInfoWrapper(strFile);
         if (!GetInterfaces())
         {
           m_strCurrentFile = "";
@@ -97,6 +110,15 @@ namespace MediaPortal.Player
         }
 
         GetFrameStepInterface();
+        _directShowHelper.AnalyseStreams(graphBuilder);
+        // if doesn't find any IAMStreamSelect filter. It's possible. For example Monkey Audio
+        if (_mediaStreams.Count == 0)
+        {
+          for (var i = 0; i < _mediaInfo.AudioStreams.Count; ++i)
+          {
+            _mediaStreams.Add(new AudioStreamInfo { Filter = string.Empty, Id = i, Stream = _mediaInfo.AudioStreams[i] });
+          }
+        }
 
         _rotEntry = new DsROTEntry((IFilterGraph)graphBuilder);
 
@@ -117,6 +139,77 @@ namespace MediaPortal.Player
       return true;
     }
 
+    public override int AudioStreams
+    {
+      get { return _mediaStreams.Count; }
+    }
+
+    public override int CurrentAudioStream
+    {
+      get
+      {
+        return _currentAudioStream;
+      }
+      set
+      {
+        if (_currentAudioStream != value)
+        {
+          if (value >= AudioStreams)
+          {
+            return;
+          }
+
+          _currentAudioStream = value;
+          var info = _mediaStreams[value];
+          EnableStream(info.Id, 0, info.Filter);
+          EnableStream(info.Id, AMStreamSelectEnableFlags.Enable, info.Filter);
+        }
+      }
+    }
+
+    public override AudioStream CurrentAudio
+    {
+      get { return _mediaStreams[CurrentAudioStream].Stream; }
+    }
+
+    public override AudioStream BestAudio
+    {
+      get { return _mediaInfo.BestAudioStream; }
+    }
+
+    public bool EnableStream(int Id, AMStreamSelectEnableFlags dwFlags, string Filter)
+    {
+      try
+      {
+        var foundfilter = DirectShowUtil.GetFilterByName(graphBuilder, Filter);
+        if (foundfilter != null)
+        {
+          var pStrm = foundfilter as IAMStreamSelect;
+          if (pStrm != null)
+          {
+            pStrm.Enable(Id, dwFlags);
+          }
+          DirectShowUtil.ReleaseComObject(foundfilter);
+        }
+      }
+      catch { }
+      return true;
+    }
+
+    private void StoreStream(string filterName, string name, int lcid, int id, DirectShowHelper.StreamType type, AMStreamSelectInfoFlags flag, IAMStreamSelect pStrm)
+    {
+      var stream = DirectShowHelper.MatchAudioStream(_mediaInfo, filterName, name, lcid, id);
+      var mediaStream = _mediaStreams.FirstOrDefault(x => x.Id == id);
+      if (mediaStream == null)
+      {
+        _mediaStreams.Add(new AudioStreamInfo { Filter = filterName, Id = id, Stream = stream });
+      }
+      else
+      {
+        mediaStream.Filter = filterName;
+        mediaStream.Stream = stream;
+      }
+    }
 
     private void MovieEnded(bool bManualStop)
     {
@@ -432,6 +525,8 @@ namespace MediaPortal.Player
       int hr;
       try
       {
+        _mediaInfo = null;
+        _mediaStreams.Clear();
         if (mediaCtrl != null)
         {
           int counter = 0;
@@ -546,5 +641,12 @@ namespace MediaPortal.Player
     }
 
     #endregion
+
+    private class AudioStreamInfo
+    {
+      public AudioStream Stream { get; set; }
+      public int Id { get; set; }
+      public string Filter { get; set; }
+    }
   }
 }

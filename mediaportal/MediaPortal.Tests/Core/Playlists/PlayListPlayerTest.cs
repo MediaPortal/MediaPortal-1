@@ -19,6 +19,8 @@
 #endregion
 
 using System;
+
+using MediaPortal.Player;
 using MediaPortal.Playlists;
 using NUnit.Framework;
 
@@ -77,7 +79,7 @@ namespace MediaPortal.Tests.Core.Playlists
 
     public bool Paused
     {
-      get { return Player.g_Player.Paused; }
+      get { return g_Player.Paused; }
     }
 
     public void Release()
@@ -144,12 +146,12 @@ namespace MediaPortal.Tests.Core.Playlists
       return false;
     }
 
-    public bool Play(string strFile, Player.g_Player.MediaType type)
+    public bool Play(string strFile, g_Player.MediaType type)
     {
       return true;
     }
 
-    public bool Play(string strFile, MediaPortal.Player.g_Player.MediaType type, int title, bool forcePlay)
+    public bool Play(string strFile, g_Player.MediaType type, int title, bool forcePlay)
     {
       return true;
     }

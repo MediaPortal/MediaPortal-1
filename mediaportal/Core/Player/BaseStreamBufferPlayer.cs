@@ -19,8 +19,10 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows.Forms;
@@ -30,13 +32,14 @@ using DShowNET.Helper;
 using MediaPortal.Configuration;
 using MediaPortal.ExtensionMethods;
 using MediaPortal.GUI.Library;
+using MediaPortal.Player.MediaInfo;
 using MediaPortal.Profile;
 
 //using DirectX.Capture;
 
 namespace MediaPortal.Player
 {
-  public class BaseStreamBufferPlayer : IPlayer
+  public abstract class BaseStreamBufferPlayer : BaseDirectShowVideoPlayer
   {
     #region imports
 
@@ -78,7 +81,6 @@ namespace MediaPortal.Player
     protected bool _isFullscreen = true;
     protected PlayState _state = PlayState.Init;
     protected int _volume = 100;
-    protected IGraphBuilder _graphBuilder = null;
     protected IStreamBufferSource _bufferSource = null;
     protected IStreamBufferMediaSeeking _mediaSeeking = null;
     protected IStreamBufferMediaSeeking2 _mediaSeeking2 = null;
@@ -132,7 +134,10 @@ namespace MediaPortal.Player
 
     #region ctor/dtor
 
-    public BaseStreamBufferPlayer() {}
+    protected BaseStreamBufferPlayer() 
+        : base()
+    {
+    }
 
     #endregion
 
@@ -188,6 +193,7 @@ namespace MediaPortal.Player
       _geometry = Geometry.Type.Normal;
 
       _updateNeeded = true;
+      MediaInfo = new MediaInfoWrapper(strFile);
       if (_bufferSource != null)
       {
         Log.Info("StreamBufferPlayer:replay {0}", strFile);
@@ -266,6 +272,8 @@ namespace MediaPortal.Player
         CloseInterfaces();
         return false;
       }
+
+      DirectShowHelper.AnalyseStreams(_graphBuilder);
       GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAYBACK_STARTED, 0, 0, 0, 0, 0, null);
       msg.Label = strFile;
       GUIWindowManager.SendThreadMessage(msg);
@@ -1372,7 +1380,7 @@ namespace MediaPortal.Player
         _basicAudio = null;
         _basicVideo = null;
         _bufferSource = null;
-
+        ClearStreams();
 
         if (_videoCodecFilter != null)
         {
@@ -1602,6 +1610,22 @@ namespace MediaPortal.Player
     protected virtual void ReInit() {}
 
     #endregion
+
+    public override int SubtitleStreams { get { return 0; } }
+
+    public override int CurrentSubtitleStream
+    {
+      get { return 0; }
+      set { }
+    }
+
+    public override int EditionStreams { get { return 0; } }
+
+    public override int CurrentEditionStream
+    {
+      get { return 0; }
+      set { }
+    }
 
     #region IDisposable Members
 

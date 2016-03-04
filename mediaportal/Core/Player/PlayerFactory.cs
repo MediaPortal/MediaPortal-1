@@ -72,7 +72,7 @@ namespace MediaPortal.Player
               {
                 if (t.IsClass)
                 {
-                  if (t.IsSubclassOf(typeof (IExternalPlayer)))
+                  if (typeof (IExternalPlayer).IsAssignableFrom(t))
                   {
                     if (!CompatibilityManager.IsPluginCompatible(t))
                     {
@@ -107,7 +107,7 @@ namespace MediaPortal.Player
       _externalPlayersLoaded = true;
     }
 
-    public IExternalPlayer GetExternalPlayer(string fileName)
+    public IPlayer GetExternalPlayer(string fileName)
     {
       if (!_externalPlayersLoaded)
       {
@@ -124,7 +124,7 @@ namespace MediaPortal.Player
 
         if (player.Enabled && player.SupportsFile(fileName))
         {
-          return player;
+          return player as IPlayer;
         }
       }
       return null;

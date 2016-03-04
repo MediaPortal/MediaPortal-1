@@ -20,6 +20,7 @@
 
 using System;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 
 //
 // General Information about an assembly is controlled through the following 
@@ -30,3 +31,4 @@ using System.Reflection;
 [assembly: AssemblyTitle("Core")]
 [assembly: AssemblyDescription("")]
 [assembly: CLSCompliant(false)]
+[assembly: InternalsVisibleTo("MediaPortal.Tests")]
