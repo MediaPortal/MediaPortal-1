@@ -257,6 +257,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeBlaster
     {
       this.LogDebug("Hauppauge blaster: plugin enabled");
       _isPluginEnabled = true;
+      _service.OpenBlaster();
     }
 
     /// <summary>
@@ -266,6 +267,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeBlaster
     {
       this.LogDebug("Hauppauge blaster: plugin disabled");
       _isPluginEnabled = false;
+      _service.CloseBlaster();
     }
 
     #endregion

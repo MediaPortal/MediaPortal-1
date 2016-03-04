@@ -35,8 +35,24 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeBlaster.Service
 
     ~HauppaugeBlasterConfigService()
     {
+      if (_blaster != null)
+      {
+        _blaster.CloseInterface();
+        _blaster = null;
+      }
+    }
+
+    public void OpenBlaster()
+    {
+      _blaster.OpenInterface();
+    }
+
+    public void CloseBlaster()
+    {
       _blaster.CloseInterface();
     }
+
+    #region IHauppaugeBlasterConfigService members
 
     public void GetBlasterTunerExternalIds(out string tunerExternalIdPort1, out string tunerExternalIdPort2)
     {
@@ -59,8 +75,8 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeBlaster.Service
       irBlastVersion = null;
       blastCfgLocation = null;
       isHcwIrBlastDllPresent = false;
-      blasterVersion = _blaster.GetVersion();
-      blasterPortCount = _blaster.GetPortCount();
+      blasterVersion = _blaster.Version;
+      blasterPortCount = _blaster.PortCount;
 
       using (RegistryKey key = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Hauppauge WinTV IR Blaster"))
       {
@@ -109,5 +125,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeBlaster.Service
     {
       return _blaster.BlastChannelNumber(channelNumber, port);
     }
+
+    #endregion
   }
 }

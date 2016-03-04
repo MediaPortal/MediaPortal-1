@@ -306,26 +306,18 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeBlaster
       }
     }
 
-    public int GetPortCount()
+    public int PortCount
     {
-      lock (_accessLock)
+      get
       {
-        if (!_isInterfaceOpen)
-        {
-          OpenInterface();
-        }
         return _portCount;
       }
     }
 
-    public string GetVersion()
+    public string Version
     {
-      lock (_accessLock)
+      get
       {
-        if (!_isInterfaceOpen)
-        {
-          OpenInterface();
-        }
         return _version;
       }
     }
@@ -336,8 +328,9 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeBlaster
 
       lock (_accessLock)
       {
-        if (!_isInterfaceOpen && !OpenInterface())
+        if (!_isInterfaceOpen)
         {
+          this.LogError("Hauppauge blaster: the blaster interface is not open");
           return false;
         }
 
@@ -354,7 +347,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeBlaster
           return false;
         }
 
-        if (port < 1 || port > GetPortCount())
+        if (port < 1 || port > PortCount)
         {
           this.LogError("Hauppauge blaster: invalid port number, port = {0}, port count = {1}", port, _portCount);
           return false;
