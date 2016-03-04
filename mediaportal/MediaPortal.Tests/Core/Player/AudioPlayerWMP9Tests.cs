@@ -28,35 +28,31 @@ using NUnit.Framework;
 
 namespace MediaPortal.Tests.Core.Player
 {
-    [TestFixture, RequiresSTA]
-    public class AudioPlayerWmp9Tests
+  [TestFixture, RequiresSTA]
+  public class AudioPlayerWmp9Tests
+  {
+    [Test, Explicit]
+    [TestCase(@"H:\Work\My\Music\Diablo III\06-ost--azmodan-oma.mp3")]
+    [TestCase(@"E:\Music\Anugama\Healing\01 - Healing Earth.flac")]
+    public void WavePackTest(string path)
     {
-        [Test, Explicit]
-        [TestCase(@"H:\Work\My\Music\Diablo III\06-ost--azmodan-oma.mp3")]
-        [TestCase(@"E:\Music\Anugama\Healing\01 - Healing Earth.flac")]
-        public void WavePackTest(string path)
+      using (var form = new Form { Size = new System.Drawing.Size(10, 10), Visible = false })
+      {
+        GUIGraphicsContext.form = form;
+        using (var player = new AudioPlayerWMP9())
         {
-            using (var form = new Form()
-            {
-                Size = new System.Drawing.Size(10, 10),
-                Visible = false
-            })
-            {
-                GUIGraphicsContext.form = form;
-                using (var player = new AudioPlayerWMP9())
-                {
-                    player.Play(path);
-                    Application.DoEvents();
-                    Thread.Sleep(1000);
-                    Application.DoEvents();
-                    Assert.IsNull(player.CurrentVideo);
-                    Assert.IsNull(player.BestVideo);
-                    Assert.AreEqual(0, player.VideoStreams);
-                    Assert.AreEqual(1, player.AudioStreams);
-                    Assert.AreEqual(0, player.SubtitleStreams);
-                    Assert.IsNotNull(player.CurrentAudio);
-                }
-            }
+          player.Play(path);
+          Application.DoEvents();
+          Thread.Sleep(1000);
+          Application.DoEvents();
+          Assert.IsNull(player.CurrentVideo);
+          Assert.IsNull(player.BestVideo);
+          Assert.AreEqual(0, player.VideoStreams);
+          Assert.AreEqual(1, player.AudioStreams);
+          Assert.AreEqual(0, player.SubtitleStreams);
+          Assert.IsNotNull(player.CurrentAudio);
         }
+      }
     }
+  }
 }

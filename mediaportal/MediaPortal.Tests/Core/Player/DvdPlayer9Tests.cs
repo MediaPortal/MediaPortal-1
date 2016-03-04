@@ -28,40 +28,36 @@ using NUnit.Framework;
 
 namespace MediaPortal.Tests.Core.Player
 {
-    [TestFixture, RequiresSTA]
-    public class DvdPlayer9Tests
+  [TestFixture, RequiresSTA]
+  public class DvdPlayer9Tests
+  {
+    [Test, Explicit]
+    [TestCase(@"H:\Work\My\Video\Убить дракона\VIDEO_TS\VIDEO_TS.IFO")]
+    [TestCase(@"J:\Test_DVD\Delfinariy.Koktebel.2009.DVD5\VIDEO_TS\VIDEO_TS.IFO")]
+    [TestCase(@"J:\Test_DVD\Video1\VIDEO_TS\VIDEO_TS.IFO")]
+    public void SimpleVideoFile1Test(string path)
     {
-        [Test, Explicit]
-        [TestCase(@"H:\Work\My\Video\Убить дракона\VIDEO_TS\VIDEO_TS.IFO")]
-        [TestCase(@"J:\Test_DVD\Delfinariy.Koktebel.2009.DVD5\VIDEO_TS\VIDEO_TS.IFO")]
-        [TestCase(@"J:\Test_DVD\Video1\VIDEO_TS\VIDEO_TS.IFO")]
-        public void SimpleVideoFile1Test(string path)
+      using (var form = new Form { Size = new System.Drawing.Size(100, 100), Visible = false })
+      {
+        using (new DirectShowPlayerTestHelper(form))
         {
-            using (var form = new Form()
-            {
-                Size = new System.Drawing.Size(100, 100),
-                Visible = false
-            })
-            {
-                using (new DirectShowPlayerTestHelper(form))
-                {
-                    using (var player = new DVDPlayer9())
-                    {
-                        Assert.IsTrue(player.Play(path));
-                        Application.DoEvents();
-                        Thread.Sleep(1000);
-                        Application.DoEvents();
-                        Assert.IsNotNull(player.CurrentVideo);
-                        Assert.IsNotNull(player.BestVideo);
-                        Assert.AreEqual(1, player.VideoStreams);
-                        Assert.AreEqual(VideoCodec.V_MPEG2, player.CurrentVideo.Codec);
-                        Assert.AreEqual(720, player.CurrentVideo.Width);
-                        Assert.AreEqual("576P", player.CurrentVideo.Resolution);
-                        Assert.GreaterOrEqual(player.AudioStreams, 1);
-                        Assert.GreaterOrEqual(player.SubtitleStreams, 0);
-                    }
-                }
-            }
+          using (var player = new DVDPlayer9())
+          {
+            Assert.IsTrue(player.Play(path));
+            Application.DoEvents();
+            Thread.Sleep(1000);
+            Application.DoEvents();
+            Assert.IsNotNull(player.CurrentVideo);
+            Assert.IsNotNull(player.BestVideo);
+            Assert.AreEqual(1, player.VideoStreams);
+            Assert.AreEqual(VideoCodec.V_MPEG2, player.CurrentVideo.Codec);
+            Assert.AreEqual(720, player.CurrentVideo.Width);
+            Assert.AreEqual("576P", player.CurrentVideo.Resolution);
+            Assert.GreaterOrEqual(player.AudioStreams, 1);
+            Assert.GreaterOrEqual(player.SubtitleStreams, 0);
+          }
         }
+      }
     }
+  }
 }

@@ -120,7 +120,8 @@ namespace MediaPortal.Player
           }
         }
 
-          _rotEntry = new DsROTEntry((IFilterGraph)graphBuilder);
+        _rotEntry = new DsROTEntry((IFilterGraph)graphBuilder);
+
 
         hr = mediaCtrl.Run();
         if (hr < 0)
@@ -644,9 +645,7 @@ namespace MediaPortal.Player
     private class AudioStreamInfo
     {
       public AudioStream Stream { get; set; }
-
       public int Id { get; set; }
-
       public string Filter { get; set; }
     }
   }

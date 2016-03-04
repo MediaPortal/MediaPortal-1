@@ -279,7 +279,7 @@ namespace MediaPortal.GUI.Library
           Load(null);
         }
 
-        CultureInfo[] cultures = _stringProvider.AvailableLanguages;
+        CultureInfo[] cultures = _stringProvider.AvailableLanguages();
 
         SortedList sortedLanguages = new SortedList();
         foreach (CultureInfo culture in cultures)

@@ -853,10 +853,7 @@ namespace MediaPortal.Player
 
     public override int AudioStreams
     {
-      get 
-      {
-        return IsMediaAvailable ? 1 : 0; 
-      }
+      get { return IsMediaAvailable ? 1 : 0; }
     }
 
     public override int CurrentAudioStream
@@ -880,8 +877,8 @@ namespace MediaPortal.Player
       double result;
       var attributeValue = _wmp10Player.currentMedia.getItemInfo(attributeName);
       return !string.IsNullOrEmpty(attributeValue) && double.TryParse(attributeValue, out result)
-                 ? result
-                 : defaultValue;
+             ? result
+             : defaultValue;
     }
 
     private static int AttributeToInt(string attributeName, int defaultValue)
@@ -889,8 +886,8 @@ namespace MediaPortal.Player
       int result;
       var attributeValue = _wmp10Player.currentMedia.getItemInfo(attributeName);
       return !string.IsNullOrEmpty(attributeValue) && int.TryParse(attributeValue, out result)
-                 ? result
-                 : defaultValue;
+             ? result
+             : defaultValue;
     }
 
     private AudioStream GetCurrentAudioStream()
@@ -910,11 +907,11 @@ namespace MediaPortal.Player
     {
       get
       {
-        return !string.IsNullOrEmpty(_currentFile) &&
-               _wmp10Player != null &&
-               _wmp10Player.currentMedia != null &&
-               !string.IsNullOrEmpty(_wmp10Player.currentMedia.sourceURL) &&
-               (_wmp10Player.Error == null || _wmp10Player.Error.errorCount == 0);
+        return !string.IsNullOrEmpty(_currentFile) && 
+          _wmp10Player != null && 
+          _wmp10Player.currentMedia != null && 
+          !string.IsNullOrEmpty(_wmp10Player.currentMedia.sourceURL) && 
+          (_wmp10Player.Error == null || _wmp10Player.Error.errorCount == 0);
       }
     }
   }

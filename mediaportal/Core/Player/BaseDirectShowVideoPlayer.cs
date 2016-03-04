@@ -30,15 +30,15 @@ namespace MediaPortal.Player
 {
   public abstract class BaseDirectShowVideoPlayer : IPlayer
   {
+    #region vars
+
     private readonly List<StreamInfo> _audioStreams;
     private readonly List<StreamInfo> _videoStreams;
     private int _currentAudioStream;
     private int _currentVideoStream;
     protected IGraphBuilder _graphBuilder = null;
 
-    protected MediaInfoWrapper MediaInfo { get; set; }
-
-    protected DirectShowHelper DirectShowHelper { get; private set; }
+    #endregion
 
     protected BaseDirectShowVideoPlayer()
     {
@@ -46,6 +46,10 @@ namespace MediaPortal.Player
       _audioStreams = new List<StreamInfo>();
       _videoStreams = new List<StreamInfo>();
     }
+
+    protected MediaInfoWrapper MediaInfo { get; set; }
+
+    protected DirectShowHelper DirectShowHelper { get; private set; }
 
     public override int AudioStreams
     {
@@ -57,15 +61,12 @@ namespace MediaPortal.Player
       get { return _currentAudioStream; }
       set
       {
-        if (_currentAudioStream != value)
+        if (_currentAudioStream != value && value < AudioStreams)
         {
-          if (value < AudioStreams)
-          {
-            _currentAudioStream = value;
-            var info = _audioStreams[value];
-            EnableStream(info.Id, 0, info.Filter);
-            EnableStream(info.Id, AMStreamSelectEnableFlags.Enable, info.Filter);
-          }
+          _currentAudioStream = value;
+          var info = _audioStreams[value];
+          EnableStream(info.Id, 0, info.Filter);
+          EnableStream(info.Id, AMStreamSelectEnableFlags.Enable, info.Filter);
         }
       }
     }
@@ -77,10 +78,7 @@ namespace MediaPortal.Player
 
     public override AudioStream CurrentAudio
     {
-      get
-      {
-        return CurrentAudioStream < _audioStreams.Count ? _audioStreams[CurrentAudioStream].Stream as AudioStream : null;
-      }
+      get { return CurrentAudioStream < _audioStreams.Count ? _audioStreams[CurrentAudioStream].Stream as AudioStream : null; }
     }
 
     public override int VideoStreams
@@ -93,15 +91,12 @@ namespace MediaPortal.Player
       get { return _currentVideoStream; }
       set
       {
-        if (_currentVideoStream != value)
+        if (_currentVideoStream != value && value < VideoStreams)
         {
-          if (value < VideoStreams)
-          {
-            _currentVideoStream = value;
-            var info = _videoStreams[value];
-            EnableStream(info.Id, 0, info.Filter);
-            EnableStream(info.Id, AMStreamSelectEnableFlags.Enable, info.Filter);
-          }
+          _currentVideoStream = value;
+          var info = _videoStreams[value];
+          EnableStream(info.Id, 0, info.Filter);
+          EnableStream(info.Id, AMStreamSelectEnableFlags.Enable, info.Filter);
         }
       }
     }
@@ -113,10 +108,7 @@ namespace MediaPortal.Player
 
     public override VideoStream CurrentVideo
     {
-      get
-      {
-        return CurrentVideoStream < _videoStreams.Count ? _videoStreams[CurrentVideoStream].Stream as VideoStream : null;
-      }
+      get { return CurrentVideoStream < _videoStreams.Count ? _videoStreams[CurrentVideoStream].Stream as VideoStream : null; }
     }
 
     protected void ClearStreams()
@@ -126,8 +118,7 @@ namespace MediaPortal.Player
       _videoStreams.Clear();
     }
 
-    private void StoreStream(string filterName, string name, int lcid, int id, DirectShowHelper.StreamType type,
-      AMStreamSelectInfoFlags flag, IAMStreamSelect pStrm)
+    private void StoreStream(string filterName, string name, int lcid, int id, DirectShowHelper.StreamType type, AMStreamSelectInfoFlags flag, IAMStreamSelect pStrm)
     {
       switch (type)
       {
@@ -146,7 +137,7 @@ namespace MediaPortal.Player
       var mediaStream = _audioStreams.FirstOrDefault(x => x.Id == id);
       if (mediaStream == null)
       {
-        _audioStreams.Add(new StreamInfo {Filter = filterName, Id = id, Stream = stream});
+        _audioStreams.Add(new StreamInfo { Filter = filterName, Id = id, Stream = stream });
       }
       else
       {
@@ -161,7 +152,7 @@ namespace MediaPortal.Player
       var mediaStream = _videoStreams.FirstOrDefault(x => x.Id == id);
       if (mediaStream == null)
       {
-        _videoStreams.Add(new StreamInfo {Filter = filterName, Id = id, Stream = stream});
+        _videoStreams.Add(new StreamInfo { Filter = filterName, Id = id, Stream = stream });
       }
       else
       {
@@ -185,28 +176,25 @@ namespace MediaPortal.Player
           DirectShowUtil.ReleaseComObject(foundfilter);
         }
       }
-      catch
-      {
-      }
+      catch { }
+
       return true;
     }
 
     protected void AddCustomVideoStream(VideoStream stream, int id, string filterName)
     {
-      _videoStreams.Add(new StreamInfo {Filter = filterName, Id = id, Stream = stream});
+      _videoStreams.Add(new StreamInfo { Filter = filterName, Id = id, Stream = stream });
     }
 
     protected void AddCustomAudioStream(AudioStream stream, int id, string filterName)
     {
-      _audioStreams.Add(new StreamInfo {Filter = filterName, Id = id, Stream = stream});
+      _audioStreams.Add(new StreamInfo { Filter = filterName, Id = id, Stream = stream });
     }
 
     private class StreamInfo
     {
       public MediaStream Stream { get; set; }
-
       public int Id { get; set; }
-
       public string Filter { get; set; }
     }
   }

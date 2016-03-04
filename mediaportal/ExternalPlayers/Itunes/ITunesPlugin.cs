@@ -620,15 +620,15 @@ namespace MediaPortal.ITunesPlayer
         if (_iTunesApplication != null)
         {
           return new AudioStream(1)
-          {
-            Bitrate = _iTunesApplication.CurrentTrack.BitRate*1000,
-            Language = "English",
-            Lcid = 0x1033,
-            Name = _iTunesApplication.CurrentTrack.Name,
-            Duration = TimeSpan.FromSeconds(_iTunesApplication.CurrentTrack.Duration),
-            Channel = 2,
-            SamplingRate = _iTunesApplication.CurrentTrack.SampleRate
-          };
+                   {
+                     Bitrate = _iTunesApplication.CurrentTrack.BitRate * 1000,
+                     Language = "English",
+                     Lcid = 0x1033,
+                     Name = _iTunesApplication.CurrentTrack.Name,
+                     Duration = TimeSpan.FromSeconds(_iTunesApplication.CurrentTrack.Duration),
+                     Channel = 2,
+                     SamplingRate = _iTunesApplication.CurrentTrack.SampleRate
+                   };
         }
 
         return null;
@@ -642,15 +642,15 @@ namespace MediaPortal.ITunesPlayer
         if (_iTunesApplication != null)
         {
           return new AudioStream(1)
-          {
-            Bitrate = _iTunesApplication.CurrentTrack.BitRate*1000,
-            Language = "English",
-            Lcid = 0x1033,
-            Name = _iTunesApplication.CurrentTrack.Name,
-            Duration = TimeSpan.FromSeconds(_iTunesApplication.CurrentTrack.Duration),
-            Channel = 2,
-            SamplingRate = _iTunesApplication.CurrentTrack.SampleRate
-          };
+                   {
+                     Bitrate = _iTunesApplication.CurrentTrack.BitRate * 1000,
+                     Language = "English",
+                     Lcid = 0x1033,
+                     Name = _iTunesApplication.CurrentTrack.Name,
+                     Duration = TimeSpan.FromSeconds(_iTunesApplication.CurrentTrack.Duration),
+                     Channel = 2,
+                     SamplingRate = _iTunesApplication.CurrentTrack.SampleRate
+                   };
         }
 
         return null;
@@ -659,8 +659,8 @@ namespace MediaPortal.ITunesPlayer
 
     public override int CurrentAudioStream
     {
-        get { return 0; }
-        set { }
+      get { return 0; }
+      set { }
     }
   }
 }

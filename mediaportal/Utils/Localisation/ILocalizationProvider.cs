@@ -23,28 +23,28 @@ using MediaPortal.Localisation.LanguageStrings;
 
 namespace MediaPortal.Localisation
 {
-    public interface ILocalizationProvider
-    {
-        CultureInfo CurrentLanguage { get; }
+  public interface ILocalizationProvider
+  {
+    CultureInfo CurrentLanguage { get; }
 
-        int Characters { get; }
+    int Characters { get; }
 
-        bool UseRTL { get; }
+    bool UseRTL { get; }
 
-        CultureInfo[] AvailableLanguages { get; }
+    CultureInfo[] AvailableLanguages();
 
-        bool IsLocalSupported { get; }
+    bool IsLocalSupported();
 
-        void AddDirection(string directory);
+    void AddDirection(string directory);
 
-        void ChangeLanguage(string cultureName);
+    void ChangeLanguage(string cultureName);
 
-        StringLocalised Get(string section, int id);
+    StringLocalised Get(string section, int id);
 
-        string GetString(string section, int id);
+    string GetString(string section, int id);
 
-        string GetString(string section, int id, object[] parameters);
+    string GetString(string section, int id, object[] parameters);
 
-        CultureInfo GetBestLanguage();
-    }
+    CultureInfo GetBestLanguage();
+  }
 }
