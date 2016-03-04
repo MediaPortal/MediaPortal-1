@@ -20,6 +20,7 @@
 
 using System;
 using System.Xml.Serialization;
+using System.Collections.Generic;
 
 namespace MediaPortal.Utils.Web
 {
@@ -34,6 +35,7 @@ namespace MediaPortal.Utils.Web
     [XmlAttribute("name")] public string Name;
     [XmlAttribute("start")] public string Start;
     [XmlAttribute("end")] public string End;
+    [XmlArray("Replaces")] [XmlArrayItem("Replace")] public List<HtmlReplaceData> replaceList; //list with replace tasks
     [XmlElement("SectionTemplate")] public HtmlSectionTemplate SectionTemplate;
 
     #endregion
