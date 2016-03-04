@@ -342,17 +342,6 @@ namespace Mediaportal.TV.Server.TVLibrary
                     : PowerEventType.QueryStandByFailed);
         }
       }
-      else if (powerStatus == PowerEventType.ResumeAutomatic ||
-               powerStatus == PowerEventType.ResumeCritical ||
-               powerStatus == PowerEventType.ResumeStandBy ||
-               powerStatus == PowerEventType.ResumeSuspend
-        )
-      {
-        ServiceManager.Instance.InternalControllerService.ExecutePendingDeletions();
-        // call Recording-folder cleanup, just in case we have empty folders.
-      }
-
-
       return false;
     }
 
@@ -479,13 +468,13 @@ namespace Mediaportal.TV.Server.TVLibrary
           this.LogInfo("TV service: {0} is disabled, stopping...", plugin.Name);
           try
           {
-            plugin.Stop();
             ITvServerPluginCommunication communicatorPlugin = plugin as ITvServerPluginCommunication;
             if (communicatorPlugin != null)
             {
               this.LogInfo("TV service:   disabling communication...");
               ServiceManager.Instance.RemoveService(communicatorPlugin.GetServiceInterfaceForContractType, communicatorPlugin.GetServiceInstance);
             }
+            plugin.Stop();
             _pluginsStarted.Remove(plugin);
           }
           catch (Exception ex)
