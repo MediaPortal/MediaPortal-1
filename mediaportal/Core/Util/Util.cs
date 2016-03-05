@@ -2639,7 +2639,8 @@ namespace MediaPortal.Util
       catch (Exception) {}
       return false;
     }
-
+	
+	// deprecated, use DownLoadImage(string strURL, string strFile) instead
     public static void DownLoadImage(string strURL, string strFile, System.Drawing.Imaging.ImageFormat imageFormat)
     {
       if (string.IsNullOrEmpty(strURL) || string.IsNullOrEmpty(strFile))
@@ -2747,67 +2748,61 @@ namespace MediaPortal.Util
       }
     }
 
-    public static void DownLoadImage(string strURL, string strFile)
-    {
-      if (string.IsNullOrEmpty(strURL) || string.IsNullOrEmpty(strFile))
-        return;
-
-      try
-      {
-        HttpWebRequest wr = (HttpWebRequest)WebRequest.Create(strURL);
-        wr.Timeout = 20000;
-        try
+        /// <summary>
+        /// Download a remote image and save it locally.
+        /// If it fails the first time, wait one second and try to download again.
+        /// UserAgent and Accept headers are set for correct request.
+        /// Unfortunately, synchronous downloads are often problematic, so it is necessary to correctly handle errors.
+        /// </summary>
+        /// <param name="strURL">remote image to download</param>
+        /// <param name="strFile">local image to save</param>
+        /// <param name="secondTry">bool used for the recursive call, after first fail</param>
+        public static void DownLoadImage(string strURL, string strFile, bool secondTry = false)
         {
-          // Use the current user in case an NTLM Proxy or similar is used.
-          // wr.Proxy = WebProxy.GetDefaultProxy();
-          wr.Proxy.Credentials = CredentialCache.DefaultCredentials;
-        }
-        catch (Exception) {}
-        HttpWebResponse ws = (HttpWebResponse)wr.GetResponse();
-        try
-        {
-          using (Stream str = ws.GetResponseStream())
-          {
-            byte[] inBuf = new byte[900000];
-            int bytesToRead = (int)inBuf.Length;
-            int bytesRead = 0;
-
-            DateTime dt = DateTime.Now;
-            while (bytesToRead > 0)
+            if (string.IsNullOrEmpty(strURL) || string.IsNullOrEmpty(strFile))
+                return;
+            Uri uri = new Uri(strURL);
+            HttpWebRequest wReq = (HttpWebRequest)WebRequest.Create(uri);
+            wReq.Proxy.Credentials = CredentialCache.DefaultCredentials;
+            wReq.UserAgent = "Mozilla/8.0 (compatible; MSIE 9.0; Windows NT 6.1; .NET CLR 1.0.3705;)";
+            wReq.Accept = "*/*";
+            //should check the results before continue
+            //if wr.StatusCode == HttpStatusCode.OK
+            //but don't have reason if is a void procedure
+            try
             {
-              dt = DateTime.Now;
-              int n = str.Read(inBuf, bytesRead, bytesToRead);
-              if (n == 0)
-                break;
-              bytesRead += n;
-              bytesToRead -= n;
-              TimeSpan ts = DateTime.Now - dt;
-              if (ts.TotalSeconds >= 5)
-              {
-                throw new Exception("timeout");
-              }
+                using (HttpWebResponse wr = (HttpWebResponse)wReq.GetResponse())
+                    using (BinaryReader br = new BinaryReader(wr.GetResponseStream()))
+                        using (FileStream fs = new FileStream(strFile, FileMode.OpenOrCreate, FileAccess.Write))
+                        {
+                            byte[] b = new byte[1024 * 128];//Should we increase the buffer size?. We live in 2014
+                            int bRead;
+                            do
+                            {
+                                bRead = br.Read(b, 0, b.Length);
+                                fs.Write(b, 0, bRead);
+                            } while (bRead != 0);
+                        }
             }
-            using (FileStream fstr = new FileStream(strFile, FileMode.OpenOrCreate, FileAccess.Write))
+            catch (System.Net.WebException eWebException)
             {
-              fstr.Write(inBuf, 0, bytesRead);
-              str.Close();
-              fstr.Close();
+                string s = string.Empty;
+                using (Stream st = eWebException.Response.GetResponseStream())
+                    using (StreamReader sr = new StreamReader(st))
+                        s += sr.ReadToEnd();
+                if ((!string.IsNullOrEmpty(s)) && (secondTry))
+                    s += "second Try Fail";
+                if (!string.IsNullOrEmpty(s))
+                    Log.Info("Utils: DownLoadImage {1} failed:{0}", s, strURL);
+                //after second fail, return
+                if (secondTry)
+                    return;
+                //just wait a second, and then try again
+                Thread.Sleep(1000);
+                DownLoadImage(strURL, strFile, true);
             }
-          }
+            return;
         }
-        finally
-        {
-          if (ws != null)
-          {
-            ws.Close();
-          }
-        }
-      }
-      catch (Exception ex)
-      {
-        Log.Info("Utils: DownLoadImage {1} failed:{0}", ex.Message, strURL);
-      }
-    }
 
 
     public static string RemoveTrailingSlash(string strLine)
