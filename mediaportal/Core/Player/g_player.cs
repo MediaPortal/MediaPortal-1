@@ -2827,6 +2827,10 @@ namespace MediaPortal.Player
             _player.CurrentVideoStream = value;
             OnStreamChanged(StreamKind.Video, oldStream, _player.CurrentVideo, _player);
           }
+          else
+          {
+            _player.CurrentAudioStream = value;
+          }
         }
       }
     }
@@ -2916,6 +2920,10 @@ namespace MediaPortal.Player
             var oldStream = _player.CurrentAudio;
             _player.CurrentAudioStream = value;
             OnStreamChanged(StreamKind.Audio, oldStream, _player.CurrentAudio, _player);
+          }
+          else
+          {
+            _player.CurrentAudioStream = value;
           }
         }
       }
