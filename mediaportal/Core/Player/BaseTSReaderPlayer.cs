@@ -1718,7 +1718,17 @@ namespace MediaPortal.Player
     }
 
     /// <summary> create the used COM components and get the interfaces. </summary>
-    protected virtual bool GetInterfaces(string filename) { return true; }
+    protected virtual bool GetInterfaces(string filename)
+    {
+      DirectShowHelper.AnalyseStreams(_graphBuilder);
+      // TsReader filter does not report about video streams
+      if (VideoStreams == 0)
+      {
+        AddCustomVideoStream(MediaInfo.BestVideoStream, 0, "TsReader");
+      }
+
+      return true;
+    }
 
     protected virtual void CloseInterfaces()
     {
