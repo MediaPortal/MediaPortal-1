@@ -493,10 +493,10 @@ ${MementoSection} "MediaPortal TV Server" SecServer
   File "${TVSERVER.BASE}\Ionic.Zip.dll"
 
   ; MediaInfo
-  File "${git_ROOT}\Packages\MP-1-MediaInfolib.1.0.0\MediaInfo.dll"
-  File "${git_ROOT}\Packages\MP-1-MediaInfolib.1.0.0\libcurl.dll"
-  File "${git_ROOT}\Packages\MP-1-MediaInfolib.1.0.0\libeay32.dll"
-  File "${git_ROOT}\Packages\MP-1-MediaInfolib.1.0.0\ssleay32.dll"
+  File "${git_ROOT}\Packages\MP-1-MediaInfolib.1.0.1\MediaInfo.dll"
+  File "${git_ROOT}\Packages\MP-1-MediaInfolib.1.0.1\libcurl.dll"
+  File "${git_ROOT}\Packages\MP-1-MediaInfolib.1.0.1\libeay32.dll"
+  File "${git_ROOT}\Packages\MP-1-MediaInfolib.1.0.1\ssleay32.dll"
 
   ; thumbnail software
   File "${git_ROOT}\Packages\ffmpeg.2.7.1\ffmpeg.exe"
