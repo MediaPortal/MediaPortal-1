@@ -51,7 +51,7 @@ namespace Mediaportal.TV.Server.Plugins.TvMovieImport
         }
 
         string vsKeyName = @"Software\Classes\VirtualStore\MACHINE\SOFTWARE\";
-        if (OSInfo.OSInfo.Is64BitOs() && IntPtr.Size != 8)
+        if (Environment.Is64BitOperatingSystem && !Environment.Is64BitProcess)
         {
           vsKeyName += @"Wow6432Node\";
         }

@@ -250,6 +250,11 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport.Config
     private void OnStatusUiUpdateTimerTick(object sender, EventArgs e)
     {
       // Update the status UI. Take care to do it on the UI thread.
+      if (!this.InvokeRequired)
+      {
+        UpdateImportAndScheduleStatusUi();
+        return;
+      }
       this.Invoke((MethodInvoker)delegate
       {
         UpdateImportAndScheduleStatusUi();
@@ -288,6 +293,119 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport.Config
         this.LogDebug("XMLTV import config: scheduled actions status update...");
         this.LogDebug("  date/time = {0}", _scheduledActionsStatusDateTime);
         this.LogDebug("  status    = {0}", _scheduledActionsStatus);
+      }
+    }
+
+    private static void FindBestMatchGuideChannel(
+      Channel channel, bool enablePartialMatching,
+      IDictionary<string, IDictionary<string, IList<string>>> guideChannels, HashSet<string> guideChannelIds,
+      IDictionary<string, string> matchingDictionary, IDictionary<string, string> mc2xmlMatchingDictionary,
+      out MatchType matchType, out string bestMatchId
+    )
+    {
+      matchType = MatchType.None;
+      bestMatchId = string.Empty;
+
+      if (!string.IsNullOrEmpty(channel.ExternalId))
+      {
+        if (!XmlTvImportId.HasXmlTvMapping(channel.ExternalId))
+        {
+          matchType = MatchType.External;
+          return;
+        }
+
+        if (guideChannelIds.Contains(channel.ExternalId))
+        {
+          matchType = MatchType.Mapped;
+          bestMatchId = channel.ExternalId;
+          return;
+        }
+
+        // Check for mappings that have been broken by file renaming.
+        string fileName;
+        string xmlTvChannelId;
+        XmlTvImportId.GetQualifiedIdComponents(channel.ExternalId, out fileName, out xmlTvChannelId);
+        foreach (KeyValuePair<string, IDictionary<string, IList<string>>> fileChannels in guideChannels)
+        {
+          if (fileChannels.Value.ContainsKey(xmlTvChannelId))
+          {
+            matchType = MatchType.Exact;
+            bestMatchId = XmlTvImportId.GetQualifiedIdForChannel(fileChannels.Key, xmlTvChannelId);
+            return;
+          }
+        }
+        if (matchType == MatchType.None)
+        {
+          matchType = MatchType.Broken;
+        }
+      }
+
+      // mc2xml channel number matching...
+      if (mc2xmlMatchingDictionary.Count > 0)
+      {
+        // Check the tuning detail channel number. It's less likely to
+        // have been customised. This also enables us to only match
+        // channels with ATSC and/or SCTE tuning details. We don't know
+        // if it makes sense to support this matching technique for other
+        // sources.
+        var channelTuningDetails = ServiceAgents.Instance.ChannelServiceAgent.ListAllTuningDetailsByChannel(channel.IdChannel);
+        if (channelTuningDetails != null)
+        {
+          foreach (TuningDetail tuningDetail in channelTuningDetails)
+          {
+            if (tuningDetail.BroadcastStandard == (int)BroadcastStandard.Atsc || tuningDetail.BroadcastStandard == (int)BroadcastStandard.Scte)
+            {
+              if (mc2xmlMatchingDictionary.TryGetValue(tuningDetail.LogicalChannelNumber, out bestMatchId))
+              {
+                matchType = MatchType.Exact;
+                return;
+              }
+            }
+          }
+        }
+      }
+
+      // Exact matching...
+      if (matchingDictionary.TryGetValue(channel.Name, out bestMatchId))
+      {
+        if (matchType == MatchType.Broken)
+        {
+          matchType = MatchType.BrokenExact;
+          return;
+        }
+        matchType = MatchType.Exact;
+        return;
+      }
+
+      // Partial matching...
+      if (enablePartialMatching)
+      {
+        // Find the best match...
+        float bestSimilarity = 0.5f;
+        foreach (KeyValuePair<string, string> match in matchingDictionary)
+        {
+          float similarity = Levenshtein.GetSimilarity(match.Key, channel.Name);
+          if (similarity > bestSimilarity)
+          {
+            bestMatchId = match.Value;
+            bestSimilarity = similarity;
+            if (similarity == 1f)
+            {
+              break;
+            }
+          }
+        }
+
+        if (!string.IsNullOrEmpty(bestMatchId))
+        {
+          if (matchType == MatchType.Broken)
+          {
+            matchType = MatchType.BrokenPartial;
+            return;
+          }
+
+          matchType = MatchType.Partial;
+        }
       }
     }
 
@@ -418,155 +536,44 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport.Config
           }
         }
 
+        // Trust me - you don't want to mess with this! Data grid view combo
+        // boxes are fragile.
+        DataGridViewComboBoxColumn guideChannelColumn = (DataGridViewComboBoxColumn)dataGridViewMappings.Columns["dataGridViewColumnGuideChannel"];
+        guideChannelColumn.DataSource = guideChannelsForComboBox;
+        guideChannelColumn.ValueType = typeof(ComboBoxGuideChannel);
+        guideChannelColumn.DisplayMember = "DisplayName";
+        guideChannelColumn.ValueMember = "ValueMember";
+
         // Populate the grid.
         progressBarMappingsProgress.Minimum = 0;
         progressBarMappingsProgress.Maximum = databaseChannels.Count;
         progressBarMappingsProgress.Value = 0;
         dataGridViewColumnId.ValueType = typeof(int);
         dataGridViewMappings.Rows.Add(databaseChannels.Count);
-        int row = 0;
+        int rowIndex = 0;
         foreach (Channel channel in databaseChannels)
         {
-          DataGridViewRow gridRow = dataGridViewMappings.Rows[row++];
+          DataGridViewRow row = dataGridViewMappings.Rows[rowIndex++];
+          row.Tag = channel;
 
-          gridRow.Cells["dataGridViewColumnId"].Value = channel.IdChannel;
-          gridRow.Cells["dataGridViewColumnTuningChannel"].Value = channel.Name;
-          gridRow.Tag = channel;
+          row.Cells["dataGridViewColumnId"].Value = channel.IdChannel;
+          row.Cells["dataGridViewColumnTuningChannel"].Value = channel.Name;
 
-          // Trust me - you don't want to mess with this! Data grid view combo
-          // boxes are fragile.
-          DataGridViewComboBoxCell guideChannelComboBox = (DataGridViewComboBoxCell)gridRow.Cells["dataGridViewColumnGuideChannel"];
-          guideChannelComboBox.DataSource = guideChannelsForComboBox;
-          guideChannelComboBox.ValueType = typeof(ComboBoxGuideChannel);
-          guideChannelComboBox.DisplayMember = "DisplayName";
-          guideChannelComboBox.ValueMember = "ValueMember";
-          guideChannelComboBox.Tag = channel.ExternalId ?? string.Empty;
-
-          // Find the best match guide channel for this channel.
           MatchType matchType = MatchType.None;
           string bestMatchId = string.Empty;
-          if (!string.IsNullOrEmpty(channel.ExternalId))
-          {
-            if (!XmlTvImportId.HasXmlTvMapping(channel.ExternalId))
-            {
-              matchType = MatchType.External;
-            }
-            else
-            {
-              if (guideChannelIds.Contains(channel.ExternalId))
-              {
-                bestMatchId = channel.ExternalId;
-                matchType = MatchType.Mapped;
-              }
-              else
-              {
-                // Check for mappings that have been broken by file renaming.
-                string fileName;
-                string xmlTvChannelId;
-                XmlTvImportId.GetQualifiedIdComponents(channel.ExternalId, out fileName, out xmlTvChannelId);
-                foreach (KeyValuePair<string, IDictionary<string, IList<string>>> fileChannels in guideChannels)
-                {
-                  if (fileChannels.Value.ContainsKey(xmlTvChannelId))
-                  {
-                    matchType = MatchType.Exact;
-                    bestMatchId = XmlTvImportId.GetQualifiedIdForChannel(fileChannels.Key, xmlTvChannelId);
-                    break;
-                  }
-                }
-                if (matchType == MatchType.None)
-                {
-                  matchType = MatchType.Broken;
-                }
-              }
-            }
-          }
-
-          if (matchType == MatchType.None || matchType == MatchType.Broken)
-          {
-            // mc2xml channel number matching...
-            if (mc2xmlMatchingDictionary.Count > 0)
-            {
-              // Check the tuning detail channel number. It's less likely to
-              // have been customised. This also enables us to only match
-              // channels with ATSC and/or SCTE tuning details. We don't know
-              // if it makes sense to support this matching technique for other
-              // sources.
-              var channelTuningDetails = ServiceAgents.Instance.ChannelServiceAgent.ListAllTuningDetailsByChannel(channel.IdChannel);
-              if (channelTuningDetails != null)
-              {
-                foreach (TuningDetail tuningDetail in channelTuningDetails)
-                {
-                  if (tuningDetail.BroadcastStandard == (int)BroadcastStandard.Atsc || tuningDetail.BroadcastStandard == (int)BroadcastStandard.Scte)
-                  {
-                    if (mc2xmlMatchingDictionary.TryGetValue(tuningDetail.LogicalChannelNumber, out bestMatchId))
-                    {
-                      matchType = MatchType.Exact;
-                      break;
-                    }
-                  }
-                }
-              }
-            }
-
-            // Exact matching...
-            if (
-              (matchType == MatchType.None || matchType == MatchType.Broken) &&
-              matchingDictionary.TryGetValue(channel.Name, out bestMatchId)
-            )
-            {
-              if (matchType == MatchType.Broken)
-              {
-                matchType = MatchType.BrokenExact;
-              }
-              else
-              {
-                matchType = MatchType.Exact;
-              }
-            }
-
-            // Partial matching...
-            if (checkBoxMappingsPartialMatch.Checked && (matchType == MatchType.None || matchType == MatchType.Broken))
-            {
-              // Find the best match...
-              float bestSimilarity = 0.5f;
-              foreach (KeyValuePair<string, string> match in matchingDictionary)
-              {
-                float similarity = Levenshtein.GetSimilarity(match.Key, channel.Name);
-                if (similarity > bestSimilarity)
-                {
-                  bestMatchId = match.Value;
-                  bestSimilarity = similarity;
-                  if (similarity == 1f)
-                  {
-                    break;
-                  }
-                }
-              }
-
-              if (!string.IsNullOrEmpty(bestMatchId))
-              {
-                if (matchType == MatchType.Broken)
-                {
-                  matchType = MatchType.BrokenPartial;
-                }
-                else
-                {
-                  matchType = MatchType.Partial;
-                }
-              }
-            }
-          }
-
+          FindBestMatchGuideChannel(channel, checkBoxMappingsPartialMatch.Checked, guideChannels, guideChannelIds, matchingDictionary, mc2xmlMatchingDictionary, out matchType, out bestMatchId);
           this.LogDebug("XMLTV import config: DB channel, ID = {0}, name = {1}, external ID = {2}, match type = {3}, best match = {4}", channel.IdChannel, channel.Name, channel.ExternalId ?? string.Empty, matchType, bestMatchId);
+          DataGridViewCell cell = row.Cells["dataGridViewColumnGuideChannel"];
           if (!string.IsNullOrEmpty(bestMatchId))
           {
-            guideChannelComboBox.Value = comboBoxValueLookup[bestMatchId];
+            cell.Value = comboBoxValueLookup[bestMatchId];
           }
+          cell.Tag = channel.ExternalId ?? string.Empty;
 
           // Note the mapping cell values are set so that the grid can be
           // sorted by mapping state without actually showing text in the
           // cells.
-          DataGridViewCell cell = gridRow.Cells["dataGridViewColumnMatchType"];
+          cell = row.Cells["dataGridViewColumnMatchType"];
           cell.ToolTipText = matchType.GetDescription();
           cell.Value = string.Empty.PadRight((int)matchType, ' ');
           if (matchType == MatchType.Mapped)
