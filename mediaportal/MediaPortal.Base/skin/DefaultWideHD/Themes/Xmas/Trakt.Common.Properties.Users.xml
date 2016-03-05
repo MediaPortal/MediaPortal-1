@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!--version="1.0" encoding="utf-8" standalone="yes"-->
+<window>
+  <controls>
+    <control>
+      <description>Overlay text right</description>
+      <id>0</id>
+      <type>image</type>
+      <posX>1063</posX>
+      <posY>234</posY>
+      <width>823</width>
+      <height>699</height>
+      <texture mask="picturethumbmask.png">black.png</texture>
+      <colordiffuse>60ffffff</colordiffuse>
+      <visible>facadeview.list</visible>
+    </control>
+    <!-- User Info -->
+    <control>
+      <description>LCD image</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>1573</posX>
+      <posY>300</posY>
+      <width>300</width>
+      <height>322</height>
+      <texture>LCD.png</texture>
+      <visible>facadeview.list+!string.equals(#Trakt.User.Username,)</visible>
+    </control>
+    <control>
+      <description>Avatar image</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>1588</posX>
+      <posY>325</posY>
+      <width>270</width>
+      <height>270</height>
+      <keepaspectratio>yes</keepaspectratio>
+      <zoom>yes</zoom>
+      <texture>#selectedthumb</texture>
+      <visible>facadeview.list+!string.equals(#Trakt.User.Username,)</visible>
+    </control>
+    <control>
+      <description>FullName txt</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>1093</posX>
+      <posY>280</posY>
+      <label>#Trakt.Translation.FullName.Label</label>
+      <font>font10</font>
+      <align>left</align>
+      <textcolor>ffffd700</textcolor>
+      <visible>facadeview.list+!string.equals(#Trakt.User.FullName,)</visible>
+    </control>
+    <control>
+      <description>FullName value</description>
+      <type>fadelabel</type>
+      <id>1</id>
+      <posX>1093</posX>
+      <posY>309</posY>
+      <width>399</width>
+      <label>#Trakt.User.FullName</label>
+      <font>font12</font>
+      <textcolor>ffffd700</textcolor>
+      <visible>facadeview.list+!string.equals(#Trakt.User.FullName,)</visible>
+    </control>
+    <control>
+      <description>Join Date txt</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>1093</posX>
+      <posY>346</posY>
+      <label>#Trakt.Translation.JoinDate.Label</label>
+      <font>font10</font>
+      <align>left</align>
+      <textcolor>ffffd700</textcolor>
+      <visible>facadeview.list+!string.equals(#Trakt.User.JoinDate,)</visible>
+    </control>
+    <control>
+      <description>Join Date value</description>
+      <type>fadelabel</type>
+      <id>1</id>
+      <posX>1093</posX>
+      <posY>375</posY>
+      <label>#Trakt.User.JoinDate</label>
+      <font>font12</font>
+      <width>420</width>
+      <textcolor>ffffd700</textcolor>
+      <visible>facadeview.list+!string.equals(#Trakt.User.JoinDate,)</visible>
+    </control>
+    <control>
+      <description>Location txt</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>1093</posX>
+      <posY>412</posY>
+      <label>#Trakt.Translation.Location.Label</label>
+      <font>font10</font>
+      <align>left</align>
+      <textcolor>ffffd700</textcolor>
+      <visible>facadeview.list+!string.equals(#Trakt.User.Location,)</visible>
+    </control>
+    <control>
+      <description>Location</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>1093</posX>
+      <posY>441</posY>
+      <width>420</width>
+      <label>#Trakt.User.Location</label>
+      <font>font12</font>
+      <textcolor>ffffd700</textcolor>
+      <visible>facadeview.list+!string.equals(#Trakt.User.Location,)</visible>
+    </control>
+    <control>
+      <description>Gender txt</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>1093</posX>
+      <posY>478</posY>
+      <label>#Trakt.Translation.Gender.Label</label>
+      <font>font10</font>
+      <align>left</align>
+      <textcolor>ffffd700</textcolor>
+      <visible>facadeview.list+!string.equals(#Trakt.User.Gender,)</visible>
+    </control>
+    <control>
+      <description>Gender</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>1093</posX>
+      <posY>507</posY>
+      <width>420</width>
+      <label>#Trakt.User.Gender</label>
+      <font>font12</font>
+      <textcolor>ffffd700</textcolor>
+      <visible>facadeview.list+!string.equals(#Trakt.User.Gender,)</visible>
+    </control>
+    <control>
+      <description>Age Label</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>1093</posX>
+      <posY>544</posY>
+      <label>#Trakt.Translation.Age.Label</label>
+      <font>font11</font>
+      <textcolor>ffffd700</textcolor>
+      <visible>facadeview.list+!string.equals(#Trakt.User.Age,)</visible>
+    </control>
+    <control>
+      <description>Age Value</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>1093</posX>
+      <posY>573</posY>
+      <label>#Trakt.User.Age</label>
+      <font>font12</font>
+      <textcolor>ffffd700</textcolor>
+      <visible>facadeview.list+!string.equals(#Trakt.User.Age,)</visible>
+    </control>
+    <control>
+      <description>Protected txt</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>1093</posX>
+      <posY>610</posY>
+      <label>#Trakt.Translation.Protected.Label</label>
+      <font>font10</font>
+      <align>left</align>
+      <textcolor>ffffd700</textcolor>
+      <visible>facadeview.list+!string.equals(#Trakt.User.Protected,)</visible>
+    </control>
+    <control>
+      <description>Protected</description>
+      <type>fadelabel</type>
+      <id>1</id>
+      <posX>1093</posX>
+      <posY>639</posY>
+      <width>420</width>
+      <label>#Trakt.User.Protected</label>
+      <font>font12</font>
+      <align>left</align>
+      <textcolor>ffffd700</textcolor>
+      <visible>facadeview.list+!string.equals(#Trakt.User.Protected,)</visible>
+    </control>
+    <control>
+      <description>Separator Line</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>1093</posX>
+      <posY>690</posY>
+      <width>750</width>
+      <height>1</height>
+      <texture>hbar1white.png</texture>
+      <colordiffuse>60ffffff</colordiffuse>
+      <visible>facadeview.list+!string.equals(#Trakt.User.About,)</visible>
+    </control>
+    <control Style="NoShadow">
+      <description>Plot value</description>
+      <type>textboxscrollup</type>
+      <id>1</id>
+      <posX>1093</posX>
+      <posY>705</posY>
+      <width>780</width>
+      <height>157</height>
+      <label>#Trakt.User.About</label>
+      <font>font11</font>
+      <textcolor>ffffd700</textcolor>
+      <visible>facadeview.list+!string.equals(#Trakt.User.About,)</visible>
+    </control>
+    <control>
+      <description>Separator Line</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>1093</posX>
+      <posY>870</posY>
+      <width>750</width>
+      <height>1</height>
+      <texture>hbar1white.png</texture>
+      <colordiffuse>60ffffff</colordiffuse>
+      <visible>facadeview.list+!string.equals(#Trakt.User.About,)</visible>
+    </control>
+  </controls>
+</window>

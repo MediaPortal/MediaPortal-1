@@ -30,6 +30,7 @@ using MediaPortal.Configuration;
 using MediaPortal.Database;
 using MediaPortal.GUI.Library;
 using MediaPortal.Player;
+using MediaPortal.Player.MediaInfo;
 using MediaPortal.Util;
 using SQLite.NET;
 using MediaPortal.Profile;
@@ -348,161 +349,6 @@ namespace MediaPortal.Video.Database
       catch (Exception ex)
       {
         Log.Error("videodatabase upgrade exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
-      }
-    }
-
-    // Deletes unwanted inserted data from the videodatabase tables which polutes user data, ie. when OnlineVideos play
-    // some online video, MP automatically insert it's data in tables and we really don't need'em here
-    // Also cleans all broken linked data from other tables
-    private void CleanUpDatabase()
-    {
-      try
-      {
-        if (m_db == null)
-        {
-          return;
-        }
-
-        string strSql = String.Format("SELECT * FROM path");
-        SQLiteResultSet resultsPath = m_db.Execute(strSql);
-
-        Int32 cleanedRows = 0;
-
-        // Get paths
-        for (int iRowPath = 0; iRowPath < resultsPath.Rows.Count; iRowPath++)
-        {
-          int idPath = Int32.Parse(DatabaseUtility.Get(resultsPath, iRowPath, "idPath"));
-          string strPath = DatabaseUtility.Get(resultsPath, iRowPath, "strPath");
-          
-          // Check for trash paths
-          if (strPath.StartsWith("http:"))
-          {
-            // Find all files related to current trash path
-            string strSqlfile = String.Format("SELECT * FROM files WHERE idPath={0}", idPath);
-            SQLiteResultSet resultsFile = m_db.Execute(strSqlfile);
-            // Delete data in file related tables
-            for (int iRowFiles = 0; iRowFiles < resultsFile.Rows.Count; iRowFiles++)
-            {
-              int idFile = Int32.Parse(DatabaseUtility.Get(resultsFile, iRowFiles, "idFile"));
-              // Bookmark
-              strSql = String.Format("DELETE FROM bookmark WHERE idFile={0}", idFile);
-              m_db.Execute(strSql);
-              cleanedRows += m_db.ChangedRows();
-              // Duration
-              strSql = String.Format("DELETE FROM duration WHERE idFile={0}", idFile);
-              m_db.Execute(strSql);
-              cleanedRows += m_db.ChangedRows();
-              // Resume
-              strSql = String.Format("DELETE FROM resume WHERE idFile={0}", idFile);
-              m_db.Execute(strSql);
-              cleanedRows += m_db.ChangedRows();
-            }
-            // Delete files
-            strSql = String.Format("DELETE FROM files WHERE idPath={0}", idPath);
-            m_db.Execute(strSql);
-            cleanedRows += m_db.ChangedRows();
-            // Delete movies
-            strSql = String.Format("DELETE FROM movie WHERE idPath={0}", idPath);
-            m_db.Execute(strSql);
-            cleanedRows += m_db.ChangedRows();
-            // Delete path
-            strSql = String.Format("DELETE FROM path WHERE idPath={0}", idPath);
-            m_db.Execute(strSql);
-            cleanedRows += m_db.ChangedRows();
-          }
-        }
-        Log.Info("Cleaned up " + cleanedRows + " rows for unwanted paths.");
-
-        // Find all files without not existing path link
-        strSql = String.Format("SELECT * FROM files WHERE files.idPath NOT IN (SELECT idPath FROM path)");
-        SQLiteResultSet results = m_db.Execute(strSql);
-        Log.Info("Found " + results.Rows.Count + " files without path link. Cleaning files related tables.");
-
-        cleanedRows = 0;
-
-        // Delete data in file related tables
-        for (int iRow = 0; iRow < results.Rows.Count; iRow++)
-        {
-          int idFile = Int32.Parse(DatabaseUtility.Get(results, iRow, "files.idFile"));
-          // Bookmark
-          strSql = String.Format("DELETE FROM bookmark WHERE idFile={0}", idFile);
-          m_db.Execute(strSql);
-          cleanedRows += m_db.ChangedRows();
-          // Duration
-          strSql = String.Format("DELETE FROM duration WHERE idFile={0}", idFile);
-          m_db.Execute(strSql);
-          cleanedRows += m_db.ChangedRows();
-          // Resume
-          strSql = String.Format("DELETE FROM resume WHERE idFile={0}", idFile);
-          m_db.Execute(strSql);
-          cleanedRows += m_db.ChangedRows();
-        }
-        Log.Info("Cleaned up " + cleanedRows + " rows for tables without file link.");
-
-        // Delete files without path link
-        strSql = String.Format("DELETE FROM files WHERE files.idPath NOT IN (SELECT idPath FROM path)");
-        m_db.Execute(strSql);
-        Log.Info("Clean up files (no path link): " + m_db.ChangedRows() + " rows affected.");
-        
-        // Delete path without any file link
-        strSql = String.Format("DELETE FROM path WHERE path.idPath NOT IN (SELECT idPath FROM files)");
-        m_db.Execute(strSql);
-        Log.Info("Clean up path (no file link): " + m_db.ChangedRows() + " rows affected.");
-        
-        // Delete movies without path link
-        strSql = String.Format("DELETE FROM movie WHERE movie.idPath NOT IN (SELECT idPath FROM path)");
-        m_db.Execute(strSql);
-        Log.Info("Clean up movie (no path link): " + m_db.ChangedRows() + " rows affected.");
-
-        // Delete actorinfo without link to actorId
-        strSql = String.Format("DELETE FROM actorinfo WHERE actorinfo.idActor NOT IN (SELECT idActor FROM actors)");
-        m_db.Execute(strSql);
-        Log.Info("Clean up actorinfo (no actorId link to actors): " + m_db.ChangedRows() + " rows affected.");
-        
-        // Delete actorlinkmovie without link to actorId 
-        strSql = String.Format("DELETE FROM actorlinkmovie where actorlinkmovie.idActor NOT IN (SELECT idActor FROM actors)");
-        m_db.Execute(strSql);
-        Log.Info("Clean up actorlinkmovie (no actorId link to actors): " + m_db.ChangedRows() + " rows affected.");
-        
-        // Delete actorlinkmovie without link to the movie
-        strSql = String.Format("DELETE FROM actorlinkmovie WHERE actorlinkmovie.idMovie NOT IN (SELECT idMovie FROM movie)");
-        m_db.Execute(strSql);
-        Log.Info("Clean up actorlinkmovie (no movie link): " + m_db.ChangedRows() + " rows affected.");
-
-        // Delete actorinfomovies without link to the actorId in actors
-        strSql = String.Format("DELETE FROM actorinfomovies WHERE actorinfomovies.idActor NOT IN (SELECT idActor FROM actors)");
-        m_db.Execute(strSql);
-        Log.Info("Clean up actorinfomovies (no actorId link to actors): " + m_db.ChangedRows() + " rows affected.");
-        
-        // Delete movieinfo without link to the movie
-        strSql = String.Format("DELETE FROM movieinfo WHERE movieinfo.idMovie NOT IN (SELECT idMovie FROM movie)");
-        m_db.Execute(strSql);
-        Log.Info("Clean up movieinfo (no movie link): " + m_db.ChangedRows() + " rows affected.");
-        
-        // Delete genrelinkmovie without link to the movie
-        strSql = String.Format("DELETE FROM genrelinkmovie WHERE genrelinkmovie.idMovie NOT IN (SELECT idMovie FROM movie)");
-        m_db.Execute(strSql);
-        Log.Info("Clean up genrelinkmovie (no movie link): " + m_db.ChangedRows() + " rows affected.");
-        
-        // Compact db after cleanup
-        long vdbFile = new FileInfo(Config.GetFile(Config.Dir.Database, @"VideoDatabaseV5.db3")).Length;
-        Log.Info("Compacting videodatabase: " + vdbFile + " bytes");
-        //DatabaseUtility.CompactDatabase(m_db);
-        try
-        {
-          DatabaseUtility.CompactDatabase(m_db);
-          vdbFile = new FileInfo(Config.GetFile(Config.Dir.Database, @"VideoDatabaseV5.db3")).Length;
-          Log.Info("Compacting finished successfully. New file lenght: " + vdbFile + " bytes");
-        }
-        catch (Exception)
-        {
-          Log.Error("Compact videodatabase: vacuum failed");
-        }
-      }
-      catch (Exception ex)
-      {
-        Log.Error("videodatabase cleanup exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
-        Open();
       }
     }
 
@@ -1121,15 +967,10 @@ namespace MediaPortal.Video.Database
         }
 
         // Set currentMediaInfoFilePlaying for later use if it's the same media to play (it will cache mediainfo data)
-        MediaInfoWrapper mInfo = null;
-        if (!string.IsNullOrEmpty(g_Player.currentMediaInfoFilePlaying) && (g_Player.currentMediaInfoFilePlaying == strFilenameAndPath))
-        {
-          mInfo = g_Player._mediaInfo;
-        }
-        else
+        var mediaInfo = new MediaInfoWrapper(strFilenameAndPath);
+        if (string.IsNullOrEmpty(g_Player.currentMediaInfoFilePlaying) || g_Player.currentMediaInfoFilePlaying != strFilenameAndPath)
         {
           g_Player.currentMediaInfoFilePlaying = strFilenameAndPath;
-          mInfo = g_Player._mediaInfo = new MediaInfoWrapper(strFilenameAndPath);
         }
 
         if (isImage && DaemonTools.IsMounted(strFilenameAndPath))
@@ -1144,46 +985,34 @@ namespace MediaPortal.Video.Database
 
         int subtitles = 0;
 
-        if (mInfo.HasSubtitles)
+        if (mediaInfo.HasSubtitles)
         {
           subtitles = 1;
         }
 
         try
         {
-          if (results.Rows.Count == 0)
+          var audio = mediaInfo.BestAudioStream;
+          var video = mediaInfo.BestVideoStream;
+          if (video == null || string.IsNullOrEmpty(video.Format))
           {
-            strSQL = String.Format(
-              "INSERT INTO filesmediainfo (idFile, videoCodec, videoResolution, aspectRatio, hasSubtitles, audioCodec, audioChannels) VALUES({0},'{1}','{2}','{3}',{4},'{5}','{6}')",
-              fileID,
-              Util.Utils.MakeFileName(mInfo.VideoCodec),
-              mInfo.VideoResolution,
-              mInfo.AspectRatio,
-              subtitles,
-              Util.Utils.MakeFileName(mInfo.AudioCodec),
-              mInfo.AudioChannelsFriendly);
-          }
-          else
-          {
-            strSQL = String.Format(
-              "UPDATE filesmediainfo SET videoCodec='{1}', videoResolution='{2}', aspectRatio='{3}', hasSubtitles='{4}', audioCodec='{5}', audioChannels='{6}' WHERE idFile={0}",
-              fileID,
-              Util.Utils.MakeFileName(mInfo.VideoCodec),
-              mInfo.VideoResolution,
-              mInfo.AspectRatio,
-              subtitles,
-              Util.Utils.MakeFileName(mInfo.AudioCodec),
-              mInfo.AudioChannelsFriendly);
+              return;
           }
 
-          // Prevent empty record for future or unknown codecs
-          if (mInfo.VideoCodec == string.Empty)
-          {
-            return;
-          }
+          strSQL = string.Format(results.Rows.Count == 0 ? 
+                "INSERT INTO filesmediainfo (idFile, videoCodec, videoResolution, aspectRatio, hasSubtitles, audioCodec, audioChannels) VALUES({0},'{1}','{2}','{3}',{4},'{5}','{6}')" : 
+                "UPDATE filesmediainfo SET videoCodec='{1}', videoResolution='{2}', aspectRatio='{3}', hasSubtitles='{4}', audioCodec='{5}', audioChannels='{6}' WHERE idFile={0}",
+                fileID, 
+                Util.Utils.MakeFileName(video.Format), 
+                video.Resolution, 
+                video.AspectRatio, 
+                subtitles, 
+                Util.Utils.MakeFileName(audio != null ? audio.Format : string.Empty), 
+                audio != null ? audio.AudioChannelsFriendly : "Mono");
 
+            // Prevent empty record for future or unknown codecs
           m_db.Execute(strSQL);
-          SetVideoDuration(fileID, mInfo.VideoDuration / 1000);
+          SetVideoDuration(fileID, mediaInfo.VideoDuration / 1000);
           ArrayList movieFiles = new ArrayList();
           int movieId = VideoDatabase.GetMovieId(strFilenameAndPath);
           VideoDatabase.GetFilesForMovie(movieId, ref movieFiles);

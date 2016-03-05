@@ -20,6 +20,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Globalization;
@@ -33,6 +34,7 @@ using DShowNET.Helper;
 using MediaPortal.Configuration;
 using MediaPortal.ExtensionMethods;
 using MediaPortal.GUI.Library;
+using MediaPortal.Player.MediaInfo;
 using MediaPortal.Profile;
 using MediaPortal.Util;
 using MediaPortal.Player.PostProcessing;
@@ -156,6 +158,32 @@ namespace MediaPortal.Player
     protected bool _cyberlinkDVDNavigator = false;
 
     protected ArrayList _mouseMsg;
+
+    private readonly Dictionary<DvdAudioFormat, string> _dvdAudioFormat = new Dictionary<DvdAudioFormat, string>
+    {
+      { DvdAudioFormat.AC3, "AC-3" },
+      { DvdAudioFormat.DTS, "DTS" },
+      { DvdAudioFormat.LPCM, "LPCM" },
+      { DvdAudioFormat.MPEG1, "MPEG Audio" },
+      { DvdAudioFormat.MPEG1_DRC, "MPEG Audio" },
+      { DvdAudioFormat.MPEG2, "MPEG Audio" },
+      { DvdAudioFormat.MPEG2_DRC, "MPEG Audio" },
+      { DvdAudioFormat.Other, "" },
+      { DvdAudioFormat.SDDS, "SDDS" },
+    };
+
+    private readonly Dictionary<DvdAudioFormat, AudioCodec> _dvdAudioCodec = new Dictionary<DvdAudioFormat, AudioCodec>
+    {
+      { DvdAudioFormat.AC3, AudioCodec.A_AC3 },
+      { DvdAudioFormat.DTS, AudioCodec.A_DTS },
+      { DvdAudioFormat.LPCM, AudioCodec.A_PCM_INT_BIG },
+      { DvdAudioFormat.MPEG1, AudioCodec.A_MPEG_L1 },
+      { DvdAudioFormat.MPEG1_DRC, AudioCodec.A_MPEG_L1 },
+      { DvdAudioFormat.MPEG2, AudioCodec.A_MPEG_L2 },
+      { DvdAudioFormat.MPEG2_DRC, AudioCodec.A_MPEG_L2 },
+      { DvdAudioFormat.Other, AudioCodec.A_UNDEFINED },
+      { DvdAudioFormat.SDDS, AudioCodec.A_UNDEFINED },
+    };
 
     public DVDPlayer() {}
 
@@ -2177,5 +2205,107 @@ namespace MediaPortal.Player
     }
 
     protected virtual void Repaint() {}
+
+    public override AudioStream BestAudio
+    {
+      get { return GetCurrentAudio(); }
+    }
+
+    private AudioStream GetCurrentAudio()
+    {
+      DvdAudioAttributes attr;
+      var hr = _dvdInfo.GetAudioAttributes(CurrentAudioStream, out attr);
+      if (hr == 0)
+      {
+        return new AudioStream(CurrentAudioStream)
+        {
+          Channel = attr.bNumberOfChannels,
+          Format = _dvdAudioFormat[attr.AudioFormat],
+          Codec = _dvdAudioCodec[attr.AudioFormat],
+          SamplingRate = attr.dwFrequency,
+          BitDepth = attr.bQuantization,
+          Lcid = attr.Language
+        };
+      }
+
+      return null;
+    }
+
+    public override AudioStream CurrentAudio
+    {
+      get { return GetCurrentAudio(); }
+    }
+
+    public override int VideoStreams
+    {
+      get
+      {
+        int anglesAvailable, currentAngle;
+        var hr = _dvdInfo.GetCurrentAngle(out anglesAvailable, out currentAngle);
+        return hr == 0 ? anglesAvailable : 1;
+      }
+    }
+
+    public override int CurrentVideoStream
+    {
+      get
+      {
+        int anglesAvailable, currentAngle;
+        var hr = _dvdInfo.GetCurrentAngle(out anglesAvailable, out currentAngle);
+        return hr == 0 ? currentAngle : 0;
+      }
+      set
+      {
+        try
+        {
+          var hr = _dvdCtrl.SelectAngle(value, DvdCmdFlags.None, out _cmdOption);
+          if (hr != 0)
+          {
+            Log.Error("DVDPlayer:Failed to set angle to {0} with error code:{1}", value, hr);
+          }
+        }
+        catch { }
+      }
+    }
+
+    private VideoStream GetCurrentVideo()
+    {
+      DvdVideoAttributes attr;
+      var hr = _dvdInfo.GetCurrentVideoAttributes(out attr);
+      if (hr == 0)
+      {
+        return new VideoStream(CurrentAudioStream)
+        {
+          AspectRatio = attr.aspectX == 4 && attr.aspectY == 3 ? AspectRatio.Tv : AspectRatio.HighDefinitionTv,
+          Codec = attr.compression == DvdVideoCompression.Mpeg1 ? VideoCodec.V_MPEG1 : VideoCodec.V_MPEG2,
+          Format = "MPEG Video",
+          Height = attr.sourceResolutionY,
+          Width = attr.sourceResolutionX,
+          Stereoscopic = StereoMode.Mono,
+          Interlaced = attr.sourceResolutionY < 576,
+          Default = true,
+        };
+      }
+
+      return null;
+    }
+
+    public override VideoStream BestVideo
+    {
+      get { return GetCurrentVideo(); }
+    }
+
+    public override VideoStream CurrentVideo
+    {
+      get { return GetCurrentVideo(); }
+    }
+
+    public override int EditionStreams { get { return 0; } }
+
+    public override int CurrentEditionStream
+    {
+      get { return 0; }
+      set { }
+    }
   }
 }

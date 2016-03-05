@@ -22,6 +22,8 @@ using System;
 using System.Drawing;
 using System.Windows.Forms;
 using MediaPortal.GUI.Library;
+using MediaPortal.Player.MediaInfo;
+
 using Action = MediaPortal.GUI.Library.Action;
 using MediaPortal.Player.Subtitles;
 
@@ -463,10 +465,7 @@ namespace MediaPortal.Player
     /// <summary>
     /// Property which should return true if the player is capable of rendering video
     /// </summary>
-    public virtual bool HasVideo
-    {
-      get { return false; }
-    }
+    public abstract bool HasVideo { get; }
 
     /// <summary>
     /// Property which should return true if the player is capable of rendering vizualization
@@ -485,33 +484,23 @@ namespace MediaPortal.Player
     /// <summary>
     /// Property which returns the total number of audio streams available
     /// </summary>
-    public virtual int AudioStreams
-    {
-      get { return 1; }
-    }
+    public abstract int AudioStreams { get; }
 
     /// <summary>
     /// Property to get/set the current audio stream
     /// </summary>
-    public virtual int CurrentAudioStream
-    {
-      get { return 0; }
-      set { }
-    }
+    public abstract int CurrentAudioStream { get; set; }
 
-    public virtual int EditionStreams
-    {
-      get { return 1; }
-    }
+    public abstract AudioStream CurrentAudio { get; }
+
+    public abstract AudioStream BestAudio { get; }
+
+    public abstract int EditionStreams { get; }
 
     /// <summary>
     /// Property to get/set the current edition stream
     /// </summary>
-    public virtual int CurrentEditionStream
-    {
-      get { return 0; }
-      set { }
-    }
+    public abstract int CurrentEditionStream { get; set; }
 
     /// <summary>
     /// Property to get the name for an edition stream
@@ -529,24 +518,21 @@ namespace MediaPortal.Player
       return Strings.Unknown;
     }
 
-    public virtual int VideoStreams
-    {
-      get { return 1; }
-    }
+    public abstract int VideoStreams { get; }
 
     /// <summary>
     /// Property to get/set the current Video stream
     /// </summary>
-    public virtual int CurrentVideoStream
-    {
-      get { return 0; }
-      set { }
-    }
+    public abstract int CurrentVideoStream { get; set; }
+
+    public abstract VideoStream CurrentVideo { get; }
+
+    public abstract VideoStream BestVideo { get; }
 
     /// <summary>
     /// Property to get the name for an Video stream
     /// </summary>
-    public virtual string VideoLanguage(int iStream)
+    public virtual string VideoName(int iStream)
     {
       return Strings.Unknown;
     }
@@ -578,19 +564,12 @@ namespace MediaPortal.Player
     /// <summary>
     /// Property to get the total number of subtitle streams
     /// </summary>
-    public virtual int SubtitleStreams
-    {
-      get { return 0; }
-    }
+    public abstract int SubtitleStreams { get; }
 
     /// <summary>
     /// Property to get/set the current subtitle stream
     /// </summary>
-    public virtual int CurrentSubtitleStream
-    {
-      get { return 0; }
-      set { }
-    }
+    public abstract int CurrentSubtitleStream { get; set; }
 
     /// <summary>
     /// Property to get/set the language name for a subtitle stream

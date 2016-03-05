@@ -57,6 +57,9 @@ namespace MediaPortal.Util
 
     private List<GUIListItem> _cachedItems = new List<GUIListItem>();
     private string _cachedDir = null;
+    private List<string> ignoredItems = new List<string>();
+    private List<string> detectedItems = new List<string>();
+    internal static List<string> detectedItemsPath = new List<string>();
 
     public void LoadSettings(string section)
     {
@@ -186,6 +189,9 @@ namespace MediaPortal.Util
       currentShare = string.Empty;
       previousShare = string.Empty;
       m_strPreviousDir = string.Empty;
+      ignoredItems.Clear();
+      detectedItems.Clear();
+      detectedItemsPath.Clear();
     }
 
     public bool RequestPin(string folder)
@@ -1466,8 +1472,6 @@ namespace MediaPortal.Util
     /// </returns>
     public List<GUIListItem> GetRootExt()
     {
-      List<string> ignoredItems = new List<string>();
-
       List<GUIListItem> items = new List<GUIListItem>();
       foreach (Share share in m_shares)
       {
@@ -1522,12 +1526,26 @@ namespace MediaPortal.Util
           {
             isUNCNetwork = Util.Utils.IsUNCNetwork(Util.Utils.FindUNCPaths(item.Path));
 
-            pathOnline = !isUNCNetwork || UNCTools.IsUNCFileFolderOnline(item.Path);
+            if (!detectedItems.Contains(serverName))
+            {
+              pathOnline = !isUNCNetwork || UNCTools.IsUNCFileFolderOnline(item.Path);
+            }
+            else
+            {
+              pathOnline = true;
+            }
 
             if (!pathOnline)
             {
-              ignoredItems.Add(serverName);
-              Log.Debug("GetRootExt(): '{0}' is offline. Added to the ignored list.", serverName);
+              if (!ignoredItems.Contains(serverName))
+              {
+                ignoredItems.Add(serverName);
+                Log.Debug("GetRootExt(): '{0}' is offline. Added to the ignored list.", serverName);
+              }
+            }
+            else if (!detectedItems.Contains(serverName))
+            {
+              detectedItems.Add(serverName);
             }
           }
 

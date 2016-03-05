@@ -280,9 +280,9 @@
     <Reference Include="System.Xml">
       <Name>System.XML</Name>
     </Reference>
-    <Reference Include="taglib-sharp, Version=2.0.3.8, Culture=neutral, PublicKeyToken=db62eba44689b5b0, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Packages\MediaPortal.TagLib.2.0.3.8\lib\taglib-sharp.dll</HintPath>
+    <Reference Include="taglib-sharp, Version=2.1.0.1, Culture=neutral, PublicKeyToken=db62eba44689b5b0, processorArchitecture=x86">
+      <HintPath>..\..\Packages\MediaPortal.TagLib.2.1.0.1\lib\net40\taglib-sharp.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="WindowsBase" />
   </ItemGroup>
@@ -370,6 +370,9 @@
     <Compile Include="guilib\ViewHandler.cs" />
     <Compile Include="guilib\XMLSkinFunctionAttribute.cs" />
     <Compile Include="MusicPlayer\BASS\MixerStream.cs" />
+    <Compile Include="Player\BaseAudioPlayer.cs" />
+    <Compile Include="Player\BaseDirectShowVideoPlayer.cs" />
+    <Compile Include="Player\BaseExternalMusicPlayer.cs" />
     <Compile Include="Player\BDOSDRenderer.cs" />
     <Compile Include="Player\BDPlayer.cs" />
     <Compile Include="Mixer\MasterVolumeHelper.cs" />
@@ -378,6 +381,7 @@
     <Compile Include="MusicPlayer\BASS\Enums.cs" />
     <Compile Include="MusicPlayer\BASS\MusicStream.cs" />
     <Compile Include="MusicPlayer\BASS\Utils.cs" />
+    <Compile Include="Player\DirectShowHelper.cs" />
     <Compile Include="Player\FFDShow\FFDShowEngine.cs" />
     <Compile Include="Player\FFDShow\FFDShowReceiver.cs">
       <SubType>Form</SubType>
@@ -387,7 +391,14 @@
     <Compile Include="Player\FFDShow\Interfaces\IffdshowBase.cs" />
     <Compile Include="Player\FFDShow\Interfaces\IffdshowDec.cs" />
     <Compile Include="Player\FFDShow\Interfaces\IffdshowDecVideo.cs" />
-    <Compile Include="Player\MediaInfoWrapper.cs" />
+    <Compile Include="Player\MediaInfo\AudioStream.cs" />
+    <Compile Include="Player\MediaInfo\LanguageMediaStream.cs" />
+    <Compile Include="Player\MediaInfo\MediaInfo.cs" />
+    <Compile Include="Player\MediaInfo\MediaInfoWrapper.cs" />
+    <Compile Include="Player\MediaInfo\MediaStream.cs" />
+    <Compile Include="Player\MediaInfo\MenuStream.cs" />
+    <Compile Include="Player\MediaInfo\SubtitleStream.cs" />
+    <Compile Include="Player\MediaInfo\VideoStream.cs" />
     <Compile Include="Player\PostProcessing\PostProcessingEngine.cs" />
     <Compile Include="Player\RefreshRateChanger.cs" />
     <Compile Include="guilib\Tween.cs" />
@@ -420,7 +431,6 @@
     <Compile Include="Player\DummyPlayerFactory.cs" />
     <Compile Include="Player\IMPAudioSwitcher.cs" />
     <Compile Include="Player\IPlayerFactory.cs" />
-    <Compile Include="Player\MediaInfo.cs" />
     <Compile Include="Player\Subtitles\DirectVobSubEngine.cs" />
     <Compile Include="Player\FFDShow\FFDShowAPI.cs" />
     <Compile Include="Player\FFDShow\FFDShowConstants.cs" />
@@ -531,6 +541,7 @@
     <Compile Include="TagReader\CUE\CueTrackFileStringBuilder.cs" />
     <Compile Include="TagReader\CUE\CueUtil.cs" />
     <Compile Include="TagReader\CUE\ICueTrackFileBuilder.cs" />
+    <Compile Include="TagReader\CUE\TagCache.cs" />
     <Compile Include="TagReader\ITag.cs" />
     <Compile Include="TagReader\Utils.cs" />
     <Compile Include="Transcoding\TSReader2WMV.cs" />

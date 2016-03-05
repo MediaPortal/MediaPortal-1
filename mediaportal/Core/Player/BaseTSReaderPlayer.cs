@@ -35,6 +35,8 @@ using MediaPortal.Player.PostProcessing;
 using System.Collections;
 using System.Collections.Generic;
 
+using MediaPortal.Player.MediaInfo;
+
 namespace MediaPortal.Player
 {
   [ComVisible(true), ComImport,
@@ -62,7 +64,7 @@ namespace MediaPortal.Player
     int OnRequestAudioChange();
   }
 
-  internal class BaseTSReaderPlayer : IPlayer, ITSReaderCallback, ITSReaderCallbackAudioChange
+  internal class BaseTSReaderPlayer : BaseDirectShowVideoPlayer, ITSReaderCallback, ITSReaderCallbackAudioChange
   {
     [Guid("b9559486-E1BB-45D3-A2A2-9A7AFE49B24F"),
      InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
@@ -134,7 +136,6 @@ namespace MediaPortal.Player
     protected PlayState _state = PlayState.Init;
     protected int _volume = 100;
     protected int _volumeBeforeSeeking = 0;
-    protected IGraphBuilder _graphBuilder = null;
     protected IMediaSeeking _mediaSeeking = null;
     protected int _speed = 1;
     protected double _currentPos;
@@ -207,11 +208,14 @@ namespace MediaPortal.Player
     public TVFilterConfig filterConfig;
     public FilterCodec filterCodec;
 
+    protected object lockObj = new object();
+
     #endregion
 
     #region ctor/dtor
 
-    public BaseTSReaderPlayer()
+    public BaseTSReaderPlayer() 
+        : base()
     {
       _mediaType = g_Player.MediaType.Video;
       _videoFormat = new VideoStreamFormat();
@@ -569,6 +573,7 @@ namespace MediaPortal.Player
 
       Log.Info("TSReaderPlayer:play {0}", strFile);
       _isStarted = false;
+      MediaInfo = new MediaInfoWrapper(strFile);
       if (!GetInterfaces(strFile))
       {
         Log.Error("TSReaderPlayer:GetInterfaces() failed");
@@ -646,97 +651,100 @@ namespace MediaPortal.Player
 
     public override void SetVideoWindow()
     {
-      if (GUIGraphicsContext.IsFullScreenVideo != _isFullscreen)
+      lock (lockObj)
       {
-        _isFullscreen = GUIGraphicsContext.IsFullScreenVideo;
-        _updateNeeded = true;
-      }
+        if (GUIGraphicsContext.IsFullScreenVideo != _isFullscreen)
+        {
+          _isFullscreen = GUIGraphicsContext.IsFullScreenVideo;
+          _updateNeeded = true;
+        }
 
-      if (!_updateNeeded)
-      {
-        return;
-      }
-      _updateNeeded = false;
-      _isStarted = true;
-      float x = _positionX;
-      float y = _positionY;
-      int nw = _width;
-      int nh = _height;
-      if (nw > GUIGraphicsContext.OverScanWidth)
-      {
-        nw = GUIGraphicsContext.OverScanWidth;
-      }
-      if (nh > GUIGraphicsContext.OverScanHeight)
-      {
-        nh = GUIGraphicsContext.OverScanHeight;
-      }
-      if (GUIGraphicsContext.IsFullScreenVideo)
-      {
-        x = _positionX = GUIGraphicsContext.OverScanLeft;
-        y = _positionY = GUIGraphicsContext.OverScanTop;
-        nw = _width = GUIGraphicsContext.OverScanWidth;
-        nh = _height = GUIGraphicsContext.OverScanHeight;
-      }
-      /*			Log.Info("{0},{1}-{2},{3}  vidwin:{4},{5}-{6},{7} fs:{8}", x,y,nw,nh, 
+        if (!_updateNeeded)
+        {
+          return;
+        }
+        _updateNeeded = false;
+        _isStarted = true;
+        float x = _positionX;
+        float y = _positionY;
+        int nw = _width;
+        int nh = _height;
+        if (nw > GUIGraphicsContext.OverScanWidth)
+        {
+          nw = GUIGraphicsContext.OverScanWidth;
+        }
+        if (nh > GUIGraphicsContext.OverScanHeight)
+        {
+          nh = GUIGraphicsContext.OverScanHeight;
+        }
+        if (GUIGraphicsContext.IsFullScreenVideo)
+        {
+          x = _positionX = GUIGraphicsContext.OverScanLeft;
+          y = _positionY = GUIGraphicsContext.OverScanTop;
+          nw = _width = GUIGraphicsContext.OverScanWidth;
+          nh = _height = GUIGraphicsContext.OverScanHeight;
+        }
+        /*			Log.Info("{0},{1}-{2},{3}  vidwin:{4},{5}-{6},{7} fs:{8}", x,y,nw,nh, 
               GUIGraphicsContext.VideoWindow.Left,
               GUIGraphicsContext.VideoWindow.Top,
               GUIGraphicsContext.VideoWindow.Right,
               GUIGraphicsContext.VideoWindow.Bottom,
               GUIGraphicsContext.IsFullScreenVideo);*/
-      if (nw <= 0 || nh <= 0)
-      {
-        return;
+        if (nw <= 0 || nh <= 0)
+        {
+          return;
+        }
+        if (x < 0 || y < 0)
+        {
+          return;
+        }
+        int aspectX, aspectY;
+        if (_basicVideo != null)
+        {
+          _basicVideo.GetVideoSize(out _videoWidth, out _videoHeight);
+        }
+        aspectX = _videoWidth;
+        aspectY = _videoHeight;
+        if (_basicVideo != null)
+        {
+          _basicVideo.GetPreferredAspectRatio(out aspectX, out aspectY);
+        }
+        GUIGraphicsContext.VideoSize = new Size(_videoWidth, _videoHeight);
+        _aspectX = aspectX;
+        _aspectY = aspectY;
+        Geometry m_geometry = new Geometry();
+        Rectangle rSource, rDest;
+        m_geometry.ImageWidth = _videoWidth;
+        m_geometry.ImageHeight = _videoHeight;
+        m_geometry.ScreenWidth = nw;
+        m_geometry.ScreenHeight = nh;
+        m_geometry.ARType = GUIGraphicsContext.ARType;
+        m_geometry.PixelRatio = GUIGraphicsContext.PixelRatio;
+        m_geometry.GetWindow(aspectX, aspectY, out rSource, out rDest);
+        rDest.X += (int) x;
+        rDest.Y += (int) y;
+        Log.Info("overlay: video WxH  : {0}x{1}", _videoWidth, _videoHeight);
+        Log.Info("overlay: video AR   : {0}:{1}", aspectX, aspectY);
+        Log.Info("overlay: screen WxH : {0}x{1}", nw, nh);
+        Log.Info("overlay: AR type    : {0}", GUIGraphicsContext.ARType);
+        Log.Info("overlay: PixelRatio : {0}", GUIGraphicsContext.PixelRatio);
+        Log.Info("overlay: src        : ({0},{1})-({2},{3})",
+          rSource.X, rSource.Y, rSource.X + rSource.Width, rSource.Y + rSource.Height);
+        Log.Info("overlay: dst        : ({0},{1})-({2},{3})",
+          rDest.X, rDest.Y, rDest.X + rDest.Width, rDest.Y + rDest.Height);
+        Log.Info("TSStreamBufferPlayer:Window ({0},{1})-({2},{3}) - ({4},{5})-({6},{7})",
+          rSource.X, rSource.Y, rSource.Right, rSource.Bottom,
+          rDest.X, rDest.Y, rDest.Right, rDest.Bottom);
+        if (rSource.Y == 0)
+        {
+          rSource.Y += 5;
+          rSource.Height -= 10;
+        }
+        SetSourceDestRectangles(rSource, rDest);
+        SetVideoPosition(rDest);
+        _sourceRectangle = rSource;
+        _videoRectangle = rDest;
       }
-      if (x < 0 || y < 0)
-      {
-        return;
-      }
-      int aspectX, aspectY;
-      if (_basicVideo != null)
-      {
-        _basicVideo.GetVideoSize(out _videoWidth, out _videoHeight);
-      }
-      aspectX = _videoWidth;
-      aspectY = _videoHeight;
-      if (_basicVideo != null)
-      {
-        _basicVideo.GetPreferredAspectRatio(out aspectX, out aspectY);
-      }
-      GUIGraphicsContext.VideoSize = new Size(_videoWidth, _videoHeight);
-      _aspectX = aspectX;
-      _aspectY = aspectY;
-      Geometry m_geometry = new Geometry();
-      Rectangle rSource, rDest;
-      m_geometry.ImageWidth = _videoWidth;
-      m_geometry.ImageHeight = _videoHeight;
-      m_geometry.ScreenWidth = nw;
-      m_geometry.ScreenHeight = nh;
-      m_geometry.ARType = GUIGraphicsContext.ARType;
-      m_geometry.PixelRatio = GUIGraphicsContext.PixelRatio;
-      m_geometry.GetWindow(aspectX, aspectY, out rSource, out rDest);
-      rDest.X += (int)x;
-      rDest.Y += (int)y;
-      Log.Info("overlay: video WxH  : {0}x{1}", _videoWidth, _videoHeight);
-      Log.Info("overlay: video AR   : {0}:{1}", aspectX, aspectY);
-      Log.Info("overlay: screen WxH : {0}x{1}", nw, nh);
-      Log.Info("overlay: AR type    : {0}", GUIGraphicsContext.ARType);
-      Log.Info("overlay: PixelRatio : {0}", GUIGraphicsContext.PixelRatio);
-      Log.Info("overlay: src        : ({0},{1})-({2},{3})",
-               rSource.X, rSource.Y, rSource.X + rSource.Width, rSource.Y + rSource.Height);
-      Log.Info("overlay: dst        : ({0},{1})-({2},{3})",
-               rDest.X, rDest.Y, rDest.X + rDest.Width, rDest.Y + rDest.Height);
-      Log.Info("TSStreamBufferPlayer:Window ({0},{1})-({2},{3}) - ({4},{5})-({6},{7})",
-               rSource.X, rSource.Y, rSource.Right, rSource.Bottom,
-               rDest.X, rDest.Y, rDest.Right, rDest.Bottom);
-      if (rSource.Y == 0)
-      {
-        rSource.Y += 5;
-        rSource.Height -= 10;
-      }
-      SetSourceDestRectangles(rSource, rDest);
-      SetVideoPosition(rDest);
-      _sourceRectangle = rSource;
-      _videoRectangle = rDest;
     }
 
     public override bool Ended
@@ -966,7 +974,7 @@ namespace MediaPortal.Player
               if (hr != 0)
               {
                 IMediaSeeking oldMediaSeek = _graphBuilder as IMediaSeeking;
-                hr = oldMediaSeek.SetRate((double)iSpeed);
+                if (oldMediaSeek != null) hr = oldMediaSeek.SetRate((double)iSpeed);
 
                 setRateFailed = true;
                 _usingFastSeeking = false;
@@ -1735,9 +1743,22 @@ namespace MediaPortal.Player
     }
 
     /// <summary> create the used COM components and get the interfaces. </summary>
-    protected virtual bool GetInterfaces(string filename) { return true; }
+    protected virtual bool GetInterfaces(string filename)
+    {
+      DirectShowHelper.AnalyseStreams(_graphBuilder);
+      // TsReader filter does not report about video streams
+      if (VideoStreams == 0)
+      {
+        AddCustomVideoStream(MediaInfo.BestVideoStream, 0, "TsReader");
+      }
 
-    protected virtual void CloseInterfaces() { }
+      return true;
+    }
+
+    protected virtual void CloseInterfaces()
+    {
+        ClearStreams();
+    }
 
     private void OnGraphNotify()
     {
@@ -2095,5 +2116,21 @@ namespace MediaPortal.Player
     }
 
     #endregion
+
+    public override int SubtitleStreams { get { return 0; } }
+
+    public override int CurrentSubtitleStream
+    {
+      get { return 0; }
+      set { }
+    }
+
+    public override int EditionStreams { get { return 0; } }
+
+    public override int CurrentEditionStream
+    {
+      get { return 0; }
+      set { }
+    }
   }
 }

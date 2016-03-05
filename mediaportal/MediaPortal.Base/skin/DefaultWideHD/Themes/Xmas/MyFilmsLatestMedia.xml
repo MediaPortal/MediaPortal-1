@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!--version="1.0" encoding="utf-8" standalone="yes"-->
+<window>
+  <controls>
+    <!--     *******************************************************************************************  -->
+    <!--     *************************   RECENTLY ADDED - MyFilms   ****************************  -->
+    <!--     *******************************************************************************************  -->
+    <control>
+      <description>Recently Added group</description>
+      <type>group</type>
+      <animation effect="fade" start="0" end="100" time="100">WindowOpen</animation>
+      <animation effect="fade" start="100" end="0" time="100">WindowClose</animation>
+      <visible>Control.isvisible(40)+plugin.isenabled(Latest Media Handler)+plugin.isenabled(MyFilms)+string.equals(#latestMediaHandler.myfilms.latest.enabled,True)+[string.equals(#latestMediaHandler.myfilms.latest1.title)|string.equals(#latestMediaHandler.myfilms.latest2.title)|string.equals(#latestMediaHandler.myfilms.latest3.title)]</visible>
+      <!-- <control>
+                  <description>background for recently added files</description>
+                  <type>image</type>
+                  <id>0</id>
+                  <posX>370</posX>
+                  <posY>580</posY>
+                  <width>1220</width>
+                  <height>150</height>
+                  <texture>list_sub_focus.png</texture>
+                  <colordiffuse>ccffffff</colordiffuse>
+                  <visible>plugin.isenabled(Latest Media Handler)+plugin.isenabled(MyFilms)+string.equals(#latestMediaHandler.myfilms.latest.enabled,True)+!Player.hasmedia</visible>
+                </control> -->
+      <control>
+        <description>Recently Added label</description>
+        <type>fadelabel</type>
+        <id>0</id>
+        <posX>1095</posX>
+        <posY>645</posY>
+        <width>780</width>
+        <label>#(L(4558)):</label>
+        <align>left</align>
+        <font>font12</font>
+        <textcolor>ffffd700</textcolor>
+      </control>
+      <control>
+        <description>MyFilms Latest Title 1</description>
+        <type>fadelabel</type>
+        <id>0</id>
+        <posX>1095</posX>
+        <posY>705</posY>
+        <width>780</width>
+        <label>#latestMediaHandler.myfilms.latest1.dateAdded: #latestMediaHandler.myfilms.latest1.title (#latestMediaHandler.myfilms.latest1.year) - #latestMediaHandler.myfilms.latest1.runtime #myfilms.db.length.unit - #latestMediaHandler.myfilms.latest1.genre</label>
+        <align>left</align>
+        <font>font11</font>
+        <visible>string.equals(#latestMediaHandler.myfilms.latest1.title)</visible>
+        <textcolor>ffffd700</textcolor>
+      </control>
+      <control>
+        <description>MyFilms Latest Title 2</description>
+        <type>fadelabel</type>
+        <id>0</id>
+        <posX>1095</posX>
+        <posY>750</posY>
+        <width>780</width>
+        <label>#latestMediaHandler.myfilms.latest2.dateAdded: #latestMediaHandler.myfilms.latest2.title (#latestMediaHandler.myfilms.latest2.year) - #latestMediaHandler.myfilms.latest2.runtime #myfilms.db.length.unit - #latestMediaHandler.myfilms.latest2.genre</label>
+        <align>left</align>
+        <font>font11</font>
+        <visible>string.equals(#latestMediaHandler.myfilms.latest2.title)</visible>
+        <textcolor>ffffd700</textcolor>
+      </control>
+      <control>
+        <description>MyFilms Latest Title 3</description>
+        <type>fadelabel</type>
+        <id>0</id>
+        <posX>1095</posX>
+        <posY>795</posY>
+        <width>780</width>
+        <label>#latestMediaHandler.myfilms.latest3.dateAdded: #latestMediaHandler.myfilms.latest3.title (#latestMediaHandler.myfilms.latest3.year) - #latestMediaHandler.myfilms.latest3.runtime #myfilms.db.length.unit - #latestMediaHandler.myfilms.latest3.genre</label>
+        <align>left</align>
+        <font>font11</font>
+        <visible>string.equals(#latestMediaHandler.myfilms.latest3.title)</visible>
+        <textcolor>ffffd700</textcolor>
+      </control>
+      <control>
+        <description>Missing Cover1</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>1095</posX>
+        <posY>420</posY>
+        <width>120</width>
+        <height>174</height>
+        <texture mask="videothumbmask.png">MyFilms\myfilms_latest_nocover.png</texture>
+        <shouldCache>true</shouldCache>
+        <visible>string.equals(#latestMediaHandler.myfilms.latest1.title)</visible>
+      </control>
+      <control>
+        <description>Cover1</description>
+        <type>image</type>
+        <id>1</id>
+        <posX>1095</posX>
+        <posY>420</posY>
+        <width>120</width>
+        <height>174</height>
+        <texture mask="videothumbmask.png">#latestMediaHandler.myfilms.latest1.poster</texture>
+        <shouldCache>true</shouldCache>
+        <visible>string.equals(#latestMediaHandler.myfilms.latest1.title)</visible>
+      </control>
+      <control>
+        <description>Frame Cover 1</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>1095</posX>
+        <posY>420</posY>
+        <width>120</width>
+        <height>174</height>
+        <texture>Videothumbframe.png</texture>
+        <align>left</align>
+        <visible>string.equals(#latestMediaHandler.myfilms.latest1.title)</visible>
+        <textcolor>ffffd700</textcolor>
+      </control>
+      <control>
+        <description>Missing Cover2</description>
+        <type>image</type>
+        <id>1</id>
+        <posX>1245</posX>
+        <posY>420</posY>
+        <width>120</width>
+        <height>174</height>
+        <texture mask="videothumbmask.png">MyFilms\myfilms_latest_nocover.png</texture>
+        <visible>string.equals(#latestMediaHandler.myfilms.latest2.title)</visible>
+      </control>
+      <control>
+        <description>Cover2</description>
+        <type>image</type>
+        <id>1</id>
+        <posX>1245</posX>
+        <posY>420</posY>
+        <width>120</width>
+        <height>174</height>
+        <texture mask="videothumbmask.png">#latestMediaHandler.myfilms.latest2.poster</texture>
+        <visible>string.equals(#latestMediaHandler.myfilms.latest2.title)</visible>
+      </control>
+      <control>
+        <description>Overlay Cover 2</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>1245</posX>
+        <posY>420</posY>
+        <width>120</width>
+        <height>174</height>
+        <texture>Videothumbframe.png</texture>
+        <align>left</align>
+        <visible>string.equals(#latestMediaHandler.myfilms.latest2.title)</visible>
+        <textcolor>ffffd700</textcolor>
+      </control>
+      <control>
+        <description>Missing Cover3</description>
+        <type>image</type>
+        <id>1</id>
+        <posX>1395</posX>
+        <posY>420</posY>
+        <width>120</width>
+        <height>174</height>
+        <texture mask="videothumbmask.png">MyFilms\myfilms_latest_nocover.png</texture>
+        <shouldCache>true</shouldCache>
+        <visible>string.equals(#latestMediaHandler.myfilms.latest3.title)</visible>
+      </control>
+      <control>
+        <description>Cover3</description>
+        <type>image</type>
+        <id>1</id>
+        <posX>1395</posX>
+        <posY>420</posY>
+        <width>120</width>
+        <height>174</height>
+        <texture mask="videothumbmask.png">#latestMediaHandler.myfilms.latest3.poster</texture>
+        <shouldCache>true</shouldCache>
+        <visible>string.equals(#latestMediaHandler.myfilms.latest3.title)</visible>
+      </control>
+      <control>
+        <description>Frame Cover 3</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>1395</posX>
+        <posY>420</posY>
+        <width>120</width>
+        <height>174</height>
+        <texture>Videothumbframe.png</texture>
+        <align>left</align>
+        <visible>string.equals(#latestMediaHandler.myfilms.latest3.title)</visible>
+        <textcolor>ffffd700</textcolor>
+      </control>
+    </control>
+  </controls>
+</window>

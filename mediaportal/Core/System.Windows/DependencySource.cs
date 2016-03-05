@@ -24,8 +24,6 @@ namespace System.Windows
   {
     #region Constructors
 
-    private DependencySource() {}
-
     public DependencySource(DependencyObject dependencyObject, DependencyProperty dependencyProperty)
     {
       _dependencyObject = dependencyObject;

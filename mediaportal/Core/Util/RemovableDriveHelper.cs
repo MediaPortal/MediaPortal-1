@@ -619,14 +619,6 @@ namespace MediaPortal.Util
       int dnDevInst,
       int ulFlags);
 
-    [DllImport("setupapi.dll", CharSet = CharSet.Auto)]
-    private static extern int CM_Get_Device_ID(
-      IntPtr dnDevInst,
-      IntPtr Buffer,
-      int BufferLen,
-      int ulFlags
-      );
-
     [DllImport("setupapi.dll")]
     private static extern int CM_Request_Device_Eject(
       int dnDevInst,

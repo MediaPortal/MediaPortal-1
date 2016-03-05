@@ -66,6 +66,7 @@ namespace MediaPortal.Configuration.Sections
     private MPButton bttnClearBlacklistedThumbs;
     private Label labelPrerecord;
     private NumericUpDown numericpreRecordInterval;
+    private MPCheckBox checkBoxPictureThumbs;
     private TrackBar trackBarQuality;
 
     public GuiThumbs()
@@ -96,6 +97,7 @@ namespace MediaPortal.Configuration.Sections
         trackBarQuality.Value = xmlreader.GetValueAsInt("thumbnails", "quality", 3);
         checkBoxFolderThumbOnDemand.Checked = xmlreader.GetValueAsBool("thumbnails", "musicfolderondemand", true);
         checkBoxPicThumbOnDemand.Checked = xmlreader.GetValueAsBool("thumbnails", "picturenolargethumbondemand", false);
+        checkBoxPictureThumbs.Checked = xmlreader.GetValueAsBool("thumbnails", "pictureAutoCreateThumbs", true);
         checkBoxVideoThumbs.Checked = xmlreader.GetValueAsBool("thumbnails", "videoondemand", true);
         checkBoxShareThumb.Checked = xmlreader.GetValueAsBool("thumbnails", "videosharepreview", false);
         numericUpDownThumbColumns.Value = xmlreader.GetValueAsInt("thumbnails", "videothumbcols", 1);
@@ -111,6 +113,7 @@ namespace MediaPortal.Configuration.Sections
         xmlwriter.SetValue("thumbnails", "quality", trackBarQuality.Value);
         xmlwriter.SetValueAsBool("thumbnails", "musicfolderondemand", checkBoxFolderThumbOnDemand.Checked);
         xmlwriter.SetValueAsBool("thumbnails", "picturenolargethumbondemand", checkBoxPicThumbOnDemand.Checked);
+        xmlwriter.SetValueAsBool("thumbnails", "pictureAutoCreateThumbs", checkBoxPictureThumbs.Checked);
         xmlwriter.SetValueAsBool("thumbnails", "videoondemand", checkBoxVideoThumbs.Checked);
         xmlwriter.SetValueAsBool("thumbnails", "videosharepreview", checkBoxShareThumb.Checked);
         xmlwriter.SetValue("thumbnails", "videothumbcols", numericUpDownThumbColumns.Value);
@@ -236,6 +239,7 @@ namespace MediaPortal.Configuration.Sections
       this.labelLow = new MediaPortal.UserInterface.Controls.MPLabel();
       this.labelQualityHint = new MediaPortal.UserInterface.Controls.MPLabel();
       this.trackBarQuality = new System.Windows.Forms.TrackBar();
+      this.checkBoxPictureThumbs = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.groupBoxVideoThumbs.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.numericpreRecordInterval)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownThumbRows)).BeginInit();
@@ -261,9 +265,9 @@ namespace MediaPortal.Configuration.Sections
       this.groupBoxVideoThumbs.Controls.Add(this.buttonClearVideoThumbs);
       this.groupBoxVideoThumbs.Controls.Add(this.checkBoxVideoThumbs);
       this.groupBoxVideoThumbs.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.groupBoxVideoThumbs.Location = new System.Drawing.Point(6, 264);
+      this.groupBoxVideoThumbs.Location = new System.Drawing.Point(6, 280);
       this.groupBoxVideoThumbs.Name = "groupBoxVideoThumbs";
-      this.groupBoxVideoThumbs.Size = new System.Drawing.Size(462, 141);
+      this.groupBoxVideoThumbs.Size = new System.Drawing.Size(462, 124);
       this.groupBoxVideoThumbs.TabIndex = 7;
       this.groupBoxVideoThumbs.TabStop = false;
       this.groupBoxVideoThumbs.Text = "Videos thumbs";
@@ -305,7 +309,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.mpLabel1.Anchor = System.Windows.Forms.AnchorStyles.None;
       this.mpLabel1.AutoSize = true;
-      this.mpLabel1.Location = new System.Drawing.Point(217, 10);
+      this.mpLabel1.Location = new System.Drawing.Point(217, 1);
       this.mpLabel1.Name = "mpLabel1";
       this.mpLabel1.Size = new System.Drawing.Size(106, 13);
       this.mpLabel1.TabIndex = 13;
@@ -315,7 +319,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.labelRows.Anchor = System.Windows.Forms.AnchorStyles.None;
       this.labelRows.AutoSize = true;
-      this.labelRows.Location = new System.Drawing.Point(217, 63);
+      this.labelRows.Location = new System.Drawing.Point(217, 54);
       this.labelRows.Name = "labelRows";
       this.labelRows.Size = new System.Drawing.Size(81, 13);
       this.labelRows.TabIndex = 12;
@@ -348,7 +352,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.labelCol.Anchor = System.Windows.Forms.AnchorStyles.None;
       this.labelCol.AutoSize = true;
-      this.labelCol.Location = new System.Drawing.Point(217, 35);
+      this.labelCol.Location = new System.Drawing.Point(217, 26);
       this.labelCol.Name = "labelCol";
       this.labelCol.Size = new System.Drawing.Size(98, 13);
       this.labelCol.TabIndex = 10;
@@ -417,19 +421,20 @@ namespace MediaPortal.Configuration.Sections
       // groupBoxPictureThumbs
       // 
       this.groupBoxPictureThumbs.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxPictureThumbs.Controls.Add(this.checkBoxPictureThumbs);
       this.groupBoxPictureThumbs.Controls.Add(this.buttonClearPictureThumbs);
       this.groupBoxPictureThumbs.Controls.Add(this.checkBoxPicThumbOnDemand);
       this.groupBoxPictureThumbs.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBoxPictureThumbs.Location = new System.Drawing.Point(241, 185);
       this.groupBoxPictureThumbs.Name = "groupBoxPictureThumbs";
-      this.groupBoxPictureThumbs.Size = new System.Drawing.Size(227, 74);
+      this.groupBoxPictureThumbs.Size = new System.Drawing.Size(227, 93);
       this.groupBoxPictureThumbs.TabIndex = 6;
       this.groupBoxPictureThumbs.TabStop = false;
       this.groupBoxPictureThumbs.Text = "Picture thumbs";
       // 
       // buttonClearPictureThumbs
       // 
-      this.buttonClearPictureThumbs.Location = new System.Drawing.Point(14, 42);
+      this.buttonClearPictureThumbs.Location = new System.Drawing.Point(14, 61);
       this.buttonClearPictureThumbs.Name = "buttonClearPictureThumbs";
       this.buttonClearPictureThumbs.Size = new System.Drawing.Size(178, 23);
       this.buttonClearPictureThumbs.TabIndex = 1;
@@ -456,14 +461,14 @@ namespace MediaPortal.Configuration.Sections
       this.groupBoxMusicThumbs.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBoxMusicThumbs.Location = new System.Drawing.Point(6, 185);
       this.groupBoxMusicThumbs.Name = "groupBoxMusicThumbs";
-      this.groupBoxMusicThumbs.Size = new System.Drawing.Size(227, 74);
+      this.groupBoxMusicThumbs.Size = new System.Drawing.Size(227, 93);
       this.groupBoxMusicThumbs.TabIndex = 5;
       this.groupBoxMusicThumbs.TabStop = false;
       this.groupBoxMusicThumbs.Text = "Music thumbs";
       // 
       // buttonClearMusicCache
       // 
-      this.buttonClearMusicCache.Location = new System.Drawing.Point(13, 42);
+      this.buttonClearMusicCache.Location = new System.Drawing.Point(14, 61);
       this.buttonClearMusicCache.Name = "buttonClearMusicCache";
       this.buttonClearMusicCache.Size = new System.Drawing.Size(178, 23);
       this.buttonClearMusicCache.TabIndex = 1;
@@ -658,6 +663,17 @@ namespace MediaPortal.Configuration.Sections
       this.trackBarQuality.Value = 3;
       this.trackBarQuality.ValueChanged += new System.EventHandler(this.trackBarQuality_ValueChanged);
       // 
+      // checkBoxPictureThumbs
+      // 
+      this.checkBoxPictureThumbs.AutoSize = true;
+      this.checkBoxPictureThumbs.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.checkBoxPictureThumbs.Location = new System.Drawing.Point(14, 38);
+      this.checkBoxPictureThumbs.Name = "checkBoxPictureThumbs";
+      this.checkBoxPictureThumbs.Size = new System.Drawing.Size(113, 17);
+      this.checkBoxPictureThumbs.TabIndex = 2;
+      this.checkBoxPictureThumbs.Text = "Autocreate thumbs";
+      this.checkBoxPictureThumbs.UseVisualStyleBackColor = true;
+      // 
       // GuiThumbs
       // 
       this.Controls.Add(this.groupBoxVideoThumbs);
@@ -725,11 +741,6 @@ namespace MediaPortal.Configuration.Sections
     }
 
     private void groupBoxVideoThumbs_Enter(object sender, EventArgs e)
-    {
-
-    }
-
-    private void label2_Click(object sender, EventArgs e)
     {
 
     }

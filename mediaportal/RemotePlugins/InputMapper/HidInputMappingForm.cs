@@ -738,8 +738,8 @@ namespace MediaPortal.InputDevices
               buttonName = nodeButton.Attributes["name"].Value;
             }
 
-            var background = "";
-            //Use code as name if no name attribute
+            //Get background attribute and default to false
+            var background = "";            
             if (nodeButton.Attributes["background"] == null)
             {
               background = "false";
@@ -749,8 +749,20 @@ namespace MediaPortal.InputDevices
               background = nodeButton.Attributes["background"].Value;
             }
 
+            //Get repeat attribute and default to false
+            var repeat = "";            
+            if (nodeButton.Attributes["repeat"] == null)
+            {
+              repeat = "false";
+            }
+            else
+            {
+              repeat = nodeButton.Attributes["repeat"].Value;
+            }
+
+
             var buttonNode = new TreeNode(buttonName);
-            var hbAttributes = new HidButtonAttributes(buttonName, nodeButton.Attributes["code"].Value, background);
+            var hbAttributes = new HidButtonAttributes(buttonName, nodeButton.Attributes["code"].Value, background, repeat);
             buttonNode.Tag = new NodeData("BUTTON", hbAttributes, null);
             remoteNode.Nodes.Add(buttonNode);
 
@@ -929,8 +941,19 @@ namespace MediaPortal.InputDevices
       catch (Exception ex)
       {
         Log.Error(ex);
-        File.Delete(pathCustom);
-        LoadMapping(xmlFile, true);
+        //Force loading defaults if we were not already doing it
+        if (!defaults)
+        {
+          //Possibly corrupted custom configuration
+          //Try loading the defaults then
+          LoadMapping(xmlFile, true);
+        }
+        else
+        {
+          //Loading the default configuration failed
+          //Just propagate our exception then
+          throw ex;
+        }        
       }
     }
 
@@ -988,8 +1011,14 @@ namespace MediaPortal.InputDevices
 
                 if (buttonAttributes.Background != "false" && buttonAttributes.Background != "0")
                 {
-                  //Only save the background handling if different from the defaults
+                  //Only save background handling if different from the defaults
                   writer.WriteAttributeString("background", buttonAttributes.Background);
+                }
+
+                if (buttonAttributes.Repeat != "false" && buttonAttributes.Repeat != "0")
+                {
+                  //Only save repeat handling if different from the defaults
+                  writer.WriteAttributeString("repeat", buttonAttributes.Repeat);
                 }
 
                 if (buttonNode.Nodes.Count > 0)
@@ -2020,16 +2049,18 @@ namespace MediaPortal.InputDevices
     /// </summary>
     private class HidButtonAttributes
     {
-      public HidButtonAttributes(string aName, string aCode, string aBackground)
+      public HidButtonAttributes(string aName, string aCode, string aBackground, string aRepeat)
       {
         Name = aName;
         Code = aCode;
         Background = aBackground;
+        Repeat = aRepeat;
       }
 
       public string Name { get; private set; }
       public string Code { get; private set; }
       public string Background { get; private set; }
+      public string Repeat { get; private set; }
     }
 
     private class NodeData

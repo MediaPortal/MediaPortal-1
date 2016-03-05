@@ -36,6 +36,22 @@
           <IconXOff>750</IconXOff>
           <IconYOff>9</IconYOff>
           <textXOff2>747</textXOff2>
+          <shadedColor>20ffffff</shadedColor>
+          <selectedColor3>FF00CC00</selectedColor3>
+          <selectedColor2>FF00CC00</selectedColor2>
+          <selectedColor>FF00CC00</selectedColor>
+          <playedColor>FFffffff</playedColor>
+          <playedColor2>FFffffff</playedColor2>
+          <textcolor>ffffcc00</textcolor>
+          <textcolorNoFocus>80ffcc00</textcolorNoFocus>
+          <textcolor2>ffffffff</textcolor2>
+          <textcolor3>ffffffff</textcolor3>
+          <colordiffuse>ffffffff</colordiffuse>
+          <remoteColor>ffFFffff</remoteColor>
+          <remoteColor2>ffFFffff</remoteColor2>
+          <downloadColor>ffffffff</downloadColor>
+          <downloadColor2>ffffffff</downloadColor2>
+          <dimColor>ffffffff</dimColor>
           <textureFocus>#(iif(eq(#TVSeries.Episode.Watched,'0'),'button_focus_notwatched.png','button_focus.png'))</textureFocus>
           <onright>2</onright>
         </control>

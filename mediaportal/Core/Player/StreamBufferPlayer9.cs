@@ -231,6 +231,14 @@ namespace MediaPortal.Player
           Cleanup();
           return base.GetInterfaces(filename);
         }
+
+        DirectShowHelper.AnalyseStreams(_graphBuilder);
+        // TsReader filter does not report about video streams
+        if (VideoStreams == 0)
+        {
+          AddCustomVideoStream(MediaInfo.BestVideoStream, 0, "SBE SOURCE");
+        }
+
         _pinVmr9ConnectedTo = _vmr9.PinConnectedTo;
         _vmr9.SetDeinterlaceMode();
         return true;
@@ -298,6 +306,7 @@ namespace MediaPortal.Player
         _basicVideo = null;
         _bufferSource = null;
         _pinVmr9ConnectedTo = null;
+        ClearStreams();
 
         if (_pinVmr9ConnectedTo != null)
         {

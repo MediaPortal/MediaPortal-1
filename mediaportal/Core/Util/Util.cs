@@ -170,7 +170,7 @@ namespace MediaPortal.Util
         ".m3u,.m3u8,.pls,.b4s,.wpl,.cue," +
         // Bass Standard
         ".mod,.mo3,.s3m,.xm,.it,.mtm,.umx,.mdz,.s3z,.itz,.xmz," +
-        ".mp3,.ogg,.wav,.mp2,.mp1,.aiff,.m2a,.mpa,.m1a,.swa,.aif,.mp3pro," +
+        ".mp3,.ogg,.wav,.mp2,.mp1,.aiff,.m2a,.mpa,.m1a,.swa,.aif,.mp3pro,.mka" +
         // BassCD
         ".cda," +
         // BassAac
@@ -202,7 +202,7 @@ namespace MediaPortal.Util
         ".wv";
     
     public static string VideoExtensionsDefault =
-      ".avi,.bdmv,.mpg,.mpeg,.mp4,.divx,.ogm,.mkv,.wmv,.qt,.rm,.mov,.mts,.m2ts,.sbe,.dvr-ms,.ts,.dat,.ifo,.flv,.m4v,.3gp,.wtv,.ogv";
+      ".avi,.bdmv,.mpg,.mpeg,.mp4,.divx,.ogm,.mkv,.wmv,.qt,.rm,.mov,.mts,.m2ts,.sbe,.dvr-ms,.ts,.dat,.ifo,.flv,.m4v,.3gp,.wtv,.ogv,.mk3d";
 
     public static string PictureExtensionsDefault = ".jpg,.jpeg,.gif,.bmp,.png";
     public static string ImageExtensionsDefault = ".cue,.bin,.iso,.ccd,.bwt,.mds,.cdi,.nrg,.pdi,.b5t,.img";
@@ -464,14 +464,14 @@ namespace MediaPortal.Util
     {
       if (strPath == null) return false;
       if (IsLastFMStream(strPath)) return false;
-      if (strPath.ToLowerInvariant().StartsWith("rtsp:")) return true;
-      if (strPath.ToLowerInvariant().StartsWith("mms:")
-          && strPath.ToLowerInvariant().EndsWith(".ymvp")) return true;
+      if (strPath.IndexOf("rtsp:", StringComparison.OrdinalIgnoreCase) == 0) return true;
+      if (strPath.IndexOf("mms:", StringComparison.OrdinalIgnoreCase) == 0
+          && strPath.ToLower().EndsWith(".ymvp")) return true;
       try
       {
         if (!Path.HasExtension(strPath))
           return false;
-        string extensionFile = Path.GetExtension(strPath).ToLowerInvariant();
+        string extensionFile = Path.GetExtension(strPath).ToLower();
         if (IsPlayListExtension(extensionFile))
           return false;
 
@@ -487,7 +487,7 @@ namespace MediaPortal.Util
         }
         if (VirtualDirectory.IsImageFile(extensionFile.ToLowerInvariant()))
           return true;
-        return m_VideoExtensions.Contains(extensionFile, StringComparer.InvariantCultureIgnoreCase);
+        return m_VideoExtensions.Contains(extensionFile, StringComparer.OrdinalIgnoreCase);
       }
       catch (Exception) {}
       return false;
@@ -4921,8 +4921,6 @@ namespace MediaPortal.Util
       catch (Exception) {}
     }
 
-    //void DeleteOldTimeShiftFiles(string path)
-
     public static void DeleteRecording(string recordingFilename)
     {
       Utils.FileDelete(recordingFilename);
@@ -4942,13 +4940,8 @@ namespace MediaPortal.Util
         {
           try
           {
-            if (fileName.ToLowerInvariant().IndexOf(filename) >= 0)
+            if (fileName.ToLowerInvariant().IndexOf(filename.ToLowerInvariant()) >= 0)
             {
-              //delete all Timeshift buffer files
-              if (fileName.ToLowerInvariant().IndexOf(".sbe") >= 0)
-              {
-                File.Delete(fileName);
-              }
               //delete Thumbnails
               if (fileName.ToLowerInvariant().IndexOf(".jpg") >= 0)
               {
@@ -4961,6 +4954,10 @@ namespace MediaPortal.Util
               }
               //delete Matroska tag file
               if (fileName.ToLowerInvariant().IndexOf(".xml") >= 0)
+              {
+                File.Delete(fileName);
+              }
+              if (fileName.ToLowerInvariant().IndexOf(".nfo") >= 0)
               {
                 File.Delete(fileName);
               }

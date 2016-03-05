@@ -182,20 +182,6 @@ namespace MpeMaker.Sections
       SelectedSection.WizardButtonsEnum = (WizardButtonsEnum)cmb_buttons.SelectedIndex;
     }
 
-    private void list_groups_ItemCheck(object sender, ItemCheckEventArgs e)
-    {
-      if (SelectedSection == null)
-        return;
-      if (e.NewValue == CheckState.Checked)
-      {
-        SelectedSection.IncludedGroups.Add((string)list_groups.Items[e.Index]);
-      }
-      else
-      {
-        SelectedSection.IncludedGroups.Remove((string)list_groups.Items[e.Index]);
-      }
-    }
-
     private void btn_params_Click(object sender, EventArgs e)
     {
       if (SelectedSection == null)

@@ -28,6 +28,7 @@ using DShowNET.Helper;
 using MediaPortal.Configuration;
 using MediaPortal.ExtensionMethods;
 using MediaPortal.GUI.Library;
+using MediaPortal.Player.MediaInfo;
 using MediaPortal.Player.Subtitles;
 using MediaPortal.Profile;
 
@@ -1405,6 +1406,70 @@ namespace MediaPortal.Player
 
     #endregion
 
+    public override int AudioStreams
+    {
+      get { throw new NotImplementedException(); }
+    }
+
+    public override int CurrentAudioStream
+    {
+      get { throw new NotImplementedException(); }
+      set { throw new NotImplementedException(); }
+    }
+
+    public override AudioStream BestAudio
+    {
+      get { throw new NotImplementedException(); }
+    }
+
+    public override AudioStream CurrentAudio
+    {
+      get { throw new NotImplementedException(); }
+    }
+
+    public override int VideoStreams
+    {
+      get { throw new NotImplementedException(); }
+    }
+
+    public override int CurrentVideoStream
+    {
+      get { throw new NotImplementedException(); }
+      set { throw new NotImplementedException(); }
+    }
+
+    public override VideoStream BestVideo
+    {
+      get { throw new NotImplementedException(); }
+    }
+
+    public override VideoStream CurrentVideo
+    {
+      get { throw new NotImplementedException(); }
+    }
+
+    public override int SubtitleStreams
+    {
+      get { throw new NotImplementedException(); }
+    }
+
+    public override int CurrentSubtitleStream
+    {
+      get { throw new NotImplementedException(); }
+      set { throw new NotImplementedException(); }
+    }
+
+    public override int EditionStreams
+    {
+      get { throw new NotImplementedException(); }
+    }
+
+    public override int CurrentEditionStream
+    {
+      get { throw new NotImplementedException(); }
+      set { throw new NotImplementedException(); }
+    }
+
     private AMMediaType GetTSMedia()
     {
       AMMediaType TS = new AMMediaType();
@@ -1420,23 +1485,6 @@ namespace MediaPortal.Player
       TS.formatSize = 0;
       TS.formatPtr = IntPtr.Zero;
       return TS;
-    }
-
-    private AMMediaType GetSubtitleMedia()
-    {
-      AMMediaType mediaSubtitle = new AMMediaType();
-      mediaSubtitle.majorType = MediaType.Null;
-      mediaSubtitle.subType = MediaSubType.Null;
-      mediaSubtitle.formatType = FormatType.Null;
-      mediaSubtitle.formatPtr = IntPtr.Zero;
-      mediaSubtitle.sampleSize = 1;
-      mediaSubtitle.temporalCompression = false;
-      mediaSubtitle.fixedSizeSamples = true;
-      mediaSubtitle.unkPtr = IntPtr.Zero;
-      mediaSubtitle.formatType = FormatType.None;
-      mediaSubtitle.formatSize = 0;
-      mediaSubtitle.formatPtr = IntPtr.Zero;
-      return mediaSubtitle;
     }
   }
 }

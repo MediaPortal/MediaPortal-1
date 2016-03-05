@@ -392,7 +392,6 @@ namespace MediaPortal.LastFM
           url = url + "?" + querystring;
         }
 
-        bool webExceptionStatus = false;
         var postArray = Encoding.UTF8.GetBytes(querystring);
         var request = (HttpWebRequest) WebRequest.Create(url);
         request.Method = httpMethod;

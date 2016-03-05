@@ -63,6 +63,14 @@ namespace MediaPortal.InputDevices
       _initialized = false;
     }
 
+    /// <summary>
+    /// Broadcast window messages to each input device.
+    /// </summary>
+    /// <param name="msg"></param>
+    /// <param name="action"></param>
+    /// <param name="key"></param>
+    /// <param name="keyCode"></param>
+    /// <returns></returns>
     public static bool WndProc(ref Message msg, out Action action, out char key, out Keys keyCode)
     {
       action = null;
@@ -71,9 +79,18 @@ namespace MediaPortal.InputDevices
 
       foreach (var device in Devices)
       {
-        if (device.WndProc(ref msg, out action, out key, out keyCode))
+        try
         {
+          if (device.WndProc(ref msg, out action, out key, out keyCode))
+          {
+            //First come, first served, stop message propagation then.
             return true;
+          }
+        }
+        catch (Exception ex)
+        {
+          //Keep on propagating that message even if one of our input device crapped out.
+          Log.Error("InputDevices - WndProc - exception caught from InputDevice: {0} {1}", device.ToString(), ex);
         }
       }
 

@@ -31,7 +31,7 @@ using MediaPortal.Configuration;
 
 namespace MediaPortal.Localisation
 {
-  public class LocalisationProvider
+  public class LocalisationProvider : ILocalizationProvider
   {
     #region Variables
 

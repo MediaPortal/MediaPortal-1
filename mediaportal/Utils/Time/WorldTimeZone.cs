@@ -37,7 +37,6 @@ namespace MediaPortal.Utils.Time
     private const string VALUE_STANDARD_NAME = "Std";
     private const string VALUE_DAYLIGHT_NAME = "Dlt";
     private const string VALUE_ZONE_INFO = "TZI";
-    private const int LENGTH_ZONE_INFO = 44;
     private const int LENGTH_DWORD = 4;
     private const int LENGTH_WORD = 2;
     private const int LENGTH_SYSTEMTIME = 16;

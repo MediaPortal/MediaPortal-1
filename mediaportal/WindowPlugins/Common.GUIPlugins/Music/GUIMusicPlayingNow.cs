@@ -119,7 +119,6 @@ namespace MediaPortal.GUI.Music
     private List<String> ImagePathContainer = null;
     private bool _trackChanged = true;
     private bool _usingBassEngine = false;
-    private bool _showVisualization = false;
     private object _imageMutex = null;
     private string _vuMeter = "none";
     private static readonly Random Randomizer = new Random();
@@ -158,16 +157,6 @@ namespace MediaPortal.GUI.Music
         ShowViz = xmlreader.GetValueAsBool("musicmisc", "showVisInNowPlaying", false);
         _vuMeter = xmlreader.GetValueAsString("musicmisc", "vumeter", "none");
         _lookupSimilarTracks = xmlreader.GetValueAsBool("musicmisc", "lookupSimilarTracks", true);
-
-        if (ShowViz && VizName != "None")
-        {
-          _showVisualization = true;
-        }
-        else
-        {
-          _showVisualization = false;
-          Log.Debug("GUIMusicPlayingNow: Viz disabled - ShowViz {0}, VizName {1}", Convert.ToString(ShowViz), VizName);
-        }
       }
 
       _usingBassEngine = BassMusicPlayer.IsDefaultMusicPlayer;

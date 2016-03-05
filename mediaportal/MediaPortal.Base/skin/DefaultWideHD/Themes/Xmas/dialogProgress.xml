@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!--version="1.0" encoding="utf-8" standalone="yes"-->
+<window>
+  <id>101</id>
+  <defaultcontrol>10</defaultcontrol>
+  <allowoverlay>no</allowoverlay>
+  <controls>
+    <import>common.dialog.xml</import>
+    <control>
+      <description>background</description>
+      <type>image</type>
+      <id>100</id>
+      <posX>540</posX>
+      <posY>649</posY>
+      <width>825</width>
+      <height>28</height>
+      <texture>osd_progress_background.png</texture>
+    </control>
+    <control>
+      <description>Progress Bar</description>
+      <type>progress</type>
+      <id>20</id>
+      <posX>514</posX>
+      <posY>652</posY>
+      <width>840</width>
+      <height>25</height>
+      <label>#percentage</label>
+      <texturebg>-</texturebg>
+      <onlymidtexture>no</onlymidtexture>
+      <midwidth>1182</midwidth>
+      <midheight>25</midheight>
+      <midoffsetX>0</midoffsetX>
+      <midoffsetY>0</midoffsetY>
+      <midtexture>osd_progress_mid.png</midtexture>
+    </control>
+    <control>
+      <description>Cancel button</description>
+      <type>button</type>
+      <id>10</id>
+      <posX>1372</posX>
+      <posY>411</posY>
+      <width>45</width>
+      <height>45</height>
+      <textureFocus>tb_exit.png</textureFocus>
+      <textureNoFocus>tb_exitNF.png</textureNoFocus>
+      <label>-</label>
+      <onleft>10</onleft>
+      <onright>10</onright>
+      <onup>10</onup>
+      <ondown>10</ondown>
+    </control>
+  </controls>
+</window>

@@ -1,0 +1,482 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <controls>
+    <control>
+      <description>bar image</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>358</posX>
+      <posY>860</posY>
+      <height>77</height>
+      <width>1150</width>
+      <texture>OSDBG.png</texture>
+      <colordiffuse>ddffffff</colordiffuse>
+      <animation effect="zoom" start="1,1" end="100,100" time="150" center="990,650" reversible="true">visiblechange</animation>
+      <visible>control.hasfocus(1237)+!skin.hassetting(#skin.tv.streaminfo)</visible>
+    </control>
+    <control>
+      <type>group</type>
+      <description>group element</description>
+      <layout>StackLayout(0, Horizontal, true)</layout>
+      <posX>358</posX>
+      <posY>872</posY>
+      <visible>control.hasfocus(1237)+!skin.hassetting(#skin.tv.streaminfo)</visible>
+      <animation effect="zoom" start="1,1" end="100,100" time="150" center="990,650" reversible="true">visiblechange</animation>
+      <layout>StackLayout(2, Horizontal, true)</layout>
+      <control>
+        <description>Video resolution</description>
+        <type>image</type>
+        <id>0</id>
+        <width>102</width>
+        <height>70</height>
+        <texture>Logos\resolution\#Play.Current.VideoResolution.png</texture>
+        <keepaspectratio>yes</keepaspectratio>
+      </control>
+      <control>
+        <description>Video codec</description>
+        <type>image</type>
+        <id>0</id>
+        <width>102</width>
+        <height>70</height>
+        <texture>Logos\video\#Play.Current.VideoCodec.Texture.png</texture>
+        <keepaspectratio>yes</keepaspectratio>
+      </control>
+      <control>
+        <description>Audio codec</description>
+        <type>image</type>
+        <id>0</id>
+        <width>102</width>
+        <height>70</height>
+        <texture>Logos\audio\#Play.Current.AudioCodec.Texture.png</texture>
+        <keepaspectratio>yes</keepaspectratio>
+      </control>
+      <control>
+        <description>AspectRatio</description>
+        <type>image</type>
+        <id>0</id>
+        <width>102</width>
+        <height>70</height>
+        <texture>Logos\aspectratio\#Play.Current.AspectRatio.png</texture>
+        <keepaspectratio>yes</keepaspectratio>
+      </control>
+      <control>
+        <description>Teletext</description>
+        <type>image</type>
+        <id>0</id>
+        <width>102</width>
+        <height>70</height>
+        <visible>string.equals(#TV.View.HasTeletext,true)</visible>
+        <texture>logos\Teletext.png</texture>
+        <keepaspectratio>yes</keepaspectratio>
+      </control>
+      <control>
+        <description>No Teletext</description>
+        <type>image</type>
+        <id>0</id>
+        <width>102</width>
+        <height>70</height>
+        <visible>string.equals(#TV.View.HasTeletext,false)</visible>
+        <texture>logos\noTeletext.png</texture>
+        <keepaspectratio>yes</keepaspectratio>
+      </control>
+      <control>
+        <description>Subtitles</description>
+        <type>image</type>
+        <id>0</id>
+        <width>102</width>
+        <height>70</height>
+        <visible>string.equals(#Play.Current.HasSubtitles,true)</visible>
+        <texture>logos\subtitles.png</texture>
+        <keepaspectratio>yes</keepaspectratio>
+      </control>
+      <control>
+        <description>NoSubtitles</description>
+        <type>image</type>
+        <id>0</id>
+        <width>102</width>
+        <height>70</height>
+        <visible>string.equals(#Play.Current.HasSubtitles,false)</visible>
+        <texture>logos\nosubtitles.png</texture>
+        <keepaspectratio>yes</keepaspectratio>
+      </control>
+      <control>
+        <description>FTA</description>
+        <type>image</type>
+        <id>0</id>
+        <width>102</width>
+        <height>70</height>
+        <visible>string.equals(#TV.TuningDetails.FreeToAir,TRUE)</visible>
+        <texture>logos\fta.gif</texture>
+        <keepaspectratio>yes</keepaspectratio>
+        <colordiffuse>bbffffff</colordiffuse>
+      </control>
+      <control>
+        <description>No FTA</description>
+        <type>image</type>
+        <id>0</id>
+        <width>102</width>
+        <height>70</height>
+        <visible>string.equals(#TV.TuningDetails.FreeToAir,FALSE)</visible>
+        <texture>logos\nofta.png</texture>
+        <keepaspectratio>yes</keepaspectratio>
+      </control>
+    </control>
+    <control>
+      <description>Bitrate</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>1096</posX>
+      <posY>876</posY>
+      <width>45</width>
+      <height>45</height>
+      <texture>logos\satellite.gif</texture>
+      <keepaspectratio>yes</keepaspectratio>
+      <colordiffuse>bbffffff</colordiffuse>
+      <animation effect="zoom" start="1,1" end="100,100" time="150" center="990,650" reversible="true">visiblechange</animation>
+      <visible>control.hasfocus(1237)+!skin.hassetting(#skin.tv.streaminfo)</visible>
+    </control>
+    <control>
+      <description>Bitrate</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>1151</posX>
+      <posY>870</posY>
+      <label>#Play.Current.TSBitRate</label>
+      <align>left</align>
+      <font>font10</font>
+      <textcolor>ffffd700</textcolor>
+      <animation effect="zoom" start="1,1" end="100,100" time="150" center="990,650" reversible="true">visiblechange</animation>
+      <visible>control.hasfocus(1237)+!skin.hassetting(#skin.tv.streaminfo)</visible>
+    </control>
+    <control>
+      <description>Bitrate</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>1151</posX>
+      <posY>898</posY>
+      <label>Mbit/s</label>
+      <align>left</align>
+      <font>font10</font>
+      <textcolor>ffffd700</textcolor>
+      <animation effect="zoom" start="1,1" end="100,100" time="150" center="990,650" reversible="true">visiblechange</animation>
+      <visible>control.hasfocus(1237)+!skin.hassetting(#skin.tv.streaminfo)</visible>
+    </control>
+    <control>
+      <description>Signal level</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>1375</posX>
+      <posY>870</posY>
+      <label>Signal: #TV.TuningDetails.SignalLevel</label>
+      <font>font10</font>
+      <textcolor>ffffd700</textcolor>
+      <animation effect="zoom" start="1,1" end="100,100" time="150" center="990,650" reversible="true">visiblechange</animation>
+      <visible>control.hasfocus(1237)+!skin.hassetting(#skin.tv.streaminfo)</visible>
+    </control>
+    <control>
+      <description>Signal Quality</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>1375</posX>
+      <posY>898</posY>
+      <label>Quality: #TV.TuningDetails.SignalQuality</label>
+      <font>font10</font>
+      <textcolor>ffffd700</textcolor>
+      <animation effect="zoom" start="1,1" end="100,100" time="150" center="990,650" reversible="true">visiblechange</animation>
+      <visible>control.hasfocus(1237)+!skin.hassetting(#skin.tv.streaminfo)</visible>
+    </control>
+    <control>
+      <description>Progress background</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>1250</posX>
+      <posY>876</posY>
+      <width>110</width>
+      <height>18</height>
+      <texture>osd_progress_background.png</texture>
+      <animation effect="zoom" start="1,1" end="100,100" time="150" center="990,650" reversible="true">visiblechange</animation>
+      <visible>control.hasfocus(1237)+!skin.hassetting(#skin.tv.streaminfo)</visible>
+    </control>
+    <control>
+      <description>Signal level progress bar</description>
+      <type>progress</type>
+      <id>0</id>
+      <posX>1239</posX>
+      <posY>878</posY>
+      <width>133</width>
+      <height>14</height>
+      <label>#TV.TuningDetails.SignalLevel</label>
+      <texturebg>-</texturebg>
+      <lefttexture>osd_progress_left.png</lefttexture>
+      <midtexture>osd_progress_mid.png</midtexture>
+      <righttexture>osd_progress_right.png</righttexture>
+      <animation effect="zoom" start="1,1" end="100,100" time="150" center="990,650" reversible="true">visiblechange</animation>
+      <visible>control.hasfocus(1237)+!skin.hassetting(#skin.tv.streaminfo)</visible>
+    </control>
+    <control>
+      <description>Progress background</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>1250</posX>
+      <posY>906</posY>
+      <width>110</width>
+      <height>18</height>
+      <texture>osd_progress_background.png</texture>
+      <animation effect="zoom" start="1,1" end="100,100" time="150" center="990,650" reversible="true">visiblechange</animation>
+      <visible>control.hasfocus(1237)+!skin.hassetting(#skin.tv.streaminfo)</visible>
+    </control>
+    <control>
+      <description>Signal level progress bar</description>
+      <type>progress</type>
+      <id>0</id>
+      <posX>1239</posX>
+      <posY>908</posY>
+      <width>133</width>
+      <height>14</height>
+      <label>#TV.TuningDetails.SignalQuality</label>
+      <texturebg>-</texturebg>
+      <lefttexture>osd_progress_left.png</lefttexture>
+      <midtexture>osd_progress_mid.png</midtexture>
+      <righttexture>osd_progress_right.png</righttexture>
+      <animation effect="zoom" start="1,1" end="100,100" time="150" center="990,650" reversible="true">visiblechange</animation>
+      <visible>control.hasfocus(1237)+!skin.hassetting(#skin.tv.streaminfo)</visible>
+    </control>
+    <!--*************************************************************************************-->
+    <!--*************************************************************************************-->
+    <!--*************************************************************************************-->
+    <control>
+      <description>bar image</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>348</posX>
+      <posY>625</posY>
+      <height>77</height>
+      <width>1200</width>
+      <texture>OSDBG2.png</texture>
+      <colordiffuse>ccffffff</colordiffuse>
+      <visible>!control.hasfocus(1237)+!control.hasfocus(1238)+skin.hassetting(#skin.tv.streaminfo)</visible>
+      <animation effect="fade" time="150" delay="150">visible</animation>
+    </control>
+    <control>
+      <type>group</type>
+      <description>group element</description>
+      <layout>StackLayout(0, Horizontal, true)</layout>
+      <posX>368</posX>
+      <posY>637</posY>
+      <visible>!control.hasfocus(1237)+!control.hasfocus(1238)+skin.hassetting(#skin.tv.streaminfo)</visible>
+      <layout>StackLayout(2, Horizontal, true)</layout>
+      <animation effect="fade" time="150" delay="150">visible</animation>
+      <control>
+        <description>Video resolution</description>
+        <type>image</type>
+        <id>0</id>
+        <width>102</width>
+        <height>70</height>
+        <texture>Logos\resolution\#Play.Current.VideoResolution.png</texture>
+        <keepaspectratio>yes</keepaspectratio>
+      </control>
+      <control>
+        <description>Video codec</description>
+        <type>image</type>
+        <id>0</id>
+        <width>102</width>
+        <height>70</height>
+        <texture>Logos\video\#Play.Current.VideoCodec.Texture.png</texture>
+        <keepaspectratio>yes</keepaspectratio>
+      </control>
+      <control>
+        <description>Audio codec</description>
+        <type>image</type>
+        <id>0</id>
+        <width>102</width>
+        <height>70</height>
+        <texture>Logos\audio\#Play.Current.AudioCodec.Texture.png</texture>
+        <keepaspectratio>yes</keepaspectratio>
+      </control>
+      <control>
+        <description>AspectRatio</description>
+        <type>image</type>
+        <id>0</id>
+        <width>102</width>
+        <height>70</height>
+        <texture>Logos\aspectratio\#Play.Current.AspectRatio.png</texture>
+        <keepaspectratio>yes</keepaspectratio>
+      </control>
+      <control>
+        <description>Teletext</description>
+        <type>image</type>
+        <id>0</id>
+        <width>102</width>
+        <height>70</height>
+        <visible>string.equals(#TV.View.HasTeletext,true)</visible>
+        <texture>logos\Teletext.png</texture>
+        <keepaspectratio>yes</keepaspectratio>
+      </control>
+      <control>
+        <description>No Teletext</description>
+        <type>image</type>
+        <id>0</id>
+        <width>102</width>
+        <height>70</height>
+        <visible>string.equals(#TV.View.HasTeletext,false)</visible>
+        <texture>logos\noTeletext.png</texture>
+        <keepaspectratio>yes</keepaspectratio>
+      </control>
+      <control>
+        <description>Subtitles</description>
+        <type>image</type>
+        <id>0</id>
+        <width>102</width>
+        <height>70</height>
+        <visible>string.equals(#Play.Current.HasSubtitles,true)</visible>
+        <texture>logos\subtitles.png</texture>
+        <keepaspectratio>yes</keepaspectratio>
+      </control>
+      <control>
+        <description>NoSubtitles</description>
+        <type>image</type>
+        <id>0</id>
+        <width>102</width>
+        <height>70</height>
+        <visible>string.equals(#Play.Current.HasSubtitles,false)</visible>
+        <texture>logos\nosubtitles.png</texture>
+        <keepaspectratio>yes</keepaspectratio>
+      </control>
+      <control>
+        <description>FTA</description>
+        <type>image</type>
+        <id>0</id>
+        <width>102</width>
+        <height>70</height>
+        <visible>string.equals(#TV.TuningDetails.FreeToAir,TRUE)</visible>
+        <texture>logos\fta.gif</texture>
+        <keepaspectratio>yes</keepaspectratio>
+        <colordiffuse>bbffffff</colordiffuse>
+      </control>
+      <control>
+        <description>No FTA</description>
+        <type>image</type>
+        <id>0</id>
+        <width>102</width>
+        <height>70</height>
+        <visible>string.equals(#TV.TuningDetails.FreeToAir,FALSE)</visible>
+        <texture>logos\nofta.png</texture>
+        <keepaspectratio>yes</keepaspectratio>
+      </control>
+    </control>
+    <control>
+      <description>Bitrate</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>1106</posX>
+      <posY>641</posY>
+      <width>45</width>
+      <height>45</height>
+      <texture>logos\satellite.gif</texture>
+      <keepaspectratio>yes</keepaspectratio>
+      <colordiffuse>bbffffff</colordiffuse>
+      <visible>!control.hasfocus(1237)+!control.hasfocus(1238)+skin.hassetting(#skin.tv.streaminfo)</visible>
+      <animation effect="fade" time="150" delay="150">visible</animation>
+    </control>
+    <control>
+      <description>Bitrate</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>1161</posX>
+      <posY>635</posY>
+      <label>#Play.Current.TSBitRate</label>
+      <align>left</align>
+      <font>font10</font>
+      <textcolor>ffffd700</textcolor>
+      <visible>!control.hasfocus(1237)+!control.hasfocus(1238)+skin.hassetting(#skin.tv.streaminfo)</visible>
+      <animation effect="fade" time="150" delay="150">visible</animation>
+    </control>
+    <control>
+      <description>Bitrate</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>1161</posX>
+      <posY>663</posY>
+      <label>Mbit/s</label>
+      <align>left</align>
+      <font>font10</font>
+      <textcolor>ffffd700</textcolor>
+      <visible>!control.hasfocus(1237)+!control.hasfocus(1238)+skin.hassetting(#skin.tv.streaminfo)</visible>
+      <animation effect="fade" time="150" delay="150">visible</animation>
+    </control>
+    <control>
+      <description>Signal level</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>1385</posX>
+      <posY>635</posY>
+      <label>Signal: #TV.TuningDetails.SignalLevel</label>
+      <font>font10</font>
+      <textcolor>ffffd700</textcolor>
+      <visible>!control.hasfocus(1237)+!control.hasfocus(1238)+skin.hassetting(#skin.tv.streaminfo)</visible>
+    </control>
+    <control>
+      <description>Signal Quality</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>1385</posX>
+      <posY>663</posY>
+      <label>Quality: #TV.TuningDetails.SignalQuality</label>
+      <font>font10</font>
+      <textcolor>ffffd700</textcolor>
+      <visible>!control.hasfocus(1237)+!control.hasfocus(1238)+skin.hassetting(#skin.tv.streaminfo)</visible>
+    </control>
+    <control>
+      <description>Progress background</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>1260</posX>
+      <posY>641</posY>
+      <width>110</width>
+      <height>18</height>
+      <texture>osd_progress_background.png</texture>
+      <visible>!control.hasfocus(1237)+!control.hasfocus(1238)+skin.hassetting(#skin.tv.streaminfo)</visible>
+    </control>
+    <control>
+      <description>Signal level progress bar</description>
+      <type>progress</type>
+      <id>0</id>
+      <posX>1249</posX>
+      <posY>643</posY>
+      <width>133</width>
+      <height>14</height>
+      <label>#TV.TuningDetails.SignalLevel</label>
+      <texturebg>-</texturebg>
+      <lefttexture>osd_progress_left.png</lefttexture>
+      <midtexture>osd_progress_mid.png</midtexture>
+      <righttexture>osd_progress_right.png</righttexture>
+      <visible>!control.hasfocus(1237)+!control.hasfocus(1238)+skin.hassetting(#skin.tv.streaminfo)</visible>
+    </control>
+    <control>
+      <description>Progress background</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>1260</posX>
+      <posY>669</posY>
+      <width>110</width>
+      <height>18</height>
+      <texture>osd_progress_background.png</texture>
+      <visible>!control.hasfocus(1237)+!control.hasfocus(1238)+skin.hassetting(#skin.tv.streaminfo)</visible>
+    </control>
+    <control>
+      <description>Signal level progress bar</description>
+      <type>progress</type>
+      <id>0</id>
+      <posX>1249</posX>
+      <posY>671</posY>
+      <width>133</width>
+      <height>14</height>
+      <label>#TV.TuningDetails.SignalQuality</label>
+      <texturebg>-</texturebg>
+      <lefttexture>osd_progress_left.png</lefttexture>
+      <midtexture>osd_progress_mid.png</midtexture>
+      <righttexture>osd_progress_right.png</righttexture>
+      <visible>!control.hasfocus(1237)+!control.hasfocus(1238)+skin.hassetting(#skin.tv.streaminfo)</visible>
+    </control>
+  </controls>
+</window>

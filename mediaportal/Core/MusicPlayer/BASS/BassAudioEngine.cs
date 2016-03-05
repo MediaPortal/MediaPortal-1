@@ -21,12 +21,14 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
 using MediaPortal.ExtensionMethods;
 using MediaPortal.GUI.Library;
 using MediaPortal.Player;
 using MediaPortal.Player.DSP;
+using MediaPortal.Player.MediaInfo;
 using MediaPortal.TagReader;
 using Un4seen.Bass;
 using Un4seen.Bass.AddOn.Cd;
@@ -43,7 +45,7 @@ namespace MediaPortal.MusicPlayer.BASS
   /// <summary>
   /// Handles playback of Audio files and Internet streams via the BASS Audio Engine.
   /// </summary>
-  public class BassAudioEngine : IPlayer
+  public class BassAudioEngine : BaseAudioPlayer
   {
     #region Enums
 
@@ -102,8 +104,6 @@ namespace MediaPortal.MusicPlayer.BASS
     public event InternetStreamSongChangedDelegate InternetStreamSongChanged;
 
     private delegate void InitializeControlsDelegate();
-
-    private delegate void ShowVisualizationWindowDelegate(bool visible);
 
     private Thread _commandThread = null;
     private List<QueueItem> _commandQueue = new List<QueueItem>();
@@ -417,6 +417,7 @@ namespace MediaPortal.MusicPlayer.BASS
     public override int CurrentAudioStream
     {
       get { return _mixer.BassStream; }
+      set { }
     }
 
     #endregion
@@ -1366,7 +1367,7 @@ namespace MediaPortal.MusicPlayer.BASS
           // If audio file is not changed, just set new start/end position and reset pause
           string audioFilePath = System.IO.Path.GetDirectoryName(cueFakeTrack.CueFileName) +
                                  System.IO.Path.DirectorySeparatorChar + track.DataFile.Filename;
-          if (audioFilePath.CompareTo(_filePath) == 0 /* && StreamIsPlaying(stream)*/)
+          if (audioFilePath.CompareTo(_filePath) == 0)
           {
             SetCueTrackEndPosition(GetCurrentStream(), endOnly);
             return true;
@@ -1554,9 +1555,18 @@ namespace MediaPortal.MusicPlayer.BASS
           // Cue support
           if ((currentStream != null && currentStream.IsPlaying))
           {
-            if (HandleCueFile(ref filePath, false))
+            if (CueUtil.isCueFakeTrackFile(filePath))
             {
-              return true;
+              // Only process the CUE file here, if the song belongs to the same CUE file
+              // When the CUE file has changed, we handle that in PlayInternal
+              CueFakeTrack cueFakeTrack = CueUtil.parseCueFakeTrackFileName(filePath);
+              if (cueFakeTrack.CueFileName.Equals(_currentCueFileName))
+              {
+                if (HandleCueFile(ref filePath, false))
+                {
+                  return true;
+                }
+              }
             }
           }
         }
@@ -2086,6 +2096,33 @@ namespace MediaPortal.MusicPlayer.BASS
         msg.Label = CurrentFile;
         GUIWindowManager.SendThreadMessage(msg);
       }
+    }
+
+    public override int AudioStreams { get { return _streams.Count; } }
+
+    public override AudioStream CurrentAudio { get { return MusicToAudioStream(GetCurrentStream()); } }
+
+    public override AudioStream BestAudio
+    {
+      get
+      {
+        return MusicToAudioStream(_streams.OrderByDescending(x => x.StreamTags.channelinfo.chans * 10000000 + x.StreamTags.bitrate).FirstOrDefault());
+      }
+    }
+
+    private static AudioStream MusicToAudioStream(MusicStream source)
+    {
+      if (source == null) return null;
+      return new AudioStream(source.BassStream)
+      {
+        Bitrate = source.StreamTags.bitrate * 1000,
+        Channel = source.StreamTags.channelinfo.chans,
+        SamplingRate = source.StreamTags.channelinfo.sample,
+        Name = source.StreamTags.title,
+        Duration = TimeSpan.FromSeconds(source.StreamElapsedTime),
+        Language = "English",
+        Lcid = 0x1033
+      };
     }
 
     #endregion

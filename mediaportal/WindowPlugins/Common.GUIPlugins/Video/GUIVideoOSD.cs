@@ -694,31 +694,6 @@ namespace MediaPortal.GUI.Video
       SetSliderValue(0.0f, 100.0f, (float)engine.CropHorizontal, (int)Controls.OSD_VIDEO_POSTPROC_CROP_HORIZONTAL);
     }
 
-    private void SetVideoProgress()
-    {
-      if (g_Player.Playing)
-      {
-        //  double fPercentage=g_Player.CurrentPosition / g_Player.Duration;
-        //      GUIProgressControl pControl = (GUIProgressControl)GetControl((int)Controls.OSD_VIDEOPROGRESS);
-        //    if (null!=pControl) pControl.Percentage=(int)(100*fPercentage);			// Update our progress bar accordingly ...
-
-        //float fPercent = (float)(100 * (g_Player.CurrentPosition / g_Player.Duration));
-        //SetSliderValue(0.0f, 100.0f, (float)fPercent, (int)Controls.OSD_VIDEOPOS); // Update our progress slider accordingly ...
-
-        int iValue = g_Player.Volume;
-        GUISliderControl pSlider = GetControl((int)Controls.OSD_VOLUMESLIDER) as GUISliderControl;
-        if (null != pSlider)
-        {
-          pSlider.Percentage = iValue; // Update our volume slider accordingly ...
-        }
-        pSlider = GetControl((int)Controls.OSD_AUDIOVOLUMESLIDER) as GUISliderControl;
-        if (null != pSlider)
-        {
-          pSlider.Percentage = iValue; // Update our volume slider accordingly ...
-        }
-      }
-    }
-
     private void ToggleButton(int iButtonID, bool bSelected)
     {
       GUIControl pControl = GetControl(iButtonID) as GUIControl;
