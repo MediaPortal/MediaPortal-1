@@ -232,13 +232,6 @@ namespace MediaPortal.Player
           return base.GetInterfaces(filename);
         }
 
-        DirectShowHelper.AnalyseStreams(_graphBuilder);
-        // TsReader filter does not report about video streams
-        if (VideoStreams == 0)
-        {
-          AddCustomVideoStream(MediaInfo.BestVideoStream, 0, "SBE SOURCE");
-        }
-
         _pinVmr9ConnectedTo = _vmr9.PinConnectedTo;
         _vmr9.SetDeinterlaceMode();
         return true;

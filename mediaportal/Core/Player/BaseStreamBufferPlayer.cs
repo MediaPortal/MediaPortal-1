@@ -274,6 +274,12 @@ namespace MediaPortal.Player
       }
 
       DirectShowHelper.AnalyseStreams(_graphBuilder);
+      // SBE filter does not report about video streams
+      if (VideoStreams == 0)
+      {
+        AddCustomVideoStream(MediaInfo.BestVideoStream, 0, "SBE SOURCE");
+      }
+
       GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAYBACK_STARTED, 0, 0, 0, 0, 0, null);
       msg.Label = strFile;
       GUIWindowManager.SendThreadMessage(msg);
@@ -573,7 +579,9 @@ namespace MediaPortal.Player
         {
           return iSpeed;
         }
-        if (g_Player._mediaInfo != null && _speedRate == 5000 && g_Player._mediaInfo.Framerate == 24)
+
+        var videoStream = CurrentVideo;
+        if (_speedRate == 5000 && videoStream != null && videoStream.FrameRate == 24)
         {
           return 0.25;
         }
