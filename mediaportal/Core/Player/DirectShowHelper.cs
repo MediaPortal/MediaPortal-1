@@ -842,7 +842,8 @@ namespace MediaPortal.Player
       { "NOG", "Nogai" },
       { "HAT", "Haitian" },
       { "HT", "Haitian" },
-      { "XAL", "Kalmyk" }
+      { "XAL", "Kalmyk" },
+      { "UNK", "Unknown" }
     };
 
     private static readonly Dictionary<string, int> FiltersToSkip = new Dictionary<string, int>
