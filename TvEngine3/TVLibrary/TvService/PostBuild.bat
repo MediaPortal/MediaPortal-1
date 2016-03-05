@@ -22,7 +22,7 @@ xcopy %1\..\..\DirectShowFilters\DXErr9\bin\%2\*.* . /R /Y /D
 xcopy %1\SetupTv\bin\%2\SetupTv.* . /R /Y /D
 xcopy %1\TvLibrary.Utils\bin\%2\*.* /R /Y /D
 rem MediaInfo
-xcopy %1\..\..\Packages\MP-1-MediaInfolib.1.0.0\MediaInfo.dll . /R /Y /D
-xcopy %1\..\..\Packages\MP-1-MediaInfolib.1.0.0\libcurl.dll . /R /Y /D
-xcopy %1\..\..\Packages\MP-1-MediaInfolib.1.0.0\libeay32.dll . /R /Y /D
-xcopy %1\..\..\Packages\MP-1-MediaInfolib.1.0.0\ssleay32.dll . /R /Y /D
+xcopy %1\..\..\Packages\MP-1-MediaInfolib.1.0.1\MediaInfo.dll . /R /Y /D
+xcopy %1\..\..\Packages\MP-1-MediaInfolib.1.0.1\libcurl.dll . /R /Y /D
+xcopy %1\..\..\Packages\MP-1-MediaInfolib.1.0.1\libeay32.dll . /R /Y /D
+xcopy %1\..\..\Packages\MP-1-MediaInfolib.1.0.1\ssleay32.dll . /R /Y /D

@@ -57,6 +57,8 @@ namespace MediaPortal.Tests.Core.Player
     [Test, Explicit]
     [TestCase(@"D:\Video\2012.mkv")]
     [TestCase(@"F:\Serials\С точки зрения науки\01. С точки зрения науки. Большой взрыв_2007_HDTV 1080i.ts")]
+    [TestCase(@"I:\Users\Videos\The_Good_Wife_More_4_Test.wtv")]
+    [TestCase(@"I:\Users\Videos\RTL_7_Darts_WK_2014-2013-12-23_1.ts")]
     public void LoadProblemFiles(string fileName)
     {
       var info = new MediaInfoWrapper(fileName);
