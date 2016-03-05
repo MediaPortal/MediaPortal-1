@@ -895,7 +895,10 @@ namespace MediaPortal.Player
       {
         if (info != null)
         {
-          fps = info.BestVideoStream.FrameRate;
+          if (!info.MediaInfoNotloaded)
+          {
+            fps = info.BestVideoStream.FrameRate;
+          }
         }
         else
         {
@@ -917,7 +920,8 @@ namespace MediaPortal.Player
 
       if (fps < 1)
       {
-        Log.Info("RefreshRateChanger.AdaptRefreshRate: unable to guess framerate on file {0}", strFile);
+        Log.Info("RefreshRateChanger.AdaptRefreshRate: unable to guess framerate on file {0}{1}", strFile, 
+          (isVideo || isDVD) && !(isRTSP || isTV) && info.MediaInfoNotloaded ? ", because media info hasn't be detected" : string.Empty);
       }
       else
       {
