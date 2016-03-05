@@ -547,7 +547,7 @@ Section "MediaPortal core files (required)" SecCore
   File "${git_ROOT}\Packages\ffmpeg.2.7.1\ffmpeg.exe"
   ; NuGet binaries MediaInfo
   SetOutPath "$MPdir.Base\"
-  File "${git_ROOT}\Packages\MP-1-MediaInfolib.1.0.0\MediaInfo.dll"
+  File "${git_ROOT}\Packages\MP-1-MediaInfolib.1.0.1\MediaInfo.dll"
   ; NuGet binaries Sqlite
   SetOutPath "$MPdir.Base\"
   File "${git_ROOT}\Packages\Sqlite.3.10.0\Sqlite.dll"
