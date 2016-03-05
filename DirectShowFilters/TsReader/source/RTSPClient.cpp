@@ -165,8 +165,6 @@ void CRTSPClient::Shutdown()
     Medium::close(m_client);
     m_client = NULL;
   }
-
-  m_buffer.Clear();
 }
 
 bool CRTSPClient::OpenStream(char* url)
@@ -290,6 +288,7 @@ void CRTSPClient::Stop()
 {
   LogDebug("CRTSPClient:Stop()");
   Shutdown();
+  m_buffer.Clear();
   LogDebug("CRTSPClient:Stop(): done");
 }
 
