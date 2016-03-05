@@ -908,7 +908,8 @@ namespace MediaPortal.Player
           return iSpeed;
         }
 
-        if (g_Player._mediaInfo != null && _speedRate == 5000 && g_Player._mediaInfo.Framerate == 24)
+        var videoStream = CurrentVideo;
+        if (_speedRate == 5000 && videoStream != null && videoStream.FrameRate == 24)
         {
           return 0.25;
         }
