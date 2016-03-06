@@ -194,6 +194,7 @@ namespace MediaPortal.Player
 
       _updateNeeded = true;
       MediaInfo = new MediaInfoWrapper(strFile);
+      MediaInfo.PrintInfo();
       if (_bufferSource != null)
       {
         Log.Info("StreamBufferPlayer:replay {0}", strFile);
