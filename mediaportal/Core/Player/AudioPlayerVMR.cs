@@ -96,6 +96,7 @@ namespace MediaPortal.Player
       {
         CloseInterfaces();
         _mediaInfo = new MediaInfoWrapper(strFile);
+        _mediaInfo.PrintInfo();
         if (!GetInterfaces())
         {
           m_strCurrentFile = "";

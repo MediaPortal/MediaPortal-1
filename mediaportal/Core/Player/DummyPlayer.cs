@@ -59,6 +59,7 @@ namespace MediaPortal.Player
       _isPlaying = true;
       _isPaused = false;
       _mediaInfo = new MediaInfoWrapper(strFile);
+      _mediaInfo.PrintInfo();
       // Console.WriteLine(String.Format("player:{0}", strFile));
       return true;
     }

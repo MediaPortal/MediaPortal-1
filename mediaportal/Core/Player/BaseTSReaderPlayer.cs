@@ -574,6 +574,7 @@ namespace MediaPortal.Player
       Log.Info("TSReaderPlayer:play {0}", strFile);
       _isStarted = false;
       MediaInfo = new MediaInfoWrapper(strFile);
+      MediaInfo.PrintInfo();
       if (!GetInterfaces(strFile))
       {
         Log.Error("TSReaderPlayer:GetInterfaces() failed");
