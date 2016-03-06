@@ -250,7 +250,7 @@ namespace MediaPortal.Player.MediaInfo
       }
       catch (Exception e)
       {
-        Log.Error("Error while retrieving files for: {0} {1}" + targetDir, e.Message);
+        Log.Error("MediaInfoWrapper: Error while retrieving files for: {0} {1}" + targetDir, e.Message);
       }
 
       return largestFile;
@@ -379,40 +379,47 @@ namespace MediaPortal.Player.MediaInfo
     {
       if (MediaInfoNotloaded)
       {
-        Log.Debug("Media info hasn't been loaded");
+        Log.Debug("MediaInfoWrapper: Media info hasn't been loaded");
       }
       else
       {
-        Log.Debug("Inspecting media {0}", sourceLocation);
+        var mediaInfo = new MediaInfo();
+        Log.Debug("MediaInfoWrapper: DLL Version      {0}", mediaInfo.Option("Info_Version"));
+        Log.Debug("MediaInfoWrapper: Inspecting media {0}", sourceLocation);
         for (var i = 0; i < VideoStreams.Count; ++i)
         {
-          Log.Debug("Video stream #{0}", i);
-          Log.Debug("Codec            : {0}", VideoStreams[i].Format);
-          Log.Debug("Width            : {0}", VideoStreams[i].Width);
-          Log.Debug("Height           : {0}", VideoStreams[i].Height);
-          Log.Debug("FrameRate        : {0}", VideoStreams[i].FrameRate);
-          Log.Debug("AspectRatio      : {0}", VideoStreams[i].AspectRatio);
-          Log.Debug("IsInterlaced     : {0}", VideoStreams[i].Interlaced);
-          Log.Debug("Name             : {0}", VideoStreams[i].Name);
+          Log.Debug("MediaInfoWrapper: ----------------------");
+          Log.Debug("MediaInfoWrapper: Video stream #{0}", i);
+          Log.Debug("MediaInfoWrapper: Codec            : {0}", VideoStreams[i].Format);
+          Log.Debug("MediaInfoWrapper: Width            : {0}", VideoStreams[i].Width);
+          Log.Debug("MediaInfoWrapper: Height           : {0}", VideoStreams[i].Height);
+          Log.Debug("MediaInfoWrapper: FrameRate        : {0}", VideoStreams[i].FrameRate);
+          Log.Debug("MediaInfoWrapper: AspectRatio      : {0}", VideoStreams[i].AspectRatio);
+          Log.Debug("MediaInfoWrapper: IsInterlaced     : {0}", VideoStreams[i].Interlaced);
+          Log.Debug("MediaInfoWrapper: VideoDuration    : {0}", VideoStreams[i].Duration);
+          Log.Debug("MediaInfoWrapper: Name             : {0}", VideoStreams[i].Name);
         }
 
         for (var i = 0; i < AudioStreams.Count; ++i)
         {
-          Log.Debug("Audio stream #{0}", i);
-          Log.Debug("Codec            : {0}", AudioStreams[i].Format);
-          Log.Debug("Channels         : {0} ({1})", AudioStreams[i].Channel, AudioStreams[i].AudioChannelsFriendly);
-          Log.Debug("Rate             : {0}", AudioStreams[i].Bitrate);
-          Log.Debug("BitDepth         : {0}", AudioStreams[i].BitDepth);
-          Log.Debug("Language         : {0}", AudioStreams[i].Language);
-          Log.Debug("Name             : {0}", AudioStreams[i].Name);
+          Log.Debug("MediaInfoWrapper: ----------------------");
+          Log.Debug("MediaInfoWrapper: Audio stream #{0}", i);
+          Log.Debug("MediaInfoWrapper: Codec            : {0}", AudioStreams[i].Format);
+          Log.Debug("MediaInfoWrapper: Channels         : {0} ({1})", AudioStreams[i].Channel, AudioStreams[i].AudioChannelsFriendly);
+          Log.Debug("MediaInfoWrapper: Rate             : {0}", AudioStreams[i].Bitrate);
+          Log.Debug("MediaInfoWrapper: BitDepth         : {0}", AudioStreams[i].BitDepth);
+          Log.Debug("MediaInfoWrapper: Language         : {0}", AudioStreams[i].Language);
+          Log.Debug("MediaInfoWrapper: Name             : {0}", AudioStreams[i].Name);
         }
 
         for (var i = 0; i < Subtitles.Count; ++i)
         {
-          Log.Debug("Subtitle stream #{0}", i);
-          Log.Debug("Codec            : {0}", Subtitles[i].Format);
-          Log.Debug("Language         : {0}", Subtitles[i].Language);
+          Log.Debug("MediaInfoWrapper: ----------------------");
+          Log.Debug("MediaInfoWrapper: Subtitle stream #{0}", i);
+          Log.Debug("MediaInfoWrapper: Codec            : {0}", Subtitles[i].Format);
+          Log.Debug("MediaInfoWrapper: Language         : {0}", Subtitles[i].Language);
         }
+        Log.Debug("MediaInfoWrapper: ----------------------");
       }
     }
   }
