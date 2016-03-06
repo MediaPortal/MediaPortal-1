@@ -34,19 +34,19 @@ namespace MediaPortal.Player.MediaInfo
   {
     #region private vars
 
-    private List<VideoStream> _videoStreams;
-    private List<AudioStream> _audioStreams;
-    private List<SubtitleStream> _subtitleStreams;
+    private static readonly HashSet<string> SubTitleExtensions = new HashSet<string>();
+
+    private readonly List<VideoStream> videoStreams;
+    private readonly List<AudioStream> audioStreams;
+    private readonly List<SubtitleStream> subtitleStreams;
+    private readonly string sourceLocation;
 
     //Video
-    private int _videoDuration;
+    private readonly int videoDuration;
     private bool _DVDenabled = false;
-    private string _ParseSpeed;
 
     //Subtitles
-    private int _numsubtitles;
-    private bool _hasExternalSubtitles;
-    private static HashSet<string> _subTitleExtensions = new HashSet<string>();
+    private readonly bool hasExternalSubtitles;
 
     #endregion
 
@@ -65,10 +65,12 @@ namespace MediaPortal.Player.MediaInfo
 
     public MediaInfoWrapper(string strFile)
     {
+      string parseSpeed;
+      sourceLocation = strFile;
       MediaInfoNotloaded = false;
-      _videoStreams = new List<VideoStream>();
-      _audioStreams = new List<AudioStream>();
-      _subtitleStreams = new List<SubtitleStream>();
+      videoStreams = new List<VideoStream>();
+      audioStreams = new List<AudioStream>();
+      subtitleStreams = new List<SubtitleStream>();
 
       if (!MediaInfoExist())
       {
@@ -79,7 +81,7 @@ namespace MediaPortal.Player.MediaInfo
       using (Settings xmlreader = new MPSettings())
       {
         _DVDenabled = xmlreader.GetValueAsBool("dvdplayer", "mediainfoused", false);
-        _ParseSpeed = xmlreader.GetValueAsString("debug", "MediaInfoParsespeed", "0.3");
+        parseSpeed = xmlreader.GetValueAsString("debug", "MediaInfoParsespeed", "0.3");
         // fix delay introduced after 0.7.26: http://sourceforge.net/tracker/?func=detail&aid=3013548&group_id=86862&atid=581181
       }
       bool isTV = Util.Utils.IsLiveTv(strFile);
@@ -115,7 +117,7 @@ namespace MediaPortal.Player.MediaInfo
       try
       {
         mediaInfo = new MediaInfo();
-        mediaInfo.Option("ParseSpeed", _ParseSpeed);
+        mediaInfo.Option("ParseSpeed", parseSpeed);
 
         // Analyze local file for DVD and BD
         if (!(isAVStream || isNetwork))
@@ -158,8 +160,8 @@ namespace MediaPortal.Player.MediaInfo
             // get all other info from main title's 1st vob
             if (programBlocks.Any())
             {
-              _videoDuration = programBlocks.Max(x => x.Item2);
-              strFile = programBlocks.First(x => x.Item2 == _videoDuration).Item1;
+              videoDuration = programBlocks.Max(x => x.Item2);
+              strFile = programBlocks.First(x => x.Item2 == videoDuration).Item1;
             }
           }
           else if (strFile.EndsWith(".bdmv", StringComparison.OrdinalIgnoreCase))
@@ -168,7 +170,7 @@ namespace MediaPortal.Player.MediaInfo
             strFile = GetLargestFileInDirectory(path, "*.m2ts");
           }
 
-          _hasExternalSubtitles = !string.IsNullOrEmpty(strFile) && CheckHasExternalSubtitles(strFile);
+          hasExternalSubtitles = !string.IsNullOrEmpty(strFile) && CheckHasExternalSubtitles(strFile);
         }
 
         if (string.IsNullOrEmpty(strFile))
@@ -184,32 +186,32 @@ namespace MediaPortal.Player.MediaInfo
         var videoStreamCount = mediaInfo.Count_Get(StreamKind.Video);
         for (var i = 0; i < videoStreamCount; ++i)
         {
-          _videoStreams.Add(new VideoStream(mediaInfo, i));
+          videoStreams.Add(new VideoStream(mediaInfo, i));
         }
 
-        if (_videoDuration == 0)
+        if (videoDuration == 0)
         {
           double duration;
           double.TryParse(mediaInfo.Get(StreamKind.Video, 0, "Duration"), NumberStyles.AllowDecimalPoint, providerNumber, out duration);
-          _videoDuration = (int)duration;
+          videoDuration = (int)duration;
         }
 
         //Audio
         var iAudioStreams = mediaInfo.Count_Get(StreamKind.Audio);
         for (var i = 0; i < iAudioStreams; ++i)
         {
-          _audioStreams.Add(new AudioStream(mediaInfo, i));
+          audioStreams.Add(new AudioStream(mediaInfo, i));
         }
 
         //Subtitles
-        _numsubtitles = mediaInfo.Count_Get(StreamKind.Text);
+        var numsubtitles = mediaInfo.Count_Get(StreamKind.Text);
 
-        for (var i = 0; i < _numsubtitles; ++i)
+        for (var i = 0; i < numsubtitles; ++i)
         {
-          _subtitleStreams.Add(new SubtitleStream(mediaInfo, i));
+          subtitleStreams.Add(new SubtitleStream(mediaInfo, i));
         }
 
-        MediaInfoNotloaded = _videoStreams.Count == 0 && _audioStreams.Count == 0 && _subtitleStreams.Count == 0;
+        MediaInfoNotloaded = videoStreams.Count == 0 && audioStreams.Count == 0 && subtitleStreams.Count == 0;
       }
       catch (Exception e)
       {
@@ -256,40 +258,40 @@ namespace MediaPortal.Player.MediaInfo
 
     private static bool CheckHasExternalSubtitles(string strFile)
     {
-      if (_subTitleExtensions.Count == 0)
+      if (SubTitleExtensions.Count == 0)
       {
         // load them in first time
-        _subTitleExtensions.Add(".aqt");
-        _subTitleExtensions.Add(".asc");
-        _subTitleExtensions.Add(".ass");
-        _subTitleExtensions.Add(".dat");
-        _subTitleExtensions.Add(".dks");
-        _subTitleExtensions.Add(".idx");
-        _subTitleExtensions.Add(".js");
-        _subTitleExtensions.Add(".jss");
-        _subTitleExtensions.Add(".lrc");
-        _subTitleExtensions.Add(".mpl");
-        _subTitleExtensions.Add(".ovr");
-        _subTitleExtensions.Add(".pan");
-        _subTitleExtensions.Add(".pjs");
-        _subTitleExtensions.Add(".psb");
-        _subTitleExtensions.Add(".rt");
-        _subTitleExtensions.Add(".rtf");
-        _subTitleExtensions.Add(".s2k");
-        _subTitleExtensions.Add(".sbt");
-        _subTitleExtensions.Add(".scr");
-        _subTitleExtensions.Add(".smi");
-        _subTitleExtensions.Add(".son");
-        _subTitleExtensions.Add(".srt");
-        _subTitleExtensions.Add(".ssa");
-        _subTitleExtensions.Add(".sst");
-        _subTitleExtensions.Add(".ssts");
-        _subTitleExtensions.Add(".stl");
-        _subTitleExtensions.Add(".sub");
-        _subTitleExtensions.Add(".txt");
-        _subTitleExtensions.Add(".vkt");
-        _subTitleExtensions.Add(".vsf");
-        _subTitleExtensions.Add(".zeg");
+        SubTitleExtensions.Add(".aqt");
+        SubTitleExtensions.Add(".asc");
+        SubTitleExtensions.Add(".ass");
+        SubTitleExtensions.Add(".dat");
+        SubTitleExtensions.Add(".dks");
+        SubTitleExtensions.Add(".idx");
+        SubTitleExtensions.Add(".js");
+        SubTitleExtensions.Add(".jss");
+        SubTitleExtensions.Add(".lrc");
+        SubTitleExtensions.Add(".mpl");
+        SubTitleExtensions.Add(".ovr");
+        SubTitleExtensions.Add(".pan");
+        SubTitleExtensions.Add(".pjs");
+        SubTitleExtensions.Add(".psb");
+        SubTitleExtensions.Add(".rt");
+        SubTitleExtensions.Add(".rtf");
+        SubTitleExtensions.Add(".s2k");
+        SubTitleExtensions.Add(".sbt");
+        SubTitleExtensions.Add(".scr");
+        SubTitleExtensions.Add(".smi");
+        SubTitleExtensions.Add(".son");
+        SubTitleExtensions.Add(".srt");
+        SubTitleExtensions.Add(".ssa");
+        SubTitleExtensions.Add(".sst");
+        SubTitleExtensions.Add(".ssts");
+        SubTitleExtensions.Add(".stl");
+        SubTitleExtensions.Add(".sub");
+        SubTitleExtensions.Add(".txt");
+        SubTitleExtensions.Add(".vkt");
+        SubTitleExtensions.Add(".vsf");
+        SubTitleExtensions.Add(".zeg");
       }
 
       var filenameNoExt = Path.GetFileNameWithoutExtension(strFile);
@@ -298,7 +300,7 @@ namespace MediaPortal.Player.MediaInfo
         foreach (string file in Directory.GetFiles(Path.GetDirectoryName(strFile), filenameNoExt + "*"))
         {
           var fi = new FileInfo(file);
-          if (_subTitleExtensions.Contains(fi.Extension.ToLowerInvariant()))
+          if (SubTitleExtensions.Contains(fi.Extension.ToLowerInvariant()))
           {
             return true;
           }
@@ -318,22 +320,22 @@ namespace MediaPortal.Player.MediaInfo
 
     public int VideoDuration
     {
-      get { return _videoDuration; }
+      get { return videoDuration; }
     }
 
     public bool HasVideo
     {
-      get { return _videoStreams.Count > 0; }
+      get { return videoStreams.Count > 0; }
     }
 
     public IList<VideoStream> VideoStreams
     {
-      get { return _videoStreams; }
+      get { return videoStreams; }
     }
 
     public VideoStream BestVideoStream
     {
-      get { return _videoStreams.OrderByDescending(x => (long)x.Width * (long)x.Height * x.BitDepth * (x.Stereoscopic == StereoMode.Mono ? 1L : 2L) * x.FrameRate).FirstOrDefault(); }
+      get { return videoStreams.OrderByDescending(x => (long)x.Width * (long)x.Height * x.BitDepth * (x.Stereoscopic == StereoMode.Mono ? 1L : 2L) * x.FrameRate).FirstOrDefault(); }
     }
 
     #endregion
@@ -342,12 +344,12 @@ namespace MediaPortal.Player.MediaInfo
 
     public IList<AudioStream> AudioStreams
     {
-      get { return _audioStreams; }
+      get { return audioStreams; }
     }
 
     public AudioStream BestAudioStream
     {
-      get { return _audioStreams.OrderByDescending(x => x.Channel * 10000000 + x.Bitrate).FirstOrDefault(); }
+      get { return audioStreams.OrderByDescending(x => x.Channel * 10000000 + x.Bitrate).FirstOrDefault(); }
     }
 
     #endregion
@@ -356,21 +358,62 @@ namespace MediaPortal.Player.MediaInfo
 
     public IList<SubtitleStream> Subtitles
     {
-      get { return _subtitleStreams; }
+      get { return subtitleStreams; }
     }
 
     public bool HasSubtitles
     {
-      get { return _hasExternalSubtitles || _subtitleStreams.Count > 0; }
+      get { return hasExternalSubtitles || subtitleStreams.Count > 0; }
     }
 
     public bool HasExternalSubtitles
     {
-      get { return _hasExternalSubtitles; }
+      get { return hasExternalSubtitles; }
     }
 
     #endregion
 
     public bool MediaInfoNotloaded { get; private set; }
+
+    public void PrintInfo()
+    {
+      if (MediaInfoNotloaded)
+      {
+        Log.Debug("Media info hasn't been loaded");
+      }
+      else
+      {
+        Log.Debug("Inspecting media {0}", sourceLocation);
+        for (var i = 0; i < VideoStreams.Count; ++i)
+        {
+          Log.Debug("Video stream #{0}", i);
+          Log.Debug("Codec            : {0}", VideoStreams[i].Format);
+          Log.Debug("Width            : {0}", VideoStreams[i].Width);
+          Log.Debug("Height           : {0}", VideoStreams[i].Height);
+          Log.Debug("FrameRate        : {0}", VideoStreams[i].FrameRate);
+          Log.Debug("AspectRatio      : {0}", VideoStreams[i].AspectRatio);
+          Log.Debug("IsInterlaced     : {0}", VideoStreams[i].Interlaced);
+          Log.Debug("Name             : {0}", VideoStreams[i].Name);
+        }
+
+        for (var i = 0; i < AudioStreams.Count; ++i)
+        {
+          Log.Debug("Audio stream #{0}", i);
+          Log.Debug("Codec            : {0}", AudioStreams[i].Format);
+          Log.Debug("Channels         : {0} ({1})", AudioStreams[i].Channel, AudioStreams[i].AudioChannelsFriendly);
+          Log.Debug("Rate             : {0}", AudioStreams[i].Bitrate);
+          Log.Debug("BitDepth         : {0}", AudioStreams[i].BitDepth);
+          Log.Debug("Language         : {0}", AudioStreams[i].Language);
+          Log.Debug("Name             : {0}", AudioStreams[i].Name);
+        }
+
+        for (var i = 0; i < Subtitles.Count; ++i)
+        {
+          Log.Debug("Subtitle stream #{0}", i);
+          Log.Debug("Codec            : {0}", Subtitles[i].Format);
+          Log.Debug("Language         : {0}", Subtitles[i].Language);
+        }
+      }
+    }
   }
 }
