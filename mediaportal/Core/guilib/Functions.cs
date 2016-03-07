@@ -20,6 +20,7 @@
 
 using System;
 using System.ComponentModel;
+using System.Globalization;
 using System.Text.RegularExpressions;
 
 namespace MediaPortal.GUI.Library
@@ -142,37 +143,92 @@ namespace MediaPortal.GUI.Library
     [XMLSkinFunction("string.trim")]
     public static string TrimString(string text)
     {
-      return text.Trim();
+      return ((text != null) ? text.Trim() : string.Empty);
     }
 
     [XMLSkinFunction("string.trim")]
     public static string TrimString(string text, string charsToTrim)
     {
-      return text.Trim(charsToTrim.ToCharArray());
+      return (((text != null) && (charsToTrim !=null)) ? text.Trim(charsToTrim.ToCharArray()) : string.Empty);
     }
 
     [XMLSkinFunction("string.rtrim")]
     public static string RightTrimString(string text)
     {
-      return text != null ? text.TrimEnd() : "";
+      return ((text != null) ? text.TrimEnd() : string.Empty);
     }
 
     [XMLSkinFunction("string.rtrim")]
     public static string RightTrimString(string text, string charsToTrim)
     {
-      return text.TrimEnd(charsToTrim.ToCharArray());
+      return (((text != null) && (charsToTrim !=null)) ? text.TrimEnd(charsToTrim.ToCharArray()) : string.Empty);
     }
 
     [XMLSkinFunction("string.ltrim")]
     public static string LeftTrimString(string text)
     {
-      return text.TrimStart();
+      return ((text != null) ? text.TrimStart() : string.Empty);
     }
 
     [XMLSkinFunction("string.ltrim")]
     public static string LeftTrimString(string text, string charsToTrim)
     {
-      return text.TrimStart(charsToTrim.ToCharArray());
+      return (((text != null) && (charsToTrim !=null)) ? text.TrimStart(charsToTrim.ToCharArray()) : string.Empty);
+    }
+
+    [XMLSkinFunction("string.toupper")]
+    public static string ToUpperString(string text)
+    {
+      return ((text != null) ? text.ToUpper() : string.Empty);
+    }
+    [XMLSkinFunction("string.tolower")]
+    public static string ToLowerString(string text)
+    {
+      return ((text != null) ? text.ToLower() : string.Empty);
+    }
+  
+    [XMLSkinFunction("string.capitalize")]
+    public static string CapitalizeText(string text)
+    {
+      return ((text != null) ? System.Globalization.CultureInfo.InvariantCulture.TextInfo.ToTitleCase(text) : string.Empty);
+    }
+  
+    [XMLSkinFunction("string.titlecase")]
+    public static string TitleCase(string text)
+    {
+      return ((text != null) ? System.Threading.Thread.CurrentThread.CurrentCulture.TextInfo.ToTitleCase(text) : string.Empty);
+    }
+  
+    [XMLSkinFunction("string.getfilename")]
+    public static string GetFileName(string text)
+    {
+      return ((text != null) ? MediaPortal.Util.Utils.MakeFileName(text) : string.Empty);
+    }
+  
+    [XMLSkinFunction("string.getdirectorypath")]
+    public static string GetDirectoryPath(string text)
+    {
+      return ((text != null) ? MediaPortal.Util.Utils.MakeDirectoryPath(text) : string.Empty);
+    }
+
+    [XMLSkinFunction("string.equals")]
+    public static string EqualsString(string text, string part)
+    {
+      if ((text == null) || (part == null))
+      {
+        return "false";
+      }
+      return ((CultureInfo.InvariantCulture.CompareInfo.Compare(text, part, CompareOptions.IgnoreCase) == 0) ? "true" : "false");
+    }
+
+    [XMLSkinFunction("string.contains")]
+    public static string ContainsString(string text, string part)
+    {
+      if ((text == null) || (part == null))
+      {
+        return "false";
+      }
+      return ((CultureInfo.InvariantCulture.CompareInfo.IndexOf(text, part, CompareOptions.IgnoreCase) >= 0) ? "true" : "false");
     }
 
     #endregion
@@ -264,13 +320,41 @@ namespace MediaPortal.GUI.Library
     [XMLSkinFunction("eq")]
     public new static bool Equals(object arg1, object arg2)
     {
+      if ((arg1 is string) && (arg2 is string))
+      {
+        return (CultureInfo.InvariantCulture.CompareInfo.Compare(arg1.ToString(), arg2.ToString(), CompareOptions.IgnoreCase) == 0);
+      }
       return object.Equals(arg1, arg2);
     }
 
     [XMLSkinFunction("neq")]
     public static bool NotEquals(object arg1, object arg2)
     {
+      if ((arg1 is string) && (arg2 is string))
+      {
+        return (CultureInfo.InvariantCulture.CompareInfo.Compare(arg1.ToString(), arg2.ToString(), CompareOptions.IgnoreCase) != 0);
+      }
       return !object.Equals(arg1, arg2);
+    }
+
+    [XMLSkinFunction("cont")]
+    public static bool Contains(object text, object part)
+    {
+      if ((text == null) || (part == null))
+      {
+        return false;
+      }
+      return (CultureInfo.InvariantCulture.CompareInfo.IndexOf(text.ToString(), part.ToString(), CompareOptions.IgnoreCase) >= 0);
+    }
+
+    [XMLSkinFunction("ncont")]
+    public static bool NotContains(object text, object part)
+    {
+      if ((text == null) || (part == null))
+      {
+        return false;
+      }
+      return (CultureInfo.InvariantCulture.CompareInfo.IndexOf(text.ToString(), part.ToString(), CompareOptions.IgnoreCase) < 0);
     }
 
     [XMLSkinFunction("gt")]

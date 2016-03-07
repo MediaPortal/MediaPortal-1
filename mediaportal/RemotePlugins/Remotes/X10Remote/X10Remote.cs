@@ -76,10 +76,6 @@ namespace MediaPortal.InputDevices
       using (Settings xmlreader = new MPSettings())
       {
         _controlEnabled = xmlreader.GetValueAsBool("remote", "X10", false);
-        if (!_controlEnabled)
-        { 
-          return;
-        }
         _x10Medion = xmlreader.GetValueAsBool("remote", "X10Medion", false);
         _x10Ati = xmlreader.GetValueAsBool("remote", "X10ATI", false);
         _x10Firefly = xmlreader.GetValueAsBool("remote", "X10Firefly", false);
@@ -225,6 +221,13 @@ namespace MediaPortal.InputDevices
     /// <param name="hwnd"></param>
     public void Init(IntPtr hwnd)
     {
+      using (Settings xmlreader = new MPSettings())
+      {
+        if (!xmlreader.GetValueAsBool("remote", "X10", false))
+        {
+          return;
+        }
+      }
       Init();
     }
 

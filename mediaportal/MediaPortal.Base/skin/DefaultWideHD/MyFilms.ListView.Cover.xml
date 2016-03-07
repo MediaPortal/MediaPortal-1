@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <window>
   <controls>
     <!-- MENU COVER -->
@@ -64,28 +64,25 @@
       <description>Cover Art for Views</description>
       <type>image</type>
       <id>0</id>
-      <posX>1590</posX>
-      <posY>300</posY>
-      <width>270</width>
-      <height>375</height>
+      <posX>1500</posX>
+      <posY>570</posY>
+      <width>70</width>
+      <height>100</height>
       <texture mask="videothumbmask.png">#myfilms.viewcoverimage</texture>
-      <visible>[facadeview.list|facadeview.album]+[Control.isvisible(37)|Control.isvisible(36)|string.equals(#myfilms.groupcoverimage)]</visible>
-      <animation effect="fade" time="0">visiblechange</animation>
-      <animation effect="zoom" time="0" tween="cubic" easing="inout" start="100,100" end="30,30" center="1020,320" reversible="true" condition="Control.isvisible(36)|Control.isvisible(39)">conditional</animation>
+      <visible>facadeview.list|facadeview.album</visible>
     </control>
     <!-- PERSONS COVER -->
     <control>
       <description>Cover Art for Persons</description>
       <type>image</type>
       <id>0</id>
-      <posX>1590</posX>
-      <posY>300</posY>
-      <width>270</width>
-      <height>375</height>
+      <posX>1500</posX>
+      <posY>570</posY>
+      <width>70</width>
+      <height>100</height>
       <texture mask="videothumbmask.png">#myfilms.personcoverimage</texture>
-      <visible>[facadeview.list|facadeview.album]+[Control.isvisible(38)|Control.isvisible(36)|string.equals(#myfilms.groupcoverimage)]</visible>
-      <animation effect="fade" time="0">visiblechange</animation>
-      <animation effect="zoom" time="0" tween="cubic" easing="inout" start="100,100" end="30,30" center="1020,320" reversible="true" condition="Control.isvisible(36)|Control.isvisible(39)">conditional</animation>
+      <visible>facadeview.list|facadeview.album</visible>
+      
     </control>
     <!-- VIEWS and PERSONS Frames -->
     <control>
@@ -106,14 +103,12 @@
       <description>Cover Art for Groups or Hierarchies or Collections</description>
       <type>image</type>
       <id>0</id>
-      <posX>1590</posX>
-      <posY>300</posY>
-      <width>270</width>
-      <height>375</height>
+      <posX>1500</posX>
+      <posY>570</posY>
+      <width>70</width>
+      <height>100</height>
       <texture mask="videothumbmask.png">#myfilms.groupcoverimage</texture>
-      <visible>[facadeview.list|facadeview.album]+[Control.isvisible(39)]</visible>
-      <animation effect="fade" time="0">visiblechange</animation>
-      <animation effect="zoom" time="0" tween="cubic" easing="inout" start="100,100" end="30,30" center="1020,320" reversible="true" condition="Control.isvisible(36)|Control.isvisible(39)">conditional</animation>
+      <visible>facadeview.list|facadeview.album</visible>
     </control>
     <control>
       <description>Collection Banner</description>

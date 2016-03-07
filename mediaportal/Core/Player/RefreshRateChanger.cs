@@ -774,6 +774,8 @@ namespace MediaPortal.Player
           Log.Info("RefreshRateChanger.SetRefreshRateBasedOnFPS: no refreshrate change required. current is {0}hz, desired is {1}", currentRR, newRR);
         }
       }
+      Log.Info("RefreshRateChanger.SwitchFocus");
+      Util.Utils.SwitchFocus();
     }
 
     // defaults the refreshrate

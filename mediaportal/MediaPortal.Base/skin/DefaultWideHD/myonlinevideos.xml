@@ -26,7 +26,7 @@
       <height>1080</height>
       <texture>general_overlay.png</texture>
     </control>
-    <import>common.facade.pictures.xml</import>
+    <import>myonlinevideos.facade.xml</import>
     <control>
       <description>Label for Current, Total Amount and Localized Type of items</description>
       <type>label</type>
@@ -115,7 +115,7 @@
       <centered>yes</centered>
       <texture mask="Picturethumbmask.png">#selectedthumb</texture>
       <keepaspectratio>yes</keepaspectratio>
-      <visible>!Control.IsVisible(51)+facadeview.list</visible>
+      <visible>!Control.IsVisible(51)</visible>
     </control>
     <control>
       <description>picture frame</description>
@@ -126,7 +126,7 @@
       <width>390</width>
       <height>270</height>
       <texture mask="Picturethumbmask.png">Picturethumbframe.png</texture>
-      <visible>!Control.IsVisible(51)+facadeview.list</visible>
+      <visible>!Control.IsVisible(51)</visible>
     </control>
     <control>
       <description>Language Label</description>
@@ -138,7 +138,7 @@
       <font>font10</font>
       <label>#(L(248)):</label>
       <textcolor>ffa9d0f7</textcolor>
-      <visible>string.equals(#OnlineVideos.state, sites)+control.hastext(502)+facadeview.list</visible>
+      <visible>string.equals(#OnlineVideos.state, sites)+control.hastext(502)</visible>
     </control>
     <control>
       <description>language of site | number of sites in group | number of videos in category</description>
@@ -150,7 +150,7 @@
       <font>font10</font>
       <label>#selecteditem2</label>
       <textcolor>ffa9d0f7</textcolor>
-      <visible>!string.equals(#OnlineVideos.state, details) + !string.equals(#OnlineVideos.state, videos)+facadeview.list</visible>
+      <visible>!string.equals(#OnlineVideos.state, details) + !string.equals(#OnlineVideos.state, videos)</visible>
     </control>
     <control>
       <description>Description</description>
@@ -164,7 +164,7 @@
       <font>font10</font>
       <label>#OnlineVideos.desc</label>
       <textcolor>White</textcolor>
-      <visible>!Control.IsVisible(51) + [string.equals(#OnlineVideos.ExtendedVideoInfo, False) | !string.equals(#OnlineVideos.selectedSiteUtil, YouTube)]+facadeview.list</visible>
+      <visible>!Control.IsVisible(51) + [string.equals(#OnlineVideos.ExtendedVideoInfo, False) | !string.equals(#OnlineVideos.selectedSiteUtil, YouTube)]</visible>
     </control>
     <import>myonlinevideos.extended.youtube.xml</import>
     <!-- ******************************* Buffering Information **************************** -->

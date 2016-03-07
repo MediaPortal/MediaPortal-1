@@ -58,8 +58,6 @@ namespace MediaPortal.GUI.Settings
     #region Variables
 
     private MusicDatabase m_dbs = MusicDatabase.Instance;
-    private ArrayList m_pathids = new ArrayList();
-    private ArrayList m_shares = new ArrayList();
 
     private int _parentWindowID = 0;
 
@@ -96,28 +94,6 @@ namespace MediaPortal.GUI.Settings
       pDlgProgress.SetPercentage(e.progress);
       pDlgProgress.SetLine(1, e.phase);
       pDlgProgress.Progress();
-    }
-
-    private bool IsCanceled()
-    {
-      GUIDialogProgress pDlgProgress =
-        (GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
-      if (null == pDlgProgress)
-      {
-        return false;
-      }
-
-      pDlgProgress.ProgressKeys();
-      if (pDlgProgress.IsCanceled)
-      {
-        try
-        {
-          MusicDatabase.DirectExecute("rollback");
-        }
-        catch (Exception) {}
-        return true;
-      }
-      return false;
     }
 
     public int DoReorg()

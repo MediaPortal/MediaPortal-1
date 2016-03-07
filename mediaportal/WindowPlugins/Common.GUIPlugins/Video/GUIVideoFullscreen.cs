@@ -816,7 +816,7 @@ namespace MediaPortal.GUI.Video
                                               (int)Control.LABEL_ROW1, 0, 0, null);
               g_Player.SwitchToNextVideo();
 
-              String language = g_Player.VideoLanguage(g_Player.CurrentVideoStream);
+              String language = g_Player.VideoName(g_Player.CurrentVideoStream);
               String languagetype = g_Player.VideoType(g_Player.CurrentVideoStream);
               if (String.Equals(language, "Video") || String.Equals(language, "") || String.Equals(language, languagetype))
               {
@@ -825,7 +825,7 @@ namespace MediaPortal.GUI.Video
               }
               else
               {
-                msg.Label = string.Format("{0} {1} ({2}/{3})", language,
+                msg.Label = string.Format("{0} - {1} ({2}/{3})", language,
                                           languagetype,
                                           g_Player.CurrentVideoStream + 1, g_Player.VideoStreams);
               }
@@ -1428,6 +1428,22 @@ namespace MediaPortal.GUI.Video
         {
           item.Label = (String.Format("{0} #{1}", GUILocalizeStrings.Get(200091), (i + 1)));
           item.Label2 = Util.Utils.SecondsToHMSString((int)chaptersList[i]);
+
+          if (i < chaptersList.Length - 1)
+          {
+            if (g_Player.CurrentPosition >= chaptersList[i] && g_Player.CurrentPosition < chaptersList[i + 1])
+            {
+              item.Selected = true;
+            }
+          }
+          else
+          {
+            if (g_Player.CurrentPosition >= chaptersList[i])
+            {
+              item.Selected = true;
+            }
+          }
+
           dlg.Add(item);
         }
         else
@@ -1436,14 +1452,27 @@ namespace MediaPortal.GUI.Video
           {
             item.Label = (String.Format("{0} #{1}", GUILocalizeStrings.Get(200091), (i + 1)));
             item.Label2 = Util.Utils.SecondsToHMSString((int)chaptersList[i]);
-            dlg.Add(item);
           }
           else
           {
             item.Label = (String.Format("{0} #{1}: {2}", GUILocalizeStrings.Get(200091), (i + 1), chaptersname[i]));
             item.Label2 = Util.Utils.SecondsToHMSString((int)chaptersList[i]);
-            dlg.Add(item);
           }
+          if (i < chaptersList.Length - 1)
+          {
+            if (g_Player.CurrentPosition >= chaptersList[i] && g_Player.CurrentPosition < chaptersList[i + 1])
+            {
+              item.Selected = true;
+            }
+          }
+          else
+          {
+            if (g_Player.CurrentPosition >= chaptersList[i])
+            {
+              item.Selected = true;
+            }
+          }
+          dlg.Add(item);
         }
       }
 
@@ -1537,15 +1566,15 @@ namespace MediaPortal.GUI.Video
       for (int i = 0; i < count; i++)
       {
         string videoType = g_Player.VideoType(i);
-        string videoLang = g_Player.VideoLanguage(i);
+        string videoName = g_Player.VideoName(i);
         if (videoType == Strings.Unknown || String.Equals(videoType, "") ||
-            videoType.Equals(videoLang))
+            videoType.Equals(videoName))
         {
-          dlg.Add(videoLang);
+          dlg.Add(videoName);
         }
         else
         {
-          dlg.Add(String.Format("{0} {1}", videoLang, videoType));
+          dlg.Add(String.Format("{0} - {1}", videoName, videoType));
         }
       }
 

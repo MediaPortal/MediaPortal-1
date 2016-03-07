@@ -223,9 +223,15 @@ namespace MediaPortal.Configuration.Sections
         string selectedSkin = prevSkin;
         try
         {
-          selectedSkin = listViewAvailableSkins.SelectedItems[0].Text;
+          if (listViewAvailableSkins.SelectedItems.Count > 0)
+          {
+            selectedSkin = listViewAvailableSkins.SelectedItems[0].Text;
+          }
         }
-        catch (Exception) {}
+        catch (Exception)
+        {
+          // ignored
+        }
         if (prevSkin != selectedSkin)
         {
           xmlwriter.SetValueAsBool("general", "dontshowskinversion", false);

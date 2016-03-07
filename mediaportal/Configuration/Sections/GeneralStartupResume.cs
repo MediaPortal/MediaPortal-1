@@ -113,7 +113,7 @@ namespace MediaPortal.Configuration.Sections
                                             // 0 Start MediaPortal in fullscreen mode
                                             new[] {"general", "startfullscreen", "true"},
                                             // 1 Keep MediaPortal fullscreen mode (don't rely on windows resolution change)
-                                            new[] {"general", "keepstartfullscreen", "false"},
+                                            new[] {"general", "ignorefullscreenresolutionchanges", "false"},
                                             // 2 Use screenselector to choose on which screen MP should start
                                             new[] {"general", "usefullscreensplash", "true"},
                                             // 3 Keep MediaPortal always on top
@@ -462,7 +462,7 @@ namespace MediaPortal.Configuration.Sections
       settingsCheckedListBox.SelectionMode = SelectionMode.None;
       if (settingsCheckedListBox.GetItemChecked(1))
       {
-        // if we use keepstartfullscreen, we need to force to use MP as fullscreen
+        // if we use ignorefullscreenresolutionchanges, we need to force to use MP as fullscreen
         settingsCheckedListBox.SetItemChecked(0, true);
       }
       if (settingsCheckedListBox.GetItemChecked(13))

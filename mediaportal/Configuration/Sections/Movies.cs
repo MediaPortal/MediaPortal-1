@@ -19,7 +19,6 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.Globalization;
 using System.IO;
@@ -27,7 +26,6 @@ using System.Windows.Forms;
 using MediaPortal.GUI.Library;
 using MediaPortal.Profile;
 using MediaPortal.UserInterface.Controls;
-using MediaPortal.Util;
 using DShowNET.Helper;
 using System.Runtime.InteropServices;
 using DirectShowLib;
@@ -101,8 +99,10 @@ namespace MediaPortal.Configuration.Sections
     private TrackBar playedPercentageTrackBar;
     private MPLabel percentPlayedLabel;
     private NumericUpDown playedPercentageTB;
+    private static MPCheckBox audioDefaultCheckBox;
+    private MPLabel mpLabelOptionLAV;
+    private static MPCheckBox streamLAVSelectionCheckBox;
     private MPCheckBox chbKeepFoldersTogether;
-    private List<LanguageInfo> ISOLanguagePairs = new List<LanguageInfo>();
 
     //private int 
 
@@ -135,7 +135,7 @@ namespace MediaPortal.Configuration.Sections
 
         folderNameTextBox.Text = xmlreader.GetValueAsString("movies", "playlists", playListFolder);
 
-        if (string.Compare(folderNameTextBox.Text, playListFolder) == 0)
+        if (String.CompareOrdinal(folderNameTextBox.Text, playListFolder) == 0)
         {
           if (Directory.Exists(playListFolder) == false)
           {
@@ -225,6 +225,20 @@ namespace MediaPortal.Configuration.Sections
           defaultAudioLanguageComboBox.SelectedItem = ci.EnglishName;
         }
         subtitlesSelectionComboBox.SelectedItem = xmlreader.GetValueAsString("subtitles", "selection", "Subtitles won\'t be auto loaded");
+        audioDefaultCheckBox.Checked = xmlreader.GetValueAsBool("movieplayer", "audiodefaultlanguage", false);
+        streamLAVSelectionCheckBox.Checked = xmlreader.GetValueAsBool("movieplayer", "streamlavselection", false);
+
+        // Set Source Splitter check for first init to true.
+        if (MovieCodec._forceSourceSplitter && (MovieCodec._splitterFilter == "LAV Splitter Source" || MovieCodec._splitterFileFilter == "LAV Splitter"))
+        {
+          audioDefaultCheckBox.Enabled = true;
+          streamLAVSelectionCheckBox.Enabled=true;
+        }
+        else
+        {
+          audioDefaultCheckBox.Enabled = false;
+          streamLAVSelectionCheckBox.Enabled = false;
+        }
       }
     }
 
@@ -282,20 +296,32 @@ namespace MediaPortal.Configuration.Sections
         {
           xmlwriter.SetValueAsBool("subtitles", "selectionoff", true);
           xmlwriter.SetValueAsBool("subtitles", "enabled", false);
+          xmlwriter.SetValueAsBool("subtitles", "autoloadSubtitle", false);
           xmlwriter.SetValue("subtitles", "selection", subtitlesSelectionComboBox.SelectedItem);
         }
         else if (subtitlesSelectionComboBox.SelectedIndex == 1) //"Subtitles will be auto loaded by language preference"
         {
           xmlwriter.SetValueAsBool("subtitles", "selectionoff", false);
           xmlwriter.SetValueAsBool("subtitles", "enabled", true);
+          xmlwriter.SetValueAsBool("subtitles", "autoloadSubtitle", false);
           xmlwriter.SetValue("subtitles", "selection", subtitlesSelectionComboBox.SelectedItem);
         }
-        else if (subtitlesSelectionComboBox.SelectedIndex == 2) //"Subtitles will only display forced subtitles *"
+        else if (subtitlesSelectionComboBox.SelectedIndex == 2) //"Subtitles will be auto loaded by first available"
+        {
+          xmlwriter.SetValueAsBool("subtitles", "selectionoff", false);
+          xmlwriter.SetValueAsBool("subtitles", "enabled", true);
+          xmlwriter.SetValueAsBool("subtitles", "autoloadSubtitle", true);
+          xmlwriter.SetValue("subtitles", "selection", subtitlesSelectionComboBox.SelectedItem);
+        }
+        else if (subtitlesSelectionComboBox.SelectedIndex == 3) //"Subtitles will only display forced subtitles *"
         {
           xmlwriter.SetValueAsBool("subtitles", "selectionoff", false);
           xmlwriter.SetValueAsBool("subtitles", "enabled", false);
+          xmlwriter.SetValueAsBool("subtitles", "autoloadSubtitle", false);
           xmlwriter.SetValue("subtitles", "selection", subtitlesSelectionComboBox.SelectedItem);
         }
+        xmlwriter.SetValueAsBool("movieplayer", "audiodefaultlanguage", audioDefaultCheckBox.Checked);
+        xmlwriter.SetValueAsBool("movieplayer", "streamlavselection", streamLAVSelectionCheckBox.Checked);
       }
     }
 
@@ -351,6 +377,7 @@ namespace MediaPortal.Configuration.Sections
       this.mpGroupBoxComSkip = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.comSkipCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.chbKeepFoldersTogether = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.playedPercentageTB = new System.Windows.Forms.NumericUpDown();
       this.percentPlayedLabel = new MediaPortal.UserInterface.Controls.MPLabel();
       this.comboBoxPlayAll = new MediaPortal.UserInterface.Controls.MPComboBox();
@@ -363,11 +390,13 @@ namespace MediaPortal.Configuration.Sections
       this.tabControl1 = new MediaPortal.UserInterface.Controls.MPTabControl();
       this.mpTabPage1 = new MediaPortal.UserInterface.Controls.MPTabPage();
       this.mpGroupBox4 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      streamLAVSelectionCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.mpLabelOptionLAV = new MediaPortal.UserInterface.Controls.MPLabel();
+      audioDefaultCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.mpLabel7 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.defaultAudioLanguageComboBox = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.mpLabel8 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.defaultSubtitleLanguageComboBox = new MediaPortal.UserInterface.Controls.MPComboBox();
-      this.chbKeepFoldersTogether = new MediaPortal.UserInterface.Controls.MPCheckBox();
       tabPage3 = new MediaPortal.UserInterface.Controls.MPTabPage();
       mpGroupBox3 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       mpLabel2 = new MediaPortal.UserInterface.Controls.MPLabel();
@@ -503,6 +532,7 @@ namespace MediaPortal.Configuration.Sections
       this.subtitlesSelectionComboBox.Items.AddRange(new object[] {
             "Subtitles won\'t be auto loaded",
             "Subtitles will be auto loaded by language preference",
+            "Subtitles will be auto loaded by first available",
             "Subtitles will only display forced subtitles *"});
       this.subtitlesSelectionComboBox.Location = new System.Drawing.Point(16, 39);
       this.subtitlesSelectionComboBox.Name = "subtitlesSelectionComboBox";
@@ -884,6 +914,17 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1.TabStop = false;
       this.groupBox1.Text = "Settings";
       // 
+      // chbKeepFoldersTogether
+      // 
+      this.chbKeepFoldersTogether.AutoSize = true;
+      this.chbKeepFoldersTogether.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.chbKeepFoldersTogether.Location = new System.Drawing.Point(19, 100);
+      this.chbKeepFoldersTogether.Name = "chbKeepFoldersTogether";
+      this.chbKeepFoldersTogether.Size = new System.Drawing.Size(209, 17);
+      this.chbKeepFoldersTogether.TabIndex = 15;
+      this.chbKeepFoldersTogether.Text = "Keep DVD and BluRay folders together";
+      this.chbKeepFoldersTogether.UseVisualStyleBackColor = true;
+      // 
       // playedPercentageTB
       // 
       this.playedPercentageTB.Enabled = false;
@@ -1018,6 +1059,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.mpGroupBox4.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpGroupBox4.Controls.Add(streamLAVSelectionCheckBox);
+      this.mpGroupBox4.Controls.Add(this.mpLabelOptionLAV);
+      this.mpGroupBox4.Controls.Add(audioDefaultCheckBox);
       this.mpGroupBox4.Controls.Add(this.mpLabel7);
       this.mpGroupBox4.Controls.Add(this.defaultAudioLanguageComboBox);
       this.mpGroupBox4.Controls.Add(this.mpLabel8);
@@ -1025,10 +1069,42 @@ namespace MediaPortal.Configuration.Sections
       this.mpGroupBox4.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.mpGroupBox4.Location = new System.Drawing.Point(14, 12);
       this.mpGroupBox4.Name = "mpGroupBox4";
-      this.mpGroupBox4.Size = new System.Drawing.Size(432, 88);
+      this.mpGroupBox4.Size = new System.Drawing.Size(432, 176);
       this.mpGroupBox4.TabIndex = 10;
       this.mpGroupBox4.TabStop = false;
       this.mpGroupBox4.Text = "Default Language";
+      // 
+      // streamLAVSelectionCheckBox
+      // 
+      streamLAVSelectionCheckBox.AutoSize = true;
+      streamLAVSelectionCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      streamLAVSelectionCheckBox.Location = new System.Drawing.Point(16, 134);
+      streamLAVSelectionCheckBox.Name = "streamLAVSelectionCheckBox";
+      streamLAVSelectionCheckBox.Size = new System.Drawing.Size(360, 17);
+      streamLAVSelectionCheckBox.TabIndex = 18;
+      streamLAVSelectionCheckBox.Text = "Override the whole audio/subtitle use stream selection from LAV Splitter";
+      streamLAVSelectionCheckBox.UseVisualStyleBackColor = true;
+      streamLAVSelectionCheckBox.CheckedChanged += new System.EventHandler(this.streamLAVSelectionCheckBox_CheckedChanged);
+      // 
+      // mpLabelOptionLAV
+      // 
+      this.mpLabelOptionLAV.Location = new System.Drawing.Point(13, 83);
+      this.mpLabelOptionLAV.Name = "mpLabelOptionLAV";
+      this.mpLabelOptionLAV.Size = new System.Drawing.Size(238, 16);
+      this.mpLabelOptionLAV.TabIndex = 17;
+      this.mpLabelOptionLAV.Text = "Option working only with  LAV Splitter in use:";
+      // 
+      // audioDefaultCheckBox
+      // 
+      audioDefaultCheckBox.AutoSize = true;
+      audioDefaultCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      audioDefaultCheckBox.Location = new System.Drawing.Point(16, 111);
+      audioDefaultCheckBox.Name = "audioDefaultCheckBox";
+      audioDefaultCheckBox.Size = new System.Drawing.Size(235, 17);
+      audioDefaultCheckBox.TabIndex = 16;
+      audioDefaultCheckBox.Text = "Override audio selection and use default one";
+      audioDefaultCheckBox.UseVisualStyleBackColor = true;
+      audioDefaultCheckBox.CheckedChanged += new System.EventHandler(this.audioDefault_CheckedChanged);
       // 
       // mpLabel7
       // 
@@ -1070,17 +1146,6 @@ namespace MediaPortal.Configuration.Sections
       this.defaultSubtitleLanguageComboBox.Sorted = true;
       this.defaultSubtitleLanguageComboBox.TabIndex = 7;
       // 
-      // chbKeepFoldersTogether
-      // 
-      this.chbKeepFoldersTogether.AutoSize = true;
-      this.chbKeepFoldersTogether.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.chbKeepFoldersTogether.Location = new System.Drawing.Point(19, 100);
-      this.chbKeepFoldersTogether.Name = "chbKeepFoldersTogether";
-      this.chbKeepFoldersTogether.Size = new System.Drawing.Size(209, 17);
-      this.chbKeepFoldersTogether.TabIndex = 15;
-      this.chbKeepFoldersTogether.Text = "Keep DVD and BluRay folders together";
-      this.chbKeepFoldersTogether.UseVisualStyleBackColor = true;
-      // 
       // Movies
       // 
       this.Controls.Add(this.tabControl1);
@@ -1109,6 +1174,7 @@ namespace MediaPortal.Configuration.Sections
       this.tabControl1.ResumeLayout(false);
       this.mpTabPage1.ResumeLayout(false);
       this.mpGroupBox4.ResumeLayout(false);
+      this.mpGroupBox4.PerformLayout();
       this.ResumeLayout(false);
 
     }
@@ -1303,6 +1369,46 @@ namespace MediaPortal.Configuration.Sections
     private void playedPercentageTB_ValueChanged(object sender, EventArgs e)
     {
       playedPercentageTrackBar.Value = (int)playedPercentageTB.Value;
+    }
+
+    /// <summary>
+    /// sets useability of select config depending on whether auot decoder stting option is enabled.
+    /// </summary>
+    public static void UpdateDecoderSettings()
+    {
+      // Enable checkbox if LAV splitter are in use.
+      if (MovieCodec._forceSourceSplitter && (MovieCodec._splitterFilter == "LAV Splitter Source" || MovieCodec._splitterFileFilter == "LAV Splitter"))
+      {
+        audioDefaultCheckBox.Enabled = true;
+        streamLAVSelectionCheckBox.Enabled = true;
+      }
+      else
+      {
+        audioDefaultCheckBox.Enabled = false;
+        streamLAVSelectionCheckBox.Enabled = false;
+      }
+    }
+
+    private void audioDefault_CheckedChanged(object sender, EventArgs e)
+    {
+      defaultAudioLanguageComboBox.Enabled = !audioDefaultCheckBox.Checked;
+    }
+
+    private void streamLAVSelectionCheckBox_CheckedChanged(object sender, EventArgs e)
+    {
+      if (streamLAVSelectionCheckBox.Checked)
+      {
+        defaultSubtitleLanguageComboBox.Enabled = false;
+        defaultAudioLanguageComboBox.Enabled = false;
+        audioDefaultCheckBox.Enabled = false;
+        audioDefaultCheckBox.Checked = false;
+      }
+      else
+      {
+        defaultSubtitleLanguageComboBox.Enabled = true;
+        defaultAudioLanguageComboBox.Enabled = true;
+        audioDefaultCheckBox.Enabled = true;
+      }
     }
   }
 }

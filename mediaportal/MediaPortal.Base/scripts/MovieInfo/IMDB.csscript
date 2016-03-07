@@ -332,7 +332,7 @@ internal class Grabber : MarshalByRefObject, IIMDBScriptGrabber
       regexBlockPattern = @"<h4[^>]*>Genre[s]?:[^<]*</h4>(?<genres_block>.+?)</div>";
       regexPattern = @"\s*href=""/[Gg]enre[s]?/.*?>(?<movieGenres>.+?)<";
       block = Regex.Match(strBody, regexBlockPattern, RegexOptions.Singleline).Value;
-      MatchCollection mcGenre = Regex.Matches(block, regexPattern);
+      MatchCollection mcGenre = Regex.Matches(block, regexPattern, RegexOptions.Singleline);
       string genre = string.Empty;
 
       foreach (Match m in mcGenre)
@@ -444,7 +444,7 @@ internal class Grabber : MarshalByRefObject, IIMDBScriptGrabber
       }
 
       // Runtime
-      regexPattern = "<h5>Runtime:</h5>.*?(?<movieRuntime>\\d+)\\smin\\s+|(?<movieRuntime>\\d+)\\smin";
+      regexPattern = "<time\\sitemprop=\"duration\".*?(?<movieRuntime>\\d+)\\smin";
       int runtime;
 
       if (int.TryParse(Regex.Match(strBody, regexPattern).Groups["movieRuntime"].Value, out runtime))
@@ -486,14 +486,14 @@ internal class Grabber : MarshalByRefObject, IIMDBScriptGrabber
       {
         movieDetails.PlotOutline = shortPlot.Trim();
       }
-
-      // Plot long
+			
+			// Plot long
       string strPlotUrl = "http://m.imdb.com/title/" + movieDetails.IMDBNumber + "/plotsummary";
       try
       {
         string absoluteUri;
         string strPlotHtml = GetPage(strPlotUrl, "utf-8", out absoluteUri);
-        regexBlockPattern = @"<section\sclass=""plot"">.*?</section>";
+        regexBlockPattern = @">Plot\sSummary.*?<footer\sclass=";
         strPlotHtml = Regex.Match(strPlotHtml, regexBlockPattern,
                       RegexOptions.IgnoreCase |
                       RegexOptions.IgnorePatternWhitespace |
@@ -502,7 +502,7 @@ internal class Grabber : MarshalByRefObject, IIMDBScriptGrabber
 
         if (strPlotHtml.Length != 0)
         {
-          regexPattern = @"<p>(?<moviePlot>.+?)</p>";
+          regexPattern = @"<p\sclass=""text-large"">(?<moviePlot>.+?)</p>";
           movieDetails.Plot = Regex.Match(strPlotHtml, regexPattern,
                               RegexOptions.IgnoreCase |
                               RegexOptions.IgnorePatternWhitespace |

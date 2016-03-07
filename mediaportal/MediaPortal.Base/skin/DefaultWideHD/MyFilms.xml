@@ -341,7 +341,7 @@
       <description>DB Rating</description>
       <type>label</type>
       <id>1</id>
-      <posX>1401</posX>
+      <posX>1370</posX>
       <posY>240</posY>
       <width>300</width>
       <align>left</align>
@@ -600,7 +600,7 @@
       <description>thumb Logos ID 2001 - preset to Media Info Logos</description>
       <id>2001</id>
       <posX>1095</posX>
-      <posY>885</posY>
+      <posY>877</posY>
       <width>825</width>
       <height>45</height>
       <texture>#myfilms.logos_id2001</texture>
@@ -629,8 +629,8 @@
       <type>image</type>
       <description>UnWatched Icon</description>
       <id>1</id>
-      <posX>987</posX>
-      <posY>262</posY>
+      <posX>1487</posX>
+      <posY>240</posY>
       <width>36</width>
       <height>36</height>
       <texture>MyFilms\overlayunwatched.png</texture>
@@ -642,8 +642,8 @@
       <type>image</type>
       <description>Watched Icon</description>
       <id>1</id>
-      <posX>987</posX>
-      <posY>262</posY>
+      <posX>1487</posX>
+      <posY>240</posY>
       <width>36</width>
       <height>36</height>
       <texture>MyFilms\overlaywatched.png</texture>

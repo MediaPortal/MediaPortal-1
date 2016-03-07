@@ -65,6 +65,23 @@ namespace DeployVersionGIT
         return Process.Start(procInfo);
       }
 
+      // GIT V2 is installed to x64 folder
+      programFiles = Environment.GetEnvironmentVariable("ProgramW6432");
+
+      file = new FileInfo(programFiles + @"\Git\bin\git.exe");
+      procInfo = new ProcessStartInfo();
+      procInfo.RedirectStandardOutput = true;
+      procInfo.UseShellExecute = false;
+      procInfo.Arguments = arguments;
+      procInfo.FileName = file.FullName;
+
+      Console.WriteLine("Running : {0} {1}", file.FullName, arguments);
+
+      if (file.Exists)
+      {
+        return Process.Start(procInfo);
+      }
+
       Console.WriteLine("git.exe not found!");
       return null;
     }

@@ -219,7 +219,7 @@
 
   <define property="true" evaluateNow="true">#list.VIDEO:#(#list.header.left)#(L(291))#(#list.header.right),#NONE,#VIDEO1,#.TVSERIES,#1.TVSERIES,#2.TVSERIES,#3.TVSERIES,#4.TVSERIES,#5.TVSERIES,#6.TVSERIES,#7.TVSERIES,#8.TVSERIES,#9.TVSERIES,#10.TVSERIES,#11.TVSERIES,#12.TVSERIES,#13.TVSERIES,#14.TVSERIES,#15.TVSERIES,#.MOVPIC,#1.MOVPIC,#2.MOVPIC,#3.MOVPIC,#4.MOVPIC,#5.MOVPIC,#6.MOVPIC,#7.MOVPIC,#8.MOVPIC,#9.MOVPIC,#10.MOVPIC,#VIDEO3,#VIDEO4,#VIDEO5,#.TRAKT,#1.TRAKT,#2.TRAKT,#3.TRAKT,#4.TRAKT,#5.TRAKT,#6.TRAKT,#7.TRAKT,#8.TRAKT,#9.TRAKT,#10.TRAKT,#11.TRAKT,#12.TRAKT,#VIDEO6,#VIDEO7,#VIDEO8</define>
 
-  <define property="true" evaluateNow="true">#list.AUDIO:#(#list.header.left)#(L(292))#(#list.header.right),#NONE,#AUDIO1,#AUDIO2,#AUDIO3,#AUDIO4,#AUDIO5,#AUDIO6,#AUDIO7,#AUDIO8,#AUDIO9,#AUDIO10,#AUDIO11,#.MUSIC,#1.MUSIC,#2.MUSIC,#3.MUSIC,#4.MUSIC,#5.MUSIC,#6.MUSIC,#7.MUSIC,#8.MUSIC,#9.MUSIC,#10.MUSIC</define>
+  <define property="true" evaluateNow="true">#list.AUDIO:#(#list.header.left)#(L(292))#(#list.header.right),#NONE,#AUDIO1,#AUDIO2,#AUDIO22,#AUDIO23,#AUDIO24,#AUDIO3,#AUDIO4,#AUDIO5,#AUDIO6,#AUDIO7,#AUDIO8,#AUDIO9,#AUDIO20,#AUDIO21,#.MUSIC,#1.MUSIC,#2.MUSIC,#3.MUSIC,#4.MUSIC,#5.MUSIC,#6.MUSIC,#7.MUSIC,#8.MUSIC,#9.MUSIC,#10.MUSIC</define>
 
   <define property="true" evaluateNow="true">#list.PICTURE:#(#list.header.left)#(L(1))#(#list.header.right),#NONE,#PICTURE1,#PICTURE2</define>
 
@@ -543,27 +543,60 @@
   <define property="true" evaluateNow="true">#AUDIO9.active:#(iif(or(eq(#AUDIO9.plugin,''),plugin.isenabled(#AUDIO9.plugin)),' ',''))</define>
   <define property="true" evaluateNow="true">#AUDIO9:#(string.format('{0}{1}',#AUDIO9.name,iif(eq(#AUDIO9.active,' '),'',#PLUGERROR)))</define>
 
-  <define property="true" evaluateNow="true">#AUDIO10.name:Rockstar</define>
-  <define property="true" evaluateNow="true">#AUDIO10.plugin:Rockstar</define>
-  <define property="true" evaluateNow="true">#AUDIO10.hyperlink:47286</define>
-  <define property="true" evaluateNow="true">#AUDIO10.parameter:</define>
-  <define property="true" evaluateNow="true">#AUDIO10.hover:musicvideos-background.jpg</define>
-  <define property="true" evaluateNow="true">#AUDIO10.background:Animations\BasicHome\music.jpg</define>
-  <define property="true" evaluateNow="true">#AUDIO10.iconfocus:tb_music.png</define>
-  <define property="true" evaluateNow="true">#AUDIO10.iconnofocus:tb_musicNF.png</define>
-  <define property="true" evaluateNow="true">#AUDIO10.active:#(iif(or(eq(#AUDIO10.plugin,''),plugin.isenabled(#AUDIO10.plugin)),' ',''))</define>
-  <define property="true" evaluateNow="true">#AUDIO10:#(string.format('{0}{1}',#AUDIO10.name,iif(eq(#AUDIO10.active,' '),'',#PLUGERROR)))</define>
+  <define property="true" evaluateNow="true">#AUDIO20.name:Rockstar</define>
+  <define property="true" evaluateNow="true">#AUDIO20.plugin:Rockstar</define>
+  <define property="true" evaluateNow="true">#AUDIO20.hyperlink:47286</define>
+  <define property="true" evaluateNow="true">#AUDIO20.parameter:</define>
+  <define property="true" evaluateNow="true">#AUDIO20.hover:musicvideos-background.jpg</define>
+  <define property="true" evaluateNow="true">#AUDIO20.background:Animations\BasicHome\music.jpg</define>
+  <define property="true" evaluateNow="true">#AUDIO20.iconfocus:tb_music.png</define>
+  <define property="true" evaluateNow="true">#AUDIO20.iconnofocus:tb_musicNF.png</define>
+  <define property="true" evaluateNow="true">#AUDIO20.active:#(iif(or(eq(#AUDIO20.plugin,''),plugin.isenabled(#AUDIO20.plugin)),' ',''))</define>
+  <define property="true" evaluateNow="true">#AUDIO20:#(string.format('{0}{1}',#AUDIO20.name,iif(eq(#AUDIO20.active,' '),'',#PLUGERROR)))</define>
 
-  <define property="true" evaluateNow="true">#AUDIO11.name:YouTube.FM</define>
-  <define property="true" evaluateNow="true">#AUDIO11.plugin:YouTubeFM</define>
-  <define property="true" evaluateNow="true">#AUDIO11.hyperlink:29052</define>
-  <define property="true" evaluateNow="true">#AUDIO11.parameter:</define>
-  <define property="true" evaluateNow="true">#AUDIO11.hover:youtubefm_logo.png</define>
-  <define property="true" evaluateNow="true">#AUDIO11.background:Animations\BasicHome\music.jpg</define>
-  <define property="true" evaluateNow="true">#AUDIO11.iconfocus:tb_music.png</define>
-  <define property="true" evaluateNow="true">#AUDIO11.iconnofocus:tb_musicNF.png</define>
-  <define property="true" evaluateNow="true">#AUDIO11.active:#(iif(or(eq(#AUDIO11.plugin,''),plugin.isenabled(#AUDIO11.plugin)),' ',''))</define>
-  <define property="true" evaluateNow="true">#AUDIO11:#(string.format('{0}{1}',#AUDIO11.name,iif(eq(#AUDIO11.active,' '),'',#PLUGERROR)))</define>
+  <define property="true" evaluateNow="true">#AUDIO21.name:YouTube.FM</define>
+  <define property="true" evaluateNow="true">#AUDIO21.plugin:YouTubeFM</define>
+  <define property="true" evaluateNow="true">#AUDIO21.hyperlink:29052</define>
+  <define property="true" evaluateNow="true">#AUDIO21.parameter:</define>
+  <define property="true" evaluateNow="true">#AUDIO21.hover:youtubefm_logo.png</define>
+  <define property="true" evaluateNow="true">#AUDIO21.background:Animations\BasicHome\music.jpg</define>
+  <define property="true" evaluateNow="true">#AUDIO21.iconfocus:tb_music.png</define>
+  <define property="true" evaluateNow="true">#AUDIO21.iconnofocus:tb_musicNF.png</define>
+  <define property="true" evaluateNow="true">#AUDIO21.active:#(iif(or(eq(#AUDIO21.plugin,''),plugin.isenabled(#AUDIO21.plugin)),' ',''))</define>
+  <define property="true" evaluateNow="true">#AUDIO21:#(string.format('{0}{1}',#AUDIO21.name,iif(eq(#AUDIO21.active,' '),'',#PLUGERROR)))</define>
+  
+  <define property="true" evaluateNow="true">#AUDIO22.name:#(L(533))</define>
+  <define property="true" evaluateNow="true">#AUDIO22.plugin:Radio</define>
+  <define property="true" evaluateNow="true">#AUDIO22.hyperlink:762</define>
+  <define property="true" evaluateNow="true">#AUDIO22.parameter:</define>
+  <define property="true" evaluateNow="true">#AUDIO22.hover:hover_my radio.png</define>
+  <define property="true" evaluateNow="true">#AUDIO22.background:Animations\BasicHome\music.jpg</define>
+  <define property="true" evaluateNow="true">#AUDIO22.iconfocus:tb_music.png</define>
+  <define property="true" evaluateNow="true">#AUDIO22.iconnofocus:tb_musicNF.png</define>
+  <define property="true" evaluateNow="true">#AUDIO22.active:#(iif(or(eq(#AUDIO22.plugin,''),plugin.isenabled(#AUDIO22.plugin)),' ',''))</define>
+  <define property="true" evaluateNow="true">#AUDIO22:#(string.format('{0}{1}',#AUDIO22.name,iif(eq(#AUDIO22.active,' '),'',#PLUGERROR)))</define>
+  
+  <define property="true" evaluateNow="true">#AUDIO23.name:#(L(811))</define>
+  <define property="true" evaluateNow="true">#AUDIO23.plugin:Radio</define>
+  <define property="true" evaluateNow="true">#AUDIO23.hyperlink:763</define>
+  <define property="true" evaluateNow="true">#AUDIO23.parameter:</define>
+  <define property="true" evaluateNow="true">#AUDIO23.hover:hover_my radio.png</define>
+  <define property="true" evaluateNow="true">#AUDIO23.background:Animations\BasicHome\music.jpg</define>
+  <define property="true" evaluateNow="true">#AUDIO23.iconfocus:tb_music.png</define>
+  <define property="true" evaluateNow="true">#AUDIO23.iconnofocus:tb_musicNF.png</define>
+  <define property="true" evaluateNow="true">#AUDIO23.active:#(iif(or(eq(#AUDIO23.plugin,''),plugin.isenabled(#AUDIO23.plugin)),' ',''))</define>
+  <define property="true" evaluateNow="true">#AUDIO23:#(string.format('{0}{1}',#AUDIO23.name,iif(eq(#AUDIO23.active,' '),'',#PLUGERROR)))</define>
+  
+  <define property="true" evaluateNow="true">#AUDIO24.name:#(L(862)) #(L(137))</define>
+  <define property="true" evaluateNow="true">#AUDIO24.plugin:Radio</define>
+  <define property="true" evaluateNow="true">#AUDIO24.hyperlink:8900</define>
+  <define property="true" evaluateNow="true">#AUDIO24.parameter:</define>
+  <define property="true" evaluateNow="true">#AUDIO24.hover:hover_my radio.png</define>
+  <define property="true" evaluateNow="true">#AUDIO24.background:Animations\BasicHome\music.jpg</define>
+  <define property="true" evaluateNow="true">#AUDIO24.iconfocus:tb_music.png</define>
+  <define property="true" evaluateNow="true">#AUDIO24.iconnofocus:tb_musicNF.png</define>
+  <define property="true" evaluateNow="true">#AUDIO24.active:#(iif(or(eq(#AUDIO24.plugin,''),plugin.isenabled(#AUDIO24.plugin)),' ',''))</define>
+  <define property="true" evaluateNow="true">#AUDIO24:#(string.format('{0}{1}',#AUDIO24.name,iif(eq(#AUDIO24.active,' '),'',#PLUGERROR)))</define>
 
   <!--     *******************************************************************************************  -->
   <!--     **************************************   PICTURES ITEMS   *********************************  -->

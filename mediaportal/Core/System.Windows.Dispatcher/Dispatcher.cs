@@ -64,24 +64,6 @@ namespace System.Windows.Dispatcher
 
     public void BeginInvokeShutdown(DispatcherPriority priority) {}
 
-    private void BeginInvokeShutdownWorker()
-    {
-      _hasShutdownStarted = true;
-
-      if (ShutdownStarted != null)
-      {
-        ShutdownStarted(this, EventArgs.Empty);
-      }
-
-
-      _hasShutdownFinished = true;
-
-      if (ShutdownFinished != null)
-      {
-        ShutdownFinished(this, EventArgs.Empty);
-      }
-    }
-
     public bool CheckAccess()
     {
       return _thread == Thread.CurrentThread;

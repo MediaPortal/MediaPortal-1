@@ -351,161 +351,6 @@ namespace MediaPortal.Video.Database
       }
     }
 
-    // Deletes unwanted inserted data from the videodatabase tables which polutes user data, ie. when OnlineVideos play
-    // some online video, MP automatically insert it's data in tables and we really don't need'em here
-    // Also cleans all broken linked data from other tables
-    private void CleanUpDatabase()
-    {
-      try
-      {
-        if (m_db == null)
-        {
-          return;
-        }
-
-        string strSql = String.Format("SELECT * FROM path");
-        SQLiteResultSet resultsPath = m_db.Execute(strSql);
-
-        Int32 cleanedRows = 0;
-
-        // Get paths
-        for (int iRowPath = 0; iRowPath < resultsPath.Rows.Count; iRowPath++)
-        {
-          int idPath = Int32.Parse(DatabaseUtility.Get(resultsPath, iRowPath, "idPath"));
-          string strPath = DatabaseUtility.Get(resultsPath, iRowPath, "strPath");
-          
-          // Check for trash paths
-          if (strPath.StartsWith("http:"))
-          {
-            // Find all files related to current trash path
-            string strSqlfile = String.Format("SELECT * FROM files WHERE idPath={0}", idPath);
-            SQLiteResultSet resultsFile = m_db.Execute(strSqlfile);
-            // Delete data in file related tables
-            for (int iRowFiles = 0; iRowFiles < resultsFile.Rows.Count; iRowFiles++)
-            {
-              int idFile = Int32.Parse(DatabaseUtility.Get(resultsFile, iRowFiles, "idFile"));
-              // Bookmark
-              strSql = String.Format("DELETE FROM bookmark WHERE idFile={0}", idFile);
-              m_db.Execute(strSql);
-              cleanedRows += m_db.ChangedRows();
-              // Duration
-              strSql = String.Format("DELETE FROM duration WHERE idFile={0}", idFile);
-              m_db.Execute(strSql);
-              cleanedRows += m_db.ChangedRows();
-              // Resume
-              strSql = String.Format("DELETE FROM resume WHERE idFile={0}", idFile);
-              m_db.Execute(strSql);
-              cleanedRows += m_db.ChangedRows();
-            }
-            // Delete files
-            strSql = String.Format("DELETE FROM files WHERE idPath={0}", idPath);
-            m_db.Execute(strSql);
-            cleanedRows += m_db.ChangedRows();
-            // Delete movies
-            strSql = String.Format("DELETE FROM movie WHERE idPath={0}", idPath);
-            m_db.Execute(strSql);
-            cleanedRows += m_db.ChangedRows();
-            // Delete path
-            strSql = String.Format("DELETE FROM path WHERE idPath={0}", idPath);
-            m_db.Execute(strSql);
-            cleanedRows += m_db.ChangedRows();
-          }
-        }
-        Log.Info("Cleaned up " + cleanedRows + " rows for unwanted paths.");
-
-        // Find all files without not existing path link
-        strSql = String.Format("SELECT * FROM files WHERE files.idPath NOT IN (SELECT idPath FROM path)");
-        SQLiteResultSet results = m_db.Execute(strSql);
-        Log.Info("Found " + results.Rows.Count + " files without path link. Cleaning files related tables.");
-
-        cleanedRows = 0;
-
-        // Delete data in file related tables
-        for (int iRow = 0; iRow < results.Rows.Count; iRow++)
-        {
-          int idFile = Int32.Parse(DatabaseUtility.Get(results, iRow, "files.idFile"));
-          // Bookmark
-          strSql = String.Format("DELETE FROM bookmark WHERE idFile={0}", idFile);
-          m_db.Execute(strSql);
-          cleanedRows += m_db.ChangedRows();
-          // Duration
-          strSql = String.Format("DELETE FROM duration WHERE idFile={0}", idFile);
-          m_db.Execute(strSql);
-          cleanedRows += m_db.ChangedRows();
-          // Resume
-          strSql = String.Format("DELETE FROM resume WHERE idFile={0}", idFile);
-          m_db.Execute(strSql);
-          cleanedRows += m_db.ChangedRows();
-        }
-        Log.Info("Cleaned up " + cleanedRows + " rows for tables without file link.");
-
-        // Delete files without path link
-        strSql = String.Format("DELETE FROM files WHERE files.idPath NOT IN (SELECT idPath FROM path)");
-        m_db.Execute(strSql);
-        Log.Info("Clean up files (no path link): " + m_db.ChangedRows() + " rows affected.");
-        
-        // Delete path without any file link
-        strSql = String.Format("DELETE FROM path WHERE path.idPath NOT IN (SELECT idPath FROM files)");
-        m_db.Execute(strSql);
-        Log.Info("Clean up path (no file link): " + m_db.ChangedRows() + " rows affected.");
-        
-        // Delete movies without path link
-        strSql = String.Format("DELETE FROM movie WHERE movie.idPath NOT IN (SELECT idPath FROM path)");
-        m_db.Execute(strSql);
-        Log.Info("Clean up movie (no path link): " + m_db.ChangedRows() + " rows affected.");
-
-        // Delete actorinfo without link to actorId
-        strSql = String.Format("DELETE FROM actorinfo WHERE actorinfo.idActor NOT IN (SELECT idActor FROM actors)");
-        m_db.Execute(strSql);
-        Log.Info("Clean up actorinfo (no actorId link to actors): " + m_db.ChangedRows() + " rows affected.");
-        
-        // Delete actorlinkmovie without link to actorId 
-        strSql = String.Format("DELETE FROM actorlinkmovie where actorlinkmovie.idActor NOT IN (SELECT idActor FROM actors)");
-        m_db.Execute(strSql);
-        Log.Info("Clean up actorlinkmovie (no actorId link to actors): " + m_db.ChangedRows() + " rows affected.");
-        
-        // Delete actorlinkmovie without link to the movie
-        strSql = String.Format("DELETE FROM actorlinkmovie WHERE actorlinkmovie.idMovie NOT IN (SELECT idMovie FROM movie)");
-        m_db.Execute(strSql);
-        Log.Info("Clean up actorlinkmovie (no movie link): " + m_db.ChangedRows() + " rows affected.");
-
-        // Delete actorinfomovies without link to the actorId in actors
-        strSql = String.Format("DELETE FROM actorinfomovies WHERE actorinfomovies.idActor NOT IN (SELECT idActor FROM actors)");
-        m_db.Execute(strSql);
-        Log.Info("Clean up actorinfomovies (no actorId link to actors): " + m_db.ChangedRows() + " rows affected.");
-        
-        // Delete movieinfo without link to the movie
-        strSql = String.Format("DELETE FROM movieinfo WHERE movieinfo.idMovie NOT IN (SELECT idMovie FROM movie)");
-        m_db.Execute(strSql);
-        Log.Info("Clean up movieinfo (no movie link): " + m_db.ChangedRows() + " rows affected.");
-        
-        // Delete genrelinkmovie without link to the movie
-        strSql = String.Format("DELETE FROM genrelinkmovie WHERE genrelinkmovie.idMovie NOT IN (SELECT idMovie FROM movie)");
-        m_db.Execute(strSql);
-        Log.Info("Clean up genrelinkmovie (no movie link): " + m_db.ChangedRows() + " rows affected.");
-        
-        // Compact db after cleanup
-        long vdbFile = new FileInfo(Config.GetFile(Config.Dir.Database, @"VideoDatabaseV5.db3")).Length;
-        Log.Info("Compacting videodatabase: " + vdbFile + " bytes");
-        //DatabaseUtility.CompactDatabase(m_db);
-        try
-        {
-          DatabaseUtility.CompactDatabase(m_db);
-          vdbFile = new FileInfo(Config.GetFile(Config.Dir.Database, @"VideoDatabaseV5.db3")).Length;
-          Log.Info("Compacting finished successfully. New file lenght: " + vdbFile + " bytes");
-        }
-        catch (Exception)
-        {
-          Log.Error("Compact videodatabase: vacuum failed");
-        }
-      }
-      catch (Exception ex)
-      {
-        Log.Error("videodatabase cleanup exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
-        Open();
-      }
-    }
-
     public void Dispose()
     {
       if (m_db != null)
@@ -6718,7 +6563,16 @@ namespace MediaPortal.Video.Database
       // Add directorID
       try
       {
-        details.DirectorID = Int32.Parse(DatabaseUtility.Get(results, iRow, "movieinfo.idDirector"));
+        int numValue;
+        bool parsed = Int32.TryParse(DatabaseUtility.Get(results, iRow, "movieinfo.idDirector"), out numValue);
+        if (parsed)
+        {
+          details.DirectorID = numValue;
+        }
+        else
+        {
+          details.DirectorID = -1;
+        }
       }
       catch (Exception)
       {

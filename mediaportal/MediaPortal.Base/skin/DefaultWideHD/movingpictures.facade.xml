@@ -43,7 +43,22 @@
           <!-- group headers -->
           <textXOff3>0</textXOff3>
           <textYOff3>12</textYOff3>
-          <textcolor3>ff6FAFE1</textcolor3>
+          <shadedColor>20ffffff</shadedColor>
+          <selectedColor3>FF00CC00</selectedColor3>
+          <selectedColor2>FF00CC00</selectedColor2>
+          <selectedColor>FF00CC00</selectedColor>
+          <playedColor>FFffffff</playedColor>
+          <playedColor2>FFffffff</playedColor2>
+          <textcolor>ffffcc00</textcolor>
+          <textcolorNoFocus>80ffcc00</textcolorNoFocus>
+          <textcolor2>ffffffff</textcolor2>
+          <textcolor3>ffffffff</textcolor3>
+          <colordiffuse>ffffffff</colordiffuse>
+          <remoteColor>ffFF9900</remoteColor>
+          <remoteColor2>ffFF9900</remoteColor2>
+          <downloadColor>ff666666</downloadColor>
+          <downloadColor2>ff80ff80</downloadColor2>
+          <dimColor>ffffffff</dimColor>
           <onleft>4</onleft>
           <onright>4</onright>
         </control>
@@ -176,8 +191,6 @@
           <frameHeight>540</frameHeight>
           <spinSpeed>8</spinSpeed>
           <unfocusedAlpha>FF</unfocusedAlpha>
-          <folderPrefix>[</folderPrefix>
-          <folderSuffix>]</folderSuffix>
           <font1>font13</font1>
           <font2>font10</font2>
           <label1>-</label1>
@@ -190,8 +203,8 @@
           <shadowAngle>45</shadowAngle>
           <shadowDistance>0</shadowDistance>
           <shadowColor>FF000000</shadowColor>
-          <label1YOff>405</label1YOff>
-          <label2YOff>430</label2YOff>
+          <label1YOff>2405</label1YOff>
+          <label2YOff>2430</label2YOff>
           <pageSize>5</pageSize>
           <keepaspectratio>no</keepaspectratio>
           <scrollbarBackground>bar_hor.png</scrollbarBackground>

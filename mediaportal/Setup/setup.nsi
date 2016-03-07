@@ -295,6 +295,7 @@ ShowUninstDetails show
   !insertmacro RemoveTTFFont "Titan.ttf"
   !insertmacro RemoveTTFFont "TitanLight.ttf"
   !insertmacro RemoveTTFFont "TitanMedium.ttf"
+  !insertmacro RemoveTTFFont "NotoSans-Regular.ttf"
   SendMessage ${HWND_BROADCAST} ${WM_FONTCHANGE} 0 0 /TIMEOUT=1000
 !macroend
 
@@ -398,7 +399,6 @@ Section "MediaPortal core files (required)" SecCore
   #CONFIG FILES ARE ALWAYS INSTALLED by GIT and FINAL releases, BECAUSE of the config dir location
   #MediaPortal Paths should not be overwritten
   !define EXCLUDED_CONFIG_FILES "\
-    /x 'eHome Infrared Transceiver List XP.xml' \
     /x keymap.xml \
     /x MediaPortalDirs.xml \
     /x wikipedia.xml \
@@ -458,7 +458,6 @@ Section "MediaPortal core files (required)" SecCore
 
   ; Config Files
   SetOutPath "$MPdir.Config"
-  File /nonfatal "${MEDIAPORTAL.BASE}\eHome Infrared Transceiver List XP.xml"
   File /nonfatal "${MEDIAPORTAL.BASE}\keymap.xml"
   File /nonfatal "${MEDIAPORTAL.BASE}\wikipedia.xml"
 
@@ -545,11 +544,13 @@ Section "MediaPortal core files (required)" SecCore
   File "${git_MP}\WindowPlugins\Common.GUIPlugins\bin\${BUILD_TYPE}\Common.GUIPlugins.dll"
   ; ffmpeg
   SetOutPath "$MPdir.Base\MovieThumbnailer"
-  File "${git_ROOT}\Packages\ffmpeg.2.1.1\ffmpeg.exe"
+  File "${git_ROOT}\Packages\ffmpeg.2.7.1\ffmpeg.exe"
   ; NuGet binaries MediaInfo
   SetOutPath "$MPdir.Base\"
   File "${git_ROOT}\Packages\MediaInfo.0.7.69\MediaInfo.dll"
-  ; NuGet binaries
+  ; NuGet binaries Sqlite
+  SetOutPath "$MPdir.Base\"
+  File "${git_ROOT}\Packages\Sqlite.3.10.0\Sqlite.dll"
   ; Bass Core
   SetOutPath "$MPdir.Base\"
   File "${git_ROOT}\Packages\BASS.2.4.10\bass.dll"
@@ -583,10 +584,16 @@ Section "MediaPortal core files (required)" SecCore
   File "${git_ROOT}\Packages\bass.dsd.0.0.1\bassdsd.dll"
   ; taglib-sharp
   SetOutPath "$MPdir.Base\"
-  File "${git_ROOT}\Packages\MediaPortal.TagLib.2.0.3.8\lib\taglib-sharp.dll"
+  File "${git_ROOT}\Packages\MediaPortal.TagLib.2.1.0.1\lib\net40\taglib-sharp.dll"
   ; SharpLibHid
   SetOutPath "$MPdir.Base\"
-  File "${git_ROOT}\Packages\SharpLibHid.1.1.0\lib\net20\SharpLibHid.dll"
+  File "${git_ROOT}\Packages\SharpLibHid.1.3.1\lib\net20\SharpLibHid.dll"
+  ; SharpLibWin32
+  SetOutPath "$MPdir.Base\"
+  File "${git_ROOT}\Packages\SharpLibWin32.0.0.7\lib\net20\SharpLibWin32.dll"
+  ; SharpLibDisplay
+  SetOutPath "$MPdir.Base\"
+  File "${git_ROOT}\Packages\SharpLibDisplay.0.2.5\lib\net40\SharpLibDisplay.dll"
   ; Doc
   SetOutPath "$MPdir.Base\Docs"
   File "${git_MP}\Docs\BASS License.txt"
@@ -632,18 +639,18 @@ Section "MediaPortal core files (required)" SecCore
 
   ; delete font for proper reinstallation for Default and Titan Skin Font
   !insertmacro un.Fonts
-  Delete "$FONT\TitanSmall.ttf"
-  Delete "$FONT\Titan.ttf"
-  Delete "$FONT\TitanLight.ttf"
-  Delete "$FONT\TitanMedium.ttf"
-  Delete "$FONT\Lato-Medium.ttf"
-  Delete "$FONT\Lato-Light.ttf"
+  Delete "${MEDIAPORTAL.BASE}\skin\Titan\Fonts\TitanSmall.ttf"
+  Delete "${MEDIAPORTAL.BASE}\skin\Titan\Fonts\Titan.ttf"
+  Delete "${MEDIAPORTAL.BASE}\skin\Titan\Fonts\TitanLight.ttf"
+  Delete "${MEDIAPORTAL.BASE}\skin\Titan\Fonts\TitanMedium.ttf"
+  Delete "${MEDIAPORTAL.BASE}\skin\DefaultWideHD\MPDefaultFonts\Lato-Medium.ttf"
+  Delete "${MEDIAPORTAL.BASE}\skin\DefaultWideHD\MPDefaultFonts\Lato-Light.ttf"
+  Delete "${MEDIAPORTAL.BASE}\skin\DefaultWideHD\MPDefaultFonts\NotoSans-Regular.ttf"
 
   ; used for Default and Titan Skin Font
   StrCpy $FONT_DIR $FONTS
 
-  !insertmacro InstallTTFFont "${MEDIAPORTAL.BASE}\skin\DefaultWideHD\MPDefaultFonts\Lato-Medium.ttf"
-  !insertmacro InstallTTFFont "${MEDIAPORTAL.BASE}\skin\DefaultWideHD\MPDefaultFonts\Lato-Light.ttf"
+  !insertmacro InstallTTFFont "${MEDIAPORTAL.BASE}\skin\DefaultWideHD\MPDefaultFonts\NotoSans-Regular.ttf"
   !insertmacro InstallTTFFont "${MEDIAPORTAL.BASE}\skin\Titan\Fonts\TitanSmall.ttf"
   !insertmacro InstallTTFFont "${MEDIAPORTAL.BASE}\skin\Titan\Fonts\Titan.ttf"
   !insertmacro InstallTTFFont "${MEDIAPORTAL.BASE}\skin\Titan\Fonts\TitanLight.ttf"
@@ -697,7 +704,6 @@ SectionEnd
 
   ; Config Files
   Delete "$MPdir.Config\CaptureCardDefinitions.xml"
-  Delete "$MPdir.Config\eHome Infrared Transceiver List XP.xml"
   ; Don't delete this file (needed for manual user input)
   ;Delete "$MPdir.Config\keymap.xml"
   Delete "$MPdir.Config\wikipedia.xml"

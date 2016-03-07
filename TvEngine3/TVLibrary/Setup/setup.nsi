@@ -493,10 +493,10 @@ ${MementoSection} "MediaPortal TV Server" SecServer
   File "${TVSERVER.BASE}\Ionic.Zip.dll"
 
   ; MediaInfo
-  File "${TVSERVER.BASE}\MediaInfo.dll"
+  File "${git_ROOT}\Packages\MediaInfo.0.7.69\MediaInfo.dll"
 
   ; thumbnail software
-  File "${git_ROOT}\Packages\ffmpeg.2.1.1\ffmpeg.exe"
+  File "${git_ROOT}\Packages\ffmpeg.2.7.1\ffmpeg.exe"
   File "${git_TVServer}\TvThumbnails\bin\${BUILD_TYPE}\TvThumbnails.dll"
   
 
