@@ -517,12 +517,12 @@ namespace MediaPortal.GUI.Video
           // Add movie to collection if there is available collections for that movie
           if (movieMovieCollectionsList.Count < movieCollectionsList.Count)
           {
-            dlg.AddLocalizedString(1327); //add movie to collection
+            dlg.AddLocalizedString(1333); //add movie to collection
           }
 
           if (handler.CurrentLevel > 0)
           {
-            dlg.AddLocalizedString(1328); //remove from collection
+            dlg.AddLocalizedString(1334); //remove from collection
           }
         }
 
@@ -629,11 +629,11 @@ namespace MediaPortal.GUI.Video
           GUIVideoFiles.SetDefaultGrabber();
           break;
         
-        case 1327: // Add Movie to Collection
+        case 1333: // Add Movie to Collection
           OnAddToCollection(movie, itemNo);
           break;
 
-        case 1328: // Remove from Collection
+        case 1334: // Remove from Collection
           OnRemoveFromCollection(movie, itemNo);
           break;
         

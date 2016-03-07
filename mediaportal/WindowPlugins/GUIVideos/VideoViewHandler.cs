@@ -940,13 +940,13 @@ namespace MediaPortal.GUI.Video
           localizedLevelName = GUILocalizeStrings.Get(1265);
           break;
         case "user groups only":
-          localizedLevelName = GUILocalizeStrings.Get(1325);
+          localizedLevelName = GUILocalizeStrings.Get(1330);
           break;
         case "movie collections":
-          localizedLevelName = GUILocalizeStrings.Get(1324);
+          localizedLevelName = GUILocalizeStrings.Get(1331);
           break;
         case "movie collections only":
-          localizedLevelName = GUILocalizeStrings.Get(1326);
+          localizedLevelName = GUILocalizeStrings.Get(1332);
           break;
         default:
           localizedLevelName = lvlName;
