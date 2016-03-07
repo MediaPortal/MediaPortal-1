@@ -562,7 +562,7 @@ namespace MediaPortal.GUI.Video
         dlg.AddLocalizedString(1298); //Refresh fanart
       }
 
-      dlg.AddLocalizedString(1329); //Refresh cover
+      dlg.AddLocalizedString(1335); //Refresh cover
       dlg.AddLocalizedString(1304); //Export to nfo file
       // Show dialog menu
       dlg.DoModal(GetID);
@@ -581,7 +581,7 @@ namespace MediaPortal.GUI.Video
         case 1298: // Refresh fanart
           OnFanartRefresh();
           break;
-        case 1329: // Refresh cover
+        case 1335: // Refresh cover
           OnCoverRefresh();
           break;
         case 1263: // Set deault grabber script
