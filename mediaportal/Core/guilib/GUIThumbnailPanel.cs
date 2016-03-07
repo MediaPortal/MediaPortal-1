@@ -2888,6 +2888,13 @@ namespace MediaPortal.GUI.Library
       _refresh = true;
     }
 
+    public void Replace(int index, GUIListItem item)
+    {
+      if (item != null && index >= 0 && index < _listItems.Count)
+      {
+        _listItems[index] = item;
+      }
+    }
 
     public void Insert(int index, GUIListItem item)
     {
@@ -2988,6 +2995,30 @@ namespace MediaPortal.GUI.Library
         OnSelectionChanged();
         _refresh = true;
       }
+    }
+
+    public virtual int RemoveItem(int iItem)
+    {
+      if (iItem < 0 || iItem > _listItems.Count)
+      {
+        return -1;
+      }
+
+      try
+      {
+        Monitor.Enter(this);
+        _listItems.RemoveAt(iItem);
+      }
+      catch (Exception ex)
+      {
+        Log.Error("GUIThumbnailPanel.RemoveItem caused an exception: {0}", ex.Message);
+      }
+      finally
+      {
+        Monitor.Exit(this);
+      }
+      _refresh = true;
+      return SelectedListItemIndex;
     }
 
     public void Clear()
