@@ -438,6 +438,43 @@ HRESULT CMPUrlSourceSplitter_Parser_F4M::GetParserResult(void)
                                 }
                               }
 
+                              if (SUCCEEDED(this->parserResult))
+                              {
+                                // copy cookies from current protocol connection parameters to new connection parameters
+                                CParameterCollection *protocolConnectionParameters = new CParameterCollection(&this->parserResult);
+                                CHECK_POINTER_HRESULT(this->parserResult, protocolConnectionParameters, this->parserResult, E_OUTOFMEMORY);
+
+                                CHECK_CONDITION_EXECUTE(SUCCEEDED(this->parserResult), this->parserResult = this->protocolHoster->GetConnectionParameters(protocolConnectionParameters));
+
+                                if (SUCCEEDED(this->parserResult))
+                                {
+                                  unsigned int currentCookiesCount = protocolConnectionParameters->GetValueUnsignedInt(PARAMETER_NAME_HTTP_COOKIES_COUNT, true, 0);
+
+                                  wchar_t *cookiesCountValue = FormatString(L"%u", currentCookiesCount);
+                                  CHECK_POINTER_HRESULT(this->parserResult, cookiesCountValue, this->parserResult, E_OUTOFMEMORY);
+                                  CHECK_CONDITION_HRESULT(this->parserResult, this->connectionParameters->Update(PARAMETER_NAME_HTTP_COOKIES_COUNT, true, cookiesCountValue), this->parserResult, E_OUTOFMEMORY);
+                                  FREE_MEM(cookiesCountValue);
+
+                                  for (unsigned int i = 0; (SUCCEEDED(this->parserResult) && (i < currentCookiesCount)); i++)
+                                  {
+                                    wchar_t *httpCookieName = FormatString(HTTP_COOKIE_FORMAT_PARAMETER_NAME, i);
+                                    CHECK_POINTER_HRESULT(this->parserResult, httpCookieName, this->parserResult, E_OUTOFMEMORY);
+
+                                    if (SUCCEEDED(this->parserResult))
+                                    {
+                                      const wchar_t *cookieValue = protocolConnectionParameters->GetValue(httpCookieName, true, NULL);
+                                      CHECK_POINTER_HRESULT(this->parserResult, cookieValue, this->parserResult, E_OUTOFMEMORY);
+
+                                      CHECK_CONDITION_HRESULT(this->parserResult, this->connectionParameters->Update(httpCookieName, true, cookieValue), this->parserResult, E_OUTOFMEMORY);
+                                    }
+
+                                    FREE_MEM(httpCookieName);
+                                  }
+                                }
+
+                                FREE_MEM_CLASS(protocolConnectionParameters);
+                              }
+
                               if (FAILED(this->parserResult))
                               {
                                 // error occured while processing last piece of media
