@@ -23,22 +23,14 @@ using MpeCore.Interfaces;
 
 namespace MpeCore.Classes.VersionProvider
 {
-  public class TvServerVersion : IVersionProvider
+  public class TvServerVersion : VersionProvider
   {
-    public string DisplayName
+    public override string DisplayName
     {
       get { return "TvServer"; }
     }
 
-    public bool Validate(DependencyItem componentItem)
-    {
-      if (componentItem.MinVersion.CompareTo(Version(componentItem.Id)) >= 0 &&
-          componentItem.MaxVersion.CompareTo(Version(componentItem.Id)) <= 0)
-        return true;
-      return false;
-    }
-
-    public VersionInfo Version(string id)
+    public override VersionInfo Version(string id)
     {
       RegistryKey key =
         Registry.LocalMachine.OpenSubKey(

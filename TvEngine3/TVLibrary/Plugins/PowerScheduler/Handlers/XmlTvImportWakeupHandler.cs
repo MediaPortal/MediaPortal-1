@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2013 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2013 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -21,11 +21,9 @@
 #region Usings
 
 using System;
-using System.Collections.Generic;
 using System.Runtime.CompilerServices;
-using System.Text;
-using TvEngine.PowerScheduler.Interfaces;
 using TvDatabase;
+using TvEngine.PowerScheduler.Interfaces;
 using TvLibrary.Log;
 
 #endregion
@@ -39,7 +37,7 @@ namespace TvEngine.PowerScheduler.Handlers
   {
     #region Variables    
 
-    private string _handlerName = "XmlTvImportWakeupHandler";
+    private string _handlerName = "XmlTvImport";
 
     #endregion
 

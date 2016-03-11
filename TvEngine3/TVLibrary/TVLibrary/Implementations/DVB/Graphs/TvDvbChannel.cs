@@ -1063,7 +1063,7 @@ namespace TvLibrary.Implementations.DVB
           int hr = _tsFilterInterface.RecordStartRecord(_subChannelIndex);
           if (hr != 0)
           {
-            Log.Log.Error("subch:[0} StartRecord failed:{1:X}", _subChannelId, hr);
+            Log.Log.Error("subch:{0} StartRecord failed:{1:X}", _subChannelId, hr);
           }
 
           _graphState = GraphState.Recording;
@@ -1373,44 +1373,58 @@ namespace TvLibrary.Implementations.DVB
     /// <returns></returns>
     public virtual int OnPMTReceived(int pmtPid)
     {
-      DVBBaseChannel CurrentDVBChannel = _currentChannel as DVBBaseChannel;
-      if (_eventPMT != null)
+      try
       {
-        Log.Log.WriteFile("subch:{0} OnPMTReceived() pmt:{3:X} ran:{1} dynamic:{2}", _subChannelId, GraphRunning(),
-                          !_pmtRequested, pmtPid);
-        _eventPMT.Set();
-        // PMT callback is done on each new PMT version
-        // check if the arrived PMT was _NOT_ requested (WaitForPMT), than it means dynamical change
-        if (_pmtRequested == false)
+        DVBBaseChannel CurrentDVBChannel = _currentChannel as DVBBaseChannel;
+        if (_eventPMT != null)
         {
-          bool updatePids;
-          int waitInterval;
-          if (SendPmtToCam(out updatePids, out waitInterval))
+          Log.Log.WriteFile("subch:{0} OnPMTReceived() pmt:{3:X} ran:{1} dynamic:{2}", _subChannelId, GraphRunning(),
+                            !_pmtRequested, pmtPid);
+          _eventPMT.Set();
+          // PMT callback is done on each new PMT version
+          // check if the arrived PMT was _NOT_ requested (WaitForPMT), than it means dynamical change
+          if (_pmtRequested == false)
           {
-            if (updatePids)
+            bool updatePids;
+            int waitInterval;
+            if (SendPmtToCam(out updatePids, out waitInterval))
             {
-              if (_channelInfo != null)
+              if (updatePids)
               {
-                SetMpegPidMapping(_channelInfo);
-                if (_mdplugs != null && _channelInfo.scrambled && _mdplugs.IsProviderSelected(CurrentDVBChannel.Provider))
+                if (_channelInfo != null)
                 {
-                  //_mdplugs.SetChannel(_currentChannel, _channelInfo, true);
-                  _mdplugs.AddSubChannel(_subChannelId, _currentChannel, _channelInfo, true);
-                }
-                else
-                {
-                  Log.Log.Debug("OnPMTReceived: MDAPI disabled. Possible reasons are _mdplugs=null or provider not listed");
+                  SetMpegPidMapping(_channelInfo);
+                  if (_mdplugs != null && _channelInfo.scrambled && _mdplugs.IsProviderSelected(CurrentDVBChannel.Provider))
+                  {
+                    //_mdplugs.SetChannel(_currentChannel, _channelInfo, true);
+                    _mdplugs.AddSubChannel(_subChannelId, _currentChannel, _channelInfo, true);
+                  }
+                  else
+                  {
+                    Log.Log.Debug("OnPMTReceived: MDAPI disabled. Possible reasons are _mdplugs=null or provider not listed");
+                  }
                 }
               }
             }
-          }
-          else
-          {
-            Log.Log.Debug("Failed SendPmtToCam in callback handler");
+            else
+            {
+              Log.Log.Debug("Failed SendPmtToCam in callback handler");
+            }
           }
         }
+        PersistPMTtoDataBase(pmtPid);
       }
-      PersistPMTtoDataBase(pmtPid);
+      catch (TvExceptionTuneCancelled)
+      {
+        // tune is cancelled - not serious error
+        Log.Log.Debug("OnPMTReceived: received PMT {0:X}, but tune cancelled, PMT ignored", pmtPid);
+      }
+      catch (Exception ex)
+      {
+        // error occured while processing PMT
+        Log.Log.Error("OnPMTReceived: PMT {0:X}, error: {1}", pmtPid, ex.Message);
+      }
+
       // Do *not* reset this flag. It will be reset after the PMT is processed.
       // This prevents a race condition between when this flag is set and when
       // we start to wait for PMT to be received.

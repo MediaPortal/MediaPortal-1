@@ -44,7 +44,7 @@ namespace MediaPortal.Common.Utils
     private static readonly HashSet<Assembly> AppAssemblies = new HashSet<Assembly>();
     private static readonly Dictionary<string, Version> SubSystemVersions = new Dictionary<string, Version>();
     private static readonly Version AppVersion;
-    public static readonly Version SkinVersion = new Version(1, 3, 0, 0);
+    public static readonly Version SkinVersion = new Version(1, 4, 0, 0);
     private static readonly string MinRequiredVersionDefault = "1.1.8.0"; // 1.2.0 RC1
 
     static CompatibilityManager()
@@ -290,6 +290,19 @@ namespace MediaPortal.Common.Utils
       return version;
     }
 
+    public static Version GetCurrentMaxVersion()
+    {
+      CheckLoadedAssemblies();
+      return SubSystemVersions.Max(v => v.Value);
+    }
+
+    public static Version GetCurrentSubSystemVersion(string subSystem)
+    {
+      Version version = null;
+      SubSystemVersions.TryGetValue(subSystem, out version);
+      return version;
+    }
+
     public static IEnumerable<UsesSubsystemAttribute> GetSubSystemsUsed(Assembly asm)
     {
       return ((UsesSubsystemAttribute[])asm.GetCustomAttributes(typeof(UsesSubsystemAttribute), true)).Where(attr => attr.Used);
@@ -360,6 +373,26 @@ namespace MediaPortal.Common.Utils
       Version ver;
       // Have all used subsystem known versions and prior to the one the plugin was designed for?
       return subsystemsUsed.All(attr => SubSystemVersions.TryGetValue(attr, out ver) && CompareVersions(ver, designedForVersion) <= 0);
+    }
+
+    static readonly Dictionary<Version, string> MpReleaseApi = new Dictionary<Version, string>()
+    {
+      { new Version("1.1.6.27644"), "1.2.0 Beta" },
+      { new Version("1.2.100.0"), "1.3.0 Alpha" },
+      { new Version("1.3.100.0"), "1.4.0 Pre Release" },
+      { new Version("1.4.100.0"), "1.5.0 Pre Release" },
+      { new Version("1.5.100.0"), "1.6.0 Pre Release" },
+      { new Version("1.6.100.0"), "1.7.0 Pre Release" },
+      { new Version("1.7.100.0"), "1.8.0 Pre Release" },
+      { new Version("1.8.100.0"), "1.9.0 Pre Release" },
+      { new Version("1.9.100.0"), "1.10.0 Pre Release" },
+      { new Version("1.10.100.0"), "1.11.0 Pre Release" },
+      { new Version("1.11.100.0"), "1.12.0 Pre Release" }
+    };
+
+    public static string MediaPortalReleaseForApiVersion(Version apiVersion)
+    {
+      return MpReleaseApi.First(v => v.Key >= apiVersion).Value;
     }
   }
 }

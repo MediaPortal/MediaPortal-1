@@ -20,7 +20,10 @@ namespace MpeInstaller.Dialogs
       InitializeComponent();
       package = pak;
       this.Text = pak.GeneralInfo.Name + " - Dependencies";
-      versionLabel.Text = MediaPortal.Common.Utils.CompatibilityManager.GetCurrentVersion().ToString();
+      versionLabel.Text = string.Format("MediaPortal {0} (API: {1})  -  Skin {2}",
+        MediaPortal.Common.Utils.CompatibilityManager.MediaPortalReleaseForApiVersion(MediaPortal.Common.Utils.CompatibilityManager.GetCurrentMaxVersion()),
+        MediaPortal.Common.Utils.CompatibilityManager.GetCurrentVersion(),
+        MediaPortal.Common.Utils.CompatibilityManager.SkinVersion);
       generalDepBindSource.DataSource = package.Dependencies.Items;
       dataGridView1.AutoGenerateColumns = false;
       SetColumnsGeneral();
@@ -38,7 +41,7 @@ namespace MpeInstaller.Dialogs
           skindepLabel.Visible = false;
       }
 
-      if (!package.ProvidesPlugins())
+      if (!package.ProvidesPlugins() && !package.PluginDependencies.Items.Any())
       {
         tabControl1.Controls.Remove(tabPage2);
       }
@@ -50,28 +53,55 @@ namespace MpeInstaller.Dialogs
       else
       {
         List<SimplePluginDependency> pluginDeps = new List<SimplePluginDependency>();
+        var mpVersion = MediaPortal.Common.Utils.CompatibilityManager.GetCurrentSubSystemVersion("*");
         foreach (MpeCore.Classes.PluginDependencyItem item in package.PluginDependencies.Items)
         {
-          pluginDeps.Add(new SimplePluginDependency(item));
+          pluginDeps.Add(new SimplePluginDependency(item) { CurrentVersion = mpVersion, SubSystem ="*" });
+          if (item.SubSystemsUsed != null)
+          {
+            foreach (var subSystem in item.SubSystemsUsed.Items)
+            {
+              var subSystemVersion = MediaPortal.Common.Utils.CompatibilityManager.GetCurrentSubSystemVersion(subSystem.Name);
+              pluginDeps.Add(new SimplePluginDependency(item) { SubSystem = subSystem.Name, CurrentVersion = subSystemVersion });
+            }
+          }
         }
         pluginDepBindSource.DataSource = pluginDeps;
         dataGridView2.AutoGenerateColumns = true;
         dataGridView2.RowHeadersVisible = false;
         dataGridView2.DataSource = pluginDepBindSource;
+        dataGridView2.CellToolTipTextNeeded += new DataGridViewCellToolTipTextNeededEventHandler(dataGridView2_CellToolTipTextNeeded);
         dataGridView2.AutoResizeColumns( DataGridViewAutoSizeColumnsMode.AllCells);
         dataGridView2.CellFormatting += new DataGridViewCellFormattingEventHandler(dataGridView2_CellFormatting);
       }
     }
 
+    void dataGridView2_CellToolTipTextNeeded(object sender, DataGridViewCellToolTipTextNeededEventArgs e)
+    {
+      if (e.RowIndex >= 0 && e.ColumnIndex == 4)
+      {
+        SimplePluginDependency depItem = pluginDepBindSource[e.RowIndex] as SimplePluginDependency;
+        if (depItem.CurrentVersion != null)
+          e.ToolTipText = string.Format("since MediaPortal {0}",
+              MediaPortal.Common.Utils.CompatibilityManager.MediaPortalReleaseForApiVersion(depItem.CurrentVersion));
+      }
+    }
+
     void dataGridView2_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
     {
-      MpeCore.Classes.PluginDependencyItem depItem = package.PluginDependencies.Items[e.RowIndex];
+      SimplePluginDependency depItem = pluginDepBindSource[e.RowIndex] as SimplePluginDependency;
       if (depItem == null)
         return;
-      if (MpeCore.PackageClass.CheckPluginDependency(depItem))
-        e.CellStyle.ForeColor = Color.Green;
       else
-        e.CellStyle.ForeColor = Color.Red;
+      {
+        Version compatibleVersion = null;
+        try { compatibleVersion = new Version(depItem.CompatibleVersionItem.DesignedForVersion); }
+        catch { }
+        if (compatibleVersion != null && depItem.CurrentVersion != null)
+        {
+          e.CellStyle.ForeColor = depItem.CurrentVersion > compatibleVersion ? Color.Red : Color.Green;
+        }
+      }
     }
 
     private void SetColumnsGeneral()
@@ -81,9 +111,9 @@ namespace MpeInstaller.Dialogs
       dataGridView1.Columns[0].DataPropertyName = "Name";
       dataGridView1.Columns[1].Name = "Type";
       dataGridView1.Columns[1].DataPropertyName = "Type";
-      dataGridView1.Columns[2].Name = "Min version";
+      dataGridView1.Columns[2].Name = "Min";
       dataGridView1.Columns[2].DataPropertyName = "MinVersion";
-      dataGridView1.Columns[3].Name = "Max version";
+      dataGridView1.Columns[3].Name = "Max";
       dataGridView1.Columns[3].DataPropertyName = "MaxVersion";
     }
 
@@ -111,16 +141,46 @@ namespace MpeInstaller.Dialogs
         e.CellStyle.ForeColor = Color.Green;
       }
     }
+
+    protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+    {
+      if (keyData == Keys.Escape) this.Close();
+      return base.ProcessCmdKey(ref msg, keyData);
+    }
   }
 
   public class SimplePluginDependency
   {
     private MpeCore.Classes.PluginDependencyItem baseItem;
+
+    internal MpeCore.Classes.CompatibleVersionItem CompatibleVersionItem
+    {
+      get { return baseItem.CompatibleVersion.Items.FirstOrDefault(); }
+    }
+    
     public string Name
     {
       get { return baseItem.AssemblyName; }
     }
-    public string Version
+
+    [DisplayName("Subsystem")]
+    public string SubSystem { get; set; }
+
+    [DisplayName("Min")]
+    public string MinVersion
+    {
+      get
+      {
+        if (baseItem.CompatibleVersion.Items.Count > 0)
+        {
+          return baseItem.CompatibleVersion.Items[0].MinRequiredVersion;
+        }
+        return "No version specified!";
+      }
+    }
+
+    [DisplayName("Max")]
+    public string MaxVersion
     {
       get 
       {
@@ -132,9 +192,19 @@ namespace MpeInstaller.Dialogs
       }
     }
 
+    internal Version CurrentVersion { get; set; }
+
+    public string Installed
+    {
+      get 
+      {
+        return CurrentVersion == null ? "" : CurrentVersion.ToString();
+      }
+    }
+
     public SimplePluginDependency(MpeCore.Classes.PluginDependencyItem item)
     {
       baseItem = item;
-    }
+    }    
   }
 }

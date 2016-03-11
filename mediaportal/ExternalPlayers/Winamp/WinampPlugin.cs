@@ -106,7 +106,7 @@ namespace MediaPortal.WinampPlayer
         return false; // no extension so return false;
       }
 
-      ext = ext.ToLower();
+      ext = ext.ToLowerInvariant();
 
       for (int i = 0; i < m_supportedExtensions.Length; i++)
       {

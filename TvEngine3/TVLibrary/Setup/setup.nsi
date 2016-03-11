@@ -48,6 +48,8 @@
 !define git_InstallScripts "${git_ROOT}\Tools\InstallationScripts"
 # common script init
 !include "${git_InstallScripts}\include\MediaPortalScriptInit.nsh"
+# NET4.0 Checking
+!include "${git_InstallScripts}\include\DotNetSearch.nsh"
 
 # additional path definitions
 !define TVSERVER.BASE "${git_TVServer}\TVServer.Base"
@@ -278,6 +280,54 @@ ShowUninstDetails show
   ${EndIf}
 !macroend
 
+!macro SecMpeInstaller
+  ${LOG_TEXT} "INFO" "MediaPortal Extension Manager..."
+
+  ; install files
+  SetOutPath "$INSTDIR"
+  File "${git_MP}\MPE\MpeCore\bin\${BUILD_TYPE}\MpeCore.dll"
+  File "${git_MP}\MPE\MpeInstaller\bin\${BUILD_TYPE}\MpeInstaller.exe"
+  ;File "${git_MP}\MPE\MpeMaker\bin\${BUILD_TYPE}\MpeMaker.exe"
+  File "${git_MP}\Utils\bin\${BUILD_TYPE}\Utils.dll"
+  File "${git_MP}\core\bin\${BUILD_TYPE}\Core.dll"
+  File "${git_MP}\MediaPortal.Base\CSScriptLibrary.dll"
+
+  ; create startmenu shortcuts
+  ${If} $noDesktopSC != 1
+    CreateShortCut "$DESKTOP\MediaPortal Extension Manager.lnk" "$INSTDIR\MpeInstaller.exe"  ""  "$INSTDIR\MpeInstaller.exe"  0 "" "" "MediaPortal Extension Manager"
+  ${EndIf}
+  CreateDirectory "${STARTMENU_GROUP}"
+  CreateShortCut "${STARTMENU_GROUP}\MediaPortal Extension Manager.lnk" "$INSTDIR\MpeInstaller.exe"  ""  "$INSTDIR\MpeInstaller.exe"  0 "" "" "MediaPortal Extension Manager"
+
+  ; associate file extensions
+  ${RegisterExtension} "$INSTDIR\MpeInstaller.exe" ".mpe1" "MediaPortal extension"
+
+  ${RefreshShellIcons}
+!macroend
+
+!macro Remove_SecMpeInstaller
+  ${LOG_TEXT} "INFO" "Uninstalling MediaPortal Extension Manager..."
+
+  ; remove files
+  Delete "$INSTDIR\MpeCore.dll"
+  Delete "$INSTDIR\MpeInstaller.exe"
+  Delete "$INSTDIR\MpeMaker.exe"
+  Delete "$INSTDIR\Utils.dll"
+  Delete "$INSTDIR\Core.dll"
+  Delete "$INSTDIR\CSScriptLibrary.dll"
+
+  ; remove startmenu shortcuts
+  Delete "$DESKTOP\MediaPortal Extension Manager.lnk"
+  Delete "${STARTMENU_GROUP}\MediaPortal Extension Manager.lnk"
+  ;Delete "${STARTMENU_GROUP}\MediaPortal Extension Maker.lnk"
+
+  ; unassociate file extensions
+  ${UnRegisterExtension} ".mpe1" "MediaPortal extension"
+  ${UnRegisterExtension} ".xmp2"  "MediaPortal extension project"
+
+  ${RefreshShellIcons}
+!macroend
+
 Function RunUninstaller
 
   ${VersionCompare} 1.0.2.22779 $PREVIOUS_VERSION $R0
@@ -362,6 +412,12 @@ ${MementoSection} "MediaPortal TV Server" SecServer
   ${LOG_TEXT} "INFO" "Terminating processes ..."
   ${StopService} "TVservice"
   ${KillProcess} "SetupTv.exe"
+  ; ffmpeg
+  ${KillProcess} "ffmpeg.exe"
+  
+  ${IfNot} ${MPIsInstalled}
+    !insertmacro SecMpeInstaller
+  ${EndIf}
 
   SetOverwrite on
 
@@ -420,9 +476,14 @@ ${MementoSection} "MediaPortal TV Server" SecServer
   File "${git_TVServer}\TvService\bin\${BUILD_TYPE}\TvService.exe.config"
   File "${git_TVServer}\SetupControls\bin\${BUILD_TYPE}\SetupControls.dll"
   File "${git_TVServer}\TVLibrary.Utils\bin\${BUILD_TYPE}\TVLibrary.Utils.dll"
-  File "${git_TVServer}\TVLibrary.Utils\bin\${BUILD_TYPE}\Interop.SHDocVw.dll"
+  ;File "${git_TVServer}\TVLibrary.Utils\bin\${BUILD_TYPE}\Interop.SHDocVw.dll"
 
-  ; 3rd party assemblys
+  ; MP2 assemblies
+  File "${TVSERVER.BASE}\HttpServer.dll"
+  File "${TVSERVER.BASE}\MediaPortal.Utilities.dll"
+  File "${TVSERVER.BASE}\UPnP.dll"
+
+  ; 3rd party assemblies
   File "${TVSERVER.BASE}\hauppauge.dll"
   File "${TVSERVER.BASE}\hcwWinTVCI.dll"
   File "${TVSERVER.BASE}\KNCBDACTRL.dll"
@@ -430,6 +491,21 @@ ${MementoSection} "MediaPortal TV Server" SecServer
   File "${TVSERVER.BASE}\ttdvbacc.dll"
   File "${TVSERVER.BASE}\tevii.dll"
   File "${TVSERVER.BASE}\Ionic.Zip.dll"
+
+  ; MediaInfo
+  File "${git_ROOT}\Packages\MediaInfo.0.7.69\MediaInfo.dll"
+
+  ; thumbnail software
+  File "${git_ROOT}\Packages\ffmpeg.2.7.1\ffmpeg.exe"
+  File "${git_TVServer}\TvThumbnails\bin\${BUILD_TYPE}\TvThumbnails.dll"
+  
+
+  ; protocol implementations for MPIPTVSource.ax
+  File "${git_DirectShowFilters}\MPIPTVSource\bin\${BUILD_TYPE}\MPIPTV_FILE.dll"
+  File "${git_DirectShowFilters}\MPIPTVSource\bin\${BUILD_TYPE}\MPIPTV_HTTP.dll"
+  File "${git_DirectShowFilters}\MPIPTVSource\bin\${BUILD_TYPE}\MPIPTV_RTP.dll"
+  File "${git_DirectShowFilters}\MPIPTVSource\bin\${BUILD_TYPE}\MPIPTV_RTSP.dll"
+  File "${git_DirectShowFilters}\MPIPTVSource\bin\${BUILD_TYPE}\MPIPTV_UDP.dll"
 
   File "${git_DirectShowFilters}\StreamingServer\bin\${BUILD_TYPE}\StreamingServer.dll"
   
@@ -441,6 +517,7 @@ ${MementoSection} "MediaPortal TV Server" SecServer
   SetOutPath "${COMMON_APPDATA}"
   File "${git_Common_MP_TVE3}\Gentle.config"
   File "${TVSERVER.BASE}\log4net.config"
+  File "${git_DirectShowFilters}\MPIPTVSource\MPIPTVSource\MPIPTVSource.ini"
   File "${TVSERVER.BASE}\TvSetupLog.config"
   
   #---------------------------------------------------------------------------
@@ -452,6 +529,7 @@ ${MementoSection} "MediaPortal TV Server" SecServer
   ${IfNot} ${MP023IsInstalled}
   ${AndIfNot} ${MPIsInstalled}
     !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${git_DirectShowFilters}\TsReader\bin\${BUILD_TYPE}\TsReader.ax" "$INSTDIR\TsReader.ax" "$INSTDIR"
+    !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${git_DirectShowFilters}\Core-CC-Parser\CCCP\${BUILD_TYPE}\cccp.ax" "$INSTDIR\cccp.ax" "$INSTDIR"
   ${EndIf}
   !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${git_DirectShowFilters}\TsWriter\bin\${BUILD_TYPE}\TsWriter.ax" "$INSTDIR\TsWriter.ax" "$INSTDIR"
   ; filters for analog tv
@@ -494,6 +572,8 @@ ${MementoSectionEnd}
   ${LOG_TEXT} "INFO" "Terminating processes ..."
   ${StopService} "TVservice"
   ${KillProcess} "SetupTv.exe"
+  ; ffmpeg
+  ${KillProcess} "ffmpeg.exe"
 
   #---------------------------------------------------------------------------
   # CLEARING DATABASE if RemoveAll was selected
@@ -519,6 +599,7 @@ ${MementoSectionEnd}
   ${IfNot} ${MP023IsInstalled}
   ${AndIfNot} ${MPIsInstalled}
     !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED "$INSTDIR\TsReader.ax"
+    !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED "$INSTDIR\cccp.ax"
     WriteRegStr HKCR "Media Type\Extensions\.ts"        "Source Filter" "{b9559486-e1bb-45d3-a2a2-9a7afe49b23f}"
     WriteRegStr HKCR "Media Type\Extensions\.tp"        "Source Filter" "{b9559486-e1bb-45d3-a2a2-9a7afe49b23f}"
     WriteRegStr HKCR "Media Type\Extensions\.tsbuffer"  "Source Filter" "{b9559486-e1bb-45d3-a2a2-9a7afe49b23f}"
@@ -539,6 +620,8 @@ ${MementoSectionEnd}
   RMDir /r "${COMMON_APPDATA}\WebEPG\grabbers"
   ; Remove XMLTV data dir
   Delete "${COMMON_APPDATA}\xmltv\xmltv.dtd"
+  ; Remove ini file for IPTV filter
+  Delete "${COMMON_APPDATA}\MPIPTVSource.ini"
 
   ; Remove Plugins
   Delete "$INSTDIR\Plugins\ComSkipLauncher.dll"
@@ -578,7 +661,12 @@ ${MementoSectionEnd}
   Delete "$INSTDIR\TvService.exe.config"
   Delete "$INSTDIR\SetupControls.dll"
 
-  ; 3rd party assemblys
+  ; MP2 assemblies
+  Delete "$INSTDIR\HttpServer.dll"
+  Delete "$INSTDIR\MediaPortal.Utilities.dll"
+  Delete "$INSTDIR\UPnP.dll"
+
+  ; 3rd party assemblies
   Delete "$INSTDIR\dxerr9.dll"
   Delete "$INSTDIR\hauppauge.dll"
   Delete "$INSTDIR\hcwWinTVCI.dll"
@@ -588,7 +676,17 @@ ${MementoSectionEnd}
   Delete "$INSTDIR\ttdvbacc.dll"
   Delete "$INSTDIR\tevii.dll"
   Delete "$INSTDIR\Ionic.Zip.dll"
-  Delete "$INSTDIR\Interop.SHDocVw.dll"
+  ;Delete "$INSTDIR\Interop.SHDocVw.dll"
+  Delete "$INSTDIR\ffmpeg.exe"
+  Delete "$INSTDIR\TvThumbnails.dll"
+  Delete "$INSTDIR\MediaInfo.dll"
+
+  ; protocol implementations for MPIPTVSource.ax
+  Delete "$INSTDIR\MPIPTV_FILE.dll"
+  Delete "$INSTDIR\MPIPTV_HTTP.dll"
+  Delete "$INSTDIR\MPIPTV_RTP.dll"
+  Delete "$INSTDIR\MPIPTV_RTSP.dll"
+  Delete "$INSTDIR\MPIPTV_UDP.dll"  
 
   ; remove Start Menu shortcuts
   Delete "${STARTMENU_GROUP}\TV-Server Configuration.lnk"
@@ -599,6 +697,11 @@ ${MementoSectionEnd}
   Delete "${STARTMENU_GROUP}\web site.url"
   ; remove Desktop shortcuts
   Delete "$DESKTOP\TV-Server Configuration.lnk"
+  
+  ${IfNot} ${MPIsInstalled}
+    !insertmacro Remove_SecMpeInstaller
+  ${EndIf}
+  
 !macroend
 
 ${MementoSection} "MediaPortal TV Client plugin" SecClient
@@ -773,7 +876,7 @@ Section -Post
   ;if TV Server was installed exec SetupTv with correct parameters    
   ${If} $noServer == 0
 	  ${If} $DeploySql != ""
-	  ${AndIf} $DeployPwd != ""
+	  ;${AndIf} $DeployPwd != ""
 	            StrCpy $R0 "--DeployMode --DeploySql:$DeploySql --DeployPwd:$DeployPwd"
 	  ${Else}
 	            StrCpy $R0 "--DeployMode"
@@ -878,6 +981,8 @@ Function .onInit
   ${LOG_OPEN}
   ${LOG_TEXT} "DEBUG" "FUNCTION .onInit"
 
+  !insertmacro MediaPortalNetFrameworkCheck
+  !insertmacro MediaPortalNet4FrameworkCheck
 
   #### check and parse cmdline parameter
   ; set default values for parameters ........
@@ -897,9 +1002,9 @@ Function .onInit
   ;${ReadCommandlineParameter} "noStartMenuSC"
   ${ReadCommandlineParameter} "DeployMode"
   ClearErrors
-  ${GetOptions} $R0 "/DeploySql:" $DeploySql
+  ${GetOptions} $R0 "--DeploySql:" $DeploySql
   ClearErrors
-  ${GetOptions} $R0 "/DeployPwd:" $DeployPwd
+  ${GetOptions} $R0 "--DeployPwd:" $DeployPwd
 
   ClearErrors
   ${GetOptions} $R0 "/UpdateMode" $R1

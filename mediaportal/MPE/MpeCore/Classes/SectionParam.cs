@@ -84,7 +84,7 @@ namespace MpeCore.Classes
     /// <returns></returns>
     public bool GetValueAsBool()
     {
-      if (this.Value.ToUpper() == "YES")
+      if (this.Value.ToUpperInvariant() == "YES")
         return true;
       return false;
     }

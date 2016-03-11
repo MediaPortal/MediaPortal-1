@@ -19,7 +19,9 @@
     </UpgradeBackupLocation>
     <RootNamespace>MediaPortal.ProcessPlugins.MiniDisplayPlugin</RootNamespace>
     <OldToolsVersion>3.5</OldToolsVersion>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkProfile />
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <OutputPath>bin\Debug\</OutputPath>
@@ -64,12 +66,15 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Bass.Net">
-      <Name>Bass.Net</Name>
-      <HintPath>..\MediaPortal.Base\Bass.Net.dll</HintPath>
+      <HintPath>..\..\Packages\BASS.NET.2.4.10.3\lib\net40\Bass.Net.dll</HintPath>
     </Reference>
     <Reference Include="LibDriverCoreClient">
       <Name>LibDriverCoreClient</Name>
       <HintPath>..\MediaPortal.Base\LibDriverCoreClient.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpLibDisplay, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\Packages\SharpLibDisplay.0.2.5\lib\net40\SharpLibDisplay.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="System">
       <Name>System</Name>
@@ -83,6 +88,8 @@
     <Reference Include="System.Drawing">
       <Name>System.Drawing</Name>
     </Reference>
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ServiceModel" />
     <Reference Include="System.ServiceProcess" />
     <Reference Include="System.Windows.Forms">
       <Name>System.Windows.Forms</Name>
@@ -106,6 +113,37 @@
     </Compile>
     <Compile Include="MiniDisplayPlugin\ByteArray.cs">
       <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="MiniDisplayPlugin\Drivers\Futaba\MDM166A\FutabaMDM166A.cs" />
+    <Compile Include="MiniDisplayPlugin\Drivers\Futaba\MDM166A\FutabaMDM166A_AdvancedSetupForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MiniDisplayPlugin\Drivers\Futaba\MDM166A\FutabaMDM166A_AdvancedSetupForm.Designer.cs">
+      <DependentUpon>FutabaMDM166A_AdvancedSetupForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="MiniDisplayPlugin\Drivers\iMON\SoundGraphImon.cs" />
+    <Compile Include="MiniDisplayPlugin\Drivers\iMON\SoundGraphDisplay.cs" />
+    <Compile Include="MiniDisplayPlugin\Drivers\iMON\SoundGraphImonChooseDisplayTypeForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MiniDisplayPlugin\Drivers\iMON\SoundGraphImonChooseDisplayTypeForm.Designer.cs">
+      <DependentUpon>SoundGraphImonChooseDisplayTypeForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="MiniDisplayPlugin\Drivers\iMON\SoundGraphImonLcd.cs" />
+    <Compile Include="MiniDisplayPlugin\Drivers\iMON\SoundGraphImonVfd.cs" />
+    <Compile Include="MiniDisplayPlugin\Drivers\iMON\SoundGraphImonSettingsForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MiniDisplayPlugin\Drivers\iMON\SoundGraphImonSettingsForm.designer.cs">
+      <DependentUpon>SoundGraphImonSettingsForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="MiniDisplayPlugin\Drivers\SharpLibDisplay\SharpLibDisplay.cs" />
+    <Compile Include="MiniDisplayPlugin\Drivers\SharpLibDisplay\SharpLibDisplaySettings.cs" />
+    <Compile Include="MiniDisplayPlugin\Drivers\SharpLibDisplay\SharpLibDisplaySettingsForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MiniDisplayPlugin\Drivers\SharpLibDisplay\SharpLibDisplaySettingsForm.designer.cs">
+      <DependentUpon>SharpLibDisplaySettingsForm.cs</DependentUpon>
     </Compile>
     <Compile Include="MiniDisplayPlugin\Drivers\ShuttlePF27.cs" />
     <Compile Include="MiniDisplayPlugin\Drivers\DM140GINK.cs" />
@@ -135,19 +173,19 @@
     <Compile Include="MiniDisplayPlugin\Drivers\GenericSerial_AdvancedSetupForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="MiniDisplayPlugin\Drivers\iMONDisplay.cs">
+    <Compile Include="MiniDisplayPlugin\Drivers\iMON-Legacy\iMONDisplay.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="MiniDisplayPlugin\Drivers\iMONLCDg.cs">
+    <Compile Include="MiniDisplayPlugin\Drivers\iMON-Legacy\iMONLCDg.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="MiniDisplayPlugin\Drivers\iMONLCDg_AdvancedSetupForm.cs">
+    <Compile Include="MiniDisplayPlugin\Drivers\iMON-Legacy\iMONLCDg_AdvancedSetupForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="MiniDisplayPlugin\Drivers\iMONLCDg_FontEdit.cs">
+    <Compile Include="MiniDisplayPlugin\Drivers\iMON-Legacy\iMONLCDg_FontEdit.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="MiniDisplayPlugin\Drivers\iMONLCDg_IconEdit.cs">
+    <Compile Include="MiniDisplayPlugin\Drivers\iMON-Legacy\iMONLCDg_IconEdit.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="MiniDisplayPlugin\Drivers\IOWarrior.cs">
@@ -341,9 +379,24 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="MiniDisplayPlugin\Drivers\iMONLCDg_AdvancedSetupForm.resx">
+    <EmbeddedResource Include="MiniDisplayPlugin\Drivers\Futaba\MDM166A\FutabaMDM166A_AdvancedSetupForm.resx">
+      <DependentUpon>FutabaMDM166A_AdvancedSetupForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MiniDisplayPlugin\Drivers\iMON-Legacy\iMONLCDg_AdvancedSetupForm.resx">
       <DependentUpon>iMONLCDg_AdvancedSetupForm.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="MiniDisplayPlugin\Drivers\iMON\SoundGraphImonChooseDisplayTypeForm.resx">
+      <DependentUpon>SoundGraphImonChooseDisplayTypeForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MiniDisplayPlugin\Drivers\iMON\SoundGraphImonSettingsForm.resx">
+      <DependentUpon>SoundGraphImonSettingsForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MiniDisplayPlugin\Drivers\SharpLibDisplay\SharpLibDisplaySettingsForm.resx">
+      <DependentUpon>SharpLibDisplaySettingsForm.cs</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

@@ -25,7 +25,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Globalization;
-using System.IO;
 using System.Windows.Media.Animation;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
@@ -37,6 +36,7 @@ using MediaPortal.Video.Database;
 using TvControl;
 using TvDatabase;
 using Action = MediaPortal.GUI.Library.Action;
+using TvLibrary.Epg;
 
 #endregion
 
@@ -83,6 +83,8 @@ namespace TvPlugin
     private int _backupCursorX = 0;
     private int _backupCursorY = 0;
     private int _backupChannelOffset = 0;
+
+    private int _backupSingleViewCursorX = 0;
 
     private DateTime _keyPressedTimer = DateTime.Now;
     private string _lineInput = String.Empty;
@@ -153,13 +155,10 @@ namespace TvPlugin
         _loopDelay = xmlreader.GetValueAsInt("gui", "listLoopDelay", 0);
 
         // Load the genre map.
-        if (_genreMap.Count == 0)
+        if (_mpGenres == null)
         {
-          LoadGenreMap(xmlreader);
+          _mpGenres = RemoteControl.Instance.GetMpGenres();
         }
-
-        // Special genre rules.
-        _specifyMpaaRatedAsMovie = xmlreader.GetValueAsBool("genreoptions", "specifympaaratedasmovie", false);
       }
 
       // Load settings defined by the skin.
@@ -210,39 +209,13 @@ namespace TvPlugin
       {
         _useColorsForGenres = bool.Parse(temp);
       }
-    }
 
-    private bool LoadGenreMap(Settings xmlreader)
-    {
-      int genreId;
-      string genre;
-      List<string> programGenres;
-      IDictionary<string, string> allGenres = xmlreader.GetSection<string>("genremap");
-
-      // Each genre map entry is a '{' delimited list of "program" genre names (those that may be compared with the genre from the program listings).
-      // It is an error if a single "program" genre is mapped to more than one genre color category; behavior is undefined for this condition.
-      foreach (var genreMapEntry in allGenres)
+      _showGenreKey = false;
+      temp = GUIPropertyManager.GetProperty("#skin.tvguide.showgenrekey");
+      if (temp != null && temp.Length != 0)
       {
-        genreId = int.Parse(genreMapEntry.Key);
-        genre = GUILocalizeStrings.Get(LOCALIZED_GENRE_STRING_BASE + genreId);
-        _genreList.Add(genre);
-
-        programGenres = new List<string>(genreMapEntry.Value.Split(new char[] { '{' }, StringSplitOptions.RemoveEmptyEntries));
-
-        foreach (string programGenre in programGenres)
-        {
-          try
-          {
-            _genreMap.Add(programGenre, genre);
-          }
-          catch (ArgumentException)
-          {
-            Log.Warn("TvGuideBase.cs: The following genre name appears more than once in the genre map: {0}", programGenre);
-          }
-        }
+        _showGenreKey = bool.Parse(temp);
       }
-
-      return _genreMap.Count > 0;
     }
 
     private bool LoadGuideColors(Settings xmlreader)
@@ -280,10 +253,20 @@ namespace TvPlugin
       // If only one value is provided then that value is used for both.
       long color0;
       long color1;
+      MpGenre genreObj;
 
-      for (int i = 0; i < _genreList.Count; i++)
+      for (int i = 0; i < _mpGenres.Count; i++)
       {
-        temp = new List<string>((xmlreader.GetValueAsString("tvguidecolors", i.ToString(), String.Empty)).Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries));
+        // If the genre is disabled then set the program colors to the default colors.
+        genreObj = _mpGenres.Find(x => x.Id == i);
+        if (!genreObj.Enabled)
+        {
+          _genreColorsOnNow.Add(_mpGenres[i].Name, _defaultGenreColorOnNow);
+          _genreColorsOnLater.Add(_mpGenres[i].Name, _defaultGenreColorOnLater);
+          continue;
+        }
+
+        temp = new List<string>((xmlreader.GetValueAsString("tvguidecolors", "genre" + i.ToString(), String.Empty)).Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries));
 
         if (temp.Count > 0)
         {
@@ -292,25 +275,28 @@ namespace TvPlugin
           if (temp.Count == 2)
           {
             color1 = GetColorFromString(temp[1]);
-            _genreColorsOnNow.Add(_genreList[i], color0);
-            _genreColorsOnLater.Add(_genreList[i], color1);
+            _genreColorsOnNow.Add(_mpGenres[i].Name, color0);
+            _genreColorsOnLater.Add(_mpGenres[i].Name, color1);
           }
           else if (temp.Count == 1)
           {
-            _genreColorsOnNow.Add(_genreList[i], color0);
-            _genreColorsOnLater.Add(_genreList[i], color1);
+            _genreColorsOnNow.Add(_mpGenres[i].Name, color0);
+            _genreColorsOnLater.Add(_mpGenres[i].Name, color1);
           }
         }
       }
 
-      return _genreColorsOnNow.Count > 0;
+      return true;
     }
 
     private void SaveSettings()
     {
       using (Settings xmlwriter = new MPSettings())
       {
-        xmlwriter.SetValue("mytv", "channel", _currentChannel.DisplayName);
+        if (_currentChannel != null)
+        {
+          xmlwriter.SetValue("mytv", "channel", _currentChannel.DisplayName);
+        }
         xmlwriter.SetValue("tvguide", "timeperblock", _timePerBlock);
       }
     }
@@ -348,14 +334,11 @@ namespace TvPlugin
         case Action.ActionType.ACTION_PREVIOUS_MENU:
           if (_singleChannelView)
           {
-            OnSwitchMode();
-            return; // base.OnAction would close the EPG as well
-          }
-          else
-          {
-            GUIWindowManager.ShowPreviousWindow();
+            OnSwitchMode(true);
             return;
           }
+          GUIWindowManager.ShowPreviousWindow();
+          return;
 
         case Action.ActionType.ACTION_KEY_PRESSED:
           if (action.m_key != null)
@@ -454,7 +437,8 @@ namespace TvPlugin
             {
               if (_cursorY == 0)
               {
-                OnSwitchMode();
+                _backupSingleViewCursorX = _cursorX;
+                OnSwitchMode(false);
                 return;
               }
               else
@@ -743,21 +727,51 @@ namespace TvPlugin
 
           case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT:
             {
-              base.OnMessage(message);
-              SaveSettings();
-              _recordingList.Clear();
+              if (!_singleChannelView)
+              {
+                base.OnMessage(message);
+                SaveSettings();
+                if (_recordingList != null && TVHome.Connected)
+                {
+                  _recordingList.Clear();
+                }
 
-              _controls = new Dictionary<int, GUIButton3PartControl>();
-              _channelList = null;
-              _recordingList = null;
-              _currentProgram = null;
+                _controls = new Dictionary<int, GUIButton3PartControl>();
+                _channelList = null;
+                _recordingList = null;
+                _currentProgram = null;
+              }
 
               return true;
             }
 
           case GUIMessage.MessageType.GUI_MSG_WINDOW_INIT:
             {
+
+              if (!TVHome.Connected)
+              {
+                RemoteControl.Clear();
+                GUIWindowManager.ActivateWindow((int)Window.WINDOW_SETTINGS_TVENGINE);
+                return false;
+              }
+
               TVHome.WaitForGentleConnection();
+
+              if (TVHome.Navigator == null)
+              {
+                TVHome.OnLoaded();
+              }
+              else if (TVHome.Navigator.Channel == null)
+              {
+                TVHome.m_navigator.ReLoad();
+                TVHome.LoadSettings(false);
+              }
+
+              // Create the channel navigator (it will load groups and channels)
+              if (TVHome.m_navigator == null)
+              {
+                TVHome.m_navigator = new ChannelNavigator();
+              }
 
               GUIPropertyManager.SetProperty("#itemcount", string.Empty);
               GUIPropertyManager.SetProperty("#selecteditem", string.Empty);
@@ -894,6 +908,8 @@ namespace TvPlugin
                 Log.Debug("TvGuideBase: SpinControl cntlTimeInterval is null!");
               }
 
+              InitGenreKey();
+
               if (message.Param1 != (int)Window.WINDOW_TV_PROGRAM_INFO)
               {
                 Update(true);
@@ -961,7 +977,8 @@ namespace TvPlugin
             }
             else if (_cursorY == 0)
             {
-              OnSwitchMode();
+              _backupSingleViewCursorX = _cursorX;
+              OnSwitchMode(false);
             }
             break;
         }
@@ -1006,6 +1023,12 @@ namespace TvPlugin
       _cursorX = 0;
       _cursorY = 1; // cursor should be on the program guide item
       ChannelOffset = 0;
+
+      if (_channelList == null || _currentChannel == null)
+      {
+         //Log.Error("PositionGuideCursorToCurrentChannel _channelList = {0} _currentChannel = {1}", _channelList, _currentChannel);
+         return;
+      }
 
       // Attempt to position to the current channel in the new list of channels.  If the channel is not in
       // the group then the first channel in the group is selected.
@@ -1193,8 +1216,7 @@ namespace TvPlugin
         GUIPropertyManager.SetProperty(SkinPropertyPrefix + ".Guide.ChannelName", strChannel);
         if (_showChannelNumber)
         {
-          IList<TuningDetail> detail = chan.ReferringTuningDetail();
-          int channelNum = detail[0].ChannelNumber;
+          int channelNum = chan.ChannelNumber;
           GUIPropertyManager.SetProperty(SkinPropertyPrefix + ".Guide.ChannelNumber", channelNum + "");
         }
         else
@@ -1210,6 +1232,7 @@ namespace TvPlugin
         GUIPropertyManager.SetProperty(SkinPropertyPrefix + ".Guide.Time", String.Empty);
         GUIPropertyManager.SetProperty(SkinPropertyPrefix + ".Guide.Description", String.Empty);
         GUIPropertyManager.SetProperty(SkinPropertyPrefix + ".Guide.Genre", String.Empty);
+        GUIPropertyManager.SetProperty(SkinPropertyPrefix + ".Guide.MpGenre", String.Empty);
         GUIPropertyManager.SetProperty(SkinPropertyPrefix + ".Guide.SubTitle", String.Empty);
         GUIPropertyManager.SetProperty(SkinPropertyPrefix + ".Guide.Episode", String.Empty);
         GUIPropertyManager.SetProperty(SkinPropertyPrefix + ".Guide.EpisodeDetail", String.Empty);
@@ -1233,11 +1256,29 @@ namespace TvPlugin
                                        _currentProgram.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
                                        _currentProgram.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
 
+        // Lookup the MediaPortal genre for this program.  If found use it, if not found then use the program genre.
+        string mpg = "";
+        MpGenre mpGenre = _mpGenres.Find(x => x.MappedProgramGenres.Contains(_currentProgram.Genre));
+        if (mpGenre != null && mpGenre.Enabled)
+        {
+          mpg = mpGenre.Name;
+        }
+        // Try to apply the "movie" genre.
+        else if (IsMPAA(_currentProgram.Classification))
+        {
+          mpGenre = _mpGenres.Find(x => x.IsMovie == true);
+          if (mpGenre != null && mpGenre.Enabled)
+          {
+            mpg = mpGenre.Name;
+          }
+        }
+
         GUIPropertyManager.SetProperty(SkinPropertyPrefix + ".Guide.Title", _currentProgram.Title);
         GUIPropertyManager.SetProperty(SkinPropertyPrefix + ".Guide.CompositeTitle", TVUtil.GetDisplayTitle(_currentProgram));
         GUIPropertyManager.SetProperty(SkinPropertyPrefix + ".Guide.Time", strTime);
         GUIPropertyManager.SetProperty(SkinPropertyPrefix + ".Guide.Description", _currentProgram.Description);
         GUIPropertyManager.SetProperty(SkinPropertyPrefix + ".Guide.Genre", _currentProgram.Genre);
+        GUIPropertyManager.SetProperty(SkinPropertyPrefix + ".Guide.MpGenre", mpg);
         GUIPropertyManager.SetProperty(SkinPropertyPrefix + ".Guide.Duration", GetDuration(_currentProgram));
         GUIPropertyManager.SetProperty(SkinPropertyPrefix + ".Guide.DurationMins", GetDurationAsMinutes(_currentProgram));
         GUIPropertyManager.SetProperty(SkinPropertyPrefix + ".Guide.TimeFromNow", GetStartTimeFromNow(_currentProgram));
@@ -1921,10 +1962,7 @@ namespace TvPlugin
 
       if (!_byIndex)
       {
-        foreach (TuningDetail detail in channel.ReferringTuningDetail())
-        {
-          channelNum = detail.ChannelNumber;
-        }
+        channelNum = channel.ChannelNumber;
       }
       else
       {
@@ -3478,7 +3516,8 @@ namespace TvPlugin
 
 
           case 939: // switch mode
-            OnSwitchMode();
+            _backupSingleViewCursorX = _cursorX;
+            OnSwitchMode(false);
             break;
           case 629: //stop recording
             Schedule schedule = Schedule.FindNoEPGSchedule(_currentProgram.ReferencedChannel());
@@ -3503,7 +3542,7 @@ namespace TvPlugin
       }
     }
 
-    private void OnSwitchMode()
+    private void OnSwitchMode(bool returnPreviousMenu)
     {
       UnFocus();
       _singleChannelView = !_singleChannelView;
@@ -3515,6 +3554,13 @@ namespace TvPlugin
 
         _programOffset = _cursorY = _cursorX = 0;
         _recalculateProgramOffset = true;
+      }
+      else if (returnPreviousMenu)
+      {
+        //focus current channel
+        _cursorY = 0;
+        _cursorX = _backupSingleViewCursorX;
+        ChannelOffset = _backupChannelOffset;
       }
       else
       {
@@ -3556,9 +3602,23 @@ namespace TvPlugin
           prog.Persist();
         }
         GUIVideoInfo videoInfo = (GUIVideoInfo)GUIWindowManager.GetWindow((int)Window.WINDOW_VIDEO_INFO);
+        videoInfo.AllocResources();
         videoInfo.Movie = movieDetails;
         GUIButtonControl btnPlay = (GUIButtonControl)videoInfo.GetControl(2);
-        btnPlay.Visible = false;
+        if (btnPlay != null)
+        {
+          btnPlay.Visible = false;
+        }
+        GUICheckButton btnCast = (GUICheckButton)videoInfo.GetControl(4);
+        if (btnCast != null)
+        {
+          btnCast.Visible = false;
+        }
+        GUICheckButton btnWatched = (GUICheckButton)videoInfo.GetControl(6);
+        if (btnWatched != null)
+        {
+          btnWatched.Visible = false;
+        }
         GUIWindowManager.ActivateWindow((int)Window.WINDOW_VIDEO_INFO);
       }
       else
@@ -3912,18 +3972,21 @@ namespace TvPlugin
         return defaultColor;
       }
 
-      // Lookup the category genre for the specified program genre.
-      string genre = "";
-      if (_specifyMpaaRatedAsMovie && IsMPAA(program.Classification))
+      // If the program has a movie rating then choose the user specified "movie" genre if it exists.
+      MpGenre mpGenre = null;
+      if (IsMPAA(program.Classification))
       {
-        genre = GUILocalizeStrings.Get(LOCALIZED_GENRE_STRING_MOVIE);
+        mpGenre = _mpGenres.Find(x => x.IsMovie == true);
       }
       else
       {
-        if (!_genreMap.TryGetValue(program.Genre, out genre))
-        {
-          return defaultColor;
-        }
+        mpGenre = _mpGenres.Find(x => x.MappedProgramGenres.Contains(program.Genre));
+      }
+
+      // If no mapped mp genre could be found or the found genre is disabled then return the default genre color.
+      if (mpGenre == null || !mpGenre.Enabled)
+      {
+        return defaultColor;
       }
 
       // Return a valid default color if the specified genre does not have a color association.
@@ -3931,11 +3994,11 @@ namespace TvPlugin
       bool found = false;
       if (onNow)
       {
-        found = _genreColorsOnNow.TryGetValue(genre, out color);
+        found = _genreColorsOnNow.TryGetValue(mpGenre.Name, out color);
       }
       else
       {
-        found = _genreColorsOnLater.TryGetValue(genre, out color);
+        found = _genreColorsOnLater.TryGetValue(mpGenre.Name, out color);
       }
 
       if (!found)
@@ -4058,19 +4121,18 @@ namespace TvPlugin
         while (iCounter < _channelList.Count && found == false)
         {
           chan = (Channel)_channelList[iCounter].channel;
-          foreach (TuningDetail detail in chan.ReferringTuningDetail())
+
+          if (chan.ChannelNumber == searchChannel)
           {
-            if (detail.ChannelNumber == searchChannel)
-            {
-              iChannelNr = iCounter;
-              found = true;
-            } //find closest channel number
-            else if ((int)Math.Abs(detail.ChannelNumber - searchChannel) < channelDistance)
-            {
-              channelDistance = (int)Math.Abs(detail.ChannelNumber - searchChannel);
-              iChannelNr = iCounter;
-            }
+            iChannelNr = iCounter;
+            found = true;
+          } //find closest channel number
+          else if ((int)Math.Abs(chan.ChannelNumber - searchChannel) < channelDistance)
+          {
+            channelDistance = (int)Math.Abs(chan.ChannelNumber - searchChannel);
+            iChannelNr = iCounter;
           }
+
           iCounter++;
         }
       }
@@ -4156,8 +4218,7 @@ namespace TvPlugin
                   }
                   else
                   {
-                    foreach (TuningDetail detail in tvGuidChannel.channel.ReferringTuningDetail())
-                      tvGuidChannel.channelNum = detail.ChannelNumber;
+                    tvGuidChannel.channelNum = chan.ChannelNumber;
                   }
                 }
                 tvGuidChannel.strLogo = GetChannelLogo(tvGuidChannel.channel.DisplayName);
@@ -4172,7 +4233,7 @@ namespace TvPlugin
         {
           GuideChannel tvGuidChannel = new GuideChannel();
           tvGuidChannel.channel = new Channel(false, true, 0, DateTime.MinValue, false,
-                                              DateTime.MinValue, 0, true, "", GUILocalizeStrings.Get(911));
+                                              DateTime.MinValue, 0, true, "", GUILocalizeStrings.Get(911), 10000);
           for (int i = 0; i < 10; ++i)
           {
             _channelList.Add(tvGuidChannel);

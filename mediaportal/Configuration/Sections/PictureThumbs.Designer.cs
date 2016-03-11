@@ -25,7 +25,7 @@ namespace MediaPortal.Configuration.Sections
     {
       this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.groupBox2 = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.fileLabel = new MediaPortal.UserInterface.Controls.MPLabel();
+      PictureThumbs.fileLabel = new MediaPortal.UserInterface.Controls.MPLabel();
       this.progressBar = new System.Windows.Forms.ProgressBar();
       this.clearButton = new MediaPortal.UserInterface.Controls.MPButton();
       this.startButton = new MediaPortal.UserInterface.Controls.MPButton();
@@ -55,7 +55,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
-      this.groupBox2.Controls.Add(this.fileLabel);
+      this.groupBox2.Controls.Add(PictureThumbs.fileLabel);
       this.groupBox2.Controls.Add(this.progressBar);
       this.groupBox2.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBox2.Location = new System.Drawing.Point(10, 341);
@@ -67,12 +67,12 @@ namespace MediaPortal.Configuration.Sections
       // 
       // fileLabel
       // 
-      this.fileLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+      PictureThumbs.fileLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
-      this.fileLabel.Location = new System.Drawing.Point(16, 23);
-      this.fileLabel.Name = "fileLabel";
-      this.fileLabel.Size = new System.Drawing.Size(411, 16);
-      this.fileLabel.TabIndex = 0;
+      PictureThumbs.fileLabel.Location = new System.Drawing.Point(16, 23);
+      PictureThumbs.fileLabel.Name = "fileLabel";
+      PictureThumbs.fileLabel.Size = new System.Drawing.Size(411, 16);
+      PictureThumbs.fileLabel.TabIndex = 0;
       // 
       // progressBar
       // 
@@ -135,7 +135,7 @@ namespace MediaPortal.Configuration.Sections
     private MediaPortal.UserInterface.Controls.MPButton startButton;
     private System.Windows.Forms.CheckedListBox sharesListBox;
     private MediaPortal.UserInterface.Controls.MPGroupBox groupBox2;
-    private MediaPortal.UserInterface.Controls.MPLabel fileLabel;
+    private static MediaPortal.UserInterface.Controls.MPLabel fileLabel;
     private System.Windows.Forms.ProgressBar progressBar;
 
   }

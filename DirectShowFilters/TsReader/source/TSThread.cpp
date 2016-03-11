@@ -36,6 +36,8 @@
 // For more details for memory leak detection see the alloctracing.h header
 #include "..\..\alloctracing.h"
 
+extern void LogDebug(const char *fmt, ...) ;
+
 /*
 void TSThreadThreadProc(void *pParam)
 {
@@ -49,8 +51,8 @@ void TSThreadThreadProc(void *pParam)
 
 TSThread::TSThread()
 {
-	m_hStopEvent = CreateEvent(NULL, TRUE, TRUE, NULL);
-	m_hDoneEvent = CreateEvent(NULL, TRUE, TRUE, NULL);
+	m_hStopEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
+	m_hDoneEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
 	m_hWakeEvent = CreateEvent(NULL, FALSE, FALSE, NULL); //Auto-reset
 	m_threadHandle = INVALID_HANDLE_VALUE;
   m_bThreadRunning=FALSE;
@@ -58,7 +60,10 @@ TSThread::TSThread()
 
 TSThread::~TSThread()
 {
-	StopThread();
+	if (m_threadHandle != INVALID_HANDLE_VALUE)
+	{
+	  StopThread(5000);
+	}
 	CloseHandle(m_hStopEvent);
 	CloseHandle(m_hDoneEvent);
 	CloseHandle(m_hWakeEvent);
@@ -72,25 +77,43 @@ BOOL TSThread::IsThreadRunning()
 
 HRESULT TSThread::StartThread()
 {
+  CAutoLock tLock (&m_ThreadStateLock);
 	ResetEvent(m_hStopEvent);
-	unsigned long m_threadHandle = _beginthread(&TSThread::thread_function, 0, (void *) this);
-	if (m_threadHandle == (unsigned long)INVALID_HANDLE_VALUE)
-		return E_FAIL;
 
+	m_threadHandle = (HANDLE)_beginthread(&TSThread::thread_function, 0, (void *) this);
+	if (m_threadHandle == INVALID_HANDLE_VALUE)
+	{
+    LogDebug("TSThread::StartThread failed !!");
+		return E_FAIL;
+	}
+	
 	return S_OK;
 }
 
 HRESULT TSThread::StopThread(DWORD dwTimeoutMilliseconds)
 {
+  CAutoLock tLock (&m_ThreadStateLock);
 	HRESULT hr = S_OK;
-
+	
+  if (m_threadHandle == INVALID_HANDLE_VALUE)
+	{
+	  return S_FALSE;
+	}
+	
+	ResetEvent(m_hDoneEvent);
+  m_bThreadRunning=FALSE; //Block wake events
 	SetEvent(m_hStopEvent);
 	DWORD result = WaitForSingleObject(m_hDoneEvent, dwTimeoutMilliseconds);
 
 	if ((result == WAIT_TIMEOUT) && (m_threadHandle != INVALID_HANDLE_VALUE))
 	{
-		TerminateThread(m_threadHandle, -1);
-		CloseHandle(m_threadHandle);
+	  try
+	  {
+  		TerminateThread(m_threadHandle, -1);
+  		CloseHandle(m_threadHandle);
+	  }
+    catch(...) {}
+    
 		hr = S_FALSE;
 	}
 	else if (result != WAIT_OBJECT_0)
@@ -146,12 +169,13 @@ void TSThread::InternalThreadProc()
 	{
 		pStr = NULL;
 	}
-	SetEvent(m_hDoneEvent);
   m_bThreadRunning=FALSE;
+	SetEvent(m_hDoneEvent);
 }
 
 void TSThread::thread_function(void* p)
 {
 	TSThread *thread = reinterpret_cast<TSThread *>(p);
 	thread->InternalThreadProc();
+	_endthread();
 }

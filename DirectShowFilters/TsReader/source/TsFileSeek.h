@@ -10,8 +10,8 @@ class CTsFileSeek: public CPacketSync
 public:
   CTsFileSeek( CTsDuration& duration );
   virtual ~CTsFileSeek(void);
-	void OnTsPacket(byte* tsPacket);
-  void Seek(CRefTime refTime);
+	void OnTsPacket(byte* tsPacket, int bufferOffset, int bufferLength);
+  bool Seek(CRefTime refTime);
   void SetFileReader(FileReader* reader);
 
 private:
@@ -19,4 +19,5 @@ private:
   CTsDuration&  m_duration;
   CPcr          m_pcrFound;
   int           m_seekPid;
+  byte*         m_pFileReadBuffer;
 };

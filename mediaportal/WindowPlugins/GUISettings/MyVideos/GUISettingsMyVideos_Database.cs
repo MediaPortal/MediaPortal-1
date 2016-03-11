@@ -38,6 +38,19 @@ using Action = MediaPortal.GUI.Library.Action;
 
 namespace MediaPortal.GUI.Settings
 {
+  internal class ComboBoxItemDatabase
+  {
+    public string Database;
+    public string Name;
+    public string Language;
+    public string Limit;
+
+    public override string ToString()
+    {
+      return String.Format("{0}: {1} [{2}]", Language, Name, Database);
+    }
+  }
+
   public class GUISettingsMoviesDatabase : GUIInternalWindow, IMDB.IProgress
   {
     // Grabbers
@@ -59,10 +72,7 @@ namespace MediaPortal.GUI.Settings
     [SkinControl(14)] protected GUIButtonControl btnScandatabase = null;
     [SkinControl(15)] protected GUIButtonControl btnResetdatabase= null;
     [SkinControl(16)] protected GUICheckButton btnUseSortTitle = null;
-    [SkinControl(17)] protected GUICheckButton btnUseNfoScraper = null;
-
-    //[SkinControl(16)] protected GUIButtonControl btnUseSortTitle= null;
-    //[SkinControl(17)] protected GUIButtonControl btnUseInternalInfoScraper = null;
+    [SkinControl(18)] protected GUICheckButton btnUseNfoScraper = null;
 
     private String _defaultShare;
     private bool _rememberLastFolder;
@@ -77,8 +87,8 @@ namespace MediaPortal.GUI.Settings
 
     // grabber index holds information/urls of available grabbers to download
     private string _grabberIndexFile = Config.GetFile(Config.Dir.Config, "MovieInfoGrabber.xml");
-    private string _grabberIndexUrl = @"http://install.team-mediaportal.com/MP1/MovieInfoGrabber.xml";
-    private Dictionary<string, IIMDBScriptGrabber> _grabberList;
+    private string _grabberIndexUrl = @"http://install.team-mediaportal.com/MP1/MovieInfoGrabber_V16.xml";
+    private Dictionary<string, ComboBoxItemDatabase> _grabberList;
 
     private int m_iCount = 1;
     private string _prefixes = string.Empty;
@@ -139,7 +149,17 @@ namespace MediaPortal.GUI.Settings
           GUIControl.DisableControl(GetID, (int)Controls.CONTROL_FANARTCOUNT);
         }
         
-        m_iCount = xmlreader.GetValueAsInt("moviedatabase", "fanartnumber", 0);
+        int faCount = xmlreader.GetValueAsInt("moviedatabase", "fanartnumber", 1);
+        
+        if (faCount < 1)
+        {
+          m_iCount = 1;
+        }
+        else
+        {
+          m_iCount = faCount;
+        }
+
         _actorsFetchSize = xmlreader.GetValueAsString("moviedatabase", "actorslistsize", "Short");
         
         // Folder names as title
@@ -167,9 +187,9 @@ namespace MediaPortal.GUI.Settings
 
         foreach (GUIListItem item in settingsSharesHelper.ShareListControl)
         {
-          string driveLetter = FolderInfo(item).Folder.Substring(0, 3).ToUpper();
-          
-          if (Util.Utils.getDriveType(driveLetter) == 3 ||
+          string driveLetter = FolderInfo(item).Folder.Substring(0, 3).ToUpperInvariant();
+
+          if (driveLetter.StartsWith("\\\\") || Util.Utils.getDriveType(driveLetter) == 3 ||
               Util.Utils.getDriveType(driveLetter) == 4)
           {
             item.IsPlayed = false;
@@ -246,7 +266,6 @@ namespace MediaPortal.GUI.Settings
         case GUIMessage.MessageType.GUI_MSG_WINDOW_INIT:
           {
             base.OnMessage(message);
-            LoadSettings();
             GUIControl.ClearControl(GetID, (int)Controls.CONTROL_FANARTCOUNT);
             for (int i = 1; i <= 5; ++i)
             {
@@ -288,10 +307,16 @@ namespace MediaPortal.GUI.Settings
       }
     }
 
-    protected override void OnPageDestroy(int new_windowId)
+    protected override void OnPageDestroy(int newWindowId)
     {
       SaveSettings();
-      base.OnPageDestroy(new_windowId);
+
+      if (MediaPortal.GUI.Settings.GUISettings.SettingsChanged && !MediaPortal.Util.Utils.IsGUISettingsWindow(newWindowId))
+      {
+        MediaPortal.GUI.Settings.GUISettings.OnRestartMP(GetID);
+      }
+
+      base.OnPageDestroy(newWindowId);
     }
 
     protected override void OnClicked(int controlId, GUIControl control, Action.ActionType actionType)
@@ -433,7 +458,7 @@ namespace MediaPortal.GUI.Settings
       progressDialog.SetPercentage(100);
       progressDialog.StartModal(GetID);
 
-      if (DownloadFile(_grabberIndexFile, _grabberIndexUrl) == false)
+      if (DownloadFile(_grabberIndexFile, _grabberIndexUrl, Encoding.Default) == false)
       {
         progressDialog.Close();
         return;
@@ -442,40 +467,56 @@ namespace MediaPortal.GUI.Settings
       string parserIndexFile = Config.GetFile(Config.Dir.Config, "scripts\\VDBParserStrings.xml");
       string parserIndexUrl = @"http://install.team-mediaportal.com/MP1/VDBParserStrings.xml";
       string internalGrabberScriptFile = Config.GetFile(Config.Dir.Config, "scripts\\InternalActorMoviesGrabber.csscript");
-      string internalGrabberScriptUrl = @"http://install.team-mediaportal.com/MP1/InternalGrabber/InternalActorMoviesGrabber.csscript";
-
+      string internalActorsGrabberScriptUrl = @"http://install.team-mediaportal.com/MP1/InternalGrabber/InternalActorMoviesGrabber.csscript";
+      string internalMovieImagesGrabberScriptFile = Config.GetFile(Config.Dir.Config, "scripts\\InternalMovieImagesGrabber.csscript");
+      string internalMovieImagesGrabberScriptUrl = @"http://install.team-mediaportal.com/MP1/InternalGrabber/InternalMovieImagesGrabber.csscript";
+      
       // VDB parser update
       progressDialog.SetHeading("Updating VDBparser file......");
       progressDialog.ShowProgressBar(true);
       progressDialog.SetLine(1, "Downloading VDBparser file...");
       progressDialog.SetLine(2, "Downloading...");
-      progressDialog.SetPercentage(75);
+      progressDialog.SetPercentage(33);
       progressDialog.StartModal(GUIWindowManager.ActiveWindow);
 
-      if (DownloadFile(parserIndexFile, parserIndexUrl) == false)
+      if (DownloadFile(parserIndexFile, parserIndexUrl, Encoding.UTF8) == false)
       {
         progressDialog.Close();
         return;
       }
 
-      // Internal grabber script update
-      progressDialog.SetHeading("Updating InternalGrabberScript file......");
+      // Internal actors grabber script update
+      progressDialog.SetHeading("Updating InternalActorsGrabberScript file......");
       progressDialog.ShowProgressBar(true);
-      progressDialog.SetLine(1, "Downloading InternalGrabberScript file...");
+      progressDialog.SetLine(1, "Downloading InternalActorsGrabberScript file...");
+      progressDialog.SetLine(2, "Downloading...");
+      progressDialog.SetPercentage(66);
+      progressDialog.StartModal(GUIWindowManager.ActiveWindow);
+
+      if (DownloadFile(internalGrabberScriptFile, internalActorsGrabberScriptUrl, Encoding.Default) == false)
+      {
+        progressDialog.Close();
+        return;
+      }
+
+      IMDB.InternalActorsScriptGrabber.ResetGrabber();
+
+      // Internal images grabber script update
+      progressDialog.SetHeading("Updating InternalImagesGrabberScript file......");
+      progressDialog.ShowProgressBar(true);
+      progressDialog.SetLine(1, "Downloading InternalImagesrabberScript file...");
       progressDialog.SetLine(2, "Downloading...");
       progressDialog.SetPercentage(100);
       progressDialog.StartModal(GUIWindowManager.ActiveWindow);
 
-      if (DownloadFile(internalGrabberScriptFile, internalGrabberScriptUrl) == false)
+      Util.InternalCSScriptGrabbersLoader.Movies.ImagesGrabber.ResetGrabber();
+
+      if (DownloadFile(internalMovieImagesGrabberScriptFile, internalMovieImagesGrabberScriptUrl, Encoding.Default) == false)
       {
         progressDialog.Close();
         return;
       }
-
-      // For 1.3.0B
-      //IMDB.InternalMovieInfoScraper _internalGrabber = new IMDB.InternalMovieInfoScraper();
-      //_internalGrabber.LoadScript();
-
+      
       // read index file
       if (!File.Exists(_grabberIndexFile))
       {
@@ -510,7 +551,7 @@ namespace MediaPortal.GUI.Settings
           percent += 100 / (sectionNodes.Count - 1);
           progressDialog.Progress();
 
-          if (DownloadFile(IMDB.ScriptDirectory + @"\" + id, url) == false)
+          if (DownloadFile(IMDB.ScriptDirectory + @"\" + id, url, Encoding.Default) == false)
           {
             progressDialog.Close();
             return;
@@ -518,9 +559,10 @@ namespace MediaPortal.GUI.Settings
         }
       }
       progressDialog.Close();
+      IMDB.MovieInfoDatabase.ResetGrabber();
     }
 
-    private bool DownloadFile(string filepath, string url)
+    private bool DownloadFile(string filepath, string url, Encoding enc)
     {
       string grabberTempFile = Path.GetTempFileName();
 
@@ -544,7 +586,7 @@ namespace MediaPortal.GUI.Settings
         {
           using (Stream resStream = response.GetResponseStream())
           {
-            using (TextReader tin = new StreamReader(resStream, Encoding.Default))
+            using (TextReader tin = new StreamReader(resStream, enc))
             {
               using (TextWriter tout = File.CreateText(grabberTempFile))
               {
@@ -607,9 +649,9 @@ namespace MediaPortal.GUI.Settings
       dlg.Reset();
       dlg.SetHeading(300036); // Set default Grabber script
 
-      foreach (KeyValuePair<string, IIMDBScriptGrabber> grabber in _grabberList)
+      foreach (KeyValuePair<string, ComboBoxItemDatabase> grabber in _grabberList)
       {
-        dlg.Add(grabber.Value.GetName() + " - " + grabber.Value.GetLanguage());
+        dlg.Add(grabber.Value.Name + " - " + grabber.Value.Language);
 
         if (defaultDatabase == grabber.Key)
         {
@@ -632,8 +674,7 @@ namespace MediaPortal.GUI.Settings
 
       using (MediaPortal.Profile.Settings xmlwriter = new MPSettings())
       {
-        KeyValuePair<string, IIMDBScriptGrabber> grabber = _grabberList.ElementAt(dlg.SelectedLabel);
-
+        KeyValuePair<string, ComboBoxItemDatabase> grabber = _grabberList.ElementAt(dlg.SelectedLabel);
 
         if (grabber.Key != "IMDB")
         {
@@ -643,8 +684,8 @@ namespace MediaPortal.GUI.Settings
           }
           xmlwriter.SetValue("moviedatabase", "number", dbNumber);
           xmlwriter.SetValue("moviedatabase", "database" + 0, grabber.Key);
-          xmlwriter.SetValue("moviedatabase", "title" + 0, grabber.Value.GetName());
-          xmlwriter.SetValue("moviedatabase", "language" + 0, grabber.Value.GetLanguage());
+          xmlwriter.SetValue("moviedatabase", "title" + 0, grabber.Value.Name);
+          xmlwriter.SetValue("moviedatabase", "language" + 0, grabber.Value.Language);
           xmlwriter.SetValue("moviedatabase", "limit" + 0, 25);
         }
         else
@@ -659,6 +700,7 @@ namespace MediaPortal.GUI.Settings
           }
         }
       }
+      IMDB.MovieInfoDatabase.ResetGrabber();
     }
 
     private void GetGrabbers()
@@ -675,13 +717,13 @@ namespace MediaPortal.GUI.Settings
 
       int percent = 0;
 
-      _grabberList = new Dictionary<string, IIMDBScriptGrabber>();
+      _grabberList = new Dictionary<string, ComboBoxItemDatabase>();
 
       Directory.CreateDirectory(IMDB.ScriptDirectory);
       DirectoryInfo di = new DirectoryInfo(IMDB.ScriptDirectory);
 
       FileInfo[] fileList = di.GetFiles("*.csscript", SearchOption.AllDirectories);
-
+      
       foreach (FileInfo f in fileList)
       {
         try
@@ -689,15 +731,24 @@ namespace MediaPortal.GUI.Settings
           progressDialog.SetLine(1, f.Name);
           progressDialog.SetPercentage(percent);
           Application.DoEvents();
+          CSScript.GlobalSettings.AddSearchDir(AppDomain.CurrentDomain.BaseDirectory);
 
-          AsmHelper script = new AsmHelper(CSScript.Load(f.FullName, null, false));
-          IIMDBScriptGrabber grabber = (IIMDBScriptGrabber)script.CreateObject("Grabber");
+          using (AsmHelper script = new AsmHelper(CSScript.Compile(f.FullName), "Temp", true))
+          {
+            script.ProbingDirs = CSScript.GlobalSettings.SearchDirs.Split(';');
+            IIMDBScriptGrabber grabber = (IIMDBScriptGrabber) script.CreateObject("Grabber");
+
+            ComboBoxItemDatabase item = new ComboBoxItemDatabase();
+            item.Database = Path.GetFileNameWithoutExtension(f.FullName);
+            item.Language = grabber.GetLanguage();
+            item.Limit = IMDB.DEFAULT_SEARCH_LIMIT.ToString();
+            item.Name = grabber.GetName();
+            _grabberList.Add(item.Database, item);
+          }
 
           percent += 100 / (fileList.Count() - 1);
           progressDialog.Progress();
           Application.DoEvents();
-
-          _grabberList.Add(Path.GetFileNameWithoutExtension(f.FullName), grabber);
         }
         catch (Exception ex)
         {
@@ -781,10 +832,7 @@ namespace MediaPortal.GUI.Settings
         string path = item.Path;
         availablePaths.Add(path);
       }
-      // Here goes check for nfo scraper only
-      //***************
-      //
-
+      
       // Clean covers and fanarts (only if refreshexisting cb is checked)
       if (btnRefreshexistingonly.Selected)
       {
@@ -806,8 +854,36 @@ namespace MediaPortal.GUI.Settings
         }
       }
       _conflictFiles = new ArrayList();
-      IMDBFetcher.ScanIMDB(this, availablePaths, btnNearestmatch.Selected, btnSkipalreadyexisting.Selected, false,
-                           btnRefreshexistingonly.Selected);
+      ArrayList nfoFiles = new ArrayList();
+
+      foreach (string availablePath in availablePaths)
+      {
+        GetNfoFiles(availablePath, ref nfoFiles);
+      }
+
+      if (!btnUseNfoScraper.Selected)
+      {
+        // Scan only new movies (skip scan existing movies or not refreshing existing)
+        if (btnSkipalreadyexisting.Selected && !btnRefreshexistingonly.Selected)
+        {
+          // First nfo (can speed up scan time)
+          IMDBFetcher fetcher = new IMDBFetcher(this);
+          fetcher.FetchNfo(nfoFiles, true, false);
+          // Then video files (for movies not added by nfo)
+          IMDBFetcher.ScanIMDB(this, availablePaths, btnNearestmatch.Selected, true, false, false);
+
+        }
+        else // User wants to scan no matter if movies are already in the database (do not use nfo here, user must set that option)
+        {
+          IMDBFetcher.ScanIMDB(this, availablePaths, btnNearestmatch.Selected, btnSkipalreadyexisting.Selected, false,
+                             btnRefreshexistingonly.Selected);
+        }
+      }
+      else // Use only nfo files
+      {
+        IMDBFetcher fetcher = new IMDBFetcher(this);
+        fetcher.FetchNfo(nfoFiles, btnSkipalreadyexisting.Selected, btnRefreshexistingonly.Selected);
+      }
     }
 
     private void OnResetDatabase()
@@ -828,9 +904,16 @@ namespace MediaPortal.GUI.Settings
         try
         {
           File.Delete(database);
+          // Clear thumbs
+          // Delete covers
+          string files = @"*.jpg"; // Only delete jpg files
+          string configDir = Config.GetFolder(Config.Dir.Thumbs) + @"\Videos\Title\";
+          DeleteVideoThumbs(files, configDir);
+          // Delete actor images
+          configDir = Config.GetFolder(Config.Dir.Thumbs) + @"\Videos\Actors\";
+          DeleteVideoThumbs(files, configDir);
+          
           // FanArt delete all files
-          string configDir;
-          FanArt.GetFanArtFolder(out configDir);
           if (btnUsefanart.Selected)
           {
             dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_YES_NO);
@@ -846,12 +929,9 @@ namespace MediaPortal.GUI.Settings
             {
               return;
             }
-            string files = @"*.jpg"; // Only delete jpg files
-            string[] fileList = Directory.GetFiles(configDir, files);
-            foreach (string file in fileList)
-            {
-              File.Delete(file);
-            }
+
+            FanArt.GetFanArtFolder(out configDir);
+            DeleteVideoThumbs(files, configDir);
           }
         }
         catch (Exception)
@@ -910,7 +990,33 @@ namespace MediaPortal.GUI.Settings
       }
     }
 
-    // Need change fore 1.3.0
+    private void GetNfoFiles(string path, ref ArrayList nfoFiles)
+    {
+      string[] files = Directory.GetFiles(path, "*.nfo", SearchOption.AllDirectories);
+      var sortedFiles = files.OrderBy(f => f);
+
+      foreach (string file in sortedFiles)
+      {
+        nfoFiles.Add(file);
+      }
+    }
+
+    private void DeleteVideoThumbs(string files, string configDir)
+    {
+      try
+      {
+        string[] fileList = Directory.GetFiles(configDir, files);
+
+        foreach (string file in fileList)
+        {
+          File.Delete(file);
+        }
+      }
+      catch (Exception)
+      {
+      }
+    }
+
     #region IMDB.IProgress
 
     public bool OnDisableCancel(IMDBFetcher fetcher)

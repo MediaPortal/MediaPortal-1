@@ -192,9 +192,9 @@ namespace MediaPortal.WinampPlayer
           //Continue to read until you reach end of file
           while (line != null)
           {
-            if (line.ToLower().Trim().StartsWith("minimized"))
+            if (line.ToLowerInvariant().Trim().StartsWith("minimized"))
             {
-              if (line.ToLower().Trim().StartsWith("minimized=1"))
+              if (line.ToLowerInvariant().Trim().StartsWith("minimized=1"))
               {
                 sr.Close();
                 return; // already in minimize... nothing to do...

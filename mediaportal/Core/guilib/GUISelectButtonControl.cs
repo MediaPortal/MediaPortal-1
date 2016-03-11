@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2013 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2013 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -38,13 +38,23 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("textureNoFocus")] protected string _textureNoFocusName = "";
     [XMLSkinElement("texturebg")] protected string _backgroundTextureName = "";
     [XMLSkinElement("textureLeft")] protected string _leftTextureName = "";
+    [XMLSkinElement("textureLeftHeight")] private int _leftTextureHeight = 16;
+    [XMLSkinElement("textureLeftWidth")] private int _leftTextureWidth = 16;
     [XMLSkinElement("textureRight")] protected string _rightTextureName = "";
+    [XMLSkinElement("textureRightHeight")] private int _rightTextureHeight = 16;
+    [XMLSkinElement("textureRightWidth")] private int _rightTextureWidth = 16;
     [XMLSkinElement("textureLeftFocus")] protected string _leftFocusName = "";
+    [XMLSkinElement("textureLeftFocusHeight")] private int _leftTextureFocusHeight = 16;
+    [XMLSkinElement("textureLeftFocusWidth")] private int _leftTextureFocusWidth = 16;
     [XMLSkinElement("textureRightFocus")] protected string _rightFocusName = "";
+    [XMLSkinElement("textureRightFocusHeight")] private int _rightTextureFocusHeight = 16;
+    [XMLSkinElement("textureRightFocusWidth")] private int _rightTextureFocusWidth = 16;
     [XMLSkinElement("textXOff")] protected int _textOffsetX = 0;
     [XMLSkinElement("textYOff")] protected int _textOffsetY = 0;
     [XMLSkinElement("textXOff2")] protected int _textOffsetX2 = 0;
     [XMLSkinElement("textYOff2")] protected int _textOffsetY2 = 0;
+    [XMLSkinElement("textpadding")] protected int _textPadding = 0;
+    [XMLSkinElement("textpadding2")] protected int _textPadding2 = 0;
     [XMLSkinElement("shadowAngle")] protected int _shadowAngle = 0;
     [XMLSkinElement("shadowDistance")] protected int _shadowDistance = 0;
     [XMLSkinElement("shadowColor")] protected long _shadowColor = 0xFF000000;
@@ -147,20 +157,20 @@ namespace MediaPortal.GUI.Library
       _imageBackground.ParentControl = this;
       _imageBackground.DimColor = DimColor;
 
-      _imageLeft = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, x1, y1, _leftTextureName);
+      _imageLeft = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, _leftTextureWidth, _leftTextureHeight, _leftTextureName);
       _imageLeft.DimColor = DimColor;
       _imageLeft.ParentControl = this;
 
-      _imageLeftFocus = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, x1, y1,
+      _imageLeftFocus = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, _leftTextureFocusWidth, _leftTextureFocusHeight,
                                              _leftFocusName);
       _imageLeftFocus.ParentControl = this;
       _imageLeftFocus.DimColor = DimColor;
 
-      _imageRight = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, x1, y1, _rightTextureName);
+      _imageRight = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, _rightTextureWidth, _rightTextureHeight, _rightTextureName);
       _imageRight.ParentControl = this;
       _imageRight.DimColor = DimColor;
 
-      _imageRightFocus = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, x1, y1,
+      _imageRightFocus = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, _rightTextureFocusWidth, _rightTextureFocusHeight,
                                               _rightFocusName);
       _imageRightFocus.ParentControl = this;
       _imageRightFocus.DimColor = DimColor;
@@ -224,86 +234,77 @@ namespace MediaPortal.GUI.Library
           return;
         }
       }
-
-
-      if (Focus)
-      {
-        _showSelect = true;
-      }
-      else
-      {
-        _showSelect = false;
-      }
-
-      //	Are we in selection mode
+      
+      // Are we in selection mode
+      _showSelect = Focus;
       if (_showSelect)
       {
-        //	Yes, render the select control
+        // Yes, render the select control
 
-        //	render background, left and right arrow
-
+        // render background, left and right arrow
         _imageBackground.Render(timePassed);
 
         long dwTextColor = Focus ? _textColor : _textColorNoFocus;
 
-        //	User has moved left...
+        // User has moved left...
         if (_leftSelected)
         {
-          //	...render focused arrow
+          // ...render focused arrow
           _startFrame++;
           if (_autoHide && _startFrame >= 25)
           {
             _startFrame = 0;
             _leftSelected = false;
-            GUIMessage message = new GUIMessage(GUIMessage.MessageType.GUI_MSG_CLICKED, WindowId, GetID, ParentID, 0, 0,
-                                                null);
+            GUIMessage message = new GUIMessage(GUIMessage.MessageType.GUI_MSG_CLICKED, WindowId, GetID, ParentID, 0, 0, null);
             GUIWindowManager.SendThreadMessage(message);
             _updateNeeded = true;
           }
           _imageLeftFocus.Render(timePassed);
 
-          //	If we are moving left
-          //	render item text as disabled
+          // If we are moving left	render item text as disabled
           dwTextColor = _disabledColor;
         }
         else
         {
-          //	Render none focused arrow
+          // Render none focused arrow
           _imageLeft.Render(timePassed);
         }
 
 
-        //	User has moved right...
+        // User has moved right...
         if (_rightSelected)
         {
-          //	...render focused arrow
+          // ...render focused arrow
           _startFrame++;
           if (_autoHide && _startFrame >= 25)
           {
             _startFrame = 0;
             _rightSelected = false;
-            GUIMessage message = new GUIMessage(GUIMessage.MessageType.GUI_MSG_CLICKED, WindowId, GetID, ParentID, 0, 0,
-                                                null);
+            GUIMessage message = new GUIMessage(GUIMessage.MessageType.GUI_MSG_CLICKED, WindowId, GetID, ParentID, 0, 0, null);
             GUIWindowManager.SendThreadMessage(message);
             _updateNeeded = true;
           }
           _imageRightFocus.Render(timePassed);
 
-          //	If we are moving right
-          //	render item text as disabled
+          // If we are moving right render item text as disabled
           dwTextColor = _disabledColor;
         }
         else
         {
-          //	Render none focused arrow
+          // Render none focused arrow
           _imageRight.Render(timePassed);
         }
-
-
-        //	Render text if a current item is available
+        
+        // Render text if a current item is available
         if (SelectedItem >= 0 && null != _font && SelectedItem < _subItemList.Count)
         {
           _labelControl.FontName = _font.FontName;
+
+          if (_textPadding > 0)
+          {
+            _width -= GUIGraphicsContext.ScaleHorizontal(_textPadding);
+          }
+
           if (_textAlignment == Alignment.ALIGN_RIGHT)
           {
             _labelControl.SetPosition(_positionX + _width - _imageLeft.Width - _textOffsetX, _textOffsetY + _positionY);
@@ -317,31 +318,18 @@ namespace MediaPortal.GUI.Library
           _labelControl.TextAlignment = _textAlignment;
           _labelControl.Label = (string)_subItemList[SelectedItem];
           _labelControl.Width = _width - (_imageRight.Width + _imageLeft.Width + _textOffsetX);
+
+          if (_labelControl.Width <= 0)
+          {
+            base.Render(timePassed);
+            return;
+          }
           _labelControl.Render(timePassed);
         }
-        /*
-                //	Select current item, if user doesn't 
-                //	move left or right for 1.5 sec.
-                long dwTicksSpan=DateTime.Now.Ticks-_ticks;
-                dwTicksSpan/=10000;
-                if ((float)(dwTicksSpan/1000)>0.8f)
-                {
-                  //	User hasn't moved disable selection mode...
-                  _showSelect=false;
-
-                  //	...and send a thread message.
-                  //	(Sending a message with SendMessage 
-                  //	can result in a GPF.)
-                  GUIMessage message = new GUIMessage(GUIMessage.MessageType.GUI_MSG_CLICKED,WindowId,GetID, ParentID ,0,0,null);
-                  GUIWindowManager.SendThreadMessage(message);
-                  _updateNeeded=true;
-                }
-        */
-      } //	if (_showSelect)
+      }
+      // No, render a normal button
       else
       {
-        //	No, render a normal button
-
         if (!IsVisible)
         {
           base.Render(timePassed);
@@ -350,30 +338,22 @@ namespace MediaPortal.GUI.Library
 
         if (Focus)
         {
-/*
-          int dwAlphaCounter = _frameCounter+2;
-          int dwAlphaChannel;
-          if ((dwAlphaCounter%128)>=64)
-            dwAlphaChannel = dwAlphaCounter%64;
-          else
-            dwAlphaChannel = 63-(dwAlphaCounter%64);
-
-          dwAlphaChannel += 192;
-          SetAlpha(dwAlphaChannel );
-          _imageFocused.IsVisible=true;
-          _imageNonFocused.IsVisible=false;
-          _frameCounter++;*/
           _imageFocused.Render(timePassed);
         }
         else
         {
-          //SetAlpha(0xff);
           _imageNonFocused.Render(timePassed);
         }
 
-        if (_label != null && _label.Length > 0 && _font != null)
+        if (!string.IsNullOrEmpty(_label) && _font != null)
         {
           _labelControl.FontName = _font.FontName;
+
+          if (_textPadding2 > 0)
+          {
+            _width -= GUIGraphicsContext.ScaleHorizontal(_textPadding2);
+          }
+
           if (_textAlignment == Alignment.ALIGN_RIGHT)
           {
             _labelControl.SetPosition(_positionX + _width - _textOffsetX2, _textOffsetY2 + _positionY);
@@ -393,6 +373,13 @@ namespace MediaPortal.GUI.Library
           }
           _labelControl.TextAlignment = _textAlignment;
           _labelControl.Label = _label;
+          _labelControl.Width = _width - (_imageRight.Width + _imageLeft.Width + _textOffsetX);
+
+          if (_labelControl.Width <= 0)
+          {
+            base.Render(timePassed);
+            return;
+          }
           _labelControl.Render(timePassed);
         }
       }

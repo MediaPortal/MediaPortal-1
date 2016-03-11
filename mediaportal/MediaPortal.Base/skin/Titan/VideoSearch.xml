@@ -1,0 +1,100 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <id>1987</id>
+  <defaultcontrol>50</defaultcontrol>
+  <allowoverlay>yes</allowoverlay>
+  <define>#header.label</define>
+  <define>#header.hover</define>
+  <controls>
+    <import>common.window.xml</import>
+    <import>VideoSearch.facade.xml</import>
+    <import>VideoSearch.details.xml</import>
+	
+    <control>
+      <description>Status</description>
+      <type>fadelabel</type>
+      <id>6</id>
+      <posX>163</posX>
+      <posY>50</posY>
+      <label></label>
+      <onleft>2</onleft>
+      <onright>2</onright>
+      <onup>2</onup>
+      <ondown>3</ondown>
+      <width>575</width>
+      <font>font16</font>
+      <textcolor>150517</textcolor>
+      <height>41</height>
+    </control>
+
+    <control>
+      <type>button</type>
+      <description>Search</description>
+      <id>66</id>
+      <label>Search</label>
+      <posX>760</posX>
+      <posY>50</posY>
+      <width>180</width>
+      <height>47</height>
+      <textalign>center</textalign>
+      <textYOff>0</textYOff>
+      <onup>50</onup>
+      <onright>50</onright>
+    </control>
+	
+    <control>
+      <description>an Image</description>
+      <type>image</type>
+      <id>55</id>
+      <posX>160</posX>
+      <posY>50</posY>
+      <width>590</width>
+      <height>41</height>
+      <texture>searchBlock.PNG</texture>
+    </control>
+	
+    <control>
+      <type>actiongroup</type>
+      <description>action menu</description>
+      <onexit>50</onexit>
+      <buttonX>0</buttonX>
+      <buttonY>0</buttonY>
+      <buttonwidth>80</buttonwidth>
+      <buttonheight>650</buttonheight>
+      <textureFocus>Action_focus.png</textureFocus>
+      <textureNoFocus>Action_nofocus.png</textureNoFocus>
+      <width>320</width>
+      <height>720</height>
+      <dimColor>00ffffff</dimColor>
+	  
+
+      <control>
+        <description>button group</description>
+        <type>group</type>
+        <animation effect="slide" time="450" start="-300,0" reversible="false">visible</animation>
+        <animation effect="slide" time="450" end="-300,0" reversible="false">hidden</animation>
+        <posX>40</posX>
+        <posY>97</posY>
+        <layout>StackLayout</layout>
+        <control>
+          <type>button</type>
+          <description>Search</description>
+          <id>102</id>
+          <onright>50</onright>
+          <label>Search</label>
+          <onup>101</onup>
+          <ondown>101</ondown>
+        </control>
+        <control>
+          <description>Top Rated</description>
+          <type>button</type>
+          <id>101</id>
+          <onright>50</onright>
+          <label>Top Rated</label>
+          <onup>102</onup>
+          <ondown>102</ondown>
+        </control>
+      </control>
+    </control>
+  </controls>
+</window>

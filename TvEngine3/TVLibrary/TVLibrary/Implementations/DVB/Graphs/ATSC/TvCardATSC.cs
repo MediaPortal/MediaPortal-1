@@ -41,10 +41,9 @@ namespace TvLibrary.Implementations.DVB
     /// <summary>
     /// Initializes a new instance of the <see cref="TvCardATSC"/> class.
     /// </summary>
-    /// <param name="epgEvents">The EPG events interface.</param>
     /// <param name="device">The device.</param>
-    public TvCardATSC(IEpgEvents epgEvents, DsDevice device)
-      : base(epgEvents, device)
+    public TvCardATSC(DsDevice device)
+      : base(device)
     {
       _cardType = CardType.Atsc;
     }
@@ -75,8 +74,9 @@ namespace TvLibrary.Implementations.DVB
           CreateTuningSpace();
           AddMpeg2DemuxerToGraph();
         }
-        AddAndConnectBDABoardFilters(_device);
-        AddBdaTransportFiltersToGraph();
+        IBaseFilter lastFilter;
+        AddAndConnectBDABoardFilters(_device, out lastFilter);
+        CompleteGraph(ref lastFilter);
         string graphName = _device.Name + " - ATSC Graph.grf";
         FilterGraphTools.SaveGraphFile(_graphBuilder, graphName);
         GetTunerSignalStatistics();
@@ -242,7 +242,7 @@ namespace TvLibrary.Implementations.DVB
       }
     }
 
-    private bool BeforeTune(IChannel channel)
+    protected virtual bool BeforeTune(IChannel channel)
     {
       ATSCChannel atscChannel = channel as ATSCChannel;
       if (atscChannel == null)
@@ -364,17 +364,19 @@ namespace TvLibrary.Implementations.DVB
     }
 
     /// <summary>
-    /// Method to check if card can tune to the channel specified
+    /// Check if the tuner can tune to a given channel.
     /// </summary>
-    /// <param name="channel"></param>
-    /// <returns>
-    /// true if card can tune to the channel otherwise false
-    /// </returns>
+    /// <param name="channel">The channel to check.</param>
+    /// <returns><c>true</c> if the tuner can tune to the channel, otherwise <c>false</c></returns>
     public override bool CanTune(IChannel channel)
     {
-      if ((channel as ATSCChannel) == null)
+      ATSCChannel atscChannel = channel as ATSCChannel;
+      if (atscChannel == null)
+      {
         return false;
-      return true;
+      }
+      // We tune by physical channel and/or frequency.
+      return atscChannel.PhysicalChannel > 0;
     }
 
     protected override DVBBaseChannel CreateChannel(int networkid, int transportid, int serviceid, string name)

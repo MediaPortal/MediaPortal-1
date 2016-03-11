@@ -186,9 +186,6 @@ namespace MediaPortal.Player.Subtitles
 
   public class SubtitleRenderer
   {
-    [DllImport("fontEngine.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
-    private static extern unsafe void FontEngineSetAlphaBlend(UInt32 alphaBlend);
-
     private bool _useBitmap = false; // if false use teletext
     private int _activeSubPage = -1; // if use teletext, what page
     private static SubtitleRenderer _instance = null;
@@ -411,7 +408,7 @@ namespace MediaPortal.Player.Subtitles
             // allocate new texture
             texture = new Texture(GUIGraphicsContext.DX9Device, (int)subtitle.width, (int)subtitle.height, 1,
                                   Usage.Dynamic,
-                                  Format.A8R8G8B8, Pool.Default);
+                                  Format.A8R8G8B8, GUIGraphicsContext.GetTexturePoolType());
 
             if (texture == null)
             {
@@ -583,10 +580,20 @@ namespace MediaPortal.Player.Subtitles
 
     public static Bitmap RenderText(LineContent[] lc)
     {
-      int w = 720;
-      int h = 576;
+      float w = 720;
+      float h = 576;
+      // With DPIAware setting baseSize need to be kept
+      // adjust for different DPI settings (96dpi = 100%)
+      using (Graphics graphics = GUIGraphicsContext.form.CreateGraphics())
+      {
+        if (Environment.OSVersion.Version.Major >= 6 && graphics.DpiY != 96.0)
+        {
+          w *= graphics.DpiX/96;
+          h *= graphics.DpiY/96;
+        }
+      }
 
-      Bitmap bmp = new Bitmap(w, h);
+      Bitmap bmp = new Bitmap((int)w, (int)h);
 
       using (Graphics gBmp = Graphics.FromImage(bmp))
       {
@@ -600,7 +607,7 @@ namespace MediaPortal.Player.Subtitles
               using (Font fnt = new Font("Courier", (lc[i].doubleHeight ? 22 : 15), FontStyle.Bold))
                 // fixed width font!
               {
-                int vertOffset = (h / lc.Length) * i;
+                int vertOffset = ((int)h / lc.Length) * i;
 
                 SizeF size = gBmp.MeasureString(lc[i].line, fnt);
                 //gBmp.FillRectangle(new SolidBrush(Color.Pink), new Rectangle(0, 0, w, h));
@@ -785,19 +792,30 @@ namespace MediaPortal.Player.Subtitles
           VMR9Util.g_vmr9.GetVideoWindows(out src, out dst);
 
           rationH = dst.Height / (float)_currentSubtitle.screenHeight;
-          rationW = dst.Width / (float)_currentSubtitle.screenWidth;
-          wx = dst.X + (int)(rationW * (float)_currentSubtitle.horizontalPosition);
-          wy = dst.Y + (int)(rationH * (float)_currentSubtitle.firstScanLine);          
-          wwidth = (int)((float)_currentSubtitle.width * rationW);
-          wheight = (int)((float)_currentSubtitle.height * rationH);
-          
+
+          // Get the location to render the subtitle to for blu-ray
+          if (_currentSubtitle.horizontalPosition != 0)
+          {
+            rationW = dst.Width / (float)_currentSubtitle.screenWidth;
+            wx = dst.X + (int)(rationW * (float)_currentSubtitle.horizontalPosition);
+          }
+          else
+          {
+            rationW = rationH;
+            wx = dst.X + (int)((dst.Width - _currentSubtitle.width * rationW) / 2);
+          }
+          wy = dst.Y + (int)(rationH * _currentSubtitle.firstScanLine);
+
+          wwidth = (int)(_currentSubtitle.width * rationW);
+          wheight = (int)(_currentSubtitle.height * rationH);
+
           // make sure the vertex buffer is ready and correct for the coordinates
           CreateVertexBuffer(wx, wy, wwidth, wheight);
 
           // Log.Debug("Subtitle render target: wx = {0} wy = {1} ww = {2} wh = {3}", wx, wy, wwidth, wheight);
 
           // enable alpha blending so that the subtitle is rendered with transparent background
-          FontEngineSetAlphaBlend(1); //TRUE
+          DXNative.FontEngineSetRenderState((int)D3DRENDERSTATETYPE.D3DRS_ALPHABLENDENABLE, 1);
 
           // Make sure D3D objects haven't been disposed for some reason. This would  cause
           // an access violation on native side, causing Skin Engine to halt rendering
@@ -844,11 +862,12 @@ namespace MediaPortal.Player.Subtitles
       if (_vertexBuffer == null)
       {
         Log.Debug("Subtitle: Creating vertex buffer");
+        var usage = OSInfo.OSInfo.VistaOrLater() ? Usage.Dynamic | Usage.WriteOnly : 0;
         _vertexBuffer = new VertexBuffer(typeof (CustomVertex.TransformedTextured),
-                                        4, GUIGraphicsContext.DX9Device,
-                                        Usage.Dynamic | Usage.WriteOnly,
-                                        CustomVertex.TransformedTextured.Format,
-                                        GUIGraphicsContext.GetTexturePoolType());
+                                         4, GUIGraphicsContext.DX9Device,
+                                         usage,
+                                         CustomVertex.TransformedTextured.Format,
+                                         GUIGraphicsContext.GetTexturePoolType());
         _wx = _wy = _wwidth = _wheight = 0;
       }
 

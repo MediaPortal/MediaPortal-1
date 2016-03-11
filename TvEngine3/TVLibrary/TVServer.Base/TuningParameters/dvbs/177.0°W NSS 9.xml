@@ -28,24 +28,6 @@
     <Rolloff>NotSet</Rolloff>
   </Transponder>
   <Transponder>
-    <CarrierFrequency>4185000</CarrierFrequency>
-    <Polarisation>CircularR</Polarisation>
-    <SymbolRate>6527</SymbolRate>
-    <Modulation>ModNotSet</Modulation>
-    <InnerFecRate>Rate1_2</InnerFecRate>
-    <Pilot>NotSet</Pilot>
-    <Rolloff>NotSet</Rolloff>
-  </Transponder>
-  <Transponder>
-    <CarrierFrequency>3762000</CarrierFrequency>
-    <Polarisation>CircularR</Polarisation>
-    <SymbolRate>22000</SymbolRate>
-    <Modulation>ModQpsk</Modulation>
-    <InnerFecRate>Rate3_4</InnerFecRate>
-    <Pilot>Off</Pilot>
-    <Rolloff>ThirtyFive</Rolloff>
-  </Transponder>
-  <Transponder>
     <CarrierFrequency>3792000</CarrierFrequency>
     <Polarisation>CircularR</Polarisation>
     <SymbolRate>2048</SymbolRate>
@@ -55,11 +37,11 @@
     <Rolloff>ThirtyFive</Rolloff>
   </Transponder>
   <Transponder>
-    <CarrierFrequency>4104000</CarrierFrequency>
+    <CarrierFrequency>4163000</CarrierFrequency>
     <Polarisation>CircularR</Polarisation>
-    <SymbolRate>6050</SymbolRate>
+    <SymbolRate>2644</SymbolRate>
     <Modulation>ModQpsk</Modulation>
-    <InnerFecRate>Rate2_3</InnerFecRate>
+    <InnerFecRate>Rate3_4</InnerFecRate>
     <Pilot>Off</Pilot>
     <Rolloff>ThirtyFive</Rolloff>
   </Transponder>

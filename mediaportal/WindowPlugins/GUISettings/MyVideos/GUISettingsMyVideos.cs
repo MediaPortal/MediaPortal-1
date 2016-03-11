@@ -47,7 +47,11 @@ namespace WindowPlugins.GUISettings.TV
     [SkinControl(41)] protected GUIButtonControl btnDatabase= null;
     [SkinControl(42)] protected GUIButtonControl btnPlaylist= null;
     [SkinControl(43)] protected GUIButtonControl btnOtherSettings = null;
-    
+    [SkinControl(44)] protected GUICheckButton btnautoDecoderSettings = null;
+    [SkinControl(45)] protected GUICheckButton btnForceSourceSplitter = null;
+    [SkinControl(46)] protected GUICheckButton btnUseMovieCodects = null;
+    [SkinControl(47)] protected GUICheckButton btnUseAudioDefaultCheckBox = null;
+    [SkinControl(48)] protected GUICheckButton btnUseSstreamLAVSelection = null;
 
     private bool _subtitleSettings;
     private int _selectedOption;
@@ -69,6 +73,11 @@ namespace WindowPlugins.GUISettings.TV
     private CultureInfo _info;
     private CultureInfo _infoAudio;
     private string _defaultAudioLanguage;
+    private bool _autoDecoderSettings;
+    private bool _ForceSourceSplitter;
+    private bool _mpCheckBoxTS;
+    private bool _audioDefaultCheckBox;
+    private bool _streamLAVSelectionCheckBox;
     
 
     private class CultureComparer : IComparer
@@ -123,6 +132,29 @@ namespace WindowPlugins.GUISettings.TV
         _subtitleSettings = xmlreader.GetValueAsBool("subtitles", "enabled", false);
         btnEnableSubtitles.Selected = _subtitleSettings;
         _playAll = xmlreader.GetValueAsInt("movies", "playallinfolder", 3);
+        _autoDecoderSettings = xmlreader.GetValueAsBool("movieplayer", "autodecodersettings", false);
+        _ForceSourceSplitter = xmlreader.GetValueAsBool("movieplayer", "forcesourcesplitter", false);
+        _mpCheckBoxTS = xmlreader.GetValueAsBool("movieplayer", "usemoviecodects", false);
+        btnForceSourceSplitter.Selected = _ForceSourceSplitter;
+        btnUseMovieCodects.Selected = _mpCheckBoxTS;
+        btnautoDecoderSettings.Selected = _autoDecoderSettings;
+        _audioDefaultCheckBox = xmlreader.GetValueAsBool("movieplayer", "audiodefaultlanguage", false);
+        _streamLAVSelectionCheckBox = xmlreader.GetValueAsBool("movieplayer", "streamlavselection", false);
+        btnUseAudioDefaultCheckBox.Selected = _audioDefaultCheckBox;
+        btnUseSstreamLAVSelection.Selected = _streamLAVSelectionCheckBox;
+        // Set Source Splitter check for first init to true.
+        if (btnForceSourceSplitter.Selected && (_strSplitterFilter == "LAV Splitter Source" || _strSplitterFilter == "LAV Splitter"))
+        {
+          btnUseAudioDefaultCheckBox.IsEnabled = true;
+          btnUseSstreamLAVSelection.IsEnabled = true;
+        }
+        else
+        {
+          btnUseAudioDefaultCheckBox.IsEnabled = false;
+          btnUseSstreamLAVSelection.IsEnabled = false;
+          btnUseAudioDefaultCheckBox.Selected = false;
+          btnUseSstreamLAVSelection.Selected = false;
+        }
       }
     }
 
@@ -143,6 +175,11 @@ namespace WindowPlugins.GUISettings.TV
         // Splitter
         xmlwriter.SetValue("movieplayer", "splitterfilter", _strSplitterFilter);
         xmlwriter.SetValue("movieplayer", "splitterfilefilter", _strSplitterFilesyncFilter);
+        xmlwriter.SetValueAsBool("movieplayer", "autodecodersettings", btnautoDecoderSettings.Selected);
+        xmlwriter.SetValueAsBool("movieplayer", "forcesourcesplitter", btnForceSourceSplitter.Selected);
+        xmlwriter.SetValueAsBool("movieplayer", "usemoviecodects", btnUseMovieCodects.Selected);
+        xmlwriter.SetValueAsBool("movieplayer", "audiodefaultlanguage", btnUseAudioDefaultCheckBox.Selected);
+        xmlwriter.SetValueAsBool("movieplayer", "streamlavselection", btnUseSstreamLAVSelection.Selected);
 
         if (_info != null)
         {
@@ -177,10 +214,16 @@ namespace WindowPlugins.GUISettings.TV
       }
     }
 
-    protected override void OnPageDestroy(int new_windowId)
+    protected override void OnPageDestroy(int newWindowId)
     {
       SaveSettings();
-      base.OnPageDestroy(new_windowId);
+
+      if (MediaPortal.GUI.Settings.GUISettings.SettingsChanged && !MediaPortal.Util.Utils.IsGUISettingsWindow(newWindowId))
+      {
+        MediaPortal.GUI.Settings.GUISettings.OnRestartMP(GetID);
+      }
+
+      base.OnPageDestroy(newWindowId);
     }
 
     protected override void OnClicked(int controlId, GUIControl control, Action.ActionType actionType)
@@ -219,6 +262,27 @@ namespace WindowPlugins.GUISettings.TV
       {
         OnOtherSettings();
       }
+      if (control == btnForceSourceSplitter)
+      {
+        SaveSettings();
+        LoadSettings();
+      }
+      if (control == btnautoDecoderSettings)
+      {
+        SaveSettings();
+        LoadSettings();
+      }
+      if (control == btnUseAudioDefaultCheckBox)
+      {
+        SaveSettings();
+        LoadSettings();
+      }
+      if (control == btnUseSstreamLAVSelection)
+      {
+        btnAudio.IsEnabled = !btnUseSstreamLAVSelection.Selected;
+        SaveSettings();
+        LoadSettings();
+      }
 
       base.OnClicked(controlId, control, actionType);
     }
@@ -243,13 +307,23 @@ namespace WindowPlugins.GUISettings.TV
         dlg.Reset();
         dlg.SetHeading(GUILocalizeStrings.Get(496)); //Menu
 
-        dlg.AddLocalizedString(6000); // MPEG2
-        dlg.AddLocalizedString(6036); // H264
-        dlg.AddLocalizedString(300212); // VC-1
-        dlg.AddLocalizedString(300213); // VC-1i
-        dlg.AddLocalizedString(300214); // DivX/Xvid
-        dlg.AddLocalizedString(300215); // Splitter
-        dlg.AddLocalizedString(300216); // FileSplitter
+        if (!_autoDecoderSettings)
+        {
+          dlg.AddLocalizedString(6000); // MPEG2
+          dlg.AddLocalizedString(6036); // H264
+          dlg.AddLocalizedString(300212); // VC-1
+          dlg.AddLocalizedString(300213); // VC-1i
+          dlg.AddLocalizedString(300214); // DivX/Xvid
+          if (_ForceSourceSplitter)
+          {
+            dlg.AddLocalizedString(300215); // Splitter
+            if ((_strSplitterFilter == "File Source (Async.)" ||
+                 _strSplitterFilter == "File Source (URL)"))
+            {
+              dlg.AddLocalizedString(300216); // FileSplitter
+            }
+          }
+        }
         dlg.AddLocalizedString(6004); // Aspect Ratio
         dlg.AddLocalizedString(1029); // Subtitle
 
@@ -257,6 +331,20 @@ namespace WindowPlugins.GUISettings.TV
           dlg.SelectedLabel = _selectedOption;
 
         dlg.DoModal(GetID);
+
+        // Set Source Splitter check for first init to true.
+        if (btnForceSourceSplitter.Selected && (_strSplitterFilter == "LAV Splitter Source" || _strSplitterFilter == "LAV Splitter"))
+        {
+          btnUseAudioDefaultCheckBox.IsEnabled = true;
+          btnUseSstreamLAVSelection.IsEnabled = true;
+        }
+        else
+        {
+          btnUseAudioDefaultCheckBox.IsEnabled = false;
+          btnUseSstreamLAVSelection.IsEnabled = false;
+          btnUseAudioDefaultCheckBox.Selected = false;
+          btnUseSstreamLAVSelection.Selected = false;
+        }
 
         if (dlg.SelectedId == -1)
         {

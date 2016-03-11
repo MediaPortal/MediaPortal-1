@@ -22,6 +22,8 @@ using System;
 using System.Net;
 using System.Threading;
 using TvLibrary;
+using TvLibrary.Channels;
+using TvLibrary.Implementations;
 using TvLibrary.Interfaces;
 using TvLibrary.Implementations.DVB;
 using TvLibrary.Log;
@@ -58,8 +60,16 @@ namespace TvService
     public TvCardHandler(Card dbsCard, ITVCard card)
     {
       _dbsCard = dbsCard;
-      Card = card;
-      IsLocal = _card != null;
+      _card = card;
+      if (_card != null)
+      {
+        _card.Context = new TvCardContext();
+        _isLocal = true;
+      }
+      else
+      {
+        _isLocal = false;
+      }
       _userManagement = new UserManagement(this);
       _disEqcManagement = new DisEqcManagement(this);
       _teletext = new TeletextManagement(this);
@@ -165,14 +175,6 @@ namespace TvService
     public ITVCard Card
     {
       get { return _card; }
-      set
-      {
-        _card = value;
-        if (_card.Context == null)
-        {
-          _card.Context = new TvCardContext();
-        }
-      }
     }
 
     /// <summary>
@@ -664,7 +666,6 @@ namespace TvService
       settings.MaximumFileSize *= 1000;
       _card.Parameters = settings;
     }
-
 
     /// <summary>
     /// Gets the current channel.

@@ -786,25 +786,25 @@ namespace MediaPortal.GUI.Library
         switch ((SearchKinds)searchKind)
         {
           case SearchKinds.SEARCH_STARTS_WITH:
-            if (item.Label.ToLower().StartsWith(searchString.ToLower()))
+            if (item.Label.ToLowerInvariant().StartsWith(searchString.ToLowerInvariant()))
             {
               validItem = true;
             }
             break;
           case SearchKinds.SEARCH_CONTAINS:
-            if (item.Label.ToLower().IndexOf(searchString.ToLower()) >= 0)
+            if (item.Label.ToLowerInvariant().IndexOf(searchString.ToLowerInvariant()) >= 0)
             {
               validItem = true;
             }
             break;
           case SearchKinds.SEARCH_ENDS_WITH:
-            if (item.Label.ToLower().EndsWith(searchString.ToLower()))
+            if (item.Label.ToLowerInvariant().EndsWith(searchString.ToLowerInvariant()))
             {
               validItem = true;
             }
             break;
           case SearchKinds.SEARCH_IS:
-            if (item.Label.ToLower().Equals(searchString.ToLower()))
+            if (item.Label.ToLowerInvariant().Equals(searchString.ToLowerInvariant()))
             {
               validItem = true;
             }
@@ -1413,6 +1413,76 @@ namespace MediaPortal.GUI.Library
           _layoutCoverFlow[i].RefreshCoverArt();
         }
       }
+    }
+
+    public void Replace(int index, GUIListItem iItem)
+    {
+      if (iItem == null || index < 0)
+      {
+        return;
+      }
+
+      if (_layoutList != null)
+      {
+        _layoutList.Replace(index, iItem);
+      }
+      if (_layoutAlbum != null)
+      {
+        _layoutAlbum.Replace(index, iItem);
+      }
+      if (_layoutThumbnail != null)
+      {
+        _layoutThumbnail.Replace(index, iItem);
+      }
+      if (_layoutFilmStrip != null)
+      {
+        _layoutFilmStrip.Replace(index, iItem);
+      }
+      if (_layoutPlayList != null)
+      {
+        _layoutPlayList.Replace(index, iItem);
+      }
+      if (_layoutCoverFlow != null)
+      {
+        _layoutCoverFlow.Replace(index, iItem);
+      }
+    }
+
+    public int RemoveItem(int iItem)
+    {
+      int selectedItemIndex = -1;
+
+      if (iItem < 0 || iItem > _itemList.Count)
+      {
+        return -1;
+      }
+
+      if (_layoutList != null)
+      {
+        selectedItemIndex = _layoutList.RemoveItem(iItem);
+      }
+      if (_layoutAlbum != null)
+      {
+        selectedItemIndex = _layoutAlbum.RemoveItem(iItem);
+      }
+      if (_layoutThumbnail != null)
+      {
+        selectedItemIndex = _layoutThumbnail.RemoveItem(iItem);
+      }
+      if (_layoutFilmStrip != null)
+      {
+        selectedItemIndex = _layoutFilmStrip.RemoveItem(iItem);
+      }
+      if (_layoutPlayList != null)
+      {
+        selectedItemIndex = _layoutPlayList.RemoveItem(iItem);
+      }
+      if (_layoutCoverFlow != null)
+      {
+        selectedItemIndex = _layoutCoverFlow.RemoveItem(iItem);
+      }
+
+      return selectedItemIndex;
     }
 
     public int MoveItemDown(int iItem, bool select)

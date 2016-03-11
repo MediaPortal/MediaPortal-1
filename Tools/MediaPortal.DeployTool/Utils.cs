@@ -19,14 +19,19 @@
 #endregion
 
 using System;
+using System.Linq;
+using System.Reflection;
 using System.Windows.Forms;
 using System.IO;
 using System.Resources;
 using System.Globalization;
 using System.Xml;
+using System.Xml.Linq;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+using MediaPortal.DeployTool.Sections;
 using Microsoft.Win32;
+using Microsoft.Win32.SafeHandles;
 
 namespace MediaPortal.DeployTool
 {
@@ -217,6 +222,97 @@ namespace MediaPortal.DeployTool
 
     #endregion
 
+    #region RegistryHelper
+
+    [DllImport("advapi32.dll", CharSet = CharSet.Unicode, EntryPoint = "RegOpenKeyEx")]
+    static extern int RegOpenKeyEx(IntPtr hKey, string subKey, uint options, int sam,
+        out IntPtr phkResult);
+
+    [Flags]
+    public enum eRegWow64Options : int
+    {
+      None = 0x0000,
+      KEY_WOW64_64KEY = 0x0100,
+      KEY_WOW64_32KEY = 0x0200,
+      // Add here any others needed, from the table of the previous chapter
+    }
+
+    [Flags]
+    public enum eRegistryRights : int
+    {
+      ReadKey = 131097,
+      WriteKey = 131078,
+    }
+
+    public static RegistryKey OpenSubKey(RegistryKey pParentKey, string pSubKeyName,
+                                         bool pWriteable,
+                                         eRegWow64Options pOptions)
+    {
+      if (pParentKey == null || GetRegistryKeyHandle(pParentKey).Equals(System.IntPtr.Zero))
+        throw new System.Exception("OpenSubKey: Parent key is not open");
+
+      eRegistryRights Rights = eRegistryRights.ReadKey;
+      if (pWriteable)
+        Rights = eRegistryRights.WriteKey;
+
+      System.IntPtr SubKeyHandle;
+      System.Int32 Result = RegOpenKeyEx(GetRegistryKeyHandle(pParentKey), pSubKeyName, 0,
+                                        (int)Rights | (int)pOptions, out SubKeyHandle);
+      if (Result != 0)
+      {
+        System.ComponentModel.Win32Exception W32ex =
+            new System.ComponentModel.Win32Exception();
+        throw new System.Exception("OpenSubKey: Exception encountered opening key",
+            W32ex);
+      }
+
+      return PointerToRegistryKey(SubKeyHandle, pWriteable, false);
+    }
+
+    private static System.IntPtr GetRegistryKeyHandle(RegistryKey pRegisteryKey)
+    {
+      Type Type = Type.GetType("Microsoft.Win32.RegistryKey");
+      FieldInfo Info = Type.GetField("hkey", BindingFlags.NonPublic | BindingFlags.Instance);
+
+      SafeHandle Handle = (SafeHandle)Info.GetValue(pRegisteryKey);
+      IntPtr RealHandle = Handle.DangerousGetHandle();
+
+      return Handle.DangerousGetHandle();
+    }
+
+    private static RegistryKey PointerToRegistryKey(IntPtr hKey, bool pWritable,
+        bool pOwnsHandle)
+    {
+      // Create a SafeHandles.SafeRegistryHandle from this pointer - this is a private class
+      BindingFlags privateConstructors = BindingFlags.Instance | BindingFlags.NonPublic;
+      Type safeRegistryHandleType = typeof(
+          SafeHandleZeroOrMinusOneIsInvalid).Assembly.GetType(
+          "Microsoft.Win32.SafeHandles.SafeRegistryHandle");
+
+      Type[] safeRegistryHandleConstructorTypes = new Type[] { typeof(System.IntPtr),
+        typeof(System.Boolean) };
+      ConstructorInfo safeRegistryHandleConstructor =
+          safeRegistryHandleType.GetConstructor(privateConstructors,
+          null, safeRegistryHandleConstructorTypes, null);
+      Object safeHandle = safeRegistryHandleConstructor.Invoke(new Object[] { hKey,
+        pOwnsHandle });
+
+      // Create a new Registry key using the private constructor using the
+      // safeHandle - this should then behave like 
+      // a .NET natively opened handle and disposed of correctly
+      Type registryKeyType = typeof(Microsoft.Win32.RegistryKey);
+      Type[] registryKeyConstructorTypes = new Type[] { safeRegistryHandleType,
+        typeof(Boolean) };
+      ConstructorInfo registryKeyConstructor =
+          registryKeyType.GetConstructor(privateConstructors, null,
+          registryKeyConstructorTypes, null);
+      RegistryKey result = (RegistryKey)registryKeyConstructor.Invoke(new Object[] {
+        safeHandle, pWritable });
+      return result;
+    }
+
+    #endregion
+
     #region Uninstall
 
     public static void UninstallNSIS(string RegistryFullPathName)
@@ -245,8 +341,22 @@ namespace MediaPortal.DeployTool
 
     public static string CheckUninstallString(string clsid, bool delete)
     {
+      RegistryKey key = null;
       string keyPath = "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\" + clsid;
-      RegistryKey key = Registry.LocalMachine.OpenSubKey(keyPath);
+      key = Registry.LocalMachine.OpenSubKey(keyPath);
+      if (key == null)
+      {
+        try
+        {
+          key = OpenSubKey(Registry.LocalMachine, keyPath, false,
+              eRegWow64Options.KEY_WOW64_32KEY);
+        }
+        catch
+        {
+          // Parent key not open, exception found at opening (probably related to
+          // security permissions requested)
+        }
+      }
       if (key != null)
       {
         string strUninstall = key.GetValue("UninstallString").ToString();
@@ -266,11 +376,25 @@ namespace MediaPortal.DeployTool
 
     public static CheckResult CheckNSISUninstallString(string RegistryPath, string MementoSection)
     {
+      RegistryKey key = null;
       CheckResult result = new CheckResult();
       result.state = CheckState.NOT_INSTALLED;
 
-      RegistryKey key =
-        Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\" + RegistryPath);
+      try
+      {
+        key = OpenSubKey(Registry.LocalMachine, ("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\" + RegistryPath), false,
+            eRegWow64Options.KEY_WOW64_32KEY);
+      }
+      catch
+      {
+        // Parent key not open, exception found at opening (probably related to
+        // security permissions requested)
+      }
+      if (key == null)
+      {
+        key =
+          Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\" + RegistryPath);
+      }
       if (key != null)
       {
         int _IsInstalled = (int)key.GetValue(MementoSection, 0);
@@ -288,7 +412,18 @@ namespace MediaPortal.DeployTool
 
         if (_IsInstalled == 1)
         {
-          result.state = IsPackageUpdatabled(ver) ? CheckState.VERSION_MISMATCH : CheckState.INSTALLED;
+          if (UpgradeDlg.reInstallForce)
+          {
+            result.state = Utils.IsCurrentPackageUpdatabled(ver) ? CheckState.VERSION_MISMATCH : CheckState.INSTALLED;
+          }
+          else if (UpgradeDlg.freshForce)
+          {
+            result.state = CheckState.VERSION_MISMATCH;
+          }
+          else
+          {
+            result.state = IsPackageUpdatabled(ver) ? CheckState.VERSION_MISMATCH : CheckState.INSTALLED;
+          }
         }
         else
         {
@@ -551,8 +686,8 @@ namespace MediaPortal.DeployTool
           break;
         case "max":
           major = 1;
-          minor = 2;
-          revision = 3;
+          minor = 13;
+          revision = 0;
           break;
       }
       Version ver = new Version(major, minor, revision);
@@ -569,9 +704,40 @@ namespace MediaPortal.DeployTool
       return false;
     }
 
+    public static Version GetCurrentPackageVersion()
+    {
+      int major = 1;
+      int minor = 13;
+      int revision = 100;
+
+      Version ver = new Version(major, minor, revision);
+      return ver;
+    }
+
+    public static bool IsCurrentPackageUpdatabled(Version pkgVer)
+    {
+      if (pkgVer.CompareTo(GetCurrentPackageVersion()) >= 0)
+      {
+        return true;
+      }
+      return false;
+    }
+
     public static string PathFromRegistry(string regkey)
     {
-      RegistryKey key = Registry.LocalMachine.OpenSubKey(regkey);
+      RegistryKey key = null;
+      try
+      {
+        key = OpenSubKey(Registry.LocalMachine, (regkey), false,
+            eRegWow64Options.KEY_WOW64_32KEY);
+      }
+      catch
+      {
+        // Parent key not open, exception found at opening (probably related to
+        // security permissions requested)
+      }
+      if (key == null)
+        key = Registry.LocalMachine.OpenSubKey(regkey);
       string Tv3Path = null;
 
       if (key != null)
@@ -585,7 +751,20 @@ namespace MediaPortal.DeployTool
 
     public static Version VersionFromRegistry(string regkey)
     {
-      RegistryKey key = Registry.LocalMachine.OpenSubKey(regkey);
+      RegistryKey key = null;
+      try
+      {
+        key = OpenSubKey(Registry.LocalMachine, (regkey), false,
+            eRegWow64Options.KEY_WOW64_32KEY);
+      }
+      catch
+      {
+        // Parent key not open, exception found at opening (probably related to
+        // security permissions requested)
+      }
+
+      if (key == null)
+        key = Registry.LocalMachine.OpenSubKey(regkey);
       int major = 0;
       int minor = 0;
       int revision = 0;
@@ -602,7 +781,52 @@ namespace MediaPortal.DeployTool
 
     public static string GetDisplayVersion()
     {
-      return "1.3.0 Alpha";
+      return "1.14.0 Pre Release";
+    }
+
+    /// <summary>
+    /// Adds a record to deploy.xml (will be created if it does not exist).
+    /// This will then be picked up by MP itself and applied to mediaportal.xml
+    /// </summary>
+    /// <param name="section">name attribute of section element in mediaportal.xml</param>
+    /// <param name="entry">name attribute of entry element in mediaportal.xml</param>
+    /// <param name="value">Value to be set for this section/entry</param>
+    public static void SetDeployXml(string section, string entry, string value)
+    {
+      var commonAppsDir = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) +
+                          @"\Team MediaPortal\MediaPortal\";
+      if (!Directory.Exists(commonAppsDir))
+      {
+        Directory.CreateDirectory(commonAppsDir);
+      }
+
+      var deployXmlLocation = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) +
+                              @"\Team MediaPortal\MediaPortal\deploy.xml";
+      var deployXml = File.Exists(deployXmlLocation) ? XDocument.Load(deployXmlLocation) : new XDocument();
+      var root = deployXml.Elements("deploySettings").FirstOrDefault();
+      if (root == null)
+      {
+        deployXml.Add(new XElement("deploySettings"));
+        root = deployXml.Elements("deploySettings").First();
+      }
+
+      var existingNode =
+        (from x in deployXml.Elements("deploySettings").Elements()
+         where (string) x.Attribute("section") == section &&
+               (string) x.Attribute("entry") == entry
+         select x).FirstOrDefault();
+
+      if (existingNode == null)
+      {
+        root.Add(new XElement("deploySetting", new XAttribute("section", section), new XAttribute("entry", entry),
+                              value));
+      }
+      else
+      {
+        existingNode.Value = value;
+      }
+
+      deployXml.Save(deployXmlLocation);
     }
 
     #endregion

@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <controls>
+    <control>
+      <type>image</type>
+      <description>movie border</description>
+      <id>23</id>
+      <posX>38</posX>
+      <posY>85</posY>
+      <width>221</width>
+      <height>312</height>
+      <visible>no</visible>
+      <texture>playback_background.png</texture>
+    </control>
+    <control>
+      <type>image</type>
+      <description>movie poster</description>
+      <id>24</id>
+      <posX>46</posX>
+      <posY>97</posY>
+      <width>200</width>
+      <height>280</height>
+      <visible>no</visible>
+      <texture flipY="true" diffuse="Thumb_Mask.png">#VideoSearch.movieposter</texture>
+    </control>
+    <control>
+      <type>listcontrol</type>
+      <description>listcontrol</description>
+      <id>51</id>
+      <scrollOffset>0</scrollOffset>
+      <posX>490</posX>      
+      <height>220</height>
+      <width>220</width>
+      <onright>51</onright>
+      <onleft>51</onleft>
+      <onup>51</onup>
+      <ondown>51</ondown>
+      <visible>no</visible>
+    </control>
+    <control>
+      <type>label</type>
+      <description>Cast txt</description>
+      <id>52</id>
+      <posX>260</posX>
+      <posY>97</posY>
+      <label>344</label>
+      <visible>no</visible>
+      <textcolor>ffb2d4f5</textcolor>
+    </control>
+    <control>
+      <type>fadelabel</type>
+      <description>cast value</description>
+      <id>53</id>
+      <posX>260</posX>
+      <posY>120</posY>
+      <width>230</width>
+      <font>font12</font>
+      <label>#VideoSearch.cast</label>
+      <visible>no</visible>
+      <disabledcolor>ff808080</disabledcolor>
+    </control>
+    <control>
+      <type>label</type>
+      <description>Year txt</description>
+      <id>54</id>
+      <posX>50</posX>
+      <posY>400</posY>
+      <label>172</label>
+      <visible>no</visible>
+      <textcolor>ffb2d4f5</textcolor>
+    </control>
+    <control>
+      <type>label</type>
+      <description>year value</description>
+      <id>0</id>
+      <posX>50</posX>
+      <posY>425</posY>
+      <label>#VideoSearch.releasedate</label>
+      <visible>no</visible>
+      <textcolor>ffffffff</textcolor>
+    </control>
+    <control>
+      <type>label</type>
+      <description>Genre txt</description>
+      <id>56</id>
+      <posX>50</posX>
+      <posY>460</posY>
+      <label>174</label>
+      <visible>no</visible>
+      <textcolor>ffb2d4f5</textcolor>
+    </control>
+    <control>
+      <type>fadelabel</type>
+      <description>genre value</description>
+      <id>57</id>
+      <posX>50</posX>
+      <posY>485</posY>
+      <width>195</width>
+      <label>#VideoSearch.genre</label>
+      <visible>no</visible>
+      <disabledcolor>ff808080</disabledcolor>
+    </control>
+    <control>
+      <type>label</type>
+      <description>Plot txt</description>
+      <id>58</id>
+      <posX>260</posX>
+      <posY>260</posY>
+      <visible>no</visible>
+      <label>203</label>
+      <textcolor>ffb2d4f5</textcolor>
+    </control>
+    <control>
+      <type>textboxscrollup</type>
+      <description>Plot value</description>
+      <id>59</id>
+      <posX>260</posX>
+      <posY>285</posY>
+      <width>440</width>
+      <height>240</height>
+      <colordiffuse>ffffffff</colordiffuse>
+      <visible>no</visible>
+      <font>font12</font>
+      <label>#VideoSearch.trailerdesc</label>
+      <textcolor>FFFFFFFF</textcolor>
+    </control>    
+  </controls>
+</window>

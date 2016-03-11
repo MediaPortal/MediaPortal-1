@@ -43,8 +43,39 @@
 #define FS_TIM_LIM (2000*10000) //2 seconds in hns units
 #define FS_ADDON_LIM (1000*10000) //1 second in hns units (must not be zero)
 #define INITIAL_BUFF_DELAY 0      // ms units
-#define AV_READY_DELAY 0     // ms units
-#define PRESENT_DELAY (300*10000) // hns units - timestamp compensation offset
+#define AUDIO_DELAY (0*10000)     //hns units - audio timestamp offset (delays audio relative to video)
+#define AV_READY_DELAY 200     // ms units - delay before asserting VFW_S_CANT_CUE
+#define PRESENT_DELAY (200*10000) // hns units - timestamp compensation offset
+#define AUDIO_READY_POINT (0.2f + ((float)PRESENT_DELAY/10000000.0f))    // in seconds
+#define AUDIO_STALL_POINT 1.1f     // in seconds
+#define VIDEO_STALL_POINT 2.5f     // in seconds
+
+//Vid/Aud/Sub buffer sizes and limits
+#define MAX_AUD_BUF_SIZE 1024
+#define MAX_VID_BUF_SIZE 640
+#define MAX_SUB_BUF_SIZE 640
+#define AUD_BUF_SIZE_LOG_LIM (MAX_AUD_BUF_SIZE-100)
+#define VID_BUF_SIZE_LOG_LIM (MAX_VID_BUF_SIZE-60)
+#define AUD_BUF_SIZE_PREFETCH_LIM (MAX_AUD_BUF_SIZE - 50)
+#define VID_BUF_SIZE_PREFETCH_LIM (MAX_VID_BUF_SIZE - 30)
+
+//File read prefetch 'looping retry' timeout limit (in ms)
+#define MAX_PREFETCH_LOOP_TIME 5000
+#define PF_LOOP_DELAY_MIN 12
+#define PF_LOOP_DELAY_MAX 120
+
+////File/RTSP ReadFromFile() block sizes
+//#define READ_SIZE (65536)
+//#define MIN_READ_SIZE (READ_SIZE/8)
+//#define MIN_READ_SIZE_UNC (READ_SIZE/4)
+//#define INITIAL_READ_SIZE (READ_SIZE * 512)
+
+//File/RTSP ReadFromFile() block sizes
+#define READ_SIZE (131072)
+#define MIN_READ_SIZE (READ_SIZE/16)
+#define MIN_READ_SIZE_UNC (READ_SIZE/8)
+#define INITIAL_READ_SIZE (READ_SIZE * 256)
+
 
 using namespace std;
 
@@ -66,7 +97,7 @@ DEFINE_GUID(IID_ITSReader, 0xb9559486, 0xe1bb, 0x45d3, 0xa2, 0xa2, 0x9a, 0x7a, 0
 // CLSIDs used to identify connected filters
 // {04FE9017-F873-410e-871E-AB91661A4EF7}
 DEFINE_GUID(CLSID_FFDSHOWVIDEO, 0x04fe9017, 0xf873, 0x410e, 0x87, 0x1e, 0xab, 0x91, 0x66, 0x1a, 0x4e, 0xf7);
-// {0B390488-D80F-4a68-8408-48DC199F0E97}
+// {0B0EFF97-C750-462C-9488-B10E7D87F1A6}
 DEFINE_GUID(CLSID_FFDSHOWDXVA, 0xb0eff97, 0xc750, 0x462c, 0x94, 0x88, 0xb1, 0xe, 0x7d, 0x87, 0xf1, 0xa6);
 // {DBF9000E-F08C-4858-B769-C914A0FBB1D7}
 DEFINE_GUID(CLSID_FFDSHOWSUBTITLES, 0xdbf9000e, 0xf08c, 0x4858, 0xb7, 0x69, 0xc9, 0x14, 0xa0, 0xfb, 0xb1, 0xd7);
@@ -74,12 +105,16 @@ DEFINE_GUID(CLSID_FFDSHOWSUBTITLES, 0xdbf9000e, 0xf08c, 0x4858, 0xb7, 0x69, 0xc9
 DEFINE_GUID(CLSID_LAVCUVID, 0x62D767FE, 0x4F1B, 0x478B, 0xB3, 0x50, 0x8A, 0xCE, 0x9E, 0x4D, 0xB0, 0x0E);
 // [uuid("EE30215D-164F-4A92-A4EB-9D4C13390F9F")]
 DEFINE_GUID(CLSID_LAVVIDEO, 0xEE30215D, 0x164F, 0x4A92, 0xA4, 0xEB, 0x9D, 0x4C, 0x13, 0x39, 0x0F, 0x9F);
+// {212690FB-83E5-4526-8FD7-74478B7939CD}
+DEFINE_GUID(CLSID_MSDTVDVDVIDEO, 0x212690FB, 0x83E5, 0x4526, 0x8F, 0xD7, 0x74, 0x47, 0x8B, 0x79, 0x39, 0xCD);
+// {1CF3606B-6F89-4813-9D05-F9CA324CF2EA}
 
 
 DECLARE_INTERFACE_(ITSReaderCallback, IUnknown)
 {
 	STDMETHOD(OnMediaTypeChanged) (int mediaTypes)PURE;	
 	STDMETHOD(OnVideoFormatChanged) (int streamType,int width,int height,int aspectRatioX,int aspectRatioY,int bitrate,int isInterlaced)PURE;	
+	STDMETHOD(OnBitRateChanged) (int bitrate)PURE;	
 };
 
 DECLARE_INTERFACE_(ITSReaderAudioChange, IUnknown)
@@ -174,7 +209,7 @@ public:
   double          GetStartTime();
   bool            IsFilterRunning();
   CDeMultiplexer& GetDemultiplexer();
-  void            Seek(CRefTime&  seekTime, bool seekInFile);
+  bool            Seek(CRefTime&  seekTime);
 //  void            SeekDone(CRefTime& refTime);
 //  void            SeekStart();
   HRESULT         SeekPreStart(CRefTime& rtSeek);
@@ -199,6 +234,7 @@ public:
   void            OnMediaTypeChanged(int mediaTypes);
   void            OnRequestAudioChange();
   void            OnVideoFormatChanged(int streamType,int width,int height,int aspectRatioX,int aspectRatioY,int bitrate,int isInterlaced);
+  void            OnBitRateChanged(int bitrate);
   bool            IsStreaming();
 
   bool            IsSeeking();
@@ -210,6 +246,7 @@ public:
   bool            m_bStreamCompensated;
   CRefTime        m_ClockOnStart;
   bool            m_bForcePosnUpdate;
+  bool            m_bDurationThreadBusy;
 
   REFERENCE_TIME  m_RandomCompensation;
   REFERENCE_TIME  m_MediaPos;
@@ -238,27 +275,41 @@ public:
   bool            m_bDisableVidSizeRebuildMPEG2;
   bool            m_bDisableVidSizeRebuildH264;
   bool            m_bDisableAddPMT;
+  bool            m_bForceFFDShowSyncFix;
+  bool            m_bUseFPSfromDTSPTS;
+  LONG            m_regInitialBuffDelay;
+  bool            m_bEnableBufferLogging;
+  bool            m_bSubPinConnectAlways;
+  REFERENCE_TIME  m_regAudioDelay;
 
   CLSID           GetCLSIDFromPin(IPin* pPin);
+  HRESULT         GetSubInfoFromPin(IPin* pPin);
   
   void            SetErrorAbort();
   bool            CheckAudioCallback();
   bool            CheckCallback();
   void            CheckForMPAR();
   bool            m_bMPARinGraph;
+  bool            m_audioReady;
+  
+  CLSID           m_subtitleCLSID;
+  void            ReleaseSubtitleFilter();
+  CCritSec        m_ReadAheadLock;
+
+  CTsDuration     m_duration;
+    
+
 protected:
   void ThreadProc();
 
 private:
-  void    SetDuration();
   HRESULT AddGraphToRot(IUnknown *pUnkGraph);
-  HRESULT FindSubtitleFilter();
   void    RemoveGraphFromRot();
   void    SetMediaPosnUpdate(REFERENCE_TIME MediaPos);
-  void    BufferingPause(bool longPause);
+  void    BufferingPause(bool longPause, long extraSleep);
   void    ReadRegistryKeyDword(HKEY hKey, LPCTSTR& lpSubKey, DWORD& data);
   void    WriteRegistryKeyDword(HKEY hKey, LPCTSTR& lpSubKey, DWORD& data);
-    
+     
   CAudioPin*	    m_pAudioPin;
   CVideoPin*	    m_pVideoPin;
   CSubtitlePin*	  m_pSubtitlePin;
@@ -267,9 +318,10 @@ private:
   CCritSec        m_CritSecDuration;
   CCritSec        m_GetTimeLock;
   CCritSec        m_GetCompLock;
+  CCritSec        m_DurationThreadLock;
   FileReader*     m_fileReader;
   FileReader*     m_fileDuration;
-  CTsDuration     m_duration;
+  CTsDuration     m_updateThreadDuration;
   CBaseReferenceClock* m_referenceClock;
   CDeMultiplexer  m_demultiplexer;
   DWORD           m_dwGraphRegister;
@@ -284,6 +336,8 @@ private:
   IDVBSubtitle*   m_pDVBSubtitle;
   ITSReaderCallback* m_pCallback;
   ITSReaderAudioChange* m_pRequestAudioCallback;
+
+  bool            m_bEVRhasConnected;
 
   bool            m_bAnalog;
   bool            m_bStoppedForUnexpectedSeek ;

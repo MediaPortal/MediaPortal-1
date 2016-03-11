@@ -34,8 +34,8 @@ namespace MediaPortal.GUI.Library
   public class GUIPropertyManager
   {
     // pattern that matches a property tag, e.g. '#myproperty' or '#some.property_string'
-    private static Regex propertyExpr = new Regex(@"#[a-z0-9\._]+", RegexOptions.IgnoreCase | RegexOptions.Compiled);
-    private static Dictionary<string, string> _properties = new Dictionary<string, string>();
+    private static readonly Regex propertyExpr = new Regex(@"#[a-z0-9\._]+", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+    private static readonly Dictionary<string, string> _properties = new Dictionary<string, string>();
     private static bool _isChanged = false;
 
     public delegate void OnPropertyChangedHandler(string tag, string tagValue);
@@ -87,7 +87,7 @@ namespace MediaPortal.GUI.Library
       _properties["#music.duration"] = string.Empty;
       _properties["#music.comment"] = string.Empty;
       _properties["#music.genre"] = string.Empty;
-      _properties["music.year"] = string.Empty;
+      _properties["#music.year"] = string.Empty;
       _properties["#music.albumartist"] = string.Empty;
       _properties["#music.bitrate"] = string.Empty;
       _properties["#music.composer"] = string.Empty;
@@ -126,6 +126,8 @@ namespace MediaPortal.GUI.Library
       _properties["#shortcurrentplaytime"] = string.Empty;
       _properties["#duration"] = string.Empty;
       _properties["#shortduration"] = string.Empty;
+      _properties["#chapters"] = string.Empty;
+      _properties["#jumppoints"] = string.Empty;
       _properties["#playlogo"] = string.Empty;
       _properties["#playspeed"] = string.Empty;
       _properties["#percentage"] = string.Empty;
@@ -449,7 +451,10 @@ namespace MediaPortal.GUI.Library
     /// <returns></returns>
     public static bool PropertyIsDefined(string tag)
     {
-      return _properties.ContainsKey(tag);
+      lock (_properties)
+      {
+        return _properties.ContainsKey(tag);
+      }
     }
 
     /// <summary>
@@ -545,6 +550,16 @@ namespace MediaPortal.GUI.Library
       SetProperty("#Play.Next.TimesPlayed", string.Empty);
       SetProperty("#Play.Next.TrackTotal", string.Empty);
 
+      SetProperty("#currentplaytime", string.Empty);
+      SetProperty("#currentremaining", string.Empty);
+      SetProperty("#shortcurrentplaytime", string.Empty);
+      SetProperty("#shortcurrentremaining", string.Empty);
+      SetProperty("#duration", string.Empty);
+      SetProperty("#shortduration", string.Empty);
+      SetProperty("#percentage", "0,0");
+      SetProperty("#chapters", string.Empty);
+      SetProperty("#jumppoints", string.Empty);
+      
       _isChanged = true;
     }
 
@@ -605,7 +620,7 @@ namespace MediaPortal.GUI.Library
         string tag = property.Substring(0, i);
         lock (_properties)
         {
-          string propertyValue = string.Empty;
+          string propertyValue;
           if (_properties.TryGetValue(tag, out propertyValue))
           {
             return property.Replace(tag, propertyValue);
@@ -622,12 +637,14 @@ namespace MediaPortal.GUI.Library
     /// <param name="tag">name of the property</param>
     public static void RemoveProperty(string tag)
     {
-      string property = string.Empty;
-      if (tag != null && tag.IndexOf('#') > -1 && _properties.ContainsKey(tag))
+      lock (_properties)
       {
-        lock (_properties)
+        if (_properties != null && (tag != null && tag.IndexOf('#') > -1 && _properties.ContainsKey(tag)))
         {
-          _properties.Remove(tag);
+          lock (_properties)
+          {
+            _properties.Remove(tag);
+          }
         }
       }
     }

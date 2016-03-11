@@ -47,6 +47,13 @@ namespace MediaPortal.Support
         bakFile.CopyTo(destinationFolder + "\\tvserver_" + bakFile.Name, true);
       }
 
+      var gentleConfigPath = Path.Combine(basePath, "Gentle.config");
+      if (File.Exists(gentleConfigPath))
+      {
+        var destGentleConfigPath = Path.Combine(destinationFolder, "tvserver_Gentle.config");
+        File.Copy(gentleConfigPath, destGentleConfigPath);
+      }
+
       string AnalogPath = basePath + "\\AnalogCard";
       if (Directory.Exists(AnalogPath))
       {

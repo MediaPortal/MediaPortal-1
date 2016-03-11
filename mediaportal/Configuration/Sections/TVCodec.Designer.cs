@@ -42,10 +42,7 @@ namespace MediaPortal.Configuration.Sections
       this.labelAudioDecoder = new MediaPortal.UserInterface.Controls.MPLabel();
       this.labelAudioRenderer = new MediaPortal.UserInterface.Controls.MPLabel();
       this.audioRendererComboBox = new MediaPortal.UserInterface.Controls.MPComboBox();
-      this.mpGroupBox2 = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.mpLabelNote = new MediaPortal.UserInterface.Controls.MPLabel();
       this.groupBox1.SuspendLayout();
-      this.mpGroupBox2.SuspendLayout();
       this.SuspendLayout();
       // 
       // groupBox1
@@ -266,40 +263,15 @@ namespace MediaPortal.Configuration.Sections
       this.audioRendererComboBox.Sorted = true;
       this.audioRendererComboBox.TabIndex = 6;
       // 
-      // mpGroupBox2
-      // 
-      this.mpGroupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-      this.mpGroupBox2.Controls.Add(this.mpLabelNote);
-      this.mpGroupBox2.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.mpGroupBox2.Location = new System.Drawing.Point(6, 207);
-      this.mpGroupBox2.Name = "mpGroupBox2";
-      this.mpGroupBox2.Size = new System.Drawing.Size(462, 61);
-      this.mpGroupBox2.TabIndex = 14;
-      this.mpGroupBox2.TabStop = false;
-      this.mpGroupBox2.Text = "Note";
-      // 
-      // mpLabelNote
-      // 
-      this.mpLabelNote.AutoSize = true;
-      this.mpLabelNote.Location = new System.Drawing.Point(104, 26);
-      this.mpLabelNote.Name = "mpLabelNote";
-      this.mpLabelNote.Size = new System.Drawing.Size(244, 13);
-      this.mpLabelNote.TabIndex = 2;
-      this.mpLabelNote.Text = "All .ts files will be played using TV codecs settings!";
-      // 
       // TVCodec
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
       this.BackColor = System.Drawing.SystemColors.Window;
-      this.Controls.Add(this.mpGroupBox2);
       this.Controls.Add(this.groupBox1);
       this.Name = "TVCodec";
       this.Size = new System.Drawing.Size(472, 391);
       this.groupBox1.ResumeLayout(false);
-      this.mpGroupBox2.ResumeLayout(false);
-      this.mpGroupBox2.PerformLayout();
       this.ResumeLayout(false);
 
     }
@@ -317,8 +289,6 @@ namespace MediaPortal.Configuration.Sections
     private MediaPortal.UserInterface.Controls.MPLabel labelAudioDecoder;
     private MediaPortal.UserInterface.Controls.MPLabel labelAudioRenderer;
     private MediaPortal.UserInterface.Controls.MPComboBox audioRendererComboBox;
-    private MediaPortal.UserInterface.Controls.MPGroupBox mpGroupBox2;
-    private MediaPortal.UserInterface.Controls.MPLabel mpLabelNote;
     private MediaPortal.UserInterface.Controls.MPComboBox ddplusAudioCodecComboBox;
     private MediaPortal.UserInterface.Controls.MPLabel labelDDPLUSDecoder;
     private UserInterface.Controls.MPButton configAudioRenderer;

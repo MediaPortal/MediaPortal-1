@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <id>8796</id>
+  <defaultcontrol>50</defaultcontrol>
+  <allowoverlay>no</allowoverlay>
+  <define>#header.label:FlashGames</define>
+  <define>#header.hover:hover_Flash Games.png</define>
+  <define>#selecteditem:</define>
+  <controls>
+    <control>
+      <description>background image</description>
+      <type>image</type>
+      <id>1</id>
+      <width>1920</width>
+      <height>1080</height>
+      <texture>gamebg.jpg</texture>
+      <colordiffuse>ffffffff</colordiffuse>
+    </control>
+    <import>common.time.xml</import>
+    <control>
+      <type>label</type>
+      <id>1</id>
+      <posX>45</posX>
+      <posY>15</posY>
+      <label>#header.label</label>
+      <font>Label</font>
+      <align>left</align>
+      <textcolor>ff6FAFE1</textcolor>
+    </control>
+    <control>
+      <description>Overlay </description>
+      <id>0</id>
+      <type>image</type>
+      <posX>535</posX>
+      <posY>190</posY>
+      <width>1200</width>
+      <height>700</height>
+      <texture mask="picturecase_mask.png">black.png</texture>
+      <colordiffuse>90ffffff</colordiffuse>
+      <visible>control.isvisible(50)</visible>
+    </control>
+    <control>
+      <description>Button background</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>50</posX>
+      <posY>205</posY>
+      <height>290</height>
+      <width>420</width>
+      <texture mask="picturecase_mask.png">black.png</texture>
+      <colordiffuse>50ffffff</colordiffuse>
+      <animation effect="slide" time="400" start="-300,0">WindowOpen</animation>
+      <animation effect="slide" time="400" end="0,-300">WindowClose</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+    </control>
+    <control>
+      <type>group</type>
+      <description>group element</description>
+      <layout>StackLayout(0, vertical, true)</layout>
+      <posX>70</posX>
+      <posY>225</posY>
+      <animation effect="slide" time="400" start="-300,0">WindowOpen</animation>
+      <animation effect="slide" time="400" end="0,-300">WindowClose</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <control>
+        <description>Fullscreen</description>
+        <type>button</type>
+        <id>2</id>
+        <label>Fullscreen</label>
+        <onup>9</onup>
+      </control>
+      <control>
+        <description>Exit Game</description>
+        <type>button</type>
+        <id>3</id>
+        <label>Exit Game</label>
+      </control>
+    </control>
+    <control>
+      <description>Game Window</description>
+      <type>image</type>
+      <id>1000</id>
+      <posX>500</posX>
+      <posY>170</posY>
+      <width>1280</width>
+      <height>720</height>
+      <visible>false</visible>
+      <texture></texture>
+      <shouldCache>true</shouldCache>
+    </control>
+    <!--            :: Listview Lines ::            -->
+    <control>
+      <description>listcontrol</description>
+      <type>listcontrol</type>
+      <id>50</id>
+      <onleft>2</onleft>
+      <onright>50</onright>
+      <scrollOffset>1</scrollOffset>
+      <posX>600</posX>
+      <posY>228</posY>
+      <width>1000</width>
+      <height>700</height>
+      <textXOff>50</textXOff>
+      <PinIconHeight>50</PinIconHeight>
+      <PinIconWidth>50</PinIconWidth>
+      <PinIconXOff>1030</PinIconXOff>
+      <PinIconYOff>4</PinIconYOff>
+      <dimColor>ffffffff</dimColor>
+      <spinPosX>3828</spinPosX>
+      <spinPosY>1000</spinPosY>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+  </controls>
+</window>

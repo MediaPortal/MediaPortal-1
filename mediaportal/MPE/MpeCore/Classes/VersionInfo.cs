@@ -26,6 +26,31 @@ namespace MpeCore.Classes
 {
   public class VersionInfo : IComparable
   {
+    protected bool Equals(VersionInfo other)
+    {
+      return string.Equals(_major, other._major) && string.Equals(_minor, other._minor) && string.Equals(_build, other._build) && string.Equals(_revision, other._revision);
+    }
+
+    public override bool Equals(object obj)
+    {
+      if (ReferenceEquals(null, obj)) return false;
+      if (ReferenceEquals(this, obj)) return true;
+      if (obj.GetType() != this.GetType()) return false;
+      return Equals((VersionInfo) obj);
+    }
+
+    public override int GetHashCode()
+    {
+      unchecked
+      {
+        int hashCode = (_major != null ? _major.GetHashCode() : 0);
+        hashCode = (hashCode*397) ^ (_minor != null ? _minor.GetHashCode() : 0);
+        hashCode = (hashCode*397) ^ (_build != null ? _build.GetHashCode() : 0);
+        hashCode = (hashCode*397) ^ (_revision != null ? _revision.GetHashCode() : 0);
+        return hashCode;
+      }
+    }
+
     /// <summary>
     /// Initializes a new instance of the <see cref="VersionInfo"/> class.
     /// Version number components are stored in string format
@@ -78,7 +103,7 @@ namespace MpeCore.Classes
       set { _revision = value; }
     }
 
-    public static VersionInfo Pharse(string s)
+    public static VersionInfo Parse(string s)
     {
       VersionInfo ver = new VersionInfo();
       string[] vers = s.Split('.');
@@ -136,22 +161,50 @@ namespace MpeCore.Classes
 
     private static int CompareNumber(string s1, string s2)
     {
-      if (s1 == "*")
-        return 0;
-      if (s2 == "*")
+      if (s1 == "*" || s2 == "*")
         return 0;
       int i = s1.CompareTo(s2);
       int v1 = -1;
       int v2 = -1;
-      try
+
+      if (int.TryParse(s1, out v1) && int.TryParse(s2, out v2))
       {
-        int.TryParse(s1, out v1);
-        int.TryParse(s2, out v2);
-      }
-      catch (Exception) {}
-      if (v1 > -1 && v2 > -1)
         return v1.CompareTo(v2);
-      return s1.CompareTo(s2);
+      }
+      else
+      {
+        return s1.CompareTo(s2);
+      }
+    }
+
+    public static bool operator ==(VersionInfo v1, VersionInfo v2)
+    {
+      return v1.CompareTo(v2) == 0;
+    }
+
+    public static bool operator !=(VersionInfo v1, VersionInfo v2)
+    {
+      return v1.CompareTo(v2) != 0;
+    }
+
+    public static bool operator <=(VersionInfo v1, VersionInfo v2)
+    {
+      return v1.CompareTo(v2) <= 0;
+    }
+
+    public static bool operator >=(VersionInfo v1, VersionInfo v2)
+    {
+      return v1.CompareTo(v2) >= 0;
+    }
+
+    public static bool operator <(VersionInfo v1, VersionInfo v2)
+    {
+      return v1.CompareTo(v2) < 0;
+    }
+
+    public static bool operator >(VersionInfo v1, VersionInfo v2)
+    {
+      return v1.CompareTo(v2) > 0;
     }
   }
 }

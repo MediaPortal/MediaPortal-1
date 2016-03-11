@@ -66,7 +66,6 @@ namespace MediaPortal.Configuration.Sections
       groupBoxScale.Enabled = true;
 
       base.OnSectionActivated();
-      LoadSettings();
     }
 
     public override void LoadSettings()
@@ -77,20 +76,24 @@ namespace MediaPortal.Configuration.Sections
 
       using (Settings reader = new MPSettings())
       {
+        string isSettingExist = reader.GetValueAsString("volume", "handler", "");
         int volumeStyle = reader.GetValueAsInt("volume", "handler", 1);
         bool isDigital = reader.GetValueAsBool("volume", "digital", true);
-
-        // Force a couple of settings for Vista / Windows 7
-        if (OSInfo.OSInfo.VistaOrLater())
-        {
-          volumewarnlb.Visible = true;
-        }
 
         _useClassicHandler.Checked = volumeStyle == 0;
         _useWindowsHandler.Checked = volumeStyle == 1;
         _useLogarithmicHandler.Checked = volumeStyle == 2;
         _useCustomHandler.Checked = volumeStyle == 3;
         _useVistaHandler.Checked = volumeStyle == 4;
+
+        // Force a couple of settings for Vista / Windows 7
+        if (OSInfo.OSInfo.VistaOrLater())
+        {
+          volumewarnlb.Visible = true;
+          if (string.IsNullOrEmpty(isSettingExist))
+          _useVistaHandler.Checked = true;
+        }
+
         _customText = reader.GetValueAsString("volume", "table",
                                               "0, 4095, 8191, 12287, 16383, 20479, 24575, 28671, 32767, 36863, 40959, 45055, 49151, 53247, 57343, 61439, 65535");
 
@@ -314,9 +317,9 @@ namespace MediaPortal.Configuration.Sections
       this._useVolumeOSD.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this._useVolumeOSD.Location = new System.Drawing.Point(16, 19);
       this._useVolumeOSD.Name = "_useVolumeOSD";
-      this._useVolumeOSD.Size = new System.Drawing.Size(242, 17);
+      this._useVolumeOSD.Size = new System.Drawing.Size(115, 17);
       this._useVolumeOSD.TabIndex = 0;
-      this._useVolumeOSD.Text = "Show default Volume OSD for fullscreen video";
+      this._useVolumeOSD.Text = "Show Volume OSD";
       this._useVolumeOSD.UseVisualStyleBackColor = true;
       // 
       // groupBoxMixerControl
@@ -556,6 +559,7 @@ namespace MediaPortal.Configuration.Sections
       this.groupBoxScale.PerformLayout();
       this.ResumeLayout(false);
       this.PerformLayout();
+
     }
 
     #endregion

@@ -28,7 +28,10 @@
     <UpgradeBackupLocation>
     </UpgradeBackupLocation>
     <OldToolsVersion>3.5</OldToolsVersion>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkProfile />
+    <NuGetPackageImportStamp>1f245f90</NuGetPackageImportStamp>
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <OutputPath>bin\Debug\</OutputPath>
@@ -203,17 +206,15 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\MediaPortal.Base\AxInterop.WMPLib.dll</HintPath>
     </Reference>
-    <Reference Include="Bass.Net, Version=2.3.1.1, Culture=neutral, PublicKeyToken=b7566c273e6ef480, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\MediaPortal.Base\Bass.Net.dll</HintPath>
+    <Reference Include="Bass.Net">
+      <HintPath>..\..\Packages\BASS.NET.2.4.10.3\lib\net40\Bass.Net.dll</HintPath>
     </Reference>
     <Reference Include="BassRegistration, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\MediaPortal.Base\BassRegistration.dll</HintPath>
     </Reference>
-    <Reference Include="BassVisAPI.Net, Version=2.4.1.9, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\MediaPortal.Base\BassVisAPI.Net.dll</HintPath>
+    <Reference Include="CSScriptLibrary">
+      <HintPath>..\MediaPortal.Base\CSScriptLibrary.dll</HintPath>
     </Reference>
     <Reference Include="edtftpnet-1.2.2, Version=1.2.2.0, Culture=neutral, PublicKeyToken=4b0c991f43097782">
       <SpecificVersion>False</SpecificVersion>
@@ -235,6 +236,11 @@
     <Reference Include="Microsoft.DirectX.DirectDraw, Version=1.0.2902.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
       <SpecificVersion>True</SpecificVersion>
     </Reference>
+    <Reference Include="Microsoft.WindowsAPICodePack.Shell">
+      <HintPath>..\MediaPortal.Base\Microsoft.WindowsAPICodePack.Shell.dll</HintPath>
+    </Reference>
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
     <Reference Include="System">
       <Name>System</Name>
     </Reference>
@@ -251,6 +257,10 @@
     <Reference Include="System.Management">
       <Name>System.Management</Name>
     </Reference>
+    <Reference Include="System.Management.Automation">
+      <HintPath>..\..\Packages\System.Management.Automation.6.1.7601.17515\lib\net40\System.Management.Automation.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System.Runtime.Serialization.Formatters.Soap">
       <Name>System.Runtime.Serialization.Formatters.Soap</Name>
     </Reference>
@@ -266,13 +276,15 @@
     <Reference Include="System.Windows.Forms">
       <Name>System.Windows.Forms</Name>
     </Reference>
+    <Reference Include="System.Xaml" />
     <Reference Include="System.Xml">
       <Name>System.XML</Name>
     </Reference>
-    <Reference Include="taglib-sharp, Version=2.0.2.10, Culture=neutral, PublicKeyToken=db62eba44689b5b0, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\MediaPortal.Base\taglib-sharp.dll</HintPath>
+    <Reference Include="taglib-sharp, Version=2.1.0.1, Culture=neutral, PublicKeyToken=db62eba44689b5b0, processorArchitecture=x86">
+      <HintPath>..\..\Packages\MediaPortal.TagLib.2.1.0.1\lib\net40\taglib-sharp.dll</HintPath>
+      <Private>True</Private>
     </Reference>
+    <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\..\Common-MP-TVE3\SolutionInfo.cs">
@@ -283,6 +295,9 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Drawing.Layouts\ILayoutDetail.cs" />
+    <Compile Include="Drawing.Layouts\StackLayout.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Drawing.Layouts\TableLayout.cs" />
     <Compile Include="DShowNET\Helper\AudioMixerHelper.cs">
       <SubType>Code</SubType>
@@ -308,6 +323,7 @@
     <Compile Include="DShowNET\Helper\Filters\FilterCollection.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="DShowNET\Helper\Filters\FilterFromFile.cs" />
     <Compile Include="DShowNET\Helper\Filters\FilterHelper.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -334,6 +350,7 @@
     <Compile Include="ExtensionMethods\ListExtMethods.cs" />
     <Compile Include="ExtensionMethods\DictionaryExtMethods.cs" />
     <Compile Include="ExtensionMethods\ObjectMethods.cs" />
+    <Compile Include="guilib\DXNative.cs" />
     <Compile Include="guilib\ExpressionManager.cs" />
     <Compile Include="guilib\Functions.cs" />
     <Compile Include="guilib\FontObject.cs" />
@@ -348,11 +365,19 @@
     <Compile Include="guilib\IDialogbox2.cs" />
     <Compile Include="guilib\IStandardKeyboard.cs" />
     <Compile Include="guilib\GUIThemeManager.cs" />
+    <Compile Include="guilib\RepeatBehavior.cs" />
+    <Compile Include="guilib\TextureFrame.cs" />
     <Compile Include="guilib\ViewHandler.cs" />
     <Compile Include="guilib\XMLSkinFunctionAttribute.cs" />
+    <Compile Include="MusicPlayer\BASS\MixerStream.cs" />
     <Compile Include="Player\BDOSDRenderer.cs" />
     <Compile Include="Player\BDPlayer.cs" />
     <Compile Include="Mixer\MasterVolumeHelper.cs" />
+    <Compile Include="MusicPlayer\BASS\BassMusicPlayer.cs" />
+    <Compile Include="MusicPlayer\BASS\Config.cs" />
+    <Compile Include="MusicPlayer\BASS\Enums.cs" />
+    <Compile Include="MusicPlayer\BASS\MusicStream.cs" />
+    <Compile Include="MusicPlayer\BASS\Utils.cs" />
     <Compile Include="Player\FFDShow\FFDShowEngine.cs" />
     <Compile Include="Player\FFDShow\FFDShowReceiver.cs">
       <SubType>Form</SubType>
@@ -366,9 +391,7 @@
     <Compile Include="Player\PostProcessing\PostProcessingEngine.cs" />
     <Compile Include="Player\RefreshRateChanger.cs" />
     <Compile Include="guilib\Tween.cs" />
-    <Compile Include="MusicPlayer\BASS\StreamCopy.cs" />
     <Compile Include="MusicPlayer\DSP\DSPPluginInfo.cs" />
-    <Compile Include="MusicPlayer\Visualization\WinampViz.cs" />
     <Compile Include="Player\AudioSelector.cs" />
     <Compile Include="Player\FrameGrabber.cs" />
     <Compile Include="guilib\Animations.cs" />
@@ -391,23 +414,7 @@
     <Compile Include="MusicPlayer\DSP\VSTPlugin.cs" />
     <Compile Include="MusicPlayer\DSP\VSTPluginParm.cs" />
     <Compile Include="Player\IAutoCrop.cs" />
-    <Compile Include="MusicPlayer\BASS\BassAudio.cs" />
-    <Compile Include="MusicPlayer\Visualization\IVisualization.cs" />
-    <Compile Include="MusicPlayer\Visualization\IVisualizationManager.cs" />
-    <Compile Include="MusicPlayer\Visualization\IWMPEffects.cs" />
-    <Compile Include="MusicPlayer\Visualization\SoniqueViz.cs" />
-    <Compile Include="MusicPlayer\Visualization\SoundSpectrumViz.cs" />
-    <Compile Include="MusicPlayer\Visualization\VisualizationBase.cs" />
-    <Compile Include="MusicPlayer\Visualization\VisualizationInfo.cs" />
-    <Compile Include="MusicPlayer\Visualization\VisualizationManager.cs" />
-    <Compile Include="MusicPlayer\Visualization\VisualizationWindow.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="MusicPlayer\Visualization\VisualizationWindow.Designer.cs">
-      <DependentUpon>VisualizationWindow.cs</DependentUpon>
-    </Compile>
-    <Compile Include="MusicPlayer\Visualization\WMPVisualizationHelper.cs" />
-    <Compile Include="MusicPlayer\Visualization\WMPViz.cs" />
+    <Compile Include="MusicPlayer\BASS\BassAudioEngine.cs" />
     <Compile Include="Player\CropSettings.cs" />
     <Compile Include="Player\DummyPlayer.cs" />
     <Compile Include="Player\DummyPlayerFactory.cs" />
@@ -451,12 +458,80 @@
     <Compile Include="Ripper\Win32Functions.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="System.Threading\TaskExtrasExtensions.cs" />
+    <Compile Include="System.Windows\DependencyPropertyAttribute.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\DependencySource.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\EventPrivateKey.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\FlowDirection.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\FrameworkPropertyMetadataOptions.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\GetValueOverride.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\IFrameworkInputElement.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\INameScope.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\IResourceHost.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\PropertyInvalidatedCallback.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\ReadLocalValueOverride.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\RequestBringIntoViewHandler.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\SetValueOverride.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\StaticResourceExtension.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\StaticResources.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\SystemResourceHost.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\TriggerInvalidatedEventArgs.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\TriggerInvalidatedEventHandler.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\Visual.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\VisualCollection.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\WindowState.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\WriteLocalValueOverride.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="TagReader\CUE\CueFakeTrack.cs" />
     <Compile Include="TagReader\CUE\CueSharp.cs" />
     <Compile Include="TagReader\CUE\CueTrackFileGUIListItemBuilder.cs" />
     <Compile Include="TagReader\CUE\CueTrackFileStringBuilder.cs" />
     <Compile Include="TagReader\CUE\CueUtil.cs" />
     <Compile Include="TagReader\CUE\ICueTrackFileBuilder.cs" />
+    <Compile Include="TagReader\CUE\TagCache.cs" />
     <Compile Include="TagReader\ITag.cs" />
     <Compile Include="TagReader\Utils.cs" />
     <Compile Include="Transcoding\TSReader2WMV.cs" />
@@ -486,6 +561,7 @@
     <Compile Include="UserInterfaceControls\MPToolTip.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="guilib\DXEnums.cs" />
     <Compile Include="Util\EncryptDecrypt.cs" />
     <Compile Include="Util\FanArt.cs" />
     <Compile Include="Util\FastImage.cs" />
@@ -496,17 +572,21 @@
     <Compile Include="Util\HTMLParser.cs" />
     <Compile Include="Util\IMDBSearch.cs" />
     <Compile Include="Util\IMPawardsSearch.cs" />
+    <Compile Include="Util\InternalCSScriptGrabbersLoader.cs" />
     <Compile Include="Util\NativeFileSystemOperations.cs" />
     <Compile Include="Util\Network.cs" />
     <Compile Include="Util\NetworkShares.cs" />
     <Compile Include="Util\PathUtility.cs" />
     <Compile Include="Util\PRNG.cs" />
     <Compile Include="Util\ProcessLock.cs" />
+    <Compile Include="Util\RawInput.cs" />
     <Compile Include="Util\RegistryTools.cs" />
     <Compile Include="Util\RemovableDriveHelper.cs" />
+    <Compile Include="Util\ShellNotification.cs" />
     <Compile Include="Util\StopWatch.cs" />
     <Compile Include="Util\ThumbExtractor.cs" />
     <Compile Include="Util\TMDBCoversSearch.cs" />
+    <Compile Include="Util\UNCTools.cs" />
     <Compile Include="Util\UnhandledExceptionLogger.cs" />
     <Compile Include="UserInterfaceControls\MPTabPage.cs">
       <SubType>Component</SubType>
@@ -567,9 +647,6 @@
     <Compile Include="Drawing.Layouts\RingLayout.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Drawing.Layouts\StackLayout.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Drawing.Transforms\RotateTransform.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -597,15 +674,6 @@
     <Compile Include="Drawing\AlignmentY.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Drawing\Brush.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Drawing\BrushConverter.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Drawing\BrushFactory.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Drawing\BrushMappingMode.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -621,9 +689,6 @@
     <Compile Include="Drawing\DashStyles.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Drawing\DrawingContext.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Drawing\FillRule.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -637,9 +702,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Drawing\GeometryConverter.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Drawing\GeometryDrawing.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Drawing\GeometryGroup.cs">
@@ -666,19 +728,10 @@
     <Compile Include="Drawing\HorizontalAlignment.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Drawing\ImageBrush.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Drawing\ImageSource.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Drawing\ImageSourceConverter.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Drawing\Matrix.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Drawing\Pen.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Drawing\PenBase.cs">
@@ -717,12 +770,6 @@
     <Compile Include="Drawing\SizeConverter.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Drawing\SolidColorBrush.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Drawing\SolidColorBrushConverter.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Drawing\Stretch.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -736,9 +783,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Drawing\ThicknessConverter.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Drawing\TileBrush.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Drawing\TileMode.cs">
@@ -906,9 +950,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="guilib\GUIThumbnailPanel.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="guilib\GUIToggleButtonControl.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="guilib\GUITVProgressControl.cs">
@@ -1217,19 +1258,7 @@
     <Compile Include="System.Windows.Controls\ClickMode.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="System.Windows.Controls\ColumnDefinition.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="System.Windows.Controls\ColumnDefinitionCollection.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System.Windows.Controls\ContextMenu.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System.Windows.Controls\ContextMenuService.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System.Windows.Controls\DefinitionBase.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="System.Windows.Controls\Dock.cs">
@@ -1256,22 +1285,13 @@
     <Compile Include="System.Windows.Controls\MenuItemRole.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="System.Windows.Controls\Orientation.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="System.Windows.Controls\PlacementMode.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System.Windows.Controls\RowDefinition.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="System.Windows.Controls\RowDefinitionCollection.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="System.Windows.Data\Binding.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System.Windows.Data\IValueConverter.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="System.Windows.Dispatcher\Dispatcher.cs">
@@ -1307,9 +1327,6 @@
     <Compile Include="System.Windows.Dispatcher\DispatcherSynchronizationContext.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="System.Windows.Dispatcher\DispatcherTimer.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="System.Windows.Dispatcher\DispatcherUnhandledExceptionEventArgs.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -1322,55 +1339,16 @@
     <Compile Include="System.Windows.Dispatcher\DispatcherUnhandledExceptionFilterEventHandler.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="System.Windows.Input\ApplicationCommands.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System.Windows.Input\CommandBinding.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="System.Windows.Input\CommandBindingCollection.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="System.Windows.Input\CommandConverter.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="System.Windows.Input\CommandManager.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System.Windows.Input\ExecuteEventArgs.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System.Windows.Input\ExecuteEventHandler.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System.Windows.Input\FocusManager.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System.Windows.Input\ICommand.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System.Windows.Input\IFrameworkInputElement.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System.Windows.Input\IInputElement.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="System.Windows.Input\InputGestureCollection.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="System.Windows.Input\KeyboardFocusChangedEventArgs.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System.Windows.Input\KeyboardFocusChangedEventHandler.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="System.Windows.Input\KeyEventArgs.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System.Windows.Input\MouseButtonEventArgs.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System.Windows.Input\MouseButtonEventHandler.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="System.Windows.Input\MouseEventArgs.cs">
@@ -1385,25 +1363,7 @@
     <Compile Include="System.Windows.Input\QueryEnabledEventHandler.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="System.Windows.Input\RoutedCommand.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System.Windows.Input\UICommand.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System.Windows.Media.Animation\Animatable.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System.Windows.Media.Animation\AnimationClock.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="System.Windows.Media.Animation\AnimationClockCollection.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System.Windows.Media.Animation\AnimationStore.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System.Windows.Media.Animation\AnimationTimeline.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="System.Windows.Media.Animation\AnimationTimelineCollection.cs">
@@ -1415,31 +1375,10 @@
     <Compile Include="System.Windows.Media.Animation\AnimationType.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="System.Windows.Media.Animation\BeginAction.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System.Windows.Media.Animation\BeginStoryboard.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System.Windows.Media.Animation\Clock.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System.Windows.Media.Animation\ClockCollection.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System.Windows.Media.Animation\ClockController.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="System.Windows.Media.Animation\ClockGroup.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="System.Windows.Media.Animation\ClockState.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System.Windows.Media.Animation\DoubleAnimation.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System.Windows.Media.Animation\DoubleAnimationBase.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="System.Windows.Media.Animation\Duration.cs">
@@ -1451,67 +1390,13 @@
     <Compile Include="System.Windows.Media.Animation\Easing.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="System.Windows.Media.Animation\FillBehavior.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System.Windows.Media.Animation\HandoffBehavior.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System.Windows.Media.Animation\IAnimatable.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="System.Windows.Media.Animation\IClock.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System.Windows.Media.Animation\ParallelTimeline.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System.Windows.Media.Animation\PauseAction.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System.Windows.Media.Animation\RepeatBehavior.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System.Windows.Media.Animation\RepeatBehaviorConverter.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System.Windows.Media.Animation\ResumeAction.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System.Windows.Media.Animation\ReverseAction.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System.Windows.Media.Animation\SeekAction.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System.Windows.Media.Animation\SkipToFillAction.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System.Windows.Media.Animation\StopAction.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System.Windows.Media.Animation\Storyboard.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="System.Windows.Media.Animation\StoryboardCollection.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="System.Windows.Media.Animation\Timeline.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System.Windows.Media.Animation\TimelineAction.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="System.Windows.Media.Animation\TimelineCollection.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System.Windows.Media.Animation\TimelineGroup.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System.Windows.Media.Animation\TimeManager.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System.Windows.Media.Animation\TimeSeekOrigin.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="System.Windows.Media.Animation\TweenHelper.cs">
@@ -1519,11 +1404,6 @@
     </Compile>
     <Compile Include="System.Windows.Media.Imaging\BitmapCacheOption.cs" />
     <Compile Include="System.Windows.Media.Imaging\BitmapCreateOptions.cs" />
-    <Compile Include="System.Windows.Media.Imaging\BitmapImage.cs" />
-    <Compile Include="System.Windows.Media.Imaging\BitmapSource.cs" />
-    <Compile Include="System.Windows.Media.Imaging\DownloadProgressEventArgs.cs" />
-    <Compile Include="System.Windows.Media.Imaging\DownloadProgressEventHandler.cs" />
-    <Compile Include="System.Windows.Media.Imaging\Rotation.cs" />
     <Compile Include="System.Windows.Serialization\IAddChild.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -1543,225 +1423,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="System.Windows.Serialization\XamlParserException.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System.Windows.Threading\DispatcherObject.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System.Windows\ComponentResourceKey.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System.Windows\ContentElement.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System.Windows\DependencyObject.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System.Windows\DependencyObjectType.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System.Windows\DependencyProperty.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System.Windows\DependencyPropertyAttribute.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System.Windows\DependencyPropertyChangedEventArgs.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System.Windows\DependencyPropertyChangedEventHandler.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System.Windows\DependencyPropertyConverter.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System.Windows\DependencyPropertyKey.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System.Windows\DependencySource.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System.Windows\EventHandlersStore.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System.Windows\EventManager.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System.Windows\EventPrivateKey.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System.Windows\EventRoute.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System.Windows\EventSetter.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System.Windows\EventTrigger.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System.Windows\FlowDirection.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System.Windows\FrameworkContentElement.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System.Windows\FrameworkElementFactory.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System.Windows\FrameworkPropertyMetadata.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System.Windows\FrameworkPropertyMetadataOptions.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System.Windows\Freezable.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System.Windows\GetValueOverride.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System.Windows\IFrameworkInputElement.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System.Windows\INameScope.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System.Windows\IResourceHost.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System.Windows\LocalValueEntry.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System.Windows\LocalValueEnumerator.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System.Windows\PropertyInvalidatedCallback.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System.Windows\PropertyMetadata.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System.Windows\PropertyPath.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System.Windows\PropertyPathConverter.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System.Windows\ReadLocalValueOverride.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System.Windows\RequestBringIntoViewEventArgs.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System.Windows\RequestBringIntoViewHandler.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System.Windows\ResourceDictionary.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System.Windows\ResourceDictionaryCollection.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System.Windows\ResourceKey.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System.Windows\RoutedEvent.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System.Windows\RoutedEventArgs.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System.Windows\RoutedEventConverter.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System.Windows\RoutedEventHandler.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System.Windows\RoutedEventHandlerInfo.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System.Windows\RoutedEventHandlerInfoList.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System.Windows\RoutedEventHandlerInfoStore.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System.Windows\RoutingStrategy.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System.Windows\Setter.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System.Windows\SetterBase.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System.Windows\SetterBaseCollection.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System.Windows\SetValueOverride.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System.Windows\SizeChangedEventArgs.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System.Windows\SizeChangedEventHandler.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System.Windows\StaticResourceExtension.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System.Windows\StaticResources.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System.Windows\Style.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System.Windows\SystemResourceHost.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System.Windows\TemplateBindingExtension.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System.Windows\Trigger.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System.Windows\TriggerAction.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System.Windows\TriggerActionCollection.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System.Windows\TriggerBase.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System.Windows\TriggerCollection.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System.Windows\TriggerInvalidatedEventArgs.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System.Windows\TriggerInvalidatedEventHandler.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System.Windows\UIPropertyMetadata.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System.Windows\ValidateValueCallback.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System.Windows\Visibility.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System.Windows\Visual.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System.Windows\VisualCollection.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System.Windows\WindowState.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System.Windows\WriteLocalValueOverride.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="TagReader\MusicTag.cs">
@@ -1861,12 +1522,18 @@
     <Compile Include="Util\VirtualDirectory.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Util\WakeOnLanManager.cs" />
     <Compile Include="Util\Win32API.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Util\Win32AppCommand.cs" />
+    <Compile Include="Util\Win32CreateFile.cs" />
+    <Compile Include="Util\Win32Hid.cs" />
+    <Compile Include="Util\Win32RawInput.cs" />
     <Compile Include="Util\WindowsController.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Util\WmiExtensions.cs" />
     <Compile Include="Vista Toolbelt\NativeInterop.cs" />
     <Compile Include="Vista Toolbelt\ThumbnailGenerator.cs" />
     <Compile Include="wmfsdk\BufferTypes.cs">
@@ -1912,10 +1579,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Transcoding\Wmlib.cs" />
-    <EmbeddedResource Include="MusicPlayer\Visualization\VisualizationWindow.resx">
-      <DependentUpon>VisualizationWindow.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
     <EmbeddedResource Include="UserInterfaceControls\MPForm.resx">
       <DependentUpon>MPForm.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -1990,6 +1653,10 @@
   <ItemGroup>
     <Content Include="UserInterfaceControls\Resources\mp.ico" />
   </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>
@@ -1997,4 +1664,54 @@
     <PostBuildEvent>
     </PostBuildEvent>
   </PropertyGroup>
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\..\Packages\BASS.2.4.10\build\bass.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\Packages\BASS.2.4.10\build\bass.targets'))" />
+    <Error Condition="!Exists('..\..\Packages\bass.aac.2.4.4.4\build\bass.aac.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\Packages\bass.aac.2.4.4.4\build\bass.aac.targets'))" />
+    <Error Condition="!Exists('..\..\Packages\bass.ac3.2.4.0.3\build\bass.ac3.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\Packages\bass.ac3.2.4.0.3\build\bass.ac3.targets'))" />
+    <Error Condition="!Exists('..\..\Packages\bass.alac.2.4.3\build\bass.alac.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\Packages\bass.alac.2.4.3\build\bass.alac.targets'))" />
+    <Error Condition="!Exists('..\..\Packages\bass.ape.2.4.1\build\bass.ape.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\Packages\bass.ape.2.4.1\build\bass.ape.targets'))" />
+    <Error Condition="!Exists('..\..\Packages\bass.asio.1.3.0.2\build\bass.asio.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\Packages\bass.asio.1.3.0.2\build\bass.asio.targets'))" />
+    <Error Condition="!Exists('..\..\Packages\bass.cd.2.4.5\build\bass.cd.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\Packages\bass.cd.2.4.5\build\bass.cd.targets'))" />
+    <Error Condition="!Exists('..\..\Packages\bass.flac.2.4.1\build\bass.flac.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\Packages\bass.flac.2.4.1\build\bass.flac.targets'))" />
+    <Error Condition="!Exists('..\..\Packages\bass.fx.2.4.10.1\build\bass.fx.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\Packages\bass.fx.2.4.10.1\build\bass.fx.targets'))" />
+    <Error Condition="!Exists('..\..\Packages\bass.midi.2.4.8\build\bass.midi.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\Packages\bass.midi.2.4.8\build\bass.midi.targets'))" />
+    <Error Condition="!Exists('..\..\Packages\bass.mix.2.4.7.2\build\bass.mix.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\Packages\bass.mix.2.4.7.2\build\bass.mix.targets'))" />
+    <Error Condition="!Exists('..\..\Packages\bass.mpc.2.4.1.1\build\bass.mpc.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\Packages\bass.mpc.2.4.1.1\build\bass.mpc.targets'))" />
+    <Error Condition="!Exists('..\..\Packages\bass.ofr.2.4.0.2\build\bass.ofr.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\Packages\bass.ofr.2.4.0.2\build\bass.ofr.targets'))" />
+    <Error Condition="!Exists('..\..\Packages\bass.spx.2.4.2\build\bass.spx.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\Packages\bass.spx.2.4.2\build\bass.spx.targets'))" />
+    <Error Condition="!Exists('..\..\Packages\bass.opus.2.4.1.3\build\bass.opus.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\Packages\bass.opus.2.4.1.3\build\bass.opus.targets'))" />
+    <Error Condition="!Exists('..\..\Packages\bass.tta.2.4.0\build\bass.tta.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\Packages\bass.tta.2.4.0\build\bass.tta.targets'))" />
+    <Error Condition="!Exists('..\..\Packages\bass.vst.2.4.5\build\bass.vst.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\Packages\bass.vst.2.4.5\build\bass.vst.targets'))" />
+    <Error Condition="!Exists('..\..\Packages\bass.wadsp.2.4.1\build\bass.wadsp.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\Packages\bass.wadsp.2.4.1\build\bass.wadsp.targets'))" />
+    <Error Condition="!Exists('..\..\Packages\bass.wasapi.2.4.0.2\build\bass.wasapi.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\Packages\bass.wasapi.2.4.0.2\build\bass.wasapi.targets'))" />
+    <Error Condition="!Exists('..\..\Packages\bass.wma.2.4.4\build\bass.wma.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\Packages\bass.wma.2.4.4\build\bass.wma.targets'))" />
+    <Error Condition="!Exists('..\..\Packages\bass.wv.2.4.4\build\bass.wv.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\Packages\bass.wv.2.4.4\build\bass.wv.targets'))" />
+    <Error Condition="!Exists('..\..\Packages\bass.dsd.0.0.1\build\bass.dsd.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\Packages\bass.dsd.0.0.1\build\bass.dsd.targets'))" />
+  </Target>
+  <Import Project="..\..\Packages\BASS.2.4.10\build\bass.targets" Condition="Exists('..\..\Packages\BASS.2.4.10\build\bass.targets')" />
+  <Import Project="..\..\Packages\bass.aac.2.4.4.4\build\bass.aac.targets" Condition="Exists('..\..\Packages\bass.aac.2.4.4.4\build\bass.aac.targets')" />
+  <Import Project="..\..\Packages\bass.ac3.2.4.0.3\build\bass.ac3.targets" Condition="Exists('..\..\Packages\bass.ac3.2.4.0.3\build\bass.ac3.targets')" />
+  <Import Project="..\..\Packages\bass.alac.2.4.3\build\bass.alac.targets" Condition="Exists('..\..\Packages\bass.alac.2.4.3\build\bass.alac.targets')" />
+  <Import Project="..\..\Packages\bass.ape.2.4.1\build\bass.ape.targets" Condition="Exists('..\..\Packages\bass.ape.2.4.1\build\bass.ape.targets')" />
+  <Import Project="..\..\Packages\bass.asio.1.3.0.2\build\bass.asio.targets" Condition="Exists('..\..\Packages\bass.asio.1.3.0.2\build\bass.asio.targets')" />
+  <Import Project="..\..\Packages\bass.cd.2.4.5\build\bass.cd.targets" Condition="Exists('..\..\Packages\bass.cd.2.4.5\build\bass.cd.targets')" />
+  <Import Project="..\..\Packages\bass.flac.2.4.1\build\bass.flac.targets" Condition="Exists('..\..\Packages\bass.flac.2.4.1\build\bass.flac.targets')" />
+  <Import Project="..\..\Packages\bass.fx.2.4.10.1\build\bass.fx.targets" Condition="Exists('..\..\Packages\bass.fx.2.4.10.1\build\bass.fx.targets')" />
+  <Import Project="..\..\Packages\bass.midi.2.4.8\build\bass.midi.targets" Condition="Exists('..\..\Packages\bass.midi.2.4.8\build\bass.midi.targets')" />
+  <Import Project="..\..\Packages\bass.mix.2.4.7.2\build\bass.mix.targets" Condition="Exists('..\..\Packages\bass.mix.2.4.7.2\build\bass.mix.targets')" />
+  <Import Project="..\..\Packages\bass.mpc.2.4.1.1\build\bass.mpc.targets" Condition="Exists('..\..\Packages\bass.mpc.2.4.1.1\build\bass.mpc.targets')" />
+  <Import Project="..\..\Packages\bass.ofr.2.4.0.2\build\bass.ofr.targets" Condition="Exists('..\..\Packages\bass.ofr.2.4.0.2\build\bass.ofr.targets')" />
+  <Import Project="..\..\Packages\bass.spx.2.4.2\build\bass.spx.targets" Condition="Exists('..\..\Packages\bass.spx.2.4.2\build\bass.spx.targets')" />
+  <Import Project="..\..\Packages\bass.opus.2.4.1.3\build\bass.opus.targets" Condition="Exists('..\..\Packages\bass.opus.2.4.1.3\build\bass.opus.targets')" />
+  <Import Project="..\..\Packages\bass.tta.2.4.0\build\bass.tta.targets" Condition="Exists('..\..\Packages\bass.tta.2.4.0\build\bass.tta.targets')" />
+  <Import Project="..\..\Packages\bass.vst.2.4.5\build\bass.vst.targets" Condition="Exists('..\..\Packages\bass.vst.2.4.5\build\bass.vst.targets')" />
+  <Import Project="..\..\Packages\bass.wadsp.2.4.1\build\bass.wadsp.targets" Condition="Exists('..\..\Packages\bass.wadsp.2.4.1\build\bass.wadsp.targets')" />
+  <Import Project="..\..\Packages\bass.wasapi.2.4.0.2\build\bass.wasapi.targets" Condition="Exists('..\..\Packages\bass.wasapi.2.4.0.2\build\bass.wasapi.targets')" />
+  <Import Project="..\..\Packages\bass.wma.2.4.4\build\bass.wma.targets" Condition="Exists('..\..\Packages\bass.wma.2.4.4\build\bass.wma.targets')" />
+  <Import Project="..\..\Packages\bass.wv.2.4.4\build\bass.wv.targets" Condition="Exists('..\..\Packages\bass.wv.2.4.4\build\bass.wv.targets')" />
+  <Import Project="..\..\Packages\MediaInfo.0.7.69\build\MediaInfo.targets" Condition="Exists('..\..\Packages\MediaInfo.0.7.69\build\MediaInfo.targets')" />
+  <Import Project="..\..\Packages\bass.dsd.0.0.1\build\bass.dsd.targets" Condition="Exists('..\..\Packages\bass.dsd.0.0.1\build\bass.dsd.targets')" />
 </Project>

@@ -34,7 +34,6 @@ namespace SetupTv.Dialogs
     {
       if (TuningDetail != null)
       {
-        textBoxDVBTChannel.Text = TuningDetail.ChannelNumber.ToString();
         textBoxDVBTfreq.Text = TuningDetail.Frequency.ToString();
         textBoxNetworkId.Text = TuningDetail.NetworkId.ToString();
         textBoxTransportId.Text = TuningDetail.TransportId.ToString();
@@ -46,7 +45,6 @@ namespace SetupTv.Dialogs
       }
       else
       {
-        textBoxDVBTChannel.Text = "";
         textBoxDVBTfreq.Text = "";
         textBoxNetworkId.Text = "";
         textBoxTransportId.Text = "";
@@ -75,7 +73,6 @@ namespace SetupTv.Dialogs
     private void UpdateTuningDetail()
     {
       TuningDetail.ChannelType = 4;
-      TuningDetail.ChannelNumber = Int32.Parse(textBoxDVBTChannel.Text);
       TuningDetail.Frequency = Int32.Parse(textBoxDVBTfreq.Text);
       TuningDetail.NetworkId = Int32.Parse(textBoxNetworkId.Text);
       TuningDetail.TransportId = Int32.Parse(textBoxTransportId.Text);
@@ -88,17 +85,7 @@ namespace SetupTv.Dialogs
 
     private bool ValidateInput()
     {
-      int lcn, freq, onid, tsid, sid, pmt;
-      if (textBoxDVBTChannel.Text.Length == 0)
-      {
-        MessageBox.Show(this, "Please enter a channel number!", "Incorrect input");
-        return false;
-      }
-      if (!Int32.TryParse(textBoxDVBTChannel.Text, out lcn))
-      {
-        MessageBox.Show(this, "Please enter a valid channel number!", "Incorrect input");
-        return false;
-      }
+      int freq, onid, tsid, sid, pmt;
       if (textBoxDVBTfreq.Text.Length == 0)
       {
         MessageBox.Show(this, "Please enter a frequency!", "Incorrect input");

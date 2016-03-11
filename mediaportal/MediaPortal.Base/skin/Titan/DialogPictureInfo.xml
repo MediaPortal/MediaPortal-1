@@ -1,0 +1,392 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+<id>2014</id>
+<defaultcontrol>6</defaultcontrol>
+<allowoverlay>no</allowoverlay>
+<controls>
+    
+  <control>
+		<description>overlay</description>
+		<type>image</type>
+		<id>0</id>
+		<width>1920</width>
+		<height>1080</height>
+		<texture>music_info_overlay.png</texture>
+		<animation effect="fade" time="350">windowopen</animation>
+		<animation effect="fade" time="300">windowclose</animation>
+	</control>
+	
+  
+	<control>
+		<description>background</description>
+		<type>image</type>
+		<id>1</id>
+		<posX>165</posX>
+		<posY>81</posY>
+		<width>1590</width>
+		<height>811</height>
+		<texture>music_info_bg.png</texture>
+    <animation effect="Fade" time="150">WindowOpen</animation>
+    <animation effect="Fade" time="150">WindowClose</animation>
+	</control>
+  
+  <control>
+    <id>20</id>
+    <description>Image Title value</description>
+    <type>label</type>
+    <posX>909</posX>
+    <posY>196</posY>
+    <font>fontB20</font>
+    <textcolor>FF393939</textcolor>
+    <label>-</label>
+    <animation effect="Fade" time="150">WindowOpen</animation>
+    <animation effect="Fade" time="150">WindowClose</animation>
+  </control>
+  
+  <control>
+    <id>1</id>
+    <description>Dimensions txt</description>
+    <type>label</type>
+    <posX>909</posX>
+    <posY>280</posY>
+    <font>TitanLight12</font>
+    <textcolor>FF393939</textcolor>
+    <label>9000</label>
+    <animation effect="Fade" time="150">WindowOpen</animation>
+    <animation effect="Fade" time="150">WindowClose</animation>
+  </control>
+  
+  <control>
+    <id>1</id>
+    <description>Resolution txt</description>
+    <type>label</type>
+    <posX>909</posX>
+    <posY>318</posY>
+    <font>TitanLight12</font>
+    <textcolor>FF393939</textcolor>
+    <label>9001</label>
+    <animation effect="Fade" time="150">WindowOpen</animation>
+    <animation effect="Fade" time="150">WindowClose</animation>
+  </control>
+  
+  <control>
+    <id>1</id>
+    <description>Flash txt</description>
+    <type>label</type>
+    <posX>909</posX>
+    <posY>356</posY>
+    <font>TitanLight12</font>
+    <textcolor>FF393939</textcolor>
+    <label>9002</label>
+    <animation effect="Fade" time="150">WindowOpen</animation>
+    <animation effect="Fade" time="150">WindowClose</animation>
+  </control>
+  
+  <control>
+    <id>1</id>
+    <description>Metering mode txt</description>
+    <type>label</type>
+    <posX>909</posX>
+    <posY>394</posY>
+    <font>TitanLight12</font>
+    <textcolor>FF393939</textcolor>
+    <label>9003</label>
+    <animation effect="Fade" time="150">WindowOpen</animation>
+    <animation effect="Fade" time="150">WindowClose</animation>
+  </control>
+  
+  <control>
+    <id>1</id>
+    <description>Exposure Compensation txt</description>
+    <type>label</type>
+    <posX>909</posX>
+    <posY>432</posY>
+    <font>TitanLight12</font>
+    <textcolor>FF393939</textcolor>
+    <label>9004</label>
+    <animation effect="Fade" time="150">WindowOpen</animation>
+    <animation effect="Fade" time="150">WindowClose</animation>
+  </control>
+  
+  <control>
+    <id>1</id>
+    <description>Shutterspeed txt</description>
+    <type>label</type>
+    <posX>909</posX>
+    <posY>470</posY>
+    <font>TitanLight12</font>
+    <textcolor>FF393939</textcolor>
+    <label>9005</label>
+    <animation effect="Fade" time="150">WindowOpen</animation>
+    <animation effect="Fade" time="150">WindowClose</animation>
+  </control>
+  
+  <control>
+    <id>1</id>
+    <description>Date Taken txt</description>
+    <type>label</type>
+    <posX>909</posX>
+    <posY>508</posY>
+    <font>TitanLight12</font>
+    <textcolor>FF393939</textcolor>
+    <label>9006</label>
+    <animation effect="Fade" time="150">WindowOpen</animation>
+    <animation effect="Fade" time="150">WindowClose</animation>
+  </control>
+  
+  <control>
+    <id>1</id>
+    <description>Fstop txt</description>
+    <type>label</type>
+    <posX>909</posX>
+    <posY>546</posY>
+    <font>TitanLight12</font>
+    <textcolor>FF393939</textcolor>
+    <label>9007</label>
+    <animation effect="Fade" time="150">WindowOpen</animation>
+    <animation effect="Fade" time="150">WindowClose</animation>
+  </control>
+  
+  <control>
+    <id>1</id>
+    <description>Exposure Time txt</description>
+    <type>label</type>
+    <posX>909</posX>
+    <posY>584</posY>
+    <font>TitanLight12</font>
+    <textcolor>FF393939</textcolor>
+    <label>9008</label>
+    <animation effect="Fade" time="150">WindowOpen</animation>
+    <animation effect="Fade" time="150">WindowClose</animation>
+  </control>
+  
+  <control>
+    <id>1</id>
+    <description>Camera Model txt</description>
+    <type>label</type>
+    <posX>909</posX>
+    <posY>622</posY>
+    <font>TitanLight12</font>
+    <textcolor>FF393939</textcolor>
+    <label>9009</label>
+    <animation effect="Fade" time="150">WindowOpen</animation>
+    <animation effect="Fade" time="150">WindowClose</animation>
+  </control>
+  
+  <control>
+    <id>1</id>
+    <description>Equipment make txt</description>
+    <type>label</type>
+    <posX>909</posX>
+    <posY>660</posY>
+    <font>TitanLight12</font>
+    <textcolor>FF393939</textcolor>
+    <label>9010</label>
+    <animation effect="Fade" time="150">WindowOpen</animation>
+    <animation effect="Fade" time="150">WindowClose</animation>
+  </control>
+  
+  <control>
+    <id>1</id>
+    <description>View Comment txt</description>
+    <type>label</type>
+    <posX>909</posX>
+    <posY>698</posY>
+    <font>TitanLight12</font>
+    <textcolor>FF393939</textcolor>
+    <label>9011</label>
+    <animation effect="Fade" time="150">WindowOpen</animation>
+    <animation effect="Fade" time="150">WindowClose</animation>
+  </control>
+  
+  <control>
+    <id>21</id>
+    <description>Image Dimensions value</description>
+    <type>label</type>
+    <posX>1265</posX>
+    <posY>280</posY>
+    <font>TitanLight12</font>
+    <textcolor>FF393939</textcolor>
+    <label>-</label>
+    <animation effect="Fade" time="150">WindowOpen</animation>
+    <animation effect="Fade" time="150">WindowClose</animation>
+  </control>
+  
+  <control>
+    <id>22</id>
+    <description>Resolutions value</description>
+    <type>label</type>
+    <posX>1265</posX>
+    <posY>318</posY>
+    <font>TitanLight12</font>
+    <textcolor>FF393939</textcolor>
+    <label>-</label>
+    <animation effect="Fade" time="150">WindowOpen</animation>
+    <animation effect="Fade" time="150">WindowClose</animation>
+  </control>
+  
+  <control>
+    <id>23</id>
+    <description>Flash value</description>
+    <type>fadelabel</type>
+    <posX>1265</posX>
+    <posY>356</posY>
+    <width>231</width>
+    <font>TitanLight12</font>
+    <textcolor>FF393939</textcolor>
+    <label>-</label>
+    <animation effect="Fade" time="150">WindowOpen</animation>
+    <animation effect="Fade" time="150">WindowClose</animation>
+  </control>
+  
+  <control>
+    <id>24</id>
+    <description>Metering Mode value</description>
+    <type>fadelabel</type>
+    <posX>1265</posX>
+    <posY>392</posY>
+    <width>231</width>
+    <font>TitanLight12</font>
+    <textcolor>FF393939</textcolor>
+    <label>-</label>
+    <animation effect="Fade" time="150">WindowOpen</animation>
+    <animation effect="Fade" time="150">WindowClose</animation>
+  </control>
+  
+  <control>
+    <id>25</id>
+    <description>Exposure Compensation value</description>
+    <type>fadelabel</type>
+    <posX>1265</posX>
+    <posY>430</posY>
+    <width>711</width>
+    <font>TitanLight12</font>
+    <textcolor>FF393939</textcolor>
+    <label>-</label>
+    <animation effect="Fade" time="150">WindowOpen</animation>
+    <animation effect="Fade" time="150">WindowClose</animation>
+  </control>
+  
+  <control>
+    <id>26</id>
+    <description>Shutter Speed value</description>
+    <type>fadelabel</type>
+    <posX>1265</posX>
+    <posY>468</posY>
+    <width>711</width>
+    <font>TitanLight12</font>
+    <textcolor>FF393939</textcolor>
+    <label>-</label>
+    <animation effect="Fade" time="150">WindowOpen</animation>
+    <animation effect="Fade" time="150">WindowClose</animation>
+  </control>
+  
+  <control>
+    <id>27</id>
+    <description>Date Taken value</description>
+    <type>label</type>
+    <posX>1265</posX>
+    <posY>506</posY>
+    <font>TitanLight12</font>
+    <textcolor>FF393939</textcolor>
+    <label>-</label>
+    <animation effect="Fade" time="150">WindowOpen</animation>
+    <animation effect="Fade" time="150">WindowClose</animation>
+  </control>
+ 
+  <control>
+    <id>28</id>
+    <description>Fstop value</description>
+    <type>label</type>
+    <posX>1265</posX>
+    <posY>544</posY>
+    <font>TitanLight12</font>
+    <textcolor>FF393939</textcolor>
+    <label>-</label>
+    <animation effect="Fade" time="150">WindowOpen</animation>
+    <animation effect="Fade" time="150">WindowClose</animation>
+  </control>
+  
+  <control>
+    <id>29</id>
+    <description>Exposure Time value</description>
+    <type>label</type>
+    <posX>1265</posX>
+    <posY>582</posY>
+    <font>TitanLight12</font>
+    <textcolor>FF393939</textcolor>
+    <label>-</label>
+    <animation effect="Fade" time="150">WindowOpen</animation>
+    <animation effect="Fade" time="150">WindowClose</animation>
+  </control>
+  
+  <control>
+    <id>30</id>
+    <description>Camera Model value</description>
+    <type>fadelabel</type>
+    <posX>1265</posX>
+    <posY>620</posY>
+    <width>355</width>
+    <font>TitanLight12</font>
+    <textcolor>FF393939</textcolor>
+    <label>-</label>
+    <animation effect="Fade" time="150">WindowOpen</animation>
+    <animation effect="Fade" time="150">WindowClose</animation>
+  </control>
+  
+  <control>
+    <id>31</id>
+    <description>Equipment Make value</description>
+    <type>fadelabel</type>
+    <posX>1265</posX>
+    <posY>658</posY>
+    <width>355</width>
+    <font>TitanLight12</font>
+    <textcolor>FF393939</textcolor>
+    <label>-</label>
+    <animation effect="Fade" time="150">WindowOpen</animation>
+    <animation effect="Fade" time="150">WindowClose</animation>
+  </control>
+  
+  <control>
+    <id>32</id>
+    <description>View Comments value</description>
+    <type>label</type>
+    <posX>1265</posX>
+    <posY>696</posY>
+    <font>TitanLight12</font>
+    <textcolor>FF393939</textcolor>
+    <label>-</label>
+    <animation effect="Fade" time="150">WindowOpen</animation>
+    <animation effect="Fade" time="150">WindowClose</animation>
+  </control>
+        
+  <control>
+    <description>shadow</description>
+    <type>image</type>
+    <id>0</id>
+    <posX>283</posX>
+    <posY>194</posY>
+    <width>574</width>
+    <height>389</height>
+    <texture>pictures_info_poster_shadow.png</texture>
+    <animation effect="Fade" time="150">WindowOpen</animation>
+    <animation effect="Fade" time="150">WindowClose</animation>
+  </control>
+        
+  <control>
+    <id>3</id>
+    <description>Image</description>
+    <type>image</type>
+    <colordiffuse>ffffffff</colordiffuse>
+    <posX>288</posX>
+    <posY>200</posY>
+    <width>558</width>
+    <height>376</height>
+    <texture>-</texture>
+    <animation effect="Fade" time="150">WindowOpen</animation>
+    <animation effect="Fade" time="150">WindowClose</animation>
+    <keepaspectratio>no</keepaspectratio>
+  </control>
+</controls>
+</window>

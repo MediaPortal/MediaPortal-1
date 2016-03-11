@@ -37,8 +37,8 @@ namespace MediaPortal.Util
       if (iPos < 0 || iPos >= strHTML.Length) return -1;
       string strHTMLLow = strHTML;
       string strTagLow = strTag;
-      strHTMLLow = strHTMLLow.ToLower();
-      strTagLow = strTagLow.ToLower();
+      strHTMLLow = strHTMLLow.ToLowerInvariant();
+      strTagLow = strTagLow.ToLowerInvariant();
       strtagFound = "";
       int iStart = strHTMLLow.IndexOf(strTag, iPos);
       if (iStart < 0) return -1;
@@ -50,8 +50,8 @@ namespace MediaPortal.Util
 
     public int FindClosingTag(string strHTML, string strTag, ref string strtagFound, int iPos)
     {
-      string strHTMLLow = strHTML.ToLower();
-      string strTagLow = strTag.ToLower();
+      string strHTMLLow = strHTML.ToLowerInvariant();
+      string strTagLow = strTag.ToLowerInvariant();
       strtagFound = "";
       int iStart = strHTMLLow.IndexOf("</" + strTag, iPos);
       if (iStart < 0) return -1;

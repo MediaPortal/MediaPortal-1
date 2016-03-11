@@ -82,6 +82,8 @@ namespace TvPlugin
     private int _backupCursorY = 0;
     private int _backupChannelOffset = 0;
 
+    private int _backupSingleViewCursorX = 0;
+
     private DateTime _keyPressedTimer = DateTime.Now;
     private string _lineInput = String.Empty;
 
@@ -185,6 +187,23 @@ namespace TvPlugin
         _guideContinuousScroll = xmlreader.GetValueAsBool("myradio", "continuousScrollGuide", false);
         _loopDelay = xmlreader.GetValueAsInt("gui", "listLoopDelay", 0);
       }
+
+      // Load settings defined by the skin.
+      LoadSkinSettings();
+
+      // Load genre colors.
+      // If guide colors have not been loaded then attempt to load guide colors.
+
+      // this is just for the border highlight in radio EPG
+
+      if (!_guideColorsLoaded)
+      {
+        using (Settings xmlreader = new SKSettings())
+        {
+          _guideColorsLoaded = LoadGuideColors(xmlreader);
+        }
+      }
+
       _useNewRecordingButtonColor =
         Utils.FileExistsInCache(GUIGraphicsContext.GetThemedSkinFile(@"\media\tvguide_recButton_Focus_middle.png"));
       _useNewPartialRecordingButtonColor =
@@ -197,14 +216,52 @@ namespace TvPlugin
 
     protected override void LoadSkinSettings()
     {
-      // Nothing to do for RadioGuide.
+      String temp;
+
+      _useBorderHighlight = false;
+      temp = GUIPropertyManager.GetProperty("#skin.tvguide.useborderhighlight");
+      if (temp != null && temp.Length != 0)
+      {
+        _useBorderHighlight = bool.Parse(temp);
+      }
     }
+
+
+
+    private bool LoadGuideColors(Settings xmlreader)
+    {
+      _guideColorBorderHighlight = GetColorFromString(xmlreader.GetValueAsString("tvguidecolors", "guidecolorborderhighlight", "99ffffff"));
+
+      return true;
+    }
+
+
+    private long GetColorFromString(string strColor)
+    {
+      long result = 0xFFFFFFFF;
+
+      if (long.TryParse(strColor, System.Globalization.NumberStyles.HexNumber, null, out result))
+      {
+        // Result set in out param
+      }
+      else if (Color.FromName(strColor).IsKnownColor)
+      {
+        result = Color.FromName(strColor).ToArgb();
+      }
+
+      return result;
+    }
+
+
 
     private void SaveSettings()
     {
       using (Settings xmlwriter = new MPSettings())
       {
-        xmlwriter.SetValue("radioguide", "channel", _currentChannel);
+        if (_currentChannel != null)
+        {
+          xmlwriter.SetValue("radioguide", "channel", _currentChannel);
+        }
         xmlwriter.SetValue("radioguide", "ypos", _cursorX.ToString());
         xmlwriter.SetValue("radioguide", "yoffset", ChannelOffset.ToString());
         xmlwriter.SetValue("radioguide", "timeperblock", _timePerBlock);
@@ -244,14 +301,11 @@ namespace TvPlugin
         case Action.ActionType.ACTION_PREVIOUS_MENU:
           if (_singleChannelView)
           {
-            OnSwitchMode();
-            return; // base.OnAction would close the EPG as well
-          }
-          else
-          {
-            GUIWindowManager.ShowPreviousWindow();
+            OnSwitchMode(true);
             return;
           }
+          GUIWindowManager.ShowPreviousWindow();
+          return;
 
         case Action.ActionType.ACTION_KEY_PRESSED:
           if (action.m_key != null)
@@ -350,7 +404,8 @@ namespace TvPlugin
             {
               if (_cursorY == 0)
               {
-                OnSwitchMode();
+                _backupSingleViewCursorX = _cursorX;
+                OnSwitchMode(false);
                 return;
               }
               else
@@ -646,22 +701,55 @@ namespace TvPlugin
 
           case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT:
             {
-              base.OnMessage(message);
-              SaveSettings();
-              _recordingList.Clear();
+              if (!_singleChannelView)
+              {
+                base.OnMessage(message);
+                SaveSettings();
+                if (_recordingList != null && TVHome.Connected)
+                {
+                  _recordingList.Clear();
+                }
 
-              _controls = new Dictionary<int, GUIButton3PartControl>();
-              _channelList = null;
-              _recordingList = null;
-              _currentProgram = null;
+                _controls = new Dictionary<int, GUIButton3PartControl>();
+                _channelList = null;
+                _recordingList = null;
+                _currentProgram = null;
+              }
 
               return true;
             }
 
           case GUIMessage.MessageType.GUI_MSG_WINDOW_INIT:
             {              
-              TVHome.WaitForGentleConnection();        
-      
+
+              if (!TVHome.Connected)
+              {
+                RemoteControl.Clear();
+                GUIWindowManager.ActivateWindow((int)Window.WINDOW_SETTINGS_TVENGINE);
+                return false;
+              }
+
+              TVHome.WaitForGentleConnection();
+
+              if (TVHome.Navigator == null)
+              {
+                TVHome.OnLoaded();
+              }
+              else if (TVHome.Navigator.Channel == null)
+              {
+                TVHome.m_navigator.ReLoad();
+                TVHome.LoadSettings(false);
+              }
+
+              if (TVHome.m_navigator == null)
+              {
+                TVHome.m_navigator = new ChannelNavigator(); // Create the channel navigator (it will load groups and channels)
+              }
+
+              // Reload ChannelGroups
+              Radio radioLoad = (Radio)GUIWindowManager.GetWindow((int)Window.WINDOW_RADIO);
+              radioLoad.OnAdded();
+
               GUIPropertyManager.SetProperty("#itemcount", string.Empty);
               GUIPropertyManager.SetProperty("#selecteditem", string.Empty);
               GUIPropertyManager.SetProperty("#selecteditem2", string.Empty);
@@ -863,7 +951,8 @@ namespace TvPlugin
             }
             else if (_cursorY == 0)
             {
-              OnSwitchMode();
+              _backupSingleViewCursorX = _cursorX;
+              OnSwitchMode(false);
             }
             break;
         }
@@ -1101,8 +1190,7 @@ namespace TvPlugin
         GUIPropertyManager.SetProperty(SkinPropertyPrefix + ".Guide.ChannelName", strChannel);
         if (_showChannelNumber)
         {
-          IList<TuningDetail> detail = chan.ReferringTuningDetail();
-          int channelNum = detail[0].ChannelNumber;
+          int channelNum = chan.ChannelNumber;
           GUIPropertyManager.SetProperty(SkinPropertyPrefix + ".Guide.ChannelNumber", channelNum + "");
         }
         else
@@ -1775,10 +1863,7 @@ namespace TvPlugin
 
       if (!_byIndex)
       {
-        foreach (TuningDetail detail in channel.ReferringTuningDetail())
-        {
-          channelNum = detail.ChannelNumber;
-        }
+        channelNum = channel.ChannelNumber;
       }
       else
       {
@@ -2996,6 +3081,15 @@ namespace TvPlugin
         else
           controlid = (int)Controls.IMG_CHAN1 + _cursorX;
 
+        GUIButton3PartControl img = GetControl(controlid) as GUIButton3PartControl;
+        if (null != img && img.IsVisible)
+        {
+          if (_useBorderHighlight)
+          {
+            SetFocusBorder(ref img);
+          }
+        }
+
         GUIControl.FocusControl(GetID, controlid);
       }
       else
@@ -3005,6 +3099,11 @@ namespace TvPlugin
         GUIButton3PartControl img = GetControl(iControlId) as GUIButton3PartControl;
         if (null != img && img.IsVisible)
         {
+          if (_useBorderHighlight)
+          {
+            SetFocusBorder(ref img);
+          }
+
           img.ColourDiffuse = 0xffffffff;
           _currentProgram = img.Data as Program;
           SetProperties();
@@ -3012,6 +3111,43 @@ namespace TvPlugin
         GUIControl.FocusControl(GetID, iControlId);
       }
     }
+
+
+    private void SetFocusBorder(ref GUIButton3PartControl button)
+    {
+      // Setup the highlight border for the specified button control.
+      // The focus overlay needs to have an outline border to highlight the selected button.
+      // To get the border to render on top of everything else we need to move the selected
+      // control to the end of the windows list of children controls.
+      GUIControl ctrl = (GUIControl)button;
+      SendToFront(ref ctrl);
+
+      if (button.RenderLeft && button.RenderRight)
+      {
+        button.SetBorderTFM("0,0,6,6", GUIImage.BorderPosition.BORDER_IMAGE_OUTSIDE, false, false, "tvguide_highlight_border.png", _guideColorBorderHighlight, true, true);
+        button.SetBorderTFL("6,0,6,6", GUIImage.BorderPosition.BORDER_IMAGE_OUTSIDE, false, false, "tvguide_highlight_border.png", _guideColorBorderHighlight, true, true);
+        button.SetBorderTFR("0,6,6,6", GUIImage.BorderPosition.BORDER_IMAGE_OUTSIDE, false, false, "tvguide_highlight_border.png", _guideColorBorderHighlight, true, true);
+      }
+      else if (button.RenderLeft && !button.RenderRight)
+      {
+        button.SetBorderTFM("0,6,6,6", GUIImage.BorderPosition.BORDER_IMAGE_OUTSIDE, false, false, "tvguide_highlight_border.png", _guideColorBorderHighlight, true, true);
+        button.SetBorderTFL("6,0,6,6", GUIImage.BorderPosition.BORDER_IMAGE_OUTSIDE, false, false, "tvguide_highlight_border.png", _guideColorBorderHighlight, true, true);
+        button.SetBorderTFR("0", GUIImage.BorderPosition.BORDER_IMAGE_OUTSIDE, false, false, "tvguide_highlight_border.png", _guideColorBorderHighlight, true, true);
+      }
+      else if (!button.RenderLeft && button.RenderRight)
+      {
+        button.SetBorderTFM("6,0,6,6", GUIImage.BorderPosition.BORDER_IMAGE_OUTSIDE, false, false, "tvguide_highlight_border.png", _guideColorBorderHighlight, true, true);
+        button.SetBorderTFL("0", GUIImage.BorderPosition.BORDER_IMAGE_OUTSIDE, false, false, "tvguide_highlight_border.png", _guideColorBorderHighlight, true, true);
+        button.SetBorderTFR("0,6,6,6", GUIImage.BorderPosition.BORDER_IMAGE_OUTSIDE, false, false, "tvguide_highlight_border.png", _guideColorBorderHighlight, true, true);
+      }
+      else
+      {
+        button.SetBorderTFM("6,6,6,6", GUIImage.BorderPosition.BORDER_IMAGE_OUTSIDE, false, false, "tvguide_highlight_border.png", _guideColorBorderHighlight, true, true);
+        button.SetBorderTFL("0", GUIImage.BorderPosition.BORDER_IMAGE_OUTSIDE, false, false, "tvguide_highlight_border.png", _guideColorBorderHighlight, true, true);
+        button.SetBorderTFR("0", GUIImage.BorderPosition.BORDER_IMAGE_OUTSIDE, false, false, "tvguide_highlight_border.png", _guideColorBorderHighlight, true, true);
+      }
+    }
+
 
     private void Correct()
     {
@@ -3163,7 +3299,8 @@ namespace TvPlugin
 
 
           case 939: // switch mode
-            OnSwitchMode();
+            _backupSingleViewCursorX = _cursorX;
+            OnSwitchMode(false);
             break;
           case 629: //stop recording
             Schedule schedule = Schedule.FindNoEPGSchedule(_currentProgram.ReferencedChannel());
@@ -3188,7 +3325,7 @@ namespace TvPlugin
       }
     }
 
-    private void OnSwitchMode()
+    private void OnSwitchMode(bool returnPreviousMenu)
     {
       UnFocus();
       _singleChannelView = !_singleChannelView;
@@ -3200,6 +3337,13 @@ namespace TvPlugin
 
         _programOffset = _cursorY = _cursorX = 0;
         _recalculateProgramOffset = true;
+      }
+      else if (returnPreviousMenu)
+      {
+        //focus current channel
+        _cursorY = 0;
+        _cursorX = _backupSingleViewCursorX;
+        ChannelOffset = _backupChannelOffset;
       }
       else
       {
@@ -3667,19 +3811,17 @@ namespace TvPlugin
         while (iCounter < _channelList.Count && found == false)
         {
           chan = (Channel)_channelList[iCounter].channel;
-          foreach (TuningDetail detail in chan.ReferringTuningDetail())
+          if (chan.ChannelNumber == searchChannel)
           {
-            if (detail.ChannelNumber == searchChannel)
-            {
-              iChannelNr = iCounter;
-              found = true;
-            } //find closest channel number
-            else if ((int)Math.Abs(detail.ChannelNumber - searchChannel) < channelDistance)
-            {
-              channelDistance = (int)Math.Abs(detail.ChannelNumber - searchChannel);
-              iChannelNr = iCounter;
-            }
+            iChannelNr = iCounter;
+            found = true;
+          } //find closest channel number
+          else if ((int)Math.Abs(chan.ChannelNumber - searchChannel) < channelDistance)
+          {
+            channelDistance = (int)Math.Abs(chan.ChannelNumber - searchChannel);
+            iChannelNr = iCounter;
           }
+
           iCounter++;
         }
       }
@@ -3763,8 +3905,7 @@ namespace TvPlugin
                   }
                   else
                   {
-                    foreach (TuningDetail detail in tvGuidChannel.channel.ReferringTuningDetail())
-                      tvGuidChannel.channelNum = detail.ChannelNumber;
+                    tvGuidChannel.channelNum = tvGuidChannel.channel.ChannelNumber;
                   }
                 }
                 tvGuidChannel.strLogo = GetChannelLogo(tvGuidChannel.channel.DisplayName);
@@ -3779,7 +3920,7 @@ namespace TvPlugin
         {
           GuideChannel tvGuidChannel = new GuideChannel();
           tvGuidChannel.channel = new Channel(false, true, 0, DateTime.MinValue, false,
-                                              DateTime.MinValue, 0, true, "", GUILocalizeStrings.Get(911));
+                                              DateTime.MinValue, 0, true, "", GUILocalizeStrings.Get(911), 10000);
           for (int i = 0; i < 10; ++i)
           {
             _channelList.Add(tvGuidChannel);
@@ -4247,4 +4388,4 @@ namespace TvPlugin
     #endregion
     
   }
-}
+} 

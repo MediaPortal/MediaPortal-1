@@ -23,7 +23,6 @@ using System.Collections;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
 using MediaPortal.GUI.Music;
-using MediaPortal.GUI.Pictures;
 using MediaPortal.GUI.Video;
 using MediaPortal.Profile;
 using MediaPortal.Util;
@@ -78,6 +77,24 @@ namespace MediaPortal.GUI.Settings
       }
 
       GUIPropertyManager.SetProperty("#currentmodule", module);
+      
+      if (!MediaPortal.Util.Utils.IsGUISettingsWindow(GUIWindowManager.GetPreviousActiveWindow()))
+      {
+        if (MediaPortal.GUI.Settings.GUISettings.IsPinLocked() && !MediaPortal.GUI.Settings.GUISettings.RequestPin())
+        {
+          GUIWindowManager.CloseCurrentWindow();
+        }
+      }
+    }
+
+    protected override void OnPageDestroy(int newWindowId)
+    {
+      if (MediaPortal.GUI.Settings.GUISettings.SettingsChanged && !MediaPortal.Util.Utils.IsGUISettingsWindow(newWindowId))
+      {
+        MediaPortal.GUI.Settings.GUISettings.OnRestartMP(GetID);
+      }
+
+      base.OnPageDestroy(newWindowId);
     }
 
     protected override void OnClicked(int controlId, GUIControl control, Action.ActionType actionType)
@@ -215,7 +232,7 @@ namespace MediaPortal.GUI.Settings
           GUIMusicFiles.ResetExtensions(aExtensions);
           break;
         case "pictures":
-          GUIPictures.ResetExtensions(aExtensions);
+          Pictures.GUIPictures.ResetExtensions(aExtensions);
           break;
       }
     }

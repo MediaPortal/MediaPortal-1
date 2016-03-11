@@ -31,7 +31,7 @@ namespace MediaPortal.Core.Transcoding
 
     public ITranscode GetTranscoder(TranscodeInfo info, VideoFormat format)
     {
-      string ext = System.IO.Path.GetExtension(info.file).ToLower();
+      string ext = System.IO.Path.GetExtension(info.file).ToLowerInvariant();
       if (ext == ".dvr-ms") return new Dvrms2Mpeg();
       else
       {

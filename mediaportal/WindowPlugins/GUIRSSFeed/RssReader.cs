@@ -183,7 +183,7 @@ namespace Rss
         }
         if (readData)
         {
-          string readerName = reader.Name.ToLower();
+          string readerName = reader.Name.ToLowerInvariant();
           switch (reader.NodeType)
           {
             case XmlNodeType.Element:
@@ -213,7 +213,7 @@ namespace Rss
                     for (int i = 0; i < reader.AttributeCount; i++)
                     {
                       reader.MoveToAttribute(i);
-                      switch (reader.Name.ToLower())
+                      switch (reader.Name.ToLowerInvariant())
                       {
                         case "url":
                           try
@@ -234,7 +234,7 @@ namespace Rss
                     for (int i = 0; i < reader.AttributeCount; i++)
                     {
                       reader.MoveToAttribute(i);
-                      switch (reader.Name.ToLower())
+                      switch (reader.Name.ToLowerInvariant())
                       {
                         case "url":
                           try
@@ -268,7 +268,7 @@ namespace Rss
                     for (int i = 0; i < reader.AttributeCount; i++)
                     {
                       reader.MoveToAttribute(i);
-                      switch (reader.Name.ToLower())
+                      switch (reader.Name.ToLowerInvariant())
                       {
                         case "ispermalink":
                           try
@@ -296,7 +296,7 @@ namespace Rss
                     for (int i = 0; i < reader.AttributeCount; i++)
                     {
                       reader.MoveToAttribute(i);
-                      switch (reader.Name.ToLower())
+                      switch (reader.Name.ToLowerInvariant())
                       {
                         case "url":
                           goto case "domain";
@@ -331,7 +331,7 @@ namespace Rss
                     for (int i = 0; i < reader.AttributeCount; i++)
                     {
                       reader.MoveToAttribute(i);
-                      switch (reader.Name.ToLower())
+                      switch (reader.Name.ToLowerInvariant())
                       {
                         case "domain":
                           cloud.Domain = reader.Value;
@@ -353,7 +353,7 @@ namespace Rss
                           cloud.RegisterProcedure = reader.Value;
                           break;
                         case "protocol":
-                          switch (reader.Value.ToLower())
+                          switch (reader.Value.ToLowerInvariant())
                           {
                             case "xml-rpc":
                               cloud.Protocol = RssCloudProtocol.XmlRpc;
@@ -376,7 +376,7 @@ namespace Rss
                     for (int i = 0; i < reader.AttributeCount; i++)
                     {
                       reader.MoveToAttribute(i);
-                      if (reader.Name.ToLower() == "version")
+                      if (reader.Name.ToLowerInvariant() == "version")
                       {
                         switch (reader.Value)
                         {
@@ -400,7 +400,7 @@ namespace Rss
                     for (int i = 0; i < reader.AttributeCount; i++)
                     {
                       reader.MoveToAttribute(i);
-                      if (reader.Name.ToLower() == "version")
+                      if (reader.Name.ToLowerInvariant() == "version")
                       {
                         switch (reader.Value)
                         {
@@ -676,7 +676,7 @@ namespace Rss
                   case "skipdays":
                     if (childElementName == "day")
                     {
-                      switch (elementText.ToString().ToLower())
+                      switch (elementText.ToString().ToLowerInvariant())
                       {
                         case "monday":
                           channel.SkipDays[0] = true;
@@ -705,7 +705,7 @@ namespace Rss
                   case "skiphours":
                     if (childElementName == "hour")
                     {
-                      channel.SkipHours[Byte.Parse(elementText.ToString().ToLower())] = true;
+                      channel.SkipHours[Byte.Parse(elementText.ToString().ToLowerInvariant())] = true;
                     }
                     break;
                 }

@@ -36,7 +36,7 @@ using Action = MediaPortal.GUI.Library.Action;
 
 namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 {
-  public class GenericSerial : BaseDisplay, IDisplay
+  public class GenericSerial : BaseDisplay
   {
     private bool _BackLightControl = false;
     //private int _BackLightLevel = 0x7f;
@@ -77,7 +77,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       this.Initialize();
     }
 
-    public void CleanUp()
+    public override void CleanUp()
     {
       AdvancedSettings.OnSettingsChanged -=
         new AdvancedSettings.OnSettingsChangedHandler(this.AdvancedSettings_OnSettingsChanged);
@@ -109,7 +109,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       this.GSD.ClearDisplay();
     }
 
-    public void Configure()
+    public override void Configure()
     {
       Form form = new GenericSerial_AdvancedSetupForm();
       form.ShowDialog();
@@ -228,12 +228,12 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       }
     }
 
-    public void Dispose()
+    public override void Dispose()
     {
       this.GSD.CloseDisplay(this._BackLightControl);
     }
 
-    public void DrawImage(Bitmap bitmap) {}
+    public override void DrawImage(Bitmap bitmap) { }
 
     private void InitCommandSet(ref CommandStrings CommandSet)
     {
@@ -253,7 +253,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       CommandSet.CMD_ToggleDTR = false;
     }
 
-    public void Initialize()
+    public override void Initialize()
     {
       this.Clear();
     }
@@ -373,9 +373,9 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       }
     }
 
-    public void SetCustomCharacters(int[][] customCharacters) {}
+    public override void SetCustomCharacters(int[][] customCharacters) { }
 
-    public void SetLine(int line, string message)
+    public override void SetLine(int line, string message, ContentAlignment aAlignment)
     {
       if (this._IsDisabled)
       {
@@ -455,7 +455,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       }
     }
 
-    public void Setup(string _port, int _lines, int _cols, int _delay, int _linesG, int _colsG, int _delayG,
+    public override void Setup(string _port, int _lines, int _cols, int _delay, int _linesG, int _colsG, int _delayG,
                       bool _useBackLight, int _useBackLightLevel, bool _useContrast, int _useContrastLevel,
                       bool _blankOnExit)
     {
@@ -546,32 +546,32 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       }
     }
 
-    public string Description
+    public override string Description
     {
       get { return "Generic Serial Character VFD/LCD driver v04_10_2008"; }
     }
 
-    public string ErrorMessage
+    public override string ErrorMessage
     {
       get { return this._ErrorMessage; }
     }
 
-    public bool IsDisabled
+    public override bool IsDisabled
     {
       get { return this._IsDisabled; }
     }
 
-    public string Name
+    public override string Name
     {
       get { return "GenericSerial"; }
     }
 
-    public bool SupportsGraphics
+    public override bool SupportsGraphics
     {
       get { return false; }
     }
 
-    public bool SupportsText
+    public override bool SupportsText
     {
       get { return true; }
     }
@@ -1006,31 +1006,31 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         byte[] buffer = new byte[strArray.Length];
         for (int i = 0; i < strArray.Length; i++)
         {
-          if (strArray[i].Substring(0, 1).ToLower() == "TL")
+          if (strArray[i].Substring(0, 1).ToLowerInvariant() == "TL")
           {
             buffer[i] = 0xfb;
           }
-          if (strArray[i].Substring(0, 1).ToLower() == "TC")
+          if (strArray[i].Substring(0, 1).ToLowerInvariant() == "TC")
           {
             buffer[i] = 0xfc;
           }
-          if (strArray[i].Substring(0, 1).ToLower() == "PL")
+          if (strArray[i].Substring(0, 1).ToLowerInvariant() == "PL")
           {
             buffer[i] = 0xfd;
           }
-          if (strArray[i].Substring(0, 1).ToLower() == "PC")
+          if (strArray[i].Substring(0, 1).ToLowerInvariant() == "PC")
           {
             buffer[i] = 0xfe;
           }
-          if (strArray[i].Substring(0, 1).ToLower() == "PZ")
+          if (strArray[i].Substring(0, 1).ToLowerInvariant() == "PZ")
           {
             buffer[i] = 0xff;
           }
-          if (strArray[i].Substring(0, 1).ToLower() == "x")
+          if (strArray[i].Substring(0, 1).ToLowerInvariant() == "x")
           {
             buffer[i] = byte.Parse(strArray[i].Substring(1), NumberStyles.HexNumber);
           }
-          else if (strArray[i].Substring(0, 2).ToLower() == "0x")
+          else if (strArray[i].Substring(0, 2).ToLowerInvariant() == "0x")
           {
             buffer[i] = byte.Parse(strArray[i].Substring(2), NumberStyles.HexNumber);
           }

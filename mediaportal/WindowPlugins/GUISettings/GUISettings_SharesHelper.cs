@@ -22,7 +22,6 @@ using System;
 using System.Collections.Generic;
 using MediaPortal.GUI.Library;
 using MediaPortal.GUI.Music;
-using MediaPortal.GUI.Pictures;
 using MediaPortal.GUI.Video;
 using MediaPortal.Profile;
 using MediaPortal.Util;
@@ -129,7 +128,7 @@ namespace MediaPortal.GUI.Settings
 
           if (driveName.Length == 0)
           {
-            string driveLetter = drive.Substring(0, 1).ToUpper();
+            string driveLetter = drive.Substring(0, 1).ToUpperInvariant();
             driveName = String.Format("{0} {1}:", defaultName, driveLetter);
           }
 
@@ -154,19 +153,19 @@ namespace MediaPortal.GUI.Settings
             switch (driveType)
             {
               case DriveType.Removable:
-                name = String.Format("({0}:) Removable", drive.Substring(0, 1).ToUpper());
+                name = String.Format("({0}:) Removable", drive.Substring(0, 1).ToUpperInvariant());
                 break;
               case DriveType.Fixed:
-                name = String.Format("({0}:) Fixed", drive.Substring(0, 1).ToUpper());
+                name = String.Format("({0}:) Fixed", drive.Substring(0, 1).ToUpperInvariant());
                 break;
               case DriveType.RemoteDisk:
-                name = String.Format("({0}:) Remote", drive.Substring(0, 1).ToUpper());
+                name = String.Format("({0}:) Remote", drive.Substring(0, 1).ToUpperInvariant());
                 break;
               case DriveType.DVD: // or cd
-                name = String.Format("({0}:) CD/DVD", drive.Substring(0, 1).ToUpper());
+                name = String.Format("({0}:) CD/DVD", drive.Substring(0, 1).ToUpperInvariant());
                 break;
               case DriveType.RamDisk:
-                name = String.Format("({0}:) Ram", drive.Substring(0, 1).ToUpper());
+                name = String.Format("({0}:) Ram", drive.Substring(0, 1).ToUpperInvariant());
                 break;
             }
             if (driveType == DriveType.Fixed || driveType == DriveType.RemoteDisk)
@@ -227,8 +226,9 @@ namespace MediaPortal.GUI.Settings
         }
 
         DefaultShare = xmlreader.GetValueAsString(section, "default", "");
-        _addOpticalDiskDrives = xmlreader.GetValueAsBool("movies", "AddOpticalDiskDrives", true);
-        _autoSwitchRemovableDrives = xmlreader.GetValueAsBool("movies", "SwitchRemovableDrives", true);
+        _addOpticalDiskDrives = xmlreader.GetValueAsBool(section, "AddOpticalDiskDrives", true);
+        _autoSwitchRemovableDrives = xmlreader.GetValueAsBool(section, "SwitchRemovableDrives", true);
+        _rememberLastFolder = xmlreader.GetValueAsBool(section, "rememberlastfolder", false);
 
         // Shares
         for (int index = 0; index < 128; index++)
@@ -247,7 +247,7 @@ namespace MediaPortal.GUI.Settings
 
           string shareNameData = xmlreader.GetValueAsString(section, shareName, "");
           string sharePathData = xmlreader.GetValueAsString(section, sharePath, "");
-          string sharePinData = Util.Utils.DecryptPin(xmlreader.GetValueAsString(section, sharePin, ""));
+          string sharePinData = Util.Utils.DecryptPassword(xmlreader.GetValueAsString(section, sharePin, ""));
 
           // provide default shares
           if (index == 0 && shareNameData == string.Empty)
@@ -262,7 +262,7 @@ namespace MediaPortal.GUI.Settings
           bool shareTypeData = xmlreader.GetValueAsBool(section, shareType, false);
           string shareServerData = xmlreader.GetValueAsString(section, shareServer, "");
           string shareLoginData = xmlreader.GetValueAsString(section, shareLogin, "");
-          string sharePwdData = xmlreader.GetValueAsString(section, sharePwd, "");
+          string sharePwdData = Util.Utils.DecryptPassword(xmlreader.GetValueAsString(section, sharePwd, ""));
           int sharePortData = xmlreader.GetValueAsInt(section, sharePort, 21);
           string shareRemotePathData = xmlreader.GetValueAsString(section, shareRemotePath, "/");
           int shareLayout = xmlreader.GetValueAsInt(section, shareViewPath, (int)GUIFacadeControl.Layout.List);
@@ -450,11 +450,11 @@ namespace MediaPortal.GUI.Settings
 
               xmlwriter.SetValue(section, shareName, shareNameData);
               xmlwriter.SetValue(section, sharePath, sharePathData);
-              xmlwriter.SetValue(section, sharePin, Util.Utils.EncryptPin(sharePinData));
+              xmlwriter.SetValue(section, sharePin, Util.Utils.EncryptPassword(sharePinData));
               xmlwriter.SetValueAsBool(section, shareType, shareTypeData);
               xmlwriter.SetValue(section, shareServer, shareServerData);
               xmlwriter.SetValue(section, shareLogin, shareLoginData);
-              xmlwriter.SetValue(section, sharePwd, sharePwdData);
+              xmlwriter.SetValue(section, sharePwd, Util.Utils.EncryptPassword(sharePwdData));
               xmlwriter.SetValue(section, sharePort, sharePortData.ToString());
               xmlwriter.SetValue(section, shareRemotePath, shareRemotePathData);
               xmlwriter.SetValue(section, shareViewPath, shareLayout);
@@ -491,7 +491,7 @@ namespace MediaPortal.GUI.Settings
           GUIMusicFiles.ResetShares();
           break;
         case "pictures":
-          GUIPictures.ResetShares();
+          Pictures.GUIPictures.ResetShares();
           break;
       }
     }

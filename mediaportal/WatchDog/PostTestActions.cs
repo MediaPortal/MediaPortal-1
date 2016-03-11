@@ -78,7 +78,7 @@ namespace WatchDog
         sw.WriteLine("<ul>");
         sw.WriteLine("<li><a href=MediaPortal.log>MediaPortal.log</a></li>");
         sw.WriteLine("<li><a href=Configuration.log>Configuration.log</a></li>");
-        sw.WriteLine("<li><a href=Error.log>Error.log</a></li>");
+        sw.WriteLine("<li><a href=MediaPortal-Error.log>MediaPortal-Error.log</a></li>");
         sw.WriteLine("<li><a href=Recorder.log>Recorder.log</a></li>");
         if (File.Exists(_tmpDir + "\\TsReader.log"))
         {
@@ -93,7 +93,7 @@ namespace WatchDog
           sw.WriteLine("<ul>");
           sw.WriteLine("<li><a href=tvserver_tv.log>TV.log</a></li>");
           sw.WriteLine("<li><a href=tvserver_epg.log>EPG.log</a></li>");
-          sw.WriteLine("<li><a href=tvserver_error.log>Error.log</a></li>");
+          sw.WriteLine("<li><a href=tvserver_error.log>TV-Error.log</a></li>");
           sw.WriteLine("<li><a href=tvserver_Streaming Server.log>Streaming Server.log</a></li>");
           sw.WriteLine("<li><a href=tvserver_TsWriter.log>TsWriter.log</a></li>");
           sw.WriteLine("<li><a href=tvserver_Player.log>Player.log</a></li>");
@@ -133,8 +133,20 @@ namespace WatchDog
       base.setAction("Creating ZIP Archive with gathered information...");
       try
       {
-        // Get config file also to help debugging
-        File.Copy(Config.GetFolder(Config.Dir.Config) + @"\\MediaPortal.xml", _tmpDir + @"\\MediaPortal.xml", true);
+        // Get config file to help debugging. It may not exist if MediaPortal Configuration
+        // has not been used yet.
+        string fileName = Config.GetFolder(Config.Dir.Config) + @"\\MediaPortal.xml";
+        if (File.Exists(fileName))
+        {
+          File.Copy(fileName, _tmpDir + @"\\MediaPortal.xml", true);
+        }
+
+        //Add client gentle.config if it exists
+        fileName = Config.GetFolder(Config.Dir.Config) + @"\\Gentle.config";
+        if (File.Exists(fileName))
+        {
+          File.Copy(fileName, _tmpDir + @"\\Client_Gentle.config", true);
+        }
 
         if (File.Exists(_zipFile))
         {

@@ -30,7 +30,7 @@ using MediaPortal.Util;
 using TvControl;
 using TvDatabase;
 using TvLibrary.Interfaces;
-using WindowPlugins;
+using Common.GUIPlugins;
 using Action = MediaPortal.GUI.Library.Action;
 using Layout = MediaPortal.GUI.Library.GUIFacadeControl.Layout;
 
@@ -69,6 +69,7 @@ namespace TvPlugin
     private string rootGroup = "(none)";
     private static RadioChannelGroup selectedGroup;
     public static List<RadioChannelGroup> AllRadioGroups= new List<RadioChannelGroup>();
+    private static bool settingsRadioLoaded = false;
 
     #endregion
     
@@ -119,6 +120,11 @@ namespace TvPlugin
 
     protected override void LoadSettings()
     {
+      if (settingsRadioLoaded)
+      {
+        return;
+      }
+
       base.LoadSettings();
       using (Settings xmlreader = new MPSettings())
       {
@@ -160,6 +166,7 @@ namespace TvPlugin
 
         _autoTurnOnRadio = xmlreader.GetValueAsBool("myradio", "autoturnonradio", false);
       }
+      settingsRadioLoaded = true;
     }
 
     protected override void SaveSettings()
@@ -254,6 +261,34 @@ namespace TvPlugin
     protected override void OnPageLoad()
     {
       Log.Info("RadioHome:OnPageLoad");
+
+      if (!TVHome.Connected)
+      {
+        RemoteControl.Clear();
+        GUIWindowManager.ActivateWindow((int)Window.WINDOW_SETTINGS_TVENGINE);
+        return;
+      }
+
+      if (TVHome.Navigator == null)
+      {
+        TVHome.OnLoaded();
+      }
+      else if (TVHome.Navigator.Channel == null)
+      {
+        TVHome.m_navigator.ReLoad();
+        TVHome.LoadSettings(false);
+      }
+
+      // Create the channel navigator (it will load groups and channels)
+      if (TVHome.m_navigator == null)
+      {
+        TVHome.m_navigator = new ChannelNavigator();
+      }
+
+      // Reload ChannelGroups
+      Radio radioLoad = (Radio)GUIWindowManager.GetWindow((int)Window.WINDOW_RADIO);
+      radioLoad.OnAdded();
+
       base.OnPageLoad();
       GUIMessage msgStopRecorder = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RECORDER_STOP, 0, 0, 0, 0, 0, null);
       GUIWindowManager.SendMessage(msgStopRecorder);      
@@ -283,7 +318,11 @@ namespace TvPlugin
 
       if ((_autoTurnOnRadio) && !(g_Player.Playing && g_Player.IsRadio))
       {
-        Play(facadeLayout.SelectedListItem);
+        GUIListItem item = facadeLayout.SelectedListItem;
+        if (item != null && item.Label != ".." && !item.IsFolder)
+        {
+          Play(facadeLayout.SelectedListItem);
+        }
       }
 
       btnSortBy.SortChanged += SortChanged;       
@@ -291,6 +330,10 @@ namespace TvPlugin
 
     private static void LoadChannelGroups()
     {
+      if (!TVHome.Connected)
+      {
+        return;
+      }
       Settings xmlreader = new MPSettings();
       string currentchannelName = xmlreader.GetValueAsString("myradio", "channel", String.Empty);
 
@@ -642,7 +685,7 @@ namespace TvPlugin
       }
       if (item2.IsFolder && item2.Label == "..")
       {
-        return -1;
+        return 1;
       }
       if (item1.IsFolder && !item2.IsFolder)
       {
@@ -849,17 +892,28 @@ namespace TvPlugin
       GUIPropertyManager.RemovePlayerProperties();
       GUIPropertyManager.SetProperty("#Play.Current.ArtistThumb", _currentChannel.DisplayName);
       GUIPropertyManager.SetProperty("#Play.Current.Album", _currentChannel.DisplayName);
-      GUIPropertyManager.SetProperty("#Play.Current.Title", _currentChannel.DisplayName);
       
+      if ((_currentChannel.IsWebstream()) || (_currentChannel.NextProgram == null || _currentChannel.NextProgram == null ||
+        string.IsNullOrEmpty(_currentChannel.CurrentProgram.Title) ||  string.IsNullOrEmpty(_currentChannel.NextProgram.Title)))
+      {
+        GUIPropertyManager.SetProperty("#Play.Current.Title", _currentChannel.DisplayName); // No EPG
+        GUIPropertyManager.SetProperty("#Play.Next.Title", string.Empty);
+      }
+      else
+      {
+        GUIPropertyManager.SetProperty("#Play.Current.Title", _currentChannel.CurrentProgram.Title);
+        GUIPropertyManager.SetProperty("#Play.Next.Title", _currentChannel.NextProgram.Title);
+      }
+
       string strLogo = Utils.GetCoverArt(Thumbs.Radio, _currentChannel.DisplayName);
       if (string.IsNullOrEmpty(strLogo))
       {
-          strLogo = "defaultMyRadioBig.png";
+        strLogo = "defaultMyRadioBig.png";
       }
-      
+
       GUIPropertyManager.SetProperty("#Play.Current.Thumb", strLogo);
 
-      if (g_Player.Playing)
+      if (g_Player.Playing && !_currentChannel.IsWebstream())
       {
         if (!g_Player.IsTimeShifting || (g_Player.IsTimeShifting && _currentChannel.IsWebstream()))
         {
@@ -910,7 +964,7 @@ namespace TvPlugin
 
     public bool HasSetup()
     {
-      return true;
+      return false;
     }
 
     public bool DefaultEnabled()
@@ -943,11 +997,7 @@ namespace TvPlugin
       return "Connect to TV service to listen to analog, DVB and internet radio";
     }
 
-    public void ShowPlugin()
-    {
-      RadioSetupForm setup = new RadioSetupForm();
-      setup.ShowDialog();
-    }
+    public void ShowPlugin() { }
 
     #endregion
 

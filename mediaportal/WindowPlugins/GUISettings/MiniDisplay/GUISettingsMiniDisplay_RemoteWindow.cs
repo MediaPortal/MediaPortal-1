@@ -20,7 +20,6 @@
 
 using System;
 using System.IO;
-using MediaPortal.Configuration;
 using MediaPortal.GUI.Library;
 using MediaPortal.InputDevices;
 using MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers;
@@ -31,8 +30,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Setup
   public class RemoteWindow : GUIInternalWindow
   {
     [SkinControl(40)] protected GUILabelControl label1 = null;
-    [SkinControl(50)] protected GUIToggleButtonControl btnDisableRemote = null;
-    [SkinControl(51)] protected GUIToggleButtonControl btnDisableRepeat = null;
+    [SkinControl(50)] protected GUICheckButton btnDisableRemote = null;
+    [SkinControl(51)] protected GUICheckButton btnDisableRepeat = null;
     [SkinControl(52)] protected GUISelectButtonControl btnRepeatDelay = null;
     [SkinControl(53)] protected GUIButtonControl btnRemoteMapping = null;
 
@@ -90,12 +89,6 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Setup
       base.OnClicked(controlId, control, actionType);
     }
 
-    protected override void OnPageDestroy(int newWindowId)
-    {
-      this.SaveSettings();
-      base.OnPageDestroy(newWindowId);
-    }
-
     public override bool OnMessage(GUIMessage message)
     {
       if (!base.OnMessage(message))
@@ -126,6 +119,18 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Setup
           GUIWindowManager.CloseCurrentWindow();
         }
       }
+    }
+
+    protected override void OnPageDestroy(int newWindowId)
+    {
+      SaveSettings();
+
+      if (MediaPortal.GUI.Settings.GUISettings.SettingsChanged && !MediaPortal.Util.Utils.IsGUISettingsWindow(newWindowId))
+      {
+        MediaPortal.GUI.Settings.GUISettings.OnRestartMP(GetID);
+      }
+
+      base.OnPageDestroy(newWindowId);
     }
 
     public override void OnAction(Action action)

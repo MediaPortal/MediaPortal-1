@@ -395,9 +395,10 @@ namespace MediaPortal.EPG
       try
       {
         XmlSerializer s = new XmlSerializer(typeof (WebepgConfigFile));
-        TextReader r = new StreamReader(_configFile);
-        _config = (WebepgConfigFile)s.Deserialize(r);
-        r.Close();
+        using (TextReader r = new StreamReader(_configFile))
+        {
+          _config = (WebepgConfigFile)s.Deserialize(r);
+        }
       }
       catch (InvalidOperationException ex)
       {

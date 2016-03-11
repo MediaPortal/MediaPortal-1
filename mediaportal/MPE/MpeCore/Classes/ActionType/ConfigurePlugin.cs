@@ -93,7 +93,7 @@ namespace MpeCore.Classes.ActionType
         return SectionResponseEnum.Ok;
       }
       if (ItemProcessed != null)
-        ItemProcessed(this, new InstallEventArgs("Plugin configuration donne"));
+        ItemProcessed(this, new InstallEventArgs("Plugin configuration done"));
       return SectionResponseEnum.Ok;
     }
 

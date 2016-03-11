@@ -78,7 +78,7 @@ namespace MediaPortal.Core.Transcoding
     {
       if (!Supports(format)) return false;
       string ext = System.IO.Path.GetExtension(info.file);
-      if (ext.ToLower() != ".dvr-ms" && ext.ToLower() != ".sbe")
+      if (ext.ToLowerInvariant() != ".dvr-ms" && ext.ToLowerInvariant() != ".sbe")
       {
         Log.Info("DVRMS2DIVX: wrong file format");
         return false;

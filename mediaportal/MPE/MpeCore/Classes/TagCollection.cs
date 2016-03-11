@@ -49,7 +49,7 @@ namespace MpeCore.Classes
 
     public void Add(string tag)
     {
-      tag = tag.ToLower().Trim();
+      tag = tag.ToLowerInvariant().Trim();
       if (string.IsNullOrEmpty(tag))
         return;
       if (!Tags.Contains(tag))

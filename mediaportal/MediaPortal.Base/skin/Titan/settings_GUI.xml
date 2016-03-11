@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <id>1021</id>
+  <defaultcontrol>100</defaultcontrol>
+	<define>#header.label:897</define>
+  <rememberLastFocusedControl>yes</rememberLastFocusedControl>
+  <controls>
+	<import>common.time.settings.xml</import>
+	
+	<control>
+		<description>BG</description>
+		<type>image</type>
+		<id>1</id>
+		<width>1920</width>
+		<height>1080</height>
+		<texture>background_settings.png</texture>
+	</control>
+
+	<control>
+		<description>panel</description>
+		<type>image</type>
+		<id>0</id>
+		<posX>5</posX>
+		<posY>140</posY>
+		<width>618</width>
+		<height>940</height>
+		<texture>panel_settings_left.png</texture>
+	</control>
+	
+  <control>
+    <id>0</id>
+    <type>image</type>
+    <posX>68</posX>
+    <posY>36</posY>
+    <width>58</width>
+    <height>58</height>
+    <texture>icon_settings.png</texture>
+  </control>
+	
+	<control>
+		<type>label</type>
+		<id>1</id>
+		<posX>152</posX>
+		<posY>225</posY>
+		<width>500</width>
+		<label>101021</label>
+		<textcolor>00b7ff</textcolor>
+		<font>TitanLight20</font>
+	</control>
+	
+	<control>
+		<description>buttons</description>
+		<type>group</type>
+		<posX>122</posX>
+		<posY>321</posY>
+		<dimColor>ffffffff</dimColor>
+		<layout>StackLayout(7, Vertical, true)</layout>
+				
+			<control Style="SettingsButton">
+				<description>Skin</description>
+				<type>button</type>
+				<id>100</id>
+				<label>300120</label>
+				<onup>18</onup>
+				<hyperlink>705</hyperlink>
+			</control>
+				
+			<control Style="SettingsButton">
+				<description>General</description>
+				<type>button</type>
+				<id>200</id>
+				<label>101016</label>
+				<hyperlink>1022</hyperlink>
+			</control>
+				
+			<control Style="SettingsButton">
+				<description>Screen</description>
+				<type>button</type>
+				<id>300</id>
+				<label>131</label>
+				<hyperlink>9</hyperlink>
+			</control>
+				
+			<control Style="SettingsButton">
+				<description>Screensaver</description>
+				<type>button</type>
+				<id>400</id>
+				<label>102900</label>
+				<hyperlink>1020</hyperlink>
+			</control>
+				
+			<control Style="SettingsButton">
+				<description>Thumbnails</description>
+				<type>button</type>
+				<id>500</id>
+				<label>101005</label>
+				<hyperlink>1005</hyperlink>
+			</control>
+				
+			<control Style="SettingsButton">
+				<description>OnScreenDisplay</description>
+				<type>button</type>
+				<id>600</id>
+				<label>300121</label>
+				<hyperlink>1006</hyperlink>
+			</control>
+				
+			<control Style="SettingsButton">
+				<description>Skip steps</description>
+				<type>button</type>
+				<id>700</id>
+				<label>6024</label>
+				<hyperlink>708</hyperlink>
+			</control>
+				
+			<control Style="SettingsButton">
+				<description>File Menu</description>
+				<type>checkbutton</type>
+				<id>16</id>
+				<posX>99</posX>
+				<posY>368</posY>
+				<label>500</label>
+			</control>
+				
+			<control Style="SettingsButton">
+				<description>File menu pin button</description>
+				<type>button</type>
+				<id>18</id>
+				<label>300059</label>
+				<ondown>100</ondown>
+			</control>
+		</control>
+		
+  </controls>
+</window>

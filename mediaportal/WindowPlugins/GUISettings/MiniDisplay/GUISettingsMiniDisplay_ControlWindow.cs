@@ -24,10 +24,10 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Setup
 {
   public class DisplayControlWindow : GUIInternalWindow
   {
-    [SkinControl(40)] protected GUIToggleButtonControl btnDisplayVideo = null;
-    [SkinControl(41)] protected GUIToggleButtonControl btnDisplayAction = null;
+    [SkinControl(40)] protected GUICheckButton btnDisplayVideo = null;
+    [SkinControl(41)] protected GUICheckButton btnDisplayAction = null;
     [SkinControl(42)] protected GUISelectButtonControl btnDisplayActionTime = null;
-    [SkinControl(43)] protected GUIToggleButtonControl btnDisplayIdle = null;
+    [SkinControl(43)] protected GUICheckButton btnDisplayIdle = null;
     [SkinControl(44)] protected GUISelectButtonControl btnIdleDelay = null;
     private DisplayControl DisplayControl = new DisplayControl();
 
@@ -112,8 +112,14 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Setup
 
     protected override void OnPageDestroy(int newWindowId)
     {
+      SaveSettings();
+
+      if (MediaPortal.GUI.Settings.GUISettings.SettingsChanged && !MediaPortal.Util.Utils.IsGUISettingsWindow(newWindowId))
+      {
+        MediaPortal.GUI.Settings.GUISettings.OnRestartMP(GetID);
+      }
+
       base.OnPageDestroy(newWindowId);
-      this.SaveSettings();
     }
 
     public override bool OnMessage(GUIMessage message)

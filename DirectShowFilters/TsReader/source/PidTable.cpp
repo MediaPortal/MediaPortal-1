@@ -1,5 +1,5 @@
 /* 
- *	Copyright (C) 2006-2009 Team MediaPortal
+ *	Copyright (C) 2006-2013 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -129,6 +129,8 @@ bool CPidTable::HasTeletextPageInfo(int page)
 
 void CPidTable::LogPIDs()
 {
+  USES_CONVERSION;
+
   LogDebug(" pcr      pid: %4x ",PcrPid);
   LogDebug(" pmt      pid: %4x ",PmtPid);
 
@@ -137,7 +139,7 @@ void CPidTable::LogPIDs()
   {
     LogDebug(" video    pid: %4x type: %s",
       videoPids[i].Pid, 
-      StreamFormatAsString(videoPids[i].VideoServiceType));
+      T2A(StreamFormatAsString(videoPids[i].VideoServiceType)));
   }
 
   // Log all audio streams
@@ -146,7 +148,7 @@ void CPidTable::LogPIDs()
 	  LogDebug(" audio    pid: %4x language: %3s type: %s",
       audioPids[i].Pid, 
       audioPids[i].Lang,
-      StreamFormatAsString(audioPids[i].AudioServiceType));
+      T2A(StreamFormatAsString(audioPids[i].AudioServiceType)));
   }
   
   // Log all subtitle streams
@@ -155,7 +157,7 @@ void CPidTable::LogPIDs()
 	  LogDebug(" Subtitle pid: %4x language: %3s type: %s",
       subtitlePids[i].Pid, 
       subtitlePids[i].Lang,
-      StreamFormatAsString(subtitlePids[i].SubtitleServiceType));  
+      T2A(StreamFormatAsString(subtitlePids[i].SubtitleServiceType)));  
   }  
 }
 
@@ -196,6 +198,8 @@ LPCTSTR CPidTable::StreamFormatAsString(int streamType)
 		return _T("DTS-HD");
 	case 0x86:
 		return _T("DTS-HD Master Audio");
+	case 0x87:
+		return _T("DD+");
   case 0x0f:
 		return _T("AAC");
 	case 0x11:

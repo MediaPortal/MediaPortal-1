@@ -28,10 +28,7 @@ namespace MediaPortal.Player
 {
   public class BDOSDRenderer
   {
-    [DllImport("fontEngine.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
-    private static extern unsafe void FontEngineSetAlphaBlend(UInt32 alphaBlend);
-
-    private static BDOSDRenderer _instance;     
+    private static BDOSDRenderer _instance;
 
     /// <summary>
     /// The coordinates of current vertex buffer
@@ -135,8 +132,8 @@ namespace MediaPortal.Player
             wx = GUIGraphicsContext.VideoWindow.Right - (GUIGraphicsContext.VideoWindow.Width);
             wy = GUIGraphicsContext.VideoWindow.Top;
           }
-          
-          FontEngineSetAlphaBlend(1); //TRUE
+
+          DXNative.FontEngineSetRenderState((int)D3DRENDERSTATETYPE.D3DRS_ALPHABLENDENABLE, 1);
           CreateVertexBuffer(wx, wy, wwidth, wheight);
 
           // Make sure D3D objects haven't been disposed for some reason. This would cause

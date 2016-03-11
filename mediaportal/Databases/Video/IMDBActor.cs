@@ -226,5 +226,17 @@ namespace MediaPortal.Video.Database
         GUIPropertyManager.SetProperty("#hideActorinfo", "false");
       }
     }
+
+    public void ResetProperties()
+    {
+      GUIPropertyManager.SetProperty("#Actor.Name", string.Empty);
+      GUIPropertyManager.SetProperty("#Actor.DateOfBirth", string.Empty);
+      GUIPropertyManager.SetProperty("#Actor.PlaceOfBirth", string.Empty);
+      GUIPropertyManager.SetProperty("#Actor.LastUpdate", string.Empty);
+      GUIPropertyManager.SetProperty("#Actor.DateOfDeath", string.Empty);
+      GUIPropertyManager.SetProperty("#Actor.PlaceOfDeath", string.Empty);
+      GUIPropertyManager.SetProperty("#Actor.Biography", string.Empty);
+      GUIPropertyManager.SetProperty("#hideActorinfo", "true");
+    }
   }
 }

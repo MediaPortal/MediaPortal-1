@@ -34,7 +34,7 @@ namespace MediaPortal.InputDevices
   /// Hauppauge HCW remote control class
   /// all remotes are supported, if the buttons are defined in the XML file
   /// </summary>
-  public class HcwRemote
+  public class HcwRemote : IInputDevice
   {
     private bool _controlEnabled = false; // HCW remote enabled
     private bool _allowExternal = false; // External processes are controlled by the Hauppauge app
@@ -495,6 +495,32 @@ namespace MediaPortal.InputDevices
         }
       }
       return false;
+    }
+
+    /// <summary>
+    /// Required for the IInputDevice interface
+    /// </summary>    
+    /// <param name="msg"></param>
+    /// <param name="action"></param>
+    /// <param name="key"></param>
+    /// <param name="keyCode"></param>
+    /// <returns></returns>
+    public bool WndProc(ref System.Windows.Forms.Message msg, out GUI.Library.Action action, out char key, out Keys keyCode)
+    {
+      action = null;
+      key = (char)0;
+      keyCode = Keys.A;
+      return WndProc(msg);
+    }
+
+    /// <summary>
+    /// Get the mapping for this wndproc action
+    /// </summary>
+    /// <param name="msg"></param>
+    /// <returns></returns>
+    public MediaPortal.InputDevices.InputHandler.Mapping GetMapping(Message msg)
+    {
+      return null;
     }
   }
 }

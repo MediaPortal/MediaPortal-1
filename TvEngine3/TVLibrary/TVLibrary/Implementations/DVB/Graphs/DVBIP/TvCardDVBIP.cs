@@ -48,10 +48,10 @@ namespace TvLibrary.Implementations.DVB
     /// <summary>
     /// Contstructor
     /// </summary>
-    /// <param name="epgEvents"></param>
     /// <param name="device"></param>
     /// <param name="sequence"></param>
-    public TvCardDVBIP(IEpgEvents epgEvents, DsDevice device, int sequence) : base(epgEvents, device)
+    public TvCardDVBIP(DsDevice device, int sequence)
+      : base(device)
     {
       _cardType = CardType.DvbIP;
       _sequence = sequence;
@@ -252,7 +252,10 @@ namespace TvLibrary.Implementations.DVB
 
         try
         {
-          RunGraph(ch.SubChannelId, dvbipChannel.Url);
+          if (dvbipChannel.Url != _defaultUrl)
+          {
+            RunGraph(ch.SubChannelId, dvbipChannel.Url);
+          }
         }
         catch (TvExceptionNoPMT)
         {

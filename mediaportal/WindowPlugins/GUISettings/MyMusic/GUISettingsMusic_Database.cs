@@ -58,7 +58,6 @@ namespace MediaPortal.GUI.Settings
     private int _dateAddedSelectedIndex = 0;
     private ArrayList _dateAdded = new ArrayList();
     private Thread _scanThread = null;
-    private bool _scanRunning = false;
     private int _scanShare = 0;
 
     private String _defaultShare;
@@ -88,10 +87,10 @@ namespace MediaPortal.GUI.Settings
     {
       using (Profile.Settings xmlreader = new Profile.MPSettings())
       {
-        btnExtractthumbs.Selected = xmlreader.GetValueAsBool("musicfiles", "extractthumbs", false);
+        btnExtractthumbs.Selected = xmlreader.GetValueAsBool("musicfiles", "extractthumbs", true);
         btnCreateartistthumbs.Selected = xmlreader.GetValueAsBool("musicfiles", "createartistthumbs", false);
         btnCreategenrethumbs.Selected = xmlreader.GetValueAsBool("musicfiles", "creategenrethumbs", true);
-        btnUseFolderThumbs.Selected = xmlreader.GetValueAsBool("musicfiles", "useFolderThumbs", true);
+        btnUseFolderThumbs.Selected = xmlreader.GetValueAsBool("musicfiles", "useFolderThumbs", false);
         btnUseAllImages.Selected = xmlreader.GetValueAsBool("musicfiles", "useAllImages",
                                                              btnUseFolderThumbs.Selected);
         btnTreatFolderAsAlbum.Selected = xmlreader.GetValueAsBool("musicfiles", "treatFolderAsAlbum", false);
@@ -109,7 +108,7 @@ namespace MediaPortal.GUI.Settings
                                                                      btnTreatFolderAsAlbum.Selected);
         btnMonitorShares.Selected = xmlreader.GetValueAsBool("musicfiles", "monitorShares", false);
         btnUpdateSinceLastImport.Selected = xmlreader.GetValueAsBool("musicfiles", "updateSinceLastImport", true);
-        _updateSinceLastImport = String.Format("Only update files after {0}",
+        _updateSinceLastImport = String.Format(GUILocalizeStrings.Get(300232),
                                                            xmlreader.GetValueAsString("musicfiles", "lastImport",
                                                                                       "1900-01-01 00:00:00"));
         btnStripartistprefixes.Selected = xmlreader.GetValueAsBool("musicfiles", "stripartistprefixes", false);
@@ -124,9 +123,9 @@ namespace MediaPortal.GUI.Settings
         
         foreach (GUIListItem item in settingsSharesHelper.ShareListControl)
         {
-          string driveLetter = FolderInfo(item).Folder.Substring(0, 3).ToUpper();
+          string driveLetter = FolderInfo(item).Folder.Substring(0, 3).ToUpperInvariant();
 
-          if (Util.Utils.getDriveType(driveLetter) == 3 ||
+          if (driveLetter.StartsWith("\\\\") || Util.Utils.getDriveType(driveLetter) == 3 ||
               Util.Utils.getDriveType(driveLetter) == 4)
           {
             item.IsPlayed = false;
@@ -207,10 +206,16 @@ namespace MediaPortal.GUI.Settings
       }
     }
 
-    protected override void OnPageDestroy(int new_windowId)
+    protected override void OnPageDestroy(int newWindowId)
     {
       SaveSettings();
-      base.OnPageDestroy(new_windowId);
+
+      if (MediaPortal.GUI.Settings.GUISettings.SettingsChanged && !MediaPortal.Util.Utils.IsGUISettingsWindow(newWindowId))
+      {
+        MediaPortal.GUI.Settings.GUISettings.OnRestartMP(GetID);
+      }
+
+      base.OnPageDestroy(newWindowId);
     }
 
     protected override void OnClicked(int controlId, GUIControl control, Action.ActionType actionType)
@@ -342,7 +347,6 @@ namespace MediaPortal.GUI.Settings
     
     private void FolderScanThread()
     {
-      _scanRunning = true;
       ArrayList shares = new ArrayList();
       ArrayList scanShares = new ArrayList();
       
@@ -398,7 +402,7 @@ namespace MediaPortal.GUI.Settings
       // Now create a Settings Object with the Settings checked to pass to the Import
       MusicDatabaseSettings setting = new MusicDatabaseSettings();
       setting.CreateMissingFolderThumb = btnCreateMissingFolderThumbs.Selected;
-      setting.ExtractEmbeddedCoverArt = btnUseAllImages.Selected;
+      setting.ExtractEmbeddedCoverArt = btnExtractthumbs.Selected;
       setting.StripArtistPrefixes = btnStripartistprefixes.Selected;
       setting.TreatFolderAsAlbum = btnTreatFolderAsAlbum.Selected;
       setting.UseFolderThumbs = btnUseFolderThumbs.Selected;
@@ -416,28 +420,21 @@ namespace MediaPortal.GUI.Settings
       catch (Exception ex)
       {
         Log.Error("Folder Scan: Exception during processing: ", ex.Message);
-        _scanRunning = false;
       }
 
       using (Profile.Settings xmlreader = new Profile.MPSettings())
       {
-        _updateSinceLastImport = String.Format("Only update files after {0}",
+        _updateSinceLastImport = String.Format(GUILocalizeStrings.Get(300232),
                                                            xmlreader.GetValueAsString("musicfiles", "lastImport",
                                                                                       "1900-01-01 00:00:00"));
       }
 
-      _scanRunning = false;
       EnableControls(true);
       SetProperties();
 
-      GUIDialogNotify dlgNotify =
-        (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
-      if (null != dlgNotify)
-      {
-        dlgNotify.SetHeading(GUILocalizeStrings.Get(1020)); // Information
-        dlgNotify.SetText(GUILocalizeStrings.Get(300024)); // Scan finished
-        dlgNotify.DoModal(GetID);
-      }
+      // We can't send the message from here as this will result to run the dislog in a wrong thread
+      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_DATABASE_SCAN_ENDED, 0, 0, 0, 0, 0, null);
+      GUIWindowManager.SendThreadMessage(msg);
     }
 
     private void SetStatus(object sender, DatabaseReorgEventArgs e)

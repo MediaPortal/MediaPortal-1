@@ -104,9 +104,6 @@ CBitDepthAdapter::~CBitDepthAdapter()
 
 HRESULT CBitDepthAdapter::Init()
 {
-  HRESULT hr = InitAllocator();
-  if (FAILED(hr))
-    return hr;
   return CBaseAudioSink::Init();
 }
 
@@ -144,9 +141,12 @@ HRESULT CBitDepthAdapter::NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, int 
       SetOutputFormat(pwfx);
     }
 
+    m_bNextFormatPassthru = true;
     m_chOrder = *pChOrder;
     return hr;
   }
+  
+  m_bNextFormatPassthru = false;
 
   // Verify input format is PCM or IEEE_FLOAT
   bool isPCM = pwfx->SubFormat == KSDATAFORMAT_SUBTYPE_PCM;
@@ -190,9 +190,12 @@ HRESULT CBitDepthAdapter::NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, int 
     SAFE_DELETE_WAVEFORMATEX(pOutWfx);
     return hr;
   }
+
   if (bApplyChanges)
   {
     LogWaveFormat(pwfx, "BDA  - applying ");
+
+    m_pNextSink->NegotiateBuffer(pOutWfx, &m_nOutBufferSize, &m_nOutBufferCount, true);
 
     m_bPassThrough = false;
     SetInputFormat(pwfx);

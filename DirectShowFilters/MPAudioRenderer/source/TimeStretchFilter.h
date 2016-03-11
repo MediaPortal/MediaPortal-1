@@ -106,7 +106,7 @@ public:
   BOOL setSetting(int settingId, int value);
 
   HRESULT SetFormat(const WAVEFORMATEXTENSIBLE *pwfe);
-  HRESULT CheckSample(IMediaSample* pSample);
+  HRESULT CheckSample(IMediaSample* pSample, REFERENCE_TIME* rtDrained);
 
   bool putSamples(const short *inBuffer, long inSamples);
   uint receiveSamples(short **outBuffer, uint maxSamples);
@@ -120,7 +120,9 @@ protected:
 
   void setTempoInternal(float newTempo, float newAdjustment);
 
-  void CheckStreamContinuity(IMediaSample* pSample);
+  REFERENCE_TIME DrainBuffers(IMediaSample* pSample, REFERENCE_TIME rtNewStart);
+
+  void CheckStreamContinuity(IMediaSample* pSample, REFERENCE_TIME rtDrained);
   void CreateOutput(UINT32 nInFrames, UINT32 nOutFrames, double dBias, double dAdjustment, double dAVMult, bool bFlushPartialSample);
   void OutputSample(bool bForce);
 
@@ -135,6 +137,9 @@ private:
   AM_MEDIA_TYPE* m_pMediaType;
   REFERENCE_TIME m_rtInSampleTime;
   REFERENCE_TIME m_rtNextIncomingSampleTime;
+
+  REFERENCE_TIME m_rtLastOuputStart;
+  REFERENCE_TIME m_rtLastOuputEnd;
 
   static const uint SAMPLE_LEN = 0x40000;
   std::vector<CSoundTouchEx *> *m_Streams;

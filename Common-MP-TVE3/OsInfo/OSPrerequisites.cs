@@ -36,7 +36,7 @@ namespace OSPrerequisites
   public class OSPrerequisites
   {
     private const string MSG_NOT_SUPPORTED =
-      "Your platform is not supported by MediaPortal Team because it lacks critical hotfixes! \nPlease check our Wiki's requirements page.";
+      "Your platform is not supported by MediaPortal\nPlease check our Wiki's requirements page.";
 
     private const string MSG_NOT_INSTALLABLE =
       "Your platform is not supported and cannot be used for MediaPortal/TV-Server! \nPlease check our Wiki's requirements page.";

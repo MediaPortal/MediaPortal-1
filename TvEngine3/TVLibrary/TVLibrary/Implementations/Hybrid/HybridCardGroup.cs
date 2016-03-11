@@ -149,6 +149,18 @@ namespace TvLibrary.Implementations.Hybrid
     }
 
     /// <summary>
+    /// Register to receive EPG related events.
+    /// </summary>
+    /// <param name="eventListener">The event listener.</param>
+    public void RegisterEpgEventListener(IEpgEvents eventListener)
+    {
+      foreach (ITVCard card in _cards)
+      {
+        card.RegisterEpgEventListener(eventListener);
+      }
+    }
+
+    /// <summary>
     /// Grabs the epg.
     /// </summary>
     /// <param name="callback">The callback which gets called when epg is received or canceled.</param>
@@ -293,6 +305,16 @@ namespace TvLibrary.Implementations.Hybrid
     public ITvSubChannel GetSubChannel(int id)
     {
       return _cards[_currentCardIndex].GetSubChannel(id);
+    }
+
+    /// <summary>
+    /// Gets the first sub channel.
+    /// </summary>
+    /// <param name="id">The id.</param>
+    /// <returns></returns>
+    public ITvSubChannel GetFirstSubChannel()
+    {
+      return _cards[_currentCardIndex].GetFirstSubChannel();
     }
 
     /// <summary>

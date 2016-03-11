@@ -526,7 +526,7 @@ namespace MediaPortal.GUI.Library
     {
       using (Profile.Settings xmlreader = new Profile.MPSettings())
       {
-        _startWithBasicHome = xmlreader.GetValueAsBool("gui", "startbasichome", false);
+        _startWithBasicHome = xmlreader.GetValueAsBool("gui", "startbasichome", true);
       }
       //no active window yet
       _activeWindowId = -1;
@@ -651,15 +651,6 @@ namespace MediaPortal.GUI.Library
       LockAndDoOnAllRegisteredWindows(window => window.OnDeviceRestored());
     }
 
-    /// <summary>
-    /// Called by the runtime when the DirectX device has been lost
-    /// just let all windoww know about this so they can free their directx resources
-    /// </summary>
-    public static void OnDeviceLost()
-    {
-      LockAndDoOnAllRegisteredWindows(window => window.OnDeviceLost());
-    }
-
     #endregion
 
     #region window switching
@@ -772,6 +763,11 @@ namespace MediaPortal.GUI.Library
       }
     }
 
+    public static void ResetWindowsHistory()
+    {
+      _listHistory.Clear();
+    }
+
     private static void ActivateWindow(int newWindowId, bool replaceWindow, bool skipHistory, String loadParameter)
     {
       ActivateWindow(newWindowId, replaceWindow, skipHistory, loadParameter, false, -1);
@@ -878,16 +874,23 @@ namespace MediaPortal.GUI.Library
         #endregion
 
         //activate the new window
-        _activeWindowId = newWindow.GetID;
-        if (OnActivateWindow != null)
+        if (newWindow != null)
         {
-          OnActivateWindow(_activeWindowId);
-        }
+          _activeWindowId = newWindow.GetID;
+          if (OnActivateWindow != null)
+          {
+            OnActivateWindow(_activeWindowId);
+          }
 
-        msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_INIT, _activeWindowId, 0, 0, _previousActiveWindowId,
-                             (skipAnimation ? 1 : 0), loadParameter);
-        msg.Param3 = focusControlId;
-        newWindow.OnMessage(msg);
+            msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_INIT, _activeWindowId, 0, 0, _previousActiveWindowId,
+                                 (skipAnimation ? 1 : 0), loadParameter);
+            msg.Param3 = focusControlId;
+            newWindow.OnMessage(msg);
+        }
+        else
+        {
+          Log.Error("Windowmanager: can't load newWindow");
+        }
       }
       catch (Exception ex)
       {
@@ -1382,14 +1385,16 @@ namespace MediaPortal.GUI.Library
     {
       lock (thisLock)
       {
-        if (_routedWindow != null)
+        GUIWindow currentRoutedWindow = _routedWindow;
+        
+        if (currentRoutedWindow != null)
         {
           Log.Debug("WindowManager: unroute to {0}:{1}->{2}:{3}",
-                    _routedWindow, _routedWindow.GetID, GetWindow(ActiveWindow), ActiveWindow);
+                    currentRoutedWindow, currentRoutedWindow.GetID, GetWindow(ActiveWindow), ActiveWindow);
 
-          GUIMessage msgDlg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT, _routedWindow.GetID, 0, 0,
-                                 _routedWindow.PreviousWindowId, 0, null);
-          _routedWindow.OnMessage(msgDlg);
+          GUIMessage msgDlg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT, currentRoutedWindow.GetID, 0, 0,
+                                 currentRoutedWindow.PreviousWindowId, 0, null);
+          currentRoutedWindow.OnMessage(msgDlg);
         }
         //if (_currentWindowName != string.Empty && _routedWindow != null)
         {

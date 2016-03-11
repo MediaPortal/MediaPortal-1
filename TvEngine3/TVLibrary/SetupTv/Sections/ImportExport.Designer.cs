@@ -32,6 +32,7 @@ namespace SetupTv.Sections
       this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
       this.tabControl1 = new System.Windows.Forms.TabControl();
       this.exportTab = new System.Windows.Forms.TabPage();
+      this.exCheckSettings = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.exCheckRadioGroups = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.exCheckTVGroups = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.mpLabel3 = new MediaPortal.UserInterface.Controls.MPLabel();
@@ -41,6 +42,7 @@ namespace SetupTv.Sections
       this.exCheckTVChannels = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.mpLabel1 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.importTab = new System.Windows.Forms.TabPage();
+      this.imCheckSettings = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.imCheckRadioGroups = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.imCheckTvGroups = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.mpLabel2 = new MediaPortal.UserInterface.Controls.MPLabel();
@@ -70,6 +72,7 @@ namespace SetupTv.Sections
       // 
       // exportTab
       // 
+      this.exportTab.Controls.Add(this.exCheckSettings);
       this.exportTab.Controls.Add(this.exCheckRadioGroups);
       this.exportTab.Controls.Add(this.exCheckTVGroups);
       this.exportTab.Controls.Add(this.mpLabel3);
@@ -86,13 +89,26 @@ namespace SetupTv.Sections
       this.exportTab.Text = "Export";
       this.exportTab.UseVisualStyleBackColor = true;
       // 
+      // exCheckSettings
+      // 
+      this.exCheckSettings.AutoSize = true;
+      this.exCheckSettings.Checked = true;
+      this.exCheckSettings.CheckState = System.Windows.Forms.CheckState.Checked;
+      this.exCheckSettings.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.exCheckSettings.Location = new System.Drawing.Point(9, 186);
+      this.exCheckSettings.Name = "exCheckSettings";
+      this.exCheckSettings.Size = new System.Drawing.Size(62, 17);
+      this.exCheckSettings.TabIndex = 9;
+      this.exCheckSettings.Text = "Settings";
+      this.exCheckSettings.UseVisualStyleBackColor = true;
+      // 
       // exCheckRadioGroups
       // 
       this.exCheckRadioGroups.AutoSize = true;
       this.exCheckRadioGroups.Checked = true;
       this.exCheckRadioGroups.CheckState = System.Windows.Forms.CheckState.Checked;
       this.exCheckRadioGroups.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.exCheckRadioGroups.Location = new System.Drawing.Point(10, 135);
+      this.exCheckRadioGroups.Location = new System.Drawing.Point(9, 140);
       this.exCheckRadioGroups.Name = "exCheckRadioGroups";
       this.exCheckRadioGroups.Size = new System.Drawing.Size(87, 17);
       this.exCheckRadioGroups.TabIndex = 8;
@@ -105,7 +121,7 @@ namespace SetupTv.Sections
       this.exCheckTVGroups.Checked = true;
       this.exCheckTVGroups.CheckState = System.Windows.Forms.CheckState.Checked;
       this.exCheckTVGroups.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.exCheckTVGroups.Location = new System.Drawing.Point(10, 89);
+      this.exCheckTVGroups.Location = new System.Drawing.Point(9, 94);
       this.exCheckTVGroups.Name = "exCheckTVGroups";
       this.exCheckTVGroups.Size = new System.Drawing.Size(73, 17);
       this.exCheckTVGroups.TabIndex = 7;
@@ -114,7 +130,7 @@ namespace SetupTv.Sections
       // 
       // mpLabel3
       // 
-      this.mpLabel3.Location = new System.Drawing.Point(7, 36);
+      this.mpLabel3.Location = new System.Drawing.Point(6, 41);
       this.mpLabel3.Name = "mpLabel3";
       this.mpLabel3.Size = new System.Drawing.Size(304, 13);
       this.mpLabel3.TabIndex = 6;
@@ -122,7 +138,7 @@ namespace SetupTv.Sections
       // 
       // exportButton
       // 
-      this.exportButton.Location = new System.Drawing.Point(10, 181);
+      this.exportButton.Location = new System.Drawing.Point(9, 209);
       this.exportButton.Name = "exportButton";
       this.exportButton.Size = new System.Drawing.Size(75, 23);
       this.exportButton.TabIndex = 4;
@@ -136,7 +152,7 @@ namespace SetupTv.Sections
       this.exCheckSchedules.Checked = true;
       this.exCheckSchedules.CheckState = System.Windows.Forms.CheckState.Checked;
       this.exCheckSchedules.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.exCheckSchedules.Location = new System.Drawing.Point(10, 158);
+      this.exCheckSchedules.Location = new System.Drawing.Point(9, 163);
       this.exCheckSchedules.Name = "exCheckSchedules";
       this.exCheckSchedules.Size = new System.Drawing.Size(74, 17);
       this.exCheckSchedules.TabIndex = 3;
@@ -149,7 +165,7 @@ namespace SetupTv.Sections
       this.exCheckRadioChannels.Checked = true;
       this.exCheckRadioChannels.CheckState = System.Windows.Forms.CheckState.Checked;
       this.exCheckRadioChannels.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.exCheckRadioChannels.Location = new System.Drawing.Point(10, 112);
+      this.exCheckRadioChannels.Location = new System.Drawing.Point(9, 117);
       this.exCheckRadioChannels.Name = "exCheckRadioChannels";
       this.exCheckRadioChannels.Size = new System.Drawing.Size(91, 17);
       this.exCheckRadioChannels.TabIndex = 2;
@@ -162,7 +178,7 @@ namespace SetupTv.Sections
       this.exCheckTVChannels.Checked = true;
       this.exCheckTVChannels.CheckState = System.Windows.Forms.CheckState.Checked;
       this.exCheckTVChannels.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.exCheckTVChannels.Location = new System.Drawing.Point(10, 66);
+      this.exCheckTVChannels.Location = new System.Drawing.Point(9, 71);
       this.exCheckTVChannels.Name = "exCheckTVChannels";
       this.exCheckTVChannels.Size = new System.Drawing.Size(84, 17);
       this.exCheckTVChannels.TabIndex = 1;
@@ -171,7 +187,7 @@ namespace SetupTv.Sections
       // 
       // mpLabel1
       // 
-      this.mpLabel1.Location = new System.Drawing.Point(7, 7);
+      this.mpLabel1.Location = new System.Drawing.Point(6, 12);
       this.mpLabel1.Name = "mpLabel1";
       this.mpLabel1.Size = new System.Drawing.Size(433, 18);
       this.mpLabel1.TabIndex = 0;
@@ -180,6 +196,7 @@ namespace SetupTv.Sections
       // 
       // importTab
       // 
+      this.importTab.Controls.Add(this.imCheckSettings);
       this.importTab.Controls.Add(this.imCheckRadioGroups);
       this.importTab.Controls.Add(this.imCheckTvGroups);
       this.importTab.Controls.Add(this.mpLabel2);
@@ -195,6 +212,19 @@ namespace SetupTv.Sections
       this.importTab.TabIndex = 1;
       this.importTab.Text = "Import";
       this.importTab.UseVisualStyleBackColor = true;
+      // 
+      // imCheckSettings
+      // 
+      this.imCheckSettings.AutoSize = true;
+      this.imCheckSettings.Checked = true;
+      this.imCheckSettings.CheckState = System.Windows.Forms.CheckState.Checked;
+      this.imCheckSettings.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.imCheckSettings.Location = new System.Drawing.Point(9, 186);
+      this.imCheckSettings.Name = "imCheckSettings";
+      this.imCheckSettings.Size = new System.Drawing.Size(62, 17);
+      this.imCheckSettings.TabIndex = 15;
+      this.imCheckSettings.Text = "Settings";
+      this.imCheckSettings.UseVisualStyleBackColor = true;
       // 
       // imCheckRadioGroups
       // 
@@ -232,7 +262,7 @@ namespace SetupTv.Sections
       // 
       // importButton
       // 
-      this.importButton.Location = new System.Drawing.Point(9, 186);
+      this.importButton.Location = new System.Drawing.Point(9, 209);
       this.importButton.Name = "importButton";
       this.importButton.Size = new System.Drawing.Size(75, 23);
       this.importButton.TabIndex = 11;
@@ -328,5 +358,7 @@ namespace SetupTv.Sections
     private MediaPortal.UserInterface.Controls.MPCheckBox exCheckTVGroups;
     private MediaPortal.UserInterface.Controls.MPCheckBox imCheckRadioGroups;
     private MediaPortal.UserInterface.Controls.MPCheckBox imCheckTvGroups;
+    private MediaPortal.UserInterface.Controls.MPCheckBox exCheckSettings;
+    private MediaPortal.UserInterface.Controls.MPCheckBox imCheckSettings;
   }
 }

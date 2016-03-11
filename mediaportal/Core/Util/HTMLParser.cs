@@ -20,6 +20,7 @@
 
 using System;
 using System.Collections;
+using System.Globalization;
 using System.Web;
 
 namespace MediaPortal.Util
@@ -55,7 +56,7 @@ namespace MediaPortal.Util
       set
       {
         m_strContent = value;
-        m_strContentLC = m_strContent.ToLower();
+        m_strContentLC = m_strContent.ToLower(CultureInfo.CurrentCulture);
         resetPosition();
       }
     }
@@ -196,7 +197,7 @@ namespace MediaPortal.Util
     public static string removeEnclosingAnchorTag
       (string strString)
     {
-      string strStringLC = strString.ToLower();
+      string strStringLC = strString.ToLower(CultureInfo.CurrentCulture);
       int nStart = strStringLC.IndexOf("<a");
       if (nStart != -1)
       {
@@ -379,7 +380,7 @@ namespace MediaPortal.Util
     public bool atNoCase
       (string strString)
     {
-      strString = strString.ToLower();
+      strString = strString.ToLower(CultureInfo.CurrentCulture);
       if (m_strContentLC.IndexOf(strString, Position) == Position)
         return (true);
       return (false);
@@ -419,7 +420,7 @@ namespace MediaPortal.Util
       (string strString,
        ref string strExtract)
     {
-      strString = strString.ToLower();
+      strString = strString.ToLower(CultureInfo.CurrentCulture);
       int nPos = m_strContentLC.IndexOf(strString, Position);
       if (nPos != -1)
       {
@@ -464,7 +465,7 @@ namespace MediaPortal.Util
       (string strString,
        ref string strExtract)
     {
-      strString = strString.ToLower();
+      strString = strString.ToLower(CultureInfo.CurrentCulture);
       int nPos = m_strContentLC.IndexOf(strString, Position);
       if (nPos != -1)
       {
@@ -504,7 +505,7 @@ namespace MediaPortal.Util
     {
       // Initialize replacement process
       int nReplacements = 0;
-      strOccurrence = strOccurrence.ToLower();
+      strOccurrence = strOccurrence.ToLower(CultureInfo.CurrentCulture);
 
       // For every occurence...
       int nOccurrence = m_strContentLC.IndexOf(strOccurrence);
@@ -524,7 +525,7 @@ namespace MediaPortal.Util
 
         // Update the original string
         m_strContent = strReplacedString;
-        m_strContentLC = m_strContent.ToLower();
+        m_strContentLC = m_strContent.ToLower(CultureInfo.CurrentCulture);
         nReplacements++;
 
         // Find the next occurence
@@ -549,7 +550,7 @@ namespace MediaPortal.Util
         m_strContent = m_strContent.Replace(strOccurrence, strReplacement);
         nReplacements++;
       }
-      m_strContentLC = m_strContent.ToLower();
+      m_strContentLC = m_strContent.ToLower(CultureInfo.CurrentCulture);
       return (nReplacements);
     }
 
@@ -646,7 +647,7 @@ namespace MediaPortal.Util
         int nNewIndex = 0;
         if (bNoCase)
         {
-          strString = strString.ToLower();
+          strString = strString.ToLower(CultureInfo.CurrentCulture);
           nNewIndex = m_strContentLC.IndexOf(strString, Position);
         }
         else

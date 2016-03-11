@@ -1,10 +1,27 @@
+#region Copyright (C) 2005-2013 Team MediaPortal
+
+// Copyright (C) 2005-2013 Team MediaPortal
+// http://www.team-mediaportal.com
+// 
+// MediaPortal is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 2 of the License, or
+// (at your option) any later version.
+// 
+// MediaPortal is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with MediaPortal. If not, see <http://www.gnu.org/licenses/>.
+
+#endregion
+
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.Xml.Linq;
 using MediaPortal.Profile;
 using MediaPortal.GUI.Library;
-using MediaPortal.Configuration;
 using MediaPortal.Support;
 using System.IO;
 
@@ -17,7 +34,7 @@ namespace MediaPortal.Configuration
     /// <summary>
     /// Singleton
     /// </summary>
-    private static SettingsUpgradeManager _instance = new SettingsUpgradeManager();
+    private static readonly SettingsUpgradeManager UpgradeManagerInstance = new SettingsUpgradeManager();
 
     #endregion
 
@@ -28,7 +45,7 @@ namespace MediaPortal.Configuration
     /// </summary>
     internal static SettingsUpgradeManager Instance
     {
-      get { return _instance; }
+      get { return UpgradeManagerInstance; }
     }
 
     #endregion
@@ -55,13 +72,44 @@ namespace MediaPortal.Configuration
       RemoveEntry(settings, "plugins", "ISDN Caller-ID");
       RemoveEntry(settings, "plugins", "YAC Caller-ID");
       RemoveEntry(settings, "plugins", "MAME Devices");
+      RemoveEntry(settings, "plugins", "Audioscrobbler");
+      RemoveEntry(settings, "plugins", "Last.fm Radio");
       RemoveEntry(settings, "home", "Burner");
       RemoveEntry(settings, "home", "VideoEditor");
+      RemoveEntry(settings, "home", "Last.fm Radio");
       RemoveEntry(settings, "myplugins", "Burner");
       RemoveEntry(settings, "myplugins", "VideoEditor");
+      RemoveEntry(settings, "myplugins", "Last.fm Radio");
       RemoveEntry(settings, "pluginswindows", "MediaPortal.GUI.GUIBurner.GUIBurner");
       RemoveEntry(settings, "pluginswindows", "WindowPlugins.VideoEditor.GUIVideoEditor");
+      RemoveEntry(settings, "pluginswindows", "MediaPortal.GUI.RADIOLASTFM.GUIRadioLastFM");
       RemoveEntry(settings, "musicmisc", "playnowjumpto");
+      RemoveEntry(settings, "gui", "autosize");
+      RemoveEntry(settings, "debug", "useS3Hack");
+      RemoveEntry(settings, "general", "enables3trick");
+      RemoveEntry(settings, "general", "turnmonitoronafterresume");
+      RemoveEntry(settings, "general", "restartonresume");
+      RemoveEntry(settings, "audioplayer", "player");
+      RemoveEntry(settings, "audioplayer", "asio");
+      RemoveEntry(settings, "audioplayer", "asiodevice");
+      RemoveEntry(settings, "audioplayer", "mixing");
+      RemoveEntry(settings, "screenselector", "usescreenselector");
+      RemoveEntry(settings, "audioscrobbler", "user");
+      RemoveEntry(settings, "audioscrobbler", "usesimilarrandom");
+      RemoveEntry(settings, "audioscrobbler", "EnableNowPlaying");
+      RemoveEntry(settings, "audioscrobbler", "showtrayicon");
+      RemoveEntry(settings, "audioscrobbler", "showballontips");
+      RemoveEntry(settings, "audioscrobbler", "submitradiotracks");
+      RemoveEntry(settings, "audioscrobbler", "directskip");
+      RemoveEntry(settings, "audioscrobbler", "listentrycount");
+      RemoveEntry(settings, "audioscrobbler", "streamplayertype");
+      RemoveEntry(settings, "audioscrobbler", "oneclickstart");
+      RemoveEntry(settings, "audioscrobbler", "usesmskeyboard");
+      RemoveEntry(settings, "musicmisc", "fetchlastfmcovers");
+      RemoveEntry(settings, "musicmisc", "fetchlastfmtopalbums");
+      RemoveEntry(settings, "musicmisc", "lookupSimilarTracks");
+      RemoveEntry(settings, "musicmisc", "switchArtistOnLastFMSubmit");
+      RemoveEntry(settings, "musicfiles", "autoshuffle");
 
       // Moved entries
       MoveEntry(settings, "general", "gui", "mousesupport");
@@ -69,7 +117,6 @@ namespace MediaPortal.Configuration
       MoveEntry(settings, "general", "gui", "allowRememberLastFocusedItem");
       MoveEntry(settings, "general", "gui", "myprefix");
       MoveEntry(settings, "general", "gui", "startbasichome");
-      MoveEntry(settings, "general", "gui", "autosize");
       MoveEntry(settings, "general", "gui", "enableguisounds");
       MoveEntry(settings, "general", "gui", "ScrollSpeedRight");
       MoveEntry(settings, "general", "gui", "ScrollSpeedDown");
@@ -77,15 +124,14 @@ namespace MediaPortal.Configuration
       MoveEntry(settings, "general", "gui", "useonlyonehome");
 
       //  blue3/wide and blue4/blue4wide are now default/wide
-      UpdateEntryDefaultValue(settings, "skin", "name", "Blue3", "Default");
-      UpdateEntryDefaultValue(settings, "skin", "name", "Blue3wide", "DefaultWide");
-      UpdateEntryDefaultValue(settings, "skin", "name", "Blue4", "Default");
-      UpdateEntryDefaultValue(settings, "skin", "name", "Blue4wide", "DefaultWide");
+      UpdateEntryDefaultValue(settings, "skin", "name", "Blue3", "Titan");
+      UpdateEntryDefaultValue(settings, "skin", "name", "Blue3wide", "Titan");
+      UpdateEntryDefaultValue(settings, "skin", "name", "Blue4", "Titan");
+      UpdateEntryDefaultValue(settings, "skin", "name", "Blue4wide", "Titan");
+      UpdateEntryDefaultValue(settings, "skin", "name", "Default", "Titan");
+      UpdateEntryDefaultValue(settings, "skin", "name", "DefaultWide", "Titan");
 
-      //Mantis 3772 - Weather.com API is not free any more
-      //temporarily disable plugin
-      UpdateEntryDefaultValue(settings, "pluginswindows", "MediaPortal.GUI.Weather.GUIWindowWeather", "yes", "no");
-      UpdateEntryDefaultValue(settings, "plugins", "weather", "yes", "no");
+      ApplyDeploySettingUpgrade(settings);
 
       settings.Save();
 
@@ -104,13 +150,89 @@ namespace MediaPortal.Configuration
       }
 
       // Delete beta Blue4/Blue4Wide and outdated Blue3/Blue3Wide folders
-      string[] skins3_4 = { "Blue3", "Blue3Wide", "Blue4", "Blue4Wide" };
-      foreach (string skin in skins3_4)
+      string[] skins34 = { "Blue3", "Blue3Wide", "Blue4", "Blue4Wide" };
+      foreach (string skin in skins34)
       {
         if (Directory.Exists(skinbase + skin))
         {
           Log.Info("Deleting old skin \"" + skinbase + skin + "\"...");
           Directory.Delete(skinbase + skin, true);
+        }
+      }
+    }
+
+    /// <summary>
+    /// Checks for the existance of deploy.xml and if it exists it applies the settings to mediaportal.xml
+    /// </summary>
+    /// <param name="settings"></param>
+    internal void ApplyDeploySettingUpgrade(ISettingsProvider settings)
+    {
+
+      var deployFile = Config.GetFile(Config.Dir.Config, "deploy.xml");
+      if (!File.Exists(deployFile)) return;
+
+      try
+      {
+        var deployXml = XDocument.Load(deployFile);
+        foreach (var deployElement in deployXml.Elements("deploySettings").Elements("deploySetting"))
+        {
+          try
+          {
+            var section = (string) deployElement.Attribute("section");
+            var entry = (string) deployElement.Attribute("entry");
+            var value = (string) deployElement;
+            if (!string.IsNullOrEmpty(section) && !string.IsNullOrEmpty(entry))
+            {
+              Log.Info("Apply Deploy Setting: {0} - {1} to: {2}", section, entry, value);
+            }
+            settings.SetValue(section, entry, value);
+          }
+          catch (Exception ex)
+          {
+            Log.Error("Issue applying value from deploy.xml");
+            Log.Error(deployElement.ToString());
+            Log.Error(ex);
+          }
+        }
+        settings.Save();
+      }
+      catch (Exception ex)
+      {
+        Log.Error("Error applying updates from deploy.xml");
+        Log.Error(ex);
+      }
+    }
+
+    /// <summary>
+    /// Checks for the existance of deploy.xml and if it exists it applies the settings to mediaportal.xml
+    /// </summary>
+    internal void ApplyDeploySetting()
+    {
+      var deployFile = Config.GetFile(Config.Dir.Config, "deploy.xml");
+      if (!File.Exists(deployFile)) return;
+
+      using(var settings = new MPSettings())
+      {
+        var deployXml = XDocument.Load(deployFile);
+        foreach (var deployElement in deployXml.Elements("deploySettings").Elements("deploySetting"))
+        {
+          try
+          {
+            var section = (string)deployElement.Attribute("section");
+            var entry = (string)deployElement.Attribute("entry");
+            var value = (string)deployElement;
+            if (!string.IsNullOrEmpty(section) && !string.IsNullOrEmpty(entry))
+            {
+              Log.Info("Apply Deploy Setting: {0} - {1} to: {2}", section, entry, value);
+            }
+            settings.SetValue(section, entry, value);
+          }
+          catch (Exception ex)
+          {
+            Log.Error("Issue applying value from deploy.xml");
+            Log.Error(deployElement.ToString());
+            Log.Error(ex);
+          }
         }
       }
     }
@@ -137,7 +259,7 @@ namespace MediaPortal.Configuration
       }
       catch (Exception ex)
       {
-        Log.Error("(Settings upgrade) Unhandled exception when trying to remove entry " + section + "/" + entry + "\r\n\r\n" + ex.ToString());
+        Log.Error("(Settings upgrade) Unhandled exception when trying to remove entry " + section + "/" + entry + "\r\n\r\n" + ex);
       }
     }
 
@@ -164,7 +286,7 @@ namespace MediaPortal.Configuration
       }
       catch (Exception ex)
       {
-        Log.Error("(Settings upgrade) Unhandled exception when trying to move entry " + entry + " from section " + fromSection + "->" + toSection + "\r\n\r\n" + ex.ToString());
+        Log.Error("(Settings upgrade) Unhandled exception when trying to move entry " + entry + " from section " + fromSection + "->" + toSection + "\r\n\r\n" + ex);
       }
     }
 
@@ -174,8 +296,8 @@ namespace MediaPortal.Configuration
     /// <param name="settings"></param>
     /// <param name="section"></param>
     /// <param name="entry"></param>
-    /// <param name="fromValue"></param>
-    /// <param name="toValue"></param>
+    /// <param name="fromDefaultValue"></param>
+    /// <param name="toDefaultValue"></param>
     private void UpdateEntryDefaultValue(ISettingsProvider settings, string section, string entry, object fromDefaultValue, object toDefaultValue)
     {
 
@@ -193,7 +315,7 @@ namespace MediaPortal.Configuration
       }
       catch (Exception ex)
       {
-        Log.Error("(Settings upgrade) Unhandled exception when trying to update default value for entry " + section + "/" + entry + "\r\n\r\n" + ex.ToString());
+        Log.Error("(Settings upgrade) Unhandled exception when trying to update default value for entry " + section + "/" + entry + "\r\n\r\n" + ex);
       }
     }
 
@@ -204,9 +326,9 @@ namespace MediaPortal.Configuration
     /// <param name="skin"></param>
     private void ZipDirectory(string skinbase, string skin)
     {
-      string _zipFile = skinbase + "Old-" + skin + "-" + DateTime.Now.ToString("dd_MM_yy") + ".zip";
-      Archiver archiver = new Archiver();
-      archiver.AddDirectory(skinbase + skin, _zipFile, true);
+      string zipFile = skinbase + "Old-" + skin + "-" + DateTime.Now.ToString("dd_MM_yy") + ".zip";
+      var archiver = new Archiver();
+      archiver.AddDirectory(skinbase + skin, zipFile, true);
     }
 
     #endregion

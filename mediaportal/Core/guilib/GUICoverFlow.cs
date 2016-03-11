@@ -24,6 +24,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Timers;
+using System.Threading;
 using System.Windows.Forms;
 using System.Xml;
 using MediaPortal.ExtensionMethods;
@@ -433,6 +434,7 @@ namespace MediaPortal.GUI.Library
         //UnspinCard();
         if (action.wID == Action.ActionType.ACTION_SHOW_INFO)
         {
+          ResetSearchString();
           OnDefaultAction(action);
           UnspinCard();
           return;
@@ -731,7 +733,7 @@ namespace MediaPortal.GUI.Library
 
         GUIListItem pItem = _listItems[iItem];
 
-        if (pItem.Label.ToUpper().StartsWith(SearchKey.ToUpper()) == true)
+        if (pItem.Label.ToUpperInvariant().StartsWith(SearchKey.ToUpperInvariant()) == true)
         {
           bItemFound = true;
           break;
@@ -751,7 +753,13 @@ namespace MediaPortal.GUI.Library
 
       if ((bItemFound) && (iItem >= 0 && iItem < _listItems.Count))
       {
+        string searchstring = _searchString;
+        char previousKey = _previousKey;
+        char currentKey = _currentKey;
         SelectCardIndex(iItem);
+        _searchString = searchstring;
+        _previousKey = previousKey;
+        _currentKey = currentKey;
       }
       UpdateProperties();
     }
@@ -1566,12 +1574,6 @@ namespace MediaPortal.GUI.Library
         spinningCard.expected = 0.0f;
     }
 
-    private void QueueAction(Action action)
-    {
-      // Queue the user action.
-      _queuedAction = action;
-    }
-
     /// <summary>
     /// Renders cards to the right of the flow, does not render the selected card once animation has stopped.
     /// </summary>
@@ -1762,6 +1764,29 @@ namespace MediaPortal.GUI.Library
         }
         GUIGraphicsContext.PopMatrix();
       }
+    }
+
+    public virtual int RemoveItem(int iItem)
+    {
+      if (iItem < 0 || iItem > _listItems.Count)
+      {
+        return -1;
+      }
+
+      try
+      {
+        Monitor.Enter(this);
+        _listItems.RemoveAt(iItem);
+      }
+      catch (Exception ex)
+      {
+        Log.Error("GUICoverFlow.RemoveItem caused an exception: {0}", ex.Message);
+      }
+      finally
+      {
+        Monitor.Exit(this);
+      }
+      return SelectedListItemIndex;
     }
 
     public override void Render(float timePassed)
@@ -2149,7 +2174,7 @@ namespace MediaPortal.GUI.Library
 
       if (_searchString.Length > 0)
       {
-        GUIPropertyManager.SetProperty("#selecteditem", "{" + _searchString.ToLower() + "}");
+        GUIPropertyManager.SetProperty("#selecteditem", "{" + _searchString.ToLowerInvariant() + "}");
       }
     }
 
@@ -2158,7 +2183,6 @@ namespace MediaPortal.GUI.Library
         GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_CLICKED, WindowId, GetID, ParentID,
                                         (int)action.wID, 0, null);
         GUIGraphicsContext.SendMessage(msg);
-        ResetSearchString();
     }
 
     private void ResetSearchString()
@@ -2529,6 +2553,14 @@ namespace MediaPortal.GUI.Library
     public void Insert(int index, GUIListItem card)
     {
       AddCard(card, index);
+    }
+
+    public void Replace(int index, GUIListItem item)
+    {
+      if (item != null && index >= 0 && index < _listItems.Count)
+      {
+        _listItems[index] = item;
+      }
     }
 
     public void Clear()

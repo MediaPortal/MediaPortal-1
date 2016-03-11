@@ -1,0 +1,332 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+<id>28</id>
+<defaultcontrol>2</defaultcontrol>
+<allowoverlay>no</allowoverlay>
+<define>#header.label:136</define>
+<controls>
+
+    <!--            :: DEFAULT BACKGROUND ::            -->
+    <control>
+      <description>DEFAULT BACKGROUND</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>1920</width>
+      <height>1080</height>
+      <texture>background.png</texture>
+    </control>
+    
+    <import>common.fanart.selected.xml</import>
+    <import>myvideo.background.default.xml</import>
+    
+    <control>
+			<id>0</id>
+    	<type>image</type>
+      <posX>60</posX>
+      <posY>34</posY>
+      <width>68</width>
+			<height>60</height>
+       <texture>icon_movies.png</texture>
+	    <animation effect="fade" time="250">WindowOpen</animation>
+	    <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+	
+	<import>common.time.xml</import>
+	
+	<control>
+		<type>actiongroup</type>
+		<description>action menu</description>
+		<defaultcontrol>2</defaultcontrol>
+		<onexit>50</onexit>
+		<dimColor>00ffffff</dimColor>
+		<buttonX>0</buttonX>
+		<buttonY>0</buttonY>
+		<buttonwidth>497</buttonwidth>
+		<buttonheight>1080</buttonheight>
+		
+			<control>
+				<type>image</type>
+				<id>0</id>
+				<width>1920</width>
+				<height>1080</height>
+				<texture>semi_trans_back_hidden_menu.png</texture>
+				<visible>!Control.HasFocus(50)</visible>
+				<animation effect="fade" time="450">visible</animation>
+				<animation effect="fade" time="400">hidden</animation>
+			</control>
+	
+			<control>
+				<type>image</type>
+				<id>0</id>
+				<posY>0</posY>
+				<posX>0</posX>
+				<width>612</width>
+				<height>1074</height>
+				<texture>menu_bg.png</texture>
+				<visible>!Control.HasFocus(50)+control.isvisible(50)</visible>
+	    	<animation effect="fade" time="0">WindowClose</animation>
+	    	<animation effect="slide" start="-150,0" time="100">visible</animation>
+	    	<animation effect="fade" time="50">visible</animation>
+	    	<animation effect="fade" time="0">hidden</animation>
+			</control>
+	
+			<control>
+				<type>image</type>
+				<id>0</id>
+				<posY>237</posY>
+				<posX>116</posX>
+				<width>369</width>
+				<height>1</height>
+				<texture>hiddenmenu_separator.png</texture>
+				<visible>!Control.HasFocus(50)</visible>
+	    	<animation effect="fade" time="0">WindowClose</animation>
+	    	<animation effect="slide" start="-150,0" time="100">visible</animation>
+	    	<animation effect="fade" time="50">visible</animation>
+	    	<animation effect="fade" time="0">hidden</animation>
+			</control>
+					
+			<control>
+				<description>Menu label</description>
+				<type>label</type>
+				<id>1</id>
+				<posX>116</posX>
+				<posY>100</posY>
+				<label>924</label>
+				<font>fontB16</font>
+				<textcolor>393939</textcolor>
+				<visible>!Control.HasFocus(50)</visible>
+	    	<animation effect="fade" time="0">WindowClose</animation>
+	    	<animation effect="slide" start="-150,0" time="100">visible</animation>
+	    	<animation effect="fade" time="50">visible</animation>
+	    	<animation effect="fade" time="0">hidden</animation>
+	    </control>
+			
+			<control>
+				<description>Playlist label</description>
+				<type>label</type>
+				<id>1</id>
+				<posX>116</posX>
+				<posY>247</posY>
+				<label>136</label>
+				<font>fontB12</font>
+				<textcolor>393939</textcolor>
+	 			<visible>!Control.HasFocus(50)</visible>
+	    	<animation effect="fade" time="0">WindowClose</animation>
+	    	<animation effect="slide" start="-150,0" time="100">visible</animation>
+	    	<animation effect="fade" time="50">visible</animation>
+	    	<animation effect="fade" time="0">hidden</animation>
+			</control>
+          
+			<control>
+      	<type>group</type>
+        <description>group element</description>
+ 				<visible>!Control.HasFocus(50)</visible>
+    		<animation effect="fade" time="0">WindowClose</animation>
+    		<animation effect="slide" start="-150,0" time="100">visible</animation>
+    		<animation effect="fade" time="50">visible</animation>
+    		<animation effect="fade" time="0">hidden</animation>
+        <posX>53</posX>
+        <posY>155</posY>
+        <layout>StackLayout(0, Vertical, true)</layout>	
+					
+					<control>
+						<description>View-As</description>
+						<type>menubutton</type>
+						<id>2</id>
+						<textureFocus>hiddenmenu_item_selected.png</textureFocus>
+						<textureNoFocus>-</textureNoFocus>
+						<width>499</width>
+						<height>69</height>
+						<textXOff>62</textXOff>
+						<textYOff>16</textYOff>
+						<label></label>	
+						<mode>dialoglist</mode>				
+						<dialogTitle>792</dialogTitle> 					
+						<valueTextInButton>yes</valueTextInButton>
+						<valuePrefixText>95</valuePrefixText>
+						<onright>50</onright>
+						<onleft>50</onleft>
+	          <ondown>20</ondown>
+	          <onup>25</onup>
+					</control>
+		
+          <control>
+          	<description>Empty button</description>
+            <type>button</type>
+            <id>0</id>
+    			  <textureFocus>-</textureFocus>
+    			  <textureNoFocus>-</textureNoFocus>
+						<width>499</width>
+						<height>69</height>
+            <label>-</label>
+            <visible>true</visible>
+      		</control>
+    
+					<control>
+						<description>Shuffle button</description>
+						<type>button</type>
+						<id>20</id>
+						<label>191</label>
+						<onright>50</onright>
+						<onup>2</onup>
+						<ondown>30</ondown>
+						<textureFocus>hiddenmenu_item_selected.png</textureFocus>
+						<textureNoFocus>-</textureNoFocus>
+						<width>499</width>
+						<height>69</height>
+						<textXOff>62</textXOff>
+						<textYOff>16</textYOff>
+					</control>
+		
+					<control>
+						<description>Repeat on/off button</description>
+						<type>checkbutton</type>
+						<id>30</id>
+						<label>486</label>
+						<onright>50</onright>
+						<onup>20</onup>
+						<ondown>21</ondown>
+						<textureFocus>hiddenmenu_item_selected.png</textureFocus>
+						<textureNoFocus>-</textureNoFocus>
+			      <textureCheckmark>settings_checkmark_checked.png</textureCheckmark>
+			      <textureCheckmarkNoFocus>settings_checkmark_unchecked.png</textureCheckmarkNoFocus>
+            <textcolor>FFFFFFFF</textcolor>
+            <colordiffuse>ffffffff</colordiffuse>
+            <textcolorNoFocus>ff393939</textcolorNoFocus>
+	    			<width>499</width>
+	    			<height>69</height>
+	    			<textXOff>62</textXOff>
+	    			<textYOff>16</textYOff>
+					</control>
+		
+					<control>
+						<description>Save button</description>
+						<type>button</type>
+						<id>21</id>
+						<label>190</label>
+						<onright>50</onright>
+						<onup>30</onup>
+						<ondown>9</ondown>
+						<textureFocus>hiddenmenu_item_selected.png</textureFocus>
+						<textureNoFocus>-</textureNoFocus>
+						<width>499</width>
+						<height>69</height>
+						<textXOff>62</textXOff>
+						<textYOff>16</textYOff>
+					</control>
+						
+					<control>
+						<description>My Playlists</description>
+						<type>button</type>
+						<id>9</id>
+						<label>983</label>
+						<onright>50</onright>
+						<ondown>22</ondown>
+						<onup>21</onup>
+						<textureFocus>hiddenmenu_item_selected.png</textureFocus>
+						<textureNoFocus>-</textureNoFocus>
+						<width>499</width>
+						<height>69</height>
+						<textXOff>62</textXOff>
+						<textYOff>16</textYOff>
+					</control>
+		
+					<control>
+						<description>Clear button</description>
+						<type>button</type>
+						<id>22</id>
+						<label>192</label>
+						<onright>50</onright>
+						<onup>9</onup>
+						<ondown>23</ondown>
+						<textureFocus>hiddenmenu_item_selected.png</textureFocus>
+						<textureNoFocus>-</textureNoFocus>
+						<width>499</width>
+						<height>69</height>
+						<textXOff>62</textXOff>
+						<textYOff>16</textYOff>
+					</control>
+		
+					<control>
+						<description>Play button</description>
+						<type>button</type>
+						<id>23</id>
+						<label>208</label>
+						<onright>50</onright>
+						<onup>22</onup>
+						<ondown>24</ondown>
+						<textureFocus>hiddenmenu_item_selected.png</textureFocus>
+						<textureNoFocus>-</textureNoFocus>
+						<width>499</width>
+						<height>69</height>
+						<textXOff>62</textXOff>
+						<textYOff>16</textYOff>
+					</control>
+		
+					<control>
+						<description>Next button</description>
+						<type>button</type>
+						<id>24</id>
+						<label>209</label>
+						<onright>50</onright>
+						<onup>23</onup>
+						<ondown>25</ondown>
+						<textureFocus>hiddenmenu_item_selected.png</textureFocus>
+						<textureNoFocus>-</textureNoFocus>
+						<width>499</width>
+						<height>69</height>
+						<textXOff>62</textXOff>
+						<textYOff>16</textYOff>
+					</control>
+		
+					<control>
+						<description>Previous button</description>
+						<type>button</type>
+						<id>25</id>
+						<label>210</label>
+						<onright>50</onright>
+						<onup>24</onup>
+						<ondown>2</ondown>
+						<textureFocus>hiddenmenu_item_selected.png</textureFocus>
+						<textureNoFocus>-</textureNoFocus>
+						<width>499</width>
+						<height>69</height>
+						<textXOff>62</textXOff>
+						<textYOff>16</textYOff>
+					</control>
+	
+				</control>
+			
+		</control>
+
+
+		
+
+	<import>common.facade.video.default.xml</import>
+	
+	<control>
+		<id>1</id>
+		<type>image</type>
+		<posX>0</posX>
+		<posY>325</posY>
+		<texture>hiddenmenu_tab.png</texture>
+		<visible>facadeview.playlist+Control.HasFocus(50)</visible>
+	</control>
+	
+	<control>
+		<id>1</id>
+		<type>image</type>
+		<posX>624</posX>
+		<posY>0</posY>
+		<texture>hiddenmenu_tab_up.png</texture>
+		<visible>facadeview.album+Control.HasFocus(50)</visible>
+	</control>
+<import>myvideo.views.default.xml</import>
+<import>myvideo.watchedCount.xml</import>
+<import>myvideo.mediainfo.xml</import>
+<import>common.overlay.xml</import>
+	
+</controls>
+</window>

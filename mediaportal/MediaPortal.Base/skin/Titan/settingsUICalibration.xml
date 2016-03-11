@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+<id>10</id>
+<defaultcontrol>2</defaultcontrol>
+<allowoverlay>no</allowoverlay>
+<controls>
+	<control>
+		<description>calibration image</description>
+		<type>image</type>
+		<id>1</id>
+		<width>1366</width>
+		<height>768</height>
+		<texture>settingsUICalibration.png</texture>
+		<animation effect="fade" time="150">WindowOpen</animation>
+		<animation effect="fade" time="150">WindowClose</animation>
+	</control>
+
+	<control>
+		<description>rectangle image</description>
+		<type>image</type>
+		<id>1</id>
+		<posX>314</posX>
+		<posY>175</posY>
+		<texture>calibration_bar.png</texture>
+	</control>
+
+	<control>
+		<description>coordinates label</description>
+		<type>label</type>
+		<id>2</id>
+		<posX>340</posX>
+		<posY>194</posY>
+		<label>5</label>
+		<font>font12</font>
+		<animation effect="fade" time="150">WindowOpen</animation>
+		<animation effect="fade" time="150">WindowClose</animation>
+	</control>
+
+</controls>
+</window>

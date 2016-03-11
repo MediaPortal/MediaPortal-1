@@ -1,0 +1,169 @@
+<fonts>
+
+<font>
+	<name>font2</name>
+	<filename>TitanSmall</filename>
+	<height>11</height>
+	<start>0</start>
+	<end>1536</end>
+	<bold>no</bold>
+</font>
+
+<font>
+	<name>font10</name>
+	<filename>Titan</filename>
+	<height>10</height>
+	<start>0</start>
+	<end>1536</end>
+</font>
+
+<font>
+	<name>font11</name>
+	<filename>Titan</filename>
+	<height>11</height>
+	<start>0</start>
+	<end>1536</end>
+</font>
+
+<font>
+	<name>font12</name>
+	<filename>Titan</filename>
+	<height>12</height>
+	<start>0</start>
+	<end>1536</end>
+</font>
+
+<font>
+	<name>font14</name>
+	<filename>Titan</filename>
+	<height>14</height>
+	<start>0</start>
+	<end>1536</end>
+</font>
+
+<font>
+	<name>font22</name>
+	<filename>Titan</filename>
+	<height>22</height>
+	<start>0</start>
+	<end>1536</end>
+</font>
+
+<font>
+	<name>fontB11</name>
+	<filename>TitanMedium</filename>
+	<height>11</height>
+	<start>0</start>
+	<end>1536</end>
+	<bold>yes</bold>
+</font>
+
+<font>
+	<name>fontB12</name>
+	<filename>TitanMedium</filename>
+	<height>12</height>
+	<start>0</start>
+	<end>1536</end>
+	<bold>yes</bold>
+</font>
+
+<font>
+	<name>fontB14</name>
+	<filename>TitanMedium</filename>
+	<height>14</height>
+	<start>0</start>
+	<end>1536</end>
+	<bold>yes</bold>
+</font>
+
+<font>
+	<name>fontB16</name>
+	<filename>TitanMedium</filename>
+	<height>16</height>
+	<start>0</start>
+	<end>1536</end>
+	<bold>yes</bold>
+</font>
+
+<font>
+	<name>fontB20</name>
+	<filename>TitanMedium</filename>
+	<height>20</height>
+	<start>0</start>
+	<end>1536</end>
+	<bold>yes</bold>
+</font>
+
+<font>
+	<name>TitanLight10</name>
+	<filename>TitanLight</filename>
+	<height>10</height>
+	<start>0</start>
+	<end>1536</end>
+	<bold>no</bold>
+</font>
+
+<font>
+	<name>TitanLight11</name>
+	<filename>TitanLight</filename>
+	<height>11</height>
+	<start>0</start>
+	<end>1536</end>
+	<bold>no</bold>
+</font>
+
+<font>
+	<name>TitanLight12</name>
+	<filename>TitanLight</filename>
+	<height>12</height>
+	<start>0</start>
+	<end>1536</end>
+	<bold>no</bold>
+</font>
+
+<font>
+	<name>TitanLight14</name>
+	<filename>TitanLight</filename>
+	<height>14</height>
+	<start>0</start>
+	<end>1536</end>
+	<bold>no</bold>
+</font>
+
+<font>
+	<name>TitanLight16</name>
+	<filename>TitanLight</filename>
+	<height>16</height>
+	<start>0</start>
+	<end>1536</end>
+	<bold>no</bold>
+</font>
+
+
+<font>
+	<name>TitanLight20</name>
+	<filename>TitanLight</filename>
+	<height>20</height>
+	<start>0</start>
+	<end>1536</end>
+	<bold>no</bold>
+</font>
+
+<font>
+	<name>TitanLight22</name>
+	<filename>TitanLight</filename>
+	<height>22</height>
+	<start>0</start>
+	<end>1536</end>
+	<bold>no</bold>
+</font>
+
+<font>
+	<name>TitanLight32</name>
+	<filename>TitanLight</filename>
+	<height>32</height>
+	<start>0</start>
+	<end>1536</end>
+	<bold>no</bold>
+</font>
+</fonts>

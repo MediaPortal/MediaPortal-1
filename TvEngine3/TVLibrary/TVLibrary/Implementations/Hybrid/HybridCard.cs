@@ -299,6 +299,15 @@ namespace TvLibrary.Implementations.Hybrid
     }
 
     /// <summary>
+    /// Register to receive EPG related events.
+    /// </summary>
+    /// <param name="eventListener">The event listener.</param>
+    public void RegisterEpgEventListener(IEpgEvents eventListener)
+    {
+      _group.RegisterEpgEventListener(eventListener);
+    }
+
+    /// <summary>
     /// Grabs the epg.
     /// </summary>
     /// <param name="callback">The callback which gets called when epg is received or canceled.</param>
@@ -445,6 +454,15 @@ namespace TvLibrary.Implementations.Hybrid
     public ITvSubChannel GetSubChannel(int id)
     {
       return _group.GetSubChannel(id);
+    }
+
+    /// <summary>
+    /// Gets the first sub channel.
+    /// </summary>    
+    /// <returns></returns>
+    public ITvSubChannel GetFirstSubChannel()
+    {
+      return _group.GetFirstSubChannel();
     }
 
     /// <summary>

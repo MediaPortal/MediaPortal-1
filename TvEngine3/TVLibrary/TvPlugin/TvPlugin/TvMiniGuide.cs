@@ -216,7 +216,7 @@ namespace TvPlugin
         if (_channelList.Count == 0)
         {
           Channel newChannel = new Channel(false, true, 0, DateTime.MinValue, false,
-                                           DateTime.MinValue, 0, true, "", GUILocalizeStrings.Get(911));
+                                           DateTime.MinValue, 0, true, "", GUILocalizeStrings.Get(911), 0);
           for (int i = 0; i < 10; ++i)
           {
             _channelList.Add(newChannel);
@@ -267,7 +267,7 @@ namespace TvPlugin
                 Channel changeChannel = null;
                 if (AutoZap)
                 {
-                  if ((TVHome.Navigator.Channel.IdChannel != SelectedChannel.IdChannel) || g_Player.IsTVRecording)
+                  if (TVHome.Navigator.Channel.IdChannel != SelectedChannel.IdChannel || !g_Player.IsTimeShifting || g_Player.IsTVRecording)
                   {
                     List<Channel> tvChannelList = GetChannelListByGroup();
                     if (tvChannelList != null)
@@ -669,10 +669,7 @@ namespace TvPlugin
             sb.Append(" - ");
             if (!_byIndex)
             {
-              foreach (TuningDetail detail in tvChannelList[i].ReferringTuningDetail())
-              {
-                sb.Append(detail.ChannelNumber);
-              }
+              sb.Append(tvChannelList[i].ChannelNumber);
             }
             else
             {

@@ -1,0 +1,412 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+	<id>7890</id>
+	<defaultcontrol>10</defaultcontrol>
+	<allowoverlay>no</allowoverlay>
+	<define>#usePlayFanart:Yes</define>
+	<controls>
+	
+		<control>
+			<description>BG</description>
+			<type>image</type>
+			<id>0</id>
+			<texture>BasicHomeBG\music_default.jpg</texture>
+			<width>1920</width>
+			<height>1080</height>
+		</control>
+
+		<import>common.music.play.fanart.xml</import>
+
+        <control>
+            <id>0</id>
+            <type>image</type>
+			<posX>178</posX>
+			<posY>676</posY>
+			<width>1560</width>
+			<height>402</height>
+			<texture>music_nowplaying_bg.png</texture>
+    		<animation effect="fade" start="0" end="100" time="300" delay="350">WindowOpen</animation>
+    		<animation effect="fade" start="100" end="0" time="0" delay="0">WindowClose</animation>
+        </control>
+		
+    	<control>
+    		<description>details bg</description>
+    		<type>image</type>
+    		<id>0</id>
+    		<posX>177</posX>
+    		<posY>33</posY>
+			<width>1560</width>
+			<height>652</height>
+    		<texture>lastfm_details_bg.png</texture>
+    		<animation effect="fade" start="100" end="0" time="200" reversible="false">Hidden</animation>
+    		<animation effect="fade" start="0" end="100" delay="150" time="400" reversible="false">Visible</animation>
+    		<animation effect="fade" start="0" end="100" time="300" delay="350">WindowOpen</animation>
+    		<animation effect="fade" start="100" end="0" time="0" delay="0">WindowClose</animation>
+    	</control>
+        
+	<control>
+		<description>clock bg</description>
+		<type>image</type>
+		<id>0</id>
+		<posX>1480</posX>
+		<posY>748</posY>
+		<width>188</width>
+		<height>80</height>
+		<texture>osd_clock_bg.png</texture>
+		<animation effect="fade" start="0" end="100" time="300" delay="350">WindowOpen</animation>
+		<animation effect="fade" start="100" end="0" time="0" delay="0">WindowClose</animation>
+	</control>
+		
+	<control>
+		<type>label</type>
+		<id>1</id>
+		<description>Clock</description>
+		<posX>1497</posX>
+		<posY>792</posY>
+		<width>144</width>
+		<font>TitanLight14</font>
+		<align>center</align>
+		<label>#time</label>
+		<textcolor>ff85cffe</textcolor>
+		<animation effect="fade" start="0" end="100" time="300" delay="350">WindowOpen</animation>
+		<animation effect="fade" start="100" end="0" time="0" delay="0">WindowClose</animation>
+	</control>
+		
+	<control>
+		<description>Animated EQ BG</description>
+		<type>image</type>
+		<id>0</id>
+		<posX>1480</posX>
+		<posY>840</posY>
+		<width>188</width>
+		<height>80</height>
+		<texture>EQ_bg.png</texture>
+		<animation effect="fade" start="0" end="100" time="300" delay="350">WindowOpen</animation>
+		<animation effect="fade" start="100" end="0" time="0" delay="0">WindowClose</animation>
+	</control>
+        
+	<control>
+		<description>Animated EQ</description>
+		<type>image</type>
+		<id>0</id>
+		<posX>1495</posX>
+		<posY>852</posY>
+		<width>158</width>
+		<height>55</height>
+		<texture>MusicPlayingNow_EQ.gif</texture>
+        <visible>player.playing</visible>
+		<animation effect="fade" start="0" end="100" time="300" delay="350">WindowOpen</animation>
+		<animation effect="fade" start="100" end="0" time="0" delay="0">WindowClose</animation>
+	</control>
+        
+<!--		
+		<control>
+			<description>Stream Label</description>
+			<type>label</type>
+			<label>#Play.Current.Lastfm.CurrentStream</label>
+			<posX>1850</posX>
+			<posY>1030</posY>
+			<width>1000</width>
+			<align>right</align>
+		</control>	
+-->        
+		<control>
+			<description>group element</description>
+			<type>group</type>
+			<layout>StackLayout(0, Vertical, true)</layout>
+			<animation effect="fade" start="0" end="100" time="300" delay="350">WindowOpen</animation>
+			<animation effect="fade" start="100" end="0" time="0" delay="0">WindowClose</animation>
+			<posX>282</posX>
+			<posY>144</posY>
+			<control>
+				<description>start a stream</description>
+				<type>button</type>
+				<id>10</id>
+				<posX>106</posX>
+				<posY>137</posY>
+				<label>34001</label>
+				<onleft>6101</onleft>
+				<onright>123</onright>
+				<onup>6661</onup>
+				<ondown>15</ondown>
+			</control>
+			<control>
+				<description>choose artist</description>
+				<type>button</type>
+				<id>15</id>
+				<label>Artists</label>
+				<onleft>15</onleft>
+				<onright>123</onright>
+				<onup>10</onup>
+				<ondown>20</ondown>
+			</control>
+			<control>
+				<description>choose tag</description>
+				<type>button</type>
+				<id>20</id>
+				<label>Tags</label>
+				<onleft>20</onleft>
+				<onright>123</onright>
+				<onup>15</onup>
+				<ondown>30</ondown>
+			</control>
+			<control>
+				<description>choose friend</description>
+				<type>button</type>
+				<id>30</id>
+				<label>Friends</label>
+				<onleft>30</onleft>
+				<onright>123</onright>
+				<onup>20</onup>
+				<ondown>35</ondown>
+			</control>
+			<control>
+				<description>toggle submit mode</description>
+				<type>checkbutton</type>
+				<id>35</id>
+				<label>34014</label>
+				<onleft>35</onleft>
+				<onright>123</onright>
+				<onup>30</onup>
+				<ondown>40</ondown>
+				<visible>true</visible>
+			</control>
+			<control>
+				<description>toggle discovery mode</description>
+				<type>checkbutton</type>
+				<id>40</id>
+				<label>34013</label>
+				<onleft>40</onleft>
+				<onright>123</onright>
+				<onup>35</onup>
+				<ondown>6661</ondown>
+				<visible>false</visible>
+			</control>
+            
+			<control>
+				<description>toggle discovery mode</description>
+				<type>button</type>
+				<id>6661</id>
+				<label>Tags</label>
+				<onleft>6661</onleft>
+				<onright>123</onright>
+				<onup>40</onup>
+				<ondown>10</ondown>
+			</control>
+            
+		</control>
+
+        <control>
+            <id>112</id>
+            <description>album art image</description>
+            <type>image</type>
+            <posX>250</posX>
+            <posY>746</posY>
+            <width>250</width>
+            <height>250</height>
+            <texture mask="music_listview_mask.png">#Play.Current.Thumb</texture>
+			<keepaspectratio>yes</keepaspectratio>
+			<centered>yes</centered>	
+			<zoom>yes</zoom>			
+			<animation effect="fade" start="0" end="100" time="300" delay="350">WindowOpen</animation>
+			<animation effect="fade" start="100" end="0" time="0" delay="0">WindowClose</animation>
+			<animation effect="Fade" time="500">VisibleChange</animation>
+        </control>
+
+		<control>
+			<type>image</type>
+			<id>1</id>
+			<posX>1236</posX>
+			<posY>310</posY>
+			<width>530</width>
+			<height>555</height>
+			<texture>music_thumb_big_overlay_reflect.png</texture>
+			<visible>player.hasmedia</visible>
+			<animation effect="fade" time="150" reversible="false">visible</animation>
+		</control>
+
+        <control>
+            <id>1</id>
+            <description>Progress background</description>
+            <type>image</type>
+            <visible>player.hasmedia</visible>
+			<posX>648</posX>
+			<posY>961</posY>
+			<width>914</width>
+			<height>18</height>
+			<texture>osd_progress_bg_music.png</texture>
+			<animation effect="fade" start="0" end="100" time="300" delay="350">WindowOpen</animation>
+			<animation effect="fade" start="100" end="0" time="0" delay="0">WindowClose</animation>
+        </control>
+
+        <control>
+            <id>1</id>
+            <description>progress bar</description>
+            <type>progress</type>
+            <visible>player.hasmedia</visible>
+			<posX>638</posX>
+			<posY>963</posY>
+			<width>935</width>
+			<height>15</height>
+			<label>#percentage</label>
+			<texturebg>-</texturebg>
+			<lefttexture>osd_progress_left.png</lefttexture>
+			<midtexture>osd_progress_mid.png</midtexture>
+			<righttexture>osd_progress_right.png</righttexture>
+            <label>#percentage</label>
+			<animation effect="fade" start="0" end="100" time="300" delay="350">WindowOpen</animation>
+			<animation effect="fade" start="100" end="0" time="0" delay="0">WindowClose</animation>
+        </control>
+
+        <control>
+            <id>0</id>
+            <description>title label</description>
+            <type>fadelabel</type>
+            <posX>545</posX>
+            <posY>751</posY>
+			<width>924</width>
+            <font>fontB16</font>
+            <label>#Play.Current.Title</label>
+			<animation effect="fade" start="0" end="100" time="300" delay="350">WindowOpen</animation>
+			<animation effect="fade" start="100" end="0" time="0" delay="0">WindowClose</animation>
+        </control>
+
+		<control>
+			<type>fadelabel</type>
+			<description>artist label</description>
+			<id>0</id>
+            <posX>545</posX>
+            <posY>809</posY>
+			<width>924</width>
+            <font>fontB14</font>
+            <textcolor>ff6aa5cb</textcolor>
+			<label>#Play.Current.Artist - #Play.Current.Album</label>
+			<visible>player.hasmedia</visible>
+			<animation effect="fade" start="0" end="100" time="300" delay="350">WindowOpen</animation>
+			<animation effect="fade" start="100" end="0" time="0" delay="0">WindowClose</animation>
+		</control>
+
+        <control>
+            <id>0</id>
+            <description>track duration label</description>
+            <type>label</type>
+            <visible>player.hasmedia</visible>
+			<posX>548</posX>
+			<posY>953</posY>
+			<label>#currentplaytime</label>
+			<align>left</align>
+			<font>font11</font>
+			<animation effect="fade" start="0" end="100" time="300" delay="350">WindowOpen</animation>
+			<animation effect="fade" start="100" end="0" time="0" delay="0">WindowClose</animation>
+        </control>
+        
+        <control>
+            <id>0</id>
+            <description>track duration label</description>
+            <type>fadelabel</type>
+            <visible>player.hasmedia</visible>
+			<posX>1660</posX>
+			<posY>953</posY>
+			<label>#currentremaining</label>
+			<align>right</align>
+			<font>font11</font>
+			<animation effect="fade" start="0" end="100" time="300" delay="350">WindowOpen</animation>
+			<animation effect="fade" start="100" end="0" time="0" delay="0">WindowClose</animation>
+        </control>
+
+		<control>
+			<type>label</type>
+			<description>similar hint</description>
+			<id>443</id>
+			<posX>785</posX>
+			<posY>146</posY>
+            <font>fontB16</font>
+            <textcolor>6aa5cb</textcolor>
+			<label>34039</label>
+			<width>664</width>
+			<visible>control.hastext(444) + Control.HasFocus(6661)</visible>
+			<animation effect="fade" start="0" end="100" time="300" delay="350">WindowOpen</animation>
+			<animation effect="fade" start="100" end="0" time="0" delay="0">WindowClose</animation>
+		</control>
+		
+		<control>
+			<type>textbox</type>
+			<description>Similar artists box</description>
+			<id>444</id>
+			<posX>785</posX>
+			<posY>200</posY>
+			<width>664</width>
+			<label>#Play.Current.Lastfm.SimilarArtists</label>
+            <visible>control.hastext(444) + Control.HasFocus(6661)</visible>
+			<animation effect="fade" start="0" end="100" time="300" delay="350">WindowOpen</animation>
+			<animation effect="fade" start="100" end="0" time="0" delay="0">WindowClose</animation>
+		</control>
+		
+		<control>
+			<type>label</type>
+			<description>tag hint</description>
+			<id>332</id>
+			<posX>785</posX>
+			<posY>300</posY>
+            <font>fontB16</font>
+            <textcolor>6aa5cb</textcolor>
+			<label>34041</label>
+			<width>664</width>
+			<visible>control.hastext(333) + Control.HasFocus(6661)</visible>
+			<animation effect="fade" start="0" end="100" time="300" delay="350">WindowOpen</animation>
+			<animation effect="fade" start="100" end="0" time="0" delay="0">WindowClose</animation>
+		</control>
+		
+		<control>
+			<type>textbox</type>
+			<description>Track tags box</description>
+			<id>333</id>
+			<posX>785</posX>
+			<posY>354</posY>
+			<width>664</width>
+			<label>#Play.Current.Lastfm.TrackTags</label>
+            <visible>Control.HasFocus(6661)</visible>
+			<animation effect="fade" start="0" end="100" time="300" delay="350">WindowOpen</animation>
+			<animation effect="fade" start="100" end="0" time="0" delay="0">WindowClose</animation>
+		</control>
+		
+		<control>
+			<type>label</type>
+			<description>start/change stream</description>
+			<id>1</id>
+			<posX>785</posX>
+			<posY>146</posY>
+            <font>fontB16</font>
+            <textcolor>6aa5cb</textcolor>
+			<label>34001</label>
+			<visible>player.hasmedia + !Control.HasFocus(6661)</visible>
+			<animation effect="fade" start="0" end="100" time="300" delay="350">WindowOpen</animation>
+			<animation effect="fade" start="100" end="0" time="0" delay="0">WindowClose</animation>
+		</control>
+        
+		<control>
+			<type>listcontrol</type>
+			<description>current playlist control</description>
+			<id>123</id>
+			<onleft>10</onleft>
+			<onright>123</onright>
+			<posX>723</posX>
+            <posY>204</posY>
+            <width>930</width>
+			<height>450</height>
+            <textXOff>80</textXOff>
+            <IconXOff>58</IconXOff>
+            <IconYOff>0</IconYOff>
+            <itemHeight>52</itemHeight>
+            <itemWidth>52</itemWidth>
+			<spinPosX>2000</spinPosX>
+            <spaceBetweenItems>5</spaceBetweenItems>
+			<spinCanFocus>no</spinCanFocus>
+			<visible allowhiddenfocus="True">player.hasmedia + !Control.HasFocus(6661)</visible>
+            <dimColor>ffffffff</dimColor>
+			<animation effect="fade" start="0" end="100" time="300" delay="350">WindowOpen</animation>
+			<animation effect="fade" start="100" end="0" time="0" delay="0">WindowClose</animation>
+		</control>
+
+	</controls>
+</window>

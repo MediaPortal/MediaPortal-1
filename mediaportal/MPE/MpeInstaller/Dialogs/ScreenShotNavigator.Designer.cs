@@ -32,14 +32,15 @@
       this.btn_next = new System.Windows.Forms.Button();
       this.btn_prev = new System.Windows.Forms.Button();
       this.progressBar1 = new System.Windows.Forms.ProgressBar();
+      this.lblIndex = new System.Windows.Forms.Label();
       ((System.ComponentModel.ISupportInitialize)(this.pictureBox)).BeginInit();
       this.SuspendLayout();
       // 
       // pictureBox
       // 
-      this.pictureBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.pictureBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.pictureBox.BackColor = System.Drawing.Color.Black;
       this.pictureBox.ImageLocation = "";
       this.pictureBox.Location = new System.Drawing.Point(-1, -1);
@@ -73,13 +74,23 @@
       // 
       // progressBar1
       // 
-      this.progressBar1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.progressBar1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.progressBar1.Location = new System.Drawing.Point(92, 392);
       this.progressBar1.Name = "progressBar1";
       this.progressBar1.Size = new System.Drawing.Size(511, 23);
       this.progressBar1.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
       this.progressBar1.TabIndex = 3;
+      // 
+      // lblIndex
+      // 
+      this.lblIndex.Dock = System.Windows.Forms.DockStyle.Bottom;
+      this.lblIndex.ForeColor = System.Drawing.Color.White;
+      this.lblIndex.Location = new System.Drawing.Point(0, 386);
+      this.lblIndex.Name = "lblIndex";
+      this.lblIndex.Size = new System.Drawing.Size(697, 34);
+      this.lblIndex.TabIndex = 4;
+      this.lblIndex.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
       // 
       // ScreenShotNavigator
       // 
@@ -91,6 +102,7 @@
       this.Controls.Add(this.btn_prev);
       this.Controls.Add(this.btn_next);
       this.Controls.Add(this.pictureBox);
+      this.Controls.Add(this.lblIndex);
       this.MinimizeBox = false;
       this.Name = "ScreenShotNavigator";
       this.Text = "ScreenShotNavigator";
@@ -106,5 +118,6 @@
     private System.Windows.Forms.Button btn_next;
     private System.Windows.Forms.Button btn_prev;
     private System.Windows.Forms.ProgressBar progressBar1;
+    private System.Windows.Forms.Label lblIndex;
   }
 }

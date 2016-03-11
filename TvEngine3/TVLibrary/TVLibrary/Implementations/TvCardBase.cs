@@ -20,6 +20,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using DirectShowLib;
 using TvLibrary.Interfaces;
 using TvLibrary.Implementations.DVB;
@@ -69,14 +70,18 @@ namespace TvLibrary.Implementations
       _graphState = GraphState.Idle;
       _device = device;
       _tunerDevice = device;
-      _name = device.Name;
-      _devicePath = device.DevicePath;
 
-      //get preload card value
-      if (_devicePath != null)
+      if (device != null)
       {
-        GetPreloadBitAndCardId();
-        GetSupportsPauseGraph();
+        _name = device.Name;
+        _devicePath = device.DevicePath;
+
+        //get preload card value
+        if (_devicePath != null)
+        {
+          GetPreloadBitAndCardId();
+          GetSupportsPauseGraph();
+        }
       }
     }
 
@@ -548,7 +553,7 @@ namespace TvLibrary.Implementations
       }
     }
 
-    private void GetSupportsPauseGraph()
+    protected void GetSupportsPauseGraph()
     {
       //fetch stopgraph value from db and apply it.
       IList<Card> cardsInDbs = Card.ListAll();
@@ -711,7 +716,8 @@ namespace TvLibrary.Implementations
       if (_mapSubChannels.Count == 0)
       {
         _subChannelId = 0;
-     
+        IsEpgGrabbing = false;  // stop the EPG grabber
+
         Log.Log.Info("tvcard:FreeSubChannel : no subchannels present, pausing graph");          
         if (SupportsPauseGraph)
         {
@@ -725,7 +731,7 @@ namespace TvLibrary.Implementations
       }
       else
       {
-        Log.Log.Info("tvcard:FreeSubChannel : subchannels STILL present {}, continueing graph", _mapSubChannels.Count);
+        Log.Log.Info("tvcard:FreeSubChannel : subchannels STILL present {0}, continuing graph", _mapSubChannels.Count);
       }
     }
 
@@ -742,6 +748,20 @@ namespace TvLibrary.Implementations
       }
       _mapSubChannels.Clear();
       _subChannelId = 0;
+    }
+
+    /// <summary>
+    /// Gets the first sub channel.
+    /// </summary>
+    /// <returns></returns>
+    public ITvSubChannel GetFirstSubChannel()
+    {
+      ITvSubChannel subChannel = null;
+      if (_mapSubChannels.Count > 0)
+      {
+        subChannel = _mapSubChannels.FirstOrDefault().Value;
+      }
+      return subChannel;
     }
 
     /// <summary>
@@ -778,5 +798,13 @@ namespace TvLibrary.Implementations
     }
 
     #endregion
+
+    /// <summary>
+    /// Register to receive EPG related events.
+    /// </summary>
+    /// <param name="eventListener">The event listener.</param>
+    public virtual void RegisterEpgEventListener(IEpgEvents eventListener)
+    {
+    }
   }
 }

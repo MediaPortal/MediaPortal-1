@@ -19,6 +19,8 @@
 #endregion
 
 using System;
+using MediaPortal.DeployTool.Sections;
+using System.Xml;
 using Microsoft.Win32;
 using System.IO;
 using System.Diagnostics;
@@ -49,14 +51,96 @@ namespace MediaPortal.DeployTool.InstallationChecks
       {
         return false;
       }
+
+      // If we have a deploy.xml left over from previous installation then attempt to delete it
+      var deployXml = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) +
+                      @"\Team MediaPortal\MediaPortal\deploy.xml";
+      if (File.Exists(deployXml))
+      {
+        try
+        {
+          File.Delete(deployXml);
+        }
+        catch (Exception ex)
+        {
+          var result = MessageBox.Show(Localizer.GetBestTranslation("MainWindow_AppName"),
+                                       Localizer.GetBestTranslation("DeployXmlDelete_Failed"),
+                                       MessageBoxButtons.AbortRetryIgnore,
+                                       MessageBoxIcon.Error);
+          switch (result)
+          {
+            case DialogResult.Abort:
+              Environment.Exit(-2);
+              break;
+            case DialogResult.Ignore:
+              break;
+            case DialogResult.Retry:
+              return Install();
+          }
+        }
+      }
+
+      //if user has chosen a skin then update deploy.xml so this is picked up by MP
+      //if no skin has been chosed (user has selected one click install) then set one
+      var chosenSkin = InstallationProperties.Instance.Get("ChosenSkin");
+      if (string.IsNullOrEmpty(chosenSkin))
+      {
+        chosenSkin = "Titan";
+      }
+
+      if (InstallationProperties.Instance["UpdateMode"] == "yes")
+      {
+        if (chosenSkin != "[Existing]")
+        {
+          Utils.SetDeployXml("skin", "name", chosenSkin);
+        }
+      }
+
+      // Remove PowerScheduler++ information from installed extensions
+      string InstalledMpesPath = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) + @"\Team MediaPortal\MediaPortal\Installer\V2\InstalledExtensions.xml";
+      XmlDocument doc = new XmlDocument();
+      try
+      {
+        // Load the installed extensions file
+        doc.Load(InstalledMpesPath);
+
+        // Get all PackageClass nodes
+        XmlNodeList packageClassNodes = doc.SelectNodes("/ExtensionCollection/Items/PackageClass");
+        foreach (XmlNode packageClassNode in packageClassNodes)
+        {
+          // Remove node if GeneralInfo/Name is PowerSchedeuler++
+          XmlNode idNode = packageClassNode.SelectSingleNode("GeneralInfo/Id");
+          if (idNode.InnerText == "9b9bc24e-69ca-4abc-8810-f8f95bd4bbe6")
+          {
+            packageClassNode.ParentNode.RemoveChild(packageClassNode);
+            doc.Save(InstalledMpesPath);
+            break;
+          }
+        }
+      }
+      catch (Exception)
+      {
+      }
+
       string targetDir = InstallationProperties.Instance["MPDir"];
 
-      //NSIS installer need to to if it's a fresh install or an update (chefkoch)
+      //NSIS installer need to know if it's a fresh install or an update (chefkoch)
       string UpdateMode = InstallationProperties.Instance["UpdateMode"] == "yes" ? "/UpdateMode" : string.Empty;
 
+      Process setup = null;
+
+      if (UpgradeDlg.reInstallForce)
+      {
+        setup = Process.Start(_fileName,
+                              String.Format("/S /DeployMode --DeployMode /UpdateMode"));
+      }
+      else
+      {
       //NSIS installer doesn't want " in parameters (chefkoch)
-      //Rember that /D must be the last one         (chefkoch)
-      Process setup = Process.Start(_fileName, String.Format("/S /DeployMode {0} /D={1}", UpdateMode, targetDir));
+      //Remember that /D must be the last one         (chefkoch)
+        setup = Process.Start(_fileName,
+                                      String.Format("/S /DeployMode --DeployMode {0} /D={1}", UpdateMode, targetDir));
+      }
       if (setup != null)
       {
         setup.WaitForExit();
@@ -66,6 +150,17 @@ namespace MediaPortal.DeployTool.InstallationChecks
           {
             Utils.NotifyReboot(GetDisplayName());
           }
+
+          // installer backups existing folder so need to write deploy.xml after installation 
+          // else it will get backed up
+          if (InstallationProperties.Instance["UpdateMode"] != "yes")
+          {
+            if (chosenSkin != "[Existing]")
+            {
+              Utils.SetDeployXml("skin", "name", chosenSkin);
+            }
+          }
+
           return true;
         }
       }
@@ -130,8 +225,19 @@ namespace MediaPortal.DeployTool.InstallationChecks
 
         if (MpPath != null && File.Exists(MpPath))
         {
+          if (UpgradeDlg.reInstallForce)
+          {
+            result.state = Utils.IsCurrentPackageUpdatabled(MpVer) ? CheckState.VERSION_MISMATCH : CheckState.INSTALLED;
+          }
+          else if (UpgradeDlg.freshForce)
+          {
+            result.state = CheckState.VERSION_MISMATCH;
+          }
+          else
+          {
           result.state = Utils.IsPackageUpdatabled(MpVer) ? CheckState.VERSION_MISMATCH : CheckState.INSTALLED;
         }
+      }
       }
       return result;
     }

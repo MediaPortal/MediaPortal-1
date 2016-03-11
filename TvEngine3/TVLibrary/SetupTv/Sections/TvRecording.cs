@@ -31,6 +31,7 @@ using Gentle.Framework;
 using TvDatabase;
 using TvControl;
 using TvLibrary.Log;
+using TvThumbnails;
 using SetupTv.Dialogs;
 
 #endregion
@@ -234,6 +235,13 @@ namespace SetupTv.Sections
       enableDiskQuotaControls();
 
       LoadComboBoxDrive();
+
+      checkBoxTVThumbs.Checked = (layer.GetSetting("TVThumbnailsEnabled", "yes").Value == "yes");
+      checkBoxShareThumb.Checked = (layer.GetSetting("TVThumbnailsLeaveShareThumb", "no").Value == "yes");
+      numericUpDownThumbColumns.Value = Convert.ToInt32(layer.GetSetting("TVThumbnailsColumns", "1").Value);
+      numericUpDownThumbRows.Value = Convert.ToInt32(layer.GetSetting("TVThumbnailsRows", "1").Value);
+      trackBarQuality.Value = Convert.ToInt32(layer.GetSetting("TVThumbnailsQuality", "4").Value);
+      numericUpDownTimeOffset.Value = Convert.ToInt32(layer.GetSetting("TVThumbnailsTimeOffset", "0").Value);
     }
 
     private static decimal ValueSanityCheck(int value, int min, int max)
@@ -303,6 +311,33 @@ namespace SetupTv.Sections
       setting.Persist();
 
       UpdateDriveInfo(true);
+
+      setting = layer.GetSetting("TVThumbnailsEnabled", "yes");
+      if (setting.Value != (checkBoxTVThumbs.Checked ? "yes" : "no"))
+        _needRestart = checkBoxTVThumbs.Checked;
+      setting.Value = checkBoxTVThumbs.Checked ? "yes" : "no";
+      setting.Persist();
+
+      setting = layer.GetSetting("TVThumbnailsLeaveShareThumb", "yes");
+      setting.Value = checkBoxShareThumb.Checked ? "yes" : "no";
+      setting.Persist();
+
+      setting = layer.GetSetting("TVThumbnailsColumns", "1");
+      setting.Value = numericUpDownThumbColumns.Value.ToString();
+      setting.Persist();
+
+      setting = layer.GetSetting("TVThumbnailsRows", "1");
+      setting.Value = numericUpDownThumbRows.Value.ToString();
+      setting.Persist();
+
+      setting = layer.GetSetting("TVThumbnailsQuality", "4");
+      setting.Value = trackBarQuality.Value.ToString();
+      setting.Persist();
+
+      setting = layer.GetSetting("TVThumbnailsTimeOffset", "1");
+      setting.Value = numericUpDownTimeOffset.Value.ToString();
+      setting.Persist();
+           
     }
 
     #endregion
@@ -439,7 +474,6 @@ namespace SetupTv.Sections
 
       MatroskaTagHandler.OnTagLookupCompleted -= OnLookupCompleted;
 
-      SaveSettings();
       if (_needRestart)
       {
         if (MessageBox.Show(this, "Changes made require TvService to restart. Restart it now?", "TvService",
@@ -532,6 +566,87 @@ namespace SetupTv.Sections
       _needRestart = true;
     }
 
+    private void buttonClearTVThumbs_Click(object sender, EventArgs e)
+    {
+      Log.Debug("Delete thumb files in thumbs folder {0}", Thumbs.ThumbnailFolder);
+      try
+      {
+        foreach (FileInfo f in new DirectoryInfo(Thumbs.ThumbnailFolder).GetFiles("*.jpg"))
+          f.Delete();
+        _needRestart = true;
+      }
+      catch (Exception ex)
+      {
+        Log.Error("Could not delete thumb files - {0}", ex.Message);
+      }
+    }
+
+    private void trackBarQuality_ValueChanged(object sender, EventArgs e)
+    {
+      switch (trackBarQuality.Value)
+      {
+        case 0:
+          Thumbs.Quality = Thumbs.ThumbQuality.fastest;
+          break;
+        case 1:
+          Thumbs.Quality = Thumbs.ThumbQuality.fast;
+          break;
+        case 2:
+          Thumbs.Quality = Thumbs.ThumbQuality.average;
+          break;
+        case 3:
+          Thumbs.Quality = Thumbs.ThumbQuality.higher;
+          break;
+        case 4:
+          Thumbs.Quality = Thumbs.ThumbQuality.highest;
+          break;
+      }
+      setThumbQualityLabels();
+      _needRestart = true;
+    }
+
+    private void setThumbQualityLabels()
+    {
+      switch (trackBarQuality.Value)
+      {
+        case 0:
+          labelCurrentResolution.Text = Convert.ToString((int)Thumbs.ThumbLargeResolution);
+          // labelCurrentCompositing.Text = "High Speed";
+          // labelCurrentInterpolation.Text = "Nearest Neighbor";
+          // labelCurrentSmoothing.Text = "None";
+          labelRecommendedCurrent.Text = @"Small CRTs";
+          break;
+        case 1:
+          labelCurrentResolution.Text = Convert.ToString((int)Thumbs.ThumbLargeResolution);
+          // labelCurrentCompositing.Text = "High Speed";
+          // labelCurrentInterpolation.Text = "Low";
+          // labelCurrentSmoothing.Text = "High Speed";
+          labelRecommendedCurrent.Text = "Small wide CRTs, medium CRTs";
+          break;
+        case 2:
+          labelCurrentResolution.Text = Convert.ToString((int)Thumbs.ThumbLargeResolution);
+          // labelCurrentCompositing.Text = "Default";
+          // labelCurrentInterpolation.Text = "Default";
+          // labelCurrentSmoothing.Text = "Default";
+          labelRecommendedCurrent.Text = "Large wide CRTs, small LCDs";
+          break;
+        case 3:
+          labelCurrentResolution.Text = Convert.ToString((int)Thumbs.ThumbLargeResolution);
+          // labelCurrentCompositing.Text = "Assume Linear";
+          // labelCurrentInterpolation.Text = "High Quality";
+          // labelCurrentSmoothing.Text = "High Quality";
+          labelRecommendedCurrent.Text = "LCDs, Plasmas";
+          break;
+        case 4:
+          labelCurrentResolution.Text = Convert.ToString((int)Thumbs.ThumbLargeResolution);
+          // labelCurrentCompositing.Text = "High Quality";
+          // labelCurrentInterpolation.Text = "High Quality Bicubic";
+          // labelCurrentSmoothing.Text = "High Quality";
+          labelRecommendedCurrent.Text = "Very large LCDs, Projectors";
+          break;
+      }
+    }
+
     #endregion
 
     #region Quota handling
@@ -542,26 +657,56 @@ namespace SetupTv.Sections
         return;
       string drive = (string)comboBoxDrive.SelectedItem;
       ulong freeSpace = Utils.GetFreeDiskSpace(drive);
-      long totalSpace = Utils.GetDiskSize(drive);
+      ulong totalSpace = Utils.GetDiskSpace(drive);
 
       labelFreeDiskspace.Text = Utils.GetSize((long)freeSpace);
-      labelTotalDiskSpace.Text = Utils.GetSize(totalSpace);
+      labelTotalDiskSpace.Text = Utils.GetSize((long)totalSpace);
       if (labelTotalDiskSpace.Text == "0")
         labelTotalDiskSpace.Text = "Not available - WMI service not available";
+      
+      Setting setting;
+      
       if (save)
       {
         TvBusinessLayer layer = new TvBusinessLayer();
-        Setting setting = layer.GetSetting("freediskspace" + drive[0]);
+        
+        if (drive.StartsWith(@"\"))
+        {
+          setting = layer.GetSetting("freediskspace" + drive);
+        }
+        else
+        {
+          setting = layer.GetSetting("freediskspace" + drive[0]);
+        }
+
         if (mpNumericTextBoxDiskQuota.Value < 500)
           mpNumericTextBoxDiskQuota.Value = 500;
         long quota = mpNumericTextBoxDiskQuota.Value * 1024;
         setting.Value = quota.ToString();
         setting.Persist();
+
+        if (enableDiskQuota.Checked)
+        {
+          Log.Debug("SetupTV: Disk Quota for {0} is enabled and set to {1} MB", drive, (int)quota / 1024);
+        }
+        else
+        {
+          Log.Debug("SetupTV: Disk Quota for {0} is disabled", drive);
+        }
       }
       else
       {
         TvBusinessLayer layer = new TvBusinessLayer();
-        Setting setting = layer.GetSetting("freediskspace" + drive[0]);
+
+        if (drive.StartsWith(@"\"))
+        {
+          setting = layer.GetSetting("freediskspace" + drive);
+        }
+        else
+        {
+          setting = layer.GetSetting("freediskspace" + drive[0]);
+        }
+
         try
         {
           long quota = Int64.Parse(setting.Value);
@@ -615,7 +760,15 @@ namespace SetupTv.Sections
         if (card.RecordingFolder.Length > 0)
         {
           string driveLetter = String.Format("{0}:", card.RecordingFolder[0]);
-          if (Utils.getDriveType(driveLetter) == 3)
+          
+          if (card.RecordingFolder.StartsWith(@"\"))
+          {
+            if (!comboBoxDrive.Items.Contains(driveLetter))
+            {
+              comboBoxDrive.Items.Add(card.RecordingFolder);
+            }
+          }
+          else if (Utils.getDriveType(driveLetter) == 3)
           {
             if (!comboBoxDrive.Items.Contains(driveLetter))
             {

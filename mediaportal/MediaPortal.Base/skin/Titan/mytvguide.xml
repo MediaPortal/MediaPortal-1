@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <id>600</id>
+  <defaultcontrol>2</defaultcontrol>
+  <allowoverlay>no</allowoverlay>
+  <define>#header.label:600</define>
+  <controls>
+  
+    <include condition="#(eq(#skin.tvguide.rows,' 7'))">mytvguide.7rows.xml</include>
+    <include condition="#(eq(#skin.tvguide.rows,' 11'))">mytvguide.11rows.xml</include>
+
+    <control>
+      <id>0</id>
+      <type>image</type>
+      <posX>66</posX>
+      <posY>34</posY>
+      <width>61</width>
+      <height>57</height>
+      <texture>icon_tv.png</texture>
+    </control>
+	
+    <import>common.time.settings.xml</import>
+
+		<include condition="#(skin.hassetting('#skin.tvguide.usecolorsforbuttons'))">mytvguide.colors.xml</include>
+		<include condition="#(eq(#skin.tvguide.rows,' 11'))">common.overlay.xml</include>
+  </controls>
+</window>

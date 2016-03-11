@@ -1,7 +1,6 @@
+#region Copyright (C) 2005-2013 Team MediaPortal
 
-#region Copyright (C) 2005-2010 Team MediaPortal
-
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2013 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -66,6 +65,7 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("shadowColor")] protected long _shadowColor = 0xFF000000;
     [XMLSkinElement("textalign")] protected Alignment _textAlignment = Alignment.ALIGN_LEFT;
     [XMLSkinElement("textvalign")] protected VAlignment _textVAlignment = VAlignment.ALIGN_TOP;
+    [XMLSkinElement("textpadding")] protected int _textPadding = 0;
     [XMLSkinElement("scrollStartDelaySec")] protected int _scrollStartDelay = -1;
     [XMLSkinElement("scrollWrapString")] protected string _userWrapString = "";
     [XMLSkinElement("hover")] protected string _hoverFilename = string.Empty;
@@ -214,9 +214,9 @@ namespace MediaPortal.GUI.Library
 
     /// <summary>
     /// This method gets called when the control is created and all properties has been set
-    /// It allows the control todo any initialization
+    /// It allows the control to do any initialization
     /// </summary>
-    public override void FinalizeConstruction()
+    public override sealed void FinalizeConstruction()
     {
       base.FinalizeConstruction();
       _imageFocused = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, _width, _height,
@@ -289,6 +289,8 @@ namespace MediaPortal.GUI.Library
                                          _textColor, Alignment.ALIGN_LEFT, VAlignment.ALIGN_TOP,
                                         _shadowAngle, _shadowDistance, _shadowColor,
                                          _userWrapString);
+        ((GUIFadeLabel)_labelControl).ParentControl = this;
+        ((GUIFadeLabel)_labelControl).DimColor = DimColor;
         ((GUIFadeLabel)_labelControl).TextAlignment = _textAlignment;
         ((GUIFadeLabel)_labelControl).TextVAlignment = _textVAlignment;
         ((GUIFadeLabel)_labelControl).AllowScrolling = false;
@@ -382,7 +384,7 @@ namespace MediaPortal.GUI.Library
     private void bindToValue(string strValue)
     {
       string strTemp = strValue;
-      strValue = GUIPropertyManager.GetProperty(strValue);
+      strValue = GUIPropertyManager.Parse(strValue, GUIExpressionManager.ExpressionOptions.EVALUATE_ALWAYS);
       if (strValue == null || strValue == "")
       {
         strValue = strTemp;
@@ -586,6 +588,12 @@ namespace MediaPortal.GUI.Library
       {
         labelWidth = _width - (2 * _textOffsetX);
       }
+
+      if (_textPadding > 0)
+      {
+        labelWidth -= GUIGraphicsContext.ScaleHorizontal(_textPadding);
+      }
+
       if (labelWidth <= 0)
       {
         return;
@@ -606,6 +614,11 @@ namespace MediaPortal.GUI.Library
       if (_textOffsetXHasMargin)
       {
         labelWidth = _width - (2 * _textOffsetX) - (2 * _spinWidth) - _textOffsetX;
+      }
+
+      if (_textPadding > 0)
+      {
+        labelWidth -= GUIGraphicsContext.ScaleHorizontal(_textPadding);
       }
 
       if (labelWidth <= 0)
@@ -1556,16 +1569,6 @@ namespace MediaPortal.GUI.Library
     private void SetSpinRange(int iStart, int iEnd)
     {
       _spinControl.SetRange(iStart, iEnd);
-    }
-
-    private int SpinMaxValue()
-    {
-      return _spinControl.GetMaximum();
-    }
-
-    private int SpinMinValue()
-    {
-      return _spinControl.GetMinimum();
     }
 
     /// <summary>

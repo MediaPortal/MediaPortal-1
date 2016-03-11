@@ -48,9 +48,12 @@ namespace MediaPortal.Video.Database
     void RemoveGenresForMovie(int lMovieId);
     
     // User groups
-    int AddUserGroup(string strUserGroup1);
+    int AddUserGroup(string userGroup);
+    void AddUserGroupDescription(string userGroup, string description);
     void GetUserGroups(ArrayList userGroups);
+    int GetUserGroupId(string userGroup);
     string GetUserGroupById(int groupId);
+    string GetUserGroupDescriptionById(int groupId);
     void GetMovieUserGroups(int movieId, ArrayList userGroups);
     string GetUserGroupRule(string group);
     void AddUserGroupRuleByGroupId(int groupId, string rule);
@@ -100,8 +103,8 @@ namespace MediaPortal.Video.Database
     void DeleteMovieStopTime(int iFileId);
     int GetMovieStopTime(int iFileId);
     void SetMovieStopTime(int iFileId, int stoptime);
-    int GetMovieStopTimeAndResumeData(int iFileId, out byte[] resumeData);
-    void SetMovieStopTimeAndResumeData(int iFileId, int stoptime, byte[] resumeData);
+    int GetMovieStopTimeAndResumeData(int iFileId, out byte[] resumeData, int bdtitle);
+    void SetMovieStopTimeAndResumeData(int iFileId, int stoptime, byte[] resumeData, int bdtitle);
     int GetVideoDuration(int iFileId);
     int GetMovieDuration(int iMovieId);
     void SetVideoDuration(int iFileId, int duration);
@@ -118,6 +121,7 @@ namespace MediaPortal.Video.Database
     int AddMovie(string strFilenameAndPath, bool bHassubtitles);
     void GetMovies(ref ArrayList movies);
     int GetMovieId(string strFilenameAndPath);
+    int GetTitleBDId(int iFileId, out byte[] resumeData);
     bool HasSubtitle(string strFilenameAndPath);
     void SetThumbURL(int lMovieId, string thumbURL);
     
@@ -127,12 +131,23 @@ namespace MediaPortal.Video.Database
     // Movies by filters
     void GetYears(ArrayList years);
     void GetMoviesByGenre(string strGenre1, ref ArrayList movies);
+    void GetRandomMoviesByGenre(string strGenre1, ref ArrayList movies, int limit);
+    string GetMovieTitlesByGenre(string strGenre);
     void GetMoviesByUserGroup(string strUserGroup1, ref ArrayList movies);
+    void GetRandomMoviesByUserGroup(string strUserGroup, ref ArrayList movies, int limit);
+    string GetMovieTitlesByUserGroup(int idGroup);
     void GetMoviesByActor(string strActor1, ref ArrayList movies);
+    void GetRandomMoviesByActor(string strActor1, ref ArrayList movies, int limit);
+    string GetMovieTitlesByActor(int actorId);
+    string GetMovieTitlesByDirector(int directorId);
     void GetMoviesByYear(string strYear, ref ArrayList movies);
+    void GetRandomMoviesByYear(string strYear, ref ArrayList movies, int limit);
+    string GetMovieTitlesByYear(string strYear);
     void GetMoviesByPath(string strPath1, ref ArrayList movies);
+    void GetRandomMoviesByPath(string strPath1, ref ArrayList movies, int limit);
     void GetMoviesByFilter(string sql, out ArrayList movies, bool actorTable, bool movieinfoTable, bool genreTable, bool usergroupTable);
     void GetIndexByFilter(string sql, bool filterNonWordChar, out ArrayList movieList);
+    string GetMovieTitlesByIndex(string sql);
 
     // CD/DVD label
     void SetDVDLabel(int lMovieId, string strDVDLabel1);
@@ -148,15 +163,19 @@ namespace MediaPortal.Video.Database
     
     // Other
     SQLiteResultSet GetResults(string sql);
-    void ExecuteSQL (string sql, out bool error);
-    ArrayList ExecuteRuleSQL(string sql, string fieldName, out bool error);
+    void ExecuteSQL (string sql, out bool error, out string errorMessage);
+    ArrayList ExecuteRuleSQL(string sql, string fieldName, out bool error, out string errorMessage);
     string DatabaseName { get; }
     void GetVideoFilesMediaInfo(string strFilenameAndPath, ref VideoFilesMediaInfo mediaInfo, bool refresh);
     bool HasMediaInfo(string fileName);
     bool CheckMovieImdbId(string id);
     bool CheckActorImdbId(string id);
-    void ImportNfo(string nfoFile);
+    void ImportNfo(string nfoFile, bool skipExisting, bool refreshdbOnly);
     bool MakeNfo(int movieId);
+    void ImportNfoUsingVideoFile(string videoFile, bool skipExisting, bool refreshdbOnly);
     void GetVideoFiles(string path, ref ArrayList availableFiles);
+    void FlushTransactionsToDisk();
+    void RevertFlushTransactionsToDisk();
+    bool DbHealth { get; }
   }
 }

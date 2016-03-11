@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2013 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2013 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -85,7 +85,7 @@ namespace TvEngine.PowerScheduler
     /// <see cref="DateTime.ToFileTime"/> of the time when the timer should
     /// expire.
     /// </summary>
-    private long m_Interval = 0;
+    private long m_ExpirationTime = 0;
 
     /// <summary>
     /// Create the timer. The caller should call <see cref="Close"/> as soon as
@@ -143,31 +143,32 @@ namespace TvEngine.PowerScheduler
     }
 
     /// <summary>
-    /// Activate the timer to stop after the indicated number of seconds.
+    /// Activate the timer to stop at the indicated date/time
     /// </summary>
     /// <remarks>
-    /// This method will always call <see cref="AbortWaiter"/>. If the number
-    /// of seconds is positive a new <see cref="m_Waiting"/> <see cref="Thread"/>
+    /// This method will always call <see cref="AbortWaiter"/>. If the date/time
+    /// is in the future a new <see cref="m_Waiting"/> <see cref="Thread"/>
     /// will be created running <see cref="WaitThread"/>. Before calling
-    /// <see cref="Thread.Start"/> the <see cref="m_Interval"/> is initialized
-    /// with the correct value. If the number of seconds is zero or negative
+    /// <see cref="Thread.Start"/> the <see cref="m_ExpirationTime"/> is initialized
+    /// with the correct value. If the date/time is in the past or infinite
     /// the timer is canceled.
     /// </remarks>
-    public double SecondsToWait
+    public DateTime TimeToWakeup
     {
       set
       {
         // Done with thread
         AbortWaiter();
         // Check mode
-        if (value > 0)
+        if (value > DateTime.Now && value != DateTime.MaxValue)
         {
           // Calculate
-          m_Interval = DateTime.UtcNow.AddSeconds(value).ToFileTimeUtc();
+          m_ExpirationTime = value.ToUniversalTime().ToFileTimeUtc();
 
           // Create thread
           m_Waiting = new Thread(new ParameterizedThreadStart(WaitThread));
-          m_Waiting.Priority = ThreadPriority.AboveNormal;
+          // Causes 100 % CPU load on XP systems
+          // m_Waiting.Priority = ThreadPriority.AboveNormal;
           m_Waiting.Name = "PowerScheduler Waiter";
 
           using (ManualResetEvent handshake = new ManualResetEvent(false))
@@ -187,7 +188,52 @@ namespace TvEngine.PowerScheduler
     }
 
     /// <summary>
-    /// Initializes the timer with <see cref="m_Interval"/> and waits for it
+    /// Activate the timer to stop after the indicated number of seconds.
+    /// </summary>
+    /// <remarks>
+    /// This method will always call <see cref="AbortWaiter"/>. If the number
+    /// of seconds is positive a new <see cref="m_Waiting"/> <see cref="Thread"/>
+    /// will be created running <see cref="WaitThread"/>. Before calling
+    /// <see cref="Thread.Start"/> the <see cref="m_ExpirationTime"/> is initialized
+    /// with the correct value. If the number of seconds is zero or negative
+    /// the timer is canceled.
+    /// </remarks>
+    public double SecondsToWait
+    {
+      set
+      {
+        // Done with thread
+        AbortWaiter();
+        // Check mode
+        if (value > 0)
+        {
+          // Calculate
+          m_ExpirationTime = DateTime.UtcNow.AddSeconds(value).ToFileTimeUtc();
+
+          // Create thread
+          m_Waiting = new Thread(new ParameterizedThreadStart(WaitThread));
+          // Causes 100 % CPU load on XP systems
+          // m_Waiting.Priority = ThreadPriority.AboveNormal;
+          m_Waiting.Name = "PowerScheduler Waiter";
+
+          using (ManualResetEvent handshake = new ManualResetEvent(false))
+          {
+            // Run it
+            m_Waiting.Start(handshake);
+            // wait until wakeup timer is set
+            handshake.WaitOne();
+          }
+        }
+        else
+        {
+          // No timer
+          CancelWaitableTimer(SafeWaitHandle);
+        }
+      }
+    }
+
+    /// <summary>
+    /// Initializes the timer with <see cref="m_ExpirationTime"/> and waits for it
     /// to expire. If the timer expires <see cref="OnTimerExpired"/> is fired.
     /// </summary>
     /// <remarks>
@@ -200,17 +246,15 @@ namespace TvEngine.PowerScheduler
       // Ignore aborts
       try
       {
-        // Interval to use
-        long lInterval = m_Interval;
-
-
         // Start timer
-        if (!SetWaitableTimer(SafeWaitHandle, &lInterval, 0, IntPtr.Zero, IntPtr.Zero, true))
+        long dueTime = m_ExpirationTime;
+        if (!SetWaitableTimer(SafeWaitHandle, &dueTime, 0, IntPtr.Zero, IntPtr.Zero, true))
         {
           throw new TimerException("Could not start Timer", new Win32Exception(Marshal.GetLastWin32Error()));
         }
         handshake.Set();
         handshake = null;
+
         // Wait for the timer to expire
         WaitOne();
 

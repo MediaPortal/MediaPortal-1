@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+	<id>4711</id>
+	<defaultcontrol>10</defaultcontrol>
+	<allowoverlay>yes</allowoverlay>
+	<define>#header.label:2516</define>
+	<define>#header.hover:hover_wikipedia.png</define>
+	<controls>
+
+  <!--            :: BACKGROUNDS ::           	 -->
+    
+	<control>
+		<description>BG</description>
+		<type>image</type>
+		<id>1</id>
+		<width>1920</width>
+		<height>1080</height>
+	</control>
+
+	<control>
+		<description>background listview</description>
+		<type>image</type>
+		<id>0</id>
+		<posX>0</posX>
+		<posY>0</posY>
+		<width>1920</width>
+		<height>1080</height>
+		<texture>fanart_overlay.png</texture>
+	</control>
+
+	<control>
+		<id>0</id>
+		<type>image</type>
+		<posX>66</posX>
+		<posY>34</posY>
+		<width>68</width>
+		<height>60</height>
+		<texture>icon_plugin.png</texture>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>
+	</control>
+	<control>
+	 	<id>0</id>
+		<type>label</type>
+		<posX>144</posX>
+		<posY>38</posY>
+		<width>855</width>
+		<font>TitanLight22</font>
+		<textcolor>ffffff</textcolor>
+		<label>#header.label</label>
+		<align>left</align>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>
+	</control>
+	<control>
+		<id>0</id>
+		<type>label</type>
+		<posX>1848</posX>
+		<posY>36</posY>
+		<width>555</width>
+		<font>TitanLight22</font>
+		<textcolor>ffffff</textcolor>
+		<label>#time</label>
+		<align>right</align>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>
+	</control>
+	<control>
+		<description>panel</description>
+		<type>image</type>
+		<id>0</id>
+		<posX>10</posX>
+		<posY>72</posY>
+		<width>1903</width>
+		<height>970</height>
+		<texture>panel_large.png</texture>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>
+	</control>
+
+
+	
+	<!-- MENU -->
+	<control>
+		<description>buttons</description>
+		<type>group</type>
+		<posX>122</posX>
+		<posY>165</posY>
+		<layout>StackLayout(7, Vertical, true)</layout>		
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>
+		
+		<control Style="SettingsButton">
+			<description>Search</description>
+			<type>button</type>
+			<id>10</id>
+			<onup>13</onup>
+			<label>137</label>
+			<posY>165</posY>
+		</control>
+
+		<control Style="SettingsButton">
+			<description>Select local Wikipedia</description>
+			<type>button</type>
+			<id>11</id>
+			<label>200025</label>
+		</control>
+
+		<control Style="SettingsButton">
+			<description>Links</description>
+			<type>button</type>
+			<id>12</id>
+			<label>2511</label>
+		</control>
+		
+		<control Style="SettingsButton">
+			<description>Images</description>
+			<type>button</type>
+			<id>13</id>
+			<ondown>10</ondown>
+			<label>2515</label>
+		</control>
+		
+		<control Style="SettingsButton">
+			<description>Back to the text (when viewing an image)</description>
+			<type>button</type>
+			<id>14</id>
+			<label>2514</label>
+		</control>
+	</control>
+
+
+	<control Style="smallTitle">
+		<description>Selected item Label</description>
+		<type>label</type>
+		<id>4</id>
+		<posX>510</posX>
+		<posY>1015</posY>
+		<label>#selecteditem</label>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>
+	</control>
+
+	
+	<control>
+		<description>Image description</description>
+		<type>label</type>
+		<id>5</id>
+		<posX>685</posX>
+		<posY>87</posY>
+		<visible>no</visible>
+		<label>Image description</label>
+		<font>TitanLight12</font>
+		<align>left</align>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>
+	</control>
+
+	<control>
+		<description>Here is the article text displayed</description>
+		<type>textbox</type>
+		<id>20</id>
+		<posX>685</posX>
+		<posY>165</posY>
+		<visible>no</visible>
+		<width>1020</width>
+		<height>800</height>
+		<spinWidth>18</spinWidth>
+		<spinHeight>16</spinHeight>
+		<spinPosX>1684</spinPosX>
+		<spinPosY>790</spinPosY>
+		<onleft>10</onleft>
+		<onright>10</onright>
+    <spinPosX>1728</spinPosX>
+    <spinPosY>940</spinPosY>
+		<spinColor>FFFFFFFF</spinColor>
+		<font>TitanLight12</font>
+		<visible></visible>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>
+	</control>
+
+	<control>
+		<description>Article Image</description>
+		<type>image</type>
+		<id>25</id>
+		<posX>685</posX>
+		<posY>90</posY>
+		<visible>no</visible>
+		<width>782</width>
+		<height>582</height>
+		<texture/>
+		<colorkey>0</colorkey>
+		<colordiffuse>White</colordiffuse>
+		<centered>yes</centered>
+		<keepaspectratio>yes</keepaspectratio>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>
+	</control>
+		
+	<import>common.overlay.xml</import>
+</controls>
+</window>

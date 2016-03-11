@@ -72,7 +72,7 @@ namespace MpeCore.Classes.InstallerType
           unI.InstallType = "CopyFile";
           packageClass.UnInstallInfo.Items.Add(unI);
         }
-        UnInstallItem unInstallItem = packageClass.UnInstallInfo.BackUpFile(item);
+        UnInstallItem unInstallItem = packageClass.UnInstallInfo.BackUpFile(fileItem);
         packageClass.ZipProvider.Extract(item, destination);
         FileInfo info = new FileInfo(destination);
         unInstallItem.FileDate = info.CreationTimeUtc;

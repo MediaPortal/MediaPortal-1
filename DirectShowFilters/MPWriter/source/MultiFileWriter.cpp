@@ -359,7 +359,7 @@ HRESULT MultiFileWriter::ReuseTSFile()
 
 	// Check if file is being read by something.
   TCHAR sz[MAX_PATH];
-  sprintf(sz, "%S", pFilename);
+  _stprintf(sz, _T("%S"), pFilename);
   // Can be locked temporarily to update duration or definitely (!) if timeshift is paused.
 	do
 	{
@@ -552,14 +552,14 @@ HRESULT MultiFileWriter::GetAvailableDiskSpace(__int64* llAvailableDiskSpace)
 
 	HRESULT hr;
 
-	char	*pszDrive = NULL;
-	char	szDrive[4];
+	TCHAR* pszDrive = NULL;
+	TCHAR szDrive[8];
 	if (m_pTSBufferFileName[1] == ':')
 	{
 		szDrive[0] = (char)m_pTSBufferFileName[0];
-		szDrive[1] = ':';
-		szDrive[2] = '\\';
-		szDrive[3] = '\0';
+		szDrive[1] = _T(':');
+		szDrive[2] = _T('\\');
+		szDrive[3] = _T('\0');
 		pszDrive = szDrive;
 	}
 
@@ -587,7 +587,7 @@ void MultiFileWriter::setRegFileName(LPTSTR fileName)
 {
 //	CheckPointer(fileName,E_POINTER);
 
-	if(strlen(fileName) > MAX_PATH)
+	if (_tcslen(fileName) > MAX_PATH)
 		return;// ERROR_FILENAME_EXCED_RANGE;
 
 	// Take a copy of the filename

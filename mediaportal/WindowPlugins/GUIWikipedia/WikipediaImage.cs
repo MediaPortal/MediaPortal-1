@@ -36,9 +36,7 @@ namespace Wikipedia
 
     private string WikipediaURL = "http://en.wikipedia.org/wiki/Special:Export/";
     private string imagename = string.Empty;
-    private string imagedesc = string.Empty;
     private string imageurl = string.Empty;
-    private string imagelocal = string.Empty;
 
     #endregion
 

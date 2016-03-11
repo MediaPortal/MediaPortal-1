@@ -251,7 +251,7 @@ namespace SetupTv.Sections.Helpers
       ListViewItem item = new ListViewItem(ch.DisplayName);
       item.Checked = ch.VisibleInGuide;
       item.Tag = ch;
-
+      item.SubItems.Add(ch.ChannelNumber.ToString());
 
       IList<string> groups = ch.GroupNames;
       List<string> groupNames = new List<string>();

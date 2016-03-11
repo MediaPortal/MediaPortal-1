@@ -1,52 +1,351 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
+
+<!-- File version: 1.3.0 --> 
+
 <Grabber>
-  <Info treatErrorAsWarning="true" availableDays="26" timezone="W. Europe Standard Time" version="2.2.0" />
-  <Channels>
-    <Channel id="svt1@svt.se" siteId="74532" />
-    <Channel id="svt2@svt.se" siteId="74527" />
-    <Channel id="barnkanalen@svt.se" siteId="74518" />
-    <Channel id="24@svt.se" siteId="74525" />
-    <Channel id="kunskapskanalen@svt.se" siteId="74514" />
-    <Channel id="europa@svt.se" siteId="74505" />
-    <Channel id="tv3.se" siteId="74497" />
-    <Channel id="tv4@tv4.se" siteId="74490" />
-    <Channel id="kanal5.se" siteId="74488" />
-  </Channels>
-  <Listing type="Html">
-    <Site url="http://svt.se/svt/jsp/Crosslink.jsp?d=[ID]&amp;selectedDate=[YYYY][MM][DD]" post="" external="false" encoding="" />
-    <Html>
-      <Template name="default" start="class=&quot;tabDiv ch" end="&lt;!-- TOOLBOX --&gt;">
-        <SectionTemplate tags="HT">
-          <TemplateText>
+	<Info treatErrorAsWarning="true" availableDays="28" timezone="W. Europe Standard Time" version="2.2.0" />
+	<Channels>
+		<Channel id="svt1@svt.se" siteId="SVT1" />
+		<Channel id="svt2@svt.se" siteId="SVT2" />
+		<Channel id="barnkanalen@svt.se" siteId="SVTB" />
+		<Channel id="24@svt.se" siteId="SVT24" />
+		<Channel id="kunskapskanalen@svt.se" siteId="SVTK" />
+		<Channel id="europa@svt.se" siteId="SVTW" />
+		<!-- The channels below are not part of the SVT group but are avaible on their site	 -->
+		<!-- They only got 14 days forecasts instead of SVT's 28 days						 -->
+		<Channel id="tv3.se" siteId="TV3" />
+		<Channel id="tv4@tv4.se" siteId="TV4" />
+		<Channel id="kanal5.se" siteId="KANAL5" />
+		<Channel id="tv6.at" siteId="TV6" />
+		<Channel id="sjuan@tv4.se" siteId="SJUAN" />
+		<Channel id="tv8.se" siteId="TV8" />
+		<Channel id="kanal9.se" siteId="KANAL9" />
+	</Channels>
+	<Listing type="Html">
+		<Site url="http://www.svt.se/tv-tabla/[ID]/[YYYY]-[MM]-[DD]" post="" external="false" encoding="utf-8" />
+		<Html>
+			<Template name="default" start="svtTablaTable-SvtChannels" end="svtGridBlock-Right">
+				<SectionTemplate tags="HT">
+					<TemplateText>
 &lt;td&gt;&lt;#START&gt;-&lt;#END&gt;&lt;/td&gt;
-&lt;td&gt;&lt;h2&gt;&lt;#TITLE&gt;&lt;/h2&gt;
-&lt;#DESCRIPTION&gt;&lt;/td&gt;&lt;td&gt;
-          </TemplateText>
-        </SectionTemplate>
-      </Template>
-      <Searches>
-        <Search match="[^a-z][Dd]el \d+" field="#EPISODE" remove="false"/>
-        <Search match="Säsong \d+" field="#SEASON" remove="false"/>
-        <Search match="Textat sid\. \d\d\d" field="#SUBTITLESNOTFALSE" remove="true"/>
-        <Search match="Bredbild." field="#WIDESCREEN" remove="true"/>
-      </Searches>
-    </Html>
-  </Listing>
-  <Actions>
-    <Modify channel="*" field="#TITLE" search=" \? " action="Replace"> - </Modify>
-    <Modify channel="*" field="#TITLE" search="(?&lt;=\w)\?(?=\w)" action="Replace">-</Modify>
-    <Modify channel="*" field="#DESCRIPTION" search=" \? " action="Replace"> - </Modify>
-    <Modify channel="*" field="#DESCRIPTION" search="(?&lt;=\d)\?(?=\d)" action="Replace">-</Modify>
-    <Modify channel="*" field="#DESCRIPTION" search="(?&lt;=[A-Za-z])\?(?=[A-Za-z])" action="Replace">'</Modify>
-    <Modify channel="*" field="#DESCRIPTION" search="\?(?=\w(\w|\s)+\?)" action="Replace">"</Modify>
-    <Modify channel="*" field="#DESCRIPTION" search="(?&lt;=&quot;\w(\w|\s)+)\?" action="Replace">"</Modify>
-    <Modify channel="tv3.se" field="#DESCRIPTION" search="4:3-format" action="Replace"></Modify>
-    <Modify channel="tv4@tv4.se" field="#DESCRIPTION" search="4:3-format" action="Replace"></Modify>
-    <Modify channel="kanal5.se" field="#DESCRIPTION" search="4:3-format" action="Replace"></Modify>
-    <Modify channel="*" field="#DESCRIPTION" search="4:3-format" action="Replace"> 4:3-format</Modify>
-    <Modify channel="*" field="#DESCRIPTION" search="5.1-ljud" action="Replace"> 5.1-ljud</Modify>
-	<Modify channel="*" field="#DESCRIPTION" search="Samsänds" action="Replace"> Samsänds</Modify>
-    <Modify channel="*" field="#DESCRIPTION" search="\.Från" action="Replace">. Från</Modify>
-    <Modify channel="*" field="#DESCRIPTION" search="\.Även" action="Replace">. Även</Modify>
-  </Actions>
+&lt;td&gt;&lt;h4&gt;&lt;#TITLE&gt;&lt;/h4&gt;
+&lt;#DESCRIPTION&gt;&lt;/td&gt;
+					</TemplateText>
+				</SectionTemplate>
+			</Template>
+
+			<Searches>
+				<Search field="#EPISODE" remove="false" match="[^a-z][Dd]el \d+"/>
+				<Search field="#SEASON" remove="false" match="Säsong \d+"/>
+		
+				<!-- Extracting genre from programs by matching keywords: Be ware of the order, for example	-->
+				<!-- if the text is "Komedi baserad på en dokumentär..." you will probably want to have it	-->
+				<!-- mapped to Komedi, later be changed to Movie. Or Tecknad serie is more likely Kid than	-->	
+				<!-- Movie. Only the last match will be used.												-->	
+				<!-- Note: Matching is space sensitive but will be trimed (front/end) in #GENRE				-->
+				<!--			 it will only leave leading capital (VM- will be changed to Vm-)			-->
+
+				<!-- Keywords that is likley unique for a genre												-->
+				<!-- Keywords that must be before some line because of pattern		 						-->
+
+				<!-- Music -->
+				<Search match="[Kk]onsert" field="#GENRE" remove="false"/>
+				<Search match="[Mm]usik " field="#GENRE" remove="false"/>
+
+				<!-- Documentary -->
+				<Search match="[Dd]okumentär" field="#GENRE" remove="false"/>
+				<Search match="[Ii]ntervjuprogram" field="#GENRE" remove="false"/>
+				<Search match="[Kk]ulturhistor" field="#GENRE" remove="false"/>
+				<Search match="[Rr]eportage" field="#GENRE" remove="false"/>
+				<Search match="[Ss]amhällsprogram" field="#GENRE" remove="false"/>
+
+				<!-- Kids -->
+				<Search match="[Aa]nimerad" field="#GENRE" remove="false"/>
+				<Search match="[Bb]arn " field="#GENRE" remove="false"/>
+				<Search match="[Bb]arnprogram" field="#GENRE" remove="false"/>
+				<Search match="[Tt]ecknad " field="#GENRE" remove="false"/>
+
+				<!-- Movie -->
+				<Search match="[Aa]ction" field="#GENRE" remove="false"/>
+				<Search match="[Dd]eckare" field="#GENRE" remove="false"/>
+				<Search match="[Dd]rama" field="#GENRE" remove="false"/>
+				<Search match="[Ff]amiljefilm" field="#GENRE" remove="false"/>
+				<Search match="[Ff]antasy" field="#GENRE" remove="false"/>
+				<Search match="[Kk]omedi " field="#GENRE" remove="false"/>
+				<Search match="[Kk]rigsfilm" field="#GENRE" remove="false"/>
+				<Search match="[Kk]riminal" field="#GENRE" remove="false"/>
+				<Search match="[Kk]ortfilm" field="#GENRE" remove="false"/>
+				<Search match="[Ll]ångfilm" field="#GENRE" remove="false"/>
+				<Search match="[Mm]usikal" field="#GENRE" remove="false"/>
+				<Search match="[Nn]attfilm" field="#GENRE" remove="false"/>
+				<Search match="[Rr]ysare" field="#GENRE" remove="false"/>
+				<Search match="[Ss]ci-fi" field="#GENRE" remove="false"/>
+				<Search match="[Ss]cience fiction" field="#GENRE" remove="false"/>
+				<Search match="[Ss]kräck" field="#GENRE" remove="false"/>
+				<Search match="[Tt]hriller" field="#GENRE" remove="false"/>
+				<Search match="[Vv]ästern" field="#GENRE" remove="false"/>
+				<Search match="[Ww]estern" field="#GENRE" remove="false"/>
+				<Search match="[Ää]ventyr" field="#GENRE" remove="false"/>
+
+				<!-- News -->
+				<Search match="[Nn]yheter" field="#GENRE" remove="false"/>
+				<Search match="[Nn]öjesnytt" field="#GENRE" remove="false"/>
+
+				<!-- Special -->
+				<Search match="[Dd]okusåpa" field="#GENRE" remove="false"/>
+				<Search match="[Ss]åpopera" field="#GENRE" remove="false"/>
+
+				<!-- Sports -->
+				<Search match="[Aa]lpint" field="#GENRE" remove="false"/>
+				<Search match="[Aa]merikansk fotboll" field="#GENRE" remove="false"/>
+				<Search match="[Bb]ackhoppning" field="#GENRE" remove="false"/>
+				<Search match="[Bb]asket" field="#GENRE" remove="false"/>
+				<Search match="[Bb]ordtennis" field="#GENRE" remove="false"/>
+				<Search match="[Bb]owling" field="#GENRE" remove="false"/>
+				<Search match="[Bb]oxn?ing" field="#GENRE" remove="false"/>
+				<Search match="[Bb]rottning" field="#GENRE" remove="false"/>
+				<Search match="[Cc]urling" field="#GENRE" remove="false"/>
+				<Search match="[Cc]ykel" field="#GENRE" remove="false"/>
+				<Search match="[Ff]otboll" field="#GENRE" remove="false"/>
+				<Search match="[Ff]riidrott" field="#GENRE" remove="false"/>
+				<Search match="[Gg]olf" field="#GENRE" remove="false"/>
+				<Search match="[Gg]ymnastik" field="#GENRE" remove="false"/>
+				<Search match="[Hh]andboll" field="#GENRE" remove="false"/>
+				<Search match="[Ii]shockey" field="#GENRE" remove="false"/>
+				<Search match="[Kk]raftsport" field="#GENRE" remove="false"/>
+				<Search match="[Kk]ampsport" field="#GENRE" remove="false"/>
+				<Search match="[Kk]anot" field="#GENRE" remove="false"/>
+				<Search match="[Kk]onståkning" field="#GENRE" remove="false"/>
+				<Search match="[Ll]ängdåkning" field="#GENRE" remove="false"/>
+				<Search match="[Ll]ängskidor" field="#GENRE" remove="false"/>
+				<Search match="[Mm]otorsport" field="#GENRE" remove="false"/>
+				<Search match="[Rr]ally" field="#GENRE" remove="false"/>
+				<Search match="[Rr]idsport" field="#GENRE" remove="false"/>
+				<Search match="[Ss]egling" field="#GENRE" remove="false"/>
+				<Search match="[Ss]imning" field="#GENRE" remove="false"/>
+				<Search match="[Ss]kidskytte" field="#GENRE" remove="false"/>
+				<Search match="[Ss]kridsko" field="#GENRE" remove="false"/>
+				<Search match="[Ss]port" field="#GENRE" remove="false"/>
+				<Search match="[Ss]portnyheter" field="#GENRE" remove="false"/>
+				<Search match="[Ss]nooker" field="#GENRE" remove="false"/>
+				<Search match="[Tt]ennis" field="#GENRE" remove="false"/>
+				<Search match="[Tt]rav " field="#GENRE" remove="false"/>
+				<Search match="[Tt]ävlingar" field="#GENRE" remove="false"/>
+				<Search match="[Vv]olleyboll" field="#GENRE" remove="false"/>
+				<Search match="V[Mm]-" field="#GENRE" remove="false"/>
+				<Search match="-V[Mm]" field="#GENRE" remove="false"/>
+
+				<!-- Adult -->
+				<Search match="[Ee]rotik" field="#GENRE" remove="false"/>
+
+				<!-- Entertainment -->
+				<Search match="[Dd]ebatt" field="#GENRE" remove="false"/>
+				<Search match="[Ff]öreställning" field="#GENRE" remove="false"/>
+				<Search match="[Hh]istoria" field="#GENRE" remove="false"/>
+				<Search match="[Ll]ivsstil" field="#GENRE" remove="false"/>
+				<Search match="[Mm]usiklek" field="#GENRE" remove="false"/>
+				<Search match="[Pp]ratshow" field="#GENRE" remove="false"/>
+				<Search match="[Rr]eality" field="#GENRE" remove="false"/>
+				<Search match="[Rr]esor" field="#GENRE" remove="false"/>
+				<Search match="[Ss]pelprogram" field="#GENRE" remove="false"/>
+				<Search match="[Tt]alkshow " field="#GENRE" remove="false"/>
+				<Search match="[Tt]v-lek" field="#GENRE" remove="false"/>
+				<Search match="[Tt]v-teater" field="#GENRE" remove="false"/>
+				<Search match="[Uu]nderhållning" field="#GENRE" remove="false"/>
+
+				<!-- Nature -->
+				<Search match="[Dd]jurliv" field="#GENRE" remove="false"/>
+				<Search match="[Dd]jurpark" field="#GENRE" remove="false"/>
+				<Search match="[Ee]kosystem" field="#GENRE" remove="false"/>
+				<Search match="[Nn]atur" field="#GENRE" remove="false"/>
+				<Search match="[Vv]äxter" field="#GENRE" remove="false"/>
+
+				<!-- Science -->
+				<Search match="[Ff]orskare" field="#GENRE" remove="false"/>
+				<Search match="[Vv]etenskap" field="#GENRE" remove="false"/>
+
+				<!-- Standard programs titles -->
+				<Search match="24 Vision" field="#GENRE" remove="false"/>
+				<Search match="Abc" field="#GENRE" remove="false"/>
+				<Search match="Anslagstavlan" field="#GENRE" remove="false"/>
+				<Search match="Aktuellt" field="#GENRE" remove="false"/>
+				<Search match="Gävledala" field="#GENRE" remove="false"/>
+				<Search match="Kulturnyheter" field="#GENRE" remove="false"/>
+				<Search match="Mittnytt" field="#GENRE" remove="false"/>
+				<Search match="Nordnytt" field="#GENRE" remove="false"/>
+				<Search match="Nyheterna" field="#GENRE" remove="false"/>
+				<Search match="Nyhetssammanfattning" field="#GENRE" remove="false"/>
+				<Search match="Rapport" field="#GENRE" remove="false"/>
+				<Search match="Regionala nyheter" field="#GENRE" remove="false"/>
+				<Search match="Smålandsnytt" field="#GENRE" remove="false"/>
+				<Search match="Sydnytt" field="#GENRE" remove="false"/>
+				<Search match="Tvärsnytt" field="#GENRE" remove="false"/>
+				<Search match="Värmlandsnytt" field="#GENRE" remove="false"/>
+				<Search match="Västerbottensnytt" field="#GENRE" remove="false"/>
+				<Search match="Västnytt" field="#GENRE" remove="false"/>
+				<Search match="Östnytt" field="#GENRE" remove="false"/>
+
+				<!-- Keywords that must be last due to conflict -->
+				<Search match="[Mm]agasin" field="#GENRE" remove="false"/>		<!-- Documentary -->
+				<Search match="[Ff]rågesport" field="#GENRE" remove="false"/>	<!-- Entertainment -->
+				<Search match="[Ss]erie" field="#GENRE" remove="false"/>		<!-- Special -->
+				<Search match="[Ee]litserien" field="#GENRE" remove="false"/>	<!-- Sports -->
+
+			</Searches>
+		</Html>
+	</Listing>
+	<Actions>
+
+		<Modify channel="*" field="#DESCRIPTION" search="Kommer att publiceras i SVT Play" action="Replace"></Modify>
+		<Modify channel="*" field="#DESCRIPTION" search="Sänds iHD" action="Replace">Sänds i HD</Modify>
+		<Modify channel="*" field="#DESCRIPTION" search="Textat sid\. \d\d\d" action="Replace"></Modify>
+		<Modify channel="*" field="#DESCRIPTION" search="4:3-format" action="Replace"> 4:3-format</Modify>
+		<Modify channel="*" field="#DESCRIPTION" search="(Om|Se) programmet" action="Replace"></Modify>
+		<Modify channel="*" field="#DESCRIPTION" search="Se tidigare program" action="Replace"></Modify>
+		<Modify channel="*" field="#DESCRIPTION" search="\.(?=\w[^-])" action="Replace">. </Modify>
+		<Modify channel="*" field="#DESCRIPTION" search=",(?=\w)" action="Replace">, </Modify>
+		
+		<!-- This section is for mapping the extracted #GENRE from Searches above to fewer and standardised				-->
+		<!-- names. Default genres in MediaPortal are: Documentary, Kids, Movie, Music, News, Special, Sports			-->
+		<!-- Extra genres added in this file: Science, Nature, Entertainment, Adult										-->
+		<!-- Note: Strings will be replaced, therefore you must place them in the correct order.						-->
+		<!--			 For example matching both Frågesport and Sport and placing sport first will result in GENRE	-->
+		<!--			 frågeSports, with a trailing "s"																-->
+		<Modify field="#GENRE" action="Replace" channel="*" search="[Ff]rågesport">Entertainment</Modify>
+		<Modify field="#GENRE" action="Replace" channel="*" search="[Ss]port">Sports</Modify> <!-- First to prevent genre Sportss -->
+		<Modify field="#GENRE" action="Replace" channel="*" search="[Ee]litserien">Sports</Modify>
+
+		<!-- Standrad program titles mapped to standrad genre															-->
+		<Modify field="#GENRE" action="Replace" channel="24@svt.se" search="24 Vision">News</Modify>
+		<Modify field="#GENRE" action="Replace" channel="24@svt.se" search="Abc">News</Modify>
+		<Modify field="#GENRE" action="Replace" channel="*" search="Anslagstavlan">News</Modify>
+		<Modify field="#GENRE" action="Replace" channel="svt2@svt.se" search="Aktuellt">News</Modify>
+		<Modify field="#GENRE" action="Replace" channel="barnkanalen@svt.se" search="Aktuellt">News</Modify>
+		<Modify field="#GENRE" action="Replace" channel="24@svt.se" search="Gävledala">News</Modify>
+		<Modify field="#GENRE" action="Replace" channel="*" search="Kulturnyheter">News</Modify>
+		<Modify field="#GENRE" action="Replace" channel="24@svt.se" search="Mittnytt">News</Modify>
+		<Modify field="#GENRE" action="Replace" channel="24@svt.se" search="Nordnytt">News</Modify>
+		<Modify field="#GENRE" action="Replace" channel="*" search="Nyheterna">News</Modify>
+		<Modify field="#GENRE" action="Replace" channel="*" search="Nyhetssammanfattning">News</Modify>
+		<Modify field="#GENRE" action="Replace" channel="*" search="Rapport">News</Modify>
+		<Modify field="#GENRE" action="Replace" channel="*" search="Regionala nyheter">News</Modify>
+		<Modify field="#GENRE" action="Replace" channel="24@svt.se" search="Smålandsnytt">News</Modify>
+		<Modify field="#GENRE" action="Replace" channel="24@svt.se" search="Sydnytt">News</Modify>
+		<Modify field="#GENRE" action="Replace" channel="24@svt.se" search="Tvärsnytt">News</Modify>
+		<Modify field="#GENRE" action="Replace" channel="24@svt.se" search="Värmlandsnytt">News</Modify>
+		<Modify field="#GENRE" action="Replace" channel="24@svt.se" search="Västerbottensnytt">News</Modify>
+		<Modify field="#GENRE" action="Replace" channel="24@svt.se" search="Västnytt">News</Modify>
+		<Modify field="#GENRE" action="Replace" channel="24@svt.se" search="Östnytt">News</Modify>
+
+		<!--	Correction of earlier mappings. You cannot use wildcards (*) in the search field						-->
+		<!--	E.g. a "serie" on Barnkanalen is not a "Movie". It is "Kids" genre										-->
+		<Modify field="#GENRE" action="Replace" channel="barnkanalen@svt.se" search="[Ss]erie">Kids</Modify>
+
+		<!--	Keywords mapped to standard genre -->
+		<Modify field="#GENRE" action="Replace" channel="*" search="[Dd]okumentär">Documentary</Modify>
+		<Modify field="#GENRE" action="Replace" channel="*" search="[Ii]ntervjuprogram">Documentary</Modify>
+		<Modify field="#GENRE" action="Replace" channel="*" search="[Kk]ulturhistor">Documentary</Modify>
+		<Modify field="#GENRE" action="Replace" channel="*" search="[Mm]agasin">Documentary</Modify>
+		<Modify field="#GENRE" action="Replace" channel="*" search="[Rr]eportage">Documentary</Modify>
+		<Modify field="#GENRE" action="Replace" channel="*" search="[Ss]amhällsprogram">Documentary</Modify>
+
+		<Modify field="#GENRE" action="Replace" channel="*" search="[Aa]nimerad">Kids</Modify>
+		<Modify field="#GENRE" action="Replace" channel="*" search="[Bb]arnprogram">Kids</Modify> <!-- First to prevent genre Kidsprogram -->
+		<Modify field="#GENRE" action="Replace" channel="*" search="[Bb]arn">Kids</Modify>
+		<Modify field="#GENRE" action="Replace" channel="*" search="[Tt]ecknad">Kids</Modify>
+
+		<Modify field="#GENRE" action="Replace" channel="*" search="[Aa]ction">Movie</Modify>
+		<Modify field="#GENRE" action="Replace" channel="*" search="[Dd]eckare">Movie</Modify>
+		<Modify field="#GENRE" action="Replace" channel="*" search="[Dd]rama">Movie</Modify>
+		<Modify field="#GENRE" action="Replace" channel="*" search="[Ff]amiljefilm">Movie</Modify>
+		<Modify field="#GENRE" action="Replace" channel="*" search="[Ff]antasy">Movie</Modify>
+		<Modify field="#GENRE" action="Replace" channel="*" search="[Kk]omedi">Movie</Modify>
+		<Modify field="#GENRE" action="Replace" channel="*" search="[Kk]rigsfilm">Movie</Modify>
+		<Modify field="#GENRE" action="Replace" channel="*" search="[Kk]riminal">Movie</Modify>
+		<Modify field="#GENRE" action="Replace" channel="*" search="[Kk]ortfilm">Movie</Modify>
+		<Modify field="#GENRE" action="Replace" channel="*" search="[Ll]ångfilm">Movie</Modify>
+		<Modify field="#GENRE" action="Replace" channel="*" search="[Mm]usikal">Movie</Modify>
+		<Modify field="#GENRE" action="Replace" channel="*" search="[Nn]attfilm">Movie</Modify>
+		<Modify field="#GENRE" action="Replace" channel="*" search="[Rr]ysare">Movie</Modify>
+		<Modify field="#GENRE" action="Replace" channel="*" search="[Ss]ci-fi">Movie</Modify>
+		<Modify field="#GENRE" action="Replace" channel="*" search="[Ss]cience fiction">Movie</Modify>
+		<Modify field="#GENRE" action="Replace" channel="*" search="[Ss]kräck">Movie</Modify>
+		<Modify field="#GENRE" action="Replace" channel="*" search="[Tt]hriller">Movie</Modify>
+		<Modify field="#GENRE" action="Replace" channel="*" search="[Vv]ästern">Movie</Modify>
+		<Modify field="#GENRE" action="Replace" channel="*" search="[Ww]estern">Movie</Modify>
+		<Modify field="#GENRE" action="Replace" channel="*" search="[Ää]ventyr">Movie</Modify>
+
+		<Modify field="#GENRE" action="Replace" channel="*" search="[Kk]onsert">Music</Modify>
+		<Modify field="#GENRE" action="Replace" channel="*" search="[Mm]usik">Music</Modify>
+
+		<Modify field="#GENRE" action="Replace" channel="*" search="[Nn]yheter">News</Modify>
+		<Modify field="#GENRE" action="Replace" channel="*" search="[Nn]öjesnytt">News</Modify>
+
+		<Modify field="#GENRE" action="Replace" channel="*" search="[Dd]okusåpa">Special</Modify>
+		<Modify field="#GENRE" action="Replace" channel="*" search="[Ss]erie">Special</Modify>
+		<Modify field="#GENRE" action="Replace" channel="*" search="[Ss]åpopera">Special</Modify>
+
+		<Modify field="#GENRE" action="Replace" channel="*" search="[Aa]lpint">Sports</Modify>
+		<Modify field="#GENRE" action="Replace" channel="*" search="[Aa]merikansk fotboll">Sports</Modify>
+		<Modify field="#GENRE" action="Replace" channel="*" search="[Bb]ackhoppning">Sports</Modify>
+		<Modify field="#GENRE" action="Replace" channel="*" search="[Bb]asket">Sports</Modify>
+		<Modify field="#GENRE" action="Replace" channel="*" search="[Bb]ordtennis">Sports</Modify>
+		<Modify field="#GENRE" action="Replace" channel="*" search="[Bb]owling">Sports</Modify>
+		<Modify field="#GENRE" action="Replace" channel="*" search="[Bb]oxn?ing">Sports</Modify>
+		<Modify field="#GENRE" action="Replace" channel="*" search="[Bb]rottning">Sports</Modify>
+		<Modify field="#GENRE" action="Replace" channel="*" search="[Cc]urling">Sports</Modify>
+		<Modify field="#GENRE" action="Replace" channel="*" search="[Cc]ykel">Sports</Modify>
+		<Modify field="#GENRE" action="Replace" channel="*" search="[Ff]otboll">Sports</Modify>
+		<Modify field="#GENRE" action="Replace" channel="*" search="[Ff]riidrott">Sports</Modify>
+		<Modify field="#GENRE" action="Replace" channel="*" search="[Gg]olf">Sports</Modify>
+		<Modify field="#GENRE" action="Replace" channel="*" search="[Gg]ymnastik">Sports</Modify>
+		<Modify field="#GENRE" action="Replace" channel="*" search="[Hh]andboll">Sports</Modify>
+		<Modify field="#GENRE" action="Replace" channel="*" search="[Ii]shockey">Sports</Modify>
+		<Modify field="#GENRE" action="Replace" channel="*" search="[Kk]raftsport">Sports</Modify>
+		<Modify field="#GENRE" action="Replace" channel="*" search="[Kk]ampsport">Sports</Modify>
+		<Modify field="#GENRE" action="Replace" channel="*" search="[Kk]anot">Sports</Modify>
+		<Modify field="#GENRE" action="Replace" channel="*" search="[Kk]onståkning">Sports</Modify>
+		<Modify field="#GENRE" action="Replace" channel="*" search="[Ll]ängdåkning">Sports</Modify>
+		<Modify field="#GENRE" action="Replace" channel="*" search="[Ll]ängskidor">Sports</Modify>
+		<Modify field="#GENRE" action="Replace" channel="*" search="[Mm]otorsport">Sports</Modify>
+		<Modify field="#GENRE" action="Replace" channel="*" search="[Rr]ally">Sports</Modify>
+		<Modify field="#GENRE" action="Replace" channel="*" search="[Rr]idsport">Sports</Modify>
+		<Modify field="#GENRE" action="Replace" channel="*" search="[Ss]egling">Sports</Modify>
+		<Modify field="#GENRE" action="Replace" channel="*" search="[Ss]imning">Sports</Modify>
+		<Modify field="#GENRE" action="Replace" channel="*" search="[Ss]kidskytte">Sports</Modify>
+		<Modify field="#GENRE" action="Replace" channel="*" search="[Ss]kridsko">Sports</Modify>
+		<Modify field="#GENRE" action="Replace" channel="*" search="[Ss]portnyheter">Sports</Modify>
+		<Modify field="#GENRE" action="Replace" channel="*" search="[Ss]nooker">Sports</Modify>
+		<Modify field="#GENRE" action="Replace" channel="*" search="[Tt]ennis">Sports</Modify>
+		<Modify field="#GENRE" action="Replace" channel="*" search="[Tt]rav">Sports</Modify>
+		<Modify field="#GENRE" action="Replace" channel="*" search="[Tt]ävlingar">Sports</Modify>
+		<Modify field="#GENRE" action="Replace" channel="*" search="[Vv]olleyboll">Sports</Modify>
+		<Modify field="#GENRE" action="Replace" channel="*" search="V[Mm]-">Sports</Modify>
+		<Modify field="#GENRE" action="Replace" channel="*" search="-V[Mm]">Sports</Modify>
+
+		<Modify field="#GENRE" action="Replace" channel="*" search="[Ee]rotik">Adult</Modify>
+
+		<Modify field="#GENRE" action="Replace" channel="*" search="[Dd]ebatt">Entertainment</Modify>
+		<Modify field="#GENRE" action="Replace" channel="*" search="[Ff]öreställning">Entertainment</Modify>
+		<Modify field="#GENRE" action="Replace" channel="*" search="[Hh]istoria">Entertainment</Modify>
+		<Modify field="#GENRE" action="Replace" channel="*" search="[Ll]ivsstil">Entertainment</Modify>
+		<Modify field="#GENRE" action="Replace" channel="*" search="[Mm]usiklek">Entertainment</Modify>
+		<Modify field="#GENRE" action="Replace" channel="*" search="[Pp]ratshow">Entertainment</Modify>
+		<Modify field="#GENRE" action="Replace" channel="*" search="[Rr]eality">Entertainment</Modify>
+		<Modify field="#GENRE" action="Replace" channel="*" search="[Rr]esor">Entertainment</Modify>
+		<Modify field="#GENRE" action="Replace" channel="*" search="[Ss]pelprogram">Entertainment</Modify>
+		<Modify field="#GENRE" action="Replace" channel="*" search="[Tt]alkshow">Entertainment</Modify>
+		<Modify field="#GENRE" action="Replace" channel="*" search="[Tt]v-lek">Entertainment</Modify>
+		<Modify field="#GENRE" action="Replace" channel="*" search="[Tt]v-teater">Entertainment</Modify>
+		<Modify field="#GENRE" action="Replace" channel="*" search="[Uu]nderhållning">Entertainment</Modify>
+
+		<Modify field="#GENRE" action="Replace" channel="*" search="[Nn]atur">Nature</Modify> <!-- First to prevent genre Naturee -->
+		<Modify field="#GENRE" action="Replace" channel="*" search="[Dd]jurliv">Nature</Modify>
+		<Modify field="#GENRE" action="Replace" channel="*" search="[Dd]jurpark">Nature</Modify>
+		<Modify field="#GENRE" action="Replace" channel="*" search="[Ee]kosystem">Nature</Modify>
+		<Modify field="#GENRE" action="Replace" channel="*" search="[Vv]äxter">Nature</Modify>
+
+		<Modify field="#GENRE" action="Replace" channel="*" search="[Vv]etenskap">Science</Modify>
+		<Modify field="#GENRE" action="Replace" channel="*" search="[Ff]orskare">Science</Modify>
+	</Actions>
 </Grabber>

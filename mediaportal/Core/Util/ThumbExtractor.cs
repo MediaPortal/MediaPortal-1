@@ -115,13 +115,6 @@ namespace MediaPortal.Util
       [MarshalAs(System.Runtime.InteropServices.UnmanagedType.ByValArray, SizeConst = 520)] public byte[] cStr;
     }
 
-    [StructLayout(LayoutKind.Explicit, CharSet = CharSet.Auto)]
-    private struct STRRET_ANY
-    {
-      [FieldOffset(0)] public ESTRRET uType;
-      [FieldOffset(4)] public IntPtr pOLEString;
-    }
-
     [StructLayoutAttribute(LayoutKind.Sequential)]
     private struct SIZE
     {
@@ -532,7 +525,7 @@ namespace MediaPortal.Util
       try
       {
         string pidlPath = PathFromPidl(pidl);
-        if (Path.GetFileName(pidlPath).ToUpper().Equals(Path.GetFileName(file).ToUpper()))
+        if (Path.GetFileName(pidlPath).ToUpperInvariant().Equals(Path.GetFileName(file).ToUpperInvariant()))
         {
           // we have the item:
           IUnknown iunk = null;

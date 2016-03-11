@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+<id>2015</id>
+<defaultcontrol>3</defaultcontrol>
+<allowoverlay>no</allowoverlay>
+<controls>
+
+		<control>
+			<type>image</type>
+			<id>0</id>
+			<width>1920</width>
+			<height>1080</height>
+			<texture>semi_trans_back_general_menu.png</texture>
+			<animation effect="fade" time="400">windowopen</animation>
+			<animation effect="fade" time="400">windowclose</animation>
+			<visible>!window.isvisible(602)+!window.isvisible(2005)</visible>
+		</control>
+		
+    <control>
+    	<description>group element</description>
+      <type>group</type>
+			<animation effect="fade" time="250">WindowOpen</animation>
+			<animation effect="fade" time="0">WindowClose</animation>
+			<animation effect="slide" start="0,200" end="0,0" tween="quadratic" easing="in" time="150" delay="0">WindowOpen</animation>
+	
+      <control>
+      	<id>0</id>
+        <type>image</type>
+        <posX>561</posX>
+        <posY>396</posY>
+        <width>798</width>
+        <height>579</height>
+        <texture>dialog_menubottomright_background.png</texture>
+      </control>
+			
+      <control>
+      	<id>4</id>
+        <description>Heading text label</description>
+        <type>label</type>
+        <posX>680</posX>
+        <posY>496</posY>
+				<width>580</width>
+        <font>fontB20</font>
+        <textcolor>ff393939</textcolor>
+        <label>181</label>
+      </control>
+
+			<control>
+				<description>Label text</description>
+				<type>label</type>
+				<id>5</id>
+        <posX>680</posX>
+				<posY>583</posY>
+				<label>-</label>
+				<font>fontB12</font>
+				<textcolor>FFFFFFFF</textcolor>
+			</control>
+
+			<control>
+				<description>Label text</description>
+				<type>label</type>
+				<id>6</id>
+        <posX>680</posX>
+				<posY>628</posY>
+				<label>-</label>
+        <font>fontB12</font>
+				<textcolor>FFFFFFFF</textcolor>
+			</control>
+
+      <control>
+      	<id>3</id>
+        <description>options listcontrol</description>
+        <type>listcontrol</type>
+        <onleft>3</onleft>
+        <onright>3</onright>
+        <posX>635</posX>
+        <posY>722</posY>
+        <width>648</width>
+        <height>450</height>
+        <textXOff2>655</textXOff2>
+        <textYOff2>16</textYOff2>
+        <spinPosX>720</spinPosX>
+        <spinPosY>844</spinPosY>
+        <spinColor>000000</spinColor>
+        <textXOff>37</textXOff>
+        <textYOff>16</textYOff>
+        <textcolor>000000</textcolor>
+        <textcolor2>000000</textcolor2>
+     		<selectedColor>FF000000</selectedColor>                
+        <textureFocus>context_item_selected.png</textureFocus>
+        <textureNoFocus>-</textureNoFocus>
+        <textureHeight>69</textureHeight>
+        <spaceBetweenItems>1</spaceBetweenItems>
+				<PinIconWidth>15</PinIconWidth>
+				<PinIconHeight>15</PinIconHeight>
+        <PinIconXOff>2000</PinIconXOff>
+        <PinIconYOff>15</PinIconYOff>
+				<unfocusedAlpha>130</unfocusedAlpha>
+      </control>
+
+	</control>
+
+</controls>
+</window>

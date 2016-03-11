@@ -105,7 +105,7 @@ namespace MediaPortal.GUI.Library
         cultureName = GetCultureName(language);
       }
 
-      Log.Info("  Loading localized Strings - Path: {0} Culture: {1}  Language: {2} Prefix: {3}", directory, cultureName,
+      Log.Info("Loading localized Strings - Path: {0} Culture: {1}  Language: {2} Prefix: {3}", directory, cultureName,
                language, isPrefixEnabled);
 
       // http://msdn.microsoft.com/en-us/library/system.globalization.cultureinfo.aspx
@@ -299,7 +299,7 @@ namespace MediaPortal.GUI.Library
 
         for (int i = 0; i < cultureList.Length; i++)
         {
-          _cultures.Add(cultureList[i].EnglishName, cultureList[i].Name);
+          _cultures[cultureList[i].EnglishName] = cultureList[i].Name;
         }
       }
       string cultures = null;

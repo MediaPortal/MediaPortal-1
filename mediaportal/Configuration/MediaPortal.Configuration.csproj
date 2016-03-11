@@ -28,7 +28,9 @@
     </UpgradeBackupLocation>
     <OldToolsVersion>3.5</OldToolsVersion>
     <ApplicationManifest>Configuration.exe.manifest</ApplicationManifest>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkProfile />
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <OutputPath>bin\Debug\</OutputPath>
@@ -164,21 +166,20 @@
     <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\TvEngine3\TVLibrary\TvLibrary.Interfaces\TvLibrary.Interfaces.csproj">
+      <Project>{AE752FB4-7450-4150-9BAD-19EFA9D2AC37}</Project>
+      <Name>TvLibrary.Interfaces</Name>
+    </ProjectReference>
     <ProjectReference Include="WinCustomControls\WinCustomControls.csproj">
       <Project>{49DFF256-09FD-4598-A3E8-855753E2A1FC}</Project>
       <Name>WinCustomControls</Name>
     </ProjectReference>
-    <Reference Include="Bass.Net, Version=2.3.1.1, Culture=neutral, PublicKeyToken=b7566c273e6ef480, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\MediaPortal.Base\Bass.Net.dll</HintPath>
+    <Reference Include="Bass.Net">
+      <HintPath>..\..\Packages\BASS.NET.2.4.10.3\lib\net40\Bass.Net.dll</HintPath>
     </Reference>
     <Reference Include="BassRegistration, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\MediaPortal.Base\BassRegistration.dll</HintPath>
-    </Reference>
-    <Reference Include="BassVisAPI.Net, Version=2.4.1.9, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\MediaPortal.Base\BassVisAPI.Net.dll</HintPath>
     </Reference>
     <Reference Include="CSScriptLibrary, Version=1.9.0.0, Culture=neutral, PublicKeyToken=70fcc3d18c749033">
       <SpecificVersion>False</SpecificVersion>
@@ -247,6 +248,7 @@
       <Project>{6DA0E4DF-6230-4642-98B5-E690BB6942BB}</Project>
       <Name>Utils</Name>
     </ProjectReference>
+    <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\..\Common-MP-TVE3\SolutionInfo.cs">
@@ -255,6 +257,25 @@
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Plugins.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Sections\TVAdvancedOptions.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Sections\Radio.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Subdialogs\DlgWol.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Subdialogs\DlgWol.Designer.cs">
+      <DependentUpon>DlgWol.cs</DependentUpon>
+    </Compile>
+    <Compile Include="TvServerRemote.cs" />
     <Compile Include="Sections\BD.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -272,6 +293,18 @@
     </Compile>
     <Compile Include="Sections\FiltersPowerDVDDecoder10.cs">
       <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Sections\Music.Designer.cs">
+      <DependentUpon>Music.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Sections\BDPostProcessing.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Sections\BDZoom.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Sections\BDZoom.Designer.cs">
+      <DependentUpon>BDZoom.cs</DependentUpon>
     </Compile>
     <Compile Include="SettingsUpgradeManager.cs" />
     <Compile Include="HelpSystem.cs" />
@@ -396,18 +429,7 @@
     <Compile Include="Subdialogs\EditShareForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Subdialogs\EditWeatherCityForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
     <Compile Include="Subdialogs\ParameterForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
-    <Compile Include="Subdialogs\SearchCityForm.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="SectionSettings.cs">
@@ -497,7 +519,7 @@
     <Compile Include="Sections\RemoteUSBUIRT.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Sections\TVClient.cs">
+    <Compile Include="Sections\TV.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Sections\TVTeletext.cs">
@@ -508,12 +530,6 @@
     </Compile>
     <Compile Include="Sections\General.Designer.cs">
       <DependentUpon>General.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Sections\MusicASIO.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Sections\MusicASIO.Designer.cs">
-      <DependentUpon>MusicASIO.cs</DependentUpon>
     </Compile>
     <Compile Include="Sections\MusicDSP.cs">
       <SubType>UserControl</SubType>
@@ -608,13 +624,10 @@
     <Compile Include="Sections\Remote.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Sections\TV.cs">
+    <Compile Include="Sections\TVRadio.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Sections\TVPostProcessing.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Sections\Weather.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Sections\RemoteWinLirc.cs">
@@ -631,10 +644,13 @@
     <Compile Include="VideoRenderers.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="WeatherChannel.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Content Include="Resources\blu-ray_regions.png" />
+    <None Include="Resources\ms_wed_7000.jpg" />
+    <None Include="Resources\remote_MceHp.jpg" />
+    <EmbeddedResource Include="Sections\TVAdvancedOptions.resx">
+      <DependentUpon>TVAdvancedOptions.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="Sections\Images\Plugins\imageListLargePlugins\00_plugin_other.png" />
     <EmbeddedResource Include="Sections\Images\Plugins\imageListLargePlugins\01_plugin_other_off.png" />
     <EmbeddedResource Include="Sections\Images\Plugins\imageListLargePlugins\02_plugin_window.png" />
@@ -687,6 +703,9 @@
     <EmbeddedResource Include="Sections\FiltersPowerDVDDecoder10.resx">
       <DependentUpon>FiltersPowerDVDDecoder10.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Sections\BDZoom.resx">
+      <DependentUpon>BDZoom.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Sections\GeneralStartupResume.resx">
       <DependentUpon>GeneralStartupResume.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -709,6 +728,10 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\DVDZoom.resx">
       <DependentUpon>DVDZoom.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Sections\Radio.resx">
+      <DependentUpon>Radio.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\MusicShares.resx">
@@ -782,13 +805,12 @@
       <SubType>Designer</SubType>
       <DependentUpon>DlgConfigModeHint.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Subdialogs\DlgWol.resx">
+      <DependentUpon>DlgWol.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Subdialogs\EditShareForm.resx">
       <SubType>Designer</SubType>
       <DependentUpon>EditShareForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Subdialogs\EditWeatherCityForm.resx">
-      <DependentUpon>EditWeatherCityForm.cs</DependentUpon>
-      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Subdialogs\ParameterForm.resx">
       <DependentUpon>ParameterForm.cs</DependentUpon>
@@ -798,10 +820,6 @@
       <SubType>Designer</SubType>
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Subdialogs\SearchCityForm.resx">
-      <DependentUpon>SearchCityForm.cs</DependentUpon>
-      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\FiltersDScalerAudio.resx">
       <DependentUpon>FiltersDScalerAudio.cs</DependentUpon>
@@ -879,9 +897,9 @@
       <DependentUpon>RemoteUSBUIRT.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Sections\TVClient.resx">
+    <EmbeddedResource Include="Sections\TV.resx">
       <SubType>Designer</SubType>
-      <DependentUpon>TVClient.cs</DependentUpon>
+      <DependentUpon>TV.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\TVTeletext.resx">
       <DependentUpon>TVTeletext.cs</DependentUpon>
@@ -890,10 +908,6 @@
     <EmbeddedResource Include="Sections\General.resx">
       <SubType>Designer</SubType>
       <DependentUpon>General.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Sections\MusicASIO.resx">
-      <DependentUpon>MusicASIO.cs</DependentUpon>
-      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\MusicDSP.resx">
       <DependentUpon>MusicDSP.cs</DependentUpon>
@@ -967,27 +981,27 @@
       <SubType>Designer</SubType>
       <DependentUpon>PluginsNew.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Sections\TV.resx">
-      <DependentUpon>TV.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Sections\Weather.resx">
-      <DependentUpon>Weather.cs</DependentUpon>
+    <EmbeddedResource Include="Sections\TVRadio.resx">
+      <DependentUpon>TVRadio.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\RemoteWinLirc.resx">
       <DependentUpon>RemoteWinLirc.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <None Include="packages.config" />
     <None Include="Resources\config.ico" />
     <None Include="Resources\wizard_background.png" />
-    <None Include="Resources\remote.HidKeys.png" />
     <None Include="Resources\remote.FireDtv.png" />
     <None Include="Resources\remote.Centarea.png" />
     <None Include="Resources\codec_screwdriver.png" />
+    <None Include="Resources\gamepad.LogitechWirelessGamepadF710.png" />
+    <None Include="Resources\gamepad.MicrosoftXbox360WirelessController.png" />
+    <None Include="Resources\gamepad.LogitechCordlessRumblePad2.png" />
     <Content Include="Resources\icon_folder.png" />
     <Content Include="Resources\icon_help.png" />
     <Content Include="Resources\icon_refresh.png" />
+    <None Include="Resources\k60_media_keys.png" />
     <Content Include="Resources\logo_PayPal.png" />
     <None Include="Resources\mplogo.png" />
     <None Include="Resources\remote.MceVista.png" />

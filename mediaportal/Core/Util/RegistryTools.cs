@@ -66,7 +66,7 @@ namespace MediaPortal.Util
                       string friendlyName = (string)defaultkey.GetValue(null);
                       // Gets the (Default) value from this key            
                       if (!string.IsNullOrEmpty(friendlyName) &&
-                          friendlyName.ToLower().IndexOf(aFilename.ToLower()) >= 0)
+                          friendlyName.ToLowerInvariant().IndexOf(aFilename.ToLowerInvariant()) >= 0)
                       {
                         if (!resultPaths.Contains(friendlyName))
                           resultPaths.Add(friendlyName);

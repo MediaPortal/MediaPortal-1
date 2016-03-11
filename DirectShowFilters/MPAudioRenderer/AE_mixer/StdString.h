@@ -4105,7 +4105,7 @@ private:
 #ifdef _MFC_VER
   inline CArchive& AFXAPI operator<<(CArchive& ar, const CStdStringA& strA)
   {
-    CString strTemp  = strA;
+    CStdStringA strTemp  = strA;
     return ar << strTemp;
   }
   /*

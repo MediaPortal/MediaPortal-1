@@ -20,6 +20,7 @@
 
 using System;
 using System.Drawing;
+using System.Globalization;
 using System.IO;
 using System.Reflection;
 using System.Text;
@@ -29,7 +30,6 @@ using System.Xml;
 using System.Xml.Serialization;
 using MediaPortal.Configuration;
 using MediaPortal.GUI.Library;
-using MediaPortal.Hardware;
 using MediaPortal.InputDevices;
 using MediaPortal.Player;
 using MediaPortal.ProcessPlugins.MiniDisplayPlugin.xPL;
@@ -37,7 +37,7 @@ using Action = MediaPortal.GUI.Library.Action;
 
 namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 {
-  public class xPL_Connector : BaseDisplay, IDisplay
+  public class xPL_Connector : BaseDisplay
   {
     private bool _BlankDisplayOnExit;
     private bool _DisplayChanged;
@@ -56,7 +56,6 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     private SystemStatus MPStatus = new SystemStatus();
     private SystemStatus MPStatus_old = new SystemStatus();
     private readonly string mVendorID = "mportal";
-    private InputHandler rHandler;
     private DateTime SettingsLastModTime;
 
     private void AdvancedSettings_OnSettingsChanged()
@@ -72,7 +71,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       this.Initialize();
     }
 
-    public void CleanUp()
+    public override void CleanUp()
     {
       AdvancedSettings.OnSettingsChanged -=
         new AdvancedSettings.OnSettingsChangedHandler(this.AdvancedSettings_OnSettingsChanged);
@@ -83,18 +82,18 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
     private void Clear() {}
 
-    public void Configure()
+    public override void Configure()
     {
       Form form = new xPL_Connector_AdvancedSetupForm();
       form.ShowDialog();
       form.Dispose();
     }
 
-    public void Dispose() {}
+    public override void Dispose() { }
 
-    public void DrawImage(Bitmap bitmap) {}
+    public override void DrawImage(Bitmap bitmap) { }
 
-    public void Initialize()
+    public override void Initialize()
     {
       if (this._IsDisabled)
       {
@@ -159,7 +158,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
     private void Listener_XplMessageReceived(object sender, XplListener.XplEventArgs e)
     {
-      if (e.XplMsg.Schema.msgClass.ToLower().Equals("hbeat") && e.XplMsg.Schema.msgType.ToLower().Equals("app"))
+      if (e.XplMsg.Schema.msgClass.ToLowerInvariant().Equals("hbeat") && e.XplMsg.Schema.msgType.ToLowerInvariant().Equals("app"))
       {
         if (this.DoDebug)
         {
@@ -167,16 +166,16 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         }
         this._IsConnected = true;
       }
-      else if (e.XplMsg.Schema.msgClass.ToLower().Equals("config"))
+      else if (e.XplMsg.Schema.msgClass.ToLowerInvariant().Equals("config"))
       {
         if (this.DoDebug)
         {
           Log.Info("xPLConnector_Listener_XplMessageReceived: Received CONFIG message");
         }
       }
-      else if ((e.XplMsg.Source.Vendor.ToLower().Equals(this.mVendorID.ToLower()) &&
-                e.XplMsg.Source.Device.ToLower().Equals(this.mDeviceID.ToLower())) &&
-               e.XplMsg.Source.Instance.ToLower().Equals(this.mInstanceID.ToLower()))
+      else if ((e.XplMsg.Source.Vendor.ToLowerInvariant().Equals(this.mVendorID.ToLowerInvariant()) &&
+                e.XplMsg.Source.Device.ToLowerInvariant().Equals(this.mDeviceID.ToLowerInvariant())) &&
+               e.XplMsg.Source.Instance.ToLowerInvariant().Equals(this.mInstanceID.ToLowerInvariant()))
       {
         if (this.DoDebug)
         {
@@ -190,7 +189,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           Log.Info("xPLConnector_Listener_XplMessageReceived: {0} - {1} - {2}",
                    new object[] {e.XplMsg.Source.Vendor, e.XplMsg.Source.Device, e.XplMsg.Content});
         }
-        string str = e.XplMsg.Schema.msgClass.ToLower() + "." + e.XplMsg.Schema.msgType.ToLower();
+        string str = e.XplMsg.Schema.msgClass.ToLowerInvariant() + "." + e.XplMsg.Schema.msgType.ToLowerInvariant();
         string str11 = str;
         if (str11 != null)
         {
@@ -207,7 +206,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
                     Log.Info("xPL_Connector.Listener_XplMessageReceived(): Received remote.basic \"{0}\"",
                              new object[] {str9});
                   }
-                  if (Enum.IsDefined(typeof (GUIWindow.Window), str9.ToUpper()))
+                  if (Enum.IsDefined(typeof (GUIWindow.Window), str9.ToUpperInvariant()))
                   {
                     if (this.DoDebug)
                     {
@@ -215,7 +214,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
                                new object[0]);
                     }
                     this.XPL_Send_Remote_Confirm_Message(e);
-                    int num8 = (int)Enum.Parse(typeof (GUIWindow.Window), str9.ToUpper());
+                    int num8 = (int)Enum.Parse(typeof (GUIWindow.Window), str9.ToUpperInvariant());
                     if (!GUIWindowManager.ActiveWindow.Equals(num8))
                     {
                       GUIWindowManager.SendThreadCallbackAndWait(
@@ -240,26 +239,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
                       return;
                     }
                   }
-                  foreach (string str10 in Enum.GetNames(typeof (RemoteButton)))
-                  {
-                    if (str10.ToLower().Equals(str9.ToLower()) || str9.ToLower().Equals("remote_" + str10.ToLower()))
-                    {
-                      if (this.DoDebug)
-                      {
-                        Log.Info(
-                          "xPL_Connector.Listener_XplMessageReceived(): Received remote.basic remote key name \"{0}\"",
-                          new object[] {str9});
-                      }
-                      this.XPL_Send_Remote_Confirm_Message(e);
-                      if (!this.rHandler.MapAction((int)Enum.Parse(typeof (RemoteButton), str10)) && this.DoDebug)
-                      {
-                        Log.Info(
-                          "xPL_Connector.Listener_XplMessageReceived(): COULD NOT FIRE REMOTE ACTION (isLoaded = {0})",
-                          new object[] {this.rHandler.IsLoaded});
-                      }
-                      break;
-                    }
-                  }
+
                   int result = 0;
                   int.TryParse(str9, out result);
                   if (result != 0)
@@ -291,14 +271,14 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
                   return;
 
                 case "devstate":
-                  if (e.XplMsg.GetParam(1, "mp").ToLower().Equals("player"))
+                  if (e.XplMsg.GetParam(1, "mp").ToLowerInvariant().Equals("player"))
                   {
                     this.XPL_SendPlayerDevstate("xpl-stat");
                   }
                   return;
 
                 case "mpinfo":
-                  if (e.XplMsg.GetParam(1, "mp").ToLower().Equals("player"))
+                  if (e.XplMsg.GetParam(1, "mp").ToLowerInvariant().Equals("player"))
                   {
                     this.XPL_SendPlayerMediaPlayerInfo("xpl-stat");
                     this.XPL_SendPlayerMediaPlayerInputInfo("xpl-stat");
@@ -306,21 +286,21 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
                   return;
 
                 case "mptrnspt":
-                  if (e.XplMsg.GetParam(1, "mp").ToLower().Equals("player"))
+                  if (e.XplMsg.GetParam(1, "mp").ToLowerInvariant().Equals("player"))
                   {
                     this.XPL_SendPlayerTransportState("xpl-stat");
                   }
                   return;
 
                 case "mpmedia":
-                  if (e.XplMsg.GetParam(1, "mp").ToLower().Equals("player"))
+                  if (e.XplMsg.GetParam(1, "mp").ToLowerInvariant().Equals("player"))
                   {
                     this.XPL_SendMediaInfo("xpl-stat");
                   }
                   return;
 
                 case "mpconfig":
-                  if (e.XplMsg.GetParam(1, "mp").ToLower().Equals("player"))
+                  if (e.XplMsg.GetParam(1, "mp").ToLowerInvariant().Equals("player"))
                   {
                     this.XPL_SendPlayerMediaPlayerConfig("xpl-stat");
                   }
@@ -334,7 +314,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           else
           {
             int num;
-            switch (e.XplMsg.GetParam(1, "command").ToLower())
+            switch (e.XplMsg.GetParam(1, "command").ToLowerInvariant())
             {
               case "record":
               case "position":
@@ -347,7 +327,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
               case "play":
                 {
-                  string path = e.XplMsg.GetParam(1, "url").ToLower();
+                  string path = e.XplMsg.GetParam(1, "url").ToLowerInvariant();
                   if (!(path.Equals(string.Empty) & g_Player.Paused))
                   {
                     if (path.Equals(g_Player.currentFileName) & g_Player.Paused)
@@ -412,7 +392,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
               case "forward":
                 {
-                  string str4 = e.XplMsg.GetParam(1, "speed").ToLower();
+                  string str4 = e.XplMsg.GetParam(1, "speed").ToLowerInvariant();
                   num = 0;
                   if (!str4.Equals(string.Empty))
                   {
@@ -424,7 +404,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
                 }
               case "rewind":
                 {
-                  string str5 = e.XplMsg.GetParam(1, "speed").ToLower();
+                  string str5 = e.XplMsg.GetParam(1, "speed").ToLowerInvariant();
                   int num2 = 0;
                   if (!str5.Equals(string.Empty))
                   {
@@ -483,7 +463,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
                 return;
 
               case "mute":
-                if (!(e.XplMsg.GetParam(1, "state").ToLower() == "on"))
+                if (!(e.XplMsg.GetParam(1, "state").ToLowerInvariant() == "on"))
                 {
                   if (this.DoDebug)
                   {
@@ -504,7 +484,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
               case "volume":
                 {
                   string str13;
-                  string s = e.XplMsg.GetParam(1, "level").ToLower();
+                  string s = e.XplMsg.GetParam(1, "level").ToLowerInvariant();
                   if (((str13 = s.Substring(0, 1)) == null) || (!(str13 == "+") && !(str13 == "-")))
                   {
                     int num7 = int.Parse(s);
@@ -566,9 +546,9 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       this.LastSettingsCheck = DateTime.Now;
     }
 
-    public void SetCustomCharacters(int[][] customCharacters) {}
+    public override void SetCustomCharacters(int[][] customCharacters) { }
 
-    public void SetLine(int line, string message)
+    public override void SetLine(int line, string message, ContentAlignment aAlignment)
     {
       if (this._IsDisabled)
       {
@@ -597,7 +577,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       }
     }
 
-    public void Setup(string _port, int _lines, int _cols, int _delay, int _linesG, int _colsG, int _delayG,
+    public override void Setup(string _port, int _lines, int _cols, int _delay, int _linesG, int _colsG, int _delayG,
                       bool _backLight, int _backLightLevel, bool _contrast, int _contrastLevel, bool _blankOnExit)
     {
       this.DoDebug = Assembly.GetEntryAssembly().FullName.Contains("Configuration") | Settings.Instance.ExtensiveLogging;
@@ -608,16 +588,6 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       this._Trows = _lines;
       this._Tcols = _cols;
       this._IsConnected = false;
-      Log.Info("xPL_Connector.Setup(): Loading MCE Remote mapping file");
-      this.rHandler = new InputHandler("Microsoft MCE");
-      if (this.rHandler.IsLoaded)
-      {
-        Log.Info("xPL_Connector.Setup(): MCE Remote mapping file loaded!");
-      }
-      else
-      {
-        Log.Info("xPL_Connector.Setup(): ERROR Could not Load MCE Remote mapping file");
-      }
       Log.Info("xPL_Connector.Setup(): completed");
     }
 
@@ -804,7 +774,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       object obj3 =
         string.Concat(new object[]
                         {obj2, "volume=", Math.Floor((double)((this.MPStatus.SystemVolumeLevel / 0xffff) * 100)), '\n'});
-      string strMessage = string.Concat(new object[] {obj3, "mute=", this.MPStatus.IsMuted.ToString().ToLower(), '\n'});
+      string strMessage = string.Concat(new object[] { obj3, "mute=", this.MPStatus.IsMuted.ToString().ToLower(CultureInfo.CurrentCulture), '\n' });
       this.Listener.SendMessage(msgType, "*", "media.devstate", strMessage);
       strMessage = string.Empty;
     }
@@ -816,7 +786,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       object obj3 =
         string.Concat(new object[]
                         {obj2, "volume=", Math.Floor((double)((this.MPStatus.SystemVolumeLevel / 0xffff) * 100)), '\n'});
-      string strMessage = string.Concat(new object[] {obj3, "mute=", this.MPStatus.IsMuted.ToString().ToLower(), '\n'});
+      string strMessage = string.Concat(new object[] { obj3, "mute=", this.MPStatus.IsMuted.ToString().ToLower(CultureInfo.CurrentCulture), '\n' });
       this.Listener.SendMessage(msgType, "*", "media.mpconfig", strMessage);
       strMessage = string.Empty;
     }
@@ -889,32 +859,32 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       strMessage = string.Empty;
     }
 
-    public string Description
+    public override string Description
     {
       get { return "xPL_Connector driver v05_05_2008"; }
     }
 
-    public string ErrorMessage
+    public override string ErrorMessage
     {
       get { return this._ErrorMessage; }
     }
 
-    public bool IsDisabled
+    public override bool IsDisabled
     {
       get { return this._IsDisabled; }
     }
 
-    public string Name
+    public override string Name
     {
       get { return "xPL_Connector"; }
     }
 
-    public bool SupportsGraphics
+    public override bool SupportsGraphics
     {
       get { return false; }
     }
 
-    public bool SupportsText
+    public override bool SupportsText
     {
       get { return true; }
     }

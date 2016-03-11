@@ -20,6 +20,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Text;
 using System.Drawing;
 using System.Runtime.InteropServices;
@@ -124,9 +125,47 @@ namespace MediaPortal.Player.Subtitles
 
       Size size = new Size(GUIGraphicsContext.Width, GUIGraphicsContext.Height);
 
+      // Get Default Language from MP Setting and parse it to MPC-HC Engine (needed for forced track)
+      string defaultLanguageCulture = "EN";
+      string localizedCINameSub = "EN";
+      int lcidCI = 0;
+
+      using (Settings xmlreader = new MPSettings())
+      {
+        try
+        {
+          if (g_Player.IsVideo && (g_Player.CurrentFile.ToUpperInvariant().Contains(@"\BDMV\INDEX.BDMV")))
+          {
+            localizedCINameSub = (xmlreader.GetValueAsString("bdplayer", "subtitlelanguage", "English"));
+            foreach (CultureInfo ci in CultureInfo.GetCultures(CultureTypes.NeutralCultures))
+            {
+              if (ci.EnglishName == localizedCINameSub)
+              {
+                lcidCI = ci.TextInfo.LCID;;
+              }
+            }
+            Log.Info("MpcEngine: Subtitle Blu-ray Player CultureInfo {0}", localizedCINameSub);
+          }
+          else
+          {
+            CultureInfo ci = new CultureInfo(xmlreader.GetValueAsString("subtitles", "language", defaultLanguageCulture));
+            lcidCI = ci.TextInfo.LCID;
+            Log.Info("MpcEngine: Subtitle VideoPlayer CultureInfo {0}", ci);
+          }
+        }
+        catch (Exception ex)
+        {
+          CultureInfo ci = new CultureInfo(defaultLanguageCulture);
+          lcidCI = ci.TextInfo.LCID;
+          Log.Error(
+            "MpcEngine: SelectSubtitleLanguage - unable to build CultureInfo, make sure MediaPortal.xml is not corrupted! - {0}",
+            ex);
+        }
+      }
+
       return MpcSubtitles.LoadSubtitles(
         DirectShowUtil.GetUnmanagedDevice(GUIGraphicsContext.DX9Device),
-        size, filename, graphBuilder, subPaths);
+        size, filename, graphBuilder, subPaths, lcidCI);
     }
 
     public void FreeSubtitles()
@@ -224,69 +263,69 @@ namespace MediaPortal.Player.Subtitles
     private class MpcSubtitles
     {
       //set default subtitle's style (call before LoadSubtitles to take effect)
-      [DllImport("mpcSubs.dll", ExactSpelling = true, CharSet = CharSet.Unicode)]
+      [DllImport("mpcSubs.dll", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true, CharSet = CharSet.Unicode)]
       public static extern void SetDefaultStyle([In] ref SubtitleStyle style, bool overrideUserStyle);
 
       //load subtitles for video file filename, with given (rendered) graph 
-      [DllImport("mpcSubs.dll", ExactSpelling = true, CharSet = CharSet.Unicode)]
+      [DllImport("mpcSubs.dll", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true, CharSet = CharSet.Unicode)]
       public static extern bool LoadSubtitles(IntPtr d3DDev, Size size, string filename, IGraphBuilder graphBuilder,
-                                              string paths);
+                                              string paths, int lcidCI);
 
       //set sample time (set from EVR presenter, not used in case of vmr9)
-      [DllImport("mpcSubs.dll", ExactSpelling = true)]
+      [DllImport("mpcSubs.dll", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
       public static extern void SetTime(long nsSampleTime);
 
-      [DllImport("mpcSubs.dll", ExactSpelling = true)]
+      [DllImport("mpcSubs.dll", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
       public static extern void SaveToDisk();
 
-      [DllImport("mpcSubs.dll", ExactSpelling = true)]
+      [DllImport("mpcSubs.dll", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
       public static extern bool IsModified();
 
       ////
       //subs management functions
       ///
-      [DllImport("mpcSubs.dll", ExactSpelling = true)]
+      [DllImport("mpcSubs.dll", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
       public static extern int GetCount();
 
-      [DllImport("mpcSubs.dll", ExactSpelling = true)]
+      [DllImport("mpcSubs.dll", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
       [return: MarshalAs(UnmanagedType.BStr)]
       public static extern string GetLanguage(int i);
 
-      [DllImport("mpcSubs.dll", ExactSpelling = true)]
+      [DllImport("mpcSubs.dll", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
       [return: MarshalAs(UnmanagedType.BStr)]
       public static extern string GetTrackName(int i);
 
-      [DllImport("mpcSubs.dll", ExactSpelling = true)]
+      [DllImport("mpcSubs.dll", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
       public static extern int GetCurrent();
 
-      [DllImport("mpcSubs.dll", ExactSpelling = true)]
+      [DllImport("mpcSubs.dll", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
       public static extern void SetCurrent(int current);
 
-      [DllImport("mpcSubs.dll", ExactSpelling = true)]
+      [DllImport("mpcSubs.dll", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
       public static extern bool GetEnable();
 
-      [DllImport("mpcSubs.dll", ExactSpelling = true)]
+      [DllImport("mpcSubs.dll", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
       public static extern void SetEnable(bool enable);
 
-      [DllImport("mpcSubs.dll", ExactSpelling = true)]
+      [DllImport("mpcSubs.dll", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
       public static extern void Render(int x, int y, int width, int height);
 
-      [DllImport("mpcSubs.dll", ExactSpelling = true)]
+      [DllImport("mpcSubs.dll", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
       public static extern int GetDelay();
 
       //in milliseconds
 
-      [DllImport("mpcSubs.dll", ExactSpelling = true)]
+      [DllImport("mpcSubs.dll", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
       public static extern void SetDelay(int delay_ms);
 
-      [DllImport("mpcSubs.dll", ExactSpelling = true)]
+      [DllImport("mpcSubs.dll", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
       public static extern void FreeSubtitles();
 
-      [DllImport("mpcSubs.dll", ExactSpelling = true)]
+      [DllImport("mpcSubs.dll", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
       public static extern void SetAdvancedOptions(int subPicsBufferAhead, Size textureSize, bool pow2tex,
                                                    bool disableAnimation);
 
-      [DllImport("mpcSubs.dll", ExactSpelling = true)]
+      [DllImport("mpcSubs.dll", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
       public static extern void SetShowForcedOnly(bool onlyShowForcedSubs);
     }
   }

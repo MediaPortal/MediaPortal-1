@@ -42,7 +42,7 @@
       // 
       // button_next
       // 
-      this.button_next.Text = "Next>";
+      this.button_next.Text = "Next >";
       // 
       // timer1
       // 
@@ -63,9 +63,8 @@
       this.lbl_curr_file.AutoSize = true;
       this.lbl_curr_file.Location = new System.Drawing.Point(12, 102);
       this.lbl_curr_file.Name = "lbl_curr_file";
-      this.lbl_curr_file.Size = new System.Drawing.Size(35, 13);
+      this.lbl_curr_file.Size = new System.Drawing.Size(0, 13);
       this.lbl_curr_file.TabIndex = 24;
-      this.lbl_curr_file.Text = "label1";
       // 
       // lst_changes
       // 
@@ -94,7 +93,7 @@
       // 
       this.panel5.Controls.Add(this.lst_changes);
       this.panel5.Dock = System.Windows.Forms.DockStyle.Bottom;
-      this.panel5.Location = new System.Drawing.Point(0, 118);
+      this.panel5.Location = new System.Drawing.Point(0, 121);
       this.panel5.Name = "panel5";
       this.panel5.Size = new System.Drawing.Size(494, 185);
       this.panel5.TabIndex = 27;
@@ -104,13 +103,12 @@
       this.AcceptButton = this.button_next;
       this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
-      this.ClientSize = new System.Drawing.Size(494, 351);
+      this.ClientSize = new System.Drawing.Size(494, 350);
       this.Controls.Add(this.panel5);
       this.Controls.Add(this.panel4);
       this.Controls.Add(this.lbl_curr_file);
       this.Name = "InstallSection";
       this.Text = "Extension Installer for   - 0.0.0.0";
-      this.Load += new System.EventHandler(this.InstallSection_Load);
       this.Shown += new System.EventHandler(this.InstallSection_Shown);
       this.Controls.SetChildIndex(this.lbl_curr_file, 0);
       this.Controls.SetChildIndex(this.panel4, 0);

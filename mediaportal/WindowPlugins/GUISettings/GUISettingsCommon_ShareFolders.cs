@@ -143,7 +143,7 @@ namespace MediaPortal.GUI.Settings
 
       using (Profile.Settings xmlreader = new MPSettings())
       {
-        _globalVideoThumbsEnaled = xmlreader.GetValueAsBool("thumbnails", "tvrecordedondemand", true);
+        _globalVideoThumbsEnaled = xmlreader.GetValueAsBool("thumbnails", "videoondemand", true);
       }
     }
 
@@ -201,12 +201,26 @@ namespace MediaPortal.GUI.Settings
       SetProperties();
       _userNetFolder = GUILocalizeStrings.Get(145); // Network
       _folderHistory = new ArrayList();
+
+      if (!MediaPortal.Util.Utils.IsGUISettingsWindow(GUIWindowManager.GetPreviousActiveWindow()))
+      {
+        if (MediaPortal.GUI.Settings.GUISettings.IsPinLocked() && !MediaPortal.GUI.Settings.GUISettings.RequestPin())
+        {
+          GUIWindowManager.CloseCurrentWindow();
+        }
+      }
     }
 
-    protected override void OnPageDestroy(int new_windowId)
+    protected override void OnPageDestroy(int newWindowId)
     {
       SaveSettings();
-      base.OnPageDestroy(new_windowId);
+
+      if (MediaPortal.GUI.Settings.GUISettings.SettingsChanged && !MediaPortal.Util.Utils.IsGUISettingsWindow(newWindowId))
+      {
+        MediaPortal.GUI.Settings.GUISettings.OnRestartMP(GetID);
+      }
+
+      base.OnPageDestroy(newWindowId);
     }
 
     public override void OnAction(Action action)
@@ -902,49 +916,71 @@ namespace MediaPortal.GUI.Settings
       OnAddPath();
     }
 
-    private void OnAddLayout()
+    private void OnAddPin()
     {
-      GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_MENU);
-      if (dlg != null)
+      if (_folderPin != string.Empty)
       {
-        dlg.Reset();
-        dlg.SetHeading(GUILocalizeStrings.Get(496)); //Menu
-
-        foreach (string layout in _layouts)
+        var dlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_OK);
+        if (null == dlgOK)
         {
-          dlg.Add(layout);
-        }
-
-        if (_folderDefaultLayoutIndex >= 0)
-        {
-          dlg.SelectedLabel = _folderDefaultLayoutIndex;
-        }
-
-        dlg.DoModal(GetID);
-
-        if (dlg.SelectedId == -1)
-        {
-          OnAddEditFolder();
           return;
         }
+        dlgOK.SetHeading("");
+        dlgOK.SetLine(1, 100513);
+        dlgOK.DoModal(GetID);
 
-        _folderDefaultLayout = dlg.SelectedLabelText;
-        _folderDefaultLayoutIndex = dlg.SelectedLabel;
+        if (!RequestPin())
+        {
+          return;
+        }
       }
+
+      var dlgOK2 = (GUIDialogOK)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_OK);
+      if (null == dlgOK2)
+      {
+        return;
+      }
+      dlgOK2.SetHeading("");
+      dlgOK2.SetLine(1, 100514);
+      dlgOK2.DoModal(GetID);
+
+      SetPin();
+
       OnAddEditFolder();
     }
 
-    private void OnAddPin()
+    private void SetPin()
     {
-      GetStringFromKeyboard(ref _folderPin, 4);
+      var msgGetPassword = new GUIMessage(GUIMessage.MessageType.GUI_MSG_GET_PASSWORD, 0, 0, 0, 0, 0, 0);
+      GUIWindowManager.SendMessage(msgGetPassword);
 
-      int number;
-      if (!Int32.TryParse(_folderPin, out number))
+      _folderPin = msgGetPassword.Label;
+    }
+
+    private bool RequestPin()
+    {
+      bool retry = true;
+
+      while (retry)
       {
-        _folderPin = string.Empty;
-      }
+        var msgGetPassword = new GUIMessage(GUIMessage.MessageType.GUI_MSG_GET_PASSWORD, 0, 0, 0, 0, 0, 0);
+        GUIWindowManager.SendMessage(msgGetPassword);
 
-      OnAddEditFolder();
+        if (msgGetPassword.Label == _folderPin)
+        {
+          return true;
+        }
+
+        var msgWrongPassword = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WRONG_PASSWORD, 0, 0, 0, 0, 0,
+                                                     0);
+        GUIWindowManager.SendMessage(msgWrongPassword);
+
+        if (!(bool)msgWrongPassword.Object)
+        {
+          retry = false;
+        }
+      }
+      return false;
     }
 
     private void OnThumb()

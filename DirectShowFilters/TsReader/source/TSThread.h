@@ -35,11 +35,12 @@ public:
 
 	virtual void ThreadProc() = 0;
 	HRESULT StartThread();
-	HRESULT StopThread(DWORD dwTimeoutMilliseconds = 1000);
+	HRESULT StopThread(DWORD dwTimeoutMilliseconds = 5000);
   void WakeThread();
 
-	BOOL ThreadIsStopping(DWORD dwTimeoutMilliseconds = 10);
+	BOOL ThreadIsStopping(DWORD dwTimeoutMilliseconds);
   BOOL IsThreadRunning();
+
 protected:
 	virtual void InternalThreadProc();
 	HANDLE m_hDoneEvent;
@@ -47,6 +48,7 @@ protected:
 	HANDLE m_hWakeEvent;
 
 private:
+  CCritSec  m_ThreadStateLock;
   BOOL   m_bThreadRunning;
 	HANDLE m_threadHandle;
 	 static void __cdecl thread_function(void* p);

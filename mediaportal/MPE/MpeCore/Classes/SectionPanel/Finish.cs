@@ -20,13 +20,8 @@
 
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
 using System.IO;
 using System.Windows.Forms;
-using MpeCore.Classes.SectionPanel;
 using MpeCore.Interfaces;
 
 namespace MpeCore.Classes.SectionPanel
@@ -41,54 +36,19 @@ namespace MpeCore.Classes.SectionPanel
     private PackageClass _packageClass = new PackageClass();
     private List<CheckBox> CheckBoxs = new List<CheckBox>();
     private List<RadioButton> RadioButtons = new List<RadioButton>();
-    public ShowModeEnum Mode = ShowModeEnum.Preview;
-
-
+    private ShowModeEnum Mode = ShowModeEnum.Preview;
     private SectionResponseEnum resp = SectionResponseEnum.Cancel;
 
-    public Finish()
-    {
-      InitializeComponent();
-      CheckBoxs.Add(checkBox1);
-      CheckBoxs.Add(checkBox2);
-      CheckBoxs.Add(checkBox3);
-      CheckBoxs.Add(checkBox4);
-      CheckBoxs.Add(checkBox5);
-      CheckBoxs.Add(checkBox6);
-      CheckBoxs.Add(checkBox7);
-
-      RadioButtons.Add(radioButton1);
-      RadioButtons.Add(radioButton2);
-      RadioButtons.Add(radioButton3);
-      RadioButtons.Add(radioButton4);
-      RadioButtons.Add(radioButton5);
-      RadioButtons.Add(radioButton6);
-      RadioButtons.Add(radioButton7);
-    }
-
     #region ISectionPanel Members
-
-    public SectionParamCollection Params { get; set; }
-
-    public bool Unique
-    {
-      get { throw new NotImplementedException(); }
-      set { throw new NotImplementedException(); }
-    }
-
-    public string Guid
-    {
-      get { return "{BB49DFA5-04AB-45d1-8CEB-92C4544615E0}"; }
-    }
 
     public string DisplayName
     {
       get { return "Setup Complete"; }
     }
 
-    public SectionParamCollection Init()
+    public string Guid
     {
-      throw new NotImplementedException();
+      get { return "{BB49DFA5-04AB-45d1-8CEB-92C4544615E0}"; }
     }
 
     public SectionParamCollection GetDefaultParams()
@@ -130,6 +90,26 @@ namespace MpeCore.Classes.SectionPanel
 
     #endregion
 
+    public Finish()
+    {
+      InitializeComponent();
+      CheckBoxs.Add(checkBox1);
+      CheckBoxs.Add(checkBox2);
+      CheckBoxs.Add(checkBox3);
+      CheckBoxs.Add(checkBox4);
+      CheckBoxs.Add(checkBox5);
+      CheckBoxs.Add(checkBox6);
+      CheckBoxs.Add(checkBox7);
+
+      RadioButtons.Add(radioButton1);
+      RadioButtons.Add(radioButton2);
+      RadioButtons.Add(radioButton3);
+      RadioButtons.Add(radioButton4);
+      RadioButtons.Add(radioButton5);
+      RadioButtons.Add(radioButton6);
+      RadioButtons.Add(radioButton7);
+    }
+
     private void SetValues()
     {
       lbl_desc1.Text = _packageClass.ReplaceInfo(Section.Params[CONST_TEXT1].Value);
@@ -168,7 +148,7 @@ namespace MpeCore.Classes.SectionPanel
         if (i > 6)
           break;
       }
-      button_next.Text = "Next>";
+      button_next.Text = "Next >";
       switch (Section.WizardButtonsEnum)
       {
         case WizardButtonsEnum.BackNextCancel:
@@ -211,8 +191,6 @@ namespace MpeCore.Classes.SectionPanel
       }
     }
 
-    private void Welcome_Load(object sender, EventArgs e) {}
-
     private void button_back_Click(object sender, EventArgs e)
     {
       resp = SectionResponseEnum.Back;
@@ -231,7 +209,7 @@ namespace MpeCore.Classes.SectionPanel
       Close();
     }
 
-    private void checkBox1_CheckedChanged(object sender, EventArgs e)
+    private void checkBox_CheckedChanged(object sender, EventArgs e)
     {
       if (Mode == ShowModeEnum.Preview)
         return;
@@ -240,7 +218,7 @@ namespace MpeCore.Classes.SectionPanel
       item.Checked = box.Checked;
     }
 
-    private void radioButton1_CheckedChanged(object sender, EventArgs e)
+    private void radioButton_CheckedChanged(object sender, EventArgs e)
     {
       if (Mode == ShowModeEnum.Preview)
         return;

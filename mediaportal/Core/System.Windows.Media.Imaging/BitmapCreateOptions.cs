@@ -18,9 +18,11 @@
 
 #endregion
 
-namespace System.Windows.Media.Imaging
+using System;
+
+namespace MP.System.Windows.Media.Imaging
 {
-  [FlagsAttribute]
+  [Flags]
   public enum BitmapCreateOptions
   {
     #region Values

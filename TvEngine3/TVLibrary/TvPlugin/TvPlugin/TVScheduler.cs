@@ -55,7 +55,7 @@ namespace TvPlugin
     [SkinControl(8)] protected GUIButtonControl btnPriorities = null;
     [SkinControl(9)] protected GUIButtonControl btnConflicts = null;
     [SkinControl(10)] protected GUIListControl listSchedules = null;
-    [SkinControl(11)] protected GUIToggleButtonControl btnSeries = null;
+    [SkinControl(11)] protected GUICheckButton btnSeries = null;
 
     private SortMethod currentSortMethod = SortMethod.Date;
     private bool m_bSortAscending = true;
@@ -149,7 +149,29 @@ namespace TvPlugin
 
     protected override void OnPageLoad()
     {
+      if (!TVHome.Connected)
+      {
+        RemoteControl.Clear();
+        GUIWindowManager.ActivateWindow((int)Window.WINDOW_SETTINGS_TVENGINE);
+        return;
+      }
+
       TVHome.WaitForGentleConnection();
+
+      if (TVHome.Navigator == null)
+      {
+        TVHome.OnLoaded();
+      }
+      else if (TVHome.Navigator.Channel == null)
+      {
+        TVHome.m_navigator.ReLoad();
+        TVHome.LoadSettings(false);
+      }
+
+      if (TVHome.m_navigator == null)
+      {
+        TVHome.m_navigator = new ChannelNavigator(); // Create the channel navigator (it will load groups and channels)
+      }
 
       base.OnPageLoad();
       if (btnPriorities != null)
@@ -181,13 +203,16 @@ namespace TvPlugin
 
       if (!GUIGraphicsContext.IsTvWindow(newWindowId))
       {
-        if (TVHome.Card.IsTimeShifting && !(TVHome.Card.IsTimeShifting || TVHome.Card.IsRecording))
+        if (TVHome.Connected)
         {
-          if (GUIGraphicsContext.ShowBackground)
+          if (TVHome.Card.IsTimeShifting && !(TVHome.Card.IsTimeShifting || TVHome.Card.IsRecording))
           {
-            // stop timeshifting & viewing...
+            if (GUIGraphicsContext.ShowBackground)
+            {
+              // stop timeshifting & viewing...
 
-            TVHome.Card.StopTimeShifting();
+              TVHome.Card.StopTimeShifting();
+            }
           }
         }
       }
@@ -328,7 +353,7 @@ namespace TvPlugin
       }
       if (item2.IsFolder && item2.Label == "..")
       {
-        return -1;
+        return 1;
       }
       if (item1.IsFolder && !item2.IsFolder)
       {

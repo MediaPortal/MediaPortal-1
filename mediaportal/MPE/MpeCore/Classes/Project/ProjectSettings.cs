@@ -84,10 +84,14 @@ namespace MpeCore.Classes.Project
       folderGroup.Folder = Path.GetFullPath(folderGroup.Folder);
       GroupItem _groupItem = packageClass.Groups[folderGroup.Group];
       DirectoryInfo di = new DirectoryInfo(Path.GetFullPath(folderGroup.Folder));
-      FileInfo[] fileList;
-      fileList = folderGroup.Recursive
-                   ? di.GetFiles("*.*", SearchOption.AllDirectories)
-                   : di.GetFiles("*.*", SearchOption.TopDirectoryOnly);
+      FileInfo[] fileList = new FileInfo[0];
+      // only if the directory does not exists check files, otherwise exception would occur
+      if (di.Exists) 
+      {
+        fileList = folderGroup.Recursive
+                     ? di.GetFiles("*.*", SearchOption.AllDirectories)
+                     : di.GetFiles("*.*", SearchOption.TopDirectoryOnly);
+      }
       string dir = Path.GetFullPath(folderGroup.Folder);
       string templ = folderGroup.DestinationFilename;
       if (!dir.EndsWith("\\"))

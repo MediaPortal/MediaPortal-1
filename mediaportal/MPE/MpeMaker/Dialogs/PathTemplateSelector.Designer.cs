@@ -45,7 +45,7 @@
       this.listView1.Location = new System.Drawing.Point(0, 0);
       this.listView1.MultiSelect = false;
       this.listView1.Name = "listView1";
-      this.listView1.Size = new System.Drawing.Size(607, 290);
+      this.listView1.Size = new System.Drawing.Size(634, 290);
       this.listView1.Sorting = System.Windows.Forms.SortOrder.Ascending;
       this.listView1.TabIndex = 0;
       this.listView1.UseCompatibleStateImageBehavior = false;
@@ -55,23 +55,24 @@
       // columnHeader1
       // 
       this.columnHeader1.Text = "Path";
-      this.columnHeader1.Width = 254;
+      this.columnHeader1.Width = 190;
       // 
       // columnHeader2
       // 
       this.columnHeader2.Text = "Description";
-      this.columnHeader2.Width = 247;
+      this.columnHeader2.Width = 400;
       // 
       // PathTemplateSelector
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-      this.ClientSize = new System.Drawing.Size(607, 290);
+      this.ClientSize = new System.Drawing.Size(634, 290);
       this.Controls.Add(this.listView1);
       this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
       this.Name = "PathTemplateSelector";
+      this.ShowInTaskbar = false;
       this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-      this.Text = "Know path templates (Select double click)";
+      this.Text = "Know path templates (double click to select)";
       this.Load += new System.EventHandler(this.PathTemplateSelector_Load);
       this.ResumeLayout(false);
 

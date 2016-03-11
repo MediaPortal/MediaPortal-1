@@ -33,7 +33,9 @@ namespace MediaPortal.WinCustomControls
         /// <summary>
         ///   Required designer variable.
         /// </summary>
+#pragma warning disable 649
         private readonly Container components;
+#pragma warning restore 649
 
         private ColorHandler.ARGB argb;
         private Button btnCancel;

@@ -477,7 +477,7 @@ namespace MediaPortal.Utils.Time
       {
         return ts;
       }
-      strTimeZone = strTimeZone.ToLower();
+      strTimeZone = strTimeZone.ToLowerInvariant();
 
       // just ignore GMT offsets, since we're calculating everything from GMT anyway
       if (strTimeZone.IndexOf("gmt") >= 0)

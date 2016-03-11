@@ -1856,6 +1856,7 @@ namespace FFDShow
           list.Add(instance);
         }
       }
+      gch.Free();
       return list;
     }
 
@@ -1872,6 +1873,7 @@ namespace FFDShow
         if (sbc.ToString().Equals(strAppName))
           instancesArray.Add(hwnd);
       }
+      gch.Free();
       return true;
     }
 

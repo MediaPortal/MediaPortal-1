@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2013 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2013 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -24,6 +24,9 @@
 
 namespace TvEngine.PowerScheduler.Interfaces
 {
+  /// <summary>
+  /// StandbyHandler interface for PowerScheduler
+  /// </summary>
   public interface IStandbyHandler
   {
     /// <summary>
@@ -40,5 +43,26 @@ namespace TvEngine.PowerScheduler.Interfaces
     /// Description of the source that allows / disallows shutdown
     /// </summary>
     string HandlerName { get; }
+  }
+
+  /// <summary>
+  /// PowerScheduler standby mode enumeration
+  /// </summary>  
+  public enum StandbyMode
+  {
+    StandbyAllowed,
+    StandbyPrevented,
+    AwayModeRequested
+  }
+
+  /// <summary>
+  /// Extension to the IStandbyHandler interface
+  /// </summary>
+  public interface IStandbyHandlerEx : IStandbyHandler
+  {
+    /// <summary>
+    /// Indicator which standby mode is requested by the handler
+    /// </summary>
+    StandbyMode StandbyMode { get; }
   }
 }

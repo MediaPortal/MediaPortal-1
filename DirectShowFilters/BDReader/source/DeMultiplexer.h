@@ -82,6 +82,7 @@ public:
 
   void       GetAudioStreamInfo(int stream, char* szName);
   int        GetAudioStreamType(int stream);
+  int        GetAudioChannelCount(int stream);
   int        GetCurrentAudioStreamType();
   void       GetAudioStreamPMT(CMediaType& pmt);
   void       GetVideoStreamPMT(CMediaType &pmt);
@@ -132,12 +133,14 @@ private:
 
   bool AudioStreamsAvailable(BLURAY_CLIP_INFO* pClip);
   LPCTSTR StreamFormatAsString(int pStreamType);
+  LPCTSTR StreamAudioFormatAsString(int pStreamAudioChannel);
 
   struct stAudioStream
   {
     int pid;
     int audioType;
     char language[7];
+    int audioChannelCount;
   };
 
   struct stSubtitleStream

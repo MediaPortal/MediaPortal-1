@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!--version="1.0" encoding="utf-8" standalone="yes"-->
+<window>
+  <id>3000</id>
+  <defaultcontrol>2</defaultcontrol>
+  <controls>
+    <control>
+      <description>video area</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>-20</posX>
+      <posY>975</posY>
+      <width>2025</width>
+      <height>90</height>
+      <texture>general_overlay_selecteditem.png</texture>
+      <colordiffuse>ffffffff</colordiffuse>
+      <visible>Player.HasVideo</visible>
+    </control>
+    <control>
+      <description>NowPlaying Background TV/Video</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>871</posX>
+      <posY>967</posY>
+      <width>175</width>
+      <height>105</height>
+      <texture>LCD.png</texture>
+      <colordiffuse>ffffffff</colordiffuse>
+      <visible>Player.HasVideo</visible>
+    </control>
+    <control>
+      <description>video preview window</description>
+      <type>videowindow</type>
+      <id>1</id>
+      <posX>879</posX>
+      <posY>975</posY>
+      <width>160</width>
+      <height>90</height>
+      <visible>player.HasVideo</visible>
+      <action>18</action>
+      <textureFocus>tv_green_border.png</textureFocus>
+    </control>
+    <control>
+      <description>scrolling info label Video</description>
+      <type>fadelabel</type>
+      <id>5</id>
+      <posX>847</posX>
+      <posY>982</posY>
+      <width>720</width>
+      <align>right</align>
+      <font>font11</font>
+      <textcolor>ffffd700</textcolor>
+      <label>#Play.Current.Title</label>
+      <wrapString> :.:  </wrapString>
+    </control>
+    <control>
+      <description>scrolling info label Video</description>
+      <type>fadelabel</type>
+      <id>5</id>
+      <posX>847</posX>
+      <posY>1018</posY>
+      <width>720</width>
+      <align>right</align>
+      <font>font11</font>
+      <textcolor>ffffd700</textcolor>
+      <label>#Play.Current.Genre</label>
+      <wrapString> :.:  </wrapString>
+    </control>
+    <control>
+      <description>scrolling info label Video</description>
+      <type>fadelabel</type>
+      <id>0</id>
+      <posX>1072</posX>
+      <posY>982</posY>
+      <width>825</width>
+      <align>left</align>
+      <font>font11</font>
+      <textcolor>ffffd700</textcolor>
+      <label>#Play.Current.Year</label>
+      <wrapString> :.:  </wrapString>
+    </control>
+    <control>
+      <description>scrolling info label Video</description>
+      <type>fadelabel</type>
+      <id>0</id>
+      <posX>1072</posX>
+      <posY>1018</posY>
+      <width>825</width>
+      <align>left</align>
+      <font>font11</font>
+      <textcolor>ffffd700</textcolor>
+      <label>#Play.Current.Director</label>
+      <wrapString> :.:  </wrapString>
+    </control>
+    <!--     *******************************************************************************************  -->
+    <!--     ******************    !!!  THESE CONTROLS ARE FOR COMPATIBILITY ONLY  !!!  ****************  -->
+    <!--     *******************************************************************************************  -->
+    <control>
+      <description>play time label</description>
+      <type>label</type>
+      <id>2</id>
+      <posX>3414</posX>
+      <posY>930</posY>
+      <label>#currentplaytime</label>
+      <align>left</align>
+      <font>font12</font>
+      <textcolor>80ffffff</textcolor>
+    </control>
+    <control>
+      <description>play logo</description>
+      <type>image</type>
+      <id>3</id>
+      <posX>3414</posX>
+      <posY>855</posY>
+      <width>78</width>
+      <height>78</height>
+      <texture>play_enabled.png</texture>
+      <visible>!player.paused+!player.forwarding+!player.rewinding</visible>
+    </control>
+    <control>
+      <description>Pause logo</description>
+      <type>image</type>
+      <id>4</id>
+      <posX>3414</posX>
+      <posY>855</posY>
+      <width>78</width>
+      <height>78</height>
+      <texture>pause_enabled.png</texture>
+      <visible>player.paused</visible>
+    </control>
+    <control>
+      <description>FF logo</description>
+      <type>image</type>
+      <id>7</id>
+      <posX>3414</posX>
+      <posY>855</posY>
+      <width>78</width>
+      <height>78</height>
+      <texture>fastforward_enabled.png</texture>
+      <visible>player.forwarding</visible>
+    </control>
+    <control>
+      <description>RW logo</description>
+      <type>image</type>
+      <id>8</id>
+      <posX>3414</posX>
+      <posY>855</posY>
+      <width>78</width>
+      <height>78</height>
+      <texture>rew_enabled.png</texture>
+      <visible>player.rewinding</visible>
+    </control>
+    <control>
+      <description>scrolling info label Video</description>
+      <type>fadelabel</type>
+      <id>5</id>
+      <posX>64</posX>
+      <posY>4020</posY>
+      <width>457</width>
+      <height>55</height>
+      <font>font12</font>
+      <label>#Play.Current.Title\r#Play.Current.Genre\r#Play.Current.Year\r#Play.Current.Director</label>
+      <textcolor>EFFFFFFF</textcolor>
+    </control>
+  </controls>
+</window>

@@ -1,0 +1,450 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+<controls>
+
+<!-- Dummy -->
+	<control>
+		<description>dummy (visible when music is playing)</description>
+		<type>label</type>
+		<id>3337</id>
+		<posX>2000</posX>
+		<label>#Play.Current.Artist</label>
+		<visible>Player.HasAudio+control.hastext(3337)</visible>
+	</control>
+
+	<control>
+		<description>dummy (visible when there is a next track)</description>
+		<type>label</type>
+		<id>3338</id>
+		<posX>2000</posX>
+		<label>#Play.Next.Title</label>
+		<visible>Player.HasAudio+control.hastext(3338)</visible>
+	</control>
+
+	<control>
+		<description>dummy (visible when tv is running)</description>
+		<type>label</type>
+		<id>3339</id>
+		<posX>2000</posX>
+		<label>#TV.View.channel</label>
+		<visible>Player.HasVideo+!control.hastext(3337)</visible>
+	</control>
+	
+<!-- TV/Video -->
+
+	<control>
+    <description>now playing background</description>
+    <type>image</type>
+    <id>1</id>
+    <posX>593</posX>
+    <posY>0</posY>
+    <width>734</width>
+    <height>238</height>
+    <texture>now_playing_video_bg.png</texture>
+	  <visible>player.hasvideo+!control.isvisible(3337)</visible>
+  </control>
+
+	<control>
+    <description>shadow</description>
+    <type>image</type>
+    <id>1</id>
+	  <posX>666</posX>
+	  <posY>26</posY>
+    <width>273</width>
+    <height>168</height>
+    <texture>now_playing_video_shadow.png</texture>
+	  <visible>player.hasvideo+!control.isvisible(3337)</visible>
+  </control>
+
+	<control>
+		<description>video preview window</description>
+		<type>videowindow</type>
+		<id>99</id>
+		<posX>683</posX>
+		<posY>43</posY>
+		<width>240</width>
+		<height>135</height>
+		<action>18</action>
+		<textureFocus>tv_green_border.png</textureFocus>
+		<visible>player.hasvideo+!control.isvisible(3337)</visible>
+	</control>
+
+	<control>
+		<description>nowplaying label</description>
+		<type>label</type>
+		<id>1</id>
+		<posX>950</posX>
+		<posY>59</posY>
+		<width>240</width>
+		<label>4540</label>
+		<font>TitanLight11</font>
+		<textcolor>393939</textcolor>
+		<visible>player.hasvideo+!control.isvisible(3337)</visible>
+	</control>
+	
+	<control>
+		<description>nowplaying text</description>
+		<type>label</type>
+		<id>1</id>
+		<posX>981</posX>
+		<posY>138</posY>
+		<width>220</width>
+		<label>#currentplaytime / #duration</label>
+		<font>TitanLight11</font>
+		<textcolor>393939</textcolor>
+		<visible>player.hasvideo+!control.isvisible(3337)</visible>
+	</control>
+
+<!--Video-->
+	<control>
+		<description>scrolling info label</description>
+		<type>fadelabel</type>
+		<id>1</id>
+		<width>290</width>
+		<posX>951</posX>
+		<posY>87</posY>
+		<font>fontB12</font>
+		<label>#Play.Current.Title</label>
+		<textcolor>393939</textcolor>
+		<visible>player.hasvideo+!control.isvisible(3337)</visible>
+	</control>
+
+	<control>
+		<description>progress bar</description>
+		<type>progress</type>
+		<id>1</id>
+		<posX>938</posX>
+		<posY>128</posY>
+		<width>308</width>
+		<height>8</height>
+		<texturebg>-</texturebg>
+		<lefttexture>now_playing_progress_left.png</lefttexture>
+		<midtexture>now_playing_progress_mid.png</midtexture>
+		<righttexture>now_playing_progress_right.png</righttexture>
+		<label>#percentage</label>
+		<visible>player.hasvideo+!control.isvisible(3337)</visible>
+	</control>
+	
+	<control>
+    <description>play icon</description>
+    <type>image</type>
+    <id>1</id>
+    <posX>951</posX>
+    <posY>143</posY>
+    <width>16</width>
+    <height>19</height>
+    <texture>now_playing_play.png</texture>
+    <keepaspectratio>yes</keepaspectratio>
+    <visible>player.playing+player.hasvideo</visible>
+  </control>
+	
+<!--Audio-->
+
+	<control>
+    <description>now playing background</description>
+    <type>image</type>
+    <id>1</id>
+    <posX>644</posX>
+    <posY>0</posY>
+    <width>633</width>
+    <height>238</height>
+    <texture>now_playing_music_bg.png</texture>
+    <visible>player.hasaudio+control.isvisible(3337)</visible>
+		<animation effect="fade" start="0" end="100" time="300" delay="350">WindowOpen</animation>
+		<animation effect="fade" start="100" end="0" time="0" delay="0">WindowClose</animation>
+		<animation effect="fade" time="250">visible</animation>
+		<animation effect="fade" time="0">hidden</animation>
+  </control>
+
+	<control>
+    <description>shadow</description>
+    <type>image</type>
+    <id>1</id>
+	  <posX>716</posX>
+	  <posY>26</posY>
+    <width>170</width>
+    <height>168</height>
+    <texture>now_playing_music_shadow.png</texture>
+    <visible>player.hasaudio+control.isvisible(3337)</visible>
+	  <animation effect="fade" start="0" end="100" time="300" delay="350">WindowOpen</animation>
+	  <animation effect="fade" start="100" end="0" time="0" delay="0">WindowClose</animation>
+	  <animation effect="fade" time="250">visible</animation>
+	  <animation effect="fade" time="0">hidden</animation>
+  </control>
+
+	<control>
+    <description>album logo</description>
+    <type>image</type>
+    <id>1</id>
+	  <posX>732</posX>
+	  <posY>43</posY>
+	  <width>138</width>
+	  <height>135</height>
+    <texture>#Play.Current.Thumb</texture>
+    <visible>player.hasaudio+control.isvisible(3337)</visible>
+		<animation effect="fade" start="0" end="100" time="300" delay="350">WindowOpen</animation>
+		<animation effect="fade" start="100" end="0" time="0" delay="0">WindowClose</animation>
+		<animation effect="fade" time="250">visible</animation>
+		<animation effect="fade" time="0">hidden</animation>
+  </control>
+	
+	<control>
+    <description>no album logo</description>
+    <type>image</type>
+    <id>1</id>
+	  <posX>732</posX>
+	  <posY>43</posY>
+	  <width>138</width>
+	  <height>135</height>
+    <texture>audio_nothumb.png</texture>
+    <visible>player.hasaudio+control.isvisible(3337)+string.equals(#Play.Current.Thumb,)</visible>
+		<animation effect="fade" start="0" end="100" time="300" delay="350">WindowOpen</animation>
+		<animation effect="fade" start="100" end="0" time="0" delay="0">WindowClose</animation>
+		<animation effect="fade" time="250">visible</animation>
+		<animation effect="fade" time="0">hidden</animation>
+  </control>
+
+	<control>
+		<type>fadelabel</type>
+		<description>title label</description>
+		<id>1</id>
+		<posX>898</posX>
+		<posY>87</posY>
+		<width>290</width>
+		<label>#Play.Current.Title</label>
+		<font>fontB12</font>
+		<textcolor>393939</textcolor>
+		<visible>player.hasaudio+control.hastext(3337)</visible>
+		<animation effect="fade" start="0" end="100" time="300" delay="350">WindowOpen</animation>
+		<animation effect="fade" start="100" end="0" time="0" delay="0">WindowClose</animation>
+		<animation effect="fade" time="250">visible</animation>
+		<animation effect="fade" time="0">hidden</animation>
+	</control>
+	
+	<control>
+		<description>nowplaying label</description>
+		<type>label</type>
+		<id>1</id>
+		<posX>898</posX>
+		<posY>59</posY>
+		<width>240</width>
+		<label>4540</label>
+		<font>TitanLight11</font>
+		<textcolor>393939</textcolor>
+		<visible>player.hasaudio+control.isvisible(3337)</visible>
+		<animation effect="fade" start="0" end="100" time="300" delay="350">WindowOpen</animation>
+		<animation effect="fade" start="100" end="0" time="0" delay="0">WindowClose</animation>
+		<animation effect="fade" time="250">visible</animation>
+		<animation effect="fade" time="0">hidden</animation>
+	</control>
+	
+	<control>
+		<description>nowplaying text</description>
+		<type>label</type>
+		<id>1</id>
+		<posX>927</posX>
+		<posY>138</posY>
+		<width>220</width>
+		<label>#currentplaytime / #duration</label>
+		<font>TitanLight11</font>
+		<textcolor>393939</textcolor>
+		<visible>player.hasaudio+control.hastext(3337)</visible>
+		<animation effect="fade" start="0" end="100" time="300" delay="350">WindowOpen</animation>
+		<animation effect="fade" start="100" end="0" time="0" delay="0">WindowClose</animation>
+		<animation effect="fade" time="250">visible</animation>
+		<animation effect="fade" time="0">hidden</animation>
+	</control>
+
+	<control>
+		<description>progress bar</description>
+		<type>progress</type>
+		<id>1</id>
+		<posX>886</posX>
+		<posY>128</posY>
+		<width>308</width>
+		<height>8</height>
+		<texturebg>-</texturebg>
+		<lefttexture>now_playing_progress_left.png</lefttexture>
+		<midtexture>now_playing_progress_mid.png</midtexture>
+		<righttexture>now_playing_progress_right.png</righttexture>
+		<label>#percentage</label>
+		<visible>player.hasmedia+control.hastext(3337)</visible>
+		<animation effect="fade" start="0" end="100" time="300" delay="350">WindowOpen</animation>
+		<animation effect="fade" start="100" end="0" time="0" delay="0">WindowClose</animation>
+		<animation effect="fade" time="250">visible</animation>
+		<animation effect="fade" time="0">hidden</animation>
+	</control>
+    
+	<control>
+		<description>play icon</description>
+		<type>image</type>
+		<id>1</id>
+		<posX>899</posX>
+		<posY>143</posY>
+		<width>16</width>
+		<height>19</height>
+		<texture>now_playing_play.png</texture>
+		<keepaspectratio>yes</keepaspectratio>
+		<visible>player.playing+control.hastext(3337)</visible>
+		<animation effect="fade" start="0" end="100" time="300" delay="350">WindowOpen</animation>
+		<animation effect="fade" start="100" end="0" time="0" delay="0">WindowClose</animation>
+		<animation effect="fade" time="250">visible</animation>
+		<animation effect="fade" time="0">hidden</animation>
+    </control>
+
+<!--Radio-->
+
+	<control>
+		<description>now playing background</description>
+		<type>image</type>
+		<id>1</id>
+		<posX>644</posX>
+		<posY>0</posY>
+		<width>633</width>
+		<height>238</height>
+		<texture>now_playing_music_bg.png</texture>
+		<visible>Player.HasAudio+!control.isvisible(3337)+!control.isvisible(3339)</visible>
+		<animation effect="fade" start="0" end="100" time="300" delay="350">WindowOpen</animation>
+		<animation effect="fade" start="100" end="0" time="0" delay="0">WindowClose</animation>
+		<animation effect="fade" time="250">visible</animation>
+		<animation effect="fade" time="0">hidden</animation>
+    </control>
+
+	<control>
+    <description>shadow</description>
+    <type>image</type>
+    <id>1</id>
+	  <posX>716</posX>
+	  <posY>26</posY>
+    <width>170</width>
+    <height>168</height>
+    <texture>now_playing_music_shadow.png</texture>
+    <visible>Player.HasAudio+!control.isvisible(3337)+!control.isvisible(3339)</visible>
+	  <animation effect="fade" start="0" end="100" time="300" delay="350">WindowOpen</animation>
+	  <animation effect="fade" start="100" end="0" time="0" delay="0">WindowClose</animation>
+	  <animation effect="fade" time="250">visible</animation>
+	  <animation effect="fade" time="0">hidden</animation>
+  </control>
+
+	<control>
+		<description>album logo</description>
+		<type>image</type>
+		<id>1</id>
+		<posX>732</posX>
+		<posY>43</posY>
+		<width>138</width>
+		<height>135</height>
+		<texture>#Play.Current.Thumb</texture>
+		<visible>Player.HasAudio+!control.isvisible(3337)+!control.isvisible(3339)</visible>
+		<animation effect="fade" start="0" end="100" time="300" delay="350">WindowOpen</animation>
+		<animation effect="fade" start="100" end="0" time="0" delay="0">WindowClose</animation>
+		<animation effect="fade" time="250">visible</animation>
+		<animation effect="fade" time="0">hidden</animation>
+  </control>
+	
+	<control>
+		<description>no album logo</description>
+		<type>image</type>
+		<id>1</id>
+		<posX>732</posX>
+		<posY>43</posY>
+		<width>138</width>
+		<height>135</height>
+		<texture>audio_nothumb.png</texture>
+		<visible>Player.HasAudio+!control.isvisible(3337)+!control.isvisible(3339)+string.equals(#Play.Current.Thumb,)</visible>
+		<animation effect="fade" start="0" end="100" time="300" delay="350">WindowOpen</animation>
+		<animation effect="fade" start="100" end="0" time="0" delay="0">WindowClose</animation>
+		<animation effect="fade" time="250">visible</animation>
+		<animation effect="fade" time="0">hidden</animation>
+  </control>
+
+	<control>
+		<type>fadelabel</type>
+		<description>title label</description>
+		<id>1</id>
+		<posX>898</posX>
+		<posY>87</posY>
+		<width>290</width>
+		<label>#Play.Current.Title</label>
+		<font>fontB12</font>
+		<textcolor>393939</textcolor>
+		<visible>Player.HasAudio+!control.isvisible(3337)+!control.isvisible(3339)</visible>
+		<animation effect="fade" start="0" end="100" time="300" delay="350">WindowOpen</animation>
+		<animation effect="fade" start="100" end="0" time="0" delay="0">WindowClose</animation>
+		<animation effect="fade" time="250">visible</animation>
+		<animation effect="fade" time="0">hidden</animation>
+	</control>
+	
+	<control>
+		<description>nowplaying label</description>
+		<type>label</type>
+		<id>1</id>
+		<posX>898</posX>
+		<posY>59</posY>
+		<width>240</width>
+		<label>4540</label>
+		<font>TitanLight11</font>
+		<textcolor>393939</textcolor>
+		<visible>Player.HasAudio+!control.isvisible(3337)+!control.isvisible(3339)</visible>
+		<animation effect="fade" start="0" end="100" time="300" delay="350">WindowOpen</animation>
+		<animation effect="fade" start="100" end="0" time="0" delay="0">WindowClose</animation>
+		<animation effect="fade" time="250">visible</animation>
+		<animation effect="fade" time="0">hidden</animation>
+	</control>
+	
+	<control>
+		<description>nowplaying text</description>
+		<type>label</type>
+		<id>1</id>
+		<posX>927</posX>
+		<posY>138</posY>
+		<width>220</width>
+		<label>#currentplaytime / #duration</label>
+		<font>TitanLight11</font>
+		<textcolor>393939</textcolor>
+		<visible>Player.HasAudio+!control.isvisible(3337)+!control.isvisible(3339)</visible>
+		<animation effect="fade" start="0" end="100" time="300" delay="350">WindowOpen</animation>
+		<animation effect="fade" start="100" end="0" time="0" delay="0">WindowClose</animation>
+		<animation effect="fade" time="250">visible</animation>
+		<animation effect="fade" time="0">hidden</animation>
+	</control>
+
+	<control>
+		<description>progress bar</description>
+		<type>progress</type>
+		<id>1</id>
+		<posX>886</posX>
+		<posY>128</posY>
+		<width>308</width>
+		<height>8</height>
+		<texturebg>-</texturebg>
+		<lefttexture>now_playing_progress_left.png</lefttexture>
+		<midtexture>now_playing_progress_mid.png</midtexture>
+		<righttexture>now_playing_progress_right.png</righttexture>
+		<label>#percentage</label>
+		<visible>Player.HasAudio+!control.isvisible(3337)+!control.isvisible(3339)</visible>
+		<animation effect="fade" start="0" end="100" time="300" delay="350">WindowOpen</animation>
+		<animation effect="fade" start="100" end="0" time="0" delay="0">WindowClose</animation>
+		<animation effect="fade" time="250">visible</animation>
+		<animation effect="fade" time="0">hidden</animation>
+	</control>
+    
+	<control>
+		<description>play icon</description>
+		<type>image</type>
+		<id>1</id>
+		<posX>899</posX>
+		<posY>143</posY>
+		<width>16</width>
+		<height>19</height>
+		<texture>now_playing_play.png</texture>
+		<keepaspectratio>yes</keepaspectratio>
+		<visible>Player.HasAudio+!control.isvisible(3337)+!control.isvisible(3339)</visible>
+		<animation effect="fade" start="0" end="100" time="300" delay="350">WindowOpen</animation>
+		<animation effect="fade" start="100" end="0" time="0" delay="0">WindowClose</animation>
+		<animation effect="fade" time="250">visible</animation>
+		<animation effect="fade" time="0">hidden</animation>
+  </control>
+
+</controls>
+</window>

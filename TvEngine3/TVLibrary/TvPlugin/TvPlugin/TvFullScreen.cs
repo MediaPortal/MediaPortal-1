@@ -24,6 +24,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Globalization;
+using System.IO;
 using System.Timers;
 using System.Windows.Forms;
 using Gentle.Common;
@@ -128,6 +129,7 @@ namespace TvPlugin
     private bool _immediateSeekIsRelative = true;
     private int _immediateSeekValue = 10;
     private int _channelNumberMaxLength = 3;
+    private bool _confirmTimeshiftStop = true;
 
     // Tv error handling
     private TvPlugin.TVHome.ChannelErrorInfo _gotTvErrorMessage = null;
@@ -241,6 +243,7 @@ namespace TvPlugin
         _zapTimeOutValue = 1000 * xmlreader.GetValueAsInt("movieplayer", "zaptimeout", 5);
         _byIndex = xmlreader.GetValueAsBool("mytv", "byindex", true);
         _channelNumberMaxLength = xmlreader.GetValueAsInt("mytv", "channelnumbermaxlength", 3);
+        _confirmTimeshiftStop = xmlreader.GetValueAsBool("mytv", "confirmTimeshiftStop", true);
         if (xmlreader.GetValueAsBool("mytv", "allowarzoom", true))
         {
           _allowedArModes.Add(Geometry.Type.Zoom);
@@ -345,7 +348,7 @@ namespace TvPlugin
     {
       _needToClearScreen = true;
 
-      if (action.wID == Action.ActionType.ACTION_SHOW_VOLUME)
+      if (action.wID == Action.ActionType.ACTION_SHOW_VOLUME && !File.Exists(GUIGraphicsContext.Skin + @"\VolumeOverlay.xml"))
       {
         _volumeTimer = DateTime.Now;
         _isVolumeVisible = true;
@@ -899,29 +902,46 @@ namespace TvPlugin
           {
             g_Player.Stop();
           }
-          if (g_Player.IsTimeShifting)
+          if (g_Player.IsTimeShifting && CanStopTimeshifting())
           {
-            Log.Debug("TVFullscreen: user request to stop");
-            GUIDialogPlayStop dlgPlayStop =
-              (GUIDialogPlayStop)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_PLAY_STOP);
-            if (dlgPlayStop != null)
-            {
-              dlgPlayStop.SetHeading(GUILocalizeStrings.Get(605));
-              dlgPlayStop.SetLine(1, GUILocalizeStrings.Get(2550));
-              dlgPlayStop.SetLine(2, GUILocalizeStrings.Get(2551));
-              dlgPlayStop.SetDefaultToStop(false);
-              dlgPlayStop.DoModal(GetID);
-              if (dlgPlayStop.IsStopConfirmed)
-              {
-                Log.Debug("TVFullscreen: stop confirmed");
-                g_Player.Stop();
-              }
-            }
+            g_Player.Stop();
           }
           break;
       }
 
       base.OnAction(action);
+    }
+    
+    private bool CanStopTimeshifting()
+    {
+      if (!_confirmTimeshiftStop)
+      {
+        // Can always stop timeshift when confirmation is not required
+        return true;
+      }
+      
+      // Get dialog to ask the user for confirmation
+      Log.Debug("TVFullscreen: user request to stop");
+      GUIDialogPlayStop dlgPlayStop =
+        (GUIDialogPlayStop)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_PLAY_STOP);
+      if (dlgPlayStop == null)
+      {
+        // Return true to avoid dead end on missing dialog
+        return true;
+      }
+      
+      dlgPlayStop.SetHeading(GUILocalizeStrings.Get(605));
+      dlgPlayStop.SetLine(1, GUILocalizeStrings.Get(2550));
+      dlgPlayStop.SetLine(2, GUILocalizeStrings.Get(2551));
+      dlgPlayStop.SetDefaultToStop(false);
+      dlgPlayStop.DoModal(GetID);
+      if (dlgPlayStop.IsStopConfirmed)
+      {
+        Log.Debug("TVFullscreen: stop confirmed");
+        return true;
+      }
+      
+      return false;
     }
 
     private void ShowMiniEpg() 
@@ -1729,6 +1749,22 @@ namespace TvPlugin
         {
           item.Label = (String.Format("{0} #{1}", GUILocalizeStrings.Get(200091), (i + 1)));
           item.Label2 = MediaPortal.Util.Utils.SecondsToHMSString((int)chaptersList[i]);
+
+          if (i < chaptersList.Length - 1)
+          {
+            if (g_Player.CurrentPosition >= chaptersList[i] && g_Player.CurrentPosition < chaptersList[i + 1])
+            {
+              item.Selected = true;
+            }
+          }
+          else
+          {
+            if (g_Player.CurrentPosition >= chaptersList[i])
+            {
+              item.Selected = true;
+            }
+          }
+
           dlg.Add(item);
         }
         else
@@ -1737,14 +1773,28 @@ namespace TvPlugin
           {
             item.Label = (String.Format("{0} #{1}", GUILocalizeStrings.Get(200091), (i + 1)));
             item.Label2 = MediaPortal.Util.Utils.SecondsToHMSString((int)chaptersList[i]);
-            dlg.Add(item);
           }
           else
           {
             item.Label = (String.Format("{0} #{1}: {2}", GUILocalizeStrings.Get(200091), (i + 1), chaptersname[i]));
             item.Label2 = MediaPortal.Util.Utils.SecondsToHMSString((int)chaptersList[i]);
-            dlg.Add(item);
           }
+          if (i < chaptersList.Length - 1)
+          {
+            if (g_Player.CurrentPosition >= chaptersList[i] && g_Player.CurrentPosition < chaptersList[i + 1])
+            {
+              item.Selected = true;
+            }
+          }
+          else
+          {
+            if (g_Player.CurrentPosition >= chaptersList[i])
+            {
+              item.Selected = true;
+            }
+          }
+
+          dlg.Add(item);
         }
       }
 
@@ -1784,9 +1834,24 @@ namespace TvPlugin
       if (IMDBFetcher.GetInfoFromIMDB(this, ref movieDetails, true, false))
       {
         GUIVideoInfo videoInfo = (GUIVideoInfo)GUIWindowManager.GetWindow((int)Window.WINDOW_VIDEO_INFO);
+        videoInfo.AllocResources();
         videoInfo.Movie = movieDetails;
         GUIButtonControl btnPlay = (GUIButtonControl)videoInfo.GetControl(2);
-        btnPlay.Visible = false;
+        if (btnPlay != null)
+        {
+          btnPlay.Visible = false;
+        }
+        GUICheckButton btnCast = (GUICheckButton)videoInfo.GetControl(4);
+        if (btnCast != null)
+        {
+          btnCast.Visible = false;
+        }
+        GUICheckButton btnWatched = (GUICheckButton)videoInfo.GetControl(6);
+        if (btnWatched != null)
+        {
+          btnWatched.Visible = false;
+        }
+
         GUIWindowManager.ActivateWindow((int)Window.WINDOW_VIDEO_INFO);
       }
       else
@@ -2443,13 +2508,16 @@ namespace TvPlugin
       // Set recorder status
       VirtualCard card;
       var server = new TvServer();
-      if (server.IsRecording(TVHome.Navigator.Channel.IdChannel, out card))
+      if (TVHome.Navigator.Channel != null)
       {
-        ShowControl(GetID, (int)Control.REC_LOGO);
-      }
-      else
-      {
-        HideControl(GetID, (int)Control.REC_LOGO);
+        if (server.IsRecording(TVHome.Navigator.Channel.IdChannel, out card))
+        {
+          ShowControl(GetID, (int)Control.REC_LOGO);
+        }
+        else
+        {
+          HideControl(GetID, (int)Control.REC_LOGO);
+        }
       }
 
       int speed = g_Player.Speed;

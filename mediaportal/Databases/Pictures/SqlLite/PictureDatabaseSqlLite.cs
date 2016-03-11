@@ -42,6 +42,7 @@ namespace MediaPortal.Picture.Database
     private SQLiteClient m_db = null;
     private bool _useExif = true;
     private bool _usePicasa = false;
+    private bool _dbHealth = false;
 
     public PictureDatabaseSqlLite()
     {
@@ -76,6 +77,8 @@ namespace MediaPortal.Picture.Database
         m_db.BusyRetries = 10;
         // Wait 100 ms between each try (default 10)
         m_db.BusyRetryDelay = 100;
+
+        _dbHealth = DatabaseUtility.IntegrityCheck(m_db);
 
         DatabaseUtility.SetPragmas(m_db);
         CreateTables();
@@ -113,6 +116,10 @@ namespace MediaPortal.Picture.Database
     [MethodImpl(MethodImplOptions.Synchronized)]
     public int AddPicture(string strPicture, int iRotation)
     {
+      // Continue only if it's a picture files
+      if (!Util.Utils.IsPicture(strPicture))
+        return -1;
+
       if (String.IsNullOrEmpty(strPicture))
       {
         return -1;
@@ -204,6 +211,10 @@ namespace MediaPortal.Picture.Database
 
     private bool GetExifDetails(string strPicture, ref int iRotation, ref string strDateTaken)
     {
+      // Continue only if it's a picture files
+      if (!Util.Utils.IsPicture(strPicture))
+        return false;
+
       using (ExifMetadata extractor = new ExifMetadata())
       {
         ExifMetadata.Metadata metaData = extractor.GetExifMetadata(strPicture);
@@ -245,7 +256,7 @@ namespace MediaPortal.Picture.Database
             bool searching = true;
             while ((s = sr.ReadLine()) != null && searching)
             {
-              if (s.ToLower() == "[" + Path.GetFileName(strPic).ToLower() + "]")
+              if (s.ToLowerInvariant() == "[" + Path.GetFileName(strPic).ToLowerInvariant() + "]")
               {
                 do
                 {
@@ -281,6 +292,10 @@ namespace MediaPortal.Picture.Database
     {
       lock (typeof (PictureDatabase))
       {
+        // Continue only if it's a picture files
+        if (!Util.Utils.IsPicture(strPicture))
+          return;
+
         if (m_db == null)
         {
           return;
@@ -307,6 +322,10 @@ namespace MediaPortal.Picture.Database
     [MethodImpl(MethodImplOptions.Synchronized)]
     public int GetRotation(string strPicture)
     {
+      // Continue only if it's a picture files
+      if (!Util.Utils.IsPicture(strPicture))
+        return -1;
+
       if (m_db == null)
       {
         return -1;
@@ -325,6 +344,12 @@ namespace MediaPortal.Picture.Database
           return iRotation;
         }
 
+        if (_useExif)
+        {
+          iRotation = Util.Picture.GetRotateByExif(strPicture);
+          Log.Debug("PictureDatabaseSqlLite: GetRotateByExif = {0} for {1}", iRotation, strPicture);
+        }
+
         AddPicture(strPicture, iRotation);
 
         return iRotation;
@@ -340,6 +365,10 @@ namespace MediaPortal.Picture.Database
     [MethodImpl(MethodImplOptions.Synchronized)]
     public void SetRotation(string strPicture, int iRotation)
     {
+      // Continue only if it's a picture files
+      if (!Util.Utils.IsPicture(strPicture))
+        return;
+
       if (m_db == null)
       {
         return;
@@ -533,6 +562,14 @@ namespace MediaPortal.Picture.Database
           Open();
         }
         return Count;
+      }
+    }
+
+    public bool DbHealth
+    {
+      get
+      {
+        return _dbHealth;
       }
     }
 

@@ -574,6 +574,7 @@ namespace TvEngine
 
                     dateTimeStart = dateTimeStart.AddHours(-h);
                     dateTimeStart = dateTimeStart.AddMinutes(-m);
+                    dateTimeStart = dateTimeStart.ToLocalTime();
                   }
                   startDate = datetolong(dateTimeStart);
 
@@ -591,6 +592,7 @@ namespace TvEngine
 
                       dateTimeEnd = dateTimeEnd.AddHours(-h);
                       dateTimeEnd = dateTimeEnd.AddMinutes(-m);
+                      dateTimeEnd = dateTimeEnd.ToLocalTime();
                     }
                     stopDate = datetolong(dateTimeEnd);
                   }

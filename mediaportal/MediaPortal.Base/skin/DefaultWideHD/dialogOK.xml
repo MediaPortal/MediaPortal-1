@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!--version="1.0" encoding="utf-8" standalone="yes"-->
+<window>
+  <id>2002</id>
+  <defaultcontrol>10</defaultcontrol>
+  <allowoverlay>no</allowoverlay>
+  <controls>
+    <import>common.dialog.xml</import>
+    <control>
+      <description>OK button</description>
+      <type>button</type>
+      <id>10</id>
+      <posX>1372</posX>
+      <posY>412</posY>
+      <textYOff>12</textYOff>
+      <width>45</width>
+      <height>45</height>
+      <textureFocus>tb_exit.png</textureFocus>
+      <textureNoFocus>tb_exitNF.png</textureNoFocus>
+      <label>-</label>
+      <onleft>10</onleft>
+      <onright>10</onright>
+      <onup>10</onup>
+      <ondown>10</ondown>
+    </control>
+  </controls>
+</window>

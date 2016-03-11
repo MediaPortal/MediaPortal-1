@@ -29,7 +29,7 @@ struct  IAudioSink
 {
 public:
   // Initialization
-  virtual HRESULT ConnectTo(IAudioSink *pSink) = 0;
+  virtual HRESULT ConnectTo(IAudioSink* pSink) = 0;
   virtual HRESULT Disconnect() = 0;
   virtual HRESULT DisconnectAll() = 0;
 
@@ -47,14 +47,11 @@ public:
   virtual HRESULT NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, int nApplyChangesDepth, ChannelOrder* pChOrder) = 0;
 
   // Buffer negotiation
-  // -- TODO --
-  // It should be possible for a chain of filters to negotiate buffer sizes
-  // when some filters intend to reuse the IMediaSample buffers passed in PutSample()
+  virtual HRESULT NegotiateBuffer(const WAVEFORMATEXTENSIBLE* pwfx, long* pBufferSize, long* pBufferCount, bool bCanModifyBufferSize) = 0;
 
   // Processing
-  virtual HRESULT PutSample(IMediaSample *pSample) = 0;
+  virtual HRESULT PutSample(IMediaSample* pSample) = 0;
   virtual HRESULT EndOfStream() = 0;
   virtual HRESULT BeginFlush() = 0;
   virtual HRESULT EndFlush() = 0;
-
 };

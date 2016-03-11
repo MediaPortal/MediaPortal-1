@@ -567,7 +567,7 @@ void MultiFileWriter::setRegFileName(LPTSTR fileName)
 {
 //	CheckPointer(fileName,E_POINTER);
 
-	if(strlen(fileName) > MAX_PATH)
+	if(_tcslen(fileName) > MAX_PATH)
 		return;// ERROR_FILENAME_EXCED_RANGE;
 
 	// Take a copy of the filename

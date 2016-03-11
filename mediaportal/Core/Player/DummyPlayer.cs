@@ -79,7 +79,7 @@ namespace MediaPortal.Player
         {
           throw new ArgumentException("state is wrong");
         }
-        if (_currentFile.ToLower().IndexOf(".tv") >= 0)
+        if (_currentFile.ToLowerInvariant().IndexOf(".tv") >= 0)
         {
           return true;
         }

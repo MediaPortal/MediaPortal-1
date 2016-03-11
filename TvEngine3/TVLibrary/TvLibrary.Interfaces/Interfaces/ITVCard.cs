@@ -162,6 +162,12 @@ namespace TvLibrary.Interfaces
     #region epg & scanning
 
     /// <summary>
+    /// Register to receive EPG related events.
+    /// </summary>
+    /// <param name="eventListener">The event listener.</param>
+    void RegisterEpgEventListener(IEpgEvents eventListener);
+
+    /// <summary>
     /// Grabs the epg.
     /// </summary>
     /// <param name="callback">The callback which gets called when epg is received or canceled.</param>
@@ -298,7 +304,7 @@ namespace TvLibrary.Interfaces
     /// <param name="id">The id.</param>
     /// <returns></returns>
     ITvSubChannel GetSubChannel(int id);
-
+    ITvSubChannel GetFirstSubChannel();
 
     /// <summary>
     /// Frees the sub channel.

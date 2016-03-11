@@ -31,6 +31,8 @@
 
 using namespace std;
 
+#define BLURAY_TITLE_CURRENT     0xffffffff  // custom addition to the title 
+
 enum PLAYBACK_MODE
 {
   Navigation = 0,

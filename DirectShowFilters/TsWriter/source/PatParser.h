@@ -22,10 +22,9 @@
 
 #include "..\..\shared\sectiondecoder.h"
 #include "PmtParser.h"
-#include "sdtParser.h"
+#include "SdtParser.h"
 #include "NitDecoder.h"
 #include "..\..\shared\channelinfo.h"
-#include "VirtualChannelTableParser.h"
 #include "..\..\shared\tsheader.h"
 #include "criticalsection.h"
 #include "entercriticalsection.h"
@@ -35,34 +34,27 @@ using namespace std;
 using namespace Mediaportal;
 
 
-DECLARE_INTERFACE_(IChannelScanCallback, IUnknown)
-{
-	STDMETHOD(OnScannerDone)()PURE;
-};
-
 #define PID_PAT 0x0
 
-class CPatParser : public CSectionDecoder, public ISdtCallBack, public IAtscCallback, public IPmtCallBack2
+class CPatParser : public CSectionDecoder, public ISdtCallBack, public IPmtCallBack2
 {
 public:
   CPatParser(void);
   virtual ~CPatParser(void);
 
 	void	OnTsPacket(byte* tsPacket);
-  void  Reset(IChannelScanCallback* callback,bool waitForVCT);
+  void  Reset(bool isDvbScan);
 	void  OnNewSection(CSection& section);
   int PATRequest(CSection& sections, int SID);
   BOOL        IsReady();
   int         Count();
-  bool        GetChannel(int index, CChannelInfo& info);
+  bool        GetChannel(int index, CChannelInfo** info);
   void        Dump();
 	void        OnSdtReceived(const CChannelInfo& sdtInfo);
 	void				OnPmtReceived2(int pid, int serviceId, int pcrPid, bool hasCaDescriptor, vector<PidInfo2> pidInfo);
-  void        OnChannel(const CChannelInfo& info);
 
 private:
 	CCriticalSection m_section;
-  CVirtualChannelTableParser m_vctParser;
   CSdtParser                 m_sdtParser;
 	CNITDecoder                m_nitDecoder;
 
@@ -73,12 +65,10 @@ private:
 	vector<CPmtParser*>	m_pmtParsers;
   typedef vector<CPmtParser*> ::iterator itPmtParser;
 
-  map<int,CChannelInfo> m_mapChannels;
-  typedef map<int,CChannelInfo> ::iterator itChannels;
+  map<int,CChannelInfo*> m_mapChannels;
+  typedef map<int,CChannelInfo*> ::iterator itChannels;
   bool m_bDumped;
-	IChannelScanCallback* m_pCallback;
-  DWORD                 m_tickCount;
   CTsHeader             m_tsHeader;
-	bool									m_finished;
-	bool									m_waitForVCT;
+	bool									m_bIsDvbScan;
+	bool									m_bIsReady;
 };

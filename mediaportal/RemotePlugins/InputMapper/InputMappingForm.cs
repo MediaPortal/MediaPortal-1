@@ -65,18 +65,6 @@ namespace MediaPortal.InputDevices
 
     private string[] soundList = new string[] {"none", "back.wav", "click.wav", "cursor.wav"};
 
-    private string[] keyList = new string[]
-                                 {
-                                   "{BACKSPACE}", "{BREAK}", "{CAPSLOCK}", "{DELETE}", "{DOWN}", "{END}", "{ENTER}",
-                                   "{ESC}",
-                                   "{HELP}", "{HOME}", "{INSERT}", "{LEFT}", "{NUMLOCK}", "{PGDN}", "{PGUP}", "{PRTSC}",
-                                   "{RIGHT}", "{SCROLLLOCK}", "{TAB}", "{UP}", "{F1}", "{F2}", "{F3}", "{F4}", "{F5}",
-                                   "{F6}",
-                                   "{F7}", "{F8}", "{F9}", "{F10}", "{F11}", "{F12}", "{F13}", "{F14}", "{F15}", "{F16}"
-                                   ,
-                                   "{ADD}", "{SUBTRACT}", "{MULTIPLY}", "{DIVIDE}"
-                                 };
-
     private string inputClassName;
     private bool changedSettings = false;
 
@@ -851,10 +839,10 @@ namespace MediaPortal.InputDevices
               string conditionString = string.Empty;
               string commandString = string.Empty;
 
-              string condition = nodeAction.Attributes["condition"].Value.ToUpper();
-              string conProperty = nodeAction.Attributes["conproperty"].Value.ToUpper();
-              string command = nodeAction.Attributes["command"].Value.ToUpper();
-              string cmdProperty = nodeAction.Attributes["cmdproperty"].Value.ToUpper();
+              string condition = nodeAction.Attributes["condition"].Value.ToUpperInvariant();
+              string conProperty = nodeAction.Attributes["conproperty"].Value.ToUpperInvariant();
+              string command = nodeAction.Attributes["command"].Value.ToUpperInvariant();
+              string cmdProperty = nodeAction.Attributes["cmdproperty"].Value.ToUpperInvariant();
               string sound = string.Empty;
               XmlAttribute soundAttribute = nodeAction.Attributes["sound"];
               if (soundAttribute != null)
@@ -1483,7 +1471,7 @@ namespace MediaPortal.InputDevices
         }
         else
         {
-          newName += c.ToString().ToLower();
+          newName += c.ToString().ToLowerInvariant();
         }
       }
 
@@ -1504,7 +1492,7 @@ namespace MediaPortal.InputDevices
 
     private string GetWindowName(string friendlyName)
     {
-      return "WINDOW_" + friendlyName.Replace(' ', '_').ToUpper();
+      return "WINDOW_" + friendlyName.Replace(' ', '_').ToUpperInvariant();
     }
 
     private string GetActionName(string friendlyName)
@@ -1513,18 +1501,18 @@ namespace MediaPortal.InputDevices
 
       try
       {
-        if (Enum.Parse(typeof (Action.ActionType), "ACTION_" + friendlyName.Replace(' ', '_').ToUpper()) != null)
+        if (Enum.Parse(typeof (Action.ActionType), "ACTION_" + friendlyName.Replace(' ', '_').ToUpperInvariant()) != null)
         {
-          actionName = "ACTION_" + friendlyName.Replace(' ', '_').ToUpper();
+          actionName = "ACTION_" + friendlyName.Replace(' ', '_').ToUpperInvariant();
         }
       }
       catch (ArgumentException)
       {
         try
         {
-          if (Enum.Parse(typeof (Action.ActionType), friendlyName.Replace(' ', '_').ToUpper()) != null)
+          if (Enum.Parse(typeof (Action.ActionType), friendlyName.Replace(' ', '_').ToUpperInvariant()) != null)
           {
-            actionName = friendlyName.Replace(' ', '_').ToUpper();
+            actionName = friendlyName.Replace(' ', '_').ToUpperInvariant();
           }
         }
         catch (ArgumentException) {}
@@ -1536,7 +1524,7 @@ namespace MediaPortal.InputDevices
 
     private void CleanAbbreviation(ref string name, string abbreviation)
     {
-      int index = name.ToUpper().IndexOf(abbreviation.ToUpper());
+      int index = name.ToUpperInvariant().IndexOf(abbreviation.ToUpperInvariant());
       if (index != -1)
       {
         name = name.Substring(0, index) + abbreviation + name.Substring(index + abbreviation.Length);
@@ -1754,8 +1742,8 @@ namespace MediaPortal.InputDevices
         node = getNode("CONDITION");
         data = (Data)node.Tag;
       }
-      DialogResult result = MessageBox.Show(this, "Are you sure you want to remove this " + data.Type.ToLower() + "?",
-                                            "Remove " + data.Type.ToLower(),
+      DialogResult result = MessageBox.Show(this, "Are you sure you want to remove this " + data.Type.ToLowerInvariant() + "?",
+                                            "Remove " + data.Type.ToLowerInvariant(),
                                             MessageBoxButtons.YesNo, MessageBoxIcon.Question,
                                             MessageBoxDefaultButton.Button2);
       if (result == DialogResult.Yes)

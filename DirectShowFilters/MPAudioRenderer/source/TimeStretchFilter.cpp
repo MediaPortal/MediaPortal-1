@@ -40,6 +40,8 @@ CTimeStretchFilter::CTimeStretchFilter(AudioRendererSettings* pSettings, CSyncCl
   m_fNewTempo(1.0),
   m_pMediaType(NULL),
   m_rtInSampleTime(0),
+  m_rtLastOuputStart(0),
+  m_rtLastOuputEnd(-1),
   m_rtNextIncomingSampleTime(0),
   m_pClock(pClock)
 {
@@ -62,10 +64,6 @@ CTimeStretchFilter::~CTimeStretchFilter(void)
 //Initialization
 HRESULT CTimeStretchFilter::Init()
 {
-  HRESULT hr = InitAllocator();
-  if (FAILED(hr))
-    return hr;
-
   m_hSampleEvents.push_back(m_hInputAvailableEvent);
   m_hSampleEvents.push_back(m_hOOBCommandAvailableEvent);
   m_hSampleEvents.push_back(m_hStopThreadEvent);
@@ -135,6 +133,8 @@ HRESULT CTimeStretchFilter::NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, in
   {
     LogWaveFormat(pwfx, "TS   - applying ");
 
+    m_pNextSink->NegotiateBuffer(pwfx, &m_nOutBufferSize, &m_nOutBufferCount, true);
+
     AM_MEDIA_TYPE tmp;
     HRESULT result = CreateAudioMediaType((WAVEFORMATEX*)pwfx, &tmp, true);
     if (SUCCEEDED(result))
@@ -151,12 +151,13 @@ HRESULT CTimeStretchFilter::NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, in
   else
     LogWaveFormat(pwfx, "TS   -          ");
 
+  m_bNextFormatPassthru = !m_pSettings->m_bUseTimeStretching;
   m_chOrder = *pChOrder;
 
   return S_OK;
 }
 
-HRESULT CTimeStretchFilter::CheckSample(IMediaSample* pSample)
+HRESULT CTimeStretchFilter::CheckSample(IMediaSample* pSample, REFERENCE_TIME* rtDrained)
 {
   if (!pSample)
     return S_OK;
@@ -171,27 +172,20 @@ HRESULT CTimeStretchFilter::CheckSample(IMediaSample* pSample)
 
   if (bFormatChanged)
   {
-    uint unprocessedSamplesBefore = numUnprocessedSamples();
-     uint zeros = flushEx();
+    REFERENCE_TIME rtStart = 0;
+    REFERENCE_TIME rtStop = 0;
 
-    uint unprocessedSamplesAfter = numUnprocessedSamples();
-    UINT32 outFramesAfter = numSamples();
+    HRESULT hr = pSample->GetTime(&rtStart, &rtStop);
     
-    UINT32 totalSamples = zeros + unprocessedSamplesBefore;
-    UINT32 totalProcessedSamples = totalSamples - unprocessedSamplesAfter;
-    //double bias = (double)totalProcessedSamples / (double)outFramesAfter;
+    if (SUCCEEDED(hr))
+    {
+      Log("CTimeStretchFilter - CheckSample - resyncing in middle of stream on format change - rtStart: %6.3f m_rtInSampleTime: %6.3f", 
+        rtStart / 10000000.0, m_rtInSampleTime / 10000000.0);
 
-    REFERENCE_TIME estimatedSampleDuration = totalProcessedSamples * UNITS / m_pOutputFormat->Format.nSamplesPerSec;
-
-    double bias = m_pClock->GetBias();
-    double adjustment = m_pClock->Adjustment();
-    double AVMult = m_pClock->SuggestedAudioMultiplier(estimatedSampleDuration, bias, adjustment);
-    setTempoInternal(AVMult, 1.0);
-
-    CreateOutput(totalProcessedSamples, outFramesAfter, bias, adjustment, AVMult, true);
-    
-    // Empty SoundTouch's buffers
-    clear();
+      *rtDrained = DrainBuffers(pSample, rtStart);
+    }
+    else
+      Log("CTimeStretchFilter::CheckFormat failed to get timestamps from sample: 0x%08x", hr);
 
     // Apply format change
     ChannelOrder chOrder;
@@ -326,7 +320,7 @@ HRESULT CTimeStretchFilter::EndOfStream()
   return S_OK;
 }
 
-void CTimeStretchFilter::CheckStreamContinuity(IMediaSample* pSample)
+void CTimeStretchFilter::CheckStreamContinuity(IMediaSample* pSample, REFERENCE_TIME rtDrained)
 {
   REFERENCE_TIME rtStart = 0;
   REFERENCE_TIME rtStop = 0;
@@ -340,29 +334,89 @@ void CTimeStretchFilter::CheckStreamContinuity(IMediaSample* pSample)
     //Log("Ts:   rtStart: %6.3f m_rtNextIncomingSampleTime: %6.3f", rtStart / 10000000.0, m_rtNextIncomingSampleTime / 10000000.0);
 
     // Detect discontinuity in stream timeline
-    REFERENCE_TIME rtGap = m_rtNextIncomingSampleTime - rtStart;
+    REFERENCE_TIME rtGap = rtStart - m_rtNextIncomingSampleTime;
+
+    m_rtNextIncomingSampleTime = rtStart;
+    bool hasGap = false;
 
     if (abs(rtGap) > MAX_SAMPLE_TIME_ERROR)
     {
-      m_rtNextIncomingSampleTime = rtStart;
+      Log("TS - gap - rtStart: %6.3f m_rtNextIncomingSampleTime: %6.3f gap: %6.3f", rtStart / 10000000.0, m_rtNextIncomingSampleTime / 10000000.0, rtGap / 10000000.0);
+      hasGap = true;
 
       if (m_nSampleNum == 0) 
       {
-        m_rtInSampleTime = rtStart;
-
         Log("CTimeStretchFilter - resyncing in start of stream - m_rtStart: %6.3f rtStart: %6.3f m_rtInSampleTime: %6.3f", 
           m_rtStart / 10000000.0, rtStart / 10000000.0, m_rtInSampleTime / 10000000.0);
+
+        m_rtInSampleTime = rtStart;
       }
-      else
+      else 
       {
-        Log("CTimeStretchFilter - stream discontinuity detected!");
-        ASSERT(false); // shouldnt ever happen - stream is stream is continuous 
+        if (rtDrained == 0)
+          rtDrained = DrainBuffers(pSample, rtStart);
+
+        REFERENCE_TIME rtEstimatedInSampleTime = rtStart / m_pClock->GetBias();
+
+        Log("CTimeStretchFilter - resyncing in middle of stream - rtDrained: %6.3f rtStart: %6.3f m_rtInSampleTime: %6.3f rtEstimatedInSampleTime: %6.3f calculated: %6.3f", 
+          rtDrained / 10000000.0, rtStart / 10000000.0, m_rtInSampleTime / 10000000.0, rtEstimatedInSampleTime / 10000000.0, (m_rtInSampleTime + (rtGap + rtDrained) / m_pClock->GetBias()) / 10000000.0);
+
+        Log("CTimeStretchFilter - rtDrained: %6.3f rtGap: %6.3f m_rtInSampleTime: %6.3f m_rtLastOuputEnd: %6.3f Bias: %6.6f", 
+          rtDrained / 10000000.0, rtGap / 10000000.0, m_rtInSampleTime / 10000000.0, m_rtLastOuputEnd / 10000000.0, m_pClock->GetBias());
+
+        m_rtInSampleTime -= rtDrained;
+        m_rtInSampleTime += (rtGap) / m_pClock->GetBias();
+        m_rtLastOuputEnd += (rtGap) * m_pClock->GetBias();
+
+        Log("CTimeStretchFilter - m_rtInSampleTime: %6.3f m_rtLastOuputEnd: %6.3f", 
+          m_rtInSampleTime / 10000000.0, m_rtLastOuputEnd / 10000000.0);
+
+        m_rtNextIncomingSampleTime = rtStop;
       }
     }
 
-    UINT nFrames = pSample->GetActualDataLength() / m_pInputFormat->Format.nBlockAlign;
-    m_rtNextIncomingSampleTime += nFrames * UNITS / m_pInputFormat->Format.nSamplesPerSec;
+    if (!hasGap)
+    {
+      UINT nFrames = pSample->GetActualDataLength() / m_pInputFormat->Format.nBlockAlign;
+      m_rtNextIncomingSampleTime += nFrames * UNITS / m_pInputFormat->Format.nSamplesPerSec;
+    }
   }
+}
+
+REFERENCE_TIME CTimeStretchFilter::DrainBuffers(IMediaSample* pSample, REFERENCE_TIME rtNewStart)
+{
+  Log("TS - DrainBuffers - rtNewStart: %6.3f", rtNewStart / 10000000.0);
+
+  uint unprocessedSamplesBefore = numUnprocessedSamples();
+  uint zeros = flushEx() - 32; // Magic 32 to keep the SoundTouch's output in sync
+  uint unprocessedSamplesAfter = numUnprocessedSamples();
+
+  UINT32 outFramesAfter = numSamples();
+  UINT32 totalSamples = zeros + unprocessedSamplesBefore;
+  UINT32 totalProcessedSamples = totalSamples - unprocessedSamplesAfter;
+
+  Log("TS - DrainBuffers - unprocessedSamplesBefore: %u zeros: %u unprocessedSamplesAfter: %u outFramesAfter: %u duration %6.3f",
+    unprocessedSamplesBefore, zeros, unprocessedSamplesAfter, outFramesAfter, (double)unprocessedSamplesBefore * (double) UNITS / (double) m_pOutputFormat->Format.nSamplesPerSec);
+
+  REFERENCE_TIME rtAHwTime = 0;
+  REFERENCE_TIME rtRCTime = 0;
+  REFERENCE_TIME estimatedExtraSampleDuration = (((int)zeros - (int)unprocessedSamplesAfter) * UNITS) / m_pOutputFormat->Format.nSamplesPerSec;
+
+  double bias = m_pClock->GetBias();
+  double adjustment = m_pClock->Adjustment();
+
+  m_pClock->GetHWTime(&rtRCTime, &rtAHwTime);
+  double AVMult = m_pClock->SuggestedAudioMultiplier(rtAHwTime, rtRCTime, bias, adjustment);
+  setTempoInternal(AVMult, 1.0);
+
+  CreateOutput(totalProcessedSamples, outFramesAfter, bias, adjustment, AVMult, true);
+    
+  // Empty SoundTouch's buffers
+  clear();
+
+  pSample->SetDiscontinuity(false);
+
+  return estimatedExtraSampleDuration;
 }
 
 // Processing
@@ -395,12 +449,12 @@ DWORD CTimeStretchFilter::ThreadProc()
       {
       	Log("CTimeStretchFilter::timestretch thread - flushing");
         m_rtInSampleTime = m_rtNextIncomingSampleTime = 0;
-
+        m_rtLastOuputStart = m_rtLastOuputEnd = -1;
         if (m_pNextOutSample)
           m_pNextOutSample.Release();
 
         flush();
-
+        m_pClock->Flush();
         sample.Release();
         SetEvent(m_hCurrentSampleReleased);
       }
@@ -417,38 +471,71 @@ DWORD CTimeStretchFilter::ThreadProc()
           m_bDiscontinuity = true;
         }
 
-        if (CheckSample(sample) == S_FALSE)
+        REFERENCE_TIME rtDrained = 0;
+
+        if (CheckSample(sample, &rtDrained) == S_FALSE)
         {
           DeleteMediaType(m_pMediaType);
           sample->GetMediaType(&m_pMediaType);
         }
 
-        CheckStreamContinuity(sample);
+        CheckStreamContinuity(sample, rtDrained);
+
         m_nSampleNum++;
 
         hr = sample->GetPointer(&pMediaBuffer);
 
         if ((hr == S_OK) && m_pMemAllocator)
         {
+          REFERENCE_TIME rtStart = 0;
+          REFERENCE_TIME rtAdjustedStart = 0;
+          REFERENCE_TIME rtEnd = 0;
+          REFERENCE_TIME rtAdjustedEnd = 0;
+          REFERENCE_TIME rtAHwTime = 0;
+          REFERENCE_TIME rtRCTime = 0;
+
+          m_pClock->GetHWTime(&rtRCTime, &rtAHwTime);
+
+          sample->GetTime(&rtStart, &rtEnd);
+          REFERENCE_TIME sampleDuration = rtEnd - rtStart;
+
           uint unprocessedSamplesBefore = numUnprocessedSamples();
           uint unprocessedSamplesAfter = 0;
 
           UINT32 nFrames = size / m_pOutputFormat->Format.nBlockAlign;
-          REFERENCE_TIME estimatedSampleDuration = nFrames * UNITS / m_pOutputFormat->Format.nSamplesPerSec;
 
           double bias = m_pClock->GetBias();
           double adjustment = m_pClock->Adjustment();
-          double AVMult = m_pClock->SuggestedAudioMultiplier(estimatedSampleDuration, bias, adjustment);
-          setTempoInternal(AVMult, 1.0); // this should be the same as previous line, but in future we want to get rid of the 2nd parameter
+          double AVMult = m_pClock->SuggestedAudioMultiplier(rtAHwTime, rtRCTime, bias, adjustment);
+          setTempoInternal(AVMult, 1.0);
+
+          if (m_rtLastOuputEnd == -1)
+            m_rtLastOuputEnd = rtStart / AVMult - 1;
+
+          m_rtLastOuputStart = m_rtLastOuputEnd + 1;
 
           // Process the sample 
           putSamplesInternal((const short*)pMediaBuffer, size / m_pOutputFormat->Format.nBlockAlign);
+
           unprocessedSamplesAfter = numUnprocessedSamples();
 
           UINT32 nInFrames = (size / m_pOutputFormat->Format.nBlockAlign) - unprocessedSamplesAfter + unprocessedSamplesBefore;
           UINT32 nOutFrames = numSamples();
           
+          // TODO: Soundtouch can provide less samples than asked (but never more) so a cummulative error is possible.  This will not happen over the course of a long TV stint, but could be solved for correctness
+          // m_rtLastOuputEnd += (nOutFrames + unprocessedSamplesAfter - unprocessedSamplesBefore) * UNITS / m_pOutputFormat->Format.nSamplesPerSec;
+
+          //rtStart = m_rtInSampleTime;
+          rtEnd = rtStart + sampleDuration;
+          rtAdjustedStart = m_rtLastOuputEnd +1;
+          rtAdjustedEnd = rtAdjustedStart + sampleDuration / AVMult;
+
+          m_rtLastOuputEnd += sampleDuration / AVMult;
+
           CreateOutput(nInFrames, nOutFrames, bias, adjustment, AVMult, false);
+
+
+          m_pClock->AddSample(rtStart, rtAdjustedStart, rtEnd, rtAdjustedEnd);
         }
       }
     }
@@ -458,7 +545,7 @@ DWORD CTimeStretchFilter::ThreadProc()
 void CTimeStretchFilter::CreateOutput(UINT32 nInFrames, UINT32 nOutFrames, double dBias, double dAdjustment, double dAVMult, bool bFlushPartialSample)
 {
   HRESULT hr = S_OK;
-  UINT32 maxBufferFrames = DEFAULT_OUT_BUFFER_SIZE / m_pOutputFormat->Format.nBlockAlign;
+  UINT32 maxBufferFrames = m_nOutBufferSize / m_pOutputFormat->Format.nBlockAlign;
   UINT32 nOutFramesTotal = 0;
 
   while (nOutFrames > 0)
@@ -490,18 +577,9 @@ void CTimeStretchFilter::CreateOutput(UINT32 nInFrames, UINT32 nOutFrames, doubl
         m_pNextOutSample->SetMediaType(m_pMediaType);
 
       OutputSample(bFlushPartialSample);
+        
       nOutFrames = numSamples();
     }
-  }
-
-  if (nOutFramesTotal > 0)
-  {
-    double rtSampleDuration = (double)nInFrames * (double)UNITS / (double)m_pOutputFormat->Format.nSamplesPerSec;
-    double rtProcessedSampleDuration = (double)(nOutFramesTotal) * (double)UNITS / (double)m_pOutputFormat->Format.nSamplesPerSec;
-
-    m_pClock->AudioResampled(rtProcessedSampleDuration, rtSampleDuration, dBias, dAdjustment, dAVMult);
-
-    //Log(m_pClock->DebugData());
   }
 }
 
@@ -510,10 +588,10 @@ void CTimeStretchFilter::OutputSample(bool bForce)
   if (m_pNextOutSample)
   {
     UINT32 sampleLen = m_pNextOutSample->GetActualDataLength();
-    if (bForce || (sampleLen + m_pOutputFormat->Format.nBlockAlign > DEFAULT_OUT_BUFFER_SIZE))
+    if (bForce || (sampleLen + m_pOutputFormat->Format.nBlockAlign > m_nOutBufferSize))
     {
       HRESULT hr = OutputNextSample();
-      m_rtInSampleTime += sampleLen / m_pOutputFormat->Format.nBlockAlign * UNITS / m_pOutputFormat->Format.nSamplesPerSec;
+      m_rtInSampleTime += (sampleLen * UNITS) / (m_pOutputFormat->Format.nBlockAlign * m_pOutputFormat->Format.nSamplesPerSec);
 
       if (FAILED(hr))
         Log("CTimeStretchFilter::timestretch thread OutputNextSample failed with: 0x%08x", hr);

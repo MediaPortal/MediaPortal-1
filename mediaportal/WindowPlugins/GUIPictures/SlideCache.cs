@@ -20,6 +20,7 @@
 
 using System;
 using System.Diagnostics;
+using System.IO;
 using System.Threading;
 using MediaPortal.GUI.Library;
 
@@ -70,18 +71,20 @@ internal class SlideCache
     // wait for any (needed) prefetching to complete
     lock (_prefetchingThreadLock)
     {
+      bool itemFiles = File.Exists(slideFilePath);
+
+      if (!itemFiles)
+      {
+        CurrentSlide = new SlidePicture(slideFilePath, false);
+        return CurrentSlide;
+      }
+
       if (_prefetchingThread != null)
       {
         // only wait for the prefetching if it is for the slide file that we need
         if (_neededSlideFilePath == slideFilePath)
         {
           _prefetchingThread.Priority = ThreadPriority.AboveNormal;
-        }
-        else
-        {
-          // uneeded, abort
-          _prefetchingThread.Abort();
-          _prefetchingThread = null;
         }
       }
     }
@@ -98,20 +101,17 @@ internal class SlideCache
       {
         return NextSlide;
       }
-      else if (PrevSlide != null && PrevSlide.FilePath == slideFilePath)
+      if (PrevSlide != null && PrevSlide.FilePath == slideFilePath)
       {
         return PrevSlide;
       }
-      else if (CurrentSlide != null && CurrentSlide.FilePath == slideFilePath)
+      if (CurrentSlide != null && CurrentSlide.FilePath == slideFilePath)
       {
         return CurrentSlide;
       }
-      else
-      {
-        // slide is not in cache, so get it now
-        CurrentSlide = new SlidePicture(slideFilePath, false);
-        return CurrentSlide;
-      }
+      // slide is not in cache, so get it now
+      CurrentSlide = new SlidePicture(slideFilePath, false);
+      return CurrentSlide;
     }
   }
 

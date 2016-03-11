@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!--version="1.0" encoding="utf-8" standalone="yes"-->
+<window>
+  <id>16003</id>
+  <defaultcontrol>2</defaultcontrol>
+  <allowoverlay>yes</allowoverlay>
+  <define>#header.label:InfoService - Twitter</define>
+  <define>#header.hover:hover_my news.png</define>
+  <define>#itemcount:#infoservice.twitter.itemcount #infoservice.twitter.itemtype</define>
+  <controls>
+    <control>
+      <description>background image</description>
+      <type>image</type>
+      <id>1</id>
+      <width>1920</width>
+      <height>1080</height>
+      <texture>BH News.jpg</texture>
+      <colordiffuse>90ffffff</colordiffuse>
+    </control>
+    <control>
+      <description>background</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>133</posX>
+      <posY>682</posY>
+      <width>1756</width>
+      <height>323</height>
+      <texture>FilmstripBG.png</texture>
+      <colordiffuse>bbffffff</colordiffuse>
+    </control>
+    <import>common.window.xml</import>
+    <import>common.time.xml</import>
+    <control>
+      <description>Site Logo</description>
+      <type>image</type>
+      <id>101</id>
+      <posX>91</posX>
+      <posY>42</posY>
+      <width>126</width>
+      <height>70</height>
+      <texture>#infoservice.twitter.img</texture>
+      <keepaspectratio>yes</keepaspectratio>
+      <align>center</align>
+    </control>
+    <control>
+      <description>Selected item Label</description>
+      <type>fadelabel</type>
+      <id>0</id>
+      <posX>80</posX>
+      <posY>101</posY>
+      <width>1475</width>
+      <align>left</align>
+      <font>font14</font>
+      <label>#infoservice.twitter.selected.username</label>
+      <textcolor>ffffd700</textcolor>
+    </control>
+    <control>
+      <type>actiongroup</type>
+      <description>action menu</description>
+      <defaultcontrol>2</defaultcontrol>
+      <onexit>50</onexit>
+      <buttonX>0</buttonX>
+      <buttonY>70</buttonY>
+      <buttonwidth>140</buttonwidth>
+      <buttonheight>984</buttonheight>
+      <textureFocus>-</textureFocus>
+      <textureNoFocus>Action_nofocus.png</textureNoFocus>
+      <width>168</width>
+      <height>798</height>
+      <dimColor>00ffffff</dimColor>
+      <control>
+        <type>image</type>
+        <id>1</id>
+        <width>1920</width>
+        <height>1080</height>
+        <texture>white.png</texture>
+        <colordiffuse>50005eef</colordiffuse>
+      </control>
+      <control>
+        <type>image</type>
+        <posX>0</posX>
+        <posY>196</posY>
+        <width>450</width>
+        <height>239</height>
+        <texture>am-background.png</texture>
+        <colordiffuse>ffffffff</colordiffuse>
+        <visible>!Control.HasFocus(50)</visible>
+        <animation effect="slide" time="100" start="-300,0" reversible="false">visible</animation>
+        <animation effect="slide" time="100" end="-300,0" reversible="false">hidden</animation>
+      </control>
+      <control>
+        <type>group</type>
+        <description>group element</description>
+        <animation effect="slide" time="100" start="-300,0" reversible="false">visible</animation>
+        <animation effect="slide" time="100" end="-300,0" reversible="false">hidden</animation>
+        <visible>!Control.HasFocus(50)+!control.HasFocus(99)</visible>
+        <layout>StackLayout(0, Vertical, true)</layout>
+        <posX>49</posX>
+        <posY>217</posY>
+        <control>
+          <description>Refresh Button</description>
+          <type>button</type>
+          <id>2</id>
+          <label />
+          <onleft>2</onleft>
+          <onright>50</onright>
+          <onup>17</onup>
+          <ondown>4</ondown>
+        </control>
+        <control>
+          <description>RSS feed select</description>
+          <type>button</type>
+          <id>4</id>
+          <label />
+          <onleft>4</onleft>
+          <onright>50</onright>
+          <onup>2</onup>
+          <ondown>5</ondown>
+        </control>
+        <control>
+          <description>All feeds</description>
+          <type>button</type>
+          <id>5</id>
+          <label />
+          <onleft>5</onleft>
+          <onright>50</onright>
+          <onup>4</onup>
+          <ondown>2</ondown>
+        </control>
+      </control>
+    </control>
+    <control>
+      <type>group</type>
+      <description>group element</description>
+      <control>
+        <description>listcontrol</description>
+        <type>listcontrol</type>
+        <id>50</id>
+        <posX>140</posX>
+        <posY>217</posY>
+        <height>492</height>
+        <width>1630</width>
+        <folderPrefix />
+        <folderSuffix />
+        <scrollOffset>2</scrollOffset>
+        <onleft>2</onleft>
+        <onright>2</onright>
+        <spinPosX>3626</spinPosX>
+        <spinPosY>984</spinPosY>
+        <explicitlyEnableScrollLabel>yes</explicitlyEnableScrollLabel>
+      </control>
+      <control>
+        <description>Chosen Story description</description>
+        <type>textboxscrollup</type>
+        <id>506</id>
+        <posX>618</posX>
+        <posY>703</posY>
+        <width>1236</width>
+        <height>270</height>
+        <label>-</label>
+        <font>font20</font>
+        <textcolor>ffffd700</textcolor>
+      </control>
+      <control>
+        <description>Feed Item Logo</description>
+        <type>image</type>
+        <id>101</id>
+        <posX>154</posX>
+        <posY>703</posY>
+        <width>281</width>
+        <height>281</height>
+        <texture mask="picturecase_mask.png">#infoservice.twitter.selected.userpicture</texture>
+        <keepaspectratio>no</keepaspectratio>
+      </control>
+      <control>
+        <description>Feed Item Overlay</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>154</posX>
+        <posY>703</posY>
+        <width>281</width>
+        <height>281</height>
+        <texture mask="picturecase_mask.png">picturecase.png</texture>
+        <keepaspectratio>no</keepaspectratio>
+        <visible>control.hasThumb(101)</visible>
+      </control>
+    </control>
+  </controls>
+</window>

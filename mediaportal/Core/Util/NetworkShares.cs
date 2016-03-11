@@ -207,7 +207,7 @@ namespace MediaPortal.Util
       if (!IsFileSystem) return false;
       if (null == path || 0 == path.Length) return true;
 
-      return path.ToLower().StartsWith(_path.ToLower());
+      return path.ToLowerInvariant().StartsWith(_path.ToLowerInvariant());
     }
   }
 
@@ -519,7 +519,7 @@ namespace MediaPortal.Util
     {
       if (null != server && 0 != server.Length && !IsW2KUp)
       {
-        server = server.ToUpper();
+        server = server.ToUpperInvariant();
 
         // On NT4, 9x and Me, server has to start with "\\"
         if (!('\\' == server[0] && '\\' == server[1]))

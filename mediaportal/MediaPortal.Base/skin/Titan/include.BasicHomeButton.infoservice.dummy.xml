@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+<controls> 
+  <control>
+	 <description>BasicHome DUMMY Focus</description>
+	 <type>image</type>
+	 <id>0</id>
+ 	 <posX>653</posX>
+	 <posY>347</posY>
+   <width>624</width>
+   <height>271</height>
+	 <texture>basichome_button_dummy.png</texture>
+	 <animation effect="fade" time="250" condition="!control.isvisible(2000)">conditional</animation>
+ 	 <animation effect="slide" start="700" end="0" time="600">visible</animation>
+	 <animation effect="fade" time="250">visible</animation>
+	 <animation effect="zoom" start="100,100" end="102,102" time="200" condition="control.hasfocus(500)">conditional</animation>
+	 <animation effect="fade" time="250">WindowOpen</animation>
+	 <animation effect="fade" time="250">WindowClose</animation>
+	 <visible>control.HasFocus(200) | control.HasFocus(300) | control.HasFocus(400) | control.HasFocus(500) | control.HasFocus(600) | control.HasFocus(700)</visible>     
+	</control>     
+  <control>
+    <description>BasicHome DUMMY</description>
+    <type>button</type>
+    <id>500</id>
+		<posX>663</posX>
+	  <posY>353</posY>
+    <width>594</width>
+    <height>241</height> 
+    <textureFocus>-</textureFocus>
+    <textureNoFocus>-</textureNoFocus>
+    <label></label>
+    <font>TitanLight20</font>
+    <textcolor>FFFFFF</textcolor>
+		<textalign>center</textalign>   
+    <textcolorNoFocus>FFFFFFFF</textcolorNoFocus>
+    <textYOff>88</textYOff>
+		<onright>200</onright>
+		<onleft>400</onleft>
+		<onup>500</onup>
+		<ondown>700</ondown>
+	  <animation effect="fade" time="250" condition="!control.isvisible(2000)">conditional</animation>
+ 		<animation effect="slide" start="700" end="0" time="600">visible</animation>
+		<animation effect="fade" time="250">visible</animation>
+    <animation effect="zoom" start="100,100" end="102,102" time="200">focus</animation>
+    <animation effect="zoom" start="102,102" end="100,100" time="150">unfocus</animation>
+	  <animation effect="fade" time="250">WindowOpen</animation>
+	  <animation effect="fade" time="250">WindowClose</animation>
+		<visible allowhiddenfocus="true">[control.HasFocus(200) | control.HasFocus(300) | control.HasFocus(400) | control.HasFocus(500) | control.HasFocus(600) | control.HasFocus(700)]</visible> 
+  </control>
+</controls>
+</window>

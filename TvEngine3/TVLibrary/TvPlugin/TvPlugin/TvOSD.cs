@@ -19,6 +19,7 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using System.Collections;
 using System.Globalization;
 using Gentle.Framework;
@@ -137,6 +138,7 @@ namespace TvPlugin
     private Program previousProgram = null;
     private bool _immediateSeekIsRelative = true;
     private int _immediateSeekValue = 10;
+    private bool _confirmTimeshiftStop = true;
 
     private IList listTvChannels;
 
@@ -156,6 +158,7 @@ namespace TvPlugin
       {
         _immediateSeekIsRelative = xmlreader.GetValueAsBool("movieplayer", "immediateskipstepsisrelative", true);
         _immediateSeekValue = xmlreader.GetValueAsInt("movieplayer", "immediateskipstepsize", 10);
+        _confirmTimeshiftStop = xmlreader.GetValueAsBool("mytv", "confirmTimeshiftStop", true);
       }
       bool bResult = Load(GUIGraphicsContext.GetThemedSkinFile(@"\tvOSD.xml"));
       return bResult;
@@ -288,29 +291,15 @@ namespace TvPlugin
 
         case Action.ActionType.ACTION_STOP:
           {
-            if (g_Player.IsTimeShifting)
-            {
-              Log.Debug("TvOSD: user request to stop");
-              GUIDialogPlayStop dlgPlayStop =
-                (GUIDialogPlayStop)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_PLAY_STOP);
-              if (dlgPlayStop != null)
-              {
-                dlgPlayStop.SetHeading(GUILocalizeStrings.Get(605));
-                dlgPlayStop.SetLine(1, GUILocalizeStrings.Get(2550));
-                dlgPlayStop.SetLine(2, GUILocalizeStrings.Get(2551));
-                dlgPlayStop.SetDefaultToStop(false);
-                dlgPlayStop.DoModal(GetID);
-                if (dlgPlayStop.IsStopConfirmed)
-                {
-                  Log.Debug("TvOSD: stop confirmed");
-                  g_Player.Stop();
-                }
-              }
-            }
             if (g_Player.IsTVRecording)
             {
-                Log.Debug("TvOSD: stop from recorded TV");
-                g_Player.Stop();
+              Log.Debug("TvOSD: stop from recorded TV");
+              g_Player.Stop();
+            }
+            if (g_Player.IsTimeShifting && CanStopTimeshifting())
+            {
+              Log.Debug("TvOSD: stop confirmed");
+              g_Player.Stop();
             }
             GUIWindowManager.IsPauseOsdVisible = false;
             return;
@@ -384,6 +373,38 @@ namespace TvPlugin
       base.OnAction(action);
     }
 
+    private bool CanStopTimeshifting()
+    {
+      if (!_confirmTimeshiftStop)
+      {
+        // Can always stop timeshift when confirmation is not required
+        return true;
+      }
+
+      // Get dialog to ask the user for confirmation
+      Log.Debug("TvOSD: user request to stop");
+      GUIDialogPlayStop dlgPlayStop =
+        (GUIDialogPlayStop)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_PLAY_STOP);
+      if (dlgPlayStop == null)
+      {
+        // Return true to avoid dead end on missing dialog
+        return true;
+      }
+
+      dlgPlayStop.SetHeading(GUILocalizeStrings.Get(605));
+      dlgPlayStop.SetLine(1, GUILocalizeStrings.Get(2550));
+      dlgPlayStop.SetLine(2, GUILocalizeStrings.Get(2551));
+      dlgPlayStop.SetDefaultToStop(false);
+      dlgPlayStop.DoModal(GetID);
+      if (dlgPlayStop.IsStopConfirmed)
+      {
+        Log.Debug("TvOSD: stop confirmed");
+        return true;
+      }
+
+      return false;
+    }
+
     public override bool OnMessage(GUIMessage message)
     {
       switch (message.Message)
@@ -445,8 +466,76 @@ namespace TvPlugin
             m_delayIntervalAudio = PostProcessingEngine.GetInstance().AudioDelayInterval;
             if (m_delayIntervalAudio > 0)
               m_audioDelay = PostProcessingEngine.GetInstance().AudioDelay / m_delayIntervalAudio;
-            return true;
+
+            g_Player.UpdateMediaInfoProperties();
+            GUIPropertyManager.SetProperty("#TV.View.HasTeletext", TVHome.Card.HasTeletext.ToString());
+
+            MediaPortal.Player.VideoStreamFormat videoFormat = g_Player.GetVideoFormat();
+
+            GUIPropertyManager.SetProperty("#Play.Current.TSBitRate",
+             ((float)MediaPortal.Player.g_Player.GetVideoFormat().bitrate / 1024 / 1024).ToString("0.00", CultureInfo.InvariantCulture));
+
+            GUIPropertyManager.SetProperty("#TV.TuningDetails.SignalLevel", TVHome.Card.SignalLevel.ToString());
+            GUIPropertyManager.SetProperty("#TV.TuningDetails.SignalQuality", TVHome.Card.SignalQuality.ToString());
+
+            GUIPropertyManager.SetProperty("#Play.Current.VideoFormat.RawResolution",
+              videoFormat.width.ToString() + "x" + videoFormat.height.ToString());
+
+            GUIPropertyManager.SetProperty("#TV.TuningDetails.FreeToAir", string.Empty);
+
+            Channel chan = TVHome.Navigator.Channel;
+            if (chan != null)
+            {
+              IList<TuningDetail> details = chan.ReferringTuningDetail();
+              if (details.Count > 0)
+              {
+                TuningDetail detail = null;
+                switch (TVHome.Card.Type)
+                {
+                  case TvLibrary.Interfaces.CardType.Analog:
+                    foreach (TuningDetail t in details)
+                    {
+                      if (t.ChannelType == 0)
+                        detail = t;
+                    }
+                    break;
+                  case TvLibrary.Interfaces.CardType.Atsc:
+                    foreach (TuningDetail t in details)
+                    {
+                      if (t.ChannelType == 1)
+                        detail = t;
+                    }
+                    break;
+                  case TvLibrary.Interfaces.CardType.DvbC:
+                    foreach (TuningDetail t in details)
+                    {
+                      if (t.ChannelType == 2)
+                        detail = t;
+                    }
+                    break;
+                  case TvLibrary.Interfaces.CardType.DvbS:
+                    foreach (TuningDetail t in details)
+                    {
+                      if (t.ChannelType == 3)
+                        detail = t;
+                    }
+                    break;
+                  case TvLibrary.Interfaces.CardType.DvbT:
+                    foreach (TuningDetail t in details)
+                    {
+                      if (t.ChannelType == 4)
+                        detail = t;
+                    }
+                    break;
+                  default:
+                    detail = details[0];
+                    break;
+                }
+                GUIPropertyManager.SetProperty("#TV.TuningDetails.FreeToAir", detail.FreeToAir.ToString());
+              }
+            }
           }
+          return true;
 
         case GUIMessage.MessageType.GUI_MSG_SETFOCUS:
           goto case GUIMessage.MessageType.GUI_MSG_LOSTFOCUS;
@@ -883,7 +972,7 @@ namespace TvPlugin
 
       GUIImage pImgNib = GetControl((int)Controls.OSD_SUBMENU_NIB) as GUIImage; // pointer to the nib graphic
       GUIImage pImgBG = GetControl(iBackID) as GUIImage; // pointer to the background graphic
-      GUIToggleButtonControl pButton = GetControl(iButtonID) as GUIToggleButtonControl;
+      GUIControl pButton = GetControl(iButtonID);
       // pointer to the OSD menu button
 
       // check to see if we are currently showing a sub-menu and it's position is different
@@ -1715,46 +1804,49 @@ namespace TvPlugin
         lblCurrentChannel.Label = GetChannelName();
       }
 
-      Program prog = TVHome.Navigator.Channel.CurrentProgram;
-      //TVHome.Navigator.GetChannel(GetChannelName()).GetProgramAt(m_dateTime);      
-
-      if (prog != null && !g_Player.IsTVRecording)
+      if (TVHome.Navigator.Channel != null)
       {
-        string strTime = String.Format("{0}-{1}",
-                                       prog.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
-                                       prog.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
+        Program prog = TVHome.Navigator.Channel.CurrentProgram;
+        //TVHome.Navigator.GetChannel(GetChannelName()).GetProgramAt(m_dateTime);      
 
-        if (lblCurrentTime != null)
+        if (prog != null && !g_Player.IsTVRecording)
         {
-          lblCurrentTime.Label = strTime;
-        }
-        // On TV Now
-        if (tbOnTvNow != null)
-        {
-          strTime = String.Format("{0} ", prog.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
-          tbOnTvNow.Label = strTime + TVUtil.GetDisplayTitle(prog);
-          GUIPropertyManager.SetProperty("#TV.View.start", strTime);
+          string strTime = String.Format("{0}-{1}",
+                                         prog.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
+                                         prog.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
 
-          strTime = String.Format("{0} ", prog.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
-          GUIPropertyManager.SetProperty("#TV.View.stop", strTime);
-          GUIPropertyManager.SetProperty("#TV.View.remaining", Utils.SecondsToHMSString(prog.EndTime - prog.StartTime));
-        }
-        if (tbProgramDescription != null)
-        {
-          tbProgramDescription.Label = prog.Description;
-        }
-
-        // next program
-        Channel chan = GetChannel();
-        if (chan != null)
-        {
-          prog = chan.GetProgramAt(prog.EndTime.AddMinutes(1));
-
-          if (prog != null)
+          if (lblCurrentTime != null)
           {
-            if (tbOnTvNext != null)
+            lblCurrentTime.Label = strTime;
+          }
+          // On TV Now
+          if (tbOnTvNow != null)
+          {
+            strTime = String.Format("{0} ", prog.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
+            tbOnTvNow.Label = strTime + TVUtil.GetDisplayTitle(prog);
+            GUIPropertyManager.SetProperty("#TV.View.start", strTime);
+
+            strTime = String.Format("{0} ", prog.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
+            GUIPropertyManager.SetProperty("#TV.View.stop", strTime);
+            GUIPropertyManager.SetProperty("#TV.View.remaining", Utils.SecondsToHMSString(prog.CalculateTimeRemaining()));
+          }
+          if (tbProgramDescription != null)
+          {
+            tbProgramDescription.Label = prog.Description;
+          }
+
+          // next program
+          Channel chan = GetChannel();
+          if (chan != null)
+          {
+            prog = chan.GetProgramAt(prog.EndTime.AddMinutes(1));
+
+            if (prog != null)
             {
-              tbOnTvNext.Label = strTime + "  " + TVUtil.GetDisplayTitle(prog);
+              if (tbOnTvNext != null)
+              {
+                tbOnTvNext.Label = strTime + "  " + TVUtil.GetDisplayTitle(prog);
+              }
             }
           }
         }
@@ -1777,7 +1869,7 @@ namespace TvPlugin
           if (ch != null)
           {
             string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, ch.DisplayName);
-            if (string.IsNullOrEmpty(strLogo))                          
+            if (string.IsNullOrEmpty(strLogo))
             {
               strLogo = "defaultVideoBig.png";
             }
@@ -1846,19 +1938,22 @@ namespace TvPlugin
           VirtualCard card;
           TvServer server = new TvServer();
 
-          if (server.IsRecording(GetChannel().IdChannel, out card))
+          if (GetChannel() != null)
           {
-            if (g_Player.IsTVRecording)
+            if (server.IsRecording(GetChannel().IdChannel, out card))
             {
-              Recording rec = TvRecorded.ActiveRecording();
-              if (rec != null)
+              if (g_Player.IsTVRecording)
               {
-                isRecording = TvRecorded.IsLiveRecording();
+                Recording rec = TvRecorded.ActiveRecording();
+                if (rec != null)
+                {
+                  isRecording = TvRecorded.IsLiveRecording();
+                }
               }
-            }
-            else
-            {
-              isRecording = true;
+              else
+              {
+                isRecording = true;
+              }
             }
           }
 
@@ -1871,6 +1966,14 @@ namespace TvPlugin
 
     private void UpdateProgressBar()
     {
+      if (g_Player.IsTimeShifting)
+      {
+        GUIPropertyManager.SetProperty("#Play.Current.TSBitRate",
+         ((float)MediaPortal.Player.g_Player.GetVideoFormat().bitrate / 1024 / 1024).ToString("0.00", CultureInfo.InvariantCulture));
+        GUIPropertyManager.SetProperty("#TV.TuningDetails.SignalLevel", TVHome.Card.SignalLevel.ToString());
+        GUIPropertyManager.SetProperty("#TV.TuningDetails.SignalQuality", TVHome.Card.SignalQuality.ToString());
+      }
+      
       if (!g_Player.IsTVRecording)
       {
         double fPercent;
@@ -1916,7 +2019,7 @@ namespace TvPlugin
                                          prog.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
           GUIPropertyManager.SetProperty("#TV.View.stop",
                                          prog.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
-          GUIPropertyManager.SetProperty("#TV.View.remaining", Utils.SecondsToHMSString(prog.EndTime - prog.StartTime));
+          GUIPropertyManager.SetProperty("#TV.View.remaining", Utils.SecondsToHMSString(prog.CalculateTimeRemaining()));
           GUIPropertyManager.SetProperty("#TV.View.genre", prog.Genre);
           GUIPropertyManager.SetProperty("#TV.View.title", prog.Title);
           GUIPropertyManager.SetProperty("#TV.View.compositetitle", TVUtil.GetDisplayTitle(prog));

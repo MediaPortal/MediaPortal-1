@@ -114,7 +114,7 @@ namespace MediaPortal.GUI.Library
                                           GUISpinControl.SpinType.SPIN_CONTROL_TYPE_INT, Alignment.ALIGN_LEFT);
       _upDownControl.ParentControl = this;
       _font = GUIFontManager.GetFont(_fontName);
-      if (_property.IndexOf("#") >= 0)
+      if (_property.IndexOf("#", StringComparison.Ordinal) >= 0)
       {
         _containsProperty = true;
       }
@@ -424,7 +424,7 @@ namespace MediaPortal.GUI.Library
       if (!_upDownControl.Focus)
       {
         Focus = false;
-        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SETFOCUS, WindowId, GetID, _rightControlId,
+        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SETFOCUS, WindowId, GetID, NavigateRight,
                                         (int)action.wID, 0, null);
         GUIGraphicsContext.SendMessage(msg);
       }
@@ -439,7 +439,7 @@ namespace MediaPortal.GUI.Library
       if (!_upDownControl.Focus)
       {
         Focus = false;
-        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SETFOCUS, WindowId, GetID, _leftControlId,
+        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SETFOCUS, WindowId, GetID, NavigateLeft,
                                         (int)action.wID, 0, null);
         GUIGraphicsContext.SendMessage(msg);
       }
@@ -454,7 +454,7 @@ namespace MediaPortal.GUI.Library
       if (!_upDownControl.Focus)
       {
         Focus = false;
-        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SETFOCUS, WindowId, GetID, _upControlId,
+        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SETFOCUS, WindowId, GetID, NavigateUp,
                                         (int)action.wID, 0, null);
         GUIGraphicsContext.SendMessage(msg);
       }
@@ -469,7 +469,7 @@ namespace MediaPortal.GUI.Library
       if (!_upDownControl.Focus)
       {
         Focus = false;
-        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SETFOCUS, WindowId, GetID, _downControlId,
+        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SETFOCUS, WindowId, GetID, NavigateDown,
                                         (int)action.wID, 0, null);
         GUIGraphicsContext.SendMessage(msg);
       }
@@ -862,7 +862,7 @@ namespace MediaPortal.GUI.Library
       set
       {
         _property = value;
-        if (_property.IndexOf("#") >= 0)
+        if (_property.IndexOf("#", StringComparison.Ordinal) >= 0)
         {
           _containsProperty = true;
         }
@@ -886,7 +886,7 @@ namespace MediaPortal.GUI.Library
         if (_property != value || _itemList.Count == 0)
         {
           _property = value;
-          if (_property.IndexOf("#") >= 0)
+          if (_property.IndexOf("#", StringComparison.Ordinal) >= 0)
           {
             _containsProperty = true;
           }

@@ -19,15 +19,9 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
 using System.IO;
 using System.Windows.Forms;
 using CSScriptLibrary;
-using MpeCore.Classes.SectionPanel;
 using MpeCore.Interfaces;
 
 namespace MpeCore.Classes.SectionPanel
@@ -41,31 +35,17 @@ namespace MpeCore.Classes.SectionPanel
 
     private SectionItem Section = new SectionItem();
     private PackageClass _packageClass = new PackageClass();
-    public ShowModeEnum Mode = ShowModeEnum.Preview;
 
-
-    //private SectionResponseEnum resp = SectionResponseEnum.Cancel;
-
-    public UserVericalLayout()
-    {
-      InitializeComponent();
-    }
-
-
-    public string Guid
-    {
-      get { return "{{437ED9A5-B960-488c-9278-1BF7FB6E24B8}}"; }
-    }
+    #region ISectionPanel Members
 
     public string DisplayName
     {
       get { return "Custom Vertical layout"; }
     }
 
-
-    public SectionParamCollection Init()
+    public string Guid
     {
-      throw new NotImplementedException();
+      get { return "{437ED9A5-B960-488c-9278-1BF7FB6E24B8}"; }
     }
 
     public SectionParamCollection GetDefaultParams()
@@ -113,15 +93,20 @@ namespace MpeCore.Classes.SectionPanel
     {
       Section = sectionItem;
       _packageClass = packageClass;
-      Mode = ShowModeEnum.Preview;
       SetValues(sectionItem);
       ShowDialog();
     }
 
-
     public SectionResponseEnum Execute(PackageClass packageClass, SectionItem sectionItem)
     {
       throw new NotImplementedException();
+    }
+
+    #endregion
+
+    public UserVericalLayout()
+    {
+      InitializeComponent();
     }
 
     private void SetValues(SectionItem sectionItem)

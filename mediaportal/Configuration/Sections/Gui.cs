@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2013 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2013 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -75,7 +75,7 @@ namespace MediaPortal.Configuration.Sections
           {
             foreach (string invalidDirectory in invalidDirectoryNames)
             {
-              if (invalidDirectory.Equals(directoryName.ToLower()))
+              if (invalidDirectory.Equals(directoryName.ToLowerInvariant()))
               {
                 isInvalidDirectory = true;
                 break;
@@ -110,18 +110,19 @@ namespace MediaPortal.Configuration.Sections
 
     private string[][] sectionEntries = new string[][]
                                           {
-                                            new string[] {"gui", "allowRememberLastFocusedItem", "true"},
                                             // 0 Allow remember last focused item on supported window/skin
-                                            new string[] {"gui", "autosize", "true"},
-                                            // 1 Autosize window mode to skin dimensions
-                                            new string[] {"gui", "hideextensions", "true"},
+                                            new string[] {"gui", "allowRememberLastFocusedItem", "true"},
                                             // 2 Hide file extensions like .mp3, .avi, .mpg,...
-                                            new string[] {"gui", "fileexistscache", "false"},
+                                            new string[] {"gui", "hideextensions", "true"},
                                             // 3 Enable file existance cache
-                                            new string[] {"gui", "enableguisounds", "true"},
+                                            new string[] {"gui", "fileexistscache", "false"},
                                             // 4 Enable skin sound effects
-                                            new string[] {"gui", "mousesupport", "false"},
+                                            new string[] {"gui", "enableguisounds", "true"},
                                             // 5 Show special mouse controls (scrollbars, etc)      
+                                            new string[] {"gui", "mousesupport", "false"},
+                                            // 6 Reduce frame rate when not in focus     
+                                            new string[] {"gui", "reduceframerate", "false"},
+                                            new string[] {"gui", "addVideoFilesToDb", "false"},
                                           };
 
     /// <summary> 
@@ -173,22 +174,15 @@ namespace MediaPortal.Configuration.Sections
         for (int index = 0; index < sectionEntries.Length; index++)
         {
           string[] currentSection = sectionEntries[index];
-          settingsCheckedListBox.SetItemChecked(index,
-                                                xmlreader.GetValueAsBool(currentSection[0], currentSection[1],
-                                                                         bool.Parse(currentSection[2])));
+          settingsCheckedListBox.SetItemChecked(index, xmlreader.GetValueAsBool(currentSection[0], currentSection[1], bool.Parse(currentSection[2])));
         }
 
         // Load skin settings.
-        string currentSkin = xmlreader.GetValueAsString("skin", "name", "NoSkin");
+        string currentSkin = xmlreader.GetValueAsString("skin", "name", "Titan");
 
         float screenHeight = GUIGraphicsContext.currentScreen.Bounds.Height;
         float screenWidth = GUIGraphicsContext.currentScreen.Bounds.Width;
         float screenRatio = (screenWidth / screenHeight);
-        if (currentSkin == "NoSkin")
-        {
-          //Change default skin based on screen aspect ratio
-          currentSkin = screenRatio > 1.5 ? "DefaultWide" : "Default";
-        }
 
         //
         // Make sure the skin actually exists before setting it as the current skin
@@ -206,15 +200,8 @@ namespace MediaPortal.Configuration.Sections
           }
         }
 
-        //if (listViewAvailableSkins.SelectedIndices.Count == 0)
-        //{
-        //  //MessageBox.Show(String.Format("The selected skin {0} does not exist!", currentSkin), "Error", MessageBoxButtons.OK, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button1);
-        //  Log.Debug("GeneralSkin: Current skin {0} not selected.", currentSkin);
-        //}
-
-        bool startWithBasicHome = xmlreader.GetValueAsBool("gui", "startbasichome", false);
+        bool startWithBasicHome = xmlreader.GetValueAsBool("gui", "startbasichome", true);
         bool useOnlyOneHome = xmlreader.GetValueAsBool("gui", "useonlyonehome", false);
-        //homeComboBox.SelectedIndex = useOnlyOneHome ? (startWithBasicHome ? 3 : 2) : (startWithBasicHome ? 1 : 0);
         homeComboBox.SelectedIndex = (int)((useOnlyOneHome ? HomeUsageEnum.UseOnlyOne : HomeUsageEnum.UseBoth) |
                                            (startWithBasicHome ? HomeUsageEnum.PreferBasic : HomeUsageEnum.PreferClassic));
       }
@@ -232,13 +219,19 @@ namespace MediaPortal.Configuration.Sections
         }
 
         // Save skin settings.
-        string prevSkin = xmlwriter.GetValueAsString("skin", "name", "DefaultWide");
+        string prevSkin = xmlwriter.GetValueAsString("skin", "name", "Titan");
         string selectedSkin = prevSkin;
         try
         {
-          selectedSkin = listViewAvailableSkins.SelectedItems[0].Text;
+          if (listViewAvailableSkins.SelectedItems.Count > 0)
+          {
+            selectedSkin = listViewAvailableSkins.SelectedItems[0].Text;
+          }
         }
-        catch (Exception) {}
+        catch (Exception)
+        {
+          // ignored
+        }
         if (prevSkin != selectedSkin)
         {
           xmlwriter.SetValueAsBool("general", "dontshowskinversion", false);
@@ -247,10 +240,8 @@ namespace MediaPortal.Configuration.Sections
         xmlwriter.SetValue("skin", "name", selectedSkin);
         Config.SkinName = selectedSkin;
         xmlwriter.SetValue("general", "skinobsoletecount", 0);
-        xmlwriter.SetValueAsBool("gui", "useonlyonehome",
-                                 (homeComboBox.SelectedIndex & (int)HomeUsageEnum.UseOnlyOne) != 0);
-        xmlwriter.SetValueAsBool("gui", "startbasichome",
-                                 (homeComboBox.SelectedIndex & (int)HomeUsageEnum.PreferBasic) != 0);
+        xmlwriter.SetValueAsBool("gui", "useonlyonehome", (homeComboBox.SelectedIndex & (int)HomeUsageEnum.UseOnlyOne) != 0);
+        xmlwriter.SetValueAsBool("gui", "startbasichome", (homeComboBox.SelectedIndex & (int)HomeUsageEnum.PreferBasic) != 0);
       }
     }
 

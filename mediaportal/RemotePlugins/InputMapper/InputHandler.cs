@@ -207,7 +207,7 @@ namespace MediaPortal.InputDevices
     {
       using (Settings xmlreader = new MPSettings())
       {
-        _basicHome = xmlreader.GetValueAsBool("gui", "startbasichome", false);
+        _basicHome = xmlreader.GetValueAsBool("gui", "startbasichome", true);
       }
       string xmlPath = GetXmlPath(deviceXmlName);
       LoadMapping(xmlPath);
@@ -296,10 +296,10 @@ namespace MediaPortal.InputDevices
           {
             int cmdKeyChar = 0;
             int cmdKeyCode = 0;
-            string condition = nodeAction.Attributes["condition"].Value.ToUpper();
-            string conProperty = nodeAction.Attributes["conproperty"].Value.ToUpper();
-            string command = nodeAction.Attributes["command"].Value.ToUpper();
-            string cmdProperty = nodeAction.Attributes["cmdproperty"].Value.ToUpper();
+            string condition = nodeAction.Attributes["condition"].Value.ToUpperInvariant();
+            string conProperty = nodeAction.Attributes["conproperty"].Value.ToUpperInvariant();
+            string command = nodeAction.Attributes["command"].Value.ToUpperInvariant();
+            string cmdProperty = nodeAction.Attributes["cmdproperty"].Value.ToUpperInvariant();
             if ((command == "ACTION") && (cmdProperty == "93"))
             {
               cmdKeyChar = Convert.ToInt32(nodeAction.Attributes["cmdkeychar"].Value);

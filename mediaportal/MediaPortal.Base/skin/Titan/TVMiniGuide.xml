@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <id>3009</id>
+  <defaultcontrol>35</defaultcontrol>
+  <allowoverlay>no</allowoverlay>
+  <controls>
+    <control>
+      <type>label</type>
+      <id>1</id>
+      <posX>-2000</posX>
+      <posY>-2000</posY>
+      <label>-</label>
+      <visible>no</visible>
+    </control>
+    <!--            :: IMPORT ::            -->
+    <import tag="TVMiniGuide">TVMiniGuide.8rows.xml</import>
+  </controls>
+</window>

@@ -137,6 +137,21 @@ namespace TvDatabase
       return Broker.RetrieveList<CanceledSchedule>();
     }
 
+    public static void DeleteAllCancelledSeries()
+    {
+      DateTime date = DateTime.Now.AddDays(-5);
+
+      IList<CanceledSchedule> CanceledScheduleList =  ListAll();
+      foreach (CanceledSchedule cs in CanceledScheduleList)
+      {
+        if (cs.cancelDateTime < date)
+        {
+          Log.Debug("DeleteAllCancelledSeries: Removing {0}", cs.cancelDateTime);
+          cs.Remove();
+        }
+      }
+    }
+
     /// <summary>
     /// Retrieves an entity given it's id.
     /// </summary>

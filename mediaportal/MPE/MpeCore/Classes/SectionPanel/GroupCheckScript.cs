@@ -19,22 +19,18 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
 using CSScriptLibrary;
-using MpeCore;
 using MpeCore.Interfaces;
-using MpeCore.Classes;
 
 namespace MpeCore.Classes.SectionPanel
 {
   public class GroupCheckScript : Base, ISectionPanel
   {
     private const string Const_script = "Script";
+
+    #region ISectionPanel Members
 
     public string DisplayName
     {
@@ -44,11 +40,6 @@ namespace MpeCore.Classes.SectionPanel
     public string Guid
     {
       get { return "{6E83B2AC-92D1-4a45-9A3E-D02AE8E9D8ED}"; }
-    }
-
-    public SectionParamCollection Init()
-    {
-      throw new NotImplementedException();
     }
 
     public SectionParamCollection GetDefaultParams()
@@ -123,5 +114,7 @@ namespace MpeCore.Classes.SectionPanel
       Base.ActionExecute(packageClass, sectionItem, ActionExecuteLocationEnum.AfterPanelHide);
       return SectionResponseEnum.Ok;
     }
+
+    #endregion
   }
 }

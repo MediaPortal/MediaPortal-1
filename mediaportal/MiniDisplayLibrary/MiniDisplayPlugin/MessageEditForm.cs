@@ -700,8 +700,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
         tag = (Data)selectedNode.Tag;
       }
       if (
-        MessageBox.Show(this, "Are you sure you want to remove this " + tag.Type.ToLower() + "?",
-                        "Remove " + tag.Type.ToLower(), MessageBoxButtons.YesNo, MessageBoxIcon.Question,
+        MessageBox.Show(this, "Are you sure you want to remove this " + tag.Type.ToLowerInvariant() + "?",
+                        "Remove " + tag.Type.ToLowerInvariant(), MessageBoxButtons.YesNo, MessageBoxIcon.Question,
                         MessageBoxDefaultButton.Button2) == DialogResult.Yes)
       {
         selectedNode.Remove();
@@ -782,7 +782,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
 
     private void CleanAbbreviation(ref string name, string abbreviation)
     {
-      int index = name.ToUpper().IndexOf(abbreviation.ToUpper());
+      int index = name.ToUpperInvariant().IndexOf(abbreviation.ToUpperInvariant());
       if (index != -1)
       {
         name = name.Substring(0, index) + abbreviation + name.Substring(index + abbreviation.Length);
@@ -842,18 +842,18 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       Log.Info(
         "comboBoxMessageType_SelectionChangeCommitted(): EXISTING TYPE = {0}, Parameter = {1}, Value = {2} - New Window = {3}",
         new object[] {tag.Type});
-      string str = this.comboBoxMessageType.SelectedItem.ToString().ToLower();
+      string str = this.comboBoxMessageType.SelectedItem.ToString().ToLowerInvariant();
       if (str != null)
       {
         if (!(str == "line"))
         {
-          if ((str == "image") && (tag.Type.ToLower() != "image"))
+          if ((str == "image") && (tag.Type.ToLowerInvariant() != "image"))
           {
             selectedNode.Tag = new Data("IMAGE", "", "");
             selectedNode.Text = "IMAGE";
           }
         }
-        else if (tag.Type.ToLower() != "line")
+        else if (tag.Type.ToLowerInvariant() != "line")
         {
           selectedNode.Tag = new Data("LINE", "ALIGNMENT", this.comboBoxAlignment.SelectedItem);
           selectedNode.Text = "LINE Alignment = " + ((string)this.comboBoxAlignment.SelectedItem);
@@ -1019,18 +1019,18 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       string str = string.Empty;
       try
       {
-        if (Enum.Parse(typeof (Action.ActionType), "ACTION_" + friendlyName.Replace(' ', '_').ToUpper()) != null)
+        if (Enum.Parse(typeof (Action.ActionType), "ACTION_" + friendlyName.Replace(' ', '_').ToUpperInvariant()) != null)
         {
-          str = "ACTION_" + friendlyName.Replace(' ', '_').ToUpper();
+          str = "ACTION_" + friendlyName.Replace(' ', '_').ToUpperInvariant();
         }
       }
       catch (ArgumentException)
       {
         try
         {
-          if (Enum.Parse(typeof (Action.ActionType), friendlyName.Replace(' ', '_').ToUpper()) != null)
+          if (Enum.Parse(typeof (Action.ActionType), friendlyName.Replace(' ', '_').ToUpperInvariant()) != null)
           {
-            str = friendlyName.Replace(' ', '_').ToUpper();
+            str = friendlyName.Replace(' ', '_').ToUpperInvariant();
           }
           return str;
         }
@@ -1081,7 +1081,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
         }
         else
         {
-          str = str + ch.ToString().ToLower();
+          str = str + ch.ToString().ToLowerInvariant();
         }
       }
       this.CleanAbbreviation(ref str, "TV");
@@ -1224,7 +1224,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
 
     private string GetWindowName(string friendlyName)
     {
-      return ("WINDOW_" + friendlyName.Replace(' ', '_').ToUpper());
+      return ("WINDOW_" + friendlyName.Replace(' ', '_').ToUpperInvariant());
     }
 
     private void InitializeComponent()
@@ -3056,7 +3056,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
                     {
                       TreeNode node23;
                       Log.Info("        Adding Condition: {0}", new object[] {node22.LocalName});
-                      if (((name = node22.LocalName.ToLower()) != null) && ((name == "or") || (name == "and")))
+                      if (((name = node22.LocalName.ToLowerInvariant()) != null) && ((name == "or") || (name == "and")))
                       {
                         Log.Info("          Adding and/or Condition: {0}", new object[] {node22.LocalName});
                         node23 = new TreeNode(node22.LocalName);
@@ -3121,7 +3121,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
                       {
                         TreeNode node30;
                         Log.Info("        Adding Image Condition: {0}", new object[] {node29.LocalName});
-                        if (((name = node29.LocalName.ToLower()) != null) && ((name == "or") || (name == "and")))
+                        if (((name = node29.LocalName.ToLowerInvariant()) != null) && ((name == "or") || (name == "and")))
                         {
                           Log.Info("          Adding and/or Image Condition: {0}", new object[] {node29.LocalName});
                           node30 = new TreeNode(node29.LocalName);

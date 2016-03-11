@@ -37,10 +37,6 @@ CChannelMixer::~CChannelMixer(void)
 
 HRESULT CChannelMixer::Init()
 {
-  HRESULT hr = InitAllocator();
-  if (FAILED(hr))
-    return hr;
-
   return CBaseAudioSink::Init();
 }
 
@@ -87,10 +83,13 @@ HRESULT CChannelMixer::NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, int nAp
         hr = SetupConversion(*pChOrder);
       }
 
+      m_bNextFormatPassthru = true;
       m_chOrder = *pChOrder;
       return hr;
     }
   }
+
+  m_bNextFormatPassthru = false;
 
   WAVEFORMATEXTENSIBLE* pOutWfx;
   CopyWaveFormatEx(&pOutWfx, pwfx);
@@ -123,6 +122,8 @@ HRESULT CChannelMixer::NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, int nAp
   if (bApplyChanges)
   {
     LogWaveFormat(pwfx, "MIX  - applying ");
+
+    m_pNextSink->NegotiateBuffer(pOutWfx, &m_nOutBufferSize, &m_nOutBufferCount, true);
 
     m_bPassThrough = false;
     SetInputFormat(pwfx);
@@ -294,7 +295,7 @@ HRESULT CChannelMixer::MapChannelsFromDStoAE(WAVEFORMATEXTENSIBLE* pWfex, CAECha
         if (pWfex->dwChannelMask & SPEAKER_BACK_CENTER)
           *pChannelInfo = AE_AC3_CH_LAYOUT_3_S;
         else
-          *pChannelInfo = AE_AC3_CH_LAYOUT_4_0;   
+          *pChannelInfo = AE_AC3_CH_LAYOUT_4_0;
         break;
       case 5:
         *pChannelInfo = AE_AC3_CH_LAYOUT_5_0;
@@ -338,7 +339,15 @@ HRESULT CChannelMixer::MapChannelsFromDStoAE(WAVEFORMATEXTENSIBLE* pWfex, CAECha
         *pChannelInfo = AE_CH_LAYOUT_5_1;
         break;
       case 7:
-        *pChannelInfo = AE_CH_LAYOUT_7_0;
+        if (pWfex->dwChannelMask & SPEAKER_LOW_FREQUENCY)
+        {
+          if (pWfex->dwChannelMask == 0x13f)
+            *pChannelInfo = AE_CH_LAYOUT_6_1_0x13f;
+          else
+            *pChannelInfo = AE_CH_LAYOUT_6_1_0x70f;
+        }
+        else
+          *pChannelInfo = AE_CH_LAYOUT_7_0;
         break;
       case 8:
         *pChannelInfo = AE_CH_LAYOUT_7_1;

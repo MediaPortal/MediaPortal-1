@@ -137,12 +137,7 @@ namespace SetupTv.Sections
 
       item.Checked = channel.VisibleInGuide;
       item.Tag = map;
-
-      IList<TuningDetail> details = channel.ReferringTuningDetail();
-      if (details.Count > 0)
-      {
-        item.SubItems.Add(details[0].ChannelNumber.ToString());
-      }
+      item.SubItems.Add(channel.ChannelNumber.ToString());
       return item;
     }
 
@@ -333,6 +328,8 @@ namespace SetupTv.Sections
           dlg.Channel = channel;
           dlg.IsTv = false;
           dlg.ShowDialog();
+          listView1.Items[indexes[0]].Text = channel.DisplayName;
+          listView1.Items[indexes[0]].SubItems[1].Text = channel.ChannelNumber.ToString();
           return;
         }
       }

@@ -20,16 +20,17 @@
 
 using MediaPortal.Configuration;
 using MediaPortal.GUI.Library;
+using MediaPortal.GUI.Video;
 using MediaPortal.Player;
 using MediaPortal.Services;
 using System;
 
-namespace MediaPortal.GUI.Video
+namespace MediaPortal.GUI.Disc
 {
   /// <summary>
   /// Adds "Play Disc" button to homescreen
   /// </summary>
-  [PluginIcons("WindowPlugins.GUIDisc.DVD.gif", "WindowPlugins.GUIDisc.DVDDisabled.gif")]
+  [PluginIcons("GUIDisc.DVD.gif", "GUIDisc.DVDDisabled.gif")]
   public class GUIDisc : GUIInternalWindow, ISetupForm, IShowPlugin
   {
     public GUIDisc()

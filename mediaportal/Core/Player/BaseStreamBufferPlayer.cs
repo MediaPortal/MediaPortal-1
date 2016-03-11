@@ -154,7 +154,7 @@ namespace MediaPortal.Player
       _speedRate = 10000;
       _isLive = false;
       _duration = -1d;
-      string extension = Path.GetExtension(strFile).ToLower();
+      string extension = Path.GetExtension(strFile).ToLowerInvariant();
       if (extension.Equals(".tv"))
       {
         _isLive = true;

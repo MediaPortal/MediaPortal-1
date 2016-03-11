@@ -182,7 +182,7 @@ namespace MpeMaker.Sections
 
     private void onlineButton_Click(object sender, EventArgs e)
     {
-      OpenUrl(txt_online.Text);
+      OpenUrl(Package.ReplaceInfo(txt_online.Text));
     }
 
     private static void OpenUrl(string url)

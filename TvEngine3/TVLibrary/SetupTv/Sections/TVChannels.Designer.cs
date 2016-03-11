@@ -71,6 +71,7 @@ namespace SetupTv.Sections
       this.groupTabContextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
       this.renameGroupToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.deleteGroupToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+      this.hdrChannelNumber = new System.Windows.Forms.ColumnHeader();
       this.channelListContextMenuStrip.SuspendLayout();
       this.tabControl1.SuspendLayout();
       this.tabPage1.SuspendLayout();
@@ -90,6 +91,7 @@ namespace SetupTv.Sections
       this.mpListView1.CheckBoxes = true;
       this.mpListView1.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.hdrhekje,
+            this.hdrChannelNumber,
             this.hdrGroup,
             this.hdrProvider,
             this.hdrTypes,
@@ -120,19 +122,23 @@ namespace SetupTv.Sections
       // 
       // hdrGroup
       // 
+      this.hdrGroup.DisplayIndex = 1;
       this.hdrGroup.Text = "Groups";
       // 
       // hdrProvider
       // 
+      this.hdrProvider.DisplayIndex = 2;
       this.hdrProvider.Text = "Provider";
       // 
       // hdrTypes
       // 
+      this.hdrTypes.DisplayIndex = 3;
       this.hdrTypes.Text = "Mapped Cardtypes";
       this.hdrTypes.Width = 50;
       // 
       // hdrNumberOfDetails
       // 
+      this.hdrNumberOfDetails.DisplayIndex = 4;
       this.hdrNumberOfDetails.Text = "Tuningdetails";
       // 
       // channelListContextMenuStrip
@@ -489,6 +495,10 @@ namespace SetupTv.Sections
       this.deleteGroupToolStripMenuItem.Text = "Delete Group";
       this.deleteGroupToolStripMenuItem.Click += new System.EventHandler(this.deleteGroupToolStripMenuItem_Click);
       // 
+      // hdrChannelNumber
+      // 
+      this.hdrChannelNumber.Text = "Channel number";
+      // 
       // TvChannels
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -551,5 +561,6 @@ namespace SetupTv.Sections
   private System.Windows.Forms.ColumnHeader hdrNumberOfDetails;
   private System.Windows.Forms.TextBox txtFilterString;
   private System.Windows.Forms.Label lblFilterLabel;
+  private System.Windows.Forms.ColumnHeader hdrChannelNumber;
   }
 }

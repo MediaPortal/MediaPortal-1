@@ -1,0 +1,277 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+<controls>
+
+		<control>
+			<description>DUMMY CONTROL FOR RANDOM FANART 1 VISIBILITY CONDITION</description>
+			<type>label</type>
+			<id>91919297</id>
+			<posX>0</posX>
+			<posY>0</posY>
+			<width>1</width>
+		</control>
+			
+		<control>
+			<description>DUMMY CONTROL FOR RANDOM FANART 2 VISIBILITY CONDITION</description>
+			<type>label</type>
+			<id>91919298</id>
+			<posX>0</posX>
+			<posY>0</posY>
+			<width>1</width>
+		</control>
+
+	 <!--            :: VIDEO/MOVIES ::            -->
+    
+    <control>
+			<description>Movies Selected Fanart</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>1920</width>
+      <height>1080</height>
+      <visible>[control.hasfocus(6) | control.HasFocus(1100) | control.HasFocus(1101) | control.HasFocus(1102) | control.HasFocus(1103) | control.HasFocus(1104)] + string.equals(#skin.basichome.moviePlugin,Moving Pictures) + control.isvisible(91919297)</visible>
+      <texture>#fanarthandler.movingpicture.backdrop1.any</texture>
+			<animation effect="fade" start="100" end="0" time="450" reversible="false">Hidden</animation>
+			<animation effect="fade" start="0" end="100" time="450" reversible="false">Visible</animation>
+      <animation effect="fade" start="0" end="100" time="250" delay="350">WindowOpen</animation>
+      <animation effect="fade" start="100" end="0" time="250" delay="0">WindowClose</animation>
+    </control>
+        
+    <control>
+			<description>Movies Selected Fanart</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>1920</width>
+      <height>1080</height>
+      <visible>[control.hasfocus(6) | control.HasFocus(1100) | control.HasFocus(1101) | control.HasFocus(1102) | control.HasFocus(1103) | control.HasFocus(1104)] + string.equals(#skin.basichome.moviePlugin,Moving Pictures) + control.isvisible(91919298)</visible>
+      <texture>#fanarthandler.movingpicture.backdrop2.any</texture>
+			<animation effect="fade" start="100" end="0" time="450" reversible="false">Hidden</animation>
+			<animation effect="fade" start="0" end="100" time="450" reversible="false">Visible</animation>
+      <animation effect="fade" start="0" end="100" time="250" delay="350">WindowOpen</animation>
+      <animation effect="fade" start="100" end="0" time="250" delay="0">WindowClose</animation>
+    </control>
+		
+    <control>
+			<description>Video Selected Fanart</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>1920</width>
+      <height>1080</height>
+      <visible>control.hasfocus(6) + string.equals(#skin.basichome.moviePlugin,MyVideo) + control.isvisible(91919297)</visible>
+      <texture>#fanarthandler.movie.scraper.backdrop1.any</texture>
+			<animation effect="fade" start="100" end="0" time="450" reversible="false">Hidden</animation>
+			<animation effect="fade" start="0" end="100" time="450" reversible="false">Visible</animation>
+      <animation effect="fade" start="0" end="100" time="250" delay="350">WindowOpen</animation>
+      <animation effect="fade" start="100" end="0" time="250" delay="0">WindowClose</animation>
+    </control>
+        
+    <control>
+			<description>Video Selected Fanart</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>1920</width>
+      <height>1080</height>
+      <visible>control.hasfocus(6) + string.equals(#skin.basichome.moviePlugin,MyVideo) + control.isvisible(91919298)</visible>
+      <texture>#fanarthandler.movie.scraper.backdrop2.any</texture>
+			<animation effect="fade" start="100" end="0" time="450" reversible="false">Hidden</animation>
+			<animation effect="fade" start="0" end="100" time="450" reversible="false">Visible</animation>
+      <animation effect="fade" start="0" end="100" time="250" delay="350">WindowOpen</animation>
+      <animation effect="fade" start="100" end="0" time="250" delay="0">WindowClose</animation>
+    </control>
+
+		
+	 <!--            :: TVSERIES / PLUGINS ::            -->
+		
+    <control>
+			<description>TVSeries Selected Fanart</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>1920</width>
+      <height>1080</height>
+      <visible>control.hasfocus(7) + plugin.isenabled(MP-TV Series) + control.isvisible(91919297)</visible>
+      <texture>#fanarthandler.tvseries.backdrop1.any</texture>
+			<animation effect="fade" start="100" end="0" time="450" reversible="false">Hidden</animation>
+			<animation effect="fade" start="0" end="100" time="450" reversible="false">Visible</animation>
+      <animation effect="fade" start="0" end="100" time="250" delay="350">WindowOpen</animation>
+      <animation effect="fade" start="100" end="0" time="250" delay="0">WindowClose</animation>
+    </control> 
+		
+    <control>
+			<description>TVSeries Selected Fanart</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>1920</width>
+      <height>1080</height>
+      <visible>control.hasfocus(7) + plugin.isenabled(MP-TV Series) + control.isvisible(91919298)</visible>
+      <texture>#fanarthandler.tvseries.backdrop2.any</texture>
+			<animation effect="fade" start="100" end="0" time="450" reversible="false">Hidden</animation>
+			<animation effect="fade" start="0" end="100" time="450" reversible="false">Visible</animation>
+      <animation effect="fade" start="0" end="100" time="250" delay="350">WindowOpen</animation>
+      <animation effect="fade" start="100" end="0" time="250" delay="0">WindowClose</animation>
+    </control> 
+    
+    <control>
+			<description>Plugins Selected Fanart</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>1920</width>
+      <height>1080</height>
+      <visible>control.hasfocus(7) + !plugin.isenabled(MP-TV Series) + control.isvisible(91919297)</visible>
+      <texture>#fanarthandler.plugins.userdef.backdrop1.any</texture>
+			<animation effect="fade" start="100" end="0" time="450" reversible="false">Hidden</animation>
+			<animation effect="fade" start="0" end="100" time="450" reversible="false">Visible</animation>
+      <animation effect="fade" start="0" end="100" time="250" delay="350">WindowOpen</animation>
+      <animation effect="fade" start="100" end="0" time="250" delay="0">WindowClose</animation>
+    </control> 
+		
+    <control>
+			<description>Plugins Selected Fanart</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>1920</width>
+      <height>1080</height>
+      <visible>control.hasfocus(7) + !plugin.isenabled(MP-TV Series) + control.isvisible(91919298)</visible>
+      <texture>#fanarthandler.plugins.userdef.backdrop2.any</texture>
+			<animation effect="fade" start="100" end="0" time="450" reversible="false">Hidden</animation>
+			<animation effect="fade" start="0" end="100" time="450" reversible="false">Visible</animation>
+      <animation effect="fade" start="0" end="100" time="250" delay="350">WindowOpen</animation>
+      <animation effect="fade" start="100" end="0" time="250" delay="0">WindowClose</animation>
+    </control> 
+		
+	 <!--            :: TV ::            -->
+		
+    <control>
+			<description>TV Selected Fanart</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>1920</width>
+      <height>1080</height>
+      <visible>[control.hasfocus(4) | control.hasfocus(1000) | control.hasfocus(1001) | control.hasfocus(1002) | control.hasfocus(1003) | control.hasfocus(1004)] + control.isvisible(91919297)</visible>
+      <texture>#fanarthandler.tv.userdef.backdrop1.any</texture>
+			<animation effect="fade" start="100" end="0" time="450" reversible="false">Hidden</animation>
+			<animation effect="fade" start="0" end="100" time="450" reversible="false">Visible</animation>
+      <animation effect="fade" start="0" end="100" time="250" delay="350">WindowOpen</animation>
+      <animation effect="fade" start="100" end="0" time="250" delay="0">WindowClose</animation>
+    </control> 
+		
+    <control>
+			<description>TV Selected Fanart</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>1920</width>
+      <height>1080</height>
+      <visible>[control.hasfocus(4) | control.hasfocus(1000) | control.hasfocus(1001) | control.hasfocus(1002) | control.hasfocus(1003) | control.hasfocus(1004)] + control.isvisible(91919298)</visible>
+      <texture>#fanarthandler.tv.userdef.backdrop2.any</texture>
+			<animation effect="fade" start="100" end="0" time="450" reversible="false">Hidden</animation>
+			<animation effect="fade" start="0" end="100" time="450" reversible="false">Visible</animation>
+      <animation effect="fade" start="0" end="100" time="250" delay="350">WindowOpen</animation>
+      <animation effect="fade" start="100" end="0" time="250" delay="0">WindowClose</animation>
+    </control> 
+		
+	 <!--            :: MUSIC ::            -->
+		
+    <control>
+			<description>Music Selected Fanart</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>1920</width>
+      <height>1080</height>
+      <visible>control.hasfocus(2) + control.isvisible(91919297)</visible>
+      <texture>#fanarthandler.music.scraper.backdrop1.any</texture>
+			<animation effect="fade" start="100" end="0" time="450" reversible="false">Hidden</animation>
+			<animation effect="fade" start="0" end="100" time="450" reversible="false">Visible</animation>
+      <animation effect="fade" start="0" end="100" time="250" delay="350">WindowOpen</animation>
+      <animation effect="fade" start="100" end="0" time="250" delay="0">WindowClose</animation>
+    </control> 
+		
+    <control>
+			<description>Music Selected Fanart</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>1920</width>
+      <height>1080</height>
+      <visible>control.hasfocus(2) + control.isvisible(91919298)</visible>
+      <texture>#fanarthandler.music.scraper.backdrop2.any</texture>
+			<animation effect="fade" start="100" end="0" time="450" reversible="false">Hidden</animation>
+			<animation effect="fade" start="0" end="100" time="450" reversible="false">Visible</animation>
+      <animation effect="fade" start="0" end="100" time="250" delay="350">WindowOpen</animation>
+      <animation effect="fade" start="100" end="0" time="250" delay="0">WindowClose</animation>
+    </control> 
+		
+	 <!--            :: PICTURES ::            -->
+		
+    <control>
+			<description>Pictures Selected Fanart</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>1920</width>
+      <height>1080</height>
+      <visible>control.hasfocus(5) + control.isvisible(91919297)</visible>
+      <texture>#fanarthandler.picture.userdef.backdrop1.any</texture>
+			<animation effect="fade" start="100" end="0" time="450" reversible="false">Hidden</animation>
+			<animation effect="fade" start="0" end="100" time="450" reversible="false">Visible</animation>
+      <animation effect="fade" start="0" end="100" time="250" delay="350">WindowOpen</animation>
+      <animation effect="fade" start="100" end="0" time="250" delay="0">WindowClose</animation>
+    </control> 
+		
+    <control>
+			<description>Pictures Selected Fanart</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>1920</width>
+      <height>1080</height>
+      <visible>control.hasfocus(5) + control.isvisible(91919298)</visible>
+      <texture>#fanarthandler.picture.userdef.backdrop2.any</texture>
+			<animation effect="fade" start="100" end="0" time="450" reversible="false">Hidden</animation>
+			<animation effect="fade" start="0" end="100" time="450" reversible="false">Visible</animation>
+      <animation effect="fade" start="0" end="100" time="250" delay="350">WindowOpen</animation>
+      <animation effect="fade" start="100" end="0" time="250" delay="0">WindowClose</animation>
+    </control> 
+
+	 <!--            :: RADIO ::            -->
+		
+    <control>
+			<description>Radio Selected Fanart</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>1920</width>
+      <height>1080</height>
+      <visible>control.hasfocus(3)</visible>
+      <texture>hover_my radio.png</texture>
+			<animation effect="fade" start="100" end="0" time="450" reversible="false">Hidden</animation>
+			<animation effect="fade" start="0" end="100" time="450" reversible="false">Visible</animation>
+      <animation effect="fade" start="0" end="100" time="250" delay="350">WindowOpen</animation>
+      <animation effect="fade" start="100" end="0" time="250" delay="0">WindowClose</animation>
+    </control> 
+		
+</controls>
+</window>

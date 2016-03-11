@@ -3,7 +3,7 @@
   <Info treatErrorAsWarning="true" availableDays="14" timezone="W. Europe Standard Time" version="2.2.0" />
   <Channels>
     <Channel id="3sat.de" siteId="1" />
-    <Channel id="bbcentertainment.com" siteId="2" />
+    <!--<Channel id="bbcentertainment.com" siteId="2" />  Empty channel -->
     <Channel id="bbcw@bbc.co.uk" siteId="3" />
     <Channel id="cartoonnetwork.se" siteId="4" />
     <Channel id="cnn.com" siteId="5" />
@@ -60,7 +60,7 @@
     <Channel id="MTVRocks@mtve.com" siteId="74" />
     <Channel id="viasat4@viasat.no" siteId="75" />
     <Channel id="explorer@viasat.se" siteId="76" />
-    <Channel id="kanalglobal.se" siteId="80" />
+    <!--<Channel id="kanalglobal.se" siteId="80" /> Empty channel -->
     <Channel id="ftv.com" siteId="82" />
     <Channel id="3plus.dk" siteId="83" />
     <Channel id="arte-tv.com" siteId="84" />
@@ -85,7 +85,7 @@
     <Channel id="tlc@discovery.com" siteId="120" />
     <Channel id="tv2zulu@tv2.dk" siteId="126" />
     <Channel id="1tv.ru" siteId="139" />
-    <Channel id="sport@canalplus.se" siteId="140" />
+    <Channel id="sport@cmore.se" siteId="140" />
     <Channel id="sjuan@tv4.se" siteId="142" />
     <Channel id="barnkanalen@svt.se" siteId="143" />
     <Channel id="disneychannel.se" siteId="147" />
@@ -98,8 +98,7 @@
     <Channel id="espnclassic.co.uk" siteId="196" />
     <Channel id="sport2@viasatsport.se" siteId="197" />
     <Channel id="sport3@viasatsport.se" siteId="198" />
-    <Channel id="tv11@elva.tv" siteId="199" />
-    <!--<Channel id="plusone@tv1000.se" siteId="206" /> Empty channel -->
+    <Channel id="kanal11@elva.tv" siteId="199" />
     <Channel id="action@tv1000.se" siteId="207" />
     <Channel id="classic@tv1000.se" siteId="208" />
     <Channel id="nordic@tv1000.se" siteId="209" />
@@ -116,9 +115,8 @@
     <Channel id="playboytv.co.uk" siteId="223" />
     <Channel id="DisneyXD.tv" siteId="224" />
     <Channel id="eentertainment.com" siteId="225" />
-    <Channel id="action@canalplus.no" siteId="227" />
+    <Channel id="action@cmore.se" siteId="227" />
     <Channel id="fakta@tv4.se" siteId="230" />
-    <Channel id="di.tv" siteId="231" />
     <Channel id="silver.no" siteId="241" />
     <Channel id="kanal9.se" siteId="246" />
     <Channel id="axess.tv" siteId="247" />
@@ -126,12 +124,12 @@
     <Channel id="junior@disney.go.com" siteId="251" />
     <Channel id="Guld@tv4.se" siteId="252" />
     <Channel id="Komedi@tv4.se" siteId="253" />
-    <Channel id="emotion@canalplus.se" siteId="255" />
-    <Channel id="first@canalplus.no" siteId="256" />
-    <Channel id="hits@canalplus.no" siteId="257" />
-    <Channel id="sport2@canalplus.no" siteId="258" />
+    <Channel id="emotion@cmore.se" siteId="255" />
+    <Channel id="first@cmore.se" siteId="256" />
+    <Channel id="hits@cmore.se" siteId="257" />
+    <Channel id="tennis@cmore.se" siteId="258" />
     <Channel id="fmen.tv" siteId="259" />
-    <Channel id="bloomberg.co.uk" siteId="260" />
+    <!--<Channel id="bloomberg.co.uk" siteId="260" /> Empty channel -->
     <Channel id="hitssportweekend@canalplus.se" siteId="261" />
     <Channel id="aljazeera.tv" siteId="262" />
     <Channel id="hd@discoverychannel.co.uk" siteId="263" />
@@ -140,20 +138,19 @@
     <Channel id="motorstv.com" siteId="268" />
     <Channel id="sailingchannel.tv" siteId="269" />
     <!--<Channel id="zoneClub.tv" siteId="270" /> Empty channel -->
-    <Channel id="sporthd@canalplus.no" siteId="271" />
+    <Channel id="sporthd@cmore.no" siteId="271" />
     <Channel id="sport@tv4.se" siteId="275" />
     <!--<Channel id="tv3puls.dk" siteId="290" /> Empty channel -->
     <Channel id="hd@tv4.se" siteId="291" />
     <Channel id="hd@nationalgeographic.co.uk" siteId="293" />
     <Channel id="russiatoday.ru" siteId="295" />
     <Channel id="SilverHD-se" siteId="296" />
-    <Channel id="series@canalplus.se" siteId="298" />
-    <Channel id="sportextra@canalplus.se" siteId="299" />
+    <Channel id="series@cmore.se" siteId="298" />
+    <Channel id="extreme@cmore.se" siteId="299" />
     <Channel id="fotbollhd@viasatsport.se" siteId="300" />
-    <!--<Channel id="hd@tv1000.se" siteId="301" /> Empty channel -->
     <Channel id="eurosport.co.uk" siteId="302" />
     <Channel id="thehistorychannel.co.uk" siteId="303" />
-    <Channel id="scifi@tv4.se" siteId="305" />
+    <Channel id="faktaxl@tv4.se" siteId="305" />
     <Channel id="hd@thehistorychannel.co.uk" siteId="307" />
     <Channel id="HD@mtve.com" siteId="321" />
     <Channel id="nickelodeon.tv" siteId="328" />
@@ -169,14 +166,14 @@
     <!--<Channel id="toon@disneychannel.co.uk" siteId="344" /> Conflicting name -->
     <Channel id="hockey@viasat.se" siteId="346" />
     <Channel id="hd@rush.no" siteId="347" />
-    <Channel id="sf@canalplus.se" siteId="348" />
-    <Channel id="hockey@canalplus.se" siteId="352" />
-    <Channel id="fotboll@canalplus.se" siteId="353" />
+    <Channel id="sf@cmore.se" siteId="348" />
+    <Channel id="hockey@cmore.se" siteId="352" />
+    <Channel id="fotboll@cmore.se" siteId="353" />
     <Channel id="premierleagueHD@viasat.se" siteId="355" />
-    <Channel id="extra4@canalplus.se" siteId="359" />
-    <Channel id="extra1@canalplus.se" siteId="360" />
-    <Channel id="extra2@canalplus.se" siteId="361" />
-    <Channel id="extra3@canalplus.se" siteId="362" />
+    <Channel id="live4@cmore.se" siteId="359" />
+    <Channel id="live@cmore.se" siteId="360" />
+    <Channel id="live2@cmore.se" siteId="361" />
+    <Channel id="live3@cmore.se" siteId="362" />
     <Channel id="jr@nick.co.uk" siteId="369" />
     <Channel id="tv10@viasat.se" siteId="370" />
     <!--<Channel id="1hd@svt.se" siteId="371" /> Doesn't specify HD programs -->
@@ -185,10 +182,14 @@
     <Channel id="outtv.ca" siteId="400" />
     <Channel id="wildtv.ca" siteId="401" />
     <Channel id="wildhd@natgeotv.com" siteId="403" />
-    <Channel id="family@canalplus.se" siteId="405" />
-    <!--<Channel id="firsthd@canalplus.se" siteId="406" /> Empty channel -->
-    <!--<Channel id="hitshd@canalplus.se" siteId="407" /> Empty channel -->
-    <Channel id="news@tv4.se" siteId="410" />
+    <!--<Channel id="kids@cmore.se" siteId="405" /> Empty channel -->
+    <Channel id="hitshd@cmore.se" siteId="501" />
+    <Channel id="firsthd@cmore.se" siteId="502" />
+    <Channel id="tv12@tv4.se" siteId="600" />
+    <Channel id="fox@fox.com" siteId="601" />
+    <Channel id="foxhd@fox.com" siteId="602" />
+    <Channel id="brit@bbc.co.uk" siteId="603" />
+    <Channel id="earth@bbc.co.uk" siteId="604" />
     <Channel id="tv2charlie@tv2.dk" siteId="906" />
     <Channel id="dk4.dk" siteId="908" />
     <!--<Channel id="nick.co.uk" siteId="909" /> Conflicting name -->
@@ -222,7 +223,214 @@
         <Search match="[^a-z][Dd]el \d+" field="#EPISODE" remove="false"/>
         <Search match="[Ss]äsong \d+" field="#SEASON" remove="false"/>
         <Search match="Text-tv [0-9]{1,}[0-9a-zA-Z, ]{1,}." field="#TELETEXTSUBTITLE" remove="true"/>
-      </Searches>
+
+        <Search match="[Aa]ction" field="#GENRE" remove="false"/>
+        <Search match="[Aa]lpint" field="#GENRE" remove="false"/>
+        <Search match="[Aa]merikansk fotboll" field="#GENRE" remove="false"/>
+        <Search match="[Bb]ackhoppning" field="#GENRE" remove="false"/>
+        <!--<Search match="[Bb]arn" field="#GENRE" remove="false"/>-->
+        <Search match="[Bb]asket" field="#GENRE" remove="false"/>
+        <Search match="[Bb]ordtennis" field="#GENRE" remove="false"/>
+        <Search match="[Bb]owling" field="#GENRE" remove="false"/>
+        <Search match="[Bb]oxn?ing" field="#GENRE" remove="false"/>
+        <Search match="[Bb]rottning" field="#GENRE" remove="false"/>
+        <Search match="[Cc]afé &amp; magasin" field="#GENRE" remove="false"/>
+        <Search match="[Cc]urling" field="#GENRE" remove="false"/>
+        <Search match="[Cc]ykel" field="#GENRE" remove="false"/>
+        <Search match="[Dd]ata &amp; IT" field="#GENRE" remove="false"/>
+        <Search match="[Dd]jur &amp; Natur" field="#GENRE" remove="false"/>
+        <Search match="[Dd]okumentär" field="#GENRE" remove="false"/>
+        <Search match="[Dd]okusåpa" field="#GENRE" remove="false"/>
+        <Search match="[Dd]rama" field="#GENRE" remove="false"/>
+        <Search match="[Ee]konomi &amp; finans" field="#GENRE" remove="false"/>
+        <Search match="[Ee]rotik" field="#GENRE" remove="false"/>
+        <Search match="[Ff]amiljefilm" field="#GENRE" remove="false"/>
+        <Search match="[Ff]antasy" field="#GENRE" remove="false"/>
+        <Search match="[Ff]ilmmagasin" field="#GENRE" remove="false"/>
+        <Search match="[Ff]otboll" field="#GENRE" remove="false"/>
+        <Search match="[Ff]riidrott" field="#GENRE" remove="false"/>
+        <Search match="[Ff]rågesport" field="#GENRE" remove="false"/>
+        <Search match="[Gg]olf" field="#GENRE" remove="false"/>
+        <Search match="[Gg]ymnastik" field="#GENRE" remove="false"/>
+        <Search match="[Hh]andboll" field="#GENRE" remove="false"/>
+        <Search match="[Hh]em &amp; trädgård" field="#GENRE" remove="false"/>
+        <Search match="[Hh]istoria &amp; kultur" field="#GENRE" remove="false"/>
+        <Search match="[Hh]älsa" field="#GENRE" remove="false"/>
+        <!--<Search match="[Ii]nformation" field="#GENRE" remove="false"/>-->
+        <Search match="[Ii]shockey" field="#GENRE" remove="false"/>
+        <Search match="[Kk]ampsport" field="#GENRE" remove="false"/>
+        <Search match="[Kk]anot" field="#GENRE" remove="false"/>
+        <Search match="[Kk]omedi" field="#GENRE" remove="false"/>
+        <Search match="[Kk]onståkning" field="#GENRE" remove="false"/>
+        <Search match="[Kk]onsument" field="#GENRE" remove="false"/>
+        <Search match="[Kk]ortfilm" field="#GENRE" remove="false"/>
+        <Search match="[Kk]raftsport" field="#GENRE" remove="false"/>
+        <Search match="[Kk]rigsfilm" field="#GENRE" remove="false"/>
+        <Search match="[Kk]riminal" field="#GENRE" remove="false"/>
+        <Search match="[Kk]riminalmagasin" field="#GENRE" remove="false"/>
+        <Search match="[Ll]itteratur &amp; konst" field="#GENRE" remove="false"/>
+        <Search match="[Ll]ivsstil" field="#GENRE" remove="false"/>
+        <Search match="[Ll]ivsåskådning" field="#GENRE" remove="false"/>
+        <Search match="[Ll]ångfilm" field="#GENRE" remove="false"/>
+        <Search match="[Ll]ängdåkning" field="#GENRE" remove="false"/>
+        <Search match="[Ll]ängskidor" field="#GENRE" remove="false"/>
+        <Search match="[Mm]at &amp; dryck" field="#GENRE" remove="false"/>
+        <Search match="[Mm]agasin" field="#GENRE" remove="false"/>
+        <Search match="[Mm]otorsport" field="#GENRE" remove="false"/>
+        <!--<Search match="[Mm]usik" field="#GENRE" remove="false"/>-->
+        <Search match="[Mm]usikal" field="#GENRE" remove="false"/>
+        <Search match="[Nn]yheter" field="#GENRE" remove="false"/>
+        <!--<Search match="[Nn]öje" field="#GENRE" remove="false"/>-->
+        <Search match="[Nn]öjesnytt" field="#GENRE" remove="false"/>
+        <Search match="[Pp]orträtt" field="#GENRE" remove="false"/>
+        <Search match="[Pp]ratshow" field="#GENRE" remove="false"/>
+        <Search match="[Pp]å teckenspråk" field="#GENRE" remove="false"/>
+        <Search match="[Rr]ally" field="#GENRE" remove="false"/>
+        <Search match="[Rr]eality" field="#GENRE" remove="false"/>
+        <Search match="[Rr]esor &amp; äventyr" field="#GENRE" remove="false"/>
+        <Search match="[Rr]idsport" field="#GENRE" remove="false"/>
+        <Search match="[Ss]amhälle &amp; debatt" field="#GENRE" remove="false"/>
+        <Search match="[Ss]egling" field="#GENRE" remove="false"/>
+        <Search match="[Ss]erie" field="#GENRE" remove="false"/>
+        <Search match="[Ss]ci-fi" field="#GENRE" remove="false"/>
+        <Search match="[Ss]cience fiction" field="#GENRE" remove="false"/>
+        <Search match="[Ss]imning" field="#GENRE" remove="false"/>
+        <Search match="[Ss]kidskytte" field="#GENRE" remove="false"/>
+        <Search match="[Ss]kridsko" field="#GENRE" remove="false"/>
+        <Search match="[Ss]kräck" field="#GENRE" remove="false"/>
+        <Search match="[Ss]nooker" field="#GENRE" remove="false"/>
+        <Search match="[Ss]pel &amp; lotteri" field="#GENRE" remove="false"/>
+        <Search match="[Ss]portnyheter" field="#GENRE" remove="false"/>
+        <Search match="[Ss]åpopera" field="#GENRE" remove="false"/>
+        <Search match="[Tt]ecknad film" field="#GENRE" remove="false"/>
+        <Search match="[Tt]eknik &amp; vetenskap" field="#GENRE" remove="false"/>
+        <Search match="[Tt]ennis" field="#GENRE" remove="false"/>
+        <Search match="[Tt]hriller" field="#GENRE" remove="false"/>
+        <Search match="[Tt]rav" field="#GENRE" remove="false"/>
+        <Search match="[Tt]v-lek" field="#GENRE" remove="false"/>
+        <Search match="[Tt]v-teater" field="#GENRE" remove="false"/>
+        <!--<Search match="[Uu]ngdom" field="#GENRE" remove="false"/>-->
+        <!--<Search match="[Uu]tbildning" field="#GENRE" remove="false"/>-->
+        <Search match="[Ww]estern" field="#GENRE" remove="false"/>
+        <Search match="[Vv]olleyboll" field="#GENRE" remove="false"/>
+        <Search match="[Ää]ventyr" field="#GENRE" remove="false"/>
+        <Search match="[Ff]ritid" field="#GENRE" remove="false"/>
+        <!--<Search match="[Kk]ultur" field="#GENRE" remove="false"/>-->
+        <Search match="[Bb]arn &amp; Ungdom" field="#GENRE" remove="false"/>
+        <!--<Search match="[Vv]etenskap" field="#GENRE" remove="false"/>-->
+        <Search match="[Rr]esor &amp; Natur" field="#GENRE" remove="false"/>
+        <!--<Search match="[Ss]port" field="#GENRE" remove="false"/>-->
+        <!--<Search match="[Ss]amhälle" field="#GENRE" remove="false"/>-->
+        <Search match="[Rr]ysare &amp; skräck" field="#GENRE" remove="false"/>
+        <Search match="[Dd]eckare" field="#GENRE" remove="false"/>
+	  </Searches>
     </Html>
   </Listing>
+
+ <Actions>
+    <!-- This section is for mapping extracted #GENRE done in Searches to fewer and standardised names -->
+    <!-- Genres used in MediaPortal are: Documentary, Kids, Movie, Music, News, Special, Sports        -->
+    <!-- Extra genres added: Science, Nature, Entertainment, Adult                                     -->
+
+      <Modify field="#GENRE" action="Replace" channel="*" search="[Aa]ction">Movie</Modify>
+      <Modify field="#GENRE" action="Replace" channel="*" search="[Aa]lpint">Sports</Modify>
+      <Modify field="#GENRE" action="Replace" channel="*" search="[Aa]merikansk fotboll">Sports</Modify>
+      <Modify field="#GENRE" action="Replace" channel="*" search="[Bb]ackhoppning">Sports</Modify>
+        <!--<Search match="[Bb]arn"></Modify>-->
+      <Modify field="#GENRE" action="Replace" channel="*" search="[Bb]asket">Sports</Modify>
+      <Modify field="#GENRE" action="Replace" channel="*" search="[Bb]ordtennis">Sports</Modify>
+      <Modify field="#GENRE" action="Replace" channel="*" search="[Bb]owling">Sports</Modify>
+      <Modify field="#GENRE" action="Replace" channel="*" search="[Bb]oxn?ing">Sports</Modify>
+      <Modify field="#GENRE" action="Replace" channel="*" search="[Bb]rottning">Sports</Modify>
+      <Modify field="#GENRE" action="Replace" channel="*" search="[Cc]afé &amp; magasin">Entertainment</Modify>
+      <Modify field="#GENRE" action="Replace" channel="*" search="[Cc]urling">Sports</Modify>
+      <Modify field="#GENRE" action="Replace" channel="*" search="[Cc]ykel">Sports</Modify>
+      <Modify field="#GENRE" action="Replace" channel="*" search="[Dd]ata &amp; IT">Science</Modify>
+      <Modify field="#GENRE" action="Replace" channel="*" search="[Dd]jur &amp; Natur">Nature</Modify>
+      <Modify field="#GENRE" action="Replace" channel="*" search="[Dd]okumentär">Documentary</Modify>
+      <Modify field="#GENRE" action="Replace" channel="*" search="[Dd]okusåpa">Entertainment</Modify>
+      <Modify field="#GENRE" action="Replace" channel="*" search="[Dd]rama">Movie</Modify>
+      <Modify field="#GENRE" action="Replace" channel="*" search="[Ee]konomi &amp; finans">Documentary</Modify>
+      <Modify field="#GENRE" action="Replace" channel="*" search="[Ee]rotik">Adult</Modify>
+      <Modify field="#GENRE" action="Replace" channel="*" search="[Ff]amiljefilm">Movie</Modify>
+      <Modify field="#GENRE" action="Replace" channel="*" search="[Ff]antasy">Movie</Modify>
+      <Modify field="#GENRE" action="Replace" channel="*" search="[Ff]ilmmagasin">Entertainment</Modify>
+      <Modify field="#GENRE" action="Replace" channel="*" search="[Ff]otboll">Sports</Modify>
+      <Modify field="#GENRE" action="Replace" channel="*" search="[Ff]riidrott">Sports</Modify>
+      <Modify field="#GENRE" action="Replace" channel="*" search="[Ff]rågesport">Entertainment</Modify>
+      <Modify field="#GENRE" action="Replace" channel="*" search="[Gg]olf">Sports</Modify>
+      <Modify field="#GENRE" action="Replace" channel="*" search="[Gg]ymnastik">Sports</Modify>
+      <Modify field="#GENRE" action="Replace" channel="*" search="[Hh]andboll">Sports</Modify>
+      <Modify field="#GENRE" action="Replace" channel="*" search="[Hh]em &amp; trädgård">Entertainment</Modify>
+      <Modify field="#GENRE" action="Replace" channel="*" search="[Hh]istoria &amp; kultur">Documentary</Modify>
+      <Modify field="#GENRE" action="Replace" channel="*" search="[Hh]älsa">Science</Modify>
+        <!--<Search match="[Ii]nformation"></Modify>-->
+      <Modify field="#GENRE" action="Replace" channel="*" search="[Ii]shockey">Sports</Modify>
+      <Modify field="#GENRE" action="Replace" channel="*" search="[Kk]ampsport">Sports</Modify>
+      <Modify field="#GENRE" action="Replace" channel="*" search="[Kk]anot">Sports</Modify>
+      <Modify field="#GENRE" action="Replace" channel="*" search="[Kk]omedi">Movie</Modify>
+      <Modify field="#GENRE" action="Replace" channel="*" search="[Kk]onståkning">Sports</Modify>
+      <Modify field="#GENRE" action="Replace" channel="*" search="[Kk]onsument">Documentary</Modify>
+      <Modify field="#GENRE" action="Replace" channel="*" search="[Kk]ortfilm">Movie</Modify>
+      <Modify field="#GENRE" action="Replace" channel="*" search="[Kk]raftsport">Sports</Modify>
+      <Modify field="#GENRE" action="Replace" channel="*" search="[Kk]rigsfilm">Movie</Modify>
+      <Modify field="#GENRE" action="Replace" channel="*" search="[Kk]riminal">Movie</Modify>
+      <Modify field="#GENRE" action="Replace" channel="*" search="[Kk]riminalmagasin">Documentary</Modify>
+      <Modify field="#GENRE" action="Replace" channel="*" search="[Ll]itteratur &amp; konst">Documentary</Modify>
+      <Modify field="#GENRE" action="Replace" channel="*" search="[Ll]ivsstil">Documentary</Modify>
+      <Modify field="#GENRE" action="Replace" channel="*" search="[Ll]ivsåskådning">Documentary</Modify>
+      <Modify field="#GENRE" action="Replace" channel="*" search="[Ll]ångfilm">Movie</Modify>
+      <Modify field="#GENRE" action="Replace" channel="*" search="[Ll]ängdåkning">Sports</Modify>
+      <Modify field="#GENRE" action="Replace" channel="*" search="[Ll]ängskidor">Sports</Modify>
+      <Modify field="#GENRE" action="Replace" channel="*" search="[Mm]at &amp; dryck">Entertainment</Modify>
+      <Modify field="#GENRE" action="Replace" channel="*" search="[Mm]agasin">Entertainment</Modify>
+      <Modify field="#GENRE" action="Replace" channel="*" search="[Mm]otorsport">Sports</Modify>
+        <!--<Search match="[Mm]usik"></Modify>-->
+      <Modify field="#GENRE" action="Replace" channel="*" search="[Mm]usikal">Movie</Modify>
+      <Modify field="#GENRE" action="Replace" channel="*" search="[Nn]yheter">News</Modify>
+        <!--<Search match="[Nn]öje"></Modify>-->
+      <Modify field="#GENRE" action="Replace" channel="*" search="[Nn]öjesnytt">Entertainment</Modify>
+      <Modify field="#GENRE" action="Replace" channel="*" search="[Pp]orträtt">Documentary</Modify>
+      <Modify field="#GENRE" action="Replace" channel="*" search="[Pp]ratshow">Entertainment</Modify>
+      <!-- <Modify field="#GENRE" action="Replace" channel="*" search="[Pp]å teckenspråk"></Modify> -->
+      <Modify field="#GENRE" action="Replace" channel="*" search="[Rr]ally">Sports</Modify>
+      <Modify field="#GENRE" action="Replace" channel="*" search="[Rr]eality">Entertainment</Modify>
+      <Modify field="#GENRE" action="Replace" channel="*" search="[Rr]esor &amp; äventyr">Entertainment</Modify>
+      <Modify field="#GENRE" action="Replace" channel="*" search="[Rr]idsport">Sports</Modify>
+      <Modify field="#GENRE" action="Replace" channel="*" search="[Ss]amhälle &amp; debatt">Documentary</Modify>
+      <Modify field="#GENRE" action="Replace" channel="*" search="[Ss]egling">Sports</Modify>
+      <Modify field="#GENRE" action="Replace" channel="*" search="[Ss]ci-fi">Movie</Modify>
+      <Modify field="#GENRE" action="Replace" channel="*" search="[Ss]cience fiction">Movie</Modify>
+      <Modify field="#GENRE" action="Replace" channel="*" search="[Ss]imning">Sports</Modify>
+      <Modify field="#GENRE" action="Replace" channel="*" search="[Ss]kidskytte">Sports</Modify>
+      <Modify field="#GENRE" action="Replace" channel="*" search="[Ss]kridsko">Sports</Modify>
+      <Modify field="#GENRE" action="Replace" channel="*" search="[Ss]kräck">Movie</Modify>
+      <Modify field="#GENRE" action="Replace" channel="*" search="[Ss]nooker">Sports</Modify>
+      <Modify field="#GENRE" action="Replace" channel="*" search="[Ss]pel &amp; lotteri">Entertainment</Modify>
+      <Modify field="#GENRE" action="Replace" channel="*" search="[Ss]portnyheter">Sports</Modify>
+      <Modify field="#GENRE" action="Replace" channel="*" search="[Ss]åpopera">Entertainment</Modify>
+      <Modify field="#GENRE" action="Replace" channel="*" search="[Tt]ecknad film">Kids</Modify>
+      <Modify field="#GENRE" action="Replace" channel="*" search="[Tt]eknik &amp; vetenskap">Science</Modify>
+      <Modify field="#GENRE" action="Replace" channel="*" search="[Tt]ennis">Sports</Modify>
+      <Modify field="#GENRE" action="Replace" channel="*" search="[Tt]hriller">Movie</Modify>
+      <Modify field="#GENRE" action="Replace" channel="*" search="[Tt]rav">Sports</Modify>
+      <Modify field="#GENRE" action="Replace" channel="*" search="[Tt]v-lek">Entertainment</Modify>
+      <Modify field="#GENRE" action="Replace" channel="*" search="[Tt]v-teater">Movie</Modify>
+      <Modify field="#GENRE" action="Replace" channel="*" search="[Uu]nderhållning">Entertainment</Modify>
+        <!--<Search match="[Uu]ngdom"></Modify>-->
+        <!--<Search match="[Uu]tbildning"></Modify>-->
+      <Modify field="#GENRE" action="Replace" channel="*" search="[Ww]estern">Movie</Modify>
+      <Modify field="#GENRE" action="Replace" channel="*" search="[Vv]olleyboll">Sports</Modify>
+      <Modify field="#GENRE" action="Replace" channel="*" search="[Ää]ventyr">Movie</Modify>
+      <Modify field="#GENRE" action="Replace" channel="*" search="[Ff]ritid">Entertainment</Modify>
+        <!--<Search match="[Kk]ultur"></Modify>-->
+      <Modify field="#GENRE" action="Replace" channel="*" search="[Bb]arn &amp; Ungdom">Kids</Modify>
+        <!--<Search match="[Vv]etenskap"></Modify>-->
+      <Modify field="#GENRE" action="Replace" channel="*" search="[Rr]esor &amp; Natur">Entertainment</Modify>
+        <!--<Search match="[Ss]port"></Modify>-->
+        <!--<Search match="[Ss]amhälle"></Modify>-->
+      <Modify field="#GENRE" action="Replace" channel="*" search="[Rr]ysare &amp; skräck">Movie</Modify>
+      <Modify field="#GENRE" action="Replace" channel="*" search="[Dd]eckare">Movie</Modify>
+      <Modify field="#GENRE" action="Replace" channel="*" search="[Ss]erie">Special</Modify>
+  </Actions>
 </Grabber>

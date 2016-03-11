@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2013 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2013 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -34,7 +34,8 @@ namespace TvEngine.PowerScheduler.Interfaces
   {
     Suspend = 0,
     Hibernate = 1,
-    StayOn = 2
+    StayOn = 2,
+    Shutdown = 3
   }
 
   #endregion
@@ -57,8 +58,10 @@ namespace TvEngine.PowerScheduler.Interfaces
     private int _checkInterval;
     private int _allowedStart;
     private int _allowedStop;
+    private int _allowedStartOnWeekend;
+    private int _allowedStopOnWeekend;
     private bool _reinitializeController;
-    private ShutdownMode _shutdownMode = ShutdownMode.StayOn;
+    private ShutdownMode _shutdownMode;
 
     /// <summary>
     /// Placeholder for additional PowerScheduler settings
@@ -88,6 +91,8 @@ namespace TvEngine.PowerScheduler.Interfaces
       _settings = s._settings;
       _allowedStart = s.AllowedSleepStartTime;
       _allowedStop = s.AllowedSleepStopTime;
+      _allowedStartOnWeekend = s.AllowedSleepStartTimeOnWeekend;
+      _allowedStopOnWeekend = s.AllowedSleepStopTimeOnWeekend;
       _reinitializeController = s.ReinitializeController;
     }
 
@@ -213,9 +218,9 @@ namespace TvEngine.PowerScheduler.Interfaces
       get { return _idleTimeout; }
       set
       {
-        if (value < 1)
+        if (value < 0)
         {
-          throw new ArgumentException("IdleTimeout cannot be smaller than 1");
+          throw new ArgumentException("IdleTimeout cannot be smaller than 0");
         }
         _idleTimeout = value;
       }
@@ -290,9 +295,26 @@ namespace TvEngine.PowerScheduler.Interfaces
     }
 
     /// <summary>
+    /// Controls the minimum start hour of suspends. 
+    /// </summary>
+    public int AllowedSleepStartTimeOnWeekend
+    {
+      get { return _allowedStartOnWeekend; }
+      set { _allowedStartOnWeekend = value; }
+    }
+
+    /// <summary>
+    /// Controls the maximum start hour for a suspend.
+    /// </summary>
+    public int AllowedSleepStopTimeOnWeekend
+    {
+      get { return _allowedStopOnWeekend; }
+      set { _allowedStopOnWeekend = value; }
+    }
+
+    /// <summary>
     /// How should put the system into standby? suspend/hibernate/stayon
-    /// suspend uses S3, hibernate uses S4, stayon is for debugging purposes and
-    /// doesn't put the system into standby at all
+    /// suspend uses S3, hibernate uses S4, stayon doesn't do anyting
     /// </summary>
     public ShutdownMode ShutdownMode
     {
@@ -304,10 +326,11 @@ namespace TvEngine.PowerScheduler.Interfaces
           case ShutdownMode.Suspend:
           case ShutdownMode.Hibernate:
           case ShutdownMode.StayOn:
+          case ShutdownMode.Shutdown:
             _shutdownMode = value;
             break;
           default:
-            throw new ArgumentException("unknown ShutdownMode", value.ToString());
+            throw new ArgumentException("Unknown ShutdownMode", value.ToString());
         }
       }
     }

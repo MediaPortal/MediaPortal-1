@@ -19,13 +19,20 @@
 #endregion
 
 using System;
+using MediaPortal.DeployTool.InstallationChecks;
 using Microsoft.Win32;
 
 namespace MediaPortal.DeployTool.Sections
 {
   public partial class UpgradeDlg : DeployDialog
   {
-    private bool rbFreshChecked;
+    public static bool rbFreshChecked;
+    private bool rbReinstallChecked;
+    private bool rbUpdateChecked;
+    public static bool MySQL56 = false;
+    public static bool MySQL51= false;
+    public static bool reInstallForce = false;
+    public static bool freshForce = true; // Set to true by default (needed for fresh installation)
 
     public UpgradeDlg()
     {
@@ -34,6 +41,14 @@ namespace MediaPortal.DeployTool.Sections
       labelSectionHeader.Text = "";
       bFresh.Image = Images.Choose_button_on;
       rbFreshChecked = true;
+      rbReinstallChecked = false;
+      rbUpdateChecked = false;
+      // Check if MySQL need to be upgraded
+      IInstallationPackage package = new MySQLChecker();
+      CheckResult resultMySQL56 = package.CheckStatus();
+      CheckResult resultMySQL51 = MySQLChecker.CheckStatusMySQL51();
+      MySQL51 = resultMySQL51.state == CheckState.NOT_INSTALLED;
+      MySQL56 = resultMySQL56.state == CheckState.NOT_INSTALLED;
       UpdateUI();
     }
 
@@ -87,11 +102,27 @@ namespace MediaPortal.DeployTool.Sections
 
       rbUpdate.Enabled = false;
       bUpdate.Enabled = false;
+      bReinstall.Enabled = false;
+      rbReinstall.Enabled = false;
+
       if ((Utils.IsPackageUpdatabled(MpVer) || Utils.IsPackageUpdatabled(Tv3Ver)) &&
           (Utils.IsOfficialBuild(MpBuild) && Utils.IsOfficialBuild(Tv3Build)))
       {
         rbUpdate.Enabled = true;
         bUpdate.Enabled = true;
+
+        // Set the default option to upgrade, if possible
+        SelectUpdate();
+      }
+
+      if ((Utils.IsCurrentPackageUpdatabled(MpVer) || Utils.IsCurrentPackageUpdatabled(Tv3Ver)) &&
+          (Utils.IsOfficialBuild(MpBuild) && Utils.IsOfficialBuild(Tv3Build)))
+      {
+        rbReinstall.Enabled = true;
+        bReinstall.Enabled = true;
+
+        // Set the default option to upgrade, if possible
+        SelectReinstall();
       }
 
       var strMPDisplayVer = MpDisplayVer;
@@ -147,17 +178,30 @@ namespace MediaPortal.DeployTool.Sections
 
       rbUpdate.Text = String.Format(Localizer.GetBestTranslation("Upgrade_yes"), Utils.GetDisplayVersion());
       rbFresh.Text = Localizer.GetBestTranslation("Upgrade_no");
+      rbReinstall.Text = String.Format(Localizer.GetBestTranslation("Reinstall"), Utils.GetDisplayVersion());
       labelNote.Text = Localizer.GetBestTranslation("Upgrade_note");
     }
 
     public override DeployDialog GetNextDialog()
     {
+      if (MySQL56 && !MySQL51 && rbUpdate.Enabled && rbUpdateChecked &&
+          (InstallationProperties.Instance["InstallType"] == "tvserver_master" ||
+           InstallationProperties.Instance["InstallType"] == "singleseat"))
+      {
+        return DialogFlowHandler.Instance.GetDialogInstance(DialogType.MysqlUpgrade);
+      }
       if (rbFreshChecked)
       {
         // Normal deploy...
         return DialogFlowHandler.Instance.GetDialogInstance(DialogType.WatchTV);
       }
       // Direct to upgrade
+      if (InstallationProperties.Instance.Get("InstallType") != "tvserver_master")
+      {
+        // install includes MP so check skin choice
+        return DialogFlowHandler.Instance.GetDialogInstance(DialogType.SkinChoice);
+      }
+      // tv server only install so no need for skin choice
       return DialogFlowHandler.Instance.GetDialogInstance(DialogType.Installation);
     }
 
@@ -170,9 +214,23 @@ namespace MediaPortal.DeployTool.Sections
 
     private void bUpdate_Click(object sender, EventArgs e)
     {
+      SelectUpdate();
+    }
+
+    private void bFresh_Click(object sender, EventArgs e)
+    {
+      SelectFresh();
+    }
+
+    private void SelectUpdate()
+    {
       bUpdate.Image = Images.Choose_button_on;
       bFresh.Image = Images.Choose_button_off;
+      bReinstall.Image = Images.Choose_button_off;
       rbFreshChecked = false;
+      rbUpdateChecked = true;
+      reInstallForce = false;
+      freshForce = false;
       InstallationProperties.Instance.Set("UpdateMode", "yes");
 
       CheckResult resultTvServer = Utils.CheckNSISUninstallString("MediaPortal TV Server", "MementoSection_SecServer");
@@ -187,12 +245,46 @@ namespace MediaPortal.DeployTool.Sections
       if (TvServer && TvClient) InstallationProperties.Instance.Set("InstallType", "singleseat");
     }
 
-    private void bFresh_Click(object sender, EventArgs e)
+    private void SelectReinstall()
+    {
+      bUpdate.Image = Images.Choose_button_off;
+      bFresh.Image = Images.Choose_button_off;
+      bReinstall.Image = Images.Choose_button_on;
+      rbFreshChecked = false;
+      rbUpdateChecked = false;
+      rbReinstallChecked = true;
+      reInstallForce = true;
+      freshForce = false;
+      InstallationProperties.Instance.Set("UpdateMode", "yes");
+
+      CheckResult resultTvServer = Utils.CheckNSISUninstallString("MediaPortal TV Server", "MementoSection_SecServer");
+      CheckResult resultTvClient = Utils.CheckNSISUninstallString("Mediaportal Tv Server", "MementoSection_SecClient");
+
+      bool TvServer = resultTvServer.state != CheckState.NOT_INSTALLED;
+      bool TvClient = resultTvClient.state != CheckState.NOT_INSTALLED;
+
+      if (!TvServer && !TvClient) InstallationProperties.Instance.Set("InstallType", "mp_only");
+      if (!TvServer && TvClient) InstallationProperties.Instance.Set("InstallType", "client");
+      if (TvServer && !TvClient) InstallationProperties.Instance.Set("InstallType", "tvserver_master");
+      if (TvServer && TvClient) InstallationProperties.Instance.Set("InstallType", "singleseat");
+    }
+
+    private void SelectFresh()
     {
       bUpdate.Image = Images.Choose_button_off;
       bFresh.Image = Images.Choose_button_on;
+      bReinstall.Image = Images.Choose_button_off;
       rbFreshChecked = true;
+      rbUpdateChecked = false;
+      rbReinstallChecked = false;
+      reInstallForce = false;
+      freshForce = true;
       InstallationProperties.Instance.Set("UpdateMode", "no");
+    }
+
+    private void bReinstall_Click(object sender, EventArgs e)
+    {
+      SelectReinstall();
     }
   }
 }

@@ -36,9 +36,10 @@ namespace SetupTv.Sections
       this.mpButtonScanTv = new MediaPortal.UserInterface.Controls.MPButton();
       this.listViewStatus = new System.Windows.Forms.ListView();
       this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-      this.checkBoxQAM = new System.Windows.Forms.CheckBox();
       this.mpLabel1 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.mpComboBoxFrequencies = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.mpComboBoxTuningMode = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.mpLabel2 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.SuspendLayout();
       // 
       // progressBarQuality
@@ -115,17 +116,6 @@ namespace SetupTv.Sections
       this.columnHeader1.Text = "Status";
       this.columnHeader1.Width = 350;
       // 
-      // checkBoxQAM
-      // 
-      this.checkBoxQAM.AutoSize = true;
-      this.checkBoxQAM.Location = new System.Drawing.Point(24, 18);
-      this.checkBoxQAM.Name = "checkBoxQAM";
-      this.checkBoxQAM.Size = new System.Drawing.Size(315, 17);
-      this.checkBoxQAM.TabIndex = 0;
-      this.checkBoxQAM.Text = "Tune QAM instead of ATSC (requires a cable TV connection)";
-      this.checkBoxQAM.UseVisualStyleBackColor = true;
-      this.checkBoxQAM.CheckedChanged += new System.EventHandler(this.checkBoxQAM_CheckedChanged);
-      // 
       // mpLabel1
       // 
       this.mpLabel1.AutoSize = true;
@@ -144,13 +134,37 @@ namespace SetupTv.Sections
       this.mpComboBoxFrequencies.Size = new System.Drawing.Size(277, 21);
       this.mpComboBoxFrequencies.TabIndex = 2;
       // 
+      // mpComboBoxTuningMode
+      // 
+      this.mpComboBoxTuningMode.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.mpComboBoxTuningMode.FormattingEnabled = true;
+      this.mpComboBoxTuningMode.Items.AddRange(new object[] {
+            "ATSC Digital Terrestrial",
+            "Clear QAM Cable",
+            "Digital Cable"});
+      this.mpComboBoxTuningMode.Location = new System.Drawing.Point(166, 14);
+      this.mpComboBoxTuningMode.Name = "mpComboBoxTuningMode";
+      this.mpComboBoxTuningMode.Size = new System.Drawing.Size(277, 21);
+      this.mpComboBoxTuningMode.TabIndex = 10;
+      this.mpComboBoxTuningMode.SelectedIndexChanged += new System.EventHandler(this.mpComboBoxTuningMode_SelectedIndexChanged);
+      // 
+      // mpLabel2
+      // 
+      this.mpLabel2.AutoSize = true;
+      this.mpLabel2.Location = new System.Drawing.Point(21, 17);
+      this.mpLabel2.Name = "mpLabel2";
+      this.mpLabel2.Size = new System.Drawing.Size(72, 13);
+      this.mpLabel2.TabIndex = 11;
+      this.mpLabel2.Text = "Tuning mode:";
+      // 
       // CardAtsc
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+      this.Controls.Add(this.mpLabel2);
+      this.Controls.Add(this.mpComboBoxTuningMode);
       this.Controls.Add(this.mpLabel1);
       this.Controls.Add(this.mpComboBoxFrequencies);
-      this.Controls.Add(this.checkBoxQAM);
       this.Controls.Add(this.listViewStatus);
       this.Controls.Add(this.progressBarQuality);
       this.Controls.Add(this.progressBarLevel);
@@ -175,8 +189,9 @@ namespace SetupTv.Sections
     private MediaPortal.UserInterface.Controls.MPButton mpButtonScanTv;
     private System.Windows.Forms.ListView listViewStatus;
     private System.Windows.Forms.ColumnHeader columnHeader1;
-      private System.Windows.Forms.CheckBox checkBoxQAM;
     private MediaPortal.UserInterface.Controls.MPLabel mpLabel1;
     private MediaPortal.UserInterface.Controls.MPComboBox mpComboBoxFrequencies;
+    private MediaPortal.UserInterface.Controls.MPComboBox mpComboBoxTuningMode;
+    private MediaPortal.UserInterface.Controls.MPLabel mpLabel2;
   }
 }

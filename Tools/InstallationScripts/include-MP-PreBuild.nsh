@@ -25,13 +25,34 @@
 #
 #**********************************************************************************************************#
 
-!define ALToolPath "%WINDOWS_SDK%\Bin"
+!ifdef x64Environment
+!define ALToolPath "C:\Program Files (x86)\Microsoft SDKs\Windows\v8.1A\bin\NETFX 4.5.1 Tools"
+!else
+!define ALToolPath "C:\Program Files\Microsoft SDKs\Windows\v8.1A\bin\NETFX 4.5.1 Tools"
+!endif
 
 # The following commands needs to be defined by the parent script (the one, which includes this file).
 ;!define BUILD_MediaPortal
 ;!define BUILD_TVServer
 ;!define BUILD_DeployTool
 ;!define BUILD_Installer
+
+!macro PrepareBuildReport Project
+  !define BuildReport '${git_ROOT}\Build\BuildReport'
+  !define xml '${git_OUT}\Build_Report_${Project}.xml'
+  !define html '${git_OUT}\Build_Report_${Project}.html'
+  !define logger '/l:XmlFileLogger,"${BuildReport}\MSBuild.ExtensionPack.Loggers.dll";logfile=${xml}'
+
+  !system 'xcopy /I /Y "${BuildReport}\_BuildReport_Files" "${git_OUT}\_BuildReport_Files"'
+!macroend
+!macro FinalizeBuildReport
+
+  !system '"${BuildReport}\msxsl.exe" "${xml}" "${BuildReport}\_BuildReport_Files\BuildReport.xslt" -o "${html}"' = 0
+  !undef BuildReport
+  !undef xml
+  !undef html
+  !undef logger
+!macroend
 
 
 !if ${VER_BUILD} != 0
@@ -40,13 +61,28 @@
 !system '"${git_DeployVersionGIT}\DeployVersionGIT\bin\Release\DeployVersionGIT.exe" /git="${git_ROOT}" /path="${git_ROOT}\Common-MP-TVE3"' = 0
 !endif
 
+!system '"$%WINDIR%\Microsoft.NET\Framework\v4.0.30319\MSBUILD.exe" "${git_ROOT}\Build\RestorePackages.targets"' = 0
+
 !ifdef BUILD_MediaPortal
-!system '"$%WINDIR%\Microsoft.NET\Framework\v3.5\MSBUILD.exe" /target:Rebuild /property:Configuration=Release;Platform=x86 "${git_MP}\MediaPortal.sln"' = 0
+!insertmacro PrepareBuildReport DirectShowFilters
+!ifdef x64Environment
+!system '"C:\Program Files (x86)\MSBuild\12.0\Bin\MSBUILD.exe" ${logger} /target:rebuild /property:Configuration=Release "${git_DirectShowFilters}\Filters.sln"' = 0
+!else
+!system '"C:\Program Files\MSBuild\12.0\Bin\MSBUILD.exe" ${logger} /target:rebuild /property:Configuration=Release "${git_DirectShowFilters}\Filters.sln"' = 0
+!endif
+!insertmacro FinalizeBuildReport
+!insertmacro PrepareBuildReport MediaPortal
+!system '"$%WINDIR%\Microsoft.NET\Framework\v4.0.30319\MSBUILD.exe" ${logger} /target:Rebuild /property:Configuration=Release;Platform=x86 "${git_MP}\MediaPortal.sln"' = 0
+!insertmacro FinalizeBuildReport
 !endif
 
 !ifdef BUILD_TVServer
-!system '"$%WINDIR%\Microsoft.NET\Framework\v3.5\MSBUILD.exe" /target:Rebuild /property:Configuration=Release;Platform=x86 "${git_TVServer}\TvLibrary.sln"' = 0
-!system '"$%WINDIR%\Microsoft.NET\Framework\v3.5\MSBUILD.exe" /target:Rebuild /property:Configuration=Release;Platform=x86 "${git_TVServer}\TvPlugin\TvPlugin.sln"' = 0
+!insertmacro PrepareBuildReport TvLibrary
+!system '"$%WINDIR%\Microsoft.NET\Framework\v4.0.30319\MSBUILD.exe" ${logger} /target:Rebuild /property:Configuration=Release;Platform=x86 "${git_TVServer}\TvLibrary.sln"' = 0
+!insertmacro FinalizeBuildReport
+!insertmacro PrepareBuildReport TvPlugin
+!system '"$%WINDIR%\Microsoft.NET\Framework\v4.0.30319\MSBUILD.exe" ${logger} /target:Rebuild /property:Configuration=Release;Platform=x86 "${git_TVServer}\TvPlugin\TvPlugin.sln"' = 0
+!insertmacro FinalizeBuildReport
 !endif
 
 !if ${VER_BUILD} != 0
@@ -56,7 +92,9 @@
 !endif
 
 !ifdef BUILD_DeployTool
-!system '"$%WINDIR%\Microsoft.NET\Framework\v3.5\MSBUILD.exe" /p:ALToolPath="${ALToolPath}" /target:Rebuild /property:Configuration=Release;Platform=x86 "${git_DeployTool}\MediaPortal.DeployTool.sln"' = 0
+!insertmacro PrepareBuildReport DeployTool
+!system '"$%WINDIR%\Microsoft.NET\Framework\v4.0.30319\MSBUILD.exe" ${logger} /p:ALToolPath="${ALToolPath}" /target:Rebuild /property:Configuration=Release;Platform=x86 "${git_DeployTool}\MediaPortal.DeployTool.sln"' = 0
+!insertmacro FinalizeBuildReport
 !endif
 
 !ifdef BUILD_Installer

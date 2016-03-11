@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+<controls> 
+  <control>
+	 <description>BasicHome TVSeries Focus</description>
+	 <type>image</type>
+	 <id>0</id>
+ 	 <posX>1264</posX>
+	 <posY>607</posY>
+	 <width>623</width>
+	 <height>271</height>
+	 <texture>basichome_button_series.png</texture>
+	 <animation effect="zoom" start="100,100" end="102,102" time="200" condition="control.hasfocus(7)">conditional</animation>
+ 	 <animation effect="fade" time="250" reversible="false">visiblechange</animation>
+	 <animation effect="fade" time="250">WindowOpen</animation>
+	 <animation effect="fade" time="250">WindowClose</animation> 
+	 <visible>![control.HasFocus(200) | control.HasFocus(300) | control.HasFocus(400) | control.HasFocus(500) | control.HasFocus(600) | control.HasFocus(700)]</visible>      
+	</control>     
+  <control>
+    <description>BasicHome TVSeries</description>
+    <type>button</type>
+    <id>7</id>
+		<posX>1274</posX>
+	  <posY>613</posY>
+    <width>593</width>
+    <height>241</height>
+    <textureFocus>basichome_menu_item_label_overlay.png</textureFocus>
+    <textureNoFocus>basichome_menu_item_label_overlay.png</textureNoFocus>
+    <hyperlink>9811</hyperlink>
+    <label>1300</label>
+    <font>TitanLight20</font>
+    <textcolor>FFFFFF</textcolor>
+		<textalign>center</textalign>   
+    <textcolorNoFocus>FFFFFFFF</textcolorNoFocus>
+    <textYOff>88</textYOff>
+		<onright>600</onright>
+		<onleft>5</onleft>  
+		<ondown>12</ondown>
+		<onup>6</onup>
+ 		<animation effect="fade" time="250" reversible="false">visiblechange</animation>
+    <animation effect="zoom" start="100,100" end="102,102" time="200">focus</animation>
+    <animation effect="zoom" start="102,102" end="100,100" time="150">unfocus</animation>
+    <animation effect="fade" time="250">WindowOpen</animation>
+    <animation effect="fade" time="250">WindowClose</animation>
+		<visible allowhiddenfocus="true">![control.hasfocus(12)|control.hasfocus(13)|control.hasfocus(14)|control.hasfocus(99999)|control.HasFocus(200) | control.HasFocus(300) | control.HasFocus(400) | control.HasFocus(500) | control.HasFocus(600) | control.HasFocus(700)]</visible>  
+  </control>
+  
+	<!--            :: PLUGINS BUTTON ON SECOND GROUP ::            -->
+  
+	<control>
+	 <description>BasicHome Plugins NoFocus</description>
+	 <type>image</type>
+	 <id>0</id>
+ 	 <posX>43</posX>
+	 <posY>607</posY>
+	 <width>623</width>
+	 <height>271</height>
+	 <texture>basichome_button_plugins.png</texture>
+	 <animation effect="fade" time="250" condition="!control.isvisible(3000)">conditional</animation>
+ 	 <animation effect="slide" start="700" end="0" time="600">visible</animation>
+	 <animation effect="fade" time="250">visible</animation>
+	 <animation effect="zoom" start="100,100" end="102,102" time="200" condition="control.hasfocus(600)">conditional</animation>
+	 <animation effect="fade" time="250">WindowOpen</animation>
+	 <animation effect="fade" time="250">WindowClose</animation>
+	 <visible>control.HasFocus(200) | control.HasFocus(300) | control.HasFocus(400) | control.HasFocus(500) | control.HasFocus(600) | control.HasFocus(700)</visible>         
+	</control> 
+  <control>
+    <description>BasicHome Plugins</description>
+    <type>button</type>
+    <id>600</id>
+		<posX>53</posX>
+	  <posY>613</posY>
+    <width>593</width>
+    <height>241</height>
+    <textureFocus>basichome_menu_item_label_overlay.png</textureFocus>
+    <textureNoFocus>basichome_menu_item_label_overlay.png</textureNoFocus>
+    <hyperlink>34</hyperlink>
+    <label>913</label>
+    <font>TitanLight20</font>
+    <textcolor>FFFFFF</textcolor>
+		<textalign>center</textalign>   
+    <textcolorNoFocus>FFFFFFFF</textcolorNoFocus>
+    <textYOff>88</textYOff>
+		<onright>700</onright>
+		<onleft>7</onleft>
+		<ondown>12</ondown>
+		<onup>400</onup>
+ 		<animation effect="slide" start="700" end="0" time="600">visible</animation>
+		<animation effect="fade" time="250">visible</animation>
+    <animation effect="zoom" start="100,100" end="102,102" time="200">focus</animation>
+    <animation effect="zoom" start="102,102" end="100,100" time="150">unfocus</animation>
+  	<animation effect="fade" time="250">WindowOpen</animation>
+  	<animation effect="fade" time="250">WindowClose</animation>
+		<visible allowhiddenfocus="true">[control.HasFocus(200) | control.HasFocus(300) | control.HasFocus(400) | control.HasFocus(500) | control.HasFocus(600) | control.HasFocus(700)]</visible>    
+  </control>
+</controls>
+</window>

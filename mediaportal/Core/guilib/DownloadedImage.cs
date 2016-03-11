@@ -113,7 +113,7 @@ namespace MediaPortal.GUI.Library
           try
           {
             string extension = "";
-            string contentType = client.ResponseHeaders["Content-type"].ToLower();
+            string contentType = client.ResponseHeaders["Content-type"].ToLowerInvariant();
             if (contentType.IndexOf("gif") >= 0)
             {
               extension = ".gif";
@@ -133,7 +133,7 @@ namespace MediaPortal.GUI.Library
             if (extension.Length > 0)
             {
               string newFile = Path.ChangeExtension(FileName, extension);
-              if (!newFile.ToLower().Equals(FileName.ToLower()))
+              if (!newFile.ToLowerInvariant().Equals(FileName.ToLowerInvariant()))
               {
                 try
                 {

@@ -26,8 +26,6 @@ namespace MediaPortal.Configuration.Sections
 {
   public partial class TVZoom : SectionSettings
   {
-    private bool _init = false;
-
     public TVZoom()
       : this("TV Zoom") {}
 
@@ -41,37 +39,28 @@ namespace MediaPortal.Configuration.Sections
     public override void OnSectionActivated()
     {
       base.OnSectionActivated();
-      if (_init == false)
-      {
-        _init = true;
-        //
-        // Load all available aspect ratio
-        //
-        defaultZoomModeComboBox.Items.Clear();
-        foreach (Geometry.Type item in Enum.GetValues(typeof (Geometry.Type)))
-        {
-          defaultZoomModeComboBox.Items.Add(Util.Utils.GetAspectRatio(item));
-        }
-        //
-        // Change aspect ratio labels to the current core proj description
-        //
-        cbAllowNormal.Text = Util.Utils.GetAspectRatio(Geometry.Type.Normal);
-        cbAllowOriginal.Text = Util.Utils.GetAspectRatio(Geometry.Type.Original);
-        cbAllowZoom.Text = Util.Utils.GetAspectRatio(Geometry.Type.Zoom);
-        cbAllowZoom149.Text = Util.Utils.GetAspectRatio(Geometry.Type.Zoom14to9);
-        cbAllowStretch.Text = Util.Utils.GetAspectRatio(Geometry.Type.Stretch);
-        cbAllowNonLinearStretch.Text = Util.Utils.GetAspectRatio(Geometry.Type.NonLinearStretch);
-        cbAllowLetterbox.Text = Util.Utils.GetAspectRatio(Geometry.Type.LetterBox43);
-        LoadSettings();
-      }
     }
 
     public override void LoadSettings()
     {
-      if (_init == false)
+      //
+      // Load all available aspect ratio
+      //
+      defaultZoomModeComboBox.Items.Clear();
+      foreach (Geometry.Type item in Enum.GetValues(typeof(Geometry.Type)))
       {
-        return;
+        defaultZoomModeComboBox.Items.Add(Util.Utils.GetAspectRatio(item));
       }
+      //
+      // Change aspect ratio labels to the current core proj description
+      //
+      cbAllowNormal.Text = Util.Utils.GetAspectRatio(Geometry.Type.Normal);
+      cbAllowOriginal.Text = Util.Utils.GetAspectRatio(Geometry.Type.Original);
+      cbAllowZoom.Text = Util.Utils.GetAspectRatio(Geometry.Type.Zoom);
+      cbAllowZoom149.Text = Util.Utils.GetAspectRatio(Geometry.Type.Zoom14to9);
+      cbAllowStretch.Text = Util.Utils.GetAspectRatio(Geometry.Type.Stretch);
+      cbAllowNonLinearStretch.Text = Util.Utils.GetAspectRatio(Geometry.Type.NonLinearStretch);
+      cbAllowLetterbox.Text = Util.Utils.GetAspectRatio(Geometry.Type.LetterBox43);
 
       using (Settings xmlreader = new MPSettings())
       {
@@ -101,11 +90,6 @@ namespace MediaPortal.Configuration.Sections
 
     public override void SaveSettings()
     {
-      if (_init == false)
-      {
-        return;
-      }
-
       using (Settings xmlwriter = new MPSettings())
       {
         xmlwriter.SetValue("mytv", "defaultar", defaultZoomModeComboBox.SelectedItem);

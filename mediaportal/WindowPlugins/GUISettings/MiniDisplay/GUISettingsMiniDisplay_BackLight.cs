@@ -29,7 +29,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Setup
     [SkinControl(65)] protected GUISelectButtonControl btnRed = null;
     [SkinControl(66)] protected GUISelectButtonControl btnGreen = null;
     [SkinControl(67)] protected GUISelectButtonControl btnBlue = null;
-    [SkinControl(68)] protected GUIToggleButtonControl btnInvert = null;
+    [SkinControl(68)] protected GUICheckButton btnInvert = null;
 
     public BacklightWindow()
     {
@@ -79,8 +79,14 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Setup
 
     protected override void OnPageDestroy(int newWindowId)
     {
+      SaveSettings();
+
+      if (MediaPortal.GUI.Settings.GUISettings.SettingsChanged && !MediaPortal.Util.Utils.IsGUISettingsWindow(newWindowId))
+      {
+        MediaPortal.GUI.Settings.GUISettings.OnRestartMP(GetID);
+      }
+
       base.OnPageDestroy(newWindowId);
-      this.SaveSettings();
     }
 
     protected override void OnPageLoad()

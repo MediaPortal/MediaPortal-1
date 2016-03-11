@@ -74,7 +74,8 @@
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
     <ApplicationManifest>MediaPortal.exe.manifest</ApplicationManifest>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <OutputPath>bin\Debug\</OutputPath>
@@ -181,6 +182,10 @@
     <Optimize>false</Optimize>
   </PropertyGroup>
   <ItemGroup>
+    <ProjectReference Include="..\WindowPlugins\GUIHome\GUIHome.csproj">
+      <Project>{B282C55B-A37B-4CEC-A4FC-00791069BF00}</Project>
+      <Name>GUIHome</Name>
+    </ProjectReference>
     <Reference Include="Microsoft.DirectX, Version=1.0.2902.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
       <SpecificVersion>True</SpecificVersion>
     </Reference>
@@ -261,6 +266,7 @@
       <Project>{6DA0E4DF-6230-4642-98B5-E690BB6942BB}</Project>
       <Name>Utils</Name>
     </ProjectReference>
+    <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -269,17 +275,11 @@
     <Compile Include="..\..\Common-MP-TVE3\SolutionInfo.cs">
       <Link>SolutionInfo.cs</Link>
     </Compile>
-    <Compile Include="CodecsForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="d3dapp.cs">
+    <Compile Include="D3D.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="d3denumeration.cs">
       <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="D3DSettingsForm.cs">
-      <SubType>Form</SubType>
     </Compile>
     <Compile Include="d3dutil.cs">
       <SubType>Code</SubType>
@@ -301,19 +301,8 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="SplashScreen.cs" />
-    <Compile Include="ThreadMessageFilter.cs" />
-    <Compile Include="WorkingSet.cs" />
-    <EmbeddedResource Include="CodecsForm.resx">
-      <DependentUpon>CodecsForm.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="d3dapp.resx">
-      <DependentUpon>d3dapp.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="D3DSettingsForm.resx">
-      <DependentUpon>D3DSettingsForm.cs</DependentUpon>
-      <SubType>Designer</SubType>
+    <EmbeddedResource Include="D3D.resx">
+      <DependentUpon>D3D.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="FullScreenSplashScreen.resx">
       <SubType>Designer</SubType>

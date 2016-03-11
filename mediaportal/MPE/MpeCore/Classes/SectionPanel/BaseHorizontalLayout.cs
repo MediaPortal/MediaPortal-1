@@ -19,12 +19,7 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.IO;
-using System.Text;
 using System.Windows.Forms;
 
 namespace MpeCore.Classes.SectionPanel
@@ -74,7 +69,7 @@ namespace MpeCore.Classes.SectionPanel
 
     private void BaseVerticalLayout_Load(object sender, EventArgs e) {}
 
-    protected void BaseHorizontalLayout_Shown(object sender, EventArgs e)
+    protected virtual void BaseHorizontalLayout_Shown(object sender, EventArgs e)
     {
       lbl_large.Text = Package.ReplaceInfo(Section.Params[Const_LABEL_BIG].Value);
       lbl_small.Text = Package.ReplaceInfo(Section.Params[Const_LABEL_SMALL].Value);
@@ -83,7 +78,7 @@ namespace MpeCore.Classes.SectionPanel
       pictureBox1.SizeMode = PictureBoxSizeMode.StretchImage;
       Text = string.Format("Extension Installer for  {0} - {1}", Package.GeneralInfo.Name,
                            Package.GeneralInfo.Version);
-      button_next.Text = "Next>";
+      button_next.Text = "Next >";
       switch (Section.WizardButtonsEnum)
       {
         case WizardButtonsEnum.BackNextCancel:

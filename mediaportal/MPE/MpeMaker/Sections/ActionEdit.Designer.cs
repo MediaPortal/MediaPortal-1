@@ -130,7 +130,7 @@
           this.cmb_execute.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
           this.cmb_execute.FormattingEnabled = true;
           this.cmb_execute.Items.AddRange(new object[] {
-            " Befor Wizard Screen Show",
+            " Before Wizard Screen Show",
             " After Wizard Screen Show",
             " After Wizard Screen Hide"});
           this.cmb_execute.Location = new System.Drawing.Point(12, 104);

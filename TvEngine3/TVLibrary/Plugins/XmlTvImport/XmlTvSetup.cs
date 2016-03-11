@@ -660,7 +660,7 @@ namespace SetupTv.Sections
                   if (displayName != null)
                   {
                     Channel channel = new Channel(false, false, -1, new DateTime(), false, new DateTime(),
-                                                  -1, false, id, displayName);
+                                                  -1, false, id, displayName, 10000);
                     channels.Add(channel);
                   }
                 }

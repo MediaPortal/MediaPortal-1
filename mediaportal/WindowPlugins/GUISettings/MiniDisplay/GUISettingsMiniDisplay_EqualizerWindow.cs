@@ -24,12 +24,12 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Setup
 {
   public class EqualizerWindow : GUIInternalWindow
   {
-    [SkinControl(20)] protected GUIToggleButtonControl btnUseEqualizer = null;
+    [SkinControl(20)] protected GUICheckButton btnUseEqualizer = null;
     [SkinControl(21)] protected GUISelectButtonControl btnUseStyle = null;
-    [SkinControl(22)] protected GUIToggleButtonControl btnSmothEQ = null;
-    [SkinControl(23)] protected GUIToggleButtonControl btnDelayStart = null;
+    [SkinControl(22)] protected GUICheckButton btnSmothEQ = null;
+    [SkinControl(23)] protected GUICheckButton btnDelayStart = null;
     [SkinControl(24)] protected GUISelectButtonControl btnDelayStartTime = null;
-    [SkinControl(25)] protected GUIToggleButtonControl btnShowTitle = null;
+    [SkinControl(25)] protected GUICheckButton btnShowTitle = null;
     [SkinControl(26)] protected GUISelectButtonControl btnShowTitleTime = null;
     [SkinControl(27)] protected GUISelectButtonControl btnShowTitleFreq = null;
     private EQControl EQSettings = new EQControl();
@@ -95,12 +95,6 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Setup
       base.OnClicked(controlId, control, actionType);
     }
 
-    protected override void OnPageDestroy(int newWindowId)
-    {
-      this.SaveSettings();
-      base.OnPageDestroy(newWindowId);
-    }
-
     public override bool OnMessage(GUIMessage message)
     {
       if (!base.OnMessage(message))
@@ -131,6 +125,18 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Setup
           GUIWindowManager.CloseCurrentWindow();
         }
       }
+    }
+
+    protected override void OnPageDestroy(int newWindowId)
+    {
+      SaveSettings();
+
+      if (MediaPortal.GUI.Settings.GUISettings.SettingsChanged && !MediaPortal.Util.Utils.IsGUISettingsWindow(newWindowId))
+      {
+        MediaPortal.GUI.Settings.GUISettings.OnRestartMP(GetID);
+      }
+
+      base.OnPageDestroy(newWindowId);
     }
 
     public override void OnAction(Action action)

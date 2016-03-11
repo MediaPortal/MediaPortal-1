@@ -1,0 +1,270 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <id>2901</id>
+  <defaultcontrol>213</defaultcontrol>
+  <allowoverlay>no</allowoverlay>
+  <controls>
+    <control>
+      <description>background</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>90</posX>
+      <posY>681</posY>
+      <height>403</height>
+      <width>1750</width>
+      <texture>OSDBG2.png</texture>
+      <colordiffuse>ddffffff</colordiffuse>
+      <visible>!control.hasfocus(1237)</visible>
+    </control>
+    <control>
+      <description>TVSeries ClearArt</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>1422</posX>
+      <posY>523</posY>
+      <width>372</width>
+      <height>187</height>
+      <texture>#TVSeries.Play.ClearArt</texture>
+      <visible>!control.hasfocus(1237)</visible>
+    </control>
+    <control>
+      <description>TVSeries ClearArt</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>1422</posX>
+      <posY>360</posY>
+      <width>372</width>
+      <height>187</height>
+      <texture>#TVSeries.Play.ClearArt</texture>
+      <visible>control.hasfocus(1237)</visible>
+    </control>
+    <control>
+      <description>Time BG</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>1556</posX>
+      <posY>720</posY>
+      <width>237</width>
+      <height>52</height>
+      <texture>button_focus.png</texture>
+      <colordiffuse>ffffffff</colordiffuse>
+      <visible>!control.hasfocus(1237)</visible>
+    </control>
+    <control>
+      <description>Time Info</description>
+      <type>label</type>
+      <id>110</id>
+      <posX>1755</posX>
+      <posY>718</posY>
+      <label>#time</label>
+      <align>right</align>
+      <font>font16</font>
+      <textcolor>ivory</textcolor>
+      <visible>!control.hasfocus(1237)</visible>
+    </control>
+    <control>
+      <description>End Time Info</description>
+      <type>label</type>
+      <id>101</id>
+      <posX>1377</posX>
+      <posY>790</posY>
+      <label>#currentremaining</label>
+      <align>left</align>
+      <font>Menutitle</font>
+      <textcolor>ffffffff</textcolor>
+      <visible>!control.hasfocus(1237)</visible>
+    </control>
+    <control>
+      <description>Start Time Info</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>297</posX>
+      <posY>790</posY>
+      <label>#currentplaytime</label>
+      <align>right</align>
+      <font>Menutitle</font>
+      <textcolor>ffffffff</textcolor>
+      <visible>!control.hasfocus(1237)</visible>
+    </control>
+    <control>
+      <description>Movie Name</description>
+      <id>36</id>
+      <type>fadelabel</type>
+      <posX>120</posX>
+      <posY>750</posY>
+      <width>1435</width>
+      <align>center</align>
+      <textcolor>ffffffff</textcolor>
+      <font>Menutitle</font>
+      <label>#Play.Current.Title</label>
+      <visible>!control.hasfocus(1237)</visible>
+    </control>
+    
+    <!-- ***************************************************************************************************** -->
+    <!-- *****************************         INFO DISPLAY ON TV NOW/NEXT      ****************************** -->
+    <!-- ***************************************************************************************************** -->
+    <control>
+      <description>background</description>
+      <type>image</type>
+      <id>1236</id>
+      <posX>90</posX>
+      <posY>505</posY>
+      <height>590</height>
+      <width>1745</width>
+      <texture>osdbg2.png</texture>
+      <colordiffuse>ccffffff</colordiffuse>
+      <visible>control.hasfocus(1237)</visible>
+      <animation effect="fade" start="0" end="100" time="170" reversible="true">visiblechange</animation>
+    </control>
+    <control>
+      <description>divider horizontal</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>175</posX>
+      <posY>862</posY>
+      <width>1590</width>
+      <height>1</height>
+      <texture>horizontal_bar.png</texture>
+      <colordiffuse>40ffffff</colordiffuse>
+      <animation effect="fade" start="0" end="100" time="170" reversible="true">visiblechange</animation>
+      <visible>control.hasfocus(1237)</visible>
+    </control>
+    <control>
+      <description>divider horizontal</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>175</posX>
+      <posY>937</posY>
+      <width>1590</width>
+      <height>1</height>
+      <texture>horizontal_bar.png</texture>
+      <colordiffuse>40ffffff</colordiffuse>
+      <animation effect="fade" start="0" end="100" time="150" reversible="true">visiblechange</animation>
+      <visible>control.hasfocus(1237)</visible>
+    </control>
+    <control>
+      <description>Movie Name</description>
+      <id>36</id>
+      <type>fadelabel</type>
+      <posX>175</posX>
+      <posY>560</posY>
+      <height>57</height>
+      <width>1600</width>
+      <align>center</align>
+      <textcolor>dodgerblue</textcolor>
+      <font>Label</font>
+      <label>#Play.Current.Title</label>
+      <shadowAngle>90</shadowAngle>
+      <shadowDistance>1</shadowDistance>
+      <visible>control.hasfocus(1237)</visible>
+      <animation effect="fade" start="0" end="100" time="150" reversible="true">visiblechange</animation>
+    </control>
+    <control>
+      <description>Plot</description>
+      <type>textboxscrollup</type>
+      <id>1</id>
+      <posX>175</posX>
+      <posY>615</posY>
+      <height>230</height>
+      <width>1600</width>
+      <align>left</align>
+      <label>#Play.Current.Plot</label>
+      <font>RSS</font>
+      <textcolor>lightskyblue</textcolor>
+      <visible>control.hasfocus(1237)</visible>
+      <shadowAngle>0</shadowAngle>
+      <shadowDistance>0</shadowDistance>
+      <animation effect="fade" start="0" end="100" time="150" reversible="true">visiblechange</animation>
+    </control>
+    <control>
+      <description>Movie thumb</description>
+      <type>image</type>
+      <id>102</id>
+      <posX>1603</posX>
+      <posY>797</posY>
+      <width>157</width>
+      <height>239</height>
+      <texture mask="dvdcase_mask.png">#Play.Current.Thumb</texture>
+      <keepaspectratio>no</keepaspectratio>
+      <animation effect="fade" time="100" reversible="true">visible</animation>
+      <visible>!control.hasfocus(1237)+![control.isvisible(400)|control.isvisible(800)|control.isvisible(550)|control.isvisible(700)|control.isvisible(600)]</visible>
+    </control>
+    <control>
+      <id>1</id>
+      <type>image</type>
+      <posX>1603</posX>
+      <posY>797</posY>
+      <width>157</width>
+      <height>239</height>
+      <texture>dvdcase.png</texture>
+      <visible>!control.hasfocus(1237)+control.hasthumb(102)+![control.isvisible(400)|control.isvisible(800)|control.isvisible(550)|control.isvisible(700)|control.isvisible(600)]</visible>
+      <animation effect="fade" time="100" reversible="true">visible</animation>
+    </control>
+    <control>
+      <description>Movie thumb</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>1583</posX>
+      <posY>737</posY>
+      <width>187</width>
+      <height>285</height>
+      <texture mask="dvdcase_mask.png">#Play.Current.Thumb</texture>
+      <keepaspectratio>no</keepaspectratio>
+      <animation effect="fade" time="100" reversible="true">visible</animation>
+      <visible>skin.hassetting(#skin.analogosd)+!control.hasfocus(1237)+![control.isvisible(400)|control.isvisible(800)|control.isvisible(550)|control.isvisible(700)|control.isvisible(600)]</visible>
+    </control>
+    <control>
+      <id>1</id>
+      <type>image</type>
+      <posX>1583</posX>
+      <posY>737</posY>
+      <width>187</width>
+      <height>285</height>
+      <texture>dvdcase.png</texture>
+      <visible>skin.hassetting(#skin.analogosd)+!control.hasfocus(1237)+control.hasthumb(102)+![control.isvisible(400)|control.isvisible(800)|control.isvisible(550)|control.isvisible(700)|control.isvisible(600)]</visible>
+      <animation effect="fade" time="100" reversible="true">visible</animation>
+    </control>
+    <import>common.logos.xml</import>
+    <import>common.osd.buttons.xml</import>
+    <control>
+      <description>background</description>
+      <type>image</type>
+      <id>104</id>
+      <posX>313</posX>
+      <posY>807</posY>
+      <width>1042</width>
+      <height>28</height>
+      <texture>osd_progress_background.png</texture>
+      <visible>!control.hasfocus(1237)</visible>
+    </control>
+    <control>
+      <description>Progress Bar</description>
+      <type>tvprogress</type>
+      <id>105</id>
+      <posX>313</posX>
+      <posY>811</posY>
+      <width>1040</width>
+      <height>23</height>
+      <toptexture>osd_progress_right.png</toptexture>
+      <TextureOffsetY>23</TextureOffsetY>
+      <bottomtexture>-</bottomtexture>
+      <texturetick>-</texturetick>
+      <lefttexture>osd_progress_left_tv.png</lefttexture>
+      <midtexture>-</midtexture>
+      <righttexture>-</righttexture>
+      <logotexture>-</logotexture>
+      <fillbackgroundtexture>-</fillbackgroundtexture>
+      <fillbgxoff>-3</fillbgxoff>
+      <fillbgyoff>0</fillbgyoff>
+      <filltexture1>osd_progress_mid_tv.png</filltexture1>
+      <filltexture2>osd_progress_mid_tv.png</filltexture2>
+      <filltexture3>osd_progress_mid_orange_tv.png</filltexture3>
+      <markertexture>osd_progress_mid_red.png</markertexture>
+      <fillheight>24</fillheight>
+      <label>#percentage</label>
+      <labelmarkerstarts>#jumppoints</labelmarkerstarts>
+      <labelmarkerends>#chapters</labelmarkerends>
+      <visible>!control.hasfocus(1237)</visible>
+    </control>
+  </controls>
+</window>

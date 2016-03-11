@@ -1,0 +1,241 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+<id>603</id>
+<defaultcontrol>11</defaultcontrol>
+<allowoverlay>yes</allowoverlay>
+<define>#header.label:604</define>
+<controls>
+
+	<import>common.window.recordings.xml</import>
+
+    <control>
+      <id>0</id>
+      <type>image</type>
+      <posX>66</posX>
+      <posY>34</posY>
+      <width>61</width>
+      <height>57</height>
+      <texture>icon_tv.png</texture>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+
+	<import>common.time.xml</import>
+
+
+		<!-- List -->
+		
+		<control>
+			<id>0</id>
+			<type>image</type>
+			<posX>99</posX>
+			<posY>226</posY>
+			<width>335</width>
+			<height>190</height>
+			<texture>defaultTVBig.png</texture>
+			<visible>facadeview.list+[!control.hasthumb(500)|string.equals(#selectedthumb,defaultFolderBig.png)]+!string.equals(#selecteditem,..)</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+		</control>
+		
+		<control>
+			<id>500</id>
+			<type>image</type>
+			<posX>99</posX>
+			<posY>226</posY>
+			<width>335</width>
+			<height>190</height>
+			<texture>#selectedthumb</texture>
+			<visible>facadeview.list+!string.equals(#selectedthumb,defaultFolderBig.png)+!string.equals(#selecteditem,..)</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+		</control>
+			
+		<control>
+			<id>0</id>
+			<type>image</type>
+			<posX>96</posX>
+			<posY>442</posY>
+			<width>187</width>
+			<height>119</height>
+			<texture>tv_logo_bg.png</texture>
+			<visible>facadeview.list+!string.equals(#selecteditem,..)</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+		</control>
+		
+		<control>
+			<id>0</id>
+			<type>image</type>
+			<posX>145</posX>
+			<posY>457</posY>
+			<width>90</width>
+			<height>90</height>
+			<texture>#TV.RecordedTV.thumb</texture>
+			<visible>facadeview.list</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+		</control>
+    <control>
+    	<description>Current program title</description>
+    	<type>fadelabel</type>
+    	<id>1</id>
+    	<posX>312</posX>
+      <posY>457</posY>
+    	<width>570</width>
+    	<label>#TV.RecordedTV.Channel</label>
+    	<font>fontB16</font>
+    	<textcolor>ffffff</textcolor>
+      <shadowAngle>120</shadowAngle>
+      <shadowDistance>2</shadowDistance>
+      <shadowColor>FF000000</shadowColor>
+      <visible>facadeview.list</visible>
+    	<animation effect="fade" time="250">WindowOpen</animation>
+    	<animation effect="fade" time="250">WindowClose</animation>
+    </control>
+		<control>
+			<type>fadelabel</type>
+			<description>Current program time</description>
+			<id>0</id>
+			<posX>312</posX>
+			<posY>514</posY>
+			<width>800</width>
+    	<font>TitanLight14</font>
+    	<textcolor>FF00b7ff</textcolor>
+      <shadowAngle>120</shadowAngle>
+      <shadowDistance>2</shadowDistance>
+      <shadowColor>FF000000</shadowColor>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+			<label>#TV.RecordedTV.Time</label>
+			<visible>facadeview.list</visible>
+		</control>
+		
+		<control>
+			<type>textboxscrollup</type>
+			<description>Description1</description>
+			<id>0</id>
+			<posX>99</posX>
+			<posY>580</posY>
+			<width>780</width>
+			<height>405</height>
+      <lineSpacing>0.85</lineSpacing>
+			<label>#TV.RecordedTV.Description</label>
+			<visible>facadeview.list</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+		</control>
+		
+	<!--            :: THUMBVIEW ::            -->
+	
+	<control>
+		<description>Movie Title value</description>
+		<type>fadelabel</type>
+		<id>1</id>
+		<posX>1040</posX>
+		<posY>332</posY>
+		<width>700</width>
+		<label>#selecteditem - #TV.RecordedTV.Channel</label>
+		<font>fontB16</font>
+    <textcolor>FF00b7ff</textcolor>
+    <shadowAngle>120</shadowAngle>
+    <shadowDistance>2</shadowDistance>
+    <shadowColor>FF000000</shadowColor>
+		<visible>[facadeview.smallicons | facadeview.largeicons] + Control.IsVisible(50)</visible>
+    <animation effect="fade" time="250">WindowOpen</animation>
+    <animation effect="fade" time="250">WindowClose</animation>
+	</control>
+		
+	<control Style="InfoLabel">
+		<description>Channel Label</description>
+		<type>label</type>
+		<id>0</id>
+		<posX>1038</posX>
+		<posY>445</posY>
+		<label>602</label>
+		<visible>[facadeview.smallicons | facadeview.largeicons] + Control.IsVisible(50)</visible>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>
+	</control>
+
+	<control Style="InfoValueWide">
+		<description>Channel Value</description>
+		<type>label</type>
+		<id>0</id>
+		<posX>1270</posX>
+		<posY>445</posY>
+		<label>#TV.RecordedTV.Channel</label>
+		<visible>[facadeview.smallicons | facadeview.largeicons] + Control.IsVisible(50)</visible>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>
+  </control>
+    
+	<control Style="InfoLabel">
+		<description>Date/Time Label</description>
+		<type>label</type>
+		<id>0</id>
+		<posX>1038</posX>
+		<posY>481</posY>
+		<label>621</label>
+		<visible>[facadeview.smallicons | facadeview.largeicons] + Control.IsVisible(50)</visible>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>
+  </control>
+	
+	<control Style="InfoValueWide">
+		<description>Date/Time Value</description>
+		<type>label</type>
+		<id>0</id>
+		<posX>1270</posX>
+		<posY>481</posY>
+		<label>#TV.RecordedTV.Time </label>
+		<visible>[facadeview.smallicons | facadeview.largeicons] + Control.IsVisible(50)</visible>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>
+  </control>
+	
+	<control Style="InfoLabel">
+		<description>Genre Label</description>
+		<type>label</type>
+		<id>0</id>
+		<posX>1038</posX>
+		<posY>516</posY>
+		<label>135</label>
+		<visible>[facadeview.smallicons | facadeview.largeicons] + Control.IsVisible(50)</visible>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>
+  </control>
+	
+	<control Style="InfoValueWide">
+		<description>Genre Value</description>
+		<type>fadelabel</type>
+		<id>0</id>
+		<posX>1270</posX>
+		<posY>516</posY>
+		<label>#TV.RecordedTV.Genre</label>
+		<visible>[facadeview.smallicons | facadeview.largeicons] + Control.IsVisible(50)</visible>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>
+  </control>
+    
+		
+	<control Style="textBox">
+	  <type>textboxscrollup</type>
+	  <description>Description1</description>
+		<id>0</id>
+		<posX>1040</posX>
+		<posY>584</posY>
+		<width>790</width>
+		<height>350</height>
+		<lineSpacing>0.92</lineSpacing>
+		<label>#TV.RecordedTV.Description</label>
+		<visible>facadeview.smallicons|facadeview.largeicons</visible>
+    <animation effect="fade" time="250">WindowOpen</animation>
+    <animation effect="fade" time="250">WindowClose</animation>
+	</control>
+			
+	<import>mytvrecordedtv.hiddenmenu.xml</import>
+	<import>common.facade.recordings.xml</import>
+  <import>common.overlay.xml</import>
+</controls>
+</window>

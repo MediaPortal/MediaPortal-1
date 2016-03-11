@@ -5,26 +5,28 @@
 #include <streams.h>
 #include <initguid.h>
 #include <shlobj.h>
-#include <tchar.h>
 
 // For more details for memory leak detection see the alloctracing.h header
 #include "..\..\alloctracing.h"
 
-static char logFile[MAX_PATH];
+static TCHAR logFile[MAX_PATH];
 static WORD logFileParsed = -1;
 
-void GetLogFile(char *pLog)
+void GetLogFile(TCHAR* pLog)
 {
   SYSTEMTIME systemTime;
   GetLocalTime(&systemTime);
-  if(logFileParsed != systemTime.wDay)
+  if (logFileParsed != systemTime.wDay)
   {
     TCHAR folder[MAX_PATH];
     ::SHGetSpecialFolderPath(NULL,folder,CSIDL_COMMON_APPDATA,FALSE);
-    sprintf(logFile,"%s\\Team MediaPortal\\MediaPortal\\Log\\BDReader-%04.4d-%02.2d-%02.2d.Log",folder, systemTime.wYear, systemTime.wMonth, systemTime.wDay);
+    
+    _stprintf_s(logFile, _T("%s\\Team MediaPortal\\MediaPortal\\Log\\BDReader-%04.4d-%02.2d-%02.2d.Log"), 
+      folder, systemTime.wYear, systemTime.wMonth, systemTime.wDay);
+    
     logFileParsed=systemTime.wDay; // rec
   }
-  strcpy(pLog, &logFile[0]);
+  _tcscpy(pLog, &logFile[0]);
 }
 
 void LogDebug(const char *fmt, ...)
@@ -43,9 +45,9 @@ void LogDebug(const char *fmt, ...)
 //#ifdef DONTLOG
   TCHAR filename[1024];
   GetLogFile(filename);
-  FILE* fp = fopen(filename,"a+");
+  FILE* fp = _tfopen(filename, _T("a+"));
 
-  if (fp != NULL)
+  if (fp)
   {
     fprintf(fp,"%02.2d-%02.2d-%04.4d %02.2d:%02.2d:%02.2d.%03.3d [%5x]%s\n",
       systemTime.wDay, systemTime.wMonth, systemTime.wYear,

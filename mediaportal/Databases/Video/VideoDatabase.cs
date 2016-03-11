@@ -21,6 +21,7 @@
 using System;
 using System.Collections;
 using MediaPortal.Database;
+using MediaPortal.Player;
 using SQLite.NET;
 
 namespace MediaPortal.Video.Database
@@ -94,6 +95,11 @@ namespace MediaPortal.Video.Database
       _database.RemoveFilesForMovie(lMovieId);
     }
 
+    /// <summary>
+    /// Returns -1 if file don't exists
+    /// </summary>
+    /// <param name="strFilenameAndPath"></param>
+    /// <returns></returns>
     public static int GetFileId(string strFilenameAndPath)
     {
       return _database.GetFileId(strFilenameAndPath);
@@ -156,11 +162,21 @@ namespace MediaPortal.Video.Database
 
     #region User groups
 
-    public static int AddUserGroup(string strUserGroup1)
+    public static int AddUserGroup(string userGroup)
     {
-      return _database.AddUserGroup(strUserGroup1);
+      return _database.AddUserGroup(userGroup);
     }
 
+    public static int GetUserGroupId(string userGroup)
+    {
+      return _database.GetUserGroupId(userGroup);
+    }
+
+    public static void AddUserGroupDescription(string userGroup, string description)
+    {
+      _database.AddUserGroupDescription(userGroup, description);
+    }
+    
     public static void GetUserGroups(ArrayList userGroups)
     {
       _database.GetUserGroups(userGroups);
@@ -171,6 +187,11 @@ namespace MediaPortal.Video.Database
       return _database.GetUserGroupById(groupId);
     }
 
+    public static string GetUserGroupDescriptionById(int groupId)
+    {
+      return _database.GetUserGroupDescriptionById(groupId);
+    }
+    
     public static void GetMovieUserGroups(int movieId, ArrayList userGroups)
     {
       _database.GetMovieUserGroups(movieId, userGroups);
@@ -362,14 +383,30 @@ namespace MediaPortal.Video.Database
       _database.SetMovieStopTime(iFileId, stoptime);
     }
 
+    /// <summary>
+    /// Deprecated Method (this one will not use the new Blu-ray Title mode resume)
+    /// </summary>
     public static int GetMovieStopTimeAndResumeData(int iFileId, out byte[] resumeData)
     {
-      return _database.GetMovieStopTimeAndResumeData(iFileId, out resumeData);
+      return _database.GetMovieStopTimeAndResumeData(iFileId, out resumeData, g_Player.BdDefaultTitle);
     }
 
+    /// <summary>
+    /// Deprecated Method (this one will not use the new Blu-ray Title mode resume)
+    /// </summary>
     public static void SetMovieStopTimeAndResumeData(int iFileId, int stoptime, byte[] resumeData)
     {
-      _database.SetMovieStopTimeAndResumeData(iFileId, stoptime, resumeData);
+      _database.SetMovieStopTimeAndResumeData(iFileId, stoptime, resumeData, g_Player.BdDefaultTitle);
+    }
+
+    public static int GetMovieStopTimeAndResumeData(int iFileId, out byte[] resumeData, int bdtitle)
+    {
+      return _database.GetMovieStopTimeAndResumeData(iFileId, out resumeData, bdtitle);
+    }
+
+    public static void SetMovieStopTimeAndResumeData(int iFileId, int stoptime, byte[] resumeData, int bdtitle)
+    {
+      _database.SetMovieStopTimeAndResumeData(iFileId, stoptime, resumeData, bdtitle);
     }
 
     public static void SetMovieWatchedStatus(int iMovieId, bool watched, int percent)
@@ -440,6 +477,11 @@ namespace MediaPortal.Video.Database
       return _database.GetMovieId(strFilenameAndPath);
     }
 
+    public static int GetTitleBDId(int iFileId, out byte[] resumeData)
+    {
+      return _database.GetTitleBDId(iFileId, out resumeData);
+    }
+
     public static bool HasSubtitle(string strFilenameAndPath)
     {
       return _database.HasSubtitle(strFilenameAndPath);
@@ -473,9 +515,29 @@ namespace MediaPortal.Video.Database
       _database.GetMoviesByGenre(strGenre1, ref movies);
     }
 
+    public static void GetRandomMoviesByGenre(string strGenre1, ref ArrayList movies, int limit)
+    {
+      _database.GetRandomMoviesByGenre(strGenre1, ref movies, limit);
+    }
+
+    public static string GetMovieTitlesByGenre(string strGenre)
+    {
+      return _database.GetMovieTitlesByGenre(strGenre);
+    }
+
     public static void GetMoviesByUserGroup(string strUserGroup, ref ArrayList movies)
     {
       _database.GetMoviesByUserGroup(strUserGroup, ref movies);
+    }
+
+    public static void GetRandomMoviesByUserGroup(string strUserGroup, ref ArrayList movies, int limit)
+    {
+      _database.GetRandomMoviesByUserGroup(strUserGroup, ref movies, limit);
+    }
+
+    public static string GetMovieTitlesByUserGroup(int idGroup)
+    {
+      return _database.GetMovieTitlesByUserGroup(idGroup);
     }
 
     public static void GetMoviesByActor(string strActor1, ref ArrayList movies)
@@ -483,14 +545,44 @@ namespace MediaPortal.Video.Database
       _database.GetMoviesByActor(strActor1, ref movies);
     }
 
+    public static void GetRandomMoviesByActor(string strActor1, ref ArrayList movies, int limit)
+    {
+      _database.GetRandomMoviesByActor(strActor1, ref movies, limit);
+    }
+
+    public static string GetMovieTitlesByActor(int actorId)
+    {
+      return _database.GetMovieTitlesByActor(actorId);
+    }
+
+    public static string GetMovieTitlesByDirector(int directorId)
+    {
+      return _database.GetMovieTitlesByDirector(directorId);
+    }
+
     public static void GetMoviesByYear(string strYear, ref ArrayList movies)
     {
       _database.GetMoviesByYear(strYear, ref movies);
     }
 
+    public static void GetRandomMoviesByYear(string strYear, ref ArrayList movies, int limit)
+    {
+      _database.GetRandomMoviesByYear(strYear, ref movies, limit);
+    }
+
+    public static string GetMovieTitlesByYear(string strYear)
+    {
+      return _database.GetMovieTitlesByYear(strYear);
+    }
+
     public static void GetMoviesByPath(string strPath1, ref ArrayList movies)
     {
       _database.GetMoviesByPath(strPath1, ref movies);
+    }
+
+    public static void GetRandomMoviesByPath(string strPath1, ref ArrayList movies, int limit)
+    {
+      _database.GetRandomMoviesByPath(strPath1, ref movies, limit);
     }
 
     public static void GetMoviesByFilter(string sql, out ArrayList movies, bool actorTable, bool movieinfoTable,
@@ -502,6 +594,11 @@ namespace MediaPortal.Video.Database
     public static void GetIndexByFilter(string sql, bool filterNonWordChar, out ArrayList movieList)
     {
       _database.GetIndexByFilter(sql, filterNonWordChar, out movieList);
+    }
+
+    public static string GetMovieTitlesByIndex(string sql)
+    {
+      return _database.GetMovieTitlesByIndex(sql);
     }
 
     #endregion
@@ -580,14 +677,19 @@ namespace MediaPortal.Video.Database
 
     #region nfo handler
 
-    public static void ImportNfo(string nfoFile)
+    public static void ImportNfo(string nfoFile, bool skipExisting, bool refreshdbOnly)
     {
-      _database.ImportNfo(nfoFile);
+      _database.ImportNfo(nfoFile, skipExisting, refreshdbOnly);
     }
 
     public static bool MakeNfo (int movieId)
     {
       return _database.MakeNfo(movieId);
+    }
+
+    public static void ImportNfoUsingVideoFile(string videoFile, bool skipExisting, bool refreshdbOnly)
+    {
+      _database.ImportNfoUsingVideoFile(videoFile, skipExisting, refreshdbOnly);
     }
 
     #endregion
@@ -597,14 +699,14 @@ namespace MediaPortal.Video.Database
       return _database.GetResults(sql);
     }
 
-    public static void ExecuteSql(string sql, out bool error)
+    public static void ExecuteSql(string sql, out bool error, out string errorMessage)
     {
-      _database.ExecuteSQL(sql, out error);
+      _database.ExecuteSQL(sql, out error, out errorMessage);
     }
 
-    public static ArrayList ExecuteRuleSql(string sql, string fieldName, out bool error)
+    public static ArrayList ExecuteRuleSql(string sql, string fieldName, out bool error, out string errorMessage)
     {
-      return _database.ExecuteRuleSQL(sql, fieldName, out error);
+      return _database.ExecuteRuleSQL(sql, fieldName, out error, out errorMessage);
     }
 
     /// <summary>
@@ -646,6 +748,24 @@ namespace MediaPortal.Video.Database
       string characters =
         @"'1','2','3','4','5','6','7','8','9','''','(',')','[',']','{','}','""','!','#','$','%','&','/','+','-','<','>','.',',',':',';','§','|','_','\','@','€','~','^','ˇ','½','*'";
       return characters;
+    }
+
+    public static void FlushTransactionsToDisk()
+    {
+      _database.FlushTransactionsToDisk();
+    }
+
+    public static void RevertFlushTransactionsToDisk()
+    {
+      _database.RevertFlushTransactionsToDisk();
+    }
+
+    public static bool DbHealth
+    {
+      get
+      {
+        return _database.DbHealth;
+      }
     }
   }
 }

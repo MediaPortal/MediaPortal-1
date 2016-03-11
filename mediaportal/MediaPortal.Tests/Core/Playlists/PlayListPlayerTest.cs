@@ -75,12 +75,23 @@ namespace MediaPortal.Tests.Core.Playlists
       get { return true; }
     }
 
+    public bool Paused
+    {
+      get { return Player.g_Player.Paused; }
+    }
+
     public void Release()
     {
       throw new Exception("The method or operation is not implemented.");
     }
 
     public bool Play(string strFile)
+    {
+      hasPlayBeenCalled = true;
+      return true;
+    }
+
+    public bool PlayMusic (string strFile)
     {
       hasPlayBeenCalled = true;
       return true;
@@ -131,6 +142,16 @@ namespace MediaPortal.Tests.Core.Playlists
     public bool ShowFullScreenWindow()
     {
       return false;
+    }
+
+    public bool Play(string strFile, Player.g_Player.MediaType type)
+    {
+      return true;
+    }
+
+    public bool Play(string strFile, MediaPortal.Player.g_Player.MediaType type, int title, bool forcePlay)
+    {
+      return true;
     }
 
     #endregion

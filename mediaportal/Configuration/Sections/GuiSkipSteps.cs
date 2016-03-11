@@ -431,7 +431,7 @@ namespace MediaPortal.Configuration.Sections
       this.checkBoxStep16.TabIndex = 15;
       this.checkBoxStep16.Text = "+/- 3 h";
       this.checkBoxStep16.UseVisualStyleBackColor = true;
-      this.checkBoxStep16.ClientSizeChanged += new System.EventHandler(this.checkBoxStep_Click);
+      this.checkBoxStep16.Click += new System.EventHandler(this.checkBoxStep_Click);
       // 
       // checkBoxStep4
       // 
@@ -457,7 +457,7 @@ namespace MediaPortal.Configuration.Sections
       this.checkBoxStep15.TabIndex = 14;
       this.checkBoxStep15.Text = "+/- 2 h";
       this.checkBoxStep15.UseVisualStyleBackColor = true;
-      this.checkBoxStep15.ClientSizeChanged += new System.EventHandler(this.checkBoxStep_Click);
+      this.checkBoxStep15.Click += new System.EventHandler(this.checkBoxStep_Click);
       // 
       // checkBoxStep12
       // 
@@ -551,7 +551,7 @@ namespace MediaPortal.Configuration.Sections
       this.checkBoxStep14.TabIndex = 13;
       this.checkBoxStep14.Text = "+/- 1,5 h";
       this.checkBoxStep14.UseVisualStyleBackColor = true;
-      this.checkBoxStep14.ClientSizeChanged += new System.EventHandler(this.checkBoxStep_Click);
+      this.checkBoxStep14.Click += new System.EventHandler(this.checkBoxStep_Click);
       // 
       // checkBoxStep8
       // 
@@ -577,7 +577,7 @@ namespace MediaPortal.Configuration.Sections
       this.checkBoxStep13.TabIndex = 12;
       this.checkBoxStep13.Text = "+/- 1 h";
       this.checkBoxStep13.UseVisualStyleBackColor = true;
-      this.checkBoxStep13.ClientSizeChanged += new System.EventHandler(this.checkBoxStep_Click);
+      this.checkBoxStep13.Click += new System.EventHandler(this.checkBoxStep_Click);
       // 
       // checkBoxStep7
       // 

@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!--version="1.0" encoding="utf-8" standalone="yes"-->
+<window>
+  <allowoverlay>no</allowoverlay>
+  <controls>
+    <!-- *** Devices *** -->
+    <control>
+      <type>group</type>
+      <description>group element</description>
+      <visible>Control.IsVisible(51)+!control.hasfocus(999)</visible>
+      <control>
+        <type>image</type>
+        <posX>513</posX>
+        <posY>210</posY>
+        <width>1350</width>
+        <height>814</height>
+        <texture mask="picturecase_mask.png">black.png</texture>
+        <colordiffuse>bbffffff</colordiffuse>
+        <visible>control.isvisible(51)</visible>
+      </control>
+      <control>
+        <description>Devices Image</description>
+        <type>image</type>
+        <id>1</id>
+        <posX>547</posX>
+        <posY>225</posY>
+        <width>43</width>
+        <height>45</height>
+        <keepaspectratio>yes</keepaspectratio>
+        <texture>htpcinfo_device.png</texture>
+      </control>
+      <control>
+        <description>Devices</description>
+        <type>label</type>
+        <id>1</id>
+        <posX>603</posX>
+        <posY>225</posY>
+        <label>#HTPCInfo.TranslationDevice</label>
+        <font>font14</font>
+        <textcolor>ffffd700</textcolor>
+      </control>
+      <!-- *** TV Devices *** -->
+      <control>
+        <description>TV Device Name</description>
+        <type>label</type>
+        <id>1</id>
+        <posX>547</posX>
+        <posY>280</posY>
+        <label>#HTPCInfo.TranslationTVDevice (#HTPCInfo.TVDeviceCount):</label>
+        <font>font11</font>
+        <textcolor>ffffd700</textcolor>
+      </control>
+      <control>
+        <description>TV device Value</description>
+        <type>label</type>
+        <id>1</id>
+        <posX>547</posX>
+        <posY>315</posY>
+        <font>font11</font>
+        <textcolor>ffffd700</textcolor>
+        <label>#HTPCInfo.TVDevice1Name (#HTPCInfo.TVDevice1Type), #HTPCInfo.TVDevice1Enabled on TVServer #HTPCInfo.TVServerIPAddress</label>
+      </control>
+      <control>
+        <description>TV device Value</description>
+        <type>label</type>
+        <id>1</id>
+        <posX>547</posX>
+        <posY>351</posY>
+        <font>font11</font>
+        <textcolor>ffffd700</textcolor>
+        <label>#HTPCInfo.TVDevice2Name (#HTPCInfo.TVDevice2Type), #HTPCInfo.TVDevice2Enabled</label>
+      </control>
+      <control>
+        <description>TV device Value</description>
+        <type>label</type>
+        <id>1</id>
+        <posX>547</posX>
+        <posY>385</posY>
+        <font>font11</font>
+        <textcolor>ffffd700</textcolor>
+        <label>#HTPCInfo.TVDevice3Name (#HTPCInfo.TVDevice3Type), #HTPCInfo.TVDevice3Enabled</label>
+      </control>
+      <!-- *** Drive Devices *** -->
+      <control>
+        <description>Drive Device Name</description>
+        <type>label</type>
+        <id>1</id>
+        <posX>547</posX>
+        <posY>435</posY>
+        <label>#HTPCInfo.TranslationDriveDevice:</label>
+        <font>font11</font>
+        <textcolor>ffffd700</textcolor>
+      </control>
+      <control>
+        <description>Drive Device Value</description>
+        <type>label</type>
+        <id>1</id>
+        <posX>547</posX>
+        <posY>471</posY>
+        <font>font11</font>
+        <textcolor>ffffd700</textcolor>
+        <label>#HTPCInfo.Drive1Model, #HTPCInfo.TranslationDriveInterface #HTPCInfo.Drive1InterfaceType, #HTPCInfo.TranslationDriveType #HTPCInfo.Drive1Type, #HTPCInfo.Drive1PartitionCount #HTPCInfo.TranslationDrivePartition</label>
+      </control>
+      <control>
+        <description>Drive Device Value</description>
+        <type>label</type>
+        <id>1</id>
+        <posX>547</posX>
+        <posY>505</posY>
+        <font>font11</font>
+        <textcolor>ffffd700</textcolor>
+        <label>#HTPCInfo.Drive2Model, #HTPCInfo.TranslationDriveInterface #HTPCInfo.Drive2InterfaceType, #HTPCInfo.TranslationDriveType #HTPCInfo.Drive2Type, #HTPCInfo.Drive2PartitionCount #HTPCInfo.TranslationDrivePartition</label>
+      </control>
+      <control>
+        <description>Drive Device Value</description>
+        <type>label</type>
+        <id>1</id>
+        <posX>547</posX>
+        <posY>540</posY>
+        <font>font11</font>
+        <textcolor>ffffd700</textcolor>
+        <label>#HTPCInfo.Drive3Model, #HTPCInfo.TranslationDriveInterface #HTPCInfo.Drive3InterfaceType, #HTPCInfo.TranslationDriveType #HTPCInfo.Drive3Type, #HTPCInfo.Drive3PartitionCount #HTPCInfo.TranslationDrivePartition</label>
+      </control>
+      <control>
+        <description>Drive Device Value</description>
+        <type>label</type>
+        <id>1</id>
+        <posX>547</posX>
+        <posY>576</posY>
+        <font>font11</font>
+        <textcolor>ffffd700</textcolor>
+        <label>#HTPCInfo.Drive4Model, #HTPCInfo.TranslationDriveInterface #HTPCInfo.Drive4InterfaceType, #HTPCInfo.TranslationDriveType #HTPCInfo.Drive4Type, #HTPCInfo.Drive4PartitionCount #HTPCInfo.TranslationDrivePartition</label>
+      </control>
+      <!-- *** Optical Drive *** -->
+      <control>
+        <description>Optical Drive Name</description>
+        <type>label</type>
+        <id>1</id>
+        <posX>547</posX>
+        <posY>624</posY>
+        <label>#HTPCInfo.TranslationOpticalDriveDevice:</label>
+        <font>font11</font>
+        <textcolor>ffffd700</textcolor>
+      </control>
+      <control>
+        <description>Optical Device Value</description>
+        <type>label</type>
+        <id>1</id>
+        <posX>547</posX>
+        <posY>660</posY>
+        <font>font11</font>
+        <textcolor>ffffd700</textcolor>
+        <label>#HTPCInfo.OpticalDrive1Description (#HTPCInfo.OpticalDrive1Type)</label>
+      </control>
+      <control>
+        <description>Optical Device Value</description>
+        <type>label</type>
+        <id>1</id>
+        <posX>547</posX>
+        <posY>696</posY>
+        <font>font11</font>
+        <textcolor>ffffd700</textcolor>
+        <label>#HTPCInfo.OpticalDrive2Description (#HTPCInfo.OpticalDrive2Type)</label>
+      </control>
+      <!-- *** Clients *** -->
+      <control>
+        <description>Clients Image</description>
+        <type>image</type>
+        <id>1</id>
+        <posX>547</posX>
+        <posY>765</posY>
+        <width>43</width>
+        <height>45</height>
+        <keepaspectratio>yes</keepaspectratio>
+        <texture>htpcinfo_client.png</texture>
+      </control>
+      <control>
+        <description>Clients</description>
+        <type>label</type>
+        <id>1</id>
+        <posX>603</posX>
+        <posY>765</posY>
+        <label>Clients</label>
+        <font>font14</font>
+        <textcolor>ffffd700</textcolor>
+      </control>
+      <control>
+        <description>Client Value</description>
+        <type>label</type>
+        <id>1</id>
+        <posX>547</posX>
+        <posY>814</posY>
+        <font>font11</font>
+        <textcolor>ffffd700</textcolor>
+        <label>#HTPCInfo.TVClient1Name (#HTPCInfo.TVClient1IPAddress), #HTPCInfo.TVClient1Stream (#HTPCInfo.TranslationActive: #HTPCInfo.TVClient1Active)</label>
+      </control>
+      <control>
+        <description>Client Value</description>
+        <type>label</type>
+        <id>1</id>
+        <posX>547</posX>
+        <posY>849</posY>
+        <font>font11</font>
+        <textcolor>ffffd700</textcolor>
+        <label>#HTPCInfo.TVClient2Name (#HTPCInfo.TVClient2IPAddress), #HTPCInfo.TVClient2Stream (#HTPCInfo.TranslationActive: #HTPCInfo.TVClient2Active)</label>
+      </control>
+      <control>
+        <description>Client Value</description>
+        <type>label</type>
+        <id>1</id>
+        <posX>547</posX>
+        <posY>885</posY>
+        <font>font11</font>
+        <textcolor>ffffd700</textcolor>
+        <label>#HTPCInfo.TVClient3Name (#HTPCInfo.TVClient3IPAddress), #HTPCInfo.TVClient3Stream (#HTPCInfo.TranslationActive: #HTPCInfo.TVClient3Active)</label>
+      </control>
+    </control>
+  </controls>
+</window>

@@ -111,7 +111,7 @@ namespace MediaPortal.Configuration.Sections
         // Bold and Green if there is words match, Bold and orange for others
         ListViewItem newItem = new ListViewItem();
         newItem.Text = movie;
-        if (movie.ToLower().Contains(_labelFileName.Text.ToLower()))
+        if (movie.ToLowerInvariant().Contains(_labelFileName.Text.ToLowerInvariant()))
         {
           newItem.ForeColor = System.Drawing.Color.Green;
         }

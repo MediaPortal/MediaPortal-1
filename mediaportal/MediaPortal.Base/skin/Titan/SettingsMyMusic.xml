@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+<id>14</id>
+<defaultcontrol>2</defaultcontrol>
+<allowoverlay>yes</allowoverlay>
+<define>#defaultcontrol.onleft:9998</define>
+<define>#header.label:897</define>
+<controls>
+	<import>settings.menu.xml</import>
+	
+	<control>
+		<type>label</type>
+		<id>1</id>
+		<posX>766</posX>
+		<posY>252</posY>
+		<width>500</width>
+		<label>2</label>
+		<textcolor>85cffe</textcolor>
+		<font>TitanLight20</font>
+	</control>
+	
+	<!--            :: Shuffle Playlist ::            -->
+	
+	<control>
+		<type>image</type>
+		<id>1</id>
+		<posX>740</posX>
+		<posY>353</posY>
+		<width>956</width>
+		<height>52</height>
+		<texture>settings_button_large_focus.png</texture>
+		<visible>Control.HasFocus(2)</visible>
+	</control>
+	
+	<control>
+		<type>image</type>
+		<id>1</id>
+		<posX>740</posX>
+		<posY>353</posY>
+		<width>956</width>
+		<height>52</height>
+		<texture>settings_button_large_nofocus.png</texture>
+		<visible>!Control.HasFocus(2)</visible>
+	</control>
+		
+	<control>
+		<description>Shuffle Playlist on load</description>
+		<type>checkmark</type>
+		<id>2</id>
+		<posX>1590</posX>
+		<posY>365</posY>
+		<align>right</align>
+		<label>-</label>
+		<onup>10</onup>
+		<ondown>6</ondown>
+		<onleft>#defaultcontrol.onleft</onleft>
+		<onright>2</onright>
+	</control>
+		
+	<control>
+		<description>Shuffle Playlist on load label</description>
+		<type>label</type>
+		<id>0</id>
+		<posX>766</posX>
+		<posY>361</posY>
+		<label>228</label>
+	</control>
+		
+	<!--            :: ID3 Tags ::            -->
+		
+	<control>
+		<type>image</type>
+		<id>1</id>
+		<posX>740</posX>
+		<posY>405</posY>
+		<width>956</width>
+		<height>52</height>
+		<texture>settings_button_large_focus.png</texture>
+		<visible>Control.HasFocus(6)</visible>
+	</control>
+	
+	<control>
+		<type>image</type>
+		<id>1</id>
+		<posX>740</posX>
+		<posY>403</posY>
+		<width>956</width>
+		<height>52</height>
+		<texture>settings_button_large_nofocus.png</texture>
+		<visible>!Control.HasFocus(6)</visible>
+	</control>
+
+	<control>
+		<description>Enable ID3  other tagformats</description>
+		<type>checkmark</type>
+		<id>6</id>
+		<posX>1590</posX>
+		<posY>417</posY>
+		<align>right</align>
+		<label>-</label>
+		<onup>2</onup>
+		<ondown>8</ondown>
+		<onleft>#defaultcontrol.onleft</onleft>
+		<onright>6</onright>
+	</control>
+		
+	<control>
+		<description>Enable ID3  other tagformats label</description>
+		<type>label</type>
+		<id>0</id>
+		<posX>766</posX>
+		<posY>413</posY>
+		<textcolor>ffffffff</textcolor>
+		<label>258</label>
+	</control>
+
+	<!--            :: Buttons ::            -->
+	
+
+    <control Style="SettingsButtonLarge">
+		<description>Reorganize My Music Database button</description>
+		<type>button</type>
+		<id>8</id>
+		<label>334</label>
+		<posX>740</posX>
+		<posY>570</posY>
+		<onup>6</onup>
+		<ondown>13</ondown>
+		<onleft>#defaultcontrol.onleft</onleft>
+		<onright>8</onright>
+	</control>
+
+    <control Style="SettingsButtonLarge">
+		<description>delete album button</description>
+		<type>button</type>
+		<id>13</id>
+		<label>485</label>
+		<posX>740</posX>
+		<posY>622</posY>
+		<onup>8</onup>
+		<ondown>10</ondown>
+		<onleft>#defaultcontrol.onleft</onleft>
+		<onright>13</onright>
+	</control>
+
+    <control Style="SettingsButtonLarge">
+		<description>Delete Album Info</description>
+		<type>button</type>
+		<id>10</id>
+		<label>422</label>
+		<posX>740</posX>
+		<posY>674</posY>
+		<onup>13</onup>
+		<ondown>2</ondown>
+		<onleft>#defaultcontrol.onleft</onleft>
+		<onright>10</onright>
+	</control>
+
+<import>common.time.xml</import>
+<import>titan.version.xml</import>
+</controls>
+</window>

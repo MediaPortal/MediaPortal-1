@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+    <id>9915</id>
+    <defaultcontrol>10</defaultcontrol>
+    <allowoverlay>yes</allowoverlay>
+    <controls>
+        <import>common.dialog.xml</import>
+        <control>
+            <id>1</id>
+            <description>Lock</description>
+            <type>image</type>
+            <posX>850</posX>
+            <posY>266</posY>
+            <width>48</width>
+            <height>48</height>
+            <texture>lock.png</texture>
+    		<animation effect="fade" time="250">WindowOpen</animation>
+    		<animation effect="slide" start="0,150" end="0,0" tween="quadratic" easing="in" time="200" delay="0">WindowOpen</animation>
+    		<animation effect="fade" time="0">WindowClose</animation>
+        </control>
+        <control>
+            <id>1</id>
+            <description>PinCode Item 1</description>
+            <type>image</type>
+            <onup>101</onup>
+            <posX>820</posX>
+            <posY>811</posY>
+            <width>53</width>
+            <height>41</height>
+            <texture>starblue_rating.png</texture>
+    		<animation effect="fade" time="250">WindowOpen</animation>
+    		<animation effect="slide" start="0,150" end="0,0" tween="quadratic" easing="in" time="200" delay="0">WindowOpen</animation>
+    		<animation effect="fade" time="0">WindowClose</animation>
+        </control>
+        <control>
+            <id>100</id>
+            <description>PinCode Item 1</description>
+            <type>image</type>
+            <onup>101</onup>
+            <posX>820</posX>
+            <posY>811</posY>
+            <width>53</width>
+            <height>41</height>
+            <texture>starwhite_rating.png</texture>
+    		<animation effect="fade" time="250">WindowOpen</animation>
+    		<animation effect="slide" start="0,150" end="0,0" tween="quadratic" easing="in" time="200" delay="0">WindowOpen</animation>
+    		<animation effect="fade" time="0">WindowClose</animation>
+        </control>
+        <control>
+            <id>1</id>
+            <description>PinCode Item 2</description>
+            <type>image</type>
+            <onup>101</onup>
+            <posX>873</posX>
+            <posY>811</posY>
+            <width>53</width>
+            <height>41</height>
+            <texture>starblue_rating.png</texture>
+    		<animation effect="fade" time="250">WindowOpen</animation>
+    		<animation effect="slide" start="0,150" end="0,0" tween="quadratic" easing="in" time="200" delay="0">WindowOpen</animation>
+    		<animation effect="fade" time="0">WindowClose</animation>
+        </control>
+        <control>
+            <id>101</id>
+            <description>PinCode Item 2</description>
+            <type>image</type>
+            <onup>102</onup>
+            <posX>873</posX>
+            <posY>811</posY>
+            <width>53</width>
+            <height>41</height>
+            <texture>starwhite_rating.png</texture>
+    		<animation effect="fade" time="250">WindowOpen</animation>
+    		<animation effect="slide" start="0,150" end="0,0" tween="quadratic" easing="in" time="200" delay="0">WindowOpen</animation>
+    		<animation effect="fade" time="0">WindowClose</animation>
+        </control>
+        <control>
+            <id>1</id>
+            <description>PinCode Item 3</description>
+            <type>image</type>
+            <onup>101</onup>
+            <posX>926</posX>
+            <posY>811</posY>
+            <width>53</width>
+            <height>41</height>
+            <texture>starblue_rating.png</texture>
+    		<animation effect="fade" time="250">WindowOpen</animation>
+    		<animation effect="slide" start="0,150" end="0,0" tween="quadratic" easing="in" time="200" delay="0">WindowOpen</animation>
+    		<animation effect="fade" time="0">WindowClose</animation>
+        </control>
+        <control>
+            <id>102</id>
+            <description>PinCode Item 3</description>
+            <type>image</type>
+            <onup>103</onup>
+            <posX>926</posX>
+            <posY>811</posY>
+            <width>53</width>
+            <height>41</height>
+            <texture>starwhite_rating.png</texture>
+    		<animation effect="fade" time="250">WindowOpen</animation>
+    		<animation effect="slide" start="0,150" end="0,0" tween="quadratic" easing="in" time="200" delay="0">WindowOpen</animation>
+    		<animation effect="fade" time="0">WindowClose</animation>
+        </control>
+        <control>
+            <id>1</id>
+            <description>PinCode Item 4</description>
+            <type>image</type>
+            <onup>101</onup>
+            <posX>979</posX>
+            <posY>811</posY>
+            <width>53</width>
+            <height>41</height>
+            <texture>starblue_rating.png</texture>
+    		<animation effect="fade" time="250">WindowOpen</animation>
+    		<animation effect="slide" start="0,150" end="0,0" tween="quadratic" easing="in" time="200" delay="0">WindowOpen</animation>
+    		<animation effect="fade" time="0">WindowClose</animation>
+        </control>
+        <control>
+            <id>103</id>
+            <description>PinCode Item 4</description>
+            <type>image</type>
+            <onup>104</onup>
+            <posX>979</posX>
+            <posY>811</posY>
+            <width>53</width>
+            <height>41</height>
+            <texture>starwhite_rating.png</texture>
+    		<animation effect="fade" time="250">WindowOpen</animation>
+    		<animation effect="slide" start="0,150" end="0,0" tween="quadratic" easing="in" time="200" delay="0">WindowOpen</animation>
+    		<animation effect="fade" time="0">WindowClose</animation>
+        </control>
+        <control>
+            <id>6</id>
+            <description>Feedback</description>
+            <type>label</type>
+            <posX>470</posX>
+            <posY>440</posY>
+            <width>200</width>
+    		<animation effect="fade" time="250">WindowOpen</animation>
+    		<animation effect="slide" start="0,150" end="0,0" tween="quadratic" easing="in" time="200" delay="0">WindowOpen</animation>
+    		<animation effect="fade" time="0">WindowClose</animation>
+        </control>
+    </controls>
+</window>

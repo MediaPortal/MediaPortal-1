@@ -25,6 +25,8 @@ using System.Collections.Specialized;
 using System.Configuration;
 using System.Configuration.Install;
 using System.Diagnostics;
+using System.Reflection;
+using System.IO;
 using System.Security.Principal;
 using System.ServiceProcess;
 using System.Threading;
@@ -32,6 +34,7 @@ using System.Windows.Forms;
 using System.Runtime.CompilerServices;
 using System.Runtime.Remoting;
 using System.Xml;
+using MediaPortal.Common.Utils.Logger;
 using TvDatabase;
 using TvLibrary.Log;
 using TvControl;
@@ -49,11 +52,40 @@ namespace TvService
     private Thread _tvServiceThread = null;
     private static Thread _unhandledExceptionInThread = null;
 
+    const int SERVICE_ACCEPT_PRESHUTDOWN = 0x100;   // not supported on Windows XP
+    const int SERVICE_CONTROL_PRESHUTDOWN = 0xf;    // not supported on Windows XP
+
     /// <summary>
     /// Initializes a new instance of the <see cref="Service1"/> class.
     /// </summary>
     public Service1()
     {
+      if (Environment.OSVersion.Version.Major >= 6)
+      {
+        try
+        {
+          // Call base Creator
+          MethodInfo init = typeof(ServiceBase).GetMethod("Initialize", BindingFlags.Instance | BindingFlags.NonPublic);
+          init.Invoke(this, new object[] { false });
+
+          // Register the "TvServiceCallbackEx" handler
+          Type targetDelegate = typeof(ServiceBase).Assembly.GetType("System.ServiceProcess.NativeMethods+ServiceControlCallbackEx");
+          FieldInfo commandCallbackEx = typeof(ServiceBase).GetField("commandCallbackEx", BindingFlags.Instance | BindingFlags.NonPublic);
+          commandCallbackEx.SetValue(this, Delegate.CreateDelegate(targetDelegate, this, "TvServiceCallbackEx"));
+
+          // Accept SERVICE_CONTROL_PRESHUTDOWN
+          var acceptedCommands = typeof(ServiceBase).GetField("acceptedCommands", BindingFlags.Instance | BindingFlags.NonPublic);
+          int accCom = (int)acceptedCommands.GetValue(this);
+          acceptedCommands.SetValue(this, accCom | SERVICE_ACCEPT_PRESHUTDOWN);
+
+        }
+        catch (Exception ex)
+        {
+          Log.Error("Exception on Starting TV Service: {0}", ex);
+          throw;
+        }
+      }
+
       AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(CurrentDomain_UnhandledException);
       InitializeComponent();
     }
@@ -91,6 +123,16 @@ namespace TvService
     /// </summary>
     private static void Main(string[] args)
     {
+      // Init Common logger -> this will enable TVPlugin to write in the Mediaportal.log file
+      var loggerName = Path.GetFileNameWithoutExtension(Environment.GetCommandLineArgs()[0]);
+      var dataPath = Log.GetPathName();
+      var loggerPath = Path.Combine(dataPath, "log");
+#if DEBUG
+      if (loggerName != null) loggerName = loggerName.Replace(".vshost", "");
+#endif
+      CommonLogger.Instance = new CommonLog4NetLogger(loggerName, dataPath, loggerPath);
+
+      
       NameValueCollection appSettings = ConfigurationManager.AppSettings;
       appSettings.Set("GentleConfigFile", String.Format(@"{0}\gentle.config", PathManager.GetDataPath));
 
@@ -107,7 +149,7 @@ namespace TvService
         ti.Installers.Add(mi);
         String path = String.Format("/assemblypath={0}",
                                     System.Reflection.Assembly.GetExecutingAssembly().Location);
-        String[] cmdline = {path};
+        String[] cmdline = { path };
         InstallContext ctx = new InstallContext("", cmdline);
         ti.Context = ctx;
         ti.Install(new Hashtable());
@@ -120,7 +162,7 @@ namespace TvService
         ti.Installers.Add(mi);
         String path = String.Format("/assemblypath={0}",
                                     System.Reflection.Assembly.GetExecutingAssembly().Location);
-        String[] cmdline = {path};
+        String[] cmdline = { path };
         InstallContext ctx = new InstallContext("", cmdline);
         ti.Context = ctx;
         ti.Uninstall(null);
@@ -131,7 +173,7 @@ namespace TvService
       if (opt != null && opt.ToUpperInvariant() == "/DEBUG")
       {
         Service1 s = new Service1();
-        s.DoStart(new string[] {"/DEBUG"});
+        s.DoStart(new string[] { "/DEBUG" });
         do
         {
           Thread.Sleep(100);
@@ -144,7 +186,8 @@ namespace TvService
       //
       //   ServicesToRun = new ServiceBase[] {new Service1(), new MySecondUserService()};
       //
-      ServiceBase[] ServicesToRun = new ServiceBase[] {new Service1()};
+      ServiceBase[] ServicesToRun = new ServiceBase[] { new Service1() };
+      ServicesToRun[0].CanShutdown = true;    // Allow OnShutdown() 
       ServiceBase.Run(ServicesToRun);
     }
 
@@ -190,6 +233,9 @@ namespace TvService
             Log.Error("OnStart: exception applying process priority: {0}", ex.StackTrace);
           }
         }
+
+        var layer = new TvBusinessLayer();
+        layer.SetLogLevel();
 
         _tvServiceThread.Start();
 
@@ -282,11 +328,42 @@ namespace TvService
         _tvServiceThread = null;
       }
     }
+
+    /// <summary>
+    /// When implemented in a derived class, executes when the system is shutting down. Specifies what should occur immediately prior to the system shutting down.
+    /// </summary>
+    protected override void OnShutdown()
+    {
+      OnStop();
+    }
+
+    /// <summary>
+    /// Handle service events
+    /// </summary>
+    /// <param name="control"></param>
+    /// <param name="eventType"></param>
+    /// <param name="eventData"></param>
+    /// <param name="eventContext"></param>
+    /// <returns></returns>
+    internal virtual int TvServiceCallbackEx(int control, int eventType, IntPtr eventData, IntPtr eventContext)
+    {
+      var baseCallback = typeof(ServiceBase).GetMethod("ServiceCommandCallbackEx", BindingFlags.Instance | BindingFlags.NonPublic);
+      switch (control)
+      {
+        case SERVICE_CONTROL_PRESHUTDOWN:
+          Log.Debug("TV Service got PRESHUTDOWN event");
+          // Pretend shutdown was called
+          return (int)baseCallback.Invoke(this, new object[] { 0x00000005, eventType, eventData, eventContext });
+        default:
+          // Call base
+          return (int)baseCallback.Invoke(this, new object[] { control, eventType, eventData, eventContext });
+      }
+    }
   }
 
   public class TvServiceThread : IPowerEventHandler
   {
-    #region variables    
+    #region variables
 
     private EventWaitHandle _InitializedEvent;
     private static bool _started;
@@ -445,7 +522,7 @@ namespace TvService
     {
       if (msg == WM_POWERBROADCAST)
       {
-        Log.Debug("TV service PowerEventThread received WM_POWERBROADCAST {1}", wParam.ToInt32());
+        Log.Debug("TV service PowerEventThread received WM_POWERBROADCAST {0}", wParam.ToInt32());
         switch (wParam.ToInt32())
         {
           case PBT_APMQUERYSUSPENDFAILED:
@@ -661,7 +738,7 @@ namespace TvService
       try
       {
         // create the object reference and make the singleton instance available
-        RemotingServices.Marshal(_controller, "TvControl", typeof (IController));
+        RemotingServices.Marshal(_controller, "TvControl", typeof(IController));
         RemoteControl.Clear();
       }
       catch (Exception ex)
@@ -707,6 +784,19 @@ namespace TvService
         if (plugin.MasterOnly == false || _controller.IsMaster)
         {
           Setting setting = layer.GetSetting(String.Format("plugin{0}", plugin.Name), "false");
+          
+          // Start PowerScheduler if PS++ is enabled and remove PS++ entry
+          if (plugin.Name == "PowerScheduler")
+          {
+            Setting settingPSpp = layer.GetSetting(String.Format("pluginPowerScheduler++"), "false");
+            if (settingPSpp.Value == "true")
+            {
+              setting.Value = "true";
+              setting.Persist();
+            }
+            settingPSpp.Remove();
+          }
+
           if (setting.Value == "true")
           {
             Log.Info("TV Service: Plugin: {0} started", plugin.Name);
@@ -773,14 +863,21 @@ namespace TvService
 
     public void OnStop()
     {
-      if (!Started)
+      if (!_started)
         return;
+
       Log.WriteFile("TV Service: stopping");
 
+      // Reset "Global\MPTVServiceInitializedEvent"
       if (_InitializedEvent != null)
       {
         _InitializedEvent.Reset();
       }
+
+      // Stop the plugins
+      StopPlugins();
+
+      // Stop remoting and deinit the TvController
       StopRemoting();
       RemoteControl.Clear();
       if (_controller != null)
@@ -789,7 +886,7 @@ namespace TvService
         _controller = null;
       }
 
-      StopPlugins();
+      // Terminate the power event thread
       if (_powerEventThreadId != 0)
       {
         Log.Debug("TV Service: OnStop asking PowerEventThread to exit");
@@ -798,6 +895,7 @@ namespace TvService
       }
       _powerEventThreadId = 0;
       _powerEventThread = null;
+
       _started = false;
       Log.WriteFile("TV Service: stopped");
     }
@@ -809,43 +907,60 @@ namespace TvService
       {
         if (!Started)
         {
-          Log.Info("TV service: Starting");
+          Log.Info("TV Service: Starting");
 
           Thread.CurrentThread.Name = "TVService";
 
+          // Log TvService start and versions
           FileVersionInfo versionInfo = FileVersionInfo.GetVersionInfo(Application.ExecutablePath);
-
           Log.WriteFile("TVService v" + versionInfo.FileVersion + " is starting up on " +
-                        OSInfo.OSInfo.GetOSDisplayVersion());
+            OSInfo.OSInfo.GetOSDisplayVersion());
 
-          //Check for unsupported operating systems
+          // Warn about unsupported operating systems
           OSPrerequisites.OSPrerequisites.OsCheck(false);
 
+          // Start the power event thread
           _powerEventThread = new Thread(PowerEventThread);
           _powerEventThread.Name = "PowerEventThread";
           _powerEventThread.IsBackground = true;
           _powerEventThread.Start();
+
+          // Init the TvController and start remoting
           _controller = new TVController();
           _controller.Init();
+          StartRemoting();
+
+          // Start the plugins
           StartPlugins();
 
-          StartRemoting();
-          _started = true;
+          // Set "Global\MPTVServiceInitializedEvent"
           if (_InitializedEvent != null)
           {
             _InitializedEvent.Set();
           }
-          Log.Info("TV service: Started");
+          _started = true;
+          Log.Info("TV Service: Started");
+
+          // Wait for termination
           while (true)
           {
             Thread.Sleep(1000);
           }
         }
       }
+      catch (ThreadAbortException)
+      {
+        Log.Info("TV Service is being stopped");
+      }
       catch (Exception ex)
       {
-        //wait for thread to exit. eg. when stopping tvservice       
-        Log.Error("TvService OnStart failed : {0}", ex.ToString());
+        if (_started)
+          Log.Error("TV Service terminated unexpectedly: {0}", ex.ToString());
+        else
+          Log.Error("TV Service failed to start: {0}", ex.ToString());
+      }
+      finally
+      {
         _started = true; // otherwise the onstop code will not complete.
         OnStop();
       }

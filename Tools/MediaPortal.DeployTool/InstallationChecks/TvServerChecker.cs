@@ -56,15 +56,22 @@ namespace MediaPortal.DeployTool.InstallationChecks
       string pwdparam = string.Empty;
       if (!String.IsNullOrEmpty(dbtype))
       {
-        sqlparam = dbtype == "msSQL2005" ? "/DeploySql:sqlserver" : "/DeploySql:mysql";
-        pwdparam = "/DeployPwd:" + InstallationProperties.Instance["DBMSPassword"];
+        if (dbtype == "DBAlreadyInstalled")
+        {
+          sqlparam = "--DeploySql:DBAlreadyInstalled";
+        }
+        else
+        {
+          sqlparam = dbtype == "msSQL2005" ? "--DeploySql:sqlserver" : "--DeploySql:mysql"; 
+        }
+        pwdparam = "--DeployPwd:" + InstallationProperties.Instance["DBMSPassword"];
       }
 
       //NSIS installer doesn't want " in parameters (chefkoch)
-      //Rember that /D must be the last one         (chefkoch)
+      //Remember that /D must be the last one         (chefkoch)
       Process setup = Process.Start(_fileName,
-                                    String.Format("/S /noClient /DeployMode {0} {1} {2} /D={3}", UpdateMode, sqlparam,
-                                                  pwdparam, targetDir));
+                                    String.Format("/S /noClient /DeployMode --DeployMode {0} {1} {2} /D={3}", sqlparam, pwdparam,
+                                                  UpdateMode, targetDir));
 
       if (setup != null)
       {

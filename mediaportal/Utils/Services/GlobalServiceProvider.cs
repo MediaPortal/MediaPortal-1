@@ -18,10 +18,12 @@
 
 #endregion
 
+using System;
 using System.IO;
 using System.Windows.Forms;
 using MediaPortal.ServiceImplementations;
 using MediaPortal.Threading;
+using MediaPortal.Common.Utils.Logger;
 
 namespace MediaPortal.Services
 {
@@ -112,7 +114,18 @@ namespace MediaPortal.Services
 
     private static ILog LogServiceRequested(ServiceProvider services)
     {
-      ILog log = new LogImpl();
+      // Init Common logger -> this will enable TVPlugin to write in the Mediaportal.log file
+      var loggerName = Path.GetFileNameWithoutExtension(Environment.GetCommandLineArgs()[0]);
+      var dataPath = Configuration.Config.GetFolder(Configuration.Config.Dir.Config);
+      var loggerPath = Configuration.Config.GetFolder(Configuration.Config.Dir.Log);
+#if DEBUG
+      if (loggerName != null) loggerName = loggerName.Replace(".vshost", "");
+#endif
+      CommonLogger.Instance = new CommonLog4NetLogger(loggerName, dataPath, loggerPath);
+      
+      // Init wrapper from CommonLogger to the current ILog interface
+      // -> this will ensure that all external plugins will work without recompile
+      ILog log = new Log4NetWrapper();  //LogImpl();
       services.Add<ILog>(log);
       return log;
 

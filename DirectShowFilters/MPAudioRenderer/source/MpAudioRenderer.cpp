@@ -72,7 +72,10 @@ CMPAudioRenderer::CMPAudioRenderer(LPUNKNOWN punk, HRESULT* phr)
 
   m_Settings.AddRef();
 
-  m_pClock = new CSyncClock(static_cast<IBaseFilter*>(this), phr, this, m_Settings.m_bHWBasedRefClock);
+  m_hRendererStarving = CreateEvent(NULL, TRUE, FALSE, NULL);
+  m_hStopWaitingRenderer = CreateEvent(NULL, FALSE, FALSE, NULL);
+
+  m_pClock = new CSyncClock(static_cast<IBaseFilter*>(this), phr, this, &m_Settings);
 
   if (!m_pClock)
   {
@@ -121,7 +124,8 @@ CMPAudioRenderer::CMPAudioRenderer(LPUNKNOWN punk, HRESULT* phr)
     return;
   }  
 
-  m_pPipeline->Start(0);
+  if (SUCCEEDED(m_pRenderer->SetMoreSamplesEvent(&m_hRendererStarving)))
+    m_pPipeline->Start(0);
 }
 
 CMPAudioRenderer::~CMPAudioRenderer()
@@ -129,6 +133,14 @@ CMPAudioRenderer::~CMPAudioRenderer()
   Log("MP Audio Renderer - destructor - instance 0x%x", this);
   
   CAutoLock cInterfaceLock(&m_InterfaceLock);
+
+  m_pRenderer->SetMoreSamplesEvent(NULL);
+
+  if (m_hRendererStarving)
+    CloseHandle(m_hRendererStarving);
+
+  if (m_hStopWaitingRenderer)
+    CloseHandle(m_hStopWaitingRenderer);
 
   if (m_pVolumeHandler)
     m_pVolumeHandler->Release();
@@ -155,7 +167,6 @@ CMPAudioRenderer::~CMPAudioRenderer()
   delete m_pOutBitDepthAdapter;
   delete m_pTimestretchFilter;
   delete m_pSampleRateConverter;
-  delete m_pStreamSanitizer;
   delete m_pChannelMixer;
 
   Log("MP Audio Renderer - destructor - instance 0x%x - end", this);
@@ -192,15 +203,10 @@ HRESULT CMPAudioRenderer::SetupFilterPipeline()
   if (!m_pSampleRateConverter)
     return E_OUTOFMEMORY;
 
-  m_pStreamSanitizer = new CStreamSanitizer(&m_Settings);
-  if (!m_pStreamSanitizer)
-    return E_OUTOFMEMORY;
-
   m_pChannelMixer = new CChannelMixer(&m_Settings);
   if (!m_pChannelMixer)
     return E_OUTOFMEMORY;
 
-  m_pStreamSanitizer->ConnectTo(m_pInBitDepthAdapter);
   m_pInBitDepthAdapter->ConnectTo(m_pSampleRateConverter);
   m_pSampleRateConverter->ConnectTo(m_pChannelMixer);
   m_pChannelMixer->ConnectTo(m_pTimestretchFilter);
@@ -209,7 +215,7 @@ HRESULT CMPAudioRenderer::SetupFilterPipeline()
   m_pAC3Encoder->ConnectTo(m_pWASAPIRenderer);
   
   // Entry point for the audio filter pipeline
-  m_pPipeline = m_pStreamSanitizer;
+  m_pPipeline = m_pInBitDepthAdapter;
 
   return S_OK;
 }
@@ -218,8 +224,8 @@ STDMETHODIMP CMPAudioRenderer::GetState(DWORD dwMSecs, FILTER_STATE* State)
 {
   CheckPointer(State, E_POINTER);
 
-  if (m_pRenderer->BufferredDataDuration() <= 2500000 &&        // 250 ms
-      GetCurrentTimestamp() - m_lastSampleArrivalTime < 500000) // 50 ms
+  if ((m_pRenderer->BufferredDataDuration() <= (m_Settings.m_msOutputBuffer * 10000)) &&
+     (GetCurrentTimestamp() - m_lastSampleArrivalTime < SAMPLE_RECEIVE_TIMEOUT)) 
   {
     NotifyEvent(EC_STARVATION, 0, 0);
     *State = State_Paused;
@@ -276,10 +282,10 @@ HRESULT	CMPAudioRenderer::CheckMediaType(const CMediaType* pmt)
   }
 }
 
-HRESULT CMPAudioRenderer::AudioClock(UINT64& pTimestamp, UINT64& pQpc)
+HRESULT CMPAudioRenderer::AudioClock(ULONGLONG& ullTimestamp, ULONGLONG& ullQpc, ULONGLONG ullQpcNow)
 {
   if (m_pRenderer)
-    return m_pRenderer->AudioClock(pTimestamp, pQpc);
+    return m_pRenderer->AudioClock(ullTimestamp, ullQpc, ullQpcNow);
   else
     return S_FALSE;
 
@@ -382,6 +388,12 @@ bool CMPAudioRenderer::DeliverSample(IMediaSample* pSample)
     if (pSample->IsDiscontinuity() == S_OK)
       Log("Discontinuity flag set on in the incoming sample: %6.3f", rtStart / 10000000.0);
   }
+
+  HANDLE handles[2];
+  handles[0] = m_hRendererStarving;
+  handles[1] = m_hStopWaitingRenderer;
+
+  DWORD result = WaitForMultipleObjects(2, &handles[0], FALSE, INFINITE);
 
   return  m_pPipeline->PutSample(pSample) == S_OK ? true : false;
 }
@@ -521,6 +533,9 @@ STDMETHODIMP CMPAudioRenderer::Stop()
 
   CAutoLock cInterfaceLock(&m_InterfaceLock);
   
+  if (m_hStopWaitingRenderer)
+    SetEvent(m_hStopWaitingRenderer);
+
   m_pPipeline->BeginStop();
   m_pPipeline->EndStop();
 
@@ -534,6 +549,9 @@ STDMETHODIMP CMPAudioRenderer::Pause()
 {
   Log("Pause");
   CAutoLock cInterfaceLock(&m_InterfaceLock);
+
+  if (m_hStopWaitingRenderer)
+    SetEvent(m_hStopWaitingRenderer);
 
   HRESULT hr = m_pPipeline->Pause();
 
@@ -571,6 +589,9 @@ HRESULT CMPAudioRenderer::EndOfStream()
 {
   Log("EndOfStream");
 
+  if (m_hStopWaitingRenderer)
+    SetEvent(m_hStopWaitingRenderer);
+
   HRESULT hr = m_pPipeline->EndOfStream();
   if (FAILED(hr))
     return hr;
@@ -584,6 +605,9 @@ HRESULT CMPAudioRenderer::BeginFlush()
 
   if (m_State == State_Paused) 
     NotReady();
+
+  if (m_hStopWaitingRenderer)
+    SetEvent(m_hStopWaitingRenderer);
 
   SourceThreadCanWait(FALSE);
   CancelNotification();
@@ -601,7 +625,7 @@ HRESULT CMPAudioRenderer::EndFlush()
   CAutoLock cInterfaceLock(&m_InterfaceLock);
   
   m_pPipeline->EndFlush();
-  m_pClock->Reset();
+  m_pClock->Reset(0);
 
   return CBaseRenderer::EndFlush(); 
 }

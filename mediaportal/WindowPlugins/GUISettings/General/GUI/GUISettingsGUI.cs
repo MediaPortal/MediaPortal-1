@@ -18,9 +18,6 @@
 
 #endregion
 
-using System;
-using System.Collections;
-using System.Globalization;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
 using MediaPortal.GUI.Settings;
@@ -48,20 +45,6 @@ namespace WindowPlugins.GUISettings
     private string _pin = string.Empty;
 
 
-    private class CultureComparer : IComparer
-    {
-      #region IComparer Members
-
-      public int Compare(object x, object y)
-      {
-        CultureInfo info1 = (CultureInfo)x;
-        CultureInfo info2 = (CultureInfo)y;
-        return String.Compare(info1.EnglishName, info2.EnglishName, true);
-      }
-
-      #endregion
-    }
-
     public GUISettingsGUIMain()
     {
       GetID = (int)Window.WINDOW_SETTINGS_GUIMAIN; //1021
@@ -80,7 +63,7 @@ namespace WindowPlugins.GUISettings
       {
         btnFileMenu.Selected = xmlreader.GetValueAsBool("filemenu", "enabled", true);
         btnPin.IsEnabled = btnFileMenu.Selected;
-        _pin = Utils.DecryptPin(xmlreader.GetValueAsString("filemenu", "pincode", ""));
+        _pin = Utils.DecryptPassword(xmlreader.GetValueAsString("filemenu", "pincode", ""));
       }
     }
 
@@ -89,7 +72,7 @@ namespace WindowPlugins.GUISettings
       using (Settings xmlwriter = new MPSettings())
       {
         xmlwriter.SetValueAsBool("filemenu", "enabled", btnFileMenu.Selected);
-        xmlwriter.SetValue("filemenu", "pincode", Utils.EncryptPin(_pin));
+        xmlwriter.SetValue("filemenu", "pincode", Utils.EncryptPassword(_pin));
       }
     }
 
@@ -171,19 +154,36 @@ namespace WindowPlugins.GUISettings
       }
       if (control == btnPin)
       {
-        string tmpPin = _pin;
-        GetStringFromKeyboard(ref tmpPin, 4);
+        if (_pin != string.Empty)
+        {
+          var dlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_OK);
+          if (null == dlgOK)
+          {
+            return;
+          }
+          dlgOK.SetHeading("");
+          dlgOK.SetLine(1, 100513);
+          dlgOK.DoModal(GetID);
 
-        int number;
-        if (Int32.TryParse(tmpPin, out number))
-        {
-          _pin = number.ToString();
+          if (!RequestPin())
+          {
+            return;
+          }
         }
-        else
+
+        var dlgOK2 = (GUIDialogOK)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_OK);
+        if (null == dlgOK2)
         {
-          _pin = string.Empty;
+          return;
         }
+        dlgOK2.SetHeading("");
+        dlgOK2.SetLine(1, 100514);
+        dlgOK2.DoModal(GetID);
+
+        SetPin();
+        
         SettingsChanged(true);
+
       }
       if (control == btnOnScreenDisplay)
       {
@@ -198,6 +198,40 @@ namespace WindowPlugins.GUISettings
       }
 
       base.OnClicked(controlId, control, actionType);
+    }
+
+    private void SetPin()
+    {
+      var msgGetPassword = new GUIMessage(GUIMessage.MessageType.GUI_MSG_GET_PASSWORD, 0, 0, 0, 0, 0, 0);
+      GUIWindowManager.SendMessage(msgGetPassword);
+        
+      _pin = msgGetPassword.Label;
+    }
+
+    private bool RequestPin()
+    {
+      bool retry = true;
+
+      while (retry)
+      {
+        var msgGetPassword = new GUIMessage(GUIMessage.MessageType.GUI_MSG_GET_PASSWORD, 0, 0, 0, 0, 0, 0);
+        GUIWindowManager.SendMessage(msgGetPassword);
+
+        if (msgGetPassword.Label == _pin)
+        {
+          return true;
+        }
+
+        var msgWrongPassword = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WRONG_PASSWORD, 0, 0, 0, 0, 0,
+                                                     0);
+        GUIWindowManager.SendMessage(msgWrongPassword);
+
+        if (!(bool)msgWrongPassword.Object)
+        {
+          retry = false;
+        }
+      }
+      return false;
     }
 
     protected override void OnPageLoad()
@@ -218,6 +252,12 @@ namespace WindowPlugins.GUISettings
     protected override void OnPageDestroy(int newWindowId)
     {
       SaveSettings();
+
+      if (MediaPortal.GUI.Settings.GUISettings.SettingsChanged && !Utils.IsGUISettingsWindow(newWindowId))
+      {
+        MediaPortal.GUI.Settings.GUISettings.OnRestartMP(GetID);
+      }
+
       base.OnPageDestroy(newWindowId);
     }
 
@@ -232,29 +272,6 @@ namespace WindowPlugins.GUISettings
     }
 
     #endregion
-    
-    private void GetStringFromKeyboard(ref string strLine, int maxLenght)
-    {
-      VirtualKeyboard keyboard = (VirtualKeyboard)GUIWindowManager.GetWindow((int)Window.WINDOW_VIRTUAL_KEYBOARD);
-      if (null == keyboard)
-      {
-        return;
-      }
-      keyboard.Reset();
-      keyboard.Text = strLine;
-
-      if (maxLenght > 0)
-      {
-        keyboard.SetMaxLength(maxLenght);
-      }
-
-      keyboard.DoModal(GUIWindowManager.ActiveWindow);
-
-      if (keyboard.IsConfirmed)
-      {
-        strLine = keyboard.Text;
-      }
-    }
 
     private void SettingsChanged(bool settingsChanged)
     {

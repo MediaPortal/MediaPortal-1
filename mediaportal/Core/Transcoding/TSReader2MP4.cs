@@ -81,7 +81,7 @@ namespace MediaPortal.Core.Transcoding
     {
       if (!Supports(format)) return false;
       string ext = System.IO.Path.GetExtension(info.file);
-      if (ext.ToLower() != ".ts" && ext.ToLower() != ".mpg")
+      if (ext.ToLowerInvariant() != ".ts" && ext.ToLowerInvariant() != ".mpg")
       {
         Log.Info("TSReader2MP4: wrong file format");
         return false;

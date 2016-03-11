@@ -33,7 +33,7 @@
 
 extern void LogDebug( const char *fmt, ... );
 extern void LogDebugPTS( const char *fmt, uint64_t pts );
-extern void GetLogFile(char *pLog);
+extern void GetLogFile(TCHAR* pLog);
 
 //
 // Constructor

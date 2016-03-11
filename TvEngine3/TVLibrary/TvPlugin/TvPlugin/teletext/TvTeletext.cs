@@ -34,7 +34,7 @@ namespace TvPlugin.teletext
     [SkinControl(502)] protected GUIButtonControl btnPage100 = null;
     [SkinControl(503)] protected GUIButtonControl btnPage200 = null;
     [SkinControl(504)] protected GUIButtonControl btnPage300 = null;
-    [SkinControl(505)] protected GUIToggleButtonControl btnHidden = null;
+    [SkinControl(505)] protected GUICheckButton btnHidden = null;
     [SkinControl(506)] protected GUISelectButtonControl btnSubPage = null;
     [SkinControl(507)] protected GUIButtonControl btnFullscreen = null;
 

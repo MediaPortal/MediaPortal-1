@@ -26,10 +26,10 @@
 ///
 ////////////////////////////////////////////////////////////////////////////////
 //
-// Last changed  : $Date: 2009-02-21 18:00:14 +0200 (Sat, 21 Feb 2009) $
+// Last changed  : $Date: 2012-08-30 22:45:25 +0300 (Thu, 30 Aug 2012) $
 // File revision : $Revision: 4 $
 //
-// $Id: BPMDetect.cpp 63 2009-02-21 16:00:14Z oparviai $
+// $Id: BPMDetect.cpp 149 2012-08-30 19:45:25Z oparviai $
 //
 ////////////////////////////////////////////////////////////////////////////////
 //
@@ -57,6 +57,7 @@
 #include <math.h>
 #include <assert.h>
 #include <string.h>
+#include <stdio.h>
 #include "FIFOSampleBuffer.h"
 #include "PeakFinder.h"
 #include "BPMDetect.h"
@@ -74,6 +75,37 @@ const float avgdecay = 0.99986f;
 const float avgnorm = (1 - avgdecay);
 
 
+////////////////////////////////////////////////////////////////////////////////
+
+// Enable following define to create bpm analysis file:
+
+// #define _CREATE_BPM_DEBUG_FILE
+
+#ifdef _CREATE_BPM_DEBUG_FILE
+
+    #define DEBUGFILE_NAME  "c:\\temp\\soundtouch-bpm-debug.txt"
+
+    static void _SaveDebugData(const float *data, int minpos, int maxpos, double coeff)
+    {
+        FILE *fptr = fopen(DEBUGFILE_NAME, "wt");
+        int i;
+
+        if (fptr)
+        {
+            printf("\n\nWriting BPM debug data into file " DEBUGFILE_NAME "\n\n");
+            for (i = minpos; i < maxpos; i ++)
+            {
+                fprintf(fptr, "%d\t%.1lf\t%f\n", i, coeff / (double)i, data[i]);
+            }
+            fclose(fptr);
+        }
+    }
+#else
+    #define _SaveDebugData(a,b,c,d)
+#endif
+
+////////////////////////////////////////////////////////////////////////////////
+
 
 BPMDetect::BPMDetect(int numChannels, int aSampleRate)
 {
@@ -85,19 +117,19 @@ BPMDetect::BPMDetect(int numChannels, int aSampleRate)
 
     envelopeAccu = 0;
 
-    // Initialize RMS volume accumulator to RMS level of 3000 (out of 32768) that's
-    // a typical RMS signal level value for song data. This value is then adapted
+    // Initialize RMS volume accumulator to RMS level of 1500 (out of 32768) that's
+    // safe initial RMS signal level value for song data. This value is then adapted
     // to the actual level during processing.
-#ifdef INTEGER_SAMPLES
+#ifdef SOUNDTOUCH_INTEGER_SAMPLES
     // integer samples
-    RMSVolumeAccu = (3000 * 3000) / avgnorm;
+    RMSVolumeAccu = (1500 * 1500) / avgnorm;
 #else
     // float samples, scaled to range [-1..+1[
-    RMSVolumeAccu = (0.092f * 0.092f) / avgnorm;
+    RMSVolumeAccu = (0.045f * 0.045f) / avgnorm;
 #endif
 
-    // choose decimation factor so that result is approx. 500 Hz
-    decimateBy = sampleRate / 500;
+    // choose decimation factor so that result is approx. 1000 Hz
+    decimateBy = sampleRate / 1000;
     assert(decimateBy > 0);
     assert(INPUT_BLOCK_SAMPLES < decimateBy * DECIMATED_BLOCK_SAMPLES);
 
@@ -165,7 +197,7 @@ int BPMDetect::decimate(SAMPLETYPE *dest, const SAMPLETYPE *src, int numsamples)
             out = (LONG_SAMPLETYPE)(decimateSum / (decimateBy * channels));
             decimateSum = 0;
             decimateCount = 0;
-#ifdef INTEGER_SAMPLES
+#ifdef SOUNDTOUCH_INTEGER_SAMPLES
             // check ranges for sure (shouldn't actually be necessary)
             if (out > 32767) 
             {
@@ -175,7 +207,7 @@ int BPMDetect::decimate(SAMPLETYPE *dest, const SAMPLETYPE *src, int numsamples)
             {
                 out = -32768;
             }
-#endif // INTEGER_SAMPLES
+#endif // SOUNDTOUCH_INTEGER_SAMPLES
             dest[outcount] = (SAMPLETYPE)out;
             outcount ++;
         }
@@ -215,16 +247,15 @@ void BPMDetect::updateXCorr(int process_samples)
 }
 
 
-
 // Calculates envelope of the sample data
 void BPMDetect::calcEnvelope(SAMPLETYPE *samples, int numsamples) 
 {
-    const float decay = 0.7f;               // decay constant for smoothing the envelope
-    const float norm = (1 - decay);
+    const static double decay = 0.7f;               // decay constant for smoothing the envelope
+    const static double norm = (1 - decay);
 
     int i;
     LONG_SAMPLETYPE out;
-    float val;
+    double val;
 
     for (i = 0; i < numsamples; i ++) 
     {
@@ -233,20 +264,22 @@ void BPMDetect::calcEnvelope(SAMPLETYPE *samples, int numsamples)
         val = (float)fabs((float)samples[i]);
         RMSVolumeAccu += val * val;
 
-        // cut amplitudes that are below 2 times average RMS volume
+        // cut amplitudes that are below cutoff ~2 times RMS volume
         // (we're interested in peak values, not the silent moments)
-        val -= 2 * (float)sqrt(RMSVolumeAccu * avgnorm);
-        val = (val > 0) ? val : 0;
+        if (val < 0.5 * sqrt(RMSVolumeAccu * avgnorm))
+        {
+            val = 0;
+        }
 
         // smooth amplitude envelope
         envelopeAccu *= decay;
         envelopeAccu += val;
         out = (LONG_SAMPLETYPE)(envelopeAccu * norm);
 
-#ifdef INTEGER_SAMPLES
+#ifdef SOUNDTOUCH_INTEGER_SAMPLES
         // cut peaks (shouldn't be necessary though)
         if (out > 32767) out = 32767;
-#endif // INTEGER_SAMPLES
+#endif // SOUNDTOUCH_INTEGER_SAMPLES
         samples[i] = (SAMPLETYPE)out;
     }
 }
@@ -292,17 +325,46 @@ void BPMDetect::inputSamples(const SAMPLETYPE *samples, int numSamples)
 
 
 
+void BPMDetect::removeBias()
+{
+    int i;
+    float minval = 1e12f;   // arbitrary large number
+
+    for (i = windowStart; i < windowLen; i ++)
+    {
+        if (xcorr[i] < minval)
+        {
+            minval = xcorr[i];
+        }
+    }
+
+    for (i = windowStart; i < windowLen; i ++)
+    {
+        xcorr[i] -= minval;
+    }
+}
+
+
 float BPMDetect::getBpm()
 {
     double peakPos;
+    double coeff;
     PeakFinder peakFinder;
+
+    coeff = 60.0 * ((double)sampleRate / (double)decimateBy);
+
+    // save bpm debug analysis data if debug data enabled
+    _SaveDebugData(xcorr, windowStart, windowLen, coeff);
+
+    // remove bias from xcorr data
+    removeBias();
 
     // find peak position
     peakPos = peakFinder.detectPeak(xcorr, windowStart, windowLen);
 
     assert(decimateBy != 0);
-    if (peakPos < 1e-6) return 0.0; // detection failed.
+    if (peakPos < 1e-9) return 0.0; // detection failed.
 
     // calculate BPM
-    return (float)(60.0 * (((double)sampleRate / (double)decimateBy) / peakPos));
+    return (float) (coeff / peakPos);
 }

@@ -10,7 +10,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>MediaPortal.Common.Utils</RootNamespace>
     <AssemblyName>Common.Utils</AssemblyName>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
@@ -31,6 +31,7 @@
     <IsWebBootstrapper>true</IsWebBootstrapper>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -71,6 +72,9 @@
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="log4net">
+      <HintPath>..\..\mediaportal\MediaPortal.Base\log4net.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
@@ -87,6 +91,11 @@
     <Compile Include="Compatibility\CompatibleVersionAttribute.cs" />
     <Compile Include="Compatibility\SubsystemVersionAttribute.cs" />
     <Compile Include="Compatibility\UsesSubsystemAttribute.cs" />
+    <Compile Include="Logger\CommonLog4NetLogger.cs" />
+    <Compile Include="Logger\CommonLogger.cs" />
+    <Compile Include="Logger\CommonLogLevel.cs" />
+    <Compile Include="Logger\CommonLogType.cs" />
+    <Compile Include="Logger\ICommonLogger.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

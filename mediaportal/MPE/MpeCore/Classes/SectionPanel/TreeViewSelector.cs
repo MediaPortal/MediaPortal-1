@@ -18,12 +18,6 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 using MpeCore.Interfaces;
 
@@ -31,29 +25,18 @@ namespace MpeCore.Classes.SectionPanel
 {
   public partial class TreeViewSelector : BaseHorizontalLayout, ISectionPanel
   {
-    //private ShowModeEnum Mode = ShowModeEnum.Preview;
-    //private SectionItem Section = new SectionItem();
-    //private PackageClass Package;
-    //private SectionResponseEnum _resp = SectionResponseEnum.Cancel;
-
     private const string CONST_TEXT = "Description ";
-
-    public TreeViewSelector()
-    {
-      InitializeComponent();
-    }
-
+    
     #region ISectionPanel Members
 
-    public bool Unique
+    public string DisplayName
     {
-      get { throw new NotImplementedException(); }
-      set { throw new NotImplementedException(); }
+      get { return "Tree View Selector"; }
     }
 
-    public SectionParamCollection Init()
+    public string Guid
     {
-      throw new NotImplementedException();
+      get { return "{1A637F22-CBA1-480a-9B89-3994F8DF1700}"; }
     }
 
     public SectionParamCollection GetDefaultParams()
@@ -92,6 +75,11 @@ namespace MpeCore.Classes.SectionPanel
 
     #endregion
 
+    public TreeViewSelector()
+    {
+      InitializeComponent();
+    }
+
     private TreeNode CreateNode(GroupItem item)
     {
       TreeNode node = new TreeNode(item.DisplayName);
@@ -124,10 +112,9 @@ namespace MpeCore.Classes.SectionPanel
       treeView1.ExpandAll();
     }
 
-    private void TreeViewSelector_Load(object sender, EventArgs e) {}
-
     private void treeView1_AfterCheck(object sender, TreeViewEventArgs e)
     {
+      foreach (TreeNode child in e.Node.Nodes) child.Checked = e.Node.Checked;
       if (Mode == ShowModeEnum.Preview)
         return;
       GroupItem groupItem = e.Node.Tag as GroupItem;
@@ -139,20 +126,5 @@ namespace MpeCore.Classes.SectionPanel
       GroupItem groupItem = e.Node.Tag as GroupItem;
       lbl_description.Text = groupItem.Description;
     }
-
-    #region ISectionPanel Members
-
-    public string DisplayName
-    {
-      get { return "Tree View Selector"; }
-    }
-
-
-    public string Guid
-    {
-      get { return "{1A637F22-CBA1-480a-9B89-3994F8DF1700}"; }
-    }
-
-    #endregion
   }
 }

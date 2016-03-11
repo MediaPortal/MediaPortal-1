@@ -475,6 +475,11 @@ namespace MediaPortal.Configuration.Sections
     private void inputCheckBox_CheckedChanged(object sender, EventArgs e)
     {
       RedEye.Instance.InternalCommandsActive = inputCheckBox.Checked;
+
+      if (RedEye.Instance.InternalCommandsActive)
+          RedEye.Instance.ReOpen();
+      else
+          RedEye.Instance.Close();
     }
 
     private void buttonIRDA_Click(object sender, EventArgs e)

@@ -1,0 +1,327 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!--version="1.0" encoding="utf-8" standalone="yes"-->
+<window>
+  <id>36453968</id>
+  <defaultcontrol>2</defaultcontrol>
+  <allowoverlay>no</allowoverlay>
+  <define>#header.label:Chess</define>
+  <define>#header.hover:hover_my_chess.png</define>
+  <define>#selecteditem:</define>
+  <controls>
+    <control>
+      <description>background image</description>
+      <type>image</type>
+      <id>1</id>
+      <width>1920</width>
+      <height>1080</height>
+      <texture>gamebg.jpg</texture>
+      <colordiffuse>ffffffff</colordiffuse>
+    </control>
+    <control>
+      <type>label</type>
+      <id>1</id>
+      <posX>45</posX>
+      <posY>15</posY>
+      <label>#header.label</label>
+      <font>Label</font>
+      <align>left</align>
+      <textcolor>ffffd700</textcolor>
+    </control>
+    <import>common.time.xml</import>
+    <control>
+      <description>text label</description>
+      <type>label</type>
+      <id>11</id>
+      <posX>28</posX>
+      <posY>-10</posY>
+      <label>-</label>
+      <align>right</align>
+    </control>
+    <control>
+      <description>Button background</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>50</posX>
+      <posY>205</posY>
+      <height>500</height>
+      <width>420</width>
+      <texture>am-background.png</texture>
+      <colordiffuse>50ffffff</colordiffuse>
+      <animation effect="slide" time="400" start="-300,0">WindowOpen</animation>
+      <animation effect="slide" time="400" end="0,-300">WindowClose</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+    </control>
+    <control>
+      <type>group</type>
+      <description>group element</description>
+      <layout>StackLayout(0, vertical, true)</layout>
+      <posX>70</posX>
+      <posY>225</posY>
+      <animation effect="slide" time="400" start="-300,0">WindowOpen</animation>
+      <animation effect="slide" time="400" end="0,-300">WindowClose</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <control>
+        <description>Start</description>
+        <type>button</type>
+        <id>2</id>
+        <label>Start</label>
+        <onleft>2</onleft>
+        <onright>500</onright>
+        <onup>17</onup>
+        <ondown>3</ondown>
+      </control>
+      <control>
+        <description>Undo</description>
+        <type>button</type>
+        <id>3</id>
+        <label>Undo</label>
+        <onleft>3</onleft>
+        <onright>500</onright>
+        <onup>2</onup>
+        <ondown>15</ondown>
+      </control>
+      <control>
+        <description>Undo</description>
+        <type>button</type>
+        <id>15</id>
+        <label>Load</label>
+        <onleft>3</onleft>
+        <onright>500</onright>
+        <onup>3</onup>
+        <ondown>16</ondown>
+      </control>
+      <control>
+        <description>Undo</description>
+        <type>button</type>
+        <id>16</id>
+        <label>Save</label>
+        <onleft>3</onleft>
+        <onright>500</onright>
+        <onup>15</onup>
+        <ondown>4</ondown>
+      </control>
+      <control>
+        <type>group</type>
+        <description>group element</description>
+        <animation effect="slide" time="400" start="-300,0">WindowOpen</animation>
+      <animation effect="slide" time="400" end="0,-300">WindowClose</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+        <id>1234</id>
+        <posX>84</posX>
+        <posY>478</posY>
+        <layout>GridLayout(3,0,0,0)</layout>
+        <control>
+          <type>button</type>
+          <description>first</description>
+          <id>6</id>
+          <onleft>6</onleft>
+          <onright>4</onright>
+          <onup>16</onup>
+          <ondown>8</ondown>
+          <label>‹‹</label>
+          <height>63</height>
+          <width>112</width>
+          <textalign>center</textalign>
+          <font>font14</font>
+          <textXOff>0</textXOff>
+          <textYOff>0</textYOff>
+          <wrapString />
+        </control>
+        <control>
+          <type>button</type>
+          <id>1</id>
+          <label>-</label>
+          <height>63</height>
+          <width>133</width>
+          <textureFocus>-</textureFocus>
+          <textureNoFocus>-</textureNoFocus>
+        </control>
+        <control>
+          <type>button</type>
+          <description>last</description>
+          <id>4</id>
+          <onleft>6</onleft>
+          <onright>500</onright>
+          <onup>16</onup>
+          <ondown>8</ondown>
+          <height>63</height>
+          <width>112</width>
+          <label>››</label>
+          <font>font14</font>
+          <textXOff>0</textXOff>
+          <textYOff>0</textYOff>
+          <textalign>center</textalign>
+          <wrapString />
+        </control>
+      </control>
+      <control>
+        <description>Whatsthis</description>
+        <type>button</type>
+        <id>8</id>
+        <posX>84</posX>
+        <posY>601</posY>
+        <label>What's this?</label>
+        <onleft>8</onleft>
+        <onright>500</onright>
+        <onup>6</onup>
+        <ondown>99</ondown>
+      </control>
+    </control>
+    <control>
+      <description>level label</description>
+      <type>label</type>
+      <id>5</id>
+      <posX>210</posX>
+      <posY>485</posY>
+      <label>#level</label>
+      <textcolor>ffffd700</textcolor>
+    </control>
+    <control>
+      <description>Scoreboard background</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>1412</posX>
+      <posY>421</posY>
+      <height>203</height>
+      <width>350</width>
+      <texture mask="cdcase_mask.png">black.png</texture>
+        <colordiffuse>40ffffff</colordiffuse>
+        <animation effect="slide" time="400" start="-300,0">WindowOpen</animation>
+      <animation effect="slide" time="400" end="0,-300">WindowClose</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+    </control>
+    <control>
+      <description>text label</description>
+      <type>label</type>
+      <id>21</id>
+      <posX>1433</posX>
+      <posY>435</posY>
+      <label>#m1</label>
+      <animation effect="slide" time="400" start="-300,0">WindowOpen</animation>
+      <animation effect="slide" time="400" end="0,-300">WindowClose</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+    </control>
+    <control>
+      <description>text label</description>
+      <type>label</type>
+      <id>22</id>
+      <posX>1433</posX>
+      <posY>478</posY>
+      <label>#m2</label>
+      <animation effect="slide" time="400" start="-300,0">WindowOpen</animation>
+      <animation effect="slide" time="400" end="0,-300">WindowClose</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+    </control>
+    <control>
+      <description>text label</description>
+      <type>label</type>
+      <id>23</id>
+      <posX>1433</posX>
+      <posY>520</posY>
+      <label>#m3</label>
+      <animation effect="slide" time="400" start="-300,0">WindowOpen</animation>
+      <animation effect="slide" time="400" end="0,-300">WindowClose</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+    </control>
+    <control>
+      <description>text label</description>
+      <type>label</type>
+      <id>24</id>
+      <posX>1433</posX>
+      <posY>562</posY>
+      <label>#m4</label>
+      <animation effect="slide" time="400" start="-300,0">WindowOpen</animation>
+      <animation effect="slide" time="400" end="0,-300">WindowClose</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+    </control>
+    <control>
+      <description>Scoreboard background</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>1412</posX>
+      <posY>660</posY>
+      <height>239</height>
+      <width>350</width>
+      <texture mask="cdcase_mask.png">black.png</texture>
+        <colordiffuse>40ffffff</colordiffuse>
+        <animation effect="slide" time="400" start="-300,0">WindowOpen</animation>
+      <animation effect="slide" time="400" end="0,-300">WindowClose</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+    </control>
+    <control>
+      <description>text label</description>
+      <type>label</type>
+      <id>7</id>
+      <posX>1426</posX>
+      <posY>675</posY>
+      <label>#Player</label>
+      <textcolor>ffffd700</textcolor>
+      <animation effect="slide" time="400" start="-300,0">WindowOpen</animation>
+      <animation effect="slide" time="400" end="0,-300">WindowClose</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+    </control>
+    <control>
+      <description>time label</description>
+      <type>label</type>
+      <id>9</id>
+      <posX>1426</posX>
+      <posY>717</posY>
+      <label>#chess_time</label>
+      <textcolor>ffffd700</textcolor>
+      <animation effect="slide" time="400" start="-300,0">WindowOpen</animation>
+      <animation effect="slide" time="400" end="0,-300">WindowClose</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+    </control>
+    <control>
+      <description>time label</description>
+      <type>label</type>
+      <id>10</id>
+      <posX>1426</posX>
+      <posY>759</posY>
+      <label>#chess_move</label>
+      <textcolor>ffffd700</textcolor>
+      <animation effect="slide" time="400" start="-300,0">WindowOpen</animation>
+      <animation effect="slide" time="400" end="0,-300">WindowClose</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+    </control>
+    <control>
+      <type>image</type>
+      <id>25</id>
+      <posX>1426</posX>
+      <posY>815</posY>
+      <height>56</height>
+      <width>126</width>
+      <texture>#engine</texture>
+      <animation effect="slide" time="400" start="-300,0">WindowOpen</animation>
+      <animation effect="slide" time="400" end="0,-300">WindowClose</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+    </control>
+    <control>
+      <description>background</description>
+      <type>image</type>
+      <id>1200</id>
+      <posX>576</posX>
+      <posY>203</posY>
+      <width>773</width>
+      <height>773</height>
+      <texture>#board</texture>
+      <animation effect="slide" time="400" start="-300,0">WindowOpen</animation>
+      <animation effect="slide" time="400" end="0,-300">WindowClose</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+    </control>
+  </controls>
+</window>

@@ -1,6 +1,6 @@
-﻿#region Copyright (C) 2005-2011 Team MediaPortal
+﻿#region Copyright (C) 2005-2013 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2013 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -19,23 +19,32 @@
 #endregion
 
 using System;
-using System.Collections;
+using System.Collections.Generic;
+using System.Data;
+using System.Globalization;
+using System.Linq;
 using System.Runtime.InteropServices;
+using System.Text;
 using System.Windows.Forms;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
 using Microsoft.DirectX.Direct3D;
+using Microsoft.Win32;
 using Action = MediaPortal.GUI.Library.Action;
 
+// ReSharper disable CheckNamespace
 namespace MediaPortal.GUI.Settings
+// ReSharper restore CheckNamespace
 {
   /// <summary>
   /// Summary description for Class1.
   /// </summary>
-  public class GUISettingsGeneralResume : GUIInternalWindow
+  public sealed class GUISettingsGeneralResume : GUIInternalWindow
   {
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
+    // ReSharper disable InconsistentNaming
     public class DISPLAY_DEVICE
+    // ReSharper restore InconsistentNaming
     {
       public int cb = 0;
       [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 32)]
@@ -50,25 +59,20 @@ namespace MediaPortal.GUI.Settings
     }
 
     [DllImport("user32.dll")]
-    public static extern bool EnumDisplayDevices(string lpDevice,
-                                                 int iDevNum, [In, Out] DISPLAY_DEVICE lpDisplayDevice, int dwFlags);
+    public static extern bool EnumDisplayDevices(string lpDevice, int iDevNum, [In, Out] DISPLAY_DEVICE lpDisplayDevice, int dwFlags);
 
-    [SkinControl(17)]protected GUICheckButton cmTurnoffmonitor = null;
-    [SkinControl(18)]protected GUICheckButton cmTurnmonitoronafterresume = null;
-    [SkinControl(19)]protected GUICheckButton cmEnables3trick = null;
-    [SkinControl(20)]protected GUICheckButton cmUseS3Hack = null;
-    [SkinControl(21)]protected GUICheckButton cmRestartonresume = null;
-    [SkinControl(22)]protected GUICheckButton cmShowlastactivemodule = null;
-    [SkinControl(23)]protected GUICheckButton cmUsescreenselector = null;
-    [SkinControl(24)]protected GUIButtonControl btnShowScreens = null;
-    [SkinControl(30)]protected GUIButtonControl btnDelayStartup = null;
-    [SkinControl(31)]protected GUICheckButton cmDelayStartup = null;
-    [SkinControl(32)]protected GUICheckButton cmDelayResume = null;
+    [SkinControl(20)] private readonly GUICheckButton _cmTurnoffmonitor = null;
+    [SkinControl(21)] private readonly GUICheckButton _cmShowlastactivemodule = null;
+    [SkinControl(22)] private readonly GUICheckButton _cmStopOnAudioRemoval = null;
+    [SkinControl(24)] private readonly GUIButtonControl _btnStartScreen = null;
+    [SkinControl(30)] private readonly GUIButtonControl _btnDelayStartup = null;
+    [SkinControl(31)] private readonly GUICheckButton _cmDelayStartup = null;
+    [SkinControl(32)] private readonly GUICheckButton _cmDelayResume = null;
 
-
-    private int _iStartUpDelay = 0;
-    private int _screennumber = 0; // 0 is the primary screen
-    private ArrayList _screenCollection = new ArrayList();
+    private int _iStartUpDelay;
+    private int _screennumber; // 0 is the default screen for MP
+    private string _screendeviceid = "";
+    private readonly List<Tuple<string, string, string>> _screenCollection = new List<Tuple<string, string, string>>();
 
     public GUISettingsGeneralResume()
     {
@@ -80,6 +84,118 @@ namespace MediaPortal.GUI.Settings
       return Load(GUIGraphicsContext.GetThemedSkinFile(@"\settings_General_Resume.xml"));
     }
 
+    /// <summary>
+    /// The Constructor to create a new instances of the DisplayDetails class...
+    /// </summary>
+    public class DisplayDetails
+    {
+      public string PnPID { get; set; }
+
+      public string SerialNumber { get; set; }
+
+      public string Model { get; set; }
+
+      public string MonitorID { get; set; }
+
+      public string DriverID { get; set; }
+
+      /// <summary>
+      /// The Constructor to create a new instances of the DisplayDetails class...
+      /// </summary>
+      public DisplayDetails(string sPnPID, string sSerialNumber, string sModel, string sMonitorID, string sDriverID)
+      {
+        PnPID = sPnPID;
+        SerialNumber = sSerialNumber;
+        Model = sModel;
+        MonitorID = sMonitorID;
+        DriverID = sDriverID;
+      }
+
+      /// <summary>
+      /// This Function returns all Monitor Details
+      /// </summary>
+      /// <returns></returns>
+      static public IEnumerable<DisplayDetails> GetMonitorDetails()
+      {
+        //Open the Display Reg-Key
+        RegistryKey Display = Registry.LocalMachine;
+        Boolean bFailed = false;
+        try
+        {
+          Display = Registry.LocalMachine.OpenSubKey(@"SYSTEM\CurrentControlSet\Enum\DISPLAY");
+        }
+        catch
+        {
+          bFailed = true;
+        }
+
+        if (!bFailed & (Display != null))
+        {
+
+          //Get all MonitorIDss
+          foreach (string sMonitorID in Display.GetSubKeyNames())
+          {
+            RegistryKey MonitorID = Display.OpenSubKey(sMonitorID);
+
+            if (MonitorID != null)
+            {
+              //Get all Plug&Play ID's
+              foreach (string sPNPID in MonitorID.GetSubKeyNames())
+              {
+                RegistryKey PnPID = MonitorID.OpenSubKey(sPNPID);
+                if (PnPID != null)
+                {
+                  string[] sSubkeys = PnPID.GetSubKeyNames();
+
+                  //Check if Monitor is active
+                  if (sSubkeys.Contains("Device Parameters"))
+                  {
+                    string DriverID = PnPID.GetValue("Driver", null) as string;
+                    RegistryKey DevParam = PnPID.OpenSubKey("Device Parameters");
+                    string sSerial = "";
+                    string sModel = "";
+
+                    //Define Search Keys
+                    string sSerFind = new string(new char[] { (char)00, (char)00, (char)00, (char)0xff });
+                    string sModFind = new string(new char[] { (char)00, (char)00, (char)00, (char)0xfc });
+
+                    //Get the EDID code
+                    byte[] bObj = DevParam.GetValue("EDID", null) as byte[];
+                    if (bObj != null)
+                    {
+                      //Get the 4 Vesa descriptor blocks
+                      string[] sDescriptor = new string[4];
+                      sDescriptor[0] = Encoding.Default.GetString(bObj, 0x36, 18);
+                      sDescriptor[1] = Encoding.Default.GetString(bObj, 0x48, 18);
+                      sDescriptor[2] = Encoding.Default.GetString(bObj, 0x5A, 18);
+                      sDescriptor[3] = Encoding.Default.GetString(bObj, 0x6C, 18);
+
+                      //Search the Keys
+                      foreach (string sDesc in sDescriptor)
+                      {
+                        if (sDesc.Contains(sSerFind))
+                        {
+                          sSerial = sDesc.Substring(4).Replace("\0", "").Trim();
+                        }
+                        if (sDesc.Contains(sModFind))
+                        {
+                          sModel = sDesc.Substring(4).Replace("\0", "").Trim();
+                        }
+                      }
+                    }
+                    if (!string.IsNullOrEmpty(sPNPID + sSerFind + sModel + sMonitorID + DriverID))
+                    {
+                      yield return new DisplayDetails(sPNPID, sSerial, sModel, sMonitorID, DriverID);
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+
     #region Serialisation
 
     private void LoadSettings()
@@ -87,24 +203,11 @@ namespace MediaPortal.GUI.Settings
       using (Profile.Settings xmlreader = new Profile.MPSettings())
       {
         // Resume settings
-        cmTurnoffmonitor.Selected = xmlreader.GetValueAsBool("general", "turnoffmonitor", false);
-        cmTurnmonitoronafterresume.Selected = xmlreader.GetValueAsBool("general", "turnmonitoronafterresume", false);
-        cmEnables3trick.Selected = xmlreader.GetValueAsBool("general", "enables3trick", true);
-        cmUseS3Hack.Selected = xmlreader.GetValueAsBool("general", "useS3Hack", false);
-        cmRestartonresume.Selected = xmlreader.GetValueAsBool("general", "restartonresume", false);
-        cmShowlastactivemodule.Selected = xmlreader.GetValueAsBool("general", "showlastactivemodule", false);
-        cmUsescreenselector.Selected = xmlreader.GetValueAsBool("screenselector", "usescreenselector", false);
-
-        if (cmUsescreenselector.Selected)
-        {
-          btnShowScreens.IsEnabled = true;
-        }
-        else
-        {
-          btnShowScreens.IsEnabled = false;
-        }
-
+        _cmTurnoffmonitor.Selected = xmlreader.GetValueAsBool("general", "turnoffmonitor", false);
+        _cmShowlastactivemodule.Selected = xmlreader.GetValueAsBool("general", "showlastactivemodule", false);
+        _cmStopOnAudioRemoval.Selected = xmlreader.GetValueAsBool("general", "stoponaudioremoval", false);
         _screennumber = xmlreader.GetValueAsInt("screenselector", "screennumber", 0);
+        _screendeviceid = xmlreader.GetValueAsString("screenselector", "screendeviceid", "");
 
         // Delay startup
         _iStartUpDelay = xmlreader.GetValueAsInt("general", "delay", 0);
@@ -113,19 +216,19 @@ namespace MediaPortal.GUI.Settings
 
         if (_iStartUpDelay == 0)
         {
-          cmDelayStartup.IsEnabled = false;
-          cmDelayResume.IsEnabled = false;
+          _cmDelayStartup.IsEnabled = false;
+          _cmDelayResume.IsEnabled = false;
         }
         else
         {
-          cmDelayStartup.IsEnabled = true;
-          cmDelayResume.IsEnabled = true;
+          _cmDelayStartup.IsEnabled = true;
+          _cmDelayResume.IsEnabled = true;
         }
-        cmDelayStartup.Selected = xmlreader.GetValueAsBool("general", "delay startup", false);
-        cmDelayResume.Selected = xmlreader.GetValueAsBool("general", "delay resume", false);
+        _cmDelayStartup.Selected = xmlreader.GetValueAsBool("general", "delay startup", false);
+        _cmDelayResume.Selected = xmlreader.GetValueAsBool("general", "delay resume", false);
 
         GetScreens();
-        GUIPropertyManager.SetProperty("#defScreen", _screenCollection[_screennumber].ToString());
+        GUIPropertyManager.SetProperty("#defScreen", _screenCollection[_screennumber].Item1);
       }
     }
 
@@ -133,15 +236,11 @@ namespace MediaPortal.GUI.Settings
     {
       using (Profile.Settings xmlwriter = new Profile.MPSettings())
       {
-        xmlwriter.SetValueAsBool("general", "turnoffmonitor", cmTurnoffmonitor.Selected);
-        xmlwriter.SetValueAsBool("general", "turnmonitoronafterresume", cmTurnmonitoronafterresume.Selected);
-        xmlwriter.SetValueAsBool("general", "enables3trick", cmEnables3trick.Selected);
-        xmlwriter.SetValueAsBool("general", "useS3Hack", cmUseS3Hack.Selected);
-        xmlwriter.SetValueAsBool("general", "restartonresume", cmRestartonresume.Selected);
-        xmlwriter.SetValueAsBool("general", "showlastactivemodule", cmShowlastactivemodule.Selected);
-        xmlwriter.SetValueAsBool("screenselector", "usescreenselector", cmUsescreenselector.Selected);
-        xmlwriter.SetValueAsBool("general", "delay startup", cmDelayStartup.Selected);
-        xmlwriter.SetValueAsBool("general", "delay resume", cmDelayResume.Selected);
+        xmlwriter.SetValueAsBool("general", "turnoffmonitor", _cmTurnoffmonitor.Selected);
+        xmlwriter.SetValueAsBool("general", "showlastactivemodule", _cmShowlastactivemodule.Selected);
+        xmlwriter.SetValueAsBool("general", "stoponaudioremoval", _cmStopOnAudioRemoval.Selected);
+        xmlwriter.SetValueAsBool("general", "delay startup", _cmDelayStartup.Selected);
+        xmlwriter.SetValueAsBool("general", "delay resume", _cmDelayResume.Selected);
       }
     }
 
@@ -155,19 +254,25 @@ namespace MediaPortal.GUI.Settings
       GUIPropertyManager.SetProperty("#currentmodule", GUILocalizeStrings.Get(101017)); //General - Resume
       base.OnPageLoad();
 
-      if (!MediaPortal.Util.Utils.IsGUISettingsWindow(GUIWindowManager.GetPreviousActiveWindow()))
+      if (!Util.Utils.IsGUISettingsWindow(GUIWindowManager.GetPreviousActiveWindow()))
       {
-        if (MediaPortal.GUI.Settings.GUISettings.IsPinLocked() && !MediaPortal.GUI.Settings.GUISettings.RequestPin())
+        if (GUISettings.IsPinLocked() && !GUISettings.RequestPin())
         {
           GUIWindowManager.CloseCurrentWindow();
         }
       }
     }
 
-    protected override void OnPageDestroy(int new_windowId)
+    protected override void OnPageDestroy(int newWindowId)
     {
       SaveSettings();
-      base.OnPageDestroy(new_windowId);
+
+      if (GUISettings.SettingsChanged && !Util.Utils.IsGUISettingsWindow(newWindowId))
+      {
+        GUISettings.OnRestartMP(GetID);
+      }
+
+      base.OnPageDestroy(newWindowId);
     }
 
     public override void OnAction(Action action)
@@ -183,57 +288,32 @@ namespace MediaPortal.GUI.Settings
     protected override void OnClicked(int controlId, GUIControl control, Action.ActionType actionType)
     {
       // Resume
-      if (control == cmTurnoffmonitor)
+      if (control == _cmTurnoffmonitor)
       {
         SettingsChanged(true);
       }
-      if (control == cmTurnmonitoronafterresume)
+      if (control == _cmShowlastactivemodule)
       {
         SettingsChanged(true);
       }
-      if (control == cmEnables3trick)
+      if (control == _cmStopOnAudioRemoval)
       {
         SettingsChanged(true);
-      }
-      if (control == cmUseS3Hack)
-      {
-        SettingsChanged(true);
-      }
-      if (control == cmRestartonresume)
-      {
-        SettingsChanged(true);
-      }
-      if (control == cmShowlastactivemodule)
-      {
-        SettingsChanged(true);
-      }
-      if (control == cmUsescreenselector)
-      {
-        SettingsChanged(true);
-
-        if (cmUsescreenselector.Selected)
-        {
-          btnShowScreens.IsEnabled = true;
-        }
-        else
-        {
-          btnShowScreens.IsEnabled = false;
-        }
       }
       // Delay at startup
-      if (control == btnDelayStartup)
+      if (control == _btnDelayStartup)
       {
         OnStartUpDelay();
       }
-      if (control == cmDelayStartup)
+      if (control == _cmDelayStartup)
       {
         SettingsChanged(true);
       }
-      if (control == cmDelayResume)
+      if (control == _cmDelayResume)
       {
         SettingsChanged(true);
       }
-      if (control == btnShowScreens)
+      if (control == _btnStartScreen)
       {
         OnShowScreens();
       }
@@ -245,7 +325,7 @@ namespace MediaPortal.GUI.Settings
 
     private void OnStartUpDelay()
     {
-      string seconds = _iStartUpDelay.ToString();
+      string seconds = _iStartUpDelay.ToString(CultureInfo.InvariantCulture);
       GetNumberFromKeyboard(ref seconds);
       _iStartUpDelay = Convert.ToInt32(seconds);
 
@@ -254,13 +334,13 @@ namespace MediaPortal.GUI.Settings
 
       if (_iStartUpDelay == 0)
       {
-        cmDelayStartup.IsEnabled = false;
-        cmDelayResume.IsEnabled = false;
+        _cmDelayStartup.IsEnabled = false;
+        _cmDelayResume.IsEnabled = false;
       }
       else
       {
-        cmDelayStartup.IsEnabled = true;
-        cmDelayResume.IsEnabled = true;
+        _cmDelayStartup.IsEnabled = true;
+        _cmDelayResume.IsEnabled = true;
       }
 
       using (Profile.Settings xmlwriter = new Profile.MPSettings())
@@ -272,7 +352,10 @@ namespace MediaPortal.GUI.Settings
 
     private void OnShowScreens()
     {
-      GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_MENU);
+      // Refresh screen
+      GetScreens();
+
+      var dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_MENU);
       if (dlg == null)
       {
         return;
@@ -280,9 +363,9 @@ namespace MediaPortal.GUI.Settings
       dlg.Reset();
       dlg.SetHeading(496); // Options
 
-      foreach (string screen in _screenCollection)
+      foreach (Tuple<string, string, string> screen in _screenCollection)
       {
-        dlg.Add(screen);
+        dlg.Add(screen.Item1);
       }
 
       if (_screennumber < _screenCollection.Count)
@@ -298,16 +381,26 @@ namespace MediaPortal.GUI.Settings
         return;
       }
 
+      // Check if screen are present and if not force to use primary screen
+      if (dlg.SelectedLabel == -1)
+      {
+        dlg.SelectedLabel = 0;
+      }
+
       using (Profile.Settings xmlwriter = new Profile.MPSettings())
       {
         xmlwriter.SetValue("screenselector", "screennumber", dlg.SelectedLabel);
+        xmlwriter.SetValue("screenselector", "screendeviceid", _screenCollection[dlg.SelectedLabel].Item2);
+        xmlwriter.SetValue("screenselector", "screendisplayname", _screenCollection[dlg.SelectedLabel].Item3);
         SettingsChanged(true);
       }
+
+      GUIPropertyManager.SetProperty("#defScreen", _screenCollection[dlg.SelectedLabel].Item1);
     }
 
     private void GetNumberFromKeyboard(ref string strLine)
     {
-      VirtualKeyboard keyboard = (VirtualKeyboard)GUIWindowManager.GetWindow((int)Window.WINDOW_VIRTUAL_KEYBOARD);
+      var keyboard = (VirtualKeyboard)GUIWindowManager.GetWindow((int)Window.WINDOW_VIRTUAL_KEYBOARD);
       if (null == keyboard)
       {
         return;
@@ -333,26 +426,51 @@ namespace MediaPortal.GUI.Settings
       _screenCollection.Clear();
       foreach (Screen screen in Screen.AllScreens)
       {
-        int dwf = 0;
-        DISPLAY_DEVICE info = new DISPLAY_DEVICE();
+        const int dwf = 0;
+        var info = new DISPLAY_DEVICE();
         string monitorname = null;
+        string deviceId = null;
         info.cb = Marshal.SizeOf(info);
         if (EnumDisplayDevices(screen.DeviceName, 0, info, dwf))
         {
           monitorname = info.DeviceString;
+          deviceId = info.DeviceID;
         }
         if (monitorname == null)
         {
           monitorname = "";
         }
+        if (deviceId == null)
+        {
+          deviceId = "";
+        }
 
         foreach (AdapterInformation adapter in Manager.Adapters)
         {
-          if (screen.DeviceName.StartsWith(adapter.Information.DeviceName.Trim()))
+          bool detectedId = false;
+          if (screen.DeviceName.Equals(adapter.Information.DeviceName.Trim()))
           {
-            _screenCollection.Add(string.Format("{0} ({1}x{2}) on {3}",
-                                             monitorname, screen.Bounds.Width, screen.Bounds.Height,
-                                             adapter.Information.Description));
+            foreach (var display in DisplayDetails.GetMonitorDetails())
+            {
+              // double check to add display with name from extracted EDID
+              if (("MONITOR" + "\\" + display.MonitorID + "\\" + display.DriverID).Equals(info.DeviceID))
+              {
+                _screenCollection.Add(
+                  new Tuple<string, string, string>((
+                    string.Format("{0} ({1}x{2}) on {3}", display.Model, adapter.CurrentDisplayMode.Width,
+                      adapter.CurrentDisplayMode.Height, adapter.Information.Description)), deviceId, adapter.Information.DeviceName.Trim()));
+                detectedId = true;
+                break;
+              }
+            }
+            if (!detectedId)
+            {
+              _screenCollection.Add(
+                new Tuple<string, string, string>((
+                  string.Format("{0} ({1}x{2}) on {3}", monitorname, adapter.CurrentDisplayMode.Width,
+                    adapter.CurrentDisplayMode.Height, adapter.Information.Description)), deviceId, adapter.Information.DeviceName.Trim()));
+              break;
+            }
           }
         }
       }
@@ -360,7 +478,7 @@ namespace MediaPortal.GUI.Settings
 
     private void SettingsChanged(bool settingsChanged)
     {
-      MediaPortal.GUI.Settings.GUISettings.SettingsChanged = settingsChanged;
+      GUISettings.SettingsChanged = settingsChanged;
     }
 
   }

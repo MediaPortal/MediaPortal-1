@@ -89,7 +89,7 @@ namespace MediaPortal.Configuration
       Log.Info("Using Directories:");
       foreach (string options in Enum.GetNames(typeof (Config.Dir)))
       {
-        Log.Info("{0} - {1}", options, Config.GetFolder((Config.Dir)Enum.Parse(typeof (Config.Dir), options)));
+        Log.Info("{0} - {1}", options, Config.GetFolder((Config.Dir) Enum.Parse(typeof (Config.Dir), options)));
       }
 
       // rtv: disabled Wizard due to frequent bug reports on serveral sections.
@@ -102,7 +102,7 @@ namespace MediaPortal.Configuration
       {
         foreach (string argument in arguments)
         {
-          string trimmedArgument = argument.ToLower();
+          string trimmedArgument = argument.ToLowerInvariant();
 
           if (trimmedArgument.StartsWith("/wizard"))
           {
@@ -130,6 +130,7 @@ namespace MediaPortal.Configuration
             {
               ISettingsProvider mpConfig = new XmlSettingsProvider(MPSettings.ConfigPathName);
               SettingsUpgradeManager.Instance.UpgradeToLatest(mpConfig);
+              SettingsUpgradeManager.Instance.ApplyDeploySettingUpgrade(mpConfig);
             }
             catch (Exception ex)
             {
@@ -154,6 +155,15 @@ namespace MediaPortal.Configuration
 
         }
       }
+
+      // we are not in deploy mode but there is not mediaportal.xml file
+      // create one and apply any updates from deploy.xml
+      if (!_preventGUILaunch && !File.Exists(Config.GetFile(Config.Dir.Config, "mediaportal.xml")))
+      {
+        Log.Info("mediaportal.xml does not exist.   Creating a new file and applying deploy tool parameters");
+        SettingsUpgradeManager.Instance.ApplyDeploySetting();
+      }
+
     }
 
     /// <summary>
@@ -267,11 +277,7 @@ namespace MediaPortal.Configuration
       {
         return null;
       }
-      MessageBox.Show(
-        "Failed to locate assembly '" + args.Name + "'." + Environment.NewLine +
-        "Note that the configuration program must be executed from/reside in the MediaPortal folder, the execution will now end.",
-        "MediaPortal", MessageBoxButtons.OK, MessageBoxIcon.Error);
-      Application.Exit();
+      Log.Warn("Failed to locate assembly '" + args.Name + "'.");
       return null;
     }
   }

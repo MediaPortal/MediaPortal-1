@@ -1,0 +1,304 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <id>4759</id>
+  <defaultcontrol>213</defaultcontrol>
+  <allowoverlay>no</allowoverlay>
+  <controls>
+    <control>
+      <description>background</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>90</posX>
+      <posY>647</posY>
+      <height>437</height>
+      <width>1755</width>
+      <texture>OSDBG2.png</texture>
+      <colordiffuse>ddffffff</colordiffuse>
+      <visible>!control.hasfocus(1237)</visible>
+    </control>
+    <control>
+      <description>Time BG</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>1556</posX>
+      <posY>694</posY>
+      <width>237</width>
+      <height>52</height>
+      <texture>button_focus.png</texture>
+      <colordiffuse>ffffffff</colordiffuse>
+      <visible>control.isvisible(110)</visible>
+      <visible>!control.hasfocus(1237)</visible>
+    </control>
+    <control>
+      <description>Time Info</description>
+      <type>label</type>
+      <id>110</id>
+      <posX>1768</posX>
+      <posY>691</posY>
+      <label>#time</label>
+      <align>right</align>
+      <font>font16</font>
+      <textcolor>ivory</textcolor>
+      <visible>!control.hasfocus(1237)</visible>
+    </control>
+    <control>
+      <description>background</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>327</posX>
+      <posY>841</posY>
+      <width>1183</width>
+      <height>28</height>
+      <texture>osd_progress_background.png</texture>
+      <visible>!control.hasfocus(1237)</visible>
+    </control>
+    <control>
+      <description>TV Progress Bar</description>
+      <type>tvprogress</type>
+      <id>1</id>
+      <posX>328</posX>
+      <posY>844</posY>
+      <width>1180</width>
+      <height>23</height>
+      <toptexture>osd_progress_right.png</toptexture>
+      <TextureOffsetY>24</TextureOffsetY>
+      <bottomtexture>-</bottomtexture>
+      <texturetick>-</texturetick>
+      <lefttexture>osd_progress_left_tv.png</lefttexture>
+      <midtexture>-</midtexture>
+      <righttexture>-</righttexture>
+      <logotexture>-</logotexture>
+      <fillbackgroundtexture>-</fillbackgroundtexture>
+      <fillbgxoff>-3</fillbgxoff>
+      <fillbgyoff>0</fillbgyoff>
+      <filltexture1>osd_progress_mid_tv.png</filltexture1>
+      <filltexture2>osd_progress_mid_tv.png</filltexture2>
+      <filltexture3>osd_progress_mid_orange_tv.png</filltexture3>
+      <fillheight>24</fillheight>
+      <label>#percentage</label>
+      <label1>#percentage</label1>
+      <label2>#TV.Record.percent3</label2>
+      <startlabel />
+      <endlabel />
+      <toplabel />
+      <font>font10</font>
+      <textcolor>FFffffff</textcolor>
+      <visible>!control.hasfocus(1237)</visible>
+    </control>
+    <control>
+      <type>image</type>
+      <id>1</id>
+      <posX>175</posX>
+      <posY>705</posY>
+      <height>40</height>
+      <keepaspectratio>yes</keepaspectratio>
+      <texture>#OnlineVideos.HeaderImage</texture>
+      <visible>!control.hasfocus(1237)</visible>
+    </control>
+    <control>
+      <description>OV Infos</description>
+      <id>0</id>
+      <type>fadelabel</type>
+      <posX>175</posX>
+      <posY>715</posY>
+      <width>1400</width>
+      <align>center</align>
+      <textcolor>ffffffff</textcolor>
+      <font>Label</font>
+      <label>#OnlineVideos.HeaderLabel</label>
+      <textcolor>dodgerblue</textcolor>
+      <visible>!control.hasfocus(1237)</visible>
+    </control>
+    <control>
+      <description>Movie Name</description>
+      <id>36</id>
+      <type>fadelabel</type>
+      <posX>175</posX>
+      <posY>770</posY>
+      <width>1600</width>
+      <align>center</align>
+      <textcolor>ffffffff</textcolor>
+      <font>Label</font>
+      <label>#Play.Current.Title</label>
+      <visible>!control.hasfocus(1237)</visible>
+    </control>
+    <control>
+      <description>End Time Info</description>
+      <type>label</type>
+      <id>101</id>
+      <posX>1530</posX>
+      <posY>824</posY>
+      <label>#currentremaining</label>
+      <align>left</align>
+      <font>font16</font>
+      <textcolor>ffffffff</textcolor>
+      <visible>!control.hasfocus(1237)</visible>
+    </control>
+    <control>
+      <description>Start Time Info</description>
+      <type>label</type>
+      <id>101</id>
+      <posX>311</posX>
+      <posY>824</posY>
+      <label>#currentplaytime</label>
+      <align>right</align>
+      <font>font16</font>
+      <textcolor>ffffffff</textcolor>
+      <visible>!control.hasfocus(1237)</visible>
+    </control>
+    
+    <!-- ***************************************************************************************************** -->
+    <!-- *****************************         INFO DISPLAY ON TV NOW/NEXT      ****************************** -->
+    <!-- ***************************************************************************************************** -->
+    <control>
+      <description>background</description>
+      <type>image</type>
+      <id>1236</id>
+      <posX>90</posX>
+      <posY>505</posY>
+      <height>590</height>
+      <width>1745</width>
+      <texture>osdbg2.png</texture>
+      <colordiffuse>ccffffff</colordiffuse>
+      <visible>control.hasfocus(1237)</visible>
+      <animation effect="fade" start="0" end="100" time="170" reversible="true">visiblechange</animation>
+    </control>
+    <control>
+      <description>Movie Name</description>
+      <id>0</id>
+      <type>fadelabel</type>
+      <posX>175</posX>
+      <posY>555</posY>
+      <height>57</height>
+      <width>1600</width>
+      <align>center</align>
+      <textcolor>dodgerblue</textcolor>
+      <font>Label</font>
+      <label>#Play.Current.Title</label>
+      <shadowAngle>90</shadowAngle>
+      <shadowDistance>1</shadowDistance>
+      <visible>control.hasfocus(1237)</visible>
+      <animation effect="fade" start="0" end="100" time="150" reversible="true">visiblechange</animation>
+    </control>
+    <control Style="NoShadow">
+      <description>Plot</description>
+      <type>textboxscrollup</type>
+      <id>1</id>
+      <posX>175</posX>
+      <posY>615</posY>
+      <height>230</height>
+      <width>1600</width>
+      <align>left</align>
+      <font>RSS</font>
+      <label>#Play.Current.Plot</label>
+      <visible>control.hasfocus(1237)</visible>
+      <textcolor>lightskyblue</textcolor>
+      <animation effect="fade" start="0" end="100" time="150" reversible="true">visiblechange</animation>
+    </control>
+    <import>common.osd.buttons.xml</import>
+    <!--import>tvOSD.mediainfo.xml</import-->
+    <!-- **************************** PAUSE, REWIND ETC.********************************** -->
+    <control>
+      <description>Pause image</description>
+      <type>image</type>
+      <id>16</id>
+      <posX>1546</posX>
+      <posY>970</posY>
+      <width>168</width>
+      <height>56</height>
+      <visible>player.paused</visible>
+      <texture>video-pause.png</texture>
+      <animation effect="zoom" start="100,100" end="115,115" time="500" condition="true" pulse="true">conditional</animation>
+    </control>
+    <control>
+      <description>2x image</description>
+      <type>image</type>
+      <id>17</id>
+      <posX>750</posX>
+      <posY>428</posY>
+      <visible>player.forwarding2x</visible>
+      <texture>video+2x.png</texture>
+    </control>
+    <control>
+      <description>4x image</description>
+      <type>image</type>
+      <id>18</id>
+      <posX>750</posX>
+      <posY>428</posY>
+      <visible>player.forwarding4x</visible>
+      <texture>video+4x.png</texture>
+    </control>
+    <control>
+      <description>8x image</description>
+      <type>image</type>
+      <id>19</id>
+      <posX>750</posX>
+      <posY>428</posY>
+      <visible>player.forwarding8x</visible>
+      <texture>video+8x.png</texture>
+    </control>
+    <control>
+      <description>16x image</description>
+      <type>image</type>
+      <id>20</id>
+      <posX>750</posX>
+      <posY>428</posY>
+      <visible>player.forwarding16x</visible>
+      <texture>video+16x.png</texture>
+    </control>
+    <control>
+      <description>32x image</description>
+      <type>image</type>
+      <id>21</id>
+      <posX>750</posX>
+      <posY>428</posY>
+      <visible>player.forwarding32x</visible>
+      <texture>video+32x.png</texture>
+    </control>
+    <control>
+      <description>- 2x image</description>
+      <type>image</type>
+      <id>23</id>
+      <posX>750</posX>
+      <posY>428</posY>
+      <visible>player.rewinding2x</visible>
+      <texture>video-2x.png</texture>
+    </control>
+    <control>
+      <description>- 4x image</description>
+      <type>image</type>
+      <id>24</id>
+      <posX>750</posX>
+      <posY>428</posY>
+      <visible>player.rewinding4x</visible>
+      <texture>video-4x.png</texture>
+    </control>
+    <control>
+      <description>- 8x image</description>
+      <type>image</type>
+      <id>25</id>
+      <posX>750</posX>
+      <posY>428</posY>
+      <visible>player.rewinding8x</visible>
+      <texture>video-8x.png</texture>
+    </control>
+    <control>
+      <description>- 16x image</description>
+      <type>image</type>
+      <id>26</id>
+      <posX>750</posX>
+      <posY>428</posY>
+      <visible>player.rewinding16x</visible>
+      <texture>video-16x.png</texture>
+    </control>
+    <control>
+      <description>- 32x image</description>
+      <type>image</type>
+      <id>27</id>
+      <posX>750</posX>
+      <posY>428</posY>
+      <visible>player.rewinding32x</visible>
+      <texture>video-32x.png</texture>
+    </control>
+  </controls>
+</window>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+<id>3002</id>
+<defaultcontrol>2</defaultcontrol>
+<allowoverlay>no</allowoverlay>
+<controls>
+
+ 	<control>
+		<description>Background</description>
+		<type>image</type>
+		<id>0</id>
+		<posX>886</posX>
+		<posY>0</posY>
+    <width>146</width>
+    <height>37</height>
+		<texture>basichome_isrecording_bg.png</texture>
+    <animation effect="fade" start="0" end="100" time="300" delay="350">WindowOpen</animation>
+    <animation effect="fade" start="100" end="0" time="0" delay="0">WindowClose</animation>
+	</control>
+
+</controls>
+</window>

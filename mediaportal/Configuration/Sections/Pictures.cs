@@ -81,6 +81,7 @@ namespace MediaPortal.Configuration.Sections
         checkBoxGroupDays.Checked = xmlreader.GetValueAsBool("pictures", "useDayGrouping", false);
         checkBoxEnableVideo.Checked = xmlreader.GetValueAsBool("pictures", "enableVideoPlayback", false);
         checkBoxPlayVideosInSlideshow.Checked = xmlreader.GetValueAsBool("pictures", "playVideosInSlideshows", false);
+        UpdateVideoSettings();
       }
     }
 
@@ -96,7 +97,7 @@ namespace MediaPortal.Configuration.Sections
         xmlwriter.SetValueAsBool("pictures", "autoShuffle", autoShuffleCheckBox.Checked);
         xmlwriter.SetValueAsBool("pictures", "autoRepeat", repeatSlideshowCheckBox.Checked);
         xmlwriter.SetValueAsBool("pictures", "useExif", checkBoxUseExif.Checked);
-        xmlwriter.SetValueAsBool("pictures", "usePicasa", checkBoxUseExif.Checked);
+        xmlwriter.SetValueAsBool("pictures", "usePicasa", checkBoxUsePicasa.Checked);
         xmlwriter.SetValueAsBool("pictures", "useDayGrouping", checkBoxGroupDays.Checked);
         xmlwriter.SetValueAsBool("pictures", "enableVideoPlayback", checkBoxEnableVideo.Checked);
         xmlwriter.SetValueAsBool("pictures", "playVideosInSlideshows", checkBoxPlayVideosInSlideshow.Checked);
@@ -413,9 +414,17 @@ namespace MediaPortal.Configuration.Sections
 
     #endregion
 
-    private void checkBoxEnableVideo_CheckedChanged(object sender, EventArgs e)
+    /// <summary>
+    /// sets useability of select video config depending
+    /// </summary>
+    public void UpdateVideoSettings()
     {
       checkBoxPlayVideosInSlideshow.Enabled = (checkBoxEnableVideo.Checked);
+    }
+
+    private void checkBoxEnableVideo_CheckedChanged(object sender, EventArgs e)
+    {
+      UpdateVideoSettings();
     }
   }
 }

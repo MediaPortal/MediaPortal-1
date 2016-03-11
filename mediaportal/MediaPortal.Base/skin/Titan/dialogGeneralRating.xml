@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <id>28380</id>
+  <defaultcontrol>10</defaultcontrol>
+  <allowoverlay>yes</allowoverlay>
+  <controls>
+  
+        <control>
+            <description>group element</description>
+            <type>group</type>
+			<animation effect="fade" time="250">WindowOpen</animation>
+			<animation effect="fade" time="0">WindowClose</animation>
+			<animation effect="slide" start="0,150" end="0,0" tween="quadratic" easing="in" time="200" delay="0">WindowOpen</animation>
+  
+    <control>
+        <id>0</id>
+		<type>image</type>
+		<posX>575</posX>
+		<posY>395</posY>
+		<width>768</width>
+		<height>651</height>
+		<texture>dialog_rating_background.png</texture>
+	</control>
+
+	<control>
+		<description>Heading text label</description>
+		<type>label</type>
+		<id>1</id>
+		<posX>678</posX>
+		<posY>480</posY>
+		<width>560</width>
+		<label>181</label>
+		<font>TitanLight20</font>
+		<textcolor>ffffff</textcolor>
+	</control>
+
+	<control>
+		<description>dialog line 1</description>
+		<type>fadelabel</type>
+		<id>2</id>
+		<posX>678</posX>
+		<posY>540</posY>
+		<label>-</label>
+		<width>560</width>
+		<font>TitanLight14</font>
+		<textcolor>6aa5cb</textcolor>
+	</control>
+
+	<control>
+		<description>dialog line 2</description>
+		<type>fadelabel</type>
+		<id>3</id>
+		<posX>678</posX>
+		<posY>600</posY>
+		<label>-</label>
+		<width>560</width>
+		<font>TitanLight14</font>
+		<textcolor>6aa5cb</textcolor>
+	</control>
+
+	<control>
+		<description>dialog line 3</description>
+		<type>fadelabel</type>
+		<id>4</id>
+		<posX>678</posX>
+		<posY>766</posY>
+		<label>-</label>
+		<width>560</width>
+		<font>TitanLight14</font>
+		<textcolor>6aa5cb</textcolor>
+	</control>
+
+	<control>
+		<description>dialog line 4</description>
+		<type>fadelabel</type>
+		<id>4</id>
+		<posX>670</posX>
+		<posY>811</posY>
+		<label>-</label>
+		<width>560</width>
+		<font>TitanLight14</font>
+		<textcolor>6aa5cb</textcolor>
+	</control>    
+	<!-- Star Controls -->
+    <control>
+		<description>1 Star</description>
+		<type>checkbutton</type>
+		<id>100</id>
+		<posX>820</posX>
+		<posY>616</posY>
+		<width>53</width>
+		<height>41</height>
+    <textureFocus>starwhite_rating.png</textureFocus>
+    <textureNoFocus>starblue_rating.png</textureNoFocus>
+    <textureCheckmark>starwhite_rating.png</textureCheckmark>
+    <textureCheckmarkNoFocus>starblue_rating.png</textureCheckmarkNoFocus> 
+	</control>
+
+    <control>
+		<description>2 Star</description>
+		<type>checkbutton</type>
+		<id>101</id>
+		<posX>876</posX>
+		<posY>616</posY>
+		<width>53</width>
+		<height>41</height>
+    <textureFocus>starwhite_rating.png</textureFocus>
+    <textureNoFocus>starblue_rating.png</textureNoFocus>
+    <textureCheckmark>starwhite_rating.png</textureCheckmark>
+    <textureCheckmarkNoFocus>starblue_rating.png</textureCheckmarkNoFocus> 
+    </control>
+
+    <control>
+		<description>3 Star</description>
+		<type>checkbutton</type>
+		<id>102</id>
+		<posX>930</posX>
+		<posY>616</posY>
+		<width>53</width>
+		<height>41</height>
+    <textureFocus>starwhite_rating.png</textureFocus>
+    <textureNoFocus>starblue_rating.png</textureNoFocus>
+    <textureCheckmark>starwhite_rating.png</textureCheckmark>
+    <textureCheckmarkNoFocus>starblue_rating.png</textureCheckmarkNoFocus> 
+    </control>
+
+    <control>
+		<description>4 Star</description>
+		<type>checkbutton</type>
+		<id>103</id>
+		<posX>984</posX>
+		<posY>616</posY>
+		<width>53</width>
+		<height>41</height>
+    <textureFocus>starwhite_rating.png</textureFocus>
+    <textureNoFocus>starblue_rating.png</textureNoFocus>
+    <textureCheckmark>starwhite_rating.png</textureCheckmark>
+    <textureCheckmarkNoFocus>starblue_rating.png</textureCheckmarkNoFocus> 
+    </control>
+	
+    <control>
+		<description>5 Star</description>
+		<type>checkbutton</type>
+		<id>104</id>
+		<posX>1038</posX>
+		<posY>616</posY>
+		<width>53</width>
+		<height>41</height>
+    <textureFocus>starwhite_rating.png</textureFocus>
+    <textureNoFocus>starblue_rating.png</textureNoFocus>
+    <textureCheckmark>starwhite_rating.png</textureCheckmark>
+    <textureCheckmarkNoFocus>starblue_rating.png</textureCheckmarkNoFocus> 
+    </control>
+	
+	<control>
+		<description>Selected Rating</description>
+		<type>label</type>
+		<id>7</id>
+		<posX>710</posX>
+		<posY>705</posY>
+		<width>480</width>
+		<align>center</align>
+    </control>
+</control>
+  </controls>
+</window>

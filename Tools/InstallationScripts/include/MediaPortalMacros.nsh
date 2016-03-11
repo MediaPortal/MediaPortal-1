@@ -677,7 +677,7 @@ DeleteRegKey HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\MediaPort
     ${ElseIf} $R1 < 2
       StrCpy $0 "OSabort"
     ${Else}
-      StrCpy $0 "OSok"
+      StrCpy $0 "OSwarn"
     ${EndIf}
 
   ;${ElseIf} ${IsWinXP64}
@@ -709,8 +709,20 @@ DeleteRegKey HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\MediaPort
     ${LOG_TEXT} "INFO" "OSTest::IsWin7"
     StrCpy $0 "OSok"
 
+  ${ElseIf} ${IsWin8}
+    ${LOG_TEXT} "INFO" "OSTest::IsWin8"
+    StrCpy $0 "OSok"
+
+  ${ElseIf} ${IsWin81}
+    ${LOG_TEXT} "INFO" "OSTest::IsWin8.1"
+    StrCpy $0 "OSok"
+
   ${ElseIf} ${IsWin2008R2}
     ${LOG_TEXT} "INFO" "OSTest::IsWin2008R2"
+    StrCpy $0 "OSwarn"
+
+  ${ElseIf} ${IsWin2012}
+    ${LOG_TEXT} "INFO" "OSTest::IsWin2012"
     StrCpy $0 "OSwarn"
 
   ${Else}
@@ -779,6 +791,33 @@ DeleteRegKey HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\MediaPort
   ${EndIf}
 
   ${LOG_TEXT} "INFO" "============================"
+!macroend
+
+!macro MediaPortalNet4FrameworkCheck
+  ${LOG_TEXT} "INFO" ".: Microsoft .Net Framework Check :."
+  
+  ${If} ${HasDotNet4.0}
+    DetailPrint "Microsoft .NET Framework 4.0 installed."
+    ${If} ${DOTNETVER_4_0} AtLeastDotNetServicePack 1
+        DetailPrint "Microsoft .NET Framework 4.0 is at least SP1."
+    ${Else}
+        DetailPrint "Microsoft .NET Framework 4.0 SP1 not installed."
+    ${LOG_TEXT} "INFO" "============================"
+    ${EndIf}
+    ${If} ${DOTNETVER_4_0} HasDotNetClientProfile 1
+        DetailPrint "Microsoft .NET Framework 4.0 (Client Profile) available."
+    ${EndIf}
+    ${If} ${DOTNETVER_4_0} HasDotNetFullProfile 1
+        DetailPrint "Microsoft .NET Framework 4.0 (Full Profile) available."
+    ${EndIf}
+    ${If} ${DOTNETVER_4_0} HasDotNetFullProfile 0
+        DetailPrint "Microsoft .NET Framework 4.0 (Full Profile) not available."
+        !insertmacro ShowMissingComponent "     - Microsoft .NET Framework 4.0"
+    ${LOG_TEXT} "INFO" "============================"
+    ${EndIf}
+  ${Else}
+      !insertmacro ShowMissingComponent "     - Microsoft .NET Framework 4.0"
+${EndIf}
 !macroend
 
 !ifdef GIT_BUILD

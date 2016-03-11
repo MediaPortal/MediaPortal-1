@@ -85,7 +85,7 @@ namespace SetupTv.Sections
     }
 
     private void Export(string fileName, bool exporttv, bool exporttvgroups, bool exportradio, bool exportradiogroups,
-                        bool exportschedules)
+                        bool exportschedules, bool exportsettings)
     {
       XmlDocument xmlDoc = new XmlDocument();
       XmlNode rootElement = xmlDoc.CreateElement("tvserver");
@@ -107,13 +107,20 @@ namespace SetupTv.Sections
           XmlNode nodeCard = xmlDoc.CreateElement("card");
           AddAttribute(nodeCard, "IdCard", card.IdCard);
           AddAttribute(nodeCard, "DevicePath", card.DevicePath);
-          AddAttribute(nodeCard, "Enabled", card.Enabled);
-          AddAttribute(nodeCard, "CamType", card.CamType);
-          AddAttribute(nodeCard, "GrabEPG", card.GrabEPG);
-          AddAttribute(nodeCard, "LastEpgGrab", card.LastEpgGrab);
           AddAttribute(nodeCard, "Name", card.Name);
           AddAttribute(nodeCard, "Priority", card.Priority);
+          AddAttribute(nodeCard, "GrabEPG", card.GrabEPG);
+          AddAttribute(nodeCard, "LastEpgGrab", card.LastEpgGrab);
           AddAttribute(nodeCard, "RecordingFolder", card.RecordingFolder);
+          AddAttribute(nodeCard, "Enabled", card.Enabled);
+          AddAttribute(nodeCard, "CamType", card.CamType);
+          AddAttribute(nodeCard, "TimeShiftFolder", card.TimeShiftFolder);
+          AddAttribute(nodeCard, "RecordingFormat", card.RecordingFormat);
+          AddAttribute(nodeCard, "DecryptLimit", card.DecryptLimit);
+          AddAttribute(nodeCard, "PreloadCard", card.PreloadCard);
+          AddAttribute(nodeCard, "CAM", card.CAM);
+          AddAttribute(nodeCard, "netProvider", card.netProvider);
+          AddAttribute(nodeCard, "StopGraph", card.StopGraph);
           nodeCards.AppendChild(nodeCard);
         }
         nodeServer.AppendChild(nodeCards);
@@ -140,6 +147,7 @@ namespace SetupTv.Sections
         AddAttribute(nodechannel, "TotalTimeWatched", channel.TotalTimeWatched);
         AddAttribute(nodechannel, "VisibleInGuide", channel.VisibleInGuide);
         AddAttribute(nodechannel, "DisplayName", channel.DisplayName);
+        AddAttribute(nodechannel, "ChannelNumber", channel.ChannelNumber);
 
         XmlNode nodeMaps = xmlDoc.CreateElement("mappings");
         foreach (ChannelMap map in channel.ReferringChannelMap())
@@ -273,6 +281,21 @@ namespace SetupTv.Sections
         rootElement.AppendChild(nodeRadioChannelGroups);
       }
 
+      // exporting the settings
+      if (exportsettings)
+      {
+        XmlNode nodeSettings = xmlDoc.CreateElement("settings");
+        IList<Setting> settings = Setting.ListAll();
+        foreach (Setting setting in settings)
+        {
+          XmlNode nodeSetting = xmlDoc.CreateElement("setting");
+          AddAttribute(nodeSetting, "tag", setting.Tag);
+          AddAttribute(nodeSetting, "value", setting.Value);
+          nodeSettings.AppendChild(nodeSetting);
+        }
+        rootElement.AppendChild(nodeSettings);
+      }
+
       xmlDoc.AppendChild(rootElement);
       xmlDoc.Save(fileName);
       MessageBox.Show(this, "The selected items have been exported to " + fileName);
@@ -292,6 +315,7 @@ namespace SetupTv.Sections
       bool importradio = imCheckRadioChannels.Checked;
       bool importradiogroups = imCheckRadioGroups.Checked;
       bool importschedules = imCheckSchedules.Checked;
+      bool importsettings = imCheckSettings.Checked;
 
       openFileDialog1.CheckFileExists = true;
       openFileDialog1.DefaultExt = "xml";
@@ -313,8 +337,10 @@ namespace SetupTv.Sections
         CountryCollection collection = new CountryCollection();
         TvBusinessLayer layer = new TvBusinessLayer();
         bool mergeChannels = false; // every exported channel will be imported on its own.
+        int cardCount = 0;
         int channelCount = 0;
         int scheduleCount = 0;
+        int settingCount = 0;
         int tvChannelGroupCount = 0;
         int radioChannelGroupCount = 0;
 
@@ -331,12 +357,55 @@ namespace SetupTv.Sections
         }
 
         XmlDocument doc = new XmlDocument();
-        Log.Info("TvChannels: Trying to import channels from {0}", openFileDialog1.FileName);
+        Log.Info("Import: Trying to import channels from {0}", openFileDialog1.FileName);
         doc.Load(openFileDialog1.FileName);
+        XmlNodeList cardList = doc.SelectNodes("/tvserver/servers/server/cards/card");
         XmlNodeList channelList = doc.SelectNodes("/tvserver/channels/channel");
         XmlNodeList tvChannelGroupList = doc.SelectNodes("/tvserver/channelgroups/channelgroup");
         XmlNodeList radioChannelGroupList = doc.SelectNodes("/tvserver/radiochannelgroups/radiochannelgroup");
         XmlNodeList scheduleList = doc.SelectNodes("/tvserver/schedules/schedule");
+        XmlNodeList settingList = doc.SelectNodes("/tvserver/settings/setting");
+
+        if (cardList != null)
+        {
+          foreach (XmlNode nodeCard in cardList)
+          {
+            Card card = layer.GetCardByDevicePath(nodeCard.Attributes["DevicePath"].Value);
+            if (card != null)
+            {
+              card.Priority = Int32.Parse(nodeCard.Attributes["Priority"].Value);
+              card.GrabEPG = (nodeCard.Attributes["GrabEPG"].Value == "True");
+              card.RecordingFolder = nodeCard.Attributes["RecordingFolder"].Value;
+              card.Enabled = (nodeCard.Attributes["Enabled"].Value == "True");
+              card.CamType = Int32.Parse(nodeCard.Attributes["CamType"].Value);
+              if (nodeCard.Attributes["TimeShiftFolder"] != null)
+              {
+                card.TimeShiftFolder = nodeCard.Attributes["TimeShiftFolder"].Value;
+              }
+              if (nodeCard.Attributes["RecordingFormat"] != null)
+              {
+                card.RecordingFormat = Int32.Parse(nodeCard.Attributes["RecordingFormat"].Value);
+              }
+              if (nodeCard.Attributes["DecryptLimit"] != null)
+              {
+                card.DecryptLimit = Int32.Parse(nodeCard.Attributes["DecryptLimit"].Value);
+              }
+              if (nodeCard.Attributes["PreloadCard"] != null)
+              {
+                card.PreloadCard = (nodeCard.Attributes["PreloadCard"].Value == "True");
+              }
+              if (nodeCard.Attributes["CAM"] != null)
+              {
+                card.CAM = (nodeCard.Attributes["CAM"].Value == "True");
+              }
+            }
+            else
+            {
+              Log.Error("Import: Failed to import settings for card \"{0}\"", nodeCard.Attributes["Name"].Value);
+            }
+          }
+        }
+
         if (channelList != null)
         {
           foreach (XmlNode nodeChannel in channelList)
@@ -359,6 +428,7 @@ namespace SetupTv.Sections
               bool visibileInGuide = (GetNodeAttribute(nodeChannel, "VisibleInGuide", "True") == "True");
               bool FreeToAir = (GetNodeAttribute(nodeChannel, "FreeToAir", "True") == "True");
               string displayName = GetNodeAttribute(nodeChannel, "DisplayName", "Unkown");
+              int chChannelNumber = Int32.Parse(GetNodeAttribute(nodeChannel, "ChannelNumber", "10000"));
 
               // Only import TV or radio channels if the corresponding checkbox was checked
               if ((isTv && !importtv) || (isRadio && !importradio))
@@ -369,7 +439,7 @@ namespace SetupTv.Sections
               // rtv: since analog allows NOT to merge channels we need to take care of this. US users e.g. have multiple stations named "Sport" with different tuningdetails.
               // using AddChannel would incorrectly "merge" these totally different channels.
               // see this: http://forum.team-mediaportal.com/1-0-rc1-svn-builds-271/importing-exported-channel-list-groups-channels-39368/
-              Log.Info("TvChannels: Adding {0}. channel: {1}", channelCount, displayName);
+              Log.Info("Import: Adding {0}. channel: {1}", channelCount, displayName);
               IList<Channel> foundExistingChannels = layer.GetChannelsByName(displayName);
               if (mergeChannels && (foundExistingChannels != null && foundExistingChannels.Count > 0))
               {
@@ -377,7 +447,7 @@ namespace SetupTv.Sections
               }
               else
               {
-                dbChannel = layer.AddNewChannel(displayName);
+                dbChannel = layer.AddNewChannel(displayName, chChannelNumber);
               }
 
               dbChannel.GrabEpg = grabEpg;
@@ -462,7 +532,7 @@ namespace SetupTv.Sections
                     analogChannel.VideoSource = (AnalogChannel.VideoInputType)videoSource;
                     analogChannel.IsVCRSignal = isVCRSignal;
                     layer.AddTuningDetails(dbChannel, analogChannel);
-                    Log.Info("TvChannels: Added tuning details for analog channel: {0} number: {1}", name, channelNumber);
+                    Log.Info("Import: Added tuning details for analog channel: {0} number: {1}", name, channelNumber);
                     break;
                   case 1: //ATSCChannel
                     ATSCChannel atscChannel = new ATSCChannel();
@@ -481,7 +551,7 @@ namespace SetupTv.Sections
                     atscChannel.TransportId = transportId;
                     atscChannel.ModulationType = (ModulationType)modulation;
                     layer.AddTuningDetails(dbChannel, atscChannel);
-                    Log.Info("TvChannels: Added tuning details for ATSC channel: {0} number: {1} provider: {2}", name,
+                    Log.Info("Import: Added tuning details for ATSC channel: {0} number: {1} provider: {2}", name,
                              channelNumber, provider);
                     break;
                   case 2: //DVBCChannel
@@ -500,7 +570,7 @@ namespace SetupTv.Sections
                     dvbcChannel.TransportId = transportId;
                     dvbcChannel.LogicalChannelNumber = channelNumber;
                     layer.AddTuningDetails(dbChannel, dvbcChannel);
-                    Log.Info("TvChannels: Added tuning details for DVB-C channel: {0} provider: {1}", name, provider);
+                    Log.Info("Import: Added tuning details for DVB-C channel: {0} provider: {1}", name, provider);
                     break;
                   case 3: //DVBSChannel
                     DVBSChannel dvbsChannel = new DVBSChannel();
@@ -526,7 +596,7 @@ namespace SetupTv.Sections
                     dvbsChannel.Rolloff = (RollOff)rollOff;
                     dvbsChannel.LogicalChannelNumber = channelNumber;
                     layer.AddTuningDetails(dbChannel, dvbsChannel);
-                    Log.Info("TvChannels: Added tuning details for DVB-S channel: {0} provider: {1}", name, provider);
+                    Log.Info("Import: Added tuning details for DVB-S channel: {0} provider: {1}", name, provider);
                     break;
                   case 4: //DVBTChannel
                     DVBTChannel dvbtChannel = new DVBTChannel();
@@ -543,7 +613,7 @@ namespace SetupTv.Sections
                     dvbtChannel.TransportId = transportId;
                     dvbtChannel.LogicalChannelNumber = channelNumber;
                     layer.AddTuningDetails(dbChannel, dvbtChannel);
-                    Log.Info("TvChannels: Added tuning details for DVB-T channel: {0} provider: {1}", name, provider);
+                    Log.Info("Import: Added tuning details for DVB-T channel: {0} provider: {1}", name, provider);
                     break;
                   case 5: //Webstream
                     layer.AddWebStreamTuningDetails(dbChannel, url, bitrate);
@@ -563,14 +633,14 @@ namespace SetupTv.Sections
                     dvbipChannel.TransportId = transportId;
                     dvbipChannel.Url = url;
                     layer.AddTuningDetails(dbChannel, dvbipChannel);
-                    Log.Info("TvChannels: Added tuning details for DVB-IP channel: {0} provider: {1}", name, provider);
+                    Log.Info("Import: Added tuning details for DVB-IP channel: {0} provider: {1}", name, provider);
                     break;
                 }
               }
             }
             catch (Exception exc)
             {
-              Log.Error("TvChannels: Failed to add channel - {0}", exc.Message);
+              Log.Error("Import: Failed to add channel - {0}", exc.Message);
             }
           }
         }
@@ -627,7 +697,7 @@ namespace SetupTv.Sections
             }
             catch (Exception exg)
             {
-              Log.Error("TvChannels: Failed to add group - {0}", exg.Message);
+              Log.Error("Import: Failed to add group - {0}", exg.Message);
             }
           }
         }
@@ -722,25 +792,61 @@ namespace SetupTv.Sections
               {
                 schedule.Persist();
                 scheduleCount++;
-                Log.Info("TvChannels: Added schedule: {0} on channel: {1}", programName, channel);
+                Log.Info("Import: Added schedule: {0} on channel: {1}", programName, channel);
               }
               else
-                Log.Info("TvChannels: Skipped schedule: {0} because the channel was unknown: {1}", programName, channel);
+                Log.Info("Import: Skipped schedule: {0} because the channel was unknown: {1}", programName, channel);
             }
             catch (Exception ex)
             {
-              Log.Error("TvChannels: Failed to add schedule - {0}", ex.Message);
+              Log.Error("Import: Failed to add schedule - {0}", ex.Message);
+            }
+          }
+        }
+
+        if (settingList != null && importsettings)
+        {
+          // Import settings
+          foreach (XmlNode nodeSetting in settingList)
+          {
+            try
+            {
+              string tag = nodeSetting.Attributes["tag"].Value;
+              string value = nodeSetting.Attributes["value"].Value;
+              Setting setting = layer.GetSetting(tag);
+              setting.Value = value;
+              setting.Persist();
+              settingCount++;
+              Log.Info("Import: Added setting: {0} with value: {1}", tag, value);
+            }
+            catch (Exception ex)
+            {
+              Log.Error("Import: Failed to add setting - {0}", ex.Message);
             }
           }
         }
 
         dlg.Close();
         Log.Info(
-          "TvChannels: Imported {0} channels, {1} tv channel groups, {2} radio channel groups and {3} schedules",
-          channelCount, tvChannelGroupCount, radioChannelGroupCount, scheduleCount);
+          "Import: Imported {0} channels, {1} tv channel groups, {2} radio channel groups, {3} schedules and {4} settings",
+          channelCount, tvChannelGroupCount, radioChannelGroupCount, scheduleCount, settingCount);
         MessageBox.Show(
-          String.Format("Imported {0} channels, {1} tv channel groups, {2} radio channel groups and {3} schedules",
-                        channelCount, tvChannelGroupCount, radioChannelGroupCount, scheduleCount));
+          String.Format("Imported {0} channels, {1} tv channel groups, {2} radio channel groups, {3} schedules and {4} settings",
+          channelCount, tvChannelGroupCount, radioChannelGroupCount, scheduleCount, settingCount));
+
+        if (MessageBox.Show(this, "Changes made require TvService to restart. Restart it now?", "TvService",
+            MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+        {
+          var dlgNotify = new NotifyForm("Restart TvService...", "This can take some time\n\nPlease be patient...");
+          dlgNotify.Show();
+          dlgNotify.WaitForDisplay();
+
+          RemoteControl.Instance.ClearCache();
+          RemoteControl.Instance.Restart();
+
+          dlgNotify.Close();
+        }
+
       }
       catch (Exception ex)
       {
@@ -770,7 +876,7 @@ namespace SetupTv.Sections
         dlg.Show();
         dlg.WaitForDisplay();
         Export(saveFileDialog1.FileName, exCheckTVChannels.Checked, exCheckTVGroups.Checked,
-               exCheckRadioChannels.Checked, exCheckRadioGroups.Checked, exCheckSchedules.Checked);
+               exCheckRadioChannels.Checked, exCheckRadioGroups.Checked, exCheckSchedules.Checked, exCheckSettings.Checked);
         dlg.Close();
       }
     }

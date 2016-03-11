@@ -275,7 +275,7 @@ namespace MediaPortal.TagReader
         string prefix = "";
         if (file[i].Length > 1)
         {
-          prefix = file[i].Substring(0, file[i].IndexOf(' ')).ToUpper();
+          prefix = file[i].Substring(0, file[i].IndexOf(' ')).ToUpperInvariant();
         }
 
         switch (prefix)
@@ -346,7 +346,7 @@ namespace MediaPortal.TagReader
           string commentType;
           if (line.IndexOf(' ') > 0)
           {
-            commentType = line.Substring(0, line.IndexOf(' ')).ToUpper();
+            commentType = line.Substring(0, line.IndexOf(' ')).ToUpperInvariant();
           }
           else
           {
@@ -412,11 +412,11 @@ namespace MediaPortal.TagReader
         {
           try
           {
-            temp = line.Substring(0, line.IndexOf(' ')).ToUpper();
+            temp = line.Substring(0, line.IndexOf(' ')).ToUpperInvariant();
           }
           catch (Exception)
           {
-            temp = line.ToUpper();
+            temp = line.ToUpperInvariant();
           }
 
           switch (temp)
@@ -456,7 +456,7 @@ namespace MediaPortal.TagReader
           }
 
           //if the flag hasn't already been processed
-          if (temp.ToUpper().Trim() != line.ToUpper().Trim())
+          if (temp.ToUpperInvariant().Trim() != line.ToUpperInvariant().Trim())
           {
             ParseFlags(temp, trackOn);
           }
@@ -490,7 +490,7 @@ namespace MediaPortal.TagReader
       int seconds;
       int frames;
 
-      indexType = line.Substring(0, line.IndexOf(' ')).ToUpper();
+      indexType = line.Substring(0, line.IndexOf(' ')).ToUpperInvariant();
 
       tempString = line.Substring(line.IndexOf(' '), line.Length - line.IndexOf(' ')).Trim();
 
@@ -526,7 +526,7 @@ namespace MediaPortal.TagReader
 
     private void ParseString(string line, int trackOn)
     {
-      string category = line.Substring(0, line.IndexOf(' ')).ToUpper();
+      string category = line.Substring(0, line.IndexOf(' ')).ToUpperInvariant();
 
       line = line.Substring(line.IndexOf(' '), line.Length - line.IndexOf(' ')).Trim();
 
@@ -1084,7 +1084,7 @@ namespace MediaPortal.TagReader
     {
       m_Filename = filename;
 
-      switch (filetype.Trim().ToUpper())
+      switch (filetype.Trim().ToUpperInvariant())
       {
         case "BINARY":
           m_Filetype = FileType.BINARY;
@@ -1246,7 +1246,7 @@ namespace MediaPortal.TagReader
     {
       m_TrackNumber = tracknumber;
 
-      switch (datatype.Trim().ToUpper())
+      switch (datatype.Trim().ToUpperInvariant())
       {
         case "AUDIO":
           m_TrackDataType = DataType.AUDIO;
@@ -1325,7 +1325,7 @@ namespace MediaPortal.TagReader
 
     public void AddFlag(string flag)
     {
-      switch (flag.Trim().ToUpper())
+      switch (flag.Trim().ToUpperInvariant())
       {
         case "DATA":
           AddFlag(Flags.DATA);

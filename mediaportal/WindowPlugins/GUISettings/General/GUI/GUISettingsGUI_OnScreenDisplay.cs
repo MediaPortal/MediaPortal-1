@@ -19,8 +19,6 @@
 #endregion
 
 using System;
-using System.Collections;
-using System.Globalization;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
 using MediaPortal.Profile;
@@ -40,21 +38,7 @@ namespace WindowPlugins.GUISettings
     private int _displayTimeout = 0;
     private int _zapDelay= 2;
     private int _zapTimeout = 5;
-    
-    
-    private class CultureComparer : IComparer
-    {
-      #region IComparer Members
 
-      public int Compare(object x, object y)
-      {
-        CultureInfo info1 = (CultureInfo)x;
-        CultureInfo info2 = (CultureInfo)y;
-        return String.Compare(info1.EnglishName, info2.EnglishName, true);
-      }
-
-      #endregion
-    }
 
     public GUISettingsGUIOnScreenDisplay()
     {
@@ -159,6 +143,11 @@ namespace WindowPlugins.GUISettings
     protected override void OnPageDestroy(int newWindowId)
     {
       SaveSettings();
+
+      if (MediaPortal.GUI.Settings.GUISettings.SettingsChanged && !MediaPortal.Util.Utils.IsGUISettingsWindow(newWindowId))
+      {
+        MediaPortal.GUI.Settings.GUISettings.OnRestartMP(GetID);
+      }
 
       base.OnPageDestroy(newWindowId);
     }

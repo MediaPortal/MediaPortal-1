@@ -181,6 +181,7 @@ namespace MediaPortal.GUI.Library
       ACTION_MOUSE_DOUBLECLICK = 2002,
       ACTION_PREV_BOOKMARK = 140,
       ACTION_NEXT_BOOKMARK = 141,
+      ACTION_CREATE_BOOKMARK = 142,
       ACTION_LASTFM_LOVE = 800,
       ACTION_LASTFM_BAN = 801,
       ACTION_BD_POPUP_MENU = 1700,
@@ -210,7 +211,8 @@ namespace MediaPortal.GUI.Library
       ACTION_ROTATE_PICTURE_180 = 9997, // rotate current picture 180 during slideshow.
       ACTION_ROTATE_PICTURE_270 = 9998, // rotate current picture 270 during slideshow.
       ACTION_NEXT_EDITION = 134, // Switch to next edition
-      ACTION_NEXT_VIDEO = 135 // Switch to next video stream
+      ACTION_NEXT_VIDEO = 135, // Switch to next video stream
+      ACTION_SHOW_STAT = 1984
     } ;
 
     #endregion

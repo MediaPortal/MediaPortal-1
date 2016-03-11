@@ -32,7 +32,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Setup
     [SkinControl(8)] protected GUIButtonControl btnEqualizer = null;
     [SkinControl(9)] protected GUIButtonControl btnBacklight = null;
     [SkinControl(10)] protected GUIButtonControl btnRemote = null;
-    [SkinControl(11)] protected GUIToggleButtonControl btnMonitorPower = null;
+    [SkinControl(11)] protected GUICheckButton btnMonitorPower = null;
     [SkinControl(12)] protected GUISelectButtonControl btnContrast = null;
     [SkinControl(13)] protected GUISelectButtonControl btnBrightness = null;
 
@@ -97,6 +97,16 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Setup
           GUIWindowManager.CloseCurrentWindow();
         }
       }
+    }
+
+    protected override void OnPageDestroy(int newWindowId)
+    {
+      if (MediaPortal.GUI.Settings.GUISettings.SettingsChanged && !MediaPortal.Util.Utils.IsGUISettingsWindow(newWindowId))
+      {
+        MediaPortal.GUI.Settings.GUISettings.OnRestartMP(GetID);
+      }
+
+      base.OnPageDestroy(newWindowId);
     }
 
     public override void OnAction(Action action)

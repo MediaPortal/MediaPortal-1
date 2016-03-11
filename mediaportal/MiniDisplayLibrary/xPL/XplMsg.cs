@@ -114,7 +114,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.xPL
         }
         else
         {
-          this.XPL_Msg.Add(new structXplSection(str3.Substring(0, num2).ToUpper().Trim()));
+          this.XPL_Msg.Add(new structXplSection(str3.Substring(0, num2).ToUpperInvariant().Trim()));
           if (this.XPL_Msg.Count == 1)
           {
             string str4;
@@ -142,7 +142,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.xPL
             {
               index = num3;
             }
-            newKeyName = str3.Substring(0, index).Trim().ToUpper();
+            newKeyName = str3.Substring(0, index).Trim().ToUpperInvariant();
             str3 = str3.Substring(index + 1);
             index = str3.IndexOf('\n'.ToString());
             newKeyValue = str3.Substring(0, index);
@@ -175,7 +175,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.xPL
         while (num < this.XPL_Msg[BodyPart].Details.Count)
         {
           structXPLMsg msg = this.XPL_Msg[BodyPart].Details[num];
-          if (msg.keyName.ToLower() == strName.ToLower())
+          if (msg.keyName.ToLowerInvariant() == strName.ToLowerInvariant())
           {
             return msg.Value;
           }
@@ -258,7 +258,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.xPL
       get
       {
         XplSchema schema;
-        schema.msgClass = this.XPL_Msg[1].Section.ToLower();
+        schema.msgClass = this.XPL_Msg[1].Section.ToLowerInvariant();
         schema.msgType = schema.msgClass.Substring(schema.msgClass.IndexOf(".") + 1,
                                                    (schema.msgClass.Length - schema.msgClass.IndexOf(".")) - 1);
         schema.msgClass = schema.msgClass.Substring(0, schema.msgClass.IndexOf("."));
@@ -271,7 +271,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.xPL
       get
       {
         XplSource source;
-        string str = this.GetParam(0, "source").ToLower();
+        string str = this.GetParam(0, "source").ToLowerInvariant();
         source.Vendor = str.Substring(0, str.IndexOf("-"));
         source.Device = str.Substring(str.IndexOf("-") + 1, (str.IndexOf(".") - str.IndexOf("-")) - 1);
         source.Instance = str.Substring(str.IndexOf(".") + 1, (str.Length - str.IndexOf(".")) - 1);
@@ -284,7 +284,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.xPL
       get
       {
         XplSource source;
-        string str = this.GetParam(0, "target").ToLower();
+        string str = this.GetParam(0, "target").ToLowerInvariant();
         if (str == "*")
         {
           source.Vendor = "*";

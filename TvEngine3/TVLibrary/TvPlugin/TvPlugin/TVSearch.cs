@@ -38,9 +38,9 @@ namespace TvPlugin
   public class TvSearch : GUIInternalWindow
   {
     [SkinControl(2)] protected GUISortButtonControl btnSortBy = null;
-    [SkinControl(4)] protected GUIToggleButtonControl btnSearchByGenre = null;
-    [SkinControl(5)] protected GUIToggleButtonControl btnSearchByTitle = null;
-    [SkinControl(6)] protected GUIToggleButtonControl btnSearchByDescription = null;
+    [SkinControl(4)] protected GUICheckButton btnSearchByGenre = null;
+    [SkinControl(5)] protected GUICheckButton btnSearchByTitle = null;
+    [SkinControl(6)] protected GUICheckButton btnSearchByDescription = null;
     [SkinControl(7)] protected GUISelectButtonControl btnLetter = null;
     [SkinControl(19)] protected GUIButtonControl btnSMSInput = null;
     [SkinControl(8)] protected GUISelectButtonControl btnShow = null;
@@ -162,14 +162,39 @@ namespace TvPlugin
     protected override void OnPageDestroy(int newWindowId)
     {
       base.OnPageDestroy(newWindowId);
-      listRecordings.Clear();
-      listRecordings = null;
+      if (TVHome.Connected)
+      {
+        listRecordings.Clear();
+        listRecordings = null;
+      }
       if (!GUIGraphicsContext.IsTvWindow(newWindowId)) {}
     }
 
     protected override void OnPageLoad()
     {
+      if (!TVHome.Connected)
+      {
+        RemoteControl.Clear();
+        GUIWindowManager.ActivateWindow((int)Window.WINDOW_SETTINGS_TVENGINE);
+        return;
+      }
+
       TVHome.WaitForGentleConnection();
+
+      if (TVHome.Navigator == null)
+      {
+        TVHome.OnLoaded();
+      }
+      else if (TVHome.Navigator.Channel == null)
+      {
+        TVHome.m_navigator.ReLoad();
+        TVHome.LoadSettings(false);
+      }
+
+      if (TVHome.m_navigator == null)
+      {
+        TVHome.m_navigator = new ChannelNavigator(); // Create the channel navigator (it will load groups and channels)
+      }
 
       base.OnPageLoad();
       listRecordings = Schedule.ListAll();
@@ -189,7 +214,7 @@ namespace TvPlugin
         {
           btnLetter.AddSubItem(k.ToString());
         }
-        //btnLetter.AddSubItem("#");  // => will be everything beside a-z
+        btnLetter.AddSubItem("#");
       }
       Update();
 
@@ -444,66 +469,52 @@ namespace TvPlugin
       }
       else
       {
-        if (filterLetter != "#")
+        listView.IsVisible = false;
+        titleView.IsVisible = true;
+        GUIControl.FocusControl(GetID, titleView.GetID);
+
+        if (filterShow == String.Empty)
         {
-          listView.IsVisible = false;
-          titleView.IsVisible = true;
-          GUIControl.FocusControl(GetID, titleView.GetID);
-
-          if (filterShow == String.Empty)
-          {
-            if (imgChannelLogo != null)
-            {
-              imgChannelLogo.IsVisible = false;
-            }
-            if (titleView.SubItemCount == 2)
-            {
-              string subItem = (string)titleView.GetSubItem(1);
-              int h = Int32.Parse(subItem.Substring(1));
-              GUIGraphicsContext.ScaleVertical(ref h);
-              titleView.Height = h;
-              h = Int32.Parse(subItem.Substring(1));
-              h -= 55;
-              GUIGraphicsContext.ScaleVertical(ref h);
-              titleView.SpinY = titleView.YPosition + h;
-              titleView.Dispose();
-              titleView.AllocResources();
-            }
-          }
-          else
-          {
-            if (imgChannelLogo != null)
-            {
-              imgChannelLogo.IsVisible = true;
-            }
-            if (titleView.SubItemCount == 2)
-            {
-              string subItem = (string)titleView.GetSubItem(0);
-              int h = Int32.Parse(subItem.Substring(1));
-              GUIGraphicsContext.ScaleVertical(ref h);
-              titleView.Height = h;
-
-              h = Int32.Parse(subItem.Substring(1));
-              h -= 50;
-              GUIGraphicsContext.ScaleVertical(ref h);
-              titleView.SpinY = titleView.YPosition + h;
-
-              titleView.Dispose();
-              titleView.AllocResources();
-            }
-            lblNumberOfItems.YPosition = titleView.SpinY;
-          }
-        }
-        else
-        {
-          listView.IsVisible = true;
-          titleView.IsVisible = false;
-          GUIControl.FocusControl(GetID, listView.GetID);
-
           if (imgChannelLogo != null)
           {
             imgChannelLogo.IsVisible = false;
           }
+          if (titleView.SubItemCount == 2)
+          {
+            string subItem = (string)titleView.GetSubItem(1);
+            int h = Int32.Parse(subItem.Substring(1));
+            GUIGraphicsContext.ScaleVertical(ref h);
+            titleView.Height = h;
+            h = Int32.Parse(subItem.Substring(1));
+            h -= 55;
+            GUIGraphicsContext.ScaleVertical(ref h);
+            titleView.SpinY = titleView.YPosition + h;
+            titleView.Dispose();
+            titleView.AllocResources();
+          }
+        }
+        else
+        {
+          if (imgChannelLogo != null)
+          {
+            imgChannelLogo.IsVisible = true;
+          }
+          if (titleView.SubItemCount == 2)
+          {
+            string subItem = (string)titleView.GetSubItem(0);
+            int h = Int32.Parse(subItem.Substring(1));
+            GUIGraphicsContext.ScaleVertical(ref h);
+            titleView.Height = h;
+
+            h = Int32.Parse(subItem.Substring(1));
+            h -= 50;
+            GUIGraphicsContext.ScaleVertical(ref h);
+            titleView.SpinY = titleView.YPosition + h;
+
+            titleView.Dispose();
+            titleView.AllocResources();
+          }
+          lblNumberOfItems.YPosition = titleView.SpinY;
         }
 
         if (currentSearchMode != SearchMode.Genre)
@@ -539,7 +550,7 @@ namespace TvPlugin
           {
             IList<string> genres;
             TvBusinessLayer layer = new TvBusinessLayer();
-            genres = layer.GetGenres();
+            genres = layer.GetProgramGenres();
             foreach (string genre in genres)
             {
               GUIListItem item = new GUIListItem();
@@ -683,8 +694,7 @@ namespace TvPlugin
             {
               if (filterShow == String.Empty)
               {
-                titles = layer.SearchPrograms("%[^a-z]", ChannelType.Tv);
-                //titles = layer.SearchPrograms("");
+                titles = layer.SearchPrograms("[0-9]", ChannelType.Tv);
               }
               else
               {
@@ -704,60 +714,32 @@ namespace TvPlugin
             }
             foreach (Program program in titles)
             {
-              if (filterLetter != "#")
-              {
-                bool add = true;
-                foreach (Program prog in programs)
-                {
-                  if (prog.Title == program.Title)
-                  {
-                    add = false;
-                  }
-                }
-                if (!add && filterShow == String.Empty)
-                {
-                  continue;
-                }
-                if (add)
-                {
-                  programs.Add(program);
-                }
 
-                if (filterShow != String.Empty)
-                {
-                  if (program.Title == filterShow)
-                  {
-                    episodes.Add(program);
-                  }
-                }
-              } //if (filterLetter!="#")
-              else
+              bool add = true;
+              foreach (Program prog in programs)
               {
-                bool add = true;
-                foreach (Program prog in programs)
+                if (prog.Title == program.Title)
                 {
-                  if (prog.Title == program.Title)
-                  {
-                    add = false;
-                  }
-                }
-                if (!add && filterShow == String.Empty)
-                {
-                  continue;
-                }
-                if (add)
-                {
-                  programs.Add(program);
-                }
-
-                if (filterShow != String.Empty)
-                {
-                  if (program.Title == filterShow)
-                  {
-                    episodes.Add(program);
-                  }
+                  add = false;
                 }
               }
+              if (!add && filterShow == String.Empty)
+              {
+                continue;
+              }
+              if (add)
+              {
+                programs.Add(program);
+              }
+
+              if (filterShow != String.Empty)
+              {
+                if (program.Title == filterShow)
+                {
+                  episodes.Add(program);
+                }
+              }
+
               if (filterShow != String.Empty && program.Title != filterShow)
               {
                 continue;
@@ -822,44 +804,29 @@ namespace TvPlugin
             long end = Utils.datetolong(DateTime.Now.AddMonths(1));
             TvBusinessLayer layer = new TvBusinessLayer();
 
-            if (filterLetter == "#")
+            if (filterShow == String.Empty)
             {
-              if (filterShow == String.Empty)
-              {
-                titles = layer.SearchProgramsByDescription("", ChannelType.Tv);
-              }
-              else
-              {
-                titles = layer.SearchProgramsByDescription(filterShow, ChannelType.Tv);
-              }
+              titles = layer.SearchProgramsByDescription(filterLetter, ChannelType.Tv);
             }
             else
             {
-              if (filterShow == String.Empty)
-              {
-                titles = layer.SearchProgramsByDescription(filterLetter, ChannelType.Tv);
-              }
-              else
-              {
-                titles = layer.SearchProgramsByDescription(filterShow, ChannelType.Tv);
-              }
+              titles = layer.SearchProgramsByDescription(filterShow, ChannelType.Tv);
             }
+ 
             foreach (Program program in titles)
             {
               if (program.Description.Length == 0)
               {
                 continue;
               }
-              if (filterLetter != "#")
-              {
-                programs.Add(program);
+
+              programs.Add(program);
                 
-                if (filterShow != String.Empty)
+              if (filterShow != String.Empty)
+              {
+                if (program.Title == filterShow)
                 {
-                  if (program.Title == filterShow)
-                  {
-                    episodes.Add(program);
-                  }
+                  episodes.Add(program);
                 }
               }
 
@@ -1078,7 +1045,6 @@ namespace TvPlugin
         case SearchMode.Genre:
           if (currentLevel == 0)
           {
-            filterLetter = "#";
             filterShow = String.Empty;
             filterEpisode = String.Empty;
             currentGenre = item.Label;

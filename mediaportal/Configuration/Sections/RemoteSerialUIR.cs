@@ -1016,6 +1016,11 @@ namespace MediaPortal.Configuration.Sections
     private void inputCheckBox_CheckedChanged(object sender, EventArgs e)
     {
       SerialUIR.Instance.InternalCommandsActive = inputCheckBox.Checked;
+
+      if (SerialUIR.Instance.InternalCommandsActive)
+          SerialUIR.Instance.ReOpen();
+      else
+          SerialUIR.Instance.Close();
     }
   }
 }

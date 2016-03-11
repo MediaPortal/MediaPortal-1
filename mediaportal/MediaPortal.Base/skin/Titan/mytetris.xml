@@ -1,0 +1,247 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <id>7776</id>
+  <defaultcontrol>2</defaultcontrol>
+  <allowoverlay>no</allowoverlay>
+  <define>#header.label:Tetris</define>
+  <controls>
+  
+
+	<control>
+		<description>BACKGROUND</description>
+		<id>0</id>
+		<type>image</type>
+        <posX>0</posX>
+        <posY>0</posY>
+        <width>1920</width>
+        <height>1080</height>
+		<texture>hover_tetris.png</texture>
+	</control>
+	
+	<control>
+		<description>background tetris</description>
+		<type>image</type>
+		<id>0</id>
+    <posX>1448</posX>
+    <posY>458</posY>
+    <width>338</width>
+    <height>338</height>
+    <texture>tetris\block_bg.png</texture>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>
+	</control>
+	
+	<control>
+		<description>background tetris</description>
+		<type>image</type>
+		<id>0</id>
+    <posX>586</posX>
+    <posY>225</posY>
+    <width>923</width>
+    <height>778</height>
+    <texture>tetris\border.png</texture>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>
+	</control>
+	
+   <control>
+		<id>0</id>
+		<type>image</type>
+		<posX>66</posX>
+		<posY>34</posY>
+		<width>68</width>
+		<height>60</height>
+		<texture>icon_plugin.png</texture>
+    </control>
+	
+	<import>common.time.xml</import>
+	
+	
+	<control>
+		<description>buttons</description>
+		<type>group</type>
+		<dimColor>ffffffff</dimColor>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>
+		
+		<control>
+      <description>New Game</description>
+      <type>button</type>
+      <id>2</id>
+			<posX>119</posX>
+			<posY>229</posY>
+			<width>397</width>
+			<height>70</height>
+      <label>19002</label>
+			<textcolor>FF000000</textcolor>
+			<textcolorNoFocus>FF000000</textcolorNoFocus>
+			<textureFocus>tetris\button_texture_focus.png</textureFocus>
+			<textureNoFocus>tetris\button_texture.png</textureNoFocus>
+			<textXOff>33</textXOff>
+			<textYOff>11</textYOff>
+      <onright>10</onright>
+      <onup>17</onup>
+      <ondown>4</ondown>
+      <onright>10</onright>
+    </control>
+		<control>
+      <description>Sounds</description>
+      <type>checkbutton</type>
+      <id>4</id>
+			<posX>101</posX>
+			<posY>278</posY>
+			<width>415</width>
+			<height>85</height>
+      <label>19004</label>
+    	<textYOff>26</textYOff>
+			<textcolor>FF000000</textcolor>
+			<textcolorNoFocus>FF000000</textcolorNoFocus>
+			<textureFocus>tetris\button_focus_toggleon.png</textureFocus>
+			<textureNoFocus>tetris\button_nofocus_toggleon.png</textureNoFocus>
+    	<textureCheckmark>tetris\checkmark_checked.png</textureCheckmark>
+    	<textureCheckmarkNoFocus>tetris\checkmark_unchecked.png</textureCheckmarkNoFocus>
+	    <markWidth>24</markWidth>
+	    <markHeight>24</markHeight>
+     	<markXOff>35</markXOff>
+    	<markYOff>24</markYOff>
+	    <markvalign>top</markvalign>
+			<textXOff hasMargin="true">50</textXOff>
+      <onup>2</onup>
+      <ondown>2</ondown>
+      <onright>10</onright>
+    </control>
+    </control>
+	
+    <control>
+      <description>info group</description>
+      <type>group</type>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+			<dimColor>FFFFFFFF</dimColor>
+      <control>
+        <description>Scoreboard background</description>
+        <type>image</type>
+        <id>200</id>
+        <posX>119</posX>
+        <posY>401</posY>
+        <width>397</width>
+        <height>540</height>
+        <texture>tetris\scoreboard.png</texture>
+      </control>
+      <control>
+        <description>Score: label</description>
+        <type>label</type>
+        <id>201</id>
+        <posX>151</posX>
+        <posY>430</posY>
+        <label>19005</label>
+				<font>fontB12</font>
+				<textcolor>000000</textcolor>
+      </control>
+      <control>
+        <description>Score</description>
+        <type>label</type>
+        <id>202</id>
+        <posX>151</posX>
+        <posY>462</posY>
+        <width>404</width>
+				<font>fontB20</font>
+        <label>#tetris_score</label>
+				<textcolor>000000</textcolor>
+      </control>
+      <control>
+        <description>Level: label</description>
+        <type>label</type>
+        <id>203</id>
+        <posX>151</posX>
+        <posY>535</posY>
+        <label>19006</label>
+				<font>fontB12</font>
+				<textcolor>000000</textcolor>
+      </control>
+      <control>
+        <description>Level</description>
+        <type>label</type>
+        <id>204</id>
+        <posX>151</posX>
+        <posY>568</posY>
+        <width>404</width>
+        <label>#tetris_level</label>
+				<font>fontB20</font>
+				<textcolor>000000</textcolor>
+      </control>
+      <control>
+        <description>Lines: label</description>
+        <type>label</type>
+        <id>205</id>
+        <posX>148</posX>
+        <posY>641</posY>
+        <label>19007</label>
+				<font>fontB12</font>
+				<textcolor>000000</textcolor>
+      </control>
+      <control>
+        <description>Lines</description>
+        <type>label</type>
+        <id>206</id>
+        <posX>151</posX>
+        <posY>670</posY>
+        <width>404</width>
+        <label>#tetris_lines</label>
+				<font>fontB20</font>
+				<textcolor>000000</textcolor>
+      </control>
+      <control>
+        <description>Highscore: label</description>
+        <type>label</type>
+        <id>205</id>
+        <posX>146</posX>
+        <posY>746</posY>
+        <label>19008</label>
+				<font>fontB12</font>
+				<textcolor>000000</textcolor>
+      </control>
+      <control>
+        <description>Highscore</description>
+        <type>label</type>
+        <id>206</id>
+        <posX>151</posX>
+        <posY>775</posY>
+        <width>404</width>
+        <label>#tetris_highscore</label>
+				<font>fontB20</font>
+				<textcolor>000000</textcolor>
+      </control>
+    </control>
+	
+    <control>
+      <description>group element</description>
+      <type>group</type>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+      <control>
+        <description>Tetris control</description>
+        <type>tetris</type>
+        <id>10</id>
+        <posX>587</posX>
+        <posY>219</posY>
+        <width>857</width>
+        <height>713</height>
+        <font>font12</font>
+        <textcolor>ffffffff</textcolor>
+        <onback>2</onback>
+        <onleft>2</onleft>
+        <onright>10</onright>
+        <onup>10</onup>
+        <ondown>10</ondown>
+        <texture>tetris\background.png</texture>
+        <texturefocus>tetris\background.png</texturefocus>
+        <textureLeft>tetris\guide.png</textureLeft>
+        <textureRight>tetris\guide.png</textureRight>
+        <nextblockx>1660</nextblockx>
+        <nextblocky>580</nextblocky>
+      </control>
+    </control>
+	
+  </controls>
+</window>

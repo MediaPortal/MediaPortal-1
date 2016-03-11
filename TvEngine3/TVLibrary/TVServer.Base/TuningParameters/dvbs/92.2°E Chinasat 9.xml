@@ -63,13 +63,4 @@
     <Pilot>NotSet</Pilot>
     <Rolloff>NotSet</Rolloff>
   </Transponder>
-  <Transponder>
-    <CarrierFrequency>12180000</CarrierFrequency>
-    <Polarisation>CircularR</Polarisation>
-    <SymbolRate>5632</SymbolRate>
-    <Modulation>Mod8Psk</Modulation>
-    <InnerFecRate>Rate3_4</InnerFecRate>
-    <Pilot>On</Pilot>
-    <Rolloff>ThirtyFive</Rolloff>
-  </Transponder>
 </ArrayOfTransponder>

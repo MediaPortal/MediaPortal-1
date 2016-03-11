@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2013 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2013 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -57,9 +57,9 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("label2")] protected string _tagLabel2 = "";
     [XMLSkinElement("font1")] protected string _fontName1 = string.Empty;
     [XMLSkinElement("font2")] protected string _fontName2 = string.Empty;
-    [XMLSkinElement("textcolor1")] protected long _textColor1 = (long)0xFFFFFFFF;
-    [XMLSkinElement("textcolor2")] protected long _textColor2 = (long)0xFFFFFFFF;
-    [XMLSkinElement("disabledColor")] protected long _disabledColor = (long)0xFF606060;
+    [XMLSkinElement("textcolor1")] protected long _textColor1 = 0xFFFFFFFF;
+    [XMLSkinElement("textcolor2")] protected long _textColor2 = 0xFFFFFFFF;
+    [XMLSkinElement("disabledColor")] protected long _disabledColor = 0xFF606060;
     protected int _hyperLinkWindowId = -1;
     protected int _actionId = -1;
     protected string _scriptAction = "";
@@ -68,6 +68,8 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("textOffsetY1")] protected int _textOffsetY1 = 2;
     [XMLSkinElement("textOffsetX2")] protected int _textOffsetX2 = 10;
     [XMLSkinElement("textOffsetY2")] protected int _textOffsetY2 = 2;
+    [XMLSkinElement("textpadding1")] protected int _textPadding1 = 0;
+    [XMLSkinElement("textpadding2")] protected int _textPadding2 = 0;
     protected string _cachedTextLabel1;
     protected string _cachedTextLabel2;
     protected string _application = "";
@@ -189,18 +191,17 @@ namespace MediaPortal.GUI.Library
     [XMLSkin("textureIcon2", "corners")] protected bool _borderHasCornersTI2 = false;
     [XMLSkin("textureIcon2", "cornerRotate")] protected bool _borderCornerTextureRotateTI2 = true;
 
-    private GUILabelControl _labelControl1 = null;
-    private GUILabelControl _labelControl2 = null;
-    private bool _containsProperty1 = false;
-    private bool _containsProperty2 = false;
+    private GUILabelControl _labelControl1;
+    private GUILabelControl _labelControl2;
+    private bool _containsProperty1;
+    private bool _containsProperty2;
     private bool renderLeftPart = true;
     private bool renderRightPart = true;
-    private bool stretchIfNotRendered = false;
-    //Sprite                           sprite=null;
-    private bool _property1Changed = false;
-    private bool _property2Changed = false;
-    private bool _reCalculate = false;
-    private bool _registeredForEvent = false;
+    private bool stretchIfNotRendered;
+    private bool _property1Changed;
+    private bool _property2Changed;
+    private bool _reCalculate;
+    private bool _registeredForEvent;
 
     /// <summary>
     /// empty constructor
@@ -208,7 +209,7 @@ namespace MediaPortal.GUI.Library
     public GUIButton3PartControl() {}
 
     /// <summary>
-    /// The basic constructur of the GUIControl class.
+    /// The basic constructor of the GUIControl class.
     /// </summary>
     public GUIButton3PartControl(int dwParentID)
       : this()
@@ -225,8 +226,13 @@ namespace MediaPortal.GUI.Library
     /// <param name="dwPosY">The Y position of this control.</param>
     /// <param name="dwWidth">The width of this control.</param>
     /// <param name="dwHeight">The height of this control.</param>
-    /// <param name="strTextureFocus">The filename containing the texture of the butten, when the button has the focus.</param>
-    /// <param name="strTextureNoFocus">The filename containing the texture of the butten, when the button does not have the focus.</param>
+    /// <param name="strTextureFocusLeft"></param>
+    /// <param name="strTextureFocusMid"></param>
+    /// <param name="strTextureFocusRight"></param>
+    /// <param name="strTextureNoFocusLeft"></param>
+    /// <param name="strTextureNoFocusMid"></param>
+    /// <param name="strTextureNoFocusRight"></param>
+    /// <param name="strTextureIcon"></param>
     public GUIButton3PartControl(int dwParentID, int dwControlId, int dwPosX, int dwPosY, int dwWidth, int dwHeight,
                                  string strTextureFocusLeft,
                                  string strTextureFocusMid,
@@ -395,26 +401,21 @@ namespace MediaPortal.GUI.Library
       }
       _cachedTextLabel1 = _tagLabel1;
       _cachedTextLabel2 = _tagLabel2;
+      
       if (_containsProperty1 && _property1Changed)
       {
         _property1Changed = false;
-        _cachedTextLabel1 = GUIPropertyManager.Parse(_tagLabel1);
-        if (_cachedTextLabel1 == null)
-        {
-          _cachedTextLabel1 = "";
-        }
+        _cachedTextLabel1 = GUIPropertyManager.Parse(_tagLabel1) ?? "";
         _reCalculate = true;
       }
+      
       if (_containsProperty2 && _property2Changed)
       {
         _property2Changed = false;
-        _cachedTextLabel2 = GUIPropertyManager.Parse(_tagLabel2);
-        if (_cachedTextLabel2 == null)
-        {
-          _cachedTextLabel2 = "";
-        }
+        _cachedTextLabel2 = GUIPropertyManager.Parse(_tagLabel2) ?? "";
         _reCalculate = true;
       }
+
       if (_reCalculate)
       {
         Calculate();
@@ -475,11 +476,17 @@ namespace MediaPortal.GUI.Library
       // Shorten the text width so the text does not overlap a right aligned or inlined icon.
       if (_imageIcon != null && (_iconAlign == Alignment.ALIGN_RIGHT) || IconInlineLabel1)
       {
-        iWidth -= (_imageIcon.Width + IconOffsetX);
+        if (_imageIcon != null)
+        {
+          iWidth -= (_imageIcon.Width + IconOffsetX);
+        }
       }
       if (_imageIcon2 != null && (_icon2Align == Alignment.ALIGN_RIGHT) || Icon2InlineLabel1)
       {
-        iWidth -= (_imageIcon2.Width + Icon2OffsetX);
+        if (_imageIcon2 != null)
+        {
+          iWidth -= (_imageIcon2.Width + Icon2OffsetX);
+        }
       }
 
       // render the 1st line of text on the button
@@ -488,18 +495,11 @@ namespace MediaPortal.GUI.Library
         int widthLeft = 0;
         if (RenderLeft)
         {
-          widthLeft = (int)((float)_imageFocusedLeft.TextureWidth * ((float)_height / (float)_imageFocusedLeft.TextureHeight));
+          widthLeft = (int)(_imageFocusedLeft.TextureWidth * ((float)_height / _imageFocusedLeft.TextureHeight));
         }
         int xoff = _textOffsetX1 + widthLeft;
 
-        if (Disabled)
-        {
-          _labelControl1.TextColor = _disabledColor;
-        }
-        else
-        {
-          _labelControl1.TextColor = _textColor1;
-        }
+        _labelControl1.TextColor = Disabled ? _disabledColor : _textColor1;
         _labelControl1.SetPosition(xoff + _positionX, _textOffsetY1 + _positionY);
         _labelControl1.TextAlignment = Alignment.ALIGN_LEFT;
         _labelControl1.FontName = _fontName1;
@@ -515,6 +515,7 @@ namespace MediaPortal.GUI.Library
             iWidth -= (IconOffsetX + IconWidth);
           }
         }
+
         if (_imageIcon2 != null && Icon2InlineLabel1)
         {
           if (_labelControl1.TextWidth + Icon2OffsetX + Icon2Width > iWidth)
@@ -522,11 +523,16 @@ namespace MediaPortal.GUI.Library
             iWidth -= (Icon2OffsetX + Icon2Width);
           }
         }
+
+        if (_textPadding1 > 0)
+        {
+          iWidth -= GUIGraphicsContext.ScaleHorizontal(_textPadding1);
+        }
+
         if (iWidth <= 0)
         {
           iWidth = 1;
         }
-
         _labelControl1.Width = iWidth;
         _labelControl1.Render(timePassed);
       }
@@ -534,60 +540,60 @@ namespace MediaPortal.GUI.Library
       // render the 2nd line of text on the button
       if (_imageNonFocusedMid.IsVisible && _cachedTextLabel2.Length > 0)
       {
-        int widthLeft =
-          (int)((float)_imageFocusedLeft.TextureWidth * ((float)_height / (float)_imageFocusedLeft.TextureHeight));
+        int widthLeft = (int)(_imageFocusedLeft.TextureWidth * ((float)_height / _imageFocusedLeft.TextureHeight));
         int xoff = _textOffsetX2 + widthLeft;
 
-        if (Disabled)
-        {
-          _labelControl2.TextColor = _disabledColor;
-        }
-        else
-        {
-          _labelControl2.TextColor = _textColor2;
-        }
+        _labelControl2.TextColor = Disabled ? _disabledColor : _textColor2;
         _labelControl2.SetPosition(xoff + _positionX, _textOffsetY2 + _positionY);
         _labelControl2.TextAlignment = Alignment.ALIGN_LEFT;
         _labelControl2.FontName = _fontName1;
         _labelControl2.Label = _cachedTextLabel2;
+
+        if (_textPadding2 > 0)
+        {
+          iWidth -= GUIGraphicsContext.ScaleHorizontal(_textPadding2);
+        }
         _labelControl2.Width = iWidth - 10;
-        _labelControl2.Render(timePassed);
+
+        if (_labelControl2.Width <= 0)
+        {
+          base.Render(timePassed);
+        }
+        else
+        {
+          _labelControl2.Render(timePassed);
+        }
       }
 
-      //render the icon
+      // render the icon
       if (_imageIcon != null)
       {
         // If the icon should be inline with the text then move it to the end of the text.
         if (_iconInlineLabel1)
         {
-          int iconX = _labelControl1.XPosition + System.Math.Min(_labelControl1.Width, _labelControl1.TextWidth) +
-                      IconOffsetX;
+          int iconX = _labelControl1.XPosition + System.Math.Min(_labelControl1.Width, _labelControl1.TextWidth) + IconOffsetX;
           int iconY = _imageIcon.YPosition;
           _imageIcon.SetPosition(iconX, iconY);
         }
         // Ensure that the icon stays within the bounds of the button, else do not render the icon.
-        if ((_imageIcon.XPosition >= _positionX) &&
-            (_imageIcon.XPosition + _imageIcon.Width <= _positionX + _width))
+        if ((_imageIcon.XPosition >= _positionX) && (_imageIcon.XPosition + _imageIcon.Width <= _positionX + _width))
         {
           _imageIcon.Render(timePassed);
         }
       }
 
-      //render icon2
+      // render icon2
       if (_imageIcon2 != null)
-
       {
         // If the icon should be inline with the text then move it to the end of the text.
         if (_icon2InlineLabel1)
         {
-          int iconX = _labelControl1.XPosition + System.Math.Min(_labelControl1.Width, _labelControl1.TextWidth) +
-                      Icon2OffsetX;
+          int iconX = _labelControl1.XPosition + System.Math.Min(_labelControl1.Width, _labelControl1.TextWidth) + Icon2OffsetX;
           int iconY = _imageIcon2.YPosition;
           _imageIcon2.SetPosition(iconX, iconY);
         }
         // Ensure that the icon2 stays within the bounds of the button, else do not render the icon.
-        if ((_imageIcon2.XPosition >= _positionX) &&
-            (_imageIcon2.XPosition + _imageIcon2.Width <= _positionX + _width))
+        if ((_imageIcon2.XPosition >= _positionX) && (_imageIcon2.XPosition + _imageIcon2.Width <= _positionX + _width))
         {
           _imageIcon2.Render(timePassed);
         }
@@ -605,7 +611,6 @@ namespace MediaPortal.GUI.Library
     public override void OnAction(Action action)
     {
       base.OnAction(action);
-      GUIMessage message;
       if (Focus)
       {
         //is the button clicked?
@@ -624,8 +629,11 @@ namespace MediaPortal.GUI.Library
             Process proc = new Process();
             string strWorkingDir = Path.GetFullPath(_application);
             string strFileName = Path.GetFileName(_application);
-            strWorkingDir = strWorkingDir.Substring(0, strWorkingDir.Length - (strFileName.Length + 1));
-            proc.StartInfo.FileName = strFileName;
+            if (strFileName != null)
+            {
+              strWorkingDir = strWorkingDir.Substring(0, strWorkingDir.Length - (strFileName.Length + 1));
+              proc.StartInfo.FileName = strFileName;
+            }
             proc.StartInfo.WorkingDirectory = strWorkingDir;
             proc.StartInfo.Arguments = _arguments;
             proc.StartInfo.WindowStyle = ProcessWindowStyle.Minimized;
@@ -638,7 +646,7 @@ namespace MediaPortal.GUI.Library
           if (_hyperLinkWindowId >= 0)
           {
             //then switch to the other window
-            GUIWindowManager.ActivateWindow((int)_hyperLinkWindowId);
+            GUIWindowManager.ActivateWindow(_hyperLinkWindowId);
             return;
           }
 
@@ -652,7 +660,7 @@ namespace MediaPortal.GUI.Library
 
           // button selected.
           // send a message to the parent window
-          message = new GUIMessage(GUIMessage.MessageType.GUI_MSG_CLICKED, WindowId, GetID, ParentID, 0, 0, null);
+          GUIMessage message = new GUIMessage(GUIMessage.MessageType.GUI_MSG_CLICKED, WindowId, GetID, ParentID, 0, 0, null);
           GUIGraphicsContext.SendMessage(message);
         }
       }
@@ -726,11 +734,9 @@ namespace MediaPortal.GUI.Library
 
       if (_registeredForEvent == false)
       {
-        GUIPropertyManager.OnPropertyChanged -=
-          new GUIPropertyManager.OnPropertyChangedHandler(GUIPropertyManager_OnPropertyChanged);
+        GUIPropertyManager.OnPropertyChanged -= GUIPropertyManager_OnPropertyChanged;
 
-        GUIPropertyManager.OnPropertyChanged +=
-          new GUIPropertyManager.OnPropertyChangedHandler(GUIPropertyManager_OnPropertyChanged);
+        GUIPropertyManager.OnPropertyChanged += GUIPropertyManager_OnPropertyChanged;
         _registeredForEvent = true;
       }
     }
@@ -743,14 +749,14 @@ namespace MediaPortal.GUI.Library
       }
       if (_containsProperty1)
       {
-        if (_tagLabel1.IndexOf(tag) >= 0)
+        if (_tagLabel1.IndexOf(tag, System.StringComparison.Ordinal) >= 0)
         {
           _property1Changed = true;
         }
       }
       if (_containsProperty2)
       {
-        if (_tagLabel2.IndexOf(tag) >= 0)
+        if (_tagLabel2.IndexOf(tag, System.StringComparison.Ordinal) >= 0)
         {
           _property2Changed = true;
         }
@@ -776,8 +782,7 @@ namespace MediaPortal.GUI.Library
       _labelControl2.SafeDispose();
 
 
-      GUIPropertyManager.OnPropertyChanged -=
-        new GUIPropertyManager.OnPropertyChangedHandler(GUIPropertyManager_OnPropertyChanged);
+      GUIPropertyManager.OnPropertyChanged -= GUIPropertyManager_OnPropertyChanged;
     }
 
     /// <summary>
@@ -1195,7 +1200,7 @@ namespace MediaPortal.GUI.Library
         {
           return;
         }
-        if (_textOffsetY1 != value)
+        if (_textOffsetY2 != value)
         {
           _textOffsetY2 = value;
           _reCalculate = true;
@@ -1216,12 +1221,9 @@ namespace MediaPortal.GUI.Library
 
       _imageFocusedLeft.Refresh();
       _imageFocusedRight.Refresh();
-      int width;
 
-      int widthLeft =
-        (int)((float)_imageFocusedLeft.TextureWidth * ((float)_height / (float)_imageFocusedLeft.TextureHeight));
-      int widthRight =
-        (int)((float)_imageFocusedRight.TextureWidth * ((float)_height / (float)_imageFocusedRight.TextureHeight));
+      int widthLeft = (int)(_imageFocusedLeft.TextureWidth * ((float)_height / _imageFocusedLeft.TextureHeight));
+      int widthRight = (int)(_imageFocusedRight.TextureWidth * ((float)_height / _imageFocusedRight.TextureHeight));
       int widthMid = _width - widthLeft - widthRight;
       if (widthMid < 0)
       {
@@ -1230,7 +1232,7 @@ namespace MediaPortal.GUI.Library
 
       while (true)
       {
-        width = widthLeft + widthRight + widthMid;
+        int width = widthLeft + widthRight + widthMid;
         if (width > _width)
         {
           if (widthMid > 0)
@@ -1274,63 +1276,15 @@ namespace MediaPortal.GUI.Library
       _imageFocusedLeft.Width = widthLeft;
       _imageFocusedMid.Width = widthMid;
       _imageFocusedRight.Width = widthRight;
-      if (widthLeft == 0)
-      {
-        _imageFocusedLeft.IsVisible = false;
-      }
-      else
-      {
-        _imageFocusedLeft.IsVisible = true;
-      }
-
-      if (widthMid == 0)
-      {
-        _imageFocusedMid.IsVisible = false;
-      }
-      else
-      {
-        _imageFocusedMid.IsVisible = true;
-      }
-
-      if (widthRight == 0)
-      {
-        _imageFocusedRight.IsVisible = false;
-      }
-      else
-      {
-        _imageFocusedRight.IsVisible = true;
-      }
-
+      _imageFocusedLeft.IsVisible = widthLeft != 0;
+      _imageFocusedMid.IsVisible = widthMid != 0;
+      _imageFocusedRight.IsVisible = widthRight != 0;
       _imageNonFocusedLeft.Width = widthLeft;
       _imageNonFocusedMid.Width = widthMid;
       _imageNonFocusedRight.Width = widthRight;
-      if (widthLeft == 0)
-      {
-        _imageNonFocusedLeft.IsVisible = false;
-      }
-      else
-      {
-        _imageNonFocusedLeft.IsVisible = true;
-      }
-
-      if (widthMid == 0)
-      {
-        _imageNonFocusedMid.IsVisible = false;
-      }
-      else
-      {
-        _imageNonFocusedMid.IsVisible = true;
-      }
-
-      if (widthRight == 0)
-      {
-        _imageNonFocusedRight.IsVisible = false;
-      }
-      else
-      {
-        _imageNonFocusedRight.IsVisible = true;
-      }
-
+      _imageNonFocusedLeft.IsVisible = widthLeft != 0;
+      _imageNonFocusedMid.IsVisible = widthMid != 0;
+      _imageNonFocusedRight.IsVisible = widthRight != 0;
       _imageFocusedLeft.SetPosition(_positionX, _positionY);
       _imageFocusedMid.SetPosition(_positionX + widthLeft, _positionY);
       _imageFocusedRight.SetPosition(_positionX + _width - widthRight, _positionY);
@@ -1551,13 +1505,7 @@ namespace MediaPortal.GUI.Library
     public bool IconInlineLabel1
     {
       get { return _iconInlineLabel1; }
-      set
-      {
-        if (_iconInlineLabel1 != value)
-        {
-          _iconInlineLabel1 = value;
-        }
-      }
+      set { _iconInlineLabel1 = value; }
     }
 
     /// <summary>
@@ -1646,13 +1594,7 @@ namespace MediaPortal.GUI.Library
     public bool Icon2InlineLabel1
     {
       get { return _icon2InlineLabel1; }
-      set
-      {
-        if (_icon2InlineLabel1 != value)
-        {
-          _icon2InlineLabel1 = value;
-        }
-      }
+      set { _icon2InlineLabel1 = value; }
     }
 
     /// <summary>
@@ -1831,11 +1773,7 @@ namespace MediaPortal.GUI.Library
       {
         return false;
       }
-      if (text.IndexOf("#") >= 0)
-      {
-        return true;
-      }
-      return false;
+      return text.IndexOf("#", System.StringComparison.Ordinal) >= 0;
     }
 
     public bool RenderLeft
@@ -1979,7 +1917,7 @@ namespace MediaPortal.GUI.Library
       _reCalculate = true;
     }
 
-    public override int DimColor
+    public override sealed int DimColor
     {
       get { return base.DimColor; }
       set
@@ -2214,79 +2152,37 @@ namespace MediaPortal.GUI.Library
     public string OverlayFileNameTFL
     {
       get { return _overlayTFL; }
-      set
-      {
-        if (_overlayTFL == value)
-        {
-          return;
-        }
-        _overlayTFL = value;
-      }
+      set { _overlayTFL = value; }
     }
 
     public string OverlayFileNameTNFL
     {
       get { return _overlayTNFL; }
-      set
-      {
-        if (_overlayTNFL == value)
-        {
-          return;
-        }
-        _overlayTNFL = value;
-      }
+      set { _overlayTNFL = value; }
     }
 
     public string OverlayFileNameTFM
     {
       get { return _overlayTFM; }
-      set
-      {
-        if (_overlayTFM == value)
-        {
-          return;
-        }
-        _overlayTFM = value;
-      }
+      set { _overlayTFM = value; }
     }
 
     public string OverlayFileNameTNFM
     {
       get { return _overlayTNFM; }
-      set
-      {
-        if (_overlayTNFM == value)
-        {
-          return;
-        }
-        _overlayTNFM = value;
-      }
+      set { _overlayTNFM = value; }
     }
 
     public string OverlayFileNameTFR
     {
       get { return _overlayTFR; }
-      set
-      {
-        if (_overlayTFR == value)
-        {
-          return;
-        }
-        _overlayTFR = value;
-      }
+      set { _overlayTFR = value; }
     }
 
     public string OverlayFileNameTNFR
     {
       get { return _overlayTNFR; }
-      set
-      {
-        if (_overlayTNFR == value)
-        {
-          return;
-        }
-        _overlayTNFR = value;
-      }
+      set { _overlayTNFR = value; }
     }
   }
 }

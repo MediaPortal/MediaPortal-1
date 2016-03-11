@@ -18,5 +18,5 @@
 
 #pragma once
 
-LONGLONG GetCurrentTimestamp();
- __int64 _stdcall cMulDiv64(__int64 operant, __int64 multiplier, __int64 divider);
+inline LONGLONG GetCurrentTimestamp();
+inline __int64 _stdcall cMulDiv64(__int64 operant, __int64 multiplier, __int64 divider);

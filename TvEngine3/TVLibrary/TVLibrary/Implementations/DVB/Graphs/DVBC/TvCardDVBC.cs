@@ -41,10 +41,9 @@ namespace TvLibrary.Implementations.DVB
     /// <summary>
     /// Initializes a new instance of the <see cref="TvCardDVBC"/> class.
     /// </summary>
-    /// <param name="epgEvents">The EPG events interface.</param>
     /// <param name="device">The device.</param>
-    public TvCardDVBC(IEpgEvents epgEvents, DsDevice device)
-      : base(epgEvents, device)
+    public TvCardDVBC(DsDevice device)
+      : base(device)
     {
       _cardType = CardType.DvbC;
     }
@@ -75,7 +74,9 @@ namespace TvLibrary.Implementations.DVB
           CreateTuningSpace();
           AddMpeg2DemuxerToGraph();
         }
-        AddAndConnectBDABoardFilters(_device);
+        IBaseFilter lastFilter;
+        AddAndConnectBDABoardFilters(_device, out lastFilter);
+        CompleteGraph(ref lastFilter);
         string graphName = _device.Name + " - DVBC Graph.grf";
         FilterGraphTools.SaveGraphFile(_graphBuilder, graphName);
         GetTunerSignalStatistics();

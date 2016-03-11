@@ -172,9 +172,57 @@ namespace TvLibrary.Channels
       {
         return true;
       }
-      return atscChannel.MajorChannel != MajorChannel ||
-             atscChannel.MinorChannel != MinorChannel ||
-             atscChannel.PhysicalChannel != PhysicalChannel;
+
+      if (_modulation != atscChannel.ModulationType)
+      {
+        return true;
+      }
+
+      // For terrestrial digital (ATSC) and digital cable (SCTE) channels,
+      // physical channel is an arbitrary number that is mapped by the network
+      // provider to the frequency that must be tuned by the hardware. It
+      // relates to frequency/channel/band plans defined by standards bodies
+      // like the FCC, SCTE and ATSC.
+      return _physicalChannel == 0 || atscChannel.PhysicalChannel != _physicalChannel;
+    }
+
+    /// <summary>
+    /// Calculate the physical channel number corresponding with a frequency
+    /// in the QAM standard frequency plan.
+    /// </summary>
+    /// <param name="carrierFrequency">The frequency, in kHz.</param>
+    /// <returns>the physical channel number corresponding with <paramref name="carrierFrequency"/></returns>
+    public static int GetPhysicalChannelFromFrequency(int carrierFrequency)
+    {
+      if (carrierFrequency >= 651000)
+      {
+        return 100 + ((carrierFrequency - 651000) / 6000);
+      }
+      if (carrierFrequency >= 219000)
+      {
+        return 23 + ((carrierFrequency - 219000) / 6000);
+      }
+      if (carrierFrequency >= 177000)
+      {
+        return 7 + ((carrierFrequency - 177000) / 6000);
+      }
+      if (carrierFrequency >= 123000)
+      {
+        return 14 + ((carrierFrequency - 123000) / 6000);
+      }
+      if (carrierFrequency >= 93000)
+      {
+        return 95 + ((carrierFrequency - 93000) / 6000);
+      }
+      if (carrierFrequency >= 79000)
+      {
+        return 5 + ((carrierFrequency - 79000) / 6000);
+      }
+      if (carrierFrequency >= 57000)
+      {
+        return 2 + ((carrierFrequency - 57000) / 6000);
+      }
+      return 0;
     }
   }
 }

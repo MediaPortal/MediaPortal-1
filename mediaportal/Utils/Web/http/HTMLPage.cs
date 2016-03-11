@@ -23,8 +23,6 @@ using System.Reflection;
 using System.Text;
 using System.Threading;
 using MediaPortal.Services;
-using mshtml;
-using SHDocVw;
 
 namespace MediaPortal.Utils.Web
 {
@@ -35,14 +33,12 @@ namespace MediaPortal.Utils.Web
   {
     #region Variables
 
-    private string _strPageHead = string.Empty;
     private string _strPageSource = string.Empty;
     private string _defaultEncode = "iso-8859-1";
     private string _pageEncodingMessage = string.Empty;
     private string _encoding = string.Empty;
     private string _error;
     private IHtmlCache _cache;
-    private InternetExplorer _IE;
 
     #endregion
 
@@ -176,40 +172,7 @@ namespace MediaPortal.Utils.Web
     /// <returns>true if successful</returns>
     private bool GetExternal(HTTPRequest page)
     {
-      // Use External Browser (IE) to get HTML page
-      // IE downloads all linked graphics ads, etc
-      // IE will run Javascript source if required to renderthe page
-      if (_IE == null)
-      {
-        _IE = new InternetExplorer();
-      }
-
-      IWebBrowser2 webBrowser = (IWebBrowser2)_IE;
-
-      object empty = Missing.Value;
-
-      // check if request is POST or GET
-      if (page.PostQuery != null)
-      {
-        ASCIIEncoding encoding = new ASCIIEncoding();
-        object postData = (object)encoding.GetBytes(page.PostQuery);
-        object header = (object)"Content-Type: application/x-www-form-urlencoded\n\r";
-        webBrowser.Navigate(page.Url, ref empty, ref empty, ref postData, ref header);
-      }
-      else
-      {
-        webBrowser.Navigate(page.Url, ref empty, ref empty, ref empty, ref empty);
-      }
-
-      while (webBrowser.Busy == true)
-      {
-        Thread.Sleep(500);
-      }
-      HTMLDocumentClass doc = (HTMLDocumentClass)webBrowser.Document;
-
-      _strPageSource = doc.body.innerHTML;
-
-      return true;
+      return GetInternal(page);
     }
 
     /// <summary>
@@ -241,9 +204,9 @@ namespace MediaPortal.Utils.Web
             encode = System.Text.Encoding.GetEncoding(_defaultEncode);
             _strPageSource = encode.GetString(pageData);
             int headEnd;
-            if ((headEnd = _strPageSource.ToLower().IndexOf("</head")) != -1)
+            if ((headEnd = _strPageSource.ToLowerInvariant().IndexOf("</head")) != -1)
             {
-              if ((i = _strPageSource.ToLower().IndexOf("charset", 0, headEnd)) != -1)
+              if ((i = _strPageSource.ToLowerInvariant().IndexOf("charset", 0, headEnd)) != -1)
               {
                 strEncode = "";
                 i += 8;
@@ -268,7 +231,7 @@ namespace MediaPortal.Utils.Web
 
           GlobalServiceProvider.Get<ILog>().Debug("HTMLPage: GetInternal encoding: {0}", _pageEncodingMessage);
           // Encoding: depends on selected page
-          if (string.IsNullOrEmpty(_strPageSource) || strEncode.ToLower() != _defaultEncode)
+          if (string.IsNullOrEmpty(_strPageSource) || strEncode.ToLowerInvariant() != _defaultEncode)
           {
             try
             {

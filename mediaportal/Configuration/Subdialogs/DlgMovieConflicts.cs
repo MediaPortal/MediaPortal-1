@@ -272,22 +272,23 @@ namespace MediaPortal.Configuration.Sections
       {
         string strFileName = _listView1.SelectedItems[0].Text;
         string strMovieName = string.Empty;
+        
         if (Util.Utils.IsDVD(strFileName))
         {
           // DVD
           string strDrive = strFileName.Substring(0, 2);
           strMovieName = Util.Utils.GetDriveName(strDrive);
         }
-        else if (strFileName.ToUpper().IndexOf(@"\VIDEO_TS\VIDEO_TS.IFO") >= 0)
+        else if (strFileName.ToUpperInvariant().IndexOf(@"\VIDEO_TS\VIDEO_TS.IFO") >= 0)
         {
           // DVD folder
-          string dvdFolder = strFileName.Substring(0, strFileName.ToUpper().IndexOf(@"\VIDEO_TS\VIDEO_TS.IFO"));
+          string dvdFolder = strFileName.Substring(0, strFileName.ToUpperInvariant().IndexOf(@"\VIDEO_TS\VIDEO_TS.IFO"));
           strMovieName = Path.GetFileName(dvdFolder);
         }
-        else if (strFileName.ToUpper().IndexOf(@"\BDMV\INDEX.BDMV") >= 0)
+        else if (strFileName.ToUpperInvariant().IndexOf(@"\BDMV\INDEX.BDMV") >= 0)
         {
           // BD folder
-          string bdFolder = strFileName.Substring(0, strFileName.ToUpper().IndexOf(@"\BDMV\INDEX.BDMV"));
+          string bdFolder = strFileName.Substring(0, strFileName.ToUpperInvariant().IndexOf(@"\BDMV\INDEX.BDMV"));
           strMovieName = Path.GetFileName(bdFolder);
         }
         else
@@ -295,28 +296,29 @@ namespace MediaPortal.Configuration.Sections
           // Movie - Movie folder title + remove CD from title
           string dir = Path.GetDirectoryName(strFileName);
           bool foldercheck = Util.Utils.IsFolderDedicatedMovieFolder(dir);
-          //using (Settings xmlreader = new MPSettings())
-          //{
-            if (foldercheck)
+          
+          if (foldercheck)
+          {
+            strMovieName = Path.GetFileName(Path.GetDirectoryName(strFileName));
+          }
+          else
+          {
+            strMovieName = Path.GetFileNameWithoutExtension(strFileName);
+          }
+
+          // Test pattern (CD, DISK, Part, X-Y...) and remove it from filename
+          var pattern = Util.Utils.StackExpression();
+          
+          for (int i = 0; i < pattern.Length; i++)
+          {
+            if (foldercheck == false && pattern[i].IsMatch(strMovieName))
             {
-              strMovieName = Path.GetFileName(Path.GetDirectoryName(strFileName));
+              strMovieName = pattern[i].Replace(strMovieName, "");
             }
-            else
-            {
-              strMovieName = Path.GetFileNameWithoutExtension(strFileName);
-            }
-            // Test pattern (CD, DISK, Part, X-Y...) and remove it from filename
-            var pattern = Util.Utils.StackExpression();
-            for (int i = 0; i < pattern.Length; i++)
-            {
-              if (foldercheck == false && pattern[i].IsMatch(strMovieName))
-              {
-                strMovieName = pattern[i].Replace(strMovieName, "");
-              }
-            }
-          //}
+          }
         }
 
+        Util.Utils.RemoveStackEndings(ref strMovieName);
         _textBoxTitle.Text = strMovieName;
       }
       else

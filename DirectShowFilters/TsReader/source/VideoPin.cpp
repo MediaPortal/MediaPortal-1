@@ -36,9 +36,6 @@
 // For more details for memory leak detection see the alloctracing.h header
 #include "..\..\alloctracing.h"
 
-#define MAX_TIME  86400000L
-#define DRIFT_RATE 0.5f
-
 extern void LogDebug(const char *fmt, ...) ;
 extern DWORD m_tGTStartTime;
 
@@ -62,6 +59,7 @@ CVideoPin::CVideoPin(LPUNKNOWN pUnk, CTsReaderFilter *pFilter, HRESULT *phr,CCri
   m_bInFillBuffer = false;
   m_bPinNoAddPMT = false;
   m_bAddPMT = false;
+  m_bPinNoNewSegFlush = false;
   m_bDownstreamFlush=false;
 }
 
@@ -202,8 +200,17 @@ HRESULT CVideoPin::CheckConnect(IPin *pReceivePin)
 HRESULT CVideoPin::CompleteConnect(IPin *pReceivePin)
 {
   m_bInFillBuffer = false;
+  m_bPinNoNewSegFlush = false;
   m_bPinNoAddPMT = false;
   m_bAddPMT = true;
+  if (m_pTsReaderFilter->m_bForceFFDShowSyncFix)
+  {
+    m_pTsReaderFilter->m_bFastSyncFFDShow = true;
+  }
+  else
+  {
+    m_pTsReaderFilter->m_bFastSyncFFDShow = false;
+  }
   HRESULT hr = CBaseOutputPin::CompleteConnect(pReceivePin);
   if (!SUCCEEDED(hr)) return E_FAIL;
 
@@ -224,9 +231,7 @@ HRESULT CVideoPin::CompleteConnect(IPin *pReceivePin)
     LogDebug("vidPin:CompleteConnect() ok, filter: %s", szName);
     
     m_bConnected=true;
-    
-    m_pTsReaderFilter->m_bFastSyncFFDShow = false;
-    
+        
     CLSID &ref=m_pTsReaderFilter->GetCLSIDFromPin(pReceivePin);
     m_pTsReaderFilter->m_videoDecoderCLSID = ref;
     if (m_pTsReaderFilter->m_videoDecoderCLSID == CLSID_FFDSHOWVIDEO)
@@ -239,6 +244,11 @@ HRESULT CVideoPin::CompleteConnect(IPin *pReceivePin)
       m_bPinNoAddPMT = true;
       //LogDebug("vidPin:CompleteConnect() FFDShow DXVA Video Decoder connected, disable AddPMT");
     }
+    else if (m_pTsReaderFilter->m_videoDecoderCLSID == CLSID_MSDTVDVDVIDEO)
+    {
+      m_bPinNoNewSegFlush = true;
+      //LogDebug("vidPin:CompleteConnect() MS DTV-DVD Video Decoder connected, disable NewSegFlush");
+    }    
   }
   else
   {
@@ -249,7 +259,6 @@ HRESULT CVideoPin::CompleteConnect(IPin *pReceivePin)
 
   if (m_pTsReaderFilter->IsTimeShifting())
   {
-    //m_rtDuration=CRefTime(MAX_TIME);
     REFERENCE_TIME refTime;
     m_pTsReaderFilter->GetDuration(&refTime);
     m_rtDuration=CRefTime(refTime);
@@ -454,7 +463,7 @@ HRESULT CVideoPin::FillBuffer(IMediaSample *pSample)
         CRefTime RefTime, cRefTime;
         double fTime = 0.0;
         double clock = 0.0;
-        double stallPoint = 2.5;
+        double stallPoint = VIDEO_STALL_POINT;
         //check if it has a timestamp
         bool HasTimestamp=buffer->MediaTime(RefTime);
         if (HasTimestamp)
@@ -473,12 +482,12 @@ HRESULT CVideoPin::FillBuffer(IMediaSample *pSample)
           cRefTime -= m_pTsReaderFilter->m_ClockOnStart.m_time;
           
           // 'fast start' timestamp modification, during first (AddVideoComp + 1 sec) of play
-          double fsAdjLimit = (double)m_pTsReaderFilter->AddVideoComp.m_time + FS_ADDON_LIM; //vid comp + 1 second
+          double fsAdjLimit = (double)m_pTsReaderFilter->AddVideoComp.m_time + (double)FS_ADDON_LIM; //vid comp + 1 second
           if (m_pTsReaderFilter->m_EnableSlowMotionOnZapping && ((double)cRefTime.m_time < fsAdjLimit) )
           {
             //float startCref = (float)cRefTime.m_time/(1000*10000); //used in LogDebug below only
             //Assume desired timestamp span is zero to fsAdjLimit, actual span is AddVideoComp to fsAdjLimit
-            double offsetRatio = fsAdjLimit/FS_ADDON_LIM; // == fsAdjLimit/(fsAdjLimit - (double)m_pTsReaderFilter->AddVideoComp.m_time);
+            double offsetRatio = fsAdjLimit/(double)FS_ADDON_LIM; // == fsAdjLimit/(fsAdjLimit - (double)m_pTsReaderFilter->AddVideoComp.m_time);
             double currOffset = fsAdjLimit - (double)cRefTime.m_time;
             double newOffset = currOffset * offsetRatio;
             cRefTime = (fsAdjLimit > newOffset) ? (REFERENCE_TIME)(fsAdjLimit - newOffset) : 0;  //Don't allow negative cRefTime
@@ -497,7 +506,7 @@ HRESULT CVideoPin::FillBuffer(IMediaSample *pSample)
                                                                       
           if (m_dRateSeeking == 1.0)
           {
-            if ((fTime < 0.3) && (m_pTsReaderFilter->State() == State_Running) && (m_sampleCount > 10))
+            if ((fTime < 0.3) && (m_pTsReaderFilter->State() == State_Running) && (m_sampleCount > 10) && !ForcePresent)
             {              
               if (!demux.m_bVideoSampleLate) 
               {
@@ -506,20 +515,27 @@ HRESULT CVideoPin::FillBuffer(IMediaSample *pSample)
               //Samples times are getting close to presentation time
               demux.m_bVideoSampleLate = true;   
               
-              if (fTime < 0.02)
+              if (fTime < 0.05)
               {              
+                _InterlockedExchange(&demux.m_VideoDataLowPauseTime, (long)((fTime-0.02) * -1000.0));
                 //Samples are running very late - check if this is a persistant problem by counting over a period of time 
                 //(m_AVDataLowCount is checked in CTsReaderFilter::ThreadProc())
-                _InterlockedExchangeAdd(&demux.m_AVDataLowCount, 1);   
+                _InterlockedIncrement(&demux.m_AVDataLowCount);   
+              }
+              
+              if ((fTime < -2.0) && !demux.m_bFlushDelegated)
+              { 
+                //Very late - request internal flush and re-sync to stream
+                demux.DelegatedFlush(false, false);
+                LogDebug("vidPin : Video to render very late, flushing") ;
               }
             }
 
             //Discard late samples at start of play,
             //and samples outside a sensible timing window during play 
             //(helps with signal corruption recovery)
-            if ((fTime > (ForcePresent ? -0.5 : -0.3)) && (fTime < (stallPoint + 1.0)))
+            if ((fTime > (ForcePresent ? -1.0 : -0.3)) && (fTime < (stallPoint + 1.0)))
             {
-              //if ((fTime > stallPoint) && (m_pTsReaderFilter->State() == State_Running))
               if ((fTime > stallPoint) && (m_sampleCount > 10))
               {
                 //Too early - stall for a while to avoid over-filling of video pipeline buffers,
@@ -741,9 +757,12 @@ HRESULT CVideoPin::OnThreadStartPlay()
   //get file-duration and set m_rtDuration
   GetDuration(NULL);
 
-  //Downstream flush
-  DeliverBeginFlush();
-  DeliverEndFlush();
+  if( !m_bPinNoNewSegFlush ) //MS DTV video decoder can hang if we flush here...
+  {
+    //Downstream flush
+    DeliverBeginFlush();
+    DeliverEndFlush();
+  }
 
   //start playing
   DeliverNewSegment(m_rtStart, m_rtStop, m_dRateSeeking);
@@ -776,15 +795,25 @@ HRESULT CVideoPin::ChangeStop()
 }
 HRESULT CVideoPin::ChangeRate()
 {
+  CDeMultiplexer& demux = m_pTsReaderFilter->GetDemultiplexer();
+
   if( m_dRateSeeking <= 0 )
   {
     m_dRateSeeking = 1.0;  // Reset to a reasonable value.
     return E_FAIL;
   }
-  if( m_dRateSeeking > 2.0 && (m_pTsReaderFilter->m_videoDecoderCLSID == CLSID_FFDSHOWVIDEO 
-                                || m_pTsReaderFilter->m_videoDecoderCLSID == CLSID_LAVVIDEO))
+  
+  if( m_dRateSeeking > 4.0 && 
+     ((demux.GetVideoServiceType()==SERVICE_TYPE_VIDEO_H264) || 
+      (demux.GetVideoServiceType()==SERVICE_TYPE_VIDEO_MPEG4)) )
   {
-    //FFDShow video decoder doesn't handle rate > 2.0 properly
+    m_dRateSeeking = 1.0;  // Reset to a reasonable value.
+    return E_FAIL;
+  }
+  
+  if( m_dRateSeeking > 2.0 && (m_pTsReaderFilter->m_videoDecoderCLSID == CLSID_FFDSHOWVIDEO))
+  {
+    //Some video decoders don't handle higher rates properly
     m_dRateSeeking = 1.0;  // Reset to a reasonable value.
     return E_FAIL;
   }
@@ -835,11 +864,10 @@ STDMETHODIMP CVideoPin::GetAvailable( LONGLONG * pEarliest, LONGLONG * pLatest )
 //  LogDebug("vidPin:GetAvailable");
   if (m_pTsReaderFilter->IsTimeShifting())
   {
-    CTsDuration duration=m_pTsReaderFilter->GetDuration();
     if (pEarliest)
     {
       //return the startpcr, which is the earliest pcr timestamp available in the timeshifting file
-      double d2=duration.StartPcr().ToClock();
+      double d2=m_pTsReaderFilter->m_duration.StartPcr().ToClock();
       d2*=1000.0f;
       CRefTime mediaTime((LONG)d2);
       *pEarliest= mediaTime;
@@ -847,7 +875,7 @@ STDMETHODIMP CVideoPin::GetAvailable( LONGLONG * pEarliest, LONGLONG * pLatest )
     if (pLatest)
     {
       //return the endpcr, which is the latest pcr timestamp available in the timeshifting file
-      double d2=duration.EndPcr().ToClock();
+      double d2=m_pTsReaderFilter->m_duration.EndPcr().ToClock();
       d2*=1000.0f;
       CRefTime mediaTime((LONG)d2);
       *pLatest= mediaTime;
@@ -870,8 +898,7 @@ STDMETHODIMP CVideoPin::GetDuration(LONGLONG *pDuration)
 {
   if (m_pTsReaderFilter->IsTimeShifting())
   {
-    CTsDuration duration=m_pTsReaderFilter->GetDuration();
-    CRefTime totalDuration=duration.TotalDuration();
+    CRefTime totalDuration=m_pTsReaderFilter->m_duration.TotalDuration();
     m_rtDuration=totalDuration;
   }
   else

@@ -20,6 +20,7 @@
 
 #include "stdafx.h"
 
+#include "Settings.h"
 #include "IAVSyncClock.h"
 #include "SynchCorrection.h"
 
@@ -28,7 +29,9 @@ class CMPAudioRenderer;
 class CSyncClock: public CBaseReferenceClock
 {
 public:
-  CSyncClock(LPUNKNOWN pUnk, HRESULT *phr, CMPAudioRenderer* pRenderer, bool pUseHWRefClock);
+  CSyncClock(LPUNKNOWN pUnk, HRESULT* phr, CMPAudioRenderer* pRenderer, AudioRendererSettings* pSettings);
+
+  void Flush();
 
   REFERENCE_TIME GetPrivateTime();
   HRESULT GetHWTime(REFERENCE_TIME* rtTime, REFERENCE_TIME* rtHwTimme);
@@ -41,20 +44,28 @@ public:
   double Bias();
   double Adjustment();
   HRESULT Reset();
+  HRESULT Reset(REFERENCE_TIME tStart);
   void GetClockData(CLOCKDATA *pClockData);
+  void UpdateClockData(REFERENCE_TIME rtAHwTime, REFERENCE_TIME rtRCTime);
 
-  void AudioResampled(double sourceLength, double resampleLength, double bias, double adjustment, double driftMultiplier);
-  double SuggestedAudioMultiplier(UINT64 sampleLength, double bias, double adjustment);
+  void AddSample(INT64 rtOriginalStart, INT64 rtAdjustedStart, INT64 rtOriginalEnd, INT64 rtAdjustedEnd);
+  double SuggestedAudioMultiplier(REFERENCE_TIME rtAHwTime, REFERENCE_TIME rtRCTime, double bias, double adjustment);
   double GetBias();
-  char* DebugData();
 
 private:
+
+  enum CLOCK_SOURCE
+  {
+    NOT_SET,
+    HW,
+    SYSTEM
+  };
+
   double m_dAdjustment;
   double m_dSuggestedAudioMultiplier;
     
   double m_dEVRDelay;
   double m_dBias;
-  double m_dSystemClockMultiplier;
 
   UINT64 m_ullHWPrivateTime;
   UINT64 m_ullPrivateTime;
@@ -71,13 +82,18 @@ private:
   UINT64 m_ullPrevQpcHW;
   UINT64 m_dwPrevSystemTime;
 
-  bool m_bHWBasedRefClock;
   bool m_bDiscontinuity;
 
   SynchCorrection m_SynchCorrection;
+
+  CLOCK_SOURCE m_clockSource;
 
   // Not owned
   IReferenceClock*  m_pCurrentRefClock;
   IReferenceClock*  m_pPrevRefClock;
   CMPAudioRenderer* m_pAudioRenderer;
+  AudioRendererSettings* m_pSettings;
+
+  // Debug data for the video presenter
+  double m_dCurrentDrift;
 };

@@ -1,0 +1,15 @@
+[B|b]in
+obj
+*.log
+*.suo
+*.sln.cache
+*.resharper
+*.user
+_ReSharper.*
+/Release
+Thumbs.db
+*.bak
+/mediaportal/Setup/uninstall.nsh
+Packages
+*.DotSettings
+/Build/NuGet.exe

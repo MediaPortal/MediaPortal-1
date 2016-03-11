@@ -286,6 +286,15 @@ namespace TvLibrary.Implementations.RadioWebStream
     }
 
     /// <summary>
+    /// Gets the first sub channel.
+    /// </summary>    
+    /// <returns></returns>
+    public ITvSubChannel GetFirstSubChannel()
+    {
+      return null;
+    }
+
+    /// <summary>
     /// Gets the sub channels.
     /// </summary>
     /// <value>The sub channels.</value>
@@ -559,6 +568,14 @@ namespace TvLibrary.Implementations.RadioWebStream
     {
       get { return m_context; }
       set { m_context = value; }
+    }
+
+    /// <summary>
+    /// Register to receive EPG related events.
+    /// </summary>
+    /// <param name="eventListener">The event listener.</param>
+    public void RegisterEpgEventListener(IEpgEvents eventListener)
+    {
     }
 
     /// <summary>

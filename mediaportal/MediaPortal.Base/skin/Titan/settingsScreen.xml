@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+<id>9</id>
+<defaultcontrol>2</defaultcontrol>
+<allowoverlay>yes</allowoverlay>
+<define>#defaultcontrol.onleft:10002</define>
+<define>#header.label:897</define>
+<controls>
+	<import>settings.menu.xml</import>
+	
+	<control>
+		<type>label</type>
+		<id>1</id>
+		<posX>766</posX>
+		<posY>252</posY>
+		<width>1000</width>
+		<label>6023</label>
+		<textcolor>85cffe</textcolor>
+		<font>TitanLight20</font>
+	</control>
+	
+	<control>
+		<description>buttons</description>
+		<type>group</type>
+		<posX>740</posX>
+		<posY>353</posY>
+		<layout>StackLayout</layout>
+
+	   <control Style="SettingsButtonLarge">
+			<description>UI Calibration button</description>
+			<type>button</type>
+			<id>2</id>
+			<label>213</label>
+			<hyperlink>10</hyperlink>
+			<onup>4</onup>
+			<onleft>#defaultcontrol.onleft</onleft>
+		</control>
+
+	   <control Style="SettingsButtonLarge">
+			<description>Screen Calibration button</description>
+			<type>button</type>
+			<id>3</id>
+			<label>214</label>
+			<hyperlink>11</hyperlink>
+			<onleft>#defaultcontrol.onleft</onleft>
+		</control>
+
+	   <control Style="SettingsButtonLarge">
+			<description>Scroll speed button</description>
+			<type>button</type>
+			<id>4</id>
+			<label>673</label>
+			<hyperlink>31</hyperlink>
+			<ondown>2</ondown>
+			<onleft>#defaultcontrol.onleft</onleft>
+		</control>
+
+	</control>
+<import>common.time.xml</import>
+<import>titan.version.xml</import>
+</controls>
+</window>

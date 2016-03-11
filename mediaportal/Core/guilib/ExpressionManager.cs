@@ -167,7 +167,10 @@ namespace MediaPortal.GUI.Library
         _parameters = parameters;
         foreach (Expression param in _parameters)
         {
-          param.AddDependency(this);
+          if (param != null)
+          {
+            param.AddDependency(this);
+          }
         }
       }
 
@@ -180,27 +183,20 @@ namespace MediaPortal.GUI.Library
           object[] paramValues = new object[paramCount];
           for (int i = 0; i < paramCount; i++)
           {
-            paramValues[i] = _parameters[i].Evaluate(options);
-          }
-
-          // We may have to convert the parameters to the requested type.
-          if ("iif".Equals(_func.Name))
-          {
-            // The first parameter must be a boolean; attempt coersion if it is a string.
-            if (paramValues[0].GetType() != typeof(bool))
+            if (_parameters[i] != null)
             {
-              try
-              {
-                paramValues[0] = bool.Parse((string)paramValues[0]);
-              }
-              catch (Exception)
-              {
-                Log.Debug("Condition for iff() function is not a boolean; param={0}, value={1}", _parameters[0], paramValues[0]);
-              }
+              paramValues[i] = _parameters[i].Evaluate(options);
+            }
+            else
+            {
+              return 0;
             }
           }
-
           _value = _func.Invoke(paramValues);
+          if (_value == null)
+          {
+            return 0;
+          }
           IsValid = true;
         }
         return _value;
@@ -329,7 +325,7 @@ namespace MediaPortal.GUI.Library
 
     public static string Parse(string line, ExpressionOptions options)
     {
-      if (line.IndexOf("#(") > -1)
+      if (line.IndexOf("#(", StringComparison.Ordinal) > -1)
       {
         MatchCollection matches = _exprTriggerRegEx.Matches(line);
         int offset = 0;

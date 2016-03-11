@@ -1,0 +1,41 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!--version="1.0" encoding="utf-8" standalone="yes"-->
+<window>
+  <defaultcontrol>4</defaultcontrol>
+  <id>3008</id>
+  <controls>
+    <control>
+      <description>Pause logo</description>
+      <type>image</type>
+      <id>4</id>
+      <posX>451</posX>
+      <posY>855</posY>
+      <width>78</width>
+      <height>78</height>
+      <texture>pause_enabled.png</texture>
+      <visible>player.paused</visible>
+    </control>
+    <control>
+      <description>FF logo</description>
+      <type>image</type>
+      <id>5</id>
+      <posX>451</posX>
+      <posY>855</posY>
+      <width>78</width>
+      <height>78</height>
+      <texture>fastforward_enabled.png</texture>
+      <visible>player.forwarding</visible>
+    </control>
+    <control>
+      <description>RW logo</description>
+      <type>image</type>
+      <id>6</id>
+      <posX>451</posX>
+      <posY>855</posY>
+      <width>78</width>
+      <height>78</height>
+      <texture>rew_enabled.png</texture>
+      <visible>player.rewinding</visible>
+    </control>
+  </controls>
+</window>

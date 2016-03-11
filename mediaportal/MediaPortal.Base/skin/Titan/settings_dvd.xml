@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+<id>704</id>
+<defaultcontrol>22</defaultcontrol>
+<allowoverlay>yes</allowoverlay>
+<define>#defaultcontrol.onleft:9997</define>
+<define>#header.label:897</define>
+<controls>
+	<import>common.time.settings.xml</import>
+	<import>settings.menu.xml</import>
+  <import>common.settings.xml</import>
+
+	<control>
+		<type>label</type>
+		<id>1</id>
+		<posX>685</posX>
+		<posY>225</posY>
+		<width>500</width>
+		<label>446</label>
+		<textcolor>00b7ff</textcolor>
+		<font>TitanLight20</font>
+	  <animation effect="fade" time="150">WindowOpen</animation>
+	  <animation effect="fade" time="150">WindowClose</animation>
+	</control>
+
+		<control>
+			<description>buttons</description>
+			<type>group</type>
+			<posX>655</posX>
+			<posY>321</posY>
+			<dimColor>ffffffff</dimColor>
+			<layout>StackLayout(7, Vertical, true)</layout>
+	  	<animation effect="fade" time="150">WindowOpen</animation>
+	  	<animation effect="fade" time="150">WindowClose</animation>
+
+				<control Style="SettingsCheckButtonLarge">
+					<description>Enable Subtitles</description>
+					<type>checkbutton</type>
+					<id>22</id>
+					<label>1196</label>
+					<onup>25</onup>
+					<onleft>#defaultcontrol.onleft</onleft>
+				</control>
+				
+				<control Style="SettingsCheckButtonLarge">
+					<description>Enable Closed Caption</description>
+					<type>checkbutton</type>
+					<id>31</id>
+					<label>300079</label>
+					<onleft>#defaultcontrol.onleft</onleft>
+				</control>
+				
+				<control Style="SettingsCheckButtonLarge">
+					<description>Turn Off DXVA</description>
+					<type>checkbutton</type>
+					<id>23</id>
+					<label>1197</label>
+					<onleft>#defaultcontrol.onleft</onleft>
+				</control>
+			 
+				<control Style="SettingsButtonLarge">
+					<description>Video</description>
+					<type>button</type>
+					<id>24</id>
+					<label>291</label>
+					<onleft>#defaultcontrol.onleft</onleft>
+				</control>
+				
+				<control Style="SettingsButtonLarge">
+					<description>Audio</description>
+					<type>button</type>
+					<id>25</id>
+					<label>292</label>
+					<ondown>22</ondown>
+					<onleft>#defaultcontrol.onleft</onleft>
+				</control>
+
+		</control>
+<import>common.time.xml</import>
+<import>titan.version.xml</import>
+</controls>
+</window>

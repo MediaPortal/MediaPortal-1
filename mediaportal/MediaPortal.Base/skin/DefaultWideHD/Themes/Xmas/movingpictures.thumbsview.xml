@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!--version="1.0" encoding="utf-8"-->
+<!-- 
+This file should contain the thumbs view
+-->
+<window>
+  <controls>
+    <!-- Movie Details -->
+    <control>
+      <description>Movie Title</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>30</posX>
+      <posY>345</posY>
+      <width>750</width>
+      <font>font14</font>
+      <label>#MovingPictures.SelectedMovie.title</label>
+      <textcolor>ffffd700</textcolor>
+      <shadowAngle>45</shadowAngle>
+      <shadowDistance>4</shadowDistance>
+      <shadowColor>#shadow.light</shadowColor>
+      <visible>[facadeview.smallicons|facadeview.largeicons]+control.isvisible(50)</visible>
+      <animation effect="fade" time="250" delay="0">WindowClose</animation>
+    </control>
+    <control>
+      <description>Genres</description>
+      <type>label</type>
+      <label>#MovingPictures.SelectedMovie.genres</label>
+      <id>0</id>
+      <posX>30</posX>
+      <posY>387</posY>
+      <width>750</width>
+      <font>font12</font>
+      <textcolor>ffa9d0f7</textcolor>
+      <shadowAngle>45</shadowAngle>
+      <shadowDistance>3</shadowDistance>
+      <shadowColor>#shadow.dark</shadowColor>
+      <visible>[facadeview.smallicons|facadeview.largeicons]+control.isvisible(50)</visible>
+      <animation effect="fade" time="250" delay="0">WindowClose</animation>
+    </control>
+    <!-- Star Rating -->
+    <control>
+      <type>image</type>
+      <id>1001</id>
+      <posX>30</posX>
+      <posY>433</posY>
+      <width>172</width>
+      <height>33</height>
+      <align>left</align>
+      <texture>star#MovingPictures.SelectedMovie.score.rounded.png</texture>
+      <visible>[facadeview.smallicons|facadeview.largeicons]+control.isvisible(50)+!string.equals(#MovingPictures.SelectedMovie.score.rounded,)</visible>
+      <animation effect="fade" time="250" delay="0">WindowClose</animation>
+    </control>
+    <control>
+      <type>label</type>
+      <label>#MovingPictures.SelectedMovie.score.localized / 10</label>
+      <posX>225</posX>
+      <posY>432</posY>
+      <width>540</width>
+      <font>font10</font>
+      <textcolor>ffffd700</textcolor>
+      <shadowAngle>45</shadowAngle>
+      <shadowDistance>2</shadowDistance>
+      <shadowColor>#shadow.light</shadowColor>
+      <visible>[facadeview.smallicons|facadeview.largeicons]+control.isvisible(50)+!string.equals(#MovingPictures.SelectedMovie.score.rounded,)</visible>
+      <animation effect="fade" time="250" delay="0">WindowClose</animation>
+    </control>
+    <control>
+      <description>Summary</description>
+      <type>textboxscrollup</type>
+      <id>0</id>
+      <posX>30</posX>
+      <posY>480</posY>
+      <width>750</width>
+      <height>315</height>
+      <textcolor>ffffd700</textcolor>
+      <seperator>-----------------------------------------------------------------------------------</seperator>
+      <font>font11</font>
+      <label>#MovingPictures.SelectedMovie.summary</label>
+      <visible>[facadeview.smallicons|facadeview.largeicons]+control.isvisible(50)</visible>
+      <animation effect="fade" time="250" delay="0">WindowClose</animation>
+    </control>
+    <control>
+      <description>Certification Label</description>
+      <id>0</id>
+      <type>label</type>
+      <label>#MovingPictures.Translation.Certification.Label</label>
+      <posX>30</posX>
+      <posY>826</posY>
+      <width>210</width>
+      <font>font10</font>
+      <textcolor>ffa9d0f7</textcolor>
+      <visible>[facadeview.smallicons|facadeview.largeicons]+control.isvisible(50)</visible>
+      <animation effect="fade" time="250" delay="0">WindowClose</animation>
+    </control>
+    <control>
+      <description>Certification</description>
+      <id>1004</id>
+      <type>label</type>
+      <label>#(iif(neq(#MovingPictures.SelectedMovie.certification,''),#MovingPictures.SelectedMovie.certification,'N/A'))</label>
+      <posX>300</posX>
+      <posY>828</posY>
+      <width>300</width>
+      <font>font10</font>
+      <visible>[facadeview.smallicons|facadeview.largeicons]+control.isvisible(50)</visible>
+      <animation effect="fade" time="250" delay="0">WindowClose</animation>
+    </control>
+    <control>
+      <description>Runtime Label</description>
+      <id>0</id>
+      <type>label</type>
+      <label>#MovingPictures.Translation.Runtime.Label</label>
+      <posX>30</posX>
+      <posY>859</posY>
+      <width>210</width>
+      <font>font10</font>
+      <textcolor>ffa9d0f7</textcolor>
+      <visible>[facadeview.smallicons|facadeview.largeicons]+control.isvisible(50)</visible>
+      <animation effect="fade" time="250" delay="0">WindowClose</animation>
+    </control>
+    <control>
+      <description>Runtime</description>
+      <id>1005</id>
+      <type>label</type>
+      <label>#(iif(neq(#MovingPictures.SelectedMovie.extra.runtime.en.pretty,''),#MovingPictures.SelectedMovie.extra.runtime.en.pretty,'N/A'))</label>
+      <posX>300</posX>
+      <posY>861</posY>
+      <width>375</width>
+      <font>font10</font>
+      <visible>[facadeview.smallicons|facadeview.largeicons]+control.isvisible(50)</visible>
+      <animation effect="fade" time="250" delay="0">WindowClose</animation>
+    </control>
+    <control>
+      <description>Year Label</description>
+      <type>label</type>
+      <label>#MovingPictures.Translation.Year.Label</label>
+      <posX>30</posX>
+      <posY>892</posY>
+      <width>210</width>
+      <font>font10</font>
+      <textcolor>ffa9d0f7</textcolor>
+      <visible>[facadeview.smallicons|facadeview.largeicons]+control.isvisible(50)</visible>
+      <animation effect="fade" time="250" delay="0">WindowClose</animation>
+    </control>
+    <control>
+      <description>Year</description>
+      <id>1006</id>
+      <type>label</type>
+      <label>#(iif(neq(#MovingPictures.SelectedMovie.year,''),#MovingPictures.SelectedMovie.year,'N/A'))</label>
+      <posX>300</posX>
+      <posY>894</posY>
+      <font>font10</font>
+      <visible>[facadeview.smallicons|facadeview.largeicons]+control.isvisible(50)</visible>
+      <animation effect="fade" time="250" delay="0">WindowClose</animation>
+    </control>
+  </controls>
+</window>

@@ -40,6 +40,26 @@ namespace TvLibrary.Interfaces.Analyzer
   }
 
   /// <summary>
+  /// An enum listing standards that define service information table structures
+  /// in MPEG 2 transport streams.
+  /// </summary>
+  public enum TransportStreamStandard
+  {
+    /// <summary>
+    /// Use for DVB.
+    /// </summary>
+    Default = 0,
+    /// <summary>
+    /// ATSC A/65
+    /// </summary>
+    Atsc,
+    /// <summary>
+    /// ANSI SCTE 65
+    /// </summary>
+    Scte
+  }
+
+  /// <summary>
   /// interface to the channel scan com object
   /// </summary>
   [ComVisible(true), ComImport,
@@ -50,10 +70,10 @@ namespace TvLibrary.Interfaces.Analyzer
     /// <summary>
     /// Starts scanning the current transponder.
     /// </summary>
-    /// <param name="waitForVCT">Tells the analyzer to wait for a vct section in addition to just the pmt</param>
+    /// <param name="tsStandard">The standard that defines the service information table structures in the MPEG 2 transport stream.</param>
     /// <returns></returns>
     [PreserveSig]
-    int Start(bool waitForVCT);
+    int Start(TransportStreamStandard tsStandard);
 
     /// <summary>
     /// Stops scanning.
@@ -104,16 +124,16 @@ namespace TvLibrary.Interfaces.Analyzer
                    out int networkId,
                    out int transportId,
                    out int serviceId,
-                   out short majorChannel,
-                   out short minorChannel,
-                   out short frequency,
-                   out short lcn,
+                   out int majorChannel,
+                   out int minorChannel,
+                   out int frequency,
+                   out int lcn,
                    out short freeCAMode,
                    out short serviceType,
                    out short modulation,
                    out IntPtr providerName,
                    out IntPtr serviceName,
-                   out short pmtPid,
+                   out int pmtPid,
                    out short hasVideo,
                    out short hasAudio,
                    out short hasCaDescriptor);

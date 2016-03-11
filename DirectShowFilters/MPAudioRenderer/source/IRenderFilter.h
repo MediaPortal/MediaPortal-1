@@ -26,8 +26,9 @@ public:
   IRenderFilter(){};
   virtual ~IRenderFilter(){};
 
-  virtual HRESULT AudioClock(ULONGLONG& pTimestamp, ULONGLONG& pQpc) = 0;
+  virtual HRESULT AudioClock(ULONGLONG& ullTimestamp, ULONGLONG& ullQpc, ULONGLONG ullQpcNow) = 0;
   virtual REFERENCE_TIME Latency() = 0;
   virtual void ReleaseDevice() = 0;
   virtual REFERENCE_TIME BufferredDataDuration() = 0;
+  virtual HRESULT SetMoreSamplesEvent(HANDLE* hEvent) = 0;
 };

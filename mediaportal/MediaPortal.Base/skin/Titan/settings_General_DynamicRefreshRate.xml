@@ -1,0 +1,370 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+	<id>1008</id>
+	<defaultcontrol>2</defaultcontrol>
+	<allowoverlay>no</allowoverlay>
+	<define>#header.label:897</define>		
+	<rememberLastFocusedControl>yes</rememberLastFocusedControl>
+  <controls>
+  
+	<import>settings.menu.xml</import>	
+	<import>common.settings.xml</import>	
+	<import>common.time.settings.xml</import>  
+	
+	<control>
+		<type>label</type>
+		<id>1</id>
+		<posX>685</posX>
+		<posY>225</posY>
+		<width>800</width>
+		<label>#(L(128))/#(L(300083))</label>
+		<textcolor>00b7ff</textcolor>
+		<font>TitanLight20</font>
+		<animation effect="fade" time="150">WindowOpen</animation>
+		<animation effect="fade" time="150">WindowClose</animation>
+	</control>
+	
+    <!--Options-->
+  
+	<control Style="SettingsCheckButtonMedium">
+		<description>Enable dynamic refresh rate</description>
+		<type>checkbutton</type>
+		<id>2</id>
+		<posX>655</posX>
+		<posY>321</posY>
+		<onleft>2</onleft>
+		<onright>4</onright>
+		<onup>17</onup>
+		<ondown>3</ondown>
+		<align>right</align>
+		<label>300084</label>
+		<animation effect="fade" time="150">WindowOpen</animation>
+		<animation effect="fade" time="150">WindowClose</animation>
+	</control>
+  
+	<control Style="SettingsCheckButtonMedium">
+		<description>Notify</description>
+		<type>checkbutton</type>
+		<id>3</id>
+		<posX>655</posX>
+		<posY>387</posY>
+		<onleft>3</onleft>
+		<onright>5</onright>
+		<onup>2</onup>
+		<ondown>7</ondown>
+		<align>right</align>
+		<label>300085</label>
+		<animation effect="fade" time="150">WindowOpen</animation>
+		<animation effect="fade" time="150">WindowClose</animation>
+	</control>
+  
+	<control Style="SettingsCheckButtonMedium">
+		<description>Use device reset</description>
+		<type>checkbutton</type>
+		<id>4</id>
+		<posX>1240</posX>
+		<posY>321</posY>
+		<onleft>2</onleft>
+		<onright>4</onright>
+		<ondown>5</ondown>
+		<align>right</align>
+		<label>300086</label>
+		<animation effect="fade" time="150">WindowOpen</animation>
+		<animation effect="fade" time="150">WindowClose</animation>
+  </control>
+    
+	<control Style="SettingsCheckButtonMedium">
+		<description>Force refreshrate</description>
+		<type>checkbutton</type>
+		<id>5</id>
+		<posX>1240</posX>
+		<posY>387</posY>
+		<onleft>3</onleft>
+		<onright>5</onright>
+		<onup>4</onup>
+		<align>right</align>
+		<label>300087</label>
+		<animation effect="fade" time="150">WindowOpen</animation>
+		<animation effect="fade" time="150">WindowClose</animation>
+  </control>
+
+	
+	<control>
+		<type>image</type>
+		<id>0</id>
+		<posX>927</posX>
+		<posY>581</posY>
+		<width>865</width>
+		<height>253</height>
+		<texture>settings_dark_background5.png</texture>
+		<animation effect="fade" time="150">WindowOpen</animation>
+		<animation effect="fade" time="150">WindowClose</animation>
+	</control>
+
+	<control>
+		<type>image</type>
+		<id>0</id>
+		<posX>1472</posX>
+		<posY>590</posY>
+		<width>1</width>
+		<height>233</height>
+		<texture>settings_separator.png</texture>
+		<animation effect="fade" time="150">WindowOpen</animation>
+		<animation effect="fade" time="150">WindowClose</animation>
+	</control>
+	
+  <control>
+		<description>Refresh rate name label</description>
+		<type>label</type>
+		<id>1</id>
+		<posX>956</posX>
+		<posY>528</posY>
+		<width>500</width>
+		<label>Name</label>
+		<font>fontB14</font>
+    <textcolor>ff00b7ff</textcolor>
+		<animation effect="fade" time="150">WindowOpen</animation>
+		<animation effect="fade" time="150">WindowClose</animation>		
+  </control>
+	
+  <control>
+		<description>Refresh rate list</description>
+		<type>listcontrol</type>
+		<id>6</id>
+		<posX>960</posX>
+		<posY>608</posY>
+		<width>230</width>
+		<height>280</height>
+    <scrollOffset>2</scrollOffset>
+    <textXOff>15</textXOff>
+    <textYOff>-6</textYOff>
+    <textXOff2>700</textXOff2>
+    <textYOff2>0</textYOff2>
+    <textXOff3>710</textXOff3>
+    <textYOff3>0</textYOff3>		
+		<onleft>7</onleft>
+		<onright>6</onright>
+    <textureHeight>25</textureHeight>
+    <textureFocus>settings_listcontrol_focus.png</textureFocus>
+    <textureNoFocus>-</textureNoFocus>
+    <textcolor>ffffffff</textcolor>
+    <textcolor2>ffffffff</textcolor2>
+    <textcolor3>ffffffff</textcolor3>
+    <selectedColor>ff00b7ff</selectedColor>
+    <selectedColor2>ff00b7ff</selectedColor2>
+		<dimColor>ffffffff</dimColor>		
+		<spinPosX>-2000</spinPosX>
+		<spinPosY>500</spinPosY>
+    <spaceBetweenItems>16</spaceBetweenItems>
+		<animation effect="fade" time="150">WindowOpen</animation>
+		<animation effect="fade" time="150">WindowClose</animation>
+  </control>
+	
+    <!--  Value Labels  -->
+	
+  <control>
+		<description>Refresh rate info label</description>
+		<type>label</type>
+		<id>1</id>
+		<posX>1245</posX>
+		<posY>528</posY>
+		<width>200</width>
+		<label>Frame rate(s)</label>
+		<font>fontB14</font>
+    <textcolor>ff00b7ff</textcolor>
+		<animation effect="fade" time="150">WindowOpen</animation>
+		<animation effect="fade" time="150">WindowClose</animation>		
+  </control>
+
+	  <control>
+		<description>Refresh rate info label</description>
+		<type>label</type>
+		<id>1</id>
+		<posX>1490</posX>
+		<posY>528</posY>
+		<width>200</width>
+		<label>Refresh rate</label>
+		<font>fontB14</font>
+    <textcolor>ff00b7ff</textcolor>
+		<animation effect="fade" time="150">WindowOpen</animation>
+		<animation effect="fade" time="150">WindowClose</animation>		
+  </control>
+
+    <!--  Values  -->
+		
+  <control>
+		<description>Frame rate values Label</description>
+		<type>group</type>
+		<posX>1260</posX>
+		<posY>693</posY>	
+		<layout>StackLayout(30, Horizontal, true)</layout>			
+		<animation effect="fade" time="150">WindowOpen</animation>
+		<animation effect="fade" time="150">WindowClose</animation>
+		
+<!-- 	<control>
+    <description>Rate Name label</description>
+    <type>label</type>
+    <id>1</id>
+    <width>150</width>
+    <label>#name</label>
+    <font>font12</font>
+		<textcolor>ffffffff</textcolor>
+  </control> -->
+	  
+  <control>
+		<description>FPS label</description>
+		<type>fadelabel</type>
+		<id>1</id>
+		<width>150</width>
+		<label>#fps</label>
+		<font>font12</font>
+		<textcolor>ffffffff</textcolor>
+  </control>
+  
+<!--     <control>
+      <description>Action</description>
+      <type>label</type>
+      <id>1</id>
+      <width>150</width>
+      <label>#action</label>
+      <font>font12</font>
+      <textcolor>ffffffff</textcolor>
+		</control> -->
+  </control>
+
+  <control>
+		<description>Refresh rate values Label</description>
+		<type>group</type>
+		<posX>1490</posX>
+		<posY>693</posY>	
+		<layout>StackLayout(30, Horizontal, true)</layout>			
+		<animation effect="fade" time="150">WindowOpen</animation>
+		<animation effect="fade" time="150">WindowClose</animation>
+		
+  <control>
+    <description>Rate value label</description>
+    <type>label</type>
+    <id>1</id>
+    <width>150</width>
+    <label>#rate</label>
+    <font>font12</font>
+    <textcolor>ffffffff</textcolor>
+  </control>	
+  </control>
+	
+    <!--Add/Edit/Remove/Default-->
+	
+	<control Style="SettingsButtonSmall">
+		<description>Add</description>
+		<type>button</type>
+		<id>7</id>
+		<posX>655</posX>
+		<posY>581</posY>
+		<onright>6</onright>
+		<onup>3</onup>
+		<ondown>8</ondown>
+		<label>300063</label>
+		<animation effect="fade" time="150">WindowOpen</animation>
+		<animation effect="fade" time="150">WindowClose</animation>
+    </control>
+	
+	<control Style="SettingsButtonSmall">
+		<description>Remove</description>
+		<type>button</type>
+		<id>8</id>
+		<posX>655</posX>
+		<posY>646</posY>
+		<onright>6</onright>
+		<onup>7</onup>
+		<ondown>12</ondown>
+		<label>300064</label>
+		<animation effect="fade" time="150">WindowOpen</animation>
+		<animation effect="fade" time="150">WindowClose</animation>
+  </control>
+	
+	<control Style="SettingsButtonSmall">
+		<description>Edit</description>
+		<type>button</type>
+		<id>12</id>
+		<posX>655</posX>
+		<posY>711</posY>
+		<onright>6</onright>
+		<onup>8</onup>
+		<ondown>9</ondown>
+		<label>2076</label>
+		<animation effect="fade" time="150">WindowOpen</animation>
+		<animation effect="fade" time="150">WindowClose</animation>
+  </control>
+	
+	<control Style="SettingsButtonSmall">
+		<description>Default</description>
+		<type>button</type>
+		<id>9</id>
+		<posX>655</posX>
+		<posY>776</posY>
+		<onright>6</onright>
+		<onup>12</onup>
+		<ondown>10</ondown>
+		<label>886</label>
+		<animation effect="fade" time="150">WindowOpen</animation>
+		<animation effect="fade" time="150">WindowClose</animation>
+  </control>
+	
+    <!--Default refresh rate-->
+	
+	<control Style="SettingsCheckButtonMedium">
+		<description>Enable default refresh rate</description>
+		<type>checkbutton</type>
+		<id>10</id>
+		<posX>655</posX>
+		<posY>905</posY>
+		<onright>11</onright>
+		<onup>9</onup>
+		<label>300089</label>
+		<animation effect="fade" time="150">WindowOpen</animation>
+		<animation effect="fade" time="150">WindowClose</animation>
+  </control>
+
+	<control>
+		<type>image</type>
+		<id>0</id>
+		<posX>1240</posX>
+		<posY>905</posY>
+		<width>552</width>
+		<height>58</height>
+		<texture>settings_button_background_medium_black.png</texture>
+		<animation effect="fade" time="150">WindowOpen</animation>
+		<animation effect="fade" time="150">WindowClose</animation>
+	</control>
+	
+  <control Style="SettingsCheckButtonMedium">
+		<description>Select default refresh rate</description>
+		<type>button</type>
+		<id>11</id>
+		<posX>1240</posX>
+		<posY>905</posY>
+		<onleft>10</onleft>
+		<onup>6</onup>
+		<align>right</align>
+		<label>424</label>
+		<animation effect="fade" time="150">WindowOpen</animation>
+		<animation effect="fade" time="150">WindowClose</animation>
+  </control>
+	
+  <control>
+		<description>Def rate value label</description>
+		<type>label</type>
+		<id>1</id>
+		<posX>1613</posX>
+		<posY>937</posY>
+		<width>245</width>
+		<label>#defaultrate</label>
+		<font>font12</font>
+		<align>center</align>				
+		<visible>control.isvisible(11)</visible>
+		<animation effect="fade" time="150">WindowOpen</animation>
+		<animation effect="fade" time="150">WindowClose</animation>
+  </control>
+	
+  </controls>
+</window>

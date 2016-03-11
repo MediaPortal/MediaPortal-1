@@ -22,6 +22,7 @@ using System;
 using System.IO;
 using System.Text;
 using MediaPortal.GUI.Library;
+using MediaPortal.Profile;
 
 namespace MediaPortal.Playlists
 {
@@ -54,7 +55,16 @@ namespace MediaPortal.Playlists
         playlist.Name = Path.GetFileName(playlistFileName);
         basePath = Path.GetDirectoryName(Path.GetFullPath(playlistFileName));
 
-        using (file = new StreamReader(playlistFileName, Encoding.Default, true))
+        var encoding = Encoding.GetEncoding("Windows-1252");
+        using (Settings xmlreader = new MPSettings())
+        {
+          if (xmlreader.GetValueAsBool("musicfiles", "savePlaylistUTF8", false))
+          {
+            encoding = Encoding.UTF8;
+          }
+        }
+        
+        using (file = new StreamReader(playlistFileName, encoding, true))
         {
           if (file == null)
           {
@@ -145,8 +155,8 @@ namespace MediaPortal.Playlists
       }
 
       PlayListItem newItem = new PlayListItem(songName, fileName, duration);
-      if (fileName.ToLower().StartsWith("http:") || fileName.ToLower().StartsWith("https:") ||
-          fileName.ToLower().StartsWith("mms:") || fileName.ToLower().StartsWith("rtp:"))
+      if (fileName.ToLowerInvariant().StartsWith("http:") || fileName.ToLowerInvariant().StartsWith("https:") ||
+          fileName.ToLowerInvariant().StartsWith("mms:") || fileName.ToLowerInvariant().StartsWith("rtp:"))
       {
         newItem.Type = PlayListItem.PlayListItemType.AudioStream;
       }
@@ -168,7 +178,16 @@ namespace MediaPortal.Playlists
     {
       try
       {
-        using (StreamWriter writer = new StreamWriter(fileName, false, Encoding.UTF8))
+        var encoding = Encoding.GetEncoding("Windows-1252");
+        using (Settings xmlreader = new MPSettings())
+        {
+          if (xmlreader.GetValueAsBool("musicfiles", "savePlaylistUTF8", false))
+          {
+            fileName = string.Format("{0}\\{1}.m3u8", Path.GetDirectoryName(fileName), Path.GetFileNameWithoutExtension(fileName));
+            encoding = Encoding.UTF8;
+          }
+        }
+        using (StreamWriter writer = new StreamWriter(fileName, false, encoding))
         {
           writer.WriteLine(M3U_START_MARKER);
 

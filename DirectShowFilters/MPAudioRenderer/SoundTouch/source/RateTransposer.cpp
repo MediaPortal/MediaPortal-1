@@ -10,10 +10,10 @@
 ///
 ////////////////////////////////////////////////////////////////////////////////
 //
-// Last changed  : $Date: 2009-10-31 16:37:24 +0200 (Sat, 31 Oct 2009) $
+// Last changed  : $Date: 2011-09-02 21:56:11 +0300 (Fri, 02 Sep 2011) $
 // File revision : $Revision: 4 $
 //
-// $Id: RateTransposer.cpp 74 2009-10-31 14:37:24Z oparviai $
+// $Id: RateTransposer.cpp 131 2011-09-02 18:56:11Z oparviai $
 //
 ////////////////////////////////////////////////////////////////////////////////
 //
@@ -42,11 +42,9 @@
 #include <assert.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include <stdexcept>
 #include "RateTransposer.h"
 #include "AAFilter.h"
 
-using namespace std;
 using namespace soundtouch;
 
 
@@ -108,14 +106,14 @@ public:
 // depending on if we've a MMX/SSE/etc-capable CPU available or not.
 void * RateTransposer::operator new(size_t s)
 {
-    throw runtime_error("Error in RateTransoser::new: don't use \"new TDStretch\" directly, use \"newInstance\" to create a new instance instead!");
-    return NULL;
+    ST_THROW_RT_ERROR("Error in RateTransoser::new: don't use \"new TDStretch\" directly, use \"newInstance\" to create a new instance instead!");
+    return newInstance();
 }
 
 
 RateTransposer *RateTransposer::newInstance()
 {
-#ifdef INTEGER_SAMPLES
+#ifdef SOUNDTOUCH_INTEGER_SAMPLES
     return ::new RateTransposerInteger;
 #else
     return ::new RateTransposerFloat;

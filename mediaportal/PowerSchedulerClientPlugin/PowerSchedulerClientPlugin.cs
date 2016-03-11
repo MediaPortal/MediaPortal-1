@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2013 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2013 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -20,9 +20,11 @@
 
 #region Usings
 
+using System.Reflection;
 using System.Windows.Forms;
 using MediaPortal.Configuration;
 using MediaPortal.GUI.Library;
+using PowerScheduler.Setup;
 
 #endregion
 
@@ -65,7 +67,7 @@ namespace MediaPortal.Plugins.Process
 
     public string Author()
     {
-      return "micheloe";
+      return "michael_t (based on the work of micheloe and others)";
     }
 
     public bool CanEnable()
@@ -80,7 +82,8 @@ namespace MediaPortal.Plugins.Process
 
     public string Description()
     {
-      return "Enables standby/wakeup support for MP together with TVEngine3";
+      return "Enables standby/wakeup/away mode support for MP together with TVEngine3 (Version: " +
+        Assembly.GetExecutingAssembly().GetName().Version.ToString() + ")";
     }
 
     public bool GetHome(out string strButtonText, out string strButtonImage, out string strButtonImageFocus,
@@ -105,12 +108,19 @@ namespace MediaPortal.Plugins.Process
 
     public string PluginName()
     {
-      return "PowerScheduler client plugin";
+      object[] attributes = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyProductAttribute), false);
+      if (attributes.Length > 0)
+      {
+        AssemblyProductAttribute attribute = attributes[0] as AssemblyProductAttribute;
+        if (attribute != null && attribute.Product != "MediaPortal")
+          return attribute.Product;
+      }
+      return "PowerScheduler";
     }
 
     public void ShowPlugin()
     {
-      Form f = new PowerSchedulerClientSetup();
+      Form f = new PowerSchedulerSetup();
       f.Show();
     }
 

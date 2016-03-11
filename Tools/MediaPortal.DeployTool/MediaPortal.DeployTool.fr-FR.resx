@@ -510,4 +510,10 @@ L'activation d'AERO peut réduire également l'utilisation du processeur, ce qui
     <value>Un redémarrage est nécessaire par un composant Microsoft.
 Merci de procéder au redémarrage avant de poursuivre l'installation de MediaPortal.</value>
   </data>
+  <data name="ExtensionChoice_LAV" xml:space="preserve">
+    <value>Installez LAV Filtres pour permettre la lecture de nombreux formats audio vidéo</value>
+  </data>
+  <data name="Reinstall" xml:space="preserve">
+    <value>Réinstaller l'installation actuelle vers {0}</value>
+  </data>
 </root>

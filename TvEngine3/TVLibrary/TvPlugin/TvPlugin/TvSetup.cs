@@ -136,7 +136,7 @@ namespace TvPlugin
           // Need to setup the database connection string here
           // before checking for database connectivity,
           // otherwhise we will check for the wrong database provider
-          TVHome.Navigator.SetupDatabaseConnection();
+          succeeded = TVHome.Navigator.SetupDatabaseConnection();
         }
         catch (Exception)
         {
@@ -150,46 +150,54 @@ namespace TvPlugin
     private bool CheckDatabaseConnection(List<string> portErrors)
     {
       bool succeeded = true;
-      string provider = ProviderFactory.GetDefaultProvider().Name;
-      Log.Debug("TvPlugin: Detected provider name is -{0}-", provider);
-      if (provider.ToLower() == "sqlserver")
+      try
       {
-        Log.Debug("TvPlugin: Going to test ports 1433(tcp) and 1434(udp) because of MSSQL detected");
-        if (!CheckTcpPort(1433)) // MS SQL TCP Port
+        string provider = ProviderFactory.GetDefaultProvider().Name;
+        Log.Debug("TvPlugin: Detected provider name is -{0}-", provider);
+        if (provider.ToLower() == "sqlserver")
         {
-          portErrors.Add("1433 (TCP) MS SQL Server");
+          Log.Debug("TvPlugin: Going to test ports 1433(tcp) and 1434(udp) because of MSSQL detected");
+          if (!CheckTcpPort(1433)) // MS SQL TCP Port
+          {
+            portErrors.Add("1433 (TCP) MS SQL Server");
+            succeeded = false;
+          }
+          if (!CheckUdpPort(1434)) // MS SQL UDP Port
+          {
+            portErrors.Add("1434 (UDP) MS SQL Server");
+            succeeded = false;
+          }
+        }
+        else if (provider.ToLower() == "mysql")
+        {
+          Log.Debug("TvPlugin: Going to test port 3306(tcp) because of MySQL detected");
+          if (!CheckTcpPort(3306)) // MySQL TCP Port
+          {
+            portErrors.Add("3306 (TCP) MySQL Server");
+            succeeded = false;
+          }
+        }
+        else
+        {
+          //portErrors.Add("SQL connection not tested");
           succeeded = false;
         }
-        if (!CheckUdpPort(1434)) // MS SQL UDP Port
+        if (succeeded)
         {
-          portErrors.Add("1434 (UDP) MS SQL Server");
-          succeeded = false;
+          try
+          {
+            IList<Card> cards = Card.ListAll();
+          }
+          catch (Exception)
+          {
+            succeeded = false;
+          }
         }
       }
-      else if (provider.ToLower() == "mysql")
+      catch (Exception)
       {
-        Log.Debug("TvPlugin: Going to test port 3306(tcp) because of MySQL detected");
-        if (!CheckTcpPort(3306)) // MySQL TCP Port
-        {
-          portErrors.Add("3306 (TCP) MySQL Server");
-          succeeded = false;
-        }
-      }
-      else
-      {
-        //portErrors.Add("SQL connection not tested");
+        Log.Debug("TvPlugin: No <DefaultProvider> entry found in the configuration file");
         succeeded = false;
-      }
-      if (succeeded)
-      {
-        try
-        {
-          IList<Card> cards = Card.ListAll();
-        }
-        catch (Exception)
-        {
-          succeeded = false;
-        }
       }
       return succeeded;
     }

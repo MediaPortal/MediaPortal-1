@@ -23,13 +23,16 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
 using MediaPortal.Music.Database;
 using MediaPortal.Player;
 using MediaPortal.Playlists;
+using MediaPortal.TagReader;
 using Microsoft.DirectX.Direct3D;
 using Action = MediaPortal.GUI.Library.Action;
 
@@ -44,86 +47,234 @@ namespace MediaPortal.GUI.Pictures
   {
     private SlidePicture LoadCurrentSlide()
     {
-      if (_slideList.Count == 0)
+      bool _autoShuffleFolder = false;
+      GUIPictures GUIpictures = (GUIPictures)GUIWindowManager.GetWindow((int)Window.WINDOW_PICTURES);
+      GUISlideShow SlideShow = (GUISlideShow)GUIWindowManager.GetWindow((int)Window.WINDOW_SLIDESHOW);
+
+      try
       {
-        return null;
-      }
-      string slideFilePath = _slideList[_currentSlideIndex];
-
-      _currentSlide = _slideCache.GetCurrentSlide(slideFilePath);
-      GUIPropertyManager.SetProperty("#selecteditem", Util.Utils.GetFilename(slideFilePath));
-
-      ResetCurrentZoom(_currentSlide);
-
-      PrefetchNextSlide();
-
-      GUIPictures tmpGUIpictures = (GUIPictures)GUIWindowManager.GetWindow((int)Window.WINDOW_PICTURES);
-      Log.Debug("GUISlideShow: LoadSlide - currentSlideIndex {0}", _currentSlideIndex);
-      if (_isSlideShow)
-        tmpGUIpictures.IncSelectedItemIndex();
-      else
-        tmpGUIpictures.SetSelectedItemIndex(_currentSlideIndex);
-      if (Util.Utils.IsVideo(slideFilePath))
-      {
-        if (g_Player.IsMusic || g_Player.IsCDA || (g_Player.IsRadio && !g_Player.IsTimeShifting))
+        if (_slideList.Count == 0)
         {
-          pauseMusic();
+          return null;
         }
 
-        if (g_Player.Playing && (!g_Player.IsMusic || !g_Player.IsCDA || (g_Player.IsRadio && !g_Player.IsTimeShifting)))
+        if (_isSlideShow && _showRecursive)
+        {
+          // Analyse for folder and add picture/video items to the list and then remove the folder item
+          if (_currentSlideIndex != -1 && _slideList.Count > 0)
+          {
+            while (IsPathDirectory(_slideList[_currentSlideIndex]))
+            {
+              GUIpictures.AddDir(SlideShow, _slideList[_currentSlideIndex]);
+              _slideList.Remove(_slideList[_currentSlideIndex]);
+              _autoShuffleFolder = true;
+            }
+          }
+        }
+
+        // Item list has changed, if we use autoshuffle then do a new shuffle and check if new selected entry is a folder
+        if (_autoShuffleFolder && _autoShuffle)
+        {
+          Shuffle(_showRecursive, false);
+          // Analyse for folder and add picture/video items to the list and then remove the folder item
+          // like shuffle is done, continue slideshow on first entry
+          _currentSlideIndex = 0;
+          while (IsPathDirectory(_slideList[_currentSlideIndex]))
+          {
+            GUIpictures.AddDir(SlideShow, _slideList[_currentSlideIndex]);
+            _slideList.Remove(_slideList[_currentSlideIndex]);
+          }
+          _currentSlide = _slideCache.GetCurrentSlide(_slideList[_currentSlideIndex]);
+          GUIPictures.fileNameCheck = _slideList[_currentSlideIndex];
+        }
+        else
+        {
+          try
+          {
+            if (_currentSlideIndex != -1 && _slideList.Count > 0)
+            {
+              int currentIndex = _currentSlideIndex;
+              _currentSlide = _slideCache.GetCurrentSlide(_slideList[currentIndex]);
+              GUIPictures.fileNameCheck = _slideList[currentIndex];
+            }
+            else
+            {
+              return _currentSlide;
+            }
+          }
+          catch (Exception)
+          {
+            Log.Debug("GUISlideShow: catch exception when LoadSlide on stop");
+            return _currentSlide;
+          }
+
+        }
+
+        GUIPropertyManager.SetProperty("#selecteditem", Util.Utils.GetFilename(GUIPictures.fileNameCheck));
+
+        ResetCurrentZoom(_currentSlide);
+
+        PrefetchNextSlide();
+
+        Log.Debug("GUISlideShow: LoadSlide - currentSlideIndex {0}", _currentSlideIndex);
+        GUIpictures.SetSelectedItemIndex(_currentSlideIndex);
+
+        #region Video in slideshow
+
+        if (Util.Utils.IsVideo(GUIPictures.fileNameCheck))
+        {
+          // TODO Handle when it's Radio Stream
+          /*if (g_Player.Playing && (!g_Player.IsMusic || !g_Player.IsCDA || (g_Player.IsRadio && !g_Player.IsTimeShifting)))
         {
           //we skip the video in the picture slide show
           _currentSlide = _slideCache.GetCurrentSlide(_slideList[++_currentSlideIndex]);
           _slideDirection = 0;
           return _currentSlide;
+        }*/
+
+          if (!GUIpictures._playVideosInSlideshows && _isSlideShow && GUIPictureSlideShow._slideDirection == 1)
+          {
+            ShowNext();
+            _currentSlide = _slideCache.GetCurrentSlide(_slideList[_currentSlideIndex]);
+            return _currentSlide;
+          }
+
+          if (!GUIpictures._playVideosInSlideshows && _isSlideShow && GUIPictureSlideShow._slideDirection == -1)
+          {
+            ShowPrevious();
+            _currentSlide = _slideCache.GetCurrentSlide(_slideList[_currentSlideIndex]);
+            return _currentSlide;
+          }
+
+          if (g_Player.IsMusic || g_Player.IsCDA || (g_Player.IsRadio && !g_Player.IsTimeShifting))
+          {
+            pauseMusic();
+          }
+
+          _loadVideoPlayback = true;
+
+          g_Player.Stop();
+          g_Player.Play(GUIPictures.fileNameCheck, g_Player.MediaType.Video, null, true, 0, false, true);
+          GUIDialogNotify dlg = (GUIDialogNotify) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_NOTIFY);
+          if (dlg != null)
+          {
+            dlg.Reset();
+            dlg.Dispose();
+          }
+          g_Player.ShowFullScreenWindow();
+
+          if ((_currentSlideIndex + 1 < _slideList.Count))
+          {
+            if (Util.Utils.IsVideo(_slideList[_currentSlideIndex + 1]) || _isSlideShow)
+            {
+              GUIPictureSlideShow._slideDirection = 1;
+            }
+          }
+
+          _loadVideoPlayback = false;
+          _returnedFromVideoPlayback = true;
         }
 
-        _loadVideoPlayback = true;
+        #endregion Video in slideshow
 
-        g_Player.Play(slideFilePath, g_Player.MediaType.Video);
-        g_Player.ShowFullScreenWindow();
+        // Get Name of actual played slide.
+        GUIPictures.fileNameCheck = Util.Utils.GetFileNameWithExtension(_currentSlide._filePath);
 
-        _loadVideoPlayback = false;
-        _returnedFromVideoPlayback = true;
+        if (_showRecursive)
+        {
+          if (!_slideRecursiveItem.Contains(_currentSlide._filePath))
+          {
+            _slideRecursiveItem.Add(_currentSlide._filePath);
+          }
+        }
       }
-      else
-        _slideDirection = 0;
+      catch (Exception ex)
+      {
+        Log.Error("GUISlideShow: Exception in LoadCurrentSlide() : {0}", ex);
+        // If exception occurs, select first entry to avoid render loop
+        _currentSlideIndex = 0;
+        if (_slideList.Count > 0)
+        {
+          while (IsPathDirectory(_slideList[_currentSlideIndex]))
+          {
+            GUIpictures.AddDir(SlideShow, _slideList[_currentSlideIndex]);
+            _slideList.Remove(_slideList[_currentSlideIndex]);
+          }
+          _currentSlide = _slideCache.GetCurrentSlide(_slideList[_currentSlideIndex]);
+        }
+      }
       return _currentSlide;
     }
 
     private void pauseMusic()
     {
       pausedMusic = true;
-      pausedMusicPlaylist = playlistPlayer;
-      pausedPlayListType = playlistPlayer.CurrentPlaylistType;
       isPausedMusicCDA = g_Player.IsCDA;
-      pausedMusicFileName = g_Player.CurrentFile;
+      pausedPlayListType = new PlayListType();
+      pausedPlayListType = playlistPlayer.CurrentPlaylistType;
+      iSong = playlistPlayer.CurrentSong;
       pausedMusicLastPosition = g_Player.CurrentPosition;
-      g_Player.Stop();
+      g_Player.IsPicturePlaylist = false;
     }
 
-    private void resumePausedMusic()
+    public bool IsPathDirectory(string path)
+    {
+      if (path == null) throw new ArgumentNullException("path");
+      path = path.Trim();
+
+      if (Directory.Exists(path))
+        return true;
+
+      if (File.Exists(path))
+        return false;
+
+      // neither file nor directory exists. guess intention
+
+      // if has trailing slash then it's a directory
+      if (new[] { "\\", "/" }.Any(x => path.EndsWith(x)))
+        return true; // ends with slash
+
+      // has if extension then its a file; directory otherwise
+      return string.IsNullOrWhiteSpace(Path.GetExtension(path));
+    }
+
+    public void resumePausedMusic()
     {
       pausedMusic = false;
+      resumeSong = true;
       if (pausedPlayListType != PlayListType.PLAYLIST_NONE && !isPausedMusicCDA)
       {
-        playlistPlayer = pausedMusicPlaylist;
+        g_Player.Stop();
+        playlistPlayer.Reset();
         playlistPlayer.CurrentPlaylistType = pausedPlayListType;
-        playlistPlayer.Play(pausedMusicFileName);
+        playlistPlayer.CurrentSong = iSong;
+        playlistPlayer.Play(iSong);
         g_Player.SeekAbsolute(pausedMusicLastPosition);
+        g_Player.IsPicturePlaylist = true;
       }
       else
       {
-        playlistPlayer = pausedMusicPlaylist;
+        g_Player.Stop();
+        playlistPlayer.Reset();
         playlistPlayer.CurrentPlaylistType = pausedPlayListType;
-        playlistPlayer.Play(pausedMusicFileName);
+        playlistPlayer.CurrentSong = iSong;
 
         //we need a little pause, cause the cd player is to slow
-        while (!(g_Player.CurrentPosition > 0))
+        if (!g_Player.IsPicture)
         {
-          Thread.Sleep(1);
+          int _loopCount = 0;
+          {
+            // Don't wait too long (it can lead in infinite loop)
+            while (!(g_Player.CurrentPosition > 0) && _loopCount <= 5000)
+            {
+              _loopCount++;
+              Thread.Sleep(1);
+            }
+          }
         }
+        playlistPlayer.Play(iSong);
         g_Player.SeekAbsolute(pausedMusicLastPosition);
+        g_Player.IsPicturePlaylist = true;
       }
     }
 
@@ -137,17 +288,6 @@ namespace MediaPortal.GUI.Pictures
 
         _slideCache.PrefetchNextSlide(prev, curr, next);
       }
-    }
-
-    private void InvalidateCurrentSlide()
-    {
-      if (_slideList.Count == 0)
-      {
-        return;
-      }
-      string slideFilePath = _slideList[_currentSlideIndex];
-
-      InvalidateSlide(slideFilePath);
     }
 
     private void InvalidateSlide(string slideFilePath)
@@ -203,7 +343,11 @@ namespace MediaPortal.GUI.Pictures
     private int _slideShowTransistionFrames = 60;
     private int _kenBurnTransistionSpeed = 40;
 
-    private List<string> _slideList = new List<string>();
+    public List<string> _slideList = new List<string>();
+    public List<string> _slideFolder = new List<string>();
+    public List<string> _slideRecursive = new List<string>();
+    public List<string> _slideRecursiveItem = new List<string>();
+    public string _folderCurrentItem;
     private int _slideTime = 0;
     private int _counter = 0;
 
@@ -238,14 +382,12 @@ namespace MediaPortal.GUI.Pictures
     private float _defaultZoomFactor = 1.0f;
     internal bool _returnedFromVideoPlayback = false;
     internal bool _loadVideoPlayback = false;
-    private static int _slideDirection = 0; //-1=backwards, 0=nothing, 1=forward
-    private String pausedMusicFileName;
     private double pausedMusicLastPosition;
-    private bool pausedMusic;
-    private PlayListPlayer pausedMusicPlaylist;
-    private PlayListType pausedPlayListType;
+    public bool pausedMusic;
+    private bool resumeSong = false;
+    private static PlayListType pausedPlayListType;
     private bool isPausedMusicCDA;
-
+    private static int iSong;
 
     private bool _isPictureZoomed
     {
@@ -287,22 +429,20 @@ namespace MediaPortal.GUI.Pictures
     private float _panXChange;
     private float _zoomChange;
     private bool _isLoadingRawPicture = false;
-    private bool _isBackgroundMusicPlaying = false;
+    public bool _isBackgroundMusicPlaying = false;
     private string[] _musicFileExtensions;
     private int _lastSegmentIndex = -1;
     private float _renderTimer;
     public static readonly string SegmentIndicator = "#segment";
-    private PlayListPlayer playlistPlayer;
+    public PlayListPlayer playlistPlayer;
     private MusicDatabase mDB = null;
     private bool _autoShuffleMusic = false;
+    public bool _showRecursive = false;
+    public bool _enableResumeMusic = true;
+
+    protected delegate void PlaybackChangedDelegate(g_Player.MediaType type, string filename);
 
     #endregion
-
-    public static int SlideDirection
-    {
-      get { return _slideDirection; }
-      set { _slideDirection = value; }
-    }
 
     #region GUIWindow overrides
 
@@ -314,6 +454,7 @@ namespace MediaPortal.GUI.Pictures
 
     public override bool Init()
     {
+      g_Player.PlayBackStarted += new g_Player.StartedHandler(OnPlayBackStarted);
       return Load(GUIGraphicsContext.GetThemedSkinFile(@"\slideshow.xml"));
     }
 
@@ -328,7 +469,24 @@ namespace MediaPortal.GUI.Pictures
 
           if (_returnedFromVideoPlayback)
           {
-            GUIWindowManager.ShowPreviousWindow();
+            if (GUIPictureSlideShow.SlideDirection == 1)
+            {
+              ShowNext();
+            }
+            //Backward
+            if (GUIPictureSlideShow.SlideDirection == -1)
+            {
+              ShowPrevious();
+            }
+            if (GUIPictureSlideShow.SlideDirection == 0)
+            {
+              // Get folder path for recursive selectedItemIndex.
+              if (_slideList.Count != 0)
+              {
+                _folderCurrentItem = _slideList[_currentSlideIndex];
+              }
+              GUIWindowManager.ShowPreviousWindow();
+            }
           }
           else
           {
@@ -341,16 +499,15 @@ namespace MediaPortal.GUI.Pictures
 
         case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT:
           if (!_returnedFromVideoPlayback && !_loadVideoPlayback)
-            Reset();
-          GUIGraphicsContext.Overlay = _showOverlayFlag;
-          break;
-
-        case GUIMessage.MessageType.GUI_MSG_PLAYBACK_STARTED:
-          if (mDB == null)
           {
-            mDB = MusicDatabase.Instance;
+            // Get folder path for recursive selectedItemIndex.
+            if (_slideList.Count != 0)
+            {
+              _folderCurrentItem = _slideList[_currentSlideIndex];
+            }
+            Reset();
           }
-          ShowSong();
+          GUIGraphicsContext.Overlay = _showOverlayFlag;
           break;
       }
       return base.OnMessage(message);
@@ -413,6 +570,11 @@ namespace MediaPortal.GUI.Pictures
 
         case Action.ActionType.ACTION_STOP:
         case Action.ActionType.ACTION_PREVIOUS_MENU:
+          if (_returnedFromVideoPlayback)
+          {
+            _returnedFromVideoPlayback = false;
+          }
+          GUIPictureSlideShow.SlideDirection = 0;
           ShowPreviousWindow();
           break;
 
@@ -421,17 +583,31 @@ namespace MediaPortal.GUI.Pictures
           break;
 
         case Action.ActionType.ACTION_PREV_ITEM:
+        case Action.ActionType.ACTION_PREV_PICTURE:
           if (_lastSegmentIndex != -1)
           {
             ShowPrevious(true);
-            _slideDirection = -1;
+            GUIPictureSlideShow._slideDirection = -1;
+          }
+          else if (_isSlideShow)
+          {
+            GUIPictureSlideShow._slideDirection = -1;
+          }
+          else if (_currentSlideIndex > 0)
+          {
+            if (_currentSlideIndex - 1 < _slideList.Count)
+            {
+              if (Util.Utils.IsVideo(_slideList[_currentSlideIndex - 1]))
+              {
+                GUIPictureSlideShow._slideDirection = -1;
+              }
+            }
           }
           else
-            _slideDirection = 0;
+          {
+            GUIPictureSlideShow._slideDirection = 0;
+          }
 
-          break;
-        case Action.ActionType.ACTION_PREV_PICTURE:
-          _slideDirection = -1;
           if (!_isPictureZoomed)
           {
             ShowPrevious();
@@ -447,21 +623,50 @@ namespace MediaPortal.GUI.Pictures
             _slideTime = (int)(DateTime.Now.Ticks / 10000);
           }
           break;
+
         case Action.ActionType.ACTION_NEXT_ITEM:
+        case Action.ActionType.ACTION_NEXT_PICTURE:
           if (_lastSegmentIndex != -1)
           {
-            ShowNext(true);
-            _slideDirection = 1;
+            ShowNext(false, true);
+            GUIPictureSlideShow._slideDirection = 1;
+          }
+          else if (_isSlideShow)
+          {
+            GUIPictureSlideShow._slideDirection = 1;
+          }
+          else if (_currentSlideIndex > 0)
+          {
+            if (_currentSlideIndex + 1 < _slideList.Count)
+            {
+              if (Util.Utils.IsVideo(_slideList[_currentSlideIndex + 1]))
+              {
+                GUIPictureSlideShow._slideDirection = 1;
+              }
+            }
           }
           else
-            _slideDirection = 0;
+          {
+            GUIPictureSlideShow._slideDirection = 0;
+          }
 
-          break;
-        case Action.ActionType.ACTION_NEXT_PICTURE:
-          _slideDirection = 1;
           if (!_isPictureZoomed)
           {
-            ShowNext();
+            if ((_currentSlideIndex >= _slideList.Count - 1) && !_autoRepeat)
+            {
+              // Get folder path for recursive selectedItemIndex.
+              if (_slideList.Count != 0)
+              {
+                _folderCurrentItem = _slideList[_currentSlideIndex];
+              }
+              // We reach the end of slideshow
+              GUIPictureSlideShow._slideDirection = 0;
+              ShowPreviousWindow();
+            }
+            else
+            {
+              ShowNext(false, true);
+            }
           }
           else
           {
@@ -536,6 +741,23 @@ namespace MediaPortal.GUI.Pictures
           break;
 
         case Action.ActionType.ACTION_PAUSE_PICTURE:
+          if (_isSlideShow)
+          {
+            if (_isPictureZoomed)
+            {
+              _userZoomLevel = 1.0f;
+              ZoomBackGround(_defaultZoomFactor);
+              _isPaused = false;
+            }
+            else
+            {
+              _isPaused = !_isPaused;
+            }
+          }
+          _slideTime = (int)(DateTime.Now.Ticks / 10000);
+          break;
+
+        case Action.ActionType.ACTION_PAUSE:
           if (_isSlideShow)
           {
             if (_isPictureZoomed)
@@ -695,10 +917,11 @@ namespace MediaPortal.GUI.Pictures
         return;
       }
 
-      if (pausedMusic)
+      if (pausedMusic && Util.Utils.IsPicture(GUIPictures.fileNameCheck))
       {
         resumePausedMusic();
       }
+
       //Log.Info("Render:{0} {1} {2}", timePassed, _renderTimer, _frameCounter);
       if (!_isPaused && !_isPictureZoomed)
       {
@@ -746,12 +969,14 @@ namespace MediaPortal.GUI.Pictures
                     _currentSlideIndex = 0;
                     if (_autoShuffle)
                     {
-                      Shuffle();
+                      Shuffle(_showRecursive, _autoRepeat);
                     }
                   }
                   else
                   {
+                    _currentSlideIndex--;
                     // How to exit back to GUIPictures?
+                    GUIPictureSlideShow.SlideDirection = 0;
                     ShowPreviousWindow();
                   }
                 }
@@ -1017,9 +1242,27 @@ namespace MediaPortal.GUI.Pictures
       _slideList.Add(filename);
     }
 
+    public void SelectShowRecursive(string strFile)
+    {
+      LoadSettings();
+      for (int i = 0; i < _slideList.Count; ++i)
+      {
+        string strSlide = _slideList[i];
+        if (strSlide == strFile)
+        {
+          _currentSlideIndex = i;
+          return;
+        }
+      }
+    }
+
     public void Select(string strFile)
     {
       LoadSettings();
+      if (_autoShuffle)
+      {
+        Shuffle(_showRecursive, _autoRepeat);
+      }
       for (int i = 0; i < _slideList.Count; ++i)
       {
         string strSlide = _slideList[i];
@@ -1036,9 +1279,34 @@ namespace MediaPortal.GUI.Pictures
       get { return _isSlideShow; }
     }
 
-    public void Shuffle()
+    public void Shuffle(bool _recursive, bool _autoRepeat)
     {
       Random r = new Random(DateTime.Now.Millisecond);
+
+      if (_recursive)
+      {
+        for (int i = 0; i < _slideRecursiveItem.Count; ++i)
+        {
+          string strSlide = _slideRecursiveItem[i];
+          if (_slideList.Contains(strSlide))
+          {
+            _slideList.Remove(strSlide);
+          }
+        }
+      }
+
+      if (_autoRepeat)
+      {
+        for (int i = 0; i < _slideRecursiveItem.Count; ++i)
+        {
+          string strSlide = _slideRecursiveItem[i];
+          if (!_slideList.Contains(strSlide))
+          {
+            _slideList.Add(strSlide);
+          }
+        }
+      }
+
       int nItemCount = _slideList.Count;
 
       // iterate through each catalogue item performing arbitrary swaps
@@ -1059,12 +1327,15 @@ namespace MediaPortal.GUI.Pictures
     {
       LoadSettings();
       _isBackgroundMusicPlaying = false;
-      if (_autoShuffle)
-      {
-        Shuffle();
-      }
-      _slideDirection = 1;
+      GUIPictureSlideShow._slideDirection = 1;
       _isSlideShow = true;
+      if (_autoShuffle && (_isSlideShow || _showRecursive))
+      {
+        Shuffle(false, false);
+        // Reset currentSlideIndex when slideshow start from context menu
+        _currentSlideIndex = 0;
+        _currentSlide = _slideCache.GetCurrentSlide(_slideList[_currentSlideIndex]);
+      }
     }
 
     public void StartSlideShow(string path)
@@ -1072,18 +1343,17 @@ namespace MediaPortal.GUI.Pictures
       LoadSettings();
       _isBackgroundMusicPlaying = false;
       StartBackgroundMusic(path);
-      if (_autoShuffle)
-      {
-        Shuffle();
-      }
-      _slideDirection = 1;
+      GUIPictureSlideShow._slideDirection = 1;
       _isSlideShow = true;
     }
 
 
     public void Reset()
     {
+      _slideRecursiveItem.Clear();
       _slideList.Clear();
+      _slideFolder.Clear();
+      _slideRecursive.Clear();
       _infoVisible = false;
       _zoomInfoVisible = false;
       _isSlideShow = false;
@@ -1103,6 +1373,8 @@ namespace MediaPortal.GUI.Pictures
       _slideTime = 0;
       _userZoomLevel = 1.0f;
       _lastSegmentIndex = -1;
+      _showRecursive = false;
+      _enableResumeMusic = true;
 
       if (null != _backgroundSlide)
       {
@@ -1126,12 +1398,12 @@ namespace MediaPortal.GUI.Pictures
 
     #region private members
 
-    private void ShowNext()
+    public void ShowNext()
     {
-      ShowNext(false);
+      ShowNext(false, false);
     }
 
-    private void ShowNext(bool jump)
+    private void ShowNext(bool jump, bool next)
     {
       if (!_isSlideShow)
       {
@@ -1150,13 +1422,13 @@ namespace MediaPortal.GUI.Pictures
       GUIPictures tmpGUIpictures = (GUIPictures)GUIWindowManager.GetWindow((int)Window.WINDOW_PICTURES);
       tmpGUIpictures.SetSelectedItemIndex(_currentSlideIndex);
 
-      if (_currentSlideIndex == 0)
+      if (_currentSlideIndex == 0 && !next)
       {
         if (_autoRepeat)
         {
-          if (_autoShuffle)
+          if (_autoShuffle && (_isSlideShow || _showRecursive))
           {
-            Shuffle();
+            Shuffle(false, _autoRepeat);
           }
         }
         else
@@ -1164,6 +1436,11 @@ namespace MediaPortal.GUI.Pictures
           ShowPreviousWindow();
           return;
         }
+      }
+      else if ((_currentSlideIndex >= _slideList.Count - 1) && _autoShuffle)
+      {
+        // Autoshuffle when reach the end of the slide list
+        Shuffle(false, false);
       }
 
       // Reset slide time
@@ -1200,7 +1477,7 @@ namespace MediaPortal.GUI.Pictures
       return slideIndex;
     }
 
-    private void ShowPrevious()
+    public void ShowPrevious()
     {
       ShowPrevious(false);
     }
@@ -1260,34 +1537,6 @@ namespace MediaPortal.GUI.Pictures
     }
 
     #region render transition methods
-
-    //pan from left->right
-    private bool RenderKenBurns(float zoom, float pan, DirectionType direction)
-    {
-      //zoom (75%-100%)
-      if (zoom < 75)
-      {
-        zoom = 75;
-      }
-      if (zoom > 100)
-      {
-        zoom = 100;
-      }
-
-      //pan 75%-125%
-      if (pan < 75)
-      {
-        pan = 75;
-      }
-      if (pan > 125)
-      {
-        pan = 125;
-      }
-
-      //direction (left,right,up,down)
-
-      return true;
-    }
 
     // Select transition based upon picture width/height
     private int InitKenBurnsTransition()
@@ -2244,9 +2493,15 @@ namespace MediaPortal.GUI.Pictures
 
     private void OnShowInfo()
     {
+      bool bPause = _isPaused;
+      _isPaused = true;
       GUIDialogExif exifDialog = (GUIDialogExif)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_EXIF);
+      // Needed to set GUIDialogExif
+      exifDialog.Restore();
+      exifDialog = (GUIDialogExif)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_EXIF);
       exifDialog.FileName = _backgroundSlide.FilePath;
       exifDialog.DoModal(GetID);
+      _isPaused = bPause;
     }
 
 
@@ -2676,50 +2931,107 @@ namespace MediaPortal.GUI.Pictures
       GUIWindowManager.ShowPreviousWindow();
     }
 
-    private void ShowSong()
+    private void ShowSong(g_Player.MediaType type, string filename)
     {
-      GUIDialogNotify dlg = (GUIDialogNotify)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_NOTIFY);
-      if (dlg == null)
+      try
       {
-        return;
-      }
+        // Show song only when we are on MyPictures Plugin or slideshow when playing/change music track
+        string activeWindowName;
+        GUIWindow.Window activeWindow;
+        activeWindowName = GUIWindowManager.ActiveWindow.ToString(CultureInfo.InvariantCulture);
+        activeWindow = (GUIWindow.Window) Enum.Parse(typeof (GUIWindow.Window), activeWindowName);
+        if (activeWindow == GUIWindow.Window.WINDOW_SLIDESHOW || activeWindow == GUIWindow.Window.WINDOW_PICTURES)
+          if (g_Player.IsMusic)
+          {
+            if (mDB == null)
+            {
+              mDB = MusicDatabase.Instance;
+            }
+            if (!resumeSong)
+            {
+              GUIDialogNotify dlg = (GUIDialogNotify) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_NOTIFY);
+              if (dlg == null)
+              {
+                return;
+              }
 
-      //get albumart
-      string albumart = g_Player.CurrentFile;
-      int e = albumart.LastIndexOf(@"\") + 1;
-      albumart = albumart.Remove(e);
-      if (_slideList[_currentSlideIndex].Contains(albumart))
+              //get albumart
+              string albumart = g_Player.CurrentFile;
+              int e = albumart.LastIndexOf(@"\") + 1;
+              if (!String.IsNullOrEmpty(albumart))
+              {
+                albumart = albumart.Remove(e);
+              }
+              if (_slideList.Count > 0 && _slideList[_currentSlideIndex].Contains(albumart))
+              {
+                albumart = string.Empty;
+              }
+              else
+              {
+                albumart = Util.Utils.GetFolderThumbForDir(albumart);
+                if (!Util.Utils.FileExistsInCache(albumart))
+                {
+                  albumart = string.Empty;
+                }
+              }
+              // get Song-info
+
+              // hwahrmann 2006-11-22 Using the Tagreader caused a COM exception in Win Media SDK, when reading WMA files
+              // Accessing the Music Database instead of using the Tagreader.
+              //MediaPortal.TagReader.MusicTag tag = MediaPortal.TagReader.TagReader.ReadTag(g_Player.CurrentFile);
+              Song song = new Song();
+              MusicTag currentSong = new MusicTag();
+
+              // If we don't have a tag in the db, we use the filename without the extension as song.title
+              if (!mDB.GetSongByFileName(g_Player.CurrentFile, ref song))
+              {
+                try
+                {
+                  // try Tagreader method to parse information
+                  var pl = PlayListPlayer.SingletonPlayer.GetPlaylist(PlayListPlayer.SingletonPlayer.CurrentPlaylistType);
+                  var plI = pl.First(plItem => plItem.FileName == filename);
+                  if (plI != null || plI.MusicTag != null)
+                  {
+                    currentSong = (MusicTag) plI.MusicTag;
+                  }
+                }
+                catch (Exception)
+                {
+                  // Catch the COM execption but continue code with Music Database instead.
+                }
+              }
+
+              // Show Dialog
+              dlg.Reset();
+              dlg.Dispose();
+              dlg.SetImage(albumart);
+              dlg.SetHeading(4540);
+              if (currentSong == null || string.IsNullOrEmpty(currentSong.Title) ||
+                  (string.IsNullOrEmpty(currentSong.Artist) && string.IsNullOrEmpty(currentSong.AlbumArtist)))
+              {
+                song.Title = Path.GetFileNameWithoutExtension(g_Player.CurrentFile);
+                dlg.SetText(song.Title + "\n" + song.Artist + "\n" + song.Album);
+              }
+              else
+              {
+                dlg.SetText(currentSong.Title + "\n" + currentSong.Artist + "\n" + currentSong.Album);
+              }
+              dlg.TimeOut = 5;
+              dlg.DoModal(GUIWindowManager.ActiveWindow);
+            }
+            resumeSong = false;
+          }
+      }
+      catch (Exception e)
       {
-        albumart = string.Empty;
+        Log.Debug("GUISlideShow.OnPlayBackStarted", e.Message);
       }
-      else
-      {
-        albumart = Util.Utils.GetFolderThumbForDir(albumart);
-        if (!Util.Utils.FileExistsInCache(albumart))
-        {
-          albumart = string.Empty;
-        }
-      }
-      // get Song-info
+    }
 
-      // hwahrmann 2006-11-22 Using the Tagreader caused a COM exception in Win Media SDK, when reading WMA files
-      // Accessing the Music Database instead of using the Tagreader.
-      //MediaPortal.TagReader.MusicTag tag = MediaPortal.TagReader.TagReader.ReadTag(g_Player.CurrentFile);
-      Song song = new Song();
-
-      // If we don't have a tag in the db, we use the filename without the extension as song.title
-      song.Title = Path.GetFileNameWithoutExtension(g_Player.CurrentFile);
-      mDB.GetSongByFileName(g_Player.CurrentFile, ref song);
-
-      // Show Dialog
-      dlg.Reset();
-      dlg.Dispose();
-      dlg.SetImage(albumart);
-      dlg.SetHeading(4540);
-      //dlg.SetText(tag.Title + "\n" + tag.Artist + "\n" + tag.Album);
-      dlg.SetText(song.Title + "\n" + song.Artist + "\n" + song.Album);
-      dlg.TimeOut = 5;
-      dlg.DoModal(GUIWindowManager.ActiveWindow);
+    private void OnPlayBackStarted(g_Player.MediaType type, string filename)
+    {
+      GUIGraphicsContext.form.BeginInvoke(new PlaybackChangedDelegate(ShowSong),
+                                     new object[] { g_Player.MediaType.Music, g_Player.CurrentFile });
     }
 
     #endregion

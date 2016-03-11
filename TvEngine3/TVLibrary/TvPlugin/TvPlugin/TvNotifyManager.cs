@@ -22,7 +22,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Windows.Forms;
+using System.Threading;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
 using MediaPortal.Player;
@@ -30,6 +30,7 @@ using MediaPortal.Profile;
 using MediaPortal.Util;
 using TvControl;
 using TvDatabase;
+using Timer = System.Windows.Forms.Timer;
 
 namespace TvPlugin
 {
@@ -67,8 +68,13 @@ namespace TvPlugin
       _dummyuser.Name = "Free channel checker";
       _timer.Interval = 15000;
       _timer.Enabled = true;
-      _timer.Tick += new EventHandler(_timer_Tick);
+      // Execute TvNotifyManager in a separate thread, so that it doesn't block the Main UI Render thread when Tvservice connection died
+      new Thread(() =>
+                   {
+                     _timer.Tick += new EventHandler(_timer_Tick);
 
+                   }
+        ) {Name = "TvNotifyManager"}.Start();
       _notifiedRecordings = new ArrayList();
     }
 
@@ -396,7 +402,6 @@ namespace TvPlugin
           return;
         }
 
-      
         DateTime preNotifySecs = DateTime.Now.AddSeconds(_preNotifyConfig);
         ProcessNotifies(preNotifySecs);
         ProcessRecordings(preNotifySecs);

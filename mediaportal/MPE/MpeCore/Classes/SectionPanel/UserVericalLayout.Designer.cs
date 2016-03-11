@@ -28,9 +28,23 @@
     /// </summary>
     private void InitializeComponent()
     {
-      this.components = new System.ComponentModel.Container();
-      this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+      ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+      this.SuspendLayout();
+      // 
+      // pictureBox1
+      // 
+      this.pictureBox1.Image = global::MpeCore.Properties.Resources.left;
+      // 
+      // UserVericalLayout
+      // 
+      this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
+      this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
+      this.ClientSize = new System.Drawing.Size(494, 350);
+      this.Name = "UserVericalLayout";
       this.Text = "UserVericalLayout";
+      ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
+      this.ResumeLayout(false);
+
     }
 
     #endregion

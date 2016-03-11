@@ -19,41 +19,27 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.IO;
-using System.Windows.Forms;
 using MpeCore.Interfaces;
 
 namespace MpeCore.Classes.SectionPanel
 {
   public partial class LicenseAgreement : BaseHorizontalLayout, ISectionPanel
   {
-    //private SectionResponseEnum Resp = SectionResponseEnum.Cancel;
-
-
     private const string CONST_TEXT = "License text";
     private const string CONST_TEXT_FILE = "License text file";
     private const string CONST_Check = "Checkbox text";
 
-    public LicenseAgreement()
-    {
-      InitializeComponent();
-    }
-
     #region ISectionPanel Members
 
-    public bool Unique
+    public string DisplayName
     {
-      get { throw new NotImplementedException(); }
-      set { throw new NotImplementedException(); }
+      get { return "License Agreement Screen"; }
     }
 
-    public SectionParamCollection Init()
+    public string Guid
     {
-      throw new NotImplementedException();
+      get { return "{04854407-930E-4c5d-88E8-97CF99878052}"; }
     }
 
     public SectionParamCollection GetDefaultParams()
@@ -81,8 +67,6 @@ namespace MpeCore.Classes.SectionPanel
 
     private void SetValues()
     {
-      BaseHorizontalLayout_Shown(null, null);
-      base.button_next.Enabled = false;
       checkBox1.Text = Params[CONST_Check].Value;
       if (File.Exists(Params[CONST_TEXT_FILE].Value))
       {
@@ -93,7 +77,6 @@ namespace MpeCore.Classes.SectionPanel
         richTextBox1.Text = Params[CONST_TEXT].Value;
       }
     }
-
 
     public SectionResponseEnum Execute(PackageClass packageClass, SectionItem sectionItem)
     {
@@ -114,19 +97,16 @@ namespace MpeCore.Classes.SectionPanel
 
     #endregion
 
-    #region ISectionPanel Members
-
-    public string DisplayName
+    public LicenseAgreement()
     {
-      get { return "License Agreement Screen"; }
+      InitializeComponent();
     }
 
-    public string Guid
+    protected override void BaseHorizontalLayout_Shown(object sender, EventArgs e)
     {
-      get { return "{04854407-930E-4c5d-88E8-97CF99878052}"; }
+      base.BaseHorizontalLayout_Shown(sender, e);
+      base.button_next.Enabled = false;
     }
-
-    #endregion
 
     private void checkBox1_CheckedChanged(object sender, EventArgs e)
     {

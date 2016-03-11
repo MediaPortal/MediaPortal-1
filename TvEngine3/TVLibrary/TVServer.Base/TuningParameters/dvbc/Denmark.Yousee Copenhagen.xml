@@ -1,160 +1,238 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <ArrayOfDVBCTuning xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-   <DVBCTuning>
-    <Frequency>714000</Frequency>
-    <ModulationType>Mod64Qam</ModulationType>
-    <SymbolRate>6875</SymbolRate>
-  </DVBCTuning>
   <DVBCTuning>
-    <Frequency>730000</Frequency>
-    <ModulationType>Mod64Qam</ModulationType>
-    <SymbolRate>6875</SymbolRate>
-  </DVBCTuning>
-  <DVBCTuning>
-    <Frequency>770000</Frequency>
-    <ModulationType>Mod64Qam</ModulationType>
-    <SymbolRate>6875</SymbolRate>
-  </DVBCTuning>
-  <DVBCTuning>
-    <Frequency>786000</Frequency>
-    <ModulationType>Mod64Qam</ModulationType>
-    <SymbolRate>6875</SymbolRate>
-  </DVBCTuning>
-  <DVBCTuning>
-    <Frequency>794000</Frequency>
-    <ModulationType>Mod64Qam</ModulationType>
-    <SymbolRate>6875</SymbolRate>
-  </DVBCTuning>
- <DVBCTuning>
-    <Frequency>586000</Frequency>
-    <ModulationType>Mod64Qam</ModulationType>
-    <SymbolRate>6875</SymbolRate>
-  </DVBCTuning>
-  <DVBCTuning>
-    <Frequency>594000</Frequency>
-    <ModulationType>Mod64Qam</ModulationType>
-    <SymbolRate>6875</SymbolRate>
-  </DVBCTuning>
-  <DVBCTuning>
-    <Frequency>602000</Frequency>
-    <ModulationType>Mod64Qam</ModulationType>
-    <SymbolRate>6875</SymbolRate>
-  </DVBCTuning>
-  <DVBCTuning>
-    <Frequency>618000</Frequency>
-    <ModulationType>Mod64Qam</ModulationType>
-    <SymbolRate>6875</SymbolRate>
-  </DVBCTuning>
-  <DVBCTuning>
-    <Frequency>626000</Frequency>
-    <ModulationType>Mod64Qam</ModulationType>
-    <SymbolRate>6875</SymbolRate>
-  </DVBCTuning>
- 
- 
-  <DVBCTuning>
+    <!-- C C8,C Seri,Event,C Hits,C Emo,CFrst -->
     <Frequency>143000</Frequency>
     <ModulationType>Mod64Qam</ModulationType>
     <SymbolRate>6875</SymbolRate>
   </DVBCTuning>
   <DVBCTuning>
+    <!-- Guide,HitsHD,C Kids,C Ten,C Extr,C Act,*V Film,Trailer,SeriHD -->
     <Frequency>156000</Frequency>
     <ModulationType>Mod64Qam</ModulationType>
     <SymbolRate>6875</SymbolRate>
   </DVBCTuning>
   <DVBCTuning>
-    <Frequency>330000</Frequency>
+    <!--2ØstHD,LorrHD,TV3+HD -->
+    <Frequency>222000</Frequency>
     <ModulationType>Mod64Qam</ModulationType>
     <SymbolRate>6875</SymbolRate>
   </DVBCTuning>
   <DVBCTuning>
+    <!-- TNT HD,DisnJr,TLC HD,NRK1HD-->
+    <Frequency>230000</Frequency>
+    <ModulationType>Mod64Qam</ModulationType>
+    <SymbolRate>6875</SymbolRate>
+  </DVBCTuning>
+  <DVBCTuning>
+    <!-- HD DR1,ARD HD,SVT2HD,Guiden -->
+    <Frequency>248000</Frequency>
+    <ModulationType>Mod64Qam</ModulationType>
+    <SymbolRate>6875</SymbolRate>
+  </DVBCTuning>
+  <DVBCTuning>
+    <!-- Start forfra,Tv-arkiv,Cinema -->
+    <Frequency>346000</Frequency>
+    <ModulationType>Mod64Qam</ModulationType>
+    <SymbolRate>6875</SymbolRate>
+  </DVBCTuning>
+  <DVBCTuning>
+    <!-- DR1,DR2,DR1Syn,TV 2,TV2 HD,Hoved,Lorry -->
     <Frequency>378000</Frequency>
     <ModulationType>Mod64Qam</ModulationType>
     <SymbolRate>6875</SymbolRate>
   </DVBCTuning>
   <DVBCTuning>
+    <!-- NickHD,NDR HD,SVT1HD,6rn HD -->
+    <Frequency>394000</Frequency>
+    <ModulationType>Mod64Qam</ModulationType>
+    <SymbolRate>6875</SymbolRate>
+  </DVBCTuning>
+  <DVBCTuning>
+    <!-- C9 HD,dk4 HD,DiscHD,Canal8 -->
+    <Frequency>402000</Frequency>
+    <ModulationType>Mod64Qam</ModulationType>
+    <SymbolRate>6875</SymbolRate>
+  </DVBCTuning>
+  <DVBCTuning>
+    <!-- Start forfra,Tv-arkiv,Cinema -->
     <Frequency>418000</Frequency>
     <ModulationType>Mod64Qam</ModulationType>
     <SymbolRate>6875</SymbolRate>
   </DVBCTuning>
   <DVBCTuning>
+    <!-- Start forfra,Tv-arkiv,Cinema -->
+    <Frequency>426000</Frequency>
+    <ModulationType>Mod64Qam</ModulationType>
+    <SymbolRate>6875</SymbolRate>
+  </DVBCTuning>
+  <DVBCTuning>
+    <!-- Start forfra,Tv-arkiv,Cinema -->
+    <Frequency>434000</Frequency>
+    <ModulationType>Mod64Qam</ModulationType>
+    <SymbolRate>6875</SymbolRate>
+  </DVBCTuning>
+  <DVBCTuning>
+    <!-- DR3,YouBio,C F HD,MTV HD -->
     <Frequency>442000</Frequency>
     <ModulationType>Mod64Qam</ModulationType>
     <SymbolRate>6875</SymbolRate>
   </DVBCTuning>
   <DVBCTuning>
+    <!-- AnimHD,EkstHD,DisnHD,WildHD -->
     <Frequency>450000</Frequency>
     <ModulationType>Mod64Qam</ModulationType>
     <SymbolRate>6875</SymbolRate>
   </DVBCTuning>
   <DVBCTuning>
+    <!-- SilvHD,ESp2HD,RTL HD,ESPNHD -->
     <Frequency>458000</Frequency>
     <ModulationType>Mod64Qam</ModulationType>
     <SymbolRate>6875</SymbolRate>
   </DVBCTuning>
   <DVBCTuning>
+    <!-- Histor,Explor,Golf,ESPNcl,Via NC,Blue H,PlayBy,GolfHD-->
     <Frequency>482000</Frequency>
     <ModulationType>Mod64Qam</ModulationType>
     <SymbolRate>6875</SymbolRate>
   </DVBCTuning>
   <DVBCTuning>
+    <!-- Tinget,MTVDan,MTVhit,MTVRoc,VH1Cla,Roj TV,Me TV,TV Pol,ZDF HD -->
     <Frequency>490000</Frequency>
     <ModulationType>Mod64Qam</ModulationType>
     <SymbolRate>6875</SymbolRate>
   </DVBCTuning>
   <DVBCTuning>
+    <!-- 2FriHD,NickJr,NatGeo,BBC W -->
     <Frequency>498000</Frequency>
     <ModulationType>Mod64Qam</ModulationType>
     <SymbolRate>6875</SymbolRate>
   </DVBCTuning>
   <DVBCTuning>
+    <!-- BBC E,3Puls,Charli -->
     <Frequency>506000</Frequency>
     <ModulationType>Mod64Qam</ModulationType>
     <SymbolRate>6875</SymbolRate>
   </DVBCTuning>
   <DVBCTuning>
+    <!-- DR Ram,VH1,Cartoo,BBC L,DisnXD -->
     <Frequency>514000</Frequency>
     <ModulationType>Mod64Qam</ModulationType>
     <SymbolRate>6875</SymbolRate>
   </DVBCTuning>
   <DVBCTuning>
+    <!-- EuStar,TGRT,RTK 1,Al Jaz,AlAoul,AlMasr,Kanal7,Euro D,HUSTtv,VOX,Kral,EDTV -->
     <Frequency>522000</Frequency>
     <ModulationType>Mod64Qam</ModulationType>
     <SymbolRate>6875</SymbolRate>
   </DVBCTuning>
   <DVBCTuning>
+    <!-- 2News,7'eren,CNN,DR K -->
     <Frequency>530000</Frequency>
     <ModulationType>Mod64Qam</ModulationType>
     <SymbolRate>6875</SymbolRate>
   </DVBCTuning>
   <DVBCTuning>
+    <!-- Geo,AAG,World,Scienc,TV5,KSpHD,TV4,Ultra -->
     <Frequency>538000</Frequency>
     <ModulationType>Mod64Qam</ModulationType>
     <SymbolRate>6875</SymbolRate>
   </DVBCTuning>
   <DVBCTuning>
+    <!-- Lig TV,STV,Trkmax,ATV,AbuDTV,Iqraa,ShowTV,TRT,MBC -->
     <Frequency>546000</Frequency>
     <ModulationType>Mod64Qam</ModulationType>
     <SymbolRate>6875</SymbolRate>
   </DVBCTuning>
   <DVBCTuning>
+    <!-- OutDHD,Sat1,BBC K,Discov,TCM,Pro7 -->
     <Frequency>554000</Frequency>
     <ModulationType>Mod64Qam</ModulationType>
     <SymbolRate>6875</SymbolRate>
   </DVBCTuning>
   <DVBCTuning>
+    <!-- TV3 HD,Realit,Arte,Showtm,Bloom,Star!,ID,Norge2 -->
     <Frequency>562000</Frequency>
     <ModulationType>Mod64Qam</ModulationType>
     <SymbolRate>6875</SymbolRate>
   </DVBCTuning>
   <DVBCTuning>
+    <!-- Mezzo,CNBC,Travel,ESPN,EuNews,K5 HD,3Sp HD -->
     <Frequency>570000</Frequency>
     <ModulationType>Mod64Qam</ModulationType>
     <SymbolRate>6875</SymbolRate>
   </DVBCTuning>
   <DVBCTuning>
+    <!-- 3Sat,Zulu,24Nord -->
     <Frequency>578000</Frequency>
     <ModulationType>Mod64Qam</ModulationType>
     <SymbolRate>6875</SymbolRate>
   </DVBCTuning>
+  <DVBCTuning>
+    <!-- ShowHD,EuSpHD,BBC HD,MTVLHD -->
+    <Frequency>586000</Frequency>
+    <ModulationType>Mod64Qam</ModulationType>
+    <SymbolRate>6875</SymbolRate>
+  </DVBCTuning>
+  <DVBCTuning>
+    <!-- Spil,CCTV 4,RaiUno,TVE,StarPl,Franc2,StarGo,ThaiTV,HisCHD -->
+    <Frequency>594000</Frequency>
+    <ModulationType>Mod64Qam</ModulationType>
+    <SymbolRate>6875</SymbolRate>
+  </DVBCTuning>
+  <DVBCTuning>
+    <!-- AlEng,HRT1,Pink+,Butik,RTSsat,RTCG,Hayat,NGC HD -->
+    <Frequency>602000</Frequency>
+    <ModulationType>Mod64Qam</ModulationType>
+    <SymbolRate>6875</SymbolRate>
+  </DVBCTuning>
+  <DVBCTuning>
+    <!-- Kanal 4,TV3+HD,6rn HD,C9 HD,BBC K -->
+    <Frequency>618000</Frequency>
+    <ModulationType>Mod64Qam</ModulationType>
+    <SymbolRate>6875</SymbolRate>
+  </DVBCTuning>
+  <DVBCTuning>
+    <!-- Charli,TV3+,2News,Zulu,BBC W -->
+    <Frequency>626000</Frequency>
+    <ModulationType>Mod64Qam</ModulationType>
+    <SymbolRate>6875</SymbolRate>
+  </DVBCTuning>
+  <DVBCTuning>
+    <!-- DisnXD,VH1,2FriHD -->
+    <Frequency>714000</Frequency>
+    <ModulationType>Mod64Qam</ModulationType>
+    <SymbolRate>6875</SymbolRate>
+  </DVBCTuning>
+  <DVBCTuning>
+    <!-- BBC E,Cartoo,NatGeo,7'eren -->
+    <Frequency>730000</Frequency>
+    <ModulationType>Mod64Qam</ModulationType>
+    <SymbolRate>6875</SymbolRate>
+  </DVBCTuning>
+  <DVBCTuning>
+    <!-- DisnHD,EuSpHD,ESp2HD,MTV HD -->
+    <Frequency>770000</Frequency>
+    <ModulationType>Mod64Qam</ModulationType>
+    <SymbolRate>6875</SymbolRate>
+  </DVBCTuning>
+  <DVBCTuning>
+    <!-- BBC L,CNN,DisnJr -->
+    <Frequency>786000</Frequency>
+    <ModulationType>Mod64Qam</ModulationType>
+    <SymbolRate>6875</SymbolRate>
+  </DVBCTuning>
+  <DVBCTuning>
+    <!-- 3Sp HD,NickHD,TNT HD,TLC HD -->
+    <Frequency>794000</Frequency>
+    <ModulationType>Mod64Qam</ModulationType>
+    <SymbolRate>6875</SymbolRate>
+  </DVBCTuning>
+  <DVBCTuning>
+    <!-- KSp HD,DiscHD,Canal8,AnimHD -->
+    <Frequency>858000</Frequency>
+    <ModulationType>Mod64Qam</ModulationType>
+    <SymbolRate>6875</SymbolRate>
+  </DVBCTuning>
 </ArrayOfDVBCTuning>
+

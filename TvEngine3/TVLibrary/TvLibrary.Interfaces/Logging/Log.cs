@@ -24,6 +24,7 @@ using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
+using MediaPortal.Common.Utils.Logger;
 
 namespace TvLibrary.Log
 {
@@ -212,6 +213,16 @@ namespace TvLibrary.Log
     {
       return String.Format(@"{0}\Team MediaPortal\MediaPortal TV Server",
                            Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData));
+    }
+
+    /// <summary>
+    /// Set the log level
+    /// </summary>
+    /// <param name="level">level to set</param>
+    public static void SetLogLevel(LogLevel level)
+    {
+      Log.Info("Set loglevel to: {0}", level.ToString());
+      CommonLogger.Instance.LogLevel = ConvertToCommonLogLevel(level);
     }
 
     #endregion
@@ -406,7 +417,6 @@ namespace TvLibrary.Log
       {
         try
         {
-          string logFileName = GetFileName(logType);
           string logLine = string.Format(format, arg);
 
           if (IsRepetition(logLine))
@@ -415,6 +425,18 @@ namespace TvLibrary.Log
           }
           CacheLogLine(logLine);
 
+          // implementation
+          switch (logType)
+          {
+            case LogType.Debug: CommonLogger.Instance.Debug(CommonLogType.Log, format, arg); break;
+            case LogType.Info: CommonLogger.Instance.Info(CommonLogType.Log, format, arg); break;
+            case LogType.Error:CommonLogger.Instance.Error(CommonLogType.Log, format, arg); break;
+            case LogType.Epg: CommonLogger.Instance.Info(CommonLogType.EPG, format, arg); break;
+          }
+          
+
+          /*
+          string logFileName = GetFileName(logType);
           if (CheckLogPrepared(logFileName))
           {
             using (StreamWriter writer = new StreamWriter(logFileName, true, Encoding.UTF8))
@@ -428,10 +450,24 @@ namespace TvLibrary.Log
               writer.Close();
             }
           }
+           */
         }
         catch (Exception) {}
       }
     }
+
+    private static CommonLogLevel ConvertToCommonLogLevel(LogLevel logLevel)
+    {
+      switch (logLevel)
+      {
+        case LogLevel.Debug: return CommonLogLevel.Debug;
+        case LogLevel.Error: return CommonLogLevel.Error;
+        case LogLevel.Information: return CommonLogLevel.Information;
+        case LogLevel.Warning: return CommonLogLevel.Warning;
+        default: return CommonLogLevel.All;
+      }
+    }
+
 
     #endregion
   }

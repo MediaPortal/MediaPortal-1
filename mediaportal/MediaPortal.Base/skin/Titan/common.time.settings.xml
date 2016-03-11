@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+    <controls>
+    	<control>
+      	<id>0</id>
+        <type>label</type>
+        <posX>144</posX>
+        <posY>38</posY>
+        <width>855</width>
+        <font>TitanLight22</font>
+        <textcolor>ffffff</textcolor>
+        <label>#header.label</label>
+				<align>left</align>
+  		</control>
+      
+			<control>
+      	<id>0</id>
+        <type>label</type>
+        <posX>1848</posX>
+        <posY>36</posY>
+        <width>555</width>
+        <font>TitanLight22</font>
+        <textcolor>ffffff</textcolor>
+        <label>#time</label>
+				<align>right</align>
+  		</control>
+      
+			<control>
+      	<description>Date / Weather</description>
+      	<id>0</id>
+        <type>label</type>
+        <posX>1845</posX>
+        <posY>96</posY>
+        <font>TitanLight12</font>
+        <textcolor>ffffff</textcolor>
+        <label>#date / #WorldWeather.TodayTemperature</label>
+				<align>right</align>
+				<visible>plugin.isenabled(World Weather)</visible>
+ 			</control>
+      
+			<control>
+      	<description>Date</description>
+      	<id>0</id>
+        <type>label</type>
+        <posX>1845</posX>
+        <posY>96</posY>
+        <font>TitanLight12</font>
+        <textcolor>ffffff</textcolor>
+        <label>#date</label>
+				<align>right</align>
+				<visible>!plugin.isenabled(World Weather)</visible>
+   		</control>
+    </controls>
+</window>

@@ -33,6 +33,8 @@ namespace MediaPortal.DeployTool.Sections
       this.bUpdate = new System.Windows.Forms.Button();
       this.bFresh = new System.Windows.Forms.Button();
       this.labelNote = new System.Windows.Forms.Label();
+      this.bReinstall = new System.Windows.Forms.Button();
+      this.rbReinstall = new System.Windows.Forms.Label();
       this.SuspendLayout();
       // 
       // labelSectionHeader
@@ -107,16 +109,45 @@ namespace MediaPortal.DeployTool.Sections
       this.labelNote.ForeColor = System.Drawing.Color.White;
       this.labelNote.Location = new System.Drawing.Point(244, 195);
       this.labelNote.Name = "labelNote";
-      this.labelNote.Size = new System.Drawing.Size(269, 26);
+      this.labelNote.Size = new System.Drawing.Size(265, 26);
       this.labelNote.TabIndex = 21;
       this.labelNote.Text = "NOTE: You cannot upgrade from an existing GIT build,\r\n             those are mean" +
-          "t for testing purposes only.";
+    "t for testing purposes only.";
+      // 
+      // bReinstall
+      // 
+      this.bReinstall.Cursor = System.Windows.Forms.Cursors.Hand;
+      this.bReinstall.FlatAppearance.BorderSize = 0;
+      this.bReinstall.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Transparent;
+      this.bReinstall.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
+      this.bReinstall.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+      this.bReinstall.Image = global::MediaPortal.DeployTool.Images.Choose_button_off;
+      this.bReinstall.Location = new System.Drawing.Point(200, 116);
+      this.bReinstall.Name = "bReinstall";
+      this.bReinstall.Size = new System.Drawing.Size(32, 23);
+      this.bReinstall.TabIndex = 23;
+      this.bReinstall.UseVisualStyleBackColor = true;
+      this.bReinstall.Click += new System.EventHandler(this.bReinstall_Click);
+      // 
+      // rbReinstall
+      // 
+      this.rbReinstall.AutoSize = true;
+      this.rbReinstall.Cursor = System.Windows.Forms.Cursors.Hand;
+      this.rbReinstall.Font = new System.Drawing.Font("Verdana", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+      this.rbReinstall.ForeColor = System.Drawing.Color.White;
+      this.rbReinstall.Location = new System.Drawing.Point(244, 121);
+      this.rbReinstall.MaximumSize = new System.Drawing.Size(300, 0);
+      this.rbReinstall.Name = "rbReinstall";
+      this.rbReinstall.Size = new System.Drawing.Size(213, 13);
+      this.rbReinstall.TabIndex = 22;
+      this.rbReinstall.Text = "Reinstall current installation to 1.0.1";
       // 
       // UpgradeDlg
       // 
-      this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
       this.BackgroundImage = global::MediaPortal.DeployTool.Images.Background_middle_TV_install;
+      this.Controls.Add(this.bReinstall);
+      this.Controls.Add(this.rbReinstall);
       this.Controls.Add(this.labelNote);
       this.Controls.Add(this.bFresh);
       this.Controls.Add(this.bUpdate);
@@ -130,6 +161,8 @@ namespace MediaPortal.DeployTool.Sections
       this.Controls.SetChildIndex(this.bUpdate, 0);
       this.Controls.SetChildIndex(this.bFresh, 0);
       this.Controls.SetChildIndex(this.labelNote, 0);
+      this.Controls.SetChildIndex(this.rbReinstall, 0);
+      this.Controls.SetChildIndex(this.bReinstall, 0);
       this.ResumeLayout(false);
       this.PerformLayout();
 
@@ -142,6 +175,8 @@ namespace MediaPortal.DeployTool.Sections
     private System.Windows.Forms.Button bUpdate;
     private System.Windows.Forms.Button bFresh;
     private System.Windows.Forms.Label labelNote;
+    private System.Windows.Forms.Button bReinstall;
+    private System.Windows.Forms.Label rbReinstall;
 
 
   }

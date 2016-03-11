@@ -26,16 +26,13 @@ namespace MpeCore.Interfaces
   public interface ISectionPanel
   {
     string DisplayName { get; }
+    
     string Guid { get; }
-
-    //bool Unique { get; set; }
-
-    SectionParamCollection Init();
 
     SectionParamCollection GetDefaultParams();
 
     /// <summary>
-    /// Previews the section form, but no change made.
+    /// Previews the section form, and is called by MpeMaker.
     /// </summary>
     /// <param name="packageClass">The package class.</param>
     /// <param name="sectionItem">The param collection.</param>

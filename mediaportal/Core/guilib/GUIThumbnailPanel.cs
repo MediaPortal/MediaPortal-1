@@ -363,7 +363,7 @@ namespace MediaPortal.GUI.Library
       // ToDo: add searchstring property
       if (_searchString.Length > 0)
       {
-        GUIPropertyManager.SetProperty("#selecteditem", "{" + _searchString.ToLower() + "}");
+        GUIPropertyManager.SetProperty("#selecteditem", "{" + _searchString.ToLowerInvariant() + "}");
       }
     }
 
@@ -1262,7 +1262,6 @@ namespace MediaPortal.GUI.Library
           {
             if (m_iSelect == GUIListControl.ListType.CONTROL_LIST)
             {
-              _searchString = "";
               GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_CLICKED, WindowId, GetID, ParentID,
                                               (int)action.wID, 0, null);
               GUIGraphicsContext.SendMessage(msg);
@@ -1351,9 +1350,12 @@ namespace MediaPortal.GUI.Library
           }
           int iItemsPerPage = _rowCount * _columnCount;
           int iPages = iItemsPerPage == 0 ? 0 : _listItems.Count / iItemsPerPage;
-          if ((_listItems.Count % iItemsPerPage) != 0)
+          if (iItemsPerPage != 0)
           {
-            iPages++;
+            if ((_listItems.Count % iItemsPerPage) != 0)
+            {
+              iPages++;
+            }
           }
           _controlUpDown.SetRange(1, iPages);
           _controlUpDown.Value = 1;
@@ -1547,7 +1549,7 @@ namespace MediaPortal.GUI.Library
         }
 
         GUIListItem pItem = _listItems[iItem];
-        if (pItem.Label.ToUpper().StartsWith(SearchKey.ToUpper()) == true)
+        if (pItem.Label.ToUpperInvariant().StartsWith(SearchKey.ToUpperInvariant()) == true)
         {
           bItemFound = true;
           break;
@@ -1896,9 +1898,12 @@ namespace MediaPortal.GUI.Library
 
       int iItemsPerPage = _rowCount * _columnCount;
       int iPages = iItemsPerPage == 0 ? 0 : _listItems.Count / iItemsPerPage;
-      if ((_listItems.Count % iItemsPerPage) != 0)
+      if (iItemsPerPage != 0)
       {
-        iPages++;
+        if ((_listItems.Count % iItemsPerPage) != 0)
+        {
+          iPages++;
+        }
       }
       _controlUpDown.SetRange(1, iPages);
       _controlUpDown.Value = 1;
@@ -2130,9 +2135,9 @@ namespace MediaPortal.GUI.Library
           if ((AnimationTimer.TickCount - _lastCommandTime) > _loopDelay)
           {
             //check if _downControlId is set -> then go to the window
-            if (_upControlId > 0)
+            if (NavigateUp > 0)
             {
-              GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SETFOCUS, WindowId, GetID, _upControlId,
+              GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SETFOCUS, WindowId, GetID, NavigateUp,
                                               (int)action.wID, 0, null);
               GUIGraphicsContext.SendMessage(msg);
             }
@@ -2293,10 +2298,10 @@ namespace MediaPortal.GUI.Library
       if ((AnimationTimer.TickCount - _lastCommandTime) > _loopDelay)
       {
         //check if _downControlId is set -> then go to the window
-        if (_downControlId > 0)
+        if (NavigateDown > 0)
         {
             GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SETFOCUS, WindowId, GetID,
-                                            _downControlId, (int)action.wID, 0, null);
+                                            NavigateDown, (int)action.wID, 0, null);
             GUIGraphicsContext.SendMessage(msg);
         }
         else
@@ -2871,15 +2876,25 @@ namespace MediaPortal.GUI.Library
       _listItems.Add(item);
       int iItemsPerPage = _rowCount * _columnCount;
       int iPages = iItemsPerPage == 0 ? 0 : _listItems.Count / iItemsPerPage;
-      if ((_listItems.Count % iItemsPerPage) != 0)
+      if (iItemsPerPage != 0)
       {
-        iPages++;
+        if ((_listItems.Count % iItemsPerPage) != 0)
+        {
+          iPages++;
+        }
       }
       _controlUpDown.SetRange(1, iPages);
       _controlUpDown.Value = 1;
       _refresh = true;
     }
 
+    public void Replace(int index, GUIListItem item)
+    {
+      if (item != null && index >= 0 && index < _listItems.Count)
+      {
+        _listItems[index] = item;
+      }
+    }
 
     public void Insert(int index, GUIListItem item)
     {
@@ -2890,9 +2905,12 @@ namespace MediaPortal.GUI.Library
       _listItems.Insert(index, item);
       int iItemsPerPage = _rowCount * _columnCount;
       int iPages = iItemsPerPage == 0 ? 0 : _listItems.Count / iItemsPerPage;
-      if ((_listItems.Count % iItemsPerPage) != 0)
+      if (iItemsPerPage != 0)
       {
-        iPages++;
+        if ((_listItems.Count % iItemsPerPage) != 0)
+        {
+          iPages++;
+        }
       }
       _controlUpDown.SetRange(1, iPages);
       _controlUpDown.Value = 1;
@@ -2977,6 +2995,30 @@ namespace MediaPortal.GUI.Library
         OnSelectionChanged();
         _refresh = true;
       }
+    }
+
+    public virtual int RemoveItem(int iItem)
+    {
+      if (iItem < 0 || iItem > _listItems.Count)
+      {
+        return -1;
+      }
+
+      try
+      {
+        Monitor.Enter(this);
+        _listItems.RemoveAt(iItem);
+      }
+      catch (Exception ex)
+      {
+        Log.Error("GUIThumbnailPanel.RemoveItem caused an exception: {0}", ex.Message);
+      }
+      finally
+      {
+        Monitor.Exit(this);
+      }
+      _refresh = true;
+      return SelectedListItemIndex;
     }
 
     public void Clear()

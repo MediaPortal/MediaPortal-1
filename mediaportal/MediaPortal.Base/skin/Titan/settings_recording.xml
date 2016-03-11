@@ -1,0 +1,244 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+<id>701</id>
+<defaultcontrol>4</defaultcontrol>
+<allowoverlay>yes</allowoverlay>
+<define>#header.label:897</define>
+<controls>
+	<import>common.time.settings.xml</import>
+	<import>settings.menu.xml</import>
+  <import>common.settings.xml</import>
+
+  	<control>
+  		<type>label</type>
+  		<id>1</id>
+  		<posX>685</posX>
+  		<posY>225</posY>
+  		<width>500</width>
+  		<label>6007</label>
+  		<textcolor>00b7ff</textcolor>
+  		<font>TitanLight20</font>
+  	  <animation effect="fade" time="150">WindowOpen</animation>
+  	  <animation effect="fade" time="150">WindowClose</animation>
+  	</control>	
+
+		<control>
+			<type>image</type>
+			<id>0</id>
+			<posX>655</posX>
+			<posY>321</posY>
+			<width>922</width>
+			<height>58</height>
+			<texture>settings_button_background.png</texture>
+		  <animation effect="fade" time="150">WindowOpen</animation>
+		  <animation effect="fade" time="150">WindowClose</animation>
+		</control>
+
+		<control>
+			<type>label</type>
+			<id>26</id>
+      <posX>688</posX>
+      <posY>332</posY>
+			<label>6018</label>
+			<onup>5</onup>
+			<ondown>27</ondown>
+  	  <animation effect="fade" time="150">WindowOpen</animation>
+  	  <animation effect="fade" time="150">WindowClose</animation>
+		</control>
+
+		<control>
+			<type>spincontrol</type>
+			<id>27</id>
+      <posX>1588</posX>
+      <posY>321</posY>
+	    <width>102</width>
+	    <height>58</height>
+    	<textureUp>page_up_settings_nofocus.png</textureUp>
+    	<textureUpFocus>page_up_settings_focus.png</textureUpFocus>
+    	<textureDown>page_down_settings_nofocus.png</textureDown>
+    	<textureDownFocus>page_down_settings_focus.png</textureDownFocus>
+    	<align>right</align>
+    	<reverse>no</reverse>
+      <showrange>no</showrange>
+			<spintype>int</spintype>
+    	<textcolor>ffffffff</textcolor>
+    	<textXOff>32</textXOff>
+    	<textYOff>3</textYOff>
+			<onup>26</onup>
+			<ondown>30</ondown>
+			<align>right</align>
+  	  <animation effect="fade" time="150">WindowOpen</animation>
+  	  <animation effect="fade" time="150">WindowClose</animation>
+		</control>
+
+		<control>
+			<type>label</type>
+			<id>28</id>
+			<posX>-2000</posX>
+			<posY>321</posY>
+			<label>6018</label>
+		</control>
+
+		<control>
+			<type>image</type>
+			<id>0</id>
+			<posX>655</posX>
+			<posY>386</posY>
+			<width>922</width>
+			<height>58</height>
+			<texture>settings_button_background.png</texture>
+		  <animation effect="fade" time="150">WindowOpen</animation>
+		  <animation effect="fade" time="150">WindowClose</animation>
+		</control>
+
+		<control>
+			<type>label</type>
+			<id>29</id>
+      <posX>688</posX>
+      <posY>397</posY>
+			<label>6019</label>
+  	  <animation effect="fade" time="150">WindowOpen</animation>
+  	  <animation effect="fade" time="150">WindowClose</animation>
+		</control>
+
+		<control>
+			<type>spincontrol</type>
+			<id>30</id>
+      <posX>1588</posX>
+      <posY>385</posY>
+	    <width>102</width>
+	    <height>58</height>
+    	<textureUp>page_up_settings_nofocus.png</textureUp>
+    	<textureUpFocus>page_up_settings_focus.png</textureUpFocus>
+    	<textureDown>page_down_settings_nofocus.png</textureDown>
+    	<textureDownFocus>page_down_settings_focus.png</textureDownFocus>
+    	<align>right</align>
+    	<reverse>no</reverse>
+      <showrange>no</showrange>
+			<spintype>int</spintype>
+    	<textcolor>ffffffff</textcolor>
+    	<textXOff>32</textXOff>
+    	<textYOff>3</textYOff>
+			<onup>27</onup>
+			<ondown>4</ondown>
+			<align>right</align>
+  	  <animation effect="fade" time="150">WindowOpen</animation>
+  	  <animation effect="fade" time="150">WindowClose</animation>
+		</control>
+
+		<control>
+			<type>label</type>
+			<id>31</id>
+			<posX>-2000</posX>
+			<posY>386</posY>
+			<label>6019</label>
+		</control>
+
+  	<control>
+  		<type>image</type>
+  		<id>1</id>
+			<posX>655</posX>
+			<posY>450</posY>
+  		<width>1137</width>
+  		<height>58</height>
+  		<texture>settings_button_large_focus.png</texture>
+  		<visible>Control.HasFocus(4)</visible>
+  	  <animation effect="fade" time="150">WindowOpen</animation>
+  	  <animation effect="fade" time="150">WindowClose</animation>
+  	</control>
+
+  	<control>
+  		<type>image</type>
+  		<id>1</id>
+			<posX>655</posX>
+			<posY>450</posY>
+  		<width>1137</width>
+  		<height>58</height>
+  		<texture>settings_button_large_nofocus.png</texture>
+  		<visible>!Control.HasFocus(4)</visible>
+  	  <animation effect="fade" time="150">WindowOpen</animation>
+  	  <animation effect="fade" time="150">WindowClose</animation>
+  	</control>
+
+		<control>
+			<description>Automatically delete recordings after watching them database</description>
+			<type>checkmark</type>
+			<id>4</id>
+			<posX>1670</posX>
+			<posY>461</posY>
+			<label>-</label>
+			<onup>30</onup>
+			<ondown>5</ondown>
+			<onleft>10008</onleft>
+			<onright>10008</onright>
+  	  <animation effect="fade" time="150">WindowOpen</animation>
+  	  <animation effect="fade" time="150">WindowClose</animation>
+		</control>
+		
+		<control>
+			<description>Automatically delete recordings after watching them label</description>
+			<type>label</type>
+			<id>0</id>
+			<posX>685</posX>
+			<posY>461</posY>
+			<textcolor>ffffffff</textcolor>
+			<label>6016</label>
+  	  <animation effect="fade" time="150">WindowOpen</animation>
+  	  <animation effect="fade" time="150">WindowClose</animation>
+		</control>
+		
+  	<control>
+  		<type>image</type>
+  		<id>1</id>
+			<posX>655</posX>
+			<posY>515</posY>
+  		<width>1137</width>
+  		<height>58</height>
+  		<texture>settings_button_large_focus.png</texture>
+  		<visible>Control.HasFocus(5)</visible>
+  	  <animation effect="fade" time="150">WindowOpen</animation>
+  	  <animation effect="fade" time="150">WindowClose</animation>
+  	</control>
+
+  	<control>
+  		<type>image</type>
+  		<id>1</id>
+			<posX>655</posX>
+			<posY>515</posY>
+  		<width>1137</width>
+  		<height>58</height>
+  		<texture>settings_button_large_nofocus.png</texture>
+  		<visible>!Control.HasFocus(5)</visible>
+  	  <animation effect="fade" time="150">WindowOpen</animation>
+  	  <animation effect="fade" time="150">WindowClose</animation>
+  	</control>
+
+		<control>
+			<description>Add recordings to movie database</description>
+			<type>checkmark</type>
+			<id>5</id>
+			<posX>1670</posX>
+			<posY>526</posY>
+			<label>-</label>
+			<onup>4</onup>
+			<ondown>26</ondown>
+			<onleft>10008</onleft>
+			<onright>10008</onright>
+  	  <animation effect="fade" time="150">WindowOpen</animation>
+  	  <animation effect="fade" time="150">WindowClose</animation>
+		</control>
+		
+		<control>
+			<description>Add recordings to movie database label</description>
+			<type>label</type>
+			<id>0</id>
+			<posX>685</posX>
+			<posY>526</posY>
+			<textcolor>ffffffff</textcolor>
+			<label>6017</label>
+  	  <animation effect="fade" time="150">WindowOpen</animation>
+  	  <animation effect="fade" time="150">WindowClose</animation>
+		</control>
+	
+</controls>
+</window>

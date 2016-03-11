@@ -187,7 +187,7 @@ namespace TvService
       return tvResult;
     }
 
-    public ICardTuneReservationTicket RequestCardTuneReservation(ITvCardHandler tvcard, IChannel tuningDetail, IUser user)
+    public ICardTuneReservationTicket RequestCardTuneReservation(ITvCardHandler tvcard, IChannel tuningDetail, IUser user, int idChannel)
     {
       ICardTuneReservationTicket cardTuneReservationTicket = null;
       var layer = new TvBusinessLayer();
@@ -231,10 +231,12 @@ namespace TvService
           tvcard.Tuner.CardTuneState = CardTuneState.TunePending;            
           bool isTunedToTransponder = IsTunedToTransponder(tvcard, tuningDetail);
 
-          if (isTunedToTransponder)
+          /*if (isTunedToTransponder)
           {
-            CheckTransponder(tvcard, tuningDetail, layer, user);
-          }
+           // no point here, as we dont check the bool return value ???
+            CheckTransponder(tvcard, tuningDetail, user);
+          }*/
+          long? channelTimeshiftingOnOtherMux;
 
           int ownerSubchannel = -1;
           int numberOfUsersOnSameCurrentChannel = 0;
@@ -445,11 +447,11 @@ namespace TvService
       return isCamAlreadyDecodingChannel;
     }
 
-    private void CheckTransponder(ITvCardHandler tvcard, IChannel tuningDetail, TvBusinessLayer layer, IUser user)
+    /*private void CheckTransponder(ITvCardHandler tvcard, IChannel tuningDetail, TvBusinessLayer layer, IUser user)
     {
       var cardAlloc = new AdvancedCardAllocation(layer, _tvController);
       cardAlloc.CheckTransponder(user, tvcard, tuningDetail);
-    }      
+    }*/
 
     #endregion
 

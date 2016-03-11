@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
@@ -19,13 +19,15 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseOfMfc>false</UseOfMfc>
-    <CharacterSet>MultiByte</CharacterSet>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v120_xp</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseOfMfc>false</UseOfMfc>
     <UseOfAtl>false</UseOfAtl>
-    <CharacterSet>MultiByte</CharacterSet>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v120_xp</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -64,7 +66,7 @@
       <Optimization>MaxSpeed</Optimization>
       <InlineFunctionExpansion>Default</InlineFunctionExpansion>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
-      <AdditionalIncludeDirectories>$(DSHOW_BASE);  $(WINDOWS_SDK)Include; $(DXSDK_DIR)Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)baseclasses;$(WINDOWS_SDK)Include; $(DXSDK_DIR)Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WINVER=0x0502;NDEBUG;WIN32; _WIN32; _CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>false</StringPooling>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
@@ -82,6 +84,7 @@
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <CallingConvention>Cdecl</CallingConvention>
       <CompileAs>Default</CompileAs>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -96,7 +99,7 @@
       <ShowProgress>NotSet</ShowProgress>
       <OutputFile>bin\Release/TsWriter.ax</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalLibraryDirectories>$(DSHOW_BASE)Release_MBCS; $(DXSDK_DIR)lib\x86;$(WINDOWS_SDK)\lib; ..\shared;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)baseclasses\release;$(DXSDK_DIR)lib\x86;$(WINDOWS_SDK)\lib; ..\shared;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <ModuleDefinitionFile>.\source\TsWriter.def</ModuleDefinitionFile>
@@ -109,6 +112,7 @@
       </DataExecutionPrevention>
       <TargetMachine>MachineX86</TargetMachine>
       <AllowIsolation>true</AllowIsolation>
+      <ImageHasSafeExceptionHandlers>true</ImageHasSafeExceptionHandlers>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -123,7 +127,7 @@
     </Midl>
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>$(DSHOW_BASE);  $(WINDOWS_SDK)\Include; $(DXSDK_DIR)Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)baseclasses;$(WINDOWS_SDK)\Include; $(DXSDK_DIR)Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>DBG=1;DEBUG;_DEBUG;INC_OLE2;STRICT;_WIN32_WINNT=0x0400;WIN32;_WIN32;_MT;_DLL;_X86_=1;WINVER=0x0400;_CRT_SECURE_NO_DEPRECATE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -136,6 +140,7 @@
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <CallingConvention>Cdecl</CallingConvention>
       <CompileAs>Default</CompileAs>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -145,7 +150,7 @@
       <AdditionalDependencies>dvbcoreutilsD.lib;strmbasd.lib;winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>bin\Debug/TsWriter.ax</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalLibraryDirectories>$(DSHOW_BASE)Debug_MBCS; $(DXSDK_DIR)lib\x86;$(WINDOWS_SDK)\lib;../shared;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)baseclasses\debug;$(DXSDK_DIR)lib\x86;$(WINDOWS_SDK)\lib;../shared;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
       <IgnoreSpecificDefaultLibraries>libcmtd.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <ModuleDefinitionFile>.\source\TsWriter.def</ModuleDefinitionFile>
@@ -158,15 +163,21 @@
       </DataExecutionPrevention>
       <ImportLibrary>.\bin\Debug/TsWriter.lib</ImportLibrary>
       <TargetMachine>MachineX86</TargetMachine>
+      <ImageHasSafeExceptionHandlers>true</ImageHasSafeExceptionHandlers>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="source\AtscNitParser.cpp" />
+    <ClCompile Include="source\BaseScteParser.cpp" />
     <ClCompile Include="source\CaGrabber.cpp" />
     <ClCompile Include="source\ChannelLinkageScanner.cpp" />
     <ClCompile Include="source\ChannelScan.cpp" />
     <ClCompile Include="source\DiskRecorder.cpp" />
     <ClCompile Include="source\EpgScanner.cpp" />
+    <ClCompile Include="source\LvctParser.cpp" />
+    <ClCompile Include="source\NttParser.cpp" />
     <ClCompile Include="source\PmtGrabber.cpp" />
+    <ClCompile Include="source\SvctParser.cpp" />
     <ClCompile Include="source\TeletextGrabber.cpp" />
     <ClCompile Include="source\TsChannel.cpp" />
     <ClCompile Include="source\TsWriter.cpp" />
@@ -180,7 +191,6 @@
     <ClCompile Include="source\PatParser.cpp" />
     <ClCompile Include="source\PmtParser.cpp" />
     <ClCompile Include="source\SdtParser.cpp" />
-    <ClCompile Include="source\VirtualChannelTableParser.cpp" />
     <ClCompile Include="source\PcrDecoder.cpp" />
     <ClCompile Include="source\VideoAudioScrambledAnalyzer.cpp" />
     <ClCompile Include="source\FileWriter.cpp" />
@@ -193,15 +203,21 @@
     <None Include="source\TsWriter.def" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="source\AtscNitParser.h" />
     <ClInclude Include="source\CaGrabber.h" />
     <ClInclude Include="source\ChannelLinkageScanner.h" />
     <ClInclude Include="source\ChannelScan.h" />
     <ClInclude Include="source\DiskRecorder.h" />
     <ClInclude Include="source\EpgScanner.h" />
+    <ClInclude Include="source\LvctParser.h" />
+    <ClInclude Include="source\NttParser.h" />
     <ClInclude Include="source\PmtGrabber.h" />
+    <ClInclude Include="source\BaseScteParser.h" />
+    <ClInclude Include="source\SvctParser.h" />
     <ClInclude Include="source\TeletextGrabber.h" />
     <ClInclude Include="source\TsChannel.h" />
     <ClInclude Include="source\TsWriter.h" />
+    <ClInclude Include="source\version.h" />
     <ClInclude Include="source\VideoAnalyzer.h" />
     <ClInclude Include="source\videoaudioobserver.h" />
     <ClInclude Include="source\PcrDecoder.h" />
@@ -217,7 +233,6 @@
     <ClInclude Include="source\PatParser.h" />
     <ClInclude Include="source\PmtParser.h" />
     <ClInclude Include="source\SdtParser.h" />
-    <ClInclude Include="source\VirtualChannelTableParser.h" />
     <ClInclude Include="source\FileWriter.h" />
     <ClInclude Include="source\MultiFileWriter.h" />
     <ClInclude Include="source\autoString.h" />
@@ -240,6 +255,9 @@
       <Project>{4b134b4c-4ef6-4647-9cea-a59ff0013357}</Project>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="source\TsWriter.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

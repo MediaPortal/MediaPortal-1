@@ -29,6 +29,8 @@ namespace MediaPortal.DeployTool
     DownloadOnly,
     DownloadSettings,
     Upgrade,
+    SkinChoice,
+    ExtensionChoice,
     WatchTV,
     BASE_INSTALLATION_TYPE,
     BASE_INSTALLATION_TYPE_WITHOUT_TVENGINE,
@@ -38,7 +40,8 @@ namespace MediaPortal.DeployTool
     MPSettings,
     TvServerSettings,
     Installation,
-    Finished
+    Finished,
+    MysqlUpgrade
   }
 
   public sealed class DialogFlowHandler
@@ -142,6 +145,15 @@ namespace MediaPortal.DeployTool
             break;
           case DialogType.Finished:
             dlg = new FinishedDlg();
+            break;
+          case DialogType.SkinChoice:
+            dlg = new SkinChoice();
+            break;
+          case DialogType.ExtensionChoice:
+            dlg = new ExtensionChoice();
+            break;
+          case DialogType.MysqlUpgrade:
+            dlg = new MySQLChoice();
             break;
         }
         if (dlg != null)

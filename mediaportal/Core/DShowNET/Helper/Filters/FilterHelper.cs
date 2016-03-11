@@ -83,15 +83,15 @@ namespace DShowNET.Helper
       }
       foreach (Filter device in Filters.BDAReceivers)
       {
-        if (device.Name.ToLower() == "bda slip de-framer")
+        if (device.Name.ToLowerInvariant() == "bda slip de-framer")
         {
           continue;
         }
-        if (device.Name.ToLower() == "bda mpe filter")
+        if (device.Name.ToLowerInvariant() == "bda mpe filter")
         {
           continue;
         }
-        if (device.Name.ToLower() == "bda mpe-filter")
+        if (device.Name.ToLowerInvariant() == "bda mpe-filter")
         {
           continue;
         }
@@ -117,15 +117,15 @@ namespace DShowNET.Helper
       }
       foreach (Filter device in Filters.BDAReceivers)
       {
-        if (device.Name.ToLower() == "bda slip de-framer")
+        if (device.Name.ToLowerInvariant() == "bda slip de-framer")
         {
           continue;
         }
-        if (device.Name.ToLower() == "bda mpe filter")
+        if (device.Name.ToLowerInvariant() == "bda mpe filter")
         {
           continue;
         }
-        if (device.Name.ToLower() == "bda mpe-filter")
+        if (device.Name.ToLowerInvariant() == "bda mpe-filter")
         {
           continue;
         }
@@ -153,7 +153,7 @@ namespace DShowNET.Helper
         if (String.Compare(filter.Name, "DVD Navigator", true) == 0 ||
             String.Compare(filter.Name, "InterVideo Navigator", true) == 0 ||
             String.Compare(filter.Name, "NVIDIA Navigator", true) == 0 ||
-            filter.Name.ToLower().Contains("cyberlink dvd navigator"))
+            filter.Name.ToLowerInvariant().Contains("cyberlink dvd navigator"))
         {
           navigators.Add(filter.Name);
         }

@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <id>1007</id>
+  <defaultcontrol>2</defaultcontrol>
+  <allowoverlay>no</allowoverlay>
+  <define>#header.label:897</define>
+  <rememberLastFocusedControl>no</rememberLastFocusedControl>
+  <controls>
+	<import>common.time.settings.xml</import>
+	<import>settings.menu.xml</import>
+  <import>common.settings.xml</import>
+	
+	<control>
+		<type>label</type>
+		<id>1</id>
+		<posX>685</posX>
+		<posY>225</posY>
+		<width>800</width>
+		<label>#(L(128))/#(L(101007))</label>
+		<textcolor>00b7ff</textcolor>
+		<font>TitanLight20</font>
+	  <animation effect="fade" time="150">WindowOpen</animation>
+	  <animation effect="fade" time="150">WindowClose</animation>
+	</control>
+	
+	<control>
+		<description>buttons</description>
+		<type>group</type>
+		<posX>655</posX>
+		<posY>321</posY>
+		<dimColor>ffffffff</dimColor>
+    <layout>StackLayout(7, Vertical, true)</layout>
+	  <animation effect="fade" time="150">WindowOpen</animation>
+	  <animation effect="fade" time="150">WindowClose</animation>
+		
+			<control Style="SettingsCheckButtonLarge">
+				<description>Master volume</description>
+				<type>checkbutton</type>
+				<id>2</id>
+				<posX>350</posX>
+				<posY>150</posY>
+				<onleft>10</onleft>
+				<onright>10</onright>
+				<align>right</align>
+				<label>300112</label>
+			</control>
+			
+			<control Style="SettingsCheckButtonLarge">
+				<description>Wave</description>
+				<type>checkbutton</type>
+				<id>3</id>
+				<posX>350</posX>
+				<posY>195</posY>
+				<onleft>10</onleft>
+				<onright>10</onright>
+				<align>right</align>
+				<label>300113</label>
+			</control>
+		</control>
+    <!--Scale-->
+    <control>
+      <description>Scale label</description>
+      <type>label</type>
+      <id>1</id>
+		  <posX>685</posX>
+		  <posY>485</posY>
+      <width>400</width>
+      <label>300114</label>
+		  <textcolor>00b7ff</textcolor>
+		  <font>TitanLight12</font>
+			<animation effect="fade" time="150">WindowOpen</animation>
+			<animation effect="fade" time="150">WindowClose</animation>
+    </control>
+		
+	<control>
+		<description>buttons</description>
+		<type>group</type>
+		<posX>655</posX>
+		<posY>530</posY>
+		<dimColor>ffffffff</dimColor>
+    <layout>StackLayout(7, Vertical, true)</layout>
+	  <animation effect="fade" time="150">WindowOpen</animation>
+	  <animation effect="fade" time="150">WindowClose</animation>
+		
+		<control Style="SettingsCheckButtonLarge">
+      <description>WinXP</description>
+      <type>checkbutton</type>
+      <id>4</id>
+      <label>300115</label>
+    </control>
+		
+		<control Style="SettingsCheckButtonLarge">
+      <description>Classic</description>
+      <type>checkbutton</type>
+      <id>5</id>
+      <label>300116</label>
+    </control>
+		
+		<control Style="SettingsCheckButtonLarge">
+      <description>Logarithmic</description>
+      <type>checkbutton</type>
+      <id>6</id>
+      <label>300117</label>
+    </control>
+		
+		<control Style="SettingsCheckButtonLarge">
+      <description>Vista/Win7</description>
+      <type>checkbutton</type>
+      <id>7</id>
+      <label>300118</label>
+    </control>
+		
+		<control Style="SettingsCheckButtonLarge">
+      <description>Custom</description>
+      <type>checkbutton</type>
+      <id>8</id>
+      <label>993</label>
+    </control>
+	</control>
+		
+    <control>
+      <description>Custom values label</description>
+      <type>fadelabel</type>
+      <id>1</id>
+		  <posX>685</posX>
+		  <posY>850</posY>
+      <width>1085</width>
+      <font>font10</font>
+      <label>#customScalevalues</label>
+      <visible>control.hasfocus(8)</visible>
+			<animation effect="fade" time="150">WindowOpen</animation>
+			<animation effect="fade" time="150">WindowClose</animation>
+    </control>
+    <!--OSD-->
+    <control>
+      <description>Scale label</description>
+      <type>label</type>
+      <id>1</id>
+		  <posX>685</posX>
+		  <posY>885</posY>
+      <width>400</width>
+      <label>478</label>
+		  <textcolor>00b7ff</textcolor>
+		  <font>TitanLight12</font>
+			<animation effect="fade" time="150">WindowOpen</animation>
+			<animation effect="fade" time="150">WindowClose</animation>
+    </control>
+		
+		<control Style="SettingsCheckButtonLarge">
+      <description>OSD button</description>
+      <type>checkbutton</type>
+      <id>9</id>
+		  <posX>655</posX>
+		  <posY>930</posY>
+			<onup>8</onup>
+      <ondown>2</ondown>
+      <label>300119</label>
+			<animation effect="fade" time="150">WindowOpen</animation>
+			<animation effect="fade" time="150">WindowClose</animation>
+    </control>
+  </controls>
+</window>

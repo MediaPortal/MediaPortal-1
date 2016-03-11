@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <id>1019</id>
+  <defaultcontrol>10</defaultcontrol>
+  <allowoverlay>no</allowoverlay>
+	<define>#header.label:897</define>
+  <rememberLastFocusedControl>no</rememberLastFocusedControl>
+  <controls>
+	<import>common.time.settings.xml</import>
+	<import>settings.menu.xml</import>
+  <import>common.settings.xml</import>
+	
+	<control>
+		<type>label</type>
+		<id>1</id>
+		<posX>685</posX>
+		<posY>225</posY>
+		<width>500</width>
+		<label>#(L(128))/#(L(300081))</label>
+		<textcolor>00b7ff</textcolor>
+		<font>TitanLight20</font>
+	  <animation effect="fade" time="150">WindowOpen</animation>
+	  <animation effect="fade" time="150">WindowClose</animation>
+	</control>
+	
+	<control>
+		<description>buttons</description>
+		<type>group</type>
+		<posX>655</posX>
+		<posY>321</posY>
+		<dimColor>ffffffff</dimColor>
+    <layout>StackLayout(7, Vertical, true)</layout>
+	  <animation effect="fade" time="150">WindowOpen</animation>
+	  <animation effect="fade" time="150">WindowClose</animation>
+		
+			<control Style="SettingsCheckButtonLarge">
+        <description>MP fullscreen</description>
+        <type>checkbutton</type>
+        <id>10</id>
+        <onup>16</onup>
+        <label>300105</label>
+      </control>
+			
+			<control Style="SettingsCheckButtonLarge">
+        <description>Splashscreen</description>
+        <type>checkbutton</type>
+        <id>11</id>
+        <label>300106</label>
+      </control>
+			
+			<control Style="SettingsCheckButtonLarge">
+        <description>On top</description>
+        <type>checkbutton</type>
+        <id>12</id>
+        <label>300107</label>
+      </control>
+			
+			<control Style="SettingsCheckButtonLarge">
+        <description>Hide taskbar</description>
+        <type>checkbutton</type>
+        <id>13</id>
+        <label>300108</label>
+      </control>
+			<control Style="SettingsCheckButtonLarge">
+        <description>Autostart on WinUp</description>
+        <type>checkbutton</type>
+        <id>14</id>
+        <label>300109</label>
+      </control>
+			
+			<control Style="SettingsCheckButtonLarge">
+        <description>Minimize to tray Startup</description>
+        <type>checkbutton</type>
+        <id>15</id>
+        <label>300110</label>
+      </control>
+			
+			<control Style="SettingsCheckButtonLarge">
+        <description>Minimize to tray GUI exit</description>
+        <type>checkbutton</type>
+        <id>16</id>
+        <label>300111</label>
+      </control>
+			
+			<control Style="SettingsCheckButtonLarge">
+        <description>Minimize to tray GUI on focus loss</description>
+        <type>checkbutton</type>
+        <id>17</id>
+        <label>300229</label>
+        <ondown>10</ondown>
+      </control>
+    </control>
+  </controls>
+</window>

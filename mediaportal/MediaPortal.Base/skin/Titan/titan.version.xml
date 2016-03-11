@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <controls>
+    <control>
+		<type>label</type>
+		<posX>1832</posX>
+		<posY>995</posY>
+		<align>right</align>
+		<font>TitanLight12</font>
+		<textcolor>6aa5cb</textcolor>
+		<label>Titan v1.6.0.341</label>
+		<textcolor>000000</textcolor>
+		<animation effect="fade" start="0" end="100" time="300" delay="350">WindowOpen</animation>
+		<animation effect="fade" start="100" end="0" time="0" delay="0">WindowClose</animation>
+		<animation effect="fade" start="0" end="100" time="300" delay="250" reversible="false">visible</animation>
+    </control>
+</controls>
+</window>

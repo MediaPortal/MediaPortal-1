@@ -83,7 +83,7 @@ namespace MpeCore.Classes.InstallerType
 
     public void Uninstall(PackageClass packageClass, UnInstallItem fileItem)
     {
-      throw new NotImplementedException();
+      // should not be called, since Install creates a UnInstallItem with type CopyFile
     }
 
     public string GetZipEntry(FileItem fileItem)

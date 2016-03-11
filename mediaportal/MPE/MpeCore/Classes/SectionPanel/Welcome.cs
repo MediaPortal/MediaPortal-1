@@ -19,13 +19,7 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
 using System.IO;
-using MpeCore.Classes.SectionPanel;
 using MpeCore.Interfaces;
 
 namespace MpeCore.Classes.SectionPanel
@@ -38,39 +32,20 @@ namespace MpeCore.Classes.SectionPanel
 
     private SectionItem Section = new SectionItem();
     private PackageClass _packageClass = new PackageClass();
-
     private SectionResponseEnum resp = SectionResponseEnum.Cancel;
 
-    public Welcome()
-    {
-      InitializeComponent();
-    }
-
     #region ISectionPanel Members
-
-    public SectionParamCollection Params { get; set; }
-
-    public bool Unique
-    {
-      get { throw new NotImplementedException(); }
-      set { throw new NotImplementedException(); }
-    }
-
-    public string Guid
-    {
-      get { return "{DF252CB6-872D-4f61-ABC7-729B12C8C686}"; }
-    }
 
     public string DisplayName
     {
       get { return "Welcome Screen"; }
     }
 
-    public SectionParamCollection Init()
+    public string Guid
     {
-      throw new NotImplementedException();
+      get { return "{DF252CB6-872D-4f61-ABC7-729B12C8C686}"; }
     }
-
+    
     public SectionParamCollection GetDefaultParams()
     {
       SectionParamCollection param = new SectionParamCollection();
@@ -111,6 +86,11 @@ namespace MpeCore.Classes.SectionPanel
 
     #endregion
 
+    public Welcome()
+    {
+      InitializeComponent();
+    }
+
     private void SetValues()
     {
       lbl_desc1.Text = _packageClass.ReplaceInfo(Section.Params[CONST_TEXT1].Value);
@@ -119,7 +99,7 @@ namespace MpeCore.Classes.SectionPanel
       {
         base.pictureBox1.Load(Section.Params[CONST_IMAGE].Value);
       }
-      button_next.Text = "Next>";
+      button_next.Text = "Next >";
       switch (Section.WizardButtonsEnum)
       {
         case WizardButtonsEnum.BackNextCancel:

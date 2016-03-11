@@ -130,6 +130,30 @@ namespace MediaPortal.Music.Database
 
     #endregion
 
+    #region Resume
+
+    public void SetResume(Song aSong)
+    {
+      try
+      {
+        if (aSong.Id == -1)
+        {
+          return;
+        }
+
+        string strSQL = String.Format("UPDATE tracks SET iResumeAt={0} WHERE idTrack={1}", aSong.ResumeAt, aSong.Id);
+        DirectExecute(strSQL);
+        return;
+      }
+      catch (Exception ex)
+      {
+        Log.Error("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Open();
+      }
+    }
+
+    #endregion
+
     #region Favorite / Ratings
 
     public void SetFavorite(Song aSong)
@@ -735,11 +759,11 @@ namespace MediaPortal.Music.Database
 
           if (SharePath.Length > 0)
           {
-            if (ShareType.ToLower() == "yes")
+            if (ShareType.ToLowerInvariant() == "yes")
             {
               Log.Info("Musicdatabasereorg: Skipping scan of Remote Share: {0}", SharePath);
             }
-            else if (ShareScan.ToLower() == "no")
+            else if (ShareScan.ToLowerInvariant() == "no")
             {
               Log.Info("Musicdatabasereorg: Skipping scan of non-selected Share: {0}", SharePath);
             }
@@ -752,6 +776,8 @@ namespace MediaPortal.Music.Database
       }
       return 0;
     }
+
+    #endregion
 
     #region Delete Song
 
@@ -1128,8 +1154,8 @@ namespace MediaPortal.Music.Database
       bool fileinCluded = false;
       try
       {
-        string ext = Path.GetExtension(file).ToLower();
-        if (ext == ".m3u")
+        string ext = Path.GetExtension(file).ToLowerInvariant();
+        if (ext == ".m3u" || ext == ".m3u8")
         {
           return false;
         }
@@ -1523,18 +1549,11 @@ namespace MediaPortal.Music.Database
 
                 if (!String.IsNullOrEmpty(mp3TagImage))
                 {
-                  if (
-                    !Util.Picture.CreateThumbnail(mp3TagImage, smallThumbPath, (int)Thumbs.ThumbResolution,
-                                                  (int)Thumbs.ThumbResolution, 0, Thumbs.SpeedThumbsSmall))
-                  {
-                    Log.Info("MusicDatabase: Could not extract thumbnail from {0}", tag.FileName);
-                  }
-                  if (
-                    !Util.Picture.CreateThumbnail(mp3TagImage, largeThumbPath, (int)Thumbs.ThumbLargeResolution,
-                                                  (int)Thumbs.ThumbLargeResolution, 0, Thumbs.SpeedThumbsLarge))
-                  {
-                    Log.Info("MusicDatabase: Could not extract thumbnail from {0}", tag.FileName);
-                  }
+                  Util.Picture.CreateThumbnail(mp3TagImage, smallThumbPath, (int) Thumbs.ThumbResolution,
+                                               (int) Thumbs.ThumbResolution, 0, Thumbs.SpeedThumbsSmall);
+
+                  Util.Picture.CreateThumbnail(mp3TagImage, largeThumbPath, (int) Thumbs.ThumbLargeResolution,
+                                               (int) Thumbs.ThumbLargeResolution, 0, Thumbs.SpeedThumbsLarge);
 
                   Util.Utils.FileDelete(mp3TagImage); // clean up the temp file directly
                 }
@@ -1588,18 +1607,11 @@ namespace MediaPortal.Music.Database
 
             if (foundThumb)
             {
-              if (
-                !Util.Picture.CreateThumbnail(sharefolderThumb, smallThumbPath, (int)Thumbs.ThumbResolution,
-                                              (int)Thumbs.ThumbResolution, 0, Thumbs.SpeedThumbsSmall))
-              {
-                Log.Info("MusicDatabase: Could not create album thumb from folder {0}", tag.FileName);
-              }
-              if (
-                !Util.Picture.CreateThumbnail(sharefolderThumb, largeThumbPath, (int)Thumbs.ThumbLargeResolution,
-                                              (int)Thumbs.ThumbLargeResolution, 0, Thumbs.SpeedThumbsLarge))
-              {
-                Log.Info("MusicDatabase: Could not create large album thumb from folder {0}", tag.FileName);
-              }
+              Util.Picture.CreateThumbnail(sharefolderThumb, smallThumbPath, (int) Thumbs.ThumbResolution,
+                                           (int) Thumbs.ThumbResolution, 0, Thumbs.SpeedThumbsSmall);
+
+              Util.Picture.CreateThumbnail(sharefolderThumb, largeThumbPath, (int) Thumbs.ThumbLargeResolution,
+                                           (int) Thumbs.ThumbLargeResolution, 0, Thumbs.SpeedThumbsLarge);
             }
           }
         }
@@ -1624,13 +1636,8 @@ namespace MediaPortal.Music.Database
               if (Util.Utils.FileExistsInCache(sourceCover))
               {
                 _previousPosHitDir = Path.GetDirectoryName(tag.FileName);
-                //FolderThumbCreator newThumb = new FolderThumbCreator(tag.FileName, tag);
-                if (
-                  !Util.Picture.CreateThumbnail(sourceCover, sharefolderThumb, (int)Thumbs.ThumbLargeResolution,
-                                                (int)Thumbs.ThumbLargeResolution, 0, Thumbs.SpeedThumbsLarge))
-                {
-                  Log.Info("MusicDatabase: Could not create missing folder thumb in share path {0}", sharefolderThumb);
-                }
+                Util.Picture.CreateThumbnail(sourceCover, sharefolderThumb, (int) Thumbs.ThumbLargeResolution,
+                                             (int) Thumbs.ThumbLargeResolution, 0, Thumbs.SpeedThumbsLarge);
                 Thread.Sleep(1);
               }
             }
@@ -1686,18 +1693,11 @@ namespace MediaPortal.Music.Database
 
               if (foundCover)
               {
-                if (
-                  !Util.Picture.CreateThumbnail(sharefolderThumb, localFolderThumb, (int)Thumbs.ThumbResolution,
-                                                (int)Thumbs.ThumbResolution, 0, Thumbs.SpeedThumbsSmall))
-                {
-                  Log.Info("MusicDatabase: Could not cache folder thumb from folder {0}", sharePath);
-                }
-                if (
-                  !Util.Picture.CreateThumbnail(sharefolderThumb, localFolderLThumb, (int)Thumbs.ThumbLargeResolution,
-                                                (int)Thumbs.ThumbLargeResolution, 0, Thumbs.SpeedThumbsLarge))
-                {
-                  Log.Info("MusicDatabase: Could not cache large folder thumb from folder {0}", sharePath);
-                }
+                Util.Picture.CreateThumbnail(sharefolderThumb, localFolderThumb, (int) Thumbs.ThumbResolution,
+                                             (int) Thumbs.ThumbResolution, 0, Thumbs.SpeedThumbsSmall);
+
+                Util.Picture.CreateThumbnail(sharefolderThumb, localFolderLThumb, (int) Thumbs.ThumbLargeResolution,
+                                             (int) Thumbs.ThumbLargeResolution, 0, Thumbs.SpeedThumbsLarge);
               }
             }
             catch (Exception ex2)
@@ -2237,243 +2237,40 @@ namespace MediaPortal.Music.Database
 
     #endregion
 
-    #region Scrobble
+    #region last.fm
 
-    public int AddScrobbleUser(string userName_)
+    public bool AddLastFMUser(string userName, string lastFmKey)
     {
-      string strSQL;
+      if (string.IsNullOrEmpty(lastFmKey)) return false;
+
       try
       {
-        if (userName_ == null)
+        strSQL = @"select * from lastfmusers";
+        var results = DirectExecute(strSQL);
+        if(results.Rows.Count == 0)
         {
-          return -1;
-        }
-        if (userName_.Length == 0)
-        {
-          return -1;
-        }
-        string strUserName = userName_;
-
-        DatabaseUtility.RemoveInvalidChars(ref strUserName);
-
-
-        strSQL = String.Format("select * from scrobbleusers where strUsername like '{0}'", strUserName);
-        SQLiteResultSet results = DirectExecute(strSQL);
-        if (results.Rows.Count == 0)
-        {
-          // doesnt exists, add it
-          strSQL = String.Format("insert into scrobbleusers (idScrobbleUser , strUsername) values ( NULL, '{0}' )",
-                                 strUserName);
+          strSQL = String.Format("insert into lastfmusers (idLastFMUser , strUsername, strSK) values ( NULL, '{0}', '{1}' )",
+                                 userName, lastFmKey);
           DirectExecute(strSQL);
-          Log.Info("MusicDatabase: added scrobbleuser {0} with ID {1}", strUserName,
-                   Convert.ToString(MusicDbClient.LastInsertID()));
-          return Instance.DbConnection.LastInsertID();
+          Log.Info("LastFM Key added to database");
         }
         else
         {
-          return DatabaseUtility.GetAsInt(results, 0, "idScrobbleUser");
-        }
-      }
-      catch (Exception ex)
-      {
-        Log.Error("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
-        Open();
-      }
-      return -1;
-    }
-
-    public string AddScrobbleUserPassword(string userID_, string userPassword_)
-    {
-      string strSQL;
-      try
-      {
-        if (userPassword_ == null || userID_ == null)
-        {
-          return string.Empty;
-        }
-        if (userID_.Length == 0)
-        {
-          return string.Empty;
-        }
-        string strUserPassword = userPassword_;
-
-        DatabaseUtility.RemoveInvalidChars(ref strUserPassword);
-
-        SQLiteResultSet results;
-        strSQL = String.Format("select * from scrobbleusers where idScrobbleUser = '{0}'", userID_);
-        results = DirectExecute(strSQL);
-        // user doesn't exist therefore no password to change
-        if (results.Rows.Count == 0)
-        {
-          return string.Empty;
-        }
-
-        if (DatabaseUtility.Get(results, 0, "strPassword") == strUserPassword)
-        {
-          // password didn't change
-          return userPassword_;
-        }
-          // set new password
-        else
-        {
-          // if no password was given = fetch it
-          if (userPassword_ == "")
-          {
-            return DatabaseUtility.Get(results, 0, "strPassword");
-          }
-          else
-          {
-            strSQL = String.Format("update scrobbleusers set strPassword='{0}' where idScrobbleUser like '{1}'",
-                                   strUserPassword, userID_);
-            DirectExecute(strSQL);
-            return userPassword_;
-          }
-        }
-      }
-      catch (Exception ex)
-      {
-        Log.Error("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
-        Open();
-      }
-      return string.Empty;
-    }
-
-    public int AddScrobbleUserSettings(string userID_, string fieldName_, int fieldValue_)
-    {
-      string strSQL;
-      string currentSettingID;
-      try
-      {
-        if (fieldName_ == null || userID_ == null || userID_ == "-1")
-        {
-          return -1;
-        }
-        if (userID_.Length == 0 || fieldName_.Length == 0)
-        {
-          return -1;
-        }
-
-        SQLiteResultSet results;
-
-        strSQL =
-          String.Format("select idScrobbleSettings, idScrobbleUser from scrobblesettings where idScrobbleUser = '{0}'",
-                        userID_);
-        results = DirectExecute(strSQL);
-        currentSettingID = DatabaseUtility.Get(results, 0, "idScrobbleSettings");
-        //Log.Info("MusicDatabase: updating settings with ID {0}", currentSettingID);
-
-        // setting doesn't exist - add it
-        if (results.Rows.Count == 0)
-        {
-          strSQL =
-            String.Format(
-              "insert into scrobblesettings (idScrobbleSettings, idScrobbleUser, " + fieldName_ +
-              ") values ( NULL, '{0}', '{1}')", userID_, fieldValue_);
+          strSQL = String.Format("update lastfmusers set strUsername = '{0}', strSK = '{1}'", userName, lastFmKey);
           DirectExecute(strSQL);
-          Log.Info("MusicDatabase: added scrobblesetting {0} for userid {1}",
-                   Convert.ToString(MusicDbClient.LastInsertID()), userID_);
-          if (fieldValue_ > -1)
-          {
-            return Instance.DbConnection.LastInsertID();
-          }
-          else
-          {
-            return fieldValue_;
-          }
+          Log.Info("LastFM Key updated in database");
         }
-        else
-        {
-          strSQL = String.Format("select " + fieldName_ + " from scrobblesettings where idScrobbleSettings = '{0}'",
-                                 currentSettingID);
-          results = DirectExecute(strSQL);
 
-          if (DatabaseUtility.GetAsInt(results, 0, fieldName_) == fieldValue_)
-          {
-            // setting didn't change
-            return fieldValue_;
-          }
-            // set new value
-          else
-          {
-            // if no value was given = fetch it
-            if (fieldValue_ == -1)
-            {
-              return DatabaseUtility.GetAsInt(results, 0, fieldName_);
-            }
-            else
-            {
-              strSQL =
-                String.Format(
-                  "update scrobblesettings set " + fieldName_ + "='{0}' where idScrobbleSettings like '{1}'",
-                  fieldValue_, currentSettingID);
-              DirectExecute(strSQL);
-              return fieldValue_;
-            }
-          }
-        }
       }
-      catch (Exception ex)
+      catch (Exception e)
       {
-        Log.Error("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
-        Open();
-      }
-      return -1;
-    }
-
-    public List<string> GetAllScrobbleUsers()
-    {
-      SQLiteResultSet results;
-      List<string> scrobbleUsers = new List<string>();
-
-      strSQL = "select * from scrobbleusers";
-      results = DirectExecute(strSQL);
-
-      if (results.Rows.Count != 0)
-      {
-        for (int i = 0; i < results.Rows.Count; i++)
-        {
-          scrobbleUsers.Add(DatabaseUtility.Get(results, i, "strUsername"));
-        }
-      }
-      // what else?
-
-      return scrobbleUsers;
-    }
-
-    public bool DeleteScrobbleUser(string userName_)
-    {
-      if (string.IsNullOrEmpty(userName_))
-      {
+        Log.Error("Unable to add last.fm key to database");
+        Log.Error(e);
         return false;
       }
 
-      string strSQL;
-      int strUserID;
-      try
-      {
-        string strUserName = userName_;
-        DatabaseUtility.RemoveInvalidChars(ref strUserName);
-
-        // get the UserID
-        strUserID = AddScrobbleUser(strUserName);
-
-        strSQL = String.Format("delete from scrobblesettings where idScrobbleUser = '{0}'", strUserID);
-        SQLiteResultSet results = DirectExecute(strSQL);
-
-        // setting removed now remove user
-        strSQL = String.Format("delete from scrobbleusers where idScrobbleUser = '{0}'", strUserID);
-        DirectExecute(strSQL);
-        return true;
-      }
-      catch (Exception ex)
-      {
-        Log.Error("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
-        Open();
-      }
-      return false;
+      return true;
     }
-
-    #endregion
 
     #endregion
   }

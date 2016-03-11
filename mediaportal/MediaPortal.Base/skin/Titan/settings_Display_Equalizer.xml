@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+<id>9004</id>
+<defaultcontrol>10009</defaultcontrol>
+<allowoverlay>yes</allowoverlay>
+<controls>
+<import>common.window.xml</import>
+<import>settings.menu.xml</import>
+
+	<control>
+		<type>image</type>
+		<id>1</id>
+		<posX>434</posX>
+		<posY>60</posY>
+		<width>820</width>
+		<height>640</height>
+		<texture>settings_main_panel.png</texture>
+	</control>
+	
+	<control>
+		<animation effect="fade" time="100">WindowOpen</animation>
+		<animation effect="fade" time="100">WindowClose</animation>
+		<type>label</type>
+		<id>1</id>
+		<posX>504</posX>
+		<posY>125</posY>
+		<width>500</width>
+		<height>100</height>
+		<label>9100</label>
+		<textcolor>6aa5cb</textcolor>
+		<font>Segoe Light40</font>
+		<valign>middle</valign>
+	</control>
+	<control>
+		<description>buttons</description>
+		<type>group</type>
+		<animation effect="fade" time="150">WindowOpen</animation>
+		<animation effect="fade" time="150">WindowClose</animation>
+		<posX>490</posX>
+		<posY>260</posY>
+		<layout>GridLayout(2, 7, 42, 0, 1)</layout>
+		<control>
+			<description>Use Equalizer</description>
+			<type>checkbutton</type>
+			<id>20</id>
+			<width>334</width>
+			<textcolor>ff85cffe</textcolor>
+	<textcolorNoFocus>ff85cffe</textcolorNoFocus>
+			<label>9132</label>
+			<onup>17</onup>
+		</control>
+
+		<control>
+			<description>Equalizer Style</description>
+			<type>selectbutton</type>
+			<id>21</id>
+			<width>334</width>
+			<textureFocus>settings_button_medium_focus.png</textureFocus>
+			<texturebg>settings_button_medium_focus.png</texturebg>
+			<textXOff>9</textXOff>
+			<textYOff>5</textYOff>
+			<textYOff2>5</textYOff2>
+			<textXOff2>25</textXOff2>
+			<textcolor>ff85cffe</textcolor>
+			<textcolorNoFocus>ff85cffe</textcolorNoFocus>
+			<label>9133</label>
+		</control>
+
+		<control>
+			<description>Use Equalizer Smoothing</description>
+			<type>checkbutton</type>
+			<id>22</id>
+			<width>334</width>
+			<textcolor>ff85cffe</textcolor>
+	<textcolorNoFocus>ff85cffe</textcolorNoFocus>
+			<label>9134</label>
+		</control>
+
+		<control>
+			<description>Delay Start</description>
+			<type>checkbutton</type>
+			<id>23</id>
+			<width>334</width>
+			<textcolor>ff85cffe</textcolor>
+	<textcolorNoFocus>ff85cffe</textcolorNoFocus>
+			<label>9135</label>
+		</control>
+
+		<control>
+			<description>Delay Time</description>
+			<type>selectbutton</type>
+			<id>24</id>
+			<width>334</width>
+			<textureFocus>settings_button_medium_focus.png</textureFocus>
+			<texturebg>settings_button_medium_focus.png</texturebg>
+			<textXOff>9</textXOff>
+			<textYOff>5</textYOff>
+			<textYOff2>5</textYOff2>
+			<textXOff2>25</textXOff2>
+			<textcolor>ff85cffe</textcolor>
+			<textcolorNoFocus>ff85cffe</textcolorNoFocus>
+			<label>9136</label>
+		</control>
+
+		<control>
+			<description>Show Title</description>
+			<type>checkbutton</type>
+			<id>25</id>
+			<width>334</width>
+			<textcolor>ff85cffe</textcolor>
+	<textcolorNoFocus>ff85cffe</textcolorNoFocus>
+			<label>9137</label>
+		</control>
+
+		<control>
+			<description>Title Time</description>
+			<type>selectbutton</type>
+			<id>26</id>
+			<width>334</width>
+			<textureFocus>settings_button_medium_focus.png</textureFocus>
+			<texturebg>settings_button_medium_focus.png</texturebg>
+			<textXOff>9</textXOff>
+			<textYOff>5</textYOff>
+			<textYOff2>5</textYOff2>
+			<textXOff2>25</textXOff2>
+			<textcolor>ff85cffe</textcolor>
+			<textcolorNoFocus>ff85cffe</textcolorNoFocus>
+			<label>9138</label>
+		</control>
+
+		<control>
+			<description>Title Frequency</description>
+			<type>selectbutton</type>
+			<id>27</id>
+			<width>334</width>
+			<textureFocus>settings_button_medium_focus.png</textureFocus>
+			<texturebg>settings_button_medium_focus.png</texturebg>
+			<textXOff>9</textXOff>
+			<textYOff>5</textYOff>
+			<textYOff2>5</textYOff2>
+			<textXOff2>25</textXOff2>
+			<textcolor>ff85cffe</textcolor>
+			<textcolorNoFocus>ff85cffe</textcolorNoFocus>
+			<label>9139</label>
+		</control>
+
+	</control>
+
+</controls>
+</window>

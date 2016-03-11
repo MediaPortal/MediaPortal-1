@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <profile>
   <section name="ChannelInfo">
-    <entry name="TotalChannels">1461</entry>
+    <entry name="TotalChannels">1501</entry>
   </section>
   <section name="0">
     <entry name="ChannelID">1@betv.be</entry>
@@ -780,8 +780,8 @@
     <entry name="FullName">Canal+</entry>
   </section>
   <section name="194">
-    <entry name="ChannelID">first@canalplus.no</entry>
-    <entry name="FullName">Canal+ First</entry>
+    <entry name="ChannelID">first@cmore.se</entry>
+    <entry name="FullName">C More First</entry>
   </section>
   <section name="195">
     <entry name="ChannelID">canalplus@canalplus.se</entry>
@@ -1184,8 +1184,8 @@
     <entry name="FullName">cmorefilm@canalplus.se</entry>
   </section>
   <section name="295">
-    <entry name="ChannelID">hits@canalplus.no</entry>
-    <entry name="FullName">Canal+ Hits</entry>
+    <entry name="ChannelID">hits@cmore.se</entry>
+    <entry name="FullName">C More Hits</entry>
   </section>
   <section name="296">
     <entry name="ChannelID">hd@canalplus.no</entry>
@@ -1800,16 +1800,16 @@
     <entry name="FullName">film1@canalplus.se</entry>
   </section>
   <section name="449">
-    <entry name="ChannelID">action@canalplus.no</entry>
-    <entry name="FullName">Canal+ Action</entry>
+    <entry name="ChannelID">action@cmore.se</entry>
+    <entry name="FullName">C More Action</entry>
   </section>
   <section name="450">
     <entry name="ChannelID">film2@canalplus.se</entry>
     <entry name="FullName">film2@canalplus.se</entry>
   </section>
   <section name="451">
-    <entry name="ChannelID">sporthd@canalplus.no</entry>
-    <entry name="FullName">Canal+ Sport HD</entry>
+    <entry name="ChannelID">sporthd@cmore.no</entry>
+    <entry name="FullName">C More Sport HD</entry>
   </section>
   <section name="452">
     <entry name="ChannelID">film4@channel4.com</entry>
@@ -2825,7 +2825,7 @@
   </section>
   <section name="705">
     <entry name="ChannelID">nordic@tv1000.se</entry>
-    <entry name="FullName">Viasat Film Nordic</entry>
+    <entry name="FullName">Viasat Film Comedy</entry>
   </section>
   <section name="706">
     <entry name="ChannelID">nost@premiere.de</entry>
@@ -3980,8 +3980,8 @@
     <entry name="FullName">Canal+ Sport 1</entry>
   </section>
   <section name="994">
-    <entry name="ChannelID">sport@canalplus.se</entry>
-    <entry name="FullName">Canal+ Sport 1</entry>
+    <entry name="ChannelID">sport@cmore.se</entry>
+    <entry name="FullName">C More Sport</entry>
   </section>
   <section name="995">
     <entry name="ChannelID">sport@viasatsport.no</entry>
@@ -5480,8 +5480,8 @@
 	<entry name="FullName">TV2 Sport</entry>
   </section>
     <section name="1369">
-    <entry name="ChannelID">sport2@canalplus.no</entry>
-    <entry name="FullName">Canal+ Sport 2</entry>
+    <entry name="ChannelID">tennis@cmore.se</entry>
+    <entry name="FullName">C More Tennis</entry>
   </section>
     <section name="1370">
     <entry name="ChannelID">aljazint.int</entry>
@@ -5612,16 +5612,16 @@
     <entry name="FullName">Silver HD</entry>
   </section>
   <section name="1402">
-    <entry name="ChannelID">sportextra@canalplus.se</entry>
-    <entry name="FullName">Canal+ Sport Extra</entry>
+    <entry name="ChannelID">extreme@cmore.se</entry>
+    <entry name="FullName">C More Extreme</entry>
   </section>
   <section name="1403">
     <entry name="ChannelID">hd@tv1000.se</entry>
     <entry name="FullName">TV1000 HD</entry>
   </section>
   <section name="1404">
-    <entry name="ChannelID">scifi@tv4.se</entry>
-    <entry name="FullName">TV4 Science Fiction</entry>
+    <entry name="ChannelID">faktaxl@tv4.se</entry>
+    <entry name="FullName">TV4 Fakta XL</entry>
   </section>
   <section name="1405">
     <entry name="ChannelID">HD@mtve.com</entry>
@@ -5660,8 +5660,8 @@
     <entry name="FullName">Viasat Motor</entry>
   </section>
   <section name="1414">
-    <entry name="ChannelID">sf@canalplus.se</entry>
-    <entry name="FullName">SF-kanalen</entry>
+    <entry name="ChannelID">sf@cmore.se</entry>
+    <entry name="FullName">SF-Kanalen</entry>
   </section>
   <section name="1415">
     <entry name="ChannelID">silverhd.no</entry>
@@ -5688,8 +5688,8 @@
     <entry name="FullName">TV Norge HD</entry>
   </section>
   <section name="1421">
-    <entry name="ChannelID">series@canalplus.se</entry>
-    <entry name="FullName">Canal+ Series</entry>
+    <entry name="ChannelID">series@cmore.se</entry>
+    <entry name="FullName">C More Series</entry>
   </section>
   <section name="1422">
     <entry name="ChannelID">ppvsport1@canalplus.se</entry>
@@ -5712,8 +5712,8 @@
     <entry name="FullName">PPV Sport 5</entry>
   </section>
   <section name="1427">
-    <entry name="ChannelID">fotboll@canalplus.se</entry>
-    <entry name="FullName">Canal+ Fotboll</entry>
+    <entry name="ChannelID">fotboll@cmore.se</entry>
+    <entry name="FullName">C More Fotboll</entry>
   </section>
   <section name="1428">
     <entry name="ChannelID">premierleagueHD@viasat.se</entry>
@@ -5724,24 +5724,24 @@
     <entry name="FullName">Investigation Discovery</entry>
   </section>
   <section name="1430">
-    <entry name="ChannelID">hockey@canalplus.se</entry>
-    <entry name="FullName">Canal+ Hockey</entry>
+    <entry name="ChannelID">hockey@cmore.se</entry>
+    <entry name="FullName">C More Hockey</entry>
   </section>
   <section name="1431">
-    <entry name="ChannelID">extra1@canalplus.se</entry>
-    <entry name="FullName">Canal+ Extra 1</entry>
+    <entry name="ChannelID">live@cmore.se</entry>
+    <entry name="FullName">C More Live</entry>
   </section>
   <section name="1432">
-    <entry name="ChannelID">extra2@canalplus.se</entry>
-    <entry name="FullName">Canal+ Extra 2</entry>
+    <entry name="ChannelID">live2@cmore.se</entry>
+    <entry name="FullName">C More Live 2</entry>
   </section>
   <section name="1433">
-    <entry name="ChannelID">extra3@canalplus.se</entry>
-    <entry name="FullName">Canal+ Extra 3</entry>
+    <entry name="ChannelID">live3@cmore.se</entry>
+    <entry name="FullName">C More Live 3</entry>
   </section>
   <section name="1434">
-    <entry name="ChannelID">extra4@canalplus.se</entry>
-    <entry name="FullName">Canal+ Extra 4</entry>
+    <entry name="ChannelID">live4@cmore.se</entry>
+    <entry name="FullName">C More Live 4</entry>
   </section>
   <section name="1435">
     <entry name="ChannelID">tv10@viasat.se</entry>
@@ -5752,8 +5752,8 @@
     <entry name="FullName">TLC</entry>
   </section>
   <section name="1437">
-    <entry name="ChannelID">tv11@elva.tv</entry>
-    <entry name="FullName">TV11</entry>
+    <entry name="ChannelID">kanal11@elva.tv</entry>
+    <entry name="FullName">Kanal 11</entry>
   </section>
   <section name="1438">
     <entry name="ChannelID">hd@tv3.se</entry>
@@ -5792,20 +5792,20 @@
     <entry name="FullName">Sport1</entry>
   </section>
   <section name="1447">
-    <entry name="ChannelID">family@canalplus.se</entry>
-    <entry name="FullName">Canal+ Family</entry>
+    <entry name="ChannelID">kids@cmore.se</entry>
+    <entry name="FullName">C More Kids</entry>
   </section>
   <section name="1448">
-    <entry name="ChannelID">emotion@canalplus.se</entry>
-    <entry name="FullName">Canal+ Emotion</entry>
+    <entry name="ChannelID">emotion@cmore.se</entry>
+    <entry name="FullName">C More Emotion</entry>
   </section>
   <section name="1449">
-    <entry name="ChannelID">firsthd@canalplus.se</entry>
-    <entry name="FullName">Canal+ First HD</entry>
+    <entry name="ChannelID">firsthd@cmore.se</entry>
+    <entry name="FullName">C More First HD</entry>
   </section>
   <section name="1450">
-    <entry name="ChannelID">hitshd@canalplus.se</entry>
-    <entry name="FullName">Canal+ Hits HD</entry>
+    <entry name="ChannelID">hitshd@cmore.se</entry>
+    <entry name="FullName">C More Hits HD</entry>
   </section>
   <section name="1451">
     <entry name="ChannelID">news@tv4.se</entry>
@@ -5846,6 +5846,166 @@
   <section name="1460">
     <entry name="ChannelID">sport3@canalplus.no</entry>
     <entry name="FullName">Canal+ Sport 3</entry>
+  </section>
+  <section name="1461">
+    <entry name="ChannelID">fotball@cmore.no</entry>
+    <entry name="FullName">C More Fotball</entry>
+  </section>
+  <section name="1462">
+    <entry name="ChannelID">sportxtra@tv4.se</entry>
+    <entry name="FullName">TV4 Sport Xtra</entry>
+  </section>
+  <section name="1463">
+    <entry name="ChannelID">Metropol@sverigesradio.se</entry>
+    <entry name="FullName">Metropol</entry>
+  </section>
+  <section name="1464">
+    <entry name="ChannelID">Minnen@sverigesradio.se</entry>
+    <entry name="FullName">Minnen</entry>
+  </section>
+  <section name="1465">
+    <entry name="ChannelID">P1@sverigesradio.se</entry>
+    <entry name="FullName">P1</entry>
+  </section>
+  <section name="1466">
+    <entry name="ChannelID">P2@sverigesradio.se</entry>
+    <entry name="FullName">P2</entry>
+  </section>
+  <section name="1467">
+    <entry name="ChannelID">P2Musik@sverigesradio.se</entry>
+    <entry name="FullName">P2 Musik</entry>
+  </section>
+  <section name="1468">
+    <entry name="ChannelID">P3@sverigesradio.se</entry>
+    <entry name="FullName">P3</entry>
+  </section>
+  <section name="1469">
+    <entry name="ChannelID">P4Blekinge@sverigesradio.se</entry>
+    <entry name="FullName">P4 Blekinge</entry>
+  </section>
+  <section name="1470">
+    <entry name="ChannelID">P4Dalarna@sverigesradio.se</entry>
+    <entry name="FullName">P4 Dalarna</entry>
+  </section>
+  <section name="1471">
+    <entry name="ChannelID">P4Gotland@sverigesradio.se</entry>
+    <entry name="FullName">P4 Gotland</entry>
+  </section>
+  <section name="1472">
+    <entry name="ChannelID">P4Gävleborg@sverigesradio.se</entry>
+    <entry name="FullName">P4 Gävleborg</entry>
+  </section>
+  <section name="1473">
+    <entry name="ChannelID">P4Göteborg@sverigesradio.se</entry>
+    <entry name="FullName">P4 Göteborg</entry>
+  </section>
+  <section name="1474">
+    <entry name="ChannelID">P4Halland@sverigesradio.se</entry>
+    <entry name="FullName">P4 Halland</entry>
+  </section>
+  <section name="1475">
+    <entry name="ChannelID">P4Jämtland@sverigesradio.se</entry>
+    <entry name="FullName">P4 Jämtland</entry>
+  </section>
+  <section name="1476">
+    <entry name="ChannelID">P4Jönköping@sverigesradio.se</entry>
+    <entry name="FullName">P4 Jönköping</entry>
+  </section>
+  <section name="1477">
+    <entry name="ChannelID">P4Kalmar@sverigesradio.se</entry>
+    <entry name="FullName">P4 Kalmar</entry>
+  </section>
+  <section name="1478">
+    <entry name="ChannelID">P4Kristianstad@sverigesradio.se</entry>
+    <entry name="FullName">P4 Kristianstad</entry>
+  </section>
+  <section name="1479">
+    <entry name="ChannelID">P4Kronoberg@sverigesradio.se</entry>
+    <entry name="FullName">P4 Kronoberg</entry>
+  </section>
+  <section name="1480">
+    <entry name="ChannelID">P4Malmöhus@sverigesradio.se</entry>
+    <entry name="FullName">P4 Malmöhus</entry>
+  </section>
+  <section name="1481">
+    <entry name="ChannelID">P4Norrbotten@sverigesradio.se</entry>
+    <entry name="FullName">P4 Norrbotten</entry>
+  </section>
+  <section name="1482">
+    <entry name="ChannelID">P4Sjuhärad@sverigesradio.se</entry>
+    <entry name="FullName">P4 Sjuhärad</entry>
+  </section>
+  <section name="1483">
+    <entry name="ChannelID">P4Skaraborg@sverigesradio.se</entry>
+    <entry name="FullName">P4 Skaraborg</entry>
+  </section>
+  <section name="1484">
+    <entry name="ChannelID">P4Stockholm@sverigesradio.se</entry>
+    <entry name="FullName">P4 Stockholm</entry>
+  </section>
+  <section name="1485">
+    <entry name="ChannelID">P4Sörmland@sverigesradio.se</entry>
+    <entry name="FullName">P4 Sörmland</entry>
+  </section>
+  <section name="1486">
+    <entry name="ChannelID">P4Uppland@sverigesradio.se</entry>
+    <entry name="FullName">P4 Uppland</entry>
+  </section>
+  <section name="1487">
+    <entry name="ChannelID">P4Värmland@sverigesradio.se</entry>
+    <entry name="FullName">P4 Värmland</entry>
+  </section>
+  <section name="1488">
+    <entry name="ChannelID">P4Väst@sverigesradio.se</entry>
+    <entry name="FullName">P4 Väst</entry>
+  </section>
+  <section name="1489">
+    <entry name="ChannelID">P4Västerbotten@sverigesradio.se</entry>
+    <entry name="FullName">P4 Västerbotten</entry>
+  </section>
+  <section name="1490">
+    <entry name="ChannelID">P4Västernorrland@sverigesradio.se</entry>
+    <entry name="FullName">P4 Västernorrland</entry>
+  </section>
+  <section name="1491">
+    <entry name="ChannelID">P4Västmanland@sverigesradio.se</entry>
+    <entry name="FullName">P4 Västmanland</entry>
+  </section>
+  <section name="1492">
+    <entry name="ChannelID">P4Örebro@sverigesradio.se</entry>
+    <entry name="FullName">P4 Örebro</entry>
+  </section>
+  <section name="1493">
+    <entry name="ChannelID">P4Östergötland@sverigesradio.se</entry>
+    <entry name="FullName">P4 Östergötland</entry>
+  </section>
+  <section name="1494">
+    <entry name="ChannelID">SRSápmi@sverigesradio.se</entry>
+    <entry name="FullName">SR Sápmi</entry>
+  </section>
+  <section name="1495">
+    <entry name="ChannelID">SRSisuradio@sverigesradio.se</entry>
+    <entry name="FullName">SR Sisuradio</entry>
+  </section>
+  <section name="1496">
+    <entry name="ChannelID">tv12@tv4.se</entry>
+    <entry name="FullName">TV12</entry>
+  </section>
+  <section name="1497">
+    <entry name="ChannelID">fox@fox.com</entry>
+    <entry name="FullName">FOX</entry>
+  </section>
+  <section name="1498">
+    <entry name="ChannelID">foxhd@fox.com</entry>
+    <entry name="FullName">FOX HD</entry>
+  </section>
+  <section name="1499">
+    <entry name="ChannelID">brit@bbc.co.uk</entry>
+    <entry name="FullName">BBC Brit</entry>
+  </section>
+  <section name="1500">
+    <entry name="ChannelID">earth@bbc.co.uk</entry>
+    <entry name="FullName">BBC Earth</entry>
   </section>
   <section name=".svn">
     <entry name="TotalChannels">0</entry>
@@ -7059,109 +7219,125 @@
     <entry name="66">1251</entry>
   </section>
   <section name="NO">
-    <entry name="TotalChannels">102</entry>
+    <entry name="TotalChannels">118</entry>
     <entry name="0">24</entry>
     <entry name="1">25</entry>
-    <entry name="2">60</entry>
-    <entry name="3">83</entry>
-    <entry name="4">154</entry>
-    <entry name="5">156</entry>
-    <entry name="6">194</entry>
-    <entry name="7">211</entry>
-    <entry name="8">273</entry>
-    <entry name="9">282</entry>
+    <entry name="2">42</entry>
+    <entry name="3">60</entry>
+    <entry name="4">83</entry>
+    <entry name="5">149</entry>
+    <entry name="6">156</entry>
+    <entry name="7">167</entry>
+    <entry name="8">194</entry>
+    <entry name="9">211</entry>
     <entry name="10">286</entry>
-    <entry name="11">289</entry>
-    <entry name="12">293</entry>
+    <entry name="11">288</entry>
+    <entry name="12">289</entry>
     <entry name="13">295</entry>
-    <entry name="14">296</entry>
-    <entry name="15">299</entry>
-    <entry name="16">300</entry>
-    <entry name="17">305</entry>
-    <entry name="18">332</entry>
-    <entry name="19">351</entry>
-    <entry name="20">358</entry>
-    <entry name="21">359</entry>
-    <entry name="22">361</entry>
-    <entry name="23">365</entry>
-    <entry name="24">406</entry>
-    <entry name="25">426</entry>
+    <entry name="14">299</entry>
+    <entry name="15">300</entry>
+    <entry name="16">305</entry>
+    <entry name="17">332</entry>
+    <entry name="18">351</entry>
+    <entry name="19">358</entry>
+    <entry name="20">359</entry>
+    <entry name="21">361</entry>
+    <entry name="22">365</entry>
+    <entry name="23">403</entry>
+    <entry name="24">426</entry>
+    <entry name="25">427</entry>
     <entry name="26">430</entry>
     <entry name="27">437</entry>
     <entry name="28">441</entry>
-    <entry name="29">447</entry>
-    <entry name="30">449</entry>
-    <entry name="31">451</entry>
-    <entry name="32">498</entry>
-    <entry name="33">504</entry>
-    <entry name="34">549</entry>
-    <entry name="35">567</entry>
-    <entry name="36">642</entry>
-    <entry name="37">672</entry>
-    <entry name="38">700</entry>
-    <entry name="39">704</entry>
-    <entry name="40">709</entry>
-    <entry name="41">710</entry>
-    <entry name="42">781</entry>
-    <entry name="43">793</entry>
-    <entry name="44">807</entry>
-    <entry name="45">809</entry>
-    <entry name="46">841</entry>
-    <entry name="47">849</entry>
-    <entry name="48">870</entry>
-    <entry name="49">971</entry>
-    <entry name="50">972</entry>
-    <entry name="51">993</entry>
-    <entry name="52">995</entry>
-    <entry name="53">1002</entry>
-    <entry name="54">1004</entry>
-    <entry name="55">1011</entry>
-    <entry name="56">1019</entry>
-    <entry name="57">1021</entry>
-    <entry name="58">1026</entry>
-    <entry name="59">1032</entry>
-    <entry name="60">1057</entry>
-    <entry name="61">1066</entry>
-    <entry name="62">1082</entry>
-    <entry name="63">1086</entry>
-    <entry name="64">1116</entry>
-    <entry name="65">1123</entry>
-    <entry name="66">1124</entry>
-    <entry name="67">1128</entry>
-    <entry name="68">1131</entry>
-    <entry name="69">1133</entry>
-    <entry name="70">1134</entry>
-    <entry name="71">1141</entry>
-    <entry name="72">1144</entry>
-    <entry name="73">1145</entry>
-    <entry name="74">1146</entry>
-    <entry name="75">1167</entry>
-    <entry name="76">1207</entry>
-    <entry name="77">1256</entry>
-    <entry name="78">1257</entry>
-    <entry name="79">1354</entry>
-    <entry name="80">1355</entry>
-    <entry name="81">1356</entry>
-    <entry name="82">1361</entry>
-    <entry name="83">1362</entry>
-    <entry name="84">1363</entry>
-    <entry name="85">1364</entry>
-    <entry name="86">1365</entry>
-    <entry name="87">1366</entry>
-    <entry name="88">1367</entry>
-    <entry name="89">1368</entry>
-    <entry name="90">1369</entry>
-    <entry name="91">1370</entry>
-    <entry name="92">1371</entry>
-    <entry name="93">1372</entry>
-    <entry name="94">1373</entry>
-    <entry name="95">1374</entry>
-    <entry name="96">1375</entry>
-    <entry name="97">1376</entry>
-    <entry name="98">1377</entry>
-    <entry name="99">1378</entry>
-    <entry name="100">1418</entry>
-    <entry name="101">1419</entry>
+    <entry name="29">449</entry>
+    <entry name="30">504</entry>
+    <entry name="31">567</entry>
+    <entry name="32">642</entry>
+    <entry name="33">672</entry>
+    <entry name="34">700</entry>
+    <entry name="35">704</entry>
+    <entry name="36">709</entry>
+    <entry name="37">710</entry>
+    <entry name="38">744</entry>
+    <entry name="39">781</entry>
+    <entry name="40">793</entry>
+    <entry name="41">807</entry>
+    <entry name="42">841</entry>
+    <entry name="43">849</entry>
+    <entry name="44">870</entry>
+    <entry name="45">971</entry>
+    <entry name="46">972</entry>
+    <entry name="47">995</entry>
+    <entry name="48">1002</entry>
+    <entry name="49">1004</entry>
+    <entry name="50">1011</entry>
+    <entry name="51">1019</entry>
+    <entry name="52">1021</entry>
+    <entry name="53">1026</entry>
+    <entry name="54">1032</entry>
+    <entry name="55">1064</entry>
+    <entry name="56">1082</entry>
+    <entry name="57">1086</entry>
+    <entry name="58">1100</entry>
+    <entry name="59">1116</entry>
+    <entry name="60">1123</entry>
+    <entry name="61">1124</entry>
+    <entry name="62">1131</entry>
+    <entry name="63">1133</entry>
+    <entry name="64">1134</entry>
+    <entry name="65">1141</entry>
+    <entry name="66">1144</entry>
+    <entry name="67">1146</entry>
+    <entry name="68">1167</entry>
+    <entry name="69">1207</entry>
+    <entry name="70">1219</entry>
+    <entry name="71">1255</entry>
+    <entry name="72">1257</entry>
+    <entry name="73">1286</entry>
+    <entry name="74">1300</entry>
+    <entry name="75">1354</entry>
+    <entry name="76">1355</entry>
+    <entry name="77">1356</entry>
+    <entry name="78">1361</entry>
+    <entry name="79">1362</entry>
+    <entry name="80">1363</entry>
+    <entry name="81">1364</entry>
+    <entry name="82">1368</entry>
+    <entry name="83">1369</entry>
+    <entry name="84">1370</entry>
+    <entry name="85">1372</entry>
+    <entry name="86">1374</entry>
+    <entry name="87">1375</entry>
+    <entry name="88">1376</entry>
+    <entry name="89">1377</entry>
+    <entry name="90">1378</entry>
+    <entry name="91">1379</entry>
+    <entry name="92">1380</entry>
+    <entry name="93">1383</entry>
+    <entry name="94">1384</entry>
+    <entry name="95">1385</entry>
+    <entry name="96">1410</entry>
+    <entry name="97">1411</entry>
+    <entry name="98">1414</entry>
+    <entry name="99">1415</entry>
+    <entry name="100">1416</entry>
+    <entry name="101">1417</entry>
+    <entry name="102">1418</entry>
+    <entry name="103">1419</entry>
+    <entry name="104">1420</entry>
+    <entry name="105">1421</entry>
+    <entry name="106">1430</entry>
+    <entry name="107">1448</entry>
+    <entry name="108">1449</entry>
+    <entry name="109">1452</entry>
+    <entry name="110">1453</entry>
+    <entry name="111">1455</entry>
+    <entry name="112">1456</entry>
+    <entry name="113">1457</entry>
+    <entry name="114">1458</entry>
+    <entry name="115">1459</entry>
+    <entry name="116">1460</entry>
+    <entry name="117">1461</entry>
   </section>
   <section name="NZ">
     <entry name="TotalChannels">6</entry>
@@ -7283,7 +7459,7 @@
     <entry name="62">1218</entry>
   </section>
   <section name="SE">
-	<entry name="TotalChannels">200</entry>
+	<entry name="TotalChannels">235</entry>
 	<entry name="0">22</entry>
 	<entry name="1">24</entry>
 	<entry name="2">25</entry>
@@ -7425,65 +7601,101 @@
 	<entry name="138">1384</entry>
 	<entry name="139">1385</entry>
 	<entry name="140">1386</entry>
-	<entry name="141">1387</entry>
-	<entry name="142">1388</entry>
-	<entry name="143">1389</entry>
-	<entry name="144">1391</entry>
-	<entry name="145">1392</entry>
-	<entry name="146">1393</entry>
-	<entry name="147">1394</entry>
-	<entry name="148">1396</entry>
-	<entry name="149">1397</entry>
-	<entry name="150">1398</entry>
-	<entry name="151">1399</entry>
-	<entry name="152">1400</entry>
-	<entry name="153">1401</entry>
-	<entry name="154">1402</entry>
-	<entry name="155">1403</entry>
-	<entry name="156">1404</entry>
-	<entry name="157">1405</entry>
-	<entry name="158">1406</entry>
-	<entry name="159">1407</entry>
-	<entry name="160">1408</entry>
-	<entry name="161">1409</entry>
-	<entry name="162">1410</entry>
-	<entry name="163">1411</entry>
-	<entry name="164">1412</entry>
-	<entry name="165">1413</entry>
-	<entry name="166">1414</entry>
-	<entry name="167">1416</entry>
-	<entry name="168">1417</entry>
-	<entry name="169">1421</entry>
-	<entry name="170">1422</entry>
-	<entry name="171">1423</entry>
-	<entry name="172">1424</entry>
-	<entry name="173">1425</entry>
-	<entry name="174">1426</entry>
-	<entry name="175">1427</entry>
-	<entry name="176">1428</entry>
-	<entry name="177">1429</entry>
-	<entry name="178">1430</entry>
-	<entry name="179">1431</entry>
-	<entry name="180">1432</entry>
-	<entry name="181">1433</entry>
-	<entry name="182">1434</entry>
-	<entry name="183">1435</entry>
-	<entry name="184">1436</entry>
-	<entry name="185">1437</entry>
-	<entry name="186">1438</entry>
-	<entry name="187">1439</entry>
-	<entry name="188">1440</entry>
-	<entry name="189">1441</entry>
-	<entry name="190">1442</entry>
-	<entry name="191">1443</entry>
-	<entry name="192">1444</entry>
-	<entry name="193">1445</entry>
-	<entry name="194">1446</entry>
-	<entry name="195">1447</entry>
-	<entry name="196">1448</entry>
-	<entry name="197">1449</entry>
-	<entry name="198">1450</entry>
-	<entry name="199">1451</entry>
+	<entry name="141">1388</entry>
+	<entry name="142">1389</entry>
+	<entry name="143">1391</entry>
+	<entry name="144">1392</entry>
+	<entry name="145">1393</entry>
+	<entry name="146">1394</entry>
+	<entry name="147">1396</entry>
+	<entry name="148">1397</entry>
+	<entry name="149">1398</entry>
+	<entry name="150">1399</entry>
+	<entry name="151">1400</entry>
+	<entry name="152">1401</entry>
+	<entry name="153">1402</entry>
+	<entry name="154">1403</entry>
+	<entry name="155">1404</entry>
+	<entry name="156">1405</entry>
+	<entry name="157">1406</entry>
+	<entry name="158">1407</entry>
+	<entry name="159">1408</entry>
+	<entry name="160">1409</entry>
+	<entry name="161">1410</entry>
+	<entry name="162">1411</entry>
+	<entry name="163">1412</entry>
+	<entry name="164">1413</entry>
+	<entry name="165">1414</entry>
+	<entry name="166">1416</entry>
+	<entry name="167">1417</entry>
+	<entry name="168">1421</entry>
+	<entry name="169">1422</entry>
+	<entry name="170">1423</entry>
+	<entry name="171">1424</entry>
+	<entry name="172">1425</entry>
+	<entry name="173">1426</entry>
+	<entry name="174">1427</entry>
+	<entry name="175">1428</entry>
+	<entry name="176">1429</entry>
+	<entry name="177">1430</entry>
+	<entry name="178">1431</entry>
+	<entry name="179">1432</entry>
+	<entry name="180">1433</entry>
+	<entry name="181">1434</entry>
+	<entry name="182">1435</entry>
+	<entry name="183">1436</entry>
+	<entry name="184">1437</entry>
+	<entry name="185">1438</entry>
+	<entry name="186">1439</entry>
+	<entry name="187">1440</entry>
+	<entry name="188">1441</entry>
+	<entry name="189">1442</entry>
+	<entry name="190">1443</entry>
+	<entry name="191">1444</entry>
+	<entry name="192">1445</entry>
+	<entry name="193">1446</entry>
+	<entry name="194">1447</entry>
+	<entry name="195">1448</entry>
+	<entry name="196">1449</entry>
+	<entry name="197">1450</entry>
+	<entry name="198">1463</entry>
+	<entry name="199">1464</entry>
+	<entry name="199">1465</entry>
+	<entry name="200">1466</entry>
+	<entry name="201">1467</entry>
+	<entry name="202">1468</entry>
+	<entry name="203">1469</entry>
+	<entry name="204">1470</entry>
+	<entry name="205">1471</entry>
+	<entry name="206">1472</entry>
+	<entry name="207">1473</entry>
+	<entry name="208">1474</entry>
+	<entry name="209">1475</entry>
+	<entry name="210">1476</entry>
+	<entry name="211">1477</entry>
+	<entry name="212">1478</entry>
+	<entry name="213">1479</entry>
+	<entry name="214">1480</entry>
+	<entry name="215">1481</entry>
+	<entry name="216">1482</entry>
+	<entry name="217">1483</entry>
+	<entry name="218">1484</entry>
+	<entry name="219">1485</entry>
+	<entry name="220">1486</entry>
+	<entry name="221">1487</entry>
+	<entry name="222">1488</entry>
+	<entry name="223">1489</entry>
+	<entry name="224">1490</entry>
+	<entry name="225">1491</entry>
+	<entry name="226">1492</entry>
+	<entry name="227">1493</entry>
+	<entry name="228">1494</entry>
+	<entry name="229">1495</entry>
+	<entry name="230">1496</entry>
+	<entry name="231">1497</entry>
+	<entry name="232">1498</entry>
+	<entry name="232">1499</entry>
+	<entry name="232">1500</entry>
   </section>
   <section name="US">
     <entry name="TotalChannels">73</entry>

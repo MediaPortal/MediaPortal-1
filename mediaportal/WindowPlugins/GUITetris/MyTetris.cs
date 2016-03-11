@@ -30,7 +30,7 @@ namespace MediaPortal.Games.Tetris
   /// <summary>
   /// Written by Smirnoff (smirnuff@gmail.com)
   /// </summary>
-  [PluginIcons("WindowPlugins.GUITetris.Tetris.gif", "WindowPlugins.GUITetris.TetrisDisabled.gif")]
+  [PluginIcons("GUITetris.Tetris.gif", "GUITetris.TetrisDisabled.gif")]
   public class MyTetris : GUIInternalWindow, ISetupForm, IShowPlugin
   {
     #region Construction, initialization & cleanup

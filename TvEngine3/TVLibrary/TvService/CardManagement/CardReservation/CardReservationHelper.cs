@@ -122,10 +122,7 @@ namespace TvService
 
     public static int GetNumberOfOtherUsersOnCurrentCard(IUser user, int numberOfOtherUsersOnCurrentCard)
     {
-      //if (!user.Name.Equals("epg"))
-      //{
-        numberOfOtherUsersOnCurrentCard++;
-      //}
+      numberOfOtherUsersOnCurrentCard++;
       return numberOfOtherUsersOnCurrentCard;
     }
 
@@ -193,11 +190,12 @@ namespace TvService
     public static ICardStopReservationTicket RequestAndWaitForCardStopReservation(ITvCardHandler tvcard, IUser user)
     {
       ICardStopReservationTicket ticket = null;
-      
-      while (ticket == null)
+      int tries = 0;
+      while (ticket == null && tries < 10)
       {
         ticket = RequestCardStopReservation(tvcard, user);
         Thread.Sleep(100);
+        tries++;
       }
 
       return ticket;
@@ -295,34 +293,38 @@ namespace TvService
       return (isTuningPending && cardStopStateIdle);
     }
 
-    public static void CancelCardReservationAndRemoveTicket(ITvCardHandler tvCardHandler, ICollection<ICardTuneReservationTicket> tickets)
+    public static void CancelCardReservationAndRemoveTicket(CardDetail cardDetail, IDictionary<CardDetail, ICardTuneReservationTicket> tickets, IDictionary<int, ITvCardHandler> cards)
     {
-      if (tvCardHandler != null && tickets != null)
+      if (cardDetail != null && tickets != null)
       {
-        int cardId = tvCardHandler.DataBaseCard.IdCard;
-        ICardTuneReservationTicket ticket = tickets.FirstOrDefault(t => t.CardId == cardId);
-        if (ticket != null)
+        ICardTuneReservationTicket ticket;
+        bool hasTicket = tickets.TryGetValue(cardDetail, out ticket);
+        if (hasTicket)
         {
-          tickets.Remove(ticket);
-          CancelCardReservation(tvCardHandler, ticket);
+          tickets.Remove(cardDetail);
+          ITvCardHandler cardHandler = cards[cardDetail.Id];
+          CancelCardReservation(cardHandler, ticket);
         }
       }
     }
 
-    public static void CancelAllCardReservations(IEnumerable<ICardTuneReservationTicket> tickets, IDictionary<int, ITvCardHandler> cards)
+    public static void CancelAllCardReservations(IDictionary<CardDetail, ICardTuneReservationTicket> tickets, IDictionary<int, ITvCardHandler> cards)
     {
       //always release tickets, important for those cards not tuned but still a part of the freecards list.
       if (tickets != null)
       {
-        foreach (ICardTuneReservationTicket ticket in tickets)
+        foreach (ICardTuneReservationTicket ticket in tickets.Values)
         {
-          int idcard = ticket.CardId;
-          CancelCardReservation(cards[idcard], ticket);
-        }          
+          if (ticket != null)
+          {
+            int idcard = ticket.CardId;
+            CancelCardReservation(cards[idcard], ticket); 
+          }
+        }
       }
     }
 
-    public static void CancelCardReservationsBasedOnMaxCardsLimit(ICollection<ICardTuneReservationTicket> tickets, ICollection<CardDetail> freeCards, int maxCards, IDictionary<int, ITvCardHandler> cards)
+    public static void CancelCardReservationsBasedOnMaxCardsLimit(IDictionary<CardDetail, ICardTuneReservationTicket> tickets, ICollection<CardDetail> freeCards, int maxCards, IDictionary<int, ITvCardHandler> cards)
     {
       int exceedingCardsCount = freeCards.Count() - maxCards;
       if (exceedingCardsCount > 0)
@@ -335,24 +337,24 @@ namespace TvService
             if (cardDetailForReservation != null)
             {
               int idcard = cardDetailForReservation.Card.IdCard;
-              CancelCardReservationAndRemoveTicket(cards[idcard], tickets);
-              freeCards.Remove(cardDetailForReservation);
+              CancelCardReservationAndRemoveTicket(cardDetailForReservation, tickets, cards);
             }
+            freeCards.Remove(cardDetailForReservation);
           }
         }
       }
     }
 
-    private static void CancelMissingCardReservation(IEnumerable<CardDetail> freeCards, CardDetail cardDetailForReservation, ICollection<ICardTuneReservationTicket> tickets, IDictionary<int, ITvCardHandler> cards)
+    private static void CancelMissingCardReservation(IEnumerable<CardDetail> freeCards, CardDetail cardDetailForReservation, IDictionary<CardDetail, ICardTuneReservationTicket> tickets, IDictionary<int, ITvCardHandler> cards)
     {
       int idcard = cardDetailForReservation.Card.IdCard;
       if (freeCards != null && !freeCards.Any(t => t.Card.IdCard == idcard))
       {
-        CancelCardReservationAndRemoveTicket(cards[idcard], tickets);
+        CancelCardReservationAndRemoveTicket(cardDetailForReservation, tickets, cards);
       }
     }
 
-    public static void CancelCardReservationsNotFoundInFreeCards(IEnumerable<CardDetail> freeCardsForReservation, ICollection<ICardTuneReservationTicket> tickets, ICollection<CardDetail> freeCards, IDictionary<int, ITvCardHandler> cards)
+    public static void CancelCardReservationsNotFoundInFreeCards(IEnumerable<CardDetail> freeCardsForReservation, IDictionary<CardDetail, ICardTuneReservationTicket> tickets, ICollection<CardDetail> freeCards, IDictionary<int, ITvCardHandler> cards)
     {
       //cancel tickets that are no longer needed, simply because the cardalloc. has discarded the card(s)
       if (tickets != null && tickets.Count > 0)
@@ -364,48 +366,74 @@ namespace TvService
       }
     }
 
-    public static void CancelCardReservationsExceedingMaxConcurrentTickets(ICollection<ICardTuneReservationTicket> tickets, ICollection<CardDetail> freeCards, IDictionary<int, ITvCardHandler> cards)
+    public static void CancelCardReservationsExceedingMaxConcurrentTickets(IDictionary<CardDetail, ICardTuneReservationTicket> tickets, ICollection<CardDetail> freeCards, IDictionary<int, ITvCardHandler> cards)
     {
-      if (freeCards != null && freeCards.Count > 2)
-      {                        
-        Log.Debug("CancelCardReservationsExceedingMaxConcurrentTickets: removing exceeding nr of tickets, only 2 allowed at a time but found {0}", tickets.Count);       
-        while (freeCards.Count > 2)
+      if (freeCards != null && freeCards.Count > 0)
+      {
+        IDictionary<int, CardDetail> freeCardsDict = new Dictionary<int, CardDetail>();
+        foreach (CardDetail cardDetail in freeCards)
         {
-          CardDetail cardDetailForReservation = freeCards.LastOrDefault(); 
-          if (cardDetailForReservation != null)
+          if (!freeCardsDict.ContainsKey(cardDetail.Id))
           {
-            int idcard = cardDetailForReservation.Card.IdCard;
-            CancelCardReservationAndRemoveTicket(cards[idcard], tickets);
-            freeCards.Remove(cardDetailForReservation);
+            freeCardsDict.Add(cardDetail.Id, cardDetail);
           }
         }
-      }      
+
+        if (freeCardsDict.Count > 2)
+        {
+          Log.Debug(
+            "CancelCardReservationsExceedingMaxConcurrentTickets: removing exceeding nr of tickets, only 2 allowed at a time but found {0}",
+            tickets.Count);
+          while (freeCardsDict.Count > 2)
+          {
+            CardDetail cardDetailForReservation = freeCardsDict.Values.LastOrDefault();
+            if (cardDetailForReservation != null)
+            {
+              int idcard = cardDetailForReservation.Card.IdCard;
+              CancelCardReservationAndRemoveTicket(cardDetailForReservation, tickets, cards);
+              freeCardsDict.Remove(cardDetailForReservation.Id);
+            }
+          }
+        }
+      }
     }
 
-    public static ICollection<ICardTuneReservationTicket> RequestCardReservations(IUser user, IEnumerable<CardDetail> availCardsForReservation, TVController tvController, ICardReservation cardResImpl, IEnumerable<int> ignoreCards)
+    public static ICardTuneReservationTicket RequestCardReservation(IUser user, CardDetail cardDetail, TVController tvController, ICardReservation cardResImpl, int idChannel)
     {
-      ICollection<ICardTuneReservationTicket> tickets = new List<ICardTuneReservationTicket>();
-      IDictionary<int, ITvCardHandler> cards = tvController.CardCollection;
+      ICardTuneReservationTicket ticket = null;
+      int idCard = cardDetail.Card.IdCard;
+      IUser userCopy = user.Clone() as User;
+      if (userCopy != null)
+      {
+        IDictionary<int, ITvCardHandler> cards = tvController.CardCollection;
+        userCopy.CardId = idCard;
+        ITvCardHandler tvcard = cards[idCard];
+        ticket = cardResImpl.RequestCardTuneReservation(tvcard, cardDetail.TuningDetail, userCopy, idChannel);
+      }
+
+      return ticket;
+    }
+
+    public static IDictionary<CardDetail, ICardTuneReservationTicket> RequestCardReservations(IUser user, IEnumerable<CardDetail> availCardsForReservation, TVController tvController, ICardReservation cardResImpl, IEnumerable<CardDetail> ignoreCards, int idChannel)
+    {
+      IDictionary<CardDetail, ICardTuneReservationTicket> tickets = new Dictionary<CardDetail, ICardTuneReservationTicket>();
+      ICollection<int> cardIds = new HashSet<int>();
 
       foreach (CardDetail cardDetail in availCardsForReservation)
       {
+        ICardTuneReservationTicket ticket = null;
         int idCard = cardDetail.Card.IdCard;
-        bool foundIgnoredCard = ignoreCards.Contains(idCard);
-        if (!foundIgnoredCard)
+        bool cardAlreadyHasTicket = cardIds.Contains(idCard);
+        if (!cardAlreadyHasTicket)
         {
-          IUser userCopy = user.Clone() as User;
-          if (userCopy != null)
+          bool foundIgnoredCard = ignoreCards.Contains(cardDetail);
+          if (!foundIgnoredCard)
           {
-            userCopy.CardId = idCard;
-            ITvCardHandler tvcard = cards[idCard];
-            ICardTuneReservationTicket ticket = cardResImpl.RequestCardTuneReservation(tvcard, cardDetail.TuningDetail,
-                                                                                   userCopy);
-            if (ticket != null)
-            {
-              tickets.Add(ticket);
-            }
-          }          
+            ticket = RequestCardReservation(user, cardDetail, tvController, cardResImpl, idChannel);
+          }
+          cardIds.Add(idCard);
         }
+        tickets.Add(cardDetail, ticket);
       }
       return tickets;
     }
@@ -430,9 +458,9 @@ namespace TvService
         bool isCardAvail = (isCardIdle || isCardTuned || isCardTunePending || isCardTuneCancelled) && (isCardStopped || isCardStopIdle);
 
         if (isCardAvail)
-        {          
+        {
           tvcard.Tuner.CardStopState = CardStopState.StopPending;
-          cardStopReservation = new CardStopReservationTicket();          
+          cardStopReservation = new CardStopReservationTicket();
           tvcard.Tuner.ReservationsForStop.Add(cardStopReservation);
         }
 
@@ -479,7 +507,7 @@ namespace TvService
           Log.Debug("CardTuner.Stop: ticket id={0}, found={1}", ticket.Id, ticketFound);
           if (ticketFound)
           {
-            tvcard.Tuner.CardStopState = CardStopState.Stopping;            
+            tvcard.Tuner.CardStopState = CardStopState.Stopping;
           }
           else
           {
@@ -500,21 +528,21 @@ namespace TvService
           {
             if (result)
             {              
-              tvcard.Tuner.CardStopState = CardStopState.Stopped;              
+              tvcard.Tuner.CardStopState = CardStopState.Stopped;
               ResetCardTuneStateToIdle(tvcard);
             }
             else
             {              
               if (tvcard.Tuner.ReservationsForStop.Count > 1)
               {
-                tvcard.Tuner.CardStopState = CardStopState.StopPending;                
+                tvcard.Tuner.CardStopState = CardStopState.StopPending;
               }
               else
               {
-                tvcard.Tuner.CardStopState = CardStopState.StopFailed;                
+                tvcard.Tuner.CardStopState = CardStopState.StopFailed;
               }
               
-            }            
+            }
           }
         }
         else // state is not tuning, some other card tune session is busy.

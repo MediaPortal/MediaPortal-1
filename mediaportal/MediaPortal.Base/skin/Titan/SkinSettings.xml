@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<profile>
+  <section name="theme">
+    <entry name="name">Skin default</entry>
+  </section>
+  <section name="booleansettings">
+    <entry name="#skin.tvguide.usecolorsforbuttons">True</entry>
+    <entry name="#skin.tvguide.usecolorsforgenre">True</entry>
+    <entry name="#skin.tvguide.useborderhighlight">False</entry>
+    <entry name="#skin.tvguide.showgenrekey">True</entry>
+    <entry name="#skin.show.selectedbackdrops">False</entry>
+    <entry name="#skin.enable.latest.myVideo">False</entry>
+    <entry name="#skin.enable.latest.MovingPictures">False</entry>
+    <entry name="#skin.enable.latest.Series">False</entry>
+  </section>
+  <section name="tvguidecolors">
+    <entry name="guidecolorchannelbutton">FF122F3F</entry>
+    <entry name="guidecolorchannelbuttonselected">FF00B7FF</entry>
+    <entry name="guidecolorprogramselected">FF00B7FF</entry>
+    <entry name="guidecolorprogramended">FF122F3F</entry>
+    <entry name="guidecolorborderhighlight">99FFFFFF</entry>
+    <entry name="defaultgenre">FF276688,FF122F3F</entry>
+    <entry name="genre0">FF8A8965,FF8A8965</entry>
+    <entry name="genre1">F00A2A2F,FF00A2A2</entry>
+    <entry name="genre2">FF552C84,FF552C84</entry>
+    <entry name="genre3">FFAD004D,FFAD004D</entry>
+    <entry name="genre4">FF747474,FF747474</entry>
+    <entry name="genre5">FFFFAB0F,FFFFAB0F</entry>
+    <entry name="genre6">FF00A313,FF00A313</entry>
+    <entry name="guidecolorgroupbutton">FFFFFFFF</entry>
+    <entry name="guidecolorgroupbuttonselected">FFFFFFFF</entry>
+  </section>
+  <section name="stringsettings">
+    <entry name="#skin.basichome.moviePlugin">MyVideo</entry>
+    <entry name="#skin.mymusic.info">None</entry>
+    <entry name="#skin.tvguide.rows"> 7</entry>
+		<entry name="#skin.layout.movingpictures.thumbview">default</entry>
+		<entry name="#skin.layout.movingpictures.details">default</entry>
+		<entry name="#skin.layout.tvseries.widebanner">default</entry>
+  </section>
+</profile>

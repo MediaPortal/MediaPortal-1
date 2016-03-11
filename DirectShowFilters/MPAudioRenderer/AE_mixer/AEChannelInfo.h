@@ -64,6 +64,8 @@ enum AEStdChLayout
   AE_CH_LAYOUT_4_1,
   AE_CH_LAYOUT_5_0,
   AE_CH_LAYOUT_5_1,
+  AE_CH_LAYOUT_6_1_0x13f,
+  AE_CH_LAYOUT_6_1_0x70f,
   AE_CH_LAYOUT_7_0,
   AE_CH_LAYOUT_7_1,
   AE_AC3_CH_LAYOUT_1_0,     // Mono (Center only)

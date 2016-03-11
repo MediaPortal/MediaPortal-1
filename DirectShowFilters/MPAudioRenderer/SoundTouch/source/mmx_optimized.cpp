@@ -20,10 +20,10 @@
 ///
 ////////////////////////////////////////////////////////////////////////////////
 //
-// Last changed  : $Date: 2009-10-31 16:53:23 +0200 (Sat, 31 Oct 2009) $
+// Last changed  : $Date: 2012-11-08 20:53:01 +0200 (Thu, 08 Nov 2012) $
 // File revision : $Revision: 4 $
 //
-// $Id: mmx_optimized.cpp 75 2009-10-31 14:53:23Z oparviai $
+// $Id: mmx_optimized.cpp 160 2012-11-08 18:53:01Z oparviai $
 //
 ////////////////////////////////////////////////////////////////////////////////
 //
@@ -50,12 +50,8 @@
 
 #include "STTypes.h"
 
-#ifdef ALLOW_MMX
+#ifdef SOUNDTOUCH_ALLOW_MMX
 // MMX routines available only with integer sample type
-
-#if !(WIN32 || __i386__ || __x86_64__)
-#error "wrong platform - this source code file is exclusively for x86 platforms"
-#endif
 
 using namespace soundtouch;
 
@@ -72,7 +68,7 @@ using namespace soundtouch;
 
 
 // Calculates cross correlation of two buffers
-long TDStretchMMX::calcCrossCorrStereo(const short *pV1, const short *pV2) const
+double TDStretchMMX::calcCrossCorr(const short *pV1, const short *pV2) const
 {
     const __m64 *pVec1, *pVec2;
     __m64 shifter;
@@ -86,9 +82,9 @@ long TDStretchMMX::calcCrossCorrStereo(const short *pV1, const short *pV2) const
     shifter = _m_from_int(overlapDividerBits);
     normaccu = accu = _mm_setzero_si64();
 
-    // Process 4 parallel sets of 2 * stereo samples each during each 
-    // round to improve CPU-level parallellization.
-    for (i = 0; i < overlapLength / 8; i ++)
+    // Process 4 parallel sets of 2 * stereo samples or 4 * mono samples 
+    // during each round for improved CPU-level parallellization.
+    for (i = 0; i < channels * overlapLength / 16; i ++)
     {
         __m64 temp, temp2;
 
@@ -130,7 +126,8 @@ long TDStretchMMX::calcCrossCorrStereo(const short *pV1, const short *pV2) const
     // Normalize result by dividing by sqrt(norm) - this step is easiest 
     // done using floating point operation
     if (norm == 0) norm = 1;    // to avoid div by zero
-    return (long)((double)corr * USHRT_MAX / sqrt((double)norm));
+
+    return (double)corr / sqrt((double)norm);
     // Note: Warning about the missing EMMS instruction is harmless
     // as it'll be called elsewhere.
 }
@@ -242,7 +239,7 @@ void FIRFilterMMX::setCoefficients(const short *coeffs, uint newLength, uint uRe
     // Ensure that filter coeffs array is aligned to 16-byte boundary
     delete[] filterCoeffsUnalign;
     filterCoeffsUnalign = new short[2 * newLength + 8];
-    filterCoeffsAlign = (short *)(((ulong)filterCoeffsUnalign + 15) & -16);
+    filterCoeffsAlign = (short *)SOUNDTOUCH_ALIGN_POINTER_16(filterCoeffsUnalign);
 
     // rearrange the filter coefficients for mmx routines 
     for (i = 0;i < length; i += 4) 
@@ -317,4 +314,4 @@ uint FIRFilterMMX::evaluateFilterStereo(short *dest, const short *src, uint numS
     return (numSamples & 0xfffffffe) - length;
 }
 
-#endif  // ALLOW_MMX
+#endif  // SOUNDTOUCH_ALLOW_MMX

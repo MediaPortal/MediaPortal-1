@@ -35,6 +35,7 @@
 #include <initguid.h>
 #include "moreuuids.h"
 
+#define countof(array) (sizeof(array)/sizeof(array[0]))
 
 #ifdef REGISTER_FILTER
 

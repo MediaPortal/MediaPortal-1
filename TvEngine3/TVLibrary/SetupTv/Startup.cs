@@ -28,6 +28,7 @@ using System.Configuration;
 using System.Reflection;
 using System.Threading;
 using System.Diagnostics;
+using MediaPortal.Common.Utils.Logger;
 using TvControl;
 using TvDatabase;
 using TvLibrary.Log;
@@ -100,6 +101,16 @@ namespace SetupTv
     [STAThread]
     public static void Main(string[] arguments)
     {
+      // Init Common logger -> this will enable TVPlugin to write in the Mediaportal.log file
+      var loggerName = Path.GetFileNameWithoutExtension(Environment.GetCommandLineArgs()[0]);
+      var dataPath = Log.GetPathName();
+      var loggerPath = Path.Combine(dataPath, "log");
+#if DEBUG
+      if (loggerName != null) loggerName = loggerName.Replace(".vshost", "");
+#endif
+      CommonLogger.Instance = new CommonLog4NetLogger(loggerName, dataPath, loggerPath);
+      
+      
       Thread.CurrentThread.Name = "SetupTv";
 
       Process[] p = Process.GetProcessesByName(Process.GetCurrentProcess().ProcessName);
@@ -174,7 +185,19 @@ namespace SetupTv
 
       if (startupMode == StartupMode.DeployMode)
       {
-        if (String.IsNullOrEmpty(DeploySql) || String.IsNullOrEmpty(DeployPwd))
+        if (DeploySql == "dbalreadyinstalled")
+        {
+          Log.Info("---- ask user for connection details ----");
+          if (dlg.ShowDialog() != DialogResult.OK || startupMode != StartupMode.DeployMode)
+            return; // close the application without restart here.
+          
+          dlg.CheckServiceName();
+          if (startupMode == StartupMode.DeployMode)
+          {
+            dlg.SaveGentleConfig();
+          }
+        }
+        else if (String.IsNullOrEmpty(DeploySql) || String.IsNullOrEmpty(DeployPwd))
         {
           dlg.LoadConnectionDetailsFromConfig(true);
         }
@@ -292,6 +315,9 @@ namespace SetupTv
         }
       }
 
+      var layer = new TvBusinessLayer();
+      layer.SetLogLevel();
+
       // Mantis #0001991: disable mpg recording  (part I: force TS recording format)
       IList<Card> TvCards = Card.ListAll();
       foreach (Card card in TvCards)
@@ -305,7 +331,6 @@ namespace SetupTv
       }
 
       // Mantis #0002138: impossible to configure TVGroups 
-      TvBusinessLayer layer = new TvBusinessLayer();
       layer.CreateGroup(TvConstants.TvGroupNames.AllChannels);
 
       // Avoid the visual part of SetupTv if in DeployMode

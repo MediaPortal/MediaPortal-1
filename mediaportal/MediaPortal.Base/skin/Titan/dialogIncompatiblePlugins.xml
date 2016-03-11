@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <id>2021</id>
+  <defaultcontrol>3</defaultcontrol>
+  <allowoverlay>no</allowoverlay>
+  <controls>
+    <control>
+      <id>0</id>
+      <type>image</type>
+      <width>1920</width>
+      <height>1080</height>
+      <texture>background.png</texture>
+    </control>
+    <control>
+      <type>label</type>
+      <id>0</id>
+      <posX>60</posX>
+      <posY>38</posY>
+      <width>500</width>
+      <label>1910</label>
+      <textcolor>6aa5cb</textcolor>
+      <font>font22</font>
+    </control>
+    <control>
+      <id>0</id>
+      <description>dialog line 1</description>
+      <type>textbox</type>
+      <posX>60</posX>
+      <posY>96</posY>
+      <width>1800</width>
+      <height>150</height>
+      <textcolor>ffffffff</textcolor>
+      <font>TitanLight14</font>
+      <align>LEFT</align>
+      <label>#(L(1911))</label>
+    </control>
+    <control>
+      <id>2</id>
+      <description>listcontrol</description>
+      <type>listcontrol</type>
+      <onright>3</onright>
+      <ondown>3</ondown>
+      <posX>60</posX>
+      <posY>189</posY>
+      <width>785</width>
+      <height>850</height>
+	  <textXOff>50</textXOff>
+	  <textXOff2>1040</textXOff2>
+	  <textureHeight>52</textureHeight>
+	  <textureFocus>settings_button_focus.png</textureFocus>
+	  <textureNoFocus>settings_button_nofocus.png</textureNoFocus>
+	  <dimColor>ffffffff</dimColor>
+    </control>
+    <control>
+      <id>3</id>
+      <description>Continue button</description>
+      <type>button</type>
+      <onleft>2</onleft>
+      <onup>2</onup>
+      <posX>1426</posX>
+      <posY>932</posY>
+      <width>385</width>
+      <height>64</height>
+      <textureFocus>button-focus.png</textureFocus>
+      <textureNoFocus>button-nofocus.png</textureNoFocus>
+      <label>#(string.formatcount(iif(eq(#countdownseconds,''),0,#countdownseconds), 1912))</label>
+    </control>
+  </controls>
+</window>

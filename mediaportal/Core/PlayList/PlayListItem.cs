@@ -36,12 +36,25 @@ namespace MediaPortal.Playlists
       Pictures
     }
 
+    /// <summary>
+    /// Store why the item is in the playlist
+    /// Item may have been added by user or recommendation service (eg. last.fm) or random
+    /// </summary>
+    public enum PlayListItemSource
+    {
+      User,
+      Recommendation,
+      Random
+    }
+
     protected string _fileName = "";
     protected string _description = "";
     protected int _duration = 0;
     protected object _musicTag = null;
     private bool _isPlayed = false;
     private PlayListItemType _itemType = PlayListItemType.Unknown;
+    private PlayListItemSource _source = PlayListItemSource.User;
+    private string _sourceDesc;
 
     public PlayListItem() {}
 
@@ -67,6 +80,31 @@ namespace MediaPortal.Playlists
     {
       get { return _itemType; }
       set { _itemType = value; }
+    }
+
+    /// <summary>
+    /// Identify why the item is on the playlist (was this added by user, added by recommendation service etc)
+    /// </summary>
+    public PlayListItemSource Source
+    {
+      get { return _source; }
+      set { _source = value; }
+    }
+
+    /// <summary>
+    /// Details of what added the item to playlist 
+    /// </summary>
+    public string SourceDescription
+    {
+      get
+      {
+        if (string.IsNullOrEmpty(_sourceDesc))
+        {
+          return "user";
+        }
+        return _sourceDesc;
+      }
+      set { _sourceDesc = value; }
     }
 
     public virtual string FileName

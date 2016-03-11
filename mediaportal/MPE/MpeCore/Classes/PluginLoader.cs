@@ -269,7 +269,7 @@ namespace MpeCore.Classes
           //We might be running under the MONO run-time. 
         }
 
-        if (retval.Count == 0 && namespaceStr.ToLower().EndsWith(".dll"))
+        if (retval.Count == 0 && namespaceStr.ToLowerInvariant().EndsWith(".dll"))
           retval.Add(namespaceStr); //in case of if the namespaceStr is a dll name
 #if net1
 			return (string[])retval.ToArray(typeof(string));
@@ -279,35 +279,6 @@ namespace MpeCore.Classes
       }
 
       #endregion
-
-      /// <summary>
-      /// Search for namespace into local assembly file.
-      /// </summary>
-      private static bool IsNamespaceDefinedInAssembly(string asmFileName, string namespaceStr)
-      {
-        if (File.Exists(asmFileName))
-        {
-          try
-          {
-            Assembly assembly = Assembly.LoadFrom(asmFileName);
-            if (assembly != null)
-            {
-              foreach (Module m in assembly.GetModules())
-              {
-                foreach (Type t in m.GetTypes())
-                {
-                  if (namespaceStr == t.Namespace)
-                  {
-                    return true;
-                  }
-                }
-              }
-            }
-          }
-          catch {}
-        }
-        return false;
-      }
     }
   }
 }

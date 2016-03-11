@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <controls>
+    <control>
+      <type>group</type>
+      <description>exit menu</description>
+      <dimColor>0xffffffff</dimColor>
+      <visible>[control.hasfocus(12)|control.hasfocus(13)|control.hasfocus(14)]</visible>		
+      <animation effect="slide" start="0,200" end="0,0" tween="quadratic" easing="in" time="300" delay="0">Visible</animation>
+      <animation effect="fade" time="450" delay="0">Visible</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation> 	
+      <control>
+        <description>BACKGROUND</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>0</posX>
+        <posY>486</posY>
+        <width>1920</width>
+        <height>233</height>
+        <texture>basichome_exit_menu_bg.png</texture>
+      </control>                          
+      <control>
+				<description>Shutdown Button</description>
+				<type>button</type>
+				<id>13</id>
+				<posX>937</posX>
+				<posY>577</posY>
+				<width>46</width>
+				<height>50</height>
+				<textureNoFocus>shutdown_button_nofocus.png</textureNoFocus>
+				<textureFocus>shutdown_button_focus.png</textureFocus>
+				<action>99</action>
+				<onright>12</onright>
+				<onleft>14</onleft>
+				<onup>50</onup>
+				<ondown>50</ondown>
+				<label>1030</label>
+				<textXOff>-2000</textXOff>
+      	<animation effect="zoom"  start="100,100" end="110,110" time="200">focus</animation>
+      	<animation effect="zoom" start="110,110" end="100,100" time="150">unfocus</animation>  
+      </control>
+      <control>
+				<description>Restart Button</description>
+				<type>button</type>
+				<id>14</id>
+				<posX>780</posX>
+				<posY>577</posY>
+				<width>46</width>
+				<height>50</height>
+				<textureNoFocus>restart_button_nofocus.png</textureNoFocus>
+				<textureFocus>restart_button_focus.png</textureFocus>
+				<action>98</action>
+				<onright>13</onright>
+				<onleft>12</onleft>
+				<onup>50</onup>
+				<ondown>50</ondown>
+				<label>1031</label>
+				<textXOff>-2000</textXOff>
+      	<animation effect="zoom"  start="100,100" end="110,110" time="200">focus</animation>
+      	<animation effect="zoom" start="110,110" end="100,100" time="150">unfocus</animation>  
+      </control>      			
+      <control>
+				<description>Exit Button</description>
+				<type>button</type>
+				<id>12</id>
+				<posX>1090</posX>
+				<posY>578</posY>
+				<onleft>3</onleft>
+				<width>46</width>
+				<height>50</height>
+				<textureNoFocus>exit_button_nofocus.png</textureNoFocus>
+				<textureFocus>exit_button_focus.png</textureFocus>
+				<action>97</action>
+				<onright>14</onright>
+				<onleft>13</onleft>
+				<onup>50</onup>
+				<ondown>50</ondown>
+				<label>Exit</label>
+      	<animation effect="zoom"  start="100,100" end="110,110" time="200">focus</animation>
+      	<animation effect="zoom" start="110,110" end="100,100" time="150">unfocus</animation>
+      </control>
+    </control>
+  
+    <control>
+    	<description>Shutdown label</description>
+    	<type>label</type>
+    	<id>0</id>
+    	<posX>132</posX>
+    	<posY>575</posY>
+      <width>420</width>
+      <font>TitanLight20</font>
+    	<label>1030</label>
+      <visible>Control.HasFocus(13) + Control.IsVisible(13)</visible>
+      <animation effect="fade" time="450" delay="250">Visible</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation> 
+    </control>
+    
+    <control>
+    	<description>Restart label</description>
+    	<type>label</type>
+    	<id>0</id>
+    	<posX>132</posX>
+    	<posY>575</posY>
+      <width>420</width>
+      <font>TitanLight20</font>
+    	<label>1031</label>
+      <visible>Control.HasFocus(14) + Control.IsVisible(14)</visible>
+      <animation effect="fade" time="450" delay="250">Visible</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation> 
+    </control>
+    
+    <control>
+    	<description>Exit label</description>
+    	<type>label</type>
+    	<id>0</id>
+    	<posX>132</posX>
+    	<posY>575</posY>
+      <width>420</width>
+      <font>TitanLight20</font>
+    	<label>4517</label>
+      <visible>Control.HasFocus(12) + Control.IsVisible(12)</visible>
+      <animation effect="fade" time="450" delay="250">Visible</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation> 
+    </control>
+</controls>
+</window>

@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2013 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2013 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -20,6 +20,7 @@
 
 using System;
 using System.Drawing;
+using System.Linq;
 
 // used for Keys definition
 
@@ -36,52 +37,32 @@ namespace MediaPortal.GUI.Library
       PageUpDown
     }
 
-    private Selection currentSelection = Selection.ListItem;
-    private bool _MoveFirstListVisibleItemUpAllowed = true;
-    private bool _MoveLastVisibleListItemDownAllowed = true;
+    private Selection _currentSelection = Selection.ListItem;
+    private bool _moveFirstListVisibleItemUpAllowed = true;
+    private bool _moveLastVisibleListItemDownAllowed = true;
 
     [XMLSkinElement("upBtnWidth")] private int _upBtnWidth = 35;
-
     [XMLSkinElement("downBtnWidth")] private int _downBtnWidth = 35;
-
     [XMLSkinElement("deleteBtnWidth")] private int _deleteBtnWidth = 35;
-
     [XMLSkinElement("upBtnHeight")] private int _upBtnHeight = 38;
-
     [XMLSkinElement("downBtnHeight")] private int _downBtnHeight = 38;
-
     [XMLSkinElement("deleteBtnHeight")] private int _deleteBtnHeight = 38;
-
     [XMLSkinElement("upBtnXOffset")] private int _upBtnXOffset = 326;
-
     [XMLSkinElement("downBtnXOffset")] private int _downBtnXOffset = 361;
-
     [XMLSkinElement("deleteBtnXOffset")] private int _deleteBtnXOffset = 396;
-
-    [XMLSkinElement("upBtnYOffset")] private int _upBtnYOffset = 0;
-
-    [XMLSkinElement("downBtnYOffset")] private int _downBtnYOffset = 0;
-
-    [XMLSkinElement("deleteBtnYOffset")] private int _deleteBtnYOffset = 0;
-
+    [XMLSkinElement("upBtnYOffset")] private int _upBtnYOffset;
+    [XMLSkinElement("downBtnYOffset")] private int _downBtnYOffset;
+    [XMLSkinElement("deleteBtnYOffset")] private int _deleteBtnYOffset;
     [XMLSkinElement("textureFocus")] private string _textureFocus = "playlist_sub_focus.png";
-
     [XMLSkinElement("textureNoFocus")] private string _textureNoFocus = "playlist_sub_nofocus.png";
-
     [XMLSkinElement("textureMoveUp")] private string _textureMoveUp = "playlist_item_up_nofocus.png";
-
     [XMLSkinElement("textureMoveUpFocused")] private string _textureMoveUpFocused = "playlist_item_up_focus.png";
-
     [XMLSkinElement("textureMoveDown")] private string _textureMoveDown = "playlist_item_down_nofocus.png";
-
     [XMLSkinElement("textureMoveDownFocused")] private string _textureMoveDownFocus = "playlist_item_down_focus.png";
-
     [XMLSkinElement("textureDelete")] private string _textureDelete = "playlist_item_delete_nofocus.png";
-
     [XMLSkinElement("textureDeleteFocused")] private string _textureDeleteFocused = "playlist_item_delete_focus.png";
 
-    public GUIPlayListItemListControl(int dwParentID)
-      : base(dwParentID) {}
+    public GUIPlayListItemListControl(int dwParentID) : base(dwParentID) {}
 
     /// <summary>
     /// The constructor of the GUIPlayListItemListControl.
@@ -126,9 +107,12 @@ namespace MediaPortal.GUI.Library
     /// <param name="textureMoveUp">The name of the Up sub-button focused texture.</param>
     /// <param name="textureMoveUpFocused">The name of the Up sub-button unfocused texture.</param>
     /// <param name="textureMoveDown">The name of the Down sub-button focused texture.</param>
-    /// <param name="textureMoveDownFocused">The name of the Down sub-button unfocused texture.</param>
+    /// <param name="textureMoveDownFocus">The name of the Down sub-button unfocused texture.</param>
     /// <param name="textureDelete">The name of the Delete sub-button focused texture.</param>
     /// <param name="textureDeleteFocused">The name of the Delete sub-button unfocused texture.</param>
+    /// <param name="dwShadowAngle"></param>
+    /// <param name="dwShadowDistance"></param>
+    /// <param name="dwShadowColor"></param>
     public GUIPlayListItemListControl(int dwParentID, int dwControlId, int dwPosX, int dwPosY, int dwWidth, int dwHeight,
                                       int upBtnWidth,
                                       int downBtnWidth,
@@ -224,7 +208,7 @@ namespace MediaPortal.GUI.Library
 
     protected override void AllocButtons()
     {
-      currentSelection = Selection.ListItem;
+      _currentSelection = Selection.ListItem;
       for (int i = 0; i < _itemsPerPage; ++i)
       {
         GUIPlayListButtonControl cntl = new GUIPlayListButtonControl(_controlId, 0, 0, 0, _width, _itemHeight,
@@ -235,9 +219,11 @@ namespace MediaPortal.GUI.Library
                                                                      _textureMoveUpFocused, _textureMoveDownFocus,
                                                                      _textureDeleteFocused,
                                                                      _upBtnXOffset, _downBtnXOffset, _deleteBtnXOffset,
-                                                                     _upBtnYOffset, _downBtnYOffset, _deleteBtnYOffset);
+                                                                     _upBtnYOffset, _downBtnYOffset, _deleteBtnYOffset)
+                                          {
+                                            ParentControl = this
+                                          };
 
-        cntl.ParentControl = this;
         cntl.FinalizeConstruction();
         cntl.AllocResources();
         cntl.DimColor = DimColor;
@@ -271,7 +257,6 @@ namespace MediaPortal.GUI.Library
 
           return true;
         }
-
         return true;
       }
 
@@ -281,7 +266,7 @@ namespace MediaPortal.GUI.Library
       }
 
       _listType = ListType.CONTROL_LIST;
-      int posy = y - (int)_positionY;
+      int posy = y - _positionY;
       _cursorX = (posy / (_itemHeight + _spaceBetweenItems));
 
       while (_offset + _cursorX >= _listItems.Count)
@@ -299,17 +284,16 @@ namespace MediaPortal.GUI.Library
 
       if (_listButtons != null)
       {
-        int cntlId;
-        bool gotFocus;
-
         for (int i = 0; i < _itemsPerPage; ++i)
         {
           GUIPlayListButtonControl btn = (GUIPlayListButtonControl)_listButtons[i];
+          int cntlId;
+          bool gotFocus;
           btn.HitTest(x, y, out cntlId, out gotFocus);
 
           if (i == _cursorX)
           {
-            currentSelection = Selection.ListItem;
+            _currentSelection = Selection.ListItem;
           }
         }
       }
@@ -319,39 +303,33 @@ namespace MediaPortal.GUI.Library
 
     protected override void OnLeft()
     {
-      switch (currentSelection)
+      switch (_currentSelection)
       {
         case Selection.PageUpDown:
           base.OnLeft();
-
           if (_listType == ListType.CONTROL_LIST)
           {
-            currentSelection = Selection.ListItem;
+            _currentSelection = Selection.ListItem;
           }
-
           break;
 
         case Selection.ListItem:
+          if (_cursorX >= 0)
           {
-            if (_cursorX >= 0)
+            GUIPlayListButtonControl btn = (GUIPlayListButtonControl) _listButtons[_cursorX];
+            GUIPlayListButtonControl.SuppressActiveButtonReset = false;
+            if (btn.CurrentActiveButton != GUIPlayListButtonControl.ActiveButton.Main && btn.CanMoveLeft())
             {
-              GUIPlayListButtonControl btn = (GUIPlayListButtonControl)_listButtons[_cursorX];
-              GUIPlayListButtonControl.SuppressActiveButtonReset = false;
-
-              if (btn.CurrentActiveButton != GUIPlayListButtonControl.ActiveButton.Main && btn.CanMoveLeft())
-              {
-                Action action = new Action();
-                action.wID = Action.ActionType.ACTION_MOVE_LEFT;
-                btn.OnAction(action);
-                return;
-              }
+              Action action = new Action {wID = Action.ActionType.ACTION_MOVE_LEFT};
+              btn.OnAction(action);
+              return;
             }
-
-            //select down..
-            currentSelection = Selection.PageUpDown;
-            base.OnLeft();
-            break;
           }
+
+          // select down..
+          _currentSelection = Selection.PageUpDown;
+          base.OnLeft();
+          break;
       }
     }
 
@@ -373,14 +351,11 @@ namespace MediaPortal.GUI.Library
             return;
           }
 
-          else
+          btn.CurrentActiveButton = GUIPlayListButtonControl.ActiveButton.None;
+          if (!_spinCanFocus)
           {
-            btn.CurrentActiveButton = GUIPlayListButtonControl.ActiveButton.None;
-            if (!_spinCanFocus)
-            {
-              btn.CurrentActiveButton = GUIPlayListButtonControl.ActiveButton.Delete;
-              return;
-            }
+            btn.CurrentActiveButton = GUIPlayListButtonControl.ActiveButton.Delete;
+            return;
           }
         }
 
@@ -399,14 +374,13 @@ namespace MediaPortal.GUI.Library
             }
           }
         }
-
         else
         {
           _upDownControl.OnAction(action);
 
           if (!_upDownControl.Focus)
           {
-            if (base._rightControlId != GetID)
+            if (NavigateRight != GetID)
             {
               base.OnAction(action);
             }
@@ -424,47 +398,6 @@ namespace MediaPortal.GUI.Library
         GUIPlayListButtonControl.SuppressActiveButtonReset = false;
       }
       base.OnUp();
-      /*
-      Action action = new Action();
-        action.wID = Action.ActionType.ACTION_MOVE_UP;
-        if (_listType == ListType.CONTROL_LIST)
-        {
-            GUIPlayListButtonControl.SuppressActiveButtonReset = false;
-            if (_cursorX > 0)
-            {
-                _cursorX--;
-                OnSelectionChanged();
-            }
-            else if (_cursorX == 0 && _offset != 0)
-            {
-                _offset--;
-
-                int iPage = 1;
-                int iSel = _offset + _cursorX;
-                while (iSel >= _itemsPerPage)
-                {
-                    iPage++;
-                    iSel -= _itemsPerPage;
-                }
-                _upDownControl.Value = iPage;
-                OnSelectionChanged();
-            }
-            else
-            {
-                // move 2 last item in list
-                GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECT, WindowId, GetID, GetID, _listItems.Count - 1, 0, null);
-                OnMessage(msg);
-            }
-        }
-        else
-        {
-            _upDownControl.OnAction(action);
-            if (!_upDownControl.Focus)
-            {
-                _listType = ListType.CONTROL_LIST;
-            }
-        }
-       */
     }
 
     /// <summary>
@@ -477,59 +410,6 @@ namespace MediaPortal.GUI.Library
         GUIPlayListButtonControl.SuppressActiveButtonReset = false;
       }
       base.OnDown();
-      /*
-      Action action = new Action();
-        action.wID = Action.ActionType.ACTION_MOVE_DOWN;
-        if (_listType == ListType.CONTROL_LIST)
-        {
-            GUIPlayListButtonControl.SuppressActiveButtonReset = false;
-            if (_cursorX + 1 < _itemsPerPage)
-            {
-                if (_offset + 1 + _cursorX < _listItems.Count)
-                {
-                    _cursorX++;
-                    OnSelectionChanged();
-                }
-                else
-                {
-                    // move first item in list
-                    GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECT, WindowId, GetID, GetID, 0, 0, null);
-                    OnMessage(msg);
-                }
-            }
-            else
-            {
-                if (_offset + 1 + _cursorX < _listItems.Count)
-                {
-                    _offset++;
-
-                    int iPage = 1;
-                    int iSel = _offset + _cursorX;
-                    while (iSel >= _itemsPerPage)
-                    {
-                        iPage++;
-                        iSel -= _itemsPerPage;
-                    }
-                    _upDownControl.Value = iPage;
-                    OnSelectionChanged();
-                }
-                else
-                {
-                    // move first item in list
-                    GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECT, WindowId, GetID, GetID, 0, 0, null);
-                    OnMessage(msg);
-                }
-            }
-        }
-        else
-        {
-            _upDownControl.OnAction(action);
-            if (!_upDownControl.Focus)
-            {
-                base.OnAction(action);
-            }
-        }
-       */
     }
 
     public override void OnAction(Action action)
@@ -560,13 +440,11 @@ namespace MediaPortal.GUI.Library
                   GUIPlayListButtonControl.LastActiveButton = GUIPlayListButtonControl.ActiveButton.Up;
                   GUIPlayListButtonControl.SuppressActiveButtonReset = true;
                 }
-
                 else
                 {
                   return;
                 }
               }
-
               else if (btn.CurrentActiveButton == GUIPlayListButtonControl.ActiveButton.Down)
               {
                 if (btn.DownButtonEnabled)
@@ -575,13 +453,11 @@ namespace MediaPortal.GUI.Library
                   GUIPlayListButtonControl.LastActiveButton = GUIPlayListButtonControl.ActiveButton.Down;
                   GUIPlayListButtonControl.SuppressActiveButtonReset = true;
                 }
-
                 else
                 {
                   return;
                 }
               }
-
               else if (btn.CurrentActiveButton == GUIPlayListButtonControl.ActiveButton.Delete)
               {
                 if (btn.DownButtonEnabled)
@@ -590,27 +466,24 @@ namespace MediaPortal.GUI.Library
                   GUIPlayListButtonControl.LastActiveButton = GUIPlayListButtonControl.ActiveButton.Delete;
                   GUIPlayListButtonControl.SuppressActiveButtonReset = true;
                 }
-
                 else
                 {
                   return;
                 }
               }
-
               else if (btn.CurrentActiveButton == GUIPlayListButtonControl.ActiveButton.Main)
               {
                 GUIPlayListButtonControl.LastActiveButton = GUIPlayListButtonControl.ActiveButton.None;
                 GUIPlayListButtonControl.SuppressActiveButtonReset = false;
                 break;
               }
-
               else
               {
                 break;
               }
 
               GUIGraphicsContext.OnAction(newAction);
-              Console.WriteLine("\t**action modified:{0}", (Action.ActionType)newAction.wID);
+              Console.WriteLine("\t**action modified:{0}", newAction.wID);
               return;
             }
             break;
@@ -626,7 +499,7 @@ namespace MediaPortal.GUI.Library
 
       if (message.Message == GUIMessage.MessageType.GUI_MSG_ITEM_SELECT)
       {
-        if (currentSelection == Selection.PageUpDown)
+        if (_currentSelection == Selection.PageUpDown)
         {
           Console.WriteLine("currentSelection == Selection.PageUpDown");
         }
@@ -640,38 +513,46 @@ namespace MediaPortal.GUI.Library
 
       if (message.Message == GUIMessage.MessageType.GUI_MSG_LOSTFOCUS)
       {
-        //Console.WriteLine("GUI_MSG_LOSTFOCUS");
         SetItemButtonState(GUIPlayListButtonControl.ActiveButton.None);
       }
 
       if (message.Message == GUIMessage.MessageType.GUI_MSG_ITEM_SELECTED)
       {
-        //Console.WriteLine("GUI_MSG_ITEM_SELECTED");
         SetItemButtonState(GUIPlayListButtonControl.ActiveButton.Main);
       }
 
       if (message.Message == GUIMessage.MessageType.GUI_MSG_ITEM_FOCUS)
       {
+        bool foundMatchedItem = false;
         foreach (GUIListItem item in _listItems)
         {
           item.Selected = false;
         }
-        foreach (GUIListItem item in _listItems)
+        foreach (GUIListItem item in _listItems.Where(item => item.Path.Equals(message.Label, StringComparison.OrdinalIgnoreCase)))
         {
-          if (item.Path.Equals(message.Label, StringComparison.OrdinalIgnoreCase))
+          // Needed for select the correct item from music playlist if the list has same song in the list
+          if (_listItems.IndexOf(item) == message.Param1 || _listItems.IndexOf(item) == message.Param4)
+          {
+            item.Selected = true;
+            foundMatchedItem = true;
+            break;
+          }
+        }
+        if (!foundMatchedItem)
+        {
+          // fall back to item matched by name if previous check based on current index failed
+          foreach (GUIListItem item in _listItems.Where(item => item.Path.Equals(message.Label, StringComparison.OrdinalIgnoreCase)))
           {
             item.Selected = true;
             break;
           }
         }
       }
-
       return result;
     }
 
     public override void Render(float timePassed)
     {
-      //base.Render(timePassed);
       _timeElapsed += timePassed;
 
       // If there is no font do not render.
@@ -682,13 +563,10 @@ namespace MediaPortal.GUI.Library
       }
 
       // If the control is not visible do not render.
-      if (GUIGraphicsContext.EditMode == false)
+      if (GUIGraphicsContext.EditMode == false && !IsVisible)
       {
-        if (!IsVisible)
-        {
-          base.Render(timePassed);
-          return;
-        }
+        base.Render(timePassed);
+        return;
       }
 
       int dwPosY = _positionY;
@@ -699,16 +577,9 @@ namespace MediaPortal.GUI.Library
         if (i + _offset < _listItems.Count)
         {
           // render item
-          bool gotFocus = false;
-
-          if (_drawFocus && i == _cursorX && IsFocused && _listType == ListType.CONTROL_LIST)
-          {
-            gotFocus = true;
-          }
-
+          bool gotFocus = _drawFocus && i == _cursorX && IsFocused && _listType == ListType.CONTROL_LIST;
           RenderButton(timePassed, i, _positionX, dwPosY, gotFocus);
         }
-
         dwPosY += _itemHeight + _spaceBetweenItems;
       }
 
@@ -724,12 +595,7 @@ namespace MediaPortal.GUI.Library
 
         if (i + _offset < _listItems.Count)
         {
-          bool gotFocus = false;
-
-          if (_drawFocus && i == _cursorX && IsFocused && _listType == ListType.CONTROL_LIST)
-          {
-            gotFocus = true;
-          }
+          bool gotFocus = _drawFocus && i == _cursorX && IsFocused && _listType == ListType.CONTROL_LIST;
 
           // render the icon
           RenderIcon(timePassed, i, dwPosX + _iconOffsetX, dwPosY + _iconOffsetY, gotFocus);
@@ -754,56 +620,38 @@ namespace MediaPortal.GUI.Library
 
     protected override void RenderButton(float timePassed, int buttonNr, int x, int y, bool gotFocus)
     {
-      if (_listButtons != null)
+      if (_listButtons != null && (buttonNr >= 0 && buttonNr < _listButtons.Count))
       {
-        if (buttonNr >= 0 && buttonNr < _listButtons.Count)
+        GUIControl btn = _listButtons[buttonNr];
+        if (btn != null)
         {
-          GUIControl btn = _listButtons[buttonNr];
-          if (btn != null)
+          if (gotFocus)
           {
-            if (gotFocus)
-            {
-              btn.ColourDiffuse = 0xffffffff;
-            }
-            else
-            {
-              btn.ColourDiffuse = Color.FromArgb(_unfocusedAlpha, Color.White).ToArgb();
-            }
-            btn.Focus = gotFocus;
-            btn.SetPosition(x, y);
-            btn.Render(timePassed);
+            btn.ColourDiffuse = 0xffffffff;
           }
-          btn = null;
+          else
+          {
+            btn.ColourDiffuse = Color.FromArgb(_unfocusedAlpha, Color.White).ToArgb();
+          }
+          btn.Focus = gotFocus;
+          btn.SetPosition(x, y);
+          btn.Render(timePassed);
         }
       }
     }
 
     protected override void RenderLabel(float timePassed, int buttonNr, int dwPosX, int dwPosY, bool gotFocus)
     {
-      // if (buttonNr + _offset < 0 || buttonNr + _offset >= _listButtons.Count) return;
       if (buttonNr < 0 || buttonNr >= _listButtons.Count)
       {
         return;
       }
-      GUIListItem pItem = _listItems[buttonNr + _offset];
-      long dwColor = _textColor;
 
-      if (pItem.Shaded)
-      {
-        dwColor = ShadedColor;
-      }
-      if (pItem.Selected)
-      {
-        dwColor = _selectedColor;
-      }
+      GUIListItem pItem = _listItems[buttonNr + _offset];
+      long dwColor;
 
       dwPosX += _textOffsetX;
-      bool bSelected = false;
-
-      if (buttonNr == _cursorX && IsFocused && _listType == ListType.CONTROL_LIST)
-      {
-        bSelected = true;
-      }
+      bool bSelected = buttonNr == _cursorX && IsFocused && _listType == ListType.CONTROL_LIST;
 
       GUIPlayListButtonControl btn = (GUIPlayListButtonControl)_listButtons[buttonNr];
       int dMaxWidth = (_width - _imageWidth - PinIconOffsetX - GUIGraphicsContext.ScaleHorizontal(8));
@@ -836,14 +684,13 @@ namespace MediaPortal.GUI.Library
             dwColor = _bdDvdDirectoryColor;
           }
 
-          int xpos = dwPosX;
+          int xpos;
           int ypos = dwPosY;
 
           if (0 == _textOffsetX2)
           {
             xpos = _positionX + _upBtnXOffset - GUIGraphicsContext.ScaleHorizontal(8);
           }
-
           else
           {
             xpos = _positionX + _textOffsetX2;
@@ -857,14 +704,7 @@ namespace MediaPortal.GUI.Library
               if (label2 != null)
               {
                 label2.SetPosition(xpos, ypos + GUIGraphicsContext.ScaleVertical(2) + _textOffsetY2);
-                if (gotFocus)
-                {
-                  label2.TextColor = dwColor;
-                }
-                else
-                {
-                  label2.TextColor = Color.FromArgb(_unfocusedAlpha, Color.FromArgb((int)dwColor)).ToArgb();
-                }
+                label2.TextColor = gotFocus ? dwColor : Color.FromArgb(_unfocusedAlpha, Color.FromArgb((int)dwColor)).ToArgb();
                 label2.Label = pItem.Label2;
                 label2.TextAlignment = Alignment.ALIGN_RIGHT;
                 label2.FontName = _fontName2Name;
@@ -874,8 +714,6 @@ namespace MediaPortal.GUI.Library
           }
         }
       }
-
-      _textLine = pItem.Label;
 
       if (_text1Visible)
       {
@@ -904,9 +742,20 @@ namespace MediaPortal.GUI.Library
           dwColor = Color.FromArgb(_unfocusedAlpha, Color.FromArgb((int)dwColor)).ToArgb();
         }
 
-        RenderText(timePassed, buttonNr, (float)dwPosX,
-                   (float)dwPosY + GUIGraphicsContext.ScaleVertical(2) + _textOffsetY, (float)dMaxWidth, dwColor,
-                   _textLine, bSelected);
+        int maxWidth = dMaxWidth;
+        if (_textPadding > 0)
+        {
+          maxWidth -= GUIGraphicsContext.ScaleHorizontal(_textPadding);
+        }
+        
+        if (maxWidth <= 0)
+        {
+          base.Render(timePassed);
+        }
+        else
+        {
+          RenderText(timePassed, buttonNr, dwPosX, (float)dwPosY + GUIGraphicsContext.ScaleVertical(2) + _textOffsetY, maxWidth, dwColor, pItem.Label, bSelected);
+        }
       }
 
       if (pItem.Label2.Length > 0)
@@ -931,41 +780,44 @@ namespace MediaPortal.GUI.Library
           dwColor = _bdDvdDirectoryColor;
         }
 
-        if (0 == _textOffsetX2)
+        if (_textOffsetX2 == 0)
         {
           dwPosX = _positionX + _upBtnXOffset - GUIGraphicsContext.ScaleHorizontal(8);
         }
-
         else
         {
           dwPosX = _positionX + _textOffsetX2;
         }
 
-        _textLine = pItem.Label2;
-
         if (_text2Visible)
         {
-          if (_labelControls2 != null)
+          if (_labelControls2 != null && (buttonNr >= 0 && buttonNr < _labelControls2.Count))
           {
-            if (buttonNr >= 0 && buttonNr < _labelControls2.Count)
+            GUILabelControl label2 = _labelControls2[buttonNr];
+            if (label2 != null)
             {
-              GUILabelControl label2 = _labelControls2[buttonNr];
-              if (label2 != null)
+              label2.SetPosition(dwPosX, dwPosY + GUIGraphicsContext.ScaleVertical(2) + _textOffsetY2);
+              label2.TextColor = gotFocus
+                                   ? dwColor
+                                   : Color.FromArgb(_unfocusedAlpha, Color.FromArgb((int) dwColor)).ToArgb();
+              label2.Label = pItem.Label2;
+              label2.TextAlignment = Alignment.ALIGN_RIGHT;
+              label2.FontName = _fontName2Name;
+
+              float width = label2.Width;
+              float height = label2.Height;
+              _font.GetTextExtent(label2.Label, ref width, ref height);
+              label2.Width = (int)width + 1;
+              label2.Height = (int)height;
+
+              if (_textPadding2 > 0)
               {
-                label2.SetPosition(dwPosX, dwPosY + GUIGraphicsContext.ScaleVertical(2) + _textOffsetY2);
-                if (gotFocus)
-                {
-                  label2.TextColor = dwColor;
-                }
-                else
-                {
-                  label2.TextColor = Color.FromArgb(_unfocusedAlpha, Color.FromArgb((int)dwColor)).ToArgb();
-                }
-                label2.Label = _textLine;
-                label2.TextAlignment = Alignment.ALIGN_RIGHT;
-                label2.FontName = _fontName2Name;
+                label2.Width -= GUIGraphicsContext.ScaleHorizontal(_textPadding2);
+              }
+
+              if (label2.Width > 0)
+              {
                 label2.Render(timePassed);
-                label2 = null;
               }
             }
           }
@@ -998,7 +850,6 @@ namespace MediaPortal.GUI.Library
         {
           dwPosX = _positionX + _textOffsetX;
         }
-
         else
         {
           dwPosX = _positionX + _textOffsetX3;
@@ -1010,7 +861,6 @@ namespace MediaPortal.GUI.Library
         {
           ypos += _textOffsetY2;
         }
-
         else
         {
           ypos += _textOffsetY3;
@@ -1028,28 +878,31 @@ namespace MediaPortal.GUI.Library
               {
                 label3.SetPosition(dwPosX, ypos);
 
-                if (gotFocus)
-                {
-                  label3.TextColor = dwColor;
-                }
-
-                else
-                {
-                  label3.TextColor = Color.FromArgb(_unfocusedAlpha, Color.FromArgb((int)dwColor)).ToArgb();
-                }
-
+                label3.TextColor = gotFocus ? dwColor : Color.FromArgb(_unfocusedAlpha, Color.FromArgb((int)dwColor)).ToArgb();
                 label3.Label = pItem.Label3;
                 label3.TextAlignment = Alignment.ALIGN_LEFT;
                 label3.FontName = _fontName2Name;
-                label3.Render(timePassed);
-                label3 = null;
+
+                float width = label3.Width;
+                float height = label3.Height;
+                _font.GetTextExtent(label3.Label, ref width, ref height);
+                label3.Width = (int)width + 1;
+                label3.Height = (int)height;
+
+                if (_textPadding3 > 0)
+                {
+                  label3.Width -= GUIGraphicsContext.ScaleHorizontal(_textPadding3);
+                }
+
+                if (label3.Width > 0)
+                {
+                  label3.Render(timePassed);
+                }
               }
             }
           }
         }
       }
-
-      pItem = null;
     }
 
     #region Item Button Methods
@@ -1072,13 +925,12 @@ namespace MediaPortal.GUI.Library
     /// <summary>
     /// Prevent/allow first visible list item to be moved upward
     /// </summary>
-    /// <param name="allow"></param>
     public bool AllowMoveFirstVisibleListItemUp
     {
-      get { return _MoveFirstListVisibleItemUpAllowed; }
+      get { return _moveFirstListVisibleItemUpAllowed; }
       set
       {
-        _MoveFirstListVisibleItemUpAllowed = value;
+        _moveFirstListVisibleItemUpAllowed = value;
 
         if (_listButtons == null || _listButtons.Count == 0)
         {
@@ -1093,13 +945,12 @@ namespace MediaPortal.GUI.Library
     /// <summary>
     /// Prevent/allow last visible list item to be moved downward
     /// </summary>
-    /// <param name="allow"></param>
     public bool AllowLastVisibleListItemDown
     {
-      get { return _MoveLastVisibleListItemDownAllowed; }
+      get { return _moveLastVisibleListItemDownAllowed; }
       set
       {
-        _MoveLastVisibleListItemDownAllowed = value;
+        _moveLastVisibleListItemDownAllowed = value;
 
         if (_listButtons == null || _listButtons.Count == 0)
         {

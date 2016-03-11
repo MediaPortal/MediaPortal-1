@@ -24,11 +24,17 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Threading;
 using System.Windows.Forms;
+using System.Runtime.InteropServices;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using MediaPortal.ExtensionMethods;
 using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
+using Microsoft.WindowsAPICodePack.Shell;
 using Direct3D = Microsoft.DirectX.Direct3D;
 using MediaPortal.GUI.Library;
+using PixelFormat = System.Drawing.Imaging.PixelFormat;
+using ScaleTransform = System.Windows.Media.ScaleTransform;
 
 
 namespace MediaPortal.Util
@@ -38,7 +44,19 @@ namespace MediaPortal.Util
   /// </summary>
   public class Picture
   {
-    private static ThumbnailExtractor Extractor = new ThumbnailExtractor();
+    private static ExifOrientations orientation = ExifOrientations.Normal;
+    public enum ExifOrientations
+    {
+        None = 0,
+        Normal = 1,
+        HorizontalFlip = 2,
+        Rotate180 = 3,
+        VerticalFlip = 4,
+        Transpose = 5,
+        Rotate270 = 6,
+        Transverse = 7,
+        Rotate90 = 8
+    }
 
     // singleton. Dont allow any instance of this class
     static Picture() {}
@@ -86,123 +104,128 @@ namespace MediaPortal.Util
       {
         try
         {
-          theImage = ImageFast.FromFile(strPic);
-          Log.Debug("Picture: Fast loaded texture {0}", strPic);
-        }
-        catch (Exception)
-        {
-          theImage = Image.FromFile(strPic);
-          Log.Warn("Picture: Fallback loaded texture {0}", strPic);
-        }
-        if (theImage == null)
-          return null;
-        if (iRotate > 0)
-        {
-          RotateFlipType fliptype;
-          switch (iRotate)
+          using (FileStream fs = new FileStream(strPic, FileMode.Open, FileAccess.Read))
           {
-            case 1:
-              fliptype = RotateFlipType.Rotate90FlipNone;
-              theImage.RotateFlip(fliptype);
-              break;
-            case 2:
-              fliptype = RotateFlipType.Rotate180FlipNone;
-              theImage.RotateFlip(fliptype);
-              break;
-            case 3:
-              fliptype = RotateFlipType.Rotate270FlipNone;
-              theImage.RotateFlip(fliptype);
-              break;
-            default:
-              fliptype = RotateFlipType.RotateNoneFlipNone;
-              break;
-          }
-        }
-        iWidth = theImage.Size.Width;
-        iHeight = theImage.Size.Height;
-
-        int iBitmapWidth = iWidth;
-        int iBitmapHeight = iHeight;
-
-        bool bResize = false;
-        float fOutputFrameAR;
-        if (bZoom)
-        {
-          bResize = true;
-          iBitmapWidth = iMaxWidth;
-          iBitmapHeight = iMaxHeight;
-          while (iWidth < iMaxWidth || iHeight < iMaxHeight)
-          {
-            iWidth *= 2;
-            iHeight *= 2;
-          }
-          int iOffsetX1 = GUIGraphicsContext.OverScanLeft;
-          int iOffsetY1 = GUIGraphicsContext.OverScanTop;
-          int iScreenWidth = GUIGraphicsContext.OverScanWidth;
-          int iScreenHeight = GUIGraphicsContext.OverScanHeight;
-          float fPixelRatio = GUIGraphicsContext.PixelRatio;
-          float fSourceFrameAR = ((float)iWidth) / ((float)iHeight);
-          fOutputFrameAR = fSourceFrameAR / fPixelRatio;
-        }
-        else
-        {
-          fOutputFrameAR = ((float)iWidth) / ((float)iHeight);
-        }
-
-        if (iWidth > iMaxWidth)
-        {
-          bResize = true;
-          iWidth = iMaxWidth;
-          iHeight = (int)(((float)iWidth) / fOutputFrameAR);
-        }
-
-        if (iHeight > (int)iMaxHeight)
-        {
-          bResize = true;
-          iHeight = iMaxHeight;
-          iWidth = (int)(fOutputFrameAR * ((float)iHeight));
-        }
-
-        if (!bOversized)
-        {
-          iBitmapWidth = iWidth;
-          iBitmapHeight = iHeight;
-        }
-        else
-        {
-          // Adjust width/height 2 pixcels for smoother zoom actions at the edges
-          iBitmapWidth = iWidth + 2;
-          iBitmapHeight = iHeight + 2;
-          bResize = true;
-        }
-
-        if (bResize)
-        {
-          using (Bitmap result = new Bitmap(iBitmapWidth, iBitmapHeight))
-          {
-            using (Graphics g = Graphics.FromImage(result))
+            using (theImage = Image.FromStream(fs, true, false))
             {
-              g.CompositingQuality = Thumbs.Compositing;
-              g.InterpolationMode = Thumbs.Interpolation;
-              g.SmoothingMode = Thumbs.Smoothing;
-              if (bOversized)
+              Log.Debug("Picture: Fast loaded texture {0}", strPic);
+              if (theImage == null)
+                return null;
+              if (iRotate > 0)
               {
-                // Set picture at center position
-                int xpos = 1; // (iMaxWidth-iWidth)/2;
-                int ypos = 1; // (iMaxHeight-iHeight)/2;
-                g.DrawImage(theImage, new Rectangle(xpos, ypos, iWidth, iHeight));
+                RotateFlipType fliptype;
+                switch (iRotate)
+                {
+                  case 1:
+                    fliptype = RotateFlipType.Rotate90FlipNone;
+                    theImage.RotateFlip(fliptype);
+                    break;
+                  case 2:
+                    fliptype = RotateFlipType.Rotate180FlipNone;
+                    theImage.RotateFlip(fliptype);
+                    break;
+                  case 3:
+                    fliptype = RotateFlipType.Rotate270FlipNone;
+                    theImage.RotateFlip(fliptype);
+                    break;
+                  default:
+                    fliptype = RotateFlipType.RotateNoneFlipNone;
+                    break;
+                }
+              }
+              iWidth = theImage.Size.Width;
+              iHeight = theImage.Size.Height;
+
+              int iBitmapWidth = iWidth;
+              int iBitmapHeight = iHeight;
+
+              bool bResize = false;
+              float fOutputFrameAR;
+              if (bZoom)
+              {
+                bResize = true;
+                iBitmapWidth = iMaxWidth;
+                iBitmapHeight = iMaxHeight;
+                while (iWidth < iMaxWidth || iHeight < iMaxHeight)
+                {
+                  iWidth *= 2;
+                  iHeight *= 2;
+                }
+                int iOffsetX1 = GUIGraphicsContext.OverScanLeft;
+                int iOffsetY1 = GUIGraphicsContext.OverScanTop;
+                int iScreenWidth = GUIGraphicsContext.OverScanWidth;
+                int iScreenHeight = GUIGraphicsContext.OverScanHeight;
+                float fPixelRatio = GUIGraphicsContext.PixelRatio;
+                float fSourceFrameAR = ((float) iWidth)/((float) iHeight);
+                fOutputFrameAR = fSourceFrameAR/fPixelRatio;
               }
               else
               {
-                g.DrawImage(theImage, new Rectangle(0, 0, iWidth, iHeight));
+                fOutputFrameAR = ((float) iWidth)/((float) iHeight);
+              }
+
+              if (iWidth > iMaxWidth)
+              {
+                bResize = true;
+                iWidth = iMaxWidth;
+                iHeight = (int) (((float) iWidth)/fOutputFrameAR);
+              }
+
+              if (iHeight > (int) iMaxHeight)
+              {
+                bResize = true;
+                iHeight = iMaxHeight;
+                iWidth = (int) (fOutputFrameAR*((float) iHeight));
+              }
+
+              if (!bOversized)
+              {
+                iBitmapWidth = iWidth;
+                iBitmapHeight = iHeight;
+              }
+              else
+              {
+                // Adjust width/height 2 pixcels for smoother zoom actions at the edges
+                iBitmapWidth = iWidth + 2;
+                iBitmapHeight = iHeight + 2;
+                bResize = true;
+              }
+
+
+              if (bResize)
+              {
+                using (Bitmap result = new Bitmap(iBitmapWidth, iBitmapHeight))
+                {
+                  using (Graphics g = Graphics.FromImage(result))
+                  {
+                    g.CompositingQuality = Thumbs.Compositing;
+                    g.InterpolationMode = Thumbs.Interpolation;
+                    g.SmoothingMode = Thumbs.Smoothing;
+                    if (bOversized)
+                    {
+                      // Set picture at center position
+                      int xpos = 1; // (iMaxWidth-iWidth)/2;
+                      int ypos = 1; // (iMaxHeight-iHeight)/2;
+                      g.DrawImage(theImage, new Rectangle(xpos, ypos, iWidth, iHeight));
+                    }
+                    else
+                    {
+                      g.DrawImage(theImage, new Rectangle(0, 0, iWidth, iHeight));
+                    }
+                  }
+                  texture = Picture.ConvertImageToTexture(result, out iWidth, out iHeight);
+                }
+              }
+              else
+              {
+                texture = Picture.ConvertImageToTexture((Bitmap) theImage, out iWidth, out iHeight);
               }
             }
-            texture = Picture.ConvertImageToTexture(result, out iWidth, out iHeight);
           }
         }
-        else
+        catch (Exception)
         {
-          texture = Picture.ConvertImageToTexture((Bitmap)theImage, out iWidth, out iHeight);
+          Log.Warn("Picture: exception loading {0}", strPic);
         }
       }
       catch (ThreadAbortException ext)
@@ -401,18 +424,18 @@ namespace MediaPortal.Util
         GUIGraphicsContext.DX9Device.SetTexture(0, texture);
         int g_nAnisotropy = GUIGraphicsContext.DX9Device.DeviceCaps.MaxAnisotropy;
         float g_fMipMapLodBias = 0.0f;
-        GUIGraphicsContext.DX9Device.SamplerState[0].MinFilter = TextureFilter.Linear;
-        GUIGraphicsContext.DX9Device.SamplerState[0].MagFilter = TextureFilter.Linear;
-        GUIGraphicsContext.DX9Device.SamplerState[0].MipFilter = TextureFilter.Linear;
-        GUIGraphicsContext.DX9Device.SamplerState[0].MaxAnisotropy = g_nAnisotropy;
-        GUIGraphicsContext.DX9Device.SamplerState[0].MipMapLevelOfDetailBias = g_fMipMapLodBias;
 
-        GUIGraphicsContext.DX9Device.SamplerState[1].MinFilter = TextureFilter.Linear;
-        GUIGraphicsContext.DX9Device.SamplerState[1].MagFilter = TextureFilter.Linear;
-        GUIGraphicsContext.DX9Device.SamplerState[1].MipFilter = TextureFilter.Linear;
-        GUIGraphicsContext.DX9Device.SamplerState[1].MaxAnisotropy = g_nAnisotropy;
-        GUIGraphicsContext.DX9Device.SamplerState[1].MipMapLevelOfDetailBias = g_fMipMapLodBias;
+        DXNative.FontEngineSetSamplerState(0, (int)D3DSAMPLERSTATETYPE.D3DSAMP_MINFILTER, (uint)D3DTEXTUREFILTERTYPE.D3DTEXF_LINEAR);
+        DXNative.FontEngineSetSamplerState(0, (int)D3DSAMPLERSTATETYPE.D3DSAMP_MAGFILTER, (uint)D3DTEXTUREFILTERTYPE.D3DTEXF_LINEAR);
+        DXNative.FontEngineSetSamplerState(0, (int)D3DSAMPLERSTATETYPE.D3DSAMP_MIPFILTER, (uint)D3DTEXTUREFILTERTYPE.D3DTEXF_LINEAR);
+        DXNative.FontEngineSetSamplerState(0, (int)D3DSAMPLERSTATETYPE.D3DSAMP_MAXANISOTROPY, (uint)g_nAnisotropy);
+        DXNative.FontEngineSetSamplerState(0, (int)D3DSAMPLERSTATETYPE.D3DSAMP_MIPMAPLODBIAS, (uint)g_fMipMapLodBias);
 
+        DXNative.FontEngineSetSamplerState(1, (int)D3DSAMPLERSTATETYPE.D3DSAMP_MINFILTER, (int)D3DTEXTUREFILTERTYPE.D3DTEXF_LINEAR);
+        DXNative.FontEngineSetSamplerState(1, (int)D3DSAMPLERSTATETYPE.D3DSAMP_MAGFILTER, (int)D3DTEXTUREFILTERTYPE.D3DTEXF_LINEAR);
+        DXNative.FontEngineSetSamplerState(1, (int)D3DSAMPLERSTATETYPE.D3DSAMP_MIPFILTER, (int)D3DTEXTUREFILTERTYPE.D3DTEXF_LINEAR);
+        DXNative.FontEngineSetSamplerState(1, (int)D3DSAMPLERSTATETYPE.D3DSAMP_MAXANISOTROPY, (uint)g_nAnisotropy);
+        DXNative.FontEngineSetSamplerState(1, (int)D3DSAMPLERSTATETYPE.D3DSAMP_MIPMAPLODBIAS, (uint)g_fMipMapLodBias);
 
         // Render the image
         GUIGraphicsContext.DX9Device.SetStreamSource(0, m_vbBuffer, 0);
@@ -556,18 +579,17 @@ namespace MediaPortal.Util
         GUIGraphicsContext.DX9Device.SetTexture(0, texture);
         int g_nAnisotropy = GUIGraphicsContext.DX9Device.DeviceCaps.MaxAnisotropy;
         float g_fMipMapLodBias = 0.0f;
-        GUIGraphicsContext.DX9Device.SamplerState[0].MinFilter = TextureFilter.Linear;
-        GUIGraphicsContext.DX9Device.SamplerState[0].MagFilter = TextureFilter.Linear;
-        GUIGraphicsContext.DX9Device.SamplerState[0].MipFilter = TextureFilter.Linear;
-        GUIGraphicsContext.DX9Device.SamplerState[0].MaxAnisotropy = g_nAnisotropy;
-        GUIGraphicsContext.DX9Device.SamplerState[0].MipMapLevelOfDetailBias = g_fMipMapLodBias;
+        DXNative.FontEngineSetSamplerState(0, (int)D3DSAMPLERSTATETYPE.D3DSAMP_MINFILTER, (uint)D3DTEXTUREFILTERTYPE.D3DTEXF_LINEAR);
+        DXNative.FontEngineSetSamplerState(0, (int)D3DSAMPLERSTATETYPE.D3DSAMP_MAGFILTER, (uint)D3DTEXTUREFILTERTYPE.D3DTEXF_LINEAR);
+        DXNative.FontEngineSetSamplerState(0, (int)D3DSAMPLERSTATETYPE.D3DSAMP_MIPFILTER, (uint)D3DTEXTUREFILTERTYPE.D3DTEXF_LINEAR);
+        DXNative.FontEngineSetSamplerState(0, (int)D3DSAMPLERSTATETYPE.D3DSAMP_MAXANISOTROPY, (uint)g_nAnisotropy);
+        DXNative.FontEngineSetSamplerState(0, (int)D3DSAMPLERSTATETYPE.D3DSAMP_MIPMAPLODBIAS, (uint)g_fMipMapLodBias);
 
-        GUIGraphicsContext.DX9Device.SamplerState[1].MinFilter = TextureFilter.Linear;
-        GUIGraphicsContext.DX9Device.SamplerState[1].MagFilter = TextureFilter.Linear;
-        GUIGraphicsContext.DX9Device.SamplerState[1].MipFilter = TextureFilter.Linear;
-        GUIGraphicsContext.DX9Device.SamplerState[1].MaxAnisotropy = g_nAnisotropy;
-        GUIGraphicsContext.DX9Device.SamplerState[1].MipMapLevelOfDetailBias = g_fMipMapLodBias;
-
+        DXNative.FontEngineSetSamplerState(1, (int)D3DSAMPLERSTATETYPE.D3DSAMP_MINFILTER, (int)D3DTEXTUREFILTERTYPE.D3DTEXF_LINEAR);
+        DXNative.FontEngineSetSamplerState(1, (int)D3DSAMPLERSTATETYPE.D3DSAMP_MAGFILTER, (int)D3DTEXTUREFILTERTYPE.D3DTEXF_LINEAR);
+        DXNative.FontEngineSetSamplerState(1, (int)D3DSAMPLERSTATETYPE.D3DSAMP_MIPFILTER, (int)D3DTEXTUREFILTERTYPE.D3DTEXF_LINEAR);
+        DXNative.FontEngineSetSamplerState(1, (int)D3DSAMPLERSTATETYPE.D3DSAMP_MAXANISOTROPY, (uint)g_nAnisotropy);
+        DXNative.FontEngineSetSamplerState(1, (int)D3DSAMPLERSTATETYPE.D3DSAMP_MIPMAPLODBIAS, (uint)g_fMipMapLodBias);
 
         // Render the image
         GUIGraphicsContext.DX9Device.SetStreamSource(0, m_vbBuffer, 0);
@@ -709,30 +731,40 @@ namespace MediaPortal.Util
 
         GUIGraphicsContext.DX9Device.SetTexture(0, texture);
 
-        GUIGraphicsContext.DX9Device.TextureState[0].ColorOperation = Direct3D.TextureOperation.Modulate;
-        GUIGraphicsContext.DX9Device.TextureState[0].ColorArgument1 = Direct3D.TextureArgument.TextureColor;
-        GUIGraphicsContext.DX9Device.TextureState[0].ColorArgument2 = Direct3D.TextureArgument.Diffuse;
+        DXNative.FontEngineSetTextureStageState(0, (int)D3DTEXTURESTAGESTATETYPE.D3DTSS_COLOROP, (int)D3DTEXTUREOP.D3DTOP_MODULATE);
+        DXNative.FontEngineSetTextureStageState(0, (int)D3DTEXTURESTAGESTATETYPE.D3DTSS_COLORARG1, (int)D3DTA.D3DTA_TEXTURE);
+        DXNative.FontEngineSetTextureStageState(0, (int)D3DTEXTURESTAGESTATETYPE.D3DTSS_COLORARG2, (int)D3DTA.D3DTA_DIFFUSE);
+        DXNative.FontEngineSetTextureStageState(0, (int)D3DTEXTURESTAGESTATETYPE.D3DTSS_ALPHAOP, (int)D3DTEXTUREOP.D3DTOP_MODULATE);
+        DXNative.FontEngineSetTextureStageState(0, (int)D3DTEXTURESTAGESTATETYPE.D3DTSS_ALPHAARG1, (int)D3DTA.D3DTA_TEXTURE);
+        DXNative.FontEngineSetTextureStageState(0, (int)D3DTEXTURESTAGESTATETYPE.D3DTSS_ALPHAARG2, (int)D3DTA.D3DTA_DIFFUSE);
 
-        GUIGraphicsContext.DX9Device.TextureState[0].AlphaOperation = Direct3D.TextureOperation.Modulate;
 
-        GUIGraphicsContext.DX9Device.TextureState[0].AlphaArgument1 = Direct3D.TextureArgument.TextureColor;
-        GUIGraphicsContext.DX9Device.TextureState[0].AlphaArgument2 = Direct3D.TextureArgument.Diffuse;
-        GUIGraphicsContext.DX9Device.TextureState[1].ColorOperation = Direct3D.TextureOperation.Disable;
-        GUIGraphicsContext.DX9Device.TextureState[1].AlphaOperation = Direct3D.TextureOperation.Disable;
+        DXNative.FontEngineSetTextureStageState(0, (int)D3DTEXTURESTAGESTATETYPE.D3DTSS_COLOROP, (int)D3DTEXTUREOP.D3DTOP_MODULATE);
+        DXNative.FontEngineSetTextureStageState(0, (int)D3DTEXTURESTAGESTATETYPE.D3DTSS_COLORARG1, (int)D3DTA.D3DTA_TEXTURE);
+        DXNative.FontEngineSetTextureStageState(0, (int)D3DTEXTURESTAGESTATETYPE.D3DTSS_COLORARG2, (int)D3DTA.D3DTA_DIFFUSE);
+
+        DXNative.FontEngineSetTextureStageState(0, (int)D3DTEXTURESTAGESTATETYPE.D3DTSS_ALPHAOP, (int)D3DTEXTUREOP.D3DTOP_MODULATE);
+
+        DXNative.FontEngineSetTextureStageState(0, (int)D3DTEXTURESTAGESTATETYPE.D3DTSS_ALPHAARG1, (int)D3DTA.D3DTA_TEXTURE);
+        DXNative.FontEngineSetTextureStageState(0, (int)D3DTEXTURESTAGESTATETYPE.D3DTSS_ALPHAARG2, (int)D3DTA.D3DTA_DIFFUSE);
+
+        DXNative.FontEngineSetTextureStageState(1, (int)D3DTEXTURESTAGESTATETYPE.D3DTSS_COLOROP, (int)D3DTEXTUREOP.D3DTOP_DISABLE);
+        DXNative.FontEngineSetTextureStageState(1, (int)D3DTEXTURESTAGESTATETYPE.D3DTSS_ALPHAOP, (int)D3DTEXTUREOP.D3DTOP_DISABLE);
 
         int g_nAnisotropy = GUIGraphicsContext.DX9Device.DeviceCaps.MaxAnisotropy;
         float g_fMipMapLodBias = 0.0f;
-        GUIGraphicsContext.DX9Device.SamplerState[0].MinFilter = TextureFilter.Linear;
-        GUIGraphicsContext.DX9Device.SamplerState[0].MagFilter = TextureFilter.Linear;
-        GUIGraphicsContext.DX9Device.SamplerState[0].MipFilter = TextureFilter.Linear;
-        GUIGraphicsContext.DX9Device.SamplerState[0].MaxAnisotropy = g_nAnisotropy;
-        GUIGraphicsContext.DX9Device.SamplerState[0].MipMapLevelOfDetailBias = g_fMipMapLodBias;
+        
+        DXNative.FontEngineSetSamplerState(0, (int)D3DSAMPLERSTATETYPE.D3DSAMP_MINFILTER, (uint)D3DTEXTUREFILTERTYPE.D3DTEXF_LINEAR);
+        DXNative.FontEngineSetSamplerState(0, (int)D3DSAMPLERSTATETYPE.D3DSAMP_MAGFILTER, (uint)D3DTEXTUREFILTERTYPE.D3DTEXF_LINEAR);
+        DXNative.FontEngineSetSamplerState(0, (int)D3DSAMPLERSTATETYPE.D3DSAMP_MIPFILTER, (uint)D3DTEXTUREFILTERTYPE.D3DTEXF_LINEAR);
+        DXNative.FontEngineSetSamplerState(0, (int)D3DSAMPLERSTATETYPE.D3DSAMP_MAXANISOTROPY, (uint)g_nAnisotropy);
+        DXNative.FontEngineSetSamplerState(0, (int)D3DSAMPLERSTATETYPE.D3DSAMP_MIPMAPLODBIAS, (uint)g_fMipMapLodBias);
 
-        GUIGraphicsContext.DX9Device.SamplerState[1].MinFilter = TextureFilter.Linear;
-        GUIGraphicsContext.DX9Device.SamplerState[1].MagFilter = TextureFilter.Linear;
-        GUIGraphicsContext.DX9Device.SamplerState[1].MipFilter = TextureFilter.Linear;
-        GUIGraphicsContext.DX9Device.SamplerState[1].MaxAnisotropy = g_nAnisotropy;
-        GUIGraphicsContext.DX9Device.SamplerState[1].MipMapLevelOfDetailBias = g_fMipMapLodBias;
+        DXNative.FontEngineSetSamplerState(1, (int)D3DSAMPLERSTATETYPE.D3DSAMP_MINFILTER, (int)D3DTEXTUREFILTERTYPE.D3DTEXF_LINEAR);
+        DXNative.FontEngineSetSamplerState(1, (int)D3DSAMPLERSTATETYPE.D3DSAMP_MAGFILTER, (int)D3DTEXTUREFILTERTYPE.D3DTEXF_LINEAR);
+        DXNative.FontEngineSetSamplerState(1, (int)D3DSAMPLERSTATETYPE.D3DSAMP_MIPFILTER, (int)D3DTEXTUREFILTERTYPE.D3DTEXF_LINEAR);
+        DXNative.FontEngineSetSamplerState(1, (int)D3DSAMPLERSTATETYPE.D3DSAMP_MAXANISOTROPY, (uint)g_nAnisotropy);
+        DXNative.FontEngineSetSamplerState(1, (int)D3DSAMPLERSTATETYPE.D3DSAMP_MIPMAPLODBIAS, (uint)g_fMipMapLodBias);
 
         // Render the image
         GUIGraphicsContext.DX9Device.SetStreamSource(0, m_vbBuffer, 0);
@@ -751,8 +783,70 @@ namespace MediaPortal.Util
       }
     }
 
+    public static bool ThumbnailCallback()
+    {
+      return false;
+    }
+
     /// <summary>
-    /// Creates a thumbnail of the specified image filename
+    /// Set URL to use
+    /// </summary>
+    public static String MediaUrl { get; private set; }
+
+    /// <summary>
+    /// Creates a thumbnail of the specified image
+    /// </summary>
+    /// <param name="thumbnailImageSource">The source filename to load a System.Drawing.Image from</param>
+    /// <param name="thumbnailImageDest">Filename of the thumbnail to create</param>
+    /// <param name="aThumbWidth">Maximum width of the thumbnail</param>
+    /// <param name="aThumbHeight">Maximum height of the thumbnail</param>
+    /// <param name="iRotate">
+    /// 0 = no rotate
+    /// 1 = rotate 90 degrees
+    /// 2 = rotate 180 degrees
+    /// 3 = rotate 270 degrees
+    /// </param>
+    /// <returns>Whether the thumb has been successfully created</returns>
+    public static bool CreateThumbnail(string thumbnailImageSource, string thumbnailImageDest, int aThumbWidth,
+                                       int aThumbHeight, int iRotate, bool aFastMode)
+    {
+      return CreateThumbnail(thumbnailImageSource, thumbnailImageDest, aThumbWidth,
+                             aThumbHeight, iRotate, aFastMode, true, true);
+    }
+
+    private static bool BitmapFromSource(BitmapSource bitmapsource, string thumbnailImageDest)
+    {
+      if (bitmapsource == null)
+      {
+        return false;
+      }
+      try
+      {
+        using (MemoryStream outStream = new MemoryStream())
+        {
+          BitmapEncoder enc = new BmpBitmapEncoder();
+          enc.Frames.Add(BitmapFrame.Create(bitmapsource));
+          enc.Save(outStream);
+          using (outStream)
+          {
+            var img = new Bitmap(Image.FromStream(outStream));
+            if (thumbnailImageDest != null && !File.Exists(thumbnailImageDest))
+            {
+              img.Save(thumbnailImageDest, Thumbs.ThumbCodecInfo, Thumbs.ThumbEncoderParams);
+              File.SetAttributes(thumbnailImageDest, File.GetAttributes(thumbnailImageDest) | FileAttributes.Hidden);
+            }
+            return true;
+          }
+        }
+      }
+      catch (Exception)
+      {
+        return false;
+      }
+    }
+
+    /// <summary>
+    /// Creates a thumbnail of the specified image filename for Video
     /// </summary>
     /// <param name="aInputFilename">The source filename to load a System.Drawing.Image from</param>
     /// <param name="aThumbTargetPath">Filename of the thumbnail to create</param>
@@ -766,7 +860,7 @@ namespace MediaPortal.Util
     /// </param>
     /// <param name="aFastMode">Use low quality resizing without interpolation suitable for small thumbnails</param>
     /// <returns>Whether the thumb has been successfully created</returns>
-    public static bool CreateThumbnail(string aInputFilename, string aThumbTargetPath, int iMaxWidth, int iMaxHeight,
+    public static bool CreateThumbnailVideo(string aInputFilename, string aThumbTargetPath, int iMaxWidth, int iMaxHeight,
                                        int iRotate, bool aFastMode)
     {
       bool result = false;
@@ -777,26 +871,20 @@ namespace MediaPortal.Util
 
       try
       {
-        //if (aFastMode)
-        //{
-        //  try
-        //  {
-        //    Extractor.DesiredSize = new Size(iMaxWidth, iMaxHeight);
-        //    myImage = Extractor.GetThumbnail(aInputFilename);
-        //    return SaveThumbnail(aThumbTargetPath, myImage);
-        //  }
-        //  catch (Exception) { }
-        //}
         try
         {
-          myImage = ImageFast.FromFile(aInputFilename);
+          using (FileStream fs = new FileStream(aInputFilename, FileMode.Open, FileAccess.Read))
+          {
+            using (myImage = Image.FromStream(fs, true, false))
+            {
+              result = CreateThumbnail(myImage, aThumbTargetPath, iMaxWidth, iMaxHeight, iRotate, aFastMode);
+            }
+          }
         }
         catch (FileNotFoundException)
         {
           result = false;
         }
-
-        result = CreateThumbnail(myImage, aThumbTargetPath, iMaxWidth, iMaxHeight, iRotate, aFastMode);
       }
       catch (Exception)
       {
@@ -804,8 +892,19 @@ namespace MediaPortal.Util
 
         try
         {
-          myImage = Image.FromFile(aInputFilename, true);
-          result = CreateThumbnail(myImage, aThumbTargetPath, iMaxWidth, iMaxHeight, iRotate, aFastMode);
+          try
+          {
+            using (FileStream fs = new FileStream(aInputFilename, FileMode.Open, FileAccess.Read))
+            {
+              using (myImage = Image.FromStream(fs, true, false))
+              {
+                result = CreateThumbnail(myImage, aThumbTargetPath, iMaxWidth, iMaxHeight, iRotate, aFastMode);
+              }
+            }
+          }
+          catch (Exception)
+          {
+          }
         }
         catch (FileNotFoundException)
         {
@@ -831,9 +930,315 @@ namespace MediaPortal.Util
       return result;
     }
 
-    public static bool ThumbnailCallback()
+    /// <summary>
+    /// Creates a thumbnail of the specified image
+    /// </summary>
+    /// <param name="thumbnailImageSource">The source filename to load a System.Drawing.Image from</param>
+    /// <param name="thumbnailImageDest">Filename of the thumbnail to create</param>
+    /// <param name="aThumbWidth">Maximum width of the thumbnail</param>
+    /// <param name="aThumbHeight">Maximum height of the thumbnail</param>
+    /// <param name="autocreateLargeThumbs">Auto create large thumbnail</param>
+    /// <param name="iRotate">
+    /// 0 = no rotate
+    /// 1 = rotate 90 degrees
+    /// 2 = rotate 180 degrees
+    /// 3 = rotate 270 degrees
+    /// <param name="fallBack">Set to true to generated file that need to be deleted (for ex in temp folder)</param>
+    /// </param>
+    /// <returns>Whether the thumb has been successfully created</returns>
+    public static bool CreateThumbnail(string thumbnailImageSource, string thumbnailImageDest, int aThumbWidth,
+                                       int aThumbHeight, int iRotate, bool aFastMode, bool autocreateLargeThumbs, bool fallBack)
     {
-      return false;
+      return ReCreateThumbnail(thumbnailImageSource, thumbnailImageDest, aThumbWidth,
+                                       aThumbHeight, iRotate, aFastMode, autocreateLargeThumbs, fallBack, false);
+    }
+
+    /// <summary>
+    /// Creates a thumbnail of the specified image
+    /// </summary>
+    /// <param name="thumbnailImageSource">The source filename to load a System.Drawing.Image from</param>
+    /// <param name="thumbnailImageDest">Filename of the thumbnail to create</param>
+    /// <param name="aThumbWidth">Maximum width of the thumbnail</param>
+    /// <param name="aThumbHeight">Maximum height of the thumbnail</param>
+    /// <param name="autocreateLargeThumbs">Auto create large thumbnail</param>
+    /// <param name="iRotate">
+    /// 0 = no rotate
+    /// 1 = rotate 90 degrees
+    /// 2 = rotate 180 degrees
+    /// 3 = rotate 270 degrees
+    /// <param name="fallBack">Set to true to generated file that need to be deleted (for ex in temp folder)</param>
+    /// </param>
+    /// /// <param name="needOverride">Override if the file is exist</param>
+    /// <returns>Whether the thumb has been successfully created</returns>
+    public static bool ReCreateThumbnail(string thumbnailImageSource, string thumbnailImageDest, int aThumbWidth,
+                                       int aThumbHeight, int iRotate, bool aFastMode, bool autocreateLargeThumbs, bool fallBack, bool needOverride)
+    {
+      if (!needOverride && File.Exists(thumbnailImageDest))
+      {
+        return false;
+      }
+
+      if (string.IsNullOrEmpty(thumbnailImageSource) || string.IsNullOrEmpty(thumbnailImageDest) || aThumbHeight <= 0 ||
+          aThumbWidth <= 0)
+      {
+        return false;
+      }
+
+      BitmapSource ret = null;
+      BitmapMetadata meta = null;
+      Bitmap shellThumb = null;
+      Bitmap myTargetThumb = null;
+      BitmapFrame frame = null;
+      Image myImage = null;
+
+      TransformedBitmap thumbnail = null;
+      TransformGroup transformGroup = null;
+
+      bool result = false;
+      int iQuality = (int) Thumbs.Quality;
+      int decodeW = aThumbWidth;
+
+      MediaUrl = thumbnailImageSource;
+
+      try
+      {
+        if (fallBack)
+        {
+          frame = BitmapFrame.Create(new Uri(MediaUrl), BitmapCreateOptions.None, BitmapCacheOption.OnLoad);
+        }
+        else
+        {
+          //Try generate Bitmap frame : speedy and low memory !
+          frame = BitmapFrame.Create(new Uri(MediaUrl), BitmapCreateOptions.DelayCreation,
+                                     BitmapCacheOption.None);
+        }
+
+        if (frame.Thumbnail == null) //If it failed try second method (slower and use more memory)
+        {
+          using (ShellObject shellFile = ShellObject.FromParsingName(thumbnailImageSource))
+          {
+            shellFile.Thumbnail.RetrievalOption = ShellThumbnailRetrievalOption.Default;
+            shellFile.Thumbnail.FormatOption = ShellThumbnailFormatOption.ThumbnailOnly;
+
+            switch (iQuality)
+            {
+              case 0:
+                shellThumb = shellFile.Thumbnail.MediumBitmap;
+                break;
+              case 1:
+                shellThumb = shellFile.Thumbnail.LargeBitmap;
+                break;
+              case 2:
+                shellThumb = shellFile.Thumbnail.LargeBitmap;
+                break;
+              case 3:
+                shellThumb = shellFile.Thumbnail.ExtraLargeBitmap;
+                break;
+              case 4:
+                shellThumb = shellFile.Thumbnail.ExtraLargeBitmap;
+                break;
+              default:
+                break;
+            }
+
+            if (!OSInfo.OSInfo.Win8OrLater())
+            {
+              switch (iRotate)
+              {
+                case 1:
+                  shellThumb.RotateFlip(RotateFlipType.Rotate90FlipNone);
+                  break;
+                case 2:
+                  shellThumb.RotateFlip(RotateFlipType.Rotate180FlipNone);
+                  break;
+                case 3:
+                  shellThumb.RotateFlip(RotateFlipType.Rotate270FlipNone);
+                  break;
+                default:
+                  break;
+              }
+            }
+
+            if (shellThumb != null && !autocreateLargeThumbs)
+            {
+              int iWidth = aThumbWidth;
+              int iHeight = aThumbHeight;
+              double fAR = (shellThumb.Width)/((float) shellThumb.Height);
+
+              if (shellThumb.Width > shellThumb.Height)
+                iHeight = (int) Math.Floor((((float) iWidth)/fAR));
+              else
+                iWidth = (int) Math.Floor((fAR*((float) iHeight)));
+
+              try
+              {
+                Util.Utils.FileDelete(thumbnailImageDest);
+              }
+              catch (Exception ex)
+              {
+                Log.Error("Picture: Error deleting old thumbnail - {0}", ex.Message);
+              }
+
+              // Write small thumbnail
+              myTargetThumb = new Bitmap(shellThumb, iWidth, iHeight);
+              myTargetThumb.Save(thumbnailImageDest, Thumbs.ThumbCodecInfo, Thumbs.ThumbEncoderParams);
+              File.SetAttributes(thumbnailImageDest, File.GetAttributes(thumbnailImageDest) | FileAttributes.Hidden);
+              result = true;
+            }
+            else
+            {
+              int iWidth = aThumbWidth;
+              int iHeight = aThumbHeight;
+              double fAR = (shellThumb.Width)/((float) shellThumb.Height);
+
+              if (shellThumb.Width > shellThumb.Height)
+                iHeight = (int) Math.Floor((((float) iWidth)/fAR));
+              else
+                iWidth = (int) Math.Floor((fAR*((float) iHeight)));
+
+              try
+              {
+                Util.Utils.FileDelete(thumbnailImageDest);
+              }
+              catch (Exception ex)
+              {
+                Log.Error("Picture: Error deleting old thumbnail - {0}", ex.Message);
+              }
+
+              // Write Large thumbnail
+              myTargetThumb = new Bitmap(shellThumb, iWidth, iHeight);
+              myTargetThumb.Save(thumbnailImageDest, Thumbs.ThumbCodecInfo, Thumbs.ThumbEncoderParams);
+              File.SetAttributes(thumbnailImageDest, File.GetAttributes(thumbnailImageDest) | FileAttributes.Hidden);
+              result = true;
+            }
+          }
+        }
+        else
+        {
+          //Detect metas image
+          meta = frame.Metadata as BitmapMetadata;
+          ret = frame.Thumbnail;
+
+          if (autocreateLargeThumbs)
+          {
+            if (ret != null)
+            {
+              // we'll make a thumbnail image then ... (too bad as the pre-created one is FAST!)
+              thumbnail = new TransformedBitmap();
+              thumbnail.BeginInit();
+              thumbnail.Source = frame as BitmapSource;
+
+              // we'll make a reasonable sized thumnbail
+              int pixelH = frame.PixelHeight;
+              int pixelW = frame.PixelWidth;
+              int decodeH = (frame.PixelHeight*decodeW)/pixelW;
+              double scaleX = decodeW/(double) pixelW;
+              double scaleY = decodeH/(double) pixelH;
+
+              transformGroup = new TransformGroup();
+              transformGroup.Children.Add(new ScaleTransform(scaleX, scaleY));
+              thumbnail.Transform = transformGroup;
+              thumbnail.EndInit();
+              ret = thumbnail;
+              ret = MetaOrientation(meta, ret);
+
+              // Write Large thumbnail
+              result = BitmapFromSource(ret, thumbnailImageDest);
+            }
+          }
+          else
+          {
+            if (ret != null)
+            {
+              // Write small thumbnail
+              ret = MetaOrientation(meta, ret);
+              result = BitmapFromSource(ret, thumbnailImageDest);
+            }
+          }
+        }
+
+      }
+      catch (Exception)
+      {
+        try
+        {
+          try
+          {
+            using (FileStream fs = new FileStream(thumbnailImageSource, FileMode.Open, FileAccess.Read))
+            {
+              using (myImage = Image.FromStream(fs, true, false))
+              {
+                result = CreateThumbnail(myImage, thumbnailImageDest, aThumbWidth, aThumbHeight, iRotate, aFastMode);
+              }
+            }
+          }
+          catch (FileNotFoundException)
+          {
+            result = false;
+          }
+        }
+        catch (Exception)
+        {
+          Log.Warn("Picture: Fast loading of thumbnail {0} failed - trying safe fallback now", thumbnailImageDest);
+
+          try
+          {
+            try
+            {
+              using (FileStream fs = new FileStream(thumbnailImageDest, FileMode.Open, FileAccess.Read))
+              {
+                using (myImage = Image.FromStream(fs, true, false))
+                {
+                  result = CreateThumbnail(myImage, thumbnailImageDest, aThumbWidth, aThumbHeight, iRotate, aFastMode);
+                }
+              }
+            }
+            catch (Exception)
+            {
+            }
+          }
+          catch (FileNotFoundException)
+          {
+            result = false;
+          }
+          catch (OutOfMemoryException)
+          {
+            Log.Warn("Picture: Creating thumbnail failed - image format is not supported of {0}", thumbnailImageSource);
+            result = false;
+          }
+          catch (Exception)
+          {
+            Log.Info("Pictures: No thumbnail created for -- {0}", thumbnailImageSource);
+            result = false;
+          }
+        }
+      }
+      finally
+      {
+        if (shellThumb != null)
+          shellThumb.SafeDispose();
+        if (ret != null)
+          ret.SafeDispose();
+        if (thumbnail != null)
+          thumbnail.SafeDispose();
+        if (transformGroup != null)
+          transformGroup.SafeDispose();
+        if (myTargetThumb != null)
+          myTargetThumb.SafeDispose();
+        if (MediaUrl != null)
+          MediaUrl.SafeDispose();
+        if (frame != null)
+          frame.SafeDispose();
+        if (myImage != null)
+          myImage.SafeDispose();
+      }
+
+      if (result && Util.Utils.IsFileExistsCacheEnabled())
+      {
+        Log.Debug("CreateThumbnail : FileExistsInCache updated with new file: {0}", thumbnailImageDest);
+        Util.Utils.DoInsertExistingFileIntoCache(thumbnailImageDest);
+      }
+      return result;
     }
 
     /// <summary>
@@ -952,6 +1357,40 @@ namespace MediaPortal.Util
       return result;
     }
 
+    private static BitmapSource MetaOrientation(BitmapMetadata meta, BitmapSource ret)
+    {
+      double angle = 0;
+      if ((meta != null) && (ret != null)) //si on a des meta, tentative de récupération de l'orientation
+      {
+        if (meta.GetQuery("/app1/ifd/{ushort=274}") != null)
+        {
+          orientation =
+            (ExifOrientations)
+            Enum.Parse(typeof (ExifOrientations), meta.GetQuery("/app1/ifd/{ushort=274}").ToString());
+        }
+
+        switch (orientation)
+        {
+          case ExifOrientations.Rotate90:
+            angle = -90;
+            break;
+          case ExifOrientations.Rotate180:
+            angle = 180;
+            break;
+          case ExifOrientations.Rotate270:
+            angle = 90;
+            break;
+        }
+
+        if (angle != 0) //on doit effectuer une rotation de l'image
+        {
+          ret = new TransformedBitmap(ret.Clone(), new RotateTransform(angle));
+          ret.Freeze();
+        }
+      }
+      return ret;
+    }
+
     public static bool SaveThumbnail(string aThumbTargetPath, Image myImage)
     {
       try
@@ -1041,8 +1480,20 @@ namespace MediaPortal.Util
 
     public static int GetRotateByExif(string imageFile)
     {
-      Image image = Image.FromFile(imageFile);
-      return GetRotateByExif(image);
+      try
+      {
+        using (FileStream fs = new FileStream(imageFile, FileMode.Open, FileAccess.Read))
+        {
+          using (Image image = Image.FromStream(fs, true, false))
+          {
+            return GetRotateByExif(image);
+          }
+        }
+      }
+      catch
+      {
+        return 0;
+      }
     }
 
     public static int GetRotateByExif(Image image)

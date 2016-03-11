@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <controls>
+
+    <control>
+      <id>0</id>
+      <type>image</type>
+  		<posX>10</posX>
+  		<posY>332</posY>
+  		<width>1903</width>
+  		<height>383</height>
+  		<texture>panel_now_playing_info_small.png</texture>
+			<visible>string.equals(#skin.mymusic.info,TopTags)</visible>
+  		<animation effect="fade" start="100" end="0" time="250" reversible="false">Hidden</animation>
+  		<animation effect="fade" start="0" end="100" time="250" reversible="false">Visible</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+
+	<!--            :: Top Album tracks/tags ::            -->
+		
+    <control>
+      <id>0</id>
+      <description>list of tagged tracks label</description>
+      <type>fadelabel</type>
+      <visible>string.equals(#skin.mymusic.info,TopTags) | Control.HasFocus(155) | Control.HasFocus(166)</visible>
+      <posX>150</posX>
+      <posY>432</posY>
+      <width>627</width>
+      <font>fontB16</font>
+      <textcolor>ff00b7ff</textcolor>
+      <label>33011</label>
+			<animation effect="fade" start="100" end="0" time="250" reversible="false">Hidden</animation>
+			<animation effect="fade" start="0" end="100" time="250" reversible="false">Visible</animation>
+    	<animation effect="fade" time="250">WindowOpen</animation>
+    	<animation effect="fade" time="250">WindowClose</animation>
+    </control>
+		
+    <control>
+      <id>155</id>
+      <description>list of tagged tracks</description>
+      <type>listcontrol</type>
+      <onleft>155</onleft>
+      <onright>6103</onright>
+      <onup>6103</onup>
+      <ondown>6103</ondown>
+      <posX>115</posX>
+      <posY>499</posY>
+      <width>640</width>
+      <height>210</height>
+      <textXOff>30</textXOff>
+			<textYOff>0</textYOff>
+      <IconXOff>0</IconXOff>
+      <spinColor>-</spinColor>
+      <image>-</image>
+      <textcolor>FFFFFFFF</textcolor>
+      <unfocusedAlpha>255</unfocusedAlpha>
+      <textureUp>-</textureUp>
+      <textureDown>-</textureDown>
+      <textureUpFocus>-</textureUpFocus>
+      <textureDownFocus>-</textureDownFocus>
+      <textureFocus>list_sub_focus_arrow_small.png</textureFocus>
+      <textureHeight>38</textureHeight>
+      <textureNoFocus>-</textureNoFocus>
+      <spaceBetweenItems>0</spaceBetweenItems>
+      <visible>string.equals(#skin.mymusic.info,TopTags) | Control.HasFocus(155)</visible>
+			<dimColor>ffffffff</dimColor>
+			<animation effect="fade" start="100" end="0" time="250" reversible="false">Hidden</animation>
+			<animation effect="fade" start="0" end="100" time="250" reversible="false">Visible</animation>
+    	<animation effect="fade" time="250">WindowOpen</animation>
+    	<animation effect="fade" time="250">WindowClose</animation>
+    </control>	
+
+  </controls>
+</window>

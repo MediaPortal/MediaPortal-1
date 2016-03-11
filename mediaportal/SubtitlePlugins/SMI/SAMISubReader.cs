@@ -40,7 +40,7 @@ namespace MediaPortal.Subtitle
 
     public override bool SupportsFile(string strFileName)
     {
-      string strExt = Path.GetExtension(strFileName).ToLower();
+      string strExt = Path.GetExtension(strFileName).ToLowerInvariant();
       if (strExt == ".smi")
       {
         return true;
@@ -67,7 +67,7 @@ namespace MediaPortal.Subtitle
             string EndTime = "";
             if (s != null && s.Trim() != "")
             {
-              if (s.Trim().ToLower().StartsWith("<sync start="))
+              if (s.Trim().ToLowerInvariant().StartsWith("<sync start="))
               {
                 StartTime = s.Trim().Substring(12, s.Trim().IndexOf(">") - 12);
                 if (StartTime != "0")
@@ -147,7 +147,7 @@ namespace MediaPortal.Subtitle
       tmpText = tmpText.Replace("</p>", "");
       tmpText = tmpText.Replace("</P>", "");
 
-      if (tmpText.ToLower().StartsWith("<p class="))
+      if (tmpText.ToLowerInvariant().StartsWith("<p class="))
       {
         tmpText = tmpText.Substring(tmpText.IndexOf(">"));
       }

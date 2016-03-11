@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2013 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2013 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -18,15 +18,11 @@
 
 #endregion
 
-using System;
 using System.Drawing;
 using System.IO;
 using System.Threading;
-using System.Windows.Forms;
 using System.Xml;
-using MediaPortal.Configuration;
 using MediaPortal.GUI.Library;
-using MediaPortal.Profile;
 using MediaPortal.UserInterface.Controls;
 
 namespace MediaPortal
@@ -38,6 +34,10 @@ namespace MediaPortal
       InitializeComponent();
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="version"></param>
     public void SetVersion(string version)
     {
       string[] strVersion = version.Split('-');
@@ -45,12 +45,12 @@ namespace MediaPortal
       Log.Info("Version: Application {0}", strVersion[0]);
       if (strVersion.Length > 1)
       {
-        string day = strVersion[2].Substring(0, 2);
+        string day   = strVersion[2].Substring(0, 2);
         string month = strVersion[2].Substring(3, 2);
-        string year = strVersion[2].Substring(6, 4);
-        string time = strVersion[3].Substring(0, 5);
+        string year  = strVersion[2].Substring(6, 4);
+        string time  = strVersion[3].Substring(0, 5);
         string build = strVersion[4].Substring(0, 13).Trim();
-        lblCVS.Text = string.Format("{0} {1} ({2}-{3}-{4} / {5} CET)", strVersion[1], build, year, month, day, time);
+        lblCVS.Text  = string.Format("{0} {1} ({2}-{3}-{4} / {5} CET)", strVersion[1], build, year, month, day, time);
         Log.Info("Version: {0}", lblCVS.Text);
       }
       else
@@ -60,12 +60,19 @@ namespace MediaPortal
       Update();
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="information"></param>
     public void SetInformation(string information)
     {
       lblMain.Text = information;
       Update();
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
     public void FadeIn()
     {
       while (Opacity <= 0.9)
@@ -77,7 +84,7 @@ namespace MediaPortal
     }
 
     /// <summary>
-    /// Tries to load settings of the splashscreen (color, background image...)
+    /// Tries to load settings of the splash screen (color, background image...)
     /// </summary>
     public void RetrieveSplashScreenInfo()
     {
@@ -89,60 +96,78 @@ namespace MediaPortal
     }
 
     /// <summary>
-    /// Tries to read the splashscreen.xml file of the currentskin
+    /// Tries to read the splashscreen.xml file of the current skin
     /// </summary>
     private void ReadSplashScreenXML()
     {
-      string SkinFilePath = string.Empty;
-      SkinFilePath = GUIGraphicsContext.GetThemedSkinFile("\\splashscreen.xml");
+      string skinFilePath = GUIGraphicsContext.GetThemedSkinFile("\\splashscreen.xml");
 
-      if (!File.Exists(SkinFilePath))
+      if (!File.Exists(skinFilePath))
       {
-        Log.Debug("FullScreenSplash: Splashscreen.xml not found!: {0}", SkinFilePath);
-        return; // if not found... leave
+        Log.Debug("FullScreenSplash: Splashscreen.xml not found!: {0}", skinFilePath);
+        return;
       }
 
-      Log.Debug("FullScreenSplash: Splashscreen.xml found: {0}", SkinFilePath);
+      Log.Debug("FullScreenSplash: Splashscreen.xml found: {0}", skinFilePath);
 
-      XmlDocument doc = new XmlDocument();
-      doc.Load(SkinFilePath);
-      XmlNodeList ControlsList = doc.DocumentElement.SelectNodes("/window/controls/control");
-
-      foreach (XmlNode Control in ControlsList)
+      var doc = new XmlDocument();
+      doc.Load(skinFilePath);
+      if (doc.DocumentElement != null)
       {
-        if (Control.SelectSingleNode("type/text()").Value.ToLower() == "image"
-            && Control.SelectSingleNode("id/text()").Value == "1") // if the background image control is found
-        {
-          string BackgoundImageName = Control.SelectSingleNode("texture/text()").Value;
-          string BackgroundImagePath = GUIGraphicsContext.GetThemedSkinFile("\\media\\" + BackgoundImageName);
-          if (File.Exists(BackgroundImagePath))
+        XmlNodeList controlsList = doc.DocumentElement.SelectNodes("/window/controls/control");
+        if (controlsList != null)
+          foreach (XmlNode control in controlsList)
           {
-            Log.Debug("FullScreenSplash: Try to load background image value found: {0}", BackgroundImagePath);
-            pbBackground.Image = new Bitmap(BackgroundImagePath); // load the image as background
-            Log.Debug("FullScreenSplash: background image successfully loaded: {0}", BackgroundImagePath);
+            XmlNode selectSingleNode = control.SelectSingleNode("type/text()");
+            XmlNode singleNode = control.SelectSingleNode("id/text()");
+            // if the background image control is found
+            if (singleNode != null && (selectSingleNode != null && (selectSingleNode.Value.ToLowerInvariant() == "image" && singleNode.Value == "1"))) 
+            {
+              XmlNode xmlNode = control.SelectSingleNode("texture/text()");
+              if (xmlNode != null)
+              {
+                string backgoundImageName = xmlNode.Value;
+                string backgroundImagePath = GUIGraphicsContext.GetThemedSkinFile("\\media\\" + backgoundImageName);
+                if (File.Exists(backgroundImagePath))
+                {
+                  Log.Debug("FullScreenSplash: Try to load background image value found: {0}", backgroundImagePath);
+                  pbBackground.Image = new Bitmap(backgroundImagePath); // load the image as background
+                  Log.Debug("FullScreenSplash: background image successfully loaded: {0}", backgroundImagePath);
+                }
+              }
+              continue;
+            }
+            XmlNode node = control.SelectSingleNode("type/text()");
+            XmlNode selectSingleNode1 = control.SelectSingleNode("id/text()");
+            // if the center label control is found
+            if (selectSingleNode1 != null && (node != null && (node.Value.ToLowerInvariant() == "label" && selectSingleNode1.Value == "2")))
+            {
+              if (control.SelectSingleNode("textsize") != null)
+              {
+                XmlNode xmlNode = control.SelectSingleNode("textsize/text()");
+                if (xmlNode != null)
+                {
+                  float textSize = float.Parse(xmlNode.Value);
+                  Log.Debug("FullScreenSplash: Textsize value found: {0}", textSize);
+                  lblMain.Font = new Font(lblMain.Font.FontFamily, textSize, lblMain.Font.Style);
+                  Log.Debug("FullScreenSplash: Textsize successfully set: {0}", textSize);
+                }
+              }
+              if (control.SelectSingleNode("textcolor") != null)
+              {
+                XmlNode xmlNode = control.SelectSingleNode("textcolor/text()");
+                if (xmlNode != null)
+                {
+                  Color textColor = ColorTranslator.FromHtml(xmlNode.Value);
+                  Log.Debug("FullScreenSplash: TextColor value found: {0}", textColor);
+                  lblMain.ForeColor = textColor;
+                  lblVersion.ForeColor = textColor;
+                  lblCVS.ForeColor = textColor;
+                  Log.Debug("FullScreenSplash: TextColor successfully set: {0}", textColor);
+                }
+              }
+            }
           }
-          continue;
-        }
-        if (Control.SelectSingleNode("type/text()").Value.ToLower() == "label"
-            && Control.SelectSingleNode("id/text()").Value == "2") // if the center label control is found
-        {
-          if (Control.SelectSingleNode("textsize") != null) // textsize info found?
-          {
-            float TextSize = float.Parse(Control.SelectSingleNode("textsize/text()").Value);
-            Log.Debug("FullScreenSplash: Textsize value found: {0}", TextSize);
-            lblMain.Font = new Font(lblMain.Font.FontFamily, TextSize, lblMain.Font.Style);
-            Log.Debug("FullScreenSplash: Textsize successfully set: {0}", TextSize);
-          }
-          if (Control.SelectSingleNode("textcolor") != null) // textcolor info found?
-          {
-            Color TextColor = ColorTranslator.FromHtml(Control.SelectSingleNode("textcolor/text()").Value);
-            Log.Debug("FullScreenSplash: TextColor value found: {0}", TextColor);
-            lblMain.ForeColor = TextColor;
-            lblVersion.ForeColor = TextColor;
-            lblCVS.ForeColor = TextColor;
-            Log.Debug("FullScreenSplash: TextColor successfully set: {0}", TextColor);
-          }
-        }
       }
     }
 
@@ -151,72 +176,36 @@ namespace MediaPortal
     /// </summary>
     private void ReadReferenceXML()
     {
-      string SkinReferenceFilePath = string.Empty;
-      SkinReferenceFilePath = GUIGraphicsContext.GetThemedSkinFile("\\references.xml");
+      string skinReferenceFilePath = GUIGraphicsContext.GetThemedSkinFile("\\references.xml");
 
-      Log.Debug("FullScreenSplash: Try to use the reference.xml: {0}", SkinReferenceFilePath);
+      Log.Debug("FullScreenSplash: Try to use the reference.xml: {0}", skinReferenceFilePath);
 
-      XmlDocument doc = new XmlDocument();
-      doc.Load(SkinReferenceFilePath);
-      XmlNodeList ControlsList = doc.DocumentElement.SelectNodes("/controls/control");
-
-      foreach (XmlNode Control in ControlsList)
+      var doc = new XmlDocument();
+      doc.Load(skinReferenceFilePath);
+      if (doc.DocumentElement != null)
       {
-        if (Control.SelectSingleNode("type/text()").Value.ToLower() == "image")
-        {
-          string BackgoundImageName = Control.SelectSingleNode("texture/text()").Value;
-          string BackgroundImagePath = GUIGraphicsContext.GetThemedSkinFile("\\media\\" + BackgoundImageName);
-          if (File.Exists(BackgroundImagePath))
-          {
-            pbBackground.Image = new Bitmap(BackgroundImagePath); // load the image as background
-            Log.Debug("FullScreenSplash: Background image value found: {0}", BackgroundImagePath);
-          }
-        }
-      }
-    }
+        XmlNodeList controlsList = doc.DocumentElement.SelectNodes("/controls/control");
 
-    private void FullScreenSplashScreen_Activated(object sender, EventArgs e)
-    {
-      //Cursor.Position = new Point(Screen.PrimaryScreen.Bounds.Width, Screen.PrimaryScreen.Bounds.Height);
-    }
-
-    private void FullScreenSplashScreen_Load(object sender, EventArgs e)
-    {
-      using (Settings xmlreader = new MPSettings())
-      {
-        if ((D3DApp._screenNumberOverride != -1) ||
-            xmlreader.GetValueAsBool("screenselector", "usescreenselector", false))
-          // lets see if the command line option "/screen=" was set or the screen selector is enabled in the config
-        {
-          int ScreenNumber = 0;
-          if (D3DApp._screenNumberOverride != -1)
+        if (controlsList != null)
+          foreach (XmlNode control in controlsList)
           {
-            ScreenNumber = D3DApp._screenNumberOverride;
-          }
-          else
-          {
-            ScreenNumber = xmlreader.GetValueAsInt("screenselector", "screennumber", 0); // read the screen number
-          }
-
-          ScreenNumber++; // increase the number by 1 to respect the DisplayDevice naming convention
-          foreach (Screen tmpscreen in Screen.AllScreens)
-          {
-            if (tmpscreen.DeviceName.Contains("DISPLAY" + ScreenNumber)) // if the selected Display is found
+            XmlNode selectSingleNode = control.SelectSingleNode("type/text()");
+            if (selectSingleNode != null && selectSingleNode.Value.ToLowerInvariant() == "image")
             {
-              this.Location = new Point(tmpscreen.Bounds.X, tmpscreen.Bounds.Y);
-              // set the form position into this screen
-              this.Size = new Size(tmpscreen.Bounds.Width + 1, tmpscreen.Bounds.Height + 1);
+              XmlNode singleNode = control.SelectSingleNode("texture/text()");
+              if (singleNode != null)
+              {
+                string backgoundImageName = singleNode.Value;
+                string backgroundImagePath = GUIGraphicsContext.GetThemedSkinFile("\\media\\" + backgoundImageName);
+                if (File.Exists(backgroundImagePath))
+                {
+                  pbBackground.Image = new Bitmap(backgroundImagePath); // load the image as background
+                  Log.Debug("FullScreenSplash: Background image value found: {0}", backgroundImagePath);
+                }
+              }
             }
           }
-        }
-        else
-        {
-          this.Location = new Point(0, 0);
-          this.Size = new Size(Screen.FromHandle(this.Handle).Bounds.Width + 1,
-                               Screen.FromHandle(this.Handle).Bounds.Height + 1);
-        }
       }
-      //this.WindowState = FormWindowState.Maximized; // fill the screen
     }
   }
 }

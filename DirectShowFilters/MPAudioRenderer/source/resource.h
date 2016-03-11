@@ -19,6 +19,7 @@
 #define IDC_BITDEPTH                    1013
 #define IDC_AUDIO_DELAY                 1017
 #define IDC_LOG_SAMPLE_TIMES            1018
+#define IDC_OUTPUT_BUFFER               1019
 
 // Next default values for new objects
 // 

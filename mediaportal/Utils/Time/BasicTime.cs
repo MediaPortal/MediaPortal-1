@@ -337,7 +337,7 @@ namespace MediaPortal.Utils.Time
         }
       }
 
-      if (strTime.ToLower().IndexOf("pm") != -1 && _hour != 0)
+      if (strTime.ToLowerInvariant().IndexOf("pm") != -1 && _hour != 0)
       {
         if (_hour != 12)
         {
@@ -345,7 +345,7 @@ namespace MediaPortal.Utils.Time
         }
       }
 
-      if (strTime.ToLower().IndexOf("am") != -1 && _hour == 12)
+      if (strTime.ToLowerInvariant().IndexOf("am") != -1 && _hour == 12)
       {
         _hour = 0;
       }

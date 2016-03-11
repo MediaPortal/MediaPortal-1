@@ -19,11 +19,11 @@
 #endregion
 
 using System;
-using System.Collections;
-using System.Globalization;
 using MediaPortal.GUI.Library;
 using MediaPortal.Profile;
+using MediaPortal.Services;
 using MediaPortal.Util;
+using MediaPortal.Video.Database;
 using Action = MediaPortal.GUI.Library.Action;
 
 namespace WindowPlugins.GUISettings
@@ -40,6 +40,7 @@ namespace WindowPlugins.GUISettings
     [SkinControl(6)] protected GUICheckButton btnEnableVideosThumbs= null;
     [SkinControl(7)] protected GUICheckButton btnEnableLeaveThumbInFolder = null;
     [SkinControl(8)] protected GUIButtonControl btnDeleteVideosThumbs = null;
+    [SkinControl(20)] protected GUIButtonControl btnClearBlacklistedThumbs = null;
     
     private enum Controls
     {
@@ -53,20 +54,6 @@ namespace WindowPlugins.GUISettings
     private int _iRows = 1;
     private bool _settingsSaved;
 
-    private class CultureComparer : IComparer
-    {
-      #region IComparer Members
-
-      public int Compare(object x, object y)
-      {
-        CultureInfo info1 = (CultureInfo)x;
-        CultureInfo info2 = (CultureInfo)y;
-        return String.Compare(info1.EnglishName, info2.EnglishName, true);
-      }
-
-      #endregion
-    }
-    
     public GUISettingsGUIThumbnails()
     {
       GetID = (int)Window.WINDOW_SETTINGS_GUITHUMBNAILS; //1005
@@ -88,10 +75,10 @@ namespace WindowPlugins.GUISettings
         _iQuality++;
         btnEnableMusicThumbs.Selected = xmlreader.GetValueAsBool("thumbnails", "musicfolderondemand", true);
         btnEnablePicturesThumbs.Selected = xmlreader.GetValueAsBool("thumbnails", "picturenolargethumbondemand", false);
-        btnEnableVideosThumbs.Selected = xmlreader.GetValueAsBool("thumbnails", "tvrecordedondemand", true);
-        btnEnableLeaveThumbInFolder.Selected = xmlreader.GetValueAsBool("thumbnails", "tvrecordedsharepreview", false);
-        _iColumns = xmlreader.GetValueAsInt("thumbnails", "tvthumbcols", 1);
-        _iRows = xmlreader.GetValueAsInt("thumbnails", "tvthumbrows", 1);
+        btnEnableVideosThumbs.Selected = xmlreader.GetValueAsBool("thumbnails", "videoondemand", true);
+        btnEnableLeaveThumbInFolder.Selected = xmlreader.GetValueAsBool("thumbnails", "videosharepreview", false);
+        _iColumns = xmlreader.GetValueAsInt("thumbnails", "videothumbcols", 1);
+        _iRows = xmlreader.GetValueAsInt("thumbnails", "videothumbrows", 1);
       }
     }
 
@@ -106,10 +93,10 @@ namespace WindowPlugins.GUISettings
           xmlwriter.SetValue("thumbnails", "quality", _iQuality);
           xmlwriter.SetValueAsBool("thumbnails", "musicfolderondemand", btnEnableMusicThumbs.Selected);
           xmlwriter.SetValueAsBool("thumbnails", "picturenolargethumbondemand", btnEnablePicturesThumbs.Selected);
-          xmlwriter.SetValueAsBool("thumbnails", "tvrecordedondemand", btnEnableVideosThumbs.Selected);
-          xmlwriter.SetValueAsBool("thumbnails", "tvrecordedsharepreview", btnEnableLeaveThumbInFolder.Selected);
-          xmlwriter.SetValue("thumbnails", "tvthumbcols", _iColumns);
-          xmlwriter.SetValue("thumbnails", "tvthumbrows", _iRows);
+          xmlwriter.SetValueAsBool("thumbnails", "videoondemand", btnEnableVideosThumbs.Selected);
+          xmlwriter.SetValueAsBool("thumbnails", "videosharepreview", btnEnableLeaveThumbInFolder.Selected);
+          xmlwriter.SetValue("thumbnails", "videothumbcols", _iColumns);
+          xmlwriter.SetValue("thumbnails", "videothumbrows", _iRows);
         }
       }
     }
@@ -126,7 +113,7 @@ namespace WindowPlugins.GUISettings
           {
             base.OnMessage(message);
 
-            for (int i = 1; i <= 5; ++i)
+            for (int i = 1; i <= 6; ++i)
             {
               GUIControl.AddItemLabelControl(GetID, (int)Controls.CONTROL_THUMBNAILS_QUALITY, i.ToString());
             }
@@ -202,7 +189,7 @@ namespace WindowPlugins.GUISettings
       }
       if (control == btnDeletePicturesThumbs)
       {
-        Utils.DeleteFiles(Thumbs.Pictures, String.Format(@"*{0}", Utils.GetThumbExtension()));
+        Utils.DeleteFiles(Thumbs.Pictures, String.Format(@"*{0}", Utils.GetThumbExtension()), true);
       }
       if (control == btnEnableVideosThumbs)
       {
@@ -214,8 +201,11 @@ namespace WindowPlugins.GUISettings
       }
       if (control == btnDeleteVideosThumbs)
       {
-        Utils.DeleteFiles(Thumbs.TVRecorded, String.Format(@"*{0}", Utils.GetThumbExtension()));
-        Utils.DeleteFiles(Thumbs.Videos, String.Format(@"*{0}", Utils.GetThumbExtension()));
+        Utils.DeleteFiles(Thumbs.Videos, String.Format(@"*{0}", Utils.GetThumbExtension()), true);
+      }
+      if (control == btnClearBlacklistedThumbs)
+      {
+        ClearBlacklistedThumbs();
       }
 
       base.OnClicked(controlId, control, actionType);
@@ -241,6 +231,12 @@ namespace WindowPlugins.GUISettings
     protected override void OnPageDestroy(int newWindowId)
     {
       SaveSettings();
+
+      if (MediaPortal.GUI.Settings.GUISettings.SettingsChanged && !MediaPortal.Util.Utils.IsGUISettingsWindow(newWindowId))
+      {
+        MediaPortal.GUI.Settings.GUISettings.OnRestartMP(GetID);
+      }
+
       base.OnPageDestroy(newWindowId);
     }
 
@@ -274,6 +270,9 @@ namespace WindowPlugins.GUISettings
           break;
         case 5:
           Thumbs.Quality = Thumbs.ThumbQuality.highest;
+          break;
+        case 6:
+          Thumbs.Quality = Thumbs.ThumbQuality.uhd;
           break;
       }
     }
@@ -320,7 +319,15 @@ namespace WindowPlugins.GUISettings
           GUIPropertyManager.SetProperty("#thumbCompositing", GUILocalizeStrings.Get(300020)); //High Quality
           GUIPropertyManager.SetProperty("#thumbInterpolation", GUILocalizeStrings.Get(300022)); //High Quality Bicubic
           GUIPropertyManager.SetProperty("#thumbSmoothing", GUILocalizeStrings.Get(300020)); //High Quality
-          GUIPropertyManager.SetProperty("#thumbScreen", GUILocalizeStrings.Get(300023)); //Very large LCDs, Projectors
+          GUIPropertyManager.SetProperty("#thumbScreen", GUILocalizeStrings.Get(300023)); //Large LCDs, Plasmas
+          break;
+        case 6:
+          GUIPropertyManager.SetProperty("#thumbResolution", Convert.ToString((int)Thumbs.ThumbResolution) + " + " +
+                                        Convert.ToString((int)Thumbs.ThumbLargeResolution));
+          GUIPropertyManager.SetProperty("#thumbCompositing", GUILocalizeStrings.Get(300020)); //High Quality
+          GUIPropertyManager.SetProperty("#thumbInterpolation", GUILocalizeStrings.Get(300022)); //High Quality Bicubic
+          GUIPropertyManager.SetProperty("#thumbSmoothing", GUILocalizeStrings.Get(300020)); //High Quality
+          GUIPropertyManager.SetProperty("#thumbScreen", GUILocalizeStrings.Get(300096)); //UHD TVs, Projectors
           break;
       }
     }
@@ -328,6 +335,25 @@ namespace WindowPlugins.GUISettings
     private void SettingsChanged(bool settingsChanged)
     {
       MediaPortal.GUI.Settings.GUISettings.SettingsChanged = settingsChanged;
+    }
+
+    private void ClearBlacklistedThumbs()
+    {
+      IVideoThumbBlacklist blacklist;
+      if (GlobalServiceProvider.IsRegistered<IVideoThumbBlacklist>())
+      {
+        blacklist = GlobalServiceProvider.Get<IVideoThumbBlacklist>();
+      }
+      else
+      {
+        blacklist = new VideoThumbBlacklistDBImpl();
+        GlobalServiceProvider.Add<IVideoThumbBlacklist>(blacklist);
+      }
+
+      if (blacklist != null)
+      {
+        blacklist.Clear();
+      }
     }
 
   }

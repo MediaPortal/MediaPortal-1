@@ -40,13 +40,13 @@ namespace MpeInstaller.Dialogs
       InitializeComponent();
     }
 
-    public void Execute(PackageClass packageClass, bool silent)
+    public bool Execute(PackageClass packageClass, bool silent)
     {
       if (!silent)
         if (
-          MessageBox.Show("Do you want to Uninstall extension " + packageClass.GeneralInfo.Name, "Uninstall extension",
+          MessageBox.Show("Do you want to uninstall " + packageClass.GeneralInfo.Name + "?", "Uninstall extension",
                           MessageBoxButtons.YesNo) != DialogResult.Yes)
-          return;
+          return false;
       packageClass.UnInstallInfo = new UnInstallInfoCollection(packageClass);
       packageClass.UnInstallInfo = packageClass.UnInstallInfo.Load();
       packageClass.Silent = silent;
@@ -54,15 +54,16 @@ namespace MpeInstaller.Dialogs
       {
         if (!silent)
           if (
-            MessageBox.Show("No uninstall information found. Do you want to remowe from list ? ", "Uninstall extension",
+			MessageBox.Show("No uninstall information found. Do you want to remove " + packageClass.GeneralInfo.Name + " from the list?", "Uninstall extension",
                             MessageBoxButtons.YesNo) != DialogResult.Yes)
-            return;
+            return false;
         packageClass.UnInstallInfo = new UnInstallInfoCollection(packageClass);
       }
       packageClass.FileUnInstalled += packageClass_FileUnInstalled;
       progressBar1.Maximum = packageClass.UnInstallInfo.Items.Count + 1;
       Package = packageClass;
       ShowDialog();
+      return true;
     }
 
     private void packageClass_FileUnInstalled(object sender, MpeCore.Classes.Events.UnInstallEventArgs e)

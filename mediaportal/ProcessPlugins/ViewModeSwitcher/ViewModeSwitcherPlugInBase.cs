@@ -35,7 +35,7 @@ namespace ProcessPlugins.ViewModeSwitcher
     public string Description()
     {
       return
-        "Switches to a predefined viewmode depending on the aspect ratio of the source format. It also allows crop settings dependig on the source format.";
+        "Switches to a predefined zoom mode depending on the aspect ratio of the source video. It can also perform overscan and Black Bar cropping.";
     }
 
     public string Author()

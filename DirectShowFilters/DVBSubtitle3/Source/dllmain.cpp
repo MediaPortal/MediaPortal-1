@@ -61,7 +61,8 @@ const AMOVIESETUP_FILTER FilterInfo =
   L"MediaPortal DVBSub3",    // String name
   MERIT_DO_NOT_USE,          // Filter merit
   1,                         // Number pins
-  sudPins                    // Pin details
+  sudPins,                   // Pin details
+  CLSID_LegacyAmFilterCategory
 };
 
 
@@ -106,12 +107,12 @@ BOOL APIENTRY DllMain(HANDLE hModule,
 
 // Logging 
 //#ifdef DEBUG
-char *logbuffer=NULL; 
-void GetLogFile(char *pLog)
+char* logbuffer = NULL;
+void GetLogFile(TCHAR* pLog)
 {
   TCHAR folder[MAX_PATH];
   ::SHGetSpecialFolderPath(NULL,folder,CSIDL_COMMON_APPDATA,FALSE);
-  sprintf(pLog,"%s\\Team MediaPortal\\MediaPortal\\Log\\DVBSubs.log",folder);
+  _stprintf(pLog, _T("%s\\Team MediaPortal\\MediaPortal\\Log\\DVBSubs.log"), folder);
 }
 
 
@@ -131,9 +132,9 @@ void LogDebug(const char *fmt, ...)
 //#ifdef DONTLOG
   TCHAR filename[1024];
   GetLogFile(filename);
-  FILE* fp = fopen(filename,"a+");
+  FILE* fp = _tfopen(filename, _T("a+"));
 
-  if (fp!=NULL)
+  if (fp)
   {
     fprintf(fp,"%02.2d-%02.2d-%04.4d %02.2d:%02.2d:%02.2d.%03.3d [%x]%s\n",
       systemTime.wDay, systemTime.wMonth, systemTime.wYear,

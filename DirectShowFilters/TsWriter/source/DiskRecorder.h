@@ -53,7 +53,7 @@ enum PidType
   Other=2
 };
 
-enum ChannelType
+enum MpChannelType
 {
 	TV = 0,
 	Radio = 1,
@@ -140,7 +140,8 @@ private:
 	HANDLE							 m_hFile;
 	CCriticalSection     m_section;
   int                  m_iPmtPid;
-  int                  m_pcrPid;
+  int                  m_iOriginalPcrPid;
+  int                  m_iFakePcrPid;
 	int									 m_iServiceId;
 	vector<PidInfo2>		 m_vecPids;
 //	bool								 m_bSeenAudioStart;
@@ -162,7 +163,7 @@ private:
   int			m_iThrottleBufferSizes[NUMBER_THROTTLE_BUFFER_SIZES];
   int				m_iWriteBufferThrottle;
   BOOL				m_bThrottleAtMax;
-  ChannelType		m_eChannelType;
+  MpChannelType		m_eChannelType;
   CTsHeader       m_tsHeader;
   CAdaptionField  m_adaptionField;
   CPcr            m_prevPcr;

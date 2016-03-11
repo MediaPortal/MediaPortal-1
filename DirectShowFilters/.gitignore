@@ -1,0 +1,8 @@
+Debug/
+Release/
+bin_Win32/
+bin_Win32d/
+ipch/
+*.sdf
+*.opensdf
+*.lib

@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+<controls>
+
+	<control>
+		<description>group element</description>
+		<type>group</type>
+		<animation effect="fade" start="0" end="100" time="300" delay="350">WindowOpen</animation>
+		<animation effect="fade" start="100" end="0" time="0" delay="0">WindowClose</animation>
+		<control>
+			<description>composite control consisting of a list control and a thumbnail panel</description>
+			<type>facadeview</type>
+			<id>50</id>
+			<control>
+				<description>listcontrol</description>
+				<type>listcontrol</type>
+				<id>50</id>
+				<posX>918</posX>
+				<posY>236</posY>
+				<height>700</height>
+				<width>919</width>
+				<onleft>2</onleft>
+				<onright>2</onright>
+				<scrollOffset>1</scrollOffset>
+				<PinIconHeight>45</PinIconHeight>
+				<PinIconWidth>75</PinIconWidth>
+				<PinIconXOff>35</PinIconXOff>
+				<PinIconYOff>5</PinIconYOff>
+				<itemWidth>64</itemWidth>
+				<itemHeight>53</itemHeight>
+				<textureFocus>listcontrol_item_selected_tv.png</textureFocus>
+				<textureNoFocus>-</textureNoFocus>
+				<IconXOff>-2000</IconXOff>
+				<IconYOff>0</IconYOff>				
+				<textXOff>40</textXOff>
+				<textXOff3>-2000</textXOff3>				
+				<keepaspectratio>yes</keepaspectratio>
+				<spinCanFocus>no</spinCanFocus>
+				<dimColor>ffffffff</dimColor>
+			</control>
+
+			<control>
+				<description>Thumbnail Panel</description>
+				<type>thumbnailpanel</type>
+				<id>50</id>
+				<posX>113</posX>
+				<posY>226</posY>
+				<width>1200</width>
+				<height>450</height>
+				<onleft>2</onleft>
+				<onright>50</onright>
+				<itemWidth>165</itemWidth>
+				<itemHeight>120</itemHeight>
+				<textureWidth>160</textureWidth>
+				<textureHeight>103</textureHeight>
+				<thumbWidth>130</thumbWidth>
+				<thumbHeight>73</thumbHeight>
+				<thumbPosX>15</thumbPosX>
+				<thumbPosY>15</thumbPosY>
+				<itemWidthBig>284</itemWidthBig>
+				<itemHeightBig>181</itemHeightBig>
+				<textureWidthBig>290</textureWidthBig>
+				<textureHeightBig>187</textureHeightBig>
+				<thumbWidthBig>233</thumbWidthBig>
+				<thumbHeightBig>130</thumbHeightBig>
+				<thumbPosXBig>28</thumbPosXBig>
+				<thumbPosYBig>29</thumbPosYBig>
+				<zoomXPixels>0</zoomXPixels>
+				<zoomYPixels>0</zoomYPixels>
+				<thumbZoom>no</thumbZoom>
+				<enableFocusZoom>no</enableFocusZoom>
+				<keepaspectratio>no</keepaspectratio>
+				<hideUnfocusTexture>no</hideUnfocusTexture>
+				<renderFocusText>no</renderFocusText>
+				<renderUnfocusText>no</renderUnfocusText>
+				<imageFolderFocus>-</imageFolderFocus>
+				<imageFolder>-</imageFolder>
+
+				<frameNoFocus>blackborders_recordings_thumbnail_nofocus.png</frameNoFocus>
+    <frameFocus>blackborders_recordings_thumbnail_focus.png</frameFocus>
+			</control>
+			
+			<control>
+				<description>Filmstrip view</description>
+				<type>filmstrip</type>
+				<dimColor>90ffffff</dimColor>
+				<id>50</id>
+				<scrollOffset>1</scrollOffset>
+				<folderPrefix></folderPrefix>
+				<folderSuffix></folderSuffix>
+				<posX>40</posX>
+				<posY>210</posY>
+				<width>1286</width>
+				<height>720</height>
+				<onup>2</onup>
+				<onleft>50</onleft>
+				<thumbWidth>365</thumbWidth>
+				<thumbHeight>203</thumbHeight>
+				<thumbPosX>47</thumbPosX>
+				<thumbPosY>46</thumbPosY>
+				<itemWidth>412</itemWidth>
+				<itemHeight>231</itemHeight>
+				<textureWidth>457</textureWidth>
+				<textureHeight>295</textureHeight>
+				<thumbs></thumbs>
+				<InfoImage></InfoImage>
+				<showFrame>yes</showFrame>
+				<textYOff>-2000</textYOff>
+				<showFolder>no</showFolder>
+				<showBackGround>no</showBackGround>
+				<showInfoImage>no</showInfoImage>
+				<frameFocus>blackborders_recordings.png</frameFocus>
+			</control>
+
+		</control>
+
+	</control>
+
+</controls>
+</window>

@@ -229,17 +229,18 @@ namespace SetupTv.Sections
         Channel channel = (Channel)item.Tag;
         layer.AddChannelToRadioGroup(channel, group);
 
-        string groupString = item.SubItems[1].Text;
-        if (groupString == string.Empty)
+        IList<string> groups = channel.GroupNames;
+        List<string> groupNames = new List<string>();
+        foreach (string groupName in groups)
         {
-          groupString = group.GroupName;
+          if (groupName != TvConstants.TvGroupNames.AllChannels &&
+              groupName != TvConstants.RadioGroupNames.AllChannels)
+          {
+            //Don't add "All Channels"
+            groupNames.Add(groupName);
+          }
         }
-        else
-        {
-          groupString += ", " + group.GroupName;
-        }
-
-        item.SubItems[1].Text = groupString;
+        item.SubItems[2].Text = String.Join(", ", groupNames.ToArray());
       }
 
       mpListView1.AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize);
@@ -413,18 +414,15 @@ namespace SetupTv.Sections
       dlg.IsTv = false;
       if (dlg.ShowDialog(this) == DialogResult.OK)
       {
-        IList<Card> dbsCards = Card.ListAll();
-        Dictionary<int, CardType> cards = new Dictionary<int, CardType>();
-        foreach (Card card in dbsCards)
-        {
-          cards[card.IdCard] = RemoteControl.Instance.Type(card.IdCard);
-        }
         mpListView1.BeginUpdate();
         try
         {
-          mpListView1.Items[indexes[0]] = _lvChannelHandler.CreateListViewItemForChannel(channel, cards);
+          mpListView1.Items[indexes[0]].Text = channel.DisplayName;
+          mpListView1.Items[indexes[0]].SubItems[1].Text = channel.ChannelNumber.ToString();
+          mpListView1.Items[indexes[0]].SubItems[5].Text = channel.ReferringTuningDetail().Count.ToString();
           mpListView1.Sort();
           ReOrder();
+          txtFilterString_TextChanged(null, null);
         }
         finally
         {
@@ -591,7 +589,7 @@ namespace SetupTv.Sections
         if (string.IsNullOrEmpty(item.Description))
           item.Description = item.FileName;
         Channel channel = new Channel(true, false, 0, Schedule.MinSchedule, false,
-                                      Schedule.MinSchedule, 10000, true, "", item.Description);
+                                      Schedule.MinSchedule, 10000, true, "", item.Description, 10000);
         channel.Persist();
         layer.AddWebStreamTuningDetails(channel, item.FileName, 0);
         layer.AddChannelToRadioGroup(channel, TvConstants.RadioGroupNames.AllChannels);
@@ -667,8 +665,13 @@ namespace SetupTv.Sections
         IList<TuningDetail> details = channel.ReferringTuningDetail();
         foreach (TuningDetail detail in details)
         {
-          detail.ChannelNumber = detail.ServiceId;
-          detail.Persist();
+          if (detail.ChannelType != 0)  // SID is not relevant for analog channels
+          {
+            channel.ChannelNumber = detail.ServiceId;
+            channel.Persist();
+            item.Tag = channel;
+            break;
+          }
         }
       }
       dlg.Close();

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Skin translation file -->
+<!-- English (US) -->
+<strings>
+  <string Field="WorldNewsTicker">Activar ticker de WorldNews</string>
+  <string Field="MusicNowPlayingFanart">Fondo de música reproduciendo en BasicHome</string>
+  <string Field="MusicFanart">Fondo de música aleatorio en BasicHome</string>
+  <string Field="VideoFanart">Fondo de video aleatorio en BasicHome</string>
+  <string Field="TVGuideRows">Filas en guía de TV</string>
+  <string Field="TVSeriesRows">Filas en TVSeries Wide Banners</string>
+  <string Field="Background">Fondo</string>
+  <string Field="Games">Juegos</string>
+  <string Field="NewEpisodes">Episodios recientemente agregado</string>
+  <string Field="NewRecordings">Grabaciones de TV recientemente agregado</string>
+  <string Field="NewVideos">Vídeos añadidos recientemente</string>
+  <string Field="NewYouTubeVideos">Videos de Online Videos agregados recientemente</string>
+  <string Field="NewFilms">Películas recientemente agregado</string>
+  <string Field="LastPlayed">Última música reproducida</string>
+  <string Field="NewPictures">Fotos añadidos recientemente</string>
+  <string Field="NowRecording">Grabaciones activas</string>
+  <string Field="Timer">#(L(603))</string>
+  <string Field="tvstreaminfo">TV OSD información del canal siempre visible</string>
+</strings>

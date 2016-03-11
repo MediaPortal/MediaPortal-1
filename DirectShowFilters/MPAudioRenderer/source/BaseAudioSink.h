@@ -50,6 +50,9 @@ public:
   // Format negotiation
   virtual HRESULT NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, int nApplyChangesDepth, ChannelOrder* pChOrder);
 
+  // Buffer negotiation
+  virtual HRESULT NegotiateBuffer(const WAVEFORMATEXTENSIBLE* pwfx, long* pBufferSize, long* pBufferCount, bool bCanModifyBufferSize);
+
   // Processing
   virtual HRESULT PutSample(IMediaSample* pSample);
   virtual HRESULT EndOfStream();
@@ -73,6 +76,8 @@ protected:
   HRESULT RequestNextOutBuffer(REFERENCE_TIME rtStart);
   HRESULT OutputNextSample();
 
+  HRESULT ReleaseAllocator();
+
 protected:
   IAudioSink* m_pNextSink;
   WAVEFORMATEXTENSIBLE* m_pInputFormat;
@@ -93,4 +98,9 @@ protected:
   CCritSec m_csOutputSample;
   
   ChannelOrder m_chOrder;
+
+  long m_nOutBufferCount;
+  long m_nOutBufferSize;
+
+  bool m_bNextFormatPassthru;
 };

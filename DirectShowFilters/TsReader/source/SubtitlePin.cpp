@@ -94,7 +94,7 @@ HRESULT CSubtitlePin::CheckMediaType(const CMediaType* pmt)
 
   CDeMultiplexer& demux=m_pTsReaderFilter->GetDemultiplexer();
   
-  if (!m_pTsReaderFilter->CheckCallback())
+  if (!m_pTsReaderFilter->CheckCallback() && !m_pTsReaderFilter->m_bSubPinConnectAlways)
   {
     //LogDebug("subPin: Not running in MP - CheckMediaType() fail");
     return E_FAIL;
@@ -132,7 +132,7 @@ HRESULT CSubtitlePin::GetMediaType(CMediaType *pmt)
 
   //LogDebug("subPin:GetMediaType()");
 
-  if (!m_pTsReaderFilter->CheckCallback())
+  if (!m_pTsReaderFilter->CheckCallback() && !m_pTsReaderFilter->m_bSubPinConnectAlways)
   {
     //LogDebug("sub pin: Not running in MP - GetMediaType() fail");
     //Return a null media type
@@ -198,11 +198,17 @@ HRESULT CSubtitlePin::CheckConnect(IPin *pReceivePin)
 {
   HRESULT hr;
   PIN_INFO pinInfo;
-  FILTER_INFO filterInfo;
   
-  if (!m_pTsReaderFilter->CheckCallback())
+  if (!m_pTsReaderFilter->CheckCallback() && !m_pTsReaderFilter->m_bSubPinConnectAlways)
   {
     //LogDebug("sub pin: Not running in MP - CheckConnect() fail");
+    return E_FAIL;
+  }
+
+  CLSID &ref=m_pTsReaderFilter->GetCLSIDFromPin(pReceivePin);
+  if (ref != CLSID_DVBSub3)
+  {
+    //LogDebug("sub pin: CheckConnect() fail - Not DVBSub3 CLSID");
     return E_FAIL;
   }
 
@@ -218,22 +224,27 @@ HRESULT CSubtitlePin::CheckConnect(IPin *pReceivePin)
     //LogDebug("sub pin: Cant connect to pin name %s", pinInfo.achName);
     return E_FAIL;
   }
-
-  hr=pinInfo.pFilter->QueryFilterInfo(&filterInfo);
-  filterInfo.pGraph->Release();
-
-  if (!SUCCEEDED(hr)) return E_FAIL;
-  if ((wcscmp(filterInfo.achName,L"MediaPortal DVBSub2") !=0 ) && (wcscmp(filterInfo.achName,L"MediaPortal DVBSub3") !=0 ))
-  {
-    //LogDebug("sub pin: Cant connect to filter name %s", filterInfo.achName);
-    return E_FAIL;
-  }
+  
   return CBaseOutputPin::CheckConnect(pReceivePin);
 }
 
 HRESULT CSubtitlePin::CompleteConnect(IPin *pReceivePin)
 {
   m_bInFillBuffer=false;
+  
+  if (!m_pTsReaderFilter->CheckCallback() && !m_pTsReaderFilter->m_bSubPinConnectAlways)
+  {
+    LogDebug("sub pin: Not running in MP - CompleteConnect() fail");
+    return E_FAIL;
+  }
+
+  CLSID &ref=m_pTsReaderFilter->GetCLSIDFromPin(pReceivePin);
+  if (ref != CLSID_DVBSub3)
+  {
+    LogDebug("sub pin: CompleteConnect() fail - Not DVBSub3 CLSID");
+    return E_FAIL;
+  }
+
   //LogDebug("subPin:CompleteConnect()");
   HRESULT hr = CBaseOutputPin::CompleteConnect(pReceivePin);
   if (!SUCCEEDED(hr)) return E_FAIL;
@@ -255,6 +266,8 @@ HRESULT CSubtitlePin::CompleteConnect(IPin *pReceivePin)
     LogDebug("subPin:CompleteConnect() ok, filter: %s", szName);
     
     m_bConnected=true;
+
+    m_pTsReaderFilter->GetSubInfoFromPin(pReceivePin);
   }
   else
   {
@@ -284,6 +297,7 @@ HRESULT CSubtitlePin::CompleteConnect(IPin *pReceivePin)
 HRESULT CSubtitlePin::BreakConnect()
 {
   m_bConnected = false;
+  m_pTsReaderFilter->ReleaseSubtitleFilter();
   return CSourceStream::BreakConnect();
 }
 
@@ -584,11 +598,10 @@ STDMETHODIMP CSubtitlePin::GetAvailable( LONGLONG * pEarliest, LONGLONG * pLates
 //  LogDebug("vid:GetAvailable");
   if (m_pTsReaderFilter->IsTimeShifting())
   {
-    CTsDuration duration=m_pTsReaderFilter->GetDuration();
     if (pEarliest)
     {
       //return the startpcr, which is the earliest pcr timestamp available in the timeshifting file
-      double d2=duration.StartPcr().ToClock();
+      double d2=m_pTsReaderFilter->m_duration.StartPcr().ToClock();
       d2*=1000.0f;
       CRefTime mediaTime((LONG)d2);
       *pEarliest= mediaTime;
@@ -596,7 +609,7 @@ STDMETHODIMP CSubtitlePin::GetAvailable( LONGLONG * pEarliest, LONGLONG * pLates
     if (pLatest)
     {
       //return the endpcr, which is the latest pcr timestamp available in the timeshifting file
-      double d2=duration.EndPcr().ToClock();
+      double d2=m_pTsReaderFilter->m_duration.EndPcr().ToClock();
       d2*=1000.0f;
       CRefTime mediaTime((LONG)d2);
       *pLatest= mediaTime;
@@ -619,8 +632,7 @@ STDMETHODIMP CSubtitlePin::GetDuration(LONGLONG *pDuration)
 {
   if (m_pTsReaderFilter->IsTimeShifting())
   {
-    CTsDuration duration = m_pTsReaderFilter->GetDuration();
-    CRefTime totalDuration = duration.TotalDuration();
+    CRefTime totalDuration = m_pTsReaderFilter->m_duration.TotalDuration();
     m_rtDuration = totalDuration;
   }
   else

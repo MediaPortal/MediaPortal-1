@@ -20,12 +20,31 @@
 
 using System;
 using System.ComponentModel;
+using System.Globalization;
 using System.Text.RegularExpressions;
 
 namespace MediaPortal.GUI.Library
 {
   internal class GUIFunctions
   {
+    #region Internal utility
+
+    private static void MakeBoolean(string funcName, int paramIndex, ref object param)
+    {
+      // The parameter must be a boolean; attempt coersion if it is a string.
+      if (param.GetType() != typeof(bool))
+      {
+        bool value = false;
+        if (!bool.TryParse((string)param, out value))
+        {
+          Log.Error("Condition for {0}() function is not a boolean; paramIndex={1}, value={2}. Condition is being forced to 'false'.  You must correct your skin function.", funcName, paramIndex, param);
+        }
+        param = value;
+      }
+    }
+
+    #endregion
+
     #region  String functions
 
     [XMLSkinFunction("string.format")]
@@ -124,37 +143,92 @@ namespace MediaPortal.GUI.Library
     [XMLSkinFunction("string.trim")]
     public static string TrimString(string text)
     {
-      return text.Trim();
+      return ((text != null) ? text.Trim() : string.Empty);
     }
 
     [XMLSkinFunction("string.trim")]
     public static string TrimString(string text, string charsToTrim)
     {
-      return text.Trim(charsToTrim.ToCharArray());
+      return (((text != null) && (charsToTrim !=null)) ? text.Trim(charsToTrim.ToCharArray()) : string.Empty);
     }
 
     [XMLSkinFunction("string.rtrim")]
     public static string RightTrimString(string text)
     {
-      return text.TrimEnd();
+      return ((text != null) ? text.TrimEnd() : string.Empty);
     }
 
     [XMLSkinFunction("string.rtrim")]
     public static string RightTrimString(string text, string charsToTrim)
     {
-      return text.TrimEnd(charsToTrim.ToCharArray());
+      return (((text != null) && (charsToTrim !=null)) ? text.TrimEnd(charsToTrim.ToCharArray()) : string.Empty);
     }
 
     [XMLSkinFunction("string.ltrim")]
     public static string LeftTrimString(string text)
     {
-      return text.TrimStart();
+      return ((text != null) ? text.TrimStart() : string.Empty);
     }
 
     [XMLSkinFunction("string.ltrim")]
     public static string LeftTrimString(string text, string charsToTrim)
     {
-      return text.TrimStart(charsToTrim.ToCharArray());
+      return (((text != null) && (charsToTrim !=null)) ? text.TrimStart(charsToTrim.ToCharArray()) : string.Empty);
+    }
+
+    [XMLSkinFunction("string.toupper")]
+    public static string ToUpperString(string text)
+    {
+      return ((text != null) ? text.ToUpper() : string.Empty);
+    }
+    [XMLSkinFunction("string.tolower")]
+    public static string ToLowerString(string text)
+    {
+      return ((text != null) ? text.ToLower() : string.Empty);
+    }
+  
+    [XMLSkinFunction("string.capitalize")]
+    public static string CapitalizeText(string text)
+    {
+      return ((text != null) ? System.Globalization.CultureInfo.InvariantCulture.TextInfo.ToTitleCase(text) : string.Empty);
+    }
+  
+    [XMLSkinFunction("string.titlecase")]
+    public static string TitleCase(string text)
+    {
+      return ((text != null) ? System.Threading.Thread.CurrentThread.CurrentCulture.TextInfo.ToTitleCase(text) : string.Empty);
+    }
+  
+    [XMLSkinFunction("string.getfilename")]
+    public static string GetFileName(string text)
+    {
+      return ((text != null) ? MediaPortal.Util.Utils.MakeFileName(text) : string.Empty);
+    }
+  
+    [XMLSkinFunction("string.getdirectorypath")]
+    public static string GetDirectoryPath(string text)
+    {
+      return ((text != null) ? MediaPortal.Util.Utils.MakeDirectoryPath(text) : string.Empty);
+    }
+
+    [XMLSkinFunction("string.equals")]
+    public static string EqualsString(string text, string part)
+    {
+      if ((text == null) || (part == null))
+      {
+        return "false";
+      }
+      return ((CultureInfo.InvariantCulture.CompareInfo.Compare(text, part, CompareOptions.IgnoreCase) == 0) ? "true" : "false");
+    }
+
+    [XMLSkinFunction("string.contains")]
+    public static string ContainsString(string text, string part)
+    {
+      if ((text == null) || (part == null))
+      {
+        return "false";
+      }
+      return ((CultureInfo.InvariantCulture.CompareInfo.IndexOf(text, part, CompareOptions.IgnoreCase) >= 0) ? "true" : "false");
     }
 
     #endregion
@@ -164,19 +238,27 @@ namespace MediaPortal.GUI.Library
     [XMLSkinFunction("cint")]
     public static int ConvertToInt(object value)
     {
-      return Convert.ToInt32(value);
+      if (value is int) return (int)value;
+      if (value is float) return (int)((float)value);
+      int result;
+      return ((value is string) && (int.TryParse((string)value, out result))) ? result : 0;
     }
 
     [XMLSkinFunction("cflt")]
     public static float ConvertToFloat(object value)
     {
-      return Convert.ToSingle(value);
+      if (value is float) return (float)value;
+      if (value is int) return (float)((int)value);
+      float result;
+      return ((value is string) && (float.TryParse((string)value, out result))) ? result : 0;
     }
 
     [XMLSkinFunction("cdate")]
     public static DateTime ConvertToDate(object value)
     {
-      return Convert.ToDateTime(value);
+      if (value is DateTime) return (DateTime)value;
+      DateTime result;
+      return ((value is string) && (DateTime.TryParse((string)value, out result))) ? result : DateTime.MinValue;
     }
 
     #endregion
@@ -184,9 +266,10 @@ namespace MediaPortal.GUI.Library
     #region Conditionals
 
     [XMLSkinFunction("iif")]
-    public static object Iif(bool condition, object truePart, object falsePart)
+    public static object Iif(object condition, object truePart, object falsePart)
     {
-      return condition ? truePart : falsePart;
+      MakeBoolean("iif", 0, ref condition);
+      return (bool)condition ? truePart : falsePart;
     }
 
     [XMLSkinFunction("choose")]
@@ -237,13 +320,41 @@ namespace MediaPortal.GUI.Library
     [XMLSkinFunction("eq")]
     public new static bool Equals(object arg1, object arg2)
     {
+      if ((arg1 is string) && (arg2 is string))
+      {
+        return (CultureInfo.InvariantCulture.CompareInfo.Compare(arg1.ToString(), arg2.ToString(), CompareOptions.IgnoreCase) == 0);
+      }
       return object.Equals(arg1, arg2);
     }
 
     [XMLSkinFunction("neq")]
     public static bool NotEquals(object arg1, object arg2)
     {
+      if ((arg1 is string) && (arg2 is string))
+      {
+        return (CultureInfo.InvariantCulture.CompareInfo.Compare(arg1.ToString(), arg2.ToString(), CompareOptions.IgnoreCase) != 0);
+      }
       return !object.Equals(arg1, arg2);
+    }
+
+    [XMLSkinFunction("cont")]
+    public static bool Contains(object text, object part)
+    {
+      if ((text == null) || (part == null))
+      {
+        return false;
+      }
+      return (CultureInfo.InvariantCulture.CompareInfo.IndexOf(text.ToString(), part.ToString(), CompareOptions.IgnoreCase) >= 0);
+    }
+
+    [XMLSkinFunction("ncont")]
+    public static bool NotContains(object text, object part)
+    {
+      if ((text == null) || (part == null))
+      {
+        return false;
+      }
+      return (CultureInfo.InvariantCulture.CompareInfo.IndexOf(text.ToString(), part.ToString(), CompareOptions.IgnoreCase) < 0);
     }
 
     [XMLSkinFunction("gt")]
@@ -319,17 +430,19 @@ namespace MediaPortal.GUI.Library
     #region Boolean logic
 
     [XMLSkinFunction("not")]
-    public static bool Not(bool condition)
+    public static bool Not(object condition)
     {
-      return !condition;
+      MakeBoolean("not", 0, ref condition);
+      return !(bool)condition;
     }
 
     [XMLSkinFunction("and")]
-    public static bool And(params bool[] conditions)
+    public static bool And(params object[] conditions)
     {
       for (int i = 0; i < conditions.Length; i++)
       {
-        if (!conditions[i])
+        MakeBoolean("and", i, ref conditions[i]);
+        if (!(bool)conditions[i])
         {
           return false;
         }
@@ -338,11 +451,12 @@ namespace MediaPortal.GUI.Library
     }
 
     [XMLSkinFunction("or")]
-    public static bool Or(params bool[] conditions)
+    public static bool Or(params object[] conditions)
     {
       for (int i = 0; i < conditions.Length; i++)
       {
-        if (conditions[i])
+        MakeBoolean("or", i, ref conditions[i]);
+        if ((bool)conditions[i])
         {
           return true;
         }
@@ -811,6 +925,30 @@ namespace MediaPortal.GUI.Library
       }
 
       return GUIThemeManager.ActivateThemeByName(args[0].ToString(), focusControlId);
+    }
+
+    #endregion
+
+    #region Skin behavior functions
+
+    [XMLSkinFunction("skin.setfocus")]
+    public static void SkinSetFocus(params object[] args)
+    {
+      // args[0] - skin window id
+      // args[1] - skin control id
+      if (args.Length == 2)
+      {
+        int windowId = (int)args[0];
+        int controlId = (int)args[1];
+        GUIControl.FocusControl(windowId, controlId);
+      }
+    }
+
+    [XMLSkinFunction("plugin.isenabled")]
+    public static bool PluginIsEnabled(string name)
+    {
+      int condition = GUIInfoManager.TranslateString("plugin.isenabled(" + name + ")");
+      return GUIInfoManager.GetBool(condition, 0);
     }
 
     #endregion
