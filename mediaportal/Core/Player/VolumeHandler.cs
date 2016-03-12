@@ -173,11 +173,6 @@ namespace MediaPortal.Player
       }
       _instance = null;
       GUIGraphicsContext.VolumeHandler = null;
-
-      if (OSInfo.OSInfo.Win8OrLater() && VolumeOSD != null)
-      {
-        VolumeOSD.ShowOSD();
-      }
     }
 
     public virtual void UnMute()
