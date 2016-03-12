@@ -458,7 +458,7 @@ namespace MediaPortal.MusicPlayer.BASS
     /// <returns></returns>
     private int WasApiCallback(IntPtr buffer, int length, IntPtr user)
     {
-      if (_mixer == null || _mixer == 0)
+      if (_mixer == 0)
       {
         return 0;
       }

@@ -1514,9 +1514,9 @@ namespace MediaPortal.Player
         {
           if (currentMediaInfoFilePlaying != strFile)
           {
-          _mediaInfo = new MediaInfoWrapper(strFile);
+            _mediaInfo = new MediaInfoWrapper(strFile);
             currentMediaInfoFilePlaying = strFile;
-        }
+          }
         }
 
         // back to previous Windows if we are only in video fullscreen to do a proper release when next item is music only
@@ -1637,14 +1637,7 @@ namespace MediaPortal.Player
             IsExtTS = true;
           }
           // Set bool to know if video if we force play
-          if (forcePlay)
-          {
-            ForcePlay = true;
-          }
-          else
-          {
-            ForcePlay = false;
-          }
+          ForcePlay = forcePlay;
         }
 
         // Set currentMedia needed for correct detection when BASS Engine is doing a Stop
@@ -2799,14 +2792,14 @@ namespace MediaPortal.Player
       }
     }
 
-    public static string VideoLanguage(int iStream)
+    public static string VideoName(int iStream)
     {
       if (_player == null)
       {
         return Strings.Unknown;
       }
 
-      string stream = _player.VideoLanguage(iStream);
+      string stream = _player.VideoName(iStream);
       return Util.Utils.TranslateLanguageString(stream);
     }
 
@@ -3106,7 +3099,10 @@ namespace MediaPortal.Player
       }
       Visible = (FullScreen || GUIGraphicsContext.Overlay ||
                  windowId == (int)GUIWindow.Window.WINDOW_SCHEDULER || inTV);
-      SetVideoWindow();
+      GUIWindow._mainThreadContext.Post(delegate
+      {
+        SetVideoWindow();
+      }, null);
     }
 
     /// <summary>

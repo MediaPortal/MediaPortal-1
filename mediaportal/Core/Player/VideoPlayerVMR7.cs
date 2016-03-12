@@ -56,6 +56,7 @@ namespace MediaPortal.Player
       public string Filter;
       public StreamType Type;
       public int LCID;
+      public AMStreamSelectInfoFlags sFlag;
     };
 
     protected class FilterStreams
@@ -264,6 +265,7 @@ namespace MediaPortal.Player
     protected bool MediatypeAudio = false;
     protected bool MediatypeSubtitle = false;
     protected bool AudioOnly = false;
+    protected bool streamLAVSelection = false;
 
     public override double[] Chapters
     {
@@ -279,6 +281,17 @@ namespace MediaPortal.Player
 
     public VideoPlayerVMR7()
     {
+      // Init LAV Splitter
+      using (Settings xmlreader = new MPSettings())
+      {
+        try
+        {
+          streamLAVSelection = xmlreader.GetValueAsBool("movieplayer", "streamlavselection", false);
+        }
+        catch (Exception)
+        {
+        }
+      }
       _mediaType = g_Player.MediaType.Video;
     }
 
@@ -313,16 +326,19 @@ namespace MediaPortal.Player
 
         #region FFDShowEngine and PostProcessingEngine Detection
 
-        ISubEngine engine = SubEngine.GetInstance(true);
-        if (!engine.LoadSubtitles(graphBuilder, m_strCurrentFile))
+        if (!streamLAVSelection)
         {
-          SubEngine.engine = new SubEngine.DummyEngine();
-        }
+          ISubEngine engine = SubEngine.GetInstance(true);
+          if (!engine.LoadSubtitles(graphBuilder, m_strCurrentFile))
+          {
+            SubEngine.engine = new SubEngine.DummyEngine();
+          }
 
-        IPostProcessingEngine postengine = PostProcessingEngine.GetInstance(true);
-        if (!postengine.LoadPostProcessing(graphBuilder))
-        {
-          PostProcessingEngine.engine = new PostProcessingEngine.DummyEngine();
+          IPostProcessingEngine postengine = PostProcessingEngine.GetInstance(true);
+          if (!postengine.LoadPostProcessing(graphBuilder))
+          {
+            PostProcessingEngine.engine = new PostProcessingEngine.DummyEngine();
+          }
         }
 
         #endregion
@@ -422,28 +438,30 @@ namespace MediaPortal.Player
         catch (Exception ex)
         {
           ci = new CultureInfo(defaultLanguageCulture);
-          Log.Error(
-            "SelectSubtitleLanguage - unable to build CultureInfo, make sure MediaPortal.xml is not corrupted! - {0}",
-            ex);
+          Log.Error("SelectSubtitleLanguage - unable to build CultureInfo, make sure MediaPortal.xml is not corrupted! - {0}", ex);
         }
       }
-      int subsCount = SubtitleStreams; // Not in the loop otherwise it will be reaccessed at each pass
-      for (int i = 0; i < subsCount; i++)
+
+      if (!streamLAVSelection)
       {
-        string subtitleLanguage = SubtitleLanguage(i);
-        //Add localized stream names for FFDshow when OS language = Skin language
-        string localizedCINameSub = Util.Utils.TranslateLanguageString(ci.EnglishName);
-        if (localizedCINameSub.Equals(SubtitleLanguage(i), StringComparison.OrdinalIgnoreCase) ||
-            ci.EnglishName.Equals(subtitleLanguage, StringComparison.OrdinalIgnoreCase) ||
-            ci.TwoLetterISOLanguageName.Equals(subtitleLanguage, StringComparison.OrdinalIgnoreCase) ||
-            ci.ThreeLetterISOLanguageName.Equals(subtitleLanguage, StringComparison.OrdinalIgnoreCase) ||
-            ci.ThreeLetterWindowsLanguageName.Equals(subtitleLanguage, StringComparison.OrdinalIgnoreCase) ||
-            subtitleLanguage.ToUpperInvariant().Contains(ci.ThreeLetterWindowsLanguageName))
+        int subsCount = SubtitleStreams; // Not in the loop otherwise it will be reaccessed at each pass
+        for (int i = 0; i < subsCount; i++)
         {
-          CurrentSubtitleStream = i;
-          Log.Info("VideoPlayerVMR7: CultureInfo Selected active subtitle track language: {0} ({1})", ci.EnglishName, i);
-          EnableSubtitle = true;
-          break;
+          string subtitleLanguage = SubtitleLanguage(i);
+          //Add localized stream names for FFDshow when OS language = Skin language
+          string localizedCINameSub = Util.Utils.TranslateLanguageString(ci.EnglishName);
+          if (localizedCINameSub.Equals(SubtitleLanguage(i), StringComparison.OrdinalIgnoreCase) ||
+              ci.EnglishName.Equals(subtitleLanguage, StringComparison.OrdinalIgnoreCase) ||
+              ci.TwoLetterISOLanguageName.Equals(subtitleLanguage, StringComparison.OrdinalIgnoreCase) ||
+              ci.ThreeLetterISOLanguageName.Equals(subtitleLanguage, StringComparison.OrdinalIgnoreCase) ||
+              ci.ThreeLetterWindowsLanguageName.Equals(subtitleLanguage, StringComparison.OrdinalIgnoreCase) ||
+              subtitleLanguage.ToUpperInvariant().Contains(ci.ThreeLetterWindowsLanguageName))
+          {
+            CurrentSubtitleStream = i;
+            Log.Info("VideoPlayerVMR7: CultureInfo Selected active subtitle track language: {0} ({1})", ci.EnglishName, i);
+            EnableSubtitle = true;
+            break;
+          }
         }
       }
       if (autoloadSubtitle)
@@ -455,11 +473,13 @@ namespace MediaPortal.Player
     protected void SelectAudioLanguage()
     {
       CultureInfo ci = null;
+      bool audioDefault = false;
       using (Settings xmlreader = new MPSettings())
       {
         try
         {
           ci = new CultureInfo(xmlreader.GetValueAsString("movieplayer", "audiolanguage", defaultLanguageCulture));
+          audioDefault = xmlreader.GetValueAsBool("movieplayer", "audiodefaultlanguage", false);
           Log.Info("VideoPlayerVMR7: AudioLanguage CultureInfo {0}", ci);
         }
         catch (Exception ex)
@@ -469,19 +489,34 @@ namespace MediaPortal.Player
             "SelectAudioLanguage - unable to build CultureInfo, make sure MediaPortal.xml is not corrupted! - {0}", ex);
         }
       }
-      for (int i = 0; i < AudioStreams; i++)
+
+      if (!streamLAVSelection)
       {
-        // Unfortunately we use localized stream names...
-        string localizedCIName = Util.Utils.TranslateLanguageString(ci.EnglishName);
-        if (localizedCIName.Equals(AudioLanguage(i), StringComparison.OrdinalIgnoreCase) ||
-            ci.EnglishName.Equals(AudioLanguage(i), StringComparison.OrdinalIgnoreCase) ||
-            ci.TwoLetterISOLanguageName.Equals(AudioLanguage(i), StringComparison.OrdinalIgnoreCase) ||
-            ci.ThreeLetterISOLanguageName.Equals(AudioLanguage(i), StringComparison.OrdinalIgnoreCase) ||
-            ci.ThreeLetterWindowsLanguageName.Equals(AudioLanguage(i), StringComparison.OrdinalIgnoreCase))
+        for (int i = 0; i < AudioStreams; i++)
         {
-          CurrentAudioStream = i;
-          Log.Info("VideoPlayerVMR7: CultureInfo Selected active audio track language: {0} ({1})", ci.EnglishName, i);
-          break;
+          if (audioDefault)
+          {
+            string audioDefaultStream = FStreams.GetStreamInfos(StreamType.Audio, i).Name;
+            if (audioDefaultStream.Contains("[default"))
+            {
+              CurrentAudioStream = i;
+              Log.Info("VideoPlayerVMR7: CultureInfo Selected active audio default track language: {0} ({1})", ci.EnglishName, i);
+              break;
+            }
+            continue;
+          }
+          // Unfortunately we use localized stream names...
+          string localizedCIName = Util.Utils.TranslateLanguageString(ci.EnglishName);
+          if (localizedCIName.Equals(AudioLanguage(i), StringComparison.OrdinalIgnoreCase) ||
+              ci.EnglishName.Equals(AudioLanguage(i), StringComparison.OrdinalIgnoreCase) ||
+              ci.TwoLetterISOLanguageName.Equals(AudioLanguage(i), StringComparison.OrdinalIgnoreCase) ||
+              ci.ThreeLetterISOLanguageName.Equals(AudioLanguage(i), StringComparison.OrdinalIgnoreCase) ||
+              ci.ThreeLetterWindowsLanguageName.Equals(AudioLanguage(i), StringComparison.OrdinalIgnoreCase))
+          {
+            CurrentAudioStream = i;
+            Log.Info("VideoPlayerVMR7: CultureInfo Selected active audio track language: {0} ({1})", ci.EnglishName, i);
+            break;
+          }
         }
       }
     }
@@ -1926,6 +1961,7 @@ namespace MediaPortal.Player
                   FSInfos.LCID = sPLCid;
                   FSInfos.Id = istream;
                   FSInfos.Type = StreamType.Unknown;
+                  FSInfos.sFlag = sFlag;
                   //Avoid listing ffdshow video filter's plugins amongst subtitle and audio streams and editions.
                   if ((FSInfos.Filter == "ffdshow DXVA Video Decoder" || FSInfos.Filter == "ffdshow Video Decoder" ||
                        FSInfos.Filter == "ffdshow raw video filter") &&
@@ -1944,19 +1980,19 @@ namespace MediaPortal.Player
                     FSInfos.Type = StreamType.Audio;
                   }
                   //SUBTITLE
-                  else if (sPDWGroup == 2 && sName.LastIndexOf("off") == -1 && sName.LastIndexOf("Hide ") == -1 &&
-                           sName.LastIndexOf("No ") == -1 && sName.LastIndexOf("Miscellaneous ") == -1)
+                  else if (sPDWGroup == 2 && sName.LastIndexOf("off", StringComparison.Ordinal) == -1 && sName.LastIndexOf("Hide ", StringComparison.Ordinal) == -1 &&
+                           sName.LastIndexOf("No ", StringComparison.Ordinal) == -1 && sName.LastIndexOf("Miscellaneous ", StringComparison.Ordinal) == -1)
                   {
                     FSInfos.Type = StreamType.Subtitle;
                   }
                   //NO SUBTITILE TAG
-                  else if ((sPDWGroup == 2 && (sName.LastIndexOf("off") != -1 || sName.LastIndexOf("No ") != -1)) ||
-                           (sPDWGroup == 6590033 && sName.LastIndexOf("Hide ") != -1))
+                  else if ((sPDWGroup == 2 && (sName.LastIndexOf("off", StringComparison.Ordinal) != -1 || sName.LastIndexOf("No ", StringComparison.Ordinal) != -1)) ||
+                           (sPDWGroup == 6590033 && sName.LastIndexOf("Hide ", StringComparison.Ordinal) != -1))
                   {
                     FSInfos.Type = StreamType.Subtitle_hidden;
                   }
                   //DirectVobSub SHOW SUBTITLE TAG
-                  else if (sPDWGroup == 6590033 && sName.LastIndexOf("Show ") != -1)
+                  else if (sPDWGroup == 6590033 && sName.LastIndexOf("Show ", StringComparison.Ordinal) != -1)
                   {
                     FSInfos.Type = StreamType.Subtitle_shown;
                   }
@@ -1982,6 +2018,34 @@ namespace MediaPortal.Player
                     case StreamType.Unknown:
                     case StreamType.Subtitle:
                     case StreamType.Subtitle_file:
+                      if (streamLAVSelection)
+                      {
+                        if (FSInfos.sFlag == AMStreamSelectInfoFlags.Enabled || FSInfos.sFlag == (AMStreamSelectInfoFlags.Enabled | AMStreamSelectInfoFlags.Exclusive))
+                        {
+                          FSInfos.Current = true;
+                          pStrm.Enable(FSInfos.Id, 0);
+                          pStrm.Enable(FSInfos.Id, AMStreamSelectEnableFlags.Enable);
+
+                          // Init Subtitle Engine
+                          ISubEngine engine = SubEngine.GetInstance(true);
+                          if (!engine.LoadSubtitles(graphBuilder, m_strCurrentFile))
+                          {
+                            SubEngine.engine = new SubEngine.DummyEngine();
+                          }
+                          // Set subtitle defined by LAV Splitter
+                          int subsCount = SubtitleStreams; // Not in the loop otherwise it will be reaccessed at each pass
+                          for (int i = 0; i < subsCount; i++)
+                          {
+                            string subtitleLanguage = SubtitleLanguage(i);
+                            if (FSInfos.Name.ToLowerInvariant().Contains(subtitleLanguage.ToLowerInvariant()))
+                            {
+                              CurrentSubtitleStream = i;
+                              EnableSubtitle = true;
+                              break;
+                            }
+                          }
+                        }
+                      }
                       break;
                     case StreamType.Video:
                     case StreamType.Audio:
@@ -1992,17 +2056,24 @@ namespace MediaPortal.Player
                         FStreams.AddStreamInfosEx(FSInfos);
                         break;
                       }
-                      if (FStreams.GetStreamCount(FSInfos.Type) == 0)
+                      if (streamLAVSelection)
                       {
-                        FSInfos.Current = true;
-                        pStrm.Enable(FSInfos.Id, 0);
-                        pStrm.Enable(FSInfos.Id, AMStreamSelectEnableFlags.Enable);
-                        /*if (FSInfos.Type == StreamType.Audio && FSInfos.Filter != MEDIAPORTAL_AUDIOSWITCHER_FILTER && GetInterface && !AutoRenderingCheck)
+                        if (FSInfos.sFlag == AMStreamSelectInfoFlags.Enabled || FSInfos.sFlag == (AMStreamSelectInfoFlags.Enabled | AMStreamSelectInfoFlags.Exclusive))
                         {
-                          iChangedMediaTypes = 1;
-                          //DoGraphRebuild();
-                        }*/
+                          FSInfos.Current = true;
+                          pStrm.Enable(FSInfos.Id, 0);
+                          pStrm.Enable(FSInfos.Id, AMStreamSelectEnableFlags.Enable);
+                        }
                       }
+                      else
+                      {
+                        if (FStreams.GetStreamCount(FSInfos.Type) == 0)
+                        {
+                          FSInfos.Current = true;
+                          pStrm.Enable(FSInfos.Id, 0);
+                          pStrm.Enable(FSInfos.Id, AMStreamSelectEnableFlags.Enable);
+                        }
+                      } 
                       goto default;
                     default:
                       FStreams.AddStreamInfos(FSInfos);
@@ -2113,36 +2184,14 @@ namespace MediaPortal.Player
     /// <summary>
     /// Property to get the language for an edition stream
     /// </summary>
-    public override string VideoLanguage(int iStream)
+    public override string VideoName(int iStream)
     {
-      #region return splitter IAMStreamSelect LCID
-
-      int LCIDCheck = FStreams.GetStreamInfos(StreamType.Video, iStream).LCID;
-
-      if (LCIDCheck != 0)
-      {
-        int size = Util.Win32API.GetLocaleInfo(LCIDCheck, 2, null, 0);
-        if (size > 0)
-        {
-          string languageName = new string(' ', size);
-          Util.Win32API.GetLocaleInfo(LCIDCheck, 2, languageName, size);
-
-          if (!string.IsNullOrEmpty(languageName))
-          {
-            if (languageName.Contains("\0"))
-              languageName = languageName.Substring(0, languageName.IndexOf("\0"));
-
-            if (languageName.Contains("("))
-              languageName = languageName.Substring(0, languageName.IndexOf("("));
-
-            return Util.Utils.TranslateLanguageString(languageName.Trim());
-          }
-        }
-      }
-
-      #endregion
-
       string streamName = FStreams.GetStreamInfos(StreamType.Video, iStream).Name;
+      string streamNameFalse = FStreams.GetStreamInfos(StreamType.Video, iStream).Name;
+
+      // No stream info from splitter
+      if (m_strCurrentFile != null && streamName.Contains(Path.GetFileName(m_strCurrentFile)))
+        return Path.GetExtension(m_strCurrentFile).ToUpperInvariant().Replace(".", "");
 
       // remove prefix, which is added by Haali Media Splitter
       streamName = Regex.Replace(streamName, @"^V: ", "");
@@ -2150,51 +2199,72 @@ namespace MediaPortal.Player
       // For example Haali Media Splitter returns mkv streams as: "trackname [language]",
       // where "trackname" is stream's "trackname" property muxed in the mkv.
       Regex regex = new Regex(@"\[.+\]");
-      Regex regexMPS = new Regex(@"Video\s*-\s*(?<1>.+?),\s*.+?,\s*.+?,\s*.+?,\s*.+", RegexOptions.IgnoreCase);
-      Regex regexMPVIDEONoType = new Regex(@"^(.+?)(?<!]*,\s.+?)\s\((Video\s.+?)$");
-      Regex regexMPVIDEO = new Regex(@"^(.+?)]*,\s(.+?)\s\((Video\s.+?)$");
-      //Regex regexMPC = new Regex("([^, ]+)");
+      //Audio - English, Dolby Digital, 48.0 kHz, 6 chn, 640.0 kbit/s 
+      //Audio - Dolby TrueHD, 48.0 kHz, 6 chn, 640.0 kbit/s (1100,fd,00)
+      Regex regexMPS = new Regex(@"Video\s*-\s*.+?,\s*(?<1>.+?,\s*.+?,\s*.+?,\s*.+)", RegexOptions.IgnoreCase);
+      Regex regexMPSNoLang = new Regex(@"Video\s*-\s*(?<1>.+?,\s*.+?,\s*.+?,\s*.+)", RegexOptions.IgnoreCase);
+      Regex regexLAVF =
+        new Regex(
+          @"(?:V:\s)(?<lang_or_title>.+?)(?:\s*\[(?<lang>[^\]]*?)\])?(?:\s*\((?<info>[^\)]*?)\))?(?:\s*\[(?<Default>[^\]]*?)\])?$");
+      Regex regexMPC = new Regex(@"\S+,\s+(?<1>.+)");
       Match result = regex.Match(streamName);
       Match resultMPS = regexMPS.Match(streamName);
-      Match resultMPVIDEONoType = regexMPVIDEONoType.Match(streamName);
-      Match resultMPVIDEO = regexMPVIDEO.Match(streamName);
-      //Match resultMPC = regexMPC.Match(streamName);
+      Match resultMPSNoLang = regexMPSNoLang.Match(streamName);
+      Match resultLAVF = regexLAVF.Match(streamNameFalse);
+      Match resultMPC = regexMPC.Match(streamName);
 
-      if (result.Success)
+      if (resultLAVF.Success)
+      // check for LAVF response format, e.g.: 
+      // V: Title [Lang] (Info) when only Language in stream -> answer is V: Lang -> start to detect if [lang] is present if not replace Lang by "" 
       {
-        //Cut off and translate the language part
-        string language = Util.Utils.TranslateLanguageString(streamName.Substring(result.Index + 1, result.Length - 2));
+        string lang_or_title = resultLAVF.Groups[1].Value;
+        string info = resultLAVF.Groups[3].Value;
+        if (!string.IsNullOrEmpty(info))
+        {
+          if (!string.IsNullOrEmpty(lang_or_title))
+          {
+            streamName = lang_or_title;
+          }
+          else
+          {
+            streamName = info;
+          }
+        }
+        else if (string.IsNullOrEmpty(info))
+        {
+          streamName = regex.Replace(streamName, "").Trim();
+        }
+      }
+      else if (result.Success)
+      {
         //Get the trackname part by removing the language part from the string.
         streamName = regex.Replace(streamName, "").Trim();
-        //Put things back together
-        //streamName = language + (streamName == string.Empty ? "" : " [" + streamName + "]");
-        if (language.Length > 0) // && streamName.Length <= 0)
-        {
-          streamName = language;
-        }
       }
       else if (resultMPS.Success)
+      // check for mpegsplitter response format, e.g.:
       {
-        string language = Util.Utils.TranslateLanguageString(resultMPS.Groups[1].Value);
-        if (language.Length > 0)
+        string VideoName = Util.Utils.TranslateLanguageString(resultMPS.Groups[1].Value);
+        if (VideoName.Length > 0)
         {
-          streamName = language;
+          streamName = VideoName;
         }
       }
-      else if (resultMPVIDEO.Success)
+      else if (resultMPSNoLang.Success)
+      // check for mpegsplitter response format:
       {
-        string language = Util.Utils.TranslateLanguageString(resultMPVIDEO.Groups[1].Value);
-        if (language.Length > 0)
+        string VideoName = Util.Utils.TranslateLanguageString(resultMPSNoLang.Groups[1].Value);
+        if (VideoName.Length > 0)
         {
-          streamName = language;
+          streamName = VideoName;
         }
       }
-      else if (resultMPVIDEONoType.Success)
+      else if (resultMPC.Success)
+      // check for mpc-hc Video response format, e.g.: 
       {
-        string language = Util.Utils.TranslateLanguageString(resultMPVIDEONoType.Groups[1].Value);
-        if (language.Length > 0)
+        string VideoName = Util.Utils.TranslateLanguageString(resultMPC.Groups[1].Value);
+        if (VideoName.Length > 0)
         {
-          streamName = language;
+          streamName = VideoName;
         }
       }
       // Remove extraneous info from splitter in parenthesis at end of line:
@@ -2234,18 +2304,12 @@ namespace MediaPortal.Player
 
       if (resultLAVF.Success)
       // check for LAVF response format, e.g.: 
-      // S: Title [Lang] (Info) when only Language in stream -> answer is S: Lang -> start to detect if [lang] is present if not replace Lang by "" 
+      // V: Title [Lang] (Info) when only Language in stream -> answer is V: Lang -> start to detect if [lang] is present if not replace Lang by "" 
       {
-        string lang_or_title = resultLAVF.Groups[1].Value;
-        string lang = resultLAVF.Groups[2].Value;
         string info = resultLAVF.Groups[3].Value;
         if (!string.IsNullOrEmpty(info))
         {
-          if (!string.IsNullOrEmpty(lang))
-          {
-            streamName = "" + lang_or_title + " [" + info + "]";
-          }
-          else
+          if (!string.IsNullOrEmpty(info))
           {
             streamName = info;
           }
@@ -2287,7 +2351,7 @@ namespace MediaPortal.Player
           streamName = videoType;
         }
       }
-      // Remove extraneous info from splitter in parenthesis at end of line:      
+      // Remove extraneous info from splitter in parenthesis at end of line:
       streamName = Regex.Replace(streamName, @"\(.+?\)$", "");
       return streamName;
     }

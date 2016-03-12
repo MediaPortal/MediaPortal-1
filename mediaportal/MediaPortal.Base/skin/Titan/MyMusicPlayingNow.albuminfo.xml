@@ -209,47 +209,7 @@
     	<animation effect="fade" time="250">WindowClose</animation>
     </control>
 		
-    <control>
-      <id>0</id>
-      <description>rating label</description>
-      <type>label</type>
-			<visible>string.equals(#skin.mymusic.info,AlbumInfo)</visible>
-			<posX>1027</posX>
-			<posY>374</posY>
-			<label>Rating</label>
-			<align>left</align>
-			<font>TitanLight12</font>
-			<textcolor>ff00b7ff</textcolor>
-			<animation effect="fade" start="100" end="0" time="250" reversible="false">Hidden</animation>
-			<animation effect="fade" start="0" end="100" time="250" reversible="false">Visible</animation>
-    	<animation effect="fade" time="250">WindowOpen</animation>
-    	<animation effect="fade" time="250">WindowClose</animation>
-    </control>
-		
-    <control>
-      <id>0</id>
-      <type>imagelist</type>
-			<visible>string.equals(#skin.mymusic.info,AlbumInfo)</visible>
-			<posX>1229</posX>
-			<posY>374</posY>
-			<width>185</width>
-			<height>29</height>
-			<textureWidth>32</textureWidth>
-			<textureHeight>27</textureHeight>
-      <percentage>#Play.Current.Rating</percentage>
-      <imagesToDraw>5</imagesToDraw>
-      <orientation>HORIZONTAL</orientation>
-      <align>LEFT</align>
-			<subitems>
-			 <subitem>starblue.png</subitem>
-			 <subitem>starwhite.png</subitem>
-			</subitems>
-			<animation effect="fade" start="100" end="0" time="250" reversible="false">Hidden</animation>
-			<animation effect="fade" start="0" end="100" time="250" reversible="false">Visible</animation>
-    	<animation effect="fade" time="250">WindowOpen</animation>
-    	<animation effect="fade" time="250">WindowClose</animation>
-    </control>
-		
+
     <control>
       <id>0</id>
       <description>Album Artist label</description>

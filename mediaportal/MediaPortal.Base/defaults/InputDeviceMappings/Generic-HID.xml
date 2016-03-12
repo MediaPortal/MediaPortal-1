@@ -6,33 +6,54 @@
       <action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="10" sound="back.wav" />
     </button>
 
+    <!-- Place holders so that they show up in the configure mapping customization UI -->
     <button code="AppCtrlForward" />
     <button code="AppCtrlRefresh" />
     <button code="AppCtrlStop" />
     <button code="AppCtrlSearch" />
     <button code="AppCtrlBookmarks" />
     <button code="AppCtrlHome" />
+    <button code="AppCtrlFind" />
+    <button code="AppCtrlNew" />
+    <button code="AppCtrlOpen" />
+    <button code="AppCtrlClose" />
+    <button code="AppCtrlSave" />
+    <button code="AppCtrlUndo" />
+    <button code="AppCtrlCopy" />
+    <button code="AppCtrlCut" />
+    <button code="AppCtrlPaste" />
+    <button code="AppCtrlRedoRepeat" />
+    <button code="AppCtrlForwardMsg" />
+    <button code="AppCtrlSend" />
+    <button code="AppCtrlReply" />
+    <button code="AppLaunchEmailReader" />
+    <button code="AppLaunchSpellCheck" />
+    <button code="BassIncrement" />
+    <button code="BassDecrement" />
+    <button code="TrebleIncrement" />
+    <button code="TrebleDecrement" />
+    <button code="BassBoost" />
+    <button code="Help" />
+    <!-- Let the OS deal with volume control-->
+    <button code="Mute" />
+    <button code="VolumeDecrement" />
+    <button code="VolumeIncrement" />
+    
+    <!-- Define exit commands -->
+    <button code="AppCtrlExit">
+      <action layer="0" condition="*" conproperty="-1" command="POWER" cmdproperty="EXIT" sound="back.wav" />
+    </button>
 
+    <!-- Define actions for our "More Info" button, alternatively showing as "i", "Info" or "Menu" on some remotes -->
     <button code="AppCtrlProperties">
       <action layer="0" condition="FULLSCREEN" conproperty="TRUE" command="ACTION" cmdproperty="24" sound="click.wav" />
       <action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="106" sound="click.wav" />
     </button>
 
+    <!-- Define actions for our "Guide" button (EPG) -->
     <button code="MediaSelectProgramGuide">
       <action layer="0" condition="WINDOW" conproperty="600" command="ACTION" cmdproperty="10" sound="back.wav" />
       <action layer="0" condition="*" conproperty="-1" command="WINDOW" cmdproperty="600" sound="click.wav" />
-    </button>
-
-    <button code="Mute" background="true">
-      <action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="9982" sound="click.wav" />
-    </button>
-
-    <button code="VolumeDecrement" background="true" repeat="true">
-      <action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="102" sound="cursor.wav" />
-    </button>
-
-    <button code="VolumeIncrement" background="true" repeat="true">
-      <action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="103" sound="cursor.wav" />
     </button>
 
     <button code="Play" background="true" >
@@ -49,7 +70,6 @@
       <action layer="0" condition="PLAYER" conproperty="MEDIA" command="ACTION" cmdproperty="12" sound="click.wav" />
       <action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="68" sound="click.wav" />
     </button>
-
 
     <button code="Stop" background="true">
       <action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="13" sound="click.wav" />
@@ -114,30 +134,7 @@
       <action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="19" sound="click.wav" />
     </button>
 
-
-    <button code="BassBoost" />
-    <button code="Help" />
-    <button code="AppCtrlFind" />
-    <button code="AppCtrlNew" />
-    <button code="AppCtrlOpen" />
-    <button code="AppCtrlClose" />
-    <button code="AppCtrlSave" />
-    <button code="AppCtrlUndo" />
-    <button code="AppCtrlCopy" />
-    <button code="AppCtrlCut" />
-    <button code="AppCtrlPaste" />
-    <button code="AppCtrlRedoRepeat" />
-    <button code="AppLaunchEmailReader" />
-    <button code="AppLaunchSpellCheck" />
-    <button code="AppCtrlForwardMsg" />
-    <button code="AppCtrlSend" />
-    <button code="AppCtrlReply" />
-    <button code="BassIncrement" />
-    <button code="BassDecrement" />
-    <button code="TrebleIncrement" />
-    <button code="TrebleDecrement" />
-
-    <!--
+<!--
 
     <button name="16 LaunchMediaSelect" code="16" />
     <button name="17 LaunchApp1" code="17" />
@@ -162,16 +159,19 @@
       <action layer="0" condition="*" conproperty="-1" command="WINDOW" cmdproperty="0" sound="click.wav" focus="True" />
     </button>
 
+    <!-- TV Power button closes MediaPortal, applies also if MP is not in the foreground -->
+    <button code="TvPower" background="true">
+      <action layer="0" condition="*" conproperty="-1" command="POWER" cmdproperty="EXIT" sound="back.wav" />
+    </button>
+
+    <!-- Extension 11 button closes MediaPortal too, applies also if MP is not in the foreground  -->
+    <button code="Ext11" background="true">
+      <action layer="0" condition="*" conproperty="-1" command="POWER" cmdproperty="EXIT" sound="back.wav" />
+    </button>
+
     <button code="RecordedTv">
       <action layer="0" condition="*" conproperty="-1" command="WINDOW" cmdproperty="603" sound="click.wav" />
     </button>
-
-
-    <!--
-    <button name="Power TV" code="power">
-      <action layer="0" condition="*" conproperty="-1" command="POWER" cmdproperty="EXIT" sound="back.wav" />
-    </button>
-    -->
 
     <button code="Tv">
       <action layer="0" condition="WINDOW" conproperty="7701" command="WINDOW" cmdproperty="602" sound="click.wav" />

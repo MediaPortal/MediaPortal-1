@@ -20,7 +20,6 @@
 
 using System;
 using System.Collections;
-using System.Globalization;
 using System.Text;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
@@ -48,20 +47,6 @@ namespace WindowPlugins.GUISettings
     private bool _settingsSaved;
     private string _customVolume = string.Empty;
     private bool _useMixing = false;
-
-    private class CultureComparer : IComparer
-    {
-      #region IComparer Members
-
-      public int Compare(object x, object y)
-      {
-        CultureInfo info1 = (CultureInfo)x;
-        CultureInfo info2 = (CultureInfo)y;
-        return String.Compare(info1.EnglishName, info2.EnglishName, true);
-      }
-
-      #endregion
-    }
 
     public GUISettingsGeneralVolume()
     {
@@ -299,40 +284,6 @@ namespace WindowPlugins.GUISettings
     private void SetProperties()
     {
       GUIPropertyManager.SetProperty("#customScalevalues", _customVolume);
-    }
-
-    private void EnableMixerButtons(bool enable)
-    {
-      if (enable)
-      {
-        btnMasterVolume.IsEnabled = true;
-        btnWave.IsEnabled = true;
-      }
-      else
-      {
-        btnMasterVolume.IsEnabled = false;
-        btnWave.IsEnabled = false;
-      }
-    }
-
-    private void EnableScaleButtons(bool enable)
-    {
-      if (enable)
-      {
-        btnWinXP.IsEnabled = true;
-        btnClassic.IsEnabled = true;
-        btnLogarithmic.IsEnabled = true;
-        btnVistaWin7.IsEnabled = true;
-        btnCustom.IsEnabled = true;
-      }
-      else
-      {
-        btnWinXP.IsEnabled = false;
-        btnClassic.IsEnabled = false;
-        btnLogarithmic.IsEnabled = false;
-        btnVistaWin7.IsEnabled = false;
-        btnCustom.IsEnabled = false;
-      }
     }
 
     private void GetStringFromKeyboard(ref string strLine)

@@ -71,65 +71,77 @@
       <texture>cdthumbframe.png</texture>
     </control>
     <control>
-      <type>fadelabel</type>
-      <id>1</id>
-      <posX>877</posX>
-      <posY>979</posY>
-      <width>840</width>
-      <visible>Player.HasAudio+!Player.HasVideo</visible>
-      <label>#(L(171)) #Play.Current.Artist</label>
-      <align>right</align>
-      <font>font11</font>
-      <textcolor>ivory</textcolor>
-    </control>
-    <control>
-      <type>fadelabel</type>
-      <id>1</id>
-      <posX>877</posX>
-      <posY>1015</posY>
-      <visible>Player.HasAudio+!Player.HasVideo</visible>
-      <label>#(L(182)): #Play.Current.Title</label>
-      <width>840</width>
-      <align>right</align>
-      <font>font11</font>
-      <textcolor>ivory</textcolor>
-    </control>
-    <control>
-      <type>fadelabel</type>
-      <id>1</id>
-      <posX>1042</posX>
-      <posY>979</posY>
-      <width>840</width>
-      <visible>Player.HasAudio+!Player.HasVideo</visible>
-      <label>#(L(170)) #Play.Current.Album</label>
-      <align>left</align>
-      <textcolor>ivory</textcolor>
-      <font>font11</font>
-    </control>
-    <control>
-      <type>fadelabel</type>
-      <id>1</id>
-      <posX>1042</posX>
-      <posY>1015</posY>
-      <width>840</width>
-      <label>#(L(435)) #Play.Current.Track  |  #(L(436)) #Play.Current.Year  |  #currentplaytime &gt; #currentremaining</label>
-      <align>left</align>
-      <textcolor>ivory</textcolor>
-      <font>font11</font>
-      <visible>Player.HasAudio+!Player.HasVideo+string.equals(#Play.Current.Lastfm.CurrentStream,)</visible>
-    </control>
-    <control>
-      <type>fadelabel</type>
-      <id>1</id>
-      <posX>1042</posX>
-      <posY>1015</posY>
-      <width>840</width>
-      <label>#Play.Current.Lastfm.CurrentStream  |  #currentplaytime &gt; #currentremaining</label>
-      <align>left</align>
-      <textcolor>ivory</textcolor>
-      <font>font11</font>
-      <visible>Player.HasAudio+!Player.HasVideo+!string.equals(#Play.Current.Lastfm.CurrentStream,)</visible>
-    </control>
+    <type>fadelabel</type>
+    <id>1</id>
+    <posX>877</posX>
+    <posY>979</posY>
+    <width>840</width>
+    <visible>Player.HasAudio+!Player.HasVideo</visible>
+    <label>#(L(171)) #Play.Current.Artist</label>
+    <align>right</align>
+    <font>RSS</font>
+    <textcolor>ivory</textcolor>
+  </control>
+  <control>
+    <type>fadelabel</type>
+    <id>1</id>
+    <posX>877</posX>
+    <posY>1015</posY>
+    <visible>Player.HasAudio+!Player.HasVideo</visible>
+    <label>#(L(182)): #Play.Current.Title</label>
+    <width>840</width>
+    <align>right</align>
+    <font>RSS</font>
+    <textcolor>ivory</textcolor>
+  </control>
+  <control>
+    <type>fadelabel</type>
+    <id>1</id>
+    <posX>1042</posX>
+    <posY>979</posY>
+    <width>840</width>
+    <visible>Player.HasAudio+!Player.HasVideo+string.equals(#duration)</visible>
+    <label>#(L(170)) #Play.Current.Album</label>
+    <align>left</align>
+    <textcolor>ivory</textcolor>
+    <font>RSS</font>
+  </control>
+  <control>
+    <type>fadelabel</type>
+    <id>1</id>
+    <posX>1042</posX>
+    <posY>979</posY>
+    <width>840</width>
+    <visible>Player.HasAudio+!Player.HasVideo+!string.equals(#duration)</visible>
+    <label>#(L(34043)) #Play.Current.Album</label>
+    <align>left</align>
+    <textcolor>ivory</textcolor>
+    <font>RSS</font>
+  </control>
+  <control>
+    <type>fadelabel</type>
+    <id>1</id>
+    <posX>1042</posX>
+    <posY>1015</posY>
+    <width>840</width>
+    <label>#(L(435)) #Play.Current.Track  |  #(L(436)) #Play.Current.Year  |  #currentplaytime &gt; #currentremaining</label>
+    <align>left</align>
+    <textcolor>ivory</textcolor>
+    <font>RSS</font>
+    <visible>Player.HasAudio+!Player.HasVideo+string.equals(#duration)</visible>
+  </control>
+  <control>
+    <type>fadelabel</type>
+    <id>1</id>
+    <posX>1042</posX>
+    <posY>1015</posY>
+    <width>840</width>
+    <label>#currentplaytime</label>
+    <align>left</align>
+    <textcolor>ivory</textcolor>
+    <font>RSS</font>
+    <visible>Player.HasAudio+!Player.HasVideo+!string.equals(#duration)</visible>
+  </control>
     <!--     *******************************************************************************************  -->
     <!--     ******************    !!!  THESE CONTROLS ARE FOR COMPATIBILITY ONLY  !!!  ****************  -->
     <!--     *******************************************************************************************  -->
@@ -261,10 +273,10 @@
       <id>5</id>
       <height>55</height>
       <posX>3364</posX>
-      <posY>1012</posY>
+      <posY>2012</posY>
       <width>502</width>
       <font>font12</font>
-      <label>#(L(179)): #Play.Current.Title\r#(L(171)) #Play.Current.Artist\r#(L(170)) #Play.Current.Album\r#(L(435)) #Play.Current.Track\r#(L(436)) #Play.Current.Year</label>
+      <label></label>
       <textcolor>EFFFFFFF</textcolor>
     </control>
   </controls>

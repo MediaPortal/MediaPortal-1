@@ -2,25 +2,12 @@
 <window>
   <controls>
     <control>
-      <description>bar image</description>
-      <type>image</type>
-      <id>0</id>
-      <posX>539</posX>
-      <posY>860</posY>
-      <height>77</height>
-      <width>749</width>
-      <texture>OSDBG.png</texture>
-      <colordiffuse>ddffffff</colordiffuse>
-      <animation effect="zoom" start="1,1" end="100,100" time="150" center="990,650" reversible="true">visiblechange</animation>
-      <visible>control.hasfocus(1237)</visible>
-    </control>
-    <control>
       <description>Logos group</description>
       <type>group</type>
       <posX>553</posX>
       <posY>872</posY>
       <visible>control.hasfocus(1237)</visible>
-      <animation effect="zoom" start="1,1" end="100,100" time="150" center="990,650" reversible="true">visiblechange</animation>
+      <animation effect="fade" start="0" end="100" time="150" reversible="true">visiblechange</animation>
       <layout>StackLayout(2, Horizontal, true)</layout>
       <control>
         <description>Certification (MPAA) Logo</description>

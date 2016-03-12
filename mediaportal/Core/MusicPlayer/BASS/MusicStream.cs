@@ -946,18 +946,18 @@ namespace MediaPortal.MusicPlayer.BASS
       // There seems to be an issue with setting correctly the title via taginfo
       // So let's filter it out ourself
       string title = _tagInfo.title;
-      int streamUrlIndex = title.IndexOf("';StreamUrl=");
+      int streamUrlIndex = title.IndexOf("';StreamUrl=", StringComparison.Ordinal);
       if (streamUrlIndex > -1)
       {
         title = _tagInfo.title.Substring(0, streamUrlIndex);
       }
-      streamUrlIndex = title.IndexOf("';");
-      if (streamUrlIndex == title.Length - 2)
+      streamUrlIndex = title.IndexOf("';", StringComparison.Ordinal);
+      if (streamUrlIndex > -1 && streamUrlIndex == title.Length - 2)
       {
         title = _tagInfo.title.Substring(0, streamUrlIndex);
       }
-      streamUrlIndex = title.IndexOf(";");
-      if (streamUrlIndex == title.Length - 1)
+      streamUrlIndex = title.IndexOf(";", StringComparison.Ordinal);
+      if (streamUrlIndex > -1 && streamUrlIndex == title.Length - 1)
       {
         title = _tagInfo.title.Substring(0, streamUrlIndex);
       }

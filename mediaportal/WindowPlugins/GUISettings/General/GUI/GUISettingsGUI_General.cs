@@ -20,7 +20,6 @@
 
 using System;
 using System.Collections;
-using System.Globalization;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
 using MediaPortal.Profile;
@@ -55,20 +54,6 @@ namespace WindowPlugins.GUISettings
 
     private ArrayList _homeUsage = new ArrayList();
     private int _homeSelectedIndex = 0;
-    
-    private class CultureComparer : IComparer
-    {
-      #region IComparer Members
-
-      public int Compare(object x, object y)
-      {
-        CultureInfo info1 = (CultureInfo)x;
-        CultureInfo info2 = (CultureInfo)y;
-        return String.Compare(info1.EnglishName, info2.EnglishName, true);
-      }
-
-      #endregion
-    }
 
     public GUISettingsGUIGeneral()
     {

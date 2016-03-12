@@ -1,0 +1,246 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!--version="1.0" encoding="utf-8" standalone="yes"-->
+<window>
+  <controls>
+    <!-- Movies List Layout -->
+    <control>
+      <description>Overlay text right</description>
+      <id>0</id>
+      <type>image</type>
+      <posX>1063</posX>
+      <posY>234</posY>
+      <width>823</width>
+      <height>699</height>
+      <texture mask="picturethumbmask.png">black.png</texture>
+      <colordiffuse>60ffffff</colordiffuse>
+      <visible>facadeview.list</visible>
+    </control>
+    <control>
+      <description>Movie Poster</description>
+      <id>500</id>
+      <type>image</type>
+      <posX>1590</posX>
+      <posY>255</posY>
+      <width>270</width>
+      <height>405</height>
+      <keepaspectratio>no</keepaspectratio>
+      <zoom>no</zoom>
+      <texture mask="videothumbmask.png">#selectedthumb</texture>
+      <visible>facadeview.list</visible>
+    </control>
+    <control>
+      <description>Movie Poster Frame</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>1590</posX>
+      <posY>255</posY>
+      <width>270</width>
+      <height>405</height>
+      <texture>Videothumbframe.png</texture>
+      <visible>facadeview.list</visible>
+    </control>
+    <control>
+      <description>Rating txt</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>1093</posX>
+      <posY>280</posY>
+      <label>#Trakt.Translation.Rating.Label</label>
+      <font>font10</font>
+      <align>left</align>
+      <textcolor>ffffd700</textcolor>
+      <visible>facadeview.list+!string.equals(#Trakt.Movie.Ratings.Votes,)</visible>
+    </control>
+    <control>
+      <description>Rating Icon</description>
+      <type>image</type>
+      <id>1</id>
+      <width>34</width>
+      <height>30</height>
+      <posX>1093</posX>
+      <posY>312</posY>
+      <texture>#Trakt.Movie.Ratings.Icon.png</texture>
+      <visible>facadeview.list+!string.equals(#Trakt.Movie.Ratings.Votes,)</visible>
+    </control>
+    <control>
+      <description>Rating value</description>
+      <type>fadelabel</type>
+      <id>1</id>
+      <posX>1149</posX>
+      <posY>309</posY>
+      <width>399</width>
+      <label>#Trakt.Movie.Ratings.Percentage% (#Trakt.Movie.Ratings.Votes #Trakt.Translation.Votes.Label)</label>
+      <font>font12</font>
+      <textcolor>ffffd700</textcolor>
+      <visible>facadeview.list+!string.equals(#Trakt.Movie.Ratings.Votes,)</visible>
+    </control>
+    <control>
+      <description>Genre txt</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>1093</posX>
+      <posY>346</posY>
+      <label>#Trakt.Translation.Genre.Label</label>
+      <font>font10</font>
+      <align>left</align>
+      <textcolor>ffffd700</textcolor>
+      <visible>facadeview.list+!string.equals(#Trakt.Movie.Genres,)</visible>
+    </control>
+    <control>
+      <description>Genre value</description>
+      <type>fadelabel</type>
+      <id>1</id>
+      <posX>1093</posX>
+      <posY>375</posY>
+      <label>#Trakt.Movie.Genres</label>
+      <font>font12</font>
+      <width>420</width>
+      <textcolor>ffffd700</textcolor>
+      <visible>facadeview.list+!string.equals(#Trakt.Movie.Genres,)</visible>
+    </control>
+    <control>
+      <description>Movie Released txt</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>1093</posX>
+      <posY>412</posY>
+      <label>#Trakt.Translation.Released.Label</label>
+      <font>font10</font>
+      <align>left</align>
+      <textcolor>ffffd700</textcolor>
+      <visible>facadeview.list+!string.equals(#Trakt.Movie.Released,)</visible>
+    </control>
+    <control>
+      <description>Released</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>1093</posX>
+      <posY>441</posY>
+      <width>420</width>
+      <label>#Trakt.Movie.Released</label>
+      <font>font12</font>
+      <textcolor>ffffd700</textcolor>
+      <visible>facadeview.list+!string.equals(#Trakt.Movie.Released,)</visible>
+    </control>
+    <control>
+      <description>Movie Year txt</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>1093</posX>
+      <posY>478</posY>
+      <label>#Trakt.Translation.Year.Label</label>
+      <font>font10</font>
+      <align>left</align>
+      <textcolor>ffffd700</textcolor>
+      <visible>facadeview.list+!string.equals(#Trakt.Movie.Year,)</visible>
+    </control>
+    <control>
+      <description>Movie Year</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>1093</posX>
+      <posY>507</posY>
+      <width>420</width>
+      <label>#Trakt.Movie.Year</label>
+      <font>font12</font>
+      <textcolor>ffffd700</textcolor>
+      <visible>facadeview.list+!string.equals(#Trakt.Movie.Year,)</visible>
+    </control>
+    <control>
+      <description>Movie Certification Label</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>1093</posX>
+      <posY>544</posY>
+      <label>#Trakt.Translation.Certification.Label</label>
+      <font>font11</font>
+      <textcolor>ffffd700</textcolor>
+      <visible>facadeview.list+!string.equals(#Trakt.Movie.Certification,)</visible>
+    </control>
+    <control>
+      <description>Movie Certification Value</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>1093</posX>
+      <posY>573</posY>
+      <label>#Trakt.Movie.Certification</label>
+      <font>font12</font>
+      <textcolor>ffffd700</textcolor>
+      <visible>facadeview.list+!string.equals(#Trakt.Movie.Certification,)</visible>
+    </control>
+    <control>
+      <description>Movie Runtime txt</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>1093</posX>
+      <posY>610</posY>
+      <label>#Trakt.Translation.Runtime.Label</label>
+      <font>font10</font>
+      <align>left</align>
+      <textcolor>ffffd700</textcolor>
+      <visible>facadeview.list+!string.equals(#Trakt.Movie.Runtime,)</visible>
+    </control>
+    <control>
+      <description>Movie Runtime</description>
+      <type>fadelabel</type>
+      <id>1</id>
+      <posX>1093</posX>
+      <posY>639</posY>
+      <width>420</width>
+      <label>#Trakt.Movie.Runtime mins</label>
+      <font>font12</font>
+      <align>left</align>
+      <textcolor>ffffd700</textcolor>
+      <visible>facadeview.list+!string.equals(#Trakt.Movie.Runtime,)</visible>
+    </control>
+    <control>
+      <description>Separator Line</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>1093</posX>
+      <posY>690</posY>
+      <width>750</width>
+      <height>1</height>
+      <texture>hbar1white.png</texture>
+      <colordiffuse>60ffffff</colordiffuse>
+      <visible>facadeview.list+!string.equals(#Trakt.Movie.Title,)</visible>
+    </control>
+    <control Style="NoShadow">
+      <description>Plot value</description>
+      <type>textboxscrollup</type>
+      <id>1</id>
+      <posX>1093</posX>
+      <posY>705</posY>
+      <width>780</width>
+      <height>157</height>
+      <label>#Trakt.Movie.Overview</label>
+      <font>font11</font>
+      <textcolor>ffffd700</textcolor>
+      <visible>facadeview.list</visible>
+    </control>
+    <control>
+      <description>Separator Line</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>1093</posX>
+      <posY>870</posY>
+      <width>750</width>
+      <height>1</height>
+      <texture>hbar1white.png</texture>
+      <colordiffuse>60ffffff</colordiffuse>
+      <visible>facadeview.list+!string.equals(#Trakt.Movie.Title,)</visible>
+    </control>
+    <control>
+      <description>Certification Logo</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>1093</posX>
+      <posY>877</posY>
+      <width>127</width>
+      <height>48</height>
+      <texture>Logos\#Trakt.Movie.Certification.png</texture>
+      <keepaspectratio>no</keepaspectratio>
+      <visible>facadeview.list</visible>
+    </control>
+  </controls>
+</window>

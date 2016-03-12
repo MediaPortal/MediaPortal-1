@@ -255,8 +255,6 @@ namespace MediaPortal.Configuration.Sections
       }
     }
 
-    private void cLBDSFilter_SelectedIndexChanged(object sender, EventArgs e) {}
-
     protected void LoadSettings(string section)
     {
       string strFilters = "";

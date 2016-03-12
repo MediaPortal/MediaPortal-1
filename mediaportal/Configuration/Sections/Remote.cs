@@ -2187,12 +2187,6 @@ namespace MediaPortal.Configuration.Sections
       checkBoxHcwFilterDoubleKlicks.Checked = false;
     }
 
-    private void buttonHcwMapping_Click(object sender, EventArgs e)
-    {
-      InputMappingForm dlg = new InputMappingForm("Hauppauge HCW");
-      dlg.ShowDialog(this);
-    }
-
     private void hScrollBarHcwButtonRelease_ValueChanged(object sender, EventArgs e)
     {
       toolTip.SetToolTip(hScrollBarHcwButtonRelease, string.Format("{0} msec.", hScrollBarHcwButtonRelease.Value));

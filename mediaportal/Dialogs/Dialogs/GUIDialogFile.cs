@@ -58,7 +58,6 @@ namespace MediaPortal.Dialogs
     private int m_iNrOfItems = 0;
     private long m_dwTotalSize = 0;
     private int m_iFileNr = 0;
-    private DirectoryHistory m_history = new DirectoryHistory();
     private string sourceFolder = string.Empty;
     private string destinationFolder = string.Empty;
     private VirtualDirectory m_directory = null;
@@ -491,10 +490,14 @@ namespace MediaPortal.Dialogs
               fi.MoveTo(destinationFolder + strItemFileName);
               // delete from database
               DeleteFromDatabase(item);
+
+              MoveMovieChildFiles(item.Path, destinationFolder);
             }
             else
             {
               fi.CopyTo(destinationFolder + strItemFileName, false);
+
+              CopyMovieChildFiles(item.Path, destinationFolder);
             }
           }
         }
@@ -507,6 +510,106 @@ namespace MediaPortal.Dialogs
           Log.Info("FileMenu Error: from {0} to {1} MC:{2}", item.Path, destinationFolder + strItemFileName, m_iFileMode);
         }
       }
+    }
+
+    private static void MoveMovieChildFiles(string fName, string destinationFolder)
+    {
+      int pos = fName.LastIndexOf(@"\");
+      if (pos < 0)
+        return;
+      string path = Path.GetDirectoryName(fName);
+      string filename = Path.GetFileNameWithoutExtension(fName);
+
+      filename = filename.ToLowerInvariant();
+      string[] files;
+      try
+      {
+        files = Directory.GetFiles(path);
+        foreach (string fileName in files)
+        {
+          try
+          {
+            if (fileName.ToLowerInvariant().IndexOf(filename) >= 0)
+            {
+              // Thumbnail
+              if (fileName.ToLowerInvariant().IndexOf(".jpg") >= 0)
+              {
+                FileInfo fi = new FileInfo(fileName);
+                fi.MoveTo(destinationFolder + Path.GetFileName(fileName));
+              }
+              // comskip txt file
+              if (fileName.ToLowerInvariant().IndexOf(".txt") >= 0)
+              {
+                FileInfo fi = new FileInfo(fileName);
+                fi.MoveTo(destinationFolder + Path.GetFileName(fileName));
+              }
+              // Matroska tag file
+              if (fileName.ToLowerInvariant().IndexOf(".xml") >= 0)
+              {
+                FileInfo fi = new FileInfo(fileName);
+                fi.MoveTo(destinationFolder + Path.GetFileName(fileName));
+              }
+              if (fileName.ToLowerInvariant().IndexOf(".nfo") >= 0)
+              {
+                FileInfo fi = new FileInfo(fileName);
+                fi.MoveTo(destinationFolder + Path.GetFileName(fileName));
+              }
+            }
+          }
+          catch (Exception) { }
+        }
+      }
+      catch (Exception) { }
+    }
+
+    private static void CopyMovieChildFiles(string fName, string destinationFolder)
+    {
+      int pos = fName.LastIndexOf(@"\");
+      if (pos < 0)
+        return;
+      string path = Path.GetDirectoryName(fName);
+      string filename = Path.GetFileNameWithoutExtension(fName);
+
+      filename = filename.ToLowerInvariant();
+      string[] files;
+      try
+      {
+        files = Directory.GetFiles(path);
+        foreach (string fileName in files)
+        {
+          try
+          {
+            if (fileName.ToLowerInvariant().IndexOf(filename) >= 0)
+            {
+              // Thumbnail
+              if (fileName.ToLowerInvariant().IndexOf(".jpg") >= 0)
+              {
+                FileInfo fi = new FileInfo(fileName);
+                fi.CopyTo(destinationFolder + Path.GetFileName(fileName));
+              }
+              // comskip txt file
+              if (fileName.ToLowerInvariant().IndexOf(".txt") >= 0)
+              {
+                FileInfo fi = new FileInfo(fileName);
+                fi.CopyTo(destinationFolder + Path.GetFileName(fileName));
+              }
+              // Matroska tag file
+              if (fileName.ToLowerInvariant().IndexOf(".xml") >= 0)
+              {
+                FileInfo fi = new FileInfo(fileName);
+                fi.CopyTo(destinationFolder + Path.GetFileName(fileName));
+              }
+              if (fileName.ToLowerInvariant().IndexOf(".nfo") >= 0)
+              {
+                FileInfo fi = new FileInfo(fileName);
+                fi.CopyTo(destinationFolder + Path.GetFileName(fileName));
+              }
+            }
+          }
+          catch (Exception) { }
+        }
+      }
+      catch (Exception) { }
     }
 
     private void FileItemGetNrOfFiles(GUIListItem item)
@@ -737,7 +840,7 @@ namespace MediaPortal.Dialogs
                   string strDestinationFile = sourceFolder + "\\" + strDestinationName + strExtension;
                   try
                   {
-                    File.Move(item.Path, strDestinationFile);
+                    RenameRecording(item.Path, strDestinationFile);
                   }
                   catch (Exception)
                   {
@@ -783,6 +886,54 @@ namespace MediaPortal.Dialogs
           }
           break;
       }
+    }
+
+    private void RenameRecording(string recordingFilename, string destinationFile)
+    {
+      File.Move(recordingFilename, destinationFile);
+
+      int pos = recordingFilename.LastIndexOf(@"\");
+      if (pos < 0)
+        return;
+      string path = Path.GetDirectoryName(recordingFilename);
+      string filename = Path.GetFileNameWithoutExtension(recordingFilename);
+      string destinationFilename = Path.GetFileNameWithoutExtension(destinationFile);
+
+      string[] files;
+      try
+      {
+        files = Directory.GetFiles(path);
+        foreach (string fileName in files)
+        {
+          try
+          {
+            if (fileName.ToLowerInvariant().IndexOf(filename.ToLowerInvariant()) >= 0)
+            {
+              //rename Thumbnails
+              if (fileName.ToLowerInvariant().IndexOf(".jpg") >= 0)
+              {
+                File.Move(fileName, path + "\\" + destinationFilename + ".jpg");
+              }
+              //rename comskip txt file
+              if (fileName.ToLowerInvariant().IndexOf(".txt") >= 0)
+              {
+                File.Move(fileName, path + "\\" + destinationFilename + ".txt");
+              }
+              //rename Matroska tag file
+              if (fileName.ToLowerInvariant().IndexOf(".xml") >= 0)
+              {
+                File.Move(fileName, path + "\\" + destinationFilename + ".xml");
+              }
+              if (fileName.ToLowerInvariant().IndexOf(".nfo") >= 0)
+              {
+                File.Move(fileName, path + "\\" + destinationFilename + ".nfo");
+              }
+            }
+          }
+          catch (Exception) { }
+        }
+      }
+      catch (Exception) { }
     }
 
     private void CleanDirectoryReadOnlyAttributes(string targetDirectory)
@@ -1040,6 +1191,9 @@ namespace MediaPortal.Dialogs
         {
           // delete from database
           DeleteFromDatabase(item);
+
+          // this will delete xml, nfo, txt, jpg with same name
+          Util.Utils.DeleteRecording(item.Path);
         }
       }
     }

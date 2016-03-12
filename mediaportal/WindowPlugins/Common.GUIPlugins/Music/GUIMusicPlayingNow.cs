@@ -115,10 +115,10 @@ namespace MediaPortal.GUI.Music
     private GUIMusicBaseWindow _MusicWindow = null;
     private Timer ImageChangeTimer = null;
     private Timer VUMeterTimer = null;
+    private Timer ProgramChangeTimer = null;
     private List<String> ImagePathContainer = null;
     private bool _trackChanged = true;
     private bool _usingBassEngine = false;
-    private bool _showVisualization = false;
     private object _imageMutex = null;
     private string _vuMeter = "none";
     private static readonly Random Randomizer = new Random();
@@ -157,16 +157,6 @@ namespace MediaPortal.GUI.Music
         ShowViz = xmlreader.GetValueAsBool("musicmisc", "showVisInNowPlaying", false);
         _vuMeter = xmlreader.GetValueAsString("musicmisc", "vumeter", "none");
         _lookupSimilarTracks = xmlreader.GetValueAsBool("musicmisc", "lookupSimilarTracks", true);
-
-        if (ShowViz && VizName != "None")
-        {
-          _showVisualization = true;
-        }
-        else
-        {
-          _showVisualization = false;
-          Log.Debug("GUIMusicPlayingNow: Viz disabled - ShowViz {0}, VizName {1}", Convert.ToString(ShowViz), VizName);
-        }
       }
 
       _usingBassEngine = BassMusicPlayer.IsDefaultMusicPlayer;
@@ -454,6 +444,12 @@ namespace MediaPortal.GUI.Music
             }
           }
           break;
+        case GUIMessage.MessageType.GUI_MSG_SEND_PROGRAM_INFO:
+          {
+            GUIPropertyManager.SetProperty("#Play.Current.Title", message.Label);
+            GUIPropertyManager.SetProperty("#Play.Next.Title", message.Label2);
+          }
+          break;
       }
       return base.OnMessage(message);
     }
@@ -497,6 +493,18 @@ namespace MediaPortal.GUI.Music
         ImageChangeTimer.Start();
       }
 
+      if (ProgramChangeTimer == null)
+      {
+        ProgramChangeTimer = new Timer();
+        ProgramChangeTimer.Interval = 3 * 1000;
+        ProgramChangeTimer.Elapsed += OnProgramTimerTickEvent;
+        ProgramChangeTimer.Start();
+      }
+      else
+      {
+        ProgramChangeTimer.Start();
+      }
+
       // Start the VUMeter Update Timer, when it is enabled in skin file
       GUIPropertyManager.SetProperty("#VUMeterL", @"VU1.png");
       GUIPropertyManager.SetProperty("#VUMeterR", @"VU1.png");
@@ -538,6 +546,12 @@ namespace MediaPortal.GUI.Music
       {
         VUMeterTimer.Stop();
         VUMeterTimer = null;
+      }
+
+      if (ProgramChangeTimer != null)
+      {
+        ProgramChangeTimer.Stop();
+        ProgramChangeTimer = null;
       }
 
       if (ImgCoverArt != null)
@@ -681,6 +695,15 @@ namespace MediaPortal.GUI.Music
     #endregion
 
     #region Private methods
+
+    private void OnProgramTimerTickEvent(object sender, ElapsedEventArgs e)
+    {
+      if (g_Player.IsRadio)
+      {
+        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_GET_PROGRAM_INFO, 0, 0, 0, 0, 0, null);
+        GUIWindowManager.SendMessage(msg);
+      }
+    }
 
     /// <summary>
     /// The VUMeter Timer has elapsed.

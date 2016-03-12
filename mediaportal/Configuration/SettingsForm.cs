@@ -144,7 +144,7 @@ namespace MediaPortal.Configuration
     #endregion
 
     public SettingsForm()
-      : this(false) {}
+      : this(false) { }
 
     public SettingsForm(bool showDebugOptions)
     {
@@ -170,6 +170,14 @@ namespace MediaPortal.Configuration
       string strLanguage;
       using (Settings xmlreader = new MPSettings())
       {
+        this.Width = xmlreader.GetValueAsInt("Configuration", "FormWidth", this.Width);
+        this.Height = xmlreader.GetValueAsInt("Configuration", "FormHeight", this.Height);
+
+        if (xmlreader.GetValueAsBool("Configuration", "FormMaximized", false))
+        {
+          this.WindowState = FormWindowState.Maximized;
+        }
+
         strLanguage = xmlreader.GetValueAsString("gui", "language", "English");
         hintShowCount = xmlreader.GetValueAsInt("general", "ConfigModeHintCount", 0);
 
@@ -298,7 +306,7 @@ namespace MediaPortal.Configuration
           {
             FiltersWinDVD7Decoder windvdConfig = new FiltersWinDVD7Decoder();
             AddSection(new ConfigPage(filterSection, windvdConfig, true));
-          }          
+          }
           if (filter.Equals("DScaler Audio Decoder"))
           {
             FiltersDScalerAudio dscalerConfig = new FiltersDScalerAudio();
@@ -357,7 +365,7 @@ namespace MediaPortal.Configuration
       //AddSection(new ConfigPage(filterSection, renderConfig, true));
 
       //Look for Audio Encoders, if exist assume encoders are installed & present config option
-      string[] audioEncoders = new string[] {"InterVideo Audio Encoder"};
+      string[] audioEncoders = new string[] { "InterVideo Audio Encoder" };
       FilterCollection legacyFilters = Filters.LegacyFilters;
       foreach (Filter audioCodec in legacyFilters)
       {
@@ -1028,9 +1036,9 @@ namespace MediaPortal.Configuration
               {
                 if (parentNode.Text == "TV/Radio")
                 {
-                      sectionTree.SelectedNode = parentNode;
-                      parentNode.EnsureVisible();
-                      return false;
+                  sectionTree.SelectedNode = parentNode;
+                  parentNode.EnsureVisible();
+                  return false;
                 }
               }
               return false;
@@ -1084,7 +1092,7 @@ namespace MediaPortal.Configuration
           }
         }
       }
-      catch (Exception) {}
+      catch (Exception) { }
 
       SaveAllSettings();
     }
@@ -1137,6 +1145,24 @@ namespace MediaPortal.Configuration
     {
       ToggleSectionVisibility(toolStripButtonSwitchAdvanced.Checked);
       toolStripButtonSwitchAdvanced.Text = AdvancedMode ? "Switch to standard mode" : "Switch to expert mode";
+    }
+
+    protected override void OnClosing(CancelEventArgs e)
+    {
+      base.OnClosing(e);
+
+      using (Settings writer = new MPSettings())
+      {
+        if (this.WindowState == FormWindowState.Normal)
+        {
+          writer.SetValue("Configuration", "FormWidth", this.Width);
+          writer.SetValue("Configuration", "FormHeight", this.Height);
+        }
+
+        writer.SetValueAsBool("Configuration", "FormMaximized", this.WindowState == FormWindowState.Maximized);
+      }
+
+      Settings.SaveCache();
     }
   }
 }

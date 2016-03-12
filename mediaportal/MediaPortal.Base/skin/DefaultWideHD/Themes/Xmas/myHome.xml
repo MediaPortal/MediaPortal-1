@@ -71,7 +71,7 @@
       <width>450</width>
       <height>500</height>
       <textAlign>center</textAlign>
-      <textcolor>ffffffff</textcolor>
+      <textcolor>ffffd700</textcolor>
       <textColorNoFocus>aaffffff</textColorNoFocus>
       <dimColor>ffffffff</dimColor>
       <buttonTextXOff>0</buttonTextXOff>
@@ -195,7 +195,7 @@
       <label>#date | #time</label>
       <align>right</align>
       <font>Label</font>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ffffd700</textcolor>
       <visible>!player.hasaudio+!player.hasvideo</visible>
     </control>
     <control>
@@ -266,62 +266,77 @@
         <texture>cdthumbframe.png</texture>
       </control>
       <control>
-        <type>fadelabel</type>
-        <id>0</id>
-        <posX>877</posX>
-        <posY>106</posY>
-        <width>840</width>
-        <label>#(L(171)) #Play.Current.Artist</label>
-        <align>right</align>
-        <font>font11</font>
-        <textcolor>ivory</textcolor>
-      </control>
-      <control>
-        <type>fadelabel</type>
-        <id>0</id>
-        <posX>877</posX>
-        <posY>142</posY>
-        <label>#(L(179)): #Play.Current.Title</label>
-        <width>840</width>
-        <align>right</align>
-        <font>font11</font>
-        <textcolor>ivory</textcolor>
-      </control>
-      <control>
-        <type>fadelabel</type>
-        <id>0</id>
-        <posX>1042</posX>
-        <posY>106</posY>
-        <width>840</width>
-        <label>#(L(170)) #Play.Current.Album</label>
-        <align>left</align>
-        <textcolor>ivory</textcolor>
-        <font>font11</font>
-      </control>
-      <control>
-        <type>fadelabel</type>
-        <id>0</id>
-        <posX>1042</posX>
-        <posY>142</posY>
-        <width>840</width>
-        <label>#(L(435)) #Play.Current.Track  |  #(L(436)) #Play.Current.Year  |  #currentplaytime &gt; #currentremaining</label>
-        <align>left</align>
-        <textcolor>ivory</textcolor>
-        <font>font11</font>
-        <visible>Player.HasAudio+!Player.HasVideo+string.equals(#Play.Current.Lastfm.CurrentStream,)</visible>
-      </control>
-      <control>
-        <type>fadelabel</type>
-        <id>0</id>
-        <posX>1042</posX>
-        <posY>142</posY>
-        <width>840</width>
-        <label>#Play.Current.Lastfm.CurrentStream  |  #currentplaytime &gt; #currentremaining</label>
-        <align>left</align>
-        <textcolor>ivory</textcolor>
-        <font>font11</font>
-        <visible>Player.HasAudio+!Player.HasVideo+!string.equals(#Play.Current.Lastfm.CurrentStream,)</visible>
-      </control>
+    <type>fadelabel</type>
+    <id>1</id>
+    <posX>877</posX>
+    <posY>106</posY>
+    <width>840</width>
+    <visible>Player.HasAudio+!Player.HasVideo</visible>
+    <label>#(L(171)) #Play.Current.Artist</label>
+    <align>right</align>
+    <font>RSS</font>
+    <textcolor>ffffd700</textcolor>
+  </control>
+  <control>
+    <type>fadelabel</type>
+    <id>1</id>
+    <posX>877</posX>
+    <posY>142</posY>
+    <visible>Player.HasAudio+!Player.HasVideo</visible>
+    <label>#(L(182)): #Play.Current.Title</label>
+    <width>840</width>
+    <align>right</align>
+    <font>RSS</font>
+    <textcolor>ffffd700</textcolor>
+  </control>
+  <control>
+    <type>fadelabel</type>
+    <id>1</id>
+    <posX>1042</posX>
+    <posY>106</posY>
+    <width>840</width>
+    <visible>Player.HasAudio+!Player.HasVideo+string.equals(#duration)</visible>
+    <label>#(L(170)) #Play.Current.Album</label>
+    <align>left</align>
+    <textcolor>ffffd700</textcolor>
+    <font>RSS</font>
+  </control>
+  <control>
+    <type>fadelabel</type>
+    <id>1</id>
+    <posX>1042</posX>
+    <posY>106</posY>
+    <width>840</width>
+    <visible>Player.HasAudio+!Player.HasVideo+!string.equals(#duration)</visible>
+    <label>#(L(34043)) #Play.Current.Album</label>
+    <align>left</align>
+    <textcolor>ffffd700</textcolor>
+    <font>RSS</font>
+  </control>
+  <control>
+    <type>fadelabel</type>
+    <id>1</id>
+    <posX>1042</posX>
+    <posY>142</posY>
+    <width>840</width>
+    <label>#(L(435)) #Play.Current.Track  |  #(L(436)) #Play.Current.Year  |  #currentplaytime &gt; #currentremaining</label>
+    <align>left</align>
+    <textcolor>ffffd700</textcolor>
+    <font>RSS</font>
+    <visible>Player.HasAudio+!Player.HasVideo+string.equals(#duration)</visible>
+  </control>
+  <control>
+    <type>fadelabel</type>
+    <id>1</id>
+    <posX>1042</posX>
+    <posY>142</posY>
+    <width>840</width>
+    <label>#currentplaytime</label>
+    <align>left</align>
+    <textcolor>ffffd700</textcolor>
+    <font>RSS</font>
+    <visible>Player.HasAudio+!Player.HasVideo+!string.equals(#duration)</visible>
+  </control>
     </control>
     <!--     *******************************************************************************************  -->
     <!--     *******************************    NOW PLAYING VIDEO  *************************************  -->
@@ -361,7 +376,7 @@
         <width>720</width>
         <align>right</align>
         <font>font11</font>
-        <textcolor>ivory</textcolor>
+        <textcolor>ffffd700</textcolor>
         <label>#Play.Current.Title</label>
         <wrapString>:.:</wrapString>
       </control>
@@ -374,7 +389,7 @@
         <width>720</width>
         <align>right</align>
         <font>font11</font>
-        <textcolor>ivory</textcolor>
+        <textcolor>ffffd700</textcolor>
         <label>#Play.Current.Genre</label>
         <wrapString>:.:</wrapString>
       </control>
@@ -387,7 +402,7 @@
         <width>825</width>
         <align>left</align>
         <font>font11</font>
-        <textcolor>ivory</textcolor>
+        <textcolor>ffffd700</textcolor>
         <label>#Play.Current.Year</label>
         <wrapString>:.:</wrapString>
       </control>
@@ -400,7 +415,7 @@
         <width>825</width>
         <align>left</align>
         <font>font11</font>
-        <textcolor>ivory</textcolor>
+        <textcolor>ffffd700</textcolor>
         <label>#Play.Current.Director</label>
         <wrapString>:.:</wrapString>
       </control>
@@ -428,7 +443,7 @@
       <width>1780</width>
       <align>left</align>
       <font>font12</font>
-      <textcolor>ivory</textcolor>
+      <textcolor>ffffd700</textcolor>
       <label>#infoservice.feed.titles</label>
       <wrapString> :-: </wrapString>
       <shadowAngle>0</shadowAngle>
@@ -445,7 +460,7 @@
       <width>1780</width>
       <align>left</align>
       <font>font12</font>
-      <textcolor>ivory</textcolor>
+      <textcolor>ffffd700</textcolor>
       <label>#WorldNews.NewsTicker</label>
       <wrapString> :-: </wrapString>
       <shadowAngle>0</shadowAngle>

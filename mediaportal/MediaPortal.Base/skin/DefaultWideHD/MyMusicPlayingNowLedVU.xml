@@ -250,10 +250,10 @@
       <description>background image</description>
       <type>image</type>
       <id>0</id>
-      <posX>1290</posX>
-      <posY>741</posY>
-      <width>427</width>
-      <height>66</height>
+      <posX>1390</posX>
+      <posY>721</posY>
+      <width>214</width>
+      <height>132</height>
       <texture>menuBG.png</texture>
       <colordiffuse>ffffffff</colordiffuse>
       <visible>Player.HasAudio</visible>
@@ -261,8 +261,8 @@
     <control>
       <type>image</type>
       <id>0</id>
-      <posX>1300</posX>
-      <posY>720</posY>
+      <posX>1400</posX>
+      <posY>700</posY>
       <width>195</width>
       <height>105</height>
       <texture>Animations\LedVu\vu1.png</texture>
@@ -272,8 +272,8 @@
     <control>
       <type>image</type>
       <id>999</id>
-      <posX>1300</posX>
-      <posY>720</posY>
+      <posX>1400</posX>
+      <posY>700</posY>
       <width>195</width>
       <height>105</height>
       <imagepath>Animations\LedVu</imagepath>
@@ -284,8 +284,8 @@
     <control>
       <type>image</type>
       <id>0</id>
-      <posX>1510</posX>
-      <posY>720</posY>
+      <posX>1400</posX>
+      <posY>770</posY>
       <width>195</width>
       <height>105</height>
       <texture>Animations\LedVu\vu1.png</texture>
@@ -295,8 +295,8 @@
     <control>
       <type>image</type>
       <id>998</id>
-      <posX>1510</posX>
-      <posY>720</posY>
+      <posX>1400</posX>
+      <posY>770</posY>
       <width>195</width>
       <height>105</height>
       <shouldCache>true</shouldCache>

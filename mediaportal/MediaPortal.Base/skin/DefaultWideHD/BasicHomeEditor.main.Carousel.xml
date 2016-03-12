@@ -212,6 +212,23 @@ ID format AA-B-C-DD [group/subgroup/layer/item] eg: 990105 = group 99 / subgroup
         <animation effect="rotatey" start="0" end="60" center="960,1500" time="250" acceleration="-0.6" reversible="false">windowclose</animation>
       </control>
       <control>
+        <type>image</type>
+        <posX>#image.posx</posX>
+        <posY>#image.posy</posY>
+        <width>#image.width</width>
+        <height>#image.height</height>
+        <texture>basichome_label_overlay.png</texture>
+        <colordiffuse>ccffffff</colordiffuse>
+        <animation effect="rotatey" start="48" end="48" center="960,1500" time="0" condition="true">conditional</animation>
+        <animation effect="fade" start="0" end="100" time="250" reversible="false" condition="string.contains(#hedit.main.calc.nav,b0)">conditional</animation>
+        <animation effect="fade" start="0" end="100" time="250" reversible="false" condition="string.contains(#hedit.main.calc.nav,b1)">conditional</animation>
+        <animation effect="rotatey" start="16" end="0" center="960,1500" time="250" acceleration="-0.6" reversible="false" condition="string.contains(#hedit.main.calc.nav,b0)">conditional</animation>
+        <animation effect="rotatey" start="16" end="0" center="960,1500" time="250" acceleration="-0.6" reversible="false" condition="string.contains(#hedit.main.calc.nav,b1)">conditional</animation>
+        <animation effect="rotatey" start="-16" end="0" center="960,1500" time="250" acceleration="-0.6" reversible="false" condition="string.contains(#hedit.main.calc.nav,f0)">conditional</animation>
+        <animation effect="rotatey" start="-16" end="0" center="960,1500" time="250" acceleration="-0.6" reversible="false" condition="string.contains(#hedit.main.calc.nav,f1)">conditional</animation>
+        <animation effect="rotatey" start="0" end="60" center="960,1500" time="250" acceleration="-0.6" reversible="false">windowclose</animation>
+      </control>
+      <control>
         <type>fadelabel</type>
         <posX>#label.posx</posX>
         <posY>#label.posy</posY>
@@ -246,6 +263,21 @@ ID format AA-B-C-DD [group/subgroup/layer/item] eg: 990105 = group 99 / subgroup
         <animation effect="rotatey" start="0" end="60" center="960,1500" time="250" acceleration="-0.6" reversible="false">windowclose</animation>
       </control>
       <control>
+        <type>image</type>
+        <posX>#image.posx</posX>
+        <posY>#image.posy</posY>
+        <width>#image.width</width>
+        <height>#image.height</height>
+        <texture>basichome_label_overlay.png</texture>
+        <colordiffuse>ccffffff</colordiffuse>
+        <animation effect="rotatey" start="32" end="32" center="960,1500" time="0" condition="true">conditional</animation>
+        <animation effect="rotatey" start="16" end="0" center="960,1500" time="250" acceleration="-0.6" reversible="false" condition="string.contains(#hedit.main.calc.nav,b0)">conditional</animation>
+        <animation effect="rotatey" start="16" end="0" center="960,1500" time="250" acceleration="-0.6" reversible="false" condition="string.contains(#hedit.main.calc.nav,b1)">conditional</animation>
+        <animation effect="rotatey" start="-16" end="0" center="960,1500" time="250" acceleration="-0.6" reversible="false" condition="string.contains(#hedit.main.calc.nav,f0)">conditional</animation>
+        <animation effect="rotatey" start="-16" end="0" center="960,1500" time="250" acceleration="-0.6" reversible="false" condition="string.contains(#hedit.main.calc.nav,f1)">conditional</animation>
+        <animation effect="rotatey" start="0" end="60" center="960,1500" time="250" acceleration="-0.6" reversible="false">windowclose</animation>
+      </control>
+      <control>
         <type>fadelabel</type>
         <posX>#label.posx</posX>
         <posY>#label.posy</posY>
@@ -270,6 +302,21 @@ ID format AA-B-C-DD [group/subgroup/layer/item] eg: 990105 = group 99 / subgroup
         <width>#image.width</width>
         <height>#image.height</height>
         <texture mask="basichome_button_mask.png">#(string.format('{0}.hover',#hedit.main.use.3))</texture>
+        <animation effect="rotatey" start="16" end="16" center="960,1500" time="0" condition="true">conditional</animation>
+        <animation effect="rotatey" start="16" end="0" center="960,1500" time="250" acceleration="-0.6" reversible="false" condition="string.contains(#hedit.main.calc.nav,b0)">conditional</animation>
+        <animation effect="rotatey" start="16" end="0" center="960,1500" time="250" acceleration="-0.6" reversible="false" condition="string.contains(#hedit.main.calc.nav,b1)">conditional</animation>
+        <animation effect="rotatey" start="-16" end="0" center="960,1500" time="250" acceleration="-0.6" reversible="false" condition="string.contains(#hedit.main.calc.nav,f0)">conditional</animation>
+        <animation effect="rotatey" start="-16" end="0" center="960,1500" time="250" acceleration="-0.6" reversible="false" condition="string.contains(#hedit.main.calc.nav,f1)">conditional</animation>
+        <animation effect="rotatey" start="0" end="60" center="960,1500" time="250" acceleration="-0.6" reversible="false">windowclose</animation>
+      </control>
+      <control>
+        <type>image</type>
+        <posX>#image.posx</posX>
+        <posY>#image.posy</posY>
+        <width>#image.width</width>
+        <height>#image.height</height>
+        <texture>basichome_label_overlay.png</texture>
+        <colordiffuse>ccffffff</colordiffuse>
         <animation effect="rotatey" start="16" end="16" center="960,1500" time="0" condition="true">conditional</animation>
         <animation effect="rotatey" start="16" end="0" center="960,1500" time="250" acceleration="-0.6" reversible="false" condition="string.contains(#hedit.main.calc.nav,b0)">conditional</animation>
         <animation effect="rotatey" start="16" end="0" center="960,1500" time="250" acceleration="-0.6" reversible="false" condition="string.contains(#hedit.main.calc.nav,b1)">conditional</animation>
@@ -340,6 +387,21 @@ ID format AA-B-C-DD [group/subgroup/layer/item] eg: 990105 = group 99 / subgroup
         <animation effect="rotatey" start="0" end="-60" center="960,1500" time="250" acceleration="-0.6" reversible="false">windowclose</animation>
       </control>
       <control>
+        <type>image</type>
+        <posX>#image.posx</posX>
+        <posY>#image.posy</posY>
+        <width>#image.width</width>
+        <height>#image.height</height>
+        <texture>basichome_label_overlay.png</texture>
+        <colordiffuse>ccffffff</colordiffuse>
+        <animation effect="rotatey" start="-16" end="-16" center="960,1500" time="0" condition="true">conditional</animation>
+        <animation effect="rotatey" start="16" end="0" center="960,1500" time="250" acceleration="-0.6" reversible="false" condition="string.contains(#hedit.main.calc.nav,b0)">conditional</animation>
+        <animation effect="rotatey" start="16" end="0" center="960,1500" time="250" acceleration="-0.6" reversible="false" condition="string.contains(#hedit.main.calc.nav,b1)">conditional</animation>
+        <animation effect="rotatey" start="-16" end="0" center="960,1500" time="250" acceleration="-0.6" reversible="false" condition="string.contains(#hedit.main.calc.nav,f0)">conditional</animation>
+        <animation effect="rotatey" start="-16" end="0" center="960,1500" time="250" acceleration="-0.6" reversible="false" condition="string.contains(#hedit.main.calc.nav,f1)">conditional</animation>
+        <animation effect="rotatey" start="0" end="-60" center="960,1500" time="250" acceleration="-0.6" reversible="false">windowclose</animation>
+      </control>
+      <control>
         <type>fadelabel</type>
         <posX>#label.posx</posX>
         <posY>#label.posy</posY>
@@ -364,6 +426,21 @@ ID format AA-B-C-DD [group/subgroup/layer/item] eg: 990105 = group 99 / subgroup
         <width>#image.width</width>
         <height>#image.height</height>
         <texture mask="basichome_button_mask.png">#(string.format('{0}.hover',#hedit.main.use.6))</texture>
+        <animation effect="rotatey" start="-32" end="-32" center="960,1500" time="0" condition="true">conditional</animation>
+        <animation effect="rotatey" start="16" end="0" center="960,1500" time="250" acceleration="-0.6" reversible="false" condition="string.contains(#hedit.main.calc.nav,b0)">conditional</animation>
+        <animation effect="rotatey" start="16" end="0" center="960,1500" time="250" acceleration="-0.6" reversible="false" condition="string.contains(#hedit.main.calc.nav,b1)">conditional</animation>
+        <animation effect="rotatey" start="-16" end="0" center="960,1500" time="250" acceleration="-0.6" reversible="false" condition="string.contains(#hedit.main.calc.nav,f0)">conditional</animation>
+        <animation effect="rotatey" start="-16" end="0" center="960,1500" time="250" acceleration="-0.6" reversible="false" condition="string.contains(#hedit.main.calc.nav,f1)">conditional</animation>
+        <animation effect="rotatey" start="0" end="-60" center="960,1500" time="250" acceleration="-0.6" reversible="false">windowclose</animation>
+      </control>
+      <control>
+        <type>image</type>
+        <posX>#image.posx</posX>
+        <posY>#image.posy</posY>
+        <width>#image.width</width>
+        <height>#image.height</height>
+        <texture>basichome_label_overlay.png</texture>
+        <colordiffuse>ccffffff</colordiffuse>
         <animation effect="rotatey" start="-32" end="-32" center="960,1500" time="0" condition="true">conditional</animation>
         <animation effect="rotatey" start="16" end="0" center="960,1500" time="250" acceleration="-0.6" reversible="false" condition="string.contains(#hedit.main.calc.nav,b0)">conditional</animation>
         <animation effect="rotatey" start="16" end="0" center="960,1500" time="250" acceleration="-0.6" reversible="false" condition="string.contains(#hedit.main.calc.nav,b1)">conditional</animation>
@@ -397,6 +474,24 @@ ID format AA-B-C-DD [group/subgroup/layer/item] eg: 990105 = group 99 / subgroup
         <height>#image.height</height>
         <hyperlink>#(string.format('{0}.hyperlink',#hedit.main.use.7))</hyperlink>
         <texture mask="basichome_button_mask.png">#(string.format('{0}.hover',#hedit.main.use.7))</texture>
+        <animation effect="rotatey" start="-48" end="-48" center="960,1500" time="0" condition="true">conditional</animation>
+        <animation effect="fade" start="0" end="100" time="250" delay="50" reversible="false" condition="string.contains(#hedit.main.calc.nav,f0)">conditional</animation>
+        <animation effect="fade" start="0" end="100" time="250" delay="50" reversible="false" condition="string.contains(#hedit.main.calc.nav,f1)">conditional</animation>
+        <animation effect="rotatey" start="16" end="0" center="960,1500" time="250" acceleration="-0.6" reversible="false" condition="string.contains(#hedit.main.calc.nav,b0)">conditional</animation>
+        <animation effect="rotatey" start="16" end="0" center="960,1500" time="250" acceleration="-0.6" reversible="false" condition="string.contains(#hedit.main.calc.nav,b1)">conditional</animation>
+        <animation effect="rotatey" start="-16" end="0" center="960,1500" time="250" acceleration="-0.6" reversible="false" condition="string.contains(#hedit.main.calc.nav,f0)">conditional</animation>
+        <animation effect="rotatey" start="-16" end="0" center="960,1500" time="250" acceleration="-0.6" reversible="false" condition="string.contains(#hedit.main.calc.nav,f1)">conditional</animation>
+        <animation effect="rotatey" start="0" end="-60" center="960,1500" time="250" acceleration="-0.6" reversible="false">windowclose</animation>
+      </control>
+      <control>
+        <type>image</type>
+        <posX>#image.posx</posX>
+        <posY>#image.posy</posY>
+        <width>#image.width</width>
+        <height>#image.height</height>
+        <hyperlink>#(string.format('{0}.hyperlink',#hedit.main.use.7))</hyperlink>
+        <texture>basichome_label_overlay.png</texture>
+        <colordiffuse>ccffffff</colordiffuse>
         <animation effect="rotatey" start="-48" end="-48" center="960,1500" time="0" condition="true">conditional</animation>
         <animation effect="fade" start="0" end="100" time="250" delay="50" reversible="false" condition="string.contains(#hedit.main.calc.nav,f0)">conditional</animation>
         <animation effect="fade" start="0" end="100" time="250" delay="50" reversible="false" condition="string.contains(#hedit.main.calc.nav,f1)">conditional</animation>
@@ -462,26 +557,6 @@ ID format AA-B-C-DD [group/subgroup/layer/item] eg: 990105 = group 99 / subgroup
       <visible>!string.contains(#hedit.inuse,sub)+!control.hasfocus(1111)</visible>
     </control>
     
-    <control>
-      <posX>#image.posx</posX>
-        <posY>#image.posy</posY>
-      <width>#image.width</width>
-      <height>#image.height</height>
-      <type>image</type>
-      <texture>basichome_label_overlay.png</texture>
-      <animation effect="rotatey" start="100" end="0" center="960,1500" time="800" acceleration="-0.6" reversible="false">windowopen</animation>
-      <animation effect="fade" start="0" end="100" time="700" reversible="false">windowopen</animation>
-      <animation effect="fade" start="100" end="0" time="250" acceleration="-0.6" reversible="false">windowclose</animation>
-      <animation effect="rotatex" start="0" end="25" center="960,0" time="250" acceleration="-1" condition="string.contains(#hedit.inuse,sub)">conditional</animation>
-      <animation effect="fade" start="100" end="70" time="250" acceleration="-1" condition="string.contains(#hedit.inuse,sub)">conditional</animation>
-      <animation effect="fade" start="0" end="100" time="250" delay="150" reversible="false" condition="string.contains(#hedit.main.calc.nav,0)">conditional</animation>
-      <animation effect="fade" start="0" end="100" time="250" delay="150" reversible="false" condition="string.contains(#hedit.main.calc.nav,1)">conditional</animation>
-      <animation effect="fade" start="0" end="100" time="250" delay="150" reversible="false">visible</animation>
-      <animation effect="fade" time="0">hidden</animation>
-      <animation effect="fade" start="0" end="100" time="250" delay="800">WindowOpen</animation>
-      <animation effect="fade" time="0">WindowClose</animation>
-      <visible>!string.contains(#hedit.inuse,sub)+!control.hasfocus(1111)</visible>
-    </control>
 
 <!-- Submenu indicator -->
 

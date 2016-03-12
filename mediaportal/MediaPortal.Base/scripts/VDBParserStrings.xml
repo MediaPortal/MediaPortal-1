@@ -5,7 +5,7 @@
 					
 	<GUIVideoInfo>
 		<string><!--0-->
-			<![CDATA[<h5>Runtime:</h5>.*?(?<movieRuntime>\d+)\smin\s+|(?<movieRuntime>\d+)\smin]]>
+			<![CDATA[<time\sitemprop="duration".*?(?<movieRuntime>\d+)\smin]]>
 		</string>
 		<string><!--1-->
 			<![CDATA[ratingValue">(?<movieScore>\d+.\d+)</span>]]>
