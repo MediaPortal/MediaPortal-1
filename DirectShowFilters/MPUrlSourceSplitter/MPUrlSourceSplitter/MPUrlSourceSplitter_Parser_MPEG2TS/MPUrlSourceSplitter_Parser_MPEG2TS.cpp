@@ -2435,11 +2435,12 @@ unsigned int WINAPI CMPUrlSourceSplitter_Parser_Mpeg2TS::ReceiveDataWorker(LPVOI
         FREE_MEM(storeFilePath);
       }
         
-      // in case of live stream remove all downloaded and processed stream fragments before reported stream time
-      if ((caller->IsLiveStream()) && (caller->reportedStreamTime > 0))
+      unsigned int fragmentRemoveStart = (caller->streamFragments->GetStartSearchingIndex() == 0) ? 1 : 0;
+      unsigned int fragmentRemoveCount = 0;
+
+      if (caller->IsDownloading() && (caller->reportedStreamPosition > 0))
       {
-        unsigned int fragmentRemoveStart = (caller->streamFragments->GetStartSearchingIndex() == 0) ? 1 : 0;
-        unsigned int fragmentRemoveCount = 0;
+        // in case of downloading stream remove all downloaded and processed stream fragments before reported stream position
 
         while ((fragmentRemoveStart + fragmentRemoveCount) < caller->streamFragments->Count())
         {
@@ -2455,26 +2456,45 @@ unsigned int WINAPI CMPUrlSourceSplitter_Parser_Mpeg2TS::ReceiveDataWorker(LPVOI
             break;
           }
         }
+      }
+      else if ((caller->IsLiveStream()) && (caller->reportedStreamTime > 0))
+      {
+        // in case of live stream remove all downloaded and processed stream fragments before reported stream time
 
-        if ((fragmentRemoveCount > 0) && (caller->cacheFile->RemoveItems(caller->streamFragments, fragmentRemoveStart, fragmentRemoveCount)))
+        while ((fragmentRemoveStart + fragmentRemoveCount) < caller->streamFragments->Count())
         {
-          unsigned int startSearchIndex = (fragmentRemoveCount > caller->streamFragments->GetStartSearchingIndex()) ? 0 : (caller->streamFragments->GetStartSearchingIndex() - fragmentRemoveCount);
-          unsigned int searchCountDecrease = (fragmentRemoveCount > caller->streamFragments->GetStartSearchingIndex()) ? (fragmentRemoveCount - caller->streamFragments->GetStartSearchingIndex()) : 0;
+          CMpeg2tsStreamFragment *fragment = caller->streamFragments->GetItem(fragmentRemoveStart + fragmentRemoveCount);
 
-          caller->streamFragments->SetStartSearchingIndex(startSearchIndex);
-          caller->streamFragments->SetSearchCount(caller->streamFragments->GetSearchCount() - searchCountDecrease);
-
-          caller->streamFragments->Remove(fragmentRemoveStart, fragmentRemoveCount);
-
-          if (caller->streamFragmentDownloading != UINT_MAX)
+          if (((fragmentRemoveStart + fragmentRemoveCount) != caller->streamFragments->GetStartSearchingIndex()) && fragment->IsProcessed() && ((fragment->GetFragmentStartPosition() + (int64_t)fragment->GetLength()) < (int64_t)caller->reportedStreamPosition))
           {
-            caller->streamFragmentDownloading -= fragmentRemoveCount;
+            // fragment will be removed
+            fragmentRemoveCount++;
           }
-
-          if (caller->streamFragmentToDownload != UINT_MAX)
+          else
           {
-            caller->streamFragmentToDownload -= fragmentRemoveCount;
+            break;
           }
+        }
+      }
+
+      if ((fragmentRemoveCount > 0) && (caller->cacheFile->RemoveItems(caller->streamFragments, fragmentRemoveStart, fragmentRemoveCount)))
+      {
+        unsigned int startSearchIndex = (fragmentRemoveCount > caller->streamFragments->GetStartSearchingIndex()) ? 0 : (caller->streamFragments->GetStartSearchingIndex() - fragmentRemoveCount);
+        unsigned int searchCountDecrease = (fragmentRemoveCount > caller->streamFragments->GetStartSearchingIndex()) ? (fragmentRemoveCount - caller->streamFragments->GetStartSearchingIndex()) : 0;
+
+        caller->streamFragments->SetStartSearchingIndex(startSearchIndex);
+        caller->streamFragments->SetSearchCount(caller->streamFragments->GetSearchCount() - searchCountDecrease);
+
+        caller->streamFragments->Remove(fragmentRemoveStart, fragmentRemoveCount);
+
+        if (caller->streamFragmentDownloading != UINT_MAX)
+        {
+          caller->streamFragmentDownloading -= fragmentRemoveCount;
+        }
+
+        if (caller->streamFragmentToDownload != UINT_MAX)
+        {
+          caller->streamFragmentToDownload -= fragmentRemoveCount;
         }
       }
 

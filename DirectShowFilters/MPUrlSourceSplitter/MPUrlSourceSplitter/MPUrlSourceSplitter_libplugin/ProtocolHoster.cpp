@@ -525,7 +525,7 @@ unsigned int WINAPI CProtocolHoster::StartReceiveDataWorker(LPVOID lpParam)
     Sleep(1);
   }
 
-  // we can't call directly StopReeceivingData()
+  // we can't call directly StopReceivingData()
   // StopReceivingData() method tries to stop StartReceiveDataWorker thread, which is not possible
 
   if (FAILED(caller->protocolError))

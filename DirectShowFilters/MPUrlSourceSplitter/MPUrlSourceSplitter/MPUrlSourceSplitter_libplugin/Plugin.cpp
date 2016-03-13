@@ -83,6 +83,7 @@ HRESULT CPlugin::Initialize(CPluginConfiguration *configuration)
 
     this->flags |= this->configuration->GetValueBool(PARAMETER_NAME_SPLITTER, true, PARAMETER_NAME_SPLITTER_DEFAULT) ? PLUGIN_FLAG_SPLITTER : PLUGIN_FLAG_NONE;
     this->flags |= this->configuration->GetValueBool(PARAMETER_NAME_IPTV, true, PARAMETER_NAME_IPTV_DEFAULT) ? PLUGIN_FLAG_IPTV : PLUGIN_FLAG_NONE;
+    this->flags |= (this->configuration->GetValue(PARAMETER_NAME_DOWNLOAD_FILE_NAME, true, NULL) != NULL) ? PLUGIN_FLAG_DOWNLOADING : PLUGIN_FLAG_NONE;
   }
 
   return result;
@@ -97,6 +98,11 @@ bool CPlugin::IsSplitter(void)
 bool CPlugin::IsIptv(void)
 {
   return this->IsSetFlags(PLUGIN_FLAG_IPTV);
+}
+
+bool CPlugin::IsDownloading(void)
+{
+  return this->IsSetFlags(PLUGIN_FLAG_DOWNLOADING);
 }
 
 void CPlugin::ClearSession(void)

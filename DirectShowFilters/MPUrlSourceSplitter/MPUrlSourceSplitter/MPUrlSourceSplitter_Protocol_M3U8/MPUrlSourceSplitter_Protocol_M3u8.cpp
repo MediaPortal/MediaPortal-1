@@ -972,14 +972,27 @@ HRESULT CMPUrlSourceSplitter_Protocol_M3u8::ReceiveData(CStreamPackage *streamPa
     if ((!this->IsSetStreamLength()) && (this->IsWholeStreamDownloaded() || this->IsEndOfStreamReached() || this->IsConnectionLostCannotReopen()))
     {
       // reached end of stream, set stream length
+      // stream length can be set only in case when all fragments are processed
 
-      this->streamLength = this->GetBytePosition();
-      this->logger->Log(LOGGER_VERBOSE, L"%s: %s: setting total length: %llu", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->streamLength);
+      bool allFragmentsProcessed = true;
 
-      this->flags |= PROTOCOL_PLUGIN_FLAG_SET_STREAM_LENGTH;
-      this->flags &= ~PROTOCOL_PLUGIN_FLAG_STREAM_LENGTH_ESTIMATED;
+      for (unsigned int i = 0; i < this->streamFragments->Count(); i++)
+      {
+        CM3u8StreamFragment *fragment = this->streamFragments->GetItem(i);
 
-      CHECK_CONDITION_NOT_NULL_EXECUTE(this->mainCurlInstance, this->flags |= MP_URL_SOURCE_SPLITTER_PROTOCOL_M3U8_FLAG_CLOSE_CURL_INSTANCE);
+        allFragmentsProcessed &= fragment->IsProcessed();
+      }
+
+      if (allFragmentsProcessed)
+      {
+        this->streamLength = this->GetBytePosition();
+        this->logger->Log(LOGGER_VERBOSE, L"%s: %s: setting total length: %llu", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->streamLength);
+
+        this->flags |= PROTOCOL_PLUGIN_FLAG_SET_STREAM_LENGTH;
+        this->flags &= ~PROTOCOL_PLUGIN_FLAG_STREAM_LENGTH_ESTIMATED;
+
+        CHECK_CONDITION_NOT_NULL_EXECUTE(this->mainCurlInstance, this->flags |= MP_URL_SOURCE_SPLITTER_PROTOCOL_M3U8_FLAG_CLOSE_CURL_INSTANCE);
+      }
     }
 
     // process stream package (if valid)
@@ -1256,13 +1269,34 @@ HRESULT CMPUrlSourceSplitter_Protocol_M3u8::ReceiveData(CStreamPackage *streamPa
 
       if (this->streamFragments->Count() > 0)
       {
-        // in case of live stream remove all downloaded and processed stream fragments before reported stream time
-        if ((this->IsLiveStream()) && (this->reportedStreamTime > 0))
-        {
-          unsigned int fragmentRemoveStart = (this->streamFragments->GetStartSearchingIndex() == 0) ? 1 : 0;
-          unsigned int fragmentRemoveCount = 0;
+        unsigned int fragmentRemoveStart = (this->streamFragments->GetStartSearchingIndex() == 0) ? 1 : 0;
+        unsigned int fragmentRemoveCount = 0;
 
+        if (this->IsDownloading() && (this->reportedStreamPosition > 0))
+        {
+          // in case of downloading stream remove all downloaded and processed stream fragments before reported stream position
           // leave at least 3 stream fragments (one is start searching stream fragment, the last two are needed to compute waiting time for playlist)
+
+          while (((fragmentRemoveStart + fragmentRemoveCount) < this->streamFragmentProcessing) && ((fragmentRemoveStart + fragmentRemoveCount + 3) < this->streamFragments->Count()))
+          {
+            CM3u8StreamFragment *fragment = this->streamFragments->GetItem(fragmentRemoveStart + fragmentRemoveCount);
+
+            if (((fragmentRemoveStart + fragmentRemoveCount) != this->streamFragments->GetStartSearchingIndex()) && fragment->IsProcessed() && ((fragment->GetFragmentStartPosition() + (int64_t)fragment->GetLength()) < (int64_t)this->reportedStreamPosition))
+            {
+              // fragment will be removed
+              fragmentRemoveCount++;
+            }
+            else
+            {
+              break;
+            }
+          }
+        }
+        else if (this->IsLiveStream() && (this->reportedStreamTime > 0))
+        {
+          // in case of live stream remove all downloaded and processed stream fragments before reported stream time
+          // leave at least 3 stream fragments (one is start searching stream fragment, the last two are needed to compute waiting time for playlist)
+
           while (((fragmentRemoveStart + fragmentRemoveCount) < this->streamFragmentProcessing) && ((fragmentRemoveStart + fragmentRemoveCount + 3) < this->streamFragments->Count()))
           {
             CM3u8StreamFragment *fragment = this->streamFragments->GetItem(fragmentRemoveStart + fragmentRemoveCount);
@@ -1277,28 +1311,28 @@ HRESULT CMPUrlSourceSplitter_Protocol_M3u8::ReceiveData(CStreamPackage *streamPa
               break;
             }
           }
+        }
 
-          if ((fragmentRemoveCount > 0) && (this->cacheFile->RemoveItems(this->streamFragments, fragmentRemoveStart, fragmentRemoveCount)))
+        if ((fragmentRemoveCount > 0) && (this->cacheFile->RemoveItems(this->streamFragments, fragmentRemoveStart, fragmentRemoveCount)))
+        {
+          unsigned int startSearchIndex = (fragmentRemoveCount > this->streamFragments->GetStartSearchingIndex()) ? 0 : (this->streamFragments->GetStartSearchingIndex() - fragmentRemoveCount);
+          unsigned int searchCountDecrease = (fragmentRemoveCount > this->streamFragments->GetStartSearchingIndex()) ? (fragmentRemoveCount - this->streamFragments->GetStartSearchingIndex()) : 0;
+
+          this->streamFragments->SetStartSearchingIndex(startSearchIndex);
+          this->streamFragments->SetSearchCount(this->streamFragments->GetSearchCount() - searchCountDecrease);
+
+          this->streamFragments->Remove(fragmentRemoveStart, fragmentRemoveCount);
+
+          this->streamFragmentProcessing -= fragmentRemoveCount;
+
+          if (this->streamFragmentDownloading != UINT_MAX)
           {
-            unsigned int startSearchIndex = (fragmentRemoveCount > this->streamFragments->GetStartSearchingIndex()) ? 0 : (this->streamFragments->GetStartSearchingIndex() - fragmentRemoveCount);
-            unsigned int searchCountDecrease = (fragmentRemoveCount > this->streamFragments->GetStartSearchingIndex()) ? (fragmentRemoveCount - this->streamFragments->GetStartSearchingIndex()) : 0;
+            this->streamFragmentDownloading -= fragmentRemoveCount;
+          }
 
-            this->streamFragments->SetStartSearchingIndex(startSearchIndex);
-            this->streamFragments->SetSearchCount(this->streamFragments->GetSearchCount() - searchCountDecrease);
-
-            this->streamFragments->Remove(fragmentRemoveStart, fragmentRemoveCount);
-
-            this->streamFragmentProcessing -= fragmentRemoveCount;
-
-            if (this->streamFragmentDownloading != UINT_MAX)
-            {
-              this->streamFragmentDownloading -= fragmentRemoveCount;
-            }
-
-            if (this->streamFragmentToDownload != UINT_MAX)
-            {
-              this->streamFragmentToDownload -= fragmentRemoveCount;
-            }
+          if (this->streamFragmentToDownload != UINT_MAX)
+          {
+            this->streamFragmentToDownload -= fragmentRemoveCount;
           }
         }
 

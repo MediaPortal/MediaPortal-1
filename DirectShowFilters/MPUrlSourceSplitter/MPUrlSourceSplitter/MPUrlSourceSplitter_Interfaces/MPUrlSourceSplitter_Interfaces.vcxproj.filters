@@ -30,9 +30,6 @@
     <ClInclude Include="ISeeking.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ISimpleProtocol.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="IOutputPinMediaSample.h">
       <Filter>Header Files</Filter>
     </ClInclude>
