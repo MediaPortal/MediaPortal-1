@@ -42,10 +42,10 @@ namespace TvLibrary.Implementations.Analog
     private readonly TvCardHDPVR _card;
 
     // The Hauppauge HD PVR and Colossus deliver a DVB stream with a single service on a fixed
-    // service ID with a fixed PMT PID.
+    // service ID with a fixed PMT PID. The HD PVR 2 uses a different PMT PID.
     private readonly String _deviceType;
     private readonly int SERVICE_ID = 1;
-    private readonly int PMT_PID = 0x100;
+    private int PMT_PID = 0x100;
 
     #endregion
 
@@ -65,6 +65,10 @@ namespace TvLibrary.Implementations.Analog
       // Keep a reference to the card for quality control.
       _card = card;
       _deviceType = deviceType;
+      if (_deviceType.Equals("HD-PVR 2"))
+      {
+        PMT_PID = 0x200;
+      }
 
       _tsFilterInterface = (ITsFilter)filterTsWriter;
       _tsFilterInterface.AddChannel(ref _subChannelIndex);

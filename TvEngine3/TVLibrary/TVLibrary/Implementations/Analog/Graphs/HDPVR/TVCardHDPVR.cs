@@ -40,9 +40,14 @@ namespace TvLibrary.Implementations.Analog
   {
     #region constants
 
+    public const string CROSSBAR_NAME_HDPVR = "Hauppauge HD PVR Crossbar";
+    public const string CROSSBAR_NAME_COLOSSUS = "Hauppauge Colossus Crossbar";
+    public const string CROSSBAR_NAME_HDPVR2_COLOSSUS2 = "Hauppauge Siena Crossbar";
+    public const string CROSSBAR_NAME_HDPVR60 = "HD PVR 60 Crossbar Filter (HD)";
+
     // Assume the capture card is a Hauppauge HD PVR by default.
-    private readonly string _deviceType = "HDPVR";
-    private readonly string _crossbarDeviceName = "Hauppauge HD PVR Crossbar";
+    private readonly string _deviceType = "HD-PVR";
+    private readonly string _crossbarDeviceName = CROSSBAR_NAME_HDPVR;
     private readonly string _captureDeviceName = "Hauppauge HD PVR Capture Device";
     private readonly string _encoderDeviceName = "Hauppauge HD PVR Encoder";
 
@@ -100,7 +105,7 @@ namespace TvLibrary.Implementations.Analog
       : base(device)
     {
       // Determine what type of card this is.
-      if (device.Name.Contains("Colossus"))
+      if (device.Name.Contains(CROSSBAR_NAME_COLOSSUS))
       {
         Match match = Regex.Match(device.Name, @".*?(\d+)$");
         int deviceNumber = 0;
@@ -112,6 +117,20 @@ namespace TvLibrary.Implementations.Analog
         _crossbarDeviceName = device.Name;
         _captureDeviceName = "Hauppauge Colossus Capture " + deviceNumber;
         _encoderDeviceName = "Hauppauge Colossus TS Encoder " + deviceNumber;
+      }
+      else if (device.Name.Equals(CROSSBAR_NAME_HDPVR2_COLOSSUS2))
+      {
+        _deviceType = "HD-PVR 2";
+        _crossbarDeviceName = device.Name;
+        _captureDeviceName = "Hauppauge Siena Video Capture";
+        _encoderDeviceName = "Hauppauge Siena Encoder";
+      }
+      else if (device.Name.Equals(CROSSBAR_NAME_HDPVR60))
+      {
+        _deviceType = "HD-PVR 60";
+        _crossbarDeviceName = device.Name;
+        _captureDeviceName = "HD PVR 60 Capture Filter (HD)";
+        _encoderDeviceName = "HD PVR 60 Encoder Filter (HD)";
       }
 
       _mapSubChannels = new Dictionary<Int32, BaseSubChannel>();
@@ -955,6 +974,7 @@ namespace TvLibrary.Implementations.Analog
         int audioLine = 0;
         int audioSPDIF = 0;
         int audioAux = 0;
+        int audioAes = 0;
         int videoCvbsNr = 0;
         int videoSvhsNr = 0;
         int videoYrYbYNr = 0;
@@ -1018,6 +1038,21 @@ namespace TvLibrary.Implementations.Analog
                   break;
               }
               break;
+            case PhysicalConnectorType.Audio_AESDigital:
+              audioAes++;
+              switch (audioAes)
+              {
+                case 1:
+                  _audioPinMap.Add(AnalogChannel.AudioInputType.AesInput1, i);
+                  break;
+                case 2:
+                  _audioPinMap.Add(AnalogChannel.AudioInputType.AesInput2, i);
+                  break;
+                case 3:
+                  _audioPinMap.Add(AnalogChannel.AudioInputType.AesInput3, i);
+                  break;
+              }
+              break;
             case PhysicalConnectorType.Video_Composite:
               videoCvbsNr++;
               switch (videoCvbsNr)
@@ -1049,8 +1084,8 @@ namespace TvLibrary.Implementations.Analog
                   _videoPinRelatedAudioMap.Add(AnalogChannel.VideoInputType.SvhsInput2, relatedPinIndex);
                   break;
                 case 3:
-                  _videoPinMap.Add(AnalogChannel.VideoInputType.VideoInput3, i);
-                  _videoPinRelatedAudioMap.Add(AnalogChannel.VideoInputType.VideoInput3, relatedPinIndex);
+                  _videoPinMap.Add(AnalogChannel.VideoInputType.SvhsInput3, i);
+                  _videoPinRelatedAudioMap.Add(AnalogChannel.VideoInputType.SvhsInput3, relatedPinIndex);
                   break;
               }
               break;
@@ -1067,8 +1102,8 @@ namespace TvLibrary.Implementations.Analog
                   _videoPinRelatedAudioMap.Add(AnalogChannel.VideoInputType.RgbInput2, relatedPinIndex);
                   break;
                 case 3:
-                  _videoPinMap.Add(AnalogChannel.VideoInputType.SvhsInput3, i);
-                  _videoPinRelatedAudioMap.Add(AnalogChannel.VideoInputType.SvhsInput3, relatedPinIndex);
+                  _videoPinMap.Add(AnalogChannel.VideoInputType.RgbInput3, i);
+                  _videoPinRelatedAudioMap.Add(AnalogChannel.VideoInputType.RgbInput3, relatedPinIndex);
                   break;
               }
               break;
@@ -1091,6 +1126,7 @@ namespace TvLibrary.Implementations.Analog
               }
               break;
             case PhysicalConnectorType.Video_SerialDigital:
+            case PhysicalConnectorType.Video_ParallelDigital:
               videoHdmiNr++;
               switch (videoHdmiNr)
               {
