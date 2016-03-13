@@ -340,7 +340,7 @@ namespace TvPlugin
 
       if (!firstNotLoaded)
       {
-        _notifyManager.Start();
+        //_notifyManager.Start();
       }
     }
 
@@ -550,9 +550,9 @@ namespace TvPlugin
       {
         RemoteControl.Clear();
         GUIWindowManager.ActivateWindow((int)Window.WINDOW_SETTINGS_TVENGINE);
-        UpdateStateOfRecButton();
-        UpdateProgressPercentageBar();
-        UpdateRecordingIndicator();
+        //UpdateStateOfRecButton();
+        //UpdateProgressPercentageBar();
+        //UpdateRecordingIndicator();
         return;
       }
 
@@ -739,8 +739,8 @@ namespace TvPlugin
 
       if (!Connected)
       {
-        UpdateStateOfRecButton();
-        UpdateRecordingIndicator();
+        //UpdateStateOfRecButton();
+        //UpdateRecordingIndicator();
         UpdateGUIonPlaybackStateChange();
         ShowDlgAsynch();
         return;
@@ -813,7 +813,7 @@ namespace TvPlugin
           }
         }
 
-        UpdateStateOfRecButton();
+        //UpdateStateOfRecButton();
         //UpdateGUIonPlaybackStateChange();
         //UpdateProgressPercentageBar();
         benchClock.Stop();
@@ -880,7 +880,7 @@ namespace TvPlugin
       try
       {
         UpdateRecordingIndicator();
-        UpdateStateOfRecButton();
+        //UpdateStateOfRecButton();
 
         if (!Card.IsTimeShifting)
         {
@@ -1513,7 +1513,7 @@ namespace TvPlugin
         firstNotLoaded = false;
         OnLoaded();
       }
-      _notifyManager.Start();
+      //_notifyManager.Start();
     }
     private static void RemoteControl_OnRemotingConnected()
     {
@@ -1953,7 +1953,7 @@ namespace TvPlugin
         RemoteControl.OnRemotingConnected += new RemoteControl.RemotingConnectedDelegate(RemoteControl_OnRemotingConnected);
         HandleWakeUpTvServer();
         startHeartBeatThread();
-        _notifyManager.Start();
+        //_notifyManager.Start();
         _suspended = false;
         if (_resumeChannel != null)
         {
@@ -2730,7 +2730,7 @@ namespace TvPlugin
     private void OnRecord()
     {
       ManualRecord(Navigator.Channel, GetID);
-      UpdateStateOfRecButton();
+      //UpdateStateOfRecButton();
     }
 
     private void UpdateStateOfRecButton()
