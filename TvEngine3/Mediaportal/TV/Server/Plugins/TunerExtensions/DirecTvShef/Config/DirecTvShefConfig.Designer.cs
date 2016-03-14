@@ -156,6 +156,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DirecTvShef.Config
       // 
       this.dataGridViewColumnPowerControl.HeaderText = "Power Control";
       this.dataGridViewColumnPowerControl.Name = "dataGridViewColumnPowerControl";
+      this.dataGridViewColumnPowerControl.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
       this.dataGridViewColumnPowerControl.Width = 50;
       // 
       // DirecTvShefConfig
