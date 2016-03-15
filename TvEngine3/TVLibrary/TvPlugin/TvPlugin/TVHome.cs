@@ -1159,7 +1159,7 @@ namespace TvPlugin
 
       Stopwatch timer = Stopwatch.StartNew();
       Log.Debug("TVHome: trying waiting for gentle.net DB connection {0} msec", timer.ElapsedMilliseconds);
-      while (!success && timer.ElapsedMilliseconds < 10000) //10sec max
+      //while (!success && timer.ElapsedMilliseconds < 10000) //10sec max
       {
         try
         {
@@ -1169,7 +1169,7 @@ namespace TvPlugin
         catch (Exception)
         {
           success = false;
-          Log.Debug("TVHome: waiting for gentle.net DB connection {0} msec", timer.ElapsedMilliseconds);
+          Log.Debug("TVHome: waiting for gentle.net DB connection exception {0} msec", timer.ElapsedMilliseconds);
           Thread.Sleep(100);
         }
       }
