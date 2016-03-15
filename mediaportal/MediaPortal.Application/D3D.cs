@@ -144,8 +144,6 @@ namespace MediaPortal
     protected int                  MouseTimeOutMP;           // Mouse activity timeout while in MP in seconds
     protected int                  MouseTimeOutFullscreen;   // Mouse activity timeout while in Fullscreen in seconds
     protected bool                 deviceLost;
-    protected DateTime             ResumeTimeOutTimer;       // tracks the time of the last resume activity
-    protected int                  ResumeTimeOutMP;          // Resume activity timeout while in MP in seconds
 
     #endregion
 
