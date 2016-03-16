@@ -222,6 +222,18 @@
       <visible>facadeview.list+string.equals(#hideinfo, False)</visible>
     </control>
     <control>
+      <description>Genre images</description>
+      <id>0</id>
+      <type>image</type>
+      <posX>1860</posX>
+      <posY>300</posY>
+      <width>40</width>
+      <height>375</height>
+      <keepaspectratio>yes</keepaspectratio>
+      <texture>#fanarthandler.movie.genres.selected.verticalall</texture>
+      <visible>facadeview.list+string.equals(#hideinfo, False)</visible>
+    </control>
+    <control>
       <description>Text Rating/Votes Value</description>
       <type>label</type>
       <id>1</id>

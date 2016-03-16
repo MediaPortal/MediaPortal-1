@@ -94,10 +94,6 @@
           <posY>162</posY>
           <width>1650</width>
           <height>170</height>
-          <onleft>98301</onleft>
-          <onright>98301</onright>
-          <onup>17</onup>
-          <ondown>820101</ondown>
           <scrollOffset>0</scrollOffset>
           <itemWidth>129</itemWidth>
           <itemHeight>167</itemHeight>

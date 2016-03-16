@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!--version="1.0" encoding="utf-8" standalone="yes"-->
+<!--version="1.0" encoding="utf-8" standalone="yes"-->
+<window>
+  <id>15634330</id>
+  <defaultcontrol>2</defaultcontrol>
+  <allowoverlay>yes</allowoverlay>
+  <!--define>#header.label:666</define-->
+  <!--define>#header.image:webstream_logo.png</define-->
+  <!-->define>#header.hover:-</define-->
+  <controls>
+    <control>
+      <description>BG</description>
+      <type>image</type>
+      <id>1</id>
+      <texture>BH Radio.jpg</texture>
+      <width>1920</width>
+      <height>1080</height>
+    </control>
+    <import>common.music.fanart.xml</import>
+    <import>common.window.xml</import>
+    <import>common.time.xml</import>
+    <control>
+      <description>General Overlay</description>
+      <id>0</id>
+      <type>image</type>
+      <posX>0</posX>
+      <posY>45</posY>
+      <width>1920</width>
+      <height>1080</height>
+      <texture>general_overlay.png</texture>
+    </control>
+    <control>
+      <type>actiongroup</type>
+      <description>action menu</description>
+      <defaultcontrol>2</defaultcontrol>
+      <onexit>50</onexit>
+      <buttonX>0</buttonX>
+      <buttonY>0</buttonY>
+      <buttonwidth>159</buttonwidth>
+      <buttonheight>1080</buttonheight>
+      <textureFocus>-</textureFocus>
+      <textureNoFocus>Action_nofocus.png</textureNoFocus>
+      <width>412</width>
+      <height>1080</height>
+      <dimColor>00ffffff</dimColor>
+      <control>
+        <type>image</type>
+        <id>0</id>
+        <width>1920</width>
+        <height>1080</height>
+        <texture>white.png</texture>
+        <colordiffuse>201e90ff</colordiffuse>
+      </control>
+      <control>
+        <type>image</type>
+        <posX>39</posX>
+        <posY>117</posY>
+        <width>480</width>
+        <height>886</height>
+        <texture>Backslide.png</texture>
+        <colorDiffuse>fffffffff</colorDiffuse>
+        <visible>!Control.HasFocus(50)</visible>
+        <animation effect="slide" time="70" start="-300,0" reversible="false">visible</animation>
+        <animation effect="slide" time="70" end="-300,0" reversible="false">hidden</animation>
+      </control>
+      <control>
+        <description>group element</description>
+        <type>group</type>
+        <animation effect="slide" time="70" start="-300,0" reversible="false">visible</animation>
+        <animation effect="slide" time="70" end="-300,0" reversible="false">hidden</animation>
+        <layout>StackLayout(0, Vertical, true)</layout>
+        <posX>75</posX>
+        <posY>181</posY>
+        <visible>!Control.HasFocus(50)</visible>
+        <control>
+          <description>View-As</description>
+          <type>button</type>
+          <id>2</id>
+          <label>100</label>
+          <onright>50</onright>
+          <onup>17</onup>
+        </control>
+        <control>
+          <description>Sort</description>
+          <type>sortbutton</type>
+          <id>3</id>
+          <onright>50</onright>
+        </control>
+        <control>
+          <description>Record</description>
+          <type>checkbutton</type>
+          <id>9</id>
+          <label>601</label>
+          <onright>50</onright>
+        </control>
+        <control>
+          <description>my recordings</description>
+          <type>button</type>
+          <id>11</id>
+          <label>604</label>
+          <onright>50</onright>
+        </control>
+      </control>
+    </control>
+    <import>common.facade.music.xml</import>
+    <control>
+      <type>image</type>
+      <id>0</id>
+      <posX>150</posX>
+      <posY>600</posY>
+      <width>892</width>
+      <height>267</height>
+      <texture>Shoutcast.png</texture>
+    </control>
+  </controls>
+</window>

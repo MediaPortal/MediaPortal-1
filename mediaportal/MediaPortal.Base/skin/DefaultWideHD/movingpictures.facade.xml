@@ -222,8 +222,8 @@
                 <type>image</type>
                 <posX>0</posX>
                 <posY>0</posY>
-                <width>250</width>
-                <height>360</height>
+                <width>375</width>
+                <height>540</height>
                 <texture mask="videothumbmask.png">blue.png</texture>
               </control>
               <control>
@@ -243,7 +243,7 @@
                 <type>imagelist</type>
                 <id>101</id>
                 <posX>10</posX>
-                <posY>40</posY>
+                <posY>45</posY>
                 <width>230</width>
                 <height>37</height>
                 <textureWidth>17</textureWidth>
@@ -264,10 +264,10 @@
                 <type>label</type>
                 <posX>10</posX>
                 <posY>60</posY>
-                <width>230</width>
+                <width>365</width>
                 <label>#MovingPictures.Translation.Director.Label</label>
                 <font>font9</font>
-                <textcolor>ivory</textcolor>
+                <textcolor>lightskyblue</textcolor>
                 <shadowAngle>0</shadowAngle>
                 <shadowDistance>0</shadowDistance>
               </control>
@@ -275,8 +275,8 @@
                 <description>director</description>
                 <type>label</type>
                 <posX>10</posX>
-                <posY>80</posY>
-                <width>230</width>
+                <posY>85</posY>
+                <width>365</width>
                 <label>#MovingPictures.SelectedMovie.extra.directors.1</label>
                 <font>font9</font>
                 <textcolor>ivory</textcolor>
@@ -287,9 +287,9 @@
                 <description>plot</description>
                 <type>textboxscrollup</type>
                 <posX>10</posX>
-                <posY>110</posY>
-                <width>230</width>
-                <height>95</height>
+                <posY>120</posY>
+                <width>365</width>
+                <height>400</height>
                 <label>#MovingPictures.SelectedMovie.summary</label>
                 <font>font9</font>
                 <lineSpacing>2.5</lineSpacing>
