@@ -720,16 +720,15 @@ namespace TvPlugin
             }
 
           case GUIMessage.MessageType.GUI_MSG_WINDOW_INIT:
-            {              
+            {
+              TVHome.WaitForGentleConnection();
 
-              if (!TVHome.Connected)
+              if (!TVHome.Connected || !TVHome.GentleConnected)
               {
                 RemoteControl.Clear();
                 GUIWindowManager.ActivateWindow((int)Window.WINDOW_SETTINGS_TVENGINE);
                 return false;
               }
-
-              TVHome.WaitForGentleConnection();
 
               if (TVHome.Navigator == null)
               {

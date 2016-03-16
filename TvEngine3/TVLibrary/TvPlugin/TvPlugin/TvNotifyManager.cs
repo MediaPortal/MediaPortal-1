@@ -70,13 +70,13 @@ namespace TvPlugin
       _dummyuser.Name = "Free channel checker";
       _timer.Interval = 15000;
       _timer.Enabled = true;
-      // Execute TvNotifyManager in a separate thread, so that it doesn't block the Main UI Render thread when Tvservice connection died
+      //// Execute TvNotifyManager in a separate thread, so that it doesn't block the Main UI Render thread when Tvservice connection died
       new Thread(() =>
                    {
                      _timer.Tick += new EventHandler(_timer_Tick);
 
                    }
-        ) {Name = "TvNotifyManager"}.Start();
+        ) { Name = "TvNotifyManager" }.Start();
       _notifiedRecordings = new ArrayList();
     }
 
@@ -392,7 +392,8 @@ namespace TvPlugin
     {
       try
       {
-        if (!TVHome.Connected)
+        TVHome.WaitForGentleConnection();
+        if (!TVHome.Connected || !TVHome.GentleConnected)
         {
           return;
         }

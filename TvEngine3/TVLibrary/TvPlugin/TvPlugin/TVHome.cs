@@ -106,6 +106,9 @@ namespace TvPlugin
     private static readonly SynchronizationContext _mainThreadContext = SynchronizationContext.Current;
     private Channel _resumeChannel = null;
     private Thread heartBeatTransmitterThread = null;
+    private static Thread remoteControlOnRemotingDisconnectedThread = null;
+    private static Thread remoteControlOnRemotingConnectedThread = null;
+    private static Thread waitForGentleConnectionThread = null;
     private static DateTime _updateProgressTimer = DateTime.MinValue;
     public static ChannelNavigator m_navigator;
     private static TVUtil _util;
@@ -189,6 +192,13 @@ namespace TvPlugin
     private static int _notifyTVTimeout = 15;
     private static bool _playNotifyBeep = true;
     private static int _preNotifyConfig = 60;
+
+
+    public delegate void DisconnectedGentleDelegate();
+    public delegate void ConnectedGentleDelegate();
+
+    public static event DisconnectedGentleDelegate OnGentleDisconnected;
+    public static event ConnectedGentleDelegate OnGentleConnected;
 
     #endregion
 
@@ -312,7 +322,8 @@ namespace TvPlugin
 
       try
       {
-        if (Connected && !firstNotLoaded)
+        WaitForGentleConnection();
+        if (Connected && !firstNotLoaded && GentleConnected)
         {
           m_navigator = new ChannelNavigator();
           m_navigator.OnZapChannel -= new ChannelNavigator.OnZapChannelDelegate(ForceUpdates);
@@ -340,7 +351,10 @@ namespace TvPlugin
 
       if (!firstNotLoaded)
       {
-        //_notifyManager.Start();
+        if (Connected && GentleConnected)
+        {
+          _notifyManager.Start();
+        }
       }
     }
 
@@ -349,6 +363,9 @@ namespace TvPlugin
       Log.Info("TVHome:OnAdded");
       RemoteControl.OnRemotingDisconnected += RemoteControl_OnRemotingDisconnected;
       RemoteControl.OnRemotingConnected += RemoteControl_OnRemotingConnected;
+
+      OnGentleDisconnected += TVHome_OnGentleDisconnected;
+      OnGentleConnected += TVHome_OnGentleConnected;
 
       GUIGraphicsContext.OnBlackImageRendered += new BlackImageRenderedHandler(OnBlackImageRendered);
       GUIGraphicsContext.OnVideoReceived += new VideoReceivedHandler(OnVideoReceived);
@@ -421,6 +438,9 @@ namespace TvPlugin
 
       RemoteControl.OnRemotingDisconnected -= RemoteControl_OnRemotingDisconnected;
       RemoteControl.OnRemotingConnected -= RemoteControl_OnRemotingConnected;
+
+      OnGentleDisconnected -= TVHome_OnGentleDisconnected;
+      OnGentleConnected -= TVHome_OnGentleConnected;
 
       GUIGraphicsContext.OnBlackImageRendered -= new BlackImageRenderedHandler(OnBlackImageRendered);
       GUIGraphicsContext.OnVideoReceived -= new VideoReceivedHandler(OnVideoReceived);
@@ -546,13 +566,13 @@ namespace TvPlugin
 
       btnActiveStreams.Label = GUILocalizeStrings.Get(692);
 
-      if (!Connected)
+      if (!Connected || !GentleConnected)
       {
         RemoteControl.Clear();
         GUIWindowManager.ActivateWindow((int)Window.WINDOW_SETTINGS_TVENGINE);
-        //UpdateStateOfRecButton();
-        //UpdateProgressPercentageBar();
-        //UpdateRecordingIndicator();
+        UpdateStateOfRecButton();
+        UpdateProgressPercentageBar();
+        UpdateRecordingIndicator();
         return;
       }
 
@@ -721,7 +741,7 @@ namespace TvPlugin
         //and we're not playing which means we dont timeshift tv
         //g_Player.Stop();
       }
-      if (Connected)
+      if (Connected && GentleConnected)
       {
         SaveSettings();
       }
@@ -737,10 +757,10 @@ namespace TvPlugin
 
       RefreshConnectionState();
 
-      if (!Connected)
+      if (!Connected || !GentleConnected)
       {
-        //UpdateStateOfRecButton();
-        //UpdateRecordingIndicator();
+        UpdateStateOfRecButton();
+        UpdateRecordingIndicator();
         UpdateGUIonPlaybackStateChange();
         ShowDlgAsynch();
         return;
@@ -813,9 +833,9 @@ namespace TvPlugin
           }
         }
 
-        //UpdateStateOfRecButton();
-        //UpdateGUIonPlaybackStateChange();
-        //UpdateProgressPercentageBar();
+        UpdateStateOfRecButton();
+        UpdateGUIonPlaybackStateChange();
+        UpdateProgressPercentageBar();
         benchClock.Stop();
         Log.Warn("TVHome.OnClicked(): Total Time - {0} ms", benchClock.ElapsedMilliseconds.ToString());
       }
@@ -872,7 +892,7 @@ namespace TvPlugin
     public override void Process()
     {
       TimeSpan ts = DateTime.Now - _updateTimer;
-      if (!Connected || _suspended || ts.TotalMilliseconds < PROCESS_UPDATE_INTERVAL)
+      if (!Connected || _suspended || ts.TotalMilliseconds < PROCESS_UPDATE_INTERVAL || !GentleConnected)
       {
         return;
       }
@@ -880,7 +900,7 @@ namespace TvPlugin
       try
       {
         UpdateRecordingIndicator();
-        //UpdateStateOfRecButton();
+        UpdateStateOfRecButton();
 
         if (!Card.IsTimeShifting)
         {
@@ -1119,22 +1139,17 @@ namespace TvPlugin
             GUIWindowManager.SendThreadMessage(initMsgTV);
             return true;
           }
-          //Thread showDlgThread = new Thread(ShowDlgThread);
-          //showDlgThread.IsBackground = true;
-          //// show the dialog asynch.
-          //// this fixes a hang situation that would happen when resuming TV with showlastactivemodule
-          //showDlgThread.Start();
+          Thread showDlgThread = new Thread(ShowDlgThread);
+          showDlgThread.IsBackground = true;
+          // show the dialog asynch.
+          // this fixes a hang situation that would happen when resuming TV with showlastactivemodule
+          showDlgThread.Start();
           _ServerNotConnectedHandled = true;
           return true;
         }
         else
         {
-          bool gentleConnected = WaitForGentleConnection();
-
-          if (!gentleConnected)
-          {
-            return true;
-          }
+          WaitForGentleConnection();
         }
       }
       catch (Exception e)
@@ -1150,39 +1165,77 @@ namespace TvPlugin
       return false;
     }
 
-    public static bool WaitForGentleConnection()
+    internal static void WaitForGentleConnection()
+    {
+      if (waitForGentleConnectionThread != null)
+      {
+        if (waitForGentleConnectionThread.IsAlive)
+        {
+          return;
+        }
+      }
+      waitForGentleConnectionThread = new Thread(WaitForGentleConnectionThread)
+      {
+        IsBackground = true,
+        Name = "TvClient-TvHome: WaitForGentleConnection thread"
+      };
+      waitForGentleConnectionThread.Start();
+    }
+
+    public static void WaitForGentleConnectionThread()
     {
       Log.Debug("TVHome: WaitForGentleConnection()");
       // lets try one more time - seems like the gentle framework is not properly initialized when coming out of standby/hibernation.
       // lets wait 10 secs before giving up.
       bool success = false;
+      int countToHBLoop = 10;
 
-      Stopwatch timer = Stopwatch.StartNew();
-      Log.Debug("TVHome: trying waiting for gentle.net DB connection {0} msec", timer.ElapsedMilliseconds);
-      //while (!success && timer.ElapsedMilliseconds < 10000) //10sec max
+      while (true)
       {
-        try
+        if (countToHBLoop >= 10)
         {
-          IList<Card> cards = TvDatabase.Card.ListAll();
-          success = true;
-        }
-        catch (Exception)
-        {
-          success = false;
-          Log.Debug("TVHome: waiting for gentle.net DB connection exception {0} msec", timer.ElapsedMilliseconds);
-          Thread.Sleep(100);
-        }
-      }
+          countToHBLoop = 0;
+          Stopwatch timer = Stopwatch.StartNew();
+          Log.Debug("TVHome: trying waiting for gentle.net DB connection {0} msec", timer.ElapsedMilliseconds);
+          //while (!success && timer.ElapsedMilliseconds < 10000) //10sec max
+          {
+            try
+            {
+              IList<Card> cards = TvDatabase.Card.ListAll();
+              success = true;
+            }
+            catch (Exception)
+            {
+              success = false;
+              Log.Debug("TVHome: waiting for gentle.net DB connection exception {0} msec", timer.ElapsedMilliseconds);
+              Thread.Sleep(100);
+            }
+          }
 
-      if (!success)
-      {
-        RemoteControl.Clear();
-        GUIWindowManager.ActivateWindow((int)Window.WINDOW_SETTINGS_TVENGINE);
-        //GUIWaitCursor.Hide();
+          if (!success)
+          {
+            //GUIWaitCursor.Hide();
+            if (OnGentleDisconnected != null)
+            {
+              OnGentleDisconnected();
+              _notifyManager.Stop();
+              Log.Debug("TVHome: gentle.net DB disconnected connected");
+            }
+          }
+          else
+          {
+            if (OnGentleConnected != null)
+            {
+              OnGentleConnected();
+              _notifyManager.Start();
+              Log.Debug("TVHome: gentle.net DB connected connected");
+            }
+            Log.Debug("TVHome: waiting for gentle.net DB connection {0} msec", timer.ElapsedMilliseconds);
+          }
+        }
+        Thread.Sleep(HEARTBEAT_INTERVAL * 1000); //sleep for 1 sec. before sending heartbeat again
+        countToHBLoop++;
       }
-      Log.Debug("TVHome: waiting for gentle.net DB connection {0} msec", timer.ElapsedMilliseconds);
-
-      return success;
     }
 
     public static List<string> PreferredLanguages
@@ -1236,6 +1289,8 @@ namespace TvPlugin
     }
 
     public static bool Connected { get; set; }
+
+    public static bool GentleConnected { get; set; }
 
     public static VirtualCard Card
     {
@@ -1513,13 +1568,28 @@ namespace TvPlugin
         firstNotLoaded = false;
         OnLoaded();
       }
-      //_notifyManager.Start();
+      if (_notifyManager != null)
+      {
+        _notifyManager.Start();
+      }
+      if (remoteControlOnRemotingDisconnectedThread != null)
+      {
+        remoteControlOnRemotingDisconnectedThread.Abort();
+      }
     }
     private static void RemoteControl_OnRemotingConnected()
     {
-      Thread remoteControlOnRemotingConnectedThread = new Thread(RemoteControl_OnRemotingConnectedThread)
+      if (remoteControlOnRemotingConnectedThread != null)
       {
-        IsBackground = true
+        if (remoteControlOnRemotingConnectedThread.IsAlive)
+        {
+          return;
+        }
+      }
+      remoteControlOnRemotingConnectedThread = new Thread(RemoteControl_OnRemotingConnectedThread)
+      {
+        IsBackground = true,
+        Name = "TvClient-TvHome: RemoteControl_OnRemotingConnected thread"
       };
       remoteControlOnRemotingConnectedThread.Start();
     }
@@ -1529,15 +1599,44 @@ namespace TvPlugin
       if (Connected)
         Log.Info("TVHome: OnRemotingDisconnected");
       Connected = false;
-      _notifyManager.Stop();
+      if (_notifyManager != null)
+      {
+        _notifyManager.Stop();
+      }
       HandleServerNotConnected();
+      if (remoteControlOnRemotingConnectedThread != null)
+      {
+        remoteControlOnRemotingConnectedThread.Abort();
+      }
+      if (waitForGentleConnectionThread != null)
+      {
+        waitForGentleConnectionThread.Abort();
+      }
+    }
+
+    private static void TVHome_OnGentleDisconnected()
+    {
+      GentleConnected = false;
+    }
+
+    private static void TVHome_OnGentleConnected()
+    {
+      GentleConnected = true;
     }
 
     private static void RemoteControl_OnRemotingDisconnected()
     {
-      Thread remoteControlOnRemotingDisconnectedThread = new Thread(RemoteControl_OnRemotingDisconnectedThread)
+      if (remoteControlOnRemotingDisconnectedThread != null)
       {
-        IsBackground = true
+        if (remoteControlOnRemotingDisconnectedThread.IsAlive)
+        {
+          return;
+        }
+      }
+      remoteControlOnRemotingDisconnectedThread = new Thread(RemoteControl_OnRemotingDisconnectedThread)
+      {
+        IsBackground = true,
+        Name = "TvClient-TvHome: RemoteControl_OnRemotingDisconnected thread"
       };
       remoteControlOnRemotingDisconnectedThread.Start();
     }
@@ -1554,7 +1653,12 @@ namespace TvPlugin
           Card.User.Name = new User().Name;
           Card.StopTimeShifting();
         }
-        _notifyManager.Stop();
+
+        if (_notifyManager != null)
+        {
+          _notifyManager.Stop();
+        }
+
         stopHeartBeatThread();
       }
       catch (Exception) { }
@@ -1570,7 +1674,7 @@ namespace TvPlugin
         while (true)
         {
           // 1 second loop
-          if (Connected)
+          if (Connected && GentleConnected)
           {
             _isAnyCardRecording = TvServer.IsAnyCardRecording();
           }
@@ -1581,7 +1685,7 @@ namespace TvPlugin
             countToHBLoop = 0;
             if (!Connected) // is this needed to update connection status
               RefreshConnectionState();
-            if (Connected && !_suspended)
+            if (Connected && !_suspended && GentleConnected)
             {
               bool isTS = ((Card != null && Card.IsTimeShifting) || inPlaceShift);
               if (Connected && isTS)
@@ -1890,9 +1994,11 @@ namespace TvPlugin
         return;
       }
 
-      RemoteControl.OnRemotingDisconnected -=
-        new RemoteControl.RemotingDisconnectedDelegate(RemoteControl_OnRemotingDisconnected);
-      RemoteControl.OnRemotingConnected -= new RemoteControl.RemotingConnectedDelegate(RemoteControl_OnRemotingConnected);
+      RemoteControl.OnRemotingDisconnected -= RemoteControl_OnRemotingDisconnected;
+      RemoteControl.OnRemotingConnected -= RemoteControl_OnRemotingConnected;
+
+      OnGentleDisconnected -= TVHome_OnGentleDisconnected;
+      OnGentleConnected -= TVHome_OnGentleConnected;
 
       if (wasPrevWinTVplugin() && _autoTurnOnTv)
       {
@@ -1920,7 +2026,10 @@ namespace TvPlugin
           Card.User.Name = new User().Name;
           Card.StopTimeShifting();
         }
-        _notifyManager.Stop();
+        if (_notifyManager != null)
+        {
+          _notifyManager.Stop();
+        }
         stopHeartBeatThread();
         //Connected = false;
         _ServerNotConnectedHandled = false;
@@ -1948,12 +2057,19 @@ namespace TvPlugin
       try
       {
         Connected = false;
-        RemoteControl.OnRemotingDisconnected +=
-          new RemoteControl.RemotingDisconnectedDelegate(RemoteControl_OnRemotingDisconnected);
-        RemoteControl.OnRemotingConnected += new RemoteControl.RemotingConnectedDelegate(RemoteControl_OnRemotingConnected);
+
+        RemoteControl.OnRemotingDisconnected += RemoteControl_OnRemotingDisconnected;
+        RemoteControl.OnRemotingConnected += RemoteControl_OnRemotingConnected;
+
+        OnGentleDisconnected += TVHome_OnGentleDisconnected;
+        OnGentleConnected += TVHome_OnGentleConnected;
+
         HandleWakeUpTvServer();
         startHeartBeatThread();
-        //_notifyManager.Start();
+        if (_notifyManager != null)
+        {
+          _notifyManager.Start();
+        }
         _suspended = false;
         if (_resumeChannel != null)
         {
@@ -2391,6 +2507,11 @@ namespace TvPlugin
 
     private void UpdateGUIonPlaybackStateChange()
     {
+      if (!Connected || !GentleConnected)
+      {
+        return;
+      }
+
       bool isTimeShiftingTV = (Connected && Card.IsTimeShifting && g_Player.IsTV);
       if (!_tunePending)
       {
@@ -2730,7 +2851,7 @@ namespace TvPlugin
     private void OnRecord()
     {
       ManualRecord(Navigator.Channel, GetID);
-      //UpdateStateOfRecButton();
+      UpdateStateOfRecButton();
     }
 
     private void UpdateStateOfRecButton()
@@ -2747,7 +2868,7 @@ namespace TvPlugin
     /// </summary>
     private void UpdateStateOfRecButtonThread()
     {
-      if (!Connected)
+      if (!Connected || !GentleConnected)
       {
         btnTvOnOff.Selected = false;
         return;
@@ -2796,28 +2917,31 @@ namespace TvPlugin
       DateTime now = DateTime.Now;
       //Log.Debug("updaterec: conn:{0}, rec:{1}", Connected, Card.IsRecording);
       // if we're recording tv, update gui with info
-      if (Connected && Card.IsRecording)
+      if (Connected && GentleConnected)
       {
-        int scheduleId = Card.RecordingScheduleId;
-        if (scheduleId > 0)
+        if (Card != null && Card.IsRecording)
         {
-          Schedule schedule = Schedule.Retrieve(scheduleId);
-          if (schedule != null)
+          int scheduleId = Card.RecordingScheduleId;
+          if (scheduleId > 0)
           {
-            if (schedule.ScheduleType == (int)ScheduleRecordingType.Once)
+            Schedule schedule = Schedule.Retrieve(scheduleId);
+            if (schedule != null)
             {
-              imgRecordingIcon.SetFileName(Thumbs.TvRecordingIcon);
-            }
-            else
-            {
-              imgRecordingIcon.SetFileName(Thumbs.TvRecordingSeriesIcon);
+              if (schedule.ScheduleType == (int) ScheduleRecordingType.Once)
+              {
+                imgRecordingIcon.SetFileName(Thumbs.TvRecordingIcon);
+              }
+              else
+              {
+                imgRecordingIcon.SetFileName(Thumbs.TvRecordingSeriesIcon);
+              }
             }
           }
         }
-      }
-      else
-      {
-        imgRecordingIcon.IsVisible = false;
+        else
+        {
+          imgRecordingIcon.IsVisible = false;
+        }
       }
     }
 
@@ -2835,7 +2959,7 @@ namespace TvPlugin
 
       try
       {
-        if (!Connected)
+        if (!Connected || !GentleConnected)
         {
           return;
         }

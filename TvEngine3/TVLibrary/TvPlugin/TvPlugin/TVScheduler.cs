@@ -149,14 +149,14 @@ namespace TvPlugin
 
     protected override void OnPageLoad()
     {
-      if (!TVHome.Connected)
+      TVHome.WaitForGentleConnection();
+
+      if (!TVHome.Connected || !TVHome.GentleConnected)
       {
         RemoteControl.Clear();
         GUIWindowManager.ActivateWindow((int)Window.WINDOW_SETTINGS_TVENGINE);
         return;
       }
-
-      TVHome.WaitForGentleConnection();
 
       if (TVHome.Navigator == null)
       {
@@ -203,7 +203,7 @@ namespace TvPlugin
 
       if (!GUIGraphicsContext.IsTvWindow(newWindowId))
       {
-        if (TVHome.Connected)
+        if (TVHome.Connected && TVHome.GentleConnected)
         {
           if (TVHome.Card.IsTimeShifting && !(TVHome.Card.IsTimeShifting || TVHome.Card.IsRecording))
           {
