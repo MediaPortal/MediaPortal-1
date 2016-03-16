@@ -87,6 +87,8 @@ namespace MediaPortal
     private static int retries = 0;
     private static bool successful = false;
     private static bool successfulInit = false;
+
+    protected static readonly Size WINDOWS_NATIVE_RESOLUTION = new Size(1024, 768);
     // ReSharper restore InconsistentNaming
 
     #endregion
@@ -140,8 +142,6 @@ namespace MediaPortal
     protected GraphicsAdapterInfo  AdapterInfo;              // hold adapter info for the selected display on startup of MP
     protected int                  MouseTimeOutMP;           // Mouse activity timeout while in MP in seconds
     protected int                  MouseTimeOutFullscreen;   // Mouse activity timeout while in Fullscreen in seconds
-    protected DateTime             ResumeTimeOutTimer;       // tracks the time of the last resume activity
-    protected int                  ResumeTimeOutMP;          // Resume activity timeout while in MP in seconds
 
     #endregion
 
@@ -448,14 +448,8 @@ namespace MediaPortal
                  GUIGraphicsContext.currentScreen.Bounds.Width, GUIGraphicsContext.currentScreen.Bounds.Height);
       }
 
-      // Backup bounds when native resolution is not (1024x768)
-      if (GUIGraphicsContext.currentScreen.Bounds.Width != 1024 &&
-          GUIGraphicsContext.currentScreen.Bounds.Height != 768)
-      {
-        Log.Debug("D3D: backups screen Bounds {0}", Bounds);
-        _backupBounds = GUIGraphicsContext.currentScreen.Bounds;
-        _backupscreen = GUIGraphicsContext.currentScreen;
-      }
+      _backupBounds = GUIGraphicsContext.currentScreen.Bounds;
+      _backupscreen = GUIGraphicsContext.currentScreen;
 
       if (!successful)
       {
