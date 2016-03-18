@@ -47,6 +47,7 @@ namespace MediaPortal.Player
       if (GUIGraphicsContext.DeviceAudioConnected > 0)
       {
         bool isDigital;
+        bool hideWindowsOSD;
 
         using (Settings reader = new MPSettings())
         {
@@ -69,6 +70,8 @@ namespace MediaPortal.Player
           isDigital = reader.GetValueAsBool("volume", "digital", false);
 
           _showVolumeOSD = reader.GetValueAsBool("volume", "defaultVolumeOSD", true);
+
+          hideWindowsOSD = reader.GetValueAsBool("volume", "hideWindowsOSD", true);
         }
 
         try
@@ -83,7 +86,7 @@ namespace MediaPortal.Player
           Log.Error("VolumeHandler: Mixer exception when init {0}", ex);
         }
 
-        if (OSInfo.OSInfo.Win8OrLater())
+        if (OSInfo.OSInfo.Win8OrLater() && hideWindowsOSD)
         {
           try
           {
