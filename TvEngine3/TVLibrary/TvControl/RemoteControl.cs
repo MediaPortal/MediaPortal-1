@@ -20,6 +20,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Net;
 using System.Net.NetworkInformation;
@@ -31,6 +32,7 @@ using System.Runtime.Remoting.Channels.Tcp;
 using System.Runtime.Remoting.Messaging;
 using System.Runtime.Serialization.Formatters;
 using System.Threading;
+using TvDatabase;
 using TvLibrary.Interfaces;
 using TvLibrary.Log;
 using ThreadState = System.Threading.ThreadState;
@@ -165,6 +167,21 @@ namespace TvControl
           {
             Thread.Sleep(10);
           }
+        }
+        // Check gentle connection
+        try
+        {
+          if (_isRemotingConnected)
+          {
+            Card.ListAll();
+            _isRemotingConnected = true;
+          }
+        }
+        catch (Exception)
+        {
+          _isRemotingConnected = false;
+          InvokeEvents();
+          Log.Info("RemoteControl - Gentle Disconnected ");
         }
       }
       catch (System.Threading.ThreadAbortException)
@@ -301,30 +318,6 @@ namespace TvControl
       }
     }
 
-    private static bool CheckTcpPortMethod2() // Not used for now
-    {
-      IPAddress ipa = (IPAddress)Dns.GetHostAddresses(_hostName)[0];
-
-      try
-      {
-        Socket sock = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-        sock.Connect(ipa, REMOTING_PORT);
-        if (sock.Connected) // Port is in use and connection is successful
-        {
-          Log.Debug("RemoteControl: Port is Closed");
-          _isRemotingConnected = true;
-        }
-        sock.Close();
-
-      }
-      catch (SocketException ex)
-      {
-        Log.Debug("RemoteControl: {0}", (ex.Message));
-        _isRemotingConnected = false;
-      }
-      return _isRemotingConnected;
-    }
-
     public static IPAddress GetIP4Addresses()
     {
       IPAddress ipv4Address = null;
@@ -354,7 +347,6 @@ namespace TvControl
       {
         sock = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
         IPAddress ip = (IPAddress) GetIP4Addresses();
-        if (sock != null)
         {
           IPEndPoint ipEndPoint = new IPEndPoint(ip, REMOTING_PORT);
 
@@ -362,7 +354,7 @@ namespace TvControl
           //time out MAX_TCP_TIMEOUT
           CallWithTimeout(ConnectToProxyServers, MAX_TCP_TIMEOUT, sock, ipEndPoint);
 
-          if (sock != null && sock.Connected)
+          if (sock.Connected)
           {
             _isRemotingConnected = true;
           }
@@ -461,7 +453,7 @@ namespace TvControl
             return _tvControl;
           }
 
-          // register remoting channel          
+          // register remoting channel
           RegisterChannel();
 
           _tvControl =

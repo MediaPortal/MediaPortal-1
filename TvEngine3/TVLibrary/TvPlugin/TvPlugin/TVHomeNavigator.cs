@@ -163,8 +163,7 @@ namespace TvPlugin
       //System.Diagnostics.Debugger.Launch();
       try
       {
-        TVHome.WaitForGentleConnection();
-        if (!TVHome.Connected || !TVHome.GentleConnected)
+        if (!TVHome.Connected)
         {
           return;
         }

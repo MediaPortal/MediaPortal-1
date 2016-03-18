@@ -172,9 +172,7 @@ namespace TvPlugin
 
     protected override void OnPageLoad()
     {
-      TVHome.WaitForGentleConnection();
-
-      if (!TVHome.Connected || !TVHome.GentleConnected)
+      if (!TVHome.Connected)
       {
         RemoteControl.Clear();
         GUIWindowManager.ActivateWindow((int)Window.WINDOW_SETTINGS_TVENGINE);

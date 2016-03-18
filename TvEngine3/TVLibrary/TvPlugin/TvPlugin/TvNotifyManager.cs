@@ -109,6 +109,10 @@ namespace TvPlugin
 
     public static void ForceUpdate()
     {
+      if (!TVHome.Connected)
+      {
+        return;
+      }
       if (!_enableRecNotification)
       {
         return;
@@ -253,6 +257,10 @@ namespace TvPlugin
 
     private void ProcessRecordings(DateTime preNotifySecs)
     {
+      if (!TVHome.Connected)
+      {
+        return;
+      }
       //Log.Debug("TVPlugIn: Notifier checking for recording to start at {0}", preNotifySecs);
       //if (g_Player.IsTV && TVHome.Card.IsTimeShifting && g_Player.Playing)
       IList<Schedule> schedulesList = null;
@@ -392,8 +400,7 @@ namespace TvPlugin
     {
       try
       {
-        TVHome.WaitForGentleConnection();
-        if (!TVHome.Connected || !TVHome.GentleConnected)
+        if (!TVHome.Connected)
         {
           return;
         }
