@@ -60,6 +60,7 @@ namespace MediaPortal.Player
       if (GUIGraphicsContext.DeviceAudioConnected > 0)
       {
         bool isDigital;
+        bool hideWindowsOSD;
 
         using (Settings reader = new MPSettings())
         {
@@ -82,6 +83,8 @@ namespace MediaPortal.Player
           isDigital = reader.GetValueAsBool("volume", "digital", false);
 
           _showVolumeOSD = reader.GetValueAsBool("volume", "defaultVolumeOSD", true);
+
+          hideWindowsOSD = reader.GetValueAsBool("volume", "hideWindowsOSD", true);
         }
 
         try
@@ -107,12 +110,18 @@ namespace MediaPortal.Player
           }
         }
 
-        if (OSInfo.OSInfo.Win8OrLater())
+        if (OSInfo.OSInfo.Win8OrLater() && hideWindowsOSD)
         {
           try
           {
+            bool tempShowVolumeOSD = _showVolumeOSD;
+
+            _showVolumeOSD = false;
+            
             VolumeOSD = new HideVolumeOSD.HideVolumeOSDLib(IsMuted);
             VolumeOSD.HideOSD();
+
+            _showVolumeOSD = tempShowVolumeOSD;
           }
           catch { }
         }
@@ -191,11 +200,6 @@ namespace MediaPortal.Player
       }
       _instance = null;
       GUIGraphicsContext.VolumeHandler = null;
-
-      if (OSInfo.OSInfo.Win8OrLater() && VolumeOSD != null)
-      {
-        VolumeOSD.ShowOSD();
-      }
     }
 
     public virtual void UnMute()

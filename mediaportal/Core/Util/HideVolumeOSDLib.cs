@@ -115,10 +115,5 @@ namespace HideVolumeOSD
 		{
 			ShowWindow(hWndInject, 6); // SW_MINIMIZE
 		}
-
-		public void ShowOSD()
-		{
-			ShowWindow(hWndInject, 9); // SW_RESTORE
-		}
 	}
 }
