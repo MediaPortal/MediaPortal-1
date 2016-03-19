@@ -27,7 +27,9 @@ xcopy "..\..\TvService\bin\%TARGET%\Ionic.Zip.dll" "content\References" /R /Y
 xcopy "..\..\TvService\bin\%TARGET%\KNCBDACTRL.dll" "content\References" /R /Y
 xcopy "..\..\TvService\bin\%TARGET%\log4net.config" "content\References" /R /Y
 xcopy "..\..\TvService\bin\%TARGET%\log4net.dll" "content\References" /R /Y
-xcopy "..\..\TvService\bin\%TARGET%\MediaInfo.dll" "content\References" /R /Y
+rem Morpheus_xx, 2016-03-05: Changed by MP1.14, needs to be adjusted in case of version changes!
+rem xcopy "..\..\TvService\bin\%TARGET%\MediaInfo.dll" "content\References" /R /Y
+xcopy "..\..\..\..\Packages\MediaInfo.0.7.69\MediaInfo.dll" "content\References" /R /Y
 xcopy "..\..\TvService\bin\%TARGET%\MySql.Data.dll" "content\References" /R /Y
 xcopy "..\..\TvService\bin\%TARGET%\PluginBase.dll" "content\References" /R /Y
 xcopy "..\..\TvService\bin\%TARGET%\PowerScheduler.Interfaces.dll" "content\References" /R /Y
