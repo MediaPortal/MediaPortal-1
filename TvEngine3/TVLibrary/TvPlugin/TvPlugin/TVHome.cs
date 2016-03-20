@@ -1855,6 +1855,8 @@ namespace TvPlugin
     private void OnSuspend()
     {
       Log.Info("TVHome.OnSuspend()");
+      // Force disconnection
+      RemoteControl_OnRemotingDisconnected();
       // OnSuspend already in progress
       if (_suspended)
       {
