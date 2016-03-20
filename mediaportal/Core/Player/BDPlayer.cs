@@ -555,6 +555,7 @@ namespace MediaPortal.Player
     protected int _height = 100;
     protected int _videoWidth = 100;
     protected int _videoHeight = 100;
+    protected bool _updateNeeded = true;
     protected string _currentFile = "";
     protected bool _isFullscreen = false;
     protected PlayState _state = PlayState.Init;
@@ -758,6 +759,52 @@ namespace MediaPortal.Player
       return false;
     }
 
+    protected virtual void SetVideoPosition(Rectangle destination)
+    {
+      if (_videoWin != null)
+      {
+        if (destination.Left < 0 || destination.Top < 0 || destination.Width <= 0 || destination.Height <= 0)
+        {
+          return;
+        }
+        if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+        {
+          Size client = GUIGraphicsContext.form.ClientSize;
+          _videoWin.SetWindowPosition(0, 0, client.Width, client.Height);
+        }
+        else
+        {
+          _videoWin.SetWindowPosition(destination.Left, destination.Top, destination.Width, destination.Height);
+        }
+      }
+    }
+
+    protected virtual void SetSourceDestRectangles(Rectangle source, Rectangle destination)
+    {
+      if (_basicVideo != null)
+      {
+        if (source.Left < 0 || source.Top < 0 || source.Width <= 0 || source.Height <= 0)
+        {
+          return;
+        }
+        if (destination.Width <= 0 || destination.Height <= 0)
+        {
+          return;
+        }
+
+        _basicVideo.SetSourcePosition(source.Left, source.Top, source.Width, source.Height);
+
+        if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+        {
+          _basicVideo.SetDestinationPosition(destination.Left, destination.Top, destination.Width, destination.Height);
+        }
+        else
+        {
+          _basicVideo.SetDestinationPosition(0, 0, destination.Width, destination.Height);
+        }
+      }
+    }
+
     public override bool CanSeek()
     {
       return _state == PlayState.Playing && (menuState == MenuState.None || menuState == MenuState.RootPending);      
@@ -937,7 +984,6 @@ namespace MediaPortal.Player
       }
       if (_videoWin != null)
       {
-        _videoWin.put_Owner(GUIGraphicsContext.ActiveForm);
         _videoWin.put_WindowStyle(
           (WindowStyle)((int)WindowStyle.Child + (int)WindowStyle.ClipSiblings + (int)WindowStyle.ClipChildren));
         _videoWin.put_MessageDrain(GUIGraphicsContext.form.Handle);
@@ -947,9 +993,7 @@ namespace MediaPortal.Player
         hr = _basicVideo.GetVideoSize(out _videoWidth, out _videoHeight);
         if (hr < 0)
         {
-          Log.Error("BDPlayer:GetVideoSize() failed");
-          MovieEnded();
-          return false;
+          Log.Info("BDPlayer:GetVideoSize() failed");
         }
         Log.Debug("BDPlayer:VideoSize:{0}x{1}", _videoWidth, _videoHeight);
       }
@@ -988,7 +1032,92 @@ namespace MediaPortal.Player
       if (GUIGraphicsContext.IsFullScreenVideo != _isFullscreen)
       {
         _isFullscreen = GUIGraphicsContext.IsFullScreenVideo;
+        _updateNeeded = true;
       }
+
+      if (!_updateNeeded)
+      {
+        return;
+      }
+
+      _updateNeeded = false;
+
+      float x = _positionX;
+      float y = _positionY;
+      int nw = _width;
+      int nh = _height;
+
+      if (nw > GUIGraphicsContext.OverScanWidth)
+      {
+        nw = GUIGraphicsContext.OverScanWidth;
+      }
+      
+      if (nh > GUIGraphicsContext.OverScanHeight)
+      {
+        nh = GUIGraphicsContext.OverScanHeight;
+      }
+      
+      if (GUIGraphicsContext.IsFullScreenVideo)
+      {
+        x = _positionX = GUIGraphicsContext.OverScanLeft;
+        y = _positionY = GUIGraphicsContext.OverScanTop;
+        nw = _width = GUIGraphicsContext.OverScanWidth;
+        nh = _height = GUIGraphicsContext.OverScanHeight;
+      }
+
+      if (nw <= 0 || nh <= 0 || x < 0 || y < 0)
+      {
+        return;
+      }
+
+      int aspectX, aspectY;
+
+      if (_basicVideo != null)
+      {
+        _basicVideo.GetVideoSize(out _videoWidth, out _videoHeight);
+      }
+      aspectX = _videoWidth;
+      aspectY = _videoHeight;
+
+      if (_basicVideo != null)
+      {
+        _basicVideo.GetPreferredAspectRatio(out aspectX, out aspectY);
+      }
+
+      _aspectX = aspectX;
+      _aspectY = aspectY;
+
+      GUIGraphicsContext.VideoSize = new Size(_videoWidth, _videoHeight);
+      GUIGraphicsContext.ScaleVideoWindow(ref nw, ref nh, ref x, ref y);
+
+      Rectangle rSource, rDest;
+
+      Geometry m_geometry = new Geometry();
+      m_geometry.ImageWidth = _videoWidth;
+      m_geometry.ImageHeight = _videoHeight;
+      m_geometry.ScreenWidth = nw;
+      m_geometry.ScreenHeight = nh;
+      m_geometry.ARType = GUIGraphicsContext.ARType;
+      m_geometry.PixelRatio = GUIGraphicsContext.PixelRatio;
+      m_geometry.GetWindow(aspectX, aspectY, out rSource, out rDest);
+
+      rDest.X += (int)x;
+      rDest.Y += (int)y;
+
+      Log.Info("overlay: video WxH  : {0}x{1}", _videoWidth, _videoHeight);
+      Log.Info("overlay: video AR   : {0}:{1}", aspectX, aspectY);
+      Log.Info("overlay: screen WxH : {0}x{1}", nw, nh);
+      Log.Info("overlay: AR type    : {0}", GUIGraphicsContext.ARType);
+      Log.Info("overlay: PixelRatio : {0}", GUIGraphicsContext.PixelRatio);
+      Log.Info("overlay: src        : ({0},{1})-({2},{3})",
+        rSource.X, rSource.Y, rSource.X + rSource.Width, rSource.Y + rSource.Height);
+      Log.Info("overlay: dst        : ({0},{1})-({2},{3})",
+        rDest.X, rDest.Y, rDest.X + rDest.Width, rDest.Y + rDest.Height);
+
+      SetSourceDestRectangles(rSource, rDest);
+      SetVideoPosition(rDest);
+      _sourceRectangle = rSource;
+      _videoRectangle = rDest;
     }
 
     public override bool Ended
@@ -1140,6 +1269,7 @@ namespace MediaPortal.Player
         if (value != _positionX)
         {
           _positionX = value;
+          _updateNeeded = true;
         }
       }
     }
@@ -1152,6 +1282,7 @@ namespace MediaPortal.Player
         if (value != _positionY)
         {
           _positionY = value;
+          _updateNeeded = true;
         }
       }
     }
@@ -1164,6 +1295,7 @@ namespace MediaPortal.Player
         if (value != _width)
         {
           _width = value;
+          _updateNeeded = true;
         }
       }
     }
@@ -1176,6 +1308,7 @@ namespace MediaPortal.Player
         if (value != _height)
         {
           _height = value;
+          _updateNeeded = true;
         }
       }
     }
@@ -1208,7 +1341,7 @@ namespace MediaPortal.Player
         if (value != _isFullscreen)
         {
           _isFullscreen = value;
-          GUIGraphicsContext.IsFullScreenVideo = _isFullscreen;
+          _updateNeeded = true;
         }
       }
     }
@@ -2530,6 +2663,9 @@ namespace MediaPortal.Player
         _graphBuilder = (IGraphBuilder)new FilterGraph();
         _rotEntry = new DsROTEntry(_graphBuilder as IFilterGraph);
 
+        _basicVideo = _graphBuilder as IBasicVideo2;
+        _videoWin = _graphBuilder as IVideoWindow;
+
         filterConfig = GetFilterConfiguration();
 
         if (filterConfig.AudioRenderer.Length > 0)
@@ -2869,8 +3005,8 @@ namespace MediaPortal.Player
         _videoWin = _graphBuilder as IVideoWindow;
         if (_videoWin != null)
         {
-          hr = _videoWin.put_Visible(OABool.False);
-          hr = _videoWin.put_Owner(IntPtr.Zero);
+          _videoWin.put_Owner(IntPtr.Zero);
+          _videoWin.put_Visible(OABool.False);
           _videoWin = null;
         }
 
@@ -2956,7 +3092,6 @@ namespace MediaPortal.Player
           _vmr9 = null;
         }
 
-        GUIGraphicsContext.form.Invalidate(true);
         _state = PlayState.Init;
       }
       catch (Exception ex)

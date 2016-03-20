@@ -41,6 +41,8 @@ namespace MediaPortal.Player.Subtitles
     void Render(Rectangle subsRect, Rectangle frameRect);
     void SetTime(long nsSampleTime);
 
+    void SetDevice(IntPtr device);
+
     ////
     //subs management functions
     ///
@@ -101,6 +103,8 @@ namespace MediaPortal.Player.Subtitles
     public class DummyEngine : ISubEngine
     {
       #region ISubEngine Members
+
+      public void SetDevice(IntPtr device) {}
 
       public bool LoadSubtitles(IGraphBuilder graphBuilder, string filename)
       {

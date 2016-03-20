@@ -324,6 +324,21 @@ namespace MediaPortal.Player
           return false;
         }
 
+        int hr = mediaEvt.SetNotifyWindow(GUIGraphicsContext.ActiveForm, WM_GRAPHNOTIFY, IntPtr.Zero);
+        if (hr < 0)
+        {
+          Error.SetError("Unable to play movie", "Can not set notifications");
+          m_strCurrentFile = "";
+          CloseInterfaces();
+          return false;
+        }
+        if (videoWin != null)
+        {
+          videoWin.put_WindowStyle(
+            (WindowStyle)((int)WindowStyle.Child + (int)WindowStyle.ClipChildren + (int)WindowStyle.ClipSiblings));
+          videoWin.put_MessageDrain(GUIGraphicsContext.form.Handle);
+        }
+
         #region FFDShowEngine and PostProcessingEngine Detection
 
         if (!streamLAVSelection)
@@ -349,32 +364,6 @@ namespace MediaPortal.Player
         SelectAudioLanguage();
         OnInitialized();
 
-        int hr = mediaEvt.SetNotifyWindow(GUIGraphicsContext.ActiveForm, WM_GRAPHNOTIFY, IntPtr.Zero);
-        if (hr < 0)
-        {
-          Error.SetError("Unable to play movie", "Can not set notifications");
-          m_strCurrentFile = "";
-          CloseInterfaces();
-          return false;
-        }
-        if (videoWin != null)
-        {
-          videoWin.put_Owner(GUIGraphicsContext.ActiveForm);
-          videoWin.put_WindowStyle(
-            (WindowStyle)((int)WindowStyle.Child + (int)WindowStyle.ClipChildren + (int)WindowStyle.ClipSiblings));
-          videoWin.put_MessageDrain(GUIGraphicsContext.form.Handle);
-        }
-        if (basicVideo != null)
-        {
-          hr = basicVideo.GetVideoSize(out m_iVideoWidth, out m_iVideoHeight);
-          if (hr < 0)
-          {
-            Error.SetError("Unable to play movie", "Can not find movie width/height");
-            m_strCurrentFile = "";
-            CloseInterfaces();
-            return false;
-          }
-        }
         /*
         GUIGraphicsContext.DX9Device.Clear( ClearFlags.Target, Color.Black, 1.0f, 0);
         try
@@ -403,6 +392,12 @@ namespace MediaPortal.Player
           CloseInterfaces();
           return false;
         }
+
+        if (basicVideo != null)
+        {
+          basicVideo.GetVideoSize(out m_iVideoWidth, out m_iVideoHeight);
+        }
+
         GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAYBACK_STARTED, 0, 0, 0, 0, 0, null);
         msg.Label = strFile;
         GUIWindowManager.SendThreadMessage(msg);
@@ -542,10 +537,9 @@ namespace MediaPortal.Player
     {
       if (GUIGraphicsContext.Vmr9Active)
       {
-        _updateNeeded = false;
         m_bStarted = true;
-        return;
       }
+
       if (GUIGraphicsContext.IsFullScreenVideo != m_bFullScreen)
       {
         m_bFullScreen = GUIGraphicsContext.IsFullScreenVideo;
@@ -600,6 +594,7 @@ namespace MediaPortal.Player
         m_aspectX = aspectX;
         m_aspectY = aspectY;
         GUIGraphicsContext.VideoSize = new Size(m_iVideoWidth, m_iVideoHeight);
+        GUIGraphicsContext.ScaleVideoWindow(ref nw, ref nh, ref x, ref y);
         Rectangle rSource, rDest;
         Geometry m_geometry = new Geometry();
         m_geometry.ImageWidth = m_iVideoWidth;
@@ -635,7 +630,15 @@ namespace MediaPortal.Player
         {
           return;
         }
-        videoWin.SetWindowPosition(rDest.Left, rDest.Top, rDest.Width, rDest.Height);
+        if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+        {
+          Size client = GUIGraphicsContext.form.ClientSize;
+          videoWin.SetWindowPosition(0, 0, client.Width, client.Height);
+        }
+        else
+        {
+          videoWin.SetWindowPosition(rDest.Left, rDest.Top, rDest.Width, rDest.Height);
+        }
       }
     }
 
@@ -651,8 +654,17 @@ namespace MediaPortal.Player
         {
           return;
         }
+
         basicVideo.SetSourcePosition(rSource.Left, rSource.Top, rSource.Width, rSource.Height);
-        basicVideo.SetDestinationPosition(0, 0, rDest.Width, rDest.Height);
+
+        if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+        {
+          basicVideo.SetDestinationPosition(rDest.Left, rDest.Top, rDest.Width, rDest.Height);
+        }
+        else
+        {
+          basicVideo.SetDestinationPosition(0, 0, rDest.Width, rDest.Height);
+        }
       }
     }
 
@@ -707,7 +719,6 @@ namespace MediaPortal.Player
             videoWin.put_Visible(OABool.True);
           }
         }
-        CheckVideoResolutionChanges();
         updateTimer = DateTime.Now;
       }
       if (m_speedRate != 10000)
@@ -719,32 +730,6 @@ namespace MediaPortal.Player
         m_lastFrameCounter = 0;
       }
       OnProcess();
-    }
-
-    private void CheckVideoResolutionChanges()
-    {
-      if (videoWin == null || basicVideo == null)
-      {
-        return;
-      }
-      int aspectX, aspectY;
-      int videoWidth = 1, videoHeight = 1;
-      if (basicVideo != null)
-      {
-        basicVideo.GetVideoSize(out videoWidth, out videoHeight);
-      }
-      aspectX = videoWidth;
-      aspectY = videoHeight;
-      if (basicVideo != null)
-      {
-        basicVideo.GetPreferredAspectRatio(out aspectX, out aspectY);
-      }
-      if (videoHeight != m_iVideoHeight || videoWidth != m_iVideoWidth ||
-          aspectX != m_aspectX || aspectY != m_aspectY)
-      {
-        _updateNeeded = true;
-        SetVideoWindow();
-      }
     }
 
     protected virtual void OnProcess() {}

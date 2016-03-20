@@ -522,6 +522,8 @@ namespace MediaPortal.Player
         //Get filterCodecName
         filterCodec = GetFilterCodec();
 
+        basicVideo = graphBuilder as IBasicVideo2;
+
         if (filterConfig.bAutoDecoderSettings)
         {
           AutoRenderingCheck = true;
@@ -1402,8 +1404,8 @@ namespace MediaPortal.Player
 
         if (videoWin != null)
         {
-          hr = videoWin.put_Visible(OABool.False);
-          hr = videoWin.put_Owner(IntPtr.Zero);
+          videoWin.put_Owner(IntPtr.Zero);
+          videoWin.put_Visible(OABool.False);
           videoWin = null;
         }
 

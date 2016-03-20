@@ -64,6 +64,21 @@ namespace MediaPortal.Player
     //used to synchronize subtitle's clock
     [PreserveSig]
     void SetSampleTime(Int64 nsSampleTime);
+
+    [PreserveSig]
+    int RenderGui(Int16 cx, Int16 cy, Int16 arx, Int16 ary);
+
+    [PreserveSig]
+    int RenderOverlay(Int16 cx, Int16 cy, Int16 arx, Int16 ary);
+
+    [PreserveSig]
+    void SetRenderTarget(uint target);
+
+    [PreserveSig]
+    void SetSubtitleDevice(IntPtr device);
+
+    [PreserveSig]
+    void RenderSubtitle(long frameStart, int left, int top, int right, int bottom, int width, int height);
   }
 
   #endregion
@@ -111,6 +126,12 @@ namespace MediaPortal.Player
 
     [DllImport("dshowhelper.dll", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
     private static extern unsafe void EVRUpdateDisplayFPS();
+
+    [DllImport("dshowhelper.dll", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
+    private static extern unsafe bool MadInit(IVMR9PresentCallback callback, int width, int height, uint dwD3DDevice, uint parent, ref IBaseFilter madFilter);
+
+    [DllImport("dshowhelper.dll", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
+    private static extern unsafe void MadDeinit();
 
     #endregion
 
@@ -366,8 +387,6 @@ namespace MediaPortal.Player
         return false;
       }
 
-      bool _useEvr = GUIGraphicsContext.IsEvr;
-
       if (_instanceCounter != 0)
       {
         Log.Error("VMR9: Multiple instances of VMR9 running!!!");
@@ -381,7 +400,7 @@ namespace MediaPortal.Player
       _scene = new PlaneScene(this);
       _scene.Init();
 
-      if (_useEvr)
+      if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.EVR)
       {
         // Fix RDP Screen out of bound (force to use AdapterOrdinal to 0 if adapter number are out of bounds)
         int AdapterOrdinal = GUIGraphicsContext.DX9Device.DeviceCaps.AdapterOrdinal;
@@ -425,6 +444,14 @@ namespace MediaPortal.Player
         hr = new HResult(graphBuilder.AddFilter(_vmr9Filter, "Enhanced Video Renderer"));
         Log.Info("VMR9: added EVR Renderer to graph");
       }
+      else if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+      {
+        var backbuffer = GUIGraphicsContext.DX9Device.PresentationParameters;
+        MadInit(_scene, backbuffer.BackBufferWidth, backbuffer.BackBufferHeight, (uint)upDevice.ToInt32(), (uint)GUIGraphicsContext.ActiveForm.ToInt32(), ref _vmr9Filter);
+
+        hr = new HResult(graphBuilder.AddFilter(_vmr9Filter, "madVR"));
+        Log.Info("VMR9: added madVR Renderer to graph");
+      }
       else
       {
         _vmr9Filter = (IBaseFilter) new VideoMixingRenderer9();
@@ -443,14 +470,19 @@ namespace MediaPortal.Player
 
       if (hr != 0)
       {
-        if (_useEvr)
+        if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.EVR)
         {
           EvrDeinit();
+        }
+        else if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+        {
+          MadDeinit();
         }
         else
         {
           Vmr9Deinit();
         }
+
         _scene.Stop();
         _scene.Deinit();
         _scene = null;
@@ -467,7 +499,7 @@ namespace MediaPortal.Player
       _graphBuilderInterface = graphBuilder;
       _instanceCounter++;
       _isVmr9Initialized = true;
-      if (!_useEvr)
+      if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.VMR9)
       {
         SetDeinterlacePrefs();
 
@@ -743,7 +775,7 @@ namespace MediaPortal.Player
 
     public void SetDeinterlaceMode()
     {
-      if (!GUIGraphicsContext.IsEvr)
+      if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.VMR9)
       {
         if (!_isVmr9Initialized)
         {
@@ -1193,9 +1225,13 @@ namespace MediaPortal.Player
 
       _qualityInterface = null;
 
-      if (GUIGraphicsContext.IsEvr)
+      if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.EVR)
       {
         EvrDeinit();
+      }
+      else if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+      {
+        MadDeinit();
       }
       else
       {

@@ -19,6 +19,8 @@
 #endregion
 
 using System;
+using System.Threading;
+using System.Runtime.InteropServices;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
@@ -29,6 +31,7 @@ using MediaPortal.Configuration;
 using MediaPortal.Player;
 using MediaPortal.Profile;
 using MediaPortal.Util;
+using MediaPortal;
 using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
 
@@ -54,10 +57,14 @@ namespace MediaPortal.GUI.Library
   /// </summary>
   public class GUIGraphicsContext
   {
+    [DllImport("user32.dll", SetLastError = true)]
+    static extern bool PostMessage(IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam);
+
     public static event BlackImageRenderedHandler OnBlackImageRendered;
     public static event VideoReceivedHandler OnVideoReceived;
     
     private static readonly object RenderLoopLock = new object();  // Rendering loop lock - use this when removing any D3D resources
+    private static readonly object _videoWindowChangeLock = new Object();
     private static readonly List<Point> Cameras = new List<Point>();
     private static readonly List<TransformMatrix> GroupTransforms = new List<TransformMatrix>();
     private static TransformMatrix _guiTransform = new TransformMatrix();
@@ -75,6 +82,13 @@ namespace MediaPortal.GUI.Library
       SUSPENDING,
       LOST
       // ReSharper restore InconsistentNaming
+    }
+
+    public enum VideoRendererType
+    {
+      VMR9 = 0,
+      EVR = 1,
+      madVR = 2
     }
     
     public static event SendMessageHandler Receivers; // triggered when a message has arrived
@@ -96,6 +110,7 @@ namespace MediaPortal.GUI.Library
     private const int WM_SYSCOMMAND = 0x0112;
     private const int MONITOR_ON = -1;
     private const int MONITOR_OFF = 2;
+
     // ReSharper restore InconsistentNaming
     private static bool m_volumeOverlay = false; // Volume overlay
     private static bool m_disableVolumeOverlay = false; // Window volume overlay allowed
@@ -136,6 +151,7 @@ namespace MediaPortal.GUI.Library
     private static bool _idleTimePowerSaving;
     private static bool _turnOffMonitor;
     private static bool _vmr9Allowed = true;
+    private static VideoRendererType _videoRendererType;
     private static DateTime _lastActivity = DateTime.Now;
     private static Screen _currentScreen;
     private static Screen _currentStartScreen;
@@ -323,12 +339,9 @@ namespace MediaPortal.GUI.Library
                 Log.Warn("GraphicContext: Could not power monitor {0}", value ? "off" : "on");
               }
             }
-            _blankScreen = value;
 
-            if (OnVideoWindowChanged != null)
-            {
-              OnVideoWindowChanged();
-            }
+            _blankScreen = value;
+            VideoWindowChanged();
           }
           catch (Exception ex)
           {
@@ -799,10 +812,7 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     public static void VideoReceived()
     {
-      if (OnVideoReceived != null)
-      {
-        OnVideoReceived();
-      }
+      VideoWindowChanged();
     }
 
     /// <summary>
@@ -819,10 +829,7 @@ namespace MediaPortal.GUI.Library
       set
       {
         _geometryType = value;
-        if (OnVideoWindowChanged != null)
-        {
-          OnVideoWindowChanged();
-        }
+        VideoWindowChanged();
       }
     }
 
@@ -970,10 +977,7 @@ namespace MediaPortal.GUI.Library
         if (value != _isFullScreenVideo)
         {
           _isFullScreenVideo = value;
-          if (OnVideoWindowChanged != null)
-          {
-            OnVideoWindowChanged();
-          }
+          VideoWindowChanged();
         }
       }
     }
@@ -989,10 +993,36 @@ namespace MediaPortal.GUI.Library
         if (!_rectVideo.Equals(value))
         {
           _rectVideo = value;
-          if (OnVideoWindowChanged != null)
-          {
-            OnVideoWindowChanged();
-          }
+          VideoWindowChanged();
+        }
+      }
+    }
+
+    /// <summary>
+    /// Delegates video window size/position change notify to be done by main thread
+    /// </summary>
+    private static void VideoWindowChanged()
+    {
+      if (_videoRendererType == VideoRendererType.madVR)
+      {
+        ThreadPool.QueueUserWorkItem(o => NotifyVideoWindowChanged());
+      }
+      else if (OnVideoWindowChanged != null)
+      {
+        OnVideoWindowChanged();
+      }
+    }
+
+    /// <summary>
+    /// Notifies video window position/size change.
+    /// </summary>
+    public static void NotifyVideoWindowChanged()
+    {
+      if (OnVideoWindowChanged != null)
+      {
+        lock (_videoWindowChangeLock)
+        {
+          OnVideoWindowChanged();
         }
       }
     }
@@ -1041,9 +1071,9 @@ namespace MediaPortal.GUI.Library
             VideoWindow = new Rectangle(0, 0, 1, 1);
           }
 
-          if (bOldOverlay != _overlay && OnVideoWindowChanged != null)
+          if (bOldOverlay != _overlay)
           {
-            OnVideoWindowChanged();
+            VideoWindowChanged();
           }
         }
       }
@@ -1432,10 +1462,28 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     public static bool IsVMR9Exclusive { get; set; }
 
-    /// <summary>
-    /// 
-    /// </summary>
-    public static bool IsEvr { get; set; }
+    public static VideoRendererType VideoRenderer
+    {
+      get { return _videoRendererType; }
+      set { _videoRendererType = value; }
+    }
+
+    public static void ScaleVideoWindow(ref int width, ref int height, ref float x, ref float y)
+    {
+      if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+      {
+        Size client = GUIGraphicsContext.form.ClientSize;
+        float ration = 1.0f;
+        
+        if (DX9Device != null && DX9Device.PresentationParameters != null)
+          ration = (float)client.Width / (float)DX9Device.PresentationParameters.BackBufferWidth;
+
+        width = (int)((float)width * (float)ration);
+        height = (int)((float)height * (float)ration);
+        x *= ration;
+        y *= ration;
+      }
+    }
 
     /// <summary>
     /// 

@@ -520,8 +520,8 @@ namespace MediaPortal.Player
         videoWin = graphBuilder as IVideoWindow;
         if (videoWin != null)
         {
-          hr = videoWin.put_Visible(OABool.False);
-          hr = videoWin.put_Owner(IntPtr.Zero);
+          videoWin.put_Owner(IntPtr.Zero);
+          videoWin.put_Visible(OABool.False);
           videoWin = null;
         }
 

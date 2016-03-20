@@ -40,6 +40,8 @@ namespace MediaPortal.Configuration.Sections
       this.mpVMR9FilterMethod = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.label1 = new System.Windows.Forms.Label();
       this.VMR9Tips = new MediaPortal.UserInterface.Controls.MPToolTip();
+      this.radioButtonMadVR = new System.Windows.Forms.RadioButton();
+      this.mpMadLabel = new MediaPortal.UserInterface.Controls.MPLabel();
       this.mpGroupBox1.SuspendLayout();
       this.SuspendLayout();
       // 
@@ -59,8 +61,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // mpGroupBox1
       // 
-      this.mpGroupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpGroupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpGroupBox1.Controls.Add(this.mpMadLabel);
+      this.mpGroupBox1.Controls.Add(this.radioButtonMadVR);
       this.mpGroupBox1.Controls.Add(this.radioButtonEVR);
       this.mpGroupBox1.Controls.Add(this.radioButtonVMR9);
       this.mpGroupBox1.Controls.Add(this.labelEVRHint);
@@ -74,7 +78,7 @@ namespace MediaPortal.Configuration.Sections
       this.mpGroupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.mpGroupBox1.Location = new System.Drawing.Point(6, 0);
       this.mpGroupBox1.Name = "mpGroupBox1";
-      this.mpGroupBox1.Size = new System.Drawing.Size(462, 323);
+      this.mpGroupBox1.Size = new System.Drawing.Size(462, 388);
       this.mpGroupBox1.TabIndex = 1;
       this.mpGroupBox1.TabStop = false;
       this.mpGroupBox1.Text = "Video renderer - advanced settings";
@@ -82,7 +86,7 @@ namespace MediaPortal.Configuration.Sections
       // radioButtonEVR
       // 
       this.radioButtonEVR.AutoSize = true;
-      this.radioButtonEVR.Location = new System.Drawing.Point(30, 211);
+      this.radioButtonEVR.Location = new System.Drawing.Point(30, 188);
       this.radioButtonEVR.Name = "radioButtonEVR";
       this.radioButtonEVR.Size = new System.Drawing.Size(182, 17);
       this.radioButtonEVR.TabIndex = 12;
@@ -107,7 +111,7 @@ namespace MediaPortal.Configuration.Sections
       // labelEVRHint
       // 
       this.labelEVRHint.AutoSize = true;
-      this.labelEVRHint.Location = new System.Drawing.Point(61, 240);
+      this.labelEVRHint.Location = new System.Drawing.Point(61, 217);
       this.labelEVRHint.Name = "labelEVRHint";
       this.labelEVRHint.Size = new System.Drawing.Size(283, 52);
       this.labelEVRHint.TabIndex = 9;
@@ -189,6 +193,27 @@ namespace MediaPortal.Configuration.Sections
       this.label1.Size = new System.Drawing.Size(0, 13);
       this.label1.TabIndex = 1;
       // 
+      // radioButtonMadVR
+      // 
+      this.radioButtonMadVR.AutoSize = true;
+      this.radioButtonMadVR.Location = new System.Drawing.Point(30, 285);
+      this.radioButtonMadVR.Name = "radioButtonMadVR";
+      this.radioButtonMadVR.Size = new System.Drawing.Size(178, 17);
+      this.radioButtonMadVR.TabIndex = 13;
+      this.radioButtonMadVR.TabStop = true;
+      this.radioButtonMadVR.Text = "Madshi\'s Video Render (madVR)";
+      this.radioButtonMadVR.UseVisualStyleBackColor = true;
+      this.radioButtonMadVR.CheckedChanged += new System.EventHandler(this.radioButtonMadVR_CheckedChanged);
+      // 
+      // mpMadLabel
+      // 
+      this.mpMadLabel.AutoSize = true;
+      this.mpMadLabel.Location = new System.Drawing.Point(61, 314);
+      this.mpMadLabel.Name = "mpMadLabel";
+      this.mpMadLabel.Size = new System.Drawing.Size(269, 13);
+      this.mpMadLabel.TabIndex = 14;
+      this.mpMadLabel.Text = "You need to install madVR manually to be able to use it.";
+      // 
       // FiltersVideoRenderer
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -217,5 +242,7 @@ namespace MediaPortal.Configuration.Sections
       private MediaPortal.UserInterface.Controls.MPLabel labelEVRHint;
       private System.Windows.Forms.RadioButton radioButtonEVR;
       private System.Windows.Forms.RadioButton radioButtonVMR9;
+      private UserInterface.Controls.MPLabel mpMadLabel;
+      private System.Windows.Forms.RadioButton radioButtonMadVR;
   }
 }

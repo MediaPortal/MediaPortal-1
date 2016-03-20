@@ -307,29 +307,15 @@ namespace MediaPortal.Player
         {
           if (hr == 0)
           {
-            hr = _videoWin.put_Owner(GUIGraphicsContext.ActiveForm);
-            if (hr != 0)
-            {
-              Log.Error("DVDPlayer:Unable to set window owner 0x{0:X}", hr);
-            }
-          }
-          if (hr == 0)
-          {
             hr = _videoWin.put_WindowStyle((WindowStyle)((int)WindowStyle.Child +
                                                          (int)WindowStyle.ClipChildren + (int)WindowStyle.ClipSiblings));
             if (hr != 0)
             {
-              Log.Error("DVDPlayer:Unable to set window style 0x{0:X}", hr);
+              Log.Info("DVDPlayer:Unable to set window style 0x{0:X}", hr);
             }
           }
         }
 
-        if (hr != 0)
-        {
-          Log.Error("DVDPlayer:Unable to set options()");
-          CloseInterfaces();
-          return false;
-        }
         if (_basicVideo != null)
         {
           _basicVideo.SetDefaultSourcePosition();
@@ -1512,6 +1498,7 @@ namespace MediaPortal.Player
           _basicVideo.GetPreferredAspectRatio(out aspectX, out aspectY);
         }
         GUIGraphicsContext.VideoSize = new Size(_videoWidth, _videoHeight);
+        GUIGraphicsContext.ScaleVideoWindow(ref nw, ref nh, ref x, ref y);
 
         Geometry m_geometry = new Geometry();
         m_geometry.ImageWidth = _videoWidth;
@@ -2136,7 +2123,19 @@ namespace MediaPortal.Player
     {
       if (_videoWin != null)
       {
-        _videoWin.SetWindowPosition(destination.Left, destination.Top, destination.Width, destination.Height);
+        if (destination.Left < 0 || destination.Top < 0 || destination.Width <= 0 || destination.Height <= 0)
+        {
+          return;
+        }
+        if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+        {
+          Size client = GUIGraphicsContext.form.ClientSize;
+          _videoWin.SetWindowPosition(0, 0, client.Width, client.Height);
+        }
+        else
+        {
+          _videoWin.SetWindowPosition(destination.Left, destination.Top, destination.Width, destination.Height);
+        }
       }
     }
 
@@ -2144,8 +2143,25 @@ namespace MediaPortal.Player
     {
       if (_basicVideo != null)
       {
+        if (source.Left < 0 || source.Top < 0 || source.Width <= 0 || source.Height <= 0)
+        {
+          return;
+        }
+        if (destination.Width <= 0 || destination.Height <= 0)
+        {
+          return;
+        }
+
         _basicVideo.SetSourcePosition(source.Left, source.Top, source.Width, source.Height);
-        _basicVideo.SetDestinationPosition(0, 0, destination.Width, destination.Height);
+
+        if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+        {
+          _basicVideo.SetDestinationPosition(destination.Left, destination.Top, destination.Width, destination.Height);
+        }
+        else
+        {
+          _basicVideo.SetDestinationPosition(0, 0, destination.Width, destination.Height);
+        }
       }
     }
 

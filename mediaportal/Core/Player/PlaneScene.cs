@@ -251,6 +251,11 @@ namespace MediaPortal.Player
         }
         GUIGraphicsContext.LastFrames.Clear();
       }
+
+      if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+      {
+        GUIGraphicsContext.InVmr9Render = false;
+      }
     }
 
     /// <summary>
@@ -265,6 +270,11 @@ namespace MediaPortal.Player
       _renderTarget = GUIGraphicsContext.DX9Device.GetRenderTarget(0);
       GUILayerManager.RegisterLayer(this, GUILayerManager.LayerType.Video);
       GUIWindowManager.Receivers += new SendMessageHandler(this.OnMessage);
+
+      if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+      {
+        GUIGraphicsContext.InVmr9Render = true;
+      }
     }
 
     /// <summary>
@@ -337,8 +347,8 @@ namespace MediaPortal.Player
         // get the window where the video/tv should be shown
         float x = GUIGraphicsContext.VideoWindow.X;
         float y = GUIGraphicsContext.VideoWindow.Y;
-        float nw = GUIGraphicsContext.VideoWindow.Width;
-        float nh = GUIGraphicsContext.VideoWindow.Height;
+        int nw = GUIGraphicsContext.VideoWindow.Width;
+        int nh = GUIGraphicsContext.VideoWindow.Height;
 
         //sanity checks
         if (nw > GUIGraphicsContext.OverScanWidth)
@@ -366,11 +376,11 @@ namespace MediaPortal.Player
           return false;
         }
 
-        GUIGraphicsContext.VideoReceived();
+        GUIGraphicsContext.ScaleVideoWindow(ref nw, ref nh, ref x, ref y);
 
         //did the video window,aspect ratio change? if not
         //then we dont need to recalculate and just return the previous settings
-        if (!updateCrop && x == _rectPrevious.X && y == _rectPrevious.Y &&
+        if (!updateCrop && (int)x == _rectPrevious.X && (int)y == _rectPrevious.Y &&
             nw == _rectPrevious.Width && nh == _rectPrevious.Height &&
             GUIGraphicsContext.ARType == _aspectRatioType &&
             GUIGraphicsContext.Overlay == _lastOverlayVisible && _shouldRenderTexture &&
@@ -555,6 +565,83 @@ namespace MediaPortal.Player
       return 0;
     }
 
+    public int RenderGui(Int16 width, Int16 height, Int16 arWidth, Int16 arHeight)
+    {
+      return RenderLayers(GUILayers.under, width, height, arWidth, arHeight);
+    }
+
+    public int RenderOverlay(Int16 width, Int16 height, Int16 arWidth, Int16 arHeight)
+    {
+      return RenderLayers(GUILayers.over, width, height, arWidth, arHeight);
+    }
+
+    private int RenderLayers(GUILayers layers, Int16 width, Int16 height, Int16 arWidth, Int16 arHeight)
+    {
+      if (width > 0 && height > 0)
+      {
+        _vmr9Util.VideoWidth = width;
+        _vmr9Util.VideoHeight = height;
+        _vmr9Util.VideoAspectRatioX = arWidth;
+        _vmr9Util.VideoAspectRatioY = arHeight;
+        _arVideoWidth = arWidth;
+        _arVideoHeight = arHeight;
+
+        Size nativeSize = new Size(width, height);
+        _shouldRenderTexture = SetVideoWindow(nativeSize);
+      }
+
+      Device device = GUIGraphicsContext.DX9Device;
+
+      device.Clear(ClearFlags.Target, Color.FromArgb(0, 0, 0, 0), 1.0f, 0);
+      device.BeginScene();
+
+      if (layers == GUILayers.over)
+      {
+        SubtitleRenderer.GetInstance().Render();
+        BDOSDRenderer.GetInstance().Render();
+      }
+
+      bool visible = false;
+      GUIGraphicsContext.RenderGUI.RenderFrame(GUIGraphicsContext.TimePassed, layers, ref visible);
+      GUIFontManager.Present();
+      device.EndScene();
+
+      // Present() call is done on C++ side so we are able to use DirectX 9 Ex device
+      // which allows us to skip the v-sync wait. We don't want to wait with madVR
+      // is it only increases the UI rendering time.
+
+      return visible ? 0 : 1;  // S_OK, S_FALSE
+    }
+
+    public void SetRenderTarget(uint target)
+    {
+      lock (GUIGraphicsContext.RenderLock)
+      {
+        IntPtr ptr = (IntPtr)target;
+        Surface surface = new Surface(ptr);
+        GUIGraphicsContext.DX9Device.SetRenderTarget(0, surface);
+      }
+    }
+
+    public void SetSubtitleDevice(IntPtr device)
+    {
+      ISubEngine engine = SubEngine.GetInstance();
+      if (engine != null)
+      {
+        engine.SetDevice(device);
+      }
+    }
+
+    public void RenderSubtitle(long frameStart, int left, int top, int right, int bottom, int width, int height)
+    {
+      ISubEngine engine = SubEngine.GetInstance();
+      if (engine != null)
+      {
+        engine.SetTime(frameStart);
+        engine.Render(_subsRect, _destinationRect);
+      }
+    }
+
     public static void RenderFor3DMode(GUIGraphicsContext.eRender3DModeHalf renderModeHalf, float timePassed,
       Surface backbuffer, Surface surface, Rectangle targetRect)
     {
@@ -576,7 +663,7 @@ namespace MediaPortal.Player
           if (!GUIGraphicsContext.BlankScreen)
           {
             // Render GUI + Video surface
-            GUIGraphicsContext.RenderGUI.RenderFrame(timePassed);
+            GUIGraphicsContext.RenderGUI.RenderFrame(timePassed, GUILayers.all);
             GUIFontManager.Present();
           }
         }
@@ -867,7 +954,7 @@ namespace MediaPortal.Player
                 if (!GUIGraphicsContext.BlankScreen)
                 {
                   // Render GUI + Video surface
-                  GUIGraphicsContext.RenderGUI.RenderFrame(timePassed);
+                  GUIGraphicsContext.RenderGUI.RenderFrame(timePassed, GUILayers.all);
                   GUIFontManager.Present();
                 }
               }
@@ -887,6 +974,8 @@ namespace MediaPortal.Player
 
             Surface backbuffer = GUIGraphicsContext.DX9Device.GetBackBuffer(0, 0, BackBufferType.Mono);
 
+            // create texture/surface for preparation for 3D output
+ 
             // Alert the frame grabber that it has a chance to grab a GUI frame
             // if it likes (method returns immediately otherwise
             grabber.OnFrameGUI(backbuffer);
