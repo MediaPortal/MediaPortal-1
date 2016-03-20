@@ -18,6 +18,7 @@
 
 #endregion
 
+using System;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using Mediaportal.TV.Server.Common.Types.Enum;
@@ -38,7 +39,7 @@ namespace Mediaportal.TV.Server.Thumbnailer
 
     public int ColumnCount = 1;
     public int RowCount = 1;
-    public int TimeOffsetMinutes = 3;      // unit = minutes
+    public TimeSpan TimeOffset = new TimeSpan(0, 3, 0);
 
     public ThumbnailSettings(RecordingThumbnailQuality quality)
     {

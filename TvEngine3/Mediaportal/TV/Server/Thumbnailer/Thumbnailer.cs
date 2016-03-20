@@ -107,7 +107,7 @@ namespace Mediaportal.TV.Server.Thumbnailer
     /// Get the full thumbnail path and file name for a recording.
     /// </summary>
     /// <param name="recordingFileName">The recording's file name.</param>
-    public static string GetThumbnailPath(string recordingFileName)
+    public static string GetThumbnailFileName(string recordingFileName)
     {
       return Path.Combine(ThumbnailPath, Path.ChangeExtension(Path.GetFileNameWithoutExtension(recordingFileName), FORMAT_FILE_EXTENSION));
     }
@@ -119,7 +119,7 @@ namespace Mediaportal.TV.Server.Thumbnailer
     /// <returns>the contents of the thumbnail file</returns>
     public static byte[] GetThumbnailForRecording(string recordingFileName)
     {
-      string thumbnailFileName = GetThumbnailPath(recordingFileName);
+      string thumbnailFileName = GetThumbnailFileName(recordingFileName);
       if (!File.Exists(thumbnailFileName))
       {
         return new byte[0];
@@ -221,7 +221,7 @@ namespace Mediaportal.TV.Server.Thumbnailer
         _settings = new ThumbnailSettings(thumbnailQuality);
         _settings.ColumnCount = SettingsManagement.GetValue("thumbnailerColumnCount", 1);
         _settings.RowCount = SettingsManagement.GetValue("thumbnailerRowCount", 1);
-        _settings.TimeOffsetMinutes = SettingsManagement.GetValue("thumbnailerTimeOffset", 3);
+        _settings.TimeOffset = new TimeSpan(0, SettingsManagement.GetValue("thumbnailerTimeOffset", 3), 0);
         foreach (ImageCodecInfo info in ImageCodecInfo.GetImageEncoders())
         {
           if (info.FilenameExtension.ToLowerInvariant().Contains(FORMAT_FILE_EXTENSION.ToLowerInvariant()))
@@ -235,7 +235,7 @@ namespace Mediaportal.TV.Server.Thumbnailer
         this.LogDebug("  quality            = {0}", thumbnailQuality);
         this.LogDebug("  column count       = {0}", _settings.ColumnCount);
         this.LogDebug("  row count          = {0}", _settings.RowCount);
-        this.LogDebug("  time offset        = {0} minutes", _settings.TimeOffsetMinutes);
+        this.LogDebug("  time offset        = {0} minutes", _settings.TimeOffset.TotalMinutes);
         this.LogDebug("  copy to rec. dir.? = {0}", _copyToRecordingFolder);
       }
     }
@@ -413,7 +413,7 @@ namespace Mediaportal.TV.Server.Thumbnailer
               continue;
             }
 
-            string thumbnailFileName = GetThumbnailPath(recording.FileName);
+            string thumbnailFileName = GetThumbnailFileName(recording.FileName);
             if (!File.Exists(thumbnailFileName))
             {
               try
@@ -465,17 +465,17 @@ namespace Mediaportal.TV.Server.Thumbnailer
     /// <returns><c>true</c> if the thumbnail is created successfully, otherwise <c>false</c></returns>
     private static bool CreateThumbnail(string videoPath, string thumbnailPath, ThumbnailSettings settings)
     {
-      int durationSeconds = MediaInfo.GetVideoDuration(videoPath) / 1000;
-      if (durationSeconds == 0)
+      TimeSpan duration = MediaInfo.GetVideoDuration(videoPath);
+      if (duration == TimeSpan.Zero)
       {
         Log.Warn("thumbnail processor: input video is corrupt, file name = {0}", videoPath);
         return false;
       }
 
-      int timeOffsetSeconds = settings.TimeOffsetMinutes * 60;
-      if (timeOffsetSeconds > durationSeconds)
+      TimeSpan timeOffset = settings.TimeOffset;
+      if (settings.TimeOffset > duration)
       {
-        timeOffsetSeconds = durationSeconds * 20 / 100;   // fall-back = 20%
+        timeOffset = new TimeSpan(0, 0, (int)duration.TotalSeconds * 20 / 100);   // fall-back = 20%
       }
       int tileCount = settings.ColumnCount * settings.RowCount;
       int thumbnailResolutionVertical = settings.HorizontalResolution * 9 / 16;
@@ -487,7 +487,7 @@ namespace Mediaportal.TV.Server.Thumbnailer
       string tempThumbnailPath = string.Format("{0}{1}", thumbnailFileNameWithoutExtension, FORMAT_FILE_EXTENSION);   // This is the full path and file name of the final thumbnail we'll generate in the temp folder.
       if (tileCount == 1)
       {
-        success = StartGenerator(videoPath, tempThumbnailPath, tempPath, timeOffsetSeconds, settings.HorizontalResolution, thumbnailResolutionVertical, 1, 1, 0);
+        success = StartGenerator(videoPath, tempThumbnailPath, tempPath, timeOffset, settings.HorizontalResolution, thumbnailResolutionVertical, 1, 1, TimeSpan.Zero);
         if (!success)
         {
           Log.Warn("thumbnail processor: failed to create single tile thumbnail, file name = {0}", videoPath);
@@ -497,20 +497,20 @@ namespace Mediaportal.TV.Server.Thumbnailer
       else
       {
         // Generate the tiles.
-        int timeBetweenTilesSeconds = (durationSeconds - timeOffsetSeconds) / (tileCount + 1);
+        TimeSpan timeBetweenTiles = new TimeSpan(0, 0, (int)((duration - timeOffset).TotalSeconds / (tileCount + 1)));
         int tileResolutionHorizontal = 600;
         int tileResolutionVertical = 337;
         string tiledThumbnailPath = string.Format("{0}_tiled{1}", thumbnailFileNameWithoutExtension, FORMAT_FILE_EXTENSION);  // This is the full path and file name of the unscaled thumbnail we'll generate in the temp folder.
         List<string> tilePaths = new List<string>();
         for (int i = 0; i < tileCount; i++)
         {
-          timeOffsetSeconds += timeBetweenTilesSeconds;
+          timeOffset += timeBetweenTiles;
           string tilePath = string.Format("{0}_{1}{2}", thumbnailFileNameWithoutExtension, i, FORMAT_FILE_EXTENSION);
 
-          success = StartGenerator(videoPath, tilePath, tempPath, timeOffsetSeconds, tileResolutionHorizontal, tileResolutionVertical, 1, 1, timeBetweenTilesSeconds);
+          success = StartGenerator(videoPath, tilePath, tempPath, timeOffset, tileResolutionHorizontal, tileResolutionVertical, 1, 1, timeBetweenTiles);
           if (!success)
           {
-            Log.Warn("thumbnail processor: failed to create tile {0}, time offset = {1} s, file name = {2}", i, timeOffsetSeconds, videoPath);
+            Log.Warn("thumbnail processor: failed to create tile {0}, time offset = {1} s, file name = {2}", i, timeOffset, videoPath);
             KillGenerator();
             Thread.Sleep(500);  // Make sure processes have enough time to die before we use the generator again.
             break;
@@ -531,7 +531,7 @@ namespace Mediaportal.TV.Server.Thumbnailer
         if (!success)
         {
           // Try again with the encoder doing the tiling.
-          success = StartGenerator(videoPath, tiledThumbnailPath, tempPath, timeOffsetSeconds, tileResolutionHorizontal, tileResolutionVertical, settings.ColumnCount, settings.RowCount, timeBetweenTilesSeconds);
+          success = StartGenerator(videoPath, tiledThumbnailPath, tempPath, timeOffset, tileResolutionHorizontal, tileResolutionVertical, settings.ColumnCount, settings.RowCount, timeBetweenTiles);
           if (!success)
           {
             Log.Error("thumbnail processor: failed to create tiled thumbnail with fall-back method, file name = {0}", videoPath);
@@ -679,15 +679,15 @@ namespace Mediaportal.TV.Server.Thumbnailer
     /// <param name="pathInput">The full video input path and file name.</param>
     /// <param name="pathOutput">The full thumbnail output path and file name.</param>
     /// <param name="pathWorking">The working director for the generator to use.</param>
-    /// <param name="timeOffsetSeconds">The time offset from the start of the video at which to capture the thumbnail.</param>
+    /// <param name="timeOffset">The time offset from the start of the video at which to capture the thumbnail.</param>
     /// <param name="scaleResolutionHorizontal">The target horizontal resolution for the thumbnail.</param>
     /// <param name="scaleResolutionVertical">The target vertical resolution for the thumbnail.</param>
     /// <param name="tileCountHorizontal">The number of tile columns in the thumbnail.</param>
     /// <param name="tileCountVertical">The number of tile rows in the thumbnail.</param>
-    /// <param name="timeBetweenTilesSeconds">The time between each tile capture.</param>
+    /// <param name="timeBetweenTiles">The time between each tile capture.</param>
     /// <returns><c>true</c> if the thumbnail is generated successfully, otherwise <c>false</c></returns>
     [MethodImpl(MethodImplOptions.Synchronized)]
-    private static bool StartGenerator(string pathInput, string pathOutput, string pathWorking, int timeOffsetSeconds, int scaleResolutionHorizontal, int scaleResolutionVertical, int tileCountHorizontal, int tileCountVertical, int timeBetweenTilesSeconds)
+    private static bool StartGenerator(string pathInput, string pathOutput, string pathWorking, TimeSpan timeOffset, int scaleResolutionHorizontal, int scaleResolutionVertical, int tileCountHorizontal, int tileCountVertical, TimeSpan timeBetweenTiles)
     {
       // Refer to https://ffmpeg.org/ffmpeg-filters.html for argument syntax details.
       string tileConfig = string.Empty;
@@ -697,14 +697,14 @@ namespace Mediaportal.TV.Server.Thumbnailer
         // captures. Unfortunately this tiling method involves decoding all frames from the initial
         // offset ("ss" switch). Decoding runs in approximately real time. To stay within our 2
         // minute generation time limit, we must limit the tile gap.
-        if (timeBetweenTilesSeconds > 10)
+        if (timeBetweenTiles.TotalSeconds > 10)
         {
-          timeBetweenTilesSeconds = 10;
+          timeBetweenTiles = new TimeSpan(0, 0, 10);
         }
-        tileConfig = string.Format(@",select='isnan(prev_selected_t)+gte(t-prev_selected_t\,{0}'),tile={1}x{2}", timeBetweenTilesSeconds, tileCountHorizontal, tileCountVertical);
+        tileConfig = string.Format(@",select='isnan(prev_selected_t)+gte(t-prev_selected_t\,{0}'),tile={1}x{2}", (int)timeBetweenTiles.TotalSeconds, tileCountHorizontal, tileCountVertical);
       }
       ProcessStartInfo startInfo = new ProcessStartInfo(PathManager.BuildAssemblyRelativePath(GENERATOR_EXECUTABLE_NAME));
-      startInfo.Arguments = string.Format("-loglevel quiet -ss {0} -i \"{1}\" -y -vf yadif=0:-1:0,scale={2}:{3},setsar=1:1{4} -vframes 1 -vsync 0 -an \"{5}\"", timeOffsetSeconds, pathInput, scaleResolutionHorizontal, scaleResolutionVertical, tileConfig, pathOutput);
+      startInfo.Arguments = string.Format("-loglevel quiet -ss {0} -i \"{1}\" -y -vf yadif=0:-1:0,scale={2}:{3},setsar=1:1{4} -vframes 1 -vsync 0 -an \"{5}\"", (int)timeOffset.TotalSeconds, pathInput, scaleResolutionHorizontal, scaleResolutionVertical, tileConfig, pathOutput);
       startInfo.UseShellExecute = false;
       startInfo.RedirectStandardError = true;
       startInfo.RedirectStandardOutput = true;

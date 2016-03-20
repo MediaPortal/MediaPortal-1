@@ -73,20 +73,20 @@ namespace Mediaportal.TV.Server.Thumbnailer
 
     #endregion
 
-    public static int GetVideoDuration(string fileName)
+    public static TimeSpan GetVideoDuration(string fileName)
     {
       IntPtr handle = MediaInfo_New();
       if (handle == null || handle == IntPtr.Zero)
       {
         Log.Error("media info: failed to initialise");
-        return 0;
+        return TimeSpan.Zero;
       }
       try
       {
         if ((int)MediaInfo_Open(handle, fileName) == 0)
         {
           Log.Error("media info: failed to open file, file name = {0}", fileName);
-          return 0;
+          return TimeSpan.Zero;
         }
 
         try
@@ -95,17 +95,17 @@ namespace Mediaportal.TV.Server.Thumbnailer
           if (durationBuffer == null || durationBuffer == IntPtr.Zero)
           {
             Log.Error("media info: failed to get duration for file, file name = {0}", fileName);
-            return 0;
+            return TimeSpan.Zero;
           }
 
           string durationString = Marshal.PtrToStringUni(durationBuffer);
-          int duration;
-          if (!int.TryParse(durationString, out duration))
+          int durationMilliSeconds;
+          if (!int.TryParse(durationString, out durationMilliSeconds))
           {
             Log.Error("media info: failed to interpret duration, duration = {0}, file name = {1}", durationString, fileName);
-            return 0;
+            return TimeSpan.Zero;
           }
-          return duration;  // unit = milli-seconds
+          return new TimeSpan(0, 0, 0, 0, durationMilliSeconds);
         }
         finally
         {
