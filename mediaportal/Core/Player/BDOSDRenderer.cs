@@ -26,9 +26,17 @@ using Microsoft.DirectX.Direct3D;
 
 namespace MediaPortal.Player
 {
-  public class BDOSDRenderer
+  public sealed class BDOSDRenderer
   {
+    private enum BD_OVERLAY_PLANE
+    {
+      BD_OVERLAY_PG = 0,  /* Presentation Graphics plane */
+      BD_OVERLAY_IG = 1,  /* Interactive Graphics plane (on top of PG plane) */
+    }
+
     private static BDOSDRenderer _instance;
+    private static bool _render = false;
+    private readonly static object _instanceLock = new Object();
 
     /// <summary>
     /// The coordinates of current vertex buffer
@@ -36,15 +44,15 @@ namespace MediaPortal.Player
     private int _wx, _wy, _wwidth, _wheight;
 
     /// <summary>
-    /// Vertex buffer for rendering OSD
+    /// Vertex buffer for rendering OSD (shared between planes)
     /// </summary>
     private VertexBuffer _vertexBuffer;
 
     /// <summary>
-    /// Texture containing the whole OSD area (1920x1080)
+    /// Array containing interactive and presentation graphics overlay textures
     /// </summary>
-    private Texture _OSDTexture;
-
+    private Texture[] _planes;
+    
     /// <summary>
     /// Lock for syncronising the texture update and rendering
     /// </summary>
@@ -53,39 +61,67 @@ namespace MediaPortal.Player
     private BDOSDRenderer()
     {
       _OSDLock = new Object();
+      _planes = new Texture[2];
     }
 
     public static BDOSDRenderer GetInstance()
     {
       if (_instance == null)
       {
-        _instance = new BDOSDRenderer();
+        lock (_instanceLock)
+        {
+          if (_instance == null)
+          {
+            _instance = new BDOSDRenderer();
+          }
+        }
       }
       return _instance;
     }
 
-    public static void Release()
+    public static void StartRendering()
     {
-      _instance = null;
+      lock (_instanceLock)
+      {
+        _render = true;
+      }
     }
-    
+
+    public static void StopRendering()
+    {
+      if (_instance != null)
+      {
+        lock (_instanceLock)
+        {
+          if (_instance != null)
+          {
+            _instance.ReleaseTextures();
+          }
+        }
+      }
+    }
+
     public void DrawItem(OSDTexture item)
     {
       try
       {
-        lock (_OSDLock)
+        lock (_instanceLock)
         {
+          if (!_render)
+          {
+            return;
+          }
+
           if (item.texture != null && item.width > 0 && item.height > 0)
           {
-            // todo: support 2 planes
-            if (_OSDTexture == null)
+            if (_planes[item.plane] == null)
             {
-              _OSDTexture = new Texture(item.texture);
+              _planes[item.plane] = new Texture(item.texture);
             }
           }
           else
           {
-            _OSDTexture = null;
+            _planes[item.plane] = null;
           }
         }
       }
@@ -97,23 +133,29 @@ namespace MediaPortal.Player
 
     public void Render()
     {
-      lock (_OSDLock)
+      lock (_instanceLock)
       {
+        if (!_render)
+        {
+          return;
+        }
+
         // Store current settings so they can be restored when we are done
-        VertexFormats vertexFormat = GUIGraphicsContext.DX9Device.VertexFormat;        
+        VertexFormats vertexFormat = GUIGraphicsContext.DX9Device.VertexFormat;
         
         try
         {
-          if (_OSDTexture == null || _OSDTexture.Disposed)
+          if ((_planes[(int)BD_OVERLAY_PLANE.BD_OVERLAY_PG] == null || _planes[(int)BD_OVERLAY_PLANE.BD_OVERLAY_PG].Disposed) &&
+              (_planes[(int)BD_OVERLAY_PLANE.BD_OVERLAY_IG] == null || _planes[(int)BD_OVERLAY_PLANE.BD_OVERLAY_IG].Disposed))
           {
             return;
           }
 
-          int wx = 0, wy = 0, wwidth = 0, wheight = 0;          
+          int wx = 0, wy = 0, wwidth = 0, wheight = 0;
           if (GUIGraphicsContext.IsFullScreenVideo)
           {
-            wheight = PlaneScene.DestRect.Height;
-            wwidth = PlaneScene.DestRect.Width;
+            wheight = GUIGraphicsContext.Height;
+            wwidth = GUIGraphicsContext.Width;
 
             wx = GUIGraphicsContext.OverScanLeft;
             wy = GUIGraphicsContext.OverScanTop;
@@ -138,16 +180,21 @@ namespace MediaPortal.Player
 
           // Make sure D3D objects haven't been disposed for some reason. This would cause
           // an access violation on native side, causing Skin Engine to halt rendering
-          if (!_OSDTexture.Disposed && !_vertexBuffer.Disposed)
+          
+          if (_planes[(int)BD_OVERLAY_PLANE.BD_OVERLAY_PG] != null && !_planes[(int)BD_OVERLAY_PLANE.BD_OVERLAY_PG].Disposed && !_vertexBuffer.Disposed)
           {
             GUIGraphicsContext.DX9Device.SetStreamSource(0, _vertexBuffer, 0);
-            GUIGraphicsContext.DX9Device.SetTexture(0, _OSDTexture);
+            GUIGraphicsContext.DX9Device.SetTexture(0, _planes[(int)BD_OVERLAY_PLANE.BD_OVERLAY_PG]);
             GUIGraphicsContext.DX9Device.VertexFormat = CustomVertex.TransformedTextured.Format;
             GUIGraphicsContext.DX9Device.DrawPrimitives(PrimitiveType.TriangleStrip, 0, 2);
           }
-          else
+
+          if (_planes[(int)BD_OVERLAY_PLANE.BD_OVERLAY_IG] != null && !_planes[(int)BD_OVERLAY_PLANE.BD_OVERLAY_IG].Disposed && !_vertexBuffer.Disposed)
           {
-            Log.Debug("OSD renderer: D3D resource was disposed! Not trying to render the texture");
+            GUIGraphicsContext.DX9Device.SetStreamSource(0, _vertexBuffer, 0);
+            GUIGraphicsContext.DX9Device.SetTexture(0, _planes[(int)BD_OVERLAY_PLANE.BD_OVERLAY_IG]);
+            GUIGraphicsContext.DX9Device.VertexFormat = CustomVertex.TransformedTextured.Format;
+            GUIGraphicsContext.DX9Device.DrawPrimitives(PrimitiveType.TriangleStrip, 0, 2);
           }
         }
         catch (Exception e)
@@ -205,6 +252,13 @@ namespace MediaPortal.Player
         _wheight = wheight;
         _wwidth = wwidth;
       }
+    }
+
+    private void ReleaseTextures()
+    {
+      _render = false;
+      _planes[0] = null;
+      _planes[1] = null;
     }
   }
 }

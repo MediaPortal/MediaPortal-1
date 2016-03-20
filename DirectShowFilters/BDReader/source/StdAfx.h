@@ -52,6 +52,14 @@
 #define VC_EXTRALEAN		// Exclude rarely-used stuff from Windows headers
 #endif
 
+// http://connect.microsoft.com/VisualStudio/feedback/details/621653
+#pragma warning (push)
+#pragma warning (disable : 4005)
+#include <intsafe.h>
+#include <stdint.h>
+#pragma warning (pop)
+#pragma warning (default : 4005)
+
 #include <afx.h>
 #include <afxwin.h>         // MFC core and standard components
 
