@@ -95,10 +95,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Atsc
 
     private bool _isScanning = false;
 
-    // timing - unit = milli-seconds
-    private int _minimumTime = 2000;
-    private int _timeLimitSingleTransmitter = 15000;
-    private int _timeLimitCableCard = 300000;
+    // timing
+    private TimeSpan _minimumTime = new TimeSpan(0, 0, 2);
+    private TimeSpan _timeLimitSingleTransmitter = new TimeSpan(0, 0, 15);
+    private TimeSpan _timeLimitCableCard = new TimeSpan(0, 5, 0);
 
     private IGrabberSiMpeg _grabberMpeg = null;
     private IGrabberSiAtsc _grabberAtsc = null;
@@ -277,13 +277,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Atsc
     {
       this.LogDebug("scan ATSC: reload configuration");
 
-      _minimumTime = SettingsManagement.GetValue("minimumScanTime", 2000);
-      _timeLimitSingleTransmitter = SettingsManagement.GetValue("timeLimitScanSingleTransmitter", 15000);
-      _timeLimitCableCard = SettingsManagement.GetValue("timeLimitScanCableCard", 300000);
+      _minimumTime = new TimeSpan(0, 0, 0, 0, SettingsManagement.GetValue("minimumScanTime", 2000));
+      _timeLimitSingleTransmitter = new TimeSpan(0, 0, 0, 0, SettingsManagement.GetValue("timeLimitScanSingleTransmitter", 15000));
+      _timeLimitCableCard = new TimeSpan(0, 0, 0, 0, SettingsManagement.GetValue("timeLimitScanCableCard", 300000));
       this.LogDebug("  timing...");
-      this.LogDebug("    minimum            = {0} ms", _minimumTime);
-      this.LogDebug("    single transmitter = {0} ms", _timeLimitSingleTransmitter);
-      this.LogDebug("    CableCARD          = {0} ms", _timeLimitCableCard);
+      this.LogDebug("    minimum            = {0} ms", _minimumTime.TotalMilliseconds);
+      this.LogDebug("    single transmitter = {0} ms", _timeLimitSingleTransmitter.TotalMilliseconds);
+      this.LogDebug("    CableCARD          = {0} ms", _timeLimitCableCard.TotalMilliseconds);
     }
 
     /// <summary>
@@ -356,8 +356,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Atsc
 
         // Enforce minimum scan time.
         DateTime start = DateTime.Now;
-        int remainingTime = _minimumTime;
-        while (remainingTime > 0)
+        TimeSpan remainingTime = _minimumTime;
+        while (remainingTime > TimeSpan.Zero)
         {
           if (!_event.WaitOne(remainingTime))
           {
@@ -367,7 +367,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Atsc
           {
             return;
           }
-          remainingTime = _minimumTime - (int)(DateTime.Now - start).TotalMilliseconds;
+          remainingTime = _minimumTime - (DateTime.Now - start);
         }
 
         if (_seenTables == TableType.None)
@@ -377,7 +377,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Atsc
         }
 
         // Wait for scanning to complete.
-        int timeLimit = _timeLimitSingleTransmitter;
+        TimeSpan timeLimit = _timeLimitSingleTransmitter;
         ChannelScte scteChannel = channel as ChannelScte;
         if (scteChannel != null && scteChannel.Frequency <= 0)
         {
@@ -426,14 +426,14 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Atsc
             timeLimit = _timeLimitCableCard;
           }
 
-          remainingTime = timeLimit - (int)(DateTime.Now - start).TotalMilliseconds;
+          remainingTime = timeLimit - (DateTime.Now - start);
           if (!_event.WaitOne(remainingTime))
           {
             this.LogWarn("scan ATSC: scan time limit reached, tables seen = [{0}], tables complete = [{1}]", _seenTables, _completeTables);
             break;
           }
         }
-        while (remainingTime > 0);
+        while (remainingTime > TimeSpan.Zero);
 
         // Should we pull channel details from S-VCT or L-VCT?
         ushort transportStreamId = 0;

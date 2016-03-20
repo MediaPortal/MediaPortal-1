@@ -18,6 +18,7 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
@@ -60,7 +61,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// The maximum time to wait for implementation-dependent stream
     /// information (eg. PAT, PMT and CAT) to be received during tuning.
     /// </summary>
-    private int _timeLimitReceiveStreamInfo = 5000;   // unit = milli-seconds
+    private TimeSpan _timeLimitReceiveStreamInfo = new TimeSpan(0, 0, 5);
 
     /// <summary>
     /// Should the current tuning process be aborted immediately?
@@ -86,7 +87,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// <param name="configuration">The tuner's configuration.</param>
     public virtual void ReloadConfiguration(Tuner configuration)
     {
-      _timeLimitReceiveStreamInfo = SettingsManagement.GetValue("timeLimitReceiveStreamInfo", 5000);
+      _timeLimitReceiveStreamInfo = new TimeSpan(0, 0, 0, 0, SettingsManagement.GetValue("timeLimitReceiveStreamInfo", 5000));
     }
 
     /// <summary>
@@ -292,9 +293,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// </summary>
     /// <param name="id">The sub-channel's identifier.</param>
     /// <param name="channel">The channel to tune to.</param>
-    /// <param name="timeLimitReceiveStreamInfo">The maximum time in milli-seconds to wait for required implementation-dependent stream information during tuning.</param>
+    /// <param name="timeLimitReceiveStreamInfo">The maximum time to wait for required implementation-dependent stream information during tuning.</param>
     /// <returns>the sub-channel</returns>
-    protected abstract ISubChannelInternal OnTune(int id, IChannel channel, int timeLimitReceiveStreamInfo);
+    protected abstract ISubChannelInternal OnTune(int id, IChannel channel, TimeSpan timeLimitReceiveStreamInfo);
 
     /// <summary>
     /// Free a sub-channel.

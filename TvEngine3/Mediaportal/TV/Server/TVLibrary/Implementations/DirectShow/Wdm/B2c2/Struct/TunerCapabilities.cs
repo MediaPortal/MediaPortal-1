@@ -28,9 +28,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2.St
   {
     public TunerType TunerType;
     [MarshalAs(UnmanagedType.Bool)]
-    public bool ConstellationSupported;         // Is SetModulation() supported?
+    public bool IsConstellationSupported;     // Is SetModulation() supported?
     [MarshalAs(UnmanagedType.Bool)]
-    public bool FecSupported;                   // Is SetFec() suppoted?
+    public bool IsFecSupported;               // Is SetFec() suppoted?
     public uint MinTransponderFrequency;      // unit = kHz
     public uint MaxTransponderFrequency;      // unit = kHz
     public uint MinTunerFrequency;            // unit = kHz

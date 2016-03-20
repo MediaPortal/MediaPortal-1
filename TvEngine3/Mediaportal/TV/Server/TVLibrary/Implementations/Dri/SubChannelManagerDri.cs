@@ -57,9 +57,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
     /// </summary>
     /// <param name="id">The sub-channel's identifier.</param>
     /// <param name="channel">The channel to tune to.</param>
-    /// <param name="timeLimitReceiveStreamInfo">The maximum time in milli-seconds to wait for required implementation-dependent stream information during tuning.</param>
+    /// <param name="timeLimitReceiveStreamInfo">The maximum time to wait for required implementation-dependent stream information during tuning.</param>
     /// <returns>the sub-channel</returns>
-    protected override ISubChannelInternal OnTune(int id, IChannel channel, int timeLimitReceiveStreamInfo)
+    protected override ISubChannelInternal OnTune(int id, IChannel channel, TimeSpan timeLimitReceiveStreamInfo)
     {
       // When switched digital video (SDV) is active - ie. the tuner uses a
       // tuning adaptor/resolver (TA/TR) to ask the cable system which
@@ -79,7 +79,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
 
       int originalProgramNumber = mpeg2Channel.ProgramNumber;
       DateTime start = DateTime.Now;
-      while ((DateTime.Now - start).TotalMilliseconds < timeLimitReceiveStreamInfo)
+      while (DateTime.Now - start < timeLimitReceiveStreamInfo)
       {
         ThrowExceptionIfTuneCancelled();
         mpeg2Channel.ProgramNumber = 0;

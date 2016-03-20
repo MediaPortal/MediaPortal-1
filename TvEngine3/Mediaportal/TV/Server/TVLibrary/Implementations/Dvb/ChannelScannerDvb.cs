@@ -125,10 +125,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
 
     private bool _isScanning = false;
 
-    // timing - unit = milli-seconds
-    private int _minimumTime = 2000;
-    private int _timeLimitSingleTransmitter = 15000;
-    private int _timeLimitNetworkInformation = 15000;
+    // timing
+    private TimeSpan _minimumTime = new TimeSpan(0, 0, 2);
+    private TimeSpan _timeLimitSingleTransmitter = new TimeSpan(0, 0, 15);
+    private TimeSpan _timeLimitNetworkInformation = new TimeSpan(0, 0, 15);
 
     // provider preferences
     private string _dishNetworkStateAbbreviation = string.Empty;
@@ -247,13 +247,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
       this.LogDebug("scan DVB: reload configuration");
 
       // timing
-      _minimumTime = SettingsManagement.GetValue("minimumScanTime", 2000);
-      _timeLimitSingleTransmitter = SettingsManagement.GetValue("timeLimitScanSingleTransmitter", 15000);
-      _timeLimitNetworkInformation = SettingsManagement.GetValue("timeLimitScanNetworkInformation", 15000);
+      _minimumTime = new TimeSpan(0, 0, 0, 0, SettingsManagement.GetValue("minimumScanTime", 2000));
+      _timeLimitSingleTransmitter = new TimeSpan(0, 0, 0, 0, SettingsManagement.GetValue("timeLimitScanSingleTransmitter", 15000));
+      _timeLimitNetworkInformation = new TimeSpan(0, 0, 0, 0, SettingsManagement.GetValue("timeLimitScanNetworkInformation", 15000));
       this.LogDebug("  timing...");
-      this.LogDebug("    minimum             = {0} ms", _minimumTime);
-      this.LogDebug("    single transmitter  = {0} ms", _timeLimitSingleTransmitter);
-      this.LogDebug("    network information = {0} ms", _timeLimitNetworkInformation);
+      this.LogDebug("    minimum             = {0} ms", _minimumTime.TotalMilliseconds);
+      this.LogDebug("    single transmitter  = {0} ms", _timeLimitSingleTransmitter.TotalMilliseconds);
+      this.LogDebug("    network information = {0} ms", _timeLimitNetworkInformation.TotalMilliseconds);
 
       // provider preferences
       string countryName = RegionInfo.CurrentRegion.EnglishName;
@@ -352,8 +352,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
 
         // Enforce minimum scan time.
         DateTime start = DateTime.Now;
-        int remainingTime = _minimumTime;
-        while (remainingTime > 0)
+        TimeSpan remainingTime = _minimumTime;
+        while (remainingTime > TimeSpan.Zero)
         {
           if (!_event.WaitOne(remainingTime))
           {
@@ -363,7 +363,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
           {
             return;
           }
-          remainingTime = _minimumTime - (int)(DateTime.Now - start).TotalMilliseconds;
+          remainingTime = _minimumTime - (DateTime.Now - start);
         }
 
         if (!_seenTables.HasFlag(TableType.Pat))
@@ -412,14 +412,14 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
             break;
           }
 
-          remainingTime = _timeLimitSingleTransmitter - (int)(DateTime.Now - start).TotalMilliseconds;
+          remainingTime = _timeLimitSingleTransmitter - (DateTime.Now - start);
           if (!_event.WaitOne(remainingTime))
           {
             this.LogWarn("scan DVB: scan time limit reached, tables seen = [{0}], tables complete = [{1}]", _seenTables, _completeTables);
             break;
           }
         }
-        while (remainingTime > 0);
+        while (remainingTime > TimeSpan.Zero);
 
         // Read MPEG 2 TS program information.
         ushort transportStreamId;
@@ -573,8 +573,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
 
         // Enforce minimum scan time.
         DateTime start = DateTime.Now;
-        int remainingTime = _minimumTime;
-        while (remainingTime > 0)
+        TimeSpan remainingTime = _minimumTime;
+        while (remainingTime > TimeSpan.Zero)
         {
           if (!_event.WaitOne(remainingTime))
           {
@@ -584,7 +584,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
           {
             return tuningDetails;
           }
-          remainingTime = _minimumTime - (int)(DateTime.Now - start).TotalMilliseconds;
+          remainingTime = _minimumTime - (DateTime.Now - start);
         }
 
         if (!_seenTables.HasFlag(TableType.NitActual) && !_seenTables.HasFlag(TableType.NitOther))
@@ -614,14 +614,14 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
             break;
           }
 
-          remainingTime = _timeLimitNetworkInformation - (int)(DateTime.Now - start).TotalMilliseconds;
+          remainingTime = _timeLimitNetworkInformation - (DateTime.Now - start);
           if (!_event.WaitOne(remainingTime))
           {
             this.LogWarn("scan DVB: NIT scan time limit reached, tables seen = [{0}], tables complete = [{1}]", _seenTables, _completeTables);
             break;
           }
         }
-        while (remainingTime > 0);
+        while (remainingTime > TimeSpan.Zero);
 
         tuningDetails = CollectTransmitters(_grabberDvb);
         if (_grabberFreesat != null)
@@ -2253,7 +2253,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
 
       // Wait for scanning to complete.
       DateTime start = DateTime.Now;
-      int remainingTime;
+      TimeSpan remainingTime;
       do
       {
         if (_cancelScan)
@@ -2266,14 +2266,14 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
           break;
         }
 
-        remainingTime = _timeLimitSingleTransmitter - (int)(DateTime.Now - start).TotalMilliseconds;
+        remainingTime = _timeLimitSingleTransmitter - (DateTime.Now - start);
         if (!_event.WaitOne(remainingTime))
         {
           this.LogWarn("scan DVB: scan time limit reached, tables seen = [{0}], tables complete = [{1}]", _seenTables, _completeTables);
           break;
         }
       }
-      while (remainingTime > 0);
+      while (remainingTime > TimeSpan.Zero);
 
       ushort networkPid;
       ushort programCount;

@@ -53,8 +53,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.SatIp
 
     private static readonly Regex REGEX_DESCRIBE_RESPONSE_SIGNAL_INFO = new Regex(@";tuner=\d+,(\d+),(\d+),(\d+),", RegexOptions.Singleline | RegexOptions.IgnoreCase);
     private static readonly Regex REGEX_RTSP_SESSION_HEADER = new Regex(@"\s*([^\s;]+)(;timeout=(\d+))?");
-    private const int DEFAULT_RTSP_SESSION_TIMEOUT = 60;    // unit = s
-    private const int RTCP_REPORT_WAIT_TIMEOUT = 400;       // unit = ms; specification says the server should deliver 5 reports per second
+    private static readonly TimeSpan DEFAULT_RTSP_SESSION_TIMEOUT = new TimeSpan(0, 0, 60);
+    private static readonly TimeSpan RTCP_REPORT_WAIT_TIMEOUT = new TimeSpan(0, 0, 0, 0, 400);    // specification says the server should deliver 5 reports per second; we are generous and allow double time
 
     #endregion
 
@@ -87,10 +87,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.SatIp
     private string _rtspSessionId = string.Empty;
 
     /// <summary>
-    /// The time (in seconds) after which the SAT>IP server will stop streaming
-    /// if it does not receive some kind of interaction.
+    /// The time after which the SAT>IP server will stop streaming if it does
+    /// not receive some kind of interaction.
     /// </summary>
-    private int _rtspSessionTimeout = -1;
+    private TimeSpan _rtspSessionTimeout = TimeSpan.Zero;
 
     /// <summary>
     /// The current SAT>IP stream ID. Used as part of all URIs sent to the
@@ -288,7 +288,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.SatIp
       _rtspSessionId = m.Groups[1].Captures[0].Value;
       if (m.Groups[3].Captures.Count == 1)
       {
-        _rtspSessionTimeout = int.Parse(m.Groups[3].Captures[0].Value);
+        _rtspSessionTimeout = new TimeSpan(0, 0, int.Parse(m.Groups[3].Captures[0].Value));
       }
       else
       {
@@ -354,7 +354,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.SatIp
       }
       this.LogDebug("SAT>IP base: RTSP SETUP response okay");
       this.LogDebug("  session ID = {0}", _rtspSessionId);
-      this.LogDebug("  timeout    = {0}", _rtspSessionTimeout);
+      this.LogDebug("  time-out   = {0} s", _rtspSessionTimeout.TotalSeconds);
       this.LogDebug("  stream ID  = {0}", _satIpStreamId);
       this.LogDebug("  RTP URL    = {0}", rtpUrl);
       this.LogDebug("  RTCP ports = {0}/{1}", _rtcpClientPort, _rtcpServerPort);
@@ -414,7 +414,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.SatIp
         else
         {
           _streamingKeepAliveThreadStopEvent.Set();
-          if (!_streamingKeepAliveThread.Join(_rtspSessionTimeout * 2))
+          if (!_streamingKeepAliveThread.Join((int)_rtspSessionTimeout.TotalMilliseconds * 2))
           {
             this.LogWarn("SAT>IP base: failed to join streaming keep-alive thread, aborting thread");
             _streamingKeepAliveThread.Abort();
@@ -433,7 +433,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.SatIp
     {
       try
       {
-        while (!_streamingKeepAliveThreadStopEvent.WaitOne((_rtspSessionTimeout - 5) * 1000))  // -5 seconds to avoid timeout
+        while (!_streamingKeepAliveThreadStopEvent.WaitOne((int)(_rtspSessionTimeout - new TimeSpan(0, 0, 5)).TotalMilliseconds * 1000))  // -5 seconds to avoid time-out
         {
           RtspRequest request = new RtspRequest(RtspMethod.Options, string.Format("rtsp://{0}/", _serverIpAddress));
           request.Headers.Add("Session", _rtspSessionId);
@@ -491,7 +491,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.SatIp
         else
         {
           _rtcpListenerThreadStopEvent.Set();
-          if (!_rtcpListenerThread.Join(RTCP_REPORT_WAIT_TIMEOUT * 2))
+          if (!_rtcpListenerThread.Join((int)RTCP_REPORT_WAIT_TIMEOUT.TotalMilliseconds * 2))
           {
             this.LogWarn("SAT>IP base: failed to join RTCP listener thread, aborting thread");
             _rtcpListenerThread.Abort();
@@ -514,7 +514,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.SatIp
         UdpClient udpClient = new UdpClient(new IPEndPoint(_localIpAddress, _rtcpClientPort));
         try
         {
-          udpClient.Client.ReceiveTimeout = RTCP_REPORT_WAIT_TIMEOUT;
+          udpClient.Client.ReceiveTimeout = (int)RTCP_REPORT_WAIT_TIMEOUT.TotalMilliseconds;
           IPEndPoint serverEndPoint = new IPEndPoint(IPAddress.Parse(_serverIpAddress), _rtcpServerPort);
           while (!receivedGoodBye && !_rtcpListenerThreadStopEvent.WaitOne(1))
           {

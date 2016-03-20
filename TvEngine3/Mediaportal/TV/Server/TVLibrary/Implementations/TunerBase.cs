@@ -269,7 +269,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// <summary>
     /// The maximum length of time to wait for signal lock/detection after tuning.
     /// </summary>
-    private int _timeLimitSignalLock = 2500;    // unit = milli-seconds
+    private TimeSpan _timeLimitSignalLock = new TimeSpan(0, 0, 0, 0, 2500);
 
     #endregion
 
@@ -792,7 +792,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
         }
       }
 
-      _timeLimitSignalLock = SettingsManagement.GetValue("timeLimitSignalLock", 2500);
+      _timeLimitSignalLock = new TimeSpan(0, 0, 0, 0, SettingsManagement.GetValue("timeLimitSignalLock", 2500));
 
       if (InternalEpgGrabberInterface != null)
       {
@@ -1422,9 +1422,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     {
       this.LogDebug("tuner base: lock in on signal");
       DateTime timeStart = DateTime.Now;
-      TimeSpan ts = timeStart - timeStart;
       bool isLocked;
-      while (ts.TotalMilliseconds < _timeLimitSignalLock)
+      bool wasPresent = false;
+      do
       {
         ThrowExceptionIfTuneCancelled();
         GetSignalStatus(out isLocked, out _isSignalPresent, out _signalStrength, out _signalQuality, true);
@@ -1434,9 +1434,17 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
           this.LogDebug("tuner base: locked");
           return;
         }
-        ts = DateTime.Now - timeStart;
+        if (wasPresent != _isSignalPresent)
+        {
+          if (_isSignalPresent)
+          {
+            this.LogDebug("tuner base: signal is present");
+          }
+          wasPresent = _isSignalPresent;
+        }
         System.Threading.Thread.Sleep(20);
       }
+      while ((DateTime.Now - timeStart) < _timeLimitSignalLock);
 
       throw new TvExceptionNoSignal(TunerId, _currentTuningDetail);
     }

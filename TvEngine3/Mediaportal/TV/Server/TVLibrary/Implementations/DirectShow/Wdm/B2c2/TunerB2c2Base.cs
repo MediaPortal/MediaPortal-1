@@ -50,7 +50,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
     #region constants
 
     private static readonly int TUNER_CAPABILITIES_SIZE = Marshal.SizeOf(typeof(TunerCapabilities));  // 56
-    private const int REMOTE_CONTROL_LISTENER_THREAD_WAIT_TIME = 100;     // unit = ms
+    private static readonly TimeSpan REMOTE_CONTROL_LISTENER_THREAD_WAIT_TIME = new TimeSpan(0, 0, 0, 0, 100);
 
     #endregion
 
@@ -162,8 +162,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
       }
 
       this.LogDebug("  tuner type                = {0}", _capabilities.TunerType);
-      this.LogDebug("  set constellation?        = {0}", _capabilities.ConstellationSupported);
-      this.LogDebug("  set FEC rate?             = {0}", _capabilities.FecSupported);
+      this.LogDebug("  set constellation?        = {0}", _capabilities.IsConstellationSupported);
+      this.LogDebug("  set FEC rate?             = {0}", _capabilities.IsFecSupported);
       this.LogDebug("  min transponder frequency = {0} kHz", _capabilities.MinTransponderFrequency);
       this.LogDebug("  max transponder frequency = {0} kHz", _capabilities.MaxTransponderFrequency);
       this.LogDebug("  min tuner frequency       = {0} kHz", _capabilities.MinTunerFrequency);
@@ -281,7 +281,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
         else
         {
           _remoteControlListenerThreadStopEvent.Set();
-          if (!_remoteControlListenerThread.Join(REMOTE_CONTROL_LISTENER_THREAD_WAIT_TIME * 2))
+          if (!_remoteControlListenerThread.Join((int)REMOTE_CONTROL_LISTENER_THREAD_WAIT_TIME.TotalMilliseconds * 2))
           {
             this.LogWarn("B2C2 base: failed to join remote control listener thread, aborting thread");
             _remoteControlListenerThread.Abort();

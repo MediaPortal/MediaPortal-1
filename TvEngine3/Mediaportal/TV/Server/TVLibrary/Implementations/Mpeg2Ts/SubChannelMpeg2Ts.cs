@@ -443,11 +443,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Mpeg2Ts
     private void WaitForVideoAndAudio()
     {
       this.LogDebug("MPEG 2 sub-channel: wait for video and/or audio, ID = {0}, video = {1}, audio = {2}", _subChannelId, _isExpectedVideo, _isExpectedAudio);
-      int timeLimit = TimeLimitReceiveVideoAudio;
+      TimeSpan timeLimit = TimeLimitReceiveVideoAudio;
       DateTime startTime = DateTime.Now;
       if (
         (!_isExpectedVideo || _eventVideo.WaitOne(timeLimit)) &&
-        (!_isExpectedAudio || _eventAudio.WaitOne(Math.Max(0, timeLimit - (int)((DateTime.Now - startTime).TotalMilliseconds))))
+        (!_isExpectedAudio || _eventAudio.WaitOne(Math.Max(0, (int)(timeLimit - (DateTime.Now - startTime)).TotalMilliseconds)))
       )
       {
         ThrowExceptionIfTuneCancelled();

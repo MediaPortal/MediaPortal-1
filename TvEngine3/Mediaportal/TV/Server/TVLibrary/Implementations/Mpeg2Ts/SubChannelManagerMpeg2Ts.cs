@@ -389,7 +389,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Mpeg2Ts
           {
             this.LogDebug("MPEG 2: provider is not ready, waiting for up to 15 seconds", caProvider.Name);
             DateTime startWait = DateTime.Now;
-            TimeSpan waitTime = new TimeSpan(0);
+            TimeSpan waitTime = TimeSpan.Zero;
             while (waitTime.TotalMilliseconds < 15000)
             {
               ThrowExceptionIfTuneCancelled();
@@ -795,9 +795,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Mpeg2Ts
     /// </summary>
     /// <param name="id">The sub-channel's identifier.</param>
     /// <param name="channel">The channel to tune to.</param>
-    /// <param name="timeLimitReceiveStreamInfo">The maximum time in milli-seconds to wait for required implementation-dependent stream information during tuning.</param>
+    /// <param name="timeLimitReceiveStreamInfo">The maximum time to wait for required implementation-dependent stream information during tuning.</param>
     /// <returns>the sub-channel</returns>
-    protected override ISubChannelInternal OnTune(int id, IChannel channel, int timeLimitReceiveStreamInfo)
+    protected override ISubChannelInternal OnTune(int id, IChannel channel, TimeSpan timeLimitReceiveStreamInfo)
     {
       DateTime tuneStartTime = DateTime.Now;
 
@@ -831,7 +831,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Mpeg2Ts
       while (true)
       {
         ThrowExceptionIfTuneCancelled();
-        if (!_programWaitEvent.WaitOne(timeLimitReceiveStreamInfo - (int)((DateTime.Now - tuneStartTime).TotalMilliseconds)))
+        if (!_programWaitEvent.WaitOne(timeLimitReceiveStreamInfo - (DateTime.Now - tuneStartTime)))
         {
           if (_isPatComplete)
           {

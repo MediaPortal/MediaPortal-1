@@ -443,11 +443,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// Get the maximum time to wait for the video and/or audio streams to
     /// start being received.
     /// </summary>
-    protected int TimeLimitReceiveVideoAudio
+    protected TimeSpan TimeLimitReceiveVideoAudio
     {
       get
       {
-        return SettingsManagement.GetValue("timeLimitReceiveVideoAudio", 5000);
+        return new TimeSpan(0, 0, 0, 0, SettingsManagement.GetValue("timeLimitReceiveVideoAudio", 5000));
       }
     }
 
