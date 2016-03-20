@@ -64,7 +64,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Turbosight.RemoteControl
     private static readonly Guid BDA_EXTENSION_PROPERTY_SET = new Guid(0xc6efe5eb, 0x855a, 0x4f1b, 0xb7, 0xaa, 0x87, 0xb5, 0xe1, 0xdc, 0x41, 0x13);
 
     private static readonly int IR_COMMAND_SIZE = Marshal.SizeOf(typeof(IrCommand));          // 288
-    private const int REMOTE_CONTROL_LISTENER_THREAD_WAIT_TIME = 100;     // unit = ms
+    private static readonly TimeSpan REMOTE_CONTROL_LISTENER_THREAD_WAIT_TIME = new TimeSpan(0, 0, 0, 0, 100);
 
     #endregion
 
@@ -195,7 +195,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Turbosight.RemoteControl
         else
         {
           _listenerThreadStopEvent.Set();
-          if (!_listenerThread.Join(REMOTE_CONTROL_LISTENER_THREAD_WAIT_TIME * 2))
+          if (!_listenerThread.Join((int)REMOTE_CONTROL_LISTENER_THREAD_WAIT_TIME.TotalMilliseconds * 2))
           {
             this.LogWarn("Turbosight Cyprus RC: failed to join listener thread, aborting thread");
             _listenerThread.Abort();

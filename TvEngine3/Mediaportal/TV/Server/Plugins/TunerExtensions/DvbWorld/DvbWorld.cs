@@ -161,7 +161,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DvbWorld
         DISEQC_COMMAND_SIZE, HARDWARE_INFO_SIZE, MAC_ADDRESS_LENGTH, TUNER_INFO_SIZE, TUNING_PARAMS_SIZE
       }.Max();
 
-    private const int REMOTE_CONTROL_LISTENER_THREAD_WAIT_TIME = 100;     // unit = ms
+    private static readonly TimeSpan REMOTE_CONTROL_LISTENER_THREAD_WAIT_TIME = new TimeSpan(0, 0, 0, 0, 100);
 
     #endregion
 
@@ -360,7 +360,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DvbWorld
         else
         {
           _remoteControlListenerThreadStopEvent.Set();
-          if (!_remoteControlListenerThread.Join(REMOTE_CONTROL_LISTENER_THREAD_WAIT_TIME * 2))
+          if (!_remoteControlListenerThread.Join((int)REMOTE_CONTROL_LISTENER_THREAD_WAIT_TIME.TotalMilliseconds * 2))
           {
             this.LogWarn("DVB World: failed to join remote control listener thread, aborting thread");
             _remoteControlListenerThread.Abort();

@@ -592,8 +592,8 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
         TEMPERATURE_INFO_SIZE
       }.Max();
 
-    private const int MMI_HANDLER_THREAD_WAIT_TIME = 500;                 // unit = ms
-    private const int REMOTE_CONTROL_LISTENER_THREAD_WAIT_TIME = 100;     // unit = ms
+    private static readonly TimeSpan MMI_HANDLER_THREAD_WAIT_TIME = new TimeSpan(0, 0, 0, 0, 500);
+    private static readonly TimeSpan REMOTE_CONTROL_LISTENER_THREAD_WAIT_TIME = new TimeSpan(0, 0, 0, 0, 100);
 
     #endregion
 
@@ -918,7 +918,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
           else
           {
             _mmiHandlerThreadStopEvent.Set();
-            if (!_mmiHandlerThread.Join(MMI_HANDLER_THREAD_WAIT_TIME * 2))
+            if (!_mmiHandlerThread.Join((int)MMI_HANDLER_THREAD_WAIT_TIME.TotalMilliseconds * 2))
             {
               this.LogWarn("Digital Everywhere: failed to join MMI handler thread, aborting thread");
               _mmiHandlerThread.Abort();
@@ -1096,7 +1096,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
         else
         {
           _remoteControlListenerThreadStopEvent.Set();
-          if (!_remoteControlListenerThread.Join(REMOTE_CONTROL_LISTENER_THREAD_WAIT_TIME * 2))
+          if (!_remoteControlListenerThread.Join((int)REMOTE_CONTROL_LISTENER_THREAD_WAIT_TIME.TotalMilliseconds * 2))
           {
             this.LogWarn("Digital Everywhere: failed to join remote control listener thread, aborting thread");
             _remoteControlListenerThread.Abort();

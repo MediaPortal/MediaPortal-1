@@ -206,7 +206,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DvbSky
     private static readonly int PLP_COMMAND_SIZE = Marshal.SizeOf(typeof(PlpCommand));  // 520
     private const int MAC_ADDRESS_LENGTH = 6;
 
-    private const int REMOTE_CONTROL_LISTENER_THREAD_WAIT_TIME = 100;                   // unit = ms
+    private static readonly TimeSpan REMOTE_CONTROL_LISTENER_THREAD_WAIT_TIME = new TimeSpan(0, 0, 0, 0, 100);
 
     #endregion
 
@@ -334,7 +334,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DvbSky
         else
         {
           _remoteControlListenerThreadStopEvent.Set();
-          if (!_remoteControlListenerThread.Join(REMOTE_CONTROL_LISTENER_THREAD_WAIT_TIME * 2))
+          if (!_remoteControlListenerThread.Join((int)REMOTE_CONTROL_LISTENER_THREAD_WAIT_TIME.TotalMilliseconds * 2))
           {
             this.LogWarn("DVBSky: failed to join remote control listener thread, aborting thread");
             _remoteControlListenerThread.Abort();

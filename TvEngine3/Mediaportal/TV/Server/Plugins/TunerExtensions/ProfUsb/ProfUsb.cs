@@ -277,7 +277,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.ProfUsb
     private static readonly int GENERAL_BUFFER_SIZE = BDA_EXTENSION_PARAMS_SIZE;
 
     private const byte MIN_BIG_REMOTE_CODE = 0x80;
-    private const int REMOTE_CONTROL_LISTENER_THREAD_WAIT_TIME = 100;     // unit = ms
+    private static readonly TimeSpan REMOTE_CONTROL_LISTENER_THREAD_WAIT_TIME = new TimeSpan(0, 0, 0, 0, 100);
 
     #endregion
 
@@ -404,7 +404,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.ProfUsb
         else
         {
           _remoteControlListenerThreadStopEvent.Set();
-          if (!_remoteControlListenerThread.Join(REMOTE_CONTROL_LISTENER_THREAD_WAIT_TIME * 2))
+          if (!_remoteControlListenerThread.Join((int)REMOTE_CONTROL_LISTENER_THREAD_WAIT_TIME.TotalMilliseconds * 2))
           {
             this.LogWarn("Prof USB: failed to join remote control listener thread, aborting thread");
             _remoteControlListenerThread.Abort();

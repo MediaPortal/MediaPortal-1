@@ -301,7 +301,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Turbosight
 
     private static readonly int GENERAL_BUFFER_SIZE = new int[] { NBC_TUNING_PARAMS_SIZE, MEDIA_INFO_SIZE, TBS_ACCESS_PARAMS_SIZE, PLP_INFO_SIZE }.Max();
 
-    private const int MMI_HANDLER_THREAD_WAIT_TIME = 2000;    // unit = ms
+    private static readonly TimeSpan MMI_HANDLER_THREAD_WAIT_TIME = new TimeSpan(0, 0, 2);
 
     #endregion
 
@@ -575,7 +575,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Turbosight
           else
           {
             _mmiHandlerThreadStopEvent.Set();
-            if (!_mmiHandlerThread.Join(MMI_HANDLER_THREAD_WAIT_TIME * 2))
+            if (!_mmiHandlerThread.Join((int)MMI_HANDLER_THREAD_WAIT_TIME.TotalMilliseconds * 2))
             {
               this.LogWarn("Turbosight: failed to join MMI handler thread, aborting thread");
               _mmiHandlerThread.Abort();

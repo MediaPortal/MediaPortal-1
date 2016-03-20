@@ -65,7 +65,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Turbosight.RemoteControl
     private static readonly int KS_PROPERTY_SIZE = Marshal.SizeOf(typeof(KsProperty));    // 24
     private static readonly int IR_DATA_SIZE = Marshal.SizeOf(typeof(IrData));            // 8
 
-    private const int REMOTE_CONTROL_LISTENER_THREAD_WAIT_TIME = 100;     // unit = ms
+    private static readonly TimeSpan REMOTE_CONTROL_LISTENER_THREAD_WAIT_TIME = new TimeSpan(0, 0, 0, 0, 100);
 
     #endregion
 
@@ -295,7 +295,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Turbosight.RemoteControl
         else
         {
           _listenerThreadStopEvent.Set();
-          if (!_listenerThread.Join(REMOTE_CONTROL_LISTENER_THREAD_WAIT_TIME * 2))
+          if (!_listenerThread.Join((int)REMOTE_CONTROL_LISTENER_THREAD_WAIT_TIME.TotalMilliseconds * 2))
           {
             this.LogWarn("Turbosight Conexant RC: failed to join listener thread, aborting thread");
             _listenerThread.Abort();

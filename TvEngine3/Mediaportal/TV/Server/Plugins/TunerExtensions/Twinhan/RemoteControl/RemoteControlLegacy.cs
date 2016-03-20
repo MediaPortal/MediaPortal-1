@@ -36,7 +36,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan.RemoteControl
   {
     #region constants
 
-    private const int REMOTE_CONTROL_LISTENER_THREAD_WAIT_TIME = 100; // unit = ms
+    private static readonly TimeSpan REMOTE_CONTROL_LISTENER_THREAD_WAIT_TIME = new TimeSpan(0, 0, 0, 0, 100);
 
     #endregion
 
@@ -172,7 +172,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan.RemoteControl
         else
         {
           _listenerThreadStopEvent.Set();
-          if (!_listenerThread.Join(REMOTE_CONTROL_LISTENER_THREAD_WAIT_TIME * 2))
+          if (!_listenerThread.Join((int)REMOTE_CONTROL_LISTENER_THREAD_WAIT_TIME.TotalMilliseconds * 2))
           {
             this.LogWarn("Twinhan legacy RC: failed to join listener thread, aborting thread");
             _listenerThread.Abort();

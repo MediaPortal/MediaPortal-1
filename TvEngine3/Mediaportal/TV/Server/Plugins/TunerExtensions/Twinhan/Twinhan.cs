@@ -528,7 +528,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
         PID_FILTER_PARAMS_SIZE, TUNING_PARAMS_SIZE, REGISTRY_PARAMS_SIZE
       }.Max();
 
-    private const int MMI_HANDLER_THREAD_WAIT_TIME = 500;             // unit = ms
+    private static readonly TimeSpan MMI_HANDLER_THREAD_WAIT_TIME = new TimeSpan(0, 0, 0, 0, 500);
 
     // Elgato and TerraTec have entended the length and number of possible CAM
     // menu entries in their drivers' MMI data struct.
@@ -880,7 +880,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
           else
           {
             _mmiHandlerThreadStopEvent.Set();
-            if (!_mmiHandlerThread.Join(MMI_HANDLER_THREAD_WAIT_TIME * 2))
+            if (!_mmiHandlerThread.Join((int)MMI_HANDLER_THREAD_WAIT_TIME.TotalMilliseconds * 2))
             {
               this.LogWarn("Twinhan: failed to join MMI handler thread, aborting thread");
               _mmiHandlerThread.Abort();

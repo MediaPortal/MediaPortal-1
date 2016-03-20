@@ -750,7 +750,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
 
       private const int API_INSTANCE_SIZE = 76;
       private const int MAX_DEVICE_COUNT = 32;
-      private const int API_ACCESS_THREAD_WAIT_TIME = 500;    // unit = ms
+      private static readonly TimeSpan API_ACCESS_THREAD_WAIT_TIME = new TimeSpan(0, 0, 0, 0, 500);
 
       #endregion
 
@@ -1089,7 +1089,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
           {
             this.LogDebug("Anysee: CI API access thread state = {0}", _apiAccessThread.ThreadState);
             _apiAccessThreadStopEvent.Set();
-            if (!_apiAccessThread.Join(API_ACCESS_THREAD_WAIT_TIME * 2))
+            if (!_apiAccessThread.Join((int)API_ACCESS_THREAD_WAIT_TIME.TotalMilliseconds * 2))
             {
               this.LogWarn("Anysee: failed to join CI API access thread, aborting thread");
               _apiAccessThread.Abort();
@@ -1212,7 +1212,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
 
     private static readonly int GENERAL_BUFFER_SIZE = new int[] { BOARD_INFO_SIZE, CAPABILITIES_SIZE, DISEQC_MESSAGE_SIZE, DRIVER_VERSION_SIZE, NIM_CONFIG_SIZE, PLATFORM_INFO_SIZE }.Max();
 
-    private const int REMOTE_CONTROL_LISTENER_THREAD_WAIT_TIME = 100;     // unit = ms
+    private static readonly TimeSpan REMOTE_CONTROL_LISTENER_THREAD_WAIT_TIME = new TimeSpan(0, 0, 0, 0, 100);
 
     #endregion
 
@@ -1666,7 +1666,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
         else
         {
           _remoteControlListenerThreadStopEvent.Set();
-          if (!_remoteControlListenerThread.Join(REMOTE_CONTROL_LISTENER_THREAD_WAIT_TIME * 2))
+          if (!_remoteControlListenerThread.Join((int)REMOTE_CONTROL_LISTENER_THREAD_WAIT_TIME.TotalMilliseconds * 2))
           {
             this.LogWarn("Anysee: failed to join remote control listener thread, aborting thread");
             _remoteControlListenerThread.Abort();

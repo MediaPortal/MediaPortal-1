@@ -348,7 +348,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
 
     private static readonly int PLP_INFO_SIZE = Marshal.SizeOf(typeof(PlpInfo));  // 284
 
-    private const int MMI_HANDLER_THREAD_WAIT_TIME = 500;   // unit = ms
+    private static readonly TimeSpan MMI_HANDLER_THREAD_WAIT_TIME = new TimeSpan(0, 0, 0, 0, 500);
 
     #endregion
 
@@ -439,7 +439,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
           else
           {
             _mmiHandlerThreadStopEvent.Set();
-            if (!_mmiHandlerThread.Join(MMI_HANDLER_THREAD_WAIT_TIME * 2))
+            if (!_mmiHandlerThread.Join((int)MMI_HANDLER_THREAD_WAIT_TIME.TotalMilliseconds * 2))
             {
               this.LogWarn("Digital Devices: failed to join MMI handler thread, aborting thread");
               _mmiHandlerThread.Abort();
