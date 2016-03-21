@@ -11,6 +11,10 @@ rem %DeployVersionGIT% /git="%GIT_ROOT%" /path="%MediaPortal%" >> %log%
 %DeployVersionGIT% /git="%GIT_ROOT%" /path="%CommonMPTV%" >> %log%
 
 echo.
+echo Building Libbluray Java...
+call %ant_home%\bin\ant -f %LibblurayJAR% -Dsrc_awt=:java-j2se
+
+echo.
 echo Building MediaPortal...
 set xml=Build_Report_%BUILD_TYPE%_MediaPortal.xml
 set html=Build_Report_%BUILD_TYPE%_MediaPortal.html
