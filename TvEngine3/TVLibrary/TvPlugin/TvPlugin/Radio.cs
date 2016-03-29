@@ -892,8 +892,8 @@ namespace TvPlugin
       GUIPropertyManager.RemovePlayerProperties();
       GUIPropertyManager.SetProperty("#Play.Current.ArtistThumb", _currentChannel.DisplayName);
       GUIPropertyManager.SetProperty("#Play.Current.Album", _currentChannel.DisplayName);
-      
-      if ((_currentChannel.IsWebstream()) || (_currentChannel.NextProgram == null || _currentChannel.NextProgram == null ||
+
+      if ((_currentChannel.IsWebstream()) || (_currentChannel.CurrentProgram == null || _currentChannel.NextProgram == null ||
         string.IsNullOrEmpty(_currentChannel.CurrentProgram.Title) ||  string.IsNullOrEmpty(_currentChannel.NextProgram.Title)))
       {
         GUIPropertyManager.SetProperty("#Play.Current.Title", _currentChannel.DisplayName); // No EPG
