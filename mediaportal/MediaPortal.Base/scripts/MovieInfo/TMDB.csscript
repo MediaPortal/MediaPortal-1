@@ -221,7 +221,6 @@ internal class Grabber : MarshalByRefObject, MediaPortal.Video.Database.IIMDBScr
   public const string API_LatestMovie = API_BaseUrl + "latest/movie";
   public const string API_Keywords = API_BaseUrl + "movie/{0}/keywords";
   public const string API_Translations = API_BaseUrl + "movie/{0}/translations";
-  public const string API_Collection = API_BaseUrl + "collection/{0}";
 
   #endregion<<TMDB_CONST>>
 
@@ -585,6 +584,7 @@ internal class Grabber : MarshalByRefObject, MediaPortal.Video.Database.IIMDBScr
         {
           AddTMDBCollections(iMovieColID);
         }
+        // Log.Debug("GetTMDBDetails Collection: {0}: {1} - {2} - {3}", iMovieColID, oReturn.Collection, oReturn.CollectionCover, oReturn.CollectionBackdrop);
       }
       else
       {
@@ -767,7 +767,7 @@ internal class Grabber : MarshalByRefObject, MediaPortal.Video.Database.IIMDBScr
     }
 
     string sReponseDetails = string.Empty;
-    string sRequest = API_Collection.Replace("{0}", iCollection.ToString().Trim()) + "?api_key=" + Grabber.API_KEY;
+    string sRequest = API_CollectionInfo.Replace("{0}", iCollection.ToString().Trim()) + "?api_key=" + Grabber.API_KEY;
     if (!string.IsNullOrEmpty(API_LANG))
     {
       sRequest += "&language=" + API_LANG.ToLower();
