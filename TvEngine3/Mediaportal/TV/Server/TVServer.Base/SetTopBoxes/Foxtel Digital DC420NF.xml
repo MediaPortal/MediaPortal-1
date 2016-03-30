@@ -19,4 +19,5 @@
   <PowerOff></PowerOff>
   <PowerToggle></PowerToggle>
   <PowerChangeDelay>0</PowerChangeDelay>
+  <DigitCount>0</DigitCount>
 </SetTopBoxProfile>
