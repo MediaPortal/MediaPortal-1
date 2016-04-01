@@ -23,7 +23,6 @@ using iTunesLib;
 using MediaPortal.Configuration;
 using MediaPortal.GUI.Library;
 using MediaPortal.Player;
-using MediaPortal.Player.MediaInfo;
 using MediaPortal.Profile;
 
 namespace MediaPortal.ITunesPlayer
@@ -619,7 +618,7 @@ namespace MediaPortal.ITunesPlayer
       {
         if (_iTunesApplication != null)
         {
-          return new AudioStream(1)
+          return new AudioStream(0, 0)
                    {
                      Bitrate = _iTunesApplication.CurrentTrack.BitRate * 1000,
                      Language = "English",
@@ -641,7 +640,7 @@ namespace MediaPortal.ITunesPlayer
       {
         if (_iTunesApplication != null)
         {
-          return new AudioStream(1)
+          return new AudioStream(0, 0)
                    {
                      Bitrate = _iTunesApplication.CurrentTrack.BitRate * 1000,
                      Language = "English",

@@ -30,10 +30,10 @@ using MediaPortal.Configuration;
 using MediaPortal.Database;
 using MediaPortal.GUI.Library;
 using MediaPortal.Player;
-using MediaPortal.Player.MediaInfo;
 using MediaPortal.Util;
-using SQLite.NET;
 using MediaPortal.Profile;
+
+using SQLite.NET;
 
 namespace MediaPortal.Video.Database
 {

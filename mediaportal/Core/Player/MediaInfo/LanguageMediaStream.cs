@@ -20,7 +20,7 @@
 
 using System.Collections.Generic;
 
-namespace MediaPortal.Player.MediaInfo
+namespace MediaPortal.Player
 {
   public abstract class LanguageMediaStream : MediaStream
   {
@@ -166,6 +166,8 @@ namespace MediaPortal.Player.MediaInfo
       { "ps", new LanguageInfo { Name = "Pashto", Lcid = 0x0463 } },
       { "pt", new LanguageInfo { Name = "Portuguese", Lcid = 0x0816 } },
       { "pt-br", new LanguageInfo { Name = "Portuguese (Brazil)", Lcid = 0x0416 } },
+      { "qaa", new LanguageInfo { Name = "French", Lcid = 0x040c } },
+      { "qad", new LanguageInfo { Name = "French", Lcid = 0x040c } },
       { "qu", new LanguageInfo { Name = "Quechua", Lcid = 0 } },
       { "rm", new LanguageInfo { Name = "Raeto-Romance", Lcid = 0 } },
       { "rn", new LanguageInfo { Name = "Rundi", Lcid = 0 } },
@@ -225,8 +227,8 @@ namespace MediaPortal.Player.MediaInfo
 
     #endregion
 
-    protected LanguageMediaStream(MediaInfo info, int number)
-        : base(info, number)
+    protected LanguageMediaStream(MediaInfo info, int number, int position)
+        : base(info, number, position)
     {
     }
 

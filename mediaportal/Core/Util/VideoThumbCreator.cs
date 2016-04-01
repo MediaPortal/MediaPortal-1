@@ -26,12 +26,9 @@ using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using MediaPortal.Configuration;
 using MediaPortal.ServiceImplementations;
+using MediaPortal.Player;
 using MediaPortal.Profile;
 using MediaPortal.Services;
-using System.Diagnostics;
-using System.Text.RegularExpressions;
-
-using MediaPortal.Player.MediaInfo;
 
 namespace MediaPortal.Util
 {

@@ -20,7 +20,7 @@
 
 using System.Collections.Generic;
 
-namespace MediaPortal.Player.MediaInfo
+namespace MediaPortal.Player
 {
   public enum SubtitleCodec
   {
@@ -61,8 +61,8 @@ namespace MediaPortal.Player.MediaInfo
 
     #endregion
 
-    public SubtitleStream(MediaInfo info, int number)
-        : base(info, number)
+    public SubtitleStream(MediaInfo info, int number, int position)
+        : base(info, number, position)
     {
     }
 

@@ -19,23 +19,22 @@
 #endregion
 
 using System;
-using System.Globalization;
 using System.Drawing;
+using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
+
 using DirectShowLib;
 using DShowNET.Helper;
+
 using MediaPortal.Configuration;
 using MediaPortal.GUI.Library;
-using MediaPortal.Profile;
-using MediaPortal.Player.Subtitles;
-using System.Collections.Generic;
-using System.Linq;
-
-using MediaPortal.Player.MediaInfo;
 using MediaPortal.Player.PostProcessing;
+using MediaPortal.Player.Subtitles;
+using MediaPortal.Profile;
 
 namespace MediaPortal.Player
 {

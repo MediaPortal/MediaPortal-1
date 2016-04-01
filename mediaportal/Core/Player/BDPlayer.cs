@@ -19,6 +19,8 @@
 #endregion
 
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Globalization;
 using System.IO;
@@ -26,17 +28,15 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows.Forms;
+
 using DirectShowLib;
 using DShowNET.Helper;
+
 using MediaPortal.ExtensionMethods;
 using MediaPortal.GUI.Library;
 using MediaPortal.Player.PostProcessing;
 using MediaPortal.Player.Subtitles;
 using MediaPortal.Profile;
-using System.Collections.Generic;
-using System.Collections;
-
-using MediaPortal.Player.MediaInfo;
 
 namespace MediaPortal.Player
 {
@@ -3155,25 +3155,25 @@ namespace MediaPortal.Player
       switch (stream)
       {
         case (int)BluRayStreamFormats.BLURAY_STREAM_TYPE_AUDIO_AC3:
-          return MediaInfo.AudioCodec.A_AC3;
+          return Player.AudioCodec.A_AC3;
         case (int)BluRayStreamFormats.BLURAY_STREAM_TYPE_AUDIO_AC3PLUS:
-          return MediaInfo.AudioCodec.A_AC3;
+          return Player.AudioCodec.A_AC3;
         case (int)BluRayStreamFormats.BLURAY_STREAM_TYPE_AUDIO_DTS:
-          return MediaInfo.AudioCodec.A_DTS;
+          return Player.AudioCodec.A_DTS;
         case (int)BluRayStreamFormats.BLURAY_STREAM_TYPE_AUDIO_DTSHD:
-          return MediaInfo.AudioCodec.A_DTS_HD;
+          return Player.AudioCodec.A_DTS_HD;
         case (int)BluRayStreamFormats.BLURAY_STREAM_TYPE_AUDIO_DTSHD_MASTER:
-          return MediaInfo.AudioCodec.A_DTS_HD;
+          return Player.AudioCodec.A_DTS_HD;
         case (int)BluRayStreamFormats.BLURAY_STREAM_TYPE_AUDIO_LPCM:
-          return MediaInfo.AudioCodec.A_PCM_INT_BIG;
+          return Player.AudioCodec.A_PCM_INT_BIG;
         case (int)BluRayStreamFormats.BLURAY_STREAM_TYPE_AUDIO_MPEG1:
-          return MediaInfo.AudioCodec.A_MPEG_L1;
+          return Player.AudioCodec.A_MPEG_L1;
         case (int)BluRayStreamFormats.BLURAY_STREAM_TYPE_AUDIO_MPEG2:
-          return MediaInfo.AudioCodec.A_MPEG_L2;
+          return Player.AudioCodec.A_MPEG_L2;
         case (int)BluRayStreamFormats.BLURAY_STREAM_TYPE_AUDIO_TRUHD:
-          return MediaInfo.AudioCodec.A_TRUEHD;
+          return Player.AudioCodec.A_TRUEHD;
       }
-      return MediaInfo.AudioCodec.A_UNDEFINED;
+      return Player.AudioCodec.A_UNDEFINED;
     }
 
     private VideoCodec StreamTypetoVideoCodec(int stream)
@@ -3181,15 +3181,15 @@ namespace MediaPortal.Player
       switch (stream)
       {
         case (int)BluRayStreamFormats.BLURAY_STREAM_TYPE_VIDEO_MPEG1:
-          return MediaInfo.VideoCodec.V_MPEG1;
+          return Player.VideoCodec.V_MPEG1;
         case (int)BluRayStreamFormats.BLURAY_STREAM_TYPE_VIDEO_MPEG2:
-          return MediaInfo.VideoCodec.V_MPEG2;
+          return Player.VideoCodec.V_MPEG2;
         case (int)BluRayStreamFormats.BLURAY_STREAM_TYPE_VIDEO_H264:
-          return MediaInfo.VideoCodec.V_MPEG4_ISO_AVC;
+          return Player.VideoCodec.V_MPEG4_ISO_AVC;
         case (int)BluRayStreamFormats.BLURAY_STREAM_TYPE_VIDEO_VC1:
-          return MediaInfo.VideoCodec.V_VC1;
+          return Player.VideoCodec.V_VC1;
       }
-      return MediaInfo.VideoCodec.V_UNDEFINED;
+      return Player.VideoCodec.V_UNDEFINED;
     }
 
     protected string StreamTypeAudiotoString(int stream)
@@ -3284,7 +3284,7 @@ namespace MediaPortal.Player
         var stream = CurrentAudioStream;
         pStrm.Info(stream, out sType, out sFlag, out sPLCid, out sPDWGroup, out sName, out pppunk, out ppobject);
           return GetStreamByParams(
-              CurrentAudioStream,
+              stream,
               DirectShowHelper.GetLanguage(sName.Trim()),
               _ireader.GetAudioChannelCount(stream),
               sPDWGroup);
@@ -3295,7 +3295,7 @@ namespace MediaPortal.Player
 
     private AudioStream GetStreamByParams(int id, string language, int channelCount, int streamType)
     {
-      return new AudioStream(id)
+      return new AudioStream(id, id)
       {
         Language = DirectShowHelper.GetLanguage(language),
         Channel = channelCount,
@@ -3322,7 +3322,7 @@ namespace MediaPortal.Player
       BDStreamInfo clipInfo = new BDStreamInfo();
       _ireader.GetCurrentClipStreamInfo(ref clipInfo);
 
-      return new VideoStream(0)
+      return new VideoStream(0, 0)
                {
                  Duration = TimeSpan.FromSeconds(_duration),
                  Format = StreamTypetoFormat(clipInfo.coding_type),
@@ -3334,7 +3334,7 @@ namespace MediaPortal.Player
                  Height = VideoFormattoHeight(clipInfo.format),
                  Width = VideoFormattoWidth(clipInfo.format, clipInfo.aspect),
                  Stereoscopic = StereoMode.Mono,
-                 AspectRatio = clipInfo.aspect == 2 ? AspectRatio.Tv : AspectRatio.WideScreen
+                 AspectRatio = clipInfo.aspect == 2 ? AspectRatio.FullScreen : AspectRatio.WideScreen
                };
     }
 
