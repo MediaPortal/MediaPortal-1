@@ -34,30 +34,16 @@
     <import>common.window.xml</import>
     <import>common.time.xml</import>
     <control>
-      <id>0</id>
-      <type>fadelabel</type>
-      <description>Title</description>
-      <posX>372</posX>
-      <posY>52</posY>
-      <width>1475</width>
+      <description>TvMovie++ LastUpdate</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>45</posX>
+      <posY>55</posY>
+      <width>925</width>
+      <font>font11</font>
       <align>left</align>
-      <font>Menutitle</font>
-      <textcolor>White</textcolor>
-      <label>Clickfinder #selecteditem</label>
-      <visible>!skin.hassetting(#skin.noclock)</visible>
-    </control>
-    <control>
-      <id>0</id>
-      <type>fadelabel</type>
-      <description>Title</description>
-      <posX>80</posX>
-      <posY>52</posY>
-      <width>1475</width>
-      <align>left</align>
-      <font>Menutitle</font>
-      <textcolor>White</textcolor>
-      <label>Clickfinder #selecteditem</label>
-      <visible>skin.hassetting(#skin.noclock)</visible>
+      <textcolor>ff6FAFE1</textcolor>
+      <label>#SettingLastUpdate</label>
     </control>
     <control>
       <description>BG listcontrol left</description>
@@ -83,30 +69,6 @@
     </control>
     <!-- Tv Movie++ Last UpdateLabel-->
     <control>
-      <description>TvMovie++ LastUpdate</description>
-      <type>label</type>
-      <id>1</id>
-      <posX>372</posX>
-      <posY>105</posY>
-      <label>#SettingLastUpdate</label>
-      <font>Label</font>
-      <align>left</align>
-      <textcolor>FFdddddd</textcolor>
-      <visible>!skin.hassetting(#skin.noclock)</visible>
-    </control>
-    <control>
-      <description>TvMovie++ LastUpdate</description>
-      <type>label</type>
-      <id>1</id>
-      <posX>80</posX>
-      <posY>105</posY>
-      <label>#SettingLastUpdate</label>
-      <font>Label</font>
-      <align>left</align>
-      <textcolor>FFdddddd</textcolor>
-      <visible>skin.hassetting(#skin.noclock)</visible>
-    </control>
-    <control>
       <description>label</description>
       <type>label</type>
       <id>1</id>
@@ -114,7 +76,7 @@
       <posY>182</posY>
       <label>#EpisodePreviewLabel</label>
       <font>Label</font>
-      <textcolor>FFdddddd</textcolor>
+      <textcolor>ff6FAFE1</textcolor>
     </control>
     <!-- SeriesList & Controls-->
     <control>

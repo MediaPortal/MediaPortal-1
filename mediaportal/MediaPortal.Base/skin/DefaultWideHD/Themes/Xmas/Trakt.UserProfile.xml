@@ -1,0 +1,688 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!--version="1.0" encoding="utf-8" standalone="yes"-->
+<window>
+  <id>87400</id>
+  <defaultcontrol>50</defaultcontrol>
+  <allowoverlay>yes</allowoverlay>
+  <controls>
+    <control>
+      <description>BG</description>
+      <type>image</type>
+      <id>1</id>
+      <texture>BH Trakt.jpg</texture>
+      <width>1920</width>
+      <height>1080</height>
+      <colordiffuse>90ffffff</colordiffuse>
+    </control>
+    <import>common.window.xml</import>
+    <import>common.time.xml</import>
+    <control>
+      <description>General Overlay</description>
+      <id>0</id>
+      <type>image</type>
+      <posX>0</posX>
+      <posY>45</posY>
+      <width>1920</width>
+      <height>1080</height>
+      <texture>general_overlay.png</texture>
+    </control>
+    <control>
+      <description>Current View</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>45</posX>
+      <posY>15</posY>
+      <width>1299</width>
+      <font>Label</font>
+      <textcolor>ffffd700</textcolor>
+      <label>#Trakt.Translation.UserProfile.Label</label>
+      <align>left</align>
+    </control>
+    <control>
+      <description>group element</description>
+      <type>group</type>
+      <control>
+        <type>facadeview</type>
+        <id>50</id>
+        <control>
+          <description>listcontrol</description>
+          <type>listcontrol</type>
+          <id>50</id>
+          <width>823</width>
+          <playedColor>ffffffff</playedColor>
+          <playedColor2>ffffffff</playedColor2>
+          <textcolor>ff99f9ff</textcolor>
+          <textcolorNoFocus>ff99f9ff</textcolorNoFocus>
+          <textXOff2>823</textXOff2>
+          <textYOff2>3</textYOff2>
+          <textXOff3>3816</textXOff3>
+          <textYOff3>12</textYOff3>
+          <PinIconXOff>750</PinIconXOff>
+          <PinIconYOff>0</PinIconYOff>
+          <PinIconWidth>32</PinIconWidth>
+          <PinIconHeight>32</PinIconHeight>
+          <textalign3>right</textalign3>
+          <font3>font9</font3>
+          <font2>font11</font2>
+          <scrollOffset>2</scrollOffset>
+          <spinCanFocus>yes</spinCanFocus>
+          <unfocusedAlpha>160</unfocusedAlpha>
+          <onleft>4</onleft>
+          <onright>4</onright>
+          <folderPrefix />
+          <folderSuffix />
+        </control>
+      </control>
+    </control>
+    <!-- Hidden Menu -->
+    <control>
+      <type>actiongroup</type>
+      <description>action menu</description>
+      <defaultcontrol>4</defaultcontrol>
+      <onexit>50</onexit>
+      <buttonX>0</buttonX>
+      <buttonY>-60</buttonY>
+      <buttonwidth>157</buttonwidth>
+      <buttonheight>1080</buttonheight>
+      <textureFocus>-</textureFocus>
+      <textureNoFocus>Action_nofocus.png</textureNoFocus>
+      <width>411</width>
+      <height>1350</height>
+      <dimColor>00ffffff</dimColor>
+      <control>
+        <type>image</type>
+        <id>0</id>
+        <width>1920</width>
+        <height>1080</height>
+        <texture>white.png</texture>
+        <colordiffuse>50005eef</colordiffuse>
+      </control>
+      <control>
+        <type>image</type>
+        <posX>37</posX>
+        <posY>117</posY>
+        <width>559</width>
+        <height>886</height>
+        <texture>Backslide.png</texture>
+        <colorDiffuse>ffffffff</colorDiffuse>
+        <visible>!Control.HasFocus(50)</visible>
+        <animation effect="slide" time="70" start="-300,0" reversible="false">visible</animation>
+        <animation effect="slide" time="70" end="-300,0" reversible="false">hidden</animation>
+      </control>
+      <control>
+        <description>group element</description>
+        <type>group</type>
+        <animation effect="slide" time="70" start="-300,0" reversible="false">visible</animation>
+        <animation effect="slide" time="70" end="-300,0" reversible="false">hidden</animation>
+        <visible>!Control.HasFocus(50)</visible>
+        <posX>73</posX>
+        <posY>181</posY>
+        <layout>StackLayout</layout>
+        <visible>!Control.HasFocus(50)</visible>
+        <control>
+          <description>button group</description>
+          <type>group</type>
+          <posX>90</posX>
+          <posY>181</posY>
+          <width>439</width>
+          <layout>StackLayout</layout>
+          <visible>!Control.HasFocus(50)</visible>
+          <animation effect="slide" time="70" start="-300,0" reversible="false">visible</animation>
+          <animation effect="slide" time="70" end="-300,0" reversible="false">hidden</animation>
+          <control>
+            <description>Refresh</description>
+            <type>button</type>
+            <id>4</id>
+            <width>439</width>
+            <label>#Trakt.Translation.Refresh.Label</label>
+            <onleft>50</onleft>
+            <onright>50</onright>
+            <ondown>2</ondown>
+          </control>
+        </control>
+      </control>
+    </control>
+    <control>
+      <description>Overlay text right</description>
+      <id>0</id>
+      <type>image</type>
+      <posX>1063</posX>
+      <posY>234</posY>
+      <width>823</width>
+      <height>699</height>
+      <texture mask="picturethumbmask.png">black.png</texture>
+      <colordiffuse>60ffffff</colordiffuse>
+    </control>
+    <!-- Friend Info -->
+    <control>
+      <description>LCD image</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>1573</posX>
+      <posY>270</posY>
+      <width>300</width>
+      <height>322</height>
+      <texture>LCD.png</texture>
+      <visible>!string.equals(#Trakt.User.Username,)</visible>
+    </control>
+    <control>
+      <description>Avatar image</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>1588</posX>
+      <posY>295</posY>
+      <width>270</width>
+      <height>270</height>
+      <keepaspectratio>yes</keepaspectratio>
+      <zoom>yes</zoom>
+      <texture>#selectedthumb</texture>
+      <visible>!string.equals(#Trakt.User.Username,)</visible>
+    </control>
+    <control>
+      <description>FullName txt</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>1093</posX>
+      <posY>265</posY>
+      <label>#Trakt.Translation.FullName.Label</label>
+      <font>font10</font>
+      <align>left</align>
+      <textcolor>ffffd700</textcolor>
+      <visible>!string.equals(#Trakt.User.FullName,)</visible>
+    </control>
+    <control>
+      <description>FullName value</description>
+      <type>fadelabel</type>
+      <id>1</id>
+      <posX>1093</posX>
+      <posY>294</posY>
+      <width>399</width>
+      <label>#Trakt.User.FullName</label>
+      <font>font12</font>
+      <textcolor>ffffd700</textcolor>
+      <visible>!string.equals(#Trakt.User.FullName,)</visible>
+    </control>
+    <control>
+      <description>Join Date txt</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>1093</posX>
+      <posY>331</posY>
+      <label>#Trakt.Translation.JoinDate.Label</label>
+      <font>font10</font>
+      <align>left</align>
+      <textcolor>ffffd700</textcolor>
+      <visible>!string.equals(#Trakt.User.JoinDate,)</visible>
+    </control>
+    <control>
+      <description>Join Date value</description>
+      <type>fadelabel</type>
+      <id>1</id>
+      <posX>1093</posX>
+      <posY>360</posY>
+      <label>#Trakt.User.JoinDate</label>
+      <font>font12</font>
+      <width>420</width>
+      <textcolor>ffffd700</textcolor>
+      <visible>!string.equals(#Trakt.User.JoinDate,)</visible>
+    </control>
+    <control>
+      <description>Location txt</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>1093</posX>
+      <posY>397</posY>
+      <label>#Trakt.Translation.Location.Label</label>
+      <font>font10</font>
+      <align>left</align>
+      <textcolor>ffffd700</textcolor>
+      <visible>!string.equals(#Trakt.User.Location,)</visible>
+    </control>
+    <control>
+      <description>Location</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>1093</posX>
+      <posY>426</posY>
+      <width>420</width>
+      <label>#Trakt.User.Location</label>
+      <font>font12</font>
+      <textcolor>ffffd700</textcolor>
+      <visible>!string.equals(#Trakt.User.Location,)</visible>
+    </control>
+    <control>
+      <description>Age txt</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>1093</posX>
+      <posY>463</posY>
+      <label>#Trakt.Translation.Age.Label</label>
+      <font>font10</font>
+      <align>left</align>
+      <textcolor>ffffd700</textcolor>
+      <visible>!string.equals(#Trakt.User.Age,)</visible>
+    </control>
+    <control>
+      <description>Age</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>1093</posX>
+      <posY>492</posY>
+      <width>405</width>
+      <label>#Trakt.User.Age</label>
+      <font>font12</font>
+      <textcolor>ffffd700</textcolor>
+      <visible>!string.equals(#Trakt.User.Age,)</visible>
+    </control>
+    <control>
+      <description>Friends txt</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>1333</posX>
+      <posY>463</posY>
+      <label>#Trakt.Translation.Friends.Label</label>
+      <font>font10</font>
+      <align>left</align>
+      <textcolor>ffffd700</textcolor>
+      <visible>!string.equals(#Trakt.Statistics.Friends,)</visible>
+    </control>
+    <control>
+      <description>Friends</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>1333</posX>
+      <posY>492</posY>
+      <width>420</width>
+      <label>#Trakt.Statistics.Friends</label>
+      <font>font12</font>
+      <textcolor>ffffd700</textcolor>
+      <visible>!string.equals(#Trakt.Statistics.Friends,)</visible>
+    </control>
+    <control>
+      <description>VIP Label</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>1093</posX>
+      <posY>529</posY>
+      <label>Vip</label>
+      <font>font11</font>
+      <textcolor>ffffd700</textcolor>
+      <visible>!string.equals(#Trakt.User.Age,)</visible>
+    </control>
+    <control>
+      <description>VIP Value</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>1093</posX>
+      <posY>558</posY>
+      <label>#(iif(eq(#Trakt.User.VIP,'true'),'#Trakt.Translation.Yes.Label','#Trakt.Translation.No.Label'))</label>
+      <font>font12</font>
+      <textcolor>ffffd700</textcolor>
+      <visible>!string.equals(#Trakt.User.VIP,)</visible>
+    </control>
+    <control>
+      <description>Protected txt</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>1333</posX>
+      <posY>529</posY>
+      <label>#Trakt.Translation.Protected.Label</label>
+      <font>font10</font>
+      <align>left</align>
+      <textcolor>ffffd700</textcolor>
+      <visible>!string.equals(#Trakt.User.Protected,)</visible>
+    </control>
+    <control>
+      <description>Protected</description>
+      <type>fadelabel</type>
+      <id>1</id>
+      <posX>1333</posX>
+      <posY>558</posY>
+      <width>405</width>
+      <label>#(iif(eq(#Trakt.User.Protected,'true'),'#Trakt.Translation.Yes.Label','#Trakt.Translation.No.Label'))</label>
+      <font>font12</font>
+      <align>left</align>
+      <textcolor>ffffd700</textcolor>
+      <visible>!string.equals(#Trakt.User.Protected,)</visible>
+    </control>
+    <control>
+      <description>Episodes txt</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>1093</posX>
+      <posY>607</posY>
+      <label>#Trakt.Translation.Episodes.Label</label>
+      <width>225</width>
+      <font>font10</font>
+      <align>left</align>
+      <textcolor>ffffd700</textcolor>
+      <visible>!string.equals(#Trakt.Statistics.Episodes.WatchedUnique,)</visible>
+    </control>
+    <control>
+      <description>Separator Line</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>1093</posX>
+      <posY>645</posY>
+      <width>750</width>
+      <height>1</height>
+      <texture>hbar1white.png</texture>
+      <colordiffuse>60ffffff</colordiffuse>
+      <visible>!string.equals(#Trakt.Statistics.Episodes.WatchedUnique,)</visible>
+    </control>
+    <control>
+      <description>Episodes Watched Icon</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>1093</posX>
+      <posY>648</posY>
+      <width>60</width>
+      <height>60</height>
+      <texture>traktWatchedIcon.png</texture>
+      <visible>!string.equals(#Trakt.Statistics.Episodes.WatchedUnique,)</visible>
+    </control>
+    <control>
+      <description>Episodes Watched Value</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>1170</posX>
+      <posY>655</posY>
+      <label>#(string.format('{0:#,0}', cint(#Trakt.Statistics.Episodes.WatchedUnique)))</label>
+      <font>font12</font>
+      <textcolor>ffffd700</textcolor>
+      <visible>!string.equals(#Trakt.Statistics.Episodes.WatchedUnique,)</visible>
+    </control>
+    <control>
+      <description>Episodes Collected Icon</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>1318</posX>
+      <posY>648</posY>
+      <width>60</width>
+      <height>60</height>
+      <texture>traktCollectionIcon.png</texture>
+      <visible>!string.equals(#Trakt.Statistics.Episodes.Collection,)</visible>
+    </control>
+    <control>
+      <description>Episodes Collected Value</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>1395</posX>
+      <posY>655</posY>
+      <label>#(string.format('{0:#,0}', cint(#Trakt.Statistics.Episodes.Collection)))</label>
+      <font>font12</font>
+      <textcolor>ffffd700</textcolor>
+      <visible>!string.equals(#Trakt.Statistics.Episodes.Collection,)</visible>
+    </control>
+    <control>
+      <description>Episodes Shouts Icon</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>1513</posX>
+      <posY>648</posY>
+      <width>60</width>
+      <height>60</height>
+      <texture>traktActivityShout.png</texture>
+      <visible>!string.equals(#Trakt.Statistics.Episodes.Shouts,)</visible>
+    </control>
+    <control>
+      <description>Episodes Shouts Value</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>1582</posX>
+      <posY>655</posY>
+      <label>#(string.format('{0:#,0}', cint(#Trakt.Statistics.Episodes.Shouts)))</label>
+      <font>font12</font>
+      <textcolor>ffffd700</textcolor>
+      <visible>!string.equals(#Trakt.Statistics.Episodes.Shouts,)</visible>
+    </control>
+    <control>
+      <description>Episodes Loved Icon</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>1693</posX>
+      <posY>648</posY>
+      <width>60</width>
+      <height>60</height>
+      <texture>traktActivityLove.png</texture>
+      <visible>!string.equals(#Trakt.Statistics.Episodes.Loved,)</visible>
+    </control>
+    <control>
+      <description>Episodes Loved Value</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>1755</posX>
+      <posY>655</posY>
+      <label>#(string.format('{0:#,0}', cint(#Trakt.Statistics.Episodes.Loved)))</label>
+      <font>font12</font>
+      <textcolor>ffffd700</textcolor>
+      <visible>!string.equals(#Trakt.Statistics.Episodes.Loved,)</visible>
+    </control>
+    <control>
+      <description>Shows txt</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>1093</posX>
+      <posY>705</posY>
+      <label>#Trakt.Translation.Series.Label</label>
+      <width>225</width>
+      <font>font10</font>
+      <align>left</align>
+      <textcolor>ffffd700</textcolor>
+      <visible>!string.equals(#Trakt.Statistics.Shows.Watched,)</visible>
+    </control>
+    <control>
+      <description>Separator Line</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>1093</posX>
+      <posY>742</posY>
+      <width>750</width>
+      <height>1</height>
+      <texture>hbar1white.png</texture>
+      <colordiffuse>60ffffff</colordiffuse>
+      <visible>!string.equals(#Trakt.Statistics.Shows.Watched,)</visible>
+    </control>
+    <control>
+      <description>Shows Watched Icon</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>1093</posX>
+      <posY>745</posY>
+      <width>60</width>
+      <height>60</height>
+      <texture>traktWatchedIcon.png</texture>
+      <visible>!string.equals(#Trakt.Statistics.Shows.Watched,)</visible>
+    </control>
+    <control>
+      <description>Shows Watched Value</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>1170</posX>
+      <posY>753</posY>
+      <label>#(string.format('{0:#,0}', cint(#Trakt.Statistics.Shows.Watched)))</label>
+      <font>font12</font>
+      <textcolor>ffffd700</textcolor>
+      <visible>!string.equals(#Trakt.Statistics.Shows.Watched,)</visible>
+    </control>
+    <control>
+      <description>Shows Collected Icon</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>1318</posX>
+      <posY>745</posY>
+      <width>60</width>
+      <height>60</height>
+      <texture>traktCollectionIcon.png</texture>
+      <visible>!string.equals(#Trakt.Statistics.Shows.Collection,)</visible>
+    </control>
+    <control>
+      <description>Shows Collected Value</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>1395</posX>
+      <posY>753</posY>
+      <label>#(string.format('{0:#,0}', cint(#Trakt.Statistics.Shows.Collection)))</label>
+      <font>font12</font>
+      <textcolor>ffffd700</textcolor>
+      <visible>!string.equals(#Trakt.Statistics.Shows.Collection,)</visible>
+    </control>
+    <control>
+      <description>Shows Shouts Icon</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>1513</posX>
+      <posY>745</posY>
+      <width>60</width>
+      <height>60</height>
+      <texture>traktActivityShout.png</texture>
+      <visible>!string.equals(#Trakt.Statistics.Shows.Shouts,)</visible>
+    </control>
+    <control>
+      <description>Shows Shouts Value</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>1582</posX>
+      <posY>753</posY>
+      <label>#(string.format('{0:#,0}', cint(#Trakt.Statistics.Shows.Shouts)))</label>
+      <font>font12</font>
+      <textcolor>ffffd700</textcolor>
+      <visible>!string.equals(#Trakt.Statistics.Shows.Shouts,)</visible>
+    </control>
+    <control>
+      <description>Shows Loved Icon</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>1693</posX>
+      <posY>745</posY>
+      <width>60</width>
+      <height>60</height>
+      <texture>traktActivityLove.png</texture>
+      <visible>!string.equals(#Trakt.Statistics.Shows.Loved,)</visible>
+    </control>
+    <control>
+      <description>Shows Loved Value</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>1755</posX>
+      <posY>753</posY>
+      <label>#(string.format('{0:#,0}', cint(#Trakt.Statistics.Shows.Loved)))</label>
+      <font>font12</font>
+      <textcolor>ffffd700</textcolor>
+      <visible>!string.equals(#Trakt.Statistics.Shows.Loved,)</visible>
+    </control>
+    <control>
+      <description>Movies txt</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>1093</posX>
+      <posY>802</posY>
+      <label>#Trakt.Translation.Movies.Label</label>
+      <width>225</width>
+      <font>font10</font>
+      <align>left</align>
+      <textcolor>ffffd700</textcolor>
+      <visible>!string.equals(#Trakt.Statistics.Movies.Watched,)</visible>
+    </control>
+    <control>
+      <description>Separator Line</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>1093</posX>
+      <posY>840</posY>
+      <width>750</width>
+      <height>1</height>
+      <texture>hbar1white.png</texture>
+      <colordiffuse>60ffffff</colordiffuse>
+      <visible>!string.equals(#Trakt.Statistics.Movies.Watched,)</visible>
+    </control>
+    <control>
+      <description>Movies Watched Icon</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>1093</posX>
+      <posY>843</posY>
+      <width>60</width>
+      <height>60</height>
+      <texture>traktWatchedIcon.png</texture>
+      <visible>!string.equals(#Trakt.Statistics.Movies.Watched,)</visible>
+    </control>
+    <control>
+      <description>Movies Watched Value</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>1170</posX>
+      <posY>850</posY>
+      <label>#(string.format('{0:#,0}', cint(#Trakt.Statistics.Movies.Watched)))</label>
+      <font>font12</font>
+      <textcolor>ffffd700</textcolor>
+      <visible>!string.equals(#Trakt.Statistics.Movies.Watched,)</visible>
+    </control>
+    <control>
+      <description>Movies Collected Icon</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>1318</posX>
+      <posY>843</posY>
+      <width>60</width>
+      <height>60</height>
+      <texture>traktCollectionIcon.png</texture>
+      <visible>!string.equals(#Trakt.Statistics.Movies.Collection,)</visible>
+    </control>
+    <control>
+      <description>Movies Collected Value</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>1395</posX>
+      <posY>850</posY>
+      <label>#(string.format('{0:#,0}', cint(#Trakt.Statistics.Movies.Collection)))</label>
+      <font>font12</font>
+      <textcolor>ffffd700</textcolor>
+      <visible>!string.equals(#Trakt.Statistics.Movies.Collection,)</visible>
+    </control>
+    <control>
+      <description>Movies Shouts Icon</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>1513</posX>
+      <posY>843</posY>
+      <width>60</width>
+      <height>60</height>
+      <texture>traktActivityShout.png</texture>
+      <visible>!string.equals(#Trakt.Statistics.Movies.Shouts,)</visible>
+    </control>
+    <control>
+      <description>Movies Shouts Value</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>1582</posX>
+      <posY>850</posY>
+      <label>#(string.format('{0:#,0}', cint(#Trakt.Statistics.Movies.Shouts)))</label>
+      <font>font12</font>
+      <textcolor>ffffd700</textcolor>
+      <visible>!string.equals(#Trakt.Statistics.Movies.Shouts,)</visible>
+    </control>
+    <control>
+      <description>Movies Loved Icon</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>1693</posX>
+      <posY>843</posY>
+      <width>60</width>
+      <height>60</height>
+      <texture>traktActivityLove.png</texture>
+      <visible>!string.equals(#Trakt.Statistics.Movies.Loved,)</visible>
+    </control>
+    <control>
+      <description>Movies Loved Value</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>1755</posX>
+      <posY>850</posY>
+      <label>#(string.format('{0:#,0}', cint(#Trakt.Statistics.Movies.Loved)))</label>
+      <font>font12</font>
+      <textcolor>ffffd700</textcolor>
+      <visible>!string.equals(#Trakt.Statistics.Movies.Loved,)</visible>
+    </control>
+  </controls>
+</window>

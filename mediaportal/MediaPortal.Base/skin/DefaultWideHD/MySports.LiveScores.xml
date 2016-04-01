@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!--version="1.0" encoding="utf-8"-->
+<window>
+  <id>87354</id>
+  <defaultcontrol>31</defaultcontrol>
+  <allowoverlay>no</allowoverlay>
+  <disabletopbar>no</disabletopbar>
+  <define>#header.label:MySports - Livescores</define>
+  <define>#curentmodule:MySports - LiveScores</define>
+  <controls>
+    <control>
+      <description>BG</description>
+      <type>image</type>
+      <id>1</id>
+      <texture>BH Sports.jpg</texture>
+      <width>1920</width>
+      <height>1080</height>
+      <colordiffuse>90ffffff</colordiffuse>
+    </control>
+    <control>
+      <description>background top overlay</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>1920</width>
+      <height>405</height>
+      <texture>overlay_top.png</texture>
+      <colordiffuse>ccffffff</colordiffuse>
+    </control>
+    <control>
+      <description>background selecteditem</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>-20</posX>
+      <posY>97</posY>
+      <width>2025</width>
+      <height>90</height>
+      <texture>general_overlay_selecteditem.png</texture>
+      <colordiffuse>bbffffff</colordiffuse>
+    </control>
+    <control>
+      <description>General Overlay</description>
+      <id>0</id>
+      <type>image</type>
+      <posX>0</posX>
+      <posY>45</posY>
+      <width>1920</width>
+      <height>1080</height>
+      <texture>general_overlay.png</texture>
+    </control>
+    <control>
+      <type>label</type>
+      <id>1</id>
+      <posX>45</posX>
+      <posY>15</posY>
+      <label>#header.label</label>
+      <font>Label</font>
+      <align>left</align>
+      <textcolor>ff6FAFE1</textcolor>
+    </control>
+    <control>
+      <description>Channels List</description>
+      <type>listcontrol</type>
+      <id>31</id>
+      <posX>150</posX>
+      <posY>300</posY>
+      <width>1650</width>
+      <height>750</height>
+      <textureHeight>150</textureHeight>
+      <textXOff>225</textXOff>
+      <textYOff>45</textYOff>
+      <textXOff2>1200</textXOff2>
+      <textYOff2>45</textYOff2>
+      <textalign2>left</textalign2>
+      <textXOff3>750</textXOff3>
+      <font>font15</font>
+      <font2>font15</font2>
+      <font3>font17</font3>
+      <PinIconXOff>150</PinIconXOff>
+      <IconXOff>1350</IconXOff>
+      <PinIconHeight>150</PinIconHeight>
+      <PinIconWidth>150</PinIconWidth>
+      <keepaspectratio>true</keepaspectratio>
+      <itemHeight>150</itemHeight>
+      <itemWidth>150</itemWidth>
+      <scrollOffset>2</scrollOffset>
+      <onright>290</onright>
+      <onleft>260</onleft>
+    </control>
+    <import>common.window.xml</import>
+    <import>common.time.xml</import>
+  </controls>
+</window>
+<!--Checksum:5e07f09b7dd8095e1d56dd227d3fd170-->

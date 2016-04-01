@@ -1,0 +1,516 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+
+<!--
+
+ID format AA-B-C-DD [group/subgroup/layer/item] eg: 990105 = group 99 / subgroup 0 / layer 1 / item 05
+
+-->
+
+  <define property="true" evaluateNow="true">#image.posx:779</define>
+  <define property="true" evaluateNow="true">#image.posy:430</define>
+  <define property="true" evaluateNow="true">#image.width:360</define>
+  <define property="true" evaluateNow="true">#image.height:251</define>
+  <define property="true" evaluateNow="true">#label.posx:797</define>
+  <define property="true" evaluateNow="true">#label.posy:640</define>
+  <define property="true" evaluateNow="true">#label.width:322</define>
+  <define property="true" evaluateNow="true">#focus.posy:410</define>
+  <define>#label.font:font12</define>
+
+  <define property="true" evaluateNow="true">#scroll.delay:3</define>
+  <define property="true" evaluateNow="true">#scroll.wrap: · </define>
+
+  <controls>
+
+<!-- Availability checker -->
+
+    <control>
+      <type>group</type>
+      <posX>3000</posX>
+      <posY>0</posY>
+      <layout>StackLayout(0, Vertical, true)</layout>
+      <control>
+        <id>820000</id>
+        <type>button</type>
+        <label>-</label>
+        <textureFocus>-</textureFocus>
+        <textureNoFocus>-</textureNoFocus>
+        <onfocus>
+          #(skin.setstring('#hedit.sub.return',820101))
+          #(skin.setfocus(cint(#currentmoduleid),820001))
+        </onfocus>
+      </control>
+      <control>
+        <id>820001</id>
+        <type>button</type>
+        <label>-</label>
+        <textureFocus>-</textureFocus>
+        <textureNoFocus>-</textureNoFocus>
+        <onfocus>
+          #(skin.setfocus(cint(#currentmoduleid),cint(#hedit.sub.center)))
+        </onfocus>
+        <visible>control.isvisible(920900)</visible>
+      </control>
+      <control>
+        <id>820002</id>
+        <type>button</type>
+        <label>-</label>
+        <textureFocus>-</textureFocus>
+        <textureNoFocus>-</textureNoFocus>
+        <onfocus>
+          #(skin.setfocus(cint(#currentmoduleid),cint(#hedit.main.return)))
+        </onfocus>
+        <visible>!control.isvisible(920900)</visible>
+      </control>
+    </control>
+
+<!-- Mouse Focus -->
+
+    <control>
+      <id>820010</id>
+      <type>button</type>
+      <posX>270</posX>
+      <posY>360</posY>
+      <width>1390</width>
+      <height>240</height>
+      <label>-</label>
+      <textureFocus>#(iif(eq(#hedit.debug.mouse,'1'),'settingsUICalibration.png','-'))</textureFocus>
+      <textureNoFocus>#(iif(eq(#hedit.debug.mouse,'1'),'settingsUICalibration.png','-'))</textureNoFocus>
+      <onfocus>
+        #(skin.setstring('#hedit.sub.return',820201))
+        #(skin.setfocus(cint(#currentmoduleid),cint(#hedit.sub.center)))
+      </onfocus>
+      <visible>!string.contains(#hedit.inuse,sub)+control.isvisible(920900)</visible>
+    </control>
+
+<!-- Input control -->
+
+    <control>
+      <description>Key control</description>
+      <type>button</type>
+      <id>820101</id>
+      <posX>-999</posX>
+      <posY>-999</posY>
+      <label>#hedit.sub.use.4</label>
+      <textureFocus>-</textureFocus>
+      <textureNoFocus>-</textureNoFocus>
+      <onleft>#hedit.sub.backward</onleft>
+      <onright>#hedit.sub.forward</onright>
+      <onup>#(string.format('{0}.latestmedia',#hedit.sub.use.4))</onup>
+      <ondown>#hedit.main.return</ondown>
+      <hyperlink>#(string.format('{0}.hyperlink',#hedit.sub.use.4))</hyperlink>
+      <hyperlinkParameter>#(string.format('{0}.parameter',#hedit.sub.use.4))</hyperlinkParameter>
+      <action>#(string.format('{0}.action',#hedit.sub.use.4))</action>
+      <onfocus>
+        #(skin.setstring('#hedit.inuse','sub'))
+        #(skin.setstring('#hedit.sub.return',820101))
+        #(skin.setstring(#(string.format('{0}.latestmedia',#hedit.sub.use.4))))
+      </onfocus>
+      <visible allowhiddenfocus="true">string.contains(#hedit.inuse,sub)</visible>
+    </control>
+
+    <control>
+      <description>Mouse control - Click Center</description>
+      <type>button</type>
+      <id>820201</id>
+      <posX>#image.posx</posX>
+      <posY>#image.posy</posY>
+      <width>#image.width</width>
+      <height>#image.height</height>
+      <label>#hedit.sub.use.4</label>
+      <textXOff>2000</textXOff>
+      <textureFocus>#(iif(eq(#hedit.debug.mouse,'1'),'settingsUICalibration.png','-'))</textureFocus>
+      <textureNoFocus>#(iif(eq(#hedit.debug.mouse,'1'),'settingsUICalibration.png','-'))</textureNoFocus>
+      <onleft>820211</onleft>
+      <onright>820212</onright>
+      <onup>#hedit.sub.backward</onup>
+      <ondown>#hedit.sub.forward</ondown>
+      <hyperlink>#(string.format('{0}.hyperlink',#hedit.sub.use.4))</hyperlink>
+      <hyperlinkParameter>#(string.format('{0}.parameter',#hedit.sub.use.4))</hyperlinkParameter>
+      <action>#(string.format('{0}.action',#hedit.sub.use.4))</action>
+      <onfocus>
+        #(skin.setstring('#hedit.inuse','sub'))
+        #(skin.setstring('#hedit.sub.return',820201))
+        #(skin.setstring(#(string.format('{0}.latestmedia',#hedit.sub.use.4))))
+      </onfocus>
+      <visible allowhiddenfocus="true">string.contains(#hedit.inuse,sub)</visible>
+    </control>
+
+    <control>
+      <description>Mouse control - Click Backward</description>
+      <type>button</type>
+      <id>820202</id>
+      <posX>270</posX>
+      <posY>360</posY>
+      <width>501</width>
+      <height>240</height>
+      <label>-</label>
+      <textureFocus>#(iif(eq(#hedit.debug.mouse,'1'),'settingsUICalibration.png','-'))</textureFocus>
+      <textureNoFocus>#(iif(eq(#hedit.debug.mouse,'1'),'settingsUICalibration.png','-'))</textureNoFocus>
+      <onleft>820211</onleft>
+      <onright>820212</onright>
+      <onup>#hedit.sub.backward</onup>
+      <ondown>#hedit.sub.forward</ondown>
+      <onclick>
+        #(skin.setstring('#hedit.sub.return',820201))
+        #(skin.setfocus(cint(#currentmoduleid),cint(#hedit.sub.backward)))
+      </onclick>
+      <visible>string.contains(#hedit.inuse,sub)</visible>
+    </control>
+
+    <control>
+      <description>Mouse control - Click Forward</description>
+      <type>button</type>
+      <id>820203</id>
+      <posX>1160</posX>
+      <posY>360</posY>
+      <width>500</width>
+      <height>240</height>
+      <label>-</label>
+      <textureFocus>#(iif(eq(#hedit.debug.mouse,'1'),'settingsUICalibration.png','-'))</textureFocus>
+      <textureNoFocus>#(iif(eq(#hedit.debug.mouse,'1'),'settingsUICalibration.png','-'))</textureNoFocus>
+      <onleft>820211</onleft>
+      <onright>820212</onright>
+      <onup>#hedit.sub.backward</onup>
+      <ondown>#hedit.sub.forward</ondown>
+      <onclick>
+        #(skin.setstring('#hedit.sub.return',820201))
+        #(skin.setfocus(cint(#currentmoduleid),cint(#hedit.sub.forward)))
+      </onclick>
+      <visible>string.contains(#hedit.inuse,sub)</visible>
+    </control>
+
+    <control>
+      <description>Move backward and return to key control</description>
+      <type>button</type>
+      <id>820211</id>
+      <posX>-999</posX>
+      <posY>-999</posY>
+      <label>-</label>
+      <textureFocus>-</textureFocus>
+      <textureNoFocus>-</textureNoFocus>
+      <onfocus>
+        #(skin.setstring('#hedit.sub.return',820101))
+        #(skin.setfocus(cint(#currentmoduleid),cint(#hedit.sub.backward)))
+      </onfocus>
+    </control>
+
+    <control>
+      <description>Move forward and return to key control</description>
+      <type>button</type>
+      <id>820212</id>
+      <posX>-999</posX>
+      <posY>-999</posY>
+      <label>-</label>
+      <textureFocus>-</textureFocus>
+      <textureNoFocus>-</textureNoFocus>
+      <onfocus>
+        #(skin.setstring('#hedit.sub.return',820101))
+        #(skin.setfocus(cint(#currentmoduleid),cint(#hedit.sub.forward)))
+      </onfocus>
+    </control>
+
+<!-- Render button images and labels -->
+
+    <control>
+      <type>group</type>
+      <dimColor>FFFFFFFF</dimColor>
+      <animation effect="fade" start="0" end="100" time="250" delay="350">WindowOpen</animation>
+      <animation effect="fade" start="100" end="0" time="250" delay="0">WindowClose</animation>
+      <animation effect="fade" time="250" reversible="false">hidden</animation>
+      <animation effect="fade" start="0" end="100" time="400" reversible="false">visible</animation>
+      <animation effect="rotatey" start="70" end="0" center="960,1500" time="400" acceleration="-.5" reversible="false" condition="string.contains(#hedit.inuse,sub)">conditional</animation>
+      <animation effect="rotatey" start="0" end="-50" center="960,1500" time="400" acceleration=".5" reversible="false" condition="!string.contains(#hedit.inuse,sub)">conditional</animation>
+      <visible>string.contains(#hedit.inuse,sub)</visible>
+      
+
+      <control>
+        <type>image</type>
+        <posX>#image.posx</posX>
+        <posY>#image.posy</posY>
+        <width>#image.width</width>
+        <height>#image.height</height>
+        <texture mask="basichome_button_mask.png">#(string.format('{0}.hover',#hedit.sub.use.1))</texture>
+        <animation effect="rotatey" start="48" end="48" center="960,1500" time="0" condition="true">conditional</animation>
+        <animation effect="fade" start="0" end="100" time="250" reversible="false" condition="string.contains(#hedit.sub.calc.nav,b0)">conditional</animation>
+        <animation effect="fade" start="0" end="100" time="250" reversible="false" condition="string.contains(#hedit.sub.calc.nav,b1)">conditional</animation>
+        <animation effect="rotatey" start="16" end="0" center="960,1500" time="250" acceleration="-0.6" reversible="false" condition="string.contains(#hedit.sub.calc.nav,b0)">conditional</animation>
+        <animation effect="rotatey" start="16" end="0" center="960,1500" time="250" acceleration="-0.6" reversible="false" condition="string.contains(#hedit.sub.calc.nav,b1)">conditional</animation>
+        <animation effect="rotatey" start="-16" end="0" center="960,1500" time="250" acceleration="-0.6" reversible="false" condition="string.contains(#hedit.sub.calc.nav,f0)">conditional</animation>
+        <animation effect="rotatey" start="-16" end="0" center="960,1500" time="250" acceleration="-0.6" reversible="false" condition="string.contains(#hedit.sub.calc.nav,f1)">conditional</animation>
+        <animation effect="rotatey" start="0" end="60" center="960,1500" time="250" acceleration="-0.6" reversible="false">windowclose</animation>
+      </control>
+      <control>
+        <type>fadelabel</type>
+        <posX>#label.posx</posX>
+        <posY>#label.posy</posY>
+        <width>#label.width</width>
+        <align>center</align>
+        <font>#label.font</font>
+        <wrapString>#scroll.wrap</wrapString>
+        <scrollStartDelaySec>#scroll.delay</scrollStartDelaySec>
+        <label>#(string.format('{0}.name',#hedit.sub.use.1))</label>
+        <animation effect="rotatey" start="48" end="48" center="960,1500" time="0" condition="true">conditional</animation>
+        <animation effect="fade" start="0" end="100" time="250" delay="50" reversible="false" condition="string.contains(#hedit.sub.calc.nav,b0)">conditional</animation>
+        <animation effect="fade" start="0" end="100" time="250" delay="50" reversible="false" condition="string.contains(#hedit.sub.calc.nav,b1)">conditional</animation>
+        <animation effect="rotatey" start="16" end="0" center="960,1500" time="250" acceleration="-0.6" reversible="false" condition="string.contains(#hedit.sub.calc.nav,b0)">conditional</animation>
+        <animation effect="rotatey" start="16" end="0" center="960,1500" time="250" acceleration="-0.6" reversible="false" condition="string.contains(#hedit.sub.calc.nav,b1)">conditional</animation>
+        <animation effect="rotatey" start="-16" end="0" center="960,1500" time="250" acceleration="-0.6" reversible="false" condition="string.contains(#hedit.sub.calc.nav,f0)">conditional</animation>
+        <animation effect="rotatey" start="-16" end="0" center="960,1500" time="250" acceleration="-0.6" reversible="false" condition="string.contains(#hedit.sub.calc.nav,f1)">conditional</animation>
+        <animation effect="rotatey" start="0" end="60" center="960,1500" time="250" acceleration="-0.6" reversible="false">windowclose</animation>
+      </control>
+
+      <control>
+        <type>image</type>
+        <posX>#image.posx</posX>
+        <posY>#image.posy</posY>
+        <width>#image.width</width>
+        <height>#image.height</height>
+        <texture mask="basichome_button_mask.png">#(string.format('{0}.hover',#hedit.sub.use.2))</texture>
+        <animation effect="rotatey" start="32" end="32" center="960,1500" time="0" condition="true">conditional</animation>
+        <animation effect="rotatey" start="16" end="0" center="960,1500" time="250" acceleration="-0.6" reversible="false" condition="string.contains(#hedit.sub.calc.nav,b0)">conditional</animation>
+        <animation effect="rotatey" start="16" end="0" center="960,1500" time="250" acceleration="-0.6" reversible="false" condition="string.contains(#hedit.sub.calc.nav,b1)">conditional</animation>
+        <animation effect="rotatey" start="-16" end="0" center="960,1500" time="250" acceleration="-0.6" reversible="false" condition="string.contains(#hedit.sub.calc.nav,f0)">conditional</animation>
+        <animation effect="rotatey" start="-16" end="0" center="960,1500" time="250" acceleration="-0.6" reversible="false" condition="string.contains(#hedit.sub.calc.nav,f1)">conditional</animation>
+        <animation effect="rotatey" start="0" end="60" center="960,1500" time="250" acceleration="-0.6" reversible="false">windowclose</animation>
+      </control>
+      <control>
+        <type>fadelabel</type>
+        <posX>#label.posx</posX>
+        <posY>#label.posy</posY>
+        <width>#label.width</width>
+        <align>center</align>
+        <font>#label.font</font>
+        <wrapString>#scroll.wrap</wrapString>
+        <scrollStartDelaySec>#scroll.delay</scrollStartDelaySec>
+        <label>#(string.format('{0}.name',#hedit.sub.use.2))</label>
+        <animation effect="rotatey" start="32" end="32" center="960,1500" time="0" condition="true">conditional</animation>
+        <animation effect="rotatey" start="16" end="0" center="960,1500" time="250" acceleration="-0.6" reversible="false" condition="string.contains(#hedit.sub.calc.nav,b0)">conditional</animation>
+        <animation effect="rotatey" start="16" end="0" center="960,1500" time="250" acceleration="-0.6" reversible="false" condition="string.contains(#hedit.sub.calc.nav,b1)">conditional</animation>
+        <animation effect="rotatey" start="-16" end="0" center="960,1500" time="250" acceleration="-0.6" reversible="false" condition="string.contains(#hedit.sub.calc.nav,f0)">conditional</animation>
+        <animation effect="rotatey" start="-16" end="0" center="960,1500" time="250" acceleration="-0.6" reversible="false" condition="string.contains(#hedit.sub.calc.nav,f1)">conditional</animation>
+        <animation effect="rotatey" start="0" end="60" center="960,1500" time="250" acceleration="-0.6" reversible="false">windowclose</animation>
+      </control>
+
+      <control>
+        <type>image</type>
+        <posX>#image.posx</posX>
+        <posY>#image.posy</posY>
+        <width>#image.width</width>
+        <height>#image.height</height>
+        <texture mask="basichome_button_mask.png">#(string.format('{0}.hover',#hedit.sub.use.3))</texture>
+        <animation effect="rotatey" start="16" end="16" center="960,1500" time="0" condition="true">conditional</animation>
+        <animation effect="rotatey" start="16" end="0" center="960,1500" time="250" acceleration="-0.6" reversible="false" condition="string.contains(#hedit.sub.calc.nav,b0)">conditional</animation>
+        <animation effect="rotatey" start="16" end="0" center="960,1500" time="250" acceleration="-0.6" reversible="false" condition="string.contains(#hedit.sub.calc.nav,b1)">conditional</animation>
+        <animation effect="rotatey" start="-16" end="0" center="960,1500" time="250" acceleration="-0.6" reversible="false" condition="string.contains(#hedit.sub.calc.nav,f0)">conditional</animation>
+        <animation effect="rotatey" start="-16" end="0" center="960,1500" time="250" acceleration="-0.6" reversible="false" condition="string.contains(#hedit.sub.calc.nav,f1)">conditional</animation>
+        <animation effect="rotatey" start="0" end="60" center="960,1500" time="250" acceleration="-0.6" reversible="false">windowclose</animation>
+      </control>
+      <control>
+        <type>fadelabel</type>
+        <posX>#label.posx</posX>
+        <posY>#label.posy</posY>
+        <width>#label.width</width>
+        <align>center</align>
+        <font>#label.font</font>
+        <wrapString>#scroll.wrap</wrapString>
+        <scrollStartDelaySec>#scroll.delay</scrollStartDelaySec>
+        <label>#(string.format('{0}.name',#hedit.sub.use.3))</label>
+        <animation effect="rotatey" start="16" end="16" center="960,1500" time="0" condition="true">conditional</animation>
+        <animation effect="rotatey" start="16" end="0" center="960,1500" time="250" acceleration="-0.6" reversible="false" condition="string.contains(#hedit.sub.calc.nav,b0)">conditional</animation>
+        <animation effect="rotatey" start="16" end="0" center="960,1500" time="250" acceleration="-0.6" reversible="false" condition="string.contains(#hedit.sub.calc.nav,b1)">conditional</animation>
+        <animation effect="rotatey" start="-16" end="0" center="960,1500" time="250" acceleration="-0.6" reversible="false" condition="string.contains(#hedit.sub.calc.nav,f0)">conditional</animation>
+        <animation effect="rotatey" start="-16" end="0" center="960,1500" time="250" acceleration="-0.6" reversible="false" condition="string.contains(#hedit.sub.calc.nav,f1)">conditional</animation>
+        <animation effect="rotatey" start="0" end="60" center="960,1500" time="250" acceleration="-0.6" reversible="false">windowclose</animation>
+      </control>
+
+      <control>
+        <type>image</type>
+        <posX>#image.posx</posX>
+        <posY>#image.posy</posY>
+        <width>#image.width</width>
+        <height>#image.height</height>
+        <texture mask="basichome_button_mask.png">#(string.format('{0}.hover',#hedit.sub.use.4))</texture>
+        <animation effect="rotatey" start="16" end="0" center="960,1500" time="250" acceleration="-0.6" reversible="false" condition="string.contains(#hedit.sub.calc.nav,b0)">conditional</animation>
+        <animation effect="rotatey" start="16" end="0" center="960,1500" time="250" acceleration="-0.6" reversible="false" condition="string.contains(#hedit.sub.calc.nav,b1)">conditional</animation>
+        <animation effect="rotatey" start="-16" end="0" center="960,1500" time="250" acceleration="-0.6" reversible="false" condition="string.contains(#hedit.sub.calc.nav,f0)">conditional</animation>
+        <animation effect="rotatey" start="-16" end="0" center="960,1500" time="250" acceleration="-0.6" reversible="false" condition="string.contains(#hedit.sub.calc.nav,f1)">conditional</animation>
+        <animation effect="zoom" start="100,100" end="200,200" center="960,625" time="250" acceleration="-0.6" reversible="false">windowclose</animation>
+        <animation effect="rotatex" start="0" end="20" center="360,-100" time="150" acceleration="-1" reversible="false">windowclose</animation>
+      </control>
+      <control>
+        <type>fadelabel</type>
+        <posX>#label.posx</posX>
+        <posY>#label.posy</posY>
+        <width>#label.width</width>
+        <align>center</align>
+        <font>#label.font</font>
+        <wrapString>#scroll.wrap</wrapString>
+        <scrollStartDelaySec>#scroll.delay</scrollStartDelaySec>
+        <label>#(string.format('{0}.name',#hedit.sub.use.4))</label>
+        <animation effect="rotatey" start="16" end="0" center="960,1500" time="250" acceleration="-0.6" reversible="false" condition="string.contains(#hedit.sub.calc.nav,b0)">conditional</animation>
+        <animation effect="rotatey" start="16" end="0" center="960,1500" time="250" acceleration="-0.6" reversible="false" condition="string.contains(#hedit.sub.calc.nav,b1)">conditional</animation>
+        <animation effect="rotatey" start="-16" end="0" center="960,1500" time="250" acceleration="-0.6" reversible="false" condition="string.contains(#hedit.sub.calc.nav,f0)">conditional</animation>
+        <animation effect="rotatey" start="-16" end="0" center="960,1500" time="250" acceleration="-0.6" reversible="false" condition="string.contains(#hedit.sub.calc.nav,f1)">conditional</animation>
+        <animation effect="zoom" start="100,100" end="200,200" center="960,615" time="250" acceleration="-0.6" reversible="false">windowclose</animation>
+        <animation effect="rotatex" start="0" end="20" center="360,-100" time="150" acceleration="-1" reversible="false">windowclose</animation>
+      </control>
+
+      <control>
+        <type>image</type>
+        <posX>#image.posx</posX>
+        <posY>#image.posy</posY>
+        <width>#image.width</width>
+        <height>#image.height</height>
+        <texture mask="basichome_button_mask.png">#(string.format('{0}.hover',#hedit.sub.use.5))</texture>
+        <animation effect="rotatey" start="-16" end="-16" center="960,1500" time="0" condition="true">conditional</animation>
+        <animation effect="rotatey" start="16" end="0" center="960,1500" time="250" acceleration="-0.6" reversible="false" condition="string.contains(#hedit.sub.calc.nav,b0)">conditional</animation>
+        <animation effect="rotatey" start="16" end="0" center="960,1500" time="250" acceleration="-0.6" reversible="false" condition="string.contains(#hedit.sub.calc.nav,b1)">conditional</animation>
+        <animation effect="rotatey" start="-16" end="0" center="960,1500" time="250" acceleration="-0.6" reversible="false" condition="string.contains(#hedit.sub.calc.nav,f0)">conditional</animation>
+        <animation effect="rotatey" start="-16" end="0" center="960,1500" time="250" acceleration="-0.6" reversible="false" condition="string.contains(#hedit.sub.calc.nav,f1)">conditional</animation>
+        <animation effect="rotatey" start="0" end="-60" center="960,1500" time="250" acceleration="-0.6" reversible="false">windowclose</animation>
+      </control>
+      <control>
+        <type>fadelabel</type>
+        <posX>#label.posx</posX>
+        <posY>#label.posy</posY>
+        <width>#label.width</width>
+        <align>center</align>
+        <font>#label.font</font>
+        <wrapString>#scroll.wrap</wrapString>
+        <scrollStartDelaySec>#scroll.delay</scrollStartDelaySec>
+        <label>#(string.format('{0}.name',#hedit.sub.use.5))</label>
+        <animation effect="rotatey" start="-16" end="-16" center="960,1500" time="0" condition="true">conditional</animation>
+        <animation effect="rotatey" start="16" end="0" center="960,1500" time="250" acceleration="-0.6" reversible="false" condition="string.contains(#hedit.sub.calc.nav,b0)">conditional</animation>
+        <animation effect="rotatey" start="16" end="0" center="960,1500" time="250" acceleration="-0.6" reversible="false" condition="string.contains(#hedit.sub.calc.nav,b1)">conditional</animation>
+        <animation effect="rotatey" start="-16" end="0" center="960,1500" time="250" acceleration="-0.6" reversible="false" condition="string.contains(#hedit.sub.calc.nav,f0)">conditional</animation>
+        <animation effect="rotatey" start="-16" end="0" center="960,1500" time="250" acceleration="-0.6" reversible="false" condition="string.contains(#hedit.sub.calc.nav,f1)">conditional</animation>
+        <animation effect="rotatey" start="0" end="-60" center="960,1500" time="250" acceleration="-0.6" reversible="false">windowclose</animation>
+      </control>
+
+      <control>
+        <type>image</type>
+        <posX>#image.posx</posX>
+        <posY>#image.posy</posY>
+        <width>#image.width</width>
+        <height>#image.height</height>
+        <texture mask="basichome_button_mask.png">#(string.format('{0}.hover',#hedit.sub.use.6))</texture>
+        <animation effect="rotatey" start="-32" end="-32" center="960,1500" time="0" condition="true">conditional</animation>
+        <animation effect="rotatey" start="16" end="0" center="960,1500" time="250" acceleration="-0.6" reversible="false" condition="string.contains(#hedit.sub.calc.nav,b0)">conditional</animation>
+        <animation effect="rotatey" start="16" end="0" center="960,1500" time="250" acceleration="-0.6" reversible="false" condition="string.contains(#hedit.sub.calc.nav,b1)">conditional</animation>
+        <animation effect="rotatey" start="-16" end="0" center="960,1500" time="250" acceleration="-0.6" reversible="false" condition="string.contains(#hedit.sub.calc.nav,f0)">conditional</animation>
+        <animation effect="rotatey" start="-16" end="0" center="960,1500" time="250" acceleration="-0.6" reversible="false" condition="string.contains(#hedit.sub.calc.nav,f1)">conditional</animation>
+        <animation effect="rotatey" start="0" end="-60" center="960,1500" time="250" acceleration="-0.6" reversible="false">windowclose</animation>
+      </control>
+      <control>
+        <type>fadelabel</type>
+        <posX>#label.posx</posX>
+        <posY>#label.posy</posY>
+        <width>#label.width</width>
+        <align>center</align>
+        <font>#label.font</font>
+        <wrapString>#scroll.wrap</wrapString>
+        <scrollStartDelaySec>#scroll.delay</scrollStartDelaySec>
+        <label>#(string.format('{0}.name',#hedit.sub.use.6))</label>
+        <animation effect="rotatey" start="-32" end="-32" center="960,1500" time="0" condition="true">conditional</animation>
+        <animation effect="rotatey" start="16" end="0" center="960,1500" time="250" acceleration="-0.6" reversible="false" condition="string.contains(#hedit.sub.calc.nav,b0)">conditional</animation>
+        <animation effect="rotatey" start="16" end="0" center="960,1500" time="250" acceleration="-0.6" reversible="false" condition="string.contains(#hedit.sub.calc.nav,b1)">conditional</animation>
+        <animation effect="rotatey" start="-16" end="0" center="960,1500" time="250" acceleration="-0.6" reversible="false" condition="string.contains(#hedit.sub.calc.nav,f0)">conditional</animation>
+        <animation effect="rotatey" start="-16" end="0" center="960,1500" time="250" acceleration="-0.6" reversible="false" condition="string.contains(#hedit.sub.calc.nav,f1)">conditional</animation>
+        <animation effect="rotatey" start="0" end="-60" center="960,1500" time="250" acceleration="-0.6" reversible="false">windowclose</animation>
+      </control>
+
+      <control>
+        <type>image</type>
+        <posX>#image.posx</posX>
+        <posY>#image.posy</posY>
+        <width>#image.width</width>
+        <height>#image.height</height>
+        <hyperlink>#(string.format('{0}.hyperlink',#hedit.sub.use.7))</hyperlink>
+        <texture mask="basichome_button_mask.png">#(string.format('{0}.hover',#hedit.sub.use.7))</texture>
+        <animation effect="rotatey" start="-48" end="-48" center="960,1500" time="0" condition="true">conditional</animation>
+        <animation effect="fade" start="0" end="100" time="250" delay="50" reversible="false" condition="string.contains(#hedit.sub.calc.nav,f0)">conditional</animation>
+        <animation effect="fade" start="0" end="100" time="250" delay="50" reversible="false" condition="string.contains(#hedit.sub.calc.nav,f1)">conditional</animation>
+        <animation effect="rotatey" start="16" end="0" center="960,1500" time="250" acceleration="-0.6" reversible="false" condition="string.contains(#hedit.sub.calc.nav,b0)">conditional</animation>
+        <animation effect="rotatey" start="16" end="0" center="960,1500" time="250" acceleration="-0.6" reversible="false" condition="string.contains(#hedit.sub.calc.nav,b1)">conditional</animation>
+        <animation effect="rotatey" start="-16" end="0" center="960,1500" time="250" acceleration="-0.6" reversible="false" condition="string.contains(#hedit.sub.calc.nav,f0)">conditional</animation>
+        <animation effect="rotatey" start="-16" end="0" center="960,1500" time="250" acceleration="-0.6" reversible="false" condition="string.contains(#hedit.sub.calc.nav,f1)">conditional</animation>
+        <animation effect="rotatey" start="0" end="-60" center="960,1500" time="250" acceleration="-0.6" reversible="false">windowclose</animation>
+      </control>
+      <control>
+        <type>fadelabel</type>
+        <posX>#label.posx</posX>
+        <posY>#label.posy</posY>
+        <width>#label.width</width>
+        <font>#label.font</font>
+        <align>center</align>
+        <wrapString>#scroll.wrap</wrapString>
+        <scrollStartDelaySec>#scroll.delay</scrollStartDelaySec>
+        <label>#(string.format('{0}.name',#hedit.sub.use.7))</label>
+        <animation effect="rotatey" start="-48" end="-48" center="960,1500" time="0" condition="true">conditional</animation>
+        <animation effect="fade" start="0" end="100" time="250" delay="50" reversible="false" condition="string.contains(#hedit.sub.calc.nav,f0)">conditional</animation>
+        <animation effect="fade" start="0" end="100" time="250" delay="50" reversible="false" condition="string.contains(#hedit.sub.calc.nav,f1)">conditional</animation>
+        <animation effect="rotatey" start="16" end="0" center="960,1500" time="250" acceleration="-0.6" reversible="false" condition="string.contains(#hedit.sub.calc.nav,b0)">conditional</animation>
+        <animation effect="rotatey" start="16" end="0" center="960,1500" time="250" acceleration="-0.6" reversible="false" condition="string.contains(#hedit.sub.calc.nav,b1)">conditional</animation>
+        <animation effect="rotatey" start="-16" end="0" center="960,1500" time="250" acceleration="-0.6" reversible="false" condition="string.contains(#hedit.sub.calc.nav,f0)">conditional</animation>
+        <animation effect="rotatey" start="-16" end="0" center="960,1500" time="250" acceleration="-0.6" reversible="false" condition="string.contains(#hedit.sub.calc.nav,f1)">conditional</animation>
+        <animation effect="rotatey" start="0" end="-60" center="960,1500" time="250" acceleration="-0.6" reversible="false">windowclose</animation>
+      </control>
+
+    </control>
+
+<!-- Focus image and label overlay -->
+
+    <control>
+      <type>image</type>
+      <posX>#image.posx</posX>
+        <posY>#image.posy</posY>
+      <width>#image.width</width>
+      <height>#image.height</height>
+      <texture>basichome_button_focus.png</texture>
+      <animation effect="fade" start="0" end="100" time="250" delay="800">WindowOpen</animation>
+      <animation effect="fade" time="0">WindowClose</animation>
+      <animation effect="fade" time="0">hidden</animation>
+      <animation effect="fade" start="0" end="100" time="250" delay="150" reversible="false" condition="string.contains(#hedit.sub.calc.nav,0)">conditional</animation>
+      <animation effect="fade" start="0" end="100" time="250" delay="150" reversible="false" condition="string.contains(#hedit.sub.calc.nav,1)">conditional</animation>
+      <animation effect="fade" start="0" end="100" time="250" delay="400" reversible="false">visible</animation>
+      <visible>string.contains(#hedit.inuse,sub)</visible>
+    </control>
+    
+    <control>
+      <type>image</type>
+      <posX>#image.posx</posX>
+        <posY>#image.posy</posY>
+      <width>#image.width</width>
+      <height>#image.height</height>
+      <texture>basichome_label_overlay.png</texture>
+      <animation effect="fade" start="0" end="100" time="250" delay="800">WindowOpen</animation>
+      <animation effect="fade" time="0">WindowClose</animation>
+      <animation effect="fade" time="0">hidden</animation>
+      <animation effect="fade" start="0" end="100" time="250" delay="150" reversible="false" condition="string.contains(#hedit.sub.calc.nav,0)">conditional</animation>
+      <animation effect="fade" start="0" end="100" time="250" delay="150" reversible="false" condition="string.contains(#hedit.sub.calc.nav,1)">conditional</animation>
+      <animation effect="fade" start="0" end="100" time="250" delay="400" reversible="false">visible</animation>
+      <visible>string.contains(#hedit.inuse,sub)</visible>
+    </control>
+    
+    <!-- Indicator for Latest Media++++++++++-->
+
+    <control>
+      <description>Indicator</description>
+      <type>image</type>
+      <posX>930</posX>
+      <posY>360</posY>
+      <width>70</width>
+      <height>70</height>
+      <texture>play.png</texture>
+      <animation effect="fade" start="0" end="100" time="800" delay="500" reversible="false" condition="string.contains(#hedit.sub.calc.nav,0)">conditional</animation>
+      <animation effect="fade" start="0" end="100" time="800" delay="500" reversible="false" condition="string.contains(#hedit.sub.calc.nav,1)">conditional</animation>
+      <animation effect="fade" start="0" end="100" time="800" delay="500" reversible="false">visible</animation>
+      <animation effect="fade" time="0" reversible="false">hidden</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="0">WindowClose</animation>
+      <visible>string.contains(#hedit.inuse,sub)+[string.contains(#highlightedbutton,TVSERIES)|string.contains(#highlightedbutton,VIDEO1)|string.contains(#highlightedbutton,VIDEO2)|string.contains(#highlightedbutton,MOVPIC)|string.contains(#highlightedbutton,TV3)|string.contains(#highlightedbutton,AUDIO1)|string.contains(#highlightedbutton,VIDEO4)|string.contains(#highlightedbutton,MUSIC)|string.contains(#highlightedbutton,TRAKT)|string.contains(#highlightedbutton,PICTURE)|string.contains(#highlightedbutton,AUDIO6)]</visible>
+    </control>
+
+  </controls>
+</window>

@@ -517,6 +517,18 @@ namespace MediaPortal.Video.Database
 
             // Save movie info
             VideoDatabase.SetMovieInfoById(_movieDetails.ID, ref _movieDetails, true);
+            
+            // Add custom user groups
+            if (!string.IsNullOrEmpty(_movieDetails.SingleUserGroup))
+            {
+              string[] PipesArray = new string[3] { ",", "/", "|" };
+              string[] sGroups = _movieDetails.SingleUserGroup.Split(PipesArray, StringSplitOptions.RemoveEmptyEntries);
+              foreach (string sGroup in sGroups)
+              {
+                VideoDatabase.AddUserGroupToMovie(_movieDetails.ID, VideoDatabase.AddUserGroup(sGroup.Trim()));
+              }
+              _movieDetails.SingleUserGroup = string.Empty;
+            }
 
             // Add groups with rules
             ArrayList groups = new ArrayList();

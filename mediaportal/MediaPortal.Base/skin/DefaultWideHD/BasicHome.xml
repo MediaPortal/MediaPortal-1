@@ -361,9 +361,9 @@
       <midheight>16</midheight>
       <midoffsetX>0</midoffsetX>
       <midoffsetY>0</midoffsetY>
-      <lefttexture>overlay_progress_left.png</lefttexture>
-      <midtexture>overlay_progress_mid.png</midtexture>
-      <righttexture>overlay_progress_right.png</righttexture>
+      <lefttexture>osd_progress_left.png</lefttexture>
+      <midtexture>osd_progress_mid.png</midtexture>
+      <righttexture>osd_progress_right.png</righttexture>
       <visible>player.hasvideo+!string.contains(#Play.Current.File,tsbuffer)</visible>
     </control>
     <control>

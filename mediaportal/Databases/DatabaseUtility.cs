@@ -208,7 +208,29 @@ namespace MediaPortal.Database
       int returnValue = -1;
       try
       {
+        //Remove decimal from string
+        try
+        {
+          if (result.Length > 1)
+          {
+            int slashPos = result.IndexOf(".", StringComparison.Ordinal);
+            if (slashPos > 0)
+            {
+              result = result.Substring(0, result.IndexOf('.', 0));
+            }
+          }
+        }
+        catch (Exception)
+        {
+          // Can't convert or remove decimal from the string
+        }
+
+        int numValue;
+        bool parsed = Int32.TryParse(result, out numValue);
+        if (parsed)
+        {
         returnValue = Int32.Parse(result);
+      }
       }
       catch (Exception)
       {
@@ -347,7 +369,7 @@ namespace MediaPortal.Database
         //strLine = strLine.Replace("''","'");
         return strLine;
       }
-      int pos = strColum.IndexOf(".");
+      int pos = strColum.IndexOf(".", StringComparison.Ordinal);
       if (pos < 0)
       {
         return string.Empty;

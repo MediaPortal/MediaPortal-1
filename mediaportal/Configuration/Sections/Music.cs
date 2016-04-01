@@ -53,17 +53,6 @@ namespace MediaPortal.Configuration.Sections
     private const string JumpToOption5 = "Fullscreen [always] (internal music player only)";
     private const string JumpToOption6 = "Fullscreen [if multiple items] (internal music player only)";
 
-    private string[] JumpToValues = new string[]
-                                      {
-                                        JumpToValue0,
-                                        JumpToValue1,
-                                        JumpToValue2,
-                                        JumpToValue3,
-                                        JumpToValue4,
-                                        JumpToValue5,
-                                        JumpToValue6,
-                                      };
-
     private string[] JumpToOptions = new string[]
                                        {
                                          JumpToOption0,
@@ -75,13 +64,6 @@ namespace MediaPortal.Configuration.Sections
                                          JumpToOption6,
                                        };
 
-    private string[] autoPlayOptions = new string[]
-                                         {
-                                           "Autoplay, never ask",
-                                           "Don't autoplay, never ask",
-                                           "Ask every time a CD is inserted"
-                                         };
-
     private string[] PlayerOptions = new string[]
                                        {
                                          "BASS engine",
@@ -89,21 +71,6 @@ namespace MediaPortal.Configuration.Sections
                                          "WASAPI",
                                          "Internal dshow player",
                                        };
-
-    private const string LyricsValue0 = "never";
-    private const string LyricsValue1 = "asOverlay";
-    private const string LyricsValue2 = "asVisualCue";
-
-    private const string LyricsOption0 = "Never";
-    private const string LyricsOption1 = "Display as an overlay";
-    private const string LyricsOption2 = "Show visual cue that lyrics are available";
-
-    private string[] ShowLyricsOptions = new string[]
-                                           {
-                                             LyricsOption0,
-                                             LyricsOption1,
-                                             LyricsOption2
-                                           };
 
     private string[] MonoUpmix = new string[] {"None", "Stereo", "QuadraphonicPhonic", "5.1 Surround", "7.1 Surround"};
     private string[] StereoUpmix = new string[] {"None", "QuadraphonicPhonic", "5.1 Surround", "7.1 Surround"};

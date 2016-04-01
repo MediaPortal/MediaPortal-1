@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <id>87605</id>
+  <defaultcontrol>50</defaultcontrol>
+  <allowoverlay>yes</allowoverlay>
+  <define>#Fanart.1:#Trakt.AnticipatedMovies.Fanart.1</define>
+  <define>#Fanart.2:#Trakt.AnticipatedMovies.Fanart.2</define>
+  <!-- overide year property with something unique to anticipated -->
+  <define>#Trakt.Translation.Genre.Label:#Trakt.Translation.Lists.Label</define>
+  <define>#Trakt.Movie.Genres:#Trakt.Movie.ListCount.Extra</define>
+  <controls>
+    <control>
+      <description>BG</description>
+      <type>image</type>
+      <id>1</id>
+      <texture>BH Trakt.jpg</texture>
+      <width>1920</width>
+      <height>1080</height>
+      <colordiffuse>90ffffff</colordiffuse>
+    </control>
+    <import>Trakt.Common.Fanart.xml</import>
+    <import>common.window.xml</import>
+    <import>common.time.xml</import>
+    <control>
+      <description>General Overlay</description>
+      <id>0</id>
+      <type>image</type>
+      <posX>0</posX>
+      <posY>45</posY>
+      <width>1920</width>
+      <height>1080</height>
+      <texture>general_overlay.png</texture>
+    </control>
+    <control>
+      <description>Current View</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>45</posX>
+      <posY>15</posY>
+      <width>1299</width>
+      <font>Label</font>
+      <textcolor>ffffd700</textcolor>
+      <label>#Trakt.Translation.AnticipatedMovies.Label</label>
+      <align>left</align>
+    </control>
+    <import>Trakt.Common.Facade.xml</import>
+    <!-- Hidden Menu -->
+    <control>
+      <type>actiongroup</type>
+      <description>action menu</description>
+      <defaultcontrol>2</defaultcontrol>
+      <onexit>50</onexit>
+      <buttonX>0</buttonX>
+      <buttonY>-60</buttonY>
+      <buttonwidth>157</buttonwidth>
+      <buttonheight>1080</buttonheight>
+      <textureFocus>-</textureFocus>
+      <textureNoFocus>Action_nofocus.png</textureNoFocus>
+      <width>411</width>
+      <height>1350</height>
+      <dimColor>00ffffff</dimColor>
+      <control>
+        <type>image</type>
+        <id>0</id>
+        <width>1920</width>
+        <height>1080</height>
+        <texture>white.png</texture>
+        <colordiffuse>50005eef</colordiffuse>
+      </control>
+      <control>
+        <type>image</type>
+        <posX>37</posX>
+        <posY>117</posY>
+        <width>559</width>
+        <height>886</height>
+        <texture>Backslide.png</texture>
+        <colorDiffuse>ffffffff</colorDiffuse>
+        <visible>!Control.HasFocus(50)</visible>
+        <animation effect="slide" time="70" start="-300,0" reversible="false">visible</animation>
+        <animation effect="slide" time="70" end="-300,0" reversible="false">hidden</animation>
+      </control>
+      <control>
+        <description>group element</description>
+        <type>group</type>
+        <animation effect="slide" time="70" start="-300,0" reversible="false">visible</animation>
+        <animation effect="slide" time="70" end="-300,0" reversible="false">hidden</animation>
+        <visible>!Control.HasFocus(50)</visible>
+        <posX>73</posX>
+        <posY>181</posY>
+        <layout>StackLayout</layout>
+        <visible>!Control.HasFocus(50)</visible>
+        <control>
+          <description>button group</description>
+          <type>group</type>
+          <posX>90</posX>
+          <posY>181</posY>
+          <width>439</width>
+          <layout>StackLayout</layout>
+          <visible>!Control.HasFocus(50)</visible>
+          <animation effect="slide" time="70" start="-300,0" reversible="false">visible</animation>
+          <animation effect="slide" time="70" end="-300,0" reversible="false">hidden</animation>
+          <animation effect="slide" time="70" end="-300,0" reversible="false">hidden</animation>
+          <control>
+            <description>Change Layout</description>
+            <type>button</type>
+            <id>2</id>
+            <label>Change Layout</label>
+            <onleft>50</onleft>
+            <onright>50</onright>
+            <onup>21</onup>
+          </control>
+          <control>
+            <description>Sort</description>
+            <type>sortbutton</type>
+            <id>8</id>
+            <label>-</label>
+            <onleft>50</onleft>
+            <onright>50</onright>
+            <onup>2</onup>
+            <ondown>9</ondown>
+          </control>
+          <control>
+            <description>Hide Watchlisted</description>
+            <type>checkbutton</type>
+            <id>10</id>
+            <label>#Trakt.Translation.HideWatchlisted.Label</label>
+            <onup>8</onup>
+            <ondown>2</ondown>
+            <onleft>50</onleft>
+            <onright>50</onright>
+          </control>
+        </control>
+      </control>
+    </control>
+    <import>Trakt.Common.Properties.Movies.xml</import>
+  </controls>
+</window>

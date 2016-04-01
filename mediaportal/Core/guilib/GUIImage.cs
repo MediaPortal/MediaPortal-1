@@ -125,8 +125,8 @@ namespace MediaPortal.GUI.Library
     private string _cachedTextureFileName = "";
 
     //using for debugging leaks;
-    private string _debugCachedTextureFileName = "";
-    private string _debugCaller = "";
+    //private string _debugCachedTextureFileName = "";
+    //private string _debugCaller = "";
     //private bool _debugDisposed = false;
     //private bool _debugAllocResourcesCalled = false;
     private Guid _debugGuid = Guid.NewGuid();
@@ -328,7 +328,7 @@ namespace MediaPortal.GUI.Library
 
       m_iRenderWidth = _width;
       m_iRenderHeight = _height;
-      if (_textureFileNameTag != null && _textureFileNameTag.IndexOf("#") >= 0)
+      if (_textureFileNameTag != null && _textureFileNameTag.IndexOf("#", StringComparison.Ordinal) >= 0)
       {
         _containsProperty = true;
       }

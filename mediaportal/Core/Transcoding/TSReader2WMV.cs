@@ -20,7 +20,6 @@
 
 using System;
 using System.IO;
-using System.Text;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using DirectShowLib;
@@ -60,9 +59,6 @@ namespace MediaPortal.Core.Transcoding
     #region Guids
 
     private Guid AVC1 = new Guid("31435641-0000-0010-8000-00AA00389B71");
-
-    private Guid IID_IWMWriterAdvanced2 = new Guid(0x962dc1ec, 0xc046, 0x4db8, 0x9c, 0xc7, 0x26, 0xce, 0xae, 0x50, 0x08,
-                                                   0x17);
 
     #endregion
 
@@ -652,126 +648,6 @@ namespace MediaPortal.Core.Transcoding
         profileManager = null;
       }
       return true;
-    }
-
-    private void SetCutomProfile(int vidbitrate, int audbitrate, int vidheight, int vidwidth, double fps)
-    {
-      //seperate method atm braindump for adjusting an existing profile (prx file)
-      //method call is not enabled yet
-      IWMProfileManager profileManager = null;
-      IWMProfileManager2 profileManager2 = null;
-      IWMProfile profile = null;
-      IWMStreamConfig streamConfig;
-      //IWMInputMediaProps inputProps = null;
-      IWMProfileManagerLanguage profileManagerLanguage = null;
-      WMVersion wmversion = WMVersion.V8_0;
-      int nbrProfiles = 0;
-      short langID;
-      StringBuilder profileName = new StringBuilder(MAXLENPROFNAME);
-      StringBuilder profileDescription = new StringBuilder(MAXLENPROFDESC);
-      int profileNameLen = MAXLENPROFNAME;
-      int profileDescLen = MAXLENPROFDESC;
-      profileName.Length = 0;
-      profileDescription.Length = 0;
-      double videoFps = fps;
-      long singleFramePeriod = (long)((10000000L / fps));
-      //Guid guidInputType;
-      //int dwInputCount = 0;
-      int hr;
-      int videoBitrate = vidbitrate;
-      int audioBitrate = audbitrate;
-      int videoHeight = vidheight;
-      int videoWidth = vidwidth;
-      double videofps = fps;
-      int streamCount = 0;
-      IWMMediaProps streamMediaProps = null;
-      IntPtr mediaTypeBufferPtr = IntPtr.Zero;
-      uint mediaTypeBufferSize = 0;
-      Guid streamType = Guid.Empty;
-      WmMediaType videoMediaType = new WmMediaType();
-      //Set WMVIDEOHEADER
-      WMVIDEOINFOHEADER videoInfoHeader = new WMVIDEOINFOHEADER();
-      //Setup the profile manager
-      hr = WMLib.WMCreateProfileManager(out profileManager);
-      profileManager2 = (IWMProfileManager2)profileManager;
-      //Set profile version - possibly not needed in this case.
-      profileManager2.SetSystemProfileVersion(WMVersion.V8_0);
-      //get the profile to modify
-      string strprofileType = Config.GetFile(Config.Dir.Base, @"Profiles\MPCustom.prx");
-      //read the profile contents
-      String profileContents = "";
-      using (StreamReader prx = new StreamReader(strprofileType))
-      {
-        profileContents = prx.ReadToEnd();
-      }
-
-      profileManager2 = profileManager as IWMProfileManager2;
-      profileManagerLanguage = profileManager as IWMProfileManagerLanguage;
-      hr = profileManager2.GetSystemProfileVersion(out wmversion);
-      Log.Info("TSReader2WMV: WM version=" + wmversion.ToString());
-      hr = profileManagerLanguage.GetUserLanguageID(out langID);
-      Log.Info("TSReader2WMV: WM language ID=" + langID.ToString());
-      hr = profileManager2.SetSystemProfileVersion(DefaultWMversion);
-      hr = profileManager2.GetSystemProfileCount(out nbrProfiles);
-      Log.Info("TSReader2WMV: ProfileCount=" + nbrProfiles.ToString());
-      //load the profile contents
-      hr = profileManager.LoadProfileByData(profileContents, out profile);
-      //get the profile name
-      hr = profile.GetName(profileName, ref profileNameLen);
-      Log.Info("TSReader2WMV: profile name {0}", profileName.ToString());
-      //get the profile description
-      hr = profile.GetDescription(profileDescription, ref profileDescLen);
-      Log.Info("TSReader2WMV: profile description {0}", profileDescription.ToString());
-      //get the stream count
-      hr = profile.GetStreamCount(out streamCount);
-      for (int i = 0; i < streamCount; i++)
-      {
-        profile.GetStream(i, out streamConfig);
-        streamMediaProps = (IWMMediaProps)streamConfig;
-        streamConfig.GetStreamType(out streamType);
-        if (streamType == MediaType.Video)
-        {
-          //adjust the video details based on the user input values.
-          streamConfig.SetBitrate(videoBitrate);
-          streamConfig.SetBufferWindow(-1); //3 or 5 seconds ???
-          streamMediaProps.GetMediaType(IntPtr.Zero, ref mediaTypeBufferSize);
-          mediaTypeBufferPtr = Marshal.AllocHGlobal((int)mediaTypeBufferSize);
-          streamMediaProps.GetMediaType(mediaTypeBufferPtr, ref mediaTypeBufferSize);
-          Marshal.PtrToStructure(mediaTypeBufferPtr, videoMediaType);
-          Marshal.FreeHGlobal(mediaTypeBufferPtr);
-          Marshal.PtrToStructure(videoMediaType.pbFormat, videoInfoHeader);
-          videoInfoHeader.TargetRect.right = 0; // set to zero to take source size
-          videoInfoHeader.TargetRect.bottom = 0; // set to zero to take source size
-          videoInfoHeader.BmiHeader.Width = videoWidth;
-          videoInfoHeader.BmiHeader.Height = videoHeight;
-          videoInfoHeader.BitRate = videoBitrate;
-          videoInfoHeader.AvgTimePerFrame = singleFramePeriod; //Need to check how this is to be calculated
-          IntPtr vidInfoPtr = Marshal.AllocHGlobal(Marshal.SizeOf(typeof (WMVIDEOINFOHEADER)));
-          Marshal.StructureToPtr(videoInfoHeader, vidInfoPtr, false);
-          videoMediaType.pbFormat = vidInfoPtr;
-          hr = streamMediaProps.SetMediaType(videoMediaType);
-          Marshal.FreeHGlobal(vidInfoPtr);
-        }
-        if (streamType == MediaType.Audio)
-        {
-          //adjust the audio details based on the user input
-          //audio is determined from bitrate selection and thus effects audio profile.
-          hr = streamConfig.SetBitrate(audioBitrate);
-          hr = streamConfig.SetBufferWindow(-1); //3 or 5 seconds ???
-          //TODO: set the WaveformatEx profile info etc
-        }
-        //recofigures the stream ready for saving
-        hr = profile.ReconfigStream(streamConfig);
-      }
-      //save the profile
-      //You should make two calls to SaveProfile.
-      //On the first call, pass NULL as pwszProfile.
-      int profileLength = 0;
-      hr = profileManager2.SaveProfile(profile, null, ref profileLength);
-      //On return, the value of pdwLength is set to the length required to hold the profile in string form.
-      //TODO: set memory buffer to profileLength
-      //Then you can allocate the required amount of memory for the buffer and pass a pointer to it as pwszProfile on the second call.
-      hr = profileManager2.SaveProfile(profile, profileContents, ref profileLength);
     }
   }
 }

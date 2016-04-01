@@ -599,7 +599,7 @@ namespace MediaPortal.Video.Database
       GUIPropertyManager.SetProperty("#credits", WritingCredits.Replace(" /", ","));
       GUIPropertyManager.SetProperty("#thumb", strThumb);
       GUIPropertyManager.SetProperty("#title", Title);
-      GUIPropertyManager.SetProperty("#year", Year.ToString());
+      GUIPropertyManager.SetProperty("#year", ((Year <= 1900) ? string.Empty : Year.ToString()));
       // MPAA rating
       MPARating = Util.Utils.MakeFileName(MPARating);
       GUIPropertyManager.SetProperty("#mpaarating", MPARating);
@@ -698,12 +698,19 @@ namespace MediaPortal.Video.Database
         RunTime = movie.RunTime;
       }
 
-      GUIPropertyManager.SetProperty("#runtime", RunTime + 
-                              " " +
-                              GUILocalizeStrings.Get(2998) +
-                              " (" + 
-                              Util.Utils.SecondsToHMString(RunTime * 60) + 
-                              ")");
+      if (RunTime <=0)
+      {
+        GUIPropertyManager.SetProperty("#runtime", string.Empty);
+      }
+      else
+      {
+        GUIPropertyManager.SetProperty("#runtime", RunTime + 
+                                " " +
+                                GUILocalizeStrings.Get(2998) +
+                                " (" + 
+                                Util.Utils.SecondsToHMString(RunTime * 60) + 
+                                ")");
+      }
 
       if (Duration <= 0)
       {
@@ -1003,6 +1010,10 @@ namespace MediaPortal.Video.Database
               GetUserFanart(item, ref info);
             }
           }
+          catch (ThreadAbortException) 
+          {
+            Log.Debug("IMDBMovie.ThreadAbortException SetMovieData (GetMovieInfo) error.");
+          }
           catch (Exception ex)
           {
             Log.Error("IMDBMovie Set user fanart file property error: {0}", ex.Message);
@@ -1010,11 +1021,19 @@ namespace MediaPortal.Video.Database
 
           item.AlbumInfoTag = info;
         }
+        catch (ThreadAbortException) 
+        {
+          Log.Debug("IMDBMovie.ThreadAbortException SetMovieData (GetMovieInfo) error.");
+        }
         catch (Exception ex)
         {
           Log.Error("IMDBMovie SetMovieData (GetMovieInfo) error: {0}", ex.Message);
           item.AlbumInfoTag = info;
         }
+      }
+      catch (ThreadAbortException)
+      {
+        Log.Debug("IMDBMovie.ThreadAbortException SetMovieData error.");
       }
       catch (Exception ex)
       {
@@ -1732,7 +1751,7 @@ namespace MediaPortal.Video.Database
         GUIPropertyManager.SetProperty("#credits", info.WritingCredits.Replace(" /", ","));
         GUIPropertyManager.SetProperty("#thumb", strThumb);
         GUIPropertyManager.SetProperty("#title", info.Title);
-        GUIPropertyManager.SetProperty("#year", info.Year.ToString());
+        GUIPropertyManager.SetProperty("#year", ((info.Year <= 1900) ? string.Empty : info.Year.ToString()));
         // MPAA
         info.MPARating = Util.Utils.MakeFileName(info.MPARating);
         GUIPropertyManager.SetProperty("#mpaarating", info.MPARating);
@@ -1763,10 +1782,17 @@ namespace MediaPortal.Video.Database
             GUIPropertyManager.SetProperty("#hideinfo", "false");
           }
 
-          GUIPropertyManager.SetProperty("#runtime", info.RunTime +
-                                " " +
-                                GUILocalizeStrings.Get(2998) +
-                                " (" + Util.Utils.SecondsToHMString(info.RunTime * 60) + ")");
+          if (info.RunTime <= 0)
+          {
+            GUIPropertyManager.SetProperty("#runtime", string.Empty);
+          }
+          else
+          {
+            GUIPropertyManager.SetProperty("#runtime", info.RunTime +
+                                  " " +
+                                  GUILocalizeStrings.Get(2998) +
+                                  " (" + Util.Utils.SecondsToHMString(info.RunTime * 60) + ")");
+          }
 
           if (info.Duration <= 0)
           {
@@ -1780,10 +1806,18 @@ namespace MediaPortal.Video.Database
         else
         {
           GUIPropertyManager.SetProperty("#hideinfo", "false");
-          GUIPropertyManager.SetProperty("#runtime", info.RunTime +
-                                " " +
-                                GUILocalizeStrings.Get(2998) +
-                                " (" + Util.Utils.SecondsToHMString(info.RunTime * 60) + ")");
+
+          if (info.RunTime <= 0)
+          {
+            GUIPropertyManager.SetProperty("#runtime", string.Empty);
+          }
+          else
+          {
+            GUIPropertyManager.SetProperty("#runtime", info.RunTime +
+                                  " " +
+                                  GUILocalizeStrings.Get(2998) +
+                                  " (" + Util.Utils.SecondsToHMString(info.RunTime * 60) + ")");
+          }
 
           if (info.Duration <= 0)
           {

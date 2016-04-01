@@ -145,14 +145,6 @@ namespace MediaPortal.Dialogs
       return (GUIListItem)msg.Object;
     }
 
-    private GUIListItem GetItem(int iItem)
-    {
-      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_GET_ITEM, GetID, 0, (int)Controls.CONTROL_LIST,
-                                      iItem, 0, null);
-      OnMessage(msg);
-      return (GUIListItem)msg.Object;
-    }
-
     private int GetSelectedItemNo()
     {
       GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECTED, GetID, 0,
@@ -160,14 +152,6 @@ namespace MediaPortal.Dialogs
       OnMessage(msg);
       int iItem = msg.Param1;
       return iItem;
-    }
-
-    private int GetItemCount()
-    {
-      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEMS, GetID, 0, (int)Controls.CONTROL_LIST, 0, 0,
-                                      null);
-      OnMessage(msg);
-      return msg.Param1;
     }
 
     private void ClearControl(int iWindowId, int iControlId)

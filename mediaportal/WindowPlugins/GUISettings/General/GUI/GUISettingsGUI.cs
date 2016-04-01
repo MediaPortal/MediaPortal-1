@@ -18,9 +18,6 @@
 
 #endregion
 
-using System;
-using System.Collections;
-using System.Globalization;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
 using MediaPortal.GUI.Settings;
@@ -47,20 +44,6 @@ namespace WindowPlugins.GUISettings
     
     private string _pin = string.Empty;
 
-
-    private class CultureComparer : IComparer
-    {
-      #region IComparer Members
-
-      public int Compare(object x, object y)
-      {
-        CultureInfo info1 = (CultureInfo)x;
-        CultureInfo info2 = (CultureInfo)y;
-        return String.Compare(info1.EnglishName, info2.EnglishName, true);
-      }
-
-      #endregion
-    }
 
     public GUISettingsGUIMain()
     {
@@ -289,29 +272,6 @@ namespace WindowPlugins.GUISettings
     }
 
     #endregion
-    
-    private void GetStringFromKeyboard(ref string strLine, int maxLenght)
-    {
-      VirtualKeyboard keyboard = (VirtualKeyboard)GUIWindowManager.GetWindow((int)Window.WINDOW_VIRTUAL_KEYBOARD);
-      if (null == keyboard)
-      {
-        return;
-      }
-      keyboard.Reset();
-      keyboard.Text = strLine;
-
-      if (maxLenght > 0)
-      {
-        keyboard.SetMaxLength(maxLenght);
-      }
-
-      keyboard.DoModal(GUIWindowManager.ActiveWindow);
-
-      if (keyboard.IsConfirmed)
-      {
-        strLine = keyboard.Text;
-      }
-    }
 
     private void SettingsChanged(bool settingsChanged)
     {

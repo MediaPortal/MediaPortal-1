@@ -348,56 +348,6 @@ namespace DShowNET.Helper
       return null;
     }
 
-    private static void ListMediaTypes(IPin pin)
-    {
-      IEnumMediaTypes types;
-      pin.EnumMediaTypes(out types);
-      types.Reset();
-      while (true)
-      {
-        AMMediaType[] mediaTypes = new AMMediaType[1];
-        int typesFetched;
-        int hr = types.Next(1, mediaTypes, out typesFetched);
-        if (hr != 0 || typesFetched == 0)
-        {
-          break;
-        }
-        Log.Info("Has output type: {0}, {1}", mediaTypes[0].majorType,
-                 mediaTypes[0].subType);
-      }
-      ReleaseComObject(types);
-      Log.Info("-----EndofTypes");
-    }
-
-    private static bool TestMediaTypes(IPin pin, IPin receiver)
-    {
-      bool ret = false;
-      IEnumMediaTypes types;
-      pin.EnumMediaTypes(out types);
-      types.Reset();
-      while (true)
-      {
-        AMMediaType[] mediaTypes = new AMMediaType[1];
-        int typesFetched;
-        int hr = types.Next(1, mediaTypes, out typesFetched);
-        if (hr != 0 || typesFetched == 0)
-        {
-          break;
-        }
-        //Log.Info("Check output type: {0}, {1}", mediaTypes[0].majorType,
-        //  mediaTypes[0].subType);
-        if (receiver.QueryAccept(mediaTypes[0]) == 0)
-        {
-          //Log.Info("Accepted!");
-          ret = true;
-          break;
-        }
-      }
-      ReleaseComObject(types);
-      //Log.Info("-----EndofTypes");
-      return ret;
-    }
-
     private static bool TryConnect(IGraphBuilder graphBuilder, string filtername, IPin outputPin)
     {
       return TryConnect(graphBuilder, filtername, outputPin, true);
@@ -1625,39 +1575,6 @@ namespace DShowNET.Helper
     private static bool IsField1First(uint x)
     {
       return ((x) & ((uint)AMInterlace.Field1First)) != 0;
-    }
-
-    private static VMR9SampleFormat ConvertInterlaceFlags(uint dwInterlaceFlags)
-    {
-      if (IsInterlaced(dwInterlaceFlags))
-      {
-        if (IsSingleField(dwInterlaceFlags))
-        {
-          if (IsField1First(dwInterlaceFlags))
-          {
-            return VMR9SampleFormat.FieldSingleEven;
-          }
-          else
-          {
-            return VMR9SampleFormat.FieldSingleOdd;
-          }
-        }
-        else
-        {
-          if (IsField1First(dwInterlaceFlags))
-          {
-            return VMR9SampleFormat.FieldInterleavedEvenFirst;
-          }
-          else
-          {
-            return VMR9SampleFormat.FieldInterleavedOddFirst;
-          }
-        }
-      }
-      else
-      {
-        return VMR9SampleFormat.ProgressiveFrame; // Not interlaced.
-      }
     }
 
     /// <summary>

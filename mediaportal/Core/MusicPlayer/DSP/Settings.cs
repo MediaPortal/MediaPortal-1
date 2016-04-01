@@ -36,13 +36,6 @@ namespace MediaPortal.Player.DSP
   {
     #region Enums
 
-    private enum AmplificationPreset
-    {
-      Soft = 0,
-      Medium = 1,
-      Hard = 2
-    }
-
     #endregion
 
     #region Variables

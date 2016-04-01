@@ -1,0 +1,189 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!--version="1.0" encoding="utf-8" standalone="yes"-->
+<window>
+  <id>509</id>
+  <defaultcontrol>30</defaultcontrol>
+  <allowoverlay>no</allowoverlay>
+  <controls>
+    <control>
+      <type>image</type>
+      <description>background image</description>
+      <id>1</id>
+      <width>1920</width>
+      <height>1080</height>
+    </control>
+    <import>common.window.xml</import>
+    <import>common.time.xml</import>
+    <control>
+      <type>image</type>
+      <description>Title image</description>
+      <id>2</id>
+      <posX>159</posX>
+      <posY>37</posY>
+      <texture>coverart_logo.png</texture>
+    </control>
+    <control>
+      <type>image</type>
+      <description>Amazon Logo image</description>
+      <id>3</id>
+      <posX>169</posX>
+      <posY>930</posY>
+      <width>250</width>
+      <height>84</height>
+      <texture>amazonlogo.png</texture>
+      <centered>yes</centered>
+      <keepaspectratio>yes</keepaspectratio>
+    </control>
+    <control>
+      <type>image</type>
+      <id>100</id>
+      <posX>732</posX>
+      <posY>723</posY>
+      <width>919</width>
+      <texture>osd_progress_BH Music.jpg</texture>
+    </control>
+    <control>
+      <type>image</type>
+      <id>101</id>
+      <posX>732</posX>
+      <posY>849</posY>
+      <width>919</width>
+      <texture>osd_progress_BH Music.jpg</texture>
+    </control>
+    <control>
+      <type>fadelabel</type>
+      <description>Overall progress label</description>
+      <id>10</id>
+      <posX>732</posX>
+      <posY>900</posY>
+      <width>1159</width>
+      <label>-</label>
+      <textcolor>BFffffff</textcolor>
+    </control>
+    <control>
+      <type>fadelabel</type>
+      <description>Current cover progress label</description>
+      <id>11</id>
+      <posX>732</posX>
+      <posY>774</posY>
+      <width>1159</width>
+      <label>-</label>
+      <textcolor>BFffffff</textcolor>
+    </control>
+    <control>
+      <type>label</type>
+      <description>Folder value</description>
+      <id>12</id>
+      <posX>1681</posX>
+      <posY>130</posY>
+      <label>-</label>
+      <font>font18</font>
+      <align>right</align>
+      <textcolor>BFffffff</textcolor>
+    </control>
+    <control>
+      <type>fadelabel</type>
+      <description>Current album value</description>
+      <id>13</id>
+      <posX>732</posX>
+      <posY>679</posY>
+      <width>1159</width>
+      <label>-</label>
+      <font>font13</font>
+      <textcolor>BFffffff</textcolor>
+    </control>
+    <control>
+      <type>fadelabel</type>
+      <description>search info label</description>
+      <id>14</id>
+      <posX>732</posX>
+      <posY>642</posY>
+      <width>1159</width>
+      <label>-</label>
+      <font>font13</font>
+      <textcolor>BFffffff</textcolor>
+    </control>
+    <control>
+      <type>progress</type>
+      <description>Overall progress control</description>
+      <id>20</id>
+      <posX>703</posX>
+      <posY>849</posY>
+      <width>978</width>
+    </control>
+    <control>
+      <type>progress</type>
+      <description>Current cover progress control</description>
+      <id>21</id>
+      <posX>703</posX>
+      <posY>723</posY>
+      <width>978</width>
+    </control>
+    <control>
+      <type>button</type>
+      <description>Start button</description>
+      <id>30</id>
+      <posX>169</posX>
+      <posY>780</posY>
+      <label>335</label>
+      <width>336</width>
+    </control>
+    <control>
+      <type>button</type>
+      <description>Cancel button</description>
+      <id>31</id>
+      <posX>169</posX>
+      <posY>840</posY>
+      <label>4517</label>
+      <width>336</width>
+    </control>
+    <control>
+      <type>checkmark</type>
+      <description>Skip existing checkmark</description>
+      <id>40</id>
+      <posX>169</posX>
+      <posY>262</posY>
+      <onleft>31</onleft>
+      <onright>31</onright>
+      <onup>40</onup>
+      <ondown>41</ondown>
+      <align>right</align>
+      <disabledcolor>BFFFFFFF</disabledcolor>
+      <textureFocus>check-box.png</textureFocus>
+      <textureNoFocus>check-boxNF.png</textureNoFocus>
+      <label>4500</label>
+    </control>
+    <control>
+      <type>checkmark</type>
+      <description>Save to album folder checkmark</description>
+      <id>41</id>
+      <posX>169</posX>
+      <posY>318</posY>
+      <onleft>31</onleft>
+      <onright>31</onright>
+      <onup>40</onup>
+      <ondown>42</ondown>
+      <align>right</align>
+      <disabledcolor>BFFFFFFF</disabledcolor>
+      <textureFocus>check-box.png</textureFocus>
+      <textureNoFocus>check-boxNF.png</textureNoFocus>
+      <label>4501</label>
+    </control>
+    <control>
+      <type>checkmark</type>
+      <description>Save to thumbs folder</description>
+      <id>42</id>
+      <posX>169</posX>
+      <posY>375</posY>
+      <onleft>31</onleft>
+      <onright>31</onright>
+      <onup>41</onup>
+      <ondown>30</ondown>
+      <align>right</align>
+      <disabledcolor>BFFFFFFF</disabledcolor>
+      <textureFocus>check-box.png</textureFocus>
+      <textureNoFocus>check-boxNF.png</textureNoFocus>
+      <label>4502</label>
+    </control>
+  </controls>
+</window>

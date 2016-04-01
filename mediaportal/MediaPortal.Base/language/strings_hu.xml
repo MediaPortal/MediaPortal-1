@@ -864,8 +864,8 @@
     <String id="978">amellyel ez a csatorna nézhető lenne</String>
     <String id="979">Felvétel lejátszása az elejétől</String>
     <String id="980">Felvétel lejátszása az aktuális ponttól</String>
-    <String id="981">Megszakítja ezt a műsort</String>
-    <String id="982">Törli az egész felvételt</String>
+    <String id="981">Törli ezt az adott ütemezést</String>
+    <String id="982">Törli az összes ütemezést</String>
     <String id="983">Lejátszási lista</String>
     <String id="984">Film lista letöltése</String>
     <String id="985">Film részleteinek letöltése</String>
@@ -976,10 +976,15 @@
     <String id="1209">Ennyiszer lejátszott</String>
     <String id="1211">Folytatás a {0}-tól</String>
     <String id="1212">Figyelmeztetés elvetése</String>
+    <String id="1216">Lemezek</String>
+    <String id="1218">Albumok Év szerint</String>
+    <String id="1219">Album Előadók (Index)</String>
     <String id="1220">Rendezés: Készítés dátuma</String>
     <String id="1221">Rendezés: Módosítás dátuma</String>
     <String id="1222">Csoportok</String>
     <String id="1224">Törölni akarod a jelenlegi lejátszási listát?</String>
+    <String id="1225">Hozzáadás a lejátszási listához</String>
+    <String id="1226">Az összes hozzáadása a lejátszási lishoz</String>
     <String id="1230">Hozzáadás dátuma:</String>
     <String id="1231">Utoljára lejátszva:</String>
     <String id="1240">Tartalom zárolása</String>
@@ -998,6 +1003,8 @@
     <String id="1280">Keresés nfo fájl alapján</String>
     <String id="1281">Cím szerint</String>
     <String id="1282">Rendező szerint</String>
+    <String id="1283">Színész szerint</String>
+    <String id="1284">Színész szerep szerint</String>
     <String id="1285">Év szerint</String>
     <String id="1290">Aktuális videó frissítése</String>
     <String id="1293">Film keresése</String>
@@ -1038,6 +1045,7 @@
     <String id="1511">Nincs aktív műsorfolyam</String>
     <String id="1512">Ez előző csatornára lépjen?</String>
     <String id="1513">Az időcsúszatás leállt egy felvétel miatt</String>
+    <String id="1516">Az időcsúsztatás ismeretlen okból leállt</String>
     <String id="1520">Nincs elég szabad hely</String>
     <String id="1521">Cím szerinti nézet</String>
     <String id="1522">Műfaj szerinti nézet</String>
@@ -1051,6 +1059,7 @@
     <String id="1653">Hőmérséklet mértékegysége</String>
     <String id="1654">Szélsebesség mértékegysége</String>
     <String id="1655">Frissítési időköz</String>
+    <String id="1656">Perc</String>
     <String id="1900">Túl régi skin</String>
     <String id="1901">Az aktuálisan kiválasztott skin ({0}) túl régi. Ez hibákat okozhat a MediaPortalban, ezért ideiglenesen az alapértelmezett skin lett betöltve. Amennyiben meg szeretnéd próbálni használni ezt a skint, válaszd az "átugrik és kipróbál" gombot, de hibát a fejlesztőknek ezzek a skinnel nem jelenthetsz be.
 (Ez az üzenet egy idő után automatikusan el fog tűnni vagy nyomd meg a vissza gombot a távirányítódon.))</String>
@@ -1096,7 +1105,7 @@
     <String id="1993">Ellenőrizd a hálózati kapcsolatokat vagy növeld meg próbálkozási időt.</String>
     <String id="1994">Várj, ameddig a megosztás elérhetővé válik.</String>
     <String id="1995">Mappa előnézeti kép készítése a filmekből</String>
-    <String id="1999">Név és Film hossz</String>
+    <String id="1999">Rendezés: Név és Film hossz</String>
     <String id="2000">A zene csak olvashatónak van megjelölve!</String>
     <String id="2001">A kép csak olvashatónak van megjelölve!</String>
     <String id="2002">A film csak olvashatónak van megjelölve!</String>
@@ -1246,6 +1255,8 @@
     <String id="2147">Nincs elég hely DVD-n</String>
     <String id="2148">Szeretnéd lecserélni az összes alkönyvtárban?</String>
     <String id="2149">Kérdés</String>
+    <String id="2160">Média információ frissítése az alkönyvtárban lévő videókról</String>
+    <String id="2161">A háttérben futó méda információt frissítő folyamat megszakítása</String>
     <String id="2200">Intéző</String>
     <String id="2201">Forrás kiválasztása</String>
     <String id="2202">Cél kiválasztása</String>

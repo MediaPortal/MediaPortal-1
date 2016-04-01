@@ -30,7 +30,7 @@
   <style Name="NoShadow">
     <shadowAngle>0</shadowAngle>
     <shadowDistance>0</shadowDistance>
-    <shadowColor>ff000000</shadowColor>
+    <shadowColor></shadowColor>
   </style>
   <style Name="SettingsButton">
     <font>Label</font>
@@ -52,7 +52,7 @@
   <style Name="BasicHomeRecentlyLabel">
     <font>font11</font>
     <textcolor>ffffffff</textcolor>
-    <shadowAngle>45</shadowAngle>
+    <shadowAngle>0</shadowAngle>
     <shadowDistance>3</shadowDistance>
     <shadowColor>ff202020</shadowColor>
     <textcolorNoFocus>ffffffff</textcolorNoFocus>
@@ -127,9 +127,9 @@
     <font>font13</font>
     <textcolor>FFdddddd</textcolor>
     <disabledcolor>40ffffff</disabledcolor>
-    <shadowAngle>45</shadowAngle>
-    <shadowDistance>1</shadowDistance>
-    <shadowColor>ff000000</shadowColor>
+    <shadowAngle>0</shadowAngle>
+    <shadowDistance>0</shadowDistance>
+    <shadowColor></shadowColor>
   </control>
   <control>
     <description>default button</description>
@@ -146,16 +146,16 @@
     <textureFocus>button_focus.png</textureFocus>
     <textureNoFocus>button_nofocus.png</textureNoFocus>
     <scrollStartDelaySec>5</scrollStartDelaySec>
-    <scrollWrapString>  ~  </scrollWrapString>
+    <scrollWrapString>  |  </scrollWrapString>
     <font>Label</font>
     <textcolor>ffffffff</textcolor>
     <colordiffuse>ffffffff</colordiffuse>
     <disabledcolor>40ffffff</disabledcolor>
     <textcolorNoFocus>ff6FAFE1</textcolorNoFocus>
     <dimColor>ff000000</dimColor>
-    <shadowAngle>45</shadowAngle>
-    <shadowDistance>1</shadowDistance>
-    <shadowColor>ff000000</shadowColor>
+    <shadowAngle>0</shadowAngle>
+    <shadowDistance>0</shadowDistance>
+    <shadowColor></shadowColor>
   </control>
   <control>
     <description>default menubutton</description>
@@ -191,13 +191,13 @@
     <disabledcolor>40ffffff</disabledcolor>
     <textcolorNoFocus>ff6FAFE1</textcolorNoFocus>
     <dimColor>ff000000</dimColor>
-    <shadowAngle>45</shadowAngle>
-    <shadowDistance>1</shadowDistance>
-    <shadowColor>ff000000</shadowColor>
+    <shadowAngle>0</shadowAngle>
+    <shadowDistance>0</shadowDistance>
+    <shadowColor></shadowColor>
     <textureFocus>button_focus.png</textureFocus>
     <textureNoFocus>button_nofocus.png</textureNoFocus>
     <scrollStartDelaySec>5</scrollStartDelaySec>
-    <scrollWrapString>  ~  </scrollWrapString>
+    <scrollWrapString>  |  </scrollWrapString>
   </control>
   <control>
     <description>default updownbutton</description>
@@ -219,11 +219,11 @@
     <disabledcolor>40ffffff</disabledcolor>
     <textcolorNoFocus>ff6FAFE1</textcolorNoFocus>
     <dimColor>ffcccccc</dimColor>
-    <shadowAngle>45</shadowAngle>
-    <shadowDistance>1</shadowDistance>
-    <shadowColor>ff000000</shadowColor>
+    <shadowAngle>0</shadowAngle>
+    <shadowDistance>0</shadowDistance>
+    <shadowColor></shadowColor>
     <scrollStartDelaySec>5</scrollStartDelaySec>
-    <scrollWrapString>  ~  </scrollWrapString>
+    <scrollWrapString>  |  </scrollWrapString>
   </control>
   <control>
     <description>default select button</description>
@@ -255,7 +255,7 @@
     <dimColor>ffcccccc</dimColor>
     <disabledcolor>40ffffff</disabledcolor>
     <scrollStartDelaySec>5</scrollStartDelaySec>
-    <scrollWrapString>  ~  </scrollWrapString>
+    <scrollWrapString>  |  </scrollWrapString>
   </control>
   <control>
     <description>playlist item button</description>
@@ -335,9 +335,9 @@
     <textcolorNoFocus>ff6FAFE1</textcolorNoFocus>
     <dimColor>ffcccccc</dimColor>
     <label>103</label>
-    <shadowAngle>45</shadowAngle>
-    <shadowDistance>1</shadowDistance>
-    <shadowColor>ff000000</shadowColor>
+    <shadowAngle>0</shadowAngle>
+    <shadowDistance>0</shadowDistance>
+    <shadowColor></shadowColor>
   </control>
   <control>
     <description>default listcontrol</description>
@@ -756,9 +756,9 @@
     <playedColor>ff6FAFE1</playedColor>
     <downloadColor>FF00FF00</downloadColor>
     <selectedColor>FFFFFFFF</selectedColor>
-    <shadowAngle>45</shadowAngle>
-    <shadowDistance>1</shadowDistance>
-    <shadowColor>FF000000</shadowColor>
+    <shadowAngle>0</shadowAngle>
+    <shadowDistance>0</shadowDistance>
+    <shadowColor></shadowColor>
     <label1YOff>380</label1YOff>
     <label2YOff>390</label2YOff>
     <pageSize>10</pageSize>
@@ -779,11 +779,11 @@
     <align>left</align>
     <font>font13</font>
     <textcolor>ivory</textcolor>
-    <wrapString>  ~  </wrapString>
+    <wrapString>  |  </wrapString>
     <scrollStartDelaySec>5</scrollStartDelaySec>
-    <shadowAngle>45</shadowAngle>
-    <shadowDistance>1</shadowDistance>
-    <shadowColor>ff000000</shadowColor>
+    <shadowAngle>0</shadowAngle>
+    <shadowDistance>0</shadowDistance>
+    <shadowColor></shadowColor>
   </control>
   <control>
     <description>default textboxscrollup</description>
@@ -920,9 +920,9 @@
     <disabledcolor>40ffffff</disabledcolor>
     <textcolorNoFocus>ff6FAFE1</textcolorNoFocus>
     <dimColor>ff000000</dimColor>
-    <shadowAngle>45</shadowAngle>
-    <shadowDistance>1</shadowDistance>
-    <shadowColor>ff000000</shadowColor>
+    <shadowAngle>0</shadowAngle>
+    <shadowDistance>0</shadowDistance>
+    <shadowColor></shadowColor>
     <textureFocus>button_focus.png</textureFocus>
     <textureNoFocus>button_nofocus.png</textureNoFocus>
     <markWidth>43</markWidth>
@@ -936,6 +936,6 @@
     <textalign>left</textalign>
     <textvalign>middle</textvalign>
     <scrollStartDelaySec>5</scrollStartDelaySec>
-    <scrollWrapString>  ~  </scrollWrapString>
+    <scrollWrapString>  |  </scrollWrapString>
   </control>
 </controls>

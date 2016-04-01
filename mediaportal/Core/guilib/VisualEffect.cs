@@ -833,11 +833,6 @@ namespace MediaPortal.GUI.Library
       }
     }
 
-    private void QueueAnimation(AnimationProcess process)
-    {
-      _queuedProcess = process;
-    }
-
     public void SetCenter(float x, float y)
     {
       if (_effect == EffectType.Zoom || _effect == EffectType.RotateZ)

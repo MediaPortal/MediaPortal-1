@@ -114,7 +114,7 @@ namespace MediaPortal.GUI.Library
                                           GUISpinControl.SpinType.SPIN_CONTROL_TYPE_INT, Alignment.ALIGN_LEFT);
       _upDownControl.ParentControl = this;
       _font = GUIFontManager.GetFont(_fontName);
-      if (_property.IndexOf("#") >= 0)
+      if (_property.IndexOf("#", StringComparison.Ordinal) >= 0)
       {
         _containsProperty = true;
       }
@@ -862,7 +862,7 @@ namespace MediaPortal.GUI.Library
       set
       {
         _property = value;
-        if (_property.IndexOf("#") >= 0)
+        if (_property.IndexOf("#", StringComparison.Ordinal) >= 0)
         {
           _containsProperty = true;
         }
@@ -886,7 +886,7 @@ namespace MediaPortal.GUI.Library
         if (_property != value || _itemList.Count == 0)
         {
           _property = value;
-          if (_property.IndexOf("#") >= 0)
+          if (_property.IndexOf("#", StringComparison.Ordinal) >= 0)
           {
             _containsProperty = true;
           }

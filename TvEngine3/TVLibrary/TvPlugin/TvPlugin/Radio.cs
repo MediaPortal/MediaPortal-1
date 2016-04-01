@@ -892,14 +892,25 @@ namespace TvPlugin
       GUIPropertyManager.RemovePlayerProperties();
       GUIPropertyManager.SetProperty("#Play.Current.ArtistThumb", _currentChannel.DisplayName);
       GUIPropertyManager.SetProperty("#Play.Current.Album", _currentChannel.DisplayName);
-      GUIPropertyManager.SetProperty("#Play.Current.Title", _currentChannel.DisplayName);
-      
+
+      if ((_currentChannel.IsWebstream()) || (_currentChannel.CurrentProgram == null || _currentChannel.NextProgram == null ||
+        string.IsNullOrEmpty(_currentChannel.CurrentProgram.Title) ||  string.IsNullOrEmpty(_currentChannel.NextProgram.Title)))
+      {
+        GUIPropertyManager.SetProperty("#Play.Current.Title", _currentChannel.DisplayName); // No EPG
+        GUIPropertyManager.SetProperty("#Play.Next.Title", string.Empty);
+      }
+      else
+      {
+        GUIPropertyManager.SetProperty("#Play.Current.Title", _currentChannel.CurrentProgram.Title);
+        GUIPropertyManager.SetProperty("#Play.Next.Title", _currentChannel.NextProgram.Title);
+      }
+
       string strLogo = Utils.GetCoverArt(Thumbs.Radio, _currentChannel.DisplayName);
       if (string.IsNullOrEmpty(strLogo))
       {
-          strLogo = "defaultMyRadioBig.png";
+        strLogo = "defaultMyRadioBig.png";
       }
-      
+
       GUIPropertyManager.SetProperty("#Play.Current.Thumb", strLogo);
 
       if (g_Player.Playing && !_currentChannel.IsWebstream())

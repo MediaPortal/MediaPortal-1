@@ -221,6 +221,13 @@ namespace MediaPortal.InputDevices
     /// <param name="hwnd"></param>
     public void Init(IntPtr hwnd)
     {
+      using (Settings xmlreader = new MPSettings())
+      {
+        if (!xmlreader.GetValueAsBool("remote", "X10", false))
+        {
+          return;
+        }
+      }
       Init();
     }
 

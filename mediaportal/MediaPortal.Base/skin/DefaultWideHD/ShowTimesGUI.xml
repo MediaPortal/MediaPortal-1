@@ -191,34 +191,9 @@
           <posY>315</posY>
           <label>71119924</label>
           <onup>4</onup>
-          <ondown>11899</ondown>
+          <ondown>41</ondown>
           <onleft>50</onleft>
           <onright>50</onright>
-        </control>
-        <control>
-          <type>button</type>
-          <description>Play Trailer</description>
-          <id>11899</id>
-          <label>#Trailers.Translation.Trailers.Label...</label>
-          <posX>49</posX>
-          <posY>360</posY>
-          <onup>40</onup>
-          <ondown>97258</ondown>
-          <onleft>50</onleft>
-          <onright>50</onright>
-        </control>
-        <control>
-          <type>button</type>
-          <description>Add to Trakt Movie Watch List</description>
-          <id>97258</id>
-          <posX>49</posX>
-          <posY>495</posY>
-          <label>#Trakt.Translation.AddToWatchList.Label</label>
-          <onup>11899</onup>
-          <ondown>2</ondown>
-          <onleft>50</onleft>
-          <onright>50</onright>
-          <visible>!control.isvisible(24)+plugin.isenabled(Trakt)</visible>
         </control>
       </control>
       <control>
@@ -260,7 +235,6 @@
       <height>486</height>
       <texture></texture>
     </control>
-    
     <control>
       <type>group</type>
       <description>group element</description>
@@ -284,9 +258,45 @@
         <id>43</id>
         <label>210</label>
         <onup>42</onup>
-        <ondown>42</ondown>
+        <ondown>41</ondown>
         <onleft>43</onleft>
         <onright>43</onright>
+      </control>
+      <control>
+        <type>button</type>
+        <description>Play Trailer</description>
+        <id>41</id>
+        <label>-</label>
+        <onup>43</onup>
+        <ondown>11899</ondown>
+        <onleft>41</onleft>
+        <onright>41</onright>
+      </control>
+      <control>
+        <type>button</type>
+        <description>Find Trailer</description>
+        <id>11899</id>
+        <label>#Trailers.Translation.Trailers.Label...</label>
+        <posX>49</posX>
+        <posY>360</posY>
+        <onup>41</onup>
+        <ondown>97258</ondown>
+        <onleft>50</onleft>
+        <onright>50</onright>
+        <visible>control.isvisible(24)+plugin.isenabled(Trailers)</visible>
+      </control>
+      <control>
+        <type>button</type>
+        <description>Add to Trakt Movie Watch List</description>
+        <id>97258</id>
+        <posX>49</posX>
+        <posY>495</posY>
+        <label>#Trakt.Translation.AddToWatchList.Label</label>
+        <onup>11899</onup>
+        <ondown>42</ondown>
+        <onleft>50</onleft>
+        <onright>50</onright>
+        <visible>control.isvisible(24)+plugin.isenabled(Trakt)</visible>
       </control>
     </control>
     <!-- ******************************************************************************************* -->
@@ -534,41 +544,26 @@
       <visible>control.isvisible(24)</visible>
       <animation effect="zoom" start="1,1" end="100,100" time="300" center="760,543">visible</animation>
     </control>
-    
     <import>common.facade.video.Title.xml</import>
-    
-  <!-- ******************************************************************************************* -->
-  <!-- *********************************** NOT USED CONTROLS BUT IMPORTANT ********************* -->
-  <!-- ******************************************************************************************* -->
-  <control>
-    <description>DUMMY movie border to shwo Details View</description>
-    <type>image</type>
-    <id>23</id>
-    <posX>2000</posX>
-    <posY>548</posY>
-    <width>321</width>
-    <height>486</height>
-    <texture>DVDCase.png</texture>
-  </control>
-  <control>
-    <type>button</type>
-    <description>Play Trailer NOT USED!!! But ID is necessary to work!!!</description>
-    <id>41</id>
-    <label>#Trailers.Translation.Trailers.Label...</label>
-    <posX>2249</posX>
-    <posY>360</posY>
-    <onup>40</onup>
-    <ondown>42</ondown>
-    <onleft>50</onleft>
-    <onright>50</onright>
-    <visible>!control.HasFocus(99)</visible>
-  </control>
-  <control>
-    <type>fadelabel</type>
-    <description>NOT USED Showtimes</description>
-    <id>46</id>
-    <posX>3131</posX>
-    <posY>3164</posY>
-  </control>
-</controls>
+    <!-- ******************************************************************************************* -->
+    <!-- *********************************** NOT USED CONTROLS BUT IMPORTANT ********************* -->
+    <!-- ******************************************************************************************* -->
+    <control>
+      <description>DUMMY movie border to shwo Details View</description>
+      <type>image</type>
+      <id>23</id>
+      <posX>2000</posX>
+      <posY>548</posY>
+      <width>321</width>
+      <height>486</height>
+      <texture>DVDCase.png</texture>
+    </control>
+    <control>
+      <type>fadelabel</type>
+      <description>NOT USED Showtimes</description>
+      <id>46</id>
+      <posX>3131</posX>
+      <posY>3164</posY>
+    </control>
+  </controls>
 </window>

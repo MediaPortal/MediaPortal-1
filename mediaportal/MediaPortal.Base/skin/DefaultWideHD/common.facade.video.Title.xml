@@ -17,10 +17,22 @@
           <type>listcontrol</type>
           <id>50</id>
           <width>825</width>
-          <playedColor>ffffffff</playedColor>
-          <playedColor2>ffffffff</playedColor2>
-          <textcolor>ff99f9ff</textcolor>
-          <textcolorNoFocus>ff99f9ff</textcolorNoFocus>
+          <shadedColor>20ffffff</shadedColor>
+          <selectedColor3>FF00CC00</selectedColor3>
+          <selectedColor2>FF00CC00</selectedColor2>
+          <selectedColor>FF00CC00</selectedColor>
+          <playedColor>FFffffff</playedColor>
+          <playedColor2>FFffffff</playedColor2>
+          <playedColor3>FFffffff</playedColor3>
+          <textcolor>ffffcc00</textcolor>
+          <textcolorNoFocus>ffffcc00</textcolorNoFocus>
+          <textcolor2>ffffcc00</textcolor2>
+          <colordiffuse>ffffffff</colordiffuse>
+          <remoteColor>ff00ffff</remoteColor>
+          <remoteColor2>ff00ffff</remoteColor2>
+          <downloadColor>ff666666</downloadColor>
+          <downloadColor2>ff80ff80</downloadColor2>
+          <dimColor>90ffffff</dimColor>
           <textXOff2>825</textXOff2>
           <textYOff2>3</textYOff2>
           <textXOff3>3817</textXOff3>
@@ -28,7 +40,7 @@
           <textalign3>right</textalign3>
           <font3>font9</font3>
           <scrollOffset>2</scrollOffset>
-          <spinCanFocus>yes</spinCanFocus>
+          <spinCanFocus>no</spinCanFocus>
           <unfocusedAlpha>160</unfocusedAlpha>
           <folderPrefix />
           <folderSuffix />
@@ -203,8 +215,8 @@
           <folderSuffix>]</folderSuffix>
           <font1>font13</font1>
           <font2>font10</font2>
-          <label1>-</label1>
-          <label2>-</label2>
+          <label1></label1>
+          <label2></label2>
           <textColor>FFFFFFFF</textColor>
           <remoteColor>ffcc9900</remoteColor>
           <playedColor>ff6FAFE1</playedColor>
@@ -213,8 +225,8 @@
           <shadowAngle>45</shadowAngle>
           <shadowDistance>0</shadowDistance>
           <shadowColor>FF000000</shadowColor>
-          <label1YOff>405</label1YOff>
-          <label2YOff>430</label2YOff>
+          <label1YOff>2405</label1YOff>
+          <label2YOff>2430</label2YOff>
           <pageSize>5</pageSize>
           <keepaspectratio>no</keepaspectratio>
           <scrollbarBackground>bar_hor.png</scrollbarBackground>
@@ -232,8 +244,8 @@
                 <type>image</type>
                 <posX>0</posX>
                 <posY>0</posY>
-                <width>250</width>
-                <height>360</height>
+                <width>375</width>
+                <height>540</height>
                 <texture mask="videothumbmask.png">blue.png</texture>
               </control>
               <control>
@@ -281,7 +293,7 @@
                 <type>imagelist</type>
                 <id>1</id>
                 <posX>10</posX>
-                <posY>40</posY>
+                <posY>45</posY>
                 <width>230</width>
                 <height>37</height>
                 <textureWidth>17</textureWidth>
@@ -300,8 +312,8 @@
                 <description>genre</description>
                 <type>fadelabel</type>
                 <posX>10</posX>
-                <posY>60</posY>
-                <width>230</width>
+                <posY>70</posY>
+                <width>365</width>
                 <label>#genre</label>
                 <font>font9</font>
                 <textcolor>ivory</textcolor>
@@ -313,8 +325,8 @@
                 <description>year runtime</description>
                 <type>fadelabel</type>
                 <posX>10</posX>
-                <posY>80</posY>
-                <width>230</width>
+                <posY>95</posY>
+                <width>365</width>
                 <label>#year  /  #runtime</label>
                 <font>font9</font>
                 <textcolor>ivory</textcolor>
@@ -326,8 +338,8 @@
                 <description>director</description>
                 <type>fadelabel</type>
                 <posX>10</posX>
-                <posY>100</posY>
-                <width>230</width>
+                <posY>120</posY>
+                <width>365</width>
                 <label>#(L(199)) #director</label>
                 <font>font9</font>
                 <textcolor>ivory</textcolor>
@@ -339,8 +351,8 @@
                 <description>mpaarating</description>
                 <type>fadelabel</type>
                 <posX>10</posX>
-                <posY>120</posY>
-                <width>230</width>
+                <posY>145</posY>
+                <width>365</width>
                 <label>#(L(173)) #mpaarating</label>
                 <font>font9</font>
                 <textcolor>ivory</textcolor>
@@ -352,9 +364,9 @@
                 <description>plot</description>
                 <type>textboxscrollup</type>
                 <posX>10</posX>
-                <posY>145</posY>
-                <width>240</width>
-                <height>82</height>
+                <posY>180</posY>
+                <width>365</width>
+                <height>350</height>
                 <label>#plot</label>
                 <font>font9</font>
                 <lineSpacing>2.5</lineSpacing>
