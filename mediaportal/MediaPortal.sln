@@ -1,5 +1,7 @@
-Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual Studio 2010
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.40629.0
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Plugins", "Plugins", "{D214B2BD-4CA7-45CD-9EC5-CF7CC244C03A}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "HcwHelper", "HcwHelper", "{D213045F-E672-421B-B92A-78F512AAF784}"
@@ -132,6 +134,11 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ProcessPlugins", "ProcessPlugins", "{06741964-B339-4FCF-B6E5-E0D32A434DA2}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MiniDisplayPlugin", "ProcessPlugins\MiniDisplay\MiniDisplayPlugin.csproj", "{C430B2F0-CD3A-4BD5-B6C2-1DE2BDC68C86}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{5C3FEA09-9CDA-49D2-A72D-0EC3E7AB7562}"
+	ProjectSection(SolutionItems) = preProject
+		.nuget\packages.config = .nuget\packages.config
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
