@@ -26,7 +26,6 @@ using System.Text.RegularExpressions;
 using DirectShowLib;
 using DShowNET.Helper;
 using MediaPortal.GUI.Library;
-using MediaPortal.Player.MediaInfo;
 
 namespace MediaPortal.Player
 {
@@ -34,8 +33,11 @@ namespace MediaPortal.Player
 
   public class DirectShowHelper
   {
+    private const string UnknownLanguage = "Unknown";
+
     public enum StreamType
     {
+      Unknown,
       Video,
       Audio,
       Subtitle,
@@ -44,7 +46,6 @@ namespace MediaPortal.Player
       Edition,
       Subtitle_file,
       PostProcessing,
-      Unknown,
     }
 
     private readonly StoreStreamAction storeAction;
@@ -55,190 +56,423 @@ namespace MediaPortal.Player
     {
       { "1 channel", "Mono" },
       { "2 channels", "Stereo" },
+      { "3 channels", "2.1" },
+      { "4 channels", "4.0" },
       { "6 channels", "5.1" },
       { "7 channels", "6.1" },
       { "8 channels", "7.1" },
+      { "9 channels", "7.2" },
+      { "10 channels", "7.2.1" },
+    };
+
+    private static readonly Dictionary<string, int> ChannelNumbers = new Dictionary<string, int>
+    {
+      { "1 channel", 1 },
+      { "Mono", 1 },
+      { "2 channels", 2 },
+      { "Stereo", 2 },
+      { "3 channels", 3 },
+      { "2.1", 3 },
+      { "4 channels", 4 },
+      { "4.0", 4 },
+      { "6 channels", 6 },
+      { "5.1", 6 },
+      { "7 channels", 7 },
+      { "6.1", 7 },
+      { "8 channels", 8 },
+      { "7.1", 8 },
+      { "9 channels", 9 },
+      { "7.2", 9 },
+      { "10 channels", 10 },
+      { "7.2.1", 10 },
     };
 
     private static readonly Dictionary<string, string> NameEncoders = new Dictionary<string, string>
     {
-      { "Mainconcept MP4 Sound Media Handler", "" },
-      { "Mainconcept MP4 Video Media Handler", "" },
-      { "SoundHandler", "" },
-      { "VideoHandler", "" },
-      { "L-SMASH Video Handler", ""},
-      { "L-SMASH Sound Handler", ""},
+      { "Mainconcept MP4 Sound Media Handler", string.Empty },
+      { "Mainconcept MP4 Video Media Handler", string.Empty },
+      { "SoundHandler", string.Empty },
+      { "VideoHandler", string.Empty },
+      { "L-SMASH Video Handler", string.Empty },
+      { "L-SMASH Sound Handler", string.Empty },
+      { "DataHandler", string.Empty },
+      { "MediaHandler", string.Empty },
     };
 
-    private static readonly Dictionary<string, string> Codecs = new Dictionary<string, string>
+    #region Video codecs
+
+    private static readonly Dictionary<string, HashSet<VideoCodec>> VideoCodecs = new Dictionary<string, HashSet<VideoCodec>>
     {
-      { "MP1", "MPEG Audio" },
-      { "MP2", "MPEG Audio" },
-      { "MP3", "MPEG Audio" },
-      { "MP3ADU", "MPEG Audio" },
-      { "MP3ON4", "MPEG Audio" },
-      { "MP4ALS", "ALS" },
-      { "AC3", "AC-3" },
-      { "ADTS", "DTS" },
-      { "DTS", "DTS" },
-      { "DTSHD", "DTS" },
-      { "DTS-HD MA", "DTS" },
-      { "DTS-ES", "DTS" },
-      { "DTS 96/24", "DTS" },
-      { "DTS-HD HRA", "DTS" },
-      { "DTS EXPRESS", "DTS" },
-      { "EAC3", "E-AC-3" },
-      { "FLAC", "FLAC" },
-      { "OPUS", "OPUS" },
-      { "TTA1", "TTA" },
-      { "TTA", "TTA" },
-      { "VORBIS", "Vorbis" },
-      { "WAVPACK4", "WavPack" },
-      { "WAVPACK", "WavPack" },
-      { "TRUEHD", "TrueHD" },
-      { "MLP", "MLP" },
-      { "AAC", "AAC" },
-      { "AAC_LATM", "AAC" },
-      { "AAC LC", "AAC" },
-      { "ALAC", "ALAC" },
-      { "ATRAC1", "Atrac" },
-      { "ATRAC3", "Atrac" },
-      { "ATRAC3P", "Atrac" },
-      { "BINKAUDIO_DCT", "" },
-      { "BINKAUDIO_RDFT", "" },
-      { "PCM_ALAW", "PCM" },
-      { "PCM_MULAW", "PCM" },
-      { "PCM_BLURAY", "PCM" },
-      { "PCM_DVD", "PCM" },
-      { "PCM_LXF", "PCM" },
-      { "PCM_F32BE", "PCM" },
-      { "PCM_F32LE", "PCM" },
-      { "PCM_F64BE", "PCM" },
-      { "PCM_F64LE", "PCM" },
-      { "PCM_S16BE", "PCM" },
-      { "PCM_S16BE_PLANAR", "PCM" },
-      { "PCM_S16LE", "PCM" },
-      { "PCM_S16LE_PLANAR", "PCM" },
-      { "PCM_S24BE", "PCM" },
-      { "PCM_S24DAUD", "PCM" },
-      { "PCM_S24LE", "PCM" },
-      { "PCM_S24LE_PLANAR", "PCM" },
-      { "PCM_S32BE", "PCM" },
-      { "PCM_S32LE", "PCM" },
-      { "PCM_S32LE_PLANAR", "PCM" },
-      { "PCM_S8", "PCM" },
-      { "PCM_S8_PLANAR", "PCM" },
-      { "PCM_U16BE", "PCM" },
-      { "PCM_U16LE", "PCM" },
-      { "PCM_U24BE", "PCM" },
-      { "PCM_U24LE", "PCM" },
-      { "PCM_U32BE", "PCM" },
-      { "PCM_U32LE", "PCM" },
-      { "PCM_U8", "PCM" },
-      { "PCM_ZORK", "PCM" },
-      { "PCM", "PCM" },
-      { "APE", "Monkey's Audio" },
-      { "RA_144", "RealAudio" },
-      { "RA_288", "RealAudio" },
-      { "RALF", "RealAudio" },
-      { "WMALOSSLESS", "WMA" },
-      { "WMAPRO", "WMA" },
-      { "WMAV1", "WMA" },
-      { "WMAV2", "WMA" },
-      { "WMAVOICE", "WMA" },
+      // H.264 High Profile
+      { "H264 HIGH L1", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 HIGH L1.0", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 HIGH L1b", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 HIGH L1.0b", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 HIGH L1.1", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 HIGH L1.2", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 HIGH L1.3", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 HIGH L2", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 HIGH L2.0", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 HIGH L2.1", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 HIGH L2.2", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 HIGH L3", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 HIGH L3.0", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 HIGH L3.1", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 HIGH L3.2", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 HIGH L4", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 HIGH L4.0", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 HIGH L4.1", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 HIGH L4.2", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 HIGH L5", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 HIGH L5.0", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 HIGH L5.1", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 HIGH L5.2", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
 
-      { "H264 HIGH L3", "AVC" },
-      { "H264 HIGH L3.0", "AVC" },
-      { "H264 HIGH L3.1", "AVC" },
-      { "H264 HIGH L3.2", "AVC" },
-      { "H264 HIGH L4", "AVC" },
-      { "H264 HIGH L4.0", "AVC" },
-      { "H264 HIGH L4.1", "AVC" },
-      { "H264 HIGH L4.2", "AVC" },
-      { "H264 HIGH L5", "AVC" },
-      { "H264 HIGH L5.0", "AVC" },
-      { "H264 HIGH L5.1", "AVC" },
-      { "H264 MAIN L3", "AVC" },
-      { "H264 MAIN L3.0", "AVC" },
-      { "H264 MAIN L3.1", "AVC" },
-      { "H264 MAIN L3.2", "AVC" },
-      { "H264 MAIN L4", "AVC" },
-      { "H264 MAIN L4.0", "AVC" },
-      { "H264 MAIN L4.1", "AVC" },
-      { "H264 MAIN L4.2", "AVC" },
-      { "H264 MAIN L5", "AVC" },
-      { "H264 MAIN L5.0", "AVC" },
-      { "H264 MAIN L5.1", "AVC" },
-      { "8BPS", "QuickTime 8bps" },
+      // H.264 High 10 Profile
+      { "H264 HIGH 10 L1", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 HIGH 10 L1.0", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 HIGH 10 L1b", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 HIGH 10 L1.0b", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 HIGH 10 L1.1", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 HIGH 10 L1.2", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 HIGH 10 L1.3", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 HIGH 10 L2", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 HIGH 10 L2.0", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 HIGH 10 L2.1", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 HIGH 10 L2.2", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 HIGH 10 L3", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 HIGH 10 L3.0", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 HIGH 10 L3.1", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 HIGH 10 L3.2", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 HIGH 10 L4", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 HIGH 10 L4.0", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 HIGH 10 L4.1", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 HIGH 10 L4.2", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 HIGH 10 L5", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 HIGH 10 L5.0", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 HIGH 10 L5.1", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 HIGH 10 L5.2", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
 
-      { "DIVX", "" },
-      { "DX50", "" },
-      { "XVID", "" },
-      { "BINKVIDEO", "" },
-      { "AMV", "" },
-      { "AVRN", "" },
-      { "AVRP", "" },
-      { "AYUV", "" },
-      { "CAVS", "" },
-      { "DVVIDEO", "" },
-      { "FLASHSV", "" },
-      { "FLASHSV2", "" },
-      { "FLIC", "" },
-      { "FLV1", "" },
-      { "FRAPS", "" },
-      { "H261", "H.261" },
-      { "H263", "H.263" },
-      { "H263I", "H.263" },
-      { "H263P", "H.263" },
-      { "HEVC", "HEVC" },
-      { "INDEO2", "" },
-      { "INDEO3", "" },
-      { "INDEO4", "" },
-      { "INDEO5", "" },
-      { "MDEC", "" },
-      { "MPEG1VIDEO", "" },
-      { "MPEG2VIDEO", "" },
-      { "MPEG4", "" },
-      { "MPEGVIDEO_XVMC", "" },
-      { "MSMPEG4V1", "" },
-      { "MSMPEG4V2", "" },
-      { "MSMPEG4V3", "" },
-      { "MSS1", "" },
-      { "MSS2", "" },
-      { "MSVIDEO1", "" },
-      { "PGM", "" },
-      { "PGMYUV", "" },
-      { "QTRLE", "" },
-      { "RAWVIDEO", "" },
-      { "RPZA", "" },
-      { "RV10", "" },
-      { "RV20", "" },
-      { "RV30", "" },
-      { "RV40", "" },
-      { "THEORA", "" },
-      { "V210", "" },
-      { "V210X", "" },
-      { "V308", "" },
-      { "V408", "" },
-      { "V410", "" },
-      { "VC1", "" },
-      { "VC1IMAGE", "" },
-      { "VCR1", "" },
-      { "VP3", "" },
-      { "VP5", "" },
-      { "VP6", "" },
-      { "VP6A", "" },
-      { "VP6F", "" },
-      { "VP8", "" },
-      { "VP9", "" },
-      { "WEBP", "" },
-      { "WMV1", "" },
-      { "WMV2", "" },
-      { "WMV3", "" },
-      { "WMV3IMAGE", "" },
-      { "Y41P", "" },
-      { "YUV4", "" },
+      // H.264 Scalable High Profile
+      { "H264 SCALABLE HIGH L1", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 SCALABLE HIGH L1.0", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 SCALABLE HIGH L1b", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 SCALABLE HIGH L1.0b", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 SCALABLE HIGH L1.1", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 SCALABLE HIGH L1.2", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 SCALABLE HIGH L1.3", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 SCALABLE HIGH L2", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 SCALABLE HIGH L2.0", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 SCALABLE HIGH L2.1", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 SCALABLE HIGH L2.2", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 SCALABLE HIGH L3", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 SCALABLE HIGH L3.0", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 SCALABLE HIGH L3.1", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 SCALABLE HIGH L3.2", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 SCALABLE HIGH L4", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 SCALABLE HIGH L4.0", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 SCALABLE HIGH L4.1", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 SCALABLE HIGH L4.2", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 SCALABLE HIGH L5", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 SCALABLE HIGH L5.0", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 SCALABLE HIGH L5.1", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 SCALABLE HIGH L5.2", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+
+      // H.264 Main Profile
+      { "H264 MAIN L1", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 MAIN L1.0", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 MAIN L1b", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 MAIN L1.0b", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 MAIN L1.1", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 MAIN L1.2", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 MAIN L1.3", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 MAIN L2", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 MAIN L2.0", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 MAIN L2.1", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 MAIN L2.2", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 MAIN L3", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 MAIN L3.0", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 MAIN L3.1", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 MAIN L3.2", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 MAIN L4", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 MAIN L4.0", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 MAIN L4.1", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 MAIN L4.2", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 MAIN L5", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 MAIN L5.0", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 MAIN L5.1", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 MAIN L5.2", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      
+      // H.264 Baseline Profile
+      { "H264 BASELINE L1", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 BASELINE L1.0", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 BASELINE L1b", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 BASELINE L1.0b", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 BASELINE L1.1", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 BASELINE L1.2", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 BASELINE L1.3", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 BASELINE L2", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 BASELINE L2.0", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 BASELINE L2.1", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 BASELINE L2.2", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 BASELINE L3", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 BASELINE L3.0", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 BASELINE L3.1", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 BASELINE L3.2", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 BASELINE L4", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 BASELINE L4.0", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 BASELINE L4.1", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 BASELINE L4.2", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 BASELINE L5", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 BASELINE L5.0", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 BASELINE L5.1", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 BASELINE L5.2", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+
+      // H.264 Constrained Baseline Profile
+      { "H264 CONSTRAINED BASELINE L1", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 CONSTRAINED BASELINE L1.0", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 CONSTRAINED BASELINE L1b", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 CONSTRAINED BASELINE L1.0b", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 CONSTRAINED BASELINE L1.1", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 CONSTRAINED BASELINE L1.2", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 CONSTRAINED BASELINE L1.3", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 CONSTRAINED BASELINE L2", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 CONSTRAINED BASELINE L2.0", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 CONSTRAINED BASELINE L2.1", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 CONSTRAINED BASELINE L2.2", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 CONSTRAINED BASELINE L3", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 CONSTRAINED BASELINE L3.0", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 CONSTRAINED BASELINE L3.1", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 CONSTRAINED BASELINE L3.2", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 CONSTRAINED BASELINE L4", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 CONSTRAINED BASELINE L4.0", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 CONSTRAINED BASELINE L4.1", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 CONSTRAINED BASELINE L4.2", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 CONSTRAINED BASELINE L5", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 CONSTRAINED BASELINE L5.0", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 CONSTRAINED BASELINE L5.1", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 CONSTRAINED BASELINE L5.2", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+
+      // H.264 Scalable Baseline Profile
+      { "H264 SCALABLE BASELINE L1", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 SCALABLE BASELINE L1.0", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 SCALABLE BASELINE L1b", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 SCALABLE BASELINE L1.0b", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 SCALABLE BASELINE L1.1", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 SCALABLE BASELINE L1.2", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 SCALABLE BASELINE L1.3", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 SCALABLE BASELINE L2", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 SCALABLE BASELINE L2.0", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 SCALABLE BASELINE L2.1", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 SCALABLE BASELINE L2.2", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 SCALABLE BASELINE L3", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 SCALABLE BASELINE L3.0", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 SCALABLE BASELINE L3.1", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 SCALABLE BASELINE L3.2", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 SCALABLE BASELINE L4", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 SCALABLE BASELINE L4.0", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 SCALABLE BASELINE L4.1", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 SCALABLE BASELINE L4.2", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 SCALABLE BASELINE L5", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 SCALABLE BASELINE L5.0", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 SCALABLE BASELINE L5.1", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 SCALABLE BASELINE L5.2", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+
+      // H.264 Extended Profile
+      { "H264 EXTENDED L1", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 EXTENDED L1.0", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 EXTENDED L1b", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 EXTENDED L1.0b", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 EXTENDED L1.1", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 EXTENDED L1.2", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 EXTENDED L1.3", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 EXTENDED L2", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 EXTENDED L2.0", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 EXTENDED L2.1", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 EXTENDED L2.2", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 EXTENDED L3", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 EXTENDED L3.0", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 EXTENDED L3.1", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 EXTENDED L3.2", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 EXTENDED L4", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 EXTENDED L4.0", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 EXTENDED L4.1", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 EXTENDED L4.2", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 EXTENDED L5", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 EXTENDED L5.0", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 EXTENDED L5.1", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+      { "H264 EXTENDED L5.2", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_ISO_AVC } },
+
+      // H.264 High 4:2:2 Profile
+      // H.264 4:4:4 Predictive Profile
+
+      { "8BPS", new HashSet<VideoCodec> { VideoCodec.V_8BPS } },
+      { "DIVX", new HashSet<VideoCodec> { VideoCodec.V_DIVX4, VideoCodec.V_DIVX3, VideoCodec.V_DIVX2, VideoCodec.V_DIVX1 } },
+      { "DX50", new HashSet<VideoCodec> { VideoCodec.V_DIVX50 } },
+      { "XVID", new HashSet<VideoCodec> { VideoCodec.V_XVID } },
+      { "BINKVIDEO", new HashSet<VideoCodec> { VideoCodec.V_BINKVIDEO } },
+      { "DVVIDEO", new HashSet<VideoCodec> { VideoCodec.V_DV } },
+      { "FLV1", new HashSet<VideoCodec> { VideoCodec.V_SPRK, VideoCodec.V_FFV1 } },
+      { "FLV", new HashSet<VideoCodec> { VideoCodec.V_SPRK, VideoCodec.V_FFV2 } },
+      { "FFVHUFF", new HashSet<VideoCodec> { VideoCodec.V_FFVH } },
+      { "FRAPS", new HashSet<VideoCodec> { VideoCodec.V_FRAPS } },
+      { "H261", new HashSet<VideoCodec> { VideoCodec.V_H261 } },
+      { "H263", new HashSet<VideoCodec> { VideoCodec.V_H263 } },
+      { "H263I", new HashSet<VideoCodec> { VideoCodec.V_H263 } },
+      { "H263P", new HashSet<VideoCodec> { VideoCodec.V_H263 } },
+
+      { "HEVC", new HashSet<VideoCodec> { VideoCodec.V_MPEGH_ISO_HEVC } },
+      { "HEVC MAIN", new HashSet<VideoCodec> { VideoCodec.V_MPEGH_ISO_HEVC } },
+      { "HEVC MAIN 10", new HashSet<VideoCodec> { VideoCodec.V_MPEGH_ISO_HEVC } },
+
+      { "INDEO2", new HashSet<VideoCodec> { VideoCodec.V_IV21 } },
+      { "INDEO3", new HashSet<VideoCodec> { VideoCodec.V_IV30 } },
+      { "INDEO4", new HashSet<VideoCodec> { VideoCodec.V_IV40 } },
+      { "INDEO5", new HashSet<VideoCodec> { VideoCodec.V_IV50 } },
+      { "MPEG1VIDEO", new HashSet<VideoCodec> { VideoCodec.V_MPEG1 } },
+
+      { "MPEG2VIDEO", new HashSet<VideoCodec> { VideoCodec.V_MPEG2 } },
+      { "MPEG2 MAIN", new HashSet<VideoCodec> { VideoCodec.V_MPEG2 } },
+      { "MPEG2 SIMPLE", new HashSet<VideoCodec> { VideoCodec.V_MPEG2 } },
+      { "MPEG2 HIGH", new HashSet<VideoCodec> { VideoCodec.V_MPEG2 } },
+      
+      { "MPEG4", new HashSet<VideoCodec> { VideoCodec.V_MPEG4, VideoCodec.V_MPEG4_ISO_SP } },
+      { "MSMPEG4V1", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_MS_V1 } },
+      { "MSMPEG4V2", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_MS_V2 } },
+      { "MSMPEG4V3", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_MS_V3 } },
+      { "MSMPEG4", new HashSet<VideoCodec> { VideoCodec.V_MPEG4_MS_V1, VideoCodec.V_MPEG4_MS_V2, VideoCodec.V_MPEG4_MS_V3 } },
+
+      // VC-1 
+      { "VC1", new HashSet<VideoCodec> { VideoCodec.V_VC1 } },
+      { "VC-1", new HashSet<VideoCodec> { VideoCodec.V_VC1 } },
+      { "VC-1 SIMPLE LOW", new HashSet<VideoCodec> { VideoCodec.V_VC1 } },
+      { "VC-1 SIMPLE L", new HashSet<VideoCodec> { VideoCodec.V_VC1 } },
+      { "VC-1 SIMPLE MEDIUM", new HashSet<VideoCodec> { VideoCodec.V_VC1 } },
+      { "VC-1 SIMPLE M", new HashSet<VideoCodec> { VideoCodec.V_VC1 } },
+      { "VC-1 MAIN LOW", new HashSet<VideoCodec> { VideoCodec.V_VC1 } },
+      { "VC-1 MAIN L", new HashSet<VideoCodec> { VideoCodec.V_VC1 } },
+      { "VC-1 MAIN MEDIUM", new HashSet<VideoCodec> { VideoCodec.V_VC1 } },
+      { "VC-1 MAIN M", new HashSet<VideoCodec> { VideoCodec.V_VC1 } },
+      { "VC-1 MAIN HIGH", new HashSet<VideoCodec> { VideoCodec.V_VC1 } },
+      { "VC-1 MAIN H", new HashSet<VideoCodec> { VideoCodec.V_VC1 } },
+      { "VC-1 ADVANCED L0", new HashSet<VideoCodec> { VideoCodec.V_VC1 } },
+      { "VC-1 ADVANCED L1", new HashSet<VideoCodec> { VideoCodec.V_VC1 } },
+      { "VC-1 ADVANCED L2", new HashSet<VideoCodec> { VideoCodec.V_VC1 } },
+      { "VC-1 ADVANCED L3", new HashSet<VideoCodec> { VideoCodec.V_VC1 } },
+      { "VC-1 ADVANCED L4", new HashSet<VideoCodec> { VideoCodec.V_VC1 } },
+
+      { "VP6", new HashSet<VideoCodec> { VideoCodec.V_VP6 } },
+      { "VP6A", new HashSet<VideoCodec> { VideoCodec.V_VP6 } },
+      { "VP6F", new HashSet<VideoCodec> { VideoCodec.V_VP6 } },
+      { "VP8", new HashSet<VideoCodec> { VideoCodec.V_VP8 } },
+      { "VP9", new HashSet<VideoCodec> { VideoCodec.V_VP9 } },
+      { "WMV1", new HashSet<VideoCodec> { VideoCodec.V_WMV1 } },
+      { "WMV2", new HashSet<VideoCodec> { VideoCodec.V_WMV2 } },
+      { "WMV3", new HashSet<VideoCodec> { VideoCodec.V_WMV3 } },
+      { "MPEG4 SIMPLE SCALABLE PROFILE", new HashSet<VideoCodec> { VideoCodec.V_DIVX50, VideoCodec.V_MPEG4, VideoCodec.V_MPEG4_IS0_SP, VideoCodec.V_MPEG4_ISO_SP, VideoCodec.V_XVID } },
+      { "MPEG4 SIMPLE PROFILE", new HashSet<VideoCodec> { VideoCodec.V_DIVX50, VideoCodec.V_MPEG4, VideoCodec.V_MPEG4_IS0_SP, VideoCodec.V_MPEG4_ISO_SP, VideoCodec.V_XVID } },
     };
+
+    #endregion
+
+    #region Audio codecs
+
+    private static readonly Dictionary<string, HashSet<AudioCodec>> AudioCodecs = new Dictionary<string, HashSet<AudioCodec>>
+    {
+      { "MP1", new HashSet<AudioCodec> { AudioCodec.A_MPEG_L1 } },
+      { "MP2", new HashSet<AudioCodec> { AudioCodec.A_MPEG_L2 } },
+      { "MP3", new HashSet<AudioCodec> { AudioCodec.A_MPEG_L3 } },
+      { "MP3ADU", new HashSet<AudioCodec> { AudioCodec.A_MPEG_L3 } },
+      { "MP3ON4", new HashSet<AudioCodec> { AudioCodec.A_MPEG_L3 } },
+      
+      { "AC3", new HashSet<AudioCodec> { AudioCodec.A_AC3, AudioCodec.A_AC3_BSID10, AudioCodec.A_AC3_BSID9 } },
+      { "EAC3", new HashSet<AudioCodec> { AudioCodec.A_EAC3, AudioCodec.A_AC3, AudioCodec.A_AC3_BSID10, AudioCodec.A_AC3_BSID9 } },
+      
+      { "ADTS", new HashSet<AudioCodec> { AudioCodec.A_DTS } },
+      { "DTS", new HashSet<AudioCodec> { AudioCodec.A_DTS } },
+      { "DTSHD", new HashSet<AudioCodec> { AudioCodec.A_DTS_HD, AudioCodec.A_DTS } },
+      { "DTS-HD MA", new HashSet<AudioCodec> { AudioCodec.A_DTS_HD, AudioCodec.A_DTS } },
+      { "DTS-ES", new HashSet<AudioCodec> { AudioCodec.A_DTS } },
+      { "DTS 96/24", new HashSet<AudioCodec> { AudioCodec.A_DTS } },
+      { "DTS-HD HRA", new HashSet<AudioCodec> { AudioCodec.A_DTS_HD, AudioCodec.A_DTS } },
+      { "DTS EXPRESS", new HashSet<AudioCodec> { AudioCodec.A_DTS } },
+
+      { "FLAC", new HashSet<AudioCodec> { AudioCodec.A_FLAC } },
+      { "OPUS", new HashSet<AudioCodec> { AudioCodec.A_OPUS } },
+      { "LIBOPUS", new HashSet<AudioCodec> { AudioCodec.A_OPUS } },
+      { "TTA1", new HashSet<AudioCodec> { AudioCodec.A_TTA1 } },
+      { "TTA", new HashSet<AudioCodec> { AudioCodec.A_TTA1 } },
+      { "VORBIS", new HashSet<AudioCodec> { AudioCodec.A_VORBIS } },
+      { "WAVPACK4", new HashSet<AudioCodec> { AudioCodec.A_WAVPACK4 } },
+      { "WAVPACK", new HashSet<AudioCodec> { AudioCodec.A_WAVPACK } },
+      { "TRUEHD", new HashSet<AudioCodec> { AudioCodec.A_TRUEHD } },
+      { "MLP", new HashSet<AudioCodec> { AudioCodec.A_MLP } },
+
+      { "AAC", new HashSet<AudioCodec> { AudioCodec.A_AAC, AudioCodec.A_AAC_MPEG2_MAIN, AudioCodec.A_AAC_MPEG4_MAIN, 
+                                         AudioCodec.A_AAC_MPEG2_LC, AudioCodec.A_AAC_MPEG2_LC_SBR, AudioCodec.A_AAC_MPEG4_LC, AudioCodec.A_AAC_MPEG4_LC_SBR, AudioCodec.A_AAC_MPEG4_LC_SBR_PS,
+                                         AudioCodec.A_AAC_MPEG2_SSR, AudioCodec.A_AAC_MPEG4_SSR,
+                                         AudioCodec.A_AAC_MPEG4_LTP } },
+      { "AAC_LATM", new HashSet<AudioCodec> { AudioCodec.A_AAC } },
+      { "AAC LC", new HashSet<AudioCodec> { AudioCodec.A_AAC_MPEG4_LC, AudioCodec.A_AAC_MPEG2_LC, AudioCodec.A_AAC_MPEG2_LC_SBR, AudioCodec.A_AAC_MPEG4_LC_SBR, AudioCodec.A_AAC_MPEG4_LC_SBR_PS } },
+      { "AAC LTP", new HashSet<AudioCodec> { AudioCodec.A_AAC_MPEG4_LTP } },
+      { "AAC SSR", new HashSet<AudioCodec> { AudioCodec.A_AAC_MPEG4_SSR, AudioCodec.A_AAC_MPEG2_SSR } },
+
+      { "ALAC", new HashSet<AudioCodec> { AudioCodec.A_ALAC } },
+      { "ATRAC1", new HashSet<AudioCodec> { AudioCodec.A_ATRAC1 } },
+      { "ATRAC3", new HashSet<AudioCodec> { AudioCodec.A_ATRAC3 } },
+      { "ATRAC3P", new HashSet<AudioCodec> { AudioCodec.A_ATRAC3 } },
+
+      { "PCM_ALAW", new HashSet<AudioCodec> { AudioCodec.A_PCM_INT_LIT } },
+      { "PCM_MULAW", new HashSet<AudioCodec> { AudioCodec.A_PCM_INT_LIT } },
+      { "PCM_BLURAY", new HashSet<AudioCodec> { AudioCodec.A_PCM_INT_LIT } },
+      { "PCM_DVD", new HashSet<AudioCodec> { AudioCodec.A_PCM_INT_LIT } },
+      { "PCM_LXF", new HashSet<AudioCodec> { AudioCodec.A_PCM_INT_LIT } },
+      { "PCM_F32BE", new HashSet<AudioCodec> { AudioCodec.A_PCM_FLOAT_IEEE } },
+      { "PCM_F32LE", new HashSet<AudioCodec> { AudioCodec.A_PCM_FLOAT_IEEE } },
+      { "PCM_F64BE", new HashSet<AudioCodec> { AudioCodec.A_PCM_FLOAT_IEEE } },
+      { "PCM_F64LE", new HashSet<AudioCodec> { AudioCodec.A_PCM_FLOAT_IEEE } },
+      { "PCM_S16BE", new HashSet<AudioCodec> { AudioCodec.A_PCM_INT_BIG } },
+      { "PCM_S16BE_PLANAR", new HashSet<AudioCodec> { AudioCodec.A_PCM_INT_BIG } },
+      { "PCM_S16LE", new HashSet<AudioCodec> { AudioCodec.A_PCM_INT_LIT } },
+      { "PCM_S16LE_PLANAR", new HashSet<AudioCodec> { AudioCodec.A_PCM_INT_LIT } },
+      { "PCM_S24BE", new HashSet<AudioCodec> { AudioCodec.A_PCM_INT_BIG } },
+      { "PCM_S24DAUD", new HashSet<AudioCodec> { AudioCodec.A_PCM_INT_LIT } },
+      { "PCM_S24LE", new HashSet<AudioCodec> { AudioCodec.A_PCM_INT_LIT } },
+      { "PCM_S24LE_PLANAR", new HashSet<AudioCodec> { AudioCodec.A_PCM_INT_LIT } },
+      { "PCM_S32BE", new HashSet<AudioCodec> { AudioCodec.A_PCM_INT_BIG } },
+      { "PCM_S32LE", new HashSet<AudioCodec> { AudioCodec.A_PCM_INT_LIT } },
+      { "PCM_S32LE_PLANAR", new HashSet<AudioCodec> { AudioCodec.A_PCM_INT_LIT } },
+      { "PCM_S8", new HashSet<AudioCodec> { AudioCodec.A_PCM_INT_LIT } },
+      { "PCM_S8_PLANAR", new HashSet<AudioCodec> { AudioCodec.A_PCM_INT_LIT } },
+      { "PCM_U16BE", new HashSet<AudioCodec> { AudioCodec.A_PCM_INT_BIG } },
+      { "PCM_U16LE", new HashSet<AudioCodec> { AudioCodec.A_PCM_INT_LIT } },
+      { "PCM_U24BE", new HashSet<AudioCodec> { AudioCodec.A_PCM_INT_BIG } },
+      { "PCM_U24LE", new HashSet<AudioCodec> { AudioCodec.A_PCM_INT_LIT } },
+      { "PCM_U32BE", new HashSet<AudioCodec> { AudioCodec.A_PCM_INT_BIG } },
+      { "PCM_U32LE", new HashSet<AudioCodec> { AudioCodec.A_PCM_INT_LIT } },
+      { "PCM_U8", new HashSet<AudioCodec> { AudioCodec.A_PCM_INT_LIT } },
+      { "PCM_ZORK", new HashSet<AudioCodec> { AudioCodec.A_PCM_INT_LIT } },
+      { "PCM", new HashSet<AudioCodec> { AudioCodec.A_PCM_INT_LIT } },
+
+      { "APE", new HashSet<AudioCodec> { AudioCodec.A_APE } },
+      { "RA_144", new HashSet<AudioCodec> { AudioCodec.A_REAL_14_4 } },
+      { "RA_288", new HashSet<AudioCodec> { AudioCodec.A_REAL_28_8 } },
+      { "RALF", new HashSet<AudioCodec> { AudioCodec.A_REAL_ATRC } },
+
+      { "WMALOSSLESS", new HashSet<AudioCodec> { AudioCodec.A_WMA9 } },
+      { "WMAPRO", new HashSet<AudioCodec> { AudioCodec.A_WMA9 } },
+      { "WMAV1", new HashSet<AudioCodec> { AudioCodec.A_WMA1 } },
+      { "WMAV2", new HashSet<AudioCodec> { AudioCodec.A_WMA2 } },
+      { "WMAVOICE", new HashSet<AudioCodec> { AudioCodec.A_WMA9 } },
+
+      { "ADPCM_IMA_WAV", new HashSet<AudioCodec> { AudioCodec.A_ADPCM } },
+      { "ADPCM", new HashSet<AudioCodec> { AudioCodec.A_ADPCM } },
+      { "AMRNB", new HashSet<AudioCodec> { AudioCodec.A_AMR } },
+    };
+
+    #endregion
+
+    #region Languages
 
     private static readonly Dictionary<string, string> Languages = new Dictionary<string, string>
     {
@@ -666,6 +900,8 @@ namespace MediaPortal.Player
       { "PB", "Portuguese (Brazil)" },
       { "PUS", "Pushto" },
       { "PS", "Pushto" },
+      { "QAA", "French" },
+      { "QAD", "French" },
       { "QUE", "Quechua" },
       { "QU", "Quechua" },
       { "ROH", "Raeto-Romance" },
@@ -843,8 +1079,10 @@ namespace MediaPortal.Player
       { "HAT", "Haitian" },
       { "HT", "Haitian" },
       { "XAL", "Kalmyk" },
-      { "UNK", "Unknown" }
+      { "UNK", UnknownLanguage }
     };
+
+    #endregion
 
     private static readonly Dictionary<string, int> FiltersToSkip = new Dictionary<string, int>
     {
@@ -864,6 +1102,65 @@ namespace MediaPortal.Player
       Chapters = null;
       ChaptersName = null;
       this.storeAction = storeAction;
+    }
+
+    public void AnalyzeStreamChapters(IGraphBuilder graphBuilder)
+    {
+      try
+      {
+        //RETRIEVING THE CURRENT SPLITTER
+        var foundfilter = new IBaseFilter[2];
+        IEnumFilters enumFilters;
+        graphBuilder.EnumFilters(out enumFilters);
+        if (enumFilters != null)
+        {
+          try
+          {
+            int fetched;
+            enumFilters.Reset();
+            while (enumFilters.Next(1, foundfilter, out fetched) == 0)
+            {
+              if (foundfilter[0] != null && fetched == 1)
+              {
+                var pEs = foundfilter[0] as IAMExtendedSeeking;
+                try
+                {
+                  if (pEs != null)
+                  {
+                    int markerCount;
+                    if (pEs.get_MarkerCount(out markerCount) == 0 && markerCount > 0)
+                    {
+                      Chapters = new double[markerCount];
+                      ChaptersName = new string[markerCount];
+                      for (int i = 1; i <= markerCount; ++i)
+                      {
+                        double markerTime;
+                        pEs.GetMarkerTime(i, out markerTime);
+                        Chapters[i - 1] = markerTime;
+                        //fill up chapter names
+                        string name = null;
+                        pEs.GetMarkerName(i, out name);
+                        ChaptersName[i - 1] = name;
+                      }
+                    }
+                  }
+                }
+                finally
+                {
+                  DirectShowUtil.ReleaseComObject(foundfilter[0]);
+                }
+              }
+            }
+          }
+          finally
+          {
+            DirectShowUtil.ReleaseComObject(enumFilters);
+          }
+        }
+      }
+      catch
+      {
+      }
     }
 
     public bool AnalyseStreams(IGraphBuilder graphBuilder)
@@ -1016,13 +1313,13 @@ namespace MediaPortal.Player
       var m = LavSplitterAudio.Match(name);
       if (m.Success)
       {
-        return LavSplitterAudioMatch(info, m);
+        return LavSplitterAudioMatch(info, m, id);
       }
 
       m = FfdshowNameAudio.Match(name);
       if (m.Success)
       {
-        return FfdshowAudioMatch(info, m);
+        return FfdshowAudioMatch(info, m, id);
       }
 
       m = TsReaderAudio.Match(name);
@@ -1031,7 +1328,14 @@ namespace MediaPortal.Player
         return TsReaderAudioMatch(info, id, m);
       }
 
-      return null;
+      return new AudioStream(id, id)
+      {
+          Language = UnknownLanguage,
+          Name = string.Empty,
+          Format = string.Empty,
+          Codec = AudioCodec.A_UNDEFINED,
+          Duration = TimeSpan.FromSeconds(0)
+      };
     }
 
     public static string GetLanguage(string source)
@@ -1040,22 +1344,27 @@ namespace MediaPortal.Player
       return Languages.TryGetValue(source.ToUpper(), out result) ? result : string.Empty;
     }
 
+    public static VideoCodec GetVideoCodecByType(string videoType)
+    {
+      var result = GetVideoCodec(videoType);
+      return result != null && result.Any() ? result.First() : VideoCodec.V_UNDEFINED;
+    }
+
+    public static AudioCodec GetAudioCodecByType(string videoType)
+    {
+      var result = GetAudioCodec(videoType);
+      return result != null && result.Any() ? result.First() : AudioCodec.A_UNDEFINED;
+    }
+
     private static AudioStream TsReaderAudioMatch(MediaInfoWrapper info, int id, Match m)
     {
       var result = id < info.AudioStreams.Count ? info.AudioStreams[id] : null;
       if (result != null)
       {
         string language;
-        if (Languages.TryGetValue(m.Groups["language"].ToString().ToUpper(), out language))
+        if (!Languages.TryGetValue(m.Groups["language"].ToString().ToUpper(), out language) || result.Language != language)
         {
-          if (result.Language != language)
-          {
-            return null;
-          }
-        }
-        else
-        {
-          result = null;
+          result = new AudioStream(id, id) { Name = string.Empty, Codec = AudioCodec.A_UNDEFINED, Language = m.Groups["language"].Value };
         }
       }
 
@@ -1068,9 +1377,10 @@ namespace MediaPortal.Player
       return NameEncoders.TryGetValue(name, out result) ? result : name;
     }
 
-    private static AudioStream FfdshowAudioMatch(MediaInfoWrapper info, Match m)
+    private static AudioStream FfdshowAudioMatch(MediaInfoWrapper info, Match m, int id)
     {
-      var codec = GetCodec(m.Groups["codec"].Value);
+      var codec = GetAudioCodec(m.Groups["codec"].Value);
+
       int frequency;
       if (!int.TryParse(m.Groups["freq"].Value, out frequency))
       {
@@ -1079,25 +1389,35 @@ namespace MediaPortal.Player
 
       var channelFrendly = m.Groups["channels"].Value;
 
-      return info.AudioStreams.FirstOrDefault(
-               x =>
-               x.Format.Equals(codec, StringComparison.OrdinalIgnoreCase)
-               && x.AudioChannelsFriendly.Equals(channelFrendly, StringComparison.OrdinalIgnoreCase)
-               && (int)x.SamplingRate == frequency);
-    }
-
-    private static string GetCodec(string sourceCodecName)
-    {
-      var result = string.Empty;
-      if (!string.IsNullOrEmpty(sourceCodecName))
-      {
-        if (!Codecs.TryGetValue(sourceCodecName.ToUpper(), out result))
-        {
-          result = sourceCodecName.ToUpper();
-        }
-      }
+      var result = info.AudioStreams.FirstOrDefault(x =>
+                                                    (codec == null || codec.Contains(x.Codec))
+                                                    && x.AudioChannelsFriendly.Equals(channelFrendly, StringComparison.OrdinalIgnoreCase)
+                                                    && (int)x.SamplingRate == frequency) 
+              ??  new AudioStream(id, id)
+              {
+                  Language = UnknownLanguage, 
+                  Name = string.Empty, 
+                  Codec = codec != null ? codec.FirstOrDefault() : AudioCodec.A_UNDEFINED, 
+                  SamplingRate = frequency
+              };
 
       return result;
+    }
+
+    private static HashSet<VideoCodec> GetVideoCodec(string sourceCodecName)
+    {
+      HashSet<VideoCodec> result;
+      return !string.IsNullOrEmpty(sourceCodecName) && VideoCodecs.TryGetValue(sourceCodecName.ToUpper(), out result)
+               ? result
+               : null;
+    }
+
+    private static HashSet<AudioCodec> GetAudioCodec(string sourceCodecName)
+    {
+      HashSet<AudioCodec> result;
+      return !string.IsNullOrEmpty(sourceCodecName) && AudioCodecs.TryGetValue(sourceCodecName.ToUpper(), out result)
+               ? result
+               : null;
     }
 
     private static string EncodeChannels(string source)
@@ -1106,12 +1426,20 @@ namespace MediaPortal.Player
       return Channels.TryGetValue(source, out result) ? result : source;
     }
 
-    private static AudioStream LavSplitterAudioMatch(MediaInfoWrapper info, Match m)
+    private static int GetChannelNumbers(string source)
+    {
+        int result;
+        return ChannelNumbers.TryGetValue(source, out result) ? result : 0;
+    }
+
+    private static AudioStream LavSplitterAudioMatch(MediaInfoWrapper info, Match m, int id)
     {
       string language;
-      string codec;
       string name;
-      GetLavMainParameters(m, out language, out codec, out name);
+      GetLavMainParameters(m, out language, out name);
+
+      var codec = GetAudioCodec(m.Groups["codec"].Value);
+
       int frequency;
       if (!int.TryParse(m.Groups["freq"].Value, out frequency))
       {
@@ -1119,27 +1447,56 @@ namespace MediaPortal.Player
       }
 
       var channelFrendly = EncodeChannels(m.Groups["channels"].Value);
+
       int bit;
       if (!int.TryParse(m.Groups["bit"].Value, out bit))
       {
         bit = 0;
       }
 
-      return info.AudioStreams.FirstOrDefault(
-               x =>
-               x.Format.Equals(codec, StringComparison.OrdinalIgnoreCase)
-               && x.AudioChannelsFriendly.Equals(channelFrendly, StringComparison.OrdinalIgnoreCase)
-               && (int)x.SamplingRate == frequency && (x.BitDepth == bit || bit == 0)
-               && (string.IsNullOrEmpty(language) || x.Language.Equals(language, StringComparison.OrdinalIgnoreCase))
-               && ((string.IsNullOrEmpty(x.Name) && !string.IsNullOrEmpty(language) 
-               && language.Equals(name, StringComparison.OrdinalIgnoreCase)) || x.Name.Equals(name, StringComparison.InvariantCultureIgnoreCase)));
+      var result = info.AudioStreams.FirstOrDefault(x => x.StreamNumber == id);
+      if (result != null && (codec == null || codec.Contains(result.Codec))
+          && result.AudioChannelsFriendly.Equals(channelFrendly, StringComparison.OrdinalIgnoreCase)
+          && (int)result.SamplingRate == frequency
+          && (result.BitDepth == bit || bit == 0 || result.Codec == AudioCodec.A_ADPCM) // ADPCM reports 16 bit instead of 4
+          && (string.IsNullOrEmpty(language) || result.Language.Equals(UnknownLanguage, StringComparison.OrdinalIgnoreCase) || result.Language.Equals(language, StringComparison.OrdinalIgnoreCase)))
+      {
+        return result;
+      }
+
+      return info.AudioStreams.FirstOrDefault(x =>
+                                             (codec == null || codec.Contains(x.Codec))
+                                             && x.AudioChannelsFriendly.Equals(channelFrendly, StringComparison.OrdinalIgnoreCase)
+                                             && (int)x.SamplingRate == frequency
+                                             && (x.BitDepth == bit || bit == 0 || x.Codec == AudioCodec.A_ADPCM)
+                                             && (string.IsNullOrEmpty(language) || x.Language.Equals(UnknownLanguage, StringComparison.OrdinalIgnoreCase) || x.Language.Equals(language, StringComparison.OrdinalIgnoreCase))
+                                             && ((string.IsNullOrEmpty(x.Name) && !string.IsNullOrEmpty(language) 
+                                             && language.Equals(name, StringComparison.OrdinalIgnoreCase)) || x.Name.Equals(name, StringComparison.InvariantCultureIgnoreCase)))
+        ?? new AudioStream(id, id)
+        {
+            Codec = codec != null ? codec.FirstOrDefault() : AudioCodec.A_UNDEFINED, 
+            Name = name, 
+            Language = language, 
+            Channel = GetChannelNumbers(m.Groups["channels"].Value), 
+            BitDepth = bit, 
+            SamplingRate = frequency
+        };
     }
 
-    private static void GetLavMainParameters(Match m, out string language, out string codec, out string name)
+    private static void GetLavMainParameters(Match m, out string language, out string name)
     {
       name = CheckNameEncoder(m.Groups["name"].Value.TrimEnd());
+      if (name.Equals(m.Groups["language"].Value, StringComparison.OrdinalIgnoreCase))
+      {
+        name = string.Empty;
+      }
+
       language = GetLanguage(m.Groups["language"].Value);
-      codec = GetCodec(m.Groups["codec"].Value);
+
+      if (name.Equals(language, StringComparison.OrdinalIgnoreCase))
+      {
+        name = string.Empty;
+      }
     }
 
     private static readonly Regex LavSplitterVideo = new Regex(@"V\:\s*(((?<name>.+)\[(?<language>\w+)\]|\[(?<language>\w+)\]|(?<name>.+))\s*\()?\s*(?<codec>[a-z0-9\s\.'_\-]+),\s*(?<output>[a-z0-9\s\.'_\-]+),\s*(?<width>\d+)x(?<height>\d+)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
@@ -1151,18 +1508,23 @@ namespace MediaPortal.Player
       var m = LavSplitterVideo.Match(name);
       if (m.Success)
       {
-        return LavSplitterVideoMatch(info, m);
+        return LavSplitterVideoMatch(info, m, id);
       }
 
-      return null;
+      return new VideoStream(id, id)
+      {
+          Name = string.Empty, 
+          Codec = VideoCodec.V_UNDEFINED
+      };
     }
 
-    private static VideoStream LavSplitterVideoMatch(MediaInfoWrapper info, Match m)
+    private static VideoStream LavSplitterVideoMatch(MediaInfoWrapper info, Match m, int id)
     {
       string language;
-      string codec;
       string name;
-      GetLavMainParameters(m, out language, out codec, out name);
+      GetLavMainParameters(m, out language, out name);
+
+      var codec = GetVideoCodec(m.Groups["codec"].Value);
       int width;
       if (!int.TryParse(m.Groups["width"].Value, out width))
       {
@@ -1175,13 +1537,28 @@ namespace MediaPortal.Player
         height = 0;
       }
 
-      return info.VideoStreams.FirstOrDefault(
-               x =>
-               (x.Width == width || width == 0) && (x.Height == height || height == 0)
-               && (string.IsNullOrEmpty(codec) || x.Format.Equals(codec, StringComparison.OrdinalIgnoreCase))
-               && (string.IsNullOrEmpty(language) || x.Language.Equals(language, StringComparison.OrdinalIgnoreCase))
-               && ((string.IsNullOrEmpty(x.Name) && !string.IsNullOrEmpty(language)
-               && language.Equals(name, StringComparison.OrdinalIgnoreCase)) || x.Name.Equals(name, StringComparison.InvariantCultureIgnoreCase)));
+      var result = info.VideoStreams.FirstOrDefault(x => x.StreamNumber == id);
+      if (result != null && (result.Width == width || width == 0) && (result.Height == height || height == 0)
+          && (codec == null || codec.Contains(result.Codec))
+          && (string.IsNullOrEmpty(language) || result.Language.Equals(UnknownLanguage, StringComparison.OrdinalIgnoreCase) || result.Language.Equals(language, StringComparison.OrdinalIgnoreCase)))
+      {
+        return result;
+      }
+
+      return info.VideoStreams.FirstOrDefault(x =>
+                                              (x.Width == width || width == 0) && (x.Height == height || height == 0)
+                                              && (codec == null || codec.Contains(x.Codec))
+                                              && (string.IsNullOrEmpty(language) || x.Language.Equals(language, StringComparison.OrdinalIgnoreCase))
+                                              && ((string.IsNullOrEmpty(x.Name) && !string.IsNullOrEmpty(language)
+                                              && language.Equals(name, StringComparison.OrdinalIgnoreCase)) || x.Name.Equals(name, StringComparison.InvariantCultureIgnoreCase)))
+          ?? new VideoStream(id, id)
+          {
+              Name = name, 
+              Codec = codec != null ? codec.FirstOrDefault() : 
+              VideoCodec.V_UNDEFINED, 
+              Height = height, 
+              Width = width
+          };
     }
   }
 }

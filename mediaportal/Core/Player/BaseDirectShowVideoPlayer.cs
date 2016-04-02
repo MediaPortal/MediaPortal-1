@@ -24,8 +24,6 @@ using System.Linq;
 using DirectShowLib;
 using DShowNET.Helper;
 
-using MediaPortal.Player.MediaInfo;
-
 namespace MediaPortal.Player
 {
   public abstract class BaseDirectShowVideoPlayer : IPlayer

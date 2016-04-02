@@ -35,8 +35,6 @@ using MediaPortal.Player.PostProcessing;
 using System.Collections;
 using System.Collections.Generic;
 
-using MediaPortal.Player.MediaInfo;
-
 namespace MediaPortal.Player
 {
   [ComVisible(true), ComImport,

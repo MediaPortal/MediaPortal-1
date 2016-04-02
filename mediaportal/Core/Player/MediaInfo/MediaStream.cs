@@ -21,7 +21,7 @@
 using System;
 using System.Globalization;
 
-namespace MediaPortal.Player.MediaInfo
+namespace MediaPortal.Player
 {
   public enum MediaStreamKind
   {
@@ -34,9 +34,10 @@ namespace MediaPortal.Player.MediaInfo
 
   public abstract class MediaStream : MarshalByRefObject
   {
-    protected MediaStream(MediaInfo info, int number)
+    protected MediaStream(MediaInfo info, int number, int position)
     {
       StreamNumber = number;
+      StreamPosition = position;
       if (info != null)
       {
         AnalyzeStream(info);
@@ -50,6 +51,8 @@ namespace MediaPortal.Player.MediaInfo
     public abstract MediaStreamKind Kind { get; }
 
     protected abstract StreamKind StreamKind { get; }
+
+    public int StreamPosition { get; private set; }
 
     public int StreamNumber { get; private set; }
 
@@ -67,7 +70,7 @@ namespace MediaPortal.Player.MediaInfo
     protected long GetLong(MediaInfo info, string parameter)
     {
       long parsedValue;
-      var result = info.Get(StreamKind, StreamNumber, parameter);
+      var result = info.Get(StreamKind, StreamPosition, parameter);
       return long.TryParse(result, out parsedValue) ? parsedValue : 0;
     }
 
@@ -76,34 +79,34 @@ namespace MediaPortal.Player.MediaInfo
       NumberFormatInfo providerNumber = new NumberFormatInfo();
       providerNumber.NumberDecimalSeparator = ".";
       double parsedValue;
-      var result = info.Get(StreamKind, StreamNumber, parameter);
+      var result = info.Get(StreamKind, StreamPosition, parameter);
       return double.TryParse(result, NumberStyles.AllowDecimalPoint, providerNumber, out parsedValue) ? parsedValue : 0;
     }
 
     protected int GetInt(MediaInfo info, string parameter)
     {
       int parsedValue;
-      var result = info.Get(StreamKind, StreamNumber, parameter);
+      var result = info.Get(StreamKind, StreamPosition, parameter);
       return int.TryParse(result, out parsedValue) ? parsedValue : 0;
     }
 
     protected bool GetBool(MediaInfo info, string parameter)
     {
       bool parsedValue;
-      var result = info.Get(StreamKind, StreamNumber, parameter);
+      var result = info.Get(StreamKind, StreamPosition, parameter);
       return bool.TryParse(result, out parsedValue) && parsedValue;
     }
 
     protected DateTime GetDateTime(MediaInfo info, string parameter)
     {
       DateTime parsedValue;
-      var result = info.Get(StreamKind, StreamNumber, parameter);
+      var result = info.Get(StreamKind, StreamPosition, parameter);
       return DateTime.TryParse(result, out parsedValue) ? parsedValue : DateTime.MinValue;
     }
 
     protected string GetString(MediaInfo info, string parameter)
     {
-      var result = info.Get(StreamKind, StreamNumber, parameter);
+      var result = info.Get(StreamKind, StreamPosition, parameter);
       return result ?? string.Empty;
     }
   }

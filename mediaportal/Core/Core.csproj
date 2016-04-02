@@ -392,6 +392,7 @@
     <Compile Include="Player\FFDShow\Interfaces\IffdshowDec.cs" />
     <Compile Include="Player\FFDShow\Interfaces\IffdshowDecVideo.cs" />
     <Compile Include="Player\MediaInfo\AudioStream.cs" />
+    <Compile Include="Player\MediaInfo\Chapter.cs" />
     <Compile Include="Player\MediaInfo\LanguageMediaStream.cs" />
     <Compile Include="Player\MediaInfo\MediaInfo.cs" />
     <Compile Include="Player\MediaInfo\MediaInfoWrapper.cs" />

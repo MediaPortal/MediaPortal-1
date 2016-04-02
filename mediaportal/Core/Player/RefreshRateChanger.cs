@@ -21,18 +21,18 @@
 #region using
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
+using System.Runtime.InteropServices;
 using System.Threading;
-using System.Collections.Generic;
+using System.Windows.Forms;
+
 using MediaPortal.Configuration;
 using MediaPortal.GUI.Library;
 using MediaPortal.Profile;
-using Microsoft.DirectX.Direct3D;
-using System.Runtime.InteropServices;
-using System.Windows.Forms;
 
-using MediaPortal.Player.MediaInfo;
+using Microsoft.DirectX.Direct3D;
 
 #endregion
 

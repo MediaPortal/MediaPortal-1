@@ -20,8 +20,6 @@
 
 using System;
 
-using MediaPortal.Player.MediaInfo;
-
 namespace MediaPortal.Player
 {
   public class DummyPlayer : IPlayer

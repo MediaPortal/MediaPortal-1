@@ -28,7 +28,6 @@ using MediaPortal.ExtensionMethods;
 using MediaPortal.GUI.Library;
 using MediaPortal.Player;
 using MediaPortal.Player.DSP;
-using MediaPortal.Player.MediaInfo;
 using MediaPortal.TagReader;
 using Un4seen.Bass;
 using Un4seen.Bass.AddOn.Cd;
@@ -2107,7 +2106,7 @@ namespace MediaPortal.MusicPlayer.BASS
     private static AudioStream MusicToAudioStream(MusicStream source)
     {
       if (source == null) return null;
-      return new AudioStream(source.BassStream)
+      return new AudioStream(source.BassStream, 0)
       {
         Bitrate = source.StreamTags.bitrate * 1000,
         Channel = source.StreamTags.channelinfo.chans,

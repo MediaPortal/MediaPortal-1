@@ -20,9 +20,9 @@
 
 namespace MediaPortal.Player
 {
-  public class MenuStream : MediaStream
+  public class Chapter : MediaStream
   {
-    public MenuStream(MediaInfo info, int number, int position)
+    public Chapter(MediaInfo info, int number, int position)
       : base(info, number, position)
     {
     }
@@ -34,7 +34,16 @@ namespace MediaPortal.Player
 
     protected override StreamKind StreamKind
     {
-      get { return StreamKind.Menu; }
+      get { return StreamKind.Other; }
+    }
+
+    public double Offset { get; set; }
+
+    public string Description { get; set; }
+
+    protected override void AnalyzeStreamInternal(MediaInfo info)
+    {
+      base.AnalyzeStreamInternal(info);
     }
   }
 }

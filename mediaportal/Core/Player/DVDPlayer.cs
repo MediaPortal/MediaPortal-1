@@ -34,7 +34,6 @@ using DShowNET.Helper;
 using MediaPortal.Configuration;
 using MediaPortal.ExtensionMethods;
 using MediaPortal.GUI.Library;
-using MediaPortal.Player.MediaInfo;
 using MediaPortal.Profile;
 using MediaPortal.Util;
 using MediaPortal.Player.PostProcessing;
@@ -2203,7 +2202,8 @@ namespace MediaPortal.Player
       var hr = _dvdInfo.GetAudioAttributes(CurrentAudioStream, out attr);
       if (hr == 0)
       {
-        return new AudioStream(CurrentAudioStream)
+        var streamId = CurrentAudioStream;
+        return new AudioStream(streamId, streamId)
         {
           Channel = attr.bNumberOfChannels,
           Format = _dvdAudioFormat[attr.AudioFormat],
@@ -2260,9 +2260,10 @@ namespace MediaPortal.Player
       var hr = _dvdInfo.GetCurrentVideoAttributes(out attr);
       if (hr == 0)
       {
-        return new VideoStream(CurrentAudioStream)
+        var streamId = CurrentVideoStream;
+        return new VideoStream(streamId, streamId)
         {
-          AspectRatio = attr.aspectX == 4 && attr.aspectY == 3 ? AspectRatio.Tv : AspectRatio.HighDefinitionTv,
+          AspectRatio = attr.aspectX == 4 && attr.aspectY == 3 ? AspectRatio.FullScreen : AspectRatio.HighDefinitionTv,
           Codec = attr.compression == DvdVideoCompression.Mpeg1 ? VideoCodec.V_MPEG1 : VideoCodec.V_MPEG2,
           Format = "MPEG Video",
           Height = attr.sourceResolutionY,

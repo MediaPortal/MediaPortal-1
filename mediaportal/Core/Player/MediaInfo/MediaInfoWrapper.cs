@@ -28,7 +28,7 @@ using MediaPortal.GUI.Library;
 using MediaPortal.Profile;
 using MediaPortal.Util;
 
-namespace MediaPortal.Player.MediaInfo
+namespace MediaPortal.Player
 {
   public class MediaInfoWrapper
   {
@@ -38,7 +38,10 @@ namespace MediaPortal.Player.MediaInfo
 
     private readonly List<VideoStream> videoStreams;
     private readonly List<AudioStream> audioStreams;
+    private readonly VideoStream bestVideo;
+    private readonly AudioStream bestAudio;
     private readonly List<SubtitleStream> subtitleStreams;
+    private readonly List<Chapter> chapters;
     private readonly string sourceLocation;
 
     //Video
@@ -71,6 +74,7 @@ namespace MediaPortal.Player.MediaInfo
       videoStreams = new List<VideoStream>();
       audioStreams = new List<AudioStream>();
       subtitleStreams = new List<SubtitleStream>();
+      chapters = new List<Chapter>();
 
       if (!MediaInfoExist())
       {
@@ -140,6 +144,7 @@ namespace MediaPortal.Player.MediaInfo
 
           if (strFile.EndsWith(".ifo", StringComparison.OrdinalIgnoreCase))
           {
+            IsDVD = true;
             var path = Path.GetDirectoryName(strFile) ?? string.Empty;
             var bups = Directory.GetFiles(path, "*.BUP", SearchOption.TopDirectoryOnly);
             var programBlocks = new List<Tuple<string, int>>();
@@ -166,6 +171,7 @@ namespace MediaPortal.Player.MediaInfo
           }
           else if (strFile.EndsWith(".bdmv", StringComparison.OrdinalIgnoreCase))
           {
+            IsBD = true;
             var path = Path.GetDirectoryName(strFile) + @"\STREAM";
             strFile = GetLargestFileInDirectory(path, "*.m2ts");
           }
@@ -182,11 +188,12 @@ namespace MediaPortal.Player.MediaInfo
         Log.Debug("MediaInfoWrapper.MediaInfoWrapper: Opening file : {0}", strFile);
         mediaInfo.Open(strFile);
 
+        var streamNumber = 0;
         //Video
         var videoStreamCount = mediaInfo.Count_Get(StreamKind.Video);
         for (var i = 0; i < videoStreamCount; ++i)
         {
-          videoStreams.Add(new VideoStream(mediaInfo, i));
+          videoStreams.Add(new VideoStream(mediaInfo, streamNumber++, i));
         }
 
         if (videoDuration == 0)
@@ -200,7 +207,7 @@ namespace MediaPortal.Player.MediaInfo
         var iAudioStreams = mediaInfo.Count_Get(StreamKind.Audio);
         for (var i = 0; i < iAudioStreams; ++i)
         {
-          audioStreams.Add(new AudioStream(mediaInfo, i));
+          audioStreams.Add(new AudioStream(mediaInfo, streamNumber++, i));
         }
 
         //Subtitles
@@ -208,10 +215,48 @@ namespace MediaPortal.Player.MediaInfo
 
         for (var i = 0; i < numsubtitles; ++i)
         {
-          subtitleStreams.Add(new SubtitleStream(mediaInfo, i));
+          subtitleStreams.Add(new SubtitleStream(mediaInfo, streamNumber++, i));
+        }
+
+        var numChapters = mediaInfo.Count_Get(StreamKind.Other);
+
+        for (var i = 0; i < numChapters; ++i)
+        {
+          chapters.Add(new Chapter(mediaInfo, streamNumber++, i));
         }
 
         MediaInfoNotloaded = videoStreams.Count == 0 && audioStreams.Count == 0 && subtitleStreams.Count == 0;
+
+        // Produce copability properties
+        if (!MediaInfoNotloaded)
+        {
+          bestVideo = videoStreams.OrderByDescending(x => (long)x.Width * (long)x.Height * x.BitDepth * (x.Stereoscopic == StereoMode.Mono ? 1L : 2L) * x.FrameRate).FirstOrDefault();
+          VideoCodec = bestVideo != null ? bestVideo.CodecName : string.Empty;
+          VideoResolution = bestVideo != null ? bestVideo.Resolution : string.Empty;
+          Width = bestVideo != null ? bestVideo.Width : 0;
+          Height = bestVideo != null ? bestVideo.Height : 0;
+          IsInterlaced = bestVideo != null && bestVideo.Interlaced;
+          Framerate = bestVideo != null ? bestVideo.FrameRate : 0;
+          ScanType = bestVideo != null ? mediaInfo.Get(StreamKind.Video, bestVideo.StreamPosition, "ScanType").ToLower() : string.Empty;
+          AspectRatio = bestVideo != null ? mediaInfo.Get(StreamKind.Video, bestVideo.StreamPosition, "DisplayAspectRatio") : string.Empty;
+          AspectRatio = AspectRatio == "4:3" || AspectRatio == "1.333" ? "fullscreen" : "widescreen";
+
+          bestAudio = audioStreams.OrderByDescending(x => x.Channel * 10000000 + x.Bitrate).FirstOrDefault();
+          AudioCodec = bestAudio != null ? bestAudio.CodecName : string.Empty;
+          AudioRate = bestAudio != null ? (int)bestAudio.Bitrate : 0;
+          AudioChannels = bestAudio != null ? bestAudio.Channel : 0;
+          AudioChannelsFriendly = bestAudio != null ? bestAudio.AudioChannelsFriendly : string.Empty;
+        }
+        else
+        {
+          VideoCodec = string.Empty;
+          VideoResolution = string.Empty;
+          ScanType = string.Empty;
+          AspectRatio = string.Empty;
+
+          AudioCodec = string.Empty;
+          AudioChannelsFriendly = string.Empty;
+        }
       }
       catch (Exception e)
       {
@@ -335,8 +380,24 @@ namespace MediaPortal.Player.MediaInfo
 
     public VideoStream BestVideoStream
     {
-      get { return videoStreams.OrderByDescending(x => (long)x.Width * (long)x.Height * x.BitDepth * (x.Stereoscopic == StereoMode.Mono ? 1L : 2L) * x.FrameRate).FirstOrDefault(); }
+      get { return bestVideo; }
     }
+
+    public string VideoCodec { get; private set; }
+
+    public double Framerate { get; private set; }
+
+    public int Width { get; private set; }
+
+    public int Height { get; private set; }
+
+    public string AspectRatio { get; private set; }
+
+    public string ScanType { get; private set; }
+
+    public bool IsInterlaced { get; private set; }
+
+    public string VideoResolution { get; private set; }
 
     #endregion
 
@@ -349,8 +410,16 @@ namespace MediaPortal.Player.MediaInfo
 
     public AudioStream BestAudioStream
     {
-      get { return audioStreams.OrderByDescending(x => x.Channel * 10000000 + x.Bitrate).FirstOrDefault(); }
+      get { return bestAudio; }
     }
+
+    public string AudioCodec { get; private set; }
+
+    public int AudioRate { get; private set; }
+
+    public int AudioChannels { get; private set; }
+
+    public string AudioChannelsFriendly { get; private set; }
 
     #endregion
 
@@ -372,6 +441,10 @@ namespace MediaPortal.Player.MediaInfo
     }
 
     #endregion
+
+    public bool IsDVD { get; private set; }
+
+    public bool IsBD { get; private set; }
 
     public bool MediaInfoNotloaded { get; private set; }
 
