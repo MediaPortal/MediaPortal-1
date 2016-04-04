@@ -2435,7 +2435,7 @@ namespace MediaPortal.Util
                 }
               }
               // %filename% argument handling
-              else if (strParams.IndexOf("%filename%") >= 0)
+              else if (strParams.IndexOf("%filename%", StringComparison.Ordinal) >= 0)
                 strParams = strParams.Replace("%filename%", "\"" + strFile + "\"");
               
               Process movieplayer = new Process();
@@ -2466,7 +2466,8 @@ namespace MediaPortal.Util
                 OnStopExternal(movieplayer, true); // Event: External process stopped
               }
               Log.Debug("Util: External player stopped on {0}", strPath);
-              if (IsISOImage(strFile))
+              // Avoid unMount ISO
+              /*if (IsISOImage(strFile))
               {
                 if (!String.IsNullOrEmpty(DaemonTools.GetVirtualDrive()) &&
                     (g_Player.IsBDDirectory(DaemonTools.GetVirtualDrive()) ||
@@ -2474,13 +2475,10 @@ namespace MediaPortal.Util
                 {
                   DaemonTools.UnMount();
                 }
-              }
+              }*/
               return true;
             }
-            else
-            {
-              Log.Warn("Util: External player {0} does not exists", strPath);
-            }
+            Log.Warn("Util: External player {0} does not exists", strPath);
           }
         }
       }
