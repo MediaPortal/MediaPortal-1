@@ -394,12 +394,14 @@ namespace MediaPortal.GUI.Video
         string largeCoverArtImage = Util.Utils.GetLargeCoverArtName(Thumbs.MovieTitle, titleExt);
         
         Util.Utils.FileDelete(coverArtImage);
+        Util.Utils.FileDelete(largeCoverArtImage);
         //
         // 07.11.2010 Deda: Cache entry Flag change for cover thumb file
         //
         Util.Utils.DoInsertNonExistingFileIntoCache(coverArtImage);
         //
-        Util.Utils.FileDelete(largeCoverArtImage);
+        GUITextureManager.ReleaseTexture(largeCoverArtImage);
+        //
         Refresh();
         Update();
         int idMovie = _currentMovie.ID;
