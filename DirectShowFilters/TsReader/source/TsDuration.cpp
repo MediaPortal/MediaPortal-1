@@ -52,9 +52,8 @@ CTsDuration::~CTsDuration(void)
   else
   {
     LogDebug("CTsDuration::dtor - ERROR m_pFileReadBuffer is NULL !!");
+    StopLogger(); //Needed since logging thread might be re-started after CDeMultiplexer() destructor has called StopLogger()
   }
-  LogDebug("CTsDuration - dtor");
-  StopLogger();  
 }
 
 

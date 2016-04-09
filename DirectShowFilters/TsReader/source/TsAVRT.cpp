@@ -27,7 +27,7 @@
 #include "..\..\alloctracing.h"
 
 extern void LogDebug(const char *fmt, ...) ;
-
+extern void StopLogger();
 
 
 TsAVRT::TsAVRT()
@@ -44,14 +44,13 @@ TsAVRT::TsAVRT()
 TsAVRT::~TsAVRT()
 {
   UnloadAVRT();
+  StopLogger(); //Needed since logging thread might be re-started after CDeMultiplexer() destructor has called StopLogger()
 }
 
 void TsAVRT::UnloadAVRT()
 {
-  LogDebug("TsAVRT::UnloadAVRT() - Unloading AVRT libraries");
   if (m_hModuleAVRT)
   {
-    //LogDebug("TsAVRT::UnloadAVRT() - Freeing lib: avrt.dll");
     if (!FreeLibrary(m_hModuleAVRT))
     {
       LogDebug("TsAVRT::UnloadAVRT() - avrt.dll could not be unloaded");
@@ -69,7 +68,7 @@ bool TsAVRT::LoadAVRT()
   
   _stprintf_s(DLLFileName, MAX_PATH, _T("%s\\avrt.dll"), systemFolder);
   m_hModuleAVRT = LoadLibrary(DLLFileName);
-  // Vista and later OS only, allowed to return NULL. Remember to check agains NULL when using
+  // Vista and later OS only, allowed to return NULL. Remember to check against NULL when using
   if (m_hModuleAVRT)
   {
     //LogDebug("TsAVRT::LoadAVRT() - Successfully loaded AVRT dll");
