@@ -87,7 +87,8 @@ float TsMPEG2TransportFileServerMediaSubsession::duration() const
   FileReader *pFileDuration = OpenFileDuration();
   if (pFileDuration)
   {
-    m_pDuration->UpdateDuration();
+    m_pDuration->UpdateDuration(false, false);
+    m_pDuration->CloseBufferFiles();
     CloseFileDuration(pFileDuration);
 	  return m_pDuration->Duration().Millisecs() / 1000.0f;
   }

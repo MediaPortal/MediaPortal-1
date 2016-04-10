@@ -141,8 +141,8 @@ struct timeval presentationTime) {
 	}
   else if (dataGoingToBeLost>0)// there is a problem in the buffer somewhere
   {
-    unsigned badPacket;
-    for (int badPacket=0;badPacket<numTSPackets;badPacket++)
+    unsigned badPacket = 0;
+    for (badPacket=0;badPacket<numTSPackets;badPacket++)
     {
       if (fTo[badPacket*TRANSPORT_PACKET_SIZE]!=TRANSPORT_SYNC_BYTE && badPacket*TRANSPORT_PACKET_SIZE<frameSize) break;
     }

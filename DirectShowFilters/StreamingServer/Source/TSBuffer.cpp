@@ -167,7 +167,7 @@ HRESULT CTSBuffer::Require(long nBytes, BOOL bIgnoreDelay)
 
 
 	//	Success! Copy all bytes to data items
-	for(int i = 0; i < dataItemsRequired; i++)
+	for(UINT i = 0; i < dataItemsRequired; i++)
 	{
 		BYTE* newDataItem = new BYTE[m_lTSBufferItemSize];
 		memcpy(newDataItem, readBuffer + (i * m_lTSBufferItemSize), m_lTSBufferItemSize);
