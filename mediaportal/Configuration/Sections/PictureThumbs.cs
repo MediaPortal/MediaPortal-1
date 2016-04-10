@@ -110,11 +110,6 @@ namespace MediaPortal.Configuration.Sections
       UpdateControlStatus();
     }
 
-    private void sharesListBox_ItemCheck(object sender, ItemCheckEventArgs e)
-    {
-      UpdateControlStatus();
-    }
-
     /// <summary>
     /// 
     /// </summary>
@@ -128,11 +123,6 @@ namespace MediaPortal.Configuration.Sections
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="e"></param>
-    private void sharesListBox_SelectedIndexChanged(object sender, EventArgs e)
-    {
-      UpdateControlStatus();
-    }
-
     /// <summary>
     /// 
     /// </summary>

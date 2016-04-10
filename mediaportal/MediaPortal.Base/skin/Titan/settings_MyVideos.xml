@@ -61,7 +61,7 @@
         <type>button</type>
         <id>42</id>
         <label>851</label>
-        <onup>46</onup>
+        <onup>48</onup>
       </control>
       <control Style="SettingsCheckButton">
         <description>Subtitles On/Off</description>
@@ -122,6 +122,20 @@
         <type>checkbutton</type>
         <id>46</id>
         <label>1323</label>
+        <ondown>47</ondown>
+      </control>
+      <control Style="SettingsCheckButton">
+        <description>Override audio selection and use default one</description>
+        <type>checkbutton</type>
+        <id>47</id>
+        <label>1324</label>
+        <ondown>48</ondown>
+      </control>
+      <control Style="SettingsCheckButton">
+        <description>Use audio/subtitle stream selection from LAV Splitter</description>
+        <type>checkbutton</type>
+        <id>48</id>
+        <label>1325</label>
         <ondown>42</ondown>
       </control>
     </control>

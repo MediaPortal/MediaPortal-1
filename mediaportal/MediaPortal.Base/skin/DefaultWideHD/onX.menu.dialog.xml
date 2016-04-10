@@ -1,0 +1,264 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <!--  Pog: onX [Online Xtra]   onX menu insert for DialogMenu.xml    -->
+  <!-- user defined positions/sizes -->
+  <define property="true" evaluateNow="true">#onx.menu.posx:653</define>
+  <define property="true" evaluateNow="true">#onx.menu.posy:240</define>
+  <define property="true" evaluateNow="true">#onx.menu.button.width:125</define>
+  <define property="true" evaluateNow="true">#onx.menu.button.height:125</define>
+  <define property="true" evaluateNow="true">#onx.menu.space.width:100</define>
+  <define property="true" evaluateNow="true">#onx.menu.space.height:50</define>
+  <define property="true" evaluateNow="true">#onx.menu.mouse.margin:10</define>
+  <define property="true" evaluateNow="true">#onx.menu.tagx:903</define>
+  <define property="true" evaluateNow="true">#onx.menu.tagy:770</define>
+  <define property="true" evaluateNow="true">#onx.menu.tagw:85</define>
+  <define property="true" evaluateNow="true">#onx.menu.tagh:45</define>
+  <!-- dummy mouse fix: set to pos/size of dialog list control -->
+  <define property="true" evaluateNow="true">#onx.menu.mouse.posx:491</define>
+  <define property="true" evaluateNow="true">#onx.menu.mouse.posy:302</define>
+  <define property="true" evaluateNow="true">#onx.menu.mouse.width:870</define>
+  <define property="true" evaluateNow="true">#onx.menu.mouse.height:590</define>
+  <!-- internal calc positions/sizes -->
+  <define property="true" evaluateNow="true">#onx.menu.c1.posx:#(cint(#onx.menu.posx))</define>
+  <define property="true" evaluateNow="true">#onx.menu.c2.posx:#(add(cint(#onx.menu.c1.posx),cint(#onx.menu.button.width)))</define>
+  <define property="true" evaluateNow="true">#onx.menu.c3.posx:#(add(cint(#onx.menu.c2.posx),cint(#onx.menu.space.width)))</define>
+  <define property="true" evaluateNow="true">#onx.menu.c4.posx:#(add(cint(#onx.menu.c3.posx),cint(#onx.menu.button.width)))</define>
+  <define property="true" evaluateNow="true">#onx.menu.c5.posx:#(add(cint(#onx.menu.c4.posx),cint(#onx.menu.space.width)))</define>
+  <define property="true" evaluateNow="true">#onx.menu.r1.posy:#(cint(#onx.menu.posy))</define>
+  <define property="true" evaluateNow="true">#onx.menu.r2.posy:#(add(cint(#onx.menu.r1.posy),cint(#onx.menu.button.height)))</define>
+  <define property="true" evaluateNow="true">#onx.menu.r3.posy:#(add(cint(#onx.menu.r2.posy),cint(#onx.menu.space.height)))</define>
+  <define property="true" evaluateNow="true">#onx.menu.r4.posy:#(add(cint(#onx.menu.r3.posy),cint(#onx.menu.button.height)))</define>
+  <define property="true" evaluateNow="true">#onx.menu.r5.posy:#(add(cint(#onx.menu.r4.posy),cint(#onx.menu.space.height)))</define>
+  <define property="true" evaluateNow="true">#onx.menu.c.width:#(add(cint(#onx.menu.button.width),cint(#onx.menu.space.width),cint(#onx.menu.button.width),cint(#onx.menu.space.width),cint(#onx.menu.button.width)))</define>
+  <define property="true" evaluateNow="true">#onx.menu.r.height:#(add(cint(#onx.menu.button.height),cint(#onx.menu.space.height),cint(#onx.menu.button.height),cint(#onx.menu.space.height),cint(#onx.menu.button.height)))</define>
+  <!-- menu -->
+  <controls>
+    <control>
+      <description>action menu</description>
+      <type>actiongroup</type>
+      <defaultcontrol>33101</defaultcontrol>
+      <onexit>33101</onexit>
+      <buttonX>#onx.menu.tagx</buttonX>
+      <buttonY>#onx.menu.tagy</buttonY>
+      <buttonwidth>#onx.menu.tagw</buttonwidth>
+      <buttonheight>#onx.menu.tagh</buttonheight>
+      <control>
+        <type>group</type>
+        <description>group element</description>
+        <!-- user defined open/close animations to match skin dialog menu -->
+        <animation effect="fade" time="250">WindowOpen</animation>
+        <animation effect="fade" time="0">WindowClose</animation>
+        <animation effect="slide" start="0,200" end="0,0" tween="quadratic" easing="in" time="150" delay="0">WindowOpen</animation>
+        <!-- main -->
+        <animation effect="slide" end="0,-3000" time="0">WindowOpen</animation>
+        <animation effect="slide" end="0,-3000" time="0">WindowClose</animation>
+        <animation effect="slide" end="0,3000" time="0">focus</animation>
+        <animation effect="slide" end="0,3000" time="0">unfocus</animation>
+        <animation effect="fade" time="300" reversible="false">unfocus</animation>
+        <dimColor>ffffffff</dimColor>
+        <control>
+          <description>Mouse Fix Dummy Button</description>
+          <type>button</type>
+          <id>33101</id>
+          <posX>#onx.menu.mouse.posx</posX>
+          <posY>#onx.menu.mouse.posy</posY>
+          <width>#onx.menu.mouse.width</width>
+          <height>#onx.menu.mouse.height</height>
+          <textureFocus></textureFocus>
+          <textureNoFocus></textureNoFocus>
+          <hover></hover>
+          <visible>string.equals(#onx.visible)</visible>
+        </control>
+        <control>
+          <description>onX Button 1</description>
+          <type>button</type>
+          <id>22101</id>
+          <onleft>3</onleft>
+          <onright>22102</onright>
+          <onup>22101</onup>
+          <ondown>22104</ondown>
+          <posX>#onx.menu.c1.posx</posX>
+          <posY>#onx.menu.r1.posy</posY>
+          <width>#onx.menu.button.width</width>
+          <height>#onx.menu.button.height</height>
+          <textureFocus>#onx.icon.1</textureFocus>
+          <textureNoFocus>#onx.icon.1</textureNoFocus>
+          <hover></hover>
+          <hyperlink>#onx.link.1</hyperlink>
+          <hyperlinkParameter>#onx.parm.1</hyperlinkParameter>
+          <animation effect="zoom" start="100,100" end="125,125" center="0,0" time="150">focus</animation>
+          <animation effect="zoom" start="125,125" end="100,100" center="0,0" time="150">unfocus</animation>
+          <visible>string.equals(#onx.visible)</visible>
+        </control>
+        <control>
+          <description>onX Button 2</description>
+          <type>button</type>
+          <id>22102</id>
+          <onleft>22101</onleft>
+          <onright>22103</onright>
+          <onup>22102</onup>
+          <ondown>22105</ondown>
+          <posX>#onx.menu.c3.posx</posX>
+          <posY>#onx.menu.r1.posy</posY>
+          <width>#onx.menu.button.width</width>
+          <height>#onx.menu.button.height</height>
+          <textureFocus>#onx.icon.2</textureFocus>
+          <textureNoFocus>#onx.icon.2</textureNoFocus>
+          <hover></hover>
+          <hyperlink>#onx.link.2</hyperlink>
+          <hyperlinkParameter>#onx.parm.2</hyperlinkParameter>
+          <animation effect="zoom" start="100,100" end="125,125" center="0,0" time="150">focus</animation>
+          <animation effect="zoom" start="125,125" end="100,100" center="0,0" time="150">unfocus</animation>
+          <visible>string.equals(#onx.visible)</visible>
+        </control>
+        <control>
+          <description>onX Button 3</description>
+          <type>button</type>
+          <id>22103</id>
+          <onleft>22102</onleft>
+          <onright>3</onright>
+          <onup>22103</onup>
+          <ondown>22106</ondown>
+          <posX>#onx.menu.c5.posx</posX>
+          <posY>#onx.menu.r1.posy</posY>
+          <width>#onx.menu.button.width</width>
+          <height>#onx.menu.button.height</height>
+          <textureFocus>#onx.icon.3</textureFocus>
+          <textureNoFocus>#onx.icon.3</textureNoFocus>
+          <hover></hover>
+          <hyperlink>#onx.link.3</hyperlink>
+          <hyperlinkParameter>#onx.parm.3</hyperlinkParameter>
+          <animation effect="zoom" start="100,100" end="125,125" center="0,0" time="150">focus</animation>
+          <animation effect="zoom" start="125,125" end="100,100" center="0,0" time="150">unfocus</animation>
+          <visible>string.equals(#onx.visible)</visible>
+        </control>
+        <control>
+          <description>onX Button 4</description>
+          <type>button</type>
+          <id>22104</id>
+          <onleft>3</onleft>
+          <onright>22105</onright>
+          <onup>22101</onup>
+          <ondown>22107</ondown>
+          <posX>#onx.menu.c1.posx</posX>
+          <posY>#onx.menu.r3.posy</posY>
+          <width>#onx.menu.button.width</width>
+          <height>#onx.menu.button.height</height>
+          <textureFocus>#onx.icon.4</textureFocus>
+          <textureNoFocus>#onx.icon.4</textureNoFocus>
+          <hover></hover>
+          <hyperlink>#onx.link.4</hyperlink>
+          <hyperlinkParameter>#onx.parm.4</hyperlinkParameter>
+          <animation effect="zoom" start="100,100" end="125,125" center="0,0" time="150">focus</animation>
+          <animation effect="zoom" start="125,125" end="100,100" center="0,0" time="150">unfocus</animation>
+          <visible>string.equals(#onx.visible)</visible>
+        </control>
+        <control>
+          <description>onX Button 5</description>
+          <type>button</type>
+          <id>22105</id>
+          <onleft>22104</onleft>
+          <onright>22106</onright>
+          <onup>22102</onup>
+          <ondown>22108</ondown>
+          <posX>#onx.menu.c3.posx</posX>
+          <posY>#onx.menu.r3.posy</posY>
+          <width>#onx.menu.button.width</width>
+          <height>#onx.menu.button.height</height>
+          <textureFocus>#onx.icon.5</textureFocus>
+          <textureNoFocus>#onx.icon.5</textureNoFocus>
+          <hover></hover>
+          <hyperlink>#onx.link.5</hyperlink>
+          <hyperlinkParameter>#onx.parm.5</hyperlinkParameter>
+          <animation effect="zoom" start="100,100" end="125,125" center="0,0" time="150">focus</animation>
+          <animation effect="zoom" start="125,125" end="100,100" center="0,0" time="150">unfocus</animation>
+          <visible>string.equals(#onx.visible)</visible>
+        </control>
+        <control>
+          <description>onX Button 6</description>
+          <type>button</type>
+          <id>22106</id>
+          <onleft>22105</onleft>
+          <onright>3</onright>
+          <onup>22103</onup>
+          <ondown>22109</ondown>
+          <posX>#onx.menu.c5.posx</posX>
+          <posY>#onx.menu.r3.posy</posY>
+          <width>#onx.menu.button.width</width>
+          <height>#onx.menu.button.height</height>
+          <textureFocus>#onx.icon.6</textureFocus>
+          <textureNoFocus>#onx.icon.6</textureNoFocus>
+          <hover></hover>
+          <hyperlink>#onx.link.6</hyperlink>
+          <hyperlinkParameter>#onx.parm.6</hyperlinkParameter>
+          <animation effect="zoom" start="100,100" end="125,125" center="0,0" time="150">focus</animation>
+          <animation effect="zoom" start="125,125" end="100,100" center="0,0" time="150">unfocus</animation>
+          <visible>string.equals(#onx.visible)</visible>
+        </control>
+        <control>
+          <description>onX Button 7</description>
+          <type>button</type>
+          <id>22107</id>
+          <onleft>3</onleft>
+          <onright>22108</onright>
+          <onup>22104</onup>
+          <ondown>22107</ondown>
+          <posX>#onx.menu.c1.posx</posX>
+          <posY>#onx.menu.r5.posy</posY>
+          <width>#onx.menu.button.width</width>
+          <height>#onx.menu.button.height</height>
+          <textureFocus>#onx.icon.7</textureFocus>
+          <textureNoFocus>#onx.icon.7</textureNoFocus>
+          <hover></hover>
+          <hyperlink>#onx.link.7</hyperlink>
+          <hyperlinkParameter>#onx.parm.7</hyperlinkParameter>
+          <animation effect="zoom" start="100,100" end="125,125" center="0,0" time="150">focus</animation>
+          <animation effect="zoom" start="125,125" end="100,100" center="0,0" time="150">unfocus</animation>
+          <visible>string.equals(#onx.visible)</visible>
+        </control>
+        <control>
+          <description>onX Button 8</description>
+          <type>button</type>
+          <id>22108</id>
+          <onleft>22107</onleft>
+          <onright>22109</onright>
+          <onup>22105</onup>
+          <ondown>22108</ondown>
+          <posX>#onx.menu.c3.posx</posX>
+          <posY>#onx.menu.r5.posy</posY>
+          <width>#onx.menu.button.width</width>
+          <height>#onx.menu.button.height</height>
+          <textureFocus>#onx.icon.8</textureFocus>
+          <textureNoFocus>#onx.icon.8</textureNoFocus>
+          <hover></hover>
+          <hyperlink>#onx.link.8</hyperlink>
+          <hyperlinkParameter>#onx.parm.8</hyperlinkParameter>
+          <animation effect="zoom" start="100,100" end="125,125" center="0,0" time="150">focus</animation>
+          <animation effect="zoom" start="125,125" end="100,100" center="0,0" time="150">unfocus</animation>
+          <visible>string.equals(#onx.visible)</visible>
+        </control>
+        <control>
+          <description>onX Button 9</description>
+          <type>button</type>
+          <id>22109</id>
+          <onleft>22108</onleft>
+          <onright>3</onright>
+          <onup>22106</onup>
+          <ondown>22109</ondown>
+          <posX>#onx.menu.c5.posx</posX>
+          <posY>#onx.menu.r5.posy</posY>
+          <width>#onx.menu.button.width</width>
+          <height>#onx.menu.button.height</height>
+          <textureFocus>#onx.icon.9</textureFocus>
+          <textureNoFocus>#onx.icon.9</textureNoFocus>
+          <hover></hover>
+          <hyperlink>#onx.link.9</hyperlink>
+          <hyperlinkParameter>#onx.parm.9</hyperlinkParameter>
+          <animation effect="zoom" start="100,100" end="125,125" center="0,0" time="150">focus</animation>
+          <animation effect="zoom" start="125,125" end="100,100" center="0,0" time="150">unfocus</animation>
+          <visible>string.equals(#onx.visible)</visible>
+        </control>
+      </control>
+    </control>
+  </controls>
+</window>

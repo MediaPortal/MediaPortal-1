@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!--version="1.0" encoding="utf-8" standalone="yes"-->
+<window>
+  <id>7997</id>
+  <defaultcontrol>3</defaultcontrol>
+  <allowoverlay>control.isvisible(13371337)</allowoverlay>
+  <animation effect="slide" tween="circle" easing="out" time="250" start="1000,0" reversible="false">WindowOpen</animation>
+  <animation effect="slide" tween="circle" easing="out" time="250" end="1000,0" reversible="false">WindowClose</animation>
+  <controls>
+    <control>
+      <description>Overlay to darken background</description>
+      <type>image</type>
+      <id>0</id>
+      <width>1920</width>
+      <height>1080</height>
+      <texture>blue.png</texture>
+      <colordiffuse>efffffff</colordiffuse>
+      <animation effect="fade" time="50">WindowClose</animation>
+      <animation effect="fade" time="500">WindowOpen</animation>
+    </control>
+    <control>
+      <description>current active main cover</description>
+      <id>0</id>
+      <type>image</type>
+      <posX>90</posX>
+      <posY>90</posY>
+      <width>600</width>
+      <height>900</height>
+      <visible>true</visible>
+      <keepaspectratio>yes</keepaspectratio>
+      <centered>yes</centered>
+      <zoom>yes</zoom>
+      <texture flipY="true" diffuse="Thumb_Mask.png">#myfilms.dialogimageselect.selectedthumb</texture>
+      <animation effect="fade" time="50">WindowClose</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+    </control>
+    <control>
+      <type>image</type>
+      <posX>763</posX>
+      <posY>0</posY>
+      <width>1156</width>
+      <height>1080</height>
+      <texture>bg_right.png</texture>
+      <colorDiffuse>ffffffff</colorDiffuse>
+    </control>
+    <!-- 		<control>
+			<description>GFX-Heading "menu" text label</description>
+			<type>label</type>
+			<id>5</id>
+			<posX>480</posX>
+			<posY>20</posY>
+			<width>426</width>
+			<label>102012</label>
+			<font>font32</font>
+			<textcolor>90ffffff</textcolor>
+		</control> -->
+    <control>
+      <description>Heading text label</description>
+      <type>label</type>
+      <id>4</id>
+      <posX>870</posX>
+      <posY>49</posY>
+      <label>181</label>
+      <font>font24</font>
+      <width>885</width>
+      <textcolor>ffffd700</textcolor>
+      <animation effect="fade" time="500" reversible="false">WindowOpen</animation>
+    </control>
+    <control>
+      <description>Exit button</description>
+      <type>button</type>
+      <id>2</id>
+      <posX>1800</posX>
+      <posY>64</posY>
+      <width>45</width>
+      <height>45</height>
+      <textureFocus>button_close_focus.png</textureFocus>
+      <textureNoFocus>button_close_nofocus.png</textureNoFocus>
+      <label>-</label>
+      <onleft>3</onleft>
+      <onright>3</onright>
+      <onup>3</onup>
+      <ondown>3</ondown>
+      <dimColor>90ffffff</dimColor>
+      <animation effect="fade" time="500" reversible="false">WindowOpen</animation>
+    </control>
+    <control>
+      <type>image</type>
+      <id>0</id>
+      <posX>810</posX>
+      <posY>70</posY>
+      <width>1110</width>
+      <height>79</height>
+      <texture>bg_facade_line_nofocus.png</texture>
+      <colordiffuse>77ffffff</colordiffuse>
+      <animation effect="fade" time="500" reversible="false">WindowOpen</animation>
+    </control>
+    <control>
+      <type>group</type>
+      <description>group element</description>
+      <control>
+        <description>options listcontrol</description>
+        <type>listcontrol</type>
+        <id>3</id>
+        <posX>810</posX>
+        <posY>150</posY>
+        <width>1110</width>
+        <height>900</height>
+        <onleft>2</onleft>
+        <onright>2</onright>
+        <spinPosX>1770</spinPosX>
+        <spinPosY>982</spinPosY>
+        <textXOff>45</textXOff>
+        <textYOff>48</textYOff>
+        <textXOff2>1117</textXOff2>
+        <textYOff2>10</textYOff2>
+        <PinIconXOff>1234</PinIconXOff>
+        <PinIconYOff>19</PinIconYOff>
+        <IconXOff>24</IconXOff>
+        <IconYOff>9</IconYOff>
+        <itemWidth>99</itemWidth>
+        <itemHeight>141</itemHeight>
+        <keepaspectratio>yes</keepaspectratio>
+        <textureFocus>bg_facade_line_focus.png</textureFocus>
+        <textureNoFocus>bg_facade_line_nofocus.png</textureNoFocus>
+        <textureHeight>165</textureHeight>
+        <font>font18</font>
+        <spaceBetweenItems>0</spaceBetweenItems>
+        <remoteColor>#ColorOffline</remoteColor>
+        <playedColor>#ColorPlayed</playedColor>
+        <downloadColor>ff707070</downloadColor>
+        <animation effect="fade" time="500" reversible="false">WindowOpen</animation>
+      </control>
+    </control>
+  </controls>
+</window>

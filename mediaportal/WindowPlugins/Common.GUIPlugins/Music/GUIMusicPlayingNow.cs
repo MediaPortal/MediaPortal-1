@@ -67,6 +67,7 @@ namespace MediaPortal.GUI.Music
       LBL_UP_NEXT = 20,
       VUMETER_LEFT = 999,
       VUMETER_RIGHT = 998,
+      LABEL_ROW1 = 10,
     }
 
     #endregion
@@ -114,10 +115,10 @@ namespace MediaPortal.GUI.Music
     private GUIMusicBaseWindow _MusicWindow = null;
     private Timer ImageChangeTimer = null;
     private Timer VUMeterTimer = null;
+    private Timer ProgramChangeTimer = null;
     private List<String> ImagePathContainer = null;
     private bool _trackChanged = true;
     private bool _usingBassEngine = false;
-    private bool _showVisualization = false;
     private object _imageMutex = null;
     private string _vuMeter = "none";
     private static readonly Random Randomizer = new Random();
@@ -156,16 +157,6 @@ namespace MediaPortal.GUI.Music
         ShowViz = xmlreader.GetValueAsBool("musicmisc", "showVisInNowPlaying", false);
         _vuMeter = xmlreader.GetValueAsString("musicmisc", "vumeter", "none");
         _lookupSimilarTracks = xmlreader.GetValueAsBool("musicmisc", "lookupSimilarTracks", true);
-
-        if (ShowViz && VizName != "None")
-        {
-          _showVisualization = true;
-        }
-        else
-        {
-          _showVisualization = false;
-          Log.Debug("GUIMusicPlayingNow: Viz disabled - ShowViz {0}, VizName {1}", Convert.ToString(ShowViz), VizName);
-        }
       }
 
       _usingBassEngine = BassMusicPlayer.IsDefaultMusicPlayer;
@@ -253,7 +244,23 @@ namespace MediaPortal.GUI.Music
       CurrentTrackFileName = filename;
       GetTrackTags();
 
-      CurrentThumbFileName = GUIMusicBaseWindow.GetCoverArt(false, CurrentTrackFileName, CurrentTrackTag);
+      if (g_Player.IsRadio)
+      {
+
+        string strLogo = GUIPropertyManager.GetProperty("#Play.Current.Thumb");
+        if (!string.IsNullOrEmpty(strLogo))
+        {
+          CurrentThumbFileName = strLogo;
+        }
+        else
+        {
+          CurrentThumbFileName = string.Empty;
+        }
+      }
+      else
+      {
+        CurrentThumbFileName = GUIMusicBaseWindow.GetCoverArt(false, CurrentTrackFileName, CurrentTrackTag);
+      }
 
       if (string.IsNullOrEmpty(CurrentThumbFileName))
         // no LOCAL Thumb found because user has bad settings -> check if there is a folder.jpg in the share
@@ -285,8 +292,6 @@ namespace MediaPortal.GUI.Music
         Log.Debug("GUIMusicPlayingNow: Do Last.FM lookup for similar trracks");
         UpdateSimilarTracks(CurrentTrackFileName);
       }
-
-
     }
 
     #endregion
@@ -391,6 +396,35 @@ namespace MediaPortal.GUI.Music
               //  break;
           }
           break;
+
+        case Action.ActionType.ACTION_NEXT_AUDIO:
+          {
+            if (g_Player.AudioStreams > 1)
+            {
+              //_showStatus = true;
+              //_timeStatusShowTime = (DateTime.Now.Ticks / 10000);
+              GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID, 0,
+                                              (int)ControlIDs.LABEL_ROW1, 0, 0, null);
+              g_Player.SwitchToNextAudio();
+
+              String language = g_Player.AudioLanguage(g_Player.CurrentAudioStream);
+              String languageType = g_Player.AudioType(g_Player.CurrentAudioStream);
+              if (languageType == Strings.Unknown || string.IsNullOrEmpty(languageType))
+              {
+                msg.Label = string.Format("{0} ({1}/{2})", language,
+                                          g_Player.CurrentAudioStream + 1, g_Player.AudioStreams);
+              }
+              else
+              {
+                msg.Label = string.Format("{0} [{1}] ({2}/{3})", language, languageType.TrimEnd(),
+                                          g_Player.CurrentAudioStream + 1, g_Player.AudioStreams);
+              }
+
+              OnMessage(msg);
+              Log.Info("GUIMusicPlayingNow: switched audio to {0}", msg.Label);
+            }
+          }
+          break;
       }
     }
 
@@ -408,6 +442,12 @@ namespace MediaPortal.GUI.Music
                 AddSongToPlaylist(ref song);
               }
             }
+          }
+          break;
+        case GUIMessage.MessageType.GUI_MSG_SEND_PROGRAM_INFO:
+          {
+            GUIPropertyManager.SetProperty("#Play.Current.Title", message.Label);
+            GUIPropertyManager.SetProperty("#Play.Next.Title", message.Label2);
           }
           break;
       }
@@ -453,6 +493,18 @@ namespace MediaPortal.GUI.Music
         ImageChangeTimer.Start();
       }
 
+      if (ProgramChangeTimer == null)
+      {
+        ProgramChangeTimer = new Timer();
+        ProgramChangeTimer.Interval = 3 * 1000;
+        ProgramChangeTimer.Elapsed += OnProgramTimerTickEvent;
+        ProgramChangeTimer.Start();
+      }
+      else
+      {
+        ProgramChangeTimer.Start();
+      }
+
       // Start the VUMeter Update Timer, when it is enabled in skin file
       GUIPropertyManager.SetProperty("#VUMeterL", @"VU1.png");
       GUIPropertyManager.SetProperty("#VUMeterR", @"VU1.png");
@@ -466,6 +518,11 @@ namespace MediaPortal.GUI.Music
       }
 
       UpdateImagePathContainer();
+
+      if (g_Player.Playing && g_Player.IsRadio)
+      {
+        PlaylistPlayer.Reset();
+      }
 
       if (g_Player.Playing)
       {
@@ -489,6 +546,12 @@ namespace MediaPortal.GUI.Music
       {
         VUMeterTimer.Stop();
         VUMeterTimer = null;
+      }
+
+      if (ProgramChangeTimer != null)
+      {
+        ProgramChangeTimer.Stop();
+        ProgramChangeTimer = null;
       }
 
       if (ImgCoverArt != null)
@@ -632,6 +695,15 @@ namespace MediaPortal.GUI.Music
     #endregion
 
     #region Private methods
+
+    private void OnProgramTimerTickEvent(object sender, ElapsedEventArgs e)
+    {
+      if (g_Player.IsRadio)
+      {
+        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_GET_PROGRAM_INFO, 0, 0, 0, 0, 0, null);
+        GUIWindowManager.SendMessage(msg);
+      }
+    }
 
     /// <summary>
     /// The VUMeter Timer has elapsed.
@@ -856,11 +928,6 @@ namespace MediaPortal.GUI.Music
 
     private void FlipPictures()
     {
-      if (g_Player.currentFileName == string.Empty)
-      {
-        return;
-      }
-
       if (ImgCoverArt != null)
       {
         if (ImagePathContainer.Count > 1)
@@ -947,7 +1014,7 @@ namespace MediaPortal.GUI.Music
 
     private void UpdateTrackInfo()
     {
-      if (PreviousTrackTag == null)
+      if (PreviousTrackTag == null || CurrentTrackTag == null)
       {
         _trackChanged = true;
       }
@@ -1101,7 +1168,7 @@ namespace MediaPortal.GUI.Music
       switch (message.Message)
       {
         case GUIMessage.MessageType.GUI_MSG_PLAYING_10SEC:
-          if (PlaylistPlayer.CurrentPlaylistType == PlayListType.PLAYLIST_MUSIC && _lookupSimilarTracks)
+          if (_lookupSimilarTracks && (PlaylistPlayer.CurrentPlaylistType == PlayListType.PLAYLIST_MUSIC || PlaylistPlayer.CurrentPlaylistType == PlayListType.PLAYLIST_MUSIC_TEMP))
           {
             string strFile = message.Label;
             UpdateSimilarTracks(strFile);

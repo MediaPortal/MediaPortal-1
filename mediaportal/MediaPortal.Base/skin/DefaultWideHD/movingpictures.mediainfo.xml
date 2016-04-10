@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!--version="1.0" encoding="utf-8"-->
+<window>
+  <controls>
+    <!-- Media logos [Details View] -->
+    <control>
+      <description>Logos group</description>
+      <type>group</type>
+      <posX>1075</posX>
+      <posY>877</posY>
+      <layout>StackLayout(15, Horizontal, true)</layout>
+      <visible>!control.isvisible(50)+!control.isvisible(51)</visible>
+      <control>
+        <description>Certification</description>
+        <type>image</type>
+        <id>0</id>
+        <height>55</height>
+        <width>85</width>
+        <keepaspectratio>yes</keepaspectratio>
+        <texture>Logos\#MovingPictures.SelectedMovie.certification.png</texture>
+      </control>
+      <control>
+        <description>Studio Logo</description>
+        <type>image</type>
+        <id>0</id>
+        <width>85</width>
+        <height>55</height>
+        <texture>Logos\studios\#MovingPictures.SelectedMovie.extra.studios.1.png</texture>
+        <keepaspectratio>yes</keepaspectratio>
+      </control>
+      <control>
+        <description>Video Codec</description>
+        <type>image</type>
+        <id>0</id>
+        <height>55</height>
+        <width>85</width>
+        <keepaspectratio>yes</keepaspectratio>
+        <texture>Logos\#MovingPictures.LocalMedia.videocodec.png</texture>
+      </control>
+      <control>
+        <description>Video Resolution</description>
+        <type>image</type>
+        <id>0</id>
+        <height>55</height>
+        <width>85</width>
+        <keepaspectratio>yes</keepaspectratio>
+        <texture>Logos\#MovingPictures.LocalMedia.videoresolution.png</texture>
+      </control>
+      <control>
+        <description>Video Aspect Ratio</description>
+        <type>image</type>
+        <id>0</id>
+        <height>55</height>
+        <width>85</width>
+        <keepaspectratio>yes</keepaspectratio>
+        <texture>Logos\#MovingPictures.LocalMedia.videoaspectratio.png</texture>
+      </control>
+      <control>
+        <description>Audio Codec</description>
+        <type>image</type>
+        <id>0</id>
+        <height>55</height>
+        <width>85</width>
+        <keepaspectratio>yes</keepaspectratio>
+        <texture>Logos\#MovingPictures.LocalMedia.audiocodec.png</texture>
+      </control>
+      <control>
+        <description>Audio Channels</description>
+        <type>image</type>
+        <id>0</id>
+        <height>55</height>
+        <width>85</width>
+        <keepaspectratio>yes</keepaspectratio>
+        <texture>Logos\#MovingPictures.LocalMedia.audiochannels.png</texture>
+      </control>
+      <control>
+        <description>Subtitles</description>
+        <type>image</type>
+        <id>0</id>
+        <height>55</height>
+        <width>85</width>
+        <keepaspectratio>yes</keepaspectratio>
+        <texture>Logos\#MovingPictures.LocalMedia.Subtitles.png</texture>
+      </control>
+    </control>
+    <!-- Media logos [List] -->
+    <control>
+      <description>Logos group</description>
+      <type>group</type>
+      <posX>1075</posX>
+      <posY>877</posY>
+      <layout>StackLayout(15, Horizontal, true)</layout>
+      <visible>facadeview.list+!control.isvisible(51)</visible>
+      <control>
+        <description>Certification</description>
+        <type>image</type>
+        <id>0</id>
+        <height>55</height>
+        <width>85</width>
+        <keepaspectratio>yes</keepaspectratio>
+        <texture>Logos\#MovingPictures.SelectedMovie.certification.png</texture>
+      </control>
+      <control>
+        <description>Studio Logo</description>
+        <type>image</type>
+        <id>0</id>
+        <width>85</width>
+        <height>55</height>
+        <texture>Logos\studios\#MovingPictures.SelectedMovie.extra.studios.1.png</texture>
+        <keepaspectratio>yes</keepaspectratio>
+      </control>
+      <control>
+        <description>Video Codec</description>
+        <type>image</type>
+        <id>0</id>
+        <height>55</height>
+        <width>85</width>
+        <keepaspectratio>yes</keepaspectratio>
+        <texture>Logos\#MovingPictures.LocalMedia.videocodec.png</texture>
+      </control>
+      <control>
+        <description>Video Resolution</description>
+        <type>image</type>
+        <id>0</id>
+        <height>55</height>
+        <width>85</width>
+        <keepaspectratio>yes</keepaspectratio>
+        <texture>Logos\#MovingPictures.LocalMedia.videoresolution.png</texture>
+      </control>
+      <control>
+        <description>Video Aspect Ratio</description>
+        <type>image</type>
+        <id>0</id>
+        <height>55</height>
+        <width>85</width>
+        <keepaspectratio>yes</keepaspectratio>
+        <texture>Logos\#MovingPictures.LocalMedia.videoaspectratio.png</texture>
+      </control>
+      <control>
+        <description>Audio Codec</description>
+        <type>image</type>
+        <id>0</id>
+        <height>55</height>
+        <width>85</width>
+        <keepaspectratio>yes</keepaspectratio>
+        <texture>Logos\#MovingPictures.LocalMedia.audiocodec.png</texture>
+      </control>
+      <control>
+        <description>Audio Channels</description>
+        <type>image</type>
+        <id>0</id>
+        <height>55</height>
+        <width>85</width>
+        <keepaspectratio>yes</keepaspectratio>
+        <texture>Logos\#MovingPictures.LocalMedia.audiochannels.png</texture>
+      </control>
+      <control>
+        <description>Subtitles</description>
+        <type>image</type>
+        <id>0</id>
+        <height>55</height>
+        <width>85</width>
+        <keepaspectratio>yes</keepaspectratio>
+        <texture>Logos\#MovingPictures.LocalMedia.Subtitles.png</texture>
+      </control>
+    </control>
+  </controls>
+</window>

@@ -1,0 +1,723 @@
+//css_reference "core.dll";
+//css_reference "Databases.dll";
+//css_reference "utils.dll";
+
+using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Text;
+using System.Windows.Forms;
+using System.IO;
+using System.Net;
+using System.Collections;
+using System.Web;
+using System.Text.RegularExpressions;
+using MediaPortal.Util;
+using MediaPortal.Video.Database;
+using MediaPortal.GUI.Library;
+
+// change to Grabber, this for avoid to load by mediaportal
+internal class Grabber : MarshalByRefObject, MediaPortal.Video.Database.IIMDBScriptGrabber
+{
+  public Grabber()
+  {
+  }
+
+  void MediaPortal.Video.Database.IIMDBScriptGrabber.FindFilm(string strSearch, int iLimit, ArrayList elements)
+  {
+    Log.Debug("Grabber.FindFilm(" + strSearch + "," + iLimit + ")");
+    // code for search for movie titles
+    try
+    {
+      //strSearch = strSearch.Replace (" " ,"+");
+      TMDBUrl[] tUrl = GetTitles(strSearch);
+      foreach (TMDBUrl aUrl in tUrl)
+      {
+        Log.Debug("Grabber.FindFilm(" + strSearch + ") [" + aUrl.url + "] " + GetTMDBMovieDetails(aUrl.url));
+
+        MediaPortal.Video.Database.IMDB.IMDBUrl url = new MediaPortal.Video.Database.IMDB.IMDBUrl(
+           GetTMDBMovieDetails(aUrl.url),
+           aUrl.title,
+           "TMDB");
+        elements.Add(url);
+        System.Threading.Thread.Sleep(1000);
+      }
+    }
+    catch (Exception ex)
+    {
+      Log.Error("exception for frdb lookup of {0} err:{1} stack:{2}", strSearch, ex.Message, ex.StackTrace);
+    }
+
+    Log.Debug("Grabber.FindFilm(" + strSearch + ") Ended");
+  }
+
+  bool MediaPortal.Video.Database.IIMDBScriptGrabber.GetDetails(IMDB.IMDBUrl url, ref IMDBMovie movieDetails)
+  {
+    // preces the web page defined by the url
+    // ................
+    // ................
+    // then fill the database
+    // movieDetails.Year
+    // movieDetails.Genre
+    // movieDetails.Votes
+    // movieDetails.Top250
+    // movieDetails.TagLine
+    // movieDetails.PlotOutline
+    // movieDetails.ThumbURL
+    // movieDetails.Plot
+    // movieDetails.Cast
+    // movieDetails.RunTime = ....
+    // movieDetails.MPARating = ......
+
+    //Log.Debug("Grabber.GetDetails("+url.URL+")");
+    System.Threading.Thread.Sleep(1000);
+    try
+    {
+      movieDetails.Reset();
+      movieDetails.Database = "TMDB";
+
+      //Get Details Cast  Crew in TMDB
+      TMDBMovie adetails = GetTMDBDetails(url.URL);
+      GetCast(ref adetails);
+      GetTMDBRelease(ref adetails);
+
+      //Fill movieDetails
+      string sActors = "";
+      if (adetails.Cast != null)
+      {
+        foreach (Grabber.TMDBPerson apers in adetails.Cast)
+        {
+          sActors += apers.Name + " as " + apers.As + "\n";
+        }
+      }
+      string sDirector = "";
+      string sWriters = "";
+      if (adetails.Crew != null)
+      {
+        foreach (Grabber.TMDBPerson apers in adetails.Crew)
+        {
+          if (apers.As.Contains("Direct"))
+          {
+            sDirector = " / " + apers.Name + " (" + apers.As + ")";
+          }
+          else if (apers.As.Contains("Writ"))
+          {
+            sWriters += " / " + apers.Name + " (" + apers.As + ")";
+          }
+        }
+      }
+      if (sDirector.StartsWith(" / ")) { sDirector = sDirector.Substring(3); }
+      if (sWriters.StartsWith(" / ")) { sWriters = sWriters.Substring(3); }
+
+      movieDetails.Title = adetails.Title;
+      movieDetails.IMDBNumber = adetails.IMDBNumber.ToString();
+      //movieDetails.ID = adetails.ID; // Do not fill 
+      movieDetails.Year = adetails.Year;
+      movieDetails.Language = API_LANG;
+      movieDetails.Plot = adetails.Plot.Replace("...", "").Trim();
+      movieDetails.Rating = adetails.Rating;
+      movieDetails.RunTime = adetails.RunTime;
+      movieDetails.TagLine = adetails.TagLine;
+      movieDetails.Year = adetails.Year;
+      movieDetails.Studios = adetails.Studios;
+      movieDetails.Genre = adetails.Genre;
+      movieDetails.Cast = sActors;
+      movieDetails.Director = sDirector.Replace("...", "").Trim();
+      movieDetails.WritingCredits = sWriters.Replace("...", "").Trim();
+      movieDetails.MPARating = adetails.MPARating;
+      movieDetails.Duration = movieDetails.RunTime;
+      movieDetails.Votes = adetails.Votes.ToString();
+      movieDetails.ThumbURL = adetails.ThumbURL;
+      movieDetails.FanartURL = adetails.FanartURL;
+
+      //MePo stuff
+      if (string.IsNullOrEmpty(movieDetails.PlotOutline))
+      {
+        movieDetails.PlotOutline = movieDetails.Plot;
+      }
+
+      if (movieDetails.Rating > 10.0f)
+      {
+        movieDetails.Rating /= 10.0f;
+      }
+
+      Log.Info("Grabber.GetDetails(" + url.URL + ") succeded");
+      return true;
+    }
+    catch (Exception ex)
+    {
+      Log.Error("Grabber.GetDetails(" + url.URL + ") failed " + ex.Message);
+    }
+    return false;
+  }
+
+  string MediaPortal.Video.Database.IIMDBScriptGrabber.GetName()
+  {
+    return "TMDB";
+  }
+
+
+  string MediaPortal.Video.Database.IIMDBScriptGrabber.GetLanguage()
+  {
+    return API_LANG;
+  }
+
+  #region<<TMDB_PARAMETERS>>
+
+  public const bool API_IMDB_LOOKUP = false; //IMDB LookUp
+  public const string API_KEY = "e224fe4f3fec5f7b5570641f7cd3df3a"; //Inset API Key
+  public static string API_LANG = CultureInfo.CurrentCulture.TwoLetterISOLanguageName.ToUpper(); 
+  private const string API_BaseUrl = "http://api.themoviedb.org/3/";
+
+  #endregion<<TMDB_PARAMETERS>>
+
+  #region<<TMDB_CONST>>
+
+  public const string API_Configuration = API_BaseUrl + "configuration";
+  public const string API_SearchMovie = API_BaseUrl + "search/movie";
+  public const string API_SearchPerson = API_BaseUrl + "search/person";
+  public const string API_MovieInfo = API_BaseUrl + "movie/{0}";
+  public const string API_AlternateTitles = API_BaseUrl + "movie/{0}/alternative_titles";
+  public const string API_Casts = API_BaseUrl + "movie/{0}/casts";
+  public const string API_Trailers = API_BaseUrl + "movie/{0}/trailers";
+  public const string API_ReleaseInfo = API_BaseUrl + "movie/{0}/releases";
+  public const string API_MovieImages = API_BaseUrl + "movie/{0}/images";
+  public const string API_CollectionInfo = API_BaseUrl + "collection/{0}";
+  public const string API_PersonInfo = API_BaseUrl + "person/{0}";
+  public const string API_PersonCredits = API_BaseUrl + "person/{0}/credits";
+  public const string API_PersonImages = API_BaseUrl + "person/{0}/images";
+  public const string API_LatestMovie = API_BaseUrl + "latest/movie";
+  public const string API_Keywords = API_BaseUrl + "movie/{0}/keywords";
+  public const string API_Translations = API_BaseUrl + "movie/{0}/translations";
+
+  #endregion<<TMDB_CONST>>
+
+  #region <<TMDB METHODS>>
+
+  public static TMDBUrl[] GetTitles(string title)
+  {
+    Log.Debug("GetTitles(" + title + ")");
+    List<TMDBUrl> tReturn = new List<TMDBUrl>();
+
+    if (API_IMDB_LOOKUP)
+    {
+      System.Text.RegularExpressions.Regex rx = new System.Text.RegularExpressions.Regex(@"[\(\[]tt(?<jocker>\d*)[\)\]]");
+      System.Text.RegularExpressions.Match aMath = rx.Match(title);
+      if (!string.IsNullOrEmpty(aMath.Groups["jocker"].Value))
+      {
+        try
+        {
+          TMDBMovie aMovie = GetTMDBDetails("tt" + aMath.Groups["jocker"].Value);
+          TMDBUrl aUrl = new TMDBUrl("tt" + aMath.Groups["jocker"].Value, aMovie.Title, "TMDB_" + API_LANG);
+          tReturn.Add(aUrl);
+          return tReturn.ToArray();
+        }
+        catch { }
+      }
+    }
+
+    string sRequest = Grabber.API_SearchMovie + "?api_key=" + Grabber.API_KEY;
+    if (!string.IsNullOrEmpty(API_LANG))
+    {
+      sRequest += "&language=" + API_LANG;
+    }
+    //sRequest += "&query='" + Encoder.Encode(title) + "'";
+    sRequest += "&query='" + title + "'";
+
+    string sReponseDetails = GetWebServerResponse(sRequest);
+    Log.Debug("GetTitles(" + title + ") TMDB Response = " + sReponseDetails);
+
+    string sFilter = @"{([\d\p{L}\s\-_"",\\'\/.!?:\(\);\[\]]*)}";
+    System.Text.RegularExpressions.MatchCollection tMatches = System.Text.RegularExpressions.Regex.Matches(sReponseDetails, sFilter);
+    foreach (System.Text.RegularExpressions.Match aMovie in tMatches)
+    {
+      string sCode = "";
+      string sJSONMovie = aMovie.Value;
+      System.Text.RegularExpressions.Regex rx = new System.Text.RegularExpressions.Regex(@"""id"":(?<code>\d*)");
+      System.Text.RegularExpressions.Match aMatchDetails = rx.Match(sJSONMovie);
+      if (aMatchDetails != null)
+      {
+        sCode = aMatchDetails.Groups["code"].Value;
+      }
+
+      string sTitle = "";
+      rx = new System.Text.RegularExpressions.Regex(@"""title"":""(?<code>[\p{L}\d\s',:;\-._]*)""");
+      aMatchDetails = rx.Match(sJSONMovie);
+      if (aMatchDetails != null)
+      {
+        sTitle = aMatchDetails.Groups["code"].Value;
+      }
+
+      string sOriginal_title = "";
+      rx = new System.Text.RegularExpressions.Regex(@"""original_title"":""(?<code>[\p{L}\d\s',:;\-._]*)""");
+      aMatchDetails = rx.Match(sJSONMovie);
+      if (aMatchDetails != null)
+      {
+        sOriginal_title = aMatchDetails.Groups["code"].Value;
+      }
+
+      string sYear = "";
+      rx = new System.Text.RegularExpressions.Regex(@"""release_date"":""(?<code>[\d]*)");
+      aMatchDetails = rx.Match(sJSONMovie);
+      if (aMatchDetails != null)
+      {
+        sYear = aMatchDetails.Groups["code"].Value;
+      }
+
+      if (string.IsNullOrEmpty(sTitle))
+      {
+        sTitle = sOriginal_title;
+      }
+      if (sTitle != sOriginal_title)
+      {
+        sTitle += " as " + sOriginal_title;
+      }
+
+      sTitle += " (" + (sYear ?? "Inconnu") + ")";
+
+      if (!string.IsNullOrEmpty(sCode))
+      {
+        Log.Info("GetTitles(" + title + ") Find [" + sCode + "] " + sTitle);
+        TMDBUrl aUrl = new TMDBUrl(sCode, sTitle, "TMDB_" + API_LANG);
+        tReturn.Add(aUrl);
+      }
+    }
+    Log.Debug("GetTitles(" + title + ") Ended");
+    return tReturn.ToArray();
+  }
+
+  public static TMDBMovie GetTMDBDetails(string url)
+  {
+    TMDBMovie oReturn = new TMDBMovie();
+    string sReponseDetails = string.Empty;
+    if (string.IsNullOrEmpty(url)) { return oReturn; }
+
+    try
+    {
+      string sRequest = url;
+      if (!url.Contains(API_KEY))
+      {
+        sRequest = GetTMDBMovieDetails(url);
+      }
+      // sRequest += "&append_to_response=cast";
+      sReponseDetails = GetWebServerResponse(sRequest);
+    }
+    catch { return oReturn; }
+    Log.Debug("GetTMDBDetails url = {0}, sReponseDetails = {1}", url, sReponseDetails);
+    try
+    {
+      System.Text.RegularExpressions.Regex rx = new System.Text.RegularExpressions.Regex(@"""imdb_id"":""(?<code>[\w\s',….:;-]*)""");
+      System.Text.RegularExpressions.Match aMatchDetails = rx.Match(sReponseDetails);
+      if (aMatchDetails != null)
+      {
+        oReturn.IMDBNumber = aMatchDetails.Groups["code"].Value;
+      }
+
+
+      rx = new System.Text.RegularExpressions.Regex(@"""overview"":""(?<code>[\d\p{L}\s\\'’,–….:;\(\)!?“”″«»""-]*)"",");
+      aMatchDetails = rx.Match(sReponseDetails);
+      if (aMatchDetails != null)
+      {
+        oReturn.Plot = aMatchDetails.Groups["code"].Value.Replace("\\\"", "\"").Trim();
+      }
+
+      rx = new System.Text.RegularExpressions.Regex(@"""tagline"":""(?<code>[\w\s',….:;-]*)""");
+      aMatchDetails = rx.Match(sReponseDetails);
+      if (aMatchDetails != null)
+      {
+        oReturn.TagLine = aMatchDetails.Groups["code"].Value;
+      }
+
+      rx = new System.Text.RegularExpressions.Regex(@"""runtime"":(?<code>[\d]*)");
+      aMatchDetails = rx.Match(sReponseDetails);
+      if (aMatchDetails != null)
+      {
+        int iruntime;
+        int.TryParse(aMatchDetails.Groups["code"].Value, out iruntime);
+        oReturn.RunTime = iruntime;
+      }
+
+      rx = new System.Text.RegularExpressions.Regex(@"""vote_average"":(?<code>[\d.]*)");
+      aMatchDetails = rx.Match(sReponseDetails);
+      if (aMatchDetails != null)
+      {
+        float faverage;
+        float.TryParse(aMatchDetails.Groups["code"].Value.Replace('.', ','), out faverage);
+        oReturn.Rating = (float)faverage;
+      }
+
+      string sFilter = @"""genres"":\[([\p{L}{\"":\d,}-]*)]";
+      System.Text.RegularExpressions.MatchCollection tMatches = System.Text.RegularExpressions.Regex.Matches(sReponseDetails, sFilter);
+      foreach (System.Text.RegularExpressions.Match aMovie in tMatches)
+      {
+        string sFilter2 = @"{""id"":(?<id>[\d]*),""name"":""(?<name>[\p{L}-]*)""";
+        System.Text.RegularExpressions.MatchCollection tMatches2 = System.Text.RegularExpressions.Regex.Matches(aMovie.Value, sFilter2);
+        foreach (System.Text.RegularExpressions.Match aGenre in tMatches2)
+        {
+          oReturn.Genre += " / " + aGenre.Groups["name"].Value;
+        }
+
+      }
+      if (!string.IsNullOrEmpty(oReturn.Genre))
+      {
+        if (oReturn.Genre.StartsWith(" / "))
+        {
+          oReturn.Genre = oReturn.Genre.Substring(3);
+        }
+      }
+      else
+      {
+        oReturn.Genre = string.Empty;
+      }
+
+
+      rx = new System.Text.RegularExpressions.Regex(@"""release_date"":""(?<code>[\d]*)");
+      aMatchDetails = rx.Match(sReponseDetails);
+      if (aMatchDetails != null)
+      {
+        int iYear;
+        int.TryParse(aMatchDetails.Groups["code"].Value, out iYear);
+        oReturn.Year = iYear;
+      }
+
+      rx = new System.Text.RegularExpressions.Regex(@"""id"":(?<code>[\d]*),""imdb_id""");
+      aMatchDetails = rx.Match(sReponseDetails);
+      if (aMatchDetails != null)
+      {
+        int iID;
+        int.TryParse(aMatchDetails.Groups["code"].Value, out iID);
+        oReturn.ID = iID;
+      }
+
+      rx = new System.Text.RegularExpressions.Regex(@"""vote_count"":(?<code>[\d]*)");
+      aMatchDetails = rx.Match(sReponseDetails);
+      if (aMatchDetails != null)
+      {
+        int iVotes;
+        int.TryParse(aMatchDetails.Groups["code"].Value, out iVotes);
+        oReturn.Votes = iVotes;
+      }
+
+      rx = new System.Text.RegularExpressions.Regex(@"""title"":""(?<code>[\p{L}\d\s',:;\-._]*)""");
+      aMatchDetails = rx.Match(sReponseDetails);
+      if (aMatchDetails != null)
+      {
+        oReturn.Title = aMatchDetails.Groups["code"].Value;
+      }
+
+      if (string.IsNullOrEmpty(oReturn.Title))
+      {
+        rx = new System.Text.RegularExpressions.Regex(@"""original_title"":""(?<code>[\p{L}\d\s',:;\-._]*)""");
+        aMatchDetails = rx.Match(sReponseDetails);
+        if (aMatchDetails != null)
+        {
+          oReturn.Title = aMatchDetails.Groups["code"].Value;
+        }
+      }
+
+      rx = new System.Text.RegularExpressions.Regex(@"""production_companies"":\[{""name"":""(?<code>[\p{L}\d\s',:;\-_!]*)"",""id"":([\d]*)}");
+      aMatchDetails = rx.Match(sReponseDetails);
+      if (aMatchDetails != null)
+      {
+        oReturn.Studios = aMatchDetails.Groups["code"].Value;
+      }
+
+      rx = new System.Text.RegularExpressions.Regex(@"""poster_path"":""(?<code>[/\w\d.]*)""");
+      System.Text.RegularExpressions.MatchCollection tMatchesposter = rx.Matches(sReponseDetails);
+      foreach (System.Text.RegularExpressions.Match aMovie in tMatchesposter)
+      {
+        oReturn.ThumbURL = aMovie.Groups["code"].Value;
+      }
+
+      if (!string.IsNullOrEmpty(oReturn.ThumbURL))
+      {
+        oReturn.ThumbURL = "http://image.tmdb.org/t/p/w500" + oReturn.ThumbURL;
+      }
+      else
+      {
+        oReturn.ThumbURL = string.Empty;
+      }
+
+      rx = new System.Text.RegularExpressions.Regex(@"""backdrop_path"":""(?<code>[/\w\d.]*)""");
+      aMatchDetails = rx.Match(sReponseDetails);
+      if (aMatchDetails != null)
+      {
+        oReturn.FanartURL = aMatchDetails.Groups["code"].Value;
+        if (!string.IsNullOrEmpty(oReturn.FanartURL))
+          oReturn.FanartURL = "http://image.tmdb.org/t/p/w500" + oReturn.FanartURL;
+      }
+      else
+      {
+        oReturn.FanartURL = string.Empty;
+      }
+
+    }
+    catch { }
+
+    return oReturn;
+  }
+
+  public static void GetTMDBRelease(ref TMDBMovie movie)
+  {
+
+    try
+    {
+      string sRequest = Grabber.API_ReleaseInfo + "?api_key=" + Grabber.API_KEY;
+      if (!string.IsNullOrEmpty(API_LANG))
+      {
+        sRequest += "&language=" + API_LANG;
+      }
+      sRequest = sRequest.Replace("{0}", movie.ID.ToString());
+      string sReponseDetails = GetWebServerResponse(sRequest);
+      Log.Debug("GetTMDBRelease {0}", sReponseDetails );
+      string sCertification = string.Empty;
+//      System.Text.RegularExpressions.Regex rx = new System.Text.RegularExpressions.Regex(@"""iso_3166_1"":""" + API_LANG.ToUpper() + @""",""certification"":""(?<code>[\(\)\w\d-+ ]*)"",");
+
+      System.Text.RegularExpressions.Regex rx = new System.Text.RegularExpressions.Regex(@"""certification"":""(?<code>[\(\)\w\d-+ ]*)"",""iso_3166_1"":"""+ API_LANG);
+
+      System.Text.RegularExpressions.Match aMatchCast = rx.Match(sReponseDetails);
+      if (aMatchCast != null)
+      {
+        sCertification = aMatchCast.Groups["code"].Value;
+      }
+      movie.MPARating = sCertification;
+    }
+    catch { }
+    finally
+    {
+      if (string.IsNullOrEmpty(movie.MPARating)) movie.MPARating = "NR";
+    }
+  }
+
+  public static void GetCast(ref TMDBMovie movie)
+  {
+    Log.Debug("GetCast(" + movie.ID.ToString() + ")");
+    List<TMDBPerson> tReturn = new List<TMDBPerson>();
+    string sReponseDetails = "";
+    if (movie.ID == 0) return;
+
+    try
+    {
+      string sRequest = Grabber.API_Casts.Replace("{0}", movie.ID.ToString()) + "?api_key=" + Grabber.API_KEY;
+      if (!string.IsNullOrEmpty(API_LANG))
+      {
+        sRequest += "&language=" + API_LANG;
+      }
+      //Log.Debug("GetCast " + sRequest);
+      sReponseDetails = GetWebServerResponse(sRequest);
+    }
+    catch { return; }
+
+    try
+    {
+      string sCast = string.Empty;
+      System.Text.RegularExpressions.Regex rx = new System.Text.RegularExpressions.Regex(@"""cast"":\[([{}\p{L}\s#""':;,-./\(\)]*)\]");
+      System.Text.RegularExpressions.Match aMatchCast = rx.Match(sReponseDetails);
+      if (aMatchCast != null)
+      {
+        sCast = aMatchCast.Value;
+      }
+
+      if (!string.IsNullOrEmpty(sCast))
+      {
+        string sFilter = @"{""id"":(?<id>[\d]*),""name"":""(?<name>[\w\s'-.]*)"",""character"":""(?<as>[\w\s'.//-]*)";
+        System.Text.RegularExpressions.MatchCollection tMatches = System.Text.RegularExpressions.Regex.Matches(sReponseDetails, sFilter);
+        foreach (System.Text.RegularExpressions.Match matchPerson in tMatches)
+        {
+          TMDBPerson aPerson = new TMDBPerson();
+          aPerson.Id = matchPerson.Groups["id"].Value;
+          aPerson.Name = matchPerson.Groups["name"].Value;
+          aPerson.As = matchPerson.Groups["as"].Value;
+          tReturn.Add(aPerson);
+        }
+        movie.Cast = tReturn.ToArray();
+      }
+    }
+    catch { }
+
+    try
+    {
+      tReturn = new List<TMDBPerson>();
+      string sCrew = string.Empty;
+      System.Text.RegularExpressions.Regex rx = new System.Text.RegularExpressions.Regex(@"""crew"":\[([{}\w\s""':;,-./\(\)]*)\]");
+      System.Text.RegularExpressions.Match aMatchCrew = rx.Match(sReponseDetails);
+      if (aMatchCrew != null)
+      {
+        sCrew = aMatchCrew.Value;
+      }
+
+      if (!string.IsNullOrEmpty(sCrew))
+      {
+        //string sFilter = @"{""id"":(?<id>[\d]*),""name"":""(?<name>[\w\s'-.]*)"",""department"":""(?<as>[\w\s'.//-]*)";
+        string sFilter = @"""id"":(?<id>[\d]*),""job"":""(?<as>[\w\s'.\/\/-]*)"",""name"":""(?<name>[\w\s'-.]*)";
+
+        System.Text.RegularExpressions.MatchCollection tMatches = System.Text.RegularExpressions.Regex.Matches(sCrew, sFilter);
+        foreach (System.Text.RegularExpressions.Match matchPerson in tMatches)
+        {
+          TMDBPerson aPerson = new TMDBPerson();
+          aPerson.Id = matchPerson.Groups["id"].Value;
+          aPerson.Name = matchPerson.Groups["name"].Value;
+          aPerson.As = matchPerson.Groups["as"].Value;
+          //Log.Debug("regeszter {0} as {1}", aPerson.Name, aPerson.As);
+          tReturn.Add(aPerson);
+        }
+        movie.Crew = tReturn.ToArray();
+      }
+    }
+    catch { }
+
+  }
+
+  private static string GetTMDBMovieDetails(string url)
+  {
+    string sRequest = API_MovieInfo.Replace("{0}", url) + "?api_key=" + Grabber.API_KEY;
+    if (!string.IsNullOrEmpty(API_LANG))
+    {
+      sRequest += "&language=" + API_LANG;
+    }
+    return sRequest;
+  }
+
+  private static string GetWebServerResponse(string srequest)
+  {
+    string sReturn = string.Empty;
+    System.Net.HttpWebRequest oHttpWebRequest;
+    try
+    {
+      oHttpWebRequest = (System.Net.HttpWebRequest)System.Net.WebRequest.Create(srequest);
+      oHttpWebRequest.Timeout = 5000;
+      oHttpWebRequest.Method = System.Net.WebRequestMethods.Http.Get;
+      oHttpWebRequest.Accept = "application/json";
+      System.Net.HttpWebResponse oResponse = (System.Net.HttpWebResponse)oHttpWebRequest.GetResponse();
+
+
+      using (System.IO.StreamReader sr = new System.IO.StreamReader(oResponse.GetResponseStream()))
+      {
+        sReturn = sr.ReadToEnd();
+      }
+      oResponse.Close();
+
+    }
+    catch { }
+    finally
+    {
+      oHttpWebRequest = null;
+    }
+    return sReturn;
+  }
+  #endregion <<TMDB METHODS>>
+
+  #region<<TMDB STRUCT>>
+  public struct TMDBUrl
+  {
+
+    public TMDBUrl(string url, string title, string grabber)
+    {
+      this.url = url;
+      this.title = title;
+      this.grabber = grabber;
+    }
+
+    public string url;
+    public string title;
+    public string grabber;
+  }//EOC
+
+  public struct TMDBMovie
+  {
+    /// <summary>
+    ///  TITRE
+    /// </summary>
+    public string Title;
+
+    public int ID;
+
+    /// <summary>
+    /// IMDB Number
+    /// </summary>
+    public string IMDBNumber;
+
+    /// <summary>
+    /// Production Year (Annee de production)
+    /// </summary>
+    public int Year;
+
+    // DUREE
+    public int RunTime;
+
+    // Get covers
+    public string ThumbURL;
+
+    // Director
+    public string Director;
+
+    // Writers
+    public string WritingCredits;
+
+    // Genres
+    public string Genre;
+
+    // Studios
+    public string Studios;
+
+    //Country
+    public string Country;
+
+    //Language
+    public string Language;
+
+    //MpaRating NR
+    public string MPARating;
+
+    //Tagline
+    public string TagLine;
+
+    // SYNOPSIS COURT
+    public string Plot;
+    public string PlotOutline;
+
+    public string FanartURL;
+
+    public float Rating;
+
+    public int Votes;
+
+    /// <summary>
+    /// Actors
+    /// </summary>
+    public TMDBPerson[] Cast;
+
+    public TMDBPerson[] Crew;
+
+  }//EOC
+
+  public struct TMDBPerson
+  {
+    public string Id;
+    public string Name;
+    public string As;
+  }//EOC
+
+  #endregion<<TMDB STRUCT>>
+
+  public static class Encoder
+  {
+    public static string Encode(string str)
+    {
+      string charClass = String.Format("0-9a-zA-Z{0}", System.Text.RegularExpressions.Regex.Escape("-_.!~*'()"));
+      return System.Text.RegularExpressions.Regex.Replace(str,
+          String.Format("[^{0}]", charClass),
+          new System.Text.RegularExpressions.MatchEvaluator(EncodeEvaluator));
+    }
+
+    public static string EncodeEvaluator(System.Text.RegularExpressions.Match match)
+    {
+      return (match.Value == " ") ? "+" : String.Format("&{0};", Convert.ToInt32(match.Value[0]));
+      //return (match.Value == " ") ? "+" : String.Format("%{0:X2}", Convert.ToInt32(match.Value[0]));
+    }
+
+  }
+}

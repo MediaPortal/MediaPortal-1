@@ -144,6 +144,7 @@ internal class Grabber : MarshalByRefObject, IIMDBScriptGrabber
             }
             else
             {
+	      option = Regex.Replace(option, "[^(0-9)]+", "");
               rx = new Regex(@"^(.*)?[\[\(](19\d{2}|20\d{2})[\]\)]");
               match = rx.Match(option);
 
@@ -220,21 +221,21 @@ internal class Grabber : MarshalByRefObject, IIMDBScriptGrabber
       }
 
       // Get covers
-      //movieDetails.ThumbURL = SearchCover(movieDetails.IMDBNumber, strBody);
+      movieDetails.ThumbURL = SearchCover(movieDetails.IMDBNumber, strBody);
 
-      // Title
       string engTitleBodyUrl = "http://m.imdb.com/title/" + movieDetails.IMDBNumber;
       string engNamePage = GetPage(engTitleBodyUrl, "utf-8", out strAbsUrl);
-      regexPattern = @"<title>(?<movieTitle>.*?)[(].*?(?<movieYear>\d{4})";
-      string titleIMDB = Regex.Match(engNamePage, regexPattern).Groups["movieTitle"].Value.Replace("IMDb -", string.Empty);
+      regexPattern = @"<h1>(?<movieTitle>.*?)[(].*?(?<movieYear>\d{4})";
+      string titleIMDB = Regex.Match(engNamePage, regexPattern, RegexOptions.Singleline | RegexOptions.IgnoreCase).Groups["movieTitle"].Value;
 
       if (!string.IsNullOrEmpty(titleIMDB))
       {
+        titleIMDB = Utils.stripHTMLtags(titleIMDB);
         titleIMDB = HttpUtility.HtmlDecode(titleIMDB);
         if (titleIMDB != null) movieDetails.Title = titleIMDB.Trim();
         // Year
         int year = 0;
-        int.TryParse(Regex.Match(engNamePage, regexPattern).Groups["movieYear"].Value, out year);
+        int.TryParse(Regex.Match(engNamePage, regexPattern, RegexOptions.Singleline | RegexOptions.IgnoreCase).Groups["movieYear"].Value, out year);
         movieDetails.Year = year;
       }
       else
@@ -341,7 +342,7 @@ internal class Grabber : MarshalByRefObject, IIMDBScriptGrabber
       regexBlockPattern = @"<h4[^>]*>Genre[s]?:[^<]*</h4>(?<genres_block>.+?)</div>";
       regexPattern = @"\s*href=""/[Gg]enre[s]?/.*?>(?<movieGenres>.+?)<";
       block = Regex.Match(strBody, regexBlockPattern, RegexOptions.Singleline).Value;
-      MatchCollection mcGenre = Regex.Matches(block, regexPattern);
+      MatchCollection mcGenre = Regex.Matches(block, regexPattern, RegexOptions.Singleline);
       string genre = string.Empty;
 
       foreach (Match m in mcGenre)
@@ -536,7 +537,7 @@ internal class Grabber : MarshalByRefObject, IIMDBScriptGrabber
       {
         string absoluteUri;
         string strPlotHtml = GetPage(strPlotUrl, "utf-8", out absoluteUri);
-        regexBlockPattern = @"<section\sclass=""plot"">.*?</section>";
+        regexBlockPattern = @">Plot\sSummary.*?<footer\sclass=";
         strPlotHtml = Regex.Match(strPlotHtml, regexBlockPattern,
                       RegexOptions.IgnoreCase |
                       RegexOptions.IgnorePatternWhitespace |
@@ -545,7 +546,7 @@ internal class Grabber : MarshalByRefObject, IIMDBScriptGrabber
 
         if (strPlotHtml.Length != 0)
         {
-          regexPattern = @"<p>(?<moviePlot>.+?)</p>";
+          regexPattern = @"<p\sclass=""text-large"">(?<moviePlot>.+?)</p>";
           movieDetails.Plot = Regex.Match(strPlotHtml, regexPattern,
                               RegexOptions.IgnoreCase |
                               RegexOptions.IgnorePatternWhitespace |
@@ -645,7 +646,7 @@ internal class Grabber : MarshalByRefObject, IIMDBScriptGrabber
       req.Headers.Add("Cookie", cookieHeader);
       req.Headers.Add("Accept-Language", "en-US,en;q=0.5");
       req.Timeout = 20000;
-			req.ReadWriteTimeout = 20000;
+      req.ReadWriteTimeout = 20000;
 
       result = req.GetResponse();
       receiveStream = result.GetResponseStream();

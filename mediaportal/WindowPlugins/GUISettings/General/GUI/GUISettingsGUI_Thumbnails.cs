@@ -19,8 +19,6 @@
 #endregion
 
 using System;
-using System.Collections;
-using System.Globalization;
 using MediaPortal.GUI.Library;
 using MediaPortal.Profile;
 using MediaPortal.Services;
@@ -56,20 +54,6 @@ namespace WindowPlugins.GUISettings
     private int _iRows = 1;
     private bool _settingsSaved;
 
-    private class CultureComparer : IComparer
-    {
-      #region IComparer Members
-
-      public int Compare(object x, object y)
-      {
-        CultureInfo info1 = (CultureInfo)x;
-        CultureInfo info2 = (CultureInfo)y;
-        return String.Compare(info1.EnglishName, info2.EnglishName, true);
-      }
-
-      #endregion
-    }
-    
     public GUISettingsGUIThumbnails()
     {
       GetID = (int)Window.WINDOW_SETTINGS_GUITHUMBNAILS; //1005

@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <id>7969</id>
+  <defaultcontrol>2</defaultcontrol>
+  <allowoverlay>yes</allowoverlay>
+  <define>#header.hover:hover_sleepcontrol.png</define>
+  <define>#header.label:Sleep Control</define>
+  <controls>
+    <!-- *** Button *** -->
+    <control>
+      <type>image</type>
+      <description>background</description>
+      <id>1</id>
+      <width>1920</width>
+      <height>1080</height>
+      <texture>blue.png</texture>
+    </control>
+    <import>common.window.xml</import>
+    <import>common.time.xml</import>
+    <control>
+      <description>General Overlay</description>
+      <id>0</id>
+      <type>image</type>
+      <posX>0</posX>
+      <posY>45</posY>
+      <width>1920</width>
+      <height>1080</height>
+      <texture>general_overlay.png</texture>
+    </control>
+    <control>
+      <description>Header</description>
+      <type>fadelabel</type>
+      <posX>45</posX>
+      <posY>15</posY>
+      <width>525</width>
+      <font>Label</font>
+      <align>left</align>
+      <textcolor>ff6FAFE1</textcolor>
+      <label>SleepControl</label>
+    </control>
+    <control>
+      <type>group</type>
+      <description>group element</description>
+      <layout>StackLayout(0, Vertical, true)</layout>
+      <posX>49</posX>
+      <posY>237</posY>
+      <control>
+        <description>Sleep Mode</description>
+        <type>button</type>
+        <id>2</id>
+        <label>Sleep Mode</label>
+        <onup>9</onup>
+        <ondown>3</ondown>
+      </control>
+      <control>
+        <description>Set Timer manually</description>
+        <type>button</type>
+        <id>3</id>
+        <label>Set Timer manually</label>
+        <onup>2</onup>
+        <ondown>4</ondown>
+      </control>
+      <control>
+        <description>Set Timer by recording selection</description>
+        <type>button</type>
+        <id>4</id>
+        <label>Set Timer by recording selection</label>
+        <onup>3</onup>
+        <ondown>5</ondown>
+      </control>
+      <control>
+        <description>Start/Stop Timer</description>
+        <type>button</type>
+        <id>5</id>
+        <label>Start Timer</label>
+        <onup>4</onup>
+        <ondown>6</ondown>
+      </control>
+      <control>
+        <description>Pause Timer</description>
+        <type>button</type>
+        <id>6</id>
+        <label>Pause Timer</label>
+        <onup>5</onup>
+        <ondown>7</ondown>
+      </control>
+      <control>
+        <description>Increment Timer</description>
+        <type>button</type>
+        <id>7</id>
+        <label>Increment Timer</label>
+        <onup>6</onup>
+        <ondown>8</ondown>
+      </control>
+      <control>
+        <description>Decrement Timer</description>
+        <type>button</type>
+        <id>8</id>
+        <label>Decrement Timer</label>
+        <onup>7</onup>
+        <ondown>9</ondown>
+      </control>
+      <control>
+        <description>Wait until tasks finished</description>
+        <type>checkbutton</type>
+        <id>9</id>
+        <label>Wait until tasks finished</label>
+        <onup>8</onup>
+        <ondown>10</ondown>
+      </control>
+      <control>
+        <description>Volume Reduction</description>
+        <type>checkbutton</type>
+        <id>10</id>
+        <label>Volume Reduction</label>
+        <onup>9</onup>
+        <ondown>2</ondown>
+      </control>
+    </control>
+    <control>
+      <type>image</type>
+      <id>1</id>
+      <posX>510</posX>
+      <posY>169</posY>
+      <width>1250</width>
+      <height>855</height>
+      <texture>listbg.png</texture>
+      <colordiffuse>ddffffff</colordiffuse>
+    </control>
+    <!-- *** Sleep State *** -->
+    <control>
+      <description>Sleep State</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>650</posX>
+      <posY>270</posY>
+      <width>900</width>
+      <label>#SleepControl.Activity</label>
+      <align>center</align>
+      <font>Menutitle</font>
+      <textcolor>ff6FAFE1</textcolor>
+    </control>
+    <!-- *** Sleep Mode *** -->
+    <control>
+      <description>Sleep Mode</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>650</posX>
+      <posY>330</posY>
+      <width>900</width>
+      <label>#SleepControl.Method</label>
+      <align>center</align>
+      <font>Menutitle</font>
+      <textcolor>ivory</textcolor>
+    </control>
+    <!-- *** Sleep Counter *** -->
+    <control>
+      <description>Sleep Counter</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>650</posX>
+      <posY>410</posY>
+      <width>900</width>
+      <label>#SleepControl.Counter</label>
+      <align>center</align>
+      <font>Menutitle</font>
+      <textcolor>red</textcolor>
+      <animation effect="zoom" start="100,100" end="180,180" time="0" condition="true">conditional</animation>
+    </control>
+    <!-- *** Sleep Status *** -->
+    <control>
+      <description>Sleep Status</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>480</posX>
+      <posY>495</posY>
+      <width>1300</width>
+      <label>#SleepControl.Status</label>
+      <align>center</align>
+      <font>Menutitle</font>
+      <textcolor>ff6FAFE1</textcolor>
+    </control>
+    <!-- *** Sleep Start/End *** -->
+    <control>
+      <description>Sleep Start/End</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>650</posX>
+      <posY>500</posY>
+      <width>900</width>
+      <label>#SleepControl.Start - #SleepControl.End</label>
+      <align>center</align>
+      <font>Menutitle</font>
+      <textcolor>ff6FAFE1</textcolor>
+      <visible>!string.equals(#SleepControl.Start, )</visible>
+    </control>
+    <!-- *** Recording Count *** -->
+    <control>
+      <type>label</type>
+      <id>0</id>
+      <posX>650</posX>
+      <posY>610</posY>
+      <width>830</width>
+      <align>center</align>
+      <textcolor>ff6FAFE1</textcolor>
+      <label>#SleepControl.RecordingTimerCount possible recording timer found</label>
+      <visible>!string.equals(#SleepControl.Recordings, )</visible>
+    </control>
+    <!-- *** Recording List *** -->
+    <control>
+      <description>Text</description>
+      <type>textboxscrollup</type>
+      <id>0</id>
+      <posX>600</posX>
+      <posY>650</posY>
+      <width>1150</width>
+      <height>305</height>
+      <label>#SleepControl.Recordings</label>
+    </control>
+  </controls>
+</window>

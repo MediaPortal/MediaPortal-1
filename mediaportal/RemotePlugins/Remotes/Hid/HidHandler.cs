@@ -385,7 +385,7 @@ namespace MediaPortal.InputDevices
       {
         rid[i].usUsagePage = entry.Value.UsagePage;
         rid[i].usUsage = entry.Value.UsageCollection;
-        rid[i].dwFlags = (entry.Value.HandleHidEventsWhileInBackground ? Const.RIDEV_EXINPUTSINK : 0);
+        rid[i].dwFlags = (entry.Value.HandleHidEventsWhileInBackground ? Const.RIDEV_INPUTSINK : 0);
         rid[i].hwndTarget = aHWND;
         i++;
       }

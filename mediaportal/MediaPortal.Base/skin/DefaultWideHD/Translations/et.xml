@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Skin translation file -->
+<!-- English (US) -->
+<strings>
+  <string Field="WorldNewsTicker">Activate WorldNews Ticker</string>
+  <string Field="MusicNowPlayingFanart">Music NowPlaying Fanart in BasicHome</string>
+  <string Field="MusicFanart">Random Music Fanart in BasicHome</string>
+  <string Field="VideoFanart">Random Video Fanart in BasicHome</string>
+  <string Field="TVGuideRows">Number of rows in TV guide</string>
+  <string Field="Background">Background</string>
+  <string Field="Games">Games</string>
+  <string Field="NewEpisodes">Recently added episodes</string>
+  <string Field="NewRecordings">Recently added TV recordings</string>
+  <string Field="NewVideos">Recently added videos</string>
+  <string Field="NewYouTubeVideos">Recently added Online Videos</string>
+  <string Field="NewFilms">Recently added movies</string>
+  <string Field="LastPlayed">Last played</string>
+  <string Field="NewPictures">Recently added pictures</string>
+  <string Field="NowRecording">Active recordings</string>
+  <string Field="Timer">#(L(603))</string>
+  <string Field="tvstreaminfo">TV OSD stream info always visible</string>
+</strings>

@@ -1796,6 +1796,18 @@ namespace TvPlugin
             ;
             break;
           }
+        case GUIMessage.MessageType.GUI_MSG_GET_PROGRAM_INFO:
+          {
+            if (!Radio.CurrentChannel.IsWebstream() && Navigator.Channel != null && Navigator.Channel.CurrentProgram.Title != null 
+              && Navigator.Channel.NextProgram.Title != null)
+            {
+              GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SEND_PROGRAM_INFO, 0, 0, 0, 0, 0, null);
+              msg.Label = Navigator.Channel.CurrentProgram.Title;
+              msg.Label2 = Navigator.Channel.NextProgram.Title;
+              GUIWindowManager.SendMessage(msg);
+            }
+            break;
+          }
         case GUIMessage.MessageType.GUI_MSG_NOTIFY_REC:
           string heading = message.Label;
           string text = message.Label2;

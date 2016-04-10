@@ -686,7 +686,7 @@ namespace MediaPortal.DeployTool
           break;
         case "max":
           major = 1;
-          minor = 11;
+          minor = 13;
           revision = 100;
           break;
       }
@@ -707,7 +707,7 @@ namespace MediaPortal.DeployTool
     public static Version GetCurrentPackageVersion()
     {
       int major = 1;
-      int minor = 12;
+      int minor = 14;
       int revision = 0;
 
       Version ver = new Version(major, minor, revision);
@@ -781,7 +781,7 @@ namespace MediaPortal.DeployTool
 
     public static string GetDisplayVersion()
     {
-      return "1.12.0";
+      return "1.14.0";
     }
 
     /// <summary>

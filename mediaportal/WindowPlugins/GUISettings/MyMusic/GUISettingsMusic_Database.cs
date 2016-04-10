@@ -58,7 +58,6 @@ namespace MediaPortal.GUI.Settings
     private int _dateAddedSelectedIndex = 0;
     private ArrayList _dateAdded = new ArrayList();
     private Thread _scanThread = null;
-    private bool _scanRunning = false;
     private int _scanShare = 0;
 
     private String _defaultShare;
@@ -348,7 +347,6 @@ namespace MediaPortal.GUI.Settings
     
     private void FolderScanThread()
     {
-      _scanRunning = true;
       ArrayList shares = new ArrayList();
       ArrayList scanShares = new ArrayList();
       
@@ -422,7 +420,6 @@ namespace MediaPortal.GUI.Settings
       catch (Exception ex)
       {
         Log.Error("Folder Scan: Exception during processing: ", ex.Message);
-        _scanRunning = false;
       }
 
       using (Profile.Settings xmlreader = new Profile.MPSettings())
@@ -432,7 +429,6 @@ namespace MediaPortal.GUI.Settings
                                                                                       "1900-01-01 00:00:00"));
       }
 
-      _scanRunning = false;
       EnableControls(true);
       SetProperties();
 

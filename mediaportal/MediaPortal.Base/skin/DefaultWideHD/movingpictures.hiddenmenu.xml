@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!--version="1.0" encoding="utf-8"-->
+<!--            :: HIDDEN MENU ::            -->
+<window>
+  <controls>
+    <control>
+      <type>actiongroup</type>
+      <description>action menu</description>
+      <defaultcontrol>4</defaultcontrol>
+      <onexit>50</onexit>
+      <buttonX>0</buttonX>
+      <buttonY>-60</buttonY>
+      <buttonwidth>159</buttonwidth>
+      <buttonheight>1080</buttonheight>
+      <textureFocus>-</textureFocus>
+      <textureNoFocus>Action_nofocus.png</textureNoFocus>
+      <width>412</width>
+      <height>1350</height>
+      <dimColor>00ffffff</dimColor>
+      <control>
+        <type>image</type>
+        <id>0</id>
+        <width>1920</width>
+        <height>1080</height>
+        <texture>white.png</texture>
+        <colordiffuse>50005eef</colordiffuse>
+      </control>
+      <control>
+        <type>image</type>
+        <posX>39</posX>
+        <posY>117</posY>
+        <width>480</width>
+        <height>886</height>
+        <texture>Backslide.png</texture>
+        <colorDiffuse>fffffffff</colorDiffuse>
+        <visible>!Control.HasFocus(50)+control.isvisible(50)</visible>
+        <animation effect="slide" time="70" start="-300,0" reversible="false">visible</animation>
+        <animation effect="slide" time="70" end="-300,0" reversible="false">hidden</animation>
+      </control>
+      <control>
+        <description>group element</description>
+        <type>group</type>
+        <animation effect="slide" time="70" start="-300,0" reversible="false">visible</animation>
+        <animation effect="slide" time="70" end="-300,0" reversible="false">hidden</animation>
+        <visible>!Control.HasFocus(50)+control.isvisible(50)</visible>
+        <control>
+          <description>button group</description>
+          <type>group</type>
+          <animation effect="slide" time="70" start="-300,0" reversible="false">visible</animation>
+          <animation effect="slide" time="70" end="-300,0" reversible="false">hidden</animation>
+          <posX>75</posX>
+          <posY>181</posY>
+          <layout>StackLayout(0, Vertical, true)</layout>
+          <visible>!Control.HasFocus(50)</visible>
+          <control>
+            <description>Filter</description>
+            <type>button</type>
+            <id>4</id>
+            <label>#MovingPictures.Translation.FilterBy.Label ...</label>
+            <onright>50</onright>
+            <onup>999</onup>
+            <ondown>19</ondown>
+          </control>
+          <control>
+            <description>Search</description>
+            <type>button</type>
+            <id>19</id>
+            <label>#MovingPictures.Translation.SearchBy.Label ...</label>
+            <onright>50</onright>
+            <onup>4</onup>
+            <ondown>20</ondown>
+          </control>
+          <control>
+            <description>Scan</description>
+            <type>button</type>
+            <id>20</id>
+            <label>#MovingPictures.Translation.ScanForNewMovies.Label</label>
+            <onright>50</onright>
+            <onup>19</onup>
+            <ondown>3</ondown>
+            <visible>!string.equals(#MovingPictures.ScanForNewMovies.Visible, false)</visible>
+          </control>
+          <control>
+            <description>Change View</description>
+            <type>button</type>
+            <id>3</id>
+            <label>#MovingPictures.Translation.ChangeView.Label ...</label>
+            <onright>50</onright>
+            <onup>20</onup>
+            <ondown>14</ondown>
+          </control>
+          <control>
+            <description>Sort By</description>
+            <type>sortbutton</type>
+            <id>14</id>
+            <label>#MovingPictures.Translation.SortBy.Label: #MovingPictures.Sort.Field</label>
+            <onright>50</onright>
+            <onup>3</onup>
+            <ondown>15</ondown>
+          </control>
+          <control>
+            <description>Parental Controls</description>
+            <type>button</type>
+            <id>15</id>
+            <label>#MovingPictures.Translation.ToggleParentalLock.Label</label>
+            <onright>50</onright>
+            <ondown>10</ondown>
+            <onup>14</onup>
+            <ondown>66610</ondown>
+            <scrollStartDelaySec>1</scrollStartDelaySec>
+            <scrollWrapString>|</scrollWrapString>
+          </control>
+          <control>
+            <description>Video Settings</description>
+            <type>button</type>
+            <id>66610</id>
+            <hyperlink>703</hyperlink>
+            <label>Video Settings</label>
+            <onup>15</onup>
+            <onright>50</onright>
+            <ondown>999</ondown>
+          </control>
+          <control>
+            <description>Importer</description>
+            <type>button</type>
+            <id>999</id>
+            <label>#MovingPictures.Translation.Importer.Label</label>
+            <hyperlink>96743</hyperlink>
+            <onup>66610</onup>
+            <ondown>4</ondown>
+            <onright>50</onright>
+            <scrollStartDelaySec>1</scrollStartDelaySec>
+            <scrollWrapString>|</scrollWrapString>
+          </control>
+        </control>
+      </control>
+    </control>
+  </controls>
+</window>

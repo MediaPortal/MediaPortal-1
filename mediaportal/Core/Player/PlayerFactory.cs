@@ -54,65 +54,6 @@ namespace MediaPortal.Player
       get { return _externalPlayerList; }
     }
 
-    private bool CheckMpgFile(string fileName)
-    {
-      try
-      {
-        if (!File.Exists(fileName))
-        {
-          return false;
-        }
-        using (FileStream stream = new FileStream(fileName, FileMode.Open, FileAccess.Read))
-        {
-          using (BinaryReader reader = new BinaryReader(stream))
-          {
-            stream.Seek(0, SeekOrigin.Begin);
-            byte[] header = reader.ReadBytes(5);
-            if (header[0] != 0 || header[1] != 0 || header[2] != 1 || header[3] != 0xba)
-            {
-              return false;
-            }
-            if ((header[4] & 0x40) == 0)
-            {
-              return false;
-            }
-            stream.Seek(0x800, SeekOrigin.Begin);
-            header = reader.ReadBytes(5);
-            if (header[0] != 0 || header[1] != 0 || header[2] != 1 || header[3] != 0xba)
-            {
-              return false;
-            }
-            if ((header[4] & 0x40) == 0)
-            {
-              return false;
-            }
-            stream.Seek(0x8000, SeekOrigin.Begin);
-            header = reader.ReadBytes(5);
-            if (header[0] != 0 || header[1] != 0 || header[2] != 1 || header[3] != 0xba)
-            {
-              return false;
-            }
-            if ((header[4] & 0x40) == 0)
-            {
-              return false;
-            }
-            return true;
-          }
-        }
-      }
-      catch (Exception e)
-      {
-        // If an IOException is raised, the file may be in use/being recorded so we assume that it is a correct mpeg file
-        // This fixes replaying mpeg files while being recorded
-        if (e.GetType().ToString() == "System.IO.IOException")
-        {
-          return true;
-        }
-        Log.Info("Exception in CheckMpgFile with message: {0}", e.Message);
-      }
-      return false;
-    }
-
     private void LoadExternalPlayers()
     {
       Log.Info("Loading external players plugins");

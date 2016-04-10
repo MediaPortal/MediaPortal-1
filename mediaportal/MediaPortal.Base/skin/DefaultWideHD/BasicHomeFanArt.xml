@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!--version="1.0" encoding="utf-8" standalone="yes"-->
+<window>
+  <controls>
+  <!-- ******************************************************************************************* -->
+    <!-- ******************* FANART (GENERAL AND SELECTED LATEST ADDED MEDIA) ********************** -->
+    <!-- ******************************************************************************************* -->
+    <control>
+      <type>multiimage</type>
+      <id>556</id>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>1920</width>
+      <height>1080</height>
+      <imagepath>C:\ProgramData\Team MediaPortal\MediaPortal\thumbs\Skin Fanart\Scraper\music</imagepath>
+      <timeperimage>5000</timeperimage>
+      <fadetime>1000</fadetime>
+      <loop>yes</loop>
+      <randomize>true</randomize>
+      <keepaspectratio>no</keepaspectratio>
+      <visible>[string.contains(#highlightedbutton,MUSIC)|string.contains(#highlightedbutton,AUDIO)]+!player.hasmedia+skin.hassetting(#skin.music.fanart.basichome)</visible>
+      <animation effect="fade" time="300" delay="300">visible</animation>
+      <animation effect="fade" time="300" delay="300">hidden</animation>
+    </control>
+    <control>
+      <type>multiimage</type>
+      <id>456</id>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>1920</width>
+      <height>1080</height>
+      <imagepath>C:\ProgramData\Team MediaPortal\MediaPortal\thumbs\Skin Fanart\Scraper\movies</imagepath>
+      <timeperimage>5000</timeperimage>
+      <fadetime>1000</fadetime>
+      <loop>yes</loop>
+      <randomize>true</randomize>
+      <keepaspectratio>no</keepaspectratio>
+      <visible>[string.contains(#highlightedbutton,Video1)]+!player.hasvideo+skin.hassetting(#skin.video.fanart.basichome)</visible>
+      <animation effect="fade" time="300" delay="300">visible</animation>
+      <animation effect="fade" time="300" delay="300">hidden</animation>
+    </control>
+    <control>
+      <type>multiimage</type>
+      <id>457</id>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>1920</width>
+      <height>1080</height>
+      <imagepath>C:\ProgramData\Team MediaPortal\MediaPortal\thumbs\Fan Art\fanart\original</imagepath>
+      <timeperimage>5000</timeperimage>
+      <fadetime>1000</fadetime>
+      <loop>yes</loop>
+      <randomize>true</randomize>
+      <keepaspectratio>no</keepaspectratio>
+      <visible>[string.contains(#highlightedbutton,Video2)|string.contains(#highlightedbutton,tvseries)]+!player.hasvideo+skin.hassetting(#skin.video.fanart.basichome)</visible>
+      <animation effect="fade" time="300" delay="300">visible</animation>
+      <animation effect="fade" time="300" delay="300">hidden</animation>
+    </control>
+    <control>
+      <type>multiimage</type>
+      <id>458</id>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>1920</width>
+      <height>1080</height>
+      <imagepath>C:\ProgramData\Team MediaPortal\MediaPortal\thumbs\MovingPictures\Backdrops\FullSize</imagepath>
+      <timeperimage>5000</timeperimage>
+      <fadetime>1000</fadetime>
+      <loop>yes</loop>
+      <randomize>true</randomize>
+      <keepaspectratio>no</keepaspectratio>
+      <visible>string.contains(#highlightedbutton,movpic)+!player.hasvideo+skin.hassetting(#skin.video.fanart.basichome)</visible>
+      <animation effect="fade" time="300" delay="300">visible</animation>
+      <animation effect="fade" time="300" delay="300">hidden</animation>
+    </control>
+    <control>
+      <type>multiimage</type>
+      <id>459</id>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>1920</width>
+      <height>1080</height>
+      <imagepath>C:\ProgramData\Team MediaPortal\MediaPortal\MTSA\Backdrops</imagepath>
+      <timeperimage>5000</timeperimage>
+      <fadetime>1000</fadetime>
+      <loop>yes</loop>
+      <randomize>true</randomize>
+      <keepaspectratio>no</keepaspectratio>
+      <visible>string.contains(#highlightedbutton,Video5)+!player.hasvideo+skin.hassetting(#skin.video.fanart.basichome)</visible>
+      <animation effect="fade" time="300" delay="300">visible</animation>
+      <animation effect="fade" time="300" delay="300">hidden</animation>
+    </control>
+    <control>
+      <description>DUMMY CONTROL FOR FANART 1 VISIBILITY CONDITION</description>
+      <type>label</type>
+      <id>91919295</id>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>1</width>
+      <visible>yes</visible>
+    </control>
+    <control>
+      <description>DUMMY CONTROL FOR FANART 2 VISIBILITY CONDITION</description>
+      <type>label</type>
+      <id>91919296</id>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>1</width>
+      <visible>no</visible>
+    </control>
+    <control>
+      <description>DUMMY CONTROL FOR FANART AVAILABILITY  CONDITION</description>
+      <type>label</type>
+      <id>91919294</id>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>1</width>
+    </control>
+    <control>
+      <description>FANART IMAGE 1</description>
+      <id>897688</id>
+      <type>image</type>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>1920</width>
+      <height>1080</height>
+      <colordiffuse>ffffffff</colordiffuse>
+      <texture>#fanarthandler.music.backdrop1.play</texture>
+      <visible>control.isvisible(91919295)+control.isvisible(91919294)</visible>
+      <animation effect="fade" time="300">visible</animation>
+      <animation effect="fade" time="300">hidden</animation>
+    </control>
+    <control>
+      <description>FANART IMAGE 2</description>
+      <id>897689</id>
+      <type>image</type>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>1920</width>
+      <height>1080</height>
+      <colordiffuse>ffffffff</colordiffuse>
+      <texture>#fanarthandler.music.backdrop2.play</texture>
+      <visible>control.isvisible(91919296)+control.isvisible(91919294)</visible>
+      <animation effect="fade" time="300">visible</animation>
+      <animation effect="fade" time="300">hidden</animation>
+    </control>
+      
+  <control>
+    <description>Dummy image</description>
+    <type>image</type>
+    <id>0</id>
+    <posX>0</posX>
+    <posY>0</posY>
+    <width>1920</width>
+    <height>379</height>
+    <texture>overlay_top.png</texture>
+    <colordiffuse>ffffffff</colordiffuse>
+  </control>
+  <!-- *************************************************************************************************** -->
+    <!-- ************************************** Here is the ClearArt *************************************** -->
+    <!-- *************************************************************************************************** -->
+    <control>
+      <description>ClearArt image</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>45</posX>
+      <posY>50</posY>
+      <width>400</width>
+      <height>155</height>
+      <texture>#fanarthandler.music.artistclearart.play</texture>
+      <colordiffuse>ffffffff</colordiffuse>
+    </control>
+  </controls>
+</window>

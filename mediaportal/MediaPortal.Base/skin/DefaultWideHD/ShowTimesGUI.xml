@@ -1,0 +1,569 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <id>7111992</id>
+  <defaultcontrol>50</defaultcontrol>
+  <allowoverlay>yes</allowoverlay>
+  <define>#header.label:ShowTimes - #selecteditem</define>
+  <define>#header.hover:hover_showtimes.png</define>
+  <controls>
+    <control>
+      <description>background image</description>
+      <type>image</type>
+      <id>1</id>
+      <width>1920</width>
+      <height>1080</height>
+      <texture>BH Videos.jpg</texture>
+    </control>
+    <!-- Show fanart -->
+    <control>
+      <description>fanart</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>0</posX>
+      <posY>0</posY>
+      <texture>#st_backdrop</texture>
+      <width>1920</width>
+      <height>1080</height>
+      <animation effect="fade" time="300">visiblechange</animation>
+      <animation effect="fade" time="300" delay="300">hidden</animation>
+    </control>
+    <control>
+      <description>General Overlay</description>
+      <id>0</id>
+      <type>image</type>
+      <posX>0</posX>
+      <posY>45</posY>
+      <width>1920</width>
+      <height>1080</height>
+      <texture>general_overlay.png</texture>
+    </control>
+    <import>common.window.xml</import>
+    <import>common.time.xml</import>
+    <!-- ******************************************************************************************* -->
+    <!-- ******************************** INFOS ON TOP OF WINDOW *********************************** -->
+    <!-- ******************************************************************************************* -->
+    <control>
+      <description>Movie Label</description>
+      <type>fadelabel</type>
+      <id>1</id>
+      <posX>0</posX>
+      <posY>70</posY>
+      <width>1920</width>
+      <align>center</align>
+      <font>font14</font>
+      <label>#st_theater: #st_moviedate: #st_showtimes</label>
+      <textcolor>ff6FAFE1</textcolor>
+      <wrapString />
+      <visible>control.hastext(46)</visible>
+    </control>
+    <control>
+      <type>imagelist</type>
+      <id>32</id>
+      <posX>1566</posX>
+      <posY>250</posY>
+      <width>300</width>
+      <height>35</height>
+      <textureWidth>20</textureWidth>
+      <textureHeight>20</textureHeight>
+      <subitems>
+        <subitem>starbad.png</subitem>
+        <subitem>star.png</subitem>
+      </subitems>
+      <orientation>horizontal</orientation>
+      <align>left</align>
+      <percentage>#st_userrating</percentage>
+      <imagesToDraw>10</imagesToDraw>
+    </control>
+    <control>
+      <type>fadelabel</type>
+      <description>Theater</description>
+      <id>44</id>
+      <posX>3078</posX>
+      <posY>70</posY>
+      <width>421</width>
+      <align>left</align>
+      <font>Menutitle</font>
+      <label>#st_theater</label>
+      <textcolor>ff6FAFE1</textcolor>
+      <visible>control.hastext(46)</visible>
+    </control>
+    <control>
+      <type>fadelabel</type>
+      <description>BoxOffice</description>
+      <id>0</id>
+      <posX>0</posX>
+      <posY>70</posY>
+      <width>1920</width>
+      <align>center</align>
+      <label>#st_extra</label>
+      <textcolor>ff6FAFE1</textcolor>
+      <visible>!control.hastext(46)</visible>
+    </control>
+    <!-- ******************************************************************************************* -->
+    <!-- ******************************** ACTION MENU WITH STANDARD BUTTONS ************************ -->
+    <!-- ******************************************************************************************* -->
+    <control>
+      <type>actiongroup</type>
+      <description>action menu</description>
+      <defaultcontrol>2</defaultcontrol>
+      <onexit>50</onexit>
+      <buttonX>0</buttonX>
+      <buttonY>-60</buttonY>
+      <buttonwidth>159</buttonwidth>
+      <buttonheight>1080</buttonheight>
+      <textureFocus>-</textureFocus>
+      <textureNoFocus>Action_nofocus.png</textureNoFocus>
+      <width>412</width>
+      <height>1350</height>
+      <dimColor>00ffffff</dimColor>
+      <visible>!control.isvisible(24)</visible>
+      <control>
+        <type>image</type>
+        <id>0</id>
+        <width>1920</width>
+        <height>1080</height>
+        <texture>white.png</texture>
+        <colordiffuse>50005eef</colordiffuse>
+      </control>
+      <control>
+        <type>image</type>
+        <posX>39</posX>
+        <posY>117</posY>
+        <width>480</width>
+        <height>886</height>
+        <texture>Backslide.png</texture>
+        <colorDiffuse>ffffffff</colorDiffuse>
+        <visible>!Control.HasFocus(50)+!control.isvisible(24)</visible>
+        <animation effect="slide" time="70" start="-300,0" reversible="false">visible</animation>
+        <animation effect="slide" time="70" end="-300,0" reversible="false">hidden</animation>
+      </control>
+      <control>
+        <description>group element</description>
+        <type>group</type>
+        <animation effect="slide" time="70" start="-300,0" reversible="false">visible</animation>
+        <animation effect="slide" time="70" end="-300,0" reversible="false">hidden</animation>
+        <visible>!Control.HasFocus(50)+!control.isvisible(24)</visible>
+        <posX>75</posX>
+        <posY>181</posY>
+        <layout>StackLayout</layout>
+        <visible>!Control.HasFocus(50)</visible>
+        <control>
+          <type>button</type>
+          <description>Change View</description>
+          <id>2</id>
+          <posX>49</posX>
+          <posY>180</posY>
+          <label>417</label>
+          <onup>17</onup>
+          <ondown>3</ondown>
+          <onleft>50</onleft>
+          <onright>50</onright>
+        </control>
+        <control>
+          <type>button</type>
+          <description>Show Theaters</description>
+          <id>3</id>
+          <posX>49</posX>
+          <posY>225</posY>
+          <label>-</label>
+          <onup>2</onup>
+          <ondown>4</ondown>
+          <onleft>50</onleft>
+          <onright>50</onright>
+        </control>
+        <control>
+          <type>button</type>
+          <description>Show BoxOffice</description>
+          <id>4</id>
+          <posX>49</posX>
+          <posY>270</posY>
+          <label>Box Office</label>
+          <onup>3</onup>
+          <ondown>40</ondown>
+          <onleft>50</onleft>
+          <onright>50</onright>
+        </control>
+        <control>
+          <type>button</type>
+          <description>ShowTimes</description>
+          <id>40</id>
+          <posX>49</posX>
+          <posY>315</posY>
+          <label>71119924</label>
+          <onup>4</onup>
+          <ondown>41</ondown>
+          <onleft>50</onleft>
+          <onright>50</onright>
+        </control>
+      </control>
+      <control>
+        <description>Horizontal divider</description>
+        <type>image</type>
+        <id>1</id>
+        <posX>50</posX>
+        <posY>710</posY>
+        <width>372</width>
+        <height>1</height>
+        <texture>horizontal_bar.png</texture>
+        <colordiffuse>80ffffff</colordiffuse>
+        <visible>!control.isvisible(24)</visible>
+      </control>
+      <control>
+        <type>label</type>
+        <description>Next Refresh</description>
+        <id>45</id>
+        <posX>64</posX>
+        <posY>723</posY>
+        <width>323</width>
+        <height>112</height>
+        <label>#showtimes_nextupdate</label>
+        <font>font10</font>
+        <textcolor>ff6FAFE1</textcolor>
+        <visible>!control.isvisible(24)</visible>
+      </control>
+    </control>
+    <!-- ******************************************************************************************* -->
+    <!-- ************************* BUTTONS IN DETAILS VIEW (ID 24 VISIBLE)   *********************** -->
+    <!-- ******************************************************************************************* -->
+    <control>
+      <description>DUMMY movie poster to show Details View</description>
+      <type>image</type>
+      <id>24</id>
+      <posX>2000</posX>
+      <posY>548</posY>
+      <width>321</width>
+      <height>486</height>
+      <texture></texture>
+    </control>
+    <control>
+      <type>group</type>
+      <description>group element</description>
+      <animation effect="slide" time="70" start="-335,0" reversible="true">visiblechange</animation>
+      <visible>control.isvisible(24)</visible>
+      <layout>StackLayout(0, Vertical, true)</layout>
+      <posX>49</posX>
+      <posY>250</posY>
+      <control>
+        <type>button</type>
+        <description>Next</description>
+        <id>42</id>
+        <label>209</label>
+        <ondown>43</ondown>
+        <onleft>42</onleft>
+        <onright>42</onright>
+      </control>
+      <control>
+        <type>button</type>
+        <description>Previous</description>
+        <id>43</id>
+        <label>210</label>
+        <onup>42</onup>
+        <ondown>41</ondown>
+        <onleft>43</onleft>
+        <onright>43</onright>
+      </control>
+      <control>
+        <type>button</type>
+        <description>Play Trailer</description>
+        <id>41</id>
+        <label>-</label>
+        <onup>43</onup>
+        <ondown>11899</ondown>
+        <onleft>41</onleft>
+        <onright>41</onright>
+      </control>
+      <control>
+        <type>button</type>
+        <description>Find Trailer</description>
+        <id>11899</id>
+        <label>#Trailers.Translation.Trailers.Label...</label>
+        <posX>49</posX>
+        <posY>360</posY>
+        <onup>41</onup>
+        <ondown>97258</ondown>
+        <onleft>50</onleft>
+        <onright>50</onright>
+        <visible>control.isvisible(24)+plugin.isenabled(Trailers)</visible>
+      </control>
+      <control>
+        <type>button</type>
+        <description>Add to Trakt Movie Watch List</description>
+        <id>97258</id>
+        <posX>49</posX>
+        <posY>495</posY>
+        <label>#Trakt.Translation.AddToWatchList.Label</label>
+        <onup>11899</onup>
+        <ondown>42</ondown>
+        <onleft>50</onleft>
+        <onright>50</onright>
+        <visible>control.isvisible(24)+plugin.isenabled(Trakt)</visible>
+      </control>
+    </control>
+    <!-- ******************************************************************************************* -->
+    <!-- ************************** MENU STYLE INFO WINDOW DETAILS ********************************* -->
+    <!-- ******************************************************************************************* -->
+    <control>
+      <type>group</type>
+      <description>group element</description>
+      <visible>facadeview.list|control.isvisible(24)</visible>
+      <control>
+        <description>Runtime txt</description>
+        <type>label</type>
+        <id>1</id>
+        <label>299</label>
+        <font>Label</font>
+        <posX>1084</posX>
+        <posY>240</posY>
+        <textcolor>ff6FAFE1</textcolor>
+      </control>
+      <control>
+        <description>Runtime value</description>
+        <type>label</type>
+        <id>1</id>
+        <label>#st_runtime</label>
+        <font>font12</font>
+        <posX>1358</posX>
+        <posY>239</posY>
+        <textcolor>ivory</textcolor>
+      </control>
+      <control>
+        <description>divider horizontal</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>1084</posX>
+        <posY>282</posY>
+        <width>770</width>
+        <height>1</height>
+        <texture>horizontal_bar.png</texture>
+        <colordiffuse>40ffffff</colordiffuse>
+      </control>
+      <control>
+        <description>Genre txt</description>
+        <type>label</type>
+        <id>1</id>
+        <label>174</label>
+        <font>Label</font>
+        <posX>1084</posX>
+        <posY>284</posY>
+        <textcolor>ff6FAFE1</textcolor>
+      </control>
+      <control>
+        <description>Year value</description>
+        <type>label</type>
+        <id>1</id>
+        <label>#st_genre</label>
+        <font>font12</font>
+        <posX>1358</posX>
+        <posY>281</posY>
+        <textcolor>ivory</textcolor>
+      </control>
+      <control>
+        <description>divider horizontal</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>1084</posX>
+        <posY>326</posY>
+        <width>770</width>
+        <height>1</height>
+        <texture>horizontal_bar.png</texture>
+        <colordiffuse>40ffffff</colordiffuse>
+      </control>
+      <control>
+        <description>Director txt</description>
+        <type>label</type>
+        <id>1</id>
+        <label>199</label>
+        <font>Label</font>
+        <posX>1084</posX>
+        <posY>326</posY>
+        <textcolor>ff6FAFE1</textcolor>
+      </control>
+      <control>
+        <description>Director value</description>
+        <type>fadelabel</type>
+        <id>1</id>
+        <width>646</width>
+        <label>#st_director</label>
+        <font>font12</font>
+        <posX>1358</posX>
+        <posY>323</posY>
+        <textcolor>ivory</textcolor>
+      </control>
+      <control>
+        <description>divider horizontal</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>1084</posX>
+        <posY>368</posY>
+        <width>770</width>
+        <height>1</height>
+        <texture>horizontal_bar.png</texture>
+        <colordiffuse>40ffffff</colordiffuse>
+      </control>
+      <control>
+        <description>Votes txt</description>
+        <type>label</type>
+        <id>1</id>
+        <label>205</label>
+        <font>Label</font>
+        <posX>1084</posX>
+        <posY>368</posY>
+        <textcolor>ff6FAFE1</textcolor>
+      </control>
+      <control>
+        <description>Votes value</description>
+        <type>label</type>
+        <id>1</id>
+        <label>#st_userrating</label>
+        <font>font12</font>
+        <posX>1358</posX>
+        <posY>365</posY>
+        <textcolor>ivory</textcolor>
+      </control>
+      <control>
+        <description>divider horizontal</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>1084</posX>
+        <posY>410</posY>
+        <width>770</width>
+        <height>1</height>
+        <texture>horizontal_bar.png</texture>
+        <colordiffuse>40ffffff</colordiffuse>
+      </control>
+      <control>
+        <description>MPAA txt</description>
+        <type>label</type>
+        <id>1</id>
+        <label>173</label>
+        <font>Label</font>
+        <posX>1084</posX>
+        <posY>410</posY>
+        <textcolor>ff6FAFE1</textcolor>
+      </control>
+      <control>
+        <description>MPAA value</description>
+        <type>fadelabel</type>
+        <id>1</id>
+        <width>646</width>
+        <label>#st_rating</label>
+        <font>font12</font>
+        <posX>1358</posX>
+        <posY>407</posY>
+        <textcolor>ivory</textcolor>
+      </control>
+      <control>
+        <description>divider horizontal</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>1084</posX>
+        <posY>453</posY>
+        <width>770</width>
+        <height>1</height>
+        <texture>horizontal_bar.png</texture>
+        <colordiffuse>40ffffff</colordiffuse>
+      </control>
+      <control>
+        <description>Cast txt</description>
+        <type>label</type>
+        <id>1</id>
+        <label>206</label>
+        <font>Label</font>
+        <posX>1084</posX>
+        <posY>454</posY>
+        <textcolor>ff6FAFE1</textcolor>
+      </control>
+      <control>
+        <description>Cast value</description>
+        <type>textboxscrollup</type>
+        <id>1</id>
+        <posX>1084</posX>
+        <posY>500</posY>
+        <width>770</width>
+        <height>95</height>
+        <label>#st_starring</label>
+        <font>font12</font>
+        <textcolor>ivory</textcolor>
+      </control>
+      <control>
+        <description>divider horizontal</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>1084</posX>
+        <posY>604</posY>
+        <width>770</width>
+        <height>1</height>
+        <texture>horizontal_bar.png</texture>
+        <colordiffuse>40ffffff</colordiffuse>
+      </control>
+      <control>
+        <description>Plot txt</description>
+        <type>label</type>
+        <id>1</id>
+        <label>207</label>
+        <font>Label</font>
+        <posX>1084</posX>
+        <posY>611</posY>
+        <textcolor>ff6FAFE1</textcolor>
+      </control>
+      <control>
+        <description>Plot value</description>
+        <type>textboxscrollup</type>
+        <id>1</id>
+        <posX>1084</posX>
+        <posY>660</posY>
+        <width>770</width>
+        <height>240</height>
+        <label>#st_plot</label>
+        <font>font11</font>
+        <textcolor>ivory</textcolor>
+      </control>
+    </control>
+    <!-- ******************************************************************************************* -->
+    <!-- **************************               Cover             ******************************** -->
+    <!-- ******************************************************************************************* -->
+    <control>
+      <id>1</id>
+      <type>image</type>
+      <posX>600</posX>
+      <posY>300</posY>
+      <width>321</width>
+      <height>486</height>
+      <texture mask="dvdcase_mask.png">#st_poster</texture>
+      <visible>control.isvisible(24)</visible>
+      <animation effect="zoom" start="1,1" end="100,100" time="300" center="760,543">visible</animation>
+    </control>
+    <control>
+      <id>1</id>
+      <type>image</type>
+      <posX>600</posX>
+      <posY>300</posY>
+      <width>321</width>
+      <height>486</height>
+      <texture>Videothumbframe.png</texture>
+      <visible>control.isvisible(24)</visible>
+      <animation effect="zoom" start="1,1" end="100,100" time="300" center="760,543">visible</animation>
+    </control>
+    <import>common.facade.video.Title.xml</import>
+    <!-- ******************************************************************************************* -->
+    <!-- *********************************** NOT USED CONTROLS BUT IMPORTANT ********************* -->
+    <!-- ******************************************************************************************* -->
+    <control>
+      <description>DUMMY movie border to shwo Details View</description>
+      <type>image</type>
+      <id>23</id>
+      <posX>2000</posX>
+      <posY>548</posY>
+      <width>321</width>
+      <height>486</height>
+      <texture>DVDCase.png</texture>
+    </control>
+    <control>
+      <type>fadelabel</type>
+      <description>NOT USED Showtimes</description>
+      <id>46</id>
+      <posX>3131</posX>
+      <posY>3164</posY>
+    </control>
+  </controls>
+</window>

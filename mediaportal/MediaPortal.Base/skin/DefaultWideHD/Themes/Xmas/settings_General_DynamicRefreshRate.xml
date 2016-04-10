@@ -1,0 +1,420 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!--version="1.0" encoding="utf-8" standalone="yes"-->
+<window>
+  <id>1008</id>
+  <defaultcontrol>2</defaultcontrol>
+  <allowoverlay>no</allowoverlay>
+  <rememberLastFocusedControl>yes</rememberLastFocusedControl>
+  <controls>
+    <import>common.settings.xml</import>
+    <import>common.time.xml</import>
+    <control>
+      <description>buttons</description>
+      <type>group</type>
+      <animation effect="fade" start="0" end="100" time="200">WindowOpen</animation>
+      <animation effect="fade" start="100" end="0" time="200">WindowClose</animation>
+      <control>
+        <description>background</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>620</posX>
+        <posY>225</posY>
+        <width>1280</width>
+        <height>707</height>
+        <texture>backslide2.png</texture>
+      </control>
+      <control>
+        <description>Background</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>98</posX>
+        <posY>220</posY>
+        <width>480</width>
+        <height>710</height>
+        <texture>backslide.png</texture>
+      </control>
+      <control>
+        <type>label</type>
+        <id>1</id>
+        <posX>230</posX>
+        <posY>260</posY>
+        <width>480</width>
+        <label>924</label>
+        <textcolor>ffffd700</textcolor>
+        <font>Label</font>
+      </control>
+      <control>
+        <description>buttons</description>
+        <type>group</type>
+        <posX>118</posX>
+        <posY>305</posY>
+        <dimColor>ffffffff</dimColor>
+        <layout>StackLayout(0, Vertical, true)</layout>
+        <control>
+          <description>General Main setttings</description>
+          <type>button</type>
+          <id>9991</id>
+          <label>128</label>
+          <onup>17</onup>
+          <onright>2</onright>
+          <hyperlink>1016</hyperlink>
+        </control>
+        <control>
+          <description>General Skin settings</description>
+          <type>button</type>
+          <id>9992</id>
+          <label>101021</label>
+          <hyperlink>1021</hyperlink>
+          <onup>9991</onup>
+          <onright>2</onright>
+        </control>
+        <control>
+          <description>Screen</description>
+          <type>button</type>
+          <id>9993</id>
+          <label>6023</label>
+          <hyperlink>9</hyperlink>
+          <onup>9992</onup>
+          <onright>2</onright>
+        </control>
+        <control>
+          <description>TV</description>
+          <type>button</type>
+          <id>9994</id>
+          <label>605</label>
+          <hyperlink>700</hyperlink>
+          <onup>9993</onup>
+          <onright>2</onright>
+        </control>
+        <control>
+          <description>My Pictures</description>
+          <type>button</type>
+          <id>9995</id>
+          <label>1</label>
+          <hyperlink>12</hyperlink>
+          <onup>9994</onup>
+          <onright>2</onright>
+        </control>
+        <control>
+          <description>Movies</description>
+          <type>button</type>
+          <id>9996</id>
+          <label>3</label>
+          <hyperlink>703</hyperlink>
+          <onup>9995</onup>
+          <onright>2</onright>
+        </control>
+        <control>
+          <description>My DVD</description>
+          <type>button</type>
+          <id>9997</id>
+          <label>1027</label>
+          <hyperlink>704</hyperlink>
+          <onup>9996</onup>
+          <onright>2</onright>
+        </control>
+        <control>
+          <description>BluRay</description>
+          <type>button</type>
+          <id>9998</id>
+          <label>300217</label>
+          <hyperlink>1024</hyperlink>
+          <onup>9997</onup>
+          <onright>2</onright>
+        </control>
+        <control>
+          <description>My Music</description>
+          <type>button</type>
+          <id>9999</id>
+          <label>2</label>
+          <hyperlink>14</hyperlink>
+          <ondown>99910</ondown>
+          <onup>9998</onup>
+          <onright>2</onright>
+        </control>
+        <control>
+          <description>MiniDisplay</description>
+          <type>button</type>
+          <id>99910</id>
+          <label>9100</label>
+          <hyperlink>9000</hyperlink>
+          <ondown>9991</ondown>
+          <onup>9999</onup>
+          <onright>2</onright>
+          <visible>plugin.isenabled(MiniDisplay)</visible>
+        </control>
+      </control>
+      <control>
+        <type>label</type>
+        <id>1</id>
+        <posX>700</posX>
+        <posY>260</posY>
+        <width>1000</width>
+        <label>#currentmodule</label>
+        <textcolor>ffffd700</textcolor>
+        <font>Label</font>
+      </control>
+      
+    <!--Options-->
+  
+	<control>
+		<description>Enable dynamic refresh rate</description>
+		<type>checkbutton</type>
+		<id>2</id>
+		<posX>655</posX>
+		<posY>321</posY>
+		<width>525</width>
+		<onleft>9991</onleft>
+		<onright>4</onright>
+		<onleft>9991</onleft>
+		<onup>17</onup>
+		<ondown>3</ondown>
+		<label>300084</label>
+	</control>
+  
+	<control>
+		<description>Notify</description>
+		<type>checkbutton</type>
+		<id>3</id>
+		<posX>655</posX>
+		<posY>387</posY>
+		<width>525</width>
+		<onleft>9991</onleft>
+		<onright>5</onright>
+		<onup>2</onup>
+		<ondown>7</ondown>
+		<label>300085</label>
+	</control>
+  
+	<control>
+		<description>Use device reset</description>
+		<type>checkbutton</type>
+		<id>4</id>
+		<posX>1240</posX>
+		<posY>321</posY>
+		<width>525</width>
+		<onleft>2</onleft>
+		<onright>4</onright>
+		<ondown>5</ondown>
+		<align>right</align>
+		<label>300086</label>
+  </control>
+    
+	<control>
+		<description>Force refreshrate</description>
+		<type>checkbutton</type>
+		<id>5</id>
+		<posX>1240</posX>
+		<posY>387</posY>
+		<width>525</width>
+		<onleft>3</onleft>
+		<onright>5</onright>
+		<onup>4</onup>
+		<label>300087</label>
+  </control>
+
+	<control>
+		<description>Refresh rate name label</description>
+		<type>label</type>
+		<id>1</id>
+		<posX>956</posX>
+		<posY>478</posY>
+		<width>500</width>
+		<label>Name</label>
+		<font>Label</font>
+    <textcolor>lightskyblue</textcolor>
+  </control>
+	
+  <control>
+		<description>Refresh rate list</description>
+		<type>listcontrol</type>
+		<id>6</id>
+		<posX>960</posX>
+		<posY>530</posY>
+		<width>230</width>
+		<height>250</height>
+    <scrollOffset>2</scrollOffset>
+        <textXOff>-30</textXOff>
+        <textYOff>0</textYOff>
+        <textXOff2>1050</textXOff2>
+        <textYOff2>3</textYOff2>
+        <textXOff3>1065</textXOff3>
+        <textYOff3>6</textYOff3>
+        <PinIconWidth>35</PinIconWidth>
+        <PinIconHeight>25</PinIconHeight>
+        <PinIconXOff>1120</PinIconXOff>
+        <PinIconYOff>9</PinIconYOff>
+        <textureHeight>40</textureHeight>
+        <itemWidth>25</itemWidth>
+        <itemHeight>0</itemHeight>
+        <IconXOff>0</IconXOff>
+        <IconYOff>0</IconYOff>
+        <keepaspectratio>yes</keepaspectratio>
+        <font>font11</font>
+        <font2>font11</font2>
+        <font3>font11</font3>
+        <textcolor>ffffd700</textcolor>
+        <textcolor2>ffffffff</textcolor2>
+        <textcolor3>ffffffff</textcolor3>
+        <selectedColor>80000000</selectedColor>
+        <selectedColor2>ffffffff</selectedColor2>
+        <onup>42</onup>
+        <ondown>40</ondown>
+        <onleft>3</onleft>
+        <onright>3</onright>
+        <spaceBetweenItems>0</spaceBetweenItems>
+        <scrollbarXOff>0</scrollbarXOff>
+  </control>
+	
+    <!--  Value Labels  -->
+	
+  <control>
+		<description>Refresh rate info label</description>
+		<type>label</type>
+		<id>1</id>
+		<posX>1300</posX>
+		<posY>590</posY>
+		<width>200</width>
+		<label>Frame rate(s)</label>
+		<font>Label</font>
+    <textcolor>lightskyblue</textcolor>
+  </control>
+
+	  <control>
+		<description>Refresh rate info label</description>
+		<type>label</type>
+		<id>1</id>
+		<posX>1545</posX>
+		<posY>590</posY>
+		<width>200</width>
+		<label>Refresh rate</label>
+		<font>Label</font>
+    <textcolor>lightskyblue</textcolor>
+  </control>
+
+    <!--  Values  -->
+		
+  <control>
+		<description>Frame rate values Label</description>
+		<type>group</type>
+		<posX>1300</posX>
+		<posY>643</posY>	
+		<layout>StackLayout(30, Horizontal, true)</layout>
+		
+ <control>
+		<description>FPS label</description>
+		<type>fadelabel</type>
+		<id>1</id>
+		<width>150</width>
+		<label>#fps</label>
+		<font>font12</font>
+		<textcolor>ffffd700</textcolor>
+  </control>
+  </control>
+
+  <control>
+		<description>Refresh rate values Label</description>
+		<type>group</type>
+		<posX>1545</posX>
+		<posY>643</posY>	
+		<layout>StackLayout(30, Horizontal, true)</layout>
+		
+  <control>
+    <description>Rate value label</description>
+    <type>label</type>
+    <id>1</id>
+    <width>150</width>
+    <label>#rate</label>
+    <font>font12</font>
+    <textcolor>ffffd700</textcolor>
+  </control>	
+  </control>
+	
+    <!--Add/Edit/Remove/Default-->
+    
+    <control>
+		<description>Refresh rate values Label</description>
+		<type>group</type>
+		<posX>665</posX>
+		<posY>520</posY>	
+		<layout>StackLayout(0, Vertical, true)</layout>
+	
+	<control>
+		<description>Add</description>
+		<type>button</type>
+		<id>7</id>
+		<width>300</width>
+		<onright>6</onright>
+		<onleft>9991</onleft>
+		<onup>3</onup>
+		<ondown>8</ondown>
+		<label>300063</label>
+    </control>
+	
+	<control>
+		<description>Remove</description>
+		<type>button</type>
+		<id>8</id>
+		<width>300</width>
+		<onright>6</onright>
+		<onleft>9991</onleft>
+		<onup>7</onup>
+		<ondown>12</ondown>
+		<label>300064</label>
+  </control>
+	
+	<control>
+		<description>Edit</description>
+		<type>button</type>
+		<id>12</id>
+		<width>300</width>
+		<onright>6</onright>
+		<onleft>9991</onleft>
+		<onup>8</onup>
+		<ondown>10</ondown>
+		<label>2076</label>
+  </control>  
+  </control>
+	
+    <!--Default refresh rate-->
+	
+	<control>
+		<description>Enable default refresh rate</description>
+		<type>checkbutton</type>
+		<id>10</id>
+		<posX>655</posX>
+		<posY>790</posY>
+		<width>650</width>
+		<ondown>11</ondown>
+		<onup>12</onup>
+		<label>300089</label>
+  </control>
+
+	<control>
+		<description>Select default refresh rate</description>
+		<type>button</type>
+		<id>11</id>
+		<posX>655</posX>
+		<posY>845</posY>
+		<width>650</width>
+		<onleft>10</onleft>
+		<onup>10</onup>
+		<label>424</label>
+  </control>
+	
+  <control>
+		<description>Def rate value label</description>
+		<type>label</type>
+		<id>1</id>
+		<posX>1290</posX>
+		<posY>855</posY>
+		<width>245</width>
+		<align>right</align>
+		<label>#defaultrate</label>
+		<font>font12</font>
+		<visible>control.isvisible(11)</visible>
+  </control>
+    
+    </control>
+  </controls>
+</window>

@@ -133,7 +133,14 @@ public class MediaPortalApp : D3D, IRender
   private bool                  _resumedSuspended;
   private bool                  _delayedResume;
   private readonly Object       _delayedResumeLock = new Object();
-  private bool                  _keepstartfullscreen;
+  private readonly bool         _ignoreFullscreenResolutionChanges;
+  private int                   _locationX;
+  private int                   _locationY;
+  private bool                  _firstRestoreScreen = true;
+  private int                   _backupSizeWidth;
+  private int                   _backupSizeHeight;
+  private bool                  _usePrimaryScreen;
+  private string                _screenDisplayName;
 
   // ReSharper disable InconsistentNaming
   private const int WM_SYSCOMMAND            = 0x0112; // http://msdn.microsoft.com/en-us/library/windows/desktop/ms646360(v=vs.85).aspx
@@ -203,6 +210,26 @@ public class MediaPortalApp : D3D, IRender
 
   // Framegrabber instance
   private FrameGrabber grabber = FrameGrabber.GetInstance();
+
+  [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
+  // ReSharper disable InconsistentNaming
+  public class DISPLAY_DEVICE
+  // ReSharper restore InconsistentNaming
+  {
+    public int cb = 0;
+    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 32)]
+    public string DeviceName = new String(' ', 32);
+    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 128)]
+    public string DeviceString = new String(' ', 128);
+    public int StateFlags = 0;
+    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 128)]
+    public string DeviceID = new String(' ', 128);
+    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 128)]
+    public string DeviceKey = new String(' ', 128);
+  }
+
+  [DllImport("user32.dll")]
+  public static extern bool EnumDisplayDevices(string lpDevice, int iDevNum, [In, Out] DISPLAY_DEVICE lpDisplayDevice, int dwFlags);
 
   #endregion
 
@@ -316,6 +343,13 @@ public class MediaPortalApp : D3D, IRender
   }
   // ReSharper restore InconsistentNaming
   // ReSharper restore UnusedMember.Local
+
+  private enum DisplayState
+  {
+    ON = -1,
+    OFF = 2,
+    STANDBY = 1
+  }
 
   #endregion
 
@@ -773,12 +807,12 @@ public class MediaPortalApp : D3D, IRender
         {
           using (Settings xmlreader = new MPSettings())
           {
-            skin = string.IsNullOrEmpty(SkinOverride) ? xmlreader.GetValueAsString("skin", "name", "Default") : SkinOverride;
+            skin = string.IsNullOrEmpty(SkinOverride) ? xmlreader.GetValueAsString("skin", "name", "Titan") : SkinOverride;
           }
         }
         catch (Exception)
         {
-           skin = "Default";
+          skin = "Titan";
         }
 
         Config.SkinName = skin;
@@ -1093,6 +1127,7 @@ public class MediaPortalApp : D3D, IRender
     _restartOptions        = RestartOptions.Reboot;
 
     int screenNumber;
+    string screenDeviceId;
     using (Settings xmlreader = new MPSettings())
     {
       _suspendGracePeriodSec      = xmlreader.GetValueAsInt("general", "suspendgraceperiod", 5);
@@ -1105,18 +1140,80 @@ public class MediaPortalApp : D3D, IRender
       screenNumber                = xmlreader.GetValueAsInt("screenselector", "screennumber", 0);
       _stopOnLostAudioRenderer    = xmlreader.GetValueAsBool("general", "stoponaudioremoval", true);
       _delayOnResume              = xmlreader.GetValueAsBool("general", "delay resume", false) ? xmlreader.GetValueAsInt("general", "delay", 0) : 0;
+      screenDeviceId              = xmlreader.GetValueAsString("screenselector", "screendeviceid", "");
+      _usePrimaryScreen           = xmlreader.GetValueAsBool("general", "useprimaryscreen", false);
+      _screenDisplayName          = xmlreader.GetValueAsString("screenselector", "screendisplayname", "");
     }
 
     if (ScreenNumberOverride >= 0)
     {
       screenNumber = ScreenNumberOverride;
+      if (screenNumber < 0 || screenNumber >= Screen.AllScreens.Length)
+      {
+        screenNumber = 0;
+      }
+      GUIGraphicsContext.currentScreen = Screen.AllScreens[screenNumber];
     }
-    if (screenNumber < 0 || screenNumber >= Screen.AllScreens.Length)
+    else
     {
-      screenNumber = 0;
-    }
+      bool foundScreen = false;
+      foreach (Screen screen in Screen.AllScreens)
+      {
+        const int dwf = 0;
+        var info = new DISPLAY_DEVICE();
+        string monitorname = null;
+        string deviceId = null;
+        info.cb = Marshal.SizeOf(info);
+        if (EnumDisplayDevices(screen.DeviceName, 0, info, dwf))
+        {
+          monitorname = info.DeviceString;
+          deviceId = info.DeviceID;
+        }
+        if (monitorname == null)
+        {
+          monitorname = "";
+        }
+        if (deviceId == null)
+        {
+          deviceId = "";
+        }
 
-    GUIGraphicsContext.currentScreen = Screen.AllScreens[screenNumber];
+        if (_usePrimaryScreen)
+        {
+          if (screen.Primary)
+          {
+            GUIGraphicsContext.currentScreen = screen;
+            foundScreen = true;
+            break;
+          }
+        }
+        else
+        {
+          if (!string.IsNullOrEmpty(deviceId))
+          {
+            if (deviceId.Equals(screenDeviceId))
+            {
+              GUIGraphicsContext.currentScreen = screen;
+              foundScreen = true;
+              break;
+            }
+          }
+          else
+          {
+            if (screen.DeviceName.Equals(_screenDisplayName))
+            {
+              GUIGraphicsContext.currentScreen = screen;
+              foundScreen = true;
+              break;
+            }
+          }
+        }
+      }
+      if (!foundScreen)
+      {
+        GUIGraphicsContext.currentScreen = screenNumber >= Screen.AllScreens.Length ? Screen.AllScreens[0] : Screen.AllScreens[screenNumber];
+      }
+    }
 
     Log.Info("Main: MP is using screen: {0} (Position: {1},{2} Dimensions: {3}x{4})",
              GetCleanDisplayName(GUIGraphicsContext.currentScreen),
@@ -1168,9 +1265,9 @@ public class MediaPortalApp : D3D, IRender
     CheckSkinVersion();
     using (Settings xmlreader = new MPSettings())
     {
+      _ignoreFullscreenResolutionChanges = xmlreader.GetValueAsBool("general", "ignorefullscreenresolutionchanges", false);
       var startFullscreen = !WindowedOverride && (FullscreenOverride || xmlreader.GetValueAsBool("general", "startfullscreen", false));
       Windowed = !startFullscreen;
-      _keepstartfullscreen = xmlreader.GetValueAsBool("general", "keepstartfullscreen", false);
     }
 
     DoStartupJobs();
@@ -1450,12 +1547,15 @@ public class MediaPortalApp : D3D, IRender
 
         // power management
         case WM_POWERBROADCAST:
-          OnPowerBroadcast(ref msg);
+          if (!OnPowerBroadcast(ref msg))
+          {
+            return;
+          }
           break;
 
         // set maximum and minimum form size in windowed mode
         case WM_GETMINMAXINFO:
-          if (!_keepstartfullscreen)
+          if (Windowed || !_ignoreFullscreenResolutionChanges)
           {
             if (!_suspended)
             {
@@ -1483,7 +1583,7 @@ public class MediaPortalApp : D3D, IRender
 
         // verify window size in case it was not resized by the user
         case WM_SIZE:
-          if (!_keepstartfullscreen)
+          if (Windowed || !_ignoreFullscreenResolutionChanges)
           {
             OnSize(ref msg);
             PluginManager.WndProc(ref msg);
@@ -1492,7 +1592,7 @@ public class MediaPortalApp : D3D, IRender
 
         // aspect ratio save window resizing
         case WM_SIZING:
-          if (!_keepstartfullscreen)
+          if (Windowed || !_ignoreFullscreenResolutionChanges)
           {
             OnSizing(ref msg);
             PluginManager.WndProc(ref msg);
@@ -1501,7 +1601,7 @@ public class MediaPortalApp : D3D, IRender
 
         // handle display changes
         case WM_DISPLAYCHANGE:
-          if (!_keepstartfullscreen)
+          if (Windowed || !_ignoreFullscreenResolutionChanges)
           {
             OnDisplayChange(ref msg);
             PluginManager.WndProc(ref msg);
@@ -1510,8 +1610,11 @@ public class MediaPortalApp : D3D, IRender
 
         // handle device changes
         case WM_DEVICECHANGE:
-          OnDeviceChange(ref msg);
-          PluginManager.WndProc(ref msg);
+          if (Windowed || !_ignoreFullscreenResolutionChanges)
+          {
+            OnDeviceChange(ref msg);
+            PluginManager.WndProc(ref msg);
+          }
           break;
 
         case WM_QUERYENDSESSION:
@@ -1626,9 +1729,9 @@ public class MediaPortalApp : D3D, IRender
 
       // Windows is requesting to turn off the display
       case SC_MONITORPOWER:
-        int displayState = msg.LParam.ToInt32();
+        DisplayState displayState = (DisplayState)msg.LParam.ToInt32();
         Log.Debug("Main: SC_MONITORPOWER {0}", displayState);
-        if ((GUIGraphicsContext.IsFullScreenVideo && !g_Player.Paused) || GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_SLIDESHOW && displayState != -1)
+        if (displayState != DisplayState.ON && ((GUIGraphicsContext.IsFullScreenVideo && !g_Player.Paused) || GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_SLIDESHOW))
         {
           PluginManager.WndProc(ref msg);
           Log.Info("Main: Active player - resetting idle timer for display to be turned off");
@@ -1645,7 +1748,7 @@ public class MediaPortalApp : D3D, IRender
       // Windows is requesting to start the screen saver
       case SC_SCREENSAVE:
         Log.Debug("Main: SC_SCREENSAVE");
-        if ((GUIGraphicsContext.IsFullScreenVideo && !g_Player.Paused) || GUIWindowManager.ActiveWindow == (int) GUIWindow.Window.WINDOW_SLIDESHOW)
+        if ((GUIGraphicsContext.IsFullScreenVideo && !g_Player.Paused) || GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_SLIDESHOW)
         {
           PluginManager.WndProc(ref msg);
           Log.Info("Main: Active player - resetting idle timer for screen save to be turned on");
@@ -1666,7 +1769,7 @@ public class MediaPortalApp : D3D, IRender
   /// Process WM_POWERBROADCAST messages
   /// </summary>
   /// <param name="msg"></param>
-  private void OnPowerBroadcast(ref Message msg)
+  private bool OnPowerBroadcast(ref Message msg)
   {
     try
     {
@@ -1681,38 +1784,32 @@ public class MediaPortalApp : D3D, IRender
           _delayedResume = false;
           _suspended = true;
 
+          // Workaround HDMI hot-plug problems by forcing the form size to match the actual screen size.
           Screen screen = Screen.FromControl(this);
-
-          // force form dimensions to screen size to compensate for HDMI hot plug problems (e.g. WM_DiSPLAYCHANGE reported 1920x1080 but system is still in 1024x768 mode).
-          Log.Debug("Main: PBT_APMSUSPEND GUIGraphicsContext.currentScreen.Bounds {0}x{1}", GUIGraphicsContext.currentScreen.Bounds.Width, GUIGraphicsContext.currentScreen.Bounds.Height);
-          Log.Debug("Main: PBT_APMSUSPEND screen.Bounds {0}x{1}", screen.Bounds.Width, screen.Bounds.Height);
-
-          if (screen.Bounds.Width == 1024 && screen.Bounds.Height == 768)
+          if (Equals(screen.Bounds.Size, WINDOWS_NATIVE_RESOLUTION) && !Equals(screen.Bounds.Size, _backupBounds.Size))
           {
             _restoreLoadedScreen = true;
-            Log.Debug("Main: PBT_APMSUSPEND BackupBounds {0}", _backupBounds);
-            Log.Debug("Main: PBT_APMSUSPEND Bounds {0}", Bounds);
             if (!Windowed)
             {
+              Log.Info("Main: Force form size to startup screen size, current form size = {0}x{1}, current screen size = {2}x{3}, startup screen size = {4}x{5}",
+                        Bounds.Width, Bounds.Height, screen.Bounds.Width, screen.Bounds.Height, _backupBounds.Width, _backupBounds.Height);
               SetBounds(_backupBounds.X, _backupBounds.Y, _backupBounds.Width, _backupBounds.Height);
             }
-            Log.Debug("Main: PBT_APMSUSPEND Bounds after {0}", Bounds);
             GUIGraphicsContext.currentScreen = _backupscreen;
             BuildPresentParams(Windowed);
 
-            // backup GUIGraphicsContext.DirectXPresentParameters for restoring upon resume if different from native 1024x768
-            if (_presentParamsBackup.BackBufferWidth == 1024 && _presentParamsBackup.BackBufferHeight == 768)
+            if (_presentParamsBackup.BackBufferWidth == WINDOWS_NATIVE_RESOLUTION.Width && _presentParamsBackup.BackBufferHeight == WINDOWS_NATIVE_RESOLUTION.Height)
             {
               _presentParamsBackup = _presentParams;
             }
             RecreateSwapChain(true);
             _restoreLoadedScreen = false;
-            Log.Debug("Main: PBT_APMSUSPEND force restoring start screen to Bounds {0}", Bounds);
           }
 
           // Suspending GUIGraphicsContext when going to S3
           if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.RUNNING)
           {
+            Log.Debug("Main: Set GUIGraphicsContext.State.SUSPENDING");
             GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.SUSPENDING;
           }
 
@@ -1802,11 +1899,12 @@ public class MediaPortalApp : D3D, IRender
           if (!_resumedSuspended)
           {
             // Resume operation of user interface
+            _resumedSuspended = true;
             Log.Info("Main: Resuming operation of user interface");
             OnResumeSuspend();
             msg.WParam = new IntPtr((int)PBT_EVENT.PBT_APMRESUMESUSPEND);
             PluginManager.WndProc(ref msg);
-            _resumedSuspended = true;
+            _suspended = false;
           }
           else
           {
@@ -1819,14 +1917,14 @@ public class MediaPortalApp : D3D, IRender
             GUIGraphicsContext.DX9Device.DeviceLost += OnDeviceLost;
           }
 
-          _suspended = false;
-
-          // force form dimensions to screen size to compensate for HDMI hot plug problems (e.g. WM_DiSPLAYCHANGE reported 1920x1080 but system is still in 1024x768 mode).
-          if (GUIGraphicsContext.currentScreen.Bounds.Width == 1024 &&
-              GUIGraphicsContext.currentScreen.Bounds.Height == 768)
+          // Workaround HDMI hot-plug problems by forcing the form size to match the actual screen size.
+          if (!Windowed &&
+              GUIGraphicsContext.currentScreen.Bounds.Size == WINDOWS_NATIVE_RESOLUTION &&
+              GUIGraphicsContext.currentScreen.Bounds.Size != _backupBounds.Size)
           {
+            Log.Info("Main: Force form size to startup screen size, current form size = {0}x{1}, current screen size = {2}x{3}, startup screen size = {4}x{5}",
+                      Bounds.Width, Bounds.Height, GUIGraphicsContext.currentScreen.Bounds.Width, GUIGraphicsContext.currentScreen.Bounds.Height, _backupBounds.Width, _backupBounds.Height);
             Bounds = _backupBounds;
-            Log.Debug("Main: PBT_APMRESUMESUSPEND force restoring start screen to Bounds {0}", Bounds);
           }
           break;
 
@@ -1875,6 +1973,17 @@ public class MediaPortalApp : D3D, IRender
             {
               case 0:
                 Log.Info("Main: User is providing input to the session");
+                if (_suspended && _resumedAutomatic && !_resumedSuspended)
+                {
+                  // Resume operation of user interface for PBT_APMRESUMEAUTOMATIC without PBT_APMRESUMESUSPEND.
+                  _resumedSuspended = true;
+                  Log.Info("Main: Resuming operation of user interface");
+                  OnResumeSuspend();
+                  msg.WParam = new IntPtr((int)PBT_EVENT.PBT_APMRESUMESUSPEND);
+                  PluginManager.WndProc(ref msg);
+                  msg.WParam = new IntPtr((int)PBT_EVENT.PBT_POWERSETTINGCHANGE);
+                  _suspended = false;
+                }
                 IsUserPresent = true;
                 ShowMouseCursor(false);
                 break;
@@ -1884,7 +1993,11 @@ public class MediaPortalApp : D3D, IRender
                 break;
             }
           }
+          PluginManager.WndProc(ref msg);
+          break;
 
+        // Any other event types that we don't handle...
+        default:
           PluginManager.WndProc(ref msg);
           break;
       }
@@ -1894,6 +2007,7 @@ public class MediaPortalApp : D3D, IRender
     {
       Log.Error("Main: Exception catch on OnPowerBroadcast : {0}", ex);
     }
+    return true;
   }
 
   private bool CheckDelayedResume()
@@ -2022,7 +2136,7 @@ public class MediaPortalApp : D3D, IRender
               try
               {
                 GUIGraphicsContext.DeviceVideoConnected++;
-                if (!_keepstartfullscreen)
+                if (Windowed || !_ignoreFullscreenResolutionChanges)
                 {
                   OnDisplayChange(ref msg);
                 }
@@ -2083,6 +2197,7 @@ public class MediaPortalApp : D3D, IRender
                 GUIGraphicsContext.DeviceAudioConnected--;
                 if (_stopOnLostAudioRenderer)
                 {
+                  Log.Debug("Main: Stop playback");
                   g_Player.Stop();
                   while (GUIGraphicsContext.IsPlaying)
                   {
@@ -2103,6 +2218,7 @@ public class MediaPortalApp : D3D, IRender
                 GUIGraphicsContext.DeviceAudioConnected++;
                 if (_stopOnLostAudioRenderer)
                 {
+                  Log.Debug("Main: Stop playback");
                   g_Player.Stop();
                   while (GUIGraphicsContext.IsPlaying)
                   {
@@ -2135,91 +2251,90 @@ public class MediaPortalApp : D3D, IRender
   /// <param name="msg"></param>
   private void OnDisplayChange(ref Message msg)
   {
-    Screen screen = Screen.FromControl(this);
-    if (!_suspended)
+    if (_suspended)
     {
-      // force form dimensions to screen size to compensate for HDMI hot plug problems (e.g. WM_DiSPLAYCHANGE reported 1920x1080 but system is still in 1024x768 mode).
-      if (screen.Bounds.Width == 1024 &&
-          screen.Bounds.Height == 768)
+      return;
+    }
+
+    Log.Debug("Main: WM_DISPLAYCHANGE");
+
+    // Workaround HDMI hot-plug problems by not adjusting the form size if the screen is not its actual size.
+    Screen screen = Screen.FromControl(this);
+    if (!Windowed && Equals(screen.Bounds.Size, WINDOWS_NATIVE_RESOLUTION) && !Equals(screen.Bounds.Size, _backupBounds.Size))
+    {
+      Log.Debug("Main: Ignore spurious WM_DISPLAYCHANGE for Windows native resolution");
+      return;
+    }
+
+    // disable event handlers
+    if (GUIGraphicsContext.DX9Device != null)
+    {
+      GUIGraphicsContext.DX9Device.DeviceLost -= OnDeviceLost;
+    }
+
+    if (VMR9Util.g_vmr9 != null && GUIGraphicsContext.Vmr9Active && GUIGraphicsContext.IsEvr)
+    {
+      VMR9Util.g_vmr9.UpdateEVRDisplayFPS(); // Update FPS
+    }
+    Rectangle currentBounds = GUIGraphicsContext.currentScreen.Bounds;
+    Rectangle newBounds = screen.Bounds;
+    if (Created && !Equals(screen, GUIGraphicsContext.currentScreen) || !Equals(currentBounds.Size, newBounds.Size) || !Equals(screen, GUIGraphicsContext.currentStartScreen))
+    {
+      Log.Info("Main: Screen MP OnDisplayChange is displayed on changed from {0} to {1}", GetCleanDisplayName(GUIGraphicsContext.currentScreen), GetCleanDisplayName(screen));
+      if (screen.Bounds != GUIGraphicsContext.currentScreen.Bounds)
       {
-        Log.Debug("Main: OnDisplayChange native bounds {0}x{1} detected after fresh video device connected bypass it", screen.Bounds.Width, screen.Bounds.Height);
-        return;
+        Log.Info("Main: OnDisplayChange Bounds of display changed from {0}x{1} to {2}x{3}", currentBounds.Width, currentBounds.Height, newBounds.Width, newBounds.Height);
+      }
+      if (!Equals(currentBounds.Size, newBounds.Size))
+      {
+        // Check if start screen is equal to device screen and check if current screen bond differ from current detected screen bond then recreate swap chain.
+        Log.Debug("Main: Screen MP OnDisplayChange current screen detected                                {0}", GetCleanDisplayName(screen));
+        Log.Debug("Main: Screen MP OnDisplayChange current screen                                         {0}", GetCleanDisplayName(GUIGraphicsContext.currentScreen));
+        Log.Debug("Main: Screen MP OnDisplayChange start screen                                           {0}", GetCleanDisplayName(GUIGraphicsContext.currentStartScreen));
+        Log.Debug("Main: Screen MP OnDisplayChange change current screen {0} with current detected screen {1}", GetCleanDisplayName(GUIGraphicsContext.currentScreen), GetCleanDisplayName(screen));
+        GUIGraphicsContext.currentScreen = screen;
+        Log.Debug("Main: Screen MP OnDisplayChange set current detected screen bounds : {0} to previous bounds values : {1}", GUIGraphicsContext.currentScreen.Bounds, Bounds);
+        Bounds = screen.Bounds;
+        Log.Debug("Main: Screen MP OnDisplayChange recreate swap chain");
+        NeedRecreateSwapChain = true;
+        RecreateSwapChain(false);
+        _changeScreenDisplayChange = true;
+      }
+      // Restore original Start Screen in case of change from RDP Session
+      if (!Equals(screen, GUIGraphicsContext.currentStartScreen))
+      {
+        foreach (GraphicsAdapterInfo adapterInfo in _enumerationSettings.AdapterInfoList)
+        {
+          var hMon = Manager.GetAdapterMonitor(adapterInfo.AdapterOrdinal);
+          var info = new MonitorInformation();
+          info.Size = (uint)Marshal.SizeOf(info);
+          GetMonitorInfo(hMon, ref info);
+          var rect = Screen.FromRectangle(info.MonitorRectangle).Bounds;
+          if (Equals(Manager.Adapters[GUIGraphicsContext.DX9Device.DeviceCaps.AdapterOrdinal].Information.DeviceName, GetCleanDisplayName(GUIGraphicsContext.currentStartScreen)) && rect.Equals(screen.Bounds))
+          {
+            GUIGraphicsContext.currentScreen = GUIGraphicsContext.currentStartScreen;
+            break;
+          }
+          GUIGraphicsContext.currentScreen = screen;
+          Log.Debug("Main: Screen MP OnDisplayChange restore screen");
+        }
       }
     }
 
-    if (!_suspended)
+    if (!Windowed)
     {
-      // disable event handlers
-      if (GUIGraphicsContext.DX9Device != null)
-      {
-        GUIGraphicsContext.DX9Device.DeviceLost -= OnDeviceLost;
-      }
+      SetBounds(GUIGraphicsContext.currentScreen.Bounds.X, GUIGraphicsContext.currentScreen.Bounds.Y, GUIGraphicsContext.currentScreen.Bounds.Width, GUIGraphicsContext.currentScreen.Bounds.Height);
+    }
 
-      Log.Debug("Main: WM_DISPLAYCHANGE");
-      if (VMR9Util.g_vmr9 != null && GUIGraphicsContext.Vmr9Active && GUIGraphicsContext.IsEvr)
-      {
-        VMR9Util.g_vmr9.UpdateEVRDisplayFPS(); // Update FPS
-      }
-      Rectangle currentBounds = GUIGraphicsContext.currentScreen.Bounds;
-      Rectangle newBounds = screen.Bounds;
-      if (Created && !Equals(screen, GUIGraphicsContext.currentScreen) || !Equals(currentBounds.Size, newBounds.Size) || !Equals(screen, GUIGraphicsContext.currentStartScreen))
-      {
-        Log.Info("Main: Screen MP OnDisplayChange is displayed on changed from {0} to {1}", GetCleanDisplayName(GUIGraphicsContext.currentScreen), GetCleanDisplayName(screen));
-        if (screen.Bounds != GUIGraphicsContext.currentScreen.Bounds)
-        {
-          Log.Info("Main: OnDisplayChange Bounds of display changed from {0}x{1} to {2}x{3}", currentBounds.Width, currentBounds.Height, newBounds.Width, newBounds.Height);
-        }
-        if (!Equals(currentBounds.Size, newBounds.Size))
-        {
-          // Check if start screen is equal to device screen and check if current screen bond differ from current detected screen bond then recreate swap chain.
-          Log.Debug("Main: Screen MP OnDisplayChange current screen detected                                {0}", GetCleanDisplayName(screen));
-          Log.Debug("Main: Screen MP OnDisplayChange current screen                                         {0}", GetCleanDisplayName(GUIGraphicsContext.currentScreen));
-          Log.Debug("Main: Screen MP OnDisplayChange start screen                                           {0}", GetCleanDisplayName(GUIGraphicsContext.currentStartScreen));
-          Log.Debug("Main: Screen MP OnDisplayChange change current screen {0} with current detected screen {1}", GetCleanDisplayName(GUIGraphicsContext.currentScreen), GetCleanDisplayName(screen));
-          GUIGraphicsContext.currentScreen = screen;
-          Log.Debug("Main: Screen MP OnDisplayChange set current detected screen bounds : {0} to previous bounds values : {1}", GUIGraphicsContext.currentScreen.Bounds, Bounds);
-          Bounds = screen.Bounds;
-          Log.Debug("Main: Screen MP OnDisplayChange recreate swap chain");
-          NeedRecreateSwapChain = true;
-          RecreateSwapChain(false);
-          _changeScreenDisplayChange = true;
-        }
-        // Restore original Start Screen in case of change from RDP Session
-        if (!Equals(screen, GUIGraphicsContext.currentStartScreen))
-        {
-          foreach (GraphicsAdapterInfo adapterInfo in _enumerationSettings.AdapterInfoList)
-          {
-            var hMon = Manager.GetAdapterMonitor(adapterInfo.AdapterOrdinal);
-            var info = new MonitorInformation();
-            info.Size = (uint)Marshal.SizeOf(info);
-            GetMonitorInfo(hMon, ref info);
-            var rect = Screen.FromRectangle(info.MonitorRectangle).Bounds;
-            if (Equals(Manager.Adapters[GUIGraphicsContext.DX9Device.DeviceCaps.AdapterOrdinal].Information.DeviceName, GetCleanDisplayName(GUIGraphicsContext.currentStartScreen)) && rect.Equals(screen.Bounds))
-            {
-              GUIGraphicsContext.currentScreen = GUIGraphicsContext.currentStartScreen;
-              break;
-              }
-              GUIGraphicsContext.currentScreen = screen;
-              Log.Debug("Main: Screen MP OnDisplayChange restore screen");
-            }
-        }
-      }
+    // needed to avoid cursor show when MP windows change (for ex when refesh rate is working)
+    _moveMouseCursorPositionRefresh = D3D._lastCursorPosition;
 
-      if (!Windowed)
-      {
-        SetBounds(GUIGraphicsContext.currentScreen.Bounds.X, GUIGraphicsContext.currentScreen.Bounds.Y, GUIGraphicsContext.currentScreen.Bounds.Width, GUIGraphicsContext.currentScreen.Bounds.Height);
-      }
+    msg.Result = (IntPtr)1;
 
-      // needed to avoid cursor show when MP windows change (for ex when refesh rate is working)
-      _moveMouseCursorPositionRefresh = D3D._lastCursorPosition;
-
-      msg.Result = (IntPtr)1;
-
-      // enable event handlers
-      if (GUIGraphicsContext.DX9Device != null)
-      {
-        GUIGraphicsContext.DX9Device.DeviceLost += OnDeviceLost;
-      }
+    // enable event handlers
+    if (GUIGraphicsContext.DX9Device != null)
+    {
+      GUIGraphicsContext.DX9Device.DeviceLost += OnDeviceLost;
     }
   }
 
@@ -2230,47 +2345,47 @@ public class MediaPortalApp : D3D, IRender
   /// <param name="msg"></param>
   private void OnGetMinMaxInfo(ref Message msg)
   {
-    if (!_suspended)
+    if (_suspended)
     {
-      Screen screen = Screen.FromControl(this);
-      // force form dimensions to screen size to compensate for HDMI hot plug problems (e.g. WM_DiSPLAYCHANGE reported 1920x1080 but system is still in 1024x768 mode).
-      if (screen.Bounds.Width == 1024 &&
-          screen.Bounds.Height == 768)
-      {
-        Log.Debug("Main: OnGetMinMaxInfo : don't change native bounds to {0}x{1} detected after fresh video device connected", screen.Bounds.Width, screen.Bounds.Height);
-        return;
-      }
+      return;
     }
 
-    if (!_suspended)
+    // Workaround HDMI hot-plug problems by not adjusting the form size if the screen is not its actual size.
+    Screen screen = Screen.FromControl(this);
+    if (!Windowed && Equals(screen.Bounds.Size, WINDOWS_NATIVE_RESOLUTION) && !Equals(screen.Bounds.Size, _backupBounds.Size))
     {
-      // disable event handlers
-      if (GUIGraphicsContext.DX9Device != null)
-      {
-        GUIGraphicsContext.DX9Device.DeviceLost -= OnDeviceLost;
-      }
+      Log.Debug("Main: Ignore spurious WM_GETMINMAXINFO for Windows native resolution");
+      return;
+    }
 
-      var mmi = (MINMAXINFO)Marshal.PtrToStructure(msg.LParam, typeof(MINMAXINFO));
-      Log.Debug("Main: WM_GETMINMAXINFO Start (MaxSize: {0}x{1} - MaxPostion: {2},{3} - MinTrackSize: {4}x{5} - MaxTrackSize: {6}x{7})",
-                mmi.ptMaxSize.x, mmi.ptMaxSize.y, mmi.ptMaxPosition.x, mmi.ptMaxPosition.y, mmi.ptMinTrackSize.x, mmi.ptMinTrackSize.y, mmi.ptMaxTrackSize.x, mmi.ptMaxTrackSize.y);
+    // disable event handlers
+    if (GUIGraphicsContext.DX9Device != null)
+    {
+      GUIGraphicsContext.DX9Device.DeviceLost -= OnDeviceLost;
+    }
 
-      // do not continue if form is not created yet
-      if (!Created)
-      {
-        Log.Debug("Main: Form not created yet - ignoring message");
-        return;
-      }
+    var mmi = (MINMAXINFO)Marshal.PtrToStructure(msg.LParam, typeof(MINMAXINFO));
+    Log.Debug("Main: WM_GETMINMAXINFO Start (MaxSize: {0}x{1} - MaxPostion: {2},{3} - MinTrackSize: {4}x{5} - MaxTrackSize: {6}x{7})",
+              mmi.ptMaxSize.x, mmi.ptMaxSize.y, mmi.ptMaxPosition.x, mmi.ptMaxPosition.y, mmi.ptMinTrackSize.x, mmi.ptMinTrackSize.y, mmi.ptMaxTrackSize.x, mmi.ptMaxTrackSize.y);
 
-      if (Windowed && Screen.PrimaryScreen.WorkingArea.Width == 0 && Screen.PrimaryScreen.WorkingArea.Height == 0)
-      {
-        Log.Debug("Main: Desktop is not visible - ignoring message");
-        return;
-      }
+    // do not continue if form is not created yet
+    if (!Created)
+    {
+      Log.Debug("Main: Form not created yet - ignoring message");
+      return;
+    }
 
-      // check if display changes in case no DISPLAYCHANGE message is send by Windows
-      Screen screen = Screen.FromControl(this);
-      Rectangle currentBounds = GUIGraphicsContext.currentScreen.Bounds;
-      Rectangle newBounds = screen.Bounds;
+    if (Windowed && Screen.PrimaryScreen.WorkingArea.Width == 0 && Screen.PrimaryScreen.WorkingArea.Height == 0)
+    {
+      Log.Debug("Main: Desktop is not visible - ignoring message");
+      return;
+    }
+
+    // check if display changes in case no DISPLAYCHANGE message is send by Windows
+    Rectangle currentBounds = GUIGraphicsContext.currentScreen.Bounds;
+    Rectangle newBounds = screen.Bounds;
+    if (GUIGraphicsContext.DX9Device != null)
+    {
       string adapterOrdinalScreenName = Manager.Adapters[GUIGraphicsContext.DX9Device.DeviceCaps.AdapterOrdinal].Information.DeviceName;
 
       if ((!Equals(screen, GUIGraphicsContext.currentScreen) || (!Equals(GetCleanDisplayName(GUIGraphicsContext.currentScreen), GetCleanDisplayName(screen)))) && !_firstLoadedScreen && !_restoreLoadedScreen)
@@ -2279,7 +2394,7 @@ public class MediaPortalApp : D3D, IRender
         if (screen.Bounds != GUIGraphicsContext.currentScreen.Bounds)
         {
           Log.Info("Main: OnGetMinMaxInfo Bounds of display changed from {0}x{1} @ {2},{3} to {4}x{5} @ {6},{7}",
-                   currentBounds.Width, currentBounds.Height, currentBounds.X, currentBounds.Y, newBounds.Width, newBounds.Height, newBounds.X, newBounds.Y);
+            currentBounds.Width, currentBounds.Height, currentBounds.X, currentBounds.Y, newBounds.Width, newBounds.Height, newBounds.X, newBounds.Y);
         }
         _changeScreen = true;
       }
@@ -2305,60 +2420,60 @@ public class MediaPortalApp : D3D, IRender
           SetBounds(GUIGraphicsContext.currentScreen.Bounds.X, GUIGraphicsContext.currentScreen.Bounds.Y, GUIGraphicsContext.currentScreen.Bounds.Width, GUIGraphicsContext.currentScreen.Bounds.Height);
         }
       }
+    }
 
-      if (_changeScreen || _changeScreenDisplayChange)
+    if (_changeScreen || _changeScreenDisplayChange)
+    {
+      Log.Debug("Main: Screen MP OnGetMinMaxInfo (changeScreen) change current screen {0} with current detected screen {1}", GetCleanDisplayName(GUIGraphicsContext.currentScreen), GetCleanDisplayName(screen));
+      GUIGraphicsContext.currentScreen = screen;
+      _changeScreen = false;
+      _changeScreenDisplayChange = false;
+    }
+
+    // calculate form dimension limits based on primary screen.
+    if (!_restoreLoadedScreen)
+    {
+      if (Windowed)
       {
-        Log.Debug("Main: Screen MP OnGetMinMaxInfo (changeScreen) change current screen {0} with current detected screen {1}", GetCleanDisplayName(GUIGraphicsContext.currentScreen), GetCleanDisplayName(screen));
-        GUIGraphicsContext.currentScreen = screen;
-        _changeScreen = false;
-        _changeScreenDisplayChange = false;
+        double ratio = Math.Min((double)Screen.PrimaryScreen.WorkingArea.Width / Width, (double)Screen.PrimaryScreen.WorkingArea.Height / Height);
+        mmi.ptMaxSize.x = (int)(Width * ratio);
+        mmi.ptMaxSize.y = (int)(Height * ratio);
+        mmi.ptMaxPosition.x = Screen.PrimaryScreen.WorkingArea.Left;
+        mmi.ptMaxPosition.y = Screen.PrimaryScreen.WorkingArea.Top;
+        mmi.ptMinTrackSize.x = GUIGraphicsContext.SkinSize.Width / 3;
+        mmi.ptMinTrackSize.y = GUIGraphicsContext.SkinSize.Height / 3;
+        mmi.ptMaxTrackSize.x = GUIGraphicsContext.currentScreen.WorkingArea.Right - GUIGraphicsContext.currentScreen.WorkingArea.Left;
+        mmi.ptMaxTrackSize.y = GUIGraphicsContext.currentScreen.WorkingArea.Bottom - GUIGraphicsContext.currentScreen.WorkingArea.Top;
+        Marshal.StructureToPtr(mmi, msg.LParam, true);
+        msg.Result = (IntPtr)0;
       }
-
-      // calculate form dimension limits based on primary screen.
-      if (!_restoreLoadedScreen)
+      else
       {
-        if (Windowed)
-        {
-          double ratio         = Math.Min((double)Screen.PrimaryScreen.WorkingArea.Width / Width, (double)Screen.PrimaryScreen.WorkingArea.Height / Height);
-          mmi.ptMaxSize.x      = (int)(Width * ratio);
-          mmi.ptMaxSize.y      = (int)(Height * ratio);
-          mmi.ptMaxPosition.x  = Screen.PrimaryScreen.WorkingArea.Left;
-          mmi.ptMaxPosition.y  = Screen.PrimaryScreen.WorkingArea.Top;
-          mmi.ptMinTrackSize.x = GUIGraphicsContext.SkinSize.Width / 3;
-          mmi.ptMinTrackSize.y = GUIGraphicsContext.SkinSize.Height / 3;
-          mmi.ptMaxTrackSize.x = GUIGraphicsContext.currentScreen.WorkingArea.Right - GUIGraphicsContext.currentScreen.WorkingArea.Left;
-          mmi.ptMaxTrackSize.y = GUIGraphicsContext.currentScreen.WorkingArea.Bottom - GUIGraphicsContext.currentScreen.WorkingArea.Top;
-          Marshal.StructureToPtr(mmi, msg.LParam, true);
-          msg.Result = (IntPtr)0;
-        }
-        else
-        {
-          mmi.ptMaxSize.x = screen.Bounds.Width;
-          mmi.ptMaxSize.y = screen.Bounds.Height;
-          mmi.ptMaxPosition.x = screen.Bounds.X;
-          mmi.ptMaxPosition.y = screen.Bounds.Y;
-          mmi.ptMinTrackSize.x = GUIGraphicsContext.currentScreen.Bounds.Width;
-          mmi.ptMinTrackSize.y = GUIGraphicsContext.currentScreen.Bounds.Height;
-          mmi.ptMaxTrackSize.x = GUIGraphicsContext.currentScreen.Bounds.Width;
-          mmi.ptMaxTrackSize.y = GUIGraphicsContext.currentScreen.Bounds.Height;
-          Marshal.StructureToPtr(mmi, msg.LParam, true);
-          msg.Result = (IntPtr)0;
+        mmi.ptMaxSize.x = screen.Bounds.Width;
+        mmi.ptMaxSize.y = screen.Bounds.Height;
+        mmi.ptMaxPosition.x = screen.Bounds.X;
+        mmi.ptMaxPosition.y = screen.Bounds.Y;
+        mmi.ptMinTrackSize.x = GUIGraphicsContext.currentScreen.Bounds.Width;
+        mmi.ptMinTrackSize.y = GUIGraphicsContext.currentScreen.Bounds.Height;
+        mmi.ptMaxTrackSize.x = GUIGraphicsContext.currentScreen.Bounds.Width;
+        mmi.ptMaxTrackSize.y = GUIGraphicsContext.currentScreen.Bounds.Height;
+        Marshal.StructureToPtr(mmi, msg.LParam, true);
+        msg.Result = (IntPtr)0;
 
-          // force form dimensions to screen size to compensate for HDMI hot plug problems (e.g. WM_DiSPLAYCHANGE reported 1920x1080 but system is still in 1024x768 mode).
-          //Bounds = GUIGraphicsContext.currentScreen.Bounds;
-        }
+        // force form dimensions to screen size to compensate for HDMI hot plug problems (e.g. WM_DiSPLAYCHANGE reported 1920x1080 but system is still in 1024x768 mode).
+        //Bounds = GUIGraphicsContext.currentScreen.Bounds;
       }
-      Log.Debug("Main: WM_GETMINMAXINFO End (MaxSize: {0}x{1} - MaxPostion: {2},{3} - MinTrackSize: {4}x{5} - MaxTrackSize: {6}x{7})",
-            mmi.ptMaxSize.x, mmi.ptMaxSize.y, mmi.ptMaxPosition.x, mmi.ptMaxPosition.y, mmi.ptMinTrackSize.x, mmi.ptMinTrackSize.y, mmi.ptMaxTrackSize.x, mmi.ptMaxTrackSize.y);
-      // needed to avoid cursor show when MP windows change (for ex when refesh rate is working)
-      _moveMouseCursorPositionRefresh = D3D._lastCursorPosition;
-      _restoreLoadedScreen = false;
+    }
+    Log.Debug("Main: WM_GETMINMAXINFO End (MaxSize: {0}x{1} - MaxPostion: {2},{3} - MinTrackSize: {4}x{5} - MaxTrackSize: {6}x{7})",
+          mmi.ptMaxSize.x, mmi.ptMaxSize.y, mmi.ptMaxPosition.x, mmi.ptMaxPosition.y, mmi.ptMinTrackSize.x, mmi.ptMinTrackSize.y, mmi.ptMaxTrackSize.x, mmi.ptMaxTrackSize.y);
+    // needed to avoid cursor show when MP windows change (for ex when refesh rate is working)
+    _moveMouseCursorPositionRefresh = D3D._lastCursorPosition;
+    _restoreLoadedScreen = false;
 
-      // enable event handlers
-      if (GUIGraphicsContext.DX9Device != null)
-      {
-        GUIGraphicsContext.DX9Device.DeviceLost += OnDeviceLost;
-      }
+    // enable event handlers
+    if (GUIGraphicsContext.DX9Device != null)
+    {
+      GUIGraphicsContext.DX9Device.DeviceLost += OnDeviceLost;
     }
   }
 
@@ -2491,16 +2606,25 @@ public class MediaPortalApp : D3D, IRender
               x + border.Width, y + border.Height, x + border.Width, height + border.Height, x, height);
             ClientSize = new Size(x, height);
           }
-        }
-        else
-        {
-          // force form dimensions to screen size to compensate for HDMI hot plug problems (e.g. WM_DiSPLAYCHANGE reported 1920x1080 but system is still in 1024x768 mode).
-          if ((Bounds != GUIGraphicsContext.currentScreen.Bounds) && !_suspended)
+          // Restore last MP windows
+          if (_firstRestoreScreen)
           {
-            Log.Debug("Main: Setting full screen bonds to: {0}x{1} @ {2},{3}",
-                      GUIGraphicsContext.currentScreen.Bounds.Width, GUIGraphicsContext.currentScreen.Bounds.Height, GUIGraphicsContext.currentScreen.Bounds.X, GUIGraphicsContext.currentScreen.Bounds.Y);
-            Bounds = GUIGraphicsContext.currentScreen.Bounds;
+            _firstRestoreScreen = false;
+            if ((_backupSizeWidth != 0) && (_backupSizeHeight != 0))
+            {
+              Location = new Point(_locationX, _locationY);
+              ClientSize = new Size(_backupSizeWidth, _backupSizeHeight);
+              Log.Debug("Main: Restore MP location {0}x{1} and previous client size of {2}x{3}", _locationX, _locationY,
+                _backupSizeWidth, _backupSizeHeight);
+            }
           }
+        }
+        else if ((Bounds != GUIGraphicsContext.currentScreen.Bounds) && !_suspended)
+        {
+          // Force form dimensions to screen size to compensate for HDMI hot plug problems.
+          Log.Debug("Main: Setting full screen bonds to: {0}x{1} @ {2},{3}",
+                    GUIGraphicsContext.currentScreen.Bounds.Width, GUIGraphicsContext.currentScreen.Bounds.Height, GUIGraphicsContext.currentScreen.Bounds.X, GUIGraphicsContext.currentScreen.Bounds.Y);
+          Bounds = GUIGraphicsContext.currentScreen.Bounds;
         }
         break;
 
@@ -2635,6 +2759,7 @@ public class MediaPortalApp : D3D, IRender
   {
     // Make sure that plugins cannot open dialog when system is entering standby
     _ignoreContextMenuAction = true;
+    Log.Debug("Main: PrepareSuspend - set GUIGraphicsContext.State.SUSPENDING");
     GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.SUSPENDING;
   }
 
@@ -2766,7 +2891,7 @@ public class MediaPortalApp : D3D, IRender
     RestoreFromTray();
 
     // Force focus after resume done (really weird sequence) disable for now
-    //ForceMPFocus();
+    ForceMPFocus();
 
     Log.Info("Main: OnResumeSuspend - Done");
   }
@@ -3168,6 +3293,7 @@ public class MediaPortalApp : D3D, IRender
     GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.STOPPING;
 
     g_Player.Stop();
+    DaemonTools.UnMount();
     InputDevices.Stop();
     AutoPlay.StopListening();
     PluginManager.Stop();
@@ -3178,7 +3304,7 @@ public class MediaPortalApp : D3D, IRender
     GUILocalizeStrings.Dispose();
     TexturePacker.Cleanup();
     VolumeHandler.Dispose();
-
+    
     GUIFontManager.SetDeviceNull();
 
     if (_isWinScreenSaverInUse)
@@ -3308,6 +3434,10 @@ public class MediaPortalApp : D3D, IRender
       _useLongDateFormat = xmlreader.GetValueAsBool("home", "LongTimeFormat", false);
       _startWithBasicHome = xmlreader.GetValueAsBool("gui", "startbasichome", false);
       _useOnlyOneHome = xmlreader.GetValueAsBool("gui", "useonlyonehome", false);
+      _locationX = xmlreader.GetValueAsInt("gui", "lastlocationx", 0);
+      _locationY = xmlreader.GetValueAsInt("gui", "lastlocationy", 0);
+      _backupSizeWidth = xmlreader.GetValueAsInt("gui", "backupsizewidth", 0);
+      _backupSizeHeight = xmlreader.GetValueAsInt("gui", "backupsizeheight", 0);
     }
 
     Log.Info("Startup: Starting Window Manager");
@@ -3317,7 +3447,7 @@ public class MediaPortalApp : D3D, IRender
     Log.Info("Startup: Activating Window Manager");
     if ((_startWithBasicHome) && (File.Exists(GUIGraphicsContext.GetThemedSkinFile(@"\basichome.xml"))))
     {
-      GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_SECOND_HOME);
+      GUIWindowManager.ActivateWindow((int) GUIWindow.Window.WINDOW_SECOND_HOME);
     }
     else
     {
@@ -3381,14 +3511,7 @@ public class MediaPortalApp : D3D, IRender
     Log.Warn("Main: OnDeviceLost()");
     if (!Created || !AppActive)
     {
-      if (!Created)
-      {
-        Log.Debug("Main: Form not created yet - ignoring Event");
-      }
-      else
-      {
-        Log.Debug("Main: Application not ready - ignoring Event");
-      }
+      Log.Debug(!Created ? "Main: Form not created yet - ignoring Event" : "Main: Application not ready - ignoring Event");
       return;
     }
     GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.LOST;
@@ -4047,6 +4170,11 @@ public class MediaPortalApp : D3D, IRender
         // eject cd
         case Action.ActionType.ACTION_EJECTCD:
           Utils.EjectCDROM();
+          break;
+
+        // Display Render statistic
+        case Action.ActionType.ACTION_SHOW_STAT:
+          _showStats = !_showStats;
           break;
 
         // shutdown pc

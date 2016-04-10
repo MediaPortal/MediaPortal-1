@@ -1,0 +1,128 @@
+<fonts>
+  <!-- This file contains all the fonts used by the skin. Each font can be configured seperately and uses the         following format format:  	<font>
+  <name>name of font used in the skin .xml files</name>
+  <filename>name of the font</filename>
+  <height>height of the font</height>
+  <bold>[yes|no]</bold>
+  <italic>[yes|no]</italic>
+  <start>start character (numeric) default : 0</start>
+  <end>end character (numeric) default : 255</end>
+</font>!-->
+<font>
+  <name>font9</name>
+  <filename>Noto Sans</filename>
+  <height>9</height>
+  <start>0</start>
+  <end>1536</end>
+</font>
+<font>
+  <name>font10</name>
+  <filename>Noto Sans</filename>
+  <height>10</height>
+  <start>0</start>
+  <end>1536</end>
+</font>
+<font>
+  <name>font11</name>
+  <filename>Noto Sans</filename>
+  <height>11</height>
+  <start>0</start>
+  <end>1536</end>
+</font>
+<font>
+  <name>RSS</name>
+  <filename>Noto Sans</filename>
+  <height>12</height>
+  <start>0</start>
+  <end>1536</end>
+  <bold>no</bold>
+</font>
+<font>
+  <name>font12</name>
+  <filename>Noto Sans</filename>
+  <height>12</height>
+  <start>0</start>
+  <end>1536</end>
+</font>
+<font>
+  <name>font13</name>
+  <filename>Noto Sans</filename>
+  <height>13</height>
+  <start>0</start>
+  <end>1536</end>
+</font>
+<font>
+  <name>font14</name>
+  <filename>Noto Sans</filename>
+  <height>14</height>
+  <start>0</start>
+  <end>1536</end>
+</font>
+<font>
+  <name>font15</name>
+  <filename>Noto Sans</filename>
+  <height>15</height>
+  <start>0</start>
+  <end>1536</end>
+</font>
+<font>
+  <name>Menutitle</name>
+  <filename>Noto Sans</filename>
+  <height>17</height>
+  <bold>no</bold>
+  <start>0</start>
+  <end>1536</end>
+</font>
+<font>
+  <name>Settings</name>
+  <filename>Noto Sans</filename>
+  <height>15</height>
+  <bold>no</bold>
+  <start>0</start>
+  <end>1536</end>
+</font>
+<font>
+  <name>font16</name>
+  <filename>Noto Sans</filename>
+  <height>16</height>
+  <start>0</start>
+  <end>1536</end>
+</font>
+<font>
+  <name>font18</name>
+  <filename>Noto Sans</filename>
+  <height>18</height>
+  <start>0</start>
+  <end>1536</end>
+</font>
+<font>
+  <name>font20</name>
+  <filename>Noto Sans</filename>
+  <height>20</height>
+  <start>0</start>
+  <end>1536</end>
+</font>
+<font>
+  <name>font21</name>
+  <filename>Noto Sans</filename>
+  <height>18</height>
+  <start>0</start>
+  <end>1536</end>
+</font>
+<font>
+  <name>Label</name>
+  <filename>Noto Sans</filename>
+  <height>13</height>
+  <bold>no</bold>
+  <start>0</start>
+  <end>1536</end>
+</font>
+<font>
+  <name>font36</name>
+  <filename>Noto Sans</filename>
+  <height>24</height>
+  <bold>no</bold>
+  <start>0</start>
+  <end>1536</end>
+</font>
+</fonts>

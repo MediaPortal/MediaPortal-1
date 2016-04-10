@@ -1,0 +1,346 @@
+//css_reference "core.dll";
+//css_reference "Databases.dll";
+//css_reference "utils.dll";
+
+// Philosopheur (à partir de différent Grabber)
+// v1a du 12 mars 2013
+// pour MP v1.3.x
+
+using System;
+using System.Text;
+using System.Windows.Forms;
+using System.Text.RegularExpressions;
+using System.IO;
+using System.Diagnostics;
+using System.Net;
+using System.Web;
+using System.Collections;
+using MediaPortal.Utils;
+using MediaPortal.Video.Database;
+
+// change to Grabber, this for avoid to load by mediaportal
+class Grabber : MarshalByRefObject, MediaPortal.Video.Database.IIMDBScriptGrabber
+{
+    public Grabber()
+    {
+    }
+    // *************************************************
+    void MediaPortal.Video.Database.IIMDBScriptGrabber.FindFilm(string strSearch, int iLimit, ArrayList elements)
+    //private void FindFilm(string strSearch, int iLimit) // C#
+    {
+        // Constitution de la liste des films trouvés
+        try
+        {
+            string absoluteUri;
+            string strURL = "http://www.allocine.fr/recherche/1/?q=" + strSearch;
+            int iCount = 1;
+            DateTime myDate = DateTime.Now;
+            int myYear = myDate.Year + 1;
+            // Récupération du contenu de la page corresponadnt à des Films
+            string strBody = getBodyPage(strURL, "utf-8", out absoluteUri);
+            strBody = getInfostring(strBody, "data-url='http://connect.allocine.fr/'>(?<Texte>.*?)</body>");
+            // Définition de la "Collection"
+            string idFilm = "<a href='/film/fichefilm_gen_cfilm=(?<IDfilm>[0-9]{3,6}).html'>.*?";
+            string titre = "<a href='/film/fichefilm_gen_cfilm=.*?html'>(?<Titre>.*?)<span.*?";
+            string annee = "class=\"fs11\">(?<Annee>[0-9]{4})<";
+            MatchCollection myMatches = Regex.Matches(strBody, idFilm + titre + annee);
+            // Constitution de la liste des Films trouvés
+            foreach (Match movieCode in myMatches)
+            {
+                string strMovieCode = movieCode.Groups["IDfilm"].Value;
+                string strLink = "http://www.allocine.fr/film/fichefilm_gen_cfilm=" + strMovieCode + ".html";
+                string strTitle = movieCode.Groups["Titre"].Value;
+				strTitle=strTitle.Replace("<br />","").Replace("</a>"," ");
+                string strAnnee = movieCode.Groups["Annee"].Value;
+                int intAnnée = System.Convert.ToInt32(strAnnee);
+                if (intAnnée > 1900 & intAnnée <= myYear)
+                {
+                    strTitle = strTitle + " (" + strAnnee + ")";
+                }
+                // System.Console.WriteLine("Titre : {0}", strTitle);
+                // System.Console.WriteLine("Lien : {0}", strLink);
+                // System.Console.WriteLine("strYear : {0}", intAnnée);
+                // System.Console.WriteLine("myYear : {0}", myYear);
+                MediaPortal.Video.Database.IMDB.IMDBUrl url = new MediaPortal.Video.Database.IMDB.IMDBUrl(strLink, strTitle, "Allocine_fr");
+                elements.Add(url);
+                iCount++;
+                if (iCount > iLimit) break;
+            }
+        }
+        catch (Exception ex)
+        {
+            //Debug.WriteLine("erreur : " + ex.Message);
+            // MediaPortal.GUI.Library.Log.Error("exception for imdb lookup of {0} err:{1} stack:{2}", strSearch, ex.Message, ex.StackTrace);
+        }
+    } // End FindFilms()
+    bool MediaPortal.Video.Database.IIMDBScriptGrabber.GetDetails(IMDB.IMDBUrl url, ref IMDBMovie movieDetails)
+    // private bool GetDetails(String url) // C#
+    {
+        // Récupération du contenu de la page correspondant au Film sélectionné
+        // Rating, Votes, Main Team, Plot, Main Release, Date, Cast
+        // Director, Release Date,Genre, Tagline, Plot, Cast, Runtime, Country, Language
+        try
+        {
+            movieDetails.Reset();
+            movieDetails.Database = "Allocine_fr";
+            string absoluteUri;
+            string strBody = "";
+            string infoString = "";
+            strBody = getBodyPage(url.URL, "utf-8", out absoluteUri);
+            // strBody = getBodyPage(url, "utf-8", out absoluteUri); // C#
+			strBody = getInfostring(strBody, @"-- PUB --(?<Texte>.*?)DVD et Blu-Ray");
+			
+			// MessageBox.Show("strBody;"+strBody,"test strBody");
+			//MediaPortal.GUI.Library.Log.Error("Msg {0}", "test");
+
+            if (string.IsNullOrEmpty(strBody))
+            {
+				//MessageBox.Show("strBody est vide url:"+url.URL,"Erreur strBody");
+                return false;
+            }
+            else
+            {
+                // IMDBNumber = n° IMDB
+                movieDetails.IMDBNumber = "0";
+
+                // Title = Titre Français
+                infoString = getInfostring(strBody, "title='(?<Texte>.*?)' ");
+                // System.Console.WriteLine("Titre : {0}", infoString);
+                movieDetails.Title = infoString;
+
+                // Year = Année de sortie
+                infoString = getInfostring(strBody, "Année de production.*?(?<Texte>[0-9]{4})</span>");
+                // System.Console.WriteLine("Année : {0}", infoString);
+				movieDetails.Year = Convert.ToInt32(infoString);
+				
+                // RunTime = Durée en minute
+                //string heure = getInfostring(strBody, "Synopsis et détails.*?<p itemprop=\"duration.*?(?<Texte>[0-9]{1})h");
+                string heure = getInfostring(strBody, "itemprop=\"duration.*?(?<Texte>[0-9]{1})h");
+                string minute = getInfostring(strBody, "itemprop=\"duration.*?(?<Texte>[0-9]{1,2})min");
+                //System.Console.WriteLine("Durée : minutes:{0} heures:{1}", minute, heure);
+                //System.Console.WriteLine("Durée : {0}", Convert.ToInt32(heure) * 60 + Convert.ToInt32(minute));
+                movieDetails.RunTime = Convert.ToInt32(heure) * 60 + Convert.ToInt32(minute);
+
+                // Plot = Synopsys
+                infoString = getInfostring(strBody, "<div class=\"titlebar_01\">.*?itemprop=\"description\">(?<Texte>.*?)</p>");
+                //System.Console.WriteLine("Synopsys : {0}", infoString);
+                movieDetails.Plot = infoString.Replace("<br />", "");
+
+                // Director = Réalisateur
+                infoString = getInfostring(strBody, "itemprop=\"director\" itemscope.*?<span itemprop=\"name\">(?<Texte>.*?)</span></a></span>");
+                //System.Console.WriteLine("Réalisateur : {0}", infoString);
+                movieDetails.Director = infoString;
+
+                // Rating = Note/10
+                infoString = getInfostring(strBody, "itemprop=\"ratingValue\" content=\"(?<Texte>[0-9]{1}(.[0-9]{1})?)\"><span");
+                infoString = infoString.Replace(".", ",");
+                //System.Console.WriteLine("Note : {0}", (float)Double.Parse(infoString)*2);
+				movieDetails.Rating = (float)Double.Parse(infoString) * 2;
+				
+                // Votes = Votes
+                infoString = getInfostring(strBody, "itemprop=\"ratingCount\">(?<Texte>.*?)</span>");
+                // System.Console.WriteLine("Votes : {0}", infoString);
+				movieDetails.Votes = infoString;
+
+                // ThumbURL = Affiche du film
+                infoString = getInfostring(strBody, "<div class=\"poster\">.*?<img src='(?<Texte>.*?)'");
+                // infoString = getInfostring(infoString, "<img src='(?<Texte>.*?)' alt='");
+                // System.Console.WriteLine("Affiche : {0}", infoString);
+                movieDetails.ThumbURL = infoString;
+				
+                // Genre = Genre
+                infoString = getInfostring(strBody, "<span itemprop=\"genre\">(?<Texte>.*?)</span></span>");
+                // System.Console.WriteLine("Genre : {0}", infoString);
+                movieDetails.Genre = infoString;
+				
+                // Country = Nationalité
+                infoString = getInfostring(strBody, ">Nationalité</span>.*?underline\">(?<Texte>.*?)</span>");
+                // System.Console.WriteLine("Nationalité : {0}", infoString);
+                //movieDetails.Country = infoString;
+				
+                // Main Cast = Principaux Acteurs dans Studio (curiosité assumée)
+                infoString = FindActors(strBody);
+                movieDetails.Studios = infoString;
+                /*
+                string strActor = string.Empty;
+                strActor = "Toto";
+                strActor = Utils.stripHTMLtags(strActor).Trim().Replace("\n", "");
+                string htmlDecode = HttpUtility.HtmlDecode(strActor);
+                strActor = htmlDecode.Replace(",", ";");
+                movieDetails.UserReview = strActor + " as " + "test\n";
+                movieDetails.Cast = strActor  ;
+                movieDetails.Cast += "\n";
+                */
+                return true;
+            }
+        }
+        catch (Exception ex)
+        {
+            //// System.Console.WriteLine("erreur : {0}", ex.Message);
+            // MediaPortal.GUI.Library.Log.Error("exception for imdb lookup of {0} err:{1} stack:{2}", strSearch, ex.Message, ex.StackTrace);
+        }
+        return false;
+    } // End GetDetails()
+    private string FindActors(string strSearch)
+    {
+        string strActeur = "";
+        string strActeurs = "";
+        try
+        {
+            MatchCollection myMatches = Regex.Matches(strSearch, "html\" itemprop=\"url\" ><span itemprop=\"name\">(?<Acteur>.*?)</span>.*?");
+            // Constitution de la liste des Acteurs trouvés
+            foreach (Match movieCode in myMatches)
+            {
+                strActeur = movieCode.Groups["Acteur"].Value;
+                if (strActeurs == "")
+                {
+                    strActeurs = strActeur;
+                }
+                else
+                {
+                    strActeurs = strActeurs + ", " + strActeur;
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            //// System.Console.WriteLine("erreur : {0}", ex.Message);
+            // MediaPortal.GUI.Library.Log.Error("exception for imdb lookup of {0} err:{1} stack:{2}", strSearch, ex.Message, ex.StackTrace);
+        }
+        // System.Console.WriteLine("Acteur : {0}", strActeurs+".");
+        return strActeurs + ".";
+    } // End FindActors()
+    private string getBodyPage(string strURL, string strEncode, out string absoluteUri)
+    {
+        string strBody = "";
+        absoluteUri = String.Empty;
+        Stream ReceiveStream = null;
+        StreamReader sr = null;
+        WebResponse result = null;
+        try
+        {
+            // Make the Webrequest
+            //Log.Info("IMDB: get page:{0}", strURL);
+            WebRequest req = WebRequest.Create(strURL);
+            result = req.GetResponse();
+            ReceiveStream = result.GetResponseStream();
+            // Encoding: depends on selected page
+            Encoding encode = System.Text.Encoding.GetEncoding(strEncode);
+            sr = new StreamReader(ReceiveStream, encode);
+            strBody = sr.ReadToEnd();
+            absoluteUri = result.ResponseUri.AbsoluteUri;
+        }
+        catch (Exception ex)
+        {
+            //// System.Console.WriteLine("erreur : {0}", ex.Message);
+            //MediaPortal.GUI.Library.Log.Error("Error retreiving WebPage: {0} Encoding:{1} err:{2} stack:{3}", strURL, strEncode, ex.Message, ex.StackTrace);
+        }
+        finally
+        {
+            if (sr != null)
+            {
+                try
+                {
+                    sr.Close();
+                }
+                catch (Exception)
+                {
+                }
+            }
+            if (ReceiveStream != null)
+            {
+                try
+                {
+                    ReceiveStream.Close();
+                }
+                catch (Exception)
+                {
+                }
+            }
+            if (result != null)
+            {
+                try
+                {
+                    result.Close();
+                }
+                catch (Exception)
+                {
+                }
+            }
+        }
+        strBody = correctString(strBody);
+        return strBody;
+    } // End GetBodyPage()
+    private string getInfostring(string Body, string regle)
+    {
+        Match MatchTexte = Regex.Match(Body, regle);
+        if (MatchTexte.Success)
+        {
+            string texte = MatchTexte.Groups["Texte"].Value;
+            return texte.Trim().TrimEnd();
+        }
+        return "";
+    }
+    private string getInfostring2(string Body, string regle)
+    {
+        Match MatchTexte = Regex.Match(Body, regle);
+        if (MatchTexte.Success)
+        {
+            string texte = MatchTexte.Groups["Texte"].Value;
+            return "xxx";//texte.Trim().TrimEnd();
+        }
+        return "zzzz";
+    }
+
+    static string correctString(string texte)
+    {
+        texte = texte.Replace("\n", "");
+        texte = texte.Replace("\r", "");
+        texte = texte.Replace("<b>", "");
+        texte = texte.Replace("</b>", "");
+        texte = texte.Replace("&nbsp;", " ");
+        texte = texte.Replace("&amp;", "&");
+        texte = texte.Replace("&lt;", "<");
+        texte = texte.Replace("&gt;", ">");
+        texte = texte.Replace("&quot;", "\"");
+        texte = texte.Replace("&apos;", "'");
+        texte = texte.Replace("&#39;", "'");
+        texte = texte.Replace("&#192;", "À");
+        texte = texte.Replace("&#194;", "Â");
+        texte = texte.Replace("&#199;", "Ç");
+        texte = texte.Replace("&#200;", "È");
+        texte = texte.Replace("&#201;", "É");
+        texte = texte.Replace("&#202;", "Ê");
+        texte = texte.Replace("&#203;", "Ë");
+        texte = texte.Replace("&#207;", "Ï");
+        texte = texte.Replace("&#212;", "Ô");
+        texte = texte.Replace("&#224;", "à");
+        texte = texte.Replace("&#225;", "á");
+        texte = texte.Replace("&#226;", "â");
+        texte = texte.Replace("&#228;", "ä");
+        texte = texte.Replace("&#231;", "ç");
+        texte = texte.Replace("&#232;", "è");
+        texte = texte.Replace("&#233;", "é");
+        texte = texte.Replace("&#234;", "ê");
+        texte = texte.Replace("&#235;", "ë");
+        texte = texte.Replace("&#239;", "ï");
+        texte = texte.Replace("&#242;", "ò");
+        texte = texte.Replace("&#244;", "ô");
+        texte = texte.Replace("&#249;", "ù");
+        texte = texte.Replace("&#250;", "ú");
+        texte = texte.Replace("&#251;", "û");
+        texte = texte.Replace("&#252;", "ü");
+        texte = texte.Replace("  ", " ");
+        //MessageBox.Show(texte, "test Texte");
+        return texte;
+    } //  End correctString()
+    // *************************************************
+    string IIMDBScriptGrabber.GetName()
+    {
+        return "AlloCine v1a MP13x";
+    }
+    string IIMDBScriptGrabber.GetLanguage()
+    {
+        return "FR";
+    }
+} // Fin class Grabber

@@ -1,0 +1,712 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <controls>
+
+    <!--     *******************************************************************************************  -->
+    <!--     **************************    BACKGROUNDS, EDITOR BUTTON ETC.  ****************************  -->
+    <!--     *******************************************************************************************  -->
+      <control>
+        <description>background</description>
+        <type>image</type>
+        <id>1</id>
+        <posX>790</posX>
+        <posY>105</posY>
+        <height>75</height>
+        <width>420</width>
+        <texture>tvseries_listbanner_mask.png</texture>
+        <colordiffuse>eeffffff</colordiffuse>
+        <animation effect="fade" start="0" end="100" time="500">WindowOpen</animation>
+        <animation effect="fade" start="100" end="0" time="500">WindowClose</animation>
+      </control>
+      <control>
+        <description>BasicHome Editor</description>
+        <type>checkbutton</type>
+        <id>10000</id>
+        <posX>800</posX>
+        <posY>115</posY>
+        <width>400</width>
+        <label>BasicHome Editor</label>
+        <selected>#(skin.hassetting('#skin.basichome.editor'))</selected>
+        <onclick>#(skin.togglesetting('#skin.basichome.editor'))</onclick>
+        <onfocus>#(skin.setstring('#hedit.main.pos','0'))</onfocus>
+        <onup>17</onup>
+        <onleft>10000</onleft>
+        <onright>10000</onright>
+        <ondown>#(iif(eq(#skin.basichome.editor,'True'),'770101','10'))</ondown>
+        <animation effect="fade" start="0" end="100" time="500">WindowOpen</animation>
+        <animation effect="fade" start="100" end="0" time="500">WindowClose</animation>
+      </control>
+      <control>
+        <description>group element</description>
+        <type>group</type>
+        <animation effect="fade" start="0" end="100" time="300" condition="skin.hassetting(#skin.basichome.editor)" reversible="true">conditional</animation>
+        <visible>skin.hassetting(#skin.basichome.editor)</visible>
+        <control>
+        <description>background</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>98</posX>
+        <posY>225</posY>
+        <width>1780</width>
+        <height>707</height>
+        <texture>backslide2.png</texture>
+      </control>
+        <control>
+          <description>divider</description>
+          <type>image</type>
+          <id>0</id>
+          <posX>702</posX>
+          <posY>260</posY>
+          <height>650</height>
+          <width>1</width>
+          <texture>slider_vertical.png</texture>
+          <colordiffuse>darkgray</colordiffuse>
+        </control>
+        <control>
+          <description>divider</description>
+          <type>image</type>
+          <id>0</id>
+          <posX>1202</posX>
+          <posY>260</posY>
+          <height>650</height>
+          <width>1</width>
+          <texture>slider_vertical.png</texture>
+          <colordiffuse>darkgray</colordiffuse>
+        </control>
+    
+    <!--     *******************************************************************************************  -->
+    <!--     **************************  Main Menu Editor Hidden Buttons  ******************************  -->
+    <!--     *******************************************************************************************  -->
+
+    <control>
+      <type>button</type>
+      <id>770001</id>
+      <posX>-999</posX>
+      <posY>-999</posY>
+      <label>-</label>
+      <textureFocus>-</textureFocus>
+      <textureNoFocus>-</textureNoFocus>
+      <onfocus>
+         #(skin.setfocus(cint(#currentmoduleid),switch(
+           eq(1,1),770002)))
+      </onfocus>
+    </control>
+
+    <control>
+      <type>menubutton</type>
+      <id>770002</id>
+      <posX>-999</posX>
+      <posY>-999</posY>
+      <mode>dialoglist</mode>
+      <dialogTitle>#list.dialog</dialogTitle>
+      <dialogShowNumbers>no</dialogShowNumbers>
+      <valueTextInButton>yes</valueTextInButton>
+      <valuePrefixText></valuePrefixText>
+      <binding>#hedit.main.bind</binding>
+      <subitems>
+        <subitem>#list.ALL</subitem>
+      </subitems>
+      <onfocus>
+        #(skin.setstring('#hedit.main.bind',string.format('#{0}',string.ltrim(#hedit.main,'#0123456789'))))
+      </onfocus>
+      <onclick>
+        #(skin.setstring(iif(neq(string.ltrim(#selectedlabel770002,'#'),#selectedlabel770002),'#hedit.main','#hedit.errorcheck'),#selectedlabel770002))
+        #(skin.setstring(#hedit.main.at,#hedit.main))
+        #(skin.setfocus(cint(#currentmoduleid),cint(#hedit.basichome.editor.main.return)))
+      </onclick>
+    </control>
+
+    <!--     *******************************************************************************************  -->
+    <!--     *****************************  Main Menu Editor Buttons  **********************************  -->
+    <!--     *******************************************************************************************  -->
+
+    <control>
+      <type>label</type>
+      <posX>190</posX>
+      <posY>280</posY>
+      <width>430</width>
+      <align>center</align>
+      <label>BasicHome #(L(974))</label>
+      <font>Label</font>
+      <textcolor>white</textcolor>
+      <visible>skin.hassetting(#skin.basichome.editor)</visible>
+    </control>
+
+    <control>
+      <description>buttons</description>
+      <type>group</type>
+      <posX>200</posX>
+      <posY>310</posY>
+      <dimColor>50A0A0A0</dimColor>
+      <layout>StackLayout(0, Vertical, true)</layout>
+      <visible>skin.hassetting(#skin.basichome.editor)</visible>
+      <control Style="BasicHomeEditorButton">
+        <type>button</type>
+        <id>770101</id>
+        <textureNoFocus>#(iif(eq(#hedit.main.pos,'1'),'buttonfocus.png','button_nofocus.png'))</textureNoFocus>
+        <textureFocus>#(iif(eq(string.ltrim(#hedit.button.1,'#0123456789.'),string.ltrim(#hedit.button.1,'#')),'button_focus.png','button_focus.png'))</textureFocus>
+        <label>#(string.format('{0}',#hedit.button.1))</label>
+        <onfocus>
+          #(skin.setstring('#hedit.main',#hedit.button.1))
+          #(skin.setstring('#hedit.main.at','#hedit.button.1'))
+          #(skin.setstring('#hedit.main.pos','1'))
+          #(skin.setstring('#hedit.sub.1',#hedit.button.1.1))
+          #(skin.setstring('#hedit.sub.2',#hedit.button.1.2))
+          #(skin.setstring('#hedit.sub.3',#hedit.button.1.3))
+          #(skin.setstring('#hedit.sub.4',#hedit.button.1.4))
+          #(skin.setstring('#hedit.sub.5',#hedit.button.1.5))
+          #(skin.setstring('#hedit.sub.6',#hedit.button.1.6))
+          #(skin.setstring('#hedit.sub.7',#hedit.button.1.7))
+          #(skin.setstring('#hedit.basichome.editor.main.return',770101))
+        </onfocus>
+        <onclick>
+          #(skin.setfocus(cint(#currentmoduleid),770001))
+        </onclick>
+        <action>7</action>
+        <onup>10000</onup>
+        <ondown>770102</ondown>
+        <onleft>770101</onleft>
+        <onright>771101</onright>
+      </control>
+
+      <control Style="BasicHomeEditorButton">
+        <type>button</type>
+        <id>770102</id>
+        <textureNoFocus>#(iif(eq(#hedit.main.pos,'2'),'buttonfocus.png','button_nofocus.png'))</textureNoFocus>
+        <textureFocus>#(iif(eq(string.ltrim(#hedit.button.2,'#0123456789.'),string.ltrim(#hedit.button.2,'#')),'button_focus.png','button_focus.png'))</textureFocus>
+        <label>#(string.format('{0}',#hedit.button.2))</label>
+        <onfocus>
+          #(skin.setstring('#hedit.main',#hedit.button.2))
+          #(skin.setstring('#hedit.main.at','#hedit.button.2'))
+          #(skin.setstring('#hedit.main.pos','2'))
+          #(skin.setstring('#hedit.sub.1',#hedit.button.2.1))
+          #(skin.setstring('#hedit.sub.2',#hedit.button.2.2))
+          #(skin.setstring('#hedit.sub.3',#hedit.button.2.3))
+          #(skin.setstring('#hedit.sub.4',#hedit.button.2.4))
+          #(skin.setstring('#hedit.sub.5',#hedit.button.2.5))
+          #(skin.setstring('#hedit.sub.6',#hedit.button.2.6))
+          #(skin.setstring('#hedit.sub.7',#hedit.button.2.7))
+          #(skin.setstring('#hedit.basichome.editor.main.return',770102))
+        </onfocus>
+        <onclick>
+          #(skin.setfocus(cint(#currentmoduleid),770001))
+        </onclick>
+        <action>7</action>
+        <onup>770101</onup>
+        <ondown>770103</ondown>
+        <onleft>770102</onleft>
+        <onright>771101</onright>
+      </control>
+
+      <control Style="BasicHomeEditorButton">
+        <type>button</type>
+        <id>770103</id>
+        <textureNoFocus>#(iif(eq(#hedit.main.pos,'3'),'buttonfocus.png','button_nofocus.png'))</textureNoFocus>
+        <textureFocus>#(iif(eq(string.ltrim(#hedit.button.3,'#0123456789.'),string.ltrim(#hedit.button.3,'#')),'button_focus.png','button_focus.png'))</textureFocus>
+        <label>#(string.format('{0}',#hedit.button.3))</label>
+        <onfocus>
+          #(skin.setstring('#hedit.main',#hedit.button.3))
+          #(skin.setstring('#hedit.main.at','#hedit.button.3'))
+          #(skin.setstring('#hedit.main.pos','3'))
+          #(skin.setstring('#hedit.sub.1',#hedit.button.3.1))
+          #(skin.setstring('#hedit.sub.2',#hedit.button.3.2))
+          #(skin.setstring('#hedit.sub.3',#hedit.button.3.3))
+          #(skin.setstring('#hedit.sub.4',#hedit.button.3.4))
+          #(skin.setstring('#hedit.sub.5',#hedit.button.3.5))
+          #(skin.setstring('#hedit.sub.6',#hedit.button.3.6))
+          #(skin.setstring('#hedit.sub.7',#hedit.button.3.7))
+          #(skin.setstring('#hedit.basichome.editor.main.return',770103))
+        </onfocus>
+        <onclick>
+          #(skin.setfocus(cint(#currentmoduleid),770001))
+        </onclick>
+        <action>7</action>
+        <onup>770102</onup>
+        <ondown>770104</ondown>
+        <onleft>770103</onleft>
+        <onright>771101</onright>
+      </control>
+
+      <control Style="BasicHomeEditorButton">
+        <type>button</type>
+        <id>770104</id>
+        <textureNoFocus>#(iif(eq(#hedit.main.pos,'4'),'buttonfocus.png','button_nofocus.png'))</textureNoFocus>
+        <textureFocus>#(iif(eq(string.ltrim(#hedit.button.4,'#0123456789.'),string.ltrim(#hedit.button.4,'#')),'button_focus.png','button_focus.png'))</textureFocus>
+        <label>#(string.format('{0}',#hedit.button.4))</label>
+        <onfocus>
+          #(skin.setstring('#hedit.main',#hedit.button.4))
+          #(skin.setstring('#hedit.main.at','#hedit.button.4'))
+          #(skin.setstring('#hedit.main.pos','4'))
+          #(skin.setstring('#hedit.sub.1',#hedit.button.4.1))
+          #(skin.setstring('#hedit.sub.2',#hedit.button.4.2))
+          #(skin.setstring('#hedit.sub.3',#hedit.button.4.3))
+          #(skin.setstring('#hedit.sub.4',#hedit.button.4.4))
+          #(skin.setstring('#hedit.sub.5',#hedit.button.4.5))
+          #(skin.setstring('#hedit.sub.6',#hedit.button.4.6))
+          #(skin.setstring('#hedit.sub.7',#hedit.button.4.7))
+          #(skin.setstring('#hedit.basichome.editor.main.return',770104))
+        </onfocus>
+        <onclick>
+          #(skin.setfocus(cint(#currentmoduleid),770001))
+        </onclick>
+        <action>7</action>
+        <onup>770103</onup>
+        <ondown>770105</ondown>
+        <onleft>770104</onleft>
+        <onright>771101</onright>
+      </control>
+
+      <control Style="BasicHomeEditorButton">
+        <type>button</type>
+        <id>770105</id>
+        <textureNoFocus>#(iif(eq(#hedit.main.pos,'5'),'buttonfocus.png','button_nofocus.png'))</textureNoFocus>
+        <textureFocus>#(iif(eq(string.ltrim(#hedit.button.5,'#0123456789.'),string.ltrim(#hedit.button.5,'#')),'button_focus.png','button_focus.png'))</textureFocus>
+        <label>#(string.format('{0}',#hedit.button.5))</label>
+        <onfocus>
+          #(skin.setstring('#hedit.main',#hedit.button.5))
+          #(skin.setstring('#hedit.main.at','#hedit.button.5'))
+          #(skin.setstring('#hedit.main.pos','5'))
+          #(skin.setstring('#hedit.sub.1',#hedit.button.5.1))
+          #(skin.setstring('#hedit.sub.2',#hedit.button.5.2))
+          #(skin.setstring('#hedit.sub.3',#hedit.button.5.3))
+          #(skin.setstring('#hedit.sub.4',#hedit.button.5.4))
+          #(skin.setstring('#hedit.sub.5',#hedit.button.5.5))
+          #(skin.setstring('#hedit.sub.6',#hedit.button.5.6))
+          #(skin.setstring('#hedit.sub.7',#hedit.button.5.7))
+          #(skin.setstring('#hedit.basichome.editor.main.return',770105))
+        </onfocus>
+        <onclick>
+          #(skin.setfocus(cint(#currentmoduleid),770001))
+        </onclick>
+        <action>7</action>
+        <onup>770104</onup>
+        <ondown>770106</ondown>
+        <onleft>770105</onleft>
+        <onright>771101</onright>
+      </control>
+
+      <control Style="BasicHomeEditorButton">
+        <type>button</type>
+        <id>770106</id>
+        <textureNoFocus>#(iif(eq(#hedit.main.pos,'6'),'buttonfocus.png','button_nofocus.png'))</textureNoFocus>
+        <textureFocus>#(iif(eq(string.ltrim(#hedit.button.6,'#0123456789.'),string.ltrim(#hedit.button.6,'#')),'button_focus.png','button_focus.png'))</textureFocus>
+        <label>#(string.format('{0}',#hedit.button.6))</label>
+        <onfocus>
+          #(skin.setstring('#hedit.main',#hedit.button.6))
+          #(skin.setstring('#hedit.main.at','#hedit.button.6'))
+          #(skin.setstring('#hedit.main.pos','6'))
+          #(skin.setstring('#hedit.sub.1',#hedit.button.6.1))
+          #(skin.setstring('#hedit.sub.2',#hedit.button.6.2))
+          #(skin.setstring('#hedit.sub.3',#hedit.button.6.3))
+          #(skin.setstring('#hedit.sub.4',#hedit.button.6.4))
+          #(skin.setstring('#hedit.sub.5',#hedit.button.6.5))
+          #(skin.setstring('#hedit.sub.6',#hedit.button.6.6))
+          #(skin.setstring('#hedit.sub.7',#hedit.button.6.7))
+          #(skin.setstring('#hedit.basichome.editor.main.return',770106))
+        </onfocus>
+        <onclick>
+          #(skin.setfocus(cint(#currentmoduleid),770001))
+        </onclick>
+        <action>7</action>
+        <onup>770105</onup>
+        <ondown>770107</ondown>
+        <onleft>770106</onleft>
+        <onright>771101</onright>
+      </control>
+
+      <control Style="BasicHomeEditorButton">
+        <type>button</type>
+        <id>770107</id>
+        <textureNoFocus>#(iif(eq(#hedit.main.pos,'7'),'buttonfocus.png','button_nofocus.png'))</textureNoFocus>
+        <textureFocus>#(iif(eq(string.ltrim(#hedit.button.7,'#0123456789.'),string.ltrim(#hedit.button.7,'#')),'button_focus.png','button_focus.png'))</textureFocus>
+        <label>#(string.format('{0}',#hedit.button.7))</label>
+        <onfocus>
+          #(skin.setstring('#hedit.main',#hedit.button.7))
+          #(skin.setstring('#hedit.main.at','#hedit.button.7'))
+          #(skin.setstring('#hedit.main.pos','7'))
+          #(skin.setstring('#hedit.sub.1',#hedit.button.7.1))
+          #(skin.setstring('#hedit.sub.2',#hedit.button.7.2))
+          #(skin.setstring('#hedit.sub.3',#hedit.button.7.3))
+          #(skin.setstring('#hedit.sub.4',#hedit.button.7.4))
+          #(skin.setstring('#hedit.sub.5',#hedit.button.7.5))
+          #(skin.setstring('#hedit.sub.6',#hedit.button.7.6))
+          #(skin.setstring('#hedit.sub.7',#hedit.button.7.7))
+          #(skin.setstring('#hedit.basichome.editor.main.return',770107))
+        </onfocus>
+        <onclick>
+          #(skin.setfocus(cint(#currentmoduleid),770001))
+        </onclick>
+        <action>7</action>
+        <onup>770106</onup>
+        <ondown>770108</ondown>
+        <onleft>770107</onleft>
+        <onright>771101</onright>
+      </control>
+
+      <control Style="BasicHomeEditorButton">
+        <type>button</type>
+        <id>770108</id>
+        <textureNoFocus>#(iif(eq(#hedit.main.pos,'8'),'buttonfocus.png','button_nofocus.png'))</textureNoFocus>
+        <textureFocus>#(iif(eq(string.ltrim(#hedit.button.8,'#0123456789.'),string.ltrim(#hedit.button.8,'#')),'button_focus.png','button_focus.png'))</textureFocus>
+        <label>#(string.format('{0}',#hedit.button.8))</label>
+        <onfocus>
+          #(skin.setstring('#hedit.main',#hedit.button.8))
+          #(skin.setstring('#hedit.main.at','#hedit.button.8'))
+          #(skin.setstring('#hedit.main.pos','8'))
+          #(skin.setstring('#hedit.sub.1',#hedit.button.8.1))
+          #(skin.setstring('#hedit.sub.2',#hedit.button.8.2))
+          #(skin.setstring('#hedit.sub.3',#hedit.button.8.3))
+          #(skin.setstring('#hedit.sub.4',#hedit.button.8.4))
+          #(skin.setstring('#hedit.sub.5',#hedit.button.8.5))
+          #(skin.setstring('#hedit.sub.6',#hedit.button.8.6))
+          #(skin.setstring('#hedit.sub.7',#hedit.button.8.7))
+          #(skin.setstring('#hedit.basichome.editor.main.return',770108))
+        </onfocus>
+        <onclick>
+          #(skin.setfocus(cint(#currentmoduleid),770001))
+        </onclick>
+        <action>7</action>
+        <onup>770107</onup>
+        <ondown>770109</ondown>
+        <onleft>770108</onleft>
+        <onright>771101</onright>
+      </control>
+
+      <control Style="BasicHomeEditorButton">
+        <type>button</type>
+        <id>770109</id>
+        <textureNoFocus>#(iif(eq(#hedit.main.pos,'9'),'buttonfocus.png','button_nofocus.png'))</textureNoFocus>
+        <textureFocus>#(iif(eq(string.ltrim(#hedit.button.9,'#0123456789.'),string.ltrim(#hedit.button.9,'#')),'button_focus.png','button_focus.png'))</textureFocus>
+        <label>#(string.format('{0}',#hedit.button.9))</label>
+        <onfocus>
+          #(skin.setstring('#hedit.main',#hedit.button.9))
+          #(skin.setstring('#hedit.main.at','#hedit.button.9'))
+          #(skin.setstring('#hedit.main.pos','9'))
+          #(skin.setstring('#hedit.sub.1',#hedit.button.9.1))
+          #(skin.setstring('#hedit.sub.2',#hedit.button.9.2))
+          #(skin.setstring('#hedit.sub.3',#hedit.button.9.3))
+          #(skin.setstring('#hedit.sub.4',#hedit.button.9.4))
+          #(skin.setstring('#hedit.sub.5',#hedit.button.9.5))
+          #(skin.setstring('#hedit.sub.6',#hedit.button.9.6))
+          #(skin.setstring('#hedit.sub.7',#hedit.button.9.7))
+          #(skin.setstring('#hedit.basichome.editor.main.return',770109))
+        </onfocus>
+        <onclick>
+          #(skin.setfocus(cint(#currentmoduleid),770001))
+        </onclick>
+        <action>7</action>
+        <onup>770108</onup>
+        <ondown>770110</ondown>
+        <onleft>770109</onleft>
+        <onright>771101</onright>
+      </control>
+
+      <control Style="BasicHomeEditorButton">
+        <type>button</type>
+        <id>770110</id>
+        <textureNoFocus>#(iif(eq(#hedit.main.pos,'10'),'buttonfocus.png','button_nofocus.png'))</textureNoFocus>
+        <textureFocus>#(iif(eq(string.ltrim(#hedit.button.10,'#0123456789.'),string.ltrim(#hedit.button.10,'#')),'button_focus.png','button_focus.png'))</textureFocus>
+        <label>#(string.format('{0}',#hedit.button.10))</label>
+        <onfocus>
+          #(skin.setstring('#hedit.main',#hedit.button.10))
+          #(skin.setstring('#hedit.main.at','#hedit.button.10'))
+          #(skin.setstring('#hedit.main.pos','10'))
+          #(skin.setstring('#hedit.sub.1',#hedit.button.10.1))
+          #(skin.setstring('#hedit.sub.2',#hedit.button.10.2))
+          #(skin.setstring('#hedit.sub.3',#hedit.button.10.3))
+          #(skin.setstring('#hedit.sub.4',#hedit.button.10.4))
+          #(skin.setstring('#hedit.sub.5',#hedit.button.10.5))
+          #(skin.setstring('#hedit.sub.6',#hedit.button.10.6))
+          #(skin.setstring('#hedit.sub.7',#hedit.button.10.7))
+          #(skin.setstring('#hedit.basichome.editor.main.return',770110))
+        </onfocus>
+        <onclick>
+          #(skin.setfocus(cint(#currentmoduleid),770001))
+        </onclick>
+        <action>7</action>
+        <onup>770109</onup>
+        <ondown>770101</ondown>
+        <onleft>770110</onleft>
+        <onright>771101</onright>
+      </control>
+    </control>
+
+    <!--     *******************************************************************************************  -->
+    <!--     **************************  Sub Menu Editor Hidden Buttons  *******************************  -->
+    <!--     *******************************************************************************************  -->
+
+    <control>
+      <type>button</type>
+      <id>771001</id>
+      <posX>-999</posX>
+      <posY>-999</posY>
+      <label>-</label>
+      <textureFocus>-</textureFocus>
+      <textureNoFocus>-</textureNoFocus>
+      <onfocus>
+         #(skin.setfocus(cint(#currentmoduleid),switch(
+           eq(1,1),771002)))
+      </onfocus>
+    </control>
+
+    <control>
+      <type>menubutton</type>
+      <id>771002</id>
+      <posX>-999</posX>
+      <posY>-999</posY>
+      <mode>dialoglist</mode>
+      <dialogTitle>#list.dialog</dialogTitle>
+      <dialogShowNumbers>no</dialogShowNumbers>
+      <valueTextInButton>yes</valueTextInButton>
+      <valuePrefixText></valuePrefixText>
+      <binding>#hedit.sub.bind</binding>
+      <subitems>
+        <subitem>#list.ALL</subitem>
+      </subitems>
+      <onfocus>
+        #(skin.setstring('#hedit.sub.bind',string.format('#{0}',string.ltrim(#hedit.sub,'#0123456789'))))
+      </onfocus>
+      <onclick>
+        #(skin.setstring(iif(neq(string.ltrim(#selectedlabel771002,'#'),#selectedlabel771002),'#hedit.sub','#hedit.errorcheck'),#selectedlabel771002))
+        #(skin.setstring(#hedit.sub.at,#hedit.sub))
+        #(skin.setfocus(cint(#currentmoduleid),cint(#hedit.basichome.editor.sub.return)))
+      </onclick>
+    </control>
+
+    <!--     *******************************************************************************************  -->
+    <!--     *****************************  Sub Menu Editor Buttons  ***********************************  -->
+    <!--     *******************************************************************************************  -->
+
+    <control>
+      <type>label</type>
+      <posX>740</posX>
+      <posY>280</posY>
+      <width>430</width>
+      <align>center</align>
+      <label>#(L(924)) - #(string.format('#{0}',string.ltrim(#hedit.main,'#0123456789')))</label>
+      <textcolor>white</textcolor>
+      <font>Label</font>
+      <visible>skin.hassetting(#skin.basichome.editor)</visible>
+    </control>
+
+    <control>
+      <description>buttons</description>
+      <type>group</type>
+      <posX>740</posX>
+      <posY>310</posY>
+      <dimColor>FFA0A0A0</dimColor>
+      <layout>StackLayout(0, Vertical, true)</layout>
+      <visible>skin.hassetting(#skin.basichome.editor)</visible>
+      <control>
+        <type>button</type>
+        <id>771101</id>
+        <width>430</width>
+        <textalign>center</textalign>
+        <textvalign>middle</textvalign>
+        <textureFocus>#(iif(eq(string.ltrim(#hedit.sub.1,'#0123456789.'),string.ltrim(#hedit.sub.1,'#')),'button_focus.png','button_focus.png'))</textureFocus>
+        <label>#(string.format('{0}',#hedit.sub.1))</label>
+        <onfocus>
+          #(skin.setstring(string.format('#hedit.button.{0}.1',#hedit.main.pos),#hedit.sub.1))
+          #(skin.setstring('#hedit.sub',#hedit.sub.1))
+          #(skin.setstring('#hedit.sub.at','#hedit.sub.1'))
+          #(skin.setstring('#hedit.basichome.editor.sub.return',771101))
+        </onfocus>
+        <onclick>
+          #(skin.setfocus(cint(#currentmoduleid),771001))
+        </onclick>
+        <action>7</action>
+        <onup>771107</onup>
+        <ondown>771102</ondown>
+        <onleft>#(cint(#hedit.basichome.editor.main.return))</onleft>
+        <onright>555</onright>
+      </control>
+
+      <control>
+        <type>button</type>
+        <id>771102</id>
+        <width>430</width>
+        <textalign>center</textalign>
+        <textvalign>middle</textvalign>
+        <textureFocus>#(iif(eq(string.ltrim(#hedit.sub.2,'#0123456789.'),string.ltrim(#hedit.sub.2,'#')),'button_focus.png','button_focus.png'))</textureFocus>
+        <label>#(string.format('{0}',#hedit.sub.2))</label>
+        <onfocus>
+          #(skin.setstring(string.format('#hedit.button.{0}.2',#hedit.main.pos),#hedit.sub.2))
+          #(skin.setstring('#hedit.sub',#hedit.sub.2))
+          #(skin.setstring('#hedit.sub.at','#hedit.sub.2'))
+          #(skin.setstring('#hedit.basichome.editor.sub.return',771102))
+        </onfocus>
+        <onclick>
+          #(skin.setfocus(cint(#currentmoduleid),771001))
+        </onclick>
+        <action>7</action>
+        <onup>771101</onup>
+        <ondown>771103</ondown>
+        <onleft>#(cint(#hedit.basichome.editor.main.return))</onleft>
+        <onright>555</onright>
+      </control>
+
+      <control>
+        <type>button</type>
+        <id>771103</id>
+        <width>430</width>
+        <textalign>center</textalign>
+        <textvalign>middle</textvalign>
+        <textureFocus>#(iif(eq(string.ltrim(#hedit.sub.3,'#0123456789.'),string.ltrim(#hedit.sub.3,'#')),'button_focus.png','button_focus.png'))</textureFocus>
+        <label>#(string.format('{0}',#hedit.sub.3))</label>
+        <onfocus>
+          #(skin.setstring(string.format('#hedit.button.{0}.3',#hedit.main.pos),#hedit.sub.3))
+          #(skin.setstring('#hedit.sub',#hedit.sub.3))
+          #(skin.setstring('#hedit.sub.at','#hedit.sub.3'))
+          #(skin.setstring('#hedit.basichome.editor.sub.return',771103))
+        </onfocus>
+        <onclick>
+          #(skin.setfocus(cint(#currentmoduleid),771001))
+        </onclick>
+        <action>7</action>
+        <onup>771102</onup>
+        <ondown>771104</ondown>
+        <onleft>#(cint(#hedit.basichome.editor.main.return))</onleft>
+        <onright>555</onright>
+      </control>
+
+      <control>
+        <type>button</type>
+        <id>771104</id>
+        <width>430</width>
+        <textalign>center</textalign>
+        <textvalign>middle</textvalign>
+        <textureFocus>#(iif(eq(string.ltrim(#hedit.sub.4,'#0123456789.'),string.ltrim(#hedit.sub.4,'#')),'button_focus.png','button_focus.png'))</textureFocus>
+        <label>#(string.format('{0}',#hedit.sub.4))</label>
+        <onfocus>
+          #(skin.setstring(string.format('#hedit.button.{0}.4',#hedit.main.pos),#hedit.sub.4))
+          #(skin.setstring('#hedit.sub',#hedit.sub.4))
+          #(skin.setstring('#hedit.sub.at','#hedit.sub.4'))
+          #(skin.setstring('#hedit.basichome.editor.sub.return',771104))
+        </onfocus>
+        <onclick>
+          #(skin.setfocus(cint(#currentmoduleid),771001))
+        </onclick>
+        <action>7</action>
+        <onup>771103</onup>
+        <ondown>771105</ondown>
+        <onleft>#(cint(#hedit.basichome.editor.main.return))</onleft>
+        <onright>555</onright>
+      </control>
+
+      <control>
+        <type>button</type>
+        <id>771105</id>
+        <width>430</width>
+        <textalign>center</textalign>
+        <textvalign>middle</textvalign>
+        <textureFocus>#(iif(eq(string.ltrim(#hedit.sub.5,'#0123456789.'),string.ltrim(#hedit.sub.5,'#')),'button_focus.png','button_focus.png'))</textureFocus>
+        <label>#(string.format('{0}',#hedit.sub.5))</label>
+        <onfocus>
+          #(skin.setstring(string.format('#hedit.button.{0}.5',#hedit.main.pos),#hedit.sub.5))
+          #(skin.setstring('#hedit.sub',#hedit.sub.5))
+          #(skin.setstring('#hedit.sub.at','#hedit.sub.5'))
+          #(skin.setstring('#hedit.basichome.editor.sub.return',771105))
+        </onfocus>
+        <onclick>
+          #(skin.setfocus(cint(#currentmoduleid),771001))
+        </onclick>
+        <action>7</action>
+        <onup>771104</onup>
+        <ondown>771106</ondown>
+        <onleft>#(cint(#hedit.basichome.editor.main.return))</onleft>
+        <onright>555</onright>
+      </control>
+      
+      <control>
+        <type>button</type>
+        <id>771106</id>
+        <width>430</width>
+        <textalign>center</textalign>
+        <textvalign>middle</textvalign>
+        <textureFocus>#(iif(eq(string.ltrim(#hedit.sub.6,'#0123456789.'),string.ltrim(#hedit.sub.6,'#')),'button_focus.png','button_focus.png'))</textureFocus>
+        <label>#(string.format('{0}',#hedit.sub.6))</label>
+        <onfocus>
+          #(skin.setstring(string.format('#hedit.button.{0}.6',#hedit.main.pos),#hedit.sub.6))
+          #(skin.setstring('#hedit.sub',#hedit.sub.6))
+          #(skin.setstring('#hedit.sub.at','#hedit.sub.6'))
+          #(skin.setstring('#hedit.basichome.editor.sub.return',771106))
+        </onfocus>
+        <onclick>
+          #(skin.setfocus(cint(#currentmoduleid),771001))
+        </onclick>
+        <action>7</action>
+        <onup>771105</onup>
+        <ondown>771107</ondown>
+        <onleft>#(cint(#hedit.basichome.editor.main.return))</onleft>
+        <onright>555</onright>
+      </control>
+      
+      <control>
+        <type>button</type>
+        <id>771107</id>
+        <width>430</width>
+        <textalign>center</textalign>
+        <textvalign>middle</textvalign>
+        <textureFocus>#(iif(eq(string.ltrim(#hedit.sub.7,'#0123456789.'),string.ltrim(#hedit.sub.7,'#')),'button_focus.png','button_focus.png'))</textureFocus>
+        <label>#(string.format('{0}',#hedit.sub.7))</label>
+        <onfocus>
+          #(skin.setstring(string.format('#hedit.button.{0}.7',#hedit.main.pos),#hedit.sub.7))
+          #(skin.setstring('#hedit.sub',#hedit.sub.7))
+          #(skin.setstring('#hedit.sub.at','#hedit.sub.7'))
+          #(skin.setstring('#hedit.basichome.editor.sub.return',771107))
+        </onfocus>
+        <onclick>
+          #(skin.setfocus(cint(#currentmoduleid),771001))
+        </onclick>
+        <action>7</action>
+        <onup>771106</onup>
+        <ondown>771101</ondown>
+        <onleft>#(cint(#hedit.basichome.editor.main.return))</onleft>
+        <onright>555</onright>
+      </control>
+    </control>
+    
+    <!--     *******************************************************************************************  -->
+    <!--     *********************************  Theme Editor Button  ***********************************  -->
+    <!--     *******************************************************************************************  -->
+    
+    <control>
+      <type>label</type>
+      <posX>1450</posX>
+      <posY>260</posY>
+      <label>Layout</label>
+      <textcolor>white</textcolor>
+      <font>Label</font>
+      <visible>skin.hassetting(#skin.basichome.editor)</visible>
+    </control>
+    
+        <control Style="SettingsButton">
+          <type>menubutton</type>
+          <id>555</id>
+          <posX>1250</posX>
+          <posY>310</posY>
+          <width>500</width>
+          <textalign>center</textalign>
+          <textvalign>middle</textvalign>
+          <mode>dialoglist</mode>
+          <dialogTitle>BasicHome Layout</dialogTitle>
+          <dialogShowNumbers>no</dialogShowNumbers>
+          <valueTextInButton>yes</valueTextInButton>
+          <valuePrefixText></valuePrefixText>
+          <onclick>#(skin.setstring('#hedit.mode',#selectedlabel555))</onclick>
+          <hyperlink>35</hyperlink>
+          <binding>#hedit.mode</binding>
+          <subitems>
+              <subitem>Carousel</subitem>
+              <subitem>Horizontal (scroll)</subitem>
+              <subitem>Horizontal Text only</subitem>
+        </subitems>
+        <onleft>771101</onleft>
+        <onright>555</onright>
+        <onup>555</onup>
+        <ondown>555</ondown>
+        <visible>skin.hassetting(#skin.basichome.editor)</visible>
+      </control>
+    </control>
+  </controls>
+</window>
