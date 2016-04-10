@@ -205,10 +205,10 @@ HRESULT FileWriter::CloseFile()
   	}
   	m_hFile = INVALID_HANDLE_VALUE; // Invalidate the file
   	
-  	if (m_pFileName)
-  	{
-      LogDebug(L"FileWriter: CloseFile() : %s", m_pFileName);			  
-    }
+  	// if (m_pFileName)
+  	// {
+    //   LogDebug(L"FileWriter: CloseFile() : %s", m_pFileName);			  
+    // }
 	}
 
 	return S_OK;
