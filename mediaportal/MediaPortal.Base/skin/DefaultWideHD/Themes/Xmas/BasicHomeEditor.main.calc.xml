@@ -1,0 +1,577 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+
+<!--
+
+max = total buttons
+mid = mid point
+
+#hedit.main.calc.nav
+#hedit.main.calc.fwd
+#hedit.main.calc.bwd
+#hedit.main.calc.start
+#hedit.main.calc.count
+#hedit.main.active
+#hedit.main.return
+
+ID format AA-B-C-DD [group/subgroup/layer/item] eg: 910105 = group 99 / subgroup 0 / layer 1 / item 05
+
+-->
+
+  <define property="true" evaluateNow="false">#hedit.main.max:7</define>
+  <define property="true" evaluateNow="false">#hedit.main.mid:4</define>
+
+  <define property="true" evaluateNow="false">#hedit.main.default:#DEFAULT</define>
+
+  <define property="true" evaluateNow="false">#hedit.main.center:910001</define>
+  <define property="true" evaluateNow="false">#hedit.main.backward:910002</define>
+  <define property="true" evaluateNow="false">#hedit.main.forward:910003</define>
+  <define property="true" evaluateNow="false">#hedit.main.list:910004</define>
+
+<!--
+  <define property="true" evaluateNow="true">#hedit.main.return:880101</define>
+-->
+
+  <controls>
+
+<!-- button use/available -->
+
+    <control>
+      <type>label</type>
+      <id>910901</id>
+      <posX>-999</posX>
+      <posY>-999</posY>
+      <label>#(string.format('{0}.active',#hedit.button.1))</label>
+    </control>
+    <control>
+      <type>label</type>
+      <id>910902</id>
+      <posX>-999</posX>
+      <posY>-999</posY>
+      <label>#(string.format('{0}.active',#hedit.button.2))</label>
+    </control>
+    <control>
+      <type>label</type>
+      <id>910903</id>
+      <posX>-999</posX>
+      <posY>-999</posY>
+      <label>#(string.format('{0}.active',#hedit.button.3))</label>
+    </control>
+    <control>
+      <type>label</type>
+      <id>910904</id>
+      <posX>-999</posX>
+      <posY>-999</posY>
+      <label>#(string.format('{0}.active',#hedit.button.4))</label>
+    </control>
+    <control>
+      <type>label</type>
+      <id>910905</id>
+      <posX>-999</posX>
+      <posY>-999</posY>
+      <label>#(string.format('{0}.active',#hedit.button.5))</label>
+    </control>
+    <control>
+      <type>label</type>
+      <id>910906</id>
+      <posX>-999</posX>
+      <posY>-999</posY>
+      <label>#(string.format('{0}.active',#hedit.button.6))</label>
+    </control>
+    <control>
+      <type>label</type>
+      <id>910907</id>
+      <posX>-999</posX>
+      <posY>-999</posY>
+      <label>#(string.format('{0}.active',#hedit.button.7))</label>
+    </control>
+    <control>
+      <type>label</type>
+      <id>910908</id>
+      <posX>-999</posX>
+      <posY>-999</posY>
+      <label>#(string.format('{0}.active',#hedit.button.8))</label>
+    </control>
+    <control>
+      <type>label</type>
+      <id>910909</id>
+      <posX>-999</posX>
+      <posY>-999</posY>
+      <label>#(string.format('{0}.active',#hedit.button.9))</label>
+    </control>
+    <control>
+      <type>label</type>
+      <id>910910</id>
+      <posX>-999</posX>
+      <posY>-999</posY>
+      <label>#(string.format('{0}.active',#hedit.button.10))</label>
+    </control>
+    
+    <control>
+      <description>button use/available group check</description>
+      <type>label</type>
+      <id>910900</id>
+      <posX>-999</posX>
+      <posY>-999</posY>
+      <label>-</label>
+      <visible>control.hastext(910901)|control.hastext(910902)|control.hastext(910903)|control.hastext(910904)|control.hastext(910905)|control.hastext(910906)|control.hastext(910907)|control.hastext(910908)|control.hastext(910909)|control.hastext(910910)</visible>
+    </control>
+
+<!-- arrange available buttons -->
+
+    <control>
+      <type>group</type>
+      <posX>-2000</posX>
+      <posY>0</posY>
+      <layout>StackLayout(0, Vertical, true)</layout>
+
+<!-- entry points for button arrangement -->
+
+      <control>
+        <description>select buttons - center</description>
+        <type>button</type>
+        <id>910001</id>
+        <label>-</label>
+        <textureFocus>-</textureFocus>
+        <textureNoFocus>-</textureNoFocus>
+        <onfocus>
+          #(skin.setstring('#hedit.main.calc.nav',''))
+          #(skin.setstring('#hedit.main.calc.fwd',#hedit.main.mid))
+          #(skin.setstring('#hedit.main.calc.bwd',sub(cint(#hedit.main.mid),1)))
+          #(skin.setstring('#hedit.main.calc.start',1))
+          #(skin.setstring('#hedit.main.calc.count',0))
+          #(skin.setfocus(cint(#currentmoduleid),iif(eq(#hedit.main.calc.start,'0'),910198,add(910100,cint(#hedit.main.calc.start)))))
+        </onfocus>
+      </control>
+
+      <control>
+        <type>button</type>
+        <description>select buttons - center move backward</description>
+        <id>910002</id>
+        <label>-</label>
+        <textureFocus>-</textureFocus>
+        <textureNoFocus>-</textureNoFocus>
+        <onfocus>
+          #(skin.setstring('#hedit.main.calc.nav',iif(eq(string.ltrim(#hedit.main.calc.nav,'bf'),'0'),'b1','b0')))
+          #(skin.setstring('#hedit.main.calc.fwd',add(cint(#hedit.main.mid),1)))
+          #(skin.setstring('#hedit.main.calc.bwd',#hedit.main.mid))
+          #(skin.setstring('#hedit.main.calc.start',#hedit.main.pos.4))
+          #(skin.setstring('#hedit.main.calc.count',0))
+          #(skin.setfocus(cint(#currentmoduleid),iif(eq(#hedit.main.calc.start,'0'),910198,add(910100,cint(#hedit.main.calc.start)))))
+        </onfocus>
+      </control>
+
+      <control>
+        <type>button</type>
+        <description>select buttons - center move forward</description>
+        <id>910003</id>
+        <label>-</label>
+        <textureFocus>-</textureFocus>
+        <textureNoFocus>-</textureNoFocus>
+        <onfocus>
+          #(skin.setstring('#hedit.main.calc.nav',iif(eq(string.ltrim(#hedit.main.calc.nav,'bf'),'0'),'f1','f0')))
+          #(skin.setstring('#hedit.main.calc.fwd',sub(cint(#hedit.main.mid),1)))
+          #(skin.setstring('#hedit.main.calc.bwd',sub(cint(#hedit.main.mid),2)))
+          #(skin.setstring('#hedit.main.calc.start',#hedit.main.pos.4))
+          #(skin.setstring('#hedit.main.calc.count',0))
+          #(skin.setfocus(cint(#currentmoduleid),iif(eq(#hedit.main.calc.start,'0'),910198,add(910100,cint(#hedit.main.calc.start)))))
+        </onfocus>
+      </control>
+
+      <control>
+        <type>button</type>
+        <description>select buttons - min to max</description>
+        <id>910004</id>
+        <label>-</label>
+        <textureFocus>-</textureFocus>
+        <textureNoFocus>-</textureNoFocus>
+        <onfocus>
+          #(skin.setstring('#hedit.main.calc.nav',''))
+          #(skin.setstring('#hedit.main.calc.fwd',1))
+          #(skin.setstring('#hedit.main.calc.bwd',0))
+          #(skin.setstring('#hedit.main.calc.start',1))
+          #(skin.setstring('#hedit.main.calc.count',-1))
+          #(skin.setfocus(cint(#currentmoduleid),iif(eq(#hedit.main.calc.start,'0'),910198,add(910100,cint(#hedit.main.calc.start)))))
+        </onfocus>
+      </control>
+
+<!-- forward button list -->
+
+      <control>
+        <type>button</type>
+        <id>910101</id>
+        <label>-</label>
+        <textureFocus>-</textureFocus>
+        <textureNoFocus>-</textureNoFocus>
+        <onfocus>
+          #(skin.setstring(string.format('#hedit.main.pos.{0}',#hedit.main.calc.fwd),1))
+          #(skin.setstring(string.format('#hedit.main.use.{0}',#hedit.main.calc.fwd),#hedit.button.1))
+          #(skin.setstring('#hedit.main.calc.fwd',add(cint(#hedit.main.calc.fwd),1)))
+          #(skin.setfocus(cint(#currentmoduleid),iif(lte(cint(#hedit.main.calc.fwd),cint(#hedit.main.max)),910102,910199)))
+        </onfocus>
+        <visible>control.hastext(910901)</visible>
+      </control>
+      <control>
+        <type>button</type>
+        <id>910102</id>
+        <label>-</label>
+        <textureFocus>-</textureFocus>
+        <textureNoFocus>-</textureNoFocus>
+        <onfocus>
+          #(skin.setstring(string.format('#hedit.main.pos.{0}',#hedit.main.calc.fwd),2))
+          #(skin.setstring(string.format('#hedit.main.use.{0}',#hedit.main.calc.fwd),#hedit.button.2))
+          #(skin.setstring('#hedit.main.calc.fwd',add(cint(#hedit.main.calc.fwd),1)))
+          #(skin.setfocus(cint(#currentmoduleid),iif(lte(cint(#hedit.main.calc.fwd),cint(#hedit.main.max)),910103,910199)))
+        </onfocus>
+        <visible>control.hastext(910902)</visible>
+      </control>
+      <control>
+        <type>button</type>
+        <id>910103</id>
+        <label>-</label>
+        <textureFocus>-</textureFocus>
+        <textureNoFocus>-</textureNoFocus>
+        <onfocus>
+          #(skin.setstring(string.format('#hedit.main.pos.{0}',#hedit.main.calc.fwd),3))
+          #(skin.setstring(string.format('#hedit.main.use.{0}',#hedit.main.calc.fwd),#hedit.button.3))
+          #(skin.setstring('#hedit.main.calc.fwd',add(cint(#hedit.main.calc.fwd),1)))
+          #(skin.setfocus(cint(#currentmoduleid),iif(lte(cint(#hedit.main.calc.fwd),cint(#hedit.main.max)),910104,910199)))
+        </onfocus>
+        <visible>control.hastext(910903)</visible>
+      </control>
+      <control>
+        <type>button</type>
+        <id>910104</id>
+        <label>-</label>
+        <textureFocus>-</textureFocus>
+        <textureNoFocus>-</textureNoFocus>
+        <onfocus>
+          #(skin.setstring(string.format('#hedit.main.pos.{0}',#hedit.main.calc.fwd),4))
+          #(skin.setstring(string.format('#hedit.main.use.{0}',#hedit.main.calc.fwd),#hedit.button.4))
+          #(skin.setstring('#hedit.main.calc.fwd',add(cint(#hedit.main.calc.fwd),1)))
+          #(skin.setfocus(cint(#currentmoduleid),iif(lte(cint(#hedit.main.calc.fwd),cint(#hedit.main.max)),910105,910199)))
+        </onfocus>
+        <visible>control.hastext(910904)</visible>
+      </control>
+      <control>
+        <type>button</type>
+        <id>910105</id>
+        <label>-</label>
+        <textureFocus>-</textureFocus>
+        <textureNoFocus>-</textureNoFocus>
+        <onfocus>
+          #(skin.setstring(string.format('#hedit.main.pos.{0}',#hedit.main.calc.fwd),5))
+          #(skin.setstring(string.format('#hedit.main.use.{0}',#hedit.main.calc.fwd),#hedit.button.5))
+          #(skin.setstring('#hedit.main.calc.fwd',add(cint(#hedit.main.calc.fwd),1)))
+          #(skin.setfocus(cint(#currentmoduleid),iif(lte(cint(#hedit.main.calc.fwd),cint(#hedit.main.max)),910106,910199)))
+        </onfocus>
+        <visible>control.hastext(910905)</visible>
+      </control>
+      <control>
+        <type>button</type>
+        <id>910106</id>
+        <label>-</label>
+        <textureFocus>-</textureFocus>
+        <textureNoFocus>-</textureNoFocus>
+        <onfocus>
+          #(skin.setstring(string.format('#hedit.main.pos.{0}',#hedit.main.calc.fwd),6))
+          #(skin.setstring(string.format('#hedit.main.use.{0}',#hedit.main.calc.fwd),#hedit.button.6))
+          #(skin.setstring('#hedit.main.calc.fwd',add(cint(#hedit.main.calc.fwd),1)))
+          #(skin.setfocus(cint(#currentmoduleid),iif(lte(cint(#hedit.main.calc.fwd),cint(#hedit.main.max)),910107,910199)))
+        </onfocus>
+        <visible>control.hastext(910906)</visible>
+      </control>
+      <control>
+        <type>button</type>
+        <id>910107</id>
+        <label>-</label>
+        <textureFocus>-</textureFocus>
+        <textureNoFocus>-</textureNoFocus>
+        <onfocus>
+          #(skin.setstring(string.format('#hedit.main.pos.{0}',#hedit.main.calc.fwd),7))
+          #(skin.setstring(string.format('#hedit.main.use.{0}',#hedit.main.calc.fwd),#hedit.button.7))
+          #(skin.setstring('#hedit.main.calc.fwd',add(cint(#hedit.main.calc.fwd),1)))
+          #(skin.setfocus(cint(#currentmoduleid),iif(lte(cint(#hedit.main.calc.fwd),cint(#hedit.main.max)),910108,910199)))
+        </onfocus>
+        <visible>control.hastext(910907)</visible>
+      </control>
+      <control>
+        <type>button</type>
+        <id>910108</id>
+        <label>-</label>
+        <textureFocus>-</textureFocus>
+        <textureNoFocus>-</textureNoFocus>
+        <onfocus>
+          #(skin.setstring(string.format('#hedit.main.pos.{0}',#hedit.main.calc.fwd),8))
+          #(skin.setstring(string.format('#hedit.main.use.{0}',#hedit.main.calc.fwd),#hedit.button.8))
+          #(skin.setstring('#hedit.main.calc.fwd',add(cint(#hedit.main.calc.fwd),1)))
+          #(skin.setfocus(cint(#currentmoduleid),iif(lte(cint(#hedit.main.calc.fwd),cint(#hedit.main.max)),910109,910199)))
+        </onfocus>
+        <visible>control.hastext(910908)</visible>
+      </control>
+      <control>
+        <type>button</type>
+        <id>910109</id>
+        <label>-</label>
+        <textureFocus>-</textureFocus>
+        <textureNoFocus>-</textureNoFocus>
+        <onfocus>
+          #(skin.setstring(string.format('#hedit.main.pos.{0}',#hedit.main.calc.fwd),9))
+          #(skin.setstring(string.format('#hedit.main.use.{0}',#hedit.main.calc.fwd),#hedit.button.9))
+          #(skin.setstring('#hedit.main.calc.fwd',add(cint(#hedit.main.calc.fwd),1)))
+          #(skin.setfocus(cint(#currentmoduleid),iif(lte(cint(#hedit.main.calc.fwd),cint(#hedit.main.max)),910110,910199)))
+        </onfocus>
+        <visible>control.hastext(910909)</visible>
+      </control>
+      <control>
+        <type>button</type>
+        <id>910110</id>
+        <label>-</label>
+        <textureFocus>-</textureFocus>
+        <textureNoFocus>-</textureNoFocus>
+        <onfocus>
+          #(skin.setstring(string.format('#hedit.main.pos.{0}',#hedit.main.calc.fwd),10))
+          #(skin.setstring(string.format('#hedit.main.use.{0}',#hedit.main.calc.fwd),#hedit.button.10))
+          #(skin.setstring('#hedit.main.calc.fwd',add(cint(#hedit.main.calc.fwd),1)))
+          #(skin.setfocus(cint(#currentmoduleid),iif(lte(cint(#hedit.main.calc.fwd),cint(#hedit.main.max)),910111,910199)))
+        </onfocus>
+        <visible>control.hastext(910910)</visible>
+      </control>
+            
+
+<!-- forward button list (catch no available buttons) -->
+
+      <control>
+        <type>button</type>
+        <id>910198</id>
+        <label>-</label>
+        <textureFocus>-</textureFocus>
+        <textureNoFocus>-</textureNoFocus>
+        <onfocus>
+          #(skin.setstring(string.format('#hedit.main.pos.{0}',#hedit.main.calc.fwd),0))
+          #(skin.setstring(string.format('#hedit.main.use.{0}',#hedit.main.calc.fwd),#hedit.main.default))
+          #(skin.setstring('#hedit.main.calc.fwd',add(cint(#hedit.main.calc.fwd),1)))
+          #(skin.setfocus(cint(#currentmoduleid),iif(lte(cint(#hedit.main.calc.fwd),cint(#hedit.main.max)),910101,910199)))
+        </onfocus>
+        <visible>!control.isvisible(910900)</visible>
+      </control>
+
+<!-- forward button list (catch end of group and loop) -->
+
+      <control>
+        <type>button</type>
+        <id>910111</id>
+        <label>-</label>
+        <textureFocus>-</textureFocus>
+        <textureNoFocus>-</textureNoFocus>
+        <onfocus>
+          #(skin.setstring('#hedit.main.calc.count',iif(gte(cint(#hedit.main.calc.count),0),#hedit.main.calc.count,add(cint(#hedit.main.calc.fwd),cint(#hedit.main.calc.count)))))
+          #(skin.setfocus(cint(#currentmoduleid),910101))
+        </onfocus>
+      </control>
+
+<!-- forward button list (handle end of section) -->
+
+      <control>
+        <type>button</type>
+        <id>910199</id>
+        <label>-</label>
+        <textureFocus>-</textureFocus>
+        <textureNoFocus>-</textureNoFocus>
+        <onfocus>
+          #(skin.setstring('#hedit.main.calc.count',iif(gte(cint(#hedit.main.calc.count),0),#hedit.main.calc.count,add(cint(#hedit.main.calc.fwd),cint(#hedit.main.calc.count)))))
+          #(skin.setfocus(cint(#currentmoduleid),iif(eq(#hedit.main.calc.start,'0'),910298,iif(gt(cint(#hedit.main.calc.bwd),0),add(910199,cint(#hedit.main.calc.start)),910299))))
+        </onfocus>
+      </control>
+
+<!-- backward button list -->
+
+      <control>
+        <type>button</type>
+        <id>910210</id>
+        <label>-</label>
+        <textureFocus>-</textureFocus>
+        <textureNoFocus>-</textureNoFocus>
+        <onfocus>
+          #(skin.setstring(string.format('#hedit.main.pos.{0}',#hedit.main.calc.bwd),10))
+          #(skin.setstring(string.format('#hedit.main.use.{0}',#hedit.main.calc.bwd),#hedit.button.10))
+          #(skin.setstring('#hedit.main.calc.bwd',sub(cint(#hedit.main.calc.bwd),1)))
+          #(skin.setfocus(cint(#currentmoduleid),iif(gte(cint(#hedit.main.calc.bwd),1),910209,910299)))
+          </onfocus>
+        <visible>control.hastext(910910)</visible>
+      </control>
+      <control>
+        <type>button</type>
+        <id>910209</id>
+        <label>-</label>
+        <textureFocus>-</textureFocus>
+        <textureNoFocus>-</textureNoFocus>
+        <onfocus>
+          #(skin.setstring(string.format('#hedit.main.pos.{0}',#hedit.main.calc.bwd),9))
+          #(skin.setstring(string.format('#hedit.main.use.{0}',#hedit.main.calc.bwd),#hedit.button.9))
+          #(skin.setstring('#hedit.main.calc.bwd',sub(cint(#hedit.main.calc.bwd),1)))
+          #(skin.setfocus(cint(#currentmoduleid),iif(gte(cint(#hedit.main.calc.bwd),1),910208,910299)))
+          </onfocus>
+        <visible>control.hastext(910909)</visible>
+      </control>
+      <control>
+        <type>button</type>
+        <id>910208</id>
+        <label>-</label>
+        <textureFocus>-</textureFocus>
+        <textureNoFocus>-</textureNoFocus>
+        <onfocus>
+          #(skin.setstring(string.format('#hedit.main.pos.{0}',#hedit.main.calc.bwd),8))
+          #(skin.setstring(string.format('#hedit.main.use.{0}',#hedit.main.calc.bwd),#hedit.button.8))
+          #(skin.setstring('#hedit.main.calc.bwd',sub(cint(#hedit.main.calc.bwd),1)))
+          #(skin.setfocus(cint(#currentmoduleid),iif(gte(cint(#hedit.main.calc.bwd),1),910207,910299)))
+          </onfocus>
+        <visible>control.hastext(910908)</visible>
+      </control>
+      <control>
+        <type>button</type>
+        <id>910207</id>
+        <label>-</label>
+        <textureFocus>-</textureFocus>
+        <textureNoFocus>-</textureNoFocus>
+        <onfocus>
+          #(skin.setstring(string.format('#hedit.main.pos.{0}',#hedit.main.calc.bwd),7))
+          #(skin.setstring(string.format('#hedit.main.use.{0}',#hedit.main.calc.bwd),#hedit.button.7))
+          #(skin.setstring('#hedit.main.calc.bwd',sub(cint(#hedit.main.calc.bwd),1)))
+          #(skin.setfocus(cint(#currentmoduleid),iif(gte(cint(#hedit.main.calc.bwd),1),910206,910299)))
+          </onfocus>
+        <visible>control.hastext(910907)</visible>
+      </control>
+      <control>
+        <type>button</type>
+        <id>910206</id>
+        <label>-</label>
+        <textureFocus>-</textureFocus>
+        <textureNoFocus>-</textureNoFocus>
+        <onfocus>
+          #(skin.setstring(string.format('#hedit.main.pos.{0}',#hedit.main.calc.bwd),6))
+          #(skin.setstring(string.format('#hedit.main.use.{0}',#hedit.main.calc.bwd),#hedit.button.6))
+          #(skin.setstring('#hedit.main.calc.bwd',sub(cint(#hedit.main.calc.bwd),1)))
+          #(skin.setfocus(cint(#currentmoduleid),iif(gte(cint(#hedit.main.calc.bwd),1),910205,910299)))
+          </onfocus>
+        <visible>control.hastext(910906)</visible>
+      </control>
+      <control>
+        <type>button</type>
+        <id>910205</id>
+        <label>-</label>
+        <textureFocus>-</textureFocus>
+        <textureNoFocus>-</textureNoFocus>
+        <onfocus>
+          #(skin.setstring(string.format('#hedit.main.pos.{0}',#hedit.main.calc.bwd),5))
+          #(skin.setstring(string.format('#hedit.main.use.{0}',#hedit.main.calc.bwd),#hedit.button.5))
+          #(skin.setstring('#hedit.main.calc.bwd',sub(cint(#hedit.main.calc.bwd),1)))
+          #(skin.setfocus(cint(#currentmoduleid),iif(gte(cint(#hedit.main.calc.bwd),1),910204,910299)))
+          </onfocus>
+        <visible>control.hastext(910905)</visible>
+      </control>
+      <control>
+        <type>button</type>
+        <id>910204</id>
+        <label>-</label>
+        <textureFocus>-</textureFocus>
+        <textureNoFocus>-</textureNoFocus>
+        <onfocus>
+          #(skin.setstring(string.format('#hedit.main.pos.{0}',#hedit.main.calc.bwd),4))
+          #(skin.setstring(string.format('#hedit.main.use.{0}',#hedit.main.calc.bwd),#hedit.button.4))
+          #(skin.setstring('#hedit.main.calc.bwd',sub(cint(#hedit.main.calc.bwd),1)))
+          #(skin.setfocus(cint(#currentmoduleid),iif(gte(cint(#hedit.main.calc.bwd),1),910203,910299)))
+          </onfocus>
+        <visible>control.hastext(910904)</visible>
+      </control>
+      <control>
+        <type>button</type>
+        <id>910203</id>
+        <label>-</label>
+        <textureFocus>-</textureFocus>
+        <textureNoFocus>-</textureNoFocus>
+        <onfocus>
+          #(skin.setstring(string.format('#hedit.main.pos.{0}',#hedit.main.calc.bwd),3))
+          #(skin.setstring(string.format('#hedit.main.use.{0}',#hedit.main.calc.bwd),#hedit.button.3))
+          #(skin.setstring('#hedit.main.calc.bwd',sub(cint(#hedit.main.calc.bwd),1)))
+          #(skin.setfocus(cint(#currentmoduleid),iif(gte(cint(#hedit.main.calc.bwd),1),910202,910299)))
+        </onfocus>
+        <visible>control.hastext(910903)</visible>
+      </control>
+      <control>
+        <type>button</type>
+        <id>910202</id>
+        <label>-</label>
+        <textureFocus>-</textureFocus>
+        <textureNoFocus>-</textureNoFocus>
+        <onfocus>
+          #(skin.setstring(string.format('#hedit.main.pos.{0}',#hedit.main.calc.bwd),2))
+          #(skin.setstring(string.format('#hedit.main.use.{0}',#hedit.main.calc.bwd),#hedit.button.2))
+          #(skin.setstring('#hedit.main.calc.bwd',sub(cint(#hedit.main.calc.bwd),1)))
+          #(skin.setfocus(cint(#currentmoduleid),iif(gte(cint(#hedit.main.calc.bwd),1),910201,910299)))
+        </onfocus>
+        <visible>control.hastext(910902)</visible>
+      </control>
+      <control>
+        <type>button</type>
+        <id>910201</id>
+        <label>-</label>
+        <textureFocus>-</textureFocus>
+        <textureNoFocus>-</textureNoFocus>
+        <onfocus>
+          #(skin.setstring(string.format('#hedit.main.pos.{0}',#hedit.main.calc.bwd),1))
+          #(skin.setstring(string.format('#hedit.main.use.{0}',#hedit.main.calc.bwd),#hedit.button.1))
+          #(skin.setstring('#hedit.main.calc.bwd',sub(cint(#hedit.main.calc.bwd),1)))
+          #(skin.setfocus(cint(#currentmoduleid),iif(gte(cint(#hedit.main.calc.bwd),1),910210,910299)))
+        </onfocus>
+        <visible>control.hastext(910901)</visible>
+      </control>
+
+<!-- backward button list (catch no available buttons) -->
+
+      <control>
+        <type>button</type>
+        <id>910298</id>
+        <label>-</label>
+        <textureFocus>-</textureFocus>
+        <textureNoFocus>-</textureNoFocus>
+        <onfocus>
+          #(skin.setstring(string.format('#hedit.main.pos.{0}',#hedit.main.calc.bwd),0))
+          #(skin.setstring(string.format('#hedit.main.use.{0}',#hedit.main.calc.bwd),#hedit.main.default))
+          #(skin.setstring('#hedit.main.calc.bwd',sub(cint(#hedit.main.calc.bwd),1)))
+          #(skin.setfocus(cint(#currentmoduleid),iif(gte(cint(#hedit.main.calc.bwd),1),910210,910299)))
+        </onfocus>
+        <visible>!control.isvisible(910900)</visible>
+      </control>
+
+<!-- backward button list (catch end of group and loop) -->
+
+      <control>
+        <type>button</type>
+        <id>910200</id>
+        <label>-</label>
+        <textureFocus>-</textureFocus>
+        <textureNoFocus>-</textureNoFocus>
+        <onfocus>
+          #(skin.setfocus(cint(#currentmoduleid),910210))
+        </onfocus>
+      </control>
+
+<!-- backward button list (handle end of section) -->
+
+      <control>
+        <type>button</type>
+        <id>910299</id>
+        <label>-</label>
+        <textureFocus>-</textureFocus>
+        <textureNoFocus>-</textureNoFocus>
+        <onfocus>
+          #(skin.setstring('#hedit.main.active',choose(cint(#hedit.main.calc.count),'','a','ab','abc','abcd','abcde','abcdef','abcdefg','abcdefgh','abcdefghi','abcdefghij')))
+          #(skin.setfocus(cint(#currentmoduleid),cint(#hedit.main.return)))
+        </onfocus>
+      </control>
+
+    </control>
+
+  </controls>
+</window>

@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!--version="1.0" encoding="utf-8" standalone="yes"-->
+<window>
+  <controls>
+    <control>
+      <description>video preview window</description>
+      <type>videowindow</type>
+      <id>99</id>
+      <posX>129</posX>
+      <posY>837</posY>
+      <width>304</width>
+      <height>172</height>
+      <visible>player.HasVideo</visible>
+      <action>18</action>
+      <textureFocus>tv_green_border.png</textureFocus>
+    </control>
+    <control>
+      <description>Site Icon</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>54</posX>
+      <posY>837</posY>
+      <width>60</width>
+      <height>60</height>
+      <texture>#Play.Current.OnlineVideos.SiteIcon</texture>
+      <visible>player.HasVideo</visible>
+    </control>
+    <control>
+      <description>Pause logo</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>69</posX>
+      <posY>907</posY>
+      <width>27</width>
+      <height>39</height>
+      <valign>top</valign>
+      <align>left</align>
+      <tileFill>true</tileFill>
+      <keepaspectratio>false</keepaspectratio>
+      <zoom>false</zoom>
+      <texture>video-pause.png</texture>
+      <visible>player.HasVideo + player.paused</visible>
+    </control>
+    <control>
+      <description>play time label</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>112</posX>
+      <posY>975</posY>
+      <width>97</width>
+      <label>#currentplaytime</label>
+      <align>right</align>
+      <font>font11</font>
+      <textcolor>ffffd700</textcolor>
+      <visible>player.HasVideo</visible>
+    </control>
+    <control>
+      <description>scrolling info label Video</description>
+      <type>fadelabel</type>
+      <id>0</id>
+      <posX>30</posX>
+      <posY>1015</posY>
+      <width>420</width>
+      <font>font11</font>
+      <textcolor>ffffd700</textcolor>
+      <label>#Play.Current.Title</label>
+      <wrapString> :.:  </wrapString>
+      <visible>player.HasVideo</visible>
+    </control>
+  </controls>
+</window>

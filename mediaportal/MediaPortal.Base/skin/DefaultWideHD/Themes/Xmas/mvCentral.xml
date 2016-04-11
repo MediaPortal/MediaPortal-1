@@ -1,0 +1,1226 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!--version="1.0" encoding="utf-8" standalone="yes"-->
+<window>
+  <id>112011</id>
+  <defaultcontrol>50</defaultcontrol>
+  <allowoverlay>[facadeview.list|facadeview.coverflow|facadeview.smallicons|facadeview.largeicons]</allowoverlay>
+  <define>#useSelectedFanart:Yes</define>
+  <define>#shadow.dark:ff000000</define>
+  <controls>
+    <control>
+      <description>Main Background</description>
+      <type>image</type>
+      <id>1</id>
+      <texture>BH Musicvideos.jpg</texture>
+      <width>1920</width>
+      <height>1080</height>
+      <animation effect="fade" time="70" reversible="false">visible</animation>
+    </control>
+    <import>common.time.xml</import>
+    <import>common.music.fanart.xml</import>
+    <control>
+      <description>General Overlay</description>
+      <id>0</id>
+      <type>image</type>
+      <posX>0</posX>
+      <posY>45</posY>
+      <width>1920</width>
+      <height>1080</height>
+      <texture>general_overlay.png</texture>
+    </control>
+    <control>
+      <type>fadelabel</type>
+      <description>mvCentral Title</description>
+      <id>0</id>
+      <posX>90</posX>
+      <posY>40</posY>
+      <width>1200</width>
+      <font>font18</font>
+      <shadowAngle>45</shadowAngle>
+      <shadowDistance>3</shadowDistance>
+      <shadowColor>#shadow.dark</shadowColor>
+      <align>left</align>
+      <visible>yes</visible>
+      <label>mvCentral - #mvCentral.Hierachy</label>
+      <animation effect="fade" time="70" reversible="false">visible</animation>
+    </control>
+    <control>
+      <description>Number of Artists\Video files</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>90</posX>
+      <posY>97</posY>
+      <width>525</width>
+      <font>font11</font>
+      <textcolor>ffffd700</textcolor>
+      <shadowAngle>45</shadowAngle>
+      <shadowDistance>3</shadowDistance>
+      <shadowColor>ff000000</shadowColor>
+      <label>#mvCentral.TotalArtists \ #mvCentral.TotalVideos</label>
+      <visible>control.isvisible(50)</visible>
+      <animation effect="fade" time="70" reversible="false">visible</animation>
+    </control>
+    <control>
+      <description>Number of Files Label (Artists)</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>1866</posX>
+      <posY>90</posY>
+      <label>#selectedindex/#itemcount #(L(133))</label>
+      <align>right</align>
+      <textcolor>ffffd700</textcolor>
+      <font>font10</font>
+      <shadowAngle>45</shadowAngle>
+      <shadowDistance>3</shadowDistance>
+      <shadowColor>#shadow.dark</shadowColor>
+      <visible>string.equals(#mvCentral.ArtistView,true)</visible>
+      <animation effect="fade" time="70" reversible="false">visible</animation>
+    </control>
+    <control>
+      <description>Number of Files Label (Genres)</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>1866</posX>
+      <posY>90</posY>
+      <label>#selectedindex/#itemcount #(L(135))</label>
+      <align>right</align>
+      <textcolor>ffffd700</textcolor>
+      <font>font10</font>
+      <shadowAngle>45</shadowAngle>
+      <shadowDistance>3</shadowDistance>
+      <shadowColor>#shadow.dark</shadowColor>
+      <visible>string.equals(#mvCentral.GenreView,true)</visible>
+      <animation effect="fade" time="70" reversible="false">visible</animation>
+    </control>
+    <control>
+      <description>Number of Files Label (Albums)</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>1866</posX>
+      <posY>90</posY>
+      <label>#selectedindex/#itemcount #(L(132))</label>
+      <align>right</align>
+      <textcolor>ffffd700</textcolor>
+      <font>font10</font>
+      <shadowAngle>45</shadowAngle>
+      <shadowDistance>3</shadowDistance>
+      <shadowColor>#shadow.dark</shadowColor>
+      <visible>string.equals(#mvCentral.AlbumView,true)</visible>
+      <animation effect="fade" time="70" reversible="false">visible</animation>
+    </control>
+    <control>
+      <description>Number of Files Label (Tracks)</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>1866</posX>
+      <posY>90</posY>
+      <shadowAngle>45</shadowAngle>
+      <shadowDistance>3</shadowDistance>
+      <shadowColor>#shadow.dark</shadowColor>
+      <label>#selectedindex/#itemcount #mvCentral.Translation.Videos.Label</label>
+      <align>right</align>
+      <textcolor>ffffd700</textcolor>
+      <font>font10</font>
+      <visible>string.equals(#mvCentral.TrackView,true)</visible>
+      <animation effect="fade" time="70" reversible="false">visible</animation>
+    </control>
+    <control>
+      <description>Duration of Select Track</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>1866</posX>
+      <posY>135</posY>
+      <label>#mvCentral.Translation.Runtime.Label #mvCentral.Duration</label>
+      <align>right</align>
+      <textcolor>ffffd700</textcolor>
+      <font>font10</font>
+      <shadowAngle>45</shadowAngle>
+      <shadowDistance>3</shadowDistance>
+      <shadowColor>#shadow.dark</shadowColor>
+      <visible>string.equals(#mvCentral.TrackView,true)</visible>
+      <animation effect="fade" time="70" reversible="false">visible</animation>
+    </control>
+    <!-- ******************************************************************** -->
+    <!--               Listlayout, SmallIcons and LargeIcons                  -->
+    <!-- ******************************************************************** -->
+    <!-- Images -->
+    <control>
+      <description>Image for selected Item (Artist/Genre)</description>
+      <id>0</id>
+      <type>image</type>
+      <posX>45</posX>
+      <posY>367</posY>
+      <width>420</width>
+      <height>420</height>
+      <texture flipY="true" diffuse="Thumb_Mask2.png">#selectedthumb</texture>
+      <animation effect="fade" time="70" reversible="false">visible</animation>
+      <keepaspectratio>no</keepaspectratio>
+      <visible>[facadeview.list|facadeview.smallicons|facadeview.largeicons]+[string.equals(#mvCentral.ArtistView,true)|string.equals(#mvCentral.GenreView,true)|string.equals(#mvCentral.DVDView,true)]</visible>
+    </control>
+    <control>
+      <description>Image for selected Item (Album)</description>
+      <id>0</id>
+      <type>image</type>
+      <posX>45</posX>
+      <posY>367</posY>
+      <width>420</width>
+      <height>420</height>
+      <texture flipY="true" diffuse="Thumb_Mask2.png">#selectedthumb</texture>
+      <animation effect="fade" time="70" reversible="false">visible</animation>
+      <keepaspectratio>no</keepaspectratio>
+      <visible>[facadeview.list|facadeview.smallicons|facadeview.largeicons]+string.equals(#mvCentral.AlbumView,true)</visible>
+    </control>
+    <control>
+      <description>Image for selected Item (Track)</description>
+      <id>0</id>
+      <type>image</type>
+      <posX>22</posX>
+      <posY>367</posY>
+      <width>450</width>
+      <height>333</height>
+      <texture flipY="true" diffuse="Thumb_Mask2.png">#selectedthumb</texture>
+      <animation effect="fade" time="70" reversible="false">visible</animation>
+      <keepaspectratio>yes</keepaspectratio>
+      <visible>[facadeview.list|facadeview.smallicons|facadeview.largeicons]+string.equals(#mvCentral.TrackView,true)</visible>
+    </control>
+    <!-- Text Information -->
+    <!-- First Line -->
+    <control>
+      <id>0</id>
+      <description>Description (Artist/Genre)</description>
+      <type>fadelabel</type>
+      <visible>[facadeview.list|facadeview.smallicons|facadeview.largeicons]+[string.equals(#mvCentral.ArtistView,true)|string.equals(#mvCentral.GenreView,true)]</visible>
+      <posX>45</posX>
+      <posY>232</posY>
+      <width>1387</width>
+      <font>font18</font>
+      <shadowAngle>45</shadowAngle>
+      <shadowDistance>3</shadowDistance>
+      <shadowColor>#shadow.dark</shadowColor>
+      <label>#selecteditem</label>
+      <animation effect="fade" time="70" reversible="false">visible</animation>
+    </control>
+    <control>
+      <id>0</id>
+      <description>Album Indication text</description>
+      <type>fadelabel</type>
+      <posX>45</posX>
+      <posY>232</posY>
+      <width>1387</width>
+      <font>font18</font>
+      <textcolor>ffffd700</textcolor>
+      <shadowAngle>45</shadowAngle>
+      <shadowDistance>3</shadowDistance>
+      <shadowColor>#shadow.dark</shadowColor>
+      <align>left</align>
+      <label>#selecteditem    [#mvCentral.Translation.Album.Label]</label>
+      <animation effect="fade" time="70" reversible="false">visible</animation>
+      <visible>[facadeview.list|facadeview.smallicons|facadeview.largeicons]+string.equals(#mvCentral.AlbumView,true)</visible>
+    </control>
+    <!-- Second Line -->
+    <control>
+      <description>Album Star Rating Image</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>45</posX>
+      <posY>285</posY>
+      <width>172</width>
+      <height>33</height>
+      <texture>star#mvCentral.Album.Rating.png</texture>
+      <animation effect="fade" time="70" reversible="false">visible</animation>
+      <visible>[facadeview.list|facadeview.smallicons|facadeview.largeicons]+string.equals(#mvCentral.AlbumView,true)</visible>
+    </control>
+    <control>
+      <id>0</id>
+      <description>Born or Formed Date</description>
+      <type>fadelabel</type>
+      <posX>45</posX>
+      <posY>285</posY>
+      <width>1387</width>
+      <font>font10</font>
+      <textcolor>ffffd700</textcolor>
+      <shadowAngle>45</shadowAngle>
+      <shadowDistance>3</shadowDistance>
+      <shadowColor>#shadow.dark</shadowColor>
+      <align>left</align>
+      <label>#mvCentral.BornOrFormed</label>
+      <animation effect="fade" time="70" reversible="false">visible</animation>
+      <visible>[facadeview.list|facadeview.smallicons|facadeview.largeicons]+[string.equals(#mvCentral.ArtistView,true)|string.equals(#mvCentral.GenreView,true)]</visible>
+    </control>
+    <!-- Third Line -->
+    <control>
+      <id>0</id>
+      <description>Description (Track)</description>
+      <type>fadelabel</type>
+      <visible>[facadeview.listfacadeview.list|facadeview.smallicons|facadeview.largeicons]+string.equals(#mvCentral.TrackView,true)</visible>
+      <posX>45</posX>
+      <posY>322</posY>
+      <width>1387</width>
+      <font>Menutitle</font>
+      <shadowAngle>45</shadowAngle>
+      <shadowDistance>3</shadowDistance>
+      <shadowColor>#shadow.dark</shadowColor>
+      <label>#selecteditem</label>
+      <animation effect="fade" time="70" reversible="false">visible</animation>
+    </control>
+    <control>
+      <id>0</id>
+      <description>Album Runtime and Tracks</description>
+      <type>fadelabel</type>
+      <posX>45</posX>
+      <posY>322</posY>
+      <width>1387</width>
+      <font>font11</font>
+      <textcolor>ffffd700</textcolor>
+      <shadowAngle>45</shadowAngle>
+      <shadowDistance>3</shadowDistance>
+      <shadowColor>#shadow.dark</shadowColor>
+      <align>left</align>
+      <label>[#mvCentral.Translation.Tracks.Label #mvCentral.TracksForAlbum | #mvCentral.Translation.TotalRuntime.Label #mvCentral.AlbumTracksRuntime]</label>
+      <animation effect="fade" time="70" reversible="false">visible</animation>
+      <visible>[facadeview.list|facadeview.smallicons|facadeview.largeicons]+string.equals(#mvCentral.AlbumView,true)</visible>
+    </control>
+    <control>
+      <id>0</id>
+      <description>Tracks by Artist</description>
+      <type>fadelabel</type>
+      <visible>[facadeview.list|facadeview.smallicons|facadeview.largeicons]+[string.equals(#mvCentral.ArtistView,true)|string.equals(#mvCentral.GenreView,true)]</visible>
+      <posX>45</posX>
+      <posY>322</posY>
+      <width>1387</width>
+      <font>font12</font>
+      <shadowAngle>45</shadowAngle>
+      <shadowDistance>3</shadowDistance>
+      <shadowColor>#shadow.dark</shadowColor>
+      <label>#mvCentral.Translation.Videos.Label: #mvCentral.VideosByArtist    [#mvCentral.Translation.TotalRuntime.Label #mvCentral.ArtistTracksRuntime]</label>
+      <animation effect="fade" time="70" reversible="false">visible</animation>
+    </control>
+    <!-- Bio Information/ Track Information -->
+    <control>
+      <id>0</id>
+      <description>Artist Bio</description>
+      <type>textboxscrollup</type>
+      <posX>495</posX>
+      <posY>367</posY>
+      <width>645</width>
+      <height>480</height>
+      <label>#mvCentral.ArtistBio</label>
+      <seperator>-----------------------------------------------------------------------------------</seperator>
+      <font>font11</font>
+      <scrollStartDelaySec>10</scrollStartDelaySec>
+      <visible>[facadeview.list|facadeview.smallicons|facadeview.largeicons]+string.equals(#mvCentral.ArtistView, true)</visible>
+      <animation effect="fade" time="70" reversible="false">visible</animation>
+    </control>
+    <control>
+      <id>0</id>
+      <description>Track Description</description>
+      <type>textboxscrollup</type>
+      <posX>495</posX>
+      <posY>367</posY>
+      <width>645</width>
+      <height>480</height>
+      <label>#mvCentral.TrackInfo</label>
+      <seperator>-----------------------------------------------------------------------------------</seperator>
+      <font>font11</font>
+      <scrollStartDelaySec>10</scrollStartDelaySec>
+      <visible>[facadeview.list|facadeview.smallicons|facadeview.largeicons]+[string.equals(#mvCentral.TrackView, true)|string.equals(#mvCentral.AlbumView, true)]</visible>
+      <animation effect="fade" time="70" reversible="false">visible</animation>
+    </control>
+    <!-- Genre/Tags -->
+    <control>
+      <id>0</id>
+      <description>Artist Genre</description>
+      <type>fadelabel</type>
+      <visible>[facadeview.list|facadeview.smallicons|facadeview.largeicons]+string.equals(#mvCentral.ArtistView,true)</visible>
+      <posX>45</posX>
+      <posY>855</posY>
+      <width>1575</width>
+      <font>font10</font>
+      <textcolor>ffa9d0f7</textcolor>
+      <label>#mvCentral.Genre</label>
+      <animation effect="fade" time="70" reversible="false">visible</animation>
+    </control>
+    <control>
+      <id>0</id>
+      <description>Artist Tags</description>
+      <type>fadelabel</type>
+      <visible>[facadeview.list|facadeview.smallicons|facadeview.largeicons]+string.equals(#mvCentral.ArtistView,true)</visible>
+      <posX>45</posX>
+      <posY>885</posY>
+      <width>1575</width>
+      <font>font10</font>
+      <textcolor>ffa9d0f7</textcolor>
+      <label>#mvCentral.ArtistTags</label>
+      <animation effect="fade" time="70" reversible="false">visible</animation>
+    </control>
+    <!-- Video Codecs (List/Album View) -->
+    <control>
+      <description>SD/HD Fullscreen/Widescreen (List/Album View)</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>0</posX>
+      <posY>825</posY>
+      <width>150</width>
+      <height>102</height>
+      <texture>Logos\#mvCentral.LocalMedia.videoresolution.png</texture>
+      <visible>[facadeview.list|facadeview.album]</visible>
+      <animation effect="fade" time="70" reversible="false">visible</animation>
+    </control>
+    <control>
+      <description>Video Codecs (List/Album View)</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>150</posX>
+      <posY>825</posY>
+      <width>150</width>
+      <height>102</height>
+      <texture>Logos\#mvCentral.LocalMedia.videocodec.png</texture>
+      <visible>[facadeview.list|facadeview.album]</visible>
+      <animation effect="fade" time="70" reversible="false">visible</animation>
+    </control>
+    <!-- Audio Channels / Codecs (List/Album View) -->
+    <control>
+      <description>Audio Codecs / Channels (List/Album View)</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>315</posX>
+      <posY>825</posY>
+      <width>150</width>
+      <height>102</height>
+      <texture>Logos\#mvCentral.LocalMedia.audiochannels.png</texture>
+      <visible>[facadeview.list|facadeview.album]</visible>
+      <animation effect="fade" time="70" reversible="false">visible</animation>
+    </control>
+    <!-- Video Codecs (Small/Large Icon View) -->
+    <control>
+      <description>SD/HD Fullscreen/Widescreen (Small/Large Icon View) </description>
+      <type>image</type>
+      <id>0</id>
+      <posX>0</posX>
+      <posY>825</posY>
+      <width>150</width>
+      <height>102</height>
+      <texture>Logos\#mvCentral.LocalMedia.videoresolution.png</texture>
+      <visible>[facadeview.smallicons|facadeview.largeicons]</visible>
+      <animation effect="fade" time="70" reversible="false">visible</animation>
+    </control>
+    <control>
+      <description>Video Codecs</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>150</posX>
+      <posY>825</posY>
+      <width>150</width>
+      <height>102</height>
+      <texture>Logos\#mvCentral.LocalMedia.videocodec.png</texture>
+      <visible>[facadeview.smallicons|facadeview.largeicons]</visible>
+      <animation effect="fade" time="70" reversible="false">visible</animation>
+    </control>
+    <!-- Audio Channels / Codecs (Small/Large Icon View) -->
+    <control>
+      <description>Audio Codecs / Channels (Small/Large Icon View)</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>315</posX>
+      <posY>825</posY>
+      <width>150</width>
+      <height>102</height>
+      <texture>Logos\#mvCentral.LocalMedia.audiochannels.png</texture>
+      <visible>[facadeview.smallicons|facadeview.largeicons]</visible>
+      <animation effect="fade" time="70" reversible="false">visible</animation>
+    </control>
+    <!-- ******************************************************************** -->
+    <!--                            Filmstrip Layout                          -->
+    <!-- ******************************************************************** -->
+    <!-- Images -->
+    <control>
+      <description>Image for selected Item (Artist)</description>
+      <id>0</id>
+      <type>image</type>
+      <visible>facadeview.filmstrip+string.equals(#mvCentral.ArtistView,true)</visible>
+      <posX>45</posX>
+      <posY>367</posY>
+      <width>420</width>
+      <height>420</height>
+      <texture flipY="true" diffuse="Thumb_Mask2.png">#selectedthumb</texture>
+      <animation effect="fade" time="70" reversible="false">visible</animation>
+      <keepaspectratio>no</keepaspectratio>
+    </control>
+    <control>
+      <description>Image for selected Item (Album)</description>
+      <id>0</id>
+      <type>image</type>
+      <visible>facadeview.filmstrip+string.equals(#mvCentral.AlbumView,true)</visible>
+      <posX>45</posX>
+      <posY>367</posY>
+      <width>420</width>
+      <height>420</height>
+      <texture flipY="true" diffuse="Thumb_Mask2.png">#selectedthumb</texture>
+      <animation effect="fade" time="70" reversible="false">visible</animation>
+      <keepaspectratio>no</keepaspectratio>
+    </control>
+    <control>
+      <description>Image for selected Item (Track)</description>
+      <id>0</id>
+      <type>image</type>
+      <visible>facadeview.filmstrip+string.equals(#mvCentral.TrackView,true)</visible>
+      <posX>22</posX>
+      <posY>367</posY>
+      <width>450</width>
+      <height>333</height>
+      <texture flipY="true" diffuse="Thumb_Mask.png">#selectedthumb</texture>
+      <animation effect="fade" time="70" reversible="false">visible</animation>
+      <keepaspectratio>yes</keepaspectratio>
+    </control>
+    <!-- Text Description -->
+    <!-- Line 1 -->
+    <control>
+      <id>0</id>
+      <description>Album Description</description>
+      <type>fadelabel</type>
+      <posX>45</posX>
+      <posY>232</posY>
+      <width>1387</width>
+      <font>font18</font>
+      <shadowAngle>45</shadowAngle>
+      <shadowDistance>3</shadowDistance>
+      <shadowColor>#shadow.dark</shadowColor>
+      <label>#selecteditem</label>
+      <visible>facadeview.filmstrip+[string.equals(#mvCentral.ArtistView,true)|string.equals(#mvCentral.AlbumView,true)]</visible>
+      <animation effect="fade" time="70" reversible="false">visible</animation>
+    </control>
+    <control>
+      <id>0</id>
+      <description>Track Description</description>
+      <type>fadelabel</type>
+      <posX>45</posX>
+      <posY>232</posY>
+      <width>1387</width>
+      <font>font18</font>
+      <shadowAngle>45</shadowAngle>
+      <shadowDistance>3</shadowDistance>
+      <shadowColor>#shadow.dark</shadowColor>
+      <label>#selecteditem</label>
+      <visible>facadeview.filmstrip+string.equals(#mvCentral.TrackView,true)</visible>
+      <animation effect="fade" time="70" reversible="false">visible</animation>
+    </control>
+    <!-- Line 2 -->
+    <control>
+      <description>Album Star Rating Image</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>45</posX>
+      <posY>285</posY>
+      <width>172</width>
+      <height>33</height>
+      <texture>star#mvCentral.Album.Rating.png</texture>
+      <visible>[facadeview.filmstrip]+string.equals(#mvCentral.AlbumView,true)</visible>
+      <animation effect="fade" time="70" reversible="false">visible</animation>
+    </control>
+    <control>
+      <id>0</id>
+      <description>Artist Born or Formed Date</description>
+      <type>fadelabel</type>
+      <posX>45</posX>
+      <posY>285</posY>
+      <width>1387</width>
+      <font>font10</font>
+      <textcolor>ffffd700</textcolor>
+      <shadowAngle>45</shadowAngle>
+      <shadowDistance>3</shadowDistance>
+      <shadowColor>#shadow.dark</shadowColor>
+      <align>left</align>
+      <label>#mvCentral.BornOrFormed</label>
+      <animation effect="fade" time="70" reversible="false">visible</animation>
+      <visible>[facadeview.filmstrip]+[string.equals(#mvCentral.ArtistView,true)|string.equals(#mvCentral.GenreView,true)]</visible>
+    </control>
+    <!-- Line 3 -->
+    <control>
+      <id>0</id>
+      <description>Tracks by Artist</description>
+      <type>fadelabel</type>
+      <posX>45</posX>
+      <posY>315</posY>
+      <width>1402</width>
+      <font>font11</font>
+      <shadowAngle>45</shadowAngle>
+      <shadowDistance>3</shadowDistance>
+      <shadowColor>#shadow.dark</shadowColor>
+      <label>#mvCentral.Translation.Videos.Label: #mvCentral.VideosByArtist    [#mvCentral.Translation.TotalRuntime.Label #mvCentral.ArtistTracksRuntime]</label>
+      <visible>facadeview.filmstrip+string.equals(#mvCentral.ArtistView,true)</visible>
+      <animation effect="fade" time="70" reversible="false">visible</animation>
+    </control>
+    <control>
+      <id>0</id>
+      <description>Tracks on Album</description>
+      <type>fadelabel</type>
+      <posX>45</posX>
+      <posY>315</posY>
+      <width>1402</width>
+      <font>font11</font>
+      <shadowAngle>45</shadowAngle>
+      <shadowDistance>3</shadowDistance>
+      <shadowColor>#shadow.dark</shadowColor>
+      <label>[#mvCentral.Translation.Tracks.Label #mvCentral.TracksForAlbum | #mvCentral.Translation.TotalRuntime.Label #mvCentral.AlbumTracksRuntime]</label>
+      <visible>facadeview.filmstrip+string.equals(#mvCentral.AlbumView,true)</visible>
+      <animation effect="fade" time="70" reversible="false">visible</animation>
+    </control>
+    <!-- Bio Information/ Track Information -->
+    <control>
+      <id>0</id>
+      <description>Artist Bio</description>
+      <type>textboxscrollup</type>
+      <posX>495</posX>
+      <posY>367</posY>
+      <width>1290</width>
+      <height>300</height>
+      <label>#mvCentral.ArtistBio</label>
+      <seperator>-----------------------------------------------------------------------------------</seperator>
+      <font>font11</font>
+      <scrollStartDelaySec>4</scrollStartDelaySec>
+      <visible>facadeview.filmstrip+string.equals(#mvCentral.ArtistView,true)</visible>
+      <animation effect="fade" time="70" reversible="false">visible</animation>
+    </control>
+    <control>
+      <id>0</id>
+      <description>Artist Bio</description>
+      <type>textboxscrollup</type>
+      <posX>495</posX>
+      <posY>367</posY>
+      <width>1290</width>
+      <height>180</height>
+      <label>#mvCentral.TrackInfo</label>
+      <seperator>-----------------------------------------------------------------------------------</seperator>
+      <font>font11</font>
+      <scrollStartDelaySec>4</scrollStartDelaySec>
+      <visible>facadeview.filmstrip+[string.equals(#mvCentral.TrackView,true)|string.equals(#mvCentral.AlbumView,true)]</visible>
+      <animation effect="fade" time="70" reversible="false">visible</animation>
+    </control>
+    <!-- Genre/Tags -->
+    <control>
+      <id>0</id>
+      <description>Artist Genre</description>
+      <type>fadelabel</type>
+      <visible>[facadeview.filmstrip]+string.equals(#mvCentral.ArtistView,true)</visible>
+      <posX>495</posX>
+      <posY>682</posY>
+      <width>1050</width>
+      <font>font10</font>
+      <textcolor>ffa9d0f7</textcolor>
+      <label>#mvCentral.Genre</label>
+      <animation effect="fade" time="70" reversible="false">visible</animation>
+    </control>
+    <control>
+      <id>0</id>
+      <description>Artist Tags</description>
+      <type>fadelabel</type>
+      <visible>facadeview.filmstrip+string.equals(#mvCentral.ArtistView,true)</visible>
+      <posX>495</posX>
+      <posY>720</posY>
+      <width>1350</width>
+      <font>font10</font>
+      <textcolor>ffa9d0f7</textcolor>
+      <align>left</align>
+      <label>#mvCentral.ArtistTags</label>
+      <animation effect="fade" time="70" reversible="false">visible</animation>
+    </control>
+    <!-- Video Codecs -->
+    <control>
+      <description>SD/HD Fullscreen/Widescreen</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>495</posX>
+      <posY>585</posY>
+      <width>150</width>
+      <height>102</height>
+      <texture>Logos\#mvCentral.LocalMedia.videoresolution.png</texture>
+      <visible>facadeview.filmstrip</visible>
+      <animation effect="fade" time="70" reversible="false">visible</animation>
+    </control>
+    <control>
+      <description>Video Codecs</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>690</posX>
+      <posY>585</posY>
+      <width>150</width>
+      <height>102</height>
+      <texture>Logos\#mvCentral.LocalMedia.videocodec.png</texture>
+      <visible>facadeview.filmstrip</visible>
+      <animation effect="fade" time="70" reversible="false">visible</animation>
+    </control>
+    <!-- Audio Channels / Codecs-->
+    <control>
+      <description>Audio Codecs / Channels</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>885</posX>
+      <posY>585</posY>
+      <width>150</width>
+      <height>102</height>
+      <texture>Logos\#mvCentral.LocalMedia.audiochannels.png</texture>
+      <visible>facadeview.filmstrip</visible>
+      <animation effect="fade" time="70" reversible="false">visible</animation>
+    </control>
+    <!-- ************************************ -->
+    <!--              Hidden Menu             -->
+    <!-- ************************************ -->
+    <control>
+      <type>actiongroup</type>
+      <description>Hidden Action Menu</description>
+      <defaultcontrol>2</defaultcontrol>
+      <onexit>50</onexit>
+      <buttonX>0</buttonX>
+      <buttonY>0</buttonY>
+      <buttonwidth>159</buttonwidth>
+      <buttonheight>1080</buttonheight>
+      <textureFocus>-</textureFocus>
+      <textureNoFocus>Action_nofocus.png</textureNoFocus>
+      <width>412</width>
+      <height>1350</height>
+      <dimColor>00ffffff</dimColor>
+      <control>
+        <type>image</type>
+        <id>1</id>
+        <width>1920</width>
+        <height>1080</height>
+        <texture>white.png</texture>
+        <colordiffuse>50005eef</colordiffuse>
+      </control>
+      <control>
+        <type>image</type>
+        <posX>39</posX>
+        <posY>117</posY>
+        <width>550</width>
+        <height>886</height>
+        <texture>Backslide.png</texture>
+        <colorDiffuse>fffffffff</colorDiffuse>
+        <visible>!Control.HasFocus(50)</visible>
+        <animation effect="slide" time="70" start="-300,0" reversible="false">visible</animation>
+        <animation effect="slide" time="70" end="-300,0" reversible="false">hidden</animation>
+      </control>
+      <control>
+        <description>group element</description>
+        <type>group</type>
+        <animation effect="slide" time="70" start="-300,0" reversible="false">visible</animation>
+        <animation effect="slide" time="70" end="-300,0" reversible="false">hidden</animation>
+        <posX>106</posX>
+        <posY>181</posY>
+        <visible>!Control.HasFocus(50)</visible>
+        <control>
+          <description>View-As</description>
+          <type>menubutton</type>
+          <id>2</id>
+          <posX>106</posX>
+          <posY>181</posY>
+          <label />
+          <mode>dialoglist</mode>
+          <valueTextInButton>yes</valueTextInButton>
+          <valuePrefixText>95</valuePrefixText>
+          <onright>50</onright>
+          <onup>17</onup>
+          <ondown>5</ondown>
+        </control>
+        <control>
+          <description>Switch View</description>
+          <type>menubutton</type>
+          <id>5</id>
+          <posX>106</posX>
+          <posY>244</posY>
+          <label />
+          <mode>dialoglist</mode>
+          <valueTextInButton>yes</valueTextInButton>
+          <valuePrefixText>97</valuePrefixText>
+          <onright>50</onright>
+          <onup>2</onup>
+          <ondown>3</ondown>
+        </control>
+        <control>
+          <description>Sort Facade</description>
+          <type>sortbutton</type>
+          <id>3</id>
+          <posX>106</posX>
+          <posY>309</posY>
+          <label>103</label>
+          <onright>50</onright>
+          <onup>5</onup>
+          <ondown>6</ondown>
+        </control>
+        <control>
+          <description>Empty button</description>
+          <type>button</type>
+          <id>0</id>
+          <posX>106</posX>
+          <posY>373</posY>
+          <label>-</label>
+          <visible>false</visible>
+        </control>
+        <control>
+          <description>Play All Random</description>
+          <type>button</type>
+          <id>6</id>
+          <posX>106</posX>
+          <posY>438</posY>
+          <onup>5</onup>
+          <ondown>7</ondown>
+          <onleft>50</onleft>
+          <label>#mvCentral.Translation.PlayAllRandom.Label</label>
+        </control>
+        <control>
+          <description>Smart Playlists</description>
+          <type>button</type>
+          <id>7</id>
+          <posX>106</posX>
+          <posY>502</posY>
+          <onup>6</onup>
+          <ondown>8</ondown>
+          <onleft>50</onleft>
+          <label>#mvCentral.Translation.SmartPlaylistOptions.Label</label>
+        </control>
+        <control>
+          <description>Jump to Playlist</description>
+          <type>button</type>
+          <id>8</id>
+          <posX>106</posX>
+          <posY>567</posY>
+          <onup>7</onup>
+          <ondown>9</ondown>
+          <onleft>50</onleft>
+          <label>#mvCentral.Translation.Playlist.Label</label>
+        </control>
+        <control>
+          <description>Empty button</description>
+          <type>button</type>
+          <id>0</id>
+          <posX>106</posX>
+          <posY>631</posY>
+          <label>-</label>
+          <visible>false</visible>
+        </control>
+        <control>
+          <description>Jump to DB Stats and Info</description>
+          <type>button</type>
+          <id>9</id>
+          <posX>106</posX>
+          <posY>696</posY>
+          <onup>8</onup>
+          <ondown>10</ondown>
+          <onleft>50</onleft>
+          <label>#mvCentral.Translation.StatsAndInfo.Label</label>
+        </control>
+        <control>
+          <description>Configure Genres from tags</description>
+          <type>button</type>
+          <id>10</id>
+          <posX>106</posX>
+          <posY>760</posY>
+          <onup>9</onup>
+          <ondown>11</ondown>
+          <onleft>50</onleft>
+          <label>#mvCentral.Translation.ConfigGenre.Label</label>
+        </control>
+        <control>
+          <description>Search Artists</description>
+          <type>button</type>
+          <id>11</id>
+          <posX>106</posX>
+          <posY>825</posY>
+          <onup>10</onup>
+          <ondown>15</ondown>
+          <onleft>50</onleft>
+          <label>#mvCentral.Translation.Search.Label</label>
+        </control>
+        <control>
+          <description>Search YouTube.FM</description>
+          <id>15</id>
+          <posX>106</posX>
+          <posY>889</posY>
+          <onup>11</onup>
+          <ondown>2</ondown>
+          <onleft>50</onleft>
+          <type>button</type>
+          <label>#mvCentral.Translation.Search.Label Youtube.FM</label>
+          <hyperlink>29050</hyperlink>
+          <hyperlinkParameter>ARTISTVIDEOS:#mvCentral.ArtistName</hyperlinkParameter>
+          <onleft>50</onleft>
+        </control>
+      </control>
+    </control>
+    <!-- ******************************************************************** -->
+    <!--     Facade Layout Controls, List, Icons, Filmstrip and Coverflow     -->
+    <!-- ******************************************************************** -->
+    <control>
+      <description>group element</description>
+      <type>group</type>
+      <animation effect="slide" time="70" start="0,-300">WindowOpen</animation>
+      <animation effect="slide" time="70" end="800,0">WindowClose</animation>
+      <control>
+        <description>composite control consisting of a list control and a thumbnail panel</description>
+        <type>facadeview</type>
+        <id>50</id>
+        <control>
+          <description>listcontrol</description>
+          <type>listcontrol</type>
+          <id>50</id>
+          <posX>1140</posX>
+          <posY>360</posY>
+          <height>645</height>
+          <width>795</width>
+          <onleft>2</onleft>
+          <onright>2</onright>
+          <scrollOffset>1</scrollOffset>
+          <explicitlyEnableScrollLabel>yes</explicitlyEnableScrollLabel>
+          <itemWidth>63</itemWidth>
+          <itemHeight>63</itemHeight>
+          <textureHeight>63</textureHeight>
+          <textXOff>-40</textXOff>
+          <textYOff>-3</textYOff>
+          <textXOff2>0</textXOff2>
+          <textYOff2>30</textYOff2>
+          <font>font12</font>
+          <font2>font9</font2>
+          <keepaspectratio>no</keepaspectratio>
+          <spinPosX>1762</spinPosX>
+          <spinPosY>1021</spinPosY>
+          <spinAlign>Right</spinAlign>
+          <spinColor>ff006698</spinColor>
+          <textureUp>arrow_round_up_nofocus.png</textureUp>
+          <textureDown>arrow_round_down_nofocus.png</textureDown>
+          <textureUpFocus>arrow_round_up_focus.png</textureUpFocus>
+          <textureDownFocus>arrow_round_down_focus.png</textureDownFocus>
+          <spinWidth>75</spinWidth>
+          <spinHeight>55</spinHeight>
+          <suffix>|</suffix>
+        </control>
+        <control>
+          <description>Thumbnail Panel</description>
+          <type>thumbnailpanel</type>
+          <dimColor>90ffffff</dimColor>
+          <id>50</id>
+          <posX>1200</posX>
+          <posY>255</posY>
+          <width>795</width>
+          <height>822</height>
+          <scrollOffset>0</scrollOffset>
+          <onleft>2</onleft>
+          <onright>2</onright>
+          <!--                          -->
+          <textureWidthBig>277</textureWidthBig>
+          <textureHeightBig>277</textureHeightBig>
+          <itemWidthBig>330</itemWidthBig>
+          <itemHeightBig>330</itemHeightBig>
+          <thumbWidthBig>277</thumbWidthBig>
+          <thumbHeightBig>277</thumbHeightBig>
+          <!--                          -->
+          <thumbPosXBig>0</thumbPosXBig>
+          <thumbPosYBig>0</thumbPosYBig>
+          <!--                          -->
+          <textureWidth>165</textureWidth>
+          <textureHeight>165</textureHeight>
+          <itemWidth>180</itemWidth>
+          <itemHeight>217</itemHeight>
+          <thumbWidth>165</thumbWidth>
+          <thumbHeight>165</thumbHeight>
+          <!--                          -->
+          <thumbPosX>1</thumbPosX>
+          <thumbPosY>1</thumbPosY>
+          <thumbZoom>no</thumbZoom>
+          <enableFocusZoom>no</enableFocusZoom>
+          <zoomXPixels>20</zoomXPixels>
+          <zoomYPixels>20</zoomYPixels>
+          <hideUnfocusTexture>yes</hideUnfocusTexture>
+          <renderFocusText>no</renderFocusText>
+          <renderUnfocusText>yes</renderUnfocusText>
+          <showFrame>true</showFrame>
+          <imageFolder>-</imageFolder>
+          <imageFolderFocus>-</imageFolderFocus>
+          <textureMask>Picturethumbmask.png</textureMask>
+          <frameNoFocus>Picturethumbframe.png</frameNoFocus>
+          <frameFocus>Picturethumbframe.png</frameFocus>
+          <keepaspectratio>no</keepaspectratio>
+          <font>font9</font>
+          <spinCanFocus>no</spinCanFocus>
+          <dimColor>80ffffff</dimColor>
+        </control>
+        <control>
+          <description>Filmstrip view</description>
+          <type>filmstrip</type>
+          <colordiffuse>90ffffff</colordiffuse>
+          <dimColor>90ffffff</dimColor>
+          <id>50</id>
+          <posX>7</posX>
+          <posY>825</posY>
+          <onup>2</onup>
+          <ondown>2</ondown>
+          <scrollOffset>2</scrollOffset>
+          <width>1905</width>
+          <height>864</height>
+          <thumbWidth>225</thumbWidth>
+          <thumbHeight>225</thumbHeight>
+          <thumbPosX>0</thumbPosX>
+          <thumbPosY>0</thumbPosY>
+          <itemWidth>210</itemWidth>
+          <itemHeight>240</itemHeight>
+          <textureWidth>225</textureWidth>
+          <textureHeight>225</textureHeight>
+          <frame>Picturethumbframe.png</frame>
+          <frameFocus>Picturethumbframe.png</frameFocus>
+          <textureMask>Picturethumbmask.png</textureMask>
+          <thumbs mask="Picturethumbmask.png">
+          </thumbs>
+          <background>emtpy.png</background>
+          <InfoImage>
+          </InfoImage>
+          <showFrame>yes</showFrame>
+          <showFolder>no</showFolder>
+          <showBackGround>no</showBackGround>
+          <showInfoImage>no</showInfoImage>
+          <keepaspectratio>no</keepaspectratio>
+          <dimColor>80ffffff</dimColor>
+          <textureUp>arrow_round_right_nofocus.png</textureUp>
+          <textureDown>arrow_round_left_nofocus.png</textureDown>
+          <textureUpFocus>arrow_round_right_focus.png</textureUpFocus>
+          <textureDownFocus>arrow_round_left_focus.png</textureDownFocus>
+          <thumbAnimation effect="zoom" start="100,100" end="120,120" time="200" tween="circle" ease="inout">focus</thumbAnimation>
+          <thumbAnimation effect="zoom" start="120,120" end="100,100" time="200" tween="back" ease="inout">unfocus</thumbAnimation>
+        </control>
+        <control>
+          <description>Cover Flow view</description>
+          <type>coverflow</type>
+          <colordiffuse>90ffffff</colordiffuse>
+          <dimColor>90ffffff</dimColor>
+          <id>50</id>
+          <posX>0</posX>
+          <posY>300</posY>
+          <width>1920</width>
+          <height>1080</height>
+          <onup>2</onup>
+          <onleft>2</onleft>
+          <selectedCard>0</selectedCard>
+          <cardWidth>540</cardWidth>
+          <cardHeight>540</cardHeight>
+          <angle>65</angle>
+          <sideShift>380</sideShift>
+          <sideGap>90</sideGap>
+          <sideDepth>550</sideDepth>
+          <offsetY>0</offsetY>
+          <selectedOffsetY>0</selectedOffsetY>
+          <speed>8</speed>
+          <backgroundHeight>375</backgroundHeight>
+          <backgroundWidth>1920</backgroundWidth>
+          <backgroundX>0</backgroundX>
+          <backgroundY>705</backgroundY>
+          <backgroundDiffuse>FF000000</backgroundDiffuse>
+          <background>background2.png</background>
+          <showBackground>yes</showBackground>
+          <foregroundHeight>720</foregroundHeight>
+          <foregroundWidth>1280</foregroundWidth>
+          <foregroundX>0</foregroundX>
+          <foregroundY>0</foregroundY>
+          <foregroundDiffuse>FF000000</foregroundDiffuse>
+          <foreground>coverflow_foreground.png</foreground>
+          <showForeground>no</showForeground>
+          <showFrame>yes</showFrame>
+          <frame>Picture_cover2.png</frame>
+          <frameFocus>Picture_cover2.png</frameFocus>
+          <frameWidth>540</frameWidth>
+          <frameHeight>540</frameHeight>
+          <spinSpeed>8</spinSpeed>
+          <unfocusedAlpha>FF</unfocusedAlpha>
+          <folderPrefix>[</folderPrefix>
+          <folderSuffix>]</folderSuffix>
+          <font1>font13</font1>
+          <font2>font10</font2>
+          <label1>#selecteditem</label1>
+          <label2>#selecteditem2</label2>
+          <textcolor>ffffd700</textcolor>
+          <remoteColor>FFFF0000</remoteColor>
+          <playedColor>FFA0D0FF</playedColor>
+          <downloadColor>FF00FF00</downloadColor>
+          <selectedColor>FFFFFFFF</selectedColor>
+          <shadowAngle>45</shadowAngle>
+          <shadowDistance>0</shadowDistance>
+          <shadowColor>FF000000</shadowColor>
+          <label1YOff>380</label1YOff>
+          <label2YOff>400</label2YOff>
+          <pageSize>5</pageSize>
+          <keepaspectratio>no</keepaspectratio>
+          <scrollbarBackground>bar_hor.png</scrollbarBackground>
+          <scrollbarLeft>mouse_left_horizontal.png</scrollbarLeft>
+          <scrollbarRight>mouse_right_horizontal.png</scrollbarRight>
+          <scrollbarYOff>682</scrollbarYOff>
+          <showScrollbar>yes</showScrollbar>
+          <cards flipY="yes" diffuse="Thumb_Mask.png" mask="Picturethumbmask.png">Picturethumbmask.png</cards>
+          <subitems>
+            <subitem><![CDATA[                 <controls>
+              <control>
+                <description>background</description>
+                <type>image</type>
+                <posX>0</posX>
+                <posY>0</posY>
+                <width>360</width>
+                <height>360</height>
+                <texture flipY="yes" diffuse="Thumb_Mask.png" mask="Picturethumbmask.png">Picturethumbmask.png</texture>
+              </control>
+              <control>
+                <description>General Info</description>
+                <type>fadelabel</type>
+                <posX>20</posX>
+                <posY>10</posY>
+                <width>320</width>
+                <label>#(L(171)) #mvCentral.ArtistName</label>
+                <font>font10</font>
+                <align>left</align>
+                <textcolor>gainsboro</textcolor>
+              </control>
+          		<control>
+          			<description>Tracks by Artist</description>
+          			<type>fadelabel</type>
+          			<posX>20</posX>
+          			<posY>32</posY>
+          			<width>320</width>
+          			<font>font10</font>
+          			<textcolor>gainsboro</textcolor>
+          			<label>#mvCentral.Translation.Videos.Label: #mvCentral.VideosByArtist</label>
+          			<visible>string.equals(#mvCentral.ArtistView, true)</visible>
+          		</control>
+          	  <control>
+          			<description>Album Genre</description>
+          			<type>fadelabel</type>
+          			<posX>20</posX>
+          			<posY>64</posY>
+          			<width>320</width>
+          			<font>font10</font>
+                <textcolor>ffa9d0f7</textcolor>
+          			<align>left</align>
+          			<label>#mvCentral.ArtistTags</label>
+          			<visible>string.equals(#mvCentral.ArtistView, true)</visible>
+          		</control>          		        			              
+          		<control>
+          			<description>Album Name</description>
+          			<type>fadelabel</type>
+          			<posX>20</posX>
+          			<posY>32</posY>
+          			<width>320</width>
+          			<font>font10</font>
+          			<textcolor>gainsboro</textcolor>
+          			<label>#(L(170)) #mvCentral.Album</label>
+          			<visible>string.equals(#mvCentral.AlbumView, true)</visible>
+          		</control>
+          	  <control>
+          			<description>Album tracks and total runtime</description>
+          			<type>fadelabel</type>
+          			<posX>20</posX>
+          			<posY>60</posY>
+          			<width>320</width>
+          			<font>font9</font>
+                <textcolor>gainsboro</textcolor>
+          			<align>left</align>
+          			<label>[#mvCentral.Translation.Tracks.Label #mvCentral.TracksForAlbum | #mvCentral.Translation.TotalRuntime.Label #mvCentral.AlbumTracksRuntime]</label>
+          			<visible>string.equals(#mvCentral.AlbumView, true)</visible>
+          		</control>          		        			              
+          		<control>
+          			<description>Artist Bio</description>
+          			<type>textboxscrollup</type>
+          			<posX>20</posX>
+          			<posY>94</posY>
+          			<width>320</width>
+          			<height>120</height>
+                <align>left</align>
+                <font>font9</font>
+                <lineSpacing>2</lineSpacing>
+                <textcolor>gainsboro</textcolor>
+           			<label>#mvCentral.ArtistBio</label>
+          			<seperator>-----------------------------------------------------------------------------------</seperator>
+          			<scrollStartDelaySec>10</scrollStartDelaySec>
+          			<visible>string.equals(#mvCentral.ArtistView, true)</visible>
+          		</control>
+          		<control>
+          			<id>0</id>
+          			<description>Track Description</description>
+          			<type>textboxscrollup</type>
+          			<posX>20</posX>
+          			<posY>94</posY>
+          			<width>320</width>
+          			<height>120</height>
+          			<label>#mvCentral.TrackInfo</label>
+          			<seperator>-----------------------------------------------------------------------------------</seperator>
+          			<font>font9</font>
+                <lineSpacing>2</lineSpacing>
+          			<scrollStartDelaySec>10</scrollStartDelaySec>
+          			<visible>[string.equals(#mvCentral.TrackView, true)|string.equals(#mvCentral.AlbumView, true)]</visible>
+          		</control>
+               <control>
+                <description>SD/HD Fullscreen/Widescreen</description>
+                <type>image</type>
+                <posX>20</posX>
+                <posY>40</posY>
+                <width>65</width>
+                <height>44</height>
+                <texture>Logos\#mvCentral.LocalMedia.videoresolution.png</texture>
+           			<visible>string.equals(#mvCentral.TrackView, true)</visible>
+              </control>
+              <!-- Video Codecs -->
+              <control>
+                <description>Video Codecs</description>
+                <type>image</type>
+                <posX>140</posX>
+                <posY>40</posY>
+                <width>65</width>
+                <height>44</height>
+                <texture>Logos\#mvCentral.LocalMedia.videocodec.png</texture>
+           			<visible>string.equals(#mvCentral.TrackView, true)</visible>
+              </control>
+              <!-- Audio Channels / Codecs-->
+              <control>
+                <description>Audio Codecs / Channels</description>
+                <type>image</type>
+                <posX>250</posX>
+                <posY>40</posY>
+                <width>65</width>
+                <height>44</height>
+                <texture>Logos\#mvCentral.LocalMedia.audiochannels.png</texture>
+           			<visible>string.equals(#mvCentral.TrackView, true)</visible>
+              </control>
+            </controls>]]></subitem>
+          </subitems>
+        </control>
+      </control>
+    </control>
+    <!-- *************************************** -->
+    <!-- Background Metadata and Text Percentage -->
+    <!-- *************************************** -->
+    <control>
+      <type>label</type>
+      <description>Background Metadata Refresh Text Percentage</description>
+      <id>0</id>
+      <posX>480</posX>
+      <posY>900</posY>
+      <width>1200</width>
+      <font>font9</font>
+      <align>left</align>
+      <label>Background Metadata Refresh: #mvCentral.Metadata.Update.Progress</label>
+      <visible>control.isvisible(12)</visible>
+      <animation effect="fade" time="70" reversible="false">visible</animation>
+    </control>
+    <control>
+      <description>Background Metadata Refresh Progress Bar</description>
+      <type>progress</type>
+      <id>12</id>
+      <posX>480</posX>
+      <posY>945</posY>
+      <width>660</width>
+      <height>30</height>
+      <label>-</label>
+      <texturebg>osd_progress_background.png</texturebg>
+      <onlymidtexture>yes</onlymidtexture>
+      <midwidth>660</midwidth>
+      <midheight>27</midheight>
+      <midoffsetX>1</midoffsetX>
+      <midoffsetY>1</midoffsetY>
+      <midtexture>osd_progress_mid.png</midtexture>
+      <animation effect="fade" time="70" reversible="false">visible</animation>
+      <visible>string.equals(#mvCentral.Metadata.Scan.Active,true)</visible>
+    </control>
+  </controls>
+</window>

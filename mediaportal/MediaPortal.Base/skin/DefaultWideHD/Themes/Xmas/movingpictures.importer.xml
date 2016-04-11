@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!--version="1.0" encoding="utf-8" standalone="yes"-->
+<!--version="1.0" encoding="utf-8"-->
+<window>
+  <id>96743</id>
+  <defaultcontrol>310</defaultcontrol>
+  <allowoverlay>yes</allowoverlay>
+  <disabletopbar>no</disabletopbar>
+  <controls>
+    <control>
+      <description>DEFAULT BACKGROUND</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>1920</width>
+      <height>1080</height>
+      <texture>BH MovingPictures.jpg</texture>
+      <shouldCache>true</shouldCache>
+    </control>
+    <control>
+      <description>Movie Backdrop (Fan Art) - Plug-in sets to invisible, if no art.</description>
+      <type>image</type>
+      <id>400</id>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>1920</width>
+      <height>1080</height>
+      <texture>#MovingPictures.Backdrop</texture>
+      <animation effect="fade" time="150">visible</animation>
+      <animation effect="fade" time="150">hidden</animation>
+    </control>
+    <control>
+      <description>Alternate Movie Backdrop - Toggles Load with Component 400 for animations on visibiltiy</description>
+      <type>image</type>
+      <id>401</id>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>1920</width>
+      <height>1080</height>
+      <texture>#MovingPictures.Backdrop2</texture>
+      <animation effect="fade" time="150">visible</animation>
+      <animation effect="fade" time="150">hidden</animation>
+    </control>
+    <import>common.window.xml</import>
+    <import>common.time.xml</import>
+    <control>
+      <description>General Overlay</description>
+      <id>0</id>
+      <type>image</type>
+      <posX>0</posX>
+      <posY>45</posY>
+      <width>1920</width>
+      <height>1080</height>
+      <texture>general_overlay.png</texture>
+    </control>
+    <control>
+      <description>all files list</description>
+      <type>listcontrol</type>
+      <id>310</id>
+      <width>1599</width>
+      <textXOff>49</textXOff>
+      <textXOff2>1500</textXOff2>
+      <textXOff3>2499</textXOff3>
+      <PinIconXOff>4</PinIconXOff>
+      <PinIconYOff>3</PinIconYOff>
+      <IconYOff>4999</IconYOff>
+      <dimColor>ffffffff</dimColor>
+      <spinPosX>1827</spinPosX>
+      <spinPosY>999</spinPosY>
+      <onright>311</onright>
+      <onleft>19</onleft>
+      <visible allowhiddenfocus="true">string.equals(#MovingPictures.Importer.ListMode.Flag,ALL)</visible>
+    </control>
+    <control>
+      <description>pending List</description>
+      <type>listcontrol</type>
+      <id>311</id>
+      <scrollOffset>1</scrollOffset>
+      <width>1599</width>
+      <textXOff>49</textXOff>
+      <textXOff2>1500</textXOff2>
+      <textXOff3>2499</textXOff3>
+      <PinIconXOff>4</PinIconXOff>
+      <PinIconYOff>3</PinIconYOff>
+      <IconYOff>4999</IconYOff>
+      <dimColor>ffffffff</dimColor>
+      <spinPosX>1827</spinPosX>
+      <spinPosY>999</spinPosY>
+      <onright>312</onright>
+      <onleft>310</onleft>
+      <visible allowhiddenfocus="true">string.equals(#MovingPictures.Importer.ListMode.Flag,PENDING)</visible>
+    </control>
+    <control>
+      <description>complete List</description>
+      <type>listcontrol</type>
+      <id>312</id>
+      <scrollOffset>1</scrollOffset>
+      <width>1599</width>
+      <textXOff>49</textXOff>
+      <textXOff2>1500</textXOff2>
+      <textXOff3>2499</textXOff3>
+      <PinIconXOff>4</PinIconXOff>
+      <PinIconYOff>3</PinIconYOff>
+      <IconYOff>4999</IconYOff>
+      <dimColor>ffffffff</dimColor>
+      <spinPosX>1827</spinPosX>
+      <spinPosY>999</spinPosY>
+      <onleft>311</onleft>
+      <onright>312</onright>
+      <visible allowhiddenfocus="true">string.equals(#MovingPictures.Importer.ListMode.Flag,COMPLETED)</visible>
+    </control>
+    <control>
+      <description>status label</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>0</posX>
+      <posY>210</posY>
+      <width>1920</width>
+      <align>center</align>
+      <label>#MovingPictures.Importer.Status</label>
+      <textcolor>aaffffff</textcolor>
+      <font>font11</font>
+    </control>
+    <control>
+      <type>label</type>
+      <id>1</id>
+      <posX>45</posX>
+      <posY>15</posY>
+      <label>#MovingPictures.Translation.Importer.Label</label>
+      <font>Label</font>
+      <align>left</align>
+      <textcolor>ffffd700</textcolor>
+    </control>
+    <control>
+      <description>all files label</description>
+      <type>label</type>
+      <id>0</id>
+      <label>#MovingPictures.Translation.AllFiles.Label</label>
+      <align>left</align>
+      <posX>45</posX>
+      <posY>52</posY>
+      <textcolor>ffffd700</textcolor>
+      <font>font10</font>
+      <visible>string.equals(#MovingPictures.Importer.ListMode.Flag,ALL)</visible>
+    </control>
+    <control>
+      <description>pending files label</description>
+      <type>label</type>
+      <id>0</id>
+      <label>#MovingPictures.Translation.FilesNeedingAttention.Label</label>
+      <align>left</align>
+      <posX>45</posX>
+      <posY>52</posY>
+      <textcolor>ffffd700</textcolor>
+      <font>font10</font>
+      <visible>string.equals(#MovingPictures.Importer.ListMode.Flag,PENDING)</visible>
+    </control>
+    <control>
+      <description>completed files label</description>
+      <type>label</type>
+      <id>0</id>
+      <label>#MovingPictures.Translation.CompletedFiles.Label</label>
+      <align>left</align>
+      <posX>45</posX>
+      <posY>52</posY>
+      <textcolor>ffffd700</textcolor>
+      <font>font10</font>
+      <visible>string.equals(#MovingPictures.Importer.ListMode.Flag,COMPLETED)</visible>
+    </control>
+    <control>
+      <type>actiongroup</type>
+      <description>action menu</description>
+      <defaultcontrol>19</defaultcontrol>
+      <onexit>50</onexit>
+      <buttonX>0</buttonX>
+      <buttonY>-60</buttonY>
+      <buttonwidth>159</buttonwidth>
+      <buttonheight>1080</buttonheight>
+      <textureFocus>-</textureFocus>
+      <textureNoFocus>Action_nofocus.png</textureNoFocus>
+      <width>412</width>
+      <height>1350</height>
+      <dimColor>00ffffff</dimColor>
+      <control>
+        <type>image</type>
+        <id>0</id>
+        <width>1920</width>
+        <height>1080</height>
+        <texture>white.png</texture>
+        <colordiffuse>50005eef</colordiffuse>
+      </control>
+      <control>
+        <type>image</type>
+        <posX>39</posX>
+        <posY>117</posY>
+        <width>480</width>
+        <height>886</height>
+        <texture>Backslide.png</texture>
+        <colorDiffuse>fffffffff</colorDiffuse>
+        <visible>!Control.HasFocus(310)+!Control.HasFocus(311)+!Control.HasFocus(312)</visible>
+        <animation effect="slide" time="70" start="-300,0" reversible="false">visible</animation>
+        <animation effect="slide" time="70" end="-300,0" reversible="false">hidden</animation>
+      </control>
+      <control>
+        <description>button group</description>
+        <type>group</type>
+        <animation effect="slide" time="70" start="-300,0" reversible="false">visible</animation>
+        <animation effect="slide" time="70" end="-300,0" reversible="false">hidden</animation>
+        <visible>!Control.HasFocus(310)+!Control.HasFocus(311)+!Control.HasFocus(312)</visible>
+        <posX>75</posX>
+        <posY>181</posY>
+        <layout>StackLayout(0, Vertical, true)</layout>
+        <visible>!Control.HasFocus(50)</visible>
+        <control>
+          <description>scan for more movies</description>
+          <type>button</type>
+          <id>19</id>
+          <label>#MovingPictures.Translation.ScanForNewMovies.Label</label>
+          <onright>310</onright>
+          <ondown>20</ondown>
+          <onup>66661</onup>
+        </control>
+        <control>
+          <description>restore ignored movies</description>
+          <type>button</type>
+          <id>20</id>
+          <label>#MovingPictures.Translation.RestoreIgnoredFiles.Label</label>
+          <onright>310</onright>
+          <ondown>19</ondown>
+          <onup>19</onup>
+        </control>
+      </control>
+    </control>
+  </controls>
+</window>

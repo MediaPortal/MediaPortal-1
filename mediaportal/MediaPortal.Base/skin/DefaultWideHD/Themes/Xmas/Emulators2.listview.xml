@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!--version="1.0" encoding="utf-8"-->
+<!-- 
+This file should contain the list view
+-->
+<window>
+  <controls>
+    <control>
+      <description>Cover Art</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>1575</posX>
+      <posY>300</posY>
+      <width>300</width>
+      <height>375</height>
+      <keepaspectratio>yes</keepaspectratio>
+      <align>center</align>
+      <valign>middle</valign>
+      <texture flipY="true" diffuse="Thumb_Mask.png">#Emulators2.CurrentItem.coverpath</texture>
+      <visible>facadeview.list+control.isvisible(50)</visible>
+      <animation effect="fade" time="250" delay="0">WindowClose</animation>
+    </control>
+    <control>
+      <id>0</id>
+      <type>label</type>
+      <label>#Emulators2.CurrentItem.grade / 10</label>
+      <posX>1380</posX>
+      <posY>247</posY>
+      <width>300</width>
+      <align>left</align>
+      <font>font11</font>
+      <textcolor>ffffd700</textcolor>
+      <shadowAngle>45</shadowAngle>
+      <shadowDistance>2</shadowDistance>
+      <visible>facadeview.list+control.isvisible(50)+[string.contains(#Emulators2.CurrentItem.isemulator,yes)|string.contains(#Emulators2.CurrentItem.isgame,yes)]</visible>
+      <animation effect="fade" time="250" delay="0">WindowClose</animation>
+    </control>
+    <control>
+      <description>10 star rating</description>
+      <type>imagelist</type>
+      <id>0</id>
+      <posX>1095</posX>
+      <posY>255</posY>
+      <width>453</width>
+      <height>25</height>
+      <textureWidth>25</textureWidth>
+      <textureHeight>25</textureHeight>
+      <subitems>
+        <subitem>starbad.png</subitem>
+        <subitem>star.png</subitem>
+      </subitems>
+      <orientation>horizontal</orientation>
+      <align>left</align>
+      <imagesToDraw>10</imagesToDraw>
+      <percentage>#Emulators2.CurrentItem.grade</percentage>
+      <visible>facadeview.list+control.isvisible(50)+[string.contains(#Emulators2.CurrentItem.isemulator,yes)|string.contains(#Emulators2.CurrentItem.isgame,yes)]</visible>
+      <animation effect="fade" time="250" delay="0">WindowClose</animation>
+    </control>
+    <control>
+      <description>Separator Line</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>1095</posX>
+      <posY>690</posY>
+      <width>750</width>
+      <height>1</height>
+      <texture>hbar1white.png</texture>
+      <colordiffuse>60ffffff</colordiffuse>
+      <visible>facadeview.list+control.isvisible(50)</visible>
+    </control>
+    <control>
+      <description>Summary</description>
+      <type>textboxscrollup</type>
+      <id>0</id>
+      <posX>1095</posX>
+      <posY>705</posY>
+      <width>780</width>
+      <height>187</height>
+      <textcolor>ffffd700</textcolor>
+      <font>font11</font>
+      <label>#Emulators2.CurrentItem.description</label>
+      <visible>facadeview.list+control.isvisible(50)</visible>
+      <animation effect="fade" time="250" delay="0">WindowClose</animation>
+    </control>
+    <control>
+      <description>Developer Label</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>1095</posX>
+      <posY>300</posY>
+      <label>#Emulators2.Label.developer</label>
+      <font>font10</font>
+      <align>left</align>
+      <textcolor>ffffd700</textcolor>
+      <visible>facadeview.list+control.isvisible(50)+[string.contains(#Emulators2.CurrentItem.isgame,yes)|string.contains(#Emulators2.CurrentItem.isemulator,yes]</visible>
+    </control>
+    <control>
+      <description>Developer</description>
+      <type>fadelabel</type>
+      <label>#Emulators2.CurrentItem.company</label>
+      <id>0</id>
+      <posX>1095</posX>
+      <posY>328</posY>
+      <width>465</width>
+      <font>font12</font>
+      <textcolor>ffffd700</textcolor>
+      <shadowAngle>45</shadowAngle>
+      <shadowDistance>3</shadowDistance>
+      <visible>facadeview.list+control.isvisible(50)+[string.contains(#Emulators2.CurrentItem.isgame,yes)|string.contains(#Emulators2.CurrentItem.isemulator,yes]</visible>
+      <animation effect="fade" time="250" delay="0">WindowClose</animation>
+    </control>
+    <control>
+      <description>Year Label</description>
+      <id>0</id>
+      <type>label</type>
+      <label>#Emulators2.Label.year</label>
+      <posX>1095</posX>
+      <posY>376</posY>
+      <font>font10</font>
+      <align>left</align>
+      <textcolor>ffffd700</textcolor>
+      <visible>facadeview.list+control.isvisible(50)+[string.contains(#Emulators2.CurrentItem.isgame,yes)|string.contains(#Emulators2.CurrentItem.isemulator,yes]</visible>
+      <animation effect="fade" time="250" delay="0">WindowClose</animation>
+    </control>
+    <control>
+      <description>Year</description>
+      <id>0</id>
+      <type>label</type>
+      <label>#Emulators2.CurrentItem.year</label>
+      <posX>1095</posX>
+      <posY>405</posY>
+      <width>465</width>
+      <font>font12</font>
+      <textcolor>ffffd700</textcolor>
+      <visible>facadeview.list+control.isvisible(50)</visible>
+      <animation effect="fade" time="250" delay="0">WindowClose</animation>
+    </control>
+    <control>
+      <description>Genre Label</description>
+      <id>0</id>
+      <type>label</type>
+      <label>#Emulators2.Label.genre</label>
+      <posX>1095</posX>
+      <posY>453</posY>
+      <font>font10</font>
+      <align>left</align>
+      <textcolor>ffffd700</textcolor>
+      <visible>facadeview.list+control.isvisible(50)+string.contains(#Emulators2.CurrentItem.isgame,yes)</visible>
+      <animation effect="fade" time="250" delay="0">WindowClose</animation>
+    </control>
+    <control>
+      <description>Genre</description>
+      <id>0</id>
+      <type>fadelabel</type>
+      <label>#Emulators2.CurrentItem.genre</label>
+      <posX>1095</posX>
+      <posY>481</posY>
+      <font>font12</font>
+      <width>465</width>
+      <textcolor>ffffd700</textcolor>
+      <visible>facadeview.list+control.isvisible(50)+string.contains(#Emulators2.CurrentItem.isgame,yes)</visible>
+      <animation effect="fade" time="250" delay="0">WindowClose</animation>
+    </control>
+    <control>
+      <description>Last Played Label</description>
+      <id>0</id>
+      <type>label</type>
+      <label>#Emulators2.Label.lastplayed</label>
+      <posX>1095</posX>
+      <posY>529</posY>
+      <font>font10</font>
+      <align>left</align>
+      <textcolor>ffffd700</textcolor>
+      <visible>facadeview.list+control.isvisible(50)+string.contains(#Emulators2.CurrentItem.isgame,yes)</visible>
+      <animation effect="fade" time="250" delay="0">WindowClose</animation>
+    </control>
+    <control>
+      <description>Last Played</description>
+      <id>0</id>
+      <type>label</type>
+      <label>#Emulators2.CurrentItem.latestplaydate</label>
+      <posX>1095</posX>
+      <posY>558</posY>
+      <width>225</width>
+      <font>font12</font>
+      <textcolor>ffffd700</textcolor>
+      <visible>facadeview.list+control.isvisible(50)+string.contains(#Emulators2.CurrentItem.isgame,yes)</visible>
+      <animation effect="fade" time="250" delay="0">WindowClose</animation>
+    </control>
+    <control>
+      <description>Play Count Label</description>
+      <id>0</id>
+      <type>label</type>
+      <label>#Emulators2.Label.playcount</label>
+      <posX>1327</posX>
+      <posY>529</posY>
+      <font>font10</font>
+      <align>left</align>
+      <textcolor>ffffd700</textcolor>
+      <visible>facadeview.list+control.isvisible(50)+string.contains(#Emulators2.CurrentItem.isgame,yes)</visible>
+      <animation effect="fade" time="250" delay="0">WindowClose</animation>
+    </control>
+    <control>
+      <description>Play Count</description>
+      <id>0</id>
+      <type>label</type>
+      <label>#Emulators2.CurrentItem.playcount</label>
+      <posX>1327</posX>
+      <posY>558</posY>
+      <width>232</width>
+      <font>font12</font>
+      <textcolor>ffffd700</textcolor>
+      <visible>facadeview.list+control.isvisible(50)+string.contains(#Emulators2.CurrentItem.isgame,yes)</visible>
+      <animation effect="fade" time="250" delay="0">WindowClose</animation>
+    </control>
+    <control>
+      <description>Disc Label</description>
+      <id>0</id>
+      <type>label</type>
+      <label>#Emulators2.Label.disc</label>
+      <posX>1095</posX>
+      <posY>606</posY>
+      <font>font10</font>
+      <align>left</align>
+      <textcolor>ffffd700</textcolor>
+      <visible>facadeview.list+control.isvisible(50)+string.contains(#Emulators2.CurrentItem.isgame,yes)</visible>
+      <animation effect="fade" time="250" delay="0">WindowClose</animation>
+    </control>
+    <control>
+      <description>Disc</description>
+      <id>0</id>
+      <type>label</type>
+      <label>#Emulators2.CurrentItem.currentdisc / #Emulators2.CurrentItem.totaldiscs</label>
+      <posX>1095</posX>
+      <posY>634</posY>
+      <width>465</width>
+      <font>font12</font>
+      <visible>facadeview.list+control.isvisible(50)+string.contains(#Emulators2.CurrentItem.isgame,yes)</visible>
+      <animation effect="fade" time="250" delay="0">WindowClose</animation>
+    </control>
+  </controls>
+</window>
