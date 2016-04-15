@@ -145,13 +145,23 @@ HRESULT CTSBuffer::Require(long nBytes, BOOL bIgnoreDelay)
 			if(m_eChannelType == Radio)
 				sleepPerIteration = 20;
 
-			Sleep(iteration * sleepPerIteration);
+			//Sleep(iteration * sleepPerIteration);
+  		if(iteration == 20 || iteration == 40 )
+  		{
+			  LogDebug("TSBuffer::Require() - 200ms sleep, iteration = %d", iteration);
+  		  Sleep(200);
+  		}
+  		else
+  		{
+			  Sleep(sleepPerIteration);
+		  }
 		}
 
 		ULONG bytesRead = 0;
 		HRESULT hr = m_pFileReader->Read(readBuffer + totalBytesRead, bytesToRead - totalBytesRead, &bytesRead);
 
-		if(FAILED(hr) || iteration >= 20)
+		// if(FAILED(hr) || iteration >= 20)
+		if(FAILED(hr) || iteration >= 50)
 		{
 			LogDebug("TSBuffer::Require() - Failed to read buffer file");
 			

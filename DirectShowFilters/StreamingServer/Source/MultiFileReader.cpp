@@ -966,8 +966,11 @@ __int64 MultiFileReader::FindFileLength(LPWSTR pFilename)
   HANDLE hFind = FindFirstFile(pFilename, &fileinfo);  
   if (hFind == INVALID_HANDLE_VALUE)
   {
-    HRESULT lastErr = HRESULT_FROM_WIN32(GetLastError());	  
-  	LogDebug("MultiFileReader::FindFileLength() failed. Error 0x%x, filename = %ws", lastErr, pFilename);    
+    HRESULT lastErr = HRESULT_FROM_WIN32(GetLastError());	 
+    if (lastErr != ERROR_FILE_NOT_FOUND)
+    {  
+  	  LogDebug("MultiFileReader::FindFileLength() failed. Error 0x%x, filename = %ws", lastErr, pFilename);  
+  	}  
     return -1;
   }
   FindClose(hFind);
