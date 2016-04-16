@@ -38,6 +38,7 @@ CTsDuration::CTsDuration()
   m_bStopping = false;
   m_pFileReadBuffer = NULL;
   m_pFileReadBuffer = new byte[DUR_READ_SIZE];
+  m_reader = NULL;
   LogDebug("CTsDuration - ctor");
 }
 
@@ -95,7 +96,10 @@ void CTsDuration::StopUpdate(bool stopping)
 void CTsDuration::CloseBufferFiles()
 {
   //Close any timeshift data files (to avoid 'locking' files that need to be deleted/re-used)
-  m_reader->CloseBufferFiles();
+  if (m_reader != NULL)
+  {
+    m_reader->CloseBufferFiles();
+  }
 }
 
 //*********************************************************
@@ -134,7 +138,7 @@ void CTsDuration::UpdateDuration(bool logging, bool background)
     //find the first pcr in the file
     while (1)
     {     
-      if (m_bStopping) 
+      if (m_bStopping || (m_reader == NULL)) 
       {
         m_startPcr.Reset();
         m_endPcr.Reset();
@@ -201,7 +205,7 @@ void CTsDuration::UpdateDuration(bool logging, bool background)
   
     while (1)
     {
-      if (m_bStopping) 
+      if (m_bStopping || (m_reader == NULL)) 
       {
         m_startPcr.Reset();
         m_endPcr.Reset();

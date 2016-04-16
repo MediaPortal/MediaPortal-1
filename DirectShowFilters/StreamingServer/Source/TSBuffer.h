@@ -59,5 +59,6 @@ protected:
 	ChannelType	m_eChannelType;
 	int debugcount;
 	int m_ParserLock;
+	UINT m_maxReadIterations;
 
 };

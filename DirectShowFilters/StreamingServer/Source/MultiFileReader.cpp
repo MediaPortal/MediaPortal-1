@@ -86,7 +86,7 @@ MultiFileReader::MultiFileReader(BOOL useFileNext, BOOL useDummyWrites, CCritSec
   m_pInfoFileBuffer1 = new byte[INFO_BUFF_SIZE];
   m_pInfoFileBuffer2 = new byte[INFO_BUFF_SIZE];
   
-  //LogDebug("MultiFileReader::ctor, useFileNext = %d, useDummyWrites %d, pFilterLock %d, useRandomAccess %d", m_bUseFileNext, useDummyWrites, (pFilterLock != NULL), useRandomAccess);
+  LogDebug("MultiFileReader::ctor, useFileNext = %d, useDummyWrites %d, pFilterLock %d, useRandomAccess %d", m_bUseFileNext, useDummyWrites, (pFilterLock != NULL), useRandomAccess);
 }
 
 MultiFileReader::~MultiFileReader()

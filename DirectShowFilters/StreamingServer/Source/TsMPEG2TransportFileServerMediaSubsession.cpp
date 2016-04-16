@@ -8,6 +8,7 @@
 #include "MultiFileReader.h"
 
 extern void LogDebug(const char *fmt, ...) ;
+extern void LogDebug(const wchar_t *fmt, ...) ;
 
 TsMPEG2TransportFileServerMediaSubsession* TsMPEG2TransportFileServerMediaSubsession::createNew(UsageEnvironment& env,wchar_t const* fileName,Boolean reuseFirstSource, Boolean timeshifting, int channelType) 
 {
@@ -22,10 +23,13 @@ TsMPEG2TransportFileServerMediaSubsession::TsMPEG2TransportFileServerMediaSubses
 	m_iChannelType = channelType;
 
   m_pDuration = new CTsDuration();
+  m_pFileDuration = NULL;
+  OpenFileDuration();
 }
 
 TsMPEG2TransportFileServerMediaSubsession::~TsMPEG2TransportFileServerMediaSubsession() 
 {
+  CloseFileDuration();
   delete m_pDuration;
   m_pDuration = NULL;
 }
@@ -84,12 +88,11 @@ void TsMPEG2TransportFileServerMediaSubsession::seekStreamSource(FramedSource* i
 
 float TsMPEG2TransportFileServerMediaSubsession::duration() const
 {
-  FileReader *pFileDuration = OpenFileDuration();
-  if (pFileDuration)
+  if (m_pFileDuration)
   {
     m_pDuration->UpdateDuration(false, false);
     m_pDuration->CloseBufferFiles();
-    CloseFileDuration(pFileDuration);
+	  //LogDebug("TsMPEG2TransportFileServerMediaSubsession::duration() %f", m_pDuration->Duration().Millisecs() / 1000.0f);
 	  return m_pDuration->Duration().Millisecs() / 1000.0f;
   }
   return 10.0f; //fake it
@@ -98,47 +101,54 @@ float TsMPEG2TransportFileServerMediaSubsession::duration() const
 __int64 TsMPEG2TransportFileServerMediaSubsession::filelength() const
 {  
 	__int64	fileSizeTmp = 0;
-  FileReader *pFileDuration = OpenFileDuration();
-  if (pFileDuration)
+  if (m_pFileDuration)
   {
-    fileSizeTmp = pFileDuration->GetFileSize();
-	  CloseFileDuration(pFileDuration);
+    fileSizeTmp = m_pFileDuration->GetFileSize();
+	  //LogDebug("TsMPEG2TransportFileServerMediaSubsession::filelength() %I64", fileSizeTmp);
   }
   return fileSizeTmp;
 }
 
-FileReader* TsMPEG2TransportFileServerMediaSubsession::OpenFileDuration() const
+void TsMPEG2TransportFileServerMediaSubsession::OpenFileDuration()
 {
-  FileReader *pFileDuration;
-
-  if (wcsstr(m_fileName, L".tsbuffer")!=NULL)
+  if(m_pFileDuration==NULL)
   {
-      //MultiFileReader::MultiFileReader(BOOL useFileNext, BOOL useDummyWrites, CCritSec* pFilterLock, BOOL useRandomAccess, BOOL extraLogging):
-    pFileDuration   = new MultiFileReader(FALSE, FALSE, NULL, FALSE, FALSE);
-  }
-  else
-  {
-    pFileDuration = new FileReader();
-  }
+    if (wcsstr(m_fileName, L".tsbuffer")!=NULL)
+    {
+        //MultiFileReader::MultiFileReader(BOOL useFileNext, BOOL useDummyWrites, CCritSec* pFilterLock, BOOL useRandomAccess, BOOL extraLogging):
+      m_pFileDuration = new MultiFileReader(FALSE, FALSE, NULL, TRUE, FALSE);
+    }
+    else
+    {
+      m_pFileDuration = new FileReader();
+    }
 
-  // initialize duration estimator
-  pFileDuration->SetFileName(m_fileName);
-  if(FAILED(pFileDuration->OpenFile()))
-  {
-    CloseFileDuration(pFileDuration);
-    pFileDuration = NULL;
+    if(m_pFileDuration==NULL)
+    {
+	    LogDebug(L"TsMPEG2TransportFileServerMediaSubsession::OpenFileDuration() failed, m_fileName %s", m_fileName);  
+      return;
+    }
+  
+    // initialize duration estimator
+    m_pFileDuration->SetFileName(m_fileName);
+    if(FAILED(m_pFileDuration->OpenFile()))
+    {
+      CloseFileDuration();
+      return;
+    }
+  
+    m_pDuration->SetFileReader(m_pFileDuration);
+	  LogDebug(L"TsMPEG2TransportFileServerMediaSubsession::OpenFileDuration() OK: %s", m_fileName);  
   }
-
-  m_pDuration->SetFileReader(pFileDuration);
-  return pFileDuration;
 }
 
-void TsMPEG2TransportFileServerMediaSubsession::CloseFileDuration(FileReader *pFileDuration) const
+void TsMPEG2TransportFileServerMediaSubsession::CloseFileDuration()
 {
-  if(pFileDuration)
+  if(m_pFileDuration)
   {
-    pFileDuration->CloseFile();
+    m_pFileDuration->CloseFile();
     m_pDuration->SetFileReader(NULL);
-    delete pFileDuration;
+    delete m_pFileDuration;
+    m_pFileDuration = NULL;
   }
 }
