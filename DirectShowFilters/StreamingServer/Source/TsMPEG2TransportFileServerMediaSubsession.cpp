@@ -21,6 +21,7 @@ TsMPEG2TransportFileServerMediaSubsession::TsMPEG2TransportFileServerMediaSubses
 	wcscpy(m_fileName, fileName);
 	m_bTimeshifting = timeshifting;
 	m_iChannelType = channelType;
+	m_iDurationCount = 0;
 
   m_pDuration = new CTsDuration();
   m_pFileDuration = NULL;
@@ -90,9 +91,16 @@ float TsMPEG2TransportFileServerMediaSubsession::duration() const
 {
   if (m_pFileDuration)
   {
-    m_pDuration->UpdateDuration(false, false);
-    m_pDuration->CloseBufferFiles();
-	  //LogDebug("TsMPEG2TransportFileServerMediaSubsession::duration() %f", m_pDuration->Duration().Millisecs() / 1000.0f);
+    // void CTsDuration::UpdateDuration(bool logging, bool background)
+    m_pDuration->UpdateDuration(false, false);      
+    m_pDuration->CloseBufferFiles(); //avoid leaving timeshift data files open
+
+    if (m_iDurationCount < 1)
+    {
+	    LogDebug("TsMPEG2TransportFileServerMediaSubsession::duration() %f", m_pDuration->Duration().Millisecs() / 1000.0f);
+      m_iDurationCount++;
+    }
+
 	  return m_pDuration->Duration().Millisecs() / 1000.0f;
   }
   return 10.0f; //fake it
@@ -146,6 +154,7 @@ void TsMPEG2TransportFileServerMediaSubsession::CloseFileDuration()
 {
   if(m_pFileDuration)
   {
+    m_pDuration->StopUpdate(true);
     m_pFileDuration->CloseFile();
     m_pDuration->SetFileReader(NULL);
     delete m_pFileDuration;

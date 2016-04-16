@@ -60,5 +60,4 @@ protected:
 	int debugcount;
 	int m_ParserLock;
 	UINT m_maxReadIterations;
-
 };

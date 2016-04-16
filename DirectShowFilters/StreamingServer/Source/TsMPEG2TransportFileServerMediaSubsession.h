@@ -39,4 +39,5 @@ private: // redefined virtual functions
 	wchar_t m_fileName[MAX_PATH];
 	Boolean m_bTimeshifting;
 	int m_iChannelType;
+	mutable int m_iDurationCount;
 };
