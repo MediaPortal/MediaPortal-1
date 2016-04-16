@@ -40,83 +40,142 @@ struct VID_FRAME_VERTEX
 };
 
 MPMadPresenter::MPMadPresenter(IVMR9Callback* pCallback, DWORD width, DWORD height, OAHWND parent, IDirect3DDevice9* pDevice) :
-  CUnknown(NAME("MPMadPresenter"), NULL),
+  CUnknown(NAME("MPMadPresenter"), nullptr),
   m_pCallback(pCallback),
   m_dwGUIWidth(width),
   m_dwGUIHeight(height),
   m_hParent(parent),
-  m_pDevice((IDirect3DDevice9Ex*)pDevice)
+  m_pDevice(static_cast<IDirect3DDevice9Ex*>(pDevice))
 {
+  Log("MPMadPresenter::Constructor() - instance 0x%x", this);
   m_subProxy = new MadSubtitleProxy(pCallback);
   if (m_subProxy)
     m_subProxy->AddRef();
+  Log("MPMadPresenter::MPMadPresenter() - instance 0x%x");
 }
 
 MPMadPresenter::~MPMadPresenter()
 {
+  Log("MPMadPresenter::Destructor() - instance 0x%x", this);
+
   CAutoLock cAutoLock(this);
+
+  Log("MPMadPresenter::Destructor() 2 ");
+
+  if (m_pCallback)
+  {
+    m_pCallback->Release();
+    m_pCallback = nullptr;
+  }
+
+  Log("MPMadPresenter::Destructor() 3 ");
+
+  if (m_pSubRender)
+    m_pSubRender->SetCallback(nullptr);
+
+  Log("MPMadPresenter::Destructor() 4 ");
 
   if (m_subProxy)
   {
     m_subProxy->Release();
-    m_subProxy = NULL;
+    m_subProxy = nullptr;
   }
+
+  Log("MPMadPresenter::Destructor() 5 ");
 }
 
 IBaseFilter* MPMadPresenter::Initialize()
 {
   CAutoLock cAutoLock(this);
 
-  HRESULT hr = CoCreateInstance(CLSID_madVR, NULL, CLSCTX_INPROC_SERVER, __uuidof(IMadVRDirect3D9Manager), (void**)&m_pMad);
+  Log("MPMadPresenter::Init 1()");
+  HRESULT hr = CoCreateInstance(CLSID_madVR, nullptr, CLSCTX_INPROC_SERVER, __uuidof(IMadVRDirect3D9Manager), reinterpret_cast<void**>(&m_pMad));
 
+  Log("MPMadPresenter::Init 2()");
   if (FAILED(hr))
-    return NULL;
+    return nullptr;
 
-  CComQIPtr<IBaseFilter> baseFilter = m_pMad;
-  CComQIPtr<IMadVROsdServices> pOsdServices = m_pMad;
-  CComQIPtr<IMadVRDirect3D9Manager> manager = m_pMad;
-  CComQIPtr<IMadVRSubclassReplacement> pSubclassReplacement = m_pMad;
-  CComQIPtr<ISubRender> pSubRender = m_pMad;
-  CComQIPtr<IVideoWindow> pWindow = m_pMad;
-
+  m_pMad->QueryInterface(&m_pBaseFilter);
+  m_pMad->QueryInterface(&m_pOsdServices);
+  m_pMad->QueryInterface(&m_pManager);
+  m_pMad->QueryInterface(&m_pSubclassReplacement);
+  m_pMad->QueryInterface(&m_pSubRender);
+  m_pMad->QueryInterface(&m_pWindow);
   m_pMad->QueryInterface(&m_pCommand);
 
-  if (!baseFilter || !pOsdServices || !manager || !pSubclassReplacement || !pSubRender || !m_pCommand || !pWindow)
-    return NULL;
+  Log("MPMadPresenter::Init 3()");
 
-  pOsdServices->OsdSetRenderCallback("MP-GUI", this);
-  manager->ConfigureDisplayModeChanger(false, true);
+  if (!m_pBaseFilter || !m_pOsdServices || !m_pManager || !m_pSubclassReplacement || !m_pSubRender || !m_pCommand || !m_pWindow)
+    return nullptr;
+  Log("MPMadPresenter::Init 4()");
 
-  pSubRender->SetCallback(m_subProxy);
+  m_pOsdServices->OsdSetRenderCallback("MP-GUI", this, nullptr);
+  Log("MPMadPresenter::Init 5()");
+
+  m_pManager->ConfigureDisplayModeChanger(true, true);
+  Log("MPMadPresenter::Init 6()");
+
+  m_pSubRender->SetCallback(m_subProxy);
+  Log("MPMadPresenter::Init 7()");
 
   m_pCommand->SendCommandBool("disableSeekbar", true);
+  Log("MPMadPresenter::Init 8()");
 
-  pWindow->put_Owner(m_hParent);
+  m_pWindow->put_Owner(m_hParent);
+  Log("MPMadPresenter::Init 9()");
+
+  m_pWindow->SetWindowForeground(true);
+  Log("MPMadPresenter::Init 10()");
+
+  m_pWindow->put_MessageDrain(m_hParent);
+  Log("MPMadPresenter::Init 11()");
 
   // TODO implement IMadVRSubclassReplacement
   //pSubclassReplacement->DisableSubclassing();
 
-  return baseFilter;
+  return m_pBaseFilter;
 }
 
 HRESULT MPMadPresenter::Shutdown()
 {
-  CAutoLock lock(this);
+  { // Scope for autolock for the local variable (lock, which when deleted releases the lock)
+    Log("MPMadPresenter::Shutdown() - instance 0x%x");
 
-  Log("MPMadPresenter::Shutdown()");
+    CAutoLock lock(this);
 
-  m_pCallback = nullptr;
+    if (m_pCallback)
+    {
+      m_pCallback->Release();
+      m_pCallback = nullptr;
+    }
+  } // Scope for autolock
 
   if (m_pMad)
   {
-    if (m_pCommand)
+    Log("MPMadPresenter::Shutdown() 1");
+
+    if (m_pWindow)
     {
-      m_pCommand->SendCommand("restoreDisplayModeNow");
-      m_pCommand->Release();
+      Log("MPMadPresenter::Shutdown() 2");
+      m_pWindow->put_Owner(reinterpret_cast<OAHWND>(nullptr));
+      m_pWindow->put_Visible(false);
+      Log("MPMadPresenter::Shutdown() 3");
     }
 
-    m_pMad->Release();
-    m_pMad = nullptr;
+    if (m_pCommand)
+    {
+      Log("MPMadPresenter::Shutdown() 4");
+      m_pCommand->SendCommandBool("disableExclusiveMode", true);
+      m_pCommand->SendCommand("restoreDisplayModeNow");
+      Log("MPMadPresenter::Shutdown() 5");
+    }
+
+    if (m_pOsdServices)
+    {
+      Log("MPMadPresenter::ReleaseOSD() 1");
+      m_pOsdServices->OsdSetRenderCallback("MP-GUI", nullptr, nullptr);
+      Log("MPMadPresenter::ReleaseOSD() 2");
+    }
   }
 
   return S_OK;
@@ -134,7 +193,7 @@ HRESULT MPMadPresenter::NonDelegatingQueryInterface(REFIID riid, void** ppv)
 HRESULT MPMadPresenter::QueryInterface(REFIID riid, void** ppvObject)
 {
   HRESULT hr = E_NOINTERFACE;
-  if (ppvObject == NULL)
+  if (ppvObject == nullptr)
     hr = E_POINTER;
   else if (riid == __uuidof(IOsdRenderCallback))
   {
@@ -179,21 +238,20 @@ HRESULT MPMadPresenter::ClearBackground(LPCSTR name, REFERENCE_TIME frameStart, 
 {
   HRESULT hr = E_UNEXPECTED;
 
-  WORD videoHeight = (WORD)activeVideoRect->bottom - (WORD)activeVideoRect->top;
-  WORD videoWidth = (WORD)activeVideoRect->right - (WORD)activeVideoRect->left;
+  WORD videoHeight = static_cast<WORD>(activeVideoRect->bottom) - static_cast<WORD>(activeVideoRect->top);
+  WORD videoWidth = static_cast<WORD>(activeVideoRect->right) - static_cast<WORD>(activeVideoRect->left);
 
   bool uiVisible = false;
 
   CAutoLock cAutoLock(this);
 
   if (!m_pCallback)
-    return S_OK;
+    return CALLBACK_EMPTY;
 
-  m_dwHeight = (WORD)fullOutputRect->bottom - (WORD)fullOutputRect->top;
-  m_dwWidth = (WORD)fullOutputRect->right - (WORD)fullOutputRect->left;
+  m_dwHeight = static_cast<WORD>(fullOutputRect->bottom) - static_cast<WORD>(fullOutputRect->top);
+  m_dwWidth = static_cast<WORD>(fullOutputRect->right) - static_cast<WORD>(fullOutputRect->left);
 
-  if (FAILED(hr = RenderToTexture(m_pMPTextureGui)))
-    return hr;
+  RenderToTexture(m_pMPTextureGui, videoWidth, videoHeight, videoWidth, videoHeight);
 
   if (FAILED(hr = m_deviceState.Store()))
     return hr;
@@ -208,17 +266,17 @@ HRESULT MPMadPresenter::ClearBackground(LPCSTR name, REFERENCE_TIME frameStart, 
 
   if (FAILED(hr = SetupMadDeviceState()))
     return hr;
-  
+
   if (FAILED(hr = SetupOSDVertex(m_pMadGuiVertexBuffer)))
     return hr;
 
   // Draw MP texture on madVR device's side
-  if (FAILED(hr = RenderTexture(m_pMadGuiVertexBuffer, m_pRenderTextureGui)))
-    return hr;
+  RenderTexture(m_pMadGuiVertexBuffer, m_pRenderTextureGui);
 
   if (FAILED(hr = m_deviceState.Restore()))
     return hr;
 
+  //Log("ClearBackground hr: 0x%08x", hr);
   return uiVisible ? CALLBACK_USER_INTERFACE : CALLBACK_EMPTY;
 }
 
@@ -226,21 +284,39 @@ HRESULT MPMadPresenter::RenderOsd(LPCSTR name, REFERENCE_TIME frameStart, RECT* 
 {
   HRESULT hr = E_UNEXPECTED;
 
-  WORD videoHeight = (WORD)activeVideoRect->bottom - (WORD)activeVideoRect->top;
-  WORD videoWidth = (WORD)activeVideoRect->right - (WORD)activeVideoRect->left;
+  WORD videoHeight = static_cast<WORD>(activeVideoRect->bottom) - static_cast<WORD>(activeVideoRect->top);
+  WORD videoWidth = static_cast<WORD>(activeVideoRect->right) - static_cast<WORD>(activeVideoRect->left);
 
   bool uiVisible = false;
 
   CAutoLock cAutoLock(this);
 
   if (!m_pCallback)
-    return S_OK;
+    return CALLBACK_EMPTY;
 
-  m_dwHeight = (WORD)fullOutputRect->bottom - (WORD)fullOutputRect->top;
-  m_dwWidth = (WORD)fullOutputRect->right - (WORD)fullOutputRect->left;
+  IDirect3DSurface9* SurfaceMadVr = nullptr; // This will be released by C# side
 
-  if (FAILED(hr = RenderToTexture(m_pMPTextureOsd)))
-    return hr;
+  m_dwHeight = static_cast<WORD>(fullOutputRect->bottom) - static_cast<WORD>(fullOutputRect->top);
+  m_dwWidth = static_cast<WORD>(fullOutputRect->right) - static_cast<WORD>(fullOutputRect->left);
+
+  //// Handle GetBackBuffer to be done only 2 frames
+  //countFrame++;
+  //if (countFrame == firstFrame || countFrame == secondFrame)
+  //{
+  //  if (SUCCEEDED(hr = m_pMadD3DDev->GetBackBuffer(0, 0, D3DBACKBUFFER_TYPE_MONO, &SurfaceMadVr)))
+  //  {
+  //    if (SUCCEEDED(hr = m_pCallback->RenderFrame(videoWidth, videoHeight, videoWidth, videoHeight, reinterpret_cast<DWORD>(SurfaceMadVr))))
+  //    {
+  //      SurfaceMadVr->Release();
+  //    }
+  //    if (countFrame == secondFrame)
+  //    {
+  //      countFrame = resetFrame;
+  //    }
+  //  }
+  //}
+
+  RenderToTexture(m_pMPTextureOsd, videoWidth, videoHeight, videoWidth, videoHeight);
 
   if (FAILED(hr = m_deviceState.Store()))
     return hr;
@@ -260,47 +336,52 @@ HRESULT MPMadPresenter::RenderOsd(LPCSTR name, REFERENCE_TIME frameStart, RECT* 
     return hr;
 
   // Draw MP texture on madVR device's side
-  if (FAILED(hr = RenderTexture(m_pMadOsdVertexBuffer, m_pRenderTextureOsd)))
-    return hr;
+  RenderTexture(m_pMadOsdVertexBuffer, m_pRenderTextureOsd);
 
   if (FAILED(hr = m_deviceState.Restore()))
     return hr;
 
+  //Log("RenderOsd hr: 0x%08x", hr);
   return uiVisible ? CALLBACK_USER_INTERFACE : CALLBACK_EMPTY;
 }
 
-HRESULT MPMadPresenter::RenderToTexture(IDirect3DTexture9* pTexture)
+void MPMadPresenter::RenderToTexture(IDirect3DTexture9* pTexture, WORD cx, WORD cy, WORD arx, WORD ary)
 {
+  if (!m_pDevice)
+    return;
   HRESULT hr = E_UNEXPECTED;
-  IDirect3DSurface9* pSurface = nullptr; // This will be relased by C# side
-
-  if (FAILED(hr = pTexture->GetSurfaceLevel(0, &pSurface)))
-    return hr;
-
-  if (FAILED(hr = m_pCallback->SetRenderTarget((DWORD)pSurface)))
-    return hr;
-
-  if (FAILED(hr = m_pDevice->Clear(0, NULL, D3DCLEAR_TARGET, D3DXCOLOR(0, 0, 0, 0), 1.0f, 0)))
-    return hr;
-
-  return hr;
+  IDirect3DSurface9* pSurface = nullptr; // This will be released by C# side
+  if (SUCCEEDED(hr = pTexture->GetSurfaceLevel(0, &pSurface)))
+  {
+    //Log("RenderToTexture GetSurfaceLevel hr: 0x%08x", hr);
+    if (SUCCEEDED(hr = m_pCallback->SetRenderTarget(reinterpret_cast<DWORD>(pSurface))))
+    {
+      //Log("RenderToTexture SetRenderTarget hr: 0x%08x", hr);
+      hr = m_pDevice->Clear(0, nullptr, D3DCLEAR_TARGET, D3DXCOLOR(0, 0, 0, 0), 1.0f, 0);
+      //Log("RenderToTexture SetRenderTarget Clear hr: 0x%08x", hr);
+    }
+  }
+  //Log("RenderToTexture hr: 0x%08x", hr);
 }
 
-HRESULT MPMadPresenter::RenderTexture(IDirect3DVertexBuffer9* pVertexBuf, IDirect3DTexture9* pTexture)
+void MPMadPresenter::RenderTexture(IDirect3DVertexBuffer9* pVertexBuf, IDirect3DTexture9* pTexture)
 {
-  HRESULT hr = m_pMadD3DDev->SetStreamSource(0, pVertexBuf, 0, sizeof(VID_FRAME_VERTEX));
-  if (FAILED(hr))
-    return hr;
+  if (!m_pMadD3DDev)
+    return;
 
-  hr = m_pMadD3DDev->SetTexture(0, pTexture);
-  if (FAILED(hr))
-    return hr;
+  HRESULT hr = E_UNEXPECTED;
 
-  hr = m_pMadD3DDev->DrawPrimitive(D3DPT_TRIANGLEFAN, 0, 2);
-  if (FAILED(hr))
-    return hr;
-
-  return S_OK;
+  if (SUCCEEDED(hr = m_pMadD3DDev->SetStreamSource(0, pVertexBuf, 0, sizeof(VID_FRAME_VERTEX))))
+  {
+    //Log("RenderTexture SetStreamSource hr: 0x%08x", hr);
+    if (SUCCEEDED(hr = m_pMadD3DDev->SetTexture(0, pTexture)))
+    {
+      //Log("RenderTexture SetTexture hr: 0x%08x", hr);
+      hr = m_pMadD3DDev->DrawPrimitive(D3DPT_TRIANGLEFAN, 0, 2);
+      //Log("RenderTexture DrawPrimitive hr: 0x%08x", hr);
+    }
+  }
+  //Log("RenderTexture hr: 0x%08x", hr);
 }
 
 HRESULT MPMadPresenter::SetupOSDVertex(IDirect3DVertexBuffer9* pVertextBuf)
@@ -308,7 +389,7 @@ HRESULT MPMadPresenter::SetupOSDVertex(IDirect3DVertexBuffer9* pVertextBuf)
   VID_FRAME_VERTEX* vertices = nullptr;
 
   // Lock the vertex buffer
-  HRESULT hr = pVertextBuf->Lock(0, 0, (void**)&vertices, D3DLOCK_DISCARD);
+  HRESULT hr = pVertextBuf->Lock(0, 0, reinterpret_cast<void**>(&vertices), D3DLOCK_DISCARD);
 
   if (SUCCEEDED(hr))
   {
@@ -318,29 +399,29 @@ HRESULT MPMadPresenter::SetupOSDVertex(IDirect3DVertexBuffer9* pVertextBuf)
     rDest.right = m_dwWidth;
     rDest.top = 0;
 
-    vertices[0].x = (float)rDest.left - 0.5f;
-    vertices[0].y = (float)rDest.top - 0.5f;
+    vertices[0].x = static_cast<float>(rDest.left) - 0.5f;
+    vertices[0].y = static_cast<float>(rDest.top) - 0.5f;
     vertices[0].z = 0.0f;
     vertices[0].rhw = 1.0f;
     vertices[0].u = 0.0f;
     vertices[0].v = 0.0f;
 
-    vertices[1].x = (float)rDest.right - 0.5f;
-    vertices[1].y = (float)rDest.top - 0.5f;
+    vertices[1].x = static_cast<float>(rDest.right) - 0.5f;
+    vertices[1].y = static_cast<float>(rDest.top) - 0.5f;
     vertices[1].z = 0.0f;
     vertices[1].rhw = 1.0f;
     vertices[1].u = 1.0f;
     vertices[1].v = 0.0f;
 
-    vertices[2].x = (float)rDest.right - 0.5f;
-    vertices[2].y = (float)rDest.bottom - 0.5f;
+    vertices[2].x = static_cast<float>(rDest.right) - 0.5f;
+    vertices[2].y = static_cast<float>(rDest.bottom) - 0.5f;
     vertices[2].z = 0.0f;
     vertices[2].rhw = 1.0f;
     vertices[2].u = 1.0f;
     vertices[2].v = 1.0f;
 
-    vertices[3].x = (float)rDest.left - 0.5f;
-    vertices[3].y = (float)rDest.bottom - 0.5f;
+    vertices[3].x = static_cast<float>(rDest.left) - 0.5f;
+    vertices[3].y = static_cast<float>(rDest.bottom) - 0.5f;
     vertices[3].z = 0.0f;
     vertices[3].rhw = 1.0f;
     vertices[3].u = 0.0f;
@@ -351,6 +432,7 @@ HRESULT MPMadPresenter::SetupOSDVertex(IDirect3DVertexBuffer9* pVertextBuf)
       return hr;
   }
 
+  //Log("SetupOSDVertex hr: 0x%08x", hr);
   return hr;
 }
 
@@ -394,6 +476,7 @@ HRESULT MPMadPresenter::SetupMadDeviceState()
   if (FAILED(hr = m_pMadD3DDev->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA)))
     return hr;
 
+  //Log("SetupMadDeviceState hr: 0x%08x", hr);
   return hr;
 }
 
@@ -403,9 +486,12 @@ HRESULT MPMadPresenter::SetDevice(IDirect3DDevice9* pD3DDev)
 
   CAutoLock cAutoLock(this);
 
+  if (!m_pCallback)
+    return S_OK;
+
   Log("MPMadPresenter::SetDevice() pD3DDev 0x:%x", pD3DDev);
 
-  m_pMadD3DDev = (IDirect3DDevice9Ex*)pD3DDev;
+  m_pMadD3DDev = static_cast<IDirect3DDevice9Ex*>(pD3DDev);
   m_deviceState.SetDevice(pD3DDev);
 
   if (m_pMadD3DDev)
@@ -431,5 +517,6 @@ HRESULT MPMadPresenter::SetDevice(IDirect3DDevice9* pD3DDev)
   else
     m_pMadD3DDev = nullptr;
 
+  //Log("SetDevice hr: 0x%08x", hr);
   return hr;
 }

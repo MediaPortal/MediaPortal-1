@@ -1563,7 +1563,7 @@ namespace MediaPortal.Player
             if (_player != null)
             {
               _player.Stop();
-              
+
               if (BassMusicPlayer.IsDefaultMusicPlayer && type != MediaType.Music)
               {
                 // This would be better to be handled in a new Stop() parameter, but it would break the interface compatibility
@@ -3044,9 +3044,8 @@ namespace MediaPortal.Player
 
     public static void Init()
     {
-      GUIGraphicsContext.OnVideoWindowChanged += new VideoWindowChangedHandler(OnVideoWindowChanged);
-      GUIGraphicsContext.OnGammaContrastBrightnessChanged +=
-        new VideoGammaContrastBrightnessHandler(OnGammaContrastBrightnessChanged);
+      GUIGraphicsContext.OnVideoWindowChanged += OnVideoWindowChanged;
+      GUIGraphicsContext.OnGammaContrastBrightnessChanged += OnGammaContrastBrightnessChanged;
     }
 
     private static void OnGammaContrastBrightnessChanged()
@@ -3099,10 +3098,7 @@ namespace MediaPortal.Player
       }
       Visible = (FullScreen || GUIGraphicsContext.Overlay ||
                  windowId == (int)GUIWindow.Window.WINDOW_SCHEDULER || inTV);
-      GUIWindow._mainThreadContext.Post(delegate
-      {
-        SetVideoWindow();
-      }, null);
+      SetVideoWindow();
     }
 
     /// <summary>
@@ -3670,6 +3666,11 @@ namespace MediaPortal.Player
           return true;
         }
         Log.Info("g_Player: ShowFullScreenWindow switching to fullscreen tv");
+        if (GUIGraphicsContext.Vmr9Active && GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+        {
+          // Need to know why sometimes this need to be set and break here with madVR otherwise it get stuck in loop until a dialog is displayed
+          GUIGraphicsContext.IsFullScreenVideo = true;
+        }
         GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
         GUIGraphicsContext.IsFullScreenVideo = true;
         return true;

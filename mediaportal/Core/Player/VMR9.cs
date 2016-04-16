@@ -28,6 +28,7 @@ using System.Windows.Forms;
 using DirectShowLib;
 using DShowNET.Helper;
 using MediaPortal.Configuration;
+using MediaPortal.ExtensionMethods;
 using MediaPortal.GUI.Library;
 using MediaPortal.Profile;
 using MediaPortal.Util;
@@ -79,6 +80,9 @@ namespace MediaPortal.Player
 
     [PreserveSig]
     void RenderSubtitle(long frameStart, int left, int top, int right, int bottom, int width, int height);
+
+    [PreserveSig]
+    void RenderFrame(Int16 cx, Int16 cy, Int16 arx, Int16 ary, uint pSurface);
   }
 
   #endregion
@@ -158,14 +162,14 @@ namespace MediaPortal.Player
     private bool _useVmr9 = false;
     private bool _inMenu = false;
     private IRender _renderFrame;
-    private IBaseFilter _vmr9Filter = null;
+    internal IBaseFilter _vmr9Filter = null;
     private int _videoHeight, _videoWidth;
     private int _videoAspectRatioX, _videoAspectRatioY;
     private IQualProp _qualityInterface = null;
     private int _frameCounter = 0;
     private DateTime _repaintTimer = DateTime.Now;
     private IVMRMixerBitmap9 _vmr9MixerBitmapInterface = null;
-    private IGraphBuilder _graphBuilderInterface = null;
+    private IGraphBuilder _graphBuilder = null;
     private bool _isVmr9Initialized = false;
     private int _threadId;
     private Vmr9PlayState currentVmr9State = Vmr9PlayState.Playing;
@@ -173,6 +177,7 @@ namespace MediaPortal.Player
     private string verticalStretch = "";
     private string medianFiltering = "";
     private int _freeframeCounter = 0;
+    public Surface MadVrRenderTargetVMR9 = null;
 
     #endregion
 
@@ -343,21 +348,21 @@ namespace MediaPortal.Player
             //Log.Info("vmr9: pin:{0} is connected",i);
             if (pinIn != null)
             {
-              hr = DirectShowUtil.ReleaseComObject(pinIn);
+              DirectShowUtil.ReleaseComObject(pinIn);
             }
             if (pinConnected != null)
             {
-              hr = DirectShowUtil.ReleaseComObject(pinConnected);
+              DirectShowUtil.ReleaseComObject(pinConnected);
             }
             return true;
           }
           if (pinIn != null)
           {
-            hr = DirectShowUtil.ReleaseComObject(pinIn);
+            DirectShowUtil.ReleaseComObject(pinIn);
           }
           if (pinConnected != null)
           {
-            hr = DirectShowUtil.ReleaseComObject(pinConnected);
+            DirectShowUtil.ReleaseComObject(pinConnected);
           }
         }
         return false;
@@ -376,209 +381,234 @@ namespace MediaPortal.Player
     /// <param name="graphBuilder"></param>
     public bool AddVMR9(IGraphBuilder graphBuilder)
     {
-      if (!_useVmr9)
+      try
       {
-        Log.Debug("VMR9: addvmr9 - vmr9 is deactivated");
-        return false;
-      }
-      if (_isVmr9Initialized)
-      {
-        Log.Debug("VMR9: addvmr9: vmr9 has already been initialized");
-        return false;
-      }
-
-      if (_instanceCounter != 0)
-      {
-        Log.Error("VMR9: Multiple instances of VMR9 running!!!");
-        throw new Exception("VMR9Helper: Multiple instances of VMR9 running!!!");
-      }
-
-      HResult hr;
-      IntPtr hMonitor = Manager.GetAdapterMonitor(GUIGraphicsContext.DX9Device.DeviceCaps.AdapterOrdinal);
-      IntPtr upDevice = DirectShowUtil.GetUnmanagedDevice(GUIGraphicsContext.DX9Device);
-
-      _scene = new PlaneScene(this);
-      _scene.Init();
-
-      if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.EVR)
-      {
-        // Fix RDP Screen out of bound (force to use AdapterOrdinal to 0 if adapter number are out of bounds)
-        int AdapterOrdinal = GUIGraphicsContext.DX9Device.DeviceCaps.AdapterOrdinal;
-        if (AdapterOrdinal >= Screen.AllScreens.Length)
+        Log.Debug("VMR9: addvmr9 - thread : {0}", Thread.CurrentThread.Name);
+        if (!_useVmr9)
         {
-          AdapterOrdinal = Screen.AllScreens.Length - 1;
-          Log.Info("VMR9: adapter number out of bounds");
+          Log.Debug("VMR9: addvmr9 - vmr9 is deactivated");
+          return false;
         }
-        if (GUIGraphicsContext.currentMonitorIdx != -1)
+        if (_isVmr9Initialized)
         {
-          if ((OSInfo.OSInfo.Win7OrLater() &&
-               Screen.AllScreens[AdapterOrdinal].Primary) || OSInfo.OSInfo.Win8OrLater())
-          {
-            EvrInit(_scene, (uint) upDevice.ToInt32(), ref _vmr9Filter, (uint) hMonitor.ToInt32(),
-                    GUIGraphicsContext.currentMonitorIdx, false, false);
-          }
-          else
-          {
-            EvrInit(_scene, (uint) upDevice.ToInt32(), ref _vmr9Filter, (uint) hMonitor.ToInt32(),
-                    GUIGraphicsContext.currentMonitorIdx, true, true);
-            Log.Debug("VMR9: force disable vsync and bias correction for Win7 or lower - current primary is : {0}",
-                      Screen.AllScreens[AdapterOrdinal].Primary);
-          }
+          Log.Debug("VMR9: addvmr9: vmr9 has already been initialized");
+          return false;
         }
-        else
+
+        if (_instanceCounter != 0)
         {
-          if ((OSInfo.OSInfo.Win7OrLater() &&
-               Screen.AllScreens[AdapterOrdinal].Primary) || OSInfo.OSInfo.Win8OrLater())
-          {
-            EvrInit(_scene, (uint) upDevice.ToInt32(), ref _vmr9Filter, (uint) hMonitor.ToInt32(),
-                    AdapterOrdinal, false, false);
-          }
-          else
-          {
-            EvrInit(_scene, (uint) upDevice.ToInt32(), ref _vmr9Filter, (uint) hMonitor.ToInt32(),
-                    AdapterOrdinal, true, true);
-            Log.Debug("VMR9: force disable vsync and bias correction for Win7 or lower - current primary is : {0}",
-                      Screen.AllScreens[AdapterOrdinal].Primary);
-          }
+          Log.Error("VMR9: Multiple instances of VMR9 running!!!");
+          throw new Exception("VMR9Helper: Multiple instances of VMR9 running!!!");
         }
-        hr = new HResult(graphBuilder.AddFilter(_vmr9Filter, "Enhanced Video Renderer"));
-        Log.Info("VMR9: added EVR Renderer to graph");
-      }
-      else if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
-      {
-        var backbuffer = GUIGraphicsContext.DX9Device.PresentationParameters;
-        MadInit(_scene, backbuffer.BackBufferWidth, backbuffer.BackBufferHeight, (uint)upDevice.ToInt32(), (uint)GUIGraphicsContext.ActiveForm.ToInt32(), ref _vmr9Filter);
 
-        hr = new HResult(graphBuilder.AddFilter(_vmr9Filter, "madVR"));
-        Log.Info("VMR9: added madVR Renderer to graph");
-      }
-      else
-      {
-        _vmr9Filter = (IBaseFilter) new VideoMixingRenderer9();
-        Log.Info("VMR9: added Video Mixing Renderer 9 to graph");
+        HResult hr;
+        IntPtr hMonitor = Manager.GetAdapterMonitor(GUIGraphicsContext.DX9Device.DeviceCaps.AdapterOrdinal);
+        IntPtr upDevice = DirectShowUtil.GetUnmanagedDevice(GUIGraphicsContext.DX9Device);
 
-        Vmr9Init(_scene, (uint) upDevice.ToInt32(), _vmr9Filter, (uint) hMonitor.ToInt32());
-        hr = new HResult(graphBuilder.AddFilter(_vmr9Filter, "Video Mixing Renderer 9"));
-      }
+        _scene = new PlaneScene(this);
+        if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+        {
+          // Process 5 frames to clear D3D dialog window
+          GUIWindowManager.MadVrProcess();
+          _scene.MadVrRenderTarget = GUIGraphicsContext.DX9Device.GetRenderTarget(0);
+          MadVrRenderTargetVMR9 = GUIGraphicsContext.DX9Device.GetRenderTarget(0);
+        }
+        _scene.Init();
 
-      if (_vmr9Filter == null)
-      {
-        Error.SetError("Unable to play movie", "Renderer could not be added");
-        Log.Error("VMR9: Renderer not installed / cannot be used!");
-        return false;
-      }
-
-      if (hr != 0)
-      {
         if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.EVR)
         {
-          EvrDeinit();
-        }
-        else if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
-        {
-          MadDeinit();
-        }
-        else
-        {
-          Vmr9Deinit();
-        }
-
-        _scene.Stop();
-        _scene.Deinit();
-        _scene = null;
-
-        DirectShowUtil.ReleaseComObject(_vmr9Filter);
-        _vmr9Filter = null;
-        Error.SetError("Unable to play movie", "Unable to initialize Renderer");
-        Log.Error("VMR9: Failed to add Renderer to filter graph");
-        return false;
-      }
-
-      _qualityInterface = _vmr9Filter as IQualProp;
-      _vmr9MixerBitmapInterface = _vmr9Filter as IVMRMixerBitmap9;
-      _graphBuilderInterface = graphBuilder;
-      _instanceCounter++;
-      _isVmr9Initialized = true;
-      if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.VMR9)
-      {
-        SetDeinterlacePrefs();
-
-        IVMRMixerControl9 mixer = _vmr9Filter as IVMRMixerControl9;
-        if (mixer != null)
-        {
-          VMR9MixerPrefs dwPrefs;
-          mixer.GetMixingPrefs(out dwPrefs);
-          dwPrefs &= ~VMR9MixerPrefs.RenderTargetMask;
-
-          dwPrefs |= VMR9MixerPrefs.RenderTargetYUV;
-          // YUV saves graphics bandwith  http://msdn2.microsoft.com/en-us/library/ms788177(VS.85).aspx
-          hr.Set(mixer.SetMixingPrefs(dwPrefs));
-          Log.Debug("VMR9: Enabled YUV mixing - " + hr.ToDXString());
-
-          using (Settings xmlreader = new MPSettings())
+          // Fix RDP Screen out of bound (force to use AdapterOrdinal to 0 if adapter number are out of bounds)
+          int AdapterOrdinal = GUIGraphicsContext.DX9Device.DeviceCaps.AdapterOrdinal;
+          if (AdapterOrdinal >= Screen.AllScreens.Length)
           {
-            //Enable nonsquaremixing
-            if (xmlreader.GetValueAsBool("general", "nonsquare", true))
+            AdapterOrdinal = Screen.AllScreens.Length - 1;
+            Log.Info("VMR9: adapter number out of bounds");
+          }
+          if (GUIGraphicsContext.currentMonitorIdx != -1)
+          {
+            if ((OSInfo.OSInfo.Win7OrLater() &&
+                 Screen.AllScreens[AdapterOrdinal].Primary) || OSInfo.OSInfo.Win8OrLater())
             {
-              mixer.GetMixingPrefs(out dwPrefs);
-              dwPrefs |= VMR9MixerPrefs.NonSquareMixing;
-              hr.Set(mixer.SetMixingPrefs(dwPrefs));
-              Log.Debug("VRM9: Turning on nonsquare mixing - " + hr.ToDXString());
-              hr.Set(mixer.SetMixingPrefs(dwPrefs));
-            }
-
-            // Enable DecimateMask - this will effectively use only half of the input width & length
-            if (xmlreader.GetValueAsBool("general", "dx9decimatemask", false))
-            {
-              mixer.GetMixingPrefs(out dwPrefs);
-              dwPrefs &= ~VMR9MixerPrefs.DecimateMask;
-              dwPrefs |= VMR9MixerPrefs.DecimateOutput;
-              hr.Set(mixer.SetMixingPrefs(dwPrefs));
-              Log.Debug("VRM9: Enable decimatemask - " + hr.ToDXString());
-              hr.Set(mixer.SetMixingPrefs(dwPrefs));
-            }
-
-            // see  D3DTEXTUREFILTERTYPE Enumerated Type documents for further information
-            // MixerPref9_PointFiltering
-            // MixerPref9_BiLinearFiltering
-            // MixerPref9_AnisotropicFiltering
-            // MixerPref9_PyramidalQuadFiltering
-            // MixerPref9_GaussianQuadFiltering
-
-            mixer.SetMixingPrefs(dwPrefs);
-            mixer.GetMixingPrefs(out dwPrefs);
-            dwPrefs &= ~VMR9MixerPrefs.FilteringMask;
-            string filtermode9 = xmlreader.GetValueAsString("general", "dx9filteringmode", "Gaussian Quad Filtering");
-            if (filtermode9 == "Point Filtering")
-            {
-              dwPrefs |= VMR9MixerPrefs.PointFiltering;
-            }
-            else if (filtermode9 == "Bilinear Filtering")
-            {
-              dwPrefs |= VMR9MixerPrefs.BiLinearFiltering;
-            }
-            else if (filtermode9 == "Anisotropic Filtering")
-            {
-              dwPrefs |= VMR9MixerPrefs.AnisotropicFiltering;
-            }
-            else if (filtermode9 == "Pyrimidal Quad Filtering")
-            {
-              dwPrefs |= VMR9MixerPrefs.PyramidalQuadFiltering;
+              EvrInit(_scene, (uint) upDevice.ToInt32(), ref _vmr9Filter, (uint) hMonitor.ToInt32(),
+                GUIGraphicsContext.currentMonitorIdx, false, false);
             }
             else
             {
-              dwPrefs |= VMR9MixerPrefs.GaussianQuadFiltering;
+              EvrInit(_scene, (uint) upDevice.ToInt32(), ref _vmr9Filter, (uint) hMonitor.ToInt32(),
+                GUIGraphicsContext.currentMonitorIdx, true, true);
+              Log.Debug("VMR9: force disable vsync and bias correction for Win7 or lower - current primary is : {0}",
+                Screen.AllScreens[AdapterOrdinal].Primary);
             }
+          }
+          else
+          {
+            if ((OSInfo.OSInfo.Win7OrLater() &&
+                 Screen.AllScreens[AdapterOrdinal].Primary) || OSInfo.OSInfo.Win8OrLater())
+            {
+              EvrInit(_scene, (uint) upDevice.ToInt32(), ref _vmr9Filter, (uint) hMonitor.ToInt32(),
+                AdapterOrdinal, false, false);
+            }
+            else
+            {
+              EvrInit(_scene, (uint) upDevice.ToInt32(), ref _vmr9Filter, (uint) hMonitor.ToInt32(),
+                AdapterOrdinal, true, true);
+              Log.Debug("VMR9: force disable vsync and bias correction for Win7 or lower - current primary is : {0}",
+                Screen.AllScreens[AdapterOrdinal].Primary);
+            }
+          }
+          hr = new HResult(graphBuilder.AddFilter(_vmr9Filter, "Enhanced Video Renderer"));
+          Log.Info("VMR9: added EVR Renderer to graph");
+        }
+        else if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+        {
+          var backbuffer = GUIGraphicsContext.DX9Device.PresentationParameters;
+          MadInit(_scene, backbuffer.BackBufferWidth, backbuffer.BackBufferHeight, (uint)upDevice.ToInt32(),
+            (uint)GUIGraphicsContext.ActiveForm.ToInt32(), ref _vmr9Filter);
 
+          hr = new HResult(graphBuilder.AddFilter(_vmr9Filter, "madVR"));
+          Log.Info("VMR9: added madVR Renderer to graph");
+          backbuffer.SafeDispose();
+        }
+        else
+        {
+          _vmr9Filter = (IBaseFilter) new VideoMixingRenderer9();
+          Log.Info("VMR9: added Video Mixing Renderer 9 to graph");
+
+          Vmr9Init(_scene, (uint) upDevice.ToInt32(), _vmr9Filter, (uint) hMonitor.ToInt32());
+          hr = new HResult(graphBuilder.AddFilter(_vmr9Filter, "Video Mixing Renderer 9"));
+        }
+
+        if (_vmr9Filter == null)
+        {
+          Error.SetError("Unable to play movie", "Renderer could not be added");
+          Log.Error("VMR9: Renderer not installed / cannot be used!");
+          _scene.Stop();
+          _scene.Deinit();
+          _scene = null;
+          return false;
+        }
+
+        if (hr != 0)
+        {
+          if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.EVR)
+          {
+            EvrDeinit();
+          }
+          else if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+          {
+            Log.Error("VMR9: MadDeinit - thread : {0}", Thread.CurrentThread.Name);
+            MadDeinit();
+          }
+          else
+          {
+            Vmr9Deinit();
+          }
+
+          _scene.Stop();
+          _scene.Deinit();
+          _scene = null;
+
+          DirectShowUtil.FinalReleaseComObject(_vmr9Filter);
+          _vmr9Filter = null;
+          Error.SetError("Unable to play movie", "Unable to initialize Renderer");
+          Log.Error("VMR9: Failed to add Renderer to filter graph");
+          return false;
+        }
+
+        _qualityInterface = _vmr9Filter as IQualProp;
+        _vmr9MixerBitmapInterface = _vmr9Filter as IVMRMixerBitmap9;
+        _graphBuilder = graphBuilder;
+        _instanceCounter++;
+        _isVmr9Initialized = true;
+        if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.VMR9)
+        {
+          Log.Debug("VMR9: SetDeinterlacePrefs() for VMR9 mode");
+          SetDeinterlacePrefs();
+
+          IVMRMixerControl9 mixer = _vmr9Filter as IVMRMixerControl9;
+          if (mixer != null)
+          {
+            VMR9MixerPrefs dwPrefs;
+            mixer.GetMixingPrefs(out dwPrefs);
+            dwPrefs &= ~VMR9MixerPrefs.RenderTargetMask;
+
+            dwPrefs |= VMR9MixerPrefs.RenderTargetYUV;
+            // YUV saves graphics bandwith  http://msdn2.microsoft.com/en-us/library/ms788177(VS.85).aspx
             hr.Set(mixer.SetMixingPrefs(dwPrefs));
-            Log.Debug("VRM9: Set filter mode - " + filtermode9 + " " + hr.ToDXString());
+            Log.Debug("VMR9: Enabled YUV mixing - " + hr.ToDXString());
+
+            using (Settings xmlreader = new MPSettings())
+            {
+              //Enable nonsquaremixing
+              if (xmlreader.GetValueAsBool("general", "nonsquare", true))
+              {
+                mixer.GetMixingPrefs(out dwPrefs);
+                dwPrefs |= VMR9MixerPrefs.NonSquareMixing;
+                hr.Set(mixer.SetMixingPrefs(dwPrefs));
+                Log.Debug("VRM9: Turning on nonsquare mixing - " + hr.ToDXString());
+                hr.Set(mixer.SetMixingPrefs(dwPrefs));
+              }
+
+              // Enable DecimateMask - this will effectively use only half of the input width & length
+              if (xmlreader.GetValueAsBool("general", "dx9decimatemask", false))
+              {
+                mixer.GetMixingPrefs(out dwPrefs);
+                dwPrefs &= ~VMR9MixerPrefs.DecimateMask;
+                dwPrefs |= VMR9MixerPrefs.DecimateOutput;
+                hr.Set(mixer.SetMixingPrefs(dwPrefs));
+                Log.Debug("VRM9: Enable decimatemask - " + hr.ToDXString());
+                hr.Set(mixer.SetMixingPrefs(dwPrefs));
+              }
+
+              // see  D3DTEXTUREFILTERTYPE Enumerated Type documents for further information
+              // MixerPref9_PointFiltering
+              // MixerPref9_BiLinearFiltering
+              // MixerPref9_AnisotropicFiltering
+              // MixerPref9_PyramidalQuadFiltering
+              // MixerPref9_GaussianQuadFiltering
+
+              mixer.SetMixingPrefs(dwPrefs);
+              mixer.GetMixingPrefs(out dwPrefs);
+              dwPrefs &= ~VMR9MixerPrefs.FilteringMask;
+              string filtermode9 = xmlreader.GetValueAsString("general", "dx9filteringmode", "Gaussian Quad Filtering");
+              if (filtermode9 == "Point Filtering")
+              {
+                dwPrefs |= VMR9MixerPrefs.PointFiltering;
+              }
+              else if (filtermode9 == "Bilinear Filtering")
+              {
+                dwPrefs |= VMR9MixerPrefs.BiLinearFiltering;
+              }
+              else if (filtermode9 == "Anisotropic Filtering")
+              {
+                dwPrefs |= VMR9MixerPrefs.AnisotropicFiltering;
+              }
+              else if (filtermode9 == "Pyrimidal Quad Filtering")
+              {
+                dwPrefs |= VMR9MixerPrefs.PyramidalQuadFiltering;
+              }
+              else
+              {
+                dwPrefs |= VMR9MixerPrefs.GaussianQuadFiltering;
+              }
+
+              hr.Set(mixer.SetMixingPrefs(dwPrefs));
+              Log.Debug("VRM9: Set filter mode - " + filtermode9 + " " + hr.ToDXString());
+            }
           }
         }
+        _threadId = Thread.CurrentThread.ManagedThreadId;
+        GUIGraphicsContext.Vmr9Active = true;
+        g_vmr9 = this;
+        Log.Debug("VMR9: Renderer successfully added");
       }
-      _threadId = Thread.CurrentThread.ManagedThreadId;
-      GUIGraphicsContext.Vmr9Active = true;
-      g_vmr9 = this;
-      Log.Debug("VMR9: Renderer successfully added");
+      catch (Exception)
+      {
+        _scene.Stop();
+        _scene.Deinit();
+        _scene = null;
+        return false;
+      }
       return true;
     }
 
@@ -652,7 +682,7 @@ namespace MediaPortal.Player
       {
         return;
       }
-      _scene.Repaint();
+      if (_scene != null) _scene.Repaint();
     }
 
     public void SetRepaint()
@@ -669,7 +699,7 @@ namespace MediaPortal.Player
       FrameCounter = 0;
       _repaintTimer = DateTime.Now;
       currentVmr9State = Vmr9PlayState.Repaint;
-      _scene.DrawVideo = false;
+      if (_scene != null) _scene.DrawVideo = false;
     }
 
     public bool IsRepainting
@@ -691,7 +721,7 @@ namespace MediaPortal.Player
       {
         GUIGraphicsContext.Vmr9FPS = 0f;
         currentVmr9State = Vmr9PlayState.Playing;
-        _scene.DrawVideo = true;
+        if (_scene != null) _scene.DrawVideo = true;
         _repaintTimer = DateTime.Now;
         return;
       }
@@ -725,7 +755,7 @@ namespace MediaPortal.Player
         Log.Debug("VMR9: Repainting -> Playing, Frames: {0}", frames);
         GUIGraphicsContext.Vmr9FPS = 50f;
         currentVmr9State = Vmr9PlayState.Playing;
-        _scene.DrawVideo = true;
+        if (_scene != null) _scene.DrawVideo = true;
         _repaintTimer = DateTime.Now;
       }
       else if (currentVmr9State == Vmr9PlayState.Playing && GUIGraphicsContext.Vmr9FPS < 2f)
@@ -733,7 +763,7 @@ namespace MediaPortal.Player
         Log.Debug("VMR9Helper: Playing -> Repainting, Frames {0}", frames);
         GUIGraphicsContext.Vmr9FPS = 0f;
         currentVmr9State = Vmr9PlayState.Repaint;
-        _scene.DrawVideo = false;
+        if (_scene != null) _scene.DrawVideo = false;
       }
     }
 
@@ -995,7 +1025,7 @@ namespace MediaPortal.Player
         }
         DsUtils.FreeAMMediaType(mediatype);
         //release the VMR9 pin
-        hr = DirectShowUtil.ReleaseComObject(InPin);
+        DirectShowUtil.ReleaseComObject(InPin);
 
         InPin = null;
         mediatype = null;
@@ -1033,6 +1063,54 @@ namespace MediaPortal.Player
           return true;
         }
         return _scene.Enabled;
+      }
+    }
+
+    public void Vmr9MediaCtrl(IMediaControl mediaCtrl)
+    {
+      // Disable exclusive mode here to avoid madVR window staying on top
+      try
+      {
+        if (mediaCtrl != null)
+        {
+          lock (mediaCtrl)
+          {
+            var hr = 0;
+            Log.Debug("VMR9: mediaCtrl.Stop() 1");
+            hr = mediaCtrl.StopWhenReady();
+            hr = mediaCtrl.Stop();
+            Log.Debug("VMR9: mediaCtrl.Stop() 2");
+            DsError.ThrowExceptionForHR(hr);
+            if (GUIGraphicsContext.InVmr9Render)
+            {
+              switch (GUIGraphicsContext.VideoRenderer)
+              {
+                case GUIGraphicsContext.VideoRendererType.madVR:
+                  GUIGraphicsContext.InVmr9Render = false;
+                  //if (_vmr9Filter != null) MadvrInterface.EnableExclusiveMode(false, _vmr9Filter);
+                  break;
+                default:
+                  Log.Error("VMR9: {0} in renderer", g_Player.Player.ToString());
+                  break;
+              }
+            }
+          }
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Error("VMR9: Error while stopping graph or exclusive madVR mode : {0}", ex);
+      }
+    }
+
+    public void RestoreGuiForMadVr()
+    {
+      if (MadVrRenderTargetVMR9 != null && !MadVrRenderTargetVMR9.Disposed)
+      {
+        GUIGraphicsContext.DX9Device.SetRenderTarget(0, MadVrRenderTargetVMR9);
+        MadVrRenderTargetVMR9.Dispose();
+        MadVrRenderTargetVMR9 = null;
+        Log.Debug("VMR9: RestoreGuiForMadVr");
       }
     }
 
@@ -1194,56 +1272,95 @@ namespace MediaPortal.Player
     /// </summary>
     public void Dispose()
     {
-      Log.Debug("VMR9: Dispose");
-      if (false == _isVmr9Initialized)
+      try
       {
-        return;
-      }
-      if (_threadId != Thread.CurrentThread.ManagedThreadId)
-      {
-        Log.Error("VMR9: Dispose() from wrong thread");
-        //return;
-      }
-      if (_vmr9Filter == null)
-      {
-        Log.Error("VMR9: Dispose() no filter");
-        return;
-      }
+        Log.Debug("VMR9: Dispose");
+        if (false == _isVmr9Initialized)
+        {
+          Log.Debug("VMR9: Dispose 0");
+          return;
+        }
+        if (_threadId != Thread.CurrentThread.ManagedThreadId)
+        {
+          Log.Error("VMR9: Dispose() from wrong thread");
+          //return;
+        }
+        if (_vmr9Filter == null)
+        {
+          Log.Error("VMR9: Dispose() no filter");
+          return;
+        }
 
-      if (_scene != null)
-      {
-        _scene.Stop();
-        _instanceCounter--;
-        _scene.Deinit();
-        GUIGraphicsContext.Vmr9Active = false;
-        GUIGraphicsContext.Vmr9FPS = 0f;
-        GUIGraphicsContext.InVmr9Render = false;
-        currentVmr9State = Vmr9PlayState.Playing;
-      }
+        if (_scene != null)
+        {
+          _scene.Stop();
+          _instanceCounter--;
+          _scene.Deinit();
+          GUIGraphicsContext.Vmr9Active = false;
+          GUIGraphicsContext.Vmr9FPS = 0f;
+          GUIGraphicsContext.InVmr9Render = false;
+          currentVmr9State = Vmr9PlayState.Playing;
+          Log.Debug("VMR9: Dispose 1");
+        }
 
-      _vmr9MixerBitmapInterface = null;
+        _vmr9MixerBitmapInterface = null;
 
-      _qualityInterface = null;
+        _qualityInterface = null;
 
-      if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.EVR)
-      {
-        EvrDeinit();
-      }
-      else if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
-      {
-        MadDeinit();
-      }
-      else
-      {
-        Vmr9Deinit();
-      }
+        if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.EVR)
+        {
+          EvrDeinit();
+        }
+        else if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+        {
+          Log.Debug("VMR9: Dispose MadDeinit - thread : {0}", Thread.CurrentThread.Name);
+          MadDeinit();
+          Log.Debug("VMR9: Dispose 2");
+        }
+        else
+        {
+          Vmr9Deinit();
+        }
 
-      DirectShowUtil.ReleaseComObject(_vmr9Filter);
-      _vmr9Filter = null;
-      _graphBuilderInterface = null;
-      _scene = null;
-      g_vmr9 = null;
-      _isVmr9Initialized = false;
+        if (_vmr9Filter != null)
+        {
+          //if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+          //{
+          //  MadvrInterface.EnableExclusiveMode(false, _vmr9Filter);
+          //}
+          DirectShowUtil.RemoveFilter(_graphBuilder, _vmr9Filter);
+          DirectShowUtil.FinalReleaseComObject(_vmr9Filter);
+          Log.Debug("VMR9: Dispose 3");
+        }
+        _vmr9Filter = null;
+        _scene = null;
+        g_vmr9 = null;
+        _isVmr9Initialized = false;
+        GUIGraphicsContext.DX9DeviceMadVr = null;
+        Log.Debug("VMR9: Dispose 4");
+      }
+      catch (Exception)
+      {
+        _vmr9Filter = null;
+        _scene = null;
+        g_vmr9 = null;
+        _isVmr9Initialized = false;
+        GUIGraphicsContext.DX9DeviceMadVr = null;
+      }
+      finally
+      {
+        if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+        {
+          if (MadVrRenderTargetVMR9 != null && !MadVrRenderTargetVMR9.Disposed)
+          {
+            GUIGraphicsContext.DX9Device.SetRenderTarget(0, MadVrRenderTargetVMR9);
+            MadVrRenderTargetVMR9.Dispose();
+            MadVrRenderTargetVMR9 = null;
+            Log.Debug("VMR9: Dispose 5");
+          }
+        }
+        Log.Debug("VMR9: Dispose 6");
+      }
     }
 
     #endregion

@@ -51,6 +51,12 @@ namespace MediaPortal.Player
 
     [PreserveSig]
     int OnBitRateChanged(int bitrate);
+
+    [PreserveSig]
+    void OnVideoReceived();
+
+    [PreserveSig]
+    void OnRenderBlack();
   }
 
   [ComVisible(true), ComImport,
@@ -188,10 +194,10 @@ namespace MediaPortal.Player
     protected Geometry.Type _geometry = Geometry.Type.Normal;
     protected bool _endOfFileDetected = false;
     protected bool _startingUp;
-    protected bool _isRadio = false;
+    protected static bool _isRadio = false;
     protected g_Player.MediaType _mediaType;
     protected int iChangedMediaTypes;
-    protected VideoStreamFormat _videoFormat;
+    protected static VideoStreamFormat _videoFormat;
     protected int _lastFrameCounter;
     protected string videoFilter = "";
     protected string audioFilter = "";
@@ -561,7 +567,7 @@ namespace MediaPortal.Player
       ExclusiveMode(true);
       VideoRendererStatistics.VideoState = VideoRendererStatistics.State.VideoPresent;
       _isVisible = false;
-      _isWindowVisible = false;
+      GUIGraphicsContext.IsWindowVisible = false;
       _volume = 100;
       _state = PlayState.Init;
       _currentFile = strFile;
@@ -649,19 +655,21 @@ namespace MediaPortal.Player
 
     public override void SetVideoWindow()
     {
-      lock (lockObj)
+      //lock (lockObj)
       {
+        Log.Debug("TSReaderPlayer: SetVideoWindow()");
         if (GUIGraphicsContext.IsFullScreenVideo != _isFullscreen)
         {
           _isFullscreen = GUIGraphicsContext.IsFullScreenVideo;
           _updateNeeded = true;
         }
 
-        if (!_updateNeeded)
+        if (!_updateNeeded && !GUIGraphicsContext.UpdateVideoWindow)
         {
           return;
         }
         _updateNeeded = false;
+        GUIGraphicsContext.UpdateVideoWindow = false;
 
         float x = _positionX;
         float y = _positionY;
@@ -731,14 +739,9 @@ namespace MediaPortal.Player
           rSource.X, rSource.Y, rSource.X + rSource.Width, rSource.Y + rSource.Height);
         Log.Info("overlay: dst        : ({0},{1})-({2},{3})",
           rDest.X, rDest.Y, rDest.X + rDest.Width, rDest.Y + rDest.Height);
-        Log.Info("TSStreamBufferPlayer:Window ({0},{1})-({2},{3}) - ({4},{5})-({6},{7})",
+        Log.Info("TSReaderPlayer:Window ({0},{1})-({2},{3}) - ({4},{5})-({6},{7})",
           rSource.X, rSource.Y, rSource.Right, rSource.Bottom,
           rDest.X, rDest.Y, rDest.Right, rDest.Bottom);
-        if (rSource.Y == 0)
-        {
-          rSource.Y += 5;
-          rSource.Height -= 10;
-        }
         SetSourceDestRectangles(rSource, rDest);
         SetVideoPosition(rDest);
         _sourceRectangle = rSource;
@@ -790,22 +793,51 @@ namespace MediaPortal.Player
       {
         _isVisible = false;
       }
-      if (_isWindowVisible && !_isVisible)
+      if (GUIGraphicsContext.IsWindowVisible && !_isVisible)
       {
-        _isWindowVisible = false;
+        GUIGraphicsContext.IsWindowVisible = false;
         //Log.Info("TSReaderPlayer:hide window");
         if (_videoWin != null)
         {
-          _videoWin.put_Visible(OABool.False);
+          if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+          {
+            if (_basicVideo != null)
+            {
+              if (!GUIGraphicsContext.IsFullScreenVideo)
+              {
+                _basicVideo.SetDestinationPosition(-10, -10, 1, 1);
+                //Log.Error("TsReader hide video window");
+              }
+            }
+          }
+          else
+          {
+            _videoWin.put_Visible(OABool.False);
+          }
         }
       }
-      else if (!_isWindowVisible && _isVisible)
+      else if (!GUIGraphicsContext.IsWindowVisible && _isVisible)
       {
-        _isWindowVisible = true;
+        GUIGraphicsContext.IsWindowVisible = true;
         //Log.Info("TSReaderPlayer:show window");
         if (_videoWin != null)
         {
-          _videoWin.put_Visible(OABool.True);
+          if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+          {
+            if (_basicVideo != null)
+            {
+              if (!GUIGraphicsContext.IsFullScreenVideo)
+              {
+                _basicVideo.SetDestinationPosition(-10, -10, GUIGraphicsContext.VideoWindowWidth,
+                  GUIGraphicsContext.VideoWindowHeight);
+                //Log.Error("TsReader show video window");
+              }
+            }
+          }
+          else
+          {
+            _videoWin.put_Visible(OABool.True);
+          }
         }
       }
       OnProcess();
@@ -1464,24 +1496,29 @@ namespace MediaPortal.Player
     {
       if (_basicVideo != null)
       {
-        if (rSource.Left < 0 || rSource.Top < 0 || rSource.Width <= 0 || rSource.Height <= 0)
+        lock (_basicVideo)
         {
-          return;
-        }
-        if (rDest.Width <= 0 || rDest.Height <= 0)
-        {
-          return;
-        }
+          if (rSource.Left < 0 || rSource.Top < 0 || rSource.Width <= 0 || rSource.Height <= 0)
+          {
+            return;
+          }
+          if (rDest.Width <= 0 || rDest.Height <= 0)
+          {
+            return;
+          }
 
-        _basicVideo.SetSourcePosition(rSource.Left, rSource.Top, rSource.Width, rSource.Height);
+          Log.Debug("TSReaderPlayer: SetSourcePosition 1");
+          _basicVideo.SetSourcePosition(rSource.Left, rSource.Top, rSource.Width, rSource.Height);
+          Log.Debug("TSReaderPlayer: SetSourcePosition 2");
 
-        if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
-        {
-          _basicVideo.SetDestinationPosition(rDest.Left, rDest.Top, rDest.Width, rDest.Height);
-        }
-        else
-        {
-          _basicVideo.SetDestinationPosition(0, 0, rDest.Width, rDest.Height);
+          if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+          {
+            _basicVideo.SetDestinationPosition(rDest.Left, rDest.Top, rDest.Width, rDest.Height);
+          }
+          else
+          {
+            _basicVideo.SetDestinationPosition(0, 0, rDest.Width, rDest.Height);
+          }
         }
       }
     }
@@ -1565,17 +1602,55 @@ namespace MediaPortal.Player
     public int OnVideoFormatChanged(int streamType, int width, int height, int aspectRatioX, int aspectRatioY,
                                     int bitrate, int isInterlaced)
     {
-      _isRadio = false;
-      _videoFormat.IsValid = true;
-      _videoFormat.streamType = (VideoStreamType)streamType;
-      _videoFormat.width = width;
-      _videoFormat.height = height;
-      _videoFormat.arX = aspectRatioX;
-      _videoFormat.arY = aspectRatioY;
-      _videoFormat.bitrate = bitrate;
-      _videoFormat.isInterlaced = (isInterlaced == 1);
-      Log.Info("TsReaderPlayer: OnVideoFormatChanged - {0}", _videoFormat.ToString());
+      if (Thread.CurrentThread.Name != "MPMain" && Thread.CurrentThread.Name != "Config Main")
+      {
+        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ONVIDEOFORMATCHANGED, 0, 0, 0, 0, 0, null);
+        msg.Param1 = streamType;
+        msg.Param2 = width;
+        msg.Param3 = height;
+        msg.Param4 = aspectRatioX;
+        msg.Param5 = aspectRatioY;
+        msg.Param6 = bitrate;
+        msg.Param7 = isInterlaced;
+        GUIWindowManager.SendThreadMessage(msg);
+      }
+      else
+      {
+        _isRadio = false;
+        _videoFormat.IsValid = true;
+        _videoFormat.streamType = (VideoStreamType)streamType;
+        _videoFormat.width = width;
+        _videoFormat.height = height;
+        _videoFormat.arX = aspectRatioX;
+        _videoFormat.arY = aspectRatioY;
+        _videoFormat.bitrate = bitrate;
+        _videoFormat.isInterlaced = (isInterlaced == 1);
+        Log.Info("TsReaderPlayer: OnVideoFormatChanged - {0} MP main thread", _videoFormat.ToString());
+      }
       return 0;
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="message"></param>
+    internal static void OnMessage(GUIMessage message)
+    {
+      switch (message.Message)
+      {
+        case GUIMessage.MessageType.GUI_MSG_ONVIDEOFORMATCHANGED:
+          _isRadio = false;
+          _videoFormat.IsValid = true;
+          _videoFormat.streamType = (VideoStreamType)message.Param1;
+          _videoFormat.width = message.Param2;
+          _videoFormat.height = message.Param3;
+          _videoFormat.arX = message.Param4;
+          _videoFormat.arY = message.Param5;
+          _videoFormat.bitrate = message.Param6;
+          _videoFormat.isInterlaced = (message.Param7 == 1);
+          Log.Info("TsReaderPlayer: OnVideoFormatChanged - {0}", _videoFormat.ToString());
+          break;
+      }
     }
 
     public int OnBitRateChanged(int bitrate)
@@ -1583,6 +1658,18 @@ namespace MediaPortal.Player
       _videoFormat.bitrate = bitrate;
       //Log.Debug("TsReaderPlayer:OnBitRateChanged - {0} b/s", bitrate);
       return 0;
+    }
+
+    public void OnVideoReceived()
+    {
+      Log.Debug("TsReaderPlayer: OnVideoReceived() callback");
+      GUIGraphicsContext.VideoReceived();
+    }
+
+    public void OnRenderBlack()
+    {
+      Log.Debug("TsReaderPlayer: RenderBlackImage() callback");
+      GUIGraphicsContext.RenderBlack();
     }
 
     public int OnRequestAudioChange()
@@ -1617,7 +1704,7 @@ namespace MediaPortal.Player
           {
             Log.Error("Error stopping graph: {0}", error.Message);
           }
-          
+
           try
           {
             //Make sure the graph has really stopped
@@ -1670,11 +1757,11 @@ namespace MediaPortal.Player
               {
                 CleanupCC();
                 DirectShowUtil.RenderGraphBuilderOutputPins(_graphBuilder, _fileSource);
-                DirectShowUtil.RenderUnconnectedOutputPins(_graphBuilder, filterCodec.VideoCodec);                
+                DirectShowUtil.RenderUnconnectedOutputPins(_graphBuilder, filterCodec.VideoCodec);
                 EnableCC();
                 if (CoreCCPresent)
                 {
-                  DirectShowUtil.RenderUnconnectedOutputPins(_graphBuilder, filterCodec.CoreCCParser);                  
+                  DirectShowUtil.RenderUnconnectedOutputPins(_graphBuilder, filterCodec.CoreCCParser);
                   EnableCC2();
                 }
               }
@@ -1994,7 +2081,7 @@ namespace MediaPortal.Player
         //Add Video Codec
         if (filterCodec.VideoCodec != null)
         {
-          DirectShowUtil.ReleaseComObject(filterCodec.VideoCodec);
+          DirectShowUtil.FinalReleaseComObject(filterCodec.VideoCodec);
           filterCodec.VideoCodec = null;
         }
         filterCodec.VideoCodec = DirectShowUtil.AddFilterToGraph(this._graphBuilder, MatchFilters(selection));
@@ -2019,7 +2106,7 @@ namespace MediaPortal.Player
         //Add Audio Codec
         if (filterCodec.AudioCodec != null)
         {
-          DirectShowUtil.ReleaseComObject(filterCodec.AudioCodec);
+          DirectShowUtil.FinalReleaseComObject(filterCodec.AudioCodec);
           filterCodec.AudioCodec = null;
         }
         filterCodec.AudioCodec = DirectShowUtil.AddFilterToGraph(this._graphBuilder, MatchFilters(selection));

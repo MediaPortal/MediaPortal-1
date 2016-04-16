@@ -105,6 +105,7 @@ namespace MediaPortal.GUI.Library
     public static event SendMessageHandler Receivers;
     public static event OnActionHandler OnNewAction;
     public static event OnCallBackHandler Callbacks;
+    public static event OnCallBackHandler MadVrCallbacks;
     public static event PostRenderActionHandler OnPostRenderAction;
     //public static event  PostRendererHandler  OnPostRender;
     public static event WindowActivationHandler OnActivateWindow;
@@ -284,7 +285,7 @@ namespace MediaPortal.GUI.Library
       SendThreadMessage(msg);
 
       // if this is the main thread, then dispatch the messages
-      if (Thread.CurrentThread.Name == "MPMain")
+      if (Thread.CurrentThread.Name == "MPMain" || Thread.CurrentThread.Name == "Config Main")
       {
         DispatchThreadMessages();
       }
@@ -304,6 +305,12 @@ namespace MediaPortal.GUI.Library
 
       GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_CALLBACK, 0, 0, 0, 0, 0, env);
       SendThreadMessage(msg);
+
+      // if this is the main thread, then dispatch the messages
+      if (Thread.CurrentThread.Name == "MPMain" || Thread.CurrentThread.Name == "Config Main")
+      {
+        DispatchThreadMessages();
+      }
     }
 
 
@@ -1239,6 +1246,10 @@ namespace MediaPortal.GUI.Library
           }
         }
       }
+      catch (ThreadStateException ex)
+      {
+        Log.Error("ProcessWindows thread exception:{0}", ex.ToString());
+      }
       catch (Exception ex)
       {
         Log.Error("ProcessWindows exception:{0}", ex.ToString());
@@ -1292,6 +1303,22 @@ namespace MediaPortal.GUI.Library
         Callbacks();
       }
       WaitForFrameClock();
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public static void MadVrProcess()
+    {
+      if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+      {
+        StartFrameClock();
+        if (null != MadVrCallbacks)
+        {
+          MadVrCallbacks();
+        }
+        WaitForFrameClock();
+      }
     }
 
     #endregion

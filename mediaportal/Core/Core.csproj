@@ -387,6 +387,7 @@
     <Compile Include="Player\FFDShow\Interfaces\IffdshowBase.cs" />
     <Compile Include="Player\FFDShow\Interfaces\IffdshowDec.cs" />
     <Compile Include="Player\FFDShow\Interfaces\IffdshowDecVideo.cs" />
+    <Compile Include="Player\MadvrInterface.cs" />
     <Compile Include="Player\MediaInfoWrapper.cs" />
     <Compile Include="Player\PostProcessing\PostProcessingEngine.cs" />
     <Compile Include="Player\RefreshRateChanger.cs" />

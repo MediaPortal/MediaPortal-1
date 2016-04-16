@@ -985,6 +985,12 @@ public class MediaPortalApp : D3D, IRender
               Application.Run(app);
               app.Focus();
             }
+            catch (ThreadStateException ex)
+            {
+              Log.Error(ex);
+              Log.Error("MediaPortal stopped due to thread exception {0} {1} {2}", ex.Message, ex.Source, ex.StackTrace);
+              _mpCrashed = true;
+            }
             catch (Exception ex)
             {
               Log.Error(ex);
@@ -1298,6 +1304,7 @@ public class MediaPortalApp : D3D, IRender
     GUIWindowManager.OnNewAction += OnAction;
     GUIWindowManager.Receivers += OnMessage;
     GUIWindowManager.Callbacks += MPProcess;
+    GUIWindowManager.MadVrCallbacks += MadVRMPProcess;
 
     GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.STARTING;
 
@@ -2273,8 +2280,8 @@ public class MediaPortalApp : D3D, IRender
       GUIGraphicsContext.DX9Device.DeviceLost -= OnDeviceLost;
     }
 
-    if (VMR9Util.g_vmr9 != null && GUIGraphicsContext.Vmr9Active && 
-        GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.EVR))
+    if (VMR9Util.g_vmr9 != null && GUIGraphicsContext.Vmr9Active &&
+        GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.EVR)
     {
       VMR9Util.g_vmr9.UpdateEVRDisplayFPS(); // Update FPS
     }
@@ -2924,6 +2931,30 @@ public class MediaPortalApp : D3D, IRender
     }
   }
 
+  /// <summary>
+  /// Process() gets called for madVR.
+  /// It contains the message loop 
+  /// </summary>
+  public void MadVRMPProcess()
+  {
+    if (!_suspended && AppActive)
+    {
+      try
+      {
+        int process = 10;
+        while (process > 0)
+        {
+          FullRender();
+          process--;
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Error(ex);
+      }
+    }
+  }
+
   #endregion
 
   #region RenderFrame()
@@ -3539,6 +3570,11 @@ public class MediaPortalApp : D3D, IRender
     {
       if (GUIGraphicsContext.InVmr9Render)
       {
+        if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+        {
+          GUIGraphicsContext.InVmr9Render = false;
+          return;
+        }
         Log.Error("Main: MediaPortal.Render() called while VMR9 render - {0} / {1}", GUIGraphicsContext.Vmr9Active,
                   GUIGraphicsContext.Vmr9FPS);
         return;
@@ -4271,9 +4307,27 @@ public class MediaPortalApp : D3D, IRender
 
             string fileName = string.Format("{0}\\{1:00}-{2:00}-{3:00}", directory, DateTime.Now.Hour, DateTime.Now.Minute, DateTime.Now.Second);
             Log.Info("Main: Taking screenshot - Target: {0}.png", fileName);
-            Surface backbuffer = GUIGraphicsContext.DX9Device.GetBackBuffer(0, 0, BackBufferType.Mono);
-            SurfaceLoader.Save(fileName + ".png", ImageFileFormat.Png, backbuffer);
-            backbuffer.Dispose();
+            if (GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR)
+            {
+              Surface backbuffer = GUIGraphicsContext.DX9Device.GetBackBuffer(0, 0, BackBufferType.Mono);
+              SurfaceLoader.Save(fileName + ".png", ImageFileFormat.Png, backbuffer);
+              backbuffer.Dispose();
+            }
+            else if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR && GUIGraphicsContext.InVmr9Render)
+            {
+              if (GUIGraphicsContext.DX9DeviceMadVr != null)
+              {
+                Surface backbuffer = GUIGraphicsContext.DX9DeviceMadVr.GetBackBuffer(0, 0, BackBufferType.Mono);
+                SurfaceLoader.Save(fileName + ".png", ImageFileFormat.Png, backbuffer);
+                backbuffer.Dispose();
+              }
+            }
+            else
+            {
+              Surface backbuffer = GUIGraphicsContext.DX9Device.GetBackBuffer(0, 0, BackBufferType.Mono);
+              SurfaceLoader.Save(fileName + ".png", ImageFileFormat.Png, backbuffer);
+              backbuffer.Dispose();
+            }
             Log.Info("Main: Taking screenshot done");
           }
           catch (Exception ex)

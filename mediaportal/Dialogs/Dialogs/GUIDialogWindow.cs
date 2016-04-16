@@ -231,8 +231,7 @@ namespace MediaPortal.Dialogs
             _prevLayer = GUILayerManager.GetLayer(GUILayerManager.LayerType.Dialog);
             _prevOverlay = GUIGraphicsContext.Overlay;
 
-            if (GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR)
-              GUIGraphicsContext.Overlay = base.IsOverlayAllowed;
+            GUIGraphicsContext.Overlay = base.IsOverlayAllowed;
 
             GUILayerManager.RegisterLayer(this, GUILayerManager.LayerType.Dialog);
 

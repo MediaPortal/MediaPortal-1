@@ -157,6 +157,10 @@ namespace MediaPortal.GUI.Library
       GUI_MSG_PICTURESDIRECTORY_CREATED = 143,
       GUI_MSG_PICTURESDIRECTORY_DELETED = 144,
       GUI_MSG_PICTURESDIRECTORY_RENAMED = 145,
+      GUI_MSG_ONVIDEOWINDOWCHANGED = 146,
+      GUI_MSG_SETVIDEOWINDOW = 147,
+      GUI_MSG_LOADSKIN = 148,
+      GUI_MSG_ONVIDEOFORMATCHANGED = 149,
       PS_ONSTANDBY = 9999
     } ;
 
@@ -173,6 +177,9 @@ namespace MediaPortal.GUI.Library
     private int _parameter2 = 0;
     private int _parameter3 = 0;
     private int _parameter4 = 0;
+    private int _parameter5 = 0;
+    private int _parameter6 = 0;
+    private int _parameter7 = 0;
     private int _targetWindowId = 0;
     private bool _sendToTargetWindow = false;
 
@@ -247,6 +254,24 @@ namespace MediaPortal.GUI.Library
     {
       get { return _parameter4; }
       set { _parameter4 = value; }
+    }
+
+    public int Param5
+    {
+      get { return _parameter5; }
+      set { _parameter5 = value; }
+    }
+
+    public int Param6
+    {
+      get { return _parameter6; }
+      set { _parameter6 = value; }
+    }
+
+    public int Param7
+    {
+      get { return _parameter7; }
+      set { _parameter7 = value; }
     }
 
     /// <summary>

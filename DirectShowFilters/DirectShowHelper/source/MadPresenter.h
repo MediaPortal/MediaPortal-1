@@ -44,8 +44,8 @@ class MPMadPresenter : public CUnknown, public IOsdRenderCallback, public CCritS
     STDMETHODIMP SetDevice(IDirect3DDevice9* pD3DDev);
 
   private:
-    HRESULT RenderToTexture(IDirect3DTexture9* pTexture);
-    HRESULT RenderTexture(IDirect3DVertexBuffer9* pVertexBuf, IDirect3DTexture9* pTexture);
+    void RenderToTexture(IDirect3DTexture9* pTexture, WORD cx, WORD cy, WORD arx, WORD ary);
+    void RenderTexture(IDirect3DVertexBuffer9* pVertexBuf, IDirect3DTexture9* pTexture);
 
     HRESULT SetupOSDVertex(IDirect3DVertexBuffer9* pVertextBuf);
     HRESULT SetupMadDeviceState();
@@ -59,7 +59,15 @@ class MPMadPresenter : public CUnknown, public IOsdRenderCallback, public CCritS
 
     IVMR9Callback* m_pCallback = nullptr;
     
-    IUnknown* m_pMad = nullptr;
+    CComPtr<IUnknown> m_pMad = nullptr;
+
+    CComQIPtr<IBaseFilter> m_pBaseFilter = nullptr;
+    CComQIPtr<IMadVROsdServices> m_pOsdServices = nullptr;
+    CComQIPtr<IMadVRDirect3D9Manager> m_pManager = nullptr;
+    CComQIPtr<IMadVRSubclassReplacement> m_pSubclassReplacement = nullptr;
+    CComQIPtr<ISubRender> m_pSubRender = nullptr;
+    CComQIPtr<IVideoWindow> m_pWindow = nullptr;
+    CComQIPtr<IMadVRCommand> m_pCommand = nullptr;
 
     CComQIPtr<IDirect3DTexture9> m_pRenderTextureGui = nullptr;
     CComQIPtr<IDirect3DTexture9> m_pRenderTextureOsd = nullptr;
@@ -81,6 +89,10 @@ class MPMadPresenter : public CUnknown, public IOsdRenderCallback, public CCritS
 
     DeviceState m_deviceState;
 
-    IMadVRCommand* m_pCommand = nullptr;
+    //int countFrame = 0;
+    //int firstFrame = 1;
+    //int secondFrame = 3;
+    //int resetFrame = -1;
+
 };
 

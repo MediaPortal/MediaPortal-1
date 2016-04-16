@@ -44,7 +44,7 @@ namespace MediaPortal.GUI.Library
 
     private const int MAX_LAYERS = 15;
 
-    private static IRenderLayer[] _layers = new IRenderLayer[MAX_LAYERS];
+    private static readonly IRenderLayer[] _layers = new IRenderLayer[MAX_LAYERS];
 
     public static void RegisterLayer(IRenderLayer renderer, LayerType zOrder)
     {
@@ -73,9 +73,9 @@ namespace MediaPortal.GUI.Library
 
       if (GUIGraphicsContext.BlankScreen)
       {
-        return uiVisible;
+        return false;
       }
-      int videoLayer = (int)LayerType.Video;
+      int videoLayer = (int) LayerType.Video;
       if (GUIGraphicsContext.ShowBackground == false)
       {
         if (_layers[videoLayer] != null)
@@ -93,7 +93,7 @@ namespace MediaPortal.GUI.Library
 
       if (layers == GUILayers.under)
         endLayer = videoLayer - 1;
-      else if (layers == GUILayers.over)
+      else if (layers == GUILayers.over && !GUIGraphicsContext.IsFullScreenVideo)
         startLayer = videoLayer + 1;
 
       for (int i = startLayer; i < endLayer; ++i)
@@ -109,15 +109,10 @@ namespace MediaPortal.GUI.Library
             _layers[i].RenderLayer(timePassed);
             GUIFontManager.Present();
 
-            // Currently Osd and Topbar2 layers are always reporting that they should be renderred.
-            // It is not 100% clear why that is done (probably just a bug fix done horribly wrong).
-            // As a side effet madVR won't be able to use low latency rendering path to make UI
-            // more fluid when top bar or video OSD is accessed.
-            //
-            // TODO: find out why the ugly workaround(?) has been introduced in the past.
-            if (videoLayer != i && i != (int)LayerType.Osd && i != (int)LayerType.Topbar2)
+            if (videoLayer != i)
             {
               uiVisible = true;
+              //Log.Error("Layer uiVisible and layer [{0}]", Enum.GetName(typeof (LayerType), i));
             }
           }
         }

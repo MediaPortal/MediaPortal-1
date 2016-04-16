@@ -113,6 +113,7 @@ namespace MediaPortal.Player
 
     public PlaneScene(VMR9Util util)
     {
+      MadVrRenderTarget = null;
       //	Log.Info("PlaneScene: ctor()");
 
       _textureAddress = 0;
@@ -168,6 +169,8 @@ namespace MediaPortal.Player
       }
     }
 
+    public Surface MadVrRenderTarget { get; set; }
+
     public bool Enabled
     {
       get { return _isEnabled; }
@@ -216,7 +219,20 @@ namespace MediaPortal.Player
     {
       GUIWindowManager.Receivers -= new SendMessageHandler(this.OnMessage);
       GUILayerManager.UnRegisterLayer(this);
-      if (_renderTarget != null)
+      if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+      {
+        if (MadVrRenderTarget != null)
+        {
+          //VMR9 changes the directx 9 render target. Thats why we set it back to what it was
+          if (!MadVrRenderTarget.Disposed)
+          {
+            GUIGraphicsContext.DX9Device.SetRenderTarget(0, MadVrRenderTarget);
+          }
+          MadVrRenderTarget.Dispose();
+          MadVrRenderTarget = null;
+        }
+      }
+      else if (_renderTarget != null)
       {
         //VMR9 changes the directx 9 render target. Thats why we set it back to what it was
         if (!_renderTarget.Disposed)
@@ -240,7 +256,13 @@ namespace MediaPortal.Player
         _blackImage = null;
       }
 
-      grabber.Clean();
+      if (grabber != null) 
+      {
+        lock (GUIGraphicsContext.RenderModeSwitch)
+        {
+          grabber.Clean();
+        }
+      }
       SubtitleRenderer.GetInstance().Clear();
 
       if (GUIGraphicsContext.LastFrames != null)
@@ -267,14 +289,10 @@ namespace MediaPortal.Player
     public void Init()
     {
       //Log.Info("PlaneScene: init()");
-      _renderTarget = GUIGraphicsContext.DX9Device.GetRenderTarget(0);
+      if (GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR)
+        _renderTarget = GUIGraphicsContext.DX9Device.GetRenderTarget(0);
       GUILayerManager.RegisterLayer(this, GUILayerManager.LayerType.Video);
       GUIWindowManager.Receivers += new SendMessageHandler(this.OnMessage);
-
-      if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
-      {
-        GUIGraphicsContext.InVmr9Render = true;
-      }
     }
 
     /// <summary>
@@ -373,19 +391,28 @@ namespace MediaPortal.Player
         //sanity check
         if (nw <= 10 || nh <= 10 || x < 0 || y < 0)
         {
-          return false;
+          // Need to resize window video for madVR
+          if (GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR)
+            return false;
         }
 
         GUIGraphicsContext.ScaleVideoWindow(ref nw, ref nh, ref x, ref y);
 
         //did the video window,aspect ratio change? if not
         //then we dont need to recalculate and just return the previous settings
-        if (!updateCrop && (int)x == _rectPrevious.X && (int)y == _rectPrevious.Y &&
+        //add a delta value of -1 or +1 to check
+        if (!updateCrop && (int) x == _rectPrevious.X && (int) y == _rectPrevious.Y &&
             nw == _rectPrevious.Width && nh == _rectPrevious.Height &&
             GUIGraphicsContext.ARType == _aspectRatioType &&
             GUIGraphicsContext.Overlay == _lastOverlayVisible && _shouldRenderTexture &&
-            _prevVideoWidth == videoSize.Width && _prevVideoHeight == videoSize.Height &&
-            _prevArVideoWidth == _arVideoWidth && _prevArVideoHeight == _arVideoHeight)
+            (_prevVideoWidth == videoSize.Width || _prevVideoWidth == videoSize.Width + 1 ||
+             _prevVideoWidth == videoSize.Width - 1) &&
+            (_prevVideoHeight == videoSize.Height || _prevVideoHeight == videoSize.Height + 1 ||
+             _prevVideoHeight == videoSize.Height - 1) &&
+            (_prevArVideoWidth == _arVideoWidth || _prevArVideoWidth == _arVideoWidth + 1 ||
+             _prevArVideoWidth == _arVideoWidth - 1) &&
+            (_prevArVideoHeight == _arVideoHeight || _prevArVideoHeight == _arVideoHeight + 1 ||
+             _prevArVideoHeight == _arVideoHeight - 1))
         {
           //not changed, return previous settings
           return _shouldRenderTexture;
@@ -459,6 +486,13 @@ namespace MediaPortal.Player
           return false;
         }
 
+        if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+        {
+          // Force VideoWindow to be refreshed with madVR when switching from video size like 16:9 to 4:3
+          GUIGraphicsContext.UpdateVideoWindow = true;
+          GUIGraphicsContext.VideoWindowChanged();
+        }
+
         Log.Debug("PlaneScene: crop T, B  : {0}, {1}", _cropSettings.Top, _cropSettings.Bottom);
         Log.Debug("PlaneScene: crop L, R  : {0}, {1}", _cropSettings.Left, _cropSettings.Right);
 
@@ -499,7 +533,7 @@ namespace MediaPortal.Player
       }
       try
       {
-        if (!GUIGraphicsContext.InVmr9Render)
+        if (!GUIGraphicsContext.InVmr9Render && GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR)
         {
           InternalPresentImage(_vmr9Util.VideoWidth, _vmr9Util.VideoHeight, _arVideoWidth, _arVideoHeight, true);
         }
@@ -554,7 +588,8 @@ namespace MediaPortal.Player
           }
           _vmr9Util.FrameCounter++;
           //			Log.Info("vmr9:present image()");
-          InternalPresentImage(width, height, arWidth, arHeight, false);
+          if (GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR)
+            InternalPresentImage(width, height, arWidth, arHeight, false);
           //			Log.Info("vmr9:present image() done");
         }
         catch (Exception ex)
@@ -563,6 +598,30 @@ namespace MediaPortal.Player
         }
       }
       return 0;
+    }
+
+    public void RenderFrame(Int16 width, Int16 height, Int16 arWidth, Int16 arHeight, uint pSurface)
+    {
+      IntPtr ptrMadVr = (IntPtr)pSurface;
+      Surface surfaceMadVr = new Surface(ptrMadVr);
+      try
+      {
+        unsafe
+        {
+          lock (GUIGraphicsContext.RenderModeSwitch)
+          {
+            grabber.OnFrame(width, height, arWidth, arHeight, (uint)surfaceMadVr.UnmanagedComPointer,
+              FrameGrabber.FrameSource.Video);
+          }
+        }
+        surfaceMadVr.ReleaseGraphics();
+        surfaceMadVr.Dispose();
+      }
+      catch (Exception ex)
+      {
+        surfaceMadVr.ReleaseGraphics();
+        surfaceMadVr.Dispose();
+      }
     }
 
     public int RenderGui(Int16 width, Int16 height, Int16 arWidth, Int16 arHeight)
@@ -577,6 +636,21 @@ namespace MediaPortal.Player
 
     private int RenderLayers(GUILayers layers, Int16 width, Int16 height, Int16 arWidth, Int16 arHeight)
     {
+      if (!GUIGraphicsContext.InVmr9Render)
+      {
+        GUIGraphicsContext.InVmr9Render = true;
+      }
+
+      if (GUIGraphicsContext.IsSwitchingToNewSkin)
+      {
+        return -1;
+      }
+
+      if (GUIWindowManager.IsSwitchingToNewWindow && !_vmr9Util.InMenu)
+      {
+        return 0; //dont present video during window transitions
+      }
+
       if (width > 0 && height > 0)
       {
         _vmr9Util.VideoWidth = width;
@@ -586,8 +660,16 @@ namespace MediaPortal.Player
         _arVideoWidth = arWidth;
         _arVideoHeight = arHeight;
 
-        Size nativeSize = new Size(width, height);
-        _shouldRenderTexture = SetVideoWindow(nativeSize);
+        if (GUIGraphicsContext.IsWindowVisible)
+        {
+          Size nativeSize = new Size(width, height);
+          _shouldRenderTexture = SetVideoWindow(nativeSize);
+        }
+        else
+        {
+          Size nativeSize = new Size(1, 1);
+          _shouldRenderTexture = SetVideoWindow(nativeSize);
+        }
       }
 
       Device device = GUIGraphicsContext.DX9Device;
@@ -599,12 +681,19 @@ namespace MediaPortal.Player
       {
         SubtitleRenderer.GetInstance().Render();
         BDOSDRenderer.GetInstance().Render();
+        GUIGraphicsContext.RenderOverlay = true;
       }
 
       bool visible = false;
       GUIGraphicsContext.RenderGUI.RenderFrame(GUIGraphicsContext.TimePassed, layers, ref visible);
       GUIFontManager.Present();
       device.EndScene();
+
+      if (layers == GUILayers.under)
+      {
+        GUIGraphicsContext.RenderGui = false;
+        GUIGraphicsContext.RenderOverlay = false;
+      }
 
       // Present() call is done on C++ side so we are able to use DirectX 9 Ex device
       // which allows us to skip the v-sync wait. We don't want to wait with madVR
@@ -615,17 +704,18 @@ namespace MediaPortal.Player
 
     public void SetRenderTarget(uint target)
     {
-      lock (GUIGraphicsContext.RenderLock)
-      {
-        IntPtr ptr = (IntPtr)target;
-        Surface surface = new Surface(ptr);
-        GUIGraphicsContext.DX9Device.SetRenderTarget(0, surface);
-      }
+      IntPtr ptr = (IntPtr)target;
+      Surface surface = new Surface(ptr);
+      GUIGraphicsContext.DX9Device.SetRenderTarget(0, surface);
+      surface.ReleaseGraphics();
+      surface.Dispose();
     }
 
     public void SetSubtitleDevice(IntPtr device)
     {
-      ISubEngine engine = SubEngine.GetInstance();
+      // Set madVR D3D Device
+      GUIGraphicsContext.DX9DeviceMadVr = new Device(device);
+      ISubEngine engine = SubEngine.GetInstance(true);
       if (engine != null)
       {
         engine.SetDevice(device);
@@ -784,7 +874,8 @@ namespace MediaPortal.Player
         //Direct3D.Surface backBuffer=null;
         _debugStep = 0;
         _reEntrant = true;
-        GUIGraphicsContext.InVmr9Render = true;
+        if (GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR)
+          GUIGraphicsContext.InVmr9Render = true;
         if (width > 0 && height > 0)
         {
           _vmr9Util.VideoWidth = width;

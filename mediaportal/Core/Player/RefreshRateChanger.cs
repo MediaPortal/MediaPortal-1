@@ -193,7 +193,7 @@ namespace MediaPortal.Player
     /// Finds the monitorIndex based on current specified screen on its primary monitor
     /// </summary>
     /// <returns>The monitorIndex that has the specified screen on its primary monitor</returns>
-    protected static int FindMonitorIndexForScreen()
+    protected internal static int FindMonitorIndexForScreen()
     {
       uint deviceNum = 0;
       DISPLAY_DEVICE displayDevice = new DISPLAY_DEVICE();

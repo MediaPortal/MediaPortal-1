@@ -120,7 +120,9 @@ namespace WindowPlugins.GUISettings
           // prevent MP from rendering when resource are disposed during live changing of a skin
           lock (GUIGraphicsContext.RenderLock)
           {
+            GUIGraphicsContext.IsSwitchingToNewSkin = true;
             OnSkinChanged();
+            GUIGraphicsContext.IsSwitchingToNewSkin = false;
           }
         }
         

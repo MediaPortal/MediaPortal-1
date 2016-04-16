@@ -429,25 +429,19 @@ namespace MediaPortal.Player
 
         if (_dvdbasefilter != null)
         {
-          while ((hr = DirectShowUtil.ReleaseComObject(_dvdbasefilter)) > 0)
-          {
-            ;
-          }
+          DirectShowUtil.FinalReleaseComObject(_dvdbasefilter);
           _dvdbasefilter = null;
         }
 
         if (_cmdOption != null)
         {
-          DirectShowUtil.ReleaseComObject(_cmdOption);
+          DirectShowUtil.FinalReleaseComObject(_cmdOption);
         }
         _cmdOption = null;
         _pendingCmd = false;
         if (_line21Decoder != null)
         {
-          while ((hr = DirectShowUtil.ReleaseComObject(_line21Decoder)) > 0)
-          {
-            ;
-          }
+          DirectShowUtil.FinalReleaseComObject(_line21Decoder);
           _line21Decoder = null;
         }
 
@@ -460,19 +454,13 @@ namespace MediaPortal.Player
             _rotEntry.SafeDispose();
             _rotEntry = null;
           }
-          while ((hr = DirectShowUtil.ReleaseComObject(_graphBuilder)) > 0)
-          {
-            ;
-          }
+          DirectShowUtil.FinalReleaseComObject(_graphBuilder);
           _graphBuilder = null;
         }
 
         if (_dvdGraph != null)
         {
-          while ((hr = DirectShowUtil.ReleaseComObject(_dvdGraph)) > 0)
-          {
-            ;
-          }
+          DirectShowUtil.FinalReleaseComObject(_dvdGraph);
           _dvdGraph = null;
         }
         _state = PlayState.Init;
@@ -1424,16 +1412,35 @@ namespace MediaPortal.Player
       {
         if (GUIGraphicsContext.Overlay == false && GUIGraphicsContext.IsFullScreenVideo == false)
         {
-          if (_visible)
+          if (_isVisible)
           {
-            _visible = false;
-            _videoWin.put_Visible(OABool.False);
+            _isVisible = false;
+            if (GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR)
+            {
+              _videoWin.put_Visible(OABool.False);
+            }
+            else
+            {
+              if (_basicVideo != null)
+              {
+                if (!GUIGraphicsContext.IsFullScreenVideo)
+                  _basicVideo.SetDestinationPosition(-10, -10, 1, 1);
+              }
+            }
           }
         }
-        else if (!_visible)
+        else if (!_isVisible)
         {
-          _visible = true;
-          _videoWin.put_Visible(OABool.True);
+          _isVisible = true;
+          if (GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR)
+          {
+            _videoWin.put_Visible(OABool.True);
+          }
+          else
+          {
+            GUIGraphicsContext.VideoWindow = new Rectangle(0, 0, GUIGraphicsContext.VideoWindowWidth,
+              GUIGraphicsContext.VideoWindowHeight);
+          }
         }
       }
     }
@@ -1450,13 +1457,14 @@ namespace MediaPortal.Player
         _updateNeeded = true;
       }
 
-      if (!_updateNeeded)
+      if (!_updateNeeded && !GUIGraphicsContext.UpdateVideoWindow)
       {
         return;
       }
 
       _started = true;
       _updateNeeded = false;
+      GUIGraphicsContext.UpdateVideoWindow = false;
       float x = _positionX;
       float y = _positionY;
 
@@ -2143,24 +2151,27 @@ namespace MediaPortal.Player
     {
       if (_basicVideo != null)
       {
-        if (source.Left < 0 || source.Top < 0 || source.Width <= 0 || source.Height <= 0)
+        lock (_basicVideo)
         {
-          return;
-        }
-        if (destination.Width <= 0 || destination.Height <= 0)
-        {
-          return;
-        }
+          if (source.Left < 0 || source.Top < 0 || source.Width <= 0 || source.Height <= 0)
+          {
+            return;
+          }
+          if (destination.Width <= 0 || destination.Height <= 0)
+          {
+            return;
+          }
 
-        _basicVideo.SetSourcePosition(source.Left, source.Top, source.Width, source.Height);
+          _basicVideo.SetSourcePosition(source.Left, source.Top, source.Width, source.Height);
 
-        if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
-        {
-          _basicVideo.SetDestinationPosition(destination.Left, destination.Top, destination.Width, destination.Height);
-        }
-        else
-        {
-          _basicVideo.SetDestinationPosition(0, 0, destination.Width, destination.Height);
+          if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+          {
+            _basicVideo.SetDestinationPosition(destination.Left, destination.Top, destination.Width, destination.Height);
+          }
+          else
+          {
+            _basicVideo.SetDestinationPosition(0, 0, destination.Width, destination.Height);
+          }
         }
       }
     }

@@ -43,7 +43,10 @@ void SetShowForcedOnly(BOOL onlyShowForcedSubs)
 BOOL SetDevice(IDirect3DDevice9* d3DDev)
 {
   if (g_subManager)
+  {
     g_subManager->SetDevice(d3DDev);
+    g_subManager->SetCurrent(g_subManager->GetCurrent());
+  }
 
   g_d3DDev = d3DDev;
 

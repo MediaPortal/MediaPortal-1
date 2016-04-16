@@ -252,7 +252,7 @@ namespace MediaPortal.GUI.Library
 
     private VisualEffect _showAnimation = new VisualEffect(); // for dialogs
     private VisualEffect _closeAnimation = new VisualEffect();
-    public static readonly SynchronizationContext _mainThreadContext = SynchronizationContext.Current;
+    public static SynchronizationContext _mainThreadContext = SynchronizationContext.Current;
 
     #endregion
 
@@ -475,10 +475,7 @@ namespace MediaPortal.GUI.Library
       }
 
       // else load xml file now
-      GUIWindow._mainThreadContext.Send(delegate
-      {
-        LoadSkin();
-      }, null);
+      LoadSkin();
 
       if (!_windowAllocated)
       {
@@ -489,20 +486,32 @@ namespace MediaPortal.GUI.Library
 
     }
 
+    public bool LoadSkin()
+    {
+      GUIWindowManager.SendThreadCallback(LoadSkinThreaded, 0, 0, null);
+      return true;
+    }
+
+    public int LoadSkinThreaded(int p1, int p2, object s)
+    {
+      LoadSkinBool();
+      return p1;
+    }
+
     /// <summary>
     /// Loads the xml file for the window.
     /// </summary>
     /// <returns></returns>
-    public bool LoadSkin()
+    public bool LoadSkinBool()
     {
-
       // add thread check to log calls not running in main thread/GUI
       String threadName = Thread.CurrentThread.Name;
       if (threadName != "MPMain" && threadName != "Config Main")
       {
         if (threadName != null)
         {
-          Log.Error("LoadSkin: Running on wrong thread name [{0}] - StackTrace: '{1}'", threadName, Environment.StackTrace);
+          Log.Error("LoadSkin: Running on wrong thread name [{0}] - StackTrace: '{1}'", threadName,
+            Environment.StackTrace);
         }
         else
         {
@@ -529,7 +538,8 @@ namespace MediaPortal.GUI.Library
       // Load the reference controls
       //int iPos = _windowXmlFileName.LastIndexOf('\\');
       //string strReferenceFile = _windowXmlFileName.Substring(0, iPos);
-      _windowXmlFileName = GUIGraphicsContext.GetThemedSkinFile(_windowXmlFileName.Substring(_windowXmlFileName.LastIndexOf("\\")));
+      _windowXmlFileName =
+        GUIGraphicsContext.GetThemedSkinFile(_windowXmlFileName.Substring(_windowXmlFileName.LastIndexOf("\\")));
       string strReferenceFile = GUIGraphicsContext.GetThemedSkinFile(@"\references.xml");
 
       GUIControlFactory.LoadReferences(strReferenceFile);
@@ -703,7 +713,8 @@ namespace MediaPortal.GUI.Library
         _rememberLastFocusedControl = false;
         if (GUIGraphicsContext.AllowRememberLastFocusedItem)
         {
-          XmlNode nodeRememberLastFocusedControl = doc.DocumentElement.SelectSingleNode("/window/rememberLastFocusedControl");
+          XmlNode nodeRememberLastFocusedControl =
+            doc.DocumentElement.SelectSingleNode("/window/rememberLastFocusedControl");
           if (nodeRememberLastFocusedControl != null)
           {
             string rememberLastFocusedControlStr = nodeRememberLastFocusedControl.InnerText.ToLowerInvariant();
@@ -734,13 +745,16 @@ namespace MediaPortal.GUI.Library
                 {
                   try
                   {
-                    loadInclude = bool.Parse(GUIPropertyManager.Parse(node.Attributes["condition"].Value, GUIExpressionManager.ExpressionOptions.EVALUATE_ALWAYS));
+                    loadInclude =
+                      bool.Parse(GUIPropertyManager.Parse(node.Attributes["condition"].Value,
+                        GUIExpressionManager.ExpressionOptions.EVALUATE_ALWAYS));
                   }
                   catch (FormatException)
                   {
                     // The include will not be loaded if the expression could not be evaluated.
                     loadInclude = false;
-                    Log.Debug("LoadSkin: {0}, could not evaluate include expression '{1}' ", _windowXmlFileName, node.Attributes["condition"].Value);
+                    Log.Debug("LoadSkin: {0}, could not evaluate include expression '{1}' ", _windowXmlFileName,
+                      node.Attributes["condition"].Value);
                   }
                 }
 
@@ -754,7 +768,7 @@ namespace MediaPortal.GUI.Library
         }
 
         // TODO: remove this when all XAML parser or will result in double initialization
-        ((ISupportInitialize)this).EndInit();
+        ((ISupportInitialize) this).EndInit();
 
         //				PrepareTriggers();
 
@@ -771,7 +785,7 @@ namespace MediaPortal.GUI.Library
       catch (Exception ex)
       {
         Log.Error("exception loading window {0} err:{1}\r\n\r\n{2}\r\n\r\n", _windowXmlFileName, ex.Message,
-                  ex.StackTrace);
+          ex.StackTrace);
         return false;
       }
     }
@@ -1070,10 +1084,7 @@ namespace MediaPortal.GUI.Library
     {
       if (_isSkinLoaded && (_lastSkin != GUIGraphicsContext.Skin))
       {
-        GUIWindow._mainThreadContext.Send(delegate
-        {
-          LoadSkin();
-        }, null);
+        LoadSkin();
       }
 
       if (_rememberLastFocusedControl && _rememberLastFocusedControlId >= 0)
@@ -1202,10 +1213,7 @@ namespace MediaPortal.GUI.Library
 
         Dispose();
 
-        GUIWindow._mainThreadContext.Send(delegate
-        {
-          LoadSkin();
-        }, null);
+        LoadSkin();
 
         HashSet<int> faultyControl = new HashSet<int>();
         // tell every control we're gonna alloc the resources next
@@ -1414,10 +1422,13 @@ namespace MediaPortal.GUI.Library
         }
         else
         {
-          var guicontrol = child;
-          if (guicontrol.Focus)
+          if (child != null)
           {
-            return guicontrol.GetID;
+            var guicontrol = child;
+            if (guicontrol.Focus)
+            {
+              return guicontrol.GetID;
+            }
           }
         }
       }
@@ -1504,14 +1515,16 @@ namespace MediaPortal.GUI.Library
 
         UpdateOverlayAllowed();
         _hasWindowVisibilityUpdated = true;
-        // TODO must do a proper fix
-        for (int i = 0; i < Children.Count; i++)
+        // TODO must do a proper fix (Flickering on TVGuide)
+        if (Children != null)
         {
-          GUIControl control = Children[i];
-          control.UpdateVisibility();
-          control.DoRender(timePassed, currentTime);
+          foreach (GUIControl control in Children.ToList())
+          {
+            control.UpdateVisibility();
+            control.DoRender(timePassed, currentTime);
+          }
         }
-        
+
         GUIWaitCursor.Render();
       }
       catch (Exception ex)
@@ -1750,10 +1763,7 @@ namespace MediaPortal.GUI.Library
               }
               else
               {
-                GUIWindow._mainThreadContext.Send(delegate
-                {
-                  LoadSkin();
-                }, null);
+                LoadSkin();
 
                 if (!_windowAllocated)
                 {
@@ -1763,7 +1773,7 @@ namespace MediaPortal.GUI.Library
 
               InitControls();
               UpdateOverlayAllowed();
-              GUIGraphicsContext.Overlay = _isOverlayAllowed || GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR;
+              GUIGraphicsContext.Overlay = _isOverlayAllowed;
 
               // set topbar autohide 
               switch (_autoHideTopbarType)

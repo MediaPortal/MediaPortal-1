@@ -89,6 +89,10 @@ namespace MediaPortal.GUI.Library
     public override void OnDeInit()
     {
       GUIGraphicsContext.VideoWindow = new Rectangle(0, 0, 0, 0);
+      if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+      {
+        GUIGraphicsContext.IsWindowVisible = true;
+      }
       base.OnDeInit();
     }
 

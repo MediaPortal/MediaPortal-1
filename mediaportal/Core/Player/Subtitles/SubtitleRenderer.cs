@@ -673,17 +673,20 @@ namespace MediaPortal.Player.Subtitles
       {
         Log.Error(e);
       }
-      _subFilter.StatusTest(111);
-      IntPtr pCallback = Marshal.GetFunctionPointerForDelegate(_callBack);
-      _subFilter.SetBitmapCallback(pCallback);
+      if (_subFilter != null)
+      {
+        _subFilter.StatusTest(111);
+        IntPtr pCallback = Marshal.GetFunctionPointerForDelegate(_callBack);
+        _subFilter.SetBitmapCallback(pCallback);
 
-      _subFilter.StatusTest(222);
+        _subFilter.StatusTest(222);
 
-      IntPtr pResetCallBack = Marshal.GetFunctionPointerForDelegate(_resetCallBack);
-      _subFilter.SetResetCallback(pResetCallBack);
+        IntPtr pResetCallBack = Marshal.GetFunctionPointerForDelegate(_resetCallBack);
+        _subFilter.SetResetCallback(pResetCallBack);
 
-      IntPtr pUpdateTimeoutCallBack = Marshal.GetFunctionPointerForDelegate(_updateTimeoutCallBack);
-      _subFilter.SetUpdateTimeoutCallback(pUpdateTimeoutCallBack);
+        IntPtr pUpdateTimeoutCallBack = Marshal.GetFunctionPointerForDelegate(_updateTimeoutCallBack);
+        _subFilter.SetUpdateTimeoutCallback(pUpdateTimeoutCallBack);
+      }
 
       return _filter;
     }
@@ -789,28 +792,31 @@ namespace MediaPortal.Player.Subtitles
           float rationW = 1, rationH = 1;
 
           Rectangle src, dst;
-          VMR9Util.g_vmr9.GetVideoWindows(out src, out dst);
-
-          rationH = dst.Height / (float)_currentSubtitle.screenHeight;
-
-          // Get the location to render the subtitle to for blu-ray
-          if (_currentSubtitle.horizontalPosition != 0)
+          if (VMR9Util.g_vmr9 != null)
           {
-            rationW = dst.Width / (float)_currentSubtitle.screenWidth;
-            wx = dst.X + (int)(rationW * (float)_currentSubtitle.horizontalPosition);
-          }
-          else
-          {
-            rationW = rationH;
-            wx = dst.X + (int)((dst.Width - _currentSubtitle.width * rationW) / 2);
-          }
-          wy = dst.Y + (int)(rationH * _currentSubtitle.firstScanLine);
+            VMR9Util.g_vmr9.GetVideoWindows(out src, out dst);
 
-          wwidth = (int)(_currentSubtitle.width * rationW);
-          wheight = (int)(_currentSubtitle.height * rationH);
+            rationH = dst.Height/(float) _currentSubtitle.screenHeight;
 
-          // make sure the vertex buffer is ready and correct for the coordinates
-          CreateVertexBuffer(wx, wy, wwidth, wheight);
+            // Get the location to render the subtitle to for blu-ray
+            if (_currentSubtitle.horizontalPosition != 0)
+            {
+              rationW = dst.Width/(float) _currentSubtitle.screenWidth;
+              wx = dst.X + (int) (rationW*(float) _currentSubtitle.horizontalPosition);
+            }
+            else
+            {
+              rationW = rationH;
+              wx = dst.X + (int) ((dst.Width - _currentSubtitle.width*rationW)/2);
+            }
+            wy = dst.Y + (int) (rationH*_currentSubtitle.firstScanLine);
+
+            wwidth = (int) (_currentSubtitle.width*rationW);
+            wheight = (int) (_currentSubtitle.height*rationH);
+
+            // make sure the vertex buffer is ready and correct for the coordinates
+            CreateVertexBuffer(wx, wy, wwidth, wheight);
+          }
 
           // Log.Debug("Subtitle render target: wx = {0} wy = {1} ww = {2} wh = {3}", wx, wy, wwidth, wheight);
 
@@ -819,7 +825,7 @@ namespace MediaPortal.Player.Subtitles
 
           // Make sure D3D objects haven't been disposed for some reason. This would  cause
           // an access violation on native side, causing Skin Engine to halt rendering
-          if (!_subTexture.Disposed && !_vertexBuffer.Disposed)
+          if (_subTexture != null && (!_subTexture.Disposed && !_vertexBuffer.Disposed))
           {
             GUIGraphicsContext.DX9Device.SetStreamSource(0, _vertexBuffer, 0);
             GUIGraphicsContext.DX9Device.SetTexture(0, _subTexture);

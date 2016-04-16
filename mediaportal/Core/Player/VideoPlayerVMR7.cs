@@ -258,6 +258,7 @@ namespace MediaPortal.Player
     protected bool vc1ICodec = false;
     protected bool vc1Codec = false;
     protected bool h264Codec = false;
+    protected bool hevcCodec = false;
     protected bool xvidCodec = false;
     protected bool aacCodec = false;
     protected bool aacCodecLav = false;
@@ -304,7 +305,7 @@ namespace MediaPortal.Player
     {
       updateTimer = DateTime.Now;
       m_speedRate = 10000;
-      m_bVisible = false;
+      GUIGraphicsContext.IsWindowVisible = false;
       m_iVolume = 100;
       m_state = PlayState.Init;
       m_strCurrentFile = strFile;
@@ -545,11 +546,12 @@ namespace MediaPortal.Player
         m_bFullScreen = GUIGraphicsContext.IsFullScreenVideo;
         _updateNeeded = true;
       }
-      if (!_updateNeeded)
+      if (!_updateNeeded && !GUIGraphicsContext.UpdateVideoWindow)
       {
         return;
       }
       _updateNeeded = false;
+      GUIGraphicsContext.UpdateVideoWindow = false;
       m_bStarted = true;
       float x = m_iPositionX;
       float y = m_iPositionY;
@@ -634,6 +636,7 @@ namespace MediaPortal.Player
         {
           Size client = GUIGraphicsContext.form.ClientSize;
           videoWin.SetWindowPosition(0, 0, client.Width, client.Height);
+          //basicVideo.SetDestinationPosition(rDest.Left, rDest.Top, rDest.Width, rDest.Height);
         }
         else
         {
@@ -646,24 +649,29 @@ namespace MediaPortal.Player
     {
       if (basicVideo != null)
       {
-        if (rSource.Left < 0 || rSource.Top < 0 || rSource.Width <= 0 || rSource.Height <= 0)
+        lock (basicVideo)
         {
-          return;
-        }
-        if (rDest.Width <= 0 || rDest.Height <= 0)
-        {
-          return;
-        }
+          if (rSource.Left < 0 || rSource.Top < 0 || rSource.Width <= 0 || rSource.Height <= 0)
+          {
+            return;
+          }
+          if (rDest.Width <= 0 || rDest.Height <= 0)
+          {
+            return;
+          }
 
-        basicVideo.SetSourcePosition(rSource.Left, rSource.Top, rSource.Width, rSource.Height);
+          Log.Debug("VideoPlayer: SetSourcePosition 1");
+          basicVideo.SetSourcePosition(rSource.Left, rSource.Top, rSource.Width, rSource.Height);
+          Log.Debug("VideoPlayer: SetSourcePosition 2");
 
-        if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
-        {
-          basicVideo.SetDestinationPosition(rDest.Left, rDest.Top, rDest.Width, rDest.Height);
-        }
-        else
-        {
-          basicVideo.SetDestinationPosition(0, 0, rDest.Width, rDest.Height);
+          if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+          {
+            basicVideo.SetDestinationPosition(rDest.Left, rDest.Top, rDest.Width, rDest.Height);
+          }
+          else
+          {
+            basicVideo.SetDestinationPosition(0, 0, rDest.Width, rDest.Height);
+          }
         }
       }
     }
@@ -699,24 +707,52 @@ namespace MediaPortal.Player
           mediaPos.get_Duration(out m_dDuration); //(refresh timeline when change EDITION)
           mediaPos.get_CurrentPosition(out m_dCurrentPos);
         }
-        if (GUIGraphicsContext.BlankScreen ||
-            (GUIGraphicsContext.Overlay == false && GUIGraphicsContext.IsFullScreenVideo == false))
+        if (GUIGraphicsContext.BlankScreen || (GUIGraphicsContext.VideoWindow.Width <= 10 && GUIGraphicsContext.IsFullScreenVideo == false))
         {
-          if (m_bVisible)
+          if (GUIGraphicsContext.IsWindowVisible)
           {
-            m_bVisible = false;
+            GUIGraphicsContext.IsWindowVisible = false;
             if (videoWin != null)
             {
-              videoWin.put_Visible(OABool.False);
+              if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+              {
+                if (basicVideo != null)
+                {
+                  if (!GUIGraphicsContext.IsFullScreenVideo)
+                  {
+                    // Here is to hide video window madVR when skin didn't handle video overlay (the value need to be different from GUIVideoControl Render)
+                    basicVideo.SetDestinationPosition(-10, -10, 1, 1);
+                    //Log.Error("VMR7 hide video window");
+                  }
+                }
+              }
+              else
+              {
+                videoWin.put_Visible(OABool.False);
+              }
             }
           }
         }
-        else if (!m_bVisible)
+        else if (!GUIGraphicsContext.IsWindowVisible)
         {
-          m_bVisible = true;
           if (videoWin != null)
           {
-            videoWin.put_Visible(OABool.True);
+            if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+            {
+              if (basicVideo != null)
+              {
+                if (!GUIGraphicsContext.IsFullScreenVideo)
+                {
+                  basicVideo.SetDestinationPosition(-10, -10, GUIGraphicsContext.VideoWindowWidth,
+                    GUIGraphicsContext.VideoWindowHeight);
+                  //Log.Error("VMR7 show video window");
+                }
+              }
+            }
+            else
+            {
+              videoWin.put_Visible(OABool.True);
+            }
           }
         }
         updateTimer = DateTime.Now;

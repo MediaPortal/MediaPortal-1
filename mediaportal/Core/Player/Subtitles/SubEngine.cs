@@ -87,12 +87,17 @@ namespace MediaPortal.Player.Subtitles
         using (Settings xmlreader = new MPSettings())
         {
           string engineType = xmlreader.GetValueAsString("subtitles", "engine", "DirectVobSub");
-          if (engineType.Equals("MPC-HC"))
-            engine = new MpcEngine();
-          else if (engineType.Equals("FFDShow"))
-            engine = new FFDShowEngine();
-          else if (engineType.Equals("DirectVobSub"))
-            engine = new DirectVobSubEngine();
+          if (g_Player.Player is VideoPlayerVMR9)
+          {
+            if (engineType.Equals("MPC-HC"))
+              engine = new MpcEngine();
+            else if (engineType.Equals("FFDShow"))
+              engine = new FFDShowEngine();
+            else if (engineType.Equals("DirectVobSub"))
+              engine = new DirectVobSubEngine();
+            else
+              engine = new DummyEngine();
+          }
           else
             engine = new DummyEngine();
         }

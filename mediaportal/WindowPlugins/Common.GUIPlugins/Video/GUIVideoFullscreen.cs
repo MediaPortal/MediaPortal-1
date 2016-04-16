@@ -2445,9 +2445,29 @@ namespace MediaPortal.GUI.Video
 
     #region IRenderLayer
 
+    private bool CheckScreenState()
+    {
+      return (screenState != null && (screenState.OsdVisible ||
+                                      screenState.PauseOsdVisible || screenState.Paused ||
+                                      screenState.ContextMenuVisible ||
+                                      screenState.ShowStatusLine ||
+                                      screenState.ShowTime ||
+                                      screenState.ShowSkipBar ||
+                                      screenState.wasVMRBitmapVisible ||
+                                      screenState.NotifyDialogVisible ||
+                                      screenState.volumeVisible ||
+                                      screenState.forbiddenVisible ||
+                                      Math.Abs(screenState.Speed - 1) > 0 ||
+                                      screenState.SeekStep != 0));
+    }
+
     public bool ShouldRenderLayer()
     {
-      return true;
+      if (CheckScreenState())
+      {
+        return true;
+      }
+      return false;
     }
 
     public void RenderLayer(float timePassed)

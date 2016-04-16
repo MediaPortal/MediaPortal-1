@@ -40,7 +40,19 @@ namespace MediaPortal.GUI.Library
   {
     // Synchronize access to methods known to cause AccessViolationException 
     // on native side when called simultaneously from multiple threads
-    private static readonly object _lock = new object();
+    private static readonly object lockObject = new object();
+
+    private static object _lock
+    {
+      get
+      {
+        if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR && GUIGraphicsContext.InVmr9Render)
+        {
+          return 0;
+        }
+        return lockObject;
+      }
+    }
 
     public static void FontEngineRemoveTextureSync(int textureNo)
     {
