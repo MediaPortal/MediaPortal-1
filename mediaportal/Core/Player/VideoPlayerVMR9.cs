@@ -1504,10 +1504,6 @@ namespace MediaPortal.Player
           Vmr9 = null;
         }
 
-        GC.Collect();
-        GC.Collect();
-        GC.Collect();
-
         GUIGraphicsContext.form.Invalidate(true);
         m_state = PlayState.Init;
       }

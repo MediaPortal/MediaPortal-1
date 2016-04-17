@@ -1302,6 +1302,9 @@ namespace MediaPortal.Player
       _scene = null;
       g_vmr9 = null;
       _isVmr9Initialized = false;
+
+      // let running few frame process to try to avoid .NET crash
+      GUIWindowManager.MadVrProcess();
     }
 
     #endregion

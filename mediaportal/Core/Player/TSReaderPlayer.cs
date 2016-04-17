@@ -975,10 +975,6 @@ namespace MediaPortal.Player
             _vmr9 = null;
           }
 
-          GC.Collect();
-          GC.Collect();
-          GC.Collect();
-
           _state = PlayState.Init;
         }
         catch (Exception ex)

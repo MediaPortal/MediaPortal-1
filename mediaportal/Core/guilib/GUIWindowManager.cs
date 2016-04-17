@@ -1304,12 +1304,15 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     public static void MadVrProcess()
     {
-      StartFrameClock();
-      if (null != MadVrCallbacks)
+      if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
       {
-        MadVrCallbacks();
+        StartFrameClock();
+        if (null != MadVrCallbacks)
+        {
+          MadVrCallbacks();
+        }
+        WaitForFrameClock();
       }
-      WaitForFrameClock();
     }
 
     #endregion
