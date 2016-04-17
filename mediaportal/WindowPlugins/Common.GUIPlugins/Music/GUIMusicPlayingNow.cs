@@ -1168,7 +1168,7 @@ namespace MediaPortal.GUI.Music
       switch (message.Message)
       {
         case GUIMessage.MessageType.GUI_MSG_PLAYING_10SEC:
-          if (PlaylistPlayer.CurrentPlaylistType == PlayListType.PLAYLIST_MUSIC && _lookupSimilarTracks)
+          if (_lookupSimilarTracks && (PlaylistPlayer.CurrentPlaylistType == PlayListType.PLAYLIST_MUSIC || PlaylistPlayer.CurrentPlaylistType == PlayListType.PLAYLIST_MUSIC_TEMP))
           {
             string strFile = message.Label;
             UpdateSimilarTracks(strFile);
