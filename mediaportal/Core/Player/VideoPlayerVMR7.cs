@@ -1423,6 +1423,17 @@ namespace MediaPortal.Player
     /// </summary>
     public override string AudioLanguage(int iStream)
     {
+      var result = Strings.Unknown;
+      var streamInfo = FStreams.GetStreamInfos(DirectShowHelper.StreamType.Audio, iStream).Stream as AudioStream;
+      if (streamInfo != null && !string.IsNullOrEmpty(streamInfo.Language))
+      {
+        result = streamInfo.Language;
+      }
+
+      Log.Debug("VideoPlayerVMR7::AudioLanguage return language '{0}'", result);
+      return result;
+
+
       #region return splitter IAMStreamSelect LCID
 
       int LCIDCheck = FStreams.GetStreamInfos(DirectShowHelper.StreamType.Audio, iStream).LCID;

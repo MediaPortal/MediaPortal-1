@@ -68,22 +68,31 @@ namespace MediaPortal.Player
     private static readonly Dictionary<string, int> ChannelNumbers = new Dictionary<string, int>
     {
       { "1 channel", 1 },
+      { "1 chn", 1 },
       { "Mono", 1 },
       { "2 channels", 2 },
+      { "2 chn", 2 },
       { "Stereo", 2 },
       { "3 channels", 3 },
+      { "3 chn", 3 },
       { "2.1", 3 },
       { "4 channels", 4 },
+      { "4 chn", 4 },
       { "4.0", 4 },
       { "6 channels", 6 },
+      { "6 chn", 6 },
       { "5.1", 6 },
       { "7 channels", 7 },
+      { "7 chn", 7 },
       { "6.1", 7 },
       { "8 channels", 8 },
+      { "8 chn", 8 },
       { "7.1", 8 },
       { "9 channels", 9 },
+      { "9 chn", 9 },
       { "7.2", 9 },
       { "10 channels", 10 },
+      { "10 chn", 10 },
       { "7.2.1", 10 },
     };
 
@@ -386,6 +395,7 @@ namespace MediaPortal.Player
       { "MP3ON4", new HashSet<AudioCodec> { AudioCodec.A_MPEG_L3 } },
       
       { "AC3", new HashSet<AudioCodec> { AudioCodec.A_AC3, AudioCodec.A_AC3_BSID10, AudioCodec.A_AC3_BSID9 } },
+      { "Dolby Digital", new HashSet<AudioCodec> { AudioCodec.A_AC3, AudioCodec.A_AC3_BSID10, AudioCodec.A_AC3_BSID9 } },
       { "EAC3", new HashSet<AudioCodec> { AudioCodec.A_EAC3, AudioCodec.A_AC3, AudioCodec.A_AC3_BSID10, AudioCodec.A_AC3_BSID9 } },
       
       { "ADTS", new HashSet<AudioCodec> { AudioCodec.A_DTS } },
@@ -1304,7 +1314,10 @@ namespace MediaPortal.Player
 
     private static readonly Regex LavSplitterAudio = new Regex(@"A\:\s*(((?<name>.+)\[(?<language>\w+)\]|\[(?<language>\w+)\]|(?<name>.+))\s*\()?\s*(?<codec>[a-z0-9\s\.'_\-]+),\s*(?<freq>\d+)\s*Hz,\s*(?<channels>[a-z0-9\s\.'_\-]+)(,\s*s(?<bit>\d+))?(,\s*(?<bitrate>\d+)\s*kb/s)?", RegexOptions.Compiled | RegexOptions.IgnoreCase);
     private static readonly Regex FfdshowNameAudio = new Regex(@"Audio\s*-\s*(?<codec>\w+),\s*(?<channels>[^,]+),\s*(?<freq>\d+)\s*Hz", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+    private static readonly Regex MpegSlitterNameAudio = new Regex(@"Audio\s*-\s*((?<language>\w+),\s*)?(?<codec>[^,]+),\s*(?<freq>[0-9\.\+\-]+)\s*(k)?Hz,\s*(?<channels>[^,]+)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+    private static readonly Regex MpAudioNameAudio = new Regex(@"(?<language>\w+),\s*((?<name>.*))?\(Audio\s*(\d+)\)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
     private static readonly Regex TsReaderAudio = new Regex(@"^(?<language>\w{2,3})$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+    private static readonly Regex MpcNameAudio = new Regex(@"(?<language>\w+),\s*(?<codecName>.+)\(Audio\s*(\d+)\)\s*\-\s*(?<freq>\d+)\s*Hz,\s*(?<channnel>[0-9\.]+)\s+channel(s)?\s+(?<codec>.+)\s*\((?<internalcodec>[^\(]*)\)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
     public static AudioStream MatchAudioStream(MediaInfoWrapper info, string filterName, string name, int lcid, int id)
     {
@@ -1320,6 +1333,24 @@ namespace MediaPortal.Player
       if (m.Success)
       {
         return FfdshowAudioMatch(info, m, id);
+      }
+
+      m = MpegSlitterNameAudio.Match(name);
+      if (m.Success)
+      {
+        return MpegSlitterAudioMatch(info, m, id);
+      }
+
+      m = MpAudioNameAudio.Match(name);
+      if (m.Success)
+      {
+        return MpAudioMatch(info, m, id);
+      }
+
+      m = MpcNameAudio.Match(name);
+      if (m.Success)
+      {
+        return MpcAudioMatch(info, m, id);
       }
 
       m = TsReaderAudio.Match(name);
@@ -1356,7 +1387,27 @@ namespace MediaPortal.Player
       return result != null && result.Any() ? result.First() : AudioCodec.A_UNDEFINED;
     }
 
-    private static AudioStream TsReaderAudioMatch(MediaInfoWrapper info, int id, Match m)
+    private static AudioStream MpegSlitterAudioMatch(MediaInfoWrapper info, Match m, int id)
+    {
+      string language;
+      string name;
+      GetLavMainParameters(m, out language, out name);
+
+      var codec = GetAudioCodec(m.Groups["codec"].Value);
+
+      double frequency;
+      if (!double.TryParse(m.Groups["freq"].Value, out frequency))
+      {
+        frequency = 0;
+      }
+      if (m.Groups[2].Value == "K" || m.Groups[2].Value == "k")
+      {
+        frequency *= 1000;
+      }
+
+    }
+
+    private static AudioStream TsReaderAudioMatch(MediaInfoWrapper info, Match m, int id)
     {
       var result = id < info.AudioStreams.Count ? info.AudioStreams[id] : null;
       if (result != null)
