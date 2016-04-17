@@ -103,7 +103,6 @@ IBaseFilter* MPMadPresenter::Initialize()
 HRESULT MPMadPresenter::Shutdown()
 {
   CAutoLock lock(this);
-  CComPtr< IGraphBuilder >  pGraph;
 
   Log("MPMadPresenter::Shutdown()");
 
@@ -121,12 +120,9 @@ HRESULT MPMadPresenter::Shutdown()
     m_pWindow->put_Visible(false);
 
     // Create a new IGraphBuilder to force madVR to destroy the instance
-    pGraph.CoCreateInstance(CLSID_FilterGraph);
-    pGraph.Release();
-    pGraph.Release();
+    m_pWindow->Release();
     m_pMad->Release();
-    m_pMad->Release();
-    m_pMad->Release();
+    m_pWindow = nullptr;
     m_pMad = nullptr;
   }
 

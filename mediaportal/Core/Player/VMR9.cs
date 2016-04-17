@@ -496,7 +496,7 @@ namespace MediaPortal.Player
         _scene.Deinit();
         _scene = null;
 
-        DirectShowUtil.ReleaseComObject(_vmr9Filter);
+        DirectShowUtil.FinalReleaseComObject(_vmr9Filter);
         _vmr9Filter = null;
         Error.SetError("Unable to play movie", "Unable to initialize Renderer");
         Log.Error("VMR9: Failed to add Renderer to filter graph");
@@ -1296,7 +1296,7 @@ namespace MediaPortal.Player
         Vmr9Deinit();
       }
 
-      DirectShowUtil.ReleaseComObject(_vmr9Filter);
+      DirectShowUtil.FinalReleaseComObject(_vmr9Filter);
       _vmr9Filter = null;
       _graphBuilderInterface = null;
       _scene = null;

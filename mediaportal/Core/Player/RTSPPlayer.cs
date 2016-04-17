@@ -506,12 +506,12 @@ namespace MediaPortal.Player
           videoWin.put_Visible(OABool.False);
         }
 
-        if (mediaEvt != null) DirectShowUtil.ReleaseComObject(mediaEvt);
-        if (_mediaSeeking != null) DirectShowUtil.ReleaseComObject(_mediaSeeking);
-        if (mediaPos != null) DirectShowUtil.ReleaseComObject(mediaPos);
-        if (basicAudio != null) DirectShowUtil.ReleaseComObject(basicAudio);
-        if (basicVideo != null) DirectShowUtil.ReleaseComObject(basicVideo);
-        if (videoWin != null) DirectShowUtil.ReleaseComObject(videoWin);
+        if (mediaEvt != null) DirectShowUtil.FinalReleaseComObject(mediaEvt);
+        if (_mediaSeeking != null) DirectShowUtil.FinalReleaseComObject(_mediaSeeking);
+        if (mediaPos != null) DirectShowUtil.FinalReleaseComObject(mediaPos);
+        if (basicAudio != null) DirectShowUtil.FinalReleaseComObject(basicAudio);
+        if (basicVideo != null) DirectShowUtil.FinalReleaseComObject(basicVideo);
+        if (videoWin != null) DirectShowUtil.FinalReleaseComObject(videoWin);
 
         mediaEvt = null;
         _mediaSeeking = null;
@@ -529,7 +529,7 @@ namespace MediaPortal.Player
             _rotEntry.SafeDispose();
             _rotEntry = null;
           }
-          DirectShowUtil.ReleaseComObject(graphBuilder);
+          DirectShowUtil.FinalReleaseComObject(graphBuilder);
           graphBuilder = null;
         }
 
@@ -545,7 +545,7 @@ namespace MediaPortal.Player
         if (_mpegDemux != null)
         {
           Log.Info("cleanup mpegdemux");
-          while ((hr = DirectShowUtil.ReleaseComObject(_mpegDemux)) > 0)
+          while ((hr = DirectShowUtil.FinalReleaseComObject(_mpegDemux)) > 0)
           {
             ;
           }
@@ -554,7 +554,7 @@ namespace MediaPortal.Player
         if (_rtspSource != null)
         {
           Log.Info("cleanup _rtspSource");
-          while ((hr = DirectShowUtil.ReleaseComObject(_rtspSource)) > 0)
+          while ((hr = DirectShowUtil.FinalReleaseComObject(_rtspSource)) > 0)
           {
             ;
           }
@@ -562,7 +562,7 @@ namespace MediaPortal.Player
         }
         if (_subtitleFilter != null)
         {
-          while ((hr = DirectShowUtil.ReleaseComObject(_subtitleFilter)) > 0)
+          while ((hr = DirectShowUtil.FinalReleaseComObject(_subtitleFilter)) > 0)
           {
             ;
           }
@@ -578,7 +578,7 @@ namespace MediaPortal.Player
         if (vobSub != null)
         {
           Log.Info("cleanup vobSub");
-          while ((hr = DirectShowUtil.ReleaseComObject(vobSub)) > 0)
+          while ((hr = DirectShowUtil.FinalReleaseComObject(vobSub)) > 0)
           {
             ;
           }

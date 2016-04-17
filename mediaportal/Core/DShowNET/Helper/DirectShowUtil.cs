@@ -2235,5 +2235,18 @@ namespace DShowNET.Helper
 
       return 0;
     }
+
+    public static int FinalReleaseComObject(object obj)
+    {
+      if (obj != null)
+      {
+        return Marshal.FinalReleaseComObject(obj);
+      }
+
+      StackTrace st = new StackTrace(true);
+      Log.Error("Exception while final releasing COM object (NULL) - stacktrace: {0}", st);
+
+      return 0;
+    }
   }
 }

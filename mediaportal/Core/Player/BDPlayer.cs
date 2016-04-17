@@ -2293,7 +2293,7 @@ namespace MediaPortal.Player
         if (MSVideoCodec != null)
         {
           _mChangedMediaType = MediaType.Audio | MediaType.Video;
-          DirectShowUtil.ReleaseComObject(MSVideoCodec);
+          DirectShowUtil.FinalReleaseComObject(MSVideoCodec);
           MSVideoCodec = null;
         }
         // hack end
@@ -2490,6 +2490,40 @@ namespace MediaPortal.Player
       }
     }
 
+    protected void disableCC()
+    {
+      while (true)
+      {
+        IBaseFilter basefilter;
+        DirectShowUtil.FindFilterByClassID(_graphBuilder, ClassId.Line21_1, out basefilter);
+        if (basefilter == null)
+          DirectShowUtil.FindFilterByClassID(_graphBuilder, ClassId.Line21_2, out basefilter);
+        if (basefilter != null)
+        {
+          _graphBuilder.RemoveFilter(basefilter);
+          DirectShowUtil.FinalReleaseComObject(basefilter);
+          basefilter = null;
+          Log.Info("BDPlayer: Cleanup Captions");
+        }
+        else
+          break;
+      }
+    }
+
+    protected void disableISR()
+    {
+      #region Remove isr
+      //remove InternalScriptRenderer as it takes subtitle pin
+      IBaseFilter isr = null;
+      DirectShowUtil.FindFilterByClassID(_graphBuilder, ClassId.InternalScriptRenderer, out isr);
+      if (isr != null)
+      {
+        _graphBuilder.RemoveFilter(isr);
+        DirectShowUtil.FinalReleaseComObject(isr);
+      }
+      #endregion
+    }
+
     protected void SyncAudioRenderer()
     {
       if (_audioRendererFilter != null)
@@ -2550,7 +2584,7 @@ namespace MediaPortal.Player
             if (ppFilter.Value != null)
             {
               DirectShowUtil.RemoveFilters(_graphBuilder, ppFilter.Key);
-              DirectShowUtil.ReleaseComObject(ppFilter.Value);//, 5000);
+              DirectShowUtil.FinalReleaseComObject(ppFilter.Value);//, 5000);
             }
           }
           PostProcessFilterVideo.Clear();
@@ -2566,7 +2600,7 @@ namespace MediaPortal.Player
             if (ppFilter.Value != null)
             {
               DirectShowUtil.RemoveFilters(_graphBuilder, ppFilter.Key);
-              DirectShowUtil.ReleaseComObject(ppFilter.Value);//, 5000);
+              DirectShowUtil.FinalReleaseComObject(ppFilter.Value);//, 5000);
             }
           }
           PostProcessFilterAudio.Clear();
@@ -2647,7 +2681,7 @@ namespace MediaPortal.Player
         //Add Video Codec
         if (VideoCodec != null)
         {
-          DirectShowUtil.ReleaseComObject(VideoCodec);
+          DirectShowUtil.FinalReleaseComObject(VideoCodec);
           VideoCodec = null;
         }
         VideoCodec = DirectShowUtil.AddFilterToGraph(this._graphBuilder, MatchFilters(selection));
@@ -2662,7 +2696,7 @@ namespace MediaPortal.Player
         //Add Audio Codec
         if (AudioCodec != null)
         {
-          DirectShowUtil.ReleaseComObject(AudioCodec);
+          DirectShowUtil.FinalReleaseComObject(AudioCodec);
           AudioCodec = null;
         }
         //AudioCodec = DirectShowUtil.AddFilterToGraph(this._graphBuilder, MatchFilters(selection));
@@ -2976,12 +3010,12 @@ namespace MediaPortal.Player
           _videoWin.put_Visible(OABool.False);
         }
 
-        if (_mediaEvt != null) DirectShowUtil.ReleaseComObject(_mediaEvt);
-        if (_mediaSeeking != null) DirectShowUtil.ReleaseComObject(_mediaSeeking);
-        if (_videoWin != null) DirectShowUtil.ReleaseComObject(_videoWin);
-        if (_basicAudio != null) DirectShowUtil.ReleaseComObject(_basicAudio);
-        if (_basicVideo != null) DirectShowUtil.ReleaseComObject(_basicVideo);
-        if (_ireader != null) DirectShowUtil.ReleaseComObject(_ireader);
+        if (_mediaEvt != null) DirectShowUtil.FinalReleaseComObject(_mediaEvt);
+        if (_mediaSeeking != null) DirectShowUtil.FinalReleaseComObject(_mediaSeeking);
+        if (_videoWin != null) DirectShowUtil.FinalReleaseComObject(_videoWin);
+        if (_basicAudio != null) DirectShowUtil.FinalReleaseComObject(_basicAudio);
+        if (_basicVideo != null) DirectShowUtil.FinalReleaseComObject(_basicVideo);
+        if (_ireader != null) DirectShowUtil.FinalReleaseComObject(_ireader);
 
         _mediaEvt = null;
         _mediaSeeking = null;
@@ -2994,21 +3028,21 @@ namespace MediaPortal.Player
 
         if (VideoCodec != null)
         {
-          DirectShowUtil.ReleaseComObject(VideoCodec, 5000);
+          DirectShowUtil.FinalReleaseComObject(VideoCodec);
           VideoCodec = null;
           Log.Info("BDPlayer: Cleanup VideoCodec");
         }
 
         if (AudioCodec != null)
         {
-          DirectShowUtil.ReleaseComObject(AudioCodec, 5000);
+          DirectShowUtil.FinalReleaseComObject(AudioCodec);
           AudioCodec = null;
           Log.Info("BDPlayer: Cleanup AudioCodec");
         }
 
         if (_audioRendererFilter != null)
         {
-          while (DirectShowUtil.ReleaseComObject(_audioRendererFilter) > 0) ;
+          while (DirectShowUtil.FinalReleaseComObject(_audioRendererFilter) > 0) ;
           _audioRendererFilter = null;
           Log.Info("BDPlayer: Cleanup AudioRenderer");
         }
@@ -3018,7 +3052,7 @@ namespace MediaPortal.Player
         {
           foreach (var ppFilter in PostProcessFilterVideo)
           {
-            if (ppFilter.Value != null) DirectShowUtil.ReleaseComObject(ppFilter.Value, 5000);
+            if (ppFilter.Value != null) DirectShowUtil.FinalReleaseComObject(ppFilter.Value);
           }
           PostProcessFilterVideo.Clear();
           Log.Info("BDPlayer: Cleanup PostProcessVideo");
@@ -3029,7 +3063,7 @@ namespace MediaPortal.Player
         {
           foreach (var ppFilter in PostProcessFilterAudio)
           {
-            if (ppFilter.Value != null) DirectShowUtil.ReleaseComObject(ppFilter.Value, 5000);
+            if (ppFilter.Value != null) DirectShowUtil.FinalReleaseComObject(ppFilter.Value);
           }
           PostProcessFilterAudio.Clear();
           Log.Info("BDPlayer: Cleanup PostProcessAudio");
@@ -3039,7 +3073,7 @@ namespace MediaPortal.Player
 
         if (_interfaceBDReader != null)
         {
-          DirectShowUtil.ReleaseComObject(_interfaceBDReader, 5000);
+          DirectShowUtil.FinalReleaseComObject(_interfaceBDReader);
           _interfaceBDReader = null;
         }
 
@@ -3051,7 +3085,7 @@ namespace MediaPortal.Player
             _rotEntry.SafeDispose();
             _rotEntry = null;
           }
-          while ((DirectShowUtil.ReleaseComObject(_graphBuilder)) > 0) ;
+          while ((DirectShowUtil.FinalReleaseComObject(_graphBuilder)) > 0) ;
           _graphBuilder = null;
         }
 

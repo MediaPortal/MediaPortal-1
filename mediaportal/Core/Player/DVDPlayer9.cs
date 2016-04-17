@@ -393,13 +393,13 @@ namespace MediaPortal.Player
           _videoWin.put_Visible(OABool.False);
         }
 
-        if (_mediaEvt != null) DirectShowUtil.ReleaseComObject(_mediaEvt);
-        if (_dvdCtrl != null) DirectShowUtil.ReleaseComObject(_dvdCtrl);
-        if (_dvdInfo != null) DirectShowUtil.ReleaseComObject(_dvdInfo);
-        if (_videoWin != null) DirectShowUtil.ReleaseComObject(_videoWin);
-        if (_basicAudio != null) DirectShowUtil.ReleaseComObject(_basicAudio);
-        if (_basicVideo != null) DirectShowUtil.ReleaseComObject(_basicVideo);
-        if (_mediaPos != null) DirectShowUtil.ReleaseComObject(_mediaPos);
+        if (_mediaEvt != null) DirectShowUtil.FinalReleaseComObject(_mediaEvt);
+        if (_dvdCtrl != null) DirectShowUtil.FinalReleaseComObject(_dvdCtrl);
+        if (_dvdInfo != null) DirectShowUtil.FinalReleaseComObject(_dvdInfo);
+        if (_videoWin != null) DirectShowUtil.FinalReleaseComObject(_videoWin);
+        if (_basicAudio != null) DirectShowUtil.FinalReleaseComObject(_basicAudio);
+        if (_basicVideo != null) DirectShowUtil.FinalReleaseComObject(_basicVideo);
+        if (_mediaPos != null) DirectShowUtil.FinalReleaseComObject(_mediaPos);
 
         _visible = false;
         _dvdCtrl = null;
@@ -412,25 +412,25 @@ namespace MediaPortal.Player
 
         if (_cmdOption != null)
         {
-          DirectShowUtil.ReleaseComObject(_cmdOption);
+          DirectShowUtil.FinalReleaseComObject(_cmdOption);
           _cmdOption = null;
         }
 
         if (_dvdbasefilter != null)
         {
-          while ((hr = DirectShowUtil.ReleaseComObject(_dvdbasefilter)) > 0) ;
+          while ((hr = DirectShowUtil.FinalReleaseComObject(_dvdbasefilter)) > 0) ;
           _dvdbasefilter = null;
         }
 
         if (_dvdGraph != null)
         {
-          while ((hr = DirectShowUtil.ReleaseComObject(_dvdGraph)) > 0) ;
+          while ((hr = DirectShowUtil.FinalReleaseComObject(_dvdGraph)) > 0) ;
           _dvdGraph = null;
         }
 
         if (_line21Decoder != null)
         {
-          while ((hr = DirectShowUtil.ReleaseComObject(_line21Decoder)) > 0) ;
+          while ((hr = DirectShowUtil.FinalReleaseComObject(_line21Decoder)) > 0) ;
           _line21Decoder = null;
         }
 
@@ -444,7 +444,7 @@ namespace MediaPortal.Player
             _rotEntry.SafeDispose();
             _rotEntry = null;
           }
-          while ((hr = DirectShowUtil.ReleaseComObject(_graphBuilder)) > 0) ;
+          while ((hr = DirectShowUtil.FinalReleaseComObject(_graphBuilder)) > 0) ;
           _graphBuilder = null;
         }
 

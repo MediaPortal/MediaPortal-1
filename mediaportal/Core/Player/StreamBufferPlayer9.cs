@@ -273,13 +273,13 @@ namespace MediaPortal.Player
           _vmr9.Enable(false);
         }
 
-        if (_mediaEvt != null) DirectShowUtil.ReleaseComObject(_mediaEvt);
-        if (_mediaSeeking != null) DirectShowUtil.ReleaseComObject(_mediaSeeking);
-        if (_mediaSeeking2 != null) DirectShowUtil.ReleaseComObject(_mediaSeeking2);
-        if (_videoWin != null) DirectShowUtil.ReleaseComObject(_videoWin);
-        if (_basicAudio != null) DirectShowUtil.ReleaseComObject(_basicAudio);
-        if (_basicVideo != null) DirectShowUtil.ReleaseComObject(_basicVideo);
-        if (_bufferSource != null) DirectShowUtil.ReleaseComObject(_bufferSource);
+        if (_mediaEvt != null) DirectShowUtil.FinalReleaseComObject(_mediaEvt);
+        if (_mediaSeeking != null) DirectShowUtil.FinalReleaseComObject(_mediaSeeking);
+        if (_mediaSeeking2 != null) DirectShowUtil.FinalReleaseComObject(_mediaSeeking2);
+        if (_videoWin != null) DirectShowUtil.FinalReleaseComObject(_videoWin);
+        if (_basicAudio != null) DirectShowUtil.FinalReleaseComObject(_basicAudio);
+        if (_basicVideo != null) DirectShowUtil.FinalReleaseComObject(_basicVideo);
+        if (_bufferSource != null) DirectShowUtil.FinalReleaseComObject(_bufferSource);
 
         _mediaEvt = null;
         _mediaSeeking = null;
@@ -291,13 +291,13 @@ namespace MediaPortal.Player
 
         if (_pinVmr9ConnectedTo != null)
         {
-          DirectShowUtil.ReleaseComObject(_pinVmr9ConnectedTo);
+          DirectShowUtil.FinalReleaseComObject(_pinVmr9ConnectedTo);
           _pinVmr9ConnectedTo = null;
         }
 
         if (streamConfig2 != null)
         {
-          while ((hr = DirectShowUtil.ReleaseComObject(streamConfig2)) > 0)
+          while ((hr = DirectShowUtil.FinalReleaseComObject(streamConfig2)) > 0)
           {
             ;
           }
@@ -314,7 +314,7 @@ namespace MediaPortal.Player
             _rotEntry.SafeDispose();
             _rotEntry = null;
           }
-          while ((hr = DirectShowUtil.ReleaseComObject(_graphBuilder)) > 0) ;
+          while ((hr = DirectShowUtil.FinalReleaseComObject(_graphBuilder)) > 0) ;
           _graphBuilder = null;
         }
 

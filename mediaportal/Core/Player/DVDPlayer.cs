@@ -428,7 +428,7 @@ namespace MediaPortal.Player
 
         if (_dvdbasefilter != null)
         {
-          while ((hr = DirectShowUtil.ReleaseComObject(_dvdbasefilter)) > 0)
+          while ((hr = DirectShowUtil.FinalReleaseComObject(_dvdbasefilter)) > 0)
           {
             ;
           }
@@ -437,13 +437,13 @@ namespace MediaPortal.Player
 
         if (_cmdOption != null)
         {
-          DirectShowUtil.ReleaseComObject(_cmdOption);
+          DirectShowUtil.FinalReleaseComObject(_cmdOption);
         }
         _cmdOption = null;
         _pendingCmd = false;
         if (_line21Decoder != null)
         {
-          while ((hr = DirectShowUtil.ReleaseComObject(_line21Decoder)) > 0)
+          while ((hr = DirectShowUtil.FinalReleaseComObject(_line21Decoder)) > 0)
           {
             ;
           }
@@ -459,7 +459,7 @@ namespace MediaPortal.Player
             _rotEntry.SafeDispose();
             _rotEntry = null;
           }
-          while ((hr = DirectShowUtil.ReleaseComObject(_graphBuilder)) > 0)
+          while ((hr = DirectShowUtil.FinalReleaseComObject(_graphBuilder)) > 0)
           {
             ;
           }
@@ -468,7 +468,7 @@ namespace MediaPortal.Player
 
         if (_dvdGraph != null)
         {
-          while ((hr = DirectShowUtil.ReleaseComObject(_dvdGraph)) > 0)
+          while ((hr = DirectShowUtil.FinalReleaseComObject(_dvdGraph)) > 0)
           {
             ;
           }

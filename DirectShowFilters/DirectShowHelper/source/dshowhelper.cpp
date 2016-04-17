@@ -34,8 +34,6 @@
 
 // For more details for memory leak detection see the alloctracing.h header
 #include "..\..\alloctracing.h"
-#include <chrono>
-#include <thread>
 
 using namespace std;
 
@@ -932,7 +930,6 @@ void MadDeinit()
     m_madPresenter->Shutdown();
     m_pVMR9Filter->Release();
     m_pVMR9Filter = nullptr;
-    std::this_thread::sleep_for(std::chrono::milliseconds(2000));
   }
   catch(...)
   {
