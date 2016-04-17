@@ -126,7 +126,7 @@ MultiFileReader::~MultiFileReader()
     LogDebug("MultiFileReader::dtor - ERROR m_pInfoFileBuffer2 is NULL !!");
   }
 
-  //LogDebug("MultiFileReader::dtor");
+  LogDebug("MultiFileReader::dtor");
 	//CloseFile called by ~FileReader
 }
 

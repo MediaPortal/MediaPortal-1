@@ -39,7 +39,7 @@ CTsDuration::CTsDuration()
   m_pFileReadBuffer = NULL;
   m_pFileReadBuffer = new byte[DUR_READ_SIZE];
   m_reader = NULL;
-  LogDebug("CTsDuration - ctor");
+  LogDebug("CTsDuration::ctor");
 }
 
 CTsDuration::~CTsDuration(void)
@@ -48,6 +48,7 @@ CTsDuration::~CTsDuration(void)
   {
     delete [] m_pFileReadBuffer;
     m_pFileReadBuffer = NULL;
+    LogDebug("CTsDuration::dtor");
   }
   else
   {

@@ -26,6 +26,7 @@ TsMPEG2TransportFileServerMediaSubsession::TsMPEG2TransportFileServerMediaSubses
   m_pDuration = new CTsDuration();
   m_pFileDuration = NULL;
   OpenFileDuration();
+	LogDebug(L"TsMp2TFSMediaSubsession::ctor, m_fileName %s", m_fileName);  
 }
 
 TsMPEG2TransportFileServerMediaSubsession::~TsMPEG2TransportFileServerMediaSubsession() 
@@ -33,6 +34,7 @@ TsMPEG2TransportFileServerMediaSubsession::~TsMPEG2TransportFileServerMediaSubse
   CloseFileDuration();
   delete m_pDuration;
   m_pDuration = NULL;
+	LogDebug(L"TsMp2TFSMediaSubsession::dtor, m_fileName %s", m_fileName);  
 }
 
 #define TRANSPORT_PACKET_SIZE 188
@@ -84,7 +86,7 @@ void TsMPEG2TransportFileServerMediaSubsession::seekStreamSource(FramedSource* i
 
 //	source->seekToByteAbsolute(newPos);
   source->seekToTimeAbsolute(CRefTime((LONG)(seekNPT*1000.0)), *m_pDuration) ;
-	LogDebug("ts seekStreamSource %f / %f ->%d", seekNPT,fileDuration, (DWORD)newPos);
+	LogDebug("TsMp2TFSMediaSubsession::seekStreamSource %f / %f ->%d", seekNPT,fileDuration, (DWORD)newPos);
 }
 
 float TsMPEG2TransportFileServerMediaSubsession::duration() const
@@ -97,7 +99,7 @@ float TsMPEG2TransportFileServerMediaSubsession::duration() const
 
     if (m_iDurationCount < 1)
     {
-	    LogDebug("TsMPEG2TransportFileServerMediaSubsession::duration() %f", m_pDuration->Duration().Millisecs() / 1000.0f);
+	    LogDebug("TsMp2TFSMediaSubsession::duration(): %f s", m_pDuration->Duration().Millisecs() / 1000.0f);
       m_iDurationCount++;
     }
 
@@ -112,7 +114,7 @@ __int64 TsMPEG2TransportFileServerMediaSubsession::filelength() const
   if (m_pFileDuration)
   {
     fileSizeTmp = m_pFileDuration->GetFileSize();
-	  //LogDebug("TsMPEG2TransportFileServerMediaSubsession::filelength() %I64", fileSizeTmp);
+	  //LogDebug("TsMp2TFSMediaSubsession::filelength() %I64", fileSizeTmp);
   }
   return fileSizeTmp;
 }
@@ -133,7 +135,7 @@ void TsMPEG2TransportFileServerMediaSubsession::OpenFileDuration()
 
     if(m_pFileDuration==NULL)
     {
-	    LogDebug(L"TsMPEG2TransportFileServerMediaSubsession::OpenFileDuration() failed, m_fileName %s", m_fileName);  
+	    LogDebug(L"TsMp2TFSMediaSubsession::OpenFileDuration() failed, m_fileName %s", m_fileName);  
       return;
     }
   
@@ -146,7 +148,7 @@ void TsMPEG2TransportFileServerMediaSubsession::OpenFileDuration()
     }
   
     m_pDuration->SetFileReader(m_pFileDuration);
-	  LogDebug(L"TsMPEG2TransportFileServerMediaSubsession::OpenFileDuration() OK: %s", m_fileName);  
+	  LogDebug(L"TsMp2TFSMediaSubsession::OpenFileDuration() OK: %s", m_fileName);  
   }
 }
 

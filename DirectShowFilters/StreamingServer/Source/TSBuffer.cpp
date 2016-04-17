@@ -44,11 +44,13 @@ CTSBuffer::CTSBuffer()
 	m_loopCount = 20;
 	debugcount = 0;
 	m_maxReadIterations = 0;
+  LogDebug("CTSBuffer::ctor");
 }
 
 CTSBuffer::~CTSBuffer()
 {
 	Clear();
+  LogDebug("CTSBuffer::dtor");
 }
 
 void CTSBuffer::SetFileReader(FileReader *pFileReader)
@@ -142,14 +144,13 @@ HRESULT CTSBuffer::Require(long nBytes, BOOL bIgnoreDelay)
 			//	Sleep for 4ms per iteration (TV)
 			int sleepPerIteration = 4;
 
-			//	If radio set to 20ms
+			//	If radio set to 8ms
 			if(m_eChannelType == Radio)
 				sleepPerIteration = 8;
 
-			//Sleep(iteration * sleepPerIteration);
   		if(iteration == 20 || iteration == 40 )
   		{
-			  //LogDebug("TSBuffer::Require() - 200ms sleep, iteration = %d", iteration);
+			  //LogDebug("CTSBuffer::Require() - 200ms sleep, iteration = %d", iteration);
   		  Sleep(200);
   		}
   		else
@@ -161,10 +162,9 @@ HRESULT CTSBuffer::Require(long nBytes, BOOL bIgnoreDelay)
 		ULONG bytesRead = 0;
 		HRESULT hr = m_pFileReader->Read(readBuffer + totalBytesRead, bytesToRead - totalBytesRead, &bytesRead);
 
-		// if(FAILED(hr) || iteration >= 20)
 		if(FAILED(hr) || iteration >= 50)
 		{
-			LogDebug("TSBuffer::Require() - Failed to read buffer file, iteration %d", iteration);
+			LogDebug("CTSBuffer::Require() - Failed to read buffer file, iteration %d", iteration);
 			m_maxReadIterations = 0;			
 			delete[] readBuffer;
 			return hr;
@@ -178,7 +178,7 @@ HRESULT CTSBuffer::Require(long nBytes, BOOL bIgnoreDelay)
   if (iteration > m_maxReadIterations) 
   {
     m_maxReadIterations = iteration;	
-	  LogDebug("TSBuffer::Require() - m_maxReadIterations: %d", m_maxReadIterations);
+	  LogDebug("CTSBuffer::Require() - m_maxReadIterations: %d", m_maxReadIterations);
   }		
 
 	//	Success! Copy all bytes to data items
