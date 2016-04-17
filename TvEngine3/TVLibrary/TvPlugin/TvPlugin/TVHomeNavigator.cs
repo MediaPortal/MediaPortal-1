@@ -23,7 +23,9 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Net;
+using System.Threading;
 using System.Xml;
 using Gentle.Framework;
 using MediaPortal.Configuration;
@@ -135,14 +137,24 @@ namespace TvPlugin
 
       try
       {
+        string xmlPath = Config.GetFile(Config.Dir.Config, "Gentle.config");
         XmlDocument doc = new XmlDocument();
-        doc.Load(Config.GetFile(Config.Dir.Config, "gentle.config"));
-        XmlNode nodeKey = doc.SelectSingleNode("/Gentle.Framework/DefaultProvider");
-        XmlNode node = nodeKey.Attributes.GetNamedItem("connectionString");
-        XmlNode nodeProvider = nodeKey.Attributes.GetNamedItem("name");
-        node.InnerText = connectionString;
-        nodeProvider.InnerText = provider;
-        doc.Save(Config.GetFile(Config.Dir.Config, "gentle.config"));
+        using (var reader = XmlReader.Create(xmlPath))
+        {
+          doc.Load(reader);
+        }
+        var nodeKey = doc.SelectSingleNode("/Gentle.Framework/DefaultProvider");
+        if (nodeKey != null)
+        {
+          if (nodeKey.Attributes != null)
+          {
+            var node = nodeKey.Attributes.GetNamedItem("connectionString");
+            var nodeProvider = nodeKey.Attributes.GetNamedItem("name");
+            node.InnerText = connectionString;
+            nodeProvider.InnerText = provider;
+          }
+        }
+        doc.Save(xmlPath);
       }
       catch (Exception ex)
       {
@@ -168,6 +180,11 @@ namespace TvPlugin
           return;
         }
 
+        string threadName = Thread.CurrentThread.Name;
+        if (string.IsNullOrEmpty(threadName))
+        {
+          Log.Debug("Reload SetupDatabaseConnection on thread : [{0}]", threadName);
+        }
         bool connectionValid = SetupDatabaseConnection();
         if (connectionValid)
         {

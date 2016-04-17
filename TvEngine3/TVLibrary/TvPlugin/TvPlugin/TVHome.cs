@@ -197,6 +197,7 @@ namespace TvPlugin
     private static event OnChannelChangedDelegate OnChannelChanged;
     private static event ThreadMessageHandler OnThreadMessageHandler;
     private static event OnChannelTvOnOffDelegate ChannelTvOnOff;
+    private static event OnRemoteConnectionDelegate OnRemoteConnection;
 
     #endregion
 
@@ -206,6 +207,7 @@ namespace TvPlugin
     private delegate void StopPlayerMainThreadDelegate();
     private delegate void ThreadMessageHandler(object sender, Message message);
     private delegate void OnChannelTvOnOffDelegate(bool buttonTvOnOff);
+    private delegate void OnRemoteConnectionDelegate();
 
     #endregion
 
@@ -332,6 +334,10 @@ namespace TvPlugin
           else
             Log.Info("TVHome V" + pluginVersion + ":ctor");
         }
+        else if (Connected)
+        {
+          OnRemoteConnectionEvent();
+        }
       }
       catch (Exception ex)
       {
@@ -365,6 +371,7 @@ namespace TvPlugin
       g_Player.PlayBackStopped += new g_Player.StoppedHandler(OnPlayBackStopped);
       g_Player.AudioTracksReady += new g_Player.AudioTracksReadyHandler(OnAudioTracksReady);
       ChannelTvOnOff += new OnChannelTvOnOffDelegate(OnChannelTvOnOff);
+      OnRemoteConnection = new OnRemoteConnectionDelegate(OnRemotingConnection);
 
       GUIWindowManager.Receivers += new SendMessageHandler(OnGlobalMessage);
 
@@ -1453,12 +1460,8 @@ namespace TvPlugin
     //  }
     //}
 
-    private static void RemoteControl_OnRemotingConnectedThread()
+    private static void OnRemotingConnection()
     {
-      if (!Connected)
-        Log.Info("TVHome: OnRemotingConnected, recovered from a disconnection");
-      Connected = true;
-      _ServerNotConnectedHandled = false;
       if (_recoverTV)
       {
         _recoverTV = false;
@@ -1471,21 +1474,29 @@ namespace TvPlugin
         firstNotLoaded = false;
         OnLoaded();
       }
+    }
+
+    private static void OnRemoteConnectionEvent()
+    {
+      if (OnRemoteConnection != null)
+      {
+        OnRemoteConnection();
+      }
+    }
+
+    private static void RemoteControl_OnRemotingConnected()
+    {
+      if (!Connected)
+        Log.Info("TVHome: OnRemotingConnected, recovered from a disconnection");
+      Connected = true;
+      _ServerNotConnectedHandled = false;
       if (_notifyManager != null)
       {
         _notifyManager.Start();
       }
     }
-    private static void RemoteControl_OnRemotingConnected()
-    {
-      Thread remoteControlOnRemotingConnectedThread = new Thread(RemoteControl_OnRemotingConnectedThread)
-      {
-        IsBackground = true
-      };
-      remoteControlOnRemotingConnectedThread.Start();
-    }
 
-    private static void RemoteControl_OnRemotingDisconnectedThread()
+    private static void RemoteControl_OnRemotingDisconnected()
     {
       if (Connected)
         Log.Info("TVHome: OnRemotingDisconnected");
@@ -1495,15 +1506,6 @@ namespace TvPlugin
         _notifyManager.Stop();
       }
       HandleServerNotConnected();
-    }
-
-    private static void RemoteControl_OnRemotingDisconnected()
-    {
-      Thread remoteControlOnRemotingDisconnectedThread = new Thread(RemoteControl_OnRemotingDisconnectedThread)
-      {
-        IsBackground = true
-      };
-      remoteControlOnRemotingDisconnectedThread.Start();
     }
 
     private void Application_ApplicationExit(object sender, EventArgs e)
@@ -1623,7 +1625,7 @@ namespace TvPlugin
       }
       catch (Exception ex)
       {
-        Log.Error("TVHome: HeartBeatTransmitter exception :{0}", ex);
+        //Log.Error("TVHome: HeartBeatTransmitter exception :{0}", ex);
       }
     }
 
