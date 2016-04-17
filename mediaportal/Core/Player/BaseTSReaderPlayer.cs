@@ -782,30 +782,33 @@ namespace MediaPortal.Player
       }
 
       _lastPosition = CurrentPosition;
-      if (GUIGraphicsContext.VideoWindow.Width <= 10 && GUIGraphicsContext.IsFullScreenVideo == false)
+      if (GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR)
       {
-        _isVisible = false;
-      }
-      if (GUIGraphicsContext.BlankScreen)
-      {
-        _isVisible = false;
-      }
-      if (_isWindowVisible && !_isVisible)
-      {
-        _isWindowVisible = false;
-        //Log.Info("TSReaderPlayer:hide window");
-        if (_videoWin != null)
+        if (GUIGraphicsContext.VideoWindow.Width <= 10 && GUIGraphicsContext.IsFullScreenVideo == false)
         {
-          _videoWin.put_Visible(OABool.False);
+          _isVisible = false;
         }
-      }
-      else if (!_isWindowVisible && _isVisible)
-      {
-        _isWindowVisible = true;
-        //Log.Info("TSReaderPlayer:show window");
-        if (_videoWin != null)
+        if (GUIGraphicsContext.BlankScreen)
         {
-          _videoWin.put_Visible(OABool.True);
+          _isVisible = false;
+        }
+        if (_isWindowVisible && !_isVisible)
+        {
+          _isWindowVisible = false;
+          //Log.Info("TSReaderPlayer:hide window");
+          if (_videoWin != null)
+          {
+            _videoWin.put_Visible(OABool.False);
+          }
+        }
+        else if (!_isWindowVisible && _isVisible)
+        {
+          _isWindowVisible = true;
+          //Log.Info("TSReaderPlayer:show window");
+          if (_videoWin != null)
+          {
+            _videoWin.put_Visible(OABool.True);
+          }
         }
       }
       OnProcess();

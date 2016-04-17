@@ -105,6 +105,7 @@ namespace MediaPortal.GUI.Library
     public static event SendMessageHandler Receivers;
     public static event OnActionHandler OnNewAction;
     public static event OnCallBackHandler Callbacks;
+    public static event OnCallBackHandler MadVrCallbacks;
     public static event PostRenderActionHandler OnPostRenderAction;
     //public static event  PostRendererHandler  OnPostRender;
     public static event WindowActivationHandler OnActivateWindow;
@@ -1239,6 +1240,10 @@ namespace MediaPortal.GUI.Library
           }
         }
       }
+      catch (ThreadStateException ex)
+      {
+        Log.Error("ProcessWindows thread exception:{0}", ex.ToString());
+      }
       catch (Exception ex)
       {
         Log.Error("ProcessWindows exception:{0}", ex.ToString());
@@ -1290,6 +1295,19 @@ namespace MediaPortal.GUI.Library
       if (null != Callbacks)
       {
         Callbacks();
+      }
+      WaitForFrameClock();
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public static void MadVrProcess()
+    {
+      StartFrameClock();
+      if (null != MadVrCallbacks)
+      {
+        MadVrCallbacks();
       }
       WaitForFrameClock();
     }

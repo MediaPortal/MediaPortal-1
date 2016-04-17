@@ -185,7 +185,12 @@ namespace MediaPortal.Player
         _rotEntry = new DsROTEntry((IFilterGraph)_graphBuilder);
 
         _vmr9 = new VMR9Util();
-        _vmr9.AddVMR9(_graphBuilder);
+        bool AddVMR9 = _vmr9.AddVMR9(_graphBuilder);
+        if (!AddVMR9)
+        {
+          Log.Error("DVDPlayer9:Failed to add VMR9 to graph");
+          return false;
+        }
         _vmr9.Enable(false);
 
         try
@@ -368,53 +373,38 @@ namespace MediaPortal.Player
       {
         Log.Info("DVDPlayer9: cleanup DShow graph");
 
-        if (_mediaCtrl != null)
-        {
-          int counter = 0;
-          FilterState state;
-          hr = _mediaCtrl.Stop();
-          hr = _mediaCtrl.GetState(10, out state);
-          while (state != FilterState.Stopped || GUIGraphicsContext.InVmr9Render)
-          {
-            System.Threading.Thread.Sleep(100);
-            hr = _mediaCtrl.GetState(10, out state);
-            counter++;
-            if (counter >= 30)
-            {
-              if (state != FilterState.Stopped)
-                Log.Debug("DVDPlayer9: graph still running");
-              if (GUIGraphicsContext.InVmr9Render)
-                Log.Debug("DVDPlayer9: in renderer");
-              break;
-            }
-          }
-          _mediaCtrl = null;
-        }
-
         _state = PlayState.Stopped;
         VMR9Util.g_vmr9.EVRSetDVDMenuState(false);
 
         if (_vmr9 != null)
         {
+          _vmr9.Vmr9MediaCtrl(_mediaCtrl);
           _vmr9.Enable(false);
         }
 
         if (_mediaEvt != null)
         {
           hr = _mediaEvt.SetNotifyWindow(IntPtr.Zero, WM_GRAPHNOTIFY, IntPtr.Zero);
-          _mediaEvt = null;
         }
 
         if (_videoWin != null)
         {
           _videoWin.put_Owner(IntPtr.Zero);
           _videoWin.put_Visible(OABool.False);
-          _videoWin = null;
         }
+
+        if (_mediaEvt != null) DirectShowUtil.ReleaseComObject(_mediaEvt);
+        if (_dvdCtrl != null) DirectShowUtil.ReleaseComObject(_dvdCtrl);
+        if (_dvdInfo != null) DirectShowUtil.ReleaseComObject(_dvdInfo);
+        if (_videoWin != null) DirectShowUtil.ReleaseComObject(_videoWin);
+        if (_basicAudio != null) DirectShowUtil.ReleaseComObject(_basicAudio);
+        if (_basicVideo != null) DirectShowUtil.ReleaseComObject(_basicVideo);
+        if (_mediaPos != null) DirectShowUtil.ReleaseComObject(_mediaPos);
 
         _visible = false;
         _dvdCtrl = null;
         _dvdInfo = null;
+        _videoWin = null;
         _basicVideo = null;
         _basicAudio = null;
         _mediaPos = null;

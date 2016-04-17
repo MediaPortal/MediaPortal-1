@@ -113,6 +113,7 @@ namespace MediaPortal.Player
 
     public PlaneScene(VMR9Util util)
     {
+      MadVrRenderTarget = null;
       //	Log.Info("PlaneScene: ctor()");
 
       _textureAddress = 0;
@@ -168,6 +169,8 @@ namespace MediaPortal.Player
       }
     }
 
+    public Surface MadVrRenderTarget { get; set; }
+
     public bool Enabled
     {
       get { return _isEnabled; }
@@ -216,7 +219,21 @@ namespace MediaPortal.Player
     {
       GUIWindowManager.Receivers -= new SendMessageHandler(this.OnMessage);
       GUILayerManager.UnRegisterLayer(this);
-      if (_renderTarget != null)
+      if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+      {
+        if (MadVrRenderTarget != null)
+        {
+          //VMR9 changes the directx 9 render target. Thats why we set it back to what it was
+          if (!MadVrRenderTarget.Disposed)
+          {
+            GUIGraphicsContext.DX9Device.SetRenderTarget(0, MadVrRenderTarget);
+          }
+          MadVrRenderTarget.ReleaseGraphics();
+          MadVrRenderTarget.SafeDispose();
+          MadVrRenderTarget = null;
+        }
+      }
+      else if (_renderTarget != null)
       {
         //VMR9 changes the directx 9 render target. Thats why we set it back to what it was
         if (!_renderTarget.Disposed)
@@ -240,7 +257,13 @@ namespace MediaPortal.Player
         _blackImage = null;
       }
 
-      grabber.Clean();
+      if (grabber != null) 
+      {
+        lock (GUIGraphicsContext.RenderModeSwitch)
+        {
+          grabber.Clean();
+        }
+      }
       SubtitleRenderer.GetInstance().Clear();
 
       if (GUIGraphicsContext.LastFrames != null)
@@ -267,14 +290,10 @@ namespace MediaPortal.Player
     public void Init()
     {
       //Log.Info("PlaneScene: init()");
-      _renderTarget = GUIGraphicsContext.DX9Device.GetRenderTarget(0);
+      if (GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR)
+        _renderTarget = GUIGraphicsContext.DX9Device.GetRenderTarget(0);
       GUILayerManager.RegisterLayer(this, GUILayerManager.LayerType.Video);
       GUIWindowManager.Receivers += new SendMessageHandler(this.OnMessage);
-
-      if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
-      {
-        GUIGraphicsContext.InVmr9Render = true;
-      }
     }
 
     /// <summary>
@@ -380,12 +399,19 @@ namespace MediaPortal.Player
 
         //did the video window,aspect ratio change? if not
         //then we dont need to recalculate and just return the previous settings
-        if (!updateCrop && (int)x == _rectPrevious.X && (int)y == _rectPrevious.Y &&
+        //add a delta value of -1 or +1 to check
+        if (!updateCrop && (int) x == _rectPrevious.X && (int) y == _rectPrevious.Y &&
             nw == _rectPrevious.Width && nh == _rectPrevious.Height &&
             GUIGraphicsContext.ARType == _aspectRatioType &&
             GUIGraphicsContext.Overlay == _lastOverlayVisible && _shouldRenderTexture &&
-            _prevVideoWidth == videoSize.Width && _prevVideoHeight == videoSize.Height &&
-            _prevArVideoWidth == _arVideoWidth && _prevArVideoHeight == _arVideoHeight)
+            (_prevVideoWidth == videoSize.Width || _prevVideoWidth == videoSize.Width + 1 ||
+             _prevVideoWidth == videoSize.Width - 1) &&
+            (_prevVideoHeight == videoSize.Height || _prevVideoHeight == videoSize.Height + 1 ||
+             _prevVideoHeight == videoSize.Height - 1) &&
+            (_prevArVideoWidth == _arVideoWidth || _prevArVideoWidth == _arVideoWidth + 1 ||
+             _prevArVideoWidth == _arVideoWidth - 1) &&
+            (_prevArVideoHeight == _arVideoHeight || _prevArVideoHeight == _arVideoHeight + 1 ||
+             _prevArVideoHeight == _arVideoHeight - 1))
         {
           //not changed, return previous settings
           return _shouldRenderTexture;
@@ -625,7 +651,7 @@ namespace MediaPortal.Player
 
     public void SetSubtitleDevice(IntPtr device)
     {
-      ISubEngine engine = SubEngine.GetInstance();
+      ISubEngine engine = SubEngine.GetInstance(true);
       if (engine != null)
       {
         engine.SetDevice(device);

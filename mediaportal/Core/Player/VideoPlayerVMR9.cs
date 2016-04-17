@@ -557,7 +557,12 @@ namespace MediaPortal.Player
           else
           {
             Vmr9 = new VMR9Util();
-            Vmr9.AddVMR9(graphBuilder);
+            bool AddVMR9 = Vmr9.AddVMR9(graphBuilder);
+            if (!AddVMR9)
+            {
+              Log.Error("VideoPlayer9:Failed to add VMR9 to graph");
+              return false;
+            }
             Vmr9.Enable(false);
           }
         }
@@ -1303,7 +1308,12 @@ namespace MediaPortal.Player
         // step 2: add the VMR9 in the graph
         // after enabeling exclusive mode, if done first it causes MediPortal to minimize if for example the "Windows key" is pressed while playing a video
         Vmr9 = new VMR9Util();
-        Vmr9.AddVMR9(graphBuilder);
+        bool AddVMR9 = Vmr9.AddVMR9(graphBuilder);
+        if (!AddVMR9)
+        {
+          Log.Error("VideoPlayer9:Failed to add VMR9 to graph");
+          return false;
+        }
         Vmr9.Enable(false);
 
         // Render file in graph
@@ -1359,56 +1369,43 @@ namespace MediaPortal.Player
 
     protected void Cleanup()
     {
-      if (graphBuilder == null)
+      if (graphBuilder == null || mediaCtrl == null)
       {
         return;
       }
-      int hr = 0;
       Log.Info("VideoPlayer9: Cleanup DShow graph");
       try
       {
-        if (mediaCtrl != null)
-        {
-          int counter = 0;
-          FilterState state;
-          hr = mediaCtrl.Stop();
-          hr = mediaCtrl.GetState(10, out state);
-          while (state != FilterState.Stopped || GUIGraphicsContext.InVmr9Render)
-          {
-            Log.Debug("VideoPlayer9: graph still running");
-            Thread.Sleep(100);
-            hr = mediaCtrl.GetState(10, out state);
-            counter++;
-            if (counter >= 30)
-            {
-              if (state != FilterState.Stopped)
-                Log.Debug("VideoPlayer9: graph still running");
-              if (GUIGraphicsContext.InVmr9Render)
-                Log.Debug("VideoPlayer9: in renderer");
-              break;
-            }
-          }
-          mediaCtrl = null;
-        }
-
         if (Vmr9 != null)
         {
+          if (mediaCtrl != null)
+          {
+            Vmr9.Vmr9MediaCtrl(mediaCtrl);
+          }
           Vmr9.Enable(false);
         }
 
         if (mediaEvt != null)
         {
-          hr = mediaEvt.SetNotifyWindow(IntPtr.Zero, WM_GRAPHNOTIFY, IntPtr.Zero);
-          mediaEvt = null;
+          mediaEvt.SetNotifyWindow(IntPtr.Zero, WM_GRAPHNOTIFY, IntPtr.Zero);
         }
 
         if (videoWin != null)
         {
           videoWin.put_Owner(IntPtr.Zero);
           videoWin.put_Visible(OABool.False);
-          videoWin = null;
         }
 
+        if (videoWin != null) DirectShowUtil.ReleaseComObject(videoWin);
+        if (mediaEvt != null) DirectShowUtil.ReleaseComObject(mediaEvt);
+        if (mediaSeek != null) DirectShowUtil.ReleaseComObject(mediaSeek);
+        if (mediaPos != null) DirectShowUtil.ReleaseComObject(mediaPos);
+        if (basicAudio != null) DirectShowUtil.ReleaseComObject(basicAudio);
+        if (basicVideo != null) DirectShowUtil.ReleaseComObject(basicVideo);
+
+        videoWin = null;
+        mediaCtrl = null;
+        mediaEvt = null;
         mediaSeek = null;
         mediaPos = null;
         basicAudio = null;
@@ -1443,7 +1440,6 @@ namespace MediaPortal.Player
         if (filterCodec != null && filterCodec._audioRendererFilter != null)
         {
           DirectShowUtil.DisconnectAllPins(graphBuilder, filterCodec._audioRendererFilter);
-          graphBuilder.RemoveFilter(filterCodec._audioRendererFilter);
           while (DirectShowUtil.ReleaseComObject(filterCodec._audioRendererFilter) > 0) ;
           filterCodec._audioRendererFilter = null;
           Log.Info("VideoPlayer9: Cleanup AudioRenderer");

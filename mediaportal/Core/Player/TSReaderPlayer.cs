@@ -343,7 +343,12 @@ namespace MediaPortal.Player
           if (_videoFormat.IsValid)
           {
             _vmr9 = new VMR9Util();
-            _vmr9.AddVMR9(_graphBuilder);
+            bool AddVMR9 = _vmr9.AddVMR9(_graphBuilder);
+            if (!AddVMR9)
+            {
+              Log.Error("TSReaderPlayer:Failed to add VMR9 to graph");
+              return false;
+            }
             _vmr9.Enable(false);
           }
 
@@ -814,48 +819,33 @@ namespace MediaPortal.Player
         Log.Info("TSReaderPlayer: Cleanup DShow graph {0}", GUIGraphicsContext.InVmr9Render);
         try
         {
-          if (_mediaCtrl != null)
-          {
-            int counter = 0;
-            FilterState state;
-            hr = _mediaCtrl.Stop();
-            hr = _mediaCtrl.GetState(10, out state);
-            while (state != FilterState.Stopped || GUIGraphicsContext.InVmr9Render)
-            {
-              Thread.Sleep(100);
-              hr = _mediaCtrl.GetState(10, out state);
-              counter++;
-              if (counter >= 30)
-              {
-                if (state != FilterState.Stopped)
-                  Log.Error("TSReaderPlayer: graph still running");
-                if (GUIGraphicsContext.InVmr9Render)
-                  Log.Error("TSReaderPlayer: in renderer");
-                break;
-              }
-            }
-            _mediaCtrl = null;
-          }
-
           if (_vmr9 != null)
           {
+            _vmr9.Vmr9MediaCtrl(_mediaCtrl);
             _vmr9.Enable(false);
           }
 
           if (_mediaEvt != null)
           {
             hr = _mediaEvt.SetNotifyWindow(IntPtr.Zero, WM_GRAPHNOTIFY, IntPtr.Zero);
-            _mediaEvt = null;
           }
 
           if (_videoWin != null)
           {
             _videoWin.put_Owner(IntPtr.Zero);
             _videoWin.put_Visible(OABool.False);
-            _videoWin = null;
           }
 
+          if (_mediaEvt != null) DirectShowUtil.ReleaseComObject(_mediaEvt);
+          if (_mediaSeeking != null) DirectShowUtil.ReleaseComObject(_mediaSeeking);
+          if (_videoWin != null) DirectShowUtil.ReleaseComObject(_videoWin);
+          if (_basicAudio != null) DirectShowUtil.ReleaseComObject(_basicAudio);
+          if (_basicVideo != null) DirectShowUtil.ReleaseComObject(_basicVideo);
+          if (_ireader != null) DirectShowUtil.ReleaseComObject(_ireader);
+
+          _mediaEvt = null;
           _mediaSeeking = null;
+          _videoWin = null;
           _basicAudio = null;
           _basicVideo = null;
           _ireader = null;
@@ -984,6 +974,10 @@ namespace MediaPortal.Player
             _vmr9.SafeDispose();
             _vmr9 = null;
           }
+
+          GC.Collect();
+          GC.Collect();
+          GC.Collect();
 
           _state = PlayState.Init;
         }

@@ -700,7 +700,8 @@ namespace MediaPortal.Player
           mediaPos.get_CurrentPosition(out m_dCurrentPos);
         }
         if (GUIGraphicsContext.BlankScreen ||
-            (GUIGraphicsContext.Overlay == false && GUIGraphicsContext.IsFullScreenVideo == false))
+            (GUIGraphicsContext.Overlay == false && GUIGraphicsContext.IsFullScreenVideo == false) &&
+            GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR)
         {
           if (m_bVisible)
           {

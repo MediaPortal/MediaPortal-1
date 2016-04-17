@@ -28,6 +28,7 @@ using System.Windows.Forms;
 using DirectShowLib;
 using DShowNET.Helper;
 using MediaPortal.Configuration;
+using MediaPortal.ExtensionMethods;
 using MediaPortal.GUI.Library;
 using MediaPortal.Profile;
 using MediaPortal.Util;
@@ -173,6 +174,7 @@ namespace MediaPortal.Player
     private string verticalStretch = "";
     private string medianFiltering = "";
     private int _freeframeCounter = 0;
+    public Surface MadVrRenderTargetVMR9 = null;
 
     #endregion
 
@@ -398,6 +400,13 @@ namespace MediaPortal.Player
       IntPtr upDevice = DirectShowUtil.GetUnmanagedDevice(GUIGraphicsContext.DX9Device);
 
       _scene = new PlaneScene(this);
+      if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+      {
+        // Process 5 frames to clear D3D dialog window
+        GUIWindowManager.MadVrProcess();
+        _scene.MadVrRenderTarget = GUIGraphicsContext.DX9Device.GetRenderTarget(0);
+        MadVrRenderTargetVMR9 = GUIGraphicsContext.DX9Device.GetRenderTarget(0);
+      }
       _scene.Init();
 
       if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.EVR)
@@ -578,6 +587,10 @@ namespace MediaPortal.Player
       _threadId = Thread.CurrentThread.ManagedThreadId;
       GUIGraphicsContext.Vmr9Active = true;
       g_vmr9 = this;
+      if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+      {
+        GUIGraphicsContext.InVmr9Render = true;
+      }
       Log.Debug("VMR9: Renderer successfully added");
       return true;
     }
@@ -652,7 +665,7 @@ namespace MediaPortal.Player
       {
         return;
       }
-      _scene.Repaint();
+      if (_scene != null) _scene.Repaint();
     }
 
     public void SetRepaint()
@@ -669,7 +682,7 @@ namespace MediaPortal.Player
       FrameCounter = 0;
       _repaintTimer = DateTime.Now;
       currentVmr9State = Vmr9PlayState.Repaint;
-      _scene.DrawVideo = false;
+      if (_scene != null) _scene.DrawVideo = false;
     }
 
     public bool IsRepainting
@@ -691,7 +704,7 @@ namespace MediaPortal.Player
       {
         GUIGraphicsContext.Vmr9FPS = 0f;
         currentVmr9State = Vmr9PlayState.Playing;
-        _scene.DrawVideo = true;
+        if (_scene != null) _scene.DrawVideo = true;
         _repaintTimer = DateTime.Now;
         return;
       }
@@ -725,7 +738,7 @@ namespace MediaPortal.Player
         Log.Debug("VMR9: Repainting -> Playing, Frames: {0}", frames);
         GUIGraphicsContext.Vmr9FPS = 50f;
         currentVmr9State = Vmr9PlayState.Playing;
-        _scene.DrawVideo = true;
+        if (_scene != null) _scene.DrawVideo = true;
         _repaintTimer = DateTime.Now;
       }
       else if (currentVmr9State == Vmr9PlayState.Playing && GUIGraphicsContext.Vmr9FPS < 2f)
@@ -733,7 +746,7 @@ namespace MediaPortal.Player
         Log.Debug("VMR9Helper: Playing -> Repainting, Frames {0}", frames);
         GUIGraphicsContext.Vmr9FPS = 0f;
         currentVmr9State = Vmr9PlayState.Repaint;
-        _scene.DrawVideo = false;
+        if (_scene != null) _scene.DrawVideo = false;
       }
     }
 
@@ -1036,6 +1049,43 @@ namespace MediaPortal.Player
       }
     }
 
+    public void Vmr9MediaCtrl(IMediaControl mediaCtrl)
+    {
+      if (mediaCtrl != null)
+      {
+        int counter = 0;
+        FilterState state;
+        mediaCtrl.Stop();
+        mediaCtrl.GetState(10, out state);
+        while (state != FilterState.Stopped || GUIGraphicsContext.InVmr9Render)
+        {
+          Thread.Sleep(100);
+          mediaCtrl.GetState(10, out state);
+          counter++;
+          if (counter >= 30)
+          {
+            if (state != FilterState.Stopped)
+            {
+              Log.Error("VMR9: {0} graph still running", g_Player.Player.ToString());
+            }
+            if (GUIGraphicsContext.InVmr9Render)
+            {
+              switch (GUIGraphicsContext.VideoRenderer)
+              {
+                case GUIGraphicsContext.VideoRendererType.madVR:
+                  GUIGraphicsContext.InVmr9Render = false;
+                  break;
+                default:
+                  Log.Error("VMR9: {0} in renderer", g_Player.Player.ToString());
+                  break;
+              }
+            }
+            break;
+          }
+        }
+      }
+    }
+
     public bool SaveBitmap(Bitmap bitmap, bool show, bool transparent, float alphaValue)
     {
       if (!_isVmr9Initialized)
@@ -1197,6 +1247,7 @@ namespace MediaPortal.Player
       Log.Debug("VMR9: Dispose");
       if (false == _isVmr9Initialized)
       {
+        Log.Debug("VMR9: Dispose 0");
         return;
       }
       if (_threadId != Thread.CurrentThread.ManagedThreadId)
@@ -1232,6 +1283,13 @@ namespace MediaPortal.Player
       else if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
       {
         MadDeinit();
+        if (MadVrRenderTargetVMR9 != null && !MadVrRenderTargetVMR9.Disposed)
+        {
+          GUIGraphicsContext.DX9Device.SetRenderTarget(0, MadVrRenderTargetVMR9);
+          MadVrRenderTargetVMR9.ReleaseGraphics();
+          MadVrRenderTargetVMR9.SafeDispose();
+          MadVrRenderTargetVMR9 = null;
+        }
       }
       else
       {

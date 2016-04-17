@@ -34,6 +34,8 @@
 
 // For more details for memory leak detection see the alloctracing.h header
 #include "..\..\alloctracing.h"
+#include <chrono>
+#include <thread>
 
 using namespace std;
 
@@ -909,7 +911,7 @@ BOOL MadInit(IVMR9Callback* callback, DWORD width, DWORD height, DWORD dwD3DDevi
 {
   m_RenderPrefix = _T("mad");
 
-  m_pDevice = (LPDIRECT3DDEVICE9)(dwD3DDevice);
+  m_pDevice = reinterpret_cast<LPDIRECT3DDEVICE9>(dwD3DDevice);
 
   m_madPresenter = new MPMadPresenter(callback, width, height, parent, m_pDevice);
   m_pVMR9Filter = m_madPresenter->Initialize();
@@ -924,11 +926,13 @@ BOOL MadInit(IVMR9Callback* callback, DWORD width, DWORD height, DWORD dwD3DDevi
 
 void MadDeinit()
 {
+  CAutoLock lock(m_madPresenter);
   try
   {
     m_madPresenter->Shutdown();
     m_pVMR9Filter->Release();
-    m_pVMR9Filter = NULL;
+    m_pVMR9Filter = nullptr;
+    std::this_thread::sleep_for(std::chrono::milliseconds(2000));
   }
   catch(...)
   {

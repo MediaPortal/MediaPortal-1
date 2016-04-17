@@ -23,6 +23,7 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using System.Windows.Media.Animation;
 using MediaPortal.Profile;
 using Microsoft.DirectX.Direct3D;
@@ -1420,7 +1421,7 @@ namespace MediaPortal.GUI.Library
       {
         _focusImage.Render(timePassed);
       }
-      foreach (GUIButtonControl button in _buttonList)
+      foreach (GUIButtonControl button in _buttonList.ToList())
       {
         button.Render(timePassed);
       }

@@ -377,6 +377,7 @@ namespace MediaPortal.GUI.Library
       {
         Log.Error("GUITextScrollUpControl: Error during the render process - maybe a threading issue. {0}",
                   ex.ToString());
+        GUIGraphicsContext.EndClip();
       }
     }
 
@@ -595,7 +596,7 @@ namespace MediaPortal.GUI.Library
 
             float fwidth = 0, fheight = 0;
             string wsTmp = szLine;
-            _font.GetTextExtent(wsTmp, ref fwidth, ref fheight);
+            if (_font != null) _font.GetTextExtent(wsTmp, ref fwidth, ref fheight);
             if (fwidth > (_width - _xOffset))
             {
               if (iLastSpace > 0 && iLastSpaceInLine != lpos)

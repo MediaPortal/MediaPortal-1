@@ -483,8 +483,8 @@ namespace MediaPortal.GUI.Video
             }
             _isOsdVisible = false;
             GUIWindowManager.IsOsdVisible = false;
-            GUIGraphicsContext.IsFullScreenVideo = false;
             GUIWindowManager.ShowPreviousWindow();
+            GUIGraphicsContext.IsFullScreenVideo = false;
             return;
           }
         case Action.ActionType.ACTION_AUTOCROP:
@@ -1219,7 +1219,9 @@ namespace MediaPortal.GUI.Video
               _isPauseOsdVisible = false;
               GUIWindowManager.IsOsdVisible = false;
               GUIWindowManager.IsPauseOsdVisible = false;
-              GUIGraphicsContext.IsFullScreenVideo = false;
+
+              if (GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR)
+                GUIGraphicsContext.IsFullScreenVideo = false;
 
               GUILayerManager.UnRegisterLayer(this);
 

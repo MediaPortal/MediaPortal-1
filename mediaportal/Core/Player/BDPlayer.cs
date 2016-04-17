@@ -1240,7 +1240,8 @@ namespace MediaPortal.Player
 
         if (_videoWin != null)
         {
-          if (GUIGraphicsContext.Overlay == false && GUIGraphicsContext.IsFullScreenVideo == false)
+          if (GUIGraphicsContext.Overlay == false && GUIGraphicsContext.IsFullScreenVideo == false &&
+              GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR)
           {
             if (_isVisible)
             {
@@ -2827,7 +2828,12 @@ namespace MediaPortal.Player
         Log.Info("BDPlayer: Adding filters");
 
         _vmr9 = new VMR9Util();
-        _vmr9.AddVMR9(_graphBuilder);
+        bool AddVMR9 = _vmr9.AddVMR9(_graphBuilder);
+        if (!AddVMR9)
+        {
+          Log.Error("BDPlayer: Failed to add VMR9 to graph");
+          return false;
+        }
         _vmr9.Enable(false);
 
         // Set VideoDecoder and VC1Override before adding filter in graph
@@ -2947,44 +2953,20 @@ namespace MediaPortal.Player
       {
         return;
       }
-      int hr;
       Log.Debug("BDPlayer: Cleanup DShow graph {0}", GUIGraphicsContext.InVmr9Render);
       try
       {
         BDOSDRenderer.StopRendering();
 
-        if (_mediaCtrl != null)
-        {
-          int counter = 0;
-          FilterState state;
-          hr = _mediaCtrl.Stop();
-          hr = _mediaCtrl.GetState(10, out state);
-          while (state != FilterState.Stopped || GUIGraphicsContext.InVmr9Render)
-          {
-            Thread.Sleep(100);
-            hr = _mediaCtrl.GetState(10, out state);
-            counter++;
-            if (counter >= 30)
-            {
-              if (state != FilterState.Stopped)
-                Log.Error("BDPlayer: graph still running");
-              if (GUIGraphicsContext.InVmr9Render)
-                Log.Error("BDPlayer: in renderer");
-              break;
-            }
-          }
-          _mediaCtrl = null;
-        }
-
         if (_vmr9 != null)
         {
+          _vmr9.Vmr9MediaCtrl(_mediaCtrl);
           _vmr9.Enable(false);
         }
 
         if (_mediaEvt != null)
         {
-          hr = _mediaEvt.SetNotifyWindow(IntPtr.Zero, WM_GRAPHNOTIFY, IntPtr.Zero);
-          _mediaEvt = null;
+          _mediaEvt.SetNotifyWindow(IntPtr.Zero, WM_GRAPHNOTIFY, IntPtr.Zero);
         }
 
         _videoWin = _graphBuilder as IVideoWindow;
@@ -2992,10 +2974,18 @@ namespace MediaPortal.Player
         {
           _videoWin.put_Owner(IntPtr.Zero);
           _videoWin.put_Visible(OABool.False);
-          _videoWin = null;
         }
 
+        if (_mediaEvt != null) DirectShowUtil.ReleaseComObject(_mediaEvt);
+        if (_mediaSeeking != null) DirectShowUtil.ReleaseComObject(_mediaSeeking);
+        if (_videoWin != null) DirectShowUtil.ReleaseComObject(_videoWin);
+        if (_basicAudio != null) DirectShowUtil.ReleaseComObject(_basicAudio);
+        if (_basicVideo != null) DirectShowUtil.ReleaseComObject(_basicVideo);
+        if (_ireader != null) DirectShowUtil.ReleaseComObject(_ireader);
+
+        _mediaEvt = null;
         _mediaSeeking = null;
+        _videoWin = null;
         _basicAudio = null;
         _basicVideo = null;
         _ireader = null;
@@ -3061,7 +3051,7 @@ namespace MediaPortal.Player
             _rotEntry.SafeDispose();
             _rotEntry = null;
           }
-          while ((hr = DirectShowUtil.ReleaseComObject(_graphBuilder)) > 0) ;
+          while ((DirectShowUtil.ReleaseComObject(_graphBuilder)) > 0) ;
           _graphBuilder = null;
         }
 

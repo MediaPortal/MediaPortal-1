@@ -40,12 +40,12 @@ struct VID_FRAME_VERTEX
 };
 
 MPMadPresenter::MPMadPresenter(IVMR9Callback* pCallback, DWORD width, DWORD height, OAHWND parent, IDirect3DDevice9* pDevice) :
-  CUnknown(NAME("MPMadPresenter"), NULL),
+  CUnknown(NAME("MPMadPresenter"), nullptr),
   m_pCallback(pCallback),
   m_dwGUIWidth(width),
   m_dwGUIHeight(height),
   m_hParent(parent),
-  m_pDevice((IDirect3DDevice9Ex*)pDevice)
+  m_pDevice(static_cast<IDirect3DDevice9Ex*>(pDevice))
 {
   m_subProxy = new MadSubtitleProxy(pCallback);
   if (m_subProxy)
@@ -59,7 +59,7 @@ MPMadPresenter::~MPMadPresenter()
   if (m_subProxy)
   {
     m_subProxy->Release();
-    m_subProxy = NULL;
+    m_subProxy = nullptr;
   }
 }
 
@@ -67,10 +67,10 @@ IBaseFilter* MPMadPresenter::Initialize()
 {
   CAutoLock cAutoLock(this);
 
-  HRESULT hr = CoCreateInstance(CLSID_madVR, NULL, CLSCTX_INPROC_SERVER, __uuidof(IMadVRDirect3D9Manager), (void**)&m_pMad);
+  HRESULT hr = CoCreateInstance(CLSID_madVR, nullptr, CLSCTX_INPROC_SERVER, __uuidof(IMadVRDirect3D9Manager), reinterpret_cast<void**>(&m_pMad));
 
   if (FAILED(hr))
-    return NULL;
+    return nullptr;
 
   CComQIPtr<IBaseFilter> baseFilter = m_pMad;
   CComQIPtr<IMadVROsdServices> pOsdServices = m_pMad;
@@ -80,9 +80,10 @@ IBaseFilter* MPMadPresenter::Initialize()
   CComQIPtr<IVideoWindow> pWindow = m_pMad;
 
   m_pMad->QueryInterface(&m_pCommand);
+  m_pMad->QueryInterface(&m_pWindow);
 
   if (!baseFilter || !pOsdServices || !manager || !pSubclassReplacement || !pSubRender || !m_pCommand || !pWindow)
-    return NULL;
+    return nullptr;
 
   pOsdServices->OsdSetRenderCallback("MP-GUI", this);
   manager->ConfigureDisplayModeChanger(false, true);
@@ -102,6 +103,7 @@ IBaseFilter* MPMadPresenter::Initialize()
 HRESULT MPMadPresenter::Shutdown()
 {
   CAutoLock lock(this);
+  CComPtr< IGraphBuilder >  pGraph;
 
   Log("MPMadPresenter::Shutdown()");
 
@@ -115,6 +117,15 @@ HRESULT MPMadPresenter::Shutdown()
       m_pCommand->Release();
     }
 
+    m_pWindow->put_Owner(reinterpret_cast<OAHWND>(nullptr));
+    m_pWindow->put_Visible(false);
+
+    // Create a new IGraphBuilder to force madVR to destroy the instance
+    pGraph.CoCreateInstance(CLSID_FilterGraph);
+    pGraph.Release();
+    pGraph.Release();
+    m_pMad->Release();
+    m_pMad->Release();
     m_pMad->Release();
     m_pMad = nullptr;
   }
@@ -134,7 +145,7 @@ HRESULT MPMadPresenter::NonDelegatingQueryInterface(REFIID riid, void** ppv)
 HRESULT MPMadPresenter::QueryInterface(REFIID riid, void** ppvObject)
 {
   HRESULT hr = E_NOINTERFACE;
-  if (ppvObject == NULL)
+  if (ppvObject == nullptr)
     hr = E_POINTER;
   else if (riid == __uuidof(IOsdRenderCallback))
   {
@@ -179,8 +190,8 @@ HRESULT MPMadPresenter::ClearBackground(LPCSTR name, REFERENCE_TIME frameStart, 
 {
   HRESULT hr = E_UNEXPECTED;
 
-  WORD videoHeight = (WORD)activeVideoRect->bottom - (WORD)activeVideoRect->top;
-  WORD videoWidth = (WORD)activeVideoRect->right - (WORD)activeVideoRect->left;
+  WORD videoHeight = static_cast<WORD>(activeVideoRect->bottom) - static_cast<WORD>(activeVideoRect->top);
+  WORD videoWidth = static_cast<WORD>(activeVideoRect->right) - static_cast<WORD>(activeVideoRect->left);
 
   bool uiVisible = false;
 
@@ -189,8 +200,8 @@ HRESULT MPMadPresenter::ClearBackground(LPCSTR name, REFERENCE_TIME frameStart, 
   if (!m_pCallback)
     return S_OK;
 
-  m_dwHeight = (WORD)fullOutputRect->bottom - (WORD)fullOutputRect->top;
-  m_dwWidth = (WORD)fullOutputRect->right - (WORD)fullOutputRect->left;
+  m_dwHeight = static_cast<WORD>(fullOutputRect->bottom) - static_cast<WORD>(fullOutputRect->top);
+  m_dwWidth = static_cast<WORD>(fullOutputRect->right) - static_cast<WORD>(fullOutputRect->left);
 
   if (FAILED(hr = RenderToTexture(m_pMPTextureGui)))
     return hr;
@@ -226,8 +237,8 @@ HRESULT MPMadPresenter::RenderOsd(LPCSTR name, REFERENCE_TIME frameStart, RECT* 
 {
   HRESULT hr = E_UNEXPECTED;
 
-  WORD videoHeight = (WORD)activeVideoRect->bottom - (WORD)activeVideoRect->top;
-  WORD videoWidth = (WORD)activeVideoRect->right - (WORD)activeVideoRect->left;
+  WORD videoHeight = static_cast<WORD>(activeVideoRect->bottom) - static_cast<WORD>(activeVideoRect->top);
+  WORD videoWidth = static_cast<WORD>(activeVideoRect->right) - static_cast<WORD>(activeVideoRect->left);
 
   bool uiVisible = false;
 
@@ -236,8 +247,8 @@ HRESULT MPMadPresenter::RenderOsd(LPCSTR name, REFERENCE_TIME frameStart, RECT* 
   if (!m_pCallback)
     return S_OK;
 
-  m_dwHeight = (WORD)fullOutputRect->bottom - (WORD)fullOutputRect->top;
-  m_dwWidth = (WORD)fullOutputRect->right - (WORD)fullOutputRect->left;
+  m_dwHeight = static_cast<WORD>(fullOutputRect->bottom) - static_cast<WORD>(fullOutputRect->top);
+  m_dwWidth = static_cast<WORD>(fullOutputRect->right) - static_cast<WORD>(fullOutputRect->left);
 
   if (FAILED(hr = RenderToTexture(m_pMPTextureOsd)))
     return hr;
@@ -277,7 +288,7 @@ HRESULT MPMadPresenter::RenderToTexture(IDirect3DTexture9* pTexture)
   if (FAILED(hr = pTexture->GetSurfaceLevel(0, &pSurface)))
     return hr;
 
-  if (FAILED(hr = m_pCallback->SetRenderTarget((DWORD)pSurface)))
+  if (FAILED(hr = m_pCallback->SetRenderTarget(reinterpret_cast<DWORD>(pSurface))))
     return hr;
 
   if (FAILED(hr = m_pDevice->Clear(0, NULL, D3DCLEAR_TARGET, D3DXCOLOR(0, 0, 0, 0), 1.0f, 0)))
@@ -308,7 +319,7 @@ HRESULT MPMadPresenter::SetupOSDVertex(IDirect3DVertexBuffer9* pVertextBuf)
   VID_FRAME_VERTEX* vertices = nullptr;
 
   // Lock the vertex buffer
-  HRESULT hr = pVertextBuf->Lock(0, 0, (void**)&vertices, D3DLOCK_DISCARD);
+  HRESULT hr = pVertextBuf->Lock(0, 0, reinterpret_cast<void**>(&vertices), D3DLOCK_DISCARD);
 
   if (SUCCEEDED(hr))
   {
@@ -318,29 +329,29 @@ HRESULT MPMadPresenter::SetupOSDVertex(IDirect3DVertexBuffer9* pVertextBuf)
     rDest.right = m_dwWidth;
     rDest.top = 0;
 
-    vertices[0].x = (float)rDest.left - 0.5f;
-    vertices[0].y = (float)rDest.top - 0.5f;
+    vertices[0].x = static_cast<float>(rDest.left) - 0.5f;
+    vertices[0].y = static_cast<float>(rDest.top) - 0.5f;
     vertices[0].z = 0.0f;
     vertices[0].rhw = 1.0f;
     vertices[0].u = 0.0f;
     vertices[0].v = 0.0f;
 
-    vertices[1].x = (float)rDest.right - 0.5f;
-    vertices[1].y = (float)rDest.top - 0.5f;
+    vertices[1].x = static_cast<float>(rDest.right) - 0.5f;
+    vertices[1].y = static_cast<float>(rDest.top) - 0.5f;
     vertices[1].z = 0.0f;
     vertices[1].rhw = 1.0f;
     vertices[1].u = 1.0f;
     vertices[1].v = 0.0f;
 
-    vertices[2].x = (float)rDest.right - 0.5f;
-    vertices[2].y = (float)rDest.bottom - 0.5f;
+    vertices[2].x = static_cast<float>(rDest.right) - 0.5f;
+    vertices[2].y = static_cast<float>(rDest.bottom) - 0.5f;
     vertices[2].z = 0.0f;
     vertices[2].rhw = 1.0f;
     vertices[2].u = 1.0f;
     vertices[2].v = 1.0f;
 
-    vertices[3].x = (float)rDest.left - 0.5f;
-    vertices[3].y = (float)rDest.bottom - 0.5f;
+    vertices[3].x = static_cast<float>(rDest.left) - 0.5f;
+    vertices[3].y = static_cast<float>(rDest.bottom) - 0.5f;
     vertices[3].z = 0.0f;
     vertices[3].rhw = 1.0f;
     vertices[3].u = 0.0f;
@@ -405,7 +416,7 @@ HRESULT MPMadPresenter::SetDevice(IDirect3DDevice9* pD3DDev)
 
   Log("MPMadPresenter::SetDevice() pD3DDev 0x:%x", pD3DDev);
 
-  m_pMadD3DDev = (IDirect3DDevice9Ex*)pD3DDev;
+  m_pMadD3DDev = static_cast<IDirect3DDevice9Ex*>(pD3DDev);
   m_deviceState.SetDevice(pD3DDev);
 
   if (m_pMadD3DDev)

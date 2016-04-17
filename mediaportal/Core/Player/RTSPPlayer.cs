@@ -166,7 +166,12 @@ namespace MediaPortal.Player
         Log.Info("RTSPPlayer: add source filter");
         if (IsRadio == false)
         {
-          Vmr9.AddVMR9(graphBuilder);
+          bool AddVMR9 = Vmr9 != null && Vmr9.AddVMR9(graphBuilder);
+          if (!AddVMR9)
+          {
+            Log.Error("RTSPPlayer:Failed to add VMR9 to graph");
+            return false;
+          }
           Vmr9.Enable(false);
         }
 
@@ -483,38 +488,15 @@ namespace MediaPortal.Player
       Log.Info("RTSPPlayer:cleanup DShow graph");
       try
       {
-        if (_mediaCtrl != null)
-        {
-          int counter = 0;
-          FilterState state;
-          hr = _mediaCtrl.Stop();
-          hr = _mediaCtrl.GetState(10, out state);
-          while (state != FilterState.Stopped || GUIGraphicsContext.InVmr9Render)
-          {
-            Thread.Sleep(100);
-            hr = _mediaCtrl.GetState(10, out state);
-            counter++;
-            if (counter >= 30)
-            {
-              if (state != FilterState.Stopped)
-                Log.Error("RTSPPlayer: graph still running");
-              if (GUIGraphicsContext.InVmr9Render)
-                Log.Error("RTSPPlayer: in renderer");
-              break;
-            }
-          }
-          _mediaCtrl = null;
-        }
-
         if (Vmr9 != null)
         {
+          Vmr9.Vmr9MediaCtrl(_mediaCtrl);
           Vmr9.Enable(false);
         }
 
         if (mediaEvt != null)
         {
           hr = mediaEvt.SetNotifyWindow(IntPtr.Zero, WM_GRAPHNOTIFY, IntPtr.Zero);
-          mediaEvt = null;
         }
 
         videoWin = graphBuilder as IVideoWindow;
@@ -522,9 +504,16 @@ namespace MediaPortal.Player
         {
           videoWin.put_Owner(IntPtr.Zero);
           videoWin.put_Visible(OABool.False);
-          videoWin = null;
         }
 
+        if (mediaEvt != null) DirectShowUtil.ReleaseComObject(mediaEvt);
+        if (_mediaSeeking != null) DirectShowUtil.ReleaseComObject(_mediaSeeking);
+        if (mediaPos != null) DirectShowUtil.ReleaseComObject(mediaPos);
+        if (basicAudio != null) DirectShowUtil.ReleaseComObject(basicAudio);
+        if (basicVideo != null) DirectShowUtil.ReleaseComObject(basicVideo);
+        if (videoWin != null) DirectShowUtil.ReleaseComObject(videoWin);
+
+        mediaEvt = null;
         _mediaSeeking = null;
         mediaPos = null;
         basicAudio = null;
@@ -777,7 +766,8 @@ namespace MediaPortal.Player
         UpdateCurrentPosition();
         updateTimer = DateTime.Now;
         if (GUIGraphicsContext.BlankScreen ||
-            (GUIGraphicsContext.Overlay == false && GUIGraphicsContext.IsFullScreenVideo == false))
+            (GUIGraphicsContext.Overlay == false && GUIGraphicsContext.IsFullScreenVideo == false) &&
+            GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR)
         {
           if (m_bVisible)
           {

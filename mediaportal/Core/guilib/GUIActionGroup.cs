@@ -270,14 +270,10 @@ namespace MediaPortal.GUI.Library
 
     public override void Render(float timePassed)
     {
-      //base.Render(timePassed);
       if (!Dimmed)
       {
-        if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
-        {
-          GUIGraphicsContext.Overlay = true;
-        }
-        else if (GUIGraphicsContext.Overlay != _isOverlayAllowed)
+        if (GUIGraphicsContext.Overlay != _isOverlayAllowed &&
+            GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR)
         {
           GUIGraphicsContext.Overlay = _isWinOverlayAllowed && _isOverlayAllowed;
         }
@@ -286,11 +282,8 @@ namespace MediaPortal.GUI.Library
       }
       else
       {
-        if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
-        {
-          GUIGraphicsContext.Overlay = true;
-        }
-        else if (GUIGraphicsContext.Overlay != _isWinOverlayAllowed)
+        if (GUIGraphicsContext.Overlay != _isWinOverlayAllowed &&
+            GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR)
         {
           GUIGraphicsContext.Overlay = _isWinOverlayAllowed;
         }

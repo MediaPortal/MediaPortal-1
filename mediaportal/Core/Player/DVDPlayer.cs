@@ -1436,7 +1436,8 @@ namespace MediaPortal.Player
     {
       if (_videoWin != null)
       {
-        if (GUIGraphicsContext.Overlay == false && GUIGraphicsContext.IsFullScreenVideo == false)
+        if (GUIGraphicsContext.Overlay == false && GUIGraphicsContext.IsFullScreenVideo == false &&
+            GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR)
         {
           if (_visible)
           {
