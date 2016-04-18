@@ -3010,6 +3010,7 @@ namespace MediaPortal.Player
           _videoWin.put_Visible(OABool.False);
         }
 
+        if (_mediaCtrl != null) DirectShowUtil.FinalReleaseComObject(_mediaCtrl);
         if (_mediaEvt != null) DirectShowUtil.FinalReleaseComObject(_mediaEvt);
         if (_mediaSeeking != null) DirectShowUtil.FinalReleaseComObject(_mediaSeeking);
         if (_videoWin != null) DirectShowUtil.FinalReleaseComObject(_videoWin);
@@ -3017,6 +3018,7 @@ namespace MediaPortal.Player
         if (_basicVideo != null) DirectShowUtil.FinalReleaseComObject(_basicVideo);
         if (_ireader != null) DirectShowUtil.FinalReleaseComObject(_ireader);
 
+        _mediaCtrl = null;
         _mediaEvt = null;
         _mediaSeeking = null;
         _videoWin = null;
@@ -3085,7 +3087,7 @@ namespace MediaPortal.Player
             _rotEntry.SafeDispose();
             _rotEntry = null;
           }
-          while ((DirectShowUtil.FinalReleaseComObject(_graphBuilder)) > 0) ;
+          DirectShowUtil.FinalReleaseComObject(_graphBuilder);
           _graphBuilder = null;
         }
 

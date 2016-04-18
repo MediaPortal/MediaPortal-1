@@ -1396,6 +1396,7 @@ namespace MediaPortal.Player
           videoWin.put_Visible(OABool.False);
         }
 
+        if (mediaCtrl != null) DirectShowUtil.FinalReleaseComObject(mediaCtrl);
         if (videoWin != null) DirectShowUtil.FinalReleaseComObject(videoWin);
         if (mediaEvt != null) DirectShowUtil.FinalReleaseComObject(mediaEvt);
         if (mediaSeek != null) DirectShowUtil.FinalReleaseComObject(mediaSeek);

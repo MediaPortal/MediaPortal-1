@@ -393,6 +393,7 @@ namespace MediaPortal.Player
           _videoWin.put_Visible(OABool.False);
         }
 
+        if (_mediaCtrl != null) DirectShowUtil.FinalReleaseComObject(_mediaCtrl);
         if (_mediaEvt != null) DirectShowUtil.FinalReleaseComObject(_mediaEvt);
         if (_dvdCtrl != null) DirectShowUtil.FinalReleaseComObject(_dvdCtrl);
         if (_dvdInfo != null) DirectShowUtil.FinalReleaseComObject(_dvdInfo);
@@ -401,6 +402,7 @@ namespace MediaPortal.Player
         if (_basicVideo != null) DirectShowUtil.FinalReleaseComObject(_basicVideo);
         if (_mediaPos != null) DirectShowUtil.FinalReleaseComObject(_mediaPos);
 
+        _mediaCtrl = null;
         _visible = false;
         _dvdCtrl = null;
         _dvdInfo = null;

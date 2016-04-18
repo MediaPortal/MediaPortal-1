@@ -273,6 +273,7 @@ namespace MediaPortal.Player
           _vmr9.Enable(false);
         }
 
+        if (_mediaCtrl != null) DirectShowUtil.FinalReleaseComObject(_mediaCtrl);
         if (_mediaEvt != null) DirectShowUtil.FinalReleaseComObject(_mediaEvt);
         if (_mediaSeeking != null) DirectShowUtil.FinalReleaseComObject(_mediaSeeking);
         if (_mediaSeeking2 != null) DirectShowUtil.FinalReleaseComObject(_mediaSeeking2);
@@ -281,6 +282,7 @@ namespace MediaPortal.Player
         if (_basicVideo != null) DirectShowUtil.FinalReleaseComObject(_basicVideo);
         if (_bufferSource != null) DirectShowUtil.FinalReleaseComObject(_bufferSource);
 
+        _mediaCtrl = null;
         _mediaEvt = null;
         _mediaSeeking = null;
         _mediaSeeking2 = null;

@@ -506,6 +506,7 @@ namespace MediaPortal.Player
           videoWin.put_Visible(OABool.False);
         }
 
+        if (_mediaCtrl != null) DirectShowUtil.FinalReleaseComObject(_mediaCtrl);
         if (mediaEvt != null) DirectShowUtil.FinalReleaseComObject(mediaEvt);
         if (_mediaSeeking != null) DirectShowUtil.FinalReleaseComObject(_mediaSeeking);
         if (mediaPos != null) DirectShowUtil.FinalReleaseComObject(mediaPos);
@@ -513,6 +514,7 @@ namespace MediaPortal.Player
         if (basicVideo != null) DirectShowUtil.FinalReleaseComObject(basicVideo);
         if (videoWin != null) DirectShowUtil.FinalReleaseComObject(videoWin);
 
+        _mediaCtrl = null;
         mediaEvt = null;
         _mediaSeeking = null;
         mediaPos = null;
