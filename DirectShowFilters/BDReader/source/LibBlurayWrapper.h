@@ -98,6 +98,10 @@ typedef void (*API_bd_select_stream)(BLURAY *, uint32_t, uint32_t, uint32_t);
 typedef void (*API_bd_refcnt_inc)(const void *);
 typedef void (*API_bd_refcnt_dec)(const void *);
 
+static void StubForGetModuleHandleEx()
+{
+}
+
 class CLibBlurayWrapper
 {
 public:
