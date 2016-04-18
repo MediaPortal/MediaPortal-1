@@ -144,7 +144,12 @@ bool CLibBlurayWrapper::Initialize()
   TCHAR szDirectory[MAX_PATH] = _T("");
   TCHAR szJAR[MAX_PATH] = _T("");
   TCHAR szPath[MAX_PATH] = _T("");
-  GetModuleFileName(NULL, szPath, sizeof(szPath) - 1);
+
+  HMODULE hModule = NULL;
+  DWORD flags = GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS | GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT;
+
+  GetModuleHandleEx(flags, (LPCTSTR)&StubForGetModuleHandleEx, &hModule);
+  GetModuleFileName(hModule, szPath, MAX_PATH);
 
   _tcsncpy(szDirectory, szPath, _tcsrchr(szPath, '\\') - szPath);
   szDirectory[_tcslen(szDirectory)] = '\0';
@@ -802,7 +807,6 @@ bool CLibBlurayWrapper::GetClipInfo(int pClip, UINT64* pClipStartTime, UINT64* p
   CAutoLock cLibLock(&m_csLibLock);
   return _bd_get_clip_infos(m_pBd, pClip, pClipStartTime, pStreamStartTime, pBytePos, pDuration) == 1 ? true : false;
 }
-
 
 bool CLibBlurayWrapper::SetScr(INT64 pts, INT64 offset)
 {
