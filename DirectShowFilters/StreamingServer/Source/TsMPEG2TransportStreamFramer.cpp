@@ -37,6 +37,8 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 #define MAX_PLAYOUT_BUFFER_DURATION 0.1 // (seconds)
 #define PCR_PERIOD_VARIATION_RATIO 0.5
 
+extern void LogDebug(const char *fmt, ...) ;
+
 ////////// PIDStatus //////////
 
 class TsPIDStatus {
@@ -198,7 +200,7 @@ void TsMPEG2TransportStreamFramer
 	u_int8_t const adaptation_field_length = pkt[4];
 	if (adaptation_field_length < 7) return;
 
-	u_int8_t const discontinuity_indicator = pkt[5]&0x80;
+	u_int8_t discontinuity_indicator = pkt[5]&0x80;
 	u_int8_t const pcrFlag = pkt[5]&0x10;
 	if (pcrFlag == 0) return; // no PCR
 
@@ -224,19 +226,27 @@ void TsMPEG2TransportStreamFramer
 #endif
 	} else {
 		// We've seen this PID's PCR before; update our per-packet duration estimate:
-		double durationPerPacket
-			= (clock - pidStatus->lastClock)/(fTSPacketCount - pidStatus->lastPacketNum);
-
-		// Hack (suggested by "Romain"): Don't update our estimate if this PCR appeared unusually quickly.
-		// (This can produce more accurate estimates for wildly VBR streams.)
-		double meanPCRPeriod = 0.0;
-		if (fTSPCRCount > 0) {
-			meanPCRPeriod=(double)fTSPacketCount/fTSPCRCount;
-			if (fTSPacketCount - pidStatus->lastPacketNum < meanPCRPeriod*PCR_PERIOD_VARIATION_RATIO) return;
-		}
+		double clockDiff = clock - pidStatus->lastClock;
+		double durationPerPacket = clockDiff/(fTSPacketCount - pidStatus->lastPacketNum);
+			
+		 //Detect PCR rollover or large forward jumps in PCR (maximum normal clockDiff is approx. +100ms)
+	  if ((clockDiff < 0.0) || (clockDiff > 0.5))
+    {
+      discontinuity_indicator |= 0x01; // force a reset of the stored clock and real-time values
+	    LogDebug("TsMp2TSFramer - PCR jump: %f s, packet count %d", (float)clockDiff, fTSPacketCount);  
+    } else {
+  		// Hack (suggested by "Romain"): Don't update our estimate if this PCR appeared unusually quickly.
+  		// (This can produce more accurate estimates for wildly VBR streams.)
+  		double meanPCRPeriod = 0.0;
+  		if (fTSPCRCount > 0) {
+  			meanPCRPeriod=(double)fTSPacketCount/fTSPCRCount;
+  			if (fTSPacketCount - pidStatus->lastPacketNum < meanPCRPeriod*PCR_PERIOD_VARIATION_RATIO) return;
+  		}
+  	}
 
 		if (fTSPacketDurationEstimate == 0.0) { // we've just started
 			fTSPacketDurationEstimate = durationPerPacket;
+	    LogDebug("TsMp2TSFramer - first TS packet duration: %f s, packet count %d", (float)durationPerPacket, fTSPacketCount);  
 		} else if (discontinuity_indicator == 0 && durationPerPacket >= 0.0) {
 			fTSPacketDurationEstimate
 				= durationPerPacket*NEW_DURATION_WEIGHT
