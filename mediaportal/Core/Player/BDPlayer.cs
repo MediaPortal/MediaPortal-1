@@ -3010,14 +3010,6 @@ namespace MediaPortal.Player
           _videoWin.put_Visible(OABool.False);
         }
 
-        if (_mediaCtrl != null) DirectShowUtil.FinalReleaseComObject(_mediaCtrl);
-        if (_mediaEvt != null) DirectShowUtil.FinalReleaseComObject(_mediaEvt);
-        if (_mediaSeeking != null) DirectShowUtil.FinalReleaseComObject(_mediaSeeking);
-        if (_videoWin != null) DirectShowUtil.FinalReleaseComObject(_videoWin);
-        if (_basicAudio != null) DirectShowUtil.FinalReleaseComObject(_basicAudio);
-        if (_basicVideo != null) DirectShowUtil.FinalReleaseComObject(_basicVideo);
-        if (_ireader != null) DirectShowUtil.FinalReleaseComObject(_ireader);
-
         _mediaCtrl = null;
         _mediaEvt = null;
         _mediaSeeking = null;
