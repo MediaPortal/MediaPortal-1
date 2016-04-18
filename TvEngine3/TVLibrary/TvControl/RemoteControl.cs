@@ -122,6 +122,16 @@ namespace TvControl
       _isRemotingConnected = false;
     }
 
+    /// <summary>
+    /// Clears this instance.
+    /// </summary>
+    public static void ForceRegisterChannel()
+    {
+      _callbackChannel = null;
+      _tvControl = null;
+      //RegisterChannel();
+    }
+
     #endregion
 
     #region private static methods
@@ -171,7 +181,7 @@ namespace TvControl
         // Check gentle connection
         try
         {
-          if (_isRemotingConnected)
+          if (_isRemotingConnected && _callbackChannel != null)
           {
             Card.ListAll();
             _isRemotingConnected = true;

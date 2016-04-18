@@ -1859,6 +1859,8 @@ namespace TvPlugin
       Log.Info("TVHome.OnSuspend()");
       // Force disconnection
       RemoteControl_OnRemotingDisconnected();
+      RemoteControl.Clear();
+      RemoteControl.ForceRegisterChannel();
       // OnSuspend already in progress
       if (_suspended)
       {
@@ -1925,6 +1927,8 @@ namespace TvPlugin
       }
       try
       {
+        RemoteControl.Clear();
+        RemoteControl.ForceRegisterChannel();
         Connected = false;
 
         RemoteControl.OnRemotingDisconnected += RemoteControl_OnRemotingDisconnected;
