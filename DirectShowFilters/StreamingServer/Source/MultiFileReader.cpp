@@ -42,6 +42,7 @@
 #define INFO_BUFF_SIZE (65536)
 
 extern void LogDebug(const char *fmt, ...) ;
+
 MultiFileReader::MultiFileReader(BOOL useFileNext, BOOL useDummyWrites, CCritSec* pFilterLock, BOOL useRandomAccess, BOOL extraLogging):
 	m_TSBufferFile(),
 	m_TSFile(),
@@ -159,12 +160,12 @@ HRESULT MultiFileReader::OpenFile()
 	DWORD tc=GetTickCount();
 	while (RefreshTSBufferFile()==S_FALSE)
 	{
-		if (GetTickCount()-tc>MAX_BUFFER_TIMEOUT)
+		if (GetTickCount()-tc > MAX_BUFFER_TIMEOUT)
 		{
 			LogDebug("MultiFileReader: timed out while waiting for buffer file to become available");
 			return S_FALSE;
 		}
-		Sleep(1);
+		Sleep(50);
 	}
 			
 	m_currentPosition = 0;
@@ -534,10 +535,11 @@ HRESULT MultiFileReader::RefreshTSBufferFile()
       
    	if (Error) //Handle errors from a previous loop iteration
    	{
-   	  if (Loop < 9) //An error on the first loop iteration is quasi-normal, so don't log it
-   	  {
-    	  LogDebug("MultiFileReader has error 0x%x in Loop %d. Try to clear SMB Cache.", Error, 10-Loop);  	  
-  	  }
+   	  // if (Loop < 9) //An error on the first loop iteration is quasi-normal, so don't log it
+   	  // {
+    	//   LogDebug("MultiFileReader has error 0x%x in Loop %d. Try to clear SMB Cache.", Error, 10-Loop);  	  
+  	  // }
+  	  
   	  // try to clear local / remote SMB file cache. This should happen when we close the filehandle
       m_TSBufferFile.CloseFile();
   	  m_TSBufferFile.OpenFile();
@@ -559,7 +561,10 @@ HRESULT MultiFileReader::RefreshTSBufferFile()
   	result = m_TSBufferFile.Read(m_pInfoFileBuffer1, readLength, &bytesRead);
 		
     if (!SUCCEEDED(result) || bytesRead != readLength) 
+    {
 		  Error |= 0x02;
+      continue;
+		}
 
   	if(Error == 0)
   	{
@@ -572,7 +577,10 @@ HRESULT MultiFileReader::RefreshTSBufferFile()
   	result = m_TSBufferFile.Read(m_pInfoFileBuffer2, readLength, &bytesRead);
 
     if (!SUCCEEDED(result) || bytesRead != readLength) 
+    {
 		  Error |= 0x04;
+      continue;
+		}
 
   	if(Error == 0)
   	{
@@ -806,14 +814,16 @@ HRESULT MultiFileReader::RefreshTSBufferFile()
 
   } while ( Error && Loop ) ; // If Error is set, try again...until Loop reaches 0.
  
-  if (Loop < 8)
+  if (Error)
   {
-    LogDebug("MultiFileReader has waited %d times for TSbuffer integrity.", 10-Loop) ;
-
-    if(Error)
+    LogDebug("MultiFileReader has failed for TSbuffer integrity after 10 tries. Error: %x:", Error) ;
+    if (Error & ~0x7)  //Integrity errors
     {
-      LogDebug("MultiFileReader has failed for TSbuffer integrity. Error : %x", Error) ;
       return E_FAIL ;
+    }
+    else  //File 'too short' errors (maybe nothing written to it yet)
+    {
+      return S_FALSE;
     }
   }
 
