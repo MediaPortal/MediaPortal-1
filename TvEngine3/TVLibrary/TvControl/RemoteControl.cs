@@ -73,7 +73,7 @@ namespace TvControl
     private static IController _tvControl;
     private static string _hostName = System.Net.Dns.GetHostName();
     private static TcpChannel _callbackChannel = null; // callback channel
-    private static bool _useIncreasedTimeoutForInitialConnection = true;
+    private static bool _useIncreasedTimeoutForInitialConnection = false;
 
     #endregion
 
@@ -181,7 +181,7 @@ namespace TvControl
         // Check gentle connection
         try
         {
-          if (_isRemotingConnected && _callbackChannel != null)
+          if (_isRemotingConnected)// && _callbackChannel != null)
           {
             Card.ListAll();
             _isRemotingConnected = true;
