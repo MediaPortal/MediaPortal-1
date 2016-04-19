@@ -141,6 +141,9 @@
     <ClInclude Include="SectionPayloadParser.h">
       <Filter>Parsers\Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="SectionCollection.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -226,6 +229,9 @@
     </ClCompile>
     <ClCompile Include="SectionPayloadParser.cpp">
       <Filter>Parsers\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SectionCollection.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

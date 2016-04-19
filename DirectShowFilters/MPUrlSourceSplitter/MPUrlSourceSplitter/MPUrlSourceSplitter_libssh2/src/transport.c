@@ -38,12 +38,12 @@
  * This file handles reading and writing to the SECSH transport layer. RFC4253.
  */
 
+#include <stdio.h>
 #include "libssh2_priv.h"
 #include <errno.h>
 #include <fcntl.h>
 #include <ctype.h>
 #ifdef LIBSSH2DEBUG
-#include <stdio.h>
 #endif
 
 #include <assert.h>

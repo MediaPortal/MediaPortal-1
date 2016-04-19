@@ -36,6 +36,7 @@
  *
  */
 
+#include <stdio.h>
 #include "libssh2_priv.h"
 #include "transport.h" /* _libssh2_transport_write */
 

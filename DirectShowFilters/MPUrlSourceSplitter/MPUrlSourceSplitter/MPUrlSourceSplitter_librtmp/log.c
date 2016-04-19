@@ -26,6 +26,7 @@
 #include <string.h>
 #include <assert.h>
 #include <ctype.h>
+#include <stdio.h>
 
 #include "rtmp_sys.h"
 #include "log.h"

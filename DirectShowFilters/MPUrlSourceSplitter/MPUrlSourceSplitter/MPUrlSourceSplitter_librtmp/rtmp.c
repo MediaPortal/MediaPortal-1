@@ -29,6 +29,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>
+#include <stdio.h>
 
 #include "rtmp_sys.h"
 #include "log.h"
@@ -46,6 +47,10 @@
 #include <openssl/rc4.h>
 #endif
 TLS_CTX RTMP_TLS_ctx;
+#endif
+
+#if _MSC_VER>=1900
+#  define STDC99
 #endif
 
 #define RTMP_SIG_SIZE 1536

@@ -38,6 +38,7 @@
  * OF SUCH DAMAGE.
  */
 
+#include <stdio.h>
 #include "libssh2_priv.h"
 #include <errno.h>
 #include <fcntl.h>

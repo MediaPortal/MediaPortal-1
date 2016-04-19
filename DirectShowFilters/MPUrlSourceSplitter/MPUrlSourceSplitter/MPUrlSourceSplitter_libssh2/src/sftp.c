@@ -37,6 +37,7 @@
  * OF SUCH DAMAGE.
  */
 
+#include <stdio.h>
 #include <assert.h>
 
 #include "libssh2_priv.h"

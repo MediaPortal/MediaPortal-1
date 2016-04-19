@@ -38,6 +38,7 @@
  * OF SUCH DAMAGE.
  */
 
+#include <stdio.h>
 #include "libssh2_priv.h"
 
 #ifndef LIBSSH2_LIBGCRYPT /* compile only if we build with OpenSSL */

@@ -35,6 +35,7 @@
  *
  */
 
+#include <stdio.h>
 #include "libssh2_priv.h"
 
 /*

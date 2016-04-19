@@ -18,6 +18,7 @@
     along with MediaPortal 2.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <stdio.h>
 #include "stdafx.h"
 
 // TODO: reference any additional headers you need in STDAFX.H

@@ -36,6 +36,7 @@
  * OF SUCH DAMAGE.
  */
 
+#include <stdio.h>
 #include "libssh2_priv.h"
 
 #ifdef LIBSSH2_CRYPT_NONE

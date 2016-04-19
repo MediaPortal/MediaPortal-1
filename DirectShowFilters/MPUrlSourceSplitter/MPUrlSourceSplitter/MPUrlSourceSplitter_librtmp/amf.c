@@ -26,6 +26,7 @@
 #include <string.h>
 #include <assert.h>
 #include <stdlib.h>
+#include <stdio.h>
 
 #include "rtmp_sys.h"
 #include "amf.h"

@@ -36,6 +36,7 @@
  * OF SUCH DAMAGE.
  */
 
+#include <stdio.h>
 #include "libssh2_priv.h"
 
 static int _libssh2_initialized = 0;
