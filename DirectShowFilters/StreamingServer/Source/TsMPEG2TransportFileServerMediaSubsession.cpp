@@ -26,7 +26,7 @@ TsMPEG2TransportFileServerMediaSubsession::TsMPEG2TransportFileServerMediaSubses
   m_pDuration = new CTsDuration();
   m_pFileDuration = NULL;
   OpenFileDuration();
-	LogDebug(L"TsMp2TFSMediaSubsession::ctor, m_fileName %s", m_fileName);  
+	LogDebug(L"TsMp2TFSMediaSubsession::ctor - filename %s", m_fileName);  
 }
 
 TsMPEG2TransportFileServerMediaSubsession::~TsMPEG2TransportFileServerMediaSubsession() 
@@ -34,7 +34,7 @@ TsMPEG2TransportFileServerMediaSubsession::~TsMPEG2TransportFileServerMediaSubse
   CloseFileDuration();
   delete m_pDuration;
   m_pDuration = NULL;
-	LogDebug(L"TsMp2TFSMediaSubsession::dtor, m_fileName %s", m_fileName);  
+	LogDebug(L"TsMp2TFSMediaSubsession::dtor (%s)", m_fileName);  
 }
 
 #define TRANSPORT_PACKET_SIZE 188
@@ -148,7 +148,7 @@ void TsMPEG2TransportFileServerMediaSubsession::OpenFileDuration()
     }
   
     m_pDuration->SetFileReader(m_pFileDuration);
-	  LogDebug(L"TsMp2TFSMediaSubsession::OpenFileDuration() OK: %s", m_fileName);  
+	  LogDebug(L"TsMp2TFSMediaSubsession::OpenFileDuration(): %s", m_fileName);  
   }
 }
 
