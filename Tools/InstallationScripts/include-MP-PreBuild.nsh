@@ -67,9 +67,9 @@
 !system 'ant -f ${LibblurayJAR} -Dsrc_awt=:java-j2se' = 0
 !insertmacro PrepareBuildReport DirectShowFilters
 !ifdef x64Environment
-!system '"C:\Program Files (x86)\MSBuild\12.0\Bin\MSBUILD.exe" ${logger} /target:rebuild /property:Configuration=Release "${git_DirectShowFilters}\Filters.sln"' = 0
+!system '"C:\Program Files (x86)\MSBuild\14.0\Bin\MSBUILD.exe" ${logger} /target:rebuild /property:Configuration=Release "${git_DirectShowFilters}\Filters.sln"' = 0
 !else
-!system '"C:\Program Files\MSBuild\12.0\Bin\MSBUILD.exe" ${logger} /target:rebuild /property:Configuration=Release "${git_DirectShowFilters}\Filters.sln"' = 0
+!system '"C:\Program Files\MSBuild\14.0\Bin\MSBUILD.exe" ${logger} /target:rebuild /property:Configuration=Release "${git_DirectShowFilters}\Filters.sln"' = 0
 !endif
 !insertmacro FinalizeBuildReport
 !insertmacro PrepareBuildReport MediaPortal
