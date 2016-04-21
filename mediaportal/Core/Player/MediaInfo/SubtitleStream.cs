@@ -70,10 +70,6 @@ namespace MediaPortal.Player
 
     public SubtitleCodec Codec { get; private set; }
 
-    public bool Default { get; private set; }
-
-    public bool Forced { get; private set; }
-
     public override MediaStreamKind Kind
     {
       get { return MediaStreamKind.Text; }
@@ -89,8 +85,6 @@ namespace MediaPortal.Player
       base.AnalyzeStreamInternal(info);
       Format = GetString(info, "Format");
       Codec = GetCodec(GetString(info, "CodecID").ToUpper());
-      Default = GetBool(info, "Default");
-      Forced = GetBool(info, "Forced");
     }
 
     private static SubtitleCodec GetCodec(string source)

@@ -291,10 +291,6 @@ namespace MediaPortal.Player
 
     public int BitDepth { get; set; }
 
-    public bool Default { get; set; }
-
-    public bool Forced { get; set; }
-
     public string Format { get; set; }
 
     public string CodecName { get; set; }
@@ -325,8 +321,6 @@ namespace MediaPortal.Player
       Channel = GetInt(info, "Channel(s)");
       SamplingRate = GetDouble(info, "SamplingRate");
       BitDepth = GetInt(info, "BitDepth");
-      Default = GetBool(info, "Default");
-      Forced = GetBool(info, "Forced");
       Format = GetString(info, "Format");
       CodecName = GetFullCodecName(info);
     }

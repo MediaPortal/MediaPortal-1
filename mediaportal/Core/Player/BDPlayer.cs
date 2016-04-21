@@ -34,6 +34,7 @@ using DShowNET.Helper;
 
 using MediaPortal.ExtensionMethods;
 using MediaPortal.GUI.Library;
+using MediaPortal.Localisation;
 using MediaPortal.Player.PostProcessing;
 using MediaPortal.Player.Subtitles;
 using MediaPortal.Profile;
@@ -3249,7 +3250,7 @@ namespace MediaPortal.Player
           for (var i = 0; i < allAudioStreams; ++i)
           {
             pStrm.Info(i, out sType, out sFlag, out sPLCid, out sPDWGroup, out sName, out pppunk, out ppobject);
-            currentAudioStreams.Add(new Tuple<string, int, int, int>(DirectShowHelper.GetLanguage(sName.Trim()), i, _ireader.GetAudioChannelCount(i), sPDWGroup));
+            currentAudioStreams.Add(new Tuple<string, int, int, int>(LanguageHelper.GetLanguageByShortName(sName.Trim()), i, _ireader.GetAudioChannelCount(i), sPDWGroup));
           }
 
           var bestStream = currentAudioStreams.OrderByDescending(x => x.Item3 * 1000 + x.Item4).FirstOrDefault();
@@ -3285,7 +3286,7 @@ namespace MediaPortal.Player
         pStrm.Info(stream, out sType, out sFlag, out sPLCid, out sPDWGroup, out sName, out pppunk, out ppobject);
           return GetStreamByParams(
               stream,
-              DirectShowHelper.GetLanguage(sName.Trim()),
+              LanguageHelper.GetLanguageByShortName(sName.Trim()),
               _ireader.GetAudioChannelCount(stream),
               sPDWGroup);
       }
@@ -3297,7 +3298,7 @@ namespace MediaPortal.Player
     {
       return new AudioStream(id, id)
       {
-        Language = DirectShowHelper.GetLanguage(language),
+        Language = LanguageHelper.GetLanguageByShortName(language),
         Channel = channelCount,
         Format = StreamTypetoFormat(streamType),
         Codec = StreamTypetoAudioCodec(streamType),
