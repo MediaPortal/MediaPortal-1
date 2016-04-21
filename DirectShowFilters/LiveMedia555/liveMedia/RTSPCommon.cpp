@@ -18,10 +18,10 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 // Common routines used by both RTSP clients and servers
 // Implementation
 
+#include <stdio.h>
 #include "RTSPCommon.hh"
 #include "Locale.hh"
 #include <string.h>
-#include <stdio.h>
 
 Boolean parseRTSPRequestString(char const* reqStr,
 			       unsigned reqStrSize,
