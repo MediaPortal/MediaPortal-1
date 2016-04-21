@@ -32,9 +32,10 @@ void LogDebug(const wchar_t *fmt, ...)
 	{
 		SYSTEMTIME systemTime;
 		GetLocalTime(&systemTime);
-		fwprintf(fp,L"%02.2d-%02.2d-%04.4d %02.2d:%02.2d:%02.2d.%02.2d %s\n",
-			systemTime.wDay, systemTime.wMonth, systemTime.wYear,
-			systemTime.wHour,systemTime.wMinute,systemTime.wSecond,systemTime.wMilliseconds,
+		fwprintf(fp,L"[%04.4d-%02.2d-%02.2d %02.2d:%02.2d:%02.2d,%03.3d] [%x] - %s\n",
+      systemTime.wYear, systemTime.wMonth, systemTime.wDay,
+      systemTime.wHour, systemTime.wMinute, systemTime.wSecond, systemTime.wMilliseconds,
+			GetCurrentThreadId(),
 			logbufferw);
 		fclose(fp);
 	}
@@ -156,7 +157,7 @@ int StreamSetupEx(char* ipAdress, int port)
 	swprintf(fileName, MAX_PATH, L"%s\\Team MediaPortal\\MediaPortal TV Server\\log\\streaming server.Log", folder);
 	::DeleteFileW(fileName);
 
-	LogDebug("-------------- v1.0.5 ---------------");
+	LogDebug("-------------- v1.1.0 ---------------");
   StreamShutdown();
 	if (port == DEFAULT_RTSP_PORT) {
 		LogDebug("Stream server:Setup stream server for ip: %s", ipAdress);
