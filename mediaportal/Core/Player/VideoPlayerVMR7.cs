@@ -32,9 +32,11 @@ using DShowNET.Helper;
 
 using MediaPortal.Configuration;
 using MediaPortal.GUI.Library;
+using MediaPortal.Localisation;
 using MediaPortal.Player.PostProcessing;
 using MediaPortal.Player.Subtitles;
 using MediaPortal.Profile;
+using MediaPortal.Services;
 
 namespace MediaPortal.Player
 {
@@ -290,7 +292,7 @@ namespace MediaPortal.Player
         }
       }
       _mediaType = g_Player.MediaType.Video;
-      _directShowHelper = new DirectShowHelper(StoreStream);
+      _directShowHelper = new DirectShowHelper(StoreStream, GlobalServiceProvider.Get<ILog>());
     }
 
     public VideoPlayerVMR7(g_Player.MediaType type)
@@ -1423,9 +1425,16 @@ namespace MediaPortal.Player
     /// </summary>
     public override string AudioLanguage(int iStream)
     {
+      var audioStreamInfo = FStreams.GetStreamInfos(DirectShowHelper.StreamType.Audio, iStream);
+      var audioStream = audioStreamInfo.Stream as AudioStream;
+      if (audioStream != null && !string.IsNullOrEmpty(audioStream.Language) && !audioStream.Language.Equals(LanguageHelper.UnknownLanguage, StringComparison.OrdinalIgnoreCase))
+      {
+        return Util.Utils.TranslateLanguageString(audioStream.Language);
+      }
+
       #region return splitter IAMStreamSelect LCID
 
-      int LCIDCheck = FStreams.GetStreamInfos(DirectShowHelper.StreamType.Audio, iStream).LCID;
+      int LCIDCheck = audioStreamInfo.LCID;
 
       if (LCIDCheck != 0)
       {
@@ -1450,7 +1459,7 @@ namespace MediaPortal.Player
 
       #endregion
 
-      string streamName = FStreams.GetStreamInfos(DirectShowHelper.StreamType.Audio, iStream).Name;
+      string streamName = audioStreamInfo.Name;
 
       #region External Audio File
 
@@ -1927,7 +1936,7 @@ namespace MediaPortal.Player
       }
     }
 
-    private void StoreStream(string filterName, string name, int lcid, int id, DirectShowHelper.StreamType type,
+    private void StoreStream(string filterName, string name, int lcid, int id, AMMediaType sType, DirectShowHelper.StreamType type,
       AMStreamSelectInfoFlags flag, IAMStreamSelect pStrm)
     {
       var info = new FilterStreamInfos
@@ -1977,10 +1986,10 @@ namespace MediaPortal.Player
           }
           break;
         case DirectShowHelper.StreamType.Video:
-          info.Stream = DirectShowHelper.MatchVideoStream(_mediaInfo, filterName, name, lcid, id);
+          info.Stream = _directShowHelper.MatchVideoStream(_mediaInfo, filterName, name, lcid, id, sType);
           goto case DirectShowHelper.StreamType.Edition;
         case DirectShowHelper.StreamType.Audio:
-          info.Stream = DirectShowHelper.MatchAudioStream(_mediaInfo, filterName, name, lcid, id);
+          info.Stream = _directShowHelper.MatchAudioStream(_mediaInfo, filterName, name, lcid, id, sType);
           goto case DirectShowHelper.StreamType.Edition;
         case DirectShowHelper.StreamType.Edition:
         case DirectShowHelper.StreamType.PostProcessing:
@@ -2111,8 +2120,15 @@ namespace MediaPortal.Player
     /// </summary>
     public override string VideoName(int iStream)
     {
-      string streamName = FStreams.GetStreamInfos(DirectShowHelper.StreamType.Video, iStream).Name;
-      string streamNameFalse = FStreams.GetStreamInfos(DirectShowHelper.StreamType.Video, iStream).Name;
+      var videoStreamInfo = FStreams.GetStreamInfos(DirectShowHelper.StreamType.Video, iStream);
+      var videoStream = videoStreamInfo.Stream as VideoStream;
+      if (videoStream != null)
+      {
+        return videoStream.Name;
+      }
+
+      string streamName = videoStreamInfo.Name;
+      string streamNameFalse = streamName;
 
       // No stream info from splitter
       if (m_strCurrentFile != null && streamName.Contains(Path.GetFileName(m_strCurrentFile)))

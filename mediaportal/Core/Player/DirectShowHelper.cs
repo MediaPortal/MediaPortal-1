@@ -26,15 +26,15 @@ using System.Text.RegularExpressions;
 using DirectShowLib;
 using DShowNET.Helper;
 using MediaPortal.GUI.Library;
+using MediaPortal.Localisation;
+using MediaPortal.Services;
 
 namespace MediaPortal.Player
 {
-  public delegate void StoreStreamAction(string filterName, string name, int lcid, int id, DirectShowHelper.StreamType type, AMStreamSelectInfoFlags flag, IAMStreamSelect pStrm);
+  public delegate void StoreStreamAction(string filterName, string name, int lcid, int id, AMMediaType sType, DirectShowHelper.StreamType type, AMStreamSelectInfoFlags flag, IAMStreamSelect pStrm);
 
   public class DirectShowHelper
   {
-    private const string UnknownLanguage = "Unknown";
-
     public enum StreamType
     {
       Unknown,
@@ -48,9 +48,37 @@ namespace MediaPortal.Player
       PostProcessing,
     }
 
-    private readonly StoreStreamAction storeAction;
+    private readonly StoreStreamAction _storeAction;
+    private readonly ILog _logger;
 
     #region Match dictionaries
+
+    private static readonly Dictionary<Guid, HashSet<AudioCodec>> MediaCodecs = new Dictionary<Guid, HashSet<AudioCodec>>
+    {
+        { MediaSubType.DolbyAC3, new HashSet<AudioCodec> { AudioCodec.A_AC3_BSID10, AudioCodec.A_AC3, AudioCodec.A_AC3_BSID9 } },
+        { MediaSubType.DDPLUS, new HashSet<AudioCodec> { AudioCodec.A_EAC3, AudioCodec.A_AC3 } },
+        { MediaSubType.DOLBY_AC3_SPDIF, new HashSet<AudioCodec> { AudioCodec.A_AC3_BSID10, AudioCodec.A_AC3, AudioCodec.A_AC3_BSID9 } },
+        { MediaSubType.MPEG1Audio, new HashSet<AudioCodec> { AudioCodec.A_MPEG_L1 } },
+        { MediaSubType.MPEG1AudioPayload, new HashSet<AudioCodec> { AudioCodec.A_MPEG_L1 } },
+        { MediaSubType.Mpeg2Audio, new HashSet<AudioCodec> { AudioCodec.A_MPEG_L2 } },
+        { MediaSubType.LATMAAC, new HashSet<AudioCodec>
+        {
+            AudioCodec.A_AAC, AudioCodec.A_AAC_MPEG2_LC, AudioCodec.A_AAC_MPEG2_LC_SBR, AudioCodec.A_AAC_MPEG2_MAIN, AudioCodec.A_AAC_MPEG2_SSR,
+            AudioCodec.A_AAC_MPEG4_LC, AudioCodec.A_AAC_MPEG4_LC_SBR, AudioCodec.A_AAC_MPEG4_LC_SBR_PS, AudioCodec.A_AAC_MPEG4_LTP, 
+            AudioCodec.A_AAC_MPEG4_MAIN, AudioCodec.A_AAC_MPEG4_SSR
+        } },
+        { MediaSubType.AAC, new HashSet<AudioCodec>
+        {
+            AudioCodec.A_AAC, AudioCodec.A_AAC_MPEG2_LC, AudioCodec.A_AAC_MPEG2_LC_SBR, AudioCodec.A_AAC_MPEG2_MAIN, AudioCodec.A_AAC_MPEG2_SSR,
+            AudioCodec.A_AAC_MPEG4_LC, AudioCodec.A_AAC_MPEG4_LC_SBR, AudioCodec.A_AAC_MPEG4_LC_SBR_PS, AudioCodec.A_AAC_MPEG4_LTP, 
+            AudioCodec.A_AAC_MPEG4_MAIN, AudioCodec.A_AAC_MPEG4_SSR
+        } },
+        { MediaSubType.DVD_LPCM_AUDIO, new HashSet<AudioCodec> { AudioCodec.A_PCM_FLOAT_IEEE, AudioCodec.A_PCM_INT_BIG, AudioCodec.A_PCM_INT_LIT } },
+        { MediaSubType.IEEE_FLOAT, new HashSet<AudioCodec> { AudioCodec.A_PCM_FLOAT_IEEE } },
+        { MediaSubType.PCM, new HashSet<AudioCodec> { AudioCodec.A_PCM_FLOAT_IEEE, AudioCodec.A_PCM_INT_BIG, AudioCodec.A_PCM_INT_LIT } },
+        { MediaSubType.PCMAudio_Obsolete, new HashSet<AudioCodec> { AudioCodec.A_PCM_FLOAT_IEEE, AudioCodec.A_PCM_INT_BIG, AudioCodec.A_PCM_INT_LIT } },
+        { MediaSubType.WAVE, new HashSet<AudioCodec> { AudioCodec.A_WAVE, AudioCodec.A_WAVE64, AudioCodec.A_WAVPACK, AudioCodec.A_WAVPACK4 } },
+    };
 
     private static readonly Dictionary<string, string> Channels = new Dictionary<string, string>
     {
@@ -68,22 +96,31 @@ namespace MediaPortal.Player
     private static readonly Dictionary<string, int> ChannelNumbers = new Dictionary<string, int>
     {
       { "1 channel", 1 },
+      { "1 chn", 1 },
       { "Mono", 1 },
       { "2 channels", 2 },
+      { "2 chn", 2 },
       { "Stereo", 2 },
       { "3 channels", 3 },
+      { "3 chn", 3 },
       { "2.1", 3 },
       { "4 channels", 4 },
+      { "4 chn", 4 },
       { "4.0", 4 },
       { "6 channels", 6 },
+      { "6 chn", 6 },
       { "5.1", 6 },
       { "7 channels", 7 },
+      { "7 chn", 7 },
       { "6.1", 7 },
       { "8 channels", 8 },
+      { "8 chn", 8 },
       { "7.1", 8 },
       { "9 channels", 9 },
+      { "9 chn", 9 },
       { "7.2", 9 },
       { "10 channels", 10 },
+      { "10 chn", 10 },
       { "7.2.1", 10 },
     };
 
@@ -386,6 +423,7 @@ namespace MediaPortal.Player
       { "MP3ON4", new HashSet<AudioCodec> { AudioCodec.A_MPEG_L3 } },
       
       { "AC3", new HashSet<AudioCodec> { AudioCodec.A_AC3, AudioCodec.A_AC3_BSID10, AudioCodec.A_AC3_BSID9 } },
+      { "Dolby Digital", new HashSet<AudioCodec> { AudioCodec.A_AC3, AudioCodec.A_AC3_BSID10, AudioCodec.A_AC3_BSID9 } },
       { "EAC3", new HashSet<AudioCodec> { AudioCodec.A_EAC3, AudioCodec.A_AC3, AudioCodec.A_AC3_BSID10, AudioCodec.A_AC3_BSID9 } },
       
       { "ADTS", new HashSet<AudioCodec> { AudioCodec.A_DTS } },
@@ -472,618 +510,6 @@ namespace MediaPortal.Player
 
     #endregion
 
-    #region Languages
-
-    private static readonly Dictionary<string, string> Languages = new Dictionary<string, string>
-    {
-      { "ABK", "Abkhazian" },
-      { "AB", "Abkhazian" },
-      { "ACE", "Achinese" },
-      { "ACH", "Acoli" },
-      { "ADA", "Adangme" },
-      { "AAR", "Afar" },
-      { "AA", "Afar" },
-      { "AFH", "Afrihili" },
-      { "AFR", "Afrikaans" },
-      { "AF", "Afrikaans" },
-      { "AKA", "Akan" },
-      { "AK", "Akan" },
-      { "AKK", "Akkadian" },
-      { "ALB", "Albanian" },
-      { "SQI", "Albanian" },
-      { "SQ", "Albanian" },
-      { "ALE", "Aleut" },
-      { "AMH", "Amharic" },
-      { "AM", "Amharic" },
-      { "ARA", "Arabic" },
-      { "AR", "Arabic" },
-      { "ARG", "Aragonese" },
-      { "AN", "Aragonese" },
-      { "ARC", "Aramaic" },
-      { "ARP", "Arapaho" },
-      { "ARN", "Araucanian" },
-      { "ARW", "Arawak" },
-      { "ARM", "Armenian" },
-      { "HY", "Armenian" },
-      { "HYE", "Armenian" },
-      { "AS", "Assamese" },
-      { "ASM", "Assamese" },
-      { "AVA", "Avaric" },
-      { "AV", "Avaric" },
-      { "AVE", "Avestan" },
-      { "AE", "Avestan" },
-      { "AWA", "Awadhi" },
-      { "AYM", "Aymara" },
-      { "AY", "Aymara" },
-      { "AZE", "Azerbaijani" },
-      { "AZ", "Azerbaijani" },
-      { "BAN", "Balinese" },
-      { "BAL", "Baluchi" },
-      { "BAM", "Bambara" },
-      { "BM", "Bambara" },
-      { "BAD", "Banda" },
-      { "BAS", "Basa" },
-      { "BAK", "Bashkir" },
-      { "BA", "Bashkir" },
-      { "BAQ", "Basque" },
-      { "EU", "Basque" },
-      { "EUS", "Basque" },
-      { "BEJ", "Beja" },
-      { "BEL", "Belarusian" },
-      { "BE", "Belarusian" },
-      { "BEM", "Bemba" },
-      { "BEN", "Bengali" },
-      { "BN", "Bengali" },
-      { "BHO", "Bhojpuri" },
-      { "BH", "Bihari" },
-      { "BIH", "Bihari" },
-      { "BIK", "Bikol" },
-      { "BIN", "Bini" },
-      { "BIS", "Bislama" },
-      { "BI", "Bislama" },
-      { "NOB", "Norwegian Bokmal" },
-      { "NB", "Norwegian Bokmal" },
-      { "BOS", "Bosnian" },
-      { "BS", "Bosnian" },
-      { "BRA", "Braj" },
-      { "BRE", "Breton" },
-      { "BR", "Breton" },
-      { "BUG", "Buginese" },
-      { "BUL", "Bulgarian" },
-      { "BG", "Bulgarian" },
-      { "BUA", "Buriat" },
-      { "BUR", "Burmese" },
-      { "MY", "Burmese" },
-      { "MYA", "Burmese" },
-      { "CAD", "Caddo" },
-      { "CAR", "Carib" },
-      { "SPA", "Spanish" },
-      { "ES", "Spanish" },
-      { "ESP", "Spanish" },
-      { "CAT", "Catalan" },
-      { "CA", "Catalan" },
-      { "CEB", "Cebuano" },
-      { "CEL", "Celtic" },
-      { "CHG", "Chagatai" },
-      { "CH", "Chamorro" },
-      { "CHA", "Chamorro" },
-      { "CE", "Chechen" },
-      { "CHE", "Chechen" },
-      { "CHR", "Cherokee" },
-      { "CHY", "Cheyenne" },
-      { "CHB", "Chibcha" },
-      { "CHI", "Chinese" },
-      { "ZH", "Chinese" },
-      { "ZHO", "Chinese" },
-      { "CHP", "Chipewyan" },
-      { "CHO", "Choctaw" },
-      { "CHK", "Chuukese" },
-      { "CHV", "Chuvash" },
-      { "CV", "Chuvash" },
-      { "COP", "Coptic" },
-      { "COR", "Cornish" },
-      { "KW", "Cornish" },
-      { "CO", "Corsican" },
-      { "COS", "Corsican" },
-      { "CRE", "Cree" },
-      { "CR", "Cree" },
-      { "MUS", "Creek" },
-      { "CRP", "Creoles and pidgins" },
-      { "CPE", "Creoles and pidgins" },
-      { "CPF", "Creoles and pidgins" },
-      { "CPP", "Creoles and pidgins" },
-      { "SCR", "Croatian" },
-      { "HR", "Croatian" },
-      { "HRV", "Croatian" },
-      { "CZE", "Czech" },
-      { "CS", "Czech" },
-      { "CES", "Czech" },
-      { "DAK", "Dakota" },
-      { "DAN", "Danish" },
-      { "DA", "Danish" },
-      { "DAR", "Dargwa" },
-      { "DAY", "Dayak" },
-      { "DEL", "Delaware" },
-      { "DIN", "Dinka" },
-      { "DIV", "Divehi" },
-      { "DV", "Divehi" },
-      { "DOI", "Dogri" },
-      { "DGR", "Dogrib" },
-      { "DRA", "Dravidian" },
-      { "DUA", "Duala" },
-      { "DUT", "Dutch" },
-      { "NL", "Dutch" },
-      { "NLD", "Dutch" },
-      { "DUM", "Dutch" },
-      { "DYU", "Dyula" },
-      { "DZ", "Dzongkha" },
-      { "DZO", "Dzongkha" },
-      { "EFI", "Efik" },
-      { "EGY", "Egyptian" },
-      { "EKA", "Ekajuk" },
-      { "ELX", "Elamite" },
-      { "ENG", "English" },
-      { "EN", "English" },
-      { "ENM", "English" },
-      { "ANG", "English" },
-      { "EO", "Esperanto" },
-      { "EPO", "Esperanto" },
-      { "EST", "Estonian" },
-      { "ET", "Estonian" },
-      { "EE", "Ewe" },
-      { "EWE", "Ewe" },
-      { "EWO", "Ewondo" },
-      { "FAN", "Fang" },
-      { "FAT", "Fanti" },
-      { "FAO", "Faroese" },
-      { "FO", "Faroese" },
-      { "FIJ", "Fijian" },
-      { "FJ", "Fijian" },
-      { "FIN", "Finnish" },
-      { "FI", "Finnish" },
-      { "FON", "Fon" },
-      { "FRE", "French" },
-      { "FR", "French" },
-      { "FRA", "French" },
-      { "FRM", "French" },
-      { "FRO", "French" },
-      { "FRY", "Frisian" },
-      { "FY", "Frisian" },
-      { "FUR", "Friulian" },
-      { "FF", "Fulah" },
-      { "FUL", "Fulah" },
-      { "GAA", "Ga" },
-      { "GLA", "Gaelic" },
-      { "GD", "Gaelic" },
-      { "GLG", "Gallegan" },
-      { "GL", "Gallegan" },
-      { "LUG", "Ganda" },
-      { "LG", "Ganda" },
-      { "GAY", "Gayo" },
-      { "GBA", "Gbaya" },
-      { "GEZ", "Geez" },
-      { "GEO", "Georgian" },
-      { "KA", "Georgian" },
-      { "KAT", "Georgian" },
-      { "GER", "German" },
-      { "DE", "German" },
-      { "DEU", "German" },
-      { "NDS", "German" },
-      { "GMH", "German" },
-      { "GOH", "German" },
-      { "GIL", "Gilbertese" },
-      { "GON", "Gondi" },
-      { "GOR", "Gorontalo" },
-      { "GOT", "Gothic" },
-      { "GRB", "Grebo" },
-      { "GRC", "Ancient Greek" },
-      { "GRE", "Greek" },
-      { "EL", "Greek" },
-      { "ELL", "Greek" },
-      { "GRN", "Guarani" },
-      { "GN", "Guarani" },
-      { "GUJ", "Gujarati" },
-      { "GU", "Gujarati" },
-      { "HAI", "Haida" },
-      { "HAU", "Hausa" },
-      { "HA", "Hausa" },
-      { "HAW", "Hawaiian" },
-      { "HEB", "Hebrew" },
-      { "HE", "Hebrew" },
-      { "HER", "Herero" },
-      { "HZ", "Herero" },
-      { "HIL", "Hiligaynon" },
-      { "HIM", "Himachali" },
-      { "HIN", "Hindi" },
-      { "HI", "Hindi" },
-      { "HMO", "Hiri Motu" },
-      { "HO", "Hiri Motu" },
-      { "HIT", "Hittite" },
-      { "HMN", "Hmong" },
-      { "HUN", "Hungarian" },
-      { "HU", "Hungarian" },
-      { "HUP", "Hupa" },
-      { "IBA", "Iban" },
-      { "ICE", "Icelandic" },
-      { "IS", "Icelandic" },
-      { "ISL", "Icelandic" },
-      { "IDO", "Ido" },
-      { "IO", "Ido" },
-      { "IBO", "Igbo" },
-      { "IG", "Igbo" },
-      { "IJO", "Ijo" },
-      { "ILO", "Iloko" },
-      { "SMN", "Inari Sami" },
-      { "IND", "Indonesian" },
-      { "ID", "Indonesian" },
-      { "INH", "Ingush" },
-      { "IKU", "Inuktitut" },
-      { "IU", "Inuktitut" },
-      { "IPK", "Inupiaq" },
-      { "IK", "Inupiaq" },
-      { "GLE", "Irish" },
-      { "GA", "Irish" },
-      { "MGA", "Irish" },
-      { "SGA", "Irish" },
-      { "ITA", "Italian" },
-      { "IT", "Italian" },
-      { "JPN", "Japanese" },
-      { "JA", "Japanese" },
-      { "JAV", "Javanese" },
-      { "JV", "Javanese" },
-      { "JRB", "Judeo-Arabic" },
-      { "JPR", "Judeo-Persian" },
-      { "KBD", "Kabardian" },
-      { "KAB", "Kabyle" },
-      { "KAC", "Kachin" },
-      { "KAM", "Kamba" },
-      { "KAN", "Kannada" },
-      { "KN", "Kannada" },
-      { "KAU", "Kanuri" },
-      { "KR", "Kanuri" },
-      { "KAA", "Kara-Kalpak" },
-      { "KAR", "Karen" },
-      { "KAS", "Kashmiri" },
-      { "KS", "Kashmiri" },
-      { "KAW", "Kawi" },
-      { "KAZ", "Kazakh" },
-      { "KK", "Kazakh" },
-      { "KHA", "Khasi" },
-      { "KHM", "Khmer" },
-      { "KM", "Khmer" },
-      { "KHO", "Khotanese" },
-      { "KMB", "Kimbundu" },
-      { "KIN", "Kinyarwanda" },
-      { "RW", "Kinyarwanda" },
-      { "KY", "Kirghiz" },
-      { "KIR", "Kirghiz" },
-      { "KV", "Komi" },
-      { "KOM", "Komi" },
-      { "KON", "Kongo" },
-      { "KG", "Kongo" },
-      { "KOK", "Konkani" },
-      { "KOR", "Korean" },
-      { "KO", "Korean" },
-      { "KOS", "Kosraean" },
-      { "KPE", "Kpelle" },
-      { "KRO", "Kru" },
-      { "KUM", "Kumyk" },
-      { "KUR", "Kurdish" },
-      { "KU", "Kurdish" },
-      { "KRU", "Kurukh" },
-      { "KUT", "Kutenai" },
-      { "LAD", "Ladino" },
-      { "LAH", "Lahnda" },
-      { "LAM", "Lamba" },
-      { "LAO", "Lao" },
-      { "LO", "Lao" },
-      { "LAT", "Latin" },
-      { "LA", "Latin" },
-      { "LAV", "Latvian" },
-      { "LV", "Latvian" },
-      { "LEZ", "Lezghian" },
-      { "LN", "Lingala" },
-      { "LIN", "Lingala" },
-      { "LIT", "Lithuanian" },
-      { "LT", "Lithuanian" },
-      { "LOZ", "Lozi" },
-      { "LUB", "Luba-Katanga" },
-      { "LU", "Luba-Katanga" },
-      { "LUA", "Luba-Lulua" },
-      { "LUI", "Luiseno" },
-      { "SMJ", "Lule Sami" },
-      { "LUN", "Lunda" },
-      { "LUS", "Lushai" },
-      { "MAC", "Macedonian" },
-      { "MK", "Macedonian" },
-      { "MKD", "Macedonian" },
-      { "MAD", "Madurese" },
-      { "MAG", "Magahi" },
-      { "MAI", "Maithili" },
-      { "MAK", "Makasar" },
-      { "MLG", "Malagasy" },
-      { "MG", "Malagasy" },
-      { "MAY", "Malay" },
-      { "MS", "Malay" },
-      { "MSA", "Malay" },
-      { "MAL", "Malayalam" },
-      { "ML", "Malayalam" },
-      { "MLT", "Maltese" },
-      { "MT", "Maltese" },
-      { "MNC", "Manchu" },
-      { "MDR", "Mandar" },
-      { "MAN", "Mandingo" },
-      { "MNI", "Manipuri" },
-      { "GLV", "Manx" },
-      { "GV", "Manx" },
-      { "MAO", "Maori" },
-      { "MI", "Maori" },
-      { "MRI", "Maori" },
-      { "MAR", "Marathi" },
-      { "MR", "Marathi" },
-      { "CHM", "Mari" },
-      { "MAH", "Marshallese" },
-      { "MH", "Marshallese" },
-      { "MWR", "Marwari" },
-      { "MAS", "Masai" },
-      { "MEN", "Mende" },
-      { "MIC", "Micmac" },
-      { "MIN", "Minangkabau" },
-      { "MOH", "Mohawk" },
-      { "MOL", "Moldavian" },
-      { "MO", "Moldavian" },
-      { "LOL", "Mongo" },
-      { "MON", "Mongolian" },
-      { "MN", "Mongolian" },
-      { "MOS", "Mossi" },
-      { "NAH", "Nahuatl" },
-      { "NAU", "Nauru" },
-      { "NA", "Nauru" },
-      { "NAV", "Navaho" },
-      { "NV", "Navaho" },
-      { "NDE", "Ndebele" },
-      { "ND", "Ndebele" },
-      { "NR", "Ndebele" },
-      { "NBL", "Ndebele" },
-      { "NDO", "Ndonga" },
-      { "NG", "Ndonga" },
-      { "NAP", "Neapolitan" },
-      { "NEP", "Nepali" },
-      { "NE", "Nepali" },
-      { "NEW", "Newari" },
-      { "NIA", "Nias" },
-      { "NIU", "Niuean" },
-      { "NON", "Norse" },
-      { "SME", "Northern Sami" },
-      { "SE", "Northern Sami" },
-      { "NOR", "Norwegian" },
-      { "NO", "Norwegian" },
-      { "NNO", "Norwegian Nynorsk" },
-      { "NN", "Norwegian Nynorsk" },
-      { "NYM", "Nyamwezi" },
-      { "NYA", "Nyanja" },
-      { "NY", "Nyanja" },
-      { "NYN", "Nyankole" },
-      { "NYO", "Nyoro" },
-      { "NZI", "Nzima" },
-      { "OCI", "Occitan" },
-      { "OC", "Occitan" },
-      { "OJI", "Ojibwa" },
-      { "OJ", "Ojibwa" },
-      { "ORI", "Oriya" },
-      { "OR", "Oriya" },
-      { "ORM", "Oromo" },
-      { "OM", "Oromo" },
-      { "OSA", "Osage" },
-      { "OS", "Ossetian" },
-      { "OSS", "Ossetian" },
-      { "PAL", "Pahlavi" },
-      { "PAU", "Palauan" },
-      { "PLI", "Pali" },
-      { "PI", "Pali" },
-      { "PAM", "Pampanga" },
-      { "PAG", "Pangasinan" },
-      { "PAN", "Panjabi" },
-      { "PA", "Panjabi" },
-      { "PAP", "Papiamento" },
-      { "PER", "Persian" },
-      { "FA", "Persian" },
-      { "FAS", "Persian" },
-      { "PEO", "Persian" },
-      { "PHN", "Phoenician" },
-      { "PON", "Pohnpeian" },
-      { "POL", "Polish" },
-      { "PL", "Polish" },
-      { "POR", "Portuguese" },
-      { "PT", "Portuguese" },
-      { "POB", "Portuguese (Brazil)" },
-      { "PB", "Portuguese (Brazil)" },
-      { "PUS", "Pushto" },
-      { "PS", "Pushto" },
-      { "QAA", "French" },
-      { "QAD", "French" },
-      { "QUE", "Quechua" },
-      { "QU", "Quechua" },
-      { "ROH", "Raeto-Romance" },
-      { "RM", "Raeto-Romance" },
-      { "RAJ", "Rajasthani" },
-      { "RAP", "Rapanui" },
-      { "RAR", "Rarotongan" },
-      { "RUM", "Romanian" },
-      { "RO", "Romanian" },
-      { "RON", "Romanian" },
-      { "ROM", "Romany" },
-      { "RUN", "Rundi" },
-      { "RN", "Rundi" },
-      { "RUS", "Russian" },
-      { "RU", "Russian" },
-      { "SAM", "Samaritan Aramaic" },
-      { "SMO", "Samoan" },
-      { "SM", "Samoan" },
-      { "SAD", "Sandawe" },
-      { "SAG", "Sango" },
-      { "SG", "Sango" },
-      { "SAN", "Sanskrit" },
-      { "SA", "Sanskrit" },
-      { "SAT", "Santali" },
-      { "SRD", "Sardinian" },
-      { "SC", "Sardinian" },
-      { "SAS", "Sasak" },
-      { "SCO", "Scots" },
-      { "SEL", "Selkup" },
-      { "SRP", "Serbian" },
-      { "SR", "Serbian" },
-      { "SCC", "Serbian" },
-      { "SRR", "Serer" },
-      { "SHN", "Shan" },
-      { "SNA", "Shona" },
-      { "SN", "Shona" },
-      { "III", "Sichuan Yi" },
-      { "II", "Sichuan Yi" },
-      { "SID", "Sidamo" },
-      { "BLA", "Siksika" },
-      { "SND", "Sindhi" },
-      { "SD", "Sindhi" },
-      { "SIN", "Sinhalese" },
-      { "SI", "Sinhalese" },
-      { "SMS", "Skolt Sami" },
-      { "SLO", "Slovak" },
-      { "SK", "Slovak" },
-      { "SLK", "Slovak" },
-      { "SLV", "Slovenian" },
-      { "SL", "Slovenian" },
-      { "SOG", "Sogdian" },
-      { "SOM", "Somali" },
-      { "SO", "Somali" },
-      { "SON", "Songhai" },
-      { "SNK", "Soninke" },
-      { "NSO", "Sotho" },
-      { "SOT", "Sotho" },
-      { "ST", "Sotho" },
-      { "SMA", "Southern Sami" },
-      { "SUK", "Sukuma" },
-      { "SUX", "Sumerian" },
-      { "SUN", "Sundanese" },
-      { "SU", "Sundanese" },
-      { "SUS", "Susu" },
-      { "SWA", "Swahili" },
-      { "SW", "Swahili" },
-      { "SSW", "Swati" },
-      { "SS", "Swati" },
-      { "SWE", "Swedish" },
-      { "SV", "Swedish" },
-      { "SYR", "Syriac" },
-      { "TGL", "Tagalog" },
-      { "TL", "Tagalog" },
-      { "TAH", "Tahitian" },
-      { "TY", "Tahitian" },
-      { "TGK", "Tajik" },
-      { "TG", "Tajik" },
-      { "TMH", "Tamashek" },
-      { "TAM", "Tamil" },
-      { "TA", "Tamil" },
-      { "TAT", "Tatar" },
-      { "TT", "Tatar" },
-      { "TEL", "Telugu" },
-      { "TE", "Telugu" },
-      { "TER", "Tereno" },
-      { "TET", "Tetum" },
-      { "THA", "Thai" },
-      { "TH", "Thai" },
-      { "TIB", "Tibetan" },
-      { "BO", "Tibetan" },
-      { "BOD", "Tibetan" },
-      { "TIG", "Tigre" },
-      { "TIR", "Tigrinya" },
-      { "TI", "Tigrinya" },
-      { "TEM", "Timne" },
-      { "TIV", "Tiv" },
-      { "TLI", "Tlingit" },
-      { "TPI", "Tok Pisin" },
-      { "TKL", "Tokelau" },
-      { "TOG", "Tonga" },
-      { "TON", "Tonga" },
-      { "TO", "Tonga" },
-      { "TSI", "Tsimshian" },
-      { "TS", "Tsonga" },
-      { "TSO", "Tsonga" },
-      { "TSN", "Tswana" },
-      { "TN", "Tswana" },
-      { "TUM", "Tumbuka" },
-      { "TUR", "Turkish" },
-      { "TR", "Turkish" },
-      { "OTA", "Turkish" },
-      { "TUK", "Turkmen" },
-      { "TK", "Turkmen" },
-      { "TVL", "Tuvalu" },
-      { "TYV", "Tuvinian" },
-      { "TWI", "Twi" },
-      { "TW", "Twi" },
-      { "UGA", "Ugaritic" },
-      { "UIG", "Uighur" },
-      { "UG", "Uighur" },
-      { "UKR", "Ukrainian" },
-      { "UK", "Ukrainian" },
-      { "UMB", "Umbundu" },
-      { "URD", "Urdu" },
-      { "UR", "Urdu" },
-      { "UZB", "Uzbek" },
-      { "UZ", "Uzbek" },
-      { "VAI", "Vai" },
-      { "VEN", "Venda" },
-      { "VE", "Venda" },
-      { "VIE", "Vietnamese" },
-      { "VI", "Vietnamese" },
-      { "VOL", "Volapuk" },
-      { "VO", "Volapuk" },
-      { "VOT", "Votic" },
-      { "WAL", "Walamo" },
-      { "WLN", "Walloon" },
-      { "WA", "Walloon" },
-      { "WAR", "Waray" },
-      { "WAS", "Washo" },
-      { "WEL", "Welsh" },
-      { "CY", "Welsh" },
-      { "CYM", "Welsh" },
-      { "WOL", "Wolof" },
-      { "WO", "Wolof" },
-      { "XHO", "Xhosa" },
-      { "XH", "Xhosa" },
-      { "SAH", "Yakut" },
-      { "YAO", "Yao" },
-      { "YAP", "Yapese" },
-      { "YID", "Yiddish" },
-      { "YI", "Yiddish" },
-      { "YOR", "Yoruba" },
-      { "YO", "Yoruba" },
-      { "ZND", "Zande" },
-      { "ZAP", "Zapotec" },
-      { "ZEN", "Zenaga" },
-      { "ZHA", "Zhuang" },
-      { "ZA", "Zhuang" },
-      { "ZUL", "Zulu" },
-      { "ZU", "Zulu" },
-      { "ZUN", "Zuni" },
-      { "NWC", "Newari" },
-      { "TLH", "Klingon" },
-      { "BYN", "Blin" },
-      { "JBO", "Lojban" },
-      { "CSB", "Kashubian" },
-      { "CRH", "Crimean Turkish" },
-      { "MYV", "Erzya" },
-      { "MDF", "Moksha" },
-      { "KRC", "Karachay-Balkar" },
-      { "ADY", "Adyghe" },
-      { "UDM", "Udmurt" },
-      { "NOG", "Nogai" },
-      { "HAT", "Haitian" },
-      { "HT", "Haitian" },
-      { "XAL", "Kalmyk" },
-      { "UNK", UnknownLanguage }
-    };
-
-    #endregion
-
     private static readonly Dictionary<string, int> FiltersToSkip = new Dictionary<string, int>
     {
       { "ffdshow DXVA Video Decoder", 0 },
@@ -1097,11 +523,12 @@ namespace MediaPortal.Player
 
     public string[] ChaptersName { get; private set; }
 
-    public DirectShowHelper(StoreStreamAction storeAction)
+    public DirectShowHelper(StoreStreamAction storeAction, ILog logger)
     {
       Chapters = null;
       ChaptersName = null;
-      this.storeAction = storeAction;
+      _storeAction = storeAction;
+      _logger = logger;
     }
 
     public void AnalyzeStreamChapters(IGraphBuilder graphBuilder)
@@ -1132,15 +559,21 @@ namespace MediaPortal.Player
                     {
                       Chapters = new double[markerCount];
                       ChaptersName = new string[markerCount];
-                      for (int i = 1; i <= markerCount; ++i)
+                      for (var i = 1; i <= markerCount; ++i)
                       {
                         double markerTime;
-                        pEs.GetMarkerTime(i, out markerTime);
-                        Chapters[i - 1] = markerTime;
+                        var hr = pEs.GetMarkerTime(i, out markerTime);
+                        if (hr == 0)
+                        {
+                          Chapters[i - 1] = markerTime;
+                        }
                         //fill up chapter names
-                        string name = null;
-                        pEs.GetMarkerName(i, out name);
-                        ChaptersName[i - 1] = name;
+                        string name;
+                        hr = pEs.GetMarkerName(i, out name);
+                        if (hr == 0)
+                        {
+                          ChaptersName[i - 1] = name;
+                        }
                       }
                     }
                   }
@@ -1196,12 +629,18 @@ namespace MediaPortal.Player
                         for (var i = 1; i <= markerCount; ++i)
                         {
                           double markerTime;
-                          pEs.GetMarkerTime(i, out markerTime);
-                          Chapters[i - 1] = markerTime;
+                          var hr = pEs.GetMarkerTime(i, out markerTime);
+                          if (hr == 0)
+                          {
+                            Chapters[i - 1] = markerTime;
+                          }
                           //fill up chapter names
                           string name;
-                          pEs.GetMarkerName(i, out name);
-                          ChaptersName[i - 1] = name;
+                          hr = pEs.GetMarkerName(i, out name);
+                          if (hr == 0)
+                          {
+                            ChaptersName[i - 1] = name;
+                          }
                         }
                       }
                     }
@@ -1273,13 +712,13 @@ namespace MediaPortal.Player
                       {
                         type = StreamType.PostProcessing;
                       }
-                      Log.Debug("DirectShowHelper: FoundStreams: Type={0}; Name={1}, Filter={2}, Id={3}, PDWGroup={4}, LCID={5}",
+                      _logger.Debug("DirectShowHelper: FoundStreams: Type={0}; Name={1}, Filter={2}, Id={3}, PDWGroup={4}, LCID={5}, sType={{{6}}},{{{7}}}",
                                 type.ToString(), sName, filter, istream.ToString(),
-                                sPdwGroup.ToString(), sPlcId.ToString());
+                                sPdwGroup.ToString(), sPlcId.ToString(), sType.majorType, sType.subType);
 
-                      if (storeAction != null)
+                      if (_storeAction != null)
                       {
-                        storeAction(filter, sName, sPlcId, istream, type, sFlag, pStrm);
+                        _storeAction(filter, sName, sPlcId, istream, sType, type, sFlag, pStrm);
                       }
                     }
                   }
@@ -1303,12 +742,16 @@ namespace MediaPortal.Player
     }
 
     private static readonly Regex LavSplitterAudio = new Regex(@"A\:\s*(((?<name>.+)\[(?<language>\w+)\]|\[(?<language>\w+)\]|(?<name>.+))\s*\()?\s*(?<codec>[a-z0-9\s\.'_\-]+),\s*(?<freq>\d+)\s*Hz,\s*(?<channels>[a-z0-9\s\.'_\-]+)(,\s*s(?<bit>\d+))?(,\s*(?<bitrate>\d+)\s*kb/s)?", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+    private static readonly Regex HaaliSplitterAudio = new Regex(@"A\:\s*((?<name>.+)\[(?<language>\w+)\]|\[(?<language>\w+)\]|(?<name>.+))", RegexOptions.Compiled | RegexOptions.IgnoreCase);
     private static readonly Regex FfdshowNameAudio = new Regex(@"Audio\s*-\s*(?<codec>\w+),\s*(?<channels>[^,]+),\s*(?<freq>\d+)\s*Hz", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+    private static readonly Regex MpegSlitterNameAudio = new Regex(@"Audio\s*-\s*((?<language>\w+),\s*)?(?<codec>[^,]+),\s*(?<freq>[0-9\.\+\-]+)\s*(k)?Hz,\s*(?<channels>[^,]+)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+    private static readonly Regex MpAudioNameAudio = new Regex(@"(?<language>\w+),\s*((?<name>.*))?\(Audio\s*(\d+)\)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
     private static readonly Regex TsReaderAudio = new Regex(@"^(?<language>\w{2,3})$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+    private static readonly Regex MpcNameAudio = new Regex(@"(?<language>\w+),\s*(?<codecName>.+)\(Audio\s*(\d+)\)\s*\-\s*(?<freq>\d+)\s*Hz,\s*(?<channnel>[0-9\.]+)\s+channel(s)?\s+(?<codec>.+)\s*\((?<internalcodec>[^\(]*)\)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
-    public static AudioStream MatchAudioStream(MediaInfoWrapper info, string filterName, string name, int lcid, int id)
+    public AudioStream MatchAudioStream(MediaInfoWrapper info, string filterName, string name, int lcid, int id, AMMediaType sType)
     {
-      Log.Debug("DirectShowHelper: match audio stream Name={0}, Filter={1}, Id={2}, LCID={3}", name, filterName, id, lcid);
+      _logger.Debug("DirectShowHelper: match audio stream Name={0}, Filter={1}, Id={2}, LCID={3}", name, filterName, id, lcid);
 
       var m = LavSplitterAudio.Match(name);
       if (m.Success)
@@ -1316,32 +759,50 @@ namespace MediaPortal.Player
         return LavSplitterAudioMatch(info, m, id);
       }
 
+      m = HaaliSplitterAudio.Match(name);
+      if (m.Success)
+      {
+        return HaaliSplitterAudioMatch(info, m, id);
+      }
+      
       m = FfdshowNameAudio.Match(name);
       if (m.Success)
       {
         return FfdshowAudioMatch(info, m, id);
       }
 
+      m = MpegSlitterNameAudio.Match(name);
+      if (m.Success)
+      {
+        return MpegSlitterAudioMatch(info, m, id);
+      }
+
+      m = MpAudioNameAudio.Match(name);
+      if (m.Success)
+      {
+        return MpAudioMatch(info, m, id);
+      }
+
+      m = MpcNameAudio.Match(name);
+      if (m.Success)
+      {
+        return MpcAudioMatch(info, m, id);
+      }
+
       m = TsReaderAudio.Match(name);
       if (m.Success)
       {
-        return TsReaderAudioMatch(info, id, m);
+        return TsReaderAudioMatch(info, m, id, sType);
       }
 
       return new AudioStream(id, id)
       {
-          Language = UnknownLanguage,
-          Name = string.Empty,
-          Format = string.Empty,
-          Codec = AudioCodec.A_UNDEFINED,
-          Duration = TimeSpan.FromSeconds(0)
+        Language = LanguageHelper.UnknownLanguage,
+        Name = string.Empty,
+        Format = string.Empty,
+        Codec = AudioCodec.A_UNDEFINED,
+        Duration = TimeSpan.FromSeconds(0)
       };
-    }
-
-    public static string GetLanguage(string source)
-    {
-      string result;
-      return Languages.TryGetValue(source.ToUpper(), out result) ? result : string.Empty;
     }
 
     public static VideoCodec GetVideoCodecByType(string videoType)
@@ -1356,19 +817,57 @@ namespace MediaPortal.Player
       return result != null && result.Any() ? result.First() : AudioCodec.A_UNDEFINED;
     }
 
-    private static AudioStream TsReaderAudioMatch(MediaInfoWrapper info, int id, Match m)
+    private static AudioStream MpegSlitterAudioMatch(MediaInfoWrapper info, Match m, int id)
+    {
+      string language;
+      string name;
+      GetLavMainParameters(m, out language, out name);
+
+      var codec = GetAudioCodec(m.Groups["codec"].Value);
+
+      double frequency;
+      if (!double.TryParse(m.Groups["freq"].Value, out frequency))
+      {
+        frequency = 0;
+      }
+      if (m.Groups[2].Value == "K" || m.Groups[2].Value == "k")
+      {
+        frequency *= 1000;
+      }
+
+      return null;
+    }
+
+    private static AudioStream TsReaderAudioMatch(MediaInfoWrapper info, Match m, int id, AMMediaType sType)
     {
       var result = id < info.AudioStreams.Count ? info.AudioStreams[id] : null;
       if (result != null)
       {
-        string language;
-        if (!Languages.TryGetValue(m.Groups["language"].ToString().ToUpper(), out language) || result.Language != language)
+        var codecs = GetAudioCodecByMediaType(sType);
+        string language = LanguageHelper.GetLanguageByShortName(m.Groups["language"].ToString());
+        if (language.Equals(LanguageHelper.UnknownLanguage, StringComparison.OrdinalIgnoreCase) || result.Language != language || !codecs.Contains(result.Codec))
         {
-          result = new AudioStream(id, id) { Name = string.Empty, Codec = AudioCodec.A_UNDEFINED, Language = m.Groups["language"].Value };
+          result = new AudioStream(id, id) { Name = string.Empty, Codec = codecs.FirstOrDefault(), Language = m.Groups["language"].Value };
         }
       }
 
       return result;
+    }
+
+    private static HashSet<AudioCodec> GetAudioCodecByMediaType(AMMediaType type)
+    {
+      HashSet<AudioCodec> result;
+      return MediaCodecs.TryGetValue(type.subType, out result) ? result : new HashSet<AudioCodec>();
+    }
+
+    private static AudioStream MpAudioMatch(MediaInfoWrapper info, Match m, int id)
+    {
+      return null;
+    }
+
+    private static AudioStream MpcAudioMatch(MediaInfoWrapper info, Match m, int id)
+    {
+      return null;
     }
 
     private static string CheckNameEncoder(string name)
@@ -1395,10 +894,10 @@ namespace MediaPortal.Player
                                                     && (int)x.SamplingRate == frequency) 
               ??  new AudioStream(id, id)
               {
-                  Language = UnknownLanguage, 
-                  Name = string.Empty, 
-                  Codec = codec != null ? codec.FirstOrDefault() : AudioCodec.A_UNDEFINED, 
-                  SamplingRate = frequency
+                Language = LanguageHelper.UnknownLanguage, 
+                Name = string.Empty, 
+                Codec = codec != null ? codec.FirstOrDefault() : AudioCodec.A_UNDEFINED, 
+                SamplingRate = frequency
               };
 
       return result;
@@ -1459,7 +958,7 @@ namespace MediaPortal.Player
           && result.AudioChannelsFriendly.Equals(channelFrendly, StringComparison.OrdinalIgnoreCase)
           && (int)result.SamplingRate == frequency
           && (result.BitDepth == bit || bit == 0 || result.Codec == AudioCodec.A_ADPCM) // ADPCM reports 16 bit instead of 4
-          && (string.IsNullOrEmpty(language) || result.Language.Equals(UnknownLanguage, StringComparison.OrdinalIgnoreCase) || result.Language.Equals(language, StringComparison.OrdinalIgnoreCase)))
+          && (string.IsNullOrEmpty(language) || result.Language.Equals(LanguageHelper.UnknownLanguage, StringComparison.OrdinalIgnoreCase) || result.Language.Equals(language, StringComparison.OrdinalIgnoreCase)))
       {
         return result;
       }
@@ -1469,7 +968,7 @@ namespace MediaPortal.Player
                                              && x.AudioChannelsFriendly.Equals(channelFrendly, StringComparison.OrdinalIgnoreCase)
                                              && (int)x.SamplingRate == frequency
                                              && (x.BitDepth == bit || bit == 0 || x.Codec == AudioCodec.A_ADPCM)
-                                             && (string.IsNullOrEmpty(language) || x.Language.Equals(UnknownLanguage, StringComparison.OrdinalIgnoreCase) || x.Language.Equals(language, StringComparison.OrdinalIgnoreCase))
+                                             && (string.IsNullOrEmpty(language) || x.Language.Equals(LanguageHelper.UnknownLanguage, StringComparison.OrdinalIgnoreCase) || x.Language.Equals(language, StringComparison.OrdinalIgnoreCase))
                                              && ((string.IsNullOrEmpty(x.Name) && !string.IsNullOrEmpty(language) 
                                              && language.Equals(name, StringComparison.OrdinalIgnoreCase)) || x.Name.Equals(name, StringComparison.InvariantCultureIgnoreCase)))
         ?? new AudioStream(id, id)
@@ -1483,6 +982,31 @@ namespace MediaPortal.Player
         };
     }
 
+    private static AudioStream HaaliSplitterAudioMatch(MediaInfoWrapper info, Match m, int id)
+    {
+      string language;
+      string name;
+      GetLavMainParameters(m, out language, out name);
+
+      var result = info.AudioStreams.FirstOrDefault(x => x.StreamNumber == id);
+      if (result != null 
+          && (string.IsNullOrEmpty(language) || result.Language.Equals(LanguageHelper.UnknownLanguage, StringComparison.OrdinalIgnoreCase) || result.Language.Equals(language, StringComparison.OrdinalIgnoreCase)))
+      {
+        return result;
+      }
+
+      return info.AudioStreams.FirstOrDefault(x =>
+                                             (string.IsNullOrEmpty(language) || x.Language.Equals(LanguageHelper.UnknownLanguage, StringComparison.OrdinalIgnoreCase) || x.Language.Equals(language, StringComparison.OrdinalIgnoreCase))
+                                             && ((string.IsNullOrEmpty(x.Name) && !string.IsNullOrEmpty(language) 
+                                             && language.Equals(name, StringComparison.OrdinalIgnoreCase)) || x.Name.Equals(name, StringComparison.InvariantCultureIgnoreCase)))
+        ?? new AudioStream(id, id)
+        {
+          Codec = AudioCodec.A_UNDEFINED, 
+          Name = name, 
+          Language = language, 
+        };
+    }
+
     private static void GetLavMainParameters(Match m, out string language, out string name)
     {
       name = CheckNameEncoder(m.Groups["name"].Value.TrimEnd());
@@ -1491,7 +1015,7 @@ namespace MediaPortal.Player
         name = string.Empty;
       }
 
-      language = GetLanguage(m.Groups["language"].Value);
+      language = LanguageHelper.GetLanguageByShortName(m.Groups["language"].Value);
 
       if (name.Equals(language, StringComparison.OrdinalIgnoreCase))
       {
@@ -1500,15 +1024,22 @@ namespace MediaPortal.Player
     }
 
     private static readonly Regex LavSplitterVideo = new Regex(@"V\:\s*(((?<name>.+)\[(?<language>\w+)\]|\[(?<language>\w+)\]|(?<name>.+))\s*\()?\s*(?<codec>[a-z0-9\s\.'_\-]+),\s*(?<output>[a-z0-9\s\.'_\-]+),\s*(?<width>\d+)x(?<height>\d+)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+    private static readonly Regex HaaliSplitterVideo = new Regex(@"V\:((\s*(?<name>.+)\[(?<language>\w+)\]|\[(?<language>\w+)\]))", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
-    public static VideoStream MatchVideoStream(MediaInfoWrapper info, string filterName, string name, int lcid, int id)
+    public VideoStream MatchVideoStream(MediaInfoWrapper info, string filterName, string name, int lcid, int id, AMMediaType sType)
     {
-      Log.Debug("DirectShowHelper: match video stream Name={0}, Filter={1}, Id={2}, LCID={3}", name, filterName, id, lcid);
+      _logger.Debug("DirectShowHelper: match video stream Name={0}, Filter={1}, Id={2}, LCID={3}", name, filterName, id, lcid);
 
       var m = LavSplitterVideo.Match(name);
       if (m.Success)
       {
         return LavSplitterVideoMatch(info, m, id);
+      }
+
+      m = HaaliSplitterVideo.Match(name);
+      if (m.Success)
+      {
+        return HaaliSplitterVideoMatch(info, m, id);
       }
 
       return new VideoStream(id, id)
@@ -1540,7 +1071,7 @@ namespace MediaPortal.Player
       var result = info.VideoStreams.FirstOrDefault(x => x.StreamNumber == id);
       if (result != null && (result.Width == width || width == 0) && (result.Height == height || height == 0)
           && (codec == null || codec.Contains(result.Codec))
-          && (string.IsNullOrEmpty(language) || result.Language.Equals(UnknownLanguage, StringComparison.OrdinalIgnoreCase) || result.Language.Equals(language, StringComparison.OrdinalIgnoreCase)))
+          && (string.IsNullOrEmpty(language) || result.Language.Equals(LanguageHelper.UnknownLanguage, StringComparison.OrdinalIgnoreCase) || result.Language.Equals(language, StringComparison.OrdinalIgnoreCase)))
       {
         return result;
       }
@@ -1553,11 +1084,36 @@ namespace MediaPortal.Player
                                               && language.Equals(name, StringComparison.OrdinalIgnoreCase)) || x.Name.Equals(name, StringComparison.InvariantCultureIgnoreCase)))
           ?? new VideoStream(id, id)
           {
-              Name = name, 
-              Codec = codec != null ? codec.FirstOrDefault() : 
-              VideoCodec.V_UNDEFINED, 
-              Height = height, 
-              Width = width
+            Name = name, 
+            Language = language,
+            Codec = codec != null ? codec.FirstOrDefault() : VideoCodec.V_UNDEFINED, 
+            Height = height, 
+            Width = width
+          };
+    }
+
+    private static VideoStream HaaliSplitterVideoMatch(MediaInfoWrapper info, Match m, int id)
+    {
+      string language;
+      string name;
+      GetLavMainParameters(m, out language, out name);
+
+      var result = info.VideoStreams.FirstOrDefault(x => x.StreamNumber == id);
+      if (result != null && 
+          (string.IsNullOrEmpty(language) || result.Language.Equals(LanguageHelper.UnknownLanguage, StringComparison.OrdinalIgnoreCase) || result.Language.Equals(language, StringComparison.OrdinalIgnoreCase)))
+      {
+        return result;
+      }
+
+      return info.VideoStreams.FirstOrDefault(x =>
+                                              (string.IsNullOrEmpty(language) || x.Language.Equals(language, StringComparison.OrdinalIgnoreCase))
+                                              && ((string.IsNullOrEmpty(x.Name) && !string.IsNullOrEmpty(language)
+                                              && language.Equals(name, StringComparison.OrdinalIgnoreCase)) || x.Name.Equals(name, StringComparison.InvariantCultureIgnoreCase)))
+          ?? new VideoStream(id, id)
+          {
+            Name = name, 
+            Codec = VideoCodec.V_UNDEFINED,
+            Language = language
           };
     }
   }

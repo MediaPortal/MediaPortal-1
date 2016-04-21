@@ -21,6 +21,8 @@
 using System;
 using System.Collections.Generic;
 
+using MediaPortal.Drawing;
+
 namespace MediaPortal.Player
 {
   public enum AspectRatio
@@ -341,6 +343,11 @@ namespace MediaPortal.Player
     public string Resolution
     {
       get { return GetVideoResolution(); }
+    }
+
+    public Size Size
+    {
+      get { return new Size(Width, Height); }
     }
 
     protected override void AnalyzeStreamInternal(MediaInfo info)

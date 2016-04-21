@@ -28,6 +28,7 @@ using MediaPortal.Configuration;
 using MediaPortal.ExtensionMethods;
 using MediaPortal.GUI.Library;
 using MediaPortal.Profile;
+using MediaPortal.Services;
 
 namespace MediaPortal.Player
 {
@@ -79,7 +80,7 @@ namespace MediaPortal.Player
 
     public AudioPlayerVMR7()
     {
-      _directShowHelper = new DirectShowHelper(StoreStream);
+      _directShowHelper = new DirectShowHelper(StoreStream, GlobalServiceProvider.Get<ILog>());
     }
 
     public override bool Play(string strFile)
@@ -196,9 +197,9 @@ namespace MediaPortal.Player
       return true;
     }
 
-    private void StoreStream(string filterName, string name, int lcid, int id, DirectShowHelper.StreamType type, AMStreamSelectInfoFlags flag, IAMStreamSelect pStrm)
+    private void StoreStream(string filterName, string name, int lcid, int id, AMMediaType sType, DirectShowHelper.StreamType type, AMStreamSelectInfoFlags flag, IAMStreamSelect pStrm)
     {
-      var stream = DirectShowHelper.MatchAudioStream(_mediaInfo, filterName, name, lcid, id);
+      var stream = _directShowHelper.MatchAudioStream(_mediaInfo, filterName, name, lcid, id, sType);
       var mediaStream = _mediaStreams.FirstOrDefault(x => x.Id == id);
       if (mediaStream == null)
       {

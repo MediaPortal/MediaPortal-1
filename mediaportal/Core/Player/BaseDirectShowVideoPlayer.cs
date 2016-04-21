@@ -24,6 +24,8 @@ using System.Linq;
 using DirectShowLib;
 using DShowNET.Helper;
 
+using MediaPortal.Services;
+
 namespace MediaPortal.Player
 {
   public abstract class BaseDirectShowVideoPlayer : IPlayer
@@ -40,7 +42,7 @@ namespace MediaPortal.Player
 
     protected BaseDirectShowVideoPlayer()
     {
-      DirectShowHelper = new DirectShowHelper(StoreStream);
+      DirectShowHelper = new DirectShowHelper(StoreStream, GlobalServiceProvider.Get<ILog>());
       _audioStreams = new List<StreamInfo>();
       _videoStreams = new List<StreamInfo>();
     }
@@ -116,22 +118,22 @@ namespace MediaPortal.Player
       _videoStreams.Clear();
     }
 
-    private void StoreStream(string filterName, string name, int lcid, int id, DirectShowHelper.StreamType type, AMStreamSelectInfoFlags flag, IAMStreamSelect pStrm)
+    private void StoreStream(string filterName, string name, int lcid, int id, AMMediaType sType, DirectShowHelper.StreamType type, AMStreamSelectInfoFlags flag, IAMStreamSelect pStrm)
     {
       switch (type)
       {
         case DirectShowHelper.StreamType.Audio:
-          AnalyzeAudioStream(filterName, name, lcid, id);
+          AnalyzeAudioStream(filterName, name, lcid, id, sType);
           break;
         case DirectShowHelper.StreamType.Video:
-          AnalyzeVideoStream(filterName, name, lcid, id);
+          AnalyzeVideoStream(filterName, name, lcid, id, sType);
           break;
       }
     }
 
-    private void AnalyzeAudioStream(string filterName, string name, int lcid, int id)
+    private void AnalyzeAudioStream(string filterName, string name, int lcid, int id, AMMediaType sType)
     {
-      var stream = DirectShowHelper.MatchAudioStream(MediaInfo, filterName, name, lcid, id);
+      var stream = DirectShowHelper.MatchAudioStream(MediaInfo, filterName, name, lcid, id, sType);
       var mediaStream = _audioStreams.FirstOrDefault(x => x.Id == id);
       if (mediaStream == null)
       {
@@ -144,9 +146,9 @@ namespace MediaPortal.Player
       }
     }
 
-    private void AnalyzeVideoStream(string filterName, string name, int lcid, int id)
+    private void AnalyzeVideoStream(string filterName, string name, int lcid, int id, AMMediaType sType)
     {
-      var stream = DirectShowHelper.MatchVideoStream(MediaInfo, filterName, name, lcid, id);
+      var stream = DirectShowHelper.MatchVideoStream(MediaInfo, filterName, name, lcid, id, sType);
       var mediaStream = _videoStreams.FirstOrDefault(x => x.Id == id);
       if (mediaStream == null)
       {
