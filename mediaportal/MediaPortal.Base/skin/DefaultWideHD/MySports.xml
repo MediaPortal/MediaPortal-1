@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!--version="1.0" encoding="utf-8"-->
+<window>
+  <id>87352</id>
+  <defaultcontrol>50</defaultcontrol>
+  <allowoverlay>yes</allowoverlay>
+  <disabletopbar>no</disabletopbar>
+  <define>#header.label:MySports</define>
+  <define>#curentmodule:MySports</define>
+  <controls>
+    <control>
+      <description>BG</description>
+      <type>image</type>
+      <id>1</id>
+      <texture>BH Sports.jpg</texture>
+      <width>1920</width>
+      <height>1080</height>
+      <colordiffuse>ddffffff</colordiffuse>
+    </control>
+    <control>
+      <description>background top overlay</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>1920</width>
+      <height>405</height>
+      <texture>overlay_top.png</texture>
+      <colordiffuse>ccffffff</colordiffuse>
+    </control>
+    <control>
+      <description>background selecteditem</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>-20</posX>
+      <posY>97</posY>
+      <width>2025</width>
+      <height>90</height>
+      <texture>general_overlay_selecteditem.png</texture>
+      <colordiffuse>bbffffff</colordiffuse>
+    </control>
+    <control>
+      <description>General Overlay</description>
+      <id>0</id>
+      <type>image</type>
+      <posX>0</posX>
+      <posY>45</posY>
+      <width>1920</width>
+      <height>1080</height>
+      <texture>general_overlay.png</texture>
+    </control>
+    <control>
+      <type>label</type>
+      <id>1</id>
+      <posX>45</posX>
+      <posY>15</posY>
+      <label>#header.label</label>
+      <font>Label</font>
+      <align>left</align>
+      <textcolor>ff6FAFE1</textcolor>
+    </control>
+    <control>
+      <type>actiongroup</type>
+      <description>action menu</description>
+      <defaultcontrol>50</defaultcontrol>
+      <onexit>0</onexit>
+      <buttonX>0</buttonX>
+      <buttonY>-60</buttonY>
+      <buttonwidth>159</buttonwidth>
+      <buttonheight>1080</buttonheight>
+      <textureFocus>-</textureFocus>
+      <textureNoFocus>Action_nofocus.png</textureNoFocus>
+      <width>412</width>
+      <height>1080</height>
+      <dimColor>00ffffff</dimColor>
+      <control>
+        <type>image</type>
+        <id>0</id>
+        <width>1920</width>
+        <height>1080</height>
+        <texture>white.png</texture>
+        <colordiffuse>50005eef</colordiffuse>
+      </control>
+      <control>
+        <type>image</type>
+        <posX>39</posX>
+        <posY>117</posY>
+        <width>480</width>
+        <height>886</height>
+        <texture>Backslide.png</texture>
+        <colorDiffuse>fffffffff</colorDiffuse>
+        <visible>!Control.HasFocus(50)</visible>
+        <animation effect="slide" time="70" start="-300,0" reversible="false">visible</animation>
+        <animation effect="slide" time="70" end="-300,0" reversible="false">hidden</animation>
+      </control>
+      <control>
+        <description>group element</description>
+        <type>group</type>
+        <animation effect="slide" time="70" start="-300,0" reversible="false">visible</animation>
+        <animation effect="slide" time="70" end="-300,0" reversible="false">hidden</animation>
+        <layout>StackLayout(0, Vertical, true)</layout>
+        <posX>75</posX>
+        <posY>181</posY>
+        <visible>!Control.HasFocus(50)</visible>
+        <control>
+          <description>Schedules button</description>
+          <type>button</type>
+          <id>19</id>
+          <label>LiveScores</label>
+          <hyperlink>87354</hyperlink>
+          <onup>124</onup>
+          <ondown>50</ondown>
+          <onright>50</onright>
+          <onleft>50</onleft>
+        </control>
+      </control>
+    </control>
+    <control>
+      <description>default thumbnail panel</description>
+      <type>thumbnailpanel</type>
+      <id>50</id>
+      <posX>90</posX>
+      <posY>285</posY>
+      <width>1800</width>
+      <height>630</height>
+      <scrollOffset>0</scrollOffset>
+      <onleft>19</onleft>
+      <onright>19</onright>
+      <itemWidth>250</itemWidth>
+      <itemHeight>300</itemHeight>
+      <textureWidth>210</textureWidth>
+      <textureHeight>210</textureHeight>
+      <thumbWidth>210</thumbWidth>
+      <thumbHeight>210</thumbHeight>
+      <thumbPosX>0</thumbPosX>
+      <thumbPosY>0</thumbPosY>
+      <itemWidthBig>250</itemWidthBig>
+      <itemHeightBig>300</itemHeightBig>
+      <textureWidthBig>210</textureWidthBig>
+      <textureHeightBig>210</textureHeightBig>
+      <thumbWidthBig>210</thumbWidthBig>
+      <thumbHeightBig>210</thumbHeightBig>
+      <thumbPosXBig>0</thumbPosXBig>
+      <thumbPosYBig>0</thumbPosYBig>
+      <thumbZoom>no</thumbZoom>
+      <enableFocusZoom>no</enableFocusZoom>
+      <zoomXPixels>30</zoomXPixels>
+      <zoomYPixels>30</zoomYPixels>
+      <hideUnfocusTexture>no</hideUnfocusTexture>
+      <renderFocusText>yes</renderFocusText>
+      <renderUnfocusText>yes</renderUnfocusText>
+      <showFrame>true</showFrame>
+      <imageFolder>-</imageFolder>
+      <imageFolderFocus>-</imageFolderFocus>
+      <textureMask>Picturethumbmask.png</textureMask>
+      <frameNoFocus>Picturethumbframe.png</frameNoFocus>
+      <frameFocus>Picturethumbframe.png</frameFocus>
+      <keepaspectratio>yes</keepaspectratio>
+      <font>font10</font>
+      <spinCanFocus>no</spinCanFocus>
+      <dimColor>80ffffff</dimColor>
+      <spinPosY>3012</spinPosY>
+      <scrollbarHeight>350</scrollbarHeight>
+      <scrollbarbg>bar_vert.png</scrollbarbg>
+      <scrollbartop>mouse_left_horizontal.png</scrollbartop>
+      <scrollbarbottom>mouse_right_horizontal.png</scrollbarbottom>
+      <scrollbarXOff>-30</scrollbarXOff>
+      <scrollbarYOff>0</scrollbarYOff>
+      <showScrollbar>yes</showScrollbar>
+      <scrollbarwidth>20</scrollbarwidth>
+    </control>
+    <import>common.window.xml</import>
+    <import>common.time.xml</import>
+  </controls>
+</window>
+<!--Checksum:5e07f09b7dd8095e1d56dd227d3fd170-->

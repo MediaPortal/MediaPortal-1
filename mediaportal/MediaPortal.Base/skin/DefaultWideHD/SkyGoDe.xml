@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <id>14755</id>
+  <defaultcontrol>50</defaultcontrol>
+  <allowoverlay>yes</allowoverlay>
+  <disabletopbar>no</disabletopbar>
+  <define>#currentmodule:SkyGo.de</define>
+  <controls>
+    <control>
+      <description>DEFAULT BACKGROUND</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>1920</width>
+      <height>1080</height>
+      <visible>true</visible>
+      <texture>#SkyGoDe.Backdrop</texture>
+      <shouldCache>true</shouldCache>
+    </control>
+    <control>
+      <description>General Overlay</description>
+      <id>0</id>
+      <type>image</type>
+      <posX>0</posX>
+      <posY>45</posY>
+      <width>1920</width>
+      <height>1080</height>
+      <texture>general_overlay.png</texture>
+    </control>
+    <import>common.window.xml</import>
+    <import>common.time.xml</import>
+    <control>
+      <type>label</type>
+      <id>1</id>
+      <posX>45</posX>
+      <posY>15</posY>
+      <label>SkyGo.de</label>
+      <font>Label</font>
+      <align>left</align>
+      <textcolor>ff6FAFE1</textcolor>
+    </control>
+    <import>common.facade.video.title.xml</import>
+    <control>
+      <description>Overlay text right</description>
+      <id>0</id>
+      <type>image</type>
+      <posX>1065</posX>
+      <posY>234</posY>
+      <width>825</width>
+      <height>699</height>
+      <texture mask="picturethumbmask.png">black.png</texture>
+      <colordiffuse>60ffffff</colordiffuse>
+      <visible>facadeview.list</visible>
+    </control>
+    <control>
+      <description>Category Image</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>1290</posX>
+      <posY>450</posY>
+      <width>450</width>
+      <height>150</height>
+      <texture>#SkyGoDe.HeaderImage</texture>
+      <visible>string.equals(#SkyGoDe.state,categories)</visible>
+    </control>
+    <control>
+      <description>Thumbnail Cover (right side)</description>
+      <type>image</type>
+      <id>88</id>
+      <posX>1390</posX>
+      <posY>260</posY>
+      <width>250</width>
+      <height>347</height>
+      <texture mask="videothumbmask.png">#selectedthumb</texture>
+      <keepaspectratio>yes</keepaspectratio>
+      <zoom>no</zoom>
+      <visible>string.equals(#SkyGoDe.state,videos)|string.equals(#SkyGoDe.state,serie)</visible>
+    </control>
+    <control>
+      <description>Thumbnail Cover (right side)</description>
+      <type>image</type>
+      <id>88</id>
+      <posX>1390</posX>
+      <posY>260</posY>
+      <width>250</width>
+      <height>347</height>
+      <texture mask="videothumbmask.png">#selectedthumb</texture>
+      <keepaspectratio>yes</keepaspectratio>
+      <zoom>no</zoom>
+      <visible>string.equals(#SkyGoDe.state,livestream)</visible>
+    </control>
+    <control>
+      <description>Summary</description>
+      <type>textboxscrollup</type>
+      <id>0</id>
+      <posX>1095</posX>
+      <posY>630</posY>
+      <width>780</width>
+      <height>280</height>
+      <font>font11</font>
+      <label>#SkyGoDe.desc</label>
+      <scrollStartDelaySec>7</scrollStartDelaySec>
+      <visible>!string.equals(#SkyGoDe.desc,)</visible>
+    </control>
+  </controls>
+</window>

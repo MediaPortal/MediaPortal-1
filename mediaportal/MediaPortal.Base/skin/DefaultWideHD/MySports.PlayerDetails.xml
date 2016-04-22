@@ -1,0 +1,328 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!--version="1.0" encoding="utf-8"-->
+<window>
+  <id>87353</id>
+  <defaultcontrol>18</defaultcontrol>
+  <allowoverlay>yes</allowoverlay>
+  <disabletopbar>no</disabletopbar>
+  <define>#header.label:MySports - Player Details</define>
+  <define>#curentmodule:Player Details</define>
+  <controls>
+    <control>
+      <description>BG</description>
+      <type>image</type>
+      <id>1</id>
+      <texture>BH Sports.jpg</texture>
+      <width>1920</width>
+      <height>1080</height>
+      <colordiffuse>90ffffff</colordiffuse>
+    </control>
+    <control>
+      <description>background top overlay</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>1920</width>
+      <height>405</height>
+      <texture>overlay_top.png</texture>
+      <colordiffuse>ccffffff</colordiffuse>
+    </control>
+    <control>
+      <description>background selecteditem</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>-20</posX>
+      <posY>97</posY>
+      <width>2025</width>
+      <height>90</height>
+      <texture>general_overlay_selecteditem.png</texture>
+      <colordiffuse>bbffffff</colordiffuse>
+    </control>
+    <control>
+      <description>General Overlay</description>
+      <id>0</id>
+      <type>image</type>
+      <posX>0</posX>
+      <posY>45</posY>
+      <width>1920</width>
+      <height>1080</height>
+      <texture>general_overlay.png</texture>
+    </control>
+    <control>
+      <type>label</type>
+      <id>1</id>
+      <posX>45</posX>
+      <posY>15</posY>
+      <label>#header.label</label>
+      <font>Label</font>
+      <align>left</align>
+      <textcolor>ff6FAFE1</textcolor>
+    </control>
+    <control>
+      <description>Overlay text right</description>
+      <id>0</id>
+      <type>image</type>
+      <posX>90</posX>
+      <posY>234</posY>
+      <width>825</width>
+      <height>699</height>
+      <texture mask="picturethumbmask.png">black.png</texture>
+      <colordiffuse>60ffffff</colordiffuse>
+    </control>
+    <control>
+      <description>Selected item Label</description>
+      <type>fadelabel</type>
+      <id>1</id>
+      <posX>0</posX>
+      <posY>142</posY>
+      <width>1920</width>
+      <label>#MySports.PlayerDetails.Name</label>
+      <font>font14</font>
+      <align>center</align>
+      <textcolor>ff6FAFE1</textcolor>
+    </control>
+    <control>
+      <description>Thumb</description>
+      <type>image</type>
+      <id>13</id>
+      <posX>120</posX>
+      <posY>225</posY>
+      <width>390</width>
+      <height>480</height>
+      <align>center</align>
+      <valign>middle</valign>
+      <keepaspectratio>yes</keepaspectratio>
+    </control>
+    <control>
+      <description>Gender label</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>540</posX>
+      <posY>300</posY>
+      <width>150</width>
+      <height>30</height>
+      <label>Gender:</label>
+      <font>font10</font>
+      <align>left</align>
+      <textcolor>ff6FAFE1</textcolor>
+    </control>
+    <control>
+      <description>Gender value</description>
+      <type>fadelabel</type>
+      <id>1</id>
+      <posX>540</posX>
+      <posY>330</posY>
+      <width>270</width>
+      <label>#MySports.PlayerDetails.Gender</label>
+      <font>font12</font>
+      <textcolor>ivory</textcolor>
+    </control>
+    <control>
+      <description>country label</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>540</posX>
+      <posY>375</posY>
+      <width>150</width>
+      <height>30</height>
+      <label>Country:</label>
+      <font>font10</font>
+      <align>left</align>
+      <textcolor>ff6FAFE1</textcolor>
+    </control>
+    <control>
+      <description>country value</description>
+      <type>fadelabel</type>
+      <id>1</id>
+      <posX>540</posX>
+      <posY>405</posY>
+      <width>270</width>
+      <label>#MySports.PlayerDetails.Country</label>
+      <font>font12</font>
+      <textcolor>ivory</textcolor>
+    </control>
+    <control>
+      <description>born label</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>540</posX>
+      <posY>450</posY>
+      <width>150</width>
+      <height>30</height>
+      <label>Born:</label>
+      <font>font10</font>
+      <align>left</align>
+      <textcolor>ff6FAFE1</textcolor>
+    </control>
+    <control>
+      <description>Born value</description>
+      <type>fadelabel</type>
+      <id>1</id>
+      <posX>540</posX>
+      <posY>480</posY>
+      <width>270</width>
+      <label>#MySports.PlayerDetails.Born</label>
+      <font>font12</font>
+      <textcolor>ivory</textcolor>
+    </control>
+    <control>
+      <description>height label</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>540</posX>
+      <posY>525</posY>
+      <width>150</width>
+      <height>30</height>
+      <label>Height:</label>
+      <font>font10</font>
+      <align>left</align>
+      <textcolor>ff6FAFE1</textcolor>
+    </control>
+    <control>
+      <description>Height value</description>
+      <type>fadelabel</type>
+      <id>1</id>
+      <posX>540</posX>
+      <posY>555</posY>
+      <width>270</width>
+      <label>#MySports.PlayerDetails.Height</label>
+      <font>font12</font>
+      <textcolor>ivory</textcolor>
+    </control>
+    <control>
+      <description>Weight label</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>540</posX>
+      <posY>600</posY>
+      <width>150</width>
+      <height>30</height>
+      <label>Weight:</label>
+      <font>font10</font>
+      <align>left</align>
+      <textcolor>ff6FAFE1</textcolor>
+    </control>
+    <control>
+      <description>Weight value</description>
+      <type>fadelabel</type>
+      <id>1</id>
+      <posX>540</posX>
+      <posY>630</posY>
+      <width>270</width>
+      <label>#MySports.PlayerDetails.Weight</label>
+      <font>font12</font>
+      <textcolor>ivory</textcolor>
+    </control>
+    <control>
+      <description>Description</description>
+      <type>textboxscrollup</type>
+      <id>14</id>
+      <posX>120</posX>
+      <posY>685</posY>
+      <width>795</width>
+      <height>220</height>
+      <font>font10</font>
+      <textcolor>ivory</textcolor>
+      <textalign>left</textalign>
+      <scrollStartDelaySec>10</scrollStartDelaySec>
+    </control>
+    
+    <control>
+      <type>actiongroup</type>
+      <description>action menu</description>
+      <defaultcontrol>18</defaultcontrol>
+      <onexit>0</onexit>
+      <buttonX>0</buttonX>
+      <buttonY>-60</buttonY>
+      <buttonwidth>159</buttonwidth>
+      <buttonheight>1080</buttonheight>
+      <textureFocus>-</textureFocus>
+      <textureNoFocus>Action_nofocus.png</textureNoFocus>
+      <width>412</width>
+      <height>1080</height>
+      <dimColor>00ffffff</dimColor>
+      <control>
+        <type>image</type>
+        <id>0</id>
+        <width>1920</width>
+        <height>1080</height>
+        <texture>white.png</texture>
+        <colordiffuse>50005eef</colordiffuse>
+      </control>
+      <control>
+        <type>image</type>
+        <posX>39</posX>
+        <posY>117</posY>
+        <width>480</width>
+        <height>886</height>
+        <texture>Backslide.png</texture>
+        <colorDiffuse>fffffffff</colorDiffuse>
+        <visible>!Control.HasFocus(50)</visible>
+        <animation effect="slide" time="70" start="-300,0" reversible="false">visible</animation>
+        <animation effect="slide" time="70" end="-300,0" reversible="false">hidden</animation>
+      </control>
+      <control>
+        <description>group element</description>
+        <type>group</type>
+        <animation effect="slide" time="70" start="-300,0" reversible="false">visible</animation>
+        <animation effect="slide" time="70" end="-300,0" reversible="false">hidden</animation>
+        <layout>StackLayout(0, Vertical, true)</layout>
+        <posX>75</posX>
+        <posY>181</posY>
+        <visible>!Control.HasFocus(50)</visible>
+        <control>
+          <description>Results button</description>
+          <type>button</type>
+          <id>15</id>
+          <label>Results</label>
+          <onup>124</onup>
+          <ondown>16</ondown>
+          <onleft>18</onleft>
+          <onright>18</onright>
+        </control>
+        <control>
+          <description>Schedules button</description>
+          <type>button</type>
+          <id>16</id>
+          <label>Schedules</label>
+          <onup>15</onup>
+          <ondown>17</ondown>
+          <onleft>18</onleft>
+          <onright>18</onright>
+        </control>
+        <control>
+          <description>Table button</description>
+          <type>button</type>
+          <id>17</id>
+          <label>Table</label>
+          <onup>16</onup>
+          <ondown>15</ondown>
+          <onleft>18</onleft>
+          <onright>18</onright>
+        </control>
+      </control>
+    </control>
+    <control>
+      <description>List</description>
+      <type>listcontrol</type>
+      <id>18</id>
+      <posX>950</posX>
+      <posY>275</posY>
+      <width>850</width>
+      <height>700</height>
+      <textXOff>0</textXOff>
+      <textXOff2>825</textXOff2>
+      <textXOff3>60</textXOff3>
+      <PinIconXOff>0</PinIconXOff>
+      <scrollOffset>2</scrollOffset>
+      <onup>15</onup>
+      <ondown>15</ondown>
+      <onleft>15</onleft>
+      <onright>15</onright>
+    </control>
+    <!--import>common.window.xml</import-->
+  <import>common.time.xml</import>
+</controls>
+</window>
+<!--Checksum:5e07f09b7dd8095e1d56dd227d3fd170-->
