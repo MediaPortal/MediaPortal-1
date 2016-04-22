@@ -18,8 +18,6 @@
 
 #endregion
 
-using MediaPortal.Player.MediaInfo;
-
 namespace MediaPortal.Player
 {
   public abstract class BaseAudioPlayer : IPlayer

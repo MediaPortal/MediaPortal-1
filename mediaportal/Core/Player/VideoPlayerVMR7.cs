@@ -19,20 +19,25 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
+
 using DirectShowLib;
 using DShowNET.Helper;
+
 using MediaPortal.Configuration;
 using MediaPortal.GUI.Library;
 using MediaPortal.Profile;
 using MediaPortal.Player.Subtitles;
-using System.Collections.Generic;
+using MediaPortal.Localisation;
 using MediaPortal.Player.PostProcessing;
+using MediaPortal.Services;
 
 namespace MediaPortal.Player
 {
@@ -47,6 +52,7 @@ namespace MediaPortal.Player
     protected const string LAV_VIDEO = "LAV Video Decoder";
     protected const string FILE_SYNC_FILTER = "File Source (Async.)";
     protected IGraphRebuildDelegate _IGraphRebuildDelegate = null;
+    private MediaInfoWrapper _mediaInfo;
 
     protected struct FilterStreamInfos
     {
@@ -54,9 +60,10 @@ namespace MediaPortal.Player
       public string Name;
       public bool Current;
       public string Filter;
-      public StreamType Type;
+      public DirectShowHelper.StreamType Type;
       public int LCID;
       public AMStreamSelectInfoFlags sFlag;
+      public MediaStream Stream;
     };
 
     protected class FilterStreams
@@ -69,17 +76,17 @@ namespace MediaPortal.Player
         StreamsExternal = new FilterStreamInfos[MAX_STREAMS];
       }
 
-      public FilterStreamInfos GetStreamInfos(StreamType type, int id)
+      public FilterStreamInfos GetStreamInfos(DirectShowHelper.StreamType type, int id)
       {
         return GetStreamInfos(type, id, cStreams, Streams);
       }
 
-      public FilterStreamInfos GetStreamInfosExternal(StreamType type, int id)
+      public FilterStreamInfos GetStreamInfosExternal(DirectShowHelper.StreamType type, int id)
       {
         return GetStreamInfos(type, id, cStreamsExternal, StreamsExternal);
       }
 
-      private static FilterStreamInfos GetStreamInfos(StreamType type, int id, int streamsCount, FilterStreamInfos[] streams)
+      private static FilterStreamInfos GetStreamInfos(DirectShowHelper.StreamType type, int id, int streamsCount, FilterStreamInfos[] streams)
       {
         var empty = new FilterStreamInfos();
         for (int i = 0; i < streamsCount; i++)
@@ -96,7 +103,7 @@ namespace MediaPortal.Player
         return empty;
       }
 
-      public int GetStreamCount(StreamType Type)
+      public int GetStreamCount(DirectShowHelper.StreamType Type)
       {
         int ret = 0;
         for (int i = 0; i < cStreams; i++)
@@ -125,12 +132,15 @@ namespace MediaPortal.Player
         {
           return false;
         }
-        streams[streamsCount] = streamInfos;
-        streamsCount++;
+        if (!streams.Any(x => x.Stream != null && x.Stream == streamInfos.Stream))
+        {
+          streams[streamsCount] = streamInfos;
+          streamsCount++;
+        }
         return true;
       }
 
-      public bool SetCurrentValue(StreamType Type, int Id, bool Value)
+      public bool SetCurrentValue(DirectShowHelper.StreamType Type, int Id, bool Value)
       {
         for (int i = 0; i < cStreams; i++)
         {
@@ -165,19 +175,6 @@ namespace MediaPortal.Player
       Playing,
       Paused,
       Ended,
-    }
-
-    public enum StreamType
-    {
-      Video,
-      Audio,
-      Subtitle,
-      Subtitle_hidden,
-      Subtitle_shown,
-      Edition,
-      Subtitle_file,
-      PostProcessing,
-      Unknown,
     }
 
     protected int m_iPositionX = 0;
@@ -266,6 +263,7 @@ namespace MediaPortal.Player
     protected bool MediatypeSubtitle = false;
     protected bool AudioOnly = false;
     protected bool streamLAVSelection = false;
+    private readonly DirectShowHelper _directShowHelper;
 
     public override double[] Chapters
     {
@@ -278,6 +276,8 @@ namespace MediaPortal.Player
     }
 
     protected g_Player.MediaType _mediaType;
+
+    protected MediaInfoWrapper MediaInfo { get { return _mediaInfo; } }
 
     public VideoPlayerVMR7()
     {
@@ -293,6 +293,7 @@ namespace MediaPortal.Player
         }
       }
       _mediaType = g_Player.MediaType.Video;
+      _directShowHelper = new DirectShowHelper(StoreStream, GlobalServiceProvider.Get<ILog>());
     }
 
     public VideoPlayerVMR7(g_Player.MediaType type)
@@ -317,6 +318,8 @@ namespace MediaPortal.Player
       {
         CloseInterfaces();
         m_bStarted = false;
+        _mediaInfo = new MediaInfoWrapper(strFile);
+        _mediaInfo.PrintInfo();
         if (!GetInterfaces())
         {
           m_strCurrentFile = "";
@@ -333,18 +336,27 @@ namespace MediaPortal.Player
           {
             SubEngine.engine = new SubEngine.DummyEngine();
           }
-        }
 
-        // Init post processing engine
-        IPostProcessingEngine postengine = PostProcessingEngine.GetInstance(true);
-        if (!postengine.LoadPostProcessing(graphBuilder))
-        {
-          PostProcessingEngine.engine = new PostProcessingEngine.DummyEngine();
+          // Init post processing engine
+          IPostProcessingEngine postengine = PostProcessingEngine.GetInstance(true);
+          if (!postengine.LoadPostProcessing(graphBuilder))
+          {
+            PostProcessingEngine.engine = new PostProcessingEngine.DummyEngine();
+          }
         }
 
         #endregion
 
-        AnalyseStreams();
+        if (FStreams == null)
+        {
+          FStreams = new FilterStreams();
+        }
+        FStreams.DeleteAllStreams();
+
+        _directShowHelper.AnalyseStreams(graphBuilder);
+        InitSubtitleEngine();
+        chapters = _directShowHelper.Chapters;
+        chaptersname = _directShowHelper.ChaptersName;
         SelectSubtitles();
         SelectAudioLanguage();
         OnInitialized();
@@ -497,7 +509,7 @@ namespace MediaPortal.Player
         {
           if (audioDefault)
           {
-            string audioDefaultStream = FStreams.GetStreamInfos(StreamType.Audio, i).Name;
+            string audioDefaultStream = FStreams.GetStreamInfos(DirectShowHelper.StreamType.Audio, i).Name;
             if (audioDefaultStream.Contains("[default"))
             {
               CurrentAudioStream = i;
@@ -1192,7 +1204,10 @@ namespace MediaPortal.Player
 
     /// <summary> do cleanup and release DirectShow. </summary>
     // VMR7 is no longer used and CloseInterfaces() overridden by VideoPlayerVMR9
-    protected abstract void CloseInterfaces();
+    protected virtual void CloseInterfaces()
+    {
+      _mediaInfo = null;
+    }
 
     #endregion
 
@@ -1325,7 +1340,7 @@ namespace MediaPortal.Player
     /// </summary>
     public override int AudioStreams
     {
-      get { return FStreams.GetStreamCount(StreamType.Audio); }
+      get { return FStreams.GetStreamCount(DirectShowHelper.StreamType.Audio); }
     }
 
     /// <summary>
@@ -1338,7 +1353,7 @@ namespace MediaPortal.Player
         int audioStreams = AudioStreams;
         for (int i = 0; i < audioStreams; i++)
         {
-          if (FStreams.GetStreamInfos(StreamType.Audio, i).Current)
+          if (FStreams.GetStreamInfos(DirectShowHelper.StreamType.Audio, i).Current)
           {
             return i;
           }
@@ -1350,23 +1365,23 @@ namespace MediaPortal.Player
         int audioStreams = AudioStreams;
         for (int i = 0; i < audioStreams; i++)
         {
-          if (FStreams.GetStreamInfos(StreamType.Audio, i).Current)
+          if (FStreams.GetStreamInfos(DirectShowHelper.StreamType.Audio, i).Current)
           {
-            FStreams.SetCurrentValue(StreamType.Audio, i, false);
+            FStreams.SetCurrentValue(DirectShowHelper.StreamType.Audio, i, false);
           }
         }
-        FStreams.SetCurrentValue(StreamType.Audio, value, true);
-        EnableStream(FStreams.GetStreamInfos(StreamType.Audio, value).Id, 0,
-                     FStreams.GetStreamInfos(StreamType.Audio, value).Filter);
-        EnableStream(FStreams.GetStreamInfos(StreamType.Audio, value).Id, AMStreamSelectEnableFlags.Enable,
-                     FStreams.GetStreamInfos(StreamType.Audio, value).Filter);
+        FStreams.SetCurrentValue(DirectShowHelper.StreamType.Audio, value, true);
+        EnableStream(FStreams.GetStreamInfos(DirectShowHelper.StreamType.Audio, value).Id, 0,
+                     FStreams.GetStreamInfos(DirectShowHelper.StreamType.Audio, value).Filter);
+        EnableStream(FStreams.GetStreamInfos(DirectShowHelper.StreamType.Audio, value).Id, AMStreamSelectEnableFlags.Enable,
+                     FStreams.GetStreamInfos(DirectShowHelper.StreamType.Audio, value).Filter);
 
-        if (FStreams.GetStreamInfos(StreamType.Audio, value).Filter != MEDIAPORTAL_AUDIOSWITCHER_FILTER && FStreams.GetStreamInfosExternal(StreamType.Audio, 0).Filter == MEDIAPORTAL_AUDIOSWITCHER_FILTER && FStreams.GetStreamInfosExternal(StreamType.Audio, 0).Name == "Audio " && AudioExternal && !AutoRenderingCheck && GetInterface)
+        if (FStreams.GetStreamInfos(DirectShowHelper.StreamType.Audio, value).Filter != MEDIAPORTAL_AUDIOSWITCHER_FILTER && FStreams.GetStreamInfosExternal(DirectShowHelper.StreamType.Audio, 0).Filter == MEDIAPORTAL_AUDIOSWITCHER_FILTER && FStreams.GetStreamInfosExternal(DirectShowHelper.StreamType.Audio, 0).Name == "Audio " && AudioExternal && !AutoRenderingCheck && GetInterface)
         {
-          EnableStream(FStreams.GetStreamInfosExternal(StreamType.Audio, 0).Id, 0,
-                       FStreams.GetStreamInfosExternal(StreamType.Audio, 0).Filter);
-          EnableStream(FStreams.GetStreamInfosExternal(StreamType.Audio, 0).Id, AMStreamSelectEnableFlags.Enable,
-                       FStreams.GetStreamInfosExternal(StreamType.Audio, 0).Filter);
+          EnableStream(FStreams.GetStreamInfosExternal(DirectShowHelper.StreamType.Audio, 0).Id, 0,
+                       FStreams.GetStreamInfosExternal(DirectShowHelper.StreamType.Audio, 0).Filter);
+          EnableStream(FStreams.GetStreamInfosExternal(DirectShowHelper.StreamType.Audio, 0).Id, AMStreamSelectEnableFlags.Enable,
+                       FStreams.GetStreamInfosExternal(DirectShowHelper.StreamType.Audio, 0).Filter);
         }
 
         /*if (FStreams.GetStreamInfos(StreamType.Audio, value).Filter != MEDIAPORTAL_AUDIOSWITCHER_FILTER && !AutoRenderingCheck && GetInterface)
@@ -1378,14 +1393,51 @@ namespace MediaPortal.Player
       }
     }
 
+    public override AudioStream CurrentAudio
+    {
+      get
+      {
+        var audioStreams = AudioStreams;
+        for (var i = 0; i < audioStreams; i++)
+        {
+          if (FStreams.GetStreamInfos(DirectShowHelper.StreamType.Audio, i).Current)
+          {
+            return FStreams.GetStreamInfos(DirectShowHelper.StreamType.Audio, i).Stream as AudioStream;
+          }
+        }
+
+        return null;
+      }
+    }
+
+    public override AudioStream BestAudio
+    {
+      get
+      {
+        if (_mediaInfo != null)
+        {
+          return _mediaInfo.BestAudioStream;
+        }
+
+        return null;
+      }
+    }
+    
     /// <summary>
     /// Property to get the language from stream name
     /// </summary>
     public override string AudioLanguage(int iStream)
     {
+      var audioStreamInfo = FStreams.GetStreamInfos(DirectShowHelper.StreamType.Audio, iStream);
+      var audioStream = audioStreamInfo.Stream as AudioStream;
+      if (audioStream != null && !string.IsNullOrEmpty(audioStream.Language) && !audioStream.Language.Equals(LanguageHelper.UnknownLanguage, StringComparison.OrdinalIgnoreCase))
+      {
+        return Util.Utils.TranslateLanguageString(audioStream.Language);
+      }
+
       #region return splitter IAMStreamSelect LCID
 
-      string languageName = LCIDCheck(FStreams.GetStreamInfos(StreamType.Audio, iStream).LCID);
+      string languageName = LCIDCheck(FStreams.GetStreamInfos(DirectShowHelper.StreamType.Audio, iStream).LCID);
       if (!string.IsNullOrEmpty(languageName))
       {
         return languageName;
@@ -1393,7 +1445,7 @@ namespace MediaPortal.Player
 
       #endregion
 
-      string streamName = FStreams.GetStreamInfos(StreamType.Audio, iStream).Name;
+      string streamName = audioStreamInfo.Name;
 
       #region External Audio File
 
@@ -1503,8 +1555,8 @@ namespace MediaPortal.Player
     /// </summary>
     public override string AudioType(int iStream)
     {
-      string streamName = FStreams.GetStreamInfos(StreamType.Audio, iStream).Name;
-      string streamNameFalse = FStreams.GetStreamInfos(StreamType.Audio, iStream).Name;
+      string streamName = FStreams.GetStreamInfos(DirectShowHelper.StreamType.Audio, iStream).Name;
+      string streamNameFalse = FStreams.GetStreamInfos(DirectShowHelper.StreamType.Audio, iStream).Name;
       if (streamName.EndsWith(".mp3") || streamName.EndsWith(".ac3") || streamName.EndsWith(".mka") ||
           streamName.EndsWith(".dts"))
       {
@@ -1631,15 +1683,15 @@ namespace MediaPortal.Player
         int subtitleStreams = SubtitleStreams;
         for (int i = 0; i < subtitleStreams; i++)
         {
-          if (FStreams.GetStreamInfos(StreamType.Subtitle, i).Current)
+          if (FStreams.GetStreamInfos(DirectShowHelper.StreamType.Subtitle, i).Current)
           {
             return i;
           }
-          if (FStreams.GetStreamInfos(StreamType.Subtitle_hidden, i).Current)
+          if (FStreams.GetStreamInfos(DirectShowHelper.StreamType.Subtitle_hidden, i).Current)
           {
             return -1;
           }
-          if (FStreams.GetStreamInfos(StreamType.Subtitle_file, i).Current)
+          if (FStreams.GetStreamInfos(DirectShowHelper.StreamType.Subtitle_file, i).Current)
           {
             return i;
           }
@@ -1897,206 +1949,93 @@ namespace MediaPortal.Player
       }
     }
 
-    public bool AnalyseStreams()
+    private void StoreStream(string filterName, string name, int lcid, int id, AMMediaType sType, DirectShowHelper.StreamType type,
+      AMStreamSelectInfoFlags flag, IAMStreamSelect pStrm)
     {
-      try
+      var info = new FilterStreamInfos
       {
-        if (FStreams == null)
-        {
-          FStreams = new FilterStreams();
-        }
-        FStreams.DeleteAllStreams();
-        //RETRIEVING THE CURRENT SPLITTER
-        string filter;
-        IBaseFilter[] foundfilter = new IBaseFilter[2];
-        int fetched = 0;
-        IEnumFilters enumFilters;
-        graphBuilder.EnumFilters(out enumFilters);
-        if (enumFilters != null)
-        {
-          enumFilters.Reset();
-          while (enumFilters.Next(1, foundfilter, out fetched) == 0)
-          {
-            if (foundfilter[0] != null && fetched == 1)
-            {
-              if (chapters == null)
-              {
-                IAMExtendedSeeking pEs = foundfilter[0] as IAMExtendedSeeking;
-                if (pEs != null)
-                {
-                  int markerCount = 0;
-                  if (pEs.get_MarkerCount(out markerCount) == 0 && markerCount > 0)
-                  {
-                    chapters = new double[markerCount];
-                    chaptersname = new string[markerCount];
-                    for (int i = 1; i <= markerCount; i++)
-                    {
-                      double markerTime = 0;
-                      pEs.GetMarkerTime(i, out markerTime);
-                      chapters[i - 1] = markerTime;
-                      //fill up chapter names
-                      string name = null;
-                      pEs.GetMarkerName(i, out name);
-                      chaptersname[i - 1] = name;
-                    }
-                  }
-                }
-              }
-              IAMStreamSelect pStrm = foundfilter[0] as IAMStreamSelect;
-              if (pStrm != null)
-              {
-                FilterInfo foundfilterinfos = new FilterInfo();
-                foundfilter[0].QueryFilterInfo(out foundfilterinfos);
-                filter = foundfilterinfos.achName;
-                int cStreams = 0;
-                pStrm.Count(out cStreams);
-                if (cStreams < 2)
-                {
-                  continue;
-                }
-                //GET STREAMS
-                for (int istream = 0; istream < cStreams; istream++)
-                {
-                  AMMediaType sType;
-                  AMStreamSelectInfoFlags sFlag;
-                  int sPDWGroup, sPLCid;
-                  string sName;
-                  object pppunk, ppobject;
-                  //STREAM INFO
-                  pStrm.Info(istream, out sType, out sFlag, out sPLCid,
-                             out sPDWGroup, out sName, out pppunk, out ppobject);
-                  FilterStreamInfos FSInfos = new FilterStreamInfos();
-                  FSInfos.Current = false;
-                  FSInfos.Filter = filter;
-                  FSInfos.Name = sName;
-                  FSInfos.LCID = sPLCid;
-                  FSInfos.Id = istream;
-                  FSInfos.Type = StreamType.Unknown;
-                  FSInfos.sFlag = sFlag;
-                  //Avoid listing ffdshow video filter's plugins amongst subtitle and audio streams and editions.
-                  if ((FSInfos.Filter == "ffdshow DXVA Video Decoder" || FSInfos.Filter == "ffdshow Video Decoder" ||
-                       FSInfos.Filter == "ffdshow raw video filter") &&
-                      ((sPDWGroup == 1) || (sPDWGroup == 2) || (sPDWGroup == 18) || (sPDWGroup == 4)))
-                  {
-                    FSInfos.Type = StreamType.Unknown;
-                  }
-                  //VIDEO
-                  else if (sPDWGroup == 0)
-                  {
-                    FSInfos.Type = StreamType.Video;
-                  }
-                  //AUDIO
-                  else if (sPDWGroup == 1)
-                  {
-                    FSInfos.Type = StreamType.Audio;
-                  }
-                  //SUBTITLE
-                  else if (sPDWGroup == 2 && sName.LastIndexOf("off", StringComparison.Ordinal) == -1 && sName.LastIndexOf("Hide ", StringComparison.Ordinal) == -1 &&
-                           sName.LastIndexOf("No ", StringComparison.Ordinal) == -1 && sName.LastIndexOf("Miscellaneous ", StringComparison.Ordinal) == -1)
-                  {
-                    FSInfos.Type = StreamType.Subtitle;
-                  }
-                  //NO SUBTITILE TAG
-                  else if ((sPDWGroup == 2 && (sName.LastIndexOf("off", StringComparison.Ordinal) != -1 || sName.LastIndexOf("No ", StringComparison.Ordinal) != -1)) ||
-                           (sPDWGroup == 6590033 && sName.LastIndexOf("Hide ", StringComparison.Ordinal) != -1))
-                  {
-                    FSInfos.Type = StreamType.Subtitle_hidden;
-                  }
-                  //DirectVobSub SHOW SUBTITLE TAG
-                  else if (sPDWGroup == 6590033 && sName.LastIndexOf("Show ", StringComparison.Ordinal) != -1)
-                  {
-                    FSInfos.Type = StreamType.Subtitle_shown;
-                  }
-                  //EDITION
-                  else if (sPDWGroup == 18)
-                  {
-                    FSInfos.Type = StreamType.Edition;
-                  }
-                  else if (sPDWGroup == 4) //Subtitle file
-                  {
-                    FSInfos.Type = StreamType.Subtitle_file;
-                  }
-                  else if (sPDWGroup == 10) //Postprocessing filter
-                  {
-                    FSInfos.Type = StreamType.PostProcessing;
-                  }
-                  Log.Debug("VideoPlayer: FoundStreams: Type={0}; Name={1}, Filter={2}, Id={3}, PDWGroup={4}, LCID={5}",
-                            FSInfos.Type.ToString(), FSInfos.Name, FSInfos.Filter, FSInfos.Id.ToString(),
-                            sPDWGroup.ToString(), sPLCid.ToString());
+        Current = false,
+        Filter = filterName,
+        Name = name,
+        LCID = lcid,
+        Id = id,
+        Type = type,
+        sFlag = flag
+      };
 
-                  switch (FSInfos.Type)
-                  {
-                    case StreamType.Unknown:
-                    case StreamType.Subtitle:
-                    case StreamType.Subtitle_file:
-                    case StreamType.Subtitle_hidden:
-                    case StreamType.Subtitle_shown:
-                      if (streamLAVSelection && FSInfos.Filter.ToLowerInvariant().Contains("LAV Splitter".ToLowerInvariant()))
-                      {
-                        if (FSInfos.sFlag == AMStreamSelectInfoFlags.Enabled ||
-                            FSInfos.sFlag == (AMStreamSelectInfoFlags.Enabled | AMStreamSelectInfoFlags.Exclusive))
-                        {
-                          FSInfos.Current = true;
-                          pStrm.Enable(FSInfos.Id, 0);
-                          pStrm.Enable(FSInfos.Id, AMStreamSelectEnableFlags.Enable);
-                        }
-                        goto default;
-                      }
-                      break;
-                    case StreamType.Video:
-                    case StreamType.Audio:
-                    case StreamType.Edition:
-                    case StreamType.PostProcessing:
-                      if (FSInfos.Type == StreamType.Audio && FSInfos.Filter == MEDIAPORTAL_AUDIOSWITCHER_FILTER && FSInfos.Name == "Audio " && !AutoRenderingCheck && GetInterface)
-                      {
-                        FStreams.AddStreamInfosEx(FSInfos);
-                        break;
-                      }
-                      if (streamLAVSelection)
-                      {
-                        if (FSInfos.sFlag == AMStreamSelectInfoFlags.Enabled || FSInfos.sFlag == (AMStreamSelectInfoFlags.Enabled | AMStreamSelectInfoFlags.Exclusive))
-                        {
-                          FSInfos.Current = true;
-                          pStrm.Enable(FSInfos.Id, 0);
-                          pStrm.Enable(FSInfos.Id, AMStreamSelectEnableFlags.Enable);
-                        }
-                      }
-                      else
-                      {
-                        if (FStreams.GetStreamCount(FSInfos.Type) == 0)
-                        {
-                          FSInfos.Current = true;
-                          pStrm.Enable(FSInfos.Id, 0);
-                          pStrm.Enable(FSInfos.Id, AMStreamSelectEnableFlags.Enable);
-                        }
-                      } 
-                      goto default;
-                    default:
-                      FStreams.AddStreamInfos(FSInfos);
-                      break;
-                  }
-                }
-              }
-              DirectShowUtil.ReleaseComObject(foundfilter[0]);
+      switch (type)
+      {
+        case DirectShowHelper.StreamType.Unknown:
+        case DirectShowHelper.StreamType.Subtitle:
+        case DirectShowHelper.StreamType.Subtitle_file:
+        case DirectShowHelper.StreamType.Subtitle_hidden:
+        case DirectShowHelper.StreamType.Subtitle_shown:
+          if (streamLAVSelection && filterName.IndexOf("LAV Splitter", StringComparison.OrdinalIgnoreCase) > 0)
+          {
+            if (flag == AMStreamSelectInfoFlags.Enabled ||
+                flag == (AMStreamSelectInfoFlags.Enabled | AMStreamSelectInfoFlags.Exclusive))
+            {
+              info.Current = true;
+              pStrm.Enable(id, 0);
+              pStrm.Enable(id, AMStreamSelectEnableFlags.Enable);
+            }
+            goto default;
+          }
+          break;
+        case DirectShowHelper.StreamType.Video:
+          info.Stream = _directShowHelper.MatchVideoStream(_mediaInfo, filterName, name, lcid, id, sType);
+          goto case DirectShowHelper.StreamType.Edition;
+        case DirectShowHelper.StreamType.Audio:
+          info.Stream = _directShowHelper.MatchAudioStream(_mediaInfo, filterName, name, lcid, id, sType);
+          goto case DirectShowHelper.StreamType.Edition;
+        case DirectShowHelper.StreamType.Edition:
+        case DirectShowHelper.StreamType.PostProcessing:
+          if (type == DirectShowHelper.StreamType.Audio && filterName == MEDIAPORTAL_AUDIOSWITCHER_FILTER &&
+              name == "Audio " && !AutoRenderingCheck && GetInterface)
+          {
+            FStreams.AddStreamInfosEx(info);
+            break;
+          }
+          if (streamLAVSelection)
+          {
+            if (flag == AMStreamSelectInfoFlags.Enabled ||
+                flag == (AMStreamSelectInfoFlags.Enabled | AMStreamSelectInfoFlags.Exclusive))
+            {
+              info.Current = true;
+              pStrm.Enable(id, 0);
+              pStrm.Enable(id, AMStreamSelectEnableFlags.Enable);
             }
           }
-          DirectShowUtil.ReleaseComObject(enumFilters);
-        }
-        if (streamLAVSelection)
-        {
-          // Init subtitle engine
-          ISubEngine engine = SubEngine.GetInstance(true);
-          if (!engine.LoadSubtitles(graphBuilder, m_strCurrentFile))
+          else
           {
-            SubEngine.engine = new SubEngine.DummyEngine();
+            if (FStreams.GetStreamCount(type) == 0)
+            {
+              info.Current = true;
+              pStrm.Enable(id, 0);
+              pStrm.Enable(id, AMStreamSelectEnableFlags.Enable);
+            }
           }
-          // Set LAV Splitter stream
-          CurrentSubtitleStream = CurrentSubtitleLAVStream;
-          EnableSubtitle = CurrentSubtitleLAVStream != -1;
-        }
+          goto default;
+        default:
+          FStreams.AddStreamInfos(info);
+          break;
       }
-      catch { }
-      return true;
+    }
+
+    private void InitSubtitleEngine()
+    {
+      if (streamLAVSelection)
+      {
+        // Init subtitle engine
+        ISubEngine engine = SubEngine.GetInstance(true);
+        if (!engine.LoadSubtitles(graphBuilder, m_strCurrentFile))
+        {
+          SubEngine.engine = new SubEngine.DummyEngine();
+        }
+        // Set LAV Splitter stream
+        CurrentSubtitleStream = CurrentSubtitleLAVStream;
+        EnableSubtitle = CurrentSubtitleLAVStream != -1;
+      }
     }
 
     public bool EnableStream(int Id, AMStreamSelectEnableFlags dwFlags, string Filter)
@@ -2158,19 +2097,19 @@ namespace MediaPortal.Player
     /// </summary>
     public override string EditionLanguage(int iStream)
     {
-      string streamName = FStreams.GetStreamInfos(StreamType.Edition, iStream).Name;
+      string streamName = FStreams.GetStreamInfos(DirectShowHelper.StreamType.Edition, iStream).Name;
       return streamName;
     }
 
     public override string EditionType(int iStream)
     {
-      string streamName = FStreams.GetStreamInfos(StreamType.Edition, iStream).Name;
+      string streamName = FStreams.GetStreamInfos(DirectShowHelper.StreamType.Edition, iStream).Name;
       return streamName;
     }
 
     public override int EditionStreams
     {
-      get { return FStreams.GetStreamCount(StreamType.Edition); }
+      get { return FStreams.GetStreamCount(DirectShowHelper.StreamType.Edition); }
     }
 
     /// <summary>
@@ -2180,9 +2119,9 @@ namespace MediaPortal.Player
     {
       get
       {
-        for (int i = 0; i < FStreams.GetStreamCount(StreamType.Edition); i++)
+        for (int i = 0; i < FStreams.GetStreamCount(DirectShowHelper.StreamType.Edition); i++)
         {
-          if (FStreams.GetStreamInfos(StreamType.Edition, i).Current)
+          if (FStreams.GetStreamInfos(DirectShowHelper.StreamType.Edition, i).Current)
           {
             return i;
           }
@@ -2191,18 +2130,18 @@ namespace MediaPortal.Player
       }
       set
       {
-        for (int i = 0; i < FStreams.GetStreamCount(StreamType.Edition); i++)
+        for (int i = 0; i < FStreams.GetStreamCount(DirectShowHelper.StreamType.Edition); i++)
         {
-          if (FStreams.GetStreamInfos(StreamType.Edition, i).Current)
+          if (FStreams.GetStreamInfos(DirectShowHelper.StreamType.Edition, i).Current)
           {
-            FStreams.SetCurrentValue(StreamType.Edition, i, false);
+            FStreams.SetCurrentValue(DirectShowHelper.StreamType.Edition, i, false);
           }
         }
-        FStreams.SetCurrentValue(StreamType.Edition, value, true);
-        EnableStream(FStreams.GetStreamInfos(StreamType.Edition, value).Id, 0,
-                     FStreams.GetStreamInfos(StreamType.Edition, value).Filter);
-        EnableStream(FStreams.GetStreamInfos(StreamType.Edition, value).Id, AMStreamSelectEnableFlags.Enable,
-                     FStreams.GetStreamInfos(StreamType.Edition, value).Filter);
+        FStreams.SetCurrentValue(DirectShowHelper.StreamType.Edition, value, true);
+        EnableStream(FStreams.GetStreamInfos(DirectShowHelper.StreamType.Edition, value).Id, 0,
+                     FStreams.GetStreamInfos(DirectShowHelper.StreamType.Edition, value).Filter);
+        EnableStream(FStreams.GetStreamInfos(DirectShowHelper.StreamType.Edition, value).Id, AMStreamSelectEnableFlags.Enable,
+                     FStreams.GetStreamInfos(DirectShowHelper.StreamType.Edition, value).Filter);
         // Refresh Chapters list
         AnalyseStreamsChapters();
         Log.Info("VideoPlayer:Edition Duration Change:{0}", m_dDuration);
@@ -2219,8 +2158,15 @@ namespace MediaPortal.Player
     /// </summary>
     public override string VideoName(int iStream)
     {
-      string streamName = FStreams.GetStreamInfos(StreamType.Video, iStream).Name;
-      string streamNameFalse = FStreams.GetStreamInfos(StreamType.Video, iStream).Name;
+      var videoStreamInfo = FStreams.GetStreamInfos(DirectShowHelper.StreamType.Video, iStream);
+      var videoStream = videoStreamInfo.Stream as VideoStream;
+      if (videoStream != null)
+      {
+        return videoStream.Name;
+      }
+
+      string streamName = videoStreamInfo.Name;
+      string streamNameFalse = streamName;
 
       // No stream info from splitter
       if (m_strCurrentFile != null && streamName.Contains(Path.GetFileName(m_strCurrentFile)))
@@ -2307,8 +2253,8 @@ namespace MediaPortal.Player
 
     public override string VideoType(int iStream)
     {
-      string streamName = FStreams.GetStreamInfos(StreamType.Video, iStream).Name;
-      string streamNameFalse = FStreams.GetStreamInfos(StreamType.Video, iStream).Name;
+      string streamName = FStreams.GetStreamInfos(DirectShowHelper.StreamType.Video, iStream).Name;
+      string streamNameFalse = FStreams.GetStreamInfos(DirectShowHelper.StreamType.Video, iStream).Name;
 
       // No stream info from splitter
       if (streamName.Contains(Path.GetFileName(m_strCurrentFile)))
@@ -2391,7 +2337,7 @@ namespace MediaPortal.Player
 
     public override int VideoStreams
     {
-      get { return FStreams.GetStreamCount(StreamType.Video); }
+      get { return FStreams.GetStreamCount(DirectShowHelper.StreamType.Video); }
     }
 
     /// <summary>
@@ -2401,9 +2347,9 @@ namespace MediaPortal.Player
     {
       get
       {
-        for (int i = 0; i < FStreams.GetStreamCount(StreamType.Video); i++)
+        for (int i = 0; i < FStreams.GetStreamCount(DirectShowHelper.StreamType.Video); i++)
         {
-          if (FStreams.GetStreamInfos(StreamType.Video, i).Current)
+          if (FStreams.GetStreamInfos(DirectShowHelper.StreamType.Video, i).Current)
           {
             return i;
           }
@@ -2412,20 +2358,50 @@ namespace MediaPortal.Player
       }
       set
       {
-        for (int i = 0; i < FStreams.GetStreamCount(StreamType.Video); i++)
+        for (int i = 0; i < FStreams.GetStreamCount(DirectShowHelper.StreamType.Video); i++)
         {
-          if (FStreams.GetStreamInfos(StreamType.Video, i).Current)
+          if (FStreams.GetStreamInfos(DirectShowHelper.StreamType.Video, i).Current)
           {
-            FStreams.SetCurrentValue(StreamType.Video, i, false);
+            FStreams.SetCurrentValue(DirectShowHelper.StreamType.Video, i, false);
           }
         }
-        FStreams.SetCurrentValue(StreamType.Video, value, true);
-        EnableStream(FStreams.GetStreamInfos(StreamType.Video, value).Id, 0,
-                     FStreams.GetStreamInfos(StreamType.Video, value).Filter);
-        EnableStream(FStreams.GetStreamInfos(StreamType.Video, value).Id, AMStreamSelectEnableFlags.Enable,
-                     FStreams.GetStreamInfos(StreamType.Video, value).Filter);
+        FStreams.SetCurrentValue(DirectShowHelper.StreamType.Video, value, true);
+        EnableStream(FStreams.GetStreamInfos(DirectShowHelper.StreamType.Video, value).Id, 0,
+                     FStreams.GetStreamInfos(DirectShowHelper.StreamType.Video, value).Filter);
+        EnableStream(FStreams.GetStreamInfos(DirectShowHelper.StreamType.Video, value).Id, AMStreamSelectEnableFlags.Enable,
+                     FStreams.GetStreamInfos(DirectShowHelper.StreamType.Video, value).Filter);
         Log.Info("VideoPlayer:Video Duration Change:{0}", m_dDuration);
         return;
+      }
+    }
+
+    public override VideoStream CurrentVideo
+    {
+      get
+      {
+        var videoStreamCount = FStreams.GetStreamCount(DirectShowHelper.StreamType.Video);
+        for (int i = 0; i < videoStreamCount; i++)
+        {
+          if (FStreams.GetStreamInfos(DirectShowHelper.StreamType.Video, i).Current)
+          {
+            return FStreams.GetStreamInfos(DirectShowHelper.StreamType.Video, i).Stream as VideoStream;
+          }
+        }
+
+        return null;
+      }
+    }
+
+    public override VideoStream BestVideo
+    {
+      get
+      {
+        if (_mediaInfo != null)
+        {
+          return _mediaInfo.BestVideoStream;
+        }
+
+        return null;
       }
     }
 

@@ -21,7 +21,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace MediaPortal.Player.MediaInfo
+namespace MediaPortal.Player
 {
   public enum AudioCodec
   {
@@ -66,12 +66,70 @@ namespace MediaPortal.Player.MediaInfo
     A_AAC_MPEG4_SSR,
     A_AAC_MPEG4_LTP,
     A_ALAC,
-    A_APE
+    A_APE,
+    A_WMA1,
+    A_WMA2,
+    A_WMA9,
+    A_ADPCM,
+    A_AMR,
+    A_ATRAC1,
+    A_ATRAC3,
   }
 
   public class AudioStream : LanguageMediaStream
   {
     #region matching dictionaries
+
+    private static readonly Dictionary<AudioCodec, string> CodecFrendlyNames = new Dictionary<AudioCodec, string>
+    {
+      { AudioCodec.A_UNDEFINED, "" },
+      { AudioCodec.A_MPEG_L1, "MPEG Layer 1" },
+      { AudioCodec.A_MPEG_L2, "MPEG Layer 2" },
+      { AudioCodec.A_MPEG_L3, "MPEG Layer 3" },
+      { AudioCodec.A_PCM_INT_BIG, "PCM" },
+      { AudioCodec.A_PCM_INT_LIT, "PCM" },
+      { AudioCodec.A_PCM_FLOAT_IEEE, "PCM" },
+      { AudioCodec.A_AC3, "Dolby Digital" },
+      { AudioCodec.A_AC3_BSID9, "Dolby Digital" },
+      { AudioCodec.A_AC3_BSID10, "Dolby Digital" },
+      { AudioCodec.A_DTS, "DTS" },
+      { AudioCodec.A_DTS_HD, "DTS HD" },
+      { AudioCodec.A_EAC3, "Dolby Digital Plus" },
+      { AudioCodec.A_FLAC, "FLAC" },
+      { AudioCodec.A_OPUS, "OPUS" },
+      { AudioCodec.A_TTA1, "True Audio" },
+      { AudioCodec.A_VORBIS, "Vorbis" },
+      { AudioCodec.A_WAVPACK4, "WavPack" },
+      { AudioCodec.A_WAVPACK, "WavPack" },
+      { AudioCodec.A_WAVE, "Wave" },
+      { AudioCodec.A_WAVE64, "Wave" },
+      { AudioCodec.A_REAL_14_4, "Real Audio" },
+      { AudioCodec.A_REAL_28_8, "Real Audio" },
+      { AudioCodec.A_REAL_COOK, "Real Audio" },
+      { AudioCodec.A_REAL_SIPR, "Real Audio" },
+      { AudioCodec.A_REAL_RALF, "Real Audio" },
+      { AudioCodec.A_REAL_ATRC, "Real Audio" },
+      { AudioCodec.A_TRUEHD, "Dolby TrueHD" },
+      { AudioCodec.A_MLP, "Meridian Lossless" },
+      { AudioCodec.A_AAC, "AAC" },
+      { AudioCodec.A_AAC_MPEG2_MAIN, "AAC" },
+      { AudioCodec.A_AAC_MPEG2_LC, "AAC" },
+      { AudioCodec.A_AAC_MPEG2_LC_SBR, "AAC" },
+      { AudioCodec.A_AAC_MPEG2_SSR, "AAC" },
+      { AudioCodec.A_AAC_MPEG4_MAIN, "AAC" },
+      { AudioCodec.A_AAC_MPEG4_LC, "AAC" },
+      { AudioCodec.A_AAC_MPEG4_LC_SBR, "AAC" },
+      { AudioCodec.A_AAC_MPEG4_LC_SBR_PS, "AAC" },
+      { AudioCodec.A_AAC_MPEG4_SSR, "AAC" },
+      { AudioCodec.A_AAC_MPEG4_LTP, "AAC" },
+      { AudioCodec.A_ALAC, "Apple Lossless" },
+      { AudioCodec.A_APE, "Monkey's Audio" },
+      { AudioCodec.A_WMA1, "Windows Audio" },
+      { AudioCodec.A_WMA2, "Windows Audio" },
+      { AudioCodec.A_WMA9, "Windows Audio Pro" },
+      { AudioCodec.A_ADPCM, "ADPCM" },
+      { AudioCodec.A_AMR, "Adaptive Multi-Rate" },
+    };
 
     private static readonly Dictionary<string, AudioCodec> CodecIds = new Dictionary<string, AudioCodec>
     {
@@ -113,7 +171,8 @@ namespace MediaPortal.Player.MediaInfo
       { "A_AAC/MPEG4/SSR", AudioCodec.A_AAC_MPEG4_SSR },
       { "A_AAC/MPEG4/LTP", AudioCodec.A_AAC_MPEG4_LTP },
       { "A_ALAC", AudioCodec.A_ALAC },
-      { "A_APE", AudioCodec.A_APE }
+      { "A_APE", AudioCodec.A_APE },
+      { "SAMR", AudioCodec.A_AMR },
     };
 
     private static readonly Dictionary<string, AudioCodec> Codecs = new Dictionary<string, AudioCodec>
@@ -121,8 +180,9 @@ namespace MediaPortal.Player.MediaInfo
       { "MPA1L1", AudioCodec.A_MPEG_L1 },
       { "MPA1L2", AudioCodec.A_MPEG_L2 },
       { "MPA1L3", AudioCodec.A_MPEG_L3 },
-      { "PCM/INT/BIG", AudioCodec.A_PCM_INT_BIG },
-      { "PCM/INT/LIT", AudioCodec.A_PCM_INT_LIT },
+      { "PCM BIG", AudioCodec.A_PCM_INT_BIG },
+      { "PCM LITTLE", AudioCodec.A_PCM_INT_LIT },
+      { "PCM", AudioCodec.A_PCM_INT_LIT },
       { "PCM/FLOAT/IEEE", AudioCodec.A_PCM_FLOAT_IEEE },
       { "AC3", AudioCodec.A_AC3 },
       { "AC-3", AudioCodec.A_AC3 },
@@ -133,6 +193,7 @@ namespace MediaPortal.Player.MediaInfo
       { "EAC3", AudioCodec.A_EAC3 },
       { "EAC-3", AudioCodec.A_EAC3 },
       { "E-AC-3", AudioCodec.A_EAC3 },
+      { "AC3+", AudioCodec.A_EAC3 },
       { "FLAC", AudioCodec.A_FLAC },
       { "OPUS", AudioCodec.A_OPUS },
       { "TTA1", AudioCodec.A_TTA1 },
@@ -150,7 +211,10 @@ namespace MediaPortal.Player.MediaInfo
       { "TRUEHD", AudioCodec.A_TRUEHD },
       { "MLP", AudioCodec.A_MLP },
       { "AAC", AudioCodec.A_AAC },
-      { "AAC LC", AudioCodec.A_AAC },
+      { "AAC LC", AudioCodec.A_AAC_MPEG4_LC },
+      { "AAC LTP", AudioCodec.A_AAC_MPEG4_LTP },
+      { "AAC MAIN", AudioCodec.A_AAC_MPEG4_MAIN },
+      { "AAC SSR", AudioCodec.A_AAC_MPEG4_SSR },
       { "AAC/MPEG2/MAIN", AudioCodec.A_AAC_MPEG2_MAIN },
       { "AAC/MPEG2/LC", AudioCodec.A_AAC_MPEG2_LC },
       { "AAC/MPEG2/LC/SBR", AudioCodec.A_AAC_MPEG2_LC_SBR },
@@ -162,7 +226,12 @@ namespace MediaPortal.Player.MediaInfo
       { "AAC/MPEG4/SSR", AudioCodec.A_AAC_MPEG4_SSR },
       { "AAC/MPEG4/LTP", AudioCodec.A_AAC_MPEG4_LTP },
       { "ALAC", AudioCodec.A_ALAC },
-      { "APE", AudioCodec.A_APE }
+      { "APE", AudioCodec.A_APE },
+      { "11", AudioCodec.A_ADPCM },
+      { "AMR", AudioCodec.A_AMR },
+      { "160", AudioCodec.A_WMA1 },
+      { "161", AudioCodec.A_WMA2 },
+      { "162", AudioCodec.A_WMA9 },
     };
 
     private static readonly Dictionary<int, string> Channels = new Dictionary<int, string>
@@ -181,13 +250,13 @@ namespace MediaPortal.Player.MediaInfo
 
     #endregion
 
-    public AudioStream(MediaInfo info, int number)
-        : base(info, number)
+    public AudioStream(MediaInfo info, int number, int position)
+        : base(info, number, position)
     {
     }
 
-    public AudioStream(int number)
-        : base(null, number)
+    public AudioStream(int number, int position)
+        : base(null, number, position)
     {
     }
 
@@ -203,6 +272,15 @@ namespace MediaPortal.Player.MediaInfo
 
     public AudioCodec Codec { get; set; }
 
+    public string CodecFrendly
+    {
+      get
+      {
+        string result;
+        return CodecFrendlyNames.TryGetValue(Codec, out result) ? result : string.Empty;
+      }
+    }
+
     public TimeSpan Duration { get; set; }
 
     public double Bitrate { get; set; }
@@ -213,11 +291,9 @@ namespace MediaPortal.Player.MediaInfo
 
     public int BitDepth { get; set; }
 
-    public bool Default { get; set; }
-
-    public bool Forced { get; set; }
-
     public string Format { get; set; }
+
+    public string CodecName { get; set; }
 
     public string AudioChannelsFriendly
     {
@@ -230,7 +306,14 @@ namespace MediaPortal.Player.MediaInfo
       Codec = GetCodecByCodecId(GetString(info, "CodecID").ToUpper());
       if (Codec == AudioCodec.A_UNDEFINED)
       {
-        Codec = GetCodecByCodec(GetString(info, "Codec").ToUpper());
+        var codecValue = GetString(info, "Codec");
+        if (codecValue.Equals("PCM", StringComparison.OrdinalIgnoreCase))
+        {
+          var endianness = GetString(info, "Codec_Settings_Endianness");
+          codecValue = string.Format("{0}{1}", codecValue, string.IsNullOrEmpty(endianness) ? string.Empty : " " + endianness);
+        }
+
+        Codec = GetCodecByCodec(codecValue.ToUpper());
       }
 
       Duration = TimeSpan.FromMilliseconds(GetDouble(info, "Duration"));
@@ -238,9 +321,8 @@ namespace MediaPortal.Player.MediaInfo
       Channel = GetInt(info, "Channel(s)");
       SamplingRate = GetDouble(info, "SamplingRate");
       BitDepth = GetInt(info, "BitDepth");
-      Default = GetBool(info, "Default");
-      Forced = GetBool(info, "Forced");
       Format = GetString(info, "Format");
+      CodecName = GetFullCodecName(info);
     }
 
     private static AudioCodec GetCodecByCodecId(string source)
@@ -260,5 +342,27 @@ namespace MediaPortal.Player.MediaInfo
       string result;
       return Channels.TryGetValue(channels, out result) ? result : "Unknown";
     }
+
+    private string GetFullCodecName(MediaInfo mediaInfo)
+    {
+      var strCodec = mediaInfo.Get(StreamKind.Audio, StreamPosition, "Format").ToUpper();
+      var strCodecVer = mediaInfo.Get(StreamKind.Audio, StreamPosition, "Format_Version").ToUpper();
+      if (strCodec == "MPEG-4 VISUAL")
+      {
+        strCodec = mediaInfo.Get(StreamKind.Audio, StreamPosition, "CodecID").ToUpperInvariant();
+      }
+      else
+      {
+        if (!string.IsNullOrEmpty(strCodecVer))
+        {
+          strCodec = (strCodec + " " + strCodecVer).Trim();
+        }
+      }
+
+      strCodec = (strCodec + " " + mediaInfo.Get(StreamKind.Audio, StreamPosition, "Format_Profile").Split(new char[] { '/' })[0].ToUpper()).Trim();
+
+      return strCodec.Replace("+", "PLUS");
+    }
+
   }
 }

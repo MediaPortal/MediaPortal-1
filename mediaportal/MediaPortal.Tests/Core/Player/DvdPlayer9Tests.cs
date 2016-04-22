@@ -22,7 +22,6 @@ using System.Threading;
 using System.Windows.Forms;
 
 using MediaPortal.Player;
-using MediaPortal.Player.MediaInfo;
 
 using NUnit.Framework;
 

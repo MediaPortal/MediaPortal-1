@@ -32,7 +32,6 @@ using DShowNET.Helper;
 using MediaPortal.Configuration;
 using MediaPortal.ExtensionMethods;
 using MediaPortal.GUI.Library;
-using MediaPortal.Player.MediaInfo;
 using MediaPortal.Profile;
 
 //using DirectX.Capture;

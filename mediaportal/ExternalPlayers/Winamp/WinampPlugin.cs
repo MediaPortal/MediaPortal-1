@@ -22,7 +22,6 @@ using System;
 using MediaPortal.Configuration;
 using MediaPortal.GUI.Library;
 using MediaPortal.Player;
-using MediaPortal.Player.MediaInfo;
 using MediaPortal.Profile;
 
 namespace MediaPortal.WinampPlayer
@@ -401,7 +400,7 @@ namespace MediaPortal.WinampPlayer
     {
       if (m_winampController != null)
       {
-        return new AudioStream(1)
+        return new AudioStream(0, 0)
                  {
                    Bitrate = m_winampController.Bitrate,
                    Language = "English",

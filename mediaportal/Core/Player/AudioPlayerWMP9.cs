@@ -26,7 +26,6 @@ using System.Windows.Forms;
 using AxWMPLib;
 using MediaPortal.Configuration;
 using MediaPortal.GUI.Library;
-using MediaPortal.Player.MediaInfo;
 using MediaPortal.Profile;
 using Microsoft.Win32;
 using WMPLib;
@@ -892,7 +891,7 @@ namespace MediaPortal.Player
 
     private AudioStream GetCurrentAudioStream()
     {
-      return new AudioStream(1)
+      return new AudioStream(0, 0)
       {
         Duration = TimeSpan.FromSeconds(_wmp10Player.currentMedia.duration),
         Bitrate = AttributeToDouble("Bitrate", 44100),

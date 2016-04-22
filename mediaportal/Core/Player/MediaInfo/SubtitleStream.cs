@@ -20,7 +20,7 @@
 
 using System.Collections.Generic;
 
-namespace MediaPortal.Player.MediaInfo
+namespace MediaPortal.Player
 {
   public enum SubtitleCodec
   {
@@ -61,18 +61,14 @@ namespace MediaPortal.Player.MediaInfo
 
     #endregion
 
-    public SubtitleStream(MediaInfo info, int number)
-        : base(info, number)
+    public SubtitleStream(MediaInfo info, int number, int position)
+        : base(info, number, position)
     {
     }
 
     public string Format { get; private set; }
 
     public SubtitleCodec Codec { get; private set; }
-
-    public bool Default { get; private set; }
-
-    public bool Forced { get; private set; }
 
     public override MediaStreamKind Kind
     {
@@ -89,8 +85,6 @@ namespace MediaPortal.Player.MediaInfo
       base.AnalyzeStreamInternal(info);
       Format = GetString(info, "Format");
       Codec = GetCodec(GetString(info, "CodecID").ToUpper());
-      Default = GetBool(info, "Default");
-      Forced = GetBool(info, "Forced");
     }
 
     private static SubtitleCodec GetCodec(string source)

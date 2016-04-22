@@ -18,33 +18,32 @@
 
 #endregion
 
-using MediaPortal.Localisation;
-
 namespace MediaPortal.Player
 {
-  public abstract class LanguageMediaStream : MediaStream
+  public class Chapter : MediaStream
   {
-    protected LanguageMediaStream(MediaInfo info, int number, int position)
-        : base(info, number, position)
+    public Chapter(MediaInfo info, int number, int position)
+      : base(info, number, position)
     {
     }
 
-    public string Language { get; set; }
+    public override MediaStreamKind Kind
+    {
+      get { return MediaStreamKind.Menu; }
+    }
 
-    public int Lcid { get; set; }
+    protected override StreamKind StreamKind
+    {
+      get { return StreamKind.Other; }
+    }
 
-    public bool Default { get; set; }
+    public double Offset { get; set; }
 
-    public bool Forced { get; set; }
+    public string Description { get; set; }
 
     protected override void AnalyzeStreamInternal(MediaInfo info)
     {
       base.AnalyzeStreamInternal(info);
-      var language = GetString(info, "Language").ToLower();
-      Default = GetBool(info, "Default");
-      Forced = GetBool(info, "Forced");
-      Language = LanguageHelper.GetLanguageByShortName(language);
-      Lcid = LanguageHelper.GetLcidByShortName(language);
     }
   }
 }

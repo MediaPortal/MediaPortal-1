@@ -23,7 +23,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using MediaPortal.Player;
-using MediaPortal.Player.MediaInfo;
 
 namespace MediaPortal.TagReader
 {

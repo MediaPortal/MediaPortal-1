@@ -18,7 +18,7 @@
 
 #endregion
 
-using MediaPortal.Player.MediaInfo;
+using MediaPortal.Player;
 using NUnit.Framework;
 
 namespace MediaPortal.Tests.Core.Player

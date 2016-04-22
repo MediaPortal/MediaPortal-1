@@ -21,7 +21,7 @@ using System.Runtime.InteropServices;
 
 #pragma warning disable 1591 // Disable XML documentation warnings
 
-namespace MediaPortal.Player.MediaInfo
+namespace MediaPortal.Player
 {
   public enum StreamKind
   {

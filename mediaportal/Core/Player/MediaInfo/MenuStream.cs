@@ -18,12 +18,12 @@
 
 #endregion
 
-namespace MediaPortal.Player.MediaInfo
+namespace MediaPortal.Player
 {
   public class MenuStream : MediaStream
   {
-    public MenuStream(MediaInfo info, int number)
-      : base(info, number)
+    public MenuStream(MediaInfo info, int number, int position)
+      : base(info, number, position)
     {
     }
 
