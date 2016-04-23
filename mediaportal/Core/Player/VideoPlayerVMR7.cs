@@ -217,7 +217,7 @@ namespace MediaPortal.Player
     protected IMediaPosition mediaPos;
 
     /// <summary> video preview window interface. </summary>
-    protected IVideoWindow videoWin;
+    protected IVideoWindow videoWindow;
 
     /// <summary> interface to get information and control video. </summary>
     protected IBasicVideo2 basicVideo;
@@ -332,11 +332,11 @@ namespace MediaPortal.Player
           CloseInterfaces();
           return false;
         }
-        if (videoWin != null)
+        if (videoWindow != null)
         {
-          videoWin.put_WindowStyle(
+          videoWindow.put_WindowStyle(
             (WindowStyle)((int)WindowStyle.Child + (int)WindowStyle.ClipChildren + (int)WindowStyle.ClipSiblings));
-          videoWin.put_MessageDrain(GUIGraphicsContext.form.Handle);
+          videoWindow.put_MessageDrain(GUIGraphicsContext.form.Handle);
         }
 
         #region FFDShowEngine and PostProcessingEngine Detection
@@ -624,7 +624,7 @@ namespace MediaPortal.Player
 
     protected virtual void SetVideoPosition(Rectangle rDest)
     {
-      if (videoWin != null)
+      if (videoWindow != null)
       {
         if (rDest.Left < 0 || rDest.Top < 0 || rDest.Width <= 0 || rDest.Height <= 0)
         {
@@ -633,37 +633,40 @@ namespace MediaPortal.Player
         if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
         {
           Size client = GUIGraphicsContext.form.ClientSize;
-          videoWin.SetWindowPosition(0, 0, client.Width, client.Height);
+          videoWindow.SetWindowPosition(0, 0, client.Width, client.Height);
         }
         else
         {
-          videoWin.SetWindowPosition(rDest.Left, rDest.Top, rDest.Width, rDest.Height);
+          videoWindow.SetWindowPosition(rDest.Left, rDest.Top, rDest.Width, rDest.Height);
         }
       }
     }
 
     protected virtual void SetSourceDestRectangles(Rectangle rSource, Rectangle rDest)
     {
-      if (basicVideo != null)
+      lock (basicVideo)
       {
-        if (rSource.Left < 0 || rSource.Top < 0 || rSource.Width <= 0 || rSource.Height <= 0)
+        if (basicVideo != null)
         {
-          return;
-        }
-        if (rDest.Width <= 0 || rDest.Height <= 0)
-        {
-          return;
-        }
+          if (rSource.Left < 0 || rSource.Top < 0 || rSource.Width <= 0 || rSource.Height <= 0)
+          {
+            return;
+          }
+          if (rDest.Width <= 0 || rDest.Height <= 0)
+          {
+            return;
+          }
 
-        basicVideo.SetSourcePosition(rSource.Left, rSource.Top, rSource.Width, rSource.Height);
+          basicVideo.SetSourcePosition(rSource.Left, rSource.Top, rSource.Width, rSource.Height);
 
-        if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
-        {
-          basicVideo.SetDestinationPosition(rDest.Left, rDest.Top, rDest.Width, rDest.Height);
-        }
-        else
-        {
-          basicVideo.SetDestinationPosition(0, 0, rDest.Width, rDest.Height);
+          if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+          {
+            basicVideo.SetDestinationPosition(rDest.Left, rDest.Top, rDest.Width, rDest.Height);
+          }
+          else
+          {
+            basicVideo.SetDestinationPosition(0, 0, rDest.Width, rDest.Height);
+          }
         }
       }
     }
@@ -706,18 +709,18 @@ namespace MediaPortal.Player
           if (m_bVisible)
           {
             m_bVisible = false;
-            if (videoWin != null)
+            if (videoWindow != null)
             {
-              videoWin.put_Visible(OABool.False);
+              videoWindow.put_Visible(OABool.False);
             }
           }
         }
         else if (!m_bVisible)
         {
           m_bVisible = true;
-          if (videoWin != null)
+          if (videoWindow != null)
           {
-            videoWin.put_Visible(OABool.True);
+            videoWindow.put_Visible(OABool.True);
           }
         }
         updateTimer = DateTime.Now;

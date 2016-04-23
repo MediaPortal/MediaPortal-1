@@ -514,7 +514,7 @@ namespace MediaPortal.Player
       GetInterface = true;
       try
       {
-        graphBuilder = (IGraphBuilder) new FilterGraph();
+        graphBuilder = (IGraphBuilder)new FilterGraphNoThread();
         _rotEntry = new DsROTEntry((IFilterGraph) graphBuilder);
         // add preferred video & audio codecs
         int hr;
@@ -867,7 +867,7 @@ namespace MediaPortal.Player
         mediaSeek = (IMediaSeeking) graphBuilder;
         mediaPos = (IMediaPosition) graphBuilder;
         basicAudio = (IBasicAudio) graphBuilder;
-        videoWin = (IVideoWindow) graphBuilder;
+        videoWindow = (IVideoWindow) graphBuilder;
         if (Vmr9 != null)
         {
           m_iVideoWidth = Vmr9.VideoWidth;
@@ -1338,7 +1338,7 @@ namespace MediaPortal.Player
         mediaSeek = (IMediaSeeking)graphBuilder;
         mediaPos = (IMediaPosition)graphBuilder;
         basicAudio = (IBasicAudio)graphBuilder;
-        videoWin = (IVideoWindow)graphBuilder;
+        videoWindow = (IVideoWindow)graphBuilder;
         m_iVideoWidth = Vmr9.VideoWidth;
         m_iVideoHeight = Vmr9.VideoHeight;
 
@@ -1390,21 +1390,21 @@ namespace MediaPortal.Player
           mediaEvt.SetNotifyWindow(IntPtr.Zero, WM_GRAPHNOTIFY, IntPtr.Zero);
         }
 
-        if (videoWin != null)
+        if (videoWindow != null)
         {
-          videoWin.put_Owner(IntPtr.Zero);
-          videoWin.put_Visible(OABool.False);
+          videoWindow.put_Owner(IntPtr.Zero);
+          videoWindow.put_Visible(OABool.False);
         }
 
         if (mediaCtrl != null) DirectShowUtil.FinalReleaseComObject(mediaCtrl);
-        if (videoWin != null) DirectShowUtil.FinalReleaseComObject(videoWin);
+        if (videoWindow != null) DirectShowUtil.FinalReleaseComObject(videoWindow);
         if (mediaEvt != null) DirectShowUtil.FinalReleaseComObject(mediaEvt);
         if (mediaSeek != null) DirectShowUtil.FinalReleaseComObject(mediaSeek);
         if (mediaPos != null) DirectShowUtil.FinalReleaseComObject(mediaPos);
         if (basicAudio != null) DirectShowUtil.FinalReleaseComObject(basicAudio);
         if (basicVideo != null) DirectShowUtil.FinalReleaseComObject(basicVideo);
 
-        videoWin = null;
+        videoWindow = null;
         mediaCtrl = null;
         mediaEvt = null;
         mediaSeek = null;
