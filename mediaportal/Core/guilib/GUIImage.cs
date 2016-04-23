@@ -846,23 +846,20 @@ namespace MediaPortal.GUI.Library
     {
       lock (GUIGraphicsContext.RenderLock)
       {
-        lock (this)
+        if (!_allocated)
         {
-          if (!_allocated)
-          {
-            return;
-          }
-
-          //base.Dispose(); // breaks fade in/out animations-.
-          _allocated = false;
-          UnsubscribeOnPropertyChanged();
-          UnsubscribeAndReleaseListTextures();
-          Cleanup();
-
-          _memoryImage.SafeDispose();
-          _memoryImageTexture = null;
-          //_debugDisposed = true;   
+          return;
         }
+
+        //base.Dispose(); // breaks fade in/out animations-.
+        _allocated = false;
+        UnsubscribeOnPropertyChanged();
+        UnsubscribeAndReleaseListTextures();
+        Cleanup();
+
+        _memoryImage.SafeDispose();
+        _memoryImageTexture = null;
+        //_debugDisposed = true;   
       }
     }
 

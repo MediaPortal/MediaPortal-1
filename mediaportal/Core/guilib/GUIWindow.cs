@@ -478,7 +478,7 @@ namespace MediaPortal.GUI.Library
       GUIWindow._mainThreadContext.Send(delegate
       {
         LoadSkin();
-      }, null);
+      }, LoadSkin());
 
       if (!_windowAllocated)
       {
@@ -1081,7 +1081,7 @@ namespace MediaPortal.GUI.Library
         GUIWindow._mainThreadContext.Send(delegate
         {
           LoadSkin();
-        }, null);
+        }, LoadSkin());
       }
 
       if (_rememberLastFocusedControl && _rememberLastFocusedControlId >= 0)
@@ -1213,7 +1213,7 @@ namespace MediaPortal.GUI.Library
         GUIWindow._mainThreadContext.Send(delegate
         {
           LoadSkin();
-        }, null);
+        }, LoadSkin());
 
         HashSet<int> faultyControl = new HashSet<int>();
         // tell every control we're gonna alloc the resources next
@@ -1773,7 +1773,7 @@ namespace MediaPortal.GUI.Library
                 GUIWindow._mainThreadContext.Send(delegate
                 {
                   LoadSkin();
-                }, null);
+                }, LoadSkin());
 
                 if (!_windowAllocated)
                 {

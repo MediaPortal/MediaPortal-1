@@ -1003,17 +1003,10 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     private static void VideoWindowChanged()
     {
-      lock (WindowChangeLock)
+      GUIWindow._mainThreadContext.Post(delegate
       {
-        if (OnVideoWindowChanged != null)
-        {
-          GUIWindow._mainThreadContext.Post(delegate
-          {
-            OnVideoWindowChanged();
-          }, null);
-          
-        }
-      }
+        OnVideoWindowChanged?.Invoke();
+      }, null);
     }
 
     /// <summary>
