@@ -52,6 +52,8 @@ namespace MediaPortal.GUI.Library
     protected GUIImage _imageBigPinIcon = null; // pointer to CImage containing the icon
     protected bool _isSelected = false; // item is selected or not
     protected bool _isFolder = false; // indicated if the item is a folder or a path
+    protected bool _hasProgressBar = false;
+    protected int _progressBarPercentage = 0;
     protected string _folder = string.Empty; // path + filename of the item
     protected string _dvdLabel = string.Empty; // indicates the disc number of movie
     protected int _duration = 0; // duration (in seconds) of the movie or song
@@ -551,6 +553,18 @@ namespace MediaPortal.GUI.Library
     {
       get { return _shaded; }
       set { _shaded = value; }
+    }
+
+    public int ProgressBarPercentage
+    {
+      get { return _progressBarPercentage; }
+      set { _progressBarPercentage = value; }
+    }
+
+    public bool HasProgressBar
+    {
+      get { return _hasProgressBar; }
+      set { _hasProgressBar = value; }
     }
 
     /// <summary>
