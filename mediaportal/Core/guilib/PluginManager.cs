@@ -475,6 +475,8 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     private static void LoadWindowPluginsThreaded()
     {
+      SynchronizationContext _mainThreadContext = SynchronizationContext.Current;
+
       LoadWindowWhiteListPluginsNonThreaded();
 
       if (_windowPluginsLoaded)
@@ -552,11 +554,10 @@ namespace MediaPortal.GUI.Library
                                              TimeSpan delay = startTime - queueTime;
                                              Log.Debug("PluginManager: Begin loading '{0}' ({1} ms thread delay)", pluginFile,
                                                delay.TotalMilliseconds);
-                                             GUIWindow._mainThreadContext.Post(delegate
-                                                                     {
-                                             LoadWindowPlugin(file);
-                                             }, null);
-
+                                             _mainThreadContext?.Post(delegate
+                                             {
+                                               LoadWindowPlugin(file);
+                                             }, file);
                                              DateTime endTime = DateTime.Now;
                                              TimeSpan runningTime = endTime - startTime;
                                              Log.Debug("PluginManager: End loading '{0}' ({1} ms running time)", pluginFile,
