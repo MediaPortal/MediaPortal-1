@@ -22,9 +22,10 @@ public:
   CRefTime TotalDuration();
   void     Set(CPcr& startPcr, CPcr& endPcr, CPcr& maxPcr);
   void     StopUpdate(bool stopping);
-	void     CloseBufferFiles();
 
 private:
+	void     CloseBufferFiles();
+
   int          m_pid;
   int          m_videoPid;
 	FileReader*  m_reader;

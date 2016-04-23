@@ -25,7 +25,7 @@ protected:
 	virtual ~TsMPEG2TransportFileServerMediaSubsession();
 	virtual float duration() const;
 	virtual __int64 filelength() const;
-  void OpenFileDuration();
+  void InitFileDuration();
   void CloseFileDuration();
 
   CTsDuration *m_pDuration;

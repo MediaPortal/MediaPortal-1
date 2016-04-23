@@ -109,12 +109,27 @@ void CTsDuration::CloseBufferFiles()
 // 
 void CTsDuration::UpdateDuration(bool logging, bool background)
 {
-  if (!m_pFileReadBuffer)
+  if (!m_pFileReadBuffer || m_bStopping || (m_reader == NULL))
   {
     m_startPcr.Reset();
     m_endPcr.Reset();
-    LogDebug("CTsDuration::UpdateDuration() - ERROR no buffer !!");
+    LogDebug("CTsDuration::UpdateDuration() - ERROR no buffer/stopping/no filereader !!");
+    CloseBufferFiles();
     return;
+  }
+  
+  if (m_reader->IsFileInvalid())
+  {
+    //Open the file
+    HRESULT hr = m_reader->OpenFile();
+    if (hr!= S_OK)
+    {
+      m_startPcr.Reset();
+      m_endPcr.Reset();
+	    LogDebug("CTsDuration::UpdateDuration():OpenFile() failed, hr = 0x%x", hr);  
+      CloseBufferFiles();
+      return;
+	  }
   }
 
   int Loop=5 ;
@@ -143,16 +158,19 @@ void CTsDuration::UpdateDuration(bool logging, bool background)
       {
         m_startPcr.Reset();
         m_endPcr.Reset();
+        CloseBufferFiles();
         return;
       }
       DWORD dwBytesRead = 0;
       m_reader->SetFilePointer(offset,FILE_BEGIN);
       if (!SUCCEEDED(m_reader->Read(m_pFileReadBuffer,DUR_READ_SIZE,&dwBytesRead)))
       {
+        CloseBufferFiles();
         return;
       }
       if (dwBytesRead<=0) 
       {
+        CloseBufferFiles();
         return;
       }
       OnRawData2(m_pFileReadBuffer,dwBytesRead);
@@ -166,6 +184,7 @@ void CTsDuration::UpdateDuration(bool logging, bool background)
       else if (m_videoPid<0)
       {
         //failed to find a first PCR
+        CloseBufferFiles();
         return;
       }     
       else
@@ -210,6 +229,7 @@ void CTsDuration::UpdateDuration(bool logging, bool background)
       {
         m_startPcr.Reset();
         m_endPcr.Reset();
+        CloseBufferFiles();
         return;
       }
       DWORD dwBytesRead = 0;
@@ -218,12 +238,14 @@ void CTsDuration::UpdateDuration(bool logging, bool background)
       {
         m_startPcr.Reset();
         m_endPcr.Reset();
+        CloseBufferFiles();
         return;
       }
       if (dwBytesRead<=0) 
       {
         m_startPcr.Reset();
         m_endPcr.Reset();
+        CloseBufferFiles();
         return;
       }
       Reset() ; // Reset internal "PacketSync" buffer
@@ -237,6 +259,7 @@ void CTsDuration::UpdateDuration(bool logging, bool background)
         //failed to find an end PCR
         m_startPcr.Reset();
         m_endPcr.Reset();
+        CloseBufferFiles();
         return;
       }
       offset += ( (DUR_READ_SIZE*(searchLoopCnt/2)) - (188*16)); //step back a few packets less than a buffer so that buffers overlap
@@ -290,7 +313,8 @@ void CTsDuration::UpdateDuration(bool logging, bool background)
     m_maxPcr.PcrReferenceExtension = 0x1ffULL;
     m_maxPcr.IsValid = true;
   }
-  
+
+  CloseBufferFiles();
 }
 
 void CTsDuration::OnTsPacket(byte* tsPacket, int bufferOffset, int bufferLength)

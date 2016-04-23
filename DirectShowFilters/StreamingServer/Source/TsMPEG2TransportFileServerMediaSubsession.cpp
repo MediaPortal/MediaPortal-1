@@ -25,7 +25,10 @@ TsMPEG2TransportFileServerMediaSubsession::TsMPEG2TransportFileServerMediaSubses
 
   m_pDuration = new CTsDuration();
   m_pFileDuration = NULL;
-  OpenFileDuration();
+  if (m_pDuration)
+  {
+    InitFileDuration();
+  }
 	LogDebug(L"TsMp2TFSMediaSubsession::ctor - filename %s", m_fileName);  
 }
 
@@ -61,9 +64,14 @@ RTPSink* TsMPEG2TransportFileServerMediaSubsession::createNewRTPSink(Groupsock* 
 		33, 90000, "video", "mp2t",
 		1, True, False /*no 'M' bit*/);
 }
+
 void TsMPEG2TransportFileServerMediaSubsession::seekStreamSource(FramedSource* inputSource, double& seekNPT, double streamDuration, u_int64_t& numBytes)
 {  
-
+  if (m_pDuration==NULL)
+  {
+	  LogDebug("TsMp2TFSMediaSubsession::seekStreamSource - error, m_pDuration is NULL");
+    return;
+  }
 
 	TsMPEG2TransportStreamFramer* framer=(TsMPEG2TransportStreamFramer*)inputSource;
 	TsStreamFileSource* source=(TsStreamFileSource*)framer->inputSource();
@@ -95,7 +103,6 @@ float TsMPEG2TransportFileServerMediaSubsession::duration() const
   {
     // void CTsDuration::UpdateDuration(bool logging, bool background)
     m_pDuration->UpdateDuration(false, false);      
-    m_pDuration->CloseBufferFiles(); //avoid leaving timeshift data files open
 
     if (m_iDurationCount < 1)
     {
@@ -119,7 +126,7 @@ __int64 TsMPEG2TransportFileServerMediaSubsession::filelength() const
   return fileSizeTmp;
 }
 
-void TsMPEG2TransportFileServerMediaSubsession::OpenFileDuration()
+void TsMPEG2TransportFileServerMediaSubsession::InitFileDuration()
 {
   if(m_pFileDuration==NULL)
   {
@@ -135,20 +142,14 @@ void TsMPEG2TransportFileServerMediaSubsession::OpenFileDuration()
 
     if(m_pFileDuration==NULL)
     {
-	    LogDebug(L"TsMp2TFSMediaSubsession::OpenFileDuration() failed, m_fileName %s", m_fileName);  
+	    LogDebug(L"TsMp2TFSMediaSubsession::InitFileDuration() failed, m_fileName %s", m_fileName);  
       return;
     }
   
     // initialize duration estimator
-    m_pFileDuration->SetFileName(m_fileName);
-    if(FAILED(m_pFileDuration->OpenFile()))
-    {
-      CloseFileDuration();
-      return;
-    }
-  
+    m_pFileDuration->SetFileName(m_fileName);  
     m_pDuration->SetFileReader(m_pFileDuration);
-	  LogDebug(L"TsMp2TFSMediaSubsession::OpenFileDuration(): %s", m_fileName);  
+	  LogDebug(L"TsMp2TFSMediaSubsession::InitFileDuration(): %s", m_fileName);  
   }
 }
 
