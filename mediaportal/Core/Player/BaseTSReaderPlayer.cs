@@ -649,7 +649,7 @@ namespace MediaPortal.Player
 
     public override void SetVideoWindow()
     {
-      lock (lockObj)
+      //lock (lockObj)
       {
         if (GUIGraphicsContext.IsFullScreenVideo != _isFullscreen)
         {
@@ -1490,26 +1490,29 @@ namespace MediaPortal.Player
 
     protected virtual void SetSourceDestRectangles(Rectangle rSource, Rectangle rDest)
     {
-      if (_basicVideo != null)
+      lock (_basicVideo)
       {
-        if (rSource.Left < 0 || rSource.Top < 0 || rSource.Width <= 0 || rSource.Height <= 0)
+        if (_basicVideo != null)
         {
-          return;
-        }
-        if (rDest.Width <= 0 || rDest.Height <= 0)
-        {
-          return;
-        }
+          if (rSource.Left < 0 || rSource.Top < 0 || rSource.Width <= 0 || rSource.Height <= 0)
+          {
+            return;
+          }
+          if (rDest.Width <= 0 || rDest.Height <= 0)
+          {
+            return;
+          }
 
-        _basicVideo.SetSourcePosition(rSource.Left, rSource.Top, rSource.Width, rSource.Height);
+          _basicVideo.SetSourcePosition(rSource.Left, rSource.Top, rSource.Width, rSource.Height);
 
-        if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
-        {
-          _basicVideo.SetDestinationPosition(rDest.Left, rDest.Top, rDest.Width, rDest.Height);
-        }
-        else
-        {
-          _basicVideo.SetDestinationPosition(0, 0, rDest.Width, rDest.Height);
+          if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+          {
+            _basicVideo.SetDestinationPosition(rDest.Left, rDest.Top, rDest.Width, rDest.Height);
+          }
+          else
+          {
+            _basicVideo.SetDestinationPosition(0, 0, rDest.Width, rDest.Height);
+          }
         }
       }
     }

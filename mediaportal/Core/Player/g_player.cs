@@ -1321,108 +1321,110 @@ namespace MediaPortal.Player
 
     public static bool PlayVideoStream(string strURL, string streamName)
     {
-      try
+      bool ret = false;
+      GUIWindow._mainThreadContext.Send(delegate
       {
-        _mediaInfo = null;
-        Starting = true;
-        //stop radio
-        GUIMessage msgRadio = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RECORDER_STOP_RADIO, 0, 0, 0, 0, 0, null);
-        GUIWindowManager.SendMessage(msgRadio);
-        _currentStep = 0;
-        _currentStepIndex = -1;
-        _seekTimer = DateTime.MinValue;
-        if (string.IsNullOrEmpty(strURL))
+        try
         {
-          UnableToPlay(strURL, MediaType.Unknown);
-          return false;
-        }
+          _mediaInfo = null;
+          Starting = true;
+          //stop radio
+          GUIMessage msgRadio = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RECORDER_STOP_RADIO, 0, 0, 0, 0, 0, null);
+          GUIWindowManager.SendMessage(msgRadio);
+          _currentStep = 0;
+          _currentStepIndex = -1;
+          _seekTimer = DateTime.MinValue;
+          if (string.IsNullOrEmpty(strURL))
+          {
+            UnableToPlay(strURL, MediaType.Unknown);
+            ret = false;
+            return;
+            //return false;
+          }
 
-        _isInitialized = true;
-        _subs = null;
-        Log.Info("g_Player.PlayVideoStream({0})", strURL);
-        if (_player != null)
-        {
-          GUIGraphicsContext.ShowBackground = true;
-          OnChanged(strURL);
-          OnStopped();
+          _isInitialized = true;
+          _subs = null;
+          Log.Info("g_Player.PlayVideoStream({0})", strURL);
           if (_player != null)
           {
-            _player.Stop();
+            GUIGraphicsContext.ShowBackground = true;
+            OnChanged(strURL);
+            OnStopped();
+            if (_player != null)
+            {
+              _player.Stop();
+            }
+            CachePlayer();
+            GUIGraphicsContext.form.Invalidate(true);
+            _player = null;
+            GC.Collect();
+            GC.Collect();
+            GC.Collect();
+            GC.Collect();
           }
-          CachePlayer();
-          GUIGraphicsContext.form.Invalidate(true);
-          _player = null;
-          GC.Collect();
-          GC.Collect();
-          GC.Collect();
-          GC.Collect();
-        }
 
-        //int iUseVMR9inMYMovies = 0;
-        //using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.MPSettings())
-        //{
-        //  iUseVMR9inMYMovies = xmlreader.GetValueAsInt("movieplayer", "vmr9", 1);
-        //}
-        //if (iUseVMR9inMYMovies == 0)
-        //  _player = new Player.VideoPlayerVMR7();
-        //else
-        _player = new VideoPlayerVMR9();
-        _player = CachePreviousPlayer(_player);
-        bool isPlaybackPossible;
-        if (streamName != null)
-        {
-          if (streamName != "")
+          //int iUseVMR9inMYMovies = 0;
+          //using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.MPSettings())
+          //{
+          //  iUseVMR9inMYMovies = xmlreader.GetValueAsInt("movieplayer", "vmr9", 1);
+          //}
+          //if (iUseVMR9inMYMovies == 0)
+          //  _player = new Player.VideoPlayerVMR7();
+          //else
+          _player = new VideoPlayerVMR9();
+          _player = CachePreviousPlayer(_player);
+          bool isPlaybackPossible;
+          if (streamName != null)
           {
-            isPlaybackPossible = _player.PlayStream(strURL, streamName);
+            isPlaybackPossible = streamName != "" ? _player.PlayStream(strURL, streamName) : _player.Play(strURL);
           }
           else
           {
             isPlaybackPossible = _player.Play(strURL);
           }
-        }
-        else
-        {
-          isPlaybackPossible = _player.Play(strURL);
-        }
-        if (!isPlaybackPossible)
-        {
-          Log.Info("player:ended");
-          _player.SafeDispose();
-          _player = null;
-          _subs = null;
-          GC.Collect();
-          GC.Collect();
-          GC.Collect();
-          //2nd try
-          _player = new VideoPlayerVMR9();
-          isPlaybackPossible = _player.Play(strURL);
           if (!isPlaybackPossible)
           {
-            Log.Info("player2:ended");
+            Log.Info("player:ended");
             _player.SafeDispose();
             _player = null;
             _subs = null;
             GC.Collect();
             GC.Collect();
             GC.Collect();
+            //2nd try
+            _player = new VideoPlayerVMR9();
+            isPlaybackPossible = _player.Play(strURL);
+            if (!isPlaybackPossible)
+            {
+              Log.Info("player2:ended");
+              _player.SafeDispose();
+              _player = null;
+              _subs = null;
+              GC.Collect();
+              GC.Collect();
+              GC.Collect();
+            }
           }
+          else if (_player.Playing)
+          {
+            _currentFilePlaying = _player.CurrentFile;
+            OnStarted();
+          }
+          _isInitialized = false;
+          if (!isPlaybackPossible)
+          {
+            UnableToPlay(strURL, MediaType.Unknown);
+          }
+          ret = isPlaybackPossible;
+          return;
+          //return isPlaybackPossible;
         }
-        else if (_player.Playing)
+        finally
         {
-          _currentFilePlaying = _player.CurrentFile;
-          OnStarted();
+          Starting = false;
         }
-        _isInitialized = false;
-        if (!isPlaybackPossible)
-        {
-          UnableToPlay(strURL, MediaType.Unknown);
-        }
-        return isPlaybackPossible;
-      }
-      finally
-      {
-        Starting = false;
-      }
+      }, ret);
+      return ret;
     }
 
     private static IPlayer CachePreviousPlayer(IPlayer newPlayer)
@@ -1483,319 +1485,339 @@ namespace MediaPortal.Player
 
     public static bool Play(string strFile, MediaType type, TextReader chapters, bool fromPictures, int title, bool forcePlay, bool fromExtTS)
     {
-      try
+      bool ret = false;
+      GUIWindow._mainThreadContext.Send(delegate
       {
-        if (string.IsNullOrEmpty(strFile))
+        try
         {
-          Log.Error("g_Player.Play() called without file attribute");
-          return false;
-        }
-
-        g_Player.SetResumeBDTitleState = title;
-
-        IsPicture = false;
-        IsExtTS = false;
-        bool AskForRefresh = true;
-        bool playingRemoteUrl = Util.Utils.IsRemoteUrl(strFile);
-        string extension = Util.Utils.GetFileExtension(strFile).ToLowerInvariant();
-        bool isImageFile = !playingRemoteUrl && Util.VirtualDirectory.IsImageFile(extension);
-        if (isImageFile)
-        {
-          if (!File.Exists(Util.DaemonTools.GetVirtualDrive() + @"\VIDEO_TS\VIDEO_TS.IFO"))
-            if (!File.Exists(Util.DaemonTools.GetVirtualDrive() + @"\BDMV\index.bdmv"))
-            {
-              _currentFilePlaying = strFile;
-              MediaPortal.Ripper.AutoPlay.ExamineCD(Util.DaemonTools.GetVirtualDrive(), true);
-              return true;
-            }
-        }
-
-        if (!playingRemoteUrl) // MediaInfo can only be used on files (local or SMB)
-        {
-          if (currentMediaInfoFilePlaying != strFile)
+          if (string.IsNullOrEmpty(strFile))
           {
-            _mediaInfo = new MediaInfoWrapper(strFile);
-            currentMediaInfoFilePlaying = strFile;
+            Log.Error("g_Player.Play() called without file attribute");
+            ret = false;
+            return;
+            //return false;
           }
-        }
 
-        // back to previous Windows if we are only in video fullscreen to do a proper release when next item is music only
-        if (((GUIWindow.Window) (Enum.Parse(typeof (GUIWindow.Window), GUIWindowManager.ActiveWindow.ToString())) ==
-             GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO) && !MediaInfo.hasVideo && type == MediaType.Music)
-        {
-          GUIWindowManager.ShowPreviousWindow();
-        }
+          g_Player.SetResumeBDTitleState = title;
 
-        Starting = true;
-        _currentStep = 0;
-        _currentStepIndex = -1;
-        _seekTimer = DateTime.MinValue;
-        _isInitialized = true;
-        _subs = null;
+          IsPicture = false;
+          IsExtTS = false;
+          bool AskForRefresh = true;
+          bool playingRemoteUrl = Util.Utils.IsRemoteUrl(strFile);
+          string extension = Util.Utils.GetFileExtension(strFile).ToLowerInvariant();
+          bool isImageFile = !playingRemoteUrl && Util.VirtualDirectory.IsImageFile(extension);
+          if (isImageFile)
+          {
+            if (!File.Exists(Util.DaemonTools.GetVirtualDrive() + @"\VIDEO_TS\VIDEO_TS.IFO"))
+              if (!File.Exists(Util.DaemonTools.GetVirtualDrive() + @"\BDMV\index.bdmv"))
+              {
+                _currentFilePlaying = strFile;
+                MediaPortal.Ripper.AutoPlay.ExamineCD(Util.DaemonTools.GetVirtualDrive(), true);
+                ret = true;
+                return;
+                //return true;
+              }
+          }
 
-        if (_player != null)
-        {
-          GUIGraphicsContext.ShowBackground = true;
-          OnChanged(strFile);
-          OnStopped();
-          bool doStop = true;
-          if (type != MediaType.Video && Util.Utils.IsAudio(strFile))
+          if (!playingRemoteUrl) // MediaInfo can only be used on files (local or SMB)
+          {
+            if (currentMediaInfoFilePlaying != strFile)
+            {
+              _mediaInfo = new MediaInfoWrapper(strFile);
+              currentMediaInfoFilePlaying = strFile;
+            }
+          }
+
+          // back to previous Windows if we are only in video fullscreen to do a proper release when next item is music only
+          if (((GUIWindow.Window) (Enum.Parse(typeof (GUIWindow.Window), GUIWindowManager.ActiveWindow.ToString())) ==
+               GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO) && !MediaInfo.hasVideo && type == MediaType.Music)
+          {
+            GUIWindowManager.ShowPreviousWindow();
+          }
+
+          Starting = true;
+          _currentStep = 0;
+          _currentStepIndex = -1;
+          _seekTimer = DateTime.MinValue;
+          _isInitialized = true;
+          _subs = null;
+
+          if (_player != null)
+          {
+            GUIGraphicsContext.ShowBackground = true;
+            OnChanged(strFile);
+            OnStopped();
+            bool doStop = true;
+            if (type != MediaType.Video && Util.Utils.IsAudio(strFile))
+            {
+              if (type == MediaType.Unknown)
+              {
+                type = MediaType.Music;
+              }
+              if (MediaInfo != null && MediaInfo.hasVideo && type == MediaType.Music)
+              {
+                type = MediaType.Video;
+              }
+              if (BassMusicPlayer.IsDefaultMusicPlayer && BassMusicPlayer.Player.Playing && type != MediaType.Video)
+              {
+                doStop = !BassMusicPlayer.Player.CrossFadingEnabled;
+              }
+            }
+
+            // Set currentMedia needed for correct detection when BASS Engine is doing a Stop
+            _currentMediaForBassEngine = type;
+
+            if (doStop)
+            {
+              if (_player != null)
+              {
+                _player.Stop();
+
+                if (BassMusicPlayer.IsDefaultMusicPlayer && type != MediaType.Music)
+                {
+                  // This would be better to be handled in a new Stop() parameter, but it would break the interface compatibility
+                  BassMusicPlayer.Player.FreeBass();
+                }
+              }
+
+              CachePlayer();
+              _player = null;
+            }
+          }
+
+          if (!playingRemoteUrl && Util.Utils.IsDVD(strFile))
+          {
+            ChangeDriveSpeed(strFile, DriveType.CD);
+          }
+
+          if (MediaInfo != null && MediaInfo.hasVideo && type == MediaType.Music)
+          {
+            type = MediaType.Video;
+          }
+
+          if ((!playingRemoteUrl && Util.Utils.IsVideo(strFile)) || Util.Utils.IsLiveTv(strFile) ||
+              Util.Utils.IsRTSP(strFile)) //local video, tv, rtsp
           {
             if (type == MediaType.Unknown)
             {
-              type = MediaType.Music;
-            }
-            if (MediaInfo != null && MediaInfo.hasVideo && type == MediaType.Music)
-            {
+              Log.Debug("g_Player.Play - Mediatype Unknown, forcing detection as Video");
               type = MediaType.Video;
             }
-            if (BassMusicPlayer.IsDefaultMusicPlayer && BassMusicPlayer.Player.Playing && type != MediaType.Video)
+            if (type != MediaType.Music)
             {
-              doStop = !BassMusicPlayer.Player.CrossFadingEnabled;
+              using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.MPSettings())
+              {
+                _BDInternalMenu = xmlreader.GetValueAsBool("bdplayer", "useInternalBDPlayer", true);
+              }
+              if (_BDInternalMenu && extension == ".bdmv")
+              {
+                AskForRefresh = false;
+              }
+              if (AskForRefresh)
+              {
+                // Refreshrate change done here. Blu-ray player will handle the refresh rate changes by itself
+                // Identify if it's a video
+                if (strFile.IndexOf(@"\BDMV\INDEX.BDMV") == -1 && type != MediaType.Radio)
+                {
+                  // Make a double check on .ts because it can be recorded TV or Radio
+                  if (extension == ".ts")
+                  {
+                    if (MediaInfo != null && MediaInfo.hasVideo)
+                    {
+                      RefreshRateChanger.AdaptRefreshRate(strFile, (RefreshRateChanger.MediaType) (int) type);
+                    }
+                  }
+                  else
+                  {
+                    RefreshRateChanger.AdaptRefreshRate(strFile, (RefreshRateChanger.MediaType) (int) type);
+                  }
+                }
+              }
             }
+
+            if (RefreshRateChangePending())
+            {
+              ret = true;
+              return;
+              //return true;
+            }
+
+            // Set bool to know if we want to use video codec for .ts files
+            if (fromExtTS)
+            {
+              IsExtTS = true;
+            }
+            // Set bool to know if video if we force play
+            ForcePlay = forcePlay;
           }
 
           // Set currentMedia needed for correct detection when BASS Engine is doing a Stop
           _currentMediaForBassEngine = type;
 
-          if (doStop)
+          Log.Info("g_Player.Play({0} {1})", strFile, type);
+          if (!playingRemoteUrl && Util.Utils.IsVideo(strFile) && type != MediaType.Music)
           {
-            if (_player != null)
+            if (!Util.Utils.IsRTSP(strFile) && extension != ".ts") // do not play recorded tv with external player
             {
-              _player.Stop();
-              
-              if (BassMusicPlayer.IsDefaultMusicPlayer && type != MediaType.Music)
+              using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.MPSettings())
               {
-                // This would be better to be handled in a new Stop() parameter, but it would break the interface compatibility
-                BassMusicPlayer.Player.FreeBass();
-              }
-            }
+                bool bInternal = xmlreader.GetValueAsBool("movieplayer", "internal", true);
+                bool bInternalDVD = xmlreader.GetValueAsBool("dvdplayer", "internal", true);
+                bool bUseExternalPlayerForDVD = xmlreader.GetValueAsBool("dvdplayer", "usefordvd", true);
+                bool bUseExternalPlayerForBluray = xmlreader.GetValueAsBool("bdplayer", "useforbluray", true);
 
-            CachePlayer();
-            _player = null;
-          }
-        }
-
-        if (!playingRemoteUrl && Util.Utils.IsDVD(strFile))
-        {
-          ChangeDriveSpeed(strFile, DriveType.CD);
-        }
-
-        if (MediaInfo != null && MediaInfo.hasVideo && type == MediaType.Music)
-        {
-          type = MediaType.Video;
-        }
-
-        if ((!playingRemoteUrl && Util.Utils.IsVideo(strFile)) || Util.Utils.IsLiveTv(strFile) ||
-            Util.Utils.IsRTSP(strFile)) //local video, tv, rtsp
-        {
-          if (type == MediaType.Unknown)
-          {
-            Log.Debug("g_Player.Play - Mediatype Unknown, forcing detection as Video");
-            type = MediaType.Video;
-          }
-          if (type != MediaType.Music)
-          {
-            using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.MPSettings())
-            {
-              _BDInternalMenu = xmlreader.GetValueAsBool("bdplayer", "useInternalBDPlayer", true);
-            }
-            if (_BDInternalMenu && extension == ".bdmv")
-            {
-              AskForRefresh = false;
-            }
-            if (AskForRefresh)
-            {
-              // Refreshrate change done here. Blu-ray player will handle the refresh rate changes by itself
-              // Identify if it's a video
-              if (strFile.IndexOf(@"\BDMV\INDEX.BDMV") == -1 && type != MediaType.Radio)
-              {
-                // Make a double check on .ts because it can be recorded TV or Radio
-                if (extension == ".ts")
+                // External player extension filter
+                _externalPlayerExtensions = xmlreader.GetValueAsString("movieplayer", "extensions", "");
+                if (!bInternal && !string.IsNullOrEmpty(_externalPlayerExtensions) &&
+                    extension != ".ifo" && extension != ".vob" && extension != ".bdmv" &&
+                    !Util.Utils.IsDVDImage(strFile))
                 {
-                  if (MediaInfo != null && MediaInfo.hasVideo)
-                  {
-                    RefreshRateChanger.AdaptRefreshRate(strFile, (RefreshRateChanger.MediaType)(int)type);
-                  }
+                  // Do not use external player if file ext is not in the extension list
+                  if (!CheckExtension(strFile))
+                    bInternal = true;
                 }
-                else
+
+                // Ensure DVD player 
+                if ((!bUseExternalPlayerForDVD && !bInternalDVD && !isImageFile &&
+                     (extension == ".ifo" || extension == ".vob")) ||
+                    (!bUseExternalPlayerForDVD && !bInternalDVD && isImageFile && Util.Utils.IsDVDImage(strFile)))
                 {
-                  RefreshRateChanger.AdaptRefreshRate(strFile, (RefreshRateChanger.MediaType)(int)type);
+                  bInternalDVD = true;
                 }
-              }
-            }
-          }
 
-          if (RefreshRateChangePending())
-          {
-            return true;
-          }
-
-          // Set bool to know if we want to use video codec for .ts files
-          if (fromExtTS)
-          {
-            IsExtTS = true;
-          }
-          // Set bool to know if video if we force play
-          ForcePlay = forcePlay;
-        }
-
-        // Set currentMedia needed for correct detection when BASS Engine is doing a Stop
-        _currentMediaForBassEngine = type;
-
-        Log.Info("g_Player.Play({0} {1})", strFile, type);
-        if (!playingRemoteUrl && Util.Utils.IsVideo(strFile) && type != MediaType.Music)
-        {
-          if (!Util.Utils.IsRTSP(strFile) && extension != ".ts") // do not play recorded tv with external player
-          {
-            using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.MPSettings())
-            {
-              bool bInternal = xmlreader.GetValueAsBool("movieplayer", "internal", true);
-              bool bInternalDVD = xmlreader.GetValueAsBool("dvdplayer", "internal", true);
-              bool bUseExternalPlayerForDVD = xmlreader.GetValueAsBool("dvdplayer", "usefordvd", true);
-              bool bUseExternalPlayerForBluray = xmlreader.GetValueAsBool("bdplayer", "useforbluray", true);
-
-              // External player extension filter
-              _externalPlayerExtensions = xmlreader.GetValueAsString("movieplayer", "extensions", "");
-              if (!bInternal && !string.IsNullOrEmpty(_externalPlayerExtensions) &&
-                  extension != ".ifo" && extension != ".vob" && extension != ".bdmv" && !Util.Utils.IsDVDImage(strFile))
-              {
-                // Do not use external player if file ext is not in the extension list
-                if (!CheckExtension(strFile))
-                  bInternal = true;
-              }
-
-              // Ensure DVD player 
-              if ((!bUseExternalPlayerForDVD && !bInternalDVD && !isImageFile && (extension == ".ifo" || extension == ".vob")) ||
-                  (!bUseExternalPlayerForDVD && !bInternalDVD && isImageFile && Util.Utils.IsDVDImage(strFile)))
-              {
-                  bInternalDVD = true;
-              }
-
-              // Ensure BD player is configured external player for Bluray
-              if ((!bUseExternalPlayerForBluray && !bInternalDVD && !isImageFile && extension == ".bdmv") ||
-                  (!bUseExternalPlayerForBluray && !bInternalDVD && isImageFile && Util.Utils.IsBDImage(strFile)))
-              {
-                  bInternalDVD = true;
-              }
-
-              if ((bUseExternalPlayerForBluray && !isImageFile && extension == ".bdmv") ||
-                  (bUseExternalPlayerForBluray && isImageFile && Util.Utils.IsBDImage(strFile)))
-              {
-                bInternalDVD = false;
-              }
-
-              if ((!bInternalDVD && !isImageFile && (extension == ".ifo" || extension == ".vob" || extension == ".bdmv")) ||
-                  (!bInternalDVD && isImageFile && Util.Utils.IsDVDImage(strFile)) ||
-                  // No image and no DVD folder rips
-                  (!bInternal && !isImageFile && extension != ".ifo" && extension != ".vob" && extension != ".bdmv") ||
-                  // BluRay image
-                  (!bInternal && isImageFile && Util.Utils.IsBDImage(strFile))) // external player used
-              {
-                if (isImageFile)
+                // Ensure BD player is configured external player for Bluray
+                if ((!bUseExternalPlayerForBluray && !bInternalDVD && !isImageFile && extension == ".bdmv") ||
+                    (!bUseExternalPlayerForBluray && !bInternalDVD && isImageFile && Util.Utils.IsBDImage(strFile)))
                 {
-                  // Check for DVD ISO
-                  strFile = Util.DaemonTools.GetVirtualDrive() + @"\VIDEO_TS\VIDEO_TS.IFO";
-                  if (!File.Exists(strFile))
+                  bInternalDVD = true;
+                }
+
+                if ((bUseExternalPlayerForBluray && !isImageFile && extension == ".bdmv") ||
+                    (bUseExternalPlayerForBluray && isImageFile && Util.Utils.IsBDImage(strFile)))
+                {
+                  bInternalDVD = false;
+                }
+
+                if ((!bInternalDVD && !isImageFile &&
+                     (extension == ".ifo" || extension == ".vob" || extension == ".bdmv")) ||
+                    (!bInternalDVD && isImageFile && Util.Utils.IsDVDImage(strFile)) ||
+                    // No image and no DVD folder rips
+                    (!bInternal && !isImageFile && extension != ".ifo" && extension != ".vob" && extension != ".bdmv") ||
+                    // BluRay image
+                    (!bInternal && isImageFile && Util.Utils.IsBDImage(strFile))) // external player used
+                {
+                  if (isImageFile)
                   {
-                    // Check for BluRayISO
-                    strFile = Util.DaemonTools.GetVirtualDrive() + (@"\BDMV\index.bdmv");
+                    // Check for DVD ISO
+                    strFile = Util.DaemonTools.GetVirtualDrive() + @"\VIDEO_TS\VIDEO_TS.IFO";
                     if (!File.Exists(strFile))
-                      return false;
+                    {
+                      // Check for BluRayISO
+                      strFile = Util.DaemonTools.GetVirtualDrive() + (@"\BDMV\index.bdmv");
+                      if (!File.Exists(strFile))
+                      {
+                        ret = false;
+                        return;
+                      }
+                      //return false;
+                    }
                   }
-                }
-                // Do refresh rate
-                RefreshRateChanger.AdaptRefreshRate(strFile, (RefreshRateChanger.MediaType)(int)type);
+                  // Do refresh rate
+                  RefreshRateChanger.AdaptRefreshRate(strFile, (RefreshRateChanger.MediaType) (int) type);
 
-                if (RefreshRateChangePending())
-                {
-                  return true;
-                }
-
-                if (Util.Utils.PlayMovie(strFile))
-                {
-                  if (MediaInfo != null && MediaInfo.hasVideo)
+                  if (RefreshRateChangePending())
                   {
-                    RefreshRateChanger.AdaptRefreshRate();
+                    ret = true;
+                    return;
+                    //return true;
                   }
-                  return true;
-                }
-                else // external player error
-                {
-                  UnableToPlay(strFile, type);
-                  return false;
+
+                  if (Util.Utils.PlayMovie(strFile))
+                  {
+                    if (MediaInfo != null && MediaInfo.hasVideo)
+                    {
+                      RefreshRateChanger.AdaptRefreshRate();
+                    }
+                    ret = true;
+                    return;
+                    //return true;
+                  }
+                  else // external player error
+                  {
+                    UnableToPlay(strFile, type);
+                    ret = false;
+                    return;
+                    //return false;
+                  }
                 }
               }
             }
           }
-        }
-        // Still for BDISO strFile = ISO filename, convert it
-        if (!playingRemoteUrl) Util.Utils.IsBDImage(strFile, ref strFile);
+          // Still for BDISO strFile = ISO filename, convert it
+          if (!playingRemoteUrl) Util.Utils.IsBDImage(strFile, ref strFile);
 
-        _currentFileName = strFile;
-        _player = _factory.Create(strFile, type);
+          _currentFileName = strFile;
+          _player = _factory.Create(strFile, type);
 
-        if (_player != null)
-        {
-          if (chapters != null)
+          if (_player != null)
           {
-            LoadChapters(chapters);
-          }
-          else
-          {
-            if (!playingRemoteUrl) LoadChapters(strFile);
-          }
-          _player = CachePreviousPlayer(_player);
-          bool bResult = _player.Play(strFile);
-          if (!bResult)
-          {
-            Log.Info("g_Player: ended");
-            _player.SafeDispose();
-            _player = null;
-            _subs = null;
-            UnableToPlay(strFile, type);
-          }
-          else if (_player != null && _player.Playing)
-          {
-            _isInitialized = false;
-            _currentFilePlaying = _player.CurrentFile;
-            //if (_chapters == null)
-            //{
-            //  _chapters = _player.Chapters;
-            //}
-            if (_chaptersname == null)
+            if (chapters != null)
             {
-              _chaptersname = _player.ChaptersName;
+              LoadChapters(chapters);
             }
-            OnStarted();
-          }
+            else
+            {
+              if (!playingRemoteUrl) LoadChapters(strFile);
+            }
+            _player = CachePreviousPlayer(_player);
+            bool bResult = _player.Play(strFile);
+            if (!bResult)
+            {
+              Log.Info("g_Player: ended");
+              _player.SafeDispose();
+              _player = null;
+              _subs = null;
+              UnableToPlay(strFile, type);
+            }
+            else if (_player != null && _player.Playing)
+            {
+              _isInitialized = false;
+              _currentFilePlaying = _player.CurrentFile;
+              //if (_chapters == null)
+              //{
+              //  _chapters = _player.Chapters;
+              //}
+              if (_chaptersname == null)
+              {
+                _chaptersname = _player.ChaptersName;
+              }
+              OnStarted();
+            }
 
-          // Set bool to know if video if played from MyPictures
-          if (fromPictures)
-          {
-            IsPicture = true;
-          }
+            // Set bool to know if video if played from MyPictures
+            if (fromPictures)
+            {
+              IsPicture = true;
+            }
 
-          // Set bool to know if video if we force play
-          if (forcePlay)
-          {
-            ForcePlay = true;
+            // Set bool to know if video if we force play
+            ForcePlay = forcePlay;
+            ret = bResult;
+            return;
+            //return bResult;
           }
-          else
-          {
-            ForcePlay = false;
-          }
-          return bResult;
         }
-      }
-      finally
-      {
-        _currentMediaForBassEngine = _currentMedia;
-        currentMediaInfoFilePlaying = "";
-        Starting = false;
-      }
-      UnableToPlay(strFile, type);
-      return false;
+        finally
+        {
+          _currentMediaForBassEngine = _currentMedia;
+          currentMediaInfoFilePlaying = "";
+          Starting = false;
+        }
+        UnableToPlay(strFile, type);
+        ret = false;
+        //return false;
+      }, ret);
+      return ret;
     }
 
     private static bool RefreshRateChangePending()

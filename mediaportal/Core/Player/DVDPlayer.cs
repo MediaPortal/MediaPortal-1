@@ -2156,26 +2156,29 @@ namespace MediaPortal.Player
 
     protected virtual void SetSourceDestRectangles(Rectangle source, Rectangle destination)
     {
-      if (_basicVideo != null)
+      lock (_basicVideo)
       {
-        if (source.Left < 0 || source.Top < 0 || source.Width <= 0 || source.Height <= 0)
+        if (_basicVideo != null)
         {
-          return;
-        }
-        if (destination.Width <= 0 || destination.Height <= 0)
-        {
-          return;
-        }
+          if (source.Left < 0 || source.Top < 0 || source.Width <= 0 || source.Height <= 0)
+          {
+            return;
+          }
+          if (destination.Width <= 0 || destination.Height <= 0)
+          {
+            return;
+          }
 
-        _basicVideo.SetSourcePosition(source.Left, source.Top, source.Width, source.Height);
+          _basicVideo.SetSourcePosition(source.Left, source.Top, source.Width, source.Height);
 
-        if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
-        {
-          _basicVideo.SetDestinationPosition(destination.Left, destination.Top, destination.Width, destination.Height);
-        }
-        else
-        {
-          _basicVideo.SetDestinationPosition(0, 0, destination.Width, destination.Height);
+          if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+          {
+            _basicVideo.SetDestinationPosition(destination.Left, destination.Top, destination.Width, destination.Height);
+          }
+          else
+          {
+            _basicVideo.SetDestinationPosition(0, 0, destination.Width, destination.Height);
+          }
         }
       }
     }
