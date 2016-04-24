@@ -345,21 +345,21 @@ namespace MediaPortal.Player
             //Log.Info("vmr9: pin:{0} is connected",i);
             if (pinIn != null)
             {
-              hr = DirectShowUtil.ReleaseComObject(pinIn);
+              DirectShowUtil.ReleaseComObject(pinIn);
             }
             if (pinConnected != null)
             {
-              hr = DirectShowUtil.ReleaseComObject(pinConnected);
+              DirectShowUtil.ReleaseComObject(pinConnected);
             }
             return true;
           }
           if (pinIn != null)
           {
-            hr = DirectShowUtil.ReleaseComObject(pinIn);
+            DirectShowUtil.ReleaseComObject(pinIn);
           }
           if (pinConnected != null)
           {
-            hr = DirectShowUtil.ReleaseComObject(pinConnected);
+            DirectShowUtil.ReleaseComObject(pinConnected);
           }
         }
         return false;
@@ -1028,7 +1028,7 @@ namespace MediaPortal.Player
         }
         DsUtils.FreeAMMediaType(mediatype);
         //release the VMR9 pin
-        hr = DirectShowUtil.ReleaseComObject(InPin);
+        DirectShowUtil.ReleaseComObject(InPin);
 
         InPin = null;
         mediatype = null;
@@ -1087,34 +1087,19 @@ namespace MediaPortal.Player
 
       if (mediaCtrl != null)
       {
-        int counter = 0;
-        FilterState state;
-        mediaCtrl.Stop();
-        mediaCtrl.GetState(10, out state);
-        while (state != FilterState.Stopped || GUIGraphicsContext.InVmr9Render)
+        var hr = 0;
+        hr = mediaCtrl.Stop();
+        DsError.ThrowExceptionForHR(hr);
+        if (GUIGraphicsContext.InVmr9Render)
         {
-          Thread.Sleep(100);
-          mediaCtrl.GetState(10, out state);
-          counter++;
-          if (counter >= 30)
+          switch (GUIGraphicsContext.VideoRenderer)
           {
-            if (state != FilterState.Stopped)
-            {
-              Log.Error("VMR9: {0} graph still running", g_Player.Player.ToString());
-            }
-            if (GUIGraphicsContext.InVmr9Render)
-            {
-              switch (GUIGraphicsContext.VideoRenderer)
-              {
-                case GUIGraphicsContext.VideoRendererType.madVR:
-                  GUIGraphicsContext.InVmr9Render = false;
-                  break;
-                default:
-                  Log.Error("VMR9: {0} in renderer", g_Player.Player.ToString());
-                  break;
-              }
-            }
-            break;
+            case GUIGraphicsContext.VideoRendererType.madVR:
+              GUIGraphicsContext.InVmr9Render = false;
+              break;
+            default:
+              Log.Error("VMR9: {0} in renderer", g_Player.Player.ToString());
+              break;
           }
         }
       }
@@ -1332,11 +1317,10 @@ namespace MediaPortal.Player
           Vmr9Deinit();
         }
 
-        DirectShowUtil.FinalReleaseComObject(_vmr9Filter);
-        if (_graphBuilderInterface != null)
+        if (_vmr9Filter != null)
         {
-          DirectShowUtil.FinalReleaseComObject(_graphBuilderInterface);
-          _graphBuilderInterface = null;
+          DirectShowUtil.RemoveFilter(_graphBuilderInterface, _vmr9Filter);
+          DirectShowUtil.FinalReleaseComObject(_vmr9Filter);
         }
         _vmr9Filter = null;
         _scene = null;

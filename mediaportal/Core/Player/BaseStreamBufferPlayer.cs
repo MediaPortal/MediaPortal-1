@@ -1102,9 +1102,9 @@ namespace MediaPortal.Player
 
     protected virtual void SetSourceDestRectangles(Rectangle rSource, Rectangle rDest)
     {
-      lock (_basicVideo)
+      if (_basicVideo != null)
       {
-        if (_basicVideo != null)
+        lock (_basicVideo)
         {
           if (rSource.Left < 0 || rSource.Top < 0 || rSource.Width <= 0 || rSource.Height <= 0)
           {
@@ -1404,27 +1404,18 @@ namespace MediaPortal.Player
 
         if (_videoCodecFilter != null)
         {
-          while ((hr = DirectShowUtil.ReleaseComObject(_videoCodecFilter)) > 0)
-          {
-            ;
-          }
+          DirectShowUtil.ReleaseComObject(_videoCodecFilter);
           _videoCodecFilter = null;
         }
         if (_audioCodecFilter != null)
         {
-          while ((hr = DirectShowUtil.ReleaseComObject(_audioCodecFilter)) > 0)
-          {
-            ;
-          }
+          DirectShowUtil.ReleaseComObject(_audioCodecFilter);
           _audioCodecFilter = null;
         }
 
         if (_audioRendererFilter != null)
         {
-          while ((hr = DirectShowUtil.ReleaseComObject(_audioRendererFilter)) > 0)
-          {
-            ;
-          }
+          DirectShowUtil.ReleaseComObject(_audioRendererFilter);
           _audioRendererFilter = null;
         }
 
@@ -1433,19 +1424,13 @@ namespace MediaPortal.Player
         {
           if (customFilters[i] != null)
           {
-            while ((hr = DirectShowUtil.ReleaseComObject(customFilters[i])) > 0)
-            {
-              ;
-            }
+            DirectShowUtil.ReleaseComObject(customFilters[i]);
           }
           customFilters[i] = null;
         }
         if (streamConfig2 != null)
         {
-          while ((hr = DirectShowUtil.ReleaseComObject(streamConfig2)) > 0)
-          {
-            ;
-          }
+          DirectShowUtil.ReleaseComObject(streamConfig2);
           streamConfig2 = null;
         }
         m_StreamBufferConfig = null;
@@ -1458,10 +1443,7 @@ namespace MediaPortal.Player
             _rotEntry.SafeDispose();
             _rotEntry = null;
           }
-          while ((hr = DirectShowUtil.ReleaseComObject(_graphBuilder)) > 0)
-          {
-            ;
-          }
+          DirectShowUtil.ReleaseComObject(_graphBuilder);
           _graphBuilder = null;
         }
 

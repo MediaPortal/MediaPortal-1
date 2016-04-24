@@ -299,10 +299,7 @@ namespace MediaPortal.Player
 
         if (streamConfig2 != null)
         {
-          while ((hr = DirectShowUtil.FinalReleaseComObject(streamConfig2)) > 0)
-          {
-            ;
-          }
+          DirectShowUtil.FinalReleaseComObject(streamConfig2);
           streamConfig2 = null;
         }
 
@@ -316,7 +313,7 @@ namespace MediaPortal.Player
             _rotEntry.SafeDispose();
             _rotEntry = null;
           }
-          while ((hr = DirectShowUtil.FinalReleaseComObject(_graphBuilder)) > 0) ;
+          DirectShowUtil.FinalReleaseComObject(_graphBuilder);
           _graphBuilder = null;
         }
 

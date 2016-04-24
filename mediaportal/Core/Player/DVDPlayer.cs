@@ -428,10 +428,7 @@ namespace MediaPortal.Player
 
         if (_dvdbasefilter != null)
         {
-          while ((hr = DirectShowUtil.FinalReleaseComObject(_dvdbasefilter)) > 0)
-          {
-            ;
-          }
+          DirectShowUtil.FinalReleaseComObject(_dvdbasefilter);
           _dvdbasefilter = null;
         }
 
@@ -443,10 +440,7 @@ namespace MediaPortal.Player
         _pendingCmd = false;
         if (_line21Decoder != null)
         {
-          while ((hr = DirectShowUtil.FinalReleaseComObject(_line21Decoder)) > 0)
-          {
-            ;
-          }
+          DirectShowUtil.FinalReleaseComObject(_line21Decoder);
           _line21Decoder = null;
         }
 
@@ -459,19 +453,13 @@ namespace MediaPortal.Player
             _rotEntry.SafeDispose();
             _rotEntry = null;
           }
-          while ((hr = DirectShowUtil.FinalReleaseComObject(_graphBuilder)) > 0)
-          {
-            ;
-          }
+          DirectShowUtil.FinalReleaseComObject(_graphBuilder);
           _graphBuilder = null;
         }
 
         if (_dvdGraph != null)
         {
-          while ((hr = DirectShowUtil.FinalReleaseComObject(_dvdGraph)) > 0)
-          {
-            ;
-          }
+          DirectShowUtil.FinalReleaseComObject(_dvdGraph);
           _dvdGraph = null;
         }
         _state = PlayState.Init;
@@ -2156,9 +2144,9 @@ namespace MediaPortal.Player
 
     protected virtual void SetSourceDestRectangles(Rectangle source, Rectangle destination)
     {
-      lock (_basicVideo)
+      if (_basicVideo != null)
       {
-        if (_basicVideo != null)
+        lock (_basicVideo)
         {
           if (source.Left < 0 || source.Top < 0 || source.Width <= 0 || source.Height <= 0)
           {

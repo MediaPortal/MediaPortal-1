@@ -644,9 +644,9 @@ namespace MediaPortal.Player
 
     protected virtual void SetSourceDestRectangles(Rectangle rSource, Rectangle rDest)
     {
-      lock (basicVideo)
+      if (basicVideo != null)
       {
-        if (basicVideo != null)
+        lock (basicVideo)
         {
           if (rSource.Left < 0 || rSource.Top < 0 || rSource.Width <= 0 || rSource.Height <= 0)
           {

@@ -459,6 +459,7 @@ namespace MediaPortal.Player
       {
         Error.SetError("Unable to play movie", "Unable build graph for VMR9");
         Log.Error("RTSPPlayer:exception while creating DShow graph {0} {1}", ex.Message, ex.StackTrace);
+        CloseInterfaces();
         return false;
       }
     }
@@ -547,27 +548,18 @@ namespace MediaPortal.Player
         if (_mpegDemux != null)
         {
           Log.Info("cleanup mpegdemux");
-          while ((hr = DirectShowUtil.FinalReleaseComObject(_mpegDemux)) > 0)
-          {
-            ;
-          }
+          DirectShowUtil.FinalReleaseComObject(_mpegDemux);
           _mpegDemux = null;
         }
         if (_rtspSource != null)
         {
           Log.Info("cleanup _rtspSource");
-          while ((hr = DirectShowUtil.FinalReleaseComObject(_rtspSource)) > 0)
-          {
-            ;
-          }
+          DirectShowUtil.FinalReleaseComObject(_rtspSource);
           _rtspSource = null;
         }
         if (_subtitleFilter != null)
         {
-          while ((hr = DirectShowUtil.FinalReleaseComObject(_subtitleFilter)) > 0)
-          {
-            ;
-          }
+          DirectShowUtil.FinalReleaseComObject(_subtitleFilter);
           _subtitleFilter = null;
           if (this.dvbSubRenderer != null)
           {
@@ -580,10 +572,7 @@ namespace MediaPortal.Player
         if (vobSub != null)
         {
           Log.Info("cleanup vobSub");
-          while ((hr = DirectShowUtil.FinalReleaseComObject(vobSub)) > 0)
-          {
-            ;
-          }
+          DirectShowUtil.FinalReleaseComObject(vobSub);
           vobSub = null;
         }
       }
