@@ -44,6 +44,18 @@ CTsDuration::CTsDuration()
 
 CTsDuration::~CTsDuration(void)
 {
+  if (m_reader != NULL)
+  {
+    m_reader->SetStopping(true);
+  }
+
+  m_bStopping = true;
+  
+  if (m_reader != NULL)
+  {
+    m_reader->CloseFile();
+  }
+
   if (m_pFileReadBuffer)
   {
     delete [] m_pFileReadBuffer;
@@ -131,6 +143,8 @@ void CTsDuration::UpdateDuration(bool logging, bool background)
       return;
 	  }
   }
+
+  CAutoLock rLock (&m_accessLock);
 
   int Loop=5 ;
   int searchLoopCnt;

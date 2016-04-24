@@ -34,9 +34,18 @@ TsMPEG2TransportFileServerMediaSubsession::TsMPEG2TransportFileServerMediaSubses
 
 TsMPEG2TransportFileServerMediaSubsession::~TsMPEG2TransportFileServerMediaSubsession() 
 {
-  CloseFileDuration();
-  delete m_pDuration;
-  m_pDuration = NULL;
+  if (m_pDuration)
+  {
+    delete m_pDuration;
+    m_pDuration = NULL;
+  }
+  
+  if(m_pFileDuration)
+  {
+    delete m_pFileDuration;
+    m_pFileDuration = NULL;
+  }
+    
 	LogDebug(L"TsMp2TFSMediaSubsession::dtor (%s)", m_fileName);  
 }
 
@@ -99,7 +108,7 @@ void TsMPEG2TransportFileServerMediaSubsession::seekStreamSource(FramedSource* i
 
 float TsMPEG2TransportFileServerMediaSubsession::duration() const
 {
-  if (m_pFileDuration)
+  if (m_pDuration && m_pFileDuration)
   {
     // void CTsDuration::UpdateDuration(bool logging, bool background)
     m_pDuration->UpdateDuration(false, false);      
@@ -122,6 +131,7 @@ __int64 TsMPEG2TransportFileServerMediaSubsession::filelength() const
   {
     fileSizeTmp = m_pFileDuration->GetFileSize();
 	  //LogDebug("TsMp2TFSMediaSubsession::filelength() %I64", fileSizeTmp);
+	  if (fileSizeTmp < 0) fileSizeTmp = 0;
   }
   return fileSizeTmp;
 }
@@ -150,17 +160,5 @@ void TsMPEG2TransportFileServerMediaSubsession::InitFileDuration()
     m_pFileDuration->SetFileName(m_fileName);  
     m_pDuration->SetFileReader(m_pFileDuration);
 	  LogDebug(L"TsMp2TFSMediaSubsession::InitFileDuration(): %s", m_fileName);  
-  }
-}
-
-void TsMPEG2TransportFileServerMediaSubsession::CloseFileDuration()
-{
-  if(m_pFileDuration)
-  {
-    m_pDuration->StopUpdate(true);
-    m_pFileDuration->CloseFile();
-    m_pDuration->SetFileReader(NULL);
-    delete m_pFileDuration;
-    m_pFileDuration = NULL;
   }
 }

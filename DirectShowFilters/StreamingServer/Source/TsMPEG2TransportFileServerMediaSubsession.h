@@ -26,7 +26,6 @@ protected:
 	virtual float duration() const;
 	virtual __int64 filelength() const;
   void InitFileDuration();
-  void CloseFileDuration();
 
   CTsDuration *m_pDuration;
   FileReader *m_pFileDuration;
