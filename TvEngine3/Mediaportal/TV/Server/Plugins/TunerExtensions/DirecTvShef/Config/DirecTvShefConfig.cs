@@ -148,10 +148,6 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DirecTvShef.Config
 
     private void buttonSelectGenieMini_Click(object sender, EventArgs e)
     {
-      if (dataGridViewConfig.SelectedRows.Count != 1)
-      {
-        return;
-      }
       DataGridViewRow row = dataGridViewConfig.SelectedRows[0];
       if (row == null)
       {
@@ -225,10 +221,6 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DirecTvShef.Config
 
     private void buttonTest_Click(object sender, System.EventArgs e)
     {
-      if (dataGridViewConfig.SelectedRows.Count != 1)
-      {
-        return;
-      }
       DataGridViewRow row = dataGridViewConfig.SelectedRows[0];
       if (row == null)
       {
@@ -276,6 +268,12 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DirecTvShef.Config
       this.LogDebug("  software version = {0}", stbSoftwareVersion);
       this.LogDebug("  SHEF version     = {0}", shefVersion);
       this.LogDebug("  system time      = {0}", systemTime);
+    }
+
+    private void dataGridViewConfig_SelectionChanged(object sender, EventArgs e)
+    {
+      buttonSelectGenieMini.Enabled = dataGridViewConfig.SelectedRows.Count == 1;
+      buttonTest.Enabled = buttonSelectGenieMini.Enabled;
     }
   }
 }

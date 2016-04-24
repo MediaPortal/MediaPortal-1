@@ -50,14 +50,14 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DirecTvShef.Config
     {
       System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(DirecTvShefConfig));
       this.dataGridViewConfig = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPDataGridView();
-      this.buttonTest = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
-      this.pictureBoxLogo = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPPictureBox();
-      this.buttonSelectGenieMini = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
       this.dataGridViewColumnTunerId = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPDataGridViewTextBoxColumn();
       this.dataGridViewColumnTunerName = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPDataGridViewTextBoxColumn();
       this.dataGridViewColumnSetTopBoxIpAddress = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPDataGridViewTextBoxColumn();
       this.dataGridViewColumnGenieMini = new System.Windows.Forms.DataGridViewTextBoxColumn();
       this.dataGridViewColumnPowerControl = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPDataGridViewCheckBoxColumn();
+      this.buttonTest = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
+      this.pictureBoxLogo = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPPictureBox();
+      this.buttonSelectGenieMini = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
       ((System.ComponentModel.ISupportInitialize)(this.dataGridViewConfig)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.pictureBoxLogo)).BeginInit();
       this.SuspendLayout();
@@ -67,9 +67,9 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DirecTvShef.Config
       this.dataGridViewConfig.AllowUserToAddRows = false;
       this.dataGridViewConfig.AllowUserToDeleteRows = false;
       this.dataGridViewConfig.AllowUserToOrderColumns = true;
-      this.dataGridViewConfig.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.dataGridViewConfig.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.dataGridViewConfig.ColumnHeadersHeight = 36;
       this.dataGridViewConfig.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
       this.dataGridViewConfig.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
@@ -78,6 +78,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DirecTvShef.Config
             this.dataGridViewColumnSetTopBoxIpAddress,
             this.dataGridViewColumnGenieMini,
             this.dataGridViewColumnPowerControl});
+      this.dataGridViewConfig.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
       this.dataGridViewConfig.Location = new System.Drawing.Point(6, 67);
       this.dataGridViewConfig.MultiSelect = false;
       this.dataGridViewConfig.Name = "dataGridViewConfig";
@@ -85,38 +86,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DirecTvShef.Config
       this.dataGridViewConfig.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
       this.dataGridViewConfig.Size = new System.Drawing.Size(465, 314);
       this.dataGridViewConfig.TabIndex = 0;
-      // 
-      // buttonTest
-      // 
-      this.buttonTest.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.buttonTest.Location = new System.Drawing.Point(421, 387);
-      this.buttonTest.Name = "buttonTest";
-      this.buttonTest.Size = new System.Drawing.Size(50, 23);
-      this.buttonTest.TabIndex = 2;
-      this.buttonTest.Text = "&Test";
-      this.buttonTest.UseVisualStyleBackColor = true;
-      this.buttonTest.Click += new System.EventHandler(this.buttonTest_Click);
-      // 
-      // pictureBoxLogo
-      // 
-      this.pictureBoxLogo.Image = ((System.Drawing.Image)(resources.GetObject("pictureBoxLogo.Image")));
-      this.pictureBoxLogo.Location = new System.Drawing.Point(6, 6);
-      this.pictureBoxLogo.Name = "pictureBoxLogo";
-      this.pictureBoxLogo.Size = new System.Drawing.Size(185, 55);
-      this.pictureBoxLogo.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-      this.pictureBoxLogo.TabIndex = 2;
-      this.pictureBoxLogo.TabStop = false;
-      // 
-      // buttonSelectGenieMini
-      // 
-      this.buttonSelectGenieMini.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.buttonSelectGenieMini.Location = new System.Drawing.Point(315, 387);
-      this.buttonSelectGenieMini.Name = "buttonSelectGenieMini";
-      this.buttonSelectGenieMini.Size = new System.Drawing.Size(100, 23);
-      this.buttonSelectGenieMini.TabIndex = 1;
-      this.buttonSelectGenieMini.Text = "&Select Genie Mini";
-      this.buttonSelectGenieMini.UseVisualStyleBackColor = true;
-      this.buttonSelectGenieMini.Click += new System.EventHandler(this.buttonSelectGenieMini_Click);
+      this.dataGridViewConfig.SelectionChanged += new System.EventHandler(this.dataGridViewConfig_SelectionChanged);
       // 
       // dataGridViewColumnTunerId
       // 
@@ -158,6 +128,38 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DirecTvShef.Config
       this.dataGridViewColumnPowerControl.Name = "dataGridViewColumnPowerControl";
       this.dataGridViewColumnPowerControl.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
       this.dataGridViewColumnPowerControl.Width = 50;
+      // 
+      // buttonTest
+      // 
+      this.buttonTest.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.buttonTest.Location = new System.Drawing.Point(421, 387);
+      this.buttonTest.Name = "buttonTest";
+      this.buttonTest.Size = new System.Drawing.Size(50, 23);
+      this.buttonTest.TabIndex = 2;
+      this.buttonTest.Text = "&Test";
+      this.buttonTest.UseVisualStyleBackColor = true;
+      this.buttonTest.Click += new System.EventHandler(this.buttonTest_Click);
+      // 
+      // pictureBoxLogo
+      // 
+      this.pictureBoxLogo.Image = ((System.Drawing.Image)(resources.GetObject("pictureBoxLogo.Image")));
+      this.pictureBoxLogo.Location = new System.Drawing.Point(6, 6);
+      this.pictureBoxLogo.Name = "pictureBoxLogo";
+      this.pictureBoxLogo.Size = new System.Drawing.Size(185, 55);
+      this.pictureBoxLogo.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+      this.pictureBoxLogo.TabIndex = 2;
+      this.pictureBoxLogo.TabStop = false;
+      // 
+      // buttonSelectGenieMini
+      // 
+      this.buttonSelectGenieMini.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.buttonSelectGenieMini.Location = new System.Drawing.Point(315, 387);
+      this.buttonSelectGenieMini.Name = "buttonSelectGenieMini";
+      this.buttonSelectGenieMini.Size = new System.Drawing.Size(100, 23);
+      this.buttonSelectGenieMini.TabIndex = 1;
+      this.buttonSelectGenieMini.Text = "&Select Genie Mini";
+      this.buttonSelectGenieMini.UseVisualStyleBackColor = true;
+      this.buttonSelectGenieMini.Click += new System.EventHandler(this.buttonSelectGenieMini_Click);
       // 
       // DirecTvShefConfig
       // 
