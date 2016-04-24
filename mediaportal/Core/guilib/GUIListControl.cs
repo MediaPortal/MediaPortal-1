@@ -107,6 +107,7 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("ProgressBarHeight")] protected int _heightProgressBar = 0;
     [XMLSkinElement("ProgressBarXOffset")] protected int _xOffsetProgressBar = 0;
     [XMLSkinElement("ProgressBarYOffset")] protected int _yOffsetProgressBar = 0;
+    [XMLSkinElement("SelectedProgressOnly")] protected bool _selectedProgressOnly = false;
 
     // this is the offset from the first or last element on screen when scrolling should start
     [XMLSkinElement("scrollOffset")] protected int _scrollStartOffset = 0;
@@ -569,7 +570,16 @@ namespace MediaPortal.GUI.Library
             pItem.XPosition = x;
             pItem.YPosition = y;
             pItem.Focus = gotFocus;
-            pItem.Visible = _listItems[progressBarNr + _offset].HasProgressBar;
+
+            if (gotFocus && _selectedProgressOnly || !_selectedProgressOnly)
+            {
+              pItem.Visible = _listItems[progressBarNr + _offset].HasProgressBar;
+            }
+            else
+            {
+              pItem.Visible = false;
+            }
+            
             pItem.Percentage = _listItems[progressBarNr + _offset].ProgressBarPercentage;
             pItem.Render(timePassed);
           }
