@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Text;
+using MediaPortal.ExtensionMethods;
 
 namespace MediaPortal.Player
 {
@@ -719,6 +720,19 @@ namespace MediaPortal.Player
     {
       var eModeCommand = madvr as IMadVRCommand;
       eModeCommand?.SendCommand("restoreDisplayModeNow");
+    }
+
+    public static void OsdSetRenderCallback(object madvr)
+    {
+      try
+      {
+        IMadVROsdServices osdServices = (IMadVROsdServices)madvr;
+        osdServices.OsdSetRenderCallback("MP-GUI", osdRenderCallback, reserved);
+        osdServices.SafeDispose();
+      }
+      catch (Exception e)
+      {
+      }
     }
 
     public static bool InExclusiveMode(MadVR madvr)

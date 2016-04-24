@@ -252,7 +252,7 @@ namespace MediaPortal.GUI.Library
 
     private VisualEffect _showAnimation = new VisualEffect(); // for dialogs
     private VisualEffect _closeAnimation = new VisualEffect();
-    public static readonly SynchronizationContext _mainThreadContext = SynchronizationContext.Current;
+    public static SynchronizationContext _mainThreadContext = SynchronizationContext.Current;
 
     #endregion
 
@@ -475,10 +475,10 @@ namespace MediaPortal.GUI.Library
       }
 
       // else load xml file now
-      GUIWindow._mainThreadContext.Send(delegate
-      {
+      //GUIWindow._mainThreadContext.Send(delegate
+      //{
         LoadSkin();
-      }, LoadSkin());
+      //}, LoadSkin());
 
       if (!_windowAllocated)
       {
@@ -1078,10 +1078,10 @@ namespace MediaPortal.GUI.Library
     {
       if (_isSkinLoaded && (_lastSkin != GUIGraphicsContext.Skin))
       {
-        GUIWindow._mainThreadContext.Send(delegate
-        {
+        //GUIWindow._mainThreadContext.Send(delegate
+        //{
           LoadSkin();
-        }, LoadSkin());
+        //}, LoadSkin());
       }
 
       if (_rememberLastFocusedControl && _rememberLastFocusedControlId >= 0)
@@ -1210,10 +1210,10 @@ namespace MediaPortal.GUI.Library
 
         Dispose();
 
-        GUIWindow._mainThreadContext.Send(delegate
-        {
+        //GUIWindow._mainThreadContext.Send(delegate
+        //{
           LoadSkin();
-        }, LoadSkin());
+        //}, LoadSkin());
 
         HashSet<int> faultyControl = new HashSet<int>();
         // tell every control we're gonna alloc the resources next
@@ -1770,10 +1770,10 @@ namespace MediaPortal.GUI.Library
               }
               else
               {
-                GUIWindow._mainThreadContext.Send(delegate
-                {
+                //GUIWindow._mainThreadContext.Send(delegate
+                //{
                   LoadSkin();
-                }, LoadSkin());
+                //}, LoadSkin());
 
                 if (!_windowAllocated)
                 {

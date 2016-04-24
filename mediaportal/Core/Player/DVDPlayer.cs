@@ -1422,21 +1422,23 @@ namespace MediaPortal.Player
 
     protected virtual void OnProcess()
     {
-      if (_videoWin != null)
+      if (GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR)
       {
-        if (GUIGraphicsContext.Overlay == false && GUIGraphicsContext.IsFullScreenVideo == false &&
-            GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR)
+        if (_videoWin != null)
         {
-          if (_visible)
+          if (GUIGraphicsContext.Overlay == false && GUIGraphicsContext.IsFullScreenVideo == false)
           {
-            _visible = false;
-            _videoWin.put_Visible(OABool.False);
+            if (_visible)
+            {
+              _visible = false;
+              _videoWin.put_Visible(OABool.False);
+            }
           }
-        }
-        else if (!_visible)
-        {
-          _visible = true;
-          _videoWin.put_Visible(OABool.True);
+          else if (!_visible)
+          {
+            _visible = true;
+            _videoWin.put_Visible(OABool.True);
+          }
         }
       }
     }

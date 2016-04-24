@@ -25,6 +25,7 @@ using System.Globalization;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Threading;
 using System.Windows.Forms;
 using MediaPortal.Configuration;
 using MediaPortal.ExtensionMethods;
@@ -1322,6 +1323,10 @@ namespace MediaPortal.Player
     public static bool PlayVideoStream(string strURL, string streamName)
     {
       bool ret = false;
+      if (GUIWindow._mainThreadContext == null)
+      {
+        GUIWindow._mainThreadContext = SynchronizationContext.Current;
+      }
       GUIWindow._mainThreadContext.Send(delegate
       {
         try
@@ -1486,6 +1491,10 @@ namespace MediaPortal.Player
     public static bool Play(string strFile, MediaType type, TextReader chapters, bool fromPictures, int title, bool forcePlay, bool fromExtTS)
     {
       bool ret = false;
+      if (GUIWindow._mainThreadContext == null)
+      {
+        GUIWindow._mainThreadContext = SynchronizationContext.Current;
+      }
       GUIWindow._mainThreadContext.Send(delegate
       {
         try

@@ -39,14 +39,13 @@ struct VID_FRAME_VERTEX
   float v;
 };
 
-MPMadPresenter::MPMadPresenter(IVMR9Callback* pCallback, DWORD width, DWORD height, OAHWND parent, IDirect3DDevice9* pDevice, IBaseFilter* madFilter) :
+MPMadPresenter::MPMadPresenter(IVMR9Callback* pCallback, DWORD width, DWORD height, OAHWND parent, IDirect3DDevice9* pDevice) :
   CUnknown(NAME("MPMadPresenter"), nullptr),
   m_pCallback(pCallback),
   m_dwGUIWidth(width),
   m_dwGUIHeight(height),
   m_hParent(parent),
-  m_pDevice(static_cast<IDirect3DDevice9Ex*>(pDevice)),
-  m_pMadFilter(madFilter)
+  m_pDevice(static_cast<IDirect3DDevice9Ex*>(pDevice))
 {
   m_subProxy = new MadSubtitleProxy(pCallback);
   if (m_subProxy)
@@ -68,13 +67,10 @@ IBaseFilter* MPMadPresenter::Initialize()
 {
   CAutoLock cAutoLock(this);
 
-  m_pMad = m_pMadFilter;
+  HRESULT hr = CoCreateInstance(CLSID_madVR, nullptr, CLSCTX_INPROC_SERVER, __uuidof(IMadVRDirect3D9Manager), reinterpret_cast<void**>(&m_pMad));
 
-  if (m_pMad == nullptr)
-  {
-    Log("MPMadPresenter: could not get m_pMad");
+  if (FAILED(hr))
     return nullptr;
-  }
 
   CComQIPtr<IBaseFilter> baseFilter = m_pMad;
   CComQIPtr<IMadVROsdServices> pOsdServices = m_pMad;
@@ -110,7 +106,8 @@ HRESULT MPMadPresenter::Shutdown()
 
   Log("MPMadPresenter::Shutdown()");
 
-  m_pCallback = nullptr;
+    m_pCallback->Release();
+    m_pCallback = nullptr;
 
   if (m_pMad)
   {
@@ -119,15 +116,13 @@ HRESULT MPMadPresenter::Shutdown()
       m_pCommand->SendCommand("restoreDisplayModeNow");
       m_pCommand->Release();
     }
-
     m_pWindow->put_Owner(reinterpret_cast<OAHWND>(nullptr));
     m_pWindow->put_Visible(false);
-
-    // Create a new IGraphBuilder to force madVR to destroy the instance
     m_pWindow->Release();
     m_pMad->Release();
     m_pWindow = nullptr;
     m_pMad = nullptr;
+    m_pCommand = nullptr;
   }
 
   return S_OK;
@@ -283,7 +278,7 @@ HRESULT MPMadPresenter::RenderOsd(LPCSTR name, REFERENCE_TIME frameStart, RECT* 
 HRESULT MPMadPresenter::RenderToTexture(IDirect3DTexture9* pTexture)
 {
   HRESULT hr = E_UNEXPECTED;
-  IDirect3DSurface9* pSurface = nullptr; // This will be relased by C# side
+  IDirect3DSurface9* pSurface = nullptr; // This will be released by C# side
 
   if (FAILED(hr = pTexture->GetSurfaceLevel(0, &pSurface)))
     return hr;

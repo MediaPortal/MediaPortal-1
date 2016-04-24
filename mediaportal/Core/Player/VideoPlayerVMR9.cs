@@ -1383,9 +1383,7 @@ namespace MediaPortal.Player
             // Stop the player
             Vmr9.Vmr9MediaCtrl(mediaCtrl);
           }
-          Vmr9.SafeDispose();
           Vmr9.Enable(false);
-          Vmr9 = null;
         }
 
         #region Cleanup Sebastiii
@@ -1416,7 +1414,6 @@ namespace MediaPortal.Player
 
         if (filterCodec != null && filterCodec._audioRendererFilter != null)
         {
-          DirectShowUtil.DisconnectAllPins(graphBuilder, filterCodec._audioRendererFilter);
           DirectShowUtil.RemoveFilter(graphBuilder, filterCodec._audioRendererFilter);
           DirectShowUtil.FinalReleaseComObject(filterCodec._audioRendererFilter);
           filterCodec._audioRendererFilter = null;
@@ -1477,6 +1474,12 @@ namespace MediaPortal.Player
           Log.Info("VideoPlayer9: Cleanup MediaPortal AudioSwitcher (for external audio files)");
         }
 
+        if (Vmr9._vmr9Filter != null)
+        {
+          DirectShowUtil.DisconnectAllPins(graphBuilder, Vmr9._vmr9Filter);
+          Log.Info("VideoPlayer9: Cleanup VMR9");
+        }
+
         SubEngine.GetInstance().FreeSubtitles();
         PostProcessingEngine.GetInstance().FreePostProcess();
 
@@ -1510,19 +1513,29 @@ namespace MediaPortal.Player
         graphBuilder = null;
         Log.Info("VideoPlayer9: Cleanup Sub/PostProcess");
 
+        if (Vmr9 != null)
+        {
+          Vmr9.SafeDispose();
+          Vmr9 = null;
+        }
+
         if (_rotEntry != null)
         {
           _rotEntry.SafeDispose();
           _rotEntry = null;
         }
 
-        GC.Collect();
+        //GC.Collect();
 
         GUIGraphicsContext.form.Invalidate(true);
         m_state = PlayState.Init;
       }
       catch (Exception ex)
       {
+        if (Vmr9 != null)
+        {
+          Vmr9.RestoreGuiForMadVr();
+        }
         Log.Error("VideoPlayer9: Exception while cleanuping DShow graph - {0} {1}", ex.Message, ex.StackTrace);
       }
       //switch back to directx windowed mode

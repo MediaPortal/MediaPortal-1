@@ -905,18 +905,16 @@ double EVRGetDisplayFPS()
   return displayFPS;
 }
 
-BOOL MadInit(IVMR9Callback* callback, DWORD width, DWORD height, DWORD dwD3DDevice, OAHWND parent, IBaseFilter* madFilter)
+BOOL MadInit(IVMR9Callback* callback, DWORD width, DWORD height, DWORD dwD3DDevice, OAHWND parent, IBaseFilter** madFilter)
 {
   m_RenderPrefix = _T("mad");
 
   m_pDevice = reinterpret_cast<LPDIRECT3DDEVICE9>(dwD3DDevice);
 
-  CComPtr<IBaseFilter> m_pBaseFilter;
-  m_pBaseFilter.Attach(madFilter);
-
-  m_madPresenter = new MPMadPresenter(callback, width, height, parent, m_pDevice, m_pBaseFilter);
+  m_madPresenter = new MPMadPresenter(callback, width, height, parent, m_pDevice);
   m_pVMR9Filter = m_madPresenter->Initialize();
   m_pVMR9Filter->AddRef();
+  *madFilter = m_pVMR9Filter;
 
   if (!madFilter)
     return FALSE;

@@ -460,6 +460,10 @@ namespace MediaPortal.Player
       }
       catch (Exception ex)
       {
+        if (_vmr9 != null)
+        {
+          _vmr9.RestoreGuiForMadVr();
+        }
         Log.Error("DVDPlayer9: Exception while cleanuping DShow graph - {0} {1}", ex.Message, ex.StackTrace);
       }
       Log.Info("DVDPlayer9: Disabling DX9 exclusive mode");

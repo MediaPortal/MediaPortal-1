@@ -228,8 +228,7 @@ namespace MediaPortal.Player
           {
             GUIGraphicsContext.DX9Device.SetRenderTarget(0, MadVrRenderTarget);
           }
-          MadVrRenderTarget.ReleaseGraphics();
-          MadVrRenderTarget.SafeDispose();
+          MadVrRenderTarget.Dispose();
           MadVrRenderTarget = null;
         }
       }
@@ -646,6 +645,7 @@ namespace MediaPortal.Player
         IntPtr ptr = (IntPtr)target;
         Surface surface = new Surface(ptr);
         GUIGraphicsContext.DX9Device.SetRenderTarget(0, surface);
+        surface.Dispose();
       }
     }
 

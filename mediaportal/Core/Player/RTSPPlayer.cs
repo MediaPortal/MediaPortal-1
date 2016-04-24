@@ -756,25 +756,27 @@ namespace MediaPortal.Player
       {
         UpdateCurrentPosition();
         updateTimer = DateTime.Now;
-        if (GUIGraphicsContext.BlankScreen ||
-            (GUIGraphicsContext.Overlay == false && GUIGraphicsContext.IsFullScreenVideo == false) &&
-            GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR)
+        if (GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR)
         {
-          if (m_bVisible)
+          if (GUIGraphicsContext.BlankScreen ||
+              (GUIGraphicsContext.Overlay == false && GUIGraphicsContext.IsFullScreenVideo == false))
           {
-            m_bVisible = false;
-            if (videoWin != null)
+            if (m_bVisible)
             {
-              videoWin.put_Visible(OABool.False);
+              m_bVisible = false;
+              if (videoWin != null)
+              {
+                videoWin.put_Visible(OABool.False);
+              }
             }
           }
-        }
-        else if (!m_bVisible)
-        {
-          m_bVisible = true;
-          if (videoWin != null)
+          else if (!m_bVisible)
           {
-            videoWin.put_Visible(OABool.True);
+            m_bVisible = true;
+            if (videoWin != null)
+            {
+              videoWin.put_Visible(OABool.True);
+            }
           }
         }
         CheckVideoResolutionChanges();

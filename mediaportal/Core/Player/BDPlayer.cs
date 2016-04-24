@@ -1241,21 +1241,23 @@ namespace MediaPortal.Player
       {
         _updateTimer = DateTime.Now;
 
-        if (_videoWin != null)
+        if (GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR)
         {
-          if (GUIGraphicsContext.Overlay == false && GUIGraphicsContext.IsFullScreenVideo == false &&
-              GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR)
+          if (_videoWin != null)
           {
-            if (_isVisible)
+            if (GUIGraphicsContext.Overlay == false && GUIGraphicsContext.IsFullScreenVideo == false)
             {
-              _isVisible = false;
-              _videoWin.put_Visible(OABool.False);
+              if (_isVisible)
+              {
+                _isVisible = false;
+                _videoWin.put_Visible(OABool.False);
+              }
             }
-          }
-          else if (!_isVisible)
-          {
-            _isVisible = true;
-            _videoWin.put_Visible(OABool.True);
+            else if (!_isVisible)
+            {
+              _isVisible = true;
+              _videoWin.put_Visible(OABool.True);
+            }
           }
         }
         CheckVideoResolutionChanges();
@@ -2999,9 +3001,7 @@ namespace MediaPortal.Player
         if (_vmr9 != null)
         {
           _vmr9.Vmr9MediaCtrl(_mediaCtrl);
-          _vmr9.SafeDispose();
           _vmr9.Enable(false);
-          _vmr9 = null;
         }
 
         #region Cleanup
@@ -3067,6 +3067,12 @@ namespace MediaPortal.Player
           _interfaceBDReader = null;
         }
 
+        if (_vmr9 != null && _vmr9._vmr9Filter != null)
+        {
+          DirectShowUtil.DisconnectAllPins(_graphBuilder, _vmr9._vmr9Filter);
+          Log.Info("VideoPlayer9: Cleanup VMR9");
+        }
+
         #endregion
 
         _videoWin = _graphBuilder as IVideoWindow;
@@ -3096,18 +3102,28 @@ namespace MediaPortal.Player
         _basicVideo = null;
         _ireader = null;
 
+        if (_vmr9 != null)
+        {
+          _vmr9.SafeDispose();
+          _vmr9 = null;
+        }
+
         if (_rotEntry != null)
         {
           _rotEntry.SafeDispose();
           _rotEntry = null;
         }
 
-        GC.Collect();
+        //GC.Collect();
 
         _state = PlayState.Init;
       }
       catch (Exception ex)
       {
+        if (_vmr9 != null)
+        {
+          _vmr9.RestoreGuiForMadVr();
+        }
         Log.Error("BDPlayer: Exception while cleaning DShow graph - {0} {1}", ex.Message, ex.StackTrace);
       }
       //switch back to directx windowed mode

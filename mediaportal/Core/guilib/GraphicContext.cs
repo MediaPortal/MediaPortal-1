@@ -1003,6 +1003,10 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     private static void VideoWindowChanged()
     {
+      if (GUIWindow._mainThreadContext == null)
+      {
+        GUIWindow._mainThreadContext = SynchronizationContext.Current;
+      }
       GUIWindow._mainThreadContext.Post(delegate
       {
         OnVideoWindowChanged?.Invoke();

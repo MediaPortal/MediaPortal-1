@@ -825,9 +825,7 @@ namespace MediaPortal.Player
               // Stop the player
               _vmr9.Vmr9MediaCtrl(_mediaCtrl);
             }
-            _vmr9.SafeDispose();
             _vmr9.Enable(false);
-            _vmr9 = null;
           }
 
           if (filterCodec != null && filterCodec._audioRendererFilter != null)
@@ -932,6 +930,12 @@ namespace MediaPortal.Player
             Log.Debug("TSReaderPlayer: Cleanup line21CoreCCParser");
           }
 
+          if (_vmr9 != null && _vmr9._vmr9Filter != null)
+          {
+            DirectShowUtil.DisconnectAllPins(_graphBuilder, _vmr9._vmr9Filter);
+            Log.Info("VideoPlayer9: Cleanup VMR9");
+          }
+
           if (_dvbSubRenderer != null)
           {
             _dvbSubRenderer.SetPlayer(null);
@@ -965,18 +969,28 @@ namespace MediaPortal.Player
           _ireader = null;
           _graphBuilder = null;
 
+          if (_vmr9 != null)
+          {
+            _vmr9.SafeDispose();
+            _vmr9 = null;
+          }
+
           if (_rotEntry != null)
           {
             _rotEntry.SafeDispose();
             _rotEntry = null;
           }
 
-          GC.Collect();
+          //GC.Collect();
 
           _state = PlayState.Init;
         }
         catch (Exception ex)
         {
+          if (_vmr9 != null)
+          {
+            _vmr9.RestoreGuiForMadVr();
+          }
           Log.Error("TSReaderPlayer: Exception while cleaning DShow graph - {0} {1}", ex.Message, ex.StackTrace);
         }
 

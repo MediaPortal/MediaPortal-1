@@ -702,25 +702,27 @@ namespace MediaPortal.Player
           mediaPos.get_Duration(out m_dDuration); //(refresh timeline when change EDITION)
           mediaPos.get_CurrentPosition(out m_dCurrentPos);
         }
-        if (GUIGraphicsContext.BlankScreen ||
-            (GUIGraphicsContext.Overlay == false && GUIGraphicsContext.IsFullScreenVideo == false) &&
-            GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR)
+        if (GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR)
         {
-          if (m_bVisible)
+          if (GUIGraphicsContext.BlankScreen ||
+              (GUIGraphicsContext.Overlay == false && GUIGraphicsContext.IsFullScreenVideo == false))
           {
-            m_bVisible = false;
-            if (videoWindow != null)
+            if (m_bVisible)
             {
-              videoWindow.put_Visible(OABool.False);
+              m_bVisible = false;
+              if (videoWindow != null)
+              {
+                videoWindow.put_Visible(OABool.False);
+              }
             }
           }
-        }
-        else if (!m_bVisible)
-        {
-          m_bVisible = true;
-          if (videoWindow != null)
+          else if (!m_bVisible)
           {
-            videoWindow.put_Visible(OABool.True);
+            m_bVisible = true;
+            if (videoWindow != null)
+            {
+              videoWindow.put_Visible(OABool.True);
+            }
           }
         }
         updateTimer = DateTime.Now;
