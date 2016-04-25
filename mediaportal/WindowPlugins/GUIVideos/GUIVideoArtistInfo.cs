@@ -371,7 +371,7 @@ namespace MediaPortal.GUI.Video
         // Show in list if user have that movie in collection (played property = true)
         ArrayList movies = new ArrayList();
         string sql = string.Format("SELECT * FROM movieinfo WHERE IMDBID = '{0}'", _currentActor[i].MovieImdbID);
-        VideoDatabase.GetMoviesByFilter(sql, out movies, false, true, false, false);
+        VideoDatabase.GetMoviesByFilter(sql, out movies, false, true, false, false, false);
 
         if (movies.Count > 0) // We have a movie, color normal or color played for watched
         {
