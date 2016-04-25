@@ -472,6 +472,9 @@ namespace MediaPortal.Configuration.Sections
         // Clear Genres listboxes
         listViewAllGenres.Items.Clear();
         listViewGenres.Items.Clear();
+        // Clear Collections listboxes
+        lvAllCollection.Items.Clear();
+        lvMovieCollections.Items.Clear();
         //Cleat Groups listboxes
         lvUserGroups.Items.Clear();
         lvMovieUserGroups.Items.Clear();
@@ -820,6 +823,8 @@ namespace MediaPortal.Configuration.Sections
       listViewMovieActors.BeginUpdate();
       listViewGenres.BeginUpdate();
       listViewAllGenres.BeginUpdate();
+      lvAllCollection.BeginUpdate();
+      lvMovieCollections.BeginUpdate();
       lvUserGroups.BeginUpdate();
       lvMovieUserGroups.BeginUpdate();
       listViewFiles.BeginUpdate();
@@ -833,6 +838,7 @@ namespace MediaPortal.Configuration.Sections
       tbYear.Text = movie.Year.ToString();
       tbVotes.Text = movie.Votes;
       tbRating.Text = movie.Rating.ToString();
+      tbUserRating.Text = movie.UserRating.ToString();
       tbDirector.Text = movie.Director;
       tbDirectorId.Text = movie.DirectorID.ToString();
       tbWritingCredits.Text = movie.WritingCredits;
@@ -895,6 +901,19 @@ namespace MediaPortal.Configuration.Sections
       {
         listViewAllGenres.Items.Add(item.Text);
       }
+      // Collection
+      lvAllCollection.Items.Clear();
+      ArrayList movieCollections = new ArrayList();
+      VideoDatabase.GetCollections(movieCollections);
+
+      foreach (string movieCollection in movieCollections)
+      {
+        ListViewItem item = new ListViewItem();
+        item.Text = movieCollection;
+        lvAllCollection.Items.Add(item);
+      }
+
+      lvAllCollection.Sort();
       // User groups
       lvUserGroups.Items.Clear();
       ArrayList userGroups = new ArrayList();
@@ -908,10 +927,12 @@ namespace MediaPortal.Configuration.Sections
       }
 
       lvUserGroups.Sort();
+      lvAllCollection.Sort();
 
       listViewMovieActors.Items.Clear();
       listViewGenres.Items.Clear();
       lvMovieUserGroups.Items.Clear();
+      lvMovieCollections.Items.Clear();
       listViewFiles.Items.Clear();
 
       if (_clearListBox)
@@ -983,6 +1004,24 @@ namespace MediaPortal.Configuration.Sections
             }
           }
         }
+        // Movie collections
+        ArrayList movieCollectionsList = new ArrayList();
+        VideoDatabase.GetMovieCollections(movie.ID, movieCollectionsList);
+
+        foreach (string strCollection in movieCollectionsList)
+        {
+          String strCurrentCollection = strCollection.Trim();
+          lvMovieCollections.Items.Add(strCurrentCollection);
+
+          for (int i = lvAllCollection.Items.Count - 1; i >= 0; --i)
+          {
+            if (lvAllCollection.Items[i].Text == strCurrentCollection)
+            {
+              lvAllCollection.Items.RemoveAt(i);
+              break;
+            }
+          }
+        }
         // Movie user groups
         ArrayList movieGroups = new ArrayList();
         VideoDatabase.GetMovieUserGroups(movie.ID, movieGroups);
@@ -1003,6 +1042,7 @@ namespace MediaPortal.Configuration.Sections
         }
 
         listViewGenres.Sort();
+        lvMovieCollections.Sort();
         lvMovieUserGroups.Sort();
         ArrayList filenames = new ArrayList();
         VideoDatabase.GetFilesForMovie(movie.ID, ref filenames);
@@ -1040,6 +1080,8 @@ namespace MediaPortal.Configuration.Sections
       listViewMovieActors.EndUpdate();
       listViewGenres.EndUpdate();
       listViewAllGenres.EndUpdate();
+      lvAllCollection.EndUpdate();
+      lvMovieCollections.EndUpdate();
       lvMovieUserGroups.EndUpdate();
       lvUserGroups.EndUpdate();
       listViewFiles.EndUpdate();
@@ -1522,6 +1564,10 @@ namespace MediaPortal.Configuration.Sections
       float.TryParse(tbRating.Text, out resultFloat);
       if (resultFloat == 0)
         tbRating.Text = "0";
+      // User Rating tbcheck
+      int.TryParse(tbUserRating.Text, out resultInt);
+      if (resultInt == 0)
+        tbUserRating.Text = "0";
       // IMDB id
       if (!VideoDatabase.CheckMovieImdbId(tbIMDBNr.Text))
       {
@@ -1883,6 +1929,7 @@ namespace MediaPortal.Configuration.Sections
           movie.Plot = tbSummary.Text;
           movie.UserReview = tbReview.Text; // Added review         
           movie.Rating = (float)Double.Parse(tbRating.Text);
+          movie.UserRating = (int)Int32.Parse(tbUserRating.Text);
           movie.TagLine = tbTagline.Text;
           movie.Year = Int32.Parse(tbYear.Text);
           movie.ThumbURL = (_useLocalImage ? "file://" + tbImageLocation.Text : tbImageLocation.Text);
@@ -1900,6 +1947,18 @@ namespace MediaPortal.Configuration.Sections
           else
           {
             movie.Genre += " / " + item.Text;
+          }
+        }
+        
+        foreach (ListViewItem item in lvMovieCollections.Items)
+        {
+          if (movie.MovieCollection  == string.Empty)
+          {
+            movie.MovieCollection  = item.Text;
+          }
+          else
+          {
+            movie.MovieCollection  += " / " + item.Text;
           }
         }
         
@@ -1924,6 +1983,131 @@ namespace MediaPortal.Configuration.Sections
         return movie;
       }
     }
+
+    #region Collection tab
+
+    private void btCollectionAdd_Click(object sender, EventArgs e)
+    {
+      if (tbNewCollection.Text.Length == 0)
+      {
+        return;
+      }
+
+      foreach (ListViewItem item in lvAllCollection.Items)
+      {
+        if (item.Text.ToUpperInvariant() == tbNewCollection.Text.ToUpperInvariant())
+        {
+          tbNewCollection.Text = string.Empty;
+          return;
+        }
+      }
+
+      VideoDatabase.AddCollection(tbNewCollection.Text);
+      lvAllCollection.Items.Add(tbNewCollection.Text);
+      textBoxNewGenre.Text = string.Empty;
+    }
+
+    private void btCollectionRemove_Click(object sender, EventArgs e)
+    {
+      if (
+        MessageBox.Show("Are you sure you want to delete the selected collections?", "Are you sure?", MessageBoxButtons.YesNo) ==
+        DialogResult.Yes)
+      {
+        for (int i = lvAllCollection.SelectedItems.Count - 1; i >= 0; --i)
+        {
+          ListViewItem listItem = lvAllCollection.SelectedItems[i];
+          VideoDatabase.DeleteCollection(listItem.Text);
+          lvAllCollection.Items.Remove(listItem);
+        }
+        pbCollectionImage.ImageLocation = string.Empty;
+      }
+    }
+
+    private void btCollectionThumbAdd_Click(object sender, EventArgs e)
+    {
+      if (lvAllCollection.SelectedItems.Count == 1)
+      {
+        AddThumbImage(lvAllCollection, Thumbs.MovieCollection, pbCollectionImage);
+      }
+      if (lvMovieCollections.SelectedItems.Count == 1)
+      {
+        AddThumbImage(lvMovieCollections, Thumbs.MovieCollection, pbCollectionImage);
+      }
+    }
+
+    private void btAddCollectionToMovie_Click(object sender, EventArgs e)
+    {
+      for (int i = 0; i < lvAllCollection.SelectedItems.Count; ++i)
+      {
+        ListViewItem listItem = lvAllCollection.SelectedItems[i];
+        lvMovieCollections.Items.Add(listItem.Text);
+        int iCollection = VideoDatabase.AddCollection(listItem.Text);
+        VideoDatabase.AddCollectionToMovie(CurrentMovie.ID, iCollection);
+      }
+
+      for (int i = lvAllCollection.SelectedItems.Count - 1; i >= 0; i--)
+      {
+        ListViewItem listItem = lvAllCollection.SelectedItems[i];
+        lvAllCollection.Items.Remove(listItem);
+      }
+    }
+
+    private void btRemoveCollectionToMovie_Click(object sender, EventArgs e)
+    {
+      for (int i = 0; i < lvMovieCollections.SelectedItems.Count; ++i)
+      {
+        ListViewItem listItem = lvMovieCollections.SelectedItems[i];
+        lvAllCollection.Items.Add(listItem.Text);
+        int iCollection = VideoDatabase.AddCollection(listItem.Text);
+        VideoDatabase.RemoveCollectionFromMovie(CurrentMovie.ID, iCollection);
+      }
+
+      for (int i = lvMovieCollections.SelectedItems.Count - 1; i >= 0; --i)
+      {
+        ListViewItem listItem = lvMovieCollections.SelectedItems[i];
+        lvMovieCollections.Items.Remove(listItem);
+      }
+    }
+
+    private void lvCollection_SelectedIndexChanged(object sender, EventArgs e)
+    {
+      GetThumb(lvAllCollection, Thumbs.MovieCollection, pbCollectionImage);
+    }
+
+    private void lvMovieCollections_SelectedIndexChanged(object sender, EventArgs e)
+    {
+      GetThumb(lvMovieCollections, Thumbs.MovieCollection, pbCollectionImage);
+    }
+
+    #endregion
+
+    #region Collection misc tab
+
+    private void cbCollections_SelectedIndexChanged(object sender, EventArgs e)
+    {
+      if (cbCollectionsMisc.SelectedIndex == -1)
+      {
+        return;
+      }
+
+      int idCollection = VideoDatabase.AddCollection(cbCollectionsMisc.SelectedItem.ToString());
+      tbCollectionDescription.Text = VideoDatabase.GetCollectionDescriptionById(idCollection);
+    }
+
+    private void btCollectionDescSave_Click(object sender, EventArgs e)
+    {
+      if (!string.IsNullOrEmpty(tbCollectionDescription.Text) && tbUserGroupDescription.Text != Strings.Unknown)
+      {
+        if (cbCollectionsMisc.SelectedIndex == -1)
+        {
+          return;
+        }
+
+        VideoDatabase.AddCollectionDescription(cbCollectionsMisc.SelectedItem.ToString(), tbCollectionDescription.Text);
+      }
+    }
+
+    #endregion
 
     #endregion
 
@@ -2765,6 +2949,7 @@ namespace MediaPortal.Configuration.Sections
         ShowHide();
 
         pbGenreImage.ImageLocation = string.Empty;
+        pbCollectionImage.ImageLocation = string.Empty;
         pbUserGroupImage.ImageLocation = string.Empty;
       }
     }
@@ -3797,7 +3982,7 @@ namespace MediaPortal.Configuration.Sections
           // Changed method 08.08.2010, reported it works fast with 500+ movies in collection
           ArrayList movies = new ArrayList();
           string sql = "SELECT * FROM movieinfo WHERE IMDBID = '" + actdetail[i].MovieImdbID + "'";
-          VideoDatabase.GetMoviesByFilter(sql, out movies, false, true, false, false);
+          VideoDatabase.GetMoviesByFilter(sql, out movies, false, true, false, false, false);
 
           if (movies.Count > 0)
           {
@@ -5064,6 +5249,7 @@ namespace MediaPortal.Configuration.Sections
     {
       ShowHide();
       pbGenreImage.ImageLocation = string.Empty;
+      pbCollectionImage.ImageLocation = string.Empty;
       pbUserGroupImage.ImageLocation = string.Empty;
 
       if (tabControl2.SelectedTab == tabPageUserGroupRules)
@@ -5104,6 +5290,24 @@ namespace MediaPortal.Configuration.Sections
         if (cbUserGroupsMiscList.Items.Count > 0)
         {
           cbUserGroupsMiscList.SelectedIndex = 0;
+        }
+      }
+
+      if (tabControl2.SelectedTab == tabPageCollectionDesc)
+      {
+        ArrayList userCollections = new ArrayList();
+        VideoDatabase.GetCollections(userCollections);
+        cbCollectionsMisc.Items.Clear();
+        tbCollectionDescription.Text = string.Empty;
+
+        foreach (string userCollection in userCollections)
+        {
+          cbCollectionsMisc.Items.Add(userCollection);
+        }
+
+        if (cbCollectionsMisc.Items.Count > 0)
+        {
+          cbCollectionsMisc.SelectedIndex = 0;
         }
       }
     }
