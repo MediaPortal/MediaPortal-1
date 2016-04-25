@@ -58,6 +58,7 @@ namespace MediaPortal.GUI.Library
     private FileInformation _fileInfo = null; // file info (size, date/time etc.) of the file
     private bool _shaded = false; // indicates if the item needs to be rendered shaded
     private float _rating = 0; // rating of a movie
+    private int _userrating = 0; // user rating of a movie
     private int _year = 0; // release year of the movie/song
     private object _tagMusic; // object containing the tag info of a music file (e.g., id3 tag)
     private object _tagTv; // object containing the tag info of a tv-recording
@@ -99,6 +100,7 @@ namespace MediaPortal.GUI.Library
       _duration = item._duration;
       _fileInfo = item._fileInfo;
       _rating = item._rating;
+      _userrating = item._userrating;
       _year = item._year;
       _idItem = item._idItem;
       _tagMusic = item._tagMusic;
@@ -515,6 +517,15 @@ namespace MediaPortal.GUI.Library
     {
       get { return _rating; }
       set { _rating = value; }
+    }
+
+    /// <summary>
+    /// Get/set the user rating of a movie.
+    /// </summary>
+    public int UserRating
+    {
+      get { return _userrating; }
+      set { _userrating = value; }
     }
 
     /// <summary>
