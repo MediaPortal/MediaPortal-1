@@ -46,6 +46,25 @@ namespace MediaPortal.Video.Database
     void AddGenreToMovie(int lMovieId, int lGenreId);
     void DeleteGenre(string genre);
     void RemoveGenresForMovie(int lMovieId);
+    string GetGenresForMovie(int lMovieId);
+    void GetMovieGenres(int lMovieId, ArrayList movieGenres);
+    
+    // Movie Collection
+    int AddCollection(string strCollection1);
+    int GetCollectionId(string movieCollection);
+    void AddCollectionDescription(string movieCollection, string description);
+    string GetCollectionDescriptionById(int collectionId);
+    void GetCollections(ArrayList collections);
+    string GetCollectionById(int collectionId);
+    void AddCollectionToMovie(int lMovieId, int lCollectionId);
+    void DeleteCollection(string collection);
+    void DeleteEmptyCollections();
+    void RemoveCollectionFromMovie(int lMovieId, int lCollectionId);
+    void RemoveCollectionsForMovie(int lMovieId);
+    string GetCollectionsForMovie(int lMovieId);
+    void GetMovieCollections(int lMovieId, ArrayList movieCollections);
+    bool GetMovieCollectionWatchedStatus(string collection, out int percent);
+    bool GetMovieCollectionWatchedStatus(int collection, out int percent);
     
     // User groups
     int AddUserGroup(string userGroup);
@@ -54,6 +73,7 @@ namespace MediaPortal.Video.Database
     int GetUserGroupId(string userGroup);
     string GetUserGroupById(int groupId);
     string GetUserGroupDescriptionById(int groupId);
+    string GetUserGroupsForMovie(int lMovieId);
     void GetMovieUserGroups(int movieId, ArrayList userGroups);
     string GetUserGroupRule(string group);
     void AddUserGroupRuleByGroupId(int groupId, string rule);
@@ -63,6 +83,8 @@ namespace MediaPortal.Video.Database
     void DeleteUserGroup(string userGroup);
     void RemoveUserGroupsForMovie(int lMovieId);
     void RemoveUserGroupRule(string groupName);
+    bool GetUserGroupWatchedStatus(string group, out int percent);
+    bool GetUserGroupWatchedStatus(int group, out int percent);
     
     // Actors
     int AddActor(string strActorImdbId, string strActorName);
@@ -117,6 +139,11 @@ namespace MediaPortal.Video.Database
     bool GetMovieWatchedStatus(int iFileId, out int percent, out int timesWatched);
     void DeleteMovie(string strFilenameAndPath);
     
+    // User Rating
+    void SetUserRatingForMovie(int lMovieId, int lUserRating);
+    int GetUserRatingForMovie(int lMovieId);
+    int GetUserRatingForMovie(string lIMDBNumber);
+
     // Movie files and movies
     int AddMovie(string strFilenameAndPath, bool bHassubtitles);
     void GetMovies(ref ArrayList movies);
@@ -133,6 +160,9 @@ namespace MediaPortal.Video.Database
     void GetMoviesByGenre(string strGenre1, ref ArrayList movies);
     void GetRandomMoviesByGenre(string strGenre1, ref ArrayList movies, int limit);
     string GetMovieTitlesByGenre(string strGenre);
+    void GetMoviesByCollection(string strCollection1, ref ArrayList movies);
+    void GetRandomMoviesByCollection(string strCollection1, ref ArrayList movies, int limit);
+    string GetMovieTitlesByCollection(string strCollection);
     void GetMoviesByUserGroup(string strUserGroup1, ref ArrayList movies);
     void GetRandomMoviesByUserGroup(string strUserGroup, ref ArrayList movies, int limit);
     string GetMovieTitlesByUserGroup(int idGroup);
@@ -146,6 +176,7 @@ namespace MediaPortal.Video.Database
     void GetMoviesByPath(string strPath1, ref ArrayList movies);
     void GetRandomMoviesByPath(string strPath1, ref ArrayList movies, int limit);
     void GetMoviesByFilter(string sql, out ArrayList movies, bool actorTable, bool movieinfoTable, bool genreTable, bool usergroupTable);
+    void GetMoviesByFilter(string sql, out ArrayList movies, bool actorTable, bool movieinfoTable, bool genreTable, bool usergroupTable, bool collectionTable);
     void GetIndexByFilter(string sql, bool filterNonWordChar, out ArrayList movieList);
     string GetMovieTitlesByIndex(string sql);
 
