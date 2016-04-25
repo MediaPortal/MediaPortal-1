@@ -23,6 +23,7 @@ TsMPEG2TransportFileServerMediaSubsession::TsMPEG2TransportFileServerMediaSubses
 	m_iChannelType = channelType;
 	m_iDurationCount = 0;
 
+  //Create a file duration measurement instance (and a file reader for it)
   m_pDuration = new CTsDuration();
   m_pFileDuration = NULL;
   if (m_pDuration)
@@ -34,12 +35,13 @@ TsMPEG2TransportFileServerMediaSubsession::TsMPEG2TransportFileServerMediaSubses
 
 TsMPEG2TransportFileServerMediaSubsession::~TsMPEG2TransportFileServerMediaSubsession() 
 {
+  //Delete the duration measurement instance
   if (m_pDuration)
   {
     delete m_pDuration;
     m_pDuration = NULL;
   }
-  
+  //Delete the 'duration' file reader
   if(m_pFileDuration)
   {
     delete m_pFileDuration;
@@ -126,14 +128,14 @@ float TsMPEG2TransportFileServerMediaSubsession::duration() const
 
 __int64 TsMPEG2TransportFileServerMediaSubsession::filelength() const
 {  
-	__int64	fileSizeTmp = 0;
+	__int64	fileSize = 0;
   if (m_pFileDuration)
   {
-    fileSizeTmp = m_pFileDuration->GetFileSize();
-	  //LogDebug("TsMp2TFSMediaSubsession::filelength() %I64", fileSizeTmp);
-	  if (fileSizeTmp < 0) fileSizeTmp = 0;
+    fileSize = m_pFileDuration->GetFileSize();
+	  //LogDebug("TsMp2TFSMediaSubsession::filelength() %I64d", fileSize);
+	  if (fileSize < 0) fileSize = 0;
   }
-  return fileSizeTmp;
+  return fileSize;
 }
 
 void TsMPEG2TransportFileServerMediaSubsession::InitFileDuration()
