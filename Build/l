@@ -1,0 +1,4693 @@
+MakeNSIS v2.46 - Copyright 1995-2009 Contributors
+See the file COPYING for license details.
+Credits can be found in the Users Manual.
+
+Command line defined: "BUILD_TYPE=Release"
+Command line defined: "VER_BUILD=106"
+Processing config: 
+Processing plugin dlls: "C:\Program Files\NSIS\Plugins\*.dll"
+ - AdvSplash::show
+ - Banner::destroy
+ - Banner::getWindow
+ - Banner::show
+ - BgImage::AddImage
+ - BgImage::AddText
+ - BgImage::Clear
+ - BgImage::Destroy
+ - BgImage::Redraw
+ - BgImage::SetBg
+ - BgImage::SetReturn
+ - BgImage::Sound
+ - Dialer::AttemptConnect
+ - Dialer::AutodialHangup
+ - Dialer::AutodialOnline
+ - Dialer::AutodialUnattended
+ - Dialer::GetConnectedState
+ - InstallOptions::dialog
+ - InstallOptions::initDialog
+ - InstallOptions::show
+ - LangDLL::LangDialog
+ - Math::Script
+ - NSISdl::download
+ - NSISdl::download_quiet
+ - Splash::show
+ - StartMenu::Init
+ - StartMenu::Select
+ - StartMenu::Show
+ - System::Alloc
+ - System::Call
+ - System::Copy
+ - System::Free
+ - System::Get
+ - System::Int64Op
+ - System::Store
+ - TypeLib::GetLibVersion
+ - TypeLib::Register
+ - TypeLib::UnRegister
+ - UserInfo::GetAccountType
+ - UserInfo::GetName
+ - UserInfo::GetOriginalAccountType
+ - VPatch::GetFileCRC32
+ - VPatch::GetFileMD5
+ - VPatch::vpatchfile
+ - nsDialogs::Create
+ - nsDialogs::CreateControl
+ - nsDialogs::CreateItem
+ - nsDialogs::CreateTimer
+ - nsDialogs::GetUserData
+ - nsDialogs::KillTimer
+ - nsDialogs::OnBack
+ - nsDialogs::OnChange
+ - nsDialogs::OnClick
+ - nsDialogs::OnNotify
+ - nsDialogs::SelectFileDialog
+ - nsDialogs::SelectFolderDialog
+ - nsDialogs::SetRTL
+ - nsDialogs::SetUserData
+ - nsDialogs::Show
+ - nsExec::Exec
+ - nsExec::ExecToLog
+ - nsExec::ExecToStack
+
+!define: "MUI_INSERT_NSISCONF"=""
+
+Changing directory to: "V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\Setup"
+
+Processing script file: "..\TvEngine3\TVLibrary\Setup\setup.nsi"
+!define: "SKRIPT_NAME"="MediaPortal TV Server / Client"
+!define: "git_ROOT"="..\..\.."
+!define: "git_InstallScripts"="..\..\..\Tools\InstallationScripts"
+!include: "..\..\..\Tools\InstallationScripts\include\MediaPortalScriptInit.nsh"
+%COMPUTERNAME% = DARK-FISH (..\..\..\Tools\InstallationScripts\include\MediaPortalScriptInit.nsh:33)
+!define: "git_MP"="..\..\..\mediaportal"
+!define: "git_TVServer"="..\..\..\TvEngine3\TVLibrary"
+!define: "git_Common_MP_TVE3"="..\..\..\Common-MP-TVE3"
+!define: "git_DeployTool"="..\..\..\Tools\MediaPortal.DeployTool"
+!define: "git_DirectShowFilters"="..\..\..\DirectShowFilters"
+!define: "git_TvEngine2"="..\..\..\TvEngine2"
+!define: "git_DeployVersionGIT"="..\..\..\Tools\Script & Batch tools\DeployVersionGIT"
+!define: "git_OUT"="..\..\..\Release"
+!system: "mkdir "..\..\..\Release""
+!system: returned 1
+!include: closed: "..\..\..\Tools\InstallationScripts\include\MediaPortalScriptInit.nsh"
+!include: "..\..\..\Tools\InstallationScripts\include\DotNetSearch.nsh"
+!include: closed: "..\..\..\Tools\InstallationScripts\include\DotNetSearch.nsh"
+!define: "TVSERVER.BASE"="..\..\..\TvEngine3\TVLibrary\TVServer.Base"
+!define: "MEDIAPORTAL.BASE"="..\..\..\mediaportal\MediaPortal.Base"
+!define: "PRODUCT_NAME"="MediaPortal TV Server / Client"
+!define: "PRODUCT_PUBLISHER"="Team MediaPortal"
+!define: "PRODUCT_WEB_SITE"="www.team-mediaportal.com"
+!define: "REG_UNINSTALL"="SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal TV Server"
+!define: "MP_REG_UNINSTALL"="SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal"
+!define: "MEMENTO_REGISTRY_ROOT"="HKLM"
+!define: "MEMENTO_REGISTRY_KEY"="SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal TV Server"
+!define: "COMMON_APPDATA"="$APPDATA\Team MediaPortal\MediaPortal TV Server"
+!define: "STARTMENU_GROUP"="$SMPROGRAMS\Team MediaPortal\MediaPortal TV Server"
+!include: "..\..\..\Tools\InstallationScripts\include\MediaPortalCurrentVersion.nsh"
+!define: "VER_MAJOR"="1"
+!define: "VER_MINOR"="13"
+!define: "VER_REVISION"="0"
+!define: "VER_TYPE"=""
+!define: "SPC"=""
+!define: "VER_MINOR_DISP"="13"
+!define: "VER_REVISION_DISP"="0"
+!define: "VER_DEBUG"=""
+!define: "VER_BRANCH"=""
+!define: "VER_COMMITTISH"=""
+!define: "VER_GIT"="-106 for TESTING ONLY"
+!define: "VERSION"="1.13.0-106 for TESTING ONLY"
+!define: "VERSION_DISP"="1.13.0-106 for TESTING ONLY"
+!include: closed: "..\..\..\Tools\InstallationScripts\include\MediaPortalCurrentVersion.nsh"
+SetCompressor: /SOLID lzma
+Var: "InstallPath"
+Var: "noClient"
+Var: "noServer"
+Var: "noDesktopSC"
+Var: "DeployMode"
+Var: "DeploySql"
+Var: "DeployPwd"
+Var: "UpdateMode"
+Var: "PREVIOUS_INSTALLDIR"
+Var: "PREVIOUS_VERSION"
+Var: "PREVIOUS_VERSION_STATE"
+Var: "EXPRESS_UPDATE"
+Var: "PREVIOUS_GENTLE_CONFIG"
+Var: "PREVIOUS_GENTLE_CONFIG_PLUGIN"
+Var: "frominstall"
+!include: "C:\Program Files\NSIS\Include\MUI2.nsh"
+!include: "C:\Program Files\NSIS\Contrib\Modern UI 2\MUI2.nsh"
+NSIS Modern User Interface version 2.0 - Copyright 2002-2009 Joost Verburg (C:\Program Files\NSIS\Contrib\Modern UI 2\MUI2.nsh:8)
+!define: "MUI_INCLUDED"=""
+!define: "MUI_SYSVERSION"="2.0"
+!define: "MUI_VERBOSE"="3"
+!include: closed: "C:\Program Files\NSIS\Contrib\Modern UI 2\MUI2.nsh"
+!include: closed: "C:\Program Files\NSIS\Include\MUI2.nsh"
+!include: "C:\Program Files\NSIS\Include\Sections.nsh"
+!include: closed: "C:\Program Files\NSIS\Include\Sections.nsh"
+!include: "C:\Program Files\NSIS\Include\Library.nsh"
+!include: closed: "C:\Program Files\NSIS\Include\Library.nsh"
+!include: "C:\Program Files\NSIS\Include\FileFunc.nsh"
+!define: "FILEFUNC_INCLUDED"=""
+!include: "C:\Program Files\NSIS\Include\Util.nsh"
+!include: closed: "C:\Program Files\NSIS\Include\Util.nsh"
+!define: "Locate"="!insertmacro LocateCall"
+!define: "un.Locate"="!insertmacro LocateCall"
+!define: "GetSize"="!insertmacro GetSizeCall"
+!define: "un.GetSize"="!insertmacro GetSizeCall"
+!define: "DriveSpace"="!insertmacro DriveSpaceCall"
+!define: "un.DriveSpace"="!insertmacro DriveSpaceCall"
+!define: "GetDrives"="!insertmacro GetDrivesCall"
+!define: "un.GetDrives"="!insertmacro GetDrivesCall"
+!define: "GetTime"="!insertmacro GetTimeCall"
+!define: "un.GetTime"="!insertmacro GetTimeCall"
+!define: "GetFileAttributes"="!insertmacro GetFileAttributesCall"
+!define: "un.GetFileAttributes"="!insertmacro GetFileAttributesCall"
+!define: "GetFileVersion"="!insertmacro GetFileVersionCall"
+!define: "un.GetFileVersion"="!insertmacro GetFileVersionCall"
+!define: "GetExeName"="!insertmacro GetExeNameCall"
+!define: "un.GetExeName"="!insertmacro GetExeNameCall"
+!define: "GetExePath"="!insertmacro GetExePathCall"
+!define: "un.GetExePath"="!insertmacro GetExePathCall"
+!define: "GetParameters"="!insertmacro GetParametersCall"
+!define: "un.GetParameters"="!insertmacro GetParametersCall"
+!define: "GetOptions"="!insertmacro GetOptionsCall"
+!define: "un.GetOptions"="!insertmacro GetOptionsCall"
+!define: "GetOptionsS"="!insertmacro GetOptionsSCall"
+!define: "un.GetOptionsS"="!insertmacro GetOptionsSCall"
+!define: "GetRoot"="!insertmacro GetRootCall"
+!define: "un.GetRoot"="!insertmacro GetRootCall"
+!define: "GetParent"="!insertmacro GetParentCall"
+!define: "un.GetParent"="!insertmacro GetParentCall"
+!define: "GetFileName"="!insertmacro GetFileNameCall"
+!define: "un.GetFileName"="!insertmacro GetFileNameCall"
+!define: "GetBaseName"="!insertmacro GetBaseNameCall"
+!define: "un.GetBaseName"="!insertmacro GetBaseNameCall"
+!define: "GetFileExt"="!insertmacro GetFileExtCall"
+!define: "un.GetFileExt"="!insertmacro GetFileExtCall"
+!define: "BannerTrimPath"="!insertmacro BannerTrimPathCall"
+!define: "un.BannerTrimPath"="!insertmacro BannerTrimPathCall"
+!define: "DirState"="!insertmacro DirStateCall"
+!define: "un.DirState"="!insertmacro DirStateCall"
+!define: "RefreshShellIcons"="!insertmacro RefreshShellIconsCall"
+!define: "un.RefreshShellIcons"="!insertmacro RefreshShellIconsCall"
+!include: closed: "C:\Program Files\NSIS\Include\FileFunc.nsh"
+!include: "C:\Program Files\NSIS\Include\Memento.nsh"
+!include: closed: "C:\Program Files\NSIS\Include\Memento.nsh"
+!include: "..\..\..\Tools\InstallationScripts\include\FileAssociation.nsh"
+!define: "FileAssociation_INCLUDED"=""
+!include: "C:\Program Files\NSIS\Include\Util.nsh"
+!include: closed: "C:\Program Files\NSIS\Include\Util.nsh"
+!define: "RegisterExtension"="!insertmacro RegisterExtensionCall"
+!define: "un.RegisterExtension"="!insertmacro RegisterExtensionCall"
+!define: "UnRegisterExtension"="!insertmacro UnRegisterExtensionCall"
+!define: "un.UnRegisterExtension"="!insertmacro UnRegisterExtensionCall"
+!include: closed: "..\..\..\Tools\InstallationScripts\include\FileAssociation.nsh"
+!include: "..\..\..\Tools\InstallationScripts\include\LanguageMacros.nsh"
+!define: "___LanguageMacros__NSH___"=""
+!include: closed: "..\..\..\Tools\InstallationScripts\include\LanguageMacros.nsh"
+!include: "..\..\..\Tools\InstallationScripts\include\LoggingMacros.nsh"
+!define: "LoggingMacros_INCLUDED"=""
+!define: "prefixERROR"="[ERROR     !!!]   "
+!define: "prefixDEBUG"="[    DEBUG    ]   "
+!define: "prefixINFO"="[         INFO]   "
+!include: "C:\Program Files\NSIS\Include\FileFunc.nsh"
+!include: closed: "C:\Program Files\NSIS\Include\FileFunc.nsh"
+Var: "LogFile"
+Var: "TempInstallLog"
+!define: "LOG_OPEN"="!insertmacro LOG_OPEN"
+!define: "un.LOG_OPEN"="!insertmacro LOG_OPEN"
+!define: "LOG_CLOSE"="!insertmacro LOG_CLOSE"
+!define: "un.LOG_CLOSE"="!insertmacro LOG_CLOSE"
+!define: "LOG_TEXT"="!insertmacro LOG_TEXT"
+!include: closed: "..\..\..\Tools\InstallationScripts\include\LoggingMacros.nsh"
+!include: "..\..\..\Tools\InstallationScripts\include\MediaPortalDirectories.nsh"
+!define: "___MediaPortalDirectories__NSH___"=""
+!include: "C:\Program Files\NSIS\Include\LogicLib.nsh"
+!include: closed: "C:\Program Files\NSIS\Include\LogicLib.nsh"
+!include: "C:\Program Files\NSIS\Include\FileFunc.nsh"
+!include: closed: "C:\Program Files\NSIS\Include\FileFunc.nsh"
+!include: "C:\Program Files\NSIS\Include\WordFunc.nsh"
+!define: "WORDFUNC_INCLUDED"=""
+!include: "C:\Program Files\NSIS\Include\Util.nsh"
+!include: closed: "C:\Program Files\NSIS\Include\Util.nsh"
+!define: "WordFind"="!insertmacro WordFindCall ''"
+!define: "un.WordFind"="!insertmacro WordFindCall ''"
+!define: "WordFindS"="!insertmacro WordFindSCall ''"
+!define: "un.WordFindS"="!insertmacro WordFindSCall ''"
+!define: "WordFind2X"="!insertmacro WordFind2XCall"
+!define: "un.WordFind2X"="!insertmacro WordFind2XCall"
+!define: "WordFind2XS"="!insertmacro WordFind2XSCall"
+!define: "un.WordFind2XS"="!insertmacro WordFind2XSCall"
+!define: "WordFind3X"="!insertmacro WordFind3XCall"
+!define: "un.WordFind3X"="!insertmacro WordFind3XCall"
+!define: "WordFind3XS"="!insertmacro WordFind3XSCall"
+!define: "un.WordFind3XS"="!insertmacro WordFind3XSCall"
+!define: "WordReplace"="!insertmacro WordReplaceCall"
+!define: "un.WordReplace"="!insertmacro WordReplaceCall"
+!define: "WordReplaceS"="!insertmacro WordReplaceSCall"
+!define: "un.WordReplaceS"="!insertmacro WordReplaceSCall"
+!define: "WordAdd"="!insertmacro WordAddCall"
+!define: "un.WordAdd"="!insertmacro WordAddCall"
+!define: "WordAddS"="!insertmacro WordAddSCall"
+!define: "un.WordAddS"="!insertmacro WordAddSCall"
+!define: "WordInsert"="!insertmacro WordInsertCall"
+!define: "un.WordInsert"="!insertmacro WordInsertCall"
+!define: "WordInsertS"="!insertmacro WordInsertSCall"
+!define: "un.WordInsertS"="!insertmacro WordInsertSCall"
+!define: "StrFilter"="!insertmacro StrFilterCall"
+!define: "un.StrFilter"="!insertmacro StrFilterCall"
+!define: "StrFilterS"="!insertmacro StrFilterSCall"
+!define: "un.StrFilterS"="!insertmacro StrFilterSCall"
+!define: "VersionCompare"="!insertmacro VersionCompareCall"
+!define: "un.VersionCompare"="!insertmacro VersionCompareCall"
+!define: "VersionConvert"="!insertmacro VersionConvertCall"
+!define: "un.VersionConvert"="!insertmacro VersionConvertCall"
+!include: closed: "C:\Program Files\NSIS\Include\WordFunc.nsh"
+!include: "..\..\..\Tools\InstallationScripts\include\LoggingMacros.nsh"
+!include: closed: "..\..\..\Tools\InstallationScripts\include\LoggingMacros.nsh"
+PluginDir: "..\..\..\Tools\InstallationScripts\XML-plugin\Plugin"
+ - xml::_CloneNode
+ - xml::_Coordinate
+ - xml::_CreateNode
+ - xml::_CreateText
+ - xml::_CurrentAttribute
+ - xml::_DeclarationEncoding
+ - xml::_DeclarationStandalone
+ - xml::_DeclarationVersion
+ - xml::_ElementPath
+ - xml::_FindCloseElement
+ - xml::_FindNextElement
+ - xml::_FirstAttribute
+ - xml::_FirstChild
+ - xml::_FirstChildElement
+ - xml::_FreeNode
+ - xml::_GetAttribute
+ - xml::_GetNodeValue
+ - xml::_GetText
+ - xml::_GotoHandle
+ - xml::_GotoPath
+ - xml::_InsertAfterNode
+ - xml::_InsertBeforeNode
+ - xml::_InsertEndChild
+ - xml::_IsCDATA
+ - xml::_LastAttribute
+ - xml::_LastChild
+ - xml::_LoadFile
+ - xml::_NextAttribute
+ - xml::_NextSibling
+ - xml::_NextSiblingElement
+ - xml::_NoChildren
+ - xml::_NodeHandle
+ - xml::_NodeType
+ - xml::_Parent
+ - xml::_PreviousAttribute
+ - xml::_PreviousSibling
+ - xml::_RemoveAllChild
+ - xml::_RemoveAttribute
+ - xml::_RemoveNode
+ - xml::_ReplaceNode
+ - xml::_RootElement
+ - xml::_SaveFile
+ - xml::_SetAttribute
+ - xml::_SetAttributeName
+ - xml::_SetAttributeValue
+ - xml::_SetCDATA
+ - xml::_SetCondenseWhiteSpace
+ - xml::_SetEncoding
+ - xml::_SetNodeValue
+ - xml::_SetText
+ - xml::_Unload
+ - xml::_XPathAttribute
+ - xml::_XPathNode
+ - xml::_XPathString
+!include: "..\..\..\Tools\InstallationScripts\XML-plugin\Include\XML.nsh"
+!define: "xml::SetCondenseWhiteSpace"="!insertmacro xml::SetCondenseWhiteSpace"
+!define: "xml::SetEncoding"="!insertmacro xml::SetEncoding"
+!define: "xml::LoadFile"="!insertmacro xml::LoadFile"
+!define: "xml::SaveFile"="!insertmacro xml::SaveFile"
+!define: "xml::DeclarationVersion"="!insertmacro xml::DeclarationVersion"
+!define: "xml::DeclarationEncoding"="!insertmacro xml::DeclarationEncoding"
+!define: "xml::DeclarationStandalone"="!insertmacro xml::DeclarationStandalone"
+!define: "xml::GetText"="!insertmacro xml::GetText"
+!define: "xml::SetText"="!insertmacro xml::SetText"
+!define: "xml::SetCDATA"="!insertmacro xml::SetCDATA"
+!define: "xml::IsCDATA"="!insertmacro xml::IsCDATA"
+!define: "xml::GetNodeValue"="!insertmacro xml::GetNodeValue"
+!define: "xml::SetNodeValue"="!insertmacro xml::SetNodeValue"
+!define: "xml::FindNextElement"="!insertmacro xml::FindNextElement"
+!define: "xml::FindCloseElement"="!insertmacro xml::FindCloseElement"
+!define: "xml::RootElement"="!insertmacro xml::RootElement"
+!define: "xml::FirstChildElement"="!insertmacro xml::FirstChildElement"
+!define: "xml::FirstChild"="!insertmacro xml::FirstChild"
+!define: "xml::LastChild"="!insertmacro xml::LastChild"
+!define: "xml::Parent"="!insertmacro xml::Parent"
+!define: "xml::NoChildren"="!insertmacro xml::NoChildren"
+!define: "xml::NextSiblingElement"="!insertmacro xml::NextSiblingElement"
+!define: "xml::NextSibling"="!insertmacro xml::NextSibling"
+!define: "xml::PreviousSibling"="!insertmacro xml::PreviousSibling"
+!define: "xml::InsertAfterNode"="!insertmacro xml::InsertAfterNode"
+!define: "xml::InsertBeforeNode"="!insertmacro xml::InsertBeforeNode"
+!define: "xml::InsertEndChild"="!insertmacro xml::InsertEndChild"
+!define: "xml::ReplaceNode"="!insertmacro xml::ReplaceNode"
+!define: "xml::RemoveNode"="!insertmacro xml::RemoveNode"
+!define: "xml::RemoveAllChild"="!insertmacro xml::RemoveAllChild"
+!define: "xml::CreateText"="!insertmacro xml::CreateText"
+!define: "xml::CreateNode"="!insertmacro xml::CreateNode"
+!define: "xml::CloneNode"="!insertmacro xml::CloneNode"
+!define: "xml::FreeNode"="!insertmacro xml::FreeNode"
+!define: "xml::NodeHandle"="!insertmacro xml::NodeHandle"
+!define: "xml::GotoHandle"="!insertmacro xml::GotoHandle"
+!define: "xml::XPathString"="!insertmacro xml::XPathString"
+!define: "xml::XPathNode"="!insertmacro xml::XPathNode"
+!define: "xml::XPathAttribute"="!insertmacro xml::XPathAttribute"
+!define: "xml::ElementPath"="!insertmacro xml::ElementPath"
+!define: "xml::GotoPath"="!insertmacro xml::GotoPath"
+!define: "xml::NodeType"="!insertmacro xml::NodeType"
+!define: "xml::Coordinate"="!insertmacro xml::Coordinate"
+!define: "xml::GetAttribute"="!insertmacro xml::GetAttribute"
+!define: "xml::SetAttribute"="!insertmacro xml::SetAttribute"
+!define: "xml::RemoveAttribute"="!insertmacro xml::RemoveAttribute"
+!define: "xml::FirstAttribute"="!insertmacro xml::FirstAttribute"
+!define: "xml::LastAttribute"="!insertmacro xml::LastAttribute"
+!define: "xml::NextAttribute"="!insertmacro xml::NextAttribute"
+!define: "xml::PreviousAttribute"="!insertmacro xml::PreviousAttribute"
+!define: "xml::CurrentAttribute"="!insertmacro xml::CurrentAttribute"
+!define: "xml::SetAttributeName"="!insertmacro xml::SetAttributeName"
+!define: "xml::SetAttributeValue"="!insertmacro xml::SetAttributeValue"
+!define: "xml::Unload"="!insertmacro xml::Unload"
+!include: closed: "..\..\..\Tools\InstallationScripts\XML-plugin\Include\XML.nsh"
+Var: "MyDocs"
+Var: "UserAppData"
+Var: "CommonAppData"
+Var: "MPdir.Base"
+Var: "MPdir.Config"
+Var: "MPdir.Plugins"
+Var: "MPdir.Log"
+Var: "MPdir.Skin"
+Var: "MPdir.Language"
+Var: "MPdir.Database"
+Var: "MPdir.Thumbs"
+Var: "MPdir.Cache"
+!define: "ReadMPdir"="!insertmacro ReadMPdir"
+!define: "LoadDefaultDirs"="!insertmacro LoadDefaultDirs"
+!define: "ReadConfig"="!insertmacro ReadConfigCall"
+!define: "ReadMediaPortalDirs"="!insertmacro ReadMediaPortalDirsCall"
+!define: "un.ReadMediaPortalDirs"="!insertmacro ReadMediaPortalDirsCall"
+!include: closed: "..\..\..\Tools\InstallationScripts\include\MediaPortalDirectories.nsh"
+!include: "..\..\..\Tools\InstallationScripts\include\MediaPortalMacros.nsh"
+!define: "___COMMON_MP_MACROS__NSH___"=""
+!include: "C:\Program Files\NSIS\Include\FileFunc.nsh"
+!include: closed: "C:\Program Files\NSIS\Include\FileFunc.nsh"
+!include: "C:\Program Files\NSIS\Include\LogicLib.nsh"
+!include: closed: "C:\Program Files\NSIS\Include\LogicLib.nsh"
+!include: "C:\Program Files\NSIS\Include\x64.nsh"
+!include: closed: "C:\Program Files\NSIS\Include\x64.nsh"
+!include: "..\..\..\Tools\InstallationScripts\include\WinVerEx.nsh"
+!include: closed: "..\..\..\Tools\InstallationScripts\include\WinVerEx.nsh"
+PluginDir: "..\..\..\Tools\InstallationScripts\GetVersion-plugin\Plugins"
+ - GetVersion::WindowsName
+ - GetVersion::WindowsPlatformArchitecture
+ - GetVersion::WindowsPlatformId
+ - GetVersion::WindowsServerName
+ - GetVersion::WindowsServicePack
+ - GetVersion::WindowsServicePackBuild
+ - GetVersion::WindowsType
+ - GetVersion::WindowsVersion
+!include: "..\..\..\Tools\InstallationScripts\include\LoggingMacros.nsh"
+!include: closed: "..\..\..\Tools\InstallationScripts\include\LoggingMacros.nsh"
+!define: "WEB_REQUIREMENTS"="http://wiki.team-mediaportal.com/GeneralRequirements"
+!define: "TV3_REG_UNINSTALL"="SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal TV Server"
+!define: "MIN_INSTALLED_MP_VERSION"="1.0.4.0"
+!define: "MIN_INSTALLED_MP_VERSION_TEXT"="v1.1.0 beta1"
+!define: "WEB_DOWNLOAD_MIN_MP_VERSION"="http://www.team-mediaportal.com/news/global/mediaportal_1.1.0_beta_1_-_released!.html"
+!define: "InitCommandlineParameter"="!insertmacro InitCommandlineParameterCall"
+!define: "un.InitCommandlineParameter"="!insertmacro InitCommandlineParameterCall"
+!define: "ReadCommandlineParameter"="!insertmacro ReadCommandlineParameterCall"
+!define: "un.ReadCommandlineParameter"="!insertmacro ReadCommandlineParameterCall"
+!define: "MP022IsInstalled"=""" MP022IsInstalled """
+!define: "MP023RC3IsInstalled"=""" MP023RC3IsInstalled """
+!define: "MP023IsInstalled"=""" MP023IsInstalled """
+!define: "MSI_TVServerIsInstalled"=""" MSI_TVServerIsInstalled """
+!define: "MSI_TVClientIsInstalled"=""" MSI_TVClientIsInstalled """
+!define: "MPIsInstalled"=""" MPIsInstalled """
+!define: "TVServerIsInstalled"=""" TVServerIsInstalled """
+!define: "TVClientIsInstalled"=""" TVClientIsInstalled """
+!define: "VCRedist2008IsInstalled"=""" VCRedist2008IsInstalled """
+!include: closed: "..\..\..\Tools\InstallationScripts\include\MediaPortalMacros.nsh"
+!include: "..\..\..\Tools\InstallationScripts\include\ProcessMacros.nsh"
+!define: "ProcessMacros_INCLUDED"=""
+!include: "C:\Program Files\NSIS\Include\LogicLib.nsh"
+!include: closed: "C:\Program Files\NSIS\Include\LogicLib.nsh"
+!include: "..\..\..\Tools\InstallationScripts\include\LoggingMacros.nsh"
+!include: closed: "..\..\..\Tools\InstallationScripts\include\LoggingMacros.nsh"
+PluginDir: "..\..\..\Tools\InstallationScripts\nsSCM-plugin\Plugin"
+ - nsSCM::Install
+ - nsSCM::QueryStatus
+ - nsSCM::Remove
+ - nsSCM::Start
+ - nsSCM::Stop
+PluginDir: "..\..\..\Tools\InstallationScripts\KillProc-plugin\Plugin"
+ - KillProcDLL::KillProc
+!define: "KillProcess"="!insertmacro KillProcess"
+!define: "StopService"="!insertmacro StopService"
+!define: "RenameDirectory"="!insertmacro RenameDirectory"
+!include: closed: "..\..\..\Tools\InstallationScripts\include\ProcessMacros.nsh"
+!include: "..\..\..\Tools\InstallationScripts\include\WinVerEx.nsh"
+!include: closed: "..\..\..\Tools\InstallationScripts\include\WinVerEx.nsh"
+!include: "..\..\..\Tools\InstallationScripts\pages\AddRemovePage.nsh"
+!define: "___ADD_REMOVE_PAGE__NSH___"=""
+!include: "C:\Program Files\NSIS\Include\WordFunc.nsh"
+!include: closed: "C:\Program Files\NSIS\Include\WordFunc.nsh"
+!include: "C:\Program Files\NSIS\Include\FileFunc.nsh"
+!include: closed: "C:\Program Files\NSIS\Include\FileFunc.nsh"
+Var: "ReinstallMode"
+Var: "ReinstallModePage.optBtn1"
+Var: "ReinstallModePage.optBtn1.state"
+Var: "ReinstallModePage.optBtn2"
+Var: "ReinstallModePage.optBtn2.state"
+Function: "PageReinstallMode"
+!insertmacro: _If
+!insertmacro: end of _If
+Abort: ""
+!insertmacro: _EndIf
+!insertmacro: end of _EndIf
+Push: $R0
+Push: $R1
+Push: $R2
+Push: $R3
+!insertmacro: _If
+!insertmacro: end of _If
+StrCpy $R1 "$(TEXT_ADDREMOVE_INFO_UPGRADE)" () ()
+StrCpy $R2 "$(TEXT_ADDREMOVE_UPDOWN_OPT1)" () ()
+StrCpy $R3 "$(TEXT_ADDREMOVE_UPDOWN_OPT2)" () ()
+!insertmacro: MUI_HEADER_TEXT
+!insertmacro: end of MUI_HEADER_TEXT
+!insertmacro: _ElseIf
+!insertmacro: end of _ElseIf
+StrCpy $R1 "$(TEXT_ADDREMOVE_INFO_DOWNGRADE)" () ()
+StrCpy $R2 "$(TEXT_ADDREMOVE_UPDOWN_OPT1)" () ()
+StrCpy $R3 "$(TEXT_ADDREMOVE_UPDOWN_OPT2)" () ()
+!insertmacro: MUI_HEADER_TEXT
+!insertmacro: end of MUI_HEADER_TEXT
+!insertmacro: _ElseIf
+!insertmacro: end of _ElseIf
+StrCpy $R1 "$(TEXT_ADDREMOVE_INFO_REPAIR)" () ()
+StrCpy $R2 "$(TEXT_ADDREMOVE_REPAIR_OPT1)" () ()
+StrCpy $R3 "$(TEXT_ADDREMOVE_REPAIR_OPT2)" () ()
+!insertmacro: MUI_HEADER_TEXT
+!insertmacro: end of MUI_HEADER_TEXT
+!insertmacro: _Else
+!insertmacro: end of _Else
+MessageBox: 16: "Unknown value of PREVIOUS_VERSION_STATE, aborting"
+Abort: ""
+!insertmacro: _EndIf
+!insertmacro: end of _EndIf
+File: "nsDialogs.dll"->"$PLUGINSDIR\nsDialogs.dll" 9728 bytes
+Plugin Command: Create 1018
+Pop: $R0
+File: "nsDialogs.dll"->"$PLUGINSDIR\nsDialogs.dll" 0/9728 bytes
+Plugin Command: CreateControl STATIC 0x40000000|0x10000000|0x04000000|0x00000100 0x00000020 0 0 300u 24u $R1
+Pop: $R1
+Plugin Command: CreateControl BUTTON 0x40000000|0x10000000|0x04000000|0x00010000|0x00000000|0x00000C00|0x00000009|0x00002000 0 30u 50u -30u 8u $R2
+Pop: $ReinstallModePage.optBtn1
+!insertmacro: __NSD_OnControlEvent
+Push: $0
+Push: $1
+StrCpy $1 "$ReinstallModePage.optBtn1" () ()
+GetFunctionAddress: $0 PageReinstallModeUpdateSelectionFile: "nsDialogs.dll"->"$PLUGINSDIR\nsDialogs.dll" 0/9728 bytes
+Plugin Command: OnClick $1 $0
+Pop: $1
+Pop: $0
+!insertmacro: end of __NSD_OnControlEvent
+Plugin Command: CreateControl BUTTON 0x40000000|0x10000000|0x04000000|0x00010000|0x00000000|0x00000C00|0x00000009|0x00002000 0 30u 70u -30u 8u $R3
+Pop: $ReinstallModePage.optBtn2
+!insertmacro: __NSD_OnControlEvent
+Push: $0
+Push: $1
+StrCpy $1 "$ReinstallModePage.optBtn2" () ()
+GetFunctionAddress: $0 PageReinstallModeUpdateSelectionPlugin Command: OnClick $1 $0
+Pop: $1
+Pop: $0
+!insertmacro: end of __NSD_OnControlEvent
+!insertmacro: _If
+!insertmacro: end of _If
+!insertmacro: __NSD_Check
+!insertmacro: __NSD_SetState
+SendMessage:($ReinstallModePage.optBtn2,0x00F1,1,0)
+!insertmacro: end of __NSD_SetState
+!insertmacro: end of __NSD_Check
+!insertmacro: _Else
+!insertmacro: end of _Else
+!insertmacro: __NSD_Check
+!insertmacro: __NSD_SetState
+SendMessage:($ReinstallModePage.optBtn1,0x00F1,1,0)
+!insertmacro: end of __NSD_SetState
+!insertmacro: end of __NSD_Check
+StrCpy $ReinstallMode "1" () ()
+!insertmacro: _EndIf
+!insertmacro: end of _EndIf
+File: "nsDialogs.dll"->"$PLUGINSDIR\nsDialogs.dll" 0/9728 bytes
+Plugin Command: Show
+Pop: $R3
+Pop: $R2
+Pop: $R1
+Pop: $R0
+FunctionEnd
+Function: "PageReinstallModeUpdateSelection"
+!insertmacro: __NSD_GetState
+SendMessage:(->$ReinstallModePage.optBtn1.state)($ReinstallModePage.optBtn1,0x00F0,0,0)
+!insertmacro: end of __NSD_GetState
+!insertmacro: __NSD_GetState
+SendMessage:(->$ReinstallModePage.optBtn2.state)($ReinstallModePage.optBtn2,0x00F0,0,0)
+!insertmacro: end of __NSD_GetState
+!insertmacro: _If
+!insertmacro: end of _If
+StrCpy $ReinstallMode "2" () ()
+!insertmacro: _Else
+!insertmacro: end of _Else
+StrCpy $ReinstallMode "1" () ()
+!insertmacro: _EndIf
+!insertmacro: end of _EndIf
+FunctionEnd
+Function: "PageLeaveReinstallMode"
+StrCpy $EXPRESS_UPDATE "0" () ()
+!insertmacro: _If
+!insertmacro: end of _If
+!insertmacro: _And
+!insertmacro: end of _And
+StrCpy $EXPRESS_UPDATE "1" () ()
+Call "RunUninstaller"
+Quit
+!insertmacro: _EndIf
+!insertmacro: end of _EndIf
+!insertmacro: _If
+!insertmacro: end of _If
+!insertmacro: _And
+!insertmacro: end of _And
+StrCpy $EXPRESS_UPDATE "1" () ()
+Call "LoadPreviousSettings"
+!insertmacro: _EndIf
+!insertmacro: end of _EndIf
+FunctionEnd
+!include: closed: "..\..\..\Tools\InstallationScripts\pages\AddRemovePage.nsh"
+!include: "..\..\..\Tools\InstallationScripts\pages\UninstallModePage.nsh"
+!define: "UninstallModePage_INCLUDED"=""
+Var: "UnInstallMode"
+Var: "uninstModePage.optBtn0"
+Var: "uninstModePage.optBtn0.state"
+Var: "uninstModePage.optBtn1"
+Var: "uninstModePage.optBtn1.state"
+Var: "uninstModePage.optBtn2"
+Var: "uninstModePage.optBtn2.state"
+Function: "un.UninstallModePage"
+!insertmacro: _If
+!insertmacro: end of _If
+StrCpy $UnInstallMode "0" () ()
+Abort: ""
+!insertmacro: _EndIf
+!insertmacro: end of _EndIf
+!insertmacro: MUI_HEADER_TEXT
+!insertmacro: end of MUI_HEADER_TEXT
+File: "nsDialogs.dll"->"$PLUGINSDIR\nsDialogs.dll" 9728 bytes
+Plugin Command: Create 1018
+File: "nsDialogs.dll"->"$PLUGINSDIR\nsDialogs.dll" 0/9728 bytes
+Plugin Command: CreateControl BUTTON 0x40000000|0x10000000|0x04000000|0x00010000|0x00000000|0x00000C00|0x00000009|0x00002000 0 20u 20u -20u 8u $(TEXT_UNMODE_OPT0)
+Pop: $uninstModePage.optBtn0
+!insertmacro: __NSD_OnControlEvent
+Push: $0
+Push: $1
+StrCpy $1 "$uninstModePage.optBtn0" () ()
+GetFunctionAddress: $0 un.UninstallModePageUpdateSelectionFile: "nsDialogs.dll"->"$PLUGINSDIR\nsDialogs.dll" 0/9728 bytes
+Plugin Command: OnClick $1 $0
+Pop: $1
+Pop: $0
+!insertmacro: end of __NSD_OnControlEvent
+Plugin Command: CreateControl STATIC 0x40000000|0x10000000|0x04000000|0x00000100 0x00000020 30u 30u -30u 24u $(TEXT_UNMODE_OPT0_DESC)
+Plugin Command: CreateControl BUTTON 0x40000000|0x10000000|0x04000000|0x00010000|0x00000000|0x00000C00|0x00000009|0x00002000 0 20u 60u -20u 8u $(TEXT_UNMODE_OPT1)
+Pop: $uninstModePage.optBtn1
+!insertmacro: __NSD_OnControlEvent
+Push: $0
+Push: $1
+StrCpy $1 "$uninstModePage.optBtn1" () ()
+GetFunctionAddress: $0 un.UninstallModePageUpdateSelectionPlugin Command: OnClick $1 $0
+Pop: $1
+Pop: $0
+!insertmacro: end of __NSD_OnControlEvent
+Plugin Command: CreateControl STATIC 0x40000000|0x10000000|0x04000000|0x00000100 0x00000020 30u 70u -30u 24u $(TEXT_UNMODE_OPT1_DESC)
+Plugin Command: CreateControl BUTTON 0x40000000|0x10000000|0x04000000|0x00010000|0x00000000|0x00000C00|0x00000009|0x00002000 0 20u 100u -20u 8u $(TEXT_UNMODE_OPT2)
+Pop: $uninstModePage.optBtn2
+!insertmacro: __NSD_OnControlEvent
+Push: $0
+Push: $1
+StrCpy $1 "$uninstModePage.optBtn2" () ()
+GetFunctionAddress: $0 un.UninstallModePageUpdateSelectionPlugin Command: OnClick $1 $0
+Pop: $1
+Pop: $0
+!insertmacro: end of __NSD_OnControlEvent
+Plugin Command: CreateControl STATIC 0x40000000|0x10000000|0x04000000|0x00000100 0x00000020 30u 110u -30u 24u $(TEXT_UNMODE_OPT2_DESC)
+SendMessage:($uninstModePage.optBtn0,0x00F1,1,0)
+File: "nsDialogs.dll"->"$PLUGINSDIR\nsDialogs.dll" 0/9728 bytes
+Plugin Command: Show
+FunctionEnd
+Function: "un.UninstallModePageUpdateSelection"
+!insertmacro: __NSD_GetState
+SendMessage:(->$uninstModePage.optBtn0.state)($uninstModePage.optBtn0,0x00F0,0,0)
+!insertmacro: end of __NSD_GetState
+!insertmacro: __NSD_GetState
+SendMessage:(->$uninstModePage.optBtn1.state)($uninstModePage.optBtn1,0x00F0,0,0)
+!insertmacro: end of __NSD_GetState
+!insertmacro: __NSD_GetState
+SendMessage:(->$uninstModePage.optBtn2.state)($uninstModePage.optBtn2,0x00F0,0,0)
+!insertmacro: end of __NSD_GetState
+!insertmacro: _If
+!insertmacro: end of _If
+StrCpy $UnInstallMode "1" () ()
+!insertmacro: _ElseIf
+!insertmacro: end of _ElseIf
+StrCpy $UnInstallMode "2" () ()
+!insertmacro: _Else
+!insertmacro: end of _Else
+StrCpy $UnInstallMode "0" () ()
+!insertmacro: _EndIf
+!insertmacro: end of _EndIf
+FunctionEnd
+Function: "un.UninstallModePageLeave"
+!insertmacro: _If
+!insertmacro: end of _If
+MessageBox: 308: "$(TEXT_UNMODE_OPT1_MSGBOX)" (on IDYES goto +2)
+Abort: ""
+!insertmacro: _ElseIf
+!insertmacro: end of _ElseIf
+MessageBox: 308: "$(TEXT_UNMODE_OPT2_MSGBOX)" (on IDYES goto +2)
+Abort: ""
+!insertmacro: _EndIf
+!insertmacro: end of _EndIf
+FunctionEnd
+!include: closed: "..\..\..\Tools\InstallationScripts\pages\UninstallModePage.nsh"
+!define: "MUI_ABORTWARNING"=""
+!define: "MUI_ICON"="..\..\..\Tools\InstallationScripts\Resources\install.ico"
+!define: "MUI_UNICON"="..\..\..\Tools\InstallationScripts\Resources\install.ico"
+!define: "MUI_HEADERIMAGE"=""
+!define: "MUI_HEADERIMAGE_BITMAP"="..\..\..\Tools\InstallationScripts\Resources\header.bmp"
+!define: "MUI_WELCOMEFINISHPAGE_BITMAP"="..\..\..\Tools\InstallationScripts\Resources\wizard-tv-snapshot.bmp"
+!define: "MUI_UNWELCOMEFINISHPAGE_BITMAP"="..\..\..\Tools\InstallationScripts\Resources\wizard-tv.bmp"
+!define: "MUI_HEADERIMAGE_RIGHT"=""
+!define: "MUI_COMPONENTSPAGE_SMALLDESC"=""
+!define: "MUI_FINISHPAGE_NOAUTOCLOSE"=""
+!define: "MUI_FINISHPAGE_RUN"="$INSTDIR\SetupTV.exe"
+!define: "MUI_FINISHPAGE_RUN_TEXT"="Run TV-Server Configuration"
+!define: "MUI_FINISHPAGE_LINK"="Donate to MediaPortal"
+!define: "MUI_FINISHPAGE_LINK_LOCATION"="http://www.team-mediaportal.com/donate.html"
+!define: "MUI_UNFINISHPAGE_NOAUTOCLOSE"=""
+!insertmacro: MUI_PAGE_WELCOME
+!insertmacro: end of MUI_PAGE_WELCOME
+!insertmacro: MUI_PAGE_LICENSE
+!insertmacro: end of MUI_PAGEDECLARATION_LICENSE
+!insertmacro: end of MUI_PAGE_LICENSE
+Page: custom (creator:PageReinstallMode) (leave:PageLeaveReinstallMode)
+!define: "MUI_PAGE_CUSTOMFUNCTION_PRE"="PageComponentsPre"
+!insertmacro: MUI_PAGE_COMPONENTS
+!insertmacro: end of MUI_PAGE_COMPONENTS
+!define: "MUI_PAGE_CUSTOMFUNCTION_PRE"="PageDirectoryPre"
+!insertmacro: MUI_PAGE_DIRECTORY
+!insertmacro: end of MUI_PAGE_DIRECTORY
+!insertmacro: MUI_PAGE_INSTFILES
+!insertmacro: end of MUI_PAGE_INSTFILES
+!define: "MUI_PAGE_CUSTOMFUNCTION_SHOW"="PageFinishShow"
+!insertmacro: MUI_PAGE_FINISH
+!insertmacro: end of MUI_PAGE_FINISH
+!define: "MUI_PAGE_CUSTOMFUNCTION_PRE"="un.WelcomePagePre"
+!insertmacro: MUI_UNPAGE_WELCOME
+!insertmacro: end of MUI_UNPAGE_WELCOME
+UninstPage: custom (creator:un.UninstallModePage) (leave:un.UninstallModePageLeave)
+!insertmacro: MUI_UNPAGE_INSTFILES
+!insertmacro: end of MUI_UNPAGE_INSTFILES
+!define: "MUI_PAGE_CUSTOMFUNCTION_PRE"="un.FinishPagePre"
+!insertmacro: MUI_UNPAGE_FINISH
+!insertmacro: end of MUI_UNPAGE_FINISH
+!insertmacro: LANG_LOAD
+!insertmacro: MUI_LANGUAGE
+!insertmacro: end of MUI_LANGUAGE
+!include: "..\..\..\Tools\InstallationScripts\languages\English.nsh"
+!define: "LANG"="ENGLISH"
+!insertmacro: LANG_STRING
+LangString: "^UninstallLink" 1033 "Uninstall MediaPortal TV Server / Client"
+!insertmacro: end of LANG_STRING
+!insertmacro: LANG_STRING
+LangString: "DESC_SecGabest" 1033 "Installs the MPC-HC audio/video decoders"
+!insertmacro: end of LANG_STRING
+!insertmacro: LANG_STRING
+LangString: "DESC_SecServer" 1033 "Installs the MediaPortal TV Server"
+!insertmacro: end of LANG_STRING
+!insertmacro: LANG_STRING
+LangString: "DESC_SecClient" 1033 "Installs the MediaPortal TV Client plugin"
+!insertmacro: end of LANG_STRING
+!insertmacro: LANG_STRING
+LangString: "TEXT_MP_NOT_INSTALLED" 1033 "MediaPortal not installed"
+!insertmacro: end of LANG_STRING
+!insertmacro: LANG_STRING
+LangString: "TEXT_TVSERVER_NOT_INSTALLED" 1033 "TVServer not installed"
+!insertmacro: end of LANG_STRING
+!insertmacro: LANG_STRING
+LangString: "TEXT_MSGBOX_REMOVE_ALL" 1033 "!!! ATTENTION !!!
+Do you want to make a complete cleanup?
+This removes completly the registry keys, the installation and the common app data directory AND THE ---TVDATABASE---!!!"
+!insertmacro: end of LANG_STRING
+!insertmacro: LANG_STRING
+LangString: "TEXT_MSGBOX_REMOVE_ALL_STUPID" 1033 "!!! ATTENTION !!!
+Again for those who slept the msgBox before. :(
+
+$(TEXT_MSGBOX_REMOVE_ALL)"
+!insertmacro: end of LANG_STRING
+!insertmacro: LANG_STRING
+LangString: "TEXT_MSGBOX_PARAMETER_ERROR" 1033 "You have done something wrong!
+It is not allowed to use 'noClient' & 'noServer' at the same time."
+!insertmacro: end of LANG_STRING
+!insertmacro: LANG_STRING
+LangString: "TEXT_MSGBOX_ERROR_MP022" 1033 "Old MSI-based MediaPortal 0.2.2.0 is still installed. Why didn't you follow the instructions and didn't remove it first? Do that and restart this setup."
+!insertmacro: end of LANG_STRING
+!insertmacro: LANG_STRING
+LangString: "TEXT_MSGBOX_ERROR_MP023RC3" 1033 "Old MediaPortal 0.2.3.0 RC3 is still installed. Why didn't you follow the instructions and didn't remove it first? Do that and restart this setup."
+!insertmacro: end of LANG_STRING
+!insertmacro: LANG_STRING
+LangString: "TEXT_MSGBOX_ERROR_MP023" 1033 "Old MediaPortal 0.2.3.0 is still installed. Why didn't you follow the instructions and didn't remove it first? Do that and restart this setup."
+!insertmacro: end of LANG_STRING
+!insertmacro: LANG_STRING
+LangString: "TEXT_MSGBOX_ERROR_MSI_CLIENT" 1033 "Old MSI-based TV Client plugin is still installed. Why didn't you follow the instructions and didn't remove it first? Do that and restart this setup."
+!insertmacro: end of LANG_STRING
+!insertmacro: LANG_STRING
+LangString: "TEXT_MSGBOX_ERROR_MSI_SERVER" 1033 "Old MSI-based TV Server is still installed. Why didn't you follow the instructions and didn't remove it first? Do that and restart this setup."
+!insertmacro: end of LANG_STRING
+!insertmacro: LANG_STRING
+LangString: "INSTALLATION_CANCELED" 1033 "Installation will be canceled."
+!insertmacro: end of LANG_STRING
+!insertmacro: LANG_STRING
+LangString: "TEXT_MSGBOX_INSTALLATION_CANCELD" 1033 "$(INSTALLATION_CANCELED)"
+!insertmacro: end of LANG_STRING
+!insertmacro: LANG_STRING
+LangString: "TEXT_MSGBOX_MORE_INFO" 1033 "Do you want to get more information about it?"
+!insertmacro: end of LANG_STRING
+!insertmacro: LANG_STRING
+LangString: "MISSING_COMPONENT_INTRO" 1033 "Some components are missing on your system to install MediaPortal TV Server / Client."
+!insertmacro: end of LANG_STRING
+!insertmacro: LANG_STRING
+LangString: "MISSING_COMPONENT_INSTALL" 1033 "Please install the following components:"
+!insertmacro: end of LANG_STRING
+!insertmacro: LANG_STRING
+LangString: "MISSING_COMPONENT_MORE_INFO" 1033 "You can find more information and download links in MediaPortal Wiki, which will is opened now."
+!insertmacro: end of LANG_STRING
+!insertmacro: LANG_STRING
+LangString: "TEXT_MSGBOX_ERROR_WIN" 1033 "Your operating system is not supported by MediaPortal TV Server / Client.
+
+$(TEXT_MSGBOX_INSTALLATION_CANCELD)
+
+$(TEXT_MSGBOX_MORE_INFO)"
+!insertmacro: end of LANG_STRING
+!insertmacro: LANG_STRING
+LangString: "TEXT_MSGBOX_ERROR_WIN_NOT_RECOMMENDED" 1033 "Your operating system is not recommended by MediaPortal TV Server / Client.
+
+$(TEXT_MSGBOX_MORE_INFO)"
+!insertmacro: end of LANG_STRING
+!insertmacro: LANG_STRING
+LangString: "TEXT_MSGBOX_ERROR_ADMIN" 1033 "You need administration rights to install MediaPortal TV Server / Client.
+
+$(TEXT_MSGBOX_INSTALLATION_CANCELD)"
+!insertmacro: end of LANG_STRING
+!insertmacro: LANG_STRING
+LangString: "TEXT_MSGBOX_ERROR_VCREDIST_2008" 1033 "Microsoft Visual C++ 2008 SP1 Redistributable Package (x86) is not installed.
+It is a requirement for MediaPortal TV Server / Client.
+
+$(TEXT_MSGBOX_INSTALLATION_CANCELD)
+
+$(TEXT_MSGBOX_MORE_INFO)"
+!insertmacro: end of LANG_STRING
+!insertmacro: LANG_STRING
+LangString: "TEXT_MSGBOX_ERROR_VCREDIST_2008_AND_Update" 1033 "Microsoft Visual C++ 2008 SP1 Redistributable Package (x86) and an update for it are not installed.
+Both are a requirement for MediaPortal TV Server / Client.
+
+$(TEXT_MSGBOX_INSTALLATION_CANCELD)
+
+$(TEXT_MSGBOX_MORE_INFO)"
+!insertmacro: end of LANG_STRING
+!insertmacro: LANG_STRING
+LangString: "TEXT_MSGBOX_ERROR_VCREDIST_2008_Update" 1033 "An  update  for Microsoft Visual C++ 2008 SP1 Redistributable Package (x86) is not installed.
+It is a requirement for MediaPortal TV Server / Client.
+
+$(TEXT_MSGBOX_INSTALLATION_CANCELD)
+
+$(TEXT_MSGBOX_MORE_INFO)"
+!insertmacro: end of LANG_STRING
+!insertmacro: LANG_STRING
+LangString: "TEXT_MSGBOX_ERROR_DOTNET20" 1033 "Microsoft .Net Framework 2.0 SP2 is not installed.
+It is a requirement for MediaPortal TV Server / Client.
+
+$(TEXT_MSGBOX_INSTALLATION_CANCELD)
+
+$(TEXT_MSGBOX_MORE_INFO)"
+!insertmacro: end of LANG_STRING
+!insertmacro: LANG_STRING
+LangString: "TEXT_MSGBOX_ERROR_DOTNET20_SP" 1033 "Microsoft .Net Framework 2.0 is installed.
+But Service Pack 2 is a requirement for MediaPortal TV Server / Client.
+
+$(TEXT_MSGBOX_INSTALLATION_CANCELD)
+
+$(TEXT_MSGBOX_MORE_INFO)"
+!insertmacro: end of LANG_STRING
+!insertmacro: LANG_STRING
+LangString: "TEXT_MSGBOX_ERROR_DOTNET35" 1033 "Microsoft .Net Framework 3.5 SP1 is not installed.
+It is a requirement for MediaPortal TV Server / Client.
+
+$(TEXT_MSGBOX_INSTALLATION_CANCELD)
+
+$(TEXT_MSGBOX_MORE_INFO)"
+!insertmacro: end of LANG_STRING
+!insertmacro: LANG_STRING
+LangString: "TEXT_MSGBOX_ERROR_DOTNET35_SP" 1033 "Microsoft .Net Framework 3.5 is installed.
+But Service Pack 1 for .Net 3.5 is a requirement for MediaPortal TV Server / Client.
+
+$(TEXT_MSGBOX_INSTALLATION_CANCELD)
+
+$(TEXT_MSGBOX_MORE_INFO)"
+!insertmacro: end of LANG_STRING
+!insertmacro: LANG_STRING
+LangString: "TEXT_MSGBOX_ERROR_IS_INSTALLED" 1033 "MediaPortal TV Server / Client is already installed. You need to uninstall it, before you continue with the installation.
+Uninstall will be lunched when pressing OK."
+!insertmacro: end of LANG_STRING
+!insertmacro: LANG_STRING
+LangString: "TEXT_MSGBOX_ERROR_ON_UNINSTALL" 1033 "An error occured while trying to uninstall old version!
+Do you still want to continue the installation?"
+!insertmacro: end of LANG_STRING
+!insertmacro: LANG_STRING
+LangString: "TEXT_MSGBOX_ERROR_REBOOT_REQUIRED" 1033 "A reboot is required after a previous action. Reboot you system and try it again."
+!insertmacro: end of LANG_STRING
+!insertmacro: LANG_STRING
+LangString: "TEXT_MSGBOX_ERROR_UPDATE_BUT_NOT_INSTALLED" 1033 "MediaPortal TV Server / Client is not installed. It is not possible to install this update.
+
+$(TEXT_MSGBOX_INSTALLATION_CANCELD)"
+!insertmacro: end of LANG_STRING
+!insertmacro: LANG_STRING
+LangString: "TEXT_MSGBOX_ERROR_SVN_NOMP" 1033 "MediaPortal TV Server / Client v1.1.0 beta1 is not installed. It is required to install this Snapshot-Build. Please install it first.
+Do you want to open the download page in your browser now?"
+!insertmacro: end of LANG_STRING
+!insertmacro: LANG_STRING
+LangString: "TEXT_MSGBOX_ERROR_SVN_WRONG_VERSION" 1033 "MediaPortal TV Server / Client v1.1.0 beta1 is not installed. It is required to install this Snapshot-Build. Please install it first.
+Do you want to open the download page in your browser now?"
+!insertmacro: end of LANG_STRING
+!insertmacro: LANG_STRING
+LangString: "UPDATE_ERROR_WRONGEXE" 1033 "updating MediaPortal TV Server / Client is only allowed by starting MediaPortalUpdater!"
+!insertmacro: end of LANG_STRING
+!insertmacro: LANG_STRING
+LangString: "UPDATE_ERROR_UNKNOWN" 1033 "strange / unknown error, please use full installer"
+!insertmacro: end of LANG_STRING
+!insertmacro: LANG_STRING
+LangString: "UPDATE_ERROR_NOTHING_INSTALLED" 1033 "Nothing to do, nothing installed, please use the full installer"
+!insertmacro: end of LANG_STRING
+!insertmacro: LANG_STRING
+LangString: "UPDATE_ERROR_VERSION_MP" 1033 "wrong version of MediaPortal is installed or snapshot-build, please use the full installer"
+!insertmacro: end of LANG_STRING
+!insertmacro: LANG_STRING
+LangString: "UPDATE_ERROR_VERSION_TVSERVER" 1033 "wrong version or TVServer or Client plugin is installed or snapshot-build, please use the full installer"
+!insertmacro: end of LANG_STRING
+!insertmacro: LANG_STRING
+LangString: "TEXT_ADDREMOVE_HEADER" 1033 "Already Installed"
+!insertmacro: end of LANG_STRING
+!insertmacro: LANG_STRING
+LangString: "TEXT_ADDREMOVE_HEADER2_REPAIR" 1033 "Choose the maintenance option to perform."
+!insertmacro: end of LANG_STRING
+!insertmacro: LANG_STRING
+LangString: "TEXT_ADDREMOVE_HEADER2_UPDOWN" 1033 "Choose how you want to install MediaPortal TV Server / Client."
+!insertmacro: end of LANG_STRING
+!insertmacro: LANG_STRING
+LangString: "TEXT_ADDREMOVE_INFO_SELECT" 1033 "Select the operation you want to perform and click Next to continue."
+!insertmacro: end of LANG_STRING
+!insertmacro: LANG_STRING
+LangString: "TEXT_ADDREMOVE_INFO_REPAIR" 1033 "MediaPortal TV Server / Client 1.13.0-106 for TESTING ONLY is already installed. $(TEXT_ADDREMOVE_INFO_SELECT)"
+!insertmacro: end of LANG_STRING
+!insertmacro: LANG_STRING
+LangString: "TEXT_ADDREMOVE_INFO_UPGRADE" 1033 "An older version of MediaPortal TV Server / Client is installed on your system. $(TEXT_ADDREMOVE_INFO_SELECT)"
+!insertmacro: end of LANG_STRING
+!insertmacro: LANG_STRING
+LangString: "TEXT_ADDREMOVE_INFO_DOWNGRADE" 1033 "A newer version of MediaPortal TV Server / Client is already installed! It is not recommended that you install an older version. $(TEXT_ADDREMOVE_INFO_SELECT)"
+!insertmacro: end of LANG_STRING
+!insertmacro: LANG_STRING
+LangString: "TEXT_ADDREMOVE_REPAIR_OPT1" 1033 "Add/Remove/Reinstall components"
+!insertmacro: end of LANG_STRING
+!insertmacro: LANG_STRING
+LangString: "TEXT_ADDREMOVE_REPAIR_OPT2" 1033 "Uninstall MediaPortal TV Server / Client"
+!insertmacro: end of LANG_STRING
+!insertmacro: LANG_STRING
+LangString: "TEXT_ADDREMOVE_UPDOWN_OPT1" 1033 "Upgrade MediaPortal TV Server / Client using previous settings (recommended)"
+!insertmacro: end of LANG_STRING
+!insertmacro: LANG_STRING
+LangString: "TEXT_ADDREMOVE_UPDOWN_OPT2" 1033 "Change settings (advanced)"
+!insertmacro: end of LANG_STRING
+!insertmacro: LANG_STRING
+LangString: "TEXT_UNMODE_HEADER" 1033 "Uninstallation Mode"
+!insertmacro: end of LANG_STRING
+!insertmacro: LANG_STRING
+LangString: "TEXT_UNMODE_HEADER2" 1033 "Please choose the mode, you want to do the uninstallation."
+!insertmacro: end of LANG_STRING
+!insertmacro: LANG_STRING
+LangString: "TEXT_UNMODE_OPT0" 1033 "Standard Uninstall (recommended)"
+!insertmacro: end of LANG_STRING
+!insertmacro: LANG_STRING
+LangString: "TEXT_UNMODE_OPT1" 1033 "Complete Uninstallation for MediaPortal TV Server / Client"
+!insertmacro: end of LANG_STRING
+!insertmacro: LANG_STRING
+LangString: "TEXT_UNMODE_OPT2" 1033 "Full MediaPortal Products cleanup"
+!insertmacro: end of LANG_STRING
+!insertmacro: LANG_STRING
+LangString: "TEXT_UNMODE_OPT0_DESC" 1033 "Only the main application will be uninstalled, userfiles and databases will not be deleted (recommended)"
+!insertmacro: end of LANG_STRING
+!insertmacro: LANG_STRING
+LangString: "TEXT_UNMODE_OPT1_DESC" 1033 "This will uninstall MediaPortal TV Server / Client, delete all userfiles and databases"
+!insertmacro: end of LANG_STRING
+!insertmacro: LANG_STRING
+LangString: "TEXT_UNMODE_OPT2_DESC" 1033 "This will also remove all files, folders, databases, settings and registry keys which might be leftovers from older MediaPortal versions."
+!insertmacro: end of LANG_STRING
+!insertmacro: LANG_STRING
+LangString: "TEXT_UNMODE_OPT1_MSGBOX" 1033 "Are you sure that you want to do a Complete Uninstallation? This can not be undone!"
+!insertmacro: end of LANG_STRING
+!insertmacro: LANG_STRING
+LangString: "TEXT_UNMODE_OPT2_MSGBOX" 1033 "Are you sure that you want to do a Full MediaPortal Products cleanup? This can not be undone!"
+!insertmacro: end of LANG_STRING
+!include: closed: "..\..\..\Tools\InstallationScripts\languages\English.nsh"
+!undef: "LANG"
+!insertmacro: end of LANG_LOAD
+Name: "MediaPortal TV Server / Client"
+BrandingText: "MediaPortal TV Server / Client 1.13.0-106 for TESTING ONLY by Team MediaPortal"
+OutFile: "..\..\..\Release\Setup-TvEngine-git-1.13.0.106.exe"
+InstallDir: ""
+CRCCheck: on
+XPStyle: on
+ShowInstDetails: show
+VIAddVersionKey: "ProductName" "MediaPortal TV Server"
+VIAddVersionKey: "ProductVersion" "1.13.0-106 for TESTING ONLY"
+VIAddVersionKey: "CompanyName" "Team MediaPortal"
+VIAddVersionKey: "CompanyWebsite" "www.team-mediaportal.com"
+VIAddVersionKey: "FileVersion" "1.13.0-106 for TESTING ONLY"
+VIAddVersionKey: "FileDescription" "MediaPortal TV Server / Client installation 1.13.0-106 for TESTING ONLY"
+VIAddVersionKey: "LegalCopyright" "Copyright © 2005-2011 Team MediaPortal"
+ShowUninstDetails: show
+Function: "RunUninstaller"
+!insertmacro: VersionCompareCall
+!insertmacro: end of VersionCompareCall
+!insertmacro: _If
+!insertmacro: end of _If
+!insertmacro: RunUninstaller
+ReadRegStr $R0 HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal TV Server\UninstallString
+!insertmacro: _If
+!insertmacro: end of _If
+HideWindow
+!insertmacro: GetParentCall
+!insertmacro: end of GetParentCall
+ClearErrors
+CopyFiles: "$R0" -> "$TEMP\uninstall-temp.exe", size=0KB
+!insertmacro: _If
+!insertmacro: end of _If
+!insertmacro: _And
+!insertmacro: end of _And
+ExecWait: ""$TEMP\uninstall-temp.exe" _?=$R1" (->)
+!insertmacro: _Else
+!insertmacro: end of _Else
+ExecWait: ""$TEMP\uninstall-temp.exe" /frominstall _?=$R1" (->)
+!insertmacro: _EndIf
+!insertmacro: end of _EndIf
+!insertmacro: _EndIf
+!insertmacro: end of _EndIf
+!insertmacro: end of RunUninstaller
+!insertmacro: _Else
+!insertmacro: end of _Else
+!insertmacro: RunUninstaller
+ReadRegStr $R0 HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal TV Server\UninstallString
+!insertmacro: _If
+!insertmacro: end of _If
+!insertmacro: GetParentCall
+!insertmacro: end of GetParentCall
+ClearErrors
+CopyFiles: "$R0" -> "$TEMP\uninstall-temp.exe", size=0KB
+!insertmacro: _If
+!insertmacro: end of _If
+!insertmacro: _And
+!insertmacro: end of _And
+ExecWait: ""$TEMP\uninstall-temp.exe" _?=$R1" (->)
+!insertmacro: _Else
+!insertmacro: end of _Else
+ExecWait: ""$TEMP\uninstall-temp.exe" /S _?=$R1" (->)
+!insertmacro: _EndIf
+!insertmacro: end of _EndIf
+!insertmacro: _EndIf
+!insertmacro: end of _EndIf
+!insertmacro: end of RunUninstaller
+!insertmacro: _EndIf
+!insertmacro: end of _EndIf
+FunctionEnd
+Section: "-prepare" ->(SecPrepare)
+!insertmacro: LOG_TEXT
+!insertmacro: end of LOG_TEXT
+SetShellVarContext: all
+!insertmacro: BackupGentleConfig
+!insertmacro: _If
+!insertmacro: end of _If
+GetTempFileName -> $PREVIOUS_GENTLE_CONFIG
+!insertmacro: LOG_TEXT
+!insertmacro: end of LOG_TEXT
+CopyFiles: (silent) "$APPDATA\Team MediaPortal\MediaPortal TV Server\Gentle.config" -> "$PREVIOUS_GENTLE_CONFIG", size=0KB
+!insertmacro: _EndIf
+!insertmacro: end of _EndIf
+!insertmacro: _If
+!insertmacro: end of _If
+GetTempFileName -> $PREVIOUS_GENTLE_CONFIG_PLUGIN
+!insertmacro: LOG_TEXT
+!insertmacro: end of LOG_TEXT
+CopyFiles: (silent) "$MPdir.Config\Gentle.config" -> "$PREVIOUS_GENTLE_CONFIG_PLUGIN", size=0KB
+!insertmacro: _EndIf
+!insertmacro: end of _EndIf
+!insertmacro: end of BackupGentleConfig
+!insertmacro: _If
+!insertmacro: end of _If
+!insertmacro: LOG_TEXT
+!insertmacro: end of LOG_TEXT
+!insertmacro: _If
+!insertmacro: end of _If
+!insertmacro: LOG_TEXT
+!insertmacro: end of LOG_TEXT
+!insertmacro: LOG_TEXT
+!insertmacro: end of LOG_TEXT
+!insertmacro: LOG_TEXT
+!insertmacro: end of LOG_TEXT
+!insertmacro: NsisSilentUinstall
+!insertmacro: StopService
+StopService: TVservice (macro:StopService:1)
+!insertmacro: end of StopService
+ReadRegStr $R0 HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal TV Server\UninstallString
+!insertmacro: _If
+!insertmacro: end of _If
+!insertmacro: GetParentCall
+!insertmacro: end of GetParentCall
+ClearErrors
+CopyFiles: "$R0" -> "$TEMP\uninstall-temp.exe", size=0KB
+ExecWait: ""$TEMP\uninstall-temp.exe" /S _?=$R1" (->)
+!insertmacro: _EndIf
+!insertmacro: end of _EndIf
+!insertmacro: end of NsisSilentUinstall
+!insertmacro: _ElseIf
+!insertmacro: end of _ElseIf
+!insertmacro: LOG_TEXT
+!insertmacro: end of LOG_TEXT
+!insertmacro: _If
+!insertmacro: end of _If
+!insertmacro: LOG_TEXT
+!insertmacro: end of LOG_TEXT
+!insertmacro: LOG_TEXT
+!insertmacro: end of LOG_TEXT
+!insertmacro: LOG_TEXT
+!insertmacro: end of LOG_TEXT
+!insertmacro: LOG_TEXT
+!insertmacro: end of LOG_TEXT
+!insertmacro: _Else
+!insertmacro: end of _Else
+!insertmacro: LOG_TEXT
+!insertmacro: end of LOG_TEXT
+!insertmacro: LOG_TEXT
+!insertmacro: end of LOG_TEXT
+!insertmacro: LOG_TEXT
+!insertmacro: end of LOG_TEXT
+!insertmacro: NsisSilentUinstall
+!insertmacro: StopService
+StopService: TVservice (macro:StopService:1)
+!insertmacro: end of StopService
+ReadRegStr $R0 HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal TV Server\UninstallString
+!insertmacro: _If
+!insertmacro: end of _If
+!insertmacro: GetParentCall
+!insertmacro: end of GetParentCall
+ClearErrors
+CopyFiles: "$R0" -> "$TEMP\uninstall-temp.exe", size=0KB
+ExecWait: ""$TEMP\uninstall-temp.exe" /S _?=$R1" (->)
+!insertmacro: _EndIf
+!insertmacro: end of _EndIf
+!insertmacro: end of NsisSilentUinstall
+!insertmacro: _EndIf
+!insertmacro: end of _EndIf
+!insertmacro: _EndIf
+!insertmacro: end of _EndIf
+!insertmacro: _ElseIf
+!insertmacro: end of _ElseIf
+!insertmacro: LOG_TEXT
+!insertmacro: end of LOG_TEXT
+!insertmacro: RenameInstallDirectory
+!insertmacro: GET_BACKUP_POSTFIX
+!insertmacro: GetTimeCall
+!insertmacro: end of GetTimeCall
+StrCpy $R0 "BACKUP_$1-$0_$4-$5" () ()
+!insertmacro: end of GET_BACKUP_POSTFIX
+!insertmacro: _If
+!insertmacro: end of _If
+!insertmacro: _And
+!insertmacro: end of _And
+!insertmacro: LOG_TEXT
+!insertmacro: end of LOG_TEXT
+!insertmacro: _Else
+!insertmacro: end of _Else
+!insertmacro: RenameDirectory
+RenameDirectory: old $INSTDIR | new: $INSTDIR_$R0 (macro:RenameDirectory:1)
+!insertmacro: end of RenameDirectory
+!insertmacro: RenameDirectory
+RenameDirectory: old $APPDATA\Team MediaPortal\MediaPortal TV Server | new: $APPDATA\Team MediaPortal\MediaPortal TV Server_$R0 (macro:RenameDirectory:1)
+!insertmacro: end of RenameDirectory
+!insertmacro: _EndIf
+!insertmacro: end of _EndIf
+!insertmacro: end of RenameInstallDirectory
+!insertmacro: _Else
+!insertmacro: end of _Else
+!insertmacro: LOG_TEXT
+!insertmacro: end of LOG_TEXT
+!insertmacro: LOG_TEXT
+!insertmacro: end of LOG_TEXT
+!insertmacro: _If
+!insertmacro: end of _If
+!insertmacro: RunUninstaller
+ReadRegStr $R0 HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal TV Server\UninstallString
+!insertmacro: _If
+!insertmacro: end of _If
+!insertmacro: GetParentCall
+!insertmacro: end of GetParentCall
+ClearErrors
+CopyFiles: "$R0" -> "$TEMP\uninstall-temp.exe", size=0KB
+!insertmacro: _If
+!insertmacro: end of _If
+!insertmacro: _And
+!insertmacro: end of _And
+ExecWait: ""$TEMP\uninstall-temp.exe" _?=$R1" (->)
+!insertmacro: _Else
+!insertmacro: end of _Else
+ExecWait: ""$TEMP\uninstall-temp.exe" /S _?=$R1" (->)
+!insertmacro: _EndIf
+!insertmacro: end of _EndIf
+!insertmacro: _EndIf
+!insertmacro: end of _EndIf
+!insertmacro: end of RunUninstaller
+!insertmacro: _ElseIf
+!insertmacro: end of _ElseIf
+Call "RunUninstaller"
+BringToFront
+!insertmacro: _EndIf
+!insertmacro: end of _EndIf
+!insertmacro: _EndIf
+!insertmacro: end of _EndIf
+SectionEnd
+!insertmacro: MementoSection
+Section: "MediaPortal TV Server" ->(SecServer)
+!insertmacro: end of MementoSection
+!insertmacro: LOG_TEXT
+!insertmacro: end of LOG_TEXT
+!insertmacro: LOG_TEXT
+!insertmacro: end of LOG_TEXT
+!insertmacro: StopService
+StopService: TVservice (macro:StopService:1)
+!insertmacro: end of StopService
+!insertmacro: KillProcess
+KillProcess: SetupTv.exe (macro:KillProcess:1)
+!insertmacro: end of KillProcess
+!insertmacro: KillProcess
+KillProcess: ffmpeg.exe (macro:KillProcess:1)
+!insertmacro: end of KillProcess
+!insertmacro: _If
+!insertmacro: end of _If
+!insertmacro: SecMpeInstaller
+!insertmacro: LOG_TEXT
+!insertmacro: end of LOG_TEXT
+SetOutPath: "$INSTDIR"
+File: "MpeCore.dll" 273920 bytes
+File: "MpeInstaller.exe" 145920 bytes
+File: "Utils.dll" 103936 bytes
+File: "Core.dll" 2626560 bytes
+File: "CSScriptLibrary.dll" 81920 bytes
+!insertmacro: _If
+!insertmacro: end of _If
+CreateShortCut: "$DESKTOP\MediaPortal Extension Manager.lnk"->"$INSTDIR\MpeInstaller.exe"  icon:$INSTDIR\MpeInstaller.exe,0, showmode=0x0, hotkey=0x0, comment=MediaPortal Extension Manager
+!insertmacro: _EndIf
+!insertmacro: end of _EndIf
+CreateDirectory: "$SMPROGRAMS\Team MediaPortal\MediaPortal TV Server"
+CreateShortCut: "$SMPROGRAMS\Team MediaPortal\MediaPortal TV Server\MediaPortal Extension Manager.lnk"->"$INSTDIR\MpeInstaller.exe"  icon:$INSTDIR\MpeInstaller.exe,0, showmode=0x0, hotkey=0x0, comment=MediaPortal Extension Manager
+!insertmacro: RegisterExtensionCall
+!insertmacro: end of RegisterExtensionCall
+!insertmacro: RefreshShellIconsCall
+!insertmacro: end of RefreshShellIconsCall
+!insertmacro: end of SecMpeInstaller
+!insertmacro: _EndIf
+!insertmacro: end of _EndIf
+SetOverwrite: on
+ReadRegStr $InstallPath HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal TV Server\InstallPath
+!insertmacro: _If
+!insertmacro: end of _If
+!insertmacro: LOG_TEXT
+!insertmacro: end of LOG_TEXT
+ExecWait: ""$InstallPath\TVService.exe" /uninstall" (->)
+!insertmacro: LOG_TEXT
+!insertmacro: end of LOG_TEXT
+!insertmacro: _EndIf
+!insertmacro: end of _EndIf
+Pop: $0
+SetOutPath: "$APPDATA\Team MediaPortal\MediaPortal TV Server\TuningParameters"
+File: Descending to: "..\..\..\TvEngine3\TVLibrary\TVServer.Base\TuningParameters\atsc\"
+File: "QAM HRC+3.xml" 11250 bytes
+File: "QAM HRC.xml" 11250 bytes
+File: "QAM IRC.xml" 11250 bytes
+File: "QAM Standard.xml" 11411 bytes
+File: "QAM Std Alternative.xml" 11333 bytes
+File: Descending to: "..\..\..\TvEngine3\TVLibrary\TVServer.Base\TuningParameters\dvbc\"
+File: "Austria.Kabelsignal.xml" 4414 bytes
+File: "Austria.KufNet.xml" 5281 bytes
+File: "Austria.Lampert Vlbg.xml" 1841 bytes
+File: "Austria.Salzburg Elsnet.xml" 4540 bytes
+File: "Austria.SalzburgAG.xml" 6524 bytes
+File: "Austria.UPC Tirol.xml" 5617 bytes
+File: "Brazil.Sao Paulo.xml" 1391 bytes
+File: "Denmark.Parknet Copenhagen.xml" 3015 bytes
+File: "Denmark.Stofa Aarhus.xml" 3795 bytes
+File: "Denmark.Stofa Hjallerup.xml" 4700 bytes
+File: "Denmark.Stofa Sonderborg.xml" 1182 bytes
+File: "Denmark.YouSee Nordjylland.xml" 5130 bytes
+File: "Denmark.Yousee Aarhus.xml" 3928 bytes
+File: "Denmark.Yousee Copenhagen.xml" 7913 bytes
+File: "Denmark.Yousee Global.xml" 6630 bytes
+File: "Denmark.Yousee.Odense.Kragsbjerg.xml" 4684 bytes
+File: "Denmark.waoo.xml" 4106 bytes
+File: "Estonia.Starman.xml" 1841 bytes
+File: "Finland-JNT.xml" 3801 bytes
+File: "Finland.Helsinki-DNA Welho.xml" 5807 bytes
+File: "Finland.Joensuun-Elisa.xml" 8055 bytes
+File: "Finland.Jyväskylän-Elisa.xml" 8055 bytes
+File: "Finland.Kuopio-DNA Welho.xml" 4908 bytes
+File: "Finland.Lahti-DNA Welho.xml" 4908 bytes
+File: "Finland.Lieto, Paimio, Piikkiö, Sauvo-Elisa.xml" 8055 bytes
+File: "Finland.Lohja-DNA Welho.xml" 4908 bytes
+File: "Finland.Nummelan-Elisa.xml" 8055 bytes
+File: "Finland.Oulu-DNA Welho.xml" 4908 bytes
+File: "Finland.Oulu-DNA.xml" 4606 bytes
+File: "Finland.PPO.xml" 2294 bytes
+File: "Finland.Pori-DNA Welho.xml" 1841 bytes
+File: "Finland.Pääkaupunkiseudun, Riihimäen-Elisa.xml" 8055 bytes
+File: "Finland.Raisio-Turku-DNA Welho.xml" 4908 bytes
+File: "Finland.Rauma-DNA Welho.xml" 4908 bytes
+File: "Finland.Sonera.xml" 3376 bytes
+File: "Finland.Tampere.xml" 4861 bytes
+File: "Finland.Tampere_TTV.xml" 3051 bytes
+File: "Finland.Tampereen-Elisa.xml" 8055 bytes
+File: "Finland.VLP.xml" 2432 bytes
+File: "France.Numericable-Paris.xml" 14430 bytes
+File: "Germany.Deutsche Telekabel (DTK).xml" 2440 bytes
+File: "Germany.Full.xml" 36284 bytes
+File: "Germany.Iesy.xml" 2887 bytes
+File: "Germany.KMS Muenchen.xml" 5597 bytes
+File: "Germany.Kabel Deutschland (KDG) Berlin.xml" 6056 bytes
+File: "Germany.Kabel Deutschland (KDG) Braunschweig.xml" 4254 bytes
+File: "Germany.Kabel Deutschland (KDG).xml" 4719 bytes
+File: "Germany.KabelBW.xml" 6208 bytes
+File: "Germany.Primacom.xml" 3944 bytes
+File: "Germany.Unitymedia BW.xml" 6660 bytes
+File: "Germany.Unitymedia Hessen.xml" 6215 bytes
+File: "Germany.Unitymedia NRW.xml" 6215 bytes
+File: "Germany.WilhelmTel.xml" 5916 bytes
+File: "Global.dvbc Symbolrate 4583.xml" 17722 bytes
+File: "Global.dvbc Symbolrate 5156.xml" 17722 bytes
+File: "Global.dvbc Symbolrate 6111.xml" 17722 bytes
+File: "Global.dvbc Symbolrate 6667.xml" 930 bytes
+File: "Global.dvbc Symbolrate 6875.xml" 19972 bytes
+File: "Global.dvbc Symbolrate 6952.xml" 17722 bytes
+File: "Ireland.Belfast-Virgin.xml" 4830 bytes
+File: "Ireland.Dublin-UPC.xml" 2132 bytes
+File: "Norway.Canal Digital.xml" 6200 bytes
+File: "Norway.Canal Digital_Bergen.xml" 13727 bytes
+File: "Norway.GET-Oslo.xml" 4106 bytes
+File: "Norway.Loqal-Trondheim.xml" 2580 bytes
+File: "Russia.Altair (Tula).xml" 1530 bytes
+File: "Russia.DomRu.xml" 3054 bytes
+File: "Russia.Rico-TV (SPb).xml" 6220 bytes
+File: "Spain.Euskaltel.xml" 4542 bytes
+File: "Sweden.CanalDigital.xml" 3780 bytes
+File: "Sweden.Comhem Göteborg.xml" 4860 bytes
+File: "Sweden.Comhem Jonkoping.xml" 7407 bytes
+File: "Sweden.Comhem Stockholm.xml" 3786 bytes
+File: "Sweden.Comhem Uppsala.xml" 4415 bytes
+File: "Sweden.Tele2-Joenkoeping.xml" 3180 bytes
+File: "Switzerland.FULL [SR6900_256QAM].xml" 50345 bytes
+File: "Switzerland.FULL [SR6900_64+256QAM].xml" 85937 bytes
+File: "Switzerland.FULL [SR6900_64QAM].xml" 49994 bytes
+File: "Switzerland.TeleZug.585.xml" 5756 bytes
+File: "Switzerland.UPC_Cablecom_NID_43020.xml" 15114 bytes
+File: "Switzerland.interGGA-GGAPratteln-EBM.xml" 5011 bytes
+File: "Switzerland.sasag.xml" 4811 bytes
+File: "Switzerland.thurcom.xml" 3804 bytes
+File: "The Netherlands.Aalsmeer-Uithoorn (ID 2257).xml" 16027 bytes
+File: "The Netherlands.Borculo (ID 7271).xml" 16181 bytes
+File: "The Netherlands.CAIW (ID 2249).xml" 11596 bytes
+File: "The Netherlands.CAIW_Basic-pakket (ID 2250).xml" 3609 bytes
+File: "The Netherlands.CAIW_Doorn (ID 3667).xml" 16027 bytes
+File: "The Netherlands.CAIW_Hilvarenbeek (ID 4458).xml" 16059 bytes
+File: "The Netherlands.CAIW_IJsselstein (ID 7224).xml" 16037 bytes
+File: "The Netherlands.CAIW_Loenen (ID 5636).xml" 15651 bytes
+File: "The Netherlands.CAIW_Maassluis (ID 6227).xml" 16037 bytes
+File: "The Netherlands.CAIW_Maassluis_Test (ID 6228).xml" 15754 bytes
+File: "The Netherlands.CAIW_Midden-Holland (ID 4683).xml" 10539 bytes
+File: "The Netherlands.CAIW_Root (ID 10000).xml" 17261 bytes
+File: "The Netherlands.CAIW_Schiedam (ID 7244).xml" 16040 bytes
+File: "The Netherlands.CAIW_Test_intern (ID 8378).xml" 17134 bytes
+File: "The Netherlands.Caiway_Brabant_Gelderland (ID 7524).xml" 16210 bytes
+File: "The Netherlands.Caiway_RTV (ID 2222).xml" 16046 bytes
+File: "The Netherlands.Capelle_a-d_IJssel (ID 2273).xml" 16027 bytes
+File: "The Netherlands.Delta.xml" 4832 bytes
+File: "The Netherlands.Hendrik_Ido_Ambacht (ID 2000).xml" 16077 bytes
+File: "The Netherlands.Kabel_Midden-Holland (ID 4683).xml" 16084 bytes
+File: "The Netherlands.OnsBrabantNet.xml" 1980 bytes
+File: "The Netherlands.Oudenbosch (ID 6536).xml" 16036 bytes
+File: "The Netherlands.REKAM (ID 777).xml" 2195 bytes
+File: "The Netherlands.UPC 43140 (Friesland) .xml" 6071 bytes
+File: "The Netherlands.UPC NID 50146 .xml" 6068 bytes
+File: "The Netherlands.Ziggo NID 5555 - Hengelo.xml" 6086 bytes
+File: "The Netherlands.Ziggo NID 5555 - Roosendaal.xml" 11363 bytes
+File: "The Netherlands.Ziggo NID 5555 - Venlo.xml" 6068 bytes
+File: "The Netherlands.Ziggo NID 5555 Zwolle.xml" 5917 bytes
+File: "The Netherlands.Ziggo NID 9700.xml" 5917 bytes
+File: "The Netherlands.Ziggo North (NID 5555).xml" 5919 bytes
+File: "The Netherlands.Ziggo South (NID 5555).xml" 5919 bytes
+File: "The Netherlands.Ziggo West (NID 5555).xml" 5918 bytes
+File: "The Netherlands.Ziggo_NL_ALL_SR6900_256QAM.xml" 102431 bytes
+File: "The Netherlands.caiway.xml" 7530 bytes
+File: "The Netherlands.harderwijk.xml" 2880 bytes
+File: "The Netherlands.rekam.xml" 1530 bytes
+File: "Ukraine.Kyiv-Volia.xml" 4387 bytes
+File: "United Kingdom.6952.xml" 26706 bytes
+File: "United Kingdom.NTL 6887.xml" 22680 bytes
+File: "United Kingdom.Telewest.xml" 9330 bytes
+File: "United Kingdom.UK Bruteforce.xml" 43178 bytes
+File: Descending to: "..\..\..\TvEngine3\TVLibrary\TVServer.Base\TuningParameters\dvbip\"
+File: "Austria.A1TV_rtp_TV-Senderliste_Basis.m3u" 5167 bytes
+File: "Austria.A1TV_rtp_TV-Senderliste_Basis_mit_HD.m3u" 6487 bytes
+File: "Austria.A1TV_udp_Radio-Senderliste.m3u" 14869 bytes
+File: "Austria.AonTV_Free.m3u" 3443 bytes
+File: "Austria.AonTV_HD.m3u" 99 bytes
+File: "Austria.AonTV_Premium.m3u" 1161 bytes
+File: "Austria.AonTV_Radio.m3u" 13473 bytes
+File: "Finland.SSPNET.m3u" 717 bytes
+File: "France.FreeBox_RADIO.m3u" 11394 bytes
+File: "France.FreeBox_TV.m3u" 47885 bytes
+File: "Germany.Arcor.m3u" 1112 bytes
+File: "Germany.Hansenet.m3u" 1963 bytes
+File: "Germany.T-Home.m3u" 3848 bytes
+File: "ImagenioTest.m3u" 142 bytes
+File: "Norway.TelenorFiber.m3u" 6177 bytes
+File: "Slovakia.Swan.m3u" 4190 bytes
+File: "Slovenia.SiolTV.m3u" 10314 bytes
+File: "Slovenia.t2radio.m3u" 6994 bytes
+File: "Slovenia.t2tv.m3u" 11382 bytes
+File: Descending to: "..\..\..\TvEngine3\TVLibrary\TVServer.Base\TuningParameters\dvbs\"
+File: "0.8°W Thor 5,6, Intelsat 10-02.xml" 32330 bytes
+File: "10.0°E Eutelsat 10A.xml" 51921 bytes
+File: "100.5°E AsiaSat 5.xml" 25541 bytes
+File: "101.0°W SES 1, DirecTV 4S,8.xml" 4114 bytes
+File: "103.0°E Express A2.xml" 1095 bytes
+File: "103.0°W AMC 1, Spaceway 1, DirecTV 10,12.xml" 24159 bytes
+File: "105.0°W AMC 15,18.xml" 5926 bytes
+File: "105.5°E AsiaSat 3S.xml" 16205 bytes
+File: "107.3°W Anik F1,F1R.xml" 7742 bytes
+File: "108.2°E Telkom 1, NSS 11, SES 7.xml" 20748 bytes
+File: "11.0°W Express AM44.xml" 13487 bytes
+File: "110.0°E N-Sat 110, BSAT 2C,3A, BSAT 3C,JCSAT 110R.xml" 488 bytes
+File: "110.0°W DirecTV 5, EchoStar 10,11.xml" 8750 bytes
+File: "110.5°E ChinaSat 10.xml" 1689 bytes
+File: "111.1°W Anik F2.xml" 2624 bytes
+File: "113.0°E Koreasat 5, Palapa D.xml" 17104 bytes
+File: "113.0°W SatMex 6.xml" 17697 bytes
+File: "115.5°E Chinasat 6B.xml" 13795 bytes
+File: "116.0°E ABS 7, Koreasat 6.xml" 10197 bytes
+File: "116.8°W SatMex 5.xml" 20743 bytes
+File: "118.0°E Telkom 2.xml" 1089 bytes
+File: "119.0°W Anik F3, EchoStar 14, DirecTV 7S.xml" 16700 bytes
+File: "12.5°W Eutelsat 12 West A.xml" 28640 bytes
+File: "121.0°W EchoStar 9,Galaxy 23.xml" 9867 bytes
+File: "122.2°E AsiaSat 4.xml" 8060 bytes
+File: "123.0°W Galaxy 18.xml" 7149 bytes
+File: "124.0°E JCSAT 4A.xml" 7158 bytes
+File: "125.0°E ChinaSat 6A.xml" 6234 bytes
+File: "125.0°W Galaxy 14, AMC 21.xml" 7436 bytes
+File: "127.0°W Galaxy 13,Horizons 1.xml" 5018 bytes
+File: "128.0°E JCSAT 3A.xml" 9279 bytes
+File: "129.0°W Ciel 2.xml" 9974 bytes
+File: "13.0°E Eutelsat Hot Bird 13A,13B,13C.xml" 30224 bytes
+File: "131.0°W AMC 11.xml" 3203 bytes
+File: "132.0°E Vinasat 1, JCSAT 5A.xml" 10164 bytes
+File: "133.0°W Galaxy 15.xml" 1998 bytes
+File: "134.0°E Apstar 6.xml" 4425 bytes
+File: "135.0°W AMC 10.xml" 3202 bytes
+File: "137.0°W AMC 7.xml" 1088 bytes
+File: "138.0°E Telstar 18.xml" 9549 bytes
+File: "139.0°W AMC 8.xml" 788 bytes
+File: "14.0°W Express A4.xml" 1402 bytes
+File: "140.0°E Express AM3.xml" 5345 bytes
+File: "144.0°E Superbird C2.xml" 5344 bytes
+File: "15.0°W Telstar 12.xml" 22604 bytes
+File: "150.0°E JCSAT 1B.xml" 1093 bytes
+File: "152.0°E Optus D2.xml" 4128 bytes
+File: "154.0°E JCSAT 2A.xml" 6544 bytes
+File: "156.0°E Optus C1,D3.xml" 11104 bytes
+File: "16.0°E Eutelsat 16A.xml" 33167 bytes
+File: "160.0°E Optus D1.xml" 12020 bytes
+File: "162.0°E Superbird B2.xml" 5938 bytes
+File: "164.0°E Optus B3.xml" 788 bytes
+File: "166.0°E Intelsat 19.xml" 14098 bytes
+File: "169.0°E Intelsat 8.xml" 1691 bytes
+File: "17.0°E Amos 5.xml" 5943 bytes
+File: "172.0°E Eutelsat 172A.xml" 2601 bytes
+File: "177.0°W NSS 9.xml" 1700 bytes
+File: "18.0°W Intelsat 901.xml" 9876 bytes
+File: "180.0°E Intelsat 18.xml" 3518 bytes
+File: "19.2°E Astra 1KR,1L,1M,2C.xml" 31132 bytes
+File: "20.0°E Arabsat 5C.xml" 4138 bytes
+File: "20.0°W NSS 7.xml" 2609 bytes
+File: "21.5°E Eutelsat 21B.xml" 10484 bytes
+File: "22.0°W SES 4.xml" 12018 bytes
+File: "23.3°E Astra 1D,3B.xml" 26165 bytes
+File: "24.5°W Intelsat 905.xml" 35015 bytes
+File: "25.5°E Eutelsat 25A.xml" 11088 bytes
+File: "26.0°E Badr 4,5,6.xml" 25374 bytes
+File: "27.5°W Intelsat 907.xml" 15653 bytes
+File: "28.2°E Eutelsat 28A, Astra 1N,2A,2B,2F.xml" 29634 bytes
+File: "3.1°E Eutelsat 3A,3C, Rascom QAF 1R.xml" 19237 bytes
+File: "30.0°W Hispasat 1C,1D,1E.xml" 33833 bytes
+File: "30.5°E Arabsat 5A.xml" 24415 bytes
+File: "31.5°E Astra 1G.xml" 4420 bytes
+File: "31.5°W Intelsat 25.xml" 1391 bytes
+File: "33.0°E Eutelsat 33A, Intelsat 28.xml" 17443 bytes
+File: "34.0°E Arabsat 2B.xml" 1697 bytes
+File: "34.5°W Intelsat 903.xml" 9884 bytes
+File: "36.0°E Eutelsat 36A,36B.xml" 29067 bytes
+File: "37.5°W NSS 10, Telstar 11N.xml" 18637 bytes
+File: "38.0°E Paksat 1R.xml" 21039 bytes
+File: "39.0°E Hellas Sat 2.xml" 16546 bytes
+File: "4.0°W Amos 2,3.xml" 20185 bytes
+File: "4.9°E Astra 4A, SES 5.xml" 24433 bytes
+File: "40.5°W NSS 806.xml" 37241 bytes
+File: "42.0°E Türksat 2A,3A.xml" 48657 bytes
+File: "43.1°W Intelsat 11.xml" 19207 bytes
+File: "45.0°E Intelsat 12.xml" 7448 bytes
+File: "45.0°W Intelsat 14.xml" 7437 bytes
+File: "49.0°E Yamal 202.xml" 8999 bytes
+File: "5.0°W Eutelsat 5 West A.xml" 19882 bytes
+File: "50.0°E Intelsat 26.xml" 787 bytes
+File: "50.0°W Intelsat 1R.xml" 11073 bytes
+File: "50.5°E NSS 5.xml" 791 bytes
+File: "52.5°E Yahsat 1A.xml" 3212 bytes
+File: "53.0°E Express AM22.xml" 18968 bytes
+File: "53.0°W Intelsat 707.xml" 4129 bytes
+File: "55.0°E Astra 1F, Insat 3E, G-Sat 8.xml" 3815 bytes
+File: "55.5°W Intelsat 805, Galaxy 11.xml" 30652 bytes
+File: "56.0°E Bonum 1.xml" 2630 bytes
+File: "57.0°E NSS 12.xml" 15641 bytes
+File: "58.0°W Intelsat 21.xml" 17727 bytes
+File: "60.0°E Intelsat 904.xml" 15025 bytes
+File: "61.0°W Amazonas 1,2.xml" 14421 bytes
+File: "61.5°W EchoStar 12,15.xml" 8444 bytes
+File: "62.0°E Intelsat 902.xml" 15314 bytes
+File: "63.0°W Telstar 14R.xml" 5638 bytes
+File: "64.2°E Intelsat 906.xml" 6558 bytes
+File: "65.0°W Star One C1.xml" 10443 bytes
+File: "66.0°E Intelsat 17.xml" 9860 bytes
+File: "68.5°E Intelsat 20.xml" 26477 bytes
+File: "7.0°E Eutelsat 7A.xml" 35596 bytes
+File: "7.0°W Nilesat 101,102,201, Eutelsat 7 West A.xml" 22046 bytes
+File: "70.0°W Star One C2.xml" 17992 bytes
+File: "70.5°E Eutelsat 70A.xml" 4723 bytes
+File: "72.0°W AMC 6.xml" 16237 bytes
+File: "72.1°E Intelsat 22.xml" 1091 bytes
+File: "72.7°W Nimiq 5.xml" 9668 bytes
+File: "74.0°E Insat 3C,4CR.xml" 11980 bytes
+File: "75.0°E ABS 1.xml" 8955 bytes
+File: "75.0°W Brasilsat B3.xml" 10448 bytes
+File: "76.5°E Apstar 7.xml" 17090 bytes
+File: "77.0°W EchoStar 1,8.xml" 7220 bytes
+File: "78.0°W Simón Bolívar.xml" 4119 bytes
+File: "78.5°E Thaicom 5.xml" 29805 bytes
+File: "8.0°W Eutelsat 8 West A.xml" 24691 bytes
+File: "80.0°E Express AM2,MD1.xml" 5349 bytes
+File: "82.0°W Nimiq 4.xml" 9974 bytes
+File: "83.0°E Insat 4A.xml" 19233 bytes
+File: "83.0°W AMC 9.xml" 8364 bytes
+File: "84.0°W Brasilsat B4.xml" 24038 bytes
+File: "85.0°E Horizons 2, Intelsat 15.xml" 7447 bytes
+File: "85.0°W AMC 16.xml" 3215 bytes
+File: "86.5°E KazSat 2.xml" 5936 bytes
+File: "87.0°W SES 2.xml" 11366 bytes
+File: "87.5°E ChinaSat 5A.xml" 484 bytes
+File: "88.0°E ST 2.xml" 7137 bytes
+File: "89.0°W Galaxy 28.xml" 18654 bytes
+File: "9.0°E Eutelsat 9A, Ka-Sat 9A.xml" 10785 bytes
+File: "90.0°E Yamal 201.xml" 15666 bytes
+File: "91.0°W Nimiq 1, Galaxy 17.xml" 22969 bytes
+File: "91.5°E Measat 3,3a.xml" 21056 bytes
+File: "92.2°E Chinasat 9.xml" 2324 bytes
+File: "93.1°W Galaxy 25.xml" 2909 bytes
+File: "93.5°E Insat 3A,4B.xml" 18919 bytes
+File: "95.0°E NSS 6.xml" 10800 bytes
+File: "95.0°W Galaxy 3C, Spaceway 3.xml" 11983 bytes
+File: "96.5°E Express AM33.xml" 7463 bytes
+File: "97.0°W Galaxy 19.xml" 13820 bytes
+File: "99.2°W Galaxy 16, Spaceway 2, DirecTV 11.xml" 21972 bytes
+File: "satellites.xml" 16571 bytes
+File: Descending to: "..\..\..\TvEngine3\TVLibrary\TVServer.Base\TuningParameters\dvbt\"
+File: "Australia.ACT - Black_Mountain.xml" 800 bytes
+File: "Australia.ACT - Canberra.xml" 0/800 bytes
+File: "Australia.ACT - Other Regions.xml" 800 bytes
+File: "Australia.ACT - Tuggeranong_Conder_Water_Tank.xml" 800 bytes
+File: "Australia.ACT - Tuggeranong_Hill.xml" 800 bytes
+File: "Australia.All Regions.xml" 6508 bytes
+File: "Australia.Australia - All Regions Safe.xml" 6382 bytes
+File: "Australia.NSW - Batemans Bay_Moruya.xml" 800 bytes
+File: "Australia.NSW - Bathurst.xml" 800 bytes
+File: "Australia.NSW - Coffs Harbour Mt Moombil.xml" 800 bytes
+File: "Australia.NSW - Newcastle.xml" 800 bytes
+File: "Australia.NSW - Orange.xml" 800 bytes
+File: "Australia.NSW - Sydney - Eastern Suburbs.xml" 800 bytes
+File: "Australia.NSW - Sydney - Manly_Mosman.xml" 0/800 bytes
+File: "Australia.NSW - Sydney.xml" 1050 bytes
+File: "Australia.NSW - Wollongong.xml" 800 bytes
+File: "Australia.NT - Darwin.xml" 676 bytes
+File: "Australia.QLD - Brisbane.xml" 1049 bytes
+File: "Australia.QLD - Gold Coast.xml" 1175 bytes
+File: "Australia.QLD - Mackay.xml" 800 bytes
+File: "Australia.QLD - Sunshine Coast.xml" 800 bytes
+File: "Australia.QLD - Toowoomba.xml" 800 bytes
+File: "Australia.QLD - Townsville.xml" 1420 bytes
+File: "Australia.SA - Adelaide - Elizabeth South.xml" 800 bytes
+File: "Australia.SA - Adelaide - Foothills.xml" 800 bytes
+File: "Australia.SA - Adelaide - Victor Harbour.xml" 800 bytes
+File: "Australia.SA - Adelaide.xml" 800 bytes
+File: "Australia.Tas - Hobart - Cygnet.xml" 800 bytes
+File: "Australia.Tas - Hobart - North Eastern Suburbs.xml" 800 bytes
+File: "Australia.Tas - Hobart.xml" 800 bytes
+File: "Australia.Tas - Launceston - Mt Barrow.xml" 800 bytes
+File: "Australia.Tas - Launceston - West Launceston.xml" 800 bytes
+File: "Australia.Vic - Melbourne - Ferntree Gully.xml" 800 bytes
+File: "Australia.Vic - Melbourne - Marysville.xml" 800 bytes
+File: "Australia.Vic - Melbourne - Rosebud.xml" 0/800 bytes
+File: "Australia.Vic - Melbourne - Safety Beach.xml" 0/800 bytes
+File: "Australia.Vic - Melbourne - Selby.xml" 0/800 bytes
+File: "Australia.Vic - Melbourne - South Yarra.xml" 922 bytes
+File: "Australia.Vic - Melbourne - Upway.xml" 0/800 bytes
+File: "Australia.Vic - Melbourne - Warburton.xml" 0/800 bytes
+File: "Australia.Vic - Melbourne.xml" 924 bytes
+File: "Australia.WA - Perth - Roleystone.xml" 800 bytes
+File: "Australia.WA - Perth - Toodyay.xml" 0/800 bytes
+File: "Australia.WA - Perth.xml" 924 bytes
+File: "Austria.All Regions.xml" 1668 bytes
+File: "Austria.Burgenland.xml" 800 bytes
+File: "Austria.Graz.xml" 428 bytes
+File: "Austria.Kärnten.xml" 800 bytes
+File: "Austria.Niederösterreich.xml" 676 bytes
+File: "Austria.Oberösterreich.xml" 428 bytes
+File: "Austria.Salzburg.xml" 304 bytes
+File: "Austria.Steiermark.xml" 552 bytes
+File: "Austria.Tirol.xml" 552 bytes
+File: "Austria.Vorarlberg.xml" 304 bytes
+File: "Austria.Wien.xml" 428 bytes
+File: "Belgium.All Regions.xml" 1296 bytes
+File: "Brazil.All Regions.xml" 8057 bytes
+File: "Brazil.ISDB - Sao Paulo.xml" 2182 bytes
+File: "Catalunya.Barcelona - Collserola.xml" 1944 bytes
+File: "Catalunya.Catalunya - Totes les frequencies.xml" 4982 bytes
+File: "Catalunya.Girona - Rocacorba.xml" 1062 bytes
+File: "Catalunya.Lleida - Alpicat.xml" 1062 bytes
+File: "Catalunya.Tarragona i Camp de Tarragona - La Mussara.xml" 1356 bytes
+File: "Catalunya.Terres de l'Ebre - Collredo.xml" 1062 bytes
+File: "Croatia.D1 - baranjska - srijemska.xml" 524 bytes
+File: "Croatia.D2 - bilogorska - slavonska - podravska.xml" 525 bytes
+File: "Croatia.D3 - sjeverna hrvatska.xml" 508 bytes
+File: "Croatia.D4 - zagrebaƒka - moslavaƒka - karlovaƒka.xml" 644 bytes
+File: "Croatia.D5 - istarska - primorsko-goranska.xml" 639 bytes
+File: "Croatia.D6 - liƒka.xml" 525 bytes
+File: "Croatia.D7 - zadarska - þibensko-kninska.xml" 753 bytes
+File: "Croatia.D8 - splitska.xml" 525 bytes
+File: "Croatia.D9 - dubrovaƒka.xml" 525 bytes
+File: "Croatia.Dubrovnik - Srd.xml" 304 bytes
+File: "Croatia.Osijek - Josipovac.xml" 304 bytes
+File: "Croatia.Rijeka - Ucka.xml" 304 bytes
+File: "Croatia.Split - Labistica.xml" 304 bytes
+File: "Croatia.Vinkovci - Borinci.xml" 546 bytes
+File: "Croatia.Zadar - Ugljan.xml" 304 bytes
+File: "Croatia.Zagreb - Prisavlje.xml" 530 bytes
+File: "Croatia.Zagreb - Sljeme.xml" 414 bytes
+File: "Czech Republic.All regions.xml" 3032 bytes
+File: "Czech Republic.As.xml" 428 bytes
+File: "Czech Republic.Brno.xml" 676 bytes
+File: "Czech Republic.Ceske Budejovice.xml" 552 bytes
+File: "Czech Republic.Cheb.xml" 0/304 bytes
+File: "Czech Republic.Chomutov.xml" 395 bytes
+File: "Czech Republic.Desna.xml" 0/304 bytes
+File: "Czech Republic.Domazlice.xml" 428 bytes
+File: "Czech Republic.Jachymov.xml" 395 bytes
+File: "Czech Republic.Jihlava.xml" 0/304 bytes
+File: "Czech Republic.Kraslice.xml" 0/304 bytes
+File: "Czech Republic.Liberec.xml" 676 bytes
+File: "Czech Republic.Marianske Lazne.xml" 0/304 bytes
+File: "Czech Republic.Mikulov.xml" 428 bytes
+File: "Czech Republic.Nemanice.xml" 304 bytes
+File: "Czech Republic.Ostrava.xml" 800 bytes
+File: "Czech Republic.Plzen.xml" 676 bytes
+File: "Czech Republic.Prague.xml" 552 bytes
+File: "Czech Republic.Praha.xml" 1401 bytes
+File: "Czech Republic.Pribram.xml" 304 bytes
+File: "Czech Republic.Rotava.xml" 0/304 bytes
+File: "Czech Republic.Susice.xml" 552 bytes
+File: "Czech Republic.Trinec.xml" 304 bytes
+File: "Czech Republic.Trutnov.xml" 304 bytes
+File: "Czech Republic.Usti nad Labem.xml" 486 bytes
+File: "Czech Republic.Vimperk.xml" 304 bytes
+File: "Czech Republic.Votice.xml" 428 bytes
+File: "Danmark.All Regions.xml" 2784 bytes
+File: "Estonia.All regions.xml" 2291 bytes
+File: "Estonia.Haapsalu.xml" 555 bytes
+File: "Estonia.Koeru.xml" 555 bytes
+File: "Estonia.Kohtla-Nomme, Narva.xml" 552 bytes
+File: "Estonia.Kohtla-Nõmme, Narva.xml" 0/552 bytes
+File: "Estonia.Parnu.xml" 552 bytes
+File: "Estonia.Pehka, Ellamaa, Paldiski.xml" 307 bytes
+File: "Estonia.Pehka, Ellamaa.xml" 304 bytes
+File: "Estonia.Pärnu.xml" 555 bytes
+File: "Estonia.Ruhnu, Sorve, Mannamaa.xml" 304 bytes
+File: "Estonia.Ruhnu, Sõrve, Männamaa, Kärdla.xml" 0/304 bytes
+File: "Estonia.Sauvere, Orissaare.xml" 555 bytes
+File: "Estonia.Tallinn, Teletorn, Kristiina.xml" 0/555 bytes
+File: "Estonia.Tallinn, Teletorn, Kristiine.xml" 552 bytes
+File: "Estonia.Tallinn.xml" 552 bytes
+File: "Estonia.Valgjarve, Tartu.xml" 552 bytes
+File: "Estonia.Valgjärve, Tartu.xml" 555 bytes
+File: "Estonia.Viljandi.xml" 307 bytes
+File: "Europe.All countries.xml" 14809 bytes
+File: "Finland.Ala-Vuokki.xml" 428 bytes
+File: "Finland.All Regions.xml" 7248 bytes
+File: "Finland.Anjalankoski.xml" 552 bytes
+File: "Finland.Espoo.xml" 676 bytes
+File: "Finland.Eurajoki.xml" 676 bytes
+File: "Finland.Fiskars.xml" 552 bytes
+File: "Finland.Haapavesi.xml" 428 bytes
+File: "Finland.Hanko.xml" 428 bytes
+File: "Finland.Heinola.xml" 428 bytes
+File: "Finland.Hetta.xml" 428 bytes
+File: "Finland.Houtskär.xml" 428 bytes
+File: "Finland.Hämeenlinna_Painokangas.xml" 428 bytes
+File: "Finland.Iisalmi.xml" 428 bytes
+File: "Finland.Ikaalinen_Riitiala.xml" 428 bytes
+File: "Finland.Inari.xml" 428 bytes
+File: "Finland.Jalasjärvi.xml" 428 bytes
+File: "Finland.Joensuu_Vestinkallio.xml" 428 bytes
+File: "Finland.Joutsa.xml" 428 bytes
+File: "Finland.Joutseno.xml" 552 bytes
+File: "Finland.Juntusranta.xml" 428 bytes
+File: "Finland.Jyväskylä.xml" 552 bytes
+File: "Finland.Jämsä_Kuorevesi_Halli.xml" 428 bytes
+File: "Finland.Jämsä_Matkosvuori.xml" 428 bytes
+File: "Finland.Kaihuanvaara.xml" 428 bytes
+File: "Finland.Kaipola.xml" 0/428 bytes
+File: "Finland.Kangaslampi.xml" 428 bytes
+File: "Finland.Kangasniemi.xml" 428 bytes
+File: "Finland.Kankaanpää.xml" 428 bytes
+File: "Finland.Karigasniemi.xml" 428 bytes
+File: "Finland.Karkkila.xml" 428 bytes
+File: "Finland.Karstula.xml" 428 bytes
+File: "Finland.Kaunispää.xml" 0/428 bytes
+File: "Finland.Kerimäki.xml" 428 bytes
+File: "Finland.Keuruu.xml" 428 bytes
+File: "Finland.Keuruu_Haapamäki.xml" 428 bytes
+File: "Finland.Kiihtelysvaara.xml" 428 bytes
+File: "Finland.Kilpisjärvi.xml" 428 bytes
+File: "Finland.Koli.xml" 552 bytes
+File: "Finland.Korpilahti_Vaarunvuori.xml" 428 bytes
+File: "Finland.Korppoo.xml" 0/428 bytes
+File: "Finland.Kruunupyy.xml" 428 bytes
+File: "Finland.Kuhmoinen.xml" 428 bytes
+File: "Finland.Kuhmoinen_Harjunsalmi.xml" 0/428 bytes
+File: "Finland.Kuopio.xml" 552 bytes
+File: "Finland.Kustavi.xml" 428 bytes
+File: "Finland.Kuttanen.xml" 428 bytes
+File: "Finland.Lahti.xml" 552 bytes
+File: "Finland.Lapua.xml" 552 bytes
+File: "Finland.Laukaa.xml" 0/428 bytes
+File: "Finland.Laukaa_Vihtavuori.xml" 0/428 bytes
+File: "Finland.Lohja.xml" 552 bytes
+File: "Finland.Loimaa.xml" 0/428 bytes
+File: "Finland.Luhanka.xml" 428 bytes
+File: "Finland.Luopioinen.xml" 428 bytes
+File: "Finland.Mikkeli.xml" 552 bytes
+File: "Finland.Mänttä.xml" 428 bytes
+File: "Finland.Mäntyharju.xml" 0/428 bytes
+File: "Finland.Nilsiä.xml" 0/428 bytes
+File: "Finland.Nokia.xml" 428 bytes
+File: "Finland.Nokia_Siuro_Linnavuori.xml" 0/428 bytes
+File: "Finland.Oulu.xml" 925 bytes
+File: "Finland.Padasjoki_Arrakoski.xml" 428 bytes
+File: "Finland.Parikkala.xml" 428 bytes
+File: "Finland.Parkano.xml" 428 bytes
+File: "Finland.Pello.xml" 428 bytes
+File: "Finland.Perho.xml" 428 bytes
+File: "Finland.Pernaja.xml" 428 bytes
+File: "Finland.Pihtipudas.xml" 428 bytes
+File: "Finland.Porvoo.xml" 0/428 bytes
+File: "Finland.Posio.xml" 428 bytes
+File: "Finland.Pudasjärvi.xml" 428 bytes
+File: "Finland.Puolanka.xml" 0/428 bytes
+File: "Finland.Pyhätunturi.xml" 428 bytes
+File: "Finland.Pyhävuori.xml" 428 bytes
+File: "Finland.Pyynikki.xml" 428 bytes
+File: "Finland.Raahe.xml" 428 bytes
+File: "Finland.Ranua.xml" 428 bytes
+File: "Finland.Rautavaara.xml" 428 bytes
+File: "Finland.Ristijärvi.xml" 428 bytes
+File: "Finland.Rovaniemi.xml" 552 bytes
+File: "Finland.Ruka.xml" 428 bytes
+File: "Finland.Saarijärvi.xml" 428 bytes
+File: "Finland.Salla.xml" 0/428 bytes
+File: "Finland.Salo.xml" 428 bytes
+File: "Finland.Sysmä_Liikola.xml" 428 bytes
+File: "Finland.Taivalkoski.xml" 428 bytes
+File: "Finland.Tammela.xml" 552 bytes
+File: "Finland.Tammisaari.xml" 428 bytes
+File: "Finland.Tampere.xml" 552 bytes
+File: "Finland.Tervola.xml" 428 bytes
+File: "Finland.Turku.xml" 552 bytes
+File: "Finland.Utsjoki.xml" 428 bytes
+File: "Finland.Vaala.xml" 428 bytes
+File: "Finland.Vaasa.xml" 428 bytes
+File: "Finland.Vantaa_Hakunila.xml" 428 bytes
+File: "Finland.Vuokatti.xml" 552 bytes
+File: "Finland.Vuokatti_Lentiira.xml" 428 bytes
+File: "Finland.Vuotso.xml" 428 bytes
+File: "Finland.Ylläs.xml" 0/428 bytes
+File: "Finland.Ämmänsaari.xml" 0/428 bytes
+File: "Finland.Äänekoski.xml" 428 bytes
+File: "Finland.Äänekoski_Konginkangas.xml" 0/428 bytes
+File: "France. Toute Region.xml" 6132 bytes
+File: "France.Agen.xml" 924 bytes
+File: "France.Ajaccio.xml" 924 bytes
+File: "France.Albi.xml" 924 bytes
+File: "France.Alençon.xml" 924 bytes
+File: "France.Alès (Ermitage).xml" 924 bytes
+File: "France.Alès (Mont Bouquet).xml" 924 bytes
+File: "France.Anger.xml" 924 bytes
+File: "France.Arcachon.xml" 924 bytes
+File: "France.Argenton sur Creuse.xml" 924 bytes
+File: "France.Aubenas.xml" 924 bytes
+File: "France.Aurillac.xml" 924 bytes
+File: "France.Autun.xml" 924 bytes
+File: "France.Bastia.xml" 924 bytes
+File: "France.Bayonne.xml" 924 bytes
+File: "France.Bergerac.xml" 924 bytes
+File: "France.Besançon.xml" 924 bytes
+File: "France.Bordeaux - Caudéran.xml" 924 bytes
+File: "France.Bordeaux Est.xml" 924 bytes
+File: "France.Bourges.xml" 924 bytes
+File: "France.Brest.xml" 924 bytes
+File: "France.Brive.xml" 924 bytes
+File: "France.Caen (Mont-Pinçon).xml" 924 bytes
+File: "France.Caen.xml" 924 bytes
+File: "France.Cannes.xml" 924 bytes
+File: "France.Carcassonne.xml" 924 bytes
+File: "France.Chartres.xml" 924 bytes
+File: "France.Cherbourg.xml" 924 bytes
+File: "France.Clermont-Ferrand.xml" 924 bytes
+File: "France.Dieppe.xml" 924 bytes
+File: "France.Dijon.xml" 924 bytes
+File: "France.Evreux.xml" 924 bytes
+File: "France.Grenoble.xml" 924 bytes
+File: "France.Guéret.xml" 924 bytes
+File: "France.Hyères.xml" 924 bytes
+File: "France.La Roche Sur Yon.xml" 1052 bytes
+File: "France.La Rochelle.xml" 924 bytes
+File: "France.Laval.xml" 924 bytes
+File: "France.Le Havre.xml" 924 bytes
+File: "France.Le Mans.xml" 924 bytes
+File: "France.Le Puy En Velay.xml" 924 bytes
+File: "France.Lille.xml" 924 bytes
+File: "France.Limoges.xml" 924 bytes
+File: "France.Lorient.xml" 924 bytes
+File: "France.Lyon - Fourvière.xml" 924 bytes
+File: "France.Lyon - Mont-Pilat.xml" 924 bytes
+File: "France.Mantes.xml" 924 bytes
+File: "France.Marseille.xml" 924 bytes
+File: "France.Meaux.xml" 924 bytes
+File: "France.Nantes.xml" 924 bytes
+File: "France.Nice.xml" 924 bytes
+File: "France.Niort.xml" 924 bytes
+File: "France.Orleans.xml" 924 bytes
+File: "France.Paris - Est_Nord_Sud.xml" 924 bytes
+File: "France.Paris - Tour Eiffel.xml" 1050 bytes
+File: "France.Perpignan - Pic de Neulos.xml" 924 bytes
+File: "France.Port Vendres - La Croix Blanche.xml" 0/924 bytes
+File: "France.Port Vendres - Tour Madeloc.xml" 0/924 bytes
+File: "France.Reims.xml" 924 bytes
+File: "France.Rennes.xml" 924 bytes
+File: "France.Roanne.xml" 924 bytes
+File: "France.Rouen.xml" 1172 bytes
+File: "France.St Etienne.xml" 924 bytes
+File: "France.St Raphaël.xml" 0/924 bytes
+File: "France.Toulon.xml" 924 bytes
+File: "France.Toulouse - Bonhoure.xml" 924 bytes
+File: "France.Toulouse - Pic du Midi.xml" 1172 bytes
+File: "France.Tours.xml" 924 bytes
+File: "France.Vannes.xml" 924 bytes
+File: "Germany.All Regions.xml" 0/7248 bytes
+File: "Germany.Berlin_Brandenburg.xml" 1668 bytes
+File: "Germany.Braunschweig.xml" 1050 bytes
+File: "Germany.Bremen_Unterweser.xml" 1048 bytes
+File: "Germany.Bremerhaven_Cuxhaven.xml" 1296 bytes
+File: "Germany.Chemnitz.xml" 552 bytes
+File: "Germany.Dresden.xml" 552 bytes
+File: "Germany.Düsseldorf_Ruhrgebiet.xml" 1172 bytes
+File: "Germany.Göttingen.xml" 800 bytes
+File: "Germany.Hamburg_Lübeck.xml" 1048 bytes
+File: "Germany.Hannover.xml" 828 bytes
+File: "Germany.Hannover_Braunschweig.xml" 924 bytes
+File: "Germany.Kiel.xml" 924 bytes
+File: "Germany.Köln_Bonn.xml" 1172 bytes
+File: "Germany.Löbau.xml" 552 bytes
+File: "Germany.München.xml" 930 bytes
+File: "Germany.Münster.xml" 552 bytes
+File: "Germany.Nürnberg.xml" 932 bytes
+File: "Germany.Osnabrück_Lingen.xml" 676 bytes
+File: "Germany.Ostfriesland.xml" 552 bytes
+File: "Germany.Rhein_Main.xml" 926 bytes
+File: "Germany.Stuttgart.xml" 552 bytes
+File: "Germany.Weserbergland Nord.xml" 676 bytes
+File: "Greece.All Regions.xml" 6008 bytes
+File: "Greece.Athens.xml" 924 bytes
+File: "Greece.Thessalia.xml" 304 bytes
+File: "Greece.Thessaloniki.xml" 552 bytes
+File: "Greece.Xylokastro.xml" 428 bytes
+File: "HongKong.All Regions.xml" 2605 bytes
+File: "Hungary.Aggtelek.xml" 800 bytes
+File: "Hungary.Bekescsaba.xml" 800 bytes
+File: "Hungary.Budapest.xml" 924 bytes
+File: "Hungary.Csavoly.xml" 676 bytes
+File: "Hungary.Debrecen.xml" 800 bytes
+File: "Hungary.Gerecse.xml" 676 bytes
+File: "Hungary.Gyor.xml" 800 bytes
+File: "Hungary.Karancs.xml" 800 bytes
+File: "Hungary.Karcag.xml" 800 bytes
+File: "Hungary.Kecskemet.xml" 679 bytes
+File: "Hungary.Kekes.xml" 679 bytes
+File: "Hungary.Kiskoros.xml" 0/676 bytes
+File: "Hungary.Miskolc.xml" 0/800 bytes
+File: "Hungary.Pecs.xml" 800 bytes
+File: "Hungary.Sopron.xml" 800 bytes
+File: "Hungary.Szeged.xml" 800 bytes
+File: "Hungary.Szekesfehervar.xml" 676 bytes
+File: "Hungary.Szentes.xml" 676 bytes
+File: "Hungary.Szolnok.xml" 676 bytes
+File: "Hungary.Tokaj.xml" 800 bytes
+File: "Hungary.Veszprem.xml" 0/800 bytes
+File: "Iceland.All Regions.xml" 8806 bytes
+File: "Ireland.All Regions.xml" 9103 bytes
+File: "Ireland.Carlow - Mt Leinster.xml" 678 bytes
+File: "Ireland.Clare - Ennistimon.xml" 430 bytes
+File: "Ireland.Clare - Maghera.xml" 430 bytes
+File: "Ireland.Clare - Woodcock Hill.xml" 430 bytes
+File: "Ireland.Cork - Bandon.xml" 430 bytes
+File: "Ireland.Cork - Bantry.xml" 430 bytes
+File: "Ireland.Cork - Castletownbere.xml" 430 bytes
+File: "Ireland.Cork - Clonakilty.xml" 430 bytes
+File: "Ireland.Cork - Collins Barracks.xml" 430 bytes
+File: "Ireland.Cork - Crosshaven.xml" 0/430 bytes
+File: "Ireland.Cork - Drimoleague.xml" 0/430 bytes
+File: "Ireland.Cork - Fermoy.xml" 0/430 bytes
+File: "Ireland.Cork - Glanmire.xml" 430 bytes
+File: "Ireland.Cork - Kinsale.xml" 430 bytes
+File: "Ireland.Cork - Leap.xml" 0/430 bytes
+File: "Ireland.Cork - Mitchelstown.xml" 430 bytes
+File: "Ireland.Cork - Mt. Gabriel.xml" 430 bytes
+File: "Ireland.Cork - Mullaghanish.xml" 430 bytes
+File: "Ireland.Cork - Rosscarbery.xml" 0/430 bytes
+File: "Ireland.Cork - Spur Hill.xml" 430 bytes
+File: "Ireland.Cork - Timoleague.xml" 0/430 bytes
+File: "Ireland.Donegal - Ballybofey.xml" 430 bytes
+File: "Ireland.Donegal - Clonmany.xml" 430 bytes
+File: "Ireland.Donegal - Fanad.xml" 0/430 bytes
+File: "Ireland.Donegal - Glencolumcille.xml" 430 bytes
+File: "Ireland.Donegal - Glenties.xml" 0/430 bytes
+File: "Ireland.Donegal - Holywell Hill.xml" 414 bytes
+File: "Ireland.Donegal - Letterkenny.xml" 430 bytes
+File: "Ireland.Donegal - Magheraroarty.xml" 430 bytes
+File: "Ireland.Donegal - Malin.xml" 0/430 bytes
+File: "Ireland.Donegal - Moville.xml" 0/430 bytes
+File: "Ireland.Dublin - Three Rock.xml" 454 bytes
+File: "Ireland.Galway - Casla.xml" 430 bytes
+File: "Ireland.Galway - Clifden.xml" 0/430 bytes
+File: "Ireland.Galway - Tonabrocky.xml" 430 bytes
+File: "Ireland.Kerry - Cnoc an Óir.xml" 430 bytes
+File: "Ireland.Kerry - Dingle.xml" 0/430 bytes
+File: "Ireland.Kerry - Kilkeaveragh.xml" 0/430 bytes
+File: "Ireland.Kerry - Knockmoyle.xml" 0/430 bytes
+File: "Ireland.Kerry - Maamclassach.xml" 0/430 bytes
+File: "Ireland.Kilkenny - Suir Valley.xml" 0/430 bytes
+File: "Ireland.Longford - Cairn Hill.xml" 0/430 bytes
+File: "Ireland.Louth - Clermont Carn.xml" 0/430 bytes
+File: "Ireland.Louth - Greenore.xml" 0/430 bytes
+File: "Ireland.Mayo - Achill.xml" 430 bytes
+File: "Ireland.Mayo - Aranmore.xml" 0/430 bytes
+File: "Ireland.Mayo - Ballina.xml" 0/430 bytes
+File: "Ireland.Mayo - Castlebar.xml" 430 bytes
+File: "Ireland.Mayo - Dooncarton.xml" 0/430 bytes
+File: "Ireland.Monaghan - Monaghan.xml" 0/430 bytes
+File: "Ireland.Sligo - Truskmore.xml" 0/430 bytes
+File: "Ireland.Tipperary - Cahir.xml" 430 bytes
+File: "Ireland.Tipperary - Clonmel.xml" 430 bytes
+File: "Ireland.Tipperary - Kilduff.xml" 0/430 bytes
+File: "Ireland.Waterford - Dungarvan.xml" 0/430 bytes
+File: "Ireland.Waterford - Ferrypoint.xml" 0/430 bytes
+File: "Ireland.Waterford - Gallows Hill.xml" 0/430 bytes
+File: "Ireland.Waterford - Kilmacthomas.xml" 0/430 bytes
+File: "Ireland.Waterford City - Waterford City Infill.xml" 678 bytes
+File: "Ireland.Wexford - Forth Mountain.xml" 430 bytes
+File: "Ireland.Wexford - Gorey.xml" 430 bytes
+File: "Ireland.Wexford - Mt. Leinster.xml" 430 bytes
+File: "Ireland.Wicklow - Arklow.xml" 0/430 bytes
+File: "Ireland.Wicklow - Greystones.xml" 0/430 bytes
+File: "Ireland.Wicklow - Kippure.xml" 0/430 bytes
+File: "Ireland.Wicklow - Laragh.xml" 0/430 bytes
+File: "Israel.All Regions.xml" 412 bytes
+File: "Israel.Central.xml" 304 bytes
+File: "Israel.North.xml" 0/304 bytes
+File: "Israel.South.xml" 0/304 bytes
+File: "Italy.All Regions.xml" 7489 bytes
+File: "Italy.Asciano (Pisa).xml" 800 bytes
+File: "Italy.Milano.xml" 3156 bytes
+File: "Italy.Padova.xml" 5015 bytes
+File: "Italy.Predazzo (Trento).xml" 1174 bytes
+File: "Italy.Roma.xml" 5512 bytes
+File: "Italy.Sorrento (Faito).xml" 1172 bytes
+File: "Italy.Trento.xml" 3032 bytes
+File: "Italy.Verona.xml" 924 bytes
+File: "Lithuania.Kauans.xml" 676 bytes
+File: "Lithuania.Klaipeda.xml" 676 bytes
+File: "Lithuania.Panevezys.xml" 676 bytes
+File: "Lithuania.Siauliai.xml" 676 bytes
+File: "Lithuania.Vilnius.xml" 924 bytes
+File: "Luxembourg.All Regions.xml" 800 bytes
+File: "Netherlands.Alkmaar.xml" 790 bytes
+File: "Netherlands.All Regions.xml" 7124 bytes
+File: "Netherlands.Almere.xml" 790 bytes
+File: "Netherlands.Alphen aan den Rijn.xml" 790 bytes
+File: "Netherlands.AlphenadRijn.xml" 668 bytes
+File: "Netherlands.Amersfoort.xml" 790 bytes
+File: "Netherlands.Amsterdam (IJ).xml" 668 bytes
+File: "Netherlands.Amsterdam (RAI).xml" 0/668 bytes
+File: "Netherlands.Amsterdam Hemweg.xml" 790 bytes
+File: "Netherlands.Amsterdam Rai.xml" 0/790 bytes
+File: "Netherlands.Apeldoorn.xml" 790 bytes
+File: "Netherlands.Arnhem.xml" 0/790 bytes
+File: "Netherlands.Breda.xml" 790 bytes
+File: "Netherlands.Delft.xml" 0/790 bytes
+File: "Netherlands.Den Bosch.xml" 790 bytes
+File: "Netherlands.Den Burg.xml" 790 bytes
+File: "Netherlands.Den Haag (KPN toren).xml" 0/668 bytes
+File: "Netherlands.Den Haag (Zichtenburglaan).xml" 0/668 bytes
+File: "Netherlands.Den Haag.xml" 0/790 bytes
+File: "Netherlands.Deventer.xml" 790 bytes
+File: "Netherlands.Doetinchem.xml" 0/790 bytes
+File: "Netherlands.Eindhoven oost.xml" 668 bytes
+File: "Netherlands.Eindhoven west.xml" 0/668 bytes
+File: "Netherlands.Eindhoven.xml" 0/790 bytes
+File: "Netherlands.Enkhuizen.xml" 0/790 bytes
+File: "Netherlands.Enschede.xml" 0/790 bytes
+File: "Netherlands.Goes.xml" 790 bytes
+File: "Netherlands.Gorinchem.xml" 790 bytes
+File: "Netherlands.Gouda.xml" 0/790 bytes
+File: "Netherlands.Groningen.xml" 790 bytes
+File: "Netherlands.Haarlem.xml" 0/790 bytes
+File: "Netherlands.Heerlen.xml" 790 bytes
+File: "Netherlands.Helmond.xml" 0/790 bytes
+File: "Netherlands.Hengelo.xml" 0/790 bytes
+File: "Netherlands.Hilversum.xml" 0/790 bytes
+File: "Netherlands.Hoorn.xml" 0/790 bytes
+File: "Netherlands.IJsselstein.xml" 0/790 bytes
+File: "Netherlands.Krimpen aan den Ijssel.xml" 0/790 bytes
+File: "Netherlands.Leeuwarden.xml" 790 bytes
+File: "Netherlands.Lelystad.xml" 790 bytes
+File: "Netherlands.Loon op Zand.xml" 0/790 bytes
+File: "Netherlands.Lopik.xml" 668 bytes
+File: "Netherlands.Maarssen.xml" 0/790 bytes
+File: "Netherlands.Maastricht.xml" 0/790 bytes
+File: "Netherlands.Nijmegen.xml" 790 bytes
+File: "Netherlands.Oegstgeest.xml" 0/790 bytes
+File: "Netherlands.Oss (Gelderland).xml" 0/790 bytes
+File: "Netherlands.Oss.xml" 0/790 bytes
+File: "Netherlands.REKAM.xml" 866 bytes
+File: "Netherlands.Roermond.xml" 0/790 bytes
+File: "Netherlands.Roosendaal.xml" 790 bytes
+File: "Netherlands.Rotterdam Waalhaven.xml" 0/790 bytes
+File: "Netherlands.Rotterdam-Waalhaven.xml" 668 bytes
+File: "Netherlands.Rotterdam.xml" 0/790 bytes
+File: "Netherlands.Scheveningen (Radio).xml" 0/668 bytes
+File: "Netherlands.Scheveningen.xml" 0/790 bytes
+File: "Netherlands.Sittard.xml" 0/790 bytes
+File: "Netherlands.Sliedrecht.xml" 0/790 bytes
+File: "Netherlands.Smilde.xml" 790 bytes
+File: "Netherlands.Utrecht.xml" 0/790 bytes
+File: "Netherlands.Veenendaal (Gelderland).xml" 0/790 bytes
+File: "Netherlands.Veenendaal (Utrecht).xml" 790 bytes
+File: "Netherlands.Veenendaal.xml" 791 bytes
+File: "Netherlands.Venlo.xml" 790 bytes
+File: "Netherlands.Vlaardingen.xml" 0/790 bytes
+File: "Netherlands.Wormer.xml" 0/790 bytes
+File: "Netherlands.Zoetermeer.xml" 0/790 bytes
+File: "Netherlands.Zwolle.xml" 0/790 bytes
+File: "New Zealand.All Regions.xml" 2864 bytes
+File: "New Zealand.Auckland - Infill.xml" 1083 bytes
+File: "New Zealand.Auckland - Waiatarua.xml" 1071 bytes
+File: "New Zealand.Christchurch - Sugarloaf.xml" 930 bytes
+File: "New Zealand.Dunedin - Mt Cargill.xml" 0/930 bytes
+File: "New Zealand.Gisborne - Parikanapa.xml" 1095 bytes
+File: "New Zealand.Gisborne - Wheatstone Road.xml" 1264 bytes
+File: "New Zealand.Hawkes Bay - Mt Erin.xml" 1096 bytes
+File: "New Zealand.Hawkes Bay - Napier Airport.xml" 1096 bytes
+File: "New Zealand.Invercargill - Forest Hill.xml" 927 bytes
+File: "New Zealand.Kapiti - Ngarara.xml" 930 bytes
+File: "New Zealand.Manawatu - Wharite.xml" 0/930 bytes
+File: "New Zealand.Nelson - Botanical Ridge.xml" 1434 bytes
+File: "New Zealand.Nelson - Mt Campbell.xml" 1429 bytes
+File: "New Zealand.Rotorua - Pukepoto.xml" 1102 bytes
+File: "New Zealand.Taranaki - Mt Taranaki.xml" 0/930 bytes
+File: "New Zealand.Taupo - Whakaroa.xml" 927 bytes
+File: "New Zealand.Tauranga - Kopukairoa.xml" 931 bytes
+File: "New Zealand.Timaru - Cave Hill.xml" 1259 bytes
+File: "New Zealand.Waikato - Hamilton.xml" 0/930 bytes
+File: "New Zealand.Waikato - Te Aroha.xml" 0/930 bytes
+File: "New Zealand.Wairarapa - Popoiti.xml" 0/927 bytes
+File: "New Zealand.Wanganui - Mt Jowett.xml" 0/927 bytes
+File: "New Zealand.Wellington - Infill.xml" 0/930 bytes
+File: "New Zealand.Wellington - Mt Kaukau.xml" 0/930 bytes
+File: "New Zealand.Whangarei - Parahaki.xml" 0/927 bytes
+File: "Norway.Aust-Agder - Fennefossknipen.xml" 546 bytes
+File: "Norway.Aust-Agder - Hovdefjell.xml" 546 bytes
+File: "Norway.Aust-Agder - Lillesand.xml" 792 bytes
+File: "Norway.Aust-Agder - Valle.xml" 546 bytes
+File: "Norway.Buskerud - Gol 1.xml" 546 bytes
+File: "Norway.Buskerud - Kongsberg.xml" 546 bytes
+File: "Norway.Buskerud - Ringerike.xml" 792 bytes
+File: "Norway.Finnmark - Alta 2.xml" 546 bytes
+File: "Norway.Finnmark - Alta.xml" 546 bytes
+File: "Norway.Finnmark - Hammerfest.xml" 546 bytes
+File: "Norway.Finnmark - Karasjok.xml" 546 bytes
+File: "Norway.Finnmark - Kautokeino 2.xml" 546 bytes
+File: "Norway.Finnmark - Nordkapp.xml" 546 bytes
+File: "Norway.Finnmark - Store Jekkir.xml" 546 bytes
+File: "Norway.Finnmark - Varanger.xml" 546 bytes
+File: "Norway.Hedmark - Bangsberget.xml" 546 bytes
+File: "Norway.Hedmark - Kongsvinger.xml" 546 bytes
+File: "Norway.Hedmark - Nordhue.xml" 546 bytes
+File: "Norway.Hedmark - Tron.xml" 546 bytes
+File: "Norway.Hordaland - Bergen.xml" 546 bytes
+File: "Norway.Hordaland - Erstadfjellet.xml" 790 bytes
+File: "Norway.Hordaland - Grimo.xml" 546 bytes
+File: "Norway.Hordaland - Lønahorgi.xml" 546 bytes
+File: "Norway.Hordaland - Stord.xml" 546 bytes
+File: "Norway.Møre og Roms - Gamlemsveten.xml" 790 bytes
+File: "Norway.Møre og Roms - Reinsfjell.xml" 546 bytes
+File: "Norway.Nord-Trøndelag - Grong.xml" 546 bytes
+File: "Norway.Nord-Trøndelag - Mosvik.xml" 790 bytes
+File: "Norway.Nordland - Andenes.xml" 546 bytes
+File: "Norway.Nordland - Hadsel.xml" 546 bytes
+File: "Norway.Nordland - Hemnes.xml" 546 bytes
+File: "Norway.Nordland - Narvik.xml" 546 bytes
+File: "Norway.Nordland - Salten.xml" 546 bytes
+File: "Norway.Nordland - Steigen.xml" 0/546 bytes
+File: "Norway.Nordland - Vega.xml" 546 bytes
+File: "Norway.Oppland - Bagn.xml" 546 bytes
+File: "Norway.Oppland - Gran.xml" 546 bytes
+File: "Norway.Oppland - Jetta.xml" 0/546 bytes
+File: "Norway.Oslo-Akershus - Tryvasshøgda.xml" 668 bytes
+File: "Norway.Ostfold - Viktjernasen.xml" 792 bytes
+File: "Norway.Rogaland - Bjerkreim.xml" 546 bytes
+File: "Norway.Rogaland - Bokn.xml" 546 bytes
+File: "Norway.Rogaland - Lifjell.xml" 790 bytes
+File: "Norway.Sogn og Fjordane - Bremanger.xml" 546 bytes
+File: "Norway.Sogn og Fjordane - Førde.xml" 546 bytes
+File: "Norway.Sogn og Fjordane - Gulen.xml" 546 bytes
+File: "Norway.Sogn og Fjordane - Nordfjordeid.xml" 546 bytes
+File: "Norway.Sogn og Fjordane - Sogndal.xml" 546 bytes
+File: "Norway.Sør-Trøndelag - Kopparen.xml" 546 bytes
+File: "Norway.Sør-Trøndelag - Melhus.xml" 546 bytes
+File: "Norway.Sør-Trøndelag - Ålmenberget.xml" 546 bytes
+File: "Norway.Telemark - Gausta.xml" 546 bytes
+File: "Norway.Telemark - Skien.xml" 546 bytes
+File: "Norway.Troms - Harstad 1.xml" 546 bytes
+File: "Norway.Troms - Kistefjell.xml" 546 bytes
+File: "Norway.Troms - Trolltind.xml" 546 bytes
+File: "Norway.Troms - Tromsø 2.xml" 546 bytes
+File: "Norway.Vest-Agder - Greipstad.xml" 546 bytes
+File: "Norway.Vest-Agder - Lyngdal.xml" 546 bytes
+File: "Norway.Vestfold - Hvitingen.xml" 546 bytes
+File: "Norway.Vestfold - Larvik.xml" 786 bytes
+File: "Norway.Østfold - Halden.xml" 546 bytes
+File: "Portugal.All Regions.xml" 6253 bytes
+File: "Russia.All_Regions.xml" 6158 bytes
+File: "Singapore.All Regions.xml" 546 bytes
+File: "Slovak Republic.All Regions.xml" 2254 bytes
+File: "Slovak Republic.Banska Bystrica.xml" 424 bytes
+File: "Slovak Republic.Banska Stiavnica.xml" 424 bytes
+File: "Slovak Republic.Bardejov.xml" 424 bytes
+File: "Slovak Republic.Borsky Mikulas.xml" 302 bytes
+File: "Slovak Republic.Bralova Skala.xml" 302 bytes
+File: "Slovak Republic.Bratislava.xml" 424 bytes
+File: "Slovak Republic.Brezno.xml" 302 bytes
+File: "Slovak Republic.Cadca.xml" 424 bytes
+File: "Slovak Republic.Detva.xml" 424 bytes
+File: "Slovak Republic.Dolny Kubin.xml" 0/302 bytes
+File: "Slovak Republic.Hnusta.xml" 424 bytes
+File: "Slovak Republic.Kosice.xml" 424 bytes
+File: "Slovak Republic.Kralovsky Chlmec.xml" 0/424 bytes
+File: "Slovak Republic.Krompachy.xml" 0/424 bytes
+File: "Slovak Republic.Lucenec.xml" 0/424 bytes
+File: "Slovak Republic.Martin.xml" 0/302 bytes
+File: "Slovak Republic.Medzev.xml" 0/424 bytes
+File: "Slovak Republic.Namestovo.xml" 424 bytes
+File: "Slovak Republic.Nitra.xml" 0/424 bytes
+File: "Slovak Republic.Nove Mesto nad Vahom.xml" 424 bytes
+File: "Slovak Republic.Poprad.xml" 546 bytes
+File: "Slovak Republic.Povazska Bystrica.xml" 0/424 bytes
+File: "Slovak Republic.Presov.xml" 0/424 bytes
+File: "Slovak Republic.Prievidza.xml" 424 bytes
+File: "Slovak Republic.Revuca.xml" 0/424 bytes
+File: "Slovak Republic.Rimavska Sobota.xml" 302 bytes
+File: "Slovak Republic.Roznava.xml" 0/424 bytes
+File: "Slovak Republic.Ruzomberok.xml" 0/424 bytes
+File: "Slovak Republic.Snina.xml" 0/424 bytes
+File: "Slovak Republic.Stara Lubovna.xml" 424 bytes
+File: "Slovak Republic.Sturovo.xml" 0/424 bytes
+File: "Slovak Republic.Trencin.xml" 0/424 bytes
+File: "Slovak Republic.Uhrovec.xml" 302 bytes
+File: "Slovak Republic.Velky Krtis.xml" 302 bytes
+File: "Slovak Republic.Zilina.xml" 0/424 bytes
+File: "Slovenia.All Regions.xml" 912 bytes
+File: "South Africa.Gauteng.xml" 428 bytes
+File: "Spain.All Regions.xml" 0/6253 bytes
+File: "Spain.Andalucia - Almeria.xml" 924 bytes
+File: "Spain.Andalucia - Cadiz.xml" 924 bytes
+File: "Spain.Andalucia - Cordoba.xml" 924 bytes
+File: "Spain.Andalucia - Granada.xml" 924 bytes
+File: "Spain.Andalucia - Huelva.xml" 924 bytes
+File: "Spain.Andalucia - Jaen.xml" 924 bytes
+File: "Spain.Andalucia - Malaga.xml" 924 bytes
+File: "Spain.Andalucia - Sevilla.xml" 924 bytes
+File: "Spain.Aragon - Huesca.xml" 924 bytes
+File: "Spain.Aragon - Teruel.xml" 924 bytes
+File: "Spain.Aragon - Zaragoza.xml" 924 bytes
+File: "Spain.Asturias.xml" 924 bytes
+File: "Spain.Baleares.xml" 1296 bytes
+File: "Spain.C. Valenciana - Alicante.xml" 924 bytes
+File: "Spain.C. Valenciana - Castellon.xml" 924 bytes
+File: "Spain.C. Valenciana - Valencia.xml" 1420 bytes
+File: "Spain.Canarias - Las Palmas.xml" 924 bytes
+File: "Spain.Canarias - Tenerife.xml" 924 bytes
+File: "Spain.Cantabria.xml" 924 bytes
+File: "Spain.Castilla La Mancha - Albacete.xml" 924 bytes
+File: "Spain.Castilla La Mancha - Ciudad Real.xml" 924 bytes
+File: "Spain.Castilla La Mancha - Cuenca.xml" 924 bytes
+File: "Spain.Castilla La Mancha - Guadalajara.xml" 0/924 bytes
+File: "Spain.Castilla La Mancha - Toledo.xml" 924 bytes
+File: "Spain.Castilla y Leon - Avila.xml" 924 bytes
+File: "Spain.Castilla y Leon - Burgos.xml" 924 bytes
+File: "Spain.Castilla y Leon - Leon.xml" 0/924 bytes
+File: "Spain.Castilla y Leon - Palencia.xml" 0/924 bytes
+File: "Spain.Castilla y Leon - Salamanca.xml" 0/924 bytes
+File: "Spain.Castilla y Leon - Segovia.xml" 0/924 bytes
+File: "Spain.Castilla y Leon - Soria.xml" 0/924 bytes
+File: "Spain.Castilla y Leon - Valladolid.xml" 0/924 bytes
+File: "Spain.Castilla y Leon - Zamora.xml" 0/924 bytes
+File: "Spain.Cataluna - Barcelona.xml" 2164 bytes
+File: "Spain.Cataluna - Girona.xml" 1172 bytes
+File: "Spain.Cataluna - Lleida.xml" 1172 bytes
+File: "Spain.Cataluna - Tarragona.xml" 1172 bytes
+File: "Spain.Ceuta.xml" 924 bytes
+File: "Spain.Extremadura - Badajoz.xml" 1048 bytes
+File: "Spain.Extremadura - Caceres.xml" 924 bytes
+File: "Spain.Galicia - A Coruna.xml" 0/924 bytes
+File: "Spain.Galicia - Lugo.xml" 924 bytes
+File: "Spain.Galicia - Orense.xml" 924 bytes
+File: "Spain.Galicia - Pontevedra.xml" 924 bytes
+File: "Spain.La Rioja.xml" 924 bytes
+File: "Spain.Madrid.xml" 1424 bytes
+File: "Spain.Melilla.xml" 924 bytes
+File: "Spain.Murcia.xml" 924 bytes
+File: "Spain.Navarra.xml" 924 bytes
+File: "Spain.Pais Vasco - Alava.xml" 0/924 bytes
+File: "Spain.Pais Vasco - Guipuzcoa.xml" 924 bytes
+File: "Spain.Pais Vasco - Vizcaya.xml" 0/924 bytes
+File: "Sweden.Aareavaara.xml" 306 bytes
+File: "Sweden.Adolfstrom.xml" 306 bytes
+File: "Sweden.Agnas.xml" 306 bytes
+File: "Sweden.Akersjon.xml" 306 bytes
+File: "Sweden.Alafors.xml" 1050 bytes
+File: "Sweden.Albacken.xml" 306 bytes
+File: "Sweden.Algsjo.xml" 306 bytes
+File: "Sweden.Alingsas Mariedal.xml" 0/1050 bytes
+File: "Sweden.All Regions.xml" 5886 bytes
+File: "Sweden.Alvangen.xml" 0/1050 bytes
+File: "Sweden.Alvdalen Brunnsberg.xml" 0/306 bytes
+File: "Sweden.Alvdalsasen.xml" 306 bytes
+File: "Sweden.Alvsbacka.xml" 306 bytes
+File: "Sweden.Alvsbyn.xml" 1050 bytes
+File: "Sweden.Ammarnas Ribovardo.xml" 0/306 bytes
+File: "Sweden.Ammarnas Tjultrask.xml" 306 bytes
+File: "Sweden.Amot.xml" 306 bytes
+File: "Sweden.Amotfors Kroppstad.xml" 0/306 bytes
+File: "Sweden.An.xml" 306 bytes
+File: "Sweden.Andersvattnet Ersmyrberget.xml" 306 bytes
+File: "Sweden.Ange Snoberg.xml" 1050 bytes
+File: "Sweden.Angebo.xml" 0/306 bytes
+File: "Sweden.Angelholm Vegeholm.xml" 1050 bytes
+File: "Sweden.Angersjo.xml" 0/306 bytes
+File: "Sweden.Are.xml" 1050 bytes
+File: "Sweden.Arjang.xml" 1050 bytes
+File: "Sweden.Arjeplog Galtispouda.xml" 1050 bytes
+File: "Sweden.Arosjokk.xml" 306 bytes
+File: "Sweden.Arvidsjaur Jultrask.xml" 1050 bytes
+File: "Sweden.Arvika Orshultaberget.xml" 0/306 bytes
+File: "Sweden.As.xml" 306 bytes
+File: "Sweden.Asele Aslia.xml" 306 bytes
+File: "Sweden.Asmon Sormoflo.xml" 306 bytes
+File: "Sweden.Aspeboda.xml" 306 bytes
+File: "Sweden.Atvidaberg.xml" 1050 bytes
+File: "Sweden.Avesta Krylbo.xml" 1050 bytes
+File: "Sweden.Backe.xml" 306 bytes
+File: "Sweden.Backefors.xml" 926 bytes
+File: "Sweden.Bankeryd.xml" 1050 bytes
+File: "Sweden.Bengtsfors.xml" 0/306 bytes
+File: "Sweden.Berghamn.xml" 0/306 bytes
+File: "Sweden.Bergshamra Vaxtuna.xml" 1050 bytes
+File: "Sweden.Bergsjo Balleberget.xml" 306 bytes
+File: "Sweden.Bergvik.xml" 0/306 bytes
+File: "Sweden.Billsjo.xml" 0/306 bytes
+File: "Sweden.Bispfors.xml" 1050 bytes
+File: "Sweden.Bjorkliden Tornehamn.xml" 0/306 bytes
+File: "Sweden.Bjorksele.xml" 0/306 bytes
+File: "Sweden.Bjorkvattnet.xml" 306 bytes
+File: "Sweden.Bjorna.xml" 306 bytes
+File: "Sweden.Bjurberget Hemtjarn.xml" 0/306 bytes
+File: "Sweden.Bjurtrask.xml" 0/306 bytes
+File: "Sweden.Boberg.xml" 306 bytes
+File: "Sweden.Boda Fagerum.xml" 1050 bytes
+File: "Sweden.Boden Skogsa.xml" 306 bytes
+File: "Sweden.Bograngen.xml" 0/306 bytes
+File: "Sweden.Bollebygd.xml" 0/1050 bytes
+File: "Sweden.Bollnas.xml" 1050 bytes
+File: "Sweden.Bonhamn.xml" 0/306 bytes
+File: "Sweden.Boras Dalsjofors.xml" 1050 bytes
+File: "Sweden.Boras Sjobo.xml" 1050 bytes
+File: "Sweden.Borgafjall.xml" 0/306 bytes
+File: "Sweden.Borgholm Ramsattra 2.xml" 1050 bytes
+File: "Sweden.Borgsjobyn.xml" 306 bytes
+File: "Sweden.Borkan.xml" 0/306 bytes
+File: "Sweden.Borlange Idkerberget.xml" 1050 bytes
+File: "Sweden.Borlange Nygardarna.xml" 1050 bytes
+File: "Sweden.Bortansbyn Bortan.xml" 0/306 bytes
+File: "Sweden.Bosebyn.xml" 306 bytes
+File: "Sweden.Botsmark.xml" 0/306 bytes
+File: "Sweden.Bottnaryd Ryd.xml" 0/306 bytes
+File: "Sweden.Bredaker.xml" 0/306 bytes
+File: "Sweden.Bredbyn Kubbe.xml" 306 bytes
+File: "Sweden.Bredbyn Vasterfannbyn.xml" 306 bytes
+File: "Sweden.Bredsjon.xml" 0/306 bytes
+File: "Sweden.Bromsebro.xml" 1050 bytes
+File: "Sweden.Bruzaholm.xml" 0/306 bytes
+File: "Sweden.Bydalen Hovdehogen.xml" 0/306 bytes
+File: "Sweden.Bygdetrask.xml" 0/306 bytes
+File: "Sweden.Bygdsiljum.xml" 0/306 bytes
+File: "Sweden.Byxelkrok.xml" 802 bytes
+File: "Sweden.Dadran.xml" 0/306 bytes
+File: "Sweden.Dal.xml" 0/306 bytes
+File: "Sweden.Dalfors.xml" 0/306 bytes
+File: "Sweden.Dals Langed.xml" 0/306 bytes
+File: "Sweden.Dalstuga.xml" 306 bytes
+File: "Sweden.Degeberga.xml" 0/306 bytes
+File: "Sweden.Degerfors.xml" 1050 bytes
+File: "Sweden.Delary Kolaboda.xml" 0/306 bytes
+File: "Sweden.Delary.xml" 0/306 bytes
+File: "Sweden.Djura.xml" 0/306 bytes
+File: "Sweden.Dorotea.xml" 306 bytes
+File: "Sweden.Drevdagen.xml" 0/306 bytes
+File: "Sweden.Duved.xml" 306 bytes
+File: "Sweden.Duvnas Basna.xml" 0/306 bytes
+File: "Sweden.Duvnas.xml" 0/306 bytes
+File: "Sweden.Edane.xml" 0/306 bytes
+File: "Sweden.Edsbyn.xml" 0/306 bytes
+File: "Sweden.Edsele.xml" 0/306 bytes
+File: "Sweden.Edsleskog Hogheden.xml" 306 bytes
+File: "Sweden.Eksharad Ekesberget.xml" 0/306 bytes
+File: "Sweden.Ellos.xml" 306 bytes
+File: "Sweden.Emmaboda Balshult.xml" 0/1050 bytes
+File: "Sweden.Enafors.xml" 0/306 bytes
+File: "Sweden.Enviken.xml" 1050 bytes
+File: "Sweden.Erikslund Bergasen.xml" 0/306 bytes
+File: "Sweden.Fagersta Jattasen.xml" 1050 bytes
+File: "Sweden.Falerum Centrum.xml" 0/306 bytes
+File: "Sweden.Faltrask.xml" 0/306 bytes
+File: "Sweden.Falun Lovberget.xml" 0/1050 bytes
+File: "Sweden.Farila.xml" 0/306 bytes
+File: "Sweden.Faro Ajkestrask.xml" 926 bytes
+File: "Sweden.Farosund Bunge.xml" 926 bytes
+File: "Sweden.Fengersfors.xml" 0/306 bytes
+File: "Sweden.Filipstad Klockarhojden.xml" 1050 bytes
+File: "Sweden.Finnveden.xml" 1050 bytes
+File: "Sweden.Fjal.xml" 0/306 bytes
+File: "Sweden.Fjallsta.xml" 0/306 bytes
+File: "Sweden.Flarke.xml" 0/306 bytes
+File: "Sweden.Floda.xml" 0/306 bytes
+File: "Sweden.Flurkmark.xml" 0/306 bytes
+File: "Sweden.Flyggsjo.xml" 0/306 bytes
+File: "Sweden.Flyn.xml" 0/306 bytes
+File: "Sweden.Folsbyn.xml" 0/306 bytes
+File: "Sweden.Forsed.xml" 0/306 bytes
+File: "Sweden.Forsmo Yttersel.xml" 306 bytes
+File: "Sweden.Forsmo.xml" 0/306 bytes
+File: "Sweden.Forsnaset.xml" 0/306 bytes
+File: "Sweden.Frankrikegarden Frankrike.xml" 0/306 bytes
+File: "Sweden.Fransta.xml" 0/306 bytes
+File: "Sweden.Fredrika.xml" 0/306 bytes
+File: "Sweden.Fredriksberg.xml" 0/306 bytes
+File: "Sweden.Fredros.xml" 0/306 bytes
+File: "Sweden.Fritsla.xml" 0/306 bytes
+File: "Sweden.Fullsjon.xml" 0/306 bytes
+File: "Sweden.Funasdalen Funasdalsberget.xml" 1050 bytes
+File: "Sweden.Funasdalen Telestation.xml" 0/306 bytes
+File: "Sweden.Furudal.xml" 0/306 bytes
+File: "Sweden.Gaddede.xml" 0/306 bytes
+File: "Sweden.Gallivare.xml" 1050 bytes
+File: "Sweden.Gallsatter.xml" 0/306 bytes
+File: "Sweden.Gardikfors.xml" 306 bytes
+File: "Sweden.Gargnas.xml" 0/306 bytes
+File: "Sweden.Garpenberg Kuppgarden.xml" 0/306 bytes
+File: "Sweden.Gavle Skogmur.xml" 1050 bytes
+File: "Sweden.Gillhov.xml" 0/306 bytes
+File: "Sweden.Glimakra.xml" 0/306 bytes
+File: "Sweden.Gnarp.xml" 0/306 bytes
+File: "Sweden.Gnosjo Marieholm.xml" 0/306 bytes
+File: "Sweden.Gordalen.xml" 0/306 bytes
+File: "Sweden.Goteborg Brudaremossen.xml" 1050 bytes
+File: "Sweden.Goteborg Slattadamm.xml" 926 bytes
+File: "Sweden.Graninge.xml" 0/306 bytes
+File: "Sweden.Grasmark.xml" 306 bytes
+File: "Sweden.Grasmyr.xml" 0/306 bytes
+File: "Sweden.Grebbestad.xml" 1050 bytes
+File: "Sweden.Grevie.xml" 0/306 bytes
+File: "Sweden.Grovelsjon.xml" 0/306 bytes
+File: "Sweden.Grums.xml" 0/306 bytes
+File: "Sweden.Guliksberg Rodvattnet.xml" 0/306 bytes
+File: "Sweden.Guliksberg.xml" 0/306 bytes
+File: "Sweden.Gullbrandstorp.xml" 0/306 bytes
+File: "Sweden.Gumhojden.xml" 0/306 bytes
+File: "Sweden.Gunnarn Sorsjoliden.xml" 1050 bytes
+File: "Sweden.Gunnarsbo.xml" 0/306 bytes
+File: "Sweden.Gunnarsbyn.xml" 306 bytes
+File: "Sweden.Gunnarskog.xml" 0/306 bytes
+File: "Sweden.Gusum.xml" 0/306 bytes
+File: "Sweden.Hadanberg.xml" 0/306 bytes
+File: "Sweden.Hagfors Varmullsasen.xml" 1050 bytes
+File: "Sweden.Hakafot.xml" 0/306 bytes
+File: "Sweden.Halaforsen.xml" 0/306 bytes
+File: "Sweden.Haljeboda.xml" 0/306 bytes
+File: "Sweden.Hallan.xml" 0/306 bytes
+File: "Sweden.Hallaryd.xml" 0/306 bytes
+File: "Sweden.Hallastrom.xml" 0/306 bytes
+File: "Sweden.Hallbo.xml" 0/306 bytes
+File: "Sweden.Halle.xml" 0/306 bytes
+File: "Sweden.Hallesaker Skaregarde.xml" 0/306 bytes
+File: "Sweden.Halleviksstrand.xml" 0/306 bytes
+File: "Sweden.Hallsjo.xml" 0/306 bytes
+File: "Sweden.Halmstad Hamnen.xml" 926 bytes
+File: "Sweden.Halmstad Oskarstrom.xml" 1050 bytes
+File: "Sweden.Hamburgsund.xml" 0/306 bytes
+File: "Sweden.Harads.xml" 0/306 bytes
+File: "Sweden.Harnosand Harnon.xml" 1050 bytes
+File: "Sweden.Harrsjon.xml" 0/306 bytes
+File: "Sweden.Hassela.xml" 0/306 bytes
+File: "Sweden.Hede.xml" 1050 bytes
+File: "Sweden.Hedemora.xml" 0/306 bytes
+File: "Sweden.Hedenaset.xml" 0/306 bytes
+File: "Sweden.Helgum.xml" 0/306 bytes
+File: "Sweden.Helsingborg Olympia.xml" 0/1050 bytes
+File: "Sweden.Hemavan.xml" 1050 bytes
+File: "Sweden.Hemson.xml" 0/306 bytes
+File: "Sweden.Henan.xml" 0/306 bytes
+File: "Sweden.Hennan.xml" 0/306 bytes
+File: "Sweden.Hestra Aspas.xml" 0/306 bytes
+File: "Sweden.Hjo Grevback.xml" 0/306 bytes
+File: "Sweden.Hofors.xml" 1050 bytes
+File: "Sweden.Hogfors.xml" 0/306 bytes
+File: "Sweden.Hoglunda.xml" 0/306 bytes
+File: "Sweden.Hogsby Virstad.xml" 1050 bytes
+File: "Sweden.Hogvalen.xml" 0/306 bytes
+File: "Sweden.Holjes.xml" 0/306 bytes
+File: "Sweden.Hollviken Stora Hammar.xml" 926 bytes
+File: "Sweden.Holsbybrunn Holsbyholm.xml" 0/306 bytes
+File: "Sweden.Horby Sallerup.xml" 0/1050 bytes
+File: "Sweden.Horken.xml" 0/306 bytes
+File: "Sweden.Hornon.xml" 0/306 bytes
+File: "Sweden.Hotagen.xml" 0/306 bytes
+File: "Sweden.Hoting.xml" 0/306 bytes
+File: "Sweden.Hovfjallet.xml" 0/306 bytes
+File: "Sweden.Hudiksvall Forsa.xml" 1050 bytes
+File: "Sweden.Hudiksvall Galgberget.xml" 1050 bytes
+File: "Sweden.Hummelholm.xml" 0/306 bytes
+File: "Sweden.Hunnebostrand.xml" 0/306 bytes
+File: "Sweden.Huskvarna.xml" 0/306 bytes
+File: "Sweden.Husum.xml" 0/306 bytes
+File: "Sweden.Idivuoma.xml" 0/306 bytes
+File: "Sweden.Idre.xml" 1050 bytes
+File: "Sweden.Ingatorp.xml" 0/306 bytes
+File: "Sweden.Ingvallsbenning.xml" 0/306 bytes
+File: "Sweden.Irevik 3195.xml" 926 bytes
+File: "Sweden.Ivarsbyn.xml" 0/306 bytes
+File: "Sweden.Jakkvik Frakenmyren.xml" 0/306 bytes
+File: "Sweden.Jarkvissle.xml" 306 bytes
+File: "Sweden.Jarnforsen.xml" 0/306 bytes
+File: "Sweden.Jarpen Mellangardsberget.xml" 0/306 bytes
+File: "Sweden.Jarvso.xml" 0/306 bytes
+File: "Sweden.Jarvtrask.xml" 0/306 bytes
+File: "Sweden.Joestrom.xml" 0/306 bytes
+File: "Sweden.Jokkmokk Nyborg.xml" 1050 bytes
+File: "Sweden.Jokkmokk Tjalmejaure.xml" 0/1050 bytes
+File: "Sweden.Jonkoping Bondberget.xml" 1050 bytes
+File: "Sweden.Jormvattnet.xml" 0/306 bytes
+File: "Sweden.Jude.xml" 0/306 bytes
+File: "Sweden.Junsele Hamptjarnsberget.xml" 0/306 bytes
+File: "Sweden.Junsele Vallen.xml" 0/306 bytes
+File: "Sweden.Kagerod Mollarp.xml" 0/306 bytes
+File: "Sweden.Kalarne.xml" 0/306 bytes
+File: "Sweden.Kalen.xml" 0/306 bytes
+File: "Sweden.Kalix.xml" 1050 bytes
+File: "Sweden.Kallered.xml" 306 bytes
+File: "Sweden.Kallinge Kalleberga.xml" 1050 bytes
+File: "Sweden.Kallror.xml" 306 bytes
+File: "Sweden.Kampersvik Ekeberget.xml" 0/306 bytes
+File: "Sweden.Kampersvik.xml" 0/306 bytes
+File: "Sweden.Karbole.xml" 0/306 bytes
+File: "Sweden.Karesuando.xml" 0/306 bytes
+File: "Sweden.Karlanda.xml" 0/306 bytes
+File: "Sweden.Karlsborg Vaberget.xml" 0/306 bytes
+File: "Sweden.Karlshamn.xml" 0/1050 bytes
+File: "Sweden.Karlskrona Jamjo.xml" 0/1050 bytes
+File: "Sweden.Karlskrona Vamo.xml" 0/1050 bytes
+File: "Sweden.Karlstad Sormon.xml" 1050 bytes
+File: "Sweden.Kasta Ringkallen.xml" 0/306 bytes
+File: "Sweden.Kaxas.xml" 0/306 bytes
+File: "Sweden.Kaxholmen Vistakulle.xml" 0/306 bytes
+File: "Sweden.Kinnastrom.xml" 0/306 bytes
+File: "Sweden.Kiruna Kirunavaara.xml" 1050 bytes
+File: "Sweden.Kisa.xml" 1050 bytes
+File: "Sweden.Klingsta.xml" 0/306 bytes
+File: "Sweden.Klovsjo.xml" 0/306 bytes
+File: "Sweden.Knared.xml" 0/306 bytes
+File: "Sweden.Knavland.xml" 0/306 bytes
+File: "Sweden.Kopmanholmen.xml" 1050 bytes
+File: "Sweden.Kopparberg.xml" 1050 bytes
+File: "Sweden.Koppom.xml" 0/1050 bytes
+File: "Sweden.Korstrask.xml" 0/306 bytes
+File: "Sweden.Kottsjon.xml" 0/306 bytes
+File: "Sweden.Kovland.xml" 0/306 bytes
+File: "Sweden.Kramfors Lugnvik.xml" 1050 bytes
+File: "Sweden.Kramfors Ostby.xml" 0/306 bytes
+File: "Sweden.Krangede.xml" 0/306 bytes
+File: "Sweden.Kristineberg.xml" 0/306 bytes
+File: "Sweden.Kristinehamn Utsiktsberget.xml" 1050 bytes
+File: "Sweden.Krokstrand.xml" 0/306 bytes
+File: "Sweden.Kultsjon.xml" 0/306 bytes
+File: "Sweden.Kungalv.xml" 0/1050 bytes
+File: "Sweden.Kungsater.xml" 0/306 bytes
+File: "Sweden.Kungsbacka Ojersbo.xml" 0/306 bytes
+File: "Sweden.Kungsberget Gl.xml" 0/306 bytes
+File: "Sweden.Kungshamn.xml" 1050 bytes
+File: "Sweden.Kurravaara.xml" 0/306 bytes
+File: "Sweden.Kvarnsvedjan.xml" 0/306 bytes
+File: "Sweden.Kvikkjokk Arrevare.xml" 0/306 bytes
+File: "Sweden.Kvikkjokk Tavvevare.xml" 0/306 bytes
+File: "Sweden.Kyrkesund.xml" 0/306 bytes
+File: "Sweden.Lagfors.xml" 0/306 bytes
+File: "Sweden.Laggarberg.xml" 0/306 bytes
+File: "Sweden.Laisvall.xml" 0/306 bytes
+File: "Sweden.Langa.xml" 0/306 bytes
+File: "Sweden.Langsele.xml" 0/306 bytes
+File: "Sweden.Langshyttan Engelsfors.xml" 0/306 bytes
+File: "Sweden.Langshyttan.xml" 0/306 bytes
+File: "Sweden.Laxsjo.xml" 0/306 bytes
+File: "Sweden.Laxviken.xml" 0/306 bytes
+File: "Sweden.Leksand Asledsberget.xml" 0/1050 bytes
+File: "Sweden.Lekvattnet.xml" 306 bytes
+File: "Sweden.Lerdala.xml" 0/306 bytes
+File: "Sweden.Lesjofors.xml" 1050 bytes
+File: "Sweden.Liden Osterstrom.xml" 0/306 bytes
+File: "Sweden.Liden.xml" 0/306 bytes
+File: "Sweden.Lilla Edet.xml" 1050 bytes
+File: "Sweden.Lillogda.xml" 0/306 bytes
+File: "Sweden.Lillpite Bastaberget.xml" 0/306 bytes
+File: "Sweden.Lilltjara Digerberget.xml" 0/306 bytes
+File: "Sweden.Limedsforsen.xml" 0/306 bytes
+File: "Sweden.Lindshammar Ramkvilla.xml" 0/306 bytes
+File: "Sweden.Linkoping Vattentornet.xml" 1050 bytes
+File: "Sweden.Linsell.xml" 0/306 bytes
+File: "Sweden.Lit.xml" 0/306 bytes
+File: "Sweden.Ljugarn 3193.xml" 0/926 bytes
+File: "Sweden.Ljungaverk.xml" 0/306 bytes
+File: "Sweden.Ljungdalen.xml" 1050 bytes
+File: "Sweden.Ljustorp.xml" 0/306 bytes
+File: "Sweden.Ljusvattnet.xml" 0/306 bytes
+File: "Sweden.Loderups Strandbad.xml" 0/306 bytes
+File: "Sweden.Loffstrand.xml" 1050 bytes
+File: "Sweden.Lofsdalen.xml" 0/306 bytes
+File: "Sweden.Logdealv.xml" 0/306 bytes
+File: "Sweden.Lonneberga.xml" 0/1050 bytes
+File: "Sweden.Lorstrand.xml" 0/306 bytes
+File: "Sweden.Lottorp.xml" 802 bytes
+File: "Sweden.Lovanger.xml" 0/306 bytes
+File: "Sweden.Ludvika Bjorkasen.xml" 1050 bytes
+File: "Sweden.Lumsheden Trekanten.xml" 0/306 bytes
+File: "Sweden.Lycksele Knaften.xml" 1050 bytes
+File: "Sweden.Mahult.xml" 0/306 bytes
+File: "Sweden.Mala.xml" 0/306 bytes
+File: "Sweden.Malmo Jagersro.xml" 1050 bytes
+File: "Sweden.Malung.xml" 1050 bytes
+File: "Sweden.Manserud.xml" 0/306 bytes
+File: "Sweden.Mardsjo.xml" 0/306 bytes
+File: "Sweden.Mariannelund.xml" 0/306 bytes
+File: "Sweden.Markaryd Hualtet.xml" 1050 bytes
+File: "Sweden.Matfors.xml" 1050 bytes
+File: "Sweden.Matsdal.xml" 0/306 bytes
+File: "Sweden.Medstugan.xml" 0/306 bytes
+File: "Sweden.Mittadalen.xml" 0/306 bytes
+File: "Sweden.Mjallom.xml" 1050 bytes
+File: "Sweden.Mjosjo.xml" 0/306 bytes
+File: "Sweden.Moliden.xml" 0/306 bytes
+File: "Sweden.Molnbo Tallstugan.xml" 1050 bytes
+File: "Sweden.Molndal Vasterberget.xml" 0/926 bytes
+File: "Sweden.Mora Eldris.xml" 1050 bytes
+File: "Sweden.Morkret.xml" 0/306 bytes
+File: "Sweden.Moskosel.xml" 0/306 bytes
+File: "Sweden.Motala Ervasteby.xml" 1050 bytes
+File: "Sweden.Mullsjo Torestorp.xml" 1050 bytes
+File: "Sweden.Munkbysjon Munkbyn.xml" 0/306 bytes
+File: "Sweden.Munkedal.xml" 1050 bytes
+File: "Sweden.Munkfors.xml" 1050 bytes
+File: "Sweden.Muodoslompolo.xml" 0/306 bytes
+File: "Sweden.Nalden.xml" 0/306 bytes
+File: "Sweden.Nasaker.xml" 0/306 bytes
+File: "Sweden.Nasanget.xml" 0/306 bytes
+File: "Sweden.Nassjo.xml" 1050 bytes
+File: "Sweden.Nasteln.xml" 0/306 bytes
+File: "Sweden.Navekvarn.xml" 0/306 bytes
+File: "Sweden.Naverede Oberget.xml" 0/306 bytes
+File: "Sweden.Niemisel.xml" 0/306 bytes
+File: "Sweden.Nordanede.xml" 0/306 bytes
+File: "Sweden.Nordmaling.xml" 0/306 bytes
+File: "Sweden.Norra Rorum.xml" 0/306 bytes
+File: "Sweden.Norrahammar.xml" 0/306 bytes
+File: "Sweden.Norraker.xml" 0/306 bytes
+File: "Sweden.Norrfors.xml" 0/306 bytes
+File: "Sweden.Norrhassel.xml" 0/306 bytes
+File: "Sweden.Norrkoping Krokek.xml" 1050 bytes
+File: "Sweden.Norrtalje Sodra Bergen.xml" 1050 bytes
+File: "Sweden.Norsjovallen.xml" 0/306 bytes
+File: "Sweden.Nyhem.xml" 0/306 bytes
+File: "Sweden.Nykoping.xml" 0/306 bytes
+File: "Sweden.Nyliden.xml" 0/306 bytes
+File: "Sweden.Nynashamn Vattentornet.xml" 1050 bytes
+File: "Sweden.Odsmal.xml" 0/306 bytes
+File: "Sweden.Olden Telestation.xml" 0/306 bytes
+File: "Sweden.Olkamangi.xml" 0/306 bytes
+File: "Sweden.Olofstrom.xml" 0/306 bytes
+File: "Sweden.Orebro Lockhyttan.xml" 0/1050 bytes
+File: "Sweden.Orkelljunga.xml" 0/1050 bytes
+File: "Sweden.Ornskoldsvik As.xml" 0/1050 bytes
+File: "Sweden.Oskarshamn.xml" 0/1050 bytes
+File: "Sweden.Osmo Bjorsta.xml" 430 bytes
+File: "Sweden.Osterforse.xml" 0/306 bytes
+File: "Sweden.Ostergraninge.xml" 0/306 bytes
+File: "Sweden.Ostersund Brattasen.xml" 0/1050 bytes
+File: "Sweden.Osthammar Valo.xml" 1050 bytes
+File: "Sweden.Ostmark.xml" 0/306 bytes
+File: "Sweden.Overammer.xml" 0/306 bytes
+File: "Sweden.Overhogdal.xml" 0/306 bytes
+File: "Sweden.Overkalix.xml" 1050 bytes
+File: "Sweden.Overklinten.xml" 0/306 bytes
+File: "Sweden.Overrissjo.xml" 0/306 bytes
+File: "Sweden.Overtornea Sarkivaara.xml" 1050 bytes
+File: "Sweden.Overturingen.xml" 0/306 bytes
+File: "Sweden.Oxberg.xml" 0/306 bytes
+File: "Sweden.Pajala.xml" 1050 bytes
+File: "Sweden.Paulistrom.xml" 0/306 bytes
+File: "Sweden.Pilgrimstad.xml" 0/306 bytes
+File: "Sweden.Porjus.xml" 0/1050 bytes
+File: "Sweden.Puoltsa.xml" 0/306 bytes
+File: "Sweden.Ragunda.xml" 0/1050 bytes
+File: "Sweden.Ramsele Skavasen.xml" 1050 bytes
+File: "Sweden.Ramsjo.xml" 0/306 bytes
+File: "Sweden.Ramundberget.xml" 0/306 bytes
+File: "Sweden.Randalen.xml" 0/306 bytes
+File: "Sweden.Randijaure.xml" 0/306 bytes
+File: "Sweden.Ransater.xml" 0/306 bytes
+File: "Sweden.Rattvik.xml" 0/306 bytes
+File: "Sweden.Rengsjo.xml" 0/306 bytes
+File: "Sweden.Renstrom.xml" 0/306 bytes
+File: "Sweden.Resele.xml" 0/306 bytes
+File: "Sweden.Risback.xml" 0/306 bytes
+File: "Sweden.Rissna.xml" 0/306 bytes
+File: "Sweden.Ritsem.xml" 0/306 bytes
+File: "Sweden.Robertsfors.xml" 0/306 bytes
+File: "Sweden.Rojdafors.xml" 0/306 bytes
+File: "Sweden.Ronnang.xml" 0/306 bytes
+File: "Sweden.Rorbacksnas.xml" 0/306 bytes
+File: "Sweden.Rosson.xml" 0/306 bytes
+File: "Sweden.Rusksele.xml" 0/306 bytes
+File: "Sweden.Sadvaluspen.xml" 0/306 bytes
+File: "Sweden.Sagmyra.xml" 0/306 bytes
+File: "Sweden.Saivomuotka.xml" 0/306 bytes
+File: "Sweden.Salen.xml" 0/306 bytes
+File: "Sweden.Salfjallet.xml" 0/306 bytes
+File: "Sweden.Sarna Mickeltemplet.xml" 0/306 bytes
+File: "Sweden.Satila.xml" 0/306 bytes
+File: "Sweden.Savar Sorbyn.xml" 0/306 bytes
+File: "Sweden.Savast.xml" 0/306 bytes
+File: "Sweden.Saxdalen.xml" 0/306 bytes
+File: "Sweden.Seitevaare.xml" 0/306 bytes
+File: "Sweden.Selanger.xml" 0/306 bytes
+File: "Sweden.Seltjarn.xml" 0/306 bytes
+File: "Sweden.Sidensjo Aberget.xml" 0/306 bytes
+File: "Sweden.Skalan.xml" 0/306 bytes
+File: "Sweden.Skalmsjo.xml" 0/306 bytes
+File: "Sweden.Skarstad.xml" 0/306 bytes
+File: "Sweden.Skarvangen.xml" 0/306 bytes
+File: "Sweden.Skattungbyn.xml" 0/306 bytes
+File: "Sweden.Skaulo Pyhakielinen.xml" 0/306 bytes
+File: "Sweden.Skelleftea.xml" 1050 bytes
+File: "Sweden.Skene Nycklarberget.xml" 0/306 bytes
+File: "Sweden.Skillingsfors.xml" 0/306 bytes
+File: "Sweden.Skorped.xml" 0/306 bytes
+File: "Sweden.Skottsund.xml" 0/306 bytes
+File: "Sweden.Skovde.xml" 1050 bytes
+File: "Sweden.Skroven.xml" 0/306 bytes
+File: "Sweden.Skymnas.xml" 0/306 bytes
+File: "Sweden.Slussfors.xml" 0/306 bytes
+File: "Sweden.Smedjebacken Uvberget.xml" 1050 bytes
+File: "Sweden.Soderhamn.xml" 1050 bytes
+File: "Sweden.Soderkoping.xml" 1050 bytes
+File: "Sweden.Sodertalje Ragnhildsborg.xml" 1050 bytes
+File: "Sweden.Solleftea Hallsta.xml" 1050 bytes
+File: "Sweden.Solleftea Multra.xml" 0/1050 bytes
+File: "Sweden.Soraker.xml" 0/306 bytes
+File: "Sweden.Sorbygden.xml" 0/306 bytes
+File: "Sweden.Sorflarke.xml" 0/306 bytes
+File: "Sweden.Sorsele Nalovardo.xml" 0/306 bytes
+File: "Sweden.Sorsele Vattentornet.xml" 0/306 bytes
+File: "Sweden.Sorsjon.xml" 0/306 bytes
+File: "Sweden.Soukolojarvi.xml" 0/306 bytes
+File: "Sweden.Stalon.xml" 0/306 bytes
+File: "Sweden.Stigsjo.xml" 0/306 bytes
+File: "Sweden.Stockholm Marieberg.xml" 1050 bytes
+File: "Sweden.Stockholm Nacka.xml" 0/1050 bytes
+File: "Sweden.Stode Hullsjon.xml" 0/306 bytes
+File: "Sweden.Stode Intaget.xml" 1050 bytes
+File: "Sweden.Stomne Skasas.xml" 0/306 bytes
+File: "Sweden.Stora Herrestad.xml" 0/306 bytes
+File: "Sweden.Stora Skedvi.xml" 0/306 bytes
+File: "Sweden.Stordalen.xml" 0/306 bytes
+File: "Sweden.Storfjaten.xml" 0/306 bytes
+File: "Sweden.Storlien.xml" 0/306 bytes
+File: "Sweden.Storuman.xml" 1050 bytes
+File: "Sweden.Stromstad.xml" 0/1050 bytes
+File: "Sweden.Stromsund Grelsgard.xml" 1050 bytes
+File: "Sweden.Stugun.xml" 0/306 bytes
+File: "Sweden.Suddesjaur.xml" 0/306 bytes
+File: "Sweden.Suijavaara.xml" 0/306 bytes
+File: "Sweden.Sulvik.xml" 0/306 bytes
+File: "Sweden.Sundborn.xml" 0/306 bytes
+File: "Sweden.Sundsbruk.xml" 0/1050 bytes
+File: "Sweden.Sundsvall S Stadsberget.xml" 0/1050 bytes
+File: "Sweden.Sunne As.xml" 0/306 bytes
+File: "Sweden.Sunne Blabarskullen.xml" 1050 bytes
+File: "Sweden.Sunnemo.xml" 0/306 bytes
+File: "Sweden.Svaneholm.xml" 0/306 bytes
+File: "Sweden.Svanstein.xml" 0/306 bytes
+File: "Sweden.Svardsosund Svardso.xml" 0/306 bytes
+File: "Sweden.Svartnas.xml" 0/306 bytes
+File: "Sweden.Sveg Brickan.xml" 1050 bytes
+File: "Sweden.Sveg Ransjo.xml" 0/306 bytes
+File: "Sweden.Svenstavik.xml" 0/306 bytes
+File: "Sweden.Svinesund.xml" 0/306 bytes
+File: "Sweden.Syssleback.xml" 1050 bytes
+File: "Sweden.Taberg.xml" 0/306 bytes
+File: "Sweden.Tandadalen.xml" 0/306 bytes
+File: "Sweden.Tannas Vastra Kroket.xml" 0/306 bytes
+File: "Sweden.Tanndalen.xml" 0/306 bytes
+File: "Sweden.Tarnaby Ryfjallet.xml" 1050 bytes
+File: "Sweden.Tarnamo.xml" 0/306 bytes
+File: "Sweden.Tasjo.xml" 0/1050 bytes
+File: "Sweden.Tavelsjo.xml" 0/306 bytes
+File: "Sweden.Tocksfors.xml" 0/1050 bytes
+File: "Sweden.Tollsjo.xml" 0/306 bytes
+File: "Sweden.Tormestorp.xml" 0/306 bytes
+File: "Sweden.Tornetrask.xml" 0/306 bytes
+File: "Sweden.Torpshammar.xml" 0/1050 bytes
+File: "Sweden.Torsby Bada.xml" 0/1050 bytes
+File: "Sweden.Tranas Bredkarr.xml" 1050 bytes
+File: "Sweden.Tranemo.xml" 0/306 bytes
+File: "Sweden.Transtrand Bolheden.xml" 1050 bytes
+File: "Sweden.Traryd Betas.xml" 0/1050 bytes
+File: "Sweden.Trehorningsjo.xml" 0/306 bytes
+File: "Sweden.Trelleborg Gylle.xml" 0/1050 bytes
+File: "Sweden.Trollhattan.xml" 0/1050 bytes
+File: "Sweden.Tullinge Hamra.xml" 1050 bytes
+File: "Sweden.Tyringe.xml" 0/306 bytes
+File: "Sweden.Tystberga.xml" 0/306 bytes
+File: "Sweden.Uddevalla Herrestad.xml" 0/1050 bytes
+File: "Sweden.Uddevalla Kapelle.xml" 0/306 bytes
+File: "Sweden.Uggleheden.xml" 0/306 bytes
+File: "Sweden.Ullanger Skidsta.xml" 0/306 bytes
+File: "Sweden.Ullared.xml" 0/306 bytes
+File: "Sweden.Ulricehamn.xml" 1050 bytes
+File: "Sweden.Ulvohamn.xml" 0/306 bytes
+File: "Sweden.Ulvshyttan Porjus.xml" 0/306 bytes
+File: "Sweden.Umea Mariehem.xml" 0/306 bytes
+File: "Sweden.Umfors.xml" 0/306 bytes
+File: "Sweden.Umgransele Granselelund.xml" 0/306 bytes
+File: "Sweden.Undersaker.xml" 0/306 bytes
+File: "Sweden.Uppsala Rickomberga.xml" 0/306 bytes
+File: "Sweden.Uppsala Vedyxa.xml" 1050 bytes
+File: "Sweden.Utansjo.xml" 0/306 bytes
+File: "Sweden.Utanskog.xml" 0/306 bytes
+File: "Sweden.Vaddo Elmsta.xml" 0/1050 bytes
+File: "Sweden.Vagsjofors.xml" 0/306 bytes
+File: "Sweden.Valadalen.xml" 0/306 bytes
+File: "Sweden.Valanger.xml" 0/306 bytes
+File: "Sweden.Valdemarsvik.xml" 1050 bytes
+File: "Sweden.Valsjobyn.xml" 0/306 bytes
+File: "Sweden.Vannas Granlundsberget.xml" 1050 bytes
+File: "Sweden.Vansbro Hummelberget.xml" 0/306 bytes
+File: "Sweden.Varberg Grimeton.xml" 0/1050 bytes
+File: "Sweden.Varmvattnet.xml" 0/306 bytes
+File: "Sweden.Varnamo Alandsryd.xml" 0/306 bytes
+File: "Sweden.Vassbotten.xml" 0/306 bytes
+File: "Sweden.Vassijaure.xml" 0/306 bytes
+File: "Sweden.Vastansjo.xml" 0/306 bytes
+File: "Sweden.Vasteras Lillharad.xml" 1050 bytes
+File: "Sweden.Vastervik Farhult.xml" 0/1050 bytes
+File: "Sweden.Vato.xml" 0/306 bytes
+File: "Sweden.Vaxbo.xml" 0/306 bytes
+File: "Sweden.Vemdalsskalet.xml" 0/306 bytes
+File: "Sweden.Vessigebro.xml" 0/306 bytes
+File: "Sweden.Vetlanda Nye.xml" 0/306 bytes
+File: "Sweden.Vidsel.xml" 0/306 bytes
+File: "Sweden.Vietas.xml" 0/306 bytes
+File: "Sweden.Vikmanshyttan.xml" 0/306 bytes
+File: "Sweden.Viksjo.xml" 0/306 bytes
+File: "Sweden.Vilhelmina.xml" 1050 bytes
+File: "Sweden.Villands Vanga.xml" 0/306 bytes
+File: "Sweden.Vindelgransele.xml" 0/306 bytes
+File: "Sweden.Vindeln Renfors.xml" 1050 bytes
+File: "Sweden.Virserum.xml" 1050 bytes
+File: "Sweden.Visby Follingbo.xml" 1050 bytes
+File: "Sweden.Visby Hamnen.xml" 0/926 bytes
+File: "Sweden.Visby Havdhem.xml" 0/1050 bytes
+File: "Sweden.Visingso.xml" 0/306 bytes
+File: "Sweden.Vislanda Nydala.xml" 1050 bytes
+File: "Sweden.Vitberget.xml" 0/306 bytes
+File: "Sweden.Vitsand Vagsjofors.xml" 0/306 bytes
+File: "Sweden.Vitsand.xml" 0/306 bytes
+File: "Sweden.Voxna.xml" 0/306 bytes
+File: "Sweden.Vuollerim.xml" 1050 bytes
+File: "Sweden.Ystad Metallgatan.xml" 0/1050 bytes
+File: "Sweden.Yttermalung.xml" 0/306 bytes
+File: "Switzerland.All Regions.xml" 5388 bytes
+File: "Switzerland.Graubuenden - Chur.xml" 428 bytes
+File: "Taiwan.All Regions.xml" 1400 bytes
+File: "Thailand.All Regions.xml" 6844 bytes
+File: "UK.Aberdare.xml" 924 bytes
+File: "UK.All Regions.xml" 6844 bytes
+File: "UK.Angus.xml" 1172 bytes
+File: "UK.Beacon Hill.xml" 1172 bytes
+File: "UK.Belmont.xml" 1296 bytes
+File: "UK.Bilsdale West Moor.xml" 1172 bytes
+File: "UK.Black Hill.xml" 1294 bytes
+File: "UK.Blaen-Plwyf.xml" 924 bytes
+File: "UK.Bluebell Hill.xml" 1172 bytes
+File: "UK.Bressay.xml" 924 bytes
+File: "UK.Brierley Hill.xml" 1048 bytes
+File: "UK.Brighton Whitehawk Hill.xml" 1048 bytes
+File: "UK.Bristol Ilchester Crescent.xml" 1048 bytes
+File: "UK.Bristol King's Weston Hill.xml" 1048 bytes
+File: "UK.Bromsgrove.xml" 924 bytes
+File: "UK.Brougher Mountain.xml" 1048 bytes
+File: "UK.Caldbeck.xml" 1544 bytes
+File: "UK.Caradon Hill.xml" 1173 bytes
+File: "UK.Carmel.xml" 924 bytes
+File: "UK.Chatton.xml" 924 bytes
+File: "UK.Chesterfield.xml" 924 bytes
+File: "UK.Craigkelly.xml" 1152 bytes
+File: "UK.Crystal Palace.xml" 1458 bytes
+File: "UK.Darvel.xml" 1172 bytes
+File: "UK.Divis.xml" 1296 bytes
+File: "UK.Dover.xml" 924 bytes
+File: "UK.Durris.xml" 1172 bytes
+File: "UK.Eitshal.xml" 924 bytes
+File: "UK.Emley Moor.xml" 1296 bytes
+File: "UK.Fenham.xml" 1172 bytes
+File: "UK.Fenton.xml" 1174 bytes
+File: "UK.Ferryside.xml" 552 bytes
+File: "UK.Guildford.xml" 924 bytes
+File: "UK.Hannington.xml" 1172 bytes
+File: "UK.Hastings.xml" 924 bytes
+File: "UK.Heathfield North.xml" 924 bytes
+File: "UK.Hemel Hempstead.xml" 924 bytes
+File: "UK.Huntshaw Cross.xml" 925 bytes
+File: "UK.Idle.xml" 924 bytes
+File: "UK.Isle of Man.xml" 539 bytes
+File: "UK.Keelylang Hill.xml" 924 bytes
+File: "UK.Keighley.xml" 924 bytes
+File: "UK.Kilvey Hill.xml" 924 bytes
+File: "UK.Knock More.xml" 1122 bytes
+File: "UK.Lancaster.xml" 924 bytes
+File: "UK.Lark Stoke.xml" 924 bytes
+File: "UK.Limavady.xml" 924 bytes
+File: "UK.Llanddona.xml" 924 bytes
+File: "UK.Malvern.xml" 924 bytes
+File: "UK.Mendip.xml" 1296 bytes
+File: "UK.Midhurst.xml" 924 bytes
+File: "UK.Moel-y-Parc.xml" 1172 bytes
+File: "UK.Nottingham.xml" 1048 bytes
+File: "UK.Oliver's Mount.xml" 924 bytes
+File: "UK.Oxford.xml" 1296 bytes
+File: "UK.Pendle Forest.xml" 924 bytes
+File: "UK.Plympton.xml" 924 bytes
+File: "UK.Pontop Pike.xml" 1296 bytes
+File: "UK.Pontypool.xml" 0/924 bytes
+File: "UK.Presely.xml" 924 bytes
+File: "UK.Redruth.xml" 924 bytes
+File: "UK.Reigate.xml" 924 bytes
+File: "UK.Ridge Hill.xml" 1172 bytes
+File: "UK.Rosemarkie.xml" 924 bytes
+File: "UK.Rosneath.xml" 924 bytes
+File: "UK.Rouncefall.xml" 552 bytes
+File: "UK.Rowridge.xml" 1290 bytes
+File: "UK.Rumster Forest.xml" 924 bytes
+File: "UK.Saddleworth.xml" 924 bytes
+File: "UK.Salisbury.xml" 924 bytes
+File: "UK.Sandy Heath.xml" 1296 bytes
+File: "UK.Selkirk.xml" 924 bytes
+File: "UK.Sheffield.xml" 1296 bytes
+File: "UK.Stockland Hill.xml" 0/924 bytes
+File: "UK.Storeton.xml" 1420 bytes
+File: "UK.Sudbury.xml" 934 bytes
+File: "UK.Sutton Coldfield.xml" 1296 bytes
+File: "UK.Tacolneston.xml" 1296 bytes
+File: "UK.The Wrekin.xml" 0/924 bytes
+File: "UK.Torosay.xml" 924 bytes
+File: "UK.Tunbridge Wells.xml" 0/924 bytes
+File: "UK.Waltham.xml" 1296 bytes
+File: "UK.Wenvoe.xml" 1296 bytes
+File: "UK.Winter Hill.xml" 1423 bytes
+File: "Ukraine.Kyiv.xml" 790 bytes
+File: "Ísland.Skagafjörður.xml" 430 bytes
+File: Descending to: "..\..\..\TvEngine3\TVLibrary\TVServer.Base\TuningParameters\webstreams\"
+File: "Denmark - DR Netradio.pls" 3633 bytes
+File: Returning to: "..\..\..\TvEngine3\TVLibrary\TVServer.Base\TuningParameters"
+SetOutPath: "$APPDATA\Team MediaPortal\MediaPortal TV Server\WebEPG"
+File: Descending to: "..\..\..\TvEngine3\TVLibrary\TVServer.Base\WebEPG\channels\"
+File: "channels.xml" 271960 bytes
+File: Descending to: "..\..\..\TvEngine3\TVLibrary\TVServer.Base\WebEPG\grabbers\"
+File: "commented-grabber.xml" 240 bytes
+File: "grabber-edit-notes.txt" 957 bytes
+File: Descending to: "..\..\..\TvEngine3\TVLibrary\TVServer.Base\WebEPG\grabbers\AT\"
+File: "atvplus_at.xml.dev" 1052 bytes
+File: "programm_kurier_at.xml" 896 bytes
+File: "www_tvtv_at.xml" 5134 bytes
+File: Descending to: "..\..\..\TvEngine3\TVLibrary\TVServer.Base\WebEPG\grabbers\AU\"
+File: "1-www_sbs_com_au.xml" 777 bytes
+File: "4-www_abc_net_au.xml" 1110 bytes
+File: "5-au_tv_yahoo_com.xml" 4407 bytes
+File: "6-minnie_tuhs_org.xml" 8512 bytes
+File: "www_ebroadcast_com_au.xml.offline" 18549 bytes
+File: Descending to: "..\..\..\TvEngine3\TVLibrary\TVServer.Base\WebEPG\grabbers\BE\"
+File: "www_telemoustique_be.xml" 6248 bytes
+File: "www_teveblad_be.xml" 6580 bytes
+File: Descending to: "..\..\..\TvEngine3\TVLibrary\TVServer.Base\WebEPG\grabbers\BR\"
+File: "tudonoar_uol_com_br.xml" 732 bytes
+File: Descending to: "..\..\..\TvEngine3\TVLibrary\TVServer.Base\WebEPG\grabbers\CH\"
+File: "1-www_fernsehen_ch.xml" 6304 bytes
+File: "2-www_sfdrs_ch.xml" 952 bytes
+File: "3-www_tvtv_ch.xml" 8070 bytes
+File: Descending to: "..\..\..\TvEngine3\TVLibrary\TVServer.Base\WebEPG\grabbers\CL\"
+File: "www_vtr_cl.xml" 1019 bytes
+File: Descending to: "..\..\..\TvEngine3\TVLibrary\TVServer.Base\WebEPG\grabbers\CZ\"
+File: "prepni_atlas_cz.xml" 1527 bytes
+File: "tv_sms_cz.xml" 5970 bytes
+File: "www_ceskenoviny_cz.xml" 5213 bytes
+File: "www_parabola_cz.xml" 5181 bytes
+File: Descending to: "..\..\..\TvEngine3\TVLibrary\TVServer.Base\WebEPG\grabbers\DE\"
+File: "www_tvinfo_de.xml" 8089 bytes
+File: "www_tvtoday_de.xml" 9858 bytes
+File: Descending to: "..\..\..\TvEngine3\TVLibrary\TVServer.Base\WebEPG\grabbers\DK\"
+File: "ontv_dk.xml" 3581 bytes
+File: "tv_tv2_dk.xml" 3656 bytes
+File: "www_ahot_dk.xml" 6889 bytes
+File: "www_dr_dk.xml" 1847 bytes
+File: Descending to: "..\..\..\TvEngine3\TVLibrary\TVServer.Base\WebEPG\grabbers\ES\"
+File: "es_tv_yahoo_com.xml" 4607 bytes
+File: "ocio_lne_es.xml" 1788 bytes
+File: "www_elpais_es.xml" 7765 bytes
+File: "www_espanol_cntv_cn.xml" 887 bytes
+File: "www_estdt_com.xml" 1753 bytes
+File: "www_formulatv_com.xml" 8089 bytes
+File: "www_inout_tv.xml" 2877 bytes
+File: "www_laguiatv_com.xml" 9902 bytes
+File: "www_miguiatv_com.xml" 4813 bytes
+File: "www_ono_es.xml" 9038 bytes
+File: "www_programacion-tdt_com.xml" 4145 bytes
+File: "www_programacion-tv_es.xml" 6453 bytes
+File: Descending to: "..\..\..\TvEngine3\TVLibrary\TVServer.Base\WebEPG\grabbers\FI\"
+File: "www_nyt_fi.xml" 3430 bytes
+File: "www_telkku_com.xml" 6761 bytes
+File: "www_telsu_fi.xml" 5100 bytes
+File: "www_telvis_fi.xml" 7736 bytes
+File: "www_yle_fi.xml.dev" 980 bytes
+File: Descending to: "..\..\..\TvEngine3\TVLibrary\TVServer.Base\WebEPG\grabbers\FR\"
+File: "fr_tv_yahoo_com.xml" 1552 bytes
+File: "linternaute_com.xml" 5012 bytes
+File: "programme-television_org.xml" 2694 bytes
+File: "telecineobs_nouvelobs_com.xml" 8217 bytes
+File: "telepoche_guidetele_com.xml" 7953 bytes
+File: "www_canalsat_fr.xml" 7224 bytes
+File: Descending to: "..\..\..\TvEngine3\TVLibrary\TVServer.Base\WebEPG\grabbers\GB\"
+File: "1-xmltv_radiotimes_com.xml" 21648 bytes
+File: "2-www_mydigiguide_com.xml" 35511 bytes
+File: "3-www_bleb_org.xml" 6217 bytes
+File: Descending to: "..\..\..\TvEngine3\TVLibrary\TVServer.Base\WebEPG\grabbers\GR\"
+File: "www_ert_gr.xml" 2445 bytes
+File: "www_in_gr.xml" 3378 bytes
+File: Descending to: "..\..\..\TvEngine3\TVLibrary\TVServer.Base\WebEPG\grabbers\HU\"
+File: "port_hu.xml" 6796 bytes
+File: Descending to: "..\..\..\TvEngine3\TVLibrary\TVServer.Base\WebEPG\grabbers\IE\"
+File: "www_rte_ie.xml" 819 bytes
+File: Descending to: "..\..\..\TvEngine3\TVLibrary\TVServer.Base\WebEPG\grabbers\IL\"
+File: "mouse_tv2day_co_il.xml" 7305 bytes
+File: "tv_walla_co_il.xml" 9484 bytes
+File: Descending to: "..\..\..\TvEngine3\TVLibrary\TVServer.Base\WebEPG\grabbers\IT\"
+File: "virgilio_it.xml" 1960 bytes
+File: "wfactory_net.xml" 780 bytes
+File: "www_adnkronos_com.xml" 1212 bytes
+File: Descending to: "..\..\..\TvEngine3\TVLibrary\TVServer.Base\WebEPG\grabbers\LT\"
+File: "www_5kanalas_lt.xml" 1164 bytes
+File: "www_tv_lt.xml" 1052 bytes
+File: Descending to: "..\..\..\TvEngine3\TVLibrary\TVServer.Base\WebEPG\grabbers\MY\"
+File: "astro_com_my.xml" 1819 bytes
+File: "tv9_com_my.xml" 754 bytes
+File: Descending to: "..\..\..\TvEngine3\TVLibrary\TVServer.Base\WebEPG\grabbers\NL\"
+File: "1-www_tvgids_nl.xml" 7577 bytes
+File: "2-sbs6_sbs_nl.xml" 4022 bytes
+File: "www_24kitchen_nl.xml" 2698 bytes
+File: "www_nickelodeon_nl.xml" 684 bytes
+File: Descending to: "..\..\..\TvEngine3\TVLibrary\TVServer.Base\WebEPG\grabbers\NO\"
+File: "0-www_sol_no_detailed.xml" 8472 bytes
+File: "1-www_sol_no.xml" 8276 bytes
+File: "2-fredag_dagbladet_no.xml.offline" 3805 bytes
+File: "3-fredag_dagbladet2_no.xml.offline" 3391 bytes
+File: "m_nrk_no.xml" 1478 bytes
+File: "www_dagenstv_com.xml.Offline" 5660 bytes
+File: Descending to: "..\..\..\TvEngine3\TVLibrary\TVServer.Base\WebEPG\grabbers\NZ\"
+File: "primetv_co_nz.xml" 705 bytes
+File: "tvnz_co_nz.xml" 874 bytes
+File: Descending to: "..\..\..\TvEngine3\TVLibrary\TVServer.Base\WebEPG\grabbers\PL\"
+File: "descriptions_teleman_pl.xml" 9940 bytes
+File: "gazeta_pl.xml" 7969 bytes
+File: "gazetaecho_pl.xml" 6833 bytes
+File: "telemagazyn_com_pl.xml" 2823 bytes
+File: "teleman2_pl.xml" 6910 bytes
+File: "teleman_pl.xml" 10241 bytes
+File: Descending to: "..\..\..\TvEngine3\TVLibrary\TVServer.Base\WebEPG\grabbers\PT\"
+File: "programas_rtp_pt.xml" 769 bytes
+File: "www_tvcabo_pt.xml" 5138 bytes
+File: Descending to: "..\..\..\TvEngine3\TVLibrary\TVServer.Base\WebEPG\grabbers\RO\"
+File: "port_ro.xml" 6104 bytes
+File: Descending to: "..\..\..\TvEngine3\TVLibrary\TVServer.Base\WebEPG\grabbers\RU\"
+File: "2sat_net_Eston.xml" 1805 bytes
+File: "Gorod_lv_Latv.xml" 1763 bytes
+File: "LTV_World_Lith.xml" 1137 bytes
+File: "NTK_Orbita.xml" 733 bytes
+File: "Obzor_lt_Lith.xml" 1783 bytes
+File: "Onradio_lv_Latv.xml" 1432 bytes
+File: "Russian_travel_guide.xml" 971 bytes
+File: "afisha_ru_Spb.xml" 2035 bytes
+File: "mail_ru_Raz.xml" 1759 bytes
+File: "mail_ru_Reg.xml" 3661 bytes
+File: "mail_ru_Reg_plus_2.xml" 1891 bytes
+File: "mail_ru_Reg_plus_3.xml" 1426 bytes
+File: "mail_ru_Reg_plus_4.xml" 1466 bytes
+File: "mail_ru_Reg_plus_5.xml" 1269 bytes
+File: "mail_ru_Reg_plus_7.xml" 1351 bytes
+File: "mail_ru_Ukr_Bel.xml" 3015 bytes
+File: "www_vsetv_com.xml" 50392 bytes
+File: Descending to: "..\..\..\TvEngine3\TVLibrary\TVServer.Base\WebEPG\grabbers\SE\"
+File: "sverigesradio_se.xml" 3255 bytes
+File: "svt_se.xml" 23480 bytes
+File: "www_dagenstv_com.xml" 28756 bytes
+File: Descending to: "..\..\..\TvEngine3\TVLibrary\TVServer.Base\WebEPG\grabbers\SI\"
+File: "rtvslo.xml" 1142 bytes
+File: "tv_t-2_net.xml" 6580 bytes
+File: Descending to: "..\..\..\TvEngine3\TVLibrary\TVServer.Base\WebEPG\grabbers\TW\"
+File: "www_chinapost_com_tw.xml" 599 bytes
+File: Descending to: "..\..\..\TvEngine3\TVLibrary\TVServer.Base\WebEPG\grabbers\UA\"
+File: "www_vsetv_com.xml" 37168 bytes
+File: Descending to: "..\..\..\TvEngine3\TVLibrary\TVServer.Base\WebEPG\grabbers\US\"
+File: "www_imdb_com.xml" 1672 bytes
+File: Returning to: "..\..\..\TvEngine3\TVLibrary\TVServer.Base\WebEPG"
+SetOutPath: "$APPDATA\Team MediaPortal\MediaPortal TV Server\xmltv"
+File: "ReadMe.txt" 522 bytes
+File: "xmltv.dtd" 22416 bytes
+File: Returning to: "..\..\..\TvEngine3\TVLibrary\TVServer.Base\xmltv"
+SetOutPath: "$INSTDIR\Plugins"
+File: "ComSkipLauncher.dll" 18432 bytes
+File: "ConflictsManager.dll" 20992 bytes
+File: "PowerScheduler.dll" 156160 bytes
+File: "ServerBlaster.dll" 49152 bytes
+File: "TvMovie.dll" 61440 bytes
+File: "XmlTvImport.dll" 79360 bytes
+File: "WebEPG.dll" 65536 bytes
+File: "WebEPGImport.dll" 71168 bytes
+SetOutPath: "$INSTDIR"
+File: "DirectShowLib.dll" 364544 bytes
+File: "Common.Utils.dll" 24576 bytes
+File: "PluginBase.dll" 9216 bytes
+File: "PowerScheduler.Interfaces.dll" 40448 bytes
+File: "Blaster.exe" 58368 bytes
+File: "SetupTv.exe" 1185792 bytes
+File: "SetupTv.exe.config" 1697 bytes
+File: "TvControl.dll" 40960 bytes
+File: "TVDatabase.dll" 94720 bytes
+File: "Gentle.Common.dll" 69632 bytes
+File: "Gentle.Framework.dll" 131072 bytes
+File: "Gentle.Provider.MySQL.dll" 24576 bytes
+File: "Gentle.Provider.SQLServer.dll" 40960 bytes
+File: "log4net.dll" 299008 bytes
+File: "MySql.Data.dll" 278528 bytes
+File: "TvBusinessLayer.dll" 82432 bytes
+File: "TvLibrary.Interfaces.dll" 89600 bytes
+File: "TVLibrary.dll" 609280 bytes
+File: "TvService.exe" 235008 bytes
+File: "TvService.exe.config" 0/1697 bytes
+File: "SetupControls.dll" 254976 bytes
+File: "TvLibrary.Utils.dll" 69632 bytes
+File: "HttpServer.dll" 115200 bytes
+File: "MediaPortal.Utilities.dll" 118784 bytes
+File: "UPnP.dll" 184832 bytes
+File: "hauppauge.dll" 412672 bytes
+File: "hcwWinTVCI.dll" 26112 bytes
+File: "KNCBDACTRL.dll" 32256 bytes
+File: "ttBdaDrvApi_Dll.dll" 200704 bytes
+File: "ttdvbacc.dll" 450560 bytes
+File: "TeVii.dll" 57344 bytes
+File: "Ionic.Zip.dll" 352256 bytes
+File: "MediaInfo.dll" 4663632 bytes
+File: "ffmpeg.exe" 32174592 bytes
+File: "TvThumbnails.dll" 37888 bytes
+File: "MPIPTV_FILE.dll" 16384 bytes
+File: "MPIPTV_HTTP.dll" 22016 bytes
+File: "MPIPTV_RTP.dll" 24064 bytes
+File: "MPIPTV_RTSP.dll" 178176 bytes
+File: "MPIPTV_UDP.dll" 20992 bytes
+File: "StreamingServer.dll" 131584 bytes
+File: "dxerr9.dll" 353280 bytes
+File: "dvblib.dll" 35840 bytes
+SetOutPath: "$APPDATA\Team MediaPortal\MediaPortal TV Server"
+File: "Gentle.config" 5854 bytes
+File: "log4net.config" 2664 bytes
+File: "MPIPTVSource.ini" 4470 bytes
+File: "TvSetupLog.config" 860 bytes
+!insertmacro: LOG_TEXT
+!insertmacro: end of LOG_TEXT
+!insertmacro: _If
+!insertmacro: end of _If
+!insertmacro: _And
+!insertmacro: end of _And
+!insertmacro: InstallLib
+!insertmacro: end of InstallLib
+!insertmacro: InstallLib
+!insertmacro: end of InstallLib
+!insertmacro: _EndIf
+!insertmacro: end of _EndIf
+!insertmacro: InstallLib
+!insertmacro: end of InstallLib
+!insertmacro: InstallLib
+!insertmacro: end of InstallLib
+!insertmacro: InstallLib
+!insertmacro: end of InstallLib
+!insertmacro: InstallLib
+!insertmacro: end of InstallLib
+!insertmacro: LOG_TEXT
+!insertmacro: end of LOG_TEXT
+ExecWait: ""$INSTDIR\TVService.exe" /install" (->)
+!insertmacro: LOG_TEXT
+!insertmacro: end of LOG_TEXT
+SetOutPath: "$INSTDIR"
+!insertmacro: _If
+!insertmacro: end of _If
+CreateShortCut: "$DESKTOP\TV-Server Configuration.lnk"->"$INSTDIR\SetupTV.exe"  icon:$INSTDIR\SetupTV.exe,0, showmode=0x0, hotkey=0x0, comment=MediaPortal TV Server
+!insertmacro: _EndIf
+!insertmacro: end of _EndIf
+CreateDirectory: "$SMPROGRAMS\Team MediaPortal\MediaPortal TV Server"
+CreateShortCut: "$SMPROGRAMS\Team MediaPortal\MediaPortal TV Server\TV-Server Configuration.lnk"->"$INSTDIR\SetupTV.exe"  icon:$INSTDIR\SetupTV.exe,0, showmode=0x0, hotkey=0x0, comment=TV-Server Configuration
+CreateDirectory: "$APPDATA\Team MediaPortal\MediaPortal TV Server\log"
+CreateShortCut: "$SMPROGRAMS\Team MediaPortal\MediaPortal TV Server\TV-Server Log-Files.lnk"->"$APPDATA\Team MediaPortal\MediaPortal TV Server\log"  icon:$APPDATA\Team MediaPortal\MediaPortal TV Server\log,0, showmode=0x0, hotkey=0x0, comment=TV-Server Log-Files
+WriteINIStr: [InternetShortcut] URL=http://wiki.team-mediaportal.com/TeamMediaPortal/MP1QuickSetupGuide in $SMPROGRAMS\Team MediaPortal\MediaPortal TV Server\Quick Setup Guide.url
+WriteINIStr: [InternetShortcut] URL=http://wiki.team-mediaportal.com/ in $SMPROGRAMS\Team MediaPortal\MediaPortal TV Server\Help.url
+WriteINIStr: [InternetShortcut] URL=www.team-mediaportal.com in $SMPROGRAMS\Team MediaPortal\MediaPortal TV Server\web site.url
+!insertmacro: MementoSectionEnd
+SectionEnd
+!insertmacro: end of MementoSectionEnd
+!insertmacro: MementoSection
+Section: "MediaPortal TV Client plugin" ->(SecClient)
+!insertmacro: end of MementoSection
+!insertmacro: LOG_TEXT
+!insertmacro: end of LOG_TEXT
+!insertmacro: LOG_TEXT
+!insertmacro: end of LOG_TEXT
+!insertmacro: KillProcess
+KillProcess: MediaPortal.exe (macro:KillProcess:1)
+!insertmacro: end of KillProcess
+!insertmacro: KillProcess
+KillProcess: configuration.exe (macro:KillProcess:1)
+!insertmacro: end of KillProcess
+SetOverwrite: on
+!insertmacro: LOG_TEXT
+!insertmacro: end of LOG_TEXT
+!insertmacro: LOG_TEXT
+!insertmacro: end of LOG_TEXT
+SetOutPath: "$MPdir.Base"
+File: "TvControl.dll" 0/40960 bytes
+File: "TvLibrary.Interfaces.dll" 0/89600 bytes
+File: "TVDatabase.dll" 0/94720 bytes
+File: "Gentle.Common.dll" 0/69632 bytes
+File: "Gentle.Framework.dll" 0/131072 bytes
+File: "Gentle.Provider.MySQL.dll" 0/24576 bytes
+File: "Gentle.Provider.SQLServer.dll" 0/40960 bytes
+File: "log4net.dll" 0/299008 bytes
+File: "MySql.Data.dll" 0/278528 bytes
+File: "TvBusinessLayer.dll" 0/82432 bytes
+SetOutPath: "$MPdir.Config"
+File: "Gentle.config" 0/5854 bytes
+SetOutPath: "$MPdir.Plugins\Windows"
+File: "TvPlugin.dll" 440320 bytes
+!insertmacro: InstallLib
+!insertmacro: end of InstallLib
+!insertmacro: InstallLib
+!insertmacro: end of InstallLib
+!insertmacro: MementoSectionEnd
+SectionEnd
+!insertmacro: end of MementoSectionEnd
+!insertmacro: MementoSectionDone
+!insertmacro: end of MementoSectionDone
+Section: "-Post"
+!insertmacro: LOG_TEXT
+!insertmacro: end of LOG_TEXT
+!insertmacro: _If
+!insertmacro: end of _If
+ReadRegDWORD $R0 HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal TV Server\MementoSection_SecServer
+ReadRegDWORD $R1 HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal TV Server\MementoSection_SecClient
+!insertmacro: MementoSectionSave
+!insertmacro: end of MementoSectionSave
+!insertmacro: _If
+!insertmacro: end of _If
+!insertmacro: _And
+!insertmacro: end of _And
+WriteRegDWORD: HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal TV Server\MementoSection_SecClient=$R1
+!insertmacro: _ElseIf
+!insertmacro: end of _ElseIf
+!insertmacro: _And
+!insertmacro: end of _And
+WriteRegDWORD: HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal TV Server\MementoSection_SecServer=$R0
+!insertmacro: _EndIf
+!insertmacro: end of _EndIf
+!insertmacro: _Else
+!insertmacro: end of _Else
+!insertmacro: SectionList
+!insertmacro: LOG_TEXT
+!insertmacro: end of LOG_TEXT
+!insertmacro: FinishSection
+!insertmacro: _If
+!insertmacro: end of _If
+ClearErrors
+ReadRegDWORD $R0 HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal TV Server\MementoSection_SecServer
+!insertmacro: _If
+!insertmacro: end of _If
+!insertmacro: Remove_1
+!insertmacro: LOG_TEXT
+!insertmacro: end of LOG_TEXT
+!insertmacro: LOG_TEXT
+!insertmacro: end of LOG_TEXT
+!insertmacro: StopService
+StopService: TVservice (macro:StopService:1)
+!insertmacro: end of StopService
+!insertmacro: KillProcess
+KillProcess: SetupTv.exe (macro:KillProcess:1)
+!insertmacro: end of KillProcess
+!insertmacro: KillProcess
+KillProcess: ffmpeg.exe (macro:KillProcess:1)
+!insertmacro: end of KillProcess
+!insertmacro: _If
+!insertmacro: end of _If
+!insertmacro: _Or
+!insertmacro: end of _Or
+ExecWait: ""$INSTDIR\SetupTv.exe" /Delete-db" (->)
+!insertmacro: _EndIf
+!insertmacro: end of _EndIf
+!insertmacro: LOG_TEXT
+!insertmacro: end of LOG_TEXT
+ExecWait: ""$INSTDIR\TVService.exe" /uninstall" (->)
+!insertmacro: LOG_TEXT
+!insertmacro: end of LOG_TEXT
+!insertmacro: LOG_TEXT
+!insertmacro: end of LOG_TEXT
+!insertmacro: _If
+!insertmacro: end of _If
+!insertmacro: _And
+!insertmacro: end of _And
+!insertmacro: UnInstallLib
+!insertmacro: end of UnInstallLib
+!insertmacro: UnInstallLib
+!insertmacro: end of UnInstallLib
+WriteRegStr: HKCR\Media Type\Extensions\.ts\Source Filter={b9559486-e1bb-45d3-a2a2-9a7afe49b23f}
+WriteRegStr: HKCR\Media Type\Extensions\.tp\Source Filter={b9559486-e1bb-45d3-a2a2-9a7afe49b23f}
+WriteRegStr: HKCR\Media Type\Extensions\.tsbuffer\Source Filter={b9559486-e1bb-45d3-a2a2-9a7afe49b23f}
+WriteRegStr: HKCR\Media Type\Extensions\.rtsp\Source Filter={b9559486-e1bb-45d3-a2a2-9a7afe49b23f}
+!insertmacro: _EndIf
+!insertmacro: end of _EndIf
+!insertmacro: UnInstallLib
+!insertmacro: end of UnInstallLib
+!insertmacro: UnInstallLib
+!insertmacro: end of UnInstallLib
+!insertmacro: UnInstallLib
+!insertmacro: end of UnInstallLib
+!insertmacro: UnInstallLib
+!insertmacro: end of UnInstallLib
+!insertmacro: LOG_TEXT
+!insertmacro: end of LOG_TEXT
+RMDir: /r "$APPDATA\Team MediaPortal\MediaPortal TV Server\TuningParameters"
+RMDir: /r "$APPDATA\Team MediaPortal\MediaPortal TV Server\WebEPG\channels"
+RMDir: /r "$APPDATA\Team MediaPortal\MediaPortal TV Server\WebEPG\grabbers"
+Delete: "$APPDATA\Team MediaPortal\MediaPortal TV Server\xmltv\xmltv.dtd"
+Delete: "$APPDATA\Team MediaPortal\MediaPortal TV Server\MPIPTVSource.ini"
+Delete: "$INSTDIR\Plugins\ComSkipLauncher.dll"
+Delete: "$INSTDIR\Plugins\ConflictsManager.dll"
+Delete: "$INSTDIR\Plugins\PowerScheduler.dll"
+Delete: "$INSTDIR\Plugins\ServerBlaster.dll"
+Delete: "$INSTDIR\Plugins\TvMovie.dll"
+Delete: "$INSTDIR\Plugins\WebEPG.dll"
+Delete: "$INSTDIR\Plugins\WebEPGImport.dll"
+Delete: "$INSTDIR\Plugins\XmlTvImport.dll"
+RMDir: "$INSTDIR\Plugins"
+Delete: "$INSTDIR\DirectShowLib.dll"
+Delete: "$INSTDIR\Common.Utils.dll"
+Delete: "$INSTDIR\dvblib.dll"
+Delete: "$INSTDIR\PluginBase.dll"
+Delete: "$INSTDIR\PowerScheduler.Interfaces.DLL"
+Delete: "$INSTDIR\Blaster.exe"
+Delete: "$INSTDIR\SetupTv.exe"
+Delete: "$INSTDIR\SetupTv.exe.config"
+Delete: "$INSTDIR\TvControl.dll"
+Delete: "$INSTDIR\TVDatabase.dll"
+Delete: "$INSTDIR\Gentle.Common.DLL"
+Delete: "$INSTDIR\Gentle.Framework.DLL"
+Delete: "$INSTDIR\Gentle.Provider.MySQL.dll"
+Delete: "$INSTDIR\Gentle.Provider.SQLServer.dll"
+Delete: "$INSTDIR\log4net.dll"
+Delete: "$INSTDIR\MySql.Data.dll"
+Delete: "$INSTDIR\TvBusinessLayer.dll"
+Delete: "$INSTDIR\TvLibrary.Interfaces.dll"
+Delete: "$INSTDIR\TVLibrary.dll"
+Delete: "$INSTDIR\TvLibrary.Utils.dll"
+Delete: "$INSTDIR\TvService.exe"
+Delete: "$INSTDIR\TvService.exe.config"
+Delete: "$INSTDIR\SetupControls.dll"
+Delete: "$INSTDIR\HttpServer.dll"
+Delete: "$INSTDIR\MediaPortal.Utilities.dll"
+Delete: "$INSTDIR\UPnP.dll"
+Delete: "$INSTDIR\dxerr9.dll"
+Delete: "$INSTDIR\hauppauge.dll"
+Delete: "$INSTDIR\hcwWinTVCI.dll"
+Delete: "$INSTDIR\KNCBDACTRL.dll"
+Delete: "$INSTDIR\StreamingServer.dll"
+Delete: "$INSTDIR\ttBdaDrvApi_Dll.dll"
+Delete: "$INSTDIR\ttdvbacc.dll"
+Delete: "$INSTDIR\tevii.dll"
+Delete: "$INSTDIR\Ionic.Zip.dll"
+Delete: "$INSTDIR\ffmpeg.exe"
+Delete: "$INSTDIR\TvThumbnails.dll"
+Delete: "$INSTDIR\MediaInfo.dll"
+Delete: "$INSTDIR\MPIPTV_FILE.dll"
+Delete: "$INSTDIR\MPIPTV_HTTP.dll"
+Delete: "$INSTDIR\MPIPTV_RTP.dll"
+Delete: "$INSTDIR\MPIPTV_RTSP.dll"
+Delete: "$INSTDIR\MPIPTV_UDP.dll"
+Delete: "$SMPROGRAMS\Team MediaPortal\MediaPortal TV Server\TV-Server Configuration.lnk"
+Delete: "$SMPROGRAMS\Team MediaPortal\MediaPortal TV Server\TV-Server Log-Files.lnk"
+Delete: "$SMPROGRAMS\Team MediaPortal\MediaPortal TV Server\Quick Setup Guide.url"
+Delete: "$SMPROGRAMS\Team MediaPortal\MediaPortal TV Server\Help.url"
+Delete: "$SMPROGRAMS\Team MediaPortal\MediaPortal TV Server\web site.url"
+Delete: "$DESKTOP\TV-Server Configuration.lnk"
+!insertmacro: _If
+!insertmacro: end of _If
+!insertmacro: Remove_SecMpeInstaller
+!insertmacro: LOG_TEXT
+!insertmacro: end of LOG_TEXT
+Delete: "$INSTDIR\MpeCore.dll"
+Delete: "$INSTDIR\MpeInstaller.exe"
+Delete: "$INSTDIR\MpeMaker.exe"
+Delete: "$INSTDIR\Utils.dll"
+Delete: "$INSTDIR\Core.dll"
+Delete: "$INSTDIR\CSScriptLibrary.dll"
+Delete: "$DESKTOP\MediaPortal Extension Manager.lnk"
+Delete: "$SMPROGRAMS\Team MediaPortal\MediaPortal TV Server\MediaPortal Extension Manager.lnk"
+!insertmacro: UnRegisterExtensionCall
+!insertmacro: end of UnRegisterExtensionCall
+!insertmacro: UnRegisterExtensionCall
+!insertmacro: end of UnRegisterExtensionCall
+!insertmacro: RefreshShellIconsCall
+!insertmacro: end of RefreshShellIconsCall
+!insertmacro: end of Remove_SecMpeInstaller
+!insertmacro: _EndIf
+!insertmacro: end of _EndIf
+!insertmacro: end of Remove_1
+!insertmacro: _EndIf
+!insertmacro: end of _EndIf
+!insertmacro: _EndIf
+!insertmacro: end of _EndIf
+!insertmacro: end of FinishSection
+!insertmacro: FinishSection
+!insertmacro: _If
+!insertmacro: end of _If
+ClearErrors
+ReadRegDWORD $R0 HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal TV Server\MementoSection_SecClient
+!insertmacro: _If
+!insertmacro: end of _If
+!insertmacro: Remove_2
+!insertmacro: LOG_TEXT
+!insertmacro: end of LOG_TEXT
+!insertmacro: _If
+!insertmacro: end of _If
+!insertmacro: LOG_TEXT
+!insertmacro: end of LOG_TEXT
+!insertmacro: _If
+!insertmacro: end of _If
+!insertmacro: LOG_TEXT
+!insertmacro: end of LOG_TEXT
+!insertmacro: _Else
+!insertmacro: end of _Else
+!insertmacro: LOG_TEXT
+!insertmacro: end of LOG_TEXT
+!insertmacro: _EndIf
+!insertmacro: end of _EndIf
+!insertmacro: _Else
+!insertmacro: end of _Else
+!insertmacro: LOG_TEXT
+!insertmacro: end of LOG_TEXT
+!insertmacro: _EndIf
+!insertmacro: end of _EndIf
+!insertmacro: LOG_TEXT
+!insertmacro: end of LOG_TEXT
+!insertmacro: KillProcess
+KillProcess: MediaPortal.exe (macro:KillProcess:1)
+!insertmacro: end of KillProcess
+!insertmacro: KillProcess
+KillProcess: configuration.exe (macro:KillProcess:1)
+!insertmacro: end of KillProcess
+!insertmacro: UnInstallLib
+!insertmacro: end of UnInstallLib
+!insertmacro: UnInstallLib
+!insertmacro: end of UnInstallLib
+Delete: "$MPdir.Plugins\Windows\TvPlugin.dll"
+Delete: "$MPdir.Base\TVDatabase.dll"
+Delete: "$MPdir.Base\Gentle.Common.DLL"
+Delete: "$MPdir.Base\Gentle.Framework.DLL"
+Delete: "$MPdir.Base\Gentle.Provider.MySQL.dll"
+Delete: "$MPdir.Base\Gentle.Provider.SQLServer.dll"
+Delete: "$MPdir.Base\log4net.dll"
+Delete: "$MPdir.Base\MySql.Data.dll"
+Delete: "$MPdir.Base\TvBusinessLayer.dll"
+Delete: "$MPdir.Base\TvControl.dll"
+Delete: "$MPdir.Base\TvLibrary.Interfaces.dll"
+!insertmacro: end of Remove_2
+!insertmacro: _EndIf
+!insertmacro: end of _EndIf
+!insertmacro: _EndIf
+!insertmacro: end of _EndIf
+!insertmacro: end of FinishSection
+!insertmacro: end of SectionList
+!insertmacro: MementoSectionSave
+!insertmacro: end of MementoSectionSave
+!insertmacro: _EndIf
+!insertmacro: end of _EndIf
+SetOverwrite: on
+SetOutPath: "$INSTDIR"
+RMDir: /r "$APPDATA\Team MediaPortal\MediaPortal TV Server\log\OldLogs"
+CreateDirectory: "$APPDATA\Team MediaPortal\MediaPortal TV Server\log\OldLogs"
+CopyFiles: (silent) "$APPDATA\Team MediaPortal\MediaPortal TV Server\log\*" -> "$APPDATA\Team MediaPortal\MediaPortal TV Server\log\OldLogs", size=0KB
+Delete: "$APPDATA\Team MediaPortal\MediaPortal TV Server\log\*"
+!insertmacro: _If
+!insertmacro: end of _If
+WriteRegDWORD: HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal TV Server\MediaPortalInstallationDir=$MPdir.Base
+!insertmacro: _EndIf
+!insertmacro: end of _EndIf
+CreateDirectory: "$SMPROGRAMS\Team MediaPortal\MediaPortal TV Server"
+CreateShortCut: "$SMPROGRAMS\Team MediaPortal\MediaPortal TV Server\uninstall TV-Server.lnk"->"$INSTDIR\uninstall-tve3.exe"  icon:,0, showmode=0x0, hotkey=0x0, comment=
+WriteINIStr: [InternetShortcut] URL=http://wiki.team-mediaportal.com/ in $SMPROGRAMS\Team MediaPortal\MediaPortal TV Server\Help.url
+WriteINIStr: [InternetShortcut] URL=www.team-mediaportal.com in $SMPROGRAMS\Team MediaPortal\MediaPortal TV Server\web site.url
+WriteRegDWORD: HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal TV Server\VersionMajor=1
+WriteRegDWORD: HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal TV Server\VersionMinor=13
+WriteRegDWORD: HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal TV Server\VersionRevision=0
+WriteRegDWORD: HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal TV Server\VersionBuild=106
+WriteRegStr: HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal TV Server\InstallPath=$INSTDIR
+WriteRegStr: HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal TV Server\DisplayName=MediaPortal TV Server / Client
+WriteRegStr: HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal TV Server\DisplayVersion=1.13.0-106 for TESTING ONLY
+WriteRegStr: HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal TV Server\Publisher=Team MediaPortal
+WriteRegStr: HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal TV Server\URLInfoAbout=www.team-mediaportal.com
+WriteRegStr: HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal TV Server\DisplayIcon=$INSTDIR\SetupTv.exe,0
+WriteRegStr: HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal TV Server\UninstallString=$INSTDIR\uninstall-tve3.exe
+WriteRegDWORD: HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal TV Server\NoModify=1
+WriteRegDWORD: HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal TV Server\NoRepair=1
+WriteUninstaller: "$INSTDIR\uninstall-tve3.exe"
+!insertmacro: SetRights
+!insertmacro: LOG_TEXT
+!insertmacro: end of LOG_TEXT
+SetOverwrite: on
+SetOutPath: "$PLUGINSDIR"
+File: "SetRights.exe" 8192 bytes
+SetShellVarContext: all
+File: "nsExec.dll"->"$PLUGINSDIR\nsExec.dll" 6656 bytes
+Plugin Command: ExecToLog "$PLUGINSDIR\SetRights.exe" FOLDER "$APPDATA\Team MediaPortal"
+Plugin Command: ExecToLog "$PLUGINSDIR\SetRights.exe" HKLM "Software\Team MediaPortal"
+!insertmacro: end of SetRights
+!insertmacro: RestoreGentleConfig
+!insertmacro: _If
+!insertmacro: end of _If
+!insertmacro: LOG_TEXT
+!insertmacro: end of LOG_TEXT
+CopyFiles: (silent) "$PREVIOUS_GENTLE_CONFIG" -> "$APPDATA\Team MediaPortal\MediaPortal TV Server\Gentle.config", size=0KB
+!insertmacro: _EndIf
+!insertmacro: end of _EndIf
+!insertmacro: _If
+!insertmacro: end of _If
+!insertmacro: LOG_TEXT
+!insertmacro: end of LOG_TEXT
+CopyFiles: (silent) "$PREVIOUS_GENTLE_CONFIG_PLUGIN" -> "$MPdir.Config\Gentle.config", size=0KB
+!insertmacro: _EndIf
+!insertmacro: end of _EndIf
+!insertmacro: end of RestoreGentleConfig
+!insertmacro: _If
+!insertmacro: end of _If
+!insertmacro: _If
+!insertmacro: end of _If
+StrCpy $R0 "--DeployMode --DeploySql:$DeploySql --DeployPwd:$DeployPwd" () ()
+!insertmacro: _Else
+!insertmacro: end of _Else
+StrCpy $R0 "--DeployMode" () ()
+!insertmacro: _EndIf
+!insertmacro: end of _EndIf
+!insertmacro: LOG_TEXT
+!insertmacro: end of LOG_TEXT
+ExecWait: ""$INSTDIR\SetupTV.exe" $R0" (->)
+!insertmacro: _EndIf
+!insertmacro: end of _EndIf
+SectionEnd
+Section: "Uninstall"
+!insertmacro: LOG_TEXT
+!insertmacro: end of LOG_TEXT
+!insertmacro: SectionList
+!insertmacro: LOG_TEXT
+!insertmacro: end of LOG_TEXT
+!insertmacro: RemoveSection
+!insertmacro: Remove_1
+!insertmacro: LOG_TEXT
+!insertmacro: end of LOG_TEXT
+!insertmacro: LOG_TEXT
+!insertmacro: end of LOG_TEXT
+!insertmacro: StopService
+StopService: TVservice (macro:StopService:1)
+!insertmacro: end of StopService
+!insertmacro: KillProcess
+KillProcess: SetupTv.exe (macro:KillProcess:1)
+!insertmacro: end of KillProcess
+!insertmacro: KillProcess
+KillProcess: ffmpeg.exe (macro:KillProcess:1)
+!insertmacro: end of KillProcess
+!insertmacro: _If
+!insertmacro: end of _If
+!insertmacro: _Or
+!insertmacro: end of _Or
+ExecWait: ""$INSTDIR\SetupTv.exe" /Delete-db" (->)
+!insertmacro: _EndIf
+!insertmacro: end of _EndIf
+!insertmacro: LOG_TEXT
+!insertmacro: end of LOG_TEXT
+ExecWait: ""$INSTDIR\TVService.exe" /uninstall" (->)
+!insertmacro: LOG_TEXT
+!insertmacro: end of LOG_TEXT
+!insertmacro: LOG_TEXT
+!insertmacro: end of LOG_TEXT
+!insertmacro: _If
+!insertmacro: end of _If
+!insertmacro: _And
+!insertmacro: end of _And
+!insertmacro: UnInstallLib
+!insertmacro: end of UnInstallLib
+!insertmacro: UnInstallLib
+!insertmacro: end of UnInstallLib
+WriteRegStr: HKCR\Media Type\Extensions\.ts\Source Filter={b9559486-e1bb-45d3-a2a2-9a7afe49b23f}
+WriteRegStr: HKCR\Media Type\Extensions\.tp\Source Filter={b9559486-e1bb-45d3-a2a2-9a7afe49b23f}
+WriteRegStr: HKCR\Media Type\Extensions\.tsbuffer\Source Filter={b9559486-e1bb-45d3-a2a2-9a7afe49b23f}
+WriteRegStr: HKCR\Media Type\Extensions\.rtsp\Source Filter={b9559486-e1bb-45d3-a2a2-9a7afe49b23f}
+!insertmacro: _EndIf
+!insertmacro: end of _EndIf
+!insertmacro: UnInstallLib
+!insertmacro: end of UnInstallLib
+!insertmacro: UnInstallLib
+!insertmacro: end of UnInstallLib
+!insertmacro: UnInstallLib
+!insertmacro: end of UnInstallLib
+!insertmacro: UnInstallLib
+!insertmacro: end of UnInstallLib
+!insertmacro: LOG_TEXT
+!insertmacro: end of LOG_TEXT
+RMDir: /r "$APPDATA\Team MediaPortal\MediaPortal TV Server\TuningParameters"
+RMDir: /r "$APPDATA\Team MediaPortal\MediaPortal TV Server\WebEPG\channels"
+RMDir: /r "$APPDATA\Team MediaPortal\MediaPortal TV Server\WebEPG\grabbers"
+Delete: "$APPDATA\Team MediaPortal\MediaPortal TV Server\xmltv\xmltv.dtd"
+Delete: "$APPDATA\Team MediaPortal\MediaPortal TV Server\MPIPTVSource.ini"
+Delete: "$INSTDIR\Plugins\ComSkipLauncher.dll"
+Delete: "$INSTDIR\Plugins\ConflictsManager.dll"
+Delete: "$INSTDIR\Plugins\PowerScheduler.dll"
+Delete: "$INSTDIR\Plugins\ServerBlaster.dll"
+Delete: "$INSTDIR\Plugins\TvMovie.dll"
+Delete: "$INSTDIR\Plugins\WebEPG.dll"
+Delete: "$INSTDIR\Plugins\WebEPGImport.dll"
+Delete: "$INSTDIR\Plugins\XmlTvImport.dll"
+RMDir: "$INSTDIR\Plugins"
+Delete: "$INSTDIR\DirectShowLib.dll"
+Delete: "$INSTDIR\Common.Utils.dll"
+Delete: "$INSTDIR\dvblib.dll"
+Delete: "$INSTDIR\PluginBase.dll"
+Delete: "$INSTDIR\PowerScheduler.Interfaces.DLL"
+Delete: "$INSTDIR\Blaster.exe"
+Delete: "$INSTDIR\SetupTv.exe"
+Delete: "$INSTDIR\SetupTv.exe.config"
+Delete: "$INSTDIR\TvControl.dll"
+Delete: "$INSTDIR\TVDatabase.dll"
+Delete: "$INSTDIR\Gentle.Common.DLL"
+Delete: "$INSTDIR\Gentle.Framework.DLL"
+Delete: "$INSTDIR\Gentle.Provider.MySQL.dll"
+Delete: "$INSTDIR\Gentle.Provider.SQLServer.dll"
+Delete: "$INSTDIR\log4net.dll"
+Delete: "$INSTDIR\MySql.Data.dll"
+Delete: "$INSTDIR\TvBusinessLayer.dll"
+Delete: "$INSTDIR\TvLibrary.Interfaces.dll"
+Delete: "$INSTDIR\TVLibrary.dll"
+Delete: "$INSTDIR\TvLibrary.Utils.dll"
+Delete: "$INSTDIR\TvService.exe"
+Delete: "$INSTDIR\TvService.exe.config"
+Delete: "$INSTDIR\SetupControls.dll"
+Delete: "$INSTDIR\HttpServer.dll"
+Delete: "$INSTDIR\MediaPortal.Utilities.dll"
+Delete: "$INSTDIR\UPnP.dll"
+Delete: "$INSTDIR\dxerr9.dll"
+Delete: "$INSTDIR\hauppauge.dll"
+Delete: "$INSTDIR\hcwWinTVCI.dll"
+Delete: "$INSTDIR\KNCBDACTRL.dll"
+Delete: "$INSTDIR\StreamingServer.dll"
+Delete: "$INSTDIR\ttBdaDrvApi_Dll.dll"
+Delete: "$INSTDIR\ttdvbacc.dll"
+Delete: "$INSTDIR\tevii.dll"
+Delete: "$INSTDIR\Ionic.Zip.dll"
+Delete: "$INSTDIR\ffmpeg.exe"
+Delete: "$INSTDIR\TvThumbnails.dll"
+Delete: "$INSTDIR\MediaInfo.dll"
+Delete: "$INSTDIR\MPIPTV_FILE.dll"
+Delete: "$INSTDIR\MPIPTV_HTTP.dll"
+Delete: "$INSTDIR\MPIPTV_RTP.dll"
+Delete: "$INSTDIR\MPIPTV_RTSP.dll"
+Delete: "$INSTDIR\MPIPTV_UDP.dll"
+Delete: "$SMPROGRAMS\Team MediaPortal\MediaPortal TV Server\TV-Server Configuration.lnk"
+Delete: "$SMPROGRAMS\Team MediaPortal\MediaPortal TV Server\TV-Server Log-Files.lnk"
+Delete: "$SMPROGRAMS\Team MediaPortal\MediaPortal TV Server\Quick Setup Guide.url"
+Delete: "$SMPROGRAMS\Team MediaPortal\MediaPortal TV Server\Help.url"
+Delete: "$SMPROGRAMS\Team MediaPortal\MediaPortal TV Server\web site.url"
+Delete: "$DESKTOP\TV-Server Configuration.lnk"
+!insertmacro: _If
+!insertmacro: end of _If
+!insertmacro: Remove_SecMpeInstaller
+!insertmacro: LOG_TEXT
+!insertmacro: end of LOG_TEXT
+Delete: "$INSTDIR\MpeCore.dll"
+Delete: "$INSTDIR\MpeInstaller.exe"
+Delete: "$INSTDIR\MpeMaker.exe"
+Delete: "$INSTDIR\Utils.dll"
+Delete: "$INSTDIR\Core.dll"
+Delete: "$INSTDIR\CSScriptLibrary.dll"
+Delete: "$DESKTOP\MediaPortal Extension Manager.lnk"
+Delete: "$SMPROGRAMS\Team MediaPortal\MediaPortal TV Server\MediaPortal Extension Manager.lnk"
+!insertmacro: UnRegisterExtensionCall
+!insertmacro: end of UnRegisterExtensionCall
+!insertmacro: UnRegisterExtensionCall
+!insertmacro: end of UnRegisterExtensionCall
+!insertmacro: RefreshShellIconsCall
+!insertmacro: end of RefreshShellIconsCall
+!insertmacro: end of Remove_SecMpeInstaller
+!insertmacro: _EndIf
+!insertmacro: end of _EndIf
+!insertmacro: end of Remove_1
+!insertmacro: end of RemoveSection
+!insertmacro: RemoveSection
+!insertmacro: Remove_2
+!insertmacro: LOG_TEXT
+!insertmacro: end of LOG_TEXT
+!insertmacro: _If
+!insertmacro: end of _If
+!insertmacro: LOG_TEXT
+!insertmacro: end of LOG_TEXT
+!insertmacro: _If
+!insertmacro: end of _If
+!insertmacro: LOG_TEXT
+!insertmacro: end of LOG_TEXT
+!insertmacro: _Else
+!insertmacro: end of _Else
+!insertmacro: LOG_TEXT
+!insertmacro: end of LOG_TEXT
+!insertmacro: _EndIf
+!insertmacro: end of _EndIf
+!insertmacro: _Else
+!insertmacro: end of _Else
+!insertmacro: LOG_TEXT
+!insertmacro: end of LOG_TEXT
+!insertmacro: _EndIf
+!insertmacro: end of _EndIf
+!insertmacro: LOG_TEXT
+!insertmacro: end of LOG_TEXT
+!insertmacro: KillProcess
+KillProcess: MediaPortal.exe (macro:KillProcess:1)
+!insertmacro: end of KillProcess
+!insertmacro: KillProcess
+KillProcess: configuration.exe (macro:KillProcess:1)
+!insertmacro: end of KillProcess
+!insertmacro: UnInstallLib
+!insertmacro: end of UnInstallLib
+!insertmacro: UnInstallLib
+!insertmacro: end of UnInstallLib
+Delete: "$MPdir.Plugins\Windows\TvPlugin.dll"
+Delete: "$MPdir.Base\TVDatabase.dll"
+Delete: "$MPdir.Base\Gentle.Common.DLL"
+Delete: "$MPdir.Base\Gentle.Framework.DLL"
+Delete: "$MPdir.Base\Gentle.Provider.MySQL.dll"
+Delete: "$MPdir.Base\Gentle.Provider.SQLServer.dll"
+Delete: "$MPdir.Base\log4net.dll"
+Delete: "$MPdir.Base\MySql.Data.dll"
+Delete: "$MPdir.Base\TvBusinessLayer.dll"
+Delete: "$MPdir.Base\TvControl.dll"
+Delete: "$MPdir.Base\TvLibrary.Interfaces.dll"
+!insertmacro: end of Remove_2
+!insertmacro: end of RemoveSection
+!insertmacro: end of SectionList
+DeleteRegKey: HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal TV Server
+Delete: "$SMPROGRAMS\Team MediaPortal\MediaPortal TV Server\uninstall TV-Server.lnk"
+Delete: "$SMPROGRAMS\Team MediaPortal\MediaPortal TV Server\Help.url"
+Delete: "$SMPROGRAMS\Team MediaPortal\MediaPortal TV Server\web site.url"
+RMDir: "$SMPROGRAMS\Team MediaPortal\MediaPortal TV Server"
+RMDir: "$SMPROGRAMS\Team MediaPortal"
+Delete: "$INSTDIR\uninstall-tve3.exe"
+RMDir: "$INSTDIR"
+!insertmacro: _If
+!insertmacro: end of _If
+!insertmacro: LOG_TEXT
+!insertmacro: end of LOG_TEXT
+RMDir: /r "$APPDATA\Team MediaPortal\MediaPortal TV Server"
+RMDir: /r "$INSTDIR"
+RMDir: /r "$LOCALAPPDATA\VirtualStore\ProgramData\Team MediaPortal\MediaPortal TV Server"
+RMDir: /r "$LOCALAPPDATA\VirtualStore\Program Files\Team MediaPortal\MediaPortal TV Server"
+RMDir: "$LOCALAPPDATA\VirtualStore\ProgramData\Team MediaPortal"
+RMDir: "$LOCALAPPDATA\VirtualStore\Program Files\Team MediaPortal"
+!insertmacro: _ElseIf
+!insertmacro: end of _ElseIf
+!insertmacro: CompleteMediaPortalCleanup
+!insertmacro: NSISuninstall
+ReadRegStr $R0 HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal\UninstallString
+!insertmacro: _If
+!insertmacro: end of _If
+!insertmacro: GetParentCall
+!insertmacro: end of GetParentCall
+ClearErrors
+CopyFiles: "$R0" -> "$TEMP\uninstall-temp.exe", size=0KB
+ExecWait: ""$TEMP\uninstall-temp.exe" _?=$R1 /RemoveAll" (->)
+!insertmacro: _EndIf
+!insertmacro: end of _EndIf
+!insertmacro: end of NSISuninstall
+SetShellVarContext: all
+RMDir: /r /REBOOTOK "$PROGRAMFILES\Team MediaPortal"
+RMDir: /r /REBOOTOK "$APPDATA\Team MediaPortal"
+RMDir: /r /REBOOTOK "$LOCALAPPDATA\VirtualStore\Program Files\Team MediaPortal"
+RMDir: /r /REBOOTOK "$LOCALAPPDATA\VirtualStore\ProgramData\Team MediaPortal"
+RMDir: /r /REBOOTOK "$PROGRAMFILES\MediaPortal"
+RMDir: /r /REBOOTOK "$APPDATA\MediaPortal"
+RMDir: /r /REBOOTOK "$LOCALAPPDATA\VirtualStore\Program Files\MediaPortal"
+RMDir: /r /REBOOTOK "$LOCALAPPDATA\VirtualStore\ProgramData\MediaPortal"
+RMDir: /r /REBOOTOK "$PROGRAMFILES\MediaPortal TV Engine"
+RMDir: /r /REBOOTOK "$APPDATA\MediaPortal TV Engine"
+RMDir: /r /REBOOTOK "$LOCALAPPDATA\VirtualStore\Program Files\MediaPortal TV Engine"
+RMDir: /r /REBOOTOK "$LOCALAPPDATA\VirtualStore\ProgramData\MediaPortal TV Engine"
+SetShellVarContext: all
+RMDir: /r /REBOOTOK "$APPDATA\Microsoft\Windows\Start Menu\Programs\Team MediaPortal"
+RMDir: /r /REBOOTOK "$APPDATA\Microsoft\Windows\Start Menu\Programs\MediaPortal"
+SetShellVarContext: current
+RMDir: /r /REBOOTOK "$APPDATA\Microsoft\Windows\Start Menu\Programs\Team MediaPortal"
+RMDir: /r /REBOOTOK "$APPDATA\Microsoft\Windows\Start Menu\Programs\MediaPortal"
+RMDir: /r /REBOOTOK "$LOCALAPPDATA\Microsoft\Windows\Start Menu\Programs\Team MediaPortal"
+RMDir: /r /REBOOTOK "$LOCALAPPDATA\Microsoft\Windows\Start Menu\Programs\MediaPortal"
+DeleteRegKey: HKLM\Software\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal
+DeleteRegKey: HKCU\Software\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal
+DeleteRegKey: HKLM\Software\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal TV Server
+DeleteRegKey: HKCU\Software\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal TV Server
+DeleteRegKey: HKLM\Software\Team MediaPortal
+DeleteRegKey: HKCU\Software\Team MediaPortal
+DeleteRegKey: HKLM\Software\MediaPortal
+DeleteRegKey: HKCU\Software\MediaPortal
+DeleteRegKey: HKLM\Software\Team MediaPortal
+DeleteRegKey: HKCU\Software\Team MediaPortal
+DeleteRegKey: HKLM\Software\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal
+DeleteRegKey: HKCU\Software\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal
+DeleteRegKey: HKLM\Software\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal TV Server
+DeleteRegKey: HKCU\Software\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal TV Server
+!insertmacro: end of CompleteMediaPortalCleanup
+!insertmacro: _EndIf
+!insertmacro: end of _EndIf
+!insertmacro: _If
+!insertmacro: end of _If
+Quit
+!insertmacro: _EndIf
+!insertmacro: end of _EndIf
+SectionEnd
+Function: "ReadPreviousSettings"
+!insertmacro: ReadPreviousVersion
+Push: $R0
+Push: $R1
+Push: $R2
+Push: $R3
+ReadRegDWORD $R0 HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal TV Server\VersionMajor
+ReadRegDWORD $R1 HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal TV Server\VersionMinor
+ReadRegDWORD $R2 HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal TV Server\VersionRevision
+ReadRegDWORD $R3 HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal TV Server\VersionBuild
+!insertmacro: _If
+!insertmacro: end of _If
+!insertmacro: _Or
+!insertmacro: end of _Or
+!insertmacro: _Or
+!insertmacro: end of _Or
+!insertmacro: _Or
+!insertmacro: end of _Or
+StrCpy $PREVIOUS_VERSION "" () ()
+!insertmacro: _Else
+!insertmacro: end of _Else
+StrCpy $PREVIOUS_VERSION "$R0.$R1.$R2.$R3" () ()
+!insertmacro: _EndIf
+!insertmacro: end of _EndIf
+!insertmacro: VersionCompareCall
+!insertmacro: end of VersionCompareCall
+!insertmacro: _If
+!insertmacro: end of _If
+StrCpy $PREVIOUS_VERSION_STATE "same" () ()
+!insertmacro: _ElseIf
+!insertmacro: end of _ElseIf
+StrCpy $PREVIOUS_VERSION_STATE "newer" () ()
+!insertmacro: _ElseIf
+!insertmacro: end of _ElseIf
+StrCpy $PREVIOUS_VERSION_STATE "older" () ()
+!insertmacro: _Else
+!insertmacro: end of _Else
+StrCpy $PREVIOUS_VERSION_STATE "" () ()
+!insertmacro: _EndIf
+!insertmacro: end of _EndIf
+Pop: $R3
+Pop: $R2
+Pop: $R1
+Pop: $R0
+!insertmacro: end of ReadPreviousVersion
+!insertmacro: TVSERVER_GET_INSTALL_DIR
+SetRegView: 32
+!insertmacro: _If
+!insertmacro: end of _If
+!insertmacro: _Or
+!insertmacro: end of _Or
+ReadRegStr $PREVIOUS_INSTALLDIR HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal TV Server\InstallPath
+!insertmacro: LOG_TEXT
+!insertmacro: end of LOG_TEXT
+!insertmacro: _Else
+!insertmacro: end of _Else
+StrCpy $PREVIOUS_INSTALLDIR "" () ()
+!insertmacro: LOG_TEXT
+!insertmacro: end of LOG_TEXT
+!insertmacro: _EndIf
+!insertmacro: end of _EndIf
+!insertmacro: end of TVSERVER_GET_INSTALL_DIR
+FunctionEnd
+Function: "LoadPreviousSettings"
+!insertmacro: _If
+!insertmacro: end of _If
+StrCpy $INSTDIR "$PREVIOUS_INSTALLDIR" () ()
+!insertmacro: _ElseIf
+!insertmacro: end of _ElseIf
+StrCpy $INSTDIR "$PROGRAMFILES\Team MediaPortal\MediaPortal TV Server" () ()
+!insertmacro: _EndIf
+!insertmacro: end of _EndIf
+!insertmacro: MementoSectionRestore
+!insertmacro: end of MementoSectionRestore
+!insertmacro: _If
+!insertmacro: end of _If
+!insertmacro: DisableSection
+!insertmacro: UnselectSection
+Push: $0
+Push: $1
+StrCpy $1 "2" () ()
+SectionGetFlags: $1->$0
+IntOp: $0=$0&0xFFFFFFFE
+SectionSetFlags: $1->$0
+Pop: $1
+Pop: $0
+!insertmacro: end of UnselectSection
+!insertmacro: SetSectionFlag
+Push: $R0
+Push: $R1
+StrCpy $R1 "2" () ()
+SectionGetFlags: $R1->$R0
+IntOp: $R0=$R0|16
+SectionSetFlags: $R1->$R0
+Pop: $R1
+Pop: $R0
+!insertmacro: end of SetSectionFlag
+!insertmacro: _If
+!insertmacro: end of _If
+!insertmacro: ClearSectionFlag
+Push: $R0
+Push: $R1
+Push: $R2
+StrCpy $R2 "2" () ()
+SectionGetFlags: $R2->$R0
+IntOp: $R1=32~
+IntOp: $R0=$R0&$R1
+SectionSetFlags: $R2->$R0
+Pop: $R2
+Pop: $R1
+Pop: $R0
+!insertmacro: end of ClearSectionFlag
+!insertmacro: _EndIf
+!insertmacro: end of _EndIf
+SectionSetText: 2->MediaPortal TV Client plugin ($(TEXT_MP_NOT_INSTALLED))
+!insertmacro: end of DisableSection
+!insertmacro: _Else
+!insertmacro: end of _Else
+!insertmacro: EnableSection
+!insertmacro: end of EnableSection
+!insertmacro: MP_GET_INSTALL_DIR
+SetRegView: 32
+!insertmacro: _If
+!insertmacro: end of _If
+ReadRegStr $MPdir.Base HKLM\SOFTWARE\Team MediaPortal\MediaPortal\ApplicationDir
+!insertmacro: LOG_TEXT
+!insertmacro: end of LOG_TEXT
+!insertmacro: _ElseIf
+!insertmacro: end of _ElseIf
+ReadRegStr $MPdir.Base HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal\InstallPath
+!insertmacro: LOG_TEXT
+!insertmacro: end of LOG_TEXT
+!insertmacro: _Else
+!insertmacro: end of _Else
+StrCpy $MPdir.Base "" () ()
+!insertmacro: LOG_TEXT
+!insertmacro: end of LOG_TEXT
+!insertmacro: _EndIf
+!insertmacro: end of _EndIf
+!insertmacro: end of MP_GET_INSTALL_DIR
+!insertmacro: ReadMediaPortalDirsCall
+!insertmacro: end of ReadMediaPortalDirsCall
+!insertmacro: _EndIf
+!insertmacro: end of _EndIf
+Call ".onSelChange"
+FunctionEnd
+Function: ".onInit"
+!insertmacro: LOG_OPEN
+LOG_OPEN (macro:LOG_OPEN:1)
+!insertmacro: end of LOG_OPEN
+!insertmacro: LOG_TEXT
+!insertmacro: end of LOG_TEXT
+!insertmacro: MediaPortalNetFrameworkCheck
+!insertmacro: LOG_TEXT
+!insertmacro: end of LOG_TEXT
+ReadRegDWORD $0 HKLM\SOFTWARE\Microsoft\NET Framework Setup\NDP\v3.5\Install
+ReadRegDWORD $1 HKLM\SOFTWARE\Microsoft\NET Framework Setup\NDP\v3.5\SP
+!insertmacro: LOG_TEXT
+!insertmacro: end of LOG_TEXT
+!insertmacro: LOG_TEXT
+!insertmacro: end of LOG_TEXT
+!insertmacro: _If
+!insertmacro: end of _If
+!insertmacro: _Or
+!insertmacro: end of _Or
+!insertmacro: ShowMissingComponent
+ExecShell: open: "http://wiki.team-mediaportal.com/GeneralRequirements" "" 
+StrCpy $0 "" () ()
+StrCpy $0 "$0$(MISSING_COMPONENT_INTRO)
+" () ()
+StrCpy $0 "$0$(MISSING_COMPONENT_INSTALL)
+
+" () ()
+StrCpy $0 "$0     - Microsoft .NET Framework 3.5 Service Pack 1
+
+" () ()
+StrCpy $0 "$0$(TEXT_MSGBOX_INSTALLATION_CANCELD)
+
+" () ()
+StrCpy $0 "$0$(MISSING_COMPONENT_MORE_INFO)" () ()
+MessageBox: 16: "$0"
+Abort: ""
+!insertmacro: end of ShowMissingComponent
+!insertmacro: _EndIf
+!insertmacro: end of _EndIf
+!insertmacro: LOG_TEXT
+!insertmacro: end of LOG_TEXT
+!insertmacro: end of MediaPortalNetFrameworkCheck
+!insertmacro: MediaPortalNet4FrameworkCheck
+!insertmacro: LOG_TEXT
+!insertmacro: end of LOG_TEXT
+!insertmacro: _If
+!insertmacro: end of _If
+DetailPrint: "Microsoft .NET Framework 4.0 installed."
+!insertmacro: _If
+!insertmacro: end of _If
+DetailPrint: "Microsoft .NET Framework 4.0 is at least SP1."
+!insertmacro: _Else
+!insertmacro: end of _Else
+DetailPrint: "Microsoft .NET Framework 4.0 SP1 not installed."
+!insertmacro: LOG_TEXT
+!insertmacro: end of LOG_TEXT
+!insertmacro: _EndIf
+!insertmacro: end of _EndIf
+!insertmacro: _If
+!insertmacro: end of _If
+DetailPrint: "Microsoft .NET Framework 4.0 (Client Profile) available."
+!insertmacro: _EndIf
+!insertmacro: end of _EndIf
+!insertmacro: _If
+!insertmacro: end of _If
+DetailPrint: "Microsoft .NET Framework 4.0 (Full Profile) available."
+!insertmacro: _EndIf
+!insertmacro: end of _EndIf
+!insertmacro: _If
+!insertmacro: end of _If
+DetailPrint: "Microsoft .NET Framework 4.0 (Full Profile) not available."
+!insertmacro: ShowMissingComponent
+ExecShell: open: "http://wiki.team-mediaportal.com/GeneralRequirements" "" 
+StrCpy $0 "" () ()
+StrCpy $0 "$0$(MISSING_COMPONENT_INTRO)
+" () ()
+StrCpy $0 "$0$(MISSING_COMPONENT_INSTALL)
+
+" () ()
+StrCpy $0 "$0     - Microsoft .NET Framework 4.0
+
+" () ()
+StrCpy $0 "$0$(TEXT_MSGBOX_INSTALLATION_CANCELD)
+
+" () ()
+StrCpy $0 "$0$(MISSING_COMPONENT_MORE_INFO)" () ()
+MessageBox: 16: "$0"
+Abort: ""
+!insertmacro: end of ShowMissingComponent
+!insertmacro: LOG_TEXT
+!insertmacro: end of LOG_TEXT
+!insertmacro: _EndIf
+!insertmacro: end of _EndIf
+!insertmacro: _Else
+!insertmacro: end of _Else
+!insertmacro: ShowMissingComponent
+ExecShell: open: "http://wiki.team-mediaportal.com/GeneralRequirements" "" 
+StrCpy $0 "" () ()
+StrCpy $0 "$0$(MISSING_COMPONENT_INTRO)
+" () ()
+StrCpy $0 "$0$(MISSING_COMPONENT_INSTALL)
+
+" () ()
+StrCpy $0 "$0     - Microsoft .NET Framework 4.0
+
+" () ()
+StrCpy $0 "$0$(TEXT_MSGBOX_INSTALLATION_CANCELD)
+
+" () ()
+StrCpy $0 "$0$(MISSING_COMPONENT_MORE_INFO)" () ()
+MessageBox: 16: "$0"
+Abort: ""
+!insertmacro: end of ShowMissingComponent
+!insertmacro: _EndIf
+!insertmacro: end of _EndIf
+!insertmacro: end of MediaPortalNet4FrameworkCheck
+StrCpy $noClient "0" () ()
+StrCpy $noServer "0" () ()
+StrCpy $noDesktopSC "0" () ()
+StrCpy $DeployMode "0" () ()
+StrCpy $DeploySql "" () ()
+StrCpy $DeployPwd "" () ()
+StrCpy $UpdateMode "0" () ()
+!insertmacro: InitCommandlineParameterCall
+!insertmacro: GetParametersCall
+!insertmacro: end of GetParametersCall
+!insertmacro: LOG_TEXT
+!insertmacro: end of LOG_TEXT
+!insertmacro: end of InitCommandlineParameterCall
+!insertmacro: ReadCommandlineParameterCall
+ClearErrors
+!insertmacro: GetOptionsCall
+!insertmacro: end of GetOptionsCall
+!insertmacro: _If
+!insertmacro: end of _If
+StrCpy $noClient "1" () ()
+!insertmacro: _EndIf
+!insertmacro: end of _EndIf
+!insertmacro: end of ReadCommandlineParameterCall
+!insertmacro: ReadCommandlineParameterCall
+ClearErrors
+!insertmacro: GetOptionsCall
+!insertmacro: end of GetOptionsCall
+!insertmacro: _If
+!insertmacro: end of _If
+StrCpy $noServer "1" () ()
+!insertmacro: _EndIf
+!insertmacro: end of _EndIf
+!insertmacro: end of ReadCommandlineParameterCall
+!insertmacro: ReadCommandlineParameterCall
+ClearErrors
+!insertmacro: GetOptionsCall
+!insertmacro: end of GetOptionsCall
+!insertmacro: _If
+!insertmacro: end of _If
+StrCpy $noDesktopSC "1" () ()
+!insertmacro: _EndIf
+!insertmacro: end of _EndIf
+!insertmacro: end of ReadCommandlineParameterCall
+!insertmacro: ReadCommandlineParameterCall
+ClearErrors
+!insertmacro: GetOptionsCall
+!insertmacro: end of GetOptionsCall
+!insertmacro: _If
+!insertmacro: end of _If
+StrCpy $DeployMode "1" () ()
+!insertmacro: _EndIf
+!insertmacro: end of _EndIf
+!insertmacro: end of ReadCommandlineParameterCall
+ClearErrors
+!insertmacro: GetOptionsCall
+!insertmacro: end of GetOptionsCall
+ClearErrors
+!insertmacro: GetOptionsCall
+!insertmacro: end of GetOptionsCall
+ClearErrors
+!insertmacro: GetOptionsCall
+!insertmacro: end of GetOptionsCall
+IfErrors ?+2:
+IntOp: $UpdateMode=$DeployMode&1
+!insertmacro: _If
+!insertmacro: end of _If
+!insertmacro: DoPreInstallChecks
+!insertmacro: MediaPortalOperatingSystemCheck
+!insertmacro: LOG_TEXT
+!insertmacro: end of LOG_TEXT
+!insertmacro: GetServicePack
+Push: $0
+Push: $1
+Push: $2
+Push: $3
+Plugin Command: Call *(i 148,i,i,i,i,&t128,&i2,&i2,&i2,&i1,&i1)i.r1
+Plugin Command: Call kernel32::GetVersionEx(i r1)
+Plugin Command: Call *$1(i,i,i,i,i,&t128.r0)
+!insertmacro: WordFindCall
+!insertmacro: end of WordFindCall
+!insertmacro: _If
+!insertmacro: end of _If
+StrCpy $R1 "$0" (1) (-1)
+StrCpy $R2 "0" () ()
+!insertmacro: _Else
+!insertmacro: end of _Else
+StrCpy $R1 "0" () ()
+!insertmacro: WordFindCall
+!insertmacro: end of WordFindCall
+!insertmacro: _EndIf
+!insertmacro: end of _EndIf
+Plugin Command: Free $1
+Pop: $3
+Pop: $2
+Pop: $1
+Pop: $0
+!insertmacro: end of GetServicePack
+!insertmacro: LOG_TEXT
+!insertmacro: end of LOG_TEXT
+!insertmacro: LOG_TEXT
+!insertmacro: end of LOG_TEXT
+File: "GetVersion.dll"->"$PLUGINSDIR\GetVersion.dll" 5120 bytes
+Plugin Command: WindowsName
+Pop: $R0
+!insertmacro: LOG_TEXT
+!insertmacro: end of LOG_TEXT
+!insertmacro: _If
+!insertmacro: end of _If
+!insertmacro: LOG_TEXT
+!insertmacro: end of LOG_TEXT
+StrCpy $0 "OSabort" () ()
+!insertmacro: _ElseIf
+!insertmacro: end of _ElseIf
+!insertmacro: LOG_TEXT
+!insertmacro: end of LOG_TEXT
+!insertmacro: GetServicePack
+Push: $0
+Push: $1
+Push: $2
+Push: $3
+Plugin Command: Call *(i 148,i,i,i,i,&t128,&i2,&i2,&i2,&i1,&i1)i.r1
+Plugin Command: Call kernel32::GetVersionEx(i r1)
+Plugin Command: Call *$1(i,i,i,i,i,&t128.r0)
+!insertmacro: WordFindCall
+!insertmacro: end of WordFindCall
+!insertmacro: _If
+!insertmacro: end of _If
+StrCpy $R1 "$0" (1) (-1)
+StrCpy $R2 "0" () ()
+!insertmacro: _Else
+!insertmacro: end of _Else
+StrCpy $R1 "0" () ()
+!insertmacro: WordFindCall
+!insertmacro: end of WordFindCall
+!insertmacro: _EndIf
+!insertmacro: end of _EndIf
+Plugin Command: Free $1
+Pop: $3
+Pop: $2
+Pop: $1
+Pop: $0
+!insertmacro: end of GetServicePack
+!insertmacro: _If
+!insertmacro: end of _If
+StrCpy $0 "OSwarnBetaSP" () ()
+!insertmacro: _ElseIf
+!insertmacro: end of _ElseIf
+StrCpy $0 "OSabort" () ()
+!insertmacro: _Else
+!insertmacro: end of _Else
+StrCpy $0 "OSwarn" () ()
+!insertmacro: _EndIf
+!insertmacro: end of _EndIf
+!insertmacro: _If
+!insertmacro: end of _If
+!insertmacro: LOG_TEXT
+!insertmacro: end of LOG_TEXT
+StrCpy $0 "OSabort" () ()
+!insertmacro: _EndIf
+!insertmacro: end of _EndIf
+!insertmacro: _ElseIf
+!insertmacro: end of _ElseIf
+!insertmacro: LOG_TEXT
+!insertmacro: end of LOG_TEXT
+StrCpy $0 "OSwarn" () ()
+!insertmacro: _ElseIf
+!insertmacro: end of _ElseIf
+!insertmacro: LOG_TEXT
+!insertmacro: end of LOG_TEXT
+!insertmacro: GetServicePack
+Push: $0
+Push: $1
+Push: $2
+Push: $3
+Plugin Command: Call *(i 148,i,i,i,i,&t128,&i2,&i2,&i2,&i1,&i1)i.r1
+Plugin Command: Call kernel32::GetVersionEx(i r1)
+Plugin Command: Call *$1(i,i,i,i,i,&t128.r0)
+!insertmacro: WordFindCall
+!insertmacro: end of WordFindCall
+!insertmacro: _If
+!insertmacro: end of _If
+StrCpy $R1 "$0" (1) (-1)
+StrCpy $R2 "0" () ()
+!insertmacro: _Else
+!insertmacro: end of _Else
+StrCpy $R1 "0" () ()
+!insertmacro: WordFindCall
+!insertmacro: end of WordFindCall
+!insertmacro: _EndIf
+!insertmacro: end of _EndIf
+Plugin Command: Free $1
+Pop: $3
+Pop: $2
+Pop: $1
+Pop: $0
+!insertmacro: end of GetServicePack
+!insertmacro: _If
+!insertmacro: end of _If
+StrCpy $0 "OSwarnBetaSP" () ()
+!insertmacro: _ElseIf
+!insertmacro: end of _ElseIf
+StrCpy $0 "OSwarn" () ()
+!insertmacro: _Else
+!insertmacro: end of _Else
+StrCpy $0 "OSok" () ()
+!insertmacro: _EndIf
+!insertmacro: end of _EndIf
+!insertmacro: _ElseIf
+!insertmacro: end of _ElseIf
+!insertmacro: LOG_TEXT
+!insertmacro: end of LOG_TEXT
+StrCpy $0 "OSwarn" () ()
+!insertmacro: _ElseIf
+!insertmacro: end of _ElseIf
+!insertmacro: LOG_TEXT
+!insertmacro: end of LOG_TEXT
+StrCpy $0 "OSok" () ()
+!insertmacro: _ElseIf
+!insertmacro: end of _ElseIf
+!insertmacro: LOG_TEXT
+!insertmacro: end of LOG_TEXT
+StrCpy $0 "OSok" () ()
+!insertmacro: _ElseIf
+warning: unknown variable/constant "{WINVER_81_NT}" detected, ignoring (macro:_=:1)
+!insertmacro: end of _ElseIf
+!insertmacro: LOG_TEXT
+!insertmacro: end of LOG_TEXT
+StrCpy $0 "OSok" () ()
+!insertmacro: _ElseIf
+!insertmacro: end of _ElseIf
+!insertmacro: LOG_TEXT
+!insertmacro: end of LOG_TEXT
+StrCpy $0 "OSwarn" () ()
+!insertmacro: _ElseIf
+!insertmacro: end of _ElseIf
+!insertmacro: LOG_TEXT
+!insertmacro: end of LOG_TEXT
+StrCpy $0 "OSwarn" () ()
+!insertmacro: _Else
+!insertmacro: end of _Else
+!insertmacro: LOG_TEXT
+!insertmacro: end of LOG_TEXT
+StrCpy $0 "OSabort" () ()
+!insertmacro: _EndIf
+!insertmacro: end of _EndIf
+!insertmacro: _If
+!insertmacro: end of _If
+MessageBox: 20: "$(TEXT_MSGBOX_ERROR_WIN)" (on IDNO goto +2)
+ExecShell: open: "http://wiki.team-mediaportal.com/GeneralRequirements" "" 
+Abort: ""
+!insertmacro: _ElseIf
+!insertmacro: end of _ElseIf
+MessageBox: 52: "$(TEXT_MSGBOX_ERROR_WIN_NOT_RECOMMENDED)" (on IDNO goto +2)
+ExecShell: open: "http://wiki.team-mediaportal.com/GeneralRequirements" "" 
+!insertmacro: _ElseIf
+!insertmacro: end of _ElseIf
+MessageBox: 52: "You are using a beta Service Pack! $(TEXT_MSGBOX_ERROR_WIN_NOT_RECOMMENDED)" (on IDNO goto +2)
+ExecShell: open: "http://wiki.team-mediaportal.com/GeneralRequirements" "" 
+!insertmacro: _Else
+!insertmacro: end of _Else
+!insertmacro: _EndIf
+!insertmacro: end of _EndIf
+!insertmacro: LOG_TEXT
+!insertmacro: end of LOG_TEXT
+!insertmacro: end of MediaPortalOperatingSystemCheck
+!insertmacro: MediaPortalAdminCheck
+!insertmacro: LOG_TEXT
+!insertmacro: end of LOG_TEXT
+File: "UserInfo.dll"->"$PLUGINSDIR\UserInfo.dll" 4096 bytes
+Plugin Command: GetOriginalAccountType
+Pop: $0
+!insertmacro: _If
+!insertmacro: end of _If
+MessageBox: 16: "$(TEXT_MSGBOX_ERROR_ADMIN)"
+Abort: ""
+!insertmacro: _EndIf
+!insertmacro: end of _EndIf
+!insertmacro: LOG_TEXT
+!insertmacro: end of LOG_TEXT
+!insertmacro: end of MediaPortalAdminCheck
+!insertmacro: MediaPortalVCRedistCheck
+!insertmacro: LOG_TEXT
+!insertmacro: end of LOG_TEXT
+!insertmacro: _If
+!insertmacro: end of _If
+!insertmacro: ShowMissingComponent
+ExecShell: open: "http://wiki.team-mediaportal.com/GeneralRequirements" "" 
+StrCpy $0 "" () ()
+StrCpy $0 "$0$(MISSING_COMPONENT_INTRO)
+" () ()
+StrCpy $0 "$0$(MISSING_COMPONENT_INSTALL)
+
+" () ()
+StrCpy $0 "$0     - Microsoft Visual C++ 2008 Service Pack 1 Redistributable Package ATL Security Update
+
+" () ()
+StrCpy $0 "$0$(TEXT_MSGBOX_INSTALLATION_CANCELD)
+
+" () ()
+StrCpy $0 "$0$(MISSING_COMPONENT_MORE_INFO)" () ()
+MessageBox: 16: "$0"
+Abort: ""
+!insertmacro: end of ShowMissingComponent
+!insertmacro: _EndIf
+!insertmacro: end of _EndIf
+!insertmacro: LOG_TEXT
+!insertmacro: end of LOG_TEXT
+!insertmacro: end of MediaPortalVCRedistCheck
+!insertmacro: MediaPortalNetFrameworkCheck
+!insertmacro: LOG_TEXT
+!insertmacro: end of LOG_TEXT
+ReadRegDWORD $0 HKLM\SOFTWARE\Microsoft\NET Framework Setup\NDP\v3.5\Install
+ReadRegDWORD $1 HKLM\SOFTWARE\Microsoft\NET Framework Setup\NDP\v3.5\SP
+!insertmacro: LOG_TEXT
+!insertmacro: end of LOG_TEXT
+!insertmacro: LOG_TEXT
+!insertmacro: end of LOG_TEXT
+!insertmacro: _If
+!insertmacro: end of _If
+!insertmacro: _Or
+!insertmacro: end of _Or
+!insertmacro: ShowMissingComponent
+ExecShell: open: "http://wiki.team-mediaportal.com/GeneralRequirements" "" 
+StrCpy $0 "" () ()
+StrCpy $0 "$0$(MISSING_COMPONENT_INTRO)
+" () ()
+StrCpy $0 "$0$(MISSING_COMPONENT_INSTALL)
+
+" () ()
+StrCpy $0 "$0     - Microsoft .NET Framework 3.5 Service Pack 1
+
+" () ()
+StrCpy $0 "$0$(TEXT_MSGBOX_INSTALLATION_CANCELD)
+
+" () ()
+StrCpy $0 "$0$(MISSING_COMPONENT_MORE_INFO)" () ()
+MessageBox: 16: "$0"
+Abort: ""
+!insertmacro: end of ShowMissingComponent
+!insertmacro: _EndIf
+!insertmacro: end of _EndIf
+!insertmacro: LOG_TEXT
+!insertmacro: end of LOG_TEXT
+!insertmacro: end of MediaPortalNetFrameworkCheck
+!insertmacro: _If
+!insertmacro: end of _If
+MessageBox: 16: "$(TEXT_MSGBOX_ERROR_MSI_CLIENT)"
+Abort: ""
+!insertmacro: _EndIf
+!insertmacro: end of _EndIf
+!insertmacro: _If
+!insertmacro: end of _If
+MessageBox: 16: "$(TEXT_MSGBOX_ERROR_MSI_SERVER)"
+Abort: ""
+!insertmacro: _EndIf
+!insertmacro: end of _EndIf
+!insertmacro: _If
+!insertmacro: end of _If
+MessageBox: 16: "$(TEXT_MSGBOX_ERROR_REBOOT_REQUIRED)"
+Abort: ""
+!insertmacro: _EndIf
+!insertmacro: end of _EndIf
+!insertmacro: end of DoPreInstallChecks
+!insertmacro: _EndIf
+!insertmacro: end of _EndIf
+Call "ReadPreviousSettings"
+Call "LoadPreviousSettings"
+!insertmacro: _If
+!insertmacro: end of _If
+!insertmacro: _And
+!insertmacro: end of _And
+MessageBox: 16: "$(TEXT_MSGBOX_PARAMETER_ERROR)"
+Abort: ""
+!insertmacro: _ElseIf
+!insertmacro: end of _ElseIf
+!insertmacro: SelectSection
+Push: $0
+Push: $1
+StrCpy $1 "1" () ()
+SectionGetFlags: $1->$0
+IntOp: $0=$0|1
+SectionSetFlags: $1->$0
+Pop: $1
+Pop: $0
+!insertmacro: end of SelectSection
+!insertmacro: UnselectSection
+Push: $0
+Push: $1
+StrCpy $1 "2" () ()
+SectionGetFlags: $1->$0
+IntOp: $0=$0&0xFFFFFFFE
+SectionSetFlags: $1->$0
+Pop: $1
+Pop: $0
+!insertmacro: end of UnselectSection
+!insertmacro: _ElseIf
+!insertmacro: end of _ElseIf
+!insertmacro: SelectSection
+Push: $0
+Push: $1
+StrCpy $1 "2" () ()
+SectionGetFlags: $1->$0
+IntOp: $0=$0|1
+SectionSetFlags: $1->$0
+Pop: $1
+Pop: $0
+!insertmacro: end of SelectSection
+!insertmacro: UnselectSection
+Push: $0
+Push: $1
+StrCpy $1 "1" () ()
+SectionGetFlags: $1->$0
+IntOp: $0=$0&0xFFFFFFFE
+SectionSetFlags: $1->$0
+Pop: $1
+Pop: $0
+!insertmacro: end of UnselectSection
+!insertmacro: _EndIf
+!insertmacro: end of _EndIf
+SetShellVarContext: all
+FunctionEnd
+Function: ".onInstFailed"
+!insertmacro: LOG_TEXT
+!insertmacro: end of LOG_TEXT
+!insertmacro: LOG_CLOSE
+LOG_CLOSE (macro:LOG_CLOSE:1)
+!insertmacro: end of LOG_CLOSE
+FunctionEnd
+Function: ".onInstSuccess"
+!insertmacro: LOG_TEXT
+!insertmacro: end of LOG_TEXT
+!insertmacro: LOG_CLOSE
+LOG_CLOSE (macro:LOG_CLOSE:1)
+!insertmacro: end of LOG_CLOSE
+FunctionEnd
+Function: ".onSelChange"
+!insertmacro: LOG_TEXT
+!insertmacro: end of LOG_TEXT
+!insertmacro: _If
+!insertmacro: end of _If
+!insertmacro: _And
+!insertmacro: end of _And
+EnableWindow: handle=$mui.Button.Next enable=0
+!insertmacro: _Else
+!insertmacro: end of _Else
+EnableWindow: handle=$mui.Button.Next enable=1
+!insertmacro: _EndIf
+!insertmacro: end of _EndIf
+FunctionEnd
+Function: "PageComponentsPre"
+!insertmacro: _If
+!insertmacro: end of _If
+Abort: ""
+!insertmacro: _EndIf
+!insertmacro: end of _EndIf
+FunctionEnd
+Function: "PageDirectoryPre"
+!insertmacro: _If
+!insertmacro: end of _If
+Abort: ""
+!insertmacro: _EndIf
+!insertmacro: end of _EndIf
+!insertmacro: _If
+!insertmacro: end of _If
+Abort: ""
+!insertmacro: _EndIf
+!insertmacro: end of _EndIf
+FunctionEnd
+Function: "PageFinishShow"
+!insertmacro: _If
+!insertmacro: end of _If
+SendMessage:($mui.FinishPage.Run,0x00F5,0,0)
+ShowWindow: handle=$mui.FinishPage.Run show state=0
+!insertmacro: _EndIf
+!insertmacro: end of _EndIf
+FunctionEnd
+Function: "un.onInit"
+!insertmacro: LOG_OPEN
+LOG_OPEN (macro:LOG_OPEN:1)
+!insertmacro: end of LOG_OPEN
+!insertmacro: LOG_TEXT
+!insertmacro: end of LOG_TEXT
+StrCpy $UnInstallMode "0" () ()
+!insertmacro: InitCommandlineParameterCall
+!insertmacro: GetParametersCall
+!insertmacro: end of GetParametersCall
+!insertmacro: LOG_TEXT
+!insertmacro: end of LOG_TEXT
+!insertmacro: end of InitCommandlineParameterCall
+!insertmacro: ReadCommandlineParameterCall
+ClearErrors
+!insertmacro: GetOptionsCall
+!insertmacro: end of GetOptionsCall
+!insertmacro: _If
+!insertmacro: end of _If
+StrCpy $frominstall "1" () ()
+!insertmacro: _EndIf
+!insertmacro: end of _EndIf
+!insertmacro: end of ReadCommandlineParameterCall
+ClearErrors
+!insertmacro: GetOptionsCall
+!insertmacro: end of GetOptionsCall
+IfErrors ?+2:
+StrCpy $UnInstallMode "1" () ()
+!insertmacro: _If
+!insertmacro: end of _If
+!insertmacro: _And
+!insertmacro: end of _And
+Sleep: 1 ms
+!insertmacro: _Else
+!insertmacro: end of _Else
+ReadRegStr $MPdir.Base HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal TV Server\MediaPortalInstallationDir
+!insertmacro: _If
+!insertmacro: end of _If
+!insertmacro: MP_GET_INSTALL_DIR
+SetRegView: 32
+!insertmacro: _If
+!insertmacro: end of _If
+ReadRegStr $MPdir.Base HKLM\SOFTWARE\Team MediaPortal\MediaPortal\ApplicationDir
+!insertmacro: LOG_TEXT
+!insertmacro: end of LOG_TEXT
+!insertmacro: _ElseIf
+!insertmacro: end of _ElseIf
+ReadRegStr $MPdir.Base HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal\InstallPath
+!insertmacro: LOG_TEXT
+!insertmacro: end of LOG_TEXT
+!insertmacro: _Else
+!insertmacro: end of _Else
+StrCpy $MPdir.Base "" () ()
+!insertmacro: LOG_TEXT
+!insertmacro: end of LOG_TEXT
+!insertmacro: _EndIf
+!insertmacro: end of _EndIf
+!insertmacro: end of MP_GET_INSTALL_DIR
+!insertmacro: _EndIf
+!insertmacro: end of _EndIf
+!insertmacro: ReadMediaPortalDirsCall
+!insertmacro: end of ReadMediaPortalDirsCall
+!insertmacro: _EndIf
+!insertmacro: end of _EndIf
+!insertmacro: TVSERVER_GET_INSTALL_DIR
+SetRegView: 32
+!insertmacro: _If
+!insertmacro: end of _If
+!insertmacro: _Or
+!insertmacro: end of _Or
+ReadRegStr $INSTDIR HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal TV Server\InstallPath
+!insertmacro: LOG_TEXT
+!insertmacro: end of LOG_TEXT
+!insertmacro: _Else
+!insertmacro: end of _Else
+StrCpy $INSTDIR "" () ()
+!insertmacro: LOG_TEXT
+!insertmacro: end of LOG_TEXT
+!insertmacro: _EndIf
+!insertmacro: end of _EndIf
+!insertmacro: end of TVSERVER_GET_INSTALL_DIR
+SetShellVarContext: all
+FunctionEnd
+Function: "un.onUninstFailed"
+!insertmacro: LOG_TEXT
+!insertmacro: end of LOG_TEXT
+!insertmacro: LOG_CLOSE
+LOG_CLOSE (macro:LOG_CLOSE:1)
+!insertmacro: end of LOG_CLOSE
+FunctionEnd
+Function: "un.onUninstSuccess"
+!insertmacro: LOG_TEXT
+!insertmacro: end of LOG_TEXT
+!insertmacro: _If
+!insertmacro: end of _If
+!insertmacro: LOG_TEXT
+!insertmacro: end of LOG_TEXT
+FileOpen: $INSTDIR\rebootflag as w -> $0
+Delete: "$INSTDIR\rebootflag"
+RMDir: "$INSTDIR"
+FileClose: $0
+!insertmacro: _EndIf
+!insertmacro: end of _EndIf
+!insertmacro: LOG_CLOSE
+LOG_CLOSE (macro:LOG_CLOSE:1)
+!insertmacro: end of LOG_CLOSE
+FunctionEnd
+Function: "un.WelcomePagePre"
+!insertmacro: _If
+!insertmacro: end of _If
+Abort: ""
+!insertmacro: _EndIf
+!insertmacro: end of _EndIf
+FunctionEnd
+Function: "un.FinishPagePre"
+!insertmacro: _If
+!insertmacro: end of _If
+Abort: ""
+!insertmacro: _EndIf
+!insertmacro: end of _EndIf
+FunctionEnd
+!insertmacro: MUI_FUNCTION_DESCRIPTION_BEGIN
+!insertmacro: end of MUI_FUNCTION_DESCRIPTION_BEGIN
+!insertmacro: MUI_DESCRIPTION_TEXT
+!insertmacro: end of MUI_DESCRIPTION_TEXT
+!insertmacro: MUI_DESCRIPTION_TEXT
+!insertmacro: end of MUI_DESCRIPTION_TEXT
+!insertmacro: MUI_FUNCTION_DESCRIPTION_END
+!insertmacro: end of MUI_FUNCTION_DESCRIPTION_END
+
+Processed 1 file, writing output:
+Adding plug-ins initializing function... Done!
+Processing pages... Done!
+Removing unused resources... Done!
+Generating language tables... Done!
+Generating uninstaller... Done!
+
+Output: "V:\Development\Mediaportal\MediaPortal\Release\Setup-TvEngine-git-1.13.0.106.exe"
+Install: 8 pages (512 bytes), 4 sections (1 required) (4192 bytes), 6234 instructions (174552 bytes), 2856 strings (107178 bytes), 1 language table (470 bytes).
+Uninstall: 5 pages (320 bytes), 
+1 section (1048 bytes), 2337 instructions (65436 bytes), 610 strings (19449 bytes), 1 language table (318 bytes).
+Datablock optimizer saved 2018354 bytes (~3.4%).
+
+Using lzma (compress whole) compression.
+
+EXE header size:              192512 / 34816 bytes
+Install code:                          (287304 bytes)
+Install data:                          (55323373 bytes)
+Uninstall code+data:                   (603719 bytes)
+Compressed data:            16408420 / 56214396 bytes
+CRC (0xD7000E17):                  4 / 4 bytes
+
+Total size:                 16600936 / 56249216 bytes (29.5%)
+
+1 warning:
+  unknown variable/constant "{WINVER_81_NT}" detected, ignoring (macro:_=:1)

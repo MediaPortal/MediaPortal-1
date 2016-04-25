@@ -1,0 +1,898 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<build started="20.02.2016 16:11:38">
+  <project targets="Rebuild" file="V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TvPlugin\TvPlugin.sln" started="20.02.2016 16:11:38">
+    <target name="ValidateSolutionConfiguration" started="20.02.2016 16:11:38">
+      <message importance="Normal"><![CDATA[Building solution configuration "Release|x86".]]></message>
+    </target>
+    <target name="ValidateToolsVersions" started="20.02.2016 16:11:38" />
+    <target name="ValidateProjects" started="20.02.2016 16:11:38" />
+    <target name="Rebuild" started="20.02.2016 16:11:38">
+      <project targets="Rebuild" file="V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TvPlugin\TvPlugin\TvPlugin.csproj" started="20.02.2016 16:11:38">
+        <target name="_CheckForInvalidConfigurationAndPlatform" started="20.02.2016 16:11:38" />
+        <target name="BeforeRebuild" started="20.02.2016 16:11:38" />
+        <target name="BeforeClean" started="20.02.2016 16:11:38" />
+        <target name="CoreClean" started="20.02.2016 16:11:38">
+          <message importance="Normal"><![CDATA[Deleting file "V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TvPlugin\TvPlugin\bin\Release\TvPlugin.dll".]]></message>
+          <message importance="Normal"><![CDATA[Deleting file "V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TvPlugin\TvPlugin\bin\Release\TvPlugin.pdb".]]></message>
+          <message importance="Normal"><![CDATA[Deleting file "V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TvPlugin\TvPlugin\bin\Release\Common.GUIPlugins.dll".]]></message>
+          <message importance="Normal"><![CDATA[Deleting file "V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TvPlugin\TvPlugin\bin\Release\Common.Utils.dll".]]></message>
+          <message importance="Normal"><![CDATA[Deleting file "V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TvPlugin\TvPlugin\bin\Release\Core.dll".]]></message>
+          <message importance="Normal"><![CDATA[Deleting file "V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TvPlugin\TvPlugin\bin\Release\Databases.dll".]]></message>
+          <message importance="Normal"><![CDATA[Deleting file "V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TvPlugin\TvPlugin\bin\Release\Dialogs.dll".]]></message>
+          <message importance="Normal"><![CDATA[Deleting file "V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TvPlugin\TvPlugin\bin\Release\Gentle.Common.dll".]]></message>
+          <message importance="Normal"><![CDATA[Deleting file "V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TvPlugin\TvPlugin\bin\Release\Gentle.Framework.dll".]]></message>
+          <message importance="Normal"><![CDATA[Deleting file "V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TvPlugin\TvPlugin\bin\Release\Gentle.Provider.MySQL.dll".]]></message>
+          <message importance="Normal"><![CDATA[Deleting file "V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TvPlugin\TvPlugin\bin\Release\Gentle.Provider.SQLServer.dll".]]></message>
+          <message importance="Normal"><![CDATA[Deleting file "V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TvPlugin\TvPlugin\bin\Release\GUIVideos.dll".]]></message>
+          <message importance="Normal"><![CDATA[Deleting file "V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TvPlugin\TvPlugin\bin\Release\log4net.dll".]]></message>
+          <message importance="Normal"><![CDATA[Deleting file "V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TvPlugin\TvPlugin\bin\Release\TvBusinessLayer.dll".]]></message>
+          <message importance="Normal"><![CDATA[Deleting file "V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TvPlugin\TvPlugin\bin\Release\TvControl.dll".]]></message>
+          <message importance="Normal"><![CDATA[Deleting file "V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TvPlugin\TvPlugin\bin\Release\TVDatabase.dll".]]></message>
+          <message importance="Normal"><![CDATA[Deleting file "V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TvPlugin\TvPlugin\bin\Release\TvLibrary.Interfaces.dll".]]></message>
+          <message importance="Normal"><![CDATA[Deleting file "V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TvPlugin\TvPlugin\bin\Release\Utils.dll".]]></message>
+          <message importance="Normal"><![CDATA[Deleting file "V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TvPlugin\TvPlugin\bin\Release\MySql.Data.dll".]]></message>
+          <message importance="Normal"><![CDATA[Deleting file "V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TvPlugin\TvPlugin\bin\Release\DirectShowLib.dll".]]></message>
+          <message importance="Normal"><![CDATA[Deleting file "V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TvPlugin\TvPlugin\bin\Release\LastFMLibrary.dll".]]></message>
+          <message importance="Normal"><![CDATA[Deleting file "V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TvPlugin\TvPlugin\bin\Release\Bass.Net.dll".]]></message>
+          <message importance="Normal"><![CDATA[Deleting file "V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TvPlugin\TvPlugin\bin\Release\taglib-sharp.dll".]]></message>
+          <message importance="Normal"><![CDATA[Deleting file "V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TvPlugin\TvPlugin\bin\Release\CSScriptLibrary.dll".]]></message>
+          <message importance="Normal"><![CDATA[Deleting file "V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TvPlugin\TvPlugin\bin\Release\AxInterop.WMPLib.dll".]]></message>
+          <message importance="Normal"><![CDATA[Deleting file "V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TvPlugin\TvPlugin\bin\Release\edtftpnet-1.2.2.dll".]]></message>
+          <message importance="Normal"><![CDATA[Deleting file "V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TvPlugin\TvPlugin\bin\Release\BassRegistration.dll".]]></message>
+          <message importance="Normal"><![CDATA[Deleting file "V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TvPlugin\TvPlugin\bin\Release\MediaPortal.Support.dll".]]></message>
+          <message importance="Normal"><![CDATA[Deleting file "V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TvPlugin\TvPlugin\bin\Release\Interop.WMPLib.dll".]]></message>
+          <message importance="Normal"><![CDATA[Deleting file "V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TvPlugin\TvPlugin\bin\Release\Microsoft.WindowsAPICodePack.Shell.dll".]]></message>
+          <message importance="Normal"><![CDATA[Deleting file "V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TvPlugin\TvPlugin\bin\Release\HtmlAgilityPack.dll".]]></message>
+          <message importance="Normal"><![CDATA[Deleting file "V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TvPlugin\TvPlugin\bin\Release\LastFMHelper.dll".]]></message>
+          <message importance="Normal"><![CDATA[Deleting file "V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TvPlugin\TvPlugin\bin\Release\Ionic.Zip.dll".]]></message>
+          <message importance="Normal"><![CDATA[Deleting file "V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TvPlugin\TvPlugin\bin\Release\Microsoft.WindowsAPICodePack.dll".]]></message>
+          <message importance="Normal"><![CDATA[Deleting file "V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TvPlugin\TvPlugin\bin\Release\Common.Utils.pdb".]]></message>
+          <message importance="Normal"><![CDATA[Deleting file "V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TvPlugin\TvPlugin\bin\Release\TvControl.pdb".]]></message>
+          <message importance="Normal"><![CDATA[Deleting file "V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TvPlugin\TvPlugin\bin\Release\TvControl.xml".]]></message>
+          <message importance="Normal"><![CDATA[Deleting file "V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TvPlugin\TvPlugin\bin\Release\TvBusinessLayer.pdb".]]></message>
+          <message importance="Normal"><![CDATA[Deleting file "V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TvPlugin\TvPlugin\bin\Release\TVDatabase.pdb".]]></message>
+          <message importance="Normal"><![CDATA[Deleting file "V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TvPlugin\TvPlugin\bin\Release\TvLibrary.Interfaces.pdb".]]></message>
+          <message importance="Normal"><![CDATA[Deleting file "V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TvPlugin\TvPlugin\bin\Release\TvLibrary.Interfaces.xml".]]></message>
+          <message importance="Normal"><![CDATA[Deleting file "V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TvPlugin\TvPlugin\bin\Release\Common.GUIPlugins.pdb".]]></message>
+          <message importance="Normal"><![CDATA[Deleting file "V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TvPlugin\TvPlugin\bin\Release\LastFMLibrary.pdb".]]></message>
+          <message importance="Normal"><![CDATA[Deleting file "V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TvPlugin\TvPlugin\bin\Release\Bass.Net.xml".]]></message>
+          <message importance="Normal"><![CDATA[Deleting file "V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TvPlugin\TvPlugin\bin\Release\HtmlAgilityPack.pdb".]]></message>
+          <message importance="Normal"><![CDATA[Deleting file "V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TvPlugin\TvPlugin\bin\Release\HtmlAgilityPack.xml".]]></message>
+          <message importance="Normal"><![CDATA[Deleting file "V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TvPlugin\TvPlugin\obj\Release\TvPlugin.csprojResolveAssemblyReference.cache".]]></message>
+          <message importance="Normal"><![CDATA[Deleting file "V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TvPlugin\TvPlugin\obj\Release\TvPlugin.TvSetupAudioLanguageForm.resources".]]></message>
+          <message importance="Normal"><![CDATA[Deleting file "V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TvPlugin\TvPlugin\obj\Release\TvPlugin.TvSetupForm.resources".]]></message>
+          <message importance="Normal"><![CDATA[Deleting file "V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TvPlugin\TvPlugin\obj\Release\TvPlugin.csproj.GenerateResource.Cache".]]></message>
+          <message importance="Normal"><![CDATA[Deleting file "V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TvPlugin\TvPlugin\obj\Release\TvPlugin.dll".]]></message>
+          <message importance="Normal"><![CDATA[Deleting file "V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TvPlugin\TvPlugin\obj\Release\TvPlugin.pdb".]]></message>
+        </target>
+        <target name="AssignProjectConfiguration" started="20.02.2016 16:11:38" />
+        <target name="_SplitProjectReferencesByFileExistence" started="20.02.2016 16:11:38" />
+        <target name="CleanReferencedProjects" started="20.02.2016 16:11:38">
+          <project targets="Clean" file="V:\Development\Mediaportal\MediaPortal\Common-MP-TVE3\Common.Utils\Common.Utils.csproj" started="20.02.2016 16:11:38">
+            <target name="_CheckForInvalidConfigurationAndPlatform" started="20.02.2016 16:11:38" />
+            <target name="BeforeClean" started="20.02.2016 16:11:38" />
+            <target name="CoreClean" started="20.02.2016 16:11:38">
+              <message importance="Normal"><![CDATA[Deleting file "V:\Development\Mediaportal\MediaPortal\Common-MP-TVE3\Common.Utils\bin\Release\Common.Utils.dll".]]></message>
+              <message importance="Normal"><![CDATA[Deleting file "V:\Development\Mediaportal\MediaPortal\Common-MP-TVE3\Common.Utils\bin\Release\Common.Utils.pdb".]]></message>
+              <message importance="Normal"><![CDATA[Deleting file "V:\Development\Mediaportal\MediaPortal\Common-MP-TVE3\Common.Utils\bin\Release\log4net.dll".]]></message>
+              <message importance="Normal"><![CDATA[Deleting file "V:\Development\Mediaportal\MediaPortal\Common-MP-TVE3\Common.Utils\obj\Release\Common.Utils.csprojResolveAssemblyReference.cache".]]></message>
+              <message importance="Normal"><![CDATA[Deleting file "V:\Development\Mediaportal\MediaPortal\Common-MP-TVE3\Common.Utils\obj\Release\Common.Utils.dll".]]></message>
+              <message importance="Normal"><![CDATA[Deleting file "V:\Development\Mediaportal\MediaPortal\Common-MP-TVE3\Common.Utils\obj\Release\Common.Utils.pdb".]]></message>
+            </target>
+            <target name="AssignProjectConfiguration" started="20.02.2016 16:11:38" />
+            <target name="_SplitProjectReferencesByFileExistence" started="20.02.2016 16:11:38" />
+            <target name="CleanReferencedProjects" started="20.02.2016 16:11:38" />
+            <target name="CleanPublishFolder" started="20.02.2016 16:11:38" />
+            <target name="AfterClean" started="20.02.2016 16:11:38" />
+            <target name="Clean" started="20.02.2016 16:11:38" />
+            <target name="CleanXsdCodeGen" started="20.02.2016 16:11:38" />
+          </project>
+          <project targets="Clean" file="V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TvControl\TvControl.csproj" started="20.02.2016 16:11:38">
+            <target name="_CheckForInvalidConfigurationAndPlatform" started="20.02.2016 16:11:38" />
+            <target name="BeforeClean" started="20.02.2016 16:11:38" />
+            <target name="CoreClean" started="20.02.2016 16:11:38">
+              <message importance="Normal"><![CDATA[Deleting file "V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TvControl\bin\Release\TvControl.XML".]]></message>
+              <message importance="Normal"><![CDATA[Deleting file "V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TvControl\bin\Release\TvControl.dll".]]></message>
+              <message importance="Normal"><![CDATA[Deleting file "V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TvControl\bin\Release\TvControl.pdb".]]></message>
+              <message importance="Normal"><![CDATA[Deleting file "V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TvControl\bin\Release\TvLibrary.Interfaces.dll".]]></message>
+              <message importance="Normal"><![CDATA[Deleting file "V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TvControl\bin\Release\DirectShowLib.dll".]]></message>
+              <message importance="Normal"><![CDATA[Deleting file "V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TvControl\bin\Release\Common.Utils.dll".]]></message>
+              <message importance="Normal"><![CDATA[Deleting file "V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TvControl\bin\Release\log4net.dll".]]></message>
+              <message importance="Normal"><![CDATA[Deleting file "V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TvControl\bin\Release\TvLibrary.Interfaces.pdb".]]></message>
+              <message importance="Normal"><![CDATA[Deleting file "V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TvControl\bin\Release\TvLibrary.Interfaces.xml".]]></message>
+              <message importance="Normal"><![CDATA[Deleting file "V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TvControl\bin\Release\Common.Utils.pdb".]]></message>
+              <message importance="Normal"><![CDATA[Deleting file "V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TvControl\obj\Release\TvControl.csprojResolveAssemblyReference.cache".]]></message>
+              <message importance="Normal"><![CDATA[Deleting file "V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TvControl\obj\Release\TvControl.dll".]]></message>
+              <message importance="Normal"><![CDATA[Deleting file "V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TvControl\obj\Release\TvControl.pdb".]]></message>
+            </target>
+            <target name="AssignProjectConfiguration" started="20.02.2016 16:11:38" />
+            <target name="_SplitProjectReferencesByFileExistence" started="20.02.2016 16:11:38" />
+            <target name="CleanReferencedProjects" started="20.02.2016 16:11:38">
+              <project targets="Clean" file="V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TvLibrary.Interfaces\TvLibrary.Interfaces.csproj" started="20.02.2016 16:11:38">
+                <target name="_CheckForInvalidConfigurationAndPlatform" started="20.02.2016 16:11:38" />
+                <target name="BeforeClean" started="20.02.2016 16:11:38" />
+                <target name="CoreClean" started="20.02.2016 16:11:38">
+                  <message importance="Normal"><![CDATA[Deleting file "V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TvLibrary.Interfaces\bin\Release\TvLibrary.Interfaces.XML".]]></message>
+                  <message importance="Normal"><![CDATA[Deleting file "V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TvLibrary.Interfaces\bin\Release\TvLibrary.Interfaces.dll".]]></message>
+                  <message importance="Normal"><![CDATA[Deleting file "V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TvLibrary.Interfaces\bin\Release\TvLibrary.Interfaces.pdb".]]></message>
+                  <message importance="Normal"><![CDATA[Deleting file "V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TvLibrary.Interfaces\bin\Release\Common.Utils.dll".]]></message>
+                  <message importance="Normal"><![CDATA[Deleting file "V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TvLibrary.Interfaces\bin\Release\DirectShowLib.dll".]]></message>
+                  <message importance="Normal"><![CDATA[Deleting file "V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TvLibrary.Interfaces\bin\Release\log4net.dll".]]></message>
+                  <message importance="Normal"><![CDATA[Deleting file "V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TvLibrary.Interfaces\bin\Release\Common.Utils.pdb".]]></message>
+                  <message importance="Normal"><![CDATA[Deleting file "V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TvLibrary.Interfaces\obj\Release\TvLibrary.Interfaces.csprojResolveAssemblyReference.cache".]]></message>
+                  <message importance="Normal"><![CDATA[Deleting file "V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TvLibrary.Interfaces\obj\Release\TvLibrary.Interfaces.dll".]]></message>
+                  <message importance="Normal"><![CDATA[Deleting file "V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TvLibrary.Interfaces\obj\Release\TvLibrary.Interfaces.pdb".]]></message>
+                </target>
+                <target name="AssignProjectConfiguration" started="20.02.2016 16:11:38" />
+                <target name="_SplitProjectReferencesByFileExistence" started="20.02.2016 16:11:38" />
+                <target name="CleanReferencedProjects" started="20.02.2016 16:11:38">
+                  <project targets="Clean" file="V:\Development\Mediaportal\MediaPortal\Common-MP-TVE3\Common.Utils\Common.Utils.csproj" started="20.02.2016 16:11:39" />
+                  <project targets="Clean" file="V:\Development\Mediaportal\MediaPortal\Common-MP-TVE3\DirectShowLib\DirectShowLib.csproj" started="20.02.2016 16:11:39">
+                    <target name="_CheckForInvalidConfigurationAndPlatform" started="20.02.2016 16:11:39" />
+                    <target name="BeforeClean" started="20.02.2016 16:11:39" />
+                    <target name="CoreClean" started="20.02.2016 16:11:39">
+                      <message importance="Normal"><![CDATA[Deleting file "V:\Development\Mediaportal\MediaPortal\Common-MP-TVE3\DirectShowLib\bin\Release\DirectShowLib.dll".]]></message>
+                      <message importance="Normal"><![CDATA[Deleting file "V:\Development\Mediaportal\MediaPortal\Common-MP-TVE3\DirectShowLib\obj\Release\DirectShowLib.csprojResolveAssemblyReference.cache".]]></message>
+                      <message importance="Normal"><![CDATA[Deleting file "V:\Development\Mediaportal\MediaPortal\Common-MP-TVE3\DirectShowLib\obj\Release\DirectShowLib.dll".]]></message>
+                    </target>
+                    <target name="AssignProjectConfiguration" started="20.02.2016 16:11:39" />
+                    <target name="_SplitProjectReferencesByFileExistence" started="20.02.2016 16:11:39" />
+                    <target name="CleanReferencedProjects" started="20.02.2016 16:11:39" />
+                    <target name="CleanPublishFolder" started="20.02.2016 16:11:39" />
+                    <target name="AfterClean" started="20.02.2016 16:11:39" />
+                    <target name="Clean" started="20.02.2016 16:11:39" />
+                    <target name="CleanXsdCodeGen" started="20.02.2016 16:11:39" />
+                  </project>
+                </target>
+                <target name="CleanPublishFolder" started="20.02.2016 16:11:39" />
+                <target name="AfterClean" started="20.02.2016 16:11:39" />
+                <target name="Clean" started="20.02.2016 16:11:39" />
+                <target name="CleanXsdCodeGen" started="20.02.2016 16:11:39" />
+              </project>
+              <project targets="Clean" file="V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TvLibrary.Interfaces\TvLibrary.Interfaces.csproj" started="20.02.2016 16:11:39" />
+            </target>
+            <target name="CleanPublishFolder" started="20.02.2016 16:11:39" />
+            <target name="AfterClean" started="20.02.2016 16:11:39" />
+            <target name="Clean" started="20.02.2016 16:11:39" />
+            <target name="CleanXsdCodeGen" started="20.02.2016 16:11:39" />
+          </project>
+          <project targets="Clean" file="V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TVDatabase\TvBusinessLayer\TvBusinessLayer.csproj" started="20.02.2016 16:11:39">
+            <target name="_CheckForInvalidConfigurationAndPlatform" started="20.02.2016 16:11:39" />
+            <target name="BeforeClean" started="20.02.2016 16:11:39" />
+            <target name="CoreClean" started="20.02.2016 16:11:39">
+              <message importance="Normal"><![CDATA[Deleting file "V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TVDatabase\TvBusinessLayer\bin\Release\TvBusinessLayer.dll".]]></message>
+              <message importance="Normal"><![CDATA[Deleting file "V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TVDatabase\TvBusinessLayer\bin\Release\TvBusinessLayer.pdb".]]></message>
+              <message importance="Normal"><![CDATA[Deleting file "V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TVDatabase\TvBusinessLayer\bin\Release\DirectShowLib.dll".]]></message>
+              <message importance="Normal"><![CDATA[Deleting file "V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TVDatabase\TvBusinessLayer\bin\Release\Gentle.Common.dll".]]></message>
+              <message importance="Normal"><![CDATA[Deleting file "V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TVDatabase\TvBusinessLayer\bin\Release\Gentle.Framework.dll".]]></message>
+              <message importance="Normal"><![CDATA[Deleting file "V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TVDatabase\TvBusinessLayer\bin\Release\Gentle.Provider.SQLServer.dll".]]></message>
+              <message importance="Normal"><![CDATA[Deleting file "V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TVDatabase\TvBusinessLayer\bin\Release\MySql.Data.dll".]]></message>
+              <message importance="Normal"><![CDATA[Deleting file "V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TVDatabase\TvBusinessLayer\bin\Release\TVDatabase.dll".]]></message>
+              <message importance="Normal"><![CDATA[Deleting file "V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TVDatabase\TvBusinessLayer\bin\Release\TvLibrary.Interfaces.dll".]]></message>
+              <message importance="Normal"><![CDATA[Deleting file "V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TVDatabase\TvBusinessLayer\bin\Release\Common.Utils.dll".]]></message>
+              <message importance="Normal"><![CDATA[Deleting file "V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TVDatabase\TvBusinessLayer\bin\Release\log4net.dll".]]></message>
+              <message importance="Normal"><![CDATA[Deleting file "V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TVDatabase\TvBusinessLayer\bin\Release\TvLibrary.Interfaces.pdb".]]></message>
+              <message importance="Normal"><![CDATA[Deleting file "V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TVDatabase\TvBusinessLayer\bin\Release\TvLibrary.Interfaces.xml".]]></message>
+              <message importance="Normal"><![CDATA[Deleting file "V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TVDatabase\TvBusinessLayer\bin\Release\TVDatabase.pdb".]]></message>
+              <message importance="Normal"><![CDATA[Deleting file "V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TVDatabase\TvBusinessLayer\bin\Release\Common.Utils.pdb".]]></message>
+              <message importance="Normal"><![CDATA[Deleting file "V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TVDatabase\TvBusinessLayer\obj\Release\TvBusinessLayer.csprojResolveAssemblyReference.cache".]]></message>
+              <message importance="Normal"><![CDATA[Deleting file "V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TVDatabase\TvBusinessLayer\obj\Release\TvBusinessLayer.dll".]]></message>
+              <message importance="Normal"><![CDATA[Deleting file "V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TVDatabase\TvBusinessLayer\obj\Release\TvBusinessLayer.pdb".]]></message>
+            </target>
+            <target name="AssignProjectConfiguration" started="20.02.2016 16:11:39" />
+            <target name="_SplitProjectReferencesByFileExistence" started="20.02.2016 16:11:39" />
+            <target name="CleanReferencedProjects" started="20.02.2016 16:11:39">
+              <project targets="Clean" file="V:\Development\Mediaportal\MediaPortal\Common-MP-TVE3\DirectShowLib\DirectShowLib.csproj" started="20.02.2016 16:11:39" />
+              <project targets="Clean" file="V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TvLibrary.Interfaces\TvLibrary.Interfaces.csproj" started="20.02.2016 16:11:39" />
+              <project targets="Clean" file="V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TVDatabase\TVDatabase.csproj" started="20.02.2016 16:11:39">
+                <target name="_CheckForInvalidConfigurationAndPlatform" started="20.02.2016 16:11:39" />
+                <target name="BeforeClean" started="20.02.2016 16:11:39" />
+                <target name="CoreClean" started="20.02.2016 16:11:39">
+                  <message importance="Normal"><![CDATA[Deleting file "V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TVDatabase\bin\Release\TVDatabase.dll".]]></message>
+                  <message importance="Normal"><![CDATA[Deleting file "V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TVDatabase\bin\Release\TVDatabase.pdb".]]></message>
+                  <message importance="Normal"><![CDATA[Deleting file "V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TVDatabase\bin\Release\Gentle.Common.dll".]]></message>
+                  <message importance="Normal"><![CDATA[Deleting file "V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TVDatabase\bin\Release\Gentle.Framework.dll".]]></message>
+                  <message importance="Normal"><![CDATA[Deleting file "V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TVDatabase\bin\Release\Gentle.Provider.SQLServer.dll".]]></message>
+                  <message importance="Normal"><![CDATA[Deleting file "V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TVDatabase\bin\Release\TvLibrary.Interfaces.dll".]]></message>
+                  <message importance="Normal"><![CDATA[Deleting file "V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TVDatabase\bin\Release\DirectShowLib.dll".]]></message>
+                  <message importance="Normal"><![CDATA[Deleting file "V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TVDatabase\bin\Release\Common.Utils.dll".]]></message>
+                  <message importance="Normal"><![CDATA[Deleting file "V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TVDatabase\bin\Release\log4net.dll".]]></message>
+                  <message importance="Normal"><![CDATA[Deleting file "V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TVDatabase\bin\Release\TvLibrary.Interfaces.pdb".]]></message>
+                  <message importance="Normal"><![CDATA[Deleting file "V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TVDatabase\bin\Release\TvLibrary.Interfaces.xml".]]></message>
+                  <message importance="Normal"><![CDATA[Deleting file "V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TVDatabase\bin\Release\Common.Utils.pdb".]]></message>
+                  <message importance="Normal"><![CDATA[Deleting file "V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TVDatabase\obj\Release\TVDatabase.csprojResolveAssemblyReference.cache".]]></message>
+                  <message importance="Normal"><![CDATA[Deleting file "V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TVDatabase\obj\Release\TVDatabase.dll".]]></message>
+                  <message importance="Normal"><![CDATA[Deleting file "V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TVDatabase\obj\Release\TVDatabase.pdb".]]></message>
+                </target>
+                <target name="AssignProjectConfiguration" started="20.02.2016 16:11:39" />
+                <target name="_SplitProjectReferencesByFileExistence" started="20.02.2016 16:11:39" />
+                <target name="CleanReferencedProjects" started="20.02.2016 16:11:39">
+                  <project targets="Clean" file="V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TvLibrary.Interfaces\TvLibrary.Interfaces.csproj" started="20.02.2016 16:11:39" />
+                </target>
+                <target name="CleanPublishFolder" started="20.02.2016 16:11:39" />
+                <target name="AfterClean" started="20.02.2016 16:11:39" />
+                <target name="Clean" started="20.02.2016 16:11:39" />
+                <target name="CleanXsdCodeGen" started="20.02.2016 16:11:39" />
+              </project>
+              <project targets="Clean" file="V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TVDatabase\TVDatabase.csproj" started="20.02.2016 16:11:39" />
+            </target>
+            <target name="CleanPublishFolder" started="20.02.2016 16:11:39" />
+            <target name="AfterClean" started="20.02.2016 16:11:39" />
+            <target name="Clean" started="20.02.2016 16:11:39" />
+            <target name="CleanXsdCodeGen" started="20.02.2016 16:11:39" />
+          </project>
+        </target>
+        <target name="CleanPublishFolder" started="20.02.2016 16:11:39" />
+        <target name="AfterClean" started="20.02.2016 16:11:39" />
+        <target name="Clean" started="20.02.2016 16:11:39" />
+        <target name="CleanXsdCodeGen" started="20.02.2016 16:11:39" />
+        <target name="BeforeBuild" started="20.02.2016 16:11:39" />
+        <target name="BuildOnlySettings" started="20.02.2016 16:11:39" />
+        <target name="GetFrameworkPaths" started="20.02.2016 16:11:39" />
+        <target name="GetReferenceAssemblyPaths" started="20.02.2016 16:11:39" />
+        <target name="PrepareForBuild" started="20.02.2016 16:11:39" />
+        <target name="BeforeResolveReferences" started="20.02.2016 16:11:39" />
+        <target name="ResolveProjectReferences" started="20.02.2016 16:11:39">
+          <project file="V:\Development\Mediaportal\MediaPortal\Common-MP-TVE3\Common.Utils\Common.Utils.csproj" started="20.02.2016 16:11:39">
+            <target name="BeforeBuild" started="20.02.2016 16:11:39" />
+            <target name="BuildOnlySettings" started="20.02.2016 16:11:39" />
+            <target name="GetFrameworkPaths" started="20.02.2016 16:11:39" />
+            <target name="GetReferenceAssemblyPaths" started="20.02.2016 16:11:39" />
+            <target name="PrepareForBuild" started="20.02.2016 16:11:39" />
+            <target name="BeforeResolveReferences" started="20.02.2016 16:11:39" />
+            <target name="ResolveProjectReferences" started="20.02.2016 16:11:39" />
+            <target name="GetInstalledSDKLocations" started="20.02.2016 16:11:39" />
+            <target name="ResolveSDKReferences" started="20.02.2016 16:11:39" />
+            <target name="ExpandSDKReferences" started="20.02.2016 16:11:39" />
+            <target name="ResolveAssemblyReferences" started="20.02.2016 16:11:39" />
+            <target name="AfterResolveReferences" started="20.02.2016 16:11:39" />
+            <target name="ResolveReferences" started="20.02.2016 16:11:39" />
+            <target name="AfterMarkupCompilePass1" started="20.02.2016 16:11:39" />
+            <target name="FileClassification" started="20.02.2016 16:11:39" />
+            <target name="AssignTargetPaths" started="20.02.2016 16:11:39" />
+            <target name="SplitResourcesByCulture" started="20.02.2016 16:11:39" />
+            <target name="CreateCustomManifestResourceNames" started="20.02.2016 16:11:39" />
+            <target name="PrepareResourceNames" started="20.02.2016 16:11:39" />
+            <target name="BeforeResGen" started="20.02.2016 16:11:39" />
+            <target name="CoreResGen" started="20.02.2016 16:11:39" />
+            <target name="AfterResGen" started="20.02.2016 16:11:39" />
+            <target name="ResGen" started="20.02.2016 16:11:39" />
+            <target name="PrepareResources" started="20.02.2016 16:11:39" />
+            <target name="_SetEmbeddedWin32ManifestProperties" started="20.02.2016 16:11:39" />
+            <target name="SetWin32ManifestProperties" started="20.02.2016 16:11:39" />
+            <target name="_GenerateCompileInputs" started="20.02.2016 16:11:39" />
+            <target name="_SetTargetFrameworkMonikerAttribute" started="20.02.2016 16:11:39" />
+            <target name="GenerateTargetFrameworkMonikerAttribute" started="20.02.2016 16:11:39">
+              <message importance="Normal"><![CDATA[Skipping target "GenerateTargetFrameworkMonikerAttribute" because all output files are up-to-date with respect to the input files.]]></message>
+            </target>
+            <target name="BeforeCompile" started="20.02.2016 16:11:39" />
+            <target name="PreXsdCodeGen" started="20.02.2016 16:11:39" />
+            <target name="CoreCompile" started="20.02.2016 16:11:39">
+              <message importance="High"><![CDATA[C:\Windows\Microsoft.NET\Framework\v4.0.30319\Csc.exe /noconfig /nowarn:1701,1702 /nostdlib+ /errorreport:prompt /warn:4 /define:TRACE /highentropyva- /reference:V:\Development\Mediaportal\MediaPortal\mediaportal\MediaPortal.Base\log4net.dll /reference:"C:\Program Files\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\mscorlib.dll" /reference:"C:\Program Files\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\System.Core.dll" /reference:"C:\Program Files\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\System.Data.dll" /reference:"C:\Program Files\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\System.dll" /reference:"C:\Program Files\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\System.Xml.dll" /debug:pdbonly /filealign:512 /optimize+ /out:obj\Release\Common.Utils.dll /target:library /utf8output ..\SolutionInfo.cs CompatibilityInfo.cs Compatibility\CompatibilityManager.cs Compatibility\CompatibleVersionAttribute.cs Compatibility\SubsystemVersionAttribute.cs Compatibility\UsesSubsystemAttribute.cs Logger\CommonLog4NetLogger.cs Logger\CommonLogger.cs Logger\CommonLogLevel.cs Logger\CommonLogType.cs Logger\ICommonLogger.cs Properties\AssemblyInfo.cs "c:\Temp\.NETFramework,Version=v4.0.AssemblyAttributes.cs"]]></message>
+            </target>
+            <target name="AfterCompile" started="20.02.2016 16:11:39" />
+            <target name="AfterCompileWinFX" started="20.02.2016 16:11:39" />
+            <target name="_AfterCompileWinFXInternal" started="20.02.2016 16:11:39" />
+            <target name="Compile" started="20.02.2016 16:11:39" />
+            <target name="_GenerateSatelliteAssemblyInputs" started="20.02.2016 16:11:39" />
+            <target name="CreateSatelliteAssemblies" started="20.02.2016 16:11:39" />
+            <target name="GetTargetPath" started="20.02.2016 16:11:39" />
+            <target name="_CopyFilesMarkedCopyLocal" started="20.02.2016 16:11:39">
+              <message importance="Normal"><![CDATA[Copying file from "V:\Development\Mediaportal\MediaPortal\mediaportal\MediaPortal.Base\log4net.dll" to "bin\Release\log4net.dll".]]></message>
+            </target>
+            <target name="GetCopyToOutputDirectoryXamlAppDefs" started="20.02.2016 16:11:39" />
+            <target name="GetCopyToOutputDirectoryItems" started="20.02.2016 16:11:39" />
+            <target name="_CopySourceItemsToOutputDirectory" started="20.02.2016 16:11:39" />
+            <target name="_CheckForCompileOutputs" started="20.02.2016 16:11:39" />
+            <target name="CopyFilesToOutputDirectory" started="20.02.2016 16:11:39">
+              <message importance="Normal"><![CDATA[Copying file from "obj\Release\Common.Utils.dll" to "bin\Release\Common.Utils.dll".]]></message>
+              <message importance="High"><![CDATA[Common.Utils -> V:\Development\Mediaportal\MediaPortal\Common-MP-TVE3\Common.Utils\bin\Release\Common.Utils.dll]]></message>
+              <message importance="Normal"><![CDATA[Copying file from "obj\Release\Common.Utils.pdb" to "bin\Release\Common.Utils.pdb".]]></message>
+            </target>
+            <target name="PrepareForRun" started="20.02.2016 16:11:39" />
+            <target name="_CleanGetCurrentAndPriorFileWrites" started="20.02.2016 16:11:39" />
+            <target name="IncrementalClean" started="20.02.2016 16:11:39" />
+            <target name="CoreBuild" started="20.02.2016 16:11:39" />
+            <target name="AfterBuild" started="20.02.2016 16:11:39" />
+            <target name="Build" started="20.02.2016 16:11:39" />
+          </project>
+          <project file="V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TvControl\TvControl.csproj" started="20.02.2016 16:11:39">
+            <target name="BeforeBuild" started="20.02.2016 16:11:39" />
+            <target name="BuildOnlySettings" started="20.02.2016 16:11:39" />
+            <target name="GetFrameworkPaths" started="20.02.2016 16:11:39" />
+            <target name="GetReferenceAssemblyPaths" started="20.02.2016 16:11:39" />
+            <target name="PrepareForBuild" started="20.02.2016 16:11:39" />
+            <target name="BeforeResolveReferences" started="20.02.2016 16:11:39" />
+            <target name="ResolveProjectReferences" started="20.02.2016 16:11:39">
+              <project file="V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TvLibrary.Interfaces\TvLibrary.Interfaces.csproj" started="20.02.2016 16:11:39">
+                <target name="BeforeBuild" started="20.02.2016 16:11:39" />
+                <target name="BuildOnlySettings" started="20.02.2016 16:11:39" />
+                <target name="GetFrameworkPaths" started="20.02.2016 16:11:39" />
+                <target name="GetReferenceAssemblyPaths" started="20.02.2016 16:11:39" />
+                <target name="PrepareForBuild" started="20.02.2016 16:11:39" />
+                <target name="BeforeResolveReferences" started="20.02.2016 16:11:39" />
+                <target name="ResolveProjectReferences" started="20.02.2016 16:11:39">
+                  <project file="V:\Development\Mediaportal\MediaPortal\Common-MP-TVE3\Common.Utils\Common.Utils.csproj" started="20.02.2016 16:11:39" />
+                  <project file="V:\Development\Mediaportal\MediaPortal\Common-MP-TVE3\DirectShowLib\DirectShowLib.csproj" started="20.02.2016 16:11:39">
+                    <target name="BeforeBuild" started="20.02.2016 16:11:39" />
+                    <target name="BuildOnlySettings" started="20.02.2016 16:11:39" />
+                    <target name="GetFrameworkPaths" started="20.02.2016 16:11:39" />
+                    <target name="GetReferenceAssemblyPaths" started="20.02.2016 16:11:39" />
+                    <target name="PrepareForBuild" started="20.02.2016 16:11:39" />
+                    <target name="BeforeResolveReferences" started="20.02.2016 16:11:39" />
+                    <target name="ResolveProjectReferences" started="20.02.2016 16:11:39" />
+                    <target name="GetInstalledSDKLocations" started="20.02.2016 16:11:39" />
+                    <target name="ResolveSDKReferences" started="20.02.2016 16:11:39" />
+                    <target name="ExpandSDKReferences" started="20.02.2016 16:11:39" />
+                    <target name="ResolveAssemblyReferences" started="20.02.2016 16:11:39" />
+                    <target name="AfterResolveReferences" started="20.02.2016 16:11:39" />
+                    <target name="ResolveReferences" started="20.02.2016 16:11:39" />
+                    <target name="AfterMarkupCompilePass1" started="20.02.2016 16:11:39" />
+                    <target name="FileClassification" started="20.02.2016 16:11:39" />
+                    <target name="AssignTargetPaths" started="20.02.2016 16:11:39" />
+                    <target name="SplitResourcesByCulture" started="20.02.2016 16:11:39" />
+                    <target name="CreateCustomManifestResourceNames" started="20.02.2016 16:11:39" />
+                    <target name="PrepareResourceNames" started="20.02.2016 16:11:39" />
+                    <target name="BeforeResGen" started="20.02.2016 16:11:39" />
+                    <target name="CoreResGen" started="20.02.2016 16:11:39" />
+                    <target name="AfterResGen" started="20.02.2016 16:11:39" />
+                    <target name="ResGen" started="20.02.2016 16:11:39" />
+                    <target name="PrepareResources" started="20.02.2016 16:11:39" />
+                    <target name="_SetEmbeddedWin32ManifestProperties" started="20.02.2016 16:11:39" />
+                    <target name="SetWin32ManifestProperties" started="20.02.2016 16:11:39" />
+                    <target name="_GenerateCompileInputs" started="20.02.2016 16:11:39" />
+                    <target name="_SetTargetFrameworkMonikerAttribute" started="20.02.2016 16:11:39" />
+                    <target name="GenerateTargetFrameworkMonikerAttribute" started="20.02.2016 16:11:39">
+                      <message importance="Normal"><![CDATA[Skipping target "GenerateTargetFrameworkMonikerAttribute" because all output files are up-to-date with respect to the input files.]]></message>
+                    </target>
+                    <target name="BeforeCompile" started="20.02.2016 16:11:39" />
+                    <target name="PreXsdCodeGen" started="20.02.2016 16:11:39" />
+                    <target name="CoreCompile" started="20.02.2016 16:11:39">
+                      <message importance="High"><![CDATA[C:\Windows\Microsoft.NET\Framework\v4.0.30319\Csc.exe /noconfig /unsafe- /checked- /nowarn:1701,1702 /nostdlib+ /errorreport:prompt /warn:4 /baseaddress:285212672 /define:ALLOW_UNTESTED_INTERFACES /highentropyva- /reference:"C:\Program Files\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\mscorlib.dll" /reference:"C:\Program Files\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\System.Core.dll" /reference:"C:\Program Files\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\System.Data.dll" /reference:"C:\Program Files\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\System.dll" /reference:"C:\Program Files\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\System.Drawing.dll" /reference:"C:\Program Files\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\System.Windows.Forms.dll" /reference:"C:\Program Files\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\System.Xml.dll" /debug- /filealign:4096 /optimize+ /out:obj\Release\DirectShowLib.dll /target:library /warnaserror- /utf8output amstream.cs amvideo.cs AssemblyInfo.cs atscpsipparser.cs austream.cs AxCore.cs AXExtend.cs BDAIface.cs Bdatif.cs BDATypes.cs Control.cs DES.cs DevEnum.cs DMODShow.cs dsattrib.cs DsUtils.cs dvbsiparser.cs DVDIf.cs DynGraph.cs encdec.cs EvCode.cs IL21Dec.cs MediaObj.cs MediaParam.cs Misc.cs Mixerocx.cs mmstream.cs mpconfig.cs Mpeg2Data.cs mpeg2psiparser.cs Mpeg2Structs.cs other.cs PlayList.cs QEdit.cs qnetwork.cs RegBag.cs Sbe.cs Tuner.cs TvRatings.cs Uuids.cs Vidcap.cs VidPort.cs Vmr9.cs VmRender.cs "c:\Temp\.NETFramework,Version=v4.0.AssemblyAttributes.cs"]]></message>
+                      <warning code="CS3001" file="BDAIface.cs" line="392" column="23"><![CDATA[Argument type 'ushort' is not CLS-compliant]]></warning>
+                      <warning code="CS3001" file="BDAIface.cs" line="716" column="19"><![CDATA[Argument type 'ulong' is not CLS-compliant]]></warning>
+                      <warning code="CS3001" file="BDAIface.cs" line="719" column="19"><![CDATA[Argument type 'out ulong' is not CLS-compliant]]></warning>
+                      <warning code="CS3005" file="Uuids.cs" line="1770" column="33"><![CDATA[Identifier 'DirectShowLib.MediaSubType.xvid' differing only in case is not CLS-compliant]]></warning>
+                      <warning code="CS3005" file="Uuids.cs" line="1776" column="33"><![CDATA[Identifier 'DirectShowLib.MediaSubType.dx50' differing only in case is not CLS-compliant]]></warning>
+                      <warning code="CS3005" file="Uuids.cs" line="1782" column="33"><![CDATA[Identifier 'DirectShowLib.MediaSubType.divx' differing only in case is not CLS-compliant]]></warning>
+                    </target>
+                    <target name="AfterCompile" started="20.02.2016 16:11:39" />
+                    <target name="AfterCompileWinFX" started="20.02.2016 16:11:39" />
+                    <target name="_AfterCompileWinFXInternal" started="20.02.2016 16:11:39" />
+                    <target name="Compile" started="20.02.2016 16:11:39" />
+                    <target name="_GenerateSatelliteAssemblyInputs" started="20.02.2016 16:11:39" />
+                    <target name="CreateSatelliteAssemblies" started="20.02.2016 16:11:39" />
+                    <target name="GetTargetPath" started="20.02.2016 16:11:39" />
+                    <target name="GetCopyToOutputDirectoryXamlAppDefs" started="20.02.2016 16:11:39" />
+                    <target name="GetCopyToOutputDirectoryItems" started="20.02.2016 16:11:39" />
+                    <target name="_CopySourceItemsToOutputDirectory" started="20.02.2016 16:11:39" />
+                    <target name="_CheckForCompileOutputs" started="20.02.2016 16:11:39" />
+                    <target name="CopyFilesToOutputDirectory" started="20.02.2016 16:11:39">
+                      <message importance="Normal"><![CDATA[Copying file from "obj\Release\DirectShowLib.dll" to "bin\Release\DirectShowLib.dll".]]></message>
+                      <message importance="High"><![CDATA[DirectShowLib -> V:\Development\Mediaportal\MediaPortal\Common-MP-TVE3\DirectShowLib\bin\Release\DirectShowLib.dll]]></message>
+                    </target>
+                    <target name="PrepareForRun" started="20.02.2016 16:11:39" />
+                    <target name="_CleanGetCurrentAndPriorFileWrites" started="20.02.2016 16:11:39" />
+                    <target name="IncrementalClean" started="20.02.2016 16:11:39" />
+                    <target name="CoreBuild" started="20.02.2016 16:11:39" />
+                    <target name="AfterBuild" started="20.02.2016 16:11:39" />
+                    <target name="Build" started="20.02.2016 16:11:39" />
+                  </project>
+                  <project targets="GetNativeManifest" file="V:\Development\Mediaportal\MediaPortal\Common-MP-TVE3\Common.Utils\Common.Utils.csproj" started="20.02.2016 16:11:39">
+                    <target name="GetNativeManifest" started="20.02.2016 16:11:39" />
+                  </project>
+                  <project targets="GetNativeManifest" file="V:\Development\Mediaportal\MediaPortal\Common-MP-TVE3\DirectShowLib\DirectShowLib.csproj" started="20.02.2016 16:11:39">
+                    <target name="GetNativeManifest" started="20.02.2016 16:11:39" />
+                  </project>
+                </target>
+                <target name="GetInstalledSDKLocations" started="20.02.2016 16:11:39" />
+                <target name="ResolveSDKReferences" started="20.02.2016 16:11:39" />
+                <target name="ExpandSDKReferences" started="20.02.2016 16:11:39" />
+                <target name="ResolveAssemblyReferences" started="20.02.2016 16:11:39" />
+                <target name="AfterResolveReferences" started="20.02.2016 16:11:40" />
+                <target name="ResolveReferences" started="20.02.2016 16:11:40" />
+                <target name="AfterMarkupCompilePass1" started="20.02.2016 16:11:40" />
+                <target name="FileClassification" started="20.02.2016 16:11:40" />
+                <target name="AssignTargetPaths" started="20.02.2016 16:11:40" />
+                <target name="SplitResourcesByCulture" started="20.02.2016 16:11:40" />
+                <target name="CreateCustomManifestResourceNames" started="20.02.2016 16:11:40" />
+                <target name="PrepareResourceNames" started="20.02.2016 16:11:40" />
+                <target name="BeforeResGen" started="20.02.2016 16:11:40" />
+                <target name="CoreResGen" started="20.02.2016 16:11:40" />
+                <target name="AfterResGen" started="20.02.2016 16:11:40" />
+                <target name="ResGen" started="20.02.2016 16:11:40" />
+                <target name="PrepareResources" started="20.02.2016 16:11:40" />
+                <target name="_SetEmbeddedWin32ManifestProperties" started="20.02.2016 16:11:40" />
+                <target name="SetWin32ManifestProperties" started="20.02.2016 16:11:40" />
+                <target name="_GenerateCompileInputs" started="20.02.2016 16:11:40" />
+                <target name="_SetTargetFrameworkMonikerAttribute" started="20.02.2016 16:11:40" />
+                <target name="GenerateTargetFrameworkMonikerAttribute" started="20.02.2016 16:11:40">
+                  <message importance="Normal"><![CDATA[Skipping target "GenerateTargetFrameworkMonikerAttribute" because all output files are up-to-date with respect to the input files.]]></message>
+                </target>
+                <target name="BeforeCompile" started="20.02.2016 16:11:40" />
+                <target name="PreXsdCodeGen" started="20.02.2016 16:11:40" />
+                <target name="CoreCompile" started="20.02.2016 16:11:40">
+                  <message importance="High"><![CDATA[C:\Windows\Microsoft.NET\Framework\v4.0.30319\Csc.exe /noconfig /nowarn:1701,1702 /nostdlib+ /platform:x86 /errorreport:prompt /warn:4 /doc:bin\Release\TvLibrary.Interfaces.XML /define:TRACE /highentropyva- /reference:V:\Development\Mediaportal\MediaPortal\Common-MP-TVE3\Common.Utils\bin\Release\Common.Utils.dll /reference:V:\Development\Mediaportal\MediaPortal\Common-MP-TVE3\DirectShowLib\bin\Release\DirectShowLib.dll /reference:V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TVDatabase\references\log4net.dll /reference:"C:\Program Files\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\mscorlib.dll" /reference:"C:\Program Files\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\System.Core.dll" /reference:"C:\Program Files\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\System.Data.dll" /reference:"C:\Program Files\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\System.dll" /reference:"C:\Program Files\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\System.Drawing.dll" /reference:"C:\Program Files\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\System.Xml.dll" /debug:pdbonly /optimize+ /out:obj\Release\TvLibrary.Interfaces.dll /target:library /utf8output ..\..\..\Common-MP-TVE3\SolutionInfo.cs CardType.cs ChannelLinkage\LinkedChannel.cs ChannelLinkage\PortalChannel.cs DvbTextConverter.cs Epg\MpGenre.cs HardwareProviders\IHardwareProvider.cs Implementations\Analog\Configuration.cs Implementations\Analog\GraphComponents\Capture.cs Implementations\Analog\GraphComponents\Crossbar.cs Implementations\Analog\GraphComponents\Teletext.cs Implementations\Analog\GraphComponents\TvAudio.cs Implementations\Analog\GraphComponents\Graph.cs Implementations\Analog\GraphComponents\Tuner.cs Implementations\Channels\DVBIPChannel.cs Implementations\Channels\RadioWebStreamChannel.cs Implementations\VideoStream\VideoStream.cs Interfaces\ICiMenuActions.cs Interfaces\ICiMenuCallbacks.cs Interfaces\IDeviceEventListener.cs Interfaces\IDiSEqCMotor.cs Interfaces\ITVChannelLinkage.cs Interfaces\ITvSubChannel.cs Interfaces\IVideoStream.cs Interfaces\TvPluginCallback.cs Logging\FileLogger.cs Logging\ILogger.cs Logging\Log.cs Logging\Log4netLogger.cs Logging\LogLevel.cs PathManager.cs RtspClient.cs ScanParameters.cs ServiceProvider\ServiceProvider.cs Epg\Languages.cs Implementations\AudioStream\AnalogAudioStream.cs Implementations\Channels\AnalogChannel.cs Implementations\Channels\ATSCChannel.cs Implementations\AudioStream\DVBAudioStream.cs Implementations\Channels\DVBBaseChannel.cs Implementations\Channels\DVBCChannel.cs Implementations\Channels\DVBSChannel.cs Implementations\Channels\DVBTChannel.cs Countries\Country.cs Countries\CountryCollection.cs Epg\EpgChannel.cs Epg\EpgLanguageText.cs Epg\EpgProgram.cs Interfaces\IAudioStream.cs Interfaces\IChannel.cs Interfaces\IQuality.cs Interfaces\ITeletext.cs Interfaces\ITVCard.cs Interfaces\ITVEPG.cs Interfaces\ITVScanning.cs Properties\AssemblyInfo.cs ServiceProvider\GlobalServiceProvider.cs Simmetrics\AbstractStringMetric.cs Simmetrics\AbstractSubstitutionCost.cs Simmetrics\InterfaceStringMetric.cs Simmetrics\InterfaceSubstitutionCost.cs Simmetrics\Levenstein.cs Simmetrics\MathFuncs.cs Simmetrics\SubCost01.cs TvConstants.cs TvException.cs "c:\Temp\.NETFramework,Version=v4.0.AssemblyAttributes.cs"]]></message>
+                  <warning code="CS1591" file="Epg\MpGenre.cs" line="29" column="16"><![CDATA[Missing XML comment for publicly visible type or member 'TvLibrary.Epg.MpGenre']]></warning>
+                  <warning code="CS1573" file="Logging\ILogger.cs" line="110" column="45"><![CDATA[Parameter 'ex' has no matching param tag in the XML comment for 'TvLibrary.Log.ILogger.WriteFile(string, System.Exception)' (but other parameters do)]]></warning>
+                  <warning code="CS1591" file="Logging\FileLogger.cs" line="55" column="24"><![CDATA[Missing XML comment for publicly visible type or member 'TvLibrary.Log.FileLogger._minLevel']]></warning>
+                  <warning code="CS1591" file="Logging\FileLogger.cs" line="92" column="17"><![CDATA[Missing XML comment for publicly visible type or member 'TvLibrary.Log.FileLogger.Error(System.Exception)']]></warning>
+                  <warning code="CS1591" file="Logging\FileLogger.cs" line="152" column="17"><![CDATA[Missing XML comment for publicly visible type or member 'TvLibrary.Log.FileLogger.Warn(string, params object[])']]></warning>
+                  <warning code="CS1591" file="Logging\FileLogger.cs" line="213" column="17"><![CDATA[Missing XML comment for publicly visible type or member 'TvLibrary.Log.FileLogger.WriteFile(string, System.Exception)']]></warning>
+                  <warning code="CS1591" file="Logging\FileLogger.cs" line="187" column="21"><![CDATA[Missing XML comment for publicly visible type or member 'TvLibrary.Log.FileLogger.Level']]></warning>
+                  <warning code="CS1591" file="Logging\Log4netLogger.cs" line="32" column="16"><![CDATA[Missing XML comment for publicly visible type or member 'TvLibrary.Log.Log4netLogger']]></warning>
+                  <warning code="CS1591" file="Logging\Log4netLogger.cs" line="35" column="24"><![CDATA[Missing XML comment for publicly visible type or member 'TvLibrary.Log.Log4netLogger._minLevel']]></warning>
+                  <warning code="CS1591" file="Logging\Log4netLogger.cs" line="36" column="20"><![CDATA[Missing XML comment for publicly visible type or member 'TvLibrary.Log.Log4netLogger._logger']]></warning>
+                  <warning code="CS1591" file="Logging\Log4netLogger.cs" line="40" column="12"><![CDATA[Missing XML comment for publicly visible type or member 'TvLibrary.Log.Log4netLogger.Log4netLogger(string)']]></warning>
+                  <warning code="CS1591" file="Logging\Log4netLogger.cs" line="86" column="17"><![CDATA[Missing XML comment for publicly visible type or member 'TvLibrary.Log.Log4netLogger.Epg(string, params object[])']]></warning>
+                  <warning code="CS1591" file="Logging\Log4netLogger.cs" line="202" column="17"><![CDATA[Missing XML comment for publicly visible type or member 'TvLibrary.Log.Log4netLogger.Write(System.Exception)']]></warning>
+                  <warning code="CS1591" file="Logging\Log4netLogger.cs" line="209" column="17"><![CDATA[Missing XML comment for publicly visible type or member 'TvLibrary.Log.Log4netLogger.Write(string, params object[])']]></warning>
+                  <warning code="CS1591" file="Logging\Log4netLogger.cs" line="214" column="17"><![CDATA[Missing XML comment for publicly visible type or member 'TvLibrary.Log.Log4netLogger.WriteThreadId(string, params object[])']]></warning>
+                  <warning code="CS1591" file="Logging\Log4netLogger.cs" line="219" column="17"><![CDATA[Missing XML comment for publicly visible type or member 'TvLibrary.Log.Log4netLogger.WriteFile(string, params object[])']]></warning>
+                  <warning code="CS1591" file="Logging\Log4netLogger.cs" line="224" column="17"><![CDATA[Missing XML comment for publicly visible type or member 'TvLibrary.Log.Log4netLogger.WriteFile(string, System.Exception)']]></warning>
+                  <warning code="CS1591" file="Logging\LogLevel.cs" line="23" column="15"><![CDATA[Missing XML comment for publicly visible type or member 'TvLibrary.Log.LogLevel']]></warning>
+                  <warning code="CS1591" file="Logging\LogLevel.cs" line="25" column="5"><![CDATA[Missing XML comment for publicly visible type or member 'TvLibrary.Log.LogLevel.None']]></warning>
+                  <warning code="CS1591" file="Logging\LogLevel.cs" line="26" column="5"><![CDATA[Missing XML comment for publicly visible type or member 'TvLibrary.Log.LogLevel.Critical']]></warning>
+                  <warning code="CS1591" file="Logging\LogLevel.cs" line="27" column="5"><![CDATA[Missing XML comment for publicly visible type or member 'TvLibrary.Log.LogLevel.Error']]></warning>
+                  <warning code="CS1591" file="Logging\LogLevel.cs" line="28" column="5"><![CDATA[Missing XML comment for publicly visible type or member 'TvLibrary.Log.LogLevel.Warning']]></warning>
+                  <warning code="CS1591" file="Logging\LogLevel.cs" line="29" column="5"><![CDATA[Missing XML comment for publicly visible type or member 'TvLibrary.Log.LogLevel.Information']]></warning>
+                  <warning code="CS1591" file="Logging\LogLevel.cs" line="30" column="5"><![CDATA[Missing XML comment for publicly visible type or member 'TvLibrary.Log.LogLevel.Debug']]></warning>
+                  <warning code="CS1591" file="Logging\LogLevel.cs" line="31" column="5"><![CDATA[Missing XML comment for publicly visible type or member 'TvLibrary.Log.LogLevel.All']]></warning>
+                  <warning code="CS1591" file="PathManager.cs" line="5" column="16"><![CDATA[Missing XML comment for publicly visible type or member 'TvLibrary.Interfaces.PathManager']]></warning>
+                  <warning code="CS1591" file="Epg\Languages.cs" line="36" column="12"><![CDATA[Missing XML comment for publicly visible type or member 'TvLibrary.Epg.Languages.Languages()']]></warning>
+                  <warning code="CS1591" file="Epg\Languages.cs" line="48" column="29"><![CDATA[Missing XML comment for publicly visible type or member 'TvLibrary.Epg.Languages.Instance']]></warning>
+                  <warning code="CS1591" file="Interfaces\ITVCard.cs" line="27" column="24"><![CDATA[Missing XML comment for publicly visible type or member 'TvLibrary.Interfaces.OnNewSubChannelDelegate']]></warning>
+                  <warning code="CS1591" file="Interfaces\ITVCard.cs" line="307" column="19"><![CDATA[Missing XML comment for publicly visible type or member 'TvLibrary.Interfaces.ITVCard.GetFirstSubChannel()']]></warning>
+                  <warning code="CS1591" file="Interfaces\ITVCard.cs" line="323" column="10"><![CDATA[Missing XML comment for publicly visible type or member 'TvLibrary.Interfaces.ITVCard.CancelTune(int)']]></warning>
+                  <warning code="CS1591" file="Interfaces\ITVCard.cs" line="324" column="35"><![CDATA[Missing XML comment for publicly visible type or member 'TvLibrary.Interfaces.ITVCard.OnNewSubChannelEvent']]></warning>
+                </target>
+                <target name="AfterCompile" started="20.02.2016 16:11:40" />
+                <target name="AfterCompileWinFX" started="20.02.2016 16:11:40" />
+                <target name="_AfterCompileWinFXInternal" started="20.02.2016 16:11:40" />
+                <target name="Compile" started="20.02.2016 16:11:40" />
+                <target name="_GenerateSatelliteAssemblyInputs" started="20.02.2016 16:11:40" />
+                <target name="CreateSatelliteAssemblies" started="20.02.2016 16:11:40" />
+                <target name="GetTargetPath" started="20.02.2016 16:11:40" />
+                <target name="_CopyFilesMarkedCopyLocal" started="20.02.2016 16:11:40">
+                  <message importance="Normal"><![CDATA[Copying file from "V:\Development\Mediaportal\MediaPortal\Common-MP-TVE3\Common.Utils\bin\Release\Common.Utils.dll" to "bin\Release\Common.Utils.dll".]]></message>
+                  <message importance="Normal"><![CDATA[Copying file from "V:\Development\Mediaportal\MediaPortal\Common-MP-TVE3\DirectShowLib\bin\Release\DirectShowLib.dll" to "bin\Release\DirectShowLib.dll".]]></message>
+                  <message importance="Normal"><![CDATA[Copying file from "V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TVDatabase\references\log4net.dll" to "bin\Release\log4net.dll".]]></message>
+                  <message importance="Normal"><![CDATA[Copying file from "V:\Development\Mediaportal\MediaPortal\Common-MP-TVE3\Common.Utils\bin\Release\Common.Utils.pdb" to "bin\Release\Common.Utils.pdb".]]></message>
+                </target>
+                <target name="GetCopyToOutputDirectoryXamlAppDefs" started="20.02.2016 16:11:40" />
+                <target name="GetCopyToOutputDirectoryItems" started="20.02.2016 16:11:40">
+                  <project targets="GetCopyToOutputDirectoryItems" file="V:\Development\Mediaportal\MediaPortal\Common-MP-TVE3\Common.Utils\Common.Utils.csproj" started="20.02.2016 16:11:40" />
+                  <project targets="GetCopyToOutputDirectoryItems" file="V:\Development\Mediaportal\MediaPortal\Common-MP-TVE3\DirectShowLib\DirectShowLib.csproj" started="20.02.2016 16:11:40" />
+                </target>
+                <target name="_CopySourceItemsToOutputDirectory" started="20.02.2016 16:11:40" />
+                <target name="_CheckForCompileOutputs" started="20.02.2016 16:11:40" />
+                <target name="CopyFilesToOutputDirectory" started="20.02.2016 16:11:40">
+                  <message importance="Normal"><![CDATA[Copying file from "obj\Release\TvLibrary.Interfaces.dll" to "bin\Release\TvLibrary.Interfaces.dll".]]></message>
+                  <message importance="High"><![CDATA[TvLibrary.Interfaces -> V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TvLibrary.Interfaces\bin\Release\TvLibrary.Interfaces.dll]]></message>
+                  <message importance="Normal"><![CDATA[Copying file from "obj\Release\TvLibrary.Interfaces.pdb" to "bin\Release\TvLibrary.Interfaces.pdb".]]></message>
+                </target>
+                <target name="PrepareForRun" started="20.02.2016 16:11:40" />
+                <target name="_CleanGetCurrentAndPriorFileWrites" started="20.02.2016 16:11:40" />
+                <target name="IncrementalClean" started="20.02.2016 16:11:40" />
+                <target name="CoreBuild" started="20.02.2016 16:11:40" />
+                <target name="AfterBuild" started="20.02.2016 16:11:40" />
+                <target name="Build" started="20.02.2016 16:11:40" />
+              </project>
+              <project file="V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TvLibrary.Interfaces\TvLibrary.Interfaces.csproj" started="20.02.2016 16:11:40" />
+              <project targets="GetNativeManifest" file="V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TvLibrary.Interfaces\TvLibrary.Interfaces.csproj" started="20.02.2016 16:11:40">
+                <target name="GetNativeManifest" started="20.02.2016 16:11:40" />
+              </project>
+            </target>
+            <target name="GetInstalledSDKLocations" started="20.02.2016 16:11:40" />
+            <target name="ResolveSDKReferences" started="20.02.2016 16:11:40" />
+            <target name="ExpandSDKReferences" started="20.02.2016 16:11:40" />
+            <target name="ResolveAssemblyReferences" started="20.02.2016 16:11:40" />
+            <target name="AfterResolveReferences" started="20.02.2016 16:11:40" />
+            <target name="ResolveReferences" started="20.02.2016 16:11:40" />
+            <target name="AfterMarkupCompilePass1" started="20.02.2016 16:11:40" />
+            <target name="FileClassification" started="20.02.2016 16:11:40" />
+            <target name="AssignTargetPaths" started="20.02.2016 16:11:40" />
+            <target name="SplitResourcesByCulture" started="20.02.2016 16:11:40" />
+            <target name="CreateCustomManifestResourceNames" started="20.02.2016 16:11:40" />
+            <target name="PrepareResourceNames" started="20.02.2016 16:11:40" />
+            <target name="BeforeResGen" started="20.02.2016 16:11:40" />
+            <target name="CoreResGen" started="20.02.2016 16:11:40" />
+            <target name="AfterResGen" started="20.02.2016 16:11:40" />
+            <target name="ResGen" started="20.02.2016 16:11:40" />
+            <target name="PrepareResources" started="20.02.2016 16:11:40" />
+            <target name="_SetEmbeddedWin32ManifestProperties" started="20.02.2016 16:11:40" />
+            <target name="SetWin32ManifestProperties" started="20.02.2016 16:11:40" />
+            <target name="_GenerateCompileInputs" started="20.02.2016 16:11:40" />
+            <target name="_SetTargetFrameworkMonikerAttribute" started="20.02.2016 16:11:40" />
+            <target name="GenerateTargetFrameworkMonikerAttribute" started="20.02.2016 16:11:40">
+              <message importance="Normal"><![CDATA[Skipping target "GenerateTargetFrameworkMonikerAttribute" because all output files are up-to-date with respect to the input files.]]></message>
+            </target>
+            <target name="BeforeCompile" started="20.02.2016 16:11:40" />
+            <target name="PreXsdCodeGen" started="20.02.2016 16:11:40" />
+            <target name="CoreCompile" started="20.02.2016 16:11:40">
+              <message importance="High"><![CDATA[C:\Windows\Microsoft.NET\Framework\v4.0.30319\Csc.exe /noconfig /nowarn:1701,1702 /nostdlib+ /platform:x86 /errorreport:prompt /warn:4 /doc:bin\Release\TvControl.XML /define:TRACE /highentropyva- /reference:"C:\Program Files\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\mscorlib.dll" /reference:"C:\Program Files\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\System.Core.dll" /reference:"C:\Program Files\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\System.Data.dll" /reference:"C:\Program Files\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\System.dll" /reference:"C:\Program Files\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\System.Runtime.Remoting.dll" /reference:"C:\Program Files\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\System.Windows.Forms.dll" /reference:"C:\Program Files\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\System.Xml.dll" /reference:V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TvLibrary.Interfaces\bin\Release\TvLibrary.Interfaces.dll /debug:pdbonly /optimize+ /out:obj\Release\TvControl.dll /target:library /utf8output ..\..\..\Common-MP-TVE3\SolutionInfo.cs Enums\ChannelState.cs Enums\TvResult.cs Enums\TvStoppedReason.cs Interfaces\IUser.cs RemoteControl.cs TvServer.cs User.cs Util.cs VirtualCard.cs Controller.cs Properties\AssemblyInfo.cs "c:\Temp\.NETFramework,Version=v4.0.AssemblyAttributes.cs"]]></message>
+              <warning code="CS1591" file="RemoteControl.cs" line="47" column="25"><![CDATA[Missing XML comment for publicly visible type or member 'TvControl.RemoteControl.InitializedEventName']]></warning>
+              <warning code="CS1591" file="RemoteControl.cs" line="328" column="29"><![CDATA[Missing XML comment for publicly visible type or member 'TvControl.RemoteControl.GetIP4Addresses()']]></warning>
+              <warning code="CS0168" file="RemoteControl.cs" line="371" column="24"><![CDATA[The variable 'ex' is declared but never used]]></warning>
+              <warning code="CS0168" file="RemoteControl.cs" line="389" column="26"><![CDATA[The variable 'ex' is declared but never used]]></warning>
+              <warning code="CS0168" file="RemoteControl.cs" line="419" column="24"><![CDATA[The variable 'ex' is declared but never used]]></warning>
+              <warning code="CS0168" file="RemoteControl.cs" line="435" column="24"><![CDATA[The variable 'ex' is declared but never used]]></warning>
+              <warning code="CS1591" file="RemoteControl.cs" line="62" column="54"><![CDATA[Missing XML comment for publicly visible type or member 'TvControl.RemoteControl.OnRemotingDisconnected']]></warning>
+              <warning code="CS1591" file="RemoteControl.cs" line="63" column="51"><![CDATA[Missing XML comment for publicly visible type or member 'TvControl.RemoteControl.OnRemotingConnected']]></warning>
+              <warning code="CS1591" file="RemoteControl.cs" line="217" column="24"><![CDATA[Missing XML comment for publicly visible type or member 'TvControl.RemoteControl.IsConnected']]></warning>
+              <warning code="CS1591" file="RemoteControl.cs" line="222" column="24"><![CDATA[Missing XML comment for publicly visible type or member 'TvControl.RemoteControl.UseIncreasedTimeoutForInitialConnection']]></warning>
+              <warning code="CS1591" file="RemoteControl.cs" line="58" column="26"><![CDATA[Missing XML comment for publicly visible type or member 'TvControl.RemoteControl.RemotingDisconnectedDelegate']]></warning>
+              <warning code="CS1591" file="RemoteControl.cs" line="60" column="26"><![CDATA[Missing XML comment for publicly visible type or member 'TvControl.RemoteControl.RemotingConnectedDelegate']]></warning>
+              <warning code="CS1591" file="Util.cs" line="28" column="27"><![CDATA[Missing XML comment for publicly visible type or member 'TvControl.Func&lt;TResult&gt;']]></warning>
+              <warning code="CS1591" file="VirtualCard.cs" line="45" column="32"><![CDATA[Missing XML comment for publicly visible type or member 'TvControl.VirtualCard.CommandTimeOut']]></warning>
+              <warning code="CS1572" file="VirtualCard.cs" line="906" column="22"><![CDATA[XML comment on 'TvControl.VirtualCard.GetStreamQualityCounters(out int, out int)' has a param tag for 'user', but there is no parameter by that name]]></warning>
+              <warning code="CS1591" file="VirtualCard.cs" line="1480" column="16"><![CDATA[Missing XML comment for publicly visible type or member 'TvControl.VirtualCard.NrOfOtherUsersTimeshiftingOnCard']]></warning>
+              <warning code="CS1572" file="Controller.cs" line="262" column="22"><![CDATA[XML comment on 'TvControl.IController.IsRecording(int, out TvControl.VirtualCard)' has a param tag for 'channelName', but there is no parameter by that name]]></warning>
+              <warning code="CS1573" file="Controller.cs" line="267" column="26"><![CDATA[Parameter 'idChannel' has no matching param tag in the XML comment for 'TvControl.IController.IsRecording(int, out TvControl.VirtualCard)' (but other parameters do)]]></warning>
+              <warning code="CS1591" file="Controller.cs" line="713" column="10"><![CDATA[Missing XML comment for publicly visible type or member 'TvControl.IController.CopyTimeShiftFile(long, string, long, string, string)']]></warning>
+            </target>
+            <target name="AfterCompile" started="20.02.2016 16:11:40" />
+            <target name="AfterCompileWinFX" started="20.02.2016 16:11:40" />
+            <target name="_AfterCompileWinFXInternal" started="20.02.2016 16:11:40" />
+            <target name="Compile" started="20.02.2016 16:11:40" />
+            <target name="_GenerateSatelliteAssemblyInputs" started="20.02.2016 16:11:40" />
+            <target name="CreateSatelliteAssemblies" started="20.02.2016 16:11:40" />
+            <target name="GetTargetPath" started="20.02.2016 16:11:40" />
+            <target name="_CopyFilesMarkedCopyLocal" started="20.02.2016 16:11:40">
+              <message importance="Normal"><![CDATA[Copying file from "V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TvLibrary.Interfaces\bin\Release\TvLibrary.Interfaces.dll" to "bin\Release\TvLibrary.Interfaces.dll".]]></message>
+              <message importance="Normal"><![CDATA[Copying file from "V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TvLibrary.Interfaces\bin\Release\DirectShowLib.dll" to "bin\Release\DirectShowLib.dll".]]></message>
+              <message importance="Normal"><![CDATA[Copying file from "V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TvLibrary.Interfaces\bin\Release\Common.Utils.dll" to "bin\Release\Common.Utils.dll".]]></message>
+              <message importance="Normal"><![CDATA[Copying file from "V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TvLibrary.Interfaces\bin\Release\log4net.dll" to "bin\Release\log4net.dll".]]></message>
+              <message importance="Normal"><![CDATA[Copying file from "V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TvLibrary.Interfaces\bin\Release\TvLibrary.Interfaces.pdb" to "bin\Release\TvLibrary.Interfaces.pdb".]]></message>
+              <message importance="Normal"><![CDATA[Copying file from "V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TvLibrary.Interfaces\bin\Release\TvLibrary.Interfaces.xml" to "bin\Release\TvLibrary.Interfaces.xml".]]></message>
+              <message importance="Normal"><![CDATA[Copying file from "V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TvLibrary.Interfaces\bin\Release\Common.Utils.pdb" to "bin\Release\Common.Utils.pdb".]]></message>
+            </target>
+            <target name="GetCopyToOutputDirectoryXamlAppDefs" started="20.02.2016 16:11:40" />
+            <target name="GetCopyToOutputDirectoryItems" started="20.02.2016 16:11:40">
+              <project targets="GetCopyToOutputDirectoryItems" file="V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TvLibrary.Interfaces\TvLibrary.Interfaces.csproj" started="20.02.2016 16:11:40" />
+            </target>
+            <target name="_CopySourceItemsToOutputDirectory" started="20.02.2016 16:11:40" />
+            <target name="_CheckForCompileOutputs" started="20.02.2016 16:11:40" />
+            <target name="CopyFilesToOutputDirectory" started="20.02.2016 16:11:40">
+              <message importance="Normal"><![CDATA[Copying file from "obj\Release\TvControl.dll" to "bin\Release\TvControl.dll".]]></message>
+              <message importance="High"><![CDATA[TvControl -> V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TvControl\bin\Release\TvControl.dll]]></message>
+              <message importance="Normal"><![CDATA[Copying file from "obj\Release\TvControl.pdb" to "bin\Release\TvControl.pdb".]]></message>
+            </target>
+            <target name="PrepareForRun" started="20.02.2016 16:11:40" />
+            <target name="_CleanGetCurrentAndPriorFileWrites" started="20.02.2016 16:11:40" />
+            <target name="IncrementalClean" started="20.02.2016 16:11:40" />
+            <target name="CoreBuild" started="20.02.2016 16:11:40" />
+            <target name="AfterBuild" started="20.02.2016 16:11:40" />
+            <target name="Build" started="20.02.2016 16:11:40" />
+          </project>
+          <project file="V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TVDatabase\TvBusinessLayer\TvBusinessLayer.csproj" started="20.02.2016 16:11:40">
+            <target name="BeforeBuild" started="20.02.2016 16:11:40" />
+            <target name="BuildOnlySettings" started="20.02.2016 16:11:40" />
+            <target name="GetFrameworkPaths" started="20.02.2016 16:11:40" />
+            <target name="GetReferenceAssemblyPaths" started="20.02.2016 16:11:40" />
+            <target name="PrepareForBuild" started="20.02.2016 16:11:40" />
+            <target name="BeforeResolveReferences" started="20.02.2016 16:11:40" />
+            <target name="ResolveProjectReferences" started="20.02.2016 16:11:40">
+              <project file="V:\Development\Mediaportal\MediaPortal\Common-MP-TVE3\DirectShowLib\DirectShowLib.csproj" started="20.02.2016 16:11:40" />
+              <project file="V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TvLibrary.Interfaces\TvLibrary.Interfaces.csproj" started="20.02.2016 16:11:40" />
+              <project file="V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TVDatabase\TVDatabase.csproj" started="20.02.2016 16:11:40">
+                <target name="BeforeBuild" started="20.02.2016 16:11:40" />
+                <target name="BuildOnlySettings" started="20.02.2016 16:11:40" />
+                <target name="GetFrameworkPaths" started="20.02.2016 16:11:40" />
+                <target name="GetReferenceAssemblyPaths" started="20.02.2016 16:11:40" />
+                <target name="PrepareForBuild" started="20.02.2016 16:11:40" />
+                <target name="BeforeResolveReferences" started="20.02.2016 16:11:40" />
+                <target name="ResolveProjectReferences" started="20.02.2016 16:11:40">
+                  <project file="V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TvLibrary.Interfaces\TvLibrary.Interfaces.csproj" started="20.02.2016 16:11:40" />
+                  <project targets="GetNativeManifest" file="V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TvLibrary.Interfaces\TvLibrary.Interfaces.csproj" started="20.02.2016 16:11:40" />
+                </target>
+                <target name="GetInstalledSDKLocations" started="20.02.2016 16:11:40" />
+                <target name="ResolveSDKReferences" started="20.02.2016 16:11:40" />
+                <target name="ExpandSDKReferences" started="20.02.2016 16:11:40" />
+                <target name="ResolveAssemblyReferences" started="20.02.2016 16:11:40" />
+                <target name="AfterResolveReferences" started="20.02.2016 16:11:41" />
+                <target name="ResolveReferences" started="20.02.2016 16:11:41" />
+                <target name="AfterMarkupCompilePass1" started="20.02.2016 16:11:41" />
+                <target name="FileClassification" started="20.02.2016 16:11:41" />
+                <target name="AssignTargetPaths" started="20.02.2016 16:11:41" />
+                <target name="SplitResourcesByCulture" started="20.02.2016 16:11:41" />
+                <target name="CreateCustomManifestResourceNames" started="20.02.2016 16:11:41" />
+                <target name="PrepareResourceNames" started="20.02.2016 16:11:41" />
+                <target name="BeforeResGen" started="20.02.2016 16:11:41" />
+                <target name="CoreResGen" started="20.02.2016 16:11:41" />
+                <target name="AfterResGen" started="20.02.2016 16:11:41" />
+                <target name="ResGen" started="20.02.2016 16:11:41" />
+                <target name="PrepareResources" started="20.02.2016 16:11:41" />
+                <target name="_SetEmbeddedWin32ManifestProperties" started="20.02.2016 16:11:41" />
+                <target name="SetWin32ManifestProperties" started="20.02.2016 16:11:41" />
+                <target name="_GenerateCompileInputs" started="20.02.2016 16:11:41" />
+                <target name="_SetTargetFrameworkMonikerAttribute" started="20.02.2016 16:11:41" />
+                <target name="GenerateTargetFrameworkMonikerAttribute" started="20.02.2016 16:11:41">
+                  <message importance="Normal"><![CDATA[Skipping target "GenerateTargetFrameworkMonikerAttribute" because all output files are up-to-date with respect to the input files.]]></message>
+                </target>
+                <target name="BeforeCompile" started="20.02.2016 16:11:41" />
+                <target name="PreXsdCodeGen" started="20.02.2016 16:11:41" />
+                <target name="CoreCompile" started="20.02.2016 16:11:41">
+                  <message importance="High"><![CDATA[C:\Windows\Microsoft.NET\Framework\v4.0.30319\Csc.exe /noconfig /nowarn:1701,1702 /nostdlib+ /platform:x86 /errorreport:prompt /warn:4 /define:TRACE /highentropyva- /reference:V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TVDatabase\references\Gentle.Common.dll /reference:V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TVDatabase\references\Gentle.Framework.dll /reference:V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TVDatabase\references\Gentle.Provider.SQLServer.dll /reference:"C:\Program Files\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\mscorlib.dll" /reference:"C:\Program Files\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\System.Core.dll" /reference:"C:\Program Files\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\System.Data.dll" /reference:"C:\Program Files\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\System.dll" /reference:"C:\Program Files\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\System.Xml.dll" /reference:V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TvLibrary.Interfaces\bin\Release\TvLibrary.Interfaces.dll /debug:pdbonly /optimize+ /out:obj\Release\TVDatabase.dll /target:library /utf8output ..\..\..\Common-MP-TVE3\SolutionInfo.cs CanceledSchedule.cs Card.cs Channel.cs ChannelGroup.cs ChannelLinkageMap.cs ChannelMap.cs Conflict.cs PendingDeletion.cs EpisodeFormatter.cs SoftwareEncoder.cs RadioGroupMap.cs RadioChannelGroup.cs DiSEqCMotor.cs Favorite.cs GroupMap.cs History.cs KeyWord.cs KeywordMap.cs PersonalTVGuideMap.cs Program.cs Properties\AssemblyInfo.cs Recording.cs Satellite.cs Schedule.cs Server.cs Setting.cs Timespan.cs TuningDetail.cs WeekEndTool.cs TvMovieMapping.cs Version.cs CardGroup.cs CardGroupMap.cs "c:\Temp\.NETFramework,Version=v4.0.AssemblyAttributes.cs"]]></message>
+                  <warning code="CS0168" file="Channel.cs" line="332" column="30"><![CDATA[The variable 'ex' is declared but never used]]></warning>
+                  <warning code="CS0649" file="PendingDeletion.cs" line="37" column="102"><![CDATA[Field 'TvDatabase.PendingDeletion._idPendingDeletion' is never assigned to, and will always have its default value 0]]></warning>
+                </target>
+                <target name="AfterCompile" started="20.02.2016 16:11:41" />
+                <target name="AfterCompileWinFX" started="20.02.2016 16:11:41" />
+                <target name="_AfterCompileWinFXInternal" started="20.02.2016 16:11:41" />
+                <target name="Compile" started="20.02.2016 16:11:41" />
+                <target name="_GenerateSatelliteAssemblyInputs" started="20.02.2016 16:11:41" />
+                <target name="CreateSatelliteAssemblies" started="20.02.2016 16:11:41" />
+                <target name="GetTargetPath" started="20.02.2016 16:11:41" />
+                <target name="_CopyFilesMarkedCopyLocal" started="20.02.2016 16:11:41">
+                  <message importance="Normal"><![CDATA[Copying file from "V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TVDatabase\references\Gentle.Common.dll" to "bin\Release\Gentle.Common.dll".]]></message>
+                  <message importance="Normal"><![CDATA[Copying file from "V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TVDatabase\references\Gentle.Framework.dll" to "bin\Release\Gentle.Framework.dll".]]></message>
+                  <message importance="Normal"><![CDATA[Copying file from "V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TVDatabase\references\Gentle.Provider.SQLServer.dll" to "bin\Release\Gentle.Provider.SQLServer.dll".]]></message>
+                  <message importance="Normal"><![CDATA[Copying file from "V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TvLibrary.Interfaces\bin\Release\TvLibrary.Interfaces.dll" to "bin\Release\TvLibrary.Interfaces.dll".]]></message>
+                  <message importance="Normal"><![CDATA[Copying file from "V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TvLibrary.Interfaces\bin\Release\DirectShowLib.dll" to "bin\Release\DirectShowLib.dll".]]></message>
+                  <message importance="Normal"><![CDATA[Copying file from "V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TvLibrary.Interfaces\bin\Release\Common.Utils.dll" to "bin\Release\Common.Utils.dll".]]></message>
+                  <message importance="Normal"><![CDATA[Copying file from "V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TvLibrary.Interfaces\bin\Release\log4net.dll" to "bin\Release\log4net.dll".]]></message>
+                  <message importance="Normal"><![CDATA[Copying file from "V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TvLibrary.Interfaces\bin\Release\TvLibrary.Interfaces.pdb" to "bin\Release\TvLibrary.Interfaces.pdb".]]></message>
+                  <message importance="Normal"><![CDATA[Copying file from "V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TvLibrary.Interfaces\bin\Release\TvLibrary.Interfaces.xml" to "bin\Release\TvLibrary.Interfaces.xml".]]></message>
+                  <message importance="Normal"><![CDATA[Copying file from "V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TvLibrary.Interfaces\bin\Release\Common.Utils.pdb" to "bin\Release\Common.Utils.pdb".]]></message>
+                </target>
+                <target name="GetCopyToOutputDirectoryXamlAppDefs" started="20.02.2016 16:11:41" />
+                <target name="GetCopyToOutputDirectoryItems" started="20.02.2016 16:11:41">
+                  <project targets="GetCopyToOutputDirectoryItems" file="V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TvLibrary.Interfaces\TvLibrary.Interfaces.csproj" started="20.02.2016 16:11:41" />
+                </target>
+                <target name="_CopySourceItemsToOutputDirectory" started="20.02.2016 16:11:41" />
+                <target name="_CheckForCompileOutputs" started="20.02.2016 16:11:41" />
+                <target name="CopyFilesToOutputDirectory" started="20.02.2016 16:11:41">
+                  <message importance="Normal"><![CDATA[Copying file from "obj\Release\TVDatabase.dll" to "bin\Release\TVDatabase.dll".]]></message>
+                  <message importance="High"><![CDATA[TVDatabase -> V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TVDatabase\bin\Release\TVDatabase.dll]]></message>
+                  <message importance="Normal"><![CDATA[Copying file from "obj\Release\TVDatabase.pdb" to "bin\Release\TVDatabase.pdb".]]></message>
+                </target>
+                <target name="PrepareForRun" started="20.02.2016 16:11:41" />
+                <target name="_CleanGetCurrentAndPriorFileWrites" started="20.02.2016 16:11:41" />
+                <target name="IncrementalClean" started="20.02.2016 16:11:41" />
+                <target name="CoreBuild" started="20.02.2016 16:11:41" />
+                <target name="AfterBuild" started="20.02.2016 16:11:41" />
+                <target name="Build" started="20.02.2016 16:11:41" />
+              </project>
+              <project file="V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TVDatabase\TVDatabase.csproj" started="20.02.2016 16:11:41" />
+              <project targets="GetNativeManifest" file="V:\Development\Mediaportal\MediaPortal\Common-MP-TVE3\DirectShowLib\DirectShowLib.csproj" started="20.02.2016 16:11:41" />
+              <project targets="GetNativeManifest" file="V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TvLibrary.Interfaces\TvLibrary.Interfaces.csproj" started="20.02.2016 16:11:41" />
+              <project targets="GetNativeManifest" file="V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TVDatabase\TVDatabase.csproj" started="20.02.2016 16:11:41">
+                <target name="GetNativeManifest" started="20.02.2016 16:11:41" />
+              </project>
+            </target>
+            <target name="GetInstalledSDKLocations" started="20.02.2016 16:11:41" />
+            <target name="ResolveSDKReferences" started="20.02.2016 16:11:41" />
+            <target name="ExpandSDKReferences" started="20.02.2016 16:11:41" />
+            <target name="ResolveAssemblyReferences" started="20.02.2016 16:11:41" />
+            <target name="AfterResolveReferences" started="20.02.2016 16:11:41" />
+            <target name="ResolveReferences" started="20.02.2016 16:11:41" />
+            <target name="AfterMarkupCompilePass1" started="20.02.2016 16:11:41" />
+            <target name="FileClassification" started="20.02.2016 16:11:41" />
+            <target name="AssignTargetPaths" started="20.02.2016 16:11:41" />
+            <target name="SplitResourcesByCulture" started="20.02.2016 16:11:41" />
+            <target name="CreateCustomManifestResourceNames" started="20.02.2016 16:11:41" />
+            <target name="PrepareResourceNames" started="20.02.2016 16:11:41" />
+            <target name="BeforeResGen" started="20.02.2016 16:11:41" />
+            <target name="CoreResGen" started="20.02.2016 16:11:41" />
+            <target name="AfterResGen" started="20.02.2016 16:11:41" />
+            <target name="ResGen" started="20.02.2016 16:11:41" />
+            <target name="PrepareResources" started="20.02.2016 16:11:41" />
+            <target name="_SetEmbeddedWin32ManifestProperties" started="20.02.2016 16:11:41" />
+            <target name="SetWin32ManifestProperties" started="20.02.2016 16:11:41" />
+            <target name="_GenerateCompileInputs" started="20.02.2016 16:11:41" />
+            <target name="_SetTargetFrameworkMonikerAttribute" started="20.02.2016 16:11:41" />
+            <target name="GenerateTargetFrameworkMonikerAttribute" started="20.02.2016 16:11:41">
+              <message importance="Normal"><![CDATA[Skipping target "GenerateTargetFrameworkMonikerAttribute" because all output files are up-to-date with respect to the input files.]]></message>
+            </target>
+            <target name="BeforeCompile" started="20.02.2016 16:11:41" />
+            <target name="PreXsdCodeGen" started="20.02.2016 16:11:41" />
+            <target name="CoreCompile" started="20.02.2016 16:11:41">
+              <message importance="High"><![CDATA[C:\Windows\Microsoft.NET\Framework\v4.0.30319\Csc.exe /noconfig /nowarn:1701,1702 /nostdlib+ /platform:x86 /errorreport:prompt /warn:4 /define:TRACE /highentropyva- /reference:V:\Development\Mediaportal\MediaPortal\Common-MP-TVE3\DirectShowLib\bin\Release\DirectShowLib.dll /reference:V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TVDatabase\references\Gentle.Common.dll /reference:V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TVDatabase\references\Gentle.Framework.dll /reference:V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TVDatabase\references\Gentle.Provider.SQLServer.dll /reference:"C:\Program Files\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\mscorlib.dll" /reference:V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TVDatabase\references\MySql.Data.dll /reference:"C:\Program Files\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\System.Core.dll" /reference:"C:\Program Files\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\System.Data.dll" /reference:"C:\Program Files\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\System.dll" /reference:"C:\Program Files\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\System.Xml.dll" /reference:V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TVDatabase\bin\Release\TVDatabase.dll /reference:V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TvLibrary.Interfaces\bin\Release\TvLibrary.Interfaces.dll /debug:pdbonly /optimize+ /out:obj\Release\TvBusinessLayer.dll /target:library /utf8output ..\..\..\..\Common-MP-TVE3\SolutionInfo.cs BusinessLayer.cs EpgDBUpdater.cs MatroskaTagLib.cs NowAndNext.cs ProgramList.cs Properties\AssemblyInfo.cs "c:\Temp\.NETFramework,Version=v4.0.AssemblyAttributes.cs"]]></message>
+            </target>
+            <target name="AfterCompile" started="20.02.2016 16:11:42" />
+            <target name="AfterCompileWinFX" started="20.02.2016 16:11:42" />
+            <target name="_AfterCompileWinFXInternal" started="20.02.2016 16:11:42" />
+            <target name="Compile" started="20.02.2016 16:11:42" />
+            <target name="_GenerateSatelliteAssemblyInputs" started="20.02.2016 16:11:42" />
+            <target name="CreateSatelliteAssemblies" started="20.02.2016 16:11:42" />
+            <target name="GetTargetPath" started="20.02.2016 16:11:42" />
+            <target name="_CopyFilesMarkedCopyLocal" started="20.02.2016 16:11:42">
+              <message importance="Normal"><![CDATA[Copying file from "V:\Development\Mediaportal\MediaPortal\Common-MP-TVE3\DirectShowLib\bin\Release\DirectShowLib.dll" to "bin\Release\DirectShowLib.dll".]]></message>
+              <message importance="Normal"><![CDATA[Copying file from "V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TVDatabase\references\Gentle.Common.dll" to "bin\Release\Gentle.Common.dll".]]></message>
+              <message importance="Normal"><![CDATA[Copying file from "V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TVDatabase\references\Gentle.Framework.dll" to "bin\Release\Gentle.Framework.dll".]]></message>
+              <message importance="Normal"><![CDATA[Copying file from "V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TVDatabase\references\Gentle.Provider.SQLServer.dll" to "bin\Release\Gentle.Provider.SQLServer.dll".]]></message>
+              <message importance="Normal"><![CDATA[Copying file from "V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TVDatabase\references\MySql.Data.dll" to "bin\Release\MySql.Data.dll".]]></message>
+              <message importance="Normal"><![CDATA[Copying file from "V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TVDatabase\bin\Release\TVDatabase.dll" to "bin\Release\TVDatabase.dll".]]></message>
+              <message importance="Normal"><![CDATA[Copying file from "V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TvLibrary.Interfaces\bin\Release\TvLibrary.Interfaces.dll" to "bin\Release\TvLibrary.Interfaces.dll".]]></message>
+              <message importance="Normal"><![CDATA[Copying file from "V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TvLibrary.Interfaces\bin\Release\Common.Utils.dll" to "bin\Release\Common.Utils.dll".]]></message>
+              <message importance="Normal"><![CDATA[Copying file from "V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TvLibrary.Interfaces\bin\Release\log4net.dll" to "bin\Release\log4net.dll".]]></message>
+              <message importance="Normal"><![CDATA[Copying file from "V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TvLibrary.Interfaces\bin\Release\TvLibrary.Interfaces.pdb" to "bin\Release\TvLibrary.Interfaces.pdb".]]></message>
+              <message importance="Normal"><![CDATA[Copying file from "V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TvLibrary.Interfaces\bin\Release\TvLibrary.Interfaces.xml" to "bin\Release\TvLibrary.Interfaces.xml".]]></message>
+              <message importance="Normal"><![CDATA[Copying file from "V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TVDatabase\bin\Release\TVDatabase.pdb" to "bin\Release\TVDatabase.pdb".]]></message>
+              <message importance="Normal"><![CDATA[Copying file from "V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TvLibrary.Interfaces\bin\Release\Common.Utils.pdb" to "bin\Release\Common.Utils.pdb".]]></message>
+            </target>
+            <target name="GetCopyToOutputDirectoryXamlAppDefs" started="20.02.2016 16:11:42" />
+            <target name="GetCopyToOutputDirectoryItems" started="20.02.2016 16:11:42">
+              <project targets="GetCopyToOutputDirectoryItems" file="V:\Development\Mediaportal\MediaPortal\Common-MP-TVE3\DirectShowLib\DirectShowLib.csproj" started="20.02.2016 16:11:42" />
+              <project targets="GetCopyToOutputDirectoryItems" file="V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TvLibrary.Interfaces\TvLibrary.Interfaces.csproj" started="20.02.2016 16:11:42" />
+              <project targets="GetCopyToOutputDirectoryItems" file="V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TVDatabase\TVDatabase.csproj" started="20.02.2016 16:11:42" />
+            </target>
+            <target name="_CopySourceItemsToOutputDirectory" started="20.02.2016 16:11:42" />
+            <target name="_CheckForCompileOutputs" started="20.02.2016 16:11:42" />
+            <target name="CopyFilesToOutputDirectory" started="20.02.2016 16:11:42">
+              <message importance="Normal"><![CDATA[Copying file from "obj\Release\TvBusinessLayer.dll" to "bin\Release\TvBusinessLayer.dll".]]></message>
+              <message importance="High"><![CDATA[TvBusinessLayer -> V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TVDatabase\TvBusinessLayer\bin\Release\TvBusinessLayer.dll]]></message>
+              <message importance="Normal"><![CDATA[Copying file from "obj\Release\TvBusinessLayer.pdb" to "bin\Release\TvBusinessLayer.pdb".]]></message>
+            </target>
+            <target name="PrepareForRun" started="20.02.2016 16:11:42" />
+            <target name="_CleanGetCurrentAndPriorFileWrites" started="20.02.2016 16:11:42" />
+            <target name="IncrementalClean" started="20.02.2016 16:11:42" />
+            <target name="CoreBuild" started="20.02.2016 16:11:42" />
+            <target name="AfterBuild" started="20.02.2016 16:11:42" />
+            <target name="Build" started="20.02.2016 16:11:42" />
+          </project>
+          <project targets="GetNativeManifest" file="V:\Development\Mediaportal\MediaPortal\Common-MP-TVE3\Common.Utils\Common.Utils.csproj" started="20.02.2016 16:11:42" />
+          <project targets="GetNativeManifest" file="V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TVDatabase\TVDatabase.csproj" started="20.02.2016 16:11:42" />
+          <project targets="GetNativeManifest" file="V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TvLibrary.Interfaces\TvLibrary.Interfaces.csproj" started="20.02.2016 16:11:42" />
+          <project targets="GetNativeManifest" file="V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TvControl\TvControl.csproj" started="20.02.2016 16:11:42">
+            <target name="GetNativeManifest" started="20.02.2016 16:11:42" />
+          </project>
+          <project targets="GetNativeManifest" file="V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TVDatabase\TvBusinessLayer\TvBusinessLayer.csproj" started="20.02.2016 16:11:42">
+            <target name="GetNativeManifest" started="20.02.2016 16:11:42" />
+          </project>
+        </target>
+        <target name="GetInstalledSDKLocations" started="20.02.2016 16:11:42" />
+        <target name="ResolveSDKReferences" started="20.02.2016 16:11:42" />
+        <target name="ExpandSDKReferences" started="20.02.2016 16:11:42" />
+        <target name="ResolveAssemblyReferences" started="20.02.2016 16:11:42" />
+        <target name="AfterResolveReferences" started="20.02.2016 16:11:42" />
+        <target name="ResolveReferences" started="20.02.2016 16:11:42" />
+        <target name="AfterMarkupCompilePass1" started="20.02.2016 16:11:42" />
+        <target name="FileClassification" started="20.02.2016 16:11:42" />
+        <target name="AssignTargetPaths" started="20.02.2016 16:11:42" />
+        <target name="SplitResourcesByCulture" started="20.02.2016 16:11:42" />
+        <target name="CreateManifestResourceNames" started="20.02.2016 16:11:42" />
+        <target name="CreateCustomManifestResourceNames" started="20.02.2016 16:11:42" />
+        <target name="PrepareResourceNames" started="20.02.2016 16:11:42" />
+        <target name="BeforeResGen" started="20.02.2016 16:11:42" />
+        <target name="CoreResGen" started="20.02.2016 16:11:42">
+          <message importance="Normal"><![CDATA[Processing resource file "TvSetupAudioLanguageForm.resx" into "obj\Release\TvPlugin.TvSetupAudioLanguageForm.resources".]]></message>
+          <message importance="Normal"><![CDATA[Processing resource file "TvSetupForm.resx" into "obj\Release\TvPlugin.TvSetupForm.resources".]]></message>
+        </target>
+        <target name="AfterResGen" started="20.02.2016 16:11:42" />
+        <target name="ResGen" started="20.02.2016 16:11:42" />
+        <target name="PrepareResources" started="20.02.2016 16:11:42" />
+        <target name="_SetEmbeddedWin32ManifestProperties" started="20.02.2016 16:11:42" />
+        <target name="SetWin32ManifestProperties" started="20.02.2016 16:11:42" />
+        <target name="_GenerateCompileInputs" started="20.02.2016 16:11:42" />
+        <target name="_SetTargetFrameworkMonikerAttribute" started="20.02.2016 16:11:42" />
+        <target name="GenerateTargetFrameworkMonikerAttribute" started="20.02.2016 16:11:42">
+          <message importance="Normal"><![CDATA[Skipping target "GenerateTargetFrameworkMonikerAttribute" because all output files are up-to-date with respect to the input files.]]></message>
+        </target>
+        <target name="BeforeCompile" started="20.02.2016 16:11:42" />
+        <target name="PreXsdCodeGen" started="20.02.2016 16:11:42" />
+        <target name="CoreCompile" started="20.02.2016 16:11:42">
+          <message importance="High"><![CDATA[C:\Windows\Microsoft.NET\Framework\v4.0.30319\Csc.exe /noconfig /nowarn:1701,1702 /nostdlib+ /platform:x86 /errorreport:prompt /warn:4 /define:TRACE /highentropyva- /reference:V:\Development\Mediaportal\MediaPortal\mediaportal\WindowPlugins\Common.GUIPlugins\bin\Release\Common.GUIPlugins.dll /reference:V:\Development\Mediaportal\MediaPortal\Common-MP-TVE3\Common.Utils\bin\Release\Common.Utils.dll /reference:V:\Development\Mediaportal\MediaPortal\mediaportal\Core\bin\Release\Core.dll /reference:V:\Development\Mediaportal\MediaPortal\mediaportal\Databases\bin\Release\Databases.dll /reference:V:\Development\Mediaportal\MediaPortal\mediaportal\Dialogs\bin\Release\Dialogs.dll /reference:V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TVDatabase\references\Gentle.Common.dll /reference:V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TVDatabase\references\Gentle.Framework.dll /reference:V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TVDatabase\references\Gentle.Provider.MySQL.dll /reference:V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TVDatabase\references\Gentle.Provider.SQLServer.dll /reference:V:\Development\Mediaportal\MediaPortal\mediaportal\WindowPlugins\GUIVideos\bin\Release\GUIVideos.dll /reference:V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TVDatabase\references\log4net.dll /reference:"C:\Program Files\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\mscorlib.dll" /reference:"C:\Program Files\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\System.Configuration.dll" /reference:"C:\Program Files\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\System.Core.dll" /reference:"C:\Program Files\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\System.Data.dll" /reference:"C:\Program Files\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\System.dll" /reference:"C:\Program Files\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\System.Drawing.dll" /reference:"C:\Program Files\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\System.Management.dll" /reference:"C:\Program Files\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\System.Runtime.Remoting.dll" /reference:"C:\Program Files\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\System.ServiceProcess.dll" /reference:"C:\Program Files\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\System.Windows.Forms.dll" /reference:"C:\Program Files\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\System.Xml.dll" /reference:V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TVDatabase\TvBusinessLayer\bin\Release\TvBusinessLayer.dll /reference:V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TvControl\bin\Release\TvControl.dll /reference:V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TVDatabase\bin\Release\TVDatabase.dll /reference:V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TvLibrary.Interfaces\bin\Release\TvLibrary.Interfaces.dll /reference:V:\Development\Mediaportal\MediaPortal\mediaportal\Utils\bin\Release\Utils.dll /debug:pdbonly /optimize+ /out:obj\Release\TvPlugin.dll /resource:obj\Release\TvPlugin.TvSetupAudioLanguageForm.resources /resource:obj\Release\TvPlugin.TvSetupForm.resources /resource:teletext\LogoPage,TvPlugin.teletext.LogoPage /resource:TVPlugin.gif,TvPlugin.TVPlugin.gif /resource:TVPluginDisabled.gif,TvPlugin.TVPluginDisabled.gif /resource:Radio.gif,TvPlugin.Radio.gif /resource:Radio_disabled.gif,TvPlugin.Radio_disabled.gif /target:library /utf8output ..\..\..\..\Common-MP-TVE3\SolutionInfo.cs GuideBase.cs RadioSearch.cs Helper\BitHelper.cs RadioRecorded.cs Properties\AssemblyInfo.cs Radio.cs RadioGuide.cs RadioGuideBase.cs RecordedBase.cs teletext\Hamming.cs teletext\TeletextPageRenderer.cs teletext\TvFullscreenTeletext.cs teletext\TvTeletextBase.cs TvChannelSettings.cs TVConflictDialog.cs TVConflicts.cs TvCropManager.cs TvCropSettings.cs TvEpgSettings.cs TvFullScreen.cs TVGuide.cs TvGuideBase.cs TVHome.cs TVHomeNavigator.cs TvMiniGuide.cs TvNewScheduleSearch.cs TvNewScheduleSearchType.cs TVNotifyYesNoDialog.cs TvNotifyManager.cs TvOSD.cs TVOverlay.cs TVPriorities.cs TVProgramDescription.cs TVProgramInfo.cs TvRecorded.cs TVRecordedInfo.cs TVScheduler.cs TVSearch.cs teletext\TvTeletext.cs TvRecordingSettings.cs TvSetup.cs TvSetupAudioLanguageForm.cs TvSetupAudioLanguageForm.Designer.cs TvSetupForm.cs TvSetupForm.Designer.cs TvTimeShiftPositionWatcher.cs TVTuningDetails.cs TVUtil.cs TVZapOSD.cs WakeOnLanManager.cs "c:\Temp\.NETFramework,Version=v4.0.AssemblyAttributes.cs"]]></message>
+          <warning code="CS0108" file="RadioGuideBase.cs" line="50" column="23"><![CDATA['TvPlugin.RadioGuideBase.GUIDE_COMPONENTID_START' hides inherited member 'TvPlugin.GuideBase.GUIDE_COMPONENTID_START'. Use the new keyword if hiding was intended.]]></warning>
+          <warning code="CS0108" file="TVHome.cs" line="99" column="52"><![CDATA['TvPlugin.TVHome._mainThreadContext' hides inherited member 'MediaPortal.GUI.Library.GUIWindow._mainThreadContext'. Use the new keyword if hiding was intended.]]></warning>
+          <warning code="CS0618" file="teletext\TvTeletextBase.cs" line="517" column="7"><![CDATA['MediaPortal.GUI.Library.GUIImage.Centered' is obsolete: 'ImageAlignment/ImageVAlignment should be used. (&lt;align&gt;/&lt;valign&gt; tag)']]></warning>
+          <warning code="CS0618" file="teletext\TvTeletextBase.cs" line="523" column="7"><![CDATA['MediaPortal.GUI.Library.GUIImage.Centered' is obsolete: 'ImageAlignment/ImageVAlignment should be used. (&lt;align&gt;/&lt;valign&gt; tag)']]></warning>
+          <warning code="CS0168" file="TVHomeNavigator.cs" line="131" column="24"><![CDATA[The variable 'ex' is declared but never used]]></warning>
+        </target>
+        <target name="AfterCompile" started="20.02.2016 16:11:43" />
+        <target name="AfterCompileWinFX" started="20.02.2016 16:11:43" />
+        <target name="_AfterCompileWinFXInternal" started="20.02.2016 16:11:43" />
+        <target name="Compile" started="20.02.2016 16:11:43" />
+        <target name="_GenerateSatelliteAssemblyInputs" started="20.02.2016 16:11:43" />
+        <target name="ComputeIntermediateSatelliteAssemblies" started="20.02.2016 16:11:43" />
+        <target name="CreateSatelliteAssemblies" started="20.02.2016 16:11:43" />
+        <target name="GetTargetPath" started="20.02.2016 16:11:43" />
+        <target name="_CopyFilesMarkedCopyLocal" started="20.02.2016 16:11:43">
+          <message importance="Normal"><![CDATA[Copying file from "V:\Development\Mediaportal\MediaPortal\mediaportal\WindowPlugins\Common.GUIPlugins\bin\Release\Common.GUIPlugins.dll" to "bin\Release\Common.GUIPlugins.dll".]]></message>
+          <message importance="Normal"><![CDATA[Copying file from "V:\Development\Mediaportal\MediaPortal\Common-MP-TVE3\Common.Utils\bin\Release\Common.Utils.dll" to "bin\Release\Common.Utils.dll".]]></message>
+          <message importance="Normal"><![CDATA[Copying file from "V:\Development\Mediaportal\MediaPortal\mediaportal\Core\bin\Release\Core.dll" to "bin\Release\Core.dll".]]></message>
+          <message importance="Normal"><![CDATA[Copying file from "V:\Development\Mediaportal\MediaPortal\mediaportal\Databases\bin\Release\Databases.dll" to "bin\Release\Databases.dll".]]></message>
+          <message importance="Normal"><![CDATA[Copying file from "V:\Development\Mediaportal\MediaPortal\mediaportal\Dialogs\bin\Release\Dialogs.dll" to "bin\Release\Dialogs.dll".]]></message>
+          <message importance="Normal"><![CDATA[Copying file from "V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TVDatabase\references\Gentle.Common.dll" to "bin\Release\Gentle.Common.dll".]]></message>
+          <message importance="Normal"><![CDATA[Copying file from "V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TVDatabase\references\Gentle.Framework.dll" to "bin\Release\Gentle.Framework.dll".]]></message>
+          <message importance="Normal"><![CDATA[Copying file from "V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TVDatabase\references\Gentle.Provider.MySQL.dll" to "bin\Release\Gentle.Provider.MySQL.dll".]]></message>
+          <message importance="Normal"><![CDATA[Copying file from "V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TVDatabase\references\Gentle.Provider.SQLServer.dll" to "bin\Release\Gentle.Provider.SQLServer.dll".]]></message>
+          <message importance="Normal"><![CDATA[Copying file from "V:\Development\Mediaportal\MediaPortal\mediaportal\WindowPlugins\GUIVideos\bin\Release\GUIVideos.dll" to "bin\Release\GUIVideos.dll".]]></message>
+          <message importance="Normal"><![CDATA[Copying file from "V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TVDatabase\references\log4net.dll" to "bin\Release\log4net.dll".]]></message>
+          <message importance="Normal"><![CDATA[Copying file from "V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TVDatabase\TvBusinessLayer\bin\Release\TvBusinessLayer.dll" to "bin\Release\TvBusinessLayer.dll".]]></message>
+          <message importance="Normal"><![CDATA[Copying file from "V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TvControl\bin\Release\TvControl.dll" to "bin\Release\TvControl.dll".]]></message>
+          <message importance="Normal"><![CDATA[Copying file from "V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TVDatabase\bin\Release\TVDatabase.dll" to "bin\Release\TVDatabase.dll".]]></message>
+          <message importance="Normal"><![CDATA[Copying file from "V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TvLibrary.Interfaces\bin\Release\TvLibrary.Interfaces.dll" to "bin\Release\TvLibrary.Interfaces.dll".]]></message>
+          <message importance="Normal"><![CDATA[Copying file from "V:\Development\Mediaportal\MediaPortal\mediaportal\Utils\bin\Release\Utils.dll" to "bin\Release\Utils.dll".]]></message>
+          <message importance="Normal"><![CDATA[Copying file from "V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TVDatabase\TvBusinessLayer\bin\Release\MySql.Data.dll" to "bin\Release\MySql.Data.dll".]]></message>
+          <message importance="Normal"><![CDATA[Copying file from "V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TVDatabase\TvBusinessLayer\bin\Release\DirectShowLib.dll" to "bin\Release\DirectShowLib.dll".]]></message>
+          <message importance="Normal"><![CDATA[Copying file from "V:\Development\Mediaportal\MediaPortal\mediaportal\WindowPlugins\Common.GUIPlugins\bin\Release\LastFMLibrary.dll" to "bin\Release\LastFMLibrary.dll".]]></message>
+          <message importance="Normal"><![CDATA[Copying file from "V:\Development\Mediaportal\MediaPortal\mediaportal\Core\bin\Release\Bass.Net.dll" to "bin\Release\Bass.Net.dll".]]></message>
+          <message importance="Normal"><![CDATA[Copying file from "V:\Development\Mediaportal\MediaPortal\mediaportal\Core\bin\Release\taglib-sharp.dll" to "bin\Release\taglib-sharp.dll".]]></message>
+          <message importance="Normal"><![CDATA[Copying file from "V:\Development\Mediaportal\MediaPortal\mediaportal\Core\bin\Release\CSScriptLibrary.dll" to "bin\Release\CSScriptLibrary.dll".]]></message>
+          <message importance="Normal"><![CDATA[Copying file from "V:\Development\Mediaportal\MediaPortal\mediaportal\Core\bin\Release\AxInterop.WMPLib.dll" to "bin\Release\AxInterop.WMPLib.dll".]]></message>
+          <message importance="Normal"><![CDATA[Copying file from "V:\Development\Mediaportal\MediaPortal\mediaportal\Core\bin\Release\edtftpnet-1.2.2.dll" to "bin\Release\edtftpnet-1.2.2.dll".]]></message>
+          <message importance="Normal"><![CDATA[Copying file from "V:\Development\Mediaportal\MediaPortal\mediaportal\Core\bin\Release\BassRegistration.dll" to "bin\Release\BassRegistration.dll".]]></message>
+          <message importance="Normal"><![CDATA[Copying file from "V:\Development\Mediaportal\MediaPortal\mediaportal\Core\bin\Release\MediaPortal.Support.dll" to "bin\Release\MediaPortal.Support.dll".]]></message>
+          <message importance="Normal"><![CDATA[Copying file from "V:\Development\Mediaportal\MediaPortal\mediaportal\Core\bin\Release\Interop.WMPLib.dll" to "bin\Release\Interop.WMPLib.dll".]]></message>
+          <message importance="Normal"><![CDATA[Copying file from "V:\Development\Mediaportal\MediaPortal\mediaportal\Core\bin\Release\Microsoft.WindowsAPICodePack.Shell.dll" to "bin\Release\Microsoft.WindowsAPICodePack.Shell.dll".]]></message>
+          <message importance="Normal"><![CDATA[Copying file from "V:\Development\Mediaportal\MediaPortal\mediaportal\Databases\bin\Release\HtmlAgilityPack.dll" to "bin\Release\HtmlAgilityPack.dll".]]></message>
+          <message importance="Normal"><![CDATA[Copying file from "V:\Development\Mediaportal\MediaPortal\mediaportal\WindowPlugins\Common.GUIPlugins\bin\Release\LastFMHelper.dll" to "bin\Release\LastFMHelper.dll".]]></message>
+          <message importance="Normal"><![CDATA[Copying file from "V:\Development\Mediaportal\MediaPortal\mediaportal\Core\bin\Release\Ionic.Zip.dll" to "bin\Release\Ionic.Zip.dll".]]></message>
+          <message importance="Normal"><![CDATA[Copying file from "V:\Development\Mediaportal\MediaPortal\mediaportal\Core\bin\Release\Microsoft.WindowsAPICodePack.dll" to "bin\Release\Microsoft.WindowsAPICodePack.dll".]]></message>
+          <message importance="Normal"><![CDATA[Copying file from "V:\Development\Mediaportal\MediaPortal\Common-MP-TVE3\Common.Utils\bin\Release\Common.Utils.pdb" to "bin\Release\Common.Utils.pdb".]]></message>
+          <message importance="Normal"><![CDATA[Copying file from "V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TvControl\bin\Release\TvControl.pdb" to "bin\Release\TvControl.pdb".]]></message>
+          <message importance="Normal"><![CDATA[Copying file from "V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TvControl\bin\Release\TvControl.xml" to "bin\Release\TvControl.xml".]]></message>
+          <message importance="Normal"><![CDATA[Copying file from "V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TVDatabase\TvBusinessLayer\bin\Release\TvBusinessLayer.pdb" to "bin\Release\TvBusinessLayer.pdb".]]></message>
+          <message importance="Normal"><![CDATA[Copying file from "V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TVDatabase\bin\Release\TVDatabase.pdb" to "bin\Release\TVDatabase.pdb".]]></message>
+          <message importance="Normal"><![CDATA[Copying file from "V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TvLibrary.Interfaces\bin\Release\TvLibrary.Interfaces.pdb" to "bin\Release\TvLibrary.Interfaces.pdb".]]></message>
+          <message importance="Normal"><![CDATA[Copying file from "V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TvLibrary.Interfaces\bin\Release\TvLibrary.Interfaces.xml" to "bin\Release\TvLibrary.Interfaces.xml".]]></message>
+          <message importance="Normal"><![CDATA[Copying file from "V:\Development\Mediaportal\MediaPortal\mediaportal\WindowPlugins\Common.GUIPlugins\bin\Release\Common.GUIPlugins.pdb" to "bin\Release\Common.GUIPlugins.pdb".]]></message>
+          <message importance="Normal"><![CDATA[Copying file from "V:\Development\Mediaportal\MediaPortal\mediaportal\WindowPlugins\Common.GUIPlugins\bin\Release\LastFMLibrary.pdb" to "bin\Release\LastFMLibrary.pdb".]]></message>
+          <message importance="Normal"><![CDATA[Copying file from "V:\Development\Mediaportal\MediaPortal\mediaportal\Core\bin\Release\Bass.Net.xml" to "bin\Release\Bass.Net.xml".]]></message>
+          <message importance="Normal"><![CDATA[Copying file from "V:\Development\Mediaportal\MediaPortal\mediaportal\Databases\bin\Release\HtmlAgilityPack.pdb" to "bin\Release\HtmlAgilityPack.pdb".]]></message>
+          <message importance="Normal"><![CDATA[Copying file from "V:\Development\Mediaportal\MediaPortal\mediaportal\Databases\bin\Release\HtmlAgilityPack.xml" to "bin\Release\HtmlAgilityPack.xml".]]></message>
+        </target>
+        <target name="GetCopyToOutputDirectoryXamlAppDefs" started="20.02.2016 16:11:43" />
+        <target name="GetCopyToOutputDirectoryItems" started="20.02.2016 16:11:43">
+          <project targets="GetCopyToOutputDirectoryItems" file="V:\Development\Mediaportal\MediaPortal\Common-MP-TVE3\Common.Utils\Common.Utils.csproj" started="20.02.2016 16:11:43" />
+          <project targets="GetCopyToOutputDirectoryItems" file="V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TvControl\TvControl.csproj" started="20.02.2016 16:11:43" />
+          <project targets="GetCopyToOutputDirectoryItems" file="V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TVDatabase\TvBusinessLayer\TvBusinessLayer.csproj" started="20.02.2016 16:11:43" />
+          <project targets="GetCopyToOutputDirectoryItems" file="V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TVDatabase\TVDatabase.csproj" started="20.02.2016 16:11:43" />
+          <project targets="GetCopyToOutputDirectoryItems" file="V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TvLibrary.Interfaces\TvLibrary.Interfaces.csproj" started="20.02.2016 16:11:43" />
+        </target>
+        <target name="_CopySourceItemsToOutputDirectory" started="20.02.2016 16:11:43" />
+        <target name="_CheckForCompileOutputs" started="20.02.2016 16:11:43" />
+        <target name="CopyFilesToOutputDirectory" started="20.02.2016 16:11:43">
+          <message importance="Normal"><![CDATA[Copying file from "obj\Release\TvPlugin.dll" to "bin\Release\TvPlugin.dll".]]></message>
+          <message importance="High"><![CDATA[TvPlugin -> V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TvPlugin\TvPlugin\bin\Release\TvPlugin.dll]]></message>
+          <message importance="Normal"><![CDATA[Copying file from "obj\Release\TvPlugin.pdb" to "bin\Release\TvPlugin.pdb".]]></message>
+        </target>
+        <target name="PrepareForRun" started="20.02.2016 16:11:43" />
+        <target name="_CleanGetCurrentAndPriorFileWrites" started="20.02.2016 16:11:43" />
+        <target name="IncrementalClean" started="20.02.2016 16:11:43" />
+        <target name="CoreBuild" started="20.02.2016 16:11:43" />
+        <target name="AfterBuild" started="20.02.2016 16:11:43" />
+        <target name="Build" started="20.02.2016 16:11:43" />
+        <target name="AfterRebuild" started="20.02.2016 16:11:43" />
+        <target name="Rebuild" started="20.02.2016 16:11:43" />
+      </project>
+      <project targets="Rebuild" file="V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TvControl\TvControl.csproj" started="20.02.2016 16:11:43">
+        <target name="BeforeRebuild" started="20.02.2016 16:11:43" />
+        <target name="AfterRebuild" started="20.02.2016 16:11:43" />
+        <target name="Rebuild" started="20.02.2016 16:11:43" />
+      </project>
+      <project targets="Rebuild" file="V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TvLibrary.Interfaces\TvLibrary.Interfaces.csproj" started="20.02.2016 16:11:43">
+        <target name="BeforeRebuild" started="20.02.2016 16:11:43" />
+        <target name="AfterRebuild" started="20.02.2016 16:11:43" />
+        <target name="Rebuild" started="20.02.2016 16:11:43" />
+      </project>
+      <project targets="Rebuild" file="V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TVDatabase\TVDatabase.csproj" started="20.02.2016 16:11:43">
+        <target name="BeforeRebuild" started="20.02.2016 16:11:43" />
+        <target name="AfterRebuild" started="20.02.2016 16:11:43" />
+        <target name="Rebuild" started="20.02.2016 16:11:43" />
+      </project>
+      <project targets="Rebuild" file="V:\Development\Mediaportal\MediaPortal\TvEngine3\TVLibrary\TVDatabase\TvBusinessLayer\TvBusinessLayer.csproj" started="20.02.2016 16:11:43">
+        <target name="BeforeRebuild" started="20.02.2016 16:11:43" />
+        <target name="AfterRebuild" started="20.02.2016 16:11:43" />
+        <target name="Rebuild" started="20.02.2016 16:11:43" />
+      </project>
+      <project targets="Rebuild" file="V:\Development\Mediaportal\MediaPortal\Common-MP-TVE3\DirectShowLib\DirectShowLib.csproj" started="20.02.2016 16:11:43">
+        <target name="BeforeRebuild" started="20.02.2016 16:11:43" />
+        <target name="AfterRebuild" started="20.02.2016 16:11:43" />
+        <target name="Rebuild" started="20.02.2016 16:11:43" />
+      </project>
+      <project targets="Rebuild" file="V:\Development\Mediaportal\MediaPortal\Common-MP-TVE3\Common.Utils\Common.Utils.csproj" started="20.02.2016 16:11:43">
+        <target name="BeforeRebuild" started="20.02.2016 16:11:43" />
+        <target name="AfterRebuild" started="20.02.2016 16:11:43" />
+        <target name="Rebuild" started="20.02.2016 16:11:43" />
+      </project>
+    </target>
+  </project>
+  <warnings>64</warnings>
+  <errors>0</errors>
+  <starttime>20.02.2016 16:11:38</starttime>
+  <endtime>20.02.2016 16:11:43</endtime>
+  <timeelapsed>00:00:05.1352937</timeelapsed>
+</build>
