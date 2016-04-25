@@ -3085,6 +3085,101 @@ namespace MediaPortal.Configuration.Sections
       _isRefreshing = false;
     }
 
+    // Refresh missing covers
+    private void btnRefreshMissingCovers_Click(object sender, EventArgs e)
+    {
+      if (!Win32API.IsConnectedToInternet())
+      {
+        MessageBox.Show("No active Internet connection.\nPlease check your network settings and try again.",
+                        "Warning!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+        return;
+      }
+
+      // Some cleanup before refresh
+      coversListBox.Items.Clear();
+      // Set refresh status for background worker
+      _isRefreshing = true;
+      // Freeze current panel (do not mess up while refreshing)
+      this.Enabled = false;
+      // Progress setup
+      _progressDialog = new DlgProgress();
+      _progressDialog.SetHeading("Refreshing missing covers");
+      _progressDialog.TopMost = true;
+      _progressDialog.DisableCancel();
+      _progressDialog.SetLine1("Downloading cover for:");
+      _progressDialog.SetLine2("Downloading...");
+      _progressDialog.SetPercentage(100);
+      _progressDialog.Total = cbTitle.Items.Count - 1;
+      _progressDialog.Count = 1;
+      _progressDialog.Show();
+      // Set backgroundworker
+      BackgroundWorker bgwCover = new BackgroundWorker();
+      bgwCover.WorkerSupportsCancellation = true;
+      bgwCover.WorkerReportsProgress = false;
+      bgwCover.DoWork += new DoWorkEventHandler(RefreshMissingCovers);
+      bgwCover.RunWorkerCompleted += new RunWorkerCompletedEventHandler(CancelWorker);
+      // Start worker by passing parameter moviecollection
+      bgwCover.RunWorkerAsync();
+
+      while (_isRefreshing)
+      {
+        if (!_progressDialog.CancelScan)
+        {
+          Application.DoEvents();
+        }
+        else
+        {
+          _isRefreshing = false;
+          bgwCover.CancelAsync();
+          return;
+        }
+      }
+    }
+
+    // Refresh covers DoWork event handler
+    private void RefreshMissingCovers(object sender, DoWorkEventArgs e)
+    {
+      ArrayList movies = new ArrayList();
+      VideoDatabase.GetMovies(ref movies);
+
+      foreach (IMDBMovie movie in movies)
+      {
+        if (!_isRefreshing)
+        {
+          e.Cancel = true;
+          break;
+        }
+
+        _progressDialog.SetLine1("Downloading cover for: " + movie.Title);
+
+        // Skip no thumb URL movie ...
+        if (string.IsNullOrEmpty(movie.ThumbURL) || movie.ThumbURL.Length <= 7 || (movie.ThumbURL.Length > 7 && !movie.ThumbURL.Substring(0, 7).Equals("http://")))
+        {
+          if (_progressDialog.Count < movies.Count - 1)
+            _progressDialog.Count++;
+          continue;
+        }
+
+        string titleExt = movie.Title + "{" + movie.ID + "}";
+        string file = Util.Utils.GetLargeCoverArtName(Thumbs.MovieTitle, titleExt);
+
+        if (File.Exists(file))
+        {
+          if (_progressDialog.Count < movies.Count - 1)
+            _progressDialog.Count++;
+          continue;
+        }
+
+        // Update database with new cover
+        UpdateActiveMovieImageAndThumbs(movie.ThumbURL, movie.ID, movie.Title);
+
+        // Update progress
+        if (_progressDialog.Count < movies.Count - 1)
+          _progressDialog.Count++;
+      }
+      _isRefreshing = false;
+    }
+
     #endregion
 
     #region Fanart
