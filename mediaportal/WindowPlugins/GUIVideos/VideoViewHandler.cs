@@ -106,9 +106,10 @@ namespace MediaPortal.GUI.Video
         bool useActorsTable = false;
         bool useGenreTable = false;
         bool useUserGroupsTable = false;
+        bool useMovieCollectionTable = false;
         FilterDefinition defRoot = (FilterDefinition)currentView.Filters[0];
         string table = GetTable(defRoot.Where, ref useMovieInfoTable, ref useAlbumTable, ref useActorsTable,
-                                ref useGenreTable, ref useUserGroupsTable);
+                                ref useGenreTable, ref useUserGroupsTable, ref useMovieCollectionTable);
 
         if (string.IsNullOrEmpty(table) && defRoot.Where == "actorindex")
         {
@@ -150,7 +151,7 @@ namespace MediaPortal.GUI.Video
           {
             sql += orderClause;
           }
-          VideoDatabase.GetMoviesByFilter(sql, out movies, true, false, false, false);
+          VideoDatabase.GetMoviesByFilter(sql, out movies, true, false, false, false, false);
         }
         else if (table == "genre")
         {
@@ -164,9 +165,9 @@ namespace MediaPortal.GUI.Video
           {
             sql += orderClause;
           }
-          VideoDatabase.GetMoviesByFilter(sql, out movies, false, false, true, false);
+          VideoDatabase.GetMoviesByFilter(sql, out movies, false, false, true, false, false);
         }
-        else if (table == "usergroup")
+        else if (table == "usergroup" || table == "usergrouponly")
         {
           sql = String.Format("SELECT * FROM usergroup ");
           
@@ -179,12 +180,38 @@ namespace MediaPortal.GUI.Video
           {
             sql += orderClause;
           }
-          VideoDatabase.GetMoviesByFilter(sql, out movies, false, false, false, true);
+          VideoDatabase.GetMoviesByFilter(sql, out movies, false, false, false, true, false);
 
-          ArrayList moviesExt = new ArrayList();
-          sql = String.Format("SELECT * FROM movieinfo WHERE idMovie NOT IN (SELECT DISTINCT idMovie FROM usergrouplinkmovie) ORDER BY strTitle");
-          VideoDatabase.GetMoviesByFilter(sql, out moviesExt, false, true, false, false);
-          movies.AddRange(moviesExt);
+          if (table == "usergroup")
+          {
+            ArrayList moviesExt = new ArrayList();
+            sql = String.Format("SELECT * FROM movieinfo WHERE idMovie NOT IN (SELECT DISTINCT idMovie FROM usergrouplinkmovie) ORDER BY strTitle");
+            VideoDatabase.GetMoviesByFilter(sql, out moviesExt, false, true, false, false, false);
+            movies.AddRange(moviesExt);
+          }
+        }
+        else if (table == "moviecollection" || table == "moviecollectiononly")
+        {
+          sql = String.Format("SELECT * FROM moviecollection ");
+          
+          if (whereClause != string.Empty)
+          {
+            sql += "WHERE " + whereClause;
+          }
+          
+          if (orderClause != string.Empty)
+          {
+            sql += orderClause;
+          }
+          VideoDatabase.GetMoviesByFilter(sql, out movies, false, false, false, false, true);
+
+          if (table == "moviecollection")
+          {
+            ArrayList moviesExt = new ArrayList();
+            sql = String.Format("SELECT * FROM movieinfo WHERE idMovie NOT IN (SELECT DISTINCT idMovie FROM moviecollectionlinkmovie) ORDER BY strTitle");
+            VideoDatabase.GetMoviesByFilter(sql, out moviesExt, false, true, false, false, false);
+            movies.AddRange(moviesExt);
+          }
         }
         else if (defRoot.Where == "year")
         {
@@ -215,7 +242,7 @@ namespace MediaPortal.GUI.Video
                                         searchDate.ToString("yyyy-MM-dd" + " 00:00:00"));
             sql = String.Format("SELECT * FROM movieinfo {0} {1}", whereClause, orderClause);
 
-            VideoDatabase.GetMoviesByFilter(sql, out movies, false, true, false, false);
+            VideoDatabase.GetMoviesByFilter(sql, out movies, false, true, false, false, false);
           }
           catch (Exception) { }
         }
@@ -235,7 +262,7 @@ namespace MediaPortal.GUI.Video
 
             sql = String.Format("SELECT * FROM movieinfo {0} {1}", whereClause, orderClause);
 
-            VideoDatabase.GetMoviesByFilter(sql, out movies, false, true, false, false);
+            VideoDatabase.GetMoviesByFilter(sql, out movies, false, true, false, false, false);
           }
           catch (Exception) { }
         }
@@ -249,7 +276,7 @@ namespace MediaPortal.GUI.Video
           sql = String.Format("SELECT * FROM {0} {1} {2}",
                               fromClause, whereClause, orderClause);
 
-          VideoDatabase.GetMoviesByFilter(sql, out movies, false, true, true, true);
+          VideoDatabase.GetMoviesByFilter(sql, out movies, false, true, true, true, true);
         }
       }
       else if (CurrentLevel < MaxLevels - 1)
@@ -259,13 +286,23 @@ namespace MediaPortal.GUI.Video
         bool useActorsTable = false;
         bool useGenreTable = false;
         bool useUserGroupsTable = false;
+        bool useMovieCollectionTable = false;
         string join = string.Empty;
         string fields = "*";
         
         FilterDefinition defCurrent = (FilterDefinition)currentView.Filters[CurrentLevel];
         
         string table = GetTable(defCurrent.Where, ref useMovieInfoTable, ref useAlbumTable, ref useActorsTable,
-                                ref useGenreTable, ref useUserGroupsTable);
+                                ref useGenreTable, ref useUserGroupsTable, ref useMovieCollectionTable);
+
+        if (table == "usergrouponly")
+        {
+          table = "usergroup";
+        }
+        if (table == "moviecollectiononly")
+        {
+          table = "moviecollection";
+        }
 
         if (defCurrent.Where == "director")
         {
@@ -293,9 +330,41 @@ namespace MediaPortal.GUI.Video
           }
         }
        
+        if (defCurrent.Where == "genre")
+        {
+          whereClause = " WHERE idGenre IN (SELECT idGenre FROM genrelinkmovie WHERE idMovie IN (SELECT movieinfo.idMovie FROM movieinfo" + fromClause + " " + whereClause + "))";
+        }
+
+        if (defCurrent.Where == "user groups" || defCurrent.Where == "user groups only")
+        {
+          whereClause = " WHERE idGroup IN (SELECT idGroup FROM usergrouplinkmovie WHERE idMovie IN (SELECT movieinfo.idMovie FROM movieinfo" + fromClause + " " + whereClause + "))";
+        }
+
+        if (defCurrent.Where == "movie collections" || defCurrent.Where == "movie collections only")
+        {
+          whereClause = " WHERE idCollection IN (SELECT idCollection FROM moviecollectionlinkmovie WHERE idMovie IN (SELECT movieinfo.idMovie FROM movieinfo" + fromClause + " " + whereClause + "))";
+        }
+
         sql = String.Format("SELECT DISTINCT {0} FROM {1} {2} {3} {4}",
                             fields, table, join, whereClause, orderClause);
-        VideoDatabase.GetMoviesByFilter(sql, out movies, useActorsTable, useMovieInfoTable, useGenreTable, useUserGroupsTable);
+        VideoDatabase.GetMoviesByFilter(sql, out movies, useActorsTable, useMovieInfoTable, useGenreTable, useUserGroupsTable, useMovieCollectionTable);
+
+        if (table == "usergroup")
+        {
+          ArrayList moviesExt = new ArrayList();
+          sql = String.Format("SELECT * FROM movieinfo WHERE idMovie NOT IN (SELECT DISTINCT idMovie FROM usergrouplinkmovie) "+
+                                                        "AND idMovie IN (SELECT movieinfo.idMovie FROM movieinfo" + fromClause + " " + whereClause + ") ORDER BY strTitle");
+          VideoDatabase.GetMoviesByFilter(sql, out moviesExt, false, true, false, false, false);
+          movies.AddRange(moviesExt);
+        }
+        if (table == "moviecollection")
+        {
+          ArrayList moviesExt = new ArrayList();
+          sql = String.Format("SELECT * FROM movieinfo WHERE idMovie NOT IN (SELECT DISTINCT idMovie FROM moviecollectionlinkmovie) "+
+                                                        "AND idMovie IN (SELECT movieinfo.idMovie FROM movieinfo" + fromClause + " " + whereClause + ") ORDER BY strTitle");
+          VideoDatabase.GetMoviesByFilter(sql, out moviesExt, false, true, false, false, false);
+          movies.AddRange(moviesExt);
+        }
       }
       else
       {
@@ -328,13 +397,16 @@ namespace MediaPortal.GUI.Video
                    "movieinfo.language, " +
                    "movieinfo.lastupdate, " +
                    "movieinfo.strSortTitle, " +
+                   "movieinfo.TMDBNumber, " +
+                   "movieinfo.LocalDBNumber, " +
+                   "movieinfo.iUserRating, " +
                    "path.strPath, " +
                    "movie.discid, " +
                    "path.cdlabel " +
                    "FROM {0} {1} {2}",
             fromClause, whereClause, orderClause);
         
-        VideoDatabase.GetMoviesByFilter(sql, out movies, true, true, true, true);
+        VideoDatabase.GetMoviesByFilter(sql, out movies, true, true, true, true, true);
       }
       return movies;
     }
@@ -378,8 +450,9 @@ namespace MediaPortal.GUI.Video
       bool useActorsTable = false;
       bool useGenreTable = false;
       bool useUserGroupsTable = false;
+      bool useMovieCollectionTable = false;
       string table = GetTable(filter.Where, ref useMovieInfoTable, ref useAlbumTable, ref useActorsTable,
-                              ref useGenreTable, ref useUserGroupsTable);
+                              ref useGenreTable, ref useUserGroupsTable, ref useMovieCollectionTable);
       if (useGenreTable)
       {
         fromClause += String.Format(",genre,genrelinkmovie");
@@ -391,6 +464,13 @@ namespace MediaPortal.GUI.Video
       {
         fromClause += String.Format(",usergroup,usergrouplinkmovie");
         whereClause += " AND usergroup.idGroup=usergrouplinkmovie.idGroup AND usergrouplinkMovie.idMovie=movieinfo.idMovie";
+        return;
+      }
+
+      if (useMovieCollectionTable)
+      {
+        fromClause += String.Format(",moviecollection,moviecollectionlinkmovie");
+        whereClause += " AND moviecollection.idCollection=moviecollectionlinkmovie.idCollection AND moviecollectionlinkmovie.idMovie=movieinfo.idMovie";
         return;
       }
 
@@ -473,7 +553,7 @@ namespace MediaPortal.GUI.Video
     }
 
     private string GetTable(string where, ref bool useMovieInfoTable, ref bool useAlbumTable, ref bool useActorsTable,
-                            ref bool useGenreTable, ref bool useUserGroupsTable)
+                            ref bool useGenreTable, ref bool useUserGroupsTable, ref bool useMovieCollectionTable)
     {
       if (where == "actor")
       {
@@ -499,6 +579,21 @@ namespace MediaPortal.GUI.Video
       {
         useUserGroupsTable = true;
         return "usergroup";
+      }
+      if (where == "user groups only")
+      {
+        useUserGroupsTable = true;
+        return "usergrouponly";
+      }
+      if (where == "movie collections")
+      {
+        useMovieCollectionTable = true;
+        return "moviecollection";
+      }
+      if (where == "movie collections only")
+      {
+        useMovieCollectionTable = true;
+        return "moviecollectiononly";
       }
       if (where == "year")
       {
@@ -545,9 +640,13 @@ namespace MediaPortal.GUI.Video
       {
         return "strGenre";
       }
-      if (where == "user groups")
+      if (where == "user groups" || where == "user groups only")
       {
         return "strGroup";
+      }
+      if (where == "movie collections" || where == "movie collections only")
+      {
+        return "strCollection";
       }
       if (where == "year")
       {
@@ -591,9 +690,13 @@ namespace MediaPortal.GUI.Video
       {
         return "genre.idGenre";
       }
-      if (where == "user groups")
+      if (where == "user groups" || where == "user groups only")
       {
         return "userGroup.idGroup";
+      }
+      if (where == "movie collections" || where == "movie collections only")
+      {
+        return "moviecollection.idCollection";
       }
       if (where == "year")
       {
@@ -648,9 +751,13 @@ namespace MediaPortal.GUI.Video
       {
         return "genre.strGenre";
       }
-      if (where == "user groups")
+      if (where == "user groups" || where == "user groups only")
       {
         return "usergroup.strGroup";
+      }
+      if (where == "movie collections" || where == "movie collections only")
+      {
+        return "moviecollection.strCollection";
       }
       if (where == "year")
       {
@@ -693,9 +800,13 @@ namespace MediaPortal.GUI.Video
       {
         return movie.GenreID.ToString();
       }
-      if (where == "user groups")
+      if (where == "user groups" || where == "user groups only")
       {
         return movie.UserGroupID.ToString();
+      }
+      if (where == "movie collections" || where == "movie collections only")
+      {
+        return movie.MovieCollectionID.ToString();
       }
       if (where == "year")
       {
@@ -733,11 +844,20 @@ namespace MediaPortal.GUI.Video
         item.Label2 = string.Empty;
         item.Label3 = string.Empty;
       }
-      if (definition.Where == "user groups")
+      if (definition.Where == "user groups" || definition.Where == "user groups only")
       {
         if (movie.Title == string.Empty)
         {
           item.Label = movie.SingleUserGroup;
+          item.Label2 = string.Empty;
+          item.Label3 = string.Empty;
+        }
+      }
+      if (definition.Where == "movie collections" || definition.Where == "movie collections only")
+      {
+        if (movie.Title == string.Empty)
+        {
+          item.Label = movie.SingleMovieCollection;
           item.Label2 = string.Empty;
           item.Label3 = string.Empty;
         }
@@ -818,6 +938,15 @@ namespace MediaPortal.GUI.Video
           break;
         case "user groups":
           localizedLevelName = GUILocalizeStrings.Get(1265);
+          break;
+        case "user groups only":
+          localizedLevelName = GUILocalizeStrings.Get(1330);
+          break;
+        case "movie collections":
+          localizedLevelName = GUILocalizeStrings.Get(1331);
+          break;
+        case "movie collections only":
+          localizedLevelName = GUILocalizeStrings.Get(1332);
           break;
         default:
           localizedLevelName = lvlName;

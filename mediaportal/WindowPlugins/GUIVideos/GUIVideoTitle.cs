@@ -484,7 +484,10 @@ namespace MediaPortal.GUI.Video
       if (handler.CurrentLevelWhere == "title" ||
           handler.CurrentLevelWhere == "recently added" ||
           handler.CurrentLevelWhere == "recently watched" ||
-          handler.CurrentLevelWhere == "user groups")
+          handler.CurrentLevelWhere == "user groups" ||
+          handler.CurrentLevelWhere == "user groups only" ||
+          handler.CurrentLevelWhere == "movie collections" ||
+          handler.CurrentLevelWhere == "movie collections only")
       {
         dlg.AddLocalizedString(208); //play
         dlg.AddLocalizedString(368); //IMDB
@@ -504,7 +507,26 @@ namespace MediaPortal.GUI.Video
           }
         }
 
-        if (CurrentBaseView == "user groups")
+        if (CurrentBaseView == "movie collections" || CurrentBaseView == "movie collections only")
+        {
+          ArrayList movieCollectionsList = new ArrayList();
+          ArrayList movieMovieCollectionsList = new ArrayList();
+          VideoDatabase.GetCollections(movieCollectionsList);
+          VideoDatabase.GetMovieCollections(movie.ID, movieMovieCollectionsList);
+
+          // Add movie to collection if there is available collections for that movie
+          if (movieMovieCollectionsList.Count < movieCollectionsList.Count)
+          {
+            dlg.AddLocalizedString(1333); //add movie to collection
+          }
+
+          if (handler.CurrentLevel > 0)
+          {
+            dlg.AddLocalizedString(1334); //remove from collection
+          }
+        }
+
+        if (CurrentBaseView == "user groups" || CurrentBaseView == "user groups only")
         {
           dlg.AddLocalizedString(1272); //Add new usergroup
 
@@ -533,7 +555,10 @@ namespace MediaPortal.GUI.Video
       if ((handler.CurrentLevelWhere == "title" ||
            handler.CurrentLevelWhere == "recently added" ||
            handler.CurrentLevelWhere == "recently watched") && facadeLayout.Count > 1 ||
-           handler.CurrentLevelWhere == "user groups")
+           handler.CurrentLevelWhere == "user groups" ||
+           handler.CurrentLevelWhere == "user groups only" ||
+           handler.CurrentLevelWhere == "movie collections" ||
+           handler.CurrentLevelWhere == "movie collections only")
       {
         dlg.AddLocalizedString(1293); //Search movie
       }
@@ -602,6 +627,14 @@ namespace MediaPortal.GUI.Video
         
         case 1263: // Set default grabber
           GUIVideoFiles.SetDefaultGrabber();
+          break;
+        
+        case 1333: // Add Movie to Collection
+          OnAddToCollection(movie, itemNo);
+          break;
+
+        case 1334: // Remove from Collection
+          OnRemoveFromCollection(movie, itemNo);
           break;
         
         case 1270: // Add to user group
@@ -813,13 +846,16 @@ namespace MediaPortal.GUI.Video
                      "movieinfo.language," +
                      "movieinfo.lastupdate, " +
 			               "movieinfo.strSortTitle " +
+                     "movieinfo.TMDBNumber, " +
+                     "movieinfo.LocalDBNumber, " +
+                     "movieinfo.iUserRating," +
                      "FROM movieinfo " +
                      "INNER JOIN actorlinkmovie ON actorlinkmovie.idMovie = movieinfo.idMovie " +
                      "INNER JOIN actors ON actors.idActor = actorlinkmovie.idActor " +
                      "WHERE "+ _searchMovieDbField + " LIKE '%" + _searchMovieString + "%' " +
                      "ORDER BY movieinfo.strTitle ASC";
 
-        VideoDatabase.GetMoviesByFilter(sql, out movies, false, true, false, false);
+        VideoDatabase.GetMoviesByFilter(sql, out movies, false, true, false, false, false);
       }
       else if (_searchActor && handler.CurrentLevelWhere != "title")
       {
@@ -836,7 +872,7 @@ namespace MediaPortal.GUI.Video
           sql = "SELECT * FROM actors WHERE strActor LIKE '%" + _searchActorString + "%' ORDER BY strActor ASC";
         }
         
-        VideoDatabase.GetMoviesByFilter(sql, out movies, true, false, false, false);
+        VideoDatabase.GetMoviesByFilter(sql, out movies, true, false, false, false, false);
       }
       else
       {
@@ -868,7 +904,8 @@ namespace MediaPortal.GUI.Video
         GUIListItem item = new GUIListItem();
         item.Label = movie.Title;
 
-        if (handler.CurrentLevelWhere != "user groups")
+        if (handler.CurrentLevelWhere != "user groups" && handler.CurrentLevelWhere != "user groups only" &&
+            handler.CurrentLevelWhere != "movie collections" && handler.CurrentLevelWhere != "movie collections only")
         {
           if (handler.CurrentLevel + 1 < handler.MaxLevels)
           {
@@ -909,6 +946,7 @@ namespace MediaPortal.GUI.Video
         item.Year = movie.Year;
         item.DVDLabel = movie.DVDLabel;
         item.Rating = movie.Rating;
+        item.UserRating = movie.UserRating;
         item.IsPlayed = movie.Watched > 0;
 
         try
@@ -1004,7 +1042,13 @@ namespace MediaPortal.GUI.Video
             break;
 
           case "user groups":
+          case "user groups only":
             SetUserGroupsThumbs(itemlist);
+            break;
+
+          case "movie collections":
+          case "movie collections only":
+            SetMovieCollectionThumbs(itemlist);
             break;
 
           case "actor":
@@ -1228,11 +1272,14 @@ namespace MediaPortal.GUI.Video
       else if ((handler.CurrentLevelWhere == "title" ||
                 handler.CurrentLevelWhere == "recently added" ||
                 handler.CurrentLevelWhere == "recently watched") && facadeLayout.Count > 1 ||
-                handler.CurrentLevelWhere == "user groups")
+                handler.CurrentLevelWhere == "user groups" ||
+                handler.CurrentLevelWhere == "user groups only" ||
+                handler.CurrentLevelWhere == "movie collections" ||
+                handler.CurrentLevelWhere == "movie collections only")
       {
         dlg.AddLocalizedString(1293); //Search movie
 
-        if (handler.CurrentLevelWhere == "user groups")
+        if (handler.CurrentLevelWhere == "user groups" || handler.CurrentLevelWhere == "user groups only")
         {
           dlg.AddLocalizedString(1272); //Add usergroup
           dlg.AddLocalizedString(1273); //Remove selected usergroup
@@ -1362,6 +1409,21 @@ namespace MediaPortal.GUI.Video
       }
     }
     
+    protected void SetMovieCollectionThumbs(ArrayList itemlist)
+    {
+      foreach (GUIListItem item in itemlist)
+      {
+        // get the collection somewhere since the label isn't set yet.
+        IMDBMovie movie = item.AlbumInfoTag as IMDBMovie;
+
+        if (movie != null) 
+        {
+          string collectionCover = Util.Utils.GetCoverArt(Thumbs.MovieCollection, movie.SingleMovieCollection);
+          SetItemThumb(item, collectionCover);
+        }
+      }
+    }
+
     protected void SetActorThumbs(ArrayList itemlist)
     {
       if (_setThumbs != null && _setThumbs.IsAlive)
@@ -1533,6 +1595,14 @@ namespace MediaPortal.GUI.Video
             break;
 
           case "user groups":
+          case "user groups only":
+            break;
+
+          case "movie collections":
+          case "movie collections only":
+            listItem.IconImageBig = "defaultVideoBig.png";
+            listItem.IconImage = "defaultVideo.png";
+            listItem.ThumbnailImage = "defaultVideoBig.png";
             break;
 
           case "year":
@@ -1704,9 +1774,14 @@ namespace MediaPortal.GUI.Video
               selectedValue = VideoDatabase.GetGenreById(iSelectedValue);
             }
 
-            if (strView == "user groups")
+            if (strView == "user groups" || strView == "user groups only")
             {
               selectedValue = VideoDatabase.GetUserGroupById(iSelectedValue);
+            }
+
+            if (strView == "movie collections" || strView == "movie collections only")
+            {
+              selectedValue = VideoDatabase.GetCollectionById(iSelectedValue);
             }
           }
 
@@ -1820,6 +1895,7 @@ namespace MediaPortal.GUI.Video
       string sql = string.Empty;
       string view = handler.CurrentLevelWhere.ToLowerInvariant();
       string groupDescription = string.Empty;
+      string collectionDescription = string.Empty;
       IMDBMovie movie = item.AlbumInfoTag as IMDBMovie;
 
       switch (view)
@@ -1829,6 +1905,7 @@ namespace MediaPortal.GUI.Video
           break;
       
         case "user groups":
+        case "user groups only":
           int grpId = VideoDatabase.GetUserGroupId(item.Label);
           groupDescription = VideoDatabase.GetUserGroupDescriptionById(grpId);
           strMovies = VideoDatabase.GetMovieTitlesByUserGroup(grpId);
@@ -1839,6 +1916,27 @@ namespace MediaPortal.GUI.Video
           }
           break;
       
+        case "movie collections":
+        case "movie collections only":
+          int mcolId = VideoDatabase.GetCollectionId(item.Label);
+          collectionDescription = VideoDatabase.GetCollectionDescriptionById(mcolId);
+          /*
+          strMovies = VideoDatabase.GetMovieTitlesByCollection(item.Label);
+          if (!string.IsNullOrEmpty(collectionDescription))
+          {
+            collectionDescription += ("\n\n" + GUILocalizeStrings.Get(342) + ":\n"); // Movies
+          }
+          */
+          if (!string.IsNullOrEmpty(collectionDescription))
+          {
+            strMovies = collectionDescription;
+          }
+          else
+          {
+            strMovies = VideoDatabase.GetMovieTitlesByCollection(item.Label);
+          }
+          break;
+
         case "actor":
           if (movie != null)
           {
@@ -1886,7 +1984,12 @@ namespace MediaPortal.GUI.Video
       {
         strMovies = groupDescription + strMovies;
       }
-      
+      /*
+      if (!string.IsNullOrEmpty(collectionDescription))
+      {
+        strMovies = collectionDescription + strMovies;
+      }
+      */
       return strMovies;
     }
 
@@ -2088,6 +2191,84 @@ namespace MediaPortal.GUI.Video
       }
     }
 
+    private void OnAddToCollection(IMDBMovie movie, int itemIndex)
+    {
+      ArrayList movieCollections = new ArrayList();
+      ArrayList lCollections = new ArrayList();
+      VideoDatabase.GetMovieCollections(movie.ID, movieCollections);
+      VideoDatabase.GetCollections(lCollections);
+
+      GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_MENU);
+
+      if (dlg == null || lCollections.Count == 0 || lCollections.Count == movieCollections.Count)
+      {
+        return;
+      }
+
+      dlg.Reset();
+      dlg.SetHeading(498); // menu
+
+      foreach (string strCollection in lCollections)
+      {
+        if (!movieCollections.Contains(strCollection))
+        {
+          dlg.Add(strCollection);
+        }
+      }
+
+      dlg.DoModal(GetID);
+
+      if (dlg.SelectedId == -1)
+      {
+        return;
+      }
+
+      VideoDatabase.AddCollectionToMovie(movie.ID, VideoDatabase.AddCollection(dlg.SelectedLabelText));
+
+      currentSelectedItem = itemIndex;
+
+      LoadDirectory(currentFolder);
+
+      if (currentSelectedItem >= facadeLayout.ListLayout.ListItems.Count)
+      {
+        GUIControl.SelectItemControl(GetID, facadeLayout.GetID, currentSelectedItem);
+      }
+      else
+      {
+        currentSelectedItem--;
+
+        if (currentSelectedItem >= 0)
+        {
+          GUIControl.SelectItemControl(GetID, facadeLayout.GetID, currentSelectedItem);
+        }
+      }
+    }
+
+    private void OnRemoveFromCollection(IMDBMovie movie, int itemIndex)
+    {
+      // string group = m_history.Get("movie collections");
+      string strCollection = m_history.Get(handler.CurrentLevelWhere);
+      VideoDatabase.RemoveCollectionFromMovie(movie.ID, VideoDatabase.AddCollection(strCollection));
+
+      currentSelectedItem = itemIndex;
+
+      LoadDirectory(currentFolder);
+
+      if (currentSelectedItem >= facadeLayout.ListLayout.ListItems.Count)
+      {
+        GUIControl.SelectItemControl(GetID, facadeLayout.GetID, currentSelectedItem);
+      }
+      else
+      {
+        currentSelectedItem--;
+
+        if (currentSelectedItem >= 0)
+        {
+          GUIControl.SelectItemControl(GetID, facadeLayout.GetID, currentSelectedItem);
+        }
+      }
+    }
+
     private void OnAddToUserGroup(IMDBMovie movie, int itemIndex)
     {
       ArrayList movieUserGroups = new ArrayList();
@@ -2143,7 +2324,8 @@ namespace MediaPortal.GUI.Video
 
     private void OnRemoveFromUserGroup(IMDBMovie movie, int itemIndex)
     {
-      string group = m_history.Get("user groups");
+      // string group = m_history.Get("user groups");
+      string group = m_history.Get(handler.CurrentLevelWhere);
       VideoDatabase.RemoveUserGroupFromMovie(movie.ID, VideoDatabase.AddUserGroup(group));
       
       currentSelectedItem = itemIndex;
@@ -2569,6 +2751,7 @@ namespace MediaPortal.GUI.Video
               break;
 
             case "user groups":
+            case "user groups only":
               m_history.Set(selectedLabel, view);
               IMDBMovie movie = facadeLayout.SelectedListItem.AlbumInfoTag as IMDBMovie;
               if (movie == null || movie.ID == -1)
@@ -2576,6 +2759,13 @@ namespace MediaPortal.GUI.Video
                 VideoDatabase.GetRandomMoviesByUserGroup(selectedLabel, ref mList, 1);
                 SetRandomMovieId(mList);
               }
+              break;
+
+            case "movie collections":
+            case "movie collections only":
+              m_history.Set(selectedLabel, view);
+              VideoDatabase.GetRandomMoviesByCollection(selectedLabel, ref mList, 1);
+              SetRandomMovieId(mList);
               break;
 
             case "actor":
@@ -2626,7 +2816,7 @@ namespace MediaPortal.GUI.Video
                 string sql = "SELECT * FROM movieinfo " + where +
                              "GROUP BY strTitle ORDER BY RANDOM() LIMIT 1";
 
-                VideoDatabase.GetMoviesByFilter(sql, out mList, false, true, false, false);
+                VideoDatabase.GetMoviesByFilter(sql, out mList, false, true, false, false, false);
                 SetRandomMovieId(mList);
                 m_history.Set(selectedLabel, view);
               }
