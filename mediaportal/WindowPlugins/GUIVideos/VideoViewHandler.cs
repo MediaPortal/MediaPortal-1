@@ -81,12 +81,6 @@ namespace MediaPortal.GUI.Video
       string orderClause = string.Empty;
       string fromClause = string.Empty;
       
-      if (CurrentLevel == MaxLevels - 1)
-      {
-        whereClause = "movieinfo.idmovie=movie.idmovie AND movie.idpath=path.idpath";
-        fromClause = "movie,movieinfo,path";
-      }
-
       for (int i = 0; i < CurrentLevel; ++i)
       {
         BuildSelect((FilterDefinition)currentView.Filters[i], ref whereClause, ref fromClause);
@@ -264,6 +258,7 @@ namespace MediaPortal.GUI.Video
         else
         {
           whereClause = "WHERE movieinfo.idmovie=movie.idmovie AND movie.idpath=path.idpath";
+          fromClause = "movie,movieinfo,path";
 
           BuildRestriction(defRoot, ref whereClause);
 
@@ -362,6 +357,12 @@ namespace MediaPortal.GUI.Video
       }
       else
       {
+        if (CurrentLevel == MaxLevels - 1)
+        {
+          whereClause = whereClause + (whereClause != string.Empty ? " AND " : "") + "movieinfo.idmovie=movie.idmovie AND movie.idpath=path.idpath";
+          fromClause = fromClause + (fromClause != string.Empty ? "," : "") + "movie,movieinfo,path";
+        }
+
         if (whereClause != string.Empty)
         {
           whereClause = "WHERE " + whereClause;
