@@ -83,7 +83,7 @@ namespace MediaPortal.GUI.Video
       
       if (CurrentLevel == MaxLevels - 1)
       {
-        whereClause = "WHERE movieinfo.idmovie=movie.idmovie AND movie.idpath=path.idpath";
+        whereClause = "movieinfo.idmovie=movie.idmovie AND movie.idpath=path.idpath";
         fromClause = "movie,movieinfo,path";
       }
 
@@ -137,16 +137,11 @@ namespace MediaPortal.GUI.Video
             sql = String.Format("SELECT * FROM actors WHERE strActor <> 'unknown' ");
           }
 
-          if (whereClause != string.Empty && defRoot.Where == "director")
-          {
-            sql += "WHERE " + whereClause;
-          }
-          
-          if(whereClause != string.Empty && defRoot.Where == "actor")
+          if(whereClause != string.Empty)
           {
             sql += "AND " + whereClause;
           }
-          
+
           if (orderClause != string.Empty)
           {
             sql += orderClause;
@@ -268,8 +263,7 @@ namespace MediaPortal.GUI.Video
         }
         else
         {
-          whereClause =
-            "WHERE movieinfo.idmovie=movie.idmovie AND movie.idpath=path.idpath";
+          whereClause = "WHERE movieinfo.idmovie=movie.idmovie AND movie.idpath=path.idpath";
 
           BuildRestriction(defRoot, ref whereClause);
 
@@ -326,23 +320,23 @@ namespace MediaPortal.GUI.Video
           }
           else
           {
-            whereClause = " WHERE idActor NOT IN (SELECT idDirector FROM movieinfo)";
+            whereClause = "WHERE idActor NOT IN (SELECT idDirector FROM movieinfo)";
           }
         }
        
         if (defCurrent.Where == "genre")
         {
-          whereClause = " WHERE idGenre IN (SELECT idGenre FROM genrelinkmovie WHERE idMovie IN (SELECT movieinfo.idMovie FROM movieinfo" + fromClause + " " + whereClause + "))";
+          whereClause = "WHERE idGenre IN (SELECT idGenre FROM genrelinkmovie WHERE idMovie IN (SELECT movieinfo.idMovie FROM movieinfo" + fromClause + " " + whereClause + "))";
         }
 
         if (defCurrent.Where == "user groups" || defCurrent.Where == "user groups only")
         {
-          whereClause = " WHERE idGroup IN (SELECT idGroup FROM usergrouplinkmovie WHERE idMovie IN (SELECT movieinfo.idMovie FROM movieinfo" + fromClause + " " + whereClause + "))";
+          whereClause = "WHERE idGroup IN (SELECT idGroup FROM usergrouplinkmovie WHERE idMovie IN (SELECT movieinfo.idMovie FROM movieinfo" + fromClause + " " + whereClause + "))";
         }
 
         if (defCurrent.Where == "movie collections" || defCurrent.Where == "movie collections only")
         {
-          whereClause = " WHERE idCollection IN (SELECT idCollection FROM moviecollectionlinkmovie WHERE idMovie IN (SELECT movieinfo.idMovie FROM movieinfo" + fromClause + " " + whereClause + "))";
+          whereClause = "WHERE idCollection IN (SELECT idCollection FROM moviecollectionlinkmovie WHERE idMovie IN (SELECT movieinfo.idMovie FROM movieinfo" + fromClause + " " + whereClause + "))";
         }
 
         sql = String.Format("SELECT DISTINCT {0} FROM {1} {2} {3} {4}",
@@ -368,6 +362,11 @@ namespace MediaPortal.GUI.Video
       }
       else
       {
+        if (whereClause != string.Empty)
+        {
+          whereClause = "WHERE " + whereClause;
+        }
+
         sql =
           String.Format(
             "SELECT DISTINCT movieinfo.idMovie, " + 
