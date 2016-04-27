@@ -20,7 +20,7 @@ using MediaPortal.Video.Database;
 
 class Grabber : MarshalByRefObject, MediaPortal.Video.Database.IIMDBScriptGrabber
 {
-    const string strKinopoiskVersion = "20160212.01 by ajs";
+    const string strKinopoiskVersion = "20160419.01 by ajs";
 
     public Grabber()
     {
@@ -571,6 +571,38 @@ class Grabber : MarshalByRefObject, MediaPortal.Video.Database.IIMDBScriptGrabbe
                 if (!string.IsNullOrEmpty(studios))
                 {
                   movieDetails.Studios = studios.Remove(studios.LastIndexOf(" / "));
+                }
+
+                // Details about Movie
+                string DetailsInfo = string.Empty;
+                string rx_details_block = @"tech-bg.jpg(?<detailsBlock>[\s\S]+?)<\/table";
+                string rx_details       = @"<td[^>]+?>(?<capText>(?:<b>)?[\s\S]+?)<\/td[\s\S]+?<td[^>]+?>(?<valText>[\s\S]+?)<\/td";
+
+                string detailsBlock     = ParseSingleValue(studioPage, rx_details_block, "detailsBlock", false);
+                ArrayList detailsList   = Parse(detailsBlock, rx_details);
+
+                if (detailsList != null && detailsList.Count > 0) {
+                  for(int i = 0; i < detailsList.Count; i++) {
+                    Hashtable details  = (Hashtable)detailsList[i];
+                    string detailLText = (string)details["capText"];
+                    string detailRText = (string)details["valText"];
+                    detailLText = detailLText.Trim().Replace("<br>", ", ");
+                    detailLText = detailLText.Trim().Replace("\n", "");
+                    detailLText = Regex.Replace(detailLText, @"&#(?((0?x){1})[\da-hA-H]+|[\d]+);", new MatchEvaluator(ReplaceCharUTF8));
+                    detailLText = Normalize(detailLText);
+                    detailLText = Utils.stripHTMLtags(detailLText);
+                    detailRText = detailRText.Trim().Replace("<br>", ", ");
+                    detailRText = detailRText.Trim().Replace("\n", "");
+                    detailRText = Regex.Replace(detailRText, @"&#(?((0?x){1})[\da-hA-H]+|[\d]+);", new MatchEvaluator(ReplaceCharUTF8));
+                    detailRText = Normalize(detailRText);
+                    detailRText = Utils.stripHTMLtags(detailRText);
+                    DebugLog(detailsConfig.Debug, "Details: {0} - {1}", detailLText, detailRText);
+                    DetailsInfo += "- " + detailLText + " " + detailRText + "\n"; 
+                  }
+                }
+                if (!string.IsNullOrEmpty(DetailsInfo))
+                {
+                  movieDetails.Plot += "\n\n" + "Информация о фильме:\n" + DetailsInfo;
                 }
             }
 
