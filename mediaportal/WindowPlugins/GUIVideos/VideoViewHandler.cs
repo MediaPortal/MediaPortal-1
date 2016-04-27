@@ -278,6 +278,8 @@ namespace MediaPortal.GUI.Video
         bool useMovieCollectionTable = false;
         string join = string.Empty;
         string fields = "*";
+        string _fromClause = string.Empty;
+        string _whereClause = string.Empty;
         
         FilterDefinition defCurrent = (FilterDefinition)currentView.Filters[CurrentLevel];
         
@@ -306,6 +308,8 @@ namespace MediaPortal.GUI.Video
             whereClause = "WHERE" + whereClause;
           }
         }
+        _fromClause = fromClause;
+        _whereClause = whereClause;
 
         if (defCurrent.Where == "actor")
         {
@@ -342,7 +346,7 @@ namespace MediaPortal.GUI.Video
         {
           ArrayList moviesExt = new ArrayList();
           sql = String.Format("SELECT * FROM movieinfo WHERE idMovie NOT IN (SELECT DISTINCT idMovie FROM usergrouplinkmovie) "+
-                                                        "AND idMovie IN (SELECT movieinfo.idMovie FROM movieinfo" + fromClause + " " + whereClause + ") ORDER BY strTitle");
+                                                        "AND idMovie IN (SELECT movieinfo.idMovie FROM movieinfo" + _fromClause + " " + _whereClause + ") ORDER BY strTitle");
           VideoDatabase.GetMoviesByFilter(sql, out moviesExt, false, true, false, false, false);
           movies.AddRange(moviesExt);
         }
@@ -350,7 +354,7 @@ namespace MediaPortal.GUI.Video
         {
           ArrayList moviesExt = new ArrayList();
           sql = String.Format("SELECT * FROM movieinfo WHERE idMovie NOT IN (SELECT DISTINCT idMovie FROM moviecollectionlinkmovie) "+
-                                                        "AND idMovie IN (SELECT movieinfo.idMovie FROM movieinfo" + fromClause + " " + whereClause + ") ORDER BY strTitle");
+                                                        "AND idMovie IN (SELECT movieinfo.idMovie FROM movieinfo" + _fromClause + " " + _whereClause + ") ORDER BY strTitle");
           VideoDatabase.GetMoviesByFilter(sql, out moviesExt, false, true, false, false, false);
           movies.AddRange(moviesExt);
         }
@@ -359,8 +363,8 @@ namespace MediaPortal.GUI.Video
       {
         if (CurrentLevel == MaxLevels - 1)
         {
-          whereClause = whereClause + (whereClause != string.Empty ? " AND " : "") + "movieinfo.idmovie=movie.idmovie AND movie.idpath=path.idpath";
-          fromClause = fromClause + (fromClause != string.Empty ? "," : "") + "movie,movieinfo,path";
+          whereClause = "movieinfo.idmovie=movie.idmovie AND movie.idpath=path.idpath" + (whereClause != string.Empty ? " AND " : "") + whereClause;
+          fromClause = "movie,movieinfo,path" + fromClause ;
         }
 
         if (whereClause != string.Empty)
