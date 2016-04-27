@@ -38,9 +38,6 @@ public:
 	TsAVRT();
 	virtual ~TsAVRT();
 
-  void UnloadAVRT();
-  bool LoadAVRT();
-
   TAvSetMmThreadCharacteristicsW*     m_pAvSetMmThreadCharacteristicsW;
   TAvSetMmThreadPriority*             m_pAvSetMmThreadPriority;
   TAvRevertMmThreadCharacteristics*   m_pAvRevertMmThreadCharacteristics;
@@ -49,6 +46,8 @@ public:
   void RevertMMCSThread(HANDLE hAvrt);
 
 private:
+  bool LoadAVRT();
+
   HMODULE m_hModuleAVRT;
   
 };

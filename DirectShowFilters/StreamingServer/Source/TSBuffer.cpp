@@ -25,7 +25,6 @@
 */
 #include "StdAfx.h"
 #include "TSBuffer.h"
-#include "entercriticalsection.h"
 
 
 #define TV_BUFFER_ITEM_SIZE	32336
@@ -40,9 +39,6 @@ CTSBuffer::CTSBuffer()
 
 	//round to nearest byte boundary.
 
-	m_ParserLock = FALSE;
-	m_loopCount = 20;
-	debugcount = 0;
 	m_maxReadIterations = 0;
   LogDebug("CTSBuffer::ctor");
 }
@@ -58,13 +54,13 @@ void CTSBuffer::SetFileReader(FileReader *pFileReader)
 	if (!pFileReader)
 		return;
 
-  Mediaportal::CEnterCriticalSection lock(m_BufferLock);
+  CAutoLock lock (&m_BufferLock);
 	m_pFileReader = pFileReader;
 }
 
 void CTSBuffer::Clear()
 {
-  Mediaportal::CEnterCriticalSection lock(m_BufferLock);
+  CAutoLock lock (&m_BufferLock);
 	std::vector<BYTE *>::iterator it = m_Array.begin();
 	for ( ; it != m_Array.end() ; it++ )
 	{
@@ -73,12 +69,11 @@ void CTSBuffer::Clear()
 	m_Array.clear();
 
 	m_lItemOffset = 0;
-	m_loopCount = 2;
 }
 
 long CTSBuffer::Count()
 {
-	Mediaportal::CEnterCriticalSection lock(m_BufferLock);
+	CAutoLock lock (&m_BufferLock);
 	long bytesAvailable = 0;
 	long itemCount = m_Array.size();
 
@@ -92,7 +87,7 @@ long CTSBuffer::Count()
 
 void CTSBuffer::SetChannelType(int channelType)
 {
-	Mediaportal::CEnterCriticalSection lock(m_BufferLock);
+	CAutoLock lock (&m_BufferLock);
 
 	Clear();
 
@@ -118,7 +113,7 @@ HRESULT CTSBuffer::Require(long nBytes, BOOL bIgnoreDelay)
 	if (!m_pFileReader)
 		return E_POINTER;
 
-	Mediaportal::CEnterCriticalSection lock(m_BufferLock);
+	CAutoLock lock (&m_BufferLock);
 	long bytesAvailable = Count();
 	if (nBytes <= bytesAvailable)
 		return S_OK;
@@ -198,7 +193,7 @@ HRESULT CTSBuffer::Require(long nBytes, BOOL bIgnoreDelay)
 
 HRESULT CTSBuffer::DequeFromBuffer(BYTE *pbData, long lDataLength)
 {
-	Mediaportal::CEnterCriticalSection lock(m_BufferLock);
+	CAutoLock lock (&m_BufferLock);
 	HRESULT hr = Require(lDataLength);
 	if (FAILED(hr))
 		return hr;
@@ -232,7 +227,7 @@ HRESULT CTSBuffer::ReadFromBuffer(BYTE *pbData, long lDataLength, long lOffset)
 	if (!m_pFileReader)
 		return E_POINTER;
 
-	Mediaportal::CEnterCriticalSection lock(m_BufferLock);
+	CAutoLock lock (&m_BufferLock);
 	HRESULT hr = Require(lOffset + lDataLength);
 	if (FAILED(hr))
 		return hr;

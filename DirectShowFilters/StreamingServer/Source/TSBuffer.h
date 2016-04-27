@@ -25,7 +25,7 @@
 */
 #include <vector>
 #include "FileReader.h"
-#include "CriticalSection.h"
+#include <Streams.h>
 
 
 enum ChannelType
@@ -47,17 +47,14 @@ public:
 	HRESULT Require(long nBytes, BOOL bIgnoreDelay = FALSE);
 	HRESULT DequeFromBuffer(BYTE *pbData, long lDataLength);
 	HRESULT ReadFromBuffer(BYTE *pbData, long lDataLength, long lOffset);
-	int m_loopCount;
 
 protected:
 	FileReader *m_pFileReader;
 	std::vector<BYTE *> m_Array;
 	long m_lItemOffset;
-  Mediaportal::CCriticalSection m_BufferLock;
+  CCritSec     m_BufferLock;
 
 	long m_lTSBufferItemSize;
 	ChannelType	m_eChannelType;
-	int debugcount;
-	int m_ParserLock;
 	UINT m_maxReadIterations;
 };
