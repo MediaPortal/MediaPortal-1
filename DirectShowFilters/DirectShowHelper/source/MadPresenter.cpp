@@ -294,19 +294,20 @@ HRESULT MPMadPresenter::RenderToTexture(IDirect3DTexture9* pTexture)
 
 HRESULT MPMadPresenter::RenderTexture(IDirect3DVertexBuffer9* pVertexBuf, IDirect3DTexture9* pTexture)
 {
-  HRESULT hr = m_pMadD3DDev->SetStreamSource(0, pVertexBuf, 0, sizeof(VID_FRAME_VERTEX));
-  if (FAILED(hr))
-    return hr;
+  if (!m_pMadD3DDev)
+    return S_FALSE;
 
-  hr = m_pMadD3DDev->SetTexture(0, pTexture);
-  if (FAILED(hr))
-    return hr;
+  HRESULT hr = S_OK;
 
-  hr = m_pMadD3DDev->DrawPrimitive(D3DPT_TRIANGLEFAN, 0, 2);
-  if (FAILED(hr))
-    return hr;
-
-  return S_OK;
+  if (SUCCEEDED(hr = m_pMadD3DDev->SetStreamSource(0, pVertexBuf, 0, sizeof(VID_FRAME_VERTEX))))
+  {
+    if (SUCCEEDED(hr = m_pMadD3DDev->SetTexture(0, pTexture)))
+    {
+      hr = m_pMadD3DDev->DrawPrimitive(D3DPT_TRIANGLEFAN, 0, 2);
+      m_pMadD3DDev->SetTexture(0, nullptr);
+    }
+    m_pMadD3DDev->SetStreamSource(0, nullptr, 0, 0);
+  }
 }
 
 HRESULT MPMadPresenter::SetupOSDVertex(IDirect3DVertexBuffer9* pVertextBuf)
