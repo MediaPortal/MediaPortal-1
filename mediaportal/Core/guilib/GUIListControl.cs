@@ -1204,7 +1204,6 @@ namespace MediaPortal.GUI.Library
 
           int iconX;
           int labelX;
-          int progressBarX;
           int pinX;
 
           int ten = 10;
@@ -1215,13 +1214,11 @@ namespace MediaPortal.GUI.Library
             case Alignment.ALIGN_RIGHT:
               iconX = dwPosX + _width - _iconOffsetX - _imageWidth;
               labelX = dwPosX;
-              progressBarX = dwPosX;
               pinX = dwPosX + _width - PinIconWidth;
               break;
             default:
               iconX = dwPosX + _iconOffsetX;
               labelX = dwPosX + _imageWidth + ten;
-              progressBarX = dwPosX + _xOffsetProgressBar;
               pinX = dwPosX;
               break;
           }
@@ -1233,7 +1230,8 @@ namespace MediaPortal.GUI.Library
           RenderLabel(timePassed, i, labelX, dwPosY, gotFocus);
 
           // render progressbar
-          RenderProgressBar(timePassed, i, progressBarX, dwPosY + _yOffsetProgressBar, gotFocus);
+          RenderProgressBar(timePassed, i, dwPosX + GUIGraphicsContext.ScaleHorizontal(_xOffsetProgressBar),
+                            dwPosY + GUIGraphicsContext.ScaleVertical(_yOffsetProgressBar), gotFocus);
 
           RenderPinIcon(timePassed, i, pinX, dwPosY, gotFocus);
 
@@ -2414,8 +2412,9 @@ namespace MediaPortal.GUI.Library
         if (_backgroundTextureName != string.Empty && _leftTextureName != string.Empty &&
           _midTextureName != string.Empty && _rightTextureName != string.Empty)
         {
-          GUIProgressControl progressCtl = new GUIProgressControl(_controlId, 0, 0, 0, _widthProgressBar, _heightProgressBar,
-                                                           _backgroundTextureName, _leftTextureName, _midTextureName, _rightTextureName);
+          GUIProgressControl progressCtl = new GUIProgressControl(_controlId, 0, 0, 0, GUIGraphicsContext.ScaleHorizontal(_widthProgressBar),
+                                                                  GUIGraphicsContext.ScaleVertical(_heightProgressBar),
+                                                                  _backgroundTextureName, _leftTextureName, _midTextureName, _rightTextureName);
         progressCtl.ParentControl = this;
         progressCtl.AllocResources();
         progressCtl.Visible = false;
