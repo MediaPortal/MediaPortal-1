@@ -25,19 +25,18 @@ protected:
 	virtual ~TsMPEG2TransportFileServerMediaSubsession();
 	virtual float duration() const;
 	virtual __int64 filelength() const;
-  FileReader* OpenFileDuration() const;
-  void CloseFileDuration(FileReader *pFileDuration) const;
+  void InitFileDuration();
 
   CTsDuration *m_pDuration;
+  FileReader *m_pFileDuration;
 
 private: // redefined virtual functions
 	virtual void seekStreamSource(FramedSource* inputSource, double& seekNPT, double streamDuration, u_int64_t& numBytes);
-	virtual FramedSource* createNewStreamSource(unsigned clientSessionId,
-		unsigned& estBitrate);
-	virtual RTPSink* createNewRTPSink(Groupsock* rtpGroupsock,
-		unsigned char rtpPayloadTypeIfDynamic,
-		FramedSource* inputSource);
+	virtual FramedSource* createNewStreamSource(unsigned clientSessionId, unsigned& estBitrate);
+	virtual RTPSink* createNewRTPSink(Groupsock* rtpGroupsock, unsigned char rtpPayloadTypeIfDynamic, FramedSource* inputSource);
+	
 	wchar_t m_fileName[MAX_PATH];
 	Boolean m_bTimeshifting;
 	int m_iChannelType;
+	mutable int m_iDurationCount;
 };

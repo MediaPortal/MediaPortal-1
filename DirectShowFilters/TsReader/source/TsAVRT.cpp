@@ -43,20 +43,20 @@ TsAVRT::TsAVRT()
 
 TsAVRT::~TsAVRT()
 {
-  UnloadAVRT();
-  StopLogger(); //Needed since logging thread might be re-started after CDeMultiplexer() destructor has called StopLogger()
-}
-
-void TsAVRT::UnloadAVRT()
-{
+  m_pAvSetMmThreadCharacteristicsW = NULL;
+  m_pAvSetMmThreadPriority = NULL;
+  m_pAvRevertMmThreadCharacteristics = NULL;
+  
   if (m_hModuleAVRT)
   {
     if (!FreeLibrary(m_hModuleAVRT))
     {
-      LogDebug("TsAVRT::UnloadAVRT() - avrt.dll could not be unloaded");
+      LogDebug("TsAVRT::dtor - avrt.dll could not be unloaded");
+      StopLogger(); //Needed since logging thread might be re-started after CDeMultiplexer() destructor has called StopLogger()
     }
-    m_hModuleAVRT = NULL;
   }
+  
+  m_hModuleAVRT = NULL;
 }
 
 bool TsAVRT::LoadAVRT()
@@ -75,11 +75,28 @@ bool TsAVRT::LoadAVRT()
     m_pAvSetMmThreadCharacteristicsW   = (TAvSetMmThreadCharacteristicsW*)GetProcAddress(m_hModuleAVRT,"AvSetMmThreadCharacteristicsW");
     m_pAvSetMmThreadPriority           = (TAvSetMmThreadPriority*)GetProcAddress(m_hModuleAVRT,"AvSetMmThreadPriority");
     m_pAvRevertMmThreadCharacteristics = (TAvRevertMmThreadCharacteristics*)GetProcAddress(m_hModuleAVRT,"AvRevertMmThreadCharacteristics");
-    return TRUE;
+    
+    if (m_pAvSetMmThreadCharacteristicsW && m_pAvSetMmThreadPriority && m_pAvRevertMmThreadCharacteristics)
+    {
+      return TRUE;
+    }
   }
 
-  LogDebug("TsAVRT::LoadAVRT() - Could not load avrt.dll !!!");
-  UnloadAVRT();
+  m_pAvSetMmThreadCharacteristicsW = NULL;
+  m_pAvSetMmThreadPriority = NULL;
+  m_pAvRevertMmThreadCharacteristics = NULL;
+
+  if (m_hModuleAVRT)
+  {
+    if (!FreeLibrary(m_hModuleAVRT))
+    {
+      LogDebug("TsAVRT::LoadAVRT() - avrt.dll could not be unloaded");
+    }
+  }
+  
+  m_hModuleAVRT = NULL;
+
+  LogDebug("TsAVRT::LoadAVRT() - Failed to load avrt.dll (not supported on Win XP)");
   return FALSE;
 } 
 

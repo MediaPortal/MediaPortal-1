@@ -25,7 +25,6 @@
 */
 #include "StdAfx.h"
 #include "TSBuffer.h"
-#include "entercriticalsection.h"
 
 
 #define TV_BUFFER_ITEM_SIZE	32336
@@ -40,14 +39,14 @@ CTSBuffer::CTSBuffer()
 
 	//round to nearest byte boundary.
 
-	m_ParserLock = FALSE;
-	m_loopCount = 20;
-	debugcount = 0;
+	m_maxReadIterations = 0;
+  LogDebug("CTSBuffer::ctor");
 }
 
 CTSBuffer::~CTSBuffer()
 {
 	Clear();
+  LogDebug("CTSBuffer::dtor");
 }
 
 void CTSBuffer::SetFileReader(FileReader *pFileReader)
@@ -55,13 +54,13 @@ void CTSBuffer::SetFileReader(FileReader *pFileReader)
 	if (!pFileReader)
 		return;
 
-  Mediaportal::CEnterCriticalSection lock(m_BufferLock);
+  CAutoLock lock (&m_BufferLock);
 	m_pFileReader = pFileReader;
 }
 
 void CTSBuffer::Clear()
 {
-  Mediaportal::CEnterCriticalSection lock(m_BufferLock);
+  CAutoLock lock (&m_BufferLock);
 	std::vector<BYTE *>::iterator it = m_Array.begin();
 	for ( ; it != m_Array.end() ; it++ )
 	{
@@ -70,12 +69,11 @@ void CTSBuffer::Clear()
 	m_Array.clear();
 
 	m_lItemOffset = 0;
-	m_loopCount = 2;
 }
 
 long CTSBuffer::Count()
 {
-	Mediaportal::CEnterCriticalSection lock(m_BufferLock);
+	CAutoLock lock (&m_BufferLock);
 	long bytesAvailable = 0;
 	long itemCount = m_Array.size();
 
@@ -89,7 +87,7 @@ long CTSBuffer::Count()
 
 void CTSBuffer::SetChannelType(int channelType)
 {
-	Mediaportal::CEnterCriticalSection lock(m_BufferLock);
+	CAutoLock lock (&m_BufferLock);
 
 	Clear();
 
@@ -115,7 +113,7 @@ HRESULT CTSBuffer::Require(long nBytes, BOOL bIgnoreDelay)
 	if (!m_pFileReader)
 		return E_POINTER;
 
-	Mediaportal::CEnterCriticalSection lock(m_BufferLock);
+	CAutoLock lock (&m_BufferLock);
 	long bytesAvailable = Count();
 	if (nBytes <= bytesAvailable)
 		return S_OK;
@@ -141,22 +139,29 @@ HRESULT CTSBuffer::Require(long nBytes, BOOL bIgnoreDelay)
 			//	Sleep for 4ms per iteration (TV)
 			int sleepPerIteration = 4;
 
-			//	If radio set to 20ms
+			//	If radio set to 8ms
 			if(m_eChannelType == Radio)
-				sleepPerIteration = 20;
+				sleepPerIteration = 8;
 
-			Sleep(iteration * sleepPerIteration);
+  		if(iteration == 20 || iteration == 40 )
+  		{
+			  //LogDebug("CTSBuffer::Require() - 200ms sleep, iteration = %d", iteration);
+  		  Sleep(200);
+  		}
+  		else
+  		{
+			  Sleep(sleepPerIteration);
+		  }
 		}
 
 		ULONG bytesRead = 0;
 		HRESULT hr = m_pFileReader->Read(readBuffer + totalBytesRead, bytesToRead - totalBytesRead, &bytesRead);
 
-		if(FAILED(hr) || iteration >= 20)
+		if(FAILED(hr) || iteration >= 50)
 		{
-			LogDebug("TSBuffer::Require() - Failed to read buffer file");
-			
+			LogDebug("CTSBuffer::Require() - Failed to read buffer file, iteration %d", iteration);
+			m_maxReadIterations = 0;			
 			delete[] readBuffer;
-
 			return hr;
 		}
 
@@ -165,9 +170,14 @@ HRESULT CTSBuffer::Require(long nBytes, BOOL bIgnoreDelay)
 	}
 	while(totalBytesRead < bytesToRead);
 
+  if (iteration > m_maxReadIterations) 
+  {
+    m_maxReadIterations = iteration;	
+	  LogDebug("CTSBuffer::Require() - m_maxReadIterations: %d", m_maxReadIterations);
+  }		
 
 	//	Success! Copy all bytes to data items
-	for(int i = 0; i < dataItemsRequired; i++)
+	for(UINT i = 0; i < dataItemsRequired; i++)
 	{
 		BYTE* newDataItem = new BYTE[m_lTSBufferItemSize];
 		memcpy(newDataItem, readBuffer + (i * m_lTSBufferItemSize), m_lTSBufferItemSize);
@@ -183,7 +193,7 @@ HRESULT CTSBuffer::Require(long nBytes, BOOL bIgnoreDelay)
 
 HRESULT CTSBuffer::DequeFromBuffer(BYTE *pbData, long lDataLength)
 {
-	Mediaportal::CEnterCriticalSection lock(m_BufferLock);
+	CAutoLock lock (&m_BufferLock);
 	HRESULT hr = Require(lDataLength);
 	if (FAILED(hr))
 		return hr;
@@ -217,7 +227,7 @@ HRESULT CTSBuffer::ReadFromBuffer(BYTE *pbData, long lDataLength, long lOffset)
 	if (!m_pFileReader)
 		return E_POINTER;
 
-	Mediaportal::CEnterCriticalSection lock(m_BufferLock);
+	CAutoLock lock (&m_BufferLock);
 	HRESULT hr = Require(lOffset + lDataLength);
 	if (FAILED(hr))
 		return hr;

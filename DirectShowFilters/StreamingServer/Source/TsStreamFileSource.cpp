@@ -47,8 +47,7 @@ TsStreamFileSource::createNew(UsageEnvironment& env, wchar_t const* fileName,
 	if (wcsstr(fileName, L".tsbuffer")!=NULL)
 	{
       //MultiFileReader::MultiFileReader(BOOL useFileNext, BOOL useDummyWrites, CCritSec* pFilterLock, BOOL useRandomAccess, BOOL extraLogging):
-    reader   = new MultiFileReader(FALSE, FALSE, NULL, TRUE, FALSE);
-		__int64 fileSize= reader->GetFileSize();
+    reader = new MultiFileReader(FALSE, FALSE, NULL, TRUE, FALSE);
 	}
 	else
 	{
@@ -60,8 +59,10 @@ TsStreamFileSource::createNew(UsageEnvironment& env, wchar_t const* fileName,
 
 	Boolean deleteFidOnClose = true;
 	TsStreamFileSource* newSource = new TsStreamFileSource(env, (FILE*)reader, deleteFidOnClose, preferredFrameSize, playTimePerFrame, channelType);
-	newSource->fFileSize = reader->GetFileSize();
-	LogDebug("ts:size %d",(DWORD)newSource->fFileSize);  
+  __int64 fileSize = reader->GetFileSize();
+	if (fileSize < 0) fileSize = 0;  
+	newSource->fFileSize = fileSize;
+	LogDebug("ts:size %I64d", fileSize);  
 	return newSource;
 }
 
@@ -75,8 +76,10 @@ TsStreamFileSource::createNew(UsageEnvironment& env, FILE* fid,
 
 								  TsStreamFileSource* newSource = new TsStreamFileSource(env, fid, deleteFidOnClose, preferredFrameSize, playTimePerFrame, channelType);
 								  MultiFileReader* reader = (MultiFileReader*)fid;
-								  newSource->fFileSize = reader->GetFileSize();
-								  LogDebug("ts:createNew size %d",(DWORD)newSource->fFileSize);  
+                  __int64 fileSize = reader->GetFileSize();
+                	if (fileSize < 0) fileSize = 0;  
+								  newSource->fFileSize = fileSize;
+								  LogDebug("ts:createNew size %I64d", fileSize);  
 
 								  return newSource;
 }
@@ -112,7 +115,7 @@ void TsStreamFileSource::seekToTimeAbsolute(CRefTime& seekTime, CTsDuration& dur
 void TsStreamFileSource::seekToByteRelative(int64_t offset) 
 {
 	MultiFileReader* reader = (MultiFileReader*)fFid;
-	LogDebug("ts:seek rel %d/%d",(DWORD)offset, (DWORD)reader->GetFileSize());  
+	LogDebug("ts:seek rel %I64d/%I64d", offset, reader->GetFileSize());  
 	offset/=188LL;
 	offset*=188LL;
 	reader->SetFilePointer((int64_t)offset, FILE_CURRENT);
@@ -178,7 +181,9 @@ void TsStreamFileSource::doGetNextFrame() {
 	}
 
 	MultiFileReader* reader = (MultiFileReader*)fFid;
-	fFileSize = reader->GetFileSize();
+  __int64 fileSize = reader->GetFileSize();
+	if (fileSize < 0) fileSize = 0;  
+	fFileSize = fileSize;
 	// Set the 'presentation time':
 	if (fPlayTimePerFrame > 0 && fPreferredFrameSize > 0) {
 		if (fPresentationTime.tv_sec == 0 && fPresentationTime.tv_usec == 0) {
