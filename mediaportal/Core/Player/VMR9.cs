@@ -593,10 +593,6 @@ namespace MediaPortal.Player
         _threadId = Thread.CurrentThread.ManagedThreadId;
         GUIGraphicsContext.Vmr9Active = true;
         g_vmr9 = this;
-        if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
-        {
-          GUIGraphicsContext.InVmr9Render = true;
-        }
         Log.Debug("VMR9: Renderer successfully added");
       }
       catch (Exception)

@@ -524,7 +524,7 @@ namespace MediaPortal.Player
       }
       try
       {
-        if (!GUIGraphicsContext.InVmr9Render)
+        if (!GUIGraphicsContext.InVmr9Render && GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR)
         {
           InternalPresentImage(_vmr9Util.VideoWidth, _vmr9Util.VideoHeight, _arVideoWidth, _arVideoHeight, true);
         }
@@ -579,7 +579,8 @@ namespace MediaPortal.Player
           }
           _vmr9Util.FrameCounter++;
           //			Log.Info("vmr9:present image()");
-          InternalPresentImage(width, height, arWidth, arHeight, false);
+          if (GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR)
+            InternalPresentImage(width, height, arWidth, arHeight, false);
           //			Log.Info("vmr9:present image() done");
         }
         catch (Exception ex)
@@ -602,6 +603,11 @@ namespace MediaPortal.Player
 
     private int RenderLayers(GUILayers layers, Int16 width, Int16 height, Int16 arWidth, Int16 arHeight)
     {
+      if (!GUIGraphicsContext.InVmr9Render)
+      {
+        GUIGraphicsContext.InVmr9Render = true;
+      }
+
       if (width > 0 && height > 0)
       {
         _vmr9Util.VideoWidth = width;
