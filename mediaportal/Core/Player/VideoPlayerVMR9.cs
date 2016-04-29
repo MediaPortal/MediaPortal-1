@@ -867,7 +867,7 @@ namespace MediaPortal.Player
         mediaSeek = (IMediaSeeking) graphBuilder;
         mediaPos = (IMediaPosition) graphBuilder;
         basicAudio = (IBasicAudio) graphBuilder;
-        videoWindow = (IVideoWindow) graphBuilder;
+        videoWin = (IVideoWindow) graphBuilder;
         if (Vmr9 != null)
         {
           m_iVideoWidth = Vmr9.VideoWidth;
@@ -1338,7 +1338,7 @@ namespace MediaPortal.Player
         mediaSeek = (IMediaSeeking)graphBuilder;
         mediaPos = (IMediaPosition)graphBuilder;
         basicAudio = (IBasicAudio)graphBuilder;
-        videoWindow = (IVideoWindow)graphBuilder;
+        videoWin = (IVideoWindow)graphBuilder;
         m_iVideoWidth = Vmr9.VideoWidth;
         m_iVideoHeight = Vmr9.VideoHeight;
 
@@ -1485,10 +1485,10 @@ namespace MediaPortal.Player
 
         #endregion
 
-        if (videoWindow != null)
+        if (videoWin != null)
         {
-          videoWindow.put_Owner(IntPtr.Zero);
-          videoWindow.put_Visible(OABool.False);
+          videoWin.put_Owner(IntPtr.Zero);
+          videoWin.put_Visible(OABool.False);
         }
 
         if (mediaEvt != null)
@@ -1503,7 +1503,7 @@ namespace MediaPortal.Player
           Log.Info("VideoPlayer9: Cleanup Graphbuilder");
         }
 
-        videoWindow = null;
+        videoWin = null;
         mediaCtrl = null;
         mediaEvt = null;
         mediaSeek = null;

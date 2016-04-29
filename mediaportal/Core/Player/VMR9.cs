@@ -1070,7 +1070,7 @@ namespace MediaPortal.Player
       {
         if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
         {
-          MadvrInterface.EnableExclusiveMode(false, _vmr9Filter);
+          if (_vmr9Filter != null) MadvrInterface.EnableExclusiveMode(false, _vmr9Filter);
         }
         if (mediaCtrl != null)
         {

@@ -217,7 +217,7 @@ namespace MediaPortal.Player
     protected IMediaPosition mediaPos;
 
     /// <summary> video preview window interface. </summary>
-    protected IVideoWindow videoWindow;
+    protected IVideoWindow videoWin;
 
     /// <summary> interface to get information and control video. </summary>
     protected IBasicVideo2 basicVideo;
@@ -332,11 +332,11 @@ namespace MediaPortal.Player
           CloseInterfaces();
           return false;
         }
-        if (videoWindow != null)
+        if (videoWin != null)
         {
-          videoWindow.put_WindowStyle(
+          videoWin.put_WindowStyle(
             (WindowStyle)((int)WindowStyle.Child + (int)WindowStyle.ClipChildren + (int)WindowStyle.ClipSiblings));
-          videoWindow.put_MessageDrain(GUIGraphicsContext.form.Handle);
+          videoWin.put_MessageDrain(GUIGraphicsContext.form.Handle);
         }
 
         #region FFDShowEngine and PostProcessingEngine Detection
@@ -624,7 +624,7 @@ namespace MediaPortal.Player
 
     protected virtual void SetVideoPosition(Rectangle rDest)
     {
-      if (videoWindow != null)
+      if (videoWin != null)
       {
         if (rDest.Left < 0 || rDest.Top < 0 || rDest.Width <= 0 || rDest.Height <= 0)
         {
@@ -633,11 +633,11 @@ namespace MediaPortal.Player
         if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
         {
           Size client = GUIGraphicsContext.form.ClientSize;
-          videoWindow.SetWindowPosition(0, 0, client.Width, client.Height);
+          videoWin.SetWindowPosition(0, 0, client.Width, client.Height);
         }
         else
         {
-          videoWindow.SetWindowPosition(rDest.Left, rDest.Top, rDest.Width, rDest.Height);
+          videoWin.SetWindowPosition(rDest.Left, rDest.Top, rDest.Width, rDest.Height);
         }
       }
     }
@@ -710,18 +710,18 @@ namespace MediaPortal.Player
             if (m_bVisible)
             {
               m_bVisible = false;
-              if (videoWindow != null)
+              if (videoWin != null)
               {
-                videoWindow.put_Visible(OABool.False);
+                videoWin.put_Visible(OABool.False);
               }
             }
           }
           else if (!m_bVisible)
           {
             m_bVisible = true;
-            if (videoWindow != null)
+            if (videoWin != null)
             {
-              videoWindow.put_Visible(OABool.True);
+              videoWin.put_Visible(OABool.True);
             }
           }
         }
