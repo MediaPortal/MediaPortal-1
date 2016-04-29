@@ -716,10 +716,14 @@ namespace TvPlugin
             if (startTime != SqlDateTime.MinValue.Value)
             {
               DateTime endTime = currentNowAndNext.NowEndTime;
+              int percent = (int)CalculateProgress(startTime, endTime);
               sb.Append(" - ");
               sb.Append(
-                CalculateProgress(startTime, endTime).ToString());
+                percent.ToString());
               sb.Append("%");
+
+              item.HasProgressBar = true;
+              item.ProgressBarPercentage = percent;
 
               if (endTime < nextEPGupdate || nextEPGupdate == DateTime.MinValue)
               {
@@ -728,8 +732,6 @@ namespace TvPlugin
               }
             }
           }
-
-
 
           if (hasNowNext && listNowNext[channelID].IdProgramNext != -1)
           {

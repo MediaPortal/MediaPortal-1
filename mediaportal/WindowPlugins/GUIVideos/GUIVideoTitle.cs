@@ -937,6 +937,13 @@ namespace MediaPortal.GUI.Video
         ((VideoViewHandler)handler).SetLabel(item.AlbumInfoTag as IMDBMovie, ref item);
         // Movie/group content list skin property will read from musictag
         item.MusicTag = SetMovieListGroupedBy(item);
+
+        if (!item.IsFolder)
+        {
+          item.HasProgressBar = true;
+          item.ProgressBarPercentage = movie.WatchedPercent;
+        }
+
         facadeLayout.Add(item);
         itemlist.Add(item);
       }

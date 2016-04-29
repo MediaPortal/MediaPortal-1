@@ -103,6 +103,15 @@
 		<unfocusedAlpha>255</unfocusedAlpha>
 		<onleft>36</onleft>
 		<onright>34</onright>
+	<texturebg>osd_progress_bg_list.png</texturebg>
+    <lefttexture>osd_progress_mid_lists_cap.png</lefttexture>
+    <midtexture>osd_progress_mid_guide.png</midtexture>
+    <righttexture>osd_progress_mid_lists_cap.png</righttexture>
+    <ProgressBarWidth>1190</ProgressBarWidth>
+    <ProgressBarHeight>3</ProgressBarHeight>
+    <ProgressBarXOffset>-11</ProgressBarXOffset>
+    <ProgressBarYOffset>77</ProgressBarYOffset>
+    <SelectedProgressOnly>Yes</SelectedProgressOnly>		
 	</control>
 
 	<control>
@@ -148,6 +157,15 @@
 		<unfocusedAlpha>255</unfocusedAlpha>
 		<onleft>36</onleft>
 		<onright>34</onright>
+			<texturebg>osd_progress_bg_list.png</texturebg>
+    <lefttexture>osd_progress_mid_lists_cap.png</lefttexture>
+    <midtexture>osd_progress_mid_guide.png</midtexture>
+    <righttexture>osd_progress_mid_lists_cap.png</righttexture>
+    <ProgressBarWidth>1190</ProgressBarWidth>
+    <ProgressBarHeight>3</ProgressBarHeight>
+    <ProgressBarXOffset>-11</ProgressBarXOffset>
+    <ProgressBarYOffset>77</ProgressBarYOffset>
+    <SelectedProgressOnly>Yes</SelectedProgressOnly>
 	</control>
 
 	<control>
