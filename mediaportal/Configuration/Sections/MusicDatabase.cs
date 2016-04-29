@@ -680,7 +680,6 @@ namespace MediaPortal.Configuration.Sections
     private void FolderScanProgress(object sender, ProgressChangedEventArgs e)
     {
       fileLabel.Text = e.UserState as string;
-      Application.DoEvents();
     }
 
     private void folderAsAlbumCheckBox_CheckedChanged(object sender, EventArgs e)

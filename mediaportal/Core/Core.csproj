@@ -236,6 +236,7 @@
     <Reference Include="Microsoft.DirectX.DirectDraw, Version=1.0.2902.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
       <SpecificVersion>True</SpecificVersion>
     </Reference>
+    <Reference Include="Microsoft.VisualC" />
     <Reference Include="Microsoft.WindowsAPICodePack.Shell">
       <HintPath>..\MediaPortal.Base\Microsoft.WindowsAPICodePack.Shell.dll</HintPath>
     </Reference>
