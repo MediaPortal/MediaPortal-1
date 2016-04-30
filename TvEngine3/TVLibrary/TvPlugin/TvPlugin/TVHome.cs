@@ -36,6 +36,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
+using Gentle.Framework;
 using MediaPortal;
 using MediaPortal.Configuration;
 using MediaPortal.Dialogs;
@@ -1086,7 +1087,46 @@ namespace TvPlugin
 
     private static void RefreshConnectionState()
     {
-      IController iController = RemoteControl.Instance; //calling instance will make sure the state is refreshed.
+      if (!_suspended)
+      {
+        IController iController = RemoteControl.Instance; //calling instance will make sure the state is refreshed.
+      }
+    }
+
+    public static bool WaitForGentleConnection()
+    {
+      Log.Debug("TVHome: WaitForGentleConnection()");
+      // lets try one more time - seems like the gentle framework is not properly initialized when coming out of standby/hibernation.
+      // lets wait 10 secs before giving up.
+      bool success = false;
+
+      Stopwatch timer = Stopwatch.StartNew();
+      Log.Debug("TVHome: trying waiting for gentle.net DB connection {0} msec", timer.ElapsedMilliseconds);
+      //while (!success && timer.ElapsedMilliseconds < 10000) //10sec max
+      {
+        try
+        {
+          IList<Card> cards = TvDatabase.Card.ListAll();
+          success = true;
+        }
+        catch (Exception)
+        {
+          success = false;
+          Log.Debug("TVHome: waiting for gentle.net DB connection exception {0} msec", timer.ElapsedMilliseconds);
+          Thread.Sleep(100);
+        }
+      }
+
+      if (!success)
+      {
+        ProviderFactory.ResetGentle(true);
+        RemoteControl.ForceRegisterChannel();
+        GUIWindowManager.ActivateWindow((int)Window.WINDOW_SETTINGS_TVENGINE);
+        //GUIWaitCursor.Hide();
+      }
+      Log.Debug("TVHome: waiting for gentle.net DB connection {0} msec", timer.ElapsedMilliseconds);
+
+      return success;
     }
 
     public static bool HandleServerNotConnected()
@@ -1135,6 +1175,15 @@ namespace TvPlugin
           showDlgThread.Start();
           _ServerNotConnectedHandled = true;
           return true;
+        }
+        else
+        {
+          bool gentleConnected = WaitForGentleConnection();
+
+          if (!gentleConnected)
+          {
+            return true;
+          }
         }
       }
       catch (Exception e)
@@ -1859,17 +1908,19 @@ namespace TvPlugin
       Log.Info("TVHome.OnSuspend()");
       // Force disconnection
       RemoteControl_OnRemotingDisconnected();
-      RemoteControl.Clear();
-      RemoteControl.ForceRegisterChannel();
       // OnSuspend already in progress
       if (_suspended)
       {
         Log.Info("TVHome: Suspend is already in progress");
         return;
       }
+      // Set as soon as possible.
+      _suspended = true;
 
       RemoteControl.OnRemotingDisconnected -= RemoteControl_OnRemotingDisconnected;
       RemoteControl.OnRemotingConnected -= RemoteControl_OnRemotingConnected;
+
+      RemoteControl.ForceRegisterChannel();
 
       if (wasPrevWinTVplugin() && _autoTurnOnTv)
       {
@@ -1927,7 +1978,7 @@ namespace TvPlugin
       }
       try
       {
-        RemoteControl.Clear();
+        ProviderFactory.ResetGentle(true);
         RemoteControl.ForceRegisterChannel();
         Connected = false;
 

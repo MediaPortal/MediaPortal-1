@@ -127,6 +127,7 @@ namespace TvControl
     /// </summary>
     public static void ForceRegisterChannel()
     {
+      Clear();
       _callbackChannel = null;
       _tvControl = null;
       //RegisterChannel();
@@ -179,20 +180,20 @@ namespace TvControl
           }
         }
         // Check gentle connection
-        try
-        {
-          if (_isRemotingConnected)// && _callbackChannel != null)
-          {
-            Card.ListAll();
-            _isRemotingConnected = true;
-          }
-        }
-        catch (Exception)
-        {
-          _isRemotingConnected = false;
-          InvokeEvents();
-          Log.Info("RemoteControl - Gentle Disconnected ");
-        }
+        //try
+        //{
+        //  if (_isRemotingConnected)// && _callbackChannel != null)
+        //  {
+        //    Card.ListAll();
+        //    _isRemotingConnected = true;
+        //  }
+        //}
+        //catch (Exception)
+        //{
+        //  _isRemotingConnected = false;
+        //  InvokeEvents();
+        //  Log.Info("RemoteControl - Gentle Disconnected ");
+        //}
       }
       catch (System.Threading.ThreadAbortException)
       {

@@ -495,292 +495,289 @@ namespace MediaPortal.GUI.Library
     /// <returns></returns>
     public bool LoadSkin()
     {
-      lock (GUIGraphicsContext.WindowChangeLock)
+      // add thread check to log calls not running in main thread/GUI
+      String threadName = Thread.CurrentThread.Name;
+      if (threadName != "MPMain" && threadName != "Config Main")
       {
-        // add thread check to log calls not running in main thread/GUI
-        String threadName = Thread.CurrentThread.Name;
-        if (threadName != "MPMain" && threadName != "Config Main")
+        if (threadName != null)
         {
-          if (threadName != null)
-          {
-            Log.Error("LoadSkin: Running on wrong thread name [{0}] - StackTrace: '{1}'", threadName,
-              Environment.StackTrace);
-          }
-          else
-          {
-            Log.Error("LoadSkin: Running on wrong thread - StackTrace: '{0}'", Environment.StackTrace);
-          }
+          Log.Error("LoadSkin: Running on wrong thread name [{0}] - StackTrace: '{1}'", threadName,
+            Environment.StackTrace);
         }
+        else
+        {
+          Log.Error("LoadSkin: Running on wrong thread - StackTrace: '{0}'", Environment.StackTrace);
+        }
+      }
 
-        _lastSkin = GUIGraphicsContext.Skin;
-        // no filename is configured
-        if (_windowXmlFileName == "")
+      _lastSkin = GUIGraphicsContext.Skin;
+      // no filename is configured
+      if (_windowXmlFileName == "")
+      {
+        return false;
+      }
+      // TODO what is the reason for this check
+      if (Children.Count > 0)
+      {
+        return false;
+      }
+
+      _showAnimation.Reset();
+      _closeAnimation.Reset();
+
+      _defaultControlId = 0;
+      // Load the reference controls
+      //int iPos = _windowXmlFileName.LastIndexOf('\\');
+      //string strReferenceFile = _windowXmlFileName.Substring(0, iPos);
+      _windowXmlFileName =
+        GUIGraphicsContext.GetThemedSkinFile(_windowXmlFileName.Substring(_windowXmlFileName.LastIndexOf("\\")));
+      string strReferenceFile = GUIGraphicsContext.GetThemedSkinFile(@"\references.xml");
+
+      GUIControlFactory.LoadReferences(strReferenceFile);
+
+      try
+      {
+        // Load the XML file
+        XmlDocument doc = new XmlDocument();
+        doc.Load(_windowXmlFileName);
+        if (doc.DocumentElement == null)
         {
           return false;
         }
-        // TODO what is the reason for this check
-        if (Children.Count > 0)
+        string root = doc.DocumentElement.Name;
+        // Check root element
+        if (root != "window")
         {
           return false;
         }
 
-        _showAnimation.Reset();
-        _closeAnimation.Reset();
-
-        _defaultControlId = 0;
-        // Load the reference controls
-        //int iPos = _windowXmlFileName.LastIndexOf('\\');
-        //string strReferenceFile = _windowXmlFileName.Substring(0, iPos);
-        _windowXmlFileName =
-          GUIGraphicsContext.GetThemedSkinFile(_windowXmlFileName.Substring(_windowXmlFileName.LastIndexOf("\\")));
-        string strReferenceFile = GUIGraphicsContext.GetThemedSkinFile(@"\references.xml");
-
-        GUIControlFactory.LoadReferences(strReferenceFile);
-
+        XmlNodeList nodeListAnimations = doc.DocumentElement.SelectNodes("/window/animation");
+        if (nodeListAnimations != null)
+        {
+          foreach (XmlNode nodeAnimation in nodeListAnimations)
+          {
+            if (nodeAnimation.InnerText.ToLowerInvariant() == "windowopen")
+            {
+              _showAnimation.Create(nodeAnimation);
+            }
+            if (nodeAnimation.InnerText.ToLowerInvariant() == "windowclose")
+            {
+              _closeAnimation.Create(nodeAnimation);
+            }
+          }
+        }
+        // Load id value
+        XmlNode nodeId = doc.DocumentElement.SelectSingleNode("/window/id");
+        if (nodeId == null)
+        {
+          return false;
+        }
+        // Set the default control that has the focus after loading the window
+        XmlNode nodeDefault = doc.DocumentElement.SelectSingleNode("/window/defaultcontrol");
+        if (nodeDefault == null)
+        {
+          return false;
+        }
+        // Convert the id to an int
         try
         {
-          // Load the XML file
-          XmlDocument doc = new XmlDocument();
-          doc.Load(_windowXmlFileName);
-          if (doc.DocumentElement == null)
-          {
-            return false;
-          }
-          string root = doc.DocumentElement.Name;
-          // Check root element
-          if (root != "window")
-          {
-            return false;
-          }
-
-          XmlNodeList nodeListAnimations = doc.DocumentElement.SelectNodes("/window/animation");
-          if (nodeListAnimations != null)
-          {
-            foreach (XmlNode nodeAnimation in nodeListAnimations)
-            {
-              if (nodeAnimation.InnerText.ToLowerInvariant() == "windowopen")
-              {
-                _showAnimation.Create(nodeAnimation);
-              }
-              if (nodeAnimation.InnerText.ToLowerInvariant() == "windowclose")
-              {
-                _closeAnimation.Create(nodeAnimation);
-              }
-            }
-          }
-          // Load id value
-          XmlNode nodeId = doc.DocumentElement.SelectSingleNode("/window/id");
-          if (nodeId == null)
-          {
-            return false;
-          }
-          // Set the default control that has the focus after loading the window
-          XmlNode nodeDefault = doc.DocumentElement.SelectSingleNode("/window/defaultcontrol");
-          if (nodeDefault == null)
-          {
-            return false;
-          }
-          // Convert the id to an int
-          try
-          {
-            _windowId = Int32.Parse(nodeId.InnerText);
-          }
-          catch (Exception)
-          {
-            Log.Error("LoadSkin: error converting nodeid <{0}> to int", nodeId.InnerText);
-          }
-          // Convert the id of the default control to an int
-          try
-          {
-            _defaultControlId = Int32.Parse(nodeDefault.InnerText);
-          }
-          catch (Exception)
-          {
-            Log.Error("LoadSkin: error converting nodeDefault <{0}> to int", nodeDefault.InnerText);
-          }
-
-          // find any XAML complex/compound properties
-          var xmlNodeList = doc.DocumentElement.SelectNodes("/window/*[contains(name(), '.')]");
-          if (xmlNodeList != null)
-            foreach (XmlNode node in xmlNodeList)
-            {
-              string xml = node.OuterXml;
-
-              if (xml.IndexOf("Button.") != -1)
-              {
-                xml = xml.Replace("Button.", "GUIControl.");
-              }
-
-              if (xml.IndexOf("Window.") != -1)
-              {
-                xml = xml.Replace("Window.", "GUIWindow.");
-              }
-
-              XamlParser.LoadXml(xml, XmlNodeType.Element, this, _windowXmlFileName);
-            }
-
-          // Configure the overlay settings
-          XmlNode nodeOverlay = doc.DocumentElement.SelectSingleNode("/window/allowoverlay");
-          if (nodeOverlay != null)
-          {
-            string allowed = nodeOverlay.InnerText.ToLowerInvariant();
-            switch (allowed)
-            {
-              case "true":
-              case "yes":
-                _isOverlayAllowed = true;
-                break;
-              case "false":
-              case "no":
-                _isOverlayAllowed = false;
-                break;
-              default:
-                _isOverlayAllowedCondition = GUIInfoManager.TranslateString(nodeOverlay.InnerText);
-                break;
-            }
-            if (!string.IsNullOrEmpty(allowed.Trim()))
-            {
-              _isOverlayAllowedOriginalCondition = GUIInfoManager.TranslateString(nodeOverlay.InnerText);
-            }
-          }
-
-          IDictionary<string, string> defines = LoadDefines(doc);
-
-          // Configure the autohide setting
-          XmlNode nodeAutoHideTopbar = doc.DocumentElement.SelectSingleNode("/window/autohidetopbar");
-          if (nodeAutoHideTopbar != null)
-          {
-            _autoHideTopbarType = AutoHideTopBar.UseDefault;
-            string allowed = nodeAutoHideTopbar.InnerText.ToLowerInvariant();
-            if (allowed == "yes" || allowed == "true")
-            {
-              _autoHideTopbarType = AutoHideTopBar.Yes;
-            }
-            if (allowed == "no" || allowed == "false")
-            {
-              _autoHideTopbarType = AutoHideTopBar.No;
-            }
-          }
-
-          // Configure the Topbar disable setting
-          XmlNode nodeDisableTopbar = doc.DocumentElement.SelectSingleNode("/window/disabletopbar");
-          _disableTopBar = false;
-          if (nodeDisableTopbar != null)
-          {
-            string allowed = nodeDisableTopbar.InnerText.ToLowerInvariant();
-            if (allowed == "yes" || allowed == "true")
-            {
-              _disableTopBar = true;
-            }
-          }
-
-
-          XmlNode nodeVolumeOverlayOffsetX = doc.DocumentElement.SelectSingleNode("/window/volumeoverlayoffsetx");
-          _volumeOverlayOffsetX = 0;
-          if (nodeVolumeOverlayOffsetX != null)
-          {
-            if (nodeVolumeOverlayOffsetX.InnerText != null)
-            {
-              string value = nodeVolumeOverlayOffsetX.InnerText.ToLower();
-              if (!Int32.TryParse(value, out _volumeOverlayOffsetX))
-              {
-                _volumeOverlayOffsetX = 0;
-              }
-            }
-          }
-
-          XmlNode nodeVolumeOverlayOffsetY = doc.DocumentElement.SelectSingleNode("/window/volumeoverlayoffsety");
-          _volumeOverlayOffsetY = 0;
-          if (nodeVolumeOverlayOffsetY != null)
-          {
-            if (nodeVolumeOverlayOffsetY.InnerText != null)
-            {
-              string value = nodeVolumeOverlayOffsetY.InnerText.ToLower();
-              if (!Int32.TryParse(value, out _volumeOverlayOffsetY))
-              {
-                _volumeOverlayOffsetY = 0;
-              }
-            }
-          }
-
-          _rememberLastFocusedControl = false;
-          if (GUIGraphicsContext.AllowRememberLastFocusedItem)
-          {
-            XmlNode nodeRememberLastFocusedControl =
-              doc.DocumentElement.SelectSingleNode("/window/rememberLastFocusedControl");
-            if (nodeRememberLastFocusedControl != null)
-            {
-              string rememberLastFocusedControlStr = nodeRememberLastFocusedControl.InnerText.ToLowerInvariant();
-              if (rememberLastFocusedControlStr == "yes" || rememberLastFocusedControlStr == "true")
-              {
-                _rememberLastFocusedControl = true;
-              }
-            }
-          }
-          XmlNodeList nodeList = doc.DocumentElement.SelectNodes("/window/controls/*");
-
-          if (nodeList != null)
-          {
-            foreach (XmlNode node in nodeList)
-            {
-              switch (node.Name)
-              {
-                case "control":
-                  LoadControl(node, defines);
-                  break;
-                case "include":
-                case "import":
-
-                  // Allow an include to be conditionally loaded based on a 'condition' expression.
-                  bool loadInclude = true;
-
-                  if (node.Attributes["condition"] != null && !string.IsNullOrEmpty(node.Attributes["condition"].Value))
-                  {
-                    try
-                    {
-                      loadInclude =
-                        bool.Parse(GUIPropertyManager.Parse(node.Attributes["condition"].Value,
-                          GUIExpressionManager.ExpressionOptions.EVALUATE_ALWAYS));
-                    }
-                    catch (FormatException)
-                    {
-                      // The include will not be loaded if the expression could not be evaluated.
-                      loadInclude = false;
-                      Log.Debug("LoadSkin: {0}, could not evaluate include expression '{1}' ", _windowXmlFileName,
-                        node.Attributes["condition"].Value);
-                    }
-                  }
-
-                  if (loadInclude)
-                  {
-                    LoadInclude(node, defines);
-                  }
-                  break;
-              }
-            }
-          }
-
-          // TODO: remove this when all XAML parser or will result in double initialization
-          ((ISupportInitialize) this).EndInit();
-
-          //				PrepareTriggers();
-
-          // initialize the controls
-          OnWindowLoaded();
-          _isSkinLoaded = true;
-          return true;
+          _windowId = Int32.Parse(nodeId.InnerText);
         }
-        catch (FileNotFoundException e)
+        catch (Exception)
         {
-          Log.Error("SKIN: Missing {0}", e.FileName);
-          return false;
+          Log.Error("LoadSkin: error converting nodeid <{0}> to int", nodeId.InnerText);
         }
-        catch (Exception ex)
+        // Convert the id of the default control to an int
+        try
         {
-          Log.Error("exception loading window {0} err:{1}\r\n\r\n{2}\r\n\r\n", _windowXmlFileName, ex.Message,
-            ex.StackTrace);
-          return false;
+          _defaultControlId = Int32.Parse(nodeDefault.InnerText);
         }
+        catch (Exception)
+        {
+          Log.Error("LoadSkin: error converting nodeDefault <{0}> to int", nodeDefault.InnerText);
+        }
+
+        // find any XAML complex/compound properties
+        var xmlNodeList = doc.DocumentElement.SelectNodes("/window/*[contains(name(), '.')]");
+        if (xmlNodeList != null)
+          foreach (XmlNode node in xmlNodeList)
+          {
+            string xml = node.OuterXml;
+
+            if (xml.IndexOf("Button.") != -1)
+            {
+              xml = xml.Replace("Button.", "GUIControl.");
+            }
+
+            if (xml.IndexOf("Window.") != -1)
+            {
+              xml = xml.Replace("Window.", "GUIWindow.");
+            }
+
+            XamlParser.LoadXml(xml, XmlNodeType.Element, this, _windowXmlFileName);
+          }
+
+        // Configure the overlay settings
+        XmlNode nodeOverlay = doc.DocumentElement.SelectSingleNode("/window/allowoverlay");
+        if (nodeOverlay != null)
+        {
+          string allowed = nodeOverlay.InnerText.ToLowerInvariant();
+          switch (allowed)
+          {
+            case "true":
+            case "yes":
+              _isOverlayAllowed = true;
+              break;
+            case "false":
+            case "no":
+              _isOverlayAllowed = false;
+              break;
+            default:
+              _isOverlayAllowedCondition = GUIInfoManager.TranslateString(nodeOverlay.InnerText);
+              break;
+          }
+          if (!string.IsNullOrEmpty(allowed.Trim()))
+          {
+            _isOverlayAllowedOriginalCondition = GUIInfoManager.TranslateString(nodeOverlay.InnerText);
+          }
+        }
+
+        IDictionary<string, string> defines = LoadDefines(doc);
+
+        // Configure the autohide setting
+        XmlNode nodeAutoHideTopbar = doc.DocumentElement.SelectSingleNode("/window/autohidetopbar");
+        if (nodeAutoHideTopbar != null)
+        {
+          _autoHideTopbarType = AutoHideTopBar.UseDefault;
+          string allowed = nodeAutoHideTopbar.InnerText.ToLowerInvariant();
+          if (allowed == "yes" || allowed == "true")
+          {
+            _autoHideTopbarType = AutoHideTopBar.Yes;
+          }
+          if (allowed == "no" || allowed == "false")
+          {
+            _autoHideTopbarType = AutoHideTopBar.No;
+          }
+        }
+
+        // Configure the Topbar disable setting
+        XmlNode nodeDisableTopbar = doc.DocumentElement.SelectSingleNode("/window/disabletopbar");
+        _disableTopBar = false;
+        if (nodeDisableTopbar != null)
+        {
+          string allowed = nodeDisableTopbar.InnerText.ToLowerInvariant();
+          if (allowed == "yes" || allowed == "true")
+          {
+            _disableTopBar = true;
+          }
+        }
+
+
+        XmlNode nodeVolumeOverlayOffsetX = doc.DocumentElement.SelectSingleNode("/window/volumeoverlayoffsetx");
+        _volumeOverlayOffsetX = 0;
+        if (nodeVolumeOverlayOffsetX != null)
+        {
+          if (nodeVolumeOverlayOffsetX.InnerText != null)
+          {
+            string value = nodeVolumeOverlayOffsetX.InnerText.ToLower();
+            if (!Int32.TryParse(value, out _volumeOverlayOffsetX))
+            {
+              _volumeOverlayOffsetX = 0;
+            }
+          }
+        }
+
+        XmlNode nodeVolumeOverlayOffsetY = doc.DocumentElement.SelectSingleNode("/window/volumeoverlayoffsety");
+        _volumeOverlayOffsetY = 0;
+        if (nodeVolumeOverlayOffsetY != null)
+        {
+          if (nodeVolumeOverlayOffsetY.InnerText != null)
+          {
+            string value = nodeVolumeOverlayOffsetY.InnerText.ToLower();
+            if (!Int32.TryParse(value, out _volumeOverlayOffsetY))
+            {
+              _volumeOverlayOffsetY = 0;
+            }
+          }
+        }
+
+        _rememberLastFocusedControl = false;
+        if (GUIGraphicsContext.AllowRememberLastFocusedItem)
+        {
+          XmlNode nodeRememberLastFocusedControl =
+            doc.DocumentElement.SelectSingleNode("/window/rememberLastFocusedControl");
+          if (nodeRememberLastFocusedControl != null)
+          {
+            string rememberLastFocusedControlStr = nodeRememberLastFocusedControl.InnerText.ToLowerInvariant();
+            if (rememberLastFocusedControlStr == "yes" || rememberLastFocusedControlStr == "true")
+            {
+              _rememberLastFocusedControl = true;
+            }
+          }
+        }
+        XmlNodeList nodeList = doc.DocumentElement.SelectNodes("/window/controls/*");
+
+        if (nodeList != null)
+        {
+          foreach (XmlNode node in nodeList)
+          {
+            switch (node.Name)
+            {
+              case "control":
+                LoadControl(node, defines);
+                break;
+              case "include":
+              case "import":
+
+                // Allow an include to be conditionally loaded based on a 'condition' expression.
+                bool loadInclude = true;
+
+                if (node.Attributes["condition"] != null && !string.IsNullOrEmpty(node.Attributes["condition"].Value))
+                {
+                  try
+                  {
+                    loadInclude =
+                      bool.Parse(GUIPropertyManager.Parse(node.Attributes["condition"].Value,
+                        GUIExpressionManager.ExpressionOptions.EVALUATE_ALWAYS));
+                  }
+                  catch (FormatException)
+                  {
+                    // The include will not be loaded if the expression could not be evaluated.
+                    loadInclude = false;
+                    Log.Debug("LoadSkin: {0}, could not evaluate include expression '{1}' ", _windowXmlFileName,
+                      node.Attributes["condition"].Value);
+                  }
+                }
+
+                if (loadInclude)
+                {
+                  LoadInclude(node, defines);
+                }
+                break;
+            }
+          }
+        }
+
+        // TODO: remove this when all XAML parser or will result in double initialization
+        ((ISupportInitialize) this).EndInit();
+
+        //				PrepareTriggers();
+
+        // initialize the controls
+        OnWindowLoaded();
+        _isSkinLoaded = true;
+        return true;
+      }
+      catch (FileNotFoundException e)
+      {
+        Log.Error("SKIN: Missing {0}", e.FileName);
+        return false;
+      }
+      catch (Exception ex)
+      {
+        Log.Error("exception loading window {0} err:{1}\r\n\r\n{2}\r\n\r\n", _windowXmlFileName, ex.Message,
+          ex.StackTrace);
+        return false;
       }
     }
 
