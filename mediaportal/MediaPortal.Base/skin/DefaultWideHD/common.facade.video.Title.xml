@@ -45,6 +45,15 @@
           <folderPrefix />
           <folderSuffix />
           <textureFocus>#(iif(eq(#watchedcount,'0'),'button_focus_notwatched.png','button_focus.png'))</textureFocus>
+          <texturebg>osd_progress_background.png</texturebg>
+          <lefttexture>green.png</lefttexture>
+          <midtexture>green.png</midtexture>
+          <righttexture>green.png</righttexture>
+          <ProgressBarWidth>775</ProgressBarWidth>
+          <ProgressBarHeight>1</ProgressBarHeight>
+          <ProgressBarXOffset>45</ProgressBarXOffset>
+          <ProgressBarYOffset>47</ProgressBarYOffset>
+          <SelectedProgressOnly>Yes</SelectedProgressOnly>
         </control>
         <control>
           <description>album view listcontrol</description>
