@@ -1064,10 +1064,6 @@ namespace MediaPortal.Player
       // Disable exclusive mode here to avoid madVR window staying on top
       try
       {
-        if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
-        {
-          if (_vmr9Filter != null) MadvrInterface.EnableExclusiveMode(false, _vmr9Filter);
-        }
         if (mediaCtrl != null)
         {
           var hr = 0;
@@ -1079,6 +1075,7 @@ namespace MediaPortal.Player
             {
               case GUIGraphicsContext.VideoRendererType.madVR:
                 GUIGraphicsContext.InVmr9Render = false;
+                if (_vmr9Filter != null) MadvrInterface.EnableExclusiveMode(false, _vmr9Filter);
                 break;
               default:
                 Log.Error("VMR9: {0} in renderer", g_Player.Player.ToString());
