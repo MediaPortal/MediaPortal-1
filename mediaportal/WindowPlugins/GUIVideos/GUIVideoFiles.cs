@@ -3214,6 +3214,12 @@ namespace MediaPortal.GUI.Video
             }
           }
 
+          if (!item.IsFolder)
+          {
+            item.HasProgressBar = true;
+            item.ProgressBarPercentage = percentWatched;
+          }
+
           //Do NOT add OnItemSelected event handler here, because its still there...
 
           if (item.IsFolder || !item.IsFolder && !_hideWatchedFiles && item.IsPlayed || !item.IsFolder && !item.IsPlayed)
@@ -3309,7 +3315,7 @@ namespace MediaPortal.GUI.Video
                   item.Label = pair.Key;
                 }
               }
-
+              int percentWatched = 0;
               // Check db for watched status for played movie or changed status in movie info window
               string file = item.Path;
               if (!item.IsFolder || isMovieFolder)
@@ -3326,7 +3332,6 @@ namespace MediaPortal.GUI.Video
                   }
                 }
 
-                int percentWatched = 0;
                 int timesWatched = 0;
                 int movieId = VideoDatabase.GetMovieId(file);
                 bool played = VideoDatabase.GetmovieWatchedStatus(movieId, out percentWatched, out timesWatched);
@@ -3368,6 +3373,12 @@ namespace MediaPortal.GUI.Video
               SetLabel(item);
               item.OnItemSelected += item_OnItemSelected;
 
+              if (!item.IsFolder)
+              {
+                item.HasProgressBar = true;
+                item.ProgressBarPercentage = percentWatched;
+              }
+
               if (item.IsFolder || !item.IsFolder && !_hideWatchedFiles && item.IsPlayed || !item.IsFolder && !item.IsPlayed)
               {
                 facadeLayout.Add(item);
@@ -3393,6 +3404,8 @@ namespace MediaPortal.GUI.Video
               isMovieFolder = false;
             }
 
+            int percentWatched = 0;
+
             if (!item.IsFolder || isMovieFolder)
             {
               // Special folders (DVD/BluRay)
@@ -3407,7 +3420,6 @@ namespace MediaPortal.GUI.Video
                 }
               }
 
-              int percentWatched = 0;
               int timesWatched = 0;
               int movieId = VideoDatabase.GetMovieId(file);
               bool played = VideoDatabase.GetmovieWatchedStatus(movieId, out percentWatched, out timesWatched);
@@ -3447,6 +3459,12 @@ namespace MediaPortal.GUI.Video
 
             SetLabel(item);
             item.OnItemSelected += item_OnItemSelected;
+
+            if (!item.IsFolder)
+            {
+              item.HasProgressBar = true;
+              item.ProgressBarPercentage = percentWatched;
+            }
 
             if (item.IsFolder || !item.IsFolder && !_hideWatchedFiles && item.IsPlayed || !item.IsFolder && !item.IsPlayed)
             {
