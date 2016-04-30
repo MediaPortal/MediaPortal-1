@@ -149,6 +149,9 @@ namespace TvPlugin
     private static int FramesBeforeStopRenderBlackImage = 0;
     private static BitHelper<LiveTvStatus> _status = new BitHelper<LiveTvStatus>();
 
+    internal static string connectionString;
+    internal static string provider;
+
     [SkinControl(2)] private GUIButtonControl btnTvGuide = null;
     [SkinControl(3)] private GUIButtonControl btnRecord = null;
     [SkinControl(7)] private GUIButtonControl btnChannel = null;
@@ -1119,10 +1122,7 @@ namespace TvPlugin
 
       if (!success)
       {
-        ProviderFactory.ResetGentle(true);
-        RemoteControl.ForceRegisterChannel();
         GUIWindowManager.ActivateWindow((int)Window.WINDOW_SETTINGS_TVENGINE);
-        //GUIWaitCursor.Hide();
       }
       Log.Debug("TVHome: waiting for gentle.net DB connection {0} msec", timer.ElapsedMilliseconds);
 
@@ -1979,6 +1979,8 @@ namespace TvPlugin
       try
       {
         ProviderFactory.ResetGentle(true);
+        if (provider != null) ProviderFactory.SetDefaultProvider(provider);
+        if (connectionString != null) ProviderFactory.SetDefaultProviderConnectionString(connectionString);
         RemoteControl.ForceRegisterChannel();
         Connected = false;
 

@@ -119,8 +119,6 @@ namespace TvPlugin
 
     public bool SetupDatabaseConnection()
     {
-      string connectionString = null;
-      string provider = null;
       if (!TVHome.Connected)
       {
         return false;
@@ -128,7 +126,7 @@ namespace TvPlugin
 
       try
       {
-        RemoteControl.Instance.GetDatabaseConnectionString(out connectionString, out provider);
+        RemoteControl.Instance.GetDatabaseConnectionString(out TVHome.connectionString, out TVHome.provider);
       }
       catch (Exception ex)
       {
@@ -150,8 +148,8 @@ namespace TvPlugin
           {
             var node = nodeKey.Attributes.GetNamedItem("connectionString");
             var nodeProvider = nodeKey.Attributes.GetNamedItem("name");
-            node.InnerText = connectionString;
-            nodeProvider.InnerText = provider;
+            node.InnerText = TVHome.connectionString;
+            nodeProvider.InnerText = TVHome.provider;
           }
         }
         doc.Save(xmlPath);
@@ -164,8 +162,8 @@ namespace TvPlugin
 
       Log.Info("ChannelNavigator::Reload()");
       ProviderFactory.ResetGentle(true);
-      ProviderFactory.SetDefaultProvider(provider);
-      ProviderFactory.SetDefaultProviderConnectionString(connectionString);
+      ProviderFactory.SetDefaultProvider(TVHome.provider);
+      ProviderFactory.SetDefaultProviderConnectionString(TVHome.connectionString);
 
       return true;
     }
@@ -876,10 +874,13 @@ namespace TvPlugin
       for (int i = 0; i < groupMaps.Count; i++)
       {
         GroupMap gm = (GroupMap)groupMaps[i];
-        Channel chan = (Channel)gm.ReferencedChannel();
-        if (chan.IdChannel == ch.IdChannel)
+        if (gm != null)
         {
-          return i;
+          Channel chan = (Channel)gm.ReferencedChannel();
+          if (ch != null && (chan != null && chan.IdChannel == ch.IdChannel))
+          {
+            return i;
+          }
         }
       }
       return 0; // Not found, return first channel index
