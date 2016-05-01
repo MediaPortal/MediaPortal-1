@@ -89,7 +89,7 @@ void InvalidParameterHandler(const wchar_t *expression, const wchar_t *function,
 #ifdef _DEBUG
   if (ffmpegLogger != NULL)
   {
-    ffmpegLogger->Log(LOGGER_VERBOSE, L"%s: %s: invalid parameter detected in function '%s', file '%s', line %d.\nExpression: %s", "FFmpegLogger", L"InvalidParameterHandler()", function, file, line, expression);
+    ffmpegLogger->Log(LOGGER_VERBOSE, L"%s: %s: invalid parameter detected in function '%s', file '%s', line %d.\nExpression: %s", L"FFmpegLogger", L"InvalidParameterHandler()", function, file, line, expression);
   }
 #endif
 }
