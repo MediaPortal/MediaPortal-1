@@ -130,7 +130,6 @@ namespace TvControl
       Clear();
       _callbackChannel = null;
       _tvControl = null;
-      //RegisterChannel();
     }
 
     #endregion
@@ -179,21 +178,6 @@ namespace TvControl
             Thread.Sleep(10);
           }
         }
-        // Check gentle connection
-        //try
-        //{
-        //  if (_isRemotingConnected)// && _callbackChannel != null)
-        //  {
-        //    Card.ListAll();
-        //    _isRemotingConnected = true;
-        //  }
-        //}
-        //catch (Exception)
-        //{
-        //  _isRemotingConnected = false;
-        //  InvokeEvents();
-        //  Log.Info("RemoteControl - Gentle Disconnected ");
-        //}
       }
       catch (System.Threading.ThreadAbortException)
       {

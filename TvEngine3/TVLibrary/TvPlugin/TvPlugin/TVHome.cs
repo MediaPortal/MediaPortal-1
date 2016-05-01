@@ -1109,6 +1109,10 @@ namespace TvPlugin
       {
         try
         {
+          ProviderFactory.ResetGentle(true);
+          if (provider != null) ProviderFactory.SetDefaultProvider(provider);
+          if (connectionString != null) ProviderFactory.SetDefaultProviderConnectionString(connectionString);
+          RemoteControl.ForceRegisterChannel();
           IList<Card> cards = TvDatabase.Card.ListAll();
           success = true;
         }
@@ -1978,10 +1982,6 @@ namespace TvPlugin
       }
       try
       {
-        ProviderFactory.ResetGentle(true);
-        if (provider != null) ProviderFactory.SetDefaultProvider(provider);
-        if (connectionString != null) ProviderFactory.SetDefaultProviderConnectionString(connectionString);
-        RemoteControl.ForceRegisterChannel();
         Connected = false;
 
         RemoteControl.OnRemotingDisconnected += RemoteControl_OnRemotingDisconnected;
@@ -2004,6 +2004,10 @@ namespace TvPlugin
       }
       finally
       {
+        ProviderFactory.ResetGentle(true);
+        if (provider != null) ProviderFactory.SetDefaultProvider(provider);
+        if (connectionString != null) ProviderFactory.SetDefaultProviderConnectionString(connectionString);
+        RemoteControl.ForceRegisterChannel();
         _resumed = true;
       }
     }
@@ -2039,6 +2043,7 @@ namespace TvPlugin
             Log.Info("TVHome.WndProc(): Windows is going into powerstate (hibernation/standby)");
             break;
           case PBT_APMRESUMESUSPEND:
+          case PBT_APMRESUMEAUTOMATIC:
             Log.Info("TVHome.WndProc(): Windows has resumed from hibernate mode");
             OnResume();
             break;
