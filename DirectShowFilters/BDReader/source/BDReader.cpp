@@ -134,7 +134,6 @@ CBDReaderFilter::CBDReaderFilter(IUnknown *pUnk, HRESULT *phr):
   
   wcscpy(m_fileName, L"");
 
-  LogDebug("Wait for seeking to eof - false - constructor");
   m_bStopping = false;
   m_MPmainThreadID = GetCurrentThreadId();
 

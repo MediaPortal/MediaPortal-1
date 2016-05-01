@@ -350,8 +350,7 @@ Packet* CDeMultiplexer::GetVideo()
       return NULL;
   }
 
-  if (!allowBuffering)
-    ReadFromFile(true);
+  ReadFromFile(true);
 
   return m_playlistManager->GetNextVideoPacket();
 }
@@ -372,8 +371,7 @@ Packet* CDeMultiplexer::GetAudio()
       return NULL;
   }
 
-  if (!allowBuffering)
-    ReadFromFile(true);
+  ReadFromFile(true);
 
   Packet* packet = m_playlistManager->GetNextAudioPacket();
   if (packet && packet->rtTitleDuration == 0)
