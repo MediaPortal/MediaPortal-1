@@ -277,19 +277,16 @@ HRESULT MPMadPresenter::RenderOsd(LPCSTR name, REFERENCE_TIME frameStart, RECT* 
 
 HRESULT MPMadPresenter::RenderToTexture(IDirect3DTexture9* pTexture)
 {
+  if (!m_pDevice)
+    return S_FALSE;
   HRESULT hr = E_UNEXPECTED;
   IDirect3DSurface9* pSurface = nullptr; // This will be released by C# side
-
-  if (FAILED(hr = pTexture->GetSurfaceLevel(0, &pSurface)))
-    return hr;
-
-  if (FAILED(hr = m_pCallback->SetRenderTarget(reinterpret_cast<DWORD>(pSurface))))
-    return hr;
-
-  if (FAILED(hr = m_pDevice->Clear(0, NULL, D3DCLEAR_TARGET, D3DXCOLOR(0, 0, 0, 0), 1.0f, 0)))
-    return hr;
-
-  return hr;
+  if (SUCCEEDED(hr = pTexture->GetSurfaceLevel(0, &pSurface)))
+  {
+    if (SUCCEEDED(hr = m_pCallback->SetRenderTarget((DWORD)pSurface)))
+      m_pDevice->Clear(0, NULL, D3DCLEAR_TARGET, D3DXCOLOR(0, 0, 0, 0), 1.0f, 0);
+    //m_deviceState.Store_Surface(pSurface);
+  }
 }
 
 HRESULT MPMadPresenter::RenderTexture(IDirect3DVertexBuffer9* pVertexBuf, IDirect3DTexture9* pTexture)
