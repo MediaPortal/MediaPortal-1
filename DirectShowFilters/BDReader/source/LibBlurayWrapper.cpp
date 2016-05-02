@@ -816,7 +816,10 @@ bool CLibBlurayWrapper::SetScr(INT64 pts, INT64 offset)
     m_pOverlayRenderer->SetScr(pts, offset);
 
   if (m_pBd)
-    return _bd_set_scr(m_pBd, pts) == 1 ? true : false;
+  {
+    INT64 scr = pts - offset;
+    return _bd_set_scr(m_pBd, scr) == 1 ? true : false;
+  }
 
   return false;
 }
