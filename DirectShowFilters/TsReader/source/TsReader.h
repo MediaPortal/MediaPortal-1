@@ -91,9 +91,6 @@
 //Duration loop timeout in ms (effective background repeat/iteration time)
 #define DUR_LOOP_TIMEOUT 105
 
-//Make compatible with MP1.11 and later versions if defined
-#define BITRATE_REPORT
-
 #define MAX_REG_LENGTH 256
 
 using namespace std;
