@@ -349,11 +349,6 @@ STDMETHODIMP CBDReaderFilter::Action(int key)
 {
   lib.LogAction(key);
 
-  INT64 pos = -1;
-
-  if (m_pMediaSeeking)
-    HRESULT hr = m_pMediaSeeking->GetCurrentPosition(&pos);
-  
   switch (key)
   {  
     case BD_VK_0:
@@ -374,9 +369,9 @@ STDMETHODIMP CBDReaderFilter::Action(int key)
     case BD_VK_POPUP:
     case BD_VK_ROOT_MENU:
     case BD_VK_MOUSE_ACTIVATE:
-      return lib.ProvideUserInput(CONVERT_DS_90KHz(pos), (UINT32)key) == true ? S_OK : S_FALSE;
+      return lib.ProvideUserInput(GetScr(), (UINT32)key) == true ? S_OK : S_FALSE;
     break;
-    default:  
+    default:
       return S_FALSE;
   }
   return S_FALSE;
@@ -425,16 +420,7 @@ STDMETHODIMP CBDReaderFilter::GetTitleCount(UINT32* count)
 
 STDMETHODIMP CBDReaderFilter::MouseMove(UINT16 x, UINT16 y)
 {
-  INT64 pos = -1;
-
-  if (m_pMediaSeeking)
-  {
-    HRESULT hr = m_pMediaSeeking->GetCurrentPosition(&pos);
-    if (SUCCEEDED(hr))
-      pos = CONVERT_DS_90KHz(pos);
-  }
-
-  lib.MouseMove(CONVERT_DS_90KHz(pos), x, y);
+  lib.MouseMove(GetScr(), x, y);
   return S_OK;
 }
 
@@ -1117,5 +1103,10 @@ void CBDReaderFilter::DeliverEndFlush()
 
   if (m_pAudioPin && m_pAudioPin->IsConnected())
     m_pAudioPin->DeliverEndFlush();
+}
+
+REFERENCE_TIME CBDReaderFilter::GetScr()
+{
+  return CONVERT_DS_90KHz(m_rtCurrentTime) - m_demultiplexer.m_rtOffset;
 }
 

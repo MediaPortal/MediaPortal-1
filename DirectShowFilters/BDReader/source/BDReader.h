@@ -206,6 +206,8 @@ private:
   void DeliverBeginFlush();
   void DeliverEndFlush();
 
+  REFERENCE_TIME GetScr();
+
   CAudioPin*      m_pAudioPin;
   CVideoPin*      m_pVideoPin;
   WCHAR           m_fileName[1024];
