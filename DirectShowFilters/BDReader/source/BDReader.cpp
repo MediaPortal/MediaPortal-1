@@ -788,6 +788,10 @@ void CBDReaderFilter::HandleBDEvent(BD_EVENT& pEv)
 {
   switch (pEv.event)
   {
+    case BD_EVENT_IDLE:
+      Sleep(IDLE_SLEEP_DURATION); // To avoid busy looping
+      break;
+
     case BD_EVENT_SEEK:
       if (m_bHandleSeekEvent)
       {
