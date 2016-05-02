@@ -43,7 +43,7 @@ namespace MediaPortal.InputDevices
     /// <summary>
     /// Tells whether verbose logs are enabled.
     /// </summary>
-    static public bool Verbose{get; private set;}
+    static public bool Verbose {get; private set;}
 
     /// <summary>
     /// 
@@ -72,12 +72,17 @@ namespace MediaPortal.InputDevices
         //Please also note that HID is now enabled by default on new installation.
         _controlEnabled = xmlreader.GetValueAsBool("remote", "HidEnabled", true) || xmlreader.GetValueAsBool("remote", "MCE", false);
         Verbose = xmlreader.GetValueAsBool("remote", "HidVerbose", false) || xmlreader.GetValueAsBool("remote", "MCEVerboseLog", false);
+
+        //Get the name of our current HID profile, default to legacy Generic-HID.
+        string hidProfile = xmlreader.GetValueAsString("remote", "HidProfile", "Generic-HID");
+
+        if (_controlEnabled)
+        {
+          _hidHandler = new HidHandler(hidProfile);
+        }
+
       }
 
-      if (_controlEnabled)
-      {
-        _hidHandler = new HidHandler("Generic-HID");
-      }
     }
 
     /// <summary>
