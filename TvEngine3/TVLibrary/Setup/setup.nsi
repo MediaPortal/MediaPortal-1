@@ -72,6 +72,7 @@
 !define MEMENTO_REGISTRY_ROOT HKLM
 !define MEMENTO_REGISTRY_KEY  "${REG_UNINSTALL}"
 !define COMMON_APPDATA        "$APPDATA\Team MediaPortal\MediaPortal TV Server"
+!define MP_COMMON_APPDATA	  "$APPDATA\Team MediaPortal\MediaPortal"
 !define STARTMENU_GROUP       "$SMPROGRAMS\Team MediaPortal\MediaPortal TV Server"
 
 ; import version from shared file
@@ -328,6 +329,53 @@ ShowUninstDetails show
   ${RefreshShellIcons}
 !macroend
 
+!macro SecWatchdog
+  ${LOG_TEXT} "INFO" "MediaPortal Watchdog..."
+
+  ; install files
+  SetOutPath "$INSTDIR"
+  File "${git_MP}\WatchDog\bin\${BUILD_TYPE}\WatchDog.exe"
+  File "${git_MP}\WatchDog\bin\${BUILD_TYPE}\DaggerLib.dll"
+  File "${git_MP}\WatchDog\bin\${BUILD_TYPE}\DaggerLib.DSGraphEdit.dll"
+  File "${git_MP}\WatchDog\bin\${BUILD_TYPE}\DirectShowLib-2005.dll"
+  File "${git_MP}\WatchDog\bin\${BUILD_TYPE}\MediaFoundation.dll"
+  File "${git_MP}\WatchDog\bin\${BUILD_TYPE}\MediaPortal.Support.dll"
+  
+  ; create Default Mediaportal log folder, 
+  CreateDirectory "${MP_COMMON_APPDATA}\log"
+
+  ; create startmenu shortcuts
+  ${If} $noDesktopSC != 1
+    CreateShortCut "$DESKTOP\MediaPortal WatchDog.lnk"      "$INSTDIR\WatchDog.exe"         "" "$INSTDIR\WatchDog.exe"      0 "" "" "MediaPortal WatchDog"
+  ${EndIf}
+  CreateDirectory "${STARTMENU_GROUP}"
+  CreateShortCut "${STARTMENU_GROUP}\MediaPortal WatchDog.lnk" "$INSTDIR\WatchDog.exe"  ""  "$INSTDIR\WatchDog.exe"  0 "" "" "MediaPortal WatchDog"
+
+  ${RefreshShellIcons}
+!macroend
+
+!macro Remove_SecWatchdog
+  ${LOG_TEXT} "INFO" "Uninstalling MediaPortal WatchDog..."
+
+  ; remove files
+  Delete "$INSTDIR\WatchDog.exe"
+  Delete "$INSTDIR\DaggerLib.dll"
+  Delete "$INSTDIR\DaggerLib.DSGraphEdit.dll"
+  Delete "$INSTDIR\DirectShowLib-2005.dll"
+  Delete "$INSTDIR\MediaFoundation.dll"
+  Delete "$INSTDIR\MediaPortal.Support.dll"
+  
+  ; remove Default Mediaportal log folder, 
+  RMDir /r "${MP_COMMON_APPDATA}\log"
+
+  ; remove startmenu shortcuts
+  Delete "$DESKTOP\MediaPortal WatchDog.lnk"
+  Delete "${STARTMENU_GROUP}\MediaPortal WatchDog.lnk"
+
+
+  ${RefreshShellIcons}
+!macroend
+
 Function RunUninstaller
 
   ${VersionCompare} 1.0.2.22779 $PREVIOUS_VERSION $R0
@@ -414,9 +462,15 @@ ${MementoSection} "MediaPortal TV Server" SecServer
   ${KillProcess} "SetupTv.exe"
   ; ffmpeg
   ${KillProcess} "ffmpeg.exe"
-  
+  ; MPEI installer / MPEI maker
+  ${KillProcess} "MpeInstaller.exe"
+  ${KillProcess} "MpeMaker.exe"
+  ; MediaPortal Watchdog
+  ${KillProcess} "WatchDog.exe"
+	
   ${IfNot} ${MPIsInstalled}
     !insertmacro SecMpeInstaller
+	!insertmacro SecWatchdog
   ${EndIf}
 
   SetOverwrite on
@@ -700,6 +754,7 @@ ${MementoSectionEnd}
   
   ${IfNot} ${MPIsInstalled}
     !insertmacro Remove_SecMpeInstaller
+	!insertmacro Remove_SecWatchdog
   ${EndIf}
   
 !macroend
