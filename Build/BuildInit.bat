@@ -49,4 +49,4 @@ REM copy BuildReport resources
 xcopy /I /Y .\BuildReport\_BuildReport_Files .\_BuildReport_Files
 
 REM Download NuGet packages
-@"%WINDIR%\Microsoft.NET\Framework\v4.0.30319\MSBUILD.exe" RestorePackages.targets
+@"%ProgramFiles(x86)%\MSBuild\14.0\Bin\MSBUILD.exe" RestorePackages.targets
