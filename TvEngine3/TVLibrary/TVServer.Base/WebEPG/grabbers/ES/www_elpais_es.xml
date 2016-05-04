@@ -1,9 +1,10 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Grabber>
   <Info availableDays="3" timezone="W. Europe Standard Time" />
   <Channels>
-	<Channel id="La 1" siteId="tve-1" />
-	<Channel id="Tve1" siteId="tve-1" />
+	<Channel id="#0" siteId="%230" />
+	<Channel id="13" siteId="13-tv" />
+	<Channel id="La 1" siteId="la-1" />
 	<Channel id="La 2" siteId="la-2" />
 	<Channel id="Antena 3" siteId="antena-3" />
 	<Channel id="Cuatro" siteId="cuatro" />
@@ -27,6 +28,8 @@
 	<Channel id="24horas" siteId="24-horas" />
 	<Channel id="40 TV" siteId="40-tv" />
 	<Channel id="Arirang TV" siteId="arirang-tv" />
+	<Channel id="AyE" siteId="a%26e" />
+	<Channel id="AMC" siteId="amc" />
 	<Channel id="AXN" siteId="axn" />
 	<Channel id="AXN White" siteId="axn-white" />
 	<Channel id="Al Jazeera English" siteId="al-jazeera-english" />
@@ -38,22 +41,24 @@
 	<Channel id="Bloomberg" siteId="bloomberg" />
 	<Channel id="Boing" siteId="boing" />
 	<Channel id="Canal+1" siteId="cplus-1" />
-	<Channel id="Canal+...30" siteId="cplus-1-...30" />
-	<Channel id="Canal+ Dos" siteId="cplus-2" />
 	<Channel id="Canal+ 3D" siteId="cplus-3d" />
 	<Channel id="C+ Acción" siteId="cplus-accion" />
 	<Channel id="C+ Comedia" siteId="cplus-comedia" />
 	<Channel id="C+ DCine" siteId="cplus-dcine" />
 	<Channel id="C+ Deportes" siteId="cplus-deportes" />
-	<Channel id="C+ Dep2 HD" siteId="cplus-deportes-2-hd" />
+	<Channel id="C+ Deportes 2" siteId="cplus-deportes-2" />
 	<Channel id="C+ Fútbol" siteId="cplus-futbol" />
+	<Channel id="C+ Estrenos" siteId="cplus-estrenos" />
 	<Channel id="Canal+ Golf" siteId="cplus-golf" />
 	<Channel id="Canal+ Liga" siteId="cplus-liga" />
+	<Channel id="Canal+ Liga2" siteId="cplus-liga-2" />
+	<Channel id="Canal+ Partidazo" siteId="cplus-partidazo" />
 	<Channel id="Canal+ Liga Multi" siteId="cplus-liga-multi" />
 	<Channel id="C+ Liga de Campeones" siteId="cplus-liga-de-campeones" />
 	<Channel id="C+ Liga de Campeones 2" siteId="cplus-liga-de-campeones-2" />
 	<Channel id="C+ Liga de Campeones 3" siteId="cplus-liga-de-campeones-3" />
 	<Channel id="C+ Series" siteId="cplus-series" />
+	<Channel id="C+ Series Xtra" siteId="cplus-series-xtra" />
 	<Channel id="C+ Toros" siteId="cplus-toros" />
 	<Channel id="Canal+ Xtra" siteId="cplus-xtra" />
 	<Channel id="CNBC" siteId="cnbc" />
@@ -66,11 +71,13 @@
 	<Channel id="Canal de las Estrellas" siteId="canal-de-las-estrellas" />
 	<Channel id="Caza y pesca" siteId="caza-y-pesca" />
 	<Channel id="Clan TVE" siteId="clan-tve" />
-	<Channel id="Cosmopolitan" siteId="cosmopolitan" />
+	<Channel id="ComedyCentral" siteId="comedy-central" />
+	<Channel id="Cosmo" siteId="cosmo" />
 	<Channel id="Cubavisión" siteId="cubavision" />
 	<Channel id="DCine Español" siteId="dcine-espanol" />
 	<Channel id="Disney Channel" siteId="disney-channel" />
 	<Channel id="Cinemagic" siteId="disney-cinemagic" />
+	<Channel id="Discovery-Channel" siteId="discovery" />
 	<Channel id="Disney Cinemagic" siteId="disney-cinemagic" />
 	<Channel id="Disney Junior" siteId="disney-junior" />
 	<Channel id="Disney XD" siteId="disney-xd" />
@@ -78,23 +85,29 @@
 	<Channel id="El Garaje TV" siteId="el-garage-tv" />
 	<Channel id="Energy" siteId="energy" />
 	<Channel id="Euronews" siteId="euronews" />
+	<Channel id="Eurosport1" siteId="eurosport-1" />
+	<Channel id="Eurosport2" siteId="eurosport-2" />
 	<Channel id="France 24" siteId="france-24" />
 	<Channel id="FDF" siteId="factoria-de-ficcion" />
 	<Channel id="Fox" siteId="fox" />
 	<Channel id="Fox Crime" siteId="fox-crime" />
+	<Channel id="Fox Life" siteId="fox-life" />
 	<Channel id="Fox News" siteId="fox-news" />
 	<Channel id="GolTv" siteId="canal/goltv" />
 	<Channel id="Historia" siteId="historia" />
 	<Channel id="Hollywood" siteId="hollywood" />
 	<Channel id="HollywoodHD" siteId="hollywood-hd" />
+	<Channel id="Iberalia" siteId="iberalia-tv" />
 	<Channel id="Intereconomía" siteId="intereconomia" />
 	<Channel id="La siete" siteId="la-siete" />
-	<Channel id="MTV España" siteId="mtv-esp" />
+	<Channel id="MTV España" siteId="mtv-espana" />
 	<Channel id="MTV Rocks" siteId="mtv-rocks" />
 	<Channel id="Mezzo" siteId="mezzo" />
 	<Channel id="Mezzo Live HD" siteId="mezzo-live-hd" />
+	<Channel id="Movistar F1" siteId="movistar-formula1" />
+	<Channel id="Movistar MotoGP" siteId="movistar-moto-gp" />
 	<Channel id="Motors Tv" siteId="motors-tv" />
-	<Channel id="Mexico Travel" siteId="mexico-travel-channel" />
+	<Channel id="Mega" siteId="mega" />
 	<Channel id="NHK World" siteId="nhk-world" />
 	<Channel id="Nick Jr." siteId="nick-jr" />
 	<Channel id="Nickelodeon" siteId="nickelodeon" />
@@ -102,6 +115,7 @@
 	<Channel id="Nat Geograph" siteId="nat-geographic" />
 	<Channel id="Neox" siteId="neox" />
 	<Channel id="Nitro" siteId="nitro" />
+	<Channel id="NonStopPeople" siteId="non-stop-people" />
 	<Channel id="Nova" siteId="nova" />
 	<Channel id="Canal Odisea" siteId="odisea" />
 	<Channel id="Paramount Channel" siteId="paramount-channel" />
@@ -128,8 +142,9 @@
 	<Channel id="Taquilla 6" siteId="taquilla--6" />
 	<Channel id="Taquilla 7" siteId="taquilla--7" />
 	<Channel id="Taquilla 8" siteId="taquilla--8" />
-	<Channel id="Taquilla HD" siteId="taquilla-hd" />
-	<Channel id="Taquilla HD 2" siteId="taquilla-hd-2" />
+	<Channel id="Taquilla HD 1" siteId="taquilla-hd" />
+	<Channel id="Taquilla HD 2" siteId="taquilla-2-hd" />
+	<Channel id="Taquilla HD 3" siteId="taquilla-3-hd" />
 	<Channel id="Teledeporte" siteId="teledeporte" />
 	<Channel id="TeleSur" siteId="telesur" />
 	<Channel id="Trace Sport Stars" siteId="trace-sport-stars" />
