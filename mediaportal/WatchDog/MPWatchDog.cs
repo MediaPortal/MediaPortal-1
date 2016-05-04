@@ -43,6 +43,7 @@ namespace WatchDog
     private const string Default4To3Skin = "Titan";
     private const string Default16To9Skin = "Titan";
 
+
     #endregion
 
     #region Variables
@@ -59,6 +60,7 @@ namespace WatchDog
     private readonly List<string> _knownPids = new List<string>();
     private bool _safeMode;
     private int GraphsCreated { get; set; }
+    private string _currentpath = Directory.GetCurrentDirectory();
 
     #endregion
 
@@ -189,33 +191,44 @@ namespace WatchDog
         Application.Exit();
       }
       tbZipFile.Text = _zipFile;
-      if (_autoMode)
+      // Check If Watchdog is installed on TV Server folder for disabled 1st & 2nd choice
+     if (File.Exists(Path.Combine(_currentpath, "WatchDog.exe")) & File.Exists(Path.Combine(_currentpath, "SetupTV.exe")))
       {
-        if (!CheckRequirements())
-        {
-          Application.Exit();
-        }
-        if (_safeMode)
-        {
-          SafeModeRadioButton.Checked = true;
-        }
-        else
-        {
-          NormalModeRadioButton.Checked = true;
-        }
-        EnableChoice(false);
-        ProceedButton.Enabled = false;
-        SetStatus("Running in auto/debug mode...");
-        tmrUnAttended.Enabled = true;
+        SafeModeRadioButton.Enabled = false;
+        NormalModeRadioButton.Enabled = false;
+        ExportLogsRadioButton.Enabled = true;
+        ExportLogsRadioButton.Checked = true;
       }
-      if (_watchdog)
+      else
       {
-        WindowState = FormWindowState.Minimized;
-        ShowInTaskbar = false;
-        tmrWatchdog.Enabled = true;
-        using (var xmlreader = new MPSettings())
+        if (_autoMode)
         {
-          _restoreTaskbar = xmlreader.GetValueAsBool("general", "hidetaskbar", false);
+          if (!CheckRequirements())
+          {
+            Application.Exit();
+          }
+          if (_safeMode)
+          {
+            SafeModeRadioButton.Checked = true;
+          }
+          else
+          {
+            NormalModeRadioButton.Checked = true;
+          }
+          EnableChoice(false);
+          ProceedButton.Enabled = false;
+          SetStatus("Running in auto/debug mode...");
+          tmrUnAttended.Enabled = true;
+        }
+        if (_watchdog)
+        {
+          WindowState = FormWindowState.Minimized;
+          ShowInTaskbar = false;
+          tmrWatchdog.Enabled = true;
+          using (var xmlreader = new MPSettings())
+          {
+            _restoreTaskbar = xmlreader.GetValueAsBool("general", "hidetaskbar", false);
+          }
         }
       }
     }
