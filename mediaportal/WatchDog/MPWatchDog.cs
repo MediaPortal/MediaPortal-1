@@ -184,23 +184,29 @@ namespace WatchDog
         _tempDir += "\\";
       }
       _tempDir += "MPTemp";
-      _zipFile = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory) +
-                 "\\MediaPortal-Logs\\MediaPortalLogs_[date]__[time].zip";
-      if (!ParseCommandLine())
-      {
-        Application.Exit();
-      }
-      tbZipFile.Text = _zipFile;
-      // Check If Watchdog is installed on TV Server folder for disabled 1st & 2nd choice
+      // Check If Watchdog is installed on TV Server folder for disabled 1st & 2nd choice & rename Zip file
      if (File.Exists(Path.Combine(_currentpath, "WatchDog.exe")) & File.Exists(Path.Combine(_currentpath, "SetupTV.exe")))
       {
+        _zipFile = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory) + "\\MediaPortal-Logs\\MP_TVELogs_[date]__[time].zip";
+        if (!ParseCommandLine())
+        {
+          Application.Exit();
+        }
+        tbZipFile.Text = _zipFile;
+
         SafeModeRadioButton.Enabled = false;
         NormalModeRadioButton.Enabled = false;
         ExportLogsRadioButton.Enabled = true;
         ExportLogsRadioButton.Checked = true;
       }
-      else
+     else
       {
+        _zipFile = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory) + "\\MediaPortal-Logs\\MediaPortalLogs_[date]__[time].zip";
+        if (!ParseCommandLine())
+        {
+          Application.Exit();
+        }
+        tbZipFile.Text = _zipFile;
         if (_autoMode)
         {
           if (!CheckRequirements())
