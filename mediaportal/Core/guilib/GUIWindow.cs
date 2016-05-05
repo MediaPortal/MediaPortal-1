@@ -1513,18 +1513,15 @@ namespace MediaPortal.GUI.Library
         UpdateOverlayAllowed();
         _hasWindowVisibilityUpdated = true;
         // TODO must do a proper fix
-        lock (this)
+        if (Children != null)
         {
-          if (Children != null)
+          foreach (GUIControl t in Children.ToList())
           {
-            foreach (GUIControl t in Children.ToList())
+            GUIControl control = t;
+            if (control != null)
             {
-              GUIControl control = t;
-              if (control != null)
-              {
-                control.UpdateVisibility();
-                control.DoRender(timePassed, currentTime);
-              }
+              control.UpdateVisibility();
+              control.DoRender(timePassed, currentTime);
             }
           }
         }
