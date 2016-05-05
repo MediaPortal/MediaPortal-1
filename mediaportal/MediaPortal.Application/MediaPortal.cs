@@ -141,6 +141,10 @@ public class MediaPortalApp : D3D, IRender
   private int                   _backupSizeHeight;
   private bool                  _usePrimaryScreen;
   private string                _screenDisplayName;
+  /// <summary>
+  /// Whether HID keyboard handler should be used instead of legacy keyboard handler.
+  /// </summary>
+  private bool                  _hidKeyboard = false;
 
   // ReSharper disable InconsistentNaming
   private const int WM_SYSCOMMAND            = 0x0112; // http://msdn.microsoft.com/en-us/library/windows/desktop/ms646360(v=vs.85).aspx
@@ -1143,6 +1147,7 @@ public class MediaPortalApp : D3D, IRender
       screenDeviceId              = xmlreader.GetValueAsString("screenselector", "screendeviceid", "");
       _usePrimaryScreen           = xmlreader.GetValueAsBool("general", "useprimaryscreen", false);
       _screenDisplayName          = xmlreader.GetValueAsString("screenselector", "screendisplayname", "");
+      _hidKeyboard                = xmlreader.GetValueAsBool("remote", "HidKeyboard", false) && xmlreader.GetValueAsBool("remote", "HidEnabled", true);
     }
 
     if (ScreenNumberOverride >= 0)
@@ -4572,6 +4577,30 @@ public class MediaPortalApp : D3D, IRender
   {
     GUIGraphicsContext.BlankScreen = false;
     _idlePluginActive = false;
+
+    if (!_hidKeyboard)
+    {
+      LegacyKeyPressEvent(e);
+      return;
+    }
+
+    // Only text input is going through here
+    // All other action mapping is taken care of by our HID plugin.
+    if ((GUIWindowManager.ActiveWindowEx == (int)GUIWindow.Window.WINDOW_VIRTUAL_KEYBOARD) ||
+        (GUIWindowManager.ActiveWindowEx == (int)GUIWindow.Window.WINDOW_TV_SEARCH))
+    {
+      var key = new Key(e.KeyChar, 0);
+      Action action = new Action(key, Action.ActionType.ACTION_KEY_PRESSED, 0, 0);
+      GUIGraphicsContext.OnAction(action);
+    }
+  }
+
+  /// <summary>
+  /// Major mess goes here.
+  /// </summary>
+  /// <param name="e"></param>
+  private void LegacyKeyPressEvent(KeyPressEventArgs e)
+  {
     var key = new Key(e.KeyChar, 0);
     var action = new Action();
     if (GUIWindowManager.IsRouted || GUIWindowManager.ActiveWindowEx == (int)GUIWindow.Window.WINDOW_TV_SEARCH)
@@ -4627,8 +4656,8 @@ public class MediaPortalApp : D3D, IRender
 
     action = new Action(key, Action.ActionType.ACTION_KEY_PRESSED, 0, 0);
     GUIGraphicsContext.OnAction(action);
-  }
 
+  }
 
   /// <summary>
   /// 
@@ -4636,6 +4665,12 @@ public class MediaPortalApp : D3D, IRender
   /// <param name="e"></param>
   protected override void KeyDownEvent(KeyEventArgs e)
   {
+    if (_hidKeyboard)
+    {
+      // No need to do anything if HID keyboard is enabled
+      return;
+    }
+
     if (!_suspended && AppActive)
     {
       GUIGraphicsContext.ResetLastActivity();

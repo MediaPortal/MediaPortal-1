@@ -2271,6 +2271,7 @@ namespace MediaPortal
 
       if (e.Handled == false)
       {
+        //SL: Have a setting to conditionally call this
         KeyDownEvent(e);
       }
     }
@@ -2283,6 +2284,7 @@ namespace MediaPortal
     /// <param name="e"></param>
     private void OnKeyPress(object sender, KeyPressEventArgs e)
     {
+      //SL: Have a setting to conditionally call this
       KeyPressEvent(e);
     }
 
