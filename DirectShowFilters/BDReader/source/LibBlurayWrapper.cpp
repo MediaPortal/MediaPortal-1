@@ -437,7 +437,7 @@ void CLibBlurayWrapper::SetTitle(UINT32 pTitle)
     m_currentTitle = pTitle;
 }
 
-bool CLibBlurayWrapper::SetSubtitleStream(UINT32 streamId, bool enabled)
+bool CLibBlurayWrapper::SetAudioStream(UINT32 streamId, bool enabled, char szName[40])
 {
   if (streamId < 0)
     return false;
@@ -446,7 +446,22 @@ bool CLibBlurayWrapper::SetSubtitleStream(UINT32 streamId, bool enabled)
   if (m_pBd)
   {
     // lib uses 1 based stream indices
-    _bd_select_stream(m_pBd, BLURAY_PG_TEXTST_STREAM, streamId + 1, enabled);
+    _bd_select_stream(m_pBd, BLURAY_AUDIO_STREAM, streamId + 1, enabled, szName);
+    return true;
+  }
+
+  return false;
+}
+bool CLibBlurayWrapper::SetSubtitleStream(UINT32 streamId, bool enabled, char szName[40])
+{
+  if (streamId < 0)
+    return false;
+
+  CAutoLock cLibLock(&m_csLibLock);
+  if (m_pBd)
+  {
+    // lib uses 1 based stream indices
+    _bd_select_stream(m_pBd, BLURAY_PG_TEXTST_STREAM, streamId + 1, enabled, szName);
     return true;
   }
 

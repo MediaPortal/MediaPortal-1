@@ -859,14 +859,20 @@ STDMETHODIMP CBDReaderFilter::Count(DWORD* streamCount)
 STDMETHODIMP CBDReaderFilter::Enable(long index, DWORD flags)
 {
   int subtitleOffset = m_demultiplexer.GetAudioStreamCount();
+  char szName[40];
+
+  bool enable = flags & AMSTREAMSELECTENABLE_ENABLE;
 
   if (index < subtitleOffset)
+  {
+    m_demultiplexer.GetAudioStreamInfo((int)index, szName);
+    lib.SetAudioStream((int)index, enable, szName) ? S_OK : S_FALSE;
     return m_demultiplexer.SetAudioStream((int)index) ? S_OK : S_FALSE;
+  }
   else
   {
-    bool enable = flags & AMSTREAMSELECTENABLE_ENABLE;
-    
-    return lib.SetSubtitleStream((int)index - subtitleOffset, enable) ? S_OK : S_FALSE;
+    m_demultiplexer.GetSubtitleStreamLanguage((int)index - subtitleOffset, szName);
+    return lib.SetSubtitleStream((int)index - subtitleOffset, enable, szName) ? S_OK : S_FALSE;
   }
 }
 
