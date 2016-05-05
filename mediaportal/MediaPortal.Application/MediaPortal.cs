@@ -141,6 +141,10 @@ public class MediaPortalApp : D3D, IRender
   private int                   _backupSizeHeight;
   private bool                  _usePrimaryScreen;
   private string                _screenDisplayName;
+  /// <summary>
+  /// Whether HID keyboard handler should be used instead of legacy keyboard handler.
+  /// </summary>
+  private bool                  _hidKeyboard = false;
 
   // ReSharper disable InconsistentNaming
   private const int WM_SYSCOMMAND            = 0x0112; // http://msdn.microsoft.com/en-us/library/windows/desktop/ms646360(v=vs.85).aspx
@@ -1143,6 +1147,7 @@ public class MediaPortalApp : D3D, IRender
       screenDeviceId              = xmlreader.GetValueAsString("screenselector", "screendeviceid", "");
       _usePrimaryScreen           = xmlreader.GetValueAsBool("general", "useprimaryscreen", false);
       _screenDisplayName          = xmlreader.GetValueAsString("screenselector", "screendisplayname", "");
+      _hidKeyboard                = xmlreader.GetValueAsBool("remote", "HidKeyboard", false) && xmlreader.GetValueAsBool("remote", "HidEnabled", true);
     }
 
     if (ScreenNumberOverride >= 0)
@@ -4565,13 +4570,11 @@ public class MediaPortalApp : D3D, IRender
   #region keypress handlers
 
   /// <summary>
-  /// 
+  /// Major mess goes here.
   /// </summary>
   /// <param name="e"></param>
-  protected override void KeyPressEvent(KeyPressEventArgs e)
+  private void LegacyKeyPressEvent(KeyPressEventArgs e)
   {
-    GUIGraphicsContext.BlankScreen = false;
-    _idlePluginActive = false;
     var key = new Key(e.KeyChar, 0);
     var action = new Action();
     if (GUIWindowManager.IsRouted || GUIWindowManager.ActiveWindowEx == (int)GUIWindow.Window.WINDOW_TV_SEARCH)
@@ -4627,15 +4630,52 @@ public class MediaPortalApp : D3D, IRender
 
     action = new Action(key, Action.ActionType.ACTION_KEY_PRESSED, 0, 0);
     GUIGraphicsContext.OnAction(action);
+
   }
 
-
   /// <summary>
-  /// 
+  /// This is coming indirectly from System.Windows.Forms.Control.KeyPress event.
+  /// I believe it does not fire for some keys such as direction arrows and escape.
+  /// </summary>
+  /// <param name="e"></param>
+  protected override void KeyPressEvent(KeyPressEventArgs e)
+  {
+    GUIGraphicsContext.BlankScreen = false;
+    _idlePluginActive = false;
+
+    if (!_hidKeyboard)
+    {
+      // HID keyboard handler is disabled, use legacy handler instead.
+      // TODO: Remove this if and whenever our transition to full HID is completed.
+      LegacyKeyPressEvent(e);
+      return;
+    }
+
+    // Only text input is going through here
+    // All other action mapping is taken care of by our HID plugin.
+    // TODO: Consider doing text input through HID too
+    if (GUIWindowManager.NeedsTextInput)
+    {
+      var key = new Key(e.KeyChar, 0);
+      Action action = new Action(key, Action.ActionType.ACTION_KEY_PRESSED, 0, 0);
+      GUIGraphicsContext.OnAction(action);
+    }
+  }
+
+  
+  /// <summary>
+  /// This is coming indirectly from System.Windows.Forms.Control.KeyDown event.
+  /// It's notably needed to be able to handle direction arrows and escape.
   /// </summary>
   /// <param name="e"></param>
   protected override void KeyDownEvent(KeyEventArgs e)
   {
+    if (_hidKeyboard && !GUIWindowManager.NeedsTextInput)
+    {
+      // No need to do anything if HID keyboard is enabled
+      return;
+    }
+
     if (!_suspended && AppActive)
     {
       GUIGraphicsContext.ResetLastActivity();

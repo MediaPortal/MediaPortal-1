@@ -71,18 +71,16 @@ namespace MediaPortal.InputDevices
     private readonly ArrayList windowsListFiltered = new ArrayList();    
     private MPButton buttonNew;
     private bool changedSettings;
+    private MPGroupBox groupBoxButton;
+    private MPCheckBox mpCheckBoxWindows;
+    private MPCheckBox mpCheckBoxShift;
+    private MPCheckBox mpCheckBoxAlt;
+    private MPCheckBox mpCheckBoxControl;
+    private MPCheckBox mpCheckBoxBackground;
+    private MPCheckBox mpCheckBoxRepeat;
+    private MPComboBox mpComboBoxCode;
+    private MPLabel mpLabelCode;
 
-    private string[] keyList =
-    {
-      "{BACKSPACE}", "{BREAK}", "{CAPSLOCK}", "{DELETE}", "{DOWN}", "{END}", "{ENTER}",
-      "{ESC}",
-      "{HELP}", "{HOME}", "{INSERT}", "{LEFT}", "{NUMLOCK}", "{PGDN}", "{PGUP}", "{PRTSC}",
-      "{RIGHT}", "{SCROLLLOCK}", "{TAB}", "{UP}", "{F1}", "{F2}", "{F3}", "{F4}", "{F5}",
-      "{F6}",
-      "{F7}", "{F8}", "{F9}", "{F10}", "{F11}", "{F12}", "{F13}", "{F14}", "{F15}", "{F16}"
-      ,
-      "{ADD}", "{SUBTRACT}", "{MULTIPLY}", "{DIVIDE}"
-    };
 
     public HidInputMappingForm(string aProfileName)
     {
@@ -191,168 +189,152 @@ namespace MediaPortal.InputDevices
       this.comboBoxLayer = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.labelLayer = new MediaPortal.UserInterface.Controls.MPLabel();
       this.buttonNew = new MediaPortal.UserInterface.Controls.MPButton();
+      this.groupBoxButton = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.mpComboBoxCode = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.mpLabelCode = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.mpCheckBoxWindows = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.mpCheckBoxShift = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.mpCheckBoxAlt = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.mpCheckBoxControl = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.mpCheckBoxBackground = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.mpCheckBoxRepeat = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.groupBoxAction.SuspendLayout();
       this.groupBoxCondition.SuspendLayout();
       this.groupBoxLayer.SuspendLayout();
+      this.groupBoxButton.SuspendLayout();
       this.SuspendLayout();
-      //
+      // 
       // treeMapping
-      //
+      // 
       this.treeMapping.AllowDrop = true;
-      this.treeMapping.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-          ((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-             | System.Windows.Forms.AnchorStyles.Left)
+      this.treeMapping.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
       this.treeMapping.FullRowSelect = true;
       this.treeMapping.HideSelection = false;
       this.treeMapping.Location = new System.Drawing.Point(16, 56);
       this.treeMapping.Name = "treeMapping";
-      this.treeMapping.Size = new System.Drawing.Size(312, 335);
+      this.treeMapping.Size = new System.Drawing.Size(397, 504);
       this.treeMapping.TabIndex = 1;
       this.treeMapping.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.treeMapping_AfterSelect);
-      //
+      // 
       // labelExpand
-      //
-      this.labelExpand.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-          ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      // 
+      this.labelExpand.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.labelExpand.AutoSize = true;
-      this.labelExpand.Location = new System.Drawing.Point(328, 374);
+      this.labelExpand.Location = new System.Drawing.Point(413, 543);
       this.labelExpand.Name = "labelExpand";
       this.labelExpand.Size = new System.Drawing.Size(13, 13);
       this.labelExpand.TabIndex = 29;
       this.labelExpand.Text = "+";
       this.labelExpand.Click += new System.EventHandler(this.labelExpand_Click);
-      //
+      // 
       // buttonDefault
-      //
-      this.buttonDefault.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-          ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.buttonDefault.Location = new System.Drawing.Point(262, 442);
+      // 
+      this.buttonDefault.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.buttonDefault.Location = new System.Drawing.Point(347, 611);
       this.buttonDefault.Name = "buttonDefault";
       this.buttonDefault.Size = new System.Drawing.Size(75, 23);
       this.buttonDefault.TabIndex = 28;
       this.buttonDefault.Text = "Reset";
       this.buttonDefault.UseVisualStyleBackColor = true;
       this.buttonDefault.Click += new System.EventHandler(this.buttonDefault_Click);
-      //
+      // 
       // buttonRemove
-      //
-      this.buttonRemove.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-          ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-      this.buttonRemove.Location = new System.Drawing.Point(272, 397);
+      // 
+      this.buttonRemove.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.buttonRemove.Location = new System.Drawing.Point(272, 566);
       this.buttonRemove.Name = "buttonRemove";
       this.buttonRemove.Size = new System.Drawing.Size(56, 20);
       this.buttonRemove.TabIndex = 27;
       this.buttonRemove.Text = "Remove";
       this.buttonRemove.UseVisualStyleBackColor = true;
       this.buttonRemove.Click += new System.EventHandler(this.buttonRemove_Click);
-      //
+      // 
       // buttonDown
-      //
-      this.buttonDown.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-          ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-      this.buttonDown.Location = new System.Drawing.Point(97, 397);
+      // 
+      this.buttonDown.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.buttonDown.Location = new System.Drawing.Point(97, 566);
       this.buttonDown.Name = "buttonDown";
       this.buttonDown.Size = new System.Drawing.Size(56, 20);
       this.buttonDown.TabIndex = 24;
       this.buttonDown.Text = "Down";
       this.buttonDown.UseVisualStyleBackColor = true;
       this.buttonDown.Click += new System.EventHandler(this.buttonDown_Click);
-      //
+      // 
       // buttonUp
-      //
-      this.buttonUp.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-          ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-      this.buttonUp.Location = new System.Drawing.Point(16, 397);
+      // 
+      this.buttonUp.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.buttonUp.Location = new System.Drawing.Point(16, 566);
       this.buttonUp.Name = "buttonUp";
       this.buttonUp.Size = new System.Drawing.Size(56, 20);
       this.buttonUp.TabIndex = 23;
       this.buttonUp.Text = "Up";
       this.buttonUp.UseVisualStyleBackColor = true;
       this.buttonUp.Click += new System.EventHandler(this.buttonUp_Click);
-      //
+      // 
       // beveledLine1
-      //
-      this.beveledLine1.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-          (((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+      // 
+      this.beveledLine1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-      this.beveledLine1.Location = new System.Drawing.Point(8, 432);
+      this.beveledLine1.Location = new System.Drawing.Point(8, 601);
       this.beveledLine1.Name = "beveledLine1";
-      this.beveledLine1.Size = new System.Drawing.Size(572, 2);
+      this.beveledLine1.Size = new System.Drawing.Size(657, 2);
       this.beveledLine1.TabIndex = 21;
-      //
+      // 
       // buttonApply
-      //
-      this.buttonApply.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-          ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.buttonApply.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-      this.buttonApply.Location = new System.Drawing.Point(343, 442);
+      // 
+      this.buttonApply.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.buttonApply.Location = new System.Drawing.Point(428, 611);
       this.buttonApply.Name = "buttonApply";
       this.buttonApply.Size = new System.Drawing.Size(75, 23);
       this.buttonApply.TabIndex = 20;
       this.buttonApply.Text = "Apply";
       this.buttonApply.UseVisualStyleBackColor = true;
       this.buttonApply.Click += new System.EventHandler(this.buttonApply_Click);
-      //
+      // 
       // buttonOk
-      //
-      this.buttonOk.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-          ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.buttonOk.Location = new System.Drawing.Point(424, 442);
+      // 
+      this.buttonOk.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.buttonOk.DialogResult = System.Windows.Forms.DialogResult.OK;
+      this.buttonOk.Location = new System.Drawing.Point(509, 611);
       this.buttonOk.Name = "buttonOk";
       this.buttonOk.Size = new System.Drawing.Size(75, 23);
       this.buttonOk.TabIndex = 19;
       this.buttonOk.Text = "OK";
       this.buttonOk.UseVisualStyleBackColor = true;
       this.buttonOk.Click += new System.EventHandler(this.buttonOk_Click);
-      //
+      // 
       // buttonCancel
-      //
-      this.buttonCancel.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-          ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      // 
+      this.buttonCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.buttonCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-      this.buttonCancel.Location = new System.Drawing.Point(505, 442);
+      this.buttonCancel.Location = new System.Drawing.Point(590, 611);
       this.buttonCancel.Name = "buttonCancel";
       this.buttonCancel.Size = new System.Drawing.Size(75, 23);
       this.buttonCancel.TabIndex = 18;
       this.buttonCancel.Text = "Cancel";
       this.buttonCancel.UseVisualStyleBackColor = true;
-      //
+      // 
       // headerLabel
-      //
-      this.headerLabel.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-          (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+      // 
+      this.headerLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
       this.headerLabel.Caption = "";
       this.headerLabel.FirstColor = System.Drawing.SystemColors.InactiveCaption;
-      this.headerLabel.Font = new System.Drawing.Font("Verdana", 14.25F, System.Drawing.FontStyle.Regular,
-        System.Drawing.GraphicsUnit.Point, ((byte) (0)));
+      this.headerLabel.Font = new System.Drawing.Font("Verdana", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
       this.headerLabel.LastColor = System.Drawing.Color.WhiteSmoke;
       this.headerLabel.Location = new System.Drawing.Point(16, 16);
       this.headerLabel.Name = "headerLabel";
       this.headerLabel.PaddingLeft = 2;
-      this.headerLabel.Size = new System.Drawing.Size(558, 24);
+      this.headerLabel.Size = new System.Drawing.Size(643, 24);
       this.headerLabel.TabIndex = 17;
       this.headerLabel.TextColor = System.Drawing.Color.WhiteSmoke;
-      this.headerLabel.TextFont = new System.Drawing.Font("Verdana", 14.25F, System.Drawing.FontStyle.Regular,
-        System.Drawing.GraphicsUnit.Point, ((byte) (0)));
-      //
+      this.headerLabel.TextFont = new System.Drawing.Font("Verdana", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+      // 
       // groupBoxAction
-      //
-      this.groupBoxAction.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-          ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      // 
+      this.groupBoxAction.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxAction.Controls.Add(this.checkBoxGainFocus);
       this.groupBoxAction.Controls.Add(this.textBoxKeyCode);
       this.groupBoxAction.Controls.Add(this.label1);
@@ -367,15 +349,15 @@ namespace MediaPortal.InputDevices
       this.groupBoxAction.Controls.Add(this.comboBoxCmdProperty);
       this.groupBoxAction.Enabled = false;
       this.groupBoxAction.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.groupBoxAction.Location = new System.Drawing.Point(350, 221);
+      this.groupBoxAction.Location = new System.Drawing.Point(435, 390);
       this.groupBoxAction.Name = "groupBoxAction";
       this.groupBoxAction.Size = new System.Drawing.Size(224, 192);
       this.groupBoxAction.TabIndex = 16;
       this.groupBoxAction.TabStop = false;
       this.groupBoxAction.Text = "Action";
-      //
+      // 
       // checkBoxGainFocus
-      //
+      // 
       this.checkBoxGainFocus.AutoSize = true;
       this.checkBoxGainFocus.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.checkBoxGainFocus.Location = new System.Drawing.Point(112, 68);
@@ -385,9 +367,9 @@ namespace MediaPortal.InputDevices
       this.checkBoxGainFocus.Text = "Gain Focus";
       this.checkBoxGainFocus.UseVisualStyleBackColor = true;
       this.checkBoxGainFocus.CheckedChanged += new System.EventHandler(this.checkBoxGainFocus_CheckedChanged);
-      //
+      // 
       // textBoxKeyCode
-      //
+      // 
       this.textBoxKeyCode.BorderColor = System.Drawing.Color.Empty;
       this.textBoxKeyCode.Enabled = false;
       this.textBoxKeyCode.Location = new System.Drawing.Point(152, 124);
@@ -395,20 +377,20 @@ namespace MediaPortal.InputDevices
       this.textBoxKeyCode.Name = "textBoxKeyCode";
       this.textBoxKeyCode.Size = new System.Drawing.Size(48, 20);
       this.textBoxKeyCode.TabIndex = 24;
-      this.textBoxKeyCode.KeyUp += new System.Windows.Forms.KeyEventHandler(this.textBoxKeyCode_KeyUp);
       this.textBoxKeyCode.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBoxKeyCode_KeyPress);
-      //
+      this.textBoxKeyCode.KeyUp += new System.Windows.Forms.KeyEventHandler(this.textBoxKeyCode_KeyUp);
+      // 
       // label1
-      //
+      // 
       this.label1.AutoSize = true;
       this.label1.Location = new System.Drawing.Point(24, 128);
       this.label1.Name = "label1";
       this.label1.Size = new System.Drawing.Size(28, 13);
       this.label1.TabIndex = 23;
       this.label1.Text = "Key:";
-      //
+      // 
       // textBoxKeyChar
-      //
+      // 
       this.textBoxKeyChar.BorderColor = System.Drawing.Color.Empty;
       this.textBoxKeyChar.Enabled = false;
       this.textBoxKeyChar.Location = new System.Drawing.Point(72, 124);
@@ -416,11 +398,11 @@ namespace MediaPortal.InputDevices
       this.textBoxKeyChar.Name = "textBoxKeyChar";
       this.textBoxKeyChar.Size = new System.Drawing.Size(80, 20);
       this.textBoxKeyChar.TabIndex = 22;
-      this.textBoxKeyChar.KeyUp += new System.Windows.Forms.KeyEventHandler(this.textBoxKeyChar_KeyUp);
       this.textBoxKeyChar.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBoxKeyChar_KeyPress);
-      //
+      this.textBoxKeyChar.KeyUp += new System.Windows.Forms.KeyEventHandler(this.textBoxKeyChar_KeyUp);
+      // 
       // radioButtonProcess
-      //
+      // 
       this.radioButtonProcess.AutoSize = true;
       this.radioButtonProcess.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.radioButtonProcess.Location = new System.Drawing.Point(24, 68);
@@ -430,18 +412,18 @@ namespace MediaPortal.InputDevices
       this.radioButtonProcess.Text = "Process";
       this.radioButtonProcess.UseVisualStyleBackColor = true;
       this.radioButtonProcess.Click += new System.EventHandler(this.radioButtonProcess_Click);
-      //
+      // 
       // labelSound
-      //
+      // 
       this.labelSound.AutoSize = true;
       this.labelSound.Location = new System.Drawing.Point(24, 156);
       this.labelSound.Name = "labelSound";
       this.labelSound.Size = new System.Drawing.Size(41, 13);
       this.labelSound.TabIndex = 20;
       this.labelSound.Text = "Sound:";
-      //
+      // 
       // comboBoxSound
-      //
+      // 
       this.comboBoxSound.BorderColor = System.Drawing.Color.Empty;
       this.comboBoxSound.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxSound.ForeColor = System.Drawing.Color.DarkRed;
@@ -450,9 +432,9 @@ namespace MediaPortal.InputDevices
       this.comboBoxSound.Size = new System.Drawing.Size(128, 21);
       this.comboBoxSound.TabIndex = 19;
       this.comboBoxSound.SelectionChangeCommitted += new System.EventHandler(this.comboBoxSound_SelectionChangeCommitted);
-      //
+      // 
       // radioButtonAction
-      //
+      // 
       this.radioButtonAction.AutoSize = true;
       this.radioButtonAction.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.radioButtonAction.Location = new System.Drawing.Point(24, 20);
@@ -462,9 +444,9 @@ namespace MediaPortal.InputDevices
       this.radioButtonAction.Text = "Action";
       this.radioButtonAction.UseVisualStyleBackColor = true;
       this.radioButtonAction.Click += new System.EventHandler(this.radioButtonAction_Click);
-      //
+      // 
       // radioButtonActWindow
-      //
+      // 
       this.radioButtonActWindow.AutoSize = true;
       this.radioButtonActWindow.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.radioButtonActWindow.Location = new System.Drawing.Point(112, 20);
@@ -474,9 +456,9 @@ namespace MediaPortal.InputDevices
       this.radioButtonActWindow.Text = "Window";
       this.radioButtonActWindow.UseVisualStyleBackColor = true;
       this.radioButtonActWindow.Click += new System.EventHandler(this.radioButtonActWindow_Click);
-      //
+      // 
       // radioButtonToggle
-      //
+      // 
       this.radioButtonToggle.AutoSize = true;
       this.radioButtonToggle.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.radioButtonToggle.Location = new System.Drawing.Point(112, 44);
@@ -486,9 +468,9 @@ namespace MediaPortal.InputDevices
       this.radioButtonToggle.Text = "Toggle Layer";
       this.radioButtonToggle.UseVisualStyleBackColor = true;
       this.radioButtonToggle.Click += new System.EventHandler(this.radioButtonToggle_Click);
-      //
+      // 
       // radioButtonPower
-      //
+      // 
       this.radioButtonPower.AutoSize = true;
       this.radioButtonPower.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.radioButtonPower.Location = new System.Drawing.Point(24, 44);
@@ -498,9 +480,9 @@ namespace MediaPortal.InputDevices
       this.radioButtonPower.Text = "Powerdown";
       this.radioButtonPower.UseVisualStyleBackColor = true;
       this.radioButtonPower.Click += new System.EventHandler(this.radioButtonPower_Click);
-      //
+      // 
       // comboBoxCmdProperty
-      //
+      // 
       this.comboBoxCmdProperty.BorderColor = System.Drawing.Color.Empty;
       this.comboBoxCmdProperty.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxCmdProperty.ForeColor = System.Drawing.Color.DarkGreen;
@@ -509,12 +491,11 @@ namespace MediaPortal.InputDevices
       this.comboBoxCmdProperty.Size = new System.Drawing.Size(176, 21);
       this.comboBoxCmdProperty.Sorted = true;
       this.comboBoxCmdProperty.TabIndex = 14;
-      this.comboBoxCmdProperty.SelectionChangeCommitted +=
-        new System.EventHandler(this.comboBoxCmdProperty_SelectionChangeCommitted);
-      //
+      this.comboBoxCmdProperty.SelectionChangeCommitted += new System.EventHandler(this.comboBoxCmdProperty_SelectionChangeCommitted);
+      // 
       // groupBoxCondition
-      //
-      this.groupBoxCondition.Anchor = System.Windows.Forms.AnchorStyles.Right;
+      // 
+      this.groupBoxCondition.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxCondition.Controls.Add(this.radioButtonWindow);
       this.groupBoxCondition.Controls.Add(this.radioButtonFullscreen);
       this.groupBoxCondition.Controls.Add(this.radioButtonPlaying);
@@ -522,15 +503,15 @@ namespace MediaPortal.InputDevices
       this.groupBoxCondition.Controls.Add(this.comboBoxCondProperty);
       this.groupBoxCondition.Enabled = false;
       this.groupBoxCondition.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.groupBoxCondition.Location = new System.Drawing.Point(350, 110);
+      this.groupBoxCondition.Location = new System.Drawing.Point(435, 249);
       this.groupBoxCondition.Name = "groupBoxCondition";
       this.groupBoxCondition.Size = new System.Drawing.Size(224, 100);
       this.groupBoxCondition.TabIndex = 15;
       this.groupBoxCondition.TabStop = false;
       this.groupBoxCondition.Text = "Condition";
-      //
+      // 
       // radioButtonWindow
-      //
+      // 
       this.radioButtonWindow.AutoSize = true;
       this.radioButtonWindow.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.radioButtonWindow.Location = new System.Drawing.Point(24, 20);
@@ -540,9 +521,9 @@ namespace MediaPortal.InputDevices
       this.radioButtonWindow.Text = "Window";
       this.radioButtonWindow.UseVisualStyleBackColor = true;
       this.radioButtonWindow.Click += new System.EventHandler(this.radioButtonWindow_Click);
-      //
+      // 
       // radioButtonFullscreen
-      //
+      // 
       this.radioButtonFullscreen.AutoSize = true;
       this.radioButtonFullscreen.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.radioButtonFullscreen.Location = new System.Drawing.Point(112, 20);
@@ -552,9 +533,9 @@ namespace MediaPortal.InputDevices
       this.radioButtonFullscreen.Text = "Fullscreen";
       this.radioButtonFullscreen.UseVisualStyleBackColor = true;
       this.radioButtonFullscreen.Click += new System.EventHandler(this.radioButtonFullscreen_Click);
-      //
+      // 
       // radioButtonPlaying
-      //
+      // 
       this.radioButtonPlaying.AutoSize = true;
       this.radioButtonPlaying.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.radioButtonPlaying.Location = new System.Drawing.Point(24, 44);
@@ -564,9 +545,9 @@ namespace MediaPortal.InputDevices
       this.radioButtonPlaying.Text = "Playing";
       this.radioButtonPlaying.UseVisualStyleBackColor = true;
       this.radioButtonPlaying.Click += new System.EventHandler(this.radioButtonPlaying_Click);
-      //
+      // 
       // radioButtonNoCondition
-      //
+      // 
       this.radioButtonNoCondition.AutoSize = true;
       this.radioButtonNoCondition.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.radioButtonNoCondition.Location = new System.Drawing.Point(112, 44);
@@ -576,9 +557,9 @@ namespace MediaPortal.InputDevices
       this.radioButtonNoCondition.Text = "No Condition";
       this.radioButtonNoCondition.UseVisualStyleBackColor = true;
       this.radioButtonNoCondition.Click += new System.EventHandler(this.radioButtonNoCondition_Click);
-      //
+      // 
       // comboBoxCondProperty
-      //
+      // 
       this.comboBoxCondProperty.BorderColor = System.Drawing.Color.Empty;
       this.comboBoxCondProperty.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxCondProperty.ForeColor = System.Drawing.Color.Blue;
@@ -587,27 +568,24 @@ namespace MediaPortal.InputDevices
       this.comboBoxCondProperty.Size = new System.Drawing.Size(176, 21);
       this.comboBoxCondProperty.Sorted = true;
       this.comboBoxCondProperty.TabIndex = 13;
-      this.comboBoxCondProperty.SelectionChangeCommitted +=
-        new System.EventHandler(this.comboBoxCondProperty_SelectionChangeCommitted);
-      //
+      this.comboBoxCondProperty.SelectionChangeCommitted += new System.EventHandler(this.comboBoxCondProperty_SelectionChangeCommitted);
+      // 
       // groupBoxLayer
-      //
-      this.groupBoxLayer.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-          ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      // 
+      this.groupBoxLayer.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxLayer.Controls.Add(this.comboBoxLayer);
       this.groupBoxLayer.Controls.Add(this.labelLayer);
       this.groupBoxLayer.Enabled = false;
       this.groupBoxLayer.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.groupBoxLayer.Location = new System.Drawing.Point(350, 48);
+      this.groupBoxLayer.Location = new System.Drawing.Point(435, 189);
       this.groupBoxLayer.Name = "groupBoxLayer";
       this.groupBoxLayer.Size = new System.Drawing.Size(224, 52);
       this.groupBoxLayer.TabIndex = 22;
       this.groupBoxLayer.TabStop = false;
       this.groupBoxLayer.Text = "Layer";
-      //
+      // 
       // comboBoxLayer
-      //
+      // 
       this.comboBoxLayer.BorderColor = System.Drawing.Color.Empty;
       this.comboBoxLayer.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxLayer.ForeColor = System.Drawing.Color.DimGray;
@@ -616,36 +594,147 @@ namespace MediaPortal.InputDevices
       this.comboBoxLayer.Size = new System.Drawing.Size(121, 21);
       this.comboBoxLayer.TabIndex = 25;
       this.comboBoxLayer.SelectionChangeCommitted += new System.EventHandler(this.comboBoxLayer_SelectionChangeCommitted);
-      //
+      // 
       // labelLayer
-      //
+      // 
       this.labelLayer.AutoSize = true;
       this.labelLayer.Location = new System.Drawing.Point(24, 23);
       this.labelLayer.Name = "labelLayer";
       this.labelLayer.Size = new System.Drawing.Size(36, 13);
       this.labelLayer.TabIndex = 16;
       this.labelLayer.Text = "Layer:";
-      //
+      // 
       // buttonNew
-      //
-      this.buttonNew.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-          ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-      this.buttonNew.Location = new System.Drawing.Point(189, 397);
+      // 
+      this.buttonNew.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.buttonNew.Location = new System.Drawing.Point(189, 566);
       this.buttonNew.Name = "buttonNew";
       this.buttonNew.Size = new System.Drawing.Size(56, 20);
       this.buttonNew.TabIndex = 26;
       this.buttonNew.Text = "New";
       this.buttonNew.UseVisualStyleBackColor = true;
       this.buttonNew.Click += new System.EventHandler(this.buttonNew_Click);
-      //
-      // InputMappingForm
-      //
+      // 
+      // groupBoxButton
+      // 
+      this.groupBoxButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxButton.Controls.Add(this.mpComboBoxCode);
+      this.groupBoxButton.Controls.Add(this.mpLabelCode);
+      this.groupBoxButton.Controls.Add(this.mpCheckBoxWindows);
+      this.groupBoxButton.Controls.Add(this.mpCheckBoxShift);
+      this.groupBoxButton.Controls.Add(this.mpCheckBoxAlt);
+      this.groupBoxButton.Controls.Add(this.mpCheckBoxControl);
+      this.groupBoxButton.Controls.Add(this.mpCheckBoxBackground);
+      this.groupBoxButton.Controls.Add(this.mpCheckBoxRepeat);
+      this.groupBoxButton.Enabled = false;
+      this.groupBoxButton.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.groupBoxButton.Location = new System.Drawing.Point(435, 46);
+      this.groupBoxButton.Name = "groupBoxButton";
+      this.groupBoxButton.Size = new System.Drawing.Size(224, 137);
+      this.groupBoxButton.TabIndex = 30;
+      this.groupBoxButton.TabStop = false;
+      this.groupBoxButton.Text = "Button";
+      // 
+      // mpComboBoxCode
+      // 
+      this.mpComboBoxCode.BorderColor = System.Drawing.Color.Empty;
+      this.mpComboBoxCode.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.mpComboBoxCode.ForeColor = System.Drawing.Color.DimGray;
+      this.mpComboBoxCode.Location = new System.Drawing.Point(80, 19);
+      this.mpComboBoxCode.Name = "mpComboBoxCode";
+      this.mpComboBoxCode.Size = new System.Drawing.Size(121, 21);
+      this.mpComboBoxCode.TabIndex = 27;
+      this.mpComboBoxCode.SelectedIndexChanged += new System.EventHandler(this.mpComboBoxCode_SelectedIndexChanged);
+      // 
+      // mpLabelCode
+      // 
+      this.mpLabelCode.AutoSize = true;
+      this.mpLabelCode.Location = new System.Drawing.Point(24, 22);
+      this.mpLabelCode.Name = "mpLabelCode";
+      this.mpLabelCode.Size = new System.Drawing.Size(35, 13);
+      this.mpLabelCode.TabIndex = 26;
+      this.mpLabelCode.Text = "Code:";
+      // 
+      // mpCheckBoxWindows
+      // 
+      this.mpCheckBoxWindows.AutoSize = true;
+      this.mpCheckBoxWindows.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.mpCheckBoxWindows.Location = new System.Drawing.Point(71, 108);
+      this.mpCheckBoxWindows.Name = "mpCheckBoxWindows";
+      this.mpCheckBoxWindows.Size = new System.Drawing.Size(68, 17);
+      this.mpCheckBoxWindows.TabIndex = 5;
+      this.mpCheckBoxWindows.Text = "Windows";
+      this.mpCheckBoxWindows.UseVisualStyleBackColor = true;
+      this.mpCheckBoxWindows.CheckedChanged += new System.EventHandler(this.mpCheckBoxWindows_CheckedChanged);
+      // 
+      // mpCheckBoxShift
+      // 
+      this.mpCheckBoxShift.AutoSize = true;
+      this.mpCheckBoxShift.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.mpCheckBoxShift.Location = new System.Drawing.Point(5, 84);
+      this.mpCheckBoxShift.Name = "mpCheckBoxShift";
+      this.mpCheckBoxShift.Size = new System.Drawing.Size(45, 17);
+      this.mpCheckBoxShift.TabIndex = 4;
+      this.mpCheckBoxShift.Text = "Shift";
+      this.mpCheckBoxShift.UseVisualStyleBackColor = true;
+      this.mpCheckBoxShift.CheckedChanged += new System.EventHandler(this.mpCheckBoxShift_CheckedChanged);
+      // 
+      // mpCheckBoxAlt
+      // 
+      this.mpCheckBoxAlt.AutoSize = true;
+      this.mpCheckBoxAlt.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.mpCheckBoxAlt.Location = new System.Drawing.Point(5, 107);
+      this.mpCheckBoxAlt.Name = "mpCheckBoxAlt";
+      this.mpCheckBoxAlt.Size = new System.Drawing.Size(36, 17);
+      this.mpCheckBoxAlt.TabIndex = 3;
+      this.mpCheckBoxAlt.Text = "Alt";
+      this.mpCheckBoxAlt.UseVisualStyleBackColor = true;
+      this.mpCheckBoxAlt.CheckedChanged += new System.EventHandler(this.mpCheckBoxAlt_CheckedChanged);
+      // 
+      // mpCheckBoxControl
+      // 
+      this.mpCheckBoxControl.AutoSize = true;
+      this.mpCheckBoxControl.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.mpCheckBoxControl.Location = new System.Drawing.Point(71, 85);
+      this.mpCheckBoxControl.Name = "mpCheckBoxControl";
+      this.mpCheckBoxControl.Size = new System.Drawing.Size(57, 17);
+      this.mpCheckBoxControl.TabIndex = 2;
+      this.mpCheckBoxControl.Text = "Control";
+      this.mpCheckBoxControl.UseVisualStyleBackColor = true;
+      this.mpCheckBoxControl.CheckedChanged += new System.EventHandler(this.mpCheckBoxControl_CheckedChanged);
+      // 
+      // mpCheckBoxBackground
+      // 
+      this.mpCheckBoxBackground.AutoSize = true;
+      this.mpCheckBoxBackground.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.mpCheckBoxBackground.Location = new System.Drawing.Point(71, 62);
+      this.mpCheckBoxBackground.Name = "mpCheckBoxBackground";
+      this.mpCheckBoxBackground.Size = new System.Drawing.Size(82, 17);
+      this.mpCheckBoxBackground.TabIndex = 1;
+      this.mpCheckBoxBackground.Text = "Background";
+      this.mpCheckBoxBackground.UseVisualStyleBackColor = true;
+      this.mpCheckBoxBackground.CheckedChanged += new System.EventHandler(this.mpCheckBoxBackground_CheckedChanged);
+      // 
+      // mpCheckBoxRepeat
+      // 
+      this.mpCheckBoxRepeat.AutoSize = true;
+      this.mpCheckBoxRepeat.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.mpCheckBoxRepeat.Location = new System.Drawing.Point(6, 62);
+      this.mpCheckBoxRepeat.Name = "mpCheckBoxRepeat";
+      this.mpCheckBoxRepeat.Size = new System.Drawing.Size(59, 17);
+      this.mpCheckBoxRepeat.TabIndex = 0;
+      this.mpCheckBoxRepeat.Text = "Repeat";
+      this.mpCheckBoxRepeat.UseVisualStyleBackColor = true;
+      this.mpCheckBoxRepeat.CheckedChanged += new System.EventHandler(this.mpCheckBoxRepeat_CheckedChanged);
+      // 
+      // HidInputMappingForm
+      // 
       this.AcceptButton = this.buttonOk;
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScroll = true;
       this.CancelButton = this.buttonCancel;
-      this.ClientSize = new System.Drawing.Size(590, 475);
+      this.ClientSize = new System.Drawing.Size(675, 644);
+      this.Controls.Add(this.groupBoxButton);
       this.Controls.Add(this.labelExpand);
       this.Controls.Add(this.treeMapping);
       this.Controls.Add(this.buttonDefault);
@@ -662,7 +751,7 @@ namespace MediaPortal.InputDevices
       this.Controls.Add(this.groupBoxCondition);
       this.Controls.Add(this.groupBoxLayer);
       this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
-      this.Name = "HID InputMappingForm";
+      this.Name = "HidInputMappingForm";
       this.ShowInTaskbar = false;
       this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
       this.Text = "MediaPortal - Setup";
@@ -672,8 +761,11 @@ namespace MediaPortal.InputDevices
       this.groupBoxCondition.PerformLayout();
       this.groupBoxLayer.ResumeLayout(false);
       this.groupBoxLayer.PerformLayout();
+      this.groupBoxButton.ResumeLayout(false);
+      this.groupBoxButton.PerformLayout();
       this.ResumeLayout(false);
       this.PerformLayout();
+
     }
 
     #endregion Windows Form Designer generated code
@@ -684,6 +776,55 @@ namespace MediaPortal.InputDevices
       Close();
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="aAttribute"></param>
+    /// <param name="aDefault"></param>
+    /// <returns></returns>
+    public static string GetAttributeValue(XmlAttribute aAttribute, string aDefault)
+    {
+      if (aAttribute != null)
+      {
+        return aAttribute.Value;
+      }
+
+      return aDefault;
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="aWriter"></param>
+    /// <param name="aAtrributeName"></param>
+    /// <param name="aValue"></param>
+    /// <param name="aDefaultIsNegative"></param>
+    public static void WriteAttribute(XmlTextWriter aWriter, string aAtrributeName, string aValue, bool aDefaultIsNegative=true)
+    {
+      aValue=aValue.ToLower();
+
+      if (aDefaultIsNegative && (aValue.Equals("false") || aValue.Equals("disabled") || aValue.Equals("0")))
+      {
+        //No need to write anything as we are using defaults
+        return;
+      }
+
+      if (!aDefaultIsNegative && (aValue.Equals("true") || aValue.Equals("enabled") || aValue.Equals("1")))
+      {
+        //No need to write anything as we are using defaults
+        return;
+      }
+
+
+      aWriter.WriteAttributeString(aAtrributeName,aValue);
+    }
+
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="aProfileName"></param>
+    /// <param name="defaults"></param>
     private void LoadMapping(string aProfileName, bool defaults)
     {
       var pathDefault = HidProfiles.GetDefaultProfilePath(aProfileName);
@@ -731,42 +872,22 @@ namespace MediaPortal.InputDevices
           var listButtons = nodeRemote.SelectNodes("button");
           foreach (XmlNode nodeButton in listButtons)
           {
-            var buttonName = "";
             //Use code as name if no name attribute
-            if (nodeButton.Attributes["name"] == null)
-            {
-              buttonName = nodeButton.Attributes["code"].Value;
-            }
-            else
-            {
-              buttonName = nodeButton.Attributes["name"].Value;
-            }
-
+            var buttonName = GetAttributeValue(nodeButton.Attributes["name"], nodeButton.Attributes["code"].Value);
+            
             //Get background attribute and default to false
-            var background = "";            
-            if (nodeButton.Attributes["background"] == null)
-            {
-              background = "false";
-            }
-            else
-            {
-              background = nodeButton.Attributes["background"].Value;
-            }
+            var background = GetAttributeValue(nodeButton.Attributes["background"], "false");
 
             //Get repeat attribute and default to false
-            var repeat = "";            
-            if (nodeButton.Attributes["repeat"] == null)
-            {
-              repeat = "false";
-            }
-            else
-            {
-              repeat = nodeButton.Attributes["repeat"].Value;
-            }
+            var repeat = GetAttributeValue(nodeButton.Attributes["repeat"], "false");
 
+            var shift = GetAttributeValue(nodeButton.Attributes["shift"], "false");
+            var ctrl = GetAttributeValue(nodeButton.Attributes["ctrl"], "false");
+            var alt = GetAttributeValue(nodeButton.Attributes["alt"], "false");
+            var win = GetAttributeValue(nodeButton.Attributes["win"], "false");
 
-            var buttonNode = new TreeNode(buttonName);
-            var hbAttributes = new HidButtonAttributes(buttonName, nodeButton.Attributes["code"].Value, background, repeat);
+            HidButtonAttributes hbAttributes = new HidButtonAttributes(buttonName, nodeButton.Attributes["code"].Value, background, repeat, shift, ctrl, alt, win);
+            var buttonNode = new TreeNode(hbAttributes.GetText());            
             buttonNode.Tag = new NodeData("BUTTON", hbAttributes, null);
             remoteNode.Nodes.Add(buttonNode);
 
@@ -1043,17 +1164,17 @@ namespace MediaPortal.InputDevices
                 //Save code no matter what
                 writer.WriteAttributeString("code", buttonAttributes.Code);
 
-                if (buttonAttributes.Background != "false" && buttonAttributes.Background != "0")
-                {
-                  //Only save background handling if different from the defaults
-                  writer.WriteAttributeString("background", buttonAttributes.Background);
-                }
+                //Only save background handling if different from the defaults
+                WriteAttribute(writer, "background", buttonAttributes.Background);
 
-                if (buttonAttributes.Repeat != "false" && buttonAttributes.Repeat != "0")
-                {
-                  //Only save repeat handling if different from the defaults
-                  writer.WriteAttributeString("repeat", buttonAttributes.Repeat);
-                }
+                //Only save repeat handling if different from the defaults
+                WriteAttribute(writer, "repeat", buttonAttributes.Repeat);
+
+                //Modifiers
+                WriteAttribute(writer, "shift", buttonAttributes.ModifierShift);
+                WriteAttribute(writer, "ctrl", buttonAttributes.ModifierControl);
+                WriteAttribute(writer, "alt", buttonAttributes.ModifierAlt);
+                WriteAttribute(writer, "win", buttonAttributes.ModifierWindows);
 
                 if (buttonNode.Nodes.Count > 0)
                 {
@@ -1291,24 +1412,85 @@ namespace MediaPortal.InputDevices
       }
 
       var node = e.Node;
-      var data = (NodeData) node.Tag;
+      NodeData data = (NodeData)node.Tag;
       switch (data.Type)
       {
         case "REMOTE":
-        case "BUTTON":
           groupBoxLayer.Enabled = false;
           groupBoxCondition.Enabled = false;
           groupBoxAction.Enabled = false;
+          groupBoxButton.Enabled = false;
           comboBoxLayer.Text = "All Layers";
           comboBoxCondProperty.Text = "none";
           comboBoxCmdProperty.Text = "none";
           comboBoxSound.Text = "none";
           return;
 
+        case "BUTTON":          
+          groupBoxLayer.Enabled = false;
+          groupBoxCondition.Enabled = false;
+          groupBoxAction.Enabled = false;
+          groupBoxButton.Enabled = true;
+          comboBoxLayer.Text = "All Layers";
+          comboBoxCondProperty.Text = "none";
+          comboBoxCmdProperty.Text = "none";
+          comboBoxSound.Text = "none";
+          HidButtonAttributes attributes = (HidButtonAttributes)data.Parameter;
+          mpCheckBoxAlt.Checked = HidUsageAction.AttributeValueToBoolean(attributes.ModifierAlt);
+          mpCheckBoxShift.Checked = HidUsageAction.AttributeValueToBoolean(attributes.ModifierShift);
+          mpCheckBoxControl.Checked = HidUsageAction.AttributeValueToBoolean(attributes.ModifierControl);
+          mpCheckBoxWindows.Checked = HidUsageAction.AttributeValueToBoolean(attributes.ModifierWindows);
+          mpCheckBoxRepeat.Checked = HidUsageAction.AttributeValueToBoolean(attributes.Repeat);
+          mpCheckBoxBackground.Checked = HidUsageAction.AttributeValueToBoolean(attributes.Background);
+
+          //Populate our code combo box
+          mpComboBoxCode.Items.Clear();
+          mpComboBoxCode.Text = "";
+          
+          //Check our usage page and collection
+          TreeNode remoteNode = getNode("REMOTE");
+          NodeData remoteData = (NodeData)remoteNode.Tag;
+          HidUsageActionAttributes remoteAttributes = (HidUsageActionAttributes) remoteData.Parameter;
+
+          if (remoteAttributes.UsagePage.Equals(SharpLib.Hid.UsagePage.GenericDesktopControls.ToString()) &&
+              remoteAttributes.UsageCollection.Equals(SharpLib.Hid.UsageCollection.GenericDesktop.Keyboard.ToString()))
+          {
+            // Only supporting code selection for keyboard for now
+            Type typeOfCode = typeof(Keys);
+            foreach (string keyName in Enum.GetNames(typeOfCode))
+            {
+              Keys value = (Keys) Enum.Parse(typeOfCode, keyName);
+              if (value > Keys.None && value < Keys.KeyCode)
+              {
+                mpComboBoxCode.Items.Add(keyName);
+              }
+            }
+
+            mpComboBoxCode.Text = attributes.Code;
+            mpComboBoxCode.Enabled = true;
+            mpCheckBoxShift.Enabled = true;
+            mpCheckBoxControl.Enabled = true;
+            mpCheckBoxAlt.Enabled = true;
+            mpCheckBoxWindows.Enabled = true;
+          }
+          else
+          {
+            //Disable code and modifiers check boxes for the rest
+            mpComboBoxCode.Enabled = false;
+            mpCheckBoxShift.Enabled = false;
+            mpCheckBoxControl.Enabled = false;
+            mpCheckBoxAlt.Enabled = false;
+            mpCheckBoxWindows.Enabled = false;
+          }
+
+
+          return;
+
         case "LAYER":
           groupBoxLayer.Enabled = true;
           groupBoxCondition.Enabled = false;
           groupBoxAction.Enabled = false;
+          groupBoxButton.Enabled = false;
           comboBoxCondProperty.Text = "none";
           comboBoxCmdProperty.Text = "none";
           comboBoxSound.Text = "none";
@@ -1320,6 +1502,7 @@ namespace MediaPortal.InputDevices
         case "KEY":
         case "CONDITION":
         {
+          groupBoxButton.Enabled = false;
           groupBoxCondition.Enabled = true;
           groupBoxAction.Enabled = true;
           groupBoxLayer.Enabled = true;
@@ -1814,8 +1997,30 @@ namespace MediaPortal.InputDevices
       newSound.Tag = new NodeData("SOUND", string.Empty, string.Empty);
       newSound.ForeColor = Color.DarkRed;
 
+      HidButtonAttributes newButtonAttributes = new HidButtonAttributes(Keys.A.ToString(), Keys.A.ToString(), false.ToString(), false.ToString(), false.ToString(), false.ToString(), false.ToString(), false.ToString());
+      var newButtonNode = new TreeNode(newButtonAttributes.GetText());
+      newButtonNode.Tag = new NodeData("BUTTON", newButtonAttributes, null);
+
       switch (data.Type)
       {
+        case "REMOTE":
+        {
+          //Check that the selected "remote" is a keyboard
+          HidUsageActionAttributes remoteAttributes = (HidUsageActionAttributes) data.Parameter;
+          if (remoteAttributes.UsagePage.Equals(SharpLib.Hid.UsagePage.GenericDesktopControls.ToString()) &&
+              remoteAttributes.UsageCollection.Equals(SharpLib.Hid.UsageCollection.GenericDesktop.Keyboard.ToString()))
+          {
+            //We support adding new buttons to keyboards
+            newCondition.Nodes.Add(newCommand);
+            newCondition.Nodes.Add(newSound);
+            newLayer.Nodes.Add(newCondition);
+            newButtonNode.Nodes.Add(newLayer);
+            node.Nodes.Add(newButtonNode);
+            newButtonNode.ExpandAll();
+            treeMapping.SelectedNode = newButtonNode;
+          }
+        }
+          break;
         case "LAYER":
           newCondition.Nodes.Add(newCommand);
           newCondition.Nodes.Add(newSound);
@@ -2084,18 +2289,80 @@ namespace MediaPortal.InputDevices
     /// </summary>
     private class HidButtonAttributes
     {
-      public HidButtonAttributes(string aName, string aCode, string aBackground, string aRepeat)
+      public HidButtonAttributes(string aName, string aCode, string aBackground, string aRepeat, string aShift, string aControl, string aAlt, string aWindows)
       {
         Name = aName;
         Code = aCode;
         Background = aBackground;
         Repeat = aRepeat;
+        ModifierShift = aShift;
+        ModifierControl = aControl;
+        ModifierAlt = aAlt;
+        ModifierWindows = aWindows;
       }
 
-      public string Name { get; private set; }
-      public string Code { get; private set; }
-      public string Background { get; private set; }
-      public string Repeat { get; private set; }
+      public string Name { get; set; }
+      public string Code { get; set; }
+      public string Background { get; set; }
+      public string Repeat { get; set; }
+      public string ModifierShift { get; set; }
+      public string ModifierControl { get; set; }
+      public string ModifierAlt { get; set; }
+      public string ModifierWindows { get; set; }
+
+      public string GetText()
+      {
+        if (Name != Code)
+        {
+          return Name;
+        }
+
+        //Build a neat name
+        string name = Code;
+        if (HidUsageAction.AttributeValueToBoolean(ModifierShift))
+        {
+          name += " + SHIFT";
+        }
+
+        if (HidUsageAction.AttributeValueToBoolean(ModifierControl))
+        {
+          name += " + CTRL";
+        }
+
+        if (HidUsageAction.AttributeValueToBoolean(ModifierAlt))
+        {
+          name += " + ALT";
+        }
+
+        if (HidUsageAction.AttributeValueToBoolean(ModifierWindows))
+        {
+          name += " + WIN";
+        }
+
+        if (HidUsageAction.AttributeValueToBoolean(Repeat) || HidUsageAction.AttributeValueToBoolean(Background))
+        {
+          name += " ( ";
+          bool needSeparator = false;
+          if (HidUsageAction.AttributeValueToBoolean(Background))
+          {
+            name += "background";
+            needSeparator = true;
+          }
+
+          if (HidUsageAction.AttributeValueToBoolean(Repeat))
+          {
+            if (needSeparator)
+            {
+              name += ", ";
+            }
+            name += "repeat";
+          }
+
+          name += " )";
+        }
+
+        return name;
+      }
     }
 
     private class NodeData
@@ -2175,5 +2442,90 @@ namespace MediaPortal.InputDevices
     private MPCheckBox checkBoxGainFocus;
 
     #endregion Controls
+
+    private void mpCheckBoxRepeat_CheckedChanged(object sender, EventArgs e)
+    {
+      TreeNode node = getNode("BUTTON");
+      NodeData data = (NodeData)node.Tag;
+      HidButtonAttributes attributes = (HidButtonAttributes) data.Parameter;
+      attributes.Repeat = ((CheckBox) sender).Checked.ToString();
+      node.Text = attributes.GetText();
+      changedSettings = true;
+    }
+
+    private void mpCheckBoxBackground_CheckedChanged(object sender, EventArgs e)
+    {
+      TreeNode node = getNode("BUTTON");
+      NodeData data = (NodeData)node.Tag;
+      HidButtonAttributes attributes = (HidButtonAttributes)data.Parameter;
+      attributes.Background = ((CheckBox)sender).Checked.ToString();
+      node.Text = attributes.GetText();
+      changedSettings = true;
+    }
+
+    private void mpCheckBoxShift_CheckedChanged(object sender, EventArgs e)
+    {
+      TreeNode node = getNode("BUTTON");
+      NodeData data = (NodeData)node.Tag;
+      HidButtonAttributes attributes = (HidButtonAttributes)data.Parameter;
+      attributes.ModifierShift = ((CheckBox)sender).Checked.ToString();
+      node.Text = attributes.GetText();
+      changedSettings = true;
+    }
+
+    private void mpCheckBoxControl_CheckedChanged(object sender, EventArgs e)
+    {
+      TreeNode node = getNode("BUTTON");
+      NodeData data = (NodeData)node.Tag;
+      HidButtonAttributes attributes = (HidButtonAttributes)data.Parameter;
+      attributes.ModifierControl = ((CheckBox)sender).Checked.ToString();
+      node.Text = attributes.GetText();
+      changedSettings = true;
+    }
+
+    private void mpCheckBoxWindows_CheckedChanged(object sender, EventArgs e)
+    {
+      TreeNode node = getNode("BUTTON");
+      NodeData data = (NodeData)node.Tag;
+      HidButtonAttributes attributes = (HidButtonAttributes)data.Parameter;
+      attributes.ModifierWindows = ((CheckBox)sender).Checked.ToString();
+      node.Text = attributes.GetText();
+      changedSettings = true;
+    }
+
+    private void mpCheckBoxAlt_CheckedChanged(object sender, EventArgs e)
+    {
+      TreeNode node = getNode("BUTTON");
+      NodeData data = (NodeData)node.Tag;
+      HidButtonAttributes attributes = (HidButtonAttributes)data.Parameter;
+      attributes.ModifierAlt = ((CheckBox)sender).Checked.ToString();
+      node.Text = attributes.GetText();
+      changedSettings = true;
+    }
+
+    private void mpComboBoxCode_SelectedIndexChanged(object sender, EventArgs e)
+    {
+      //Button code was changed
+      TreeNode node = getNode("BUTTON");
+      NodeData data = (NodeData)node.Tag;
+      HidButtonAttributes attributes = (HidButtonAttributes)data.Parameter;
+      if (attributes.Code.Equals(attributes.Name))
+      {
+        //Change both code and name if they are already in sync
+        attributes.Code = ((ComboBox) sender).Text;
+        attributes.Name = ((ComboBox)sender).Text;
+      }
+      else
+      {
+        //Change only the code then
+        attributes.Code = ((ComboBox)sender).Text;
+      }
+
+      //Update text in our tree
+      node.Text = attributes.GetText();
+      // We will need to save
+      changedSettings = true;
+    }
+
   }
 }

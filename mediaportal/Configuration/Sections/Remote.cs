@@ -180,6 +180,7 @@ namespace MediaPortal.Configuration.Sections
     private PictureBox pictureBox2;
     private MPLabel labelHidProfiles;
     private MPComboBox comboBoxHidProfiles;
+    private MPCheckBox checkBoxHidKeyboard;
     private MPLabel labelFireDTVModel;
 
     #endregion
@@ -387,6 +388,7 @@ namespace MediaPortal.Configuration.Sections
         //HID is also using MCE legacy setting for a smooth transition from MCE to HID
         checkBoxHidEnabled.Checked = xmlreader.GetValueAsBool("remote", "HidEnabled", true) || xmlreader.GetValueAsBool("remote", "MCE", false);
         checkBoxHidExtendedLogging.Checked = xmlreader.GetValueAsBool("remote", "HidVerbose", false) || xmlreader.GetValueAsBool("remote", "MCEVerboseLog", false);
+        checkBoxHidKeyboard.Checked = xmlreader.GetValueAsBool("remote", "HidKeyboard", false);
         numericRepeatDelay.Value = xmlreader.GetValueAsInt("remote", "HidRepeatDelayInMs", -1);
         numericRepeatSpeed.Value = xmlreader.GetValueAsInt("remote", "HidRepeatSpeedInMs", -1);
         buttonHidMapping.Enabled = checkBoxHidEnabled.Checked;
@@ -558,6 +560,7 @@ namespace MediaPortal.Configuration.Sections
 
         xmlwriter.SetValueAsBool("remote", "HidEnabled", checkBoxHidEnabled.Checked);
         xmlwriter.SetValueAsBool("remote", "HidVerbose", checkBoxHidExtendedLogging.Checked);
+        xmlwriter.SetValueAsBool("remote", "HidKeyboard", checkBoxHidKeyboard.Checked);
         xmlwriter.SetValue("remote", "HidRepeatDelayInMs", ((int)numericRepeatDelay.Value).ToString());
         xmlwriter.SetValue("remote", "HidRepeatSpeedInMs", ((int)numericRepeatSpeed.Value).ToString());
         xmlwriter.SetValue("remote", "HidProfile", comboBoxHidProfiles.Text);
@@ -751,6 +754,7 @@ namespace MediaPortal.Configuration.Sections
       this.mpCheckBox1 = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.mpCheckBox2 = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.mpButton1 = new MediaPortal.UserInterface.Controls.MPButton();
+      this.checkBoxHidKeyboard = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.tabControlRemotes.SuspendLayout();
       this.tabPageHid.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.pictureBox11)).BeginInit();
@@ -801,11 +805,11 @@ namespace MediaPortal.Configuration.Sections
       this.checkBoxHidEnabled.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.checkBoxHidEnabled.Location = new System.Drawing.Point(16, 53);
       this.checkBoxHidEnabled.Name = "checkBoxHidEnabled";
-      this.checkBoxHidEnabled.Size = new System.Drawing.Size(138, 17);
+      this.checkBoxHidEnabled.Size = new System.Drawing.Size(79, 17);
       this.checkBoxHidEnabled.TabIndex = 0;
-      this.checkBoxHidEnabled.Text = "Use generic HID device";
-      this.toolTip.SetToolTip(this.checkBoxHidEnabled, "Supports the largest range of remote and control devices. This should be you pref" +
-        "erred option.");
+      this.checkBoxHidEnabled.Text = "Enable HID";
+      this.toolTip.SetToolTip(this.checkBoxHidEnabled, "Supports the largest range of remote and control devices. This should be your pre" +
+        "ferred option.");
       this.checkBoxHidEnabled.UseVisualStyleBackColor = true;
       this.checkBoxHidEnabled.CheckedChanged += new System.EventHandler(this.checkBoxHidEnabled_CheckedChanged);
       // 
@@ -932,6 +936,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.groupBoxHidGeneral.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxHidGeneral.Controls.Add(this.checkBoxHidKeyboard);
       this.groupBoxHidGeneral.Controls.Add(this.labelHidProfiles);
       this.groupBoxHidGeneral.Controls.Add(this.comboBoxHidProfiles);
       this.groupBoxHidGeneral.Controls.Add(this.numericRepeatSpeed);
@@ -2133,6 +2138,19 @@ namespace MediaPortal.Configuration.Sections
       this.mpButton1.TabIndex = 1;
       this.mpButton1.Text = "Mapping";
       this.mpButton1.UseVisualStyleBackColor = true;
+      // 
+      // checkBoxHidKeyboard
+      // 
+      this.checkBoxHidKeyboard.AutoSize = true;
+      this.checkBoxHidKeyboard.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.checkBoxHidKeyboard.Location = new System.Drawing.Point(16, 99);
+      this.checkBoxHidKeyboard.Name = "checkBoxHidKeyboard";
+      this.checkBoxHidKeyboard.Size = new System.Drawing.Size(112, 17);
+      this.checkBoxHidKeyboard.TabIndex = 12;
+      this.checkBoxHidKeyboard.Text = "Use HID keyboard";
+      this.toolTip.SetToolTip(this.checkBoxHidKeyboard, "Meaning keyboard support is provided through HID. Make sure you select the \'full\'" +
+        " profile.");
+      this.checkBoxHidKeyboard.UseVisualStyleBackColor = true;
       // 
       // Remote
       // 

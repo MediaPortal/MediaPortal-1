@@ -1,0 +1,1033 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<HidHandler version="1">
+  
+  <!--Keyboard setup-->
+  <HidUsageAction UsagePage="GenericDesktopControls" UsageCollection="Keyboard" HandleHidEventsWhileInBackground="true">
+      
+    <!-- Action/Enter for Return key-->
+    <button code="Return">
+      <!-- From WINDOW_MOVIE_CALIBRATION do ACTION_CALIBRATE_SWAP_ARROWS: No idea what that is! -->
+      <action layer="0" condition="WINDOW" conproperty="11" command="ACTION" cmdproperty="47" sound="click.wav"/>
+      <!-- From WINDOW_UI_CALIBRATION do ACTION_CALIBRATE_RESET: No idea what that is! -->
+      <action layer="0" condition="WINDOW" conproperty="10" command="ACTION" cmdproperty="48" sound="back.wav"/>
+      <!-- From WINDOW_SLIDESHOW do ACTION_PAUSE_PICTURE: Pause/Continue -->
+      <action layer="0" condition="WINDOW" conproperty="2007" command="ACTION" cmdproperty="105" sound="click.wav"/>
+      <!-- For any other case do ACTION_SELECT_ITEM: Select item -->
+      <action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="7" sound="click.wav"/>
+    </button>
+
+    <!-- Key Esc -->
+    <button code="Escape">
+      <!-- From WINDOW_TVFULLSCREEN do ACTION_SHOW_GUI: Rewind -->
+      <action layer="0" condition="WINDOW" conproperty="602" command="ACTION" cmdproperty="18" sound="click.wav"/>            
+      <!-- From WINDOW_FULLSCREEN_VIDEO do ACTION_SHOW_GUI: Toggle between GUI and fullscreen -->
+      <action layer="0" condition="WINDOW" conproperty="2005" command="ACTION" cmdproperty="18" sound="back.wav"/>
+      <!-- From WINDOW_TV_OVERLAY do ACTION_SHOW_OSD: Exit OSD -->
+      <action layer="0" condition="WINDOW" conproperty="3003" command="ACTION" cmdproperty="24" sound="click.wav"/>
+      <!-- From WINDOW_OSD do ACTION_SHOW_OSD: Exit OSD -->
+      <action layer="0" condition="WINDOW" conproperty="2901" command="ACTION" cmdproperty="24" sound="click.wav"/>
+      <!-- For any other case do ACTION_PREVIOUS_MENU: Back for Escape key-->
+      <action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="10" sound="back.wav"/>
+    </button>
+
+    <!-- Direction arrow keys for focus control -->
+    <button code="Left" repeat="true">
+      <!-- From WINDOW_FULLSCREEN_VIDEO do ACTION_STEP_BACK: Step back -->
+      <action layer="0" condition="WINDOW" conproperty="2005" command="ACTION" cmdproperty="21" sound="click.wav"/>
+      <!-- From WINDOW_TVFULLSCREEN do ACTION_STEP_BACK: Step back -->
+      <action layer="0" condition="WINDOW" conproperty="602" command="ACTION" cmdproperty="21" sound="click.wav"/>
+      <!-- From WINDOW_SLIDESHOW do ACTION_PREV_PICTURE: Previous picture -->
+      <action layer="0" condition="WINDOW" conproperty="2007" command="ACTION" cmdproperty="29" sound="click.wav"/>
+      <!-- For any other case do ACTION_MOVE_LEFT -->
+      <action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="1" sound="cursor.wav"/>
+    </button>
+
+    <button code="Right" repeat="true">      
+      <!-- From WINDOW_FULLSCREEN_VIDEO do ACTION_STEP_FORWARD: Step forward -->
+      <action layer="0" condition="WINDOW" conproperty="2005" command="ACTION" cmdproperty="20" sound="click.wav"/>
+      <!-- From WINDOW_TVFULLSCREEN do ACTION_STEP_FORWARD: Step forward -->
+      <action layer="0" condition="WINDOW" conproperty="602" command="ACTION" cmdproperty="20" sound="click.wav"/>
+      <!-- From WINDOW_SLIDESHOW do ACTION_NEXT_PICTURE: Next picture -->
+      <action layer="0" condition="WINDOW" conproperty="2007" command="ACTION" cmdproperty="28" sound="click.wav"/>
+      <!-- For any other case do ACTION_MOVE_RIGHT -->
+      <action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="2" sound="cursor.wav"/>
+    </button>
+
+    <button code="Down" repeat="true">
+      <!-- From WINDOW_FULLSCREEN_VIDEO do ACTION_BIG_STEP_BACK: Big step backward -->
+      <action layer="0" condition="WINDOW" conproperty="2005" command="ACTION" cmdproperty="23" sound="click.wav"/>
+      <!-- From WINDOW_TVFULLSCREEN do ACTION_BIG_STEP_BACK: Big step backward -->
+      <action layer="0" condition="WINDOW" conproperty="602" command="ACTION" cmdproperty="23" sound="click.wav"/>
+      <!-- For any other case do ACTION_MOVE_DOWN -->
+      <action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="4" sound="cursor.wav"/>
+    </button>
+    
+    <button code="Up" repeat="true">
+      <!-- From WINDOW_FULLSCREEN_VIDEO do ACTION_BIG_STEP_FORWARD: Big step forward -->
+      <action layer="0" condition="WINDOW" conproperty="2005" command="ACTION" cmdproperty="22" sound="click.wav"/>
+      <!-- From WINDOW_TVFULLSCREEN do ACTION_BIG_STEP_FORWARD: Big step forward -->
+      <action layer="0" condition="WINDOW" conproperty="602" command="ACTION" cmdproperty="22" sound="click.wav"/>
+      <!-- For any other case do ACTION_MOVE_UP -->
+      <action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="3" sound="cursor.wav"/>
+    </button>
+
+    <!-- Digit 0 -->
+    <button code="D0" repeat="true">
+      <!-- From WINDOW_VIDEOS do ACTION_DELETE_ITEM: Delete item-->
+      <action layer="0" condition="WINDOW" conproperty="6" command="ACTION" cmdproperty="80" sound="click.wav"/>
+      <!-- From WINDOW_VIDEO_TITLE do ACTION_DELETE_ITEM: Delete item-->
+      <action layer="0" condition="WINDOW" conproperty="25" command="ACTION" cmdproperty="80" sound="click.wav"/>
+      <!-- From WINDOW_SLIDESHOW do ACTION_DELETE_ITEM: Delete picture-->
+      <action layer="0" condition="WINDOW" conproperty="2007" command="ACTION" cmdproperty="80" sound="click.wav"/>
+      <!-- From WINDOW_PICTURES do ACTION_DELETE_ITEM: Delete picture-->
+      <action layer="0" condition="WINDOW" conproperty="2" command="ACTION" cmdproperty="80" sound="click.wav"/>
+      <!-- From WINDOW_RECORDEDTV do ACTION_DELETE_ITEM: Delete TV recording from Recorded TV list -->
+      <action layer="0" condition="WINDOW" conproperty="603" command="ACTION" cmdproperty="80" sound="click.wav" />
+      <!-- From WINDOW_FILES do ACTION_DELETE_ITEM: Delete item-->
+      <action layer="0" condition="WINDOW" conproperty="3" command="ACTION" cmdproperty="80" sound="click.wav"/>
+      <!-- For any other case do REMOTE_0: Digit 0 -->
+      <action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="58" sound="cursor.wav"/>
+    </button>
+
+    <!-- Digit 1 -->
+    <button code="D1" repeat="true">
+      <!-- From WINDOW_SLIDESHOW do ACTION_ZOOM_LEVEL_NORMAL: Zoom level normal -->
+      <action layer="0" condition="WINDOW" conproperty="2007" command="ACTION" cmdproperty="37" sound="click.wav"/>
+      <!-- For any other case do REMOTE_1: Digit 1 -->
+      <action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="59" sound="cursor.wav"/>
+    </button>
+
+    <!-- Digit 2 -->
+    <button code="D2" repeat="true">
+      <!-- From WINDOW_SLIDESHOW do ACTION_ZOOM_LEVEL_1: Zoom level 1 -->
+      <action layer="0" condition="WINDOW" conproperty="2007" command="ACTION" cmdproperty="38" sound="click.wav"/>
+      <!-- From WINDOW_FILES do ACTION_COPY_ITEM: Copy item -->
+      <action layer="0" condition="WINDOW" conproperty="3" command="ACTION" cmdproperty="81" sound="click.wav"/>
+      <!-- For any other case do REMOTE_2: Digit 2 -->
+      <action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="60" sound="cursor.wav"/>
+    </button>
+
+    <!-- Digit 3 -->
+    <button code="D3" repeat="true">
+      <!-- From WINDOW_SLIDESHOW do ACTION_ZOOM_LEVEL_2: Zoom level 2 -->
+      <action layer="0" condition="WINDOW" conproperty="2007" command="ACTION" cmdproperty="39" sound="click.wav"/>
+      <!-- From WINDOW_FILES do ACTION_MOVE_ITEM: Move item -->
+      <action layer="0" condition="WINDOW" conproperty="3" command="ACTION" cmdproperty="82" sound="click.wav"/>
+      <!-- For any other case do REMOTE_3: Digit 3 -->
+      <action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="61" sound="cursor.wav"/>
+    </button>
+
+    <!-- Digit 4 -->
+    <button code="D4" repeat="true">
+      <!-- From WINDOW_SLIDESHOW do ACTION_ZOOM_LEVEL_3: Zoom level 3 -->
+      <action layer="0" condition="WINDOW" conproperty="2007" command="ACTION" cmdproperty="40" sound="click.wav"/>
+      <!-- For any other case do REMOTE_4: Digit 4 -->
+      <action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="62" sound="cursor.wav"/>
+    </button>
+
+    <!-- Digit 5 -->
+    <button code="D5" repeat="true">
+      <!-- From WINDOW_SLIDESHOW do ACTION_ZOOM_LEVEL_4: Zoom level 4 -->
+      <action layer="0" condition="WINDOW" conproperty="2007" command="ACTION" cmdproperty="41" sound="click.wav"/>
+      <!-- For any other case do REMOTE_5: Digit 5 -->
+      <action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="63" sound="cursor.wav"/>
+    </button>
+
+    <!-- Digit 6 -->
+    <button code="D6" repeat="true">
+      <!-- From WINDOW_SLIDESHOW do ACTION_ZOOM_LEVEL_5: Zoom level 5 -->
+      <action layer="0" condition="WINDOW" conproperty="2007" command="ACTION" cmdproperty="42" sound="click.wav"/>
+      <!-- For any other case do REMOTE_6: Digit 6 -->
+      <action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="64" sound="cursor.wav"/>
+    </button>
+
+    <!-- Digit 7 -->
+    <button code="D7" repeat="true">
+      <!-- From WINDOW_SLIDESHOW do ACTION_ZOOM_LEVEL_6: Zoom level 6 -->
+      <action layer="0" condition="WINDOW" conproperty="2007" command="ACTION" cmdproperty="43" sound="click.wav"/>
+      <!-- For any other case do REMOTE_7: Digit 7 -->
+      <action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="65" sound="cursor.wav"/>
+    </button>
+
+    <!-- Digit 8 -->
+    <button code="D8" repeat="true">
+      <!-- From WINDOW_SLIDESHOW do ACTION_ZOOM_LEVEL_7: Zoom level 7 -->
+      <action layer="0" condition="WINDOW" conproperty="2007" command="ACTION" cmdproperty="44" sound="click.wav"/>
+      <!-- For any other case do REMOTE_8: Digit 8 -->
+      <action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="66" sound="cursor.wav"/>
+    </button>
+
+    <!-- Digit 9 -->
+    <button code="D9" repeat="true">
+      <!-- From WINDOW_SLIDESHOW do ACTION_ZOOM_LEVEL_8: Zoom level 8 -->
+      <action layer="0" condition="WINDOW" conproperty="2007" command="ACTION" cmdproperty="45" sound="click.wav"/>
+      <!-- For any other case do REMOTE_9: Digit 9 -->
+      <action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="67" sound="cursor.wav"/>
+    </button>
+
+    <!-- Key F1 -->
+    <button code="F1" repeat="true">
+      <!-- From WINDOW_RADIO_GUIDE do ACTION_DEFAULT_TIMEBLOCK: Default time block -->
+      <action layer="0" condition="WINDOW" conproperty="762" command="ACTION" cmdproperty="88" sound="click.wav"/>
+      <!-- From WINDOW_TVGUIDE do ACTION_DEFAULT_TIMEBLOCK: Default time block -->
+      <action layer="0" condition="WINDOW" conproperty="600" command="ACTION" cmdproperty="88" sound="click.wav"/>
+      <!-- From WINDOW_VIDEO_PLAYLIST do ACTION_SHOW_PLAYLIST: Switch to playlist -->
+      <action layer="0" condition="WINDOW" conproperty="28" command="ACTION" cmdproperty="33" sound="click.wav"/>
+      <!-- From WINDOW_VIDEOS do ACTION_SHOW_PLAYLIST: Switch to playlist -->
+      <action layer="0" condition="WINDOW" conproperty="6" command="ACTION" cmdproperty="33" sound="click.wav"/>
+      <!-- From WINDOW_VIDEO_TITLE do ACTION_SHOW_PLAYLIST: Switch to video playlist -->
+      <action layer="0" condition="WINDOW" conproperty="25" command="ACTION" cmdproperty="33" sound="click.wav"/>
+      <!-- From WINDOW_UI_CALIBRATION do ACTION_CALIBRATE_RESET: No idea what that is! -->
+      <action layer="0" condition="WINDOW" conproperty="10" command="ACTION" cmdproperty="48" sound="back.wav"/>
+      <!-- From WINDOW_MOVIE_CALIBRATION do ACTION_CALIBRATE_RESET: No idea what that is! -->
+      <action layer="0" condition="WINDOW" conproperty="11" command="ACTION" cmdproperty="48" sound="click.wav"/>
+      <!-- From WINDOW_MUSIC_PLAYLIST do ACTION_SHOW_PLAYLIST: Toggle between Playlist and Filelist-->
+      <action layer="0" condition="WINDOW" conproperty="500" command="ACTION" cmdproperty="33" sound="click.wav"/>
+      <!-- From WINDOW_MUSIC_FILES do ACTION_SHOW_PLAYLIST: Toggle between Playlist and Filelist-->
+      <action layer="0" condition="WINDOW" conproperty="501" command="ACTION" cmdproperty="33" sound="click.wav"/>
+      <!-- From WINDOW_MUSIC_GENRE do ACTION_SHOW_PLAYLIST: Toggle between Playlist and Filelist-->
+      <action layer="0" condition="WINDOW" conproperty="504" command="ACTION" cmdproperty="33" sound="click.wav"/>
+    </button>
+    
+    <!-- Key F2 -->
+    <button code="F2" repeat="true">
+    </button>
+    
+    <!-- Key F3 -->
+    <button code="F3" repeat="true">
+      <!-- Show item info -->
+      <action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="11" sound="click.wav"/>
+    </button>
+
+    <!-- Key F4 -->
+    <button code="F4" repeat="true">
+      <!-- Toggle Autocrop -->
+      <action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="9885" sound="click.wav"/>
+    </button>
+    
+    
+    
+    <!-- Key F5 -->
+    <button code="F5" repeat="true">
+      <!-- From WINDOW_FULLSCREEN_TELETEXT do ACTION_REMOTE_SUBPAGE_DOWN: Previous Subpage -->
+      <action layer="0" condition="WINDOW" conproperty="7701" command="ACTION" cmdproperty="9980" sound="click.wav"/>      
+      <!-- From WINDOW_TELETEXT do ACTION_REMOTE_SUBPAGE_DOWN: Previous Subpage -->
+      <action layer="0" condition="WINDOW" conproperty="7700" command="ACTION" cmdproperty="9980" sound="click.wav"/>
+      <!-- From WINDOW_TV_OVERLAY do ACTION_REWIND: Rewind -->
+      <action layer="0" condition="WINDOW" conproperty="3003" command="ACTION" cmdproperty="17" sound="click.wav"/>
+      <!-- From WINDOW_TVFULLSCREEN do ACTION_REWIND: Rewind -->
+      <action layer="0" condition="WINDOW" conproperty="602" command="ACTION" cmdproperty="17" sound="click.wav"/>      
+      <!-- From WINDOW_RADIO_GUIDE do ACTION_MUSIC_REWIND: Decrease time -->
+      <action layer="0" condition="WINDOW" conproperty="762" command="ACTION" cmdproperty="78" sound="click.wav"/>
+      <!-- From WINDOW_TVGUIDE do ACTION_MUSIC_REWIND: Decrease time -->
+      <action layer="0" condition="WINDOW" conproperty="600" command="ACTION" cmdproperty="78" sound="click.wav"/>
+      <!-- From WINDOW_OSD do ACTION_REWIND: Rewind -->
+      <action layer="0" condition="WINDOW" conproperty="2901" command="ACTION" cmdproperty="17" sound="click.wav"/>
+      <!-- From WINDOW_FULLSCREEN_VIDEO do ACTION_REWIND: Rewind -->
+      <action layer="0" condition="WINDOW" conproperty="2005" command="ACTION" cmdproperty="17" sound="click.wav"/>
+      <!-- For any other case do ACTION_MUSIC_REWIND: rewind music -->
+      <action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="78" sound="click.wav"/>
+    </button>
+
+    <!-- Key F6 -->
+    <button code="F6" repeat="true">
+      <!-- From WINDOW_FULLSCREEN_TELETEXT do ACTION_REMOTE_SUBPAGE_UP: Next Subpage -->
+      <action layer="0" condition="WINDOW" conproperty="7701" command="ACTION" cmdproperty="9979" sound="click.wav"/>
+      <!-- From WINDOW_TELETEXT do ACTION_REMOTE_SUBPAGE_UP: Next Subpage -->
+      <action layer="0" condition="WINDOW" conproperty="7700" command="ACTION" cmdproperty="9979" sound="click.wav"/>
+      <!-- From WINDOW_TV_OVERLAY do ACTION_FORWARD: Fast forward -->
+      <action layer="0" condition="WINDOW" conproperty="3003" command="ACTION" cmdproperty="16" sound="click.wav"/>
+       <!-- From WINDOW_TVFULLSCREEN do ACTION_FORWARD: Fast forward -->
+      <action layer="0" condition="WINDOW" conproperty="602" command="ACTION" cmdproperty="16" sound="click.wav"/>      
+      <!-- From WINDOW_RADIO_GUIDE do ACTION_MUSIC_FORWARD: Increase time -->
+      <action layer="0" condition="WINDOW" conproperty="762" command="ACTION" cmdproperty="77" sound="click.wav"/>      
+      <!-- From WINDOW_TVGUIDE do ACTION_MUSIC_FORWARD: Increase time -->
+      <action layer="0" condition="WINDOW" conproperty="600" command="ACTION" cmdproperty="77" sound="click.wav"/>
+      <!-- From WINDOW_OSD do ACTION_FORWARD: Fast forward -->
+      <action layer="0" condition="WINDOW" conproperty="2901" command="ACTION" cmdproperty="16" sound="click.wav"/>
+      <!-- From WINDOW_FULLSCREEN_VIDEO do ACTION_FORWARD: Fast forward -->
+      <action layer="0" condition="WINDOW" conproperty="2005" command="ACTION" cmdproperty="16" sound="click.wav"/>
+      <!-- For any other case do ACTION_MUSIC_FORWARD -->
+      <action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="77" sound="click.wav"/>
+    </button>
+
+    <!-- Key F7 -->
+    <button code="F7" repeat="true">
+      <!-- From WINDOW_FULLSCREEN_TELETEXT do ACTION_PREV_TELETEXTPAGE: Previous Page -->
+      <action layer="0" condition="WINDOW" conproperty="7701" command="ACTION" cmdproperty="9985" sound="click.wav"/>
+      <!-- From WINDOW_TELETEXT do ACTION_PREV_TELETEXTPAGE: Previous Page -->
+      <action layer="0" condition="WINDOW" conproperty="7700" command="ACTION" cmdproperty="9985" sound="click.wav"/>
+       <!-- From WINDOW_TVFULLSCREEN do ACTION_PREV_CHANNEL: Previous TV channel -->
+      <action layer="0" condition="WINDOW" conproperty="602" command="ACTION" cmdproperty="94" sound="click.wav"/>      
+      <!-- From WINDOW_DVD do ACTION_PREV_CHAPTER: Next chapter -->
+      <action layer="0" condition="WINDOW" conproperty="3001" command="ACTION" cmdproperty="92" sound="click.wav"/>
+      <!-- From WINDOW_RADIO_GUIDE do ACTION_DECREASE_TIMEBLOCK: Decrease time block -->
+      <action layer="0" condition="WINDOW" conproperty="762" command="ACTION" cmdproperty="87" sound="click.wav"/>
+      <!-- From WINDOW_TVGUIDE do ACTION_DECREASE_TIMEBLOCK: Decrease time block -->
+      <action layer="0" condition="WINDOW" conproperty="600" command="ACTION" cmdproperty="87" sound="click.wav"/>
+      <!-- Skip previous -->
+      <action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="15" sound="click.wav"/>
+    </button>
+
+    <!-- Key F8 -->
+    <button code="F8" repeat="true">      
+      <!-- From WINDOW_FULLSCREEN_TELETEXT do ACTION_NEXT_TELETEXTPAGE: Next Page -->
+      <action layer="0" condition="WINDOW" conproperty="7701" command="ACTION" cmdproperty="9984" sound="click.wav"/>
+      <!-- From WINDOW_TELETEXT do ACTION_NEXT_TELETEXTPAGE: Next Page -->
+      <action layer="0" condition="WINDOW" conproperty="7700" command="ACTION" cmdproperty="9984" sound="click.wav"/>
+       <!-- From WINDOW_TVFULLSCREEN do ACTION_NEXT_CHANNEL: Next TV channel -->
+      <action layer="0" condition="WINDOW" conproperty="602" command="ACTION" cmdproperty="95" sound="click.wav"/>      
+      <!-- From WINDOW_DVD do ACTION_NEXT_CHAPTER: Next chapter -->
+      <action layer="0" condition="WINDOW" conproperty="3001" command="ACTION" cmdproperty="91" sound="click.wav"/>
+      <!-- From WINDOW_RADIO_GUIDE do ACTION_INCREASE_TIMEBLOCK: Increase time block -->
+      <action layer="0" condition="WINDOW" conproperty="762" command="ACTION" cmdproperty="86" sound="click.wav"/>
+      <!-- From WINDOW_TVGUIDE do ACTION_INCREASE_TIMEBLOCK: Increase time block -->
+      <action layer="0" condition="WINDOW" conproperty="600" command="ACTION" cmdproperty="86" sound="click.wav"/>
+      <!-- Skip next -->
+      <action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="14" sound="click.wav"/>
+    </button>
+
+    <!-- show context menu for currently selected item -->
+    <button code="F9" repeat="true">
+      <action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="106" sound="click.wav"/>
+    </button>
+
+    <!-- Take Screenshot -->
+    <button code="F11" repeat="true">
+      <action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="85" sound="click.wav"/>
+    </button>
+
+    <!-- Switch source and destination -->
+    <button code="F12" repeat="true">
+      <!-- From WINDOW_FILES do ACTION_TOGGLE_SOURCE_DEST-->
+      <action layer="0" condition="WINDOW" conproperty="3" command="ACTION" cmdproperty="32" sound="click.wav"/>
+    </button>
+
+    <!-- Page up -->
+    <button code="PageUp" repeat="true">
+      <!-- From WINDOW_TV_OVERLAY do ACTION_OSD_SHOW_VALUE_PLUS: Value plus -->
+      <action layer="0" condition="WINDOW" conproperty="3003" command="ACTION" cmdproperty="74" sound="click.wav"/>
+      <!-- From WINDOW_OSD do ACTION_OSD_SHOW_VALUE_PLUS: Value plus -->
+      <action layer="0" condition="WINDOW" conproperty="2901" command="ACTION" cmdproperty="74" sound="click.wav"/>
+      <!-- From WINDOW_SLIDESHOW do ACTION_ZOOM_OUT: Zoom Out -->
+      <action layer="0" condition="WINDOW" conproperty="2007" command="ACTION" cmdproperty="30" sound="click.wav"/>
+      <!-- For any other case do ACTION_PAGE_UP -->
+      <action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="5" sound="cursor.wav"/>
+    </button>
+
+    <!-- Page Down -->
+    <button code="PageDown" repeat="true">
+      <!-- From WINDOW_TV_OVERLAY do ACTION_OSD_SHOW_VALUE_MIN: Value min -->
+      <action layer="0" condition="WINDOW" conproperty="3003" command="ACTION" cmdproperty="75" sound="click.wav"/>
+      <!-- From WINDOW_OSD do ACTION_OSD_SHOW_VALUE_MIN: Value min -->
+      <action layer="0" condition="WINDOW" conproperty="2901" command="ACTION" cmdproperty="75" sound="click.wav"/>
+      <!-- From WINDOW_SLIDESHOW do ACTION_ZOOM_IN: Zoom In -->
+      <action layer="0" condition="WINDOW" conproperty="2007" command="ACTION" cmdproperty="31" sound="click.wav"/>
+      <!-- For any other case do ACTION_PAGE_DOWN -->
+      <action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="6" sound="cursor.wav"/>
+    </button>
+
+    <!-- Key Home -->
+    <button code="Home" repeat="true">      
+      <!-- From WINDOW_RADIO_GUIDE do ACTION_TVGUIDE_RESET: Go to current time -->
+      <action layer="0" condition="WINDOW" conproperty="762" command="ACTION" cmdproperty="96" sound="click.wav"/>
+      <!-- From WINDOW_TVGUIDE do ACTION_TVGUIDE_RESET: Go to current time -->
+      <action layer="0" condition="WINDOW" conproperty="600" command="ACTION" cmdproperty="96" sound="click.wav"/>
+      <!-- Select first item -->  
+      <action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="109" sound="cursor.wav"/>
+    </button>
+
+    <!-- Select last item -->
+    <button code="End" repeat="true">
+      <action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="110" sound="cursor.wav"/>
+    </button>
+
+    <!-- Delete item -->
+    <button code="Delete" repeat="true">
+      <action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="80" sound="cursor.wav"/>
+    </button>
+    
+    <!-- Volume Up -->
+    <button code="Add" repeat="true">
+      <action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="103" sound="click.wav"/>
+    </button>
+
+    <!-- Volume Down -->
+    <button code="Subtract" repeat="true">
+      <action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="102" sound="click.wav"/>
+    </button>
+    
+    <!-- Space bar -->
+    <button code="Space" repeat="true">
+      <!-- From WINDOW_TV_OVERLAY do ACTION_PAUSE: Pause -->
+      <action layer="0" condition="WINDOW" conproperty="3003" command="ACTION" cmdproperty="12" sound="click.wav"/>
+      <!-- From WINDOW_TVFULLSCREEN do ACTION_PAUSE: Pause -->
+      <action layer="0" condition="WINDOW" conproperty="602" command="ACTION" cmdproperty="12" sound="click.wav"/>
+      <!-- From WINDOW_FULLSCREEN_VIDEO do ACTION_PAUSE: Pause -->
+      <action layer="0" condition="WINDOW" conproperty="2005" command="ACTION" cmdproperty="12" sound="click.wav"/>
+      <!-- For any other case do ACTION_PAUSE -->
+      <action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="12" sound="click.wav"/>
+    </button>
+
+    <!-- Key A -->
+    <button code="A" repeat="true">      
+      <!-- From WINDOW_RADIO_GUIDE do ACTION_TVGUIDE_PREV_GROUP: Previous radio group -->
+      <action layer="0" condition="WINDOW" conproperty="762" command="ACTION" cmdproperty="9996" sound="click.wav"/>
+      <!-- From WINDOW_TVGUIDE do ACTION_TVGUIDE_PREV_GROUP: Previous TV group -->
+      <action layer="0" condition="WINDOW" conproperty="600" command="ACTION" cmdproperty="9996" sound="click.wav"/>
+      <!-- Cycle Audio Language or Type -->
+      <action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="26" sound="click.wav"/>
+    </button>
+
+    <!-- Key B -->
+    <button code="B" repeat="true">
+      <!-- From WINDOW_TV_OVERLAY do ACTION_STOP: Stop -->
+      <action layer="0" condition="WINDOW" conproperty="3003" command="ACTION" cmdproperty="13" sound="click.wav"/>
+      <!-- From WINDOW_TVFULLSCREEN do ACTION_STOP: Stop -->
+      <action layer="0" condition="WINDOW" conproperty="602" command="ACTION" cmdproperty="13" sound="click.wav"/>
+      <!-- From WINDOW_FULLSCREEN_VIDEO do ACTION_STOP: Stop -->
+      <action layer="0" condition="WINDOW" conproperty="2005" command="ACTION" cmdproperty="13" sound="click.wav"/>
+      <!-- Stop -->
+      <action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="13" sound="click.wav"/>
+    </button>
+
+    <!-- Key C -->
+    <button code="C" repeat="true">
+      <!-- From WINDOW_FULLSCREEN_VIDEO do ACTION_CREATE_BOOKMARK: Create Bookmark -->
+      <action layer="0" condition="WINDOW" conproperty="2005" command="ACTION" cmdproperty="142" sound="click.wav"/>
+      <!-- From WINDOW_MUSIC_FILES do ACTION_CANCEL_IMPORT: Cancel Import -->
+      <action layer="0" condition="WINDOW" conproperty="501" command="ACTION" cmdproperty="114" sound="click.wav"/>
+    </button>
+
+    <!-- Key D -->
+    <button code="D" repeat="true">
+      <!-- From WINDOW_DVD do ACTION_DVD_MENU: DVD Menu -->
+      <action layer="0" condition="WINDOW" conproperty="3001" command="ACTION" cmdproperty="90" sound="click.wav"/>
+      <!-- From WINDOW_MUSIC_FILES do ACTION_IMPORT_DISC: Import Disc -->
+      <action layer="0" condition="WINDOW" conproperty="501" command="ACTION" cmdproperty="113" sound="click.wav"/>
+    </button>
+
+    <!-- Key E -->
+    <button code="E" repeat="true">
+      <!-- From WINDOW_FULLSCREEN_VIDEO do ACTION_NEXT_EDITION: Next Edition stream -->
+      <action layer="0" condition="WINDOW" conproperty="2005" command="ACTION" cmdproperty="134" sound="click.wav"/>
+    </button>
+    
+    <!-- Key F -->
+    <button code="F" repeat="true">
+    </button>
+        
+    <!-- Key G -->
+    <button code="G" repeat="true">
+      <!-- From WINDOW_FULLSCREEN_TELETEXT do ACTION_SWITCH_TELETEXT_HIDDEN: Hidden Mode -->
+      <action layer="0" condition="WINDOW" conproperty="7701" command="ACTION" cmdproperty="9986" sound="click.wav"/>
+      <!-- From WINDOW_TELETEXT do ACTION_SWITCH_TELETEXT_HIDDEN: Hidden Mode -->
+      <action layer="0" condition="WINDOW" conproperty="7700" command="ACTION" cmdproperty="9986" sound="click.wav"/>
+      <!-- Toggle Gap / Crossfade (BASS Player only) -->
+      <action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="9886" sound="click.wav"/>
+    </button>
+
+    <!-- TGB - Switch home -->
+    <button code="H" shift="false" alt="false" win="false" ctrl="false">
+      <action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="115" sound="click.wav"/>
+    </button>
+    
+    <!-- Key I -->
+    <button code="I" repeat="true">
+      <!-- From WINDOW_FULLSCREEN_TELETEXT do ACTION_SHOW_INDEXPAGE: Index Page -->
+      <action layer="0" condition="WINDOW" conproperty="7701" command="ACTION" cmdproperty="9988" sound="click.wav"/>
+      <!-- From WINDOW_TELETEXT do ACTION_SHOW_INDEXPAGE: Index Page -->
+      <action layer="0" condition="WINDOW" conproperty="7700" command="ACTION" cmdproperty="9988" sound="click.wav"/>
+      <!-- From WINDOW_RADIO_GUIDE do ACTION_TVGUIDE_INCREASE_DAY: Increase day -->
+      <action layer="0" condition="WINDOW" conproperty="762" command="ACTION" cmdproperty="9991" sound="click.wav"/>
+      <!-- From WINDOW_TVGUIDE do ACTION_TVGUIDE_INCREASE_DAY: Increase day -->
+      <action layer="0" condition="WINDOW" conproperty="600" command="ACTION" cmdproperty="9991" sound="click.wav"/>
+      <!-- From WINDOW_MUSIC_FILES do ACTION_IMPORT_TRACK: Import Track -->
+      <action layer="0" condition="WINDOW" conproperty="501" command="ACTION" cmdproperty="112" sound="click.wav"/>
+    </button>
+
+    <!-- Key J -->
+    <button code="J" repeat="true">
+      <!-- From WINDOW_FULLSCREEN_VIDEO do ACTION_PREV_BOOKMARK: Previous Bookmark -->
+      <action layer="0" condition="WINDOW" conproperty="2005" command="ACTION" cmdproperty="140" sound="click.wav"/>
+    </button>
+
+    <!-- Key K -->
+    <button code="K" repeat="true">
+      <!-- From WINDOW_MUSIC_PLAYING_NOW do ACTION_LASTFM_BAN: LastFM Ban -->
+      <action layer="0" condition="WINDOW" conproperty="510" command="ACTION" cmdproperty="801" sound="click.wav"/>
+      <!-- From WINDOW_FULLSCREEN_VIDEO do ACTION_NEXT_BOOKMARK: Next Bookmark -->
+      <action layer="0" condition="WINDOW" conproperty="2005" command="ACTION" cmdproperty="141" sound="click.wav"/>
+    </button>
+
+    <!-- Key L -->
+    <button code="L" repeat="true">
+      <!-- From WINDOW_MUSIC_PLAYING_NOW do ACTION_LASTFM_LOVE: LastFM Love -->
+      <action layer="0" condition="WINDOW" conproperty="510" command="ACTION" cmdproperty="800" sound="click.wav"/>
+      <!-- From WINDOW_TVFULLSCREEN do ACTION_NEXT_SUBTITLE: Cycle subtitles -->
+      <action layer="0" condition="WINDOW" conproperty="602" command="ACTION" cmdproperty="119" sound="click.wav"/>
+      <!-- From WINDOW_FULLSCREEN_VIDEO do ACTION_NEXT_SUBTITLE: Cycle subtitles -->
+      <action layer="0" condition="WINDOW" conproperty="2005" command="ACTION" cmdproperty="119" sound="click.wav"/>
+      <!-- Toggle Subtitles -->
+      <action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="119" sound="click.wav"/>
+    </button>
+
+    <!-- Key M -->
+    <button code="M" repeat="true">
+      <!-- Mute -->
+      <action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="9982" sound="click.wav"/>
+    </button>
+    
+    <!-- Key N -->
+    <button code="N" repeat="true">
+    </button>
+
+    <!-- Key O -->
+    <button code="O" repeat="true">
+      <!-- From WINDOW_FULLSCREEN_TELETEXT do ACTION_REMOTE_YELLOW_BUTTON: Yellow button -->
+      <action layer="0" condition="WINDOW" conproperty="7701" command="ACTION" cmdproperty="9977" sound="click.wav"/>
+      <!-- From WINDOW_TELETEXT do ACTION_REMOTE_YELLOW_BUTTON: Yellow button -->
+      <action layer="0" condition="WINDOW" conproperty="7700" command="ACTION" cmdproperty="9977" sound="click.wav"/>
+    </button>
+      
+    <!-- Key P -->
+    <button code="P" repeat="true">
+      <!-- From WINDOW_FULLSCREEN_TELETEXT do ACTION_REMOTE_BLUE_BUTTON: Blue button -->
+      <action layer="0" condition="WINDOW" conproperty="7701" command="ACTION" cmdproperty="9978" sound="click.wav"/>
+      <!-- From WINDOW_TELETEXT do ACTION_REMOTE_BLUE_BUTTON: Blue button -->
+      <action layer="0" condition="WINDOW" conproperty="7700" command="ACTION" cmdproperty="9978" sound="click.wav"/>
+      <!-- From WINDOW_TVFULLSCREEN do ACTION_PLAY: Play/Resume -->
+      <action layer="0" condition="WINDOW" conproperty="602" command="ACTION" cmdproperty="68" sound="click.wav"/>
+      <!-- play music -->
+      <action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="79" sound="cursor.wav"/>
+    </button>
+
+    <!-- Key Q -->
+    <button code="Q" repeat="true">
+      <!-- From WINDOW_FULLSCREEN_TELETEXT do ACTION_REMOTE_RED_BUTTON: Red button -->
+      <action layer="0" condition="WINDOW" conproperty="7701" command="ACTION" cmdproperty="9975" sound="click.wav"/>
+      <!-- From WINDOW_TELETEXT do ACTION_REMOTE_RED_BUTTON: Red button -->
+      <action layer="0" condition="WINDOW" conproperty="7700" command="ACTION" cmdproperty="9975" sound="click.wav"/>
+      <!-- From WINDOW_RADIO_GUIDE do ACTION_TVGUIDE_NEXT_GROUP: Next Radio group -->
+      <action layer="0" condition="WINDOW" conproperty="762" command="ACTION" cmdproperty="9995" sound="click.wav"/>
+      <!-- From WINDOW_TVGUIDE do ACTION_TVGUIDE_NEXT_GROUP: Next TV group -->
+      <action layer="0" condition="WINDOW" conproperty="600" command="ACTION" cmdproperty="9995" sound="click.wav"/>
+    </button>
+    
+    <button code="R" repeat="true">
+      <!-- From WINDOW_SLIDESHOW do ACTION_ROTATE_PICTURE: Rotate Picture -->
+      <action layer="0" condition="WINDOW" conproperty="2007" command="ACTION" cmdproperty="50" sound="click.wav"/>
+      <!-- record current tv program -->
+      <action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="89" sound="click.wav"/>
+    </button>
+
+    <!-- Key S -->
+    <button code="S" repeat="true">      
+      <!-- From WINDOW_TV_OVERLAY do ACTION_ASPECT_RATIO: Cycle Aspect Modes -->
+      <action layer="0" condition="WINDOW" conproperty="3003" command="ACTION" cmdproperty="19" sound="click.wav"/>
+      <!-- From WINDOW_TVFULLSCREEN do ACTION_ASPECT_RATIO: Cycle Aspect Modes -->
+      <action layer="0" condition="WINDOW" conproperty="602" command="ACTION" cmdproperty="19" sound="click.wav"/>
+      <!-- From WINDOW_OSD do ACTION_ASPECT_RATIO: Cycle Aspect Modes -->
+      <action layer="0" condition="WINDOW" conproperty="2901" command="ACTION" cmdproperty="19" sound="click.wav"/>
+      <!-- From WINDOW_FULLSCREEN_VIDEO do ACTION_ASPECT_RATIO: Cycle Aspect Modes -->
+      <action layer="0" condition="WINDOW" conproperty="2005" command="ACTION" cmdproperty="19" sound="click.wav"/>
+    </button>
+
+    <!-- Key T -->
+    <button code="T" repeat="true">      
+      <!-- From WINDOW_FULLSCREEN_TELETEXT do ACTION_SWITCH_TELETEXT_TRANSPARENT: Green button -->
+      <action layer="0" condition="WINDOW" conproperty="7701" command="ACTION" cmdproperty="9987" sound="click.wav"/>
+    </button>
+    
+    <!-- Key U -->
+    <button code="U" repeat="true">
+      <!-- From WINDOW_TVFULLSCREEN do ACTION_SMALL_STEP_BACK: Small step back -->
+      <action layer="0" condition="WINDOW" conproperty="602" command="ACTION" cmdproperty="76" sound="click.wav"/>
+      <!-- From WINDOW_RADIO_GUIDE do ACTION_TVGUIDE_DECREASE_DAY: Decrease day -->
+      <action layer="0" condition="WINDOW" conproperty="762" command="ACTION" cmdproperty="9992" sound="click.wav"/>
+      <!-- From WINDOW_TVGUIDE do ACTION_TVGUIDE_DECREASE_DAY: Decrease day -->
+      <action layer="0" condition="WINDOW" conproperty="600" command="ACTION" cmdproperty="9992" sound="click.wav"/>
+      <!-- From WINDOW_FULLSCREEN_VIDEO do ACTION_SMALL_STEP_BACK: Small step back -->
+      <action layer="0" condition="WINDOW" conproperty="2005" command="ACTION" cmdproperty="76" sound="click.wav"/>
+      <!-- Parent directory -->
+      <action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="9" sound="click.wav"/>
+    </button>
+
+    <!-- Key V -->
+    <button code="V" repeat="true">
+      <!-- From WINDOW_FULLSCREEN_VIDEO do ACTION_NEXT_VIDEO: Next video stream -->
+      <action layer="0" condition="WINDOW" conproperty="2005" command="ACTION" cmdproperty="135" sound="click.wav"/>
+    </button>
+
+    <!-- Key W -->
+    <button code="W" repeat="true">
+      <!-- From WINDOW_FULLSCREEN_TELETEXT do ACTION_REMOTE_GREEN_BUTTON: Green button -->
+      <action layer="0" condition="WINDOW" conproperty="7701" command="ACTION" cmdproperty="9976" sound="click.wav"/>
+      <!-- From WINDOW_TELETEXT do ACTION_REMOTE_GREEN_BUTTON: Green button -->
+      <action layer="0" condition="WINDOW" conproperty="7700" command="ACTION" cmdproperty="9976" sound="click.wav"/>
+    </button>
+
+    <!-- Key X -->
+    <button code="X" repeat="true">
+      <!-- From WINDOW_TV_OVERLAY do ACTION_OSD_HIDESUBMENU: Value min -->
+      <action layer="0" condition="WINDOW" conproperty="3003" command="ACTION" cmdproperty="84" sound="click.wav"/>
+      <!-- From WINDOW_OSD do ACTION_OSD_HIDESUBMENU: Hide SubMenu -->
+      <action layer="0" condition="WINDOW" conproperty="2901" command="ACTION" cmdproperty="84" sound="click.wav"/>
+      <!-- Toggle between GUI and fullscreen -->
+      <action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="18" sound="click.wav"/>
+    </button>
+
+
+    
+    <!-- Key Y -->
+    <button code="Y" repeat="true">
+      <!-- From WINDOW_FULLSCREEN_VIDEO do ACTION_SHOW_OSD: Toggle OSD -->
+      <action layer="0" condition="WINDOW" conproperty="2005" command="ACTION" cmdproperty="24" sound="click.wav"/>
+      <!-- From WINDOW_TV_OVERLAY do ACTION_SHOW_OSD: Exit OSD -->
+      <action layer="0" condition="WINDOW" conproperty="3003" command="ACTION" cmdproperty="24" sound="click.wav"/>
+      <!-- From WINDOW_TVFULLSCREEN do ACTION_SHOW_OSD: Toggle OSD -->
+      <action layer="0" condition="WINDOW" conproperty="602" command="ACTION" cmdproperty="24" sound="click.wav"/>
+      <!-- From WINDOW_OSD do ACTION_SHOW_OSD: Exit OSD -->
+      <action layer="0" condition="WINDOW" conproperty="2901" command="ACTION" cmdproperty="24" sound="click.wav"/>
+      <!-- From WINDOW_VIDEO_PLAYLIST do ACTION_QUEUE_ITEM: Add Item to playlist -->
+      <action layer="0" condition="WINDOW" conproperty="28" command="ACTION" cmdproperty="34" sound="click.wav"/>
+      <!-- From WINDOW_VIDEOS do ACTION_QUEUE_ITEM: Add Item to playlist -->
+      <action layer="0" condition="WINDOW" conproperty="6" command="ACTION" cmdproperty="34" sound="click.wav"/>
+      <!-- From WINDOW_VIDEO_TITLE do ACTION_QUEUE_ITEM: Add Item to playlist -->
+      <action layer="0" condition="WINDOW" conproperty="25" command="ACTION" cmdproperty="34" sound="click.wav"/>
+      <!-- From WINDOW_FILES do ACTION_HIGHLIGHT_ITEM: Select/Deselect a File -->
+      <action layer="0" condition="WINDOW" conproperty="3" command="ACTION" cmdproperty="8" sound="click.wav"/>
+      <!-- From WINDOW_MUSIC_PLAYLIST do ACTION_QUEUE_ITEM: Remove Item from the Playlist (SL: should be add really) -->
+      <action layer="0" condition="WINDOW" conproperty="500" command="ACTION" cmdproperty="34" sound="click.wav"/>
+      <!-- From WINDOW_MUSIC_FILES do ACTION_QUEUE_ITEM: Add item to the playlist -->
+      <action layer="0" condition="WINDOW" conproperty="501" command="ACTION" cmdproperty="34" sound="click.wav"/>
+      <!-- From WINDOW_MUSIC_GENRE do ACTION_QUEUE_ITEM: Add item to the playlist -->
+      <action layer="0" condition="WINDOW" conproperty="504" command="ACTION" cmdproperty="34" sound="click.wav"/>
+    </button>
+    
+    <!-- Jump to Music Now Playing -->
+    <button code="Z" repeat="true">
+      <!-- From WINDOW_TVFULLSCREEN do ACTION_LAST_VIEWED_CHANNEL: Go to last viewed channel -->
+      <action layer="0" condition="WINDOW" conproperty="602" command="ACTION" cmdproperty="111" sound="click.wav"/>
+      <!-- For any other case do : Toggle OSD -->
+      <action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="125" sound="click.wav"/>
+    </button>
+
+    <!-- That OEM8 is the exclamation mark on French keyboards, that's the first key on the left of the right shift key -->
+    <button code="Oem8">
+      <!-- Toggle Render Statistics -->
+      <action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="1984" sound="click.wav" />
+    </button>
+
+
+  </HidUsageAction>
+
+  <!--Application Control setup-->
+  <HidUsageAction UsagePage="Consumer" UsageCollection="ConsumerControl" HandleHidEventsWhileInBackground="true">
+
+    <button code="AppCtrlBack">
+      <action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="10" sound="back.wav" />
+    </button>
+
+    <!-- Place holders so that they show up in the configure mapping customization UI -->
+    <button code="AppCtrlForward" />
+    <button code="AppCtrlRefresh" />
+    <button code="AppCtrlStop" />
+    <button code="AppCtrlSearch" />
+    <button code="AppCtrlBookmarks" />
+    <button code="AppCtrlHome" />
+    <button code="AppCtrlFind" />
+    <button code="AppCtrlNew" />
+    <button code="AppCtrlOpen" />
+    <button code="AppCtrlClose" />
+    <button code="AppCtrlSave" />
+    <button code="AppCtrlUndo" />
+    <button code="AppCtrlCopy" />
+    <button code="AppCtrlCut" />
+    <button code="AppCtrlPaste" />
+    <button code="AppCtrlRedoRepeat" />
+    <button code="AppCtrlForwardMsg" />
+    <button code="AppCtrlSend" />
+    <button code="AppCtrlReply" />
+    <button code="AppLaunchEmailReader" />
+    <button code="AppLaunchSpellCheck" />
+    <button code="BassIncrement" />
+    <button code="BassDecrement" />
+    <button code="TrebleIncrement" />
+    <button code="TrebleDecrement" />
+    <button code="BassBoost" />
+    <button code="Help" />
+    <!-- Let the OS deal with volume control-->
+    <button code="Mute" />
+    <button code="VolumeDecrement" />
+    <button code="VolumeIncrement" />
+    
+    <!-- Define exit commands -->
+    <button code="AppCtrlExit">
+      <action layer="0" condition="*" conproperty="-1" command="POWER" cmdproperty="EXIT" sound="back.wav" />
+    </button>
+
+    <!-- Define actions for our "More Info" button, alternatively showing as "i", "Info" or "Menu" on some remotes -->
+    <button code="AppCtrlProperties">
+      <action layer="0" condition="FULLSCREEN" conproperty="TRUE" command="ACTION" cmdproperty="24" sound="click.wav" />
+      <action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="106" sound="click.wav" />
+    </button>
+
+    <!-- Define actions for our "Guide" button (EPG) -->
+    <button code="MediaSelectProgramGuide">
+      <action layer="0" condition="WINDOW" conproperty="600" command="ACTION" cmdproperty="10" sound="back.wav" />
+      <action layer="0" condition="*" conproperty="-1" command="WINDOW" cmdproperty="600" sound="click.wav" />
+    </button>
+
+    <button code="Play" background="true" >
+      <action layer="0" condition="WINDOW" conproperty="2007" command="ACTION" cmdproperty="105" sound="click.wav" />
+      <action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="68" sound="click.wav" />
+    </button>
+
+    <button code="Pause" background="true" >
+      <action layer="0" condition="WINDOW" conproperty="2007" command="ACTION" cmdproperty="105" sound="click.wav" />
+      <action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="12" sound="click.wav" />
+    </button>
+
+    <button code="PlayPause" background="true" >
+      <action layer="0" condition="PLAYER" conproperty="MEDIA" command="ACTION" cmdproperty="12" sound="click.wav" />
+      <action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="68" sound="click.wav" />
+    </button>
+
+    <button code="Stop" background="true">
+      <action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="13" sound="click.wav" />
+    </button>
+
+    <button code="Record">
+      <action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="89" sound="click.wav" />
+      <action layer="0" condition="WINDOW" conproperty="501" command="ACTION" cmdproperty="113" sound="click.wav" />
+    </button>
+
+    <button code="FastForward" background="true">
+      <action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="16" sound="cursor.wav" />
+      <action layer="0" condition="WINDOW" conproperty="600" command="ACTION" cmdproperty="86" sound="cursor.wav" />
+      <action layer="0" condition="WINDOW" conproperty="2007" command="ACTION" cmdproperty="28" sound="cursor.wav" />
+    </button>
+
+    <button code="Rewind" background="true">
+      <action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="17" sound="cursor.wav" />
+      <action layer="0" condition="WINDOW" conproperty="600" command="ACTION" cmdproperty="87" sound="cursor.wav" />
+      <action layer="0" condition="WINDOW" conproperty="2007" command="ACTION" cmdproperty="29" sound="cursor.wav" />
+    </button>
+
+    <button code="ChannelIncrement" repeat="true">
+      <action layer="0" condition="FULLSCREEN" conproperty="true" command="ACTION" cmdproperty="95" sound="cursor.wav" />
+      <action layer="0" condition="WINDOW" conproperty="7701" command="ACTION" cmdproperty="9979" sound="cursor.wav" />
+      <action layer="0" condition="WINDOW" conproperty="7700" command="ACTION" cmdproperty="9979" sound="cursor.wav" />
+      <action layer="0" condition="WINDOW" conproperty="2007" command="ACTION" cmdproperty="31" sound="cursor.wav" />
+      <action layer="0" condition="WINDOW" conproperty="1" command="ACTION" cmdproperty="95" sound="cursor.wav" />
+      <action layer="0" condition="WINDOW" conproperty="602" command="ACTION" cmdproperty="95" sound="cursor.wav" />
+      <action layer="0" condition="WINDOW" conproperty="3003" command="ACTION" cmdproperty="95" sound="cursor.wav" />
+      <action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="5" sound="cursor.wav" />
+    </button>
+
+    <button code="ChannelDecrement" repeat="true">
+      <action layer="0" condition="FULLSCREEN" conproperty="true" command="ACTION" cmdproperty="94" sound="cursor.wav" />
+      <action layer="0" condition="WINDOW" conproperty="7701" command="ACTION" cmdproperty="9980" sound="cursor.wav" />
+      <action layer="0" condition="WINDOW" conproperty="7700" command="ACTION" cmdproperty="9980" sound="cursor.wav" />
+      <action layer="0" condition="WINDOW" conproperty="2007" command="ACTION" cmdproperty="30" sound="cursor.wav" />
+      <action layer="0" condition="WINDOW" conproperty="1" command="ACTION" cmdproperty="94" sound="cursor.wav" />
+      <action layer="0" condition="WINDOW" conproperty="602" command="ACTION" cmdproperty="94" sound="cursor.wav" />
+      <action layer="0" condition="WINDOW" conproperty="3003" command="ACTION" cmdproperty="94" sound="cursor.wav" />
+      <action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="6" sound="cursor.wav" />
+    </button>
+
+    <button code="ScanNextTrack" background="true">
+      <action layer="0" condition="PLAYER" conproperty="DVD" command="ACTION" cmdproperty="91" sound="cursor.wav" />
+      <action layer="0" condition="WINDOW" conproperty="600" command="ACTION" cmdproperty="5" sound="cursor.wav" />
+      <action layer="0" condition="WINDOW" conproperty="2007" command="ACTION" cmdproperty="28" sound="click.wav" />
+      <action layer="0" condition="WINDOW" conproperty="2005" command="ACTION" cmdproperty="91" sound="click.wav" />
+      <action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="14" sound="cursor.wav" />
+    </button>
+
+    <button code="ScanPreviousTrack" background="true">
+      <action layer="0" condition="PLAYER" conproperty="DVD" command="ACTION" cmdproperty="92" sound="cursor.wav" />
+      <action layer="0" condition="WINDOW" conproperty="600" command="ACTION" cmdproperty="6" sound="cursor.wav" />
+      <action layer="0" condition="WINDOW" conproperty="2007" command="ACTION" cmdproperty="29" sound="click.wav" />
+      <action layer="0" condition="WINDOW" conproperty="2005" command="ACTION" cmdproperty="92" sound="click.wav" />
+      <action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="15" sound="cursor.wav" />
+    </button>
+
+    <button code="AppCtrlPrint">
+      <action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="19" sound="click.wav" />
+    </button>
+
+<!--
+
+    <button name="16 LaunchMediaSelect" code="16" />
+    <button name="17 LaunchApp1" code="17" />
+    <button name="18 LaunchApp2" code="18" />
+
+    <button name="24 MicrophoneVolumeMute" code="24" />
+    <button name="25 MicrophoneVolumeDown" code="25" />
+    <button name="26 MicrophoneVolumeUp" code="26" />
+
+    <button name="43 DictateOrCommandControlToggle" code="43" />
+    <button name="44 MicrophoneOnOffToggle" code="44" />
+    <button name="45 CorrectionList" code="45" />
+-->
+
+  </HidUsageAction>
+
+
+  <HidUsageAction UsagePage="WindowsMediaCenterRemoteControl" UsageCollection="WindowsMediaCenterRemoteControl" HandleHidEventsWhileInBackground="false">
+
+    <button code="GreenStart">
+      <!-- Go back to home screen. Note for further dev 0 is the first home screen and 35 is the second home screen. -->
+      <action layer="0" condition="*" conproperty="-1" command="WINDOW" cmdproperty="0" sound="click.wav" focus="True" />
+    </button>
+
+    <!-- TV Power button closes MediaPortal, applies also if MP is not in the foreground -->
+    <button code="TvPower" background="true">
+      <action layer="0" condition="*" conproperty="-1" command="POWER" cmdproperty="EXIT" sound="back.wav" />
+    </button>
+
+    <!-- Extension 11 button closes MediaPortal too, applies also if MP is not in the foreground  -->
+    <button code="Ext11" background="true">
+      <action layer="0" condition="*" conproperty="-1" command="POWER" cmdproperty="EXIT" sound="back.wav" />
+    </button>
+
+    <button code="RecordedTv">
+      <action layer="0" condition="*" conproperty="-1" command="WINDOW" cmdproperty="603" sound="click.wav" />
+    </button>
+
+    <button code="Tv">
+      <action layer="0" condition="WINDOW" conproperty="7701" command="WINDOW" cmdproperty="602" sound="click.wav" />
+      <action layer="0" condition="WINDOW" conproperty="1" command="ACTION" cmdproperty="18" sound="click.wav" />
+      <action layer="0" condition="WINDOW" conproperty="602" command="ACTION" cmdproperty="18" sound="click.wav" />
+      <action layer="0" condition="WINDOW" conproperty="7700" command="ACTION" cmdproperty="18" sound="click.wav" />
+      <action layer="0" condition="*" conproperty="-1" command="WINDOW" cmdproperty="1" sound="click.wav" />
+    </button>
+
+    <button code="LiveTv">
+      <action layer="0" condition="WINDOW" conproperty="7701" command="WINDOW" cmdproperty="602" sound="click.wav" />
+      <action layer="0" condition="WINDOW" conproperty="1" command="ACTION" cmdproperty="18" sound="click.wav" />
+      <action layer="0" condition="WINDOW" conproperty="602" command="ACTION" cmdproperty="18" sound="click.wav" />
+      <action layer="0" condition="WINDOW" conproperty="7700" command="ACTION" cmdproperty="18" sound="click.wav" />
+      <action layer="0" condition="*" conproperty="-1" command="WINDOW" cmdproperty="1" sound="click.wav" />
+    </button>
+
+    <button code="DvdMenu">
+      <!-- From WINDOW_TVFULLSCREEN do ACTION_LAST_VIEWED_CHANNEL: Go to last viewed channel -->
+      <action layer="0" condition="WINDOW" conproperty="602" command="ACTION" cmdproperty="111" sound="click.wav"/>
+      <!--  -->
+      <action layer="0" condition="PLAYER" conproperty="DVD" command="ACTION" cmdproperty="90" sound="click.wav" />
+      <action layer="0" condition="*" conproperty="-1" command="WINDOW" cmdproperty="3001" sound="click.wav" />
+    </button>
+
+    <button code="Teletext">
+      <action layer="0" condition="WINDOW" conproperty="602" command="WINDOW" cmdproperty="7701" sound="click.wav" />
+      <action layer="0" condition="WINDOW" conproperty="1" command="WINDOW" cmdproperty="7700" sound="click.wav" />
+      <action layer="0" condition="WINDOW" conproperty="7701" command="WINDOW" cmdproperty="7700" sound="click.wav" />
+      <action layer="0" condition="WINDOW" conproperty="7700" command="WINDOW" cmdproperty="7701" sound="click.wav" />
+    </button>
+
+    <button code="TeletextRed">
+      <action layer="0" condition="WINDOW" conproperty="7701" command="ACTION" cmdproperty="9975" sound="click.wav" />
+      <action layer="0" condition="WINDOW" conproperty="7700" command="ACTION" cmdproperty="9975" sound="click.wav" />
+      <!-- Toggle GUI -->
+      <action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="18" sound="click.wav" />
+    </button>
+
+    <button code="TeletextGreen">
+      <action layer="0" condition="WINDOW" conproperty="7701" command="ACTION" cmdproperty="9976" sound="click.wav" />
+      <action layer="0" condition="WINDOW" conproperty="7700" command="ACTION" cmdproperty="9976" sound="click.wav" />
+      <!-- Switch to next possible audio stream -->
+      <action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="26" sound="click.wav" />
+    </button>
+
+    <button code="TeletextYellow">
+      <!-- From WINDOW_RADIO_GUIDE do ACTION_TVGUIDE_PREV_GROUP: Previous radio group -->
+      <action layer="0" condition="WINDOW" conproperty="762" command="ACTION" cmdproperty="9996" sound="click.wav"/>
+      <!-- From WINDOW_TVGUIDE do ACTION_TVGUIDE_PREV_GROUP: Previous TV group -->
+      <action layer="0" condition="WINDOW" conproperty="600" command="ACTION" cmdproperty="9996" sound="click.wav"/>
+      <action layer="0" condition="WINDOW" conproperty="7701" command="ACTION" cmdproperty="9977" sound="click.wav" />
+      <action layer="0" condition="WINDOW" conproperty="7700" command="ACTION" cmdproperty="9977" sound="click.wav" />
+      <!-- Next subtitle -->
+      <action layer="0" condition="FULLSCREEN" conproperty="true" command="ACTION" cmdproperty="119" sound="click.wav" />
+      <!-- Show info -->
+      <action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="11" sound="click.wav" />
+    </button>
+
+    <button code="TeletextBlue">
+      <!-- From WINDOW_RADIO_GUIDE do ACTION_TVGUIDE_NEXT_GROUP: Next Radio group -->
+      <action layer="0" condition="WINDOW" conproperty="762" command="ACTION" cmdproperty="9995" sound="click.wav"/>
+      <!-- From WINDOW_TVGUIDE do ACTION_TVGUIDE_NEXT_GROUP: Next TV group -->
+      <action layer="0" condition="WINDOW" conproperty="600" command="ACTION" cmdproperty="9995" sound="click.wav"/>
+      <action layer="0" condition="WINDOW" conproperty="7701" command="ACTION" cmdproperty="9978" sound="click.wav" />
+      <action layer="0" condition="WINDOW" conproperty="7700" command="ACTION" cmdproperty="9978" sound="click.wav" />
+      <action layer="0" condition="WINDOW" conproperty="602" command="ACTION" cmdproperty="122" sound="click.wav" />
+      <action layer="0" condition="WINDOW" conproperty="511" command="ACTION" cmdproperty="9886" />
+      <!-- Change Aspect Ratio -->
+      <action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="19" sound="click.wav" />
+    </button>
+
+    <button code="Music">
+      <action layer="0" condition="*" conproperty="-1" command="WINDOW" cmdproperty="501" sound="click.wav" />
+    </button>
+
+    <button code="Pictures">
+      <action layer="0" condition="*" conproperty="-1" command="WINDOW" cmdproperty="2" sound="click.wav" />
+    </button>
+
+    <button code="Videos">
+      <action layer="0" condition="WINDOW" conproperty="6" command="ACTION" cmdproperty="18" sound="click.wav" />
+      <action layer="0" condition="WINDOW" conproperty="2005" command="ACTION" cmdproperty="18" sound="click.wav" />
+      <action layer="0" condition="*" conproperty="-1" command="WINDOW" cmdproperty="6" sound="click.wav" />
+    </button>
+
+    <button code="FmRadio">
+      <action layer="0" condition="*" conproperty="-1" command="WINDOW" cmdproperty="30" sound="click.wav" />
+    </button>
+
+    <button name="Aspect Ratio" code="Zoom">
+      <action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="19" sound="click.wav" />
+    </button>
+
+    <button code="DvdAudio">
+      <!-- Switch to next possible audio stream -->
+      <action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="26" sound="click.wav" />
+    </button>
+
+    <button code="DvdSubtitle">
+      <!-- Next subtitle -->
+      <action layer="0" condition="FULLSCREEN" conproperty="true" command="ACTION" cmdproperty="119" sound="click.wav" />
+    </button>
+
+    <button code="ClosedCaptioning">
+      <!-- Next subtitle -->
+      <action layer="0" condition="FULLSCREEN" conproperty="true" command="ACTION" cmdproperty="119" sound="click.wav" />
+    </button>
+
+    <!-- Providing empty buttons so that they can be customized through our UI -->    
+    <button code="Extras" />
+    <button code="ExtrasApp" />
+    <button code="DvdAngle" />    
+    <button code="Eject" />
+    <button code="DvdTopMenu" />
+    <button name="Visualization" code="Ext0" />
+    <button name="SlideShow" code="Ext1" />
+    <button name="HpEject" code="Ext2" />
+    <button name="InputSelection" code="Ext3" />
+    <button code="Ext4" />
+    <button code="Ext5" />
+    <button code="Ext6" />
+    <button code="Ext7" />
+    <button code="Ext8" />
+    <button code="Ext9" />
+    <button code="Ext10" />
+    <button code="Ext11" />
+    <button code="ChannelInput" />
+    <button code="SubAudio" />
+    <button code="Channel10" />
+    <button code="Channel11" />
+    <button code="Channel12" />
+    <button code="Display" />
+    <button code="Kiosk" />
+    <button code="NetworkSelection" />
+    <button code="BlueRayTool" />
+    <button code="ChannelInfo" />
+    <button code="VideoSelection" />
+
+  </HidUsageAction>
+
+  <!--GamePad setup-->
+  <HidUsageAction UsagePage="GenericDesktopControls" UsageCollection="GamePad" HandleHidEventsWhileInBackground="false">
+    <!--D-pad uses special codes from 1000/Up to 1007/Up-Left going clockwise-->
+    <button name="Left" code="1006" repeat="true">
+      <action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="1" sound="cursor.wav"/>
+    </button>
+    <button name="Down" code="1004" repeat="true">
+      <action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="4" sound="cursor.wav"/>
+    </button>
+    <button name="Right" code="1002" repeat="true">
+      <action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="2" sound="cursor.wav"/>
+    </button>
+    <button name="Up" code="1000" repeat="true">
+      <action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="3" sound="cursor.wav"/>
+    </button>
+
+    <!--
+    Now we setup our buttons with X-Box controller in mind.
+    Works just fine with Logitech Wireless Gamepad F710 and other X-Box like controllers.
+    This should work as well with older DirectInput devices such as Logitech Cordless Rumblepad 2.
+    Note however that the physical position of the logical buttons is different between X-Box and DirectInput hardware. 
+    -->
+
+    <!-- Enter for button One/A/Green-->
+    <button name="Enter" code="1">
+      <action layer="0" condition="WINDOW" conproperty="11" command="ACTION" cmdproperty="47" sound="click.wav"/>
+      <action layer="0" condition="WINDOW" conproperty="10" command="ACTION" cmdproperty="10" sound="back.wav"/>
+      <action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="7" sound="click.wav"/>
+    </button>
+
+    <!-- Back for button Two/B/Red-->
+    <button name="Back" code="2">
+      <action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="10" sound="back.wav"/>
+    </button>
+
+    <!-- AppCtrlProperties for button Four/X/Blue-->
+    <button name="AppCtrlProperties" code="3">
+      <action layer="0" condition="FULLSCREEN" conproperty="TRUE" command="ACTION" cmdproperty="24" sound="click.wav" />
+      <action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="106" sound="click.wav" />
+    </button>
+
+    <!-- TV EPG for button Three/Y/Yellow-->
+    <button name="MediaSelectProgramGuide" code="4">
+      <action layer="0" condition="WINDOW" conproperty="600" command="ACTION" cmdproperty="10" sound="back.wav" />
+      <action layer="0" condition="*" conproperty="-1" command="WINDOW" cmdproperty="600" sound="click.wav" />
+    </button>
+
+    <!-- ScanPreviousTrack for button Five/LB -->
+    <button name="ScanPreviousTrack" code="5">
+      <action layer="0" condition="PLAYER" conproperty="DVD" command="ACTION" cmdproperty="92" sound="cursor.wav" />
+      <action layer="0" condition="WINDOW" conproperty="600" command="ACTION" cmdproperty="6" sound="cursor.wav" />
+      <action layer="0" condition="WINDOW" conproperty="2007" command="ACTION" cmdproperty="29" sound="click.wav" />
+      <action layer="0" condition="WINDOW" conproperty="2005" command="ACTION" cmdproperty="92" sound="click.wav" />
+      <action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="15" sound="cursor.wav" />
+    </button>
+
+    <!-- ScanNextTrack for button Six/RB -->
+    <button name="ScanNextTrack" code="6">
+      <action layer="0" condition="PLAYER" conproperty="DVD" command="ACTION" cmdproperty="91" sound="cursor.wav" />
+      <action layer="0" condition="WINDOW" conproperty="600" command="ACTION" cmdproperty="5" sound="cursor.wav" />
+      <action layer="0" condition="WINDOW" conproperty="2007" command="ACTION" cmdproperty="28" sound="click.wav" />
+      <action layer="0" condition="WINDOW" conproperty="2005" command="ACTION" cmdproperty="91" sound="click.wav" />
+      <action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="14" sound="cursor.wav" />
+    </button>
+
+    <!-- Pause/Stop for button Seven/Back -->
+    <button name="Pause" code="7" >
+      <action layer="0" condition="WINDOW" conproperty="2007" command="ACTION" cmdproperty="105" sound="click.wav" />
+      <action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="12" sound="click.wav" />
+    </button>
+
+    <!-- Play for button Height/Start -->
+    <button name="PlayPause" code="8">
+      <action layer="0" condition="PLAYER" conproperty="MEDIA" command="ACTION" cmdproperty="12" sound="click.wav" />
+      <action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="68" sound="click.wav" />
+    </button>
+
+    <!-- VolumeDecrement for button Nine/Left Joystick Button/Back -->
+    <button name="VolumeDecrement" code="09" repeat="true">
+      <action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="102" sound="cursor.wav" />
+    </button>
+
+    <!-- VolumeIncrement for button Ten/Right Joystick Button/Back -->
+    <button name="VolumeIncrement" code="10" repeat="true">
+      <action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="103" sound="cursor.wav" />
+    </button>
+
+    <!-- Mute for button Eleven/None/Left Joystick Button (Not on X-Box) -->
+    <button name="Mute" code="11" >
+      <action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="9982" sound="click.wav" />
+    </button>
+
+  </HidUsageAction>
+
+</HidHandler>
