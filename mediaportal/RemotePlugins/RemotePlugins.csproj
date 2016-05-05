@@ -227,6 +227,7 @@
     <Compile Include="InputDevices.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Remotes\Hid\HidProfiles.cs" />
     <Compile Include="Remotes\Hid\HidUsageAction.cs" />
     <Compile Include="Remotes\IrTrans\IrTRans.cs" />
     <Compile Include="ControlDevices\Devices\USBUIRT\USBUIRTPlugin.cs" />
