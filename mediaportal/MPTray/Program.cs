@@ -114,7 +114,7 @@ namespace MPTray
       int i = 0;
       rid[i].usUsagePage = (ushort)SharpLib.Hid.UsagePage.WindowsMediaCenterRemoteControl;
       rid[i].usUsage = (ushort)SharpLib.Hid.UsageCollection.WindowsMediaCenter.WindowsMediaCenterRemoteControl;
-      rid[i].dwFlags = Const.RIDEV_INPUTSINK;
+      rid[i].dwFlags = RawInputDeviceFlags.RIDEV_INPUTSINK;
       rid[i].hwndTarget = aHwnd; //Process.GetCurrentProcess().MainWindowHandle;
 
       _hidHandler = new SharpLib.Hid.Handler(rid);
