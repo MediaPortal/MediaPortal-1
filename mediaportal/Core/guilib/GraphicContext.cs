@@ -978,9 +978,15 @@ namespace MediaPortal.GUI.Library
         {
           _isFullScreenVideo = value;
           VideoWindowChanged();
+          GUIGraphicsContext.RenderGui = true;
         }
       }
     }
+
+    /// <summary>
+    /// Get/Set render GUI for madVR
+    /// </summary>
+    public static bool RenderGui { get; set; }
 
     /// <summary>
     /// Get/Set video window rectangle

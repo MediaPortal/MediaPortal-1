@@ -18,6 +18,8 @@
 
 #endregion
 
+using System.Threading;
+
 namespace MediaPortal.GUI.Library
 {
   public class GUILayerManager
@@ -73,7 +75,7 @@ namespace MediaPortal.GUI.Library
 
       if (GUIGraphicsContext.BlankScreen)
       {
-        return uiVisible;
+        return false;
       }
       int videoLayer = (int)LayerType.Video;
       if (GUIGraphicsContext.ShowBackground == false)
@@ -91,10 +93,50 @@ namespace MediaPortal.GUI.Library
       int startLayer = 0;
       int endLayer = MAX_LAYERS;
 
-      if (layers == GUILayers.under)
+      if (GUIGraphicsContext.IsFullScreenVideo || !GUIGraphicsContext.InVmr9Render ||
+          GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR)
+      {
+        for (int i = 0; i < MAX_LAYERS; ++i)
+        {
+          if (_layers[i] != null)
+          {
+            if (_layers[i].ShouldRenderLayer())
+            {
+              if (GUIGraphicsContext.ShowBackground == false && i == videoLayer)
+              {
+                continue;
+              }
+              _layers[i].RenderLayer(timePassed);
+              GUIFontManager.Present();
+            }
+          }
+        }
+        //if (layers == GUILayers.under)
+        //{
+        return false;
+        //}
+        //if (layers == GUILayers.over)
+        //{
+        //  return true;
+        //}
+      }
+      if (GUIGraphicsContext.RenderGui)
+      {
+        //  // Need to force GUI
         endLayer = videoLayer - 1;
-      else if (layers == GUILayers.over)
-        startLayer = videoLayer + 1;
+      }
+      else
+      {
+        if (layers == GUILayers.under)
+        {
+          endLayer = videoLayer - 1;
+        }
+        else if (layers == GUILayers.over)
+        {
+          Thread.Sleep(10);
+          startLayer = videoLayer + 1;
+        }
+      }
 
       for (int i = startLayer; i < endLayer; ++i)
       {

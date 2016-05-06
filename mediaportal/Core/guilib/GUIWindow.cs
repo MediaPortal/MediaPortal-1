@@ -1777,25 +1777,7 @@ namespace MediaPortal.GUI.Library
 
               InitControls();
               UpdateOverlayAllowed();
-              // Change made here to avoid switching between window video in TVHome
-              if (GUIGraphicsContext.IsFullScreenVideo)
-              {
-                switch (GUIGraphicsContext.VideoRenderer)
-                {
-                  case GUIGraphicsContext.VideoRendererType.madVR:
-                    GUIGraphicsContext.Overlay = GUIGraphicsContext.VideoRenderer ==
-                                                 GUIGraphicsContext.VideoRendererType.madVR;
-                    GUIGraphicsContext.IsFullScreenVideo = false;
-                    break;
-                  default:
-                    GUIGraphicsContext.Overlay = _isOverlayAllowed;
-                    break;
-                }
-              }
-              else
-              {
-                GUIGraphicsContext.Overlay = _isOverlayAllowed;
-              }
+              GUIGraphicsContext.Overlay = _isOverlayAllowed;
 
               // set topbar autohide 
               switch (_autoHideTopbarType)

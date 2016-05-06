@@ -272,26 +272,16 @@ namespace MediaPortal.GUI.Library
     {
       if (!Dimmed)
       {
-        if (GUIGraphicsContext.Overlay != _isOverlayAllowed &&
-            GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR)
+        if (GUIGraphicsContext.Overlay != _isOverlayAllowed)
         {
-          GUIGraphicsContext.Overlay = _isWinOverlayAllowed && _isOverlayAllowed;
+          GUIGraphicsContext.Overlay = _parentWin.IsOverlayAllowed = _isOverlayAllowed;
         }
         _imageFocused.Render(timePassed);
         GUIFontManager.Present();
       }
       else
       {
-        if (GUIGraphicsContext.Overlay != _isWinOverlayAllowed &&
-            GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR)
-        {
-          GUIGraphicsContext.Overlay = _isWinOverlayAllowed;
-        }
         _imageNonFocused.Render(timePassed);
-        if (IsEffectAnimating(AnimationType.Hidden))
-        {
-          GUIFontManager.Present();
-        }
       }
       base.Render(timePassed);
     }

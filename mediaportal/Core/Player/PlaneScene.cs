@@ -637,6 +637,11 @@ namespace MediaPortal.Player
       GUIFontManager.Present();
       device.EndScene();
 
+      if (layers == GUILayers.under)
+      {
+        GUIGraphicsContext.RenderGui = false;
+      }
+
       // Present() call is done on C++ side so we are able to use DirectX 9 Ex device
       // which allows us to skip the v-sync wait. We don't want to wait with madVR
       // is it only increases the UI rendering time.
