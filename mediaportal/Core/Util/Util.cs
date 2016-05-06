@@ -1295,6 +1295,32 @@ namespace MediaPortal.Util
       return strHMS;
     }
 
+    public static string SecondsToHMSStringSeconds(TimeSpan timespan)
+    {
+      return SecondsToHMSStringSeconds(Convert.ToInt32(timespan.TotalSeconds));
+    }
+
+    public static string SecondsToHMSStringSeconds(int lSeconds)
+    {
+      if (lSeconds < 0) return ("0:00");
+      string strHMS = "";
+      strHMS = String.Format("{0}", lSeconds);
+      return strHMS;
+    }
+
+    public static string SecondsToHMSStringMinutes(TimeSpan timespan)
+    {
+      return SecondsToHMSStringMinutes(Convert.ToInt32(timespan.TotalSeconds));
+    }
+
+    public static string SecondsToHMSStringMinutes(int lSeconds)
+    {
+      if (lSeconds < 0) return ("0:00");
+      int mm = lSeconds / 60;
+      string strHMS = "";
+      strHMS = String.Format("{0}", mm);
+      return strHMS;
+    }
 
     public static string GetNamedMonth(string aTwoLetterMonth)
     {
