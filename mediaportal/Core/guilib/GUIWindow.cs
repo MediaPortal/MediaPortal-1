@@ -1512,17 +1512,13 @@ namespace MediaPortal.GUI.Library
 
         UpdateOverlayAllowed();
         _hasWindowVisibilityUpdated = true;
-        // TODO must do a proper fix
+        // TODO must do a proper fix (Flickering on TVGuide)
         if (Children != null)
         {
-          foreach (GUIControl t in Children.ToList())
+          foreach (GUIControl control in Children.ToList())
           {
-            GUIControl control = t;
-            if (control != null)
-            {
-              control.UpdateVisibility();
-              control.DoRender(timePassed, currentTime);
-            }
+            control.UpdateVisibility();
+            control.DoRender(timePassed, currentTime);
           }
         }
 

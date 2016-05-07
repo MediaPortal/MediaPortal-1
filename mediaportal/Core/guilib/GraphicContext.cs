@@ -989,6 +989,11 @@ namespace MediaPortal.GUI.Library
     public static bool RenderGui { get; set; }
 
     /// <summary>
+    /// Get/Set render Overlay for madVR
+    /// </summary>
+    public static bool RenderOverlay { get; set; }
+
+    /// <summary>
     /// Get/Set video window rectangle
     /// </summary>
     public static Rectangle VideoWindow

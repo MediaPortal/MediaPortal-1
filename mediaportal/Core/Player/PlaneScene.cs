@@ -630,6 +630,7 @@ namespace MediaPortal.Player
       {
         SubtitleRenderer.GetInstance().Render();
         BDOSDRenderer.GetInstance().Render();
+        GUIGraphicsContext.RenderOverlay = true;
       }
 
       bool visible = false;
@@ -640,6 +641,7 @@ namespace MediaPortal.Player
       if (layers == GUILayers.under)
       {
         GUIGraphicsContext.RenderGui = false;
+        GUIGraphicsContext.RenderOverlay = false;
       }
 
       // Present() call is done on C++ side so we are able to use DirectX 9 Ex device

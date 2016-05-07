@@ -133,7 +133,6 @@ namespace MediaPortal.GUI.Library
         }
         else if (layers == GUILayers.over)
         {
-          Thread.Sleep(20);
           startLayer = videoLayer + 1;
         }
       }

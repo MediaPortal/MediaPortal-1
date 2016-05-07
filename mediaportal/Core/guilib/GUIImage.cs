@@ -1364,10 +1364,10 @@ namespace MediaPortal.GUI.Library
         //get the current frame
         if (_packedTexture != null)
         {
-          uint color = (uint)_diffuseColor;
+          uint color = (uint) _diffuseColor;
           if (Dimmed)
           {
-            color = (uint)(_diffuseColor & DimColor);
+            color = (uint) (_diffuseColor & DimColor);
           }
           color = GUIGraphicsContext.MergeAlpha(color);
           float[,] matrix = GUIGraphicsContext.GetFinalMatrix();
@@ -1398,8 +1398,8 @@ namespace MediaPortal.GUI.Library
             ++x;
 
             // Compute the number of textures to draw in the control and draw the texture.
-            float umax = _nw / x;
-            float vmax = _nh / x;
+            float umax = _nw/x;
+            float vmax = _nh/x;
             texture.Draw(_fx, _fy, _nw, _nh, 0, 0, umax, vmax, color);
           }
           else
@@ -1410,9 +1410,9 @@ namespace MediaPortal.GUI.Library
               if (_packedMaskTextureNo < 0)
               {
                 GUITextureManager.GetPackedTexture(_maskFileName, out _masktexUoff, out _masktexVoff,
-                                                    out _masktexUmax, out _masktexVmax, out _maskTexWidth,
-                                                    out _maskTexHeight, out _maskTexture,
-                                                    out _packedMaskTextureNo);
+                  out _masktexUmax, out _masktexVmax, out _maskTexWidth,
+                  out _maskTexHeight, out _maskTexture,
+                  out _packedMaskTextureNo);
               }
               if (_packedMaskTextureNo >= 0)
               {
@@ -1427,15 +1427,18 @@ namespace MediaPortal.GUI.Library
                 vmaxm = _masktexVmax + _masktexVoff;
 
                 DXNative.FontEngineDrawMaskedTexture(_packedTextureNo, _fx, _fy, _nw, _nh, uoff, voff, umax, vmax,
-                                                      color, matrix,
-                                                      _packedMaskTextureNo, uoffm, voffm, umaxm, vmaxm);
+                  color, matrix,
+                  _packedMaskTextureNo, uoffm, voffm, umaxm, vmaxm);
               }
             }
             else
             {
-                // Default behavior, draw the image texture with no mask.
-                DXNative.FontEngineDrawTextureSync(_packedTextureNo, _fx, _fy, _nw, _nh, _uoff, _voff, 
-                                                   _umax, _vmax, color, matrix);
+              // TODO must do a proper fix (Flickering on TVGuide
+              // Default behavior, draw the image texture with no mask.
+              DXNative.FontEngineDrawTextureSync(_packedTextureNo, _fx, _fy, _nw, _nh, _uoff, _voff,
+                _umax, _vmax, color, matrix);
+              if (GUIGraphicsContext.RenderOverlay)
+                return;
             }
           }
 
