@@ -20,6 +20,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Windows.Forms;
 using Gentle.Framework;
 using SetupTv.Dialogs;
@@ -121,6 +122,7 @@ namespace SetupTv.Sections
     {
       bool hasFta = false;
       bool hasScrambled = false;
+      float frequency = 0;
       IList<TuningDetail> tuningDetails = channel.ReferringTuningDetail();
       foreach (TuningDetail detail in tuningDetails)
       {
@@ -132,6 +134,8 @@ namespace SetupTv.Sections
         {
           hasScrambled = true;
         }
+        frequency = detail.Frequency;
+        frequency /= 1000.0f;
       }
 
       int imageIndex;
@@ -153,6 +157,7 @@ namespace SetupTv.Sections
       item.Checked = channel.VisibleInGuide;
       item.Tag = map;
       item.SubItems.Add(channel.ChannelNumber.ToString());
+      item.SubItems.Add(frequency.ToString("f2"));
       return item;
     }
 

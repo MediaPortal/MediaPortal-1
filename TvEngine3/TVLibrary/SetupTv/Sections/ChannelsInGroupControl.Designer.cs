@@ -48,6 +48,7 @@ namespace SetupTv.Sections
       this.listView1 = new MediaPortal.UserInterface.Controls.MPListView();
       this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
       this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+      this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
       this.contextMenuStrip1.SuspendLayout();
       this.mpGroupBox1.SuspendLayout();
       this.SuspendLayout();
@@ -103,6 +104,7 @@ namespace SetupTv.Sections
       // 
       // textBoxPinCode
       // 
+      this.textBoxPinCode.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
       this.textBoxPinCode.Location = new System.Drawing.Point(300, 325);
       this.textBoxPinCode.MaxLength = 5;
       this.textBoxPinCode.Name = "textBoxPinCode";
@@ -115,6 +117,7 @@ namespace SetupTv.Sections
       // 
       // labelPinCode
       // 
+      this.labelPinCode.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
       this.labelPinCode.AutoSize = true;
       this.labelPinCode.Location = new System.Drawing.Point(299, 305);
       this.labelPinCode.Name = "labelPinCode";
@@ -221,7 +224,8 @@ namespace SetupTv.Sections
       this.listView1.CheckBoxes = true;
       this.listView1.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeader1,
-            this.columnHeader2});
+            this.columnHeader2,
+            this.columnHeader3});
       this.listView1.ContextMenuStrip = this.contextMenuStrip1;
       this.listView1.FullRowSelect = true;
       this.listView1.HideSelection = false;
@@ -250,6 +254,11 @@ namespace SetupTv.Sections
       // 
       this.columnHeader2.Text = "Channel number";
       this.columnHeader2.Width = 120;
+      // 
+      // columnHeader3
+      // 
+      this.columnHeader3.Text = "Frequency";
+      this.columnHeader3.Width = 120;
       // 
       // ChannelsInGroupControl
       // 
@@ -289,5 +298,6 @@ namespace SetupTv.Sections
     private System.Windows.Forms.ColumnHeader columnHeader2;
     private System.Windows.Forms.TextBox textBoxPinCode;
     private System.Windows.Forms.Label labelPinCode;
+    private System.Windows.Forms.ColumnHeader columnHeader3;
   }
 }

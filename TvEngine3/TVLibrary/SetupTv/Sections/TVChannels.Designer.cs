@@ -31,11 +31,12 @@ namespace SetupTv.Sections
       this.components = new System.ComponentModel.Container();
       System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(TvChannels));
       this.mpListView1 = new MediaPortal.UserInterface.Controls.MPListView();
-      this.hdrhekje = new System.Windows.Forms.ColumnHeader();
-      this.hdrGroup = new System.Windows.Forms.ColumnHeader();
-      this.hdrProvider = new System.Windows.Forms.ColumnHeader();
-      this.hdrTypes = new System.Windows.Forms.ColumnHeader();
-      this.hdrNumberOfDetails = new System.Windows.Forms.ColumnHeader();
+      this.hdrhekje = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+      this.hdrChannelNumber = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+      this.hdrGroup = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+      this.hdrProvider = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+      this.hdrTypes = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+      this.hdrNumberOfDetails = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
       this.channelListContextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
       this.addToFavoritesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.deleteThisChannelToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -71,7 +72,7 @@ namespace SetupTv.Sections
       this.groupTabContextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
       this.renameGroupToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.deleteGroupToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-      this.hdrChannelNumber = new System.Windows.Forms.ColumnHeader();
+      this.hdrFrequency = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
       this.channelListContextMenuStrip.SuspendLayout();
       this.tabControl1.SuspendLayout();
       this.tabPage1.SuspendLayout();
@@ -85,9 +86,9 @@ namespace SetupTv.Sections
       // 
       this.mpListView1.AllowDrop = true;
       this.mpListView1.AllowRowReorder = true;
-      this.mpListView1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpListView1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.mpListView1.CheckBoxes = true;
       this.mpListView1.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.hdrhekje,
@@ -95,7 +96,8 @@ namespace SetupTv.Sections
             this.hdrGroup,
             this.hdrProvider,
             this.hdrTypes,
-            this.hdrNumberOfDetails});
+            this.hdrNumberOfDetails,
+            this.hdrFrequency});
       this.mpListView1.ContextMenuStrip = this.channelListContextMenuStrip;
       this.mpListView1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F);
       this.mpListView1.FullRowSelect = true;
@@ -109,36 +111,36 @@ namespace SetupTv.Sections
       this.mpListView1.TabIndex = 0;
       this.mpListView1.UseCompatibleStateImageBehavior = false;
       this.mpListView1.View = System.Windows.Forms.View.Details;
-      this.mpListView1.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.mpListView1_MouseDoubleClick);
-      this.mpListView1.ItemChecked += new System.Windows.Forms.ItemCheckedEventHandler(this.mpListView1_ItemChecked);
       this.mpListView1.AfterLabelEdit += new System.Windows.Forms.LabelEditEventHandler(this.mpListView1_AfterLabelEdit);
       this.mpListView1.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.mpListView1_ColumnClick);
+      this.mpListView1.ItemChecked += new System.Windows.Forms.ItemCheckedEventHandler(this.mpListView1_ItemChecked);
       this.mpListView1.ItemDrag += new System.Windows.Forms.ItemDragEventHandler(this.mpListView1_ItemDrag);
+      this.mpListView1.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.mpListView1_MouseDoubleClick);
       // 
       // hdrhekje
       // 
       this.hdrhekje.Text = "Name";
       this.hdrhekje.Width = 120;
       // 
+      // hdrChannelNumber
+      // 
+      this.hdrChannelNumber.Text = "Channel number";
+      // 
       // hdrGroup
       // 
-      this.hdrGroup.DisplayIndex = 1;
       this.hdrGroup.Text = "Groups";
       // 
       // hdrProvider
       // 
-      this.hdrProvider.DisplayIndex = 2;
       this.hdrProvider.Text = "Provider";
       // 
       // hdrTypes
       // 
-      this.hdrTypes.DisplayIndex = 3;
       this.hdrTypes.Text = "Mapped Cardtypes";
       this.hdrTypes.Width = 50;
       // 
       // hdrNumberOfDetails
       // 
-      this.hdrNumberOfDetails.DisplayIndex = 4;
       this.hdrNumberOfDetails.Text = "Tuningdetails";
       // 
       // channelListContextMenuStrip
@@ -224,19 +226,19 @@ namespace SetupTv.Sections
       // 
       this.tabControl1.AllowDrop = true;
       this.tabControl1.AllowReorderTabs = false;
-      this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.tabControl1.Controls.Add(this.tabPage1);
       this.tabControl1.Location = new System.Drawing.Point(3, 3);
       this.tabControl1.Name = "tabControl1";
       this.tabControl1.SelectedIndex = 0;
       this.tabControl1.Size = new System.Drawing.Size(465, 400);
       this.tabControl1.TabIndex = 8;
-      this.tabControl1.DragOver += new System.Windows.Forms.DragEventHandler(this.tabControl1_DragOver);
-      this.tabControl1.DragDrop += new System.Windows.Forms.DragEventHandler(this.tabControl1_DragDrop);
-      this.tabControl1.MouseClick += new System.Windows.Forms.MouseEventHandler(this.tabControl1_MouseClick);
       this.tabControl1.SelectedIndexChanged += new System.EventHandler(this.tabControl1_SelectedIndexChanged);
+      this.tabControl1.DragDrop += new System.Windows.Forms.DragEventHandler(this.tabControl1_DragDrop);
+      this.tabControl1.DragOver += new System.Windows.Forms.DragEventHandler(this.tabControl1_DragOver);
+      this.tabControl1.MouseClick += new System.Windows.Forms.MouseEventHandler(this.tabControl1_MouseClick);
       // 
       // tabPage1
       // 
@@ -495,9 +497,9 @@ namespace SetupTv.Sections
       this.deleteGroupToolStripMenuItem.Text = "Delete Group";
       this.deleteGroupToolStripMenuItem.Click += new System.EventHandler(this.deleteGroupToolStripMenuItem_Click);
       // 
-      // hdrChannelNumber
+      // hdrFrequency
       // 
-      this.hdrChannelNumber.Text = "Channel number";
+      this.hdrFrequency.Text = "Frequency";
       // 
       // TvChannels
       // 
@@ -562,5 +564,6 @@ namespace SetupTv.Sections
   private System.Windows.Forms.TextBox txtFilterString;
   private System.Windows.Forms.Label lblFilterLabel;
   private System.Windows.Forms.ColumnHeader hdrChannelNumber;
+    private System.Windows.Forms.ColumnHeader hdrFrequency;
   }
 }

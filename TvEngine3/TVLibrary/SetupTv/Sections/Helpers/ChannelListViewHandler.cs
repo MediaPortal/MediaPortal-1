@@ -123,9 +123,17 @@ namespace SetupTv.Sections.Helpers
           }
 
           Channel ch = _allChannels[i];
+          float frequency = 0;
+
+          IList<TuningDetail> tuningDetails = _allChannels[i].ReferringTuningDetail();
+          foreach (TuningDetail detail in tuningDetails)
+          {
+            frequency = detail.Frequency;
+            frequency /= 1000.0f;
+          }
 
           if (ch.DisplayName != null &&
-              (filterText.Equals("") || ContainsCaseInvariant(ch.DisplayName, filterText)))
+              (filterText.Equals("") || ContainsCaseInvariant(ch.DisplayName, filterText) || ContainsCaseInvariant(frequency.ToString("f2"), filterText)))
           {
             _listView.Invoke(new MethodInvoker(delegate() { items.Add(CreateListViewItemForChannel(ch, _allCards)); }));
           }
@@ -271,6 +279,7 @@ namespace SetupTv.Sections.Helpers
       IList<TuningDetail> tuningDetails = ch.ReferringTuningDetail();
       bool hasFta = false;
       bool hasScrambled = false;
+      float frequency = 0;
       foreach (TuningDetail detail in tuningDetails)
       {
         if (!providers.Contains(detail.Provider) && !String.IsNullOrEmpty(detail.Provider))
@@ -285,6 +294,8 @@ namespace SetupTv.Sections.Helpers
         {
           hasScrambled = true;
         }
+        frequency = detail.Frequency;
+        frequency /= 1000.0f;
       }
 
       string provider = String.Join(", ", providers.ToArray());
@@ -374,6 +385,7 @@ namespace SetupTv.Sections.Helpers
 
       item.SubItems.Add(builder.ToString());
       item.SubItems.Add(tuningDetails.Count.ToString());
+      item.SubItems.Add(frequency.ToString("f2"));
 
       _listViewCache.Add(ch.IdChannel, item);
 
