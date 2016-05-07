@@ -26,9 +26,12 @@
 #include "StdAfx.h"
 #include "TSBuffer.h"
 
+#define TS_PACKET_SIZE 188
+#define TV_BUFFER_ITEM_SIZE	(TS_PACKET_SIZE * 172)
+#define RADIO_BUFFER_ITEM_SIZE	(TS_PACKET_SIZE * 10)
 
-#define TV_BUFFER_ITEM_SIZE	32336
-#define RADIO_BUFFER_ITEM_SIZE	1880
+//Limit contiguous null TS packet sending to 5 sec maximum
+#define NULL_TS_TIMEOUT 5000
 
 extern void LogDebug(const char *fmt, ...) ;
 CTSBuffer::CTSBuffer()
@@ -40,6 +43,7 @@ CTSBuffer::CTSBuffer()
 	//round to nearest byte boundary.
 
 	m_maxReadIterations = 0;
+	m_lastGoodReadTime = timeGetTime();
   LogDebug("CTSBuffer::ctor");
 }
 
@@ -69,6 +73,8 @@ void CTSBuffer::Clear()
 	m_Array.clear();
 
 	m_lItemOffset = 0;
+	
+	m_lastGoodReadTime = timeGetTime();
 }
 
 long CTSBuffer::Count()
@@ -132,37 +138,34 @@ HRESULT CTSBuffer::Require(long nBytes, BOOL bIgnoreDelay)
 	UINT totalBytesRead = 0;
 	UINT iteration = 0;
 
+  __int64 filePointer = m_pFileReader->GetFilePointer(); //store current pointer
+
 	do
 	{
 		if(iteration > 0)
 		{
-			//	Sleep for 4ms per iteration (TV)
-			int sleepPerIteration = 4;
-
-			//	If radio set to 8ms
-			if(m_eChannelType == Radio)
-				sleepPerIteration = 8;
-
-  		if(iteration == 20 || iteration == 40 )
-  		{
-			  //LogDebug("CTSBuffer::Require() - 200ms sleep, iteration = %d", iteration);
-  		  Sleep(200);
-  		}
-  		else
-  		{
-			  Sleep(sleepPerIteration);
-		  }
+			Sleep(5); //Sleep for 5ms per iteration
 		}
 
 		ULONG bytesRead = 0;
 		HRESULT hr = m_pFileReader->Read(readBuffer + totalBytesRead, bytesToRead - totalBytesRead, &bytesRead);
 
-		if(FAILED(hr) || iteration >= 50)
+		if(FAILED(hr))
 		{
 			LogDebug("CTSBuffer::Require() - Failed to read buffer file, iteration %d", iteration);
 			m_maxReadIterations = 0;			
+      m_pFileReader->SetFilePointer(filePointer,FILE_BEGIN); //Restore file read position
 			delete[] readBuffer;
 			return hr;
+		}
+
+		if(iteration >= 20)
+		{
+			//LogDebug("CTSBuffer::Require() - Max iterations reached, iteration %d", iteration);
+			m_maxReadIterations = 0;			
+      m_pFileReader->SetFilePointer(filePointer,FILE_BEGIN); //Restore file read position
+			delete[] readBuffer;
+			return S_FALSE; //Not enough data
 		}
 
 		totalBytesRead += bytesRead;
@@ -183,7 +186,6 @@ HRESULT CTSBuffer::Require(long nBytes, BOOL bIgnoreDelay)
 		memcpy(newDataItem, readBuffer + (i * m_lTSBufferItemSize), m_lTSBufferItemSize);
 
 		m_Array.push_back(newDataItem);
-		bytesAvailable += m_lTSBufferItemSize;
 	}
 
 	delete[] readBuffer;
@@ -195,7 +197,7 @@ HRESULT CTSBuffer::DequeFromBuffer(BYTE *pbData, long lDataLength)
 {
 	CAutoLock lock (&m_BufferLock);
 	HRESULT hr = Require(lDataLength);
-	if (FAILED(hr))
+	if (hr!=S_OK)
 		return hr;
 
 	long bytesWritten = 0;
@@ -219,6 +221,7 @@ HRESULT CTSBuffer::DequeFromBuffer(BYTE *pbData, long lDataLength)
 			m_lItemOffset -= m_lTSBufferItemSize;	//should result in zero
 		}
 	}
+	m_lastGoodReadTime = timeGetTime();
 	return S_OK;
 }
 
@@ -261,5 +264,32 @@ HRESULT CTSBuffer::ReadFromBuffer(BYTE *pbData, long lDataLength, long lOffset)
 		}
 	}
 
+	return S_OK;
+}
+
+HRESULT CTSBuffer::GetNullTsBuffer(BYTE *pbData, long lDataLength)
+{
+  if ((timeGetTime()- m_lastGoodReadTime) > NULL_TS_TIMEOUT)
+    return E_FAIL; //Limit contiguous null packet sending
+
+  //Fill up a buffer with NULL transport stream packets...
+	BYTE* nullTsPacket = new BYTE[TS_PACKET_SIZE];
+  ZeroMemory((void*)nullTsPacket, TS_PACKET_SIZE);
+  //Add TS header (for null packet)
+  nullTsPacket[0] = 0x47; //Sync Byte
+  nullTsPacket[1] = 0x1F; //NULL packet PID
+  nullTsPacket[2] = 0xFF; //NULL packet PID
+  nullTsPacket[3] = 0x10; //not scrambled, payload only, continuity zero
+  
+	long bytesWritten = 0;
+	while (bytesWritten < lDataLength)
+	{
+		long copyLength = min(TS_PACKET_SIZE, lDataLength-bytesWritten);
+		memcpy(pbData + bytesWritten, nullTsPacket, copyLength);
+
+		bytesWritten += copyLength;
+	}
+	
+	delete[] nullTsPacket;
 	return S_OK;
 }

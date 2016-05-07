@@ -64,6 +64,8 @@ public:
 	virtual BOOL GetFileNext();
 	virtual void SetStopping(BOOL isStopping);
 	virtual void CloseBufferFiles();
+	virtual void SetTimeshift(BOOL isTimeshift);
+	virtual BOOL GetTimeshift();
 
 protected:
 	HRESULT RefreshTSBufferFile();
@@ -95,6 +97,7 @@ __int64 FindFileLength(LPWSTR pFilename);
 	BOOL     m_bUseFileNext;
 	BOOL     m_bIsStopping;
 	BOOL     m_bExtraLogging;
+	BOOL     m_isTimeshift;
 
   byte*    m_pFileReadNextBuffer;
   byte*    m_pInfoFileBuffer1;

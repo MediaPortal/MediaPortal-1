@@ -70,6 +70,7 @@ MultiFileReader::MultiFileReader(BOOL useFileNext, BOOL useDummyWrites, CCritSec
   m_bUseFileNext = useFileNext;
   m_bIsStopping = false;
   m_bExtraLogging = extraLogging;
+  m_isTimeshift = true;
   
   m_TSBufferFile.SetDummyWrites(useDummyWrites);
   m_TSFile.SetDummyWrites(useDummyWrites);
@@ -205,7 +206,6 @@ void MultiFileReader::CloseBufferFiles()
     m_TSFileIdNext = -1;
   }
 }
-
 
 BOOL MultiFileReader::IsFileInvalid()
 {
@@ -990,4 +990,14 @@ __int64 MultiFileReader::FindFileLength(LPWSTR pFilename)
 	li.LowPart  = fileinfo.nFileSizeLow;
 	li.HighPart = fileinfo.nFileSizeHigh;
   return li.QuadPart;  
+}
+
+BOOL MultiFileReader::GetTimeshift()
+{
+  return m_isTimeshift;
+}
+
+void MultiFileReader::SetTimeshift(BOOL isTimeshift)
+{
+  m_isTimeshift = isTimeshift;
 }

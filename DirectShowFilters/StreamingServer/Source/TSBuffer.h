@@ -47,6 +47,7 @@ public:
 	HRESULT Require(long nBytes, BOOL bIgnoreDelay = FALSE);
 	HRESULT DequeFromBuffer(BYTE *pbData, long lDataLength);
 	HRESULT ReadFromBuffer(BYTE *pbData, long lDataLength, long lOffset);
+  HRESULT GetNullTsBuffer(BYTE *pbData, long lDataLength);
 
 protected:
 	FileReader *m_pFileReader;
@@ -57,4 +58,5 @@ protected:
 	long m_lTSBufferItemSize;
 	ChannelType	m_eChannelType;
 	UINT m_maxReadIterations;
+	DWORD m_lastGoodReadTime;
 };

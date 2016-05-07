@@ -230,7 +230,7 @@ void TsMPEG2TransportStreamFramer
 		double durationPerPacket = clockDiff/(fTSPacketCount - pidStatus->lastPacketNum);
 			
 		 //Detect PCR rollover or large forward jumps in PCR (maximum normal clockDiff is approx. +100ms)
-	  if ((clockDiff < 0.0) || (clockDiff > 0.5) || (discontinuity_indicator > 0))
+	  if ((clockDiff < 0.0) || (clockDiff > 0.25) || (discontinuity_indicator > 0))
     {
       discontinuity_indicator |= 0x01; // force a reset of the stored clock and real-time values
 	    LogDebug("TsMp2TSFramer - PCR jump: %f s, packet count %d", (float)clockDiff, fTSPacketCount);  
@@ -248,7 +248,7 @@ void TsMPEG2TransportStreamFramer
 			fTSPacketDurationEstimate = durationPerPacket;
 			if (durationPerPacket > 0.0)
 			{
-	      LogDebug("TsMp2TSFramer - Average bitrate at start: %f kbit/s over %d packets", (float)((TRANSPORT_PACKET_SIZE*8)/(durationPerPacket*1000.0)), (fTSPacketCount - pidStatus->lastPacketNum));  
+	      LogDebug("TsMp2TSFramer - Average bitrate at start: %f kbit/s calculated over %d TS packets", (float)((TRANSPORT_PACKET_SIZE*8)/(durationPerPacket*1000.0)), (fTSPacketCount - pidStatus->lastPacketNum));  
 	    }
 		} else if (discontinuity_indicator == 0 && durationPerPacket >= 0.0) {
 			fTSPacketDurationEstimate
