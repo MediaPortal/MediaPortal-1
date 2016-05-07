@@ -20,6 +20,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Threading;
 using System.Windows.Forms;
@@ -104,6 +105,11 @@ namespace SetupTv
         Log.Error("Unable to get list of servers");
         Log.Write(ex);
       }
+
+      TvBusinessLayer layer = new TvBusinessLayer();
+
+      this.Width = Convert.ToInt16(layer.GetSetting("FormWidth", "717").Value);
+      this.Height = Convert.ToInt16(layer.GetSetting("FormHeight", "546").Value);
 
       Project project = new Project();
       AddSection(project);
@@ -759,6 +765,21 @@ namespace SetupTv
       this.ResumeLayout(false);
       this.PerformLayout();
 
+    }
+
+    protected override void OnClosing(CancelEventArgs e)
+    {
+      base.OnClosing(e);
+
+      TvBusinessLayer layer = new TvBusinessLayer();
+
+      Setting s = layer.GetSetting("FormWidth");
+      s.Value = this.Width.ToString();
+      s.Persist();
+
+      s = layer.GetSetting("FormHeight");
+      s.Value = this.Height.ToString();
+      s.Persist();
     }
 
     #endregion
