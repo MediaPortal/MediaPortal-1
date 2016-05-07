@@ -53,6 +53,7 @@ namespace SetupTv.Sections
       checkBoxEnableCRCCheck.Checked = !DebugSettings.DisableCRCCheck;
       numericUpDownEpgTimeOut.Value = Convert.ToDecimal(layer.GetSetting("timeoutEPG", "10").Value);
       numericUpDownEpgRefresh.Value = Convert.ToDecimal(layer.GetSetting("timeoutEPGRefresh", "240").Value);
+      numericUpDownEpgTimeshiftRefresh.Value = Convert.ToDecimal(layer.GetSetting("timeoutEPGTimeshiftRefresh", "10").Value);
       checkBoxEnableEpgWhileTimeshifting.Checked = (layer.GetSetting("timeshiftingEpgGrabberEnabled", "no").Value ==
                                                     "yes");
       numericUpDownTSEpgTimeout.Value = Convert.ToDecimal(layer.GetSetting("timeshiftingEpgGrabberTimeout", "2").Value);
@@ -96,6 +97,10 @@ namespace SetupTv.Sections
 
       s = layer.GetSetting("timeoutEPGRefresh", "240");
       s.Value = numericUpDownEpgRefresh.Value.ToString();
+      s.Persist();
+
+      s = layer.GetSetting("timeoutEPGTimeshiftRefresh", "10");
+      s.Value = numericUpDownEpgTimeshiftRefresh.Value.ToString();
       s.Persist();
 
       s = layer.GetSetting("timeshiftingEpgGrabberEnabled", "no");

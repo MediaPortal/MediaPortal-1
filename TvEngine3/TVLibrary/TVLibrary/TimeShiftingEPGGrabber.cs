@@ -34,6 +34,7 @@ namespace TvLibrary
     private readonly ITVCard _card;
     private readonly System.Timers.Timer _epgTimer = new System.Timers.Timer();
     private readonly System.Timers.Timer _epgTimerRefresh = new System.Timers.Timer();
+    //private readonly System.Timers.Timer _epgTimerTimeshiftRefresh = new System.Timers.Timer();
     private DateTime _grabStartTime;
     private DateTime _grabStartTimeRefresh;
     private List<EpgChannel> _epg;
@@ -55,18 +56,25 @@ namespace TvLibrary
     {
       TvBusinessLayer layer = new TvBusinessLayer();
       double timeout;
-      int _epgReGrabAfter;
+      //int _epgReGrabAfter;
+      int _epgReGrabTimeshiftAfter;
       if (!double.TryParse(layer.GetSetting("timeshiftingEpgGrabberTimeout", "2").Value, out timeout) || timeout == 0)
       {
         timeout = 2;
       }
-      Setting s = layer.GetSetting("timeoutEPGRefresh", "240");
-      if (Int32.TryParse(s.Value, out _epgReGrabAfter) == false)
+      //Setting s = layer.GetSetting("timeoutEPGRefresh", "240");
+      //if (Int32.TryParse(s.Value, out _epgReGrabAfter) == false)
+      //{
+      //  _epgReGrabAfter = 240;
+      //}
+      Setting s = layer.GetSetting("timeoutEPGTimeshiftRefresh", "10");
+      if (Int32.TryParse(s.Value, out _epgReGrabTimeshiftAfter) == false)
       {
-        _epgReGrabAfter = 240;
+        _epgReGrabTimeshiftAfter = 10;
       }
-      _epgTimer.Interval = timeout * 60000;
-      _epgTimerRefresh.Interval = _epgReGrabAfter * 60000;
+      _epgTimer.Interval = _epgReGrabTimeshiftAfter + 5 * 1000;
+      _epgTimerRefresh.Interval = _epgReGrabTimeshiftAfter * 1000;
+      //_epgTimerTimeshiftRefresh.Interval = _epgReGrabAfter * 1000;
     }
 
     public bool StartGrab()
@@ -88,7 +96,7 @@ namespace TvLibrary
     private void _epgTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
     {
       var ts = DateTime.Now - _grabStartTime;
-      Log.Log.Epg("TimeshiftingEpgGrabber: timeout after {0} mins", ts.TotalMinutes);
+      Log.Log.Epg("TimeshiftingEpgGrabber: timeout after {0} seconds", ts.Seconds);
       _epgTimer.Enabled = false;
       _card.AbortGrabbing(false);
     }
@@ -96,13 +104,24 @@ namespace TvLibrary
     private void _epgTimerRefresh_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
     {
       var ts = DateTime.Now - _grabStartTimeRefresh;
-      Log.Log.Epg("TimeshiftingEpgGrabber: refresh EPG while timeshift after {0} mins", ts.TotalMinutes);
+      Log.Log.Epg("TimeshiftingEpgGrabber for current tune : refresh EPG while timeshift after {0} seconds", ts.Seconds);
       if (!_card.IsEpgGrabbing)
       {
         _card.IsEpgGrabbing = true;
         _card.GrabEpg();
       }
     }
+
+    //private void _epgTimerTimeshiftRefresh_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+    //{
+    //  var ts = DateTime.Now - _grabStartTimeRefresh;
+    //  Log.Log.Epg("TimeshiftingEpgGrabber: refresh EPG while timeshift after {0} seconds", ts.Seconds);
+    //  if (!_card.IsEpgGrabbing)
+    //  {
+    //    _card.IsEpgGrabbing = true;
+    //    _card.GrabEpg();
+    //  }
+    //}
 
     #region BaseEpgGrabber implementation
 

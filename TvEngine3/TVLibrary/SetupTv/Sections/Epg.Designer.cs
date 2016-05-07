@@ -50,6 +50,9 @@
       this.label7 = new System.Windows.Forms.Label();
       this.checkBoxEnableEPGWhileIdleOnAllTuners = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.groupBox5 = new System.Windows.Forms.GroupBox();
+      this.numericUpDownEpgTimeshiftRefresh = new System.Windows.Forms.NumericUpDown();
+      this.label3 = new System.Windows.Forms.Label();
+      this.label4 = new System.Windows.Forms.Label();
       this.numericUpDownTSEpgTimeout = new System.Windows.Forms.NumericUpDown();
       this.checkBoxEnableEpgWhileTimeshifting = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.label22 = new System.Windows.Forms.Label();
@@ -69,6 +72,7 @@
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownEpgRefresh)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownEpgTimeOut)).BeginInit();
       this.groupBox5.SuspendLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownEpgTimeshiftRefresh)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTSEpgTimeout)).BeginInit();
       this.groupBox7.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.numericEpgCardLimit)).BeginInit();
@@ -321,6 +325,9 @@
       // 
       // groupBox5
       // 
+      this.groupBox5.Controls.Add(this.numericUpDownEpgTimeshiftRefresh);
+      this.groupBox5.Controls.Add(this.label3);
+      this.groupBox5.Controls.Add(this.label4);
       this.groupBox5.Controls.Add(this.numericUpDownTSEpgTimeout);
       this.groupBox5.Controls.Add(this.checkBoxEnableEpgWhileTimeshifting);
       this.groupBox5.Controls.Add(this.label22);
@@ -332,18 +339,54 @@
       this.groupBox5.TabStop = false;
       this.groupBox5.Text = "EPG grabbing while timeshifting/recording";
       // 
+      // numericUpDownEpgTimeshiftRefresh
+      // 
+      this.numericUpDownEpgTimeshiftRefresh.Location = new System.Drawing.Point(140, 61);
+      this.numericUpDownEpgTimeshiftRefresh.Maximum = new decimal(new int[] {
+            3600,
+            0,
+            0,
+            0});
+      this.numericUpDownEpgTimeshiftRefresh.Name = "numericUpDownEpgTimeshiftRefresh";
+      this.numericUpDownEpgTimeshiftRefresh.Size = new System.Drawing.Size(47, 20);
+      this.numericUpDownEpgTimeshiftRefresh.TabIndex = 13;
+      this.numericUpDownEpgTimeshiftRefresh.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+      this.numericUpDownEpgTimeshiftRefresh.Value = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+      // 
+      // label3
+      // 
+      this.label3.AutoSize = true;
+      this.label3.Location = new System.Drawing.Point(193, 61);
+      this.label3.Name = "label3";
+      this.label3.Size = new System.Drawing.Size(29, 13);
+      this.label3.TabIndex = 12;
+      this.label3.Text = "secs";
+      // 
+      // label4
+      // 
+      this.label4.AutoSize = true;
+      this.label4.Location = new System.Drawing.Point(8, 63);
+      this.label4.Name = "label4";
+      this.label4.Size = new System.Drawing.Size(76, 13);
+      this.label4.TabIndex = 11;
+      this.label4.Text = "Refresh every:";
+      // 
       // numericUpDownTSEpgTimeout
       // 
       this.numericUpDownTSEpgTimeout.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-      this.numericUpDownTSEpgTimeout.Location = new System.Drawing.Point(81, 37);
+      this.numericUpDownTSEpgTimeout.Location = new System.Drawing.Point(140, 37);
       this.numericUpDownTSEpgTimeout.Maximum = new decimal(new int[] {
             3600,
             0,
             0,
             0});
       this.numericUpDownTSEpgTimeout.Name = "numericUpDownTSEpgTimeout";
-      this.numericUpDownTSEpgTimeout.Size = new System.Drawing.Size(86, 20);
+      this.numericUpDownTSEpgTimeout.Size = new System.Drawing.Size(48, 20);
       this.numericUpDownTSEpgTimeout.TabIndex = 10;
       this.numericUpDownTSEpgTimeout.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
       this.numericUpDownTSEpgTimeout.Value = new decimal(new int[] {
@@ -351,6 +394,7 @@
             0,
             0,
             0});
+      this.numericUpDownTSEpgTimeout.Visible = false;
       // 
       // checkBoxEnableEpgWhileTimeshifting
       // 
@@ -367,20 +411,22 @@
       // 
       this.label22.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.label22.AutoSize = true;
-      this.label22.Location = new System.Drawing.Point(173, 42);
+      this.label22.Location = new System.Drawing.Point(193, 42);
       this.label22.Name = "label22";
-      this.label22.Size = new System.Drawing.Size(28, 13);
+      this.label22.Size = new System.Drawing.Size(29, 13);
       this.label22.TabIndex = 7;
-      this.label22.Text = "mins";
+      this.label22.Text = "secs";
+      this.label22.Visible = false;
       // 
       // label23
       // 
       this.label23.AutoSize = true;
       this.label23.Location = new System.Drawing.Point(8, 39);
       this.label23.Name = "label23";
-      this.label23.Size = new System.Drawing.Size(48, 13);
+      this.label23.Size = new System.Drawing.Size(127, 13);
       this.label23.TabIndex = 5;
-      this.label23.Text = "Timeout:";
+      this.label23.Text = "Timeout (value + refresh):";
+      this.label23.Visible = false;
       this.label23.Click += new System.EventHandler(this.label23_Click);
       // 
       // groupBox7
@@ -528,6 +574,7 @@
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownEpgTimeOut)).EndInit();
       this.groupBox5.ResumeLayout(false);
       this.groupBox5.PerformLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownEpgTimeshiftRefresh)).EndInit();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTSEpgTimeout)).EndInit();
       this.groupBox7.ResumeLayout(false);
       this.groupBox7.PerformLayout();
@@ -576,5 +623,8 @@
     private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxEnableEPGWhileIdleOnAllTuners;
     private System.Windows.Forms.NumericUpDown numericEpgCardLimit;
     private System.Windows.Forms.Label label2;
+    private System.Windows.Forms.NumericUpDown numericUpDownEpgTimeshiftRefresh;
+    private System.Windows.Forms.Label label3;
+    private System.Windows.Forms.Label label4;
   }
 }
