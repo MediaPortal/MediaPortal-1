@@ -73,13 +73,16 @@ namespace MediaPortal.Player
     int RenderOverlay(Int16 cx, Int16 cy, Int16 arx, Int16 ary);
 
     [PreserveSig]
-    void SetRenderTarget(uint target, uint targetmadVr, Int16 cx, Int16 cy, Int16 arx, Int16 ary);
+    void SetRenderTarget(uint target, Int16 cx, Int16 cy, Int16 arx, Int16 ary);
 
     [PreserveSig]
     void SetSubtitleDevice(IntPtr device);
 
     [PreserveSig]
     void RenderSubtitle(long frameStart, int left, int top, int right, int bottom, int width, int height);
+
+    [PreserveSig]
+    void RenderFrame(Int16 cx, Int16 cy, Int16 arx, Int16 ary, uint pSurface);
   }
 
   #endregion
@@ -463,6 +466,7 @@ namespace MediaPortal.Player
 
           hr = new HResult(graphBuilder.AddFilter(_vmr9Filter, "madVR"));
           Log.Info("VMR9: added madVR Renderer to graph");
+          backbuffer.SafeDispose();
         }
         else
         {
@@ -1075,7 +1079,7 @@ namespace MediaPortal.Player
             {
               case GUIGraphicsContext.VideoRendererType.madVR:
                 GUIGraphicsContext.InVmr9Render = false;
-                if (_vmr9Filter != null) MadvrInterface.EnableExclusiveMode(false, _vmr9Filter);
+                //if (_vmr9Filter != null) MadvrInterface.EnableExclusiveMode(false, _vmr9Filter);
                 break;
               default:
                 Log.Error("VMR9: {0} in renderer", g_Player.Player.ToString());
@@ -1314,10 +1318,11 @@ namespace MediaPortal.Player
         if (_vmr9Filter != null)
         {
           DirectShowUtil.RemoveFilter(_graphBuilderInterface, _vmr9Filter);
-          if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
-          {
-            MadvrInterface.OsdSetRenderCallback(_vmr9Filter);
-          }
+          //if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+          //{
+          //  MadvrInterface.OsdSetRenderCallback(_vmr9Filter);
+          //}
+          GUIWindowManager.MadVrProcess();
           DirectShowUtil.FinalReleaseComObject(_vmr9Filter);
         }
         _vmr9Filter = null;

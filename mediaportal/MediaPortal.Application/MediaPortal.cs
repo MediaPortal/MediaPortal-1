@@ -3538,6 +3538,11 @@ public class MediaPortalApp : D3D, IRender
     {
       if (GUIGraphicsContext.InVmr9Render)
       {
+        if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+        {
+          GUIGraphicsContext.InVmr9Render = false;
+          return;
+        }
         Log.Error("Main: MediaPortal.Render() called while VMR9 render - {0} / {1}", GUIGraphicsContext.Vmr9Active,
                   GUIGraphicsContext.Vmr9FPS);
         return;

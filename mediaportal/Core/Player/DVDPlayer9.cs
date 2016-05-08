@@ -393,15 +393,6 @@ namespace MediaPortal.Player
           _videoWin.put_Visible(OABool.False);
         }
 
-        if (_mediaCtrl != null) DirectShowUtil.FinalReleaseComObject(_mediaCtrl);
-        if (_mediaEvt != null) DirectShowUtil.FinalReleaseComObject(_mediaEvt);
-        if (_dvdCtrl != null) DirectShowUtil.FinalReleaseComObject(_dvdCtrl);
-        if (_dvdInfo != null) DirectShowUtil.FinalReleaseComObject(_dvdInfo);
-        if (_videoWin != null) DirectShowUtil.FinalReleaseComObject(_videoWin);
-        if (_basicAudio != null) DirectShowUtil.FinalReleaseComObject(_basicAudio);
-        if (_basicVideo != null) DirectShowUtil.FinalReleaseComObject(_basicVideo);
-        if (_mediaPos != null) DirectShowUtil.FinalReleaseComObject(_mediaPos);
-
         _mediaCtrl = null;
         _visible = false;
         _dvdCtrl = null;
@@ -414,25 +405,25 @@ namespace MediaPortal.Player
 
         if (_cmdOption != null)
         {
-          DirectShowUtil.FinalReleaseComObject(_cmdOption);
+          DirectShowUtil.ReleaseComObject(_cmdOption);
           _cmdOption = null;
         }
 
         if (_dvdbasefilter != null)
         {
-          DirectShowUtil.FinalReleaseComObject(_dvdbasefilter);
+          DirectShowUtil.ReleaseComObject(_dvdbasefilter);
           _dvdbasefilter = null;
         }
 
         if (_dvdGraph != null)
         {
-          DirectShowUtil.FinalReleaseComObject(_dvdGraph);
+          DirectShowUtil.ReleaseComObject(_dvdGraph);
           _dvdGraph = null;
         }
 
         if (_line21Decoder != null)
         {
-          DirectShowUtil.FinalReleaseComObject(_line21Decoder);
+          DirectShowUtil.ReleaseComObject(_line21Decoder);
           _line21Decoder = null;
         }
 
@@ -446,7 +437,7 @@ namespace MediaPortal.Player
             _rotEntry.SafeDispose();
             _rotEntry = null;
           }
-          DirectShowUtil.FinalReleaseComObject(_graphBuilder);
+          DirectShowUtil.ReleaseComObject(_graphBuilder);
           _graphBuilder = null;
         }
 

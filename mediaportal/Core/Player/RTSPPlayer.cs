@@ -507,14 +507,6 @@ namespace MediaPortal.Player
           videoWin.put_Visible(OABool.False);
         }
 
-        if (_mediaCtrl != null) DirectShowUtil.FinalReleaseComObject(_mediaCtrl);
-        if (mediaEvt != null) DirectShowUtil.FinalReleaseComObject(mediaEvt);
-        if (_mediaSeeking != null) DirectShowUtil.FinalReleaseComObject(_mediaSeeking);
-        if (mediaPos != null) DirectShowUtil.FinalReleaseComObject(mediaPos);
-        if (basicAudio != null) DirectShowUtil.FinalReleaseComObject(basicAudio);
-        if (basicVideo != null) DirectShowUtil.FinalReleaseComObject(basicVideo);
-        if (videoWin != null) DirectShowUtil.FinalReleaseComObject(videoWin);
-
         _mediaCtrl = null;
         mediaEvt = null;
         _mediaSeeking = null;
@@ -532,7 +524,7 @@ namespace MediaPortal.Player
             _rotEntry.SafeDispose();
             _rotEntry = null;
           }
-          DirectShowUtil.FinalReleaseComObject(graphBuilder);
+          DirectShowUtil.ReleaseComObject(graphBuilder);
           graphBuilder = null;
         }
 
@@ -548,18 +540,18 @@ namespace MediaPortal.Player
         if (_mpegDemux != null)
         {
           Log.Info("cleanup mpegdemux");
-          DirectShowUtil.FinalReleaseComObject(_mpegDemux);
+          DirectShowUtil.ReleaseComObject(_mpegDemux);
           _mpegDemux = null;
         }
         if (_rtspSource != null)
         {
           Log.Info("cleanup _rtspSource");
-          DirectShowUtil.FinalReleaseComObject(_rtspSource);
+          DirectShowUtil.ReleaseComObject(_rtspSource);
           _rtspSource = null;
         }
         if (_subtitleFilter != null)
         {
-          DirectShowUtil.FinalReleaseComObject(_subtitleFilter);
+          DirectShowUtil.ReleaseComObject(_subtitleFilter);
           _subtitleFilter = null;
           if (this.dvbSubRenderer != null)
           {
@@ -572,7 +564,7 @@ namespace MediaPortal.Player
         if (vobSub != null)
         {
           Log.Info("cleanup vobSub");
-          DirectShowUtil.FinalReleaseComObject(vobSub);
+          DirectShowUtil.ReleaseComObject(vobSub);
           vobSub = null;
         }
       }

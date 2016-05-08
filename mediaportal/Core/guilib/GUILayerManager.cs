@@ -93,49 +93,10 @@ namespace MediaPortal.GUI.Library
       int startLayer = 0;
       int endLayer = MAX_LAYERS;
 
-      if (GUIGraphicsContext.IsFullScreenVideo || !GUIGraphicsContext.InVmr9Render ||
-          GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR)
-      {
-        for (int i = 0; i < MAX_LAYERS; ++i)
-        {
-          if (_layers[i] != null)
-          {
-            if (_layers[i].ShouldRenderLayer())
-            {
-              if (GUIGraphicsContext.ShowBackground == false && i == videoLayer)
-              {
-                continue;
-              }
-              _layers[i].RenderLayer(timePassed);
-              GUIFontManager.Present();
-            }
-          }
-        }
-        //if (layers == GUILayers.under)
-        //{
-        return false;
-        //}
-        //if (layers == GUILayers.over)
-        //{
-        //  return true;
-        //}
-      }
-      if (GUIGraphicsContext.RenderGui)
-      {
-        //  // Need to force GUI
+      if (layers == GUILayers.under)
         endLayer = videoLayer - 1;
-      }
-      else
-      {
-        if (layers == GUILayers.under)
-        {
-          endLayer = videoLayer - 1;
-        }
-        else if (layers == GUILayers.over)
-        {
-          startLayer = videoLayer + 1;
-        }
-      }
+      else if (layers == GUILayers.over)
+        startLayer = videoLayer + 1;
 
       for (int i = startLayer; i < endLayer; ++i)
       {

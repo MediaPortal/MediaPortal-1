@@ -844,7 +844,7 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     public override void Dispose()
     {
-      lock (GUIGraphicsContext.RenderLock)
+      //lock (GUIGraphicsContext.RenderLock)
       {
         if (!_allocated)
         {
@@ -1437,8 +1437,8 @@ namespace MediaPortal.GUI.Library
               // Default behavior, draw the image texture with no mask.
               DXNative.FontEngineDrawTextureSync(_packedTextureNo, _fx, _fy, _nw, _nh, _uoff, _voff,
                 _umax, _vmax, color, matrix);
-              if (GUIGraphicsContext.RenderOverlay)
-                return;
+              //if (GUIGraphicsContext.RenderOverlay)
+              //  return;
             }
           }
 

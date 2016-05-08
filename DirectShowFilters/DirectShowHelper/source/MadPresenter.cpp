@@ -198,8 +198,7 @@ HRESULT MPMadPresenter::ClearBackground(LPCSTR name, REFERENCE_TIME frameStart, 
   m_dwHeight = static_cast<WORD>(fullOutputRect->bottom) - static_cast<WORD>(fullOutputRect->top);
   m_dwWidth = static_cast<WORD>(fullOutputRect->right) - static_cast<WORD>(fullOutputRect->left);
 
-  if (FAILED(hr = RenderToTexture(m_pMPTextureGui, videoWidth, videoHeight, videoWidth, videoHeight)))
-    return hr;
+  RenderToTexture(m_pMPTextureGui, videoWidth, videoHeight, videoWidth, videoHeight);
 
   if (FAILED(hr = m_deviceState.Store()))
     return hr;
@@ -219,12 +218,12 @@ HRESULT MPMadPresenter::ClearBackground(LPCSTR name, REFERENCE_TIME frameStart, 
     return hr;
 
   // Draw MP texture on madVR device's side
-  if (FAILED(hr = RenderTexture(m_pMadGuiVertexBuffer, m_pRenderTextureGui)))
-    return hr;
+  RenderTexture(m_pMadGuiVertexBuffer, m_pRenderTextureGui);
 
   if (FAILED(hr = m_deviceState.Restore()))
     return hr;
 
+  //Log("ClearBackground hr: 0x%08x", hr);
   return uiVisible ? CALLBACK_USER_INTERFACE : CALLBACK_EMPTY;
 }
 
@@ -239,14 +238,23 @@ HRESULT MPMadPresenter::RenderOsd(LPCSTR name, REFERENCE_TIME frameStart, RECT* 
 
   CAutoLock cAutoLock(this);
 
+  IDirect3DSurface9* SurfaceMadVr = nullptr; // This will be released by C# side
+
   if (!m_pCallback)
     return S_OK;
 
   m_dwHeight = static_cast<WORD>(fullOutputRect->bottom) - static_cast<WORD>(fullOutputRect->top);
   m_dwWidth = static_cast<WORD>(fullOutputRect->right) - static_cast<WORD>(fullOutputRect->left);
 
-  if (FAILED(hr = RenderToTexture(m_pMPTextureOsd, videoWidth, videoHeight, videoWidth, videoHeight)))
-    return hr;
+  if (SUCCEEDED(hr = m_pMadD3DDev->GetBackBuffer(0, 0, D3DBACKBUFFER_TYPE_MONO, &SurfaceMadVr)))
+  {
+    if (SUCCEEDED(hr = m_pCallback->RenderFrame(videoWidth, videoHeight, videoWidth, videoHeight, reinterpret_cast<DWORD>(SurfaceMadVr))))
+    {
+      SurfaceMadVr->Release();
+    }
+  }
+
+  RenderToTexture(m_pMPTextureOsd, videoWidth, videoHeight, videoWidth, videoHeight);
 
   if (FAILED(hr = m_deviceState.Store()))
     return hr;
@@ -266,46 +274,52 @@ HRESULT MPMadPresenter::RenderOsd(LPCSTR name, REFERENCE_TIME frameStart, RECT* 
     return hr;
 
   // Draw MP texture on madVR device's side
-  if (FAILED(hr = RenderTexture(m_pMadOsdVertexBuffer, m_pRenderTextureOsd)))
-    return hr;
+  RenderTexture(m_pMadOsdVertexBuffer, m_pRenderTextureOsd);
 
   if (FAILED(hr = m_deviceState.Restore()))
     return hr;
 
+  //Log("RenderOsd hr: 0x%08x", hr);
   return uiVisible ? CALLBACK_USER_INTERFACE : CALLBACK_EMPTY;
 }
 
-HRESULT MPMadPresenter::RenderToTexture(IDirect3DTexture9* pTexture, WORD cx, WORD cy, WORD arx, WORD ary)
+void MPMadPresenter::RenderToTexture(IDirect3DTexture9* pTexture, WORD cx, WORD cy, WORD arx, WORD ary)
 {
   if (!m_pDevice)
-    return S_FALSE;
+    return;
   HRESULT hr = E_UNEXPECTED;
   IDirect3DSurface9* pSurface = nullptr; // This will be released by C# side
-  IDirect3DSurface9* SurfaceMadVr = nullptr; // This will be released by C# side
   if (SUCCEEDED(hr = pTexture->GetSurfaceLevel(0, &pSurface)))
   {
-    m_pMadD3DDev->GetBackBuffer(0, 0, D3DBACKBUFFER_TYPE_MONO, &SurfaceMadVr);
-    if (SUCCEEDED(hr = m_pCallback->SetRenderTarget(reinterpret_cast<DWORD>(pSurface), reinterpret_cast<DWORD>(SurfaceMadVr), cx, cy, arx, ary)))
-      m_pDevice->Clear(0, NULL, D3DCLEAR_TARGET, D3DXCOLOR(0, 0, 0, 0), 1.0f, 0);
+    //Log("RenderToTexture GetSurfaceLevel hr: 0x%08x", hr);
+    if (SUCCEEDED(hr = m_pCallback->SetRenderTarget(reinterpret_cast<DWORD>(pSurface), cx, cy, arx, ary)))
+    {
+      //Log("RenderToTexture SetRenderTarget hr: 0x%08x", hr);
+      hr = m_pDevice->Clear(0, nullptr, D3DCLEAR_TARGET, D3DXCOLOR(0, 0, 0, 0), 1.0f, 0);
+      //Log("RenderToTexture SetRenderTarget Clear hr: 0x%08x", hr);
+    }
   }
+  //Log("RenderToTexture hr: 0x%08x", hr);
 }
 
-HRESULT MPMadPresenter::RenderTexture(IDirect3DVertexBuffer9* pVertexBuf, IDirect3DTexture9* pTexture)
+void MPMadPresenter::RenderTexture(IDirect3DVertexBuffer9* pVertexBuf, IDirect3DTexture9* pTexture)
 {
   if (!m_pMadD3DDev)
-    return S_FALSE;
+    return;
 
-  HRESULT hr = S_OK;
+  HRESULT hr = E_UNEXPECTED;
 
   if (SUCCEEDED(hr = m_pMadD3DDev->SetStreamSource(0, pVertexBuf, 0, sizeof(VID_FRAME_VERTEX))))
   {
+    //Log("RenderTexture SetStreamSource hr: 0x%08x", hr);
     if (SUCCEEDED(hr = m_pMadD3DDev->SetTexture(0, pTexture)))
     {
+      //Log("RenderTexture SetTexture hr: 0x%08x", hr);
       hr = m_pMadD3DDev->DrawPrimitive(D3DPT_TRIANGLEFAN, 0, 2);
-      m_pMadD3DDev->SetTexture(0, nullptr);
+      //Log("RenderTexture DrawPrimitive hr: 0x%08x", hr);
     }
-    m_pMadD3DDev->SetStreamSource(0, nullptr, 0, 0);
   }
+  //Log("RenderTexture hr: 0x%08x", hr);
 }
 
 HRESULT MPMadPresenter::SetupOSDVertex(IDirect3DVertexBuffer9* pVertextBuf)
@@ -356,6 +370,7 @@ HRESULT MPMadPresenter::SetupOSDVertex(IDirect3DVertexBuffer9* pVertextBuf)
       return hr;
   }
 
+  //Log("SetupOSDVertex hr: 0x%08x", hr);
   return hr;
 }
 
@@ -399,6 +414,7 @@ HRESULT MPMadPresenter::SetupMadDeviceState()
   if (FAILED(hr = m_pMadD3DDev->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA)))
     return hr;
 
+  //Log("SetupMadDeviceState hr: 0x%08x", hr);
   return hr;
 }
 
@@ -436,5 +452,6 @@ HRESULT MPMadPresenter::SetDevice(IDirect3DDevice9* pD3DDev)
   else
     m_pMadD3DDev = nullptr;
 
+  //Log("SetDevice hr: 0x%08x", hr);
   return hr;
 }

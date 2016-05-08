@@ -591,6 +591,27 @@ namespace MediaPortal.Player
       return 0;
     }
 
+    public void RenderFrame(Int16 width, Int16 height, Int16 arWidth, Int16 arHeight, uint pSurface)
+    {
+      IntPtr ptrMadVr = (IntPtr)pSurface;
+      Surface surfaceMadVr = new Surface(ptrMadVr);
+      try
+      {
+        unsafe
+        {
+          grabber?.OnFrame(width, height, arWidth, arHeight, (uint)surfaceMadVr.UnmanagedComPointer,
+            FrameGrabber.FrameSource.Video);
+        }
+        surfaceMadVr.ReleaseGraphics();
+        surfaceMadVr.Dispose();
+      }
+      catch (Exception ex)
+      {
+        surfaceMadVr.ReleaseGraphics();
+        surfaceMadVr.Dispose();
+      }
+    }
+
     public int RenderGui(Int16 width, Int16 height, Int16 arWidth, Int16 arHeight)
     {
       return RenderLayers(GUILayers.under, width, height, arWidth, arHeight);
@@ -651,32 +672,13 @@ namespace MediaPortal.Player
       return visible ? 0 : 1;  // S_OK, S_FALSE
     }
 
-    public void SetRenderTarget(uint target, uint targetmadVr, Int16 width, Int16 height, Int16 arWidth, Int16 arHeight)
+    public void SetRenderTarget(uint target, Int16 width, Int16 height, Int16 arWidth, Int16 arHeight)
     {
-      lock (GUIGraphicsContext.RenderLock)
-      {
-        IntPtr ptr = (IntPtr)target;
-        IntPtr ptrMadVr = (IntPtr)targetmadVr;
-        Surface surface = new Surface(ptr);
-        Surface surfaceMadVr = new Surface(ptrMadVr);
-        GUIGraphicsContext.DX9Device.SetRenderTarget(0, surface);
-        try
-        {
-          lock (GUIGraphicsContext.RenderModeSwitch)
-            unsafe
-            {
-              grabber?.OnFrame(width, height, arWidth, arHeight, (uint) surfaceMadVr.UnmanagedComPointer,
-                FrameGrabber.FrameSource.Video);
-            }
-        }
-        catch (Exception ex)
-        {
-        }
-        surface.ReleaseGraphics();
-        surface.Dispose();
-        surfaceMadVr.ReleaseGraphics();
-        surfaceMadVr.Dispose();
-      }
+      IntPtr ptr = (IntPtr)target;
+      Surface surface = new Surface(ptr);
+      GUIGraphicsContext.DX9Device.SetRenderTarget(0, surface);
+      surface.ReleaseGraphics();
+      surface.Dispose();
     }
 
     public void SetSubtitleDevice(IntPtr device)

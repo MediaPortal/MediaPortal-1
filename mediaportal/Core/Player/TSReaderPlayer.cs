@@ -239,7 +239,7 @@ namespace MediaPortal.Player
       {
         if (filterCodec._audioSwitcherFilter != null)
         {
-          DirectShowUtil.FinalReleaseComObject(filterCodec._audioSwitcherFilter);
+          DirectShowUtil.ReleaseComObject(filterCodec._audioSwitcherFilter);
           filterCodec._audioSwitcherFilter = null;
         }
         filterCodec._audioSwitcherFilter = DirectShowUtil.AddFilterToGraph(_graphBuilder, "MediaPortal AudioSwitcher");
@@ -831,7 +831,7 @@ namespace MediaPortal.Player
           if (filterCodec != null && filterCodec._audioRendererFilter != null)
           {
             DirectShowUtil.RemoveFilter(_graphBuilder, filterCodec._audioRendererFilter);
-            DirectShowUtil.FinalReleaseComObject(filterCodec._audioRendererFilter);
+            DirectShowUtil.ReleaseComObject(filterCodec._audioRendererFilter);
             filterCodec._audioRendererFilter = null;
             Log.Debug("TSReaderPlayer: Cleanup _audioRendererFilter");
           }
@@ -839,7 +839,7 @@ namespace MediaPortal.Player
           if (_fileSource != null)
           {
             DirectShowUtil.RemoveFilter(_graphBuilder, _fileSource);
-            DirectShowUtil.FinalReleaseComObject(_fileSource);
+            DirectShowUtil.ReleaseComObject(_fileSource);
             _fileSource = null;
             Log.Debug("TSReaderPlayer: Cleanup _fileSource");
           }
@@ -853,7 +853,7 @@ namespace MediaPortal.Player
             if (ppFilter.Value != null)
             {
               DirectShowUtil.RemoveFilter(_graphBuilder, ppFilter.Value as IBaseFilter);
-              DirectShowUtil.FinalReleaseComObject(ppFilter.Value);
+              DirectShowUtil.ReleaseComObject(ppFilter.Value);
             }
           }
           PostProcessFilterVideo.Clear();
@@ -862,7 +862,7 @@ namespace MediaPortal.Player
             if (ppFilter.Value != null)
             {
               DirectShowUtil.RemoveFilter(_graphBuilder, ppFilter.Value as IBaseFilter);
-              DirectShowUtil.FinalReleaseComObject(ppFilter.Value);
+              DirectShowUtil.ReleaseComObject(ppFilter.Value);
             }
           }
           PostProcessFilterAudio.Clear();
@@ -871,21 +871,21 @@ namespace MediaPortal.Player
           if (filterCodec != null && filterCodec._audioSwitcherFilter != null)
           {
             DirectShowUtil.RemoveFilter(_graphBuilder, filterCodec._audioSwitcherFilter);
-            DirectShowUtil.FinalReleaseComObject(filterCodec._audioSwitcherFilter);
+            DirectShowUtil.ReleaseComObject(filterCodec._audioSwitcherFilter);
             filterCodec._audioSwitcherFilter = null;
             Log.Debug("TSReaderPlayer: Cleanup _audioSwitcherFilter");
           }
 
           if (_line21DecoderAnalog != null)
           {
-            DirectShowUtil.FinalReleaseComObject(_line21DecoderAnalog);
+            DirectShowUtil.ReleaseComObject(_line21DecoderAnalog);
             _line21DecoderAnalog = null;
             Log.Debug("TSReaderPlayer: Cleanup _line21DecoderAnalog");
           }
 
           if (_line21DecoderDigital != null)
           {
-            DirectShowUtil.FinalReleaseComObject(_line21DecoderDigital);
+            DirectShowUtil.ReleaseComObject(_line21DecoderDigital);
             _line21DecoderDigital = null;
             Log.Debug("TSReaderPlayer: Cleanup _line21DecoderDigital");
           }
@@ -893,7 +893,7 @@ namespace MediaPortal.Player
           if (filterCodec != null && filterCodec.CoreCCParser != null)
           {
             DirectShowUtil.RemoveFilter(_graphBuilder, filterCodec.CoreCCParser);
-            DirectShowUtil.FinalReleaseComObject(filterCodec.CoreCCParser);
+            DirectShowUtil.ReleaseComObject(filterCodec.CoreCCParser);
             filterCodec.CoreCCParser = null;
             Log.Debug("TSReaderPlayer: Cleanup CoreCCParser");
           }
@@ -901,7 +901,7 @@ namespace MediaPortal.Player
           if (filterCodec != null && filterCodec.AudioCodec != null)
           {
             DirectShowUtil.RemoveFilter(_graphBuilder, filterCodec.AudioCodec);
-            DirectShowUtil.FinalReleaseComObject(filterCodec.AudioCodec);
+            DirectShowUtil.ReleaseComObject(filterCodec.AudioCodec);
             filterCodec.AudioCodec = null;
             Log.Debug("TSReaderPlayer: Cleanup AudioCodec");
           }
@@ -909,7 +909,7 @@ namespace MediaPortal.Player
           if (filterCodec != null && filterCodec.VideoCodec != null)
           {
             DirectShowUtil.RemoveFilter(_graphBuilder, filterCodec.VideoCodec);
-            DirectShowUtil.FinalReleaseComObject(filterCodec.VideoCodec);
+            DirectShowUtil.ReleaseComObject(filterCodec.VideoCodec);
             filterCodec.VideoCodec = null;
             Log.Debug("TSReaderPlayer: Cleanup VideoCodec");
           }
@@ -917,7 +917,7 @@ namespace MediaPortal.Player
           if (filterCodec != null && filterCodec.line21VideoCodec != null)
           {
             DirectShowUtil.RemoveFilter(_graphBuilder, filterCodec.line21VideoCodec);
-            DirectShowUtil.FinalReleaseComObject(filterCodec.line21VideoCodec);
+            DirectShowUtil.ReleaseComObject(filterCodec.line21VideoCodec);
             filterCodec.line21VideoCodec = null;
             Log.Debug("TSReaderPlayer: Cleanup line21VideoCodec");
           }
@@ -925,7 +925,7 @@ namespace MediaPortal.Player
           if (filterCodec != null && filterCodec.line21CoreCCParser != null)
           {
             DirectShowUtil.RemoveFilter(_graphBuilder, filterCodec.line21CoreCCParser);
-            DirectShowUtil.FinalReleaseComObject(filterCodec.line21CoreCCParser);
+            DirectShowUtil.ReleaseComObject(filterCodec.line21CoreCCParser);
             filterCodec.line21CoreCCParser = null;
             Log.Debug("TSReaderPlayer: Cleanup line21CoreCCParser");
           }
@@ -956,7 +956,7 @@ namespace MediaPortal.Player
           if (_graphBuilder != null)
           {
             DirectShowUtil.RemoveFilters(_graphBuilder);
-            DirectShowUtil.FinalReleaseComObject(_graphBuilder);
+            DirectShowUtil.ReleaseComObject(_graphBuilder);
             Log.Debug("TSReaderPlayer: Cleanup _graphBuilder");
           }
 

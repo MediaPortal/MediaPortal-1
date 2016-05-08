@@ -273,15 +273,6 @@ namespace MediaPortal.Player
           _vmr9.Enable(false);
         }
 
-        if (_mediaCtrl != null) DirectShowUtil.FinalReleaseComObject(_mediaCtrl);
-        if (_mediaEvt != null) DirectShowUtil.FinalReleaseComObject(_mediaEvt);
-        if (_mediaSeeking != null) DirectShowUtil.FinalReleaseComObject(_mediaSeeking);
-        if (_mediaSeeking2 != null) DirectShowUtil.FinalReleaseComObject(_mediaSeeking2);
-        if (_videoWin != null) DirectShowUtil.FinalReleaseComObject(_videoWin);
-        if (_basicAudio != null) DirectShowUtil.FinalReleaseComObject(_basicAudio);
-        if (_basicVideo != null) DirectShowUtil.FinalReleaseComObject(_basicVideo);
-        if (_bufferSource != null) DirectShowUtil.FinalReleaseComObject(_bufferSource);
-
         _mediaCtrl = null;
         _mediaEvt = null;
         _mediaSeeking = null;
@@ -293,13 +284,13 @@ namespace MediaPortal.Player
 
         if (_pinVmr9ConnectedTo != null)
         {
-          DirectShowUtil.FinalReleaseComObject(_pinVmr9ConnectedTo);
+          DirectShowUtil.ReleaseComObject(_pinVmr9ConnectedTo);
           _pinVmr9ConnectedTo = null;
         }
 
         if (streamConfig2 != null)
         {
-          DirectShowUtil.FinalReleaseComObject(streamConfig2);
+          DirectShowUtil.ReleaseComObject(streamConfig2);
           streamConfig2 = null;
         }
 
@@ -313,7 +304,7 @@ namespace MediaPortal.Player
             _rotEntry.SafeDispose();
             _rotEntry = null;
           }
-          DirectShowUtil.FinalReleaseComObject(_graphBuilder);
+          DirectShowUtil.ReleaseComObject(_graphBuilder);
           _graphBuilder = null;
         }
 

@@ -1023,7 +1023,7 @@ namespace MediaPortal.GUI.Library
       GUIWindow._mainThreadContext.Post(delegate
       {
         OnVideoWindowChanged?.Invoke();
-      }, null);
+      }, OnVideoWindowChanged);
     }
 
     /// <summary>
@@ -1065,7 +1065,7 @@ namespace MediaPortal.GUI.Library
             _overlay = false;
           }
 
-          if (!_overlay)
+          if (!_overlay && GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR)
           {
             VideoWindow = new Rectangle(0, 0, 1, 1);
           }

@@ -44,8 +44,8 @@ class MPMadPresenter : public CUnknown, public IOsdRenderCallback, public CCritS
     STDMETHODIMP SetDevice(IDirect3DDevice9* pD3DDev);
 
   private:
-    HRESULT RenderToTexture(IDirect3DTexture9* pTexture, WORD cx, WORD cy, WORD arx, WORD ary);
-    HRESULT RenderTexture(IDirect3DVertexBuffer9* pVertexBuf, IDirect3DTexture9* pTexture);
+    void RenderToTexture(IDirect3DTexture9* pTexture, WORD cx, WORD cy, WORD arx, WORD ary);
+    void RenderTexture(IDirect3DVertexBuffer9* pVertexBuf, IDirect3DTexture9* pTexture);
 
     HRESULT SetupOSDVertex(IDirect3DVertexBuffer9* pVertextBuf);
     HRESULT SetupMadDeviceState();

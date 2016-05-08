@@ -2025,7 +2025,7 @@ namespace MediaPortal.Player
         //Add Video Codec
         if (filterCodec.VideoCodec != null)
         {
-          DirectShowUtil.FinalReleaseComObject(filterCodec.VideoCodec);
+          DirectShowUtil.ReleaseComObject(filterCodec.VideoCodec);
           filterCodec.VideoCodec = null;
         }
         filterCodec.VideoCodec = DirectShowUtil.AddFilterToGraph(this._graphBuilder, MatchFilters(selection));
@@ -2050,7 +2050,7 @@ namespace MediaPortal.Player
         //Add Audio Codec
         if (filterCodec.AudioCodec != null)
         {
-          DirectShowUtil.FinalReleaseComObject(filterCodec.AudioCodec);
+          DirectShowUtil.ReleaseComObject(filterCodec.AudioCodec);
           filterCodec.AudioCodec = null;
         }
         filterCodec.AudioCodec = DirectShowUtil.AddFilterToGraph(this._graphBuilder, MatchFilters(selection));

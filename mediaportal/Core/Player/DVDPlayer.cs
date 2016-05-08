@@ -428,19 +428,19 @@ namespace MediaPortal.Player
 
         if (_dvdbasefilter != null)
         {
-          DirectShowUtil.FinalReleaseComObject(_dvdbasefilter);
+          DirectShowUtil.ReleaseComObject(_dvdbasefilter);
           _dvdbasefilter = null;
         }
 
         if (_cmdOption != null)
         {
-          DirectShowUtil.FinalReleaseComObject(_cmdOption);
+          DirectShowUtil.ReleaseComObject(_cmdOption);
         }
         _cmdOption = null;
         _pendingCmd = false;
         if (_line21Decoder != null)
         {
-          DirectShowUtil.FinalReleaseComObject(_line21Decoder);
+          DirectShowUtil.ReleaseComObject(_line21Decoder);
           _line21Decoder = null;
         }
 
@@ -453,13 +453,13 @@ namespace MediaPortal.Player
             _rotEntry.SafeDispose();
             _rotEntry = null;
           }
-          DirectShowUtil.FinalReleaseComObject(_graphBuilder);
+          DirectShowUtil.ReleaseComObject(_graphBuilder);
           _graphBuilder = null;
         }
 
         if (_dvdGraph != null)
         {
-          DirectShowUtil.FinalReleaseComObject(_dvdGraph);
+          DirectShowUtil.ReleaseComObject(_dvdGraph);
           _dvdGraph = null;
         }
         _state = PlayState.Init;
