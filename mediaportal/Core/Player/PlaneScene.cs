@@ -651,19 +651,38 @@ namespace MediaPortal.Player
       return visible ? 0 : 1;  // S_OK, S_FALSE
     }
 
-    public void SetRenderTarget(uint target)
+    public void SetRenderTarget(uint target, uint targetmadVr, Int16 width, Int16 height, Int16 arWidth, Int16 arHeight)
     {
       lock (GUIGraphicsContext.RenderLock)
       {
         IntPtr ptr = (IntPtr)target;
+        IntPtr ptrMadVr = (IntPtr)targetmadVr;
         Surface surface = new Surface(ptr);
+        Surface surfaceMadVr = new Surface(ptrMadVr);
         GUIGraphicsContext.DX9Device.SetRenderTarget(0, surface);
+        try
+        {
+          lock (GUIGraphicsContext.RenderModeSwitch)
+            unsafe
+            {
+              grabber?.OnFrame(width, height, arWidth, arHeight, (uint) surfaceMadVr.UnmanagedComPointer,
+                FrameGrabber.FrameSource.Video);
+            }
+        }
+        catch (Exception ex)
+        {
+        }
+        surface.ReleaseGraphics();
         surface.Dispose();
+        surfaceMadVr.ReleaseGraphics();
+        surfaceMadVr.Dispose();
       }
     }
 
     public void SetSubtitleDevice(IntPtr device)
     {
+      // Set madVR D3D Device
+      GUIGraphicsContext.DX9DeviceMadVr = new Device(device);
       ISubEngine engine = SubEngine.GetInstance(true);
       if (engine != null)
       {

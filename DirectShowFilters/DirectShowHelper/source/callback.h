@@ -22,7 +22,7 @@ DECLARE_INTERFACE_(IVMR9Callback, IUnknown)
   STDMETHOD(SetSampleTime)(REFERENCE_TIME nsSampleTime)PURE;
   STDMETHOD(RenderGui)(WORD cx, WORD cy, WORD arx, WORD ary)PURE;
   STDMETHOD(RenderOverlay)(WORD cx, WORD cy, WORD arx, WORD ary)PURE;
-  STDMETHOD(SetRenderTarget)(DWORD pTarget)PURE;
+  STDMETHOD(SetRenderTarget)(DWORD pTarget, DWORD pTargetmadVr, WORD cx, WORD cy, WORD arx, WORD ary)PURE;
   STDMETHOD(SetSubtitleDevice)(DWORD pDevice)PURE;
   STDMETHOD(RenderSubtitle)(REFERENCE_TIME frameStart, int left, int top, int right, int bottom, int width, int height)PURE;
 };

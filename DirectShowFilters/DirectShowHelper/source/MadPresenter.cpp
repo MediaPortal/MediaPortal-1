@@ -198,7 +198,7 @@ HRESULT MPMadPresenter::ClearBackground(LPCSTR name, REFERENCE_TIME frameStart, 
   m_dwHeight = static_cast<WORD>(fullOutputRect->bottom) - static_cast<WORD>(fullOutputRect->top);
   m_dwWidth = static_cast<WORD>(fullOutputRect->right) - static_cast<WORD>(fullOutputRect->left);
 
-  if (FAILED(hr = RenderToTexture(m_pMPTextureGui)))
+  if (FAILED(hr = RenderToTexture(m_pMPTextureGui, videoWidth, videoHeight, videoWidth, videoHeight)))
     return hr;
 
   if (FAILED(hr = m_deviceState.Store()))
@@ -245,7 +245,7 @@ HRESULT MPMadPresenter::RenderOsd(LPCSTR name, REFERENCE_TIME frameStart, RECT* 
   m_dwHeight = static_cast<WORD>(fullOutputRect->bottom) - static_cast<WORD>(fullOutputRect->top);
   m_dwWidth = static_cast<WORD>(fullOutputRect->right) - static_cast<WORD>(fullOutputRect->left);
 
-  if (FAILED(hr = RenderToTexture(m_pMPTextureOsd)))
+  if (FAILED(hr = RenderToTexture(m_pMPTextureOsd, videoWidth, videoHeight, videoWidth, videoHeight)))
     return hr;
 
   if (FAILED(hr = m_deviceState.Store()))
@@ -275,17 +275,18 @@ HRESULT MPMadPresenter::RenderOsd(LPCSTR name, REFERENCE_TIME frameStart, RECT* 
   return uiVisible ? CALLBACK_USER_INTERFACE : CALLBACK_EMPTY;
 }
 
-HRESULT MPMadPresenter::RenderToTexture(IDirect3DTexture9* pTexture)
+HRESULT MPMadPresenter::RenderToTexture(IDirect3DTexture9* pTexture, WORD cx, WORD cy, WORD arx, WORD ary)
 {
   if (!m_pDevice)
     return S_FALSE;
   HRESULT hr = E_UNEXPECTED;
   IDirect3DSurface9* pSurface = nullptr; // This will be released by C# side
+  IDirect3DSurface9* SurfaceMadVr = nullptr; // This will be released by C# side
   if (SUCCEEDED(hr = pTexture->GetSurfaceLevel(0, &pSurface)))
   {
-    if (SUCCEEDED(hr = m_pCallback->SetRenderTarget((DWORD)pSurface)))
+    m_pMadD3DDev->GetBackBuffer(0, 0, D3DBACKBUFFER_TYPE_MONO, &SurfaceMadVr);
+    if (SUCCEEDED(hr = m_pCallback->SetRenderTarget(reinterpret_cast<DWORD>(pSurface), reinterpret_cast<DWORD>(SurfaceMadVr), cx, cy, arx, ary)))
       m_pDevice->Clear(0, NULL, D3DCLEAR_TARGET, D3DXCOLOR(0, 0, 0, 0), 1.0f, 0);
-    //m_deviceState.Store_Surface(pSurface);
   }
 }
 

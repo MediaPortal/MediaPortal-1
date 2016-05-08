@@ -73,7 +73,7 @@ namespace MediaPortal.Player
     int RenderOverlay(Int16 cx, Int16 cy, Int16 arx, Int16 ary);
 
     [PreserveSig]
-    void SetRenderTarget(uint target);
+    void SetRenderTarget(uint target, uint targetmadVr, Int16 cx, Int16 cy, Int16 arx, Int16 ary);
 
     [PreserveSig]
     void SetSubtitleDevice(IntPtr device);
@@ -1324,6 +1324,7 @@ namespace MediaPortal.Player
         _scene = null;
         g_vmr9 = null;
         _isVmr9Initialized = false;
+        GUIGraphicsContext.DX9DeviceMadVr = null;
       }
       catch (Exception)
       {
@@ -1331,6 +1332,7 @@ namespace MediaPortal.Player
         _scene = null;
         g_vmr9 = null;
         _isVmr9Initialized = false;
+        GUIGraphicsContext.DX9DeviceMadVr = null;
       }
       finally
       {
