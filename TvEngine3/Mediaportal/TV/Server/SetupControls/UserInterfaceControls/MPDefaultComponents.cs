@@ -37,7 +37,6 @@ namespace Mediaportal.TV.Server.SetupControls.UserInterfaceControls
     public MPContextMenuStrip() : base() { }
     public MPContextMenuStrip(System.ComponentModel.IContainer container) : base(container) { }
   }
-  public class MPDataGridView : DataGridView { }
   public class MPDataGridViewButtonColumn : DataGridViewButtonColumn { }
   public class MPDataGridViewCheckBoxColumn : DataGridViewCheckBoxColumn
   {
@@ -57,7 +56,6 @@ namespace Mediaportal.TV.Server.SetupControls.UserInterfaceControls
     public MPMaskedTextBox(System.ComponentModel.MaskedTextProvider maskedTextProvider) : base(maskedTextProvider) { }
     public MPMaskedTextBox(string mask) : base(mask) { }
   }
-  public class MPNumericUpDown : NumericUpDown { }
   public class MPPanel : Panel { }
   public class MPPictureBox : PictureBox { }
   public class MPProgressBar : ProgressBar { }

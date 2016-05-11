@@ -1,5 +1,6 @@
 using Mediaportal.TV.Server.SetupControls.UserInterfaceControls;
-namespace Mediaportal.TV.Server.SetupTV
+
+namespace Mediaportal.TV.Server.SetupControls
 {
   partial class NotifyForm
   {

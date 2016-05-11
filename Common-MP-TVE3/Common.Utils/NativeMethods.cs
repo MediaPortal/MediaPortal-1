@@ -550,6 +550,16 @@ namespace MediaPortal.Common.Utils
 
     #region kernel32.dll
 
+    /// <summary>
+    /// Cancels all pending input and output (I/O) operations that are issued by the calling thread for the specified file. The function does not cancel I/O operations that other threads issue for a file handle.
+    /// To cancel I/O operations from another thread, use the CancelIoEx function.
+    /// </summary>
+    /// <param name="hFile">A handle to the file. The function cancels all pending I/O operations for this file handle.</param>
+    /// <returns>If the function succeeds, the return value is nonzero. The cancel operation for all pending I/O operations issued by the calling thread for the specified file handle was successfully requested. The thread can use the GetOverlappedResult function to determine when the I/O operations themselves have been completed. If the function fails, the return value is zero (0). To get extended error information, call the GetLastError function.</returns>
+    [DllImport("kernel32.dll", SetLastError = true)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    public static extern bool CancelIo(SafeFileHandle hFile);
+
     [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
     public static extern SafeFileHandle CreateFile(string lpFileName,
                                                     AccessMask dwDesiredAccess,
@@ -595,6 +605,18 @@ namespace MediaPortal.Common.Utils
     public static extern IntPtr GetModuleHandle(string lpModuleName);
 
     /// <summary>
+    /// Retrieves the results of an overlapped operation on the specified file, named pipe, or communications device. To specify a timeout interval or wait on an alertable thread, use GetOverlappedResultEx.
+    /// </summary>
+    /// <param name="hFile">A handle to the file, named pipe, or communications device. This is the same handle that was specified when the overlapped operation was started by a call to the ReadFile, WriteFile, ConnectNamedPipe, TransactNamedPipe, DeviceIoControl, or WaitCommEvent function.</param>
+    /// <param name="lpOverlapped">A pointer to an OVERLAPPED structure that was specified when the overlapped operation was started.</param>
+    /// <param name="lpNumberOfBytesTransferred">A pointer to a variable that receives the number of bytes that were actually transferred by a read or write operation. For a TransactNamedPipe operation, this is the number of bytes that were read from the pipe. For a DeviceIoControl operation, this is the number of bytes of output data returned by the device driver. For a ConnectNamedPipe or WaitCommEvent operation, this value is undefined.</param>
+    /// <param name="bWait">If this parameter is TRUE, and the Internal member of the lpOverlapped structure is STATUS_PENDING, the function does not return until the operation has been completed. If this parameter is FALSE and the operation is still pending, the function returns FALSE and the GetLastError function returns ERROR_IO_INCOMPLETE.</param>
+    /// <returns>If the function succeeds, the return value is nonzero. If the function fails, the return value is zero. To get extended error information, call GetLastError.</returns>
+    [DllImport("kernel32.dll", SetLastError = true)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    public static extern bool GetOverlappedResult(SafeFileHandle hFile, IntPtr lpOverlapped, out uint lpNumberOfBytesTransferred, [MarshalAs(UnmanagedType.Bool)] bool bWait);
+
+    /// <summary>
     /// The GetProcAddress function retrieves the address of an exported function or variable from the specified dynamic-link library (DLL).
     /// </summary>
     /// <param name="hModule">Handle to the DLL module that contains the function or variable. The LoadLibrary or GetModuleHandle function returns this handle.</param>
@@ -628,6 +650,10 @@ namespace MediaPortal.Common.Utils
     [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
     public static extern IntPtr LoadLibrary(string lpLibFileName);
 
+    [DllImport("kernel32.dll", SetLastError = true)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    public static extern bool ReadFile(SafeFileHandle hFile, IntPtr lpBuffer, uint nNumberOfBytesToRead, out uint lpNumberOfBytesRead, IntPtr lpOverlapped);
+
     /// <summary>
     /// The SetDllDirectory function adds a directory to the search path used to locate DLLs for the application.
     /// </summary>
@@ -636,6 +662,10 @@ namespace MediaPortal.Common.Utils
     [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
     [return: MarshalAs(UnmanagedType.Bool)]
     public static extern bool SetDllDirectory(string PathName);
+
+    [DllImport("kernel32.dll", SetLastError = true)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    public static extern bool WriteFile(SafeFileHandle hFile, byte[] lpBuffer, uint nNumberOfBytesToWrite, out uint lpNumberOfBytesWritten, IntPtr lpOverlapped);
 
     #endregion
 
@@ -1435,7 +1465,7 @@ namespace MediaPortal.Common.Utils
     public static extern IntPtr DispatchMessage(ref MSG msg);
 
     [DllImport("user32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
-    public static extern int GetMessage(ref MSG msg, IntPtr hWnd, int uMsgFilterMin, int uMsgFilterMax);
+    public static extern int GetMessage(ref MSG msg, IntPtr hWnd, uint uMsgFilterMin, uint uMsgFilterMax);
 
     [DllImport("user32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
     public static extern bool PostThreadMessage(uint idThread, WindowsMessage Msg, IntPtr wParam, IntPtr lParam);

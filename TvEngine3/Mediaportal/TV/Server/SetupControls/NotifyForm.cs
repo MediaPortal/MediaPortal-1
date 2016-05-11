@@ -21,7 +21,7 @@
 using System;
 using System.Windows.Forms;
 
-namespace Mediaportal.TV.Server.SetupTV
+namespace Mediaportal.TV.Server.SetupControls
 {
   public partial class NotifyForm : Form
   {
