@@ -21,12 +21,12 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 // Implementation
 
 #include "TsMPEG2TransportStreamFramer.h"
+#include "StreamingDefs.h"
 
 #ifndef _GROUPSOCK_HELPER_HH
 #include <GroupsockHelper.hh>   // gettimeofday()
 #endif
 
-#define TRANSPORT_PACKET_SIZE 188
 #define NEW_DURATION_WEIGHT 0.5
 // How much weight to give to the latest duration measurement (must be <= 1)
 #define TIME_ADJUSTMENT_FACTOR 0.8
@@ -104,8 +104,6 @@ struct timeval presentationTime,
 		TsMPEG2TransportStreamFramer* framer = (TsMPEG2TransportStreamFramer*)clientData;
 		framer->afterGettingFrame1(frameSize, presentationTime);
 }
-
-#define TRANSPORT_SYNC_BYTE 0x47
 
 void TsMPEG2TransportStreamFramer::afterGettingFrame1(unsigned frameSize,
 struct timeval presentationTime) {
@@ -228,12 +226,14 @@ void TsMPEG2TransportStreamFramer
 		// We've seen this PID's PCR before; update our per-packet duration estimate:
 		double clockDiff = clock - pidStatus->lastClock;
 		double durationPerPacket = clockDiff/(fTSPacketCount - pidStatus->lastPacketNum);
+		
+		double timeDiff = timeNow - pidStatus->lastRealTime;
 			
 		 //Detect PCR rollover or large forward jumps in PCR (maximum normal clockDiff is approx. +100ms)
-	  if ((clockDiff < 0.0) || (clockDiff > 0.25) || (discontinuity_indicator > 0))
+	  if ((clockDiff < 0.0) || (clockDiff > 0.25) || (timeDiff > 0.25) || (discontinuity_indicator > 0))
     {
       discontinuity_indicator |= 0x01; // force a reset of the stored clock and real-time values
-	    LogDebug("TsMp2TSFramer - PCR jump: %f s, packet count %d", (float)clockDiff, fTSPacketCount);  
+	    LogDebug("TsMp2TSFramer - PCR jump: %f s, Time jump: : %f s, packet count %d", (float)clockDiff, (float)timeDiff, fTSPacketCount);  
     } else {
   		// Hack (suggested by "Romain"): Don't update our estimate if this PCR appeared unusually quickly.
   		// (This can produce more accurate estimates for wildly VBR streams.)

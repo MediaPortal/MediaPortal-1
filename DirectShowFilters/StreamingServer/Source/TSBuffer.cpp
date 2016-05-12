@@ -25,25 +25,30 @@
 */
 #include "StdAfx.h"
 #include "TSBuffer.h"
-
-#define TS_PACKET_SIZE 188
-#define TV_BUFFER_ITEM_SIZE	(TS_PACKET_SIZE * 172)
-#define RADIO_BUFFER_ITEM_SIZE	(TS_PACKET_SIZE * 10)
-
-//Limit contiguous null TS packet sending to 5 sec maximum
-#define NULL_TS_TIMEOUT 5000
+#include "StreamingDefs.h"
 
 extern void LogDebug(const char *fmt, ...) ;
 CTSBuffer::CTSBuffer()
 {
 	m_pFileReader = NULL;
 	m_lItemOffset = 0;
-	m_lTSBufferItemSize = TV_BUFFER_ITEM_SIZE; 
+	m_lTSBufferItemSize = PREFERRED_FRAME_SIZE; 
+	m_lTSItemsPerRead = TV_BUFFER_ITEMS;
 
 	//round to nearest byte boundary.
 
 	m_maxReadIterations = 0;
 	m_lastGoodReadTime = timeGetTime();
+	m_lastEmptyReadTime = m_lastGoodReadTime;
+	m_bWasEmpty = false;
+	
+	m_eChannelType = TV;
+
+	m_maxReqSize = 0;
+	m_minReqSize = LONG_MAX;
+	m_maxReadSize = 0;
+	m_minReadSize = LONG_MAX;
+
   LogDebug("CTSBuffer::ctor");
 }
 
@@ -75,6 +80,13 @@ void CTSBuffer::Clear()
 	m_lItemOffset = 0;
 	
 	m_lastGoodReadTime = timeGetTime();
+	m_lastEmptyReadTime = m_lastGoodReadTime;
+	m_bWasEmpty = false;
+	
+	m_maxReqSize = 0;
+	m_minReqSize = LONG_MAX;
+	m_maxReadSize = 0;
+	m_minReadSize = LONG_MAX;
 }
 
 long CTSBuffer::Count()
@@ -100,21 +112,19 @@ void CTSBuffer::SetChannelType(int channelType)
 	//	Tv
 	if(channelType == 0)
 	{
-		LogDebug("CTSBuffer::SetChannelType() - Buffer size set to TV (%d)", TV_BUFFER_ITEM_SIZE);
-		m_lTSBufferItemSize = TV_BUFFER_ITEM_SIZE;
+		m_lTSItemsPerRead = TV_BUFFER_ITEMS;
 		m_eChannelType = TV;
-	}
-
-	//	Radio
-	else
+		LogDebug("CTSBuffer::SetChannelType() - Read size set to TV (%d)", m_lTSBufferItemSize * m_lTSItemsPerRead);
+	}	
+	else //	Radio
 	{
-		LogDebug("CTSBuffer::SetChannelType() - Buffer size set to radio (%d)", RADIO_BUFFER_ITEM_SIZE);
-		m_lTSBufferItemSize = RADIO_BUFFER_ITEM_SIZE;
+		m_lTSItemsPerRead = RADIO_BUFFER_ITEMS;
 		m_eChannelType = Radio;
+		LogDebug("CTSBuffer::SetChannelType() - Read size set to Radio (%d)", m_lTSBufferItemSize * m_lTSItemsPerRead);
 	}
 }
 
-HRESULT CTSBuffer::Require(long nBytes, BOOL bIgnoreDelay)
+HRESULT CTSBuffer::Require(long nBytes, long *lReadBytes)
 {
 	if (!m_pFileReader)
 		return E_POINTER;
@@ -122,14 +132,21 @@ HRESULT CTSBuffer::Require(long nBytes, BOOL bIgnoreDelay)
 	CAutoLock lock (&m_BufferLock);
 	long bytesAvailable = Count();
 	if (nBytes <= bytesAvailable)
+	{
+	  *lReadBytes = nBytes;
 		return S_OK;
+	}
+
+	*lReadBytes = bytesAvailable;
 
 	//	Calculate how many data items we need
-	UINT bytesRequired = nBytes - bytesAvailable;
+	UINT bytesRequired = nBytes - bytesAvailable;	
 	UINT dataItemsRequired = bytesRequired / m_lTSBufferItemSize;
 
 	if((bytesRequired % m_lTSBufferItemSize) > 0)
 		dataItemsRequired++;
+		
+  dataItemsRequired = max(m_lTSItemsPerRead, dataItemsRequired);
 
 	//	Work out the total number of bytes we need to read and allocate a buffer
 	UINT bytesToRead = dataItemsRequired * m_lTSBufferItemSize;
@@ -142,13 +159,11 @@ HRESULT CTSBuffer::Require(long nBytes, BOOL bIgnoreDelay)
 
 	do
 	{
-		if(iteration > 0)
-		{
-			Sleep(5); //Sleep for 5ms per iteration
-		}
-
 		ULONG bytesRead = 0;
 		HRESULT hr = m_pFileReader->Read(readBuffer + totalBytesRead, bytesToRead - totalBytesRead, &bytesRead);
+		
+		totalBytesRead += bytesRead;
+		iteration++;
 
 		if(FAILED(hr))
 		{
@@ -159,19 +174,52 @@ HRESULT CTSBuffer::Require(long nBytes, BOOL bIgnoreDelay)
 			return hr;
 		}
 
+	  dataItemsRequired = (totalBytesRead / m_lTSBufferItemSize);
+	  if (dataItemsRequired > 0)
+	  { 
+	    //Check if enough delay time since last 'empty' read - need at least MIN_FILE_BUFFER_TIME (ms)
+	    //of data buffered in file to avoid stutter problems on restart of good reads.
+      DWORD readTime = timeGetTime();
+      if (m_bWasEmpty && ((readTime - m_lastEmptyReadTime) < MIN_FILE_BUFFER_TIME))
+      {
+        m_pFileReader->SetFilePointer(filePointer,FILE_BEGIN); //Restore file read position
+  			delete[] readBuffer;
+			  return E_FAIL;
+      }
+		  if (m_bWasEmpty)
+		  {
+			  LogDebug("CTSBuffer::Require() - First read after EOF, total stall: %d ms, bytes: %d", readTime - m_lastEmptyReadTime, totalBytesRead);
+			}
+			m_bWasEmpty = false;
+	    m_lastGoodReadTime = readTime;
+
+	    //We have at least one frame of data, so just add all complete frames onto the queue and correct the file pointer position
+	    UINT discardBytes = (totalBytesRead % m_lTSBufferItemSize); //Keep complete frames only - discard partial frame data
+	    if (discardBytes > 0)
+	    {
+  	    totalBytesRead -= discardBytes;
+        m_pFileReader->SetFilePointer(filePointer+totalBytesRead, FILE_BEGIN);
+      }
+	    break;
+	  }
+
 		if(iteration >= 20)
 		{
-			//LogDebug("CTSBuffer::Require() - Max iterations reached, iteration %d", iteration);
+		  if (!m_bWasEmpty)
+		  {
+			  LogDebug("CTSBuffer::Require() - End of file, bytes available %d, bytes requested %d", (bytesAvailable + totalBytesRead), nBytes);
+			}
 			m_maxReadIterations = 0;			
       m_pFileReader->SetFilePointer(filePointer,FILE_BEGIN); //Restore file read position
 			delete[] readBuffer;
-			return S_FALSE; //Not enough data
+			m_lastEmptyReadTime = timeGetTime();
+			m_bWasEmpty = true;
+			return E_FAIL; //'Empty' read - not enough data to satisfy request
 		}
-
-		totalBytesRead += bytesRead;
-		iteration++;
+		
+		Sleep(5); //Sleep for 5ms per iteration
 	}
-	while(totalBytesRead < bytesToRead);
+	while(true);
 
   if (iteration > m_maxReadIterations) 
   {
@@ -179,7 +227,7 @@ HRESULT CTSBuffer::Require(long nBytes, BOOL bIgnoreDelay)
 	  LogDebug("CTSBuffer::Require() - m_maxReadIterations: %d", m_maxReadIterations);
   }		
 
-	//	Success! Copy all bytes to data items
+	// Copy all bytes to data items
 	for(UINT i = 0; i < dataItemsRequired; i++)
 	{
 		BYTE* newDataItem = new BYTE[m_lTSBufferItemSize];
@@ -190,21 +238,35 @@ HRESULT CTSBuffer::Require(long nBytes, BOOL bIgnoreDelay)
 
 	delete[] readBuffer;
 
+  //Return the data amount requested, or less if full amount is not available
+	*lReadBytes = min(nBytes, bytesAvailable + (long)totalBytesRead);
+
 	return S_OK;
 }
 
-HRESULT CTSBuffer::DequeFromBuffer(BYTE *pbData, long lDataLength)
+HRESULT CTSBuffer::DequeFromBuffer(BYTE *pbData, long lDataLength, long *lReadBytes)
 {
-	CAutoLock lock (&m_BufferLock);
-	HRESULT hr = Require(lDataLength);
-	if (hr!=S_OK)
+	CAutoLock lock (&m_BufferLock);     
+		
+	//Debug logging
+	if (lDataLength > m_maxReqSize) {m_maxReqSize = lDataLength; LogDebug("CTSBuffer - m_maxReqSize: %d)", m_maxReqSize);}
+	if (lDataLength < m_minReqSize) {m_minReqSize = lDataLength; LogDebug("CTSBuffer - m_minReqSize: %d)", m_minReqSize);}
+	
+	HRESULT hr = Require(lDataLength, lReadBytes);
+	if (FAILED(hr))
 		return hr;
+		
+	if (*lReadBytes<=0)
+		return S_FALSE;
 
 	long bytesWritten = 0;
-	while (bytesWritten < lDataLength)
+	while (bytesWritten < *lReadBytes)
 	{
 		if(!m_Array.size() || m_Array.size() <= 0)
-			return E_FAIL;
+	  {
+	    *lReadBytes = 0;
+			return S_FALSE;
+		}
 
 		BYTE *item = m_Array.at(0);
 
@@ -221,74 +283,86 @@ HRESULT CTSBuffer::DequeFromBuffer(BYTE *pbData, long lDataLength)
 			m_lItemOffset -= m_lTSBufferItemSize;	//should result in zero
 		}
 	}
-	m_lastGoodReadTime = timeGetTime();
-	return S_OK;
-}
-
-HRESULT CTSBuffer::ReadFromBuffer(BYTE *pbData, long lDataLength, long lOffset)
-{
-	if (!m_pFileReader)
-		return E_POINTER;
-
-	CAutoLock lock (&m_BufferLock);
-	HRESULT hr = Require(lOffset + lDataLength);
-	if (FAILED(hr))
-		return hr;
-
-	long bytesWritten = 0;
-	long itemIndex = 0;
-	lOffset += m_lItemOffset;
-
-	while (bytesWritten < lDataLength)
-	{
-		while (lOffset >= m_lTSBufferItemSize)
-		{
-			lOffset -= m_lTSBufferItemSize;
-
-			itemIndex++;
-			if((m_Array.size() == 0) || ((long)m_Array.size() <= itemIndex))
-				return E_FAIL;
-		}
-
-		if((m_Array.size() == 0) || ((long)m_Array.size() <= itemIndex))
-			return E_FAIL;
-
-		BYTE *item = m_Array.at(itemIndex);
-
-		long copyLength = min(m_lTSBufferItemSize-lOffset, lDataLength-bytesWritten);
-		{
-			memcpy(pbData + bytesWritten, item + lOffset, copyLength);
-
-			bytesWritten += copyLength;
-			lOffset += copyLength;
-		}
-	}
+	
+	*lReadBytes = bytesWritten;
+	
+	if (bytesWritten != lDataLength) {LogDebug("CTSBuffer - DequeFromBuffer() length mismatch, request: %d, return: %d)", lDataLength, bytesWritten);}
 
 	return S_OK;
 }
 
-HRESULT CTSBuffer::GetNullTsBuffer(BYTE *pbData, long lDataLength)
+//HRESULT CTSBuffer::ReadFromBuffer(BYTE *pbData, long lDataLength, long lOffset)
+//{
+//	if (!m_pFileReader)
+//		return E_POINTER;
+//
+//	CAutoLock lock (&m_BufferLock);
+//	long lReadBytes = 0;
+//	HRESULT hr = Require(lOffset + lDataLength, &lReadBytes);
+//	if (FAILED(hr))
+//		return hr;
+//
+//	long bytesWritten = 0;
+//	long itemIndex = 0;
+//	lOffset += m_lItemOffset;
+//
+//	while (bytesWritten < lDataLength)
+//	{
+//		while (lOffset >= m_lTSBufferItemSize)
+//		{
+//			lOffset -= m_lTSBufferItemSize;
+//
+//			itemIndex++;
+//			if((m_Array.size() == 0) || ((long)m_Array.size() <= itemIndex))
+//				return E_FAIL;
+//		}
+//
+//		if((m_Array.size() == 0) || ((long)m_Array.size() <= itemIndex))
+//			return E_FAIL;
+//
+//		BYTE *item = m_Array.at(itemIndex);
+//
+//		long copyLength = min(m_lTSBufferItemSize-lOffset, lDataLength-bytesWritten);
+//		{
+//			memcpy(pbData + bytesWritten, item + lOffset, copyLength);
+//
+//			bytesWritten += copyLength;
+//			lOffset += copyLength;
+//		}
+//	}
+//
+//	return S_OK;
+//}
+
+HRESULT CTSBuffer::GetNullTsBuffer(BYTE *pbData, long lDataLength, long *lReadBytes)
 {
-  if ((timeGetTime()- m_lastGoodReadTime) > NULL_TS_TIMEOUT)
-    return E_FAIL; //Limit contiguous null packet sending
+  if ((timeGetTime() - m_lastGoodReadTime) > NULL_TS_TIMEOUT)
+  {
+    //Limit contiguous null packet sending to NULL_TS_TIMEOUT time
+    *lReadBytes = 0;
+    return E_FAIL;
+  }
 
   //Fill up a buffer with NULL transport stream packets...
-	BYTE* nullTsPacket = new BYTE[TS_PACKET_SIZE];
-  ZeroMemory((void*)nullTsPacket, TS_PACKET_SIZE);
+	BYTE* nullTsPacket = new BYTE[TRANSPORT_PACKET_SIZE];
+  ZeroMemory((void*)nullTsPacket, TRANSPORT_PACKET_SIZE);
   //Add TS header (for null packet)
-  nullTsPacket[0] = 0x47; //Sync Byte
+  nullTsPacket[0] = TRANSPORT_SYNC_BYTE; //Sync Byte
   nullTsPacket[1] = 0x1F; //NULL packet PID
   nullTsPacket[2] = 0xFF; //NULL packet PID
   nullTsPacket[3] = 0x10; //not scrambled, payload only, continuity zero
   
+	lDataLength -= (lDataLength % TRANSPORT_PACKET_SIZE); //Adjust to be an integral number of TS packets in size
 	long bytesWritten = 0;
 	while (bytesWritten < lDataLength)
 	{
-		long copyLength = min(TS_PACKET_SIZE, lDataLength-bytesWritten);
+		long copyLength = min(TRANSPORT_PACKET_SIZE, lDataLength-bytesWritten);
 		memcpy(pbData + bytesWritten, nullTsPacket, copyLength);
 
 		bytesWritten += copyLength;
 	}
+	  
+	*lReadBytes = bytesWritten;
 	
 	delete[] nullTsPacket;
 	return S_OK;

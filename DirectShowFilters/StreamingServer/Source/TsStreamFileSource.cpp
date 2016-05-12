@@ -168,13 +168,14 @@ void TsStreamFileSource::doGetNextFrame() {
 		fMaxSize = fPreferredFrameSize;
 	}
 	
-	if (m_buffer.DequeFromBuffer(fTo,fMaxSize)!=S_OK)
+	long lReadBytes = 0;
+	
+	if (m_buffer.DequeFromBuffer(fTo,fMaxSize, &lReadBytes)!=S_OK)
 	{
 	  if (reader->GetTimeshift())
 	  {
 	    //Timeshifting is theoretically endless, so send NULL TS packets as there is not enough real data to send
-	    fMaxSize -= (fMaxSize % 188); //Adjust to be an integral number of TS packets in size (it should be anyway)
-    	if (m_buffer.GetNullTsBuffer(fTo,fMaxSize)!=S_OK)
+    	if (m_buffer.GetNullTsBuffer(fTo,fMaxSize, &lReadBytes)!=S_OK)
     	{
   			LogDebug("ts:GetNullTsBuffer() timeout, closing stream"); //See TSBuffer.cpp for timeout value
   			handleClosure(this);
@@ -189,7 +190,7 @@ void TsStreamFileSource::doGetNextFrame() {
 	  }
 	}
 	
-	fFrameSize = fMaxSize;
+	fFrameSize = lReadBytes;
 
   __int64 fileSize = reader->GetFileSize();
   

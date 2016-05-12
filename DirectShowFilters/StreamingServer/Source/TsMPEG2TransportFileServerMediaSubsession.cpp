@@ -6,6 +6,7 @@
 #include "TsStreamFileSource.h"
 #include "TsMPEG2TransportStreamFramer.h"
 #include "MultiFileReader.h"
+#include "StreamingDefs.h"
 
 extern void LogDebug(const char *fmt, ...) ;
 extern void LogDebug(const wchar_t *fmt, ...) ;
@@ -51,16 +52,12 @@ TsMPEG2TransportFileServerMediaSubsession::~TsMPEG2TransportFileServerMediaSubse
 	LogDebug(L"TsMp2TFSMediaSubsession::dtor (%s)", m_fileName);  
 }
 
-#define TRANSPORT_PACKET_SIZE 188
-#define TRANSPORT_PACKETS_PER_NETWORK_PACKET 7
-// The product of these two numbers must be enough to fit within a network packet
-
 FramedSource* TsMPEG2TransportFileServerMediaSubsession::createNewStreamSource(unsigned /*clientSessionId*/, unsigned& estBitrate) 
 {
 	estBitrate = 15000; // kbps, estimate
 
 	// Create the video source:
-	unsigned const inputDataChunkSize= TRANSPORT_PACKETS_PER_NETWORK_PACKET*TRANSPORT_PACKET_SIZE;
+	unsigned const inputDataChunkSize = PREFERRED_FRAME_SIZE;
 	TsStreamFileSource* fileSource= TsStreamFileSource::createNew(envir(), m_fileName, inputDataChunkSize, 0, m_iChannelType);
 	if (fileSource == NULL) return NULL;
 	fFileSize = fileSource->fileSize();

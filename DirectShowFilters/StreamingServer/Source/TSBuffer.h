@@ -44,10 +44,10 @@ public:
 	void Clear();
 	long Count();
 	void SetChannelType(int channelType);
-	HRESULT Require(long nBytes, BOOL bIgnoreDelay = FALSE);
-	HRESULT DequeFromBuffer(BYTE *pbData, long lDataLength);
-	HRESULT ReadFromBuffer(BYTE *pbData, long lDataLength, long lOffset);
-  HRESULT GetNullTsBuffer(BYTE *pbData, long lDataLength);
+	HRESULT Require(long nBytes, long *lReadBytes);
+	HRESULT DequeFromBuffer(BYTE *pbData, long lDataLength, long *lReadBytes);
+//	HRESULT ReadFromBuffer(BYTE *pbData, long lDataLength, long lOffset);
+  HRESULT GetNullTsBuffer(BYTE *pbData, long lDataLength, long *lReadBytes);
 
 protected:
 	FileReader *m_pFileReader;
@@ -58,5 +58,12 @@ protected:
 	long m_lTSBufferItemSize;
 	ChannelType	m_eChannelType;
 	UINT m_maxReadIterations;
+	UINT m_lTSItemsPerRead;
 	DWORD m_lastGoodReadTime;
+	DWORD m_lastEmptyReadTime;
+	bool m_bWasEmpty;
+	long m_maxReqSize;
+	long m_minReqSize;
+	long m_maxReadSize;
+	long m_minReadSize;
 };
