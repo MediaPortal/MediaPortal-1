@@ -218,21 +218,151 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MdPlugin
     private static readonly int PIDS_TO_DECRYPT_SIZE = Marshal.SizeOf(typeof(PidsToDecrypt));   // 128
     private const int MAX_PID_COUNT = 63;
 
+    private static readonly string CONFIG_FOLDER = PathManager.BuildAssemblyRelativePath("MDPLUGINS");
+
     #endregion
 
     #region variables
 
     private bool _isMdPlugin = false;
+    private string _tunerExternalId = null;
+    private string _tunerName = null;
     private bool _isCaInterfaceOpen = false;
-    private HashSet<string> _providers = new HashSet<string>();
-    private string _pluginFolder = PathManager.BuildAssemblyRelativePath("MDPLUGINS");
-    private string _configurationFolderPrefix = string.Empty;
-    private IFilterGraph2 _graph = null;
+
     private int _slotCount = 0;
     private List<DecryptSlot> _slots = null;
     private List<PendingChannel> _pendingNewChannels = null;
+    private HashSet<string> _providers = new HashSet<string>();
+    private string _pluginFolderPrefix = string.Empty;
+
+    private IFilterGraph2 _graph = null;
+    private IBaseFilter _upstreamFilter = null;
 
     #endregion
+
+    /// <summary>
+    /// Load the configuration for a tuner.
+    /// </summary>
+    /// <param name="tunerExternalId">The tuner's external identifier.</param>
+    /// <param name="tunerName">The tuner's name.</param>
+    /// <param name="slotCount">The number of decrypt slots that the tuner is configured to have.</param>
+    /// <param name="providers">The set of provider names that the tuner is configured to be able to decrypt.</param>
+    /// <param name="pluginFolderPrefix">The prefix for the tuner's decrypt plugin folders.</param>
+    private void GetTunerConfig(string tunerExternalId, string tunerName, out int slotCount, out HashSet<string> providers, out string pluginFolderPrefix)
+    {
+      slotCount = 1;
+      providers = new HashSet<string>();    // all
+      pluginFolderPrefix = tunerName;
+
+      try
+      {
+        string configFile = Path.Combine(CONFIG_FOLDER, "MDAPICards.xml");
+        XmlDocument doc = new XmlDocument();
+        XmlNode rootNode = null;
+        XmlNode tunerNode = null;
+        if (File.Exists(configFile))
+        {
+          this.LogDebug("MD plugin: searching for configuration, external identifier = {0}", tunerExternalId);
+          doc.Load(configFile);
+          rootNode = doc.SelectSingleNode("/cards");
+          if (rootNode != null)
+          {
+            XmlNodeList tunerList = doc.SelectNodes("/cards/card");
+            if (tunerList != null)
+            {
+              this.LogDebug("MD plugin: found {0} configuration(s)", tunerList.Count);
+              foreach (XmlNode node in tunerList)
+              {
+                if (node.Attributes["DevicePath"].Value.Equals(tunerExternalId))
+                {
+                  // We found the configuration for the tuner.
+                  this.LogDebug("MD plugin: found matching configuration");
+                  tunerNode = node;
+                  break;
+                }
+              }
+            }
+          }
+        }
+        if (rootNode == null)
+        {
+          rootNode = doc.CreateElement("cards");
+        }
+        if (tunerNode == null)
+        {
+          this.LogDebug("MD plugin: creating configuration");
+          tunerNode = doc.CreateElement("card");
+
+          // The "name" attribute is used as the plugin folder prefix.
+          XmlAttribute attr = doc.CreateAttribute("Name");
+          attr.InnerText = tunerName;
+          tunerNode.Attributes.Append(attr);
+
+          // Used to identify the tuner.
+          attr = doc.CreateAttribute("DevicePath");
+          attr.InnerText = tunerExternalId;
+          tunerNode.Attributes.Append(attr);
+
+          // Default: enable one instance of the plugin.
+          attr = doc.CreateAttribute("EnableMdapi");
+          attr.InnerText = slotCount.ToString();
+          tunerNode.Attributes.Append(attr);
+
+          // Default: the plugin can decrypt any program from any provider.
+          attr = doc.CreateAttribute("Provider");
+          attr.InnerText = "all";
+          tunerNode.Attributes.Append(attr);
+
+          rootNode.AppendChild(tunerNode);
+          doc.AppendChild(rootNode);
+          doc.Save(configFile);
+          return;
+        }
+
+        try
+        {
+          pluginFolderPrefix = tunerNode.Attributes["Name"].Value;
+          slotCount = Convert.ToInt32(tunerNode.Attributes["EnableMdapi"].Value);
+        }
+        catch
+        {
+          // Assume that the plugin is enabled unless the parameter says "no".
+          if (tunerNode.Attributes["EnableMdapi"].Value.Equals("no"))
+          {
+            slotCount = 0;
+          }
+          tunerNode.Attributes["EnableMdapi"].Value = slotCount.ToString();
+          doc.Save(configFile);
+        }
+        try
+        {
+          string providerList = tunerNode.Attributes["Provider"].Value.ToLowerInvariant();
+          if (!providerList.Equals("all"))
+          {
+            providers = new HashSet<string>(Regex.Split(providerList.Trim(), @"\s*,\s*"));
+          }
+        }
+        catch
+        {
+          // Assume that the plugin can decrypt any program.
+          XmlAttribute providerListNode = tunerNode.Attributes["Provider"];
+          if (providerListNode == null)
+          {
+            providerListNode = doc.CreateAttribute("Provider");
+            tunerNode.Attributes.Append(providerListNode);
+          }
+          providerListNode.InnerText = "all";
+          doc.Save(configFile);
+        }
+      }
+      catch (Exception ex)
+      {
+        this.LogWarn(ex, "MD plugin: failed to create, load or read tuner configuration");
+        slotCount = 1;
+        providers = new HashSet<string>();
+        pluginFolderPrefix = tunerName;
+      }
+    }
 
     /// <summary>
     /// Send a decrypt command.
@@ -669,7 +799,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MdPlugin
         this.LogDebug("MD plugin: identifying primary ECM PID");
 
         // Load configuration (if we have any).
-        string configFile = Path.Combine(_pluginFolder, "MDAPIProvID.xml");
+        string configFile = Path.Combine(CONFIG_FOLDER, "MDAPIProvID.xml");
         XmlDocument doc = new XmlDocument();
         bool configFound = false;
         if (File.Exists(configFile))
@@ -797,7 +927,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MdPlugin
           }
           else
           {
-            Boolean.TryParse(mainNode.Attributes["fillout"].Value, out fillOutConfig);
+            bool.TryParse(mainNode.Attributes["fillout"].Value, out fillOutConfig);
           }
 
           if (fillOutConfig)
@@ -973,153 +1103,47 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MdPlugin
         return false;
       }
 
-      // If there is no MD configuration folder then there is no softCAM plugin.
-      if (!Directory.Exists(_pluginFolder))
+      if (!Directory.Exists(CONFIG_FOLDER))
       {
-        this.LogDebug("MD plugin: plugin not configured");
-        return false;
-      }
-
-      // Get the tuner filter name. We use it as a prefix for the tuner configuration folder.
-      FilterInfo tunerFilterInfo;
-      int hr = tunerFilter.QueryFilterInfo(out tunerFilterInfo);
-      _configurationFolderPrefix = tunerFilterInfo.achName;
-      Release.FilterInfo(ref tunerFilterInfo);
-      if (hr != (int)NativeMethods.HResult.S_OK || _configurationFolderPrefix == null)
-      {
-        this.LogError("MD plugin: failed to get the tuner filter name, hr = 0x{0:x}", hr);
+        this.LogDebug("MD plugin: plugin is not configured");
         return false;
       }
 
       try
       {
-        // Look for a configuration file.
-        string configFile = Path.Combine(_pluginFolder, "MDAPICards.xml");
-        _slotCount = 1;
-        string providerList = "all";
-        XmlDocument doc = new XmlDocument();
-        XmlNode rootNode = null;
-        XmlNode tunerNode = null;
-        if (File.Exists(configFile))
+        MDAPIFilter mdFilter = new MDAPIFilter();
+        if (mdFilter == null)
         {
-          this.LogDebug("MD plugin: searching for configuration, external identifier = {0}", tunerExternalId);
-          doc.Load(configFile);
-          rootNode = doc.SelectSingleNode("/cards");
-          if (rootNode != null)
-          {
-            XmlNodeList tunerList = doc.SelectNodes("/cards/card");
-            if (tunerList != null)
-            {
-              this.LogDebug("MD plugin: found {0} configuration(s)", tunerList.Count);
-              foreach (XmlNode node in tunerList)
-              {
-                if (node.Attributes["DevicePath"].Value.Equals(tunerExternalId))
-                {
-                  // We found the configuration for the tuner.
-                  this.LogDebug("MD plugin: found matching configuration");
-                  tunerNode = node;
-                  break;
-                }
-              }
-            }
-          }
+          throw new NullReferenceException();
         }
-        if (rootNode == null)
-        {
-          rootNode = doc.CreateElement("cards");
-        }
-        if (tunerNode == null)
-        {
-          this.LogDebug("MD plugin: creating configuration");
-          tunerNode = doc.CreateElement("card");
-
-          // The "name" attribute is used as the configuration folder prefix.
-          XmlAttribute attr = doc.CreateAttribute("Name");
-          attr.InnerText = _configurationFolderPrefix;
-          tunerNode.Attributes.Append(attr);
-
-          // Used to identify the tuner.
-          attr = doc.CreateAttribute("DevicePath");
-          attr.InnerText = tunerExternalId;
-          tunerNode.Attributes.Append(attr);
-
-          // Default: enable one instance of the plugin.
-          attr = doc.CreateAttribute("EnableMdapi");
-          attr.InnerText = _slotCount.ToString();
-          tunerNode.Attributes.Append(attr);
-
-          // Default: the plugin can decrypt any program from any provider.
-          attr = doc.CreateAttribute("Provider");
-          attr.InnerText = "all";
-          tunerNode.Attributes.Append(attr);
-
-          rootNode.AppendChild(tunerNode);
-          doc.AppendChild(rootNode);
-          doc.Save(configFile);
-        }
-        else
-        {
-          try
-          {
-            _configurationFolderPrefix = tunerNode.Attributes["Name"].Value;
-            _slotCount = Convert.ToInt32(tunerNode.Attributes["EnableMdapi"].Value);
-          }
-          catch (Exception)
-          {
-            // Assume that the plugin is enabled unless the parameter says "no".
-            if (tunerNode.Attributes["EnableMdapi"].Value.Equals("no"))
-            {
-              _slotCount = 0;
-            }
-            tunerNode.Attributes["EnableMdapi"].Value = _slotCount.ToString();
-            doc.Save(configFile);
-          }
-          try
-          {
-            providerList = tunerNode.Attributes["Provider"].Value.ToLowerInvariant();
-            if (!providerList.Equals("all"))
-            {
-              _providers = new HashSet<string>(Regex.Split(providerList.Trim(), @"\s*,\s*"));
-            }
-          }
-          catch (Exception)
-          {
-            // Assume that the plugin can decrypt any program.
-            XmlAttribute providerListNode = tunerNode.Attributes["Provider"];
-            if (providerListNode == null)
-            {
-              providerListNode = doc.CreateAttribute("Provider"); 
-              tunerNode.Attributes.Append(providerListNode);
-            }
-            providerListNode.InnerText = "all";
-            doc.Save(configFile);
-          }
-        }
-
-        if (_slotCount > 0)
-        {
-          this.LogInfo("MD plugin: plugin is enabled for {0} decoding slot(s)", _slotCount);
-          _isMdPlugin = true;
-          _slots = new List<DecryptSlot>(_slotCount);
-          if (_providers.Count == 0)
-          {
-            this.LogDebug("MD plugin: plugin can decrypt programs from any provider");
-          }
-          else
-          {
-            this.LogDebug("MD plugin: plugin can decrypt programs from provider(s) \"{0}\"", providerList);
-          }
-          return true;
-        }
-
-        this.LogDebug("MD plugin: plugin is not enabled");
-        return false;
+        Release.ComObject("MD plugin test filter", ref mdFilter);
       }
-      catch (Exception ex)
+      catch
       {
-        this.LogError(ex, "MD plugin: failed to create, load or read configuration");
+        this.LogDebug("MD plugin: filter class is not registered");
         return false;
       }
+
+      // Get the tuner filter name. We use it as a prefix for the tuner's plugin folder(s).
+      FilterInfo tunerFilterInfo;
+      int hr = tunerFilter.QueryFilterInfo(out tunerFilterInfo);
+      _tunerName = tunerFilterInfo.achName;
+      Release.FilterInfo(ref tunerFilterInfo);
+      if (hr != (int)NativeMethods.HResult.S_OK || string.IsNullOrEmpty(_tunerName))
+      {
+        this.LogError("MD plugin: failed to get the tuner filter name, hr = 0x{0:x}", hr);
+        return false;
+      }
+
+      this.LogInfo("MD plugin: extension supported");
+      _tunerExternalId = tunerExternalId;
+      GetTunerConfig(_tunerExternalId, _tunerName, out _slotCount, out _providers, out _pluginFolderPrefix);
+      _isMdPlugin = true;
+      _slots = new List<DecryptSlot>(_slotCount);
+      this.LogDebug("  slot count           = {0}", _slotCount);
+      this.LogDebug("  provider(s)          = [{0}]", string.Join(", ", _providers));
+      this.LogDebug("  plugin folder prefix = {0}", _pluginFolderPrefix);
+      return true;
     }
 
     #endregion
@@ -1158,16 +1182,25 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MdPlugin
         return true;
       }
 
-      // Add one filter for each decoding slot. Note that we preset the capacity in Initialise().
-      this.LogDebug("MD plugin: adding {0} decoding filter(s)", _slotCount);
+      // Add one filter for each decrypt slot.
+      this.LogDebug("MD plugin: adding {0} decrypting filter(s)", _slotCount);
       _graph = graph;
+      _upstreamFilter = lastFilter;
       int hr;
       IPin inputPin;
       IPin outputPin;
       for (int i = 0; i < _slotCount; i++)
       {
         DecryptSlot slot = new DecryptSlot();
-        slot.Filter = (IBaseFilter)new MDAPIFilter();
+        try
+        {
+          slot.Filter = (IBaseFilter)new MDAPIFilter();
+        }
+        catch
+        {
+          this.LogError("MD plugin: failed to instance MP plugin filter {0}", i + 1);
+          return false;
+        }
         slot.ProgramNumber = 0;
         slot.PendingChannel = null;
 
@@ -1197,8 +1230,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MdPlugin
         IChangeChannel temp = slot.Filter as IChangeChannel;
         try
         {
-          temp.SetPluginsDirectory(_configurationFolderPrefix + i);
-          this.LogDebug("MD plugin: plugins directory is \"{0}{1}\"", _configurationFolderPrefix, i);
+          temp.SetPluginsDirectory(_pluginFolderPrefix + i);
         }
         catch (Exception ex)
         {
@@ -1246,7 +1278,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MdPlugin
         this.LogWarn("MD plugin: not initialised or interface not supported");
         return false;
       }
-      if (_slots == null || _slots.Count == 0)
+      if (_slots == null || (_slots.Count == 0 && _slotCount != 0))
       {
         this.LogError("MD plugin: failed to open conditional access interface, filter(s) not added to the BDA filter graph");
         return false;
@@ -1331,54 +1363,63 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MdPlugin
 
       // Get a reference to the upstream filter that the first MD filter is
       // connected to.
-      this.LogDebug("MD plugin: get upstream connection");
-      IPin pin = DsFindPin.ByDirection(_slots[0].Filter, PinDirection.Input, 0);
-      if (pin == null)
-      {
-        this.LogError("MD plugin: failed to get the first MD filter input pin");
-        return false;
-      }
-
-      IPin connectedPin = null;
+      IBaseFilter upstreamFilter = _upstreamFilter;
       int hr;
-      try
+      IPin connectedPin = null;
+      if (_slots.Count != 0)
       {
-        hr = pin.ConnectedTo(out connectedPin);
-        if (hr != (int)NativeMethods.HResult.S_OK || connectedPin == null)
+        this.LogDebug("MD plugin: get upstream connection");
+        IPin firstFilterInputPin = DsFindPin.ByDirection(_slots[0].Filter, PinDirection.Input, 0);
+        if (firstFilterInputPin == null)
         {
-          this.LogError("MD plugin: failed to get the pin connected to the first MD filter input, hr = 0x{0:x}", hr);
+          this.LogError("MD plugin: failed to get the first MD filter input pin");
           return false;
         }
-      }
-      finally
-      {
-        Release.ComObject("MD plugin first filter input pin", ref pin);
-      }
 
-      IBaseFilter connectedFilter = null;
-      try
-      {
-        PinInfo pinInfo;
-        hr = connectedPin.QueryPinInfo(out pinInfo);
-        if (hr != (int)NativeMethods.HResult.S_OK || pinInfo.filter == null)
+        try
         {
-          this.LogError("MD plugin: failed to get the filter connected to the first MD filter input, hr = 0x{0:x}", hr);
-          return false;
+          hr = firstFilterInputPin.ConnectedTo(out connectedPin);
+          if (hr != (int)NativeMethods.HResult.S_OK || connectedPin == null)
+          {
+            this.LogError("MD plugin: failed to get the pin connected to the first MD filter input, hr = 0x{0:x}", hr);
+            return false;
+          }
         }
-        connectedFilter = pinInfo.filter;
-      }
-      finally
-      {
-        Release.ComObject("MD plugin first filter input connected pin", ref connectedPin);
+        finally
+        {
+          Release.ComObject("MD plugin first filter input pin", ref firstFilterInputPin);
+        }
+
+        try
+        {
+          PinInfo pinInfo;
+          hr = connectedPin.QueryPinInfo(out pinInfo);
+          if (hr != (int)NativeMethods.HResult.S_OK || pinInfo.filter == null)
+          {
+            this.LogError("MD plugin: failed to get the filter connected to the first MD filter input, hr = 0x{0:x}", hr);
+            return false;
+          }
+          upstreamFilter = pinInfo.filter;
+        }
+        finally
+        {
+          Release.ComObject("MD plugin first filter input connected pin", ref connectedPin);
+        }
       }
 
+      // Get a reference to the input pin that the last MD filter is connected
+      // to.
+      this.LogDebug("MD plugin: get downstream connection");
       try
       {
-        // Get a reference to the input pin that the last MD filter is
-        // connected to.
-        this.LogDebug("MD plugin: get downstream connection");
-        pin = DsFindPin.ByDirection(_slots[_slots.Count - 1].Filter, PinDirection.Output, 0);
-        if (pin == null)
+        IBaseFilter lastMdFilter = _upstreamFilter;
+        if (_slotCount != 0)
+        {
+          lastMdFilter = _slots[_slots.Count - 1].Filter;
+        }
+
+        IPin lastFilterOutputPin = DsFindPin.ByDirection(lastMdFilter, PinDirection.Output, 0);
+        if (lastFilterOutputPin == null)
         {
           this.LogError("MD plugin: failed to get the last MD filter output pin");
           return false;
@@ -1386,7 +1427,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MdPlugin
 
         try
         {
-          hr = pin.ConnectedTo(out connectedPin);
+          hr = lastFilterOutputPin.ConnectedTo(out connectedPin);
           if (hr != (int)NativeMethods.HResult.S_OK || connectedPin == null)
           {
             this.LogError("MD plugin: failed to get the pin connected to the last MD filter output, hr = 0x{0:x}", hr);
@@ -1395,22 +1436,39 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MdPlugin
         }
         finally
         {
-          Release.ComObject("MD plugin last filter output pin", ref pin);
+          Release.ComObject("MD plugin last filter output pin", ref lastFilterOutputPin);
         }
 
         try
         {
-          // Close the interface and re-add all the filters.
-          (this as IConditionalAccessProvider).Close();
-          this.LogDebug("MD plugin: release filter(s)");
-          foreach (DecryptSlot slot in _slots)
+          if (_slots.Count > 0)
           {
-            _graph.RemoveFilter(slot.Filter);
-            Release.ComObject("MD plugin filter", ref slot.Filter);
+            // Close the interface.
+            (this as IConditionalAccessProvider).Close();
+            this.LogDebug("MD plugin: release filter(s)");
+            foreach (DecryptSlot slot in _slots)
+            {
+              _graph.RemoveFilter(slot.Filter);
+              Release.ComObject("MD plugin filter", ref slot.Filter);
+            }
+            _slots.Clear();
           }
-          _slots.Clear();
 
-          IBaseFilter lastFilter = connectedFilter;
+          // Reload configuration.
+          int previousSlotCount = _slotCount;
+          GetTunerConfig(_tunerExternalId, _tunerName, out _slotCount, out _providers, out _pluginFolderPrefix);
+
+          // Re-add filters.
+          if (previousSlotCount == 0)
+          {
+            if (_slotCount == 0)
+            {
+              this.LogDebug("MD plugin: nothing to do");
+              return true;
+            }
+            connectedPin.Disconnect();
+          }
+          IBaseFilter lastFilter = upstreamFilter;
           if (!AddToGraph(_graph, ref lastFilter))
           {
             return false;
@@ -1418,16 +1476,16 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MdPlugin
 
           // Reconnect the downstream chain.
           this.LogDebug("MD plugin: reconnect downstream filter chain");
-          pin = DsFindPin.ByDirection(_slots[_slots.Count - 1].Filter, PinDirection.Output, 0);
-          if (pin == null)
+          lastFilterOutputPin = DsFindPin.ByDirection(lastFilter, PinDirection.Output, 0);
+          if (lastFilterOutputPin == null)
           {
-            this.LogError("MD plugin: failed to get the new last MD filter output pin");
+            this.LogError("MD plugin: failed to get the new last filter output pin");
             return false;
           }
 
           try
           {
-            hr = _graph.ConnectDirect(pin, connectedPin, null);
+            hr = _graph.ConnectDirect(lastFilterOutputPin, connectedPin, null);
             if (hr != (int)NativeMethods.HResult.S_OK)
             {
               this.LogError("MD plugin: failed to reconnect downstream filter chain, hr = 0x{0:x}", hr);
@@ -1437,7 +1495,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MdPlugin
           }
           finally
           {
-            Release.ComObject("MD plugin new last filter output pin", ref pin);
+            Release.ComObject("MD plugin new last filter output pin", ref lastFilterOutputPin);
           }
         }
         finally
@@ -1447,7 +1505,10 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MdPlugin
       }
       finally
       {
-        Release.ComObject("MD plugin first filter input connected filter", ref connectedFilter);
+        if (upstreamFilter != _upstreamFilter)
+        {
+          Release.ComObject("MD plugin upstream filter", ref upstreamFilter);
+        }
       }
     }
 
@@ -1741,6 +1802,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MdPlugin
         _slots = null;
       }
 
+      _upstreamFilter = null;
       _isMdPlugin = false;
     }
 
