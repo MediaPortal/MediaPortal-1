@@ -85,14 +85,16 @@ IBaseFilter* MPMadPresenter::Initialize()
   if (!baseFilter || !pOsdServices || !manager || !pSubclassReplacement || !pSubRender || !m_pCommand || !pWindow)
     return nullptr;
 
-  pOsdServices->OsdSetRenderCallback("MP-GUI", this);
-  manager->ConfigureDisplayModeChanger(false, true);
+  pOsdServices->OsdSetRenderCallback("MP-GUI", this, nullptr);
+  manager->ConfigureDisplayModeChanger(true, true);
 
   pSubRender->SetCallback(m_subProxy);
 
   m_pCommand->SendCommandBool("disableSeekbar", true);
 
   pWindow->put_Owner(m_hParent);
+  pWindow->SetWindowForeground(true);
+  pWindow->put_MessageDrain(m_hParent);
 
   // TODO implement IMadVRSubclassReplacement
   //pSubclassReplacement->DisableSubclassing();
@@ -111,6 +113,7 @@ HRESULT MPMadPresenter::Shutdown()
 
   if (m_pMad)
   {
+    CComQIPtr<IMadVROsdServices> pOsdServices = m_pMad;
     if (m_pCommand)
     {
       m_pCommand->SendCommand("restoreDisplayModeNow");
@@ -119,7 +122,9 @@ HRESULT MPMadPresenter::Shutdown()
     m_pWindow->put_Owner(reinterpret_cast<OAHWND>(nullptr));
     m_pWindow->put_Visible(false);
     m_pWindow->Release();
-    m_pMad->Release();
+    pOsdServices->OsdSetRenderCallback("MP-GUI", nullptr, nullptr);
+    pOsdServices.Release();
+    pOsdServices = nullptr;
     m_pWindow = nullptr;
     m_pMad = nullptr;
     m_pCommand = nullptr;

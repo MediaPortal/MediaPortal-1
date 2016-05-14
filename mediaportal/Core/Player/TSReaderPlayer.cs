@@ -270,7 +270,7 @@ namespace MediaPortal.Player
       Log.Info("TSReaderPlayer: GetInterfaces()");
       try
       {
-        _graphBuilder = (IGraphBuilder)new FilterGraph();
+        _graphBuilder = (IGraphBuilder)new FilterGraphNoThread();
         _rotEntry = new DsROTEntry((IFilterGraph)_graphBuilder);
 
         //Get filterCodecName and filterConfig
@@ -960,6 +960,14 @@ namespace MediaPortal.Player
             Log.Debug("TSReaderPlayer: Cleanup _graphBuilder");
           }
 
+          if (_videoWin != null)
+          {
+            DirectShowUtil.ReleaseComObject(_videoWin);
+          }
+          if (_basicVideo != null)
+          {
+            DirectShowUtil.ReleaseComObject(_basicVideo);
+          }
           _mediaCtrl = null;
           _mediaEvt = null;
           _mediaSeeking = null;

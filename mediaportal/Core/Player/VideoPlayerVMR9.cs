@@ -1503,6 +1503,14 @@ namespace MediaPortal.Player
           Log.Info("VideoPlayer9: Cleanup Graphbuilder");
         }
 
+        if (videoWin != null)
+        {
+          DirectShowUtil.ReleaseComObject(videoWin);
+        }
+        if (basicVideo != null)
+        {
+          DirectShowUtil.ReleaseComObject(basicVideo);
+        }
         videoWin = null;
         mediaCtrl = null;
         mediaEvt = null;

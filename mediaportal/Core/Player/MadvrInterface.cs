@@ -727,7 +727,7 @@ namespace MediaPortal.Player
       try
       {
         IMadVROsdServices osdServices = (IMadVROsdServices)madvr;
-        osdServices.OsdSetRenderCallback("MP-GUI", osdRenderCallback, reserved);
+        osdServices.OsdSetRenderCallback("MP-GUI", null, reserved);
         osdServices.SafeDispose();
       }
       catch (Exception e)
