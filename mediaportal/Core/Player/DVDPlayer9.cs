@@ -405,25 +405,25 @@ namespace MediaPortal.Player
 
         if (_cmdOption != null)
         {
-          DirectShowUtil.ReleaseComObject(_cmdOption);
+          DirectShowUtil.FinalReleaseComObject(_cmdOption);
           _cmdOption = null;
         }
 
         if (_dvdbasefilter != null)
         {
-          DirectShowUtil.ReleaseComObject(_dvdbasefilter);
+          DirectShowUtil.FinalReleaseComObject(_dvdbasefilter);
           _dvdbasefilter = null;
         }
 
         if (_dvdGraph != null)
         {
-          DirectShowUtil.ReleaseComObject(_dvdGraph);
+          DirectShowUtil.FinalReleaseComObject(_dvdGraph);
           _dvdGraph = null;
         }
 
         if (_line21Decoder != null)
         {
-          DirectShowUtil.ReleaseComObject(_line21Decoder);
+          DirectShowUtil.FinalReleaseComObject(_line21Decoder);
           _line21Decoder = null;
         }
 
@@ -437,7 +437,7 @@ namespace MediaPortal.Player
             _rotEntry.SafeDispose();
             _rotEntry = null;
           }
-          DirectShowUtil.ReleaseComObject(_graphBuilder);
+          DirectShowUtil.FinalReleaseComObject(_graphBuilder);
           _graphBuilder = null;
         }
 

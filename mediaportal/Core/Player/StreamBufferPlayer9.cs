@@ -284,13 +284,13 @@ namespace MediaPortal.Player
 
         if (_pinVmr9ConnectedTo != null)
         {
-          DirectShowUtil.ReleaseComObject(_pinVmr9ConnectedTo);
+          DirectShowUtil.FinalReleaseComObject(_pinVmr9ConnectedTo);
           _pinVmr9ConnectedTo = null;
         }
 
         if (streamConfig2 != null)
         {
-          DirectShowUtil.ReleaseComObject(streamConfig2);
+          DirectShowUtil.FinalReleaseComObject(streamConfig2);
           streamConfig2 = null;
         }
 
@@ -304,7 +304,7 @@ namespace MediaPortal.Player
             _rotEntry.SafeDispose();
             _rotEntry = null;
           }
-          DirectShowUtil.ReleaseComObject(_graphBuilder);
+          DirectShowUtil.FinalReleaseComObject(_graphBuilder);
           _graphBuilder = null;
         }
 

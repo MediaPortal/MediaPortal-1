@@ -524,7 +524,7 @@ namespace MediaPortal.Player
             _rotEntry.SafeDispose();
             _rotEntry = null;
           }
-          DirectShowUtil.ReleaseComObject(graphBuilder);
+          DirectShowUtil.FinalReleaseComObject(graphBuilder);
           graphBuilder = null;
         }
 
@@ -540,18 +540,18 @@ namespace MediaPortal.Player
         if (_mpegDemux != null)
         {
           Log.Info("cleanup mpegdemux");
-          DirectShowUtil.ReleaseComObject(_mpegDemux);
+          DirectShowUtil.FinalReleaseComObject(_mpegDemux);
           _mpegDemux = null;
         }
         if (_rtspSource != null)
         {
           Log.Info("cleanup _rtspSource");
-          DirectShowUtil.ReleaseComObject(_rtspSource);
+          DirectShowUtil.FinalReleaseComObject(_rtspSource);
           _rtspSource = null;
         }
         if (_subtitleFilter != null)
         {
-          DirectShowUtil.ReleaseComObject(_subtitleFilter);
+          DirectShowUtil.FinalReleaseComObject(_subtitleFilter);
           _subtitleFilter = null;
           if (this.dvbSubRenderer != null)
           {
@@ -564,7 +564,7 @@ namespace MediaPortal.Player
         if (vobSub != null)
         {
           Log.Info("cleanup vobSub");
-          DirectShowUtil.ReleaseComObject(vobSub);
+          DirectShowUtil.FinalReleaseComObject(vobSub);
           vobSub = null;
         }
       }
