@@ -336,7 +336,8 @@ HRESULT CTSBuffer::DequeFromBuffer(BYTE *pbData, long lDataLength, long *lReadBy
 
 HRESULT CTSBuffer::GetNullTsBuffer(BYTE *pbData, long lDataLength, long *lReadBytes)
 {
-  if ((timeGetTime() - m_lastGoodReadTime) > NULL_TS_TIMEOUT)
+  DWORD diffTime = timeGetTime() - m_lastGoodReadTime;
+  if (diffTime > NULL_TS_TIMEOUT)
   {
     //Limit contiguous null packet sending to NULL_TS_TIMEOUT time
     *lReadBytes = 0;
@@ -346,13 +347,20 @@ HRESULT CTSBuffer::GetNullTsBuffer(BYTE *pbData, long lDataLength, long *lReadBy
   //Fill up a buffer with NULL transport stream packets...
 	BYTE* nullTsPacket = new BYTE[TRANSPORT_PACKET_SIZE];
   ZeroMemory((void*)nullTsPacket, TRANSPORT_PACKET_SIZE);
-  //Add TS header (for null packet)
-  nullTsPacket[0] = TRANSPORT_SYNC_BYTE; //Sync Byte
-  nullTsPacket[1] = 0x1F; //NULL packet PID
-  nullTsPacket[2] = 0xFF; //NULL packet PID
-  nullTsPacket[3] = 0x10; //not scrambled, payload only, continuity zero
   
-	lDataLength -= (lDataLength % TRANSPORT_PACKET_SIZE); //Adjust to be an integral number of TS packets in size
+  if (lDataLength >= TRANSPORT_PACKET_SIZE)
+  {
+    //Add TS header (for null packet)
+    nullTsPacket[0] = TRANSPORT_SYNC_BYTE; //Sync Byte
+    nullTsPacket[1] = 0x1F; //NULL packet PID
+    nullTsPacket[2] = 0xFF; //NULL packet PID
+    nullTsPacket[3] = NULL_TS_CONTINUITY_BYTE; //not scrambled, payload only, continuity seven (will be replaced by zero downstream)
+    
+    *(DWORD *)(nullTsPacket+4) = diffTime; //Put timeout value in first four bytes of payload
+    
+	  lDataLength -= (lDataLength % TRANSPORT_PACKET_SIZE); //Adjust to be an integral number of TS packets in size
+  } // else send all zero data if less than TRANSPORT_PACKET_SIZE 
+  
 	long bytesWritten = 0;
 	while (bytesWritten < lDataLength)
 	{

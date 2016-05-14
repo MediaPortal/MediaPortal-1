@@ -98,11 +98,10 @@ void TsMPEG2TransportFileServerMediaSubsession::seekStreamSource(FramedSource* i
 	pos*=fileSize;
 	pos/=188;
 	pos*=188;
-	__int64 newPos=(__int64) pos;
 
-//	source->seekToByteAbsolute(newPos);
   source->seekToTimeAbsolute(CRefTime((LONG)(seekNPT*1000.0)), *m_pDuration) ;
-	LogDebug("TsMp2TFSMediaSubsession::seekStreamSource %f / %f ->%d", seekNPT,fileDuration, (DWORD)newPos);
+  
+	//LogDebug("TsMp2TFSMediaSubsession::seekStreamSource %f / %f", seekNPT, fileDuration);
 }
 
 float TsMPEG2TransportFileServerMediaSubsession::duration() const

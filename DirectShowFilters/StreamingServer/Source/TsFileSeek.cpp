@@ -129,7 +129,7 @@ bool CTsFileSeek::Seek(CRefTime refTime)
       //no need to seek when we want to seek to end of file
       //simply set the pointer at the end of the file
       m_reader->SetFilePointer(0,FILE_END);
-      return false;
+      return true;
     }
 
     //set filepointer to filePos

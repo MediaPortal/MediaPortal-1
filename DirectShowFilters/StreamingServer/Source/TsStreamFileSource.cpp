@@ -104,7 +104,29 @@ void TsStreamFileSource::seekToTimeAbsolute(CRefTime& seekTime, CTsDuration& dur
     LogDebug("StreamingServer::  Seek-> %f/%f", startTime, duration.Duration().Millisecs()/1000.0f);
     CTsFileSeek seek(duration);
     seek.SetFileReader(reader);
-    seek.Seek(seekTime);
+    
+    for(int i(0) ; i < 4 ; i++)
+    {
+      bool eof = seek.Seek(seekTime);
+      if (eof)
+      {
+        REFERENCE_TIME rollBackTime = reader->GetTimeshift() ? 5000000 : 30000000;  // 0.5s/3s 
+        //reached end-of-file, try to seek to an earlier position
+        if ((seekTime.m_time - rollBackTime) > 0)
+        {
+          seekTime.m_time -= rollBackTime;
+        }
+        else
+        {
+          break; //very short file....
+        }
+      }
+      else
+      {
+        break; //we've succeeded
+      }
+    }
+   
   	m_buffer.Clear();
 }
 

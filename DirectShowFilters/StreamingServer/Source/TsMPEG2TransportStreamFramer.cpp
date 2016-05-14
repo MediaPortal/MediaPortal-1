@@ -64,7 +64,7 @@ TsMPEG2TransportStreamFramer* TsMPEG2TransportStreamFramer
 TsMPEG2TransportStreamFramer
 ::TsMPEG2TransportStreamFramer(UsageEnvironment& env, FramedSource* inputSource)
 : FramedFilter(env, inputSource),
-fTSPacketCount(0), fTSPacketDurationEstimate(0.0), fTSPCRCount(0) {
+fTSPacketCount(0), fTSPacketDurationEstimate(0.0), fTSPCRCount(0), fTSPacketNullTime(0) {
 	fPIDStatusTable = HashTable::create(ONE_WORD_HASH_KEYS);
 }
 
@@ -92,6 +92,7 @@ void TsMPEG2TransportStreamFramer::doStopGettingFrames() {
 	FramedFilter::doStopGettingFrames();
 	fTSPacketCount = 0;
 	fTSPCRCount = 0;
+	fTSPacketNullTime = 0;
 
 	clearPIDStatusTable();
 }
@@ -188,8 +189,21 @@ void TsMPEG2TransportStreamFramer
 		return;
 	}
 
-	++fTSPacketCount;
+  // Get the pid
+	unsigned pid = ((pkt[1]&0x1F)<<8) | pkt[2];
+	
+	if ((pid & 0x1FFF) == 0x1FFF) //NULL TS packet PID
+	{
+	  if (pkt[3] == NULL_TS_CONTINUITY_BYTE) //CTSBuffer::GetNullTsBuffer() has inserted it
+	  {
+	    fTSPacketNullTime = *(DWORD *)(pkt+4); //Get the NULL duration timestamp (milliseconds)
+	    pkt[3] &= 0xF0; // force the continuity value to zero
+	  }
+	  return;
+	}
 
+	++fTSPacketCount; //Only count the real stream packets, not the extra NULL padding packets CTSBuffer might insert
+	
 	// If this packet doesn't contain a PCR, then we're not interested in it:
 	u_int8_t const adaptation_field_control = (pkt[3]&0x30)>>4;
 	if (adaptation_field_control != 2 && adaptation_field_control != 3) return;
@@ -210,7 +224,6 @@ void TsMPEG2TransportStreamFramer
 	unsigned short pcrExt = ((pkt[10]&0x01)<<8) | pkt[11];
 	clock += pcrExt/27000000.0;
 
-	unsigned pid = ((pkt[1]&0x1F)<<8) | pkt[2];
 
 	// Check whether we already have a record of a PCR for this PID:
 	TsPIDStatus* pidStatus = (TsPIDStatus*)(fPIDStatusTable->Lookup((char*)pid));
@@ -227,13 +240,17 @@ void TsMPEG2TransportStreamFramer
 		double clockDiff = clock - pidStatus->lastClock;
 		double durationPerPacket = clockDiff/(fTSPacketCount - pidStatus->lastPacketNum);
 		
-		double timeDiff = timeNow - pidStatus->lastRealTime;
+		//Contiguous NULL TS packet duration
+		double durNullPackets = ((double)fTSPacketNullTime)/1000.0;
+		fTSPacketNullTime = 0;
+		
+		pidStatus->firstRealTime += durNullPackets; //Adjust to compensate for NULL packet insertion
 			
-		 //Detect PCR rollover or large forward jumps in PCR (maximum normal clockDiff is approx. +100ms)
-	  if ((clockDiff < 0.0) || (clockDiff > 0.25) || (timeDiff > 0.25) || (discontinuity_indicator > 0))
+		 //Detect PCR rollover or large forward jumps in PCR (maximum normal clockDiff is approx. +100ms) or too many NULL packets in a block
+	  if ((clockDiff < 0.0) || (clockDiff > 0.25) || (durNullPackets > 0.25) || (discontinuity_indicator > 0))
     {
       discontinuity_indicator |= 0x01; // force a reset of the stored clock and real-time values
-	    LogDebug("TsMp2TSFramer - PCR jump: %f s, Time jump: : %f s, packet count %d", (float)clockDiff, (float)timeDiff, fTSPacketCount);  
+	    LogDebug("TsMp2TSFramer - PCR jump: %f s, NULL dur: : %f s, packet count %d", (float)clockDiff, (float)durNullPackets, fTSPacketCount);  
     } else {
   		// Hack (suggested by "Romain"): Don't update our estimate if this PCR appeared unusually quickly.
   		// (This can produce more accurate estimates for wildly VBR streams.)
@@ -259,11 +276,15 @@ void TsMPEG2TransportStreamFramer
 			// rate matches the playout rate:
 			double transmitDuration = timeNow - pidStatus->firstRealTime;
 			double playoutDuration = clock - pidStatus->firstClock;
-			if (transmitDuration > playoutDuration) {
-				fTSPacketDurationEstimate *= TIME_ADJUSTMENT_FACTOR; // reduce estimate
-			} else if (transmitDuration + MAX_PLAYOUT_BUFFER_DURATION < playoutDuration) {
-				fTSPacketDurationEstimate /= TIME_ADJUSTMENT_FACTOR; // increase estimate
-			}
+			
+			if (transmitDuration > 0.0 && playoutDuration > 0.0)
+			{
+  			if (transmitDuration > playoutDuration) {
+  				fTSPacketDurationEstimate *= TIME_ADJUSTMENT_FACTOR; // reduce estimate
+  			} else if (transmitDuration + MAX_PLAYOUT_BUFFER_DURATION < playoutDuration) {
+  				fTSPacketDurationEstimate /= TIME_ADJUSTMENT_FACTOR; // increase estimate
+  			}
+  	  }
 		} else {
 			// the PCR has a discontinuity from its previous value; don't use it now,
 			// but reset our PCR and real-time values to compensate:
