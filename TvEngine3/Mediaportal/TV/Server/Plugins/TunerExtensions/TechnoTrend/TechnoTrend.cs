@@ -1672,7 +1672,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
       }
 
       _tunerHandle = bdaapiOpenHWIdx(_deviceCategory, (uint)deviceId);
-      if (_tunerHandle == null || _tunerHandle == IntPtr.Zero || _tunerHandle.ToInt64() == -1)
+      if (_tunerHandle == IntPtr.Zero || _tunerHandle == NativeMethods.INVALID_HANDLE_VALUE)
       {
         this.LogError("TechnoTrend: hardware interface could not be opened");
         _tunerHandle = IntPtr.Zero;
@@ -2033,7 +2033,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
 
       if (_isCaInterfaceOpen)
       {
-        if (_tunerHandle != null && _tunerHandle != IntPtr.Zero && _tunerHandle.ToInt64() != -1)
+        if (_tunerHandle != IntPtr.Zero && _tunerHandle != NativeMethods.INVALID_HANDLE_VALUE)
         {
           bdaapiCloseCI(_tunerHandle);
         }
@@ -2489,7 +2489,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
 
       if (_isRemoteControlInterfaceOpen)
       {
-        if (_tunerHandle != null && _tunerHandle != IntPtr.Zero && _tunerHandle.ToInt64() != -1)
+        if (_tunerHandle != IntPtr.Zero && _tunerHandle != NativeMethods.INVALID_HANDLE_VALUE)
         {
           TtApiResult result = bdaapiCloseIR(_tunerHandle);
           if (result != TtApiResult.Success)

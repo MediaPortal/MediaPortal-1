@@ -861,7 +861,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan.RemoteControl
       // Enumerate installed and present media devices.
       Guid mediaClass = NativeMethods.GUID_DEVCLASS_MEDIA;
       IntPtr devInfoSet = NativeMethods.SetupDiGetClassDevs(ref mediaClass, null, IntPtr.Zero, NativeMethods.DiGetClassFlags.DIGCF_PRESENT);
-      if (devInfoSet == IntPtr.Zero || devInfoSet == new IntPtr(-1))  // If INVALID_HANDLE_VALUE...
+      if (devInfoSet == IntPtr.Zero || devInfoSet == NativeMethods.INVALID_HANDLE_VALUE)
       {
         this.LogError("Twinhan HID RC: failed get media device information set, error = {0}", Marshal.GetLastWin32Error());
         return false;

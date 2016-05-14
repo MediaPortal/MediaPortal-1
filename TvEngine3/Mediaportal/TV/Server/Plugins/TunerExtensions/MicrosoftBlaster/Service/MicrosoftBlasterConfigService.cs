@@ -387,7 +387,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBlaster.Service
       this.LogDebug("Microsoft blaster service: find devices, IID = {0}", iid);
       ICollection<string> devices = new List<string>();
       IntPtr devInfoSet = NativeMethods.SetupDiGetClassDevs(ref iid, null, IntPtr.Zero, NativeMethods.DiGetClassFlags.DIGCF_DEVICEINTERFACE | NativeMethods.DiGetClassFlags.DIGCF_PRESENT);
-      if (devInfoSet == IntPtr.Zero || devInfoSet == new IntPtr(-1))  // If INVALID_HANDLE_VALUE...
+      if (devInfoSet == IntPtr.Zero || devInfoSet == NativeMethods.INVALID_HANDLE_VALUE)
       {
         this.LogError("Microsoft blaster service: failed to get device information set");
         return devices;

@@ -805,7 +805,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
 
       Guid mediaClass = NativeMethods.GUID_DEVCLASS_MEDIA;
       IntPtr devInfoSet = NativeMethods.SetupDiGetClassDevs(ref mediaClass, null, IntPtr.Zero, NativeMethods.DiGetClassFlags.DIGCF_PRESENT);
-      if (devInfoSet == IntPtr.Zero || devInfoSet == new IntPtr(-1))  // If INVALID_HANDLE_VALUE...
+      if (devInfoSet == IntPtr.Zero || devInfoSet == NativeMethods.INVALID_HANDLE_VALUE)
       {
         this.LogError("detector: failed to get system device information set, error = {0}", Marshal.GetLastWin32Error());
         return;

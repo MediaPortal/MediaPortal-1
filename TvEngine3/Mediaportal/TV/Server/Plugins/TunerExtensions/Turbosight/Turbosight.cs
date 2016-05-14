@@ -1429,7 +1429,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Turbosight
 
       // Attempt to initialise the interface.
       _ciApiHandle = _onStartCi(_tunerFilter, _tunerFilterName, _ciApiIndex);
-      if (_ciApiHandle == IntPtr.Zero || _ciApiHandle.ToInt64() == -1 || _ciApiHandle.ToInt32() == -1)
+      if (_ciApiHandle == IntPtr.Zero || _ciApiHandle == NativeMethods.INVALID_HANDLE_VALUE)
       {
         this.LogWarn("Turbosight: interface handle is null");
         _isCiSlotPresent = false;

@@ -1487,6 +1487,8 @@ namespace MediaPortal.Common.Utils
 
     #region WinBase.h
 
+    public static readonly IntPtr INVALID_HANDLE_VALUE = new IntPtr(-1);
+
     [Flags]
     public enum FileFlag : uint
     {
