@@ -1,1 +1,1 @@
-xcopy _TvPluginDebug\MediaPortal\*.* ..\..\mediaportal\MediaPortal.Application\bin\Release\ /E /R /Y
+xcopy _TvPluginRelease\MediaPortal\*.* ..\..\mediaportal\MediaPortal.Application\bin\Release\ /E /R /Y
