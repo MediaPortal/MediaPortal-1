@@ -279,6 +279,7 @@ CDemuxer::CDemuxer(HRESULT *result, CLogger *logger, IDemuxerOwner *filter, CPar
   this->outputPacketCollection = NULL;
   this->outputPacketMutex = NULL;
   this->streamInputFormat = NULL;
+  this->streamFileName = NULL;
   this->demuxingWorkerThread = NULL;
   this->demuxingWorkerShouldExit = false;
   this->packetInputFormat = NULL;
@@ -376,6 +377,7 @@ CDemuxer::~CDemuxer(void)
 
   FREE_MEM(this->containerFormat);
   FREE_MEM(this->streamInputFormat);
+  FREE_MEM(this->streamFileName);
   //FREE_MEM(this->flvTimestamps);
   FREE_MEM_CLASS(this->configuration);
   FREE_MEM_CLASS(this->packetInputFormat);
@@ -590,6 +592,7 @@ HRESULT CDemuxer::SetStreamInformation(CStreamInformation *streamInformation)
     this->flags |= (streamInformation->IsPackets()) ? DEMUXER_FLAG_STREAM_IN_PACKETS : DEMUXER_FLAG_NONE;
 
     SET_STRING_HRESULT_WITH_NULL(this->streamInputFormat, streamInformation->GetStreamInputFormat(), result);
+    SET_STRING_HRESULT_WITH_NULL(this->streamFileName, streamInformation->GetStreamFileName(), result);
   }
 
   return result;
@@ -3112,15 +3115,27 @@ HRESULT CDemuxer::OpenStream(AVIOContext *demuxerContext)
 
       if (SUCCEEDED(result))
       {
-        ret = avformat_open_input(&this->formatContext, "", this->packetInputFormat, NULL);
-
-        CHECK_CONDITION_EXECUTE(ret < 0, result = ret);
+        char *streamFileName = NULL;
+        if (this->streamFileName != NULL)
+        {
+          streamFileName = ConvertToMultiByteW(this->streamFileName);
+          CHECK_POINTER_HRESULT(result, streamFileName, result, E_CONVERT_STRING_ERROR);
+        }
 
         if (SUCCEEDED(result))
         {
-          ret = this->InitFormatContext();
+          ret = avformat_open_input(&this->formatContext, streamFileName, this->packetInputFormat, NULL);
+          
           CHECK_CONDITION_EXECUTE(ret < 0, result = ret);
+
+          if (SUCCEEDED(result))
+          {
+            ret = this->InitFormatContext();
+            CHECK_CONDITION_EXECUTE(ret < 0, result = ret);
+          }
         }
+        
+        FREE_MEM(streamFileName);
       }
 
       CHECK_CONDITION_EXECUTE(FAILED(result), this->flags &= ~DEMUXER_FLAG_ALL_CONTAINERS);

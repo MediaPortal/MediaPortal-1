@@ -270,6 +270,8 @@ protected:
 
   // holds stream input format (if specified)
   wchar_t *streamInputFormat;
+  // holds stream file name (if specified, mostly NULL)
+  wchar_t *streamFileName;
   // holds special packet input format (only in case of DEMUXER_FLAG_STREAM_IN_PACKETS set flag)
   CPacketInputFormat *packetInputFormat;
 

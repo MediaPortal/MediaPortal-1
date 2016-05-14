@@ -40,6 +40,7 @@
 #define PARAMETER_NAME_LOG_VERBOSITY                                          L"LogVerbosity"
 
 #define PARAMETER_NAME_FINISH_TIME                                            L"FinishTime"
+#define PARAMETER_NAME_STREAM_FILE_NAME                                       L"StreamFileName"
 
 #define PARAMETER_NAME_CRASH_REPORT                                           L"CrashReport"
 #define PARAMETER_NAME_CRASH_REPORT_SEND_CRASH                                L"CrashReportSendCrash"
@@ -66,6 +67,8 @@
 #define PARAMETER_NAME_CRASH_REPORT_MAX_DUMP_FILES_DEFAULT                    3
 #define PARAMETER_NAME_CRASH_REPORT_MAX_RETAIN_DAYS_DEFAULT                   14
 #define PARAMETER_NAME_CRASH_REPORT_MODE_DEFAULT                              CRASH_REPORT_MODE_BASIC
+
+#define PARAMETER_NAME_STREAM_FILE_NAME_DEFAULT                               NULL
 
 // internal filter parameters, they can't be set from external source
 
