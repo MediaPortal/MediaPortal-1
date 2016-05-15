@@ -285,7 +285,7 @@ namespace MediaPortal.GUI.Library
       SendThreadMessage(msg);
 
       // if this is the main thread, then dispatch the messages
-      if (Thread.CurrentThread.Name == "MPMain")
+      if (Thread.CurrentThread.Name == "MPMain" || Thread.CurrentThread.Name == "Config Main")
       {
         DispatchThreadMessages();
       }

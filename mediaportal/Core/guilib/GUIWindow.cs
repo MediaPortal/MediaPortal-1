@@ -475,10 +475,7 @@ namespace MediaPortal.GUI.Library
       }
 
       // else load xml file now
-      //GUIWindow._mainThreadContext.Send(delegate
-      //{
-        LoadSkin();
-      //}, LoadSkin());
+      LoadSkin();
 
       if (!_windowAllocated)
       {
@@ -491,20 +488,21 @@ namespace MediaPortal.GUI.Library
 
     public bool LoadSkin()
     {
-      if (Thread.CurrentThread.Name != "MPMain" && Thread.CurrentThread.Name != "Config Main")
-      {
-        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LOADSKIN, 0, 0, 0, 0, 0, null);
-        GUIWindowManager.SendThreadMessage(msg);
-        return true;
-      }
-      return LoadSkinThreaded();
+      GUIWindowManager.SendThreadCallbackAndWait(LoadSkinThreaded, 0, 0, null);
+      return true;
+    }
+
+    public int LoadSkinThreaded(int p1, int p2, object s)
+    {
+      LoadSkinBool();
+      return p1;
     }
 
     /// <summary>
     /// Loads the xml file for the window.
     /// </summary>
     /// <returns></returns>
-    public bool LoadSkinThreaded()
+    public bool LoadSkinBool()
     {
       // add thread check to log calls not running in main thread/GUI
       String threadName = Thread.CurrentThread.Name;
@@ -1086,10 +1084,7 @@ namespace MediaPortal.GUI.Library
     {
       if (_isSkinLoaded && (_lastSkin != GUIGraphicsContext.Skin))
       {
-        //GUIWindow._mainThreadContext.Send(delegate
-        //{
-          LoadSkin();
-        //}, LoadSkin());
+        LoadSkin();
       }
 
       if (_rememberLastFocusedControl && _rememberLastFocusedControlId >= 0)
@@ -1218,10 +1213,7 @@ namespace MediaPortal.GUI.Library
 
         Dispose();
 
-        //GUIWindow._mainThreadContext.Send(delegate
-        //{
-          LoadSkin();
-        //}, LoadSkin());
+        LoadSkin();
 
         HashSet<int> faultyControl = new HashSet<int>();
         // tell every control we're gonna alloc the resources next
@@ -1771,10 +1763,7 @@ namespace MediaPortal.GUI.Library
               }
               else
               {
-                //GUIWindow._mainThreadContext.Send(delegate
-                //{
-                  LoadSkin();
-                //}, LoadSkin());
+                LoadSkin();
 
                 if (!_windowAllocated)
                 {
@@ -1901,10 +1890,6 @@ namespace MediaPortal.GUI.Library
                 return true;
               }
 
-            case GUIMessage.MessageType.GUI_MSG_LOADSKIN:
-              {
-                return LoadSkinThreaded();
-              }
           }
 
           GUIControl cntlTarget = GetControl(message.TargetControlId);
