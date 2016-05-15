@@ -81,7 +81,5 @@ class MPMadPresenter : public CUnknown, public IOsdRenderCallback, public CCritS
 
     DeviceState m_deviceState;
 
-    IMadVRCommand* m_pCommand = nullptr;
-    IVideoWindow* m_pWindow = nullptr;
 };
 

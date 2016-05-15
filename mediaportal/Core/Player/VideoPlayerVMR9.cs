@@ -1476,6 +1476,7 @@ namespace MediaPortal.Player
 
         if (Vmr9._vmr9Filter != null)
         {
+          MadvrInterface.EnableExclusiveMode(false, Vmr9._vmr9Filter);
           DirectShowUtil.DisconnectAllPins(graphBuilder, Vmr9._vmr9Filter);
           Log.Info("VideoPlayer9: Cleanup VMR9");
         }

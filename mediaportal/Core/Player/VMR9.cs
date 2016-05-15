@@ -1303,12 +1303,6 @@ namespace MediaPortal.Player
         else if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
         {
           MadDeinit();
-          if (MadVrRenderTargetVMR9 != null && !MadVrRenderTargetVMR9.Disposed)
-          {
-            GUIGraphicsContext.DX9Device.SetRenderTarget(0, MadVrRenderTargetVMR9);
-            MadVrRenderTargetVMR9.Dispose();
-            MadVrRenderTargetVMR9 = null;
-          }
         }
         else
         {
@@ -1317,11 +1311,12 @@ namespace MediaPortal.Player
 
         if (_vmr9Filter != null)
         {
-          DirectShowUtil.RemoveFilter(_graphBuilderInterface, _vmr9Filter);
           //if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
           //{
           //  MadvrInterface.OsdSetRenderCallback(_vmr9Filter);
+          //  MadvrInterface.EnableExclusiveMode(false, _vmr9Filter);
           //}
+          DirectShowUtil.RemoveFilter(_graphBuilderInterface, _vmr9Filter);
           GUIWindowManager.MadVrProcess();
           DirectShowUtil.FinalReleaseComObject(_vmr9Filter);
         }
@@ -1345,9 +1340,10 @@ namespace MediaPortal.Player
         {
           if (MadVrRenderTargetVMR9 != null && !MadVrRenderTargetVMR9.Disposed)
           {
+            GUIGraphicsContext.DX9Device.SetRenderTarget(0, MadVrRenderTargetVMR9);
             MadVrRenderTargetVMR9.Dispose();
+            MadVrRenderTargetVMR9 = null;
           }
-          MadVrRenderTargetVMR9 = null;
         }
       }
     }

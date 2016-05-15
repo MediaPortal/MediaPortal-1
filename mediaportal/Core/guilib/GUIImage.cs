@@ -819,7 +819,7 @@ namespace MediaPortal.GUI.Library
       {
         return;
       }
-      if (_textureFileNameTag.IndexOf(tag) >= 0)
+      if (_textureFileNameTag.IndexOf(tag, StringComparison.Ordinal) >= 0)
       {
         _propertyChanged = true;
       }

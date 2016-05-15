@@ -78,11 +78,9 @@ IBaseFilter* MPMadPresenter::Initialize()
   CComQIPtr<IMadVRSubclassReplacement> pSubclassReplacement = m_pMad;
   CComQIPtr<ISubRender> pSubRender = m_pMad;
   CComQIPtr<IVideoWindow> pWindow = m_pMad;
+  CComQIPtr<IMadVRCommand> pCommand = m_pMad;
 
-  m_pMad->QueryInterface(&m_pCommand);
-  m_pMad->QueryInterface(&m_pWindow);
-
-  if (!baseFilter || !pOsdServices || !manager || !pSubclassReplacement || !pSubRender || !m_pCommand || !pWindow)
+  if (!baseFilter || !pOsdServices || !manager || !pSubclassReplacement || !pSubRender || !pCommand || !pWindow)
     return nullptr;
 
   pOsdServices->OsdSetRenderCallback("MP-GUI", this, nullptr);
@@ -90,11 +88,17 @@ IBaseFilter* MPMadPresenter::Initialize()
 
   pSubRender->SetCallback(m_subProxy);
 
-  m_pCommand->SendCommandBool("disableSeekbar", true);
+  pCommand->SendCommandBool("disableSeekbar", true);
 
   pWindow->put_Owner(m_hParent);
   pWindow->SetWindowForeground(true);
   pWindow->put_MessageDrain(m_hParent);
+
+  pOsdServices.Release();
+  manager.Release();
+  pSubRender.Release();
+  pCommand.Release();
+  pWindow.Release();
 
   // TODO implement IMadVRSubclassReplacement
   //pSubclassReplacement->DisableSubclassing();
@@ -114,20 +118,33 @@ HRESULT MPMadPresenter::Shutdown()
   if (m_pMad)
   {
     CComQIPtr<IMadVROsdServices> pOsdServices = m_pMad;
-    if (m_pCommand)
+    CComQIPtr<IMadVRCommand> pCommand = m_pMad;
+    CComQIPtr<IVideoWindow> pWindow = m_pMad;
+
+    if (pOsdServices)
     {
-      m_pCommand->SendCommand("restoreDisplayModeNow");
-      m_pCommand->Release();
+      pOsdServices->OsdSetRenderCallback("MP-GUI", nullptr, nullptr);
+      pOsdServices.Release();
+      pOsdServices = nullptr;
     }
-    m_pWindow->put_Owner(reinterpret_cast<OAHWND>(nullptr));
-    m_pWindow->put_Visible(false);
-    m_pWindow->Release();
-    pOsdServices->OsdSetRenderCallback("MP-GUI", nullptr, nullptr);
-    pOsdServices.Release();
-    pOsdServices = nullptr;
-    m_pWindow = nullptr;
+
+    if (pWindow)
+    {
+      pWindow->put_Owner(reinterpret_cast<OAHWND>(nullptr));
+      pWindow->put_Visible(false);
+      pWindow.Release();
+      pWindow = nullptr;
+    }
+
+    if (pCommand)
+    {
+      pCommand->SendCommandBool("disableExclusiveMode", true);
+      pCommand->SendCommand("restoreDisplayModeNow");
+      pCommand.Release();
+      pCommand = nullptr;
+    }
+
     m_pMad = nullptr;
-    m_pCommand = nullptr;
   }
 
   return S_OK;

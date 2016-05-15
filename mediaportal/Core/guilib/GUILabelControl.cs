@@ -549,7 +549,7 @@ namespace MediaPortal.GUI.Library
       {
         return;
       }
-      if (_labelText.IndexOf(tag) >= 0)
+      if (_labelText.IndexOf(tag, StringComparison.Ordinal) >= 0)
       {
         _propertyHasChanged = true;
       }

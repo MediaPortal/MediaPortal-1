@@ -599,8 +599,11 @@ namespace MediaPortal.Player
       {
         unsafe
         {
-          grabber?.OnFrame(width, height, arWidth, arHeight, (uint)surfaceMadVr.UnmanagedComPointer,
-            FrameGrabber.FrameSource.Video);
+          lock (GUIGraphicsContext.RenderModeSwitch)
+          {
+            grabber?.OnFrame(width, height, arWidth, arHeight, (uint)surfaceMadVr.UnmanagedComPointer,
+              FrameGrabber.FrameSource.Video);
+          }
         }
         surfaceMadVr.ReleaseGraphics();
         surfaceMadVr.Dispose();
