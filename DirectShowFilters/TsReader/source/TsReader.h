@@ -280,6 +280,7 @@ public:
   void GetMediaPosition(REFERENCE_TIME *pMediaTime);
 
   bool            m_bOnZap;
+  bool            m_bZapinProgress;
   bool            m_bForceSeekOnStop;
   bool            m_bRenderingClockTooFast;
   bool            m_bForceSeekAfterRateChange;
@@ -336,6 +337,7 @@ private:
   void    ReadRegistryKeyString(HKEY hKey, LPCTSTR& lpSubKey, LPCTSTR& data);
   void    WriteRegistryKeyString(HKEY hKey, LPCTSTR& lpSubKey, LPCTSTR& data);
   LONG    ReadOnlyRegistryKeyDword(HKEY hKey, LPCTSTR& lpSubKey, DWORD& data);
+  double  DurationUpdate();
      
   CAudioPin*	    m_pAudioPin;
   CVideoPin*	    m_pVideoPin;

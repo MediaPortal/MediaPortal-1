@@ -421,25 +421,25 @@ void CRTSPClient::Continue()
 
 bool CRTSPClient::InternalPlay(double startPoint)
 {
-  LogDebug("CRTSPClient::Play()");
+  LogDebug("CRTSPClient::InternalPlay() - start = %f", (float)startPoint);
   if (m_client != NULL && m_session != NULL)
   {
     ResetEvent(m_genericResponseEvent);
     m_client->sendPlayCommand(*m_session, &CRTSPClient::OnGenericResponseReceived, startPoint);
     if (WaitForSingleObject(m_genericResponseEvent, TIMEOUT_GENERIC_RTSP_RESPONSE) == WAIT_TIMEOUT)
     {
-      LogDebug("CRTSPClient::Play(): RTSP PLAY timed out");
+      LogDebug("CRTSPClient::InternalPlay(): RTSP PLAY timed out");
       return false;
     }
     if (m_genericResponseResultCode != 0)
 	  {
-      LogDebug("CRTSPClient::Play(): RTSP PLAY failed, result code = %d, message = %s", m_genericResponseResultCode, m_env->getResultMsg());
+      LogDebug("CRTSPClient::InternalPlay(): RTSP PLAY failed, result code = %d, message = %s", m_genericResponseResultCode, m_env->getResultMsg());
       return false;
     }
 
     m_isPaused = false;
   }
-  LogDebug("CRTSPClient::Play(): done");
+  LogDebug("CRTSPClient::InternalPlay(): done");
   return true;
 }
 

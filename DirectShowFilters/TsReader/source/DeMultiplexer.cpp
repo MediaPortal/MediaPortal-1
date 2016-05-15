@@ -724,7 +724,7 @@ void CDeMultiplexer::Flush(bool clearAVready)
 {
   if (m_bFlushRunning) return;
     
-  LogDebug("demux:flushing");
+  LogDebug("demux:flushing, clearAVready = %d", clearAVready);
 
   m_bFlushRunning = true; //Stall GetVideo()/GetAudio()/GetSubtitle() calls from pins 
 
