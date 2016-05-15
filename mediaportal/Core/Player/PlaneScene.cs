@@ -632,6 +632,11 @@ namespace MediaPortal.Player
         GUIGraphicsContext.InVmr9Render = true;
       }
 
+      if (GUIWindowManager.IsSwitchingToNewWindow && !_vmr9Util.InMenu)
+      {
+        return 0; //dont present video during window transitions
+      }
+
       if (width > 0 && height > 0)
       {
         _vmr9Util.VideoWidth = width;
@@ -640,9 +645,6 @@ namespace MediaPortal.Player
         _vmr9Util.VideoAspectRatioY = arHeight;
         _arVideoWidth = arWidth;
         _arVideoHeight = arHeight;
-
-        Size nativeSize = new Size(width, height);
-        _shouldRenderTexture = SetVideoWindow(nativeSize);
       }
 
       Device device = GUIGraphicsContext.DX9Device;

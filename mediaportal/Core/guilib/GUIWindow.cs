@@ -489,11 +489,22 @@ namespace MediaPortal.GUI.Library
 
     }
 
+    public bool LoadSkin()
+    {
+      if (Thread.CurrentThread.Name != "MPMain" && Thread.CurrentThread.Name != "Config Main")
+      {
+        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LOADSKIN, 0, 0, 0, 0, 0, null);
+        GUIWindowManager.SendThreadMessage(msg);
+        return true;
+      }
+      return LoadSkinThreaded();
+    }
+
     /// <summary>
     /// Loads the xml file for the window.
     /// </summary>
     /// <returns></returns>
-    public bool LoadSkin()
+    public bool LoadSkinThreaded()
     {
       // add thread check to log calls not running in main thread/GUI
       String threadName = Thread.CurrentThread.Name;
@@ -1888,6 +1899,11 @@ namespace MediaPortal.GUI.Library
                   _previousFocusedControlId = id;
                 }
                 return true;
+              }
+
+            case GUIMessage.MessageType.GUI_MSG_LOADSKIN:
+              {
+                return LoadSkinThreaded();
               }
           }
 

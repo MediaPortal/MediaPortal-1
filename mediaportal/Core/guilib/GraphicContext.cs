@@ -213,6 +213,7 @@ namespace MediaPortal.GUI.Library
       Convert2Dto3DSkewFactor = 0;
       LastFrames = new List<Texture>();
       LastFramesIndex = 0;
+      GUIWindowManager.Receivers += OnMessage;
     }
 
     /// <summary>
@@ -1016,14 +1017,15 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     private static void VideoWindowChanged()
     {
-      if (GUIWindow._mainThreadContext == null)
+      if (Thread.CurrentThread.Name != "MPMain" && Thread.CurrentThread.Name != "Config Main")
       {
-        GUIWindow._mainThreadContext = SynchronizationContext.Current;
+        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ONVIDEOWINDOWCHANGED, 0, 0, 0, 0, 0, null);
+        GUIWindowManager.SendThreadMessage(msg);
       }
-      GUIWindow._mainThreadContext.Post(delegate
+      else
       {
         OnVideoWindowChanged?.Invoke();
-      }, OnVideoWindowChanged);
+      }
     }
 
     /// <summary>
@@ -1065,9 +1067,17 @@ namespace MediaPortal.GUI.Library
             _overlay = false;
           }
 
-          if (!_overlay && GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR)
+          if (!_overlay)
           {
-            VideoWindow = new Rectangle(0, 0, 1, 1);
+            if (Thread.CurrentThread.Name != "MPMain" && Thread.CurrentThread.Name != "Config Main")
+            {
+              GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SETVIDEOWINDOW, 0, 0, 0, 0, 0, null);
+              GUIWindowManager.SendThreadMessage(msg);
+            }
+            else
+            {
+              VideoWindow = new Rectangle(0, 0, 3, 3);
+            }
           }
 
           if (bOldOverlay != _overlay)
@@ -1075,6 +1085,24 @@ namespace MediaPortal.GUI.Library
             VideoWindowChanged();
           }
         }
+      }
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="message"></param>
+    private static void OnMessage(GUIMessage message)
+    {
+      switch (message.Message)
+      {
+        case GUIMessage.MessageType.GUI_MSG_ONVIDEOWINDOWCHANGED:
+          OnVideoWindowChanged?.Invoke();
+          break;
+        case GUIMessage.MessageType.GUI_MSG_SETVIDEOWINDOW:
+          VideoWindow = new Rectangle(0, 0, 3, 3);
+          VideoWindowChanged();
+          break;
       }
     }
 
@@ -1702,6 +1730,9 @@ namespace MediaPortal.GUI.Library
     {
       get { return RenderLoopLock; }
     }
+
+    public static int VideoWindowWidth { get; set; }
+    public static int VideoWindowHeight { get; set; }
 
     /// <summary>
     /// Enable/Disable bypassing of UI Calibration transforms

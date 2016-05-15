@@ -151,6 +151,8 @@ namespace MediaPortal.GUI.Library
         if (_setVideoWindow)
         {
           GUIGraphicsContext.VideoWindow = _videoWindows[0];
+          GUIGraphicsContext.VideoWindowWidth = _videoWindows[0].Width;
+          GUIGraphicsContext.VideoWindowHeight = _videoWindows[0].Height;
         }
 
         if (GUIGraphicsContext.ShowBackground)
