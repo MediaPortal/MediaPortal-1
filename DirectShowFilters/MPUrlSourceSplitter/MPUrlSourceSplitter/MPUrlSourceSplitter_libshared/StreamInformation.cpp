@@ -26,11 +26,13 @@ CStreamInformation::CStreamInformation(HRESULT *result)
   : CFlags()
 {
   this->streamInputFormat = NULL;
+  this->streamFileName = NULL;
 }
 
 CStreamInformation::~CStreamInformation(void)
 {
   FREE_MEM(this->streamInputFormat);
+  FREE_MEM(this->streamFileName);
 }
 
 /* get methods */
@@ -40,11 +42,21 @@ const wchar_t *CStreamInformation::GetStreamInputFormat(void)
   return this->streamInputFormat;
 }
 
+const wchar_t *CStreamInformation::GetStreamFileName(void)
+{
+  return this->streamFileName;
+}
+
 /* set methods */
 
 bool CStreamInformation::SetStreamInputFormat(const wchar_t *streamInputFormat)
 {
   SET_STRING_RETURN_WITH_NULL(this->streamInputFormat, streamInputFormat);
+}
+
+bool CStreamInformation::SetStreamFileName(const wchar_t *streamFileName)
+{
+  SET_STRING_RETURN_WITH_NULL(this->streamFileName, streamFileName);
 }
 
 void CStreamInformation::SetContainer(bool container)
@@ -74,5 +86,6 @@ bool CStreamInformation::IsPackets(void)
 void CStreamInformation::Clear(void)
 {
   FREE_MEM(this->streamInputFormat);
+  FREE_MEM(this->streamFileName);
   this->flags = STREAM_INFORMATION_FLAG_NONE;
 }

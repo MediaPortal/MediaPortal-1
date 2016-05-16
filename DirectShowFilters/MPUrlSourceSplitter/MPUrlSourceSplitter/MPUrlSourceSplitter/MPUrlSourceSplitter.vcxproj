@@ -204,6 +204,7 @@ echo #endif &gt;&gt; VersionInfo.h</Command>
     <ClInclude Include="StreamCollection.h" />
     <ClInclude Include="StreamInfo.h" />
     <ClInclude Include="targetver.h" />
+    <ClInclude Include="Version.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ByteParser.cpp" />

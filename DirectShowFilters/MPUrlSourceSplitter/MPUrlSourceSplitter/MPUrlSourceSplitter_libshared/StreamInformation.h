@@ -401,12 +401,21 @@ public:
   // @return : stream input format or NULL if not specified
   const wchar_t *GetStreamInputFormat(void);
 
+  // gets stream file name (if specified)
+  // @return : stream file name or NULL if not specified
+  const wchar_t *GetStreamFileName(void);
+
   /* set methods */
 
   // sets stream input format
   // @param streamInputFormat : stream input format to set
   // @return : true if successful, false otherwise
   bool SetStreamInputFormat(const wchar_t *streamInputFormat);
+
+  // sets stream file name
+  // @param streamFileName : stream file name to set
+  // @return : true if successful, false otherwise
+  bool SetStreamFileName(const wchar_t *streamFileName);
 
   // sets if received data are in container
   // @param container : true if received data are in container, false otherwise
@@ -433,6 +442,10 @@ protected:
   // holds stream input format
   // can be NULL, but for stream without container is recommened to specify it - automatic guess in that case is not working properly
   wchar_t *streamInputFormat;
+
+  // holds stream file name
+  // mostly NULL, it is set in rare cases when FFmpeg autodetection does not work
+  wchar_t *streamFileName;
 
   /* methods */
 };

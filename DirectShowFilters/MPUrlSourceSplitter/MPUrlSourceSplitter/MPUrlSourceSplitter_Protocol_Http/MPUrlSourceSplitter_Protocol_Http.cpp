@@ -1247,6 +1247,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Http::GetStreamInformation(CStreamInformat
     if (SUCCEEDED(result))
     {
       streamInfo->SetContainer(true);
+      streamInfo->SetStreamFileName(this->configuration->GetValue(PARAMETER_NAME_STREAM_FILE_NAME, true, PARAMETER_NAME_STREAM_FILE_NAME_DEFAULT));
     }
 
     CHECK_CONDITION_HRESULT(result, streams->Add(streamInfo), result, E_OUTOFMEMORY);

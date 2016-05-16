@@ -20,16 +20,15 @@ along with MediaPortal 2.  If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
 
-#ifndef __CRASH_REPORT_
+#ifndef __CRASH_REPORT
 #define __CRASH_REPORT
 
 #include "Flags.h"
+#include "Version.h"
 #include "ParameterCollection.h"
 #include "CrashRpt.h"
 
-#define UNIX_TIMESTAMP_2000_01_01                                     946684800
-#define SECONDS_IN_DAY                                                86400
-#define HUNDRED_NANOSECONDS_IN_DAY                                    864000000000
+#define HUNDRED_NANOSECONDS_IN_DAY                                    (SECONDS_IN_DAY * 10000000ULL)
 
 #define CRASHRPT_FILE_NAME                                            L"crashrpt.dll"
 #define DBGHELP_FILE_NAME                                             L"dbghelp.dll"

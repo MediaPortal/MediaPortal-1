@@ -124,9 +124,6 @@ const wchar_t *REPLACE_PARAMETER_NAME_STOCK_FILTER[PARAMETER_NAME_STOCK_FILTER_T
                                                                   PARAMETER_NAME_INTERFACE,
                                                                   PARAMETER_NAME_URL};
 
-#define UNIX_TIMESTAMP_2000_01_01                                 946684800
-#define SECONDS_IN_DAY                                            86400
-
 extern "C++" CStaticLogger *staticLogger;
 extern "C++" CCrashReport *crashReport;
 
@@ -604,19 +601,6 @@ STDMETHODIMP CMPUrlSourceSplitter::Load(LPCOLESTR pszFileName, const AM_MEDIA_TY
   this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, MODULE_NAME, METHOD_LOAD_NAME);
   HRESULT result = S_OK;
   CHECK_POINTER_DEFAULT_HRESULT(result, pszFileName);
-
-  //// check log file parameter, if not set, add default
-  //if (!this->configuration->Contains(PARAMETER_NAME_LOG_FILE_NAME, true))
-  //{
-  //  wchar_t *logFile = this->IsIptv() ? GetTvServerFilePath(MP_IPTV_SOURCE_LOG_FILE) : GetMediaPortalFilePath(MP_URL_SOURCE_SPLITTER_LOG_FILE);
-  //  CHECK_POINTER_HRESULT(result, logFile, result, E_OUTOFMEMORY);
-
-  //  CHECK_CONDITION_HRESULT(result, this->configuration->Add(PARAMETER_NAME_LOG_FILE_NAME, logFile), result, E_OUTOFMEMORY);
-  //  FREE_MEM(logFile);
-  //}
-
-  // set logger parameters
-  //this->logger->SetParameters(this->configuration);
 
   if (SUCCEEDED(result))
   {
@@ -1453,10 +1437,7 @@ STDMETHODIMP CMPUrlSourceSplitter::GetVersion(unsigned int *version)
 
   if (SUCCEEDED(result))
   {
-    uint64_t buildDate = BUILD_INFO_MP_URL_SOURCE_SPLITTER - UNIX_TIMESTAMP_2000_01_01;
-    buildDate /= SECONDS_IN_DAY;
-
-    *version = (unsigned int)buildDate;
+    *version = MP_URL_SOURCE_SPLITTER_VERSION_BUILD;
   }
 
   return result;

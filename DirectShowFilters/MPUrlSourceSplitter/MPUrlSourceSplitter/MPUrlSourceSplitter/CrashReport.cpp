@@ -92,18 +92,15 @@ CCrashReport::CCrashReport(HRESULT *result)
         wcscat_s(this->dbgHelpPath, MAX_PATH, DBGHELP_FILE_NAME);
         wcscat_s(this->sendrptPath, MAX_PATH, SENDRPT_FILE_NAME);
 
-        uint64_t buildDate = BUILD_INFO_MP_URL_SOURCE_SPLITTER - UNIX_TIMESTAMP_2000_01_01;
-        buildDate /= SECONDS_IN_DAY;
-
         this->applicationInfo->ApplicationInfoSize = sizeof(ApplicationInfo);
-        this->applicationInfo->ApplicationGUID = "44514f47-9a70-4e67-8f52-d2377e0517b8";
+        this->applicationInfo->ApplicationGUID = "49edbffb-2056-4ca1-8868-8723305aead3";
         this->applicationInfo->Prefix = "MPUrlSourceSplitter";
-        this->applicationInfo->AppName = L"MediaPortal Url Source Splitter";
+        this->applicationInfo->AppName = L"MediaPortal IPTV filter and url source splitter";
         this->applicationInfo->Company = L"Team MediaPortal";
         this->applicationInfo->V[0] = 2;
         this->applicationInfo->V[1] = 2;
-        this->applicationInfo->V[2] = 11;
-        this->applicationInfo->V[3] = (USHORT)buildDate;
+        this->applicationInfo->V[2] = MP_URL_SOURCE_SPLITTER_VERSION_REVISION;
+        this->applicationInfo->V[3] = (USHORT)MP_URL_SOURCE_SPLITTER_VERSION_BUILD;
         this->applicationInfo->Hotfix = 0;
         this->applicationInfo->PrivacyPolicyUrl = NULL;
 
