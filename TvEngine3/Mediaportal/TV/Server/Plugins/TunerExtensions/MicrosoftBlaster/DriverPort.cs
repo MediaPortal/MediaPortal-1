@@ -109,7 +109,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBlaster
 
     private SafeFileHandle _handle = null;
     private bool _isReceiving = false;
-    private int _carrierFrequency = IrCommand.CARRIER_FREQUENCY_UNKNOWN;
+    private int _carrierFrequency = -1;
 
     // Almost all the I/O struct members are of type ULONG_PTR. The size (in
     // bytes) of a ULONG_PTR varies depending on whether the operating system
@@ -316,7 +316,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBlaster
       try
       {
         Marshal.WriteInt32(bufferTransmitParams, 0, (int)portMask);
-        if (carrierFrequency == 0 || carrierFrequency == IrCommand.CARRIER_FREQUENCY_DC_MODE)
+        if (carrierFrequency == 0)  // DC (no carrier)
         {
           // DC and/or pulse mode probably won't work. The documentation for
           // the flags and pulse size members is incomplete and essentially
@@ -441,7 +441,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBlaster
       }
 
       // Cache the carrier frequency when DataEnd is set.
-      _carrierFrequency = IrCommand.CARRIER_FREQUENCY_UNKNOWN;
+      _carrierFrequency = -1;
       if (Marshal.ReadInt32(receiveBuffer, 0) != 0)
       {
         _carrierFrequency = Marshal.ReadInt32(receiveBuffer, _sizeOfUlongPtr * 2);
@@ -457,7 +457,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBlaster
     protected override bool LearnCarrierFrequency(IEnumerable<int> timingData, out int carrierFrequency)
     {
       carrierFrequency = _carrierFrequency;
-      return _carrierFrequency != IrCommand.CARRIER_FREQUENCY_UNKNOWN;
+      return _carrierFrequency > 0;
     }
 
     #endregion

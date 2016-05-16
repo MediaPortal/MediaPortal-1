@@ -92,14 +92,9 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBlaster.Config
     private string _learningTransceiverDevicePath = null;
 
     public MicrosoftBlasterConfig()
-      : this("Microsoft Blaster")
+      : base("Microsoft Blaster")
     {
       ServiceAgents.Instance.AddGenericService<IMicrosoftBlasterConfigService>();
-    }
-
-    public MicrosoftBlasterConfig(string name)
-      : base(name)
-    {
       InitializeComponent();
     }
 
@@ -338,6 +333,11 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBlaster.Config
       if (transmitPort == null || transmitPort.Port == TransmitPort.None)
       {
         MessageBox.Show("Please select a port to test.", MESSAGE_CAPTION);
+        return;
+      }
+      if (!transmitPort.IsConnected)
+      {
+        MessageBox.Show("An emitter is not connected to the selected port. Please select a different port to test.", MESSAGE_CAPTION);
         return;
       }
 

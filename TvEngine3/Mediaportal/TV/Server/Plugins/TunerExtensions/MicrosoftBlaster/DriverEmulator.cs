@@ -312,7 +312,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBlaster
       catch (Exception ex)
       {
         CloseHandles();
-        this.LogError("Microsoft blaster emulation driver: resume command failed, device path = {0}, is replacement driver = {1}", _devicePath, _isReplacementDriver);
+        this.LogError(ex, "Microsoft blaster emulation driver: resume command failed, device path = {0}, is replacement driver = {1}", _devicePath, _isReplacementDriver);
         return false;
       }
     }
@@ -477,7 +477,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBlaster
 
       this.LogDebug("Microsoft blaster emulation driver: set carrier frequency, frequency = {0} Hz", carrierFrequency);
       byte[] packet = new byte[4] { CMD_PORT_IR, (byte)CommandType.SetIrCarrierFrequency, 0x00, 0x00 };   // default = DC mode
-      if (carrierFrequency != IrCommand.CARRIER_FREQUENCY_DC_MODE)
+      if (carrierFrequency > 0)
       {
         byte preScalar = 0;
         while (true)
@@ -627,7 +627,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBlaster
     /// <returns><c>true</c> if the carrier frequency has been learned (indicating learning is complete), otherwise <c>false</c></returns>
     protected override bool LearnCarrierFrequency(IEnumerable<int> timingData, out int carrierFrequency)
     {
-      carrierFrequency = IrCommand.CARRIER_FREQUENCY_UNKNOWN;
+      carrierFrequency = -1;
       if (_decodeCarrierCount < 0)
       {
         return false;
@@ -651,7 +651,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBlaster
 
       if ((double)_decodeCarrierCount / pulseCount < 2.0)
       {
-        carrierFrequency = IrCommand.CARRIER_FREQUENCY_DC_MODE;
+        carrierFrequency = 0;   // DC (no carrier)
       }
       else
       {

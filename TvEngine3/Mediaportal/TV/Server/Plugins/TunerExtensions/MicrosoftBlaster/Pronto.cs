@@ -20,11 +20,13 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
 namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBlaster
 {
   /// <summary>
-  /// A class for converting IR commands to and from Philips Pronto format.
+  /// A class for decoding and encoding Philips Pronto format.
   /// </summary>
   /// <remarks>
   /// This code is based on code from IRSS, improved with information from
@@ -63,13 +65,15 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBlaster
     // somewhat arbitrary - chosen to optimise the match between typical
     // pulse/space durations and the available resolution (16 bits).
     // => Proto data value 1 = 3 micro-seconds
-    private const int CARRIER_UNKNOWN_HZ = 333333;
+    private const int DECODE_ENCODE_CARRIER_UNKNOWN_HZ = 333333;
 
     private const int CARRIER_RC5_HZ = 36000;
     private const int CARRIER_RC6_HZ = 36000;
 
     private const double PRONTO_CLOCK_MULTIPLIER = 0.241246;
+    private const int PRONTO_CARRIER_UNKNOWN = 0;
 
+    // unit = micro-seconds (us)
     private const int SIGNAL_FREE_TIME = 10000;
     private const int SIGNAL_FREE_TIME_RC6 = 2666;
 
@@ -78,53 +82,68 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBlaster
 
     #endregion
 
-    /// <summary>
-    /// Convert Pronto data into its corresponding IR command representation.
-    /// </summary>
-    /// <param name="prontoData">The Pronto data to convert.</param>
-    /// <returns>an IR command instance if successful, otherwise <c>null</c></returns>
-    public static IrCommand ConvertProntoDataToIrCommand(ushort[] prontoData)
+    public static bool Decode(string command, out int carrierFrequency, out int[] timingData)
     {
-      if (prontoData == null || prontoData.Length == 0)
+      carrierFrequency = -1;
+      timingData = null;
+
+      try
       {
-        throw new ArgumentNullException("prontoData");
+        if (string.IsNullOrWhiteSpace(command))
+        {
+          return false;
+        }
+
+        string[] temp = command.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+
+        ushort[] prontoData = new ushort[temp.Length];
+        for (int i = 0; i < temp.Length; i++)
+        {
+          prontoData[i] = ushort.Parse(temp[i], NumberStyles.HexNumber);
+        }
+
+        switch ((CodeType)prontoData[0])
+        {
+          case CodeType.RawOscillated:
+          case CodeType.RawUnmodulated:
+            return DecodeRaw(prontoData, out carrierFrequency, out timingData);
+
+          case CodeType.Rc5:
+            return DecodeRc5(prontoData, out carrierFrequency, out timingData);
+
+          case CodeType.Rc5x:
+            return DecodeRc5x(prontoData, out carrierFrequency, out timingData);
+
+          case CodeType.Rc6Mode0:
+            return DecodeRc6(prontoData, out carrierFrequency, out timingData);
+
+          case CodeType.Rc6Mode6a:
+            return DecodeRc6a(prontoData, out carrierFrequency, out timingData);
+        }
+        return false;
       }
-
-      switch ((CodeType)prontoData[0])
+      catch (Exception ex)
       {
-        case CodeType.RawOscillated:
-        case CodeType.RawUnmodulated:
-          return ConvertProntoRawToIrCommand(prontoData);
-
-        case CodeType.Rc5:
-          return ConvertProntoRc5ToIrCommand(prontoData);
-
-        case CodeType.Rc5x:
-          return ConvertProntoRc5xToIrCommand(prontoData);
-
-        case CodeType.Rc6Mode0:
-          return ConvertProntoRc6ToIrCommand(prontoData);
-
-        case CodeType.Rc6Mode6a:
-          return ConvertProntoRc6aToIrCommand(prontoData);
-
-        default:
-          return null;
+        Log.Error(ex, "Microsoft blaster: failed to decode Pronto command string");
+        return false;
       }
     }
 
-    private static IrCommand ConvertProntoRawToIrCommand(ushort[] prontoData)
+    private static bool DecodeRaw(ushort[] prontoData, out int carrierFrequency, out int[] timingData)
     {
+      carrierFrequency = -1;
+      timingData = null;
+
       if (prontoData.Length < 5)
       {
-        return null;
+        return false;
       }
 
       int burstPairSequenceSizeOnce = 2 * prontoData[2];
       int burstPairSequenceSizeRepeat = 2 * prontoData[3];
       if (burstPairSequenceSizeOnce == 0 && burstPairSequenceSizeRepeat == 0)
       {
-        return null;
+        return false;
       }
       int repeatStartIndex = 4 + burstPairSequenceSizeOnce;
       if (burstPairSequenceSizeRepeat == 0)
@@ -134,22 +153,22 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBlaster
       }
 
       ushort prontoCarrier = prontoData[1];
-      double carrierFrequency = CARRIER_UNKNOWN_HZ;
-      if (prontoCarrier != 0)
+      double decodeCarrier = DECODE_ENCODE_CARRIER_UNKNOWN_HZ;
+      if (prontoCarrier != PRONTO_CARRIER_UNKNOWN)
       {
-        carrierFrequency = CarrierFrequencyFromProntoCarrier(prontoCarrier);
+        decodeCarrier = CarrierFrequencyFromProntoCarrier(prontoCarrier);
       }
-      double multiplier = 1000000 / carrierFrequency;
+      double multiplier = 1000000 / decodeCarrier;
 
       int repeatCount = 0;  // can be changed
       if (burstPairSequenceSizeOnce == 0)
       {
         repeatCount++;
       }
-      int[] timingData = new int[burstPairSequenceSizeOnce + (repeatCount * burstPairSequenceSizeRepeat)];
+      timingData = new int[burstPairSequenceSizeOnce + (repeatCount * burstPairSequenceSizeRepeat)];
       if (timingData.Length == 0)
       {
-        return null;
+        return false;
       }
 
       short pulse = 1;
@@ -171,30 +190,33 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBlaster
         }
       }
 
-      int irCommandCarrierFrequency = (int)carrierFrequency;
+      carrierFrequency = (int)decodeCarrier;
       if (prontoData[0] == (ushort)CodeType.RawUnmodulated)
       {
-        irCommandCarrierFrequency = IrCommand.CARRIER_FREQUENCY_DC_MODE;
+        carrierFrequency = 0;   // DC - no carrier
       }
-      else if (prontoCarrier == 0)
+      else if (prontoCarrier == PRONTO_CARRIER_UNKNOWN)
       {
-        irCommandCarrierFrequency = IrCommand.CARRIER_FREQUENCY_UNKNOWN;
+        carrierFrequency = -1;
       }
-      return new IrCommand(irCommandCarrierFrequency, timingData);
+      return true;
     }
 
-    private static IrCommand ConvertProntoRc5ToIrCommand(ushort[] prontoData)
+    private static bool DecodeRc5(ushort[] prontoData, out int carrierFrequency, out int[] timingData)
     {
+      carrierFrequency = -1;
+      timingData = null;
+
       if (prontoData.Length != 6 || prontoData[2] != 0 || prontoData[3] != 1)
       {
-        return null;
+        return false;
       }
 
       ushort system = prontoData[4];
       ushort command = prontoData[5];
       if (system > 31 || command > 127)
       {
-        return null;
+        return false;
       }
 
       ushort rc5 = 0x2800;  // Start and toggle bits set.
@@ -203,14 +225,18 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBlaster
         rc5 |= 0x1000;      // field Bit (inverted command bit 6)
       }
       rc5 |= (ushort)((system << 6) | (command & 0x3f));
-      return GetIrCommandForRc5Command(rc5, prontoData[1], false);
+      DecodeRc5Variant(rc5, prontoData[1], false, out carrierFrequency, out timingData);
+      return true;
     }
 
-    private static IrCommand ConvertProntoRc5xToIrCommand(ushort[] prontoData)
+    private static bool DecodeRc5x(ushort[] prontoData, out int carrierFrequency, out int[] timingData)
     {
+      carrierFrequency = -1;
+      timingData = null;
+
       if (prontoData.Length != 8 || prontoData[2] != 0 || prontoData[3] != 2)
       {
-        return null;
+        return false;
       }
 
       ushort system = prontoData[4];
@@ -218,7 +244,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBlaster
       ushort data = prontoData[6];
       if (system > 31 || command > 127 || data > 63)
       {
-        return null;
+        return false;
       }
 
       uint rc5 = 0xa0000; // Start and toggle bits set.
@@ -227,10 +253,11 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBlaster
         rc5 |= 0x40000;   // field Bit (inverted command bit 6)
       }
       rc5 |= (uint)((system << 12) | ((command & 0x3f) << 6) | data);
-      return GetIrCommandForRc5Command(rc5, prontoData[1], true);
+      DecodeRc5Variant(rc5, prontoData[1], true, out carrierFrequency, out timingData);
+      return true;
     }
 
-    private static IrCommand GetIrCommandForRc5Command(uint command, ushort prontoCarrierOverride = 0, bool isRc5x = false)
+    private static void DecodeRc5Variant(uint command, ushort prontoCarrierOverride, bool isRc5x, out int carrierFrequency, out int[] timingData)
     {
       uint iStart = 0x2000;
       if (isRc5x)
@@ -238,7 +265,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBlaster
         iStart = 0x80000;
       }
 
-      List<int> timingData = new List<int>();
+      List<int> timingDataList = new List<int>();
       int duration = 0;
       for (uint i = iStart; i != 0; i >>= 1)
       {
@@ -246,7 +273,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBlaster
         {
           if (duration > 0)
           {
-            timingData.Add(duration);
+            timingDataList.Add(duration);
             duration = 0;
           }
           duration -= (889 * 4);
@@ -255,54 +282,65 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBlaster
         int d = (command & i) != 0 ? -889 : 889;    // 889 us = 32 x carrier frequency periods; logic 0 = pulse + space; logic 1 = space + pulse
         if (Math.Sign(duration) != Math.Sign(d))
         {
-          timingData.Add(duration);
+          timingDataList.Add(duration);
           duration = 0;
         }
 
-        timingData.Add(duration + d);
+        timingDataList.Add(duration + d);
         duration = -d;
       }
 
       if (duration > 0)
       {
-        timingData.Add(duration);
-        timingData.Add(-SIGNAL_FREE_TIME);
+        timingDataList.Add(duration);
+        timingDataList.Add(-SIGNAL_FREE_TIME);
       }
       else
       {
-        timingData.Add(duration - SIGNAL_FREE_TIME);
+        timingDataList.Add(duration - SIGNAL_FREE_TIME);
       }
 
       if (prontoCarrierOverride != 0)
       {
-        return new IrCommand(CarrierFrequencyFromProntoCarrier(prontoCarrierOverride), timingData.ToArray());
+        carrierFrequency = CarrierFrequencyFromProntoCarrier(prontoCarrierOverride);
       }
-      return new IrCommand(CARRIER_RC5_HZ, timingData.ToArray());
+      else
+      {
+        carrierFrequency = CARRIER_RC5_HZ;
+      }
+      timingData = timingDataList.ToArray();
     }
 
-    private static IrCommand ConvertProntoRc6ToIrCommand(ushort[] prontoData)
+    private static bool DecodeRc6(ushort[] prontoData, out int carrierFrequency, out int[] timingData)
     {
+      carrierFrequency = -1;
+      timingData = null;
+
       if (prontoData.Length != 6 || prontoData[2] != 0 || prontoData[3] != 1)
       {
-        return null;
+        return false;
       }
 
       ushort system = prontoData[4];
       ushort command = prontoData[5];
       if (system > 255 || command > 255)
       {
-        return null;
+        return false;
       }
 
       ushort rc6 = (ushort)((system << 8) | command);
-      return GetIrCommandForRc6Command(rc6, prontoData[1]);
+      DecodeRc6Variant(rc6, prontoData[1], 0, out carrierFrequency, out timingData);
+      return true;
     }
 
-    private static IrCommand ConvertProntoRc6aToIrCommand(ushort[] prontoData)
+    private static bool DecodeRc6a(ushort[] prontoData, out int carrierFrequency, out int[] timingData)
     {
+      carrierFrequency = -1;
+      timingData = null;
+
       if (prontoData.Length != 6 || prontoData[2] != 0 || prontoData[3] != 2)
       {
-        return null;
+        return false;
       }
 
       ushort customer = prontoData[4];
@@ -310,96 +348,100 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBlaster
       ushort command = prontoData[6];
       if ((customer > 127 && customer < 32768) || system > 255 || command > 255)
       {
-        return null;
+        return false;
       }
 
       uint rc6 = (uint)((customer << 16) | (system << 8) | command);
-      return GetIrCommandForRc6Command(rc6, prontoData[1], (byte)(customer > 127 ? 16 : 8));
+      DecodeRc6Variant(rc6, prontoData[1], (byte)(customer > 127 ? 16 : 8), out carrierFrequency, out timingData);
+      return true;
     }
 
-    private static IrCommand GetIrCommandForRc6Command(uint command, ushort prontoCarrierOverride = 0, byte customerBitCount = 0)
+    private static void DecodeRc6Variant(uint command, ushort prontoCarrierOverride, byte customerBitCount, out int carrierFrequency, out int[] timingData)
     {
       uint iStart = (uint)(1 << (15 + customerBitCount));
 
-      List<int> timingData;
+      List<int> timingDataList;
       if (customerBitCount == 0)
       {
-        timingData = new List<int>(HEADER_RC6_MODE_0);
+        timingDataList = new List<int>(HEADER_RC6_MODE_0);
       }
       else
       {
-        timingData = new List<int>(HEADER_RC6_MODE_6A);
+        timingDataList = new List<int>(HEADER_RC6_MODE_6A);
       }
 
-      int duration = timingData[timingData.Count - 1];
+      int duration = timingDataList[timingDataList.Count - 1];
       for (uint i = iStart; i != 0; i >>= 1)
       {
         int d = (command & i) != 0 ? 444 : -444;    // 444 us = 16 x carrier frequency periods; logic 0 = space + pulse; logic 1 = pulse + space
         if (Math.Sign(duration) != Math.Sign(d))
         {
-          timingData.Add(duration);
+          timingDataList.Add(duration);
           duration = 0;
         }
 
-        timingData.Add(duration + d);
+        timingDataList.Add(duration + d);
         duration = -d;
       }
 
       if (duration > 0)
       {
-        timingData.Add(duration);
-        timingData.Add(-SIGNAL_FREE_TIME_RC6);
+        timingDataList.Add(duration);
+        timingDataList.Add(-SIGNAL_FREE_TIME_RC6);
       }
       else
       {
-        timingData.Add(duration - SIGNAL_FREE_TIME_RC6);
+        timingDataList.Add(duration - SIGNAL_FREE_TIME_RC6);
       }
 
       if (prontoCarrierOverride != 0)
       {
-        return new IrCommand(CarrierFrequencyFromProntoCarrier(prontoCarrierOverride), timingData.ToArray());
+        carrierFrequency = CarrierFrequencyFromProntoCarrier(prontoCarrierOverride);
       }
-      return new IrCommand(CARRIER_RC6_HZ, timingData.ToArray());
+      else
+      {
+        carrierFrequency = CARRIER_RC6_HZ;
+      }
+      timingData = timingDataList.ToArray();
     }
 
-    /// <summary>
-    /// Convert an IR command instance into its corresponding Pronto [raw]
-    /// representation.
-    /// </summary>
-    /// <param name="command">The IR command to convert.</param>
-    /// <returns>Pronto data</returns>
-    public static ushort[] ConvertIrCommandToProntoRaw(IrCommand command)
+    public static string EncodeRaw(int carrierFrequency, ICollection<int> timingData)
     {
+      if (timingData == null)
+      {
+        timingData = new int[0];
+      }
+
       CodeType codeType = CodeType.RawOscillated;
-      int carrierFrequency = CARRIER_UNKNOWN_HZ;
-      ushort prontoCarrier = 0;
-      if (command.CarrierFrequency == IrCommand.CARRIER_FREQUENCY_DC_MODE)
+      int encodeCarrier = DECODE_ENCODE_CARRIER_UNKNOWN_HZ;
+      ushort prontoCarrier = PRONTO_CARRIER_UNKNOWN;
+      if (carrierFrequency == 0)  // DC - no carrier
       {
         codeType = CodeType.RawUnmodulated;
       }
-      else if (command.CarrierFrequency != IrCommand.CARRIER_FREQUENCY_UNKNOWN)
+      else if (carrierFrequency > 0)
       {
-        carrierFrequency = command.CarrierFrequency;
+        encodeCarrier = carrierFrequency;
         prontoCarrier = CarrierFrequencyToProntoCarrier(carrierFrequency);
       }
 
-      ushort[] prontoData = new ushort[4 + command.TimingData.Length + (command.TimingData.Length % 2)];
-      prontoData[0] = (ushort)codeType;
-      prontoData[1] = prontoCarrier;
-      prontoData[2] = (ushort)((prontoData.Length - 4) / 2);  // once burst sequence pair count
-      prontoData[3] = 0;                                      // repeat burst sequence pair count
+      string[] prontoData = new string[4 + timingData.Count + (timingData.Count % 2)];
+      prontoData[0] = ((ushort)codeType).ToString("X4");
+      prontoData[1] = prontoCarrier.ToString("X4");
+      prontoData[2] = "0000";                                                 // once burst sequence pair count
+      prontoData[3] = ((ushort)((prontoData.Length - 4) / 2)).ToString("X4"); // repeat burst sequence pair count
 
       double multiplier = carrierFrequency / 1000000;
       int index = 4;
-      foreach (int duration in command.TimingData)
+      foreach (int duration in timingData)
       {
-        prontoData[index++] = (ushort)Math.Round(multiplier * Math.Abs(duration));  // duration in micro-seconds => number of carrier frequency periods
+        prontoData[index++] = Math.Round(multiplier * Math.Abs(duration)).ToString("X4"); // duration in micro-seconds => number of carrier frequency periods
       }
-      if (command.TimingData.Length % 2 != 0)
+      if (timingData.Count % 2 != 0)
       {
-        prontoData[index] = SIGNAL_FREE_TIME;
+        prontoData[index] = Math.Round(multiplier * SIGNAL_FREE_TIME).ToString("X4");
       }
-      return prontoData;
+      return string.Join(" ", prontoData);
     }
 
     private static int CarrierFrequencyFromProntoCarrier(ushort prontoCarrier)

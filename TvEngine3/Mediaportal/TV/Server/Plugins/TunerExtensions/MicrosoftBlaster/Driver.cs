@@ -137,7 +137,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBlaster
     protected bool _useStandardTransmitPortHandling = false;
 
     private List<int> _learnedTimingData = new List<int>(500);
-    private int _learnedCarrierFrequency = IrCommand.CARRIER_FREQUENCY_UNKNOWN;
+    private int _learnedCarrierFrequency = -1;
 
     private Thread _receiveThread = null;
     private ReceiveThreadState _receiveThreadState = ReceiveThreadState.Stop;
@@ -248,21 +248,22 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBlaster
         this.LogError("Microsoft blaster driver: failed to transmit, the device is not open, device path = {0}", _devicePath);
         return TransmitResult.Fail;
       }
-      if (_availablePortsTransmit == 0)
+      if (_availablePortsTransmit == TransmitPort.None)
       {
         this.LogError("Microsoft blaster driver: failed to transmit, the device does not have any transmit ports, device path = {0}", _devicePath);
         return TransmitResult.Unsupported;
       }
-      IrCommand command = IrCommand.FromProntoString(commandString);
-      if (command == null)
+      int carrierFrequency;
+      int[] timingData;
+      if (!Pronto.Decode(commandString, out carrierFrequency, out timingData))
       {
-        this.LogError("Microsoft blaster driver: failed to transmit, the command is not valid, command = {0}", commandName);
+        this.LogError("Microsoft blaster driver: failed to transmit, the command is not valid, command name = {0}, command = {1}", commandName, commandString);
         return TransmitResult.InvalidCommand;
       }
 
       // Truncate inherent inter-command delay. The caller controls the delay
       // based on configuration.
-      command.TimingData[command.TimingData.Length - 1] = 1;
+      timingData[timingData.Length - 1] = 1;
 
       if ((DateTime.Now - _connectedTransmitPortsUpdateTimeStamp).TotalSeconds > 30)
       {
@@ -276,19 +277,18 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBlaster
         return TransmitResult.EmitterNotConnected;
       }
 
-      uint carrierFrequency = (uint)command.CarrierFrequency;
-      if (command.CarrierFrequency == IrCommand.CARRIER_FREQUENCY_UNKNOWN)
+      if (carrierFrequency < 0)
       {
-        carrierFrequency = IrCommand.CARRIER_FREQUENCY_DEFAULT;
+        carrierFrequency = 36000;   // 36 kHz = RC-5 and RC-6 carrier frequency
         this.LogWarn("Microsoft blaster driver: carrier frequency not specified, using default {0} Hz", carrierFrequency);
       }
       uint portMask = GetTransmitPortMask(ports);
 
-      this.LogDebug("Microsoft blaster driver: port mask = 0x{0:x8}, carrier frequency = {1} Hz, pulse/space count = {2}", portMask, carrierFrequency, command.TimingData.Length);
-      //DebugTimingData(command.TimingData);
+      this.LogDebug("Microsoft blaster driver: port mask = 0x{0:x8}, carrier frequency = {1} Hz, pulse/space count = {2}", portMask, carrierFrequency, timingData.Length);
+      //DebugTimingData(timingData);
       try
       {
-        Transmit(portMask, carrierFrequency, command.TimingData);
+        Transmit(portMask, (uint)carrierFrequency, timingData);
         return TransmitResult.Success;
       }
       catch (Exception ex)
@@ -321,7 +321,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBlaster
       }
 
       _learnedTimingData.Clear();
-      _learnedCarrierFrequency = IrCommand.CARRIER_FREQUENCY_UNKNOWN;
+      _learnedCarrierFrequency = -1;
 
       // Start the learning process, then wait while the command is received.
       _receiveThreadState = ReceiveThreadState.Learning;
@@ -343,8 +343,14 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBlaster
         int pulseSpaceCount = _learnedTimingData.Count;
         if (endState == ReceiveThreadState.LearningComplete)
         {
-          this.LogDebug("Microsoft blaster driver: learning succeeded, pulse/space count = {0} (original = {1}), carrier frequency = {2} Hz", pulseSpaceCount, _learnedCarrierFrequency);
-          command = new IrCommand(_learnedCarrierFrequency, _learnedTimingData.ToArray()).ToProntoString();
+          command = Pronto.EncodeRaw(_learnedCarrierFrequency, _learnedTimingData);
+          if (command == null)
+          {
+            this.LogError("Microsoft blaster driver: failed to Pronto-encode learned command, pulse/space count = {0}, device path = {1}", pulseSpaceCount, _devicePath);
+            return LearnResult.Fail;
+          }
+
+          this.LogDebug("Microsoft blaster driver: learning succeeded, pulse/space count = {0}, carrier frequency = {1} Hz", pulseSpaceCount, _learnedCarrierFrequency);
           return LearnResult.Success;
         }
 
