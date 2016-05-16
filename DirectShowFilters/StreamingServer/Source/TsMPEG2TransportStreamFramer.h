@@ -70,4 +70,5 @@ private:
 	double fTSPacketDurationEstimate;
 	HashTable* fPIDStatusTable;
 	unsigned long fTSPCRCount;
+	DWORD fTSPacketNullTime;
 };

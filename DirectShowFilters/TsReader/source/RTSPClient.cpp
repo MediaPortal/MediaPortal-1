@@ -405,22 +405,23 @@ bool CRTSPClient::Play(double start, double duration)
     }
   }
 
-  long dur = m_duration / 1000;
-  if (duration > 0.0)
+  //Sanity check the start value
+  double dur = ((double)m_duration) / 1000.0;
+  double maxDur = fmax(dur, duration); //Allow for m_duration being too low when timeshifting (value only updated every 4 seconds)
+  if (maxDur > 0.0)
   {
-    double remainingDuration = duration - start;
-    if (remainingDuration < 0)
-    {
-      remainingDuration = 0;
-    }
-    start = dur - remainingDuration;
-    if (start < 0)
-    {
-      start = 0;
-    }
+    start = fmin(start, maxDur);
+  }
+  else
+  {
+    start = 0.0;
+  }
+  if (start < 0.0)
+  {
+    start = 0.0;
   }
 
-  LogDebug("CRTSPClient::Play(): start = %f, duration = %f", (float)start, (float)duration);
+  LogDebug("CRTSPClient::Play(): start = %f, duration = %f, m_duration = %f", (float)start, (float)duration, (float)dur);
   StartBufferThread();  // Note: thread expected to be running already. This is for "safety".
   if (!InternalPlay(start))
   {
@@ -440,25 +441,25 @@ void CRTSPClient::Continue()
 
 bool CRTSPClient::InternalPlay(double startPoint)
 {
-  LogDebug("CRTSPClient::Play()");
+  LogDebug("CRTSPClient::InternalPlay() - start = %f", (float)startPoint);
   if (m_client != NULL && m_session != NULL)
   {
     ResetEvent(m_genericResponseEvent);
     m_client->sendPlayCommand(*m_session, &CRTSPClient::OnGenericResponseReceived, startPoint);
     if (WaitForSingleObject(m_genericResponseEvent, TIMEOUT_GENERIC_RTSP_RESPONSE) == WAIT_TIMEOUT)
     {
-      LogDebug("CRTSPClient::Play(): RTSP PLAY timed out");
+      LogDebug("CRTSPClient::InternalPlay(): RTSP PLAY timed out");
       return false;
     }
     if (m_genericResponseResultCode != 0)
     {
-      LogDebug("CRTSPClient::Play(): RTSP PLAY failed, result code = %d, message = %s", m_genericResponseResultCode, m_env->getResultMsg());
+      LogDebug("CRTSPClient::InternalPlay(): RTSP PLAY failed, result code = %d, message = %s", m_genericResponseResultCode, m_env->getResultMsg());
       return false;
     }
 
     m_isPaused = false;
   }
-  LogDebug("CRTSPClient::Play(): done");
+  LogDebug("CRTSPClient::InternalPlay(): done");
   return true;
 }
 

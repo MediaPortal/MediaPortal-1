@@ -39,6 +39,7 @@ FileReader::FileReader() :
   m_bUseDummyWrites(FALSE),
   m_bUseRandomAccess(FALSE),
   m_bIsStopping(FALSE),
+  m_isTimeshift(FALSE),
   m_pKernel32LibHandle(NULL),
   m_pCancelSynchronousIoProcHandle(NULL)
 {
@@ -537,4 +538,14 @@ BOOL FileReader::IsVistaOrLater()
       dwlConditionMask);
       
    return m_bIsVistaOrLater;
+}
+
+BOOL FileReader::GetTimeshift()
+{
+  return m_isTimeshift;
+}
+
+void FileReader::SetTimeshift(BOOL isTimeshift)
+{
+  m_isTimeshift = isTimeshift;
 }

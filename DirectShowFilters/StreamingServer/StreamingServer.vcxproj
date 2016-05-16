@@ -149,6 +149,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\StdAfx.h" />
+    <ClInclude Include="Source\StreamingDefs.h" />
     <ClInclude Include="Source\TSBuffer.h" />
     <ClInclude Include="Source\TSThread.h" />
     <ClInclude Include="Source\FileReader.h" />

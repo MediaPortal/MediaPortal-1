@@ -17,22 +17,22 @@
     <control>
       <type>image</type>
       <id>1</id>
-      <posX>320</posX>
-      <posY>50</posY>
-      <width>1300</width>
-      <height>980</height>
-      <texture>listbg2.png</texture>
-      <colordiffuse>ddffffff</colordiffuse>
+      <posX>435</posX>
+      <posY>37</posY>
+      <width>1170</width>
+      <height>1012</height>
+      <texture>context_background.png</texture>
+      <colordiffuse>ccffffff</colordiffuse>
       <visible>window.isvisible(602)|window.isvisible(2005)</visible>
     </control>
     <control>
       <type>image</type>
       <id>1</id>
-      <posX>320</posX>
-      <posY>50</posY>
-      <width>1300</width>
-      <height>980</height>
-      <texture>listbg2.png</texture>
+      <posX>435</posX>
+      <posY>37</posY>
+      <width>1170</width>
+      <height>1012</height>
+      <texture>context_background.png</texture>
       <colordiffuse>ffffffff</colordiffuse>
       <visible>!window.isvisible(602)+!window.isvisible(2005)</visible>
     </control>
@@ -40,136 +40,131 @@
       <description>list to show channels without channel state logos</description>
       <type>listcontrol</type>
       <id>35</id>
-      <posX>363</posX>
-      <posY>154</posY>
-      <height>901</height>
-      <width>950</width>
-      <textXOff>80</textXOff>
-      <textYOff>40</textYOff>
-      <textXOff2>1170</textXOff2>
-      <textYOff2>40</textYOff2>
+      <posX>495</posX>
+      <posY>165</posY>
+      <height>930</height>
+      <width>1042</width>
+      <textXOff>77</textXOff>
+      <textYOff>43</textYOff>
+      <textXOff2>1035</textXOff2>
+      <textYOff2>43</textYOff2>
       <textXOff3>157</textXOff3>
-      <textYOff3>2</textYOff3>
-      <IconXOff>8</IconXOff>
+      <textYOff3>7</textYOff3>
+      <IconXOff>9</IconXOff>
       <IconYOff>7</IconYOff>
-      <PinIconXOff>94</PinIconXOff>
-      <PinIconYOff>20</PinIconYOff>
-      <PinIconWidth>45</PinIconWidth>
-      <PinIconHeight>45</PinIconHeight>
-      <spinPosX>2885</spinPosX>
-      <spinPosY>935</spinPosY>
-      <itemWidth>68</itemWidth>
-      <itemHeight>68</itemHeight>
-      <textureFocus>listfocus.png</textureFocus>
-      <textureNoFocus></textureNoFocus>
+      <spinPosX>3945</spinPosX>
+      <spinPosY>997</spinPosY>
+      <itemWidth>73</itemWidth>
+      <itemHeight>73</itemHeight>
+      <textureFocus>list_sub_focus.png</textureFocus>
+      <textureNoFocus>list_sub_nofocus.png</textureNoFocus>
       <spaceBetweenItems>0</spaceBetweenItems>
-      <textureHeight>84</textureHeight>
+      <textureHeight>90</textureHeight>
       <keepaspectratio>no</keepaspectratio>
       <font>font11</font>
-      <font2>font10</font2>
-      <font3>Label</font3>
-      <textcolorNoFocus>ffffffff</textcolorNoFocus>
+      <font2>font11</font2>
+      <font3>font12</font3>
+      <shadedColor>20ffffff</shadedColor>
+      <selectedColor3>ff787878</selectedColor3>
+      <selectedColor2>ff787878</selectedColor2>
+      <selectedColor>ff787878</selectedColor>
+      <playedColor>ff787878</playedColor>
+      <playedColor2>ff787878</playedColor2>
       <textcolor>ffffffff</textcolor>
+      <textcolorNoFocus>ffffffff</textcolorNoFocus>
       <textcolor2>ffffffff</textcolor2>
-      <textcolor3>ff87cefa</textcolor3>
-      <remoteColor>ffffcc00</remoteColor>
-      <remoteColor2>ffffcc00</remoteColor2>
-      <remoteColor3>ffffcc00</remoteColor3>
-      <scrollOffset>2</scrollOffset>
+      <textcolor3>ffffffff</textcolor3>
+      <colordiffuse>ffffffff</colordiffuse>
+      <remoteColor>ff00ff00</remoteColor>
+      <remoteColor2>ff00ff00</remoteColor2>
+      <downloadColor>ff666666</downloadColor>
+      <downloadColor2>ff80ff80</downloadColor2>
+      <scrollOffset>4</scrollOffset>
       <!-- used for selected channel -->
       <onleft>36</onleft>
       <onright>34</onright>
-      <unfocusedAlpha applyToAll="true">180</unfocusedAlpha>
-      <spinCanFocus>no</spinCanFocus>
-      <scrollbarHeight>400</scrollbarHeight>
-      <scrollbarbg>bar_vert.png</scrollbarbg>
-      <scrollbartop>mouse_left_horizontal.png</scrollbartop>
-      <scrollbarbottom>mouse_right_horizontal.png</scrollbarbottom>
-      <scrollbarXOff>240</scrollbarXOff>
-      <scrollbarYOff>0</scrollbarYOff>
-      <showScrollbar>yes</showScrollbar>
-      <scrollbarwidth>20</scrollbarwidth>
+      <scrollbarXOff>3052</scrollbarXOff>
+      <showScrollbar>no</showScrollbar>
       <texturebg>osd_progress_background.png</texturebg>
-      <lefttexture>osd_progress_left.png</lefttexture>
-      <midtexture>osd_progress_mid.png</midtexture>
-      <righttexture>osd_progress_right.png</righttexture>
-      <ProgressBarWidth>150</ProgressBarWidth>
-      <ProgressBarHeight>30</ProgressBarHeight>
-      <ProgressBarXOffset>1015</ProgressBarXOffset>
-      <ProgressBarYOffset>10</ProgressBarYOffset>
+      <lefttexture>green.png</lefttexture>
+      <midtexture>green.png</midtexture>
+      <righttexture>green.png</righttexture>
+      <ProgressBarWidth>890</ProgressBarWidth>
+      <ProgressBarHeight>10</ProgressBarHeight>
+      <ProgressBarXOffset>145</ProgressBarXOffset>
+      <ProgressBarYOffset>84</ProgressBarYOffset>
     </control>
     <control>
       <description>list to show channels with channel state logos</description>
       <type>listcontrol</type>
       <id>37</id>
-      <posX>363</posX>
-      <posY>154</posY>
-      <height>901</height>
-      <width>950</width>
-      <textXOff>80</textXOff>
-      <textYOff>40</textYOff>
-      <textXOff2>1170</textXOff2>
-      <textYOff2>40</textYOff2>
+      <posX>495</posX>
+      <posY>165</posY>
+      <height>930</height>
+      <width>1042</width>
+      <textXOff>77</textXOff>
+      <textYOff>43</textYOff>
+      <textXOff2>1035</textXOff2>
+      <textYOff2>43</textYOff2>
       <textXOff3>157</textXOff3>
-      <textYOff3>2</textYOff3>
-      <IconXOff>8</IconXOff>
+      <textYOff3>7</textYOff3>
+      <IconXOff>9</IconXOff>
       <IconYOff>7</IconYOff>
-      <PinIconXOff>94</PinIconXOff>
-      <PinIconYOff>20</PinIconYOff>
-      <PinIconWidth>45</PinIconWidth>
-      <PinIconHeight>45</PinIconHeight>
-      <spinPosX>2885</spinPosX>
-      <spinPosY>935</spinPosY>
-      <itemWidth>68</itemWidth>
-      <itemHeight>68</itemHeight>
-      <textureFocus>listfocus.png</textureFocus>
-      <textureNoFocus></textureNoFocus>
+      <PinIconXOff>93</PinIconXOff>
+      <PinIconYOff>18</PinIconYOff>
+      <PinIconWidth>50</PinIconWidth>
+      <PinIconHeight>50</PinIconHeight>
+      <spinPosX>3945</spinPosX>
+      <spinPosY>997</spinPosY>
+      <itemWidth>73</itemWidth>
+      <itemHeight>73</itemHeight>
+      <textureFocus>list_sub_focus.png</textureFocus>
+      <textureNoFocus>list_sub_nofocus.png</textureNoFocus>
       <spaceBetweenItems>0</spaceBetweenItems>
-      <textureHeight>84</textureHeight>
+      <textureHeight>90</textureHeight>
       <keepaspectratio>no</keepaspectratio>
       <font>font11</font>
-      <font2>font10</font2>
-      <font3>Label</font3>
-      <textcolorNoFocus>ffffffff</textcolorNoFocus>
+      <font2>font11</font2>
+      <font3>font12</font3>
+      <shadedColor>20ffffff</shadedColor>
+      <selectedColor3>ff787878</selectedColor3>
+      <selectedColor2>ff787878</selectedColor2>
+      <selectedColor>ff787878</selectedColor>
+      <playedColor>ff787878</playedColor>
+      <playedColor2>ff787878</playedColor2>
       <textcolor>ffffffff</textcolor>
+      <textcolorNoFocus>ffffffff</textcolorNoFocus>
       <textcolor2>ffffffff</textcolor2>
-      <textcolor3>ff87cefa</textcolor3>
-      <remoteColor>ffffcc00</remoteColor>
-      <remoteColor2>ffffcc00</remoteColor2>
-      <remoteColor3>ffffcc00</remoteColor3>
-      <scrollOffset>2</scrollOffset>
+      <textcolor3>ffffffff</textcolor3>
+      <colordiffuse>ffffffff</colordiffuse>
+      <remoteColor>ff00ff00</remoteColor>
+      <remoteColor2>ff00ff00</remoteColor2>
+      <downloadColor2>ff80ff80</downloadColor2>
+      <scrollbarXOff>3052</scrollbarXOff>
+      <scrollOffset>4</scrollOffset>
       <!-- used for selected channel -->
       <onleft>36</onleft>
       <onright>34</onright>
-      <unfocusedAlpha applyToAll="true">180</unfocusedAlpha>
-      <spinCanFocus>no</spinCanFocus>
-      <scrollbarHeight>400</scrollbarHeight>
-      <scrollbarbg>bar_vert.png</scrollbarbg>
-      <scrollbartop>mouse_left_horizontal.png</scrollbartop>
-      <scrollbarbottom>mouse_right_horizontal.png</scrollbarbottom>
-      <scrollbarXOff>240</scrollbarXOff>
-      <scrollbarYOff>0</scrollbarYOff>
-      <showScrollbar>yes</showScrollbar>
-      <scrollbarwidth>20</scrollbarwidth>
+      <showScrollbar>no</showScrollbar>
       <texturebg>osd_progress_background.png</texturebg>
-      <lefttexture>osd_progress_left.png</lefttexture>
-      <midtexture>osd_progress_mid.png</midtexture>
-      <righttexture>osd_progress_right.png</righttexture>
-      <ProgressBarWidth>150</ProgressBarWidth>
-      <ProgressBarHeight>30</ProgressBarHeight>
-      <ProgressBarXOffset>1015</ProgressBarXOffset>
-      <ProgressBarYOffset>10</ProgressBarYOffset>
+      <lefttexture>green.png</lefttexture>
+      <midtexture>green.png</midtexture>
+      <righttexture>green.png</righttexture>
+      <ProgressBarWidth>890</ProgressBarWidth>
+      <ProgressBarHeight>10</ProgressBarHeight>
+      <ProgressBarXOffset>145</ProgressBarXOffset>
+      <ProgressBarYOffset>84</ProgressBarYOffset>
     </control>
     <control>
       <description>groups spin control</description>
       <type>spincontrol</type>
       <id>36</id>
-      <posX>800</posX>
-      <posY>94</posY>
+      <posX>510</posX>
+      <posY>100</posY>
       <showrange>no</showrange>
       <orientation>horizontal</orientation>
       <align>left</align>
-      <font>Menutitle</font>
+      <font>font12</font>
       <textcolor>ff6FAFE1</textcolor>
       <ondown>35</ondown>
       <onup>36</onup>
@@ -180,127 +175,27 @@
       <description>Current Time Info</description>
       <type>label</type>
       <id>110</id>
-      <posX>377</posX>
-      <posY>84</posY>
+      <posX>1530</posX>
+      <posY>96</posY>
       <label>#time</label>
-      <align>left</align>
-      <font>Menutitle</font>
+      <align>right</align>
+      <font>font12</font>
       <textcolor>ff6FAFE1</textcolor>
     </control>
     <control>
       <description>exit button</description>
       <type>button</type>
       <id>34</id>
-      <posX>1530</posX>
-      <posY>85</posY>
-      <width>50</width>
-      <height>50</height>
+      <posX>3069</posX>
+      <posY>108</posY>
+      <width>117</width>
+      <height>102</height>
       <textureFocus>tb_exit.png</textureFocus>
       <textureNoFocus>tb_exitNF.png</textureNoFocus>
       <onleft>36</onleft>
       <onright>34</onright>
       <ondown>35</ondown>
       <onup>34</onup>
-    </control>
-    <!--     *******************************************************************************************  -->
-    <!--     ********************************      Channel Separators      *****************************  -->
-    <!--     *******************************************************************************************  -->
-    <control>
-      <type>group</type>
-      <description>group element</description>
-      <layout>StackLayout(83, Vertical, true)</layout>
-      <posX>367</posX>
-      <posY>236</posY>
-      <control>
-        <description>divider horizontal</description>
-        <type>image</type>
-        <id>0</id>
-        <width>1170</width>
-        <height>0</height>
-        <texture>hbar1white.png</texture>
-        <colordiffuse>40ffffff</colordiffuse>
-      </control>
-      <control>
-        <description>divider horizontal</description>
-        <type>image</type>
-        <id>0</id>
-        <width>1170</width>
-        <height>0</height>
-        <texture>hbar1white.png</texture>
-        <colordiffuse>40ffffff</colordiffuse>
-      </control>
-      <control>
-        <description>divider horizontal</description>
-        <type>image</type>
-        <id>0</id>
-        <width>1170</width>
-        <height>0</height>
-        <texture>hbar1white.png</texture>
-        <colordiffuse>40ffffff</colordiffuse>
-      </control>
-      <control>
-        <description>divider horizontal</description>
-        <type>image</type>
-        <id>0</id>
-        <width>1170</width>
-        <height>0</height>
-        <texture>hbar1white.png</texture>
-        <colordiffuse>40ffffff</colordiffuse>
-      </control>
-      <control>
-        <description>divider horizontal</description>
-        <type>image</type>
-        <id>0</id>
-        <width>1170</width>
-        <height>0</height>
-        <texture>hbar1white.png</texture>
-        <colordiffuse>40ffffff</colordiffuse>
-      </control>
-      <control>
-        <description>divider horizontal</description>
-        <type>image</type>
-        <id>0</id>
-        <width>1170</width>
-        <height>0</height>
-        <texture>hbar1white.png</texture>
-        <colordiffuse>40ffffff</colordiffuse>
-      </control>
-      <control>
-        <description>divider horizontal</description>
-        <type>image</type>
-        <id>0</id>
-        <width>1170</width>
-        <height>0</height>
-        <texture>hbar1white.png</texture>
-        <colordiffuse>40ffffff</colordiffuse>
-      </control>
-      <control>
-        <description>divider horizontal</description>
-        <type>image</type>
-        <id>0</id>
-        <width>1170</width>
-        <height>0</height>
-        <texture>hbar1white.png</texture>
-        <colordiffuse>40ffffff</colordiffuse>
-      </control>
-      <control>
-        <description>divider horizontal</description>
-        <type>image</type>
-        <id>0</id>
-        <width>1170</width>
-        <height>0</height>
-        <texture>hbar1white.png</texture>
-        <colordiffuse>40ffffff</colordiffuse>
-      </control>
-      <control>
-        <description>divider horizontal</description>
-        <type>image</type>
-        <id>0</id>
-        <width>1170</width>
-        <height>0</height>
-        <texture>hbar1white.png</texture>
-        <colordiffuse>40ffffff</colordiffuse>
-      </control>
     </control>
   </controls>
 </window>

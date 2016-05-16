@@ -126,6 +126,8 @@ public:
 	virtual void CloseBufferFiles();
 	
 	virtual void SetStopping(BOOL isStopping);
+	virtual void SetTimeshift(BOOL isTimeshift);
+	virtual BOOL GetTimeshift();
   
 protected:
   
@@ -144,6 +146,7 @@ protected:
 	BOOL     m_bUseRandomAccess;
 	BOOL     m_bIsStopping;
 	BOOL     m_bIsVistaOrLater;
+	BOOL     m_isTimeshift;
 	DWORD    m_dwLastThreadID;
   CCritSecFR     m_accessLock;
 

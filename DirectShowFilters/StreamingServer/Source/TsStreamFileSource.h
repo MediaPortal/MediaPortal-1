@@ -76,4 +76,5 @@ private:
 	unsigned fLastPlayTime;
 	u_int64_t fFileSize;
 	Boolean fDeleteFidOnClose;
+	Boolean m_isTimeshift;
 };
