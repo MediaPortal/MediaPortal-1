@@ -119,7 +119,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
 
       // Setup power event handling.
       _systemChangeNotifier = new SystemChangeNotifier();
-      _systemChangeNotifier.OnPowerBroadcastDelegate += OnSystemPowerManagementEvent;
+      _systemChangeNotifier.OnPowerBroadcast += OnSystemPowerManagementEvent;
 
       // Setup UPnP tuner detection.
       UPnPConfiguration.LOGGER = new Logger();
@@ -506,7 +506,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
 
       if (_systemChangeNotifier != null)
       {
-        _systemChangeNotifier.OnPowerBroadcastDelegate -= OnSystemPowerManagementEvent;
+        _systemChangeNotifier.OnPowerBroadcast -= OnSystemPowerManagementEvent;
         _systemChangeNotifier.Dispose();
         _systemChangeNotifier = null;
       }

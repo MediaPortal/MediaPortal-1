@@ -203,7 +203,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Helper
     #endregion
 
     public event OnDeviceInterfaceChangeDelegate OnDeviceInterfaceChange = null;
-    public event OnPowerBroadcastDelegate OnPowerBroadcastDelegate = null;
+    public event OnPowerBroadcastDelegate OnPowerBroadcast = null;
 
     private void Notifier(object eventParam)
     {
@@ -218,7 +218,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Helper
       {
         try
         {
-          notifierWindow = new NotifierWindow(OnDeviceInterfaceChange, OnPowerBroadcastDelegate);
+          notifierWindow = new NotifierWindow(OnDeviceInterfaceChange, OnPowerBroadcast);
         }
         catch (System.Exception ex)
         {

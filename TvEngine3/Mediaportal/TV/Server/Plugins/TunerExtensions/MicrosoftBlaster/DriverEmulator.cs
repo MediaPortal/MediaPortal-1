@@ -257,7 +257,8 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBlaster
     /// <summary>
     /// Open access handle(s).
     /// </summary>
-    protected override void OpenHandles()
+    /// <returns><c>true</c> if the handle(s) are opened successfully, otherwise <c>false</c></returns>
+    protected override bool OpenHandles()
     {
       if (_isReplacementDriver)
       {
@@ -272,7 +273,8 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBlaster
       if (_readHandle.IsInvalid)
       {
         _readHandle = null;
-        throw new TvException("Failed to open read handle. Error = {0}, device path = {1}, is replacement driver = {2}.", Marshal.GetLastWin32Error(), _devicePath, _isReplacementDriver);
+        this.LogError("Microsoft blaster emulation driver: failed to open read handle (is this device being used by other software?), error = {0}, device path = {1}, is replacement driver = {2}", Marshal.GetLastWin32Error(), _devicePath, _isReplacementDriver);
+        return false;
       }
 
       lock (_writeLock)
@@ -291,7 +293,8 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBlaster
             _readHandle.Close();
             _readHandle.Dispose();
             _readHandle = null;
-            throw new TvException("Failed to open write handle. Error = {0}, device path = {1}, is replacement driver = {2}.", Marshal.GetLastWin32Error(), _devicePath, _isReplacementDriver);
+            this.LogError("Microsoft blaster emulation driver: failed to open write handle (is this device being used by other software?), error = {0}, device path = {1}, is replacement driver = {2}", Marshal.GetLastWin32Error(), _devicePath, _isReplacementDriver);
+            return false;
           }
         }
       }
@@ -304,11 +307,13 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBlaster
       try
       {
         Resume();
+        return true;
       }
       catch (Exception ex)
       {
         CloseHandles();
-        throw new TvException(ex, "Resume command failed. Device path = {0}, is replacement driver = {1}.", _devicePath, _isReplacementDriver);
+        this.LogError("Microsoft blaster emulation driver: resume command failed, device path = {0}, is replacement driver = {1}", _devicePath, _isReplacementDriver);
+        return false;
       }
     }
 

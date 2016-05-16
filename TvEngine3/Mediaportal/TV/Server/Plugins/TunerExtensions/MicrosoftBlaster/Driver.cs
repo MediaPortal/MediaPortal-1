@@ -163,16 +163,20 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBlaster
     /// <summary>
     /// Open the device.
     /// </summary>
-    public void Open()
+    /// <returns><c>true</c> if the device is opened successfully, otherwise <c>false</c></returns>
+    public bool Open()
     {
       this.LogDebug("Microsoft blaster driver: open, device path = {0}", _devicePath);
       if (_isOpen)
       {
         this.LogWarn("Microsoft blaster driver: already open, device path = {0}", _devicePath);
-        return;
+        return true;
       }
 
-      OpenHandles();
+      if (!OpenHandles())
+      {
+        return false;
+      }
       _abortEventWrite = new ManualResetEvent(false);
       _abortEventWrite.Reset();
       _isOpen = true;
@@ -192,6 +196,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBlaster
         UpdateTransmitPortStatus();
         _connectedTransmitPortsUpdateTimeStamp = DateTime.Now;
       }
+      return true;
     }
 
     /// <summary>
@@ -374,7 +379,8 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBlaster
     /// <summary>
     /// Open access handle(s).
     /// </summary>
-    protected abstract void OpenHandles();
+    /// <returns><c>true</c> if the handle(s) are opened successfully, otherwise <c>false</c></returns>
+    protected abstract bool OpenHandles();
 
     /// <summary>
     /// Close the access handle(s).

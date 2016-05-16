@@ -21,6 +21,7 @@
 using System;
 using System.IO;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Helper;
 using MediaPortal.Common.Utils;
 using Microsoft.Win32;
 
@@ -32,24 +33,51 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeBlaster.Service
     public event OnBlasterConfigChange OnConfigChange;
 
     private Blaster _blaster = new Blaster();
+    private SystemChangeNotifier _systemChangeNotifier = null;
 
     ~HauppaugeBlasterConfigService()
     {
-      if (_blaster != null)
-      {
-        _blaster.CloseInterface();
-        _blaster = null;
-      }
+      Stop();
     }
 
-    public void OpenBlaster()
+    public void Start()
     {
+      if (_systemChangeNotifier == null)
+      {
+        _systemChangeNotifier = new SystemChangeNotifier();
+        _systemChangeNotifier.OnPowerBroadcast += OnPowerBroadcast;
+      }
       _blaster.OpenInterface();
     }
 
-    public void CloseBlaster()
+    public void Stop()
     {
-      _blaster.CloseInterface();
+      if (_systemChangeNotifier != null)
+      {
+        _systemChangeNotifier.OnPowerBroadcast -= OnPowerBroadcast;
+        _systemChangeNotifier.Dispose();
+        _systemChangeNotifier = null;
+      }
+      if (_blaster != null)
+      {
+        _blaster.CloseInterface();
+      }
+    }
+
+    private void OnPowerBroadcast(NativeMethods.PBT_MANAGEMENT_EVENT eventType)
+    {
+      if (eventType == NativeMethods.PBT_MANAGEMENT_EVENT.PBT_APMSUSPEND)
+      {
+        _blaster.CloseInterface();
+      }
+      else if (
+        eventType == NativeMethods.PBT_MANAGEMENT_EVENT.PBT_APMRESUMEAUTOMATIC ||
+        eventType == NativeMethods.PBT_MANAGEMENT_EVENT.PBT_APMRESUMECRITICAL ||
+        eventType == NativeMethods.PBT_MANAGEMENT_EVENT.PBT_APMRESUMESUSPEND
+      )
+      {
+        _blaster.OpenInterface();
+      }
     }
 
     #region IHauppaugeBlasterConfigService members

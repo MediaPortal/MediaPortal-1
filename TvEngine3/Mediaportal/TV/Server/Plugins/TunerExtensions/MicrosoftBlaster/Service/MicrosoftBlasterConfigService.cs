@@ -93,6 +93,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBlaster.Service
 
       _systemChangeNotifier = new SystemChangeNotifier();
       _systemChangeNotifier.OnDeviceInterfaceChange += OnDeviceChange;
+      _systemChangeNotifier.OnPowerBroadcast += OnPowerBroadcast;
     }
 
     public void Stop()
@@ -101,6 +102,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBlaster.Service
       if (_systemChangeNotifier != null)
       {
         _systemChangeNotifier.OnDeviceInterfaceChange -= OnDeviceChange;
+        _systemChangeNotifier.OnPowerBroadcast -= OnPowerBroadcast;
         _systemChangeNotifier.Dispose();
         _systemChangeNotifier = null;
       }
@@ -523,6 +525,34 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBlaster.Service
           }
         }
       });
+    }
+
+    private void OnPowerBroadcast(NativeMethods.PBT_MANAGEMENT_EVENT eventType)
+    {
+      if (eventType == NativeMethods.PBT_MANAGEMENT_EVENT.PBT_APMSUSPEND)
+      {
+        lock (_lockDevices)
+        {
+          foreach (Driver device in _devices.Values)
+          {
+            device.Close();
+          }
+        }
+      }
+      else if (
+        eventType == NativeMethods.PBT_MANAGEMENT_EVENT.PBT_APMRESUMEAUTOMATIC ||
+        eventType == NativeMethods.PBT_MANAGEMENT_EVENT.PBT_APMRESUMECRITICAL ||
+        eventType == NativeMethods.PBT_MANAGEMENT_EVENT.PBT_APMRESUMESUSPEND
+      )
+      {
+        lock (_lockDevices)
+        {
+          foreach (Driver device in _devices.Values)
+          {
+            device.Open();
+          }
+        }
+      }
     }
 
     private void UpdateStbProfileNames()

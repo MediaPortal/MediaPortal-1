@@ -135,15 +135,18 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBlaster
     /// <summary>
     /// Open access handle(s).
     /// </summary>
-    protected override void OpenHandles()
+    /// <returns><c>true</c> if the handle(s) are opened successfully, otherwise <c>false</c></returns>
+    protected override bool OpenHandles()
     {
       _handle = NativeMethods.CreateFile(_devicePath, NativeMethods.AccessMask.GENERIC_READ | NativeMethods.AccessMask.GENERIC_WRITE, FileShare.None,
                                           IntPtr.Zero, FileMode.Open, (uint)NativeMethods.FileFlag.FILE_FLAG_OVERLAPPED, IntPtr.Zero);
       if (_handle.IsInvalid)
       {
         _handle = null;
-        throw new TvException("Failed to open handle. Error = {0}, device path = {1}.", Marshal.GetLastWin32Error(), _devicePath);
+        this.LogError("Microsoft blaster port driver: failed to open handle (is this device being used by other software?), error = {0}, device path = {1}", Marshal.GetLastWin32Error(), _devicePath);
+        return false;
       }
+      return true;
     }
 
     /// <summary>
