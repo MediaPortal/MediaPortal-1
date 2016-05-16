@@ -30,7 +30,7 @@ along with MediaPortal 2.  If not, see <http://www.gnu.org/licenses/>.
 
 #define MP_URL_SOURCE_SPLITTER_VERSION_MAJOR                          2
 #define MP_URL_SOURCE_SPLITTER_VERSION_MINOR                          2
-#define MP_URL_SOURCE_SPLITTER_VERSION_REVISION                       12
+#define MP_URL_SOURCE_SPLITTER_VERSION_REVISION                       13
 #define MP_URL_SOURCE_SPLITTER_VERSION_BUILD                          ((BUILD_INFO_MP_URL_SOURCE_SPLITTER - UNIX_TIMESTAMP_2000_01_01) / SECONDS_IN_DAY)
 
 #endif
