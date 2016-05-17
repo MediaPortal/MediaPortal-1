@@ -121,12 +121,6 @@ HRESULT MPMadPresenter::Shutdown()
     CComQIPtr<IMadVRCommand> pCommand = m_pMad;
     CComQIPtr<IVideoWindow> pWindow = m_pMad;
 
-    if(m_pSurfaceMadVr)
-    {
-      m_pSurfaceMadVr->Release();
-      m_pSurfaceMadVr = nullptr;
-    }
-
     if (pOsdServices)
     {
       pOsdServices->OsdSetRenderCallback("MP-GUI", nullptr, nullptr);
@@ -266,17 +260,19 @@ HRESULT MPMadPresenter::RenderOsd(LPCSTR name, REFERENCE_TIME frameStart, RECT* 
 
   CAutoLock cAutoLock(this);
 
+  IDirect3DSurface9* SurfaceMadVr = nullptr; // This will be released by C# side
+
   if (!m_pCallback)
     return S_OK;
 
   m_dwHeight = static_cast<WORD>(fullOutputRect->bottom) - static_cast<WORD>(fullOutputRect->top);
   m_dwWidth = static_cast<WORD>(fullOutputRect->right) - static_cast<WORD>(fullOutputRect->left);
 
-  if (SUCCEEDED(hr = m_pMadD3DDev->GetBackBuffer(0, 0, D3DBACKBUFFER_TYPE_MONO, &m_pSurfaceMadVr)))
+  if (SUCCEEDED(hr = m_pMadD3DDev->GetBackBuffer(0, 0, D3DBACKBUFFER_TYPE_MONO, &SurfaceMadVr)))
   {
-    if (SUCCEEDED(hr = m_pCallback->RenderFrame(videoWidth, videoHeight, videoWidth, videoHeight, reinterpret_cast<DWORD>(m_pSurfaceMadVr))))
+    if (SUCCEEDED(hr = m_pCallback->RenderFrame(videoWidth, videoHeight, videoWidth, videoHeight, reinterpret_cast<DWORD>(SurfaceMadVr))))
     {
-      m_pSurfaceMadVr->Release();
+      SurfaceMadVr->Release();
     }
   }
 
