@@ -1313,11 +1313,11 @@ namespace MediaPortal.Player
 
         if (_vmr9Filter != null)
         {
-          //if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
-          //{
-          //  MadvrInterface.OsdSetRenderCallback(_vmr9Filter);
-          //  MadvrInterface.EnableExclusiveMode(false, _vmr9Filter);
-          //}
+          if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+          {
+            MadvrInterface.OsdSetRenderCallback(_vmr9Filter);
+            MadvrInterface.EnableExclusiveMode(false, _vmr9Filter);
+          }
           DirectShowUtil.RemoveFilter(_graphBuilderInterface, _vmr9Filter);
           GUIWindowManager.MadVrProcess();
           DirectShowUtil.FinalReleaseComObject(_vmr9Filter);

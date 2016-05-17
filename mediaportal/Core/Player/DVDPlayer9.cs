@@ -387,6 +387,13 @@ namespace MediaPortal.Player
           hr = _mediaEvt.SetNotifyWindow(IntPtr.Zero, WM_GRAPHNOTIFY, IntPtr.Zero);
         }
 
+        if (_vmr9 != null && _vmr9._vmr9Filter != null)
+        {
+          MadvrInterface.EnableExclusiveMode(false, _vmr9._vmr9Filter);
+          DirectShowUtil.DisconnectAllPins(_graphBuilder, _vmr9._vmr9Filter);
+          Log.Info("DVDPlayer9: Cleanup VMR9");
+        }
+
         if (_videoWin != null)
         {
           _videoWin.put_Owner(IntPtr.Zero);

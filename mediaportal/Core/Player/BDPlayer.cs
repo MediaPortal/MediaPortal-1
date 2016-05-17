@@ -3071,7 +3071,7 @@ namespace MediaPortal.Player
         {
           MadvrInterface.EnableExclusiveMode(false, _vmr9._vmr9Filter);
           DirectShowUtil.DisconnectAllPins(_graphBuilder, _vmr9._vmr9Filter);
-          Log.Info("VideoPlayer9: Cleanup VMR9");
+          Log.Info("BDPlayer: Cleanup VMR9");
         }
 
         #endregion
