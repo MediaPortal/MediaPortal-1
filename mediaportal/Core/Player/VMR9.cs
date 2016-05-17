@@ -1290,6 +1290,7 @@ namespace MediaPortal.Player
           GUIGraphicsContext.Vmr9FPS = 0f;
           GUIGraphicsContext.InVmr9Render = false;
           currentVmr9State = Vmr9PlayState.Playing;
+          Log.Debug("VMR9: Dispose 1");
         }
 
         _vmr9MixerBitmapInterface = null;
@@ -1303,6 +1304,7 @@ namespace MediaPortal.Player
         else if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
         {
           MadDeinit();
+          Log.Debug("VMR9: Dispose 2");
         }
         else
         {
@@ -1319,12 +1321,14 @@ namespace MediaPortal.Player
           DirectShowUtil.RemoveFilter(_graphBuilderInterface, _vmr9Filter);
           GUIWindowManager.MadVrProcess();
           DirectShowUtil.FinalReleaseComObject(_vmr9Filter);
+          Log.Debug("VMR9: Dispose 3");
         }
         _vmr9Filter = null;
         _scene = null;
         g_vmr9 = null;
         _isVmr9Initialized = false;
         GUIGraphicsContext.DX9DeviceMadVr = null;
+        Log.Debug("VMR9: Dispose 4");
       }
       catch (Exception)
       {
@@ -1343,8 +1347,10 @@ namespace MediaPortal.Player
             GUIGraphicsContext.DX9Device.SetRenderTarget(0, MadVrRenderTargetVMR9);
             MadVrRenderTargetVMR9.Dispose();
             MadVrRenderTargetVMR9 = null;
+            Log.Debug("VMR9: Dispose 5");
           }
         }
+        Log.Debug("VMR9: Dispose 6");
       }
     }
 
