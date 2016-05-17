@@ -92,7 +92,8 @@ CLibBlurayWrapper::CLibBlurayWrapper() :
   _bd_register_argb_overlay_proc(NULL),
   _bd_refcnt_inc(NULL),
   _bd_refcnt_dec(NULL),
-  _bd_select_stream(NULL)
+  _bd_select_stream(NULL),
+  _bd_set_rate(NULL)
 {
   m_pOverlayRenderer = new COverlayRenderer(this);
   ZeroMemory((void*)&m_playerSettings, sizeof(bd_player_settings));
@@ -222,6 +223,7 @@ bool CLibBlurayWrapper::Initialize()
   _bd_refcnt_inc = (API_bd_refcnt_inc)GetProcAddress(m_hDLL, "bd_refcnt_inc");
   _bd_refcnt_dec = (API_bd_refcnt_dec)GetProcAddress(m_hDLL, "bd_refcnt_dec");
   _bd_select_stream = (API_bd_select_stream)GetProcAddress(m_hDLL, "bd_select_stream");
+  _bd_set_rate = (API_bd_set_rate)GetProcAddress(m_hDLL, "bd_set_rate");
 
   // This method is not available in the vanilla libbluray 
   _bd_get_clip_infos = (API_bd_get_clip_infos)GetProcAddress(m_hDLL, "bd_get_clip_infos");
@@ -268,7 +270,8 @@ bool CLibBlurayWrapper::Initialize()
       !_bd_register_argb_overlay_proc ||
       !_bd_refcnt_inc ||
       !_bd_refcnt_dec ||
-      !_bd_select_stream)
+      !_bd_select_stream ||
+      !_bd_set_rate)
   {
     LogDebug("CLibBlurayWrapper - failed to load method from lib - a version mismatch?");
     return false;
@@ -820,6 +823,16 @@ bool CLibBlurayWrapper::SetScr(INT64 pts, INT64 offset)
     INT64 scr = pts - offset;
     return _bd_set_scr(m_pBd, scr) == 1 ? true : false;
   }
+
+  return false;
+}
+
+bool CLibBlurayWrapper::SetRate(UINT32 rate)
+{
+  CAutoLock cLibLock(&m_csLibLock);
+
+  if (m_pBd)
+    return _bd_set_rate(m_pBd, rate) == 0;
 
   return false;
 }
