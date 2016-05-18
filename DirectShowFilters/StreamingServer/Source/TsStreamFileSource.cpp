@@ -38,9 +38,10 @@ extern void LogDebug(const wchar_t *fmt, ...) ;
 
 
 TsStreamFileSource*
-TsStreamFileSource::createNew(UsageEnvironment& env, wchar_t const* fileName,
+TsStreamFileSource::createNew(UsageEnvironment& env, wchar_t const* fileName, CTsDuration *pDuration,
 							  unsigned preferredFrameSize,
-							  unsigned playTimePerFrame, int channelType) 
+							  unsigned playTimePerFrame, 
+							  int channelType) 
 {
 	LogDebug(L"ts:open %s", fileName);  
 	FileReader* reader;

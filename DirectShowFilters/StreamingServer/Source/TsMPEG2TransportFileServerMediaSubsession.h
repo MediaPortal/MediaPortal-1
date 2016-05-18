@@ -39,4 +39,5 @@ private: // redefined virtual functions
 	Boolean m_bTimeshifting;
 	int m_iChannelType;
 	mutable int m_iDurationCount;
+	//mutable double m_dTotalDuration;
 };

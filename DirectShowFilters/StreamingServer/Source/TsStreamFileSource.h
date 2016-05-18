@@ -31,7 +31,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 class TsStreamFileSource: public FramedFileSource {
 public:
 	static TsStreamFileSource* createNew(UsageEnvironment& env,
-		wchar_t const* fileName,
+		wchar_t const* fileName, CTsDuration *pDuration,
 		unsigned preferredFrameSize = 0,
 		unsigned playTimePerFrame = 0,
 		int channelType = 0);
