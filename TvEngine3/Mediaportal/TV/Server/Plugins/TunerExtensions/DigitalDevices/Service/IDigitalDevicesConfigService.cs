@@ -31,7 +31,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices.Service
     ICollection<CiSlotConfig> GetAllSlotConfiguration();
 
     [OperationContract]
-    void SaveAllSlotConfiguration(ICollection<CiSlotConfig> settings);
+    void SaveSlotConfiguration(ICollection<CiSlotConfig> config);
 
     [OperationContract]
     string GetCamNameForSlot(string devicePath);

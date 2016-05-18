@@ -28,9 +28,9 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices.Service
   {
     public ICollection<CiSlotConfig> GetAllSlotConfiguration()
     {
-      ICollection<CiSlotConfig> settings = CiSlotConfig.ReadAllSettings();
+      ICollection<CiSlotConfig> allConfig = CiSlotConfig.LoadAll();
       HashSet<string> keys = new HashSet<string>();
-      foreach (CiSlotConfig config in settings)
+      foreach (CiSlotConfig config in allConfig)
       {
         keys.Add(config.DevicePath);
       }
@@ -45,21 +45,21 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices.Service
           {
             continue;
           }
-          settings.Add(new CiSlotConfig(device.DevicePath, device.Name));
+          allConfig.Add(new CiSlotConfig(device.DevicePath, device.Name));
         }
         finally
         {
           device.Dispose();
         }
       }
-      return settings;
+      return allConfig;
     }
 
-    public void SaveAllSlotConfiguration(ICollection<CiSlotConfig> settings)
+    public void SaveSlotConfiguration(ICollection<CiSlotConfig> config)
     {
-      foreach (CiSlotConfig config in settings)
+      foreach (CiSlotConfig c in config)
       {
-        config.SaveSettings();
+        c.Save();
       }
     }
 

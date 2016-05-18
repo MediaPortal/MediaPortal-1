@@ -71,13 +71,13 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
     {
       DevicePath = devicePath;
       DeviceName = deviceName;
-      ResetSettings();
+      Reset();
     }
 
     /// <summary>
     /// Set the CI slot settings to default values.
     /// </summary>
-    public void ResetSettings()
+    public void Reset()
     {
       // Decrypt any requested service. Note that a decrypt limit of zero is
       // only permitted when the plugin is disabled. It cannot be entered via
@@ -87,15 +87,15 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
     }
 
     /// <summary>
-    /// Load the CI slot settings from the database.
+    /// Load the configuration for a CI slot.
     /// </summary>
-    public void LoadSettings()
+    public void Load()
     {
       DecryptLimit = 1;
       Providers = new HashSet<string>();
 
       byte i = 0;
-      while (true)  // Loop until we don't find any more settings.
+      while (true)  // Loop until we don't find any more configuration.
       {
         string devicePath = SettingsManagement.GetValue("digitalDevicesCiDevicePath" + i, string.Empty);
         if (string.IsNullOrEmpty(devicePath))
@@ -115,12 +115,12 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
     }
 
     /// <summary>
-    /// Save the CI slot settings to the database.
+    /// Save the configuration for a CI slot.
     /// </summary>
-    public void SaveSettings()
+    public void Save()
     {
       byte i = 0;
-      while (true)  // Loop until we find existing settings or a free space to store new settings.
+      while (true)  // Loop until we find existing configuration for the CI slot or a free space to store new configuration.
       {
         string devicePath = SettingsManagement.GetValue("digitalDevicesCiDevicePath" + i, DevicePath);
         if (string.IsNullOrEmpty(devicePath) || devicePath.Equals(DevicePath))
@@ -136,15 +136,15 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
     }
 
     /// <summary>
-    /// Get the current settings for each of the known Digital Devices CI slots.
+    /// Load the configuration for all of the known CI slots.
     /// </summary>
-    /// <returns>the collection of CI slot configurations</returns>
-    public static ICollection<CiSlotConfig> ReadAllSettings()
+    /// <returns>all CI slot configuration</returns>
+    public static ICollection<CiSlotConfig> LoadAll()
     {
       HashSet<string> seenDevicePaths = new HashSet<string>();
-      ICollection<CiSlotConfig> settings = new List<CiSlotConfig>(4);
+      ICollection<CiSlotConfig> allConfig = new List<CiSlotConfig>(4);
       byte i = 0;
-      while (true)  // Loop until we don't find any more settings.
+      while (true)  // Loop until we don't find any more configuration.
       {
         string devicePath = SettingsManagement.GetValue("digitalDevicesCiDevicePath" + i, string.Empty);
         if (string.IsNullOrEmpty(devicePath))
@@ -152,22 +152,22 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
           break;
         }
 
-        CiSlotConfig slot = new CiSlotConfig(devicePath, string.Empty);
-        slot.DeviceName = SettingsManagement.GetValue("digitalDevicesCiDeviceName" + i, string.Empty);
-        slot.DecryptLimit = SettingsManagement.GetValue("digitalDevicesCiDecryptLimit" + i, 1);
+        CiSlotConfig config = new CiSlotConfig(devicePath, string.Empty);
+        config.DeviceName = SettingsManagement.GetValue("digitalDevicesCiDeviceName" + i, string.Empty);
+        config.DecryptLimit = SettingsManagement.GetValue("digitalDevicesCiDecryptLimit" + i, 1);
         string providers = SettingsManagement.GetValue("digitalDevicesCiProviderList" + i, string.Empty);
-        slot.Providers = new HashSet<string>(providers.Split('|'));
+        config.Providers = new HashSet<string>(providers.Split('|'));
 
         // Use the first settings found. Settings found later could be invalid left-overs.
         if (!seenDevicePaths.Contains(devicePath))
         {
           seenDevicePaths.Add(devicePath);
-          settings.Add(slot);
+          allConfig.Add(config);
         }
         i++;
       }
 
-      return settings;
+      return allConfig;
     }
   }
 }

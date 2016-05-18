@@ -66,9 +66,9 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices.Config
 
       // Get the details for all slots that we've ever seen connected to the system.
       IDigitalDevicesConfigService service = ServiceAgents.Instance.PluginService<IDigitalDevicesConfigService>();
-      ICollection<CiSlotConfig> settings = service.GetAllSlotConfiguration();
-      _ciContexts = new List<CiContext>(settings.Count);
-      foreach (CiSlotConfig config in settings)
+      ICollection<CiSlotConfig> allConfig = service.GetAllSlotConfiguration();
+      _ciContexts = new List<CiContext>(allConfig.Count);
+      foreach (CiSlotConfig config in allConfig)
       {
         CiContext context = new CiContext();
         context.Config = config;
@@ -209,7 +209,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices.Config
     {
       this.LogDebug("Digital Devices config: deactivating, slot count = {0}", _ciContexts.Count);
 
-      ICollection<CiSlotConfig> settings = new List<CiSlotConfig>();
+      ICollection<CiSlotConfig> configToSave = new List<CiSlotConfig>();
       foreach (CiContext context in _ciContexts)
       {
         bool isChanged = false;
@@ -234,13 +234,13 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices.Config
         if (isChanged)
         {
           context.Debug();
-          settings.Add(context.Config);
+          configToSave.Add(context.Config);
         }
       }
 
-      if (settings.Count > 0)
+      if (configToSave.Count > 0)
       {
-        ServiceAgents.Instance.PluginService<IDigitalDevicesConfigService>().SaveAllSlotConfiguration(settings);
+        ServiceAgents.Instance.PluginService<IDigitalDevicesConfigService>().SaveSlotConfiguration(configToSave);
       }
 
       base.OnSectionDeActivated();

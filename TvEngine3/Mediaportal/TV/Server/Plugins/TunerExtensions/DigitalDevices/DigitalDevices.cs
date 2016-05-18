@@ -280,11 +280,11 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
 
         if (_isPluginEnabled)
         {
-          _config.LoadSettings();
+          _config.Load();
         }
         else
         {
-          _config.ResetSettings();
+          _config.Reset();
         }
 
         if (decryptLimit != _config.DecryptLimit)
