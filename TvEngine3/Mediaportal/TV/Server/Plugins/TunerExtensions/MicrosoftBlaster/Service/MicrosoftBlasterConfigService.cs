@@ -25,6 +25,7 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using System.Xml;
 using System.Xml.Serialization;
+using Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBlaster.Driver;
 using Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBlaster.Enum;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations;
@@ -53,7 +54,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBlaster.Service
 
     private SystemChangeNotifier _systemChangeNotifier = new SystemChangeNotifier();
     private object _lockDevices = new object();
-    private IDictionary<string, Driver> _devices = new Dictionary<string, Driver>();
+    private IDictionary<string, Driver.Driver> _devices = new Dictionary<string, Driver.Driver>();
     private SortedList<string, string> _stbProfileNames = new SortedList<string, string>();
 
     #endregion
@@ -61,7 +62,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBlaster.Service
     public void Start()
     {
       this.LogDebug("Microsoft blaster service: start");
-      List<Driver> devices = new List<Driver>();
+      List<Driver.Driver> devices = new List<Driver.Driver>();
       if (Environment.OSVersion.Version.Major >= 6) // Vista or later
       {
         foreach (string devicePath in FindDevices(DEVICE_INTERFACE_GUID_MS_EHOME))
@@ -84,7 +85,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBlaster.Service
 
       lock (_lockDevices)
       {
-        foreach (Driver device in devices)
+        foreach (Driver.Driver device in devices)
         {
           device.Open();
           _devices.Add(device.DevicePath, device);
@@ -109,7 +110,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBlaster.Service
 
       lock (_lockDevices)
       {
-        foreach (Driver device in _devices.Values)
+        foreach (Driver.Driver device in _devices.Values)
         {
           device.Close();
         }
@@ -141,7 +142,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBlaster.Service
       lock (_lockDevices)
       {
         List<TransceiverDetail> details = new List<TransceiverDetail>(_devices.Count);
-        foreach (Driver device in _devices.Values)
+        foreach (Driver.Driver device in _devices.Values)
         {
           details.Add(device.GetDetail());
         }
@@ -198,7 +199,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBlaster.Service
     public LearnResult Learn(string transceiverDevicePath, TimeSpan timeLimit, out string command)
     {
       command = string.Empty;
-      Driver driver;
+      Driver.Driver driver;
       lock (_lockDevices)
       {
         if (!_devices.TryGetValue(transceiverDevicePath, out driver))
@@ -251,7 +252,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBlaster.Service
         }
       }
 
-      Driver driver;
+      Driver.Driver driver;
       lock (_lockDevices)
       {
         if (!_devices.TryGetValue(transceiverDevicePath, out driver))
@@ -495,7 +496,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBlaster.Service
 
       ThreadPool.QueueUserWorkItem(delegate
       {
-        Driver device;
+        Driver.Driver device;
         lock (_lockDevices)
         {
           if (eventType == NativeMethods.DBT_MANAGEMENT_EVENT.DBT_DEVICEARRIVAL)
@@ -533,7 +534,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBlaster.Service
       {
         lock (_lockDevices)
         {
-          foreach (Driver device in _devices.Values)
+          foreach (Driver.Driver device in _devices.Values)
           {
             device.Close();
           }
@@ -547,7 +548,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBlaster.Service
       {
         lock (_lockDevices)
         {
-          foreach (Driver device in _devices.Values)
+          foreach (Driver.Driver device in _devices.Values)
           {
             device.Open();
           }

@@ -89,8 +89,6 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBlaster.Config
       }
     }
 
-    private string _learningTransceiverDevicePath = null;
-
     public MicrosoftBlasterConfig()
       : base("Microsoft Blaster")
     {
@@ -270,11 +268,6 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBlaster.Config
       base.OnSectionDeActivated();
     }
 
-    private LearnResult LearnCommand(TimeSpan timeLimit, out string command)
-    {
-      return ServiceAgents.Instance.PluginService<IMicrosoftBlasterConfigService>().Learn(_learningTransceiverDevicePath, timeLimit, out command);
-    }
-
     private void buttonLearn_Click(object sender, EventArgs e)
     {
       DataGridViewRow row = dataGridViewConfig.SelectedRows[0];
@@ -294,26 +287,19 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBlaster.Config
         return;
       }
 
-      _learningTransceiverDevicePath = transceiver.DevicePath;
-      this.LogInfo("Microsoft blaster config: learn, transceiver = {0}", _learningTransceiverDevicePath);
-      LearnSetTopBox learnDlg = new LearnSetTopBox(LearnCommand);
-      if (learnDlg.ShowDialog() == DialogResult.OK)
+      using (LearnSetTopBox dlg = new LearnSetTopBox(transceiver.DevicePath))
       {
-        this.LogInfo("Microsoft blaster config: save STB profile, name = {0}", learnDlg.Profile.Name);
-        if (!ServiceAgents.Instance.PluginService<IMicrosoftBlasterConfigService>().SaveSetTopBoxProfile(learnDlg.Profile))
+        if (dlg.ShowDialog() == DialogResult.OK)
         {
-          this.LogError("Microsoft blaster config: failed to save STB profile, name = {0}", learnDlg.Profile.Name);
-          MessageBox.Show("Failed to save the profile." + Environment.NewLine + SENTENCE_CHECK_LOG_FILES, MESSAGE_CAPTION, MessageBoxButtons.OK, MessageBoxIcon.Error);
-          return;
-        }
 
-        // This works without changing existing selections because:
-        // - strings have an Equals() override
-        // - we can assume that profiles can't have been deleted
-        IList<string> stbProfileNames = ServiceAgents.Instance.PluginService<IMicrosoftBlasterConfigService>().GetAllSetTopBoxProfileNames();
-        ((DataGridViewComboBoxColumn)dataGridViewConfig.Columns["dataGridViewColumnSetTopBoxProfile"]).DataSource = stbProfileNames;
+
+          // This works without changing existing selections because:
+          // - strings have an Equals() override
+          // - we can assume that profiles can't have been deleted
+          IList<string> stbProfileNames = ServiceAgents.Instance.PluginService<IMicrosoftBlasterConfigService>().GetAllSetTopBoxProfileNames();
+          ((DataGridViewComboBoxColumn)dataGridViewConfig.Columns["dataGridViewColumnSetTopBoxProfile"]).DataSource = stbProfileNames;
+        }
       }
-      _learningTransceiverDevicePath = null;
     }
 
     private void buttonTest_Click(object sender, System.EventArgs e)

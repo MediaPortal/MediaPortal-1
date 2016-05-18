@@ -29,7 +29,7 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using MediaPortal.Common.Utils;
 using Microsoft.Win32.SafeHandles;
 
-namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBlaster
+namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBlaster.Driver
 {
   /// <summary>
   /// This class supports the port driver interface exposed by the eHome driver

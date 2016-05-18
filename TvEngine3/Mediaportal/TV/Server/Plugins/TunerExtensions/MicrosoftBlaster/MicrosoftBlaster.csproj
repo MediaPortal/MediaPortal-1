@@ -92,9 +92,9 @@
     <Compile Include="Decoder\DecoderJvc.cs" />
     <Compile Include="Decoder\DecoderBase.cs" />
     <Compile Include="Decoder\DecoderDaewoo.cs" />
-    <Compile Include="Driver.cs" />
-    <Compile Include="DriverPort.cs" />
-    <Compile Include="DriverEmulator.cs" />
+    <Compile Include="Driver\Driver.cs" />
+    <Compile Include="Driver\DriverPort.cs" />
+    <Compile Include="Driver\DriverEmulator.cs" />
     <Compile Include="Enum\LearnResult.cs" />
     <Compile Include="MicrosoftBlaster.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

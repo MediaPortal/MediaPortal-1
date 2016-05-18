@@ -24,7 +24,9 @@ using System.Drawing;
 using System.Threading;
 using System.Windows.Forms;
 using Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBlaster.Enum;
+using Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBlaster.Service;
 using Mediaportal.TV.Server.SetupControls;
+using Mediaportal.TV.Server.TVControl.ServiceAgents;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
@@ -32,23 +34,12 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBlaster.Config
 {
   internal partial class LearnSetTopBox : Form
   {
-    public delegate LearnResult LearnCommandDelegate(TimeSpan timeLimit, out string command);
+    private string _transceiverDevicePath = null;
 
-    private LearnCommandDelegate _learnCommandDelegate = null;
-    private SetTopBoxProfile _profile = new SetTopBoxProfile();
-
-    public LearnSetTopBox(LearnCommandDelegate learnCommandDelegate)
+    public LearnSetTopBox(string transceiverDevicePath)
     {
-      _learnCommandDelegate = learnCommandDelegate;
+      _transceiverDevicePath = transceiverDevicePath;
       InitializeComponent();
-    }
-
-    public SetTopBoxProfile Profile
-    {
-      get
-      {
-        return _profile;
-      }
     }
 
     private void UpdateOkayButtonState()
@@ -133,7 +124,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBlaster.Config
       }
 
       ListViewItem item = listViewCommands.SelectedItems[0];
-      this.LogInfo("learn STB: learn command, name = {0}", item.SubItems[0].Text);
+      this.LogInfo("Microsoft blaster learn STB: learn command, name = {0}, transceiver = {1}", item.SubItems[0].Text, _transceiverDevicePath);
 
       NotifyForm dlg = new NotifyForm(SectionSettings.MESSAGE_CAPTION, "Hold the remote control approximately 5 centimeters from the receiver and press the target button once.");
       dlg.Show(this);
@@ -143,8 +134,8 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBlaster.Config
         delegate
         {
           string command;
-          LearnResult result = _learnCommandDelegate(new TimeSpan(0, 0, 10), out command);
-          this.LogInfo("learn STB: learn result = {0}, command = {1}", result, command);
+          LearnResult result = ServiceAgents.Instance.PluginService<IMicrosoftBlasterConfigService>().Learn(_transceiverDevicePath, new TimeSpan(0, 0, 10), out command);
+          this.LogInfo("Microsoft blaster learn STB: learn result = {0}, command = {1}", result, command);
           this.Invoke((MethodInvoker)delegate
           {
             dlg.Close();
@@ -188,7 +179,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBlaster.Config
     {
       foreach (ListViewItem item in listViewCommands.SelectedItems)
       {
-        this.LogDebug("learn STB: forget command, name = {0}", item.SubItems[0].Text);
+        this.LogDebug("Microsoft blaster learn STB: forget command, name = {0}", item.SubItems[0].Text);
         item.SubItems[1].Tag = null;
         if ((bool)item.Tag)   // Is the command required?
         {
@@ -206,37 +197,46 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBlaster.Config
 
     private void buttonOkay_Click(object sender, EventArgs e)
     {
-      _profile.Name = textBoxName.Text.Trim();
-      _profile.Digit0 = listViewCommands.Items[0].SubItems[1].Tag as string;
-      _profile.Digit1 = listViewCommands.Items[1].SubItems[1].Tag as string;
-      _profile.Digit2 = listViewCommands.Items[2].SubItems[1].Tag as string;
-      _profile.Digit3 = listViewCommands.Items[3].SubItems[1].Tag as string;
-      _profile.Digit4 = listViewCommands.Items[4].SubItems[1].Tag as string;
-      _profile.Digit5 = listViewCommands.Items[5].SubItems[1].Tag as string;
-      _profile.Digit6 = listViewCommands.Items[6].SubItems[1].Tag as string;
-      _profile.Digit7 = listViewCommands.Items[7].SubItems[1].Tag as string;
-      _profile.Digit8 = listViewCommands.Items[8].SubItems[1].Tag as string;
-      _profile.Digit9 = listViewCommands.Items[9].SubItems[1].Tag as string;
-      _profile.PreChange = listViewCommands.Items[10].SubItems[1].Tag as string;
-      _profile.Separator = listViewCommands.Items[11].SubItems[1].Tag as string;
-      _profile.Enter = listViewCommands.Items[12].SubItems[1].Tag as string;
-      _profile.PowerToggle = listViewCommands.Items[13].SubItems[1].Tag as string;
-      _profile.PowerOff = listViewCommands.Items[14].SubItems[1].Tag as string;
-      _profile.PowerOn = listViewCommands.Items[15].SubItems[1].Tag as string;
+      this.LogInfo("Microsoft blaster learn STB: save STB profile");
 
-      _profile.CommandDelay = (int)numericUpDownCommandDelay.Value;
-      _profile.PowerChangeDelay = (int)numericUpDownPowerChangeDelay.Value;
-      _profile.DigitCount = comboBoxDigitCount.SelectedIndex;
-      if (_profile.DigitCount != 0)
+      SetTopBoxProfile profile = new SetTopBoxProfile();
+      profile.Name = textBoxName.Text.Trim();
+      profile.Digit0 = listViewCommands.Items[0].SubItems[1].Tag as string;
+      profile.Digit1 = listViewCommands.Items[1].SubItems[1].Tag as string;
+      profile.Digit2 = listViewCommands.Items[2].SubItems[1].Tag as string;
+      profile.Digit3 = listViewCommands.Items[3].SubItems[1].Tag as string;
+      profile.Digit4 = listViewCommands.Items[4].SubItems[1].Tag as string;
+      profile.Digit5 = listViewCommands.Items[5].SubItems[1].Tag as string;
+      profile.Digit6 = listViewCommands.Items[6].SubItems[1].Tag as string;
+      profile.Digit7 = listViewCommands.Items[7].SubItems[1].Tag as string;
+      profile.Digit8 = listViewCommands.Items[8].SubItems[1].Tag as string;
+      profile.Digit9 = listViewCommands.Items[9].SubItems[1].Tag as string;
+      profile.PreChange = listViewCommands.Items[10].SubItems[1].Tag as string;
+      profile.Separator = listViewCommands.Items[11].SubItems[1].Tag as string;
+      profile.Enter = listViewCommands.Items[12].SubItems[1].Tag as string;
+      profile.PowerToggle = listViewCommands.Items[13].SubItems[1].Tag as string;
+      profile.PowerOff = listViewCommands.Items[14].SubItems[1].Tag as string;
+      profile.PowerOn = listViewCommands.Items[15].SubItems[1].Tag as string;
+
+      profile.CommandDelay = (int)numericUpDownCommandDelay.Value;
+      profile.PowerChangeDelay = (int)numericUpDownPowerChangeDelay.Value;
+      profile.DigitCount = comboBoxDigitCount.SelectedIndex;
+      if (profile.DigitCount != 0)
       {
-        _profile.DigitCount++;
+        profile.DigitCount++;
       }
 
-      this.LogDebug("learn STB: configuration...");
-      this.LogDebug("  name               = {0}", _profile.Name);
-      this.LogDebug("  command delay      = {0} ms", _profile.CommandDelay);
-      this.LogDebug("  power change delay = {0} ms", _profile.PowerChangeDelay);
-      this.LogDebug("  digit count        = {0}", _profile.DigitCount);
+      this.LogDebug("  name               = {0}", profile.Name);
+      this.LogDebug("  command delay      = {0} ms", profile.CommandDelay);
+      this.LogDebug("  power change delay = {0} ms", profile.PowerChangeDelay);
+      this.LogDebug("  digit count        = {0}", profile.DigitCount);
+
+      if (!ServiceAgents.Instance.PluginService<IMicrosoftBlasterConfigService>().SaveSetTopBoxProfile(profile))
+      {
+        this.LogError("Microsoft blaster learn STB: failed to save STB profile, name = {0}", profile.Name);
+        MessageBox.Show("Failed to save the profile." + Environment.NewLine + SectionSettings.SENTENCE_CHECK_LOG_FILES, SectionSettings.MESSAGE_CAPTION, MessageBoxButtons.OK, MessageBoxIcon.Error);
+        return;
+      }
 
       DialogResult = DialogResult.OK;
       Close();
