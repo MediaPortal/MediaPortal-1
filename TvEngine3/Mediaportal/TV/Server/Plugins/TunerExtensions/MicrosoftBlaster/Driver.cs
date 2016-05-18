@@ -241,12 +241,12 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBlaster
     /// <returns>the result of the transmit process</returns>
     public TransmitResult Transmit(string commandName, string commandString, TransmitPort ports)
     {
-      this.LogDebug("Microsoft blaster driver: transmit, command = {0}, port(s) = {1}, device path = {2}", commandName, ports, _devicePath);
+      this.LogDebug("Microsoft blaster driver: transmit, command = {0}, port(s) = [{1}], device path = {2}", commandName, ports, _devicePath);
 
       if (!_isOpen)
       {
         this.LogError("Microsoft blaster driver: failed to transmit, the device is not open, device path = {0}", _devicePath);
-        return TransmitResult.Fail;
+        return TransmitResult.NotOpen;
       }
       if (_availablePortsTransmit == TransmitPort.None)
       {
@@ -273,7 +273,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBlaster
       }
       if (!_connectedTransmitPorts.HasFlag(ports))
       {
-        this.LogError("Microsoft blaster driver: failed to transmit, emitter(s) are not connected to the specified port(s), port(s) = {0}, device path = {1}", ports, _devicePath);
+        this.LogError("Microsoft blaster driver: failed to transmit, emitter(s) are not connected to the specified port(s), specified port(s) = [{0}], connected port(s) = [{1}], device path = {2}", ports, _connectedTransmitPorts, _devicePath);
         return TransmitResult.EmitterNotConnected;
       }
 
@@ -293,7 +293,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBlaster
       }
       catch (Exception ex)
       {
-        this.LogError(ex, "Microsoft blaster driver: failed to transmit, command = {0}, device path = {1}", commandName, _devicePath);
+        this.LogError(ex, "Microsoft blaster driver: failed to transmit, command = {0}, port(s) = [{1}], device path = {2}", commandName, ports, _devicePath);
         return TransmitResult.Fail;
       }
     }
@@ -312,7 +312,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBlaster
       if (!_isOpen)
       {
         this.LogError("Microsoft blaster driver: failed to learn, the device is not open, device path = {0}", _devicePath);
-        return LearnResult.Fail;
+        return LearnResult.NotOpen;
       }
       if (!_availablePortsReceive.HasFlag(ReceivePort.Learn))
       {
@@ -356,7 +356,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBlaster
 
         if (endState == ReceiveThreadState.Learning && pulseSpaceCount > 0)
         {
-          this.LogError("Microsoft blaster driver: learn time limit reached, pulse/space count = {0}, device path = {1}", pulseSpaceCount, _devicePath);
+          this.LogError("Microsoft blaster driver: learn time limit reached, time limit = {0} ms, pulse/space count = {1}, device path = {2}", timeLimit.TotalMilliseconds, pulseSpaceCount, _devicePath);
           return LearnResult.TimeOut;
         }
 

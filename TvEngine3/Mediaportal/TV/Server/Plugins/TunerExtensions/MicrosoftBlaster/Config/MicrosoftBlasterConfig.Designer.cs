@@ -50,16 +50,16 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBlaster.Config
     {
       System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MicrosoftBlasterConfig));
       this.dataGridViewConfig = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPDataGridView();
+      this.buttonTest = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
+      this.numericUpDownTest = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPNumericUpDown();
+      this.buttonLearn = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
+      this.pictureBoxLogo = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPPictureBox();
       this.dataGridViewColumnTunerId = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPDataGridViewTextBoxColumn();
       this.dataGridViewColumnTunerName = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPDataGridViewTextBoxColumn();
       this.dataGridViewColumnTransceiver = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPDataGridViewComboBoxColumn();
       this.dataGridViewColumnTransmitPort = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPDataGridViewComboBoxColumn();
       this.dataGridViewColumnSetTopBoxProfile = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPDataGridViewComboBoxColumn();
       this.dataGridViewColumnPowerControl = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPDataGridViewCheckBoxColumn();
-      this.buttonTest = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
-      this.numericUpDownTest = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPNumericUpDown();
-      this.buttonLearn = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
-      this.pictureBoxLogo = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPPictureBox();
       ((System.ComponentModel.ISupportInitialize)(this.dataGridViewConfig)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTest)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.pictureBoxLogo)).BeginInit();
@@ -92,59 +92,6 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBlaster.Config
       this.dataGridViewConfig.TabIndex = 0;
       this.dataGridViewConfig.CurrentCellDirtyStateChanged += new System.EventHandler(this.dataGridViewConfig_CurrentCellDirtyStateChanged);
       this.dataGridViewConfig.SelectionChanged += new System.EventHandler(this.dataGridViewConfig_SelectionChanged);
-      // 
-      // dataGridViewColumnTunerId
-      // 
-      this.dataGridViewColumnTunerId.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCellsExceptHeader;
-      this.dataGridViewColumnTunerId.HeaderText = "Tuner ID";
-      this.dataGridViewColumnTunerId.MinimumWidth = 45;
-      this.dataGridViewColumnTunerId.Name = "dataGridViewColumnTunerId";
-      this.dataGridViewColumnTunerId.ReadOnly = true;
-      this.dataGridViewColumnTunerId.Width = 45;
-      // 
-      // dataGridViewColumnTunerName
-      // 
-      this.dataGridViewColumnTunerName.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-      this.dataGridViewColumnTunerName.FillWeight = 34F;
-      this.dataGridViewColumnTunerName.HeaderText = "Tuner Name";
-      this.dataGridViewColumnTunerName.Name = "dataGridViewColumnTunerName";
-      this.dataGridViewColumnTunerName.ReadOnly = true;
-      // 
-      // dataGridViewColumnTransceiver
-      // 
-      this.dataGridViewColumnTransceiver.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-      this.dataGridViewColumnTransceiver.DisplayStyle = System.Windows.Forms.DataGridViewComboBoxDisplayStyle.ComboBox;
-      this.dataGridViewColumnTransceiver.FillWeight = 33F;
-      this.dataGridViewColumnTransceiver.HeaderText = "Transceiver";
-      this.dataGridViewColumnTransceiver.Name = "dataGridViewColumnTransceiver";
-      this.dataGridViewColumnTransceiver.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
-      // 
-      // dataGridViewColumnTransmitPort
-      // 
-      this.dataGridViewColumnTransmitPort.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
-      this.dataGridViewColumnTransmitPort.DisplayStyle = System.Windows.Forms.DataGridViewComboBoxDisplayStyle.ComboBox;
-      this.dataGridViewColumnTransmitPort.FillWeight = 20F;
-      this.dataGridViewColumnTransmitPort.HeaderText = "Port";
-      this.dataGridViewColumnTransmitPort.Name = "dataGridViewColumnTransmitPort";
-      this.dataGridViewColumnTransmitPort.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
-      this.dataGridViewColumnTransmitPort.Width = 51;
-      // 
-      // dataGridViewColumnSetTopBoxProfile
-      // 
-      this.dataGridViewColumnSetTopBoxProfile.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-      this.dataGridViewColumnSetTopBoxProfile.DisplayStyle = System.Windows.Forms.DataGridViewComboBoxDisplayStyle.ComboBox;
-      this.dataGridViewColumnSetTopBoxProfile.FillWeight = 33F;
-      this.dataGridViewColumnSetTopBoxProfile.HeaderText = "Set Top Box Profile";
-      this.dataGridViewColumnSetTopBoxProfile.Name = "dataGridViewColumnSetTopBoxProfile";
-      this.dataGridViewColumnSetTopBoxProfile.Resizable = System.Windows.Forms.DataGridViewTriState.True;
-      this.dataGridViewColumnSetTopBoxProfile.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
-      // 
-      // dataGridViewColumnPowerControl
-      // 
-      this.dataGridViewColumnPowerControl.HeaderText = "Power Control";
-      this.dataGridViewColumnPowerControl.Name = "dataGridViewColumnPowerControl";
-      this.dataGridViewColumnPowerControl.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
-      this.dataGridViewColumnPowerControl.Width = 50;
       // 
       // buttonTest
       // 
@@ -204,6 +151,58 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBlaster.Config
       this.pictureBoxLogo.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
       this.pictureBoxLogo.TabIndex = 8;
       this.pictureBoxLogo.TabStop = false;
+      // 
+      // dataGridViewColumnTunerId
+      // 
+      this.dataGridViewColumnTunerId.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCellsExceptHeader;
+      this.dataGridViewColumnTunerId.HeaderText = "Tuner ID";
+      this.dataGridViewColumnTunerId.MinimumWidth = 45;
+      this.dataGridViewColumnTunerId.Name = "dataGridViewColumnTunerId";
+      this.dataGridViewColumnTunerId.ReadOnly = true;
+      this.dataGridViewColumnTunerId.Width = 45;
+      // 
+      // dataGridViewColumnTunerName
+      // 
+      this.dataGridViewColumnTunerName.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+      this.dataGridViewColumnTunerName.FillWeight = 33F;
+      this.dataGridViewColumnTunerName.HeaderText = "Tuner Name";
+      this.dataGridViewColumnTunerName.Name = "dataGridViewColumnTunerName";
+      this.dataGridViewColumnTunerName.ReadOnly = true;
+      // 
+      // dataGridViewColumnTransceiver
+      // 
+      this.dataGridViewColumnTransceiver.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+      this.dataGridViewColumnTransceiver.DisplayStyle = System.Windows.Forms.DataGridViewComboBoxDisplayStyle.ComboBox;
+      this.dataGridViewColumnTransceiver.FillWeight = 33F;
+      this.dataGridViewColumnTransceiver.HeaderText = "Transceiver";
+      this.dataGridViewColumnTransceiver.Name = "dataGridViewColumnTransceiver";
+      this.dataGridViewColumnTransceiver.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
+      // 
+      // dataGridViewColumnTransmitPort
+      // 
+      this.dataGridViewColumnTransmitPort.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+      this.dataGridViewColumnTransmitPort.DisplayStyle = System.Windows.Forms.DataGridViewComboBoxDisplayStyle.ComboBox;
+      this.dataGridViewColumnTransmitPort.HeaderText = "Port";
+      this.dataGridViewColumnTransmitPort.Name = "dataGridViewColumnTransmitPort";
+      this.dataGridViewColumnTransmitPort.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
+      this.dataGridViewColumnTransmitPort.Width = 51;
+      // 
+      // dataGridViewColumnSetTopBoxProfile
+      // 
+      this.dataGridViewColumnSetTopBoxProfile.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+      this.dataGridViewColumnSetTopBoxProfile.DisplayStyle = System.Windows.Forms.DataGridViewComboBoxDisplayStyle.ComboBox;
+      this.dataGridViewColumnSetTopBoxProfile.FillWeight = 33F;
+      this.dataGridViewColumnSetTopBoxProfile.HeaderText = "Set Top Box Profile";
+      this.dataGridViewColumnSetTopBoxProfile.Name = "dataGridViewColumnSetTopBoxProfile";
+      this.dataGridViewColumnSetTopBoxProfile.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+      this.dataGridViewColumnSetTopBoxProfile.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
+      // 
+      // dataGridViewColumnPowerControl
+      // 
+      this.dataGridViewColumnPowerControl.HeaderText = "Power Control";
+      this.dataGridViewColumnPowerControl.Name = "dataGridViewColumnPowerControl";
+      this.dataGridViewColumnPowerControl.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
+      this.dataGridViewColumnPowerControl.Width = 50;
       // 
       // MicrosoftBlasterConfig
       // 

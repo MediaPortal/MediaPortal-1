@@ -25,6 +25,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBlaster.Enum
     Success,
     Fail,
     Unavailable,
+    NotOpen,
     Unsupported,
     InvalidProfile,
     InvalidCommand,

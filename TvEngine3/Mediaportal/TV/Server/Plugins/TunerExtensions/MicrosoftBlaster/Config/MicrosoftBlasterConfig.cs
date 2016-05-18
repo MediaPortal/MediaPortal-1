@@ -371,6 +371,10 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBlaster.Config
       {
         MessageBox.Show("The selected set-top-box profile is not valid. Please try (re-)learning the commands.", MESSAGE_CAPTION, MessageBoxButtons.OK, MessageBoxIcon.Error);
       }
+      else if (result == TransmitResult.NotOpen)
+      {
+        MessageBox.Show("The selected transceiver's interface is currently closed.", MESSAGE_CAPTION, MessageBoxButtons.OK, MessageBoxIcon.Error);
+      }
       else if (result == TransmitResult.Unavailable)
       {
         MessageBox.Show("The selected transceiver is currently not available.", MESSAGE_CAPTION, MessageBoxButtons.OK, MessageBoxIcon.Error);
