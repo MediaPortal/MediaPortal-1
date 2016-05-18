@@ -24,14 +24,14 @@ using System.ServiceModel;
 namespace Mediaportal.TV.Server.Plugins.TunerExtension.DirecTvShef.Service
 {
   [ServiceContract(Namespace = "http://www.team-mediaportal.com")]
-  [ServiceKnownType(typeof(SetTopBoxConfig))]
+  [ServiceKnownType(typeof(TunerSetTopBoxConfig))]
   internal interface IDirecTvShefConfigService
   {
     [OperationContract]
-    SetTopBoxConfig GetSetTopBoxConfigurationForTuner(string tunerExternalId);
+    TunerSetTopBoxConfig GetSetTopBoxConfigurationForTuner(string tunerExternalId);
 
     [OperationContract]
-    void SaveSetTopBoxConfiguration(ICollection<SetTopBoxConfig> settings);
+    void SaveSetTopBoxConfiguration(ICollection<TunerSetTopBoxConfig> config);
 
     [OperationContract]
     bool GetSetTopBoxLocations(string ipAddress, out IDictionary<string, string> locations);

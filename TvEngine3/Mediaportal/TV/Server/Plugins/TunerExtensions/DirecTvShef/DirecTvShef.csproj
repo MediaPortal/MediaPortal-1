@@ -80,7 +80,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Service\DirecTvShefConfigService.cs" />
     <Compile Include="Service\IDirecTvShefConfigService.cs" />
-    <Compile Include="SetTopBoxConfig.cs" />
+    <Compile Include="TunerSetTopBoxConfig.cs" />
     <Compile Include="Shef\Request\ShefRequestGetLocations.cs" />
     <Compile Include="Shef\Request\ShefRequestGetVersion.cs" />
     <Compile Include="Shef\Request\ShefRemoteKeyPress.cs" />

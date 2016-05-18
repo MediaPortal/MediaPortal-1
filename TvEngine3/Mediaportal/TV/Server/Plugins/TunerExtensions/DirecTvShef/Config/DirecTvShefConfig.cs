@@ -65,7 +65,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DirecTvShef.Config
 
         row.Cells["dataGridViewColumnTunerName"].Value = tuner.Name;
 
-        SetTopBoxConfig tunerStbConfig = ServiceAgents.Instance.PluginService<IDirecTvShefConfigService>().GetSetTopBoxConfigurationForTuner(tuner.ExternalId);
+        TunerSetTopBoxConfig tunerStbConfig = ServiceAgents.Instance.PluginService<IDirecTvShefConfigService>().GetSetTopBoxConfigurationForTuner(tuner.ExternalId);
         cell = row.Cells["dataGridViewColumnSetTopBoxIpAddress"];
         cell.Value = tunerStbConfig.IpAddress;
         cell.Tag = tunerStbConfig;
@@ -93,7 +93,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DirecTvShef.Config
     {
       this.LogDebug("DirecTV SHEF config: deactivating, tuner count = {0}", dataGridViewConfig.Rows.Count);
 
-      ICollection<SetTopBoxConfig> settings = new List<SetTopBoxConfig>(dataGridViewConfig.Rows.Count);
+      ICollection<TunerSetTopBoxConfig> configToSave = new List<TunerSetTopBoxConfig>(dataGridViewConfig.Rows.Count);
       foreach (DataGridViewRow row in dataGridViewConfig.Rows)
       {
         bool isChanged = false;
@@ -101,7 +101,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DirecTvShef.Config
         Tuner tuner = cell.Tag as Tuner;
 
         cell = row.Cells["dataGridViewColumnSetTopBoxIpAddress"];
-        SetTopBoxConfig tunerStbConfig = cell.Tag as SetTopBoxConfig;
+        TunerSetTopBoxConfig tunerStbConfig = cell.Tag as TunerSetTopBoxConfig;
         string newIpAddress = cell.Value as string;
         if (string.IsNullOrWhiteSpace(newIpAddress))
         {
@@ -134,13 +134,13 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DirecTvShef.Config
 
         if (isChanged)
         {
-          settings.Add(tunerStbConfig);
+          configToSave.Add(tunerStbConfig);
         }
       }
 
-      if (settings.Count > 0)
+      if (configToSave.Count > 0)
       {
-        ServiceAgents.Instance.PluginService<IDirecTvShefConfigService>().SaveSetTopBoxConfiguration(settings);
+        ServiceAgents.Instance.PluginService<IDirecTvShefConfigService>().SaveSetTopBoxConfiguration(configToSave);
       }
 
       base.OnSectionDeActivated();
@@ -161,7 +161,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DirecTvShef.Config
         return;
       }
 
-      SetTopBoxConfig tunerStbConfig = cell.Tag as SetTopBoxConfig;
+      TunerSetTopBoxConfig tunerStbConfig = cell.Tag as TunerSetTopBoxConfig;
       cell = row.Cells["dataGridViewColumnTunerId"];
       Tuner tuner = cell.Tag as Tuner;
       this.LogInfo("DirecTV SHEF config: select Genie Mini, tuner ID = {0}, IP address = {1}, current Genie Mini = {2} ({3})", tuner.IdTuner, ipAddress, tunerStbConfig.Location, tunerStbConfig.MacAddress);

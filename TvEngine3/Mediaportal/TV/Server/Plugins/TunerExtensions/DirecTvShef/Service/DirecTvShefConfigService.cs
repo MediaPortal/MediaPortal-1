@@ -28,22 +28,22 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DirecTvShef.Service
 {
   internal class DirecTvShefConfigService : IDirecTvShefConfigService
   {
-    public delegate void OnSetTopBoxConfigChange(SetTopBoxConfig config);
-    public event OnSetTopBoxConfigChange OnConfigChange;
+    public delegate void OnTunerSetTopBoxConfigChange(TunerSetTopBoxConfig config);
+    public event OnTunerSetTopBoxConfigChange OnConfigChange;
 
-    public SetTopBoxConfig GetSetTopBoxConfigurationForTuner(string tunerExternalId)
+    public TunerSetTopBoxConfig GetSetTopBoxConfigurationForTuner(string tunerExternalId)
     {
-      return SetTopBoxConfig.LoadSettings(tunerExternalId);
+      return TunerSetTopBoxConfig.Load(tunerExternalId);
     }
 
-    public void SaveSetTopBoxConfiguration(ICollection<SetTopBoxConfig> settings)
+    public void SaveSetTopBoxConfiguration(ICollection<TunerSetTopBoxConfig> config)
     {
-      foreach (SetTopBoxConfig config in settings)
+      foreach (TunerSetTopBoxConfig c in config)
       {
-        config.SaveSettings();
+        c.Save();
         if (OnConfigChange != null)
         {
-          OnConfigChange(config);
+          OnConfigChange(c);
         }
       }
     }

@@ -59,11 +59,11 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DirecTvShef
 
     private object _configLock = new object();
     private ShefClient _shefClient = null;
-    private SetTopBoxConfig _config = null;
+    private TunerSetTopBoxConfig _config = null;
 
     #endregion
 
-    private void OnSetTopBoxConfigChange(SetTopBoxConfig config)
+    private void OnSetTopBoxConfigChange(TunerSetTopBoxConfig config)
     {
       if (string.Equals(_tunerExternalId, config.TunerExternalId))
       {
@@ -72,7 +72,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DirecTvShef
       }
     }
 
-    private void UpdateConfig(SetTopBoxConfig config)
+    private void UpdateConfig(TunerSetTopBoxConfig config)
     {
       lock (_configLock)
       {
@@ -146,7 +146,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DirecTvShef
       this.LogInfo("DirecTV SHEF: extension supported");
       _isDirecTvShef = true;
       _tunerExternalId = tunerExternalId;
-      UpdateConfig(SetTopBoxConfig.LoadSettings(_tunerExternalId));
+      UpdateConfig(TunerSetTopBoxConfig.Load(_tunerExternalId));
       _service.OnConfigChange += OnSetTopBoxConfigChange;
       return true;
     }
