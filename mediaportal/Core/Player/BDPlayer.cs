@@ -3097,11 +3097,11 @@ namespace MediaPortal.Player
 
         if (_videoWin != null)
         {
-          DirectShowUtil.ReleaseComObject(_videoWin);
+          DirectShowUtil.FinalReleaseComObject(_videoWin);
         }
         if (_basicVideo != null)
         {
-          DirectShowUtil.ReleaseComObject(_basicVideo);
+          DirectShowUtil.FinalReleaseComObject(_basicVideo);
         }
         _mediaCtrl = null;
         _mediaEvt = null;
@@ -3122,8 +3122,6 @@ namespace MediaPortal.Player
           _rotEntry.SafeDispose();
           _rotEntry = null;
         }
-
-        //GC.Collect();
 
         _state = PlayState.Init;
       }

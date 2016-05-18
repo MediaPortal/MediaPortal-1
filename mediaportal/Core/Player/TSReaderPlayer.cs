@@ -990,8 +990,6 @@ namespace MediaPortal.Player
             _rotEntry = null;
           }
 
-          //GC.Collect();
-
           _state = PlayState.Init;
         }
         catch (Exception ex)
