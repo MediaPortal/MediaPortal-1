@@ -25,20 +25,20 @@ using Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBlaster.Enum;
 namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBlaster
 {
   /// <summary>
-  /// Configuration properties for a set top box.
+  /// Configuration for the set top box associated with a tuner.
   /// </summary>
   [DataContract]
-  internal class SetTopBoxConfig
+  internal class TunerSetTopBoxConfig
   {
     /// <summary>
-    /// The external identifier of the tuner that the set top box is connected
-    /// to.
+    /// The tuner's external identifier.
     /// </summary>
     [DataMember]
     public string TunerExternalId = string.Empty;
 
     /// <summary>
-    /// The device path of the transceiver which controls the set top box.
+    /// The device path of the transceiver which controls the set top box that
+    /// is connected to the tuner.
     /// </summary>
     [DataMember]
     public string TransceiverDevicePath = string.Empty;
@@ -67,28 +67,28 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBlaster
     [DataMember]
     public bool IsPowerControlEnabled = false;
 
-    private SetTopBoxConfig(string tunerExternalId)
+    private TunerSetTopBoxConfig(string tunerExternalId)
     {
       TunerExternalId = tunerExternalId;
     }
 
     /// <summary>
-    /// Load the set top box settings for a tuner.
+    /// Load the configuration for a tuner.
     /// </summary>
     /// <param name="tunerExternalId">The tuner's external identifier.</param>
-    public static SetTopBoxConfig LoadSettings(string tunerExternalId)
+    public static TunerSetTopBoxConfig Load(string tunerExternalId)
     {
       byte i = 0;
-      while (true)  // Loop until we don't find any more settings.
+      while (true)  // Loop until we don't find any more configuration.
       {
         string externalId = SettingsManagement.GetValue("microsoftBlasterTunerExternalId" + i, string.Empty);
         if (string.IsNullOrEmpty(externalId))
         {
-          return new SetTopBoxConfig(tunerExternalId);
+          return new TunerSetTopBoxConfig(tunerExternalId);
         }
         if (externalId.Equals(tunerExternalId))
         {
-          SetTopBoxConfig config = new SetTopBoxConfig(tunerExternalId);
+          TunerSetTopBoxConfig config = new TunerSetTopBoxConfig(tunerExternalId);
           config.TransceiverDevicePath = SettingsManagement.GetValue("microsoftBlasterTransceiverDevicePath" + i, string.Empty);
           config.TransmitPort = (TransmitPort)SettingsManagement.GetValue("microsoftBlasterTransmitPort" + i, (int)TransmitPort.Port1);
           config.ProfileName = SettingsManagement.GetValue("microsoftBlasterProfileName" + i, string.Empty);
@@ -99,12 +99,12 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBlaster
     }
 
     /// <summary>
-    /// Save the set top box settings to the database.
+    /// Save the configuration for a tuner.
     /// </summary>
-    public void SaveSettings()
+    public void Save()
     {
       byte i = 0;
-      while (true)  // Loop until we find existing settings or a free space to store new settings.
+      while (true)  // Loop until we find existing configuration for the tuner or a free space to store new configuration.
       {
         string tunerExternalId = SettingsManagement.GetValue("microsoftBlasterTunerExternalId" + i, string.Empty);
         if (string.IsNullOrEmpty(tunerExternalId) || tunerExternalId.Equals(TunerExternalId))

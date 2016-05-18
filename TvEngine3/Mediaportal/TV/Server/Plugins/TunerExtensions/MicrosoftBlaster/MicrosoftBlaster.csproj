@@ -97,12 +97,11 @@
     <Compile Include="DriverEmulator.cs" />
     <Compile Include="Enum\LearnResult.cs" />
     <Compile Include="MicrosoftBlaster.cs" />
-    <Compile Include="Pronto.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Decoder\DetectionData.cs" />
     <Compile Include="Service\MicrosoftBlasterConfigService.cs" />
     <Compile Include="Service\IMicrosoftBlasterConfigService.cs" />
-    <Compile Include="SetTopBoxConfig.cs" />
+    <Compile Include="TunerSetTopBoxConfig.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\..\..\..\Common-MP-TVE3\Common.Utils\Common.Utils.csproj">

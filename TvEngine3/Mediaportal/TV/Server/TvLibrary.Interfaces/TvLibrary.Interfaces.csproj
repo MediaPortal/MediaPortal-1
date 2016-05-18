@@ -137,6 +137,7 @@
     <Compile Include="Implementations\Mpeg2Ts\Enum\StreamType.cs" />
     <Compile Include="Implementations\Mpeg2Ts\Enum\DescriptorTag.cs" />
     <Compile Include="Implementations\Mpeg2Ts\TableProgramMap.cs" />
+    <Compile Include="Implementations\Pronto.cs" />
     <Compile Include="Implementations\ScannedChannel.cs" />
     <Compile Include="Implementations\SetTopBoxProfile.cs" />
     <Compile Include="Implementations\TuningDetail.cs" />

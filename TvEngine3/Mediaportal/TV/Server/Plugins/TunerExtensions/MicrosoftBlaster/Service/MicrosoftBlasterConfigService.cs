@@ -36,8 +36,8 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBlaster.Service
 {
   internal class MicrosoftBlasterConfigService : IMicrosoftBlasterConfigService
   {
-    public delegate void OnBlasterConfigChange();
-    public event OnBlasterConfigChange OnConfigChange;
+    public delegate void OnTunerSetTopBoxConfigChange();
+    public event OnTunerSetTopBoxConfigChange OnConfigChange;
 
     #region constants
 
@@ -119,16 +119,16 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBlaster.Service
 
     #region IMicrosoftBlasterConfigService members
 
-    public SetTopBoxConfig GetSetTopBoxConfigurationForTuner(string tunerExternalId)
+    public TunerSetTopBoxConfig GetSetTopBoxConfigurationForTuner(string tunerExternalId)
     {
-      return SetTopBoxConfig.LoadSettings(tunerExternalId);
+      return TunerSetTopBoxConfig.Load(tunerExternalId);
     }
 
-    public void SaveSetTopBoxConfiguration(ICollection<SetTopBoxConfig> settings)
+    public void SaveSetTopBoxConfiguration(ICollection<TunerSetTopBoxConfig> config)
     {
-      foreach (SetTopBoxConfig config in settings)
+      foreach (TunerSetTopBoxConfig c in config)
       {
-        config.SaveSettings();
+        c.Save();
       }
       if (OnConfigChange != null)
       {

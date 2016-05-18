@@ -143,7 +143,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBlaster.Config
           continue;
         }
 
-        SetTopBoxConfig tunerStbConfig = ServiceAgents.Instance.PluginService<IMicrosoftBlasterConfigService>().GetSetTopBoxConfigurationForTuner(tuner.ExternalId);
+        TunerSetTopBoxConfig tunerStbConfig = ServiceAgents.Instance.PluginService<IMicrosoftBlasterConfigService>().GetSetTopBoxConfigurationForTuner(tuner.ExternalId);
         this.LogDebug("Microsoft blaster config: tuner...");
         this.LogDebug("  tuner ID       = {0}", tuner.IdTuner);
         this.LogDebug("  tuner name     = {0}", tuner.Name);
@@ -200,7 +200,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBlaster.Config
     {
       this.LogDebug("Microsoft blaster config: deactivating, tuner count = {0}", dataGridViewConfig.Rows.Count);
 
-      ICollection<SetTopBoxConfig> settings = new List<SetTopBoxConfig>(dataGridViewConfig.Rows.Count);
+      ICollection<TunerSetTopBoxConfig> configToSave = new List<TunerSetTopBoxConfig>(dataGridViewConfig.Rows.Count);
       foreach (DataGridViewRow row in dataGridViewConfig.Rows)
       {
         bool isChanged = false;
@@ -208,7 +208,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBlaster.Config
         Tuner tuner = cell.Tag as Tuner;
 
         cell = row.Cells["dataGridViewColumnTransceiver"];
-        SetTopBoxConfig tunerStbConfig = cell.Tag as SetTopBoxConfig;
+        TunerSetTopBoxConfig tunerStbConfig = cell.Tag as TunerSetTopBoxConfig;
         TransceiverDetail newTransceiver = cell.Value as TransceiverDetail;
         string newTransceiverDevicePath = string.Empty;
         if (newTransceiver != null && !string.IsNullOrWhiteSpace(newTransceiver.DevicePath))
@@ -258,13 +258,13 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBlaster.Config
 
         if (isChanged)
         {
-          settings.Add(tunerStbConfig);
+          configToSave.Add(tunerStbConfig);
         }
       }
 
-      if (settings.Count > 0)
+      if (configToSave.Count > 0)
       {
-        ServiceAgents.Instance.PluginService<IMicrosoftBlasterConfigService>().SaveSetTopBoxConfiguration(settings);
+        ServiceAgents.Instance.PluginService<IMicrosoftBlasterConfigService>().SaveSetTopBoxConfiguration(configToSave);
       }
 
       base.OnSectionDeActivated();

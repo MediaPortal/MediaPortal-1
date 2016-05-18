@@ -27,16 +27,16 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations;
 namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBlaster.Service
 {
   [ServiceContract(Namespace = "http://www.team-mediaportal.com")]
-  [ServiceKnownType(typeof(SetTopBoxConfig))]
   [ServiceKnownType(typeof(SetTopBoxProfile))]
   [ServiceKnownType(typeof(TransceiverDetail))]
+  [ServiceKnownType(typeof(TunerSetTopBoxConfig))]
   internal interface IMicrosoftBlasterConfigService
   {
     [OperationContract]
-    SetTopBoxConfig GetSetTopBoxConfigurationForTuner(string tunerExternalId);
+    TunerSetTopBoxConfig GetSetTopBoxConfigurationForTuner(string tunerExternalId);
 
     [OperationContract]
-    void SaveSetTopBoxConfiguration(ICollection<SetTopBoxConfig> settings);
+    void SaveSetTopBoxConfiguration(ICollection<TunerSetTopBoxConfig> config);
 
     [OperationContract]
     ICollection<TransceiverDetail> GetAllTransceiverDetails();

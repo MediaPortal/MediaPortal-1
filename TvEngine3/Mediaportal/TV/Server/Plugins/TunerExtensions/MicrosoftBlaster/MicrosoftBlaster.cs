@@ -45,7 +45,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBlaster
     private bool _isMicrosoftBlaster = false;
     private string _tunerExternalId = null;
     private object _configLock = new object();
-    private SetTopBoxConfig _config = null;
+    private TunerSetTopBoxConfig _config = null;
 
     #endregion
 
@@ -53,7 +53,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBlaster
     {
       lock (_configLock)
       {
-        SetTopBoxConfig config = _service.GetSetTopBoxConfigurationForTuner(_tunerExternalId);
+        TunerSetTopBoxConfig config = _service.GetSetTopBoxConfigurationForTuner(_tunerExternalId);
         if (
           _config == null ||
           !string.Equals(_config.TransceiverDevicePath, config.TransceiverDevicePath) ||

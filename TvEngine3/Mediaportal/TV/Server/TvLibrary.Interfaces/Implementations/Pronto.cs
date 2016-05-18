@@ -21,9 +21,8 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
-namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBlaster
+namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations
 {
   /// <summary>
   /// A class for decoding and encoding Philips Pronto format.
@@ -35,7 +34,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBlaster
   /// http://www.majority.nl/files/pronto.pdf
   /// http://www.majority.nl/files/prontoirformats.pdf
   /// </remarks>
-  internal static class Pronto
+  public static class Pronto
   {
     private enum CodeType
     {
@@ -120,13 +119,11 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBlaster
           case CodeType.Rc6Mode6a:
             return DecodeRc6a(prontoData, out carrierFrequency, out timingData);
         }
-        return false;
       }
-      catch (Exception ex)
+      catch
       {
-        Log.Error(ex, "Microsoft blaster: failed to decode Pronto command string");
-        return false;
       }
+      return false;
     }
 
     private static bool DecodeRaw(ushort[] prontoData, out int carrierFrequency, out int[] timingData)
