@@ -600,6 +600,8 @@ STDMETHODIMP CBDReaderFilter::Run(REFERENCE_TIME tStart)
   
   HRESULT hr = CSource::Run(tStart);
 
+  lib.SetRate((UINT32((double)BLURAY_RATE_NORMAL * m_dRate)));
+
   LogDebug("CBDReaderFilter::Run(%05.2f) state %d -->done", tStart / 10000000.0, m_State);
 
   if (!m_hCommandThread)
@@ -647,6 +649,9 @@ STDMETHODIMP CBDReaderFilter::Pause()
 
   CAutoLock cObjectLock(m_pLock);
   lib.SetState(State_Paused);
+
+  if (m_State == State_Running)
+    lib.SetRate(BLURAY_RATE_PAUSED);
 
   HRESULT hr = CSource::Pause();
 

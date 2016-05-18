@@ -92,7 +92,8 @@ typedef int (*API_bd_mouse_select)(BLURAY *, int64_t, uint16_t, uint16_t);
 typedef struct meta_dl* (*API_bd_get_meta)(BLURAY *);
 typedef int (*API_bd_get_clip_infos)(BLURAY *, int, uint64_t *, uint64_t *, uint64_t *, uint64_t *);
 typedef int (*API_bd_register_argb_overlay_proc)(BLURAY *, void *, bd_argb_overlay_proc_f, struct bd_argb_buffer_s *);
-typedef void (*API_bd_select_stream)(BLURAY *, uint32_t, uint32_t, uint32_t, char szName[40]);
+typedef void (*API_bd_select_stream)(BLURAY *, uint32_t, uint32_t, uint32_t);
+typedef int(*API_bd_set_rate)(BLURAY *, uint32_t);
 
 // overlay.h
 typedef void (*API_bd_refcnt_inc)(const void *);
@@ -117,8 +118,7 @@ public:
   bool SetAngle(UINT8 pAngle);
   bool SetChapter(UINT32 pChapter);
   void SetTitle(UINT32 pTitle);
-  bool SetSubtitleStream(UINT32 stream_id, bool enabled, char szName[40]);
-  bool SetAudioStream(UINT32 stream_id, bool enabled, char szName[40]);
+  bool SetSubtitleStream(UINT32 stream_id, bool enabled);
   bool GetAngle(UINT8* pAngle);
   bool GetChapter(UINT32* pChapter);
   bool Play();
@@ -134,6 +134,7 @@ public:
   BLURAY_CLIP_INFO* CurrentClipInfo();
   bool GetClipInfo(int pClip, UINT64* pClipStartTime, UINT64* pStreamStartTime, UINT64* pBytePos, UINT64* pDuration);
   bool SetScr(INT64 pts, INT64 offset);
+  bool SetRate(UINT32 rate);
   bool ProvideUserInput(INT64 pPts, UINT32 pKey);
   bool OpenMenu(INT64 pPts);
   void ForceTitleBasedPlayback(bool pForce);
@@ -243,6 +244,7 @@ private:
   API_bd_get_clip_infos _bd_get_clip_infos;
   API_bd_register_argb_overlay_proc _bd_register_argb_overlay_proc;
   API_bd_select_stream _bd_select_stream;
+  API_bd_set_rate _bd_set_rate;
 
   API_bd_refcnt_inc _bd_refcnt_inc;
   API_bd_refcnt_dec _bd_refcnt_dec;
