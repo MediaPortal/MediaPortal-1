@@ -483,21 +483,21 @@ crash_rpt::CrashProcessingCallbackResult CALLBACK CCrashReport::HandleException(
             FREE_MEM(fullDumpFileName);
             FREE_MEM(guid);
             FREE_MEM(message);
+
+            // add user name (if any)
+            if (caller->userName != NULL)
+            {
+              caller->crashReporting->AddUserInfoToReport(L"UserName", caller->userName);
+            }
+#ifdef _DEBUG
+            result = crash_rpt::CrashProcessingCallbackResult::SkipSendReportReturnDefaultResult;
+#else
+            result = (SUCCEEDED(res) && caller->IsSendingCrashReportEnabled()) ? crash_rpt::CrashProcessingCallbackResult::DoDefaultActions : crash_rpt::CrashProcessingCallbackResult::SkipSendReportReturnDefaultResult;
+#endif
           }
         }
 
         FREE_MEM(exceptionModuleFileName);
-
-        // add user name (if any)
-        if (caller->userName != NULL)
-        {
-          caller->crashReporting->AddUserInfoToReport(L"UserName", caller->userName);
-        }
-#ifdef _DEBUG
-        result = crash_rpt::CrashProcessingCallbackResult::SkipSendReportReturnDefaultResult;
-#else
-        result = (SUCCEEDED(res) && caller->IsSendingCrashReportEnabled()) ? crash_rpt::CrashProcessingCallbackResult::DoDefaultActions : crash_rpt::CrashProcessingCallbackResult::SkipSendReportReturnDefaultResult;
-#endif
       }
 
       staticLogger->Flush();
