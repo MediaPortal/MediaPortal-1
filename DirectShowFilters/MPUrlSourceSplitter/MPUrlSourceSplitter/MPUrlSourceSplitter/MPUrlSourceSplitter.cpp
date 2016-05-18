@@ -254,7 +254,7 @@ CMPUrlSourceSplitter::CMPUrlSourceSplitter(LPCSTR pName, LPUNKNOWN pUnk, const I
     unsigned int buildVersion = 0;
     if (SUCCEEDED(GetVersion(&buildVersion)))
     {
-      this->logger->Log(LOGGER_INFO, L"%s: %s: Build: %u", MODULE_NAME, METHOD_CONSTRUCTOR_NAME, buildVersion);
+      this->logger->Log(LOGGER_INFO, L"%s: %s: Version: %u.%u.%u.%u", MODULE_NAME, METHOD_CONSTRUCTOR_NAME, MP_URL_SOURCE_SPLITTER_VERSION_MAJOR, MP_URL_SOURCE_SPLITTER_VERSION_MINOR, MP_URL_SOURCE_SPLITTER_VERSION_REVISION, buildVersion);
     }
 
     wchar_t *result = NULL;
