@@ -73,7 +73,7 @@ namespace MediaPortal.Player
     int RenderOverlay(Int16 cx, Int16 cy, Int16 arx, Int16 ary);
 
     [PreserveSig]
-    void SetRenderTarget(uint target, Int16 cx, Int16 cy, Int16 arx, Int16 ary);
+    void SetRenderTarget(uint target);
 
     [PreserveSig]
     void SetSubtitleDevice(IntPtr device);

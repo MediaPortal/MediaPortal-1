@@ -314,7 +314,7 @@ void MPMadPresenter::RenderToTexture(IDirect3DTexture9* pTexture, WORD cx, WORD 
   if (SUCCEEDED(hr = pTexture->GetSurfaceLevel(0, &pSurface)))
   {
     //Log("RenderToTexture GetSurfaceLevel hr: 0x%08x", hr);
-    if (SUCCEEDED(hr = m_pCallback->SetRenderTarget(reinterpret_cast<DWORD>(pSurface), cx, cy, arx, ary)))
+    if (SUCCEEDED(hr = m_pCallback->SetRenderTarget(reinterpret_cast<DWORD>(pSurface))))
     {
       //Log("RenderToTexture SetRenderTarget hr: 0x%08x", hr);
       hr = m_pDevice->Clear(0, nullptr, D3DCLEAR_TARGET, D3DXCOLOR(0, 0, 0, 0), 1.0f, 0);

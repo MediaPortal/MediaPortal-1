@@ -645,6 +645,9 @@ namespace MediaPortal.Player
         _vmr9Util.VideoAspectRatioY = arHeight;
         _arVideoWidth = arWidth;
         _arVideoHeight = arHeight;
+
+        Size nativeSize = new Size(width, height);
+        _shouldRenderTexture = SetVideoWindow(nativeSize);
       }
 
       Device device = GUIGraphicsContext.DX9Device;
@@ -677,7 +680,7 @@ namespace MediaPortal.Player
       return visible ? 0 : 1;  // S_OK, S_FALSE
     }
 
-    public void SetRenderTarget(uint target, Int16 width, Int16 height, Int16 arWidth, Int16 arHeight)
+    public void SetRenderTarget(uint target)
     {
       IntPtr ptr = (IntPtr)target;
       Surface surface = new Surface(ptr);
