@@ -117,31 +117,38 @@ HRESULT MPMadPresenter::Shutdown()
 
   if (m_pMad)
   {
+    Log("MPMadPresenter::Shutdown() 1");
     CComQIPtr<IMadVROsdServices> pOsdServices = m_pMad;
     CComQIPtr<IMadVRCommand> pCommand = m_pMad;
     CComQIPtr<IVideoWindow> pWindow = m_pMad;
 
     if (pOsdServices)
     {
+      Log("MPMadPresenter::Shutdown() 2");
       pOsdServices->OsdSetRenderCallback("MP-GUI", nullptr, nullptr);
       pOsdServices.Release();
       pOsdServices = nullptr;
+      Log("MPMadPresenter::Shutdown() 3");
     }
 
     if (pWindow)
     {
+      Log("MPMadPresenter::Shutdown() 4");
       pWindow->put_Owner(reinterpret_cast<OAHWND>(nullptr));
       pWindow->put_Visible(false);
       pWindow.Release();
       pWindow = nullptr;
+      Log("MPMadPresenter::Shutdown() 5");
     }
 
     if (pCommand)
     {
+      Log("MPMadPresenter::Shutdown() 6");
       pCommand->SendCommandBool("disableExclusiveMode", true);
       pCommand->SendCommand("restoreDisplayModeNow");
       pCommand.Release();
       pCommand = nullptr;
+      Log("MPMadPresenter::Shutdown() 7");
     }
 
     m_pMad = nullptr;
