@@ -108,6 +108,9 @@ namespace MediaPortal.GUI.Library
       if (_setVideoWindow)
       {
         GUIGraphicsContext.VideoWindow = _videoWindows[0];
+        GUIGraphicsContext.VideoWindowWidth = _videoWindows[0].Width;
+        GUIGraphicsContext.VideoWindowHeight = _videoWindows[0].Height;
+        Log.Error("GUIVideoControl Init : Width {0}, Height {1}", _videoWindows[0].Width, _videoWindows[0].Height);
       }
     }
 
@@ -153,6 +156,7 @@ namespace MediaPortal.GUI.Library
           GUIGraphicsContext.VideoWindow = _videoWindows[0];
           GUIGraphicsContext.VideoWindowWidth = _videoWindows[0].Width;
           GUIGraphicsContext.VideoWindowHeight = _videoWindows[0].Height;
+          //Log.Error("GUIVideoControl Render : Width {0}, Height {1}", _videoWindows[0].Width, _videoWindows[0].Height);
         }
 
         if (GUIGraphicsContext.ShowBackground)
