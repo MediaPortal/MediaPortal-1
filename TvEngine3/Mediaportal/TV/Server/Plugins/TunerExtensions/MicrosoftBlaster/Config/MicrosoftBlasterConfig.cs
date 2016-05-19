@@ -343,7 +343,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBlaster.Config
 
       if (result == TransmitResult.EmitterNotConnected)
       {
-        MessageBox.Show("An emitter is not connected to the selected port.", MESSAGE_CAPTION, MessageBoxButtons.OK, MessageBoxIcon.Error);
+        MessageBox.Show("There is no emitter connected to the selected port.", MESSAGE_CAPTION, MessageBoxButtons.OK, MessageBoxIcon.Error);
       }
       else if (result == TransmitResult.Fail)
       {
@@ -351,7 +351,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBlaster.Config
       }
       else if (result == TransmitResult.InvalidCommand)
       {
-        MessageBox.Show("One of the commands is not valid. Please try (re-)learning the commands.", MESSAGE_CAPTION, MessageBoxButtons.OK, MessageBoxIcon.Error);
+        MessageBox.Show("At least one of the commands required to transmit the channel number is not valid. Please try (re-)learning the commands.", MESSAGE_CAPTION, MessageBoxButtons.OK, MessageBoxIcon.Error);
       }
       else if (result == TransmitResult.InvalidProfile)
       {
@@ -363,11 +363,11 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBlaster.Config
       }
       else if (result == TransmitResult.Unavailable)
       {
-        MessageBox.Show("The selected transceiver is currently not available.", MESSAGE_CAPTION, MessageBoxButtons.OK, MessageBoxIcon.Error);
+        MessageBox.Show("The selected transceiver seems to have been disconnected.", MESSAGE_CAPTION, MessageBoxButtons.OK, MessageBoxIcon.Error);
       }
       else if (result == TransmitResult.Unsupported)
       {
-        MessageBox.Show("The selected transceiver does not support learning.", MESSAGE_CAPTION, MessageBoxButtons.OK, MessageBoxIcon.Error);
+        MessageBox.Show("The selected transceiver does not support transmitting.", MESSAGE_CAPTION, MessageBoxButtons.OK, MessageBoxIcon.Error);
       }
     }
 

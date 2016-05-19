@@ -152,7 +152,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBlaster.Config
             }
             else if (result == LearnResult.Fail)
             {
-              MessageBox.Show("Learning failed. Ensure the remote control batteries are not flat, and try again with the remote control slightly closer to or further from the receiver.", SectionSettings.MESSAGE_CAPTION, MessageBoxButtons.OK, MessageBoxIcon.Error);
+              MessageBox.Show("Learning failed. Ensure the remote control batteries are okay, and try again with the remote control slightly closer to or further from the receiver.", SectionSettings.MESSAGE_CAPTION, MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             else if (result == LearnResult.NotOpen)
             {
@@ -160,11 +160,11 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBlaster.Config
             }
             else if (result == LearnResult.TimeOut)
             {
-              MessageBox.Show("Learning was incomplete. Please try again.", SectionSettings.MESSAGE_CAPTION, MessageBoxButtons.OK, MessageBoxIcon.Error);
+              MessageBox.Show("Learning was not completed. Please try again.", SectionSettings.MESSAGE_CAPTION, MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             else if (result == LearnResult.Unavailable)
             {
-              MessageBox.Show("The selected transceiver is currently not available. Please check that it is connected.", SectionSettings.MESSAGE_CAPTION, MessageBoxButtons.OK, MessageBoxIcon.Error);
+              MessageBox.Show("The selected transceiver seems to have been disconnected.", SectionSettings.MESSAGE_CAPTION, MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             else if (result == LearnResult.Unsupported)
             {
