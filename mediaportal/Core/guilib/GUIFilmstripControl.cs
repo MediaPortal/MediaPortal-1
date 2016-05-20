@@ -1095,7 +1095,7 @@ namespace MediaPortal.GUI.Library
               int iPage = 1;
               _cursorX = 0;
               _offset = 0;
-              while (iItem >= (_columns))
+              while (iItem >= (_columns) && _columns != 0)
               {
                 _offset += (_columns);
                 iItem -= (_columns);
@@ -1446,7 +1446,7 @@ namespace MediaPortal.GUI.Library
       int iPage = 1;
       _cursorX = 0;
       _offset = 0;
-      while (iItem >= (_columns))
+      while (iItem >= (_columns) && _columns != 0)
       {
         _offset += (_columns);
         iItem -= (_columns);
@@ -1526,7 +1526,7 @@ namespace MediaPortal.GUI.Library
         int iPage = 1;
         _cursorX = 0;
         _offset = 0;
-        while (iItem >= (_columns))
+        while (iItem >= (_columns) && _columns != 0)
         {
           _offset += (_columns);
           iItem -= (_columns);
