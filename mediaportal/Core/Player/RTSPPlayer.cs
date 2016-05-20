@@ -19,6 +19,7 @@
 #endregion
 
 using System;
+using System.Drawing;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Threading;
@@ -598,7 +599,7 @@ namespace MediaPortal.Player
     {
       updateTimer = DateTime.Now;
       m_speedRate = 10000;
-      m_bVisible = false;
+      GUIGraphicsContext.IsWindowVisible = false;
       m_iVolume = 100;
       _state = PlayState.Init;
       m_strCurrentFile = strFile;
@@ -748,29 +749,36 @@ namespace MediaPortal.Player
       {
         UpdateCurrentPosition();
         updateTimer = DateTime.Now;
-        if (GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR)
+        if (GUIGraphicsContext.BlankScreen ||
+            (GUIGraphicsContext.Overlay == false && GUIGraphicsContext.IsFullScreenVideo == false))
         {
-          if (GUIGraphicsContext.BlankScreen ||
-              (GUIGraphicsContext.Overlay == false && GUIGraphicsContext.IsFullScreenVideo == false))
+          if (GUIGraphicsContext.IsWindowVisible)
           {
-            if (m_bVisible)
+            GUIGraphicsContext.IsWindowVisible = false;
+            if (videoWin != null && GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR)
             {
-              m_bVisible = false;
-              if (videoWin != null)
-              {
-                videoWin.put_Visible(OABool.False);
-              }
+              videoWin.put_Visible(OABool.False);
             }
-          }
-          else if (!m_bVisible)
-          {
-            m_bVisible = true;
-            if (videoWin != null)
+            else
             {
-              videoWin.put_Visible(OABool.True);
+              GUIGraphicsContext.VideoWindow = new Rectangle(0, 0, 3, 3);
             }
           }
         }
+        else if (!GUIGraphicsContext.IsWindowVisible)
+        {
+          GUIGraphicsContext.IsWindowVisible = true;
+          if (videoWin != null && GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR)
+          {
+            videoWin.put_Visible(OABool.True);
+          }
+          else
+          {
+            GUIGraphicsContext.VideoWindow = new Rectangle(0, 0, GUIGraphicsContext.VideoWindowWidth,
+              GUIGraphicsContext.VideoWindowHeight);
+          }
+        }
+
         CheckVideoResolutionChanges();
         updateTimer = DateTime.Now;
       }

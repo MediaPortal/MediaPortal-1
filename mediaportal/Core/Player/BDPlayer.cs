@@ -1241,22 +1241,34 @@ namespace MediaPortal.Player
       {
         _updateTimer = DateTime.Now;
 
-        if (GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR)
+        if (_videoWin != null)
         {
-          if (_videoWin != null)
+          if (GUIGraphicsContext.Overlay == false && GUIGraphicsContext.IsFullScreenVideo == false)
           {
-            if (GUIGraphicsContext.Overlay == false && GUIGraphicsContext.IsFullScreenVideo == false)
+            if (_isVisible)
             {
-              if (_isVisible)
+              _isVisible = false;
+              if (GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR)
               {
-                _isVisible = false;
                 _videoWin.put_Visible(OABool.False);
               }
+              else
+              {
+                GUIGraphicsContext.VideoWindow = new Rectangle(0, 0, 3, 3);
+              }
             }
-            else if (!_isVisible)
+          }
+          else if (!_isVisible)
+          {
+            _isVisible = true;
+            if (GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR)
             {
-              _isVisible = true;
               _videoWin.put_Visible(OABool.True);
+            }
+            else
+            {
+              GUIGraphicsContext.VideoWindow = new Rectangle(0, 0, GUIGraphicsContext.VideoWindowWidth,
+                GUIGraphicsContext.VideoWindowHeight);
             }
           }
         }

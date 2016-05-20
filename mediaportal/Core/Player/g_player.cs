@@ -3136,14 +3136,6 @@ namespace MediaPortal.Player
         PositionY = GUIGraphicsContext.VideoWindow.Top;
         RenderWidth = GUIGraphicsContext.VideoWindow.Width;
         RenderHeight = GUIGraphicsContext.VideoWindow.Height;
-        if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
-        {
-          if (GUIGraphicsContext.Overlay)
-          {
-            RenderWidth = GUIGraphicsContext.VideoWindowWidth;
-            RenderHeight = GUIGraphicsContext.VideoWindowHeight;
-          }
-        }
       }
       bool inTV = false;
       int windowId = GUIWindowManager.ActiveWindow;

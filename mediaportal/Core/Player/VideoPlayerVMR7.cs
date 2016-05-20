@@ -304,7 +304,7 @@ namespace MediaPortal.Player
     {
       updateTimer = DateTime.Now;
       m_speedRate = 10000;
-      m_bVisible = false;
+      GUIGraphicsContext.IsWindowVisible = false;
       m_iVolume = 100;
       m_state = PlayState.Init;
       m_strCurrentFile = strFile;
@@ -702,27 +702,32 @@ namespace MediaPortal.Player
           mediaPos.get_Duration(out m_dDuration); //(refresh timeline when change EDITION)
           mediaPos.get_CurrentPosition(out m_dCurrentPos);
         }
-        if (GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR)
+        if (GUIGraphicsContext.BlankScreen || (GUIGraphicsContext.VideoWindow.Width <= 10 && GUIGraphicsContext.IsFullScreenVideo == false))
         {
-          if (GUIGraphicsContext.BlankScreen ||
-              (GUIGraphicsContext.Overlay == false && GUIGraphicsContext.IsFullScreenVideo == false))
+          if (GUIGraphicsContext.IsWindowVisible)
           {
-            if (m_bVisible)
+            GUIGraphicsContext.IsWindowVisible = false;
+            if (videoWin != null && GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR)
             {
-              m_bVisible = false;
-              if (videoWin != null)
-              {
-                videoWin.put_Visible(OABool.False);
-              }
+              videoWin.put_Visible(OABool.False);
+            }
+            else
+            {
+              GUIGraphicsContext.VideoWindow = new Rectangle(0, 0, 3, 3);
             }
           }
-          else if (!m_bVisible)
+        }
+        else if (!GUIGraphicsContext.IsWindowVisible)
+        {
+          GUIGraphicsContext.IsWindowVisible = true;
+          if (videoWin != null && GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR)
           {
-            m_bVisible = true;
-            if (videoWin != null)
-            {
-              videoWin.put_Visible(OABool.True);
-            }
+            videoWin.put_Visible(OABool.True);
+          }
+          else
+          {
+            GUIGraphicsContext.VideoWindow = new Rectangle(0, 0, GUIGraphicsContext.VideoWindowWidth,
+              GUIGraphicsContext.VideoWindowHeight);
           }
         }
         updateTimer = DateTime.Now;

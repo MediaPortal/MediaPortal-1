@@ -305,6 +305,12 @@ namespace MediaPortal.GUI.Library
 
       GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_CALLBACK, 0, 0, 0, 0, 0, env);
       SendThreadMessage(msg);
+
+      // if this is the main thread, then dispatch the messages
+      if (Thread.CurrentThread.Name == "MPMain" || Thread.CurrentThread.Name == "Config Main")
+      {
+        DispatchThreadMessages();
+      }
     }
 
 

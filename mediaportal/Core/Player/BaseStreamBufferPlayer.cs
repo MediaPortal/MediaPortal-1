@@ -180,7 +180,7 @@ namespace MediaPortal.Player
       _backingFileDuration = (int)(iTimeShiftBuffer / 6);
 
       _isVisible = false;
-      _isWindowVisible = false;
+      GUIGraphicsContext.IsWindowVisible = false;
       _volume = 100;
       _state = PlayState.Init;
       _currentFile = strFile;
@@ -476,33 +476,39 @@ namespace MediaPortal.Player
       }
       _lastPosition = CurrentPosition;
 
-      if (GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR)
+      if (GUIGraphicsContext.VideoWindow.Width <= 10 && GUIGraphicsContext.IsFullScreenVideo == false)
       {
-        if (GUIGraphicsContext.VideoWindow.Width <= 10 && GUIGraphicsContext.IsFullScreenVideo == false)
+        _isVisible = false;
+      }
+      if (GUIGraphicsContext.BlankScreen)
+      {
+        _isVisible = false;
+      }
+      if (GUIGraphicsContext.IsWindowVisible && !_isVisible)
+      {
+        GUIGraphicsContext.IsWindowVisible = false;
+        //Log.Info("TSReaderPlayer:hide window");
+        if (_videoWin != null && GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR)
         {
-          _isVisible = false;
+          _videoWin.put_Visible(OABool.False);
         }
-        if (GUIGraphicsContext.BlankScreen)
+        else
         {
-          _isVisible = false;
+          GUIGraphicsContext.VideoWindow = new Rectangle(0, 0, 3, 3);
         }
-        if (_isWindowVisible && !_isVisible)
+      }
+      else if (!GUIGraphicsContext.IsWindowVisible && _isVisible)
+      {
+        GUIGraphicsContext.IsWindowVisible = true;
+        //Log.Info("TSReaderPlayer:show window");
+        if (_videoWin != null && GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR)
         {
-          _isWindowVisible = false;
-          //Log.Info("StreamBufferPlayer:hide window");
-          if (_videoWin != null)
-          {
-            _videoWin.put_Visible(OABool.False);
-          }
+          _videoWin.put_Visible(OABool.True);
         }
-        else if (!_isWindowVisible && _isVisible)
+        else
         {
-          _isWindowVisible = true;
-          //Log.Info("StreamBufferPlayer:show window");
-          if (_videoWin != null)
-          {
-            _videoWin.put_Visible(OABool.True);
-          }
+          GUIGraphicsContext.VideoWindow = new Rectangle(0, 0, GUIGraphicsContext.VideoWindowWidth,
+            GUIGraphicsContext.VideoWindowHeight);
         }
       }
 
@@ -1392,7 +1398,7 @@ namespace MediaPortal.Player
         _state = PlayState.Init;
 
         _mediaEvt = null;
-        _isWindowVisible = false;
+        GUIGraphicsContext.IsWindowVisible = false;
         _isVisible = false;
         _videoWin = null;
         _mediaSeeking = null;

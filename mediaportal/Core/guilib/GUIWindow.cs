@@ -489,7 +489,7 @@ namespace MediaPortal.GUI.Library
     public bool LoadSkin()
     {
       Log.Error("Loadskin 0");
-      GUIWindowManager.SendThreadCallbackAndWait(LoadSkinThreaded, 0, 0, null);
+      GUIWindowManager.SendThreadCallback(LoadSkinThreaded, 0, 0, null);
       Log.Error("Loadskin 3");
       return true;
     }

@@ -391,7 +391,9 @@ namespace MediaPortal.Player
         //sanity check
         if (nw <= 10 || nh <= 10 || x < 0 || y < 0)
         {
-          return false;
+          // Need to resize window video for madVR
+          if (GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR)
+            return false;
         }
 
         GUIGraphicsContext.ScaleVideoWindow(ref nw, ref nh, ref x, ref y);
@@ -632,6 +634,11 @@ namespace MediaPortal.Player
         GUIGraphicsContext.InVmr9Render = true;
       }
 
+      if (GUIGraphicsContext.IsSwitchingToNewSkin)
+      {
+        return -1;
+      }
+
       if (GUIWindowManager.IsSwitchingToNewWindow && !_vmr9Util.InMenu)
       {
         return 0; //dont present video during window transitions
@@ -646,8 +653,16 @@ namespace MediaPortal.Player
         _arVideoWidth = arWidth;
         _arVideoHeight = arHeight;
 
-        Size nativeSize = new Size(width, height);
-        _shouldRenderTexture = SetVideoWindow(nativeSize);
+        if (GUIGraphicsContext.IsWindowVisible)
+        {
+          Size nativeSize = new Size(width, height);
+          _shouldRenderTexture = SetVideoWindow(nativeSize);
+        }
+        else
+        {
+          Size nativeSize = new Size(1, 1);
+          _shouldRenderTexture = SetVideoWindow(nativeSize);
+        }
       }
 
       Device device = GUIGraphicsContext.DX9Device;

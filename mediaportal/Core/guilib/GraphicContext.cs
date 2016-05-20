@@ -1077,6 +1077,7 @@ namespace MediaPortal.GUI.Library
             else
             {
               VideoWindow = new Rectangle(0, 0, 3, 3);
+              GUIGraphicsContext.IsWindowVisible = true;
             }
           }
 
@@ -1728,11 +1729,25 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     public static object RenderLock
     {
-      get { return RenderLoopLock; }
+      get
+      {
+        if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR && GUIGraphicsContext.InVmr9Render)
+        {
+          return 0;
+        }
+        return RenderLoopLock;
+      }
     }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public static bool IsSwitchingToNewSkin { get; set; }
 
     public static int VideoWindowWidth { get; set; }
     public static int VideoWindowHeight { get; set; }
+
+    public static bool IsWindowVisible { get; set; }
 
     /// <summary>
     /// Enable/Disable bypassing of UI Calibration transforms

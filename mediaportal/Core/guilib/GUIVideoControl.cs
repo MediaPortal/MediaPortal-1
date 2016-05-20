@@ -89,6 +89,10 @@ namespace MediaPortal.GUI.Library
     public override void OnDeInit()
     {
       GUIGraphicsContext.VideoWindow = new Rectangle(0, 0, 0, 0);
+      if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+      {
+        GUIGraphicsContext.IsWindowVisible = true;
+      }
       base.OnDeInit();
     }
 
@@ -108,9 +112,6 @@ namespace MediaPortal.GUI.Library
       if (_setVideoWindow)
       {
         GUIGraphicsContext.VideoWindow = _videoWindows[0];
-        GUIGraphicsContext.VideoWindowWidth = _videoWindows[0].Width;
-        GUIGraphicsContext.VideoWindowHeight = _videoWindows[0].Height;
-        Log.Error("GUIVideoControl Init : Width {0}, Height {1}", _videoWindows[0].Width, _videoWindows[0].Height);
       }
     }
 
@@ -154,9 +155,6 @@ namespace MediaPortal.GUI.Library
         if (_setVideoWindow)
         {
           GUIGraphicsContext.VideoWindow = _videoWindows[0];
-          GUIGraphicsContext.VideoWindowWidth = _videoWindows[0].Width;
-          GUIGraphicsContext.VideoWindowHeight = _videoWindows[0].Height;
-          //Log.Error("GUIVideoControl Render : Width {0}, Height {1}", _videoWindows[0].Width, _videoWindows[0].Height);
         }
 
         if (GUIGraphicsContext.ShowBackground)
