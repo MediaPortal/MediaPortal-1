@@ -112,8 +112,11 @@ HRESULT MPMadPresenter::Shutdown()
 
   Log("MPMadPresenter::Shutdown()");
 
+  if (m_pCallback)
+  {
     m_pCallback->Release();
     m_pCallback = nullptr;
+  }
 
   if (m_pMad)
   {
@@ -122,32 +125,32 @@ HRESULT MPMadPresenter::Shutdown()
     CComQIPtr<IMadVRCommand> pCommand = m_pMad;
     CComQIPtr<IVideoWindow> pWindow = m_pMad;
 
-    if (pOsdServices)
-    {
-      Log("MPMadPresenter::Shutdown() 2");
-      pOsdServices->OsdSetRenderCallback("MP-GUI", nullptr, nullptr);
-      pOsdServices.Release();
-      pOsdServices = nullptr;
-      Log("MPMadPresenter::Shutdown() 3");
-    }
-
     if (pWindow)
     {
-      Log("MPMadPresenter::Shutdown() 4");
+      Log("MPMadPresenter::Shutdown() 2");
       pWindow->put_Owner(reinterpret_cast<OAHWND>(nullptr));
       pWindow->put_Visible(false);
       pWindow.Release();
       pWindow = nullptr;
-      Log("MPMadPresenter::Shutdown() 5");
+      Log("MPMadPresenter::Shutdown() 3");
     }
 
     if (pCommand)
     {
-      Log("MPMadPresenter::Shutdown() 6");
+      Log("MPMadPresenter::Shutdown() 4");
       pCommand->SendCommandBool("disableExclusiveMode", true);
       pCommand->SendCommand("restoreDisplayModeNow");
       pCommand.Release();
       pCommand = nullptr;
+      Log("MPMadPresenter::Shutdown() 5");
+    }
+
+    if (pOsdServices)
+    {
+      Log("MPMadPresenter::Shutdown() 6");
+      pOsdServices->OsdSetRenderCallback("MP-GUI", nullptr, nullptr);
+      pOsdServices.Release();
+      pOsdServices = nullptr;
       Log("MPMadPresenter::Shutdown() 7");
     }
 
