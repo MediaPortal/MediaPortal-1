@@ -74,7 +74,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
     /// <param name="majorChannelNumber">The channel's major number.</param>
     /// <param name="minorChannelNumber">The channel's minor number, if any.</param>
     /// <param name="modulationMode">The modulation mode of the channel's transmitter, encoded according to ATSC specifications.</param>
-    /// <param name="carrierFrequency">The frequency at which the channel's transmitter operates in kHz.</param>
+    /// <param name="carrierFrequency">The frequency at which the channel's transmitter operates. The unit is kilo-Hertz (kHz).</param>
     /// <param name="transportStreamId">The identifier of the transport stream that the channel is associated with.</param>
     /// <param name="programNumber">The channel's ATSC/MPEG 2 identifier. Only unique when combined with the <paramref name="transportStreamId">transport stream ID</paramref>.</param>
     /// <param name="etmLocation">The channel's extended text message location, encoded according to ATSC specifications.</param>
@@ -214,8 +214,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
     /// <param name="wideBandwidthAudio">An indication of whether the channel's audio bandwidth is wide or standard. Not applicable for MPEG 2 transport.</param>
     /// <param name="compandedAudio">An indication of whether the channel's audio waveform is companded (compressed dynamic range). Not applicable for MPEG 2 transport.</param>
     /// <param name="matrixMode">The matrix mode/mapping for the channel's analog audio sub-carriers, encoded according to ATSC specifications. Not applicable for MPEG 2 transport.</param>
-    /// <param name="subcarrier2Offset">The offset of the channel's second analog audio sub-carrier in kHz, if any. Not applicable for MPEG 2 transport.</param>
-    /// <param name="subcarrier1Offset">The offset of the channel's primary analog audio sub-carrier in kHz. Not applicable for MPEG 2 transport.</param>
+    /// <param name="subcarrier2Offset">The offset of the channel's second analog audio sub-carrier, if any. The unit is kilo-Hertz (kHz). Not applicable for MPEG 2 transport.</param>
+    /// <param name="subcarrier1Offset">The offset of the channel's primary analog audio sub-carrier. The unit is kilo-Hertz (kHz). Not applicable for MPEG 2 transport.</param>
     /// <param name="suppressVideo">An indication of whether the channel's video should be supressed (ignored). Not applicable for MPEG 2 transport.</param>
     /// <param name="audioSelection">The channel's analog audio sub-carrier selection/configuration, encoded according to ATSC specifications. Not applicable for MPEG 2 transport.</param>
     /// <param name="programNumber">The channel's ATSC/MPEG 2 identifier. Only unique when combined with the <paramref name="transportStreamId">transport stream ID</paramref>. Only applicable for MPEG 2 transport.</param>
@@ -227,7 +227,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
     /// <param name="satelliteFullName">A buffer containing the satellite's full name, encoded as DVB-compatible text. The caller must allocate and free this buffer. Only applicable for satellite channels.</param>
     /// <param name="satelliteFullNameBufferSize">As an input, the size of the <paramref name="satelliteFullName">satellite full name buffer</paramref>; as an output, the consumed buffer size. Only applicable for satellite channels.</param>
     /// <param name="hemisphere">The hemisphere (East or West) in which the satellite that the channel is transmitted from is located. Only applicable for satellite channels.</param>
-    /// <param name="orbitalPosition">The longitudinal position of the satellite that the channel is transmitted from in tenths of a degree. Must be combined with <paramref name="hemisphere"/> to get a fully qualified position. Only applicable for satellite channels.</param>
+    /// <param name="orbitalPosition">The longitudinal position of the satellite that the channel is transmitted from. The unit is tenths of a degree. Must be combined with <paramref name="hemisphere"/> to get a fully qualified position. Only applicable for satellite channels.</param>
     /// <param name="youAreHere">An indication of whether the channel details were received from the satellite specified by <paramref name="satelliteId">the satellite identifier</paramref>. Only applicable for satellite channels.</param>
     /// <param name="frequencyBand">The frequency band in which the transponder that the channel is transmitted from operates, encoded according to ATSC specifications. Only applicable for satellite channels.</param>
     /// <param name="outOfService">An indication of whether the satellite specified by <paramref name="satelliteId">the satellite identifier</paramref> is permanently unavailable (ie. retired without replacement). Only applicable for satellite channels.</param>
@@ -239,8 +239,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
     /// <param name="rootTransponder">An indication of whether the transponder that the channel is transmitted from is the satellite's root/home transponder. Only applicable for satellite channels.</param>
     /// <param name="toneSelect">The 22 kHz tone state required to receive the transponder/transmitter that the channel is transmitted from. Only applicable for satellite channels.</param>
     /// <param name="polarisation">The polarisation (ie. horizontal/left or vertical/right) of the transponder that the channel is transmitted from. Only applicable for satellite channels.</param>
-    /// <param name="frequency">The frequency at which the channel's transmitter operates in kHz.</param>
-    /// <param name="symbolRate">The symbol rate of the channel's transmitter in s/s.</param>
+    /// <param name="frequency">The frequency at which the channel's transmitter operates. The unit is kilo-Hertz (kHz).</param>
+    /// <param name="symbolRate">The symbol rate of the channel's transmitter. The unit is symbols-per-second (s/s).</param>
     /// <param name="transmissionSystem">The transmission system that the channel's transmitter is associated with.</param>
     /// <param name="innerCodingMode">The inner coding mode of the channel's transmitter, encoded according to ATSC specifications.</param>
     /// <param name="splitBitstreamMode">An indication of whether the channel's transmitter is operating in split mode.</param>

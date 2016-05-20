@@ -34,17 +34,17 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2.In
     #region setters
 
     /// <summary>
-    /// Set the multiplex frequency.
+    /// Set the transmitter frequency.
     /// </summary>
-    /// <param name="frequency">The frequency in MHz.</param>
+    /// <param name="frequency">The frequency. The unit is mega-Hertz (MHz).</param>
     /// <returns>an HRESULT indicating whether the frequency was successfully set</returns>
     [PreserveSig]
     int SetFrequency(int frequency);
 
     /// <summary>
-    /// Set the multiplex symbol rate. Only applicable for DVB-S and DVB-C tuners.
+    /// Set the transmitter symbol rate. Only applicable for DVB-S and DVB-C tuners.
     /// </summary>
-    /// <param name="symbolRate">The symbol rate in ks/s.</param>
+    /// <param name="symbolRate">The symbol rate. The unit is kilo-symbols-per-second (ks/s).</param>
     /// <returns>an HRESULT indicating whether the symbol rate was successfully set</returns>
     [PreserveSig]
     int SetSymbolRate(int symbolRate);
@@ -52,13 +52,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2.In
     /// <summary>
     /// Set the LNB local oscillator frequency. Only applicable for DVB-S tuners.
     /// </summary>
-    /// <param name="lnbFrequency">The local oscillator frequency in MHz.</param>
+    /// <param name="lnbFrequency">The local oscillator frequency. The unit is mega-Hertz (MHz).</param>
     /// <returns>an HRESULT indicating whether the local oscillator frequency was successfully set</returns>
     [PreserveSig]
     int SetLnbFrequency(int lnbFrequency);
 
     /// <summary>
-    /// Set the multiplex FEC rate. Only applicable for DVB-S tuners.
+    /// Set the transmitter FEC rate. Only applicable for DVB-S tuners.
     /// </summary>
     /// <param name="fecRate">The FEC rate.</param>
     /// <returns>an HRESULT indicating whether the FEC rate was successfully set</returns>
@@ -66,7 +66,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2.In
     int SetFec(FecRate fecRate);
 
     /// <summary>
-    /// Set the multiplex polarisation. Only applicable for DVB-S tuners.
+    /// Set the transmitter polarisation. Only applicable for DVB-S tuners.
     /// </summary>
     /// <param name="polarisation">The polarisation.</param>
     /// <returns>an HRESULT indicating whether the polarisation was successfully set</returns>
@@ -82,15 +82,15 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2.In
     int SetLnbKHz(Tone toneState);
 
     /// <summary>
-    /// Switch to a specific satellite. Only applicable for DVB-S tuners.
+    /// Set the DiSEqC switch port. Only applicable for DVB-S tuners.
     /// </summary>
-    /// <param name="diseqcPort">The DiSEqC switch port associated with the satellite.</param>
-    /// <returns>an HRESULT indicating whether the DiSEqC command was successfully sent</returns>
+    /// <param name="diseqcPort">The DiSEqC port.</param>
+    /// <returns>an HRESULT indicating whether the DiSEqC port was successfully set</returns>
     [PreserveSig]
     int SetDiseqc(DiseqcPort diseqcPort);
 
     /// <summary>
-    /// Set the multiplex modulation scheme. Only applicable for DVB-C tuners.
+    /// Set the transmitter modulation scheme. Only applicable for DVB-C tuners.
     /// </summary>
     /// <param name="modulation">The modulation scheme.</param>
     /// <returns>an HRESULT indicating whether the modulation scheme was successfully set</returns>
@@ -132,26 +132,26 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2.In
     #region getters
 
     /// <summary>
-    /// Get the tuned multiplex frequency. Only applicable for ATSC tuners.
+    /// Get the tuned frequency. Only applicable for ATSC tuners.
     /// </summary>
-    /// <param name="frequency">The multiplex frequency in MHz.</param>
-    /// <returns>an HRESULT indicating whether the multiplex frequency was successfully retrieved</returns>
+    /// <param name="frequency">The frequency. The unit is mega-Hertz (MHz).</param>
+    /// <returns>an HRESULT indicating whether the frequency was successfully retrieved</returns>
     [PreserveSig]
     int GetFrequency(out int frequency);
 
     /// <summary>
-    /// Get the tuned multiplex symbol rate in ks/s. Only applicable for ATSC tuners.
+    /// Get the tuned symbol rate. Only applicable for ATSC tuners.
     /// </summary>
-    /// <param name="symbolRate">The multiplex symbol rate in ks/s.</param>
-    /// <returns>an HRESULT indicating whether the multiplex symbol rate was successfully retrieved</returns>
+    /// <param name="symbolRate">The symbol rate. The unit is kilo-symbols-per-second (ks/s).</param>
+    /// <returns>an HRESULT indicating whether the symbol rate was successfully retrieved</returns>
     [PreserveSig]
     int GetSymbolRate(out int symbolRate);
 
     /// <summary>
-    /// Get the modulation scheme for the tuned multiplex. Only applicable for ATSC tuners.
+    /// Get the tuned modulation scheme. Only applicable for ATSC tuners.
     /// </summary>
-    /// <param name="modulation">The multiplex modulation scheme.</param>
-    /// <returns>an HRESULT indicating whether the multiplex modulation scheme was successfully retrieved</returns>
+    /// <param name="modulation">The modulation scheme.</param>
+    /// <returns>an HRESULT indicating whether the modulation scheme was successfully retrieved</returns>
     [PreserveSig]
     int GetModulation(out Modulation modulation);
 
@@ -162,7 +162,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2.In
     /// <summary>
     /// Get the tuner/demodulator signal strength statistic.
     /// </summary>
-    /// <param name="signalStrength">The signal strength as a percentage.</param>
+    /// <param name="signalStrength">The signal strength. The unit is percent (%).</param>
     /// <returns>an HRESULT indicating whether the signal strength was successfully retrieved</returns>
     [PreserveSig]
     int GetSignalStrength(out int signalStrength);
@@ -170,7 +170,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2.In
     /// <summary>
     /// Obsolete. Use GetSignalStrength() or GetSignalQuality() instead.
     /// </summary>
-    /// <param name="signalLevel">The signal level in dBm.</param>
+    /// <param name="signalLevel">The signal level. The unit is decibel-milli-watts (dBm).</param>
     /// <returns>an HRESULT indicating whether the signal level was successfully retrieved</returns>
     [PreserveSig, Obsolete("Use GetSignalStrength() or GetSignalQuality() instead.")]
     int GetSignalLevel(out float signalLevel);
@@ -219,7 +219,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2.In
     int GetChannel(out int channel);
 
     /// <summary>
-    /// Set the tuner channel number. Only applicable for ATSC tuners.
+    /// Set the transmitter channel number. Only applicable for ATSC tuners.
     /// </summary>
     /// <param name="channel">The channel number.</param>
     /// <returns>an HRESULT indicating whether the channel number was successfully set</returns>
@@ -242,15 +242,15 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2.In
     #region get/set tuning parameters
 
     /// <summary>
-    /// Set the multiplex frequency.
+    /// Set the transmitter frequency.
     /// </summary>
-    /// <param name="frequency">The frequency in kHz.</param>
+    /// <param name="frequency">The frequency. The unit is kilo-Hertz (kHz).</param>
     /// <returns>an HRESULT indicating whether the frequency was successfully set</returns>
     [PreserveSig]
     int SetFrequencyKHz(int frequency);
 
     /// <summary>
-    /// Set the multiplex guard interval. Only applicable for DVB-T tuners.
+    /// Set the transmitter guard interval. Only applicable for DVB-T tuners.
     /// </summary>
     /// <param name="interval">The guard interval.</param>
     /// <returns>an HRESULT indicating whether the guard interval was successfully set</returns>
@@ -258,7 +258,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2.In
     int SetGuardInterval(GuardInterval interval);
 
     /// <summary>
-    /// Get the multiplex guard interval. Only applicable for DVB-T tuners.
+    /// Get the tuned guard interval. Only applicable for DVB-T tuners.
     /// </summary>
     /// <param name="interval">The guard interval.</param>
     /// <returns>an HRESULT indicating whether the guard interval was successfully retrieved</returns>
@@ -266,7 +266,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2.In
     int GetGuardInterval(out GuardInterval interval);
 
     /// <summary>
-    /// Get the multiplex FEC rate. Only applicable for DVB-S tuners.
+    /// Get the tuned FEC rate. Only applicable for DVB-S tuners.
     /// </summary>
     /// <param name="fecRate">The FEC rate.</param>
     /// <returns>an HRESULT indicating whether the FEC rate was successfully retrieved</returns>
@@ -274,7 +274,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2.In
     int GetFec(out FecRate fecRate);
 
     /// <summary>
-    /// Get the multiplex polarisation. Only applicable for DVB-S tuners.
+    /// Get the tuned polarisation. Only applicable for DVB-S tuners.
     /// </summary>
     /// <param name="polarisation">The polarisation.</param>
     /// <returns>an HRESULT indicating whether the polarisation was successfully retrieved</returns>
@@ -282,10 +282,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2.In
     int GetPolarity(out Polarisation polarisation);
 
     /// <summary>
-    /// Get the currenly selected satellite. Only applicable for DVB-S tuners.
+    /// Get the selected DiSEqC switch port. Only applicable for DVB-S tuners.
     /// </summary>
-    /// <param name="diseqcPort">The DiSEqC switch port associated with the satellite.</param>
-    /// <returns>an HRESULT indicating whether the setting was successfully retrieved</returns>
+    /// <param name="diseqcPort">The DiSEqC port.</param>
+    /// <returns>an HRESULT indicating whether the DiSEqC port was successfully retrieved</returns>
     [PreserveSig]
     int GetDiseqc(out DiseqcPort diseqcPort);
 
@@ -300,7 +300,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2.In
     /// <summary>
     /// Get the LNB local oscillator frequency. Only applicable for DVB-S tuners.
     /// </summary>
-    /// <param name="lnbFrequency">The local oscillator frequency in MHz.</param>
+    /// <param name="lnbFrequency">The local oscillator frequency. The unit is mega-Hertz (MHz).</param>
     /// <returns>an HRESULT indicating whether the local oscillator frequency was successfully retrieved</returns>
     [PreserveSig]
     int GetLnbFrequency(out int lnbFrequency);
@@ -318,7 +318,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2.In
     /// <summary>
     /// Get the tuner/demodulator signal quality statistic.
     /// </summary>
-    /// <param name="signalQuality">The signal quality as a percentage.</param>
+    /// <param name="signalQuality">The signal quality. The unit is percent (%).</param>
     /// <returns>an HRESULT indicating whether the signal quality was successfully retrieved</returns>
     [PreserveSig]
     int GetSignalQuality(out int signalQuality);
@@ -328,17 +328,17 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2.In
     #region IMpeg2TunerCtrl3
 
     /// <summary>
-    /// Set the multiplex bandwidth. Only applicable for DVB-T tuners.
+    /// Set the transmitter bandwidth. Only applicable for DVB-T tuners.
     /// </summary>
-    /// <param name="bandwidth">The bandwidth in MHz, expected to be 6, 7 or 8.</param>
+    /// <param name="bandwidth">The bandwidth. The unit is mega-Hertz (MHz). The value is expected to be 6, 7 or 8.</param>
     /// <returns>an HRESULT indicating whether the bandwidth was successfully set</returns>
     [PreserveSig]
     int SetBandwidth(int bandwidth);
 
     /// <summary>
-    /// Get the multiplex bandwidth. Only applicable for DVB-T tuners.
+    /// Get the tuned bandwidth. Only applicable for DVB-T tuners.
     /// </summary>
-    /// <param name="bandwidth">The bandwidth in MHz, expected to be 6, 7 or 8.</param>
+    /// <param name="bandwidth">The bandwidth. The unit is mega-Hertz (MHz). The value is expected to be 6, 7 or 8.</param>
     /// <returns>an HRESULT indicating whether the bandwidth was successfully retrieved</returns>
     [PreserveSig]
     int GetBandwidth(out int bandwidth);

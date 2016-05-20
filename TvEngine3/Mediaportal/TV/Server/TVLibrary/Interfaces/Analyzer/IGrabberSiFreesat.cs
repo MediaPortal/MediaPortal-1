@@ -547,15 +547,15 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
     /// <param name="transportStreamId">The identifier of the transport stream that the transmitter is associated with.</param>
     /// <param name="isHomeTransmitter">An indication of whether the transmitter is a "home" transmitter (ie. transmits complete network/bouquet SI).</param>
     /// <param name="broadcastStandard">The broadcast standard that the transmitter is associated with. This field indicates which other fields will be populated.</param>
-    /// <param name="frequencies">The frequencies which the transmitter operates at in kHz. The caller must allocate this array.</param>
+    /// <param name="frequencies">The frequencies which the transmitter operates at. The unit is kilo-Hertz (kHz). The caller must allocate this array.</param>
     /// <param name="frequencyCount">As an input, the size of the <paramref name="frequencies"/> array; as an output, the consumed array size.</param>
     /// <param name="polarisation">The transmitter's polarisation. Only applicable for DVB-S and DVB-S2 transmitters.</param>
     /// <param name="modulation">The transmitter's modulation scheme. Only applicable for DVB-C, DVB-S and DVB-S2 transmitters.</param>
-    /// <param name="symbolRate">The transmitter's symbol rate in ks/s. Only applicable for DVB-C, DVB-S and DVB-S2 transmitters.</param>
-    /// <param name="bandwidth">The transmitter's bandwith in kHz. Only applicable for DVB-C2, DVB-T and DVB-T2 transmitters.</param>
+    /// <param name="symbolRate">The transmitter's symbol rate. The unit is kilo-symbols-per-second (ks/s). Only applicable for DVB-C, DVB-S and DVB-S2 transmitters.</param>
+    /// <param name="bandwidth">The transmitter's bandwith. The unit is kilo-Hertz (kHz). Only applicable for DVB-C2, DVB-T and DVB-T2 transmitters.</param>
     /// <param name="innerFecRate">The transmitter's inner FEC rate. Only applicable for DVB-S and DVB-S2 transmitters.</param>
     /// <param name="rollOffFactor">The transmitter's roll-off factor. Only applicable for DVB-S2 transmitters.</param>
-    /// <param name="longitude">The longitude of the geostationary satellite on which the transmitter is located in tenths of a degree. Positive values indicate Eastern hemisphere. Only applicable for DVB-S and DVB-S2 transmitters.</param>
+    /// <param name="longitude">The longitude of the geostationary satellite on which the transmitter is located.  The unit is tenths of a degree. Positive values indicate Eastern hemisphere. Only applicable for DVB-S and DVB-S2 transmitters.</param>
     /// <param name="cellId">The identifier of the terrestrial cell in which the transmitter is located. Only applicable for DVB-T and DVB-T2 transmitters.</param>
     /// <param name="cellIdExtension">The identifier extension of the terrestrial cell in which the transmitter is located. Only applicable for DVB-T and DVB-T2 transmitters.</param>
     /// <param name="isMultipleInputStream">An indication of whether the transmitter broadcasts multiple transport streams. Only applicable for DVB-C2, DVB-S2 and DVBT2 transmitters.</param>
