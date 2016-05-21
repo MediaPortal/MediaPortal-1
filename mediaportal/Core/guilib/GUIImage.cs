@@ -1437,8 +1437,6 @@ namespace MediaPortal.GUI.Library
               // Default behavior, draw the image texture with no mask.
               DXNative.FontEngineDrawTextureSync(_packedTextureNo, _fx, _fy, _nw, _nh, _uoff, _voff,
                 _umax, _vmax, color, matrix);
-              //if (GUIGraphicsContext.RenderOverlay)
-              //  return;
             }
           }
 

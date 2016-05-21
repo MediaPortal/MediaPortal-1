@@ -459,7 +459,13 @@ namespace MediaPortal.GUI.Library
         }
 
         _imageNonFocusedMid.ColourDiffuse = ColourDiffuseTNFM;
-        _imageNonFocusedMid.OverlayFileName = OverlayFileNameTNFM;
+        // TODO must do a proper fix (Flickering on TVGuide)
+        //if (!string.IsNullOrEmpty(OverlayFileNameTNFM) && _imageNonFocusedMid.OverlayFileName != OverlayFileNameTNFM)
+        if (GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR &&
+            GUIGraphicsContext.InVmr9Render)
+        {
+          _imageNonFocusedMid.OverlayFileName = OverlayFileNameTNFM;
+        }
         _imageNonFocusedMid.Render(timePassed);
 
         if (renderRightPart)
