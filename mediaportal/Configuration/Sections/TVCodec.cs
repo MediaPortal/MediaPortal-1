@@ -102,9 +102,9 @@ namespace MediaPortal.Configuration.Sections
           availableAudioFilters.Remove("Nero Mpeg2 Encoder");
         }
         availableAudioFilters.Sort();
-        ArrayList availableAACAudioFilters = FilterHelper.GetFilters(MediaType.Audio, MpMediaSubType.LATMAAC);
+        ArrayList availableAACAudioFilters = FilterHelper.GetFilters(MediaType.Audio, MediaSubType.LATMAAC);    // Note: this MediaSubType is not present in standard DirectShowLib.
         availableAACAudioFilters.Sort();
-        ArrayList availableDDPLUSAudioFilters = FilterHelper.GetFilters(MediaType.Audio, MpMediaSubType.DDPLUS);
+        ArrayList availableDDPLUSAudioFilters = FilterHelper.GetFilters(MediaType.Audio, MediaSubType.DDPLUS);  // Note: this MediaSubType is not present in standard DirectShowLib.
         availableDDPLUSAudioFilters.Sort();
         ArrayList availableAudioRenderers = FilterHelper.GetAudioRenderers();
         availableAudioRenderers.Sort();
@@ -155,12 +155,12 @@ namespace MediaPortal.Configuration.Sections
         }
         if (aacaudioCodec == string.Empty)
         {
-          ArrayList availableAACAudioFilters = FilterHelper.GetFilters(MediaType.Audio, MpMediaSubType.AAC);
+          ArrayList availableAACAudioFilters = FilterHelper.GetFilters(MediaType.Audio, MediaSubType.AAC);          // Note: this MediaSubType is not present in standard DirectShowLib.
           aacaudioCodec = SetCodecBox(availableAACAudioFilters, "LAV Audio Decoder", "MONOGRAM ACC Decoder", "ffdshow Audio Decoder");
         }
         if (ddplusaudioCodec == string.Empty)
         {
-          ArrayList availableDDPLUSAudioFilters = FilterHelper.GetFilters(MediaType.Audio, MpMediaSubType.DDPLUS);
+          ArrayList availableDDPLUSAudioFilters = FilterHelper.GetFilters(MediaType.Audio, MediaSubType.DDPLUS);    // Note: this MediaSubType is not present in standard DirectShowLib.
           ddplusaudioCodec =SetCodecBox(availableDDPLUSAudioFilters, "LAV Audio Decoder", "ffdshow Audio Decoder", "");
         }
 
