@@ -75,6 +75,7 @@ xcopy "%1Plugins\TunerExtensions\TechnoTrend\bin\%3\Mediaportal.TV.Server.Plugin
 xcopy "%1Plugins\TunerExtensions\TeVii\bin\%3\Mediaportal.TV.Server.Plugins.TunerExtension.TeVii.*" "%4Plugins\TunerExtensions\" /Y/D
 xcopy "%1Plugins\TunerExtensions\Turbosight\bin\%3\Mediaportal.TV.Server.Plugins.TunerExtension.Turbosight.*" "%4Plugins\TunerExtensions\" /Y/D
 xcopy "%1Plugins\TunerExtensions\Twinhan\bin\%3\Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan.*" "%4Plugins\TunerExtensions\" /Y/D
+xcopy "%1Plugins\TunerExtensions\UsbUirt\bin\%3\Mediaportal.TV.Server.Plugins.TunerExtension.UsbUirt.*" "%4Plugins\TunerExtensions\" /Y/D
 xcopy "%1Plugins\TunerExtensions\ViXS\bin\%3\Mediaportal.TV.Server.Plugins.TunerExtension.ViXS.*" "%4Plugins\TunerExtensions\" /Y/D
 
 
