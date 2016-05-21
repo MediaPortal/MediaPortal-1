@@ -33,9 +33,6 @@ namespace MediaPortal.DeployTool.Sections
     public static bool MySQL51= false;
     public static bool reInstallForce = false;
     public static bool freshForce = true; // Set to true by default (needed for fresh installation)
-    private bool rbReinstallChecked;
-    public static bool reInstallForce = false;
-    public static bool freshForce = true; // Set to true by default (needed for fresh installation)
 
     public UpgradeDlg()
     {
