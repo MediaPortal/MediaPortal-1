@@ -60,28 +60,10 @@ namespace DirectShowLib
     SegmentStarted = 0x1D, // EC_SEGMENT_STARTED
     LengthChanged = 0x1E, // EC_LENGTH_CHANGED
     DeviceLost = 0x1f, // EC_DEVICE_LOST
-    SampleNeeded = 0x20, // EC_SAMPLE_NEEDED
-    ProcessingLatency = 0x21, // EC_PROCESSING_LATENCY
-    SampleLatency = 0x22, // EC_SAMPLE_LATENCY
-    ScrubTime = 0x23, // EC_SCRUB_TIME
     StepComplete = 0x24, // EC_STEP_COMPLETE
-    SkipFrames = 0x25, // EC_SKIP_FRAMES
-
     TimeCodeAvailable = 0x30, // EC_TIMECODE_AVAILABLE
     ExtDeviceModeChange = 0x31, // EC_EXTDEVICE_MODE_CHANGE
     StateChange = 0x32, // EC_STATE_CHANGE
-
-    PleaseReOpen = 0x40, // EC_PLEASE_REOPEN
-    Status = 0x41, // EC_STATUS
-    MarkerHit = 0x42, // EC_MARKER_HIT
-    LoadStatus = 0x43, // EC_LOADSTATUS
-    FileClosed = 0x44, // EC_FILE_CLOSED
-    ErrorAbortEx = 0x45, // EC_ERRORABORTEX
-    EOSSoon = 0x046, // EC_EOS_SOON
-    ContentPropertyChanged = 0x47, // EC_CONTENTPROPERTY_CHANGED
-    BandwidthChange = 0x48, // EC_BANDWIDTHCHANGE
-    VideoFrameReady = 0x49, // EC_VIDEOFRAMEREADY
-
     GraphChanged = 0x50, // EC_GRAPH_CHANGED
     ClockUnset = 0x51, // EC_CLOCK_UNSET
     VMRRenderDeviceSet = 0x53, // EC_VMR_RENDERDEVICE_SET
@@ -118,15 +100,6 @@ namespace DirectShowLib
     DvdDiscInserted = 0x119, // EC_DVD_DISC_INSERTED
     DvdCurrentHmsfTime = 0x11a, // EC_DVD_CURRENT_HMSF_TIME
     DvdKaraokeMode = 0x11b, // EC_DVD_KARAOKE_MODE
-    DvdProgramCellChange = 0x11c, // EC_DVD_PROGRAM_CELL_CHANGE
-    DvdTitleSetChange = 0x11d, // EC_DVD_TITLE_SET_CHANGE
-    DvdProgramChainChange = 0x11e, // EC_DVD_PROGRAM_CHAIN_CHANGE
-    DvdVOBU_Offset = 0x11f, // EC_DVD_VOBU_Offset
-    DvdVOBU_Timestamp = 0x120, // EC_DVD_VOBU_Timestamp
-    DvdGPRM_Change = 0x121, // EC_DVD_GPRM_Change
-    DvdSPRM_Change = 0x122, // EC_DVD_SPRM_Change
-    DvdBeginNavigationCommands = 0x123, // EC_DVD_BeginNavigationCommands
-    DvdNavigationCommand = 0x124, // EC_DVD_NavigationCommand
 
     // AudEvCod.h
     SNDDEVInError = 0x200, // EC_SNDDEV_IN_ERROR

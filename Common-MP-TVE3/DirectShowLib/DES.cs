@@ -960,6 +960,42 @@ namespace DirectShowLib.DES
 
   [ComImport, SuppressUnmanagedCodeSecurity,
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown),
+   Guid("4ada63a0-72d5-11d2-952a-0060081840bc")]
+  public interface IResize
+  {
+    [PreserveSig]
+    int get_Size(
+      out int piHeight,
+      out int piWidth,
+      ResizeFlags pFlag
+      );
+
+    [PreserveSig]
+    int get_InputSize(
+      out int piHeight,
+      out int piWidth
+      );
+
+    [PreserveSig]
+    int put_Size(
+      int Height,
+      int Width,
+      ResizeFlags Flag
+      );
+
+    [PreserveSig]
+    int get_MediaType(
+      [MarshalAs(UnmanagedType.LPStruct)] out AMMediaType pmt
+      );
+
+    [PreserveSig]
+    int put_MediaType(
+      [MarshalAs(UnmanagedType.LPStruct)] AMMediaType pmt
+      );
+  }
+
+  [ComImport, SuppressUnmanagedCodeSecurity,
+   InterfaceType(ComInterfaceType.InterfaceIsIUnknown),
    Guid("E43E73A2-0EFA-11D3-9601-00A0C9441E20")]
   public interface IAMErrorLog
   {
@@ -2275,42 +2311,6 @@ namespace DirectShowLib.DES
     [PreserveSig]
     int SetResizerGUID(
       [In] Guid ResizerGuid
-      );
-  }
-
-  [ComImport, SuppressUnmanagedCodeSecurity,
-   InterfaceType(ComInterfaceType.InterfaceIsIUnknown),
-   Guid("4ada63a0-72d5-11d2-952a-0060081840bc")]
-  public interface IResize
-  {
-    [PreserveSig]
-    int get_Size(
-      out int piHeight,
-      out int piWidth,
-      out ResizeFlags pFlag
-      );
-
-    [PreserveSig]
-    int get_InputSize(
-      out int piHeight,
-      out int piWidth
-      );
-
-    [PreserveSig]
-    int put_Size(
-      int Height,
-      int Width,
-      ResizeFlags Flag
-      );
-
-    [PreserveSig]
-    int get_MediaType(
-      [Out, MarshalAs(UnmanagedType.LPStruct)] AMMediaType pmt
-      );
-
-    [PreserveSig]
-    int put_MediaType(
-      [In, MarshalAs(UnmanagedType.LPStruct)] AMMediaType pmt
       );
   }
 

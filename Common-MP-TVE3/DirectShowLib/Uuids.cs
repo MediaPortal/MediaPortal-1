@@ -431,6 +431,13 @@ namespace DirectShowLib
   {
   }
 
+  /// <summary>
+  /// CLSID_EnhancedVideoRenderer
+  /// </summary>
+  [ComImport, Guid("fa10746c-9b63-4b6c-bc49-fc300ea5f256")]
+  public class EnhancedVideoRenderer
+  {
+  }
 
   /// <summary>
   /// CLSID_VideoRendererDefault
@@ -878,120 +885,17 @@ namespace DirectShowLib
   {
   }
 
-
-  /// <summary>
-  /// CLSID_PTFilter
-  /// </summary>
-  [ComImport, Guid("9CD31617-B303-4f96-8330-2EB173EA4DC6")]
-  public class PTFilter
-  {
-  }
-
-  /// <summary>
-  /// CLSID_MPEG2Demultiplexer_NoClock
-  /// </summary>
-  [ComImport, Guid("687D3367-3644-467a-ADFE-6CD7A85C4A2C")]
-  public class MPEG2Demultiplexer_NoClock
-  {
-  }
-
-
-  /// <summary>
-  /// CLSID_SBE2Sink
-  /// </summary>
-  [ComImport, Guid("E2448508-95DA-4205-9A27-7EC81E723B1A")]
-  public class SBE2Sink
-  {
-  }
-
-
-  /// <summary>
-  /// CLSID_StreamBufferPropertyHandler
-  /// </summary>
-  [ComImport, Guid("E37A73F8-FB01-43dc-914E-AAEE76095AB9")]
-  public class StreamBufferPropertyHandler
-  {
-  }
-
-
-  /// <summary>
-  /// CLSID_StreamBufferThumbnailHandler
-  /// </summary>
-  [ComImport, Guid("713790EE-5EE1-45ba-8070-A1337D2762FA")]
-  public class StreamBufferThumbnailHandler
-  {
-  }
-
-
-  /// <summary>
-  /// CLSID_SBE2File
-  /// </summary>
-  [ComImport, Guid("93A094D7-51E8-485b-904A-8D6B97DC6B39")]
-  public class SBE2File
-  {
-  }
-
-
-  /// <summary>
-  /// CLSID_CCAFilter
-  /// </summary>
-  [ComImport, Guid("3d07a539-35ca-447c-9b05-8d85ce924f9e")]
-  public class CCAFilter
-  {
-  }
-
-
-  /// <summary>
-  /// CLSID_CaptionsFilter
-  /// </summary>
-  [ComImport, Guid("2F7EE4B6-6FF5-4EB4-B24A-2BFC41117171")]
-  public class CaptionsFilter
-  {
-  }
-
-
-  /// <summary>
-  /// CLSID_SubtitlesFilter
-  /// </summary>
-  [ComImport, Guid("9F22CFEA-CE07-41ab-8BA0-C7364AF90AF9")]
-  public class SubtitlesFilter
-  {
-  }
-
-
-  /// <summary>
-  /// CLSID_DirectShowPluginControl
-  /// </summary>
-  [ComImport, Guid("8670C736-F614-427b-8ADA-BBADC587194B")]
-  public class DirectShowPluginControl
-  {
-  }
-
-
-  /// <summary>
-  /// CLSID_SBE2MediaTypeProfile
-  /// </summary>
-  [ComImport, Guid("1f26a602-2b5c-4b63-b8e8-9ea5c1a7dc2e")]
-  public class SBE2MediaTypeProfile
-  {
-  }
-
-
-  /// <summary>
-  /// CLSID_SBE2FileScan
-  /// </summary>
-  [ComImport, Guid("3E458037-0CA6-41aa-A594-2AA6C02D709B")]
-  public class SBE2FileScan
-  {
-  }
-
-
   #endregion
 
   #region GUIDS
 
-  public static class FilterCategory
+  public sealed class FilterCategory
   {
+    private FilterCategory()
+    {
+      // Prevent people from trying to instantiate this class
+    }
+
     /// <summary> CLSID_CPCAFiltersCategory </summary>
     public static readonly Guid CPCAFiltersCategory = new Guid(0xC4C4C4FC, 0x0049, 0x4E2B, 0x98, 0xFB, 0x95, 0x37, 0xF6,
                                                                0xCE, 0x51, 0x6D);
@@ -1145,6 +1049,10 @@ namespace DirectShowLib
     public static readonly Guid AMKSVBICodec = new Guid(0x07dad660, 0x22f1, 0x11d1, 0xa9, 0xf4, 0x00, 0xc0, 0x4f, 0xbb,
                                                         0xde, 0x8f);
 
+    /// <summary> AM_KSCATEGORY_MULTIVBICODEC </summary>
+    public static readonly Guid AMKSMULTIVBICodec = new Guid(0x9c24a977, 0x0951, 0x451a, 0x80, 0x06, 0x0e, 0x49, 0xbd,
+                                                             0x28, 0xcd, 0x5f);
+
     /// <summary> AM_KSCATEGORY_SPLITTER </summary>
     public static readonly Guid AMKSSplitter = new Guid(0x0A4252A0, 0x7E70, 0x11D0, 0xA5, 0xD6, 0x28, 0xDB, 0x04, 0xC1,
                                                         0x00, 0x00);
@@ -1158,12 +1066,21 @@ namespace DirectShowLib
                                                                           0xA2, 0xB9, 0x62, 0x71, 0xE8);
 
     /// <summary> Not defined </summary>
+    public static readonly Guid BDACPCAFilters = new Guid(0xC4C4C4FC, 0x0049, 0x4E2B, 0x98, 0xFB, 0x95, 0x37, 0xF6, 0xCE,
+                                                          0x51, 0x6D);
+
+    /// <summary> Not defined </summary>
     public static readonly Guid LTMMVideoProcessors = new Guid(0xE526D606, 0x22E7, 0x494C, 0xB8, 0x1E, 0xAC, 0x0A, 0x94,
                                                                0xBF, 0xE6, 0x03);
   }
 
-  public static class VMRClsId
+  public sealed class VMRClsId
   {
+    private VMRClsId()
+    {
+      // Prevent people from trying to instantiate this class
+    }
+
     /// <summary>CLSID_AllocPresenter</summary>
     public static readonly Guid AllocPresenter = new Guid(0x99d54f63, 0x1a69, 0x41ae, 0xaa, 0x4d, 0xc9, 0x76, 0xeb, 0x3f,
                                                           0x07, 0x13);
@@ -1173,8 +1090,13 @@ namespace DirectShowLib
                                                                    0xd4, 0x63, 0x52, 0xbc);
   }
 
-  public static class TVEClsId
+  public sealed class TVEClsId
   {
+    private TVEClsId()
+    {
+      // Prevent people from trying to instantiate this class
+    }
+
     /// <summary>CLSID_DShowTVEFilter</summary>
     public static readonly Guid DShowTVEFilter = new Guid(0x05500280, 0xFAA5, 0x4DF9, 0x82, 0x46, 0xBF, 0xC2, 0x3A, 0xC5,
                                                           0xCE, 0xA8);
@@ -1192,8 +1114,13 @@ namespace DirectShowLib
                                                                     0x3A, 0xC5, 0xCE, 0xA8);
   }
 
-  public static class ENCAPIClsId
+  public sealed class ENCAPIClsId
   {
+    private ENCAPIClsId()
+    {
+      // Prevent people from trying to instantiate this class
+    }
+
     /// <summary>CLSID_IVideoEncoderProxy</summary>
     public static readonly Guid IVideoEncoderProxy = new Guid(0xb43c4eec, 0x8c32, 0x4791, 0x91, 0x02, 0x50, 0x8a, 0xda,
                                                               0x5e, 0xe8, 0xe7);
@@ -1207,8 +1134,13 @@ namespace DirectShowLib
                                                                       0xe9, 0x1f, 0x1c, 0x9c);
   }
 
-  public static class MediaType
+  public sealed class MediaType
   {
+    private MediaType()
+    {
+      // Prevent people from trying to instantiate this class
+    }
+
     public static readonly Guid Null = Guid.Empty;
 
     /// <summary> MEDIATYPE_Video 'vids' </summary>
@@ -1223,8 +1155,16 @@ namespace DirectShowLib
     public static readonly Guid Audio = new Guid(0x73647561, 0x0000, 0x0010, 0x80, 0x00, 0x00, 0xaa, 0x00, 0x38, 0x9b,
                                                  0x71);
 
+    /// <summary> MEDIATYPE_Subtitle 'subs' </summary>
+    public static readonly Guid Subtitle = new Guid(0xE487EB08, 0x6B26, 0x4be9, 0x9D, 0xD3, 0x99, 0x34, 0x34, 0xD3, 0x13,
+                                                  0xFD);
+
+      /// <summary> MEDIATYPE_FileSourceAsync </summary>
+    public static readonly Guid FileSourceAsync = new Guid(0xE436EBB5, 0x524F, 0x11CE, 0x9F, 0x53, 0x00, 0x20, 0xAF, 0x0B, 0xA7,
+                                                 0x70);
+
     /// <summary> MEDIATYPE_Text 'txts' </summary>
-    public static readonly Guid Texts = new Guid(0x73747874, 0x0000, 0x0010, 0x80, 0x00, 0x00, 0xaa, 0x00, 0x38, 0x9b,
+    public static readonly Guid Text = new Guid(0x73747874, 0x0000, 0x0010, 0x80, 0x00, 0x00, 0xaa, 0x00, 0x38, 0x9b,
                                                 0x71);
 
     /// <summary> MEDIATYPE_Stream </summary>
@@ -1282,19 +1222,23 @@ namespace DirectShowLib
     /// <summary> MEDIATYPE_MSTVCaption </summary>
     public static readonly Guid MSTVCaption = new Guid(0xB88B8A89, 0xB049, 0x4C80, 0xAD, 0xCF, 0x58, 0x98, 0x98, 0x5E,
                                                        0x22, 0xC1);
-
-    /// <summary> MEDIATYPE_AUXTeletextPage </summary>
-    public static readonly Guid AUXTeletextPage = new Guid(0x11264acb, 0x37de, 0x4eba, 0x8c, 0x35, 0x7f, 0x4, 0xa1, 0xa6,
-                                                            0x83, 0x32);
-
-    /// <summary> MEDIATYPE_CC_CONTAINER </summary>
-    public static readonly Guid CC_Container = new Guid(0xaeb312e9, 0x3357, 0x43ca, 0xb7, 0x1, 0x97, 0xec, 0x19, 0x8e,
-                                                        0x2b, 0x62);
-
   }
 
-  public static class MediaSubType
+  public sealed class MediaSubType
   {
+    public static readonly Guid AAC = new Guid(0x00000FF, 0x0000, 0x0010, 0x80, 0x00, 0x00, 0xaa, 0x00, 0x38, 0x9b, 0x71);
+
+    public static readonly Guid DDPLUS = new Guid(0xa7fb87af, 0x2d02, 0x42fb,0xa4, 0xd4, 0x05, 0xcd, 0x93, 0x84, 0x3b, 0xdd);
+
+
+    public static readonly Guid DVD_LPCM_AUDIO = new Guid(0xe06d8032, 0xdb46, 0x11cf, 0xb4, 0xd1, 0x00, 0x80, 0x05f,
+                                                          0x6c, 0xbb, 0xea);
+
+    private MediaSubType()
+    {
+      // Prevent people from trying to instantiate this class
+    }
+
     public static readonly Guid Null = Guid.Empty;
 
     /// <summary> MEDIASUBTYPE_CLPL </summary>
@@ -1796,9 +1740,42 @@ namespace DirectShowLib
     public static readonly Guid None = new Guid(0xe436eb8e, 0x524f, 0x11ce, 0x9f, 0x53, 0x00, 0x20, 0xaf, 0x0b, 0xa7,
                                                 0x70);
 
+    /// <summary> MEDIASUBTYPE_BDA_MPEG2_TRANSPORT </summary>
+    public static readonly Guid BdaMpeg2Transport = new Guid(0xF4AEB342, 0x0329, 0x4fdd, 0xA8, 0xFD, 0x4A, 0xFF, 0x49,
+                                                             0x26, 0xC9, 0x78);
+
     /// <summary> MEDIASUBTYPE_H264 </summary>
     public static readonly Guid H264 = new Guid(0x34363248, 0x0000, 0x0010, 0x80, 0x00, 0x00, 0xaa, 0x00, 0x38, 0x9b,
                                                 0x71);
+    /// <summary> MEDIASUBTYPE_VC1 </summary>
+    public static readonly Guid VC1 = new Guid(0x31435657, 0x0000, 0x0010, 0x80, 0x00, 0x00, 0xAA, 0x00, 0x38, 0x9B,
+                                                0x71);
+
+    /// <summary> MEDIASUBTYPE_VC1_Cyberlink </summary>
+    public static readonly Guid CyberlinkVC1 = new Guid(0xD979F77B, 0xDBEA, 0x4BF6, 0x9E, 0x6D, 0x1D, 0x7E, 0x57, 0xFB, 0xAD,
+                                                0x53);
+
+    /// <summary> MEDIASUBTYPE_AVC1 </summary>
+    public static readonly Guid AVC1 = new Guid(0x31435641, 0x0000, 0x0010, 0x80, 0x00, 0x00, 0xaa, 0x00, 0x38, 0x9b,
+                                                0x71);
+
+    // 56564D41-0000-0010-8000-00AA00389B71
+    public static readonly Guid XVID = new Guid(0x44495658, 0x0000, 0x0010, 0x80, 0x00, 0x00, 0xAA, 0x00, 0x38, 0x9B, 0x71);
+
+    // 56564D41-0000-0010-8000-00AA00389B71
+    public static readonly Guid xvid = new Guid(0x64697678, 0x0000, 0x0010, 0x80, 0x00, 0x00, 0xAA, 0x00, 0x38, 0x9B, 0x71);
+
+    // 30355844-0000-0010-8000-00aa00389b71
+    public static readonly Guid DX50 = new Guid(0x30355844, 0x0000, 0x0010, 0x80, 0x00, 0x00, 0xAA, 0x00, 0x38, 0x9B, 0x71);
+
+    // 30357864-0000-0010-8000-00AA00389B71
+    public static readonly Guid dx50 = new Guid(0x30357864, 0x0000, 0x0010, 0x80, 0x00, 0x00, 0xAA, 0x00, 0x38, 0x9B, 0x71);
+
+    // 56564D41-0000-0010-8000-00AA00389B71
+    public static readonly Guid DIVX = new Guid(0x58564944, 0x0000, 0x0010, 0x80, 0x00, 0x00, 0xAA, 0x00, 0x38, 0x9B, 0x71);
+
+    // 78766964-0000-0010-8000-00AA00389B71
+    public static readonly Guid divx = new Guid(0x78766964, 0x0000, 0x0010, 0x80, 0x00, 0x00, 0xAA, 0x00, 0x38, 0x9B, 0x71);
 
     /// <summary> MEDIASUBTYPE_NV24 </summary>
     public static readonly Guid NV24 = new Guid(0x3432564E, 0x0000, 0x0010, 0x80, 0x00, 0x00, 0xaa, 0x00, 0x38, 0x9b,
@@ -1812,76 +1789,22 @@ namespace DirectShowLib
     public static readonly Guid DtvCcData = new Guid(0xF52ADDAA, 0x36F0, 0x43F5, 0x95, 0xEA, 0x6D, 0x86, 0x64, 0x84,
                                                      0x26, 0x2A);
 
-    /// <summary> MEDIASUBTYPE_DVB_SUBTITLES </summary>
-    public static readonly Guid DVB_Subtitles = new Guid(0x34FFCBC3, 0xD5B3, 0x4171, 0x90, 0x02, 0xD4, 0xC6, 0x03, 0x01,
-                                                          0x69, 0x7F);
+    /// <summary> MEDIASUBTYPE_LATM_AAC </summary>
+    public static readonly Guid LATMAAC = new Guid(0x00001FF, 0x0000, 0x0010, 0x80, 0x00, 0x00, 0xaa, 0x00, 0x38, 0x9b,
+                                                   0x71);
 
-    /// <summary> MEDIASUBTYPE_ISDB_CAPTIONS </summary>
-    public static readonly Guid ISDB_Captions = new Guid(0x059dd67d, 0x2e55, 0x4d41, 0x8d, 0x1b, 0x01, 0xf5, 0xe4, 0xf5,
-                                                          0x06, 0x07);
-
-    /// <summary> MEDIASUBTYPE_ISDB_SUPERIMPOSE </summary>
-    public static readonly Guid ISDB_Superimpose = new Guid(0x36dc6d28, 0xf1a6, 0x4216, 0x90, 0x48, 0x9c, 0xfc, 0xef,
-                                                            0xeb, 0x5e, 0xba);
-
-    /// <summary> MEDIASUBTYPE_NV11 </summary>
-    public static readonly Guid NV11 = new Guid(0x3131564E, 0x0000, 0x0010, 0x80, 0x00, 0x00, 0xaa, 0x00, 0x38, 0x9b,
-                                                0x71);
-
-    /// <summary> MEDIASUBTYPE_P208 </summary>
-    public static readonly Guid P208 = new Guid(0x38303250, 0x0000, 0x0010, 0x80, 0x00, 0x00, 0xaa, 0x00, 0x38, 0x9b,
-                                                0x71);
-
-    /// <summary> MEDIASUBTYPE_P210 </summary>
-    public static readonly Guid P210 = new Guid(0x38303250, 0x0000, 0x0010, 0x80, 0x00, 0x00, 0xaa, 0x00, 0x38, 0x9b,
-                                                0x71);
-
-    /// <summary> MEDIASUBTYPE_P216 </summary>
-    public static readonly Guid P216 = new Guid(0x38303250, 0x0000, 0x0010, 0x80, 0x00, 0x00, 0xaa, 0x00, 0x38, 0x9b,
-                                                0x71);
-
-    /// <summary> MEDIASUBTYPE_P010 </summary>
-    public static readonly Guid P010 = new Guid(0x38303250, 0x0000, 0x0010, 0x80, 0x00, 0x00, 0xaa, 0x00, 0x38, 0x9b,
-                                                0x71);
-
-    /// <summary> MEDIASUBTYPE_P016 </summary>
-    public static readonly Guid P016 = new Guid(0x38303250, 0x0000, 0x0010, 0x80, 0x00, 0x00, 0xaa, 0x00, 0x38, 0x9b,
-                                                0x71);
-
-    /// <summary> MEDIASUBTYPE_Y210 </summary>
-    public static readonly Guid Y210 = new Guid(0x38303250, 0x0000, 0x0010, 0x80, 0x00, 0x00, 0xaa, 0x00, 0x38, 0x9b,
-                                                0x71);
-
-    /// <summary> MEDIASUBTYPE_Y216 </summary>
-    public static readonly Guid Y216 = new Guid(0x38303250, 0x0000, 0x0010, 0x80, 0x00, 0x00, 0xaa, 0x00, 0x38, 0x9b,
-                                                0x71);
-
-    /// <summary> MEDIASUBTYPE_P408 </summary>
-    public static readonly Guid P408 = new Guid(0x38303450, 0x0000, 0x0010, 0x80, 0x00, 0x00, 0xaa, 0x00, 0x38, 0x9b,
-                                                0x71);
-
-    /// <summary> MEDIASUBTYPE_CC_CONTAINER </summary>
-    public static readonly Guid CC_Container = new Guid(0x7ea626db, 0x54da, 0x437b, 0xbe, 0x9f, 0xf7, 0x30, 0x73, 0xad,
-                                                        0xfa, 0x3c);
-
-    /// <summary> MEDIASUBTYPE_VBI </summary>
-    public static readonly Guid VBI = new Guid(0x663da43c, 0x3e8, 0x4e9a, 0x9c, 0xd5, 0xbf, 0x11, 0xed, 0xd, 0xef, 0x76);
-
-    /// <summary> MEDIASUBTYPE_XDS </summary>
-    public static readonly Guid XDS = new Guid(0x1ca73e3, 0xdce6, 0x4575, 0xaf, 0xe1, 0x2b, 0xf1, 0xc9, 0x2, 0xca, 0xf3);
-
-    /// <summary> MEDIASUBTYPE_ETDTFilter_Tagged </summary>
-    public static readonly Guid ETDTFilter_Tagged = new Guid(0xC4C4C4D0, 0x0049, 0x4E2B, 0x98, 0xFB, 0x95, 0x37, 0xF6,
-                                                              0xCE, 0x51, 0x6D);
-
-    /// <summary> MEDIASUBTYPE_CPFilters_Processed </summary>
-    public static readonly Guid CPFilters_Processed = new Guid(0x46adbd28, 0x6fd0, 0x4796, 0x93, 0xb2, 0x15, 0x5c, 0x51,
-                                                                0xdc, 0x4, 0x8d);
-
+    /// <summary> MEDIASUBTYPE_LATM_AAC_LAF_SPLITTER </summary>
+    public static readonly Guid LATMAACLAF = new Guid(0x53544441, 0x0000, 0x0010, 0x80, 0x00, 0x00, 0xAA, 0x00, 0x38, 0x9B,
+                                                  0x71);
   }
 
-  public static class FormatType
+  public sealed class FormatType
   {
+    private FormatType()
+    {
+      // Prevent people from trying to instantiate this class
+    }
+
     public static readonly Guid Null = Guid.Empty;
 
     /// <summary> FORMAT_None </summary>
@@ -1931,18 +1854,15 @@ namespace DirectShowLib
     /// <summary> FORMAT_525WSS </summary>
     public static readonly Guid WSS525 = new Guid(0xc7ecf04d, 0x4582, 0x4869, 0x9a, 0xbb, 0xbf, 0xb5, 0x23, 0xb6, 0x2e,
                                                   0xdf);
-
-    /// <summary> FORMATTYPE_ETDTFilter_Tagged </summary>
-    public static readonly Guid ETDTFilter_Tagged = new Guid(0xC4C4C4D1, 0x0049, 0x4E2B, 0x98, 0xFB, 0x95, 0x37, 0xF6,
-                                                              0xCE, 0x51, 0x6D);
-
-    /// <summary> FORMATTYPE_CPFilters_Processed </summary>
-    public static readonly Guid CPFilters_Processed = new Guid(0x6739b36f, 0x1d5f, 0x4ac2, 0x81, 0x92, 0x28, 0xbb, 0xe,
-                                                                0x73, 0xd1, 0x6a);
   }
 
-  public static class DSAttrib
+  public sealed class DSAttrib
   {
+    private DSAttrib()
+    {
+      // Prevent people from trying to instantiate this class
+    }
+
     /// <summary> DSATTRIB_UDCRTag </summary>
     public static readonly Guid UDCRTag = new Guid(0xEB7836CA, 0x14FF, 0x4919, 0xbc, 0xe7, 0x3a, 0xf1, 0x23, 0x19, 0xe5,
                                                    0x0c);
@@ -1950,46 +1870,15 @@ namespace DirectShowLib
     /// <summary> DSATTRIB_PicSampleSeq </summary>
     public static readonly Guid PicSampleSeq = new Guid(0x2f5bae02, 0x7b8f, 0x4f60, 0x82, 0xd6, 0xe4, 0xea, 0x2f, 0x1f,
                                                         0x4c, 0x99);
-
-    /// <summary> DSATTRIB_OptionalVideoAttributes </summary>
-    public static readonly Guid OptionalVideoAttributes = new Guid(0x5A5F08CA, 0x55C2, 0x4033, 0x92, 0xAB, 0x55, 0xDB,
-                                                                    0x8F, 0x78, 0x12, 0x26);
-
-    /// <summary> DSATTRIB_CC_CONTAINER_INFO </summary>
-    public static readonly Guid CC_ContainerInfo = new Guid(0xe7e050fb, 0xdd5d, 0x40dd, 0x99, 0x15, 0x35, 0xDC, 0xB8, 0x1B,
-                                                            0xDC, 0x8a);
-
-    /// <summary> DSATTRIB_TRANSPORT_PROPERTIES </summary>
-    public static readonly Guid TransportProperties = new Guid(0xb622f612, 0x47ad, 0x4671, 0xad, 0x6c, 0x5, 0xa9, 0x8e, 0x65,
-                                                                0xde, 0x3a);
-
-    /// <summary> DSATTRIB_PBDATAG_ATTRIBUTE </summary>
-    public static readonly Guid PBDATagAttribute = new Guid(0xe0b56679, 0x12b9, 0x43cc, 0xb7, 0xdf, 0x57, 0x8c, 0xaa, 0x5a,
-                                                            0x7b, 0x63);
-
-    /// <summary> DSATTRIB_CAPTURE_STREAMTIME </summary>
-    public static readonly Guid CaptureStreamtime = new Guid(0x0c1a5614, 0x30cd, 0x4f40, 0xbc, 0xbf, 0xd0, 0x3e, 0x52, 0x30,
-                                                              0x62, 0x07);
-
-    /// <summary> DSATTRIB_DSHOW_STREAM_DESC </summary>
-    public static readonly Guid DShowStreamDesc = new Guid(0x5fb5673b, 0xa2a, 0x4565, 0x82, 0x7b, 0x68, 0x53, 0xfd, 0x75,
-                                                            0xe6, 0x11);
-
-    /// <summary> DSATTRIB_SAMPLE_LIVE_STREAM_TIME </summary>
-    public static readonly Guid SampleLiveStreamtime = new Guid(0x892cd111, 0x72f3, 0x411d, 0x8b, 0x91, 0xa9, 0xe9, 0x12,
-                                                                0x3a, 0xc2, 0x9a);
-
-    /// <summary> DSATTRIB_WMDRMProtectionInfo </summary>
-    public static readonly Guid WMDRMProtectionInfo = new Guid(0x40749583, 0x6b9d, 0x4eec, 0xb4, 0x3c, 0x67, 0xa1, 0x80,
-                                                                0x1e, 0x1a, 0x9b);
-
-    /// <summary> DSATTRIB_BadSampleInfo </summary>
-    public static readonly Guid BadSampleInfo = new Guid(0xe4846dda, 0x5838, 0x42b4, 0xb8, 0x97, 0x6f, 0x7e, 0x5f, 0xaa,
-                                                          0x2f, 0x2f);
   }
 
-  public static class PropSetID
+  public sealed class PropSetID
   {
+    private PropSetID()
+    {
+      // Prevent people from trying to instantiate this class
+    }
+
     /// <summary> AMPROPSETID_Pin</summary>
     public static readonly Guid Pin = new Guid(0x9b00f101, 0x1567, 0x11d1, 0xb3, 0xf1, 0x00, 0xaa, 0x00, 0x37, 0x61,
                                                0xc5);
@@ -2047,8 +1936,13 @@ namespace DirectShowLib
                                                                       0xc5, 0xb9, 0xd1, 0x3d);
   }
 
-  public static class PinCategory
+  public sealed class PinCategory
   {
+    private PinCategory()
+    {
+      // Prevent people from trying to instantiate this class
+    }
+
     /// <summary> PIN_CATEGORY_CAPTURE </summary>
     public static readonly Guid Capture = new Guid(0xfb6c4281, 0x0353, 0x11d1, 0x90, 0x5f, 0x00, 0x00, 0xc0, 0xcc, 0x16,
                                                    0xba);
@@ -2097,8 +1991,13 @@ namespace DirectShowLib
                                                         0x16, 0xba);
   }
 
-  public static class FindDirection
+  public sealed class FindDirection
   {
+    private FindDirection()
+    {
+      // Prevent people from trying to instantiate this class
+    }
+
     /// <summary> LOOK_UPSTREAM_ONLY </summary>
     public static readonly Guid UpstreamOnly = new Guid(0xac798be0, 0x98e3, 0x11d1, 0xb3, 0xf1, 0x00, 0xaa, 0x00, 0x37,
                                                         0x61, 0xc5);
@@ -2108,8 +2007,13 @@ namespace DirectShowLib
                                                           0x61, 0xc5);
   }
 
-  public static class TimeFormat
+  public sealed class TimeFormat
   {
+    private TimeFormat()
+    {
+      // Prevent people from trying to instantiate this class
+    }
+
     // 00000000-0000-0000-0000-000000000000 TIME_FORMAT_NONE
     public static readonly Guid None = new Guid(0x0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 
@@ -2134,8 +2038,13 @@ namespace DirectShowLib
                                                      0x74, 0xf6);
   }
 
-  public static class PropertyPages
+  public sealed class PropertyPages
   {
+    private PropertyPages()
+    {
+      // Prevent people from trying to instantiate this class
+    }
+
     /// <summary> CLSID_CrossbarFilterPropertyPage </summary>
     public static readonly Guid CrossbarFilterPropertyPage = new Guid(0x71f96461, 0x78f3, 0x11d0, 0xa1, 0x8c, 0x00, 0xa0,
                                                                       0xc9, 0x11, 0x89, 0x56);
@@ -2213,8 +2122,13 @@ namespace DirectShowLib
                                                                      0xc9, 0x11, 0x89, 0x56);
   }
 
-  public static class BDANodeCategory
+  public sealed class BDANodeCategory
   {
+    private BDANodeCategory()
+    {
+      // Prevent people from trying to instantiate this class
+    }
+
     /// <summary> KSNODE_BDA_RF_TUNER </summary>
     public static readonly Guid RFTuner = new Guid(0x71985f4c, 0x1ca1, 0x11d3, 0x9c, 0xc8, 0x00, 0xc0, 0x4f, 0x79, 0x71,
                                                    0xe0);
@@ -2250,17 +2164,6 @@ namespace DirectShowLib
     /// <summary> KSNODE_BDA_IP_SINK </summary>
     public static readonly Guid IPSink = new Guid(0x71985f4e, 0x1ca1, 0x11d3, 0x9c, 0xc8, 0x00, 0xc0, 0x4f, 0x79, 0x71,
                                                   0xe0);
-  }
-
-  public static class TAGTables
-  {
-    /// <summary> UUID_UdriTagTables </summary>
-    public static readonly Guid UdriTagTables = new Guid(0xe1b98d74, 0x9778, 0x4878, 0xb6, 0x64, 0xeb, 0x20, 0x20, 0x36,
-                                                          0x4d, 0x88);
-
-    /// <summary> UUID_WMDRMTagTables </summary>
-    public static readonly Guid WMDRMTagTables = new Guid(0x5DCD1101, 0x9263, 0x45bb, 0xa4, 0xd5, 0xc4, 0x15, 0xab, 0x8c,
-                                                          0x58, 0x9c);
   }
 
   #endregion

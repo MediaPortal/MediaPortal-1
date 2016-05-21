@@ -800,9 +800,6 @@ namespace DirectShowLib
       );
   }
 
-  /*
-   * Interface redefined in MediaPortalCustomisations.
-   * 
   [ComImport, SuppressUnmanagedCodeSecurity,
    Guid("56a868c0-0ad4-11ce-b03a-0020af0ba770"),
    InterfaceType(ComInterfaceType.InterfaceIsDual)]
@@ -816,8 +813,8 @@ namespace DirectShowLib
     [PreserveSig]
     int GetEvent(
       [Out] out EventCode lEventCode,
-      [Out] out IntPtr lParam1,
-      [Out] out IntPtr lParam2,
+      [Out] out int lParam1,
+      [Out] out int lParam2,
       [In] int msTimeout
       );
 
@@ -836,8 +833,8 @@ namespace DirectShowLib
     [PreserveSig]
     int FreeEventParams(
       [In] EventCode lEvCode,
-      [In] IntPtr lParam1,
-      [In] IntPtr lParam2
+      [In] int lParam1,
+      [In] int lParam2
       );
 
     #endregion
@@ -854,7 +851,7 @@ namespace DirectShowLib
 
     [PreserveSig]
     int GetNotifyFlags([Out] out NotifyFlags lplNoNotifyFlags);
-  }*/
+  }
 
   [ComImport, SuppressUnmanagedCodeSecurity,
    Guid("56a868b2-0ad4-11ce-b03a-0020af0ba770"),

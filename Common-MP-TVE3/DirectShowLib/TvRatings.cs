@@ -159,9 +159,7 @@ namespace DirectShowLib.BDA
     System5 = 5,
     System6 = 6,
     Reserved7 = 7,
-    PBDA = 8,
-    AgeBased = 9,
-    TvRat_kSystems = 10,
+    TvRat_kSystems = 8,
     TvRat_SystemDontKnow = 255
   }
 
@@ -178,22 +176,7 @@ namespace DirectShowLib.BDA
     TvRat_5 = 5,
     TvRat_6 = 6,
     TvRat_7 = 7,
-    TvRat_8 = 8,
-    TvRat_9 = 9,
-    TvRat_10 = 10,
-    TvRat_11 = 11,
-    TvRat_12 = 12,
-    TvRat_13 = 13,
-    TvRat_14 = 14,
-    TvRat_15 = 15,
-    TvRat_16 = 16,
-    TvRat_17 = 17,
-    TvRat_18 = 18,
-    TvRat_19 = 19,
-    TvRat_20 = 20,
-    TvRat_21 = 21,
-    TvRat_kLevels = 22,
-    TvRat_Unblock = -1,
+    TvRat_kLevels = 8,
     TvRat_LevelDontKnow = 255
   }
 

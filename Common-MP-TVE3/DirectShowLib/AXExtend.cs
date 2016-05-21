@@ -267,7 +267,7 @@ namespace DirectShowLib
   /// From AMCOPPCommand
   /// </summary>
   [StructLayout(LayoutKind.Sequential)]
-  public class AMCOPPCommand
+  public struct AMCOPPCommand
   {
     public Guid macKDI;
     public Guid guidCommandID;
@@ -280,7 +280,7 @@ namespace DirectShowLib
   /// From AMCOPPStatusInput
   /// </summary>
   [StructLayout(LayoutKind.Sequential)]
-  public class AMCOPPStatusInput
+  public struct AMCOPPStatusInput
   {
     public Guid rApp;
     public Guid guidStatusRequestID;
@@ -699,9 +699,6 @@ namespace DirectShowLib
     Trigger = 0x0008
   }
 
-  /*
-   * Redefined in MediaPortalCustomisations.cs.
-   * 
   /// <summary>
   /// From TVAudioMode
   /// </summary>
@@ -714,11 +711,8 @@ namespace DirectShowLib
     LangA = 0x0010,
     LangB = 0x0020,
     LangC = 0x0040,
-  }*/
+  }
 
-  /*
-   * Redefined in MediaPortalCustomisations.cs.
-   * 
   /// <summary>
   /// From VideoProcAmpProperty
   /// </summary>
@@ -734,7 +728,7 @@ namespace DirectShowLib
     WhiteBalance,
     BacklightCompensation,
     Gain
-  }*/
+  }
 
   /// <summary>
   /// From VideoProcAmpFlags
@@ -1317,9 +1311,6 @@ namespace DirectShowLib
     Flood
   }
 
-  /*
-   * Redefined in MediaPortalCustomisations.cs.
-   * 
   /// <summary>
   /// From CameraControlProperty
   /// </summary>
@@ -1332,7 +1323,7 @@ namespace DirectShowLib
     Exposure,
     Iris,
     Focus
-  }*/
+  }
 
   /// <summary>
   /// From CameraControlFlags
@@ -2139,20 +2130,20 @@ namespace DirectShowLib
     [PreserveSig]
     int GetParameterValues(
       [In, MarshalAs(UnmanagedType.LPStruct)] Guid Api,
-      [Out] out IntPtr Values,
+      [Out] out object[] Values,
       [Out] out int ValuesCount
       );
 
     [PreserveSig]
     int GetDefaultValue(
       [In, MarshalAs(UnmanagedType.LPStruct)] Guid Api,
-      [Out, MarshalAs(UnmanagedType.Struct)] out object Value
+      [Out] out object Value
       );
 
     [PreserveSig]
     int GetValue(
       [In, MarshalAs(UnmanagedType.LPStruct)] Guid Api,
-      [Out, MarshalAs(UnmanagedType.Struct)] out object Value
+      [Out] out object Value
       );
 
     [PreserveSig]
@@ -2178,7 +2169,7 @@ namespace DirectShowLib
       [In, MarshalAs(UnmanagedType.LPStruct)] Guid Api,
       [In] object Value,
       [Out] out Guid[] ChangedParam,
-      [Out] out int ChangedParamCount
+      [Out] int ChangedParamCount
       );
 
     [PreserveSig]
@@ -2213,9 +2204,6 @@ namespace DirectShowLib
       );
   }
 
-  /*
-   * Interface redefined in MediaPortalCustomisations.
-   * 
   [ComImport, SuppressUnmanagedCodeSecurity,
    Guid("70423839-6ACC-4b23-B079-21DBF08156A5"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
@@ -2260,17 +2248,16 @@ namespace DirectShowLib
     [PreserveSig]
     int SetValue(
       [In, MarshalAs(UnmanagedType.LPStruct)] Guid Api,
-      [In] object Value
+      [In] ref object Value
       );
-  }*/
+  }
 
-  /*
-   * Interface redefined in MediaPortalCustomisations.
-   * 
   [ComImport, SuppressUnmanagedCodeSecurity,
   Guid("02997C3B-8E1B-460e-9270-545E0DE9563E"),
   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+#pragma warning disable 612,618
   public interface IVideoEncoder : IEncoderAPI
+#pragma warning restore 612,618
   {
     #region IEncoderAPI Methods
 
@@ -2310,11 +2297,11 @@ namespace DirectShowLib
     [PreserveSig]
     new int SetValue(
       [In, MarshalAs(UnmanagedType.LPStruct)] Guid Api,
-      [In] object Value
+      [In] ref object Value
         );
 
     #endregion
-  }*/
+  }
 
   [ComImport, SuppressUnmanagedCodeSecurity,
    Guid("6feded3e-0ff1-4901-a2f1-43f7012c8515"),
@@ -2329,10 +2316,10 @@ namespace DirectShowLib
       );
 
     [PreserveSig]
-    int SessionSequenceStart([In, MarshalAs(UnmanagedType.LPArray)] byte[] pSig);
+    int SessionSequenceStart([In] AMCOPPSignature pSig);
 
     [PreserveSig]
-    int ProtectionCommand([In, MarshalAs(UnmanagedType.LPStruct)] AMCOPPCommand cmd);
+    int ProtectionCommand([In] AMCOPPCommand cmd);
 
     [PreserveSig]
     int ProtectionStatus(
@@ -4241,69 +4228,6 @@ namespace DirectShowLib
       IReferenceClock pClockForMostOfFilterGraph,
       IReferenceClock pClockForFilter,
       IBaseFilter pFilter
-      );
-  }
-
-  [ComImport, SuppressUnmanagedCodeSecurity,
-   Guid("0e26a181-f40c-4635-8786-976284b52981"),
-   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-  public interface IAMPluginControl
-  {
-    [PreserveSig]
-    int GetPreferredClsid(
-      [In, MarshalAs(UnmanagedType.LPStruct)] Guid subType,
-      out Guid clsid
-      );
-
-    [PreserveSig]
-    int GetPreferredClsidByIndex(
-      int index,
-      out Guid subType,
-      out Guid clsid
-      );
-
-    [PreserveSig]
-    int SetPreferredClsid(
-      [In, MarshalAs(UnmanagedType.LPStruct)] Guid subType,
-      [In, MarshalAs(UnmanagedType.LPStruct)] DsGuid clsid
-      );
-
-    [PreserveSig]
-    int IsDisabled(
-      [In, MarshalAs(UnmanagedType.LPStruct)] Guid clsid
-      );
-
-    [PreserveSig]
-    int GetDisabledByIndex(
-      int index,
-      out Guid clsid
-      );
-
-    [PreserveSig]
-    int SetDisabled(
-      [In, MarshalAs(UnmanagedType.LPStruct)] Guid clsid,
-      bool disabled
-      );
-
-    [PreserveSig]
-    int IsLegacyDisabled(
-      [MarshalAs(UnmanagedType.LPWStr)] string dllName
-      );
-  }
-
-  [ComImport, SuppressUnmanagedCodeSecurity,
-   Guid("cf7b26fc-9a00-485b-8147-3e789d5e8f67"),
-   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-  public interface IAMAsyncReaderTimestampScaling
-  {
-    [PreserveSig]
-    int GetTimestampMode(
-      [MarshalAs(UnmanagedType.Bool)] out bool pfRaw
-      );
-
-    [PreserveSig]
-    int SetTimestampMode(
-      [MarshalAs(UnmanagedType.Bool)] bool fRaw
       );
   }
 

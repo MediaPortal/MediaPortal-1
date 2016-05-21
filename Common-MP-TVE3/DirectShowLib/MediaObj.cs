@@ -235,7 +235,7 @@ namespace DirectShowLib.DMO
 
   public sealed class DMOUtils
   {
-    [DllImport("msdmo.dll", ExactSpelling = true), SuppressUnmanagedCodeSecurity]
+    [DllImport("msdmo.dll")]
     public static extern int DMOEnum(
       [MarshalAs(UnmanagedType.LPStruct)] Guid DMOCategory,
       DMOEnumerator dwFlags,
@@ -246,19 +246,19 @@ namespace DirectShowLib.DMO
       out IEnumDMO ppEnum
       );
 
-    [DllImport("msdmo.dll", ExactSpelling = true), SuppressUnmanagedCodeSecurity]
+    [DllImport("msdmo.dll")]
     public static extern int MoInitMediaType(
       [Out] AMMediaType pmt,
       int i
       );
 
-    [DllImport("msdmo.dll", ExactSpelling = true), SuppressUnmanagedCodeSecurity]
+    [DllImport("msdmo.dll")]
     public static extern int MoCopyMediaType(
       [Out, MarshalAs(UnmanagedType.LPStruct)] AMMediaType dst,
       [In, MarshalAs(UnmanagedType.LPStruct)] AMMediaType src
       );
 
-    [DllImport("MSDmo.dll", CharSet = CharSet.Unicode, ExactSpelling = true), SuppressUnmanagedCodeSecurity]
+    [DllImport("MSDmo.dll")]
     public static extern int DMORegister(
       [MarshalAs(UnmanagedType.LPWStr)] string szName,
       [In, MarshalAs(UnmanagedType.LPStruct)] Guid clsidDMO,
@@ -270,19 +270,19 @@ namespace DirectShowLib.DMO
       [In] DMOPartialMediatype[] pOutTypes
       );
 
-    [DllImport("MSDmo.dll", ExactSpelling = true), SuppressUnmanagedCodeSecurity]
+    [DllImport("MSDmo.dll")]
     public static extern int DMOUnregister(
       [In, MarshalAs(UnmanagedType.LPStruct)] Guid clsidDMO,
       [In, MarshalAs(UnmanagedType.LPStruct)] Guid guidCategory
       );
 
-    [DllImport("MSDmo.dll", CharSet = CharSet.Unicode, ExactSpelling = true), SuppressUnmanagedCodeSecurity]
+    [DllImport("MSDmo.dll")]
     public static extern int DMOGetName(
       [In, MarshalAs(UnmanagedType.LPStruct)] Guid clsidDMO,
       [Out, MarshalAs(UnmanagedType.LPWStr, SizeConst = 80)] StringBuilder szName
       );
 
-    [DllImport("MSDmo.dll", ExactSpelling = true), SuppressUnmanagedCodeSecurity]
+    [DllImport("MSDmo.dll")]
     public static extern int DMOGetTypes(
       [In, MarshalAs(UnmanagedType.LPStruct)] Guid clsidDMO,
       int ulInputTypesRequested,

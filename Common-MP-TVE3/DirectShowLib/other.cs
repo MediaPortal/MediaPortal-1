@@ -224,24 +224,22 @@ namespace DirectShowLib
   /// <summary>
   /// From ACM_MPEG_LAYER* defines
   /// </summary>
-  [Flags]
   public enum AcmMpegHeadLayer : short
   {
     Layer1 = 1,
-    Layer2 = 2,
-    Layer3 = 4
+    Layer2,
+    Layer3
   }
 
   /// <summary>
   /// From ACM_MPEG_* defines
   /// </summary>
-  [Flags]
   public enum AcmMpegHeadMode : short
   {
     Stereo = 1,
-    JointStereo = 2,
-    DualChannel = 4,
-    SingleChannel = 8
+    JointStereo,
+    DualChannel,
+    SingleChannel
   }
 
   /// <summary>
@@ -259,33 +257,6 @@ namespace DirectShowLib
   }
 
   /// <summary>
-  /// From SPEAKER_* defines
-  /// </summary>
-  [Flags]
-  public enum WaveMask
-  {
-    None = 0x0,
-    FrontLeft = 0x1,
-    FrontRight = 0x2,
-    FrontCenter = 0x4,
-    LowFrequency = 0x8,
-    BackLeft = 0x10,
-    BackRight = 0x20,
-    FrontLeftOfCenter = 0x40,
-    FrontRightOfCenter = 0x80,
-    BackCenter = 0x100,
-    SideLeft = 0x200,
-    SideRight = 0x400,
-    TopCenter = 0x800,
-    TopFrontLeft = 0x1000,
-    TopFrontCenter = 0x2000,
-    TopFrontRight = 0x4000,
-    TopBackLeft = 0x8000,
-    TopBackCenter = 0x10000,
-    TopBackRight = 0x20000
-  }
-
-  /// <summary>
   /// From MPEG1WAVEFORMAT
   /// </summary>
   [StructLayout(LayoutKind.Sequential, Pack = 2)]
@@ -300,24 +271,6 @@ namespace DirectShowLib
     public AcmMpegHeadFlags fwHeadFlags;
     public int dwPTSLow;
     public int dwPTSHigh;
-  }
-
-  /// <summary>
-  /// From WAVEFORMATEXTENSIBLE
-  /// </summary>
-  [StructLayout(LayoutKind.Explicit, Pack = 1)]
-  public class WaveFormatExtensible : WaveFormatEx
-  {
-    [FieldOffset(0)]
-    public short wValidBitsPerSample;
-    [FieldOffset(0)]
-    public short wSamplesPerBlock;
-    [FieldOffset(0)]
-    public short wReserved;
-    [FieldOffset(2)]
-    public WaveMask dwChannelMask;
-    [FieldOffset(6)]
-    public Guid SubFormat;
   }
 
   /// <summary>
@@ -348,6 +301,15 @@ namespace DirectShowLib
 
     [PreserveSig]
     int Flush();
+  }
+
+  [ComImport, SuppressUnmanagedCodeSecurity,
+   Guid("a8809222-07bb-48ea-951c-33158100625b"),
+   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+  public interface IGetCapabilitiesKey
+  {
+    [PreserveSig]
+    int GetCapabilitiesKey([Out] out IntPtr pHKey); // HKEY
   }
 
   [ComImport, SuppressUnmanagedCodeSecurity,
@@ -683,7 +645,6 @@ namespace DirectShowLib
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IServiceProvider
   {
-    [PreserveSig]
     int QueryService(
       [In, MarshalAs(UnmanagedType.LPStruct)] DsGuid guidService,
       [In, MarshalAs(UnmanagedType.LPStruct)] DsGuid riid,
@@ -778,15 +739,6 @@ namespace DirectShowLib
 
     [PreserveSig]
     int ResetMultiPassState();
-  }
-
-  [ComImport, SuppressUnmanagedCodeSecurity,
-   Guid("a8809222-07bb-48ea-951c-33158100625b"),
-   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-  public interface IGetCapabilitiesKey
-  {
-    [PreserveSig]
-    int GetCapabilitiesKey([Out] out IntPtr pHKey); // HKEY
   }
 
   #endregion

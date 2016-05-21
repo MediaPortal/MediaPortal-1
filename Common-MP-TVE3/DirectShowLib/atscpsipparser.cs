@@ -683,40 +683,5 @@ namespace DirectShowLib.BDA
       );
   }
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
-   Guid("58C3C827-9D91-4215-BFF3-820A49F0904C"),
-   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-  public interface IServiceLocationDescriptor
-  {
-    [PreserveSig]
-    int GetPCR_PID(
-      out short pwVal
-      );
-
-    [PreserveSig]
-    int GetNumberOfElements(
-      out byte pbVal
-      );
-
-    [PreserveSig]
-    int GetElementStreamType(
-      byte bIndex,
-      out byte pbVal
-      );
-
-    [PreserveSig]
-    int GetElementPID(
-      byte bIndex,
-      out short pwVal
-      );
-
-    [PreserveSig]
-    int GetElementLanguageCode(
-      byte bIndex,
-      [MarshalAs(UnmanagedType.LPArray, SizeConst = 3)] out byte[] LangCode
-      );
-
-  };
-
   #endregion
 }

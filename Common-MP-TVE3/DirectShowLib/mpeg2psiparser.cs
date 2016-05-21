@@ -104,48 +104,6 @@ namespace DirectShowLib.BDA
   }
 
   [ComImport, SuppressUnmanagedCodeSecurity,
-   Guid("BF02FB7E-9792-4e10-A68D-033A2CC246A5"),
-   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-  public interface IGenericDescriptor2 : IGenericDescriptor
-  {
-    #region IGenericDescriptor methods
-
-    [PreserveSig]
-    new int Initialize(
-      [In] IntPtr pbDesc,
-      [In] int bCount
-      );
-
-    [PreserveSig]
-    new int GetTag(
-      [Out] out byte pbVal
-      );
-
-    [PreserveSig]
-    new int GetLength(
-      [Out] out byte pbVal
-      );
-
-    [PreserveSig]
-    new int GetBody(
-      [Out] out IntPtr ppbVal
-      );
-
-    #endregion
-
-    [PreserveSig]
-    int Initialize(
-      IntPtr pbDesc,
-      short wCount
-      );
-
-    [PreserveSig]
-    int GetLength(
-      out short pwVal
-      );
-  };
-
-  [ComImport, SuppressUnmanagedCodeSecurity,
    Guid("6A5918F8-A77A-4f61-AED0-5702BDCDA3E6"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IGenericDescriptor
