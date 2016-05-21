@@ -730,12 +730,12 @@ namespace MediaPortal.Video.Database
         
         if (results.Rows.Count > 0)
         {
-          int lFileId;
+                int lFileId;
           Int32.TryParse(DatabaseUtility.Get(results, 0, "idFile"), out lFileId);
           Int32.TryParse(DatabaseUtility.Get(results, 0, "idMovie"), out lMovieId);
-          return lFileId;
-        }
-      }
+                return lFileId;
+              }
+            }
       catch (ThreadAbortException)
       {
         // Will be logged in thread main code
@@ -881,7 +881,7 @@ namespace MediaPortal.Video.Database
         {
           strSQL = String.Format("SELECT * FROM path WHERE strPath = '{0}'", strPath);
         }
-
+        
         SQLiteResultSet results = m_db.Execute(strSQL);
         
         if (results.Rows.Count > 0)
@@ -1213,7 +1213,7 @@ namespace MediaPortal.Video.Database
         }
 
         int fileID = GetFileId(strFilenameAndPath);
-        
+
         if (fileID < 1)
         {
           return;

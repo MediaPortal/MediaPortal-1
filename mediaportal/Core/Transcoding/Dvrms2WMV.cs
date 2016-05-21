@@ -39,6 +39,14 @@ namespace MediaPortal.Core.Transcoding
   /// </summary>
   public class DVRMS2WMV : ITranscode
   {
+    #region imports
+
+    [DllImport("dvblib.dll", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
+    private static extern int SetWmvProfile(DirectShowLib.IBaseFilter filter, int bitrate, int fps, int screenX,
+                                            int screenY);
+
+    #endregion
+
     #region constants
 
     private const WMVersion DefaultWMversion = WMVersion.V8_0;

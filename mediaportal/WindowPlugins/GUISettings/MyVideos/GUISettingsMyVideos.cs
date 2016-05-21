@@ -383,7 +383,7 @@ namespace WindowPlugins.GUISettings.TV
 
     private void OnVideoCodec()
     {
-      ArrayList availableVideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubType.Mpeg2Video);
+      ArrayList availableVideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubTypeEx.MPEG2);
       
       while (availableVideoFilters.Contains("CyberLink MPEG Muxer"))
       {
@@ -485,8 +485,8 @@ namespace WindowPlugins.GUISettings.TV
 
     private void OnVC1()
     {
-      ArrayList availableVC1VideoFilters = FilterHelper.GetFilters(MediaType.Video, MpMediaSubType.VC1);
-      ArrayList availableVC1CyberlinkVideoFilters = FilterHelper.GetFilters(MediaType.Video, MpMediaSubType.CyberlinkVC1);
+      ArrayList availableVC1VideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubType.VC1);
+      ArrayList availableVC1CyberlinkVideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubType.CyberlinkVC1);
       availableVC1VideoFilters.AddRange(availableVC1CyberlinkVideoFilters.ToArray());
       availableVC1VideoFilters.Sort();
 
@@ -529,8 +529,8 @@ namespace WindowPlugins.GUISettings.TV
 
     private void OnVC1i()
     {
-      ArrayList availableVC1IVideoFilters = FilterHelper.GetFilters(MediaType.Video, MpMediaSubType.VC1);
-      ArrayList availableVC1ICyberlinkVideoFilters = FilterHelper.GetFilters(MediaType.Video, MpMediaSubType.CyberlinkVC1);
+      ArrayList availableVC1IVideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubType.VC1);
+      ArrayList availableVC1ICyberlinkVideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubType.CyberlinkVC1);
 
       while (availableVC1IVideoFilters.Contains("MPC - Video decoder"))
       {
@@ -584,7 +584,7 @@ namespace WindowPlugins.GUISettings.TV
 
     private void OnDivX()
     {
-      ArrayList availableXVIDVideoFilters = FilterHelper.GetFilters(MediaType.Video, MpMediaSubType.XVID1);
+      ArrayList availableXVIDVideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubType.XVID);
       availableXVIDVideoFilters.Sort();
 
       GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_MENU);
@@ -760,7 +760,7 @@ namespace WindowPlugins.GUISettings.TV
 
     private void OnAACAudioCodec()
     {
-      ArrayList availableAACAudioFilters = FilterHelper.GetFilters(MediaType.Audio, MpMediaSubType.AAC);
+      ArrayList availableAACAudioFilters = FilterHelper.GetFilters(MediaType.Audio, MediaSubType.AAC);
       availableAACAudioFilters.Sort();
       GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_MENU);
       

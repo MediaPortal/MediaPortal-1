@@ -401,7 +401,7 @@ namespace WindowPlugins.GUISettings.TV
       {
         strVideoCodec = xmlreader.GetValueAsString("dvdplayer", "videocodec", "");
       }
-      ArrayList availableVideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubType.Mpeg2Video);
+      ArrayList availableVideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubTypeEx.MPEG2);
       //Remove Muxer's from the list to avoid confusion.
       while (availableVideoFilters.Contains("CyberLink MPEG Muxer"))
       {

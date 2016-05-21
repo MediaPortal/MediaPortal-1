@@ -439,19 +439,19 @@ namespace MediaPortal.Player
 
           if (mediaTypes[0].majorType == MediaType.Video && !pinInfo.name.ToLowerInvariant().Contains("sub"))
           {
-            if (mediaTypes[0].subType == MpMediaSubType.VC1)
+            if (mediaTypes[0].subType == MediaSubType.VC1)
             {
               Log.Info("VideoPlayer9: found VC-1 video out pin");
               vc1Codec = true;
             }
-            if (mediaTypes[0].subType == MediaSubType.H264 || mediaTypes[0].subType == MpMediaSubType.AVC1)
+            if (mediaTypes[0].subType == MediaSubType.H264 || mediaTypes[0].subType == MediaSubType.AVC1)
             {
               Log.Info("VideoPlayer9: found H264 video out pin");
               h264Codec = true;
             }
-            if (mediaTypes[0].subType == MpMediaSubType.XVID1 || mediaTypes[0].subType == MpMediaSubType.XVID2 ||
-                mediaTypes[0].subType == MpMediaSubType.DX50_1 || mediaTypes[0].subType == MpMediaSubType.DX50_2 ||
-                mediaTypes[0].subType == MpMediaSubType.DIVX1 || mediaTypes[0].subType == MpMediaSubType.DIVX2)
+            if (mediaTypes[0].subType == MediaSubType.XVID || mediaTypes[0].subType == MediaSubType.xvid ||
+                mediaTypes[0].subType == MediaSubType.dx50 || mediaTypes[0].subType == MediaSubType.DX50 ||
+                mediaTypes[0].subType == MediaSubType.divx || mediaTypes[0].subType == MediaSubType.DIVX)
             {
               Log.Info("VideoPlayer9: found XVID video out pin");
               xvidCodec = true;
@@ -461,19 +461,19 @@ namespace MediaPortal.Player
           else if (mediaTypes[0].majorType == MediaType.Audio)
           {
             //Detection if the Audio Stream is AAC on output pin of the splitter
-            if (mediaTypes[0].subType == MpMediaSubType.LATMAAC || mediaTypes[0].subType == MpMediaSubType.AAC)
+            if (mediaTypes[0].subType == MediaSubType.LATMAAC || mediaTypes[0].subType == MediaSubType.AAC)
             {
               Log.Info("VideoPlayer9: found AAC Audio out pin");
               aacCodec = true;
             }
-            if (mediaTypes[0].subType == MpMediaSubType.LATMAACLAVF)
+            if (mediaTypes[0].subType == MediaSubType.LATMAACLAF)
             {
               Log.Info("VideoPlayer9: found AAC LAVF Audio out pin");
               aacCodecLav = true;
             }
             MediatypeAudio = true;
           }
-          else if (mediaTypes[0].majorType == MediaPortalGuid.Subtitle)
+          else if (mediaTypes[0].majorType == MediaType.Subtitle)
           {
             MediatypeSubtitle = true;
           }

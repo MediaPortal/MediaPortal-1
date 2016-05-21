@@ -131,7 +131,7 @@ namespace MediaPortal.Core.Transcoding
           int typesFetched;
           hr = enumMediaTypes.Next(1, mediaTypes, out typesFetched);
           if (hr != 0 || typesFetched == 0) break;
-          if (mediaTypes[0].majorType == MediaType.Audio && mediaTypes[0].subType == MpMediaSubType.LATMAAC)
+          if (mediaTypes[0].majorType == MediaType.Audio && mediaTypes[0].subType == MediaSubType.LATMAAC)
           {
             Log.Info("TSReader2MP4: found LATM AAC audio out pin on tsreader");
             usingAAC = true;

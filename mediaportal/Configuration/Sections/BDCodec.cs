@@ -58,11 +58,11 @@ namespace MediaPortal.Configuration.Sections
         // Fetch available audio and video renderers
         ArrayList availableAudioRenderers = FilterHelper.GetAudioRenderers();
         // Populate video and audio codecs
-        ArrayList availableVideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubType.Mpeg2Video);
+        ArrayList availableVideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubTypeEx.MPEG2);
         ArrayList availableAudioFilters = FilterHelper.GetFilters(MediaType.Audio, MediaSubType.Mpeg2Audio);
         ArrayList availableH264VideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubType.H264);
-        ArrayList availableVC1VideoFilters = FilterHelper.GetFilters(MediaType.Video, MpMediaSubType.VC1);
-        ArrayList availableVC1CyberlinkVideoFilters = FilterHelper.GetFilters(MediaType.Video, MpMediaSubType.CyberlinkVC1);
+        ArrayList availableVC1VideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubType.VC1);
+        ArrayList availableVC1CyberlinkVideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubType.CyberlinkVC1);
         ArrayList availableFileSyncFilters = FilterHelper.GetFilters(MediaType.Stream, MediaSubType.Null);
         //Remove Cyberlink Muxer from the list to avoid newbie user confusion.
         while (availableVideoFilters.Contains("CyberLink MPEG Muxer"))
@@ -142,7 +142,7 @@ namespace MediaPortal.Configuration.Sections
 
         if (videoCodec == string.Empty)
         {
-          ArrayList availableVideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubType.Mpeg2Video);
+          ArrayList availableVideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubTypeEx.MPEG2);
           videoCodec = SetCodecBox(availableVideoFilters, "LAV Video Decoder", "DScaler Mpeg2 Video Decoder", "");
         }
         if (h264videoCodec == string.Empty)
@@ -152,7 +152,7 @@ namespace MediaPortal.Configuration.Sections
         }
         if (vc1videoCodec == string.Empty)
         {
-          ArrayList availableVC1VideoFilters = FilterHelper.GetFilters(MediaType.Video, MpMediaSubType.VC1);
+          ArrayList availableVC1VideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubType.VC1);
           vc1videoCodec = SetCodecBox(availableVC1VideoFilters, "LAV Video Decoder", "", "");
         }
         if (audioCodec == string.Empty)

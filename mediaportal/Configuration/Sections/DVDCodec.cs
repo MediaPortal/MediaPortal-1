@@ -77,7 +77,7 @@ namespace MediaPortal.Configuration.Sections
       if (_init == false)
       {
         // Fetch available DirectShow filters
-        ArrayList availableVideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubType.Mpeg2Video);
+        ArrayList availableVideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubTypeEx.MPEG2);
         //Remove Muxer's from the list to avoid confusion.
         while (availableVideoFilters.Contains("CyberLink MPEG Muxer"))
         {
@@ -156,7 +156,7 @@ namespace MediaPortal.Configuration.Sections
 
         if (videoCodec == string.Empty)
         {
-          ArrayList availableVideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubType.Mpeg2Video);
+          ArrayList availableVideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubTypeEx.MPEG2);
           videoCodec = SetCodecBox(availableVideoFilters, "LAV Video Decoder", "DScaler Mpeg2 Video Decoder", "");
         }
         if (audioCodec == string.Empty)

@@ -89,6 +89,16 @@ namespace MediaPortal.Player
     [ComImport, Guid("b9559486-E1BB-45D3-A2A2-9A7AFE49B23F")]
     protected class TsReader { }
 
+    #region imports
+
+    [DllImport("dvblib.dll", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.StdCall)]
+    protected static extern int SetupDemuxerPin(IPin pin, int pid, int elementaryStream, bool unmapOtherPins);
+
+    [DllImport("dvblib.dll", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.StdCall)]
+    protected static extern int DumpMpeg2DemuxerMappings(IBaseFilter filter);
+
+    #endregion
+
     #region enums
 
     public enum PlayState

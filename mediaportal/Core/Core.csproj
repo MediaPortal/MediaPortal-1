@@ -336,7 +336,13 @@
     <Compile Include="DShowNET\Helper\PropertyPages\PropertyPage.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="DShowNET\Helper\TunerCountry.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="DShowNET\IPersistMemory.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DShowNET\MediaSubTypeEx.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="ExtensionMethods\ArrayExtMethods.cs" />

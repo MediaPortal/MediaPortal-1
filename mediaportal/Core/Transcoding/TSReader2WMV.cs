@@ -41,6 +41,14 @@ namespace MediaPortal.Core.Transcoding
     [ComImport, Guid("b9559486-E1BB-45D3-A2A2-9A7AFE49B23F")]
     protected class TsReader {}
 
+    #region imports
+
+    [DllImport("dvblib.dll", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
+    private static extern int SetWmvProfile(DirectShowLib.IBaseFilter filter, int bitrate, int fps, int screenX,
+                                            int screenY);
+
+    #endregion
+
     #region constants
 
     private const WMVersion DefaultWMversion = WMVersion.V8_0;
@@ -150,7 +158,7 @@ namespace MediaPortal.Core.Transcoding
           int typesFetched;
           hr = enumMediaTypes.Next(1, mediaTypes, out typesFetched);
           if (hr != 0 || typesFetched == 0) break;
-          if (mediaTypes[0].majorType == MediaType.Audio && mediaTypes[0].subType == MpMediaSubType.LATMAAC)
+          if (mediaTypes[0].majorType == MediaType.Audio && mediaTypes[0].subType == MediaSubType.LATMAAC)
           {
             Log.Info("TSReader2WMV: found LATM AAC audio out pin on tsreader");
             usingAAC = true;

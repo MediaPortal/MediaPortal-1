@@ -212,7 +212,7 @@ namespace MediaPortal.Core.Transcoding
         string outputFileName = System.IO.Path.ChangeExtension(info.file, ".mpg");
         Log.Info("DVR2MPG: set output file to :{0}", outputFileName);
         mt.majorType = MediaType.Stream;
-        mt.subType = MediaSubType.Mpeg2Video;
+        mt.subType = MediaSubTypeEx.MPEG2;
 
         hr = fileWriterFilter.SetFileName(outputFileName, mt);
         if (hr != 0)
