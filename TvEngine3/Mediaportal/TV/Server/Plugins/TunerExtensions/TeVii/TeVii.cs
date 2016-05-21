@@ -174,8 +174,9 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TeVii
     /// Get the friendly name for a specific TeVii device.
     /// </summary>
     /// <remarks>
-    /// The returned pointer is a pointer to an ANSI NULL terminated string (UnmanagedType.LPStr). We don't use
-    /// automatic marshaling because we are not meant to modify or free the memory associated with the pointer.
+    /// The returned pointer points to an ANSI NULL terminated string (UnmanagedType.LPStr). We don't use
+    /// automatic marshaling because it would conflict with the stipulation that we must not modify or
+    /// free the memory associated with the pointer.
     /// </remarks>
     /// <param name="index">The zero-based device index (0 &lt;= index &lt; FindDevices()).</param>
     /// <returns>a pointer to a NULL terminated buffer containing the device name, otherwise <c>IntPtr.Zero</c></returns>
@@ -186,8 +187,9 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TeVii
     /// Get the device path for a specific TeVii device.
     /// </summary>
     /// <remarks>
-    /// The returned pointer is a pointer to an ANSI NULL terminated string (UnmanagedType.LPStr). We don't use
-    /// automatic marshaling because we are not meant to modify or free the memory associated with the pointer.
+    /// The returned pointer points to an ANSI NULL terminated string (UnmanagedType.LPStr). We don't use
+    /// automatic marshaling because it would conflict with the stipulation that we must not modify or
+    /// free the memory associated with the pointer.
     /// </remarks>
     /// <param name="index">The zero-based device index (0 &lt;= index &lt; FindDevices()).</param>
     /// <returns>a pointer to a NULL terminated buffer containing the device path, otherwise <c>IntPtr.Zero</c></returns>
@@ -207,8 +209,8 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TeVii
     /// devices simultaneously.
     /// </remarks>
     /// <param name="index">The zero-based device index (0 &lt;= index &lt; FindDevices()).</param>
-    /// <param name="captureCallBack">An optional delegate that will be invoked when raw stream packets are received.</param>
-    /// <param name="context">An optional pointer that will be passed as a paramter to the capture call back.</param>
+    /// <param name="captureCallBack">An optional delegate that will be invoked when raw packet data is received.</param>
+    /// <param name="context">An optional pointer that will be passed as a paramter to the capture call-back.</param>
     /// <returns><c>true</c> if the device access is successfully established, otherwise <c>false</c></returns>
     [DllImport("Resources\\TeVii.dll", CallingConvention = CallingConvention.Cdecl)]
     [return: MarshalAs(UnmanagedType.Bool)]
@@ -227,13 +229,13 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TeVii
     /// Tune a TeVii DVB-S/S2 tuner to a specific satellite transponder.
     /// </summary>
     /// <param name="index">The zero-based device index (0 &lt;= index &lt; FindDevices()).</param>
-    /// <param name="frequency">The transponder frequency in kHz (eg. 12450000).</param>
-    /// <param name="symbolRate">The transponder symbol rate in sps (eg. 27500000).</param>
-    /// <param name="lnbLof">The LNB local oscillator frequency offset in kHz (eg. 9570000).</param>
+    /// <param name="frequency">The transponder frequency. The unit is kilo-Hertz (kHz).</param>
+    /// <param name="symbolRate">The transponder symbol rate. The unit is symbols-per-second (s/s).</param>
+    /// <param name="lnbLof">The LNB local oscillator frequency offset. The unit is kilo-Hertz (kHz).</param>
     /// <param name="polarisation">The transponder polarisation.</param>
     /// <param name="toneOn"><c>True</c> to turn the 22 kHz oscillator on (to force the LNB to high band mode or switch to port 2).</param>
     /// <param name="modulation">The transponder modulation. Note that it's better to avoid using <c>TeViiModulation.Auto</c> for DVB-S2 transponders to minimise lock time.</param>
-    /// <param name="fecRate">The transponder FEC rate. Note that it's better to avoid using <c>TeViiFecRate.Auto</c> for DVB-S2 transponders to minimise lock time.</param>
+    /// <param name="fecRate">The transponder FEC rate. Note that avoiding <c>TeViiFecRate.Auto</c> for DVB-S2 transponders minimises lock time.</param>
     /// <returns><c>true</c> if the tuner successfully locks on the transponder, otherwise <c>false</c></returns>
     [DllImport("Resources\\TeVii.dll", CallingConvention = CallingConvention.Cdecl)]
     [return: MarshalAs(UnmanagedType.Bool)]
@@ -269,12 +271,12 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TeVii
     /// Set the remote control receiver call back function.
     /// </summary>
     /// <param name="index">The zero-based device index (0 &lt;= index &lt; FindDevices()).</param>
-    /// <param name="remoteKeyCallBack">A delegate that will be invoked when remote keypress events are detected.</param>
-    /// <param name="context">An optional pointer that will be passed as a paramter to the remote key call back.</param>
+    /// <param name="remoteKeyPressCallBack">A delegate that will be invoked when remote key-press events are detected.</param>
+    /// <param name="context">An optional pointer that will be passed as a paramter to the remote key-press call-back.</param>
     /// <returns><c>true</c> if the call back function is successfully set, otherwise <c>false</c></returns>
     [DllImport("Resources\\TeVii.dll", CallingConvention = CallingConvention.Cdecl)]
     [return: MarshalAs(UnmanagedType.Bool)]
-    private static extern bool SetRemoteControl(int index, OnTeViiRemoteControlKeyPress remoteKeyCallBack, IntPtr context);
+    private static extern bool SetRemoteControl(int index, OnTeViiRemoteControlKeyPress remoteKeyPressCallBack, IntPtr context);
 
     #endregion
 

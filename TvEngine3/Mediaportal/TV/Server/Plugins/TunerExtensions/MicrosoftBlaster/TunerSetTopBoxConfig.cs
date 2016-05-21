@@ -19,8 +19,8 @@
 #endregion
 
 using System.Runtime.Serialization;
-using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
 using Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBlaster.Enum;
+using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
 
 namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBlaster
 {
