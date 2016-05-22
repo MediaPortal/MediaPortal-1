@@ -545,11 +545,12 @@ namespace MediaPortal.Player
         m_bFullScreen = GUIGraphicsContext.IsFullScreenVideo;
         _updateNeeded = true;
       }
-      if (!_updateNeeded)
+      if (!_updateNeeded && !GUIGraphicsContext.UpdateVideoWindow)
       {
         return;
       }
       _updateNeeded = false;
+      GUIGraphicsContext.UpdateVideoWindow = false;
       m_bStarted = true;
       float x = m_iPositionX;
       float y = m_iPositionY;

@@ -1467,13 +1467,14 @@ namespace MediaPortal.Player
         _updateNeeded = true;
       }
 
-      if (!_updateNeeded)
+      if (!_updateNeeded && !GUIGraphicsContext.UpdateVideoWindow)
       {
         return;
       }
 
       _started = true;
       _updateNeeded = false;
+      GUIGraphicsContext.UpdateVideoWindow = false;
       float x = _positionX;
       float y = _positionY;
 

@@ -486,6 +486,13 @@ namespace MediaPortal.Player
           return false;
         }
 
+        if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+        {
+          // Force VideoWindow to be refreshed with madVR when switching from video size like 16:9 to 4:3
+          GUIGraphicsContext.UpdateVideoWindow = true;
+          GUIGraphicsContext.VideoReceived();
+        }
+
         Log.Debug("PlaneScene: crop T, B  : {0}, {1}", _cropSettings.Top, _cropSettings.Bottom);
         Log.Debug("PlaneScene: crop L, R  : {0}, {1}", _cropSettings.Left, _cropSettings.Right);
 

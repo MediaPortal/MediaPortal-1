@@ -635,11 +635,12 @@ namespace MediaPortal.Player
         _isFullScreen = GUIGraphicsContext.IsFullScreenVideo;
         _needUpdate = true;
       }
-      if (!_needUpdate)
+      if (!_needUpdate && !GUIGraphicsContext.UpdateVideoWindow)
       {
         return;
       }
       _needUpdate = false;
+      GUIGraphicsContext.UpdateVideoWindow = false;
 
       if (_isFullScreen)
       {

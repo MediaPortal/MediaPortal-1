@@ -1748,6 +1748,7 @@ namespace MediaPortal.GUI.Library
     public static int VideoWindowHeight { get; set; }
 
     public static bool IsWindowVisible { get; set; }
+    public static bool UpdateVideoWindow { get; set; }
 
     /// <summary>
     /// Enable/Disable bypassing of UI Calibration transforms
