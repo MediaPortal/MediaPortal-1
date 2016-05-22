@@ -961,9 +961,22 @@ void FontEngineDrawTexture2(int textureNo1,float x, float y, float nw, float nh,
   m_pDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, verts, sizeof(CUSTOMVERTEX2));
   
   m_pStateManager->SetTexture(0, NULL);
+
+  //IDirect3DVertexBuffer9 *g_list_vb = nullptr;
+  //const DWORD TRI_FVF = D3DFVF_XYZRHW | D3DFVF_DIFFUSE;
+  //void *vb_vertices;
+  //HRESULT hr;
+
+  //hr = m_pDevice->CreateVertexBuffer(sizeof(CUSTOMVERTEX2) * 4, D3DUSAGE_WRITEONLY, TRI_FVF, D3DPOOL_DEFAULT, &g_list_vb, nullptr);
+  //hr = g_list_vb->Lock(0, 0, &vb_vertices, 0);
+  //memcpy(vb_vertices, verts, sizeof(CUSTOMVERTEX2));
+  //g_list_vb->Unlock();
+  //m_pDevice->SetStreamSource(0, g_list_vb, 0, sizeof(verts[0]));
+  //m_pDevice->DrawPrimitive(D3DPT_TRIANGLEFAN, 0, 12);
+
   if (blendMode > BLEND_NONE)
   {
-    m_pStateManager->SetTexture(1, NULL);
+    m_pStateManager->SetTexture(1, nullptr);
   }
 
   // Important - the scissor test (for clipping) must be disabled before return.

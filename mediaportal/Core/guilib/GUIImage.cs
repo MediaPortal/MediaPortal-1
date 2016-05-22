@@ -1524,6 +1524,8 @@ namespace MediaPortal.GUI.Library
                 DXNative.FontEngineDrawTexture2(_packedTextureNo, fx, fy, nw, nh, uoff1, voff1, umax1, vmax1, color, m,
                                                 _packedBlendableTextureNo, _blendabletexUoffCalc, _blendabletexVoffCalc, _blendabletexUmaxCalc, _blendabletexVmaxCalc,
                                                 _blendMode);
+                // TODO need to find why it trigger flichering TV Guide
+                //DXNative.FontEngineDrawTexture2(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, m, 1, 0, 0, 0, 0, FontEngineBlendMode.BLEND_NONE);
               }
 
               // Draw flipped image border.
