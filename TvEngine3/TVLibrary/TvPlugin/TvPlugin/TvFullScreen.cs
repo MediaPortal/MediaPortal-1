@@ -3351,7 +3351,9 @@ namespace TvPlugin
                                        _screenState._bottomDialogMenuVisible ||
                                        _screenState.wasVMRBitmapVisible ||
                                        _screenState.volumeVisible ||
-                                       _screenState._dialogYesNoVisible));
+                                       _screenState._dialogYesNoVisible ||
+                                       Math.Abs(_screenState.Speed - 1) > 0 ||
+                                      _screenState.SeekStep != 0));
     }
 
     public bool ShouldRenderLayer()

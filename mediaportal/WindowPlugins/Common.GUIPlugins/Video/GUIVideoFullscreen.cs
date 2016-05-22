@@ -2455,7 +2455,9 @@ namespace MediaPortal.GUI.Video
                                       screenState.wasVMRBitmapVisible ||
                                       screenState.NotifyDialogVisible ||
                                       screenState.volumeVisible ||
-                                      screenState.forbiddenVisible));
+                                      screenState.forbiddenVisible || 
+                                      Math.Abs(screenState.Speed - 1) > 0 || 
+                                      screenState.SeekStep != 0));
     }
 
     public bool ShouldRenderLayer()
