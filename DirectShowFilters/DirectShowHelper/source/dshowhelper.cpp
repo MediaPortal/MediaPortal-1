@@ -907,14 +907,23 @@ double EVRGetDisplayFPS()
 
 BOOL MadInit(IVMR9Callback* callback, DWORD width, DWORD height, DWORD dwD3DDevice, OAHWND parent, IBaseFilter** madFilter)
 {
+  Log("MPMadDshow::MadInit 1");
   m_RenderPrefix = _T("mad");
 
   m_pDevice = reinterpret_cast<LPDIRECT3DDEVICE9>(dwD3DDevice);
+  Log("MPMadDshow::MadInit 2()");
 
   m_madPresenter = new MPMadPresenter(callback, width, height, parent, m_pDevice);
+  Log("MPMadDshow::MadInit 3()");
   m_pVMR9Filter = m_madPresenter->Initialize();
-  m_pVMR9Filter->AddRef();
-  *madFilter = m_pVMR9Filter;
+  Log("MPMadDshow::MadInit 4()");
+  if (m_pVMR9Filter)
+  {
+    m_pVMR9Filter->AddRef();
+    Log("MPMadDshow::MadInit 5()");
+    *madFilter = m_pVMR9Filter;
+    Log("MPMadDshow::MadInit 6()");
+  }
 
   if (!madFilter)
     return FALSE;
@@ -924,7 +933,6 @@ BOOL MadInit(IVMR9Callback* callback, DWORD width, DWORD height, DWORD dwD3DDevi
 
 void MadDeinit()
 {
-  CAutoLock lock(m_madPresenter);
   try
   {
     m_madPresenter->Shutdown();

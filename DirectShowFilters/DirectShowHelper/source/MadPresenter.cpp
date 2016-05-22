@@ -50,6 +50,7 @@ MPMadPresenter::MPMadPresenter(IVMR9Callback* pCallback, DWORD width, DWORD heig
   m_subProxy = new MadSubtitleProxy(pCallback);
   if (m_subProxy)
     m_subProxy->AddRef();
+  Log("MPMadPresenter::MPMadPresenter()");
 }
 
 MPMadPresenter::~MPMadPresenter()
@@ -67,8 +68,10 @@ IBaseFilter* MPMadPresenter::Initialize()
 {
   CAutoLock cAutoLock(this);
 
+  Log("MPMadPresenter::Init 1()");
   HRESULT hr = CoCreateInstance(CLSID_madVR, nullptr, CLSCTX_INPROC_SERVER, __uuidof(IMadVRDirect3D9Manager), reinterpret_cast<void**>(&m_pMad));
 
+  Log("MPMadPresenter::Init 2()");
   if (FAILED(hr))
     return nullptr;
 
@@ -79,26 +82,40 @@ IBaseFilter* MPMadPresenter::Initialize()
   CComQIPtr<ISubRender> pSubRender = m_pMad;
   CComQIPtr<IVideoWindow> pWindow = m_pMad;
   CComQIPtr<IMadVRCommand> pCommand = m_pMad;
+  Log("MPMadPresenter::Init 3()");
 
   if (!baseFilter || !pOsdServices || !manager || !pSubclassReplacement || !pSubRender || !pCommand || !pWindow)
     return nullptr;
+  Log("MPMadPresenter::Init 4()");
 
   pOsdServices->OsdSetRenderCallback("MP-GUI", this, nullptr);
+  Log("MPMadPresenter::Init 5()");
   manager->ConfigureDisplayModeChanger(true, true);
+  Log("MPMadPresenter::Init 6()");
 
   pSubRender->SetCallback(m_subProxy);
+  Log("MPMadPresenter::Init 7()");
 
   pCommand->SendCommandBool("disableSeekbar", true);
+  Log("MPMadPresenter::Init 8()");
 
   pWindow->put_Owner(m_hParent);
+  Log("MPMadPresenter::Init 9()");
   pWindow->SetWindowForeground(true);
+  Log("MPMadPresenter::Init 10()");
   pWindow->put_MessageDrain(m_hParent);
+  Log("MPMadPresenter::Init 11()");
 
   pOsdServices.Release();
+  Log("MPMadPresenter::Init 12()");
   manager.Release();
+  Log("MPMadPresenter::Init 13()");
   pSubRender.Release();
+  Log("MPMadPresenter::Init 14()");
   pCommand.Release();
+  Log("MPMadPresenter::Init 15()");
   pWindow.Release();
+  Log("MPMadPresenter::Init 16()");
 
   // TODO implement IMadVRSubclassReplacement
   //pSubclassReplacement->DisableSubclassing();
