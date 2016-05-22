@@ -731,14 +731,9 @@ namespace MediaPortal.Player
           rSource.X, rSource.Y, rSource.X + rSource.Width, rSource.Y + rSource.Height);
         Log.Info("overlay: dst        : ({0},{1})-({2},{3})",
           rDest.X, rDest.Y, rDest.X + rDest.Width, rDest.Y + rDest.Height);
-        Log.Info("TSStreamBufferPlayer:Window ({0},{1})-({2},{3}) - ({4},{5})-({6},{7})",
+        Log.Info("TSReaderPlayer:Window ({0},{1})-({2},{3}) - ({4},{5})-({6},{7})",
           rSource.X, rSource.Y, rSource.Right, rSource.Bottom,
           rDest.X, rDest.Y, rDest.Right, rDest.Bottom);
-        if (rSource.Y == 0)
-        {
-          rSource.Y += 5;
-          rSource.Height -= 10;
-        }
         SetSourceDestRectangles(rSource, rDest);
         SetVideoPosition(rDest);
         _sourceRectangle = rSource;
