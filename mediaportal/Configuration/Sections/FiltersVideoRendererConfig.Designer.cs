@@ -201,7 +201,7 @@ namespace MediaPortal.Configuration.Sections
       this.radioButtonMadVR.Size = new System.Drawing.Size(178, 17);
       this.radioButtonMadVR.TabIndex = 13;
       this.radioButtonMadVR.TabStop = true;
-      this.radioButtonMadVR.Text = "Madshi\'s Video Render (madVR)";
+      this.radioButtonMadVR.Text = "Madshi\'s Video Renderer (madVR)";
       this.radioButtonMadVR.UseVisualStyleBackColor = true;
       this.radioButtonMadVR.CheckedChanged += new System.EventHandler(this.radioButtonMadVR_CheckedChanged);
       // 
