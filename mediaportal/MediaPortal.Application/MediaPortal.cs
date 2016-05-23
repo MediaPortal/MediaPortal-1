@@ -4275,9 +4275,27 @@ public class MediaPortalApp : D3D, IRender
 
             string fileName = string.Format("{0}\\{1:00}-{2:00}-{3:00}", directory, DateTime.Now.Hour, DateTime.Now.Minute, DateTime.Now.Second);
             Log.Info("Main: Taking screenshot - Target: {0}.png", fileName);
-            Surface backbuffer = GUIGraphicsContext.DX9Device.GetBackBuffer(0, 0, BackBufferType.Mono);
-            SurfaceLoader.Save(fileName + ".png", ImageFileFormat.Png, backbuffer);
-            backbuffer.Dispose();
+            if (GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR)
+            {
+              Surface backbuffer = GUIGraphicsContext.DX9Device.GetBackBuffer(0, 0, BackBufferType.Mono);
+              SurfaceLoader.Save(fileName + ".png", ImageFileFormat.Png, backbuffer);
+              backbuffer.Dispose();
+            }
+            else if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR && GUIGraphicsContext.InVmr9Render)
+            {
+              if (GUIGraphicsContext.DX9DeviceMadVr != null)
+              {
+                Surface backbuffer = GUIGraphicsContext.DX9DeviceMadVr.GetBackBuffer(0, 0, BackBufferType.Mono);
+                SurfaceLoader.Save(fileName + ".png", ImageFileFormat.Png, backbuffer);
+                backbuffer.Dispose();
+              }
+            }
+            else
+            {
+              Surface backbuffer = GUIGraphicsContext.DX9Device.GetBackBuffer(0, 0, BackBufferType.Mono);
+              SurfaceLoader.Save(fileName + ".png", ImageFileFormat.Png, backbuffer);
+              backbuffer.Dispose();
+            }
             Log.Info("Main: Taking screenshot done");
           }
           catch (Exception ex)
