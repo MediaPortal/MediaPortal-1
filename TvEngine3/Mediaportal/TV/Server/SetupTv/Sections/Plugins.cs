@@ -57,11 +57,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         foreach (ITvServerPlugin plugin in _pluginLoader.Plugins)
         {
           bool isEnabled = ServiceAgents.Instance.SettingServiceAgent.GetValue(GetPluginEnabledSettingName(plugin), false);
-          this.LogDebug("  plugin...");
-          this.LogDebug("    name     = {0}", plugin.Name);
-          this.LogDebug("    enabled? = {0}", isEnabled);
-          this.LogDebug("    version  = {0}", plugin.Version);
-          this.LogDebug("    author   = {0}", plugin.Author);
+          this.LogDebug("  name = {0, -40}, is enabled = {1, -5}, version = {2, -10}, author = {3}", plugin.Name, isEnabled, plugin.Version, plugin.Author);
 
           ListViewItem item = listViewPlugins.Items.Add(string.Empty);
           item.Group = listGroup;
@@ -77,9 +73,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         foreach (Type plugin in _pluginLoader.IncompatiblePlugins)
         {
           string version = plugin.Assembly.GetName().Version.ToString();
-          this.LogDebug("  plugin...");
-          this.LogDebug("    name     = {0}", plugin.Name);
-          this.LogDebug("    version  = {0}", version);
+          this.LogDebug("  name = {0, -40}, version = {2, -10}", plugin.Name, version);
 
           ListViewItem item = listViewPlugins.Items.Add(string.Empty);
           item.Group = listGroup;
