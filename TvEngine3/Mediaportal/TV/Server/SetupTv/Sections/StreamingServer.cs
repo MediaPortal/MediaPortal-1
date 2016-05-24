@@ -152,7 +152,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         this.LogInfo("streamer: port changed from {0} to {1}", _port, numericUpDownPort.Value);
         ServiceAgents.Instance.SettingServiceAgent.SaveValue("rtspServerPort", (int)numericUpDownPort.Value);
       }
-      OnServerConfigurationChanged(this, false, true, null);
+      OnServerConfigurationChanged(this, true, null);
 
       base.OnSectionDeActivated();
     }
@@ -160,7 +160,12 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     private void OnClientListUpdateTimerTick(object sender, EventArgs e)
     {
       // Update the client list. Take care to do it on the UI thread.
-      this.Invoke((MethodInvoker)delegate
+      if (!listViewClients.InvokeRequired)
+      {
+        UpdateClientList();
+        return;
+      }
+      listViewClients.Invoke((MethodInvoker)delegate
       {
         UpdateClientList();
       });

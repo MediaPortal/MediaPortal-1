@@ -22,7 +22,7 @@ using System.Collections.Generic;
 
 namespace Mediaportal.TV.Server.SetupControls
 {
-  public delegate void ServerConfigurationChangedEventHandler(object sender, bool restartController, bool reloadConfigController, HashSet<int> reloadConfigTuners);
+  public delegate void ServerConfigurationChangedEventHandler(object sender, bool reloadConfigController, HashSet<int> reloadConfigTuners);
   public delegate void PluginEnabledOrDisabledEventHandler(object sender, object plugin, bool isEnabled);
 
   public partial class SectionSettings : System.Windows.Forms.UserControl
@@ -56,11 +56,11 @@ namespace Mediaportal.TV.Server.SetupControls
       Text = text;
     }
 
-    protected virtual void OnServerConfigurationChanged(object sender, bool restartController, bool reloadConfigController, HashSet<int> reloadConfigTuners)
+    protected virtual void OnServerConfigurationChanged(object sender, bool reloadConfigController, HashSet<int> reloadConfigTuners)
     {
       if (_onServerConfigurationChanged != null)
       {
-        _onServerConfigurationChanged(sender, restartController, reloadConfigController, reloadConfigTuners);
+        _onServerConfigurationChanged(sender, reloadConfigController, reloadConfigTuners);
       }
     }
 

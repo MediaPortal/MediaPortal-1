@@ -82,7 +82,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
       if (_changedTuners.Count > 0)
       {
-        OnServerConfigurationChanged(this, false, false, _changedTuners);
+        OnServerConfigurationChanged(this, false, _changedTuners);
       }
 
       base.OnSectionDeActivated();

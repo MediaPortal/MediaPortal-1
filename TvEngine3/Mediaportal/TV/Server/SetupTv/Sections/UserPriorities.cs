@@ -70,7 +70,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         int priority;
         if (!string.IsNullOrEmpty(userName) && int.TryParse(priorityString, out priority))
         {
-          this.LogDebug("  {0,-13} = {1}", userName, priority);
+          this.LogDebug("  {0, -13} = {1}", userName, priority);
           _prioritiesOtherCustom[userName] = priority;
           dataGridViewUserPriorities.Rows.Add(new string[2] { userName.Trim(), priority.ToString() });
         }
@@ -150,7 +150,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
       if (needReload)
       {
-        OnServerConfigurationChanged(this, false, true, null);
+        OnServerConfigurationChanged(this, true, null);
       }
 
       base.OnSectionDeActivated();
