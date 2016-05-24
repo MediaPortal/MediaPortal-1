@@ -193,9 +193,9 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
         this.LogDebug("XMLTV import: reading programmes");
         showProgress("loading programs", stats);
 
-        string preferredLanguageCodes = SettingsManagement.GetValue("epgPreferredLanguages", string.Empty);
-        string preferredClassificationSystems = SettingsManagement.GetValue("epgPreferredClassificationSystems", string.Empty);
-        string preferredRatingSystems = SettingsManagement.GetValue("epgPreferredRatingSystems", string.Empty);
+        List<string> preferredLanguageCodes = new List<string>(SettingsManagement.GetValue("epgPreferredLanguages", string.Empty).Split('|'));
+        List<string> preferredClassificationSystems = new List<string>(SettingsManagement.GetValue("epgPreferredClassificationSystems", string.Empty).Split('|'));
+        List<string> preferredRatingSystems = new List<string>(SettingsManagement.GetValue("epgPreferredRatingSystems", string.Empty).Split('|'));
         IDictionary<string, ProgramCategory> dbCategories = new Dictionary<string, ProgramCategory>();
         foreach (var programCategory in ProgramCategoryManagement.ListAllProgramCategories())
         {
@@ -354,7 +354,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
     }
 
     private static void ParseProgramme(XmlReader xmlProg, DateTime startDateTime, DateTime endDateTime,
-                                        string preferredLanguageCodes, string preferredClassificationSystems, string preferredRatingSystems,
+                                        List<string> preferredLanguageCodes, List<string> preferredClassificationSystems, List<string> preferredRatingSystems,
                                         IDictionary<string, ProgramCategory> dbCategories, IList<MappedChannel> mappedChannels)
     {
       string title = null;
@@ -596,14 +596,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
 
       foreach (MappedChannel mappedChannel in mappedChannels)
       {
-        var program = ProgramFactory.CreateEmptyProgram();
-        program.IdChannel = mappedChannel.ChannelId;
-        program.StartTime = startDateTime;
-        program.EndTime = endDateTime;
-        if (!string.IsNullOrEmpty(title))
-        {
-          program.Title = title;
-        }
+        var program = ProgramFactory.CreateProgram(mappedChannel.ChannelId, startDateTime, endDateTime, title ?? string.Empty);
         if (!string.IsNullOrEmpty(description))
         {
           program.Description = description;

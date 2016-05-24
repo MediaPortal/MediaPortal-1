@@ -24,7 +24,6 @@ using System.Drawing;
 using System.Globalization;
 using System.Linq;
 using System.Windows.Media.Animation;
-using Mediaportal.TV.Server.Common.Types.Enum;
 using Mediaportal.TV.Server.TVControl.ServiceAgents;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.Entities.Factories;
@@ -516,21 +515,9 @@ namespace Mediaportal.TV.TvPlugin.EPG
         day = Utils.GetShortDayString(_viewingTime);
         GUIPropertyManager.SetProperty(SkinPropertyPrefix + ".Guide.Day", day);
 
-        //2004 03 31 22 20 00
-        string strStart = String.Format("{0}{1:00}{2:00}{3:00}{4:00}{5:00}",
-                                        _viewingTime.Year, _viewingTime.Month, _viewingTime.Day,
-                                        _viewingTime.Hour, _viewingTime.Minute, 0);
-        var dtStop = new DateTime();
-        dtStop = _viewingTime;
-        dtStop = dtStop.AddMinutes(_numberOfBlocks * _timePerBlock - 1);
-        iMin = dtStop.Minute;
-        string strEnd = String.Format("{0}{1:00}{2:00}{3:00}{4:00}{5:00}",
-                                      dtStop.Year, dtStop.Month, dtStop.Day,
-                                      dtStop.Hour, iMin, 0);
-
-        long iStart = Int64.Parse(strStart);
-        long iEnd = Int64.Parse(strEnd);
-
+        DateTime iStart = new DateTime(_viewingTime.Year, _viewingTime.Month, _viewingTime.Day, _viewingTime.Hour, _viewingTime.Minute, 0, _viewingTime.Kind);
+        DateTime iEnd = iStart.AddMinutes(_numberOfBlocks * _timePerBlock - 1);
+        iMin = iEnd.Minute;
 
         LoadSchedules(false);
 
@@ -582,25 +569,7 @@ namespace Mediaportal.TV.TvPlugin.EPG
             }
           }
 
-          IDictionary<int, IList<Program>> programEntities = ServiceAgents.Instance.ProgramServiceAgent.GetProgramsForAllChannels(Utils.longtodate(iStart),
-                                                                      Utils.longtodate(iEnd),
-                                                                      visibleChannels);
-          // todo tedious code.. Id like to rethink this
-          // as we need to convert the IDictionary<int, IList<Program>> to IDictionary<int, IList<ProgramBLL>>
-          IDictionary<int, IList<ProgramBLL>> programs = new Dictionary<int, IList<ProgramBLL>>();
-          foreach (IList<Program> pList in programEntities.Values)
-          {
-            IList<ProgramBLL> programBlls = new List<ProgramBLL>();
-            int idchannel = 0;
-            foreach (var p in pList)
-            {
-              idchannel = p.IdChannel;
-              var programBll = new ProgramBLL(p);
-              programBlls.Add(programBll);
-            }
-            programs[idchannel] = programBlls;
-          }
-
+          IDictionary<int, IList<Program>> programs = ServiceAgents.Instance.ProgramServiceAgent.GetProgramsForAllChannels(iStart, iEnd, visibleChannels);
 
           // make sure the TV Guide heading is visiable and the single channel labels are not.
           SetGuideHeadingVisibility(true);
@@ -1450,11 +1419,7 @@ namespace Mediaportal.TV.TvPlugin.EPG
         else
         {
           // bugfix for 0 items
-          var prog = ProgramFactory.CreateEmptyProgram();
-          prog.IdChannel = channel.IdChannel;
-          prog.Title = "-";
-          prog.StartTime = _viewingTime;
-          prog.EndTime = _viewingTime;
+          var prog = ProgramFactory.CreateProgram(channel.IdChannel, _viewingTime, _viewingTime, "-");
           if (_programs.Count != 0)
           {
             program = new ProgramBLL(_programs[_programs.Count - 1]);
@@ -1865,9 +1830,9 @@ namespace Mediaportal.TV.TvPlugin.EPG
       return Color.White.ToArgb();
     }
 
-    private void RenderChannel(ref IDictionary<int, IList<ProgramBLL>> mapPrograms, int iChannel,
+    private void RenderChannel(ref IDictionary<int, IList<Program>> mapPrograms, int iChannel,
                                  GuideChannel tvGuideChannel,
-                                 long iStart, long iEnd, bool selectCurrentShow)
+                                 DateTime start, DateTime end, bool selectCurrentShow)
     {
       Channel channel = tvGuideChannel.Channel;
 
@@ -1903,7 +1868,7 @@ namespace Mediaportal.TV.TvPlugin.EPG
         }
       }
 
-      IList<ProgramBLL> programs = null;
+      IList<Program> programs = null;
       if (mapPrograms.ContainsKey(channel.IdChannel))
       {
         programs = mapPrograms[channel.IdChannel];
@@ -1912,17 +1877,13 @@ namespace Mediaportal.TV.TvPlugin.EPG
       bool noEPG = (programs == null || programs.Count == 0);
       if (noEPG)
       {
-        var prog = ProgramFactory.CreateEmptyProgram();
-        prog.IdChannel = channel.IdChannel;
-        prog.StartTime = Utils.longtodate(iStart);
-        prog.EndTime = Utils.longtodate(Utils.datetolong(Utils.longtodate(iEnd)));  // WHY?!?
-        prog.Title = GUILocalizeStrings.Get(736);
+        var prog = ProgramFactory.CreateProgram(channel.IdChannel, start, end, GUILocalizeStrings.Get(736));
         prog.Channel = channel;
         if (programs == null)
         {
-          programs = new List<ProgramBLL>();
+          programs = new List<Program>();
         }
-        programs.Add(new ProgramBLL(prog));
+        programs.Add(prog);
       }
 
       int iProgram = 0;
@@ -1943,19 +1904,20 @@ namespace Mediaportal.TV.TvPlugin.EPG
         height = GetControl((int)Controls.IMG_CHAN1).Height;
       }
 
-      foreach (ProgramBLL program in programs)
+      foreach (Program p in programs)
       {
-        if (Utils.datetolong(program.Entity.EndTime) <= iStart)
+        ProgramBLL program = new ProgramBLL(p);
+        if (program.Entity.EndTime <= start)
           continue;
 
         string strTitle = TVUtil.GetDisplayTitle(program.Entity);
         bool bStartsBefore = false;
         bool bEndsAfter = false;
 
-        if (Utils.datetolong(program.Entity.StartTime) < iStart)
+        if (program.Entity.StartTime < start)
           bStartsBefore = true;
 
-        if (Utils.datetolong(program.Entity.EndTime) > iEnd)
+        if (program.Entity.EndTime > end)
           bEndsAfter = true;
 
         DateTime dtBlokStart = _viewingTime;
@@ -1972,7 +1934,7 @@ namespace Mediaportal.TV.TvPlugin.EPG
           bRecording = IsRecordingNoEPG(channel);
         }
 
-        bool programIsHd = program.Entity.Description.Contains(_hdtvProgramText);
+        bool programIsHd = program.Entity.IsHighDefinition.GetValueOrDefault(false) || program.Entity.Description.Contains(_hdtvProgramText);
 
         int iStartXPos = 0;
         int iEndXPos = 0;

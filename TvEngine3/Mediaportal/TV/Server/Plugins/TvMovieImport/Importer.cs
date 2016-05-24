@@ -484,11 +484,7 @@ namespace Mediaportal.TV.Server.Plugins.TvMovieImport
 
         foreach (MappedChannel mappedChannel in mappedChannels)
         {
-          Program prog = ProgramFactory.CreateEmptyProgram();
-          prog.IdChannel = mappedChannel.ChannelId;
-          prog.StartTime = start;
-          prog.EndTime = end;
-          prog.Title = title;
+          Program prog = ProgramFactory.CreateProgram(mappedChannel.ChannelId, start, end, title);
           prog.Description = description;
           if (episodeName != null)
           {

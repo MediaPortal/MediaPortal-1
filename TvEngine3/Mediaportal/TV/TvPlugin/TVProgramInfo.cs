@@ -323,13 +323,9 @@ namespace Mediaportal.TV.TvPlugin
         // to keep the dialog working at all
         if (CurrentProgram == null)
         {
-          var prog = ProgramFactory.CreateEmptyProgram();
-          prog.IdChannel = currentSchedule.IdChannel;
-          prog.StartTime = currentSchedule.StartTime;
-          prog.EndTime = currentSchedule.EndTime;
-          prog.Title = currentSchedule.ProgramName;
+          var prog = ProgramFactory.CreateProgram(currentSchedule.IdChannel, currentSchedule.StartTime, currentSchedule.EndTime, currentSchedule.ProgramName);
           CurrentProgram = prog;
-        }        
+        }
       }
     }
 
@@ -1144,7 +1140,13 @@ namespace Mediaportal.TV.TvPlugin
         currentSchedule == null ||
         (
           currentSchedule != null &&
-          (currentSchedule.ScheduleType == 0 || (currentSchedule.ScheduleType > 0 && schedule.ScheduleType > 0))
+          (
+            currentSchedule.ScheduleType == (int)ScheduleRecordingType.Once ||
+            (
+              currentSchedule.ScheduleType != (int)ScheduleRecordingType.Once &&
+              schedule.ScheduleType != (int)ScheduleRecordingType.Once
+            )
+          )
         )
       )
       {
@@ -1234,11 +1236,7 @@ namespace Mediaportal.TV.TvPlugin
                 Log.Debug("TVProgramInfo.CreateProgram: Skip old recording(s)");
                 foreach (Schedule conflict in conflicts)
                 {
-                  var prog = ProgramFactory.CreateEmptyProgram();
-                  prog.IdChannel = conflict.IdChannel;
-                  prog.StartTime = conflict.StartTime;
-                  prog.EndTime = conflict.EndTime;
-                  prog.Title = conflict.ProgramName;
+                  var prog = ProgramFactory.CreateProgram(conflict.IdChannel, conflict.StartTime, conflict.EndTime, conflict.ProgramName);
                   CancelProgram(prog, ServiceAgents.Instance.ScheduleServiceAgent.GetSchedule(conflict.IdSchedule), dialogId);
                 }
                 break;
@@ -1333,7 +1331,7 @@ namespace Mediaportal.TV.TvPlugin
         Log.Debug("TVProgramInfo.CreateProgram - create schedule = {0}", schedule.Entity.ToString());
         ServiceAgents.Instance.ScheduleServiceAgent.SaveSchedule(schedule.Entity);
 
-        if (currentSchedule == null || (currentSchedule.ScheduleType > 0 && schedule.Entity.ScheduleType != (int)ScheduleRecordingType.Once))
+        if (currentSchedule == null || (currentSchedule.ScheduleType != (int)ScheduleRecordingType.Once && schedule.Entity.ScheduleType != (int)ScheduleRecordingType.Once))
         {
           currentSchedule = schedule.Entity;
         }
@@ -1499,10 +1497,16 @@ namespace Mediaportal.TV.TvPlugin
       }
       dlg.Reset();
       dlg.SetHeading(1042);
-      dlg.AddLocalizedString(1043); //Until watched
-      dlg.AddLocalizedString(1044); //Until space needed
-      dlg.AddLocalizedString(1045); //Until date
-      dlg.AddLocalizedString(1046); //Always
+      dlg.AddLocalizedString(1043);   //Until watched
+      dlg.AddLocalizedString(1044);   //Until space needed
+      int offset = -1;
+      if (rec.ScheduleType != (int)ScheduleRecordingType.Once && rec.MaxAirings > 0 && rec.MaxAirings < int.MaxValue)
+      {
+        dlg.AddLocalizedString(102020); //Until episode limit
+        offset = 0;
+      }
+      dlg.AddLocalizedString(1045);   //Until date
+      dlg.AddLocalizedString(1046);   //Always
       switch (rec.KeepMethod)
       {
         case (int)RecordingKeepMethod.UntilWatched:
@@ -1511,11 +1515,14 @@ namespace Mediaportal.TV.TvPlugin
         case (int)RecordingKeepMethod.UntilSpaceNeeded:
           dlg.SelectedLabel = 1;
           break;
-        case (int)RecordingKeepMethod.UntilDate:
+        case (int)RecordingKeepMethod.UntilEpisodeLimit:
           dlg.SelectedLabel = 2;
           break;
+        case (int)RecordingKeepMethod.UntilDate:
+          dlg.SelectedLabel = 3 + offset;
+          break;
         case (int)RecordingKeepMethod.Always:
-          dlg.SelectedLabel = 3;
+          dlg.SelectedLabel = 4 + offset;
           break;
       }
       dlg.DoModal(GetID);
@@ -1530,7 +1537,9 @@ namespace Mediaportal.TV.TvPlugin
           break;
         case 1044:
           rec.KeepMethod = (int)RecordingKeepMethod.UntilSpaceNeeded;
-
+          break;
+        case 102020:
+          rec.KeepMethod = (int)RecordingKeepMethod.UntilEpisodeLimit;
           break;
         case 1045:
           rec.KeepMethod = (int)RecordingKeepMethod.UntilDate;

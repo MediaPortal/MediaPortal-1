@@ -294,8 +294,8 @@ namespace WebEPG.Parser
         _genre = "";
       }
       _subTitle = dbProgram.EpisodeName;
-      _episode = dbProgram.EpisodeNumber.HasValue ? dbProgram.EpisodeNumber.Value : -1;
-      _season = dbProgram.SeasonNumber.HasValue ? dbProgram.SeasonNumber.Value : -1;
+      _episode = dbProgram.EpisodeNumber.GetValueOrDefault(-1);
+      _season = dbProgram.SeasonNumber.GetValueOrDefault(-1);
     }
 
     //public Program ToTvProgram(string channelName)
@@ -321,25 +321,20 @@ namespace WebEPG.Parser
         category = ProgramCategoryManagement.AddCategory(category);
       }
 
-      Program program = ProgramFactory.CreateEmptyProgram();
-      program.IdChannel = dbIdChannel;
-      program.StartTime = _startTime.ToLocalTime();
-      if (_endTime == null)
-      {
-        program.EndTime = program.StartTime;
-      }
-      else
-      {
-        program.EndTime = _endTime.ToLocalTime();
-      }
-      program.Title = _title;
+      Program program = ProgramFactory.CreateProgram(dbIdChannel, _startTime.ToLocalTime(), (_endTime ?? _startTime).ToLocalTime(), _title);
       program.Description = _description;
       if (!string.IsNullOrEmpty(_subTitle))
       {
         program.EpisodeName = _subTitle;
       }
-      program.SeasonNumber = _season;
-      program.EpisodeNumber = _episode;
+      if (_season > 0)
+      {
+        program.SeasonNumber = _season;
+      }
+      if (_episode > 0)
+      {
+        program.EpisodeNumber = _episode;
+      }
       program.IsPreviouslyShown = _repeat;
       if (category != null)
       {

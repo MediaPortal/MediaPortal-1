@@ -28,6 +28,7 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces.Channel;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channel;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using TuningDetail = Mediaportal.TV.Server.TVDatabase.Entities.TuningDetail;
 
 namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.EPG
 {
@@ -63,7 +64,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.EPG
 
     public void UpdateEpgForChannel(IChannel tuningDetail, KeyValuePair<IChannel, IList<EpgProgram>> epgChannel)
     {
-      Channel dbChannel = IsInsertAllowed(tuningDetail, epgChannel);
+      Channel dbChannel = IsInsertAllowed(epgChannel);
       if (dbChannel == null)
       {
         return;
@@ -150,7 +151,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.EPG
 
     #region private functions
 
-    private Channel IsInsertAllowed(IChannel sourceTuningDetail, KeyValuePair<IChannel, IList<EpgProgram>> epgChannel)
+    private Channel IsInsertAllowed(KeyValuePair<IChannel, IList<EpgProgram>> epgChannel)
     {
       ChannelDvbBase dvbChannel = epgChannel.Key as ChannelDvbBase;
       if (dvbChannel == null)
@@ -276,11 +277,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.EPG
         }
       }
 
-      var program = ProgramFactory.CreateEmptyProgram();
-      program.IdChannel = dbChannel.IdChannel;
-      program.StartTime = epgProgram.StartTime;
-      program.EndTime = epgProgram.EndTime;
-      program.Title = title;
+      var program = ProgramFactory.CreateProgram(dbChannel.IdChannel, epgProgram.StartTime, epgProgram.EndTime, title);
       program.Description = description;
       if (idCategory != -1)
       {

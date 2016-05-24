@@ -11,14 +11,14 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities.Factories
       return CloneHelper.DeepCopy<Program>(source);
     }
 
-    public static Program CreateEmptyProgram()
+    public static Program CreateProgram(int idChannel, DateTime startTime, DateTime endTime, string title)
     {
       var program = new Program
       {
-        IdChannel = -1,
-        StartTime = SqlDateTime.MinValue.Value,
-        EndTime = SqlDateTime.MinValue.Value,
-        Title = string.Empty,
+        IdChannel = idChannel,
+        StartTime = startTime,
+        EndTime = endTime,
+        Title = title ?? string.Empty,
         Description = string.Empty,
         EpisodeName = null,
         SeriesId = null,
