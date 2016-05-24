@@ -24,7 +24,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -45,8 +44,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 {
   public partial class TestChannels : SectionSettings
   {
- 
-
     private DateTime _lastTune;
     private readonly Dictionary<string, bool> _users = new Dictionary<string, bool>();
     private double _avg;
@@ -72,11 +69,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       : base("Test Channels")
     {
       InitializeComponent();
-      Init();
-    }
-
-    private void Init()
-    {
       DoubleBuffered = true;
     }
 
@@ -441,14 +433,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     {
       Stopwatch sw = Stopwatch.StartNew();
       UpdateDiscontinuityCounter(user, nextRowIndexForDiscUpdate);
-      if (user.Priority.HasValue)
-      {
-        result = ServiceAgents.Instance.ControllerServiceAgent.StartTimeShifting(user.Name, user.Priority.GetValueOrDefault(), channel.IdChannel, out card, out user); 
-      }
-      else
-      {
-        result = ServiceAgents.Instance.ControllerServiceAgent.StartTimeShifting(user.Name, channel.IdChannel, out card, out user); 
-      }      
+      result = ServiceAgents.Instance.ControllerServiceAgent.StartTimeShifting(user.Name, channel.IdChannel, out card, out user, user.Priority);
       mSecsElapsed = sw.ElapsedMilliseconds;
       _avg += mSecsElapsed;
       return user;
@@ -620,39 +605,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         return;
       }
 
-      Utils.UpdateCardStatus(mpListView1);      
-    }
-
-    private void ColorLine(Tuner tuner, ListViewItem item)
-    {
-      Color lineColor = Color.White;
-      int subchannels = 0;
-      IUser user;
-      bool cardInUse = ServiceAgents.Instance.ControllerServiceAgent.IsCardInUse(tuner.IdTuner, out user);
-
-      if (!cardInUse)
-      {
-        subchannels = ServiceAgents.Instance.ControllerServiceAgent.GetSubChannels(tuner.IdTuner);
-        if (subchannels > 0)
-        {
-          lineColor = Color.Red;
-        }
-      }
-
-      item.UseItemStyleForSubItems = false;
-
-      item.BackColor = lineColor;
-
-      foreach (ListViewItem.ListViewSubItem lvi in item.SubItems)
-      {
-        lvi.BackColor = lineColor;
-      }
-
-      item.SubItems[3].Text = "";
-      item.SubItems[4].Text = "";
-      item.SubItems[5].Text = "";
-      item.SubItems[6].Text = tuner.Name;
-      item.SubItems[7].Text = Convert.ToString(subchannels);
+      Utils.UpdateCardStatus(mpListView1);
     }
 
     private void txtRndFrom_TextChanged(object sender, EventArgs e)
@@ -800,47 +753,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     private void chkRndPrio_CheckedChanged(object sender, EventArgs e)
     {
       _rndPrio = chkRndPrio.Checked;
-  }
-
-    private void btnCustom_Click(object sender, EventArgs e)
-    {
-      IVirtualCard card;      
-
-      Channel dr1 = ServiceAgents.Instance.ChannelServiceAgent.GetChannel(1);
-      Channel dr2 = ServiceAgents.Instance.ChannelServiceAgent.GetChannel(2);
-
-      
-
-      IUser low = UserFactory.CreateBasicUser("dr1", 1);
-      IUser low2 = UserFactory.CreateBasicUser("dr2", 1);
-
-      TvResult tvresult = ServiceAgents.Instance.ControllerServiceAgent.StartTimeShifting(low.Name, dr1.IdChannel, out card, out low);
-      low.CardId = card.Id;
-      Thread.Sleep(2000);
-
-      bool result = ServiceAgents.Instance.ControllerServiceAgent.ParkTimeShifting(low.Name, 0, dr1.IdChannel, out low);      
-
-      Thread.Sleep(1000);
-      tvresult = ServiceAgents.Instance.ControllerServiceAgent.StartTimeShifting(low.Name, dr2.IdChannel, out card, out low);
-      low.CardId = card.Id;
-
-      //StartTimeshifting(tv3, low, 0, out mSecsElapsed, out result, out card);      
-
-
-      //ThreadPool.QueueUserWorkItem(delegate { StartTimeshifting(nosignal, low, 0, out mSecsElapsed, out result, out card); });            
-
-      //Thread.Sleep(1000);
-
-      //ThreadPool.QueueUserWorkItem(delegate { StartTimeshifting(nosignal, low, 0, out mSecsElapsed, out result, out card); });
-
-
-      //StartTimeshifting(tv3_plus, low2, 0, out mSecsElapsed, out result, out card);      
-
-      //StartTimeshifting(tv3, high, 0, out mSecsElapsed, out result, out card);
-
-      //Thread.Sleep(3000);
-
-      //StartTimeshifting(tv3_plus, high, 0, out mSecsElapsed, out result, out card);
     }
   }
 

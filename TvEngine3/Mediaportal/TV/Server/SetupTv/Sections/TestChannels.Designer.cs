@@ -34,7 +34,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(TestChannels));
       this.mpLabelChannel = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.mpGroupBox1 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPGroupBox();
-      this.btnCustom = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
       this.lblIgnored = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.txtIgnored = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPNumericTextBox();
       this.lblDisc = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
@@ -44,15 +43,15 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.lblAvgMsec = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.txtAvgMsec = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPNumericTextBox();
       this.mpListViewLog = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPListView();
-      this.columnHeader12 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-      this.columnHeader13 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-      this.columnHeader6 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-      this.columnHeader7 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-      this.columnHeader8 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-      this.columnHeader9 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-      this.columnHeader10 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-      this.columnHeader14 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-      this.columnHeader11 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+      this.columnHeader12 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader();
+      this.columnHeader13 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader();
+      this.columnHeader6 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader();
+      this.columnHeader7 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader();
+      this.columnHeader8 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader();
+      this.columnHeader9 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader();
+      this.columnHeader10 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader();
+      this.columnHeader14 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader();
+      this.columnHeader11 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader();
       this.mpButton1 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
       this.lblTotal = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.txtTotal = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPNumericTextBox();
@@ -78,15 +77,15 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.lblTuneDelayMsec = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.chkShareChannels = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPCheckBox();
       this.mpListView1 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPListView();
-      this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-      this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-      this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-      this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-      this.columnHeader5 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-      this.User = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-      this.cardName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-      this.subchannels = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-      this.owner = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+      this.columnHeader1 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader();
+      this.columnHeader2 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader();
+      this.columnHeader3 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader();
+      this.columnHeader4 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader();
+      this.columnHeader5 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader();
+      this.User = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader();
+      this.cardName = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader();
+      this.subchannels = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader();
+      this.owner = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader();
       this.chkSynch = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPCheckBox();
       this.chkRndPrio = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPCheckBox();
       this.mpGroupBox1.SuspendLayout();
@@ -104,7 +103,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // 
       this.mpGroupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
-      this.mpGroupBox1.Controls.Add(this.btnCustom);
       this.mpGroupBox1.Controls.Add(this.lblIgnored);
       this.mpGroupBox1.Controls.Add(this.txtIgnored);
       this.mpGroupBox1.Controls.Add(this.lblDisc);
@@ -132,16 +130,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.mpGroupBox1.TabStop = false;
       this.mpGroupBox1.Text = "Status:";
       // 
-      // btnCustom
-      // 
-      this.btnCustom.Location = new System.Drawing.Point(323, 149);
-      this.btnCustom.Name = "btnCustom";
-      this.btnCustom.Size = new System.Drawing.Size(36, 23);
-      this.btnCustom.TabIndex = 80;
-      this.btnCustom.Text = "Custom";
-      this.btnCustom.UseVisualStyleBackColor = true;
-      this.btnCustom.Click += new System.EventHandler(this.btnCustom_Click);
-      // 
       // lblIgnored
       // 
       this.lblIgnored.AutoSize = true;
@@ -154,6 +142,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // txtIgnored
       // 
       this.txtIgnored.Location = new System.Drawing.Point(268, 151);
+      this.txtIgnored.MaximumValue = 2147483647;
+      this.txtIgnored.MinimumValue = -2147483648;
       this.txtIgnored.Name = "txtIgnored";
       this.txtIgnored.ReadOnly = true;
       this.txtIgnored.Size = new System.Drawing.Size(46, 20);
@@ -173,6 +163,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // txtDisc
       // 
       this.txtDisc.Location = new System.Drawing.Point(268, 172);
+      this.txtDisc.MaximumValue = 2147483647;
+      this.txtDisc.MinimumValue = -2147483648;
       this.txtDisc.Name = "txtDisc";
       this.txtDisc.ReadOnly = true;
       this.txtDisc.Size = new System.Drawing.Size(46, 20);
@@ -192,6 +184,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // txtFirstFail
       // 
       this.txtFirstFail.Location = new System.Drawing.Point(170, 173);
+      this.txtFirstFail.MaximumValue = 2147483647;
+      this.txtFirstFail.MinimumValue = -2147483648;
       this.txtFirstFail.Name = "txtFirstFail";
       this.txtFirstFail.ReadOnly = true;
       this.txtFirstFail.Size = new System.Drawing.Size(46, 20);
@@ -211,6 +205,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // txtAvgMsec
       // 
       this.txtAvgMsec.Location = new System.Drawing.Point(74, 173);
+      this.txtAvgMsec.MaximumValue = 2147483647;
+      this.txtAvgMsec.MinimumValue = -2147483648;
       this.txtAvgMsec.Name = "txtAvgMsec";
       this.txtAvgMsec.ReadOnly = true;
       this.txtAvgMsec.Size = new System.Drawing.Size(46, 20);
@@ -312,6 +308,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // txtTotal
       // 
       this.txtTotal.Location = new System.Drawing.Point(394, 172);
+      this.txtTotal.MaximumValue = 2147483647;
+      this.txtTotal.MinimumValue = -2147483648;
       this.txtTotal.Name = "txtTotal";
       this.txtTotal.ReadOnly = true;
       this.txtTotal.Size = new System.Drawing.Size(46, 20);
@@ -331,6 +329,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // txtFailed
       // 
       this.txtFailed.Location = new System.Drawing.Point(170, 152);
+      this.txtFailed.MaximumValue = 2147483647;
+      this.txtFailed.MinimumValue = -2147483648;
       this.txtFailed.Name = "txtFailed";
       this.txtFailed.ReadOnly = true;
       this.txtFailed.Size = new System.Drawing.Size(46, 20);
@@ -350,6 +350,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // txtSucceded
       // 
       this.txtSucceded.Location = new System.Drawing.Point(74, 153);
+      this.txtSucceded.MaximumValue = 2147483647;
+      this.txtSucceded.MinimumValue = -2147483648;
       this.txtSucceded.Name = "txtSucceded";
       this.txtSucceded.ReadOnly = true;
       this.txtSucceded.Size = new System.Drawing.Size(46, 20);
@@ -422,6 +424,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // txtConcurrentTunes
       // 
       this.txtConcurrentTunes.Location = new System.Drawing.Point(105, 217);
+      this.txtConcurrentTunes.MaximumValue = 2147483647;
+      this.txtConcurrentTunes.MinimumValue = -2147483648;
       this.txtConcurrentTunes.Name = "txtConcurrentTunes";
       this.txtConcurrentTunes.Size = new System.Drawing.Size(46, 20);
       this.txtConcurrentTunes.TabIndex = 63;
@@ -449,6 +453,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // txtRndFrom
       // 
       this.txtRndFrom.Location = new System.Drawing.Point(183, 242);
+      this.txtRndFrom.MaximumValue = 2147483647;
+      this.txtRndFrom.MinimumValue = -2147483648;
       this.txtRndFrom.Name = "txtRndFrom";
       this.txtRndFrom.Size = new System.Drawing.Size(33, 20);
       this.txtRndFrom.TabIndex = 65;
@@ -459,6 +465,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // txtRndTo
       // 
       this.txtRndTo.Location = new System.Drawing.Point(235, 242);
+      this.txtRndTo.MaximumValue = 2147483647;
+      this.txtRndTo.MinimumValue = -2147483648;
       this.txtRndTo.Name = "txtRndTo";
       this.txtRndTo.Size = new System.Drawing.Size(33, 20);
       this.txtRndTo.TabIndex = 67;
@@ -492,6 +500,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // txtTuneDelay
       // 
       this.txtTuneDelay.Location = new System.Drawing.Point(412, 220);
+      this.txtTuneDelay.MaximumValue = 2147483647;
+      this.txtTuneDelay.MinimumValue = -2147483648;
       this.txtTuneDelay.Name = "txtTuneDelay";
       this.txtTuneDelay.Size = new System.Drawing.Size(46, 20);
       this.txtTuneDelay.TabIndex = 72;
@@ -670,38 +680,37 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     private MPNumericTextBox txtSucceded;
     private MPButton mpButton1;
     private MPListView mpListViewLog;
-    private System.Windows.Forms.ColumnHeader columnHeader6;
-    private System.Windows.Forms.ColumnHeader columnHeader7;
-    private System.Windows.Forms.ColumnHeader columnHeader8;
-    private System.Windows.Forms.ColumnHeader columnHeader9;
-    private System.Windows.Forms.ColumnHeader columnHeader10;
-    private System.Windows.Forms.ColumnHeader columnHeader11;
+    private MPColumnHeader columnHeader6;
+    private MPColumnHeader columnHeader7;
+    private MPColumnHeader columnHeader8;
+    private MPColumnHeader columnHeader9;
+    private MPColumnHeader columnHeader10;
+    private MPColumnHeader columnHeader11;
     private MPNumericTextBox txtTuneDelay;
     private MPLabel lblFirstFail;
     private MPNumericTextBox txtFirstFail;
     private MPLabel lblAvgMsec;
     private MPNumericTextBox txtAvgMsec;
-    private System.Windows.Forms.ColumnHeader columnHeader12;
-    private System.Windows.Forms.ColumnHeader columnHeader13;
+    private MPColumnHeader columnHeader12;
+    private MPColumnHeader columnHeader13;
     private MPLabel lblTuneDelayMsec;
     private MPCheckBox chkShareChannels;
-    private System.Windows.Forms.ColumnHeader columnHeader14;
+    private MPColumnHeader columnHeader14;
     private MPLabel lblDisc;
     private MPNumericTextBox txtDisc;
     private MPListView mpListView1;
-    private System.Windows.Forms.ColumnHeader columnHeader1;
-    private System.Windows.Forms.ColumnHeader columnHeader2;
-    private System.Windows.Forms.ColumnHeader columnHeader3;
-    private System.Windows.Forms.ColumnHeader columnHeader4;
-    private System.Windows.Forms.ColumnHeader columnHeader5;
-    private System.Windows.Forms.ColumnHeader User;
-    private System.Windows.Forms.ColumnHeader cardName;
-    private System.Windows.Forms.ColumnHeader subchannels;
+    private MPColumnHeader columnHeader1;
+    private MPColumnHeader columnHeader2;
+    private MPColumnHeader columnHeader3;
+    private MPColumnHeader columnHeader4;
+    private MPColumnHeader columnHeader5;
+    private MPColumnHeader User;
+    private MPColumnHeader cardName;
+    private MPColumnHeader subchannels;
     private MPCheckBox chkSynch;
     private MPLabel lblIgnored;
     private MPNumericTextBox txtIgnored;
     private MPCheckBox chkRndPrio;
-    private MPButton btnCustom;
-    private System.Windows.Forms.ColumnHeader owner;
+    private MPColumnHeader owner;
   }
 }
