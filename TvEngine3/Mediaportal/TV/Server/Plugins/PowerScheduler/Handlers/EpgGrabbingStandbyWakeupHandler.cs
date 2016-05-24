@@ -184,10 +184,9 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler.Handlers
         }
 
         // check if any card is grabbing EPG
-        for (int i = 0; i < _controllerService.Cards; i++)
+        foreach (int id in _controllerService.CardCollection.Keys)
         {
-          int cardId = _controllerService.CardId(i);
-          if (_controllerService.IsGrabbingEpg(cardId))
+          if (_controllerService.IsGrabbingEpg(id))
           {
             return _useAwayMode ? StandbyMode.AwayModeRequested : StandbyMode.StandbyPrevented;
           }
