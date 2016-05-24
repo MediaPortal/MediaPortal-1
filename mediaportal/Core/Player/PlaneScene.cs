@@ -639,6 +639,7 @@ namespace MediaPortal.Player
       if (!GUIGraphicsContext.InVmr9Render)
       {
         GUIGraphicsContext.InVmr9Render = true;
+        GUIGraphicsContext.RenderLayerOnce = true;
       }
 
       if (GUIGraphicsContext.IsSwitchingToNewSkin)
@@ -682,6 +683,12 @@ namespace MediaPortal.Player
         SubtitleRenderer.GetInstance().Render();
         BDOSDRenderer.GetInstance().Render();
         GUIGraphicsContext.RenderOverlay = true;
+      }
+
+      if (GUIGraphicsContext.RenderLayerOnce && layers == GUILayers.over)
+      {
+        layers = GUILayers.all;
+        GUIGraphicsContext.RenderLayerOnce = false;
       }
 
       bool visible = false;
