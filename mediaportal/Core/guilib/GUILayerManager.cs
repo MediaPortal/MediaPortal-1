@@ -18,6 +18,7 @@
 
 #endregion
 
+using System;
 using System.Threading;
 
 namespace MediaPortal.GUI.Library
@@ -46,7 +47,7 @@ namespace MediaPortal.GUI.Library
 
     private const int MAX_LAYERS = 15;
 
-    private static IRenderLayer[] _layers = new IRenderLayer[MAX_LAYERS];
+    private static readonly IRenderLayer[] _layers = new IRenderLayer[MAX_LAYERS];
 
     public static void RegisterLayer(IRenderLayer renderer, LayerType zOrder)
     {
@@ -111,10 +112,9 @@ namespace MediaPortal.GUI.Library
             _layers[i].RenderLayer(timePassed);
             GUIFontManager.Present();
 
-            if (videoLayer != i)
-            {
-              uiVisible = true;
-            }
+            if (videoLayer == i) continue;
+            uiVisible = true;
+            //Log.Error("Layer uiVisible and layer [{0}]", Enum.GetName(typeof(LayerType), i));
           }
         }
       }
