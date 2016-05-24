@@ -109,6 +109,7 @@
       <SubType>
       </SubType>
     </Compile>
+    <Compile Include="ProgramPartial.cs" />
     <Compile Include="VideoEncoderPartial.cs" />
     <Compile Include="TuningDetailPartial.cs" />
     <Compile Include="SatellitePartial.cs" />
