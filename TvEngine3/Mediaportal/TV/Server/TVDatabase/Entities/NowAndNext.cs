@@ -35,17 +35,17 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
     private int _idProgramNext;
     private string _episodeName;
     private string _episodeNameNext;
-    private string _seriesNum;
-    private string _seriesNumNext;
-    private string _episodeNum;
-    private string _episodeNumNext;
-    private string _episodePart;
-    private string _episodePartNext;
+    private int? _seasonNumber;
+    private int? _seasonNumberNext;
+    private int? _episodeNumber;
+    private int? _episodeNumberNext;
+    private int? _episodePartNumber;
+    private int? _episodePartNumberNext;
 
     public NowAndNext(int idChannel, DateTime nowStart, DateTime nowEnd, string titleNow, string titleNext,
                       int idProgramNow, int idProgramNext,
-                      string episodeName, string episodeNameNext, string seriesNum, string seriesNumNext,
-                      string episodeNum, string EpisodeNumNext, string episodePart, string episodePartNext)
+                      string episodeName, string episodeNameNext, int? seasonNumber, int? seasonNumberNext,
+                      int? episodeNumber, int? episodeNumberNext, int? episodePartNumber, int? episodePartNumberNext)
     {
       _idChannel = idChannel;
       _nowStart = nowStart;
@@ -56,40 +56,36 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
       _idProgramNext = idProgramNext;
       _episodeName = episodeName;
       _episodeNameNext = episodeNameNext;
-      _seriesNum = seriesNum;
-      _seriesNumNext = seriesNumNext;
-      _episodeNum = episodeNum;
-      _episodeNumNext = EpisodeNumNext;
-      _episodePart = episodePart;
-      _episodePartNext = episodePartNext;
+      _seasonNumber = seasonNumber;
+      _seasonNumberNext = seasonNumberNext;
+      _episodeNumber = episodeNumber;
+      _episodeNumberNext = episodeNumberNext;
+      _episodePartNumber = episodePartNumber;
+      _episodePartNumberNext = episodePartNumberNext;
     }
 
     [DataMember]
     public int IdChannel
     {
       get { return _idChannel; }
-      set { _idChannel = value; }
     }
 
     [DataMember]
     public DateTime NowStartTime
     {
       get { return _nowStart; }
-      set { _nowStart = value; }
     }
 
     [DataMember]
     public DateTime NowEndTime
     {
       get { return _nowEnd; }
-      set { _nowEnd = value; }
     }
 
     [DataMember]
     public string TitleNow
     {
       get { return _titleNow; }
-      set { _titleNow = value; }
     }
 
     [DataMember]
@@ -103,7 +99,6 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
     public int IdProgramNow
     {
       get { return _idProgramNow; }
-      set { _idProgramNow = value; }
     }
 
     [DataMember]
@@ -117,7 +112,6 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
     public string EpisodeName
     {
       get { return _episodeName; }
-      set { _episodeName = value; }
     }
 
     [DataMember]
@@ -128,45 +122,42 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
     }
 
     [DataMember]
-    public string SeriesNum
+    public int? SeasonNumber
     {
-      get { return _seriesNum; }
-      set { _seriesNum = value; }
+      get { return _seasonNumber; }
     }
 
     [DataMember]
-    public string SeriesNumNext
+    public int? SeasonNumberNext
     {
-      get { return _seriesNumNext; }
-      set { _seriesNumNext = value; }
+      get { return _seasonNumberNext; }
+      set { _seasonNumberNext = value; }
     }
 
     [DataMember]
-    public string EpisodeNum
+    public int? EpisodeNumber
     {
-      get { return _episodeNum; }
-      set { _episodeNum = value; }
+      get { return _episodeNumber; }
     }
 
     [DataMember]
-    public string EpisodeNumNext
+    public int? EpisodeNumberNext
     {
-      get { return _episodeNumNext; }
-      set { _episodeNumNext = value; }
+      get { return _episodeNumberNext; }
+      set { _episodeNumberNext = value; }
     }
 
     [DataMember]
-    public string EpisodePart
+    public int? EpisodePartNubmer
     {
-      get { return _episodePart; }
-      set { _episodePart = value; }
+      get { return _episodePartNumber; }
     }
 
     [DataMember]
-    public string EpisodePartNext
+    public int? EpisodePartNumberNext
     {
-      get { return _episodePartNext; }
-      set { _episodePartNext = value; }
+      get { return _episodePartNumberNext; }
+      set { _episodePartNumberNext = value; }
     }
   }
 }

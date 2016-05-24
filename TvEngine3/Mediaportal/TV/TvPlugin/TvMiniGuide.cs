@@ -212,8 +212,6 @@ namespace Mediaportal.TV.TvPlugin
                 _canceled = false;
                 PageDestroy();
 
-                TVHome.UserChannelChanged = true;
-
                 if (changeChannel != null)
                 {
                   //todo: remove gentle
@@ -545,18 +543,11 @@ namespace Mediaportal.TV.TvPlugin
           NowAndNext currentNowAndNext;
           bool hasNowNext = listNowNext.TryGetValue(channelID, out currentNowAndNext);
 
-          if (hasNowNext)
+          if (hasNowNext && currentNowAndNext.IdProgramNow > 0)
           {
-            if (!string.IsNullOrEmpty(currentNowAndNext.TitleNow))
-            {
-              TVUtil.TitleDisplay(sbTmp, currentNowAndNext.TitleNow, currentNowAndNext.EpisodeName,
-                                              currentNowAndNext.SeriesNum,
-                                              currentNowAndNext.EpisodeNum, currentNowAndNext.EpisodePart);
-            }
-            else
-            {
-              sbTmp.Append(local736);
-            }
+            sbTmp.Append(TVUtil.TitleDisplay(currentNowAndNext.TitleNow, currentNowAndNext.EpisodeName,
+                                            currentNowAndNext.SeasonNumber,
+                                            currentNowAndNext.EpisodeNumber, currentNowAndNext.EpisodePartNubmer));
           }
           else
           {
@@ -569,7 +560,7 @@ namespace Mediaportal.TV.TvPlugin
 
           sbTmp.Length = 0;
 
-          if (_showChannelNumber == true)
+          if (_showChannelNumber)
           {
             sb.Append(" - ");
             if (!_byIndex)
@@ -602,14 +593,12 @@ namespace Mediaportal.TV.TvPlugin
             }
           }
 
-
-
-          if (hasNowNext && listNowNext[channelID].IdProgramNext != -1)
+          if (hasNowNext && currentNowAndNext.IdProgramNext > 0)
           {
-            TVUtil.TitleDisplay(sbTmp, currentNowAndNext.TitleNext, currentNowAndNext.EpisodeNameNext,
-                                            currentNowAndNext.SeriesNumNext,
-                                            currentNowAndNext.EpisodeNumNext,
-                                            currentNowAndNext.EpisodePartNext);
+            sbTmp.Append(TVUtil.TitleDisplay(currentNowAndNext.TitleNext, currentNowAndNext.EpisodeNameNext,
+                                            currentNowAndNext.SeasonNumberNext,
+                                            currentNowAndNext.EpisodeNumberNext,
+                                            currentNowAndNext.EpisodePartNumberNext));
           }
           else
           {
