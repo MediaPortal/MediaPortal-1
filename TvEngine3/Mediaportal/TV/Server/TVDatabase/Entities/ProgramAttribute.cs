@@ -38,10 +38,10 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
 
     public int LanguageId { get; private set; }
 
-   public ProgramAttribute(string displayName, int languageId)
-   {
+    public ProgramAttribute(string displayName, int languageId)
+    {
       DisplayName = displayName;
       LanguageId = languageId;
-   }
+    }
   }
 }
