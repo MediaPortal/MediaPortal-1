@@ -22,7 +22,7 @@ using System;
 
 namespace Mediaportal.TV.Server.SetupTV.Sections.Helpers
 {
-  internal class Codec : IComparable
+  internal class Codec : IComparable<Codec>
   {
     #region constants
 
@@ -97,15 +97,10 @@ namespace Mediaportal.TV.Server.SetupTV.Sections.Helpers
 
     #endregion
 
-    #region IComparable member
+    #region IComparable<Codec> member
 
-    public int CompareTo(object obj)
+    public int CompareTo(Codec other)
     {
-      Codec other = obj as Codec;
-      if (other == null)
-      {
-        return -1;
-      }
       int result = string.Compare(Name, other.Name);
       if (result != 0)
       {
