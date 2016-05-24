@@ -811,7 +811,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
 
     #endregion
 
-    #region external ID
+    #region external tuner
 
     private void comboBoxExternalInputSourceVideo_SelectedIndexChanged(object sender, EventArgs e)
     {
