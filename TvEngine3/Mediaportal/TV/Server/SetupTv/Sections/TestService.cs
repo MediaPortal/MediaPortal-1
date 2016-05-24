@@ -140,12 +140,12 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       : base("Manual Control")
     {
       InitializeComponent();
-      Init();
+      mpComboBoxChannels.ImageList = imageList1;
+      DoubleBuffered = true;
 
       _serverMonitor.OnServerConnected += new ServerMonitor.ServerConnectedDelegate(_serverMonitor_OnServerConnected);
       _serverMonitor.OnServerDisconnected += new ServerMonitor.ServerDisconnectedDelegate(_serverMonitor_OnServerDisconnected);
       _serverMonitor.Start();
-      
     }
 
     void _serverMonitor_OnServerDisconnected()
@@ -157,13 +157,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     {
       
     }
-
-    private void Init()
-    {
-      mpComboBoxChannels.ImageList = imageList1;
-      DoubleBuffered = true;
-    }
-
 
     public override void OnSectionActivated()
     {
@@ -316,8 +309,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
     private bool IsSameUser(IVirtualCard card)
     {
-      var isSameUser = txtUsername.Text.Length == 0 || card.User.Name == txtUsername.Text;
-      return isSameUser;
+      return txtUsername.Text.Length == 0 || card.User.Name == txtUsername.Text;
     }
 
     private string GetUserName(int cardId, int id)
@@ -470,7 +462,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       {
         if (subch.IdChannel == id)
         {
-          if (subch.TvUsage == TvUsage.Parked)
+          if (subch.Usage == TvUsage.Parked)
           {
             isChannelParked = true;
             break;
@@ -760,7 +752,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       IUser user;
       if (parsed)
       {
-        result = ServiceAgents.Instance.ControllerServiceAgent.StartTimeShifting(txtUsername.Text, prio, id, out card, out user);
+        result = ServiceAgents.Instance.ControllerServiceAgent.StartTimeShifting(txtUsername.Text, id, out card, out user, prio);
       }
       else
       {
