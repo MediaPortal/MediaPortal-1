@@ -314,7 +314,7 @@ namespace Mediaportal.TV.Server.SetupTV
       try
       {
         Log.Info("---- check connection to TV service ----");
-        int tunerCount = ServiceAgents.Instance.ControllerServiceAgent.Cards;
+        string version = ServiceAgents.Instance.ControllerServiceAgent.GetAssemblyVersion;
         Log.Info("---- TV service connection seems to be okay ----");
       }
       catch (Exception ex)
