@@ -36,26 +36,22 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.labelParkTimeLimit = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.numericUpDownTunerLimit = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPNumericUpDown();
       this.numericUpDownParkTimeLimit = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPNumericUpDown();
-      this.labelBufferFileCountDescription = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.labelBufferSizeDescription = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.groupBoxBuffer = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPGroupBox();
-      this.labelBufferFileCountMaximumDescription = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.labelBufferSizePausedDescription = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.labelBufferLocation = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.buttonBufferLocationBrowse = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
       this.textBoxBufferLocation = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPTextBox();
-      this.numericUpDownBufferFileSize = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPNumericUpDown();
-      this.numericUpDownBufferFileCountMaximum = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPNumericUpDown();
-      this.numericUpDownBufferFileCount = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPNumericUpDown();
-      this.labelBufferFileSizeUnit = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
-      this.labelBufferFileCountMaximum = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
-      this.labelBufferFileCount = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
-      this.labelBufferFileSize = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.numericUpDownBufferSizePaused = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPNumericUpDown();
+      this.numericUpDownBufferSize = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPNumericUpDown();
+      this.labelBufferSizePaused = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.labelBufferSize = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.groupBoxOther.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTunerLimit)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownParkTimeLimit)).BeginInit();
       this.groupBoxBuffer.SuspendLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownBufferFileSize)).BeginInit();
-      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownBufferFileCountMaximum)).BeginInit();
-      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownBufferFileCount)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownBufferSizePaused)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownBufferSize)).BeginInit();
       this.SuspendLayout();
       // 
       // groupBoxOther
@@ -66,9 +62,9 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.groupBoxOther.Controls.Add(this.numericUpDownTunerLimit);
       this.groupBoxOther.Controls.Add(this.numericUpDownParkTimeLimit);
       this.groupBoxOther.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.groupBoxOther.Location = new System.Drawing.Point(3, 139);
+      this.groupBoxOther.Location = new System.Drawing.Point(3, 110);
       this.groupBoxOther.Name = "groupBoxOther";
-      this.groupBoxOther.Size = new System.Drawing.Size(234, 75);
+      this.groupBoxOther.Size = new System.Drawing.Size(213, 75);
       this.groupBoxOther.TabIndex = 1;
       this.groupBoxOther.TabStop = false;
       this.groupBoxOther.Text = "Other";
@@ -85,7 +81,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // labelParkTimeLimitUnit
       // 
       this.labelParkTimeLimitUnit.AutoSize = true;
-      this.labelParkTimeLimitUnit.Location = new System.Drawing.Point(173, 47);
+      this.labelParkTimeLimitUnit.Location = new System.Drawing.Point(148, 47);
       this.labelParkTimeLimitUnit.Name = "labelParkTimeLimitUnit";
       this.labelParkTimeLimitUnit.Size = new System.Drawing.Size(43, 13);
       this.labelParkTimeLimitUnit.TabIndex = 4;
@@ -102,7 +98,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // 
       // numericUpDownTunerLimit
       // 
-      this.numericUpDownTunerLimit.Location = new System.Drawing.Point(111, 19);
+      this.numericUpDownTunerLimit.Location = new System.Drawing.Point(86, 19);
       this.numericUpDownTunerLimit.Minimum = new decimal(new int[] {
             1,
             0,
@@ -120,7 +116,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // 
       // numericUpDownParkTimeLimit
       // 
-      this.numericUpDownParkTimeLimit.Location = new System.Drawing.Point(111, 45);
+      this.numericUpDownParkTimeLimit.Location = new System.Drawing.Point(86, 45);
       this.numericUpDownParkTimeLimit.Maximum = new decimal(new int[] {
             120,
             0,
@@ -141,47 +137,44 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
             0,
             0});
       // 
-      // labelBufferFileCountDescription
+      // labelBufferSizeDescription
       // 
-      this.labelBufferFileCountDescription.AutoSize = true;
-      this.labelBufferFileCountDescription.Location = new System.Drawing.Point(177, 73);
-      this.labelBufferFileCountDescription.Name = "labelBufferFileCountDescription";
-      this.labelBufferFileCountDescription.Size = new System.Drawing.Size(255, 13);
-      this.labelBufferFileCountDescription.TabIndex = 8;
-      this.labelBufferFileCountDescription.Text = "=> X.XX GB (approx. Y minutes SD or Z minutes HD)";
+      this.labelBufferSizeDescription.AutoSize = true;
+      this.labelBufferSizeDescription.Location = new System.Drawing.Point(148, 47);
+      this.labelBufferSizeDescription.Name = "labelBufferSizeDescription";
+      this.labelBufferSizeDescription.Size = new System.Drawing.Size(216, 13);
+      this.labelBufferSizeDescription.TabIndex = 5;
+      this.labelBufferSizeDescription.Text = "GB  (approx. X minutes SD or Y minutes HD)";
       // 
       // groupBoxBuffer
       // 
       this.groupBoxBuffer.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
-      this.groupBoxBuffer.Controls.Add(this.labelBufferFileCountMaximumDescription);
+      this.groupBoxBuffer.Controls.Add(this.labelBufferSizePausedDescription);
       this.groupBoxBuffer.Controls.Add(this.labelBufferLocation);
       this.groupBoxBuffer.Controls.Add(this.buttonBufferLocationBrowse);
-      this.groupBoxBuffer.Controls.Add(this.labelBufferFileCountDescription);
+      this.groupBoxBuffer.Controls.Add(this.labelBufferSizeDescription);
       this.groupBoxBuffer.Controls.Add(this.textBoxBufferLocation);
-      this.groupBoxBuffer.Controls.Add(this.numericUpDownBufferFileSize);
-      this.groupBoxBuffer.Controls.Add(this.numericUpDownBufferFileCountMaximum);
-      this.groupBoxBuffer.Controls.Add(this.numericUpDownBufferFileCount);
-      this.groupBoxBuffer.Controls.Add(this.labelBufferFileSizeUnit);
-      this.groupBoxBuffer.Controls.Add(this.labelBufferFileCountMaximum);
-      this.groupBoxBuffer.Controls.Add(this.labelBufferFileCount);
-      this.groupBoxBuffer.Controls.Add(this.labelBufferFileSize);
+      this.groupBoxBuffer.Controls.Add(this.numericUpDownBufferSizePaused);
+      this.groupBoxBuffer.Controls.Add(this.numericUpDownBufferSize);
+      this.groupBoxBuffer.Controls.Add(this.labelBufferSizePaused);
+      this.groupBoxBuffer.Controls.Add(this.labelBufferSize);
       this.groupBoxBuffer.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBoxBuffer.Location = new System.Drawing.Point(3, 3);
       this.groupBoxBuffer.Name = "groupBoxBuffer";
-      this.groupBoxBuffer.Size = new System.Drawing.Size(474, 130);
+      this.groupBoxBuffer.Size = new System.Drawing.Size(474, 101);
       this.groupBoxBuffer.TabIndex = 0;
       this.groupBoxBuffer.TabStop = false;
       this.groupBoxBuffer.Text = "Buffer";
       // 
-      // labelBufferFileCountMaximumDescription
+      // labelBufferSizePausedDescription
       // 
-      this.labelBufferFileCountMaximumDescription.AutoSize = true;
-      this.labelBufferFileCountMaximumDescription.Location = new System.Drawing.Point(177, 99);
-      this.labelBufferFileCountMaximumDescription.Name = "labelBufferFileCountMaximumDescription";
-      this.labelBufferFileCountMaximumDescription.Size = new System.Drawing.Size(255, 13);
-      this.labelBufferFileCountMaximumDescription.TabIndex = 11;
-      this.labelBufferFileCountMaximumDescription.Text = "=> X.XX GB (approx. Y minutes SD or Z minutes HD)";
+      this.labelBufferSizePausedDescription.AutoSize = true;
+      this.labelBufferSizePausedDescription.Location = new System.Drawing.Point(148, 73);
+      this.labelBufferSizePausedDescription.Name = "labelBufferSizePausedDescription";
+      this.labelBufferSizePausedDescription.Size = new System.Drawing.Size(216, 13);
+      this.labelBufferSizePausedDescription.TabIndex = 8;
+      this.labelBufferSizePausedDescription.Text = "GB  (approx. X minutes SD or Y minutes HD)";
       // 
       // labelBufferLocation
       // 
@@ -207,118 +200,88 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // 
       this.textBoxBufferLocation.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
-      this.textBoxBufferLocation.Location = new System.Drawing.Point(111, 19);
+      this.textBoxBufferLocation.Location = new System.Drawing.Point(86, 19);
       this.textBoxBufferLocation.Name = "textBoxBufferLocation";
-      this.textBoxBufferLocation.Size = new System.Drawing.Size(327, 20);
+      this.textBoxBufferLocation.Size = new System.Drawing.Size(352, 20);
       this.textBoxBufferLocation.TabIndex = 1;
       // 
-      // numericUpDownBufferFileSize
+      // numericUpDownBufferSizePaused
       // 
-      this.numericUpDownBufferFileSize.Location = new System.Drawing.Point(111, 45);
-      this.numericUpDownBufferFileSize.Maximum = new decimal(new int[] {
-            1024,
+      this.numericUpDownBufferSizePaused.DecimalPlaces = 1;
+      this.numericUpDownBufferSizePaused.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            65536});
+      this.numericUpDownBufferSizePaused.Location = new System.Drawing.Point(86, 71);
+      this.numericUpDownBufferSizePaused.Maximum = new decimal(new int[] {
+            10000,
             0,
             0,
             0});
-      this.numericUpDownBufferFileSize.Minimum = new decimal(new int[] {
-            20,
-            0,
-            0,
-            0});
-      this.numericUpDownBufferFileSize.Name = "numericUpDownBufferFileSize";
-      this.numericUpDownBufferFileSize.Size = new System.Drawing.Size(60, 20);
-      this.numericUpDownBufferFileSize.TabIndex = 4;
-      this.numericUpDownBufferFileSize.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-      this.numericUpDownBufferFileSize.Value = new decimal(new int[] {
-            256,
-            0,
-            0,
-            0});
-      this.numericUpDownBufferFileSize.ValueChanged += new System.EventHandler(this.numericUpDownBufferFileSize_ValueChanged);
-      // 
-      // numericUpDownBufferFileCountMaximum
-      // 
-      this.numericUpDownBufferFileCountMaximum.Location = new System.Drawing.Point(111, 97);
-      this.numericUpDownBufferFileCountMaximum.Maximum = new decimal(new int[] {
-            999,
-            0,
-            0,
-            0});
-      this.numericUpDownBufferFileCountMaximum.Minimum = new decimal(new int[] {
+      this.numericUpDownBufferSizePaused.Minimum = new decimal(new int[] {
             2,
             0,
             0,
-            0});
-      this.numericUpDownBufferFileCountMaximum.Name = "numericUpDownBufferFileCountMaximum";
-      this.numericUpDownBufferFileCountMaximum.Size = new System.Drawing.Size(60, 20);
-      this.numericUpDownBufferFileCountMaximum.TabIndex = 10;
-      this.numericUpDownBufferFileCountMaximum.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-      this.numericUpDownBufferFileCountMaximum.Value = new decimal(new int[] {
-            20,
+            65536});
+      this.numericUpDownBufferSizePaused.Name = "numericUpDownBufferSizePaused";
+      this.numericUpDownBufferSizePaused.Size = new System.Drawing.Size(60, 20);
+      this.numericUpDownBufferSizePaused.TabIndex = 7;
+      this.numericUpDownBufferSizePaused.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+      this.numericUpDownBufferSizePaused.Value = new decimal(new int[] {
+            5,
             0,
             0,
             0});
-      this.numericUpDownBufferFileCountMaximum.ValueChanged += new System.EventHandler(this.numericUpDownBufferFileCountMaximum_ValueChanged);
+      this.numericUpDownBufferSizePaused.ValueChanged += new System.EventHandler(this.numericUpDownBufferFileCountMaximum_ValueChanged);
       // 
-      // numericUpDownBufferFileCount
+      // numericUpDownBufferSize
       // 
-      this.numericUpDownBufferFileCount.Location = new System.Drawing.Point(111, 71);
-      this.numericUpDownBufferFileCount.Maximum = new decimal(new int[] {
-            999,
+      this.numericUpDownBufferSize.DecimalPlaces = 1;
+      this.numericUpDownBufferSize.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            65536});
+      this.numericUpDownBufferSize.Location = new System.Drawing.Point(86, 45);
+      this.numericUpDownBufferSize.Maximum = new decimal(new int[] {
+            10000,
             0,
             0,
             0});
-      this.numericUpDownBufferFileCount.Minimum = new decimal(new int[] {
+      this.numericUpDownBufferSize.Minimum = new decimal(new int[] {
             2,
             0,
             0,
-            0});
-      this.numericUpDownBufferFileCount.Name = "numericUpDownBufferFileCount";
-      this.numericUpDownBufferFileCount.Size = new System.Drawing.Size(60, 20);
-      this.numericUpDownBufferFileCount.TabIndex = 7;
-      this.numericUpDownBufferFileCount.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-      this.numericUpDownBufferFileCount.Value = new decimal(new int[] {
-            6,
+            65536});
+      this.numericUpDownBufferSize.Name = "numericUpDownBufferSize";
+      this.numericUpDownBufferSize.Size = new System.Drawing.Size(60, 20);
+      this.numericUpDownBufferSize.TabIndex = 4;
+      this.numericUpDownBufferSize.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+      this.numericUpDownBufferSize.Value = new decimal(new int[] {
+            15,
             0,
             0,
-            0});
-      this.numericUpDownBufferFileCount.ValueChanged += new System.EventHandler(this.numericUpDownBufferFileCount_ValueChanged);
+            65536});
+      this.numericUpDownBufferSize.ValueChanged += new System.EventHandler(this.numericUpDownBufferFileCount_ValueChanged);
       // 
-      // labelBufferFileSizeUnit
+      // labelBufferSizePaused
       // 
-      this.labelBufferFileSizeUnit.AutoSize = true;
-      this.labelBufferFileSizeUnit.Location = new System.Drawing.Point(173, 47);
-      this.labelBufferFileSizeUnit.Name = "labelBufferFileSizeUnit";
-      this.labelBufferFileSizeUnit.Size = new System.Drawing.Size(23, 13);
-      this.labelBufferFileSizeUnit.TabIndex = 5;
-      this.labelBufferFileSizeUnit.Text = "MB";
+      this.labelBufferSizePaused.AutoSize = true;
+      this.labelBufferSizePaused.Location = new System.Drawing.Point(5, 73);
+      this.labelBufferSizePaused.Name = "labelBufferSizePaused";
+      this.labelBufferSizePaused.Size = new System.Drawing.Size(67, 13);
+      this.labelBufferSizePaused.TabIndex = 6;
+      this.labelBufferSizePaused.Text = "Paused size:";
       // 
-      // labelBufferFileCountMaximum
+      // labelBufferSize
       // 
-      this.labelBufferFileCountMaximum.AutoSize = true;
-      this.labelBufferFileCountMaximum.Location = new System.Drawing.Point(5, 99);
-      this.labelBufferFileCountMaximum.Name = "labelBufferFileCountMaximum";
-      this.labelBufferFileCountMaximum.Size = new System.Drawing.Size(100, 13);
-      this.labelBufferFileCountMaximum.TabIndex = 9;
-      this.labelBufferFileCountMaximum.Text = "Maximum file count:";
-      // 
-      // labelBufferFileCount
-      // 
-      this.labelBufferFileCount.AutoSize = true;
-      this.labelBufferFileCount.Location = new System.Drawing.Point(5, 73);
-      this.labelBufferFileCount.Name = "labelBufferFileCount";
-      this.labelBufferFileCount.Size = new System.Drawing.Size(99, 13);
-      this.labelBufferFileCount.TabIndex = 6;
-      this.labelBufferFileCount.Text = "Standard file count:";
-      // 
-      // labelBufferFileSize
-      // 
-      this.labelBufferFileSize.AutoSize = true;
-      this.labelBufferFileSize.Location = new System.Drawing.Point(5, 47);
-      this.labelBufferFileSize.Name = "labelBufferFileSize";
-      this.labelBufferFileSize.Size = new System.Drawing.Size(47, 13);
-      this.labelBufferFileSize.TabIndex = 3;
-      this.labelBufferFileSize.Text = "File size:";
+      this.labelBufferSize.AutoSize = true;
+      this.labelBufferSize.Location = new System.Drawing.Point(5, 47);
+      this.labelBufferSize.Name = "labelBufferSize";
+      this.labelBufferSize.Size = new System.Drawing.Size(74, 13);
+      this.labelBufferSize.TabIndex = 3;
+      this.labelBufferSize.Text = "Standard size:";
       // 
       // TvTimeshifting
       // 
@@ -335,9 +298,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownParkTimeLimit)).EndInit();
       this.groupBoxBuffer.ResumeLayout(false);
       this.groupBoxBuffer.PerformLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownBufferFileSize)).EndInit();
-      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownBufferFileCountMaximum)).EndInit();
-      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownBufferFileCount)).EndInit();
+      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownBufferSizePaused)).EndInit();
+      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownBufferSize)).EndInit();
       this.ResumeLayout(false);
 
     }
@@ -345,15 +307,12 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     #endregion
 
     private MPGroupBox groupBoxBuffer;
-    private MPNumericUpDown numericUpDownBufferFileSize;
-    private MPNumericUpDown numericUpDownBufferFileCountMaximum;
-    private MPNumericUpDown numericUpDownBufferFileCount;
-    private MPLabel labelBufferFileSizeUnit;
-    private MPLabel labelBufferFileSize;
-    private MPLabel labelBufferFileCountMaximum;
-    private MPLabel labelBufferFileCount;
+    private MPNumericUpDown numericUpDownBufferSizePaused;
+    private MPNumericUpDown numericUpDownBufferSize;
+    private MPLabel labelBufferSizePaused;
+    private MPLabel labelBufferSize;
     private MPGroupBox groupBoxOther;
-    private MPLabel labelBufferFileCountDescription;
+    private MPLabel labelBufferSizeDescription;
     private MPNumericUpDown numericUpDownTunerLimit;
     private MPLabel labelTunerLimit;
     private MPLabel labelParkTimeLimitUnit;
@@ -362,6 +321,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     private MPButton buttonBufferLocationBrowse;
     private MPTextBox textBoxBufferLocation;
     private MPLabel labelBufferLocation;
-    private MPLabel labelBufferFileCountMaximumDescription;
+    private MPLabel labelBufferSizePausedDescription;
   }
 }

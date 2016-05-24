@@ -46,19 +46,18 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.LogDebug("time-shifting: activating");
 
       _bufferLocation = ServiceAgents.Instance.SettingServiceAgent.GetValue("timeShiftBufferFolder", string.Empty);
-      _bufferFileSize = ServiceAgents.Instance.SettingServiceAgent.GetValue("timeShiftBufferFileSize", 256);
-      _bufferFileCount = ServiceAgents.Instance.SettingServiceAgent.GetValue("timeShiftBufferFileCount", 6);
-      _bufferFileCountMaximum = ServiceAgents.Instance.SettingServiceAgent.GetValue("timeShiftBufferFileCountMaximum", 20);
+      _bufferFileSize = ServiceAgents.Instance.SettingServiceAgent.GetValue("timeShiftBufferFileSize", 100);
+      _bufferFileCount = ServiceAgents.Instance.SettingServiceAgent.GetValue("timeShiftBufferFileCount", 15);
+      _bufferFileCountMaximum = ServiceAgents.Instance.SettingServiceAgent.GetValue("timeShiftBufferFileCountMaximum", 50);
       textBoxBufferLocation.Text = _bufferLocation;
-      numericUpDownBufferFileSize.Value = _bufferFileSize;
-      numericUpDownBufferFileCount.Value = _bufferFileCount;
-      numericUpDownBufferFileCountMaximum.Value = _bufferFileCountMaximum;
+      numericUpDownBufferSize.Value = _bufferFileCount * _bufferFileSize / 1000;
+      numericUpDownBufferSizePaused.Value = _bufferFileCountMaximum * _bufferFileSize / 1000;
       UpdateBufferTimeEstimates();
       this.LogDebug("  buffer...");
       this.LogDebug("    folder         = {0}", textBoxBufferLocation.Text);
-      this.LogDebug("    file size      = {0} MB", numericUpDownBufferFileSize.Value);
-      this.LogDebug("    file count     = {0}", numericUpDownBufferFileCount.Value);
-      this.LogDebug("    max file count = {0}", numericUpDownBufferFileCountMaximum.Value);
+      this.LogDebug("    file size      = {0} MB", _bufferFileSize);
+      this.LogDebug("    file count     = {0}", _bufferFileCount);
+      this.LogDebug("    max file count = {0}", _bufferFileCountMaximum);
 
       _tunerLimit = ServiceAgents.Instance.SettingServiceAgent.GetValue("timeShiftTunerLimit", 3);
       _parkTimeLimit = ServiceAgents.Instance.SettingServiceAgent.GetValue("parkedStreamTimeout", 10);
@@ -75,28 +74,35 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.LogDebug("time-shifting: deactivating");
 
       bool needReload = false;
+      textBoxBufferLocation.Text.Trim();
       if (!string.Equals(_bufferLocation, textBoxBufferLocation.Text))
       {
         this.LogInfo("time-shifting: buffer location changed from {0} to {1}", _bufferLocation, textBoxBufferLocation.Text);
         ServiceAgents.Instance.SettingServiceAgent.SaveValue("timeShiftBufferFolder", textBoxBufferLocation.Text);
         needReload = true;
       }
-      if (_bufferFileSize != numericUpDownBufferFileSize.Value)
+
+      int newFileCount = (int)(numericUpDownBufferSize.Value * 1000 / _bufferFileSize);
+      if (newFileCount < 2)
       {
-        this.LogInfo("time-shifting: buffer file size changed from {0} to {1} MB", _bufferFileSize, numericUpDownBufferFileSize.Value);
-        ServiceAgents.Instance.SettingServiceAgent.SaveValue("timeShiftBufferFileSize", (int)numericUpDownBufferFileSize.Value);
+        newFileCount = 2;
+      }
+      if (_bufferFileCount != newFileCount)
+      {
+        this.LogInfo("time-shifting: buffer file count changed from {0} to {1}", _bufferFileCount, newFileCount);
+        ServiceAgents.Instance.SettingServiceAgent.SaveValue("timeShiftBufferFileCount", newFileCount);
         needReload = true;
       }
-      if (_bufferFileCount != numericUpDownBufferFileCount.Value)
+
+      newFileCount = (int)(numericUpDownBufferSizePaused.Value * 1000 / _bufferFileSize);
+      if (newFileCount < 2)
       {
-        this.LogInfo("time-shifting: buffer file count changed from {0} to {1}", _bufferFileCount, numericUpDownBufferFileCount.Value);
-        ServiceAgents.Instance.SettingServiceAgent.SaveValue("timeShiftBufferFileCount", (int)numericUpDownBufferFileCount.Value);
-        needReload = true;
+        newFileCount = 2;
       }
-      if (_bufferFileCountMaximum != numericUpDownBufferFileCountMaximum.Value)
+      if (_bufferFileCountMaximum != newFileCount)
       {
-        this.LogInfo("time-shifting: buffer maximum file count changed from {0} to {1}", _bufferFileCountMaximum, numericUpDownBufferFileCountMaximum.Value);
-        ServiceAgents.Instance.SettingServiceAgent.SaveValue("timeShiftBufferFileCountMaximum", (int)numericUpDownBufferFileCountMaximum.Value);
+        this.LogInfo("time-shifting: buffer maximum file count changed from {0} to {1}", _bufferFileCountMaximum, newFileCount);
+        ServiceAgents.Instance.SettingServiceAgent.SaveValue("timeShiftBufferFileCountMaximum", (int)numericUpDownBufferSizePaused.Value);
         needReload = true;
       }
 
@@ -115,7 +121,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
       if (needReload)
       {
-        OnServerConfigurationChanged(this, false, true, null);
+        OnServerConfigurationChanged(this, true, null);
       }
 
       base.OnSectionDeActivated();
@@ -133,16 +139,11 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       }
     }
 
-    private void numericUpDownBufferFileSize_ValueChanged(object sender, EventArgs e)
-    {
-      UpdateBufferTimeEstimates();
-    }
-
     private void numericUpDownBufferFileCount_ValueChanged(object sender, EventArgs e)
     {
-      if (numericUpDownBufferFileCountMaximum.Value < numericUpDownBufferFileCount.Value)
+      if (numericUpDownBufferSizePaused.Value < numericUpDownBufferSize.Value)
       {
-        numericUpDownBufferFileCountMaximum.Value = numericUpDownBufferFileCount.Value;
+        numericUpDownBufferSizePaused.Value = numericUpDownBufferSize.Value;
         return;
       }
       UpdateBufferTimeEstimates();
@@ -150,9 +151,9 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
     private void numericUpDownBufferFileCountMaximum_ValueChanged(object sender, EventArgs e)
     {
-      if (numericUpDownBufferFileCountMaximum.Value < numericUpDownBufferFileCount.Value)
+      if (numericUpDownBufferSizePaused.Value < numericUpDownBufferSize.Value)
       {
-        numericUpDownBufferFileCount.Value = numericUpDownBufferFileCountMaximum.Value;
+        numericUpDownBufferSize.Value = numericUpDownBufferSizePaused.Value;
         return;
       }
       UpdateBufferTimeEstimates();
@@ -160,14 +161,12 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
     private void UpdateBufferTimeEstimates()
     {
-      labelBufferFileCountDescription.Text = string.Format("=> {0} GB (approx. {1} minutes SD or {2} minutes HD)",
-                                              Math.Round(numericUpDownBufferFileSize.Value * numericUpDownBufferFileCount.Value / 1000, 2),
-                                              Math.Round(numericUpDownBufferFileSize.Value * numericUpDownBufferFileCount.Value * 8 / (3 * 60), 1),     // SD = ~3 Mb/s
-                                              Math.Round(numericUpDownBufferFileSize.Value * numericUpDownBufferFileCount.Value * 8 / (10 * 60), 1));   // HD = ~10 Mb/s
-      labelBufferFileCountMaximumDescription.Text = string.Format("=> {0} GB (approx. {1} minutes SD or {2} minutes HD)",
-                                                      Math.Round(numericUpDownBufferFileSize.Value * numericUpDownBufferFileCountMaximum.Value / 1000, 2),
-                                                      Math.Round(numericUpDownBufferFileSize.Value * numericUpDownBufferFileCountMaximum.Value * 8 / (3 * 60), 1),    // SD = ~3 Mb/s
-                                                      Math.Round(numericUpDownBufferFileSize.Value * numericUpDownBufferFileCountMaximum.Value * 8 / (10 * 60), 1));  // HD = ~10 Mb/s
+      labelBufferSizeDescription.Text = string.Format("GB  (approx. {0} minutes SD or {1} minutes HD)",
+                                                      Math.Round(numericUpDownBufferSize.Value * 1000 * 8 / (3 * 60)),    // SD = ~3 Mb/s
+                                                      Math.Round(numericUpDownBufferSize.Value * 1000 * 8 / (10 * 60)));  // HD = ~10 Mb/s
+      labelBufferSizePausedDescription.Text = string.Format("GB  (approx. {0} minutes SD or {1} minutes HD)",
+                                                            Math.Round(numericUpDownBufferSizePaused.Value * 1000 * 8 / (3 * 60)),    // SD = ~3 Mb/s
+                                                            Math.Round(numericUpDownBufferSizePaused.Value * 1000 * 8 / (10 * 60)));  // HD = ~10 Mb/s
     }
   }
 }
