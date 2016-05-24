@@ -432,7 +432,6 @@ ${MementoSection} "MediaPortal TV Server" SecServer
   ; 3rd party assemblies
   File "${TVSERVER.BASE}\Ionic.Zip.dll"
   File "${git_DirectShowFilters}\StreamingServer\bin\${BUILD_TYPE}\StreamingServer.dll"
-  File "${git_DirectShowFilters}\DXErr9\bin\${BUILD_TYPE}\dxerr9.dll"
   
   ; CustomDevice plugin 3rd party resource assemblies
   SetOutPath "$INSTDIR\Plugins\CustomDevices\Resources"
@@ -445,8 +444,6 @@ ${MementoSection} "MediaPortal TV Server" SecServer
   File "${TVSERVER.BASE}\ttBdaDrvApi_Dll.dll"
   
   File "${git_DirectShowFilters}\StreamingServer\bin\${BUILD_TYPE}\StreamingServer.dll"
-
-  File "${git_DirectShowFilters}\DXErr9\bin\${BUILD_TYPE}\dxerr9.dll"
 
   ; Common App Data Files
   SetOutPath "${COMMON_APPDATA}"
@@ -708,7 +705,6 @@ ${MementoSectionEnd}
   Delete "$INSTDIR\log4net.config"
 
   ; 3rd party assembliess
-  Delete "$INSTDIR\dxerr9.dll"
   Delete "$INSTDIR\hauppauge.dll"
   Delete "$INSTDIR\StreamingServer.dll"
   Delete "$INSTDIR\Ionic.Zip.dll"
