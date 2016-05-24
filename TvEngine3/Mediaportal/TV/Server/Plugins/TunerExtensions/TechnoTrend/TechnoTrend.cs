@@ -1578,7 +1578,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
     /// <param name="timeOut">A time-out. The unit is ten milli-seconds.</param>
     private void OnLscSetParams(IntPtr context, byte slotIndex, byte bufferSize, byte timeOut)
     {
-      this.LogDebug("TechnoTrend: low speed communication set parameters call back, slot = {0}, buffer size = {1}, time-out = {2}", slotIndex, bufferSize, timeout);
+      this.LogDebug("TechnoTrend: low speed communication set parameters call back, slot = {0}, buffer size = {1}, time-out = {2}", slotIndex, bufferSize, timeOut);
     }
 
     /// <summary>
