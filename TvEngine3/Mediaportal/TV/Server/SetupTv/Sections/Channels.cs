@@ -496,8 +496,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       }
 
       // It is not easy to undo deleting channels so always confirm.
-      if (MessageBox.Show(string.Format("Are you sure you want to delete the {0} selected channel(s)?", listViewChannels.SelectedItems.Count, MessageBoxButtons.YesNo, MessageBoxIcon.Question),
-        MESSAGE_CAPTION, MessageBoxButtons.YesNo) != DialogResult.Yes)
+      if (MessageBox.Show(string.Format("Are you sure you want to delete the {0} selected channel(s)?", listViewChannels.SelectedItems.Count), MESSAGE_CAPTION, MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes)
       {
         return;
       }
