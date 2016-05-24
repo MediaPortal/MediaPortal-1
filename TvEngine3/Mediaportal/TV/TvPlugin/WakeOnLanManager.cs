@@ -18,46 +18,40 @@
 
 #endregion
 
-#region Usings
-
 using System;
 using System.Net;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Runtime.InteropServices;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
-
-#endregion
+using MediaPortal.Common.Utils;
 
 namespace Mediaportal.TV.TvPlugin
 {
   public class WakeOnLanManager
   {
-    #region Constants
+    #region constants
 
-    // Maximum length of a physical address
-    private const int PHYSADDR_MAXLEN = 8;
-    // Insufficient buffer error
-    private const int INSUFFICIENT_BUFFER = 122;
+    private const int HW_ADDRESS_SIZE = 6;
 
     #endregion
 
-    #region Structs
+    #region structs
 
     // Define the MIB_IPNETROW structure.
     [StructLayout(LayoutKind.Sequential)]
     private struct MIB_IPNETROW
     {
-      [MarshalAs(UnmanagedType.U4)] public int dwIndex;
-      [MarshalAs(UnmanagedType.U4)] public int dwPhysAddrLen;
-      [MarshalAs(UnmanagedType.ByValArray, SizeConst = PHYSADDR_MAXLEN)] public byte[] bPhysAddr;
-      [MarshalAs(UnmanagedType.U4)] public int dwAddr;
-      [MarshalAs(UnmanagedType.U4)] public int dwType;
+      public int dwIndex;
+      public int dwPhysAddrLen;
+      [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)] public byte[] bPhysAddr;
+      public int dwAddr;
+      public int dwType;
     }
 
     #endregion
 
-    #region External methods
+    #region external methods
 
     [DllImport("iphlpapi.dll")]
     [return: MarshalAs(UnmanagedType.U4)]
@@ -69,42 +63,35 @@ namespace Mediaportal.TV.TvPlugin
 
     #endregion
 
-    #region Private (lowlevel) methods
+    #region private methods
 
-    private MIB_IPNETROW[] GetPhysicalAddressTable()
+    private static MIB_IPNETROW[] GetHardwareAddressTable()
     {
       int bytesNeeded = 0;
       int result = GetIpNetTable(IntPtr.Zero, ref bytesNeeded, false);
-
-      if (result != INSUFFICIENT_BUFFER)
+      if (result != (int)NativeMethods.SystemErrorCode.ERROR_INSUFFICIENT_BUFFER)
       {
         throw new ApplicationException(Convert.ToString(result));
       }
 
-      IntPtr buffer = IntPtr.Zero;
-      MIB_IPNETROW[] table;
-
+      MIB_IPNETROW[] table = null;
+      IntPtr buffer = Marshal.AllocCoTaskMem(bytesNeeded);
       try
       {
-        buffer = Marshal.AllocCoTaskMem(bytesNeeded);
-
         result = GetIpNetTable(buffer, ref bytesNeeded, false);
-
-        if (result != 0)
+        if (result != (int)NativeMethods.SystemErrorCode.ERROR_SUCCESS)
         {
           throw new ApplicationException(Convert.ToString(result));
         }
 
-        int entries = Marshal.ReadInt32(buffer);
-        IntPtr currentBuffer = new IntPtr(buffer.ToInt64() + sizeof (int));
-        table = new MIB_IPNETROW[entries];
-
-        for (int i = 0; i < entries; i++)
+        int entryCount = Marshal.ReadInt32(buffer);
+        IntPtr currentBuffer = IntPtr.Add(buffer, sizeof(int));
+        table = new MIB_IPNETROW[entryCount];
+        int arpEntrySize = Marshal.SizeOf(typeof(MIB_IPNETROW));
+        for (int i = 0; i < entryCount; i++)
         {
-          table[i] = (MIB_IPNETROW)Marshal.PtrToStructure(
-                                     new IntPtr(currentBuffer.ToInt64() + (i * Marshal.SizeOf(typeof (MIB_IPNETROW)))),
-                                     typeof (MIB_IPNETROW)
-                                     );
+          table[i] = (MIB_IPNETROW)Marshal.PtrToStructure(currentBuffer, typeof(MIB_IPNETROW));
+          currentBuffer = IntPtr.Add(currentBuffer, arpEntrySize);
         }
       }
       finally
@@ -114,222 +101,181 @@ namespace Mediaportal.TV.TvPlugin
       return table;
     }
 
-    private byte[] SendArpRequest(IPAddress address)
+    private static byte[] GetWakeOnLanMagicPacket(byte[] hwAddress)
     {
-      byte[] hwAddr = new byte[6];
-      int len = hwAddr.Length;
-      byte[] ipAddr = address.GetAddressBytes();
-      int result = SendARP(BitConverter.ToInt32(ipAddr, 0), 0, hwAddr, ref len);
-      ipAddr = null;
-      return hwAddr;
-    }
-
-    private byte[] GetWakeOnLanMagicPacket(byte[] hwAddress)
-    {
-      if (hwAddress.Length != 6)
+      // Refer to http://support.amd.com/TechDocs/20213.pdf
+      if (hwAddress == null || hwAddress.Length != HW_ADDRESS_SIZE)
       {
-        throw new ArgumentOutOfRangeException("hwAddress", hwAddress, "hwAddress must contain 6 bytes!");
-      }
-      byte[] packet = new byte[102];
-      // pad packet data with 6 0xFF bytes
-      for (int i = 0; i < 6; i++)
-      {
-        packet[i] = 0xFF;
+        throw new ArgumentOutOfRangeException("hwAddress", hwAddress, string.Format("hwAddress must contain {0} bytes!", HW_ADDRESS_SIZE));
       }
 
-      // write hwaddress (at least) 16 times to packet
-      for (int i = 1; i < 17; i++)
+      byte[] packet = new byte[HW_ADDRESS_SIZE * 17];
+
+      // Write padding.
+      int offset = 0;
+      for (int i = 0; i < HW_ADDRESS_SIZE; i++)
       {
-        for (int x = 0; x < 6; x++)
+        packet[offset++] = 0xff;
+      }
+
+      // Write the hardware address at least 16 times.
+      for (int i = 0; i < 16; i++)
+      {
+        for (int x = 0; x < HW_ADDRESS_SIZE; x++)
         {
-          packet[i * 6 + x] = hwAddress[x];
+          packet[offset++] = hwAddress[x];
         }
       }
       return packet;
     }
 
-    private void SendMagicPacket(IPAddress address, byte[] data)
+    private static void SendUdpPacket(IPAddress address, byte[] data)
     {
-      UdpClient client = new UdpClient();
-      client.Connect(address, 1234);
-      client.Send(data, data.Length);
-      client.Close();
-      client = null;
+      using (UdpClient client = new UdpClient())
+      {
+        client.Connect(address, 1234);
+        client.Send(data, data.Length);
+        client.Close();
+      }
     }
 
-    /// <summary>
-    /// Sends an AMD "magic" packet for the given hardware ethernet address, with ipAddress as the target.
-    /// </summary>
-    /// <param name="hwAddress">hardware ethernet address to wake up</param>
-    /// <param name="ipAddress">IP address to use as target</param>
-    /// <returns>bool indicating if the packet was sent successfully</returns>
-    private bool SendWakeOnLanPacket(byte[] hwAddress, IPAddress ipAddress)
+    private static bool Ping(string hostName, int timeLimitMilliSeconds)
     {
-      if (IsValidEthernetAddress(hwAddress))
+      Log.Debug("WOL manager: ping, host name = {0}, time limit = {1} ms", hostName, timeLimitMilliSeconds);
+      using (Ping p = new Ping())
       {
-        byte[] magicPacket = GetWakeOnLanMagicPacket(hwAddress);
-        SendMagicPacket(ipAddress, magicPacket);
-        return true;
+        try
+        {
+          return p.Send(hostName, timeLimitMilliSeconds).Status == IPStatus.Success;
+        }
+        catch (Exception ex)
+        {
+          Log.Error(ex, "WOL manager: ping failed, host name = {0}", hostName);
+        }
       }
-      else
+      return false;
+    }
+
+    private static bool IsValidHardwareAddress(byte[] hwAddress)
+    {
+      if (hwAddress == null || hwAddress.Length != HW_ADDRESS_SIZE)
       {
-        this.LogDebug("WOLMgr: Invalid ethernet address!");
         return false;
       }
-    }
 
-    private bool Ping(string hostName, int timeout)
-    {
-      Ping p = new Ping();
-      try
+      for (int i = 0; i < hwAddress.Length; i++)
       {
-        PingReply r = p.Send(hostName, timeout);
-        if (r.Status == IPStatus.Success)
+        if (hwAddress[i] != 0x00)
         {
           return true;
         }
       }
-      catch (Exception ex)
-      {
-        this.LogError(ex, "WOLMgr: Ping failed");
-      }
-
       return false;
     }
 
     #endregion
 
-    #region Public methods
+    #region public methods
 
     /// <summary>
-    /// Gets the hardware ethernet address of the given IP address as an array of bytes. The address is searched
-    /// for in the ARP table cache and (if not found there) and ARP request is transmitted to find out the address.
+    /// Get the hardware ethernet (MAC) address of the given IP address as an
+    /// array of bytes. The address is either retrieved from the ARP table
+    /// cache, or determined by transmission of an ARP request.
     /// </summary>
-    /// <param name="address">IP address to find the hardware ethernet address for</param>
-    /// <returns>byte[] containing the hardware ethernet address</returns>
-    public byte[] GetHardwareAddress(IPAddress address)
+    /// <param name="address">The IP address to find the hardware ethernet address for.</param>
+    /// <returns>a byte array containing the hardware ethernet address for the IP address</returns>
+    public static byte[] GetHardwareAddress(IPAddress address)
     {
-      // Try fetching h/w ethernet address from the ARP table
-      MIB_IPNETROW[] addrTable = GetPhysicalAddressTable();
-      if (addrTable != null)
+      byte[] hardwareAddress = null;
+      try
       {
-        for (int i = 0; i < addrTable.Length; i++)
+        int addr = BitConverter.ToInt32(address.GetAddressBytes(), 0);
+
+        // Try fetching the address from the ARP table.
+        MIB_IPNETROW[] addressTable = GetHardwareAddressTable();
+        if (addressTable != null)
         {
-          byte[] addr = address.GetAddressBytes();
-          if (BitConverter.ToInt32(addr, 0) == addrTable[i].dwAddr)
+          foreach (var row in addressTable)
           {
-            byte[] physAddr = new byte[addrTable[i].dwPhysAddrLen];
-            Array.Copy(addrTable[i].bPhysAddr, physAddr, addrTable[i].dwPhysAddrLen);
-            return physAddr;
+            if (addr == row.dwAddr)
+            {
+              hardwareAddress = new byte[row.dwPhysAddrLen];
+              Array.Copy(row.bPhysAddr, hardwareAddress, row.dwPhysAddrLen);
+              return hardwareAddress;
+            }
           }
         }
-      }
-      // Try sending an ARP request specifically for this address
-      return SendArpRequest(address);
-    }
 
-    /// <summary>
-    /// Checks whether the given address is a valid hardware ethernet address
-    /// </summary>
-    /// <param name="hwAddress">hardware ethernet address to check</param>
-    /// <returns>bool indicating if the given address is valid</returns>
-    public bool IsValidEthernetAddress(byte[] hwAddress)
-    {
-      if (hwAddress == null)
-      {
-        return false;
-      }
-
-      if (hwAddress.Length != 6)
-      {
-        return false;
-      }
-
-      bool valid = false;
-      for (int i = 0; i < hwAddress.Length; i++)
-      {
-        if (hwAddress[i] != 0x00)
+        // Try sending an ARP request for the address.
+        int addressSize = HW_ADDRESS_SIZE;
+        hardwareAddress = new byte[addressSize];
+        if (SendARP(addr, 0, hardwareAddress, ref addressSize) != (int)NativeMethods.SystemErrorCode.ERROR_SUCCESS || !IsValidHardwareAddress(hardwareAddress))
         {
-          valid = true;
-          break;
+          return null;
         }
       }
-      return valid;
+      catch (Exception ex)
+      {
+        Log.Error(ex, "WOL manager: failed to determine hardware address, IP address = {0}", address);
+      }
+      return hardwareAddress;
     }
 
     /// <summary>
-    /// Wakes up the given target system by sending a wake-on-lan packet for the specified hardware ethernet address.
-    /// The packet is broadcasted to the general broadcast address (255.255.255.255). After the wake-on-lan packet is sent,
-    /// the system invokes ping requests to the wakeupTarget to verify that the host is actually resumed until the
-    /// given timeout has been reached.
+    /// Wake a target system by sending a wake-on-LAN packet for the
+    /// corresponding hardware ethernet address. Ping is used to verify that
+    /// the system has woken.
     /// </summary>
-    /// <param name="hwAddress">byte[] containing the hardware ethernet address to wakeup</param>
-    /// <param name="wakeupTarget">Hostname of the system to wake up. Used to verify the system has resumed.</param>
-    /// <param name="timeout">timeout (in seconds) for system resume verification</param>
-    /// <returns>bool indication whether or not the system is available</returns>
-    public bool WakeupSystem(byte[] hwAddress, string wakeupTarget, int timeout)
+    /// <param name="hwAddress">A byte array containing the hardware ethernet address of the target system.</param>
+    /// <param name="hostName">The host name of the target system.</param>
+    /// <param name="timeLimitSeconds">The time limit for the wake process. The unit is seconds.</param>
+    /// <returns><c>true</c> if the target system was woken successfully, otherwise <c>false</c></returns>
+    public static bool WakeSystem(byte[] hwAddress, string hostName, int timeLimitSeconds)
     {
-      int waited = 0;
-
-      this.LogDebug("WOLMgr: Ping {0}", wakeupTarget);
-      if (Ping(wakeupTarget, timeout))
+      Log.Debug("WOL manager: wake system, host name = {0}, hardware address = {1}, time limit = {2} s", hostName, BitConverter.ToString(hwAddress).Replace("-", ":"), timeLimitSeconds);
+      if (!IsValidHardwareAddress(hwAddress))
       {
-        this.LogDebug("WOLMgr: {0} already awake", wakeupTarget);
+        Log.Error("WOL manager: invalid hardware ethernet address, address = {0}", BitConverter.ToString(hwAddress).Replace("-", ":"));
+        return false;
+      }
+
+      timeLimitSeconds *= 1000;   // to milli-seconds
+      DateTime start = DateTime.Now;
+
+      if (Ping(hostName, 1000))
+      {
+        Log.Info("WOL manager: system already awake, host name = {0}", hostName);
         return true;
       }
 
-      while (waited < timeout * 1000)
+      byte[] packet = GetWakeOnLanMagicPacket(hwAddress);
+      while ((DateTime.Now - start).TotalMilliseconds < timeLimitSeconds)
       {
-        this.LogDebug("WOLMgr: Send wake-on-lan packet...");
-        if (!SendWakeOnLanPacket(hwAddress, IPAddress.Broadcast))
+        Log.Debug("WOL manager: send WOL packet...");
+        try
         {
-          this.LogWarn("WOLMgr: Failed to send wake-on-lan packet, is network interface up?");
+          SendUdpPacket(IPAddress.Broadcast, packet);
+        }
+        catch (Exception ex)
+        {
+          Log.Error(ex, "WOL manager: WOL packet transmission failed");
         }
 
-        this.LogDebug("WOLMgr: Ping...");
-        if (Ping(wakeupTarget, 1000))
+        Log.Debug("WOL manager: ping...");
+        if (Ping(hostName, 1000))
         {
-          this.LogDebug("WOLMgr: {0} is awake!", wakeupTarget);
+          Log.Info("WOL manager: system woken successfully, host name = {0}", hostName);
           return true;
         }
-        this.LogDebug("WOLMgr: Not reachable, waiting 1 second...");
+
+        Log.Debug("WOL manager: not yet reachable, waiting 1 second...");
         System.Threading.Thread.Sleep(1000);
-        waited += 1000;
       }
 
-      // Timeout was reached.
-      this.LogWarn("WOLMgr: Timed out waiting for {0} to wake, try increasing the WOL timeout value!", wakeupTarget);
+      Log.Error("WOL manager: failed to wake system within time limit, host name = {0}, hardware address = {1}, time limit = {2} ms", hostName, BitConverter.ToString(hwAddress).Replace("-", ":"), timeLimitSeconds);
       return false;
     }
 
-    /// <summary>
-    /// Convert the given hardware ethernet address into a byte[]
-    /// </summary>
-    /// <param name="address">string containing the hardware ethernet address to convert (00:01:02:03:04:05)</param>
-    /// <returns>byte[] containing the byte representation of this hardware ethernet address</returns>
-    public byte[] GetHwAddrBytes(string address)
-    {
-      byte[] addrn = new byte[6];
-      string[] addr = address.Split(':');
-      if (addr.Length != 6)
-      {
-        throw new ArgumentOutOfRangeException("address", address, "not a valid hardware ethernet addresss");
-      }
-      try
-      {
-        for (int i = 0; i < addr.Length; i++)
-        {
-          addrn[i] = byte.Parse(addr[i], System.Globalization.NumberStyles.HexNumber);
-        }
-
-        return addrn;
-      }
-      catch (FormatException)
-      {
-        throw new ArgumentOutOfRangeException("address", address, "not a valid hardware ethernet addresss");
-      }
-    }
+    #endregion
   }
 }
-
-#endregion
