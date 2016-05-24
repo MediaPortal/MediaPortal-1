@@ -167,6 +167,7 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Config\WebEPGMappingControl.resx">
       <DependentUpon>WebEPGMappingControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
