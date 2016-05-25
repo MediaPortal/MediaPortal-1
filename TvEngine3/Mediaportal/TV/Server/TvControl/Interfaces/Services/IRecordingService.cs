@@ -10,13 +10,16 @@ namespace Mediaportal.TV.Server.TVControl.Interfaces.Services
   public interface IRecordingService
   {
     [OperationContract]
-    Recording GetRecording(int idRecording);
+    IList<Recording> ListAllRecordings();
 
     [OperationContract]
     IList<Recording> ListAllRecordingsByMediaType(MediaType mediaType);
 
     [OperationContract]
-    Recording SaveRecording(Recording recording);
+    IList<Recording> ListAllActiveRecordingsByMediaType(MediaType mediaType);
+
+    [OperationContract]
+    Recording GetRecording(int idRecording);
 
     [OperationContract]
     Recording GetRecordingByFileName(string fileName);
@@ -28,9 +31,6 @@ namespace Mediaportal.TV.Server.TVControl.Interfaces.Services
     Recording GetActiveRecordingByTitleAndChannel(string title, int idChannel);
 
     [OperationContract]
-    IList<Recording> ListAllActiveRecordingsByMediaType(MediaType mediaType);
-
-    [OperationContract]
-    void DeleteRecording(int idRecording);
+    Recording SaveRecording(Recording recording);
   }
 }

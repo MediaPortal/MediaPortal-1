@@ -97,11 +97,8 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
     {
       if (!_startDayLoaded)
       {
-        // load first working day from database
-        int dayOfWeek = GlobalServiceProvider.Get<ISettingService>().GetValue("FirstDayOfWeekend", (int)DayOfWeek.Monday);
-        // in DayOfWeek enum Sunday = 0 so need to convert from value stored in database
-        // which is Saturday = 0, Sunday=1 etc
-        _firstWorkingDay = (DayOfWeek)((dayOfWeek + 1) % 7);
+        DayOfWeek firstWeekEndDay = (DayOfWeek)GlobalServiceProvider.Get<ISettingService>().GetValue("firstDayOfWeekEnd", (int)DayOfWeek.Saturday);
+        _firstWorkingDay = (DayOfWeek)(((int)firstWeekEndDay + 2) % 7);
         _startDayLoaded = true;
       }
 

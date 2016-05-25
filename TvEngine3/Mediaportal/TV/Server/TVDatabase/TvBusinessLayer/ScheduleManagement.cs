@@ -111,7 +111,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
       using (IScheduleRepository scheduleRepository = new ScheduleRepository())
       {
         var retrieveSeries = scheduleRepository.First<Schedule>(
-          s => s.ScheduleType != 0 && s.IdChannel == idChannel && s.ProgramName == programName);
+          s => s.ScheduleType != (int)ScheduleRecordingType.Once && s.IdChannel == idChannel && s.ProgramName == programName);
         return retrieveSeries;
       }
     }
@@ -130,7 +130,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
       {
         var retrieveSeries = scheduleRepository.First<Schedule>(
           s =>
-          s.ScheduleType != 0 && s.IdChannel == idChannel && s.ProgramName == programName && s.StartTime == startTime &&
+          s.ScheduleType != (int)ScheduleRecordingType.Once && s.IdChannel == idChannel && s.ProgramName == programName && s.StartTime == startTime &&
           s.EndTime == endTime);
         return retrieveSeries;
       }
@@ -148,7 +148,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
       using (IScheduleRepository scheduleRepository = new ScheduleRepository())
       {
         var retrieveSeries = scheduleRepository.First<Schedule>(
-          s => s.ScheduleType != 0 && s.IdChannel == idChannel && s.StartTime == startTime && s.EndTime == endTime);
+          s => s.ScheduleType != (int)ScheduleRecordingType.Once && s.IdChannel == idChannel && s.StartTime == startTime && s.EndTime == endTime);
         return retrieveSeries;
       }
     }
@@ -158,10 +158,11 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
       Schedule scheduleToDelete;
       using (IScheduleRepository scheduleRepository = new ScheduleRepository(true))
       {
-        SetRelatedRecordingsToNull(idSchedule, scheduleRepository);
         scheduleToDelete = scheduleRepository.First<Schedule>(schedule => schedule.IdSchedule == idSchedule);
         if (scheduleToDelete == null)
           return;
+
+        SetRelatedRecordingsToNull(idSchedule, scheduleRepository);
 
         scheduleRepository.Delete(scheduleToDelete);
         scheduleRepository.UnitOfWork.SaveChanges();
@@ -173,23 +174,14 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
     private static void SetRelatedRecordingsToNull(int idSchedule, IScheduleRepository scheduleRepository)
     {
       // todo : since "on delete: set null" is not currently supported in EF, we have to do this manually - remove this ugly workaround once EF gets mature enough.
-      var schedules = scheduleRepository.GetQuery<Schedule>(s => s.IdSchedule == idSchedule);
-      // Morpheus_xx, 2013-12-15: only include the recordings here, it's the only relation we change. Limiting the query to recordings fixes a bug with SQLite database,
-      // EF throws an exception: System.ServiceModel.FaultException`1[System.ServiceModel.ExceptionDetail]:
-      // The type of the key field 'IdSchedule' is expected to be 'System.Int32', but the value provided is actually of type 'System.Int64'.
-
-      schedules = scheduleRepository.IncludeAllRelations(schedules, ScheduleIncludeRelationEnum.Recordings);
-      Schedule schedule = schedules.FirstOrDefault();
-
-      if (schedule != null)
+      var recordings = scheduleRepository.GetQuery<Recording>(r => r.IdSchedule == idSchedule).ToList();
+      if (recordings.Count > 0)
       {
-        //scheduleRepository.DeleteList(schedule.Recordings);
-        for (int i = schedule.Recordings.Count - 1; i >= 0; i--)
+        foreach (Recording r in recordings)
         {
-          Recording recording = schedule.Recordings[i];
-          recording.IdSchedule = null;
+          r.IdSchedule = null;
         }
-        scheduleRepository.ApplyChanges<Schedule>(scheduleRepository.ObjectContext.Schedules, schedule);
+        scheduleRepository.ApplyChanges<Recording>(scheduleRepository.ObjectContext.Recordings, recordings);
       }
     }
 
@@ -230,7 +222,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
       using (IScheduleRepository scheduleRepository = new ScheduleRepository())
       {
         var scheduleWithNoEpg = scheduleRepository.FindOne<Schedule>(
-          s => s.ScheduleType == 0 && s.IdChannel == idChannel && s.IdParentSchedule <= 0 && !s.Series);
+          s => s.ScheduleType == (int)ScheduleRecordingType.Once && s.IdChannel == idChannel && s.IdParentSchedule <= 0 && !s.Series);
         return scheduleWithNoEpg;
       }
     }
@@ -632,20 +624,6 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
         }
       }
       return recordings;
-    }
-
-
-    public static bool DoesScheduleUseEpisodeManagement(Schedule schedule)
-    {
-      if (schedule.MaxAirings == Int32.MaxValue)
-      {
-        return false;
-      }
-      if (schedule.MaxAirings < 1)
-      {
-        return false;
-      }
-      return true;
     }
 
     public static void DeleteOrphanedOnceSchedules()

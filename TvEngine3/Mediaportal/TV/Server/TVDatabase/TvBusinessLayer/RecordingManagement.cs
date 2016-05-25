@@ -9,12 +9,84 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
 {
   public static class RecordingManagement
   {
-    public static Recording GetRecording(int idRecording)
+    public static IList<Recording> ListAllRecordings()
     {
-      //lazy loading verified ok
       using (IRecordingRepository recordingRepository = new RecordingRepository())
       {
-        Recording recording = recordingRepository.GetRecording(idRecording);
+        IQueryable<Recording> query = recordingRepository.GetAll<Recording>();
+        query = recordingRepository.IncludeAllRelations(query);
+        return query.ToList();
+      }
+    }
+
+    public static IList<Recording> ListAllRecordingsByMediaType(MediaType mediaType)
+    {
+      using (IRecordingRepository recordingRepository = new RecordingRepository())
+      {
+        IQueryable<Recording> query = recordingRepository.GetQuery<Recording>(r => r.MediaType == (int)mediaType);
+        query = recordingRepository.IncludeAllRelations(query);
+        return query.ToList();
+      }
+    }
+
+    public static IList<Recording> ListAllActiveRecordingsByMediaType(MediaType mediaType)
+    {
+      using (IRecordingRepository recordingRepository = new RecordingRepository())
+      {
+        IQueryable<Recording> query = recordingRepository.GetQuery<Recording>(c => c.MediaType == (int)mediaType && c.IsRecording);
+        query = recordingRepository.IncludeAllRelations(query);
+        return query.ToList();
+      }
+    }
+
+    public static Recording GetRecording(int idRecording)
+    {
+      using (IRecordingRepository recordingRepository = new RecordingRepository())
+      {
+        IQueryable<Recording> query = recordingRepository.GetQuery<Recording>(c => c.IdRecording == idRecording);
+        query = recordingRepository.IncludeAllRelations(query);
+        return query.FirstOrDefault();
+      }
+    }
+
+    public static Recording GetRecordingByFileName(string fileName)
+    {
+      using (IRecordingRepository recordingRepository = new RecordingRepository())
+      {
+        IQueryable<Recording> query = recordingRepository.GetQuery<Recording>(r => r.FileName == fileName);
+        query = recordingRepository.IncludeAllRelations(query);
+        return query.FirstOrDefault();
+      }
+    }
+
+    public static Recording GetActiveRecording(int idSchedule)
+    {
+      using (IRecordingRepository recordingRepository = new RecordingRepository())
+      {
+        IQueryable<Recording> query = recordingRepository.GetQuery<Recording>(r => r.IsRecording && r.IdSchedule == idSchedule);
+        query = recordingRepository.IncludeAllRelations(query);
+        return query.FirstOrDefault();
+      }
+    }
+
+    public static Recording GetActiveRecordingByTitleAndChannel(string title, int idChannel)
+    {
+      using (IRecordingRepository recordingRepository = new RecordingRepository())
+      {
+        IQueryable<Recording> query = recordingRepository.GetQuery<Recording>(r => r.IsRecording && r.IdChannel == idChannel && r.Title == title);
+        query = recordingRepository.IncludeAllRelations(query);
+        return query.FirstOrDefault();
+      }
+    }
+
+    public static Recording SaveRecording(Recording recording)
+    {
+      using (IRecordingRepository recordingRepository = new RecordingRepository())
+      {
+        recordingRepository.AttachEntityIfChangeTrackingDisabled(recordingRepository.ObjectContext.Recordings, recording);
+        recordingRepository.ApplyChanges(recordingRepository.ObjectContext.Recordings, recording);
+        recordingRepository.UnitOfWork.SaveChanges();
+        recording.AcceptChanges();
         return recording;
       }
     }
@@ -28,96 +100,57 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
       }
     }
 
-    public static IList<Recording> ListAllRecordingsByMediaType(MediaType mediaType)
+    public static void ResetActiveRecordings()
     {
-      //lazy loading verified ok
       using (IRecordingRepository recordingRepository = new RecordingRepository())
       {
-        return recordingRepository.ListAllRecordingsByMediaType(mediaType).ToList();
-      }
-    }
+        IList<Recording> activeRecordings = recordingRepository.GetQuery<Recording>(r => r.IsRecording).ToList();
+        foreach (Recording rec in activeRecordings)
+        {
+          rec.IsRecording = false;
+        }
 
-    public static Recording SaveRecording(Recording recording)
-    {
-      using (var recordingRepository = new RecordingRepository())
-      {
-        recordingRepository.AttachEntityIfChangeTrackingDisabled(recordingRepository.ObjectContext.Recordings, recording);                        
-        recordingRepository.ApplyChanges(recordingRepository.ObjectContext.Recordings, recording);
+        recordingRepository.ApplyChanges(recordingRepository.ObjectContext.Recordings, activeRecordings);
         recordingRepository.UnitOfWork.SaveChanges();
-        recording.AcceptChanges();
-        return recording;
-      }      
-    }
-
-    public static Recording GetRecordingByFileName(string filename)
-    {
-      //lazy loading verified ok
-      using (var recordingRepository = new RecordingRepository())
-      {
-        IQueryable<Recording> recordingsByFileName = recordingRepository.GetQuery<Recording>(r => r.FileName == filename);
-        Recording recordingByFileName = recordingRepository.IncludeAllRelations(recordingsByFileName).FirstOrDefault();
-        return recordingByFileName;
       }
     }
 
-    public static Recording GetActiveRecording(int idSchedule)
+    #region pending deletions
+
+    public static IList<PendingDeletion> ListAllPendingRecordingDeletions()
     {
-      //lazy loading verified ok
       using (IRecordingRepository recordingRepository = new RecordingRepository())
       {
-        IQueryable<Recording> recordings =
-          recordingRepository.GetQuery<Recording>(r => r.IsRecording && r.IdSchedule == idSchedule);
-        Recording activeRecording = recordingRepository.IncludeAllRelations(recordings).FirstOrDefault();
-        return activeRecording;
+        return recordingRepository.GetAll<PendingDeletion>().ToList();
       }
     }
 
-    public static Recording GetActiveRecordingByTitleAndChannel(string title, int idChannel)
+    public static PendingDeletion GetPendingRecordingDeletion(int idPendingDeletion)
     {
-      //lazy loading verified ok
       using (IRecordingRepository recordingRepository = new RecordingRepository())
       {
-        IQueryable<Recording> recordings =
-          recordingRepository.GetQuery<Recording>(r => r.IsRecording && r.IdChannel == idChannel && r.Title == title);
-        Recording activeRecordingByTitleAndChannel =
-          recordingRepository.IncludeAllRelations(recordings).FirstOrDefault();
-        return activeRecordingByTitleAndChannel;
+        return recordingRepository.FindOne<PendingDeletion>(p => p.IdPendingDeletion == idPendingDeletion);
       }
     }
 
-    public static IList<Recording> ListAllActiveRecordingsByMediaType(MediaType mediaType)
+    public static bool HasRecordingPendingDeletion(string fileName)
     {
-      //lazy loading verified ok
       using (IRecordingRepository recordingRepository = new RecordingRepository())
       {
-        IQueryable<Recording> allActiveRecordingsByMediaType =
-          recordingRepository.GetQuery<Recording>(c => c.MediaType == (int)mediaType && c.IsRecording);
-        allActiveRecordingsByMediaType = recordingRepository.IncludeAllRelations(allActiveRecordingsByMediaType);
-        return allActiveRecordingsByMediaType.ToList();
+        return recordingRepository.Count<PendingDeletion>(c => c.FileName == fileName) > 0;
       }
-    }
-
-    public static bool HasRecordingPendingDeletion(string filename)
-    {
-      bool hasRecordingPendingDeletion;
-      using (IRecordingRepository recordingRepository = new RecordingRepository())
-      {
-        hasRecordingPendingDeletion =
-          recordingRepository.Count<PendingDeletion>(c => c.FileName == filename) > 0;      
-      }
-      return hasRecordingPendingDeletion;
     }
 
     public static PendingDeletion SaveRecordingPendingDeletion(PendingDeletion pendingDeletion)
     {
       using (var recordingRepository = new RecordingRepository())
       {
-        recordingRepository.AttachEntityIfChangeTrackingDisabled(recordingRepository.ObjectContext.PendingDeletions, pendingDeletion);        
-        recordingRepository.ApplyChanges(recordingRepository.ObjectContext.PendingDeletions, pendingDeletion);        
+        recordingRepository.AttachEntityIfChangeTrackingDisabled(recordingRepository.ObjectContext.PendingDeletions, pendingDeletion);
+        recordingRepository.ApplyChanges(recordingRepository.ObjectContext.PendingDeletions, pendingDeletion);
         recordingRepository.UnitOfWork.SaveChanges();
         pendingDeletion.AcceptChanges();
         return pendingDeletion;
-      }      
+      }
     }
 
     public static void DeletePendingRecordingDeletion(int idPendingDeletion)
@@ -129,38 +162,6 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
       }
     }
 
-    public static PendingDeletion GetPendingRecordingDeletion(int idPendingDeletion)
-    {
-      using (IRecordingRepository recordingRepository = new RecordingRepository())
-      {
-        PendingDeletion pendingDeletion = recordingRepository.FindOne<PendingDeletion>(p => p.IdPendingDeletion == idPendingDeletion);
-        return pendingDeletion;
-      }
-    }
-
-    public static IList<PendingDeletion> ListAllPendingRecordingDeletions()
-    {
-      using (IRecordingRepository recordingRepository = new RecordingRepository())
-      {
-        var listAllPendingRecordingDeletions = recordingRepository.GetAll<PendingDeletion>().ToList();
-        return listAllPendingRecordingDeletions;
-      }
-    }
-
-    public static void ResetActiveRecordings()
-    {
-      using (IRecordingRepository recordingRepository = new RecordingRepository())
-      {
-        IQueryable<Recording> activeRecordings = recordingRepository.GetAll<Recording>();
-        foreach (Recording rec in activeRecordings)
-        {
-          rec.IsRecording = false;          
-        }
-
-        recordingRepository.ApplyChanges(recordingRepository.ObjectContext.Recordings, activeRecordings);
-        //recordingRepository.UpdateList(activeRecordings);
-        recordingRepository.UnitOfWork.SaveChanges();
-      }            
-    }
+    #endregion
   }
 }

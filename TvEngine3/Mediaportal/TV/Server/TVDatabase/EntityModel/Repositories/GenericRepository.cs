@@ -18,10 +18,10 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
   /// <summary>
   /// Generic repository
   /// </summary>
-  public class GenericRepository<TEntity> : IRepository<TEntity> where TEntity : ObjectContext
+  public class GenericRepository<TContext> : IRepository<TContext> where TContext : ObjectContext
   {
     private IUnitOfWork _unitOfWork;
-    private TEntity _objectContext;
+    private TContext _objectContext;
     private readonly PluralizationService _pluralizer = PluralizationService.CreateService(CultureInfo.GetCultureInfo("en"));
     private bool _disposed;
 
@@ -34,7 +34,7 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="GenericRepository&lt;TEntity&gt;"/> class.
+    /// Initializes a new instance of the <see cref="GenericRepository&lt;TContext&gt;"/> class.
     /// </summary>
     public GenericRepository()
       : this(false)
@@ -43,14 +43,14 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
     public GenericRepository(bool trackingEnabled)
     {
       _trackingEnabled = trackingEnabled;
-      _objectContext = ObjectContextManager.CreateDbContext() as TEntity;
+      _objectContext = ObjectContextManager.CreateDbContext() as TContext;
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="GenericRepository&lt;TEntity&gt;"/> class.
+    /// Initializes a new instance of the <see cref="GenericRepository&lt;TContext&gt;"/> class.
     /// </summary>
     /// <param name="objectContext">The object context.</param>
-    public GenericRepository(TEntity objectContext)
+    public GenericRepository(TContext objectContext)
     {
       if (objectContext == null)
         throw new ArgumentNullException("objectContext");
@@ -286,9 +286,9 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
       get { return _unitOfWork ?? (_unitOfWork = new UnitOfWork(ObjectContext)); }
     }
 
-    public TEntity ObjectContext
+    public TContext ObjectContext
     {
-      get { return _objectContext ?? (_objectContext = ObjectContextManager.CreateDbContext() as TEntity); }
+      get { return _objectContext ?? (_objectContext = ObjectContextManager.CreateDbContext() as TContext); }
     }
 
     private EntityKey GetEntityKey<TEntity>(object keyValue) where TEntity : class

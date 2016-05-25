@@ -1870,7 +1870,8 @@ namespace Mediaportal.TV.TvPlugin
           GUIPropertyManager.SetProperty("#TV.View.compositetitle", TVUtil.GetDisplayTitle(prog));
           GUIPropertyManager.SetProperty("#TV.View.subtitle", prog.EpisodeName ?? string.Empty);
           GUIPropertyManager.SetProperty("#TV.View.description", prog.Description);
-          GUIPropertyManager.SetProperty("#TV.View.episode", prog.EpisodeNumber > 0 ? prog.EpisodeNumber.ToString() : string.Empty);
+          GUIPropertyManager.SetProperty("#TV.View.season", prog.SeasonNumber.ToString());
+          GUIPropertyManager.SetProperty("#TV.View.episode", prog.EpisodeNumber.ToString());
         }
       }
 
@@ -1906,8 +1907,9 @@ namespace Mediaportal.TV.TvPlugin
           GUIPropertyManager.SetProperty("#TV.View.title", rec.Title);
           GUIPropertyManager.SetProperty("#TV.View.compositetitle", TVUtil.GetDisplayTitle(rec));
           GUIPropertyManager.SetProperty("#TV.View.description", rec.Description);
-          GUIPropertyManager.SetProperty("#TV.View.subtitle", rec.EpisodeName);
-          GUIPropertyManager.SetProperty("#TV.View.episode", rec.EpisodeNum);
+          GUIPropertyManager.SetProperty("#TV.View.subtitle", rec.EpisodeName ?? string.Empty);
+          GUIPropertyManager.SetProperty("#TV.View.season", rec.SeasonNumber.ToString());
+          GUIPropertyManager.SetProperty("#TV.View.episode", rec.EpisodeNumber.ToString());
         }
       }
     }

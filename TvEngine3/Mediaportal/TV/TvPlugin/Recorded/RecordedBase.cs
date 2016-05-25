@@ -289,11 +289,7 @@ namespace Mediaportal.TV.TvPlugin.Recorded
     {
       try
       {
-        var prog = ProgramFactory.CreateEmptyProgram();
-        prog.IdChannel = rec.IdChannel.GetValueOrDefault();
-        prog.StartTime = rec.StartTime;
-        prog.EndTime = rec.EndTime;
-        prog.Title = rec.Title;
+        var prog = ProgramFactory.CreateProgram(rec.IdChannel.GetValueOrDefault(), rec.StartTime, rec.EndTime, rec.Title);
         prog.Description = rec.Description;
         TVProgramInfo.CurrentProgram = prog;
         GUIWindowManager.ActivateWindow((int)Window.WINDOW_TV_PROGRAM_INFO);
@@ -513,7 +509,7 @@ namespace Mediaportal.TV.TvPlugin.Recorded
 
       dlg.AddLocalizedString(655); //Play recorded tv
       dlg.AddLocalizedString(656); //Delete recorded tv
-      if (rec.TimesWatched > 0)
+      if (rec.WatchedCount > 0)
       {
         dlg.AddLocalizedString(830); //Reset watched status
       }
@@ -749,10 +745,7 @@ namespace Mediaportal.TV.TvPlugin.Recorded
         }
       }
 
-      if (TVHome.Card != null)
-      {
-        TVHome.Card.StopTimeShifting();
-      }
+      TVHome.Card.StopTimeShifting();
       return TVUtil.PlayRecording(rec, stoptime, mpMediaType);
     }
 
@@ -959,7 +952,7 @@ namespace Mediaportal.TV.TvPlugin.Recorded
 
         // Set a default logo indicating the watched status
         string smallThumb;
-        if (aRecording.TimesWatched > 0)
+        if (aRecording.WatchedCount > 0)
         {
           smallThumb = GUIGraphicsContext.GetThemedSkinFile(@"\Media\defaultVideoSeenBig.png");
         }
@@ -1138,12 +1131,9 @@ namespace Mediaportal.TV.TvPlugin.Recorded
             item1.Label2 = GetChannelDisplayName(rec);
           }
 
-          if (rec.TimesWatched > 0)
+          if (rec.WatchedCount > 0 && !item1.IsFolder)
           {
-            if (!item1.IsFolder)
-            {
-              item1.IsPlayed = true;
-            }
+            item1.IsPlayed = true;
           }
           //this.LogDebug("RecordedBase: SetLabels - 1: {0}, 2: {1}, 3: {2}", item1.Label, item1.Label2, item1.Label3);
         }
@@ -1190,7 +1180,7 @@ namespace Mediaportal.TV.TvPlugin.Recorded
       }
       else
       {
-        if (rec.TimesWatched > 0)
+        if (rec.WatchedCount > 0)
         {
           dlgYesNo.SetHeading(GUILocalizeStrings.Get(653));
         }
@@ -1255,23 +1245,9 @@ namespace Mediaportal.TV.TvPlugin.Recorded
 
     private void TryDeleteRecordingAndNotifyUser(Recording rec)
     {
-      int timeout = 0;
-      bool deleteRecording = false;
-
-      while (!deleteRecording && timeout < 5)
-      {
-        deleteRecording = ServiceAgents.Instance.ControllerServiceAgent.DeleteRecording(rec.IdRecording);
-        if (!deleteRecording)
-        {
-          timeout++;
-          Thread.Sleep(1000);
-        }
-      }
-
-      if (!deleteRecording)
+      if (!ServiceAgents.Instance.ControllerServiceAgent.DeleteRecording(rec.IdRecording))
       {
         GUIDialogOK dlgOk = (GUIDialogOK)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_OK);
-
         if (dlgOk != null)
         {
           dlgOk.SetHeading(257);
@@ -1305,34 +1281,20 @@ namespace Mediaportal.TV.TvPlugin.Recorded
       dlg.SetHeading(GUILocalizeStrings.Get(200043)); //Cleanup recordings?
 
       dlg.Add(new GUIListItem(GUILocalizeStrings.Get(676))); // Only watched recordings?
-      dlg.Add(new GUIListItem(GUILocalizeStrings.Get(200044))); // Only invalid recordings?
-      dlg.Add(new GUIListItem(GUILocalizeStrings.Get(200045))); // Both?
-      if (_currentLabel != "")
+      if (!string.IsNullOrEmpty(_currentLabel))
       {
         dlg.Add(new GUIListItem(GUILocalizeStrings.Get(200049))); // Only watched recordings from this folder.
       }
       dlg.Add(new GUIListItem(GUILocalizeStrings.Get(222))); // Cancel?
       dlg.DoModal(GetID);
-      if (dlg.SelectedLabel < 0)
-      {
-        return;
-      }
-      if (dlg.SelectedLabel > 4)
+      if (dlg.SelectedLabel < 0 || dlg.SelectedLabel > 2)
       {
         return;
       }
 
-      if ((dlg.SelectedLabel == 0) || (dlg.SelectedLabel == 2))
+      if (dlg.SelectedLabel == 0 || (dlg.SelectedLabel == 1 && !string.IsNullOrEmpty(_currentLabel)))
       {
-        DeleteWatchedRecordings(null);
-      }
-      if ((dlg.SelectedLabel == 1) || (dlg.SelectedLabel == 2))
-      {
-        DeleteInvalidRecordings();
-      }
-      if (dlg.SelectedLabel == 3 && _currentLabel != "")
-      {
-        DeleteWatchedRecordings(_currentLabel);
+        ServiceAgents.Instance.ControllerServiceAgent.DeleteWatchedRecordings(_currentLabel, MediaType);
       }
       dlg.Reset();
       LoadDirectory();
@@ -1342,22 +1304,6 @@ namespace Mediaportal.TV.TvPlugin.Recorded
       }
 
       GUIControl.SelectItemControl(GetID, facadeLayout.GetID, _selectedItem);
-    }
-
-    private void DeleteWatchedRecordings(string currentTitle)
-    {
-      ServiceAgents.Instance.ControllerServiceAgent.DeleteWatchedRecordings(currentTitle);
-    }
-
-    private bool DeleteInvalidRecordings()
-    {
-      Stopwatch watch = new Stopwatch();
-      watch.Reset();
-      watch.Start();
-      bool deletedrecordings = ServiceAgents.Instance.ControllerServiceAgent.DeleteInvalidRecordings();
-      watch.Stop();
-      this.LogDebug("DeleteInvalidRecordings() - finished after {0} ms., deletedrecordings = {1}", watch.ElapsedMilliseconds, deletedrecordings);
-      return deletedrecordings;
     }
 
     private void UpdateThumbnails()
@@ -1575,11 +1521,11 @@ namespace Mediaportal.TV.TvPlugin.Recorded
           switch (_currentSortMethod)
           {
             case SortMethod.Played:
-              item1.Label2 = string.Format("{0} {1}", rec1.TimesWatched, GUILocalizeStrings.Get(677)); //times
-              item2.Label2 = string.Format("{0} {1}", rec2.TimesWatched, GUILocalizeStrings.Get(677)); //times
-              if (rec1.TimesWatched != rec2.TimesWatched)
+              item1.Label2 = string.Format("{0} {1}", rec1.WatchedCount, GUILocalizeStrings.Get(677)); //times
+              item2.Label2 = string.Format("{0} {1}", rec2.WatchedCount, GUILocalizeStrings.Get(677)); //times
+              if (rec1.WatchedCount != rec2.WatchedCount)
               {
-                int x = rec1.TimesWatched - rec2.TimesWatched;
+                int x = rec1.WatchedCount - rec2.WatchedCount;
                 return m_bSortAscending ? x : -x;
               }
               _currentSortMethod = SortMethod.Name;
@@ -1701,7 +1647,7 @@ namespace Mediaportal.TV.TvPlugin.Recorded
       Recording rec = ServiceAgents.Instance.RecordingServiceAgent.GetRecordingByFileName(filename);
       if (rec != null)
       {
-        if (_deleteWatchedShows || rec.KeepUntil == (int)RecordingKeepMethod.UntilWatched)
+        if (_deleteWatchedShows || rec.KeepMethod == (int)RecordingKeepMethod.UntilWatched)
         {
           ServiceAgents.Instance.ControllerServiceAgent.DeleteRecording(rec.IdRecording);
         }
@@ -1730,7 +1676,7 @@ namespace Mediaportal.TV.TvPlugin.Recorded
 
     private void ResetWatchedStatus(Recording aRecording)
     {
-      aRecording.TimesWatched = 0;
+      aRecording.WatchedCount = 0;
       aRecording.StopTime = 0;
       ServiceAgents.Instance.RecordingServiceAgent.SaveRecording(aRecording);
     }

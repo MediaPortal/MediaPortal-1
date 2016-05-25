@@ -179,7 +179,6 @@
     <Property Name="Priority" Type="int" Nullable="false" />
     <Property Name="IsEnabled" Type="bit" Nullable="false" />
     <Property Name="UseForEpgGrabbing" Type="bit" Nullable="false" />
-    <Property Name="RecordingFolder" Type="varchar" Nullable="false" MaxLength="300" />
     <Property Name="SupportedBroadcastStandards" Type="int" Nullable="false" />
     <Property Name="UseConditionalAccess" Type="bit" Nullable="false" />
     <Property Name="CamType" Type="int" Nullable="false" />
@@ -353,23 +352,36 @@
     </Key>
     <Property Name="IdRecording" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
     <Property Name="IdChannel" Type="int" Nullable="true" />
+    <Property Name="MediaType" Type="int" Nullable="false" />
     <Property Name="StartTime" Type="datetime" Nullable="false" />
     <Property Name="EndTime" Type="datetime" Nullable="false" />
     <Property Name="Title" Type="varchar" Nullable="false" MaxLength="2000" />
     <Property Name="Description" Type="varchar" Nullable="false" MaxLength="8000" />
-    <Property Name="FileName" Type="varchar" Nullable="false" MaxLength="260" />
-    <Property Name="KeepUntil" Type="int" Nullable="false" />
-    <Property Name="KeepUntilDate" Type="datetime" Nullable="true" />
-    <Property Name="TimesWatched" Type="int" Nullable="false" />
-    <Property Name="StopTime" Type="int" Nullable="false" />
-    <Property Name="EpisodeName" Type="varchar" Nullable="false" MaxLength="Max" />
-    <Property Name="SeriesNum" Type="varchar" Nullable="false" MaxLength="200" />
-    <Property Name="EpisodeNum" Type="varchar" Nullable="false" MaxLength="200" />
-    <Property Name="EpisodePart" Type="varchar" Nullable="false" MaxLength="Max" />
+    <Property Name="EpisodeName" Type="varchar" Nullable="true" MaxLength="2000" />
+    <Property Name="SeriesId" Type="varchar" Nullable="true" MaxLength="200" />
+    <Property Name="SeasonNumber" Type="int" Nullable="true" />
+    <Property Name="EpisodeId" Type="varchar" Nullable="true" MaxLength="200" />
+    <Property Name="EpisodeNumber" Type="int" Nullable="true" />
+    <Property Name="EpisodePartNumber" Type="int" Nullable="true" />
+    <Property Name="IsPreviouslyShown" Type="bit" Nullable="true" />
+    <Property Name="OriginalAirDate" Type="datetime" Nullable="true" />
+    <Property Name="IdProgramCategory" Type="int" Nullable="true" />
+    <Property Name="Classification" Type="varchar" Nullable="true" MaxLength="200" />
+    <Property Name="Advisories" Type="int" Nullable="false" />
+    <Property Name="IsHighDefinition" Type="bit" Nullable="true" />
+    <Property Name="IsThreeDimensional" Type="bit" Nullable="true" />
+    <Property Name="IsLive" Type="bit" Nullable="true" />
+    <Property Name="ProductionYear" Type="int" Nullable="true" />
+    <Property Name="ProductionCountry" Type="varchar" Nullable="true" MaxLength="200" />
+    <Property Name="StarRating" Type="decimal" Nullable="true" />
+    <Property Name="StarRatingMaximum" Type="decimal" Nullable="true" />
     <Property Name="IsRecording" Type="bit" Nullable="false" />
     <Property Name="IdSchedule" Type="int" Nullable="true" />
-    <Property Name="MediaType" Type="int" Nullable="false" />
-    <Property Name="IdProgramCategory" Type="int" Nullable="true" />
+    <Property Name="FileName" Type="varchar" Nullable="false" MaxLength="260" />
+    <Property Name="KeepMethod" Type="int" Nullable="false" />
+    <Property Name="KeepUntilDate" Type="datetime" Nullable="true" />
+    <Property Name="WatchedCount" Type="int" Nullable="false" />
+    <Property Name="StopTime" Type="int" Nullable="false" />
   </EntityType>
   <EntityType Name="RuleBasedSchedules">
     <Key>

@@ -123,21 +123,6 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private bool _useForEpgGrabbing;
     
         [DataMember]
-        public string RecordingFolder
-        {
-            get { return _recordingFolder; }
-            set
-            {
-                if (_recordingFolder != value)
-                {
-                    _recordingFolder = value;
-                    OnPropertyChanged("RecordingFolder");
-                }
-            }
-        }
-        private string _recordingFolder;
-    
-        [DataMember]
         public int SupportedBroadcastStandards
         {
             get { return _supportedBroadcastStandards; }

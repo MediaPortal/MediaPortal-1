@@ -29,537 +29,570 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     /// </summary>
     private void InitializeComponent()
     {
-      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(TvRecording));
-      this.tabControl1 = new System.Windows.Forms.TabControl();
-      this.tpSettings = new System.Windows.Forms.TabPage();
-      this.groupBox1 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPGroupBox();
-      this.groupBoxRecording = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPGroupBox();
-      this.label48 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
-      this.numericUpDownMaxFreeCardsToTry = new System.Windows.Forms.NumericUpDown();
-      this.lblMaxFreeCards = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
-      this.groupBoxScheduler = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPGroupBox();
-      this.lblWeekend = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
-      this.comboBoxWeekend = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPComboBox();
-      this.checkBoxPreventDupes = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPCheckBox();
-      this.comboBoxEpisodeKey = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPComboBox();
-      this.labelEpisodeKey = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
-      this.groupBoxGap = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPGroupBox();
-      this.label1 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
-      this.label2 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
-      this.numericUpDownPostRec = new System.Windows.Forms.NumericUpDown();
-      this.label3 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
-      this.numericUpDownPreRec = new System.Windows.Forms.NumericUpDown();
-      this.label4 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
-      this.tpCustom = new System.Windows.Forms.TabPage();
-      this.groupBox2 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPGroupBox();
-      this.labelCustomFormat = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
-      this.textBoxCustomFormat = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPTextBox();
-      this.comboBoxFormat = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPComboBox();
-      this.groupBox3 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPGroupBox();
-      this.mpLabel3 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
-      this.mpLabel4 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
-      this.textBoxSample = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPTextBox();
-      this.label8 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
-      this.label7 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
-      this.label5 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
-      this.comboBoxMovies = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPComboBox();
-      this.tpThumbnails = new System.Windows.Forms.TabPage();
-      this.buttonThumbnailerDeleteExisting = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
+      this.tabControl = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPTabControl();
+      this.tabPageStorage = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPTabPage();
+      this.numericUpDownDiskManagement = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPNumericUpDown();
+      this.groupBoxNaming = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPGroupBox();
+      this.labelNamingTemplateTags2 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.labelNamingTip = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.labelNamingTemplateTags4 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.labelNamingTemplateTags1 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.labelNamingTemplateTags3 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.textBoxRecordingFolder = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPTextBox();
+      this.labelRecordingFolder = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.labelDiskManagement = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.checkBoxDiskManagementEnable = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPCheckBox();
+      this.labelNamingTemplateSeries = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.labelDiskManagementSpaceFree = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.labelDiskManagementSpaceFreeValue = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.labelNamingTemplateNonSeries = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.labelDiskManagementSpaceTotal = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.textBoxNamingTemplateNonSeries = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPTextBox();
+      this.labelDiskManagementSpaceTotalValue = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.buttonRecordingFolderBrowse = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
+      this.textBoxNamingTemplateSeries = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPTextBox();
+      this.tabPageGeneral = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPTabPage();
+      this.groupBoxGeneral = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPGroupBox();
+      this.checkBoxDuplicateDetectionEpisodeNames = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPCheckBox();
+      this.checkBoxDuplicateDetectionSeasonEpisodeNumbers = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPCheckBox();
+      this.checkBoxDuplicateDetectionSeriesEpisodeIdentifers = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPCheckBox();
+      this.labelWeekEnd = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.numericUpDownTunerLimit = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPNumericUpDown();
+      this.comboBoxWeekEnd = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPComboBox();
+      this.labelTunerLimit = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.labelDuplicateDetection = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.labelPreRecord1 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.labelPostRecord1 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.numericUpDownPostRecord = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPNumericUpDown();
+      this.labelPreRecord2 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.numericUpDownPreRecord = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPNumericUpDown();
+      this.labelPostRecord2 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.groupBoxThumbnailer = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPGroupBox();
+      this.buttonThumbnailerDeleteExisting = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
+      this.checkBoxThumbnailerEnable = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPCheckBox();
+      this.labelThumbnailerTimeOffsetUnit = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.checkBoxThumbnailerCopyToRecordingFolder = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPCheckBox();
       this.comboBoxThumbnailerQualitySpeed = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPComboBox();
+      this.buttonThumbnailerCreateMissing = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
       this.labelThumbnailerQualitySpeed = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
-      this.numericUpDownThumbnailerTimeOffset = new System.Windows.Forms.NumericUpDown();
+      this.numericUpDownThumbnailerTimeOffset = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPNumericUpDown();
       this.labelThumbnailerTimeOffset = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
-      this.numericUpDownThumbnailerRowCount = new System.Windows.Forms.NumericUpDown();
-      this.numericUpDownThumbnailerColumnCount = new System.Windows.Forms.NumericUpDown();
+      this.numericUpDownThumbnailerRowCount = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPNumericUpDown();
+      this.numericUpDownThumbnailerColumnCount = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPNumericUpDown();
       this.labelThumbnailerRowCount = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.labelThumbnailerColumnCount = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
-      this.checkBoxThumbnailerEnable = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPCheckBox();
-      this.buttonThumbnailerCreateMissing = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
-      this.tpRecording = new System.Windows.Forms.TabPage();
-      this.groupBox4 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPGroupBox();
-      this.mpLabel5 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
-      this.enableDiskQuota = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPCheckBox();
-      this.mpNumericTextBoxDiskQuota = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPNumericTextBox();
-      this.label14 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
-      this.comboBoxDrive = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPComboBox();
-      this.labelFreeDiskspace = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
-      this.label9 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
-      this.labelTotalDiskSpace = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
-      this.label10 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
-      this.label11 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
-      this.groupBoxRecordSettings = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPGroupBox();
-      this.buttonSameRecFolder = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
-      this.textBoxRecordingFormat = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPTextBox();
-      this.pictureBox1 = new System.Windows.Forms.PictureBox();
-      this.comboBoxCards = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPComboBox();
-      this.label23 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
-      this.textBoxFolder = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPTextBox();
-      this.label13 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
-      this.buttonBrowse = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
-      this.tpRecordImport = new System.Windows.Forms.TabPage();
-      this.buttonChangeChannel = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
-      this.btnRemoveInvalidFiles = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
-      this.btnImport = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
-      this.lblImportItems = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
-      this.tvTagRecs = new System.Windows.Forms.TreeView();
-      this.lblRecFolders = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
-      this.cbRecPaths = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPComboBox();
-      this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
-      this.mpLabel1 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
-      this.mpLabel2 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
-      this.tabControl1.SuspendLayout();
-      this.tpSettings.SuspendLayout();
-      this.groupBox1.SuspendLayout();
-      this.groupBoxRecording.SuspendLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownMaxFreeCardsToTry)).BeginInit();
-      this.groupBoxScheduler.SuspendLayout();
-      this.groupBoxGap.SuspendLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownPostRec)).BeginInit();
-      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownPreRec)).BeginInit();
-      this.tpCustom.SuspendLayout();
-      this.groupBox2.SuspendLayout();
-      this.groupBox3.SuspendLayout();
-      this.tpThumbnails.SuspendLayout();
+      this.tabPageDatabase = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPTabPage();
+      this.buttonImport = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
+      this.buttonRecordingDelete = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
+      this.listViewRecordings = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPListView();
+      this.columnHeaderTitle = ((Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader)(new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader()));
+      this.columnHeaderChannel = ((Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader)(new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader()));
+      this.columnHeaderStart = ((Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader)(new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader()));
+      this.columnHeaderSeasonNumber = ((Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader)(new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader()));
+      this.columnHeaderEpisodeNumber = ((Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader)(new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader()));
+      this.columnHeaderEpisodeName = ((Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader)(new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader()));
+      this.columnHeaderCategory = ((Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader)(new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader()));
+      this.columnHeaderKeepUntil = ((Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader)(new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader()));
+      this.columnHeaderFileName = ((Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader)(new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader()));
+      this.labelRecordingImport = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.textBoxImportFolder = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPTextBox();
+      this.buttonImportBrowse = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
+      this.buttonRecordingChangeChannel = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
+      this.tabControl.SuspendLayout();
+      this.tabPageStorage.SuspendLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownDiskManagement)).BeginInit();
+      this.groupBoxNaming.SuspendLayout();
+      this.tabPageGeneral.SuspendLayout();
+      this.groupBoxGeneral.SuspendLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTunerLimit)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownPostRecord)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownPreRecord)).BeginInit();
       this.groupBoxThumbnailer.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownThumbnailerTimeOffset)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownThumbnailerRowCount)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownThumbnailerColumnCount)).BeginInit();
-      this.tpRecording.SuspendLayout();
-      this.groupBox4.SuspendLayout();
-      this.groupBoxRecordSettings.SuspendLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
-      this.tpRecordImport.SuspendLayout();
+      this.tabPageDatabase.SuspendLayout();
       this.SuspendLayout();
       // 
-      // tabControl1
+      // tabControl
       // 
-      this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+      this.tabControl.AllowDrop = true;
+      this.tabControl.AllowReorderTabs = false;
+      this.tabControl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
                   | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
-      this.tabControl1.Controls.Add(this.tpSettings);
-      this.tabControl1.Controls.Add(this.tpCustom);
-      this.tabControl1.Controls.Add(this.tpThumbnails);
-      this.tabControl1.Controls.Add(this.tpRecording);
-      this.tabControl1.Controls.Add(this.tpRecordImport);
-      this.tabControl1.Location = new System.Drawing.Point(0, 0);
-      this.tabControl1.Name = "tabControl1";
-      this.tabControl1.SelectedIndex = 0;
-      this.tabControl1.Size = new System.Drawing.Size(480, 420);
-      this.tabControl1.TabIndex = 0;
-      this.tabControl1.SelectedIndexChanged += new System.EventHandler(this.tabControl1_SelectedIndexChanged);
+      this.tabControl.Controls.Add(this.tabPageStorage);
+      this.tabControl.Controls.Add(this.tabPageGeneral);
+      this.tabControl.Controls.Add(this.tabPageDatabase);
+      this.tabControl.Location = new System.Drawing.Point(0, 0);
+      this.tabControl.Name = "tabControl";
+      this.tabControl.SelectedIndex = 0;
+      this.tabControl.Size = new System.Drawing.Size(480, 420);
+      this.tabControl.TabIndex = 0;
       // 
-      // tpSettings
+      // tabPageStorage
       // 
-      this.tpSettings.Controls.Add(this.groupBox1);
-      this.tpSettings.Location = new System.Drawing.Point(4, 22);
-      this.tpSettings.Name = "tpSettings";
-      this.tpSettings.Padding = new System.Windows.Forms.Padding(3);
-      this.tpSettings.Size = new System.Drawing.Size(472, 394);
-      this.tpSettings.TabIndex = 0;
-      this.tpSettings.Text = "General";
-      this.tpSettings.UseVisualStyleBackColor = true;
+      this.tabPageStorage.Controls.Add(this.numericUpDownDiskManagement);
+      this.tabPageStorage.Controls.Add(this.groupBoxNaming);
+      this.tabPageStorage.Controls.Add(this.textBoxRecordingFolder);
+      this.tabPageStorage.Controls.Add(this.labelRecordingFolder);
+      this.tabPageStorage.Controls.Add(this.labelDiskManagement);
+      this.tabPageStorage.Controls.Add(this.checkBoxDiskManagementEnable);
+      this.tabPageStorage.Controls.Add(this.labelNamingTemplateSeries);
+      this.tabPageStorage.Controls.Add(this.labelDiskManagementSpaceFree);
+      this.tabPageStorage.Controls.Add(this.labelDiskManagementSpaceFreeValue);
+      this.tabPageStorage.Controls.Add(this.labelNamingTemplateNonSeries);
+      this.tabPageStorage.Controls.Add(this.labelDiskManagementSpaceTotal);
+      this.tabPageStorage.Controls.Add(this.textBoxNamingTemplateNonSeries);
+      this.tabPageStorage.Controls.Add(this.labelDiskManagementSpaceTotalValue);
+      this.tabPageStorage.Controls.Add(this.buttonRecordingFolderBrowse);
+      this.tabPageStorage.Controls.Add(this.textBoxNamingTemplateSeries);
+      this.tabPageStorage.Location = new System.Drawing.Point(4, 22);
+      this.tabPageStorage.Name = "tabPageStorage";
+      this.tabPageStorage.Padding = new System.Windows.Forms.Padding(3);
+      this.tabPageStorage.Size = new System.Drawing.Size(472, 394);
+      this.tabPageStorage.TabIndex = 1;
+      this.tabPageStorage.Text = "Storage";
+      this.tabPageStorage.UseVisualStyleBackColor = true;
       // 
-      // groupBox1
+      // numericUpDownDiskManagement
       // 
-      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+      this.numericUpDownDiskManagement.Location = new System.Drawing.Point(228, 42);
+      this.numericUpDownDiskManagement.Maximum = new decimal(new int[] {
+            999999,
+            0,
+            0,
+            0});
+      this.numericUpDownDiskManagement.Minimum = new decimal(new int[] {
+            50,
+            0,
+            0,
+            0});
+      this.numericUpDownDiskManagement.Name = "numericUpDownDiskManagement";
+      this.numericUpDownDiskManagement.Size = new System.Drawing.Size(60, 20);
+      this.numericUpDownDiskManagement.TabIndex = 4;
+      this.numericUpDownDiskManagement.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+      this.numericUpDownDiskManagement.Value = new decimal(new int[] {
+            1000,
+            0,
+            0,
+            0});
+      // 
+      // groupBoxNaming
+      // 
+      this.groupBoxNaming.Controls.Add(this.labelNamingTemplateTags2);
+      this.groupBoxNaming.Controls.Add(this.labelNamingTip);
+      this.groupBoxNaming.Controls.Add(this.labelNamingTemplateTags4);
+      this.groupBoxNaming.Controls.Add(this.labelNamingTemplateTags1);
+      this.groupBoxNaming.Controls.Add(this.labelNamingTemplateTags3);
+      this.groupBoxNaming.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.groupBoxNaming.Location = new System.Drawing.Point(9, 166);
+      this.groupBoxNaming.Name = "groupBoxNaming";
+      this.groupBoxNaming.Size = new System.Drawing.Size(457, 114);
+      this.groupBoxNaming.TabIndex = 14;
+      this.groupBoxNaming.TabStop = false;
+      this.groupBoxNaming.Text = "Naming Tags";
+      // 
+      // labelNamingTemplateTags2
+      // 
+      this.labelNamingTemplateTags2.AutoSize = true;
+      this.labelNamingTemplateTags2.Location = new System.Drawing.Point(132, 16);
+      this.labelNamingTemplateTags2.Name = "labelNamingTemplateTags2";
+      this.labelNamingTemplateTags2.Size = new System.Drawing.Size(93, 65);
+      this.labelNamingTemplateTags2.TabIndex = 1;
+      this.labelNamingTemplateTags2.Text = "%channel_name%\r\n%genre%\r\n%date%\r\n%start%\r\n%end%";
+      // 
+      // labelNamingTip
+      // 
+      this.labelNamingTip.AutoSize = true;
+      this.labelNamingTip.Location = new System.Drawing.Point(6, 91);
+      this.labelNamingTip.Name = "labelNamingTip";
+      this.labelNamingTip.Size = new System.Drawing.Size(393, 13);
+      this.labelNamingTip.TabIndex = 4;
+      this.labelNamingTip.Text = "Use square braces [] to specify optional fields and back-slash (\\) for relative p" +
+          "aths.";
+      // 
+      // labelNamingTemplateTags4
+      // 
+      this.labelNamingTemplateTags4.AutoSize = true;
+      this.labelNamingTemplateTags4.Location = new System.Drawing.Point(358, 16);
+      this.labelNamingTemplateTags4.Name = "labelNamingTemplateTags4";
+      this.labelNamingTemplateTags4.Size = new System.Drawing.Size(78, 65);
+      this.labelNamingTemplateTags4.TabIndex = 3;
+      this.labelNamingTemplateTags4.Text = "%end_year%\r\n%end_month%\r\n%end_day%\r\n%end_hour%\r\n%end_minute%";
+      // 
+      // labelNamingTemplateTags1
+      // 
+      this.labelNamingTemplateTags1.AutoSize = true;
+      this.labelNamingTemplateTags1.Location = new System.Drawing.Point(6, 16);
+      this.labelNamingTemplateTags1.Name = "labelNamingTemplateTags1";
+      this.labelNamingTemplateTags1.Size = new System.Drawing.Size(101, 65);
+      this.labelNamingTemplateTags1.TabIndex = 0;
+      this.labelNamingTemplateTags1.Text = "%program_title%\r\n%episode_name%\r\n%series_number%\r\n%episode_number%\r\n%episode_part" +
+          "%";
+      // 
+      // labelNamingTemplateTags3
+      // 
+      this.labelNamingTemplateTags3.AutoSize = true;
+      this.labelNamingTemplateTags3.Location = new System.Drawing.Point(244, 16);
+      this.labelNamingTemplateTags3.Name = "labelNamingTemplateTags3";
+      this.labelNamingTemplateTags3.Size = new System.Drawing.Size(80, 65);
+      this.labelNamingTemplateTags3.TabIndex = 2;
+      this.labelNamingTemplateTags3.Text = "%start_year%\r\n%start_month%\r\n%start_day%\r\n%start_hour%\r\n%start_minute%";
+      // 
+      // textBoxRecordingFolder
+      // 
+      this.textBoxRecordingFolder.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
-      this.groupBox1.Controls.Add(this.groupBoxRecording);
-      this.groupBox1.Controls.Add(this.groupBoxScheduler);
-      this.groupBox1.Controls.Add(this.groupBoxGap);
-      this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.groupBox1.Location = new System.Drawing.Point(6, 3);
-      this.groupBox1.Name = "groupBox1";
-      this.groupBox1.Size = new System.Drawing.Size(460, 363);
-      this.groupBox1.TabIndex = 0;
-      this.groupBox1.TabStop = false;
+      this.textBoxRecordingFolder.Location = new System.Drawing.Point(109, 13);
+      this.textBoxRecordingFolder.Name = "textBoxRecordingFolder";
+      this.textBoxRecordingFolder.Size = new System.Drawing.Size(325, 20);
+      this.textBoxRecordingFolder.TabIndex = 1;
       // 
-      // groupBoxRecording
+      // labelRecordingFolder
       // 
-      this.groupBoxRecording.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+      this.labelRecordingFolder.AutoSize = true;
+      this.labelRecordingFolder.Location = new System.Drawing.Point(6, 16);
+      this.labelRecordingFolder.Name = "labelRecordingFolder";
+      this.labelRecordingFolder.Size = new System.Drawing.Size(39, 13);
+      this.labelRecordingFolder.TabIndex = 0;
+      this.labelRecordingFolder.Text = "Folder:";
+      // 
+      // labelDiskManagement
+      // 
+      this.labelDiskManagement.AutoSize = true;
+      this.labelDiskManagement.Location = new System.Drawing.Point(290, 44);
+      this.labelDiskManagement.Name = "labelDiskManagement";
+      this.labelDiskManagement.Size = new System.Drawing.Size(79, 13);
+      this.labelDiskManagement.TabIndex = 5;
+      this.labelDiskManagement.Text = "MB free space.";
+      // 
+      // checkBoxDiskManagementEnable
+      // 
+      this.checkBoxDiskManagementEnable.AccessibleName = "";
+      this.checkBoxDiskManagementEnable.AutoSize = true;
+      this.checkBoxDiskManagementEnable.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.checkBoxDiskManagementEnable.Location = new System.Drawing.Point(9, 42);
+      this.checkBoxDiskManagementEnable.Name = "checkBoxDiskManagementEnable";
+      this.checkBoxDiskManagementEnable.Size = new System.Drawing.Size(218, 17);
+      this.checkBoxDiskManagementEnable.TabIndex = 3;
+      this.checkBoxDiskManagementEnable.Text = "Delete recordings when there is less than";
+      this.checkBoxDiskManagementEnable.UseVisualStyleBackColor = true;
+      this.checkBoxDiskManagementEnable.CheckedChanged += new System.EventHandler(this.checkBoxDiskManagementEnable_CheckedChanged);
+      // 
+      // labelNamingTemplateSeries
+      // 
+      this.labelNamingTemplateSeries.AutoSize = true;
+      this.labelNamingTemplateSeries.Location = new System.Drawing.Point(6, 117);
+      this.labelNamingTemplateSeries.Name = "labelNamingTemplateSeries";
+      this.labelNamingTemplateSeries.Size = new System.Drawing.Size(76, 13);
+      this.labelNamingTemplateSeries.TabIndex = 10;
+      this.labelNamingTemplateSeries.Text = "Series naming:";
+      // 
+      // labelDiskManagementSpaceFree
+      // 
+      this.labelDiskManagementSpaceFree.AutoSize = true;
+      this.labelDiskManagementSpaceFree.Location = new System.Drawing.Point(33, 85);
+      this.labelDiskManagementSpaceFree.Name = "labelDiskManagementSpaceFree";
+      this.labelDiskManagementSpaceFree.Size = new System.Drawing.Size(63, 13);
+      this.labelDiskManagementSpaceFree.TabIndex = 8;
+      this.labelDiskManagementSpaceFree.Tag = "";
+      this.labelDiskManagementSpaceFree.Text = "Free space:";
+      // 
+      // labelDiskManagementSpaceFreeValue
+      // 
+      this.labelDiskManagementSpaceFreeValue.AutoSize = true;
+      this.labelDiskManagementSpaceFreeValue.Location = new System.Drawing.Point(106, 85);
+      this.labelDiskManagementSpaceFreeValue.Name = "labelDiskManagementSpaceFreeValue";
+      this.labelDiskManagementSpaceFreeValue.Size = new System.Drawing.Size(33, 13);
+      this.labelDiskManagementSpaceFreeValue.TabIndex = 9;
+      this.labelDiskManagementSpaceFreeValue.Text = "X MB";
+      // 
+      // labelNamingTemplateNonSeries
+      // 
+      this.labelNamingTemplateNonSeries.AutoSize = true;
+      this.labelNamingTemplateNonSeries.Location = new System.Drawing.Point(6, 143);
+      this.labelNamingTemplateNonSeries.Name = "labelNamingTemplateNonSeries";
+      this.labelNamingTemplateNonSeries.Size = new System.Drawing.Size(97, 13);
+      this.labelNamingTemplateNonSeries.TabIndex = 12;
+      this.labelNamingTemplateNonSeries.Text = "Non-series naming:";
+      // 
+      // labelDiskManagementSpaceTotal
+      // 
+      this.labelDiskManagementSpaceTotal.AutoSize = true;
+      this.labelDiskManagementSpaceTotal.Location = new System.Drawing.Point(33, 62);
+      this.labelDiskManagementSpaceTotal.Name = "labelDiskManagementSpaceTotal";
+      this.labelDiskManagementSpaceTotal.Size = new System.Drawing.Size(66, 13);
+      this.labelDiskManagementSpaceTotal.TabIndex = 6;
+      this.labelDiskManagementSpaceTotal.Tag = "";
+      this.labelDiskManagementSpaceTotal.Text = "Total space:";
+      // 
+      // textBoxNamingTemplateNonSeries
+      // 
+      this.textBoxNamingTemplateNonSeries.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
-      this.groupBoxRecording.Controls.Add(this.label48);
-      this.groupBoxRecording.Controls.Add(this.numericUpDownMaxFreeCardsToTry);
-      this.groupBoxRecording.Controls.Add(this.lblMaxFreeCards);
-      this.groupBoxRecording.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.groupBoxRecording.Location = new System.Drawing.Point(15, 19);
-      this.groupBoxRecording.Name = "groupBoxRecording";
-      this.groupBoxRecording.Size = new System.Drawing.Size(427, 62);
-      this.groupBoxRecording.TabIndex = 18;
-      this.groupBoxRecording.TabStop = false;
-      this.groupBoxRecording.Text = "Recording";
+      this.textBoxNamingTemplateNonSeries.Location = new System.Drawing.Point(109, 140);
+      this.textBoxNamingTemplateNonSeries.Name = "textBoxNamingTemplateNonSeries";
+      this.textBoxNamingTemplateNonSeries.Size = new System.Drawing.Size(357, 20);
+      this.textBoxNamingTemplateNonSeries.TabIndex = 13;
+      this.textBoxNamingTemplateNonSeries.Enter += new System.EventHandler(this.textBoxNamingTemplateNonSeries_Enter);
+      this.textBoxNamingTemplateNonSeries.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBoxNamingTemplate_KeyPress);
       // 
-      // label48
+      // labelDiskManagementSpaceTotalValue
       // 
-      this.label48.AutoSize = true;
-      this.label48.Location = new System.Drawing.Point(246, 29);
-      this.label48.Name = "label48";
-      this.label48.Size = new System.Drawing.Size(29, 13);
-      this.label48.TabIndex = 37;
-      this.label48.Text = "0=all";
+      this.labelDiskManagementSpaceTotalValue.AutoSize = true;
+      this.labelDiskManagementSpaceTotalValue.Location = new System.Drawing.Point(106, 62);
+      this.labelDiskManagementSpaceTotalValue.Name = "labelDiskManagementSpaceTotalValue";
+      this.labelDiskManagementSpaceTotalValue.Size = new System.Drawing.Size(33, 13);
+      this.labelDiskManagementSpaceTotalValue.TabIndex = 7;
+      this.labelDiskManagementSpaceTotalValue.Text = "X MB";
       // 
-      // numericUpDownMaxFreeCardsToTry
+      // buttonRecordingFolderBrowse
       // 
-      this.numericUpDownMaxFreeCardsToTry.Location = new System.Drawing.Point(153, 26);
-      this.numericUpDownMaxFreeCardsToTry.Name = "numericUpDownMaxFreeCardsToTry";
-      this.numericUpDownMaxFreeCardsToTry.Size = new System.Drawing.Size(87, 20);
-      this.numericUpDownMaxFreeCardsToTry.TabIndex = 36;
-      this.numericUpDownMaxFreeCardsToTry.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+      this.buttonRecordingFolderBrowse.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.buttonRecordingFolderBrowse.Location = new System.Drawing.Point(440, 11);
+      this.buttonRecordingFolderBrowse.Name = "buttonRecordingFolderBrowse";
+      this.buttonRecordingFolderBrowse.Size = new System.Drawing.Size(26, 23);
+      this.buttonRecordingFolderBrowse.TabIndex = 2;
+      this.buttonRecordingFolderBrowse.Text = "...";
+      this.buttonRecordingFolderBrowse.UseVisualStyleBackColor = true;
+      this.buttonRecordingFolderBrowse.Click += new System.EventHandler(this.buttonRecordingFolderBrowse_Click);
       // 
-      // lblMaxFreeCards
+      // textBoxNamingTemplateSeries
       // 
-      this.lblMaxFreeCards.AutoSize = true;
-      this.lblMaxFreeCards.Location = new System.Drawing.Point(6, 28);
-      this.lblMaxFreeCards.Name = "lblMaxFreeCards";
-      this.lblMaxFreeCards.Size = new System.Drawing.Size(127, 13);
-      this.lblMaxFreeCards.TabIndex = 35;
-      this.lblMaxFreeCards.Text = "Maximum free cards to try";
-      // 
-      // groupBoxScheduler
-      // 
-      this.groupBoxScheduler.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+      this.textBoxNamingTemplateSeries.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
-      this.groupBoxScheduler.Controls.Add(this.lblWeekend);
-      this.groupBoxScheduler.Controls.Add(this.comboBoxWeekend);
-      this.groupBoxScheduler.Controls.Add(this.checkBoxPreventDupes);
-      this.groupBoxScheduler.Controls.Add(this.comboBoxEpisodeKey);
-      this.groupBoxScheduler.Controls.Add(this.labelEpisodeKey);
-      this.groupBoxScheduler.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.groupBoxScheduler.Location = new System.Drawing.Point(15, 180);
-      this.groupBoxScheduler.Name = "groupBoxScheduler";
-      this.groupBoxScheduler.Size = new System.Drawing.Size(427, 142);
-      this.groupBoxScheduler.TabIndex = 14;
-      this.groupBoxScheduler.TabStop = false;
-      this.groupBoxScheduler.Text = "Scheduler";
+      this.textBoxNamingTemplateSeries.Location = new System.Drawing.Point(109, 114);
+      this.textBoxNamingTemplateSeries.Name = "textBoxNamingTemplateSeries";
+      this.textBoxNamingTemplateSeries.Size = new System.Drawing.Size(357, 20);
+      this.textBoxNamingTemplateSeries.TabIndex = 11;
+      this.textBoxNamingTemplateSeries.Enter += new System.EventHandler(this.textBoxNamingTemplateSeries_Enter);
+      this.textBoxNamingTemplateSeries.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBoxNamingTemplate_KeyPress);
       // 
-      // lblWeekend
+      // tabPageGeneral
       // 
-      this.lblWeekend.AutoSize = true;
-      this.lblWeekend.Location = new System.Drawing.Point(15, 103);
-      this.lblWeekend.Name = "lblWeekend";
-      this.lblWeekend.Size = new System.Drawing.Size(57, 13);
-      this.lblWeekend.TabIndex = 20;
-      this.lblWeekend.Text = "Weekend:";
+      this.tabPageGeneral.Controls.Add(this.groupBoxGeneral);
+      this.tabPageGeneral.Controls.Add(this.groupBoxThumbnailer);
+      this.tabPageGeneral.Location = new System.Drawing.Point(4, 22);
+      this.tabPageGeneral.Name = "tabPageGeneral";
+      this.tabPageGeneral.Size = new System.Drawing.Size(472, 394);
+      this.tabPageGeneral.TabIndex = 2;
+      this.tabPageGeneral.Text = "General";
+      this.tabPageGeneral.UseVisualStyleBackColor = true;
       // 
-      // comboBoxWeekend
+      // groupBoxGeneral
       // 
-      this.comboBoxWeekend.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.comboBoxWeekend.FormattingEnabled = true;
-      this.comboBoxWeekend.Items.AddRange(new object[] {
-            "Saturday/Sunday",
+      this.groupBoxGeneral.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxGeneral.Controls.Add(this.checkBoxDuplicateDetectionEpisodeNames);
+      this.groupBoxGeneral.Controls.Add(this.checkBoxDuplicateDetectionSeasonEpisodeNumbers);
+      this.groupBoxGeneral.Controls.Add(this.checkBoxDuplicateDetectionSeriesEpisodeIdentifers);
+      this.groupBoxGeneral.Controls.Add(this.labelWeekEnd);
+      this.groupBoxGeneral.Controls.Add(this.numericUpDownTunerLimit);
+      this.groupBoxGeneral.Controls.Add(this.comboBoxWeekEnd);
+      this.groupBoxGeneral.Controls.Add(this.labelTunerLimit);
+      this.groupBoxGeneral.Controls.Add(this.labelDuplicateDetection);
+      this.groupBoxGeneral.Controls.Add(this.labelPreRecord1);
+      this.groupBoxGeneral.Controls.Add(this.labelPostRecord1);
+      this.groupBoxGeneral.Controls.Add(this.numericUpDownPostRecord);
+      this.groupBoxGeneral.Controls.Add(this.labelPreRecord2);
+      this.groupBoxGeneral.Controls.Add(this.numericUpDownPreRecord);
+      this.groupBoxGeneral.Controls.Add(this.labelPostRecord2);
+      this.groupBoxGeneral.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.groupBoxGeneral.Location = new System.Drawing.Point(3, 3);
+      this.groupBoxGeneral.Name = "groupBoxGeneral";
+      this.groupBoxGeneral.Size = new System.Drawing.Size(466, 224);
+      this.groupBoxGeneral.TabIndex = 0;
+      this.groupBoxGeneral.TabStop = false;
+      this.groupBoxGeneral.Text = "General";
+      // 
+      // checkBoxDuplicateDetectionEpisodeNames
+      // 
+      this.checkBoxDuplicateDetectionEpisodeNames.AutoSize = true;
+      this.checkBoxDuplicateDetectionEpisodeNames.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.checkBoxDuplicateDetectionEpisodeNames.Location = new System.Drawing.Point(25, 166);
+      this.checkBoxDuplicateDetectionEpisodeNames.Name = "checkBoxDuplicateDetectionEpisodeNames";
+      this.checkBoxDuplicateDetectionEpisodeNames.Size = new System.Drawing.Size(99, 17);
+      this.checkBoxDuplicateDetectionEpisodeNames.TabIndex = 11;
+      this.checkBoxDuplicateDetectionEpisodeNames.Text = "Episode names.";
+      this.checkBoxDuplicateDetectionEpisodeNames.UseVisualStyleBackColor = true;
+      // 
+      // checkBoxDuplicateDetectionSeasonEpisodeNumbers
+      // 
+      this.checkBoxDuplicateDetectionSeasonEpisodeNumbers.AutoSize = true;
+      this.checkBoxDuplicateDetectionSeasonEpisodeNumbers.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.checkBoxDuplicateDetectionSeasonEpisodeNumbers.Location = new System.Drawing.Point(25, 143);
+      this.checkBoxDuplicateDetectionSeasonEpisodeNumbers.Name = "checkBoxDuplicateDetectionSeasonEpisodeNumbers";
+      this.checkBoxDuplicateDetectionSeasonEpisodeNumbers.Size = new System.Drawing.Size(167, 17);
+      this.checkBoxDuplicateDetectionSeasonEpisodeNumbers.TabIndex = 10;
+      this.checkBoxDuplicateDetectionSeasonEpisodeNumbers.Text = "Season and episode numbers.";
+      this.checkBoxDuplicateDetectionSeasonEpisodeNumbers.UseVisualStyleBackColor = true;
+      // 
+      // checkBoxDuplicateDetectionSeriesEpisodeIdentifers
+      // 
+      this.checkBoxDuplicateDetectionSeriesEpisodeIdentifers.AutoSize = true;
+      this.checkBoxDuplicateDetectionSeriesEpisodeIdentifers.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.checkBoxDuplicateDetectionSeriesEpisodeIdentifers.Location = new System.Drawing.Point(25, 120);
+      this.checkBoxDuplicateDetectionSeriesEpisodeIdentifers.Name = "checkBoxDuplicateDetectionSeriesEpisodeIdentifers";
+      this.checkBoxDuplicateDetectionSeriesEpisodeIdentifers.Size = new System.Drawing.Size(220, 17);
+      this.checkBoxDuplicateDetectionSeriesEpisodeIdentifers.TabIndex = 9;
+      this.checkBoxDuplicateDetectionSeriesEpisodeIdentifers.Text = "Series, episode and/or program identifers.";
+      this.checkBoxDuplicateDetectionSeriesEpisodeIdentifers.UseVisualStyleBackColor = true;
+      // 
+      // labelWeekEnd
+      // 
+      this.labelWeekEnd.AutoSize = true;
+      this.labelWeekEnd.Location = new System.Drawing.Point(6, 197);
+      this.labelWeekEnd.Name = "labelWeekEnd";
+      this.labelWeekEnd.Size = new System.Drawing.Size(60, 13);
+      this.labelWeekEnd.TabIndex = 12;
+      this.labelWeekEnd.Text = "Week-end:";
+      // 
+      // numericUpDownTunerLimit
+      // 
+      this.numericUpDownTunerLimit.Location = new System.Drawing.Point(84, 71);
+      this.numericUpDownTunerLimit.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+      this.numericUpDownTunerLimit.Name = "numericUpDownTunerLimit";
+      this.numericUpDownTunerLimit.Size = new System.Drawing.Size(45, 20);
+      this.numericUpDownTunerLimit.TabIndex = 7;
+      this.numericUpDownTunerLimit.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+      this.numericUpDownTunerLimit.Value = new decimal(new int[] {
+            100,
+            0,
+            0,
+            0});
+      // 
+      // comboBoxWeekEnd
+      // 
+      this.comboBoxWeekEnd.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.comboBoxWeekEnd.FormattingEnabled = true;
+      this.comboBoxWeekEnd.Items.AddRange(new object[] {
             "Sunday/Monday",
             "Monday/Tuesday",
             "Tuesday/Wednesday",
             "Wednesday/Thursday",
             "Thursday/Friday",
-            "Friday/Saturday"});
-      this.comboBoxWeekend.Location = new System.Drawing.Point(180, 103);
-      this.comboBoxWeekend.Name = "comboBoxWeekend";
-      this.comboBoxWeekend.Size = new System.Drawing.Size(137, 21);
-      this.comboBoxWeekend.TabIndex = 15;
+            "Friday/Saturday",
+            "Saturday/Sunday"});
+      this.comboBoxWeekEnd.Location = new System.Drawing.Point(84, 194);
+      this.comboBoxWeekEnd.Name = "comboBoxWeekEnd";
+      this.comboBoxWeekEnd.Size = new System.Drawing.Size(160, 21);
+      this.comboBoxWeekEnd.TabIndex = 13;
       // 
-      // checkBoxPreventDupes
+      // labelTunerLimit
       // 
-      this.checkBoxPreventDupes.AutoSize = true;
-      this.checkBoxPreventDupes.Checked = true;
-      this.checkBoxPreventDupes.CheckState = System.Windows.Forms.CheckState.Checked;
-      this.checkBoxPreventDupes.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.checkBoxPreventDupes.Location = new System.Drawing.Point(15, 28);
-      this.checkBoxPreventDupes.Name = "checkBoxPreventDupes";
-      this.checkBoxPreventDupes.Size = new System.Drawing.Size(335, 30);
-      this.checkBoxPreventDupes.TabIndex = 13;
-      this.checkBoxPreventDupes.Text = "Check episode of already recorded programs to prevent duplicate \r\nrecording of re" +
-          "peated broadcasts";
-      this.checkBoxPreventDupes.UseVisualStyleBackColor = true;
-      this.checkBoxPreventDupes.CheckedChanged += new System.EventHandler(this.checkBoxPreventDupes_CheckedChanged);
+      this.labelTunerLimit.AutoSize = true;
+      this.labelTunerLimit.Location = new System.Drawing.Point(6, 73);
+      this.labelTunerLimit.Name = "labelTunerLimit";
+      this.labelTunerLimit.Size = new System.Drawing.Size(69, 13);
+      this.labelTunerLimit.TabIndex = 6;
+      this.labelTunerLimit.Text = "Tuners to try:";
       // 
-      // comboBoxEpisodeKey
+      // labelDuplicateDetection
       // 
-      this.comboBoxEpisodeKey.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.comboBoxEpisodeKey.Enabled = this.checkBoxPreventDupes.Checked;
-      this.comboBoxEpisodeKey.FormattingEnabled = true;
-      this.comboBoxEpisodeKey.Items.AddRange(new object[] {
-            "Episode Title",
-            "Episode Number"});
-      this.comboBoxEpisodeKey.Location = new System.Drawing.Point(180, 65);
-      this.comboBoxEpisodeKey.Name = "comboBoxEpisodeKey";
-      this.comboBoxEpisodeKey.Size = new System.Drawing.Size(137, 21);
-      this.comboBoxEpisodeKey.TabIndex = 13;
+      this.labelDuplicateDetection.AutoSize = true;
+      this.labelDuplicateDetection.Location = new System.Drawing.Point(6, 103);
+      this.labelDuplicateDetection.Name = "labelDuplicateDetection";
+      this.labelDuplicateDetection.Size = new System.Drawing.Size(204, 13);
+      this.labelDuplicateDetection.TabIndex = 8;
+      this.labelDuplicateDetection.Text = "Avoid recording duplicate programs using:";
       // 
-      // labelEpisodeKey
+      // labelPreRecord1
       // 
-      this.labelEpisodeKey.AutoSize = true;
-      this.labelEpisodeKey.Location = new System.Drawing.Point(12, 68);
-      this.labelEpisodeKey.Name = "labelEpisodeKey";
-      this.labelEpisodeKey.Size = new System.Drawing.Size(71, 13);
-      this.labelEpisodeKey.TabIndex = 1;
-      this.labelEpisodeKey.Text = "Episode key: ";
+      this.labelPreRecord1.AutoSize = true;
+      this.labelPreRecord1.Location = new System.Drawing.Point(6, 21);
+      this.labelPreRecord1.Name = "labelPreRecord1";
+      this.labelPreRecord1.Size = new System.Drawing.Size(76, 13);
+      this.labelPreRecord1.TabIndex = 0;
+      this.labelPreRecord1.Text = "Start recording";
       // 
-      // groupBoxGap
+      // labelPostRecord1
       // 
-      this.groupBoxGap.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.groupBoxGap.Controls.Add(this.label1);
-      this.groupBoxGap.Controls.Add(this.label2);
-      this.groupBoxGap.Controls.Add(this.numericUpDownPostRec);
-      this.groupBoxGap.Controls.Add(this.label3);
-      this.groupBoxGap.Controls.Add(this.numericUpDownPreRec);
-      this.groupBoxGap.Controls.Add(this.label4);
-      this.groupBoxGap.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.groupBoxGap.Location = new System.Drawing.Point(15, 87);
-      this.groupBoxGap.Name = "groupBoxGap";
-      this.groupBoxGap.Size = new System.Drawing.Size(427, 84);
-      this.groupBoxGap.TabIndex = 13;
-      this.groupBoxGap.TabStop = false;
-      this.groupBoxGap.Text = "Pre- and post recording";
+      this.labelPostRecord1.AutoSize = true;
+      this.labelPostRecord1.Location = new System.Drawing.Point(6, 47);
+      this.labelPostRecord1.Name = "labelPostRecord1";
+      this.labelPostRecord1.Size = new System.Drawing.Size(76, 13);
+      this.labelPostRecord1.TabIndex = 3;
+      this.labelPostRecord1.Text = "Stop recording";
       // 
-      // label1
+      // numericUpDownPostRecord
       // 
-      this.label1.AutoSize = true;
-      this.label1.Location = new System.Drawing.Point(12, 26);
-      this.label1.Name = "label1";
-      this.label1.Size = new System.Drawing.Size(76, 13);
-      this.label1.TabIndex = 0;
-      this.label1.Text = "Start recording";
-      // 
-      // label2
-      // 
-      this.label2.AutoSize = true;
-      this.label2.Location = new System.Drawing.Point(12, 56);
-      this.label2.Name = "label2";
-      this.label2.Size = new System.Drawing.Size(76, 13);
-      this.label2.TabIndex = 1;
-      this.label2.Text = "Stop recording";
-      // 
-      // numericUpDownPostRec
-      // 
-      this.numericUpDownPostRec.Location = new System.Drawing.Point(94, 54);
-      this.numericUpDownPostRec.Name = "numericUpDownPostRec";
-      this.numericUpDownPostRec.Size = new System.Drawing.Size(66, 20);
-      this.numericUpDownPostRec.TabIndex = 11;
-      this.numericUpDownPostRec.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-      this.numericUpDownPostRec.Value = new decimal(new int[] {
+      this.numericUpDownPostRecord.Location = new System.Drawing.Point(84, 45);
+      this.numericUpDownPostRecord.Maximum = new decimal(new int[] {
+            120,
+            0,
+            0,
+            0});
+      this.numericUpDownPostRecord.Minimum = new decimal(new int[] {
+            120,
+            0,
+            0,
+            -2147483648});
+      this.numericUpDownPostRecord.Name = "numericUpDownPostRecord";
+      this.numericUpDownPostRecord.Size = new System.Drawing.Size(45, 20);
+      this.numericUpDownPostRecord.TabIndex = 4;
+      this.numericUpDownPostRecord.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+      this.numericUpDownPostRecord.Value = new decimal(new int[] {
             10,
             0,
             0,
             0});
       // 
-      // label3
+      // labelPreRecord2
       // 
-      this.label3.AutoSize = true;
-      this.label3.Location = new System.Drawing.Point(166, 26);
-      this.label3.Name = "label3";
-      this.label3.Size = new System.Drawing.Size(151, 13);
-      this.label3.TabIndex = 4;
-      this.label3.Text = "minute(s) before program starts";
+      this.labelPreRecord2.AutoSize = true;
+      this.labelPreRecord2.Location = new System.Drawing.Point(131, 21);
+      this.labelPreRecord2.Name = "labelPreRecord2";
+      this.labelPreRecord2.Size = new System.Drawing.Size(172, 13);
+      this.labelPreRecord2.TabIndex = 2;
+      this.labelPreRecord2.Text = "minute(s) before the program starts.";
       // 
-      // numericUpDownPreRec
+      // numericUpDownPreRecord
       // 
-      this.numericUpDownPreRec.Location = new System.Drawing.Point(94, 24);
-      this.numericUpDownPreRec.Name = "numericUpDownPreRec";
-      this.numericUpDownPreRec.Size = new System.Drawing.Size(66, 20);
-      this.numericUpDownPreRec.TabIndex = 10;
-      this.numericUpDownPreRec.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-      this.numericUpDownPreRec.Value = new decimal(new int[] {
+      this.numericUpDownPreRecord.Location = new System.Drawing.Point(84, 19);
+      this.numericUpDownPreRecord.Maximum = new decimal(new int[] {
+            120,
+            0,
+            0,
+            0});
+      this.numericUpDownPreRecord.Minimum = new decimal(new int[] {
+            120,
+            0,
+            0,
+            -2147483648});
+      this.numericUpDownPreRecord.Name = "numericUpDownPreRecord";
+      this.numericUpDownPreRecord.Size = new System.Drawing.Size(45, 20);
+      this.numericUpDownPreRecord.TabIndex = 1;
+      this.numericUpDownPreRecord.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+      this.numericUpDownPreRecord.Value = new decimal(new int[] {
             7,
             0,
             0,
             0});
       // 
-      // label4
+      // labelPostRecord2
       // 
-      this.label4.AutoSize = true;
-      this.label4.Location = new System.Drawing.Point(166, 56);
-      this.label4.Name = "label4";
-      this.label4.Size = new System.Drawing.Size(140, 13);
-      this.label4.TabIndex = 5;
-      this.label4.Text = "minute(s) after program ends";
-      // 
-      // tpCustom
-      // 
-      this.tpCustom.Controls.Add(this.groupBox2);
-      this.tpCustom.Location = new System.Drawing.Point(4, 22);
-      this.tpCustom.Name = "tpCustom";
-      this.tpCustom.Padding = new System.Windows.Forms.Padding(3);
-      this.tpCustom.Size = new System.Drawing.Size(472, 394);
-      this.tpCustom.TabIndex = 1;
-      this.tpCustom.Text = "Custom paths and filenames";
-      this.tpCustom.UseVisualStyleBackColor = true;
-      // 
-      // groupBox2
-      // 
-      this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.groupBox2.AutoSize = true;
-      this.groupBox2.Controls.Add(this.labelCustomFormat);
-      this.groupBox2.Controls.Add(this.textBoxCustomFormat);
-      this.groupBox2.Controls.Add(this.comboBoxFormat);
-      this.groupBox2.Controls.Add(this.groupBox3);
-      this.groupBox2.Controls.Add(this.textBoxSample);
-      this.groupBox2.Controls.Add(this.label8);
-      this.groupBox2.Controls.Add(this.label7);
-      this.groupBox2.Controls.Add(this.label5);
-      this.groupBox2.Controls.Add(this.comboBoxMovies);
-      this.groupBox2.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.groupBox2.Location = new System.Drawing.Point(6, 3);
-      this.groupBox2.Name = "groupBox2";
-      this.groupBox2.Size = new System.Drawing.Size(448, 374);
-      this.groupBox2.TabIndex = 0;
-      this.groupBox2.TabStop = false;
-      // 
-      // labelCustomFormat
-      // 
-      this.labelCustomFormat.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.labelCustomFormat.AutoSize = true;
-      this.labelCustomFormat.Location = new System.Drawing.Point(85, 124);
-      this.labelCustomFormat.Name = "labelCustomFormat";
-      this.labelCustomFormat.Size = new System.Drawing.Size(323, 13);
-      this.labelCustomFormat.TabIndex = 11;
-      this.labelCustomFormat.Text = "Use blockquotes[] to specify optional fields and \\\\ for relative paths";
-      // 
-      // textBoxCustomFormat
-      // 
-      this.textBoxCustomFormat.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.textBoxCustomFormat.Location = new System.Drawing.Point(88, 101);
-      this.textBoxCustomFormat.Name = "textBoxCustomFormat";
-      this.textBoxCustomFormat.Size = new System.Drawing.Size(331, 20);
-      this.textBoxCustomFormat.TabIndex = 10;
-      this.textBoxCustomFormat.TextChanged += new System.EventHandler(this.textBoxCustomFormat_TextChanged);
-      this.textBoxCustomFormat.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBoxCustomFormat_KeyPress);
-      // 
-      // comboBoxFormat
-      // 
-      this.comboBoxFormat.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.comboBoxFormat.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.comboBoxFormat.FormattingEnabled = true;
-      this.comboBoxFormat.Location = new System.Drawing.Point(88, 74);
-      this.comboBoxFormat.Name = "comboBoxFormat";
-      this.comboBoxFormat.Size = new System.Drawing.Size(331, 21);
-      this.comboBoxFormat.TabIndex = 9;
-      this.comboBoxFormat.SelectedIndexChanged += new System.EventHandler(this.comboBoxFormat_SelectedIndexChanged);
-      // 
-      // groupBox3
-      // 
-      this.groupBox3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.groupBox3.Controls.Add(this.mpLabel2);
-      this.groupBox3.Controls.Add(this.mpLabel1);
-      this.groupBox3.Controls.Add(this.mpLabel3);
-      this.groupBox3.Controls.Add(this.mpLabel4);
-      this.groupBox3.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.groupBox3.Location = new System.Drawing.Point(29, 183);
-      this.groupBox3.Name = "groupBox3";
-      this.groupBox3.Size = new System.Drawing.Size(390, 93);
-      this.groupBox3.TabIndex = 7;
-      this.groupBox3.TabStop = false;
-      this.groupBox3.Text = "Available tags";
-      // 
-      // mpLabel3
-      // 
-      this.mpLabel3.AutoSize = true;
-      this.mpLabel3.Location = new System.Drawing.Point(6, 16);
-      this.mpLabel3.Name = "mpLabel3";
-      this.mpLabel3.Size = new System.Drawing.Size(101, 65);
-      this.mpLabel3.TabIndex = 16;
-      this.mpLabel3.Text = "%program_title%\r\n%episode_name%\r\n%series_number%\r\n%episode_number%\r\n%episode_part" +
-          "%";
-      // 
-      // mpLabel4
-      // 
-      this.mpLabel4.AutoSize = true;
-      this.mpLabel4.Location = new System.Drawing.Point(215, 16);
-      this.mpLabel4.Name = "mpLabel4";
-      this.mpLabel4.Size = new System.Drawing.Size(80, 65);
-      this.mpLabel4.TabIndex = 18;
-      this.mpLabel4.Text = "%start_year%\r\n%start_month%\r\n%start_day%\r\n%start_hour%\r\n%start_minute%";
-      // 
-      // textBoxSample
-      // 
-      this.textBoxSample.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.textBoxSample.Enabled = false;
-      this.textBoxSample.Location = new System.Drawing.Point(88, 148);
-      this.textBoxSample.Name = "textBoxSample";
-      this.textBoxSample.ReadOnly = true;
-      this.textBoxSample.Size = new System.Drawing.Size(331, 20);
-      this.textBoxSample.TabIndex = 6;
-      // 
-      // label8
-      // 
-      this.label8.AutoSize = true;
-      this.label8.Location = new System.Drawing.Point(27, 151);
-      this.label8.Name = "label8";
-      this.label8.Size = new System.Drawing.Size(42, 13);
-      this.label8.TabIndex = 5;
-      this.label8.Text = "Sample";
-      // 
-      // label7
-      // 
-      this.label7.AutoSize = true;
-      this.label7.Location = new System.Drawing.Point(27, 77);
-      this.label7.Name = "label7";
-      this.label7.Size = new System.Drawing.Size(39, 13);
-      this.label7.TabIndex = 4;
-      this.label7.Text = "Format";
-      // 
-      // label5
-      // 
-      this.label5.AutoSize = true;
-      this.label5.Location = new System.Drawing.Point(27, 27);
-      this.label5.Name = "label5";
-      this.label5.Size = new System.Drawing.Size(56, 13);
-      this.label5.TabIndex = 1;
-      this.label5.Text = "Recording";
-      // 
-      // comboBoxMovies
-      // 
-      this.comboBoxMovies.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.comboBoxMovies.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.comboBoxMovies.FormattingEnabled = true;
-      this.comboBoxMovies.Items.AddRange(new object[] {
-            "Movies  (manual or single type recordings)",
-            "Series"});
-      this.comboBoxMovies.Location = new System.Drawing.Point(88, 24);
-      this.comboBoxMovies.Name = "comboBoxMovies";
-      this.comboBoxMovies.Size = new System.Drawing.Size(331, 21);
-      this.comboBoxMovies.TabIndex = 0;
-      this.comboBoxMovies.SelectedIndexChanged += new System.EventHandler(this.comboBoxMovies_SelectedIndexChanged);
-      // 
-      // tpThumbnails
-      // 
-      this.tpThumbnails.Controls.Add(this.buttonThumbnailerDeleteExisting);
-      this.tpThumbnails.Controls.Add(this.groupBoxThumbnailer);
-      this.tpThumbnails.Controls.Add(this.checkBoxThumbnailerEnable);
-      this.tpThumbnails.Controls.Add(this.buttonThumbnailerCreateMissing);
-      this.tpThumbnails.Location = new System.Drawing.Point(4, 22);
-      this.tpThumbnails.Name = "tpThumbnails";
-      this.tpThumbnails.Size = new System.Drawing.Size(472, 394);
-      this.tpThumbnails.TabIndex = 2;
-      this.tpThumbnails.Text = "Thumbnails";
-      this.tpThumbnails.UseVisualStyleBackColor = true;
-      // 
-      // buttonThumbnailerDeleteExisting
-      // 
-      this.buttonThumbnailerDeleteExisting.Location = new System.Drawing.Point(6, 222);
-      this.buttonThumbnailerDeleteExisting.Name = "buttonThumbnailerDeleteExisting";
-      this.buttonThumbnailerDeleteExisting.Size = new System.Drawing.Size(150, 23);
-      this.buttonThumbnailerDeleteExisting.TabIndex = 3;
-      this.buttonThumbnailerDeleteExisting.Text = "&Delete Existing Thumbnails";
-      this.buttonThumbnailerDeleteExisting.UseVisualStyleBackColor = true;
-      this.buttonThumbnailerDeleteExisting.Click += new System.EventHandler(this.buttonThumbnailerDeleteExisting_Click);
+      this.labelPostRecord2.AutoSize = true;
+      this.labelPostRecord2.Location = new System.Drawing.Point(131, 47);
+      this.labelPostRecord2.Name = "labelPostRecord2";
+      this.labelPostRecord2.Size = new System.Drawing.Size(161, 13);
+      this.labelPostRecord2.TabIndex = 5;
+      this.labelPostRecord2.Text = "minute(s) after the program ends.";
       // 
       // groupBoxThumbnailer
       // 
       this.groupBoxThumbnailer.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxThumbnailer.Controls.Add(this.buttonThumbnailerDeleteExisting);
+      this.groupBoxThumbnailer.Controls.Add(this.checkBoxThumbnailerEnable);
+      this.groupBoxThumbnailer.Controls.Add(this.labelThumbnailerTimeOffsetUnit);
       this.groupBoxThumbnailer.Controls.Add(this.checkBoxThumbnailerCopyToRecordingFolder);
       this.groupBoxThumbnailer.Controls.Add(this.comboBoxThumbnailerQualitySpeed);
+      this.groupBoxThumbnailer.Controls.Add(this.buttonThumbnailerCreateMissing);
       this.groupBoxThumbnailer.Controls.Add(this.labelThumbnailerQualitySpeed);
       this.groupBoxThumbnailer.Controls.Add(this.numericUpDownThumbnailerTimeOffset);
       this.groupBoxThumbnailer.Controls.Add(this.labelThumbnailerTimeOffset);
@@ -568,21 +601,52 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.groupBoxThumbnailer.Controls.Add(this.labelThumbnailerRowCount);
       this.groupBoxThumbnailer.Controls.Add(this.labelThumbnailerColumnCount);
       this.groupBoxThumbnailer.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.groupBoxThumbnailer.Location = new System.Drawing.Point(6, 29);
+      this.groupBoxThumbnailer.Location = new System.Drawing.Point(3, 233);
       this.groupBoxThumbnailer.Name = "groupBoxThumbnailer";
-      this.groupBoxThumbnailer.Size = new System.Drawing.Size(242, 153);
+      this.groupBoxThumbnailer.Size = new System.Drawing.Size(466, 154);
       this.groupBoxThumbnailer.TabIndex = 1;
       this.groupBoxThumbnailer.TabStop = false;
-      this.groupBoxThumbnailer.Text = "Settings";
+      this.groupBoxThumbnailer.Text = "Thumbnails";
+      // 
+      // buttonThumbnailerDeleteExisting
+      // 
+      this.buttonThumbnailerDeleteExisting.Location = new System.Drawing.Point(145, 120);
+      this.buttonThumbnailerDeleteExisting.Name = "buttonThumbnailerDeleteExisting";
+      this.buttonThumbnailerDeleteExisting.Size = new System.Drawing.Size(100, 23);
+      this.buttonThumbnailerDeleteExisting.TabIndex = 12;
+      this.buttonThumbnailerDeleteExisting.Text = "&Delete Existing";
+      this.buttonThumbnailerDeleteExisting.UseVisualStyleBackColor = true;
+      this.buttonThumbnailerDeleteExisting.Click += new System.EventHandler(this.buttonThumbnailerDeleteExisting_Click);
+      // 
+      // checkBoxThumbnailerEnable
+      // 
+      this.checkBoxThumbnailerEnable.AutoSize = true;
+      this.checkBoxThumbnailerEnable.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.checkBoxThumbnailerEnable.Location = new System.Drawing.Point(6, 19);
+      this.checkBoxThumbnailerEnable.Name = "checkBoxThumbnailerEnable";
+      this.checkBoxThumbnailerEnable.Size = new System.Drawing.Size(198, 17);
+      this.checkBoxThumbnailerEnable.TabIndex = 0;
+      this.checkBoxThumbnailerEnable.Text = "Enable automatic thumbnail creation.";
+      this.checkBoxThumbnailerEnable.UseVisualStyleBackColor = true;
+      this.checkBoxThumbnailerEnable.CheckedChanged += new System.EventHandler(this.checkBoxThumbnailerEnable_CheckedChanged);
+      // 
+      // labelThumbnailerTimeOffsetUnit
+      // 
+      this.labelThumbnailerTimeOffsetUnit.AutoSize = true;
+      this.labelThumbnailerTimeOffsetUnit.Location = new System.Drawing.Point(151, 71);
+      this.labelThumbnailerTimeOffsetUnit.Name = "labelThumbnailerTimeOffsetUnit";
+      this.labelThumbnailerTimeOffsetUnit.Size = new System.Drawing.Size(43, 13);
+      this.labelThumbnailerTimeOffsetUnit.TabIndex = 5;
+      this.labelThumbnailerTimeOffsetUnit.Text = "minutes";
       // 
       // checkBoxThumbnailerCopyToRecordingFolder
       // 
       this.checkBoxThumbnailerCopyToRecordingFolder.AutoSize = true;
       this.checkBoxThumbnailerCopyToRecordingFolder.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.checkBoxThumbnailerCopyToRecordingFolder.Location = new System.Drawing.Point(9, 124);
+      this.checkBoxThumbnailerCopyToRecordingFolder.Location = new System.Drawing.Point(25, 95);
       this.checkBoxThumbnailerCopyToRecordingFolder.Name = "checkBoxThumbnailerCopyToRecordingFolder";
       this.checkBoxThumbnailerCopyToRecordingFolder.Size = new System.Drawing.Size(187, 17);
-      this.checkBoxThumbnailerCopyToRecordingFolder.TabIndex = 8;
+      this.checkBoxThumbnailerCopyToRecordingFolder.TabIndex = 6;
       this.checkBoxThumbnailerCopyToRecordingFolder.Text = "Add a copy to the recording folder.";
       this.checkBoxThumbnailerCopyToRecordingFolder.UseVisualStyleBackColor = true;
       // 
@@ -590,23 +654,33 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // 
       this.comboBoxThumbnailerQualitySpeed.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxThumbnailerQualitySpeed.FormattingEnabled = true;
-      this.comboBoxThumbnailerQualitySpeed.Location = new System.Drawing.Point(129, 19);
+      this.comboBoxThumbnailerQualitySpeed.Location = new System.Drawing.Point(104, 42);
       this.comboBoxThumbnailerQualitySpeed.Name = "comboBoxThumbnailerQualitySpeed";
       this.comboBoxThumbnailerQualitySpeed.Size = new System.Drawing.Size(100, 21);
-      this.comboBoxThumbnailerQualitySpeed.TabIndex = 1;
+      this.comboBoxThumbnailerQualitySpeed.TabIndex = 2;
+      // 
+      // buttonThumbnailerCreateMissing
+      // 
+      this.buttonThumbnailerCreateMissing.Location = new System.Drawing.Point(6, 120);
+      this.buttonThumbnailerCreateMissing.Name = "buttonThumbnailerCreateMissing";
+      this.buttonThumbnailerCreateMissing.Size = new System.Drawing.Size(100, 23);
+      this.buttonThumbnailerCreateMissing.TabIndex = 11;
+      this.buttonThumbnailerCreateMissing.Text = "&Create Missing";
+      this.buttonThumbnailerCreateMissing.UseVisualStyleBackColor = true;
+      this.buttonThumbnailerCreateMissing.Click += new System.EventHandler(this.buttonThumbnailerCreateMissing_Click);
       // 
       // labelThumbnailerQualitySpeed
       // 
       this.labelThumbnailerQualitySpeed.AutoSize = true;
-      this.labelThumbnailerQualitySpeed.Location = new System.Drawing.Point(6, 22);
+      this.labelThumbnailerQualitySpeed.Location = new System.Drawing.Point(22, 45);
       this.labelThumbnailerQualitySpeed.Name = "labelThumbnailerQualitySpeed";
       this.labelThumbnailerQualitySpeed.Size = new System.Drawing.Size(76, 13);
-      this.labelThumbnailerQualitySpeed.TabIndex = 0;
+      this.labelThumbnailerQualitySpeed.TabIndex = 1;
       this.labelThumbnailerQualitySpeed.Text = "Quality/speed:";
       // 
       // numericUpDownThumbnailerTimeOffset
       // 
-      this.numericUpDownThumbnailerTimeOffset.Location = new System.Drawing.Point(129, 98);
+      this.numericUpDownThumbnailerTimeOffset.Location = new System.Drawing.Point(104, 69);
       this.numericUpDownThumbnailerTimeOffset.Maximum = new decimal(new int[] {
             999,
             0,
@@ -614,7 +688,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
             0});
       this.numericUpDownThumbnailerTimeOffset.Name = "numericUpDownThumbnailerTimeOffset";
       this.numericUpDownThumbnailerTimeOffset.Size = new System.Drawing.Size(45, 20);
-      this.numericUpDownThumbnailerTimeOffset.TabIndex = 7;
+      this.numericUpDownThumbnailerTimeOffset.TabIndex = 4;
       this.numericUpDownThumbnailerTimeOffset.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
       this.numericUpDownThumbnailerTimeOffset.Value = new decimal(new int[] {
             3,
@@ -625,15 +699,15 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // labelThumbnailerTimeOffset
       // 
       this.labelThumbnailerTimeOffset.AutoSize = true;
-      this.labelThumbnailerTimeOffset.Location = new System.Drawing.Point(6, 100);
+      this.labelThumbnailerTimeOffset.Location = new System.Drawing.Point(22, 71);
       this.labelThumbnailerTimeOffset.Name = "labelThumbnailerTimeOffset";
-      this.labelThumbnailerTimeOffset.Size = new System.Drawing.Size(107, 13);
-      this.labelThumbnailerTimeOffset.TabIndex = 6;
-      this.labelThumbnailerTimeOffset.Text = "Time offset (minutes):";
+      this.labelThumbnailerTimeOffset.Size = new System.Drawing.Size(62, 13);
+      this.labelThumbnailerTimeOffset.TabIndex = 3;
+      this.labelThumbnailerTimeOffset.Text = "Time offset:";
       // 
       // numericUpDownThumbnailerRowCount
       // 
-      this.numericUpDownThumbnailerRowCount.Location = new System.Drawing.Point(129, 72);
+      this.numericUpDownThumbnailerRowCount.Location = new System.Drawing.Point(367, 69);
       this.numericUpDownThumbnailerRowCount.Maximum = new decimal(new int[] {
             3,
             0,
@@ -646,7 +720,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
             0});
       this.numericUpDownThumbnailerRowCount.Name = "numericUpDownThumbnailerRowCount";
       this.numericUpDownThumbnailerRowCount.Size = new System.Drawing.Size(45, 20);
-      this.numericUpDownThumbnailerRowCount.TabIndex = 5;
+      this.numericUpDownThumbnailerRowCount.TabIndex = 10;
       this.numericUpDownThumbnailerRowCount.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
       this.numericUpDownThumbnailerRowCount.Value = new decimal(new int[] {
             1,
@@ -656,7 +730,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // 
       // numericUpDownThumbnailerColumnCount
       // 
-      this.numericUpDownThumbnailerColumnCount.Location = new System.Drawing.Point(129, 46);
+      this.numericUpDownThumbnailerColumnCount.Location = new System.Drawing.Point(367, 43);
       this.numericUpDownThumbnailerColumnCount.Maximum = new decimal(new int[] {
             3,
             0,
@@ -669,7 +743,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
             0});
       this.numericUpDownThumbnailerColumnCount.Name = "numericUpDownThumbnailerColumnCount";
       this.numericUpDownThumbnailerColumnCount.Size = new System.Drawing.Size(45, 20);
-      this.numericUpDownThumbnailerColumnCount.TabIndex = 3;
+      this.numericUpDownThumbnailerColumnCount.TabIndex = 8;
       this.numericUpDownThumbnailerColumnCount.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
       this.numericUpDownThumbnailerColumnCount.Value = new decimal(new int[] {
             1,
@@ -680,523 +754,268 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // labelThumbnailerRowCount
       // 
       this.labelThumbnailerRowCount.AutoSize = true;
-      this.labelThumbnailerRowCount.Location = new System.Drawing.Point(6, 74);
+      this.labelThumbnailerRowCount.Location = new System.Drawing.Point(244, 71);
       this.labelThumbnailerRowCount.Name = "labelThumbnailerRowCount";
       this.labelThumbnailerRowCount.Size = new System.Drawing.Size(100, 13);
-      this.labelThumbnailerRowCount.TabIndex = 4;
+      this.labelThumbnailerRowCount.TabIndex = 9;
       this.labelThumbnailerRowCount.Text = "Number of row tiles:";
       // 
       // labelThumbnailerColumnCount
       // 
       this.labelThumbnailerColumnCount.AutoSize = true;
-      this.labelThumbnailerColumnCount.Location = new System.Drawing.Point(6, 48);
+      this.labelThumbnailerColumnCount.Location = new System.Drawing.Point(244, 45);
       this.labelThumbnailerColumnCount.Name = "labelThumbnailerColumnCount";
       this.labelThumbnailerColumnCount.Size = new System.Drawing.Size(117, 13);
-      this.labelThumbnailerColumnCount.TabIndex = 2;
+      this.labelThumbnailerColumnCount.TabIndex = 7;
       this.labelThumbnailerColumnCount.Text = "Number of column tiles:";
       // 
-      // checkBoxThumbnailerEnable
+      // tabPageDatabase
       // 
-      this.checkBoxThumbnailerEnable.AutoSize = true;
-      this.checkBoxThumbnailerEnable.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.checkBoxThumbnailerEnable.Location = new System.Drawing.Point(6, 6);
-      this.checkBoxThumbnailerEnable.Name = "checkBoxThumbnailerEnable";
-      this.checkBoxThumbnailerEnable.Size = new System.Drawing.Size(198, 17);
-      this.checkBoxThumbnailerEnable.TabIndex = 0;
-      this.checkBoxThumbnailerEnable.Text = "Enable automatic thumbnail creation.";
-      this.checkBoxThumbnailerEnable.UseVisualStyleBackColor = true;
-      this.checkBoxThumbnailerEnable.CheckedChanged += new System.EventHandler(this.checkBoxThumbnailerEnable_CheckedChanged);
+      this.tabPageDatabase.Controls.Add(this.buttonImport);
+      this.tabPageDatabase.Controls.Add(this.buttonRecordingDelete);
+      this.tabPageDatabase.Controls.Add(this.listViewRecordings);
+      this.tabPageDatabase.Controls.Add(this.labelRecordingImport);
+      this.tabPageDatabase.Controls.Add(this.textBoxImportFolder);
+      this.tabPageDatabase.Controls.Add(this.buttonImportBrowse);
+      this.tabPageDatabase.Controls.Add(this.buttonRecordingChangeChannel);
+      this.tabPageDatabase.Location = new System.Drawing.Point(4, 22);
+      this.tabPageDatabase.Name = "tabPageDatabase";
+      this.tabPageDatabase.Padding = new System.Windows.Forms.Padding(3);
+      this.tabPageDatabase.Size = new System.Drawing.Size(472, 394);
+      this.tabPageDatabase.TabIndex = 4;
+      this.tabPageDatabase.Text = "Database";
+      this.tabPageDatabase.UseVisualStyleBackColor = true;
       // 
-      // buttonThumbnailerCreateMissing
+      // buttonImport
       // 
-      this.buttonThumbnailerCreateMissing.Location = new System.Drawing.Point(6, 193);
-      this.buttonThumbnailerCreateMissing.Name = "buttonThumbnailerCreateMissing";
-      this.buttonThumbnailerCreateMissing.Size = new System.Drawing.Size(150, 23);
-      this.buttonThumbnailerCreateMissing.TabIndex = 2;
-      this.buttonThumbnailerCreateMissing.Text = "&Create Missing Thumbnails";
-      this.buttonThumbnailerCreateMissing.UseVisualStyleBackColor = true;
-      this.buttonThumbnailerCreateMissing.Click += new System.EventHandler(this.buttonThumbnailerCreateMissing_Click);
+      this.buttonImport.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.buttonImport.Location = new System.Drawing.Point(406, 360);
+      this.buttonImport.Name = "buttonImport";
+      this.buttonImport.Size = new System.Drawing.Size(60, 23);
+      this.buttonImport.TabIndex = 6;
+      this.buttonImport.Text = "&Import";
+      this.buttonImport.UseVisualStyleBackColor = true;
+      this.buttonImport.Click += new System.EventHandler(this.buttonImport_Click);
       // 
-      // tpRecording
+      // buttonRecordingDelete
       // 
-      this.tpRecording.Controls.Add(this.groupBox4);
-      this.tpRecording.Controls.Add(this.groupBoxRecordSettings);
-      this.tpRecording.Location = new System.Drawing.Point(4, 22);
-      this.tpRecording.Name = "tpRecording";
-      this.tpRecording.Size = new System.Drawing.Size(472, 394);
-      this.tpRecording.TabIndex = 3;
-      this.tpRecording.Text = "Folders";
-      this.tpRecording.UseVisualStyleBackColor = true;
+      this.buttonRecordingDelete.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.buttonRecordingDelete.Location = new System.Drawing.Point(406, 331);
+      this.buttonRecordingDelete.Name = "buttonRecordingDelete";
+      this.buttonRecordingDelete.Size = new System.Drawing.Size(60, 23);
+      this.buttonRecordingDelete.TabIndex = 2;
+      this.buttonRecordingDelete.Text = "&Delete";
+      this.buttonRecordingDelete.UseVisualStyleBackColor = true;
+      this.buttonRecordingDelete.Click += new System.EventHandler(this.buttonRecordingDelete_Click);
       // 
-      // groupBox4
+      // listViewRecordings
       // 
-      this.groupBox4.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.groupBox4.AutoSize = true;
-      this.groupBox4.Controls.Add(this.mpLabel5);
-      this.groupBox4.Controls.Add(this.enableDiskQuota);
-      this.groupBox4.Controls.Add(this.mpNumericTextBoxDiskQuota);
-      this.groupBox4.Controls.Add(this.label14);
-      this.groupBox4.Controls.Add(this.comboBoxDrive);
-      this.groupBox4.Controls.Add(this.labelFreeDiskspace);
-      this.groupBox4.Controls.Add(this.label9);
-      this.groupBox4.Controls.Add(this.labelTotalDiskSpace);
-      this.groupBox4.Controls.Add(this.label10);
-      this.groupBox4.Controls.Add(this.label11);
-      this.groupBox4.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.groupBox4.Location = new System.Drawing.Point(6, 215);
-      this.groupBox4.Name = "groupBox4";
-      this.groupBox4.Size = new System.Drawing.Size(445, 175);
-      this.groupBox4.TabIndex = 27;
-      this.groupBox4.TabStop = false;
-      this.groupBox4.Text = "Disk quota";
-      // 
-      // mpLabel5
-      // 
-      this.mpLabel5.AutoSize = true;
-      this.mpLabel5.Location = new System.Drawing.Point(306, 139);
-      this.mpLabel5.Name = "mpLabel5";
-      this.mpLabel5.Size = new System.Drawing.Size(79, 13);
-      this.mpLabel5.TabIndex = 20;
-      this.mpLabel5.Text = "MB free space.";
-      // 
-      // enableDiskQuota
-      // 
-      this.enableDiskQuota.AccessibleName = "";
-      this.enableDiskQuota.AutoSize = true;
-      this.enableDiskQuota.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.enableDiskQuota.Location = new System.Drawing.Point(34, 71);
-      this.enableDiskQuota.Name = "enableDiskQuota";
-      this.enableDiskQuota.Size = new System.Drawing.Size(109, 17);
-      this.enableDiskQuota.TabIndex = 21;
-      this.enableDiskQuota.Text = "Enable disk quota";
-      this.enableDiskQuota.UseVisualStyleBackColor = true;
-      this.enableDiskQuota.CheckedChanged += new System.EventHandler(this.enableDiskQuota_CheckedChanged);
-      // 
-      // mpNumericTextBoxDiskQuota
-      // 
-      this.mpNumericTextBoxDiskQuota.Location = new System.Drawing.Point(238, 136);
-      this.mpNumericTextBoxDiskQuota.MaximumValue = 2147483647;
-      this.mpNumericTextBoxDiskQuota.MinimumValue = -2147483648;
-      this.mpNumericTextBoxDiskQuota.Name = "mpNumericTextBoxDiskQuota";
-      this.mpNumericTextBoxDiskQuota.Size = new System.Drawing.Size(62, 20);
-      this.mpNumericTextBoxDiskQuota.TabIndex = 19;
-      this.mpNumericTextBoxDiskQuota.Text = "13";
-      this.mpNumericTextBoxDiskQuota.Value = 13;
-      // 
-      // label14
-      // 
-      this.label14.AutoSize = true;
-      this.label14.Location = new System.Drawing.Point(31, 139);
-      this.label14.Name = "label14";
-      this.label14.Size = new System.Drawing.Size(201, 13);
-      this.label14.TabIndex = 18;
-      this.label14.Text = "Delete recordings when there is less than";
-      // 
-      // comboBoxDrive
-      // 
-      this.comboBoxDrive.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.comboBoxDrive.FormattingEnabled = true;
-      this.comboBoxDrive.Location = new System.Drawing.Point(12, 38);
-      this.comboBoxDrive.Name = "comboBoxDrive";
-      this.comboBoxDrive.Size = new System.Drawing.Size(369, 21);
-      this.comboBoxDrive.TabIndex = 13;
-      this.comboBoxDrive.SelectedIndexChanged += new System.EventHandler(this.comboBoxDrive_SelectedIndexChanged);
-      // 
-      // labelFreeDiskspace
-      // 
-      this.labelFreeDiskspace.AutoSize = true;
-      this.labelFreeDiskspace.Location = new System.Drawing.Point(151, 114);
-      this.labelFreeDiskspace.Name = "labelFreeDiskspace";
-      this.labelFreeDiskspace.Size = new System.Drawing.Size(93, 13);
-      this.labelFreeDiskspace.TabIndex = 17;
-      this.labelFreeDiskspace.Text = "Checking space...";
-      // 
-      // label9
-      // 
-      this.label9.AutoSize = true;
-      this.label9.Location = new System.Drawing.Point(9, 22);
-      this.label9.Name = "label9";
-      this.label9.Size = new System.Drawing.Size(35, 13);
-      this.label9.TabIndex = 12;
-      this.label9.Text = "Drive:";
-      // 
-      // labelTotalDiskSpace
-      // 
-      this.labelTotalDiskSpace.AutoSize = true;
-      this.labelTotalDiskSpace.Location = new System.Drawing.Point(151, 96);
-      this.labelTotalDiskSpace.Name = "labelTotalDiskSpace";
-      this.labelTotalDiskSpace.Size = new System.Drawing.Size(93, 13);
-      this.labelTotalDiskSpace.TabIndex = 16;
-      this.labelTotalDiskSpace.Text = "Checking space...";
-      // 
-      // label10
-      // 
-      this.label10.AutoSize = true;
-      this.label10.Location = new System.Drawing.Point(31, 96);
-      this.label10.Name = "label10";
-      this.label10.Size = new System.Drawing.Size(85, 13);
-      this.label10.TabIndex = 14;
-      this.label10.Tag = "";
-      this.label10.Text = "Total diskspace:";
-      // 
-      // label11
-      // 
-      this.label11.AutoSize = true;
-      this.label11.Location = new System.Drawing.Point(31, 114);
-      this.label11.Name = "label11";
-      this.label11.Size = new System.Drawing.Size(82, 13);
-      this.label11.TabIndex = 15;
-      this.label11.Tag = "";
-      this.label11.Text = "Free diskspace:";
-      // 
-      // groupBoxRecordSettings
-      // 
-      this.groupBoxRecordSettings.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+      this.listViewRecordings.AllowColumnReorder = true;
+      this.listViewRecordings.AllowRowReorder = false;
+      this.listViewRecordings.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
                   | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
-      this.groupBoxRecordSettings.AutoSize = true;
-      this.groupBoxRecordSettings.Controls.Add(this.buttonSameRecFolder);
-      this.groupBoxRecordSettings.Controls.Add(this.textBoxRecordingFormat);
-      this.groupBoxRecordSettings.Controls.Add(this.pictureBox1);
-      this.groupBoxRecordSettings.Controls.Add(this.comboBoxCards);
-      this.groupBoxRecordSettings.Controls.Add(this.label23);
-      this.groupBoxRecordSettings.Controls.Add(this.textBoxFolder);
-      this.groupBoxRecordSettings.Controls.Add(this.label13);
-      this.groupBoxRecordSettings.Controls.Add(this.buttonBrowse);
-      this.groupBoxRecordSettings.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.groupBoxRecordSettings.Location = new System.Drawing.Point(6, 6);
-      this.groupBoxRecordSettings.Name = "groupBoxRecordSettings";
-      this.groupBoxRecordSettings.Size = new System.Drawing.Size(445, 203);
-      this.groupBoxRecordSettings.TabIndex = 26;
-      this.groupBoxRecordSettings.TabStop = false;
-      this.groupBoxRecordSettings.Text = "Recording folders";
+      this.listViewRecordings.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.columnHeaderTitle,
+            this.columnHeaderChannel,
+            this.columnHeaderStart,
+            this.columnHeaderSeasonNumber,
+            this.columnHeaderEpisodeNumber,
+            this.columnHeaderEpisodeName,
+            this.columnHeaderCategory,
+            this.columnHeaderKeepUntil,
+            this.columnHeaderFileName});
+      this.listViewRecordings.FullRowSelect = true;
+      this.listViewRecordings.Location = new System.Drawing.Point(6, 6);
+      this.listViewRecordings.Name = "listViewRecordings";
+      this.listViewRecordings.Size = new System.Drawing.Size(460, 319);
+      this.listViewRecordings.TabIndex = 0;
+      this.listViewRecordings.UseCompatibleStateImageBehavior = false;
+      this.listViewRecordings.View = System.Windows.Forms.View.Details;
       // 
-      // buttonSameRecFolder
+      // columnHeaderTitle
       // 
-      this.buttonSameRecFolder.Location = new System.Drawing.Point(12, 161);
-      this.buttonSameRecFolder.Name = "buttonSameRecFolder";
-      this.buttonSameRecFolder.Size = new System.Drawing.Size(369, 23);
-      this.buttonSameRecFolder.TabIndex = 28;
-      this.buttonSameRecFolder.Text = "Same recording folder for all cards";
-      this.buttonSameRecFolder.UseVisualStyleBackColor = true;
-      this.buttonSameRecFolder.Click += new System.EventHandler(this.buttonSameRecFolder_Click);
+      this.columnHeaderTitle.Text = "Title";
       // 
-      // textBoxRecordingFormat
+      // columnHeaderChannel
       // 
-      this.textBoxRecordingFormat.Location = new System.Drawing.Point(63, 71);
-      this.textBoxRecordingFormat.Name = "textBoxRecordingFormat";
-      this.textBoxRecordingFormat.ReadOnly = true;
-      this.textBoxRecordingFormat.Size = new System.Drawing.Size(318, 20);
-      this.textBoxRecordingFormat.TabIndex = 26;
-      this.textBoxRecordingFormat.Text = " Transport Stream (.ts)";
+      this.columnHeaderChannel.Text = "Channel";
       // 
-      // pictureBox1
+      // columnHeaderStart
       // 
-      this.pictureBox1.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox1.Image")));
-      this.pictureBox1.Location = new System.Drawing.Point(12, 22);
-      this.pictureBox1.Name = "pictureBox1";
-      this.pictureBox1.Size = new System.Drawing.Size(33, 23);
-      this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
-      this.pictureBox1.TabIndex = 18;
-      this.pictureBox1.TabStop = false;
+      this.columnHeaderStart.Text = "Start";
+      this.columnHeaderStart.Width = 70;
       // 
-      // comboBoxCards
+      // columnHeaderSeasonNumber
       // 
-      this.comboBoxCards.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+      this.columnHeaderSeasonNumber.Text = "S#";
+      this.columnHeaderSeasonNumber.Width = 35;
+      // 
+      // columnHeaderEpisodeNumber
+      // 
+      this.columnHeaderEpisodeNumber.Text = "E#";
+      this.columnHeaderEpisodeNumber.Width = 35;
+      // 
+      // columnHeaderEpisodeName
+      // 
+      this.columnHeaderEpisodeName.Text = "Ep. Name";
+      this.columnHeaderEpisodeName.Width = 70;
+      // 
+      // columnHeaderCategory
+      // 
+      this.columnHeaderCategory.Text = "Category";
+      // 
+      // columnHeaderKeepUntil
+      // 
+      this.columnHeaderKeepUntil.Text = "Keep Until";
+      this.columnHeaderKeepUntil.Width = 70;
+      // 
+      // columnHeaderFileName
+      // 
+      this.columnHeaderFileName.Text = "File Name";
+      this.columnHeaderFileName.Width = 70;
+      // 
+      // labelRecordingImport
+      // 
+      this.labelRecordingImport.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.labelRecordingImport.AutoSize = true;
+      this.labelRecordingImport.Location = new System.Drawing.Point(3, 365);
+      this.labelRecordingImport.Name = "labelRecordingImport";
+      this.labelRecordingImport.Size = new System.Drawing.Size(62, 13);
+      this.labelRecordingImport.TabIndex = 3;
+      this.labelRecordingImport.Text = "Import from:";
+      // 
+      // textBoxImportFolder
+      // 
+      this.textBoxImportFolder.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
-      this.comboBoxCards.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.comboBoxCards.FormattingEnabled = true;
-      this.comboBoxCards.Location = new System.Drawing.Point(63, 22);
-      this.comboBoxCards.Name = "comboBoxCards";
-      this.comboBoxCards.Size = new System.Drawing.Size(318, 21);
-      this.comboBoxCards.TabIndex = 0;
-      this.comboBoxCards.SelectedIndexChanged += new System.EventHandler(this.comboBoxCards_SelectedIndexChanged);
+      this.textBoxImportFolder.Location = new System.Drawing.Point(71, 362);
+      this.textBoxImportFolder.Name = "textBoxImportFolder";
+      this.textBoxImportFolder.Size = new System.Drawing.Size(297, 20);
+      this.textBoxImportFolder.TabIndex = 4;
       // 
-      // label23
+      // buttonImportBrowse
       // 
-      this.label23.AutoSize = true;
-      this.label23.Location = new System.Drawing.Point(60, 55);
-      this.label23.Name = "label23";
-      this.label23.Size = new System.Drawing.Size(91, 13);
-      this.label23.TabIndex = 23;
-      this.label23.Text = "Recording format:";
+      this.buttonImportBrowse.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.buttonImportBrowse.Location = new System.Drawing.Point(374, 360);
+      this.buttonImportBrowse.Name = "buttonImportBrowse";
+      this.buttonImportBrowse.Size = new System.Drawing.Size(26, 23);
+      this.buttonImportBrowse.TabIndex = 5;
+      this.buttonImportBrowse.Text = "...";
+      this.buttonImportBrowse.UseVisualStyleBackColor = true;
+      this.buttonImportBrowse.Click += new System.EventHandler(this.buttonImportBrowse_Click);
       // 
-      // textBoxFolder
+      // buttonRecordingChangeChannel
       // 
-      this.textBoxFolder.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.textBoxFolder.Location = new System.Drawing.Point(63, 120);
-      this.textBoxFolder.Name = "textBoxFolder";
-      this.textBoxFolder.ReadOnly = true;
-      this.textBoxFolder.Size = new System.Drawing.Size(275, 20);
-      this.textBoxFolder.TabIndex = 2;
-      this.textBoxFolder.TextChanged += new System.EventHandler(this.textBoxFolder_TextChanged);
-      // 
-      // label13
-      // 
-      this.label13.AutoSize = true;
-      this.label13.Location = new System.Drawing.Point(60, 104);
-      this.label13.Name = "label13";
-      this.label13.Size = new System.Drawing.Size(88, 13);
-      this.label13.TabIndex = 3;
-      this.label13.Text = "Recording folder:";
-      // 
-      // buttonBrowse
-      // 
-      this.buttonBrowse.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.buttonBrowse.Location = new System.Drawing.Point(355, 118);
-      this.buttonBrowse.Name = "buttonBrowse";
-      this.buttonBrowse.Size = new System.Drawing.Size(26, 23);
-      this.buttonBrowse.TabIndex = 4;
-      this.buttonBrowse.Text = "...";
-      this.buttonBrowse.UseVisualStyleBackColor = true;
-      this.buttonBrowse.Click += new System.EventHandler(this.buttonBrowse_Click);
-      // 
-      // tpRecordImport
-      // 
-      this.tpRecordImport.Controls.Add(this.buttonChangeChannel);
-      this.tpRecordImport.Controls.Add(this.btnRemoveInvalidFiles);
-      this.tpRecordImport.Controls.Add(this.btnImport);
-      this.tpRecordImport.Controls.Add(this.lblImportItems);
-      this.tpRecordImport.Controls.Add(this.tvTagRecs);
-      this.tpRecordImport.Controls.Add(this.lblRecFolders);
-      this.tpRecordImport.Controls.Add(this.cbRecPaths);
-      this.tpRecordImport.Location = new System.Drawing.Point(4, 22);
-      this.tpRecordImport.Name = "tpRecordImport";
-      this.tpRecordImport.Padding = new System.Windows.Forms.Padding(3);
-      this.tpRecordImport.Size = new System.Drawing.Size(472, 394);
-      this.tpRecordImport.TabIndex = 4;
-      this.tpRecordImport.Text = "Database import";
-      this.tpRecordImport.UseVisualStyleBackColor = true;
-      // 
-      // buttonChangeChannel
-      // 
-      this.buttonChangeChannel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-      this.buttonChangeChannel.Location = new System.Drawing.Point(171, 345);
-      this.buttonChangeChannel.Name = "buttonChangeChannel";
-      this.buttonChangeChannel.Size = new System.Drawing.Size(100, 23);
-      this.buttonChangeChannel.TabIndex = 5;
-      this.buttonChangeChannel.Text = "Change channel";
-      this.buttonChangeChannel.UseVisualStyleBackColor = true;
-      this.buttonChangeChannel.Click += new System.EventHandler(this.buttonChangeChannel_Click);
-      // 
-      // btnRemoveInvalidFiles
-      // 
-      this.btnRemoveInvalidFiles.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.btnRemoveInvalidFiles.Location = new System.Drawing.Point(298, 345);
-      this.btnRemoveInvalidFiles.Name = "btnRemoveInvalidFiles";
-      this.btnRemoveInvalidFiles.Size = new System.Drawing.Size(135, 23);
-      this.btnRemoveInvalidFiles.TabIndex = 4;
-      this.btnRemoveInvalidFiles.Text = "Remove invalid entries";
-      this.btnRemoveInvalidFiles.UseVisualStyleBackColor = true;
-      this.btnRemoveInvalidFiles.Click += new System.EventHandler(this.btnRemoveInvalidFiles_Click);
-      // 
-      // btnImport
-      // 
-      this.btnImport.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-      this.btnImport.Location = new System.Drawing.Point(30, 345);
-      this.btnImport.Name = "btnImport";
-      this.btnImport.Size = new System.Drawing.Size(135, 23);
-      this.btnImport.TabIndex = 3;
-      this.btnImport.Text = "Import selected files";
-      this.btnImport.UseVisualStyleBackColor = true;
-      this.btnImport.Click += new System.EventHandler(this.btnImport_Click);
-      // 
-      // lblImportItems
-      // 
-      this.lblImportItems.AutoSize = true;
-      this.lblImportItems.Location = new System.Drawing.Point(27, 75);
-      this.lblImportItems.Name = "lblImportItems";
-      this.lblImportItems.Size = new System.Drawing.Size(307, 13);
-      this.lblImportItems.TabIndex = 4;
-      this.lblImportItems.Text = "Recorded files which are currently not present in your database:";
-      // 
-      // tvTagRecs
-      // 
-      this.tvTagRecs.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.tvTagRecs.CheckBoxes = true;
-      this.tvTagRecs.FullRowSelect = true;
-      this.tvTagRecs.Location = new System.Drawing.Point(30, 94);
-      this.tvTagRecs.Name = "tvTagRecs";
-      this.tvTagRecs.ShowPlusMinus = false;
-      this.tvTagRecs.ShowRootLines = false;
-      this.tvTagRecs.Size = new System.Drawing.Size(403, 245);
-      this.tvTagRecs.TabIndex = 2;
-      this.tvTagRecs.AfterCheck += new System.Windows.Forms.TreeViewEventHandler(this.tvTagRecs_AfterCheck);
-      this.tvTagRecs.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.tvTagRecs_AfterSelect);
-      // 
-      // lblRecFolders
-      // 
-      this.lblRecFolders.AutoSize = true;
-      this.lblRecFolders.Location = new System.Drawing.Point(27, 24);
-      this.lblRecFolders.Name = "lblRecFolders";
-      this.lblRecFolders.Size = new System.Drawing.Size(88, 13);
-      this.lblRecFolders.TabIndex = 2;
-      this.lblRecFolders.Text = "Recording folder:";
-      // 
-      // cbRecPaths
-      // 
-      this.cbRecPaths.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.cbRecPaths.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.cbRecPaths.FormattingEnabled = true;
-      this.cbRecPaths.Location = new System.Drawing.Point(30, 43);
-      this.cbRecPaths.Name = "cbRecPaths";
-      this.cbRecPaths.Size = new System.Drawing.Size(403, 21);
-      this.cbRecPaths.Sorted = true;
-      this.cbRecPaths.TabIndex = 1;
-      this.cbRecPaths.SelectedIndexChanged += new System.EventHandler(this.cbRecPaths_SelectedIndexChanged);
-      // 
-      // openFileDialog1
-      // 
-      this.openFileDialog1.FileName = "openFileDialog1";
-      // 
-      // mpLabel1
-      // 
-      this.mpLabel1.AutoSize = true;
-      this.mpLabel1.Location = new System.Drawing.Point(301, 16);
-      this.mpLabel1.Name = "mpLabel1";
-      this.mpLabel1.Size = new System.Drawing.Size(78, 65);
-      this.mpLabel1.TabIndex = 19;
-      this.mpLabel1.Text = "%end_year%\r\n%end_month%\r\n%end_day%\r\n%end_hour%\r\n%end_minute%";
-      // 
-      // mpLabel2
-      // 
-      this.mpLabel2.AutoSize = true;
-      this.mpLabel2.Location = new System.Drawing.Point(116, 16);
-      this.mpLabel2.Name = "mpLabel2";
-      this.mpLabel2.Size = new System.Drawing.Size(93, 65);
-      this.mpLabel2.TabIndex = 20;
-      this.mpLabel2.Text = "%channel_name%\r\n%genre%\r\n%date%\r\n%start%\r\n%end%";
+      this.buttonRecordingChangeChannel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.buttonRecordingChangeChannel.Location = new System.Drawing.Point(300, 331);
+      this.buttonRecordingChangeChannel.Name = "buttonRecordingChangeChannel";
+      this.buttonRecordingChangeChannel.Size = new System.Drawing.Size(100, 23);
+      this.buttonRecordingChangeChannel.TabIndex = 1;
+      this.buttonRecordingChangeChannel.Text = "&Change Channel";
+      this.buttonRecordingChangeChannel.UseVisualStyleBackColor = true;
+      this.buttonRecordingChangeChannel.Click += new System.EventHandler(this.buttonRecordingChangeChannel_Click);
       // 
       // TvRecording
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-      this.Controls.Add(this.tabControl1);
+      this.Controls.Add(this.tabControl);
       this.Name = "TvRecording";
       this.Size = new System.Drawing.Size(480, 420);
-      this.tabControl1.ResumeLayout(false);
-      this.tpSettings.ResumeLayout(false);
-      this.groupBox1.ResumeLayout(false);
-      this.groupBoxRecording.ResumeLayout(false);
-      this.groupBoxRecording.PerformLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownMaxFreeCardsToTry)).EndInit();
-      this.groupBoxScheduler.ResumeLayout(false);
-      this.groupBoxScheduler.PerformLayout();
-      this.groupBoxGap.ResumeLayout(false);
-      this.groupBoxGap.PerformLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownPostRec)).EndInit();
-      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownPreRec)).EndInit();
-      this.tpCustom.ResumeLayout(false);
-      this.tpCustom.PerformLayout();
-      this.groupBox2.ResumeLayout(false);
-      this.groupBox2.PerformLayout();
-      this.groupBox3.ResumeLayout(false);
-      this.groupBox3.PerformLayout();
-      this.tpThumbnails.ResumeLayout(false);
-      this.tpThumbnails.PerformLayout();
+      this.tabControl.ResumeLayout(false);
+      this.tabPageStorage.ResumeLayout(false);
+      this.tabPageStorage.PerformLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownDiskManagement)).EndInit();
+      this.groupBoxNaming.ResumeLayout(false);
+      this.groupBoxNaming.PerformLayout();
+      this.tabPageGeneral.ResumeLayout(false);
+      this.groupBoxGeneral.ResumeLayout(false);
+      this.groupBoxGeneral.PerformLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTunerLimit)).EndInit();
+      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownPostRecord)).EndInit();
+      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownPreRecord)).EndInit();
       this.groupBoxThumbnailer.ResumeLayout(false);
       this.groupBoxThumbnailer.PerformLayout();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownThumbnailerTimeOffset)).EndInit();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownThumbnailerRowCount)).EndInit();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownThumbnailerColumnCount)).EndInit();
-      this.tpRecording.ResumeLayout(false);
-      this.tpRecording.PerformLayout();
-      this.groupBox4.ResumeLayout(false);
-      this.groupBox4.PerformLayout();
-      this.groupBoxRecordSettings.ResumeLayout(false);
-      this.groupBoxRecordSettings.PerformLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
-      this.tpRecordImport.ResumeLayout(false);
-      this.tpRecordImport.PerformLayout();
+      this.tabPageDatabase.ResumeLayout(false);
+      this.tabPageDatabase.PerformLayout();
       this.ResumeLayout(false);
 
     }
 
     #endregion
 
-    private System.Windows.Forms.TabControl tabControl1;
-    private System.Windows.Forms.TabPage tpSettings;
-    private System.Windows.Forms.TabPage tpCustom;
-    private MPGroupBox groupBox1;
-    private MPLabel label4;
-    private MPLabel label3;
-    private MPLabel label2;
-    private MPLabel label1;
-    private MPGroupBox groupBox2;
-    private MPGroupBox groupBox3;
-    private MPTextBox textBoxSample;
-    private MPLabel label8;
-    private MPLabel label7;
-    private MPLabel label5;
-    private MPComboBox comboBoxMovies;
-    private System.Windows.Forms.TabPage tpThumbnails;
-    private MPLabel mpLabel3;
-    private MPLabel mpLabel4;
-    private System.Windows.Forms.TabPage tpRecording;
-    private MPComboBox comboBoxCards;
-    private MPButton buttonBrowse;
-    private MPLabel label13;
-    private MPTextBox textBoxFolder;
-    private System.Windows.Forms.OpenFileDialog openFileDialog1;
-    private System.Windows.Forms.PictureBox pictureBox1;
-    private MPLabel label23;
-    private System.Windows.Forms.NumericUpDown numericUpDownPostRec;
-    private System.Windows.Forms.NumericUpDown numericUpDownPreRec;
-    private System.Windows.Forms.TabPage tpRecordImport;
-    private MPButton btnImport;
-    private MPLabel lblImportItems;
-    private System.Windows.Forms.TreeView tvTagRecs;
-    private MPLabel lblRecFolders;
-    private MPComboBox cbRecPaths;
-    private MPButton btnRemoveInvalidFiles;
-    private MPGroupBox groupBoxRecordSettings;
-    private MPTextBox textBoxRecordingFormat;
-    private MPButton buttonChangeChannel;
-    private MPComboBox comboBoxEpisodeKey;
-    private MPLabel labelEpisodeKey;
-    private MPButton buttonSameRecFolder;
-    private MPGroupBox groupBoxScheduler;
-    private MPGroupBox groupBoxGap;
-    private MPCheckBox checkBoxPreventDupes;
-    private MPComboBox comboBoxFormat;
-    private MPTextBox textBoxCustomFormat;
-    private MPLabel labelCustomFormat;
-    private MPGroupBox groupBoxRecording;
-    private MPLabel label48;
-    private System.Windows.Forms.NumericUpDown numericUpDownMaxFreeCardsToTry;
-    private MPLabel lblMaxFreeCards;
-    private MPComboBox comboBoxWeekend;
-    private MPLabel lblWeekend;
+    private MPTabControl tabControl;
+    private MPTabPage tabPageStorage;
+    private MPLabel labelNamingTemplateNonSeries;
+    private MPTabPage tabPageGeneral;
+    private MPTabPage tabPageDatabase;
+    private MPButton buttonRecordingChangeChannel;
+    private MPTextBox textBoxNamingTemplateNonSeries;
     private MPCheckBox checkBoxThumbnailerCopyToRecordingFolder;
     private MPButton buttonThumbnailerCreateMissing;
     private MPCheckBox checkBoxThumbnailerEnable;
-    private MPGroupBox groupBox4;
-    private MPLabel mpLabel5;
-    private MPCheckBox enableDiskQuota;
-    private MPNumericTextBox mpNumericTextBoxDiskQuota;
-    private MPLabel label14;
-    private MPComboBox comboBoxDrive;
-    private MPLabel labelFreeDiskspace;
-    private MPLabel label9;
-    private MPLabel labelTotalDiskSpace;
-    private MPLabel label10;
-    private MPLabel label11;
     private MPGroupBox groupBoxThumbnailer;
-    private System.Windows.Forms.NumericUpDown numericUpDownThumbnailerRowCount;
-    private System.Windows.Forms.NumericUpDown numericUpDownThumbnailerColumnCount;
+    private MPNumericUpDown numericUpDownThumbnailerRowCount;
+    private MPNumericUpDown numericUpDownThumbnailerColumnCount;
     private MPLabel labelThumbnailerRowCount;
     private MPLabel labelThumbnailerColumnCount;
-    private System.Windows.Forms.NumericUpDown numericUpDownThumbnailerTimeOffset;
+    private MPNumericUpDown numericUpDownThumbnailerTimeOffset;
     private MPLabel labelThumbnailerTimeOffset;
     private MPComboBox comboBoxThumbnailerQualitySpeed;
     private MPLabel labelThumbnailerQualitySpeed;
     private MPButton buttonThumbnailerDeleteExisting;
-    private MPLabel mpLabel1;
-    private MPLabel mpLabel2;
+    private MPTextBox textBoxNamingTemplateSeries;
+    private MPTextBox textBoxRecordingFolder;
+    private MPButton buttonRecordingFolderBrowse;
+    private MPLabel labelDiskManagement;
+    private MPCheckBox checkBoxDiskManagementEnable;
+    private MPLabel labelDiskManagementSpaceFreeValue;
+    private MPLabel labelDiskManagementSpaceTotalValue;
+    private MPLabel labelDiskManagementSpaceTotal;
+    private MPLabel labelDiskManagementSpaceFree;
+    private MPLabel labelThumbnailerTimeOffsetUnit;
+    private MPGroupBox groupBoxGeneral;
+    private MPLabel labelWeekEnd;
+    private MPNumericUpDown numericUpDownTunerLimit;
+    private MPComboBox comboBoxWeekEnd;
+    private MPLabel labelTunerLimit;
+    private MPLabel labelDuplicateDetection;
+    private MPLabel labelPreRecord1;
+    private MPLabel labelPostRecord1;
+    private MPNumericUpDown numericUpDownPostRecord;
+    private MPLabel labelPreRecord2;
+    private MPNumericUpDown numericUpDownPreRecord;
+    private MPLabel labelPostRecord2;
+    private MPGroupBox groupBoxNaming;
+    private MPLabel labelNamingTemplateTags2;
+    private MPLabel labelNamingTip;
+    private MPLabel labelNamingTemplateTags4;
+    private MPLabel labelNamingTemplateTags1;
+    private MPLabel labelNamingTemplateTags3;
+    private MPLabel labelRecordingFolder;
+    private MPLabel labelNamingTemplateSeries;
+    private MPNumericUpDown numericUpDownDiskManagement;
+    private MPCheckBox checkBoxDuplicateDetectionSeriesEpisodeIdentifers;
+    private MPCheckBox checkBoxDuplicateDetectionEpisodeNames;
+    private MPCheckBox checkBoxDuplicateDetectionSeasonEpisodeNumbers;
+    private MPLabel labelRecordingImport;
+    private MPTextBox textBoxImportFolder;
+    private MPButton buttonImportBrowse;
+    private MPListView listViewRecordings;
+    private MPColumnHeader columnHeaderTitle;
+    private MPColumnHeader columnHeaderChannel;
+    private MPColumnHeader columnHeaderStart;
+    private MPColumnHeader columnHeaderSeasonNumber;
+    private MPColumnHeader columnHeaderEpisodeNumber;
+    private MPColumnHeader columnHeaderEpisodeName;
+    private MPColumnHeader columnHeaderFileName;
+    private MPColumnHeader columnHeaderCategory;
+    private MPColumnHeader columnHeaderKeepUntil;
+    private MPButton buttonRecordingDelete;
+    private MPButton buttonImport;
   }
 }

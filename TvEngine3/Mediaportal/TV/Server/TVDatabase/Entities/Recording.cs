@@ -69,6 +69,21 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private Nullable<int> _idChannel;
     
         [DataMember]
+        public int MediaType
+        {
+            get { return _mediaType; }
+            set
+            {
+                if (_mediaType != value)
+                {
+                    _mediaType = value;
+                    OnPropertyChanged("MediaType");
+                }
+            }
+        }
+        private int _mediaType;
+    
+        [DataMember]
         public System.DateTime StartTime
         {
             get { return _startTime; }
@@ -129,81 +144,6 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private string _description;
     
         [DataMember]
-        public string FileName
-        {
-            get { return _fileName; }
-            set
-            {
-                if (_fileName != value)
-                {
-                    _fileName = value;
-                    OnPropertyChanged("FileName");
-                }
-            }
-        }
-        private string _fileName;
-    
-        [DataMember]
-        public int KeepUntil
-        {
-            get { return _keepUntil; }
-            set
-            {
-                if (_keepUntil != value)
-                {
-                    _keepUntil = value;
-                    OnPropertyChanged("KeepUntil");
-                }
-            }
-        }
-        private int _keepUntil;
-    
-        [DataMember]
-        public Nullable<System.DateTime> KeepUntilDate
-        {
-            get { return _keepUntilDate; }
-            set
-            {
-                if (_keepUntilDate != value)
-                {
-                    _keepUntilDate = value;
-                    OnPropertyChanged("KeepUntilDate");
-                }
-            }
-        }
-        private Nullable<System.DateTime> _keepUntilDate;
-    
-        [DataMember]
-        public int TimesWatched
-        {
-            get { return _timesWatched; }
-            set
-            {
-                if (_timesWatched != value)
-                {
-                    _timesWatched = value;
-                    OnPropertyChanged("TimesWatched");
-                }
-            }
-        }
-        private int _timesWatched;
-    
-        [DataMember]
-        public int StopTime
-        {
-            get { return _stopTime; }
-            set
-            {
-                if (_stopTime != value)
-                {
-                    _stopTime = value;
-                    OnPropertyChanged("StopTime");
-                }
-            }
-        }
-        private int _stopTime;
-    
-        [DataMember]
         public string EpisodeName
         {
             get { return _episodeName; }
@@ -219,49 +159,267 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private string _episodeName;
     
         [DataMember]
-        public string SeriesNum
+        public string SeriesId
         {
-            get { return _seriesNum; }
+            get { return _seriesId; }
             set
             {
-                if (_seriesNum != value)
+                if (_seriesId != value)
                 {
-                    _seriesNum = value;
-                    OnPropertyChanged("SeriesNum");
+                    _seriesId = value;
+                    OnPropertyChanged("SeriesId");
                 }
             }
         }
-        private string _seriesNum;
+        private string _seriesId;
     
         [DataMember]
-        public string EpisodeNum
+        public Nullable<int> SeasonNumber
         {
-            get { return _episodeNum; }
+            get { return _seasonNumber; }
             set
             {
-                if (_episodeNum != value)
+                if (_seasonNumber != value)
                 {
-                    _episodeNum = value;
-                    OnPropertyChanged("EpisodeNum");
+                    _seasonNumber = value;
+                    OnPropertyChanged("SeasonNumber");
                 }
             }
         }
-        private string _episodeNum;
+        private Nullable<int> _seasonNumber;
     
         [DataMember]
-        public string EpisodePart
+        public string EpisodeId
         {
-            get { return _episodePart; }
+            get { return _episodeId; }
             set
             {
-                if (_episodePart != value)
+                if (_episodeId != value)
                 {
-                    _episodePart = value;
-                    OnPropertyChanged("EpisodePart");
+                    _episodeId = value;
+                    OnPropertyChanged("EpisodeId");
                 }
             }
         }
-        private string _episodePart;
+        private string _episodeId;
+    
+        [DataMember]
+        public Nullable<int> EpisodeNumber
+        {
+            get { return _episodeNumber; }
+            set
+            {
+                if (_episodeNumber != value)
+                {
+                    _episodeNumber = value;
+                    OnPropertyChanged("EpisodeNumber");
+                }
+            }
+        }
+        private Nullable<int> _episodeNumber;
+    
+        [DataMember]
+        public Nullable<int> EpisodePartNumber
+        {
+            get { return _episodePartNumber; }
+            set
+            {
+                if (_episodePartNumber != value)
+                {
+                    _episodePartNumber = value;
+                    OnPropertyChanged("EpisodePartNumber");
+                }
+            }
+        }
+        private Nullable<int> _episodePartNumber;
+    
+        [DataMember]
+        public Nullable<bool> IsPreviouslyShown
+        {
+            get { return _isPreviouslyShown; }
+            set
+            {
+                if (_isPreviouslyShown != value)
+                {
+                    _isPreviouslyShown = value;
+                    OnPropertyChanged("IsPreviouslyShown");
+                }
+            }
+        }
+        private Nullable<bool> _isPreviouslyShown;
+    
+        [DataMember]
+        public Nullable<System.DateTime> OriginalAirDate
+        {
+            get { return _originalAirDate; }
+            set
+            {
+                if (_originalAirDate != value)
+                {
+                    _originalAirDate = value;
+                    OnPropertyChanged("OriginalAirDate");
+                }
+            }
+        }
+        private Nullable<System.DateTime> _originalAirDate;
+    
+        [DataMember]
+        public Nullable<int> IdProgramCategory
+        {
+            get { return _idProgramCategory; }
+            set
+            {
+                if (_idProgramCategory != value)
+                {
+                    ChangeTracker.RecordOriginalValue("IdProgramCategory", _idProgramCategory);
+                    if (!IsDeserializing)
+                    {
+                        if (ProgramCategory != null && ProgramCategory.IdProgramCategory != value)
+                        {
+                            ProgramCategory = null;
+                        }
+                    }
+                    _idProgramCategory = value;
+                    OnPropertyChanged("IdProgramCategory");
+                }
+            }
+        }
+        private Nullable<int> _idProgramCategory;
+    
+        [DataMember]
+        public string Classification
+        {
+            get { return _classification; }
+            set
+            {
+                if (_classification != value)
+                {
+                    _classification = value;
+                    OnPropertyChanged("Classification");
+                }
+            }
+        }
+        private string _classification;
+    
+        [DataMember]
+        public int Advisories
+        {
+            get { return _advisories; }
+            set
+            {
+                if (_advisories != value)
+                {
+                    _advisories = value;
+                    OnPropertyChanged("Advisories");
+                }
+            }
+        }
+        private int _advisories;
+    
+        [DataMember]
+        public Nullable<bool> IsHighDefinition
+        {
+            get { return _isHighDefinition; }
+            set
+            {
+                if (_isHighDefinition != value)
+                {
+                    _isHighDefinition = value;
+                    OnPropertyChanged("IsHighDefinition");
+                }
+            }
+        }
+        private Nullable<bool> _isHighDefinition;
+    
+        [DataMember]
+        public Nullable<bool> IsThreeDimensional
+        {
+            get { return _isThreeDimensional; }
+            set
+            {
+                if (_isThreeDimensional != value)
+                {
+                    _isThreeDimensional = value;
+                    OnPropertyChanged("IsThreeDimensional");
+                }
+            }
+        }
+        private Nullable<bool> _isThreeDimensional;
+    
+        [DataMember]
+        public Nullable<bool> IsLive
+        {
+            get { return _isLive; }
+            set
+            {
+                if (_isLive != value)
+                {
+                    _isLive = value;
+                    OnPropertyChanged("IsLive");
+                }
+            }
+        }
+        private Nullable<bool> _isLive;
+    
+        [DataMember]
+        public Nullable<int> ProductionYear
+        {
+            get { return _productionYear; }
+            set
+            {
+                if (_productionYear != value)
+                {
+                    _productionYear = value;
+                    OnPropertyChanged("ProductionYear");
+                }
+            }
+        }
+        private Nullable<int> _productionYear;
+    
+        [DataMember]
+        public string ProductionCountry
+        {
+            get { return _productionCountry; }
+            set
+            {
+                if (_productionCountry != value)
+                {
+                    _productionCountry = value;
+                    OnPropertyChanged("ProductionCountry");
+                }
+            }
+        }
+        private string _productionCountry;
+    
+        [DataMember]
+        public Nullable<decimal> StarRating
+        {
+            get { return _starRating; }
+            set
+            {
+                if (_starRating != value)
+                {
+                    _starRating = value;
+                    OnPropertyChanged("StarRating");
+                }
+            }
+        }
+        private Nullable<decimal> _starRating;
+    
+        [DataMember]
+        public Nullable<decimal> StarRatingMaximum
+        {
+            get { return _starRatingMaximum; }
+            set
+            {
+                if (_starRatingMaximum != value)
+                {
+                    _starRatingMaximum = value;
+                    OnPropertyChanged("StarRatingMaximum");
+                }
+            }
+        }
+        private Nullable<decimal> _starRatingMaximum;
     
         [DataMember]
         public bool IsRecording
@@ -302,42 +460,79 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private Nullable<int> _idSchedule;
     
         [DataMember]
-        public int MediaType
+        public string FileName
         {
-            get { return _mediaType; }
+            get { return _fileName; }
             set
             {
-                if (_mediaType != value)
+                if (_fileName != value)
                 {
-                    _mediaType = value;
-                    OnPropertyChanged("MediaType");
+                    _fileName = value;
+                    OnPropertyChanged("FileName");
                 }
             }
         }
-        private int _mediaType;
+        private string _fileName;
     
         [DataMember]
-        public Nullable<int> IdProgramCategory
+        public int KeepMethod
         {
-            get { return _idProgramCategory; }
+            get { return _keepMethod; }
             set
             {
-                if (_idProgramCategory != value)
+                if (_keepMethod != value)
                 {
-                    ChangeTracker.RecordOriginalValue("IdProgramCategory", _idProgramCategory);
-                    if (!IsDeserializing)
-                    {
-                        if (ProgramCategory != null && ProgramCategory.IdProgramCategory != value)
-                        {
-                            ProgramCategory = null;
-                        }
-                    }
-                    _idProgramCategory = value;
-                    OnPropertyChanged("IdProgramCategory");
+                    _keepMethod = value;
+                    OnPropertyChanged("KeepMethod");
                 }
             }
         }
-        private Nullable<int> _idProgramCategory;
+        private int _keepMethod;
+    
+        [DataMember]
+        public Nullable<System.DateTime> KeepUntilDate
+        {
+            get { return _keepUntilDate; }
+            set
+            {
+                if (_keepUntilDate != value)
+                {
+                    _keepUntilDate = value;
+                    OnPropertyChanged("KeepUntilDate");
+                }
+            }
+        }
+        private Nullable<System.DateTime> _keepUntilDate;
+    
+        [DataMember]
+        public int WatchedCount
+        {
+            get { return _watchedCount; }
+            set
+            {
+                if (_watchedCount != value)
+                {
+                    _watchedCount = value;
+                    OnPropertyChanged("WatchedCount");
+                }
+            }
+        }
+        private int _watchedCount;
+    
+        [DataMember]
+        public int StopTime
+        {
+            get { return _stopTime; }
+            set
+            {
+                if (_stopTime != value)
+                {
+                    _stopTime = value;
+                    OnPropertyChanged("StopTime");
+                }
+            }
+        }
+        private int _stopTime;
 
         #endregion
         #region Navigation Properties

@@ -11,9 +11,9 @@ namespace Mediaportal.TV.Server.TVControl.ServiceAgents
     {
     }
 
-    public Recording GetRecording(int idRecording)
+    public IList<Recording> ListAllRecordings()
     {
-      return _channel.GetRecording(idRecording);
+      return _channel.ListAllRecordings();
     }
 
     public IList<Recording> ListAllRecordingsByMediaType(MediaType mediaType)
@@ -21,10 +21,14 @@ namespace Mediaportal.TV.Server.TVControl.ServiceAgents
       return _channel.ListAllRecordingsByMediaType(mediaType);
     }
 
-    public Recording SaveRecording(Recording recording)
+    public IList<Recording> ListAllActiveRecordingsByMediaType(MediaType mediaType)
     {
-      recording.UnloadAllUnchangedRelationsForEntity();
-      return _channel.SaveRecording(recording);
+      return _channel.ListAllActiveRecordingsByMediaType(mediaType);
+    }
+
+    public Recording GetRecording(int idRecording)
+    {
+      return _channel.GetRecording(idRecording);
     }
 
     public Recording GetRecordingByFileName(string fileName)
@@ -42,14 +46,10 @@ namespace Mediaportal.TV.Server.TVControl.ServiceAgents
       return _channel.GetActiveRecordingByTitleAndChannel(title, idChannel);
     }
 
-    public IList<Recording> ListAllActiveRecordingsByMediaType(MediaType mediaType)
+    public Recording SaveRecording(Recording recording)
     {
-      return _channel.ListAllActiveRecordingsByMediaType(mediaType);
-    }
-
-    public void DeleteRecording(int idRecording)
-    {
-      _channel.DeleteRecording(idRecording);
+      recording.UnloadAllUnchangedRelationsForEntity();
+      return _channel.SaveRecording(recording);
     }
   }
 }

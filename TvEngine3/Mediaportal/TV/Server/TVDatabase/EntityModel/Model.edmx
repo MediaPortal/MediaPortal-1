@@ -184,7 +184,6 @@
     <Property Name="Priority" Type="int" Nullable="false" />
     <Property Name="IsEnabled" Type="bit" Nullable="false" />
     <Property Name="UseForEpgGrabbing" Type="bit" Nullable="false" />
-    <Property Name="RecordingFolder" Type="varchar" Nullable="false" MaxLength="300" />
     <Property Name="SupportedBroadcastStandards" Type="int" Nullable="false" />
     <Property Name="UseConditionalAccess" Type="bit" Nullable="false" />
     <Property Name="CamType" Type="int" Nullable="false" />
@@ -358,23 +357,36 @@
     </Key>
     <Property Name="IdRecording" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
     <Property Name="IdChannel" Type="int" Nullable="true" />
+    <Property Name="MediaType" Type="int" Nullable="false" />
     <Property Name="StartTime" Type="datetime" Nullable="false" />
     <Property Name="EndTime" Type="datetime" Nullable="false" />
     <Property Name="Title" Type="varchar" Nullable="false" MaxLength="2000" />
     <Property Name="Description" Type="varchar" Nullable="false" MaxLength="8000" />
-    <Property Name="FileName" Type="varchar" Nullable="false" MaxLength="260" />
-    <Property Name="KeepUntil" Type="int" Nullable="false" />
-    <Property Name="KeepUntilDate" Type="datetime" Nullable="true" />
-    <Property Name="TimesWatched" Type="int" Nullable="false" />
-    <Property Name="StopTime" Type="int" Nullable="false" />
-    <Property Name="EpisodeName" Type="longtext" Nullable="false" />
-    <Property Name="SeriesNum" Type="varchar" Nullable="false" MaxLength="200" />
-    <Property Name="EpisodeNum" Type="varchar" Nullable="false" MaxLength="200" />
-    <Property Name="EpisodePart" Type="longtext" Nullable="false" />
+    <Property Name="EpisodeName" Type="varchar" Nullable="true" MaxLength="2000" />
+    <Property Name="SeriesId" Type="varchar" Nullable="true" MaxLength="200" />
+    <Property Name="SeasonNumber" Type="int" Nullable="true" />
+    <Property Name="EpisodeId" Type="varchar" Nullable="true" MaxLength="200" />
+    <Property Name="EpisodeNumber" Type="int" Nullable="true" />
+    <Property Name="EpisodePartNumber" Type="int" Nullable="true" />
+    <Property Name="IsPreviouslyShown" Type="bit" Nullable="true" />
+    <Property Name="OriginalAirDate" Type="datetime" Nullable="true" />
+    <Property Name="IdProgramCategory" Type="int" Nullable="true" />
+    <Property Name="Classification" Type="varchar" Nullable="true" MaxLength="200" />
+    <Property Name="Advisories" Type="int" Nullable="false" />
+    <Property Name="IsHighDefinition" Type="bit" Nullable="true" />
+    <Property Name="IsThreeDimensional" Type="bit" Nullable="true" />
+    <Property Name="IsLive" Type="bit" Nullable="true" />
+    <Property Name="ProductionYear" Type="int" Nullable="true" />
+    <Property Name="ProductionCountry" Type="varchar" Nullable="true" MaxLength="200" />
+    <Property Name="StarRating" Type="decimal" Nullable="true" />
+    <Property Name="StarRatingMaximum" Type="decimal" Nullable="true" />
     <Property Name="IsRecording" Type="bit" Nullable="false" />
     <Property Name="IdSchedule" Type="int" Nullable="true" />
-    <Property Name="MediaType" Type="int" Nullable="false" />
-    <Property Name="IdProgramCategory" Type="int" Nullable="true" />
+    <Property Name="FileName" Type="varchar" Nullable="false" MaxLength="260" />
+    <Property Name="KeepMethod" Type="int" Nullable="false" />
+    <Property Name="KeepUntilDate" Type="datetime" Nullable="true" />
+    <Property Name="WatchedCount" Type="int" Nullable="false" />
+    <Property Name="StopTime" Type="int" Nullable="false" />
   </EntityType>
   <EntityType Name="RuleBasedSchedules">
     <Key>
@@ -1188,7 +1200,6 @@
           <Property Type="Int32" Name="Priority" Nullable="false" />
           <Property Type="Boolean" Name="IsEnabled" Nullable="false" />
           <Property Type="Boolean" Name="UseForEpgGrabbing" Nullable="false" />
-          <Property Type="String" Name="RecordingFolder" Nullable="false" MaxLength="300" Unicode="false" FixedLength="false" />
           <Property Type="Int32" Name="SupportedBroadcastStandards" Nullable="false" />
           <Property Type="Boolean" Name="UseConditionalAccess" Nullable="false" />
           <Property Type="Int32" Name="CamType" Nullable="false" />
@@ -1400,27 +1411,40 @@
           <Key>
             <PropertyRef Name="IdRecording" />
           </Key>
-          <Property Name="IdRecording" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="IdChannel" Type="Int32" Nullable="true" />
-          <Property Name="StartTime" Type="DateTime" Nullable="false" />
-          <Property Name="EndTime" Type="DateTime" Nullable="false" />
-          <Property Name="Title" Type="String" Nullable="false" MaxLength="2000" Unicode="false" FixedLength="false" />
-          <Property Name="Description" Type="String" Nullable="false" MaxLength="8000" Unicode="false" FixedLength="false" />
-          <Property Name="FileName" Type="String" Nullable="false" MaxLength="260" Unicode="false" FixedLength="false" />
-          <Property Name="KeepUntil" Type="Int32" Nullable="false" />
-          <Property Name="KeepUntilDate" Type="DateTime" Nullable="true" />
-          <Property Name="TimesWatched" Type="Int32" Nullable="false" />
-          <Property Name="StopTime" Type="Int32" Nullable="false" />
-          <Property Name="EpisodeName" Type="String" Nullable="false" MaxLength="Max" Unicode="false" FixedLength="false" />
-          <Property Name="SeriesNum" Type="String" Nullable="false" MaxLength="200" Unicode="false" FixedLength="false" />
-          <Property Name="EpisodeNum" Type="String" Nullable="false" MaxLength="200" Unicode="false" FixedLength="false" />
-          <Property Name="EpisodePart" Type="String" Nullable="false" MaxLength="Max" Unicode="false" FixedLength="false" />
-          <Property Name="IsRecording" Type="Boolean" Nullable="false" />
-          <Property Name="IdSchedule" Type="Int32" Nullable="true" />
-          <NavigationProperty Name="Channel" Relationship="TVDatabaseModel.ChannelRecording" FromRole="Recording" ToRole="Channel" />
+          <Property Type="Int32" Name="IdRecording" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="Int32" Name="IdChannel" Nullable="true" />
           <Property Type="Int32" Name="MediaType" Nullable="false" />
-          <NavigationProperty Name="Schedule" Relationship="TVDatabaseModel.ScheduleRecording" FromRole="Recording" ToRole="Schedule" />
+          <Property Type="DateTime" Name="StartTime" Nullable="false" />
+          <Property Type="DateTime" Name="EndTime" Nullable="false" />
+          <Property Type="String" Name="Title" Nullable="false" MaxLength="2000" Unicode="false" FixedLength="false" />
+          <Property Type="String" Name="Description" Nullable="false" MaxLength="8000" Unicode="false" FixedLength="false" />
+          <Property Type="String" Name="EpisodeName" Nullable="true" MaxLength="2000" Unicode="false" FixedLength="false" />
+          <Property Type="String" Name="SeriesId" Nullable="true" MaxLength="200" Unicode="false" FixedLength="false" />
+          <Property Type="Int32" Name="SeasonNumber" Nullable="true" />
+          <Property Type="String" Name="EpisodeId" Nullable="true" MaxLength="200" Unicode="false" FixedLength="false" />
+          <Property Type="Int32" Name="EpisodeNumber" Nullable="true" />
+          <Property Type="Int32" Name="EpisodePartNumber" Nullable="true" />
+          <Property Type="Boolean" Name="IsPreviouslyShown" Nullable="true" />
+          <Property Type="DateTime" Name="OriginalAirDate" Nullable="true" />
           <Property Type="Int32" Name="IdProgramCategory" Nullable="true" />
+          <Property Type="String" Name="Classification" Nullable="true" MaxLength="200" Unicode="false" FixedLength="false" />
+          <Property Type="Int32" Name="Advisories" Nullable="false" />
+          <Property Type="Boolean" Name="IsHighDefinition" Nullable="true" />
+          <Property Type="Boolean" Name="IsThreeDimensional" Nullable="true" />
+          <Property Type="Boolean" Name="IsLive" Nullable="true" />
+          <Property Type="Int32" Name="ProductionYear" Nullable="true" />
+          <Property Type="String" Name="ProductionCountry" Nullable="true" MaxLength="200" Unicode="false" FixedLength="false" />
+          <Property Type="Decimal" Name="StarRating" Nullable="true" />
+          <Property Type="Decimal" Name="StarRatingMaximum" Nullable="true" />
+          <Property Type="Boolean" Name="IsRecording" Nullable="false" />
+          <Property Type="Int32" Name="IdSchedule" Nullable="true" />
+          <Property Type="String" Name="FileName" Nullable="false" MaxLength="260" Unicode="false" FixedLength="false" />
+          <Property Type="Int32" Name="KeepMethod" Nullable="false" />
+          <Property Type="DateTime" Name="KeepUntilDate" Nullable="true" />
+          <Property Type="Int32" Name="WatchedCount" Nullable="false" />
+          <Property Type="Int32" Name="StopTime" Nullable="false" />
+          <NavigationProperty Name="Channel" Relationship="TVDatabaseModel.ChannelRecording" FromRole="Recording" ToRole="Channel" />
+          <NavigationProperty Name="Schedule" Relationship="TVDatabaseModel.ScheduleRecording" FromRole="Recording" ToRole="Schedule" />
           <NavigationProperty Name="RecordingCredits" Relationship="TVDatabaseModel.RecordingRecordingCredit" FromRole="Recording" ToRole="RecordingCredit" />
           <NavigationProperty Name="ProgramCategory" Relationship="TVDatabaseModel.RecordingProgramCategory" FromRole="Recording" ToRole="ProgramCategory" />
         </EntityType>
@@ -2097,7 +2121,6 @@
           <ScalarProperty Name="Priority" ColumnName="Priority" />
           <ScalarProperty Name="IsEnabled" ColumnName="IsEnabled" />
           <ScalarProperty Name="UseForEpgGrabbing" ColumnName="UseForEpgGrabbing" />
-          <ScalarProperty Name="RecordingFolder" ColumnName="RecordingFolder" />
           <ScalarProperty Name="SupportedBroadcastStandards" ColumnName="SupportedBroadcastStandards" />
           <ScalarProperty Name="UseConditionalAccess" ColumnName="UseConditionalAccess" />
           <ScalarProperty Name="CamType" ColumnName="CamType" />
@@ -2285,23 +2308,36 @@
         <MappingFragment StoreEntitySet="Recordings">
           <ScalarProperty Name="IdRecording" ColumnName="IdRecording" />
           <ScalarProperty Name="IdChannel" ColumnName="IdChannel" />
+          <ScalarProperty Name="MediaType" ColumnName="MediaType" />
           <ScalarProperty Name="StartTime" ColumnName="StartTime" />
           <ScalarProperty Name="EndTime" ColumnName="EndTime" />
           <ScalarProperty Name="Title" ColumnName="Title" />
           <ScalarProperty Name="Description" ColumnName="Description" />
-          <ScalarProperty Name="FileName" ColumnName="FileName" />
-          <ScalarProperty Name="KeepUntil" ColumnName="KeepUntil" />
-          <ScalarProperty Name="KeepUntilDate" ColumnName="KeepUntilDate" />
-          <ScalarProperty Name="TimesWatched" ColumnName="TimesWatched" />
-          <ScalarProperty Name="StopTime" ColumnName="StopTime" />
           <ScalarProperty Name="EpisodeName" ColumnName="EpisodeName" />
-          <ScalarProperty Name="SeriesNum" ColumnName="SeriesNum" />
-          <ScalarProperty Name="EpisodeNum" ColumnName="EpisodeNum" />
-          <ScalarProperty Name="EpisodePart" ColumnName="EpisodePart" />
+          <ScalarProperty Name="SeriesId" ColumnName="SeriesId" />
+          <ScalarProperty Name="SeasonNumber" ColumnName="SeasonNumber" />
+          <ScalarProperty Name="EpisodeId" ColumnName="EpisodeId" />
+          <ScalarProperty Name="EpisodeNumber" ColumnName="EpisodeNumber" />
+          <ScalarProperty Name="EpisodePartNumber" ColumnName="EpisodePartNumber" />
+          <ScalarProperty Name="IsPreviouslyShown" ColumnName="IsPreviouslyShown" />
+          <ScalarProperty Name="OriginalAirDate" ColumnName="OriginalAirDate" />
+          <ScalarProperty Name="IdProgramCategory" ColumnName="IdProgramCategory" />
+          <ScalarProperty Name="Classification" ColumnName="Classification" />
+          <ScalarProperty Name="Advisories" ColumnName="Advisories" />
+          <ScalarProperty Name="IsHighDefinition" ColumnName="IsHighDefinition" />
+          <ScalarProperty Name="IsThreeDimensional" ColumnName="IsThreeDimensional" />
+          <ScalarProperty Name="IsLive" ColumnName="IsLive" />
+          <ScalarProperty Name="ProductionYear" ColumnName="ProductionYear" />
+          <ScalarProperty Name="ProductionCountry" ColumnName="ProductionCountry" />
+          <ScalarProperty Name="StarRating" ColumnName="StarRating" />
+          <ScalarProperty Name="StarRatingMaximum" ColumnName="StarRatingMaximum" />
           <ScalarProperty Name="IsRecording" ColumnName="IsRecording" />
           <ScalarProperty Name="IdSchedule" ColumnName="IdSchedule" />
-          <ScalarProperty Name="MediaType" ColumnName="MediaType" />
-          <ScalarProperty Name="IdProgramCategory" ColumnName="IdProgramCategory" />
+          <ScalarProperty Name="FileName" ColumnName="FileName" />
+          <ScalarProperty Name="KeepMethod" ColumnName="KeepMethod" />
+          <ScalarProperty Name="KeepUntilDate" ColumnName="KeepUntilDate" />
+          <ScalarProperty Name="WatchedCount" ColumnName="WatchedCount" />
+          <ScalarProperty Name="StopTime" ColumnName="StopTime" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
@@ -2556,17 +2592,17 @@
         <EntityTypeShape EntityType="TVDatabaseModel.ChannelGroup" Width="1.625" PointX="9.5" PointY="7" Height="1.7566536458333317" IsExpanded="true" />
         <EntityTypeShape EntityType="TVDatabaseModel.ChannelLinkageMap" Width="1.875" PointX="2.375" PointY="10" Height="1.9210009765624996" IsExpanded="true" />
         <EntityTypeShape EntityType="TVDatabaseModel.ChannelMap" Width="1.5" PointX="3" PointY="6.75" Height="1.7566536458333326" IsExpanded="true" />
-        <EntityTypeShape EntityType="TVDatabaseModel.Conflict" Width="1.5" PointX="0.625" PointY="6.75" Height="2.578390299479171" IsExpanded="true" />
-        <EntityTypeShape EntityType="TVDatabaseModel.DiseqcMotor" Width="1.5" PointX="5.375" PointY="6.75" Height="1.9210009765624996" IsExpanded="true" />
+        <EntityTypeShape EntityType="TVDatabaseModel.Conflict" Width="1.5" PointX="0.625" PointY="6.625" Height="2.578390299479171" IsExpanded="true" />
+        <EntityTypeShape EntityType="TVDatabaseModel.DiseqcMotor" Width="1.5" PointX="5.375" PointY="6.625" Height="1.9210009765624996" IsExpanded="true" />
         <EntityTypeShape EntityType="TVDatabaseModel.GroupMap" Width="1.5" PointX="7.375" PointY="9" Height="1.9210009765625" IsExpanded="true" />
         <EntityTypeShape EntityType="TVDatabaseModel.History" Width="1.5" PointX="5" PointY="13.625" Height="2.7427376302083335" IsExpanded="true" />
         <EntityTypeShape EntityType="TVDatabaseModel.PendingDeletion" Width="1.625" PointX="15.5" PointY="3.75" Height="1.2636116536458353" IsExpanded="true" />
-        <EntityTypeShape EntityType="TVDatabaseModel.Program" Width="1.625" PointX="7.375" PointY="12.625" Height="6.1940315755208353" IsExpanded="true" />
+        <EntityTypeShape EntityType="TVDatabaseModel.Program" Width="1.625" PointX="7.25" PointY="13.625" Height="6.5227262369791674" IsExpanded="true" />
         <EntityTypeShape EntityType="TVDatabaseModel.ProgramCategory" Width="1.75" PointX="5" PointY="17" Height="2.0853483072916656" IsExpanded="true" />
-        <EntityTypeShape EntityType="TVDatabaseModel.ProgramCredit" Width="1.5" PointX="9.625" PointY="17.375" Height="1.7566536458333317" IsExpanded="true" />
+        <EntityTypeShape EntityType="TVDatabaseModel.ProgramCredit" Width="1.5" PointX="9.625" PointY="17.875" Height="1.7566536458333317" IsExpanded="true" />
         <EntityTypeShape EntityType="TVDatabaseModel.Recording" Width="1.625" PointX="2.75" PointY="13.625" Height="4.7149055989583317" IsExpanded="true" />
         <EntityTypeShape EntityType="TVDatabaseModel.RuleBasedSchedule" Width="1.875" PointX="13.375" PointY="2.625" Height="2.7427376302083335" IsExpanded="true" />
-        <EntityTypeShape EntityType="TVDatabaseModel.Satellite" Width="1.5" PointX="7.5" PointY="6.875" Height="1.5923063151041665" IsExpanded="true" />
+        <EntityTypeShape EntityType="TVDatabaseModel.Satellite" Width="1.5" PointX="7.5" PointY="6.75" Height="1.5923063151041665" IsExpanded="true" />
         <EntityTypeShape EntityType="TVDatabaseModel.Schedule" Width="1.5" PointX="0.5" PointY="10.375" Height="4.8792529296875014" IsExpanded="true" />
         <EntityTypeShape EntityType="TVDatabaseModel.ScheduleRulesTemplate" Width="2.125" PointX="13.125" PointY="0.5" Height="1.9210009765624996" IsExpanded="true" />
         <EntityTypeShape EntityType="TVDatabaseModel.Setting" Width="1.25" PointX="15.5" PointY="0.625" Height="1.4279589843750031" IsExpanded="true" />
@@ -2581,16 +2617,16 @@
           <ConnectorPoint PointX="7.375" PointY="9.96050048828125" />
         </AssociationConnector>
         <AssociationConnector Association="TVDatabaseModel.DiseqcMotorTuner">
-          <ConnectorPoint PointX="4.8750000000000009" PointY="6.2009895833333326" />
-          <ConnectorPoint PointX="5.375" PointY="6.75" />
+          <ConnectorPoint PointX="4.875" PointY="6.0366422526041656" />
+          <ConnectorPoint PointX="5.375" PointY="6.625" />
         </AssociationConnector>
         <AssociationConnector Association="TVDatabaseModel.ChannelRecording">
           <ConnectorPoint PointX="4.875" PointY="13.057516276041667" />
           <ConnectorPoint PointX="4.375" PointY="13.625" />
         </AssociationConnector>
         <AssociationConnector Association="TVDatabaseModel.ChannelProgram" ManuallyRouted="false">
-          <ConnectorPoint PointX="6.625" PointY="12.841258138020834" />
-          <ConnectorPoint PointX="7.375" PointY="12.841258138020834" />
+          <ConnectorPoint PointX="6.6249999999999982" PointY="13.057516276041666" />
+          <ConnectorPoint PointX="7.25" PointY="13.625" />
         </AssociationConnector>
         <AssociationConnector Association="TVDatabaseModel.TunerChannelMap">
           <ConnectorPoint PointX="3.75" PointY="6.2009895833333326" />
@@ -2611,12 +2647,12 @@
           <ConnectorPoint PointX="1.4784615384615383" PointY="15.254252929687501" />
         </AssociationConnector>
         <AssociationConnector Association="TVDatabaseModel.ProgramProgramCategory">
-          <ConnectorPoint PointX="7.375" PointY="18.042674153645834" />
+          <ConnectorPoint PointX="7.25" PointY="18.042674153645834" />
           <ConnectorPoint PointX="6.75" PointY="18.042674153645834" />
         </AssociationConnector>
         <AssociationConnector Association="TVDatabaseModel.ProgramProgramCredit">
-          <ConnectorPoint PointX="9" PointY="18.253326822916666" />
-          <ConnectorPoint PointX="9.625" PointY="18.253326822916666" />
+          <ConnectorPoint PointX="8.875" PointY="18.753326822916666" />
+          <ConnectorPoint PointX="9.625" PointY="18.753326822916666" />
         </AssociationConnector>
         <AssociationConnector Association="TVDatabaseModel.ChannelHistory">
           <ConnectorPoint PointX="5.75" PointY="13.057516276041666" />
@@ -2627,17 +2663,17 @@
           <ConnectorPoint PointX="9.5" PointY="11.77300048828125" />
         </AssociationConnector>
         <AssociationConnector Association="TVDatabaseModel.DiseqcMotorSatellite">
-          <ConnectorPoint PointX="7.5" PointY="7.6711531575520837" />
-          <ConnectorPoint PointX="6.875" PointY="7.6711531575520837" />
+          <ConnectorPoint PointX="7.5" PointY="7.5461531575520837" />
+          <ConnectorPoint PointX="6.875" PointY="7.5461531575520837" />
         </AssociationConnector>
         <AssociationConnector Association="TVDatabaseModel.ScheduleRecording">
           <ConnectorPoint PointX="2" PointY="14.439626464843752" />
           <ConnectorPoint PointX="2.75" PointY="14.439626464843752" />
         </AssociationConnector>
-        <EntityTypeShape EntityType="TVDatabaseModel.RecordingCredit" Width="1.625" PointX="2.75" PointY="19.125" Height="1.7566536458333335" />
+        <EntityTypeShape EntityType="TVDatabaseModel.RecordingCredit" Width="1.625" PointX="0.5" PointY="18.25" Height="1.7566536458333335" />
         <AssociationConnector Association="TVDatabaseModel.RecordingRecordingCredit">
-          <ConnectorPoint PointX="3.5625" PointY="18.339905598958332" />
-          <ConnectorPoint PointX="3.5625" PointY="19.125" />
+          <ConnectorPoint PointX="2.75" PointY="19.128326822916666" />
+          <ConnectorPoint PointX="2.125" PointY="19.128326822916666" />
         </AssociationConnector>
         <AssociationConnector Association="TVDatabaseModel.ScheduleCanceledSchedule">
           <ConnectorPoint PointX="0.70346153846153847" PointY="15.254252929687501" />
@@ -2652,24 +2688,25 @@
           <ConnectorPoint PointX="4.25" PointY="10.417750244140624" />
         </AssociationConnector>
         <AssociationConnector Association="TVDatabaseModel.RecordingProgramCategory">
-          <ConnectorPoint PointX="4.375" PointY="17.669952799479166" />
-          <ConnectorPoint PointX="5" PointY="17.669952799479166" />
+          <ConnectorPoint PointX="4.375" PointY="18.042674153645834" />
+          <ConnectorPoint PointX="5" PointY="18.042674153645834" />
         </AssociationConnector>
         <AssociationConnector Association="TVDatabaseModel.TunerConflict">
-          <ConnectorPoint PointX="2.7499999999999991" PointY="6.2009895833333326" />
-          <ConnectorPoint PointX="2.125" PointY="6.75" />
+          <ConnectorPoint PointX="2.75" PointY="6.0366422526041656" />
+          <ConnectorPoint PointX="2.125" PointY="6.625" />
         </AssociationConnector>
         <AssociationConnector Association="TVDatabaseModel.ChannelConflict">
-          <ConnectorPoint PointX="4.875" PointY="9.1954476497395863" />
-          <ConnectorPoint PointX="2.125" PointY="9.1954476497395863" />
+          <ConnectorPoint PointX="4.875" PointY="9.570445649739586" />
+          <ConnectorPoint PointX="2.09375" PointY="9.570445649739586" />
+          <ConnectorPoint PointX="2.09375" PointY="9.203390299479171" />
         </AssociationConnector>
         <AssociationConnector Association="TVDatabaseModel.ScheduleConflict">
           <ConnectorPoint PointX="1.3125" PointY="10.375" />
-          <ConnectorPoint PointX="1.3125" PointY="9.328390299479171" />
+          <ConnectorPoint PointX="1.3125" PointY="9.203390299479171" />
         </AssociationConnector>
         <AssociationConnector Association="TVDatabaseModel.ScheduleConflict1">
           <ConnectorPoint PointX="1.71875" PointY="10.375" />
-          <ConnectorPoint PointX="1.71875" PointY="9.328390299479171" />
+          <ConnectorPoint PointX="1.71875" PointY="9.203390299479171" />
         </AssociationConnector>
         <AssociationConnector Association="TVDatabaseModel.ProgramCategoryHistory">
           <ConnectorPoint PointX="5.75" PointY="17" />

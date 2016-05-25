@@ -34,29 +34,31 @@ namespace Mediaportal.TV.Server.TVLibrary
     // singleton. Dont allow any instance of this class
     private Utils() {}
 
-    public static ulong GetFreeDiskSpace(string disk)
+    public static bool GetFreeDiskSpace(string disk, out ulong bytesTotal, out ulong bytesFreeAndAvailable)
     {
-      ulong freeBytesAvailable = 0;
-      ulong totalNumberOfBytes = 0;
-      ulong totalNumberOfFreeBytes = 0;
+      bytesTotal = 0;
+      bytesFreeAndAvailable = 0;
+      ulong bytesFreeTotal = 0;
       try
       {
         bool result = GetDiskFreeSpaceEx(
           Path.GetPathRoot(disk),
-          out freeBytesAvailable,
-          out totalNumberOfBytes,
-          out totalNumberOfFreeBytes);
-        if (!result)
+          out bytesFreeAndAvailable,
+          out bytesTotal,
+          out bytesFreeTotal);
+        if (result)
         {
-          Log.Warn("utils: failed to determine free disk space, error code = {0}, disk = {1}", Marshal.GetLastWin32Error(), disk);
-          freeBytesAvailable = 0;
+          return true;
         }
+        Log.Warn("utils: failed to determine free disk space, error code = {0}, disk = {1}", Marshal.GetLastWin32Error(), disk);
+        bytesTotal = 0;
+        bytesFreeAndAvailable = 0;
       }
       catch (Exception ex)
       {
         Log.Warn(ex, "utils: failed to determine free disk space, disk = {0}", disk);
       }
-      return freeBytesAvailable;
+      return false;
     }
   }
 }
