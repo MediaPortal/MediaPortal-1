@@ -30,11 +30,12 @@ using Mediaportal.TV.Server.TVControl.ServiceAgents;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Channel;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channel;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using MediaPortal.Common.Utils.ExtensionMethods;
 using DbTuningDetail = Mediaportal.TV.Server.TVDatabase.Entities.TuningDetail;
-using FileTuningDetail = Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.TuningDetail.TuningDetail;
+using FileTuningDetail = Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.TuningDetail;
 
 namespace Mediaportal.TV.Server.SetupTV.Sections
 {
@@ -47,9 +48,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     private TuningDetailFilter _tuningDetailFilter;
     private ChannelScanHelper _scanHelper = null;
     private ScanState _scanState = ScanState.Initialized;
-
-    private IDictionary<MediaType, int> _satelliteChannelGroupIds = null;
-    private IList<GroupMap> _newChannelSatelliteGroupMappings = new List<GroupMap>();
 
     #endregion
 
@@ -224,28 +222,23 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
           break;
         case ScanState.Initialized:
           List<FileTuningDetail> tuningDetails = null;
-          bool isNitScan = false;
-          switch (ActiveScanType)
+          ScanType scanType = ActiveScanType;
+          if (scanType != ScanType.PredefinedProvider)
           {
-            case ScanType.PredefinedProvider:
-              CustomFileName tuningFile = (CustomFileName)comboBoxSatellite.SelectedItem;
-              this.LogInfo("satellite: start scanning, satellite = {0}...", comboBoxSatellite.SelectedItem);
-              tuningDetails = new List<FileTuningDetail>(100);
-              foreach (FileTuningDetail td in _tuningDetailFilter.LoadList(tuningFile.FileName))
+            tuningDetails = new List<FileTuningDetail> { GetManualTuning() };
+          }
+          else
+          {
+            CustomFileName tuningFile = (CustomFileName)comboBoxSatellite.SelectedItem;
+            this.LogInfo("satellite: start scanning, satellite = {0}...", comboBoxSatellite.SelectedItem);
+            tuningDetails = new List<FileTuningDetail>(100);
+            foreach (FileTuningDetail td in _tuningDetailFilter.LoadList(tuningFile.FileName))
+            {
+              if (_tunerSupportedBroadcastStandards.HasFlag(td.BroadcastStandard))
               {
-                if (_tunerSupportedBroadcastStandards.HasFlag(td.BroadcastStandard))
-                {
-                  tuningDetails.Add(td);
-                }
+                tuningDetails.Add(td);
               }
-              break;
-            case ScanType.FullNetworkInformationTable:
-              isNitScan = true;
-              tuningDetails = new List<FileTuningDetail> { GetManualTuning() };
-              break;
-            case ScanType.SingleTransmitter:
-              tuningDetails = new List<FileTuningDetail> { GetManualTuning() };
-              break;
+            }
           }
           if (tuningDetails == null || tuningDetails.Count == 0)
           {
@@ -260,33 +253,21 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
             tuningDetail.DiseqcPort = diseqcPort;
           }
 
-          _scanHelper = new ChannelScanHelper(_tunerId);
+          _scanHelper = new ChannelScanHelper(_tunerId, listViewProgress, progressBarProgress, OnNitScanFoundTransmitters, OnGetDbExistingTuningDetailCandidates, OnScanCompleted, progressBarSignalStrength, progressBarSignalQuality);
           bool result;
-          if (isNitScan)
+          if (scanType != ScanType.PredefinedProvider)
           {
-            result = _scanHelper.StartNitScan(tuningDetails[0], listViewProgress, progressBarProgress, OnNitScanFoundTransmitters, OnGetDbExistingTuningDetailCandidates, OnNewChannel, OnScanCompleted, progressBarSignalStrength, progressBarSignalQuality);
+            result = _scanHelper.StartNitScan(tuningDetails[0]);
           }
           else
           {
-            result = _scanHelper.StartScan(tuningDetails, listViewProgress, progressBarProgress, OnGetDbExistingTuningDetailCandidates, OnNewChannel, OnScanCompleted, progressBarSignalStrength, progressBarSignalQuality);
+            result = _scanHelper.StartScan(tuningDetails, scanType);
           }
           if (result)
           {
             _scanState = ScanState.Scanning;
             buttonScan.Text = "Cancel...";
             ShowOrHideScanProgress(true);
-
-            bool createSatelliteGroup = ServiceAgents.Instance.SettingServiceAgent.GetValue("scanAutoCreateSatelliteChannelGroups", false);
-            this.LogInfo("satellite: create satellite group = {0}", createSatelliteGroup);
-            if (createSatelliteGroup)
-            {
-              _satelliteChannelGroupIds = new Dictionary<MediaType, int>();
-              _newChannelSatelliteGroupMappings.Clear();
-            }
-            else
-            {
-              _satelliteChannelGroupIds = null;
-            }
           }
           break;
       }
@@ -310,10 +291,67 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       return tunableTransmitters;
     }
 
-    private IList<DbTuningDetail> OnGetDbExistingTuningDetailCandidates(FileTuningDetail tuningDetail, IChannel tuneChannel, IChannel foundChannel, bool useChannelMovementDetection)
+    private IList<DbTuningDetail> OnGetDbExistingTuningDetailCandidates(ScannedChannel foundChannel, bool useChannelMovementDetection)
     {
+      // Freesat channel movement detection is always active. Each channel has
+      // a unique identifier.
+      int freesatChannelId = 0;
+      ChannelDvbS dvbsChannel = foundChannel.Channel as ChannelDvbS;
+      if (dvbsChannel != null)
+      {
+        freesatChannelId = dvbsChannel.FreesatChannelId;
+      }
+      else
+      {
+        ChannelDvbS2 dvbs2Channel = foundChannel.Channel as ChannelDvbS2;
+        if (dvbs2Channel != null)
+        {
+          freesatChannelId = dvbs2Channel.FreesatChannelId;
+        }
+      }
+      IList<DbTuningDetail> tuningDetails;
+      if (freesatChannelId > 0)
+      {
+        tuningDetails = ServiceAgents.Instance.ChannelServiceAgent.GetFreesatTuningDetails(freesatChannelId);
+        if (tuningDetails != null && tuningDetails.Count > 0)
+        {
+          return tuningDetails;
+        }
+      }
+
+      // OpenTV channel movement detection is always active. Each channel has a
+      // unique identifier.
+      int? originalNetworkId = null;
+      ChannelDvbBase dvbChannel = foundChannel.Channel as ChannelDvbBase;
+      if (dvbChannel != null)
+      {
+        if (dvbChannel.OpenTvChannelId > 0)
+        {
+          tuningDetails = ServiceAgents.Instance.ChannelServiceAgent.GetOpenTvTuningDetails(dvbChannel.OpenTvChannelId);
+          if (tuningDetails != null && tuningDetails.Count > 0)
+          {
+            return tuningDetails;
+          }
+        }
+
+        originalNetworkId = dvbChannel.OriginalNetworkId;
+      }
+
+      // If previous DVB service identifiers are available then assume the
+      // service has moved recently and use the identifiers to locate the
+      // tuning detail.
+      BroadcastStandard broadcastStandardSearchMask = BroadcastStandard.MaskSatellite;
+      if (foundChannel.PreviousOriginalNetworkId > 0)
+      {
+        tuningDetails = ServiceAgents.Instance.ChannelServiceAgent.GetDvbTuningDetails(broadcastStandardSearchMask, foundChannel.PreviousOriginalNetworkId, foundChannel.PreviousServiceId, foundChannel.PreviousTransportStreamId);
+        if (tuningDetails != null && tuningDetails.Count > 0)
+        {
+          return tuningDetails;
+        }
+      }
+
       // According to the DVB specifications ONID + SID should be a sufficient
-      // channel identifier. The specification also recommends that the SID
+      // service identifier. The specification also recommends that the SID
       // should not change if a service moves. This theoretically allows us to
       // track channel movements.
       // Unfortunately, unlike with DVB-C/C2 and DVB-T/T2 there are many
@@ -323,21 +361,13 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // suitable replacement identifier. However, the consequence of using the
       // TSID as part of the identifier is that channel movement tracking won't
       // work (the TSID is associated with the transmitter).
-      ChannelMpeg2Base mpeg2Channel = foundChannel as ChannelMpeg2Base;
+      ChannelMpeg2Base mpeg2Channel = foundChannel.Channel as ChannelMpeg2Base;
       if (mpeg2Channel == null)
       {
         return null;
       }
 
-      int? originalNetworkId = null;
-      ChannelDvbBase dvbChannel = foundChannel as ChannelDvbBase;
-      if (dvbChannel != null)
-      {
-        originalNetworkId = dvbChannel.OriginalNetworkId;
-      }
-
       int? frequency = null;
-      int? transportStreamId = mpeg2Channel.TransportStreamId;
       if (
         (dvbChannel == null || dvbChannel.OriginalNetworkId < 3 || dvbChannel.OriginalNetworkId > ushort.MaxValue - 3) &&
         (mpeg2Channel.TransportStreamId < 3 || mpeg2Channel.TransportStreamId > ushort.MaxValue - 3) &&
@@ -345,51 +375,40 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       )
       {
         // Feeds, provider private transmissions etc. - even ONID + TSID + SID will not be unique.
-        IChannelPhysical channelPhysical = foundChannel as IChannelPhysical;
+        useChannelMovementDetection = false;
+        IChannelPhysical channelPhysical = foundChannel.Channel as IChannelPhysical;
         if (channelPhysical != null)
         {
           frequency = channelPhysical.Frequency;
         }
       }
-      else if (useChannelMovementDetection)
-      {
-        transportStreamId = null;
-      }
 
       if (!originalNetworkId.HasValue)
       {
-        return ServiceAgents.Instance.ChannelServiceAgent.GetMpeg2TuningDetails(tuningDetail.BroadcastStandard, mpeg2Channel.ProgramNumber, transportStreamId, frequency);
-      }
-      else
-      {
-        return ServiceAgents.Instance.ChannelServiceAgent.GetDvbTuningDetails(tuningDetail.BroadcastStandard, originalNetworkId.Value, mpeg2Channel.ProgramNumber, transportStreamId, frequency);
-      }
-    }
-
-    private void OnNewChannel(FileTuningDetail tuningDetail, IChannel tuneChannel, Channel dbChannel, IChannel channel)
-    {
-      if (_satelliteChannelGroupIds == null)
-      {
-        return;
+        if (useChannelMovementDetection)
+        {
+          tuningDetails = ServiceAgents.Instance.ChannelServiceAgent.GetMpeg2TuningDetails(broadcastStandardSearchMask, mpeg2Channel.ProgramNumber, null, frequency);
+          if (tuningDetails == null || tuningDetails.Count == 1)
+          {
+            return tuningDetails;
+          }
+        }
+        return ServiceAgents.Instance.ChannelServiceAgent.GetMpeg2TuningDetails(broadcastStandardSearchMask, mpeg2Channel.ProgramNumber, mpeg2Channel.TransportStreamId, frequency);
       }
 
-      int groupId;
-      if (!_satelliteChannelGroupIds.TryGetValue(channel.MediaType, out groupId))
+      if (useChannelMovementDetection)
       {
-        string satelliteName = ((CustomFileName)comboBoxSatellite.SelectedItem).DisplayName;
-        ChannelGroup group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(satelliteName, channel.MediaType);
-        _satelliteChannelGroupIds.Add(channel.MediaType, group.IdGroup);
+        tuningDetails = ServiceAgents.Instance.ChannelServiceAgent.GetDvbTuningDetails(broadcastStandardSearchMask, originalNetworkId.Value, mpeg2Channel.ProgramNumber, null, frequency);
+        if (tuningDetails == null || tuningDetails.Count == 1)
+        {
+          return tuningDetails;
+        }
       }
-
-      _newChannelSatelliteGroupMappings.Add(new GroupMap { IdGroup = groupId, IdChannel = dbChannel.IdChannel });
+      return ServiceAgents.Instance.ChannelServiceAgent.GetDvbTuningDetails(broadcastStandardSearchMask, originalNetworkId.Value, mpeg2Channel.ProgramNumber, mpeg2Channel.TransportStreamId, frequency);
     }
 
     private void OnScanCompleted()
     {
-      if (_newChannelSatelliteGroupMappings.Count > 0)
-      {
-        ServiceAgents.Instance.ChannelServiceAgent.SaveChannelGroupMaps(_newChannelSatelliteGroupMappings);
-      }
       _scanState = ScanState.Done;
       this.Invoke((MethodInvoker)delegate
       {

@@ -1,15 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Mediaportal.TV.Server.Common.Types.Country;
 using Mediaportal.TV.Server.Common.Types.Enum;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVDatabase.EntityModel.Interfaces;
 using Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories;
-using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.Entities;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Channel;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channel;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
 namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
 {
@@ -120,15 +115,58 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
       }
     }
 
-    public static IList<Channel> GetAllChannelsWithExternalId()
+    public static Channel GetChannel(int idChannel)
     {
       using (IChannelRepository channelRepository = new ChannelRepository())
       {
-        IQueryable<Channel> query =
-          channelRepository.GetQuery<Channel>(c => c.ExternalId != null && c.ExternalId != "").OrderBy(
-            c => c.ExternalId);
-        query = channelRepository.IncludeAllRelations(query, ChannelIncludeRelationEnum.TuningDetails);
-        return channelRepository.LoadNavigationProperties(query, ChannelIncludeRelationEnum.TuningDetails);
+        IQueryable<Channel> query = channelRepository.GetQuery<Channel>(c => c.IdChannel == idChannel);
+        Channel channel = channelRepository.IncludeAllRelations(query).FirstOrDefault();
+        channel = channelRepository.LoadNavigationProperties(channel);
+        return channel;
+      }
+    }
+
+    public static Channel GetChannel(int idChannel, ChannelIncludeRelationEnum includeRelations)
+    {
+      using (IChannelRepository channelRepository = new ChannelRepository())
+      {
+        IQueryable<Channel> query = channelRepository.GetQuery<Channel>(c => c.IdChannel == idChannel);
+        Channel channel = channelRepository.IncludeAllRelations(query, includeRelations).FirstOrDefault();
+        channel = channelRepository.LoadNavigationProperties(channel, includeRelations);
+        return channel;
+      }
+    }
+
+    public static IList<Channel> GetChannelsByName(string channelName)
+    {
+      using (IChannelRepository channelRepository = new ChannelRepository())
+      {
+        IQueryable<Channel> query = channelRepository.GetQuery<Channel>(c => c.Name == channelName);
+        query = channelRepository.IncludeAllRelations(query);
+        return channelRepository.LoadNavigationProperties(query);
+      }
+    }
+
+    public static IList<Channel> GetChannelsByName(string channelName, ChannelIncludeRelationEnum includeRelations)
+    {
+      using (IChannelRepository channelRepository = new ChannelRepository())
+      {
+        IQueryable<Channel> query = channelRepository.GetQuery<Channel>(c => c.Name == channelName);
+        query = channelRepository.IncludeAllRelations(query, includeRelations);
+        return channelRepository.LoadNavigationProperties(query, includeRelations);
+      }
+    }
+
+    public static Channel SaveChannel(Channel channel)
+    {
+      using (IChannelRepository channelRepository = new ChannelRepository())
+      {
+        // TODO should channel map and tuning detail change events should be triggered here?
+        channelRepository.AttachEntityIfChangeTrackingDisabled(channelRepository.ObjectContext.Channels, channel);
+        channelRepository.ApplyChanges(channelRepository.ObjectContext.Channels, channel);
+        channelRepository.UnitOfWork.SaveChanges();
+        channel.AcceptChanges();
+        return channel;
       }
     }
 
@@ -147,103 +185,6 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
           channel.AcceptChanges();
         }
         return channels.ToList();
-      }
-    }
-
-    public static IList<Channel> GetChannelsByName(string channelName)
-    {
-      using (IChannelRepository channelRepository = new ChannelRepository())
-      {
-        IQueryable<Channel> query = channelRepository.GetQuery<Channel>(c => c.Name == channelName);
-        query = channelRepository.IncludeAllRelations(query);
-        return channelRepository.LoadNavigationProperties(query);
-      }
-    }
-
-    public static Channel SaveChannel(Channel channel)
-    {
-      using (IChannelRepository channelRepository = new ChannelRepository())
-      {
-        // TODO should channel map and tuning detail change events should be triggered here?
-        channelRepository.AttachEntityIfChangeTrackingDisabled(channelRepository.ObjectContext.Channels, channel);
-        channelRepository.ApplyChanges(channelRepository.ObjectContext.Channels, channel);
-        channelRepository.UnitOfWork.SaveChanges();
-        channel.AcceptChanges();
-        return channel;
-      }
-    }
-
-    public static Channel GetChannel(int idChannel, ChannelIncludeRelationEnum includeRelations)
-    {
-      using (IChannelRepository channelRepository = new ChannelRepository())
-      {
-        IQueryable<Channel> query = channelRepository.GetQuery<Channel>(c => c.IdChannel == idChannel);
-        Channel channel = channelRepository.IncludeAllRelations(query, includeRelations).FirstOrDefault();
-        channel = channelRepository.LoadNavigationProperties(channel, includeRelations);
-        return channel;
-      }
-    }
-
-    public static Channel GetChannel(int idChannel)
-    {
-      using (IChannelRepository channelRepository = new ChannelRepository())
-      {
-        IQueryable<Channel> query = channelRepository.GetQuery<Channel>(c => c.IdChannel == idChannel);
-        Channel channel = channelRepository.IncludeAllRelations(query).FirstOrDefault();
-        channel = channelRepository.LoadNavigationProperties(channel);
-        return channel;
-      }
-    }
-
-    public static Channel GetChannelByTuningDetail(int networkId, int transportId, int serviceId)
-    {
-      using (IChannelRepository channelRepository = new ChannelRepository())
-      {
-        IQueryable<Channel> query = channelRepository.GetQuery<Channel>(c => c.TuningDetails.Any(t => t.OriginalNetworkId == networkId && t.TransportStreamId == transportId && t.ServiceId == serviceId));
-        Channel channel = channelRepository.IncludeAllRelations(query).FirstOrDefault();
-        channel = channelRepository.LoadNavigationProperties(channel);
-        return channel;
-      }
-    }
-
-    public static bool IsChannelMappedToTuner(int idChannel, int idTuner)
-    {
-      using (IChannelRepository channelRepository = new ChannelRepository())
-      {
-        return channelRepository.Count<ChannelMap>(m => m.IdTuner == idTuner && m.IdChannel == idChannel) == 0;
-      }
-    }
-
-    public static ChannelLinkageMap SaveChannelLinkageMap(ChannelLinkageMap map)
-    {
-      using (IChannelRepository channelRepository = new ChannelRepository())
-      {
-        channelRepository.AttachEntityIfChangeTrackingDisabled(channelRepository.ObjectContext.ChannelLinkageMaps, map);
-        channelRepository.ApplyChanges(channelRepository.ObjectContext.ChannelLinkageMaps, map);
-        channelRepository.UnitOfWork.SaveChanges();
-        map.AcceptChanges();
-        return map;
-      }
-    }
-
-    public static void DeleteAllChannelLinkageMaps(int idPortalChannel)
-    {
-      using (IChannelRepository channelRepository = new ChannelRepository(true))
-      {
-        channelRepository.Delete<ChannelLinkageMap>(p => p.IdPortalChannel == idPortalChannel);
-        channelRepository.UnitOfWork.SaveChanges();
-      }
-    }
-
-    public static History SaveChannelHistory(History history)
-    {
-      using (IChannelRepository channelRepository = new ChannelRepository())
-      {
-        channelRepository.AttachEntityIfChangeTrackingDisabled(channelRepository.ObjectContext.Histories, history);
-        channelRepository.ApplyChanges(channelRepository.ObjectContext.Histories, history);
-        channelRepository.UnitOfWork.SaveChanges();
-        history.AcceptChanges();
-        return history;
       }
     }
 
@@ -275,47 +216,6 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
         */
         channelRepository.UnitOfWork.SaveChanges();
       }
-    }
-
-    private static void ClearChannelRecordingForeignKeys(int idChannel, IChannelRepository channelRepository)
-    {
-      // todo : since "on delete: set null" is not currently supported in EF, we have to do this manually - remove this ugly workaround once EF gets mature enough.
-      IQueryable<Channel> channels = channelRepository.GetQuery<Channel>(s => s.IdChannel == idChannel);
-
-      channels = channelRepository.IncludeAllRelations(channels, ChannelIncludeRelationEnum.Recordings);
-      Channel channel = channels.FirstOrDefault();
-
-      if (channel != null)
-      {
-        //channelRepository.DeleteList(channel.Recordings);
-
-        for (int i = channel.Recordings.Count - 1; i >= 0; i--)
-        {
-          Recording recording = channel.Recordings[i];
-          recording.Schedule = null;
-        }
-        channelRepository.ApplyChanges<Channel>(channelRepository.ObjectContext.Channels, channel);
-      }
-    }
-
-    public static Channel GetChannelByName(string channelName, ChannelIncludeRelationEnum includeRelations)
-    {
-      Channel channel;
-      using (IChannelRepository channelRepository = new ChannelRepository())
-      {
-        var query = channelRepository.GetQuery<Channel>(c => c.Name == channelName);
-        channel = channelRepository.IncludeAllRelations(query, includeRelations).FirstOrDefault();
-
-        if (channel == null)
-        {
-          query = channelRepository.GetQuery<Channel>(c => c.Name.Contains(channelName));
-          channel = channelRepository.IncludeAllRelations(query, includeRelations).FirstOrDefault();
-        }
-
-        channel = channelRepository.LoadNavigationProperties(channel, includeRelations);
-
-      }
-      return channel;
     }
 
     public static Channel MergeChannels(IEnumerable<Channel> channels, ChannelIncludeRelationEnum includeRelations)
@@ -424,6 +324,92 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
       }
 
       return GetChannel(bestChannel.IdChannel, includeRelations);
+    }
+
+    public static IList<Channel> GetAllChannelsWithExternalId()
+    {
+      using (IChannelRepository channelRepository = new ChannelRepository())
+      {
+        IQueryable<Channel> query =
+          channelRepository.GetQuery<Channel>(c => c.ExternalId != null && c.ExternalId != "").OrderBy(
+            c => c.ExternalId);
+        query = channelRepository.IncludeAllRelations(query, ChannelIncludeRelationEnum.TuningDetails);
+        return channelRepository.LoadNavigationProperties(query, ChannelIncludeRelationEnum.TuningDetails);
+      }
+    }
+
+    public static Channel GetChannelByTuningDetail(int networkId, int transportId, int serviceId)
+    {
+      using (IChannelRepository channelRepository = new ChannelRepository())
+      {
+        IQueryable<Channel> query = channelRepository.GetQuery<Channel>(c => c.TuningDetails.Any(t => t.OriginalNetworkId == networkId && t.TransportStreamId == transportId && t.ServiceId == serviceId));
+        Channel channel = channelRepository.IncludeAllRelations(query).FirstOrDefault();
+        channel = channelRepository.LoadNavigationProperties(channel);
+        return channel;
+      }
+    }
+
+    public static bool IsChannelMappedToTuner(int idChannel, int idTuner)
+    {
+      using (IChannelRepository channelRepository = new ChannelRepository())
+      {
+        return channelRepository.Count<ChannelMap>(m => m.IdTuner == idTuner && m.IdChannel == idChannel) == 0;
+      }
+    }
+
+    public static ChannelLinkageMap SaveChannelLinkageMap(ChannelLinkageMap map)
+    {
+      using (IChannelRepository channelRepository = new ChannelRepository())
+      {
+        channelRepository.AttachEntityIfChangeTrackingDisabled(channelRepository.ObjectContext.ChannelLinkageMaps, map);
+        channelRepository.ApplyChanges(channelRepository.ObjectContext.ChannelLinkageMaps, map);
+        channelRepository.UnitOfWork.SaveChanges();
+        map.AcceptChanges();
+        return map;
+      }
+    }
+
+    public static void DeleteAllChannelLinkageMaps(int idPortalChannel)
+    {
+      using (IChannelRepository channelRepository = new ChannelRepository(true))
+      {
+        channelRepository.Delete<ChannelLinkageMap>(p => p.IdPortalChannel == idPortalChannel);
+        channelRepository.UnitOfWork.SaveChanges();
+      }
+    }
+
+    public static History SaveChannelHistory(History history)
+    {
+      using (IChannelRepository channelRepository = new ChannelRepository())
+      {
+        channelRepository.AttachEntityIfChangeTrackingDisabled(channelRepository.ObjectContext.Histories, history);
+        channelRepository.ApplyChanges(channelRepository.ObjectContext.Histories, history);
+        channelRepository.UnitOfWork.SaveChanges();
+        history.AcceptChanges();
+        return history;
+      }
+    }
+
+    private static void ClearChannelRecordingForeignKeys(int idChannel, IChannelRepository channelRepository)
+    {
+      // todo : since "on delete: set null" is not currently supported in EF, we have to do this manually - remove this ugly workaround once EF gets mature enough.
+      IQueryable<Channel> channels = channelRepository.GetQuery<Channel>(s => s.IdChannel == idChannel);
+
+      channels = channelRepository.IncludeAllRelations(channels, ChannelIncludeRelationEnum.Recordings);
+      Channel channel = channels.FirstOrDefault();
+
+      if (channel != null)
+      {
+        //channelRepository.DeleteList(channel.Recordings);
+
+        for (int i = channel.Recordings.Count - 1; i >= 0; i--)
+        {
+          Recording recording = channel.Recordings[i];
+          recording.IdChannel = null;
+          recording.IdSchedule = null;
+        }
+        channelRepository.ApplyChanges<Channel>(channelRepository.ObjectContext.Channels, channel);
+      }
     }
 
     #region channel-to-tuner maps

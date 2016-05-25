@@ -26,7 +26,7 @@ using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Serialization;
 using Mediaportal.TV.Server.SetupControls.UserInterfaceControls;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.TuningDetail;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
 namespace Mediaportal.TV.Server.SetupTV.Sections.Helpers

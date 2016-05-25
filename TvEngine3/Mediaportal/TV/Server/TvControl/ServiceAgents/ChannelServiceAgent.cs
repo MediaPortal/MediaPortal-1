@@ -63,26 +63,6 @@ namespace Mediaportal.TV.Server.TVControl.ServiceAgents
       return _channel.ListAllVisibleChannelsByMediaType(mediaType, includeRelations);
     }
 
-    public IList<Channel> SaveChannels(IEnumerable<Channel> channels)
-    {
-      foreach (var channel in channels)
-      {
-        channel.UnloadAllUnchangedRelationsForEntity();
-      }
-      return _channel.SaveChannels(channels);
-    }
-
-    public IList<Channel> GetChannelsByName(string channelName)
-    {
-      return _channel.GetChannelsByName(channelName);
-    }
-
-    public Channel SaveChannel(Channel channel)
-    {
-      channel.UnloadAllUnchangedRelationsForEntity();
-      return _channel.SaveChannel(channel);
-    }
-
     public Channel GetChannel(int idChannel)
     {
       return _channel.GetChannel(idChannel);
@@ -93,14 +73,34 @@ namespace Mediaportal.TV.Server.TVControl.ServiceAgents
       return _channel.GetChannel(idChannel, includeRelations);
     }
 
+    public IList<Channel> GetChannelsByName(string channelName)
+    {
+      return _channel.GetChannelsByName(channelName);
+    }
+
+    public IList<Channel> GetChannelsByName(string channelName, ChannelIncludeRelationEnum includeRelations)
+    {
+      return _channel.GetChannelsByName(channelName, includeRelations);
+    }
+
+    public Channel SaveChannel(Channel channel)
+    {
+      channel.UnloadAllUnchangedRelationsForEntity();
+      return _channel.SaveChannel(channel);
+    }
+
+    public IList<Channel> SaveChannels(IEnumerable<Channel> channels)
+    {
+      foreach (var channel in channels)
+      {
+        channel.UnloadAllUnchangedRelationsForEntity();
+      }
+      return _channel.SaveChannels(channels);
+    }
+
     public void DeleteChannel(int idChannel)
     {
       _channel.DeleteChannel(idChannel);
-    }
-
-    public Channel GetChannelByName(string channelName, ChannelIncludeRelationEnum includeRelations)
-    {
-      return _channel.GetChannelByName(channelName, includeRelations);
     }
 
     public Channel MergeChannels(IEnumerable<Channel> channels, ChannelIncludeRelationEnum includeRelations)
@@ -145,9 +145,19 @@ namespace Mediaportal.TV.Server.TVControl.ServiceAgents
       return _channel.GetFmRadioTuningDetails(frequency);
     }
 
+    public IList<TuningDetail> GetFreesatTuningDetails(int channelId)
+    {
+      return _channel.GetFreesatTuningDetails(channelId);
+    }
+
     public IList<TuningDetail> GetMpeg2TuningDetails(BroadcastStandard broadcastStandard, int programNumber, int? transportStreamId = null, int? frequency = null, int? satelliteId = null)
     {
       return _channel.GetMpeg2TuningDetails(broadcastStandard, programNumber, transportStreamId, frequency, satelliteId);
+    }
+
+    public IList<TuningDetail> GetOpenTvTuningDetails(int channelId)
+    {
+      return _channel.GetOpenTvTuningDetails(channelId);
     }
 
     public IList<TuningDetail> GetStreamTuningDetails(string url)

@@ -20,9 +20,10 @@
 
 using System;
 using System.Collections.Generic;
+using Mediaportal.TV.Server.Common.Types.Enum;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Channel;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Exception;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.TuningDetail;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Tuner;
 using Mediaportal.TV.Server.TVService.Interfaces.CardHandler;
@@ -52,15 +53,13 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
       {
         try
         {
-          if (_cardHandler.Card.IsEnabled == false)
+          if (_cardHandler.Card.IsEnabled)
           {
-            return false;
-          }
-
-          IChannelScanner scanner = _cardHandler.Card.ChannelScanningInterface;
-          if (scanner != null)
-          {
-            return scanner.IsScanning;
+            IChannelScanner scanner = _cardHandler.Card.ChannelScanningInterface;
+            if (scanner != null)
+            {
+              return scanner.IsScanning;
+            }
           }
         }
         catch (Exception ex)
@@ -71,37 +70,29 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
       }
     }
 
-    /// <summary>
-    /// scans current transponder for more channels.
-    /// </summary>
-    /// <param name="channel">IChannel containing the transponder tuning details.</param>
-    /// <returns>list of channels found</returns>
-    public IChannel[] Scan(IChannel channel)
+    public void Scan(IChannel channel, bool isFastNetworkScan, out IList<ScannedChannel> channels, out IDictionary<ChannelGroupType, IDictionary<ulong, string>> groupNames)
     {
+      channels = null;
+      groupNames = null;
       try
       {
-        if (_cardHandler.Card.IsEnabled == false)
+        if (!_cardHandler.Card.IsEnabled)
         {
-          return new List<IChannel>().ToArray();
+          return;
         }
         
         IChannelScanner scanner = _cardHandler.Card.ChannelScanningInterface;
-        if (scanner == null)
-          return null;
-        List<IChannel> channelsFound = scanner.Scan(channel);
-        if (channelsFound == null)
-          return null;
-        return channelsFound.ToArray();
+        if (scanner != null)
+        {
+          scanner.Scan(channel, isFastNetworkScan, out channels, out groupNames);
+        }
       }
       catch (TvExceptionNoSignal)
       {
-        //ignore
-        return null;
       }
       catch (Exception ex)
       {
         this.LogError(ex);
-        return null;
       }
     }
 
@@ -109,24 +100,31 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
     {
       try
       {
-        if (_cardHandler.Card.IsEnabled == false)
+        if (!_cardHandler.Card.IsEnabled)
         {
-          return new List<TuningDetail>().ToArray();
+          return null;
         }
        
         IChannelScanner scanner = _cardHandler.Card.ChannelScanningInterface;
-        if (scanner == null)
-          return null;
-        List<TuningDetail> channelsFound = scanner.ScanNIT(channel);
-        if (channelsFound == null)
-          return null;
-        return channelsFound.ToArray();
+        if (scanner != null)
+        {
+          IList<TuningDetail> tuningDetails = scanner.ScanNetworkInformation(channel);
+          if (tuningDetails != null)
+          {
+            TuningDetail[] returnArray = new TuningDetail[tuningDetails.Count];
+            tuningDetails.CopyTo(returnArray, 0);
+            return returnArray;
+          }
+        }
+      }
+      catch (TvExceptionNoSignal)
+      {
       }
       catch (Exception ex)
       {
         this.LogError(ex);
-        return null;
       }
+      return null;
     }
   }
 }

@@ -62,7 +62,7 @@ namespace Mediaportal.TV.Server.SetupTV
     private SectionSettings _currentSection = null;
     private static IDictionary<string, SectionTreeNode> _sections = new Dictionary<string, SectionTreeNode>(100);
     private readonly PluginLoaderSetupTv _pluginLoader = new PluginLoaderSetupTv();
-    private Tuners _sectionTuners = null;
+    private Scanning _sectionScanning = null;
     private Mediaportal.TV.Server.SetupTV.Sections.Plugins _sectionPlugins = null;
 
     public SettingsForm(bool showAdvancedSettings)
@@ -80,18 +80,16 @@ namespace Mediaportal.TV.Server.SetupTV
         // Build the tree on the left hand side.
         AddSection(new Project());
         AddSection(new General());
+        AddSection(new Tuners(OnServerConfigurationChanged));
 
-        _sectionTuners = new Tuners(OnServerConfigurationChanged);
-        AddSection(_sectionTuners);
+        _sectionScanning = new Scanning();
         AddServerTuners(false);
 
         Channels channels = new Channels("TV Channels", MediaType.Television);
         AddSection(channels);
-        AddChildSection(channels, new ChannelMapping("Mapping", MediaType.Television));
 
         Channels radioChannels = new Channels("Radio Channels", MediaType.Radio);
         AddSection(radioChannels);
-        AddChildSection(radioChannels, new ChannelMapping("Mapping ", MediaType.Radio));
 
         AddSection(new Epg());
         AddSection(new TvRecording(OnServerConfigurationChanged));
@@ -123,6 +121,8 @@ namespace Mediaportal.TV.Server.SetupTV
         AddSection(new ThirdPartyChecks());
         if (showAdvancedSettings)
         {
+          AddChildSection(channels, new ChannelMapping("Mapping", MediaType.Television));
+          AddChildSection(radioChannels, new ChannelMapping("Mapping ", MediaType.Radio));
           AddSection(new TestChannels());
           AddSection(new DebugOptions());
         }
@@ -147,34 +147,34 @@ namespace Mediaportal.TV.Server.SetupTV
         {
           if ((tuner.SupportedBroadcastStandards & (int)(BroadcastStandard.MaskAnalog | BroadcastStandard.ExternalInput)) != 0)
           {
-            AddChildSection(_sectionTuners, new CardAnalog(string.Format("{0} Analog {1}", tuner.IdTuner, tuner.Name), tuner.IdTuner), 1);
+            AddChildSection(_sectionScanning, new CardAnalog(string.Format("{0} Analog {1}", tuner.IdTuner, tuner.Name), tuner.IdTuner), 1);
           }
           else if ((tuner.SupportedBroadcastStandards & (int)BroadcastStandard.MaskDvb & (int)BroadcastStandard.MaskTerrestrial) != 0)
           {
-            AddChildSection(_sectionTuners, new CardDvbT(string.Format("{0} DVB-T/T2 {1}", tuner.IdTuner, tuner.Name), tuner.IdTuner), 1);
+            AddChildSection(_sectionScanning, new CardDvbT(string.Format("{0} DVB-T/T2 {1}", tuner.IdTuner, tuner.Name), tuner.IdTuner), 1);
           }
           else if ((tuner.SupportedBroadcastStandards & (int)BroadcastStandard.MaskDvb & (int)BroadcastStandard.MaskCable) != 0)
           {
-            AddChildSection(_sectionTuners, new CardDvbC(string.Format("{0} DVB-C {1}", tuner.IdTuner, tuner.Name), tuner.IdTuner), 1);
+            AddChildSection(_sectionScanning, new CardDvbC(string.Format("{0} DVB-C {1}", tuner.IdTuner, tuner.Name), tuner.IdTuner), 1);
           }
           else if ((tuner.SupportedBroadcastStandards & (int)BroadcastStandard.MaskSatellite) != 0)
           {
-            AddChildSection(_sectionTuners, new CardDvbS(string.Format("{0} Satellite {1}", tuner.IdTuner, tuner.Name), tuner.IdTuner), 1);
+            AddChildSection(_sectionScanning, new CardDvbS(string.Format("{0} Satellite {1}", tuner.IdTuner, tuner.Name), tuner.IdTuner), 1);
           }
           else if ((tuner.SupportedBroadcastStandards & (int)(BroadcastStandard.Atsc | BroadcastStandard.Scte)) != 0)
           {
-            AddChildSection(_sectionTuners, new CardAtsc(string.Format("{0} ATSC {1}", tuner.IdTuner, tuner.Name), tuner.IdTuner), 1);
+            AddChildSection(_sectionScanning, new CardAtsc(string.Format("{0} ATSC {1}", tuner.IdTuner, tuner.Name), tuner.IdTuner), 1);
           }
           else if (tuner.SupportedBroadcastStandards == (int)BroadcastStandard.DvbIp)
           {
-            AddChildSection(_sectionTuners, new CardDvbIP(string.Format("{0} Stream {1}", tuner.IdTuner, tuner.Name), tuner.IdTuner), 1);
+            AddChildSection(_sectionScanning, new CardDvbIP(string.Format("{0} Stream {1}", tuner.IdTuner, tuner.Name), tuner.IdTuner), 1);
           }
         }
       }
       if (reloaded)
       {
-        SectionTreeNode activeNode = _sections[_sectionTuners.Text];
-        if (activeNode != null)
+        SectionTreeNode activeNode;
+        if (_sections.TryGetValue(_sectionScanning.Text, out activeNode) && activeNode != null)
         {
           activeNode.Expand();
         }

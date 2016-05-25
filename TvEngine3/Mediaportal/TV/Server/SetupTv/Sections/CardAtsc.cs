@@ -28,10 +28,11 @@ using Mediaportal.TV.Server.TVControl.ServiceAgents;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Channel;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channel;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using DbTuningDetail = Mediaportal.TV.Server.TVDatabase.Entities.TuningDetail;
-using FileTuningDetail = Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.TuningDetail.TuningDetail;
+using FileTuningDetail = Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.TuningDetail;
 
 namespace Mediaportal.TV.Server.SetupTV.Sections
 {
@@ -116,7 +117,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
           new FileTuningDetail
           {
             BroadcastStandard = BroadcastStandard.Scte,
-            Frequency = 0
+            Frequency = -1    // special value
           }
         };
       }
@@ -151,15 +152,15 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       item.EnsureVisible();
       this.LogInfo("ATSC: start scanning {0}...", scanMode);
 
-      _scanHelper = new ChannelScanHelper(_tunerId);
-      if (_scanHelper.StartScan(tuningDetails, listViewProgress, progressBarProgress, OnGetDbExistingTuningDetailCandidates, null, OnScanCompleted, progressBarSignalStrength, progressBarSignalQuality))
+      _scanHelper = new ChannelScanHelper(_tunerId, listViewProgress, progressBarProgress, null, OnGetDbExistingTuningDetailCandidates, OnScanCompleted, progressBarSignalStrength, progressBarSignalQuality);
+      if (_scanHelper.StartScan(tuningDetails))
       {
         comboBoxScanMode.Enabled = false;
         buttonScan.Text = "Cancel...";
       }
     }
 
-    private IList<DbTuningDetail> OnGetDbExistingTuningDetailCandidates(FileTuningDetail tuningDetail, IChannel tuneChannel, IChannel foundChannel, bool useChannelMovementDetection)
+    private IList<DbTuningDetail> OnGetDbExistingTuningDetailCandidates(ScannedChannel foundChannel, bool useChannelMovementDetection)
     {
       // ATSC over-the-air channels don't generally move, but cable channels
       // can occasionally be moved. ATSC and SCTE SI have the MPEG 2 TSID and
@@ -177,15 +178,24 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       //    for other regions
       // - clear QAM, because it is tuned by frequency (whereas CableCARD
       //    tuning is by channel number or source ID)
-      IChannelPhysical physicalChannel = foundChannel as IChannelPhysical;
-      ChannelScte scteChannel = tuneChannel as ChannelScte;
-      IList<DbTuningDetail> possibleTuningDetails;
-      if (physicalChannel == null || (scteChannel != null && scteChannel.Frequency <= 0))
+      BroadcastStandard broadcastStandard = BroadcastStandard.Atsc;
+      if (foundChannel.Channel is ChannelScte)
+      {
+        broadcastStandard = BroadcastStandard.Scte;
+      }
+      string lcn = foundChannel.Channel.LogicalChannelNumber;
+      string scanMode = string.Empty;
+      comboBoxScanMode.Invoke((MethodInvoker)delegate
+      {
+        scanMode = (string)comboBoxScanMode.SelectedItem;
+      });
+      IChannelPhysical physicalChannel = foundChannel.Channel as IChannelPhysical;
+      if (physicalChannel == null || string.Equals(scanMode, SCAN_MODE_SCTE_CABLECARD))
       {
         // CableCARD or frequency not available: support channel movement detection by LCN.
-        return possibleTuningDetails = ServiceAgents.Instance.ChannelServiceAgent.GetAtscScteTuningDetails(tuningDetail.BroadcastStandard, foundChannel.LogicalChannelNumber);
+        return ServiceAgents.Instance.ChannelServiceAgent.GetAtscScteTuningDetails(broadcastStandard, lcn);
       }
-      return ServiceAgents.Instance.ChannelServiceAgent.GetAtscScteTuningDetails(tuningDetail.BroadcastStandard, foundChannel.LogicalChannelNumber, physicalChannel.Frequency);
+      return ServiceAgents.Instance.ChannelServiceAgent.GetAtscScteTuningDetails(broadcastStandard, lcn, physicalChannel.Frequency);
     }
 
     private void OnScanCompleted()

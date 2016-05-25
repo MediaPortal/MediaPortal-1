@@ -8,7 +8,6 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channel;
 
 namespace Mediaportal.TV.Server.TVControl.Interfaces.Services
 {
-  // Define a service contract.  
   [ServiceContract(Namespace = "http://www.team-mediaportal.com")]
   [ServiceKnownType(typeof(ChannelAnalogTv))]
   [ServiceKnownType(typeof(ChannelAtsc))]
@@ -58,25 +57,25 @@ namespace Mediaportal.TV.Server.TVControl.Interfaces.Services
     IList<Channel> ListAllVisibleChannelsByMediaType(MediaType mediaType, ChannelIncludeRelationEnum includeRelations);
 
     [OperationContract]
-    IList<Channel> SaveChannels(IEnumerable<Channel> channels);
-
-    [OperationContract]
-    IList<Channel> GetChannelsByName(string channelName);
-
-    [OperationContract]
-    Channel SaveChannel(Channel channel);
-
-    [OperationContract]
     Channel GetChannel(int idChannel);
 
     [OperationContract(Name = "GetChannelWithSpecificRelations")]
     Channel GetChannel(int idChannel, ChannelIncludeRelationEnum includeRelations);
 
     [OperationContract]
-    void DeleteChannel(int idChannel);
+    IList<Channel> GetChannelsByName(string channelName);
 
     [OperationContract]
-    Channel GetChannelByName(string channelName, ChannelIncludeRelationEnum includeRelations);
+    IList<Channel> GetChannelsByName(string channelName, ChannelIncludeRelationEnum includeRelations);
+
+    [OperationContract]
+    Channel SaveChannel(Channel channel);
+
+    [OperationContract]
+    IList<Channel> SaveChannels(IEnumerable<Channel> channels);
+
+    [OperationContract]
+    void DeleteChannel(int idChannel);
 
     [OperationContract]
     Channel MergeChannels(IEnumerable<Channel> channels, ChannelIncludeRelationEnum includeRelations);
@@ -105,7 +104,13 @@ namespace Mediaportal.TV.Server.TVControl.Interfaces.Services
     IList<TuningDetail> GetFmRadioTuningDetails(int frequency);
 
     [OperationContract]
+    IList<TuningDetail> GetFreesatTuningDetails(int channelId);
+
+    [OperationContract]
     IList<TuningDetail> GetMpeg2TuningDetails(BroadcastStandard broadcastStandard, int programNumber, int? transportStreamId = null, int? frequency = null, int? satelliteId = null);
+
+    [OperationContract]
+    IList<TuningDetail> GetOpenTvTuningDetails(int channelId);
 
     [OperationContract]
     IList<TuningDetail> GetStreamTuningDetails(string url);

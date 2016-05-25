@@ -29,6 +29,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections.Helpers.Enum
     [Description("Single Transmitter")]
     SingleTransmitter,
     [Description("Full NIT")]
-    FullNetworkInformationTable
+    FullNetworkInformationTable,
+    [Description("Fast Network Info")]
+    FastNetworkInformation
   }
 }

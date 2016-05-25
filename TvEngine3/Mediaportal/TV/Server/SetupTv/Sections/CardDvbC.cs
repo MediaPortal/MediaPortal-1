@@ -26,12 +26,12 @@ using Mediaportal.TV.Server.SetupControls;
 using Mediaportal.TV.Server.SetupTV.Sections.Helpers;
 using Mediaportal.TV.Server.SetupTV.Sections.Helpers.Enum;
 using Mediaportal.TV.Server.TVControl.ServiceAgents;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Channel;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channel;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using MediaPortal.Common.Utils.ExtensionMethods;
 using DbTuningDetail = Mediaportal.TV.Server.TVDatabase.Entities.TuningDetail;
-using FileTuningDetail = Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.TuningDetail.TuningDetail;
+using FileTuningDetail = Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.TuningDetail;
 
 namespace Mediaportal.TV.Server.SetupTV.Sections
 {
@@ -155,36 +155,31 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
           break;
         case ScanState.Initialized:
           List<FileTuningDetail> tuningDetails = null;
-          bool isNitScan = false;
-          switch (ActiveScanType)
+          ScanType scanType = ActiveScanType;
+          if (scanType != ScanType.PredefinedProvider)
           {
-            case ScanType.PredefinedProvider:
-              CustomFileName tuningFile = (CustomFileName)comboBoxRegionProvider.SelectedItem;
-              this.LogInfo("DVB-C: start scanning, country = {0}, region = {1}...", comboBoxCountry.SelectedItem, tuningFile);
-              tuningDetails = _tuningDetailFilter.LoadList(tuningFile.FileName);
-              break;
-            case ScanType.FullNetworkInformationTable:
-              isNitScan = true;
-              tuningDetails = new List<FileTuningDetail> { GetManualTuning() };
-              break;
-            case ScanType.SingleTransmitter:
-              tuningDetails = new List<FileTuningDetail> { GetManualTuning() };
-              break;
+            tuningDetails = new List<FileTuningDetail> { GetManualTuning() };
+          }
+          else
+          {
+            CustomFileName tuningFile = (CustomFileName)comboBoxRegionProvider.SelectedItem;
+            this.LogInfo("DVB-C: start scanning, country = {0}, region = {1}...", comboBoxCountry.SelectedItem, tuningFile);
+            tuningDetails = _tuningDetailFilter.LoadList(tuningFile.FileName);
           }
           if (tuningDetails == null || tuningDetails.Count == 0)
           {
             return;
           }
 
-          _scanHelper = new ChannelScanHelper(_tunerId);
+          _scanHelper = new ChannelScanHelper(_tunerId, listViewProgress, progressBarProgress, OnNitScanFoundTransmitters, OnGetDbExistingTuningDetailCandidates, OnScanCompleted, progressBarSignalStrength, progressBarSignalQuality);
           bool result;
-          if (isNitScan)
+          if (scanType == ScanType.FullNetworkInformationTable)
           {
-            result = _scanHelper.StartNitScan(tuningDetails[0], listViewProgress, progressBarProgress, OnNitScanFoundTransmitters, OnGetDbExistingTuningDetailCandidates, null, OnScanCompleted, progressBarSignalStrength, progressBarSignalQuality);
+            result = _scanHelper.StartNitScan(tuningDetails[0]);
           }
           else
           {
-            result = _scanHelper.StartScan(tuningDetails, listViewProgress, progressBarProgress, OnGetDbExistingTuningDetailCandidates, null, OnScanCompleted, progressBarSignalStrength, progressBarSignalQuality);
+            result = _scanHelper.StartScan(tuningDetails, scanType);
           }
           if (result)
           {
@@ -214,25 +209,55 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       return tunableTransmitters;
     }
 
-    private IList<DbTuningDetail> OnGetDbExistingTuningDetailCandidates(FileTuningDetail tuningDetail, IChannel tuneChannel, IChannel foundChannel, bool useChannelMovementDetection)
+    private IList<DbTuningDetail> OnGetDbExistingTuningDetailCandidates(ScannedChannel foundChannel, bool useChannelMovementDetection)
     {
+      ChannelDvbBase dvbChannel = foundChannel.Channel as ChannelDvbBase;
+      if (dvbChannel == null)
+      {
+        return null;
+      }
+
+      // OpenTV channel movement detection is always active. Each channel has a
+      // unique identifier.
+      IList<DbTuningDetail> tuningDetails;
+      if (dvbChannel.OpenTvChannelId > 0)
+      {
+        tuningDetails = ServiceAgents.Instance.ChannelServiceAgent.GetOpenTvTuningDetails(dvbChannel.OpenTvChannelId);
+        if (tuningDetails != null && tuningDetails.Count > 0)
+        {
+          return tuningDetails;
+        }
+      }
+
+      // If previous DVB service identifiers are available then assume the
+      // service has moved recently and use the identifiers to locate the
+      // tuning detail.
+      BroadcastStandard broadcastStandardSearchMask = BroadcastStandard.MaskCable & (BroadcastStandard.MaskDvb | BroadcastStandard.MaskIsdb);
+      if (foundChannel.PreviousOriginalNetworkId > 0)
+      {
+        tuningDetails = ServiceAgents.Instance.ChannelServiceAgent.GetDvbTuningDetails(broadcastStandardSearchMask, foundChannel.PreviousOriginalNetworkId, foundChannel.PreviousServiceId, foundChannel.PreviousTransportStreamId);
+        if (tuningDetails != null && tuningDetails.Count > 0)
+        {
+          return tuningDetails;
+        }
+      }
+
       // According to the DVB specifications ONID + SID should be a sufficient
-      // channel identifier. The specification also recommends that the SID
+      // service identifier. The specification also recommends that the SID
       // should not change if a service moves. This theoretically allows us to
       // track channel movements.
       // Unlike with satellite, most DVB-C/C2 broadcasters maintain unique ONID
       // + SID combinations. We provide an ONID + TSID + SID fall-back option
       // for the exceptions.
-      ChannelDvbBase dvbChannel = foundChannel as ChannelDvbBase;
-      if (dvbChannel == null)
-      {
-        return null;
-      }
       if (useChannelMovementDetection)
       {
-        return ServiceAgents.Instance.ChannelServiceAgent.GetDvbTuningDetails(tuningDetail.BroadcastStandard, dvbChannel.OriginalNetworkId, dvbChannel.ServiceId);
+        tuningDetails = ServiceAgents.Instance.ChannelServiceAgent.GetDvbTuningDetails(broadcastStandardSearchMask, dvbChannel.OriginalNetworkId, dvbChannel.ServiceId);
+        if (tuningDetails == null || tuningDetails.Count == 1)
+        {
+          return tuningDetails;
+        }
       }
-      return ServiceAgents.Instance.ChannelServiceAgent.GetDvbTuningDetails(tuningDetail.BroadcastStandard, dvbChannel.OriginalNetworkId, dvbChannel.ServiceId, dvbChannel.TransportStreamId);
+      return ServiceAgents.Instance.ChannelServiceAgent.GetDvbTuningDetails(broadcastStandardSearchMask, dvbChannel.OriginalNetworkId, dvbChannel.ServiceId, dvbChannel.TransportStreamId);
     }
 
     private void OnScanCompleted()

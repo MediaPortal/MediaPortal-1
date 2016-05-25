@@ -31,10 +31,11 @@ using Mediaportal.TV.Server.TVControl.ServiceAgents;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Channel;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channel;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using DbTuningDetail = Mediaportal.TV.Server.TVDatabase.Entities.TuningDetail;
-using FileTuningDetail = Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.TuningDetail.TuningDetail;
+using FileTuningDetail = Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.TuningDetail;
 
 namespace Mediaportal.TV.Server.SetupTV.Sections
 {
@@ -190,8 +191,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       item.EnsureVisible();
       this.LogInfo("analog: start scanning {0}...", scanMode);
 
-      _scanHelper = new ChannelScanHelper(_tunerId);
-      if (_scanHelper.StartScan(tuningDetails, listViewProgress, progressBarProgress, OnGetDbExistingTuningDetailCandidates, null, OnScanCompleted, progressBarSignalStrength, progressBarSignalQuality))
+      _scanHelper = new ChannelScanHelper(_tunerId, listViewProgress, progressBarProgress, null, OnGetDbExistingTuningDetailCandidates, OnScanCompleted, progressBarSignalStrength, progressBarSignalQuality);
+      if (_scanHelper.StartScan(tuningDetails))
       {
         comboBoxScanMode.Enabled = false;
         comboBoxCountry.Enabled = false;
@@ -199,19 +200,19 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       }
     }
 
-    private IList<DbTuningDetail> OnGetDbExistingTuningDetailCandidates(FileTuningDetail tuningDetail, IChannel tuneChannel, IChannel foundChannel, bool useChannelMovementDetection)
+    private IList<DbTuningDetail> OnGetDbExistingTuningDetailCandidates(ScannedChannel foundChannel, bool useChannelMovementDetection)
     {
-      ChannelCapture captureChannel = foundChannel as ChannelCapture;
+      ChannelCapture captureChannel = foundChannel.Channel as ChannelCapture;
       if (captureChannel != null)
       {
-        return ServiceAgents.Instance.ChannelServiceAgent.GetCaptureTuningDetails(foundChannel.Name);
+        return ServiceAgents.Instance.ChannelServiceAgent.GetCaptureTuningDetails(foundChannel.Channel.Name);
       }
-      ChannelFmRadio fmRadioChannel = foundChannel as ChannelFmRadio;
+      ChannelFmRadio fmRadioChannel = foundChannel.Channel as ChannelFmRadio;
       if (fmRadioChannel != null)
       {
         return ServiceAgents.Instance.ChannelServiceAgent.GetFmRadioTuningDetails(fmRadioChannel.Frequency);
       }
-      ChannelAnalogTv analogTvChannel = foundChannel as ChannelAnalogTv;
+      ChannelAnalogTv analogTvChannel = foundChannel.Channel as ChannelAnalogTv;
       if (analogTvChannel != null)
       {
         return ServiceAgents.Instance.ChannelServiceAgent.GetAnalogTelevisionTuningDetails(analogTvChannel.PhysicalChannelNumber);
@@ -281,8 +282,10 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
             channel.IsHighDefinition = false;
             channel.IsThreeDimensional = false;
             channel.IsVcrSignal = false;
+            ScannedChannel scannedChannel = new ScannedChannel(channel);
+            scannedChannel.IsVisibleInGuide = true;
 
-            IList<DbTuningDetail> possibleTuningDetails = OnGetDbExistingTuningDetailCandidates(null, null, channel, false);
+            IList<DbTuningDetail> possibleTuningDetails = OnGetDbExistingTuningDetailCandidates(scannedChannel, false);
             DbTuningDetail dbTuningDetail = null;
             if (possibleTuningDetails != null)
             {
@@ -292,7 +295,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
               }
               else
               {
-                foreach (TuningDetail td in possibleTuningDetails)
+                foreach (DbTuningDetail td in possibleTuningDetails)
                 {
                   if (string.Equals(td.LogicalChannelNumber, channel.LogicalChannelNumber))
                   {
@@ -305,12 +308,12 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
             if (dbTuningDetail == null)
             {
-              ChannelScanHelper.AddChannel(channel);
+              ChannelScanHelper.AddChannel(channel, true);
               newChannels.Add(channel);
             }
             else
             {
-              ChannelScanHelper.UpdateChannel(channel, dbTuningDetail);
+              ChannelScanHelper.UpdateChannel(channel, true, dbTuningDetail);
               updatedChannels.Add(channel);
             }
           }

@@ -74,7 +74,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
     {
       using (ITuningDetailRepository tuningDetailRepository = new TuningDetailRepository())
       {
-        IQueryable<TuningDetail> query = tuningDetailRepository.GetQuery<TuningDetail>(td => td.BroadcastStandard == (int)broadcastStandard && td.OriginalNetworkId == originalNetworkId && td.ServiceId == serviceId);
+        IQueryable<TuningDetail> query = tuningDetailRepository.GetQuery<TuningDetail>(td => (td.BroadcastStandard & (int)broadcastStandard) != 0 && td.OriginalNetworkId == originalNetworkId && td.ServiceId == serviceId);
         if (transportStreamId.HasValue)
         {
           query = query.Where(td => td.TransportStreamId == transportStreamId.Value);
@@ -102,9 +102,29 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
       }
     }
 
+    public static IList<TuningDetail> GetFreesatTuningDetails(int channelId)
+    {
+      using (ITuningDetailRepository tuningDetailRepository = new TuningDetailRepository())
+      {
+        IQueryable<TuningDetail> query = tuningDetailRepository.GetQuery<TuningDetail>(td => td.FreesatChannelId == channelId);
+        query = tuningDetailRepository.IncludeAllRelations(query);
+        return query.ToList();
+      }
+    }
+
     public static IList<TuningDetail> GetMpeg2TuningDetails(BroadcastStandard broadcastStandard, int programNumber, int? transportStreamId = null, int? frequency = null, int? satelliteId = null)
     {
       return GetDvbTuningDetails(broadcastStandard, 0, programNumber, transportStreamId, frequency, satelliteId);
+    }
+
+    public static IList<TuningDetail> GetOpenTvTuningDetails(int channelId)
+    {
+      using (ITuningDetailRepository tuningDetailRepository = new TuningDetailRepository())
+      {
+        IQueryable<TuningDetail> query = tuningDetailRepository.GetQuery<TuningDetail>(td => td.OpenTvChannelId == channelId);
+        query = tuningDetailRepository.IncludeAllRelations(query);
+        return query.ToList();
+      }
     }
 
     public static IList<TuningDetail> GetStreamTuningDetails(string url)

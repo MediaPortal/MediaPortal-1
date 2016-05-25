@@ -53,7 +53,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.progressBarSignalStrength = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPProgressBar();
       this.progressBarSignalQuality = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPProgressBar();
       this.listViewProgress = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPListView();
-      this.columnHeader1 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader();
+      this.columnHeader1 = ((Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader)(new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader()));
       this.buttonScan = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
       this.labelRegionProvider = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.labelCountry = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
@@ -67,9 +67,11 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // 
       // tabControl
       // 
-      this.tabControl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.tabControl.AllowDrop = true;
+      this.tabControl.AllowReorderTabs = false;
+      this.tabControl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.tabControl.Controls.Add(this.tabPageScan);
       this.tabControl.Location = new System.Drawing.Point(0, 0);
       this.tabControl.Name = "tabControl";
@@ -109,8 +111,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // 
       // groupBoxAdvancedOptions
       // 
-      this.groupBoxAdvancedOptions.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxAdvancedOptions.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxAdvancedOptions.Controls.Add(this.numericTextBoxPlpId);
       this.groupBoxAdvancedOptions.Controls.Add(this.labelPlpId);
       this.groupBoxAdvancedOptions.Controls.Add(this.labelScanType);
@@ -177,7 +179,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // labelBandwidthUnit
       // 
       this.labelBandwidthUnit.AutoSize = true;
-      this.labelBandwidthUnit.Location = new System.Drawing.Point(131, 102);
+      this.labelBandwidthUnit.Location = new System.Drawing.Point(127, 102);
       this.labelBandwidthUnit.Name = "labelBandwidthUnit";
       this.labelBandwidthUnit.Size = new System.Drawing.Size(26, 13);
       this.labelBandwidthUnit.TabIndex = 9;
@@ -195,7 +197,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // labelFrequencyUnit
       // 
       this.labelFrequencyUnit.AutoSize = true;
-      this.labelFrequencyUnit.Location = new System.Drawing.Point(131, 76);
+      this.labelFrequencyUnit.Location = new System.Drawing.Point(127, 76);
       this.labelFrequencyUnit.Name = "labelFrequencyUnit";
       this.labelFrequencyUnit.Size = new System.Drawing.Size(26, 13);
       this.labelFrequencyUnit.TabIndex = 6;
@@ -259,9 +261,9 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // 
       // groupBoxProgress
       // 
-      this.groupBoxProgress.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxProgress.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxProgress.Controls.Add(this.progressBarProgress);
       this.groupBoxProgress.Controls.Add(this.labelSignalStrength);
       this.groupBoxProgress.Controls.Add(this.labelSignalQuality);
@@ -279,8 +281,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // 
       // progressBarProgress
       // 
-      this.progressBarProgress.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.progressBarProgress.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.progressBarProgress.Location = new System.Drawing.Point(7, 51);
       this.progressBarProgress.Name = "progressBarProgress";
       this.progressBarProgress.Size = new System.Drawing.Size(457, 10);
@@ -291,9 +293,9 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.labelSignalStrength.AutoSize = true;
       this.labelSignalStrength.Location = new System.Drawing.Point(4, 16);
       this.labelSignalStrength.Name = "labelSignalStrength";
-      this.labelSignalStrength.Size = new System.Drawing.Size(64, 13);
+      this.labelSignalStrength.Size = new System.Drawing.Size(80, 13);
       this.labelSignalStrength.TabIndex = 0;
-      this.labelSignalStrength.Text = "Signal level:";
+      this.labelSignalStrength.Text = "Signal strength:";
       // 
       // labelSignalQuality
       // 
@@ -306,8 +308,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // 
       // progressBarSignalStrength
       // 
-      this.progressBarSignalStrength.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.progressBarSignalStrength.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.progressBarSignalStrength.Location = new System.Drawing.Point(98, 19);
       this.progressBarSignalStrength.Name = "progressBarSignalStrength";
       this.progressBarSignalStrength.Size = new System.Drawing.Size(366, 10);
@@ -315,8 +317,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // 
       // progressBarSignalQuality
       // 
-      this.progressBarSignalQuality.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.progressBarSignalQuality.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.progressBarSignalQuality.Location = new System.Drawing.Point(98, 35);
       this.progressBarSignalQuality.Name = "progressBarSignalQuality";
       this.progressBarSignalQuality.Size = new System.Drawing.Size(366, 10);
@@ -325,9 +327,9 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // listViewProgress
       // 
       this.listViewProgress.AllowRowReorder = false;
-      this.listViewProgress.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.listViewProgress.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.listViewProgress.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeader1});
       this.listViewProgress.Location = new System.Drawing.Point(7, 67);
@@ -373,8 +375,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // 
       // comboBoxRegionProvider
       // 
-      this.comboBoxRegionProvider.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.comboBoxRegionProvider.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.comboBoxRegionProvider.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxRegionProvider.FormattingEnabled = true;
       this.comboBoxRegionProvider.Location = new System.Drawing.Point(100, 33);
@@ -384,8 +386,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // 
       // comboBoxCountry
       // 
-      this.comboBoxCountry.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.comboBoxCountry.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.comboBoxCountry.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxCountry.FormattingEnabled = true;
       this.comboBoxCountry.Location = new System.Drawing.Point(100, 6);

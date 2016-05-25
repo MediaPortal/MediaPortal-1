@@ -22,12 +22,8 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.IO;
-using System.Net;
 using System.Runtime.InteropServices.ComTypes;
-using System.Windows.Forms;
 using DirectShowLib;
-using Ionic.Zip;
 using Mediaportal.TV.Server.SetupControls;
 using Mediaportal.TV.Server.SetupTV.Sections.Helpers;
 using Mediaportal.TV.Server.TVControl.ServiceAgents;
@@ -56,26 +52,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       Idle = (int)ProcessPriorityClass.Idle
     }
 
-    private class FileDownloader : WebClient
-    {
-      public int TimeOut = 60000;
-
-      public FileDownloader(int timeOutMilliseconds = 60000)
-      {
-        TimeOut = timeOutMilliseconds;
-      }
-
-      protected override WebRequest GetWebRequest(Uri address)
-      {
-        var result = base.GetWebRequest(address);
-        if (result != null)
-        {
-          result.Timeout = TimeOut;
-        }
-        return result;
-      }
-    }
-
     #region constants
 
     private static readonly Guid MEDIA_SUB_TYPE_AVC = new Guid(0x31435641, 0x0000, 0x0010, 0x80, 0x00, 0x00, 0xaa, 0x00, 0x38, 0x9b, 0x71);
@@ -85,16 +61,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
     #endregion
 
-    private FileDownloader _downloader = null;
-    private string _fileNameTuningDetails = null;
-
     public General()
-      : this("General")
-    {
-    }
-
-    public General(string name)
-      : base(name)
+      : base("General")
     {
       InitializeComponent();
     }
@@ -116,7 +84,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       }
 
       comboBoxServicePriority.SelectedItem = ((ServicePriority)ServiceAgents.Instance.SettingServiceAgent.GetValue("servicePriority", (int)ServicePriority.Normal)).GetDescription();
-      numericUpDownTunerDetectionDelay.Value = ServiceAgents.Instance.SettingServiceAgent.GetValue("tunerDetectionDelay", 0);
 
       Codec codecVideo = Codec.Deserialise(ServiceAgents.Instance.SettingServiceAgent.GetValue("previewCodecVideo", Codec.DEFAULT_VIDEO.Serialise()));
       if (codecVideo != null)
@@ -138,14 +105,9 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         comboBoxPreviewCodecAudio.SelectedIndex = 0;
       }
 
-      checkBoxScanChannelMovementDetection.Checked = ServiceAgents.Instance.SettingServiceAgent.GetValue("channelMovementDetectionEnabled", false);
-      checkBoxScanAutomaticChannelGroupsChannelProviders.Checked = ServiceAgents.Instance.SettingServiceAgent.GetValue("scanAutoCreateProviderChannelGroups", false);
-      checkBoxScanAutomaticChannelGroupsBroadcastStandards.Checked = ServiceAgents.Instance.SettingServiceAgent.GetValue("scanAutoCreateBroadcastStandardChannelGroups", false);
-      checkBoxScanAutomaticChannelGroupsSatellites.Checked = ServiceAgents.Instance.SettingServiceAgent.GetValue("scanAutoCreateSatelliteChannelGroups", false);
-      numericUpDownTimeLimitScan.Value = ServiceAgents.Instance.SettingServiceAgent.GetValue("timeLimitScan", 20000);
-
       numericUpDownTimeLimitSignalLock.Value = ServiceAgents.Instance.SettingServiceAgent.GetValue("timeLimitSignalLock", 2500);
-      numericUpDownTimeLimitReceiveStream.Value = ServiceAgents.Instance.SettingServiceAgent.GetValue("timeLimitReceiveStream", 7500);
+      numericUpDownTimeLimitReceiveStreamInfo.Value = ServiceAgents.Instance.SettingServiceAgent.GetValue("timeLimitReceiveStreamInfo", 5000);
+      numericUpDownTimeLimitReceiveVideoAudio.Value = ServiceAgents.Instance.SettingServiceAgent.GetValue("timeLimitReceiveVideoAudio", 5000);
 
       DebugSettings();
 
@@ -158,19 +120,13 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
       int servicePriority = Convert.ToInt32(typeof(ServicePriority).GetEnumFromDescription((string)comboBoxServicePriority.SelectedItem));
       ServiceAgents.Instance.SettingServiceAgent.SaveValue("servicePriority", servicePriority);
-      ServiceAgents.Instance.SettingServiceAgent.SaveValue("tunerDetectionDelay", (int)numericUpDownTunerDetectionDelay.Value);
 
       ServiceAgents.Instance.SettingServiceAgent.SaveValue("previewCodecVideo", ((Codec)comboBoxPreviewCodecVideo.SelectedItem).Serialise());
       ServiceAgents.Instance.SettingServiceAgent.SaveValue("previewCodecAudio", ((Codec)comboBoxPreviewCodecAudio.SelectedItem).Serialise());
 
-      ServiceAgents.Instance.SettingServiceAgent.SaveValue("channelMovementDetectionEnabled", checkBoxScanChannelMovementDetection.Checked);
-      ServiceAgents.Instance.SettingServiceAgent.SaveValue("scanAutoCreateProviderChannelGroups", checkBoxScanAutomaticChannelGroupsChannelProviders.Checked);
-      ServiceAgents.Instance.SettingServiceAgent.SaveValue("scanAutoCreateBroadcastStandardChannelGroups", checkBoxScanAutomaticChannelGroupsBroadcastStandards.Checked);
-      ServiceAgents.Instance.SettingServiceAgent.SaveValue("scanAutoCreateSatelliteChannelGroups", checkBoxScanAutomaticChannelGroupsSatellites.Checked);
-      ServiceAgents.Instance.SettingServiceAgent.SaveValue("timeLimitScan", (int)numericUpDownTimeLimitScan.Value);
-
       ServiceAgents.Instance.SettingServiceAgent.SaveValue("timeLimitSignalLock", (int)numericUpDownTimeLimitSignalLock.Value);
-      ServiceAgents.Instance.SettingServiceAgent.SaveValue("timeLimitReceiveStream", (int)numericUpDownTimeLimitReceiveStream.Value);
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue("timeLimitReceiveStreamInfo", (int)numericUpDownTimeLimitReceiveStreamInfo.Value);
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue("timeLimitReceiveVideoAudio", (int)numericUpDownTimeLimitReceiveVideoAudio.Value);
 
       DebugSettings();
 
@@ -183,118 +139,15 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     {
       this.LogDebug("general: settings...");
       this.LogDebug("  service priority      = {0}", comboBoxServicePriority.SelectedItem);
-      this.LogDebug("  tuner detection delay = {0} ms", numericUpDownTunerDetectionDelay.Value);
       this.LogDebug("  preview codecs...");
       Codec c = (Codec)comboBoxPreviewCodecVideo.SelectedItem;
       this.LogDebug("    video               = {0} ({1})", c.Name, c.ClassId);
       c = (Codec)comboBoxPreviewCodecAudio.SelectedItem;
       this.LogDebug("    audio               = {0} ({1})", c.Name, c.ClassId);
-      this.LogDebug("  channel movement?     = {0}", checkBoxScanChannelMovementDetection.Checked);
-      this.LogDebug("  automatic channel groups...");
-      this.LogDebug("    providers           = {0}", checkBoxScanAutomaticChannelGroupsChannelProviders.Checked);
-      this.LogDebug("    broadcast standards = {0}", checkBoxScanAutomaticChannelGroupsBroadcastStandards.Checked);
-      this.LogDebug("    satellites          = {0}", checkBoxScanAutomaticChannelGroupsSatellites.Checked);
       this.LogDebug("  time limits...");
-      this.LogDebug("    scan                = {0} ms", numericUpDownTimeLimitScan.Value);
       this.LogDebug("    signal lock         = {0} ms", numericUpDownTimeLimitSignalLock.Value);
-      this.LogDebug("    receive stream      = {0} ms", numericUpDownTimeLimitReceiveStream.Value);
-    }
-
-    private void buttonUpdateTuningDetails_Click(object sender, EventArgs e)
-    {
-      if (_downloader != null)
-      {
-        this.LogDebug("general: cancel tuning detail update");
-        buttonUpdateTuningDetails.Text = "Cancelling...";
-        _downloader.CancelAsync();
-        return;
-      }
-
-      this.LogDebug("general: backup tuning details");
-      string tuningDetailRootPath = TuningDetailFilter.GetDataPath();
-      string fileNameBackupTemp = Path.Combine(tuningDetailRootPath, "backup_new.zip");
-      try
-      {
-        ZipFile zipFile = new ZipFile(fileNameBackupTemp, System.Text.Encoding.UTF8);
-        try
-        {
-          foreach (string directory in Directory.GetDirectories(tuningDetailRootPath))
-          {
-            zipFile.AddDirectory(directory, Path.GetFileName(directory));
-          }
-          zipFile.Save();
-        }
-        finally
-        {
-          zipFile.Dispose();
-        }
-
-        string fileNameBackupFinal = Path.Combine(tuningDetailRootPath, "backup.zip");
-        if (File.Exists(fileNameBackupFinal))
-        {
-          File.Delete(fileNameBackupFinal);
-        }
-        File.Move(fileNameBackupTemp, fileNameBackupFinal);
-      }
-      catch (Exception ex)
-      {
-        this.LogError(ex, "general: failed to backup tuning details before update");
-        MessageBox.Show(string.Format("Backup failed. {0}", SENTENCE_CHECK_LOG_FILES), MESSAGE_CAPTION, MessageBoxButtons.OK);
-        return;
-      }
-
-      this.LogDebug("general: tuning detail backup successful, starting download");
-      buttonUpdateTuningDetails.Text = "Cancel...";
-      _fileNameTuningDetails = Path.Combine(tuningDetailRootPath, "tuning_details.zip");
-      using (_downloader = new FileDownloader(120000))
-      {
-        _downloader.Proxy.Credentials = CredentialCache.DefaultCredentials;
-        _downloader.DownloadFileCompleted += OnTuningDetailDownloadCompleted;
-        _downloader.DownloadFileAsync(new Uri("http://install.team-mediaportal.com/tvsetup/TVE_3.5/tuning_details.zip"), _fileNameTuningDetails);
-      }
-    }
-
-    private void OnTuningDetailDownloadCompleted(object sender, AsyncCompletedEventArgs e)
-    {
-      if (e.Cancelled)
-      {
-        this.LogDebug("general: tuning detail download cancelled");
-      }
-      else if (e.Error != null)
-      {
-        this.LogError(e.Error, "general: failed to download tuning details");
-        MessageBox.Show(string.Format("Download failed. {0}", SENTENCE_CHECK_LOG_FILES), MESSAGE_CAPTION, MessageBoxButtons.OK);
-      }
-      else
-      {
-        this.LogDebug("general: tuning detail download successful, extracting");
-        try
-        {
-          foreach (string directory in Directory.GetDirectories(Path.GetDirectoryName(_fileNameTuningDetails)))
-          {
-            Directory.Delete(directory, true);
-          }
-
-          ZipFile zipFile = new ZipFile(_fileNameTuningDetails, System.Text.Encoding.UTF8);
-          try
-          {
-            zipFile.ExtractAll(Path.GetDirectoryName(_fileNameTuningDetails), ExtractExistingFileAction.OverwriteSilently);
-          }
-          finally
-          {
-            zipFile.Dispose();
-          }
-          this.LogDebug("general: tuning details update successful");
-        }
-        catch (Exception ex)
-        {
-          this.LogError(ex, "general: failed to extract and update tuning details");
-          MessageBox.Show(string.Format("Extract and update failed. {0}", SENTENCE_CHECK_LOG_FILES), MESSAGE_CAPTION, MessageBoxButtons.OK);
-        }
-      }
-
-      _downloader = null;
-      buttonUpdateTuningDetails.Text = "Update tuning details";
+      this.LogDebug("    receive stream info = {0} ms", numericUpDownTimeLimitReceiveStreamInfo.Value);
+      this.LogDebug("    receive video/audio = {0} ms", numericUpDownTimeLimitReceiveVideoAudio.Value);
     }
 
     private static Codec[] GetCodecs(Guid mediaType, Guid[] mediaSubTypes)

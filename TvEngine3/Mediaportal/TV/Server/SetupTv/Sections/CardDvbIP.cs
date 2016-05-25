@@ -27,11 +27,11 @@ using Mediaportal.TV.Server.Common.Types.Enum;
 using Mediaportal.TV.Server.SetupControls;
 using Mediaportal.TV.Server.SetupTV.Sections.Helpers;
 using Mediaportal.TV.Server.TVControl.ServiceAgents;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Channel;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channel;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using DbTuningDetail = Mediaportal.TV.Server.TVDatabase.Entities.TuningDetail;
-using FileTuningDetail = Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.TuningDetail.TuningDetail;
+using FileTuningDetail = Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.TuningDetail;
 
 namespace Mediaportal.TV.Server.SetupTV.Sections
 {
@@ -100,8 +100,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       item.EnsureVisible();
       this.LogInfo("stream: start scanning {0}...", comboBoxService.SelectedItem);
 
-      _scanHelper = new ChannelScanHelper(_tunerId);
-      if (_scanHelper.StartScan(tuningDetails, listViewProgress, progressBarProgress, OnGetDbExistingTuningDetailCandidates, null, OnScanCompleted, progressBarSignalStrength, progressBarSignalQuality))
+      _scanHelper = new ChannelScanHelper(_tunerId, listViewProgress, progressBarProgress, null, OnGetDbExistingTuningDetailCandidates, OnScanCompleted, progressBarSignalStrength, progressBarSignalQuality);
+      if (_scanHelper.StartScan(tuningDetails))
       {
         comboBoxService.Enabled = false;
         buttonScan.Text = "Cancel...";
@@ -156,12 +156,12 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       return channels;
     }
 
-    private IList<DbTuningDetail> OnGetDbExistingTuningDetailCandidates(FileTuningDetail tuningDetail, IChannel tuneChannel, IChannel foundChannel, bool useChannelMovementDetection)
+    private IList<DbTuningDetail> OnGetDbExistingTuningDetailCandidates(ScannedChannel foundChannel, bool useChannelMovementDetection)
     {
       // Most sources are single program transport streams (SPTSs), so we can
       // simply lookup the tuning detail by URL. However, also support MPTSs
       // with "safe" DVB ONID + TSID + SID lookup.
-      ChannelStream streamChannel = foundChannel as ChannelStream;
+      ChannelStream streamChannel = foundChannel.Channel as ChannelStream;
       if (streamChannel == null)
       {
         return null;
@@ -175,7 +175,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         {
           streamChannel.Name = m3uChannel.Name;
         }
-        if (!string.IsNullOrEmpty(m3uChannel.LogicalChannelNumber) && string.Equals(streamChannel.LogicalChannelNumber, "10000"))
+        if (!string.IsNullOrEmpty(m3uChannel.LogicalChannelNumber) && string.Equals(streamChannel.LogicalChannelNumber, streamChannel.DefaultLogicalChannelNumber))
         {
           streamChannel.LogicalChannelNumber = m3uChannel.LogicalChannelNumber;
         }
@@ -183,7 +183,11 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
       if (useChannelMovementDetection)
       {
-        return ServiceAgents.Instance.ChannelServiceAgent.GetDvbTuningDetails(BroadcastStandard.DvbIp, streamChannel.OriginalNetworkId, streamChannel.ServiceId, streamChannel.TransportStreamId);
+        IList<DbTuningDetail> tuningDetails = ServiceAgents.Instance.ChannelServiceAgent.GetDvbTuningDetails(BroadcastStandard.DvbIp, streamChannel.OriginalNetworkId, streamChannel.ServiceId, streamChannel.TransportStreamId);
+        if (tuningDetails != null && tuningDetails.Count == 1)
+        {
+          return tuningDetails;
+        }
       }
       return ServiceAgents.Instance.ChannelServiceAgent.GetStreamTuningDetails(streamChannel.Url);
     }
