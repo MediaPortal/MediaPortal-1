@@ -87,40 +87,23 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
       {
         NowAndNext nowAndNext;
         progList.TryGetValue(nextPrg.IdChannel, out nowAndNext);
-
-        int idChannel = nextPrg.IdChannel;
-        int nextIdProgram = nextPrg.IdProgram;
-        string nextTitle = nextPrg.Title;
-        string nextEpisodeName = nextPrg.EpisodeName ?? string.Empty;
-        string nextSeasonNumber = nextPrg.SeasonNumber.ToString();
-        string nextEpisodeNumber = nextPrg.EpisodeNumber.ToString();
-        string nextEpisodePartNumber = nextPrg.EpisodePartNumber.ToString();
-
         if (nowAndNext == null)
         {
-          int idProgramNow = -1;
-          DateTime nowStart = SqlDateTime.MinValue.Value;
-          DateTime nowEnd = SqlDateTime.MinValue.Value;
-          string nowTitle = string.Empty;
-          string nowEpisodeName = string.Empty;
-          string nowSeasonNumber = string.Empty;
-          string nowEpisodeNumber = string.Empty;
-          string nowEpisodePartNumber = string.Empty;
-          nowAndNext = new NowAndNext(idChannel, nowStart, nowEnd, nowTitle, nextTitle, idProgramNow,
-                                      nextIdProgram, nowEpisodeName, nextEpisodeName, nowSeasonNumber,
-                                      nextSeasonNumber, nowEpisodeNumber, nextEpisodeNumber, nowEpisodePartNumber,
-                                      nextEpisodePartNumber);
+          nowAndNext = new NowAndNext(nextPrg.IdChannel, SqlDateTime.MinValue.Value, SqlDateTime.MinValue.Value, string.Empty, nextPrg.Title,
+                                      -1, nextPrg.IdProgram, null, nextPrg.EpisodeName, null,
+                                      nextPrg.SeasonNumber, null, nextPrg.EpisodeNumber, null,
+                                      nextPrg.EpisodePartNumber);
         }
         else
         {
-          nowAndNext.IdProgramNext = nextIdProgram;
-          nowAndNext.TitleNext = nextTitle;
-          nowAndNext.EpisodeNameNext = nextEpisodeName;
-          nowAndNext.SeriesNumNext = nextSeasonNumber;
-          nowAndNext.EpisodeNumNext = nextEpisodeNumber;
-          nowAndNext.EpisodePartNext = nextEpisodePartNumber;
+          nowAndNext.IdProgramNext = nextPrg.IdProgram;
+          nowAndNext.TitleNext = nextPrg.Title;
+          nowAndNext.EpisodeNameNext = nextPrg.EpisodeName;
+          nowAndNext.SeasonNumberNext = nextPrg.SeasonNumber;
+          nowAndNext.EpisodeNumberNext = nextPrg.EpisodeNumber;
+          nowAndNext.EpisodePartNumberNext = nextPrg.EpisodePartNumber;
         }
-        progList[idChannel] = nowAndNext;
+        progList[nextPrg.IdChannel] = nowAndNext;
       }
     }
 
@@ -128,31 +111,13 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
     {
       foreach (Program nowPrg in nowPrograms)
       {
-        int idChannel = nowPrg.IdChannel;
-        string nextTitle = string.Empty;
-        int nextIdProgram = -1;
-        string nextEpisodeName = string.Empty;
-        string nextSeasonNumber = string.Empty;
-        string nextEpisodeNumber = string.Empty;
-        string nextEpisodePartNumber = string.Empty;
-
-        int nowIdProgram = nowPrg.IdProgram;
-        DateTime nowStart = nowPrg.StartTime;
-        DateTime nowEnd = nowPrg.EndTime;
-        string nowTitle = nowPrg.Title;
-        string nowEpisodeName = nowPrg.EpisodeName ?? string.Empty;
-        string nowSeasonNumber = nowPrg.SeasonNumber.ToString();
-        string nowEpisodeNumber = nowPrg.EpisodeNumber.ToString();
-        string nowEpisodePartNumber = nowPrg.EpisodePartNumber.ToString();
-
-        var nowAndNext = new NowAndNext(idChannel, nowStart, nowEnd, nowTitle, nextTitle, nowIdProgram,
-                                        nextIdProgram, nowEpisodeName, nextEpisodeName, nowSeasonNumber,
-                                        nextSeasonNumber, nowEpisodeNumber, nextEpisodeNumber, nowEpisodePartNumber,
-                                        nextEpisodePartNumber);
-        progList[idChannel] = nowAndNext;
+        var nowAndNext = new NowAndNext(nowPrg.IdChannel, nowPrg.StartTime, nowPrg.EndTime, nowPrg.Title, string.Empty,
+                                        nowPrg.IdProgram, -1, nowPrg.EpisodeName, null,
+                                        nowPrg.SeasonNumber, null, nowPrg.EpisodeNumber, null,
+                                        nowPrg.EpisodePartNumber, null);
+        progList[nowPrg.IdChannel] = nowAndNext;
       }
     }
-
 
     public static void InsertPrograms(ImportParams importParams)
     {
@@ -762,8 +727,9 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
     {
       using (IProgramRepository programRepository = new ProgramRepository())
       {
-        var programsByTitleAndTimesInterval = programRepository.GetQuery<Program>(p => p.Title == title && p.EndTime >= startTime && p.StartTime <= startTime).Include(p => p.ProgramCategory);
-        return programsByTitleAndTimesInterval.ToList();
+        var query = programRepository.GetQuery<Program>(p => p.Title == title && p.EndTime >= startTime && p.StartTime <= startTime);
+        query = programRepository.IncludeAllRelations(query);
+        return query.ToList();
       }
     }
 
@@ -771,10 +737,9 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
     {
       using (IProgramRepository programRepository = new ProgramRepository())
       {
-        var programsByTitleTimesAndChannel = programRepository.
-          GetQuery<Program>(p => p.Title == programName && p.StartTime == startTime && p.EndTime == endTime && p.IdChannel == idChannel).
-          Include(p => p.ProgramCategory).FirstOrDefault();
-        return programsByTitleTimesAndChannel;
+        var query = programRepository.GetQuery<Program>(p => p.Title == programName && p.StartTime == startTime && p.EndTime == endTime && p.IdChannel == idChannel);
+        query = programRepository.IncludeAllRelations(query);
+        return query.FirstOrDefault();
       }
     }
 
@@ -782,8 +747,9 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
     {
       using (IProgramRepository programRepository = new ProgramRepository())
       {
-        var programsByState = programRepository.GetQuery<Program>(p => (p.State & (int)state) == (int)state).Include(p => p.ProgramCategory);
-        return programsByState.ToList();
+        var query = programRepository.GetQuery<Program>(p => (p.State & (int)state) == (int)state);
+        query = programRepository.IncludeAllRelations(query);
+        return query.ToList();
       }
     }
 
@@ -861,8 +827,8 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
     {
       using (IProgramRepository programRepository = new ProgramRepository())
       {
-        var findOne = programRepository.GetQuery<Program>(p => p.IdProgram == idProgram).Include(p => p.ProgramCategory).FirstOrDefault();
-        return findOne;
+        var query = programRepository.GetQuery<Program>(p => p.IdProgram == idProgram);
+        return programRepository.IncludeAllRelations(query).FirstOrDefault();
       }
     }
 

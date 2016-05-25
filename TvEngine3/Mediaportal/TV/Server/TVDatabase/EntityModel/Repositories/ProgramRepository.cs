@@ -28,8 +28,7 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
       IQueryable<int> channels = GetQuery<Channel>(c => c.GroupMaps.Any(g => g.IdGroup == idGroup)).Select(g => g.IdChannel);
 
       DateTime now = DateTime.Now;
-      IQueryable<Program> programs = GetQuery<Program>().Where(p => channels.Contains(p.IdChannel) && p.EndTime > now && p.StartTime <= now);
-      return programs;
+      return GetQuery<Program>().Where(p => channels.Contains(p.IdChannel) && p.EndTime > now && p.StartTime <= now);
     }
 
     public IQueryable<Program> GetNextProgramsForChannelGroup(int idGroup)
@@ -53,13 +52,8 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
     public IQueryable<Program> GetNowAndNextProgramsForChannel(int idChannel)
     {
       DateTime now = DateTime.Now;
-      var programs =
-        GetQuery<Program>().Where(p => p.IdChannel == idChannel && p.EndTime >= now).Include(p => p.Channel)
-        .Include(p => p.ProgramCategory)
-        .Include(p => p.ProgramCredits)
-        .OrderBy(p => p.StartTime)
-        .Take(2);
-      return programs;
+      var programs = GetQuery<Program>().Where(p => p.IdChannel == idChannel && p.EndTime >= now).OrderBy(p => p.StartTime).Take(2);
+      return IncludeAllRelations(programs);
     }
 
     public void DeleteAllProgramsWithChannelId(int idChannel)
@@ -70,8 +64,7 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
 
     public IQueryable<Program> FindAllProgramsByChannelId(int idChannel)
     {
-      var findAllProgramsByChannelId = GetQuery<Program>().Where(p => p.IdChannel == idChannel);
-      return findAllProgramsByChannelId;
+      return GetQuery<Program>().Where(p => p.IdChannel == idChannel);
     }
 
     public Program GetProgramAt(DateTime date, int idChannel)
@@ -194,21 +187,18 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
                                                                       (p.EndTime > startTime && p.EndTime < endTime)
                                                                       || (p.StartTime >= startTime && p.StartTime <= endTime)
                                                                       || (p.StartTime <= startTime && p.EndTime >= endTime)
-                                                                    ).OrderBy(p => p.StartTime)
-                                                                    .Include(p => p.ProgramCategory).Include(p => p.Channel);
-      return programsByTimesInterval;
+                                                                    ).OrderBy(p => p.StartTime);
+      return IncludeAllRelations(programsByTimesInterval);
     }
 
     public IQueryable<Program> GetProgramsByStartEndTimes(DateTime startTime, DateTime endTime)
     {
-      var query = GetQuery<Program>(p => p.Channel.VisibleInGuide && p.StartTime < endTime && p.EndTime > startTime);
-      return query;
+      return GetQuery<Program>(p => p.Channel.VisibleInGuide && p.StartTime < endTime && p.EndTime > startTime);
     }
 
     public IQueryable<Program> IncludeAllRelations(IQueryable<Program> query)
     {
-      var includeRelations = query.Include(p => p.ProgramCategory).Include(p => p.Channel);
-      return includeRelations;
+      return query.Include(p => p.ProgramCategory).Include(p => p.Channel).Include(p => p.ProgramCredits);
     }
   }
 }
