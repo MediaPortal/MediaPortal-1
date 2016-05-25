@@ -639,7 +639,6 @@ namespace MediaPortal.Player
       if (!GUIGraphicsContext.InVmr9Render)
       {
         GUIGraphicsContext.InVmr9Render = true;
-        GUIGraphicsContext.RenderLayerOnce = true;
       }
 
       if (GUIGraphicsContext.IsSwitchingToNewSkin)
@@ -685,11 +684,6 @@ namespace MediaPortal.Player
         GUIGraphicsContext.RenderOverlay = true;
       }
 
-      if (GUIGraphicsContext.RenderLayerOnce && layers == GUILayers.over)
-      {
-        layers = GUILayers.all;
-        GUIGraphicsContext.RenderLayerOnce = false;
-      }
 
       bool visible = false;
       GUIGraphicsContext.RenderGUI.RenderFrame(GUIGraphicsContext.TimePassed, layers, ref visible);
@@ -881,7 +875,8 @@ namespace MediaPortal.Player
         //Direct3D.Surface backBuffer=null;
         _debugStep = 0;
         _reEntrant = true;
-        GUIGraphicsContext.InVmr9Render = true;
+        if (GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR)
+          GUIGraphicsContext.InVmr9Render = true;
         if (width > 0 && height > 0)
         {
           _vmr9Util.VideoWidth = width;

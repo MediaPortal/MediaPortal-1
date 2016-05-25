@@ -96,7 +96,7 @@ namespace MediaPortal.GUI.Library
 
       if (layers == GUILayers.under)
         endLayer = videoLayer - 1;
-      else if (layers == GUILayers.over)
+      else if (layers == GUILayers.over && !GUIGraphicsContext.IsFullScreenVideo)
         startLayer = videoLayer + 1;
 
       for (int i = startLayer; i < endLayer; ++i)
@@ -114,7 +114,7 @@ namespace MediaPortal.GUI.Library
 
             if (videoLayer == i) continue;
             uiVisible = true;
-            //Log.Error("Layer uiVisible and layer [{0}]", Enum.GetName(typeof(LayerType), i));
+            //Log.Error("Layer uiVisible and layer [{0}]", Enum.GetName(typeof (LayerType), i));
           }
         }
       }
