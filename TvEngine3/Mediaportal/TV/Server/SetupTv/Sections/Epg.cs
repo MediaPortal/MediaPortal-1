@@ -21,7 +21,9 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Globalization;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
+using Mediaportal.TV.Server.Common.Types.Enum;
 using Mediaportal.TV.Server.SetupControls;
 using Mediaportal.TV.Server.SetupControls.UserInterfaceControls;
 using Mediaportal.TV.Server.TVControl.ServiceAgents;
@@ -72,10 +74,9 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     {
       this.LogDebug("EPG: activating");
 
-      // First activation.
+      // first activation
       if (_languageItems == null)
       {
-        // Languages.
         _languageItems = new List<ListViewItem>();
         foreach (Iso639Language lang in Iso639LanguageCollection.Instance.Languages)
         {
@@ -87,9 +88,9 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         }
       }
 
-      // General (all EPG sources including plugins).
+      // general (all EPG sources including plugins)
       string preferredLanguageCodes = ServiceAgents.Instance.SettingServiceAgent.GetValue("epgPreferredLanguages", string.Empty);
-      this.LogDebug("  preferred languages = {0}", preferredLanguageCodes);
+      this.LogDebug("  languages              = [{0}]", string.Join(", ", preferredLanguageCodes.Split('|')));
       if (!string.Equals(_previousPreferredLanguages, preferredLanguageCodes))
       {
         listViewLanguagesAvailable.BeginUpdate();
@@ -130,106 +131,95 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         }
       }
 
-      textBoxPreferredClassificationSystems.Text = ServiceAgents.Instance.SettingServiceAgent.GetValue("epgPreferredClassificationSystems", string.Empty);
-      this.LogDebug("  preferred classification systems = {0}", textBoxPreferredClassificationSystems.Text);
-      textBoxPreferredRatingSystems.Text = ServiceAgents.Instance.SettingServiceAgent.GetValue("epgPreferredRatingSystems", string.Empty);
-      this.LogDebug("  preferred rating systems = {0}", textBoxPreferredRatingSystems.Text);
+      string[] tempArray = ServiceAgents.Instance.SettingServiceAgent.GetValue("epgPreferredClassificationSystems", string.Empty).Split('|');
+      textBoxPreferredClassificationSystems.Text = string.Join(", ", tempArray);
+      this.LogDebug("  classification systems = [{0}]", textBoxPreferredClassificationSystems.Text);
+      tempArray = ServiceAgents.Instance.SettingServiceAgent.GetValue("epgPreferredRatingSystems", string.Empty).Split('|');
+      textBoxPreferredRatingSystems.Text = string.Join(", ", tempArray);
+      this.LogDebug("  rating systems         = [{0}]", textBoxPreferredRatingSystems.Text);
 
-      // Tuner EPG grabber.
+      // tuner EPG grabber
       checkBoxTunerEpgGrabberTimeShiftingRecordingEnable.Checked = ServiceAgents.Instance.SettingServiceAgent.GetValue("tunerEpgGrabberTimeShiftingRecordingEnabled", true);
-      numericUpDownTunerEpgGrabberTimeShiftingRecordingTimeOut.Value = ServiceAgents.Instance.SettingServiceAgent.GetValue("tunerEpgGrabberTimeShiftingRecordingTimeOut", 30);
+      numericUpDownTunerEpgGrabberTimeShiftingRecordingTimeLimit.Value = ServiceAgents.Instance.SettingServiceAgent.GetValue("tunerEpgGrabberTimeShiftingRecordingTimeLimit", 30);
       checkBoxTunerEpgGrabberIdleEnable.Checked = ServiceAgents.Instance.SettingServiceAgent.GetValue("tunerEpgGrabberIdleEnabled", true);
-      numericUpDownTunerEpgGrabberIdleTimeOut.Value = ServiceAgents.Instance.SettingServiceAgent.GetValue("tunerEpgGrabberIdleTimeOut", 600);
+      numericUpDownTunerEpgGrabberIdleTimeLimit.Value = ServiceAgents.Instance.SettingServiceAgent.GetValue("tunerEpgGrabberIdleTimeLimit", 600);
       numericUpDownTunerEpgGrabberIdleRefresh.Value = ServiceAgents.Instance.SettingServiceAgent.GetValue("tunerEpgGrabberIdleRefresh", 240);
 
-      bool defaultGrabAtsc = false;
-      bool defaultGrabBellExpressVu = false;
-      bool defaultGrabDishNetwork = false;
-      bool defaultGrabFreesat = false;
-      bool defaultGrabMhw1 = false;
-      bool defaultGrabMhw2 = false;
-      bool defaultGrabMultiChoice = false;
-      bool defaultGrabOpenTv = false;
-      bool defaultGrabPremiere = false;
-      bool defaultGrabScte = false;
-      bool defaultGrabViasatSweden = false;
+      TunerEpgGrabberProtocol epgProtocols = TunerEpgGrabberProtocol.None;
       string countryName = RegionInfo.CurrentRegion.EnglishName;
       if (countryName != null)
       {
-        if (countryName.Contains("America"))
+        if (countryName.Equals("Australia"))
         {
-          defaultGrabAtsc = true;
-          defaultGrabDishNetwork = true;
-          defaultGrabScte = true;
-        }
-        else if (countryName.Equals("Australia"))
-        {
-          defaultGrabOpenTv = true;   // Foxtel
+          epgProtocols = TunerEpgGrabberProtocol.OpenTv;          // Foxtel
         }
         else if (countryName.Equals("Canada"))
         {
-          defaultGrabAtsc = true;
-          defaultGrabBellExpressVu = true;
-          defaultGrabScte = true;
+          epgProtocols = TunerEpgGrabberProtocol.AtscEit | TunerEpgGrabberProtocol.BellTv | TunerEpgGrabberProtocol.ScteAeit;
         }
         else if (countryName.Equals("France"))
         {
-          defaultGrabMhw1 = true;     // Canal Satellite
+          epgProtocols = TunerEpgGrabberProtocol.MediaHighway1;   // Canalsat
         }
         else if (countryName.Equals("Germany"))
         {
-          defaultGrabPremiere = true;
+          epgProtocols = TunerEpgGrabberProtocol.Premiere;
         }
         else if (countryName.Equals("Italy"))
         {
-          defaultGrabOpenTv = true;   // Sky
+          epgProtocols = TunerEpgGrabberProtocol.OpenTv;          // Sky
         }
-        else if (countryName.Contains("Netherlands"))
+        else if (countryName.Equals("Netherlands, The"))
         {
-          defaultGrabMhw1 = true;     // Canal Digitaal Satellite
+          epgProtocols = TunerEpgGrabberProtocol.MediaHighway1;   // Canal Digitaal
         }
         else if (countryName.Equals("New Zealand"))
         {
-          defaultGrabOpenTv = true;   // Sky
+          epgProtocols = TunerEpgGrabberProtocol.OpenTv;          // Sky
         }
         else if (countryName.Equals("Poland"))
         {
-          defaultGrabMhw1 = true;     // Cyfra+
+          epgProtocols = TunerEpgGrabberProtocol.MediaHighway1;   // Cyfra+
         }
         else if (countryName.Equals("Spain"))
         {
-          defaultGrabMhw2 = true;     // Digital+
+          epgProtocols = TunerEpgGrabberProtocol.MediaHighway2;   // Canal+/Digital+
         }
         else if (countryName.Equals("South Africa"))
         {
-          defaultGrabMultiChoice = true;
+          epgProtocols = TunerEpgGrabberProtocol.MultiChoice;
         }
         else if (countryName.Equals("Sweden"))
         {
-          defaultGrabViasatSweden = true;
+          epgProtocols = TunerEpgGrabberProtocol.ViasatSweden;
         }
         else if (countryName.Equals("United Kingdom"))
         {
-          defaultGrabFreesat = true;
-          defaultGrabOpenTv = true;   // Sky
+          epgProtocols = TunerEpgGrabberProtocol.Freesat | TunerEpgGrabberProtocol.OpenTv;  // Sky
+        }
+        else if (countryName.Equals("United States"))
+        {
+          epgProtocols = TunerEpgGrabberProtocol.AtscEit | TunerEpgGrabberProtocol.DishNetwork | TunerEpgGrabberProtocol.ScteAeit;
         }
       }
+      epgProtocols |= TunerEpgGrabberProtocol.DvbEit;
+      epgProtocols = (TunerEpgGrabberProtocol)ServiceAgents.Instance.SettingServiceAgent.GetValue("tunerEpgGrabberProtocols", (int)epgProtocols);
 
-      checkBoxTunerEpgGrabberProtocolAtsc.Checked = ServiceAgents.Instance.SettingServiceAgent.GetValue("tunerEpgGrabberProtocolAtsc", defaultGrabAtsc);
-      checkBoxTunerEpgGrabberProtocolBellExpressVu.Checked = ServiceAgents.Instance.SettingServiceAgent.GetValue("tunerEpgGrabberProtocolBellExpressVu", defaultGrabBellExpressVu);
-      checkBoxTunerEpgGrabberProtocolDishNetwork.Checked = ServiceAgents.Instance.SettingServiceAgent.GetValue("tunerEpgGrabberProtocolDishNetwork", defaultGrabDishNetwork);
-      checkBoxTunerEpgGrabberProtocolDvb.Checked = ServiceAgents.Instance.SettingServiceAgent.GetValue("tunerEpgGrabberProtocolDvb", true);
-      checkBoxTunerEpgGrabberProtocolFreesat.Checked = ServiceAgents.Instance.SettingServiceAgent.GetValue("tunerEpgGrabberProtocolFreesat", defaultGrabFreesat);
-      checkBoxTunerEpgGrabberProtocolMhw1.Checked = ServiceAgents.Instance.SettingServiceAgent.GetValue("tunerEpgGrabberProtocolMhw1", defaultGrabMhw1);
-      checkBoxTunerEpgGrabberProtocolMhw2.Checked = ServiceAgents.Instance.SettingServiceAgent.GetValue("tunerEpgGrabberProtocolMhw2", defaultGrabMhw2);
-      checkBoxTunerEpgGrabberProtocolMultiChoice.Checked = ServiceAgents.Instance.SettingServiceAgent.GetValue("tunerEpgGrabberProtocolMultiChoice", defaultGrabMultiChoice);
-      checkBoxTunerEpgGrabberProtocolOpenTv.Checked = ServiceAgents.Instance.SettingServiceAgent.GetValue("tunerEpgGrabberProtocolOpenTv", defaultGrabOpenTv);
-      checkBoxTunerEpgGrabberProtocolPremiere.Checked = ServiceAgents.Instance.SettingServiceAgent.GetValue("tunerEpgGrabberProtocolPremiere", defaultGrabPremiere);
-      checkBoxTunerEpgGrabberProtocolScte.Checked = ServiceAgents.Instance.SettingServiceAgent.GetValue("tunerEpgGrabberProtocolScte", defaultGrabScte);
-      checkBoxTunerEpgGrabberProtocolViasatSweden.Checked = ServiceAgents.Instance.SettingServiceAgent.GetValue("tunerEpgGrabberProtocolViasatSweden", defaultGrabViasatSweden);
+      checkBoxTunerEpgGrabberProtocolAtsc.Checked = epgProtocols.HasFlag(TunerEpgGrabberProtocol.AtscEit);
+      checkBoxTunerEpgGrabberProtocolBellTv.Checked = epgProtocols.HasFlag(TunerEpgGrabberProtocol.BellTv);
+      checkBoxTunerEpgGrabberProtocolDishNetwork.Checked = epgProtocols.HasFlag(TunerEpgGrabberProtocol.DishNetwork);
+      checkBoxTunerEpgGrabberProtocolDvb.Checked = epgProtocols.HasFlag(TunerEpgGrabberProtocol.DvbEit);
+      checkBoxTunerEpgGrabberProtocolFreesat.Checked = epgProtocols.HasFlag(TunerEpgGrabberProtocol.Freesat);
+      checkBoxTunerEpgGrabberProtocolMhw1.Checked = epgProtocols.HasFlag(TunerEpgGrabberProtocol.MediaHighway1);
+      checkBoxTunerEpgGrabberProtocolMhw2.Checked = epgProtocols.HasFlag(TunerEpgGrabberProtocol.MediaHighway2);
+      checkBoxTunerEpgGrabberProtocolMultiChoice.Checked = epgProtocols.HasFlag(TunerEpgGrabberProtocol.MultiChoice);
+      checkBoxTunerEpgGrabberProtocolOpenTv.Checked = epgProtocols.HasFlag(TunerEpgGrabberProtocol.OpenTv);
+      checkBoxTunerEpgGrabberProtocolPremiere.Checked = epgProtocols.HasFlag(TunerEpgGrabberProtocol.Premiere);
+      checkBoxTunerEpgGrabberProtocolScte.Checked = epgProtocols.HasFlag(TunerEpgGrabberProtocol.ScteAeit);
+      checkBoxTunerEpgGrabberProtocolViasatSweden.Checked = epgProtocols.HasFlag(TunerEpgGrabberProtocol.ViasatSweden);
       DebugTunerEpgGrabberSettings();
 
-      // Guide categories.
+      // guide categories
       this.LogDebug("  guide categories...");
       _handlingGuideCategoryIsMovieChange = true;
       IList<GuideCategory> guideCategories = ServiceAgents.Instance.ProgramCategoryServiceAgent.ListAllGuideCategories();
@@ -287,39 +277,82 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     {
       this.LogDebug("EPG: deactivating");
 
+      // general
       List<string> preferredLanguageCodes = new List<string>();
       foreach (ListViewItem item in listViewLanguagesPreferred.Items)
       {
         preferredLanguageCodes.Add(item.SubItems[1].Text);
       }
-      _previousPreferredLanguages = string.Join(",", preferredLanguageCodes);
-      this.LogDebug("  preferred languages = {0}", _previousPreferredLanguages);
+      this.LogDebug("  languages              = [{0}]", string.Join(", ", preferredLanguageCodes));
+      _previousPreferredLanguages = string.Join("|", preferredLanguageCodes);
       ServiceAgents.Instance.SettingServiceAgent.SaveValue("epgPreferredLanguages", _previousPreferredLanguages);
+      HashSet<string> systems = new HashSet<string>(Regex.Split(textBoxPreferredClassificationSystems.Text.Trim(), @"\s*,\s*"));
+      this.LogDebug("  classification systems = [{0}]", string.Join(", ", systems));
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue("epgPreferredClassificationSystems", string.Join("|", systems));
+      systems = new HashSet<string>(Regex.Split(textBoxPreferredRatingSystems.Text.Trim(), @"\s*,\s*"));
+      this.LogDebug("  rating systems         = [{0}]", string.Join(", ", systems));
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue("epgPreferredRatingSystems", string.Join("|", systems));
 
-      this.LogDebug("  preferred classification systems = {0}", textBoxPreferredClassificationSystems.Text);
-      ServiceAgents.Instance.SettingServiceAgent.SaveValue("epgPreferredClassificationSystems", textBoxPreferredClassificationSystems.Text);
-      this.LogDebug("  preferred rating systems = {0}", textBoxPreferredRatingSystems.Text);
-      ServiceAgents.Instance.SettingServiceAgent.SaveValue("epgPreferredRatingSystems", textBoxPreferredRatingSystems.Text);
-
+      // tuner EPG grabber
       ServiceAgents.Instance.SettingServiceAgent.SaveValue("tunerEpgGrabberTimeShiftingRecordingEnabled", checkBoxTunerEpgGrabberTimeShiftingRecordingEnable.Checked);
-      ServiceAgents.Instance.SettingServiceAgent.SaveValue("tunerEpgGrabberTimeShiftingRecordingTimeOut", (int)numericUpDownTunerEpgGrabberTimeShiftingRecordingTimeOut.Value);
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue("tunerEpgGrabberTimeShiftingRecordingTimeLimit", (int)numericUpDownTunerEpgGrabberTimeShiftingRecordingTimeLimit.Value);
       ServiceAgents.Instance.SettingServiceAgent.SaveValue("tunerEpgGrabberIdleEnabled", checkBoxTunerEpgGrabberIdleEnable.Checked);
-      ServiceAgents.Instance.SettingServiceAgent.SaveValue("tunerEpgGrabberIdleTimeOut", (int)numericUpDownTunerEpgGrabberIdleTimeOut.Value);
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue("tunerEpgGrabberIdleTimeLimit", (int)numericUpDownTunerEpgGrabberIdleTimeLimit.Value);
       ServiceAgents.Instance.SettingServiceAgent.SaveValue("tunerEpgGrabberIdleRefresh", (int)numericUpDownTunerEpgGrabberIdleRefresh.Value);
-      ServiceAgents.Instance.SettingServiceAgent.SaveValue("tunerEpgGrabberProtocolAtsc", checkBoxTunerEpgGrabberProtocolAtsc.Checked);
-      ServiceAgents.Instance.SettingServiceAgent.SaveValue("tunerEpgGrabberProtocolBellExpressVu", checkBoxTunerEpgGrabberProtocolBellExpressVu.Checked);
-      ServiceAgents.Instance.SettingServiceAgent.SaveValue("tunerEpgGrabberProtocolDishNetwork", checkBoxTunerEpgGrabberProtocolDishNetwork.Checked);
-      ServiceAgents.Instance.SettingServiceAgent.SaveValue("tunerEpgGrabberProtocolDvb", checkBoxTunerEpgGrabberProtocolDvb.Checked);
-      ServiceAgents.Instance.SettingServiceAgent.SaveValue("tunerEpgGrabberProtocolFreesat", checkBoxTunerEpgGrabberProtocolFreesat.Checked);
-      ServiceAgents.Instance.SettingServiceAgent.SaveValue("tunerEpgGrabberProtocolMhw1", checkBoxTunerEpgGrabberProtocolMhw1.Checked);
-      ServiceAgents.Instance.SettingServiceAgent.SaveValue("tunerEpgGrabberProtocolMhw2", checkBoxTunerEpgGrabberProtocolMhw2.Checked);
-      ServiceAgents.Instance.SettingServiceAgent.SaveValue("tunerEpgGrabberProtocolMultiChoice", checkBoxTunerEpgGrabberProtocolMultiChoice.Checked);
-      ServiceAgents.Instance.SettingServiceAgent.SaveValue("tunerEpgGrabberProtocolOpenTv", checkBoxTunerEpgGrabberProtocolOpenTv.Checked);
-      ServiceAgents.Instance.SettingServiceAgent.SaveValue("tunerEpgGrabberProtocolPremiere", checkBoxTunerEpgGrabberProtocolPremiere.Checked);
-      ServiceAgents.Instance.SettingServiceAgent.SaveValue("tunerEpgGrabberProtocolScte", checkBoxTunerEpgGrabberProtocolScte.Checked);
-      ServiceAgents.Instance.SettingServiceAgent.SaveValue("tunerEpgGrabberProtocolViasatSweden", checkBoxTunerEpgGrabberProtocolViasatSweden.Checked);
+
+      TunerEpgGrabberProtocol epgProtocols = TunerEpgGrabberProtocol.None;
+      if (checkBoxTunerEpgGrabberProtocolAtsc.Checked)
+      {
+        epgProtocols |= TunerEpgGrabberProtocol.AtscEit;
+      }
+      if (checkBoxTunerEpgGrabberProtocolBellTv.Checked)
+      {
+        epgProtocols |= TunerEpgGrabberProtocol.BellTv;
+      }
+      if (checkBoxTunerEpgGrabberProtocolDishNetwork.Checked)
+      {
+        epgProtocols |= TunerEpgGrabberProtocol.DishNetwork;
+      }
+      if (checkBoxTunerEpgGrabberProtocolDvb.Checked)
+      {
+        epgProtocols |= TunerEpgGrabberProtocol.DvbEit;
+      }
+      if (checkBoxTunerEpgGrabberProtocolFreesat.Checked)
+      {
+        epgProtocols |= TunerEpgGrabberProtocol.Freesat;
+      }
+      if (checkBoxTunerEpgGrabberProtocolMhw1.Checked)
+      {
+        epgProtocols |= TunerEpgGrabberProtocol.MediaHighway1;
+      }
+      if (checkBoxTunerEpgGrabberProtocolMhw2.Checked)
+      {
+        epgProtocols |= TunerEpgGrabberProtocol.MediaHighway2;
+      }
+      if (checkBoxTunerEpgGrabberProtocolMultiChoice.Checked)
+      {
+        epgProtocols |= TunerEpgGrabberProtocol.MultiChoice;
+      }
+      if (checkBoxTunerEpgGrabberProtocolOpenTv.Checked)
+      {
+        epgProtocols |= TunerEpgGrabberProtocol.OpenTv;
+      }
+      if (checkBoxTunerEpgGrabberProtocolPremiere.Checked)
+      {
+        epgProtocols |= TunerEpgGrabberProtocol.Premiere;
+      }
+      if (checkBoxTunerEpgGrabberProtocolScte.Checked)
+      {
+        epgProtocols |= TunerEpgGrabberProtocol.ScteAeit;
+      }
+      if (checkBoxTunerEpgGrabberProtocolViasatSweden.Checked)
+      {
+        epgProtocols |= TunerEpgGrabberProtocol.ViasatSweden;
+      }
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue("tunerEpgGrabberProtocols", (int)epgProtocols);
       DebugTunerEpgGrabberSettings();
 
+      // guide categories
       foreach (DataGridViewRow gridRow in dataGridViewGuideCategories.Rows)
       {
         bool save = false;
@@ -392,24 +425,24 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     private void DebugTunerEpgGrabberSettings()
     {
       this.LogDebug("  tuner EPG grabber...");
-      this.LogDebug("    TS/rec.?          = {0}", checkBoxTunerEpgGrabberTimeShiftingRecordingEnable.Checked);
-      this.LogDebug("      time-out        = {0} seconds", numericUpDownTunerEpgGrabberTimeShiftingRecordingTimeOut.Value);
-      this.LogDebug("    idle?             = {0}", checkBoxTunerEpgGrabberIdleEnable.Checked);
-      this.LogDebug("      time-out        = {0} seconds", numericUpDownTunerEpgGrabberIdleTimeOut.Value);
-      this.LogDebug("      refresh         = {0} minutes", numericUpDownTunerEpgGrabberIdleRefresh.Value);
+      this.LogDebug("    TS/rec.?             = {0}", checkBoxTunerEpgGrabberTimeShiftingRecordingEnable.Checked);
+      this.LogDebug("      time limit         = {0} seconds", numericUpDownTunerEpgGrabberTimeShiftingRecordingTimeLimit.Value);
+      this.LogDebug("    idle?                = {0}", checkBoxTunerEpgGrabberIdleEnable.Checked);
+      this.LogDebug("      time limit         = {0} seconds", numericUpDownTunerEpgGrabberIdleTimeLimit.Value);
+      this.LogDebug("      refresh            = {0} minutes", numericUpDownTunerEpgGrabberIdleRefresh.Value);
       this.LogDebug("    protocols...");
-      this.LogDebug("      ATSC            = {0}", checkBoxTunerEpgGrabberProtocolAtsc.Checked);
-      this.LogDebug("      Bell ExpressVu  = {0}", checkBoxTunerEpgGrabberProtocolBellExpressVu.Checked);
-      this.LogDebug("      Dish Network    = {0}", checkBoxTunerEpgGrabberProtocolDishNetwork.Checked);
-      this.LogDebug("      DVB             = {0}", checkBoxTunerEpgGrabberProtocolDvb.Checked);
-      this.LogDebug("      Freesat         = {0}", checkBoxTunerEpgGrabberProtocolFreesat.Checked);
-      this.LogDebug("      MediaHighway 1  = {0}", checkBoxTunerEpgGrabberProtocolMhw1.Checked);
-      this.LogDebug("      MediaHighway 2  = {0}", checkBoxTunerEpgGrabberProtocolMhw2.Checked);
-      this.LogDebug("      MultiChoice     = {0}", checkBoxTunerEpgGrabberProtocolMultiChoice.Checked);
-      this.LogDebug("      OpenTV          = {0}", checkBoxTunerEpgGrabberProtocolOpenTv.Checked);
-      this.LogDebug("      Premiere        = {0}", checkBoxTunerEpgGrabberProtocolPremiere.Checked);
-      this.LogDebug("      SCTE            = {0}", checkBoxTunerEpgGrabberProtocolScte.Checked);
-      this.LogDebug("      Viasat Sweden   = {0}", checkBoxTunerEpgGrabberProtocolViasatSweden.Checked);
+      this.LogDebug("      ATSC               = {0}", checkBoxTunerEpgGrabberProtocolAtsc.Checked);
+      this.LogDebug("      Bell TV            = {0}", checkBoxTunerEpgGrabberProtocolBellTv.Checked);
+      this.LogDebug("      Dish Network       = {0}", checkBoxTunerEpgGrabberProtocolDishNetwork.Checked);
+      this.LogDebug("      DVB                = {0}", checkBoxTunerEpgGrabberProtocolDvb.Checked);
+      this.LogDebug("      Freesat            = {0}", checkBoxTunerEpgGrabberProtocolFreesat.Checked);
+      this.LogDebug("      MediaHighway 1     = {0}", checkBoxTunerEpgGrabberProtocolMhw1.Checked);
+      this.LogDebug("      MediaHighway 2     = {0}", checkBoxTunerEpgGrabberProtocolMhw2.Checked);
+      this.LogDebug("      MultiChoice        = {0}", checkBoxTunerEpgGrabberProtocolMultiChoice.Checked);
+      this.LogDebug("      OpenTV             = {0}", checkBoxTunerEpgGrabberProtocolOpenTv.Checked);
+      this.LogDebug("      Premiere           = {0}", checkBoxTunerEpgGrabberProtocolPremiere.Checked);
+      this.LogDebug("      SCTE               = {0}", checkBoxTunerEpgGrabberProtocolScte.Checked);
+      this.LogDebug("      Viasat Sweden      = {0}", checkBoxTunerEpgGrabberProtocolViasatSweden.Checked);
     }
 
     private void buttonDeleteAll_Click(object sender, System.EventArgs e)

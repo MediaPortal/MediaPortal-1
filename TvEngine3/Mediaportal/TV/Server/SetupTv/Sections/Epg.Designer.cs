@@ -31,15 +31,15 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     private void InitializeComponent()
     {
       this.listViewProgramCategoriesUnmapped = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPListView();
-      this.columnHeaderUnmappedProgramCategories = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader();
+      this.columnHeaderUnmappedProgramCategories = ((Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader)(new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader()));
       this.listViewProgramCategoriesMapped = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPListView();
-      this.columnHeaderMappedProgramCategories = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader();
+      this.columnHeaderMappedProgramCategories = ((Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader)(new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader()));
       this.listViewLanguagesPreferred = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPListView();
-      this.columnHeaderLanguagesPreferredName = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader();
-      this.columnHeaderLanguagesPreferredId = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader();
+      this.columnHeaderLanguagesPreferredName = ((Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader)(new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader()));
+      this.columnHeaderLanguagesPreferredId = ((Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader)(new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader()));
       this.listViewLanguagesAvailable = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPListView();
-      this.columnHeaderLanguagesAvailableName = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader();
-      this.columnHeaderLanguagesAvailableId = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader();
+      this.columnHeaderLanguagesAvailableName = ((Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader)(new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader()));
+      this.columnHeaderLanguagesAvailableId = ((Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader)(new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader()));
       this.textBoxPreferredRatingSystems = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPTextBox();
       this.textBoxPreferredClassificationSystems = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPTextBox();
       this.labelPreferredRatingSystems = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
@@ -70,18 +70,18 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.checkBoxTunerEpgGrabberProtocolMhw2 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPCheckBox();
       this.checkBoxTunerEpgGrabberProtocolDishNetwork = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPCheckBox();
       this.checkBoxTunerEpgGrabberProtocolAtsc = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPCheckBox();
-      this.checkBoxTunerEpgGrabberProtocolBellExpressVu = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPCheckBox();
+      this.checkBoxTunerEpgGrabberProtocolBellTv = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPCheckBox();
       this.checkBoxTunerEpgGrabberProtocolFreesat = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPCheckBox();
       this.checkBoxTunerEpgGrabberProtocolScte = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPCheckBox();
       this.labelTunerEpgGrabberIdleRefresh = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.buttonTunerEpgGrabberRefreshNow = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
-      this.numericUpDownTunerEpgGrabberTimeShiftingRecordingTimeOut = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPNumericUpDown();
-      this.labelTunerEpgGrabberTimeShiftingRecordingTimeOutUnit = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
-      this.numericUpDownTunerEpgGrabberIdleTimeOut = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPNumericUpDown();
-      this.labelTunerEpgGrabberTimeShiftingRecordingTimeOut = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
-      this.labelTunerEpgGrabberIdleTimeOutUnit = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.numericUpDownTunerEpgGrabberTimeShiftingRecordingTimeLimit = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPNumericUpDown();
+      this.labelTunerEpgGrabberTimeShiftingRecordingTimeLimitUnit = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.numericUpDownTunerEpgGrabberIdleTimeLimit = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPNumericUpDown();
+      this.labelTunerEpgGrabberTimeShiftingRecordingTimeLimit = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.labelTunerEpgGrabberIdleTimeLimitUnit = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.checkBoxTunerEpgGrabberTimeShiftingRecordingEnable = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPCheckBox();
-      this.labelTunerEpgGrabberIdleTimeOut = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.labelTunerEpgGrabberIdleTimeLimit = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.checkBoxTunerEpgGrabberIdleEnable = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPCheckBox();
       this.numericUpDownTunerEpgGrabberIdleRefresh = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPNumericUpDown();
       this.labelTunerEpgGrabberIdleRefreshUnit = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
@@ -93,8 +93,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.tabPageGeneral.SuspendLayout();
       this.tabPageTunerGrabber.SuspendLayout();
       this.groupBoxTunerEpgGrabberProtocols.SuspendLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTunerEpgGrabberTimeShiftingRecordingTimeOut)).BeginInit();
-      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTunerEpgGrabberIdleTimeOut)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTunerEpgGrabberTimeShiftingRecordingTimeLimit)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTunerEpgGrabberIdleTimeLimit)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTunerEpgGrabberIdleRefresh)).BeginInit();
       this.tabPageGuideCategories.SuspendLayout();
       this.SuspendLayout();
@@ -465,13 +465,13 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.tabPageTunerGrabber.Controls.Add(this.groupBoxTunerEpgGrabberProtocols);
       this.tabPageTunerGrabber.Controls.Add(this.labelTunerEpgGrabberIdleRefresh);
       this.tabPageTunerGrabber.Controls.Add(this.buttonTunerEpgGrabberRefreshNow);
-      this.tabPageTunerGrabber.Controls.Add(this.numericUpDownTunerEpgGrabberTimeShiftingRecordingTimeOut);
-      this.tabPageTunerGrabber.Controls.Add(this.labelTunerEpgGrabberTimeShiftingRecordingTimeOutUnit);
-      this.tabPageTunerGrabber.Controls.Add(this.numericUpDownTunerEpgGrabberIdleTimeOut);
-      this.tabPageTunerGrabber.Controls.Add(this.labelTunerEpgGrabberTimeShiftingRecordingTimeOut);
-      this.tabPageTunerGrabber.Controls.Add(this.labelTunerEpgGrabberIdleTimeOutUnit);
+      this.tabPageTunerGrabber.Controls.Add(this.numericUpDownTunerEpgGrabberTimeShiftingRecordingTimeLimit);
+      this.tabPageTunerGrabber.Controls.Add(this.labelTunerEpgGrabberTimeShiftingRecordingTimeLimitUnit);
+      this.tabPageTunerGrabber.Controls.Add(this.numericUpDownTunerEpgGrabberIdleTimeLimit);
+      this.tabPageTunerGrabber.Controls.Add(this.labelTunerEpgGrabberTimeShiftingRecordingTimeLimit);
+      this.tabPageTunerGrabber.Controls.Add(this.labelTunerEpgGrabberIdleTimeLimitUnit);
       this.tabPageTunerGrabber.Controls.Add(this.checkBoxTunerEpgGrabberTimeShiftingRecordingEnable);
-      this.tabPageTunerGrabber.Controls.Add(this.labelTunerEpgGrabberIdleTimeOut);
+      this.tabPageTunerGrabber.Controls.Add(this.labelTunerEpgGrabberIdleTimeLimit);
       this.tabPageTunerGrabber.Controls.Add(this.checkBoxTunerEpgGrabberIdleEnable);
       this.tabPageTunerGrabber.Controls.Add(this.numericUpDownTunerEpgGrabberIdleRefresh);
       this.tabPageTunerGrabber.Controls.Add(this.labelTunerEpgGrabberIdleRefreshUnit);
@@ -493,7 +493,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.groupBoxTunerEpgGrabberProtocols.Controls.Add(this.checkBoxTunerEpgGrabberProtocolMhw2);
       this.groupBoxTunerEpgGrabberProtocols.Controls.Add(this.checkBoxTunerEpgGrabberProtocolDishNetwork);
       this.groupBoxTunerEpgGrabberProtocols.Controls.Add(this.checkBoxTunerEpgGrabberProtocolAtsc);
-      this.groupBoxTunerEpgGrabberProtocols.Controls.Add(this.checkBoxTunerEpgGrabberProtocolBellExpressVu);
+      this.groupBoxTunerEpgGrabberProtocols.Controls.Add(this.checkBoxTunerEpgGrabberProtocolBellTv);
       this.groupBoxTunerEpgGrabberProtocols.Controls.Add(this.checkBoxTunerEpgGrabberProtocolFreesat);
       this.groupBoxTunerEpgGrabberProtocols.Controls.Add(this.checkBoxTunerEpgGrabberProtocolScte);
       this.groupBoxTunerEpgGrabberProtocols.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
@@ -532,9 +532,9 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.checkBoxTunerEpgGrabberProtocolOpenTv.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.checkBoxTunerEpgGrabberProtocolOpenTv.Location = new System.Drawing.Point(6, 42);
       this.checkBoxTunerEpgGrabberProtocolOpenTv.Name = "checkBoxTunerEpgGrabberProtocolOpenTv";
-      this.checkBoxTunerEpgGrabberProtocolOpenTv.Size = new System.Drawing.Size(167, 17);
+      this.checkBoxTunerEpgGrabberProtocolOpenTv.Size = new System.Drawing.Size(146, 17);
       this.checkBoxTunerEpgGrabberProtocolOpenTv.TabIndex = 1;
-      this.checkBoxTunerEpgGrabberProtocolOpenTv.Text = "OpenTV [Sky AU, IT, NZ, UK]";
+      this.checkBoxTunerEpgGrabberProtocolOpenTv.Text = "OpenTV [AU, IT, NZ, UK]";
       this.checkBoxTunerEpgGrabberProtocolOpenTv.UseVisualStyleBackColor = true;
       // 
       // checkBoxTunerEpgGrabberProtocolViasatSweden
@@ -603,16 +603,16 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.checkBoxTunerEpgGrabberProtocolAtsc.Text = "ATSC [CA, US]";
       this.checkBoxTunerEpgGrabberProtocolAtsc.UseVisualStyleBackColor = true;
       // 
-      // checkBoxTunerEpgGrabberProtocolBellExpressVu
+      // checkBoxTunerEpgGrabberProtocolBellTv
       // 
-      this.checkBoxTunerEpgGrabberProtocolBellExpressVu.AutoSize = true;
-      this.checkBoxTunerEpgGrabberProtocolBellExpressVu.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.checkBoxTunerEpgGrabberProtocolBellExpressVu.Location = new System.Drawing.Point(337, 65);
-      this.checkBoxTunerEpgGrabberProtocolBellExpressVu.Name = "checkBoxTunerEpgGrabberProtocolBellExpressVu";
-      this.checkBoxTunerEpgGrabberProtocolBellExpressVu.Size = new System.Drawing.Size(81, 17);
-      this.checkBoxTunerEpgGrabberProtocolBellExpressVu.TabIndex = 10;
-      this.checkBoxTunerEpgGrabberProtocolBellExpressVu.Text = "Bell TV [CA]";
-      this.checkBoxTunerEpgGrabberProtocolBellExpressVu.UseVisualStyleBackColor = true;
+      this.checkBoxTunerEpgGrabberProtocolBellTv.AutoSize = true;
+      this.checkBoxTunerEpgGrabberProtocolBellTv.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.checkBoxTunerEpgGrabberProtocolBellTv.Location = new System.Drawing.Point(337, 65);
+      this.checkBoxTunerEpgGrabberProtocolBellTv.Name = "checkBoxTunerEpgGrabberProtocolBellTv";
+      this.checkBoxTunerEpgGrabberProtocolBellTv.Size = new System.Drawing.Size(81, 17);
+      this.checkBoxTunerEpgGrabberProtocolBellTv.TabIndex = 10;
+      this.checkBoxTunerEpgGrabberProtocolBellTv.Text = "Bell TV [CA]";
+      this.checkBoxTunerEpgGrabberProtocolBellTv.UseVisualStyleBackColor = true;
       // 
       // checkBoxTunerEpgGrabberProtocolFreesat
       // 
@@ -654,78 +654,78 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.buttonTunerEpgGrabberRefreshNow.Text = "&Refresh Now";
       this.buttonTunerEpgGrabberRefreshNow.UseVisualStyleBackColor = true;
       // 
-      // numericUpDownTunerEpgGrabberTimeShiftingRecordingTimeOut
+      // numericUpDownTunerEpgGrabberTimeShiftingRecordingTimeLimit
       // 
-      this.numericUpDownTunerEpgGrabberTimeShiftingRecordingTimeOut.Location = new System.Drawing.Point(137, 29);
-      this.numericUpDownTunerEpgGrabberTimeShiftingRecordingTimeOut.Maximum = new decimal(new int[] {
+      this.numericUpDownTunerEpgGrabberTimeShiftingRecordingTimeLimit.Location = new System.Drawing.Point(137, 29);
+      this.numericUpDownTunerEpgGrabberTimeShiftingRecordingTimeLimit.Maximum = new decimal(new int[] {
             1800,
             0,
             0,
             0});
-      this.numericUpDownTunerEpgGrabberTimeShiftingRecordingTimeOut.Minimum = new decimal(new int[] {
+      this.numericUpDownTunerEpgGrabberTimeShiftingRecordingTimeLimit.Minimum = new decimal(new int[] {
             1,
             0,
             0,
             0});
-      this.numericUpDownTunerEpgGrabberTimeShiftingRecordingTimeOut.Name = "numericUpDownTunerEpgGrabberTimeShiftingRecordingTimeOut";
-      this.numericUpDownTunerEpgGrabberTimeShiftingRecordingTimeOut.Size = new System.Drawing.Size(55, 20);
-      this.numericUpDownTunerEpgGrabberTimeShiftingRecordingTimeOut.TabIndex = 2;
-      this.numericUpDownTunerEpgGrabberTimeShiftingRecordingTimeOut.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-      this.numericUpDownTunerEpgGrabberTimeShiftingRecordingTimeOut.Value = new decimal(new int[] {
+      this.numericUpDownTunerEpgGrabberTimeShiftingRecordingTimeLimit.Name = "numericUpDownTunerEpgGrabberTimeShiftingRecordingTimeLimit";
+      this.numericUpDownTunerEpgGrabberTimeShiftingRecordingTimeLimit.Size = new System.Drawing.Size(55, 20);
+      this.numericUpDownTunerEpgGrabberTimeShiftingRecordingTimeLimit.TabIndex = 2;
+      this.numericUpDownTunerEpgGrabberTimeShiftingRecordingTimeLimit.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+      this.numericUpDownTunerEpgGrabberTimeShiftingRecordingTimeLimit.Value = new decimal(new int[] {
             30,
             0,
             0,
             0});
       // 
-      // labelTunerEpgGrabberTimeShiftingRecordingTimeOutUnit
+      // labelTunerEpgGrabberTimeShiftingRecordingTimeLimitUnit
       // 
-      this.labelTunerEpgGrabberTimeShiftingRecordingTimeOutUnit.AutoSize = true;
-      this.labelTunerEpgGrabberTimeShiftingRecordingTimeOutUnit.Location = new System.Drawing.Point(193, 31);
-      this.labelTunerEpgGrabberTimeShiftingRecordingTimeOutUnit.Name = "labelTunerEpgGrabberTimeShiftingRecordingTimeOutUnit";
-      this.labelTunerEpgGrabberTimeShiftingRecordingTimeOutUnit.Size = new System.Drawing.Size(50, 13);
-      this.labelTunerEpgGrabberTimeShiftingRecordingTimeOutUnit.TabIndex = 3;
-      this.labelTunerEpgGrabberTimeShiftingRecordingTimeOutUnit.Text = "seconds.";
+      this.labelTunerEpgGrabberTimeShiftingRecordingTimeLimitUnit.AutoSize = true;
+      this.labelTunerEpgGrabberTimeShiftingRecordingTimeLimitUnit.Location = new System.Drawing.Point(193, 31);
+      this.labelTunerEpgGrabberTimeShiftingRecordingTimeLimitUnit.Name = "labelTunerEpgGrabberTimeShiftingRecordingTimeLimitUnit";
+      this.labelTunerEpgGrabberTimeShiftingRecordingTimeLimitUnit.Size = new System.Drawing.Size(50, 13);
+      this.labelTunerEpgGrabberTimeShiftingRecordingTimeLimitUnit.TabIndex = 3;
+      this.labelTunerEpgGrabberTimeShiftingRecordingTimeLimitUnit.Text = "seconds.";
       // 
-      // numericUpDownTunerEpgGrabberIdleTimeOut
+      // numericUpDownTunerEpgGrabberIdleTimeLimit
       // 
-      this.numericUpDownTunerEpgGrabberIdleTimeOut.Location = new System.Drawing.Point(137, 88);
-      this.numericUpDownTunerEpgGrabberIdleTimeOut.Maximum = new decimal(new int[] {
+      this.numericUpDownTunerEpgGrabberIdleTimeLimit.Location = new System.Drawing.Point(137, 88);
+      this.numericUpDownTunerEpgGrabberIdleTimeLimit.Maximum = new decimal(new int[] {
             1800,
             0,
             0,
             0});
-      this.numericUpDownTunerEpgGrabberIdleTimeOut.Minimum = new decimal(new int[] {
+      this.numericUpDownTunerEpgGrabberIdleTimeLimit.Minimum = new decimal(new int[] {
             1,
             0,
             0,
             0});
-      this.numericUpDownTunerEpgGrabberIdleTimeOut.Name = "numericUpDownTunerEpgGrabberIdleTimeOut";
-      this.numericUpDownTunerEpgGrabberIdleTimeOut.Size = new System.Drawing.Size(55, 20);
-      this.numericUpDownTunerEpgGrabberIdleTimeOut.TabIndex = 6;
-      this.numericUpDownTunerEpgGrabberIdleTimeOut.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-      this.numericUpDownTunerEpgGrabberIdleTimeOut.Value = new decimal(new int[] {
+      this.numericUpDownTunerEpgGrabberIdleTimeLimit.Name = "numericUpDownTunerEpgGrabberIdleTimeLimit";
+      this.numericUpDownTunerEpgGrabberIdleTimeLimit.Size = new System.Drawing.Size(55, 20);
+      this.numericUpDownTunerEpgGrabberIdleTimeLimit.TabIndex = 6;
+      this.numericUpDownTunerEpgGrabberIdleTimeLimit.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+      this.numericUpDownTunerEpgGrabberIdleTimeLimit.Value = new decimal(new int[] {
             600,
             0,
             0,
             0});
       // 
-      // labelTunerEpgGrabberTimeShiftingRecordingTimeOut
+      // labelTunerEpgGrabberTimeShiftingRecordingTimeLimit
       // 
-      this.labelTunerEpgGrabberTimeShiftingRecordingTimeOut.AutoSize = true;
-      this.labelTunerEpgGrabberTimeShiftingRecordingTimeOut.Location = new System.Drawing.Point(24, 31);
-      this.labelTunerEpgGrabberTimeShiftingRecordingTimeOut.Name = "labelTunerEpgGrabberTimeShiftingRecordingTimeOut";
-      this.labelTunerEpgGrabberTimeShiftingRecordingTimeOut.Size = new System.Drawing.Size(112, 13);
-      this.labelTunerEpgGrabberTimeShiftingRecordingTimeOut.TabIndex = 1;
-      this.labelTunerEpgGrabberTimeShiftingRecordingTimeOut.Text = "Give up grabbing after";
+      this.labelTunerEpgGrabberTimeShiftingRecordingTimeLimit.AutoSize = true;
+      this.labelTunerEpgGrabberTimeShiftingRecordingTimeLimit.Location = new System.Drawing.Point(24, 31);
+      this.labelTunerEpgGrabberTimeShiftingRecordingTimeLimit.Name = "labelTunerEpgGrabberTimeShiftingRecordingTimeLimit";
+      this.labelTunerEpgGrabberTimeShiftingRecordingTimeLimit.Size = new System.Drawing.Size(112, 13);
+      this.labelTunerEpgGrabberTimeShiftingRecordingTimeLimit.TabIndex = 1;
+      this.labelTunerEpgGrabberTimeShiftingRecordingTimeLimit.Text = "Give up grabbing after";
       // 
-      // labelTunerEpgGrabberIdleTimeOutUnit
+      // labelTunerEpgGrabberIdleTimeLimitUnit
       // 
-      this.labelTunerEpgGrabberIdleTimeOutUnit.AutoSize = true;
-      this.labelTunerEpgGrabberIdleTimeOutUnit.Location = new System.Drawing.Point(193, 90);
-      this.labelTunerEpgGrabberIdleTimeOutUnit.Name = "labelTunerEpgGrabberIdleTimeOutUnit";
-      this.labelTunerEpgGrabberIdleTimeOutUnit.Size = new System.Drawing.Size(50, 13);
-      this.labelTunerEpgGrabberIdleTimeOutUnit.TabIndex = 7;
-      this.labelTunerEpgGrabberIdleTimeOutUnit.Text = "seconds.";
+      this.labelTunerEpgGrabberIdleTimeLimitUnit.AutoSize = true;
+      this.labelTunerEpgGrabberIdleTimeLimitUnit.Location = new System.Drawing.Point(193, 90);
+      this.labelTunerEpgGrabberIdleTimeLimitUnit.Name = "labelTunerEpgGrabberIdleTimeLimitUnit";
+      this.labelTunerEpgGrabberIdleTimeLimitUnit.Size = new System.Drawing.Size(50, 13);
+      this.labelTunerEpgGrabberIdleTimeLimitUnit.TabIndex = 7;
+      this.labelTunerEpgGrabberIdleTimeLimitUnit.Text = "seconds.";
       // 
       // checkBoxTunerEpgGrabberTimeShiftingRecordingEnable
       // 
@@ -738,14 +738,14 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.checkBoxTunerEpgGrabberTimeShiftingRecordingEnable.Text = "Enable grabbing while time-shifting or recording.";
       this.checkBoxTunerEpgGrabberTimeShiftingRecordingEnable.UseVisualStyleBackColor = true;
       // 
-      // labelTunerEpgGrabberIdleTimeOut
+      // labelTunerEpgGrabberIdleTimeLimit
       // 
-      this.labelTunerEpgGrabberIdleTimeOut.AutoSize = true;
-      this.labelTunerEpgGrabberIdleTimeOut.Location = new System.Drawing.Point(24, 90);
-      this.labelTunerEpgGrabberIdleTimeOut.Name = "labelTunerEpgGrabberIdleTimeOut";
-      this.labelTunerEpgGrabberIdleTimeOut.Size = new System.Drawing.Size(112, 13);
-      this.labelTunerEpgGrabberIdleTimeOut.TabIndex = 5;
-      this.labelTunerEpgGrabberIdleTimeOut.Text = "Give up grabbing after";
+      this.labelTunerEpgGrabberIdleTimeLimit.AutoSize = true;
+      this.labelTunerEpgGrabberIdleTimeLimit.Location = new System.Drawing.Point(24, 90);
+      this.labelTunerEpgGrabberIdleTimeLimit.Name = "labelTunerEpgGrabberIdleTimeLimit";
+      this.labelTunerEpgGrabberIdleTimeLimit.Size = new System.Drawing.Size(112, 13);
+      this.labelTunerEpgGrabberIdleTimeLimit.TabIndex = 5;
+      this.labelTunerEpgGrabberIdleTimeLimit.Text = "Give up grabbing after";
       // 
       // checkBoxTunerEpgGrabberIdleEnable
       // 
@@ -820,8 +820,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.tabPageTunerGrabber.PerformLayout();
       this.groupBoxTunerEpgGrabberProtocols.ResumeLayout(false);
       this.groupBoxTunerEpgGrabberProtocols.PerformLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTunerEpgGrabberTimeShiftingRecordingTimeOut)).EndInit();
-      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTunerEpgGrabberIdleTimeOut)).EndInit();
+      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTunerEpgGrabberTimeShiftingRecordingTimeLimit)).EndInit();
+      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTunerEpgGrabberIdleTimeLimit)).EndInit();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTunerEpgGrabberIdleRefresh)).EndInit();
       this.tabPageGuideCategories.ResumeLayout(false);
       this.ResumeLayout(false);
@@ -862,9 +862,9 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     private MPLabel labelPreferredClassificationSystems;
     private MPTabPage tabPageTunerGrabber;
     private MPButton buttonTunerEpgGrabberRefreshNow;
-    private MPNumericUpDown numericUpDownTunerEpgGrabberIdleTimeOut;
-    private MPLabel labelTunerEpgGrabberIdleTimeOutUnit;
-    private MPLabel labelTunerEpgGrabberIdleTimeOut;
+    private MPNumericUpDown numericUpDownTunerEpgGrabberIdleTimeLimit;
+    private MPLabel labelTunerEpgGrabberIdleTimeLimitUnit;
+    private MPLabel labelTunerEpgGrabberIdleTimeLimit;
     private MPNumericUpDown numericUpDownTunerEpgGrabberIdleRefresh;
     private MPCheckBox checkBoxTunerEpgGrabberTimeShiftingRecordingEnable;
     private MPCheckBox checkBoxTunerEpgGrabberIdleEnable;
@@ -877,11 +877,11 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     private MPCheckBox checkBoxTunerEpgGrabberProtocolFreesat;
     private MPCheckBox checkBoxTunerEpgGrabberProtocolOpenTv;
     private MPLabel labelTunerEpgGrabberIdleRefresh;
-    private MPNumericUpDown numericUpDownTunerEpgGrabberTimeShiftingRecordingTimeOut;
-    private MPLabel labelTunerEpgGrabberTimeShiftingRecordingTimeOutUnit;
-    private MPLabel labelTunerEpgGrabberTimeShiftingRecordingTimeOut;
+    private MPNumericUpDown numericUpDownTunerEpgGrabberTimeShiftingRecordingTimeLimit;
+    private MPLabel labelTunerEpgGrabberTimeShiftingRecordingTimeLimitUnit;
+    private MPLabel labelTunerEpgGrabberTimeShiftingRecordingTimeLimit;
     private MPCheckBox checkBoxTunerEpgGrabberProtocolDishNetwork;
-    private MPCheckBox checkBoxTunerEpgGrabberProtocolBellExpressVu;
+    private MPCheckBox checkBoxTunerEpgGrabberProtocolBellTv;
     private MPCheckBox checkBoxTunerEpgGrabberProtocolMultiChoice;
     private MPCheckBox checkBoxTunerEpgGrabberProtocolViasatSweden;
     private MPGroupBox groupBoxTunerEpgGrabberProtocols;
