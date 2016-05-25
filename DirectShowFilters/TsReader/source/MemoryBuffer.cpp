@@ -116,6 +116,7 @@ DWORD CMemoryBuffer::ReadFromBuffer(BYTE *pbData, long lDataLength)
 
 HRESULT CMemoryBuffer::PutBuffer(BYTE *pbData, long lDataLength)
 {
+  if (!m_bRunning) return S_FALSE;
   if (lDataLength<=0) return E_FAIL;
   if (pbData==NULL) return E_FAIL;
 

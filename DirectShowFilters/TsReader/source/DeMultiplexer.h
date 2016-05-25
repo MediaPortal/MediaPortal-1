@@ -67,7 +67,7 @@ public:
   CDeMultiplexer( CTsDuration& duration,CTsReaderFilter& filter);
   virtual ~CDeMultiplexer(void);
 
-  bool       Start();
+  bool       Start(DWORD timeout);
   void       Flush(bool clearAVready);
   CBuffer*   GetVideo(bool earlyStall);
   CBuffer*   GetAudio(bool earlyStall, CRefTime rtStartTime);

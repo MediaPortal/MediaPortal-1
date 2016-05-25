@@ -1049,10 +1049,17 @@ STDMETHODIMP CTsReaderFilter::Stop()
   //are we using rtsp?
   if (m_fileDuration == NULL)
   {
-    //yep then pause streaming
-    LogDebug("CTsReaderFilter::Stop()   -- pause RTSP");
-    m_buffer.Run(false);
-    PauseRtspStreaming();
+    if (!m_demultiplexer.IsMediaChanging())
+    {
+      //yep then pause streaming
+      LogDebug("CTsReaderFilter::Stop()  -- pause RTSP");
+      m_buffer.Run(false);
+      PauseRtspStreaming();
+    }
+    else
+    {
+      LogDebug("CTsReaderFilter::Stop()  -- Media changing - continue RTSP");
+    }
   }
   
   if (m_bStreamCompensated)
@@ -1159,7 +1166,7 @@ STDMETHODIMP CTsReaderFilter::Pause()
               
               if (m_bTimeShifting && m_bZapinProgress)
               {
-                startTime = DurationUpdate(); //Force start to end of timeshift file when zapping
+                startTime = DurationUpdate(); //Force play to start to end of timeshift file when zapping
               }
               
               m_rtspClient.Play(startTime, ((double)m_duration.Duration().Millisecs())/1000.0);
@@ -1168,9 +1175,9 @@ STDMETHODIMP CTsReaderFilter::Pause()
             }                
             m_bRecording = true; //Force a duration update soon...
           }
-          else
+          else if (!m_demultiplexer.IsMediaChanging())
           {
-            //we are streaming at the moment.
+            //we are streaming at the moment, and media is not changing
             PauseRtspStreaming();
           }
         }
@@ -1233,6 +1240,7 @@ STDMETHODIMP CTsReaderFilter::Load(LPCOLESTR pszFileName,const AM_MEDIA_TYPE *pm
   m_bRecording=false ;
   m_isUNCfile = false;
   m_updateThreadDuration.StopUpdate(false);
+  DWORD startTimeout = 10000;
   m_bOnZap = false;
   m_bZapinProgress = false;
 
@@ -1263,9 +1271,10 @@ STDMETHODIMP CTsReaderFilter::Load(LPCOLESTR pszFileName,const AM_MEDIA_TYPE *pm
     m_tickCount = GET_TIME_NOW();
     m_fileReader = new CMemoryReader(m_buffer);
     m_demultiplexer.SetFileReader(m_fileReader);
-    if (!m_demultiplexer.Start())
+    if (!m_demultiplexer.Start(startTimeout))
     {
       LogDebug("close rtsp:%s", url);
+      m_buffer.Run(false);
       m_rtspClient.Stop();
       return E_FAIL;
     }
@@ -1313,10 +1322,11 @@ STDMETHODIMP CTsReaderFilter::Load(LPCOLESTR pszFileName,const AM_MEDIA_TYPE *pm
 
     //get audio /video pids
     m_demultiplexer.SetFileReader(m_fileReader);
-    if (!m_demultiplexer.Start())
+    if (!m_demultiplexer.Start(startTimeout))
     {
       // stop streaming
       LogDebug("close rtsp:%s", url);
+      m_buffer.Run(false);
       m_rtspClient.Stop();
       return E_FAIL;
     }
@@ -1352,6 +1362,7 @@ STDMETHODIMP CTsReaderFilter::Load(LPCOLESTR pszFileName,const AM_MEDIA_TYPE *pm
       m_bLiveTv = false ;
       m_fileReader = new FileReader();
       m_fileDuration = new FileReader();
+      startTimeout = m_isUNCfile ? 4000 : 2000;
     }
     else
     {
@@ -1372,8 +1383,10 @@ STDMETHODIMP CTsReaderFilter::Load(LPCOLESTR pszFileName,const AM_MEDIA_TYPE *pm
 
     //detect audio/video pids
     m_demultiplexer.SetFileReader(m_fileReader);
-    if (!m_demultiplexer.Start())
+    if (!m_demultiplexer.Start(startTimeout))
     {
+      m_fileReader->CloseFile();
+      m_fileDuration->CloseFile();
       return E_FAIL;
     }
 

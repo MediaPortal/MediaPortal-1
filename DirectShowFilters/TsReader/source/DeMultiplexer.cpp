@@ -1039,7 +1039,7 @@ bool CDeMultiplexer::CheckCompensation(CRefTime rtStartTime)
 /// Starts the demuxer
 /// This method will read the file until we found the pat/sdt
 /// with all the audio/video pids
-bool CDeMultiplexer::Start()
+bool CDeMultiplexer::Start(DWORD timeout)
 {
   //reset some values
   m_bStarting=true ;
@@ -1070,7 +1070,6 @@ bool CDeMultiplexer::Start()
   m_reader->SetStopping(false);    
   CAutoLock lock (&m_filter.m_ReadAheadLock);
   DWORD m_Time = GET_TIME_NOW();
-  DWORD timeout = 10000;  
   m_hadPESfail = 0;
   
   while((GET_TIME_NOW() - m_Time) < timeout)
