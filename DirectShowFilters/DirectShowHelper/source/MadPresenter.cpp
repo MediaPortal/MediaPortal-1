@@ -165,7 +165,7 @@ HRESULT MPMadPresenter::Shutdown()
     if (pOsdServices)
     {
       Log("MPMadPresenter::Shutdown() 6");
-      //pOsdServices->OsdSetRenderCallback("MP-GUI", nullptr, nullptr);
+      pOsdServices->OsdSetRenderCallback("MP-GUI", nullptr, nullptr);
       pOsdServices.Release();
       pOsdServices = nullptr;
       Log("MPMadPresenter::Shutdown() 7");

@@ -1071,19 +1071,28 @@ namespace MediaPortal.GUI.Library
           {
             if (Thread.CurrentThread.Name != "MPMain" && Thread.CurrentThread.Name != "Config Main")
             {
-              GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SETVIDEOWINDOW, 0, 0, 0, 0, 0, null);
-              GUIWindowManager.SendThreadMessage(msg);
+              if (bOldOverlay)
+              {
+                GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SETVIDEOWINDOW, 0, 0, 0, 1, 0, null);
+                GUIWindowManager.SendThreadMessage(msg);
+              }
+              else
+              {
+                GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SETVIDEOWINDOW, 0, 0, 0, 0, 0, null);
+                GUIWindowManager.SendThreadMessage(msg);
+              }
             }
             else
             {
-              VideoWindow = new Rectangle(0, 0, 3, 3);
+              // Here is a call from a different thread like madVR when switching from fullscreen/windowed
+              // Here is to hide video window madVR when skin didn't handle video overlay (the value need to be different from Process() player like VMR7)
+              VideoWindow = new Rectangle(0, 0, 1, 1);
               GUIGraphicsContext.IsWindowVisible = true;
+              if (bOldOverlay != _overlay)
+              {
+                VideoWindowChanged();
+              }
             }
-          }
-
-          if (bOldOverlay != _overlay)
-          {
-            VideoWindowChanged();
           }
         }
       }
@@ -1101,8 +1110,14 @@ namespace MediaPortal.GUI.Library
           OnVideoWindowChanged?.Invoke();
           break;
         case GUIMessage.MessageType.GUI_MSG_SETVIDEOWINDOW:
-          VideoWindow = new Rectangle(0, 0, 3, 3);
-          VideoWindowChanged();
+          // Here is a call from a different thread like madVR when switching from fullscreen/windowed
+          bool bOldOverlay = message.Param1 == 1;
+          VideoWindow = new Rectangle(0, 0, 1, 1);
+          GUIGraphicsContext.IsWindowVisible = true;
+          if (bOldOverlay != _overlay)
+          {
+            VideoWindowChanged();
+          }
           break;
       }
     }

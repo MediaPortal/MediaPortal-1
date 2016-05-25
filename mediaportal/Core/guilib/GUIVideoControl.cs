@@ -88,6 +88,7 @@ namespace MediaPortal.GUI.Library
 
     public override void OnDeInit()
     {
+      // Here is the value that need to be different from need to find to be able to switch between fullscreen to windowed video when overlay available
       GUIGraphicsContext.VideoWindow = new Rectangle(0, 0, 0, 0);
       if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
       {
@@ -111,6 +112,7 @@ namespace MediaPortal.GUI.Library
 
       if (_setVideoWindow)
       {
+        //Log.Error("GUIVideoControl OnInit() {0}", _videoWindows[0]);
         GUIGraphicsContext.VideoWindow = _videoWindows[0];
       }
     }
@@ -134,6 +136,7 @@ namespace MediaPortal.GUI.Library
         {
           if (_setVideoWindow)
           {
+            // Here is to hide video window madVR when skin didn't handle video overlay (the value need to be different from Process() player like VMR7)
             GUIGraphicsContext.VideoWindow = new Rectangle(0, 0, 0, 0);
           }
           base.Render(timePassed);

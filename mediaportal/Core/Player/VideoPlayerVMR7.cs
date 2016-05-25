@@ -635,6 +635,7 @@ namespace MediaPortal.Player
         {
           Size client = GUIGraphicsContext.form.ClientSize;
           videoWin.SetWindowPosition(0, 0, client.Width, client.Height);
+          //basicVideo.SetDestinationPosition(rDest.Left, rDest.Top, rDest.Width, rDest.Height);
         }
         else
         {
@@ -714,7 +715,8 @@ namespace MediaPortal.Player
             }
             else
             {
-              GUIGraphicsContext.VideoWindow = new Rectangle(0, 0, 3, 3);
+              // Here is to hide video window madVR when skin didn't handle video overlay (the value need to be different from GUIVideoControl Render)
+              if (basicVideo != null) basicVideo.SetDestinationPosition(0, 0, 2, 2);
             }
           }
         }
@@ -727,8 +729,9 @@ namespace MediaPortal.Player
           }
           else
           {
-            GUIGraphicsContext.VideoWindow = new Rectangle(0, 0, GUIGraphicsContext.VideoWindowWidth,
-              GUIGraphicsContext.VideoWindowHeight);
+            GUIGraphicsContext.VideoWindow = new Rectangle(0, 0, GUIGraphicsContext.VideoWindowWidth, GUIGraphicsContext.VideoWindowHeight);
+            //if (basicVideo != null) basicVideo.SetDestinationPosition(_videoRectangle.X, _videoRectangle.Y, _videoRectangle.Width, _videoRectangle.Height);
+            Log.Error("VMR7 : {0} else", _videoRectangle);
           }
         }
         updateTimer = DateTime.Now;

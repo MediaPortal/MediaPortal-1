@@ -31,9 +31,9 @@ namespace MediaPortal.GUI.Library
       MusicOverlay,
       VideoOverlay,
       TvOverlay,
-      Video,
       WeatherOverlay,
       TopOverlay,
+      Video,
       Osd,
       Topbar1,
       Topbar2,
@@ -94,10 +94,13 @@ namespace MediaPortal.GUI.Library
       int startLayer = 0;
       int endLayer = MAX_LAYERS;
 
-      if (layers == GUILayers.under)
-        endLayer = videoLayer - 1;
-      else if (layers == GUILayers.over && !GUIGraphicsContext.IsFullScreenVideo)
-        startLayer = videoLayer + 1;
+      if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+      {
+        if (layers == GUILayers.under)
+          endLayer = videoLayer - 1;
+        else if (layers == GUILayers.over && !GUIGraphicsContext.IsFullScreenVideo)
+          startLayer = videoLayer + 1;
+      }
 
       for (int i = startLayer; i < endLayer; ++i)
       {
@@ -112,7 +115,10 @@ namespace MediaPortal.GUI.Library
             _layers[i].RenderLayer(timePassed);
             GUIFontManager.Present();
 
-            if (videoLayer == i) continue;
+            if (videoLayer == i && GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+            {
+              continue;
+            }
             uiVisible = true;
             //Log.Error("Layer uiVisible and layer [{0}]", Enum.GetName(typeof (LayerType), i));
           }

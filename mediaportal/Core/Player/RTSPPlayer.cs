@@ -761,7 +761,7 @@ namespace MediaPortal.Player
             }
             else
             {
-              GUIGraphicsContext.VideoWindow = new Rectangle(0, 0, 3, 3);
+              if (basicVideo != null) basicVideo.SetDestinationPosition(0, 0, 2, 2);
             }
           }
         }

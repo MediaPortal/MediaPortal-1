@@ -383,6 +383,7 @@ namespace MediaPortal.Player
     {
       try
       {
+        Log.Error("VMR9: addvmr9 - thread : {0}", Thread.CurrentThread.Name);
         if (!_useVmr9)
         {
           Log.Debug("VMR9: addvmr9 - vmr9 is deactivated");
@@ -495,6 +496,7 @@ namespace MediaPortal.Player
           }
           else if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
           {
+            Log.Error("VMR9: MadDeinit - thread : {0}", Thread.CurrentThread.Name);
             MadDeinit();
           }
           else
@@ -1303,6 +1305,7 @@ namespace MediaPortal.Player
         }
         else if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
         {
+          Log.Error("VMR9: Dispose MadDeinit - thread : {0}", Thread.CurrentThread.Name);
           MadDeinit();
           Log.Debug("VMR9: Dispose 2");
         }
@@ -1315,7 +1318,7 @@ namespace MediaPortal.Player
         {
           if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
           {
-            MadvrInterface.OsdSetRenderCallback(_vmr9Filter);
+            //MadvrInterface.OsdSetRenderCallback(_vmr9Filter);
             MadvrInterface.EnableExclusiveMode(false, _vmr9Filter);
           }
           DirectShowUtil.RemoveFilter(_graphBuilderInterface, _vmr9Filter);
