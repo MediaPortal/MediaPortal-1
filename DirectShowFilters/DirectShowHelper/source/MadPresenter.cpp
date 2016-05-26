@@ -75,52 +75,45 @@ IBaseFilter* MPMadPresenter::Initialize()
   if (FAILED(hr))
     return nullptr;
 
-  CComQIPtr<IBaseFilter> baseFilter = m_pMad;
-  CComQIPtr<IMadVROsdServices> pOsdServices = m_pMad;
-  CComQIPtr<IMadVRDirect3D9Manager> manager = m_pMad;
-  CComQIPtr<IMadVRSubclassReplacement> pSubclassReplacement = m_pMad;
-  CComQIPtr<ISubRender> pSubRender = m_pMad;
-  CComQIPtr<IVideoWindow> pWindow = m_pMad;
-  CComQIPtr<IMadVRCommand> pCommand = m_pMad;
+  m_pMad->QueryInterface(&m_pBaseFilter);
+  m_pMad->QueryInterface(&m_pOsdServices);
+  m_pMad->QueryInterface(&m_pManager);
+  m_pMad->QueryInterface(&m_pSubclassReplacement);
+  m_pMad->QueryInterface(&m_pSubRender);
+  m_pMad->QueryInterface(&m_pWindow);
+  m_pMad->QueryInterface(&m_pCommand);
+
   Log("MPMadPresenter::Init 3()");
 
-  if (!baseFilter || !pOsdServices || !manager || !pSubclassReplacement || !pSubRender || !pCommand || !pWindow)
+  if (!m_pBaseFilter || !m_pOsdServices || !m_pManager || !m_pSubclassReplacement || !m_pSubRender || !m_pCommand || !m_pWindow)
     return nullptr;
   Log("MPMadPresenter::Init 4()");
 
-  pOsdServices->OsdSetRenderCallback("MP-GUI", this, nullptr);
+  m_pOsdServices->OsdSetRenderCallback("MP-GUI", this, nullptr);
   Log("MPMadPresenter::Init 5()");
-  manager->ConfigureDisplayModeChanger(true, true);
+
+  m_pManager->ConfigureDisplayModeChanger(true, true);
   Log("MPMadPresenter::Init 6()");
 
-  pSubRender->SetCallback(m_subProxy);
+  m_pSubRender->SetCallback(m_subProxy);
   Log("MPMadPresenter::Init 7()");
 
-  pCommand->SendCommandBool("disableSeekbar", true);
+  m_pCommand->SendCommandBool("disableSeekbar", true);
   Log("MPMadPresenter::Init 8()");
 
-  pWindow->put_Owner(m_hParent);
+  m_pWindow->put_Owner(m_hParent);
   Log("MPMadPresenter::Init 9()");
-  pWindow->SetWindowForeground(true);
-  Log("MPMadPresenter::Init 10()");
-  pWindow->put_MessageDrain(m_hParent);
-  Log("MPMadPresenter::Init 11()");
 
-  pOsdServices.Release();
-  Log("MPMadPresenter::Init 12()");
-  manager.Release();
-  Log("MPMadPresenter::Init 13()");
-  pSubRender.Release();
-  Log("MPMadPresenter::Init 14()");
-  pCommand.Release();
-  Log("MPMadPresenter::Init 15()");
-  pWindow.Release();
-  Log("MPMadPresenter::Init 16()");
+  m_pWindow->SetWindowForeground(true);
+  Log("MPMadPresenter::Init 10()");
+
+  m_pWindow->put_MessageDrain(m_hParent);
+  Log("MPMadPresenter::Init 11()");
 
   // TODO implement IMadVRSubclassReplacement
   //pSubclassReplacement->DisableSubclassing();
 
-  return baseFilter;
+  return m_pBaseFilter;
 }
 
 HRESULT MPMadPresenter::Shutdown()
@@ -139,40 +132,29 @@ HRESULT MPMadPresenter::Shutdown()
   if (m_pMad)
   {
     Log("MPMadPresenter::Shutdown() 1");
-    CComQIPtr<IMadVROsdServices> pOsdServices = m_pMad;
-    CComQIPtr<IMadVRCommand> pCommand = m_pMad;
-    CComQIPtr<IVideoWindow> pWindow = m_pMad;
 
-    if (pWindow)
+    if (m_pWindow)
     {
       Log("MPMadPresenter::Shutdown() 2");
-      pWindow->put_Owner(reinterpret_cast<OAHWND>(nullptr));
-      pWindow->put_Visible(false);
-      pWindow.Release();
-      pWindow = nullptr;
+      m_pWindow->put_Owner(reinterpret_cast<OAHWND>(nullptr));
+      m_pWindow->put_Visible(false);
       Log("MPMadPresenter::Shutdown() 3");
     }
 
-    if (pCommand)
+    if (m_pCommand)
     {
       Log("MPMadPresenter::Shutdown() 4");
-      pCommand->SendCommandBool("disableExclusiveMode", true);
-      pCommand->SendCommand("restoreDisplayModeNow");
-      pCommand.Release();
-      pCommand = nullptr;
+      m_pCommand->SendCommandBool("disableExclusiveMode", true);
+      m_pCommand->SendCommand("restoreDisplayModeNow");
       Log("MPMadPresenter::Shutdown() 5");
     }
 
-    if (pOsdServices)
+    if (m_pOsdServices)
     {
       Log("MPMadPresenter::Shutdown() 6");
-      pOsdServices->OsdSetRenderCallback("MP-GUI", nullptr, nullptr);
-      pOsdServices.Release();
-      pOsdServices = nullptr;
+      m_pOsdServices->OsdSetRenderCallback("MP-GUI", nullptr, nullptr);
       Log("MPMadPresenter::Shutdown() 7");
     }
-
-    m_pMad = nullptr;
   }
 
   return S_OK;

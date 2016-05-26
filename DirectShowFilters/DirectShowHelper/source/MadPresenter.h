@@ -59,7 +59,15 @@ class MPMadPresenter : public CUnknown, public IOsdRenderCallback, public CCritS
 
     IVMR9Callback* m_pCallback = nullptr;
     
-    IUnknown* m_pMad = nullptr;
+    CComPtr<IUnknown> m_pMad = nullptr;
+
+    CComQIPtr<IBaseFilter> m_pBaseFilter = nullptr;
+    CComQIPtr<IMadVROsdServices> m_pOsdServices = nullptr;
+    CComQIPtr<IMadVRDirect3D9Manager> m_pManager = nullptr;
+    CComQIPtr<IMadVRSubclassReplacement> m_pSubclassReplacement = nullptr;
+    CComQIPtr<ISubRender> m_pSubRender = nullptr;
+    CComQIPtr<IVideoWindow> m_pWindow = nullptr;
+    CComQIPtr<IMadVRCommand> m_pCommand = nullptr;
 
     CComQIPtr<IDirect3DTexture9> m_pRenderTextureGui = nullptr;
     CComQIPtr<IDirect3DTexture9> m_pRenderTextureOsd = nullptr;
