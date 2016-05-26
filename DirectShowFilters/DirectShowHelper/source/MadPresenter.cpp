@@ -126,13 +126,14 @@ IBaseFilter* MPMadPresenter::Initialize()
 HRESULT MPMadPresenter::Shutdown()
 {
   CAutoLock lock(this);
-
-  Log("MPMadPresenter::Shutdown()");
-
-  if (m_pCallback)
   {
-    m_pCallback->Release();
-    m_pCallback = nullptr;
+    Log("MPMadPresenter::Shutdown()");
+
+    if (m_pCallback)
+    {
+      m_pCallback->Release();
+      m_pCallback = nullptr;
+    }
   }
 
   if (m_pMad)
@@ -472,6 +473,9 @@ HRESULT MPMadPresenter::SetDevice(IDirect3DDevice9* pD3DDev)
   HRESULT hr = S_FALSE;
 
   CAutoLock cAutoLock(this);
+
+  if (!m_pCallback)
+    return S_OK;
 
   Log("MPMadPresenter::SetDevice() pD3DDev 0x:%x", pD3DDev);
 
