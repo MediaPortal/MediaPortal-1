@@ -404,28 +404,6 @@ foreach (EntityType entity in ItemCollection.GetItems<EntityType>().OrderBy(e =>
             ClearNavigationProperties();
         }
     }
-<#
-    // If this entity type participates in any relationships where the other end has an OnDelete
-    // cascade delete defined, or if it is the dependent in any identifying relationships, it needs
-    // an event handler to handle notifications that are fired when the parent is deleted.
-    if (ItemCollection.GetItems<AssociationType>().Where(a =>
-        ((RefType)a.AssociationEndMembers[0].TypeUsage.EdmType).ElementType == entity && ef.IsCascadeDeletePrincipal(a.AssociationEndMembers[1]) ||
-        ((RefType)a.AssociationEndMembers[1].TypeUsage.EdmType).ElementType == entity && ef.IsCascadeDeletePrincipal(a.AssociationEndMembers[0])).Any())
-    {
-#>
-
-    // This entity type is the dependent end in at least one association that performs cascade deletes.
-    // This event handler will process notifications that occur when the principal end is deleted.
-    internal void HandleCascadeDelete(object sender, ObjectStateChangingEventArgs e)
-    {
-        if (e.NewState == ObjectState.Deleted)
-        {
-            this.MarkAsDeleted();
-        }
-    }
-<#
-    }
-#>
 
     protected bool IsDeserializing { get; private set; }
 
@@ -440,6 +418,25 @@ foreach (EntityType entity in ItemCollection.GetItems<EntityType>().OrderBy(e =>
     {
         IsDeserializing = false;
         ChangeTracker.ChangeTrackingEnabled = true;
+    }
+<#
+    }
+
+    // If this entity type participates in any relationships where the other end has an OnDelete
+    // cascade delete defined, or if it is the dependent in any identifying relationships, it needs
+    // an event handler to handle notifications that are fired when the parent is deleted.
+    if (ef.NeedsHandleCascadeDeleteMethod(ItemCollection, entity))
+    {
+#>
+
+    // This entity type is the dependent end in at least one association that performs cascade deletes.
+    // This event handler will process notifications that occur when the principal end is deleted.
+    internal void HandleCascadeDelete(object sender, ObjectStateChangingEventArgs e)
+    {
+        if (e.NewState == ObjectState.Deleted)
+        {
+            this.MarkAsDeleted();
+        }
     }
 <#
     }
@@ -476,7 +473,7 @@ foreach (EntityType entity in ItemCollection.GetItems<EntityType>().OrderBy(e =>
                                                                                    x.AssociationEndMembers[1].RelationshipMultiplicity != RelationshipMultiplicity.One &&
                                                                                    x.AssociationEndMembers[0].RelationshipMultiplicity != RelationshipMultiplicity.Many)))
     {
-        if (!entity.NavigationProperties.Any(x => x.RelationshipType == association))
+        if (!entity.NavigationProperties.Any(x => x.RelationshipType == association && IsReadWriteAccessibleProperty(x)))
         {
             for (int i = 0; i < 2; i++)
             {
@@ -1133,7 +1130,7 @@ foreach (ComplexType complex in ItemCollection.GetItems<ComplexType>().OrderBy(e
             }
         }
     }
-    private <#=code.Escape(edmProperty.TypeUsage)#> <#=code.FieldName(edmProperty)#>;
+    private <#=code.Escape(edmProperty.TypeUsage)#> <#=code.FieldName(edmProperty)#><#=code.StringBefore(" = ", code.CreateLiteral(edmProperty.DefaultValue))#>;
 <#
     }
 
@@ -1374,7 +1371,7 @@ bool IsSaveReference(MetadataTools tools, NavigationProperty navProperty)
 
 string CreateFixupMethodName(RelationshipEndMember endMember)
 {
-    return String.Format(CultureInfo.InvariantCulture, "Fixup{0}_{1}_{2}Keys", endMember.DeclaringType.NamespaceName, endMember.DeclaringType.Name, endMember.Name);
+    return String.Format(CultureInfo.InvariantCulture, "Fixup{0}_{1}_{2}Keys", endMember.DeclaringType.NamespaceName.Replace(".", "_"), endMember.DeclaringType.Name, endMember.Name);
 }
 
 string CreateKeyNameVariable(string keyName)
@@ -1398,6 +1395,7 @@ void WriteCustomObservableCollection()
 
 // An System.Collections.ObjectModel.ObservableCollection that raises
 // individual item removal notifications on clear and prevents adding duplicates.
+[CollectionDataContract]
 public class TrackableCollection<T> : ObservableCollection<T>
 {
     protected override void ClearItems()

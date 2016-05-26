@@ -12,7 +12,10 @@ EntityFrameworkTemplateFileManager fileManager = EntityFrameworkTemplateFileMana
 
 string inputFile = @"Model.edmx";
 EdmItemCollection ItemCollection = loader.CreateEdmItemCollection(inputFile);
+ModelNamespace = loader.GetModelNamespace(inputFile);
+DefaultSummaryComment = GetResourceString("Template_CommentNoDocumentation");
 string namespaceName = code.VsNamespaceSuggestion();
+UpdateObjectNamespaceMap(namespaceName);
 
 EntityContainer container = ItemCollection.GetItems<EntityContainer>().FirstOrDefault();
 if (container == null)
@@ -100,14 +103,13 @@ BeginNamespace(namespaceName, code);
         {
             var parameters = FunctionImportParameter.Create(edmFunction.Parameters, code, ef);
             string paramList = String.Join(", ", parameters.Select(p => p.FunctionParameterType + " " + p.FunctionParameterName).ToArray());
-            if (edmFunction.ReturnParameter == null)
-            {
-                continue;
-            }
-            string returnTypeElement = code.Escape(ef.GetElementType(edmFunction.ReturnParameter.TypeUsage));
-
+            TypeUsage returnType = edmFunction.ReturnParameter == null ? null : ef.GetElementType(edmFunction.ReturnParameter.TypeUsage);
 #>
-    <#=AccessibilityAndVirtual(Accessibility.ForMethod(edmFunction))#> ObjectResult<<#=returnTypeElement#>> <#=code.Escape(edmFunction)#>(<#=paramList#>)
+
+    /// <summary>
+    /// <#=SummaryComment(edmFunction)#>
+    /// </summary><#=LongDescriptionCommentElement(edmFunction, region.CurrentIndentLevel)#><#=ParameterComments(parameters.Select(p => new Tuple<string, string>(p.RawFunctionParameterName, SummaryComment(p.Source))), region.CurrentIndentLevel)#>
+    <#=code.SpaceAfter(NewModifier(edmFunction))#><#=AccessibilityAndVirtual(Accessibility.ForMethod(edmFunction))#> <#=returnType == null ? "int" : "ObjectResult<" + MultiSchemaEscape(returnType, code) + ">"#> <#=code.Escape(edmFunction)#>(<#=paramList#>)
     {
 <#
             foreach (var parameter in parameters)
@@ -131,9 +133,42 @@ BeginNamespace(namespaceName, code);
 <#
             }
 #>
-        return base.ExecuteFunction<<#=returnTypeElement#>>("<#=edmFunction.Name#>"<#=code.StringBefore(", ", String.Join(", ", parameters.Select(p => p.ExecuteParameterName).ToArray()))#>);
+        return base.ExecuteFunction<#=returnType == null ? "" : "<" + MultiSchemaEscape(returnType, code) + ">"#>("<#=edmFunction.Name#>"<#=code.StringBefore(", ", String.Join(", ", parameters.Select(p => p.ExecuteParameterName).ToArray()))#>);
     }
 <#
+           if(returnType != null && returnType.EdmType.BuiltInTypeKind == BuiltInTypeKind.EntityType)
+           {
+#>
+
+    /// <summary>
+    /// <#=SummaryComment(edmFunction)#>
+    /// </summary><#=LongDescriptionCommentElement(edmFunction, region.CurrentIndentLevel)#>
+    /// <param name="mergeOption"></param><#=ParameterComments(parameters.Select(p => new Tuple<string, string>(p.RawFunctionParameterName, SummaryComment(p.Source))), region.CurrentIndentLevel)#>
+    <#=code.SpaceAfter(NewModifier(edmFunction))#><#=Accessibility.ForMethod(edmFunction)#> <#=returnType == null ? "int" : "ObjectResult<" + MultiSchemaEscape(returnType, code) + ">"#> <#=code.Escape(edmFunction)#>(<#=code.StringAfter(paramList, ", ")#>MergeOption mergeOption)
+    {
+<#
+            foreach (FunctionImportParameter parameter in parameters)
+            {
+                if (!parameter.NeedsLocalVariable)
+                    continue;
+#>
+        ObjectParameter <#=parameter.LocalVariableName#>;
+        if (<#=parameter.IsNullableOfT ? parameter.FunctionParameterName + ".HasValue" : parameter.FunctionParameterName + " != null"#>)
+        {
+            <#=parameter.LocalVariableName#> = new ObjectParameter("<#=parameter.EsqlParameterName#>", <#=parameter.FunctionParameterName#>);
+        }
+        else
+        {
+            <#=parameter.LocalVariableName#> = new ObjectParameter("<#=parameter.EsqlParameterName#>", typeof(<#=parameter.RawClrTypeName#>));
+        }
+
+<#
+            }
+#>
+        return base.<#=returnType == null ? "ExecuteFunction" : "ExecuteFunction<" + MultiSchemaEscape(returnType, code) + ">"#>("<#=edmFunction.Name#>", mergeOption<#=code.StringBefore(", ", string.Join(", ", parameters.Select(p => p.ExecuteParameterName).ToArray()))#>);
+    }
+<#
+        }
         }
         region.End();
 #>
@@ -288,8 +323,7 @@ public static class SelfTrackingEntitiesContextExtensions
             {
                 ObjectStateEntry entry = context.ObjectStateManager.GetObjectStateEntry(changedEntity);
 
-                EntityType entityType = context.MetadataWorkspace.GetCSpaceEntityType(changedEntity.GetType());
-
+                EntityType entityType = context.MetadataWorkspace.GetCSpaceEntityType(changedEntity);
                 foreach (NavigationProperty navProp in entityType.NavigationProperties)
                 {
                     RelatedEnd relatedEnd = entry.GetRelatedEnd(navProp.Name);
@@ -433,7 +467,7 @@ public static class SelfTrackingEntitiesContextExtensions
             changeTracker.State == ObjectState.Deleted)
         {
             ObjectStateEntry entry = context.ObjectStateManager.GetObjectStateEntry(entity);
-            EntityType entityType = context.MetadataWorkspace.GetCSpaceEntityType(entity.GetType());
+            EntityType entityType = context.MetadataWorkspace.GetCSpaceEntityType(entity);
             RelationshipManager relationshipManager = context.ObjectStateManager.GetRelationshipManager(entity);
 
             foreach (var entityReference in EnumerateSaveReferences(relationshipManager))
@@ -695,7 +729,7 @@ public static class SelfTrackingEntitiesContextExtensions
                 String.Format(
                     CultureInfo.CurrentCulture,
                     "The OriginalValues or ExtendedProperties collections on the type '{0}' contained only a partial key to satisfy the relationship '{1}' targeting the role '{2}'",
-                    entity.GetType().FullName,
+                    ObjectContext.GetObjectType(entity.GetType()).FullName,
                     reference.RelationshipName,
                     reference.TargetRoleName));
         }
@@ -740,7 +774,7 @@ public static class SelfTrackingEntitiesContextExtensions
                 String.Format(
                     CultureInfo.CurrentCulture,
                     " The OriginalValues or ExtendedProperties collections on the type '{0}' contained only a partial key to satisfy the relationship '{1}' targeting the role '{2}'",
-                    entity.GetType().FullName,
+                    ObjectContext.GetObjectType(entity.GetType()).FullName,
                     reference.RelationshipName,
                     reference.TargetRoleName));
         }
@@ -768,7 +802,7 @@ public static class SelfTrackingEntitiesContextExtensions
         }
 
         var relationshipManager = entry.RelationshipManager;
-        EntityType entityType = context.MetadataWorkspace.GetCSpaceEntityType(entity.GetType());
+        EntityType entityType = context.MetadataWorkspace.GetCSpaceEntityType(entity);
         foreach (EntityReference entityReference in EnumerateSaveReferences(relationshipManager))
         {
             NavigationProperty navigationProperty = entityType.NavigationProperties.FirstOrDefault(n => n.RelationshipType == entityReference.RelationshipSet.ElementType &&
@@ -815,7 +849,7 @@ public static class SelfTrackingEntitiesContextExtensions
 
         ObjectStateEntry entry = context.ObjectStateManager.GetObjectStateEntry(entity);
         OriginalValueRecord originalValueRecord = entry.GetUpdatableOriginalValues();
-        EntityType entityType = context.MetadataWorkspace.GetCSpaceEntityType(entity.GetType());
+        EntityType entityType = context.MetadataWorkspace.GetCSpaceEntityType(entity);
 
         // walk through each property and see if we have an original value for it
         // set it if we do.  Walk down through ComplexType properties to set original values
@@ -833,7 +867,7 @@ public static class SelfTrackingEntitiesContextExtensions
             else if(property.TypeUsage.EdmType is ComplexType)
             {
                 OriginalValueRecord complexOriginalValues = originalValueRecord.GetOriginalValueRecord(property.Name);
-                UpdateOriginalValues((ComplexType)property.TypeUsage.EdmType, entity.GetType().FullName, property.Name, entity.ChangeTracker.OriginalValues, complexOriginalValues);
+                UpdateOriginalValues((ComplexType)property.TypeUsage.EdmType, ObjectContext.GetObjectType(entity.GetType()).FullName, property.Name, entity.ChangeTracker.OriginalValues, complexOriginalValues);
             }
         }
     }
@@ -929,12 +963,12 @@ public static class SelfTrackingEntitiesContextExtensions
             case (ObjectState.Deleted):
                 context.ObjectStateManager.ChangeObjectState(entity, EntityState.Deleted);
                 break;
-
         }
     }
 
-    private static EntityType GetCSpaceEntityType(this MetadataWorkspace workspace, Type type)
+    private static EntityType GetCSpaceEntityType(this MetadataWorkspace workspace, object entity)
     {
+        Type type = ObjectContext.GetObjectType(entity.GetType());
         EntityType ospaceEntityType = null;
         StructuralType cspaceEntityType = null;
         EntityType entityType = null;
@@ -985,7 +1019,7 @@ public static class SelfTrackingEntitiesContextExtensions
     private static RelatedEnd GetRelatedEnd(this ObjectStateEntry entry, string navigationPropertyIdentity)
     {
         NavigationProperty navigationProperty =
-                        GetNavigationProperty(entry.ObjectStateManager.MetadataWorkspace.GetCSpaceEntityType(entry.Entity.GetType()), navigationPropertyIdentity);
+                        GetNavigationProperty(entry.ObjectStateManager.MetadataWorkspace.GetCSpaceEntityType(entry.Entity), navigationPropertyIdentity);
         return entry.RelationshipManager.GetRelatedEnd(
             navigationProperty.RelationshipType.FullName, navigationProperty.ToEndMember.Name) as RelatedEnd;
     }
@@ -1117,7 +1151,7 @@ public static class SelfTrackingEntitiesContextExtensions
                 _entityIndex.Add(entry, changeTracker);
 
                 // Queue removed reference values
-                var navPropNames = _context.MetadataWorkspace.GetCSpaceEntityType(entity.GetType()).NavigationProperties.Select(n => n.Name);
+                var navPropNames = _context.MetadataWorkspace.GetCSpaceEntityType(entity).NavigationProperties.Select(n => n.Name);
                 var entityRefOriginalValues = changeTracker.OriginalValues.Where(kvp => navPropNames.Contains(kvp.Key));
                 foreach (KeyValuePair<string, object> originalValueWithName in entityRefOriginalValues)
                 {
@@ -1404,4 +1438,233 @@ public static class SelfTrackingEntitiesContextExtensions
 }
 <#+
 }
+#>
+<#+
+string DefaultSummaryComment{ get; set; }
+
+string SummaryComment(MetadataItem item)
+{
+    if (item.Documentation != null && item.Documentation.Summary != null)
+    {
+        return PrefixLinesOfMultilineComment(XMLCOMMENT_START + " ", XmlEntityize(item.Documentation.Summary));
+    }
+
+    if (DefaultSummaryComment != null)
+    {
+        return DefaultSummaryComment;
+    }
+
+    return string.Empty;
+}
+
+string LongDescriptionCommentElement(MetadataItem item, int indentLevel)
+{
+    if (item.Documentation != null && !String.IsNullOrEmpty(item.Documentation.LongDescription))
+    {
+        string comment = Environment.NewLine;
+        string lineStart = CodeRegion.GetIndent(indentLevel) + XMLCOMMENT_START + " ";
+        comment += lineStart + "<LongDescription>" + Environment.NewLine;
+        comment += lineStart + PrefixLinesOfMultilineComment(lineStart, XmlEntityize(item.Documentation.LongDescription)) + Environment.NewLine;
+        comment += lineStart + "</LongDescription>";
+        return comment;
+    }
+    return string.Empty;
+}
+
+
+string MultiSchemaEscape(TypeUsage usage, CodeGenerationTools code)
+{
+    StructuralType structural = usage.EdmType as StructuralType;
+    if (structural != null)
+    {
+        return MultiSchemaEscape(structural, code);
+    }
+    return code.Escape(usage);
+}
+
+string MultiSchemaEscape(StructuralType type, CodeGenerationTools code)
+{
+    if (type.NamespaceName != ModelNamespace)
+    {
+        return code.CreateFullName(code.EscapeNamespace(GetObjectNamespace(type.NamespaceName)), code.Escape(type));
+    }
+
+    return code.Escape(type);
+}
+
+string NewModifier(NavigationProperty navigationProperty)
+{
+    Type baseType = typeof(EntityObject);
+    return NewModifier(baseType, navigationProperty.Name);
+}
+
+string NewModifier(EdmFunction edmFunction)
+{
+    Type baseType = typeof(ObjectContext);
+    return NewModifier(baseType, edmFunction.Name);
+}
+
+string NewModifier(EntitySet set)
+{
+    Type baseType = typeof(ObjectContext);
+    return NewModifier(baseType, set.Name);
+}
+
+string NewModifier(EdmProperty property)
+{
+    Type baseType;
+    if (property.DeclaringType.BuiltInTypeKind == BuiltInTypeKind.EntityType)
+    {
+        baseType = typeof(EntityObject);
+    }
+    else
+    {
+        baseType = typeof(ComplexObject);
+    }
+    return NewModifier(baseType, property.Name);
+}
+
+string NewModifier(Type type, string memberName)
+{
+    if (HasBaseMemberWithMatchingName(type, memberName))
+    {
+        return "new";
+    }
+    return string.Empty;
+}
+
+
+string PrefixLinesOfMultilineComment(string prefix, string comment)
+{
+    return comment.Replace(Environment.NewLine, Environment.NewLine + prefix);
+}
+
+string ParameterComments(IEnumerable<Tuple<string, string>> parameters, int indentLevel)
+{
+    System.Text.StringBuilder builder = new System.Text.StringBuilder();
+    foreach (Tuple<string, string> parameter in parameters)
+    {
+        builder.AppendLine();
+        builder.Append(CodeRegion.GetIndent(indentLevel));
+        builder.Append(XMLCOMMENT_START);
+        builder.Append(String.Format(CultureInfo.InvariantCulture, " <param name=\"{0}\">{1}</param>", parameter.Item1, parameter.Item2));
+    }
+    return builder.ToString();
+}
+
+string XmlEntityize(string text)
+{
+    if (string.IsNullOrEmpty(text))
+    {
+        return string.Empty;
+    }
+
+    text = text.Replace("&","&amp;");
+    text = text.Replace("<","&lt;").Replace(">","&gt;");
+    string id = Guid.NewGuid().ToString();
+    text = text.Replace(Environment.NewLine, id);
+    text = text.Replace("\r", "&#xD;").Replace("\n","&#xA;");
+    text = text.Replace(id, Environment.NewLine);
+    return text.Replace("\'","&apos;").Replace("\"","&quot;");
+}
+
+const string XMLCOMMENT_START = "///";
+
+public string ModelNamespace{ get; set; }
+
+
+string GetObjectNamespace(string csdlNamespaceName)
+{
+    string objectNamespace;
+    if (EdmToObjectNamespaceMap.TryGetValue(csdlNamespaceName, out objectNamespace))
+    {
+        return objectNamespace;
+    }
+
+    return csdlNamespaceName;
+}
+
+
+static bool HasBaseMemberWithMatchingName(Type type, string memberName)
+{
+    BindingFlags bindingFlags = BindingFlags.FlattenHierarchy | BindingFlags.NonPublic | BindingFlags.Public
+                | BindingFlags.Instance | BindingFlags.Static;
+    return type.GetMembers(bindingFlags).Where(m => IsVisibleMember(m)).Any(m => m.Name == memberName);
+}
+
+
+static bool IsVisibleMethod(MethodBase methodBase)
+{
+    if (methodBase == null)
+        return false;
+
+    return !methodBase.IsPrivate && !methodBase.IsAssembly;
+}
+
+static bool IsVisibleMember(MemberInfo memberInfo)
+{
+    if (memberInfo is EventInfo)
+    {
+        EventInfo ei = (EventInfo)memberInfo;
+        MethodInfo add = ei.GetAddMethod();
+        MethodInfo remove = ei.GetRemoveMethod();
+        return IsVisibleMethod(add) || IsVisibleMethod(remove);
+    }
+    else if (memberInfo is FieldInfo)
+    {
+        FieldInfo fi = (FieldInfo)memberInfo;
+        return !fi.IsPrivate && !fi.IsAssembly;
+    }
+    else if (memberInfo is MethodBase)
+    {
+        MethodBase mb = (MethodBase)memberInfo;
+        if (mb.IsSpecialName)
+            return false;
+        return IsVisibleMethod(mb);
+    }
+    else if (memberInfo is PropertyInfo)
+    {
+        PropertyInfo pi = (PropertyInfo)memberInfo;
+        MethodInfo get = pi.GetGetMethod();
+        MethodInfo set = pi.GetSetMethod();
+        return IsVisibleMethod(get) || IsVisibleMethod(set);
+    }
+
+    return false;
+}
+
+public Dictionary<string, string> EdmToObjectNamespaceMap
+{
+    get { return _edmToObjectNamespaceMap; }
+    set { _edmToObjectNamespaceMap = value; }
+}
+public Dictionary<string, string> _edmToObjectNamespaceMap = new Dictionary<string, string>();
+
+void UpdateObjectNamespaceMap(string objectNamespace)
+{
+    if(objectNamespace != ModelNamespace && !EdmToObjectNamespaceMap.ContainsKey(ModelNamespace))
+    {
+        EdmToObjectNamespaceMap.Add(ModelNamespace, objectNamespace);
+    }
+}
+
+private static string GetResourceString(string resourceName)
+{
+    return ResourceManager.GetString(resourceName,
+         null); //  Take default culture.
+}
+
+static System.Resources.ResourceManager ResourceManager
+{
+    get
+    {
+        if (_resourceManager == null)
+        {
+            System.Resources.ResourceManager resourceManager = new System.Resources.ResourceManager("System.Data.Entity.Design", typeof(System.Data.Entity.Design.MetadataItemCollectionFactory).Assembly);
+            System.Threading.Interlocked.CompareExchange(ref _resourceManager, resourceManager, null);
+        }
+        return _resourceManager;
+    }
+}
+static System.Resources.ResourceManager _resourceManager;
 #>
