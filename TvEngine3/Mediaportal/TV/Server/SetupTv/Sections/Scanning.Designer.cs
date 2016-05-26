@@ -51,7 +51,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.labelTimingLimitCableCardUnit = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.numericUpDownTimingLimitCableCard = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPNumericUpDown();
       this.tabControl = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPTabControl();
-      this.tabPageGeneral = new System.Windows.Forms.TabPage();
+      this.tabPageGeneral = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPTabPage();
       this.groupBoxProviders = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPGroupBox();
       this.checkBoxProvidersProvider2IsHighDefinition = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPCheckBox();
       this.checkBoxProvidersProvider1IsHighDefinition = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPCheckBox();
@@ -59,7 +59,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.labelProvidersProvider2Region = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.comboBoxProvidersProvider2Region = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPComboBox();
       this.comboBoxProvidersProvider1Region = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPComboBox();
-      this.tabPageAutomaticChannelGroups = new System.Windows.Forms.TabPage();
+      this.tabPageAutomaticChannelGroups = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPTabPage();
       this.textBoxAutomaticChannelGroupsChannelProviders = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPTextBox();
       this.textBoxAutomaticChannelGroupsDvbNetworks = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPTextBox();
       this.textBoxAutomaticChannelGroupsDvbBouquets = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPTextBox();
@@ -713,8 +713,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     private MPLabel labelTimingMinimum;
     private MPLabel labelTimingMinimumUnit;
     private MPTabControl tabControl;
-    private System.Windows.Forms.TabPage tabPageGeneral;
-    private System.Windows.Forms.TabPage tabPageAutomaticChannelGroups;
+    private MPTabPage tabPageGeneral;
+    private MPTabPage tabPageAutomaticChannelGroups;
     private MPGroupBox groupBoxProviders;
     private MPLabel labelProvidersProvider1Region;
     private MPLabel labelProvidersProvider2Region;
