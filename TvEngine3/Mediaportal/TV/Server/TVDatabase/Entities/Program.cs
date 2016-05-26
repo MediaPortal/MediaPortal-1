@@ -333,30 +333,30 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         [DataMember]
         public string AudioLanguages
         {
-          get { return _audioLanguages; }
-          set
-          {
-            if (_audioLanguages != value)
+            get { return _audioLanguages; }
+            set
             {
-              _audioLanguages = value;
-              OnPropertyChanged("AudioLanguages");
+                if (_audioLanguages != value)
+                {
+                    _audioLanguages = value;
+                    OnPropertyChanged("AudioLanguages");
+                }
             }
-          }
         }
         private string _audioLanguages;
     
         [DataMember]
         public string SubtitlesLanguages
         {
-          get { return _subtitlesLanguages; }
-          set
-          {
-            if (_subtitlesLanguages != value)
+            get { return _subtitlesLanguages; }
+            set
             {
-              _subtitlesLanguages = value;
-              OnPropertyChanged("SubtitlesLanguages");
+                if (_subtitlesLanguages != value)
+                {
+                    _subtitlesLanguages = value;
+                    OnPropertyChanged("SubtitlesLanguages");
+                }
             }
-          }
         }
         private string _subtitlesLanguages;
     
@@ -655,16 +655,6 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
             }
         }
     
-        // This entity type is the dependent end in at least one association that performs cascade deletes.
-        // This event handler will process notifications that occur when the principal end is deleted.
-        internal void HandleCascadeDelete(object sender, ObjectStateChangingEventArgs e)
-        {
-            if (e.NewState == ObjectState.Deleted)
-            {
-                this.MarkAsDeleted();
-            }
-        }
-    
         protected bool IsDeserializing { get; private set; }
     
         [OnDeserializing]
@@ -678,6 +668,16 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         {
             IsDeserializing = false;
             ChangeTracker.ChangeTrackingEnabled = true;
+        }
+    
+        // This entity type is the dependent end in at least one association that performs cascade deletes.
+        // This event handler will process notifications that occur when the principal end is deleted.
+        internal void HandleCascadeDelete(object sender, ObjectStateChangingEventArgs e)
+        {
+            if (e.NewState == ObjectState.Deleted)
+            {
+                this.MarkAsDeleted();
+            }
         }
     
         protected virtual void ClearNavigationProperties()
