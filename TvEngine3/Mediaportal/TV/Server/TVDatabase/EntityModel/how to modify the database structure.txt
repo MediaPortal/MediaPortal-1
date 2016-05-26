@@ -1,18 +1,20 @@
 ﻿1. Open the Model.edmx file.
 2. Make the required changes using the visual editor.
-3. Right click in the white space and select "properties" (ie. view the properties panel for the
+3. Right click in the white space and select "Properties" (ie. view the properties panel for the
    "TVDatabaseModel" object.
 4. Set the "DDL Generation Template" property to "SSDLToSQL10.tt (VS)".
 5. Right click anywhere in the Model.edmx visual editor and select "Generate Database From Model".
-6. "Save DDL as" should be "Model.edmx.sql".
-7. Click finish, then yes and yes to overwrite the DDL and SSDL/MSL.
+6. "Save DDL As" should be "Model.edmx.sql".
+7. Click "Finish", then "Yes" and "Yes" to overwrite the DDL and SSDL/MSL.
 8. Save Model.edmx.
 9. Open the Model.edmx in any text or XML editor.
 10. Copy the section ***BETWEEN*** (not including) <Schema ...> and </Schema> into the
-    Model.MSSQL.ssdl file. Take care not to overwrite the <Schema ...> part because VS can generate
-    garbage for that.
-11. Repeat steps 3..11 for:
-- "SSDLToMySQL.tt (VS)" and "Model.MySQL.ssdl"
+    Model.MSSQL.ssdl file, replacing the existing content. Take care not to overwrite the
+    <Schema ...> part because VS can generate garbage for that.
+11. Repeat steps 3..10 for:
+- "SSDLToMySQL.tt (VS)" and "Model.MySQL.ssdl". You may encounter an error the first time you
+  attempt to click "Finish" at step 7. Cancel and try again, and the process should work second
+  time.
 - "???.tt" and "Model.MSSQLCE.ssdl" [Sorry, currently I don't know how to acquire the TT file.]
 12. Manually apply the model changes to Model.SQLite.ssdl and Model_SQLite.edmx.sql based on their
     existing content and the content of the other SSDL files. This must be done manually because
@@ -49,7 +51,7 @@
     Revert unintended changes.
 14. Right click anywhere in the Model.edmx visual editor and select "Add Code Generation Item...".
 15. Select "ADO.NET Self-Tracking Entity Generator".
-16. Change the name from Model1.tt (default) to Model.tt and click add.
+16. Change the name from Model1.tt (default) to Model.tt and click "Add".
 17. Click OK and OK again to ignore the security warnings.
 18. Open Windows explorer and navigate to TvEngine3\Mediaportal\TV\Server\TVDatabase\EntityModel.
 19. Open all the new files except Model.cs in a text editor.
@@ -60,7 +62,8 @@
     (I don't know by who, or why!) and we don't want to overwrite the changes.
 22. Delete Model.cs in the EntityModel project folder and any obsolete entity classes in the
     Entities project folder.
-23. In Visual Studio, delete Model.tt and all sub-items from the EntityModel project.
+23. In Visual Studio, delete Model.tt, Model.Context.tt and all sub-items from the EntityModel
+    project.
 24. Update the Entities project to ensure any new entities (classes) have been included and any
     obsolete entities have been removed. This may require editing the project file in a text
 	editor.
