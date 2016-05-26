@@ -716,7 +716,11 @@ namespace MediaPortal.Player
             else
             {
               // Here is to hide video window madVR when skin didn't handle video overlay (the value need to be different from GUIVideoControl Render)
-              if (basicVideo != null) basicVideo.SetDestinationPosition(0, 0, 2, 2);
+              if (basicVideo != null)
+              {
+                if (!GUIGraphicsContext.IsFullScreenVideo)
+                  basicVideo.SetDestinationPosition(-10, -10, 1, 1);
+              }
             }
           }
         }

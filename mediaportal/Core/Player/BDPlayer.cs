@@ -1255,7 +1255,11 @@ namespace MediaPortal.Player
               }
               else
               {
-                if (_basicVideo != null) _basicVideo.SetDestinationPosition(0, 0, 2, 2);
+                if (_basicVideo != null)
+                {
+                  if (!GUIGraphicsContext.IsFullScreenVideo)
+                    _basicVideo.SetDestinationPosition(-10, -10, 1, 1);
+                }
               }
             }
           }
@@ -2394,9 +2398,9 @@ namespace MediaPortal.Player
 
     protected void OnInitialized()
     {
-      if (_vmr9 != null)
+      if (VMR9Util.g_vmr9 != null)
       {
-        _vmr9.Enable(true);
+        VMR9Util.g_vmr9.Enable(true);
         SetVideoWindow();
       }
     }
@@ -2879,14 +2883,14 @@ namespace MediaPortal.Player
 
         Log.Info("BDPlayer: Adding filters");
 
-        _vmr9 = new VMR9Util();
-        bool AddVMR9 = _vmr9.AddVMR9(_graphBuilder);
+        _vmr9 = VMR9Util.g_vmr9 = new VMR9Util();
+        bool AddVMR9 = VMR9Util.g_vmr9.AddVMR9(_graphBuilder);
         if (!AddVMR9)
         {
           Log.Error("BDPlayer: Failed to add VMR9 to graph");
           return false;
         }
-        _vmr9.Enable(false);
+        VMR9Util.g_vmr9.Enable(false);
 
         // Set VideoDecoder and VC1Override before adding filter in graph
         SetVideoDecoder();
@@ -2930,9 +2934,9 @@ namespace MediaPortal.Player
         //Sync Audio Renderer
         SyncAudioRenderer();
 
-        if (_vmr9.IsVMR9Connected)
+        if (VMR9Util.g_vmr9.IsVMR9Connected)
         {
-          _vmr9.SetDeinterlaceMode();
+          VMR9Util.g_vmr9.SetDeinterlaceMode();
         }
 
         return true;
@@ -3011,10 +3015,10 @@ namespace MediaPortal.Player
       {
         BDOSDRenderer.StopRendering();
 
-        if (_vmr9 != null)
+        if (VMR9Util.g_vmr9 != null)
         {
-          _vmr9.Vmr9MediaCtrl(_mediaCtrl);
-          _vmr9.Enable(false);
+          VMR9Util.g_vmr9.Vmr9MediaCtrl(_mediaCtrl);
+          VMR9Util.g_vmr9.Enable(false);
         }
 
         #region Cleanup
@@ -3080,10 +3084,10 @@ namespace MediaPortal.Player
           _interfaceBDReader = null;
         }
 
-        if (_vmr9 != null && _vmr9._vmr9Filter != null)
+        if (VMR9Util.g_vmr9 != null && VMR9Util.g_vmr9._vmr9Filter != null)
         {
-          MadvrInterface.EnableExclusiveMode(false, _vmr9._vmr9Filter);
-          DirectShowUtil.DisconnectAllPins(_graphBuilder, _vmr9._vmr9Filter);
+          MadvrInterface.EnableExclusiveMode(false, VMR9Util.g_vmr9._vmr9Filter);
+          DirectShowUtil.DisconnectAllPins(_graphBuilder, VMR9Util.g_vmr9._vmr9Filter);
           Log.Info("BDPlayer: Cleanup VMR9");
         }
 
@@ -3104,6 +3108,11 @@ namespace MediaPortal.Player
         if (_graphBuilder != null)
         {
           DirectShowUtil.RemoveFilters(_graphBuilder);
+          if (_rotEntry != null)
+          {
+            _rotEntry.SafeDispose();
+            _rotEntry = null;
+          }
           DirectShowUtil.FinalReleaseComObject(_graphBuilder);
           _graphBuilder = null;
         }
@@ -3124,25 +3133,19 @@ namespace MediaPortal.Player
         _basicVideo = null;
         _ireader = null;
 
-        if (_vmr9 != null)
+        if (VMR9Util.g_vmr9 != null)
         {
-          _vmr9.SafeDispose();
-          _vmr9 = null;
-        }
-
-        if (_rotEntry != null)
-        {
-          _rotEntry.SafeDispose();
-          _rotEntry = null;
+          VMR9Util.g_vmr9.SafeDispose();
+          VMR9Util.g_vmr9 = null;
         }
 
         _state = PlayState.Init;
       }
       catch (Exception ex)
       {
-        if (_vmr9 != null)
+        if (VMR9Util.g_vmr9 != null)
         {
-          _vmr9.RestoreGuiForMadVr();
+          VMR9Util.g_vmr9.RestoreGuiForMadVr();
         }
         Log.Error("BDPlayer: Exception while cleaning DShow graph - {0} {1}", ex.Message, ex.StackTrace);
       }
@@ -3168,10 +3171,10 @@ namespace MediaPortal.Player
 
     protected void OnProcess()
     {
-      if (_vmr9 != null)
+      if (VMR9Util.g_vmr9 != null)
       {
-        _videoWidth = _vmr9.VideoWidth;
-        _videoHeight = _vmr9.VideoHeight;
+        _videoWidth = VMR9Util.g_vmr9.VideoWidth;
+        _videoHeight = VMR9Util.g_vmr9.VideoHeight;
       }
     }
 

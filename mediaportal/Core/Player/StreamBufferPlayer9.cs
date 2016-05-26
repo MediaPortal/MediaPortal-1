@@ -39,9 +39,9 @@ namespace MediaPortal.Player
 
     protected override void OnInitialized()
     {
-      if (_vmr9 != null)
+      if (VMR9Util.g_vmr9 != null)
       {
-        _vmr9.Enable(true);
+        VMR9Util.g_vmr9.Enable(true);
         _updateNeeded = true;
         SetVideoWindow();
       }
@@ -83,16 +83,16 @@ namespace MediaPortal.Player
       try
       {
         _graphBuilder = (IGraphBuilder)new FilterGraph();
-        //Log.Info("StreamBufferPlayer9: add _vmr9");
+        //Log.Info("StreamBufferPlayer9: add VMR9Util.g_vmr9");
 
-        _vmr9 = new VMR9Util();
-        bool AddVMR9 = _vmr9.AddVMR9(_graphBuilder);
+        _vmr9 = VMR9Util.g_vmr9 = new VMR9Util();
+        bool AddVMR9 = VMR9Util.g_vmr9.AddVMR9(_graphBuilder);
         if (!AddVMR9)
         {
           Log.Error("StreamBufferPlayer9:Failed to add VMR9 to graph");
           return false;
         }
-        _vmr9.Enable(false);
+        VMR9Util.g_vmr9.Enable(false);
 
 
         int hr;
@@ -229,7 +229,7 @@ namespace MediaPortal.Player
 
         //Log.Info("StreamBufferPlayer9: set Deinterlace");
 
-        if (!_vmr9.IsVMR9Connected)
+        if (!VMR9Util.g_vmr9.IsVMR9Connected)
         {
           //_vmr9 is not supported, switch to overlay
           Log.Info("StreamBufferPlayer9: switch to overlay");
@@ -237,8 +237,8 @@ namespace MediaPortal.Player
           Cleanup();
           return base.GetInterfaces(filename);
         }
-        _pinVmr9ConnectedTo = _vmr9.PinConnectedTo;
-        _vmr9.SetDeinterlaceMode();
+        _pinVmr9ConnectedTo = VMR9Util.g_vmr9.PinConnectedTo;
+        VMR9Util.g_vmr9.SetDeinterlaceMode();
         return true;
       }
       catch (Exception ex)
@@ -267,11 +267,11 @@ namespace MediaPortal.Player
       Log.Info("StreamBufferPlayer9:cleanup DShow graph {0}", GUIGraphicsContext.InVmr9Render);
       try
       {
-        if (_vmr9 != null)
+        if (VMR9Util.g_vmr9 != null)
         {
           Log.Info("StreamBufferPlayer9: vmr9 disable");
-          _vmr9.Vmr9MediaCtrl(_mediaCtrl);
-          _vmr9.Enable(false);
+          VMR9Util.g_vmr9.Vmr9MediaCtrl(_mediaCtrl);
+          VMR9Util.g_vmr9.Enable(false);
         }
 
         _mediaCtrl = null;
@@ -309,11 +309,11 @@ namespace MediaPortal.Player
           _graphBuilder = null;
         }
 
-        if (_vmr9 != null)
+        if (VMR9Util.g_vmr9 != null)
         {
           Log.Info("StreamBufferPlayer9: vmr9 dispose");
-          _vmr9.SafeDispose();
-          _vmr9 = null;
+          VMR9Util.g_vmr9.SafeDispose();
+          VMR9Util.g_vmr9 = null;
         }
 
         GUIGraphicsContext.form.Invalidate(true);
@@ -334,10 +334,10 @@ namespace MediaPortal.Player
 
     protected override void OnProcess()
     {
-      if (_vmr9 != null)
+      if (VMR9Util.g_vmr9 != null)
       {
-        _videoWidth = _vmr9.VideoWidth;
-        _videoHeight = _vmr9.VideoHeight;
+        _videoWidth = VMR9Util.g_vmr9.VideoWidth;
+        _videoHeight = VMR9Util.g_vmr9.VideoHeight;
       }
     }
 
@@ -348,9 +348,9 @@ namespace MediaPortal.Player
       {
         if (Duration < 5)
         {
-          if (_vmr9 != null)
+          if (VMR9Util.g_vmr9 != null)
           {
-            _vmr9.Enable(false);
+            VMR9Util.g_vmr9.Enable(false);
           }
           _seekToBegin = true;
           return;
@@ -358,9 +358,9 @@ namespace MediaPortal.Player
       }
       _seekToBegin = false;
 
-      if (_vmr9 != null)
+      if (VMR9Util.g_vmr9 != null)
       {
-        _vmr9.Enable(true);
+        VMR9Util.g_vmr9.Enable(true);
       }
       if (_state != PlayState.Init)
       {
@@ -400,18 +400,18 @@ namespace MediaPortal.Player
 
     protected override void ReInit()
     {
-      //if (_vmr9 != null)
+      //if (VMR9Util.g_vmr9 != null)
       //{
       //  int xx = 2;
       //}
-      _vmr9 = new VMR9Util();
-      bool AddVMR9 = _vmr9.AddVMR9(_graphBuilder);
+      _vmr9 = VMR9Util.g_vmr9 = new VMR9Util();
+      bool AddVMR9 = VMR9Util.g_vmr9.AddVMR9(_graphBuilder);
       if (!AddVMR9)
       {
         Log.Error("TSReaderPlayer:Failed to add VMR9 to graph");
         return;
       }
-      _vmr9.Enable(false);
+      VMR9Util.g_vmr9.Enable(false);
       _graphBuilder.Render(_pinVmr9ConnectedTo);
       //if (!_vmr9.IsVMR9Connected)
       //{
@@ -429,11 +429,11 @@ namespace MediaPortal.Player
           return;
         }
 
-        if (_vmr9 != null)
+        if (VMR9Util.g_vmr9 != null)
         {
           Log.Info("StreamBufferPlayer9: vmr9 disable");
-          _vmr9.Vmr9MediaCtrl(_mediaCtrl);
-          _vmr9.Enable(false);
+          VMR9Util.g_vmr9.Vmr9MediaCtrl(_mediaCtrl);
+          VMR9Util.g_vmr9.Enable(false);
         }
         int counter = 0;
         while (GUIGraphicsContext.InVmr9Render)
@@ -448,11 +448,11 @@ namespace MediaPortal.Player
 
         _mediaCtrl.Stop();
 
-        if (_vmr9 != null)
+        if (VMR9Util.g_vmr9 != null)
         {
           Log.Info("StreamBufferPlayer9: vmr9 dispose");
-          _vmr9.SafeDispose();
-          _vmr9 = null;
+          VMR9Util.g_vmr9.SafeDispose();
+          VMR9Util.g_vmr9 = null;
         }
       }
       else

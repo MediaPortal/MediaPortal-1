@@ -148,9 +148,9 @@ namespace MediaPortal.Player
     protected override void OnInitialized()
     {
       Log.Info("TSReaderPlayer: OnInitialized");
-      if (_vmr9 != null)
+      if (VMR9Util.g_vmr9 != null)
       {
-        _vmr9.Enable(true);
+        VMR9Util.g_vmr9.Enable(true);
         _updateNeeded = true;
         SetVideoWindow();
       }
@@ -342,14 +342,14 @@ namespace MediaPortal.Player
         {
           if (_videoFormat.IsValid)
           {
-            _vmr9 = new VMR9Util();
-            bool AddVMR9 = _vmr9.AddVMR9(_graphBuilder);
+            _vmr9 = VMR9Util.g_vmr9 = new VMR9Util();
+            bool AddVMR9 = VMR9Util.g_vmr9.AddVMR9(_graphBuilder);
             if (!AddVMR9)
             {
               Log.Error("TSReaderPlayer:Failed to add VMR9 to graph");
               return false;
             }
-            _vmr9.Enable(false);
+            VMR9Util.g_vmr9.Enable(false);
           }
 
           // Add preferred video filters
@@ -515,7 +515,7 @@ namespace MediaPortal.Player
         }
         if (!_isRadio)
         {
-          if (_vmr9 != null && filterConfig != null && filterConfig.enableCCSubtitles)
+          if (VMR9Util.g_vmr9 != null && filterConfig != null && filterConfig.enableCCSubtitles)
           {
             CleanupCC();
             ReleaseCC();
@@ -533,16 +533,16 @@ namespace MediaPortal.Player
               Log.Debug("TSReaderPlayer: EnableCC2");
             }
           }
-          if (_vmr9 != null && !_vmr9.IsVMR9Connected)
+          if (VMR9Util.g_vmr9 != null && !VMR9Util.g_vmr9.IsVMR9Connected)
           {
             Log.Error("TSReaderPlayer: Failed vmr9 not connected");
             Cleanup();
             return false;
           }
           DirectShowUtil.EnableDeInterlace(_graphBuilder);
-          if (_vmr9 != null)
+          if (VMR9Util.g_vmr9 != null)
           {
-            _vmr9.SetDeinterlaceMode();
+            VMR9Util.g_vmr9.SetDeinterlaceMode();
           }
         }
 
@@ -818,14 +818,14 @@ namespace MediaPortal.Player
         Log.Info("TSReaderPlayer: Cleanup DShow graph {0}", GUIGraphicsContext.InVmr9Render);
         try
         {
-          if (_vmr9 != null)
+          if (VMR9Util.g_vmr9 != null)
           {
             if (_mediaCtrl != null)
             {
               // Stop the player
-              _vmr9.Vmr9MediaCtrl(_mediaCtrl);
+              VMR9Util.g_vmr9.Vmr9MediaCtrl(_mediaCtrl);
             }
-            _vmr9.Enable(false);
+            VMR9Util.g_vmr9.Enable(false);
           }
 
           if (filterCodec != null && filterCodec._audioRendererFilter != null)
@@ -930,10 +930,10 @@ namespace MediaPortal.Player
             Log.Debug("TSReaderPlayer: Cleanup line21CoreCCParser");
           }
 
-          if (_vmr9 != null && _vmr9._vmr9Filter != null)
+          if (VMR9Util.g_vmr9 != null && VMR9Util.g_vmr9._vmr9Filter != null)
           {
-            MadvrInterface.EnableExclusiveMode(false, _vmr9._vmr9Filter);
-            DirectShowUtil.DisconnectAllPins(_graphBuilder, _vmr9._vmr9Filter);
+            MadvrInterface.EnableExclusiveMode(false, VMR9Util.g_vmr9._vmr9Filter);
+            DirectShowUtil.DisconnectAllPins(_graphBuilder, VMR9Util.g_vmr9._vmr9Filter);
             Log.Info("TSReaderPlayer: Cleanup VMR9");
           }
 
@@ -957,6 +957,13 @@ namespace MediaPortal.Player
           if (_graphBuilder != null)
           {
             DirectShowUtil.RemoveFilters(_graphBuilder);
+            if (_rotEntry != null)
+            {
+              Log.Debug("TSReaderPlayer: rotEntry Dispose 1");
+              _rotEntry.SafeDispose();
+              _rotEntry = null;
+              Log.Debug("TSReaderPlayer: rotEntry Dispose 2");
+            }
             DirectShowUtil.FinalReleaseComObject(_graphBuilder);
             Log.Debug("TSReaderPlayer: Cleanup _graphBuilder");
           }
@@ -978,25 +985,20 @@ namespace MediaPortal.Player
           _ireader = null;
           _graphBuilder = null;
 
-          if (_vmr9 != null)
+          if (VMR9Util.g_vmr9 != null)
           {
-            _vmr9.SafeDispose();
-            _vmr9 = null;
-          }
-
-          if (_rotEntry != null)
-          {
-            _rotEntry.SafeDispose();
-            _rotEntry = null;
+            VMR9Util.g_vmr9.SafeDispose();
+            VMR9Util.g_vmr9 = null;
           }
 
           _state = PlayState.Init;
+          Log.Debug("TSReaderPlayer: Cleanup done");
         }
         catch (Exception ex)
         {
-          if (_vmr9 != null)
+          if (VMR9Util.g_vmr9 != null)
           {
-            _vmr9.RestoreGuiForMadVr();
+            VMR9Util.g_vmr9.RestoreGuiForMadVr();
           }
           Log.Error("TSReaderPlayer: Exception while cleaning DShow graph - {0} {1}", ex.Message, ex.StackTrace);
         }
@@ -1018,10 +1020,10 @@ namespace MediaPortal.Player
     protected override void OnProcess()
     {
       VideoRendererStatistics.VideoState = VideoRendererStatistics.State.VideoPresent;
-      if (_vmr9 != null)
+      if (VMR9Util.g_vmr9 != null)
       {
-        _videoWidth = _vmr9.VideoWidth;
-        _videoHeight = _vmr9.VideoHeight;
+        _videoWidth = VMR9Util.g_vmr9.VideoWidth;
+        _videoHeight = VMR9Util.g_vmr9.VideoHeight;
       }
     }
 

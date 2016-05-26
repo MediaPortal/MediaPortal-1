@@ -1511,17 +1511,6 @@ namespace MediaPortal.GUI.Library
       set { _videoRendererType = value; }
     }
 
-    /// <summary>
-    /// Add IsEvr to not break plugins
-    /// </summary>
-    public static bool IsEvr
-    {
-      get
-      {
-        return VideoRenderer == VideoRendererType.EVR;
-      }
-    }
-
     public static void ScaleVideoWindow(ref int width, ref int height, ref float x, ref float y)
     {
       if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)

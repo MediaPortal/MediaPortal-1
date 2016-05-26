@@ -173,6 +173,7 @@ namespace MediaPortal.GUI.Video
         if (g_Player.CurrentFile != _fileName)
         {
           _fileName = g_Player.CurrentFile;
+          Log.Debug("GUIVideoOverlay : SetCurrentFile PostRender _fileName {0}", Util.Utils.GetFilename(_fileName));
           SetCurrentFile(_fileName);
         }
 

@@ -18,9 +18,6 @@
 
 #endregion
 
-using System;
-using System.Threading;
-
 namespace MediaPortal.GUI.Library
 {
   public class GUILayerManager
@@ -31,9 +28,9 @@ namespace MediaPortal.GUI.Library
       MusicOverlay,
       VideoOverlay,
       TvOverlay,
+      Video,
       WeatherOverlay,
       TopOverlay,
-      Video,
       Osd,
       Topbar1,
       Topbar2,
@@ -78,7 +75,7 @@ namespace MediaPortal.GUI.Library
       {
         return false;
       }
-      int videoLayer = (int)LayerType.Video;
+      int videoLayer = (int) LayerType.Video;
       if (GUIGraphicsContext.ShowBackground == false)
       {
         if (_layers[videoLayer] != null)
@@ -94,13 +91,10 @@ namespace MediaPortal.GUI.Library
       int startLayer = 0;
       int endLayer = MAX_LAYERS;
 
-      if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
-      {
-        if (layers == GUILayers.under)
-          endLayer = videoLayer - 1;
-        else if (layers == GUILayers.over && !GUIGraphicsContext.IsFullScreenVideo)
-          startLayer = videoLayer + 1;
-      }
+      if (layers == GUILayers.under)
+        endLayer = videoLayer - 1;
+      else if (layers == GUILayers.over && !GUIGraphicsContext.IsFullScreenVideo)
+        startLayer = videoLayer + 1;
 
       for (int i = startLayer; i < endLayer; ++i)
       {
@@ -115,12 +109,11 @@ namespace MediaPortal.GUI.Library
             _layers[i].RenderLayer(timePassed);
             GUIFontManager.Present();
 
-            if (videoLayer == i && GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+            if (videoLayer != i)
             {
-              continue;
+              uiVisible = true;
+              //Log.Error("Layer uiVisible and layer [{0}]", Enum.GetName(typeof (LayerType), i));
             }
-            uiVisible = true;
-            //Log.Error("Layer uiVisible and layer [{0}]", Enum.GetName(typeof (LayerType), i));
           }
         }
       }

@@ -82,9 +82,9 @@ namespace MediaPortal.Player
 
     protected override void OnInitialized()
     {
-      if (Vmr9 != null)
+      if (VMR9Util.g_vmr9 != null)
       {
-        Vmr9.Enable(true);
+        VMR9Util.g_vmr9.Enable(true);
         _updateNeeded = true;
         SetVideoWindow();
       }
@@ -556,14 +556,14 @@ namespace MediaPortal.Player
           }
           else
           {
-            Vmr9 = new VMR9Util();
-            bool AddVMR9 = Vmr9.AddVMR9(graphBuilder);
+            Vmr9 = VMR9Util.g_vmr9 = new VMR9Util();
+            bool AddVMR9 = VMR9Util.g_vmr9.AddVMR9(graphBuilder);
             if (!AddVMR9)
             {
               Log.Error("VideoPlayer9:Failed to add VMR9 to graph");
               return false;
             }
-            Vmr9.Enable(false);
+            VMR9Util.g_vmr9.Enable(false);
           }
         }
         else
@@ -854,7 +854,7 @@ namespace MediaPortal.Player
 
         //EnableClock();
 
-        if ((Vmr9 == null || !Vmr9.IsVMR9Connected) && !AudioOnly)
+        if ((VMR9Util.g_vmr9 == null || !VMR9Util.g_vmr9.IsVMR9Connected) && !AudioOnly)
         {
           Log.Error("VideoPlayer9: Failed to render file -> vmr9");
           mediaCtrl = null;
@@ -868,11 +868,11 @@ namespace MediaPortal.Player
         mediaPos = (IMediaPosition) graphBuilder;
         basicAudio = (IBasicAudio) graphBuilder;
         videoWin = (IVideoWindow) graphBuilder;
-        if (Vmr9 != null)
+        if (VMR9Util.g_vmr9 != null)
         {
-          m_iVideoWidth = Vmr9.VideoWidth;
-          m_iVideoHeight = Vmr9.VideoHeight;
-          Vmr9.SetDeinterlaceMode();
+          m_iVideoWidth = VMR9Util.g_vmr9.VideoWidth;
+          m_iVideoHeight = VMR9Util.g_vmr9.VideoHeight;
+          VMR9Util.g_vmr9.SetDeinterlaceMode();
         }
         return true;
       }
@@ -1307,14 +1307,14 @@ namespace MediaPortal.Player
 
         // step 2: add the VMR9 in the graph
         // after enabeling exclusive mode, if done first it causes MediPortal to minimize if for example the "Windows key" is pressed while playing a video
-        Vmr9 = new VMR9Util();
-        bool AddVMR9 = Vmr9.AddVMR9(graphBuilder);
+        Vmr9 = VMR9Util.g_vmr9 = new VMR9Util();
+        bool AddVMR9 = VMR9Util.g_vmr9.AddVMR9(graphBuilder);
         if (!AddVMR9)
         {
           Log.Error("VideoPlayer9:Failed to add VMR9 to graph");
           return false;
         }
-        Vmr9.Enable(false);
+        VMR9Util.g_vmr9.Enable(false);
 
         // Render file in graph
         if (OSInfo.OSInfo.VistaOrLater())
@@ -1325,7 +1325,7 @@ namespace MediaPortal.Player
         // render
         DirectShowUtil.RenderGraphBuilderOutputPins(graphBuilder, null);
 
-        if (Vmr9 == null || !Vmr9.IsVMR9Connected)
+        if (VMR9Util.g_vmr9 == null || !VMR9Util.g_vmr9.IsVMR9Connected)
         {
           Log.Error("VideoPlayer9: Failed to render file -> vmr9");
           mediaCtrl = null;
@@ -1339,10 +1339,10 @@ namespace MediaPortal.Player
         mediaPos = (IMediaPosition)graphBuilder;
         basicAudio = (IBasicAudio)graphBuilder;
         videoWin = (IVideoWindow)graphBuilder;
-        m_iVideoWidth = Vmr9.VideoWidth;
-        m_iVideoHeight = Vmr9.VideoHeight;
+        m_iVideoWidth = VMR9Util.g_vmr9.VideoWidth;
+        m_iVideoHeight = VMR9Util.g_vmr9.VideoHeight;
 
-        Vmr9.SetDeinterlaceMode();
+        VMR9Util.g_vmr9.SetDeinterlaceMode();
         return true;
       }
       catch (Exception ex)
@@ -1356,9 +1356,9 @@ namespace MediaPortal.Player
 
     protected override void OnProcess()
     {
-      if (Vmr9 == null) return;
-      m_iVideoWidth = Vmr9.VideoWidth;
-      m_iVideoHeight = Vmr9.VideoHeight;
+      if (VMR9Util.g_vmr9 == null) return;
+      m_iVideoWidth = VMR9Util.g_vmr9.VideoWidth;
+      m_iVideoHeight = VMR9Util.g_vmr9.VideoHeight;
     }
 
     /// <summary> do cleanup and release DirectShow. </summary>
@@ -1376,14 +1376,14 @@ namespace MediaPortal.Player
       Log.Info("VideoPlayer9: Cleanup DShow graph");
       try
       {
-        if (Vmr9 != null)
+        if (VMR9Util.g_vmr9 != null)
         {
           if (mediaCtrl != null)
           {
             // Stop the player
-            Vmr9.Vmr9MediaCtrl(mediaCtrl);
+            VMR9Util.g_vmr9.Vmr9MediaCtrl(mediaCtrl);
           }
-          Vmr9.Enable(false);
+          VMR9Util.g_vmr9.Enable(false);
         }
 
         #region Cleanup Sebastiii
@@ -1474,10 +1474,10 @@ namespace MediaPortal.Player
           Log.Info("VideoPlayer9: Cleanup MediaPortal AudioSwitcher (for external audio files)");
         }
 
-        if (Vmr9._vmr9Filter != null)
+        if (VMR9Util.g_vmr9 != null && VMR9Util.g_vmr9._vmr9Filter != null)
         {
-          MadvrInterface.EnableExclusiveMode(false, Vmr9._vmr9Filter);
-          DirectShowUtil.DisconnectAllPins(graphBuilder, Vmr9._vmr9Filter);
+          MadvrInterface.EnableExclusiveMode(false, VMR9Util.g_vmr9._vmr9Filter);
+          DirectShowUtil.DisconnectAllPins(graphBuilder, VMR9Util.g_vmr9._vmr9Filter);
           Log.Info("VideoPlayer9: Cleanup VMR9");
         }
 
@@ -1500,6 +1500,13 @@ namespace MediaPortal.Player
         if (graphBuilder != null)
         {
           DirectShowUtil.RemoveFilters(graphBuilder);
+          if (_rotEntry != null)
+          {
+            Log.Debug("VideoPlayer9: rotEntry Dispose 1");
+            _rotEntry.SafeDispose();
+            _rotEntry = null;
+            Log.Debug("VideoPlayer9: rotEntry Dispose 2");
+          }
           DirectShowUtil.FinalReleaseComObject(graphBuilder);
           Log.Info("VideoPlayer9: Cleanup Graphbuilder");
         }
@@ -1522,28 +1529,21 @@ namespace MediaPortal.Player
         graphBuilder = null;
         Log.Info("VideoPlayer9: Cleanup Sub/PostProcess");
 
-        if (Vmr9 != null)
+        if (VMR9Util.g_vmr9 != null)
         {
-          Vmr9.SafeDispose();
-          Vmr9 = null;
+          VMR9Util.g_vmr9.SafeDispose();
+          VMR9Util.g_vmr9 = null;
         }
-
-        if (_rotEntry != null)
-        {
-          _rotEntry.SafeDispose();
-          _rotEntry = null;
-        }
-
-        //GC.Collect();
 
         GUIGraphicsContext.form.Invalidate(true);
         m_state = PlayState.Init;
+        Log.Debug("VideoPlayer9: Cleanup done");
       }
       catch (Exception ex)
       {
-        if (Vmr9 != null)
+        if (VMR9Util.g_vmr9 != null)
         {
-          Vmr9.RestoreGuiForMadVr();
+          VMR9Util.g_vmr9.RestoreGuiForMadVr();
         }
         Log.Error("VideoPlayer9: Exception while cleanuping DShow graph - {0} {1}", ex.Message, ex.StackTrace);
       }

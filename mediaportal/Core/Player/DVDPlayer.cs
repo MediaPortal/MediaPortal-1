@@ -1435,7 +1435,11 @@ namespace MediaPortal.Player
             }
             else
             {
-              if (_basicVideo != null) _basicVideo.SetDestinationPosition(0, 0, 2, 2);
+              if (_basicVideo != null)
+              {
+                if (!GUIGraphicsContext.IsFullScreenVideo)
+                  _basicVideo.SetDestinationPosition(-10, -10, 1, 1);
+              }
             }
           }
         }

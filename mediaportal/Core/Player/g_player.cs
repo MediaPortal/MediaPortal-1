@@ -3717,6 +3717,11 @@ namespace MediaPortal.Player
           return true;
         }
         Log.Info("g_Player: ShowFullScreenWindow switching to fullscreen tv");
+        if (GUIGraphicsContext.Vmr9Active && GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+        {
+          // Need to know why sometimes this need to be set and break here with madVR otherwise it get stuck in loop until a dialog is displayed
+          GUIGraphicsContext.IsFullScreenVideo = true;
+        }
         GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
         GUIGraphicsContext.IsFullScreenVideo = true;
         return true;

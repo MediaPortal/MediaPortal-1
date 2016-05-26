@@ -47,21 +47,36 @@ MPMadPresenter::MPMadPresenter(IVMR9Callback* pCallback, DWORD width, DWORD heig
   m_hParent(parent),
   m_pDevice(static_cast<IDirect3DDevice9Ex*>(pDevice))
 {
+  Log("MPMadPresenter::Constructor() - instance 0x%x", this);
   m_subProxy = new MadSubtitleProxy(pCallback);
   if (m_subProxy)
     m_subProxy->AddRef();
-  Log("MPMadPresenter::MPMadPresenter()");
+  Log("MPMadPresenter::MPMadPresenter() - instance 0x%x");
 }
 
 MPMadPresenter::~MPMadPresenter()
 {
+  Log("MPMadPresenter::Destructor() - instance 0x%x", this);
+
   CAutoLock cAutoLock(this);
+
+  Log("MPMadPresenter::Destructor() 2 ");
+
+  if (m_pCallback)
+  {
+    m_pCallback->Release();
+    m_pCallback = nullptr;
+  }
+
+  Log("MPMadPresenter::Destructor() 3 ");
 
   if (m_subProxy)
   {
     m_subProxy->Release();
     m_subProxy = nullptr;
   }
+
+  Log("MPMadPresenter::Destructor() 4 ");
 }
 
 IBaseFilter* MPMadPresenter::Initialize()
@@ -118,16 +133,17 @@ IBaseFilter* MPMadPresenter::Initialize()
 
 HRESULT MPMadPresenter::Shutdown()
 {
-  CAutoLock lock(this);
-  {
-    Log("MPMadPresenter::Shutdown()");
+  { // Scope for autolock for the local variable (lock, which when deleted releases the lock)
+    Log("MPMadPresenter::Shutdown() - instance 0x%x");
+
+    CAutoLock lock(this);
 
     if (m_pCallback)
     {
       m_pCallback->Release();
       m_pCallback = nullptr;
     }
-  }
+  } // Scope for autolock
 
   if (m_pMad)
   {
@@ -151,9 +167,9 @@ HRESULT MPMadPresenter::Shutdown()
 
     if (m_pOsdServices)
     {
-      Log("MPMadPresenter::Shutdown() 6");
+      Log("MPMadPresenter::ReleaseOSD() 1");
       m_pOsdServices->OsdSetRenderCallback("MP-GUI", nullptr, nullptr);
-      Log("MPMadPresenter::Shutdown() 7");
+      Log("MPMadPresenter::ReleaseOSD() 2");
     }
   }
 
@@ -225,7 +241,7 @@ HRESULT MPMadPresenter::ClearBackground(LPCSTR name, REFERENCE_TIME frameStart, 
   CAutoLock cAutoLock(this);
 
   if (!m_pCallback)
-    return S_OK;
+    return CALLBACK_EMPTY;
 
   m_dwHeight = static_cast<WORD>(fullOutputRect->bottom) - static_cast<WORD>(fullOutputRect->top);
   m_dwWidth = static_cast<WORD>(fullOutputRect->right) - static_cast<WORD>(fullOutputRect->left);
@@ -245,7 +261,7 @@ HRESULT MPMadPresenter::ClearBackground(LPCSTR name, REFERENCE_TIME frameStart, 
 
   if (FAILED(hr = SetupMadDeviceState()))
     return hr;
-  
+
   if (FAILED(hr = SetupOSDVertex(m_pMadGuiVertexBuffer)))
     return hr;
 
@@ -270,21 +286,21 @@ HRESULT MPMadPresenter::RenderOsd(LPCSTR name, REFERENCE_TIME frameStart, RECT* 
 
   CAutoLock cAutoLock(this);
 
-  IDirect3DSurface9* SurfaceMadVr = nullptr; // This will be released by C# side
-
   if (!m_pCallback)
-    return S_OK;
+    return CALLBACK_EMPTY;
+
+  IDirect3DSurface9* SurfaceMadVr = nullptr; // This will be released by C# side
 
   m_dwHeight = static_cast<WORD>(fullOutputRect->bottom) - static_cast<WORD>(fullOutputRect->top);
   m_dwWidth = static_cast<WORD>(fullOutputRect->right) - static_cast<WORD>(fullOutputRect->left);
 
-  if (SUCCEEDED(hr = m_pMadD3DDev->GetBackBuffer(0, 0, D3DBACKBUFFER_TYPE_MONO, &SurfaceMadVr)))
-  {
-    if (SUCCEEDED(hr = m_pCallback->RenderFrame(videoWidth, videoHeight, videoWidth, videoHeight, reinterpret_cast<DWORD>(SurfaceMadVr))))
-    {
-      SurfaceMadVr->Release();
-    }
-  }
+  //if (SUCCEEDED(hr = m_pMadD3DDev->GetBackBuffer(0, 0, D3DBACKBUFFER_TYPE_MONO, &SurfaceMadVr)))
+  //{
+  //  if (SUCCEEDED(hr = m_pCallback->RenderFrame(videoWidth, videoHeight, videoWidth, videoHeight, reinterpret_cast<DWORD>(SurfaceMadVr))))
+  //  {
+  //    SurfaceMadVr->Release();
+  //  }
+  //}
 
   RenderToTexture(m_pMPTextureOsd, videoWidth, videoHeight, videoWidth, videoHeight);
 

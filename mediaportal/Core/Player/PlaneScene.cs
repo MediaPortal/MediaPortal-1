@@ -684,7 +684,6 @@ namespace MediaPortal.Player
         GUIGraphicsContext.RenderOverlay = true;
       }
 
-
       bool visible = false;
       GUIGraphicsContext.RenderGUI.RenderFrame(GUIGraphicsContext.TimePassed, layers, ref visible);
       GUIFontManager.Present();

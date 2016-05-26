@@ -128,10 +128,10 @@ namespace MediaPortal.Player
 
     protected void OnInitialized()
     {
-      if (Vmr9 != null)
+      if (VMR9Util.g_vmr9 != null)
       {
-        Vmr9.FrameCounter = 123;
-        Vmr9.Enable(true);
+        VMR9Util.g_vmr9.FrameCounter = 123;
+        VMR9Util.g_vmr9.Enable(true);
         _updateNeeded = true;
         SetVideoWindow();
       }
@@ -140,10 +140,10 @@ namespace MediaPortal.Player
     /// <summary> create the used COM components and get the interfaces. </summary>
     protected bool GetInterfaces()
     {
-      Vmr9 = null;
+      VMR9Util.g_vmr9 = null;
       if (IsRadio == false)
       {
-        Vmr9 = new VMR9Util();
+        Vmr9 = VMR9Util.g_vmr9 = new VMR9Util();
 
         // switch back to directx fullscreen mode
         Log.Info("RTSPPlayer: Enabling DX9 exclusive mode");
@@ -167,13 +167,13 @@ namespace MediaPortal.Player
         Log.Info("RTSPPlayer: add source filter");
         if (IsRadio == false)
         {
-          bool AddVMR9 = Vmr9 != null && Vmr9.AddVMR9(graphBuilder);
+          bool AddVMR9 = VMR9Util.g_vmr9 != null && VMR9Util.g_vmr9.AddVMR9(graphBuilder);
           if (!AddVMR9)
           {
             Log.Error("RTSPPlayer:Failed to add VMR9 to graph");
             return false;
           }
-          Vmr9.Enable(false);
+          VMR9Util.g_vmr9.Enable(false);
         }
 
         _mpegDemux = (IBaseFilter)new MPEG2Demultiplexer();
@@ -421,7 +421,7 @@ namespace MediaPortal.Player
 
         if (IsRadio == false)
         {
-          if (!Vmr9.IsVMR9Connected)
+          if (!VMR9Util.g_vmr9.IsVMR9Connected)
           {
             //VMR9 is not supported, switch to overlay
             Log.Info("RTSPPlayer: vmr9 not connected");
@@ -429,7 +429,7 @@ namespace MediaPortal.Player
             Cleanup();
             return false;
           }
-          Vmr9.SetDeinterlaceMode();
+          VMR9Util.g_vmr9.SetDeinterlaceMode();
         }
 
         _mediaCtrl = (IMediaControl)graphBuilder;
@@ -439,10 +439,10 @@ namespace MediaPortal.Player
         basicAudio = graphBuilder as IBasicAudio;
         //DirectShowUtil.SetARMode(graphBuilder,AspectRatioMode.Stretched);
         DirectShowUtil.EnableDeInterlace(graphBuilder);
-        if (Vmr9 != null)
+        if (VMR9Util.g_vmr9 != null)
         {
-          m_iVideoWidth = Vmr9.VideoWidth;
-          m_iVideoHeight = Vmr9.VideoHeight;
+          m_iVideoWidth = VMR9Util.g_vmr9.VideoWidth;
+          m_iVideoHeight = VMR9Util.g_vmr9.VideoHeight;
         }
         if (audioRendererFilter != null)
         {
@@ -467,10 +467,10 @@ namespace MediaPortal.Player
 
     protected void OnProcess()
     {
-      if (Vmr9 != null)
+      if (VMR9Util.g_vmr9 != null)
       {
-        m_iVideoWidth = Vmr9.VideoWidth;
-        m_iVideoHeight = Vmr9.VideoHeight;
+        m_iVideoWidth = VMR9Util.g_vmr9.VideoWidth;
+        m_iVideoHeight = VMR9Util.g_vmr9.VideoHeight;
       }
     }
 
@@ -490,10 +490,10 @@ namespace MediaPortal.Player
       Log.Info("RTSPPlayer:cleanup DShow graph");
       try
       {
-        if (Vmr9 != null)
+        if (VMR9Util.g_vmr9 != null)
         {
-          Vmr9.Vmr9MediaCtrl(_mediaCtrl);
-          Vmr9.Enable(false);
+          VMR9Util.g_vmr9.Vmr9MediaCtrl(_mediaCtrl);
+          VMR9Util.g_vmr9.Enable(false);
         }
 
         if (mediaEvt != null)
@@ -529,10 +529,10 @@ namespace MediaPortal.Player
           graphBuilder = null;
         }
 
-        if (Vmr9 != null)
+        if (VMR9Util.g_vmr9 != null)
         {
-          Vmr9.SafeDispose();
-          Vmr9 = null;
+          VMR9Util.g_vmr9.SafeDispose();
+          VMR9Util.g_vmr9 = null;
         }
 
         GUIGraphicsContext.form.Invalidate(true);
@@ -761,7 +761,12 @@ namespace MediaPortal.Player
             }
             else
             {
-              if (basicVideo != null) basicVideo.SetDestinationPosition(0, 0, 2, 2);
+              GUIGraphicsContext.VideoWindow = new Rectangle(-1, -1, 0, 0);
+              if (basicVideo != null)
+              {
+                if (!GUIGraphicsContext.IsFullScreenVideo)
+                  basicVideo.SetDestinationPosition(-10, -10, 1, 1);
+              }
             }
           }
         }

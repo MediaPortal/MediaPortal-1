@@ -169,7 +169,7 @@ namespace MediaPortal.Player
     private int _frameCounter = 0;
     private DateTime _repaintTimer = DateTime.Now;
     private IVMRMixerBitmap9 _vmr9MixerBitmapInterface = null;
-    private IGraphBuilder _graphBuilderInterface = null;
+    private IGraphBuilder _graphBuilder = null;
     private bool _isVmr9Initialized = false;
     private int _threadId;
     private Vmr9PlayState currentVmr9State = Vmr9PlayState.Playing;
@@ -383,7 +383,7 @@ namespace MediaPortal.Player
     {
       try
       {
-        Log.Error("VMR9: addvmr9 - thread : {0}", Thread.CurrentThread.Name);
+        Log.Debug("VMR9: addvmr9 - thread : {0}", Thread.CurrentThread.Name);
         if (!_useVmr9)
         {
           Log.Debug("VMR9: addvmr9 - vmr9 is deactivated");
@@ -517,7 +517,7 @@ namespace MediaPortal.Player
 
         _qualityInterface = _vmr9Filter as IQualProp;
         _vmr9MixerBitmapInterface = _vmr9Filter as IVMRMixerBitmap9;
-        _graphBuilderInterface = graphBuilder;
+        _graphBuilder = graphBuilder;
         _instanceCounter++;
         _isVmr9Initialized = true;
         if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.VMR9)
@@ -1072,20 +1072,26 @@ namespace MediaPortal.Player
       {
         if (mediaCtrl != null)
         {
-          var hr = 0;
-          hr = mediaCtrl.Stop();
-          DsError.ThrowExceptionForHR(hr);
-          if (GUIGraphicsContext.InVmr9Render)
+          lock (mediaCtrl)
           {
-            switch (GUIGraphicsContext.VideoRenderer)
+            var hr = 0;
+            Log.Debug("VMR9: mediaCtrl.Stop() 1");
+            hr = mediaCtrl.Pause();
+            hr = mediaCtrl.Stop();
+            Log.Debug("VMR9: mediaCtrl.Stop() 2");
+            DsError.ThrowExceptionForHR(hr);
+            if (GUIGraphicsContext.InVmr9Render)
             {
-              case GUIGraphicsContext.VideoRendererType.madVR:
-                GUIGraphicsContext.InVmr9Render = false;
-                //if (_vmr9Filter != null) MadvrInterface.EnableExclusiveMode(false, _vmr9Filter);
-                break;
-              default:
-                Log.Error("VMR9: {0} in renderer", g_Player.Player.ToString());
-                break;
+              switch (GUIGraphicsContext.VideoRenderer)
+              {
+                case GUIGraphicsContext.VideoRendererType.madVR:
+                  GUIGraphicsContext.InVmr9Render = false;
+                  //if (_vmr9Filter != null) MadvrInterface.EnableExclusiveMode(false, _vmr9Filter);
+                  break;
+                default:
+                  Log.Error("VMR9: {0} in renderer", g_Player.Player.ToString());
+                  break;
+              }
             }
           }
         }
@@ -1103,6 +1109,7 @@ namespace MediaPortal.Player
         GUIGraphicsContext.DX9Device.SetRenderTarget(0, MadVrRenderTargetVMR9);
         MadVrRenderTargetVMR9.Dispose();
         MadVrRenderTargetVMR9 = null;
+        Log.Debug("VMR9: RestoreGuiForMadVr");
       }
     }
 
@@ -1305,7 +1312,7 @@ namespace MediaPortal.Player
         }
         else if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
         {
-          Log.Error("VMR9: Dispose MadDeinit - thread : {0}", Thread.CurrentThread.Name);
+          Log.Debug("VMR9: Dispose MadDeinit - thread : {0}", Thread.CurrentThread.Name);
           MadDeinit();
           Log.Debug("VMR9: Dispose 2");
         }
@@ -1321,8 +1328,8 @@ namespace MediaPortal.Player
             //MadvrInterface.OsdSetRenderCallback(_vmr9Filter);
             MadvrInterface.EnableExclusiveMode(false, _vmr9Filter);
           }
-          DirectShowUtil.RemoveFilter(_graphBuilderInterface, _vmr9Filter);
-          GUIWindowManager.MadVrProcess();
+          DirectShowUtil.RemoveFilter(_graphBuilder, _vmr9Filter);
+          //GUIWindowManager.MadVrProcess();
           DirectShowUtil.FinalReleaseComObject(_vmr9Filter);
           Log.Debug("VMR9: Dispose 3");
         }
