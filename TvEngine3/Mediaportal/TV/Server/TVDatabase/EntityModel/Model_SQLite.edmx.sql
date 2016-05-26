@@ -43,6 +43,7 @@ DROP TABLE IF EXISTS "TunerProperties";
 DROP TABLE IF EXISTS "AnalogTunerSettings";
 DROP TABLE IF EXISTS "VideoEncoders";
 DROP TABLE IF EXISTS "AudioEncoders";
+DROP TABLE IF EXISTS "TunerSatellites";
 
 -- ------------------------------------------------------------------------------
 -- Creating all tables
@@ -572,14 +573,20 @@ CREATE TABLE "TuningDetails"  (
     "AudioSource" int NOT NULL,
     "IsVcrSignal" bit NOT NULL,
     "IdLnbType" int NULL,
+    "IdSatellite" int NULL,
+    "GrabEpg" bit NOT NULL,
+    "LastEpgGrabTime" datetime NOT NULL,
     CONSTRAINT "FK_ChannelTuningDetail" FOREIGN KEY ("IdChannel")
     REFERENCES "Channels" ("IdChannel") ON DELETE CASCADE,
     CONSTRAINT "FK_LnbTypeTuningDetail" FOREIGN KEY ("IdLnbType")
     REFERENCES "LnbTypes" ("IdLnbType")
+    CONSTRAINT "FK_SatelliteTuningDetail" FOREIGN KEY ("IdSatellite")
+    REFERENCES "Satellites" ("IdSatellite")
 );
 
 CREATE INDEX Idx_TuningDetails_1 ON "TuningDetails" (IdChannel);
 CREATE INDEX Idx_TuningDetails_2 ON "TuningDetails" (IdLnbType);
+CREATE INDEX Idx_TuningDetails_3 ON "TuningDetails" (IdSatellite);
 
 CREATE TRIGGER "TuningDetails_autoincrement" AFTER INSERT ON "TuningDetails"
   FOR EACH ROW BEGIN
@@ -671,7 +678,7 @@ CREATE TRIGGER "TunerProperties_autoincrement" AFTER INSERT ON "TunerProperties"
   END;
 
 -- Table "AnalogTunerSettings"
-CREATE TABLE "AnalogTunerSettings"(
+CREATE TABLE "AnalogTunerSettings"  (
     "Id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
     "IdAnalogTunerSettings" int UNIQUE,
     "VideoStandard" int NOT NULL,
@@ -740,5 +747,34 @@ CREATE TABLE "AudioEncoders"  (
 CREATE TRIGGER "AudioEncoders_autoincrement" AFTER INSERT ON "AudioEncoders"
   FOR EACH ROW BEGIN
     UPDATE AudioEncoders SET IdAudioEncoder = Id WHERE Id = NEW.Id; 
+  END;
+
+-- Table "TunerSatellites"
+CREATE TABLE "TunerSatellites"  (
+    "Id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+    "IdTunerSatellite" int UNIQUE, 
+    "IdSatellite" int NOT NULL, 
+    "IdTuner" int NULL, 
+    "IdLnbType" int NOT NULL, 
+    "DiseqcPort" int NOT NULL, 
+    "DiseqcMotorPosition" int NOT NULL, 
+    "Tone22kState" int NOT NULL, 
+    "ToneBurst" int NOT NULL, 
+    "IsToroidalDish" bit NOT NULL,
+    CONSTRAINT "FK_SatelliteTunerSatellite" FOREIGN KEY ("IdSatellite")
+    REFERENCES "Satellites" ("IdSatellite") ON DELETE CASCADE,
+    CONSTRAINT "FK_TunerTunerSatellite" FOREIGN KEY ("IdTuner")
+    REFERENCES "Tuners" ("IdTuner") ON DELETE CASCADE,
+    CONSTRAINT "FK_LnbTypeTunerSatellite" FOREIGN KEY ("IdLnbType")
+    REFERENCES "LnbTypes" ("IdLnbType")
+);
+
+CREATE INDEX Idx_TunerSatellites_1 ON  "TunerSatellites" (IdSatellite);
+CREATE INDEX Idx_TunerSatellites_2 ON  "TunerSatellites" (IdTuner);
+CREATE INDEX Idx_TunerSatellites_3 ON  "TunerSatellites" (IdLnbType);
+
+CREATE TRIGGER "TunerSatellites_autoincrement" AFTER INSERT ON "TunerSatellites"
+  FOR EACH ROW BEGIN
+    UPDATE TunerSatellites SET IdTunerSatellite = Id WHERE Id = NEW.Id; 
   END;
 

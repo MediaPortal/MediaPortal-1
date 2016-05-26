@@ -19,6 +19,8 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
 {
     [DataContract(IsReference = true)]
     [KnownType(typeof(DiseqcMotor))]
+    [KnownType(typeof(TunerSatellite))]
+    [KnownType(typeof(TuningDetail))]
     public partial class Satellite: IObjectWithChangeTracker, INotifyPropertyChanged
     {
         #region Primitive Properties
@@ -121,6 +123,88 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
             }
         }
         private TrackableCollection<DiseqcMotor> _diseqcMotors;
+    
+        [DataMember]
+        public TrackableCollection<TunerSatellite> TunerSatellites
+        {
+            get
+            {
+                if (_tunerSatellites == null)
+                {
+                    _tunerSatellites = new TrackableCollection<TunerSatellite>();
+                    _tunerSatellites.CollectionChanged += FixupTunerSatellites;
+                }
+                return _tunerSatellites;
+            }
+            set
+            {
+                if (!ReferenceEquals(_tunerSatellites, value))
+                {
+                    if (ChangeTracker.ChangeTrackingEnabled)
+                    {
+                        throw new InvalidOperationException("Cannot set the FixupChangeTrackingCollection when ChangeTracking is enabled");
+                    }
+                    if (_tunerSatellites != null)
+                    {
+                        _tunerSatellites.CollectionChanged -= FixupTunerSatellites;
+                        // This is the principal end in an association that performs cascade deletes.
+                        // Remove the cascade delete event handler for any entities in the current collection.
+                        foreach (TunerSatellite item in _tunerSatellites)
+                        {
+                            ChangeTracker.ObjectStateChanging -= item.HandleCascadeDelete;
+                        }
+                    }
+                    _tunerSatellites = value;
+                    if (_tunerSatellites != null)
+                    {
+                        _tunerSatellites.CollectionChanged += FixupTunerSatellites;
+                        // This is the principal end in an association that performs cascade deletes.
+                        // Add the cascade delete event handler for any entities that are already in the new collection.
+                        foreach (TunerSatellite item in _tunerSatellites)
+                        {
+                            ChangeTracker.ObjectStateChanging += item.HandleCascadeDelete;
+                        }
+                    }
+                    OnNavigationPropertyChanged("TunerSatellites");
+                }
+            }
+        }
+        private TrackableCollection<TunerSatellite> _tunerSatellites;
+    
+        [DataMember]
+        public TrackableCollection<TuningDetail> TuningDetails
+        {
+            get
+            {
+                if (_tuningDetails == null)
+                {
+                    _tuningDetails = new TrackableCollection<TuningDetail>();
+                    _tuningDetails.CollectionChanged += FixupTuningDetails;
+                }
+                return _tuningDetails;
+            }
+            set
+            {
+                if (!ReferenceEquals(_tuningDetails, value))
+                {
+                    if (ChangeTracker.ChangeTrackingEnabled)
+                    {
+                        throw new InvalidOperationException("Cannot set the FixupChangeTrackingCollection when ChangeTracking is enabled");
+                    }
+                    if (_tuningDetails != null)
+                    {
+                        _tuningDetails.CollectionChanged -= FixupTuningDetails;
+                    }
+                    _tuningDetails = value;
+                    if (_tuningDetails != null)
+                    {
+                        _tuningDetails.CollectionChanged += FixupTuningDetails;
+                    }
+                    OnNavigationPropertyChanged("TuningDetails");
+                }
+            }
+        }
+        private TrackableCollection<TuningDetail> _tuningDetails;
 
         #endregion
         #region ChangeTracking
@@ -201,6 +285,8 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         protected virtual void ClearNavigationProperties()
         {
             DiseqcMotors.Clear();
+            TunerSatellites.Clear();
+            TuningDetails.Clear();
         }
 
         #endregion
@@ -247,6 +333,90 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
                     // This is the principal end in an association that performs cascade deletes.
                     // Remove the previous dependent from the event listener.
                     ChangeTracker.ObjectStateChanging -= item.HandleCascadeDelete;
+                }
+            }
+        }
+    
+        private void FixupTunerSatellites(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (IsDeserializing)
+            {
+                return;
+            }
+    
+            if (e.NewItems != null)
+            {
+                foreach (TunerSatellite item in e.NewItems)
+                {
+                    item.Satellite = this;
+                    if (ChangeTracker.ChangeTrackingEnabled)
+                    {
+                        if (!item.ChangeTracker.ChangeTrackingEnabled)
+                        {
+                            item.StartTracking();
+                        }
+                        ChangeTracker.RecordAdditionToCollectionProperties("TunerSatellites", item);
+                    }
+                    // This is the principal end in an association that performs cascade deletes.
+                    // Update the event listener to refer to the new dependent.
+                    ChangeTracker.ObjectStateChanging += item.HandleCascadeDelete;
+                }
+            }
+    
+            if (e.OldItems != null)
+            {
+                foreach (TunerSatellite item in e.OldItems)
+                {
+                    if (ReferenceEquals(item.Satellite, this))
+                    {
+                        item.Satellite = null;
+                    }
+                    if (ChangeTracker.ChangeTrackingEnabled)
+                    {
+                        ChangeTracker.RecordRemovalFromCollectionProperties("TunerSatellites", item);
+                    }
+                    // This is the principal end in an association that performs cascade deletes.
+                    // Remove the previous dependent from the event listener.
+                    ChangeTracker.ObjectStateChanging -= item.HandleCascadeDelete;
+                }
+            }
+        }
+    
+        private void FixupTuningDetails(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (IsDeserializing)
+            {
+                return;
+            }
+    
+            if (e.NewItems != null)
+            {
+                foreach (TuningDetail item in e.NewItems)
+                {
+                    item.Satellite = this;
+                    if (ChangeTracker.ChangeTrackingEnabled)
+                    {
+                        if (!item.ChangeTracker.ChangeTrackingEnabled)
+                        {
+                            item.StartTracking();
+                        }
+                        ChangeTracker.RecordAdditionToCollectionProperties("TuningDetails", item);
+                    }
+                }
+            }
+    
+            if (e.OldItems != null)
+            {
+                foreach (TuningDetail item in e.OldItems)
+                {
+                    if (ReferenceEquals(item.Satellite, this))
+                    {
+                        item.Satellite = null;
+                    }
+                    if (ChangeTracker.ChangeTrackingEnabled)
+                    {
+                        ChangeTracker.RecordRemovalFromCollectionProperties("TuningDetails", item);
+                    }
                 }
             }
         }

@@ -20,6 +20,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
     [DataContract(IsReference = true)]
     [KnownType(typeof(Channel))]
     [KnownType(typeof(LnbType))]
+    [KnownType(typeof(Satellite))]
     public partial class TuningDetail: IObjectWithChangeTracker, INotifyPropertyChanged
     {
         #region Primitive Properties
@@ -643,6 +644,59 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
             }
         }
         private Nullable<int> _idLnbType;
+    
+        [DataMember]
+        public Nullable<int> IdSatellite
+        {
+            get { return _idSatellite; }
+            set
+            {
+                if (_idSatellite != value)
+                {
+                    ChangeTracker.RecordOriginalValue("IdSatellite", _idSatellite);
+                    if (!IsDeserializing)
+                    {
+                        if (Satellite != null && Satellite.IdSatellite != value)
+                        {
+                            Satellite = null;
+                        }
+                    }
+                    _idSatellite = value;
+                    OnPropertyChanged("IdSatellite");
+                }
+            }
+        }
+        private Nullable<int> _idSatellite;
+    
+        [DataMember]
+        public bool GrabEpg
+        {
+            get { return _grabEpg; }
+            set
+            {
+                if (_grabEpg != value)
+                {
+                    _grabEpg = value;
+                    OnPropertyChanged("GrabEpg");
+                }
+            }
+        }
+        private bool _grabEpg;
+    
+        [DataMember]
+        public System.DateTime LastEpgGrabTime
+        {
+            get { return _lastEpgGrabTime; }
+            set
+            {
+                if (_lastEpgGrabTime != value)
+                {
+                    _lastEpgGrabTime = value;
+                    OnPropertyChanged("LastEpgGrabTime");
+                }
+            }
+        }
+        private System.DateTime _lastEpgGrabTime;
 
         #endregion
         #region Navigation Properties
@@ -680,6 +734,23 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
             }
         }
         private LnbType _lnbType;
+    
+        [DataMember]
+        public Satellite Satellite
+        {
+            get { return _satellite; }
+            set
+            {
+                if (!ReferenceEquals(_satellite, value))
+                {
+                    var previousValue = _satellite;
+                    _satellite = value;
+                    FixupSatellite(previousValue);
+                    OnNavigationPropertyChanged("Satellite");
+                }
+            }
+        }
+        private Satellite _satellite;
 
         #endregion
         #region ChangeTracking
@@ -742,16 +813,6 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
             }
         }
     
-        // This entity type is the dependent end in at least one association that performs cascade deletes.
-        // This event handler will process notifications that occur when the principal end is deleted.
-        internal void HandleCascadeDelete(object sender, ObjectStateChangingEventArgs e)
-        {
-            if (e.NewState == ObjectState.Deleted)
-            {
-                this.MarkAsDeleted();
-            }
-        }
-    
         protected bool IsDeserializing { get; private set; }
     
         [OnDeserializing]
@@ -767,10 +828,21 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
             ChangeTracker.ChangeTrackingEnabled = true;
         }
     
+        // This entity type is the dependent end in at least one association that performs cascade deletes.
+        // This event handler will process notifications that occur when the principal end is deleted.
+        internal void HandleCascadeDelete(object sender, ObjectStateChangingEventArgs e)
+        {
+            if (e.NewState == ObjectState.Deleted)
+            {
+                this.MarkAsDeleted();
+            }
+        }
+    
         protected virtual void ClearNavigationProperties()
         {
             Channel = null;
             LnbType = null;
+            Satellite = null;
         }
 
         #endregion
@@ -855,6 +927,50 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
                 if (LnbType != null && !LnbType.ChangeTracker.ChangeTrackingEnabled)
                 {
                     LnbType.StartTracking();
+                }
+            }
+        }
+    
+        private void FixupSatellite(Satellite previousValue, bool skipKeys = false)
+        {
+            if (IsDeserializing)
+            {
+                return;
+            }
+    
+            if (previousValue != null && previousValue.TuningDetails.Contains(this))
+            {
+                previousValue.TuningDetails.Remove(this);
+            }
+    
+            if (Satellite != null)
+            {
+                if (!Satellite.TuningDetails.Contains(this))
+                {
+                    Satellite.TuningDetails.Add(this);
+                }
+    
+                IdSatellite = Satellite.IdSatellite;
+            }
+            else if (!skipKeys)
+            {
+                IdSatellite = null;
+            }
+    
+            if (ChangeTracker.ChangeTrackingEnabled)
+            {
+                if (ChangeTracker.OriginalValues.ContainsKey("Satellite")
+                    && (ChangeTracker.OriginalValues["Satellite"] == Satellite))
+                {
+                    ChangeTracker.OriginalValues.Remove("Satellite");
+                }
+                else
+                {
+                    ChangeTracker.RecordOriginalValue("Satellite", previousValue);
+                }
+                if (Satellite != null && !Satellite.ChangeTracker.ChangeTrackingEnabled)
+                {
+                    Satellite.StartTracking();
                 }
             }
         }

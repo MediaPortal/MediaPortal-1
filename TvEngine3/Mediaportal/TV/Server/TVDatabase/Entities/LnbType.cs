@@ -19,6 +19,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
 {
     [DataContract(IsReference = true)]
     [KnownType(typeof(TuningDetail))]
+    [KnownType(typeof(TunerSatellite))]
     public partial class LnbType: IObjectWithChangeTracker, INotifyPropertyChanged
     {
         #region Primitive Properties
@@ -154,6 +155,41 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
             }
         }
         private TrackableCollection<TuningDetail> _tuningDetails;
+    
+        [DataMember]
+        public TrackableCollection<TunerSatellite> TunerSatellites
+        {
+            get
+            {
+                if (_tunerSatellites == null)
+                {
+                    _tunerSatellites = new TrackableCollection<TunerSatellite>();
+                    _tunerSatellites.CollectionChanged += FixupTunerSatellites;
+                }
+                return _tunerSatellites;
+            }
+            set
+            {
+                if (!ReferenceEquals(_tunerSatellites, value))
+                {
+                    if (ChangeTracker.ChangeTrackingEnabled)
+                    {
+                        throw new InvalidOperationException("Cannot set the FixupChangeTrackingCollection when ChangeTracking is enabled");
+                    }
+                    if (_tunerSatellites != null)
+                    {
+                        _tunerSatellites.CollectionChanged -= FixupTunerSatellites;
+                    }
+                    _tunerSatellites = value;
+                    if (_tunerSatellites != null)
+                    {
+                        _tunerSatellites.CollectionChanged += FixupTunerSatellites;
+                    }
+                    OnNavigationPropertyChanged("TunerSatellites");
+                }
+            }
+        }
+        private TrackableCollection<TunerSatellite> _tunerSatellites;
 
         #endregion
         #region ChangeTracking
@@ -234,6 +270,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         protected virtual void ClearNavigationProperties()
         {
             TuningDetails.Clear();
+            TunerSatellites.Clear();
         }
 
         #endregion
@@ -273,6 +310,45 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
                     if (ChangeTracker.ChangeTrackingEnabled)
                     {
                         ChangeTracker.RecordRemovalFromCollectionProperties("TuningDetails", item);
+                    }
+                }
+            }
+        }
+    
+        private void FixupTunerSatellites(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (IsDeserializing)
+            {
+                return;
+            }
+    
+            if (e.NewItems != null)
+            {
+                foreach (TunerSatellite item in e.NewItems)
+                {
+                    item.LnbType = this;
+                    if (ChangeTracker.ChangeTrackingEnabled)
+                    {
+                        if (!item.ChangeTracker.ChangeTrackingEnabled)
+                        {
+                            item.StartTracking();
+                        }
+                        ChangeTracker.RecordAdditionToCollectionProperties("TunerSatellites", item);
+                    }
+                }
+            }
+    
+            if (e.OldItems != null)
+            {
+                foreach (TunerSatellite item in e.OldItems)
+                {
+                    if (ReferenceEquals(item.LnbType, this))
+                    {
+                        item.LnbType = null;
+                    }
+                    if (ChangeTracker.ChangeTrackingEnabled)
+                    {
+                        ChangeTracker.RecordRemovalFromCollectionProperties("TunerSatellites", item);
                     }
                 }
             }

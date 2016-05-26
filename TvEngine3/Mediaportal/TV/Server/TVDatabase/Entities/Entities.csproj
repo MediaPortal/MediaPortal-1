@@ -249,6 +249,11 @@
       <SubType>
       </SubType>
     </Compile>
+    <Compile Include="TunerSatellite.cs">
+      <DependentUpon>Model.tt</DependentUpon>
+      <SubType>
+      </SubType>
+    </Compile>
     <Compile Include="TuningDetail.cs">
       <DependentUpon>Model.tt</DependentUpon>
       <SubType>

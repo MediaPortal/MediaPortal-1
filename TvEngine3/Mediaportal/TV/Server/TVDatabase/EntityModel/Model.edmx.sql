@@ -5,7 +5,7 @@
 -- -----------------------------------------------------------
 -- Entity Designer DDL Script for MySQL Server 4.1 and higher
 -- -----------------------------------------------------------
--- Date Created: 08/21/2015 12:14:54
+-- Date Created: 05/26/2016 16:12:19
 -- Generated from EDMX file: F:\sdev\Code\MediaPortal\MediaPortal-1_TVE35\TvEngine3\Mediaportal\TV\Server\TVDatabase\EntityModel\Model.edmx
 -- Target version: 2.0.0.0
 -- --------------------------------------------------
@@ -48,6 +48,10 @@
 --    ALTER TABLE `AnalogTunerSettings` DROP CONSTRAINT `FK_TunerAnalogTunerSettings`;
 --    ALTER TABLE `AnalogTunerSettings` DROP CONSTRAINT `FK_VideoEncoderAnalogTunerSettings`;
 --    ALTER TABLE `AnalogTunerSettings` DROP CONSTRAINT `FK_AudioEncoderAnalogTunerSettings`;
+--    ALTER TABLE `TunerSatellites` DROP CONSTRAINT `FK_TunerTunerSatellite`;
+--    ALTER TABLE `TunerSatellites` DROP CONSTRAINT `FK_SatelliteTunerSatellite`;
+--    ALTER TABLE `TunerSatellites` DROP CONSTRAINT `FK_LnbTypeTunerSatellite`;
+--    ALTER TABLE `TuningDetails` DROP CONSTRAINT `FK_SatelliteTuningDetail`;
 
 -- --------------------------------------------------
 -- Dropping existing tables
@@ -83,6 +87,7 @@ SET foreign_key_checks = 0;
     DROP TABLE IF EXISTS `AnalogTunerSettings`;
     DROP TABLE IF EXISTS `VideoEncoders`;
     DROP TABLE IF EXISTS `AudioEncoders`;
+    DROP TABLE IF EXISTS `TunerSatellites`;
 SET foreign_key_checks = 1;
 
 -- --------------------------------------------------
@@ -271,8 +276,8 @@ CREATE TABLE `Programs`(
 	`IsLive` bool, 
 	`ProductionYear` int, 
 	`ProductionCountry` varchar (200), 
-	`StarRating` decimal (10, 2), 
-	`StarRatingMaximum` decimal (10, 2), 
+	`StarRating` decimal( 10, 2 ) , 
+	`StarRatingMaximum` decimal( 10, 2 ) , 
 	`State` int NOT NULL, 
 	`StartTimeDayOfWeek` smallint NOT NULL, 
 	`EndTimeDayOfWeek` smallint NOT NULL, 
@@ -329,8 +334,8 @@ CREATE TABLE `Recordings`(
 	`IsLive` bool, 
 	`ProductionYear` int, 
 	`ProductionCountry` varchar (200), 
-	`StarRating` decimal (10, 2), 
-	`StarRatingMaximum` decimal (10, 2), 
+	`StarRating` decimal( 10, 2 ) , 
+	`StarRatingMaximum` decimal( 10, 2 ) , 
 	`IsRecording` bool NOT NULL, 
 	`IdSchedule` int, 
 	`FileName` varchar (260) NOT NULL, 
@@ -459,7 +464,10 @@ CREATE TABLE `TuningDetails`(
 	`Url` varchar (200) NOT NULL, 
 	`AudioSource` int NOT NULL, 
 	`IsVcrSignal` bool NOT NULL, 
-	`IdLnbType` int);
+	`IdLnbType` int, 
+	`IdSatellite` int, 
+	`GrabEpg` bool NOT NULL, 
+	`LastEpgGrabTime` datetime NOT NULL);
 
 ALTER TABLE `TuningDetails` ADD PRIMARY KEY (IdTuning);
 
@@ -576,6 +584,22 @@ CREATE TABLE `AudioEncoders`(
 	`ClassId` varchar (50) NOT NULL);
 
 ALTER TABLE `AudioEncoders` ADD PRIMARY KEY (IdAudioEncoder);
+
+
+
+
+CREATE TABLE `TunerSatellites`(
+	`IdTunerSatellite` int NOT NULL AUTO_INCREMENT UNIQUE, 
+	`IdSatellite` int NOT NULL, 
+	`IdTuner` int, 
+	`IdLnbType` int NOT NULL, 
+	`DiseqcPort` int NOT NULL, 
+	`DiseqcMotorPosition` int NOT NULL, 
+	`Tone22kState` int NOT NULL, 
+	`ToneBurst` int NOT NULL, 
+	`IsToroidalDish` bool NOT NULL);
+
+ALTER TABLE `TunerSatellites` ADD PRIMARY KEY (IdTunerSatellite);
 
 
 
@@ -1059,6 +1083,66 @@ ADD CONSTRAINT `FK_AudioEncoderAnalogTunerSettings`
 CREATE INDEX `IX_FK_AudioEncoderAnalogTunerSettings` 
     ON `AnalogTunerSettings`
     (`IdAudioEncoder`);
+
+-- Creating foreign key on `IdTuner` in table 'TunerSatellites'
+
+ALTER TABLE `TunerSatellites`
+ADD CONSTRAINT `FK_TunerTunerSatellite`
+    FOREIGN KEY (`IdTuner`)
+    REFERENCES `Tuners`
+        (`IdTuner`)
+    ON DELETE CASCADE ON UPDATE NO ACTION;
+
+-- Creating non-clustered index for FOREIGN KEY 'FK_TunerTunerSatellite'
+
+CREATE INDEX `IX_FK_TunerTunerSatellite` 
+    ON `TunerSatellites`
+    (`IdTuner`);
+
+-- Creating foreign key on `IdSatellite` in table 'TunerSatellites'
+
+ALTER TABLE `TunerSatellites`
+ADD CONSTRAINT `FK_SatelliteTunerSatellite`
+    FOREIGN KEY (`IdSatellite`)
+    REFERENCES `Satellites`
+        (`IdSatellite`)
+    ON DELETE CASCADE ON UPDATE NO ACTION;
+
+-- Creating non-clustered index for FOREIGN KEY 'FK_SatelliteTunerSatellite'
+
+CREATE INDEX `IX_FK_SatelliteTunerSatellite` 
+    ON `TunerSatellites`
+    (`IdSatellite`);
+
+-- Creating foreign key on `IdLnbType` in table 'TunerSatellites'
+
+ALTER TABLE `TunerSatellites`
+ADD CONSTRAINT `FK_LnbTypeTunerSatellite`
+    FOREIGN KEY (`IdLnbType`)
+    REFERENCES `LnbTypes`
+        (`IdLnbType`)
+    ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+-- Creating non-clustered index for FOREIGN KEY 'FK_LnbTypeTunerSatellite'
+
+CREATE INDEX `IX_FK_LnbTypeTunerSatellite` 
+    ON `TunerSatellites`
+    (`IdLnbType`);
+
+-- Creating foreign key on `IdSatellite` in table 'TuningDetails'
+
+ALTER TABLE `TuningDetails`
+ADD CONSTRAINT `FK_SatelliteTuningDetail`
+    FOREIGN KEY (`IdSatellite`)
+    REFERENCES `Satellites`
+        (`IdSatellite`)
+    ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+-- Creating non-clustered index for FOREIGN KEY 'FK_SatelliteTuningDetail'
+
+CREATE INDEX `IX_FK_SatelliteTuningDetail` 
+    ON `TuningDetails`
+    (`IdSatellite`);
 
 -- --------------------------------------------------
 -- Script has ended

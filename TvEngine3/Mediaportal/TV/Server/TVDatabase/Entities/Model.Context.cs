@@ -247,15 +247,21 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
     
         public ObjectSet<VideoEncoder> VideoEncoders
         {
-          get { return _videoEncoders ?? (_videoEncoders = CreateObjectSet<VideoEncoder>("VideoEncoders")); }
+            get { return _videoEncoders  ?? (_videoEncoders = CreateObjectSet<VideoEncoder>("VideoEncoders")); }
         }
         private ObjectSet<VideoEncoder> _videoEncoders;
     
         public ObjectSet<AudioEncoder> AudioEncoders
         {
-          get { return _audioEncoders ?? (_audioEncoders = CreateObjectSet<AudioEncoder>("AudioEncoders")); }
+            get { return _audioEncoders  ?? (_audioEncoders = CreateObjectSet<AudioEncoder>("AudioEncoders")); }
         }
         private ObjectSet<AudioEncoder> _audioEncoders;
+    
+        public ObjectSet<TunerSatellite> TunerSatellites
+        {
+            get { return _tunerSatellites  ?? (_tunerSatellites = CreateObjectSet<TunerSatellite>("TunerSatellites")); }
+        }
+        private ObjectSet<TunerSatellite> _tunerSatellites;
 
         #endregion
     }
