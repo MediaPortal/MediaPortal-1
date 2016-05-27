@@ -24,9 +24,14 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
 {
   public partial class Satellite
   {
+    public string LongitudeString()
+    {
+      return string.Format("{0:#.#}° {1}", Math.Abs(Longitude / 10), Longitude < 0 ? "W" : "E");
+    }
+
     public override string ToString()
     {
-      return string.Format("{0:#.#}° {1} {2}", Math.Abs(Longitude / 10), Longitude < 0 ? "W" : "E", Name);
+      return string.Format("{0} {2}", LongitudeString(), Name);
     }
   }
 }

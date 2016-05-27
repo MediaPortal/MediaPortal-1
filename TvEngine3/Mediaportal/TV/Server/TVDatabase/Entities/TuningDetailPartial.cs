@@ -68,8 +68,12 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         case BroadcastStandardEnum.DvbS2X:
         case BroadcastStandardEnum.SatelliteTurboFec:
         case BroadcastStandardEnum.DigiCipher2:
-          // TODO add longitude
-          return string.Format("{0} MHz, {1}, {2}, {3} ks/s", frequencyMhz, ((Polarisation)Polarisation).GetDescription(), ((ModulationSchemePsk)Modulation).GetDescription(), SymbolRate);
+          string satellite = string.Format("sat {0}", IdSatellite);
+          if (Satellite != null)
+          {
+            satellite = Satellite.LongitudeString();
+          }
+          return string.Format("{0} {1} MHz, {2}, {3}, {4} ks/s", satellite, frequencyMhz, ((Polarisation)Polarisation).GetDescription(), ((ModulationSchemePsk)Modulation).GetDescription(), SymbolRate);
         case BroadcastStandardEnum.DvbIp:
           return Url;
         case BroadcastStandardEnum.Atsc:
