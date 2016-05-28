@@ -1269,7 +1269,7 @@ bool CParserNitDvb::GetTransmitter(unsigned short index,
     symbolRate = recordSatellite->SymbolRate;
     innerFecRate = recordSatellite->InnerFecRate;
     rollOffFactor = recordSatellite->RollOff;
-    longitude = ((recordSatellite->WestEastFlag == 1 ? 1 : -1) * recordSatellite->OrbitalPosition);
+    longitude = ((recordSatellite->WestEastFlag ? 1 : -1) * recordSatellite->OrbitalPosition);
     if (recordSatellite->IsS2)
     {
       broadcastStandard = 0x0200;   // This is as-per the TV Server database BroadcastStandard.DvbS2 value.
