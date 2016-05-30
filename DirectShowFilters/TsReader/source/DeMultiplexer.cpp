@@ -1104,7 +1104,7 @@ bool CDeMultiplexer::Start(DWORD timeout)
       m_reader->SetFilePointer(0,FILE_BEGIN);
       //Flush(true);
       //Flushing is delegated to CDeMultiplexer::ThreadProc()
-      DelegatedFlush(true, false);
+      //DelegatedFlush(true, false);
       m_streamPcr.Reset();
       m_bStarting=false;
 	    LogDebug("demux:Start() Succeeded : BytesProcessed:%d, DTS/PTS count = %d/%d, GOPts = %d", dwBytesProcessed, m_vidDTScount, m_vidPTScount, m_bUsingGOPtimestamp);
