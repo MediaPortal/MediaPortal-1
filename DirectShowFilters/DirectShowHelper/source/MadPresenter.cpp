@@ -70,13 +70,18 @@ MPMadPresenter::~MPMadPresenter()
 
   Log("MPMadPresenter::Destructor() 3 ");
 
+  if (m_pSubRender)
+    m_pSubRender->SetCallback(nullptr);
+
+  Log("MPMadPresenter::Destructor() 4 ");
+
   if (m_subProxy)
   {
     m_subProxy->Release();
     m_subProxy = nullptr;
   }
 
-  Log("MPMadPresenter::Destructor() 4 ");
+  Log("MPMadPresenter::Destructor() 5 ");
 }
 
 IBaseFilter* MPMadPresenter::Initialize()
