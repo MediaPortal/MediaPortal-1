@@ -936,7 +936,13 @@ void MadDeinit()
   try
   {
     m_madPresenter->Shutdown();
-    m_pVMR9Filter->Release();
+    m_pVMR9Filter->AddRef();
+    ULONG refCount = m_pVMR9Filter->Release();
+    Log("MPMadDshow::MadDeinit refCount(%d)", refCount);
+    for (ULONG i = 1; i < refCount; ++i)
+    {
+      m_pVMR9Filter->Release();
+    }
     m_pVMR9Filter = nullptr;
   }
   catch(...)

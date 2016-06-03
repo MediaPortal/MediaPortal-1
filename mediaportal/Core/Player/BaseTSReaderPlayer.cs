@@ -801,6 +801,7 @@ namespace MediaPortal.Player
             if (!GUIGraphicsContext.IsFullScreenVideo)
               _basicVideo.SetDestinationPosition(-10, -10, 1, 1);
           }
+          Log.Error("TsReader hide video window");
         }
       }
       else if (!GUIGraphicsContext.IsWindowVisible && _isVisible)
@@ -815,6 +816,7 @@ namespace MediaPortal.Player
         {
           GUIGraphicsContext.VideoWindow = new Rectangle(0, 0, GUIGraphicsContext.VideoWindowWidth,
             GUIGraphicsContext.VideoWindowHeight);
+          Log.Error("TsReader restore video window");
         }
       }
       OnProcess();

@@ -1495,6 +1495,7 @@ namespace MediaPortal.Player
         if (mediaEvt != null)
         {
           mediaEvt.SetNotifyWindow(IntPtr.Zero, WM_GRAPHNOTIFY, IntPtr.Zero);
+          mediaEvt = null;
         }
 
         if (graphBuilder != null)
@@ -1508,6 +1509,7 @@ namespace MediaPortal.Player
             Log.Debug("VideoPlayer9: rotEntry Dispose 2");
           }
           DirectShowUtil.FinalReleaseComObject(graphBuilder);
+          graphBuilder = null;
           Log.Info("VideoPlayer9: Cleanup Graphbuilder");
         }
 
@@ -1521,12 +1523,10 @@ namespace MediaPortal.Player
         }
         videoWin = null;
         mediaCtrl = null;
-        mediaEvt = null;
         mediaSeek = null;
         mediaPos = null;
         basicAudio = null;
         basicVideo = null;
-        graphBuilder = null;
         Log.Info("VideoPlayer9: Cleanup Sub/PostProcess");
 
         if (VMR9Util.g_vmr9 != null)

@@ -3103,6 +3103,7 @@ namespace MediaPortal.Player
         if (_mediaEvt != null)
         {
           _mediaEvt.SetNotifyWindow(IntPtr.Zero, WM_GRAPHNOTIFY, IntPtr.Zero);
+          _mediaEvt = null;
         }
 
         if (_graphBuilder != null)
@@ -3126,7 +3127,6 @@ namespace MediaPortal.Player
           DirectShowUtil.FinalReleaseComObject(_basicVideo);
         }
         _mediaCtrl = null;
-        _mediaEvt = null;
         _mediaSeeking = null;
         _videoWin = null;
         _basicAudio = null;

@@ -952,6 +952,7 @@ namespace MediaPortal.Player
           if (_mediaEvt != null)
           {
             _mediaEvt.SetNotifyWindow(IntPtr.Zero, WM_GRAPHNOTIFY, IntPtr.Zero);
+            _mediaEvt = null;
           }
 
           if (_graphBuilder != null)
@@ -965,6 +966,7 @@ namespace MediaPortal.Player
               Log.Debug("TSReaderPlayer: rotEntry Dispose 2");
             }
             DirectShowUtil.FinalReleaseComObject(_graphBuilder);
+            _graphBuilder = null;
             Log.Debug("TSReaderPlayer: Cleanup _graphBuilder");
           }
 
@@ -977,13 +979,11 @@ namespace MediaPortal.Player
             DirectShowUtil.ReleaseComObject(_basicVideo);
           }
           _mediaCtrl = null;
-          _mediaEvt = null;
           _mediaSeeking = null;
           _videoWin = null;
           _basicAudio = null;
           _basicVideo = null;
           _ireader = null;
-          _graphBuilder = null;
 
           if (VMR9Util.g_vmr9 != null)
           {
