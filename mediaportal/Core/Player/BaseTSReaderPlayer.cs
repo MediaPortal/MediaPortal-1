@@ -790,33 +790,47 @@ namespace MediaPortal.Player
       {
         GUIGraphicsContext.IsWindowVisible = false;
         //Log.Info("TSReaderPlayer:hide window");
-        if (_videoWin != null && GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR)
+        if (_videoWin != null)
         {
-          _videoWin.put_Visible(OABool.False);
-        }
-        else
-        {
-          if (_basicVideo != null)
+          if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
           {
-            if (!GUIGraphicsContext.IsFullScreenVideo)
-              _basicVideo.SetDestinationPosition(-10, -10, 1, 1);
+            if (_basicVideo != null)
+            {
+              if (!GUIGraphicsContext.IsFullScreenVideo)
+              {
+                _basicVideo.SetDestinationPosition(-10, -10, 1, 1);
+                Log.Error("TsReader hide video window");
+              }
+            }
           }
-          Log.Error("TsReader hide video window");
+          else
+          {
+            _videoWin.put_Visible(OABool.False);
+          }
         }
       }
       else if (!GUIGraphicsContext.IsWindowVisible && _isVisible)
       {
         GUIGraphicsContext.IsWindowVisible = true;
         //Log.Info("TSReaderPlayer:show window");
-        if (_videoWin != null && GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR)
+        if (_videoWin != null)
         {
-          _videoWin.put_Visible(OABool.True);
-        }
-        else
-        {
-          GUIGraphicsContext.VideoWindow = new Rectangle(0, 0, GUIGraphicsContext.VideoWindowWidth,
-            GUIGraphicsContext.VideoWindowHeight);
-          Log.Error("TsReader restore video window");
+          if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+          {
+            if (_basicVideo != null)
+            {
+              if (!GUIGraphicsContext.IsFullScreenVideo)
+              {
+                _basicVideo.SetDestinationPosition(-10, -10, GUIGraphicsContext.VideoWindowWidth,
+                  GUIGraphicsContext.VideoWindowHeight);
+                Log.Error("TsReader show video window");
+              }
+            }
+          }
+          else
+          {
+            _videoWin.put_Visible(OABool.True);
+          }
         }
       }
       OnProcess();

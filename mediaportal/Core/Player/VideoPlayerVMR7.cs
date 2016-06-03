@@ -709,33 +709,47 @@ namespace MediaPortal.Player
           if (GUIGraphicsContext.IsWindowVisible)
           {
             GUIGraphicsContext.IsWindowVisible = false;
-            if (videoWin != null && GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR)
+            if (videoWin != null)
             {
-              videoWin.put_Visible(OABool.False);
-            }
-            else
-            {
-              // Here is to hide video window madVR when skin didn't handle video overlay (the value need to be different from GUIVideoControl Render)
-              if (basicVideo != null)
+              if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
               {
-                if (!GUIGraphicsContext.IsFullScreenVideo)
-                  basicVideo.SetDestinationPosition(-10, -10, 1, 1);
+                if (basicVideo != null)
+                {
+                  if (!GUIGraphicsContext.IsFullScreenVideo)
+                  {
+                    // Here is to hide video window madVR when skin didn't handle video overlay (the value need to be different from GUIVideoControl Render)
+                    basicVideo.SetDestinationPosition(-10, -10, 1, 1);
+                    Log.Error("VMR7 hide video window");
+                  }
+                }
+              }
+              else
+              {
+                videoWin.put_Visible(OABool.False);
               }
             }
           }
         }
         else if (!GUIGraphicsContext.IsWindowVisible)
         {
-          GUIGraphicsContext.IsWindowVisible = true;
-          if (videoWin != null && GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR)
+          if (videoWin != null)
           {
-            videoWin.put_Visible(OABool.True);
-          }
-          else
-          {
-            GUIGraphicsContext.VideoWindow = new Rectangle(0, 0, GUIGraphicsContext.VideoWindowWidth, GUIGraphicsContext.VideoWindowHeight);
-            //if (basicVideo != null) basicVideo.SetDestinationPosition(_videoRectangle.X, _videoRectangle.Y, _videoRectangle.Width, _videoRectangle.Height);
-            Log.Error("VMR7 : {0} else", _videoRectangle);
+            if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+            {
+              if (basicVideo != null)
+              {
+                if (!GUIGraphicsContext.IsFullScreenVideo)
+                {
+                  basicVideo.SetDestinationPosition(-10, -10, GUIGraphicsContext.VideoWindowWidth,
+                    GUIGraphicsContext.VideoWindowHeight);
+                  Log.Error("VMR7 show video window");
+                }
+              }
+            }
+            else
+            {
+              videoWin.put_Visible(OABool.True);
+            }
           }
         }
         updateTimer = DateTime.Now;

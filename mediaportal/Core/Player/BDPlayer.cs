@@ -1272,8 +1272,9 @@ namespace MediaPortal.Player
             }
             else
             {
-              GUIGraphicsContext.VideoWindow = new Rectangle(0, 0, GUIGraphicsContext.VideoWindowWidth,
-                GUIGraphicsContext.VideoWindowHeight);
+              if (!GUIGraphicsContext.IsFullScreenVideo)
+                GUIGraphicsContext.VideoWindow = new Rectangle(0, 0, GUIGraphicsContext.VideoWindowWidth,
+                  GUIGraphicsContext.VideoWindowHeight);
             }
           }
         }
