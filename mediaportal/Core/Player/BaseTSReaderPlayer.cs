@@ -799,7 +799,7 @@ namespace MediaPortal.Player
               if (!GUIGraphicsContext.IsFullScreenVideo)
               {
                 _basicVideo.SetDestinationPosition(-10, -10, 1, 1);
-                Log.Error("TsReader hide video window");
+                //Log.Error("TsReader hide video window");
               }
             }
           }
@@ -823,7 +823,7 @@ namespace MediaPortal.Player
               {
                 _basicVideo.SetDestinationPosition(-10, -10, GUIGraphicsContext.VideoWindowWidth,
                   GUIGraphicsContext.VideoWindowHeight);
-                Log.Error("TsReader show video window");
+                //Log.Error("TsReader show video window");
               }
             }
           }

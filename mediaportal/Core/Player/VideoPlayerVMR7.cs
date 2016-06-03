@@ -719,7 +719,7 @@ namespace MediaPortal.Player
                   {
                     // Here is to hide video window madVR when skin didn't handle video overlay (the value need to be different from GUIVideoControl Render)
                     basicVideo.SetDestinationPosition(-10, -10, 1, 1);
-                    Log.Error("VMR7 hide video window");
+                    //Log.Error("VMR7 hide video window");
                   }
                 }
               }
@@ -742,7 +742,7 @@ namespace MediaPortal.Player
                 {
                   basicVideo.SetDestinationPosition(-10, -10, GUIGraphicsContext.VideoWindowWidth,
                     GUIGraphicsContext.VideoWindowHeight);
-                  Log.Error("VMR7 show video window");
+                  //Log.Error("VMR7 show video window");
                 }
               }
             }
