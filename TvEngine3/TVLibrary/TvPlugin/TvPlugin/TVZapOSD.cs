@@ -379,12 +379,12 @@ namespace TvPlugin
         lblZapToCannelNo.Visible = !string.IsNullOrEmpty(channelNr);
       }
       if (LastError != null)
-      {        
-        lblStartTime.Label = "";
-        lblEndTime.Label = "";
+      {
+        if (lblStartTime != null) lblStartTime.Label = "";
+        if (lblEndTime != null) lblEndTime.Label = "";
         if (LastError.FailingChannel != null)
         {
-          lblCurrentChannel.Label = LastError.FailingChannel.DisplayName;
+          if (lblCurrentChannel != null) lblCurrentChannel.Label = LastError.FailingChannel.DisplayName;
         }
         if (LastError.Messages.Count > 0)
         {
@@ -465,21 +465,21 @@ namespace TvPlugin
 
     private void UpdateProgressBar()
     {
-      double fPercent;
-      Program prog = TVHome.Navigator.GetChannel(idChannel, true).CurrentProgram;
-      if (prog == null)
+      double fPercent = 0;
+      var currentProgram = TVHome.Navigator.GetChannel(idChannel, true).CurrentProgram;
+      if (currentProgram != null)
       {
-        return;
-      }
-      string strTime = String.Format("{0}-{1}",
-                                     prog.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
-                                     prog.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
+        Program prog = currentProgram;
+        string strTime = String.Format("{0}-{1}",
+          prog.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
+          prog.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
 
-      TimeSpan ts = prog.EndTime - prog.StartTime;
-      double iTotalSecs = ts.TotalSeconds;
-      ts = DateTime.Now - prog.StartTime;
-      double iCurSecs = ts.TotalSeconds;
-      fPercent = ((double)iCurSecs) / ((double)iTotalSecs);
+        TimeSpan ts = prog.EndTime - prog.StartTime;
+        double iTotalSecs = ts.TotalSeconds;
+        ts = DateTime.Now - prog.StartTime;
+        double iCurSecs = ts.TotalSeconds;
+        fPercent = ((double)iCurSecs) / ((double)iTotalSecs);
+      }
       fPercent *= 100.0d;
       GUIPropertyManager.SetProperty("#TV.View.Percentage", fPercent.ToString());
     }
