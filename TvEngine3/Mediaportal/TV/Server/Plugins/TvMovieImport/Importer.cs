@@ -464,10 +464,10 @@ namespace Mediaportal.TV.Server.Plugins.TvMovieImport
           starRatingMaximum = 4;
         }
 
-        bool live = false;
-        if (!bool.TryParse(tvmDbReader[21].ToString(), out live))
+        bool isLive = false;
+        if (!bool.TryParse(tvmDbReader[21].ToString(), out isLive))
         {
-          live = false;
+          isLive = false;
         }
 
         string productionCountry = tvmDbReader[23].ToString();
@@ -484,37 +484,37 @@ namespace Mediaportal.TV.Server.Plugins.TvMovieImport
 
         foreach (MappedChannel mappedChannel in mappedChannels)
         {
-          Program prog = ProgramFactory.CreateProgram(mappedChannel.ChannelId, start, end, title);
-          prog.Description = description;
+          Program program = ProgramFactory.CreateProgram(mappedChannel.ChannelId, start, end, title);
+          program.Description = description;
           if (episodeName != null)
           {
-            prog.EpisodeName = episodeName;
+            program.EpisodeName = episodeName;
           }
           if (isRepeat)
           {
-            prog.IsPreviouslyShown = isRepeat;
+            program.IsPreviouslyShown = isRepeat;
           }
           if (programCategory != null)
           {
-            prog.IdProgramCategory = programCategory.IdProgramCategory;
+            program.IdProgramCategory = programCategory.IdProgramCategory;
           }
           if (classification != null)
           {
-            prog.Classification = classification;
+            program.Classification = classification;
           }
-          prog.IsLive = live;
+          program.IsLive = isLive;
           if (productionYear > 0)
           {
-            prog.ProductionYear = productionYear;
+            program.ProductionYear = productionYear;
           }
           if (!string.IsNullOrEmpty(productionCountry))
           {
-            prog.ProductionCountry = productionCountry;
+            program.ProductionCountry = productionCountry;
           }
           if (starRating >= 0)
           {
-            prog.StarRating = starRating;
-            prog.StarRatingMaximum = starRatingMaximum;
+            program.StarRating = starRating;
+            program.StarRatingMaximum = starRatingMaximum;
           }
 
           // Actors, example...
@@ -524,19 +524,19 @@ namespace Mediaportal.TV.Server.Plugins.TvMovieImport
             int idx = actor.IndexOf('(');
             if (idx != -1)
             {
-              prog.ProgramCredits.Add(new ProgramCredit { Person = actor.Substring(0, idx).Trim(), Role = "actor" });
+              program.ProgramCredits.Add(new ProgramCredit { Person = actor.Substring(0, idx).Trim(), Role = "actor" });
             }
             else
             {
-              prog.ProgramCredits.Add(new ProgramCredit { Person = actor, Role = "actor" });
+              program.ProgramCredits.Add(new ProgramCredit { Person = actor, Role = "actor" });
             }
           }
           if (!string.IsNullOrEmpty(director))
           {
-            prog.ProgramCredits.Add(new ProgramCredit { Person = director, Role = "director" });
+            program.ProgramCredits.Add(new ProgramCredit { Person = director, Role = "director" });
           }
 
-          mappedChannel.Programs.Add(prog);
+          mappedChannel.Programs.Add(program);
         }
       }
     }
