@@ -33,6 +33,8 @@ namespace Mediaportal.TV.Server.TVLibrary.DiskManagement
 {
   internal class RecordingImporter
   {
+    private static readonly IEnumerable<string> RECORDING_FILE_EXTENSIONS = new List<string> { ".ts", ".wtv", ".dvr-ms", ".mkv", ".mp4", ".mpeg", ".mpg", ".avi", ".flac", ".mp3" };
+
     private RecordingImporter()
     {
     }
@@ -75,62 +77,53 @@ namespace Mediaportal.TV.Server.TVLibrary.DiskManagement
 
       try
       {
-        IList<string> recognisedExtensions = new List<string> { ".ts", ".wtv", ".dvr-ms", ".mkv", ".mp4", ".mpeg", ".mpg", ".avi", ".flac", ".mp3" };
-        foreach (string xmlFileName in Directory.GetFiles(directory, "*.xml", SearchOption.AllDirectories))
+        foreach (string recordingFileName in Directory.EnumerateFiles(directory, "*", SearchOption.AllDirectories))
         {
-          foreach (string ext in recognisedExtensions)
+          foreach (string ext in RECORDING_FILE_EXTENSIONS)
           {
-            string recordingFileName = Path.ChangeExtension(xmlFileName, ext);
-            if (File.Exists(recordingFileName))
+            if (!string.Equals(ext, Path.GetExtension(recordingFileName).ToLowerInvariant()))
             {
-              Recording existingRecording;
-              if (recordingsByFileName.TryGetValue(Path.GetFileNameWithoutExtension(recordingFileName), out existingRecording))
-              {
-                if (!string.Equals(recordingFileName, existingRecording.FileName))
-                {
-                  Log.Debug("  update file name, ID = {0}, current = {1}, new = {2}", existingRecording.IdRecording, existingRecording.FileName, recordingFileName);
-                  existingRecording.FileName = recordingFileName;
-                  TVDatabase.TVBusinessLayer.RecordingManagement.SaveRecording(existingRecording);
-                }
-                break;
-              }
+              continue;
+            }
 
-              Recording r = CreateRecordingFromMatroskaMetaInfo(channelsByName, categoriesByName, xmlFileName);
+            Recording existingRecording;
+            if (recordingsByFileName.TryGetValue(Path.GetFileNameWithoutExtension(recordingFileName), out existingRecording))
+            {
+              if (!string.Equals(recordingFileName, existingRecording.FileName))
+              {
+                Log.Debug("  update file name, ID = {0}, current = {1}, new = {2}", existingRecording.IdRecording, existingRecording.FileName, recordingFileName);
+                existingRecording.FileName = recordingFileName;
+                TVDatabase.TVBusinessLayer.RecordingManagement.SaveRecording(existingRecording);
+              }
+              break;
+            }
+
+            Recording r = CreateRecordingFromMatroskaMetaInfo(channelsByName, categoriesByName, recordingFileName);
+            if (r != null)
+            {
+              Log.Debug("  add Matroska, file name = {0}", recordingFileName);
+              TVDatabase.TVBusinessLayer.RecordingManagement.SaveRecording(r);
+              break;
+            }
+
+            r = CreateRecordingFromArgusMetaInfo(channelsByName, categoriesByName, recordingFileName);
+            if (r != null)
+            {
+              Log.Debug("  add ARGUS, file name = {0}", recordingFileName);
+              TVDatabase.TVBusinessLayer.RecordingManagement.SaveRecording(r);
+              break;
+            }
+
+            if (WmcMetaInfo.EXTENSIONS.Contains(ext))
+            {
+              r = CreateRecordingFromWmcRecording(channelsByName, categoriesByName, recordingFileName);
               if (r != null)
               {
-                r.FileName = recordingFileName;
-                Log.Debug("  add, file name = {0}", recordingFileName);
+                Log.Debug("  add WMC, file name = {0}", recordingFileName);
                 TVDatabase.TVBusinessLayer.RecordingManagement.SaveRecording(r);
                 break;
               }
             }
-          }
-        }
-
-        foreach (string recordingFileName in Directory.GetFiles(directory, "*.wtv", SearchOption.AllDirectories))
-        {
-          if (File.Exists(Path.ChangeExtension(recordingFileName, ".xml")))
-          {
-            continue; // imported above
-          }
-
-          Recording existingRecording;
-          if (recordingsByFileName.TryGetValue(Path.GetFileNameWithoutExtension(recordingFileName), out existingRecording))
-          {
-            if (!string.Equals(recordingFileName, existingRecording.FileName))
-            {
-              Log.Debug("  update file name, ID = {0}, current = {1}, new = {2}", existingRecording.IdRecording, existingRecording.FileName, recordingFileName);
-              existingRecording.FileName = recordingFileName;
-              TVDatabase.TVBusinessLayer.RecordingManagement.SaveRecording(existingRecording);
-            }
-            continue;
-          }
-
-          Recording r = CreateRecordingFromWmcRecording(channelsByName, categoriesByName, recordingFileName);
-          if (r != null)
-          {
-            Log.Debug("  add, file name = {0}", recordingFileName);
-            TVDatabase.TVBusinessLayer.RecordingManagement.SaveRecording(r);
           }
         }
       }
@@ -140,15 +133,15 @@ namespace Mediaportal.TV.Server.TVLibrary.DiskManagement
       }
     }
 
-    private static Recording CreateRecordingFromMatroskaMetaInfo(IDictionary<string, IList<Channel>> channelsByName, IDictionary<string, ProgramCategory> categoriesByName, string xmlFileName)
+    private static Recording CreateRecordingFromMatroskaMetaInfo(IDictionary<string, IList<Channel>> channelsByName, IDictionary<string, ProgramCategory> categoriesByName, string recordingFileName)
     {
-      MatroskaMetaInfo info = MatroskaMetaInfo.Read(xmlFileName);
+      MatroskaMetaInfo info = MatroskaMetaInfo.Read(recordingFileName);
       if (info == null)
       {
         return null;
       }
 
-      Recording r = RecordingFactory.CreateRecording(string.Empty, info.MediaType, info.StartTime, info.EndTime, info.Title);
+      Recording r = RecordingFactory.CreateRecording(recordingFileName, info.MediaType, info.StartTime, info.EndTime, info.Title);
       r.Description = info.Description;
       r.EpisodeName = info.EpisodeName;
       r.SeriesId = info.SeriesId;
@@ -184,6 +177,73 @@ namespace Mediaportal.TV.Server.TVLibrary.DiskManagement
       foreach (var credit in info.Credits)
       {
         r.RecordingCredits.Add(new RecordingCredit { Person = credit.Key, Role = credit.Value });
+      }
+
+      FixTimes(r);
+      return r;
+    }
+
+    private static Recording CreateRecordingFromArgusMetaInfo(IDictionary<string, IList<Channel>> channelsByName, IDictionary<string, ProgramCategory> categoriesByName, string recordingFileName)
+    {
+      ArgusMetaInfo info = ArgusMetaInfo.Read(recordingFileName);
+      if (info == null)
+      {
+        return null;
+      }
+
+      MediaType mediaType = MediaType.Television;
+      if (info.ChannelType == ArgusMetaInfo.ArgusChannelType.Radio)
+      {
+        mediaType = MediaType.Radio;
+      }
+      Recording r = RecordingFactory.CreateRecording(recordingFileName, mediaType, info.RecordingStartTime, info.RecordingStopTime.GetValueOrDefault(SqlDateTime.MinValue.Value), info.Title);
+      r.Description = info.Description;
+      r.EpisodeName = info.SubTitle;
+      r.SeasonNumber = info.SeriesNumber;
+      r.EpisodeNumber = info.EpisodeNumber;
+      r.EpisodePartNumber = info.EpisodePart;
+      r.IsHighDefinition = info.Flags.HasFlag(ArgusMetaInfo.ArgusGuideProgramFlags.HighDefinition);
+      r.WatchedCount = info.FullyWatchedCount;
+
+      if (info.IsRepeat)
+      {
+        r.IsPreviouslyShown = true;
+      }
+      else if (info.IsPremiere)
+      {
+        r.IsPreviouslyShown = false;
+      }
+
+      if (info.StarRating.HasValue)
+      {
+        r.StarRating = (decimal)info.StarRating.Value;
+        r.StarRatingMaximum = 1;
+      }
+
+      if (!string.IsNullOrEmpty(info.Rating))
+      {
+        r.Classification = info.Rating;
+      }
+
+      Channel channel = GetChannelByMediaTypeAndName(channelsByName, mediaType, new List<string> { info.ChannelDisplayName });
+      if (channel != null)
+      {
+        r.IdChannel = channel.IdChannel;
+      }
+
+      ProgramCategory category = GetCategoryByName(categoriesByName, new List<string> { info.Category });
+      if (category != null)
+      {
+        r.IdProgramCategory = category.IdProgramCategory;
+      }
+
+      foreach (string actor in info.Actors)
+      {
+        r.RecordingCredits.Add(new RecordingCredit { Person = actor, Role = "actor" });
+      }
+      foreach (string director in info.Directors)
+      {
+        r.RecordingCredits.Add(new RecordingCredit { Person = director, Role = "director" });
       }
 
       FixTimes(r);
@@ -300,7 +360,6 @@ namespace Mediaportal.TV.Server.TVLibrary.DiskManagement
     private static ProgramCategory GetCategoryByName(IDictionary<string, ProgramCategory> categoriesByName, IEnumerable<string> names)
     {
       ProgramCategory category = null;
-      IList<ProgramCategory> newCategories = new List<ProgramCategory>();
       foreach (string name in names)
       {
         if (string.IsNullOrEmpty(name))
@@ -308,55 +367,44 @@ namespace Mediaportal.TV.Server.TVLibrary.DiskManagement
           continue;
         }
         ProgramCategory tempCategory;
-        if (!categoriesByName.TryGetValue(name.ToLowerInvariant(), out tempCategory))
+        string lowerCaseName = name.ToLowerInvariant();
+        if (!categoriesByName.TryGetValue(lowerCaseName, out tempCategory))
         {
           tempCategory = new ProgramCategory { Category = name };
           tempCategory = ProgramCategoryManagement.AddCategory(tempCategory);
-          newCategories.Add(tempCategory);
+          categoriesByName[lowerCaseName] = tempCategory;
         }
-        else if (category == null || (!category.IdGuideCategory.HasValue && tempCategory.IdGuideCategory.HasValue))
+        if (category == null || (!category.IdGuideCategory.HasValue && tempCategory.IdGuideCategory.HasValue))
         {
           category = tempCategory;
         }
       }
 
-      foreach (ProgramCategory c in newCategories)
-      {
-        categoriesByName[c.Category.ToLowerInvariant()] = c;
-      }
-
-      if (category != null)
-      {
-        return category;
-      }
-
-      if (newCategories.Count > 0)
-      {
-        return newCategories[0];
-      }
-      return null;
+      return category;
     }
 
     private static void FixTimes(Recording recording)
     {
-      if (recording.StartTime == SqlDateTime.MinValue.Value || recording.EndTime == SqlDateTime.MinValue.Value)
+      try
       {
-        try
+        FileInfo fileInfo = null;
+        if (recording.StartTime == SqlDateTime.MinValue.Value)
         {
-          FileInfo fileInfo = new FileInfo(recording.FileName);
-          if (recording.StartTime == SqlDateTime.MinValue.Value)
-          {
-            recording.StartTime = fileInfo.CreationTime;
-          }
-          if (recording.EndTime == SqlDateTime.MinValue.Value)
-          {
-            recording.EndTime = fileInfo.LastWriteTime;
-          }
+          fileInfo = new FileInfo(recording.FileName);
+          recording.StartTime = fileInfo.CreationTime;
         }
-        catch (Exception ex)
+        if (recording.EndTime == SqlDateTime.MinValue.Value)
         {
-          Log.Warn(ex, "recording importer: failed to get time details for file, file name = {0}", recording.FileName);
+          if (fileInfo == null)
+          {
+            fileInfo = new FileInfo(recording.FileName);
+          }
+          recording.EndTime = fileInfo.LastWriteTime;
         }
+      }
+      catch (Exception ex)
+      {
+        Log.Warn(ex, "recording importer: failed to get time details for file, file name = {0}", recording.FileName);
       }
     }
   }

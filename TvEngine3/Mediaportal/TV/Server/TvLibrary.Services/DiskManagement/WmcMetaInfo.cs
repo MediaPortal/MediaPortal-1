@@ -30,9 +30,11 @@ using MediaPortal.Common.Utils;
 
 namespace Mediaportal.TV.Server.TVLibrary.DiskManagement
 {
-  public class WmcMetaInfo
+  internal class WmcMetaInfo
   {
     #region constants
+
+    public static readonly IList<string> EXTENSIONS = new List<string> { ".wtv", ".dvr-ms" };
 
     /// <summary>
     /// Use for music files. Do not use for audio that is not music.

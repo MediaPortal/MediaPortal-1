@@ -28,8 +28,11 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
 namespace Mediaportal.TV.Server.TVLibrary.DiskManagement
 {
-  public class MatroskaMetaInfo
+  internal class MatroskaMetaInfo
   {
+    private const string EXTENSION = ".xml";
+    private const string DATE_TIME_FORMAT = "yyyy-MM-dd HH:mm";
+
     public string ChannelName = string.Empty;
     public DateTime StartTime = SqlDateTime.MinValue.Value;
     public DateTime EndTime = SqlDateTime.MinValue.Value;
@@ -74,10 +77,11 @@ namespace Mediaportal.TV.Server.TVLibrary.DiskManagement
     /// <summary>
     /// Read a Matroska info file.
     /// </summary>
-    /// <param name="fileName">The full name and path to the file.</param>
+    /// <param name="fileName">The full name and path to the recording file.</param>
     /// <returns>a Matroska meta info object</returns>
     public static MatroskaMetaInfo Read(string fileName)
     {
+      fileName = Path.ChangeExtension(fileName, EXTENSION);
       if (!File.Exists(fileName))
       {
         return null;
@@ -94,8 +98,26 @@ namespace Mediaportal.TV.Server.TVLibrary.DiskManagement
         }
         foreach (XmlNode simpleTag in simpleTags)
         {
-          string tagValue = simpleTag.ChildNodes[1].InnerText;
-          switch (simpleTag.ChildNodes[0].InnerText)
+          string tagName = null;
+          string tagValue = null;
+          foreach (XmlNode tagNode in simpleTag.ChildNodes)
+          {
+            string tagNodeName = tagNode.Name.ToLowerInvariant();
+            if (string.Equals(tagNodeName, "name"))
+            {
+              tagName = tagNode.InnerText.ToUpperInvariant();
+            }
+            else if (string.Equals(tagNodeName, "value"))
+            {
+              tagValue = tagNode.InnerText;
+            }
+          }
+          if (tagName == null || tagValue == null)
+          {
+            continue;
+          }
+
+          switch (tagName)
           {
             case "CHANNEL_NAME":
               info.ChannelName = tagValue;
@@ -104,7 +126,7 @@ namespace Mediaportal.TV.Server.TVLibrary.DiskManagement
             case "START_TIME":
               try
               {
-                info.StartTime = DateTime.ParseExact(tagValue, "yyyy-MM-dd HH:mm", null);
+                info.StartTime = DateTime.ParseExact(tagValue, DATE_TIME_FORMAT, null);
               }
               catch
               {
@@ -115,7 +137,7 @@ namespace Mediaportal.TV.Server.TVLibrary.DiskManagement
             case "END_TIME":
               try
               {
-                info.EndTime = DateTime.ParseExact(tagValue, "yyyy-MM-dd HH:mm", null);
+                info.EndTime = DateTime.ParseExact(tagValue, DATE_TIME_FORMAT, null);
               }
               catch
               {
@@ -289,12 +311,13 @@ namespace Mediaportal.TV.Server.TVLibrary.DiskManagement
     /// <summary>
     /// Write a Matroska info file.
     /// </summary>
-    /// <param name="fileName">The full name and path to the file.</param>
+    /// <param name="fileName">The full name and path to the recording file.</param>
     public void Write(string fileName)
     {
-      if (!Directory.Exists(Path.GetDirectoryName(fileName)))
+      string directoryName = Path.GetDirectoryName(fileName);
+      if (!Directory.Exists(directoryName))
       {
-        Directory.CreateDirectory(Path.GetDirectoryName(fileName));
+        Directory.CreateDirectory(directoryName);
       }
       XmlDocument doc = new XmlDocument();
       XmlDeclaration xmldecl = doc.CreateXmlDeclaration("1.0", "UTF-8", null);
@@ -303,8 +326,8 @@ namespace Mediaportal.TV.Server.TVLibrary.DiskManagement
 
       tagNode.AppendChild(AddSimpleTag("CHANNEL_NAME", ChannelName, doc));
       tagNode.AppendChild(AddSimpleTag("MEDIA_TYPE", MediaType.ToString(), doc));
-      tagNode.AppendChild(AddSimpleTag("START_TIME", StartTime.ToString("yyyy-MM-dd HH:mm"), doc));
-      tagNode.AppendChild(AddSimpleTag("END_TIME", EndTime.ToString("yyyy-MM-dd HH:mm"), doc));
+      tagNode.AppendChild(AddSimpleTag("START_TIME", StartTime.ToString(DATE_TIME_FORMAT), doc));
+      tagNode.AppendChild(AddSimpleTag("END_TIME", EndTime.ToString(DATE_TIME_FORMAT), doc));
       tagNode.AppendChild(AddSimpleTag("TITLE", Title, doc));
       tagNode.AppendChild(AddSimpleTag("DESCRIPTION", Description, doc));
       tagNode.AppendChild(AddSimpleTag("EPISODE_NAME", EpisodeName ?? string.Empty, doc));
@@ -314,7 +337,7 @@ namespace Mediaportal.TV.Server.TVLibrary.DiskManagement
       tagNode.AppendChild(AddSimpleTag("EPISODE_NUMBER", EpisodeNumber.ToString(), doc));
       tagNode.AppendChild(AddSimpleTag("EPISODE_PART_NUMBER", EpisodePartNumber.ToString(), doc));
       tagNode.AppendChild(AddSimpleTag("IS_PREVIOUSLY_SHOWN", IsPreviouslyShown.ToString(), doc));
-      tagNode.AppendChild(AddSimpleTag("ORIGINAL_AIR_DATE", OriginalAirDate.HasValue ? OriginalAirDate.Value.ToString("yyyy-MM-dd") : string.Empty, doc));
+      tagNode.AppendChild(AddSimpleTag("ORIGINAL_AIR_DATE", OriginalAirDate.HasValue ? OriginalAirDate.Value.ToString(DATE_TIME_FORMAT) : string.Empty, doc));
       tagNode.AppendChild(AddSimpleTag("GENRE", ProgramCategory ?? string.Empty, doc));
       tagNode.AppendChild(AddSimpleTag("CLASSIFICATION", Classification ?? string.Empty, doc));
       tagNode.AppendChild(AddSimpleTag("ADVISORIES", Advisories.ToString(), doc));
@@ -342,7 +365,7 @@ namespace Mediaportal.TV.Server.TVLibrary.DiskManagement
       tagsNode.AppendChild(tagNode);
       doc.AppendChild(tagsNode);
       doc.InsertBefore(xmldecl, tagsNode);
-      doc.Save(fileName);
+      doc.Save(Path.ChangeExtension(fileName, EXTENSION));
     }
   }
 }

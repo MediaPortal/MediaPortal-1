@@ -198,8 +198,7 @@ namespace Mediaportal.TV.Server.TVLibrary.DiskManagement
         string directoryName = Path.GetDirectoryName(recordingFileName);
         if (Directory.Exists(directoryName))
         {
-          string[] relatedFiles = Directory.GetFiles(directoryName, string.Format("{0}.*", Path.GetFileNameWithoutExtension(recordingFileName)));
-          foreach (string fileName in relatedFiles)
+          foreach (string fileName in Directory.EnumerateFiles(directoryName, string.Format("{0}.*", Path.GetFileNameWithoutExtension(recordingFileName))))
           {
             Log.Info("  file, {0}", fileName);
             File.Delete(fileName);
