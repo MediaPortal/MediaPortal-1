@@ -726,17 +726,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
         {
           if (nodeCredits.NodeType == XmlNodeType.Element)
           {
-            string creditRole = nodeCredits.Name;
-            if (creditRole.Length > 50)
-            {
-              creditRole = creditRole.Substring(0, 50);  
-            }
-            string creditPerson = nodeCredits.ReadString();
-            if (creditPerson.Length > 200)
-            {
-              creditPerson = creditPerson.Substring(0, 200);
-            }
-            programCredits.Add(new ProgramCredit { Role = creditRole, Person = creditPerson });
+            programCredits.Add(new ProgramCredit { Role = nodeCredits.Name, Person = nodeCredits.ReadString() });
           }
           nodeCredits.Read();
         }
