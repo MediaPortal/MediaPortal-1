@@ -130,6 +130,8 @@ DECLARE_INTERFACE_(ITSReaderCallback, IUnknown)
 	STDMETHOD(OnMediaTypeChanged) (int mediaTypes)PURE;	
 	STDMETHOD(OnVideoFormatChanged) (int streamType,int width,int height,int aspectRatioX,int aspectRatioY,int bitrate,int isInterlaced)PURE;	
 	STDMETHOD(OnBitRateChanged) (int bitrate)PURE;	
+  STDMETHOD(OnVideoReceived) ()PURE;
+  STDMETHOD(OnRenderBlack) ()PURE;
 };
 
 DECLARE_INTERFACE_(ITSReaderAudioChange, IUnknown)
@@ -252,6 +254,8 @@ public:
   void            OnRequestAudioChange();
   void            OnVideoFormatChanged(int streamType,int width,int height,int aspectRatioX,int aspectRatioY,int bitrate,int isInterlaced);
   void            OnBitRateChanged(int bitrate);
+  void            OnVideoReceived();
+  void            OnRenderBlack();
   bool            IsStreaming();
   void            PauseRtspStreaming();
 
@@ -322,7 +326,6 @@ public:
   CTsDuration     m_duration;
   
   DWORD           m_regLAV_AutoAVSync; //LAV Audio Decoder 'AutoAVSync' registry value
-    
 
 protected:
   void ThreadProc();

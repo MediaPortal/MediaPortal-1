@@ -1076,7 +1076,7 @@ namespace MediaPortal.Player
           {
             var hr = 0;
             Log.Debug("VMR9: mediaCtrl.Stop() 1");
-            hr = mediaCtrl.Pause();
+            hr = mediaCtrl.StopWhenReady();
             hr = mediaCtrl.Stop();
             Log.Debug("VMR9: mediaCtrl.Stop() 2");
             DsError.ThrowExceptionForHR(hr);
@@ -1323,13 +1323,11 @@ namespace MediaPortal.Player
 
         if (_vmr9Filter != null)
         {
-          if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
-          {
-            //MadvrInterface.OsdSetRenderCallback(_vmr9Filter);
-            MadvrInterface.EnableExclusiveMode(false, _vmr9Filter);
-          }
+          //if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+          //{
+          //  MadvrInterface.EnableExclusiveMode(false, _vmr9Filter);
+          //}
           DirectShowUtil.RemoveFilter(_graphBuilder, _vmr9Filter);
-          //GUIWindowManager.MadVrProcess();
           DirectShowUtil.FinalReleaseComObject(_vmr9Filter);
           Log.Debug("VMR9: Dispose 3");
         }

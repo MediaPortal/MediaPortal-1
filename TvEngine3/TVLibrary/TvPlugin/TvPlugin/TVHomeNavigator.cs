@@ -705,7 +705,7 @@ namespace TvPlugin
       {
         if (useZapDelay)
         {
-          m_zaptime = DateTime.Now.AddMilliseconds(m_zapdelay);
+          m_zaptime = DateTime.Now.AddMilliseconds(750);
         }
         else
         {
@@ -771,7 +771,7 @@ namespace TvPlugin
       {
         if (useZapDelay)
         {
-          m_zaptime = DateTime.Now.AddMilliseconds(m_zapdelay);
+          m_zaptime = DateTime.Now.AddMilliseconds(750);
         }
         else
         {

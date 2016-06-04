@@ -51,6 +51,7 @@ namespace MediaPortal.GUI.Library
 
   public delegate void VideoReceivedHandler();
 
+  public delegate void OnRenderBlackHandler();
 
   /// <summary>
   /// Singleton class which holds all GFX related settings
@@ -62,7 +63,8 @@ namespace MediaPortal.GUI.Library
 
     public static event BlackImageRenderedHandler OnBlackImageRendered;
     public static event VideoReceivedHandler OnVideoReceived;
-    
+    public static event OnRenderBlackHandler OnRenderBlack;
+
     private static readonly object RenderLoopLock = new object();  // Rendering loop lock - use this when removing any D3D resources
     private static readonly List<Point> Cameras = new List<Point>();
     private static readonly List<TransformMatrix> GroupTransforms = new List<TransformMatrix>();
@@ -816,6 +818,15 @@ namespace MediaPortal.GUI.Library
     public static void VideoReceived()
     {
       VideoWindowChanged();
+      OnVideoReceived();
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public static void RenderBlack()
+    {
+      OnRenderBlack();
     }
 
     /// <summary>

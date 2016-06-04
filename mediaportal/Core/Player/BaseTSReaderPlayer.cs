@@ -51,6 +51,12 @@ namespace MediaPortal.Player
 
     [PreserveSig]
     int OnBitRateChanged(int bitrate);
+
+    [PreserveSig]
+    void OnVideoReceived();
+
+    [PreserveSig]
+    void OnRenderBlack();
   }
 
   [ComVisible(true), ComImport,
@@ -1636,6 +1642,18 @@ namespace MediaPortal.Player
       _videoFormat.bitrate = bitrate;
       //Log.Debug("TsReaderPlayer:OnBitRateChanged - {0} b/s", bitrate);
       return 0;
+    }
+
+    public void OnVideoReceived()
+    {
+      Log.Debug("TsReaderPlayer: OnVideoReceived() callback");
+      GUIGraphicsContext.VideoReceived();
+    }
+
+    public void OnRenderBlack()
+    {
+      Log.Debug("TsReaderPlayer: RenderBlackImage() callback");
+      GUIGraphicsContext.RenderBlack();
     }
 
     public int OnRequestAudioChange()

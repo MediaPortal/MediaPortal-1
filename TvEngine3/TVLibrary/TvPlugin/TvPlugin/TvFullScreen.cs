@@ -3175,8 +3175,8 @@ namespace TvPlugin
       Log.Debug("ZapPreviousChannel()");
       TVHome.Navigator.ZapToPreviousChannel(true);
       UpdateOSD();
-      ///@
-      ///if (_useVMR9Zap == true && _vmr9OSD != null)
+      //@
+      //if (_useVMR9Zap == true && _vmr9OSD != null)
       {
         //_vmr9OSD.RenderChannelList(TVHome.Navigator.CurrentGroup,TVHome.Navigator.ZapChannel);
       }
@@ -3188,12 +3188,11 @@ namespace TvPlugin
       {
         return;
       }
-
       Log.Debug("ZapNextChannel()");
       TVHome.Navigator.ZapToNextChannel(true);
       UpdateOSD();
-      ///@
-      ///if (_useVMR9Zap == true && _vmr9OSD != null)
+      //@
+      //if (_useVMR9Zap == true && _vmr9OSD != null)
       {
         //_vmr9OSD.RenderChannelList(TVHome.Navigator.CurrentGroup,TVHome.Navigator.ZapChannel);
       }

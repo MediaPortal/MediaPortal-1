@@ -146,7 +146,6 @@ namespace TvPlugin
     private static ManualResetEvent _waitForBlackScreen = null;
     private static ManualResetEvent _waitForVideoReceived = null;
 
-    private static int FramesBeforeStopRenderBlackImage = 0;
     private static BitHelper<LiveTvStatus> _status = new BitHelper<LiveTvStatus>();
 
     internal static string connectionString;
@@ -364,6 +363,7 @@ namespace TvPlugin
       RemoteControl.OnRemotingConnected += RemoteControl_OnRemotingConnected;
 
       GUIGraphicsContext.OnBlackImageRendered += new BlackImageRenderedHandler(OnBlackImageRendered);
+      GUIGraphicsContext.OnRenderBlack += new OnRenderBlackHandler(RenderBlackImage);
       GUIGraphicsContext.OnVideoReceived += new VideoReceivedHandler(OnVideoReceived);
 
       _waitForBlackScreen = new ManualResetEvent(false);
@@ -437,6 +437,7 @@ namespace TvPlugin
       RemoteControl.OnRemotingConnected -= RemoteControl_OnRemotingConnected;
 
       GUIGraphicsContext.OnBlackImageRendered -= new BlackImageRenderedHandler(OnBlackImageRendered);
+      GUIGraphicsContext.OnRenderBlack -= new OnRenderBlackHandler(RenderBlackImage);
       GUIGraphicsContext.OnVideoReceived -= new VideoReceivedHandler(OnVideoReceived);
 
       Application.ApplicationExit -= new EventHandler(Application_ApplicationExit);
@@ -3678,9 +3679,8 @@ namespace TvPlugin
     {
       if (GUIGraphicsContext.RenderBlackImage)
       {
-        //MediaPortal.GUI.Library.Log.Debug("TvHome.OnBlackImageRendered()");
+        //Log.Debug("TvHome.OnBlackImageRendered()");
         _waitForBlackScreen.Set();
-        OnVideoReceived();
       }
     }
 
@@ -3688,36 +3688,14 @@ namespace TvPlugin
     {
       if (GUIGraphicsContext.RenderBlackImage)
       {
-        if (!_tunePending)
-        {
-          Log.Debug("TvHome.OnVideoReceived() {0}", FramesBeforeStopRenderBlackImage);
-        }
-        if (FramesBeforeStopRenderBlackImage != 0)
-        {
-          FramesBeforeStopRenderBlackImage--;
-          if (FramesBeforeStopRenderBlackImage == 0)
-          {
-            GUIGraphicsContext.RenderBlackImage = false;
-            Log.Debug("TvHome.StopRenderBlackImage()");
-          }
-        }
-      }
-    }
-
-    private static void StopRenderBlackImage()
-    {
-      if (GUIGraphicsContext.RenderBlackImage)
-      {
-        FramesBeforeStopRenderBlackImage = !_useasynctuning ? 3 : 1;
-        // Ambass : we need to wait the 3rd frame to avoid persistance of previous channel....Why ?????
-        // Morpheus: number of frames depends on hardware, from 1..5 or higher might be needed! 
-        //           Probably the faster the graphics card is, the more frames required???
+        GUIGraphicsContext.RenderBlackImage = false;
+        Log.Debug("TvHome.StopRenderBlackImage()");
       }
     }
 
     private static void RenderBlackImage()
     {
-      if (GUIGraphicsContext.RenderBlackImage == false)
+      if (!GUIGraphicsContext.RenderBlackImage && !_useasynctuning)
       {
         Log.Debug("TvHome.RenderBlackImage()");
         _waitForBlackScreen.Reset();
@@ -3937,6 +3915,10 @@ namespace TvPlugin
           VirtualCard card;
           bool cardChanged = false;
           TvResult succeeded = server.StartTimeShifting(ref user, channel.IdChannel, out card, out cardChanged);
+          channelSync = channel;
+          succeededSync = succeeded;
+          cardSync = card;
+          cardChangedSync = cardChanged;
           CompleteTune(channel, succeeded, card, cardChanged);
           _playbackStopped = false;
           _doingChannelChange = false;
@@ -3959,7 +3941,6 @@ namespace TvPlugin
       {
         if (!_useasynctuning)
         {
-          StopRenderBlackImage();
           _userChannelChanged = false;
           FireOnChannelChangedEvent();
           Navigator.UpdateCurrentChannel();
@@ -4147,19 +4128,17 @@ namespace TvPlugin
             return;
           }
 
-          _mainThreadContext.Send(delegate
-                                  {
-                                    if (_currentChannelIdForTune != channel.IdChannel)
-                                    {
-                                      return;
-                                    }
-                                    CompleteTune(channel, succeeded, card, cardChanged);
-                                  }, null);
+          channelSync = channel;
+          succeededSync = succeeded;
+          cardSync = card;
+          cardChangedSync = cardChanged;
 
           if (_currentChannelIdForTune != channel.IdChannel)
           {
             return;
           }
+          GUIWindowManager.SendThreadCallback(CompleteTune, 0, 0, null);
+
           _playbackStopped = false;
           _ServerNotConnectedHandled = false;
 
@@ -4170,37 +4149,20 @@ namespace TvPlugin
           {
             return;
           }
-          _mainThreadContext.Send(delegate
-                                  {
-                                    if (_currentChannelIdForTune != channel.IdChannel)
-                                    {
-                                      return;
-                                    }
-                                    Log.Error("TvPlugin:ViewChannelandCheckV2 Exception {0}", ex);
-                                    _doingChannelChange = false;
-                                    Card.User.Name = new User().Name;
-                                    g_Player.Stop();
-                                    Card.StopTimeShifting();
-                                  }, null);
+          GUIWindowManager.SendThreadCallback(DoAsynchTuneException, 0, 0, null);
 
         }
         finally
         {
           try
           {
-            _mainThreadContext.Send(delegate
-                                    {
-                                      if (_currentChannelIdForTune == channel.IdChannel)
-                                      {
-                                        if (succeeded == TvResult.Succeeded)
-                                        {
-                                          StopRenderBlackImage();
-                                          _userChannelChanged = false;
-                                          FireOnChannelChangedEvent();
-                                          Navigator.UpdateCurrentChannel();
-                                        }
-                                      }
-                                    }, null);
+            if (_currentChannelIdForTune == channel.IdChannel)
+            {
+              if (succeeded == TvResult.Succeeded)
+              {
+                GUIWindowManager.SendThreadCallback(FireOnChannelChanged, 0, 0, null);
+              }
+            }
           }
           catch (Exception ex)
           {
@@ -4210,8 +4172,44 @@ namespace TvPlugin
       }
     }
 
+    public static int CompleteTune(int p1, int p2, object s)
+    {
+      CompleteTune(channelSync, succeededSync, cardSync, cardChangedSync);
+      return p1;
+    }
+
+    public static int FireOnChannelChanged(int p1, int p2, object s)
+    {
+      _userChannelChanged = false;
+      FireOnChannelChangedEvent();
+      Navigator.UpdateCurrentChannel();
+      return p1;
+    }
+
+    public static int DoAsynchTuneException(int p1, int p2, object s)
+    {
+      _doingChannelChange = false;
+      Card.User.Name = new User().Name;
+      g_Player.Stop();
+      Card.StopTimeShifting();
+      return p1;
+    }
+
+    public static bool cardChangedSync { get; set; }
+
+    public static VirtualCard cardSync { get; set; }
+
+    public static Channel channelSync { get; set; }
+
+    public static TvResult succeededSync { get; set; }
+
     private static void CompleteTune(Channel channel, TvResult succeeded, VirtualCard card, bool cardChanged)
     {
+      channel = channelSync;
+      succeeded = succeededSync;
+      card = cardSync;
+      cardChanged = cardChangedSync;
+
       if (_status.IsSet(LiveTvStatus.WasPlaying))
       {
         if (card != null)
@@ -4309,7 +4307,6 @@ namespace TvPlugin
           {
             g_Player.ShowFullScreenWindow();
           }
-          StopRenderBlackImage();
         }
         _doingChannelChange = false;
         inPlaceShift = false;
