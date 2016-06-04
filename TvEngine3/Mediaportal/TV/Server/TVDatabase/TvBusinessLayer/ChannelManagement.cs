@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Data.SqlTypes;
 using System.Linq;
 using Mediaportal.TV.Server.Common.Types.Enum;
 using Mediaportal.TV.Server.TVDatabase.Entities;
@@ -414,12 +415,11 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
 
     #region channel-to-tuner maps
 
-    public static ChannelMap GetChannelMap(int idChannelMap)
+    private static ChannelMap GetChannelMap(int idChannelMap)
     {
       using (IChannelRepository channelRepository = new ChannelRepository())
       {
-        IQueryable<ChannelMap> query = channelRepository.GetQuery<ChannelMap>(m => m.IdChannelMap == idChannelMap);
-        return channelRepository.IncludeAllRelations(query).FirstOrDefault();
+        return channelRepository.GetQuery<ChannelMap>(m => m.IdChannelMap == idChannelMap).FirstOrDefault();
       }
     }
 
@@ -574,7 +574,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
     {
       using (IChannelRepository channelRepository = new ChannelRepository())
       {
-        var query = channelRepository.GetAll<Channel>().Where(c => string.IsNullOrEmpty(c.ExternalId) && c.VisibleInGuide).OrderBy(c => c.LastGrabTime ?? Schedule.MinSchedule);
+        var query = channelRepository.GetAll<Channel>().Where(c => string.IsNullOrEmpty(c.ExternalId) && c.VisibleInGuide).OrderBy(c => c.LastGrabTime ?? SqlDateTime.MinValue.Value);
         return channelRepository.IncludeAllRelations(query, includeRelations).ToList();
       }
     }

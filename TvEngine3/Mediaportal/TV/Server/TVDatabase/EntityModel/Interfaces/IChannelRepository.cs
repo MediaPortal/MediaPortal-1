@@ -9,7 +9,6 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Interfaces
   {
     IQueryable<Channel> IncludeAllRelations(IQueryable<Channel> query);
     IQueryable<Channel> IncludeAllRelations(IQueryable<Channel> query, ChannelIncludeRelationEnum includeRelations);
-    IQueryable<ChannelMap> IncludeAllRelations(IQueryable<ChannelMap> query);
     IList<Channel> LoadNavigationProperties(IEnumerable<Channel> channels, ChannelIncludeRelationEnum includeRelations);
     Channel LoadNavigationProperties(Channel channel, ChannelIncludeRelationEnum includeRelations);
     Channel LoadNavigationProperties(Channel channel);
