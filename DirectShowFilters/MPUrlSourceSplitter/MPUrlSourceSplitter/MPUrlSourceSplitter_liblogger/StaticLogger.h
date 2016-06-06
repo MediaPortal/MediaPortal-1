@@ -62,6 +62,11 @@ public:
   // flushes all logger contexts to their logger files
   void Flush(void);
 
+  // flushes all logger contexts to their logger files
+  // @param timeout : the timeout in ms to wait for locking
+  // @return : true if flushed, false otherwise
+  bool Flush(unsigned int timeout);
+
   // registers module with specified file name
   // @param moduleFileName : the full path to module file to register
   // @return : true if successful, false otherwise

@@ -77,6 +77,11 @@ public:
   // @return : true if sending crash report is enabled, false otherwise
   bool IsSendingCrashReportEnabled(void);
 
+  // handles exception
+  // @param exceptionInfo : the exception info to handle
+  // @return : S_OK if successful, error code otherwise
+  HRESULT HandleException(struct _EXCEPTION_POINTERS *exceptionInfo);
+
 protected:
 
   // holds crash reporting instance
@@ -99,11 +104,6 @@ protected:
 
   // exception handler for crash reporting
   static crash_rpt::CrashProcessingCallbackResult CALLBACK HandleException(crash_rpt::CrashProcessingCallbackStage stage, crash_rpt::ExceptionInfo* exceptionInfo, LPVOID userData);
-
-  // gets module handle by address
-  // @param lpAddress : the address to get module
-  // @return : handle to module or NULL if not found
-  static HMODULE GetModuleHandleByAddress(LPVOID lpAddress);
 };
 
 #pragma warning(pop)

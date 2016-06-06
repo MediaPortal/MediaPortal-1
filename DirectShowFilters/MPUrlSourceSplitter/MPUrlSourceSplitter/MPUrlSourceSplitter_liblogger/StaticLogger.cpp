@@ -368,7 +368,14 @@ HRESULT CStaticLogger::DestroyLoggerWorker(void)
 
 void CStaticLogger::Flush(void)
 {
-  LOCK_MUTEX(this->mutex, INFINITE)
+  this->Flush(INFINITE);
+}
+
+bool CStaticLogger::Flush(unsigned int timeout)
+{
+  bool res = false;
+
+  LOCK_MUTEX(this->mutex, timeout)
 
   HRESULT result = S_OK;
   unsigned int contextCount = this->loggerContexts->Count();
@@ -378,7 +385,11 @@ void CStaticLogger::Flush(void)
     result = this->FlushContext(i);
   }
 
+  res = SUCCEEDED(result);
+
   UNLOCK_MUTEX(this->mutex)
+
+  return res;
 }
 
 HRESULT CStaticLogger::FlushContext(unsigned int contextHandle)
