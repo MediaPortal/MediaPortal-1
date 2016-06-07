@@ -1879,8 +1879,8 @@ public class Script
     <Version>
       <Major>2</Major>
       <Minor>2</Minor>
-      <Build>14</Build>
-      <Revision>5982</Revision>
+      <Build>15</Build>
+      <Revision>6002</Revision>
     </Version>
     <ExtensionDescription>The MediaPortal IPTV filter and url source splitter is a directshow source filter that enables direct playback for many protocols and filetypes used in online video sources in the internet.
 
@@ -1892,7 +1892,9 @@ Supported protocols:
 - Adobe HTTP Dynamic Streaming (HDS, F4M manifest)
 - Microsoft Smooth Streaming
 - Apple HTTP live streaming (M3U8 playlists)</ExtensionDescription>
-    <VersionDescription>- changed parsing SDP (RTSP protocol) to allow origin without address type
+    <VersionDescription>- fixed parsing minimum and maximum client port
+- fixed freeze on crash reporting
+- changed parsing SDP (RTSP protocol) to allow origin without address type
 - changed searching for control attribute in RTSP protocol
 - handling and sending crash report only for filter</VersionDescription>
     <DevelopmentStatus>Stable</DevelopmentStatus>
@@ -2113,7 +2115,7 @@ Supported protocols:
         <Param1 />
         <UpdateOption>OverwriteIfOlder</UpdateOption>
         <LocalFileName>MPUrlSourceSplitter.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{0e4b4750-ed97-4eee-aa2e-feb84deda715}-MPUrlSourceSplitter.png</ZipFileName>
+        <ZipFileName>Installer{CopyFile}\{e66683f3-390e-4b5b-af31-c55bb7c525f6}-MPUrlSourceSplitter.png</ZipFileName>
         <DestinationFilename />
       </FileItem>
     </Items>
