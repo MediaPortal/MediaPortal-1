@@ -600,4 +600,36 @@
     <BroadcastStandard>AnalogTelevision</BroadcastStandard>
     <PhysicalChannelNumber>150</PhysicalChannelNumber>
   </TuningDetail>
+  <TuningDetail>
+    <BroadcastStandard>AnalogTelevision</BroadcastStandard>
+    <PhysicalChannelNumber>151</PhysicalChannelNumber>
+  </TuningDetail>
+  <TuningDetail>
+    <BroadcastStandard>AnalogTelevision</BroadcastStandard>
+    <PhysicalChannelNumber>152</PhysicalChannelNumber>
+  </TuningDetail>
+  <TuningDetail>
+    <BroadcastStandard>AnalogTelevision</BroadcastStandard>
+    <PhysicalChannelNumber>153</PhysicalChannelNumber>
+  </TuningDetail>
+  <TuningDetail>
+    <BroadcastStandard>AnalogTelevision</BroadcastStandard>
+    <PhysicalChannelNumber>154</PhysicalChannelNumber>
+  </TuningDetail>
+  <TuningDetail>
+    <BroadcastStandard>AnalogTelevision</BroadcastStandard>
+    <PhysicalChannelNumber>155</PhysicalChannelNumber>
+  </TuningDetail>
+  <TuningDetail>
+    <BroadcastStandard>AnalogTelevision</BroadcastStandard>
+    <PhysicalChannelNumber>156</PhysicalChannelNumber>
+  </TuningDetail>
+  <TuningDetail>
+    <BroadcastStandard>AnalogTelevision</BroadcastStandard>
+    <PhysicalChannelNumber>157</PhysicalChannelNumber>
+  </TuningDetail>
+  <TuningDetail>
+    <BroadcastStandard>AnalogTelevision</BroadcastStandard>
+    <PhysicalChannelNumber>158</PhysicalChannelNumber>
+  </TuningDetail>
 </ArrayOfTuningDetail>
