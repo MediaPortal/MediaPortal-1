@@ -123,6 +123,7 @@ namespace MediaPortal.Player
       public string strsplitterfilefilter { get; set; }
       public string Video { get; set; }
       public string VideoH264 { get; set; }
+      public string VideoHEVC { get; set; }
       public string VideoVC1 { get; set; }
       public string VideoVC1I { get; set; }
       public string VideoXVID { get; set; }
@@ -151,6 +152,7 @@ namespace MediaPortal.Player
         filterConfig.Audio = xmlreader.GetValueAsString("movieplayer", "mpeg2audiocodec", "");
         filterConfig.AudioAAC = xmlreader.GetValueAsString("movieplayer", "aacaudiocodec", "");
         filterConfig.VideoH264 = xmlreader.GetValueAsString("movieplayer", "h264videocodec", "");
+        filterConfig.VideoHEVC = xmlreader.GetValueAsString("movieplayer", "hevcvideocodec", "");
         filterConfig.VideoVC1 = xmlreader.GetValueAsString("movieplayer", "vc1videocodec", "");
         filterConfig.VideoVC1I = xmlreader.GetValueAsString("movieplayer", "vc1ivideocodec", "");
         filterConfig.VideoXVID = xmlreader.GetValueAsString("movieplayer", "xvidvideocodec", "");
@@ -327,6 +329,14 @@ namespace MediaPortal.Player
                   return 1;
                 }
               }
+              else if (hevcCodec)
+              {
+                if (fInfo.achName == filterConfig.VideoHEVC)
+                {
+                  RebuildRelease(pInfo, fInfo, pinTo, pPin);
+                  return 1;
+                }
+              }
               else if (vc1Codec)
               {
                 if (fInfo.achName == filterConfig.VideoVC1)
@@ -448,6 +458,11 @@ namespace MediaPortal.Player
             {
               Log.Info("VideoPlayer9: found H264 video out pin");
               h264Codec = true;
+            }
+            if (mediaTypes[0].subType == MediaSubType.HEVC || mediaTypes[0].subType == MediaSubType.AVC1)
+            {
+              Log.Info("VideoPlayer9: found HEVC video out pin");
+              hevcCodec = true;
             }
             if (mediaTypes[0].subType == MediaSubType.XVID || mediaTypes[0].subType == MediaSubType.xvid ||
                 mediaTypes[0].subType == MediaSubType.dx50 || mediaTypes[0].subType == MediaSubType.DX50 ||
@@ -1191,6 +1206,7 @@ namespace MediaPortal.Player
       vc1ICodec = false;
       vc1Codec = false;
       h264Codec = false;
+      hevcCodec = false;
       xvidCodec = false;
       aacCodec = false;
       aacCodecLav = false;
@@ -1233,6 +1249,8 @@ namespace MediaPortal.Player
         //aacCodec = true;
         if (g_Player.MediaInfo.VideoCodec.Contains("AVC"))
           h264Codec = true;
+        if (g_Player.MediaInfo.VideoCodec.Contains("HEVC"))
+          hevcCodec = true;
         if (g_Player.MediaInfo.VideoCodec.Contains("XVID") || g_Player.MediaInfo.VideoCodec.Contains("DIVX") ||
             g_Player.MediaInfo.VideoCodec.Contains("DX50"))
           xvidCodec = true;
@@ -1244,6 +1262,10 @@ namespace MediaPortal.Player
         if (h264Codec)
         {
           return filterConfig.VideoH264;
+        }
+        if (hevcCodec)
+        {
+          return filterConfig.VideoHEVC;
         }
         else if (vc1ICodec)
         {

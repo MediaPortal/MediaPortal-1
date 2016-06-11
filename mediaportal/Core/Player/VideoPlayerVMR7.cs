@@ -258,6 +258,7 @@ namespace MediaPortal.Player
     protected bool vc1ICodec = false;
     protected bool vc1Codec = false;
     protected bool h264Codec = false;
+    protected bool hevcCodec = false;
     protected bool xvidCodec = false;
     protected bool aacCodec = false;
     protected bool aacCodecLav = false;
