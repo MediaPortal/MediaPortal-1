@@ -923,8 +923,15 @@ namespace DShowNET.Helper
                 }
                 else
                 {
-                  Log.Debug("DirectShowUtil: build the graph for PIN : {0}", pinName);
-                  hr = graphBuilder.Render(pins[0]);
+                  try
+                  {
+                    Log.Debug("DirectShowUtil: build the graph for PIN : {0}", pinName);
+                    hr = graphBuilder.Render(pins[0]);
+                  }
+                  catch (Exception exception)
+                  {
+                    Log.Error("DirectShowUtil: Exception build the graph for PIN : {0}", pinName);
+                  }
                 }
               }
               catch (Exception ex)
@@ -1185,8 +1192,8 @@ namespace DShowNET.Helper
           if (hr == 0 && pinEnum != null)
           {
             bool filterUsed = false;
-            bool hasOut = false;
-            bool hasIn = false;
+            bool hasOutConnected = false;
+            bool hasInConnected = false;
             pinEnum.Reset();
             IPin[] pins = new IPin[1];
             while (pinEnum.Next(1, pins, out fetched) == 0)
@@ -1197,9 +1204,19 @@ namespace DShowNET.Helper
                 hr = pins[0].QueryDirection(out pinDir);
                 DsError.ThrowExceptionForHR(hr);
                 if (pinDir == PinDirection.Output)
-                  hasOut = true;
-                else
-                  hasIn = true;
+                {
+                  if (HasConnection(pins[0]))
+                  {
+                    hasOutConnected = true;
+                  }
+                }
+                else if (pinDir == PinDirection.Input)
+                {
+                  if (HasConnection(pins[0]))
+                  {
+                    hasInConnected = true;
+                  }
+                }
                 if (HasConnection(pins[0]))
                 {
                   filterUsed = true;
@@ -1208,7 +1225,7 @@ namespace DShowNET.Helper
               }
             }
             ReleaseComObject(pinEnum);
-            if (!filterUsed && hasOut && hasIn)
+            if (!filterUsed && !hasOutConnected && !hasInConnected)
             {
               hr = RemoveFilter(graphBuilder, filter);
               DsError.ThrowExceptionForHR(hr);
@@ -2214,17 +2231,20 @@ namespace DShowNET.Helper
 
       if (obj != null)
       {
-        Stopwatch stopwatch = Stopwatch.StartNew();
-        while (returnVal > 0 && stopwatch.ElapsedMilliseconds < timeOut)
+        if (Marshal.IsComObject(obj))
         {
-          returnVal = Marshal.ReleaseComObject(obj);
-          if (returnVal > 0)
+          Stopwatch stopwatch = Stopwatch.StartNew();
+          while (returnVal > 0 && stopwatch.ElapsedMilliseconds < timeOut)
           {
-            Thread.Sleep(50);
-          }
-          else
-          {
-            return returnVal;
+            returnVal = Marshal.ReleaseComObject(obj);
+            if (returnVal > 0)
+            {
+              Thread.Sleep(50);
+            }
+            else
+            {
+              return returnVal;
+            }
           }
         }
       }
@@ -2241,7 +2261,8 @@ namespace DShowNET.Helper
       {
         if (obj != null)
         {
-          Marshal.ReleaseComObject(obj);
+          if (Marshal.IsComObject(obj))
+            Marshal.ReleaseComObject(obj);
         }
         obj = null;
       }
@@ -2258,7 +2279,8 @@ namespace DShowNET.Helper
       {
         if (obj != null)
         {
-          while (Marshal.FinalReleaseComObject(obj) > 0) ;
+          if (Marshal.IsComObject(obj))
+            while (Marshal.FinalReleaseComObject(obj) > 0) ;
         }
         obj = null;
       }

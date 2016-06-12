@@ -3095,7 +3095,7 @@ namespace MediaPortal.Player
         #endregion
 
         _videoWin = _graphBuilder as IVideoWindow;
-        if (_videoWin != null)
+        if (_videoWin != null && GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR)
         {
           _videoWin.put_Owner(IntPtr.Zero);
           _videoWin.put_Visible(OABool.False);

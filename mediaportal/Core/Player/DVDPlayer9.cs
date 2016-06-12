@@ -394,7 +394,7 @@ namespace MediaPortal.Player
           Log.Info("DVDPlayer9: Cleanup VMR9");
         }
 
-        if (_videoWin != null)
+        if (_videoWin != null && GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR)
         {
           _videoWin.put_Owner(IntPtr.Zero);
           _videoWin.put_Visible(OABool.False);

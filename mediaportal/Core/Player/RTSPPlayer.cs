@@ -502,7 +502,7 @@ namespace MediaPortal.Player
         }
 
         videoWin = graphBuilder as IVideoWindow;
-        if (videoWin != null)
+        if (videoWin != null && GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR)
         {
           videoWin.put_Owner(IntPtr.Zero);
           videoWin.put_Visible(OABool.False);
