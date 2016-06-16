@@ -522,6 +522,7 @@ namespace MediaPortal.Player
         _isVmr9Initialized = true;
         if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.VMR9)
         {
+          Log.Debug("VMR9: SetDeinterlacePrefs() for VMR9 mode");
           SetDeinterlacePrefs();
 
           IVMRMixerControl9 mixer = _vmr9Filter as IVMRMixerControl9;

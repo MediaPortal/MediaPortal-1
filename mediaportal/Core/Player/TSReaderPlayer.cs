@@ -153,6 +153,7 @@ namespace MediaPortal.Player
         VMR9Util.g_vmr9.Enable(true);
         _updateNeeded = true;
         SetVideoWindow();
+        GUIWindowManager.Receivers += OnMessage;
       }
     }
 

@@ -194,10 +194,10 @@ namespace MediaPortal.Player
     protected Geometry.Type _geometry = Geometry.Type.Normal;
     protected bool _endOfFileDetected = false;
     protected bool _startingUp;
-    protected bool _isRadio = false;
+    protected static bool _isRadio = false;
     protected g_Player.MediaType _mediaType;
     protected int iChangedMediaTypes;
-    protected VideoStreamFormat _videoFormat;
+    protected static VideoStreamFormat _videoFormat;
     protected int _lastFrameCounter;
     protected string videoFilter = "";
     protected string audioFilter = "";
@@ -1531,7 +1531,9 @@ namespace MediaPortal.Player
             return;
           }
 
+          Log.Debug("TSReaderPlayer: SetSourcePosition 1");
           _basicVideo.SetSourcePosition(rSource.Left, rSource.Top, rSource.Width, rSource.Height);
+          Log.Debug("TSReaderPlayer: SetSourcePosition 2");
 
           if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
           {
@@ -1621,19 +1623,57 @@ namespace MediaPortal.Player
       return 0;
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="message"></param>
+    internal static void OnMessage(GUIMessage message)
+    {
+      switch (message.Message)
+      {
+        case GUIMessage.MessageType.GUI_MSG_ONVIDEOFORMATCHANGED:
+          _isRadio = false;
+          _videoFormat.IsValid = true;
+          _videoFormat.streamType = (VideoStreamType)message.Param1;
+          _videoFormat.width = message.Param2;
+          _videoFormat.height = message.Param3;
+          _videoFormat.arX = message.Param4;
+          _videoFormat.arY = message.Param5;
+          _videoFormat.bitrate = message.Param6;
+          _videoFormat.isInterlaced = (message.Param7 == 1);
+          Log.Info("TsReaderPlayer: OnVideoFormatChanged - {0}", _videoFormat.ToString());
+          break;
+      }
+    }
+
     public int OnVideoFormatChanged(int streamType, int width, int height, int aspectRatioX, int aspectRatioY,
                                     int bitrate, int isInterlaced)
     {
-      _isRadio = false;
-      _videoFormat.IsValid = true;
-      _videoFormat.streamType = (VideoStreamType)streamType;
-      _videoFormat.width = width;
-      _videoFormat.height = height;
-      _videoFormat.arX = aspectRatioX;
-      _videoFormat.arY = aspectRatioY;
-      _videoFormat.bitrate = bitrate;
-      _videoFormat.isInterlaced = (isInterlaced == 1);
-      Log.Info("TsReaderPlayer: OnVideoFormatChanged - {0}", _videoFormat.ToString());
+      if (Thread.CurrentThread.Name != "MPMain" && Thread.CurrentThread.Name != "Config Main")
+      {
+        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ONVIDEOFORMATCHANGED, 0, 0, 0, 0, 0, null);
+        msg.Param1 = streamType;
+        msg.Param2 = width;
+        msg.Param3 = height;
+        msg.Param4 = aspectRatioX;
+        msg.Param5 = aspectRatioY;
+        msg.Param6 = bitrate;
+        msg.Param7 = isInterlaced;
+        GUIWindowManager.SendThreadMessage(msg);
+      }
+      else
+      {
+        _isRadio = false;
+        _videoFormat.IsValid = true;
+        _videoFormat.streamType = (VideoStreamType)streamType;
+        _videoFormat.width = width;
+        _videoFormat.height = height;
+        _videoFormat.arX = aspectRatioX;
+        _videoFormat.arY = aspectRatioY;
+        _videoFormat.bitrate = bitrate;
+        _videoFormat.isInterlaced = (isInterlaced == 1);
+        Log.Info("TsReaderPlayer: OnVideoFormatChanged - {0} MP main thread", _videoFormat.ToString());
+      }
       return 0;
     }
 

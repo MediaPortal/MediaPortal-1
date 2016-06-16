@@ -660,7 +660,9 @@ namespace MediaPortal.Player
             return;
           }
 
+          Log.Debug("VideoPlayer: SetSourcePosition 1");
           basicVideo.SetSourcePosition(rSource.Left, rSource.Top, rSource.Width, rSource.Height);
+          Log.Debug("VideoPlayer: SetSourcePosition 2");
 
           if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
           {

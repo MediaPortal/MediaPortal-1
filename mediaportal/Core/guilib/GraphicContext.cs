@@ -818,7 +818,7 @@ namespace MediaPortal.GUI.Library
     public static void VideoReceived()
     {
       VideoWindowChanged();
-      OnVideoReceived();
+      OnVideoReceived?.Invoke();
     }
 
     /// <summary>
@@ -826,7 +826,7 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     public static void RenderBlack()
     {
-      OnRenderBlack();
+      OnRenderBlack?.Invoke();
     }
 
     /// <summary>
