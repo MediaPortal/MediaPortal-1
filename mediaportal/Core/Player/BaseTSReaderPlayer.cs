@@ -657,6 +657,7 @@ namespace MediaPortal.Player
     {
       //lock (lockObj)
       {
+        Log.Debug("TSReaderPlayer: SetVideoWindow()");
         if (GUIGraphicsContext.IsFullScreenVideo != _isFullscreen)
         {
           _isFullscreen = GUIGraphicsContext.IsFullScreenVideo;

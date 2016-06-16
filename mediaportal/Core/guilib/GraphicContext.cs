@@ -817,7 +817,7 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     public static void VideoReceived()
     {
-      VideoWindowChanged();
+      Log.Debug("GraphicContext VideoReceived()");
       OnVideoReceived?.Invoke();
     }
 
@@ -1026,7 +1026,7 @@ namespace MediaPortal.GUI.Library
     /// <summary>
     /// Delegates video window size/position change notify to be done by main thread
     /// </summary>
-    private static void VideoWindowChanged()
+    public static void VideoWindowChanged()
     {
       if (Thread.CurrentThread.Name != "MPMain" && Thread.CurrentThread.Name != "Config Main")
       {
@@ -1035,6 +1035,7 @@ namespace MediaPortal.GUI.Library
       }
       else
       {
+        Log.Debug("GraphicContext VideoWindowChanged()");
         OnVideoWindowChanged?.Invoke();
       }
     }
@@ -1118,6 +1119,7 @@ namespace MediaPortal.GUI.Library
       switch (message.Message)
       {
         case GUIMessage.MessageType.GUI_MSG_ONVIDEOWINDOWCHANGED:
+          Log.Debug("GraphicContext VideoWindowChanged()");
           OnVideoWindowChanged?.Invoke();
           break;
         case GUIMessage.MessageType.GUI_MSG_SETVIDEOWINDOW:
