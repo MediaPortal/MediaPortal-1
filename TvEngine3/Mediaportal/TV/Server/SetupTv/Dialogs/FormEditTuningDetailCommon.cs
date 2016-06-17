@@ -20,11 +20,14 @@
 
 using System;
 using System.ComponentModel;
+using System.Data.SqlTypes;
 using System.Globalization;
 using System.Windows.Forms;
+using Mediaportal.TV.Server.Common.Types.Enum;
 using Mediaportal.TV.Server.SetupControls;
 using Mediaportal.TV.Server.TVControl.ServiceAgents;
 using Mediaportal.TV.Server.TVDatabase.Entities;
+using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
 namespace Mediaportal.TV.Server.SetupTV.Dialogs
@@ -58,7 +61,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
         this.LogInfo("tuning detail: start edit, ID = {0}", _tuningDetail.IdTuning);
         if (_tuningDetail.IdTuning > 0)
         {
-          _tuningDetail = ServiceAgents.Instance.ChannelServiceAgent.GetTuningDetail(_tuningDetail.IdTuning);
+          _tuningDetail = ServiceAgents.Instance.ChannelServiceAgent.GetTuningDetail(_tuningDetail.IdTuning, TuningDetailRelation.None);
         }
         textBoxName.Text = _tuningDetail.Name;
         textBoxNumber.Text = _tuningDetail.LogicalChannelNumber;
@@ -69,8 +72,10 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       }
       else
       {
-        // Comment this line to enable the control to be viewed in the designer.
-        //this.LogInfo("tuning detail: create new");
+        if (!DesignMode)
+        {
+          this.LogInfo("tuning detail: create new");
+        }
         textBoxName.Text = string.Empty;
         textBoxNumber.Text = string.Empty;
         textBoxProvider.Text = string.Empty;
@@ -114,7 +119,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
         this.LogInfo("tuning detail: save new");
         _tuningDetail = new TuningDetail
         {
-          BroadcastStandard = 0,
+          BroadcastStandard = (int)BroadcastStandard.Unknown,
           Name = textBoxName.Text,
           Provider = textBoxProvider.Text,
           LogicalChannelNumber = textBoxNumber.Text,
@@ -135,30 +140,27 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
           Frequency = -1,
           CountryId = -1,
           Modulation = -1,
-          Polarisation = -1,
+          Polarisation = (int)Polarisation.Automatic,
           SymbolRate = -1,
-          DiSEqC = -1,
           Bandwidth = -1,
-          VideoSource = -1,
-          AudioSource = -1,
-          TuningSource = -1,
-          SatIndex = -1,
-          FecCodeRate = -1,
-          PilotTonesState = -1,
-          RollOffFactor = -1,
+          VideoSource = (int)CaptureSourceVideo.None,
+          AudioSource = (int)CaptureSourceAudio.None,
+          TuningSource = (int)AnalogTunerSource.Cable,
+          FecCodeRate = (int)FecCodeRate.Automatic,
+          PilotTonesState = (int)PilotTonesState.Automatic,
+          RollOffFactor = (int)RollOffFactor.Automatic,
           StreamId = -1,
           Url = string.Empty,
           IsVcrSignal = false,
-          IdLnbType = null
+          IdSatellite = null,
+          GrabEpg = true,
+          LastEpgGrabTime = SqlDateTime.MinValue.Value
         };
-      }
-      else
-      {
-        this.LogInfo("tuning detail: save changes, ID = {0}", _tuningDetail.IdTuning);
       }
       UpdateProperties(_tuningDetail);
       if (_tuningDetail.IdTuning > 0)
       {
+        this.LogInfo("tuning detail: save changes, ID = {0}", _tuningDetail.IdTuning);
         ServiceAgents.Instance.ChannelServiceAgent.SaveTuningDetail(_tuningDetail);
       }
 
@@ -182,8 +184,10 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
 
     protected virtual void LoadProperties(TuningDetail tuningDetail)
     {
-      // Comment this line to enable the control to be viewed in the designer.
-      //throw new NotImplementedException();
+      if (!DesignMode)
+      {
+        throw new NotImplementedException();
+      }
     }
 
     protected virtual bool CheckPropertyValues()
@@ -193,8 +197,10 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
 
     protected virtual void UpdateProperties(TuningDetail tuningDetail)
     {
-      // Comment this line to enable the control to be viewed in the designer.
-      //throw new NotImplementedException();
+      if (!DesignMode)
+      {
+        throw new NotImplementedException();
+      }
     }
   }
 }
