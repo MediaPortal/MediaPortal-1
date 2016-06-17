@@ -864,7 +864,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
         return;
       }
 
-      groupNames[ChannelGroupType.BroadcastStandard] = new Dictionary<ulong, string>(50);
+      AddBroadcastStandardGroupNames(groupNames);
       groupNames[ChannelGroupType.ChannelProvider] = new Dictionary<ulong, string>(serviceCount);
 
       IDictionary<ushort, IDictionary<ushort, IChannel>> tuningChannels;
@@ -1122,6 +1122,14 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
           if (market != null)
           {
             this.LogDebug("    Dish Network market = {0} [{1}]", market, dishNetworkMarketId);
+
+            IDictionary<ulong, string> dishNetworkMarketGroupNames;
+            if (!groupNames.TryGetValue(ChannelGroupType.DishNetworkMarket, out dishNetworkMarketGroupNames))
+            {
+              dishNetworkMarketGroupNames = new Dictionary<ulong, string>();
+              groupNames.Add(ChannelGroupType.DishNetworkMarket, dishNetworkMarketGroupNames);
+            }
+            dishNetworkMarketGroupNames[(ulong)market.Id] = market.ToString();
           }
           else
           {
@@ -1312,10 +1320,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
         BroadcastStandard broadcastStandard = GetBroadcastStandardFromChannelInstance(newChannel);
         if (broadcastStandard != BroadcastStandard.Unknown)
         {
-          if (!groupNames[ChannelGroupType.BroadcastStandard].ContainsKey((ulong)broadcastStandard))
-          {
-            groupNames[ChannelGroupType.BroadcastStandard][(ulong)broadcastStandard] = broadcastStandard.GetDescription();
-          }
           scannedChannel.Groups.Add(ChannelGroupType.BroadcastStandard, new List<ulong> { (ulong)broadcastStandard });
         }
         if (!string.IsNullOrEmpty(newChannel.Provider))
@@ -1324,33 +1328,30 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
           groupNames[ChannelGroupType.ChannelProvider][hashCode] = newChannel.Provider;
           scannedChannel.Groups.Add(ChannelGroupType.ChannelProvider, new List<ulong> { hashCode });
         }
-        if (bouquetIdCount > 0)
+        // (Freeview Satellite NZ groups are based on bouquets.)
+        if (bouquetIdCount > 0 && string.Equals(RegionInfo.CurrentRegion.EnglishName, "New Zealand"))
         {
-          // Freeview Satellite NZ groups are based on bouquets.
-          if (string.Equals(RegionInfo.CurrentRegion.EnglishName, "New Zealand"))
+          List<ulong> freeviewBouquetIds = new List<ulong>(bouquetIdCount);
+          for (byte b = 0; b < bouquetIdCount; b++)
           {
-            List<ulong> freeviewBouquetIds = new List<ulong>(bouquetIdCount);
-            for (byte b = 0; b < bouquetIdCount; b++)
+            ushort bouquetId = bouquetIds[b];
+            if (System.Enum.IsDefined(typeof(BouquetFreeviewSatellite), bouquetId))
             {
-              ushort bouquetId = bouquetIds[b];
-              if (System.Enum.IsDefined(typeof(BouquetFreeviewSatellite), bouquetId))
-              {
-                freeviewBouquetIds.Add(bouquetId);
-              }
-            }
-            if (freeviewBouquetIds.Count > 0)
-            {
-              Dictionary<ulong, string> freeviewGroupNames = new Dictionary<ulong, string>(freeviewBouquetIds.Count);
-              foreach (System.Enum b in System.Enum.GetValues(typeof(BouquetFreeviewSatellite)))
-              {
-                freeviewGroupNames[Convert.ToUInt64(b)] = b.GetDescription();
-              }
-              groupNames.Add(ChannelGroupType.FreeviewSatellite, freeviewGroupNames);
-              scannedChannel.Groups.Add(ChannelGroupType.FreeviewSatellite, freeviewBouquetIds);
+              freeviewBouquetIds.Add(bouquetId);
             }
           }
+          if (freeviewBouquetIds.Count > 0)
+          {
+            AddFreeviewSatelliteGroupNames(groupNames);
+            scannedChannel.Groups.Add(ChannelGroupType.FreeviewSatellite, freeviewBouquetIds);
+          }
         }
-        // TODO: satellite group
+        IChannelSatellite satelliteChannel = newChannel as IChannelSatellite;
+        if (satelliteChannel != null)
+        {
+          AddSatelliteGroupNames(groupNames);
+          scannedChannel.Groups.Add(ChannelGroupType.Satellite, new List<ulong>(1) { (ulong)(satelliteChannel.Longitude + 1800) });
+        }
 
         channels.Add(serviceKey, scannedChannel);
       }
@@ -1564,6 +1565,49 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
       Log.Debug(logFormat, groupCount, string.Join(", ", logNames));
       return groupIdList;
     }
+
+    #region group names
+
+    private static void AddBroadcastStandardGroupNames(IDictionary<ChannelGroupType, IDictionary<ulong, string>> groupNames)
+    {
+      Array broadcastStandards = System.Enum.GetValues(typeof(BroadcastStandard));
+      Dictionary<ulong, string> broadcastStandardGroupNames = new Dictionary<ulong, string>(broadcastStandards.Length);
+      foreach (System.Enum broadcastStandard in broadcastStandards)
+      {
+        broadcastStandardGroupNames[Convert.ToUInt64(broadcastStandard)] = broadcastStandard.GetDescription();
+      }
+      groupNames.Add(ChannelGroupType.FreeviewSatellite, broadcastStandardGroupNames);
+    }
+
+    private static void AddFreeviewSatelliteGroupNames(IDictionary<ChannelGroupType, IDictionary<ulong, string>> groupNames)
+    {
+      if (!groupNames.ContainsKey(ChannelGroupType.FreeviewSatellite))
+      {
+        Array bouquets = System.Enum.GetValues(typeof(BouquetFreeviewSatellite));
+        Dictionary<ulong, string> freeviewSatelliteGroupNames = new Dictionary<ulong, string>(bouquets.Length);
+        foreach (System.Enum bouquet in bouquets)
+        {
+          freeviewSatelliteGroupNames[Convert.ToUInt64(bouquet)] = bouquet.GetDescription();
+        }
+        groupNames.Add(ChannelGroupType.FreeviewSatellite, freeviewSatelliteGroupNames);
+      }
+    }
+
+    private static void AddSatelliteGroupNames(IDictionary<ChannelGroupType, IDictionary<ulong, string>> groupNames)
+    {
+      if (!groupNames.ContainsKey(ChannelGroupType.Satellite))
+      {
+        var satellites = SatelliteManagement.ListAllSatellites();
+        IDictionary<ulong, string> satelliteGroupNames = new Dictionary<ulong, string>(satellites.Count);
+        foreach (var satellite in satellites)
+        {
+          satelliteGroupNames[(ulong)satellite.Longitude + 1800] = satellite.ToString();
+        }
+        groupNames[ChannelGroupType.Satellite] = satelliteGroupNames;
+      }
+    }
+
+    #endregion
 
     /// <summary>
     /// Select the preferred logical/virtual channel number for a channel.
@@ -2140,6 +2184,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
 
         if ((broadcastStandard & BroadcastStandard.MaskSatellite) != 0)
         {
+          tuningDetail.Longitude = longitude;
+
           ModulationSchemePsk modulationScheme;
           switch (modulation)
           {
