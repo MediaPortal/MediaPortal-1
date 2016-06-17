@@ -39,6 +39,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
 
       if (tuningDetail != null)
       {
+        Text = "Edit ATSC Tuning Detail";
         numericTextBoxFrequency.Value = tuningDetail.Frequency;
         comboBoxModulation.SelectedItem = ((ModulationSchemeVsb)tuningDetail.Modulation).GetDescription();
         numericTextBoxTransportStreamId.Value = tuningDetail.TransportStreamId;
@@ -48,6 +49,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       }
       else
       {
+        Text = "Add ATSC Tuning Detail";
         numericTextBoxFrequency.Value = 50000;
         comboBoxModulation.SelectedItem = ModulationSchemeVsb.Automatic.GetDescription();
         numericTextBoxTransportStreamId.Value = 0;

@@ -44,6 +44,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
 
       if (tuningDetail != null)
       {
+        Text = "Edit SCTE Tuning Detail";
         numericTextBoxFrequency.Value = tuningDetail.Frequency;
         comboBoxModulation.SelectedItem = ((ModulationSchemeQam)tuningDetail.Modulation).GetDescription();
         numericTextBoxTransportStreamId.Value = tuningDetail.TransportStreamId;
@@ -53,6 +54,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       }
       else
       {
+        Text = "Add SCTE Tuning Detail";
         numericTextBoxFrequency.Value = 0;      // switched digital video
         comboBoxModulation.SelectedItem = ModulationSchemeQam.Automatic.GetDescription();
         numericTextBoxTransportStreamId.Value = 0;

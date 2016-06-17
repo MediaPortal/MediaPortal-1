@@ -43,6 +43,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
 
       if (tuningDetail != null)
       {
+        Text = "Edit DVB-T/T2 Tuning Detail";
         BroadcastStandard broadcastStandard = (BroadcastStandard)tuningDetail.BroadcastStandard;
         comboBoxBroadcastStandard.SelectedItem = broadcastStandard.GetDescription();
         numericTextBoxFrequency.Value = tuningDetail.Frequency;
@@ -61,6 +62,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       }
       else
       {
+        Text = "Add DVB-T/T2 Tuning Detail";
         comboBoxBroadcastStandard.SelectedItem = BroadcastStandard.DvbT.GetDescription();
         numericTextBoxFrequency.Value = 500000;
         numericTextBoxBandwidth.Value = 8000;

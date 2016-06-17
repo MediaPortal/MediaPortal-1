@@ -39,6 +39,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
 
       if (tuningDetail != null)
       {
+        Text = "Edit DVB-C Tuning Detail";
         numericTextBoxFrequency.Value = tuningDetail.Frequency;
         comboBoxModulation.SelectedItem = ((ModulationSchemeQam)tuningDetail.Modulation).GetDescription();
         numericTextBoxSymbolRate.Value = tuningDetail.SymbolRate;
@@ -53,6 +54,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       }
       else
       {
+        Text = "Add DVB-C Tuning Detail";
         numericTextBoxFrequency.Value = 388000;
         comboBoxModulation.SelectedItem = ModulationSchemeQam.Automatic.GetDescription();
         numericTextBoxSymbolRate.Value = 6875;

@@ -34,10 +34,12 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
     {
       if (tuningDetail != null)
       {
+        Text = "Edit FM Radio Tuning Detail";
         numericTextBoxFrequency.Value = tuningDetail.Frequency;
       }
       else
       {
+        Text = "Add FM Radio Tuning Detail";
         numericTextBoxFrequency.Value = 96200;
       }
     }
@@ -46,6 +48,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
     {
       tuningDetail.BroadcastStandard = (int)BroadcastStandard.FmRadio;
       tuningDetail.Frequency = numericTextBoxFrequency.Value;
+      tuningDetail.GrabEpg = false;
     }
   }
 }

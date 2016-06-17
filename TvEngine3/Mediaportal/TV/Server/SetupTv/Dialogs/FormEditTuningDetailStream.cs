@@ -34,6 +34,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
     {
       if (tuningDetail != null)
       {
+        Text = "Edit Stream Tuning Detail";
         textBoxUrl.Text = tuningDetail.Url;
         numericTextBoxOriginalNetworkId.Value = tuningDetail.OriginalNetworkId;
         numericTextBoxTransportStreamId.Value = tuningDetail.TransportStreamId;
@@ -46,6 +47,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       }
       else
       {
+        Text = "Add Stream Tuning Detail";
         textBoxUrl.Text = string.Empty;
         numericTextBoxOriginalNetworkId.Value = 0;
         numericTextBoxTransportStreamId.Value = 0;

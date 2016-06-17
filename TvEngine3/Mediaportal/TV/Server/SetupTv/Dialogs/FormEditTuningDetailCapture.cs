@@ -42,12 +42,14 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
 
       if (tuningDetail != null)
       {
+        Text = "Edit Capture Tuning Detail";
         comboBoxVideoSource.SelectedItem = ((CaptureSourceVideo)tuningDetail.VideoSource).GetDescription();
         comboBoxAudioSource.SelectedItem = ((CaptureSourceAudio)tuningDetail.AudioSource).GetDescription();
         checkBoxIsVcrSignal.Checked = tuningDetail.IsVcrSignal;
       }
       else
       {
+        Text = "Add Capture Tuning Detail";
         comboBoxVideoSource.SelectedItem = CaptureSourceVideo.TunerDefault.GetDescription();
         comboBoxAudioSource.SelectedItem = CaptureSourceAudio.TunerDefault.GetDescription();
         checkBoxIsVcrSignal.Checked = false;

@@ -43,6 +43,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
 
       if (tuningDetail != null)
       {
+        Text = "Edit Analog TV Tuning Detail";
         numericTextBoxPhysicalChannelNumber.Value = tuningDetail.Frequency;
         numericTextBoxFrequency.Value = tuningDetail.Frequency;
         foreach (Country country in CountryCollection.Instance.Countries)
@@ -57,6 +58,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       }
       else
       {
+        Text = "Add Analog TV Tuning Detail";
         numericTextBoxPhysicalChannelNumber.Value = 1;
         numericTextBoxFrequency.Value = 0;
         Country country = CountryCollection.Instance.GetCountryByName(System.Globalization.RegionInfo.CurrentRegion.EnglishName);
@@ -79,6 +81,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       tuningDetail.Frequency = numericTextBoxFrequency.Value;
       tuningDetail.CountryId = ((Country)comboBoxCountry.SelectedItem).Id;
       tuningDetail.TuningSource = Convert.ToInt32(typeof(AnalogTunerSource).GetEnumFromDescription((string)comboBoxSource.SelectedItem));
+      tuningDetail.GrabEpg = false;
     }
   }
 }
