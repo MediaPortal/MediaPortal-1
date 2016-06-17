@@ -112,6 +112,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       {
         listViewRecordings.EndUpdate();
       }
+      listViewRecordings_SelectedIndexChanged(null, null);
 
       // debug
       ThreadPool.QueueUserWorkItem(
@@ -338,6 +339,14 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
     #region database
 
+    private void listViewRecordings_SelectedIndexChanged(object sender, EventArgs e)
+    {
+      ListView.SelectedListViewItemCollection items = listViewRecordings.SelectedItems;
+      bool enableButtons = items != null && items.Count > 0;
+      buttonRecordingChangeChannel.Enabled = enableButtons;
+      buttonRecordingDelete.Enabled = enableButtons;
+    }
+
     private void buttonRecordingChangeChannel_Click(object sender, EventArgs e)
     {
       ListView.SelectedListViewItemCollection items = listViewRecordings.SelectedItems;
@@ -378,7 +387,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
       // Select the new channel.
       Channel channel = null;
-      IList<Channel> channels = ServiceAgents.Instance.ChannelServiceAgent.ListAllVisibleChannelsByMediaType((MediaType)mediaType, ChannelIncludeRelationEnum.None);
+      IList<Channel> channels = ServiceAgents.Instance.ChannelServiceAgent.ListAllVisibleChannelsByMediaType((MediaType)mediaType, ChannelRelation.None);
       using (FormSelectItems dlgSelect = new FormSelectItems("Select Channel For Recording(s)", "Please select a channel:", null, "Name", false, null))
       {
         if (dlgSelect.ShowDialog() != DialogResult.OK || dlgSelect.Items == null || dlgSelect.Items.Count != 1)
@@ -503,6 +512,15 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
           dlg.Close();
           dlg.Dispose();
         }
+      }
+    }
+
+    private void listViewRecordings_KeyDown(object sender, KeyEventArgs e)
+    {
+      if (e.KeyCode == Keys.Delete)
+      {
+        buttonRecordingDelete_Click(null, null);
+        e.Handled = true;
       }
     }
 

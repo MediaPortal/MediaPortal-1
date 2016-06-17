@@ -118,9 +118,9 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // 
       this.tabControl.AllowDrop = true;
       this.tabControl.AllowReorderTabs = false;
-      this.tabControl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.tabControl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.tabControl.Controls.Add(this.tabPageStorage);
       this.tabControl.Controls.Add(this.tabPageGeneral);
       this.tabControl.Controls.Add(this.tabPageDatabase);
@@ -172,6 +172,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.numericUpDownDiskManagement.Size = new System.Drawing.Size(60, 20);
       this.numericUpDownDiskManagement.TabIndex = 4;
       this.numericUpDownDiskManagement.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+      this.numericUpDownDiskManagement.TruncateDecimalPlaces = false;
       this.numericUpDownDiskManagement.Value = new decimal(new int[] {
             1000,
             0,
@@ -207,10 +208,10 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.labelNamingTip.AutoSize = true;
       this.labelNamingTip.Location = new System.Drawing.Point(6, 91);
       this.labelNamingTip.Name = "labelNamingTip";
-      this.labelNamingTip.Size = new System.Drawing.Size(393, 13);
+      this.labelNamingTip.Size = new System.Drawing.Size(432, 13);
       this.labelNamingTip.TabIndex = 4;
-      this.labelNamingTip.Text = "Use square braces [] to specify optional fields and back-slash (\\) for relative p" +
-          "aths.";
+      this.labelNamingTip.Text = "Use square brackets ( [ ] ) to specify optional sections and back-slash (\\) for r" +
+    "elative paths.";
       // 
       // labelNamingTemplateTags4
       // 
@@ -229,7 +230,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.labelNamingTemplateTags1.Size = new System.Drawing.Size(101, 65);
       this.labelNamingTemplateTags1.TabIndex = 0;
       this.labelNamingTemplateTags1.Text = "%program_title%\r\n%episode_name%\r\n%series_number%\r\n%episode_number%\r\n%episode_part" +
-          "%";
+    "%";
       // 
       // labelNamingTemplateTags3
       // 
@@ -242,8 +243,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // 
       // textBoxRecordingFolder
       // 
-      this.textBoxRecordingFolder.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.textBoxRecordingFolder.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.textBoxRecordingFolder.Location = new System.Drawing.Point(109, 13);
       this.textBoxRecordingFolder.Name = "textBoxRecordingFolder";
       this.textBoxRecordingFolder.Size = new System.Drawing.Size(325, 20);
@@ -329,8 +330,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // 
       // textBoxNamingTemplateNonSeries
       // 
-      this.textBoxNamingTemplateNonSeries.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.textBoxNamingTemplateNonSeries.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.textBoxNamingTemplateNonSeries.Location = new System.Drawing.Point(109, 140);
       this.textBoxNamingTemplateNonSeries.Name = "textBoxNamingTemplateNonSeries";
       this.textBoxNamingTemplateNonSeries.Size = new System.Drawing.Size(357, 20);
@@ -360,8 +361,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // 
       // textBoxNamingTemplateSeries
       // 
-      this.textBoxNamingTemplateSeries.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.textBoxNamingTemplateSeries.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.textBoxNamingTemplateSeries.Location = new System.Drawing.Point(109, 114);
       this.textBoxNamingTemplateSeries.Name = "textBoxNamingTemplateSeries";
       this.textBoxNamingTemplateSeries.Size = new System.Drawing.Size(357, 20);
@@ -382,8 +383,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // 
       // groupBoxGeneral
       // 
-      this.groupBoxGeneral.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxGeneral.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxGeneral.Controls.Add(this.checkBoxDuplicateDetectionEpisodeNames);
       this.groupBoxGeneral.Controls.Add(this.checkBoxDuplicateDetectionSeasonEpisodeNumbers);
       this.groupBoxGeneral.Controls.Add(this.checkBoxDuplicateDetectionSeriesEpisodeIdentifers);
@@ -460,6 +461,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.numericUpDownTunerLimit.Size = new System.Drawing.Size(45, 20);
       this.numericUpDownTunerLimit.TabIndex = 7;
       this.numericUpDownTunerLimit.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+      this.numericUpDownTunerLimit.TruncateDecimalPlaces = false;
       this.numericUpDownTunerLimit.Value = new decimal(new int[] {
             100,
             0,
@@ -536,6 +538,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.numericUpDownPostRecord.Size = new System.Drawing.Size(45, 20);
       this.numericUpDownPostRecord.TabIndex = 4;
       this.numericUpDownPostRecord.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+      this.numericUpDownPostRecord.TruncateDecimalPlaces = false;
       this.numericUpDownPostRecord.Value = new decimal(new int[] {
             10,
             0,
@@ -568,6 +571,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.numericUpDownPreRecord.Size = new System.Drawing.Size(45, 20);
       this.numericUpDownPreRecord.TabIndex = 1;
       this.numericUpDownPreRecord.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+      this.numericUpDownPreRecord.TruncateDecimalPlaces = false;
       this.numericUpDownPreRecord.Value = new decimal(new int[] {
             7,
             0,
@@ -585,8 +589,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // 
       // groupBoxThumbnailer
       // 
-      this.groupBoxThumbnailer.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxThumbnailer.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxThumbnailer.Controls.Add(this.buttonThumbnailerDeleteExisting);
       this.groupBoxThumbnailer.Controls.Add(this.checkBoxThumbnailerEnable);
       this.groupBoxThumbnailer.Controls.Add(this.labelThumbnailerTimeOffsetUnit);
@@ -690,6 +694,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.numericUpDownThumbnailerTimeOffset.Size = new System.Drawing.Size(45, 20);
       this.numericUpDownThumbnailerTimeOffset.TabIndex = 4;
       this.numericUpDownThumbnailerTimeOffset.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+      this.numericUpDownThumbnailerTimeOffset.TruncateDecimalPlaces = false;
       this.numericUpDownThumbnailerTimeOffset.Value = new decimal(new int[] {
             3,
             0,
@@ -722,6 +727,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.numericUpDownThumbnailerRowCount.Size = new System.Drawing.Size(45, 20);
       this.numericUpDownThumbnailerRowCount.TabIndex = 10;
       this.numericUpDownThumbnailerRowCount.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+      this.numericUpDownThumbnailerRowCount.TruncateDecimalPlaces = false;
       this.numericUpDownThumbnailerRowCount.Value = new decimal(new int[] {
             1,
             0,
@@ -745,6 +751,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.numericUpDownThumbnailerColumnCount.Size = new System.Drawing.Size(45, 20);
       this.numericUpDownThumbnailerColumnCount.TabIndex = 8;
       this.numericUpDownThumbnailerColumnCount.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+      this.numericUpDownThumbnailerColumnCount.TruncateDecimalPlaces = false;
       this.numericUpDownThumbnailerColumnCount.Value = new decimal(new int[] {
             1,
             0,
@@ -812,9 +819,9 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // 
       this.listViewRecordings.AllowColumnReorder = true;
       this.listViewRecordings.AllowRowReorder = false;
-      this.listViewRecordings.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.listViewRecordings.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.listViewRecordings.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeaderTitle,
             this.columnHeaderChannel,
@@ -832,6 +839,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.listViewRecordings.TabIndex = 0;
       this.listViewRecordings.UseCompatibleStateImageBehavior = false;
       this.listViewRecordings.View = System.Windows.Forms.View.Details;
+      this.listViewRecordings.SelectedIndexChanged += new System.EventHandler(this.listViewRecordings_SelectedIndexChanged);
+      this.listViewRecordings.KeyDown += new System.Windows.Forms.KeyEventHandler(this.listViewRecordings_KeyDown);
       // 
       // columnHeaderTitle
       // 
@@ -887,8 +896,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // 
       // textBoxImportFolder
       // 
-      this.textBoxImportFolder.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.textBoxImportFolder.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.textBoxImportFolder.Location = new System.Drawing.Point(71, 362);
       this.textBoxImportFolder.Name = "textBoxImportFolder";
       this.textBoxImportFolder.Size = new System.Drawing.Size(297, 20);
