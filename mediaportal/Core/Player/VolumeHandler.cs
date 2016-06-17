@@ -71,7 +71,7 @@ namespace MediaPortal.Player
 
           _showVolumeOSD = reader.GetValueAsBool("volume", "defaultVolumeOSD", true);
 
-          hideWindowsOSD = reader.GetValueAsBool("volume", "hideWindowsOSD", true);
+          hideWindowsOSD = reader.GetValueAsBool("volume", "hideWindowsOSD", false);
         }
 
         try
