@@ -276,6 +276,8 @@
     <Compile Include="Interfaces\Analyzer\ICallBackGrabber.cs" />
     <Compile Include="Interfaces\Analyzer\IGrabberEpgAtsc.cs" />
     <Compile Include="Interfaces\Analyzer\IGrabberEpgOpenTv.cs" />
+    <Compile Include="Interfaces\IQualityControlInternal.cs" />
+    <Compile Include="Interfaces\IEpgGrabberInternal.cs" />
     <Compile Include="Interfaces\ISubChannelManager.cs" />
     <Compile Include="Interfaces\ISubChannelInternal.cs" />
     <Compile Include="Interfaces\ITunerDetectorSystem.cs" />

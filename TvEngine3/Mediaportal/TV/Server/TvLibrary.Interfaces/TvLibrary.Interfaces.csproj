@@ -106,6 +106,9 @@
     <Compile Include="Implementations\Channel\ChannelSatelliteTurboFec.cs" />
     <Compile Include="Implementations\Channel\ChannelDigiCipher2.cs" />
     <Compile Include="Implementations\Channel\ChannelScte.cs" />
+    <Compile Include="Implementations\Exception\TvExceptionDiseqcNotSupported.cs" />
+    <Compile Include="Implementations\Exception\TvExceptionSatelliteNotReceivable.cs" />
+    <Compile Include="Implementations\SatelliteLnbHandler.cs" />
     <Compile Include="Implementations\Dvb\Enum\CaPmtCommand.cs" />
     <Compile Include="Implementations\Dvb\Enum\CaPmtListManagementAction.cs" />
     <Compile Include="Implementations\Dvb\Enum\ExtensionDescriptorTag.cs" />
@@ -146,7 +149,6 @@
     <Compile Include="Interfaces\Channel\IChannelOfdm.cs" />
     <Compile Include="Interfaces\Channel\IChannelPhysical.cs" />
     <Compile Include="Interfaces\Channel\IChannelSatellite.cs" />
-    <Compile Include="Interfaces\Channel\ILnbType.cs" />
     <Compile Include="Interfaces\TunerExtension\Enum\PowerState.cs" />
     <Compile Include="Interfaces\TunerExtension\Enum\TunerAction.cs" />
     <Compile Include="Interfaces\TunerExtension\IStreamSelector.cs" />
@@ -171,8 +173,6 @@
     <Compile Include="Implementations\Channel\ChannelStream.cs" />
     <Compile Include="Interfaces\TunerExtension\IConditionalAccessMenuActions.cs" />
     <Compile Include="Interfaces\TunerExtension\IConditionalAccessMenuCallBack.cs" />
-    <Compile Include="Interfaces\Tuner\Enum\EncoderBitRateMode.cs" />
-    <Compile Include="Interfaces\Tuner\Enum\QualityType.cs" />
     <Compile Include="Interfaces\Tuner\IEpgGrabber.cs" />
     <Compile Include="Interfaces\Tuner\ITunerDetectionEventListener.cs" />
     <Compile Include="Interfaces\Tuner\ITunerGroup.cs" />
@@ -190,7 +190,7 @@
     <Compile Include="Implementations\Channel\ChannelDvbT.cs" />
     <Compile Include="Implementations\EpgProgram.cs" />
     <Compile Include="Interfaces\Channel\IChannel.cs" />
-    <Compile Include="Interfaces\Tuner\IQuality.cs" />
+    <Compile Include="Interfaces\Tuner\IQualityControl.cs" />
     <Compile Include="Interfaces\Tuner\ITuner.cs" />
     <Compile Include="Interfaces\Tuner\IEpgGrabberCallBack.cs" />
     <Compile Include="Interfaces\Tuner\IChannelScanner.cs" />

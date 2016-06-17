@@ -272,7 +272,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Tuner
     /// Get the tuner's quality control (encoder) interface.
     /// </summary>
     /// <value><c>null</c> if the tuner does not support quality control</value>
-    IQuality QualityControlInterface
+    IQualityControl QualityControlInterface
     {
       get;
     }

@@ -65,6 +65,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     private IChannel _currentChannel = null;
 
     /// <summary>
+    /// The sub-channel's quality control interface.
+    /// </summary>
+    private IQualityControlInternal _qualityControlInterface = null;
+
+    /// <summary>
     /// Should the current tuning process be aborted immediately?
     /// </summary>
     private volatile bool _cancelTune = false;
@@ -209,9 +214,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
           this.LogError("sub-channel base: already time-shifting, ID = {0}, file name = {1}", _subChannelId, _timeShiftFileName);
           return false;
         }
-        OnStartTimeShifting(fileName, fileCount, fileCountMaximum, fileSize);
         _timeShiftFileName = fileName;
         _timeShiftStartTime = DateTime.Now;
+        if (_qualityControlInterface != null)
+        {
+          _qualityControlInterface.OnStartTimeShifting();
+        }
+        OnStartTimeShifting(fileName, fileCount, fileCountMaximum, fileSize);
         return true;
       }
       catch (Exception ex)
@@ -267,6 +276,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
           this.LogWarn("sub-channel base: not time-shifting, ID = {0}", _subChannelId);
         }
         OnStopTimeShifting();
+        if (_qualityControlInterface != null)
+        {
+          _qualityControlInterface.OnStopTimeShifting();
+        }
         _timeShiftFileName = string.Empty;
         _timeShiftStartTime = DateTime.MinValue;
         return true;
@@ -296,9 +309,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
           this.LogError("sub-channel base: already recording, ID = {0}, file name = {1}", _subChannelId, _recordFileName);
           return false;
         }
-        OnStartRecording(fileName);
         _recordFileName = fileName;
         _recordStartTime = DateTime.Now;
+        if (_qualityControlInterface != null)
+        {
+          _qualityControlInterface.OnStartRecording();
+        }
+        OnStartRecording(fileName);
         return true;
       }
       catch (Exception ex)
@@ -327,6 +344,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
           this.LogWarn("sub-channel base: not recording, ID = {0}", _subChannelId);
         }
         OnStopRecording();
+        if (_qualityControlInterface != null)
+        {
+          _qualityControlInterface.OnStopRecording();
+        }
         _recordFileName = string.Empty;
         _recordStartTime = DateTime.MinValue;
         return true;
@@ -360,6 +381,17 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     #endregion
 
     #region ISubChannelInternal members
+
+    /// <summary>
+    /// Set the sub-channel's quality control interface.
+    /// </summary>
+    public IQualityControlInternal QualityControlInterface
+    {
+      set
+      {
+        _qualityControlInterface = value;
+      }
+    }
 
     /// <summary>
     /// Cancel the current tuning process.

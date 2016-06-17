@@ -69,9 +69,19 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
 
       if (tuningDetail != null)
       {
+        Text = "Edit Satellite Tuning Detail";
         BroadcastStandard broadcastStandard = (BroadcastStandard)tuningDetail.BroadcastStandard;
         comboBoxBroadcastStandard.SelectedItem = broadcastStandard.GetDescription();
-        // TODO select satellite
+
+        foreach (Satellite satellite in satellites)
+        {
+          if (tuningDetail.IdSatellite == satellite.IdSatellite)
+          {
+            comboBoxSatellite.SelectedItem = satellite;
+            break;
+          }
+        }
+
         numericTextBoxFrequency.Value = tuningDetail.Frequency;
         comboBoxPolarisation.SelectedItem = ((Polarisation)tuningDetail.Polarisation).GetDescription();
         comboBoxModulation.SelectedItem = ((ModulationSchemePsk)tuningDetail.Modulation).GetDescription();
@@ -97,11 +107,26 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       }
       else
       {
+        Text = "Add Satellite Tuning Detail";
         comboBoxBroadcastStandard.SelectedItem = BroadcastStandard.DvbS2.GetDescription();
-        if (comboBoxSatellite.Items.Count > 0)
+
+        int? defaultLongitude = Satellite.DefaultSatelliteLongitude;
+        if (defaultLongitude.HasValue)
+        {
+          foreach (Satellite satellite in satellites)
+          {
+            if (defaultLongitude == satellite.Longitude)
+            {
+              comboBoxSatellite.SelectedItem = satellite;
+              break;
+            }
+          }
+        }
+        if (comboBoxSatellite.SelectedItem == null)
         {
           comboBoxSatellite.SelectedIndex = 0;
         }
+
         numericTextBoxFrequency.Value = 11097000;
         comboBoxPolarisation.SelectedItem = Polarisation.Automatic.GetDescription();
         comboBoxModulation.SelectedItem = ModulationSchemePsk.Automatic.GetDescription();
@@ -130,7 +155,10 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
     protected override void UpdateProperties(TuningDetail tuningDetail)
     {
       tuningDetail.BroadcastStandard = Convert.ToInt32(typeof(BroadcastStandard).GetEnumFromDescription((string)comboBoxBroadcastStandard.SelectedItem));
-      // TODO save satellite
+
+      Satellite satellite = (Satellite)comboBoxSatellite.SelectedItem;
+      tuningDetail.Satellite = satellite;
+
       tuningDetail.Frequency = numericTextBoxFrequency.Value;
       tuningDetail.Polarisation = Convert.ToInt32(typeof(Polarisation).GetEnumFromDescription((string)comboBoxPolarisation.SelectedItem));
       tuningDetail.Modulation = Convert.ToInt32(typeof(ModulationSchemePsk).GetEnumFromDescription((string)comboBoxModulation.SelectedItem));

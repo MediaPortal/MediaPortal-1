@@ -22,20 +22,41 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using DirectShowLib;
+using Mediaportal.TV.Server.Common.Types.Enum;
+using Mediaportal.TV.Server.TVDatabase.Entities;
+using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Tuner;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Tuner.Enum;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations
 {
-  internal class EncoderController : IQuality
+  internal class EncoderController : IQualityControlInternal
   {
+    private class Settings
+    {
+      public EncodeMode EncodeMode = EncodeMode.Default;
+      public int BitRateAverage = DEFAULT_BIT_RATE;
+      public int BitRatePeak = DEFAULT_BIT_RATE;
+    }
+
+    private const int DEFAULT_BIT_RATE = -1;
+
     #region variables
 
     private IList<IEncoder> _encoders = new List<IEncoder>();
-    private QualityType _bitRateProfile = QualityType.Custom;
-    private EncoderBitRateMode _bitRateMode = EncoderBitRateMode.ConstantBitRate;
+
+    private object _lock = new object();
+    private int _countTimeShifters = 0;
+    private int _countRecorders = 0;
+
+    private bool _canSetEncodeMode = false;
+    private bool _isPeakModeSupported = false;
+    private bool _canSetBitRate = false;
+
+    private bool _isCustomSettings = false;
+    private Settings _settingsCurrent = new Settings();
+    private Settings _settingsTimeShift = new Settings();
+    private Settings _settingsRecord = new Settings();
 
     #endregion
 
@@ -47,127 +68,323 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
         if (encoder != null)
         {
           _encoders.Add(encoder);
-        }
-      }
-    }
-
-    #region IQuality Members
-
-    public bool SupportsBitRateModes()
-    {
-      foreach (IEncoder encoder in _encoders)
-      {
-        if (encoder.IsParameterSupported(PropSetID.ENCAPIPARAM_BitRateMode))
-        {
-          return true;
-        }
-      }
-      return false;
-    }
-
-    public bool SupportsPeakBitRateMode()
-    {
-      foreach (IEncoder encoder in _encoders)
-      {
-        if (encoder.IsParameterSupported(PropSetID.ENCAPIPARAM_PeakBitRate))
-        {
-          return true;
-        }
-      }
-      return false;
-    }
-
-    public bool SupportsBitRate()
-    {
-      foreach (IEncoder encoder in _encoders)
-      {
-        if (encoder.IsParameterSupported(PropSetID.ENCAPIPARAM_BitRate))
-        {
-          return true;
-        }
-      }
-      return false;
-    }
-
-    public QualityType QualityType
-    {
-      get
-      {
-        return _bitRateProfile;
-      }
-      set
-      {
-        bool success = false;
-        switch (value)
-        {
-          case QualityType.Custom:
-            // TODO read from database
-            //customValue.Value = ServiceAgents.Instance.SettingServiceAgent.GetValue("tuner" + _tunerId + "CustomBitRate", 50);
-            success = SetParameterByRange(PropSetID.ENCAPIPARAM_BitRate, 50);
-            break;
-          case QualityType.Portable:
-            success = SetParameterByRange(PropSetID.ENCAPIPARAM_BitRate, 20);
-            break;
-          case QualityType.Low:
-            success = SetParameterByRange(PropSetID.ENCAPIPARAM_BitRate, 33);
-            break;
-          case QualityType.Medium:
-            success = SetParameterByRange(PropSetID.ENCAPIPARAM_BitRate, 66);
-            break;
-          case QualityType.High:
-            success = SetParameterByRange(PropSetID.ENCAPIPARAM_BitRate, 100);
-            break;
-          default:
-            success = SetParameterByDefault(PropSetID.ENCAPIPARAM_BitRate);
-            break;
-        }
-        if (_bitRateMode == EncoderBitRateMode.VariableBitRatePeak)
-        {
-          switch (value)
+          if (!_canSetEncodeMode && encoder.IsParameterSupported(PropSetID.ENCAPIPARAM_BitRateMode))
           {
-            case QualityType.Custom:
-              // TODO read from database
-              //customValuePeak.Value = ServiceAgents.Instance.SettingServiceAgent.GetValue("tuner" + _tunerId + "CustomPeakBitRate", 75);
-              success |= SetParameterByRange(PropSetID.ENCAPIPARAM_PeakBitRate, 75);
-              break;
-            case QualityType.Portable:
-              success |= SetParameterByRange(PropSetID.ENCAPIPARAM_PeakBitRate, 45);
-              break;
-            case QualityType.Low:
-              success |= SetParameterByRange(PropSetID.ENCAPIPARAM_PeakBitRate, 55);
-              break;
-            case QualityType.Medium:
-              success |= SetParameterByRange(PropSetID.ENCAPIPARAM_PeakBitRate, 88);
-              break;
-            case QualityType.High:
-              success |= SetParameterByRange(PropSetID.ENCAPIPARAM_PeakBitRate, 100);
-              break;
-            default:
-              success |= SetParameterByDefault(PropSetID.ENCAPIPARAM_PeakBitRate);
-              break;
+            _canSetEncodeMode = true;
+          }
+          if (!_isPeakModeSupported && encoder.IsParameterSupported(PropSetID.ENCAPIPARAM_PeakBitRate))
+          {
+            _isPeakModeSupported = true;
+          }
+          if (!_canSetBitRate && encoder.IsParameterSupported(PropSetID.ENCAPIPARAM_BitRate))
+          {
+            _canSetBitRate = true;
           }
         }
-        if (success)
-        {
-          _bitRateProfile = value;
-        }
+      }
+
+      if (_encoders.Count > 0)
+      {
+        this.LogInfo("encoder: supported features...");
+        this.LogInfo("  can set encode mode?    = {0}", _canSetEncodeMode);
+        this.LogInfo("  is peak mode supported? = {0}", _isPeakModeSupported);
+        this.LogInfo("  can set bit-rate?       = {0}", _canSetBitRate);
       }
     }
 
-    public EncoderBitRateMode BitRateMode
+    #region IQualityControl members
+
+    /// <summary>
+    /// Determine which (if any) quality control features are supported by the tuner.
+    /// </summary>
+    /// <param name="canSetEncodeMode"><c>True</c> if the tuner's encoding mode can be set.</param>
+    /// <param name="isPeakModeSupported"><c>True</c> if the tuner supports the variable-peak encoding mode.</param>
+    /// <param name="canSetBitRate"><c>True</c> if the tuner's encoding bit-rate can be set.</param>
+    public void GetSupportedFeatures(out bool canSetEncodeMode, out bool isPeakModeSupported, out bool canSetBitRate)
+    {
+      canSetEncodeMode = _canSetEncodeMode;
+      isPeakModeSupported = _isPeakModeSupported;
+      canSetBitRate = _canSetBitRate;
+    }
+
+    /// <summary>
+    /// Get and/or set the tuner's video and/or audio encoding mode.
+    /// </summary>
+    public EncodeMode EncodeMode
     {
       get
       {
-        return _bitRateMode;
+        return _settingsCurrent.EncodeMode;
       }
       set
       {
-        int newMode = (int)value;
+        if (!_canSetEncodeMode || (!_isPeakModeSupported && value == EncodeMode.VariablePeakBitRate))
+        {
+          return;
+        }
+        if (_settingsCurrent.EncodeMode == value)
+        {
+          return;
+        }
+
+        if (value == EncodeMode.Default)
+        {
+          if (SetParameterByDefault(PropSetID.ENCAPIPARAM_BitRateMode))
+          {
+            _settingsCurrent.EncodeMode = value;
+            _isCustomSettings = true;
+          }
+          return;
+        }
+
+        VideoEncoderBitrateMode mode = VideoEncoderBitrateMode.ConstantBitRate;
+        if (value == EncodeMode.VariableBitRate)
+        {
+          mode = VideoEncoderBitrateMode.VariableBitRateAverage;
+        }
+        else if (value == EncodeMode.VariablePeakBitRate)
+        {
+          mode = VideoEncoderBitrateMode.VariableBitRatePeak;
+        }
+        int newMode = (int)mode;
         object newModeObj = newMode;
         Marshal.WriteInt32(newModeObj, 0, newMode);
         if (SetParameterByValues(PropSetID.ENCAPIPARAM_BitRateMode, newModeObj))
         {
-          _bitRateMode = value;
+          _settingsCurrent.EncodeMode = value;
+          _isCustomSettings = true;
+        }
+      }
+    }
+
+    /// <summary>
+    /// Get and/or set the tuner's average video and/or audio bit-rate, encoded as a percentage over the supported range.
+    /// </summary>
+    public int AverageBitRate
+    {
+      get
+      {
+        return _settingsCurrent.BitRateAverage;
+      }
+      set
+      {
+        if (!_canSetBitRate)
+        {
+          return;
+        }
+        if (_settingsCurrent.BitRateAverage == value)
+        {
+          return;
+        }
+        bool success = false;
+        if (value == DEFAULT_BIT_RATE)
+        {
+          success = SetParameterByDefault(PropSetID.ENCAPIPARAM_BitRate);
+        }
+        else
+        {
+          success = SetParameterByRange(PropSetID.ENCAPIPARAM_BitRate, value);
+        }
+        if (success)
+        {
+          _settingsCurrent.BitRateAverage = value;
+          _isCustomSettings = true;
+        }
+      }
+    }
+
+    /// <summary>
+    /// Get and/or set the tuner's peak video and/or audio bit-rate, encoded as a percentage over the supported range.
+    /// </summary>
+    public int PeakBitRate
+    {
+      get
+      {
+        return _settingsCurrent.BitRatePeak;
+      }
+      set
+      {
+        if (!_isPeakModeSupported)
+        {
+          return;
+        }
+        if (_settingsCurrent.BitRatePeak == value)
+        {
+          return;
+        }
+        bool success = false;
+        if (value == DEFAULT_BIT_RATE)
+        {
+          success = SetParameterByDefault(PropSetID.ENCAPIPARAM_PeakBitRate);
+        }
+        else
+        {
+          success = SetParameterByRange(PropSetID.ENCAPIPARAM_PeakBitRate, value);
+        }
+        if (success)
+        {
+          _settingsCurrent.BitRatePeak = value;
+          _isCustomSettings = true;
+        }
+      }
+    }
+
+    #endregion
+
+    #region IQualityControlInternal members
+
+    /// <summary>
+    /// Reload the control's configuration.
+    /// </summary>
+    /// <param name="configuration">The configuration of the associated tuner.</param>
+    public void ReloadConfiguration(Tuner configuration)
+    {
+      if (_encoders.Count == 0)
+      {
+        return;
+      }
+
+      this.LogDebug("encoder: reload configuration");
+      if (configuration.AnalogTunerSettings == null)
+      {
+        _settingsTimeShift.EncodeMode = EncodeMode.ConstantBitRate;
+        _settingsTimeShift.BitRateAverage = 100;
+        _settingsTimeShift.BitRatePeak = 100;
+        _settingsRecord.EncodeMode = EncodeMode.ConstantBitRate;
+        _settingsRecord.BitRateAverage = 100;
+        _settingsRecord.BitRatePeak = 100;
+      }
+      else
+      {
+        _settingsTimeShift.EncodeMode = (EncodeMode)configuration.AnalogTunerSettings.EncoderBitRateModeTimeShifting;
+        _settingsTimeShift.BitRateAverage = configuration.AnalogTunerSettings.EncoderBitRateTimeShifting;
+        _settingsTimeShift.BitRatePeak = configuration.AnalogTunerSettings.EncoderBitRatePeakTimeShifting;
+        _settingsRecord.EncodeMode = (EncodeMode)configuration.AnalogTunerSettings.EncoderBitRateModeRecording;
+        _settingsRecord.BitRateAverage = configuration.AnalogTunerSettings.EncoderBitRateRecording;
+        _settingsRecord.BitRatePeak = configuration.AnalogTunerSettings.EncoderBitRatePeakRecording;
+      }
+
+      this.LogDebug("  time-shifting...");
+      this.LogDebug("    encode mode      = {0}", _settingsTimeShift.EncodeMode);
+      this.LogDebug("    bit-rate average = {0} %", _settingsTimeShift.BitRateAverage);
+      this.LogDebug("    bit-rate peak    = {0} %", _settingsTimeShift.BitRatePeak);
+      this.LogDebug("  recording...");
+      this.LogDebug("    encode mode      = {0}", _settingsRecord.EncodeMode);
+      this.LogDebug("    bit-rate average = {0} %", _settingsRecord.BitRateAverage);
+      this.LogDebug("    bit-rate peak    = {0} %", _settingsRecord.BitRatePeak);
+
+      if (_isCustomSettings)
+      {
+        return;
+      }
+
+      if (_countRecorders > 0)
+      {
+        this.LogInfo("encoder: update recording settings");
+        EncodeMode = _settingsRecord.EncodeMode;
+        AverageBitRate = _settingsRecord.BitRateAverage;
+        PeakBitRate = _settingsRecord.BitRatePeak;
+        _isCustomSettings = false;
+      }
+      else if (_countTimeShifters > 0)
+      {
+        this.LogInfo("encoder: update time-shifting settings");
+        EncodeMode = _settingsTimeShift.EncodeMode;
+        AverageBitRate = _settingsTimeShift.BitRateAverage;
+        PeakBitRate = _settingsTimeShift.BitRatePeak;
+        _isCustomSettings = false;
+      }
+    }
+
+    /// <summary>
+    /// Notify the control that time-shifting has started.
+    /// </summary>
+    public void OnStartTimeShifting()
+    {
+      if (_encoders.Count == 0)
+      {
+        return;
+      }
+      lock (_lock)
+      {
+        if (_countTimeShifters++ == 0 && _countRecorders == 0)
+        {
+          this.LogInfo("encoder: apply time-shifting settings");
+          EncodeMode = _settingsTimeShift.EncodeMode;
+          AverageBitRate = _settingsTimeShift.BitRateAverage;
+          PeakBitRate = _settingsTimeShift.BitRatePeak;
+          _isCustomSettings = false;
+        }
+      }
+    }
+
+    /// <summary>
+    /// Notify the control that time-shifting has stopped.
+    /// </summary>
+    public void OnStopTimeShifting()
+    {
+      if (_encoders.Count == 0)
+      {
+        return;
+      }
+      lock (_lock)
+      {
+        if (_countTimeShifters-- == 1 && _countRecorders == 0)
+        {
+          _isCustomSettings = false;
+        }
+      }
+    }
+
+    /// <summary>
+    /// Notify the control that recording has started.
+    /// </summary>
+    public void OnStartRecording()
+    {
+      if (_encoders.Count == 0)
+      {
+        return;
+      }
+      lock (_lock)
+      {
+        if (_countRecorders++ == 0)
+        {
+          this.LogInfo("encoder: apply recording settings");
+          // We intentionally override time-shifting settings, including custom
+          // time-shift settings.
+          EncodeMode = _settingsRecord.EncodeMode;
+          AverageBitRate = _settingsRecord.BitRateAverage;
+          PeakBitRate = _settingsRecord.BitRatePeak;
+          _isCustomSettings = false;
+        }
+      }
+    }
+
+    /// <summary>
+    /// Notify the control that recording has stopped.
+    /// </summary>
+    public void OnStopRecording()
+    {
+      if (_encoders.Count == 0)
+      {
+        return;
+      }
+      lock (_lock)
+      {
+        if (_countRecorders-- == 1)
+        {
+          if (_countTimeShifters == 0)
+          {
+            _isCustomSettings = false;
+          }
+          else if (!_isCustomSettings)
+          {
+            this.LogInfo("encoder: apply time-shifting settings");
+            EncodeMode = _settingsTimeShift.EncodeMode;
+            AverageBitRate = _settingsTimeShift.BitRateAverage;
+            PeakBitRate = _settingsTimeShift.BitRatePeak;
+            _isCustomSettings = false;
+          }
         }
       }
     }

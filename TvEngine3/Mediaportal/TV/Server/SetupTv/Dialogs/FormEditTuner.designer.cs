@@ -30,7 +30,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
     /// </summary>
     private void InitializeComponent()
     {
-      this.buttonSave = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
+      this.buttonOkay = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
       this.buttonCancel = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
       this.tabControl = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPTabControl();
       this.tabPageGeneral = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPTabPage();
@@ -77,8 +77,9 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.labelDecryptLimit2 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.numericUpDownDecryptLimit = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPNumericUpDown();
       this.tabPageAnalog = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPTabPage();
-      this.groupBoxEncoderBitRate = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPGroupBox();
-      this.labelEncoderBitRateSettingsRecording = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.groupBoxEncoderSettings = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPGroupBox();
+      this.buttonEncoderSettingsCheckSupport = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
+      this.labelEncoderSettingsRecording = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.numericUpDownEncoderBitRateValuePeakRecording = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPNumericUpDown();
       this.labelEncoderBitRateValuePeakUnitRecording = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.labelEncoderBitRateValuePeakRecording = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
@@ -86,8 +87,8 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.labelEncoderBitRateValueUnitRecording = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.comboBoxEncoderBitRateModeRecording = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPComboBox();
       this.labelEncoderBitRateModeRecording = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
-      this.labelEncoderRecordingBitRateValue = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
-      this.labelEncoderBitRateSettingsTimeShifting = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.labelEncoderBitRateValueRecording = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
+      this.labelEncoderSettingsTimeShifting = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.numericUpDownEncoderBitRateValuePeakTimeShifting = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPNumericUpDown();
       this.labelEncoderBitRateValuePeakUnitTimeShifting = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.labelEncoderBitRateValuePeakTimeShifting = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
@@ -144,7 +145,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.groupBoxConditionalAccess.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownDecryptLimit)).BeginInit();
       this.tabPageAnalog.SuspendLayout();
-      this.groupBoxEncoderBitRate.SuspendLayout();
+      this.groupBoxEncoderSettings.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownEncoderBitRateValuePeakRecording)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownEncoderBitRateValueRecording)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownEncoderBitRateValuePeakTimeShifting)).BeginInit();
@@ -158,17 +159,17 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownExternalInputPhysicalChannelNumber)).BeginInit();
       this.SuspendLayout();
       // 
-      // buttonSave
+      // buttonOkay
       // 
-      this.buttonSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.buttonSave.DialogResult = System.Windows.Forms.DialogResult.OK;
-      this.buttonSave.Location = new System.Drawing.Point(162, 503);
-      this.buttonSave.Name = "buttonSave";
-      this.buttonSave.Size = new System.Drawing.Size(75, 23);
-      this.buttonSave.TabIndex = 1;
-      this.buttonSave.Text = "&Save";
-      this.buttonSave.UseVisualStyleBackColor = true;
-      this.buttonSave.Click += new System.EventHandler(this.buttonSave_Click);
+      this.buttonOkay.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.buttonOkay.DialogResult = System.Windows.Forms.DialogResult.OK;
+      this.buttonOkay.Location = new System.Drawing.Point(162, 503);
+      this.buttonOkay.Name = "buttonOkay";
+      this.buttonOkay.Size = new System.Drawing.Size(75, 23);
+      this.buttonOkay.TabIndex = 1;
+      this.buttonOkay.Text = "&OK";
+      this.buttonOkay.UseVisualStyleBackColor = true;
+      this.buttonOkay.Click += new System.EventHandler(this.buttonOkay_Click);
       // 
       // buttonCancel
       // 
@@ -185,9 +186,9 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       // 
       this.tabControl.AllowDrop = true;
       this.tabControl.AllowReorderTabs = false;
-      this.tabControl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.tabControl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.tabControl.Controls.Add(this.tabPageGeneral);
       this.tabControl.Controls.Add(this.tabPageConditionalAccess);
       this.tabControl.Controls.Add(this.tabPageAnalog);
@@ -213,8 +214,8 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       // 
       // groupBoxDebug
       // 
-      this.groupBoxDebug.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxDebug.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxDebug.Controls.Add(this.labelDebugDoNotEnable);
       this.groupBoxDebug.Controls.Add(this.checkBoxTsMuxerDumpInputs);
       this.groupBoxDebug.Controls.Add(this.checkBoxTsWriterDisableCrcCheck);
@@ -271,8 +272,8 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       // 
       // groupBoxAdvanced
       // 
-      this.groupBoxAdvanced.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxAdvanced.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxAdvanced.Controls.Add(this.checkBoxUseCustomTuning);
       this.groupBoxAdvanced.Controls.Add(this.labelBdaNetworkProvider);
       this.groupBoxAdvanced.Controls.Add(this.labelPidFilterMode);
@@ -366,8 +367,8 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       // 
       // groupBoxGeneral
       // 
-      this.groupBoxGeneral.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxGeneral.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxGeneral.Controls.Add(this.checkBoxAlwaysSendDiseqcCommands);
       this.groupBoxGeneral.Controls.Add(this.labelTunerName);
       this.groupBoxGeneral.Controls.Add(this.checkBoxUseForEpgGrabbing);
@@ -416,8 +417,8 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       // 
       // textBoxTunerName
       // 
-      this.textBoxTunerName.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.textBoxTunerName.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.textBoxTunerName.Location = new System.Drawing.Point(50, 19);
       this.textBoxTunerName.Name = "textBoxTunerName";
       this.textBoxTunerName.Size = new System.Drawing.Size(249, 20);
@@ -449,8 +450,8 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       // 
       // groupBoxCaMenu
       // 
-      this.groupBoxCaMenu.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxCaMenu.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxCaMenu.Controls.Add(this.textBoxCaMenuAnswer);
       this.groupBoxCaMenu.Controls.Add(this.buttonCaMenuOkaySelect);
       this.groupBoxCaMenu.Controls.Add(this.labelCaMenuFooter);
@@ -470,8 +471,8 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       // 
       // textBoxCaMenuAnswer
       // 
-      this.textBoxCaMenuAnswer.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.textBoxCaMenuAnswer.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.textBoxCaMenuAnswer.Location = new System.Drawing.Point(9, 214);
       this.textBoxCaMenuAnswer.Name = "textBoxCaMenuAnswer";
       this.textBoxCaMenuAnswer.Size = new System.Drawing.Size(296, 20);
@@ -485,7 +486,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.buttonCaMenuOkaySelect.Name = "buttonCaMenuOkaySelect";
       this.buttonCaMenuOkaySelect.Size = new System.Drawing.Size(75, 23);
       this.buttonCaMenuOkaySelect.TabIndex = 7;
-      this.buttonCaMenuOkaySelect.Text = "&OK/Select";
+      this.buttonCaMenuOkaySelect.Text = "OK/&Select";
       this.buttonCaMenuOkaySelect.UseVisualStyleBackColor = true;
       this.buttonCaMenuOkaySelect.Click += new System.EventHandler(this.buttonCaMenuOkaySelect_Click);
       // 
@@ -501,9 +502,9 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       // 
       // listBoxCaMenuChoices
       // 
-      this.listBoxCaMenuChoices.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.listBoxCaMenuChoices.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.listBoxCaMenuChoices.FormattingEnabled = true;
       this.listBoxCaMenuChoices.Location = new System.Drawing.Point(9, 54);
       this.listBoxCaMenuChoices.Name = "listBoxCaMenuChoices";
@@ -564,8 +565,8 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       // 
       // groupBoxConditionalAccess
       // 
-      this.groupBoxConditionalAccess.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxConditionalAccess.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxConditionalAccess.Controls.Add(this.labelConditionalAccessProviders);
       this.groupBoxConditionalAccess.Controls.Add(this.textBoxConditionalAccessProviders);
       this.groupBoxConditionalAccess.Controls.Add(this.labelMultiChannelDecryptMode);
@@ -595,8 +596,8 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       // 
       // textBoxConditionalAccessProviders
       // 
-      this.textBoxConditionalAccessProviders.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.textBoxConditionalAccessProviders.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.textBoxConditionalAccessProviders.Location = new System.Drawing.Point(68, 41);
       this.textBoxConditionalAccessProviders.Name = "textBoxConditionalAccessProviders";
       this.textBoxConditionalAccessProviders.Size = new System.Drawing.Size(237, 20);
@@ -681,6 +682,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.numericUpDownDecryptLimit.Size = new System.Drawing.Size(38, 20);
       this.numericUpDownDecryptLimit.TabIndex = 6;
       this.numericUpDownDecryptLimit.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+      this.numericUpDownDecryptLimit.TruncateDecimalPlaces = false;
       this.numericUpDownDecryptLimit.Value = new decimal(new int[] {
             1,
             0,
@@ -689,7 +691,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       // 
       // tabPageAnalog
       // 
-      this.tabPageAnalog.Controls.Add(this.groupBoxEncoderBitRate);
+      this.tabPageAnalog.Controls.Add(this.groupBoxEncoderSettings);
       this.tabPageAnalog.Controls.Add(this.groupBoxVideo);
       this.tabPageAnalog.Controls.Add(this.groupBoxSoftwareEncoders);
       this.tabPageAnalog.Controls.Add(this.groupBoxVideoAndCameraProperties);
@@ -701,58 +703,79 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.tabPageAnalog.Text = "Analog";
       this.tabPageAnalog.UseVisualStyleBackColor = true;
       // 
-      // groupBoxEncoderBitRate
+      // groupBoxEncoderSettings
       // 
-      this.groupBoxEncoderBitRate.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.groupBoxEncoderBitRate.Controls.Add(this.labelEncoderBitRateSettingsRecording);
-      this.groupBoxEncoderBitRate.Controls.Add(this.numericUpDownEncoderBitRateValuePeakRecording);
-      this.groupBoxEncoderBitRate.Controls.Add(this.labelEncoderBitRateValuePeakUnitRecording);
-      this.groupBoxEncoderBitRate.Controls.Add(this.labelEncoderBitRateValuePeakRecording);
-      this.groupBoxEncoderBitRate.Controls.Add(this.numericUpDownEncoderBitRateValueRecording);
-      this.groupBoxEncoderBitRate.Controls.Add(this.labelEncoderBitRateValueUnitRecording);
-      this.groupBoxEncoderBitRate.Controls.Add(this.comboBoxEncoderBitRateModeRecording);
-      this.groupBoxEncoderBitRate.Controls.Add(this.labelEncoderBitRateModeRecording);
-      this.groupBoxEncoderBitRate.Controls.Add(this.labelEncoderRecordingBitRateValue);
-      this.groupBoxEncoderBitRate.Controls.Add(this.labelEncoderBitRateSettingsTimeShifting);
-      this.groupBoxEncoderBitRate.Controls.Add(this.numericUpDownEncoderBitRateValuePeakTimeShifting);
-      this.groupBoxEncoderBitRate.Controls.Add(this.labelEncoderBitRateValuePeakUnitTimeShifting);
-      this.groupBoxEncoderBitRate.Controls.Add(this.labelEncoderBitRateValuePeakTimeShifting);
-      this.groupBoxEncoderBitRate.Controls.Add(this.numericUpDownEncoderBitRateValueTimeShifting);
-      this.groupBoxEncoderBitRate.Controls.Add(this.labelEncoderBitRateValueUnitTimeShifting);
-      this.groupBoxEncoderBitRate.Controls.Add(this.comboBoxEncoderBitRateModeTimeShifting);
-      this.groupBoxEncoderBitRate.Controls.Add(this.labelEncoderBitRateModeTimeShifting);
-      this.groupBoxEncoderBitRate.Controls.Add(this.labelEncoderBitRateValueTimeShifting);
-      this.groupBoxEncoderBitRate.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.groupBoxEncoderBitRate.Location = new System.Drawing.Point(6, 339);
-      this.groupBoxEncoderBitRate.Name = "groupBoxEncoderBitRate";
-      this.groupBoxEncoderBitRate.Size = new System.Drawing.Size(311, 120);
-      this.groupBoxEncoderBitRate.TabIndex = 3;
-      this.groupBoxEncoderBitRate.TabStop = false;
-      this.groupBoxEncoderBitRate.Text = "Encoder Bit Rate Settings";
+      this.groupBoxEncoderSettings.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxEncoderSettings.Controls.Add(this.buttonEncoderSettingsCheckSupport);
+      this.groupBoxEncoderSettings.Controls.Add(this.labelEncoderSettingsRecording);
+      this.groupBoxEncoderSettings.Controls.Add(this.numericUpDownEncoderBitRateValuePeakRecording);
+      this.groupBoxEncoderSettings.Controls.Add(this.labelEncoderBitRateValuePeakUnitRecording);
+      this.groupBoxEncoderSettings.Controls.Add(this.labelEncoderBitRateValuePeakRecording);
+      this.groupBoxEncoderSettings.Controls.Add(this.numericUpDownEncoderBitRateValueRecording);
+      this.groupBoxEncoderSettings.Controls.Add(this.labelEncoderBitRateValueUnitRecording);
+      this.groupBoxEncoderSettings.Controls.Add(this.comboBoxEncoderBitRateModeRecording);
+      this.groupBoxEncoderSettings.Controls.Add(this.labelEncoderBitRateModeRecording);
+      this.groupBoxEncoderSettings.Controls.Add(this.labelEncoderBitRateValueRecording);
+      this.groupBoxEncoderSettings.Controls.Add(this.labelEncoderSettingsTimeShifting);
+      this.groupBoxEncoderSettings.Controls.Add(this.numericUpDownEncoderBitRateValuePeakTimeShifting);
+      this.groupBoxEncoderSettings.Controls.Add(this.labelEncoderBitRateValuePeakUnitTimeShifting);
+      this.groupBoxEncoderSettings.Controls.Add(this.labelEncoderBitRateValuePeakTimeShifting);
+      this.groupBoxEncoderSettings.Controls.Add(this.numericUpDownEncoderBitRateValueTimeShifting);
+      this.groupBoxEncoderSettings.Controls.Add(this.labelEncoderBitRateValueUnitTimeShifting);
+      this.groupBoxEncoderSettings.Controls.Add(this.comboBoxEncoderBitRateModeTimeShifting);
+      this.groupBoxEncoderSettings.Controls.Add(this.labelEncoderBitRateModeTimeShifting);
+      this.groupBoxEncoderSettings.Controls.Add(this.labelEncoderBitRateValueTimeShifting);
+      this.groupBoxEncoderSettings.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.groupBoxEncoderSettings.Location = new System.Drawing.Point(6, 339);
+      this.groupBoxEncoderSettings.Name = "groupBoxEncoderSettings";
+      this.groupBoxEncoderSettings.Size = new System.Drawing.Size(311, 120);
+      this.groupBoxEncoderSettings.TabIndex = 3;
+      this.groupBoxEncoderSettings.TabStop = false;
+      this.groupBoxEncoderSettings.Text = "Encoder Settings";
       // 
-      // labelEncoderBitRateSettingsRecording
+      // buttonEncoderSettingsCheckSupport
       // 
-      this.labelEncoderBitRateSettingsRecording.AutoSize = true;
-      this.labelEncoderBitRateSettingsRecording.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-      this.labelEncoderBitRateSettingsRecording.Location = new System.Drawing.Point(162, 16);
-      this.labelEncoderBitRateSettingsRecording.Name = "labelEncoderBitRateSettingsRecording";
-      this.labelEncoderBitRateSettingsRecording.Size = new System.Drawing.Size(69, 13);
-      this.labelEncoderBitRateSettingsRecording.TabIndex = 9;
-      this.labelEncoderBitRateSettingsRecording.Text = "Recording:";
+      this.buttonEncoderSettingsCheckSupport.Location = new System.Drawing.Point(9, 19);
+      this.buttonEncoderSettingsCheckSupport.Name = "buttonEncoderSettingsCheckSupport";
+      this.buttonEncoderSettingsCheckSupport.Size = new System.Drawing.Size(110, 23);
+      this.buttonEncoderSettingsCheckSupport.TabIndex = 0;
+      this.buttonEncoderSettingsCheckSupport.Text = "&Check For Support";
+      this.buttonEncoderSettingsCheckSupport.UseVisualStyleBackColor = true;
+      this.buttonEncoderSettingsCheckSupport.Click += new System.EventHandler(this.buttonEncoderSettingsCheckSupport_Click);
+      // 
+      // labelEncoderSettingsRecording
+      // 
+      this.labelEncoderSettingsRecording.AutoSize = true;
+      this.labelEncoderSettingsRecording.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+      this.labelEncoderSettingsRecording.Location = new System.Drawing.Point(162, 16);
+      this.labelEncoderSettingsRecording.Name = "labelEncoderSettingsRecording";
+      this.labelEncoderSettingsRecording.Size = new System.Drawing.Size(69, 13);
+      this.labelEncoderSettingsRecording.TabIndex = 10;
+      this.labelEncoderSettingsRecording.Text = "Recording:";
+      this.labelEncoderSettingsRecording.Visible = false;
       // 
       // numericUpDownEncoderBitRateValuePeakRecording
       // 
       this.numericUpDownEncoderBitRateValuePeakRecording.Enabled = false;
       this.numericUpDownEncoderBitRateValuePeakRecording.Location = new System.Drawing.Point(205, 90);
+      this.numericUpDownEncoderBitRateValuePeakRecording.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            -2147483648});
       this.numericUpDownEncoderBitRateValuePeakRecording.Name = "numericUpDownEncoderBitRateValuePeakRecording";
       this.numericUpDownEncoderBitRateValuePeakRecording.Size = new System.Drawing.Size(40, 20);
-      this.numericUpDownEncoderBitRateValuePeakRecording.TabIndex = 16;
+      this.numericUpDownEncoderBitRateValuePeakRecording.TabIndex = 17;
+      this.numericUpDownEncoderBitRateValuePeakRecording.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+      this.numericUpDownEncoderBitRateValuePeakRecording.TruncateDecimalPlaces = false;
       this.numericUpDownEncoderBitRateValuePeakRecording.Value = new decimal(new int[] {
-            100,
+            1,
             0,
             0,
-            0});
+            -2147483648});
+      this.numericUpDownEncoderBitRateValuePeakRecording.Visible = false;
+      this.numericUpDownEncoderBitRateValuePeakRecording.ValueChanged += new System.EventHandler(this.numericUpDownEncoderBitRateValuePeakRecording_ValueChanged);
       // 
       // labelEncoderBitRateValuePeakUnitRecording
       // 
@@ -760,8 +783,9 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.labelEncoderBitRateValuePeakUnitRecording.Location = new System.Drawing.Point(247, 92);
       this.labelEncoderBitRateValuePeakUnitRecording.Name = "labelEncoderBitRateValuePeakUnitRecording";
       this.labelEncoderBitRateValuePeakUnitRecording.Size = new System.Drawing.Size(15, 13);
-      this.labelEncoderBitRateValuePeakUnitRecording.TabIndex = 17;
+      this.labelEncoderBitRateValuePeakUnitRecording.TabIndex = 18;
       this.labelEncoderBitRateValuePeakUnitRecording.Text = "%";
+      this.labelEncoderBitRateValuePeakUnitRecording.Visible = false;
       // 
       // labelEncoderBitRateValuePeakRecording
       // 
@@ -769,21 +793,31 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.labelEncoderBitRateValuePeakRecording.Location = new System.Drawing.Point(162, 92);
       this.labelEncoderBitRateValuePeakRecording.Name = "labelEncoderBitRateValuePeakRecording";
       this.labelEncoderBitRateValuePeakRecording.Size = new System.Drawing.Size(35, 13);
-      this.labelEncoderBitRateValuePeakRecording.TabIndex = 15;
+      this.labelEncoderBitRateValuePeakRecording.TabIndex = 16;
       this.labelEncoderBitRateValuePeakRecording.Text = "Peak:";
+      this.labelEncoderBitRateValuePeakRecording.Visible = false;
       // 
       // numericUpDownEncoderBitRateValueRecording
       // 
       this.numericUpDownEncoderBitRateValueRecording.Enabled = false;
       this.numericUpDownEncoderBitRateValueRecording.Location = new System.Drawing.Point(205, 64);
+      this.numericUpDownEncoderBitRateValueRecording.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            -2147483648});
       this.numericUpDownEncoderBitRateValueRecording.Name = "numericUpDownEncoderBitRateValueRecording";
       this.numericUpDownEncoderBitRateValueRecording.Size = new System.Drawing.Size(40, 20);
-      this.numericUpDownEncoderBitRateValueRecording.TabIndex = 13;
+      this.numericUpDownEncoderBitRateValueRecording.TabIndex = 14;
+      this.numericUpDownEncoderBitRateValueRecording.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+      this.numericUpDownEncoderBitRateValueRecording.TruncateDecimalPlaces = false;
       this.numericUpDownEncoderBitRateValueRecording.Value = new decimal(new int[] {
-            75,
+            1,
             0,
             0,
-            0});
+            -2147483648});
+      this.numericUpDownEncoderBitRateValueRecording.Visible = false;
+      this.numericUpDownEncoderBitRateValueRecording.ValueChanged += new System.EventHandler(this.numericUpDownEncoderBitRateValueRecording_ValueChanged);
       // 
       // labelEncoderBitRateValueUnitRecording
       // 
@@ -791,8 +825,9 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.labelEncoderBitRateValueUnitRecording.Location = new System.Drawing.Point(247, 66);
       this.labelEncoderBitRateValueUnitRecording.Name = "labelEncoderBitRateValueUnitRecording";
       this.labelEncoderBitRateValueUnitRecording.Size = new System.Drawing.Size(15, 13);
-      this.labelEncoderBitRateValueUnitRecording.TabIndex = 14;
+      this.labelEncoderBitRateValueUnitRecording.TabIndex = 15;
       this.labelEncoderBitRateValueUnitRecording.Text = "%";
+      this.labelEncoderBitRateValueUnitRecording.Visible = false;
       // 
       // comboBoxEncoderBitRateModeRecording
       // 
@@ -801,7 +836,9 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.comboBoxEncoderBitRateModeRecording.Location = new System.Drawing.Point(205, 37);
       this.comboBoxEncoderBitRateModeRecording.Name = "comboBoxEncoderBitRateModeRecording";
       this.comboBoxEncoderBitRateModeRecording.Size = new System.Drawing.Size(100, 21);
-      this.comboBoxEncoderBitRateModeRecording.TabIndex = 11;
+      this.comboBoxEncoderBitRateModeRecording.TabIndex = 12;
+      this.comboBoxEncoderBitRateModeRecording.Visible = false;
+      this.comboBoxEncoderBitRateModeRecording.SelectedIndexChanged += new System.EventHandler(this.comboBoxEncoderBitRateModeRecording_SelectedIndexChanged);
       // 
       // labelEncoderBitRateModeRecording
       // 
@@ -809,40 +846,52 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.labelEncoderBitRateModeRecording.Location = new System.Drawing.Point(162, 40);
       this.labelEncoderBitRateModeRecording.Name = "labelEncoderBitRateModeRecording";
       this.labelEncoderBitRateModeRecording.Size = new System.Drawing.Size(37, 13);
-      this.labelEncoderBitRateModeRecording.TabIndex = 10;
+      this.labelEncoderBitRateModeRecording.TabIndex = 11;
       this.labelEncoderBitRateModeRecording.Text = "Mode:";
+      this.labelEncoderBitRateModeRecording.Visible = false;
       // 
-      // labelEncoderRecordingBitRateValue
+      // labelEncoderBitRateValueRecording
       // 
-      this.labelEncoderRecordingBitRateValue.AutoSize = true;
-      this.labelEncoderRecordingBitRateValue.Location = new System.Drawing.Point(162, 66);
-      this.labelEncoderRecordingBitRateValue.Name = "labelEncoderRecordingBitRateValue";
-      this.labelEncoderRecordingBitRateValue.Size = new System.Drawing.Size(37, 13);
-      this.labelEncoderRecordingBitRateValue.TabIndex = 12;
-      this.labelEncoderRecordingBitRateValue.Text = "Value:";
+      this.labelEncoderBitRateValueRecording.AutoSize = true;
+      this.labelEncoderBitRateValueRecording.Location = new System.Drawing.Point(162, 66);
+      this.labelEncoderBitRateValueRecording.Name = "labelEncoderBitRateValueRecording";
+      this.labelEncoderBitRateValueRecording.Size = new System.Drawing.Size(37, 13);
+      this.labelEncoderBitRateValueRecording.TabIndex = 13;
+      this.labelEncoderBitRateValueRecording.Text = "Value:";
+      this.labelEncoderBitRateValueRecording.Visible = false;
       // 
-      // labelEncoderBitRateSettingsTimeShifting
+      // labelEncoderSettingsTimeShifting
       // 
-      this.labelEncoderBitRateSettingsTimeShifting.AutoSize = true;
-      this.labelEncoderBitRateSettingsTimeShifting.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-      this.labelEncoderBitRateSettingsTimeShifting.Location = new System.Drawing.Point(6, 16);
-      this.labelEncoderBitRateSettingsTimeShifting.Name = "labelEncoderBitRateSettingsTimeShifting";
-      this.labelEncoderBitRateSettingsTimeShifting.Size = new System.Drawing.Size(79, 13);
-      this.labelEncoderBitRateSettingsTimeShifting.TabIndex = 0;
-      this.labelEncoderBitRateSettingsTimeShifting.Text = "Timeshifting:";
+      this.labelEncoderSettingsTimeShifting.AutoSize = true;
+      this.labelEncoderSettingsTimeShifting.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+      this.labelEncoderSettingsTimeShifting.Location = new System.Drawing.Point(6, 16);
+      this.labelEncoderSettingsTimeShifting.Name = "labelEncoderSettingsTimeShifting";
+      this.labelEncoderSettingsTimeShifting.Size = new System.Drawing.Size(83, 13);
+      this.labelEncoderSettingsTimeShifting.TabIndex = 1;
+      this.labelEncoderSettingsTimeShifting.Text = "Time-shifting:";
+      this.labelEncoderSettingsTimeShifting.Visible = false;
       // 
       // numericUpDownEncoderBitRateValuePeakTimeShifting
       // 
       this.numericUpDownEncoderBitRateValuePeakTimeShifting.Enabled = false;
       this.numericUpDownEncoderBitRateValuePeakTimeShifting.Location = new System.Drawing.Point(49, 90);
+      this.numericUpDownEncoderBitRateValuePeakTimeShifting.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            -2147483648});
       this.numericUpDownEncoderBitRateValuePeakTimeShifting.Name = "numericUpDownEncoderBitRateValuePeakTimeShifting";
       this.numericUpDownEncoderBitRateValuePeakTimeShifting.Size = new System.Drawing.Size(40, 20);
-      this.numericUpDownEncoderBitRateValuePeakTimeShifting.TabIndex = 7;
+      this.numericUpDownEncoderBitRateValuePeakTimeShifting.TabIndex = 8;
+      this.numericUpDownEncoderBitRateValuePeakTimeShifting.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+      this.numericUpDownEncoderBitRateValuePeakTimeShifting.TruncateDecimalPlaces = false;
       this.numericUpDownEncoderBitRateValuePeakTimeShifting.Value = new decimal(new int[] {
-            100,
+            1,
             0,
             0,
-            0});
+            -2147483648});
+      this.numericUpDownEncoderBitRateValuePeakTimeShifting.Visible = false;
+      this.numericUpDownEncoderBitRateValuePeakTimeShifting.ValueChanged += new System.EventHandler(this.numericUpDownEncoderBitRateValuePeakTimeShifting_ValueChanged);
       // 
       // labelEncoderBitRateValuePeakUnitTimeShifting
       // 
@@ -850,8 +899,9 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.labelEncoderBitRateValuePeakUnitTimeShifting.Location = new System.Drawing.Point(91, 92);
       this.labelEncoderBitRateValuePeakUnitTimeShifting.Name = "labelEncoderBitRateValuePeakUnitTimeShifting";
       this.labelEncoderBitRateValuePeakUnitTimeShifting.Size = new System.Drawing.Size(15, 13);
-      this.labelEncoderBitRateValuePeakUnitTimeShifting.TabIndex = 8;
+      this.labelEncoderBitRateValuePeakUnitTimeShifting.TabIndex = 9;
       this.labelEncoderBitRateValuePeakUnitTimeShifting.Text = "%";
+      this.labelEncoderBitRateValuePeakUnitTimeShifting.Visible = false;
       // 
       // labelEncoderBitRateValuePeakTimeShifting
       // 
@@ -859,21 +909,31 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.labelEncoderBitRateValuePeakTimeShifting.Location = new System.Drawing.Point(6, 92);
       this.labelEncoderBitRateValuePeakTimeShifting.Name = "labelEncoderBitRateValuePeakTimeShifting";
       this.labelEncoderBitRateValuePeakTimeShifting.Size = new System.Drawing.Size(35, 13);
-      this.labelEncoderBitRateValuePeakTimeShifting.TabIndex = 6;
+      this.labelEncoderBitRateValuePeakTimeShifting.TabIndex = 7;
       this.labelEncoderBitRateValuePeakTimeShifting.Text = "Peak:";
+      this.labelEncoderBitRateValuePeakTimeShifting.Visible = false;
       // 
       // numericUpDownEncoderBitRateValueTimeShifting
       // 
       this.numericUpDownEncoderBitRateValueTimeShifting.Enabled = false;
       this.numericUpDownEncoderBitRateValueTimeShifting.Location = new System.Drawing.Point(49, 64);
+      this.numericUpDownEncoderBitRateValueTimeShifting.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            -2147483648});
       this.numericUpDownEncoderBitRateValueTimeShifting.Name = "numericUpDownEncoderBitRateValueTimeShifting";
       this.numericUpDownEncoderBitRateValueTimeShifting.Size = new System.Drawing.Size(40, 20);
-      this.numericUpDownEncoderBitRateValueTimeShifting.TabIndex = 4;
+      this.numericUpDownEncoderBitRateValueTimeShifting.TabIndex = 5;
+      this.numericUpDownEncoderBitRateValueTimeShifting.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+      this.numericUpDownEncoderBitRateValueTimeShifting.TruncateDecimalPlaces = false;
       this.numericUpDownEncoderBitRateValueTimeShifting.Value = new decimal(new int[] {
-            75,
+            1,
             0,
             0,
-            0});
+            -2147483648});
+      this.numericUpDownEncoderBitRateValueTimeShifting.Visible = false;
+      this.numericUpDownEncoderBitRateValueTimeShifting.ValueChanged += new System.EventHandler(this.numericUpDownEncoderBitRateValueTimeShifting_ValueChanged);
       // 
       // labelEncoderBitRateValueUnitTimeShifting
       // 
@@ -881,8 +941,9 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.labelEncoderBitRateValueUnitTimeShifting.Location = new System.Drawing.Point(91, 66);
       this.labelEncoderBitRateValueUnitTimeShifting.Name = "labelEncoderBitRateValueUnitTimeShifting";
       this.labelEncoderBitRateValueUnitTimeShifting.Size = new System.Drawing.Size(15, 13);
-      this.labelEncoderBitRateValueUnitTimeShifting.TabIndex = 5;
+      this.labelEncoderBitRateValueUnitTimeShifting.TabIndex = 6;
       this.labelEncoderBitRateValueUnitTimeShifting.Text = "%";
+      this.labelEncoderBitRateValueUnitTimeShifting.Visible = false;
       // 
       // comboBoxEncoderBitRateModeTimeShifting
       // 
@@ -891,7 +952,9 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.comboBoxEncoderBitRateModeTimeShifting.Location = new System.Drawing.Point(49, 37);
       this.comboBoxEncoderBitRateModeTimeShifting.Name = "comboBoxEncoderBitRateModeTimeShifting";
       this.comboBoxEncoderBitRateModeTimeShifting.Size = new System.Drawing.Size(100, 21);
-      this.comboBoxEncoderBitRateModeTimeShifting.TabIndex = 2;
+      this.comboBoxEncoderBitRateModeTimeShifting.TabIndex = 3;
+      this.comboBoxEncoderBitRateModeTimeShifting.Visible = false;
+      this.comboBoxEncoderBitRateModeTimeShifting.SelectedIndexChanged += new System.EventHandler(this.comboBoxEncoderBitRateModeTimeShifting_SelectedIndexChanged);
       // 
       // labelEncoderBitRateModeTimeShifting
       // 
@@ -899,8 +962,9 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.labelEncoderBitRateModeTimeShifting.Location = new System.Drawing.Point(6, 40);
       this.labelEncoderBitRateModeTimeShifting.Name = "labelEncoderBitRateModeTimeShifting";
       this.labelEncoderBitRateModeTimeShifting.Size = new System.Drawing.Size(37, 13);
-      this.labelEncoderBitRateModeTimeShifting.TabIndex = 1;
+      this.labelEncoderBitRateModeTimeShifting.TabIndex = 2;
       this.labelEncoderBitRateModeTimeShifting.Text = "Mode:";
+      this.labelEncoderBitRateModeTimeShifting.Visible = false;
       // 
       // labelEncoderBitRateValueTimeShifting
       // 
@@ -908,13 +972,14 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.labelEncoderBitRateValueTimeShifting.Location = new System.Drawing.Point(6, 66);
       this.labelEncoderBitRateValueTimeShifting.Name = "labelEncoderBitRateValueTimeShifting";
       this.labelEncoderBitRateValueTimeShifting.Size = new System.Drawing.Size(37, 13);
-      this.labelEncoderBitRateValueTimeShifting.TabIndex = 3;
+      this.labelEncoderBitRateValueTimeShifting.TabIndex = 4;
       this.labelEncoderBitRateValueTimeShifting.Text = "Value:";
+      this.labelEncoderBitRateValueTimeShifting.Visible = false;
       // 
       // groupBoxVideo
       // 
-      this.groupBoxVideo.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxVideo.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxVideo.Controls.Add(this.labelAnalogVideoStandard);
       this.groupBoxVideo.Controls.Add(this.comboBoxAnalogVideoStandard);
       this.groupBoxVideo.Controls.Add(this.comboBoxFrameSize);
@@ -940,8 +1005,8 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       // 
       // comboBoxAnalogVideoStandard
       // 
-      this.comboBoxAnalogVideoStandard.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.comboBoxAnalogVideoStandard.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.comboBoxAnalogVideoStandard.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxAnalogVideoStandard.FormattingEnabled = true;
       this.comboBoxAnalogVideoStandard.Location = new System.Drawing.Point(72, 19);
@@ -951,8 +1016,8 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       // 
       // comboBoxFrameSize
       // 
-      this.comboBoxFrameSize.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.comboBoxFrameSize.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.comboBoxFrameSize.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxFrameSize.FormattingEnabled = true;
       this.comboBoxFrameSize.Location = new System.Drawing.Point(72, 46);
@@ -962,8 +1027,8 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       // 
       // comboBoxFrameRate
       // 
-      this.comboBoxFrameRate.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.comboBoxFrameRate.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.comboBoxFrameRate.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxFrameRate.FormattingEnabled = true;
       this.comboBoxFrameRate.Location = new System.Drawing.Point(72, 73);
@@ -991,8 +1056,8 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       // 
       // groupBoxSoftwareEncoders
       // 
-      this.groupBoxSoftwareEncoders.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxSoftwareEncoders.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxSoftwareEncoders.Controls.Add(this.comboBoxSoftwareEncoderAudio);
       this.groupBoxSoftwareEncoders.Controls.Add(this.labelSoftwareEncoderAudio);
       this.groupBoxSoftwareEncoders.Controls.Add(this.labelSoftwareEncoderVideo);
@@ -1007,8 +1072,8 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       // 
       // comboBoxSoftwareEncoderAudio
       // 
-      this.comboBoxSoftwareEncoderAudio.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.comboBoxSoftwareEncoderAudio.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.comboBoxSoftwareEncoderAudio.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxSoftwareEncoderAudio.FormattingEnabled = true;
       this.comboBoxSoftwareEncoderAudio.Location = new System.Drawing.Point(72, 46);
@@ -1036,8 +1101,8 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       // 
       // comboBoxSoftwareEncoderVideo
       // 
-      this.comboBoxSoftwareEncoderVideo.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.comboBoxSoftwareEncoderVideo.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.comboBoxSoftwareEncoderVideo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxSoftwareEncoderVideo.FormattingEnabled = true;
       this.comboBoxSoftwareEncoderVideo.Location = new System.Drawing.Point(72, 19);
@@ -1047,8 +1112,8 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       // 
       // groupBoxVideoAndCameraProperties
       // 
-      this.groupBoxVideoAndCameraProperties.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxVideoAndCameraProperties.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxVideoAndCameraProperties.Controls.Add(this.checkBoxVideoOrCameraPropertyValue);
       this.groupBoxVideoAndCameraProperties.Controls.Add(this.buttonRestoreAllDefaults);
       this.groupBoxVideoAndCameraProperties.Controls.Add(this.labelVideoOrCameraPropertyValue);
@@ -1084,7 +1149,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.buttonRestoreAllDefaults.Name = "buttonRestoreAllDefaults";
       this.buttonRestoreAllDefaults.Size = new System.Drawing.Size(110, 23);
       this.buttonRestoreAllDefaults.TabIndex = 7;
-      this.buttonRestoreAllDefaults.Text = "Restore All Defaults";
+      this.buttonRestoreAllDefaults.Text = "Restore &All Defaults";
       this.buttonRestoreAllDefaults.UseVisualStyleBackColor = true;
       this.buttonRestoreAllDefaults.Click += new System.EventHandler(this.buttonRestoreAllDefaults_Click);
       // 
@@ -1108,8 +1173,8 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       // 
       // comboBoxVideoOrCameraProperty
       // 
-      this.comboBoxVideoOrCameraProperty.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.comboBoxVideoOrCameraProperty.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.comboBoxVideoOrCameraProperty.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxVideoOrCameraProperty.FormattingEnabled = true;
       this.comboBoxVideoOrCameraProperty.Location = new System.Drawing.Point(72, 19);
@@ -1120,8 +1185,8 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       // 
       // scrollBarVideoOrCameraPropertyValue
       // 
-      this.scrollBarVideoOrCameraPropertyValue.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.scrollBarVideoOrCameraPropertyValue.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.scrollBarVideoOrCameraPropertyValue.Location = new System.Drawing.Point(72, 74);
       this.scrollBarVideoOrCameraPropertyValue.Name = "scrollBarVideoOrCameraPropertyValue";
       this.scrollBarVideoOrCameraPropertyValue.Size = new System.Drawing.Size(190, 13);
@@ -1144,7 +1209,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.buttonRestoreDefault.Name = "buttonRestoreDefault";
       this.buttonRestoreDefault.Size = new System.Drawing.Size(110, 23);
       this.buttonRestoreDefault.TabIndex = 6;
-      this.buttonRestoreDefault.Text = "Restore Default";
+      this.buttonRestoreDefault.Text = "&Restore Default";
       this.buttonRestoreDefault.UseVisualStyleBackColor = true;
       this.buttonRestoreDefault.Click += new System.EventHandler(this.buttonRestoreDefault_Click);
       // 
@@ -1161,8 +1226,8 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       // 
       // groupBoxExternalTuner
       // 
-      this.groupBoxExternalTuner.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxExternalTuner.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxExternalTuner.Controls.Add(this.textBoxExternalTunerProgram);
       this.groupBoxExternalTuner.Controls.Add(this.labelExternalTunerProgram);
       this.groupBoxExternalTuner.Controls.Add(this.labelExternalTunerProgramArguments);
@@ -1178,8 +1243,8 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       // 
       // textBoxExternalTunerProgram
       // 
-      this.textBoxExternalTunerProgram.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.textBoxExternalTunerProgram.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.textBoxExternalTunerProgram.Location = new System.Drawing.Point(89, 19);
       this.textBoxExternalTunerProgram.Name = "textBoxExternalTunerProgram";
       this.textBoxExternalTunerProgram.Size = new System.Drawing.Size(186, 20);
@@ -1216,8 +1281,8 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       // 
       // textBoxExternalTunerProgramArguments
       // 
-      this.textBoxExternalTunerProgramArguments.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.textBoxExternalTunerProgramArguments.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.textBoxExternalTunerProgramArguments.Location = new System.Drawing.Point(89, 45);
       this.textBoxExternalTunerProgramArguments.Name = "textBoxExternalTunerProgramArguments";
       this.textBoxExternalTunerProgramArguments.Size = new System.Drawing.Size(216, 20);
@@ -1225,8 +1290,8 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       // 
       // groupBoxExternalInput
       // 
-      this.groupBoxExternalInput.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxExternalInput.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxExternalInput.Controls.Add(this.labelExternalInputPhysicalChannelNumber);
       this.groupBoxExternalInput.Controls.Add(this.labelExternalInputCountry);
       this.groupBoxExternalInput.Controls.Add(this.comboBoxExternalInputCountry);
@@ -1263,8 +1328,8 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       // 
       // comboBoxExternalInputCountry
       // 
-      this.comboBoxExternalInputCountry.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.comboBoxExternalInputCountry.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.comboBoxExternalInputCountry.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxExternalInputCountry.FormattingEnabled = true;
       this.comboBoxExternalInputCountry.Location = new System.Drawing.Point(89, 73);
@@ -1274,8 +1339,8 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       // 
       // comboBoxExternalInputSourceAudio
       // 
-      this.comboBoxExternalInputSourceAudio.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.comboBoxExternalInputSourceAudio.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.comboBoxExternalInputSourceAudio.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxExternalInputSourceAudio.FormattingEnabled = true;
       this.comboBoxExternalInputSourceAudio.Location = new System.Drawing.Point(89, 46);
@@ -1303,8 +1368,8 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       // 
       // comboBoxExternalInputSourceVideo
       // 
-      this.comboBoxExternalInputSourceVideo.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.comboBoxExternalInputSourceVideo.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.comboBoxExternalInputSourceVideo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxExternalInputSourceVideo.FormattingEnabled = true;
       this.comboBoxExternalInputSourceVideo.Location = new System.Drawing.Point(89, 19);
@@ -1330,6 +1395,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.numericUpDownExternalInputPhysicalChannelNumber.Size = new System.Drawing.Size(50, 20);
       this.numericUpDownExternalInputPhysicalChannelNumber.TabIndex = 7;
       this.numericUpDownExternalInputPhysicalChannelNumber.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+      this.numericUpDownExternalInputPhysicalChannelNumber.TruncateDecimalPlaces = false;
       this.numericUpDownExternalInputPhysicalChannelNumber.Value = new decimal(new int[] {
             7,
             0,
@@ -1343,14 +1409,14 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       // 
       // FormEditTuner
       // 
-      this.AcceptButton = this.buttonSave;
+      this.AcceptButton = this.buttonOkay;
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
       this.CancelButton = this.buttonCancel;
       this.ClientSize = new System.Drawing.Size(329, 534);
       this.Controls.Add(this.tabControl);
       this.Controls.Add(this.buttonCancel);
-      this.Controls.Add(this.buttonSave);
+      this.Controls.Add(this.buttonOkay);
       this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
       this.MinimumSize = new System.Drawing.Size(337, 560);
       this.Name = "FormEditTuner";
@@ -1374,8 +1440,8 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.groupBoxConditionalAccess.PerformLayout();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownDecryptLimit)).EndInit();
       this.tabPageAnalog.ResumeLayout(false);
-      this.groupBoxEncoderBitRate.ResumeLayout(false);
-      this.groupBoxEncoderBitRate.PerformLayout();
+      this.groupBoxEncoderSettings.ResumeLayout(false);
+      this.groupBoxEncoderSettings.PerformLayout();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownEncoderBitRateValuePeakRecording)).EndInit();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownEncoderBitRateValueRecording)).EndInit();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownEncoderBitRateValuePeakTimeShifting)).EndInit();
@@ -1398,7 +1464,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
 
     #endregion
 
-    private MPButton buttonSave;
+    private MPButton buttonOkay;
     private MPButton buttonCancel;
     private MPTabControl tabControl;
     private MPTabPage tabPageGeneral;
@@ -1464,10 +1530,10 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
     private MPLabel labelSoftwareEncoderVideo;
     private MPComboBox comboBoxSoftwareEncoderVideo;
     private MPGroupBox groupBoxVideo;
-    private MPGroupBox groupBoxEncoderBitRate;
+    private MPGroupBox groupBoxEncoderSettings;
     private MPLabel labelEncoderBitRateModeTimeShifting;
     private MPComboBox comboBoxEncoderBitRateModeTimeShifting;
-    private MPLabel labelEncoderBitRateSettingsRecording;
+    private MPLabel labelEncoderSettingsRecording;
     private MPNumericUpDown numericUpDownEncoderBitRateValuePeakRecording;
     private MPLabel labelEncoderBitRateValuePeakUnitRecording;
     private MPLabel labelEncoderBitRateValuePeakRecording;
@@ -1475,8 +1541,8 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
     private MPLabel labelEncoderBitRateValueUnitRecording;
     private MPComboBox comboBoxEncoderBitRateModeRecording;
     private MPLabel labelEncoderBitRateModeRecording;
-    private MPLabel labelEncoderRecordingBitRateValue;
-    private MPLabel labelEncoderBitRateSettingsTimeShifting;
+    private MPLabel labelEncoderBitRateValueRecording;
+    private MPLabel labelEncoderSettingsTimeShifting;
     private MPNumericUpDown numericUpDownEncoderBitRateValuePeakTimeShifting;
     private MPLabel labelEncoderBitRateValuePeakUnitTimeShifting;
     private MPLabel labelEncoderBitRateValuePeakTimeShifting;
@@ -1502,5 +1568,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
     private MPTextBox textBoxExternalTunerProgramArguments;
     private System.Windows.Forms.OpenFileDialog openFileDialogExternalTunerProgram;
     private MPGroupBox groupBoxExternalTuner;
+    private MPButton buttonEncoderSettingsCheckSupport;
   }
 }

@@ -29,6 +29,7 @@ using Mediaportal.TV.Server.Common.Types.Enum;
 using Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan.Enum;
 using Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan.RemoteControl;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Channel;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channel;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Dvb;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Dvb.Enum;
@@ -40,7 +41,6 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension.Enum;
 using MediaPortal.Common.Utils;
 using ITuner = Mediaportal.TV.Server.TVLibrary.Interfaces.Tuner.ITuner;
-using Polarisation = Mediaportal.TV.Server.Common.Types.Enum.Polarisation;
 
 namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
 {
@@ -552,11 +552,8 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
     #pragma warning restore 0414
     private bool _isCamReady = false;
 
-    // Satellite tuner LNB data parameter cache.
+    // Satellite tuner LNB parameter cache.
     private bool _isPowerOn = false;
-    private int _lnbLowBandLof = -1;
-    private int _lnbHighBandLof = -1;
-    private int _lnbSwitchFrequency = -1;
     private TwinhanDiseqcPort _diseqcPort = TwinhanDiseqcPort.Null;
     private TwinhanToneBurst _toneBurstCommand = TwinhanToneBurst.Off;
 
@@ -1326,13 +1323,8 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
         }
       }
 
-      // Record the LNB parameters for later.
-      Tone22kState bandSelectionTone;
-      Polarisation bandSelectionPolarisation;
-      satelliteChannel.LnbType.GetTuningParameters(satelliteChannel.Frequency, satelliteChannel.Polarisation, Tone22kState.Automatic, out _lnbLowBandLof, out _lnbHighBandLof, out _lnbSwitchFrequency, out bandSelectionTone, out bandSelectionPolarisation);
-
-      // Reset DiSEqC port. We don't send a command unless we are asked to
-      // during the tune request.
+      // Reset DiSEqC switch settings. We don't send commands unless we're
+      // asked to during the tune request.
       _diseqcPort = TwinhanDiseqcPort.Null;
       _toneBurstCommand = TwinhanToneBurst.Off;
     }
@@ -1527,7 +1519,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
             {
               tuningParams.Frequency = satelliteChannel.Frequency;
               tuningParams.SymbolRate = satelliteChannel.SymbolRate;
-              if (satelliteChannel.Polarisation == Polarisation.LinearHorizontal || satelliteChannel.Polarisation == Polarisation.CircularLeft)
+              if (SatelliteLnbHandler.IsHighVoltage(satelliteChannel.Polarisation))
               {
                 tuningParams.Modulation = (ModulationType)2;
               }
@@ -2232,9 +2224,9 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
         lnbParams.Tone22kState = TwinhanTone22kState.Off;
       }
 
-      lnbParams.LowBandLof = (uint)_lnbLowBandLof / 1000;
-      lnbParams.HighBandLof = (uint)_lnbHighBandLof / 1000;
-      lnbParams.SwitchFrequency = (uint)_lnbSwitchFrequency / 1000;
+      lnbParams.LowBandLof = (uint)SatelliteLnbHandler.LOW_BAND_LOF / 1000;
+      lnbParams.HighBandLof = (uint)SatelliteLnbHandler.HIGH_BAND_LOF / 1000;
+      lnbParams.SwitchFrequency = (uint)SatelliteLnbHandler.SWITCH_FREQUENCY / 1000;
       lnbParams.DiseqcPort = _diseqcPort;
 
       // Reset - don't resend commands in subsequent tune requests.

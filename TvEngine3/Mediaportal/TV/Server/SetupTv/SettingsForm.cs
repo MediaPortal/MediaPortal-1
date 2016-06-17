@@ -81,8 +81,9 @@ namespace Mediaportal.TV.Server.SetupTV
         AddSection(new Project());
         AddSection(new General());
         AddSection(new Tuners(OnServerConfigurationChanged));
+        AddSection(new Satellites(OnServerConfigurationChanged));
 
-        _sectionScanning = new Scanning();
+        _sectionScanning = new Scanning(OnServerConfigurationChanged);
         AddServerTuners(false);
 
         Channels channels = new Channels("TV Channels", MediaType.Television);
@@ -140,7 +141,7 @@ namespace Mediaportal.TV.Server.SetupTV
 
     private void AddServerTuners(bool reloaded)
     {
-      IList<Tuner> tuners = ServiceAgents.Instance.TunerServiceAgent.ListAllTuners(TunerIncludeRelationEnum.None);
+      IList<Tuner> tuners = ServiceAgents.Instance.TunerServiceAgent.ListAllTuners(TunerRelation.None);
       foreach (Tuner tuner in tuners)
       {
         if (tuner.IsEnabled && ServiceAgents.Instance.ControllerServiceAgent.IsCardPresent(tuner.IdTuner))

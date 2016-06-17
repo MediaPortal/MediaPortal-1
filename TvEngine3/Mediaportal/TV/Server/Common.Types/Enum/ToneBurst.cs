@@ -18,10 +18,12 @@
 
 #endregion
 
+using System.ComponentModel;
+
 namespace Mediaportal.TV.Server.Common.Types.Enum
 {
   /// <summary>
-  /// Logical tone burst (simple DiSEqC) states.
+  /// Tone burst (simple DiSEqC) commands.
   /// </summary>
   public enum ToneBurst
   {
@@ -30,12 +32,14 @@ namespace Mediaportal.TV.Server.Common.Types.Enum
     /// </summary>
     None = 0,
     /// <summary>
-    /// Tone burst, also known as "unmodulated" or "simple A".
+    /// Tone burst, also known as "simple A" or "unmodulated".
     /// </summary>
+    [Description("Tone Burst (Simple A, Unmodulated)")]
     ToneBurst,
     /// <summary>
-    /// Data burst, also known as "modulated" or "simple B".
+    /// Data burst, also known as "simple B" or "modulated".
     /// </summary>
+    [Description("Data Burst (Simple B, Modulated)")]
     DataBurst
   }
 }

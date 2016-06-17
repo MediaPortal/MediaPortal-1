@@ -18,37 +18,28 @@
 
 #endregion
 
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Channel;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Tuner;
 
-namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Tuner
+namespace Mediaportal.TV.Server.TVLibrary.Interfaces
 {
   /// <summary>
-  /// Tuner in band electronic programme guide data grabber interface.
+  /// This interface defines extensions to the <see cref="IEpgGrabber"/>
+  /// interface that we don't want to publicly expose.
   /// </summary>
-  public interface IEpgGrabber
+  internal interface IEpgGrabberInternal : IEpgGrabber
   {
     /// <summary>
     /// Reload the grabber's configuration.
     /// </summary>
-    void ReloadConfiguration();
+    /// <param name="configuration">The configuration of the associated tuner.</param>
+    void ReloadConfiguration(TVDatabase.Entities.Tuner configuration);
 
     /// <summary>
-    /// Get the grabber's current status.
+    /// The tuner implementation invokes this method when it tunes to a
+    /// different transmitter.
     /// </summary>
-    /// <value><c>true</c> if the grabber is grabbing, otherwise <c>false</c></value>
-    bool IsGrabbing
-    {
-      get;
-    }
-
-    /// <summary>
-    /// Start grabbing electronic programme guide data.
-    /// </summary>
-    /// <param name="callBack">The delegate to notify when grabbing is complete or canceled.</param>
-    void GrabEpg(IEpgGrabberCallBack callBack);
-
-    /// <summary>
-    /// Abort grabbing electronic programme guide data.
-    /// </summary>
-    void AbortGrabbing();
+    /// <param name="tuningDetail">The transmitter tuning detail.</param>
+    void OnTune(IChannel tuningDetail);
   }
 }

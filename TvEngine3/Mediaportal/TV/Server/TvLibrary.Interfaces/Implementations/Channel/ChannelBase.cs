@@ -264,7 +264,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channel
     /// Clone the channel instance.
     /// </summary>
     /// <returns>a shallow clone of the channel instance</returns>
-    public virtual object Clone()
+    public object Clone()
     {
       return MemberwiseClone();
     }

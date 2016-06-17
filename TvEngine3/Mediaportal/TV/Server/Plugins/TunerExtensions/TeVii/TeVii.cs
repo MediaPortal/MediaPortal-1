@@ -24,6 +24,7 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using Mediaportal.TV.Server.Common.Types.Enum;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Channel;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channel;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension;
@@ -452,29 +453,14 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TeVii
         return false;
       }
 
-      int lnbLof;
-      Tone22kState bandSelectionTone;
-      Polarisation bandSelectionPolarisation;
-      satelliteChannel.LnbType.GetTuningParameters(satelliteChannel.Frequency, satelliteChannel.Polarisation, Tone22kState.Automatic, out lnbLof, out bandSelectionTone, out bandSelectionPolarisation);
-
-      TeViiPolarisation polarisation = TeViiPolarisation.None;
-      switch (bandSelectionPolarisation)
+      TeViiPolarisation polarisation = TeViiPolarisation.Vertical;
+      if (SatelliteLnbHandler.IsHighVoltage(satelliteChannel.Polarisation))
       {
-        case Polarisation.CircularLeft:
-        case Polarisation.LinearHorizontal:
-          polarisation = TeViiPolarisation.Horizontal;
-          break;
-        case Polarisation.CircularRight:
-        case Polarisation.LinearVertical:
-          polarisation = TeViiPolarisation.Vertical;
-          break;
-        default:
-          this.LogWarn("TeVii: tune request uses unsupported polarisation {0}", satelliteChannel.Polarisation);
-          break;
+        polarisation = TeViiPolarisation.Horizontal;
       }
 
-      // Override the default tone state with the state set in SetToneState().
-      bool toneOn = _toneState == Tone22kState.On;
+      // Use the state set in SetToneState().
+      bool isToneOn = _toneState == Tone22kState.On;
 
       TeViiModulation modulation = TeViiModulation.Auto;
       if (channel is ChannelDvbS)
@@ -576,7 +562,8 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TeVii
           break;
       }
 
-      bool result = TuneTransponder(_deviceIndex, satelliteChannel.Frequency, satelliteChannel.SymbolRate * 1000, lnbLof, polarisation, toneOn, modulation, fecCodeRate);
+      int lnbLof = SatelliteLnbHandler.GetLocalOscillatorFrequency(satelliteChannel.Frequency);
+      bool result = TuneTransponder(_deviceIndex, satelliteChannel.Frequency, satelliteChannel.SymbolRate * 1000, lnbLof, polarisation, isToneOn, modulation, fecCodeRate);
       if (result)
       {
         this.LogDebug("TeVii: result = success");

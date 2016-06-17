@@ -20,17 +20,18 @@
 
 using System;
 using System.Collections.Generic;
+using System.Data.SqlTypes;
 using System.Globalization;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using Mediaportal.TV.Server.Common.Types.Enum;
 using Mediaportal.TV.Server.TVControl.ServiceAgents;
 using Mediaportal.TV.Server.TVDatabase.Entities;
+using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVDatabase.Entities.Factories;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.Entities;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Tuner.Enum;
 using Mediaportal.TV.Server.TVService.Interfaces;
 using Mediaportal.TV.TvPlugin.Helper;
 using MediaPortal.Dialogs;
@@ -350,7 +351,7 @@ namespace Mediaportal.TV.TvPlugin
       foreach (Schedule sched in schedules)
       {
         ScheduleBLL schedule = new ScheduleBLL (sched);
-        if (schedule.Entity.Canceled != ScheduleFactory.MinSchedule || (filterCanceledRecordings && schedule.IsSerieIsCanceled(schedule.GetSchedStartTimeForProg(program), program.IdChannel)))
+        if (schedule.Entity.Canceled != SqlDateTime.MinValue.Value || (filterCanceledRecordings && schedule.IsSerieIsCanceled(schedule.GetSchedStartTimeForProg(program), program.IdChannel)))
         {
           continue;
         }
@@ -423,7 +424,7 @@ namespace Mediaportal.TV.TvPlugin
       {
         //this.LogDebug("TVProgrammInfo.UpdateProgramDescription: {0} - {1}", episode.title, episode.description);
 
-        lblProgramChannel.Label = ServiceAgents.Instance.ChannelServiceAgent.GetChannel(episode.IdChannel).Name;
+        lblProgramChannel.Label = ServiceAgents.Instance.ChannelServiceAgent.GetChannel(episode.IdChannel, ChannelRelation.None).Name;
         string strTime = String.Format("{0} {1} - {2}",
                                        Utils.GetShortDayString(episode.StartTime),
                                        episode.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
@@ -569,7 +570,8 @@ namespace Mediaportal.TV.TvPlugin
         {
           if (recordingSchedule.Entity != null && !recordingSchedule.IsSerieIsCanceled(recordingSchedule.GetSchedStartTimeForProg(episode.Entity), episode.Entity.IdChannel))
           {
-            bool hasConflict = recordingSchedule.Entity.Conflicts.Count > 0;
+            Schedule tempSchedule = ServiceAgents.Instance.ScheduleServiceAgent.GetSchedule(recordingSchedule.Entity.IdSchedule, ScheduleRelation.Conflicts);
+            bool hasConflict = tempSchedule.Conflicts.Count > 0;
             bool isPartialRecording = false;
             bool isSeries = (recordingSchedule.Entity.ScheduleType != (int)ScheduleRecordingType.Once);
 
@@ -680,7 +682,7 @@ namespace Mediaportal.TV.TvPlugin
         btnAdvancedRecord.Disabled = btnQuality.Disabled = true;
         btnKeep.Disabled = false;
 
-        IList<TuningDetail> details = ServiceAgents.Instance.ChannelServiceAgent.GetChannel(CurrentProgram.IdChannel).TuningDetails;
+        IList<TuningDetail> details = ServiceAgents.Instance.ChannelServiceAgent.GetChannel(CurrentProgram.IdChannel, ChannelRelation.TuningDetails).TuningDetails;
         foreach (TuningDetail detail in details)
         {
           if ((detail.BroadcastStandard & (int)BroadcastStandard.MaskAnalog) != 0)
@@ -882,23 +884,22 @@ namespace Mediaportal.TV.TvPlugin
 
         dlg.ShowQuickNumbers = true;
 
-        dlg.AddLocalizedString(968);
+        dlg.AddLocalizedString(886);
         dlg.AddLocalizedString(965);
         dlg.AddLocalizedString(966);
         dlg.AddLocalizedString(967);
-        EncoderBitRateMode _newBitRate = rec.BitRateMode;
-        switch (_newBitRate)
+        switch (rec.BitRateMode)
         {
-          case EncoderBitRateMode.NotSet:
+          case EncodeMode.Default:
             dlg.SelectedLabel = 0;
             break;
-          case EncoderBitRateMode.ConstantBitRate:
+          case EncodeMode.ConstantBitRate:
             dlg.SelectedLabel = 1;
             break;
-          case EncoderBitRateMode.VariableBitRateAverage:
+          case EncodeMode.VariableBitRate:
             dlg.SelectedLabel = 2;
             break;
-          case EncoderBitRateMode.VariableBitRatePeak:
+          case EncodeMode.VariablePeakBitRate:
             dlg.SelectedLabel = 3;
             break;
         }
@@ -912,23 +913,22 @@ namespace Mediaportal.TV.TvPlugin
         switch (dlg.SelectedLabel)
         {
           case 0: // Not Set
-            _newBitRate = EncoderBitRateMode.NotSet;
+            rec.BitRateMode = EncodeMode.Default;
             break;
 
           case 1: // CBR
-            _newBitRate = EncoderBitRateMode.ConstantBitRate;
+            rec.BitRateMode = EncodeMode.ConstantBitRate;
             break;
 
           case 2: // VBR
-            _newBitRate = EncoderBitRateMode.VariableBitRateAverage;
+            rec.BitRateMode = EncodeMode.VariableBitRate;
             break;
 
           case 3: // VBR Peak
-            _newBitRate = EncoderBitRateMode.VariableBitRatePeak;
+            rec.BitRateMode = EncodeMode.VariablePeakBitRate;
             break;
         }
 
-        rec.BitRateMode = _newBitRate;
         ServiceAgents.Instance.ScheduleServiceAgent.SaveSchedule(rec.Entity);
         currentSchedule = rec.Entity;
 
@@ -936,36 +936,35 @@ namespace Mediaportal.TV.TvPlugin
         dlg.SetHeading(882);
 
         dlg.ShowQuickNumbers = true;
-        dlg.AddLocalizedString(968); // NotSet
         dlg.AddLocalizedString(886); //Default
-        dlg.AddLocalizedString(993); // Custom
         dlg.AddLocalizedString(893); //Portable
         dlg.AddLocalizedString(883); //Low
         dlg.AddLocalizedString(884); //Medium
         dlg.AddLocalizedString(885); //High
-        QualityType _newQuality = rec.QualityType;
-        switch (_newQuality)
+        QualityType currentQuality = rec.QualityType;
+        if (currentQuality == QualityType.Custom)
         {
-          case QualityType.NotSet:
+          dlg.AddLocalizedString(993); //Custom
+        }
+        switch (currentQuality)
+        {
+          case QualityType.Default:
             dlg.SelectedLabel = 0;
             break;
-          case QualityType.Default:
+          case QualityType.Portable:
             dlg.SelectedLabel = 1;
             break;
-          case QualityType.Custom:
+          case QualityType.Low:
             dlg.SelectedLabel = 2;
             break;
-          case QualityType.Portable:
+          case QualityType.Medium:
             dlg.SelectedLabel = 3;
             break;
-          case QualityType.Low:
+          case QualityType.High:
             dlg.SelectedLabel = 4;
             break;
-          case QualityType.Medium:
+          case QualityType.Custom:
             dlg.SelectedLabel = 5;
-            break;
-          case QualityType.High:
-            dlg.SelectedLabel = 6;
             break;
         }
 
@@ -978,31 +977,30 @@ namespace Mediaportal.TV.TvPlugin
         switch (dlg.SelectedLabel)
         {
           case 0: // Default
-            _newQuality = QualityType.Default;
+            rec.QualityType = QualityType.Default;
             break;
 
-          case 1: // Custom
-            _newQuality = QualityType.Custom;
+          case 1: // Portable
+            rec.QualityType = QualityType.Portable;
             break;
 
-          case 2: // Protable
-            _newQuality = QualityType.Portable;
+          case 2: // Low
+            rec.QualityType = QualityType.Low;
             break;
 
-          case 3: // Low
-            _newQuality = QualityType.Low;
+          case 3: // Medium
+            rec.QualityType = QualityType.Medium;
             break;
 
-          case 4: // Medium
-            _newQuality = QualityType.Medium;
+          case 4: // High
+            rec.QualityType = QualityType.High;
             break;
 
-          case 5: // High
-            _newQuality = QualityType.High;
+          case 5: // Custom
+            rec.QualityType = QualityType.Custom;
             break;
         }
 
-        rec.QualityType = _newQuality;
         ServiceAgents.Instance.ScheduleServiceAgent.SaveSchedule(rec.Entity);
         currentSchedule = rec.Entity;
       }
@@ -1209,7 +1207,7 @@ namespace Mediaportal.TV.TvPlugin
 
             GUIListItem item = new GUIListItem(conflict.ProgramName);
             item.Label2 = GetRecordingDateTime(conflict);
-            Channel channel = ServiceAgents.Instance.ChannelServiceAgent.GetChannel(conflict.IdChannel);
+            Channel channel = ServiceAgents.Instance.ChannelServiceAgent.GetChannel(conflict.IdChannel, ChannelRelation.None);
             if (channel != null && !string.IsNullOrEmpty(channel.Name))
             {
               item.Label3 = channel.Name;
@@ -1277,7 +1275,7 @@ namespace Mediaportal.TV.TvPlugin
 
             GUIListItem item = new GUIListItem(notViewable.ProgramName);
             item.Label2 = GetRecordingDateTime(notViewable);
-            Channel channel = ServiceAgents.Instance.ChannelServiceAgent.GetChannel(notViewable.IdChannel);
+            Channel channel = ServiceAgents.Instance.ChannelServiceAgent.GetChannel(notViewable.IdChannel, ChannelRelation.None);
             if (channel != null && !string.IsNullOrEmpty(channel.Name))
             {
               item.Label3 = channel.Name;

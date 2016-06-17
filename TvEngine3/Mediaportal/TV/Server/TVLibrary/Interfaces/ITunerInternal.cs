@@ -147,7 +147,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces
     /// <summary>
     /// Get the tuner's electronic programme guide data grabbing interface.
     /// </summary>
-    IEpgGrabber InternalEpgGrabberInterface
+    IEpgGrabberInternal InternalEpgGrabberInterface
     {
       get;
     }

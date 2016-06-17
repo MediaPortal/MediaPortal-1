@@ -1,4 +1,4 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+﻿#region Copyright (C) 2005-2011 Team MediaPortal
 
 // Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
@@ -18,43 +18,40 @@
 
 #endregion
 
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Tuner.Enum;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Tuner;
 
-namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Tuner
+namespace Mediaportal.TV.Server.TVLibrary.Interfaces
 {
-  // TODO this interface needs a complete overhaul
-
   /// <summary>
-  /// interface for quality control of a card
+  /// This interface defines extensions to the <see cref="IQualityControl"/>
+  /// interface that we don't want to publicly expose.
   /// </summary>
-  public interface IQuality
+  internal interface IQualityControlInternal : IQualityControl
   {
     /// <summary>
-    /// Gets/Sets the quality bit type (only the bit rate)
+    /// Reload the control's configuration.
     /// </summary>
-    QualityType QualityType { get; set; }
+    /// <param name="configuration">The configuration of the associated tuner.</param>
+    void ReloadConfiguration(TVDatabase.Entities.Tuner configuration);
 
     /// <summary>
-    /// Gets/Sets the bit rate mode. Works only if this is supported
+    /// Notify the control that time-shifting has started.
     /// </summary>
-    EncoderBitRateMode BitRateMode { get; set; }
+    void OnStartTimeShifting();
 
     /// <summary>
-    /// Indicates if bit rate modes are supported
+    /// Notify the control that time-shifting has stopped.
     /// </summary>
-    /// <returns>true/false</returns>
-    bool SupportsBitRateModes();
+    void OnStopTimeShifting();
 
     /// <summary>
-    /// Indicates if peak bit rate mode is supported
+    /// Notify the control that recording has started.
     /// </summary>
-    /// <returns>true/false</returns>
-    bool SupportsPeakBitRateMode();
+    void OnStartRecording();
 
     /// <summary>
-    /// Indicates if bit rate control is supported
+    /// Notify the control that recording has stopped.
     /// </summary>
-    /// <returns>true/false</returns>
-    bool SupportsBitRate();
+    void OnStopRecording();
   }
 }

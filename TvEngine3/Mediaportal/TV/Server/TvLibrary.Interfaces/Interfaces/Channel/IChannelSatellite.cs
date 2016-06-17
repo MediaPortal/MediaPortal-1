@@ -28,27 +28,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Channel
   public interface IChannelSatellite : IChannel, IChannelPhysical
   {
     /// <summary>
-    /// Get/set the DiSEqC positioner index of the satellite that the channel is broadcast from.
+    /// Get/set the longitude of the satellite that the channel is broadcast from. The longitude unit is tenths of a degree. Negative values are West; positive values are East.
     /// </summary>
-    int DiseqcPositionerSatelliteIndex
-    {
-      get;
-      set;
-    }
-
-    /// <summary>
-    /// Get/set the DiSEqC switch setting used to select the satellite that the channel is broadcast from.
-    /// </summary>
-    DiseqcPort DiseqcSwitchPort
-    {
-      get;
-      set;
-    }
-
-    /// <summary>
-    /// Get/set the type of LNB used to receive the channel.
-    /// </summary>
-    ILnbType LnbType
+    int Longitude
     {
       get;
       set;
@@ -73,7 +55,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Channel
     }
 
     /// <summary>
-    /// Get/set the channel transmitter's symbol rate. The symbol rate unit is ks/s.
+    /// Get/set the channel transmitter's symbol rate. The symbol rate unit is kilo-symbols per second (ks/s).
     /// </summary>
     int SymbolRate
     {

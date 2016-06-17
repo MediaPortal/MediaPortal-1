@@ -1,6 +1,6 @@
-﻿#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2010 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2010 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -18,37 +18,33 @@
 
 #endregion
 
+using System.ComponentModel;
 
-namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Tuner
+namespace Mediaportal.TV.Server.Common.Types.Enum
 {
   /// <summary>
-  /// Tuner in band electronic programme guide data grabber interface.
+  /// Encode modes.
   /// </summary>
-  public interface IEpgGrabber
+  public enum EncodeMode
   {
     /// <summary>
-    /// Reload the grabber's configuration.
+    /// Default mode.
     /// </summary>
-    void ReloadConfiguration();
-
+    Default = 0,
     /// <summary>
-    /// Get the grabber's current status.
+    /// Constant bit-rate mode.
     /// </summary>
-    /// <value><c>true</c> if the grabber is grabbing, otherwise <c>false</c></value>
-    bool IsGrabbing
-    {
-      get;
-    }
-
+    [Description("Constant")]
+    ConstantBitRate,
     /// <summary>
-    /// Start grabbing electronic programme guide data.
+    /// Variable bit-rate mode.
     /// </summary>
-    /// <param name="callBack">The delegate to notify when grabbing is complete or canceled.</param>
-    void GrabEpg(IEpgGrabberCallBack callBack);
-
+    [Description("Variable")]
+    VariableBitRate,
     /// <summary>
-    /// Abort grabbing electronic programme guide data.
+    /// Variable peak bit-rate mode.
     /// </summary>
-    void AbortGrabbing();
+    [Description("Variable Peak")]
+    VariablePeakBitRate
   }
 }

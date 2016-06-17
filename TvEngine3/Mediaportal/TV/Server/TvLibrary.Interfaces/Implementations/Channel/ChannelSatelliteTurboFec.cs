@@ -38,19 +38,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channel
   {
     #region variables
 
-    #region TODO
-    // TODO move these properties to a TunerSatellite class, and replace them with a reference to a satellite.
-
     [DataMember]
-    private int _diseqcPositionerSatelliteIndex = -1;
-
-    [DataMember]
-    private DiseqcPort _diseqcSwitchPort = DiseqcPort.None;
-
-    [DataMember]
-    private ILnbType _lnbType = null;
-
-    #endregion
+    private int _longitude = 0;
 
     [DataMember]
     private int _frequency = -1;
@@ -72,47 +61,17 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channel
     #region properties
 
     /// <summary>
-    /// Get/set the DiSEqC positioner index of the satellite that the channel is broadcast from.
+    /// Get/set the longitude of the satellite that the channel is broadcast from. The longitude unit is tenths of a degree. Negative values are West; positive values are East.
     /// </summary>
-    public int DiseqcPositionerSatelliteIndex
+    public int Longitude
     {
       get
       {
-        return _diseqcPositionerSatelliteIndex;
+        return _longitude;
       }
       set
       {
-        _diseqcPositionerSatelliteIndex = value;
-      }
-    }
-
-    /// <summary>
-    /// Get/set the DiSEqC switch setting used to select the satellite that the channel is broadcast from.
-    /// </summary>
-    public DiseqcPort DiseqcSwitchPort
-    {
-      get
-      {
-        return _diseqcSwitchPort;
-      }
-      set
-      {
-        _diseqcSwitchPort = value;
-      }
-    }
-
-    /// <summary>
-    /// Get/set the type of LNB used to receive the channel.
-    /// </summary>
-    public ILnbType LnbType
-    {
-      get
-      {
-        return _lnbType;
-      }
-      set
-      {
-        _lnbType = value;
+        _longitude = value;
       }
     }
 
@@ -205,8 +164,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channel
       ChannelSatelliteTurboFec satelliteChannel = channel as ChannelSatelliteTurboFec;
       if (
         satelliteChannel == null ||
-        DiseqcPositionerSatelliteIndex != satelliteChannel.DiseqcPositionerSatelliteIndex ||
-        DiseqcSwitchPort != satelliteChannel.DiseqcSwitchPort ||
+        Longitude != satelliteChannel.Longitude ||
         Frequency != satelliteChannel.Frequency ||
         Polarisation != satelliteChannel.Polarisation ||
         ModulationScheme != satelliteChannel.ModulationScheme ||
@@ -234,11 +192,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channel
       if (
         channel == null ||
         !base.Equals(obj) ||
-        DiseqcPositionerSatelliteIndex != channel.DiseqcPositionerSatelliteIndex ||
-        DiseqcSwitchPort != channel.DiseqcSwitchPort ||
-        (LnbType == null && channel.LnbType != null) ||
-        (LnbType != null && channel.LnbType == null) ||
-        (LnbType != null && channel.LnbType != null && LnbType != channel.LnbType) ||
+        Longitude != channel.Longitude ||
         Frequency != channel.Frequency ||
         Polarisation != channel.Polarisation ||
         ModulationScheme != channel.ModulationScheme ||
@@ -257,16 +211,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channel
     /// <returns>a hash code for the current <see cref="T:System.Object"/></returns>
     public override int GetHashCode()
     {
-      int hashCode = base.GetHashCode() ^
-        DiseqcPositionerSatelliteIndex.GetHashCode() ^
-        DiseqcSwitchPort.GetHashCode() ^ Frequency.GetHashCode() ^
-        Polarisation.GetHashCode() ^ ModulationScheme.GetHashCode() ^
-        SymbolRate.GetHashCode() ^ FecCodeRate.GetHashCode();
-      if (LnbType != null)
-      {
-        hashCode ^= LnbType.GetHashCode();
-      }
-      return hashCode;
+      return base.GetHashCode() ^ Longitude.GetHashCode() ^
+              Frequency.GetHashCode() ^ Polarisation.GetHashCode() ^
+              ModulationScheme.GetHashCode() ^ SymbolRate.GetHashCode() ^
+              FecCodeRate.GetHashCode();
     }
 
     /// <summary>
@@ -275,30 +223,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channel
     /// <returns>a <see cref="T:System.String"/> that represents the current <see cref="T:System.Object"/></returns>
     public override string ToString()
     {
-      return string.Format("satellite turbo FEC, {0}, satellite index = {1}, DiSEqC = {2}, LNB type = {3}, frequency = {4} kHz, polarisation = {5}, modulation scheme = {6}, symbol rate = {7} ks/s, FEC code rate = {8}",
-                            base.ToString(), DiseqcPositionerSatelliteIndex,
-                            DiseqcSwitchPort,
-                            LnbType == null ? "[null]" : LnbType.ToString(),
-                            Frequency, Polarisation, ModulationScheme,
-                            SymbolRate, FecCodeRate);
-    }
-
-    #endregion
-
-    #region ICloneable member
-
-    /// <summary>
-    /// Clone the channel instance.
-    /// </summary>
-    /// <returns>a shallow clone of the channel instance</returns>
-    public override object Clone()
-    {
-      ChannelSatelliteTurboFec channel = (ChannelSatelliteTurboFec)MemberwiseClone();
-      if (LnbType != null)
-      {
-        channel.LnbType = (ILnbType)LnbType.Clone();
-      }
-      return channel;
+      return string.Format("satellite turbo FEC, {0}, satellite ID = {1}, frequency = {2} kHz, polarisation = {3}, modulation scheme = {4}, symbol rate = {5} ks/s, FEC code rate = {6}",
+                            base.ToString(), Longitude, Frequency,
+                            Polarisation, ModulationScheme, SymbolRate,
+                            FecCodeRate);
     }
 
     #endregion

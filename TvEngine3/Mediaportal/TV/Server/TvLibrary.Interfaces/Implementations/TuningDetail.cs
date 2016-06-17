@@ -34,7 +34,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations
   public class TuningDetail
   {
     public BroadcastStandard BroadcastStandard = BroadcastStandard.Unknown;
-    public short SatellitePosition = -1;
     public int CellId = -1;
     public int CellIdExtension = -1;
     public int Frequency = -1;      // unit = kHz
@@ -48,6 +47,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations
     public PilotTonesState PilotTonesState = PilotTonesState.Automatic;
     public RollOffFactor RollOffFactor = RollOffFactor.Automatic;
     public int StreamId = -1;
+
+    // The properties below are not loaded from or saved to tuning detail
+    // files.
 
     // The set of possible alternative/regional frequencies. This list is only
     // populated for certain network information (NIT) scan results. When the
@@ -64,20 +66,21 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations
     [XmlIgnore]
     public ushort TransportStreamId = 0;
 
-    // Placeholders, to enable this class to be used for satellite, analog TV
-    // and stream scanning even though we don't load the tuning details from
-    // file.
-    // TODO remove all satellite attributes except a satellite longitude/ID
+    // These properties correspond with user interface settings.
     [XmlIgnore]
-    public ILnbType LnbType;
-    [XmlIgnore]
-    public DiseqcPort DiseqcPort;
+    public int Longitude = 0;
     [XmlIgnore]
     public Country Country;
     [XmlIgnore]
     public AnalogTunerSource TunerSource;
     [XmlIgnore]
     public string Url;
+
+    // These properties correspond with information from an M3U.
+    [XmlIgnore]
+    public string StreamName;
+    [XmlIgnore]
+    public string StreamLogicalChannelNumber;
 
     [XmlIgnore]
     public ModulationSchemeVsb ModulationSchemeVsb
@@ -209,9 +212,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations
       IChannelSatellite satelliteChannel = channel as IChannelSatellite;
       if (satelliteChannel != null)
       {
-        satelliteChannel.DiseqcPositionerSatelliteIndex = -1;   // TODO this disables motor support for now, FIX!
-        satelliteChannel.LnbType = LnbType;
-        satelliteChannel.DiseqcSwitchPort = DiseqcPort;
+        satelliteChannel.Longitude = Longitude;
         satelliteChannel.Polarisation = Polarisation;
         satelliteChannel.ModulationScheme = ModulationSchemePsk;
         satelliteChannel.SymbolRate = SymbolRate;
@@ -234,7 +235,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations
       if (
         tuningDetail == null ||
         BroadcastStandard != tuningDetail.BroadcastStandard ||
-        SatellitePosition != tuningDetail.SatellitePosition ||
+        Longitude != tuningDetail.Longitude ||
         CellId != tuningDetail.CellId ||
         CellIdExtension != tuningDetail.CellIdExtension ||
         Frequency != tuningDetail.Frequency ||
@@ -287,7 +288,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations
     public override int GetHashCode()
     {
       return base.GetHashCode() ^ BroadcastStandard.GetHashCode() ^
-              SatellitePosition.GetHashCode() ^ CellId.GetHashCode() ^
+              Longitude.GetHashCode() ^ CellId.GetHashCode() ^
               CellIdExtension.GetHashCode() ^ Frequency.GetHashCode() ^
               FrequencyOffset.GetHashCode() ^ Bandwidth.GetHashCode() ^
               Polarisation.GetHashCode() ^ ModulationScheme.GetHashCode() ^
@@ -343,6 +344,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations
           }
           return string.Format("{0} {1} MHz{2}, BW {3:#.##} MHz{4}", BroadcastStandard.GetDescription(), frequencyMhz, offsetDescription, (float)Bandwidth / 1000, plpIdDescription);
         case BroadcastStandard.DvbIp:
+          if (!string.IsNullOrEmpty(StreamName))
+          {
+            return string.Format("{0} - {1}", StreamName, Url);
+          }
           return Url;
         case BroadcastStandard.DvbDsng:
         case BroadcastStandard.DvbS:

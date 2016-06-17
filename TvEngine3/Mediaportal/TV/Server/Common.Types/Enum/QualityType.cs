@@ -18,26 +18,26 @@
 
 #endregion
 
-namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Tuner.Enum
+namespace Mediaportal.TV.Server.Common.Types.Enum
 {
   /// <summary>
   /// QualityType's for setting the desired quality
   /// </summary>
   public enum QualityType
   {
+    // Seven least significant bits represent average bit rate; next seven bits represent peak bit rate.
+
     /// <summary>default quality</summary>
-    Default = 1,
-    /// <summary>custom quality setting, defined in SetupTv</summary>
-    Custom = 2,
+    Default = 0,
     /// <summary>portable quality setting for those recordings that dont need to be close to perfect</summary>
-    Portable = 3,
+    Portable = (45 << 7) | 20,
     /// <summary>low quality setting for those recordings that dont need to be close to perfect</summary>
-    Low = 4,
+    Low = (55 << 7) | 33,
     /// <summary>medium quality but still quite a bit less diskspace needed than high</summary>
-    Medium = 5,
+    Medium = (88 << 7) | 66,
     /// <summary>high quality setting will create larger files then the other options</summary>
-    High = 6,
-    /// <summary>undefined quality</summary>
-    NotSet = 7
+    High = (100 << 7) | 100,
+    /// <summary>custom quality setting, defined in SetupTv</summary>
+    Custom = 0x3fff
   }
 }

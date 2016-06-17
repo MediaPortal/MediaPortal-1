@@ -106,7 +106,6 @@
     <Compile Include="Interfaces\Services\IScheduleService.cs" />
     <Compile Include="Interfaces\Services\ISettingService.cs" />
     <Compile Include="Interfaces\Events\ITvServerEventCallbackClient.cs" />
-    <Compile Include="LnbTypeBLL.cs" />
     <Compile Include="ServiceAgents\CanceledScheduleServiceAgent.cs" />
     <Compile Include="ServiceAgents\TunerServiceAgent.cs" />
     <Compile Include="ServiceAgents\ChannelGroupServiceAgent.cs" />

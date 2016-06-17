@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -18,32 +18,24 @@
 
 #endregion
 
-namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Tuner.Enum
+using System;
+
+namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Exception
 {
   /// <summary>
-  /// used by the IVideoEncoder interface getvalue(ENCAPIPARAM_BITRATE_MODE)
+  /// Exception thrown by the TV library when physical tuning cannot be
+  /// attempted because the tuner does not support DiSEqC.
   /// </summary>
-  public enum EncoderBitRateMode
+  [Serializable]
+  public class TvExceptionDiseqcNotSupported : TvException
   {
     /// <summary>
-    /// Undefined bit rate mode.
+    /// Initialise a new instance of the <see cref="TvExceptionDiseqcNotSupported"/> class.
     /// </summary>
-    Undefined = -1,
-    /// <summary>
-    /// Constant bit rate mode.
-    /// </summary>
-    ConstantBitRate = 0,
-    /// <summary>
-    /// Variable bit rate mode.
-    /// </summary>
-    VariableBitRateAverage,
-    /// <summary>
-    /// Variable peak bit rate mode.
-    /// </summary>
-    VariableBitRatePeak,
-    /// <summary>
-    /// Bit rate mode not set.
-    /// </summary>
-    NotSet
+    /// <param name="tunerId">The tuner's identifier.</param>
+    public TvExceptionDiseqcNotSupported(int tunerId)
+      : base("Failed to tune with tuner {0}. DiSEqC is required but not supported.", tunerId)
+    {
+    }
   }
 }

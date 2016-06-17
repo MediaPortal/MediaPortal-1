@@ -35,19 +35,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channel
     [DataMember]
     protected int _freesatChannelId = -1;
 
-    #region TODO
-    // TODO move these properties to a TunerSatellite class, and replace them with a reference to a satellite.
-
     [DataMember]
-    private int _diseqcPositionerSatelliteIndex = -1;
-
-    [DataMember]
-    private DiseqcPort _diseqcSwitchPort = DiseqcPort.None;
-
-    [DataMember]
-    private ILnbType _lnbType = null;
-
-    #endregion
+    private int _longitude = 0;
 
     [DataMember]
     private int _frequency = -1;
@@ -84,47 +73,17 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channel
     }
 
     /// <summary>
-    /// Get/set the DiSEqC positioner index of the satellite that the channel is broadcast from.
+    /// Get/set the longitude of the satellite that the channel is broadcast from. The longitude unit is tenths of a degree. Negative values are West; positive values are East.
     /// </summary>
-    public int DiseqcPositionerSatelliteIndex
+    public int Longitude
     {
       get
       {
-        return _diseqcPositionerSatelliteIndex;
+        return _longitude;
       }
       set
       {
-        _diseqcPositionerSatelliteIndex = value;
-      }
-    }
-
-    /// <summary>
-    /// Get/set the DiSEqC switch setting used to select the satellite that the channel is broadcast from.
-    /// </summary>
-    public DiseqcPort DiseqcSwitchPort
-    {
-      get
-      {
-        return _diseqcSwitchPort;
-      }
-      set
-      {
-        _diseqcSwitchPort = value;
-      }
-    }
-
-    /// <summary>
-    /// Get/set the type of LNB used to receive the channel.
-    /// </summary>
-    public ILnbType LnbType
-    {
-      get
-      {
-        return _lnbType;
-      }
-      set
-      {
-        _lnbType = value;
+        _longitude = value;
       }
     }
 
@@ -217,8 +176,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channel
       ChannelDvbS dvbsChannel = channel as ChannelDvbS;
       if (
         dvbsChannel == null ||
-        DiseqcPositionerSatelliteIndex != dvbsChannel.DiseqcPositionerSatelliteIndex ||
-        DiseqcSwitchPort != dvbsChannel.DiseqcSwitchPort ||
+        Longitude != dvbsChannel.Longitude ||
         Frequency != dvbsChannel.Frequency ||
         Polarisation != dvbsChannel.Polarisation ||
         ModulationScheme != dvbsChannel.ModulationScheme ||
@@ -247,11 +205,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channel
         channel == null ||
         !base.Equals(obj) ||
         FreesatChannelId != channel.FreesatChannelId ||
-        DiseqcPositionerSatelliteIndex != channel.DiseqcPositionerSatelliteIndex ||
-        DiseqcSwitchPort != channel.DiseqcSwitchPort ||
-        (LnbType == null && channel.LnbType != null) ||
-        (LnbType != null && channel.LnbType == null) ||
-        (LnbType != null && channel.LnbType != null && LnbType != channel.LnbType) ||
+        Longitude != Longitude ||
         Frequency != channel.Frequency ||
         Polarisation != channel.Polarisation ||
         ModulationScheme != channel.ModulationScheme ||
@@ -270,16 +224,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channel
     /// <returns>a hash code for the current <see cref="T:System.Object"/></returns>
     public override int GetHashCode()
     {
-      int hashCode = base.GetHashCode() ^ FreesatChannelId.GetHashCode() ^
-        DiseqcPositionerSatelliteIndex.GetHashCode() ^
-        DiseqcSwitchPort.GetHashCode() ^ Frequency.GetHashCode() ^
-        Polarisation.GetHashCode() ^ ModulationScheme.GetHashCode() ^
-        SymbolRate.GetHashCode() ^ FecCodeRate.GetHashCode();
-      if (LnbType != null)
-      {
-        hashCode ^= LnbType.GetHashCode();
-      }
-      return hashCode;
+      return base.GetHashCode() ^ FreesatChannelId.GetHashCode() ^
+              Longitude.GetHashCode() ^ Frequency.GetHashCode() ^
+              Polarisation.GetHashCode() ^ ModulationScheme.GetHashCode() ^
+              SymbolRate.GetHashCode() ^ FecCodeRate.GetHashCode();
     }
 
     /// <summary>
@@ -288,30 +236,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channel
     /// <returns>a <see cref="T:System.String"/> that represents the current <see cref="T:System.Object"/></returns>
     public override string ToString()
     {
-      return string.Format("DVB-S, {0}, Freesat CID = {1}, satellite index = {2}, DiSEqC = {3}, LNB type = {4}, frequency = {5} kHz, polarisation = {6}, modulation scheme = {7}, symbol rate = {8} ks/s, FEC code rate = {9}",
-                            base.ToString(), FreesatChannelId,
-                            DiseqcPositionerSatelliteIndex, DiseqcSwitchPort,
-                            LnbType == null ? "[null]" : LnbType.ToString(),
+      return string.Format("DVB-S, {0}, Freesat CID = {1}, satellite ID = {2}, frequency = {3} kHz, polarisation = {4}, modulation scheme = {5}, symbol rate = {6} ks/s, FEC code rate = {7}",
+                            base.ToString(), FreesatChannelId, Longitude,
                             Frequency, Polarisation, ModulationScheme,
                             SymbolRate, FecCodeRate);
-    }
-
-    #endregion
-
-    #region ICloneable member
-
-    /// <summary>
-    /// Clone the channel instance.
-    /// </summary>
-    /// <returns>a shallow clone of the channel instance</returns>
-    public override object Clone()
-    {
-      ChannelDvbS channel = (ChannelDvbS)MemberwiseClone();
-      if (LnbType != null)
-      {
-        channel.LnbType = (ILnbType)LnbType.Clone();
-      }
-      return channel;
     }
 
     #endregion

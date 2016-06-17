@@ -31,6 +31,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces
     new IChannel CurrentChannel { get; set; }
 
     /// <summary>
+    /// Set the sub-channel's quality control interface.
+    /// </summary>
+    IQualityControlInternal QualityControlInterface { set; }
+
+    /// <summary>
     /// Cancel the current tuning process.
     /// </summary>
     void CancelTune();

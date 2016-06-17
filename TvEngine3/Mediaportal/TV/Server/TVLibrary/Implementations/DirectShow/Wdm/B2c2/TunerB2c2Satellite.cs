@@ -25,6 +25,7 @@ using Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2.Enum;
 using Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2.Struct;
 using Mediaportal.TV.Server.TVLibrary.Implementations.Enum;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Channel;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Exception;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Helper;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
@@ -34,7 +35,7 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension.Enum;
 using MediaPortal.Common.Utils;
 using B2c2DiseqcPort = Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2.Enum.DiseqcPort;
 using B2c2Polarisation = Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2.Enum.Polarisation;
-using MpPolarisation = Mediaportal.TV.Server.Common.Types.Enum.Polarisation;
+using TvePolarisation = Mediaportal.TV.Server.Common.Types.Enum.Polarisation;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
 {
@@ -141,33 +142,29 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
         }
         TvExceptionDirectShowError.Throw(_interfaceTuner.SetFec(fecCodeRate), "Failed to set FEC rate.");
 
-        int lnbLof;
-        Tone22kState bandSelectionTone;
-        MpPolarisation bandSelectionPolarisation;
-        satelliteChannel.LnbType.GetTuningParameters(satelliteChannel.Frequency, satelliteChannel.Polarisation, Tone22kState.Automatic, out lnbLof, out bandSelectionTone, out bandSelectionPolarisation);
-
         B2c2Polarisation polarisation;
-        switch (bandSelectionPolarisation)
+        switch (satelliteChannel.Polarisation)
         {
-          case MpPolarisation.LinearHorizontal:
-          case MpPolarisation.CircularLeft:
+          case TvePolarisation.LinearHorizontal:
+          case TvePolarisation.CircularLeft:
             polarisation = B2c2Polarisation.Horizontal;
             break;
-          case MpPolarisation.LinearVertical:
-          case MpPolarisation.CircularRight:
+          case TvePolarisation.LinearVertical:
+          case TvePolarisation.CircularRight:
             polarisation = B2c2Polarisation.Vertical;
             break;
-          case MpPolarisation.Automatic:
+          case TvePolarisation.Automatic:
             this.LogWarn("B2C2 satellite: falling back to linear vertical polarisation");
             polarisation = B2c2Polarisation.Vertical;
             break;
           default:
-            polarisation = (B2c2Polarisation)bandSelectionPolarisation;
+            polarisation = (B2c2Polarisation)satelliteChannel.Polarisation;
             break;
         }
         TvExceptionDirectShowError.Throw(_interfaceTuner.SetPolarity(polarisation), "Failed to set polarisation.");
 
-        TvExceptionDirectShowError.Throw(_interfaceTuner.SetLnbFrequency(lnbLof / 1000), "Failed to set LNB LOF frequency.");
+        int lnbLof = SatelliteLnbHandler.GetLocalOscillatorFrequency(satelliteChannel.Frequency) / 1000;
+        TvExceptionDirectShowError.Throw(_interfaceTuner.SetLnbFrequency(lnbLof), "Failed to set LNB LOF frequency.");
 
         base.PerformTuning(channel);
       }

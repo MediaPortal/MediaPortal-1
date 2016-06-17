@@ -24,6 +24,7 @@ using DirectShowLib;
 using DirectShowLib.BDA;
 using Mediaportal.TV.Server.Common.Types.Enum;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Channel;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channel;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension;
@@ -31,7 +32,7 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension.Enum;
 using MediaPortal.Common.Utils;
 using BdaPolarisation = DirectShowLib.BDA.Polarisation;
 using ITuner = Mediaportal.TV.Server.TVLibrary.Interfaces.Tuner.ITuner;
-using MpPolarisation = Mediaportal.TV.Server.Common.Types.Enum.Polarisation;
+using TvePolarisation = Mediaportal.TV.Server.Common.Types.Enum.Polarisation;
 
 namespace Mediaportal.TV.Server.Plugins.TunerExtension.Genpix
 {
@@ -362,34 +363,30 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Genpix
 
       BdaExtensionParams command = new BdaExtensionParams();
       command.Frequency = satelliteChannel.Frequency / 1000;
-
-      Tone22kState bandSelectionTone;
-      MpPolarisation bandSelectionPolarisation;
-      satelliteChannel.LnbType.GetTuningParameters(satelliteChannel.Frequency, satelliteChannel.Polarisation, Tone22kState.Automatic, out command.LnbLowBandLof, out command.LnbHighBandLof, out command.LnbSwitchFrequency, out bandSelectionTone, out bandSelectionPolarisation);
-      command.LnbLowBandLof /= 1000;
-      command.LnbHighBandLof /= 1000;
-      command.LnbSwitchFrequency /= 1000;
+      command.LnbLowBandLof = SatelliteLnbHandler.LOW_BAND_LOF / 1000;
+      command.LnbHighBandLof = SatelliteLnbHandler.HIGH_BAND_LOF / 1000;
+      command.LnbSwitchFrequency = SatelliteLnbHandler.SWITCH_FREQUENCY / 1000;
       command.SymbolRate = satelliteChannel.SymbolRate;
       command.Modulation = (ModulationType)satelliteChannel.ModulationScheme;
       command.SwitchPort = GenpixSwitchPort.None;
       command.DiseqcRepeats = 0;
 
-      switch (bandSelectionPolarisation)
+      switch (satelliteChannel.Polarisation)
       {
-        case MpPolarisation.CircularLeft:
+        case TvePolarisation.CircularLeft:
           command.Polarisation = BdaPolarisation.CircularL;
           break;
-        case MpPolarisation.CircularRight:
+        case TvePolarisation.CircularRight:
           command.Polarisation = BdaPolarisation.CircularR;
           break;
-        case MpPolarisation.LinearHorizontal:
+        case TvePolarisation.LinearHorizontal:
           command.Polarisation = BdaPolarisation.LinearH;
           break;
-        case MpPolarisation.LinearVertical:
+        case TvePolarisation.LinearVertical:
           command.Polarisation = BdaPolarisation.LinearV;
           break;
         default:
-          this.LogWarn("Genpix: tune request uses unsupported polarisation {0}, falling back to automatic", bandSelectionPolarisation);
+          this.LogWarn("Genpix: tune request uses unsupported polarisation {0}, falling back to automatic", satelliteChannel.Polarisation);
           command.Polarisation = BdaPolarisation.NotSet;
           break;
       }

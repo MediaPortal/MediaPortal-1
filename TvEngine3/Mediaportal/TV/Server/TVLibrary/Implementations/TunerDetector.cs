@@ -1002,7 +1002,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
 
       // Find or create a group for the tuner if appropriate.
       TunerGroup group = null;
-      Tuner tunerDbSettings = TunerManagement.GetTunerByExternalId(tuner.ExternalId, TunerIncludeRelationEnum.None);
+      Tuner tunerDbSettings = TunerManagement.GetTunerByExternalId(tuner.ExternalId, TunerRelation.None);
       if (tunerDbSettings == null)
       {
         // First ever detection. Create the tuner settings.
@@ -1212,7 +1212,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       {
         if (!string.Equals(externalId, relatedTunerExternalId))
         {
-          Tuner relatedTuner = TunerManagement.GetTunerByExternalId(relatedTunerExternalId, TunerIncludeRelationEnum.None);
+          Tuner relatedTuner = TunerManagement.GetTunerByExternalId(relatedTunerExternalId, TunerRelation.None);
           if (relatedTuner != null)
           {
             relatedTuner.IdTunerGroup = dbGroup.IdTunerGroup;

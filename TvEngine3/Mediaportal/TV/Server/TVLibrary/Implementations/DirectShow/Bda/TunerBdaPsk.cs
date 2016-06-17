@@ -25,6 +25,7 @@ using DirectShowLib.BDA;
 using Mediaportal.TV.Server.Common.Types.Enum;
 using Mediaportal.TV.Server.TVLibrary.Implementations.Enum;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Channel;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channel;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Exception;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
@@ -32,7 +33,7 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces.NetworkProvider;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension;
 using MediaPortal.Common.Utils;
 using BdaPolarisation = DirectShowLib.BDA.Polarisation;
-using MpPolarisation = Mediaportal.TV.Server.Common.Types.Enum.Polarisation;
+using TvePolarisation = Mediaportal.TV.Server.Common.Types.Enum.Polarisation;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
 {
@@ -201,16 +202,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
         throw new TvException("Failed to find DVB-S tuning space interface on tuning space.");
       }
 
-      int lnbLowBandLof;
-      int lnbHighBandLof;
-      int lnbLofSwitch;
-      Tone22kState bandSelectionTone;
-      MpPolarisation bandSelectionPolarisation;
-      satelliteChannel.LnbType.GetTuningParameters(satelliteChannel.Frequency, satelliteChannel.Polarisation, Tone22kState.Automatic, out lnbLowBandLof, out lnbHighBandLof, out lnbLofSwitch, out bandSelectionTone, out bandSelectionPolarisation);
-
-      int hr = dvbsTuningSpace.put_LowOscillator(lnbLowBandLof);
-      hr |= dvbsTuningSpace.put_HighOscillator(lnbHighBandLof);
-      hr |= dvbsTuningSpace.put_LNBSwitch(lnbLofSwitch);
+      int hr = dvbsTuningSpace.put_LowOscillator(SatelliteLnbHandler.LOW_BAND_LOF);
+      hr |= dvbsTuningSpace.put_HighOscillator(SatelliteLnbHandler.HIGH_BAND_LOF);
+      hr |= dvbsTuningSpace.put_LNBSwitch(SatelliteLnbHandler.SWITCH_FREQUENCY);
 
       ILocator locator;
       hr |= tuningSpace.get_DefaultLocator(out locator);
@@ -225,7 +219,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
 
         ChannelDvbS2 dvbs2Channel = channel as ChannelDvbS2;
         hr = dvbsLocator.put_CarrierFrequency(satelliteChannel.Frequency);
-        hr |= dvbsLocator.put_SignalPolarisation(GetBdaPolarisation(bandSelectionPolarisation));
+        hr |= dvbsLocator.put_SignalPolarisation(GetBdaPolarisation(satelliteChannel.Polarisation));
         hr |= dvbsLocator.put_SymbolRate(satelliteChannel.SymbolRate);
         hr |= dvbsLocator.put_Modulation(GetBdaModulation(satelliteChannel.ModulationScheme, dvbs2Channel != null));
         hr |= dvbsLocator.put_InnerFECRate(GetBdaFecCodeRate(satelliteChannel.FecCodeRate));
@@ -299,19 +293,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
       }
       ChannelDvbS2 dvbs2Channel = channel as ChannelDvbS2;
 
-      int lnbLowBandLof;
-      int lnbHighBandLof;
-      int lnbLofSwitch;
-      Tone22kState bandSelectionTone;
-      MpPolarisation bandSelectionPolarisation;
-      satelliteChannel.LnbType.GetTuningParameters(satelliteChannel.Frequency, satelliteChannel.Polarisation, Tone22kState.Automatic, out lnbLowBandLof, out lnbHighBandLof, out lnbLofSwitch, out bandSelectionTone, out bandSelectionPolarisation);
-
       FrequencySettings frequencySettings = new FrequencySettings
       {
         Multiplier = 1000,
         Frequency = (uint)satelliteChannel.Frequency,
         Bandwidth = uint.MaxValue,
-        Polarity = GetBdaPolarisation(bandSelectionPolarisation),
+        Polarity = GetBdaPolarisation(satelliteChannel.Polarisation),
         Range = uint.MaxValue
       };
       DigitalDemodulator2Settings demodulatorSettings = new DigitalDemodulator2Settings
@@ -338,9 +325,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
 
       LnbInfoSettings lnbSettings = new LnbInfoSettings
       {
-        LnbSwitchFrequency = (uint)lnbLofSwitch,
-        LowOscillator = (uint)lnbLowBandLof,
-        HighOscillator = (uint)lnbHighBandLof
+        LnbSwitchFrequency = SatelliteLnbHandler.SWITCH_FREQUENCY,
+        LowOscillator = SatelliteLnbHandler.LOW_BAND_LOF,
+        HighOscillator = SatelliteLnbHandler.HIGH_BAND_LOF
       };
       DiseqcSatelliteSettings diseqcSettings = new DiseqcSatelliteSettings
       {
@@ -365,19 +352,19 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
 
     #region tuning parameter translation
 
-    private static BdaPolarisation GetBdaPolarisation(MpPolarisation polarisation)
+    private static BdaPolarisation GetBdaPolarisation(TvePolarisation polarisation)
     {
       switch (polarisation)
       {
-        case MpPolarisation.CircularLeft:
+        case TvePolarisation.CircularLeft:
           return BdaPolarisation.CircularL;
-        case MpPolarisation.CircularRight:
+        case TvePolarisation.CircularRight:
           return BdaPolarisation.CircularR;
-        case MpPolarisation.LinearHorizontal:
+        case TvePolarisation.LinearHorizontal:
           return BdaPolarisation.LinearH;
-        case MpPolarisation.LinearVertical:
+        case TvePolarisation.LinearVertical:
           return BdaPolarisation.LinearV;
-        case MpPolarisation.Automatic:
+        case TvePolarisation.Automatic:
           Log.Warn("BDA PSK: falling back to automatic polarisation");
           return BdaPolarisation.NotSet;
         default:

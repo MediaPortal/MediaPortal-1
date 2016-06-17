@@ -22,13 +22,15 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using Mediaportal.TV.Server.Common.Types.Enum;
+using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Channel;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channel;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Dvb;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Tuner;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Dvb;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channel;
+using Mediaportal.TV.Server.TVDatabase.Entities;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.Atsc
 {
@@ -36,7 +38,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Atsc
   /// An implementation of <see cref="IEpgGrabber"/> for electronic programme
   /// guide data formats used by ATSC and SCTE broadcasters.
   /// </summary>
-  internal class EpgGrabberAtsc : IEpgGrabber
+  internal class EpgGrabberAtsc : IEpgGrabberInternal
   {
     #region constants
 
@@ -217,6 +219,29 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Atsc
       return description;
     }
 
+    #region IEpgGrabberInternal member
+
+    /// <summary>
+    /// Reload the grabber's configuration.
+    /// </summary>
+    /// <param name="configuration">The configuration of the associated tuner.</param>
+    public void ReloadConfiguration(Tuner configuration)
+    {
+      // TODO
+    }
+
+    /// <summary>
+    /// The tuner implementation invokes this method when it tunes to a
+    /// different transmitter.
+    /// </summary>
+    /// <param name="tuningDetail">The transmitter tuning detail.</param>
+    public void OnTune(IChannel tuningDetail)
+    {
+      // TODO problem - shouldn't grab unless the tuning detail grab flag is set
+    }
+
+    #endregion
+
     #region IEpgGrabber members
 
     public void ReloadConfiguration()
@@ -229,7 +254,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Atsc
       get { throw new System.NotImplementedException(); }
     }
 
-    public void GrabEpg(Interfaces.Channel.IChannel tuningDetail, IEpgGrabberCallBack callBack)
+    public void GrabEpg(IEpgGrabberCallBack callBack)
     {
       throw new System.NotImplementedException();
     }

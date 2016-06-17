@@ -40,6 +40,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces
     void SetExtensions(IList<ITunerExtension> extensions);
 
     /// <summary>
+    /// Get the manager's quality control interface.
+    /// </summary>
+    IQualityControlInternal QualityControlInterface { get; }
+
+    /// <summary>
     /// Decompose the sub-channel manager.
     /// </summary>
     void Decompose();

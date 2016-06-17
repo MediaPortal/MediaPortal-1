@@ -21,9 +21,9 @@
 using System;
 using Mediaportal.TV.Server.Common.Types.Enum;
 using Mediaportal.TV.Server.TVDatabase.Entities;
-using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Channel;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Exception;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Tuner.Diseqc;
@@ -33,8 +33,8 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension;
 namespace Mediaportal.TV.Server.TVLibrary.Implementations
 {
   /// <summary>
-  /// A controller class for DiSEqC devices. This controller is able to control positioners and
-  /// switches.
+  /// A controller class for DiSEqC devices. This controller is able to control
+  /// positioners and switches.
   /// </summary>
   internal class DiseqcController : IDiseqcController
   {
@@ -42,21 +42,21 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
 
     private const double EARTH_FLATTENING_FACTOR = 1.00 / 298.25642;
     private const double EARTH_ECCENTRICITY_FACTOR = EARTH_FLATTENING_FACTOR * (2 - EARTH_FLATTENING_FACTOR);
-    private const double RADIUS_SATELLITE_ORBIT = 42164.573;  // distance from the centre of Earth to the geostationary satellite orbit
-    private const double RADIUS_EARTH_EQUATOR = 6378.1366;    // distance from the centre of Earth to sea level at the equator
+    private const double RADIUS_SATELLITE_ORBIT = 42164.573;  // distance from the centre of Earth to the geostationary satellite orbit; unit = km
+    private const double RADIUS_EARTH_EQUATOR = 6378.1366;    // distance from the centre of Earth to sea level at the equator; unit = km
     private const double REFRACTION_CONST_A0 = 0.58804392;
     private const double REFRACTION_CONST_A1 = -0.17941557;
     private const double REFRACTION_CONST_A2 = 0.29906946e-1;
     private const double REFRACTION_CONST_A3 = -0.25187400e-2;
     private const double REFRACTION_CONST_A4 = 0.82622101e-4;
 
+    private const double LONGITUDE_UNKNOWN = 10000;
+
     #endregion
 
     #region variables
 
-    private int _tunerId = -1;
     private IDiseqcDevice _device = null;
-    private IChannelSatellite _previousChannel = null;
     private volatile bool _cancelTune = false;
 
     /// <summary>
@@ -71,84 +71,93 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// </remarks>
     private bool _alwaysSendCommands = false;
 
-    private double _siteLatitude = 0;
-    private double _siteLongitude = 0;
+    private bool _sendCommands = true;  // Ensure that we always send commands on first tune.
 
-    private int _currentPosition = -1;  // Ensure that we always send motor commands on first tune.
-    private double _currentLongitude = 0;
-    private int _currentStepsAzimuth;
-    private int _currentStepsElevation;
+    private double _siteLatitude = 0;   // unit = degrees; positive values represent East
+    private double _siteLongitude = 0;  // unit = degrees; positive values represent North
+    private int _siteAltitude = 0;      // unit = metres [above sea level]
+
+    private double _positionerSpeedSlow = TunerSatellite.DISEQC_MOTOR_DEFAULT_SPEED_SLOW;
+    private double _positionerSpeedFast = TunerSatellite.DISEQC_MOTOR_DEFAULT_SPEED_FAST;
+
+    private int _currentPosition = 0;
+    private double _currentLongitude = LONGITUDE_UNKNOWN;
+    private int _currentStepsAzimuth = 0;
+    private int _currentStepsElevation = 0;
+    private DiseqcPort _currentPort = DiseqcPort.None;
+    private Polarisation _currentPolarisation = Polarisation.Automatic;
+    private bool _currentIsHighBand = false;
 
     #endregion
 
     /// <summary>
     /// Initialise a new instance of the <see cref="DiseqcController"/> class.
     /// </summary>
-    /// <param name="tunerId">The identifier for the associated tuner.</param>
     /// <param name="device">A tuner's DiSEqC control interface.</param>
-    public DiseqcController(int tunerId, IDiseqcDevice device)
+    public DiseqcController(IDiseqcDevice device)
     {
-      _tunerId = tunerId;
       _device = device;
       if (device == null)
       {
         throw new ArgumentException("DiSEqC device is null.");
       }
-      ReloadConfiguration();
     }
-
-    #region IDiseqcController members
 
     /// <summary>
     /// Reload the controller's configuration.
     /// </summary>
-    public void ReloadConfiguration()
+    /// <param name="configuration">The configuration of the associated tuner.</param>
+    public void ReloadConfiguration(Tuner configuration)
     {
       this.LogDebug("DiSEqC: reload configuration");
-      Tuner tuner = TunerManagement.GetTuner(_tunerId, TunerIncludeRelationEnum.None);
-      if (tuner != null)
+
+      if (configuration != null)
       {
-        _alwaysSendCommands = tuner.AlwaysSendDiseqcCommands;
+        _alwaysSendCommands = configuration.AlwaysSendDiseqcCommands;
+        if (_alwaysSendCommands)
+        {
+          _sendCommands = true;
+        }
       }
       else
       {
         _alwaysSendCommands = false;
       }
+
+      _siteLatitude = SettingsManagement.GetValue("usalsLatitude", 0.0);
+      _siteLongitude = SettingsManagement.GetValue("usalsLongitude", 0.0);
+      _siteAltitude = SettingsManagement.GetValue("usalsAltitude", 0);
+
+      _positionerSpeedSlow = SettingsManagement.GetValue("diseqcMotorSpeedSlow", TunerSatellite.DISEQC_MOTOR_DEFAULT_SPEED_SLOW);
+      _positionerSpeedFast = SettingsManagement.GetValue("diseqcMotorSpeedFast", TunerSatellite.DISEQC_MOTOR_DEFAULT_SPEED_FAST);
+
       this.LogDebug("  always send commands = {0}", _alwaysSendCommands);
-    }
-
-    /// <summary>
-    /// Reset a device.
-    /// </summary>
-    public void Reset()
-    {
-      this.LogDebug("DiSEqC: reset");
-      byte[] cmd = new byte[3];
-      cmd[0] = (byte)DiseqcFrame.CommandFirstTransmissionNoReply;
-      cmd[1] = (byte)DiseqcAddress.Any;
-      cmd[2] = (byte)DiseqcCommand.Reset;
-      _device.SendCommand(cmd);
-      System.Threading.Thread.Sleep(100);
-
-      this.LogDebug("DiSEqC: clear reset");
-      cmd[0] = (byte)DiseqcFrame.CommandFirstTransmissionNoReply;
-      cmd[1] = (byte)DiseqcAddress.Any;
-      cmd[2] = (byte)DiseqcCommand.ClearReset;
-      _device.SendCommand(cmd);
+      this.LogDebug("  USALS location/site...");
+      this.LogDebug("    latitude           = {0}°", _siteLatitude);
+      this.LogDebug("    longitude          = {0}°", _siteLongitude);
+      this.LogDebug("    altitude           = {0} m", _siteAltitude);
+      this.LogDebug("  positioner speed...");
+      this.LogDebug("    slow               = {0} °/s", _positionerSpeedSlow);
+      this.LogDebug("    fast               = {0} °/s", _positionerSpeedFast);
     }
 
     /// <summary>
     /// Tune to a specific channel.
     /// </summary>
+    /// <remarks>
+    /// In practise tuning means sending the required switch and positioner
+    /// command(s) to enable receiving the channel.
+    /// </remarks>
     /// <param name="channel">The channel to tune to.</param>
-    public void Tune(IChannelSatellite channel)
+    /// <param name="satellite">The tuner-specific tuning parameters for the satellite that <paramref name="channel">the channel</paramref> is broadcast from.</param>
+    public void Tune(IChannelSatellite channel, TunerSatellite satellite)
     {
       // If the channel is not set, this is a request for the controller to
-      // forget the previously tuned channel. This will force commands to be
+      // forget the currently tuned channel. This will force commands to be
       // sent on the next call to Tune().
       if (channel == null)
       {
-        _previousChannel = null;
+        _sendCommands = true;
         return;
       }
 
@@ -157,46 +166,29 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       this.LogDebug("DiSEqC: tune");
       _cancelTune = false;
 
-      int lnbLof;
-      int lnbLofSwitch;
-      Tone22kState bandSelectionTone;
-      Polarisation bandSelectionPolarisation;
-      channel.LnbType.GetTuningParameters(channel.Frequency, channel.Polarisation, Tone22kState.Automatic, out lnbLof, out lnbLofSwitch, out bandSelectionTone, out bandSelectionPolarisation);
-      bool isHighBand = channel.Frequency > lnbLofSwitch && lnbLofSwitch > 0;
+      bool isHighBand = SatelliteLnbHandler.Is22kToneOn(channel.Frequency);
 
       // Switch command.
-      bool sendCommand = channel.DiseqcSwitchPort != DiseqcPort.None &&
-        channel.DiseqcSwitchPort != DiseqcPort.SimpleA &&
-        channel.DiseqcSwitchPort != DiseqcPort.SimpleB;
+      DiseqcPort diseqcPort = (DiseqcPort)satellite.DiseqcPort;
+      bool sendCommand = diseqcPort != DiseqcPort.None;
       if (sendCommand)
       {
-        bool wasHighBand = !isHighBand;
-        Polarisation previousChannelBandSelectionPolarisation = Polarisation.Automatic;
-        if (_previousChannel != null)
-        {
-          Tone22kState previousChannelBandSelectionTone;
-          channel.LnbType.GetTuningParameters(_previousChannel.Frequency, _previousChannel.Polarisation, Tone22kState.Automatic, out lnbLof, out lnbLofSwitch, out previousChannelBandSelectionTone, out previousChannelBandSelectionPolarisation);
-          wasHighBand = _previousChannel.Frequency > lnbLofSwitch && lnbLofSwitch > 0;
-        }
-
-        // If we get to here then there is a valid command to send, but we
-        // might not need/want to send it.
+        // There is a valid switch command to send, but we might not need/want to send it.
         if (
-          !_alwaysSendCommands &&
-          _previousChannel != null &&
-          _previousChannel.DiseqcSwitchPort == channel.DiseqcSwitchPort &&
+          !_sendCommands &&
+          _currentPort == (DiseqcPort)satellite.DiseqcPort &&
           (
-            // Polarisation and high band only matter for DiSEqC 1.0 switch
-            // commands.
+          // Polarisation and high band only matter for DiSEqC 1.0 switch
+          // commands.
             (
-              channel.DiseqcSwitchPort != DiseqcPort.PortA &&
-              channel.DiseqcSwitchPort != DiseqcPort.PortB &&
-              channel.DiseqcSwitchPort != DiseqcPort.PortC &&
-              channel.DiseqcSwitchPort != DiseqcPort.PortD
+              diseqcPort != DiseqcPort.PortA &&
+              diseqcPort != DiseqcPort.PortB &&
+              diseqcPort != DiseqcPort.PortC &&
+              diseqcPort != DiseqcPort.PortD
             ) ||
             (
-              previousChannelBandSelectionPolarisation == bandSelectionPolarisation &&
-              wasHighBand == isHighBand
+              _currentPolarisation == channel.Polarisation &&
+              _currentIsHighBand == isHighBand
             )
           )
         )
@@ -214,24 +206,23 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
         command[0] = (byte)DiseqcFrame.CommandFirstTransmissionNoReply;
         command[1] = (byte)DiseqcAddress.AnySwitch;
         command[3] = 0xf0;
-        int portNumber = GetPortNumber(channel.DiseqcSwitchPort);
+        int portNumber = GetPortNumber(diseqcPort);
         if (
-          channel.DiseqcSwitchPort == DiseqcPort.PortA ||
-          channel.DiseqcSwitchPort == DiseqcPort.PortB ||
-          channel.DiseqcSwitchPort == DiseqcPort.PortC ||
-          channel.DiseqcSwitchPort == DiseqcPort.PortD
+          diseqcPort == DiseqcPort.PortA ||
+          diseqcPort == DiseqcPort.PortB ||
+          diseqcPort == DiseqcPort.PortC ||
+          diseqcPort == DiseqcPort.PortD
         )
         {
-          this.LogDebug("DiSEqC: DiSEqC 1.0 switch command");
+          this.LogDebug("DiSEqC: DiSEqC 1.0 switch command, port = {0}", diseqcPort);
           command[2] = (byte)DiseqcCommand.WriteN0;
-          bool isHorizontal = bandSelectionPolarisation == Polarisation.LinearHorizontal || channel.Polarisation == Polarisation.CircularLeft;
           command[3] |= (byte)(isHighBand ? 1 : 0);
-          command[3] |= (byte)((isHorizontal) ? 2 : 0);
+          command[3] |= (byte)(SatelliteLnbHandler.IsHighVoltage(channel.Polarisation) ? 2 : 0);
           command[3] |= (byte)((portNumber - 1) << 2);
         }
         else
         {
-          this.LogDebug("DiSEqC: DiSEqC 1.1 switch command");
+          this.LogDebug("DiSEqC: DiSEqC 1.1 switch command, port = {0}", diseqcPort);
           command[2] = (byte)DiseqcCommand.WriteN1;
           command[3] |= (byte)(portNumber - 1);
         }
@@ -243,14 +234,28 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
 
       // Positioner movement.
       bool sentSwitchCommand = sendCommand;
-      sendCommand = channel.DiseqcPositionerSatelliteIndex >= 0;
+      sendCommand = satellite.DiseqcMotorPosition != TunerSatellite.DISEQC_MOTOR_POSITION_NONE;
       if (sendCommand)
       {
+        // There is a valid positioner command to send, but we might not need/want to send it.
         if (
-          !_alwaysSendCommands &&
+          !_sendCommands &&
           _currentStepsAzimuth == 0 &&
           _currentStepsElevation == 0 &&
-          channel.DiseqcPositionerSatelliteIndex == _currentPosition
+          (
+            // stored position
+            (
+              satellite.DiseqcMotorPosition != TunerSatellite.DISEQC_MOTOR_POSITION_USALS &&
+              _currentPosition == satellite.DiseqcMotorPosition &&
+              _currentLongitude == 0
+            ) ||
+            // positioned by longitude (USALS)
+            (
+              satellite.DiseqcMotorPosition == TunerSatellite.DISEQC_MOTOR_POSITION_USALS &&
+              _currentPosition == 0 &&
+              _currentLongitude == (double)satellite.Satellite.Longitude / 10
+            )
+          )
         )
         {
           sendCommand = false;
@@ -270,13 +275,42 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
           ThrowExceptionIfTuneCancelled();
         }
 
-        this.LogDebug("DiSEqC: positioner command(s)");
-        GoToStoredPosition((byte)channel.DiseqcPositionerSatelliteIndex);
+        double speed = _positionerSpeedSlow;
+        if (SatelliteLnbHandler.IsHighVoltage(_currentPolarisation))
+        {
+          speed = _positionerSpeedFast;
+        }
+        double newLongitude = (double)satellite.Satellite.Longitude / 10;
+        double distance;  // unit = degrees; longitude difference
+        if (_currentLongitude == LONGITUDE_UNKNOWN || _currentStepsAzimuth != 0 || _currentStepsElevation != 0)
+        {
+          distance = 90;  // assumed/average distance; intended to be a high estimate to avoid failure to lock on signal
+        }
+        else
+        {
+          distance = Math.Abs(newLongitude - _currentLongitude);
+        }
+        if (satellite.DiseqcMotorPosition == TunerSatellite.DISEQC_MOTOR_POSITION_USALS)
+        {
+          this.LogDebug("DiSEqC: USALS positioner command(s), longitude = {0}", satellite.Satellite.LongitudeString());
+          GoToAngularPosition(newLongitude);
+        }
+        else
+        {
+          this.LogDebug("DiSEqC: positioner command(s), position = {0}", satellite.DiseqcMotorPosition);
+          GoToStoredPosition((byte)satellite.DiseqcMotorPosition);
+          _currentLongitude = newLongitude;
+        }
+
         ThrowExceptionIfTuneCancelled();
+        double waitTimeMilliSeconds = distance * 1000 / speed;
+        this.LogDebug("DiSEqC: wait for positioner movement, distance = {0}°, speed = {1} °/s, wait time = {2} ms", distance, speed, waitTimeMilliSeconds);
+        System.Threading.Thread.Sleep((int)waitTimeMilliSeconds);
       }
 
       // Tone burst and final state.
-      if (channel.DiseqcSwitchPort == DiseqcPort.SimpleA || channel.DiseqcSwitchPort == DiseqcPort.SimpleB)
+      ToneBurst toneBurst = (ToneBurst)satellite.ToneBurst;
+      if (toneBurst != ToneBurst.None)
       {
         if (sendCommand)
         {
@@ -284,26 +318,22 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
           // command from the burst we're about to send.
           System.Threading.Thread.Sleep(15);
         }
-        if (channel.DiseqcSwitchPort == DiseqcPort.SimpleA)
-        {
-          _device.SendCommand(ToneBurst.ToneBurst);
-        }
-        else
-        {
-          _device.SendCommand(ToneBurst.DataBurst);
-        }
+        _device.SendCommand(toneBurst);
         sentSwitchCommand = true;
       }
 
-      if ((sentSwitchCommand || sendCommand) && bandSelectionTone == Tone22kState.On)
+      if ((sentSwitchCommand || sendCommand) && isHighBand)
       {
         // Delay to clearly distinguish the previously sent positioner and/or
         // switch command from the continuous tone.
         System.Threading.Thread.Sleep(15);
       }
-      _device.SetToneState(bandSelectionTone);
+      _device.SetToneState(isHighBand ? Tone22kState.On : Tone22kState.Off);
 
-      _previousChannel = channel;
+      _sendCommands = _alwaysSendCommands;
+      _currentPort = diseqcPort;
+      _currentPolarisation = channel.Polarisation;
+      _currentIsHighBand = isHighBand;
     }
 
     /// <summary>
@@ -313,6 +343,28 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     {
       this.LogDebug("DiSEqC: cancel tune");
       _cancelTune = true;
+    }
+
+    #region IDiseqcController members
+
+    /// <summary>
+    /// Reset a device.
+    /// </summary>
+    public void Reset()
+    {
+      this.LogDebug("DiSEqC: reset");
+      byte[] cmd = new byte[3];
+      cmd[0] = (byte)DiseqcFrame.CommandFirstTransmissionNoReply;
+      cmd[1] = (byte)DiseqcAddress.Any;
+      cmd[2] = (byte)DiseqcCommand.Reset;
+      _device.SendCommand(cmd);
+      System.Threading.Thread.Sleep(100);
+
+      this.LogDebug("DiSEqC: clear reset");
+      cmd[0] = (byte)DiseqcFrame.CommandFirstTransmissionNoReply;
+      cmd[1] = (byte)DiseqcAddress.Any;
+      cmd[2] = (byte)DiseqcCommand.ClearReset;
+      _device.SendCommand(cmd);
     }
 
     #region positioner (motor) control
@@ -390,9 +442,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// </summary>
     /// <param name="direction">The direction to move in.</param>
     /// <param name="stepCount">The number of position steps to move.</param>
-    public void DriveMotor(DiseqcDirection direction, byte stepCount)
+    public void Drive(DiseqcDirection direction, byte stepCount)
     {
-      this.LogDebug("DiSEqC: drive motor, direction = {0}, step count = {1}", direction, stepCount);
+      this.LogDebug("DiSEqC: drive, direction = {0}, step count = {1}", direction, stepCount);
       if (stepCount == 0 || stepCount > 128)
       {
         // Prevent time-out-based movement (not supported).
@@ -451,7 +503,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
 
       // The current position becomes our reference.
       _currentPosition = position;
-      _currentLongitude = 0;
+      _currentLongitude = LONGITUDE_UNKNOWN;
       _currentStepsAzimuth = 0;
       _currentStepsElevation = 0;
     }
@@ -472,7 +524,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
 
       // The current position becomes our reference.
       _currentPosition = 0;
-      _currentLongitude = 0;
+      _currentLongitude = LONGITUDE_UNKNOWN;
       _currentStepsAzimuth = 0;
       _currentStepsElevation = 0;
     }
@@ -498,7 +550,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
 
       // The current position becomes our reference.
       _currentPosition = position;
-      _currentLongitude = 0;
+      _currentLongitude = LONGITUDE_UNKNOWN;
       _currentStepsAzimuth = 0;
       _currentStepsElevation = 0;
     }
@@ -509,7 +561,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// <param name="longitude">The longiude to drive to. Range -180 (180W) to 180 (180E).</param>
     public void GoToAngularPosition(double longitude)
     {
-      this.LogDebug("DiSEqC: go to angular position, longitude = {0}", longitude);
+      this.LogDebug("DiSEqC: go to angular position, longitude = {0}°", longitude);
 
       double angle;
       if (!CalculateUsalsAngle(longitude, out angle))
@@ -574,11 +626,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       {
         case DiseqcPort.None:
           return 0;
-        // DiSEqC 1.0 simple
-        case DiseqcPort.SimpleA:
-          return 1;
-        case DiseqcPort.SimpleB:
-          return 2;
         // DiSEqC 1.0
         case DiseqcPort.PortA:
           return 1;
@@ -653,10 +700,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     {
       // Refer to http://www.celestrak.com/NORAD/elements/supplemental/IESS_412_Rev_2.pdf
       angle = 0;
-      int siteHeightAboveSeaLevel = 0;  // not known
 
       double sinSiteLatitude = Math.Sin(Radians(_siteLatitude));
       double cosSiteLatitude = Math.Cos(Radians(_siteLatitude));
+      int siteHeightAboveSeaLevel = _siteAltitude / 1000;   // divide converts metres to kilo-metres, as required for the calculation
 
       double R = RADIUS_EARTH_EQUATOR / Math.Sqrt(1 - EARTH_ECCENTRICITY_FACTOR * sinSiteLatitude * sinSiteLatitude);
       double Ra = (R + siteHeightAboveSeaLevel) * cosSiteLatitude;
@@ -671,7 +718,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
         // Satellite below horizon => not visible. Note that the code below
         // should still calculate azimuth and elevation correctly if this
         // condition were removed. Just saving effort...
-        this.LogWarn("DiSEqC: failed to calculate USALS angle for satellite below the horizon, satellite longitude = {0}, site latitude = {1}, site longitude = {2}", longitude, _siteLatitude, _siteLongitude);
+        this.LogWarn("DiSEqC: failed to calculate USALS angle for satellite below the horizon, satellite longitude = {0}°, site latitude = {1}°, site longitude = {2}°, site altitude = {3} m", longitude, _siteLatitude, _siteLongitude, _siteAltitude);
         return false;
       }
 
@@ -730,7 +777,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       // Southern hemisphere (already correct)
       // East = right = negative
       // West = left = positive
-      this.LogDebug("DiSEqC: calculated USALS angle, satellite longitude = {0}, site latitude = {1}, site longitude = {2}, azimuth = {3}, elevation = {4} ({5}), angle = {6}", longitude, _siteLatitude, _siteLongitude, Az, EL_observed, EL_geometric, angle);
+      this.LogDebug("DiSEqC: calculated USALS angle, satellite longitude = {0}°, site latitude = {1}°, site longitude = {2}°, site altitude = {3} m, azimuth = {4}, elevation = {5} ({6}), angle = {7}", longitude, _siteLatitude, _siteLongitude, _siteAltitude, Az, EL_observed, EL_geometric, angle);
       return true;
     }
 

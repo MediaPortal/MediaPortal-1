@@ -1036,6 +1036,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Mpeg2Ts
               _isConditionalAccessTableRequired |= caProvider.IsConditionalAccessTableRequiredForDecryption;
             }
 
+            this.LogDebug("MPEG 2: found PID filter interface \"{0}\"", extension.Name);
             IMpeg2PidFilter pidFilter = extension as IMpeg2PidFilter;
             if (pidFilter != null)
             {
@@ -1044,6 +1045,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Mpeg2Ts
           }
         }
       }
+      base.SetExtensions(extensions);
     }
 
     /// <summary>

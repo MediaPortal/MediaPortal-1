@@ -28,6 +28,7 @@ using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
 using Mediaportal.TV.Server.TVLibrary.Implementations.Enum;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Channel;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channel;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Exception;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
@@ -259,17 +260,18 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// <summary>
     /// The tuner's DiSEqC control interface.
     /// </summary>
-    private IDiseqcController _diseqcController = null;
-
-    /// <summary>
-    /// The tuner's encoder control interface.
-    /// </summary>
-    private IQuality _encoderController = null;
+    private DiseqcController _diseqcController = null;
 
     /// <summary>
     /// The maximum length of time to wait for signal lock/detection after tuning.
     /// </summary>
     private TimeSpan _timeLimitSignalLock = new TimeSpan(0, 0, 0, 0, 2500);
+
+    /// <summary>
+    /// A dictionary of satellite tuning parameters, specific to this tuner.
+    /// The key is the satellite's longitude.
+    /// </summary>
+    private IDictionary<int, TunerSatellite> _satellites = new Dictionary<int, TunerSatellite>(100);
 
     #endregion
 
@@ -661,7 +663,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// <summary>
     /// Get the tuner's electronic programme guide data grabbing interface.
     /// </summary>
-    public virtual IEpgGrabber InternalEpgGrabberInterface
+    public virtual IEpgGrabberInternal InternalEpgGrabberInterface
     {
       get
       {
@@ -672,7 +674,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// <summary>
     /// Get the tuner's quality control interface.
     /// </summary>
-    public virtual IQuality QualityControlInterface
+    public virtual IQualityControl QualityControlInterface
     {
       get
       {
@@ -680,7 +682,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
         {
           Load();
         }
-        return _encoderController;
+        if (SubChannelManager == null)
+        {
+          return null;
+        }
+        return SubChannelManager.QualityControlInterface;
       }
     }
 
@@ -700,7 +706,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       Tuner config = null;
       if (ExternalId != null)
       {
-        config = TunerManagement.GetTunerByExternalId(ExternalId, TunerIncludeRelationEnum.AnalogTunerSettings | TunerIncludeRelationEnum.TunerProperties);
+        config = TunerManagement.GetTunerByExternalId(ExternalId, TunerRelation.AnalogTunerSettings | TunerRelation.TunerProperties);
         if (config != null)
         {
           this.LogDebug("  ID                  = {0}", config.IdTuner);
@@ -745,11 +751,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
             _supportedBroadcastStandards = configuredStandards;
           }
 
-          if (_useForEpgGrabbing && !config.UseForEpgGrabbing && InternalEpgGrabberInterface != null && InternalEpgGrabberInterface.IsGrabbing)
-          {
-            this.LogDebug("tuner base: EPG grabbing disabled, cancelling grab");
-            InternalEpgGrabberInterface.AbortGrabbing();
-          }
           _useForEpgGrabbing = config.UseForEpgGrabbing;
 
           // Conditional access...
@@ -789,28 +790,43 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
           {
             Load();
           }
+
+          IList<TunerSatellite> tunerSatellites = TunerSatelliteManagement.ListAllTunerSatellitesByTuner(_tunerId, TunerSatelliteRelation.LnbType | TunerSatelliteRelation.Satellite);
+          _satellites.Clear();
+          foreach (TunerSatellite tunerSatellite in tunerSatellites)
+          {
+            _satellites[tunerSatellite.Satellite.Longitude] = tunerSatellite;
+          }
         }
       }
 
+      ReloadConfiguration(config);
+
       _timeLimitSignalLock = new TimeSpan(0, 0, 0, 0, SettingsManagement.GetValue("timeLimitSignalLock", 2500));
 
-      if (InternalEpgGrabberInterface != null)
+      if (SubChannelManager != null)
       {
-        InternalEpgGrabberInterface.ReloadConfiguration();
+        SubChannelManager.ReloadConfiguration(config);
       }
       if (_diseqcController != null)
       {
-        _diseqcController.ReloadConfiguration();
+        _diseqcController.ReloadConfiguration(config);
       }
-
-      ReloadConfiguration(config);
+      if (InternalChannelScanningInterface != null)
+      {
+        InternalChannelScanningInterface.ReloadConfiguration();
+      }
+      if (InternalEpgGrabberInterface != null)
+      {
+        InternalEpgGrabberInterface.ReloadConfiguration(config);
+      }
     }
 
     /// <summary>
     /// Reload the tuner's configuration.
     /// </summary>
     /// <param name="configuration">The tuner's configuration.</param>
-    public abstract void ReloadConfiguration(TVDatabase.Entities.Tuner configuration);
+    public abstract void ReloadConfiguration(Tuner configuration);
 
     #endregion
 
@@ -840,7 +856,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
         this.LogWarn("tuner base: the tuner is already loaded");
         return;
       }
-      _state = TunerState.Loading;
 
       // Related tuners must be unloaded before this tuner can be loaded.
       if (_group != null)
@@ -850,6 +865,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
         {
           if (tuner.TunerId != TunerId)
           {
+            if (tuner.SubChannelCount > 0)
+            {
+              this.LogError("tuner base: failed to load tuner {0}, tuner {1} in group has active sub-channels", TunerId, tuner.TunerId);
+              throw new TvExceptionTunerLoadFailed(TunerId, "Tuner {0} in group has active sub-channels.", tuner.TunerId);
+            }
             TunerBase tunerBase = tuner as TunerBase;
             if (tunerBase != null)
             {
@@ -860,11 +880,15 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       }
 
       this.LogDebug("tuner base: load tuner");
+      _state = TunerState.Loading;
       try
       {
+        // Load configuration. Some configuration determines how loading should
+        // be performed.
         ReloadConfiguration();
-        _extensions = PerformLoading(StreamFormat.Default);
 
+        // Load.
+        _extensions = PerformLoading(StreamFormat.Default);
         _state = TunerState.Stopped;
 
         // Open any extensions that were detected during loading. This is
@@ -915,6 +939,30 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
         }
 
         SubChannelManager.SetExtensions(_extensions);
+
+        // Load configuration again. Components that were instantiated during
+        // loading need their config.
+        Tuner config = null;
+        if (_tunerId >= 0)
+        {
+          config = TunerManagement.GetTuner(_tunerId, TunerRelation.AnalogTunerSettings | TunerRelation.TunerProperties);
+        }
+        if (SubChannelManager != null)
+        {
+          SubChannelManager.ReloadConfiguration(config);
+        }
+        if (_diseqcController != null)
+        {
+          _diseqcController.ReloadConfiguration(config);
+        }
+        if (InternalChannelScanningInterface != null)
+        {
+          InternalChannelScanningInterface.ReloadConfiguration();
+        }
+        if (InternalEpgGrabberInterface != null)
+        {
+          InternalEpgGrabberInterface.ReloadConfiguration(config);
+        }
       }
       catch (TvExceptionNeedSoftwareEncoder)
       {
@@ -968,16 +1016,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
           if (diseqcDevice != null)
           {
             this.LogDebug("tuner base: found DiSEqC control interface \"{0}\"", extension.Name);
-            _diseqcController = new DiseqcController(TunerId, diseqcDevice);
-          }
-        }
-        if (_encoderController == null)
-        {
-          IEncoder encoder = extension as IEncoder;
-          if (encoder != null)
-          {
-            this.LogDebug("tuner base: found encoder control interface \"{0}\"", extension.Name);
-            _encoderController = new EncoderController(_extensions);
+            _diseqcController = new DiseqcController(diseqcDevice);
           }
         }
         IRemoteControlListener rcListener = extension as IRemoteControlListener;
@@ -1044,8 +1083,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       if (!isFinalising)
       {
         _diseqcController = null;
-        _encoderController = null;
-
         _state = TunerState.NotLoaded;
       }
     }
@@ -1072,9 +1109,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       TunerAction action = TunerAction.Stop;
       try
       {
-        if (InternalEpgGrabberInterface != null && InternalEpgGrabberInterface.IsGrabbing)
+        if (InternalEpgGrabberInterface != null)
         {
-          InternalEpgGrabberInterface.AbortGrabbing();
+          InternalEpgGrabberInterface.OnTune(null);
         }
         if (InternalChannelScanningInterface != null && InternalChannelScanningInterface.IsScanning)
         {
@@ -1140,7 +1177,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
           _currentTuningDetail = null;
           if (_diseqcController != null)
           {
-            _diseqcController.Tune(null);
+            _diseqcController.Tune(null, null);
           }
         }
       }
@@ -1252,7 +1289,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
         )
       )
       {
-        return true;
+        IChannelSatellite satelliteChannel = channel as IChannelSatellite;
+        if (satelliteChannel == null || _satellites.ContainsKey(satelliteChannel.Longitude))
+        {
+          return true;
+        }
       }
       return false;
     }
@@ -1281,22 +1322,28 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
         }
 
         // Do we need to tune?
+        bool tuned = false;
         if (_currentTuningDetail == null || _currentTuningDetail.IsDifferentTransmitter(channel))
         {
+          tuned = true;
           SubChannelManager.OnBeforeTune();
 
-          // Stop the EPG grabber. We're going to move to a different channel.
-          // Any EPG data that has been grabbed but not stored is thrown away.
-          if (InternalEpgGrabberInterface != null && InternalEpgGrabberInterface.IsGrabbing)
-          {
-            InternalEpgGrabberInterface.AbortGrabbing();
-          }
-
-          // When we call ITunerExtension.OnBeforeTune(), the extension may
-          // modify the tuning parameters. However, the original channel object
-          // *must not* be modified otherwise IsDifferentTransponder() will
-          // sometimes returns true when it shouldn't. See mantis 0002979.
+          // Extensions may modify the tuning parameters when we call
+          // ITunerExtension.OnBeforeTune(). However, the original channel
+          // object *must not* be modified otherwise IsDifferentTransmitter()
+          // will sometimes returns true when it shouldn't. See mantis 0002979.
           IChannel tuneChannel = (IChannel)channel.Clone();
+
+          IChannelSatellite satelliteChannel = tuneChannel as IChannelSatellite;
+          TunerSatellite satellite = null;
+          if (satelliteChannel != null)
+          {
+            if (!_satellites.TryGetValue(satelliteChannel.Longitude, out satellite))
+            {
+              throw new TvExceptionSatelliteNotReceivable(_tunerId, Satellite.LongitudeString(satelliteChannel.Longitude));
+            }
+            SatelliteLnbHandler.Convert(ref satelliteChannel, satellite.LnbType.LowBandFrequency, satellite.LnbType.HighBandFrequency, satellite.LnbType.SwitchFrequency, satellite.LnbType.IsBandStacked, (Tone22kState)satellite.Tone22kState, satellite.IsToroidalDish);
+          }
 
           // Extension OnBeforeTune().
           TunerAction action = TunerAction.Default;
@@ -1335,12 +1382,23 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
             ThrowExceptionIfTuneCancelled();
           }
 
-          // Send DiSEqC commands (if necessary) before actually tuning in case the driver applies the commands
-          // during the tuning process.
-          if (_diseqcController != null)
+          // Send DiSEqC commands (if necessary) before actually tuning in case
+          // the driver applies the commands during the tuning process.
+          if (satelliteChannel != null && satellite != null)
           {
-            _diseqcController.Tune(channel as IChannelSatellite);
-            ThrowExceptionIfTuneCancelled();
+            if (_diseqcController != null)
+            {
+              _diseqcController.Tune(satelliteChannel, satellite);
+              ThrowExceptionIfTuneCancelled();
+            }
+            else if (
+              satellite.DiseqcMotorPosition != TunerSatellite.DISEQC_MOTOR_POSITION_NONE ||
+              satellite.DiseqcPort != (int)DiseqcPort.None ||
+              satellite.ToneBurst != (int)ToneBurst.None
+            )
+            {
+              throw new TvExceptionDiseqcNotSupported(_tunerId);
+            }
           }
 
           // Apply tuning parameters.
@@ -1350,7 +1408,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
             foreach (ITunerExtension extension in _extensions)
             {
               ICustomTuner customTuner = extension as ICustomTuner;
-              if (customTuner != null && customTuner.CanTuneChannel(channel))
+              if (customTuner != null && customTuner.CanTuneChannel(tuneChannel))
               {
                 this.LogDebug("tuner base: using custom tuning");
                 if (!customTuner.Tune(tuneChannel))
@@ -1397,6 +1455,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
         if (isNewSubChannel)
         {
           FireNewSubChannelEvent(subChannel.SubChannelId);
+        }
+
+        if (tuned && InternalEpgGrabberInterface != null)
+        {
+          InternalEpgGrabberInterface.OnTune(channel);
         }
         return subChannel;
       }

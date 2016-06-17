@@ -255,6 +255,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog
       settings.IdAnalogTunerSettings = TunerId;
       settings.IdVideoEncoder = null;
       settings.IdAudioEncoder = null;
+      settings.EncoderBitRateModeTimeShifting = (int)EncodeMode.ConstantBitRate;
+      settings.EncoderBitRateTimeShifting = 100;
+      settings.EncoderBitRatePeakTimeShifting = 100;
+      settings.EncoderBitRateModeRecording = (int)EncodeMode.ConstantBitRate;
+      settings.EncoderBitRateRecording = 100;
+      settings.EncoderBitRatePeakRecording = 100;
       settings.ExternalTunerProgram = string.Empty;
       settings.ExternalTunerProgramArguments = string.Empty;
 

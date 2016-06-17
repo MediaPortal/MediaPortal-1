@@ -34,7 +34,6 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension.Enum;
 using MediaPortal.Common.Utils;
 using ITuner = Mediaportal.TV.Server.TVLibrary.Interfaces.Tuner.ITuner;
-using Polarisation = Mediaportal.TV.Server.Common.Types.Enum.Polarisation;
 
 namespace Mediaportal.TV.Server.Plugins.TunerExtension.Knc
 {
@@ -414,68 +413,6 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Knc
     /// <param name="context">The optional context passed to the interface when the interface was opened.</param>
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     private delegate void OnKncCiCloseDisplay(byte slotIndex, uint delay, IntPtr context);
-
-    #endregion
-
-    #region private ILnbType implementation
-
-    // The KNC TV-Station DVB-S2 seems to have trouble working out which local
-    // oscillator frequency to use (and hence, whether to turn the 22 kHz tone
-    // on or off) for some LNB settings. This could be to do with the use of
-    // 18000000 kHz for the LNB switch frequency for single oscillator LNBs.
-    // The workaround is to set the two LOFs to the single, correct LOF value
-    // when we want the 22 kHz tone to be turned off.
-
-    private class KncLnbType : ILnbType
-    {
-      private ILnbType _lnbType = null;
-
-      public KncLnbType(ILnbType lnbType)
-      {
-        _lnbType = lnbType;
-      }
-
-      public int Id
-      {
-        get
-        {
-          return _lnbType.Id;
-        }
-      }
-
-      public string Name
-      {
-        get
-        {
-          return string.Format("{0} [KNC]", _lnbType.Name);
-        }
-      }
-
-      public void GetTuningParameters(int transponderFrequency, Polarisation transponderPolarisation, Tone22kState lnbSelectionTone, out int localOscillatorFrequency, out Tone22kState bandSelectionTone, out Polarisation bandSelectionPolarisation)
-      {
-        _lnbType.GetTuningParameters(transponderFrequency, transponderPolarisation, lnbSelectionTone, out localOscillatorFrequency, out bandSelectionTone, out bandSelectionPolarisation);
-      }
-
-      public void GetTuningParameters(int transponderFrequency, Polarisation transponderPolarisation, Tone22kState lnbSelectionTone, out int localOscillatorFrequency, out int oscillatorSwitchFrequency, out Tone22kState bandSelectionTone, out Polarisation bandSelectionPolarisation)
-      {
-        _lnbType.GetTuningParameters(transponderFrequency, transponderPolarisation, lnbSelectionTone, out localOscillatorFrequency, out oscillatorSwitchFrequency, out bandSelectionTone, out bandSelectionPolarisation);
-      }
-
-      public void GetTuningParameters(int transponderFrequency, Polarisation transponderPolarisation, Tone22kState lnbSelectionTone, out int localOscillatorFrequencyLow, out int localOscillatorFrequencyHigh, out int oscillatorSwitchFrequency, out Tone22kState bandSelectionTone, out Polarisation bandSelectionPolarisation)
-      {
-        // MODIFIED!!!
-        _lnbType.GetTuningParameters(transponderFrequency, transponderPolarisation, lnbSelectionTone, out localOscillatorFrequencyLow, out localOscillatorFrequencyHigh, out oscillatorSwitchFrequency, out bandSelectionTone, out bandSelectionPolarisation);
-        if (bandSelectionTone == Tone22kState.Off)
-        {
-          localOscillatorFrequencyHigh = localOscillatorFrequencyLow;
-        }
-      }
-
-      public object Clone()
-      {
-        return new KncLnbType((ILnbType)_lnbType.Clone());
-      }
-    }
 
     #endregion
 
@@ -1024,8 +961,6 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Knc
         return;
       }
 
-      satelliteChannel.LnbType = new KncLnbType(satelliteChannel.LnbType);
-
       ModulationType bdaModulation = ModulationType.ModNotSet;
       if (channel is ChannelDvbS2)
       {
@@ -1058,7 +993,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Knc
         }
         else
         {
-          this.LogWarn("Hauppauge: DVB-S tune request uses unsupported modulation scheme {0}", satelliteChannel.ModulationScheme);
+          this.LogWarn("KNC: DVB-S tune request uses unsupported modulation scheme {0}", satelliteChannel.ModulationScheme);
         }
       }
       else

@@ -64,6 +64,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     private TimeSpan _timeLimitReceiveStreamInfo = new TimeSpan(0, 0, 5);
 
     /// <summary>
+    /// The tuner's quality control interface.
+    /// </summary>
+    private IQualityControlInternal _qualityControlInterface = null;
+
+    /// <summary>
     /// Should the current tuning process be aborted immediately?
     /// </summary>
     private volatile bool _cancelTune = false;
@@ -88,13 +93,45 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     public virtual void ReloadConfiguration(Tuner configuration)
     {
       _timeLimitReceiveStreamInfo = new TimeSpan(0, 0, 0, 0, SettingsManagement.GetValue("timeLimitReceiveStreamInfo", 5000));
+      if (_qualityControlInterface != null)
+      {
+        _qualityControlInterface.ReloadConfiguration(configuration);
+      }
     }
 
     /// <summary>
     /// Set the manager's extensions.
     /// </summary>
     /// <param name="extensions">A list of the tuner's extensions, in priority order.</param>
-    public abstract void SetExtensions(IList<ITunerExtension> extensions);
+    public virtual void SetExtensions(IList<ITunerExtension> extensions)
+    {
+      List<ITunerExtension> encoders = new List<ITunerExtension>(extensions.Count);
+      foreach (ITunerExtension extension in extensions)
+      {
+        IEncoder encoder = extension as IEncoder;
+        if (encoder != null)
+        {
+          this.LogDebug("sub-channel manager base: found encoder control interface \"{0}\"", extension.Name);
+          encoders.Add(encoder);
+        }
+      }
+
+      if (encoders.Count > 0)
+      {
+        _qualityControlInterface = new EncoderController(encoders);
+      }
+    }
+
+    /// <summary>
+    /// Get the manager's quality control interface.
+    /// </summary>
+    public virtual IQualityControlInternal QualityControlInterface
+    {
+      get
+      {
+        return _qualityControlInterface;
+      }
+    }
 
     /// <summary>
     /// Decompose the sub-channel manager.
@@ -177,6 +214,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       subChannel = OnTune(id, channel, _timeLimitReceiveStreamInfo);
       if (isNew && subChannel != null)
       {
+        subChannel.QualityControlInterface = QualityControlInterface;
         _subChannels[id] = subChannel;
       }
       return subChannel;

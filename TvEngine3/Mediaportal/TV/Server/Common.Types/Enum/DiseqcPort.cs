@@ -32,16 +32,6 @@ namespace Mediaportal.TV.Server.Common.Types.Enum
     /// </summary>
     None = 0,
     /// <summary>
-    /// Simple A (tone burst).
-    /// </summary>
-    [Description("Simple A (Tone Burst)")]
-    SimpleA,
-    /// <summary>
-    /// Simple B (data burst).
-    /// </summary>
-    [Description("Simple B (Data Burst)")]
-    SimpleB,
-    /// <summary>
     /// DiSEqC 1.0 port A (option A, position A)
     /// </summary>
     [Description("1.0 Port A (Option A Position A)")]

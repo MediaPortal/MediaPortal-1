@@ -31,7 +31,6 @@ using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.CiMenu;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Tuner.Enum;
 using MediaPortal.Common.Utils.ExtensionMethods;
 
 namespace Mediaportal.TV.Server.SetupTV.Dialogs
@@ -61,7 +60,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
 
     public FormEditTuner(int idTuner)
     {
-      _tuner = ServiceAgents.Instance.TunerServiceAgent.GetTuner(idTuner, TunerIncludeRelationEnum.None);
+      _tuner = ServiceAgents.Instance.TunerServiceAgent.GetTuner(idTuner, TunerRelation.None);
       InitializeComponent();
     }
 
@@ -245,9 +244,6 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
         comboBoxSoftwareEncoderAudio.EndUpdate();
       }
 
-      // TODO Implement the back end support for these settings. Until then, disable them.
-      groupBoxEncoderBitRate.Enabled = false;
-
       if ((_tuner.SupportedBroadcastStandards & (int)(BroadcastStandard.AnalogTelevision | BroadcastStandard.ExternalInput)) == 0)
       {
         // No video support. For example, an FM radio tuner.
@@ -333,7 +329,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       textBoxExternalTunerProgramArguments.Text = _analogSettings.ExternalTunerProgramArguments;
     }
 
-    private void buttonSave_Click(object sender, EventArgs e)
+    private void buttonOkay_Click(object sender, EventArgs e)
     {
       // general tab
       textBoxTunerName.Text = textBoxTunerName.Text.Trim();
@@ -454,9 +450,17 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
         _analogSettings.IdAudioEncoder = audioEncoder.IdAudioEncoder;
       }
 
-      if (groupBoxEncoderBitRate.Enabled)
+      if (!buttonEncoderSettingsCheckSupport.Visible)
       {
-        // TODO Implement support for saving these settings when load and backend support is added.
+        if (comboBoxEncoderBitRateModeTimeShifting.Enabled)
+        {
+          _analogSettings.EncoderBitRateModeTimeShifting = Convert.ToInt32(typeof(EncodeMode).GetEnumFromDescription((string)comboBoxEncoderBitRateModeTimeShifting.SelectedItem));
+          _analogSettings.EncoderBitRateModeRecording = Convert.ToInt32(typeof(EncodeMode).GetEnumFromDescription((string)comboBoxEncoderBitRateModeRecording.SelectedItem));
+        }
+        _analogSettings.EncoderBitRateTimeShifting = (int)numericUpDownEncoderBitRateValueTimeShifting.Value;
+        _analogSettings.EncoderBitRateRecording = (int)numericUpDownEncoderBitRateValueRecording.Value;
+        _analogSettings.EncoderBitRatePeakTimeShifting = (int)numericUpDownEncoderBitRateValuePeakTimeShifting.Value;
+        _analogSettings.EncoderBitRatePeakRecording = (int)numericUpDownEncoderBitRateValuePeakRecording.Value;
       }
 
       // external input tab
@@ -494,13 +498,13 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.LogDebug("    video ID       = {0}", settings.IdVideoEncoder ?? 0);
       this.LogDebug("    audio ID       = {0}", settings.IdAudioEncoder ?? 0);
       this.LogDebug("  encoder timeshifting...");
-      this.LogDebug("    mode           = {0}", (EncoderBitRateMode)settings.EncoderBitRateModeTimeShifting);
-      this.LogDebug("    bit rate       = {0} %", settings.EncoderBitRateTimeShifting);
-      this.LogDebug("    peak bit rate  = {0} %", settings.EncoderBitRatePeakTimeShifting);
+      this.LogDebug("    mode           = {0}", (EncodeMode)settings.EncoderBitRateModeTimeShifting);
+      this.LogDebug("    bit-rate       = {0} %", settings.EncoderBitRateTimeShifting);
+      this.LogDebug("    peak bit-rate  = {0} %", settings.EncoderBitRatePeakTimeShifting);
       this.LogDebug("  encoder recording...");
-      this.LogDebug("    mode           = {0}", (EncoderBitRateMode)settings.EncoderBitRateModeRecording);
-      this.LogDebug("    bit rate       = {0} %", settings.EncoderBitRateRecording);
-      this.LogDebug("    peak bit rate  = {0} %", settings.EncoderBitRatePeakRecording);
+      this.LogDebug("    mode           = {0}", (EncodeMode)settings.EncoderBitRateModeRecording);
+      this.LogDebug("    bit-rate       = {0} %", settings.EncoderBitRateRecording);
+      this.LogDebug("    peak bit-rate  = {0} %", settings.EncoderBitRatePeakRecording);
       this.LogDebug("  external input...");
       this.LogDebug("    video source   = {0} ({1})", (CaptureSourceVideo)settings.ExternalInputSourceVideo, (CaptureSourceVideo)settings.SupportedVideoSources);
       this.LogDebug("    audio source   = {0} ({1})", (CaptureSourceAudio)settings.ExternalInputSourceAudio, (CaptureSourceAudio)settings.SupportedAudioSources);
@@ -539,6 +543,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       {
         if (!ServiceAgents.Instance.ControllerServiceAgent.CiMenuSupported(_tuner.IdTuner))
         {
+          this.LogInfo("tuner: CA menu access is currently not possible");
           MessageBox.Show("This tuner doesn't support CA menu access, or the CAM is not present, compatible or ready yet." + Environment.NewLine + "(CAM inititialisation may require up to 30 seconds.)", SectionSettings.MESSAGE_CAPTION);
           return;
         }
@@ -807,6 +812,154 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
         info.Value = info.DbProperty.Default;
       }
       buttonRestoreDefault_Click(null, null);
+    }
+
+    #endregion
+
+    #region encoder settings
+
+    private void buttonEncoderSettingsCheckSupport_Click(object sender, EventArgs e)
+    {
+      this.LogInfo("tuner: check encoder setting support, tuner ID = {0}", _tuner.IdTuner);
+      bool canSetEncodeMode;
+      bool isPeakModeSupported;
+      bool canSetBitRate;
+      if (!ServiceAgents.Instance.ControllerServiceAgent.GetSupportedQualityControlFeatures(_tuner.IdTuner, out canSetEncodeMode, out isPeakModeSupported, out canSetBitRate))
+      {
+        this.LogError("tuner: failed to get supported features, tuner ID = {0}", _tuner.IdTuner);
+        MessageBox.Show("Support check failed. " + SectionSettings.SENTENCE_CHECK_LOG_FILES, SectionSettings.MESSAGE_CAPTION, MessageBoxButtons.OK, MessageBoxIcon.Error);
+        return;
+      }
+
+      this.LogInfo("tuner: encoder settings support result...");
+      this.LogInfo("  can set encode mode?    = {0}", canSetEncodeMode);
+      this.LogInfo("  is peak mode supported? = {0}", isPeakModeSupported);
+      this.LogInfo("  can set bit-rate?       = {0}", canSetBitRate);
+      if (!canSetEncodeMode && !isPeakModeSupported && !canSetBitRate)
+      {
+        MessageBox.Show("This tuner does not support encoder settings.", SectionSettings.MESSAGE_CAPTION, MessageBoxButtons.OK, MessageBoxIcon.Information);
+        return;
+      }
+
+      buttonEncoderSettingsCheckSupport.Visible = false;
+
+      labelEncoderSettingsTimeShifting.Visible = true;
+      labelEncoderBitRateModeTimeShifting.Visible = true;
+      comboBoxEncoderBitRateModeTimeShifting.Visible = true;
+      labelEncoderBitRateValueTimeShifting.Visible = true;
+      numericUpDownEncoderBitRateValueTimeShifting.Visible = true;
+      labelEncoderBitRateValueUnitTimeShifting.Visible = true;
+      labelEncoderBitRateValuePeakTimeShifting.Visible = true;
+      numericUpDownEncoderBitRateValuePeakTimeShifting.Visible = true;
+      labelEncoderBitRateValuePeakUnitTimeShifting.Visible = true;
+
+      labelEncoderSettingsRecording.Visible = true;
+      labelEncoderBitRateModeRecording.Visible = true;
+      comboBoxEncoderBitRateModeRecording.Visible = true;
+      labelEncoderBitRateValueRecording.Visible = true;
+      numericUpDownEncoderBitRateValueRecording.Visible = true;
+      labelEncoderBitRateValueUnitRecording.Visible = true;
+      labelEncoderBitRateValuePeakRecording.Visible = true;
+      numericUpDownEncoderBitRateValuePeakRecording.Visible = true;
+      labelEncoderBitRateValuePeakUnitRecording.Visible = true;
+
+      if (!canSetEncodeMode)
+      {
+        comboBoxEncoderBitRateModeTimeShifting.Enabled = false;
+        comboBoxEncoderBitRateModeRecording.Enabled = false;
+      }
+      else
+      {
+        comboBoxEncoderBitRateModeTimeShifting.BeginUpdate();
+        comboBoxEncoderBitRateModeRecording.BeginUpdate();
+        try
+        {
+          comboBoxEncoderBitRateModeTimeShifting.Items.Add(EncodeMode.Default.GetDescription());
+          comboBoxEncoderBitRateModeRecording.Items.Add(EncodeMode.Default.GetDescription());
+          comboBoxEncoderBitRateModeTimeShifting.Items.Add(EncodeMode.ConstantBitRate.GetDescription());
+          comboBoxEncoderBitRateModeRecording.Items.Add(EncodeMode.ConstantBitRate.GetDescription());
+          comboBoxEncoderBitRateModeTimeShifting.Items.Add(EncodeMode.VariableBitRate.GetDescription());
+          comboBoxEncoderBitRateModeRecording.Items.Add(EncodeMode.VariableBitRate.GetDescription());
+          if (isPeakModeSupported)
+          {
+            comboBoxEncoderBitRateModeTimeShifting.Items.Add(EncodeMode.VariablePeakBitRate.GetDescription());
+            comboBoxEncoderBitRateModeRecording.Items.Add(EncodeMode.VariablePeakBitRate.GetDescription());
+          }
+          comboBoxEncoderBitRateModeTimeShifting.SelectedItem = ((EncodeMode)_analogSettings.EncoderBitRateModeTimeShifting).GetDescription();
+          comboBoxEncoderBitRateModeRecording.SelectedItem = ((EncodeMode)_analogSettings.EncoderBitRateModeRecording).GetDescription();
+          if (comboBoxEncoderBitRateModeTimeShifting.SelectedItem == null)
+          {
+            comboBoxEncoderBitRateModeTimeShifting.SelectedIndex = 0;
+          }
+          if (comboBoxEncoderBitRateModeRecording.SelectedItem == null)
+          {
+            comboBoxEncoderBitRateModeRecording.SelectedIndex = 0;
+          }
+        }
+        finally
+        {
+          comboBoxEncoderBitRateModeTimeShifting.EndUpdate();
+          comboBoxEncoderBitRateModeRecording.EndUpdate();
+        }
+      }
+
+      numericUpDownEncoderBitRateValueTimeShifting.Value = _analogSettings.EncoderBitRateTimeShifting;
+      numericUpDownEncoderBitRateValueRecording.Value = _analogSettings.EncoderBitRateRecording;
+      if (!canSetBitRate)
+      {
+        numericUpDownEncoderBitRateValueTimeShifting.Enabled = false;
+        numericUpDownEncoderBitRateValueRecording.Enabled = false;
+      }
+
+      numericUpDownEncoderBitRateValuePeakTimeShifting.Value = _analogSettings.EncoderBitRatePeakTimeShifting;
+      numericUpDownEncoderBitRateValuePeakRecording.Value = _analogSettings.EncoderBitRatePeakRecording;
+      if (!isPeakModeSupported)
+      {
+        numericUpDownEncoderBitRateValuePeakTimeShifting.Enabled = false;
+        numericUpDownEncoderBitRateValuePeakRecording.Enabled = false;
+      }
+    }
+
+    private void comboBoxEncoderBitRateModeTimeShifting_SelectedIndexChanged(object sender, EventArgs e)
+    {
+      numericUpDownEncoderBitRateValuePeakTimeShifting.Enabled = string.Equals(comboBoxEncoderBitRateModeTimeShifting.SelectedItem, EncodeMode.VariablePeakBitRate.GetDescription());
+    }
+
+    private void comboBoxEncoderBitRateModeRecording_SelectedIndexChanged(object sender, EventArgs e)
+    {
+      numericUpDownEncoderBitRateValuePeakRecording.Enabled = string.Equals(comboBoxEncoderBitRateModeRecording.SelectedItem, EncodeMode.VariablePeakBitRate.GetDescription());
+    }
+
+    private void numericUpDownEncoderBitRateValueTimeShifting_ValueChanged(object sender, EventArgs e)
+    {
+      if (numericUpDownEncoderBitRateValuePeakTimeShifting.Value < numericUpDownEncoderBitRateValueTimeShifting.Value)
+      {
+        numericUpDownEncoderBitRateValuePeakTimeShifting.Value = numericUpDownEncoderBitRateValueTimeShifting.Value;
+      }
+    }
+
+    private void numericUpDownEncoderBitRateValuePeakTimeShifting_ValueChanged(object sender, EventArgs e)
+    {
+      if (numericUpDownEncoderBitRateValuePeakTimeShifting.Value < numericUpDownEncoderBitRateValueTimeShifting.Value)
+      {
+        numericUpDownEncoderBitRateValueTimeShifting.Value = numericUpDownEncoderBitRateValuePeakTimeShifting.Value;
+      }
+    }
+
+    private void numericUpDownEncoderBitRateValueRecording_ValueChanged(object sender, EventArgs e)
+    {
+      if (numericUpDownEncoderBitRateValuePeakRecording.Value < numericUpDownEncoderBitRateValueRecording.Value)
+      {
+        numericUpDownEncoderBitRateValuePeakRecording.Value = numericUpDownEncoderBitRateValueRecording.Value;
+      }
+    }
+
+    private void numericUpDownEncoderBitRateValuePeakRecording_ValueChanged(object sender, EventArgs e)
+    {
+      if (numericUpDownEncoderBitRateValuePeakRecording.Value < numericUpDownEncoderBitRateValueRecording.Value)
+      {
+        numericUpDownEncoderBitRateValueRecording.Value = numericUpDownEncoderBitRateValuePeakRecording.Value;
+      }
     }
 
     #endregion

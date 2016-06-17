@@ -25,13 +25,12 @@ using DirectShowLib;
 using DirectShowLib.BDA;
 using Mediaportal.TV.Server.Common.Types.Enum;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Channel;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channel;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension.Enum;
 using MediaPortal.Common.Utils;
-using ITuner = Mediaportal.TV.Server.TVLibrary.Interfaces.Tuner.ITuner;
-using Polarisation = Mediaportal.TV.Server.Common.Types.Enum.Polarisation;
 
 namespace Mediaportal.TV.Server.Plugins.TunerExtension.ProfUsb
 {
@@ -198,69 +197,6 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.ProfUsb
       public byte Modulation;                 // (ModulationType)
       [MarshalAs(UnmanagedType.ByValArray, SizeConst = 256)]
       private byte[] Reserved;
-    }
-
-    #endregion
-
-    #region private ILnbType implementation
-
-    // Prof USB tuners seem to have trouble working out which local oscillator
-    // frequency to use. We set the two LOFs to the single, correct LOF value
-    // and use the property set to turn the 22 kHz tone on or off as required.
-
-    private class ProfUsbLnbType : ILnbType
-    {
-      private ILnbType _lnbType = null;
-
-      public ProfUsbLnbType(ILnbType lnbType)
-      {
-        _lnbType = lnbType;
-      }
-
-      public int Id
-      {
-        get
-        {
-          return _lnbType.Id;
-        }
-      }
-
-      public string Name
-      {
-        get
-        {
-          return string.Format("{0} [Prof USB]", _lnbType.Name);
-        }
-      }
-
-      public void GetTuningParameters(int transponderFrequency, Polarisation transponderPolarisation, Tone22kState lnbSelectionTone, out int localOscillatorFrequency, out Tone22kState bandSelectionTone, out Polarisation bandSelectionPolarisation)
-      {
-        _lnbType.GetTuningParameters(transponderFrequency, transponderPolarisation, lnbSelectionTone, out localOscillatorFrequency, out bandSelectionTone, out bandSelectionPolarisation);
-      }
-
-      public void GetTuningParameters(int transponderFrequency, Polarisation transponderPolarisation, Tone22kState lnbSelectionTone, out int localOscillatorFrequency, out int oscillatorSwitchFrequency, out Tone22kState bandSelectionTone, out Polarisation bandSelectionPolarisation)
-      {
-        _lnbType.GetTuningParameters(transponderFrequency, transponderPolarisation, lnbSelectionTone, out localOscillatorFrequency, out oscillatorSwitchFrequency, out bandSelectionTone, out bandSelectionPolarisation);
-      }
-
-      public void GetTuningParameters(int transponderFrequency, Polarisation transponderPolarisation, Tone22kState lnbSelectionTone, out int localOscillatorFrequencyLow, out int localOscillatorFrequencyHigh, out int oscillatorSwitchFrequency, out Tone22kState bandSelectionTone, out Polarisation bandSelectionPolarisation)
-      {
-        // MODIFIED!!!
-        _lnbType.GetTuningParameters(transponderFrequency, transponderPolarisation, lnbSelectionTone, out localOscillatorFrequencyLow, out localOscillatorFrequencyHigh, out oscillatorSwitchFrequency, out bandSelectionTone, out bandSelectionPolarisation);
-        if (bandSelectionTone == Tone22kState.Off)
-        {
-          localOscillatorFrequencyHigh = localOscillatorFrequencyLow;
-        }
-        else if (bandSelectionTone == Tone22kState.On)
-        {
-          localOscillatorFrequencyLow = localOscillatorFrequencyHigh;
-        }
-      }
-
-      public object Clone()
-      {
-        return new ProfUsbLnbType((ILnbType)_lnbType.Clone());
-      }
     }
 
     #endregion
@@ -542,38 +478,6 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.ProfUsb
       return true;
     }
 
-    #region tuner state change call backs
-
-    /// <summary>
-    /// This call back is invoked before a tune request is assembled.
-    /// </summary>
-    /// <param name="tuner">The tuner instance that this extension instance is associated with.</param>
-    /// <param name="currentChannel">The channel that the tuner is currently tuned to..</param>
-    /// <param name="channel">The channel that the tuner will been tuned to.</param>
-    /// <param name="action">The action to take, if any.</param>
-    public override void OnBeforeTune(ITuner tuner, IChannel currentChannel, ref IChannel channel, out TunerAction action)
-    {
-      this.LogDebug("Prof USB: on before tune call back");
-      action = TunerAction.Default;
-
-      if (!_isProfUsb)
-      {
-        this.LogWarn("Prof USB: not initialised or interface not supported");
-        return;
-      }
-
-      // We only need to tweak the parameters for satellite channels.
-      IChannelSatellite satelliteChannel = channel as IChannelSatellite;
-      if (satelliteChannel == null)
-      {
-        return;
-      }
-
-      satelliteChannel.LnbType = new ProfUsbLnbType(satelliteChannel.LnbType);
-    }
-
-    #endregion
-
     #endregion
 
     #region IPowerDevice member
@@ -667,26 +571,23 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.ProfUsb
       BdaExtensionParams tuningParams = new BdaExtensionParams();
       tuningParams.Frequency = satelliteChannel.Frequency / 1000;
 
-      Tone22kState bandSelectionTone;
-      Polarisation bandSelectionPolarisation;
-      satelliteChannel.LnbType.GetTuningParameters(satelliteChannel.Frequency, satelliteChannel.Polarisation, Tone22kState.Automatic, out tuningParams.LnbLowBandLof, out bandSelectionTone, out bandSelectionPolarisation);
-
-      // See the notes for the struct to understand why we do this.
-      tuningParams.LnbLowBandLof /= 1000;   // kHz -> MHz
+      // See the notes for the struct to understand why we set the same value
+      // for both LOFs.
+      tuningParams.LnbLowBandLof = SatelliteLnbHandler.GetLocalOscillatorFrequency(satelliteChannel.Frequency) / 1000;  // kHz -> MHz
       tuningParams.LnbHighBandLof = tuningParams.LnbLowBandLof;
       tuningParams.SymbolRate = satelliteChannel.SymbolRate;
       tuningParams.LnbPower = ProfUsbLnbPower.On;
 
-      if (bandSelectionPolarisation == Polarisation.LinearVertical || bandSelectionPolarisation == Polarisation.CircularRight)
-      {
-        tuningParams.Polarisation = ProfUsbPolarisation.Vertical;
-      }
-      else
+      if (SatelliteLnbHandler.IsHighVoltage(satelliteChannel.Polarisation))
       {
         tuningParams.Polarisation = ProfUsbPolarisation.Horizontal;
       }
+      else
+      {
+        tuningParams.Polarisation = ProfUsbPolarisation.Vertical;
+      }
 
-      if (bandSelectionTone == Tone22kState.On)
+      if (SatelliteLnbHandler.Is22kToneOn(satelliteChannel.Frequency))
       {
         tuningParams.Tone22kState = ProfUsbTone22kState.On;
       }

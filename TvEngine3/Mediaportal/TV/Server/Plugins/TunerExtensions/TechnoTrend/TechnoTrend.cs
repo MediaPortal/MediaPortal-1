@@ -28,6 +28,7 @@ using DirectShowLib;
 using DirectShowLib.BDA;
 using Mediaportal.TV.Server.Common.Types.Enum;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Channel;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channel;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Dvb;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Dvb.Enum;
@@ -39,7 +40,7 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension.Enum;
 using MediaPortal.Common.Utils;
 using BdaPolarisation = DirectShowLib.BDA.Polarisation;
 using ITuner = Mediaportal.TV.Server.TVLibrary.Interfaces.Tuner.ITuner;
-using MpPolarisation = Mediaportal.TV.Server.Common.Types.Enum.Polarisation;
+using TvePolarisation = Mediaportal.TV.Server.Common.Types.Enum.Polarisation;
 
 namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
 {
@@ -1867,23 +1868,22 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
           // multiplier is set to 1.
           tuneRequest.Frequency = satelliteChannel.Frequency;
           tuneRequest.FrequencyMultiplier = 1;
+          tuneRequest.LnbLowBandLof = SatelliteLnbHandler.LOW_BAND_LOF;
+          tuneRequest.LnbHighBandLof = SatelliteLnbHandler.HIGH_BAND_LOF;
+          tuneRequest.LnbSwitchFrequency = SatelliteLnbHandler.SWITCH_FREQUENCY;
 
-          Tone22kState bandSelectionTone;
-          MpPolarisation bandSelectionPolarisation;
-          satelliteChannel.LnbType.GetTuningParameters(satelliteChannel.Frequency, satelliteChannel.Polarisation, Tone22kState.Automatic, out tuneRequest.LnbLowBandLof, out tuneRequest.LnbHighBandLof, out tuneRequest.LnbSwitchFrequency, out bandSelectionTone, out bandSelectionPolarisation);
-
-          switch (bandSelectionPolarisation)
+          switch (satelliteChannel.Polarisation)
           {
-            case MpPolarisation.CircularLeft:
+            case TvePolarisation.CircularLeft:
               tuneRequest.Polarisation = BdaPolarisation.CircularL;
               break;
-            case MpPolarisation.CircularRight:
+            case TvePolarisation.CircularRight:
               tuneRequest.Polarisation = BdaPolarisation.CircularL;
               break;
-            case MpPolarisation.LinearHorizontal:
+            case TvePolarisation.LinearHorizontal:
               tuneRequest.Polarisation = BdaPolarisation.LinearH;
               break;
-            case MpPolarisation.LinearVertical:
+            case TvePolarisation.LinearVertical:
               tuneRequest.Polarisation = BdaPolarisation.LinearV;
               break;
             default:

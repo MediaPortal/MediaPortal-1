@@ -18,7 +18,6 @@
 
 #endregion
 
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Channel;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Tuner.Diseqc.Enum;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension;
 
@@ -30,29 +29,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Tuner.Diseqc
   public interface IDiseqcController
   {
     /// <summary>
-    /// Reload the controller's configuration.
-    /// </summary>
-    void ReloadConfiguration();
-
-    /// <summary>
     /// Reset a device.
     /// </summary>
     void Reset();
-
-    /// <summary>
-    /// Tune to a specific channel.
-    /// </summary>
-    /// <summary>
-    /// In practise tuning means sending the required switch and positioner
-    /// command(s) to enable receiving the channel.
-    /// </summary>
-    /// <param name="channel">The channel to tune to.</param>
-    void Tune(IChannelSatellite channel);
-
-    /// <summary>
-    /// Cancel the current tuning process.
-    /// </summary>
-    void CancelTune();
 
     #region positioner (motor) control
 
@@ -84,7 +63,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Tuner.Diseqc
     /// </summary>
     /// <param name="direction">The direction to move in.</param>
     /// <param name="stepCount">The number of position steps to move.</param>
-    void DriveMotor(DiseqcDirection direction, byte stepCount);
+    void Drive(DiseqcDirection direction, byte stepCount);
 
     /// <summary>
     /// Store the current position of a positioner device for later use.

@@ -19,10 +19,10 @@
 #endregion
 
 using System;
+using Mediaportal.TV.Server.Common.Types.Enum;
 using Mediaportal.TV.Server.TVControl.ServiceAgents;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.Entities;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Tuner.Enum;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
 
@@ -87,23 +87,23 @@ namespace Mediaportal.TV.TvPlugin
         dlg.SetHeading(882);
 
         dlg.ShowQuickNumbers = true;
-        dlg.AddLocalizedString(968);
+        dlg.AddLocalizedString(886);
         dlg.AddLocalizedString(965);
         dlg.AddLocalizedString(966);
         dlg.AddLocalizedString(967);
 
         switch (recBLL.BitRateMode)
         {
-          case EncoderBitRateMode.NotSet:
+          case EncodeMode.Default:
             dlg.SelectedLabel = 0;
             break;
-          case EncoderBitRateMode.ConstantBitRate:
+          case EncodeMode.ConstantBitRate:
             dlg.SelectedLabel = 1;
             break;
-          case EncoderBitRateMode.VariableBitRateAverage:
+          case EncodeMode.VariableBitRate:
             dlg.SelectedLabel = 2;
             break;
-          case EncoderBitRateMode.VariableBitRatePeak:
+          case EncodeMode.VariablePeakBitRate:
             dlg.SelectedLabel = 3;
             break;
         }
@@ -116,20 +116,20 @@ namespace Mediaportal.TV.TvPlugin
         }
         switch (dlg.SelectedLabel)
         {
-          case 0: // Not Set
-            recBLL.BitRateMode = EncoderBitRateMode.NotSet;
+          case 0: // Default
+            recBLL.BitRateMode = EncodeMode.Default;
             break;
 
           case 1: // CBR
-            recBLL.BitRateMode = EncoderBitRateMode.ConstantBitRate;
+            recBLL.BitRateMode = EncodeMode.ConstantBitRate;
             break;
 
           case 2: // VBR
-            recBLL.BitRateMode = EncoderBitRateMode.VariableBitRateAverage;
+            recBLL.BitRateMode = EncodeMode.VariableBitRate;
             break;
 
           case 3: // VBR Peak
-            recBLL.BitRateMode = EncoderBitRateMode.VariableBitRatePeak;
+            recBLL.BitRateMode = EncodeMode.VariablePeakBitRate;
             break;
         }
 
@@ -139,36 +139,36 @@ namespace Mediaportal.TV.TvPlugin
         dlg.SetHeading(882);
 
         dlg.ShowQuickNumbers = true;
-        dlg.AddLocalizedString(968);
         dlg.AddLocalizedString(886); //Default
-        dlg.AddLocalizedString(993); // Custom
         dlg.AddLocalizedString(893); //Portable
         dlg.AddLocalizedString(883); //Low
         dlg.AddLocalizedString(884); //Medium
         dlg.AddLocalizedString(885); //High
-
-        switch (recBLL.QualityType)
+        QualityType currentQualityType = recBLL.QualityType;
+        if (currentQualityType == QualityType.Custom)
         {
-          case QualityType.NotSet:
+          dlg.AddLocalizedString(993); //Custom
+        }
+
+        switch (currentQualityType)
+        {
+          case QualityType.Default:
             dlg.SelectedLabel = 0;
             break;
-          case QualityType.Default:
+          case QualityType.Portable:
             dlg.SelectedLabel = 1;
             break;
-          case QualityType.Custom:
+          case QualityType.Low:
             dlg.SelectedLabel = 2;
             break;
-          case QualityType.Portable:
+          case QualityType.Medium:
             dlg.SelectedLabel = 3;
             break;
-          case QualityType.Low:
+          case QualityType.High:
             dlg.SelectedLabel = 4;
             break;
-          case QualityType.Medium:
+          case QualityType.Custom:
             dlg.SelectedLabel = 5;
-            break;
-          case QualityType.High:
-            dlg.SelectedLabel = 6;
             break;
         }
 
@@ -180,32 +180,28 @@ namespace Mediaportal.TV.TvPlugin
         }
         switch (dlg.SelectedLabel)
         {
-          case 0: // Not Set
-            recBLL.QualityType = QualityType.NotSet;
-            break;
-
-          case 1: // Default
+          case 0: // Default
             recBLL.QualityType = QualityType.Default;
             break;
 
-          case 2: // Custom
-            recBLL.QualityType = QualityType.Custom;
-            break;
-
-          case 3: // Protable
+          case 1: // Portable
             recBLL.QualityType = QualityType.Portable;
             break;
 
-          case 4: // Low
+          case 2: // Low
             recBLL.QualityType = QualityType.Low;
             break;
 
-          case 5: // Medium
+          case 3: // Medium
             recBLL.QualityType = QualityType.Medium;
             break;
 
-          case 6: // High
+          case 4: // High
             recBLL.QualityType = QualityType.High;
+            break;
+
+          case 5: // Custom
+            recBLL.QualityType = QualityType.Custom;
             break;
         }
 

@@ -33,7 +33,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Exception
     /// </summary>
     /// <param name="tunerId">The tuner's identifier.</param>
     /// <param name="context">Optional context.</param>
-    /// <param name="contextcontextArgs">Optional context arguments.</param>
+    /// <param name="contextArgs">Optional context arguments.</param>
     public TvExceptionTunerLoadFailed(int tunerId, string context, params object[] contextArgs)
       : base("Failed to load tuner {0}. {1}", tunerId, string.Format(context, contextArgs))
     {

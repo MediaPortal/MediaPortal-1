@@ -24,6 +24,7 @@ using System.Globalization;
 using Mediaportal.TV.Server.Common.Types.Enum;
 using Mediaportal.TV.Server.TVControl.ServiceAgents;
 using Mediaportal.TV.Server.TVDatabase.Entities;
+using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using MediaPortal.Common.Utils.ExtensionMethods;
 using MediaPortal.GUI.Library;
@@ -51,7 +52,7 @@ namespace Mediaportal.TV.TvPlugin
       base.OnPageLoad();
       GUIPropertyManager.SetProperty("#TV.TuningDetails.ChannelName", TVHome.Card.ChannelName);
       GUIPropertyManager.SetProperty("#TV.TuningDetails.RTSPURL", TVHome.Card.RTSPUrl);
-      Channel chan = ServiceAgents.Instance.ChannelServiceAgent.GetChannel(TVHome.Navigator.Channel.Entity.IdChannel);
+      Channel chan = ServiceAgents.Instance.ChannelServiceAgent.GetChannel(TVHome.Navigator.Channel.Entity.IdChannel, ChannelRelation.TuningDetails);
       if (chan != null)
       {
         try
@@ -66,19 +67,11 @@ namespace Mediaportal.TV.TvPlugin
         IList<TuningDetail> details = chan.TuningDetails;
         if (details.Count > 0)
         {
+          // TODO This is wrong! The service could have tuned using any of the tuning details supported by the tuner.
           TuningDetail detail = details[0];
-          foreach (TuningDetail t in details)
-          {
-            // TODO This is wrong! The service could have tuned using any of the tuning details supported by the tuner.
-            if (t.BroadcastStandard == (int)TVHome.Card.SupportedBroadcastStandards)
-            {
-              detail = t;
-              break;
-            }
-          }
 
           // TODO band property is bad
-          GUIPropertyManager.SetProperty("#TV.TuningDetails.Band", detail.IdLnbType.HasValue ? detail.IdLnbType.Value.ToString() : "-1");
+          //GUIPropertyManager.SetProperty("#TV.TuningDetails.Band", detail.IdLnbType.HasValue ? detail.IdLnbType.Value.ToString() : "-1");
           GUIPropertyManager.SetProperty("#TV.TuningDetails.BandWidth", detail.Bandwidth.ToString());
           GUIPropertyManager.SetProperty("#TV.TuningDetails.channelType", ((BroadcastStandard)detail.BroadcastStandard).GetDescription());
 

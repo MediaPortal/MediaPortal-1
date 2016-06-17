@@ -26,13 +26,13 @@ using DirectShowLib;
 using DirectShowLib.BDA;
 using Mediaportal.TV.Server.Common.Types.Enum;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Channel;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channel;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension.Enum;
 using MediaPortal.Common.Utils;
 using ITuner = Mediaportal.TV.Server.TVLibrary.Interfaces.Tuner.ITuner;
-using Polarisation = Mediaportal.TV.Server.Common.Types.Enum.Polarisation;
 
 namespace Mediaportal.TV.Server.Plugins.TunerExtension.DvbWorld
 {
@@ -595,20 +595,18 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DvbWorld
 
       TuningParams tuningParams = new TuningParams();
       tuningParams.PropertyGuid = BDA_EXTENSION_PROPERTY_SET_TUNE;
+      tuningParams.LnbLof = SatelliteLnbHandler.GetLocalOscillatorFrequency(satelliteChannel.Frequency);
+      tuningParams.Tone22kEnabled = SatelliteLnbHandler.Is22kToneOn(satelliteChannel.Frequency);
       tuningParams.Frequency = satelliteChannel.Frequency;
       tuningParams.SymbolRate = satelliteChannel.SymbolRate;
 
-      Tone22kState bandSelectionTone;
-      Polarisation bandSelectionPolarisation;
-      satelliteChannel.LnbType.GetTuningParameters(satelliteChannel.Frequency, satelliteChannel.Polarisation, Tone22kState.Automatic, out tuningParams.LnbLof, out bandSelectionTone, out bandSelectionPolarisation);
-
-      if (bandSelectionPolarisation == Polarisation.LinearVertical || bandSelectionPolarisation == Polarisation.CircularRight)
+      if (SatelliteLnbHandler.IsHighVoltage(satelliteChannel.Polarisation))
       {
-        tuningParams.Polarisation = DwPolarisation.Vertical;
+        tuningParams.Polarisation = DwPolarisation.Horizontal;
       }
       else
       {
-        tuningParams.Polarisation = DwPolarisation.Horizontal;
+        tuningParams.Polarisation = DwPolarisation.Vertical;
       }
 
       // DiSEqC commands are already sent using the raw command interface. No need to resend them and
@@ -685,8 +683,6 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DvbWorld
         this.LogWarn("DVB World: tune request uses unsupported modulation {0} ({1}), falling back to DVB-S QPSK", satelliteChannel.ModulationScheme, bdaModulation);
         tuningParams.Modulation = DwModulation.Dvbs_Qpsk;
       }
-
-      tuningParams.Tone22kEnabled = bandSelectionTone == Tone22kState.On;
 
       Marshal.StructureToPtr(tuningParams, _generalBuffer, false);
       //Dump.DumpBinary(_generalBuffer, TUNING_PARAMS_SIZE);

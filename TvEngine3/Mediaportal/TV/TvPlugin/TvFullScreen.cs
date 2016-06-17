@@ -26,12 +26,13 @@ using System.Drawing;
 using System.Globalization;
 using System.Timers;
 using System.Windows.Forms;
+using Mediaportal.TV.Server.Common.Types.Enum;
 using Mediaportal.TV.Server.TVControl.ServiceAgents;
 using Mediaportal.TV.Server.TVDatabase.Entities;
+using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.Entities;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Integration;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Tuner.Enum;
 using Mediaportal.TV.Server.TVService.Interfaces;
 using Mediaportal.TV.Server.TVService.Interfaces.Services;
 using Mediaportal.TV.TvPlugin.Helper;
@@ -1040,7 +1041,7 @@ namespace Mediaportal.TV.TvPlugin
           // check if recorder has to start timeshifting for this recording
           if (_isStartingTSForRecording)
           {
-            Channel ch = ServiceAgents.Instance.ChannelServiceAgent.GetChannel(TVHome.Card.IdChannel);
+            Channel ch = ServiceAgents.Instance.ChannelServiceAgent.GetChannel(TVHome.Card.IdChannel, ChannelRelation.None);
             TVHome.ViewChannel(ch);
             _isStartingTSForRecording = false;
           }
@@ -1344,7 +1345,7 @@ namespace Mediaportal.TV.TvPlugin
       IList<ChannelLinkageMap> linkages;
       if (!g_Player.IsTVRecording)
       {
-        linkages = ServiceAgents.Instance.ChannelServiceAgent.GetChannel(TVHome.Navigator.Channel.Entity.IdChannel).ChannelLinkMaps;        
+        linkages = ServiceAgents.Instance.ChannelServiceAgent.GetChannel(TVHome.Navigator.Channel.Entity.IdChannel, ChannelRelation.ChannelLinkMapsChannelLink).ChannelLinkMaps;        
         if (linkages != null && linkages.Count > 0)
         {
           dlg.AddLocalizedString(200042); // Linked Channels
@@ -1407,7 +1408,7 @@ namespace Mediaportal.TV.TvPlugin
         }
         else
         {
-          dlg.AddLocalizedString(601); //Record Now        
+          dlg.AddLocalizedString(601); //Record Now
         }
       }
 
@@ -1416,10 +1417,16 @@ namespace Mediaportal.TV.TvPlugin
 
       //dlg.AddLocalizedString(6008); // Sort TvChannel
 
-      if (!g_Player.IsTVRecording && TVHome.Card.IsOwner() && !TVHome.Card.IsRecording &&
-          TVHome.Card.SupportsQualityControl())
+      if (!g_Player.IsTVRecording && !TVHome.Card.IsRecording)
       {
-        dlg.AddLocalizedString(882);
+        bool canSetMode;
+        bool isPeakModeSupported;
+        bool canSetBitRate;
+        TVHome.Card.GetSupportedQualityControlFeatures(out canSetMode, out isPeakModeSupported, out canSetBitRate);
+        if (canSetMode || isPeakModeSupported || canSetBitRate)
+        {
+          dlg.AddLocalizedString(882);
+        }
       }
 
       if (g_Player.HasChapters) // For recordings with chapters
@@ -1462,10 +1469,6 @@ namespace Mediaportal.TV.TvPlugin
           PrepareCiMenu();
           break;
 
-        //case 6008: // TvChannel sort
-        //  SortChannels();
-        //  break;
-
         case 492: // Show audio language menu
           ShowAudioLanguageMenu();
           break;
@@ -1504,7 +1507,7 @@ namespace Mediaportal.TV.TvPlugin
           break;
 
         case 200042: // Linked channels
-          linkages = ServiceAgents.Instance.ChannelServiceAgent.GetChannel(TVHome.Navigator.Channel.Entity.IdChannel).ChannelLinkMaps;                  
+          linkages = ServiceAgents.Instance.ChannelServiceAgent.GetChannel(TVHome.Navigator.Channel.Entity.IdChannel, ChannelRelation.ChannelLinkMapsChannelLink).ChannelLinkMaps;                  
           ShowLinkedChannelsMenu(linkages);
           break;
 
@@ -1649,7 +1652,11 @@ namespace Mediaportal.TV.TvPlugin
 
     private void ShowQualitySettingsMenu()
     {
-      if (TVHome.Card.SupportsBitRateModes() && TVHome.Card.SupportsPeakBitRateMode())
+      bool canSetEncodeMode;
+      bool isPeakModeSupported;
+      bool canSetBitRate;
+      TVHome.Card.GetSupportedQualityControlFeatures(out canSetEncodeMode, out isPeakModeSupported, out canSetBitRate);
+      if (canSetEncodeMode)
       {
         if (dlg == null)
         {
@@ -1661,18 +1668,24 @@ namespace Mediaportal.TV.TvPlugin
         dlg.ShowQuickNumbers = true;
         dlg.AddLocalizedString(965);
         dlg.AddLocalizedString(966);
-        dlg.AddLocalizedString(967);
-        EncoderBitRateMode _newBitRate = TVHome.Card.BitRateMode;
-        switch (_newBitRate)
+        if (isPeakModeSupported)
         {
-          case EncoderBitRateMode.ConstantBitRate:
+          dlg.AddLocalizedString(967);
+        }
+        EncodeMode mode = TVHome.Card.EncodeMode;
+        switch (mode)
+        {
+          case EncodeMode.ConstantBitRate:
             dlg.SelectedLabel = 0;
             break;
-          case EncoderBitRateMode.VariableBitRateAverage:
+          case EncodeMode.VariableBitRate:
             dlg.SelectedLabel = 1;
             break;
-          case EncoderBitRateMode.VariableBitRatePeak:
-            dlg.SelectedLabel = 2;
+          case EncodeMode.VariablePeakBitRate:
+            if (isPeakModeSupported)
+            {
+              dlg.SelectedLabel = 2;
+            }
             break;
         }
         _isDialogVisible = true;
@@ -1687,21 +1700,21 @@ namespace Mediaportal.TV.TvPlugin
         switch (dlg.SelectedLabel)
         {
           case 0: // CBR
-            _newBitRate = EncoderBitRateMode.ConstantBitRate;
+            mode = EncodeMode.ConstantBitRate;
             break;
 
           case 1: // VBR
-            _newBitRate = EncoderBitRateMode.VariableBitRateAverage;
+            mode = EncodeMode.VariableBitRate;
             break;
 
           case 2: // VBR Peak
-            _newBitRate = EncoderBitRateMode.VariableBitRatePeak;
+            mode = EncodeMode.VariablePeakBitRate;
             break;
         }
-        this.LogInfo("Setting quality to: {0}", _newBitRate);
-        TVHome.Card.BitRateMode = _newBitRate;
+        this.LogInfo("Setting encode mode to: {0}", mode);
+        TVHome.Card.EncodeMode = mode;
       }
-      if (TVHome.Card.SupportsBitRate())
+      if (canSetBitRate)
       {
         if (dlg == null)
         {
@@ -1712,30 +1725,34 @@ namespace Mediaportal.TV.TvPlugin
 
         dlg.ShowQuickNumbers = true;
         dlg.AddLocalizedString(886); // Default
-        dlg.AddLocalizedString(993); // Custom
         dlg.AddLocalizedString(893); // Portable
         dlg.AddLocalizedString(883); // Low
         dlg.AddLocalizedString(884); // Medium
         dlg.AddLocalizedString(885); // High
-        QualityType _newQuality = TVHome.Card.QualityType;
-        switch (_newQuality)
+        QualityType quality = (QualityType)((TVHome.Card.PeakBitRate << 7) | TVHome.Card.AverageBitRate);
+        if (!Enum.IsDefined(typeof(QualityType), quality))
+        {
+          quality = QualityType.Custom;
+          dlg.AddLocalizedString(993); // Custom
+        }
+        switch (quality)
         {
           case QualityType.Default:
             dlg.SelectedLabel = 0;
             break;
-          case QualityType.Custom:
+          case QualityType.Portable:
             dlg.SelectedLabel = 1;
             break;
-          case QualityType.Portable:
+          case QualityType.Low:
             dlg.SelectedLabel = 2;
             break;
-          case QualityType.Low:
+          case QualityType.Medium:
             dlg.SelectedLabel = 3;
             break;
-          case QualityType.Medium:
+          case QualityType.High:
             dlg.SelectedLabel = 4;
             break;
-          case QualityType.High:
+          case QualityType.Custom:
             dlg.SelectedLabel = 5;
             break;
         }
@@ -1744,37 +1761,46 @@ namespace Mediaportal.TV.TvPlugin
         dlg.DoModal(GetID);
         _isDialogVisible = false;
 
-        if (dlg.SelectedLabel == -1)
+        if (dlg.SelectedLabel == -1 || dlg.SelectedLabel == 5)
         {
           return;
         }
+
         switch (dlg.SelectedLabel)
         {
           case 0: // Default
-            _newQuality = QualityType.Default;
+            quality = QualityType.Default;
             break;
 
-          case 1: // Custom
-            _newQuality = QualityType.Custom;
+          case 1: // Portable
+            quality = QualityType.Portable;
             break;
 
-          case 2: // Protable
-            _newQuality = QualityType.Portable;
+          case 2: // Low
+            quality = QualityType.Low;
             break;
 
-          case 3: // Low
-            _newQuality = QualityType.Low;
+          case 3: // Medium
+            quality = QualityType.Medium;
             break;
 
-          case 4: // Medium
-            _newQuality = QualityType.Medium;
-            break;
-
-          case 5: // High
-            _newQuality = QualityType.High;
+          case 4: // High
+            quality = QualityType.High;
             break;
         }
-        TVHome.Card.QualityType = _newQuality;
+
+        if (quality != QualityType.Custom)
+        {
+          int bitRate = (int)quality & 0x7f;
+          this.LogInfo("Setting average bit-rate to: {0}%", bitRate);
+          TVHome.Card.AverageBitRate = bitRate;
+          if (isPeakModeSupported)
+          {
+            bitRate = (int)quality >> 7;
+            this.LogInfo("Setting peak bit-rate to: {0}%", bitRate);
+            TVHome.Card.PeakBitRate = bitRate;
+          }
+        }
       }
     }
 
@@ -1872,12 +1898,6 @@ namespace Mediaportal.TV.TvPlugin
     }
 
     #endregion
-
-    private void SortChannels()
-    {
-      GUIWindowManager.ActivateWindow((int)Window.WINDOW_SETTINGS_SORT_CHANNELS);
-      //ChannelSettings channelSettings = (ChannelSettings)GUIWindowManager.GetWindow((int)Window.WINDOW_SETTINGS_SORT_CHANNELS);
-    }
 
     private void ShowAudioLanguageMenu()
     {
@@ -2476,10 +2496,8 @@ namespace Mediaportal.TV.TvPlugin
       }
 
       // Let the navigator zap channel if needed
-      if (TVHome.UserChannelChanged)
-      {
-        TVHome.Navigator.CheckChannelChange();
-      }
+      TVHome.Navigator.CheckChannelChange();
+
       //this.LogDebug("osd visible:{0} timeoutvalue:{1}", _zapOsdVisible ,_zapTimeOutValue);
       if (_zapOsdVisible && _zapTimeOutValue > 0)
       {

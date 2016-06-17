@@ -26,7 +26,6 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Channel;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channel;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Exception;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Tuner;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.Scte
@@ -151,6 +150,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Scte
         streamFormat = StreamFormat.Mpeg2Ts | StreamFormat.Scte;
       }
       IList<ITunerExtension> extensions = _dvbcTuner.PerformLoading(streamFormat);
+
       _channelScanner = _dvbcTuner.InternalChannelScanningInterface;
       if (_channelScanner != null)
       {
@@ -287,7 +287,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Scte
     /// <summary>
     /// Get the tuner's electronic programme guide data grabbing interface.
     /// </summary>
-    public override IEpgGrabber InternalEpgGrabberInterface
+    public override IEpgGrabberInternal InternalEpgGrabberInterface
     {
       get
       {

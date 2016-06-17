@@ -28,6 +28,7 @@ using DirectShowLib;
 using DirectShowLib.BDA;
 using Mediaportal.TV.Server.Common.Types.Enum;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Channel;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channel;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Dvb;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Dvb.Enum;
@@ -38,7 +39,6 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension.Enum;
 using MediaPortal.Common.Utils;
 using ITuner = Mediaportal.TV.Server.TVLibrary.Interfaces.Tuner.ITuner;
-using Polarisation = Mediaportal.TV.Server.Common.Types.Enum.Polarisation;
 
 namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
 {
@@ -1758,22 +1758,15 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
       if (dvbsChannel != null && _tunerSupportedBroadcastStandards.HasFlag(BroadcastStandard.DvbS))
       {
         // LNB settings must be applied.
-        int lnbLowBandLof;
-        int lnbHighBandLof;
-        int lnbLofSwitch;
-        Tone22kState bandSelectionTone;
-        Polarisation bandSelectionPolarisation;
-        dvbsChannel.LnbType.GetTuningParameters(dvbsChannel.Frequency, dvbsChannel.Polarisation, Tone22kState.Automatic, out lnbLowBandLof, out lnbHighBandLof, out lnbLofSwitch, out bandSelectionTone, out bandSelectionPolarisation);
-
         LnbParamInfo lnbParams = new LnbParamInfo();
         lnbParams.NumberOfAntennas = 1;
         lnbParams.LnbParams = new LnbParams[MAX_LNB_PARAM_COUNT];
         lnbParams.LnbParams[0].AntennaNumber = 0;
         lnbParams.LnbParams[0].IsEast = true;
         lnbParams.LnbParams[0].OrbitalPosition = 160;
-        lnbParams.LnbParams[0].LowBandLof = (ushort)(lnbLowBandLof / 1000);
-        lnbParams.LnbParams[0].SwitchFrequency = (ushort)(lnbLofSwitch / 1000);
-        lnbParams.LnbParams[0].HighBandLof = (ushort)(lnbHighBandLof / 1000);
+        lnbParams.LnbParams[0].LowBandLof = (ushort)(SatelliteLnbHandler.LOW_BAND_LOF / 1000);
+        lnbParams.LnbParams[0].SwitchFrequency = (ushort)(SatelliteLnbHandler.SWITCH_FREQUENCY / 1000);
+        lnbParams.LnbParams[0].HighBandLof = (ushort)(SatelliteLnbHandler.HIGH_BAND_LOF / 1000);
 
         Marshal.StructureToPtr(lnbParams, _generalBuffer, false);
         //Dump.DumpBinary(_generalBuffer, LNB_PARAM_INFO_SIZE);
@@ -1785,6 +1778,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
         if (hr != (int)NativeMethods.HResult.S_OK)
         {
           this.LogError("Digital Everywhere: failed to apply LNB settings, hr = 0x{0:x}", hr);
+          return false;
         }
 
         DvbsMultiplexParams tuneRequest = new DvbsMultiplexParams();
@@ -1816,7 +1810,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
         }
 
         tuneRequest.Polarisation = DePolarisation.Vertical;
-        if (bandSelectionPolarisation == Polarisation.LinearHorizontal || bandSelectionPolarisation == Polarisation.CircularLeft)
+        if (SatelliteLnbHandler.IsHighVoltage(dvbsChannel.Polarisation))
         {
           tuneRequest.Polarisation = DePolarisation.Horizontal;
         }

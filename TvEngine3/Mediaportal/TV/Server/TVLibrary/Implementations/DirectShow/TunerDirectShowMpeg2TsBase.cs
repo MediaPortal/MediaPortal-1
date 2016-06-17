@@ -62,7 +62,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
     /// <summary>
     /// The tuner's EPG grabbing interface.
     /// </summary>
-    private IEpgGrabber _epgGrabber = null;
+    private IEpgGrabberInternal _epgGrabber = null;
 
     // TsWriter configuration.
     private int _tsWriterInputDumpMask = 0;
@@ -286,7 +286,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
     /// <summary>
     /// Get the tuner's electronic programme guide data grabbing interface.
     /// </summary>
-    public override IEpgGrabber InternalEpgGrabberInterface
+    public override IEpgGrabberInternal InternalEpgGrabberInterface
     {
       get
       {
