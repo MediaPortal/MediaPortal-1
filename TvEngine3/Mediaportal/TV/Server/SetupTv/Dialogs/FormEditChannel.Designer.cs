@@ -38,12 +38,12 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.labelName = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.buttonCancel = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
       this.listViewTuningDetails = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPListView();
-      this.columnHeaderId = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader();
-      this.columnHeaderName = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader();
-      this.columnHeaderNumber = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader();
-      this.columnHeaderProvider = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader();
-      this.columnHeaderBroadcastStandard = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader();
-      this.columnHeaderDetails = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader();
+      this.columnHeaderId = ((Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader)(new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader()));
+      this.columnHeaderName = ((Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader)(new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader()));
+      this.columnHeaderNumber = ((Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader)(new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader()));
+      this.columnHeaderProvider = ((Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader)(new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader()));
+      this.columnHeaderBroadcastStandard = ((Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader)(new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader()));
+      this.columnHeaderDetails = ((Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader)(new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPColumnHeader()));
       this.imageList1 = new System.Windows.Forms.ImageList(this.components);
       this.groupBoxTuningDetails = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPGroupBox();
       this.labelPriority = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
@@ -89,8 +89,8 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       // 
       // textBoxName
       // 
-      this.textBoxName.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.textBoxName.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.textBoxName.Location = new System.Drawing.Point(56, 29);
       this.textBoxName.MaxLength = 200;
       this.textBoxName.Name = "textBoxName";
@@ -99,8 +99,8 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       // 
       // labelName
       // 
-      this.labelName.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)));
+      this.labelName.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
       this.labelName.AutoSize = true;
       this.labelName.Location = new System.Drawing.Point(3, 26);
       this.labelName.Name = "labelName";
@@ -126,9 +126,9 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.listViewTuningDetails.AllowColumnReorder = true;
       this.listViewTuningDetails.AllowDrop = true;
       this.listViewTuningDetails.AllowRowReorder = false;
-      this.listViewTuningDetails.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.listViewTuningDetails.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.listViewTuningDetails.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeaderId,
             this.columnHeaderName,
@@ -193,9 +193,9 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       // 
       // groupBoxTuningDetails
       // 
-      this.groupBoxTuningDetails.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxTuningDetails.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxTuningDetails.Controls.Add(this.labelPriority);
       this.groupBoxTuningDetails.Controls.Add(this.buttonTuningDetailPriorityUp);
       this.groupBoxTuningDetails.Controls.Add(this.buttonTuningDetailPriorityDown);
@@ -280,8 +280,8 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       // 
       // labelNumber
       // 
-      this.labelNumber.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)));
+      this.labelNumber.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
       this.labelNumber.AutoSize = true;
       this.labelNumber.Location = new System.Drawing.Point(3, 52);
       this.labelNumber.Name = "labelNumber";
@@ -292,8 +292,8 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       // 
       // labelId
       // 
-      this.labelId.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)));
+      this.labelId.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
       this.labelId.AutoSize = true;
       this.labelId.Location = new System.Drawing.Point(3, 0);
       this.labelId.Name = "labelId";
@@ -304,8 +304,8 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       // 
       // labelIdValue
       // 
-      this.labelIdValue.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)));
+      this.labelIdValue.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
       this.labelIdValue.AutoSize = true;
       this.labelIdValue.Location = new System.Drawing.Point(56, 0);
       this.labelIdValue.Name = "labelIdValue";
@@ -316,8 +316,8 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       // 
       // labelExternalId
       // 
-      this.labelExternalId.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)));
+      this.labelExternalId.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
       this.labelExternalId.AutoSize = true;
       this.labelExternalId.Location = new System.Drawing.Point(266, 26);
       this.labelExternalId.Name = "labelExternalId";
@@ -328,8 +328,8 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       // 
       // textBoxExternalId
       // 
-      this.textBoxExternalId.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.textBoxExternalId.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.textBoxExternalId.Location = new System.Drawing.Point(334, 29);
       this.textBoxExternalId.MaxLength = 200;
       this.textBoxExternalId.Name = "textBoxExternalId";
@@ -338,8 +338,8 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       // 
       // tableLayoutPanel
       // 
-      this.tableLayoutPanel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.tableLayoutPanel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.tableLayoutPanel.ColumnCount = 5;
       this.tableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
       this.tableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
@@ -389,7 +389,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.ShowIcon = false;
       this.ShowInTaskbar = false;
       this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-      this.Text = "Edit Channel";
+      this.Text = "Add/Edit Channel";
       this.Shown += new System.EventHandler(this.FormEditChannel_Load);
       this.groupBoxTuningDetails.ResumeLayout(false);
       this.groupBoxTuningDetails.PerformLayout();

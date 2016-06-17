@@ -20,6 +20,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Globalization;
 using System.Windows.Forms;
 using Mediaportal.TV.Server.Common.Types.Enum;
@@ -30,7 +31,6 @@ using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using MediaPortal.Common.Utils.ExtensionMethods;
-using System.Drawing;
 
 namespace Mediaportal.TV.Server.SetupTV.Dialogs
 {
@@ -61,7 +61,8 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       if (_idChannel >= 0)
       {
         this.LogInfo("channel: start edit, ID = {0}", _idChannel);
-        _channel = ServiceAgents.Instance.ChannelServiceAgent.GetChannel(_idChannel, ChannelIncludeRelationEnum.None);
+        Text = "Edit Channel";
+        _channel = ServiceAgents.Instance.ChannelServiceAgent.GetChannel(_idChannel, ChannelRelation.None);
         labelIdValue.Text = _channel.IdChannel.ToString();
         textBoxName.Text = _channel.Name;
         textBoxNumber.Text = _channel.ChannelNumber;
@@ -72,6 +73,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       else
       {
         this.LogInfo("channel: create new");
+        Text = "Add Channel";
         labelIdValue.Text = string.Empty;
         textBoxName.Text = string.Empty;
         textBoxNumber.Text = string.Empty;
@@ -105,6 +107,8 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.LogDebug("  encrypted?       = {0}", tuningDetail.IsEncrypted);
       this.LogDebug("  high definition? = {0}", tuningDetail.IsHighDefinition);
       this.LogDebug("  3D?              = {0}", tuningDetail.IsThreeDimensional);
+      this.LogDebug("  grab EPG?        = {0}", tuningDetail.GrabEpg);
+      this.LogDebug("  last EPG grab    = {0}", tuningDetail.LastEpgGrabTime);
       BroadcastStandard broadcastStandard = (BroadcastStandard)tuningDetail.BroadcastStandard;
       this.LogDebug("  standard         = {0}", broadcastStandard);
 
@@ -166,6 +170,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       }
       else if (BroadcastStandard.MaskSatellite.HasFlag(broadcastStandard))
       {
+        this.LogDebug("  satellite        = {0}", tuningDetail.Satellite);
         this.LogDebug("  frequency        = {0} kHz", tuningDetail.Frequency);
         this.LogDebug("  polarisation     = {0}", (Polarisation)tuningDetail.Polarisation);
         this.LogDebug("  modulation       = {0}", (ModulationSchemePsk)tuningDetail.Modulation);
@@ -217,10 +222,10 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       try
       {
         listViewTuningDetails.Items.Clear();
-        foreach (TuningDetail td in ServiceAgents.Instance.ChannelServiceAgent.ListAllTuningDetailsByChannel(_idChannel))
+        foreach (TuningDetail tuningDetail in ServiceAgents.Instance.ChannelServiceAgent.ListAllTuningDetailsByChannel(_idChannel, TuningDetailRelation.Satellite))
         {
-          DebugTuningDetailSettings(td);
-          listViewTuningDetails.Items.Add(CreateItemForTuningDetail(td));
+          DebugTuningDetailSettings(tuningDetail);
+          listViewTuningDetails.Items.Add(CreateItemForTuningDetail(tuningDetail));
         }
       }
       finally
@@ -351,11 +356,22 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
         this.LogInfo("channel: cancel new, ID = {0}", _idChannel);
 
         // Delete tuning details that were moved to this channel.
+        bool confirmed = false;
         foreach (ListViewItem item in listViewTuningDetails.Items)
         {
           TuningDetail tuningDetail = item.Tag as TuningDetail;
           if (tuningDetail.IdTuning > 0)
           {
+            if (!confirmed)
+            {
+              DialogResult result = MessageBox.Show("Tuning details that have been moved to this channel will be lost. Are you sure you want to cancel?", SectionSettings.MESSAGE_CAPTION, MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+              if (result == DialogResult.No)
+              {
+                this.LogInfo("channel: cancel cancelation to avoid loss of tuning details");
+                return;
+              }
+              confirmed = true;
+            }
             this.LogInfo("channel: tuning detail {0} deleted", tuningDetail.IdTuning);
             ServiceAgents.Instance.ChannelServiceAgent.DeleteTuningDetail(tuningDetail.IdTuning);
           }
@@ -439,7 +455,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
 
           if (tuningDetail.IdTuning > 0)
           {
-            tuningDetail = ServiceAgents.Instance.ChannelServiceAgent.GetTuningDetail(tuningDetail.IdTuning);
+            tuningDetail = ServiceAgents.Instance.ChannelServiceAgent.GetTuningDetail(tuningDetail.IdTuning, TuningDetailRelation.Satellite);
           }
           else
           {
