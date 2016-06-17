@@ -51,15 +51,23 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     {
       _tunerId = tunerId;
       InitializeComponent();
-      base.Text = name;
     }
 
     public override void OnSectionActivated()
     {
-      this.LogDebug("ATSC: activating, tuner ID = {0}", _tunerId);
-      Tuner tuner = ServiceAgents.Instance.TunerServiceAgent.GetTuner(_tunerId, TunerIncludeRelationEnum.None);
+      this.LogDebug("scan ATSC/SCTE: activating, tuner ID = {0}", _tunerId);
 
+      Tuner tuner = ServiceAgents.Instance.TunerServiceAgent.GetTuner(_tunerId, TunerRelation.None);
       BroadcastStandard tunerSupportedBroadcastStandards = (BroadcastStandard)tuner.SupportedBroadcastStandards;
+      this.LogDebug("  standard(s) = [{0}]", tunerSupportedBroadcastStandards);
+
+      if (_scanHelper != null)
+      {
+        DebugSettings();
+        base.OnSectionActivated();
+        return;
+      }
+
       comboBoxScanMode.BeginUpdate();
       try
       {
@@ -83,36 +91,63 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         comboBoxScanMode.EndUpdate();
       }
 
-      comboBoxScanMode.SelectedItem = ServiceAgents.Instance.SettingServiceAgent.GetValue("atsc" + _tunerId + "ScanMode", SCAN_MODE_ATSC);
+      comboBoxScanMode.SelectedItem = ServiceAgents.Instance.SettingServiceAgent.GetValue("scanAtscScte" + _tunerId + "ScanMode", SCAN_MODE_ATSC);
       if (comboBoxScanMode.SelectedItem == null)
       {
         comboBoxScanMode.SelectedIndex = 0;
       }
+
+      string transmitter = ServiceAgents.Instance.SettingServiceAgent.GetValue("scanAtscScte" + _tunerId + "Transmitter", TuningDetailFilter.ALL_TUNING_DETAIL_ITEM);
+      foreach (object item in comboBoxTransmitter.Items)
+      {
+        if (string.Equals(item.ToString(), transmitter))
+        {
+          comboBoxTransmitter.SelectedItem = item;
+          break;
+        }
+      }
+      if (comboBoxTransmitter.SelectedItem == null)
+      {
+        comboBoxTransmitter.SelectedIndex = 0;
+      }
+
+      DebugSettings();
 
       base.OnSectionActivated();
     }
 
     public override void OnSectionDeActivated()
     {
-      this.LogDebug("ATSC: deactivating, tuner ID = {0}", _tunerId);
-      ServiceAgents.Instance.SettingServiceAgent.SaveValue("atsc" + _tunerId + "ScanMode", (string)comboBoxScanMode.SelectedItem);
+      this.LogDebug("scan ATSC/SCTE: deactivating, tuner ID = {0}", _tunerId);
+
+      DebugSettings();
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue("scanAtscScte" + _tunerId + "ScanMode", (string)comboBoxScanMode.SelectedItem);
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue("scanAtscScte" + _tunerId + "Transmitter", comboBoxTransmitter.SelectedItem.ToString());
+
       base.OnSectionDeActivated();
+    }
+
+    private void DebugSettings()
+    {
+      this.LogDebug("  scan mode   = {0}", comboBoxScanMode.SelectedItem);
+      this.LogDebug("  transmitter = {0}", comboBoxTransmitter.SelectedItem);
     }
 
     private void buttonScan_Click(object sender, EventArgs e)
     {
       if (_scanHelper != null)
       {
-        buttonScan.Text = "Cancelling...";
+        buttonScan.Enabled = false;
+        buttonScan.Text = "Stopping...";
         _scanHelper.StopScan();
         return;
       }
 
-      List<FileTuningDetail> tuningDetails = null;
+      IList<FileTuningDetail> tuningDetails = null;
       string scanMode = (string)comboBoxScanMode.SelectedItem;
       if (string.Equals(scanMode, SCAN_MODE_SCTE_CABLECARD))
       {
-        tuningDetails = new List<FileTuningDetail>
+        tuningDetails = new List<FileTuningDetail>(1)
         {
           new FileTuningDetail
           {
@@ -121,28 +156,11 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
           }
         };
       }
-      else
+      else if (string.Equals(scanMode, SCAN_MODE_ATSC) || string.Equals(scanMode, SCAN_MODE_SCTE_STANDARD) || string.Equals(scanMode, SCAN_MODE_SCTE_HRC))
       {
-        string listName = null;
-        if (string.Equals(scanMode, SCAN_MODE_ATSC))
-        {
-          listName = "ATSC.xml";
-        }
-        else if (string.Equals(scanMode, SCAN_MODE_SCTE_STANDARD))
-        {
-          listName = "QAM Standard.xml";
-        }
-        else if (string.Equals(scanMode, SCAN_MODE_SCTE_HRC))
-        {
-          listName = "QAM HRC.xml";
-        }
-        if (listName != null)
-        {
-          TuningDetailFilter filter = new TuningDetailFilter("atsc");
-          tuningDetails = filter.LoadList(listName, false);
-        }
+        tuningDetails = TuningDetailFilter.GetTuningDetails(comboBoxTransmitter);
       }
-      if (tuningDetails == null)
+      if (tuningDetails == null || tuningDetails.Count == 0)
       {
         return;
       }
@@ -150,17 +168,18 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       listViewProgress.Items.Clear();
       ListViewItem item = listViewProgress.Items.Add(string.Format("start scanning {0}...", scanMode));
       item.EnsureVisible();
-      this.LogInfo("ATSC: start scanning {0}...", scanMode);
+      this.LogInfo("scan ATSC/SCTE: start scanning, mode = {0}", scanMode);
 
       _scanHelper = new ChannelScanHelper(_tunerId, listViewProgress, progressBarProgress, null, OnGetDbExistingTuningDetailCandidates, OnScanCompleted, progressBarSignalStrength, progressBarSignalQuality);
       if (_scanHelper.StartScan(tuningDetails))
       {
         comboBoxScanMode.Enabled = false;
-        buttonScan.Text = "Cancel...";
+        comboBoxTransmitter.Enabled = false;
+        buttonScan.Text = "&Stop";
       }
     }
 
-    private IList<DbTuningDetail> OnGetDbExistingTuningDetailCandidates(ScannedChannel foundChannel, bool useChannelMovementDetection)
+    private IList<DbTuningDetail> OnGetDbExistingTuningDetailCandidates(ScannedChannel foundChannel, bool useChannelMovementDetection, TuningDetailRelation includeRelations)
     {
       // ATSC over-the-air channels don't generally move, but cable channels
       // can occasionally be moved. ATSC and SCTE SI have the MPEG 2 TSID and
@@ -193,19 +212,51 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       if (physicalChannel == null || string.Equals(scanMode, SCAN_MODE_SCTE_CABLECARD))
       {
         // CableCARD or frequency not available: support channel movement detection by LCN.
-        return ServiceAgents.Instance.ChannelServiceAgent.GetAtscScteTuningDetails(broadcastStandard, lcn);
+        return ServiceAgents.Instance.ChannelServiceAgent.GetAtscScteTuningDetails(broadcastStandard, lcn, includeRelations);
       }
-      return ServiceAgents.Instance.ChannelServiceAgent.GetAtscScteTuningDetails(broadcastStandard, lcn, physicalChannel.Frequency);
+      return ServiceAgents.Instance.ChannelServiceAgent.GetAtscScteTuningDetails(broadcastStandard, lcn, includeRelations, physicalChannel.Frequency);
     }
 
     private void OnScanCompleted()
     {
       this.Invoke((MethodInvoker)delegate
       {
-        buttonScan.Text = "Scan for channels";
         comboBoxScanMode.Enabled = true;
+        string scanMode = (string)comboBoxScanMode.SelectedItem;
+        if (
+          string.Equals(scanMode, SCAN_MODE_ATSC) ||
+          string.Equals(scanMode, SCAN_MODE_SCTE_STANDARD) ||
+          string.Equals(scanMode, SCAN_MODE_SCTE_HRC)
+        )
+        {
+          comboBoxTransmitter.Enabled = true;
+        }
+        buttonScan.Text = "&Scan for channels";
+        buttonScan.Enabled = true;
       });
       _scanHelper = null;
+    }
+
+    private void comboBoxScanMode_SelectedIndexChanged(object sender, EventArgs e)
+    {
+      string scanMode = (string)comboBoxScanMode.SelectedItem;
+
+      if (string.Equals(scanMode, SCAN_MODE_ATSC))
+      {
+        TuningDetailFilter.Load(BroadcastStandard.Atsc, "ATSC.xml", comboBoxTransmitter);
+      }
+      else if (string.Equals(scanMode, SCAN_MODE_SCTE_STANDARD))
+      {
+        TuningDetailFilter.Load(BroadcastStandard.Scte, "QAM Standard.xml", comboBoxTransmitter);
+      }
+      else if (string.Equals(scanMode, SCAN_MODE_SCTE_HRC))
+      {
+        TuningDetailFilter.Load(BroadcastStandard.Scte, "QAM HRC.xml", comboBoxTransmitter);
+      }
+      else
+      {
+        TuningDetailFilter.Load(BroadcastStandard.Unknown, null, comboBoxTransmitter);
+      }
     }
   }
 }

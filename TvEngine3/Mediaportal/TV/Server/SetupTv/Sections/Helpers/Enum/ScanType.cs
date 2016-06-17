@@ -24,10 +24,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections.Helpers.Enum
 {
   internal enum ScanType
   {
-    [Description("Predefined Provider")]
-    PredefinedProvider,
-    [Description("Single Transmitter")]
-    SingleTransmitter,
+    [Description("Standard")]
+    Standard,
     [Description("Full NIT")]
     FullNetworkInformationTable,
     [Description("Fast Network Info")]

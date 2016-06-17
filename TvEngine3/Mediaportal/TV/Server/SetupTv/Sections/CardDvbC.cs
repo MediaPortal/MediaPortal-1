@@ -26,6 +26,7 @@ using Mediaportal.TV.Server.SetupControls;
 using Mediaportal.TV.Server.SetupTV.Sections.Helpers;
 using Mediaportal.TV.Server.SetupTV.Sections.Helpers.Enum;
 using Mediaportal.TV.Server.TVControl.ServiceAgents;
+using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channel;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
@@ -46,35 +47,18 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
     #endregion
 
-    #region properties
-
-    private ScanType ActiveScanType
-    {
-      get
-      {
-        if (!checkBoxUseAdvancedOptions.Checked)
-        {
-          return ScanType.PredefinedProvider;
-        }
-        return (ScanType)typeof(ScanType).GetEnumFromDescription((string)comboBoxScanType.SelectedItem);
-      }
-    }
-
-    #endregion
-
     public CardDvbC(string name, int tunerId)
       : base(name)
     {
       _tunerId = tunerId;
       InitializeComponent();
-      base.Text = name;
     }
 
     #region activate/deactivate
 
     public override void OnSectionActivated()
     {
-      this.LogDebug("DVB-C: activating, tuner ID = {0}", _tunerId);
+      this.LogDebug("scan DVB-C: activating, tuner ID = {0}", _tunerId);
 
       // First activation.
       if (comboBoxScanType.Items.Count == 0)
@@ -86,40 +70,50 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         comboBoxModulation.Items.AddRange(typeof(ModulationSchemeQam).GetDescriptions());
       }
 
-      _tuningDetailFilter = new TuningDetailFilter("dvbc", comboBoxCountry, comboBoxRegionProvider);
+      if (_scanState == ScanState.Initialized)
+      {
+        string country = ServiceAgents.Instance.SettingServiceAgent.GetValue("scanDvbc" + _tunerId + "Country", System.Globalization.RegionInfo.CurrentRegion.EnglishName);
+        string region = ServiceAgents.Instance.SettingServiceAgent.GetValue("scanDvbc" + _tunerId + "Region", string.Empty);
+        string transmitter = ServiceAgents.Instance.SettingServiceAgent.GetValue("scanDvbc" + _tunerId + "Transmitter", TuningDetailFilter.ALL_TUNING_DETAIL_ITEM);
+        _tuningDetailFilter = new TuningDetailFilter(BroadcastStandard.DvbC, comboBoxCountry, country, comboBoxRegionProvider, region, comboBoxTransmitter, transmitter);
+      }
 
-      comboBoxCountry.SelectedItem = ServiceAgents.Instance.SettingServiceAgent.GetValue("dvbc" + _tunerId + "Country", System.Globalization.RegionInfo.CurrentRegion.EnglishName);
-      if (comboBoxCountry.SelectedItem == null)
-      {
-        comboBoxCountry.SelectedIndex = 0;
-      }
-      comboBoxRegionProvider.SelectedItem = ServiceAgents.Instance.SettingServiceAgent.GetValue("dvbc" + _tunerId + "Region", string.Empty);
-      if (comboBoxRegionProvider.SelectedItem == null)
-      {
-        comboBoxRegionProvider.SelectedIndex = 0;
-      }
-      numericTextBoxFrequency.Value = ServiceAgents.Instance.SettingServiceAgent.GetValue("dvbc" + _tunerId + "Frequency", 163000);
-      comboBoxModulation.SelectedItem = ((ModulationSchemeQam)ServiceAgents.Instance.SettingServiceAgent.GetValue("dvbc" + _tunerId + "Modulation", (int)ModulationSchemeQam.Qam256)).GetDescription();
+      numericTextBoxFrequency.Value = ServiceAgents.Instance.SettingServiceAgent.GetValue("scanDvbc" + _tunerId + "Frequency", 163000);
+      comboBoxModulation.SelectedItem = ((ModulationSchemeQam)ServiceAgents.Instance.SettingServiceAgent.GetValue("scanDvbc" + _tunerId + "Modulation", (int)ModulationSchemeQam.Qam256)).GetDescription();
       if (comboBoxModulation.SelectedItem == null)
       {
         comboBoxModulation.SelectedIndex = 0;
       }
-      numericTextBoxSymbolRate.Value = ServiceAgents.Instance.SettingServiceAgent.GetValue("dvbc" + _tunerId + "SymbolRate", 6875);
+      numericTextBoxSymbolRate.Value = ServiceAgents.Instance.SettingServiceAgent.GetValue("scanDvbc" + _tunerId + "SymbolRate", 6875);
+
+      DebugSettings();
 
       base.OnSectionActivated();
     }
 
     public override void OnSectionDeActivated()
     {
-      this.LogDebug("DVB-C: deactivating, tuner ID = {0}", _tunerId);
+      this.LogDebug("scan DVB-C: deactivating, tuner ID = {0}", _tunerId);
 
-      ServiceAgents.Instance.SettingServiceAgent.SaveValue("dvbc" + _tunerId + "Country", (string)comboBoxCountry.SelectedItem);
-      ServiceAgents.Instance.SettingServiceAgent.SaveValue("dvbc" + _tunerId + "Region", ((CustomFileName)comboBoxRegionProvider.SelectedItem).ToString());
-      ServiceAgents.Instance.SettingServiceAgent.SaveValue("dvbc" + _tunerId + "Frequency", numericTextBoxFrequency.Value);
-      ServiceAgents.Instance.SettingServiceAgent.SaveValue("dvbc" + _tunerId + "Modulation", Convert.ToInt32(typeof(ModulationSchemeQam).GetEnumFromDescription((string)comboBoxModulation.SelectedItem)));
-      ServiceAgents.Instance.SettingServiceAgent.SaveValue("dvbc" + _tunerId + "SymbolRate", numericTextBoxSymbolRate.Value);
+      DebugSettings();
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue("scanDvbc" + _tunerId + "Country", comboBoxCountry.SelectedItem.ToString());
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue("scanDvbc" + _tunerId + "Region", comboBoxRegionProvider.SelectedItem.ToString());
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue("scanDvbc" + _tunerId + "Transmitter", comboBoxTransmitter.SelectedItem.ToString());
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue("scanDvbc" + _tunerId + "Frequency", numericTextBoxFrequency.Value);
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue("scanDvbc" + _tunerId + "Modulation", Convert.ToInt32(typeof(ModulationSchemeQam).GetEnumFromDescription((string)comboBoxModulation.SelectedItem)));
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue("scanDvbc" + _tunerId + "SymbolRate", numericTextBoxSymbolRate.Value);
 
       base.OnSectionDeActivated();
+    }
+
+    private void DebugSettings()
+    {
+      this.LogDebug("  country     = {0}", comboBoxCountry.SelectedItem);
+      this.LogDebug("  region      = {0}", comboBoxRegionProvider.SelectedItem);
+      this.LogDebug("  transmitter = {0}", comboBoxTransmitter.SelectedItem);
+      this.LogDebug("  frequency   = {0} kHz", numericTextBoxFrequency.Text);
+      this.LogDebug("  modulation  = {0}", comboBoxModulation.SelectedItem);
+      this.LogDebug("  symbol rate = {0} ks/s", numericTextBoxSymbolRate.Text);
     }
 
     #endregion
@@ -138,56 +132,47 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
     private void buttonScan_Click(object sender, EventArgs e)
     {
-      switch (_scanState)
+      if (_scanState == ScanState.Done)
       {
-        case ScanState.Done:
-          buttonScan.Text = "Scan for channels";
-          _scanState = ScanState.Initialized;
-          ShowOrHideScanProgress(false);
-          return;
-        case ScanState.Scanning:
-          buttonScan.Text = "Cancelling...";
-          _scanState = ScanState.Cancel;
-          if (_scanHelper != null)
-          {
-            _scanHelper.StopScan();
-          }
-          break;
-        case ScanState.Initialized:
-          List<FileTuningDetail> tuningDetails = null;
-          ScanType scanType = ActiveScanType;
-          if (scanType != ScanType.PredefinedProvider)
-          {
-            tuningDetails = new List<FileTuningDetail> { GetManualTuning() };
-          }
-          else
-          {
-            CustomFileName tuningFile = (CustomFileName)comboBoxRegionProvider.SelectedItem;
-            this.LogInfo("DVB-C: start scanning, country = {0}, region = {1}...", comboBoxCountry.SelectedItem, tuningFile);
-            tuningDetails = _tuningDetailFilter.LoadList(tuningFile.FileName);
-          }
-          if (tuningDetails == null || tuningDetails.Count == 0)
-          {
-            return;
-          }
+        buttonScan.Text = "&Scan for channels";
+        _scanState = ScanState.Initialized;
+        ShowOrHideScanProgress(false);
+        return;
+      }
+      else if (_scanState == ScanState.Scanning)
+      {
+        buttonScan.Enabled = false;
+        buttonScan.Text = "Stopping...";
+        _scanState = ScanState.Stopping;
+        if (_scanHelper != null)
+        {
+          _scanHelper.StopScan();
+        }
+        return;
+      }
 
-          _scanHelper = new ChannelScanHelper(_tunerId, listViewProgress, progressBarProgress, OnNitScanFoundTransmitters, OnGetDbExistingTuningDetailCandidates, OnScanCompleted, progressBarSignalStrength, progressBarSignalQuality);
-          bool result;
-          if (scanType == ScanType.FullNetworkInformationTable)
-          {
-            result = _scanHelper.StartNitScan(tuningDetails[0]);
-          }
-          else
-          {
-            result = _scanHelper.StartScan(tuningDetails, scanType);
-          }
-          if (result)
-          {
-            _scanState = ScanState.Scanning;
-            buttonScan.Text = "Cancel...";
-            ShowOrHideScanProgress(true);
-          }
-          break;
+      IList<FileTuningDetail> tuningDetails = null;
+      if (checkBoxUseAdvancedOptions.Enabled && checkBoxUseAdvancedOptions.Checked && checkBoxUseManualTuning.Checked)
+      {
+        tuningDetails = new List<FileTuningDetail> { GetManualTuning() };
+      }
+      else
+      {
+        this.LogInfo("scan DVB-C: start scanning, country = {0}, region = {1}", comboBoxCountry.SelectedItem, comboBoxRegionProvider.SelectedItem);
+        tuningDetails = _tuningDetailFilter.TuningDetails;
+      }
+
+      _scanHelper = new ChannelScanHelper(_tunerId, listViewProgress, progressBarProgress, OnNitScanFoundTransmitters, OnGetDbExistingTuningDetailCandidates, OnScanCompleted, progressBarSignalStrength, progressBarSignalQuality);
+      ScanType scanType = ScanType.Standard;
+      if (checkBoxUseAdvancedOptions.Enabled && checkBoxUseAdvancedOptions.Checked)
+      {
+        scanType = (ScanType)typeof(ScanType).GetEnumFromDescription((string)comboBoxScanType.SelectedItem);
+      }
+      if (_scanHelper.StartScan(tuningDetails, scanType))
+      {
+        _scanState = ScanState.Scanning;
+        buttonScan.Text = "&Stop";
+        ShowOrHideScanProgress(true);
       }
     }
 
@@ -195,7 +180,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     {
       this.Invoke((MethodInvoker)delegate
       {
-        _tuningDetailFilter.SaveList(string.Format("NIT Scans.{0}.xml", DateTime.Now.ToString("yyyy-MM-dd")), transmitters);
+        _tuningDetailFilter.Save(string.Format("NIT Scans.{0}.xml", DateTime.Now.ToString("yyyy-MM-dd")), transmitters);
       });
 
       IList<FileTuningDetail> tunableTransmitters = new List<FileTuningDetail>(transmitters.Count);
@@ -209,7 +194,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       return tunableTransmitters;
     }
 
-    private IList<DbTuningDetail> OnGetDbExistingTuningDetailCandidates(ScannedChannel foundChannel, bool useChannelMovementDetection)
+    private IList<DbTuningDetail> OnGetDbExistingTuningDetailCandidates(ScannedChannel foundChannel, bool useChannelMovementDetection, TuningDetailRelation includeRelations)
     {
       ChannelDvbBase dvbChannel = foundChannel.Channel as ChannelDvbBase;
       if (dvbChannel == null)
@@ -222,7 +207,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       IList<DbTuningDetail> tuningDetails;
       if (dvbChannel.OpenTvChannelId > 0)
       {
-        tuningDetails = ServiceAgents.Instance.ChannelServiceAgent.GetOpenTvTuningDetails(dvbChannel.OpenTvChannelId);
+        tuningDetails = ServiceAgents.Instance.ChannelServiceAgent.GetOpenTvTuningDetails(dvbChannel.OpenTvChannelId, includeRelations);
         if (tuningDetails != null && tuningDetails.Count > 0)
         {
           return tuningDetails;
@@ -235,7 +220,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       BroadcastStandard broadcastStandardSearchMask = BroadcastStandard.MaskCable & (BroadcastStandard.MaskDvb | BroadcastStandard.MaskIsdb);
       if (foundChannel.PreviousOriginalNetworkId > 0)
       {
-        tuningDetails = ServiceAgents.Instance.ChannelServiceAgent.GetDvbTuningDetails(broadcastStandardSearchMask, foundChannel.PreviousOriginalNetworkId, foundChannel.PreviousServiceId, foundChannel.PreviousTransportStreamId);
+        tuningDetails = ServiceAgents.Instance.ChannelServiceAgent.GetDvbTuningDetails(broadcastStandardSearchMask, foundChannel.PreviousOriginalNetworkId, foundChannel.PreviousServiceId, includeRelations, foundChannel.PreviousTransportStreamId);
         if (tuningDetails != null && tuningDetails.Count > 0)
         {
           return tuningDetails;
@@ -251,13 +236,13 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // for the exceptions.
       if (useChannelMovementDetection)
       {
-        tuningDetails = ServiceAgents.Instance.ChannelServiceAgent.GetDvbTuningDetails(broadcastStandardSearchMask, dvbChannel.OriginalNetworkId, dvbChannel.ServiceId);
+        tuningDetails = ServiceAgents.Instance.ChannelServiceAgent.GetDvbTuningDetails(broadcastStandardSearchMask, dvbChannel.OriginalNetworkId, dvbChannel.ServiceId, includeRelations);
         if (tuningDetails == null || tuningDetails.Count == 1)
         {
           return tuningDetails;
         }
       }
-      return ServiceAgents.Instance.ChannelServiceAgent.GetDvbTuningDetails(broadcastStandardSearchMask, dvbChannel.OriginalNetworkId, dvbChannel.ServiceId, dvbChannel.TransportStreamId);
+      return ServiceAgents.Instance.ChannelServiceAgent.GetDvbTuningDetails(broadcastStandardSearchMask, dvbChannel.OriginalNetworkId, dvbChannel.ServiceId, includeRelations, dvbChannel.TransportStreamId);
     }
 
     private void OnScanCompleted()
@@ -265,7 +250,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       _scanState = ScanState.Done;
       this.Invoke((MethodInvoker)delegate
       {
-        buttonScan.Text = "New scan";
+        buttonScan.Text = "&New scan";
+        buttonScan.Enabled = true;
       });
       _scanHelper = null;
     }
@@ -276,21 +262,23 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
     private void ShowOrHideScanProgress(bool showScanProgress)
     {
-      EnableOrDisablePredefinedScanFields();
+      comboBoxCountry.Enabled = !showScanProgress;
+      comboBoxRegionProvider.Enabled = !showScanProgress;
+      comboBoxTransmitter.Enabled = !showScanProgress;
+      groupBoxProgress.Visible = showScanProgress;
+
       if (showScanProgress)
       {
         checkBoxUseAdvancedOptions.Enabled = false;
         groupBoxAdvancedOptions.Visible = false;
         listViewProgress.Items.Clear();
-        groupBoxProgress.Visible = true;
         groupBoxProgress.BringToFront();
         UpdateZOrder();
       }
       else
       {
-        checkBoxUseAdvancedOptions.Enabled = true;
+        checkBoxUseAdvancedOptions.Enabled = !string.Equals(comboBoxTransmitter.SelectedItem.ToString(), TuningDetailFilter.ALL_TUNING_DETAIL_ITEM);
         groupBoxAdvancedOptions.Visible = checkBoxUseAdvancedOptions.Checked;
-        groupBoxProgress.Visible = false;
         if (groupBoxAdvancedOptions.Visible)
         {
           groupBoxAdvancedOptions.BringToFront();
@@ -299,27 +287,21 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       }
     }
 
-    private void EnableOrDisablePredefinedScanFields()
+    private void comboBoxTransmitter_SelectedIndexChanged(object sender, EventArgs e)
     {
-      bool enableFields = _scanState == ScanState.Initialized && ActiveScanType == ScanType.PredefinedProvider;
-      comboBoxCountry.Enabled = enableFields;
-      comboBoxRegionProvider.Enabled = enableFields;
+      bool enableAdvancedOptions = string.Equals(comboBoxTransmitter.SelectedItem.ToString(), TuningDetailFilter.ALL_TUNING_DETAIL_ITEM);
+      checkBoxUseAdvancedOptions.Enabled = enableAdvancedOptions;
+      groupBoxAdvancedOptions.Enabled = enableAdvancedOptions;
     }
 
-    private void checkBoxUseAdvancedScanningOptions_CheckedChanged(object sender, EventArgs e)
+    private void checkBoxUseAdvancedOptions_CheckedChanged(object sender, EventArgs e)
     {
       groupBoxAdvancedOptions.Visible = !groupBoxAdvancedOptions.Visible;
-      EnableOrDisablePredefinedScanFields();
     }
 
-    private void comboBoxScanType_SelectedIndexChanged(object sender, EventArgs e)
+    private void checkBoxUseManualTuning_CheckedChanged(object sender, EventArgs e)
     {
-      EnableOrDisablePredefinedScanFields();
-
-      bool isPredefinedScan = ActiveScanType == ScanType.PredefinedProvider;
-      numericTextBoxFrequency.Enabled = !isPredefinedScan;
-      comboBoxModulation.Enabled = !isPredefinedScan;
-      numericTextBoxSymbolRate.Enabled = !isPredefinedScan;
+      groupBoxManualTuning.Enabled = checkBoxUseManualTuning.Checked;
     }
 
     #endregion

@@ -24,7 +24,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections.Helpers.Enum
   {
     Initialized,
     Scanning,
-    Cancel,
+    Stopping,
     Done
   }
 }

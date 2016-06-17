@@ -25,296 +25,378 @@ using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Serialization;
+using Mediaportal.TV.Server.Common.Types.Enum;
+using Mediaportal.TV.Server.SetupControls;
 using Mediaportal.TV.Server.SetupControls.UserInterfaceControls;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
 namespace Mediaportal.TV.Server.SetupTV.Sections.Helpers
 {
-  #region CustomFileName class
-
   /// <summary>
-  /// Container class for filename handling of tuning details
-  /// </summary>
-  internal class CustomFileName
-  {
-    private readonly string _fileName;
-    private readonly string _displayName;
-    private readonly string _filter;
-
-    public string FileName
-    {
-      get { return _fileName; }
-    }
-
-    public string DisplayName
-    {
-      get { return _displayName; }
-    }
-
-    public CustomFileName(string fileName, string filter)
-    {
-      _fileName = fileName;
-      _displayName = Path.GetFileNameWithoutExtension(fileName);
-      if (!string.IsNullOrEmpty(filter))
-      {
-        _displayName = _displayName.Replace(filter + ".", "");
-      }
-      _filter = filter;
-    }
-
-    public override string ToString()
-    {
-      return _displayName;
-    }
-
-    public override bool Equals(object obj)
-    {
-      string s = obj as string;
-      return s != null && string.Equals(obj, _displayName);
-    }
-
-    public override int GetHashCode()
-    {
-      return (_fileName ?? string.Empty).GetHashCode() ^ (_displayName ?? string.Empty).GetHashCode() ^ (_filter ?? string.Empty).GetHashCode();
-    }
-  }
-
-  #endregion
-
-  #region FileFilter class
-
-  /// <summary>
-  /// Helper class to fill master/detail comboboxes with filtered tuning files
+  /// This class simplifies handling of tuning detail selection for scanning.
   /// </summary>
   internal class TuningDetailFilter
   {
-    private readonly string _folderName;
-    private readonly MPComboBox _cbxCountries = null;
-    private readonly MPComboBox _cbxRegions = null;
+    private class ComboBoxFileItem
+    {
+      private readonly string _fileName;
+      private readonly string _displayName;
+      private readonly string _filter;
+
+      public ComboBoxFileItem(string fileName, string filter)
+      {
+        _fileName = fileName;
+        _displayName = Path.GetFileNameWithoutExtension(fileName);
+        if (!string.IsNullOrEmpty(filter))
+        {
+          _displayName = _displayName.Replace(filter + ".", "");
+        }
+        _filter = filter;
+      }
+
+      public string FileName
+      {
+        get { return _fileName; }
+      }
+
+      public string DisplayName
+      {
+        get { return _displayName; }
+      }
+
+      public override string ToString()
+      {
+        return _displayName;
+      }
+
+      public override bool Equals(object obj)
+      {
+        ComboBoxFileItem item = obj as ComboBoxFileItem;
+        return item != null && string.Equals(item.FileName, _fileName) && string.Equals(item._filter, _filter);
+      }
+
+      public override int GetHashCode()
+      {
+        return _fileName.GetHashCode() ^ (_filter ?? string.Empty).GetHashCode();
+      }
+    }
+
+    public static readonly string DATA_PATH = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "Team MediaPortal", "TV Server Configuration", "Tuning Details");
+    public const string SATELLITE_SUB_DIRECTORY = "dvbs";
+    public const string ALL_TUNING_DETAIL_ITEM = "All";
+
+    private readonly BroadcastStandard _broadcastStandard;
+    private readonly MPComboBox _comboBoxLevel1 = null;
+    private readonly MPComboBox _comboBoxLevel2 = null;
+    private readonly MPComboBox _comboBoxLevel3 = null;
     private string[] _files;
 
-    public static string GetDataPath()
+    public TuningDetailFilter(BroadcastStandard broadcastStandard, MPComboBox comboBoxLevel1, string selectedItemLevel1, MPComboBox comboBoxLevel2, string selectedItemLevel2, MPComboBox comboBoxLevel3 = null, string selectedItemLevel3 = null)
     {
-      return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "Team MediaPortal", "TV Server Configuration", "Tuning Details");
-    }
+      _broadcastStandard = broadcastStandard;
+      _comboBoxLevel1 = comboBoxLevel1;
+      _comboBoxLevel2 = comboBoxLevel2;
+      _comboBoxLevel3 = comboBoxLevel3;
 
-    /// <summary>
-    /// Load existing list from xml file 
-    /// </summary>
-    /// <param name="fileName">Path for input file</param>
-    public List<TuningDetail> LoadList(string fileName, bool isFullPath = true)
-    {
-      if (!isFullPath)
+      _comboBoxLevel1.SelectedIndexChanged += Level1SelectedIndexChanged;
+      if (comboBoxLevel3 != null)
       {
-        fileName = Path.Combine(GetDataPath(), _folderName, fileName);
+        _comboBoxLevel2.DisplayMember = "DisplayName";
+        _comboBoxLevel2.SelectedIndexChanged += Level2SelectedIndexChanged;
       }
-      try
+      else
       {
-        using (XmlReader parFileXml = XmlReader.Create(fileName))
-        {
-          XmlSerializer xmlSerializer = new XmlSerializer(typeof(List<TuningDetail>));
-          object result = xmlSerializer.Deserialize(parFileXml);
-          parFileXml.Close();
-          return (List<TuningDetail>)result;
-        }
-      }
-      catch (Exception ex)
-      {
-        this.LogError(ex, "Error loading tuning details");
-        MessageBox.Show("Transponder list could not be loaded, check error.log for details.");
-        return null;
-      }
-    }
-
-    public void SaveList(string fileName, IList<TuningDetail> tuningDetails)
-    {
-      string filePath = Path.Combine(GetDataPath(), _folderName, fileName);
-      try
-      {
-        using (XmlWriter parFileXML = XmlWriter.Create(filePath, new XmlWriterSettings() { Indent = true, IndentChars = "  ", NewLineChars = Environment.NewLine }))
-        {
-          XmlSerializer xmlSerializer = new XmlSerializer(typeof(List<TuningDetail>));
-          xmlSerializer.Serialize(parFileXML, tuningDetails);
-          parFileXML.Close();
-
-          if (_cbxCountries == null)
-          {
-            LoadFiles();
-            return;
-          }
-          object selectedCountry = _cbxCountries.SelectedItem;
-          object selectedRegion = _cbxRegions.SelectedItem;
-          LoadFiles();
-          _cbxCountries.SelectedItem = selectedCountry;
-          _cbxRegions.SelectedItem = selectedRegion;
-        }
-      }
-      catch (Exception ex)
-      {
-        this.LogError(ex, "Error saving tuning details");
-      }
-    }
-
-    /// <summary>
-    /// CTOR
-    /// </summary>
-    /// <param name="tuningType">Tuning type (subfolder name)</param>
-    /// <param name="cbxCountries">reference to country cbx</param>
-    /// <param name="cbxRegions">reference to region cbx</param>
-    public TuningDetailFilter(string tuningType, MPComboBox cbxCountries = null, MPComboBox cbxRegions = null)
-    {
-      _folderName = tuningType;
-      _cbxCountries = cbxCountries;
-      _cbxRegions = cbxRegions;
-      if (_cbxCountries == null)
-      {
-        return;
+        _comboBoxLevel1.DisplayMember = "DisplayName";
       }
 
       LoadFiles();
-      if (_cbxCountries != null && _cbxRegions != null)
+
+      Select(_comboBoxLevel1, selectedItemLevel1);
+      Select(_comboBoxLevel2, selectedItemLevel2);
+      if (_comboBoxLevel3 != null)
       {
-        _cbxRegions.DisplayMember = "DisplayName";
-        _cbxCountries.SelectedIndexChanged += SelectedIndexChanged;
-        _cbxCountries.SelectedIndex = 0;
+        Select(_comboBoxLevel3, selectedItemLevel3);
       }
+    }
+
+    public static void Load(BroadcastStandard broadcastStandard, string fileName, MPComboBox comboBox, bool isFileNameQualified = false)
+    {
+      if (broadcastStandard == BroadcastStandard.Unknown)
+      {
+        comboBox.Enabled = false;
+        comboBox.Items.Clear();
+        comboBox.Items.Add(TuningDetailFilter.ALL_TUNING_DETAIL_ITEM);
+        comboBox.SelectedIndex = 0;
+        return;
+      }
+
+      if (!isFileNameQualified)
+      {
+        fileName = Path.Combine(GetPathForBroadcastStandard(broadcastStandard), fileName);
+      }
+
+      comboBox.BeginUpdate();
+      try
+      {
+        comboBox.Items.Clear();
+        comboBox.Items.Add(ALL_TUNING_DETAIL_ITEM);
+        if (broadcastStandard == BroadcastStandard.DvbIp)
+        {
+          LoadM3uPlaylist(fileName, comboBox);
+          return;
+        }
+
+        List<TuningDetail> tuningDetails;
+        using (XmlReader xmlReader = XmlReader.Create(fileName))
+        {
+          XmlSerializer xmlSerializer = new XmlSerializer(typeof(List<TuningDetail>));
+          tuningDetails = (List<TuningDetail>)xmlSerializer.Deserialize(xmlReader);
+          xmlReader.Close();
+        }
+        foreach (TuningDetail tuningDetail in tuningDetails)
+        {
+          if (broadcastStandard.HasFlag(tuningDetail.BroadcastStandard))
+          {
+            comboBox.Items.Add(tuningDetail);
+          }
+        }
+        comboBox.SelectedIndex = 0;
+      }
+      catch (Exception ex)
+      {
+        Log.Error(ex, "tuning detail filter: failed to load tuning details, file name = {0}", fileName);
+        MessageBox.Show("Failed to load tuning details. " + SectionSettings.SENTENCE_CHECK_LOG_FILES, SectionSettings.MESSAGE_CAPTION, MessageBoxButtons.OK, MessageBoxIcon.Error);
+      }
+      finally
+      {
+        comboBox.Enabled = true;
+        comboBox.EndUpdate();
+      }
+    }
+
+    public void Save(string fileName, IList<TuningDetail> tuningDetails)
+    {
+      string filePath = Path.Combine(GetPathForBroadcastStandard(_broadcastStandard), fileName);
+      try
+      {
+        using (XmlWriter xmlWriter = XmlWriter.Create(filePath, new XmlWriterSettings() { Indent = true, IndentChars = "  ", NewLineChars = Environment.NewLine }))
+        {
+          XmlSerializer xmlSerializer = new XmlSerializer(typeof(List<TuningDetail>));
+          xmlSerializer.Serialize(xmlWriter, tuningDetails);
+          xmlWriter.Close();
+
+          object selectedItemLevel1 = _comboBoxLevel1.SelectedItem;
+          object selectedItemLevel2 = _comboBoxLevel2.SelectedItem;
+          object selectedItemLevel3 = null;
+          if (_comboBoxLevel3 != null)
+          {
+            selectedItemLevel3 = _comboBoxLevel3.SelectedItem;
+          }
+          LoadFiles();
+          _comboBoxLevel1.SelectedItem = selectedItemLevel1;
+          _comboBoxLevel2.SelectedItem = selectedItemLevel2;
+          if (_comboBoxLevel3 != null)
+          {
+            _comboBoxLevel3.SelectedItem = selectedItemLevel3;
+          }
+        }
+      }
+      catch (Exception ex)
+      {
+        this.LogError(ex, "tuning detail filter: failed to save tuning detail list, file name = {0}", fileName);
+      }
+    }
+
+    public IList<TuningDetail> TuningDetails
+    {
+      get
+      {
+        if (_comboBoxLevel3 == null)
+        {
+          return GetTuningDetails(_comboBoxLevel2);
+        }
+        return GetTuningDetails(_comboBoxLevel3);
+      }
+    }
+
+    public static IList<TuningDetail> GetTuningDetails(MPComboBox comboBox)
+    {
+      if (!string.Equals(comboBox.SelectedItem, ALL_TUNING_DETAIL_ITEM))
+      {
+        return new List<TuningDetail>(1) { comboBox.SelectedItem as TuningDetail };
+      }
+
+      List<TuningDetail> tuningDetails = new List<TuningDetail>(comboBox.Items.Count - 1);
+      foreach (object item in comboBox.Items)
+      {
+        TuningDetail tuningDetail = item as TuningDetail;
+        if (tuningDetail != null)
+        {
+          tuningDetails.Add(tuningDetail);
+        }
+      }
+      return tuningDetails;
     }
 
     private void LoadFiles()
     {
-      if (string.Equals(_folderName, "dvbip"))
+      string filter = "*.xml";
+      if (_broadcastStandard == BroadcastStandard.DvbIp)
       {
-        _files = Directory.GetFiles(Path.Combine(GetDataPath(), _folderName), "*.m3u");
+        filter = "*.m3u";
       }
-      else
-      {
-        _files = Directory.GetFiles(Path.Combine(GetDataPath(), _folderName), "*.xml");
-      }
+      _files = Directory.GetFiles(GetPathForBroadcastStandard(_broadcastStandard), filter);
+      Array.Sort(_files);
 
-      // Sort satellites by E/W then longitude.
-      if (string.Equals(_folderName, "dvbs"))
-      {
-        Array.Sort(_files, delegate(string s1, string s2)
-        {
-          s1 = Path.GetFileNameWithoutExtension(s1);
-          s2 = Path.GetFileNameWithoutExtension(s2);
-          Match m1 = Regex.Match(s1, @"^(\d+).*?([EW]).*");
-          Match m2 = Regex.Match(s2, @"^(\d+).*?([EW]).*");
-          if (m1.Success && m2.Success)
-          {
-            string ew1 = m1.Groups[2].Captures[0].Value;
-            string ew2 = m2.Groups[2].Captures[0].Value;
-            if (string.Equals(ew1, ew2))
-            {
-              float f1 = float.Parse(m1.Groups[1].Captures[0].Value);
-              float f2 = float.Parse(m2.Groups[1].Captures[0].Value);
-              if (f1 < f2)
-              {
-                return -1;
-              }
-              if (f1 > f2)
-              {
-                return 1;
-              }
-              return string.Compare(s1, s2);
-            }
-            if (string.Equals(ew1, "E"))
-            {
-              return -1;
-            }
-            return 1;
-          }
-          if (m1.Success)
-          {
-            return -1;
-          }
-          if (m2.Success)
-          {
-            return 1;
-          }
-          return string.Compare(s1, s2);
-        });
-      }
-
-      _cbxCountries.BeginUpdate();
+      _comboBoxLevel1.BeginUpdate();
       try
       {
-        _cbxCountries.Items.Clear();
-        if (_cbxRegions == null)
+        _comboBoxLevel1.Items.Clear();
+        if (_comboBoxLevel3 == null)
         {
-          _cbxCountries.Items.AddRange(FilteredList(_files, null).ToArray());
+          _comboBoxLevel1.Items.AddRange(Filter(null));
         }
         else
         {
-          _cbxCountries.Items.AddRange(CountryList(_files));
+          HashSet<string> distinct = new HashSet<string>();
+          foreach (string file in _files)
+          {
+            string level1Item = Path.GetFileName(file).Split('.')[0];
+            if (!distinct.Contains(level1Item))
+            {
+              distinct.Add(level1Item);
+              _comboBoxLevel1.Items.Add(level1Item);
+            }
+          }
         }
       }
       finally
       {
-        _cbxCountries.EndUpdate();
+        _comboBoxLevel1.EndUpdate();
       }
     }
 
-    /// <summary>
-    /// Returns a filtered list depending on selected country
-    /// 
-    /// Naming format:
-    ///    country.region.xml
-    /// </summary>
-    /// <param name="fullList">Complete file list</param>
-    /// <param name="countryFilter">Selected country</param>
-    /// <returns>List of CustomFileNames</returns>
-    private List<CustomFileName> FilteredList(string[] fullList, string countryFilter)
+    private static string GetPathForBroadcastStandard(BroadcastStandard broadcastStandard)
     {
-      List<CustomFileName> filtered = new List<CustomFileName>();
-      foreach (string singleFile in fullList)
+      if (broadcastStandard == BroadcastStandard.AnalogTelevision || broadcastStandard == BroadcastStandard.FmRadio)
       {
-        if (countryFilter == null || Path.GetFileName(singleFile).StartsWith(countryFilter))
+        return Path.Combine(DATA_PATH, "analog");
+      }
+      if ((BroadcastStandard.MaskDvb | BroadcastStandard.MaskCable).HasFlag(broadcastStandard))
+      {
+        return Path.Combine(DATA_PATH, "dvbc");
+      }
+      if (broadcastStandard == BroadcastStandard.DvbIp)
+      {
+        return Path.Combine(DATA_PATH, "dvbip");
+      }
+      if (BroadcastStandard.MaskSatellite.HasFlag(broadcastStandard))
+      {
+        return Path.Combine(DATA_PATH, SATELLITE_SUB_DIRECTORY);
+      }
+      if ((BroadcastStandard.MaskDvb | BroadcastStandard.MaskTerrestrial).HasFlag(broadcastStandard))
+      {
+        return Path.Combine(DATA_PATH, "dvbt");
+      }
+      return null;
+    }
+
+    private static void LoadM3uPlaylist(string fileName, MPComboBox comboBox)
+    {
+      Regex regex = new Regex(@"^\s*#EXTINF\s*:\s*(\d+)\s*,\s*([^\s].*?)\s*$");
+      TuningDetail tuningDetail = new TuningDetail();
+      foreach (string line in File.ReadLines(fileName))
+      {
+        if (!string.IsNullOrWhiteSpace(line))
         {
-          filtered.Add(new CustomFileName(singleFile, countryFilter));
+          Match m = regex.Match(line);
+          if (!m.Success)
+          {
+            string l = line.Trim();
+            if (!l.StartsWith("#"))
+            {
+              tuningDetail.BroadcastStandard = BroadcastStandard.DvbIp;
+              tuningDetail.Url = l;
+            }
+          }
+          else
+          {
+            if (!string.IsNullOrEmpty(tuningDetail.Url))
+            {
+              comboBox.Items.Add(tuningDetail);
+              tuningDetail = new TuningDetail();
+            }
+            string lcn = m.Groups[1].Captures[0].Value;
+            if (!string.Equals(lcn, "0"))
+            {
+              tuningDetail.StreamLogicalChannelNumber = lcn;
+            }
+            tuningDetail.StreamName = m.Groups[2].Captures[0].Value;
+          }
         }
       }
-      return filtered;
+      if (!string.IsNullOrEmpty(tuningDetail.Url))
+      {
+        comboBox.Items.Add(tuningDetail);
+      }
     }
 
-    /// <summary>
-    /// Returns the distinct country names
-    /// 
-    /// Naming format:
-    ///    country.region.xml
-    /// </summary>
-    /// <param name="fullList">Complete file list</param>
-    /// <returns>List of countries</returns>
-    private string[] CountryList(string[] fullList)
+    private ComboBoxFileItem[] Filter(string filter)
     {
-      SortedSet<string> filtered = new SortedSet<string>();
-      foreach (string singleFile in fullList)
+      List<ComboBoxFileItem> selected = new List<ComboBoxFileItem>(_files.Length);
+      foreach (string file in _files)
       {
-        string country = Path.GetFileName(singleFile).Split('.')[0];
-        if (!filtered.Contains(country))
+        if (filter == null || Path.GetFileName(file).StartsWith(filter + "."))
         {
-          filtered.Add(country);
+          selected.Add(new ComboBoxFileItem(file, filter));
         }
       }
-      string[] toReturn = new string[filtered.Count];
-      filtered.CopyTo(toReturn);
-      return toReturn;
+      return selected.ToArray();
     }
 
-    /// <summary>
-    /// refreshes detail combobox
-    /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="e"></param>
-    private void SelectedIndexChanged(object sender, EventArgs e)
+    private static void Select(MPComboBox comboBox, string itemLabel)
     {
-      if (_cbxRegions != null)
+      if (itemLabel != null)
       {
-        _cbxRegions.DataSource = FilteredList(_files, _cbxCountries.SelectedItem.ToString());
+        foreach (object item in comboBox.Items)
+        {
+          if (string.Equals(itemLabel, item.ToString()))
+          {
+            comboBox.SelectedItem = item;
+          }
+        }
       }
+      if (comboBox.SelectedItem == null)
+      {
+        comboBox.SelectedIndex = 0;
+      }
+    }
+
+    private void Level1SelectedIndexChanged(object sender, EventArgs e)
+    {
+      if (_comboBoxLevel3 == null)
+      {
+        Load(_broadcastStandard, ((ComboBoxFileItem)_comboBoxLevel1.SelectedItem).FileName, _comboBoxLevel2, true);
+        return;
+      }
+
+      _comboBoxLevel2.BeginUpdate();
+      try
+      {
+        _comboBoxLevel2.Items.Clear();
+        _comboBoxLevel2.Items.AddRange(Filter(_comboBoxLevel1.SelectedItem.ToString()));
+        _comboBoxLevel2.SelectedIndex = 0;
+      }
+      finally
+      {
+        _comboBoxLevel2.EndUpdate();
+      }
+    }
+
+    private void Level2SelectedIndexChanged(object sender, EventArgs e)
+    {
+      Load(_broadcastStandard, ((ComboBoxFileItem)_comboBoxLevel2.SelectedItem).FileName, _comboBoxLevel3, true);
     }
   }
-
-  #endregion
 }

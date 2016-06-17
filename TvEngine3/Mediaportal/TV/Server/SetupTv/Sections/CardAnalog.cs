@@ -55,12 +55,11 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     {
       _tunerId = tunerId;
       InitializeComponent();
-      base.Text = name;
     }
 
     public override void OnSectionActivated()
     {
-      this.LogDebug("analog: activating, tuner ID = {0}", _tunerId);
+      this.LogDebug("scan analog: activating, tuner ID = {0}", _tunerId);
 
       // First activation.
       if (comboBoxCountry.Items.Count == 0)
@@ -68,9 +67,17 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         comboBoxCountry.Items.AddRange(CountryCollection.Instance.Countries);
       }
 
-      Tuner tuner = ServiceAgents.Instance.TunerServiceAgent.GetTuner(_tunerId, TunerIncludeRelationEnum.None);
-
+      Tuner tuner = ServiceAgents.Instance.TunerServiceAgent.GetTuner(_tunerId, TunerRelation.None);
       BroadcastStandard tunerSupportedBroadcastStandards = (BroadcastStandard)tuner.SupportedBroadcastStandards;
+      this.LogDebug("  standard(s) = [{0}]", tunerSupportedBroadcastStandards);
+
+      if (_scanHelper != null)
+      {
+        DebugSettings();
+        base.OnSectionActivated();
+        return;
+      }
+
       comboBoxScanMode.BeginUpdate();
       try
       {
@@ -99,12 +106,13 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         comboBoxScanMode.EndUpdate();
       }
 
-      comboBoxScanMode.SelectedItem = ServiceAgents.Instance.SettingServiceAgent.GetValue("analog" + _tunerId + "ScanMode", SCAN_MODE_CAPTURE);
+      comboBoxScanMode.SelectedItem = ServiceAgents.Instance.SettingServiceAgent.GetValue("scanAnalog" + _tunerId + "ScanMode", SCAN_MODE_CAPTURE);
       if (comboBoxScanMode.SelectedItem == null)
       {
         comboBoxScanMode.SelectedIndex = 0;
       }
-      string countryName = ServiceAgents.Instance.SettingServiceAgent.GetValue("analog" + _tunerId + "Country", System.Globalization.RegionInfo.CurrentRegion.EnglishName);
+
+      string countryName = ServiceAgents.Instance.SettingServiceAgent.GetValue("scanAnalog" + _tunerId + "Country", System.Globalization.RegionInfo.CurrentRegion.EnglishName);
       Country country = CountryCollection.Instance.GetCountryByName(countryName);
       if (country == null)
       {
@@ -115,31 +123,60 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         comboBoxCountry.SelectedItem = country;
       }
 
+      string transmitter = ServiceAgents.Instance.SettingServiceAgent.GetValue("scanAnalog" + _tunerId + "Transmitter", TuningDetailFilter.ALL_TUNING_DETAIL_ITEM);
+      foreach (object item in comboBoxTransmitter.Items)
+      {
+        if (string.Equals(item.ToString(), transmitter))
+        {
+          comboBoxTransmitter.SelectedItem = item;
+          break;
+        }
+      }
+      if (comboBoxTransmitter.SelectedItem == null)
+      {
+        comboBoxTransmitter.SelectedIndex = 0;
+      }
+
+      DebugSettings();
+
       base.OnSectionActivated();
     }
 
     public override void OnSectionDeActivated()
     {
-      this.LogDebug("analog: deactivating, tuner ID = {0}", _tunerId);
-      ServiceAgents.Instance.SettingServiceAgent.SaveValue("analog" + _tunerId + "ScanMode", (string)comboBoxScanMode.SelectedItem);
-      ServiceAgents.Instance.SettingServiceAgent.SaveValue("analog" + _tunerId + "Country", ((Country)comboBoxCountry.SelectedItem).Name);
+      this.LogDebug("scan analog: deactivating, tuner ID = {0}", _tunerId);
+
+      DebugSettings();
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue("scanAnalog" + _tunerId + "ScanMode", (string)comboBoxScanMode.SelectedItem);
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue("scanAnalog" + _tunerId + "Country", ((Country)comboBoxCountry.SelectedItem).Name);
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue("scanAnalog" + _tunerId + "Transmitter", comboBoxTransmitter.SelectedItem.ToString());
+
       base.OnSectionDeActivated();
+    }
+
+    private void DebugSettings()
+    {
+      this.LogDebug("  scan mode   = {0}", comboBoxScanMode.SelectedItem);
+      this.LogDebug("  country     = {0}", comboBoxCountry.SelectedItem);
+      this.LogDebug("  transmitter = {0}", comboBoxTransmitter.SelectedItem);
     }
 
     private void buttonScan_Click(object sender, EventArgs e)
     {
       if (_scanHelper != null)
       {
-        buttonScan.Text = "Cancelling...";
+        buttonScan.Enabled = false;
+        buttonScan.Text = "Stopping...";
         _scanHelper.StopScan();
         return;
       }
 
-      List<FileTuningDetail> tuningDetails = null;
+      IList<FileTuningDetail> tuningDetails = null;
       string scanMode = (string)comboBoxScanMode.SelectedItem;
+      Country country = (Country)comboBoxCountry.SelectedItem;
       if (string.Equals(scanMode, SCAN_MODE_CAPTURE))
       {
-        tuningDetails = new List<FileTuningDetail>
+        tuningDetails = new List<FileTuningDetail>(1)
         {
           new FileTuningDetail
           {
@@ -154,68 +191,54 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       }
       else
       {
-        TuningDetailFilter filter = new TuningDetailFilter("analog");
-        if (string.Equals(scanMode, SCAN_MODE_FM_RADIO))
+        AnalogTunerSource source = AnalogTunerSource.Antenna;
+        if (string.Equals(scanMode, SCAN_MODE_TV_CABLE))
         {
-          if (string.Equals(System.Globalization.RegionInfo.CurrentRegion.EnglishName, "Japan"))
-          {
-            tuningDetails = filter.LoadList("FM Radio Japan.xml", false);
-          }
-          else
-          {
-            tuningDetails = filter.LoadList("FM Radio.xml", false);
-          }
+          source = AnalogTunerSource.Cable;
         }
-        else if (string.Equals(scanMode, SCAN_MODE_TV_CABLE) || string.Equals(scanMode, SCAN_MODE_TV_TERRESTRIAL))
+        tuningDetails = TuningDetailFilter.GetTuningDetails(comboBoxTransmitter);
+        if (tuningDetails == null || tuningDetails.Count == 0)
         {
-          AnalogTunerSource source = AnalogTunerSource.Cable;
-          if (string.Equals(scanMode, SCAN_MODE_TV_TERRESTRIAL))
-          {
-            source = AnalogTunerSource.Antenna;
-          }
-          tuningDetails = filter.LoadList("TV.xml", false);
-          foreach (FileTuningDetail td in tuningDetails)
-          {
-            td.Country = (Country)comboBoxCountry.SelectedItem;
-            td.TunerSource = source;
-          }
+          return;
         }
-      }
-      if (tuningDetails == null)
-      {
-        return;
+        foreach (FileTuningDetail tuningDetail in tuningDetails)
+        {
+          tuningDetail.Country = country;
+          tuningDetail.TunerSource = source;
+        }
       }
 
       listViewProgress.Items.Clear();
       ListViewItem item = listViewProgress.Items.Add(string.Format("start scanning {0}...", scanMode));
       item.EnsureVisible();
-      this.LogInfo("analog: start scanning {0}...", scanMode);
+      this.LogInfo("scan analog: start scanning, mode = {0}, country = {1}", scanMode, country);
 
       _scanHelper = new ChannelScanHelper(_tunerId, listViewProgress, progressBarProgress, null, OnGetDbExistingTuningDetailCandidates, OnScanCompleted, progressBarSignalStrength, progressBarSignalQuality);
       if (_scanHelper.StartScan(tuningDetails))
       {
         comboBoxScanMode.Enabled = false;
         comboBoxCountry.Enabled = false;
-        buttonScan.Text = "Cancel...";
+        comboBoxTransmitter.Enabled = false;
+        buttonScan.Text = "&Stop";
       }
     }
 
-    private IList<DbTuningDetail> OnGetDbExistingTuningDetailCandidates(ScannedChannel foundChannel, bool useChannelMovementDetection)
+    private IList<DbTuningDetail> OnGetDbExistingTuningDetailCandidates(ScannedChannel foundChannel, bool useChannelMovementDetection, TuningDetailRelation includeRelations)
     {
       ChannelCapture captureChannel = foundChannel.Channel as ChannelCapture;
       if (captureChannel != null)
       {
-        return ServiceAgents.Instance.ChannelServiceAgent.GetCaptureTuningDetails(foundChannel.Channel.Name);
+        return ServiceAgents.Instance.ChannelServiceAgent.GetCaptureTuningDetails(foundChannel.Channel.Name, includeRelations);
       }
       ChannelFmRadio fmRadioChannel = foundChannel.Channel as ChannelFmRadio;
       if (fmRadioChannel != null)
       {
-        return ServiceAgents.Instance.ChannelServiceAgent.GetFmRadioTuningDetails(fmRadioChannel.Frequency);
+        return ServiceAgents.Instance.ChannelServiceAgent.GetFmRadioTuningDetails(fmRadioChannel.Frequency, includeRelations);
       }
       ChannelAnalogTv analogTvChannel = foundChannel.Channel as ChannelAnalogTv;
       if (analogTvChannel != null)
       {
-        return ServiceAgents.Instance.ChannelServiceAgent.GetAnalogTelevisionTuningDetails(analogTvChannel.PhysicalChannelNumber);
+        return ServiceAgents.Instance.ChannelServiceAgent.GetAnalogTelevisionTuningDetails(analogTvChannel.PhysicalChannelNumber, includeRelations);
       }
       return null;
     }
@@ -224,25 +247,71 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     {
       this.Invoke((MethodInvoker)delegate
       {
-        buttonScan.Text = "Scan for channels";
         comboBoxScanMode.Enabled = true;
-        comboBoxCountry.Enabled = true;
+        string scanMode = (string)comboBoxScanMode.SelectedItem;
+        if (string.Equals(scanMode, SCAN_MODE_TV_CABLE) || string.Equals(scanMode, SCAN_MODE_TV_TERRESTRIAL))
+        {
+          comboBoxCountry.Enabled = true;
+          comboBoxTransmitter.Enabled = true;
+        }
+        else
+        {
+          comboBoxCountry.Enabled = false;
+          if (string.Equals(scanMode, SCAN_MODE_FM_RADIO))
+          {
+            comboBoxTransmitter.Enabled = true;
+          }
+          else
+          {
+            comboBoxTransmitter.Enabled = false;
+          }
+        }
+        buttonScan.Enabled = true;
       });
       _scanHelper = null;
     }
 
     private void comboBoxScanMode_SelectedIndexChanged(object sender, EventArgs e)
     {
-      bool countryVisible = string.Equals((string)comboBoxScanMode.SelectedItem, SCAN_MODE_TV_CABLE) || string.Equals((string)comboBoxScanMode.SelectedItem, SCAN_MODE_TV_TERRESTRIAL);
-      labelCountry.Visible = countryVisible;
-      comboBoxCountry.Visible = countryVisible;
-      if (string.Equals((string)comboBoxScanMode.SelectedItem, SCAN_MODE_EXTERNAL_TUNER))
+      string scanMode = (string)comboBoxScanMode.SelectedItem;
+
+      if (string.Equals(scanMode, SCAN_MODE_TV_CABLE) || string.Equals(scanMode, SCAN_MODE_TV_TERRESTRIAL))
       {
-        buttonScan.Text = "Import channels";
+        comboBoxCountry.Enabled = true;
+        TuningDetailFilter.Load(BroadcastStandard.AnalogTelevision, "TV.xml", comboBoxTransmitter);
       }
       else
       {
-        buttonScan.Text = "Scan for channels";
+        comboBoxCountry.Enabled = false;
+        if (string.Equals(scanMode, SCAN_MODE_FM_RADIO))
+        {
+          if (string.Equals(System.Globalization.RegionInfo.CurrentRegion.EnglishName, "Japan"))
+          {
+            TuningDetailFilter.Load(BroadcastStandard.FmRadio, "FM Radio Japan.xml", comboBoxTransmitter);
+          }
+          else
+          {
+            TuningDetailFilter.Load(BroadcastStandard.FmRadio, "FM Radio.xml", comboBoxTransmitter);
+          }
+        }
+        else
+        {
+          TuningDetailFilter.Load(BroadcastStandard.Unknown, null, comboBoxTransmitter);
+        }
+      }
+
+      SetScanButtonText(scanMode);
+    }
+
+    private void SetScanButtonText(string scanMode)
+    {
+      if (string.Equals(scanMode, SCAN_MODE_EXTERNAL_TUNER))
+      {
+        buttonScan.Text = "&Import channels";
+      }
+      else
+      {
+        buttonScan.Text = "&Scan for channels";
       }
     }
 
@@ -254,7 +323,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       }
 
       string fileName = openFileDialogExternalTunerChannelList.FileName;
-      this.LogInfo("analog: import external tuner channel list, file name = {0}", fileName);
+      this.LogInfo("scan analog: import external tuner channel list, file name = {0}", fileName);
       try
       {
         List<IChannel> newChannels = new List<IChannel>();
@@ -285,7 +354,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
             ScannedChannel scannedChannel = new ScannedChannel(channel);
             scannedChannel.IsVisibleInGuide = true;
 
-            IList<DbTuningDetail> possibleTuningDetails = OnGetDbExistingTuningDetailCandidates(scannedChannel, false);
+            IList<DbTuningDetail> possibleTuningDetails = OnGetDbExistingTuningDetailCandidates(scannedChannel, false, TuningDetailRelation.Channel);
             DbTuningDetail dbTuningDetail = null;
             if (possibleTuningDetails != null)
             {
@@ -321,7 +390,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
           file.Close();
         }
 
-        this.LogInfo("analog: import summary...");
+        this.LogInfo("scan analog: import summary...");
         listViewProgress.BeginUpdate();
         try
         {
@@ -359,7 +428,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       }
       catch (Exception ex)
       {
-        this.LogError(ex, "analog: unexpected import exception");
+        this.LogError(ex, "scan analog: unexpected import exception");
         listViewProgress.Invoke((MethodInvoker)delegate
         {
           ListViewItem item = listViewProgress.Items.Add(new ListViewItem("Unexpected error. Please create a report in our forum."));
