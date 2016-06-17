@@ -182,7 +182,7 @@ namespace MediaPortal.Player.Teletext
             m_iPesHeaderLen = tsPacket[pos + 8] + 9;
 
             assert(m_iPesHeaderLen == 45, "PES header not 45 as required for teletext PES packets (actual " + m_iPesHeaderLen + ")");
-            assert(m_pesHeader.Length == m_iPesHeaderLen, string.Format("PESDecoder: Reported header length is bigger than header buffer! : {0} vs {1}",
+            assert(m_pesHeader.Length >= m_iPesHeaderLen, string.Format("PESDecoder: Reported header length is bigger than header buffer! : {0} vs {1}",
                       m_pesHeader.Length, m_iPesHeaderLen));
             assert(tsPacket.Length >= pos + m_iPesHeaderLen, "m_iPesHeaderLen too long! tsPacket length is " + tsPacket.Length + " but m_iPesHeaderLen = " + m_iPesHeaderLen + " and pos = " + pos);
 
