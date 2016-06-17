@@ -67,8 +67,10 @@
 24. Update the Entities project to ensure any new entities (classes) have been included and any
     obsolete entities have been removed. This may require editing the project file in a text
 	editor.
-25. Clean and rebuild the solution.
-26. Fix all errors and rebuild.
-27. Drop the current database using your preferred DB management tool.
-28. Deploy TV Server (ie. copy EXEs and DLLs or whatever you do to make TV Server runnable).
-29. Execute TV Server and check that it creates the database successfully.
+25. Update ObjectContextManager.CreateIndexes() based on foreign key changes.
+26. Update ObjectContextManager.CreateDbContext() based on table changes.
+27. Clean and rebuild the solution.
+28. Fix all errors and rebuild.
+29. Drop the current database using your preferred DB management tool.
+30. Deploy TV Server (ie. copy EXEs and DLLs or whatever you do to make TV Server runnable).
+31. Execute TV Server and check that it creates the database successfully.

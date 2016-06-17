@@ -6,7 +6,6 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Interfaces
 {
   public interface IChannelGroupRepository : IRepository<Model>
   {
-    IQueryable<ChannelGroup> IncludeAllRelations(IQueryable<ChannelGroup> query);
-    IQueryable<ChannelGroup> IncludeAllRelations(IQueryable<ChannelGroup> query, ChannelGroupIncludeRelationEnum includeRelations);
+    IQueryable<ChannelGroup> IncludeAllRelations(IQueryable<ChannelGroup> query, ChannelGroupRelation includeRelations);
   }
 }

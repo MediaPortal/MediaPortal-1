@@ -40,7 +40,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 {
   public partial class Channels : SectionSettings
   {
-    private const ChannelIncludeRelationEnum REQUIRED_CHANNEL_RELATIONS = ChannelIncludeRelationEnum.TuningDetails | ChannelIncludeRelationEnum.GroupMaps;
+    private const ChannelRelation REQUIRED_CHANNEL_RELATIONS = ChannelRelation.TuningDetails | ChannelRelation.GroupMaps;
 
     #region variables
 
@@ -104,7 +104,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.LogDebug("channels: activating, type = {0}", _mediaType);
 
       IList<Channel> allChannels = ServiceAgents.Instance.ChannelServiceAgent.ListAllChannelsByMediaType(_mediaType, REQUIRED_CHANNEL_RELATIONS);
-      IList<ChannelGroup> allGroups = ServiceAgents.Instance.ChannelGroupServiceAgent.ListAllChannelGroupsByMediaType(_mediaType, ChannelGroupIncludeRelationEnum.None);
+      IList<ChannelGroup> allGroups = ServiceAgents.Instance.ChannelGroupServiceAgent.ListAllChannelGroupsByMediaType(_mediaType, ChannelGroupRelation.None);
 
       this.LogDebug("channels: channel count = {0}, group count = {1}", allChannels.Count, allGroups.Count);
 
@@ -1138,7 +1138,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
           group.GroupName = dlg.TextValue;
           group.MediaType = (int)_mediaType;
           group.SortOrder = lastGroupSortOrder + 1;
-          group = ServiceAgents.Instance.ChannelGroupServiceAgent.SaveGroup(group);
+          group = ServiceAgents.Instance.ChannelGroupServiceAgent.SaveChannelGroup(group);
           this.LogInfo("channels: channel group {0} added, name = {1}", group.IdGroup, group.GroupName);
 
           _listViewChannelsHandler.AddGroup(group);
@@ -1189,7 +1189,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         {
           this.LogInfo("channels: channel group {0} renamed, old name = {1}, new name = {2}", _currentChannelGroup.IdGroup, _currentChannelGroup.GroupName, dlg.TextValue);
           _currentChannelGroup.GroupName = dlg.TextValue;
-          _currentChannelGroup = ServiceAgents.Instance.ChannelGroupServiceAgent.SaveGroup(_currentChannelGroup);
+          _currentChannelGroup = ServiceAgents.Instance.ChannelGroupServiceAgent.SaveChannelGroup(_currentChannelGroup);
 
           int index = comboBoxChannelGroup.SelectedIndex;
           comboBoxChannelGroup.BeginUpdate();
@@ -1284,7 +1284,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
               isOrderChanged = true;
               this.LogInfo("channels: channel group {0} sort order changed from {1} to {2}", group.IdGroup, group.SortOrder, i);
               group.SortOrder = i;
-              group = ServiceAgents.Instance.ChannelGroupServiceAgent.SaveGroup(group);
+              group = ServiceAgents.Instance.ChannelGroupServiceAgent.SaveChannelGroup(group);
             }
             groups[i - 1] = group;
           }

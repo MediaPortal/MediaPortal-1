@@ -24,9 +24,39 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
 {
   public partial class Satellite
   {
+    public static int? DefaultSatelliteLongitude
+    {
+      get
+      {
+        string countryName = System.Globalization.RegionInfo.CurrentRegion.EnglishName;
+        if (string.Equals(countryName, "Australia"))
+        {
+          return 1560;    // Optus C1/D3: Foxtel, VAST
+        }
+        else if (string.Equals(countryName, "Germany"))
+        {
+          return 192;
+        }
+        else if (string.Equals(countryName, "New Zealand"))
+        {
+          return 1600;    // Optus D1: Freeview, Sky
+        }
+        else if (string.Equals(countryName, "United Kingdom"))
+        {
+          return 282;     // 28.2E: Freesat
+        }
+        return null;
+      }
+    }
+
+    public static string LongitudeString(int longitude)
+    {
+      return string.Format("{0:#.#}° {1}", Math.Abs(longitude / 10), longitude < 0 ? "W" : "E");
+    }
+
     public string LongitudeString()
     {
-      return string.Format("{0:#.#}° {1}", Math.Abs(Longitude / 10), Longitude < 0 ? "W" : "E");
+      return LongitudeString(Longitude);
     }
 
     public override string ToString()

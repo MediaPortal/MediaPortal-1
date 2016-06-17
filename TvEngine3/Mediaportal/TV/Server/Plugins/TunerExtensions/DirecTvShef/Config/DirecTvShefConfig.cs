@@ -48,7 +48,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DirecTvShef.Config
 
       dataGridViewConfig.Rows.Clear();
 
-      IList<Tuner> tuners = ServiceAgents.Instance.TunerServiceAgent.ListAllTuners(TunerIncludeRelationEnum.None);
+      IList<Tuner> tuners = ServiceAgents.Instance.TunerServiceAgent.ListAllTuners(TunerRelation.None);
       this.LogDebug("DirecTV SHEF config: total tuner count = {0}", tuners.Count);
       foreach (Tuner tuner in tuners)
       {

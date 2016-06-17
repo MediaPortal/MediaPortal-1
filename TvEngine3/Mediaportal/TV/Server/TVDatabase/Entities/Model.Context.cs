@@ -125,12 +125,6 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         }
         private ObjectSet<Conflict> _conflicts;
     
-        public ObjectSet<DiseqcMotor> DiseqcMotors
-        {
-            get { return _diseqcMotors  ?? (_diseqcMotors = CreateObjectSet<DiseqcMotor>("DiseqcMotors")); }
-        }
-        private ObjectSet<DiseqcMotor> _diseqcMotors;
-    
         public ObjectSet<GroupMap> GroupMaps
         {
             get { return _groupMaps  ?? (_groupMaps = CreateObjectSet<GroupMap>("GroupMaps")); }

@@ -19,6 +19,7 @@
 #endregion
 
 using System.Collections.Generic;
+using System.Data.SqlTypes;
 using System.Drawing;
 using System.Globalization;
 using System.Text.RegularExpressions;
@@ -457,10 +458,10 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       ServiceAgents.Instance.ControllerServiceAgent.EpgGrabberEnabled = false;
 
       // TODO this is far from optimal; we should update a single grabber setting
-      IList<Channel> channels = ServiceAgents.Instance.ChannelServiceAgent.ListAllChannels(ChannelIncludeRelationEnum.None);
+      IList<Channel> channels = ServiceAgents.Instance.ChannelServiceAgent.ListAllChannels(ChannelRelation.None);
       foreach (Channel ch in channels)
       {
-        ch.LastGrabTime = Schedule.MinSchedule;
+        ch.LastGrabTime = SqlDateTime.MinValue.Value;
       }
       ServiceAgents.Instance.ChannelServiceAgent.SaveChannels(channels);
 

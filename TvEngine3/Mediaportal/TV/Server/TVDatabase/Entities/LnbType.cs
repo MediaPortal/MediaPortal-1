@@ -18,7 +18,6 @@ using System.Runtime.Serialization;
 namespace Mediaportal.TV.Server.TVDatabase.Entities
 {
     [DataContract(IsReference = true)]
-    [KnownType(typeof(TuningDetail))]
     [KnownType(typeof(TunerSatellite))]
     public partial class LnbType: IObjectWithChangeTracker, INotifyPropertyChanged
     {
@@ -120,41 +119,6 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
 
         #endregion
         #region Navigation Properties
-    
-        [DataMember]
-        public TrackableCollection<TuningDetail> TuningDetails
-        {
-            get
-            {
-                if (_tuningDetails == null)
-                {
-                    _tuningDetails = new TrackableCollection<TuningDetail>();
-                    _tuningDetails.CollectionChanged += FixupTuningDetails;
-                }
-                return _tuningDetails;
-            }
-            set
-            {
-                if (!ReferenceEquals(_tuningDetails, value))
-                {
-                    if (ChangeTracker.ChangeTrackingEnabled)
-                    {
-                        throw new InvalidOperationException("Cannot set the FixupChangeTrackingCollection when ChangeTracking is enabled");
-                    }
-                    if (_tuningDetails != null)
-                    {
-                        _tuningDetails.CollectionChanged -= FixupTuningDetails;
-                    }
-                    _tuningDetails = value;
-                    if (_tuningDetails != null)
-                    {
-                        _tuningDetails.CollectionChanged += FixupTuningDetails;
-                    }
-                    OnNavigationPropertyChanged("TuningDetails");
-                }
-            }
-        }
-        private TrackableCollection<TuningDetail> _tuningDetails;
     
         [DataMember]
         public TrackableCollection<TunerSatellite> TunerSatellites
@@ -269,51 +233,11 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
     
         protected virtual void ClearNavigationProperties()
         {
-            TuningDetails.Clear();
             TunerSatellites.Clear();
         }
 
         #endregion
         #region Association Fixup
-    
-        private void FixupTuningDetails(object sender, NotifyCollectionChangedEventArgs e)
-        {
-            if (IsDeserializing)
-            {
-                return;
-            }
-    
-            if (e.NewItems != null)
-            {
-                foreach (TuningDetail item in e.NewItems)
-                {
-                    item.LnbType = this;
-                    if (ChangeTracker.ChangeTrackingEnabled)
-                    {
-                        if (!item.ChangeTracker.ChangeTrackingEnabled)
-                        {
-                            item.StartTracking();
-                        }
-                        ChangeTracker.RecordAdditionToCollectionProperties("TuningDetails", item);
-                    }
-                }
-            }
-    
-            if (e.OldItems != null)
-            {
-                foreach (TuningDetail item in e.OldItems)
-                {
-                    if (ReferenceEquals(item.LnbType, this))
-                    {
-                        item.LnbType = null;
-                    }
-                    if (ChangeTracker.ChangeTrackingEnabled)
-                    {
-                        ChangeTracker.RecordRemovalFromCollectionProperties("TuningDetails", item);
-                    }
-                }
-            }
-        }
     
         private void FixupTunerSatellites(object sender, NotifyCollectionChangedEventArgs e)
         {

@@ -3,7 +3,7 @@
 namespace Mediaportal.TV.Server.TVDatabase.Entities.Enums
 {
   [Flags]
-  public enum ScheduleIncludeRelationEnum
+  public enum ScheduleRelation
   {
     None = 0,
     Channel = 1,

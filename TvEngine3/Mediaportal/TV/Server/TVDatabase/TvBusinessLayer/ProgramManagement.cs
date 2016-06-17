@@ -423,7 +423,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
     public static void SynchProgramStatesForAllSchedules()
     {
       Log.Info("SynchProgramStatesForAllSchedules");
-      var schedules = ScheduleManagement.ListAllSchedules(ScheduleIncludeRelationEnum.None);
+      var schedules = ScheduleManagement.ListAllSchedules(ScheduleRelation.None);
       if (schedules != null)
       {
         Parallel.ForEach(schedules, schedule => SynchProgramStates(schedule.IdSchedule));
@@ -913,7 +913,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
     public static void SynchProgramStates(int idSchedule)
     {
       // We need the CanceledSchedules included here to properly update programs state
-      SynchProgramStates(new ScheduleBLL(ScheduleManagement.GetSchedule(idSchedule, ScheduleIncludeRelationEnum.CanceledSchedules)));
+      SynchProgramStates(new ScheduleBLL(ScheduleManagement.GetSchedule(idSchedule, ScheduleRelation.CanceledSchedules)));
     }
 
     public static void SynchProgramStates(ScheduleBLL schedule)

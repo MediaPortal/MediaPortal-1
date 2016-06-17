@@ -23,10 +23,7 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
 
     public IQueryable<TunerGroup> IncludeAllRelations(IQueryable<TunerGroup> query)
     {
-      IQueryable<TunerGroup> includeRelations =
-        query.
-          Include(tg => tg.Tuners);
-      return includeRelations;
+      return query.Include(tg => tg.Tuners);
     }
   }
 }

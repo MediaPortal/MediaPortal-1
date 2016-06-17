@@ -214,15 +214,14 @@ namespace Mediaportal.TV.TvPlugin
 
                 if (changeChannel != null)
                 {
-                  //todo: remove gentle
-                  Channel ch = ServiceAgents.Instance.ChannelServiceAgent.GetChannel(changeChannel.IdChannel);
+                  Channel ch = ServiceAgents.Instance.ChannelServiceAgent.GetChannel(changeChannel.IdChannel, ChannelRelation.None);
                   TVHome.ViewChannel(ch);
                 }
               }
             }
             else if (message.SenderControlId == 36) // spincontrol
             {
-              // switch group              
+              // switch group
               OnGroupChanged();
             }
             else if (message.SenderControlId == 34) // exit button
@@ -384,7 +383,7 @@ namespace Mediaportal.TV.TvPlugin
       else //not in cache, fetch it and update cache, then return.
       {
         IList<Server.TVDatabase.Entities.Channel> tvChannelList =
-          ServiceAgents.Instance.ChannelServiceAgent.ListAllVisibleChannelsByGroupId(TVHome.Navigator.CurrentGroup.IdGroup, ChannelIncludeRelationEnum.TuningDetails);
+          ServiceAgents.Instance.ChannelServiceAgent.ListAllVisibleChannelsByGroupId(TVHome.Navigator.CurrentGroup.IdGroup, ChannelRelation.TuningDetails);
 
         if (tvChannelList != null)
         {

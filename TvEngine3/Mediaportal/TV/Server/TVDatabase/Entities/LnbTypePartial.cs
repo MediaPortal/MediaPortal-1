@@ -22,20 +22,6 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
 {
   public partial class LnbType 
   {
-    public LnbType Clone()
-    {
-      var l = new LnbType
-                {
-                  HighBandFrequency = HighBandFrequency,
-                  IdLnbType = IdLnbType,
-                  IsBandStacked = IsBandStacked,
-                  LowBandFrequency = LowBandFrequency,
-                  Name = Name,
-                  SwitchFrequency = SwitchFrequency
-                };
-      return l;
-    }
-
     public override string ToString()
     {
       return Name;

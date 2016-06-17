@@ -23,6 +23,7 @@ using System.Collections.Generic;
 using System.Threading;
 using Mediaportal.TV.Server.Common.Types.Enum;
 using Mediaportal.TV.Server.TVDatabase.Entities;
+using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using WebEpg.Utils.Time;
@@ -184,7 +185,7 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport
       {
         try
         {
-          IList<Channel> dbChannels = ChannelManagement.GetChannelsByName(name);          
+          IList<Channel> dbChannels = ChannelManagement.GetChannelsByName(name, ChannelRelation.None);
           if (dbChannels.Count > 0)
           {
             _channels.Add(channelKey, dbChannels);
@@ -250,12 +251,12 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport
       if (!_deleteExisting)
       {
         // Remove programs overlapping ones in DB:
-        // First retrieve all programs for current channels                         
+        // First retrieve all programs for current channels
         var dbPrograms = new ProgramList(ProgramManagement.GetProgramsForAllChannels(_currentChannels));
         _channelPrograms.RemoveOverlappingPrograms(dbPrograms);
       }
       foreach (Channel chan in _currentChannels)
-      {        
+      {
         ProgramManagement.DeleteOldPrograms(chan.IdChannel);
       }
 

@@ -22,16 +22,17 @@
 
 using System;
 using System.Collections.Generic;
+using System.Data.SqlTypes;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using Mediaportal.TV.Server.Common.Types.Enum;
 using Mediaportal.TV.Server.Plugins.PowerScheduler.Interfaces.Interfaces;
 using Mediaportal.TV.Server.TVControl.Events;
 using Mediaportal.TV.Server.TVControl.Interfaces.Services;
+using Mediaportal.TV.Server.TVControl.ServiceAgents;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.Entities;
-using Mediaportal.TV.Server.TVControl.ServiceAgents;
 
 #endregion
 
@@ -81,7 +82,7 @@ namespace Mediaportal.TV.Server.Plugins.PowerScheduler.Handlers
       int defaultPostRecordInterval = ServiceAgents.Instance.SettingServiceAgent.GetValue("postRecordInterval", 10);
       foreach (Schedule schedule in ScheduleManagement.ListAllSchedules())
       {
-        if (schedule.Canceled != Schedule.MinSchedule) continue;
+        if (schedule.Canceled != SqlDateTime.MinValue.Value) continue;
         List<Schedule> schedules = ScheduleManagement.GetRecordingTimes(schedule);
         if (schedules.Count > 0)
         {

@@ -118,11 +118,11 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport.Config
         IList<ChannelGroup> channelGroups;
         if (IsTvMapping)
         {
-          channelGroups = ServiceAgents.Instance.ChannelGroupServiceAgent.ListAllChannelGroupsByMediaType(MediaType.Television, ChannelGroupIncludeRelationEnum.None);
+          channelGroups = ServiceAgents.Instance.ChannelGroupServiceAgent.ListAllChannelGroupsByMediaType(MediaType.Television, ChannelGroupRelation.None);
         }
         else
         {
-          channelGroups = ServiceAgents.Instance.ChannelGroupServiceAgent.ListAllChannelGroupsByMediaType(MediaType.Radio, ChannelGroupIncludeRelationEnum.None);
+          channelGroups = ServiceAgents.Instance.ChannelGroupServiceAgent.ListAllChannelGroupsByMediaType(MediaType.Radio, ChannelGroupRelation.None);
         }
         foreach (ChannelGroup cg in channelGroups)
         {
@@ -237,11 +237,11 @@ namespace Mediaportal.TV.Server.Plugins.WebEPGImport.Config
       }
       if (chGroup != null && chGroup.idGroup != -1)
       {
-        channels = ServiceAgents.Instance.ChannelServiceAgent.ListAllVisibleChannelsByGroupId(chGroup.idGroup, ChannelIncludeRelationEnum.None);
+        channels = ServiceAgents.Instance.ChannelServiceAgent.ListAllVisibleChannelsByGroupId(chGroup.idGroup, ChannelRelation.None);
       }
       else
       {
-        channels = ServiceAgents.Instance.ChannelServiceAgent.ListAllVisibleChannelsByMediaType(mediaType, ChannelIncludeRelationEnum.None);
+        channels = ServiceAgents.Instance.ChannelServiceAgent.ListAllVisibleChannelsByMediaType(mediaType, ChannelRelation.None);
       }
 
       foreach (Channel chan in channels)

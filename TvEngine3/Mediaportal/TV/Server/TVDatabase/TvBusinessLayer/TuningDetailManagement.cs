@@ -4,6 +4,7 @@ using System.Linq;
 using Mediaportal.TV.Server.Common.Types.Country;
 using Mediaportal.TV.Server.Common.Types.Enum;
 using Mediaportal.TV.Server.TVDatabase.Entities;
+using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVDatabase.EntityModel.Interfaces;
 using Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Channel;
@@ -17,36 +18,148 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
     public delegate void OnStateChangedTuningDetailDelegate(int channelId);
     public static event OnStateChangedTuningDetailDelegate OnStateChangedTuningDetailEvent;
 
-    public static IList<TuningDetail> ListAllTuningDetailsByChannel(int idChannel)
+    public static IList<TuningDetail> ListAllTuningDetailsByChannel(int idChannel, TuningDetailRelation includeRelations)
     {
       using (ITuningDetailRepository tuningDetailRepository = new TuningDetailRepository())
       {
         IQueryable<TuningDetail> query = tuningDetailRepository.GetQuery<TuningDetail>(td => td.IdChannel == idChannel).OrderBy(td => td.Priority);
-        query = tuningDetailRepository.IncludeAllRelations(query);
+        query = tuningDetailRepository.IncludeAllRelations(query, includeRelations);
         return query.ToList();
       }
     }
 
-    public static TuningDetail GetTuningDetail(int idTuningDetail)
+    public static IList<TuningDetail> ListAllDigitalTransmitterTuningDetails()
+    {
+      using (ITuningDetailRepository tuningDetailRepository = new TuningDetailRepository())
+      {
+        IList<Satellite> satellites = tuningDetailRepository.GetAll<Satellite>().ToList();
+        Dictionary<int, Satellite> satellitesById = new Dictionary<int, Satellite>(satellites.Count);
+        foreach (Satellite satellite in satellites)
+        {
+          satellitesById[satellite.IdSatellite] = satellite;
+        }
+
+        var data = tuningDetailRepository.GetQuery<TuningDetail>().Where(td => (td.BroadcastStandard & (int)BroadcastStandard.MaskAnalog) == 0)
+                      .GroupBy(
+                        group => new TuningDetail
+                        {
+                          Bandwidth = group.Bandwidth,
+                          BroadcastStandard = group.BroadcastStandard,
+                          FecCodeRate = group.FecCodeRate,
+                          Frequency = group.Frequency,
+                          IdSatellite = group.IdSatellite,
+                          Modulation = group.Modulation,
+                          PilotTonesState = group.PilotTonesState,
+                          Polarisation = group.Polarisation,
+                          RollOffFactor = group.RollOffFactor,
+                          StreamId = group.StreamId,
+                          SymbolRate = group.SymbolRate,
+                          Url = group.Url
+                        }
+                      ).Select(
+                        select => new
+                        {
+                          Bandwidth = select.Key.Bandwidth,
+                          BroadcastStandard = select.Key.BroadcastStandard,
+                          FecCodeRate = select.Key.FecCodeRate,
+                          Frequency = select.Key.Frequency,
+                          IdSatellite = select.Key.IdSatellite,
+                          Modulation = select.Key.Modulation,
+                          PilotTonesState = select.Key.PilotTonesState,
+                          Polarisation = select.Key.Polarisation,
+                          RollOffFactor = select.Key.RollOffFactor,
+                          StreamId = select.Key.StreamId,
+                          SymbolRate = select.Key.SymbolRate,
+                          Url = select.Key.Url,
+
+                          Ids = select.Select(s => s.IdTuning),
+                          Names = select.Select(s => s.Name),
+                          GrabEpgFlags = select.Select(s => s.GrabEpg),
+                          LastEpgGrabTimes = select.Select(s => s.LastEpgGrabTime)
+                        }
+                      ).ToList();
+
+        IList<TuningDetail> transmitterTuningDetails = new List<TuningDetail>(data.Count);
+        foreach (var d in data)
+        {
+          Satellite satellite = null;
+          if (d.IdSatellite.HasValue)
+          {
+            satellitesById.TryGetValue(d.IdSatellite.Value, out satellite);
+          }
+
+          transmitterTuningDetails.Add(new TuningDetail
+          {
+            Bandwidth = d.Bandwidth,
+            BroadcastStandard = d.BroadcastStandard,
+            FecCodeRate = d.FecCodeRate,
+            Frequency = d.Frequency,
+            GrabEpg = !d.GrabEpgFlags.Contains(false),
+            IdSatellite = d.IdSatellite,
+            LastEpgGrabTime = d.LastEpgGrabTimes.Min(),
+            Modulation = d.Modulation,
+            Name = string.Join(", ", d.Names.OrderBy(n => n)),
+            PilotTonesState = d.PilotTonesState,
+            Polarisation = d.Polarisation,
+            Provider = string.Join(", ", d.Ids.Select(id => id.ToString())),
+            RollOffFactor = d.RollOffFactor,
+            Satellite = satellite,
+            StreamId = d.StreamId,
+            SymbolRate = d.SymbolRate,
+            Url = d.Url,
+
+            AudioSource = (int)CaptureSourceAudio.None,
+            CountryId = -1,
+            EpgOriginalNetworkId = -1,
+            EpgServiceId = -1,
+            EpgTransportStreamId = -1,
+            FreesatChannelId = -1,
+            IdChannel = -1,
+            IdTuning = -1,
+            IsEncrypted = false,
+            IsHighDefinition = false,
+            IsThreeDimensional = false,
+            IsVcrSignal = false,
+            LogicalChannelNumber = string.Empty,
+            MediaType = (int)MediaType.Television,
+            OpenTvChannelId = -1,
+            OriginalNetworkId = -1,
+            PhysicalChannelNumber = -1,
+            PmtPid = -1,
+            Priority = -1,
+            ServiceId = -1,
+            SourceId = -1,
+            TransportStreamId = -1,
+            TuningSource = (int)AnalogTunerSource.Cable,
+            VideoSource = (int)CaptureSourceVideo.None
+          });
+        }
+
+        return transmitterTuningDetails;
+      }
+    }
+
+    public static TuningDetail GetTuningDetail(int idTuningDetail, TuningDetailRelation includeRelations)
     {
       using (ITuningDetailRepository tuningDetailRepository = new TuningDetailRepository())
       {
         IQueryable<TuningDetail> query = tuningDetailRepository.GetQuery<TuningDetail>(td => td.IdTuning == idTuningDetail);
-        return tuningDetailRepository.IncludeAllRelations(query).FirstOrDefault();
+        query = tuningDetailRepository.IncludeAllRelations(query, includeRelations);
+        return query.FirstOrDefault();
       }
     }
 
-    public static IList<TuningDetail> GetAnalogTelevisionTuningDetails(int physicalChannelNumber)
+    public static IList<TuningDetail> GetAnalogTelevisionTuningDetails(int physicalChannelNumber, TuningDetailRelation includeRelations)
     {
       using (ITuningDetailRepository tuningDetailRepository = new TuningDetailRepository())
       {
         IQueryable<TuningDetail> query = tuningDetailRepository.GetQuery<TuningDetail>(td => td.BroadcastStandard == (int)BroadcastStandard.AnalogTelevision && td.PhysicalChannelNumber == physicalChannelNumber);
-        query = tuningDetailRepository.IncludeAllRelations(query);
+        query = tuningDetailRepository.IncludeAllRelations(query, includeRelations);
         return query.ToList();
       }
     }
 
-    public static IList<TuningDetail> GetAtscScteTuningDetails(BroadcastStandard broadcastStandard, string logicalChannelNumber, int? frequency = null)
+    public static IList<TuningDetail> GetAtscScteTuningDetails(BroadcastStandard broadcastStandard, string logicalChannelNumber, TuningDetailRelation includeRelations, int? frequency = null)
     {
       using (ITuningDetailRepository tuningDetailRepository = new TuningDetailRepository())
       {
@@ -55,22 +168,22 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
         {
           query = query.Where(td => td.Frequency == frequency.Value);
         }
-        query = tuningDetailRepository.IncludeAllRelations(query);
+        query = tuningDetailRepository.IncludeAllRelations(query, includeRelations);
         return query.ToList();
       }
     }
 
-    public static IList<TuningDetail> GetCaptureTuningDetails(string name)
+    public static IList<TuningDetail> GetCaptureTuningDetails(string name, TuningDetailRelation includeRelations)
     {
       using (ITuningDetailRepository tuningDetailRepository = new TuningDetailRepository())
       {
         IQueryable<TuningDetail> query = tuningDetailRepository.GetQuery<TuningDetail>(td => td.BroadcastStandard == (int)BroadcastStandard.ExternalInput && string.Equals(td.Name, name));
-        query = tuningDetailRepository.IncludeAllRelations(query);
+        query = tuningDetailRepository.IncludeAllRelations(query, includeRelations);
         return query.ToList();
       }
     }
 
-    public static IList<TuningDetail> GetDvbTuningDetails(BroadcastStandard broadcastStandard, int originalNetworkId, int serviceId, int? transportStreamId = null, int? frequency = null, int? satelliteId = null)
+    public static IList<TuningDetail> GetDvbTuningDetails(BroadcastStandard broadcastStandard, int originalNetworkId, int serviceId, TuningDetailRelation includeRelations, int? transportStreamId = null, int? frequency = null, int? satelliteId = null)
     {
       using (ITuningDetailRepository tuningDetailRepository = new TuningDetailRepository())
       {
@@ -85,241 +198,56 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
         }
         if (satelliteId.HasValue)
         {
-          query = query.Where(td => td.SatIndex == satelliteId.Value);
+          query = query.Where(td => td.IdSatellite == satelliteId.Value);
         }
-        query = tuningDetailRepository.IncludeAllRelations(query);
+        query = tuningDetailRepository.IncludeAllRelations(query, includeRelations);
         return query.ToList();
       }
     }
 
-    public static IList<TuningDetail> GetFmRadioTuningDetails(int frequency)
+    public static IList<TuningDetail> GetFmRadioTuningDetails(int frequency, TuningDetailRelation includeRelations)
     {
       using (ITuningDetailRepository tuningDetailRepository = new TuningDetailRepository())
       {
         IQueryable<TuningDetail> query = tuningDetailRepository.GetQuery<TuningDetail>(td => td.BroadcastStandard == (int)BroadcastStandard.FmRadio && td.Frequency == frequency);
-        query = tuningDetailRepository.IncludeAllRelations(query);
+        query = tuningDetailRepository.IncludeAllRelations(query, includeRelations);
         return query.ToList();
       }
     }
 
-    public static IList<TuningDetail> GetFreesatTuningDetails(int channelId)
+    public static IList<TuningDetail> GetFreesatTuningDetails(int channelId, TuningDetailRelation includeRelations)
     {
       using (ITuningDetailRepository tuningDetailRepository = new TuningDetailRepository())
       {
         IQueryable<TuningDetail> query = tuningDetailRepository.GetQuery<TuningDetail>(td => td.FreesatChannelId == channelId);
-        query = tuningDetailRepository.IncludeAllRelations(query);
+        query = tuningDetailRepository.IncludeAllRelations(query, includeRelations);
         return query.ToList();
       }
     }
 
-    public static IList<TuningDetail> GetMpeg2TuningDetails(BroadcastStandard broadcastStandard, int programNumber, int? transportStreamId = null, int? frequency = null, int? satelliteId = null)
+    public static IList<TuningDetail> GetMpeg2TuningDetails(BroadcastStandard broadcastStandard, int programNumber, TuningDetailRelation includeRelations, int? transportStreamId = null, int? frequency = null, int? satelliteId = null)
     {
-      return GetDvbTuningDetails(broadcastStandard, 0, programNumber, transportStreamId, frequency, satelliteId);
+      return GetDvbTuningDetails(broadcastStandard, -1, programNumber, includeRelations, transportStreamId, frequency, satelliteId);
     }
 
-    public static IList<TuningDetail> GetOpenTvTuningDetails(int channelId)
+    public static IList<TuningDetail> GetOpenTvTuningDetails(int channelId, TuningDetailRelation includeRelations)
     {
       using (ITuningDetailRepository tuningDetailRepository = new TuningDetailRepository())
       {
         IQueryable<TuningDetail> query = tuningDetailRepository.GetQuery<TuningDetail>(td => td.OpenTvChannelId == channelId);
-        query = tuningDetailRepository.IncludeAllRelations(query);
+        query = tuningDetailRepository.IncludeAllRelations(query, includeRelations);
         return query.ToList();
       }
     }
 
-    public static IList<TuningDetail> GetStreamTuningDetails(string url)
+    public static IList<TuningDetail> GetStreamTuningDetails(string url, TuningDetailRelation includeRelations)
     {
       using (ITuningDetailRepository tuningDetailRepository = new TuningDetailRepository())
       {
         IQueryable<TuningDetail> query = tuningDetailRepository.GetQuery<TuningDetail>(td => td.BroadcastStandard == (int)BroadcastStandard.DvbIp && string.Equals(td.Url, url));
-        query = tuningDetailRepository.IncludeAllRelations(query);
+        query = tuningDetailRepository.IncludeAllRelations(query, includeRelations);
         return query.ToList();
       }
-    }
-
-    // TODO This is one of the worst hacks I've ever written. Please remove if possible (!!!).
-    [Obsolete("Do not use this function. It is a huge and terrible hack!")]
-    public static TuningDetail GetClosestMatchTuningDetailWithoutId(IChannel channel)
-    {
-      int broadcastStandard = (int)GetBroadcastStandardFromChannelInstance(channel);
-      IChannelPhysical physicalChannel = channel as IChannelPhysical;
-      using (ITuningDetailRepository tuningDetailRepository = new TuningDetailRepository())
-      {
-        IQueryable<TuningDetail> query;
-        if (physicalChannel != null)
-        {
-          query = tuningDetailRepository.GetQuery<TuningDetail>(td => td.BroadcastStandard == broadcastStandard && string.Equals(td.Name, channel.Name) && td.Frequency == physicalChannel.Frequency);
-        }
-        else
-        {
-          query = tuningDetailRepository.GetQuery<TuningDetail>(td => td.BroadcastStandard == broadcastStandard && string.Equals(td.Name, channel.Name));
-        }
-        return tuningDetailRepository.IncludeAllRelations(query).FirstOrDefault();
-      }
-    }
-
-    public static void AddTuningDetail(int idChannel, IChannel channel)
-    {
-      TuningDetail tuningDetail = new TuningDetail();
-      TuningDetail detail = UpdateTuningDetailWithChannelData(idChannel, channel, tuningDetail);
-      detail.Priority = 1;
-      tuningDetail.IdChannel = idChannel;
-      SaveTuningDetail(detail);
-    }
-
-    public static void UpdateTuningDetail(int idChannel, int idTuningDetail, IChannel channel)
-    {
-      using (ITuningDetailRepository tuningDetailRepository = new TuningDetailRepository())
-      {
-        IQueryable<TuningDetail> query = tuningDetailRepository.GetQuery<TuningDetail>(t => t.IdTuning == idTuningDetail && t.IdChannel == idChannel);
-        TuningDetail tuningDetail = UpdateTuningDetailWithChannelData(idChannel, channel, query.FirstOrDefault());
-        SaveTuningDetail(tuningDetail);
-      }
-    }
-
-    private static TuningDetail UpdateTuningDetailWithChannelData(int idChannel, IChannel channel, TuningDetail tuningDetail)
-    {
-      tuningDetail.Name = channel.Name;
-      tuningDetail.Provider = channel.Provider;
-      tuningDetail.LogicalChannelNumber = channel.LogicalChannelNumber;
-      tuningDetail.MediaType = (int)channel.MediaType;
-      tuningDetail.IsEncrypted = channel.IsEncrypted;
-      tuningDetail.IsHighDefinition = channel.IsHighDefinition;
-      tuningDetail.IsThreeDimensional = channel.IsThreeDimensional;
-
-      IChannelOfdm ofdmChannel = channel as IChannelOfdm;
-      if (ofdmChannel != null)
-      {
-        tuningDetail.Bandwidth = ofdmChannel.Bandwidth;
-      }
-
-      IChannelPhysical physicalChannel = channel as IChannelPhysical;
-      if (physicalChannel != null)
-      {
-        tuningDetail.Frequency = physicalChannel.Frequency;
-      }
-
-      IChannelSatellite satelliteChannel = channel as IChannelSatellite;
-      if (satelliteChannel != null)
-      {
-        tuningDetail.SatIndex = satelliteChannel.DiseqcPositionerSatelliteIndex;
-        tuningDetail.DiSEqC = (int)satelliteChannel.DiseqcSwitchPort;
-        tuningDetail.IdLnbType = satelliteChannel.LnbType.Id;
-        tuningDetail.Polarisation = (int)satelliteChannel.Polarisation;
-        tuningDetail.Modulation = (int)satelliteChannel.ModulationScheme;
-        tuningDetail.SymbolRate = satelliteChannel.SymbolRate;
-        tuningDetail.FecCodeRate = (int)satelliteChannel.FecCodeRate;
-      }
-
-      ChannelDvbBase dvbChannel = channel as ChannelDvbBase;
-      if (dvbChannel != null)
-      {
-        tuningDetail.OriginalNetworkId = dvbChannel.OriginalNetworkId;
-        tuningDetail.OpenTvChannelId = dvbChannel.OpenTvChannelId;
-        tuningDetail.EpgOriginalNetworkId = dvbChannel.EpgOriginalNetworkId;
-        tuningDetail.EpgTransportStreamId = dvbChannel.EpgTransportStreamId;
-        tuningDetail.EpgServiceId = dvbChannel.EpgServiceId;
-      }
-      ChannelMpeg2Base mpeg2Channel = channel as ChannelMpeg2Base;
-      if (mpeg2Channel != null)
-      {
-        tuningDetail.PmtPid = mpeg2Channel.PmtPid;
-        tuningDetail.ServiceId = mpeg2Channel.ProgramNumber;
-        tuningDetail.TransportStreamId = mpeg2Channel.TransportStreamId;
-      }
-
-      ChannelAnalogTv analogTvChannel = channel as ChannelAnalogTv;
-      if (analogTvChannel != null)
-      {
-        tuningDetail.BroadcastStandard = (int)BroadcastStandard.AnalogTelevision;
-        tuningDetail.PhysicalChannelNumber = analogTvChannel.PhysicalChannelNumber;
-        tuningDetail.CountryId = analogTvChannel.Country.Id;
-        tuningDetail.TuningSource = (int)analogTvChannel.TunerSource;
-      }
-      ChannelAtsc atscChannel = channel as ChannelAtsc;
-      if (atscChannel != null)
-      {
-        tuningDetail.BroadcastStandard = (int)BroadcastStandard.Atsc;
-        tuningDetail.Modulation = (int)atscChannel.ModulationScheme;
-        tuningDetail.SourceId = atscChannel.SourceId;
-      }
-      ChannelCapture captureChannel = channel as ChannelCapture;
-      if (captureChannel != null)
-      {
-        tuningDetail.BroadcastStandard = (int)BroadcastStandard.ExternalInput;
-        tuningDetail.VideoSource = (int)captureChannel.VideoSource;
-        tuningDetail.AudioSource = (int)captureChannel.AudioSource;
-        tuningDetail.IsVcrSignal = captureChannel.IsVcrSignal;
-      }
-      if (channel is ChannelDigiCipher2)
-      {
-        tuningDetail.BroadcastStandard = (int)BroadcastStandard.DigiCipher2;
-      }
-      ChannelDvbC dvbcChannel = channel as ChannelDvbC;
-      if (dvbcChannel != null)
-      {
-        tuningDetail.BroadcastStandard = (int)BroadcastStandard.DvbC;
-        tuningDetail.Modulation = (int)dvbcChannel.ModulationScheme;
-        tuningDetail.SymbolRate = dvbcChannel.SymbolRate;
-      }
-      ChannelDvbC2 dvbc2Channel = channel as ChannelDvbC2;
-      if (dvbcChannel != null)
-      {
-        tuningDetail.BroadcastStandard = (int)BroadcastStandard.DvbC2;
-        tuningDetail.StreamId = dvbc2Channel.PlpId;
-      }
-      ChannelDvbS dvbsChannel = channel as ChannelDvbS;
-      if (dvbsChannel != null)
-      {
-        tuningDetail.BroadcastStandard = (int)BroadcastStandard.DvbS;
-        tuningDetail.FreesatChannelId = dvbsChannel.FreesatChannelId;
-      }
-      ChannelDvbS2 dvbs2Channel = channel as ChannelDvbS2;
-      if (dvbs2Channel != null)
-      {
-        tuningDetail.BroadcastStandard = (int)BroadcastStandard.DvbS2;
-        tuningDetail.FreesatChannelId = dvbs2Channel.FreesatChannelId;
-        tuningDetail.PilotTonesState = (int)dvbs2Channel.PilotTonesState;
-        tuningDetail.RollOffFactor = (int)dvbs2Channel.RollOffFactor;
-        tuningDetail.StreamId = dvbs2Channel.StreamId;
-      }
-      if (channel is ChannelDvbT)
-      {
-        tuningDetail.BroadcastStandard = (int)BroadcastStandard.DvbT;
-      }
-      ChannelDvbT2 dvbt2Channel = channel as ChannelDvbT2;
-      if (dvbt2Channel != null)
-      {
-        tuningDetail.BroadcastStandard = (int)BroadcastStandard.DvbT2;
-        tuningDetail.StreamId = dvbt2Channel.PlpId;
-      }
-      if (channel is ChannelFmRadio)
-      {
-        tuningDetail.BroadcastStandard = (int)BroadcastStandard.FmRadio;
-      }
-      if (channel is ChannelSatelliteTurboFec)
-      {
-        tuningDetail.BroadcastStandard = (int)BroadcastStandard.SatelliteTurboFec;
-      }
-      ChannelScte scteChannel = channel as ChannelScte;
-      if (scteChannel != null)
-      {
-        tuningDetail.BroadcastStandard = (int)BroadcastStandard.Scte;
-        tuningDetail.Modulation = (int)scteChannel.ModulationScheme;
-        tuningDetail.SourceId = scteChannel.SourceId;
-      }
-      ChannelStream streamChannel = channel as ChannelStream;
-      if (streamChannel != null)
-      {
-        tuningDetail.BroadcastStandard = (int)BroadcastStandard.DvbIp;
-        tuningDetail.Url = streamChannel.Url;
-      }
-      else
-      {
-        // URL can't be null. Set it empty for non-stream tuning details.
-        tuningDetail.Url = string.Empty;
-      }
-      return tuningDetail;
     }
 
     public static TuningDetail SaveTuningDetail(TuningDetail tuningDetail)
@@ -331,7 +259,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
         int originalChannelId = -1;
         if (OnStateChangedTuningDetailEvent != null && tuningDetail.IdTuning > 0)
         {
-          TuningDetail originalTuningDetail = GetTuningDetail(tuningDetail.IdTuning);
+          TuningDetail originalTuningDetail = GetTuningDetail(tuningDetail.IdTuning, TuningDetailRelation.None);
           if (originalTuningDetail != null && tuningDetail.IdChannel != originalTuningDetail.IdChannel)
           {
             originalChannelId = originalTuningDetail.IdChannel;
@@ -360,7 +288,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
       TuningDetail tuningDetail = null;
       if (OnStateChangedTuningDetailEvent != null)
       {
-        tuningDetail = GetTuningDetail(idTuningDetail);
+        tuningDetail = GetTuningDetail(idTuningDetail, TuningDetailRelation.None);
       }
 
       using (ITuningDetailRepository tuningDetailRepository = new TuningDetailRepository(true))
@@ -372,6 +300,27 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
       if (OnStateChangedTuningDetailEvent != null && tuningDetail != null)
       {
         OnStateChangedTuningDetailEvent(tuningDetail.IdChannel);
+      }
+    }
+
+    // TODO This is one of the worst hacks I've ever written. Please remove if possible (!!!).
+    [Obsolete("Do not use this function. It is a huge and terrible hack!")]
+    public static TuningDetail GetClosestMatchTuningDetailWithoutId(IChannel channel, TuningDetailRelation includeRelations)
+    {
+      int broadcastStandard = (int)GetBroadcastStandardFromChannelInstance(channel);
+      IChannelPhysical physicalChannel = channel as IChannelPhysical;
+      using (ITuningDetailRepository tuningDetailRepository = new TuningDetailRepository())
+      {
+        IQueryable<TuningDetail> query;
+        if (physicalChannel != null)
+        {
+          query = tuningDetailRepository.GetQuery<TuningDetail>(td => td.BroadcastStandard == broadcastStandard && string.Equals(td.Name, channel.Name) && td.Frequency == physicalChannel.Frequency);
+        }
+        else
+        {
+          query = tuningDetailRepository.GetQuery<TuningDetail>(td => td.BroadcastStandard == broadcastStandard && string.Equals(td.Name, channel.Name));
+        }
+        return tuningDetailRepository.IncludeAllRelations(query, includeRelations).FirstOrDefault();
       }
     }
 
@@ -533,8 +482,33 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
       IChannelSatellite satelliteChannel = channel as IChannelSatellite;
       if (satelliteChannel != null)
       {
-        satelliteChannel.DiseqcPositionerSatelliteIndex = detail.SatIndex;
-        satelliteChannel.DiseqcSwitchPort = (DiseqcPort)detail.DiSEqC;
+        if (detail.IdSatellite.HasValue)
+        {
+          if (detail.Satellite != null)
+          {
+            satelliteChannel.Longitude = detail.Satellite.Longitude;
+          }
+          else
+          {
+            // This is bad for performance. We've tried to avoid this, but just
+            // in case...
+            Log.Warn("channel management: forced to manually load satellite");
+            using (ITuningDetailRepository tuningDetailRepository = new TuningDetailRepository())
+            {
+              Satellite satellite = tuningDetailRepository.GetQuery<Satellite>(s => s.IdSatellite == detail.IdSatellite.Value).FirstOrDefault();
+              if (satellite == null)
+              {
+                Log.Error("channel management: failed to load satellite, ID = {0}", detail.IdSatellite.Value);
+                satelliteChannel.Longitude = 0;
+              }
+              else
+              {
+                satelliteChannel.Longitude = detail.Satellite.Longitude;
+              }
+            }
+          }
+        }
+
         satelliteChannel.Polarisation = (Polarisation)detail.Polarisation;
         satelliteChannel.ModulationScheme = (ModulationSchemePsk)detail.Modulation;
         satelliteChannel.SymbolRate = detail.SymbolRate;

@@ -160,12 +160,12 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
     public override void OnSectionActivated()
     {
-      _tuners = ServiceAgents.Instance.TunerServiceAgent.ListAllTuners(TunerIncludeRelationEnum.None);
+      _tuners = ServiceAgents.Instance.TunerServiceAgent.ListAllTuners(TunerRelation.None);
       base.OnSectionActivated();
       mpGroupBox1.Visible = false;
 
       comboBoxGroups.Items.Clear();
-      IList<ChannelGroup> groups = ServiceAgents.Instance.ChannelGroupServiceAgent.ListAllChannelGroups(ChannelGroupIncludeRelationEnum.None);
+      IList<ChannelGroup> groups = ServiceAgents.Instance.ChannelGroupServiceAgent.ListAllChannelGroups(ChannelGroupRelation.None);
       foreach (ChannelGroup group in groups)
         comboBoxGroups.Items.Add(new ComboBoxExItem(group.GroupName, -1, group.IdGroup));
       if (comboBoxGroups.Items.Count == 0)
@@ -186,7 +186,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       //mpButtonPark.Enabled = false;
 
       _channelNames = new Dictionary<int, string>();
-      IList<Channel> channels = ServiceAgents.Instance.ChannelServiceAgent.ListAllChannels(ChannelIncludeRelationEnum.None);
+      IList<Channel> channels = ServiceAgents.Instance.ChannelServiceAgent.ListAllChannels(ChannelRelation.None);
       foreach (Channel ch in channels)
       {
         _channelNames.Add(ch.IdChannel, ch.Name);
@@ -536,7 +536,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     /// <returns>virtual card</returns>
     public VirtualCard GetCardTimeShiftingChannel(int channelId)
     {
-      IList<Tuner> tuners = ServiceAgents.Instance.TunerServiceAgent.ListAllTuners(TunerIncludeRelationEnum.None);
+      IList<Tuner> tuners = ServiceAgents.Instance.TunerServiceAgent.ListAllTuners(TunerRelation.None);
       foreach (Tuner tuner in tuners)
       {
         if (tuner.IsEnabled == false) continue;
@@ -569,7 +569,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     /// <returns>virtual card</returns>
     public VirtualCard GetCardRecordingChannel(int channelId)
     {
-      IList<Tuner> tuners = ServiceAgents.Instance.TunerServiceAgent.ListAllTuners(TunerIncludeRelationEnum.None);
+      IList<Tuner> tuners = ServiceAgents.Instance.TunerServiceAgent.ListAllTuners(TunerRelation.None);
       foreach (Tuner tuner in tuners)
       {
         if (tuner.IsEnabled == false) continue;
@@ -601,7 +601,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       mpComboBoxChannels.Items.Clear();
       if (idItem.Id == -1)
       {        
-        IList<Channel> channels = ServiceAgents.Instance.ChannelServiceAgent.ListAllChannels(ChannelIncludeRelationEnum.TuningDetails);
+        IList<Channel> channels = ServiceAgents.Instance.ChannelServiceAgent.ListAllChannels(ChannelRelation.TuningDetails);
         foreach (Channel ch in channels)
         {
           if (ch.MediaType != (int)MediaType.Television) continue;
@@ -640,7 +640,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       }
       else
       {
-        ChannelGroup group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetChannelGroup(idItem.Id);
+        ChannelGroup group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetChannelGroup(idItem.Id, ChannelGroupRelation.GroupMapsTuningDetails);
         IList<GroupMap> maps = group.GroupMaps;
         bool hasFta = false;
         foreach (GroupMap map in maps)

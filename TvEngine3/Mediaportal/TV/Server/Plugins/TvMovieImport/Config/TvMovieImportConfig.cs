@@ -159,7 +159,7 @@ namespace Mediaportal.TV.Server.Plugins.TvMovieImport.Config
         comboBoxMappingsChannelGroup.Items.Clear();
         comboBoxMappingsChannelGroup.Tag = "";
 
-        _channelGroups = ServiceAgents.Instance.ChannelGroupServiceAgent.ListAllChannelGroups(ChannelGroupIncludeRelationEnum.None);
+        _channelGroups = ServiceAgents.Instance.ChannelGroupServiceAgent.ListAllChannelGroups(ChannelGroupRelation.None);
         foreach (ChannelGroup group in _channelGroups)
         {
           comboBoxMappingsChannelGroup.Items.Add(new ComboBoxChannelGroup(string.Format("{0} - {1}", ((MediaType)group.MediaType).GetDescription(), group.GroupName), group.IdGroup));
@@ -388,7 +388,7 @@ namespace Mediaportal.TV.Server.Plugins.TvMovieImport.Config
         dataGridViewMappings.Rows.Clear();
 
         // Load the database channels.
-        IList<Channel> databaseChannels = ServiceAgents.Instance.ChannelServiceAgent.ListAllVisibleChannelsByGroupId(channelGroup.Id, ChannelIncludeRelationEnum.None);
+        IList<Channel> databaseChannels = ServiceAgents.Instance.ChannelServiceAgent.ListAllVisibleChannelsByGroupId(channelGroup.Id, ChannelRelation.None);
         if (databaseChannels.Count == 0)
         {
           MessageBox.Show("There are no channels available to map.", MESSAGE_CAPTION);

@@ -55,6 +55,7 @@
       <Link>SolutionInfo.cs</Link>
     </Compile>
     <Compile Include="EntitySQLDebug.cs" />
+    <Compile Include="Interfaces\ITunerSatelliteRepository.cs" />
     <Compile Include="Interfaces\ITuningDetailRepository.cs.cs" />
     <Compile Include="Interfaces\IAnalogTunerSettingsRepository.cs" />
     <Compile Include="Interfaces\ITunerGroupRepository.cs" />
@@ -75,11 +76,11 @@
     <Compile Include="Interfaces\IProgramRepository.cs" />
     <Compile Include="Interfaces\ISettingRepository.cs" />
     <Compile Include="Repositories\AnalogTunerSettingsRepository.cs" />
+    <Compile Include="Repositories\TunerSatelliteRepository.cs" />
     <Compile Include="Repositories\TuningDetailRepository.cs" />
     <Compile Include="Repositories\TunerGroupRepository.cs" />
     <Compile Include="Repositories\TunerRepository.cs" />
     <Compile Include="Repositories\ProgramCategoryRepository.cs" />
-    <Compile Include="Repositories\LnbTypeRepository.cs" />
     <Compile Include="Repositories\ScheduleRepository.cs" />
     <Compile Include="Repositories\RecordingRepository.cs" />
     <Compile Include="Repositories\SettingRepository.cs" />

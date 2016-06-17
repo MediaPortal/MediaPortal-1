@@ -20,6 +20,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Data.SqlTypes;
 using System.Drawing;
 using System.Threading;
 using System.Windows.Forms;
@@ -51,7 +52,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections.Helpers
       public IList<IChannel> Ignored = new List<IChannel>();
     }
 
-    public delegate IList<DbTuningDetail> GetDbExistingTuningDetailCandidatesDelegate(ScannedChannel foundChannel, bool useChannelMovementDetection);
+    public delegate IList<DbTuningDetail> GetDbExistingTuningDetailCandidatesDelegate(ScannedChannel foundChannel, bool useChannelMovementDetection, TuningDetailRelation includeRelations);
     public delegate IList<FileTuningDetail> NitScanFoundTransmittersDelegate(IList<FileTuningDetail> transmitters);
     public delegate void ScanCompletedDelegate();
 
@@ -129,18 +130,13 @@ namespace Mediaportal.TV.Server.SetupTV.Sections.Helpers
       }
     }
 
-    public bool StartNitScan(FileTuningDetail tuningDetail)
-    {
-      return StartScan(new List<FileTuningDetail> { tuningDetail }, ScanType.FullNetworkInformationTable);
-    }
-
-    public bool StartScan(IList<FileTuningDetail> tuningDetails, ScanType scanType = ScanType.PredefinedProvider)
+    public bool StartScan(IList<FileTuningDetail> tuningDetails, ScanType scanType = ScanType.Standard)
     {
       if (tuningDetails == null || tuningDetails.Count == 0)
       {
         return false;
       }
-      if (!ServiceAgents.Instance.TunerServiceAgent.GetTuner(_tunerId, TunerIncludeRelationEnum.None).IsEnabled)
+      if (!ServiceAgents.Instance.TunerServiceAgent.GetTuner(_tunerId, TunerRelation.None).IsEnabled)
       {
         MessageBox.Show("Tuner is disabled. Please enable the tuner before scanning.", SectionSettings.MESSAGE_CAPTION);
         this.LogInfo("channel scan: tuner {0} disabled", _tunerId);
@@ -184,6 +180,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections.Helpers
 
     public void StopScan()
     {
+      _listViewProgress.Items.Add("stopping...");
       this.LogInfo("channel scan: tuner {0} stop scanning", _tunerId);
       _stopScanning = true;
     }
@@ -233,6 +230,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections.Helpers
 
         HashSet<IChannel> tunedTransmitters = new HashSet<IChannel>();
         HashSet<uint> tunedTransportStreams = new HashSet<uint>();
+        IDictionary<int, int> satelliteIdsByLongitude = null;
         for (int i = 0; i < tuningDetails.Count; i++)
         {
           if (_stopScanning)
@@ -353,6 +351,17 @@ namespace Mediaportal.TV.Server.SetupTV.Sections.Helpers
             // The tuner is locked onto signal => no need to scan offset frequencies.
             skipOffsetFrequencies = frequency.Item2;
 
+            // Lazy loading for the satellite-IDs-by-longitude dictionary.
+            if (satelliteIdsByLongitude == null && tuneChannel is IChannelSatellite)
+            {
+              IList<Satellite> satellites = ServiceAgents.Instance.TunerServiceAgent.ListAllSatellites();
+              satelliteIdsByLongitude = new Dictionary<int, int>(satellites.Count);
+              foreach (Satellite satellite in satellites)
+              {
+                satelliteIdsByLongitude[satellite.Longitude] = satellite.IdSatellite;
+              }
+            }
+
             bool foundTargetTransportStream = false;
             IDictionary<MediaType, Counter> transmitterCounters = new Dictionary<MediaType, Counter>(2);
             foreach (ScannedChannel scannedChannel in channels)
@@ -394,7 +403,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections.Helpers
               }
 
               // Find matching tuning details in the database.
-              IList<DbTuningDetail> possibleTuningDetails = _tuningDetailLookupDelegate(scannedChannel, useChannelMovementDetection);
+              IList<DbTuningDetail> possibleTuningDetails = _tuningDetailLookupDelegate(scannedChannel, useChannelMovementDetection, TuningDetailRelation.Channel);
               DbTuningDetail dbTuningDetail = null;
               if (possibleTuningDetails != null)
               {
@@ -419,19 +428,19 @@ namespace Mediaportal.TV.Server.SetupTV.Sections.Helpers
               Channel dbChannel;
               if (dbTuningDetail != null)
               {
-                UpdateChannel(channel, scannedChannel.IsVisibleInGuide, dbTuningDetail);
+                UpdateChannel(channel, scannedChannel.IsVisibleInGuide, dbTuningDetail, satelliteIdsByLongitude);
                 overallCounter.Updated.Add(channel);
                 transmitterCounter.Updated.Add(channel);
               }
               else
               {
-                dbChannel = AddChannel(channel, scannedChannel.IsVisibleInGuide);
+                dbChannel = AddChannel(channel, scannedChannel.IsVisibleInGuide, satelliteIdsByLongitude);
                 overallCounter.New.Add(channel);
                 transmitterCounter.New.Add(channel);
 
                 // Automatic channel grouping...
                 ICollection<string> channelGroupNames = GetGroupNamesForChannel(channelGroupConfiguration, scannedChannel.Groups, groupNames);
-                newChannelGroupMappings.AddRange(CreateChannelGroupMapsForChannel(channelGroupNames, channel.MediaType, dbChannel.IdChannel, channelGroupsByMediaType));
+                newChannelGroupMappings.AddRange(CreateChannelGroupMappingsForChannel(channelGroupNames, channel.MediaType, dbChannel.IdChannel, channelGroupsByMediaType));
               }
             }
 
@@ -733,9 +742,9 @@ namespace Mediaportal.TV.Server.SetupTV.Sections.Helpers
       return groupNamesForChannel;
     }
 
-    private IList<GroupMap> CreateChannelGroupMapsForChannel(ICollection<string> groupNames, MediaType channelMediaType, int channelId, IDictionary<MediaType, IDictionary<string, int>> channelGroupsByMediaType)
+    private IList<GroupMap> CreateChannelGroupMappingsForChannel(ICollection<string> groupNames, MediaType channelMediaType, int channelId, IDictionary<MediaType, IDictionary<string, int>> channelGroupsByMediaType)
     {
-      IList<GroupMap> groupMaps = new List<GroupMap>(groupNames.Count);
+      IList<GroupMap> mappings = new List<GroupMap>(groupNames.Count);
 
       IDictionary<string, int> channelGroupIds;
       if (!channelGroupsByMediaType.TryGetValue(channelMediaType, out channelGroupIds))
@@ -749,17 +758,17 @@ namespace Mediaportal.TV.Server.SetupTV.Sections.Helpers
         int channelGroupId;
         if (!channelGroupIds.TryGetValue(groupName, out channelGroupId))
         {
-          channelGroupId = ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(groupName, channelMediaType).IdGroup;
+          channelGroupId = ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateChannelGroup(groupName, channelMediaType).IdGroup;
           channelGroupIds.Add(groupName, channelGroupId);
         }
 
-        groupMaps.Add(new GroupMap
+        mappings.Add(new GroupMap
         {
           IdGroup = channelGroupId,
           IdChannel = channelId
         });
       }
-      return groupMaps;
+      return mappings;
     }
 
     private Dictionary<ChannelGroupType, string[]> ReadAutomaticChannelGroupConfig()
@@ -832,7 +841,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections.Helpers
       return channelGroupConfiguration;
     }
 
-    public static Channel AddChannel(IChannel channel, bool isVisibleInGuide)
+    public static Channel AddChannel(IChannel channel, bool isVisibleInGuide, IDictionary<int, int> satelliteIdsByLongitude = null)
     {
       Channel dbChannel = new Channel();
       dbChannel.Name = channel.Name;
@@ -841,11 +850,17 @@ namespace Mediaportal.TV.Server.SetupTV.Sections.Helpers
       dbChannel.VisibleInGuide = isVisibleInGuide;
       dbChannel = ServiceAgents.Instance.ChannelServiceAgent.SaveChannel(dbChannel);
       dbChannel.AcceptChanges();
-      ServiceAgents.Instance.ChannelServiceAgent.AddTuningDetail(dbChannel.IdChannel, channel);
+
+      DbTuningDetail tuningDetail = new DbTuningDetail();
+      tuningDetail.IdChannel = dbChannel.IdChannel;
+      tuningDetail.Priority = 1;
+      tuningDetail.GrabEpg = true;
+      tuningDetail.LastEpgGrabTime = SqlDateTime.MinValue.Value;
+      UpdateTuningDetail(channel, tuningDetail, satelliteIdsByLongitude);
       return dbChannel;
     }
 
-    public static void UpdateChannel(IChannel channel, bool isVisibleInGuide, DbTuningDetail dbTuningDetail)
+    public static void UpdateChannel(IChannel channel, bool isVisibleInGuide, DbTuningDetail dbTuningDetail, IDictionary<int, int> satelliteIdsByLongitude = null)
     {
       Channel dbChannel = dbTuningDetail.Channel;
       if (dbChannel != null)
@@ -896,7 +911,157 @@ namespace Mediaportal.TV.Server.SetupTV.Sections.Helpers
         }
       }
 
-      ServiceAgents.Instance.ChannelServiceAgent.UpdateTuningDetail(dbTuningDetail.IdChannel, dbTuningDetail.IdTuning, channel);
+      UpdateTuningDetail(channel, dbTuningDetail, satelliteIdsByLongitude);
+    }
+
+    private static void UpdateTuningDetail(IChannel channel, DbTuningDetail tuningDetail, IDictionary<int, int> satelliteIdsByLongitude)
+    {
+      tuningDetail.Name = channel.Name;
+      tuningDetail.Provider = channel.Provider;
+      tuningDetail.LogicalChannelNumber = channel.LogicalChannelNumber;
+      tuningDetail.MediaType = (int)channel.MediaType;
+      tuningDetail.IsEncrypted = channel.IsEncrypted;
+      tuningDetail.IsHighDefinition = channel.IsHighDefinition;
+      tuningDetail.IsThreeDimensional = channel.IsThreeDimensional;
+
+      IChannelOfdm ofdmChannel = channel as IChannelOfdm;
+      if (ofdmChannel != null)
+      {
+        tuningDetail.Bandwidth = ofdmChannel.Bandwidth;
+      }
+
+      IChannelPhysical physicalChannel = channel as IChannelPhysical;
+      if (physicalChannel != null)
+      {
+        tuningDetail.Frequency = physicalChannel.Frequency;
+      }
+
+      IChannelSatellite satelliteChannel = channel as IChannelSatellite;
+      if (satelliteChannel != null)
+      {
+        int satelliteId;
+        if (satelliteIdsByLongitude == null || !satelliteIdsByLongitude.TryGetValue(satelliteChannel.Longitude, out satelliteId))
+        {
+          Log.Error("channel scan: failed to determine ID for satellite at longitude {0}", satelliteChannel.Longitude);
+          return;
+        }
+        tuningDetail.IdSatellite = satelliteId;
+        tuningDetail.Polarisation = (int)satelliteChannel.Polarisation;
+        tuningDetail.Modulation = (int)satelliteChannel.ModulationScheme;
+        tuningDetail.SymbolRate = satelliteChannel.SymbolRate;
+        tuningDetail.FecCodeRate = (int)satelliteChannel.FecCodeRate;
+      }
+
+      ChannelDvbBase dvbChannel = channel as ChannelDvbBase;
+      if (dvbChannel != null)
+      {
+        tuningDetail.OriginalNetworkId = dvbChannel.OriginalNetworkId;
+        tuningDetail.OpenTvChannelId = dvbChannel.OpenTvChannelId;
+        tuningDetail.EpgOriginalNetworkId = dvbChannel.EpgOriginalNetworkId;
+        tuningDetail.EpgTransportStreamId = dvbChannel.EpgTransportStreamId;
+        tuningDetail.EpgServiceId = dvbChannel.EpgServiceId;
+      }
+      ChannelMpeg2Base mpeg2Channel = channel as ChannelMpeg2Base;
+      if (mpeg2Channel != null)
+      {
+        tuningDetail.PmtPid = mpeg2Channel.PmtPid;
+        tuningDetail.ServiceId = mpeg2Channel.ProgramNumber;
+        tuningDetail.TransportStreamId = mpeg2Channel.TransportStreamId;
+      }
+
+      ChannelAnalogTv analogTvChannel = channel as ChannelAnalogTv;
+      if (analogTvChannel != null)
+      {
+        tuningDetail.BroadcastStandard = (int)BroadcastStandard.AnalogTelevision;
+        tuningDetail.PhysicalChannelNumber = analogTvChannel.PhysicalChannelNumber;
+        tuningDetail.CountryId = analogTvChannel.Country.Id;
+        tuningDetail.TuningSource = (int)analogTvChannel.TunerSource;
+      }
+      ChannelAtsc atscChannel = channel as ChannelAtsc;
+      if (atscChannel != null)
+      {
+        tuningDetail.BroadcastStandard = (int)BroadcastStandard.Atsc;
+        tuningDetail.Modulation = (int)atscChannel.ModulationScheme;
+        tuningDetail.SourceId = atscChannel.SourceId;
+      }
+      ChannelCapture captureChannel = channel as ChannelCapture;
+      if (captureChannel != null)
+      {
+        tuningDetail.BroadcastStandard = (int)BroadcastStandard.ExternalInput;
+        tuningDetail.VideoSource = (int)captureChannel.VideoSource;
+        tuningDetail.AudioSource = (int)captureChannel.AudioSource;
+        tuningDetail.IsVcrSignal = captureChannel.IsVcrSignal;
+      }
+      if (channel is ChannelDigiCipher2)
+      {
+        tuningDetail.BroadcastStandard = (int)BroadcastStandard.DigiCipher2;
+      }
+      ChannelDvbC dvbcChannel = channel as ChannelDvbC;
+      if (dvbcChannel != null)
+      {
+        tuningDetail.BroadcastStandard = (int)BroadcastStandard.DvbC;
+        tuningDetail.Modulation = (int)dvbcChannel.ModulationScheme;
+        tuningDetail.SymbolRate = dvbcChannel.SymbolRate;
+      }
+      ChannelDvbC2 dvbc2Channel = channel as ChannelDvbC2;
+      if (dvbcChannel != null)
+      {
+        tuningDetail.BroadcastStandard = (int)BroadcastStandard.DvbC2;
+        tuningDetail.StreamId = dvbc2Channel.PlpId;
+      }
+      ChannelDvbS dvbsChannel = channel as ChannelDvbS;
+      if (dvbsChannel != null)
+      {
+        tuningDetail.BroadcastStandard = (int)BroadcastStandard.DvbS;
+        tuningDetail.FreesatChannelId = dvbsChannel.FreesatChannelId;
+      }
+      ChannelDvbS2 dvbs2Channel = channel as ChannelDvbS2;
+      if (dvbs2Channel != null)
+      {
+        tuningDetail.BroadcastStandard = (int)BroadcastStandard.DvbS2;
+        tuningDetail.FreesatChannelId = dvbs2Channel.FreesatChannelId;
+        tuningDetail.PilotTonesState = (int)dvbs2Channel.PilotTonesState;
+        tuningDetail.RollOffFactor = (int)dvbs2Channel.RollOffFactor;
+        tuningDetail.StreamId = dvbs2Channel.StreamId;
+      }
+      if (channel is ChannelDvbT)
+      {
+        tuningDetail.BroadcastStandard = (int)BroadcastStandard.DvbT;
+      }
+      ChannelDvbT2 dvbt2Channel = channel as ChannelDvbT2;
+      if (dvbt2Channel != null)
+      {
+        tuningDetail.BroadcastStandard = (int)BroadcastStandard.DvbT2;
+        tuningDetail.StreamId = dvbt2Channel.PlpId;
+      }
+      if (channel is ChannelFmRadio)
+      {
+        tuningDetail.BroadcastStandard = (int)BroadcastStandard.FmRadio;
+      }
+      if (channel is ChannelSatelliteTurboFec)
+      {
+        tuningDetail.BroadcastStandard = (int)BroadcastStandard.SatelliteTurboFec;
+      }
+      ChannelScte scteChannel = channel as ChannelScte;
+      if (scteChannel != null)
+      {
+        tuningDetail.BroadcastStandard = (int)BroadcastStandard.Scte;
+        tuningDetail.Modulation = (int)scteChannel.ModulationScheme;
+        tuningDetail.SourceId = scteChannel.SourceId;
+      }
+      ChannelStream streamChannel = channel as ChannelStream;
+      if (streamChannel != null)
+      {
+        tuningDetail.BroadcastStandard = (int)BroadcastStandard.DvbIp;
+        tuningDetail.Url = streamChannel.Url;
+      }
+      else
+      {
+        // URL can't be null. Set it empty for non-stream tuning details.
+        tuningDetail.Url = string.Empty;
+      }
+
+      ServiceAgents.Instance.ChannelServiceAgent.SaveTuningDetail(tuningDetail);
     }
   }
 }

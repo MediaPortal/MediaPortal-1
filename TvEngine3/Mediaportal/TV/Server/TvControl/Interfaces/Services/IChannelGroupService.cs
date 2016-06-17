@@ -10,33 +10,21 @@ namespace Mediaportal.TV.Server.TVControl.Interfaces.Services
   public interface IChannelGroupService
   {
     [OperationContract]
-    IList<ChannelGroup> ListAllChannelGroups();
-
-    [OperationContract(Name = "ListAllChannelGroupsWithSpecificRelations")]
-    IList<ChannelGroup> ListAllChannelGroups(ChannelGroupIncludeRelationEnum includeRelations);
+    IList<ChannelGroup> ListAllChannelGroups(ChannelGroupRelation includeRelations);
 
     [OperationContract]
-    IList<ChannelGroup> ListAllChannelGroupsByMediaType(MediaType mediaType);
-
-    [OperationContract(Name = "ListAllChannelGroupsByMediaTypeWithSpecificRelations")]
-    IList<ChannelGroup> ListAllChannelGroupsByMediaType(MediaType mediaType, ChannelGroupIncludeRelationEnum includeRelations);
+    IList<ChannelGroup> ListAllChannelGroupsByMediaType(MediaType mediaType, ChannelGroupRelation includeRelations);
 
     [OperationContract]
-    ChannelGroup GetChannelGroupByNameAndMediaType(string groupName, MediaType mediaType);
+    ChannelGroup GetChannelGroup(int idChannelGroup, ChannelGroupRelation includeRelations);
 
     [OperationContract]
-    ChannelGroup GetOrCreateGroup(string groupName, MediaType mediaType);
+    ChannelGroup GetOrCreateChannelGroup(string name, MediaType mediaType);
 
     [OperationContract]
-    ChannelGroup GetChannelGroup(int id);
-
-    [OperationContract(Name = "GetChannelGroupWithSpecificRelations")]
-    ChannelGroup GetChannelGroup(int id, ChannelGroupIncludeRelationEnum includeRelations);
+    ChannelGroup SaveChannelGroup(ChannelGroup channelGroup);
 
     [OperationContract]
-    ChannelGroup SaveGroup(ChannelGroup @group);
-
-    [OperationContract]
-    void DeleteChannelGroup(int idGroup);
+    void DeleteChannelGroup(int idChannelGroup);
   }
 }

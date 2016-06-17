@@ -22,6 +22,7 @@ using System;
 using System.Globalization;
 using Mediaportal.TV.Server.TVControl.ServiceAgents;
 using Mediaportal.TV.Server.TVDatabase.Entities;
+using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVDatabase.Entities.Factories;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.Entities;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
@@ -1724,7 +1725,7 @@ namespace Mediaportal.TV.TvPlugin
           Channel ch = null;
           if (rec.IdChannel.HasValue)
           {
-            ch = ServiceAgents.Instance.ChannelServiceAgent.GetChannel(rec.IdChannel.GetValueOrDefault());
+            ch = ServiceAgents.Instance.ChannelServiceAgent.GetChannel(rec.IdChannel.GetValueOrDefault(), ChannelRelation.None);
           }
           if (ch != null)
           {

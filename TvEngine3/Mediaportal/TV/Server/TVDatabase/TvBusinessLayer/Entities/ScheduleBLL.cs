@@ -5,7 +5,6 @@ using Mediaportal.TV.Server.Common.Types.Enum;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Channel;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Tuner.Enum;
 
 namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.Entities
 {
@@ -23,23 +22,63 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.Entities
       get { return _entity; }
     }
 
+    // Stored as bits 2 to 15 (zero indexed, bit 0 is LSB) in the Quality property.
     public QualityType QualityType
     {
-      get { return (QualityType)(_entity.Quality / 10); }
+      get
+      {
+        int value = _entity.Quality >> 2;
+        if (Enum.IsDefined(typeof(QualityType), value))
+        {
+          return (QualityType)value;
+        }
+        return QualityType.Custom;
+      }
       set
       {
-        int type = ((int)value);
-        _entity.Quality = (type * 10) + (_entity.Quality % 10);
+        if (value != QualityType.Custom)
+        {
+          _entity.Quality = ((int)value << 2) | (_entity.Quality & 3);
+        }
       }
     }
 
-    public EncoderBitRateMode BitRateMode
+    // Stored as bits 2 to 8 (zero indexed, bit 0 is LSB) in the Quality property.
+    public int AverageBitRate
     {
-      get { return (EncoderBitRateMode)(_entity.Quality % 10); }
+      get
+      {
+        return (_entity.Quality >> 2) & 0x7f;
+      }
       set
       {
-        int mode = ((int)value);
-        _entity.Quality = mode + ((_entity.Quality / 10) * 10);
+        _entity.Quality = (value << 2) | (_entity.Quality & 0xfe03);
+      }
+    }
+
+    // Stored as bits 9 to 15 (zero indexed, bit 0 is LSB) in the Quality property.
+    public int PeakBitRate
+    {
+      get
+      {
+        return _entity.Quality >> 9;
+      }
+      set
+      {
+        _entity.Quality = (value << 9) | (_entity.Quality & 0x1ff);
+      }
+    }
+
+    // Stored in the 2 least significant bits of the Quality property.
+    public EncodeMode BitRateMode
+    {
+      get
+      {
+        return (EncodeMode)(_entity.Quality & 3);
+      }
+      set
+      {
+        _entity.Quality = (_entity.Quality & 0xfffc) | (int)value;
       }
     }
 
@@ -82,6 +121,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.Entities
     /// if false then we'll return true if recording has been not for this program</returns>
     public bool IsRecordingProgram(Program program, bool filterCanceledRecordings)
     {
+      // requires: CanceledSchedules
       if (program == null)
       {
         return false;
@@ -172,6 +212,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.Entities
     /// <returns>True if a common transponder exists</returns>
     public bool IsSameTransponder(Schedule schedule)
     {
+      // requires: ChannelTuningDetails
       IList<TuningDetail> tuningDetailList1 = _entity.Channel.TuningDetails;
       IList<TuningDetail> tuningDetailList2 = schedule.Channel.TuningDetails;
       foreach (TuningDetail td1 in tuningDetailList1)

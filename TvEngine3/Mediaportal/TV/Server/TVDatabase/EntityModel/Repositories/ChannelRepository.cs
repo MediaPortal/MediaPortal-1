@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
-using Mediaportal.Common.Utils;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVDatabase.EntityModel.Interfaces;
@@ -25,33 +24,26 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
     {
     }
 
-    public IQueryable<Channel> IncludeAllRelations(IQueryable<Channel> query, ChannelIncludeRelationEnum includeRelations)
+    public IQueryable<Channel> IncludeAllRelations(IQueryable<Channel> query, ChannelRelation includeRelations)
     {
-      bool channelLinkMapsChannelLink = includeRelations.HasFlag(ChannelIncludeRelationEnum.ChannelLinkMapsChannelLink);
-      bool channelLinkMapsChannelPortal = includeRelations.HasFlag(ChannelIncludeRelationEnum.ChannelLinkMapsChannelPortal);
-      bool channelMaps = includeRelations.HasFlag(ChannelIncludeRelationEnum.ChannelMaps);
-      bool groupMaps = includeRelations.HasFlag(ChannelIncludeRelationEnum.GroupMaps);
-      bool tuningDetails = includeRelations.HasFlag(ChannelIncludeRelationEnum.TuningDetails);
-      bool recordings = includeRelations.HasFlag(ChannelIncludeRelationEnum.Recordings);
-
-      if (recordings)
+      if (includeRelations.HasFlag(ChannelRelation.Recordings))
       {
         query = query.Include(c => c.Recordings);
       }
 
       //todo: move to LoadNavigationProperties for performance improvement
-      if (channelLinkMapsChannelLink)
+      if (includeRelations.HasFlag(ChannelRelation.ChannelLinkMapsChannelLink))
       {
         query = query.Include(c => c.ChannelLinkMaps.Select(l => l.ChannelLink));
       }
 
       //todo: move to LoadNavigationProperties for performance improvement
-      if (channelLinkMapsChannelPortal)
+      if (includeRelations.HasFlag(ChannelRelation.ChannelLinkMapsChannelPortal))
       {
         query = query.Include(c => c.ChannelLinkMaps.Select(l => l.ChannelPortal));
       }
 
-      if (channelMaps)
+      if (includeRelations.HasFlag(ChannelRelation.ChannelMaps))
       {
         query = query.Include(c => c.ChannelMaps);
       }
@@ -61,7 +53,7 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
       //{      
       //query = query.Include(c => c.ChannelMaps.Select(tuner => tuner.Tuner));
       //}
-      if (groupMaps)
+      if (includeRelations.HasFlag(ChannelRelation.GroupMaps))
       {
         query = query.Include(c => c.GroupMaps);
       }
@@ -72,7 +64,7 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
       //  query = query.Include(c => c.GroupMaps.Select(g => g.ChannelGroup));
       //}
 
-      if (tuningDetails)
+      if (includeRelations.HasFlag(ChannelRelation.TuningDetails))
       {
         query = query.Include(c => c.TuningDetails);
       }
@@ -80,160 +72,97 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
       return query;
     }
 
-    private IDictionary<int, ChannelGroup> GetChannelGroupsDictionary()
+    public IList<Channel> LoadNavigationProperties(IEnumerable<Channel> channels, ChannelRelation includeRelations)
     {
-      List<ChannelGroup> groups = GetAll<ChannelGroup>().ToList();
-      IDictionary<int, ChannelGroup> groupsDict = new Dictionary<int, ChannelGroup>();
-      foreach (ChannelGroup group in groups)
-      {
-        groupsDict.Add(group.IdGroup, group);
-      }
-      return groupsDict;
-    }
-
-    private IDictionary<int, Tuner> GetTunersDictionary()
-    {
-      List<Tuner> tuners = GetAll<Tuner>().ToList();
-      IDictionary<int, Tuner> tunersDict = new Dictionary<int, Tuner>();
-      foreach (Tuner tuner in tuners)
-      {
-        tunersDict.Add(tuner.IdTuner, tuner);
-      }
-      return tunersDict;
-    }
-
-    public Channel LoadNavigationProperties(Channel channel)
-    {
-      return LoadNavigationProperties(channel, GetAllRelationsForChannel());
-    }
-
-    public IList<Channel> LoadNavigationProperties(IEnumerable<Channel> channels)
-    {
-      return LoadNavigationProperties(channels, GetAllRelationsForChannel());
-    }
-
-    public IList<Channel> LoadNavigationProperties(IEnumerable<Channel> channels, ChannelIncludeRelationEnum includeRelations)
-    {
-      bool channelMapsTuner = includeRelations.HasFlag(ChannelIncludeRelationEnum.ChannelMapsTuner);
-      bool groupMapsChannelGroup = includeRelations.HasFlag(ChannelIncludeRelationEnum.GroupMapsChannelGroup);
+      bool channelMapsTuner = includeRelations.HasFlag(ChannelRelation.ChannelMapsTuner);
+      bool groupMapsChannelGroup = includeRelations.HasFlag(ChannelRelation.GroupMapsChannelGroup);
+      bool tuningDetails = includeRelations.HasFlag(ChannelRelation.TuningDetails);
 
       IList<Channel> list = channels.ToList(); //fetch the basic/incomplete result from DB now.
 
-      IDictionary<int, Tuner> tunerDict = null;
-      IDictionary<int, ChannelGroup> groupDict = null;
+      IDictionary<int, Tuner> tuners = null;
+      IDictionary<int, ChannelGroup> channelGroups = null;
+      IDictionary<int, Satellite> satellites = null;
 
       if (channelMapsTuner)
       {
-        tunerDict = GetTunersDictionary();
+        List<Tuner> tempTuners = GetAll<Tuner>().ToList();
+        tuners = new Dictionary<int, Tuner>();
+        foreach (Tuner tuner in tempTuners)
+        {
+          tuners.Add(tuner.IdTuner, tuner);
+        }
       }
       if (groupMapsChannelGroup)
       {
-        groupDict = GetChannelGroupsDictionary();
+        List<ChannelGroup> tempChannelGroups = GetAll<ChannelGroup>().ToList();
+        channelGroups = new Dictionary<int, ChannelGroup>();
+        foreach (ChannelGroup group in tempChannelGroups)
+        {
+          channelGroups.Add(group.IdGroup, group);
+        }
+      }
+      if (tuningDetails)
+      {
+        List<Satellite> tempSatellites = GetAll<Satellite>().ToList();
+        satellites = new Dictionary<int, Satellite>();
+        foreach (Satellite satellite in tempSatellites)
+        {
+          satellites.Add(satellite.IdSatellite, satellite);
+        }
       }
 
-      //now attach missing relations for tuningdetail - done in order to speed up query                    
+      // Attach missing relations.
+      // TODO further speed improvements by using Parallel/ThreadHelper?
       foreach (Channel channel in list)
       {
         if (channelMapsTuner)
         {
-          foreach (var channelMap in channel.ChannelMaps)
+          foreach (ChannelMap channelMap in channel.ChannelMaps)
           {
-            LoadChannelMap(tunerDict, channelMap);
+            Tuner tuner;
+            if (tuners.TryGetValue(channelMap.IdTuner, out tuner))
+            {
+              channelMap.Tuner = tuner;
+            }
           }
         }
         if (groupMapsChannelGroup)
         {
           foreach (GroupMap groupMap in channel.GroupMaps)
           {
-            LoadGroupMap(groupDict, groupMap);
+            ChannelGroup channelGroup;
+            if (channelGroups.TryGetValue(groupMap.IdGroup, out channelGroup))
+            {
+              groupMap.ChannelGroup = channelGroup;
+            }
+          }
+        }
+        if (tuningDetails)
+        {
+          foreach (TuningDetail tuningDetail in channel.TuningDetails)
+          {
+            if (tuningDetail.IdSatellite.HasValue)
+            {
+              Satellite satellite;
+              if (satellites.TryGetValue(tuningDetail.IdSatellite.Value, out satellite))
+              {
+                tuningDetail.Satellite = satellite;
+              }
+            }
           }
         }
       }
       return list;
     }
 
-    public Channel LoadNavigationProperties(Channel channel, ChannelIncludeRelationEnum includeRelations)
+    public Channel LoadNavigationProperties(Channel channel, ChannelRelation includeRelations)
     {
-      bool channelMapsTuner = includeRelations.HasFlag(ChannelIncludeRelationEnum.ChannelMapsTuner);
-      bool groupMapsChannelGroup = includeRelations.HasFlag(ChannelIncludeRelationEnum.GroupMapsChannelGroup);
-
-      IDictionary<int, Tuner> tunerDict = null;
-      IDictionary<int, ChannelGroup> groupDict = null;
-
-      if (channelMapsTuner)
+      if (channel == null)
       {
-        tunerDict = GetTunersDictionary();
+        return null;
       }
-      if (groupMapsChannelGroup)
-      {
-        groupDict = GetChannelGroupsDictionary();
-      }
-
-      ThreadHelper.ParallelInvoke(
-        () =>
-        {
-          if (channelMapsTuner)
-          {
-            foreach (ChannelMap channelMap in channel.ChannelMaps)
-            {
-              LoadChannelMap(tunerDict, channelMap);
-            }
-            //Parallel.ForEach(channel.ChannelMaps, (channelMap) => LoadChannelMap(tunerDict, channelMap));
-          }
-        },
-        () =>
-        {
-          if (groupMapsChannelGroup)
-          {
-            foreach (GroupMap groupMap in channel.GroupMaps)
-            {
-              LoadGroupMap(groupDict, groupMap);
-            }
-          }
-        }
-      );
-      return channel;
-    }
-
-    private static void LoadGroupMap(IDictionary<int, ChannelGroup> groupDict, GroupMap groupMap)
-    {
-      if (groupMap.IdGroup > 0)
-      {
-        ChannelGroup group;
-        if (groupDict.TryGetValue(groupMap.IdGroup, out group))
-        {
-          groupMap.ChannelGroup = group;
-        }
-      }
-    }
-
-    private static void LoadChannelMap(IDictionary<int, Tuner> tunerDict, ChannelMap channelmap)
-    {
-      if (channelmap.IdTuner > 0)
-      {
-        Tuner tuner;
-        if (tunerDict.TryGetValue(channelmap.IdTuner, out tuner))
-        {
-          channelmap.Tuner = tuner;
-        }
-      }
-    }
-
-    public IQueryable<Channel> IncludeAllRelations(IQueryable<Channel> query)
-    {
-      return IncludeAllRelations(query, GetAllRelationsForChannel());
-    }
-
-    private static ChannelIncludeRelationEnum GetAllRelationsForChannel()
-    {
-      ChannelIncludeRelationEnum include = ChannelIncludeRelationEnum.TuningDetails;
-      include |= ChannelIncludeRelationEnum.ChannelMapsTuner;
-      include |= ChannelIncludeRelationEnum.GroupMaps;
-      include |= ChannelIncludeRelationEnum.GroupMapsChannelGroup;
-      include |= ChannelIncludeRelationEnum.ChannelMaps;
-      include |= ChannelIncludeRelationEnum.ChannelLinkMapsChannelLink;
-      include |= ChannelIncludeRelationEnum.ChannelLinkMapsChannelPortal;
-      return include;
+      return LoadNavigationProperties(new Channel[1] { channel }, includeRelations)[0];
     }
   }
 }

@@ -3,70 +3,32 @@ using System.ServiceModel;
 using Mediaportal.TV.Server.Common.Types.Enum;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Channel;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channel;
 
 namespace Mediaportal.TV.Server.TVControl.Interfaces.Services
 {
   [ServiceContract(Namespace = "http://www.team-mediaportal.com")]
-  [ServiceKnownType(typeof(ChannelAnalogTv))]
-  [ServiceKnownType(typeof(ChannelAtsc))]
-  [ServiceKnownType(typeof(ChannelCapture))]
-  [ServiceKnownType(typeof(ChannelDigiCipher2))]
-  [ServiceKnownType(typeof(ChannelDvbC))]
-  [ServiceKnownType(typeof(ChannelDvbC2))]
-  [ServiceKnownType(typeof(ChannelDvbS))]
-  [ServiceKnownType(typeof(ChannelDvbS2))]
-  [ServiceKnownType(typeof(ChannelDvbT))]
-  [ServiceKnownType(typeof(ChannelDvbT2))]
-  [ServiceKnownType(typeof(ChannelFmRadio))]
-  [ServiceKnownType(typeof(ChannelSatelliteTurboFec))]
-  [ServiceKnownType(typeof(ChannelScte))]
-  [ServiceKnownType(typeof(ChannelStream))]
-  [ServiceKnownType(typeof(LnbTypeBLL))]
   public interface IChannelService
   {
     [OperationContract]
-    IList<Channel> ListAllChannels();
-
-    [OperationContract(Name = "ListAllChannelsWithSpecificRelations")]
-    IList<Channel> ListAllChannels(ChannelIncludeRelationEnum includeRelations);
+    IList<Channel> ListAllChannels(ChannelRelation includeRelations);
 
     [OperationContract]
-    IList<Channel> ListAllChannelsByGroupId(int groupId);
-
-    [OperationContract(Name = "ListAllChannelsByGroupIdWithSpecificRelations")]
-    IList<Channel> ListAllChannelsByGroupId(int groupId, ChannelIncludeRelationEnum includeRelations);
+    IList<Channel> ListAllChannelsByGroupId(int idChannelGroup, ChannelRelation includeRelations);
 
     [OperationContract]
-    IList<Channel> ListAllVisibleChannelsByGroupId(int groupId);
-
-    [OperationContract(Name = "ListAllVisibleChannelsByGroupIdWithSpecificRelations")]
-    IList<Channel> ListAllVisibleChannelsByGroupId(int groupId, ChannelIncludeRelationEnum includeRelations);
+    IList<Channel> ListAllVisibleChannelsByGroupId(int idChannelGroup, ChannelRelation includeRelations);
 
     [OperationContract]
-    IList<Channel> ListAllChannelsByMediaType(MediaType mediaType);
-
-    [OperationContract(Name = "ListAllChannelsByMediaTypeWithSpecificRelations")]
-    IList<Channel> ListAllChannelsByMediaType(MediaType mediaType, ChannelIncludeRelationEnum includeRelations);
+    IList<Channel> ListAllChannelsByMediaType(MediaType mediaType, ChannelRelation includeRelations);
 
     [OperationContract]
-    IList<Channel> ListAllVisibleChannelsByMediaType(MediaType mediaType);
-
-    [OperationContract(Name = "ListAllVisibleChannelsByMediaTypeWithSpecificRelations")]
-    IList<Channel> ListAllVisibleChannelsByMediaType(MediaType mediaType, ChannelIncludeRelationEnum includeRelations);
+    IList<Channel> ListAllVisibleChannelsByMediaType(MediaType mediaType, ChannelRelation includeRelations);
 
     [OperationContract]
-    Channel GetChannel(int idChannel);
-
-    [OperationContract(Name = "GetChannelWithSpecificRelations")]
-    Channel GetChannel(int idChannel, ChannelIncludeRelationEnum includeRelations);
+    Channel GetChannel(int idChannel, ChannelRelation includeRelations);
 
     [OperationContract]
-    IList<Channel> GetChannelsByName(string channelName);
-
-    [OperationContract]
-    IList<Channel> GetChannelsByName(string channelName, ChannelIncludeRelationEnum includeRelations);
+    IList<Channel> GetChannelsByName(string name, ChannelRelation includeRelations);
 
     [OperationContract]
     Channel SaveChannel(Channel channel);
@@ -78,48 +40,45 @@ namespace Mediaportal.TV.Server.TVControl.Interfaces.Services
     void DeleteChannel(int idChannel);
 
     [OperationContract]
-    Channel MergeChannels(IEnumerable<Channel> channels, ChannelIncludeRelationEnum includeRelations);
+    Channel MergeChannels(IEnumerable<Channel> channels, ChannelRelation includeRelations);
 
     #region tuning details
 
     [OperationContract]
-    IList<TuningDetail> ListAllTuningDetailsByChannel(int idChannel);
+    IList<TuningDetail> ListAllTuningDetailsByChannel(int idChannel, TuningDetailRelation includeRelations);
 
     [OperationContract]
-    TuningDetail GetTuningDetail(int idTuningDetail);
+    IList<TuningDetail> ListAllDigitalTransmitterTuningDetails();
 
     [OperationContract]
-    IList<TuningDetail> GetAnalogTelevisionTuningDetails(int physicalChannelNumber);
+    TuningDetail GetTuningDetail(int idTuningDetail, TuningDetailRelation includeRelations);
 
     [OperationContract]
-    IList<TuningDetail> GetAtscScteTuningDetails(BroadcastStandard broadcastStandard, string logicalChannelNumber, int? frequency = null);
+    IList<TuningDetail> GetAnalogTelevisionTuningDetails(int physicalChannelNumber, TuningDetailRelation includeRelations);
 
     [OperationContract]
-    IList<TuningDetail> GetCaptureTuningDetails(string name);
+    IList<TuningDetail> GetAtscScteTuningDetails(BroadcastStandard broadcastStandard, string logicalChannelNumber, TuningDetailRelation includeRelations, int? frequency = null);
 
     [OperationContract]
-    IList<TuningDetail> GetDvbTuningDetails(BroadcastStandard broadcastStandard, int originalNetworkId, int serviceId, int? transportStreamId = null, int? frequency = null, int? satelliteId = null);
+    IList<TuningDetail> GetCaptureTuningDetails(string name, TuningDetailRelation includeRelations);
 
     [OperationContract]
-    IList<TuningDetail> GetFmRadioTuningDetails(int frequency);
+    IList<TuningDetail> GetDvbTuningDetails(BroadcastStandard broadcastStandard, int originalNetworkId, int serviceId, TuningDetailRelation includeRelations, int? transportStreamId = null, int? frequency = null, int? satelliteId = null);
 
     [OperationContract]
-    IList<TuningDetail> GetFreesatTuningDetails(int channelId);
+    IList<TuningDetail> GetFmRadioTuningDetails(int frequency, TuningDetailRelation includeRelations);
 
     [OperationContract]
-    IList<TuningDetail> GetMpeg2TuningDetails(BroadcastStandard broadcastStandard, int programNumber, int? transportStreamId = null, int? frequency = null, int? satelliteId = null);
+    IList<TuningDetail> GetFreesatTuningDetails(int channelId, TuningDetailRelation includeRelations);
 
     [OperationContract]
-    IList<TuningDetail> GetOpenTvTuningDetails(int channelId);
+    IList<TuningDetail> GetMpeg2TuningDetails(BroadcastStandard broadcastStandard, int programNumber, TuningDetailRelation includeRelations, int? transportStreamId = null, int? frequency = null, int? satelliteId = null);
 
     [OperationContract]
-    IList<TuningDetail> GetStreamTuningDetails(string url);
+    IList<TuningDetail> GetOpenTvTuningDetails(int channelId, TuningDetailRelation includeRelations);
 
     [OperationContract]
-    void AddTuningDetail(int idChannel, IChannel channel);
-
-    [OperationContract]
-    void UpdateTuningDetail(int idChannel, int idTuningDetail, IChannel channel);
+    IList<TuningDetail> GetStreamTuningDetails(string url, TuningDetailRelation includeRelations);
 
     [OperationContract]
     TuningDetail SaveTuningDetail(TuningDetail tuningDetail);

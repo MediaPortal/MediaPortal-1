@@ -75,19 +75,19 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // Build a dictionary of channel info keyed on broadcast standard. This
       // saves getting the channel list each time the tuner selection changes.
       _channelInfoByBroadcastStandard.Clear();
-      IList<Channel> channels = ServiceAgents.Instance.ChannelServiceAgent.ListAllChannelsByMediaType(_mediaType, ChannelIncludeRelationEnum.TuningDetails);
-      foreach (Channel c in channels)
+      IList<Channel> channels = ServiceAgents.Instance.ChannelServiceAgent.ListAllChannelsByMediaType(_mediaType, ChannelRelation.TuningDetails);
+      foreach (Channel channel in channels)
       {
         ChannelInfo info = new ChannelInfo
         {
-          Id = c.IdChannel,
-          Name = c.Name,
-          ImageIndex = GetImageIndex(c.TuningDetails)
+          Id = channel.IdChannel,
+          Name = channel.Name,
+          ImageIndex = GetImageIndex(channel.TuningDetails)
         };
         BroadcastStandard seenTuningDetailBroadcastStandards = 0;
-        foreach (TuningDetail td in c.TuningDetails)
+        foreach (TuningDetail tuningDetail in channel.TuningDetails)
         {
-          BroadcastStandard tuningDetailBroadcastStandard = (BroadcastStandard)td.BroadcastStandard;
+          BroadcastStandard tuningDetailBroadcastStandard = (BroadcastStandard)tuningDetail.BroadcastStandard;
           if (!seenTuningDetailBroadcastStandards.HasFlag(tuningDetailBroadcastStandard))
           {
             IList<ChannelInfo> channelsByBroadcastStandard;
@@ -105,7 +105,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
       // Populate the tuner list.
       comboBoxTuner.Items.Clear();
-      IList<Tuner> tuners = ServiceAgents.Instance.TunerServiceAgent.ListAllTuners(TunerIncludeRelationEnum.None);
+      IList<Tuner> tuners = ServiceAgents.Instance.TunerServiceAgent.ListAllTuners(TunerRelation.None);
       foreach (Tuner tuner in tuners)
       {
         if (tuner.IsEnabled && ServiceAgents.Instance.ControllerServiceAgent.IsCardPresent(tuner.IdTuner))
@@ -142,7 +142,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         IDictionary<int, int> tunerMappings;
         if (!_tunerMappings.TryGetValue(tuner.IdTuner, out tunerMappings))
         {
-          Tuner t = ServiceAgents.Instance.TunerServiceAgent.GetTuner(tuner.IdTuner, TunerIncludeRelationEnum.ChannelMaps);
+          Tuner t = ServiceAgents.Instance.TunerServiceAgent.GetTuner(tuner.IdTuner, TunerRelation.ChannelMaps);
           this.LogDebug("mapping: loading mappings, tuner ID = {0}, name = {1}, mapping count = {2}", tuner.IdTuner, tuner.Name, t.ChannelMaps.Count);
           tunerMappings = new Dictionary<int, int>(t.ChannelMaps.Count);
           foreach (ChannelMap map in t.ChannelMaps)
@@ -210,9 +210,9 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     {
       bool hasFta = false;
       bool hasScrambled = false;
-      foreach (TuningDetail detail in tuningDetails)
+      foreach (TuningDetail tuningDetail in tuningDetails)
       {
-        if (detail.IsEncrypted)
+        if (tuningDetail.IsEncrypted)
         {
           hasScrambled = true;
         }

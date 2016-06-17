@@ -20,9 +20,11 @@
 
 using System;
 using System.Collections.Generic;
+using System.Data.SqlTypes;
 using Mediaportal.TV.Server.Common.Types.Enum;
 using Mediaportal.TV.Server.TVControl.ServiceAgents;
 using Mediaportal.TV.Server.TVDatabase.Entities;
+using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVDatabase.Entities.Factories;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Integration;
@@ -139,7 +141,7 @@ namespace Mediaportal.TV.TvPlugin
       dlg.Add(GUILocalizeStrings.Get(WeekEndTool.GetText(DayType.Record_WorkingDays)));
       dlg.Add(GUILocalizeStrings.Get(WeekEndTool.GetText(DayType.Record_WeekendDays)));
 
-      Schedule rec = ScheduleFactory.CreateSchedule(selectedChannel.IdChannel, "", ScheduleFactory.MinSchedule, ScheduleFactory.MinSchedule);
+      Schedule rec = ScheduleFactory.CreateSchedule(selectedChannel.IdChannel, "", SqlDateTime.MinValue.Value, SqlDateTime.MinValue.Value);
       rec.ScheduleType = (int)ScheduleRecordingType.Once;
 
       DateTime dtNow = DateTime.Now;
@@ -264,7 +266,7 @@ namespace Mediaportal.TV.TvPlugin
       dlg.Add(GUILocalizeStrings.Get(WeekEndTool.GetText(DayType.Record_WorkingDays)));
       dlg.Add(GUILocalizeStrings.Get(WeekEndTool.GetText(DayType.Record_WeekendDays)));
 
-      Schedule rec = ScheduleFactory.CreateSchedule(selectedChannel.IdChannel, "", ScheduleFactory.MinSchedule, ScheduleFactory.MinSchedule);
+      Schedule rec = ScheduleFactory.CreateSchedule(selectedChannel.IdChannel, "", SqlDateTime.MinValue.Value, SqlDateTime.MinValue.Value);
 
       dlg.DoModal(GetID);
       if (dlg.SelectedLabel == -1)
@@ -390,7 +392,7 @@ namespace Mediaportal.TV.TvPlugin
       }
       int duration = (dlg.SelectedLabel + 1) * 30;
 
-      IList<TuningDetail> details = ServiceAgents.Instance.ChannelServiceAgent.GetChannel(rec.IdChannel).TuningDetails;
+      IList<TuningDetail> details = ServiceAgents.Instance.ChannelServiceAgent.GetChannel(rec.IdChannel, ChannelRelation.TuningDetails).TuningDetails;
       foreach (TuningDetail detail in details)
       {
         if ((detail.BroadcastStandard & (int)BroadcastStandard.MaskAnalog) != 0)

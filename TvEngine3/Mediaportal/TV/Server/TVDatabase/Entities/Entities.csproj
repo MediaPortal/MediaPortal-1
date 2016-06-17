@@ -109,21 +109,19 @@
       <SubType>
       </SubType>
     </Compile>
+    <Compile Include="TunerSatellitePartial.cs" />
+    <Compile Include="Enums\TunerSatelliteRelation.cs" />
+    <Compile Include="Enums\TuningDetailRelation.cs" />
     <Compile Include="ProgramPartial.cs" />
     <Compile Include="VideoEncoderPartial.cs" />
     <Compile Include="TuningDetailPartial.cs" />
     <Compile Include="SatellitePartial.cs" />
-    <Compile Include="Enums\ScheduleIncludeRelationEnum.cs" />
+    <Compile Include="Enums\ScheduleRelation.cs" />
     <Compile Include="LnbTypePartial.cs" />
-    <Compile Include="DiseqcMotor.cs">
-      <DependentUpon>Model.tt</DependentUpon>
-      <SubType>
-      </SubType>
-    </Compile>
     <Compile Include="EntityExtensions.cs" />
-    <Compile Include="Enums\TunerIncludeRelationEnum.cs" />
-    <Compile Include="Enums\ChannelGroupIncludeRelationEnum.cs" />
-    <Compile Include="Enums\ChannelIncludeRelationEnum.cs" />
+    <Compile Include="Enums\TunerRelation.cs" />
+    <Compile Include="Enums\ChannelGroupRelation.cs" />
+    <Compile Include="Enums\ChannelRelation.cs" />
     <Compile Include="Enums\StringComparisonEnum.cs" />
     <Compile Include="Factories\CloneHelper.cs" />
     <Compile Include="Factories\CanceledScheduleFactory.cs" />
@@ -219,9 +217,6 @@
       <DependentUpon>Model.tt</DependentUpon>
       <SubType>
       </SubType>
-    </Compile>
-    <Compile Include="SchedulePartial.cs">
-      <SubType>Code</SubType>
     </Compile>
     <Compile Include="ScheduleRulesTemplate.cs">
       <DependentUpon>Model.tt</DependentUpon>

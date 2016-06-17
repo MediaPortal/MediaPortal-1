@@ -1,6 +1,7 @@
 ﻿using System.Data.Entity;
 using System.Linq;
 using Mediaportal.TV.Server.TVDatabase.Entities;
+using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVDatabase.EntityModel.Interfaces;
 
 namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
@@ -21,9 +22,17 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
     {
     }
 
-    public IQueryable<TuningDetail> IncludeAllRelations(IQueryable<TuningDetail> query)
+    public IQueryable<TuningDetail> IncludeAllRelations(IQueryable<TuningDetail> query, TuningDetailRelation includeRelations)
     {
-      return query.Include(c => c.Channel).Include(c => c.Channel.GroupMaps);
+      if (includeRelations.HasFlag(TuningDetailRelation.Channel))
+      {
+        query = query.Include(td => td.Channel);
+      }
+      if (includeRelations.HasFlag(TuningDetailRelation.Satellite))
+      {
+        query = query.Include(td => td.Satellite);
+      }
+      return query;
     }
   }
 }

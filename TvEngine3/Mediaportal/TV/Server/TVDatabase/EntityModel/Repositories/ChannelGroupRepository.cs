@@ -22,36 +22,20 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
     {
     }
 
-    public IQueryable<ChannelGroup> IncludeAllRelations(IQueryable<ChannelGroup> query)
+    public IQueryable<ChannelGroup> IncludeAllRelations(IQueryable<ChannelGroup> query, ChannelGroupRelation includeRelations)
     {
-      var includeRelations = query.
-        Include(r => r.GroupMaps.Select(c => c.Channel.TuningDetails)).
-        Include(r => r.GroupMaps).
-        Include(r => r.GroupMaps.Select(c => c.Channel));
-      return includeRelations;
-    }
-
-    public IQueryable<ChannelGroup> IncludeAllRelations(IQueryable<ChannelGroup> query, ChannelGroupIncludeRelationEnum includeRelations)
-    {
-      bool groupMaps = includeRelations.HasFlag(ChannelGroupIncludeRelationEnum.GroupMaps);
-      bool groupMapsChannel = includeRelations.HasFlag(ChannelGroupIncludeRelationEnum.GroupMapsChannel);
-      bool groupMapsTuningDetails = includeRelations.HasFlag(ChannelGroupIncludeRelationEnum.GroupMapsTuningDetails);
-
-      if (groupMaps)
+      if (includeRelations.HasFlag(ChannelGroupRelation.GroupMaps))
       {
-        query = query.Include(r => r.GroupMaps);
+        query = query.Include(g => g.GroupMaps);
       }
-
-      if (groupMapsChannel)
+      if (includeRelations.HasFlag(ChannelGroupRelation.GroupMapsChannel))
       {
-        query = query.Include(r => r.GroupMaps.Select(c => c.Channel));
+        query = query.Include(g => g.GroupMaps.Select(c => c.Channel));
       }
-
-      if (groupMapsTuningDetails)
+      if (includeRelations.HasFlag(ChannelGroupRelation.GroupMapsTuningDetails))
       {
-        query = query.Include(r => r.GroupMaps.Select(c => c.Channel.TuningDetails));
+        query = query.Include(g => g.GroupMaps.Select(c => c.Channel.TuningDetails));
       }
-
       return query;
     }
   }

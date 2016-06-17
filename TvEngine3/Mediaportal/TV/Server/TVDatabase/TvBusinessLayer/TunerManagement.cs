@@ -9,19 +9,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
 {
   public static class TunerManagement
   {
-    #region tuners
-
-    public static IList<Tuner> ListAllTuners()
-    {
-      using (ITunerRepository tunerRepository = new TunerRepository())
-      {
-        IQueryable<Tuner> query = tunerRepository.GetAll<Tuner>().OrderBy(t => t.Priority);
-        query = tunerRepository.IncludeAllRelations(query);
-        return query.ToList(); 
-      }
-    }
-
-    public static IList<Tuner> ListAllTuners(TunerIncludeRelationEnum includeRelations)
+    public static IList<Tuner> ListAllTuners(TunerRelation includeRelations)
     {
       using (ITunerRepository tunerRepository = new TunerRepository())
       {
@@ -31,17 +19,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
       }
     }
 
-    public static Tuner GetTuner(int idTuner)
-    {
-      using (ITunerRepository tunerRepository = new TunerRepository())
-      {
-        IQueryable<Tuner> query = tunerRepository.GetQuery<Tuner>(t => t.IdTuner == idTuner);
-        query = tunerRepository.IncludeAllRelations(query);
-        return query.FirstOrDefault();
-      }
-    }
-
-    public static Tuner GetTuner(int idTuner, TunerIncludeRelationEnum includeRelations)
+    public static Tuner GetTuner(int idTuner, TunerRelation includeRelations)
     {
       using (ITunerRepository tunerRepository = new TunerRepository())
       {
@@ -51,17 +29,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
       }
     }
 
-    public static Tuner GetTunerByExternalId(string externalId)
-    {
-      using (ITunerRepository tunerRepository = new TunerRepository())
-      {
-        var query = tunerRepository.GetQuery<Tuner>(t => t.ExternalId == externalId);
-        query = tunerRepository.IncludeAllRelations(query);
-        return query.FirstOrDefault(); 
-      }
-    }
-
-    public static Tuner GetTunerByExternalId(string externalId, TunerIncludeRelationEnum includeRelations)
+    public static Tuner GetTunerByExternalId(string externalId, TunerRelation includeRelations)
     {
       using (ITunerRepository tunerRepository = new TunerRepository())
       {
@@ -107,56 +75,6 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
         tunerRepository.Delete<Tuner>(t => t.IdTuner == idTuner);
         tunerRepository.UnitOfWork.SaveChanges();
       }
-    }
-
-    #endregion
-
-    #region satellites
-
-    public static IList<Satellite> ListAllSatellites()
-    {
-      using (ITunerRepository tunerRepository = new TunerRepository())
-      {
-        return tunerRepository.GetAll<Satellite>().ToList();
-      }
-    }
-
-    public static Satellite SaveSatellite(Satellite satellite)
-    {
-      using (ITunerRepository tunerRepository = new TunerRepository())
-      {
-        tunerRepository.AttachEntityIfChangeTrackingDisabled(tunerRepository.ObjectContext.Satellites, satellite);
-        tunerRepository.ApplyChanges(tunerRepository.ObjectContext.Satellites, satellite);
-        tunerRepository.UnitOfWork.SaveChanges();
-        satellite.AcceptChanges();
-        return satellite;
-      }
-    }
-
-    #endregion
-
-    public static DiseqcMotor SaveDiseqcMotor(DiseqcMotor motor)
-    {
-      using (ITunerRepository tunerRepository = new TunerRepository())
-      {
-        tunerRepository.AttachEntityIfChangeTrackingDisabled(tunerRepository.ObjectContext.DiseqcMotors, motor);
-        tunerRepository.ApplyChanges(tunerRepository.ObjectContext.DiseqcMotors, motor);
-        tunerRepository.UnitOfWork.SaveChanges();
-        motor.AcceptChanges();
-        return motor;
-      }
-    }
-
-    /// <summary>
-    /// Checks if a tuner can tune a specific channel
-    /// </summary>
-    /// <param name="tuner"></param>
-    /// <param name="channelId">Channel id</param>
-    /// <returns>true/false</returns>
-    public static bool CanTuneChannel(Tuner tuner, int channelId)
-    {
-      IList<ChannelMap> tunerChannels = tuner.ChannelMaps;
-      return !tunerChannels.Any(cmap => channelId == cmap.IdChannel);
     }
   }
 }

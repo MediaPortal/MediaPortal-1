@@ -19,7 +19,6 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
 {
     [DataContract(IsReference = true)]
     [KnownType(typeof(Channel))]
-    [KnownType(typeof(LnbType))]
     [KnownType(typeof(Satellite))]
     public partial class TuningDetail: IObjectWithChangeTracker, INotifyPropertyChanged
     {
@@ -443,21 +442,6 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private int _symbolRate;
     
         [DataMember]
-        public int DiSEqC
-        {
-            get { return _diSEqC; }
-            set
-            {
-                if (_diSEqC != value)
-                {
-                    _diSEqC = value;
-                    OnPropertyChanged("DiSEqC");
-                }
-            }
-        }
-        private int _diSEqC;
-    
-        [DataMember]
         public int Bandwidth
         {
             get { return _bandwidth; }
@@ -501,21 +485,6 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
             }
         }
         private int _tuningSource;
-    
-        [DataMember]
-        public int SatIndex
-        {
-            get { return _satIndex; }
-            set
-            {
-                if (_satIndex != value)
-                {
-                    _satIndex = value;
-                    OnPropertyChanged("SatIndex");
-                }
-            }
-        }
-        private int _satIndex;
     
         [DataMember]
         public int FecCodeRate
@@ -623,29 +592,6 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private bool _isVcrSignal;
     
         [DataMember]
-        public Nullable<int> IdLnbType
-        {
-            get { return _idLnbType; }
-            set
-            {
-                if (_idLnbType != value)
-                {
-                    ChangeTracker.RecordOriginalValue("IdLnbType", _idLnbType);
-                    if (!IsDeserializing)
-                    {
-                        if (LnbType != null && LnbType.IdLnbType != value)
-                        {
-                            LnbType = null;
-                        }
-                    }
-                    _idLnbType = value;
-                    OnPropertyChanged("IdLnbType");
-                }
-            }
-        }
-        private Nullable<int> _idLnbType;
-    
-        [DataMember]
         public Nullable<int> IdSatellite
         {
             get { return _idSatellite; }
@@ -717,23 +663,6 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
             }
         }
         private Channel _channel;
-    
-        [DataMember]
-        public LnbType LnbType
-        {
-            get { return _lnbType; }
-            set
-            {
-                if (!ReferenceEquals(_lnbType, value))
-                {
-                    var previousValue = _lnbType;
-                    _lnbType = value;
-                    FixupLnbType(previousValue);
-                    OnNavigationPropertyChanged("LnbType");
-                }
-            }
-        }
-        private LnbType _lnbType;
     
         [DataMember]
         public Satellite Satellite
@@ -841,7 +770,6 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         protected virtual void ClearNavigationProperties()
         {
             Channel = null;
-            LnbType = null;
             Satellite = null;
         }
 
@@ -883,50 +811,6 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
                 if (Channel != null && !Channel.ChangeTracker.ChangeTrackingEnabled)
                 {
                     Channel.StartTracking();
-                }
-            }
-        }
-    
-        private void FixupLnbType(LnbType previousValue, bool skipKeys = false)
-        {
-            if (IsDeserializing)
-            {
-                return;
-            }
-    
-            if (previousValue != null && previousValue.TuningDetails.Contains(this))
-            {
-                previousValue.TuningDetails.Remove(this);
-            }
-    
-            if (LnbType != null)
-            {
-                if (!LnbType.TuningDetails.Contains(this))
-                {
-                    LnbType.TuningDetails.Add(this);
-                }
-    
-                IdLnbType = LnbType.IdLnbType;
-            }
-            else if (!skipKeys)
-            {
-                IdLnbType = null;
-            }
-    
-            if (ChangeTracker.ChangeTrackingEnabled)
-            {
-                if (ChangeTracker.OriginalValues.ContainsKey("LnbType")
-                    && (ChangeTracker.OriginalValues["LnbType"] == LnbType))
-                {
-                    ChangeTracker.OriginalValues.Remove("LnbType");
-                }
-                else
-                {
-                    ChangeTracker.RecordOriginalValue("LnbType", previousValue);
-                }
-                if (LnbType != null && !LnbType.ChangeTracker.ChangeTrackingEnabled)
-                {
-                    LnbType.StartTracking();
                 }
             }
         }

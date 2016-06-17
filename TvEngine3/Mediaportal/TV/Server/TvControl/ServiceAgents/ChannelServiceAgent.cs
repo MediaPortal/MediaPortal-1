@@ -3,7 +3,6 @@ using Mediaportal.TV.Server.Common.Types.Enum;
 using Mediaportal.TV.Server.TVControl.Interfaces.Services;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Channel;
 
 namespace Mediaportal.TV.Server.TVControl.ServiceAgents
 {
@@ -13,74 +12,39 @@ namespace Mediaportal.TV.Server.TVControl.ServiceAgents
     {
     }
 
-    public IList<Channel> ListAllChannels()
-    {
-      return _channel.ListAllChannels();
-    }
-
-    public IList<Channel> ListAllChannels(ChannelIncludeRelationEnum includeRelations)
+    public IList<Channel> ListAllChannels(ChannelRelation includeRelations)
     {
       return _channel.ListAllChannels(includeRelations);
     }
 
-    public IList<Channel> ListAllChannelsByGroupId(int groupId)
+    public IList<Channel> ListAllChannelsByGroupId(int idChannelGroup, ChannelRelation includeRelations)
     {
-      return _channel.ListAllChannelsByGroupId(groupId);
+      return _channel.ListAllChannelsByGroupId(idChannelGroup, includeRelations);
     }
 
-    public IList<Channel> ListAllChannelsByGroupId(int groupId, ChannelIncludeRelationEnum includeRelations)
+    public IList<Channel> ListAllVisibleChannelsByGroupId(int idChannelGroup, ChannelRelation includeRelations)
     {
-      return _channel.ListAllChannelsByGroupId(groupId, includeRelations);
+      return _channel.ListAllVisibleChannelsByGroupId(idChannelGroup, includeRelations);
     }
 
-    public IList<Channel> ListAllVisibleChannelsByGroupId(int groupId)
-    {
-      return _channel.ListAllVisibleChannelsByGroupId(groupId);
-    }
-
-    public IList<Channel> ListAllVisibleChannelsByGroupId(int groupId, ChannelIncludeRelationEnum includeRelations)
-    {
-      return _channel.ListAllVisibleChannelsByGroupId(groupId, includeRelations);
-    }
-
-    public IList<Channel> ListAllChannelsByMediaType(MediaType mediaType)
-    {
-      return _channel.ListAllChannelsByMediaType(mediaType);
-    }
-
-    public IList<Channel> ListAllChannelsByMediaType(MediaType mediaType, ChannelIncludeRelationEnum includeRelations)
+    public IList<Channel> ListAllChannelsByMediaType(MediaType mediaType, ChannelRelation includeRelations)
     {
       return _channel.ListAllChannelsByMediaType(mediaType, includeRelations);
     }
 
-    public IList<Channel> ListAllVisibleChannelsByMediaType(MediaType mediaType)
-    {
-      return _channel.ListAllVisibleChannelsByMediaType(mediaType);
-    }
-
-    public IList<Channel> ListAllVisibleChannelsByMediaType(MediaType mediaType, ChannelIncludeRelationEnum includeRelations)
+    public IList<Channel> ListAllVisibleChannelsByMediaType(MediaType mediaType, ChannelRelation includeRelations)
     {
       return _channel.ListAllVisibleChannelsByMediaType(mediaType, includeRelations);
     }
 
-    public Channel GetChannel(int idChannel)
-    {
-      return _channel.GetChannel(idChannel);
-    }
-
-    public Channel GetChannel(int idChannel, ChannelIncludeRelationEnum includeRelations)
+    public Channel GetChannel(int idChannel, ChannelRelation includeRelations)
     {
       return _channel.GetChannel(idChannel, includeRelations);
     }
 
-    public IList<Channel> GetChannelsByName(string channelName)
+    public IList<Channel> GetChannelsByName(string name, ChannelRelation includeRelations)
     {
-      return _channel.GetChannelsByName(channelName);
-    }
-
-    public IList<Channel> GetChannelsByName(string channelName, ChannelIncludeRelationEnum includeRelations)
-    {
-      return _channel.GetChannelsByName(channelName, includeRelations);
+      return _channel.GetChannelsByName(name, includeRelations);
     }
 
     public Channel SaveChannel(Channel channel)
@@ -103,76 +67,71 @@ namespace Mediaportal.TV.Server.TVControl.ServiceAgents
       _channel.DeleteChannel(idChannel);
     }
 
-    public Channel MergeChannels(IEnumerable<Channel> channels, ChannelIncludeRelationEnum includeRelations)
+    public Channel MergeChannels(IEnumerable<Channel> channels, ChannelRelation includeRelations)
     {
       return _channel.MergeChannels(channels, includeRelations);
     }
 
     #region tuning details
 
-    public IList<TuningDetail> ListAllTuningDetailsByChannel(int idChannel)
+    public IList<TuningDetail> ListAllTuningDetailsByChannel(int idChannel, TuningDetailRelation includeRelations)
     {
-      return _channel.ListAllTuningDetailsByChannel(idChannel);
+      return _channel.ListAllTuningDetailsByChannel(idChannel, includeRelations);
     }
 
-    public TuningDetail GetTuningDetail(int idTuningDetail)
+    public IList<TuningDetail> ListAllDigitalTransmitterTuningDetails()
     {
-      return _channel.GetTuningDetail(idTuningDetail);
+      return _channel.ListAllDigitalTransmitterTuningDetails();
     }
 
-    public IList<TuningDetail> GetAnalogTelevisionTuningDetails(int physicalChannelNumber)
+    public TuningDetail GetTuningDetail(int idTuningDetail, TuningDetailRelation includeRelations)
     {
-      return _channel.GetAnalogTelevisionTuningDetails(physicalChannelNumber);
+      return _channel.GetTuningDetail(idTuningDetail, includeRelations);
     }
 
-    public IList<TuningDetail> GetAtscScteTuningDetails(BroadcastStandard broadcastStandard, string logicalChannelNumber, int? frequency = null)
+    public IList<TuningDetail> GetAnalogTelevisionTuningDetails(int physicalChannelNumber, TuningDetailRelation includeRelations)
     {
-      return _channel.GetAtscScteTuningDetails(broadcastStandard, logicalChannelNumber, frequency);
+      return _channel.GetAnalogTelevisionTuningDetails(physicalChannelNumber, includeRelations);
     }
 
-    public IList<TuningDetail> GetCaptureTuningDetails(string name)
+    public IList<TuningDetail> GetAtscScteTuningDetails(BroadcastStandard broadcastStandard, string logicalChannelNumber, TuningDetailRelation includeRelations, int? frequency = null)
     {
-      return _channel.GetCaptureTuningDetails(name);
+      return _channel.GetAtscScteTuningDetails(broadcastStandard, logicalChannelNumber, includeRelations, frequency);
     }
 
-    public IList<TuningDetail> GetDvbTuningDetails(BroadcastStandard broadcastStandard, int originalNetworkId, int serviceId, int? transportStreamId = null, int? frequency = null, int? satelliteId = null)
+    public IList<TuningDetail> GetCaptureTuningDetails(string name, TuningDetailRelation includeRelations)
     {
-      return _channel.GetDvbTuningDetails(broadcastStandard, originalNetworkId, serviceId, transportStreamId, frequency, satelliteId);
+      return _channel.GetCaptureTuningDetails(name, includeRelations);
     }
 
-    public IList<TuningDetail> GetFmRadioTuningDetails(int frequency)
+    public IList<TuningDetail> GetDvbTuningDetails(BroadcastStandard broadcastStandard, int originalNetworkId, int serviceId, TuningDetailRelation includeRelations, int? transportStreamId = null, int? frequency = null, int? satelliteId = null)
     {
-      return _channel.GetFmRadioTuningDetails(frequency);
+      return _channel.GetDvbTuningDetails(broadcastStandard, originalNetworkId, serviceId, includeRelations, transportStreamId, frequency, satelliteId);
     }
 
-    public IList<TuningDetail> GetFreesatTuningDetails(int channelId)
+    public IList<TuningDetail> GetFmRadioTuningDetails(int frequency, TuningDetailRelation includeRelations)
     {
-      return _channel.GetFreesatTuningDetails(channelId);
+      return _channel.GetFmRadioTuningDetails(frequency, includeRelations);
     }
 
-    public IList<TuningDetail> GetMpeg2TuningDetails(BroadcastStandard broadcastStandard, int programNumber, int? transportStreamId = null, int? frequency = null, int? satelliteId = null)
+    public IList<TuningDetail> GetFreesatTuningDetails(int channelId, TuningDetailRelation includeRelations)
     {
-      return _channel.GetMpeg2TuningDetails(broadcastStandard, programNumber, transportStreamId, frequency, satelliteId);
+      return _channel.GetFreesatTuningDetails(channelId, includeRelations);
     }
 
-    public IList<TuningDetail> GetOpenTvTuningDetails(int channelId)
+    public IList<TuningDetail> GetMpeg2TuningDetails(BroadcastStandard broadcastStandard, int programNumber, TuningDetailRelation includeRelations, int? transportStreamId = null, int? frequency = null, int? satelliteId = null)
     {
-      return _channel.GetOpenTvTuningDetails(channelId);
+      return _channel.GetMpeg2TuningDetails(broadcastStandard, programNumber, includeRelations, transportStreamId, frequency, satelliteId);
     }
 
-    public IList<TuningDetail> GetStreamTuningDetails(string url)
+    public IList<TuningDetail> GetOpenTvTuningDetails(int channelId, TuningDetailRelation includeRelations)
     {
-      return _channel.GetStreamTuningDetails(url);
+      return _channel.GetOpenTvTuningDetails(channelId, includeRelations);
     }
 
-    public void AddTuningDetail(int idChannel, IChannel channel)
+    public IList<TuningDetail> GetStreamTuningDetails(string url, TuningDetailRelation includeRelations)
     {
-      _channel.AddTuningDetail(idChannel, channel);
-    }
-
-    public void UpdateTuningDetail(int idChannel, int idTuningDetail, IChannel channel)
-    {
-      _channel.UpdateTuningDetail(idChannel, idTuningDetail, channel);
+      return _channel.GetStreamTuningDetails(url, includeRelations);
     }
 
     public TuningDetail SaveTuningDetail(TuningDetail tuningDetail)

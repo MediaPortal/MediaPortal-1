@@ -12,55 +12,35 @@ namespace Mediaportal.TV.Server.TVControl.ServiceAgents
     {
     }
 
-    public IList<ChannelGroup> ListAllChannelGroups()
-    {
-      return _channel.ListAllChannelGroups();
-    }
-
-    public IList<ChannelGroup> ListAllChannelGroups(ChannelGroupIncludeRelationEnum includeRelations)
+    public IList<ChannelGroup> ListAllChannelGroups(ChannelGroupRelation includeRelations)
     {
       return _channel.ListAllChannelGroups(includeRelations);
     }
 
-    public IList<ChannelGroup> ListAllChannelGroupsByMediaType(MediaType mediaType)
-    {
-      return _channel.ListAllChannelGroupsByMediaType(mediaType);
-    }
-
-    public IList<ChannelGroup> ListAllChannelGroupsByMediaType(MediaType mediaType, ChannelGroupIncludeRelationEnum includeRelations)
+    public IList<ChannelGroup> ListAllChannelGroupsByMediaType(MediaType mediaType, ChannelGroupRelation includeRelations)
     {
       return _channel.ListAllChannelGroupsByMediaType(mediaType, includeRelations);
     }
 
-    public ChannelGroup GetChannelGroupByNameAndMediaType(string groupName, MediaType mediaType)
+    public ChannelGroup GetChannelGroup(int idChannelGroup, ChannelGroupRelation includeRelations)
     {
-      return _channel.GetChannelGroupByNameAndMediaType(groupName, mediaType);
+      return _channel.GetChannelGroup(idChannelGroup, includeRelations);
     }
 
-    public ChannelGroup GetOrCreateGroup(string groupName, MediaType mediaType)
+    public ChannelGroup GetOrCreateChannelGroup(string name, MediaType mediaType)
     {
-      return _channel.GetOrCreateGroup(groupName, mediaType);
+      return _channel.GetOrCreateChannelGroup(name, mediaType);
     }
 
-    public ChannelGroup GetChannelGroup(int id)
+    public ChannelGroup SaveChannelGroup(ChannelGroup channelGroup)
     {
-      return _channel.GetChannelGroup(id);
+      channelGroup.UnloadAllUnchangedRelationsForEntity();
+      return _channel.SaveChannelGroup(channelGroup);
     }
 
-    public ChannelGroup GetChannelGroup(int id, ChannelGroupIncludeRelationEnum includeRelations)
+    public void DeleteChannelGroup(int idChannelGroup)
     {
-      return _channel.GetChannelGroup(id, includeRelations);
-    }
-
-    public ChannelGroup SaveGroup(ChannelGroup @group)
-    {
-      @group.UnloadAllUnchangedRelationsForEntity();
-      return _channel.SaveGroup(@group);
-    }
-
-    public void DeleteChannelGroup(int idGroup)
-    {
-      _channel.DeleteChannelGroup(idGroup);
+      _channel.DeleteChannelGroup(idChannelGroup);
     }
   }
 }

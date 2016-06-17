@@ -22,8 +22,12 @@ using System;
 
 namespace Mediaportal.TV.Server.TVDatabase.Entities
 {
-  public partial class Schedule 
+  public partial class TunerSatellite
   {
-    public static DateTime MinSchedule = new DateTime(2000, 1, 1);
+    public const int DISEQC_MOTOR_POSITION_NONE = -1;
+    public const int DISEQC_MOTOR_POSITION_USALS = 256;
+
+    public const double DISEQC_MOTOR_DEFAULT_SPEED_SLOW = 0.5;
+    public const double DISEQC_MOTOR_DEFAULT_SPEED_FAST = 0.8;
   }
 }

@@ -165,7 +165,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport.Config
       {
         comboBoxMappingsChannelGroup.Items.Clear();
 
-        _channelGroups = ServiceAgents.Instance.ChannelGroupServiceAgent.ListAllChannelGroups(ChannelGroupIncludeRelationEnum.None);
+        _channelGroups = ServiceAgents.Instance.ChannelGroupServiceAgent.ListAllChannelGroups(ChannelGroupRelation.None);
         foreach (ChannelGroup group in _channelGroups)
         {
           comboBoxMappingsChannelGroup.Items.Add(new ComboBoxChannelGroup(string.Format("{0} - {1}", ((MediaType)group.MediaType).GetDescription(), group.GroupName), group.IdGroup));
@@ -348,7 +348,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport.Config
         // channels with ATSC and/or SCTE tuning details. We don't know
         // if it makes sense to support this matching technique for other
         // sources.
-        var channelTuningDetails = ServiceAgents.Instance.ChannelServiceAgent.ListAllTuningDetailsByChannel(channel.IdChannel);
+        var channelTuningDetails = ServiceAgents.Instance.ChannelServiceAgent.ListAllTuningDetailsByChannel(channel.IdChannel, TuningDetailRelation.None);
         if (channelTuningDetails != null)
         {
           foreach (TuningDetail tuningDetail in channelTuningDetails)
@@ -459,7 +459,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport.Config
         dataGridViewMappings.Rows.Clear();
 
         // Load the database channels.
-        IList<Channel> databaseChannels = ServiceAgents.Instance.ChannelServiceAgent.ListAllVisibleChannelsByGroupId(channelGroup.Id, ChannelIncludeRelationEnum.None);
+        IList<Channel> databaseChannels = ServiceAgents.Instance.ChannelServiceAgent.ListAllVisibleChannelsByGroupId(channelGroup.Id, ChannelRelation.None);
         if (databaseChannels.Count == 0)
         {
           MessageBox.Show("There are no channels available to map.", MESSAGE_CAPTION);

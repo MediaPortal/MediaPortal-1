@@ -9,7 +9,6 @@
     <EntitySet Name="ChannelLinkageMaps" EntityType="TVDatabaseModel.Store.ChannelLinkageMaps" store:Type="Tables" />
     <EntitySet Name="ChannelMaps" EntityType="TVDatabaseModel.Store.ChannelMaps" store:Type="Tables" />
     <EntitySet Name="Conflicts" EntityType="TVDatabaseModel.Store.Conflicts" store:Type="Tables" />
-    <EntitySet Name="DiseqcMotors" EntityType="TVDatabaseModel.Store.DiseqcMotors" store:Type="Tables" />
     <EntitySet Name="GroupMaps" EntityType="TVDatabaseModel.Store.GroupMaps" store:Type="Tables" />
     <EntitySet Name="Histories" EntityType="TVDatabaseModel.Store.Histories" store:Type="Tables" />
     <EntitySet Name="PendingDeletions" EntityType="TVDatabaseModel.Store.PendingDeletions" store:Type="Tables" />
@@ -39,10 +38,6 @@
     <AssociationSet Name="GroupMapChannel" Association="TVDatabaseModel.Store.GroupMapChannel">
       <End Role="Channel" EntitySet="Channels" />
       <End Role="GroupMap" EntitySet="GroupMaps" />
-    </AssociationSet>
-    <AssociationSet Name="DiseqcMotorTuner" Association="TVDatabaseModel.Store.DiseqcMotorTuner">
-      <End Role="Tuner" EntitySet="Tuners" />
-      <End Role="DiseqcMotor" EntitySet="DiseqcMotors" />
     </AssociationSet>
     <AssociationSet Name="ChannelRecording" Association="TVDatabaseModel.Store.ChannelRecording">
       <End Role="Channel" EntitySet="Channels" />
@@ -83,10 +78,6 @@
     <AssociationSet Name="ChannelTuningDetail" Association="TVDatabaseModel.Store.ChannelTuningDetail">
       <End Role="Channel" EntitySet="Channels" />
       <End Role="TuningDetail" EntitySet="TuningDetails" />
-    </AssociationSet>
-    <AssociationSet Name="DiseqcMotorSatellite" Association="TVDatabaseModel.Store.DiseqcMotorSatellite">
-      <End Role="Satellite" EntitySet="Satellites" />
-      <End Role="DiseqcMotor" EntitySet="DiseqcMotors" />
     </AssociationSet>
     <AssociationSet Name="ScheduleRecording" Association="TVDatabaseModel.Store.ScheduleRecording">
       <End Role="Schedule" EntitySet="Schedules" />
@@ -131,10 +122,6 @@
     <AssociationSet Name="ProgramCategoryHistory" Association="TVDatabaseModel.Store.ProgramCategoryHistory">
       <End Role="ProgramCategory" EntitySet="ProgramCategories" />
       <End Role="History" EntitySet="Histories" />
-    </AssociationSet>
-    <AssociationSet Name="LnbTypeTuningDetail" Association="TVDatabaseModel.Store.LnbTypeTuningDetail">
-      <End Role="LnbType" EntitySet="LnbTypes" />
-      <End Role="TuningDetail" EntitySet="TuningDetails" />
     </AssociationSet>
     <AssociationSet Name="GuideCategoryProgramCategory" Association="TVDatabaseModel.Store.GuideCategoryProgramCategory">
       <End Role="GuideCategory" EntitySet="GuideCategories" />
@@ -270,15 +257,6 @@
     <Property Name="IdChannel" Type="int" Nullable="false" />
     <Property Name="ConflictDate" Type="datetime" Nullable="false" />
     <Property Name="IdTuner" Type="int" Nullable="true" />
-  </EntityType>
-  <EntityType Name="DiseqcMotors">
-    <Key>
-      <PropertyRef Name="IdDiseqcMotor" />
-    </Key>
-    <Property Name="IdDiseqcMotor" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-    <Property Name="IdTuner" Type="int" Nullable="false" />
-    <Property Name="IdSatellite" Type="int" Nullable="false" />
-    <Property Name="Position" Type="int" Nullable="false" />
   </EntityType>
   <EntityType Name="GroupMaps">
     <Key>
@@ -496,11 +474,9 @@
     <Property Name="Modulation" Type="int" Nullable="false" />
     <Property Name="Polarisation" Type="int" Nullable="false" />
     <Property Name="SymbolRate" Type="int" Nullable="false" />
-    <Property Name="DiSEqC" Type="int" Nullable="false" />
     <Property Name="Bandwidth" Type="int" Nullable="false" />
     <Property Name="VideoSource" Type="int" Nullable="false" />
     <Property Name="TuningSource" Type="int" Nullable="false" />
-    <Property Name="SatIndex" Type="int" Nullable="false" />
     <Property Name="FecCodeRate" Type="int" Nullable="false" />
     <Property Name="PilotTonesState" Type="int" Nullable="false" />
     <Property Name="RollOffFactor" Type="int" Nullable="false" />
@@ -508,7 +484,6 @@
     <Property Name="Url" Type="nvarchar" Nullable="false" MaxLength="200" />
     <Property Name="AudioSource" Type="int" Nullable="false" />
     <Property Name="IsVcrSignal" Type="bit" Nullable="false" />
-    <Property Name="IdLnbType" Type="int" Nullable="true" />
     <Property Name="IdSatellite" Type="int" Nullable="true" />
     <Property Name="GrabEpg" Type="bit" Nullable="false" />
     <Property Name="LastEpgGrabTime" Type="datetime" Nullable="false" />
@@ -653,20 +628,6 @@
       </Dependent>
     </ReferentialConstraint>
   </Association>
-  <Association Name="DiseqcMotorTuner">
-    <End Role="Tuner" Type="TVDatabaseModel.Store.Tuners" Multiplicity="1">
-      <OnDelete Action="Cascade" />
-    </End>
-    <End Role="DiseqcMotor" Type="TVDatabaseModel.Store.DiseqcMotors" Multiplicity="*" />
-    <ReferentialConstraint>
-      <Principal Role="Tuner">
-        <PropertyRef Name="IdTuner" />
-      </Principal>
-      <Dependent Role="DiseqcMotor">
-        <PropertyRef Name="IdTuner" />
-      </Dependent>
-    </ReferentialConstraint>
-  </Association>
   <Association Name="ChannelRecording">
     <End Role="Channel" Type="TVDatabaseModel.Store.Channels" Multiplicity="0..1" />
     <End Role="Recording" Type="TVDatabaseModel.Store.Recordings" Multiplicity="*" />
@@ -798,20 +759,6 @@
       </Principal>
       <Dependent Role="TuningDetail">
         <PropertyRef Name="IdChannel" />
-      </Dependent>
-    </ReferentialConstraint>
-  </Association>
-  <Association Name="DiseqcMotorSatellite">
-    <End Role="Satellite" Type="TVDatabaseModel.Store.Satellites" Multiplicity="1">
-      <OnDelete Action="Cascade" />
-    </End>
-    <End Role="DiseqcMotor" Type="TVDatabaseModel.Store.DiseqcMotors" Multiplicity="*" />
-    <ReferentialConstraint>
-      <Principal Role="Satellite">
-        <PropertyRef Name="IdSatellite" />
-      </Principal>
-      <Dependent Role="DiseqcMotor">
-        <PropertyRef Name="IdSatellite" />
       </Dependent>
     </ReferentialConstraint>
   </Association>
@@ -954,18 +901,6 @@
       </Principal>
       <Dependent Role="History">
         <PropertyRef Name="IdProgramCategory" />
-      </Dependent>
-    </ReferentialConstraint>
-  </Association>
-  <Association Name="LnbTypeTuningDetail">
-    <End Role="LnbType" Type="TVDatabaseModel.Store.LnbTypes" Multiplicity="0..1" />
-    <End Role="TuningDetail" Type="TVDatabaseModel.Store.TuningDetails" Multiplicity="*" />
-    <ReferentialConstraint>
-      <Principal Role="LnbType">
-        <PropertyRef Name="IdLnbType" />
-      </Principal>
-      <Dependent Role="TuningDetail">
-        <PropertyRef Name="IdLnbType" />
       </Dependent>
     </ReferentialConstraint>
   </Association>

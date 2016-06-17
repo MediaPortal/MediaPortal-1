@@ -757,15 +757,15 @@ namespace Mediaportal.TV.Server.SetupTV.Sections.Helpers
         IDictionary<BroadcastStandard, int> tuningDetailBroadcastStandardCounts = new Dictionary<BroadcastStandard, int>(10);
         bool hasFta = false;
         bool hasScrambled = false;
-        foreach (TuningDetail detail in channel.TuningDetails)
+        foreach (TuningDetail tuningDetail in channel.TuningDetails)
         {
-          if (!string.IsNullOrEmpty(detail.Provider))
+          if (!string.IsNullOrEmpty(tuningDetail.Provider))
           {
-            providers.Add(detail.Provider);
+            providers.Add(tuningDetail.Provider);
           }
 
           int count = 0;
-          BroadcastStandard tuningDetailBroadcastStandard = (BroadcastStandard)detail.BroadcastStandard;
+          BroadcastStandard tuningDetailBroadcastStandard = (BroadcastStandard)tuningDetail.BroadcastStandard;
           if (!tuningDetailBroadcastStandardCounts.TryGetValue(tuningDetailBroadcastStandard, out count))
           {
             tuningDetailBroadcastStandardCounts.Add(tuningDetailBroadcastStandard, 1);
@@ -776,7 +776,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections.Helpers
             tuningDetailBroadcastStandardCounts[tuningDetailBroadcastStandard] = ++count;
           }
 
-          if (detail.IsEncrypted)
+          if (tuningDetail.IsEncrypted)
           {
             hasScrambled = true;
           }

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.ServiceModel;
 using Mediaportal.TV.Server.TVDatabase.Entities;
+using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 
 namespace Mediaportal.TV.Server.TVControl.Interfaces.Services
 {
@@ -10,10 +11,14 @@ namespace Mediaportal.TV.Server.TVControl.Interfaces.Services
   {    
     [OperationContract]
     IList<Schedule> ListAllSchedules();
+    [OperationContract(Name = "ListAllSchedulesWithSpecificRelations")]
+    IList<Schedule> ListAllSchedules(ScheduleRelation includeRelations);
     [OperationContract]
     Schedule SaveSchedule(Schedule schedule);
     [OperationContract]
     Schedule GetSchedule(int idSchedule);
+    [OperationContract(Name = "GetScheduleWithSpecificRelations")]
+    Schedule GetSchedule(int idSchedule, ScheduleRelation includeRelations);
     [OperationContract]
     bool IsScheduleRecording(int idSchedule);
 

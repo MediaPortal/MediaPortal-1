@@ -74,11 +74,11 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
     public override void OnSectionActivated()
     {
-      _tuners = ServiceAgents.Instance.TunerServiceAgent.ListAllTuners(TunerIncludeRelationEnum.None);
+      _tuners = ServiceAgents.Instance.TunerServiceAgent.ListAllTuners(TunerRelation.None);
       base.OnSectionActivated();
 
       comboBoxGroups.Items.Clear();
-      IList<ChannelGroup> groups = ServiceAgents.Instance.ChannelGroupServiceAgent.ListAllChannelGroups(ChannelGroupIncludeRelationEnum.None);
+      IList<ChannelGroup> groups = ServiceAgents.Instance.ChannelGroupServiceAgent.ListAllChannelGroups(ChannelGroupRelation.None);
       foreach (ChannelGroup group in groups)
         comboBoxGroups.Items.Add(new ComboBoxExItem(group.GroupName, -1, group.IdGroup));
       if (comboBoxGroups.Items.Count == 0)
@@ -91,7 +91,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       _repeat = chkRepeatTest.Checked;
 
       _channelNames = new Dictionary<int, string>();
-      IList<Channel> channels = ServiceAgents.Instance.ChannelServiceAgent.ListAllChannels(ChannelIncludeRelationEnum.None);
+      IList<Channel> channels = ServiceAgents.Instance.ChannelServiceAgent.ListAllChannels(ChannelRelation.None);
       foreach (Channel ch in channels)
       {
         _channelNames.Add(ch.IdChannel, ch.Name);
@@ -257,7 +257,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         UpdateCounters();
 
         ComboBoxExItem idItem = (ComboBoxExItem)comboBoxGroups.Items[comboBoxGroups.SelectedIndex];
-        List<Channel> channels = ServiceAgents.Instance.ChannelServiceAgent.ListAllChannelsByGroupId(idItem.Id, ChannelIncludeRelationEnum.None).ToList();
+        List<Channel> channels = ServiceAgents.Instance.ChannelServiceAgent.ListAllChannelsByGroupId(idItem.Id, ChannelRelation.None).ToList();
         Thread channelTestThread = new Thread(new ParameterizedThreadStart(delegate { ChannelTestThread(channels); }));
         channelTestThread.Name = "Channel Test Thread";
         channelTestThread.IsBackground = true;

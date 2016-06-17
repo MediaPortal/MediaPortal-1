@@ -36,57 +36,40 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
       return includeRelations;
     }
 
-    public IQueryable<Schedule> IncludeAllRelations(IQueryable<Schedule> query, ScheduleIncludeRelationEnum includeRelations)
+    public IQueryable<Schedule> IncludeAllRelations(IQueryable<Schedule> query, ScheduleRelation includeRelations)
     {
-      bool channel = includeRelations.HasFlag(ScheduleIncludeRelationEnum.Channel);
-      bool channelTuningDetails = includeRelations.HasFlag(ScheduleIncludeRelationEnum.ChannelTuningDetails);
-      bool conflictingSchedules = includeRelations.HasFlag(ScheduleIncludeRelationEnum.ConflictingSchedules);
-      bool conflicts = includeRelations.HasFlag(ScheduleIncludeRelationEnum.Conflicts);
-      bool parentSchedule = includeRelations.HasFlag(ScheduleIncludeRelationEnum.ParentSchedule);
-      bool recordings = includeRelations.HasFlag(ScheduleIncludeRelationEnum.Recordings);
-      bool schedules = includeRelations.HasFlag(ScheduleIncludeRelationEnum.Schedules);
-      bool canceledSchedules = includeRelations.HasFlag(ScheduleIncludeRelationEnum.CanceledSchedules);
-
-      if (channel)
+      if (includeRelations.HasFlag(ScheduleRelation.Channel))
       {
         query = query.Include(s => s.Channel);
       }
-
-      if (channelTuningDetails)
+      if (includeRelations.HasFlag(ScheduleRelation.ChannelTuningDetails))
       {
         query = query.Include(s => s.Channel.TuningDetails);
       }
-
-      if (conflictingSchedules)
+      if (includeRelations.HasFlag(ScheduleRelation.ConflictingSchedules))
       {
         query = query.Include(s => s.ConflictingSchedules);
       }
-
-      if (conflicts)
+      if (includeRelations.HasFlag(ScheduleRelation.Conflicts))
       {
         query = query.Include(s => s.Conflicts);
       }
-
-      if (parentSchedule)
+      if (includeRelations.HasFlag(ScheduleRelation.ParentSchedule))
       {
         query = query.Include(s => s.ParentSchedule);
       }
-
-      if (recordings)
+      if (includeRelations.HasFlag(ScheduleRelation.Recordings))
       {
         query = query.Include(s => s.Recordings);
       }
-
-      if (schedules)
+      if (includeRelations.HasFlag(ScheduleRelation.Schedules))
       {
         query = query.Include(s => s.Schedules);
       }
-
-      if (canceledSchedules)
+      if (includeRelations.HasFlag(ScheduleRelation.CanceledSchedules))
       {
         query = query.Include(s => s.CanceledSchedules);
       }
-
       return query;
     }
   }

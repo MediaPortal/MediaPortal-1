@@ -106,7 +106,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     private void AddGroups()
     {
       comboBoxGroups.Items.Clear();
-      IList<ChannelGroup> groups = ServiceAgents.Instance.ChannelGroupServiceAgent.ListAllChannelGroups(ChannelGroupIncludeRelationEnum.None);
+      IList<ChannelGroup> groups = ServiceAgents.Instance.ChannelGroupServiceAgent.ListAllChannelGroups(ChannelGroupRelation.None);
       foreach (ChannelGroup group in groups)
       {
         comboBoxGroups.Items.Add(new ComboBoxExItem(group.GroupName, -1, group.IdGroup));
@@ -129,7 +129,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         listView1.Items.Clear();
         int defaultPreRecordInterval = ServiceAgents.Instance.SettingServiceAgent.GetValue("preRecordInterval", 7);
         int defaultPostRecordInterval = ServiceAgents.Instance.SettingServiceAgent.GetValue("postRecordInterval", 10);
-        IList<Schedule> schedules = ServiceAgents.Instance.ScheduleServiceAgent.ListAllSchedules();
+        IList<Schedule> schedules = ServiceAgents.Instance.ScheduleServiceAgent.ListAllSchedules(ScheduleRelation.Channel);
         foreach (Schedule schedule in schedules)
         {
           ListViewItem item = new ListViewItem(schedule.Priority.ToString());
@@ -382,7 +382,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       comboBoxChannels.Items.Clear();
       if (idItem.Id == -1)
       {
-        IList<Channel> channels = ServiceAgents.Instance.ChannelServiceAgent.ListAllChannels(ChannelIncludeRelationEnum.TuningDetails);
+        IList<Channel> channels = ServiceAgents.Instance.ChannelServiceAgent.ListAllChannels(ChannelRelation.TuningDetails);
         foreach (Channel ch in channels)
         {
           if (ch.MediaType != (int)MediaType.Television) continue;
@@ -421,7 +421,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       }
       else
       {
-        ChannelGroup group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetChannelGroup(idItem.Id);
+        ChannelGroup group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetChannelGroup(idItem.Id, ChannelGroupRelation.GroupMapsTuningDetails);
         IList<GroupMap> maps = group.GroupMaps;
         bool hasScrambled = false;
         foreach (GroupMap map in maps)

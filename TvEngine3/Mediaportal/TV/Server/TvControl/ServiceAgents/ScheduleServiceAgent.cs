@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Mediaportal.TV.Server.TVControl.Interfaces.Services;
 using Mediaportal.TV.Server.TVDatabase.Entities;
+using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 
 namespace Mediaportal.TV.Server.TVControl.ServiceAgents
 {
@@ -16,6 +17,11 @@ namespace Mediaportal.TV.Server.TVControl.ServiceAgents
       return _channel.ListAllSchedules();
     }
 
+    public IList<Schedule> ListAllSchedules(ScheduleRelation includeRelations)
+    {
+      return _channel.ListAllSchedules(includeRelations);
+    }
+
     public Schedule SaveSchedule(Schedule schedule)
     {
       schedule.UnloadAllUnchangedRelationsForEntity();
@@ -25,6 +31,11 @@ namespace Mediaportal.TV.Server.TVControl.ServiceAgents
     public Schedule GetSchedule(int idSchedule)
     {
       return _channel.GetSchedule(idSchedule);
+    }
+
+    public Schedule GetSchedule(int idSchedule, ScheduleRelation includeRelations)
+    {
+      return _channel.GetSchedule(idSchedule, includeRelations);
     }
 
     public bool IsScheduleRecording(int idSchedule)

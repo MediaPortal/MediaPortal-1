@@ -143,7 +143,7 @@ namespace Mediaportal.TV.TvPlugin
       {
         try
         {
-          int cards = ServiceAgents.Instance.ControllerServiceAgent.Cards;
+          string version = ServiceAgents.Instance.ControllerServiceAgent.GetAssemblyVersion;
         }
         catch
         {
@@ -158,7 +158,7 @@ namespace Mediaportal.TV.TvPlugin
     {
       try
       {
-        IEnumerable<Tuner> tuners = ServiceAgents.Instance.TunerServiceAgent.ListAllTuners(TunerIncludeRelationEnum.None);
+        IEnumerable<Tuner> tuners = ServiceAgents.Instance.TunerServiceAgent.ListAllTuners(TunerRelation.None);
         return true;
       }
       catch

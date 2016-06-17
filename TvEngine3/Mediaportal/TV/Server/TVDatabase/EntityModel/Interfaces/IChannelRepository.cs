@@ -7,11 +7,8 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Interfaces
 {
   public interface IChannelRepository : IRepository<Model>
   {
-    IQueryable<Channel> IncludeAllRelations(IQueryable<Channel> query);
-    IQueryable<Channel> IncludeAllRelations(IQueryable<Channel> query, ChannelIncludeRelationEnum includeRelations);
-    IList<Channel> LoadNavigationProperties(IEnumerable<Channel> channels, ChannelIncludeRelationEnum includeRelations);
-    Channel LoadNavigationProperties(Channel channel, ChannelIncludeRelationEnum includeRelations);
-    Channel LoadNavigationProperties(Channel channel);
-    IList<Channel> LoadNavigationProperties(IEnumerable<Channel> channels);
+    IQueryable<Channel> IncludeAllRelations(IQueryable<Channel> query, ChannelRelation includeRelations);
+    IList<Channel> LoadNavigationProperties(IEnumerable<Channel> channels, ChannelRelation includeRelations);
+    Channel LoadNavigationProperties(Channel channel, ChannelRelation includeRelations);
   }
 }

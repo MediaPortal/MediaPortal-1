@@ -21,7 +21,6 @@ DROP TABLE IF EXISTS "ChannelGroups";
 DROP TABLE IF EXISTS "ChannelLinkageMaps";
 DROP TABLE IF EXISTS "ChannelMaps";
 DROP TABLE IF EXISTS "Conflicts";
-DROP TABLE IF EXISTS "DiseqcMotors";
 DROP TABLE IF EXISTS "GroupMaps";
 DROP TABLE IF EXISTS "Histories";
 DROP TABLE IF EXISTS "PendingDeletions";
@@ -216,27 +215,6 @@ CREATE INDEX Idx_Conflicts_4 ON  "Conflicts" (IdConflictingSchedule);
 CREATE TRIGGER "Conflicts_autoincrement" AFTER INSERT ON "Conflicts"
   FOR EACH ROW BEGIN
     UPDATE Conflicts SET IdConflict = Id WHERE Id = NEW.Id; 
-  END;
-
--- Table "DiseqcMotors"
-CREATE TABLE "DiseqcMotors"  ( 
-    "Id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-    "IdDiseqcMotor" int UNIQUE,
-    "IdTuner" int NOT NULL,
-    "IdSatellite" int NOT NULL,
-    "Position" int NOT NULL,
-    CONSTRAINT "FK_DiseqcMotorTuner" FOREIGN KEY ("IdTuner")
-    REFERENCES "Tuners" ("IdTuner") ON DELETE CASCADE,
-    CONSTRAINT "FK_DiseqcMotorSatellite" FOREIGN KEY ("IdSatellite")
-    REFERENCES "Satellites" ("IdSatellite") ON DELETE CASCADE
-);
-
-CREATE INDEX Idx_DiseqcMotors_1 ON  "DiseqcMotors" (IdTuner);
-CREATE INDEX Idx_DiseqcMotors_2 ON  "DiseqcMotors" (IdSatellite);
-
-CREATE TRIGGER "DiseqcMotors_autoincrement" AFTER INSERT ON "DiseqcMotors"
-  FOR EACH ROW BEGIN
-    UPDATE DiseqcMotors SET IdDiseqcMotor = Id WHERE Id = NEW.Id; 
   END;
 
 -- Table "GroupMaps"
@@ -560,11 +538,9 @@ CREATE TABLE "TuningDetails"  (
     "Modulation" int NOT NULL,
     "Polarisation" int NOT NULL,
     "SymbolRate" int NOT NULL,
-    "DiSEqC" int NOT NULL,
     "Bandwidth" int NOT NULL,
     "VideoSource" int NOT NULL,
     "TuningSource" int NOT NULL,
-    "SatIndex" int NOT NULL,
     "FecCodeRate" int NOT NULL,
     "PilotTonesState" int NOT NULL,
     "RollOffFactor" int NOT NULL,
@@ -572,21 +548,17 @@ CREATE TABLE "TuningDetails"  (
     "Url" varchar(200) NOT NULL COLLATE NOCASE,
     "AudioSource" int NOT NULL,
     "IsVcrSignal" bit NOT NULL,
-    "IdLnbType" int NULL,
     "IdSatellite" int NULL,
     "GrabEpg" bit NOT NULL,
     "LastEpgGrabTime" datetime NOT NULL,
     CONSTRAINT "FK_ChannelTuningDetail" FOREIGN KEY ("IdChannel")
     REFERENCES "Channels" ("IdChannel") ON DELETE CASCADE,
-    CONSTRAINT "FK_LnbTypeTuningDetail" FOREIGN KEY ("IdLnbType")
-    REFERENCES "LnbTypes" ("IdLnbType")
     CONSTRAINT "FK_SatelliteTuningDetail" FOREIGN KEY ("IdSatellite")
     REFERENCES "Satellites" ("IdSatellite")
 );
 
 CREATE INDEX Idx_TuningDetails_1 ON "TuningDetails" (IdChannel);
-CREATE INDEX Idx_TuningDetails_2 ON "TuningDetails" (IdLnbType);
-CREATE INDEX Idx_TuningDetails_3 ON "TuningDetails" (IdSatellite);
+CREATE INDEX Idx_TuningDetails_2 ON "TuningDetails" (IdSatellite);
 
 CREATE TRIGGER "TuningDetails_autoincrement" AFTER INSERT ON "TuningDetails"
   FOR EACH ROW BEGIN

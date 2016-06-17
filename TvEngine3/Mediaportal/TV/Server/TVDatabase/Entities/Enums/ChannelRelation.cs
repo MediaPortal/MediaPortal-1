@@ -3,7 +3,7 @@
 namespace Mediaportal.TV.Server.TVDatabase.Entities.Enums
 {
   [Flags]
-  public enum ChannelIncludeRelationEnum
+  public enum ChannelRelation
   {
     None = 0,
     TuningDetails = 1,

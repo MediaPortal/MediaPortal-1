@@ -26,6 +26,7 @@ using System.Linq;
 using System.Windows.Media.Animation;
 using Mediaportal.TV.Server.TVControl.ServiceAgents;
 using Mediaportal.TV.Server.TVDatabase.Entities;
+using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVDatabase.Entities.Factories;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.Entities;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
@@ -2821,7 +2822,7 @@ namespace Mediaportal.TV.TvPlugin.EPG
       using (Settings xmlreader = new MPSettings())
       {
         String channelName = xmlreader.GetValueAsString(SettingsGuideSection, "channel", String.Empty);
-        IList<Channel> channels = ServiceAgents.Instance.ChannelServiceAgent.GetChannelsByName(channelName);
+        IList<Channel> channels = ServiceAgents.Instance.ChannelServiceAgent.GetChannelsByName(channelName, ChannelRelation.None);
         if (channels != null && channels.Count > 0)
         {
           _currentChannel = channels[0];

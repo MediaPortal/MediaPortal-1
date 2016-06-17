@@ -18,7 +18,6 @@
 
 --    ALTER TABLE `GroupMaps` DROP CONSTRAINT `FK_GroupMapChannelGroup`;
 --    ALTER TABLE `GroupMaps` DROP CONSTRAINT `FK_GroupMapChannel`;
---    ALTER TABLE `DiseqcMotors` DROP CONSTRAINT `FK_DiseqcMotorTuner`;
 --    ALTER TABLE `Recordings` DROP CONSTRAINT `FK_ChannelRecording`;
 --    ALTER TABLE `Programs` DROP CONSTRAINT `FK_ChannelProgram`;
 --    ALTER TABLE `ChannelMaps` DROP CONSTRAINT `FK_TunerChannelMap`;
@@ -29,7 +28,6 @@
 --    ALTER TABLE `ProgramCredits` DROP CONSTRAINT `FK_ProgramProgramCredit`;
 --    ALTER TABLE `Histories` DROP CONSTRAINT `FK_ChannelHistory`;
 --    ALTER TABLE `TuningDetails` DROP CONSTRAINT `FK_ChannelTuningDetail`;
---    ALTER TABLE `DiseqcMotors` DROP CONSTRAINT `FK_DiseqcMotorSatellite`;
 --    ALTER TABLE `Recordings` DROP CONSTRAINT `FK_ScheduleRecording`;
 --    ALTER TABLE `RecordingCredits` DROP CONSTRAINT `FK_RecordingRecordingCredit`;
 --    ALTER TABLE `CanceledSchedules` DROP CONSTRAINT `FK_ScheduleCanceledSchedule`;
@@ -41,7 +39,6 @@
 --    ALTER TABLE `Conflicts` DROP CONSTRAINT `FK_ScheduleConflict`;
 --    ALTER TABLE `Conflicts` DROP CONSTRAINT `FK_ScheduleConflict1`;
 --    ALTER TABLE `Histories` DROP CONSTRAINT `FK_ProgramCategoryHistory`;
---    ALTER TABLE `TuningDetails` DROP CONSTRAINT `FK_LnbTypeTuningDetail`;
 --    ALTER TABLE `ProgramCategories` DROP CONSTRAINT `FK_GuideCategoryProgramCategory`;
 --    ALTER TABLE `Tuners` DROP CONSTRAINT `FK_TunerTunerGroup`;
 --    ALTER TABLE `TunerProperties` DROP CONSTRAINT `FK_TunerTunerProperty`;
@@ -65,7 +62,6 @@ SET foreign_key_checks = 0;
     DROP TABLE IF EXISTS `ChannelLinkageMaps`;
     DROP TABLE IF EXISTS `ChannelMaps`;
     DROP TABLE IF EXISTS `Conflicts`;
-    DROP TABLE IF EXISTS `DiseqcMotors`;
     DROP TABLE IF EXISTS `GroupMaps`;
     DROP TABLE IF EXISTS `Histories`;
     DROP TABLE IF EXISTS `PendingDeletions`;
@@ -200,17 +196,6 @@ CREATE TABLE `Conflicts`(
 	`IdTuner` int);
 
 ALTER TABLE `Conflicts` ADD PRIMARY KEY (IdConflict);
-
-
-
-
-CREATE TABLE `DiseqcMotors`(
-	`IdDiseqcMotor` int NOT NULL AUTO_INCREMENT UNIQUE, 
-	`IdTuner` int NOT NULL, 
-	`IdSatellite` int NOT NULL, 
-	`Position` int NOT NULL);
-
-ALTER TABLE `DiseqcMotors` ADD PRIMARY KEY (IdDiseqcMotor);
 
 
 
@@ -452,11 +437,9 @@ CREATE TABLE `TuningDetails`(
 	`Modulation` int NOT NULL, 
 	`Polarisation` int NOT NULL, 
 	`SymbolRate` int NOT NULL, 
-	`DiSEqC` int NOT NULL, 
 	`Bandwidth` int NOT NULL, 
 	`VideoSource` int NOT NULL, 
 	`TuningSource` int NOT NULL, 
-	`SatIndex` int NOT NULL, 
 	`FecCodeRate` int NOT NULL, 
 	`PilotTonesState` int NOT NULL, 
 	`RollOffFactor` int NOT NULL, 
@@ -464,7 +447,6 @@ CREATE TABLE `TuningDetails`(
 	`Url` varchar (200) NOT NULL, 
 	`AudioSource` int NOT NULL, 
 	`IsVcrSignal` bool NOT NULL, 
-	`IdLnbType` int, 
 	`IdSatellite` int, 
 	`GrabEpg` bool NOT NULL, 
 	`LastEpgGrabTime` datetime NOT NULL);
@@ -640,21 +622,6 @@ CREATE INDEX `IX_FK_GroupMapChannel`
     ON `GroupMaps`
     (`IdChannel`);
 
--- Creating foreign key on `IdTuner` in table 'DiseqcMotors'
-
-ALTER TABLE `DiseqcMotors`
-ADD CONSTRAINT `FK_DiseqcMotorTuner`
-    FOREIGN KEY (`IdTuner`)
-    REFERENCES `Tuners`
-        (`IdTuner`)
-    ON DELETE CASCADE ON UPDATE NO ACTION;
-
--- Creating non-clustered index for FOREIGN KEY 'FK_DiseqcMotorTuner'
-
-CREATE INDEX `IX_FK_DiseqcMotorTuner` 
-    ON `DiseqcMotors`
-    (`IdTuner`);
-
 -- Creating foreign key on `IdChannel` in table 'Recordings'
 
 ALTER TABLE `Recordings`
@@ -804,21 +771,6 @@ ADD CONSTRAINT `FK_ChannelTuningDetail`
 CREATE INDEX `IX_FK_ChannelTuningDetail` 
     ON `TuningDetails`
     (`IdChannel`);
-
--- Creating foreign key on `IdSatellite` in table 'DiseqcMotors'
-
-ALTER TABLE `DiseqcMotors`
-ADD CONSTRAINT `FK_DiseqcMotorSatellite`
-    FOREIGN KEY (`IdSatellite`)
-    REFERENCES `Satellites`
-        (`IdSatellite`)
-    ON DELETE CASCADE ON UPDATE NO ACTION;
-
--- Creating non-clustered index for FOREIGN KEY 'FK_DiseqcMotorSatellite'
-
-CREATE INDEX `IX_FK_DiseqcMotorSatellite` 
-    ON `DiseqcMotors`
-    (`IdSatellite`);
 
 -- Creating foreign key on `IdSchedule` in table 'Recordings'
 
@@ -984,21 +936,6 @@ ADD CONSTRAINT `FK_ProgramCategoryHistory`
 CREATE INDEX `IX_FK_ProgramCategoryHistory` 
     ON `Histories`
     (`IdProgramCategory`);
-
--- Creating foreign key on `IdLnbType` in table 'TuningDetails'
-
-ALTER TABLE `TuningDetails`
-ADD CONSTRAINT `FK_LnbTypeTuningDetail`
-    FOREIGN KEY (`IdLnbType`)
-    REFERENCES `LnbTypes`
-        (`IdLnbType`)
-    ON DELETE NO ACTION ON UPDATE NO ACTION;
-
--- Creating non-clustered index for FOREIGN KEY 'FK_LnbTypeTuningDetail'
-
-CREATE INDEX `IX_FK_LnbTypeTuningDetail` 
-    ON `TuningDetails`
-    (`IdLnbType`);
 
 -- Creating foreign key on `IdGuideCategory` in table 'ProgramCategories'
 

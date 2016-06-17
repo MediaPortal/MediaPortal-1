@@ -22,6 +22,7 @@ using System;
 using System.Collections.Generic;
 using Mediaportal.TV.Server.Common.Types.Enum;
 using Mediaportal.TV.Server.TVDatabase.Entities;
+using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVDatabase.Entities.Factories;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.Entities.Cache;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Channel;
@@ -171,8 +172,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.EPG
       IChannelSatellite satelliteChannel = epgChannel.Key as IChannelSatellite;
       if (satelliteChannel != null)
       {
-        // TODO this isn't the real satellite ID that we want
-        satelliteId = satelliteChannel.DiseqcPositionerSatelliteIndex;
+        satelliteId = satelliteChannel.Longitude;
       }
 
       //do we have a channel with these service details?
@@ -181,6 +181,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.EPG
         broadcastStandard,
         dvbChannel.OriginalNetworkId,
         dvbChannel.ServiceId,
+        TuningDetailRelation.Channel,
         dvbChannel.TransportStreamId,
         null,
         satelliteId
@@ -199,6 +200,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.EPG
       }
 
       //should we store EPG for this channel?
+      // TODO this seems to be almost the only place in the code that needs the channel navigation property, so maybe it would be better to do this a different way
       Channel dbChannel = tuningDetails[0].Channel;
       if (!string.IsNullOrEmpty(dbChannel.ExternalId))
       {

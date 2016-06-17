@@ -91,7 +91,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeBlaster.Config
       }
       else
       {
-        IList<Tuner> tuners = ServiceAgents.Instance.TunerServiceAgent.ListAllTuners(TunerIncludeRelationEnum.None);
+        IList<Tuner> tuners = ServiceAgents.Instance.TunerServiceAgent.ListAllTuners(TunerRelation.None);
         this.LogDebug("Hauppauge blaster config: total tuner count = {0}", tuners.Count);
 
         comboBoxTunerSelectionPort1.Enabled = true;

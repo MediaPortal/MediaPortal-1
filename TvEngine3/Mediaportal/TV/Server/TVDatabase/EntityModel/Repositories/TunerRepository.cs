@@ -22,56 +22,29 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
     {
     }
 
-    public IQueryable<Tuner> IncludeAllRelations(IQueryable<Tuner> query)
+    public IQueryable<Tuner> IncludeAllRelations(IQueryable<Tuner> query, TunerRelation includeRelations)
     {
-      IQueryable<Tuner> includeRelations =
-        query.
-          Include(t => t.ChannelMaps).
-          Include(t => t.ChannelMaps.Select(m => m.Channel).Select(c => c.TuningDetails)).
-          Include(t => t.TunerGroup).
-          Include(t => t.DiseqcMotors).
-          Include(t => t.TunerProperties).
-          Include(t => t.AnalogTunerSettings).
-          Include(t => t.AnalogTunerSettings.VideoEncoder).
-          Include(t => t.AnalogTunerSettings.AudioEncoder);
-      ;
-      return includeRelations;
-    }
-
-    public IQueryable<Tuner> IncludeAllRelations(IQueryable<Tuner> query, TunerIncludeRelationEnum includeRelations)
-    {
-      bool tunerGroup = includeRelations.HasFlag(TunerIncludeRelationEnum.TunerGroup);
-      bool channelMaps = includeRelations.HasFlag(TunerIncludeRelationEnum.ChannelMaps);
-      bool channelMapsChannelTuningDetails = includeRelations.HasFlag(TunerIncludeRelationEnum.ChannelMapsChannelTuningDetails);
-      bool diseqcMotors = includeRelations.HasFlag(TunerIncludeRelationEnum.DiseqcMotors);
-      bool tunerProperties = includeRelations.HasFlag(TunerIncludeRelationEnum.TunerProperties);
-      bool analogTunerSettings = includeRelations.HasFlag(TunerIncludeRelationEnum.AnalogTunerSettings);
-
-      if (tunerGroup)
-      {
-        query = query.Include(t => t.TunerGroup);
-      }
-      if (channelMaps)
+      if (includeRelations.HasFlag(TunerRelation.ChannelMaps))
       {
         query = query.Include(t => t.ChannelMaps);
       }
-      if (channelMapsChannelTuningDetails)
+      if (includeRelations.HasFlag(TunerRelation.TunerGroup))
       {
-        query = query.Include(t => t.ChannelMaps.Select(m => m.Channel).Select(c => c.TuningDetails));
+        query = query.Include(t => t.TunerGroup);
       }
-      if (diseqcMotors)
-      {
-        query = query.Include(t => t.DiseqcMotors);
-      }
-      if (tunerProperties)
+      if (includeRelations.HasFlag(TunerRelation.TunerProperties))
       {
         query = query.Include(t => t.TunerProperties);
       }
-      if (analogTunerSettings)
+      if (includeRelations.HasFlag(TunerRelation.AnalogTunerSettings))
       {
         query = query.Include(t => t.AnalogTunerSettings).
                       Include(t => t.AnalogTunerSettings.VideoEncoder).
                       Include(t => t.AnalogTunerSettings.AudioEncoder);
+      }
+      if (includeRelations.HasFlag(TunerRelation.TunerSatellites))
+      {
+        query = query.Include(t => t.TunerSatellites.Select(ts => ts.Satellite));
       }
       return query;
     }

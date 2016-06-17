@@ -12,22 +12,13 @@ namespace Mediaportal.TV.Server.TVControl.Interfaces.Services
     #region tuners
 
     [OperationContract]
-    IList<Tuner> ListAllTuners();
-
-    [OperationContract(Name = "ListAllTunersWithSpecificRelations")]
-    IList<Tuner> ListAllTuners(TunerIncludeRelationEnum includeRelations);
+    IList<Tuner> ListAllTuners(TunerRelation includeRelations);
 
     [OperationContract]
-    Tuner GetTuner(int idTuner);
-
-    [OperationContract(Name = "GetTunerWithSpecificRelations")]
-    Tuner GetTuner(int idTuner, TunerIncludeRelationEnum includeRelations);
+    Tuner GetTuner(int idTuner, TunerRelation includeRelations);
 
     [OperationContract]
-    Tuner GetTunerByExternalId(string externalId);
-
-    [OperationContract(Name = "GetTunerByExternalIdWithSpecificRelations")]
-    Tuner GetTunerByExternalId(string externalId, TunerIncludeRelationEnum includeRelations);
+    Tuner GetTunerByExternalId(string externalId, TunerRelation includeRelations);
 
     [OperationContract]
     Tuner SaveTuner(Tuner tuner);
@@ -76,6 +67,28 @@ namespace Mediaportal.TV.Server.TVControl.Interfaces.Services
 
     #endregion
 
+    #region tuner satellites
+
+    [OperationContract]
+    IList<TunerSatellite> ListAllTunerSatellites(TunerSatelliteRelation includeRelations);
+
+    [OperationContract]
+    IList<TunerSatellite> ListAllTunerSatellitesByTuner(int idTuner, TunerSatelliteRelation includeRelations);
+
+    [OperationContract]
+    TunerSatellite GetTunerSatellite(int idTunerSatellite, TunerSatelliteRelation includeRelations);
+
+    [OperationContract]
+    TunerSatellite SaveTunerSatellite(TunerSatellite tunerSatellite);
+
+    [OperationContract]
+    IList<TunerSatellite> SaveTunerSatellites(IEnumerable<TunerSatellite> tunerSatellites);
+
+    [OperationContract]
+    void DeleteTunerSatellite(int idTunerSatellite);
+
+    #endregion
+
     #region software encoders
 
     [OperationContract]
@@ -99,7 +112,16 @@ namespace Mediaportal.TV.Server.TVControl.Interfaces.Services
     IList<Satellite> ListAllSatellites();
 
     [OperationContract]
+    IList<Satellite> ListAllReferencedSatellites();
+
+    [OperationContract]
     Satellite SaveSatellite(Satellite satellite);
+
+    [OperationContract]
+    IList<Satellite> SaveSatellites(IEnumerable<Satellite> satellites);
+
+    [OperationContract]
+    void DeleteSatellite(int idSatellite);
 
     #endregion
 
@@ -112,8 +134,5 @@ namespace Mediaportal.TV.Server.TVControl.Interfaces.Services
     LnbType GetLnbType(int idLnbType);
 
     #endregion
-
-    [OperationContract]
-    DiseqcMotor SaveDiseqcMotor(DiseqcMotor motor);
   }
 }

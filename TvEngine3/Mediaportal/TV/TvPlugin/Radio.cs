@@ -289,7 +289,7 @@ namespace Mediaportal.TV.TvPlugin.Radio
       }
       Settings xmlreader = new MPSettings();
       string currentchannelName = xmlreader.GetValueAsString("myradio", "channel", String.Empty);      
-      IList<Channel> channels = ServiceAgents.Instance.ChannelServiceAgent.GetChannelsByName(currentchannelName); 
+      IList<Channel> channels = ServiceAgents.Instance.ChannelServiceAgent.GetChannelsByName(currentchannelName, ChannelRelation.None);
       if (channels != null && channels.Count > 0)
       {
         _currentChannel = channels[0];
@@ -297,9 +297,7 @@ namespace Mediaportal.TV.TvPlugin.Radio
 
       if (AllRadioGroups.Count == 0)
       {
-        ChannelGroupIncludeRelationEnum include = ChannelGroupIncludeRelationEnum.GroupMaps;
-        include |= ChannelGroupIncludeRelationEnum.GroupMapsChannel;
-        AllRadioGroups = ServiceAgents.Instance.ChannelGroupServiceAgent.ListAllChannelGroupsByMediaType(MediaType.Radio, include);
+        AllRadioGroups = ServiceAgents.Instance.ChannelGroupServiceAgent.ListAllChannelGroupsByMediaType(MediaType.Radio, ChannelGroupRelation.GroupMapsChannel);
       }
     }
 
@@ -308,7 +306,7 @@ namespace Mediaportal.TV.TvPlugin.Radio
       if (_currentChannel != null)
       {
         GUIControl.SelectItemControl(GetID, facadeLayout.GetID, _selectedItemIndex);      
-        UpdateButtonStates();        
+        UpdateButtonStates();
       }
     }
 
@@ -394,10 +392,12 @@ namespace Mediaportal.TV.TvPlugin.Radio
       int totalItems = 0;
       if (_currentFolder == null || _currentFolder == "..")
       {
+        ChannelGroup root = null;
         foreach (ChannelGroup group in AllRadioGroups)
         {
           if (group.GroupName == _rootGroup)
           {
+            root = group;
             continue;
           }
           GUIListItem item = new GUIListItem();
@@ -416,47 +416,47 @@ namespace Mediaportal.TV.TvPlugin.Radio
           facadeLayout.Add(item);
           totalItems++;
         }
-        if (_rootGroup != "(none)")
+        if (root != null)
         {
-          ChannelGroup root = ServiceAgents.Instance.ChannelGroupServiceAgent.GetChannelGroupByNameAndMediaType(_rootGroup, MediaType.Radio);
-          if (root != null)
+          IList<GroupMap> maps = root.GroupMaps;
+          foreach (GroupMap map in maps)
           {
-            IList<GroupMap> maps = root.GroupMaps;
-            foreach (GroupMap map in maps)
+            Channel channel = map.Channel;
+            GUIListItem item = new GUIListItem();
+
+            if (_currentChannel != null)
             {
-              Channel channel = map.Channel;
-              GUIListItem item = new GUIListItem();
-
-              if (_currentChannel != null)
+              if (channel.IdChannel == _currentChannel.IdChannel)
               {
-                if (channel.IdChannel == _currentChannel.IdChannel)
-                {
-                  _selectedItemIndex = totalItems-1;
-                }
+                _selectedItemIndex = totalItems - 1;
               }
-
-              item.Label = channel.Name;
-              item.IsFolder = false;
-              item.MusicTag = channel;
-              item.IconImageBig = "DefaultMyradioBig.png";
-              item.IconImage = "DefaultMyradio.png";
-              string thumbnail = Utils.GetCoverArt(Thumbs.Radio, channel.Name);
-              if (!string.IsNullOrEmpty(thumbnail))              
-              {
-                item.IconImageBig = thumbnail;
-                item.IconImage = thumbnail;
-                item.ThumbnailImage = thumbnail;
-              }
-              facadeLayout.Add(item);
-              totalItems++;
             }
+
+            item.Label = channel.Name;
+            item.IsFolder = false;
+            item.MusicTag = channel;
+            item.IconImageBig = "DefaultMyradioBig.png";
+            item.IconImage = "DefaultMyradio.png";
+            string thumbnail = Utils.GetCoverArt(Thumbs.Radio, channel.Name);
+            if (!string.IsNullOrEmpty(thumbnail))
+            {
+              item.IconImageBig = thumbnail;
+              item.IconImage = thumbnail;
+              item.ThumbnailImage = thumbnail;
+            }
+            facadeLayout.Add(item);
+            totalItems++;
           }
         }
         _selectedGroup = null;
       }
       else
       {
-        ChannelGroup group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetChannelGroupByNameAndMediaType(_currentFolder, MediaType.Radio);
+        if (SelectedItem == null)
+        {
+          return;
+        }
+        ChannelGroup group = SelectedItem.MusicTag as ChannelGroup;
         if (group == null)
         {
           return;
@@ -707,7 +707,7 @@ namespace Mediaportal.TV.TvPlugin.Radio
       
       GUIPropertyManager.SetProperty("#Play.Current.Thumb", strLogo);
 
-      TVHome.ViewChannelAndCheck(_currentChannel, 0);
+      TVHome.ViewChannelAndCheck(_currentChannel);
     }
 
     private void SortChanged(object sender, SortEventArgs e)

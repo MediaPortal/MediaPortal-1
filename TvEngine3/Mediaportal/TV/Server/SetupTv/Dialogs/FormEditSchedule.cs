@@ -93,12 +93,12 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
 
     private void PreFillInProgramDataForDates()
     {
-      dateTimePickerOnDate.Value = Program.StartTime;      
+      dateTimePickerOnDate.Value = Program.StartTime;
       dateTimePickerStartingBetweenFrom.Value = Program.StartTime;
       dateTimePickerStartingBetweenTo.Value = Program.EndTime;
       dateTimePickerStartingBetweenFrom.Checked = false;
-      dateTimePickerStartingBetweenTo.Checked = false;      
-      dateTimePickerStartingAround.Value = Program.StartTime;      
+      dateTimePickerStartingBetweenTo.Checked = false;
+      dateTimePickerStartingAround.Value = Program.StartTime;
       mpNumericTextBoxStartingAroundDeviation.Value = 0;
       SetStartingBetweenState();
     }
@@ -117,13 +117,13 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
         if (prop.Name.ToUpperInvariant().Equals("TITLE"))
         {
           var prgField = new ProgramField(prop.Name, prop.PropertyType);
-          ConditionOperator op = ConditionOperator.Equals;          
+          ConditionOperator op = ConditionOperator.Equals;
           var prgCond = new SelectedProgramCondition<string>(prgField.Name, Program.Title, op);
           AddToListBox(prgCond, prgField.Name, listBoxPrograms);
           break;
         }
       }
-                                    
+
     }
 
     private void PreFillInProgramDataForCredits()
@@ -139,7 +139,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       {        
         foreach (var programCreditDto in programCredits)
         {
-          AddToCheckedListBox(programCreditDto, programCreditDto.ToString(), listBoxCredits, false);  
+          AddToCheckedListBox(programCreditDto, programCreditDto.ToString(), listBoxCredits, false);
         }
       }
     }
@@ -161,8 +161,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
     private void AddTvGroups()
     {
       mpComboBoxChannelsGroup.Items.Clear();
-      ChannelGroupIncludeRelationEnum include = ChannelGroupIncludeRelationEnum.GroupMaps;      
-      IList<ChannelGroup> groups = ServiceAgents.Instance.ChannelGroupServiceAgent.ListAllChannelGroupsByMediaType(MediaType.Television, include);      
+      IList<ChannelGroup> groups = ServiceAgents.Instance.ChannelGroupServiceAgent.ListAllChannelGroupsByMediaType(MediaType.Television, ChannelGroupRelation.None);
       foreach (ChannelGroup group in groups)
         mpComboBoxChannelsGroup.Items.Add(new ComboBoxExItem(group.GroupName, -1, group.IdGroup));
       if (mpComboBoxChannelsGroup.Items.Count == 0)
@@ -175,11 +174,11 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       SetRecordingInterval();
       AddTvGroups();
       SetScheduleName();
-      PopulateProgramFieldsComboBox();              
+      PopulateProgramFieldsComboBox();
       PopulateCategoriesComboBox();
       PopulateOperatorsComboBox();
       PopulateRolesComboBox();
-      PopulateKeepMethodsComboBox();      
+      PopulateKeepMethodsComboBox();
     }
 
     private void PopulateKeepMethodsComboBox()
@@ -192,7 +191,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
 
     private void PopulateRolesComboBox()
     {
-      IList<string> roles = ServiceAgents.Instance.ProgramServiceAgent.ListAllDistinctCreditRoles();      
+      IList<string> roles = ServiceAgents.Instance.ProgramServiceAgent.ListAllDistinctCreditRoles();
       foreach (var programCredit in roles)
       {
         mpComboBoxRoles.Items.Add(programCredit);
@@ -315,7 +314,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
         var channelList = new ObservableCollection<TVDatabase.Entities.Channel>();
         foreach (TVDatabase.Entities.Channel channel in listBoxChannels.Items)
         {
-          channelList.Add(channel);          
+          channelList.Add(channel);
         }
         if (channelList.Count > 0)
         {
@@ -398,36 +397,36 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
 
       IList<DayOfWeek> ondays = new ObservableCollection<DayOfWeek>();
       if (checkBoxMonday.Checked)
-      {        
+      {
         ondays.Add(DayOfWeek.Monday);
-      }            
+      }
       if (checkBoxTuesday.Checked)
       {
         ondays.Add(DayOfWeek.Tuesday);
-      }            
+      }
       if (checkBoxWednesday.Checked)
       {
         ondays.Add(DayOfWeek.Wednesday);
-      }            
+      }
       if (checkBoxThursday.Checked)
       {
         ondays.Add(DayOfWeek.Thursday);
-      }            
+      }
       if (checkBoxFriday.Checked)
       {
         ondays.Add(DayOfWeek.Friday);
-      }            
+      }
       if (checkBoxSaturday.Checked)
       {
         ondays.Add(DayOfWeek.Saturday);
-      }            
+      }
       if (checkBoxSunday.Checked)
       {
         ondays.Add(DayOfWeek.Sunday);
-      }            
+      }
       
       if (ondays.Count > 0)
-      {       
+      {
         var onDayCondition = new OnDayCondition(ondays);
         rules.Add(onDayCondition);
       }
@@ -439,7 +438,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       }
 
       if (checkBoxSkipRepeats.Checked)
-      {        
+      {
         var skipRepeatsCondition = new SkipRepeatsCondition();
         rules.Add(skipRepeatsCondition);
       }
@@ -465,17 +464,16 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       ComboBoxExItem idItem = (ComboBoxExItem)mpComboBoxChannelsGroup.Items[mpComboBoxChannelsGroup.SelectedIndex];
       mpComboBoxChannels.Items.Clear();
       if (idItem.Id == -1)
-      {        
-        IList<Channel> channels = ServiceAgents.Instance.ChannelServiceAgent.ListAllChannels();
+      {
+        IList<Channel> channels = ServiceAgents.Instance.ChannelServiceAgent.ListAllChannels(ChannelRelation.TuningDetails);
         foreach (Channel ch in channels)
         {
           if (ch.MediaType != (int)MediaType.Television) continue;
           bool hasFta = false;
           bool hasScrambled = false;
-          IList<TuningDetail> tuningDetails = ch.TuningDetails;
-          foreach (TuningDetail detail in tuningDetails)
+          foreach (TuningDetail tuningDetail in ch.TuningDetails)
           {
-            if (detail.IsEncrypted)
+            if (tuningDetail.IsEncrypted)
             {
               hasScrambled = true;
             }
@@ -493,14 +491,14 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
           }
           else
           {
-          }          
+          }
           //ComboBoxExItem item = new ComboBoxExItem(ch.displayName, imageIndex, ch.idChannel);         
           mpComboBoxChannels.Items.Add(ch);
         }
       }
       else
       {
-        ChannelGroup group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetChannelGroup(idItem.Id);
+        ChannelGroup group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetChannelGroup(idItem.Id, ChannelGroupRelation.GroupMapsTuningDetails);
         IList<GroupMap> maps = group.GroupMaps;
         bool hasFta = false;
         foreach (GroupMap map in maps)
@@ -509,10 +507,9 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
           if (ch.MediaType != (int)MediaType.Television)
           hasFta = false;
           bool hasScrambled = false;
-          IList<TuningDetail> tuningDetails = ch.TuningDetails;
-          foreach (TuningDetail detail in tuningDetails)
+          foreach (TuningDetail tuningDetail in ch.TuningDetails)
           {
-            if (detail.IsEncrypted)
+            if (tuningDetail.IsEncrypted)
             {
               hasScrambled = true;
             }
@@ -565,7 +562,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
         mpComboBoxOperators.Items.Clear();
         foreach (ConditionOperator cond in prgField.ConditionOperators)
         {
-          mpComboBoxOperators.Items.Add(cond);          
+          mpComboBoxOperators.Items.Add(cond);
         }
       }
       mpComboBoxOperators.SelectedIndex = 0;
@@ -594,7 +591,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
 
     private object CreateSelectedProgramCondition(Control ctrl, ConditionOperator op, ProgramField prgField)
     {
-      object prgCond;      
+      object prgCond;
       if (prgField.Type == typeof (int))
       {
         prgCond = new SelectedProgramCondition<int>(prgField.Name,
@@ -614,13 +611,13 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
 
     private void AddToCheckedListBox(object prgCond, string name, CheckedListBox checkedListBox, bool isChecked)
     {
-      if (DoesListBoxItemAlreadyExist(prgCond, name, checkedListBox)) return;      
-      checkedListBox.Items.Add(prgCond, isChecked);            
+      if (DoesListBoxItemAlreadyExist(prgCond, name, checkedListBox)) return;
+      checkedListBox.Items.Add(prgCond, isChecked);
     }
 
     private void AddToListBox(object prgCond, string name, ListBox listBox)
-    {      
-      if (DoesListBoxItemAlreadyExist(prgCond, name, listBox)) return;      
+    {
+      if (DoesListBoxItemAlreadyExist(prgCond, name, listBox)) return;
       listBox.Items.Add(prgCond); 
     }
 
@@ -671,8 +668,8 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       var categoryDto = mpComboBoxCategories.SelectedItem as TVDatabase.Entities.ProgramCategory;
       if (categoryDto != null)
       {
-        AddToCheckedListBox(categoryDto, categoryDto.Category, listBoxCategories, true);        
-      }      
+        AddToCheckedListBox(categoryDto, categoryDto.Category, listBoxCategories, true);
+      }
     }
 
     private void radioOnAllChannels_CheckedChanged(object sender, EventArgs e)
@@ -748,7 +745,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
     {
       mpNumericTextBoxStartingAroundDeviation.Enabled = dateTimePickerStartingAround.Checked;
       SetStartingBetweenState();
-    }    
+    }
 
     private void dateTimePickerOnDate_ValueChanged(object sender, EventArgs e)
     {
@@ -784,7 +781,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
     }
 
     private void SetStartingAroundState()
-    {      
+    {
       dateTimePickerStartingAround.Enabled = !dateTimePickerStartingBetweenFrom.Checked &&
                                              !dateTimePickerStartingBetweenTo.Checked;
 
@@ -799,7 +796,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
 
 
     private void SetOnDateState()
-    {      
+    {
       dateTimePickerOnDate.Enabled = !checkBoxMonday.Checked && !checkBoxTuesday.Checked &&
                                      !checkBoxWednesday.Checked && !checkBoxThursday.Checked && !checkBoxFriday.Checked &&
                                      !checkBoxSaturday.Checked && !checkBoxSunday.Checked;
@@ -847,7 +844,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
     private void dateTimePickerStartingBetweenTo_ValueChanged(object sender, EventArgs e)
     {
       SetStartingAroundState();
-    }    
+    }
   }
 
   internal class SelectedProgramCondition<T>

@@ -23,6 +23,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Xml.Serialization;
 using Mediaportal.TV.Server.TVDatabase.Entities;
+using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using WebEpg.Utils.Time;
@@ -280,10 +281,10 @@ namespace WebEPG
 
       try
       {
-        IList<Channel> epgChannels = ChannelManagement.GetChannelsByName(displayName);
+        IList<Channel> epgChannels = ChannelManagement.GetChannelsByName(displayName, ChannelRelation.None);
         if (epgChannels.Count > 0)
         {
-          _dbPrograms = epgChannels[0].Programs;
+          _dbPrograms = ProgramManagement.GetProgramsForAllChannels(new List<Channel> { epgChannels[0] });
         }
       }
       catch (Exception)
@@ -440,7 +441,7 @@ namespace WebEPG
         if (dbProg != null)
         {
           this.LogInfo("WebEPG: Program already in db");
-          Channel chan = ChannelManagement.GetChannelByExternalId(_strID);
+          Channel chan = ChannelManagement.GetChannelByExternalId(_strID, ChannelRelation.None);
           if (chan != null)
           {
             var dbProgramData = new ProgramData();

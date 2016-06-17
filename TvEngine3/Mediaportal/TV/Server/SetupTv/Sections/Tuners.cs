@@ -105,7 +105,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         listViewTuners.BeginUpdate();
         listViewTuners.Items.Clear();
 
-        foreach (Tuner tuner in ServiceAgents.Instance.TunerServiceAgent.ListAllTuners(TunerIncludeRelationEnum.None))
+        foreach (Tuner tuner in ServiceAgents.Instance.TunerServiceAgent.ListAllTuners(TunerRelation.None))
         {
           DebugTunerSettings(tuner);
           bool isPresent = ServiceAgents.Instance.ControllerServiceAgent.IsCardPresent(tuner.IdTuner);
@@ -208,7 +208,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.LogDebug("  name                 = {0}", tuner.Name);
       this.LogDebug("  external ID          = {0}", tuner.ExternalId);
       this.LogDebug("  standards            = {0}", (BroadcastStandard)tuner.SupportedBroadcastStandards);
-      this.LogDebug("  tuner group ID       = {0}", tuner.IdTunerGroup == null ? "[null]" : tuner.IdTunerGroup.ToString());
+      this.LogDebug("  tuner group ID       = {0}", !tuner.IdTunerGroup.HasValue ? "[null]" : tuner.IdTunerGroup.ToString());
       this.LogDebug("  enabled?             = {0}", tuner.IsEnabled);
       this.LogDebug("  priority             = {0}", tuner.Priority);
       this.LogDebug("  EPG grabbing?        = {0}", tuner.UseForEpgGrabbing);
@@ -394,7 +394,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
             }
           }
 
-          tuner = ServiceAgents.Instance.TunerServiceAgent.GetTuner(tuner.IdTuner, TunerIncludeRelationEnum.None);
+          tuner = ServiceAgents.Instance.TunerServiceAgent.GetTuner(tuner.IdTuner, TunerRelation.None);
           DebugTunerSettings(tuner);
           _changedTuners.Add(tuner.IdTuner);
           int index = item.Index;

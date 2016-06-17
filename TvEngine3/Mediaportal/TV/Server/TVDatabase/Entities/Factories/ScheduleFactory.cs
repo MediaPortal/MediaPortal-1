@@ -1,13 +1,11 @@
 ﻿using System;
+using System.Data.SqlTypes;
 using Mediaportal.TV.Server.Common.Types.Enum;
 
 namespace Mediaportal.TV.Server.TVDatabase.Entities.Factories
 {
   public static class ScheduleFactory
   {
-    public static DateTime MinSchedule = new DateTime(2000, 1, 1);
-    public static readonly int HighestPriority = Int32.MaxValue;
-
     public static Schedule Clone(Schedule source)
     {
       return CloneHelper.DeepCopy<Schedule>(source);
@@ -20,10 +18,10 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities.Factories
         IdChannel = idChannel,
         IdParentSchedule = null,
         ProgramName = programName,
-        Canceled = MinSchedule,
+        Canceled = SqlDateTime.MinValue.Value,
         Directory = string.Empty,
         EndTime = endTime,
-        KeepDate = MinSchedule,
+        KeepDate = SqlDateTime.MinValue.Value,
         KeepMethod = (int)RecordingKeepMethod.UntilSpaceNeeded,
         MaxAirings = Int32.MaxValue,
         PostRecordInterval = null,

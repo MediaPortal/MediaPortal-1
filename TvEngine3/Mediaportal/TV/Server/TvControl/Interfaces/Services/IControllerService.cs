@@ -18,18 +18,15 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
 using System.ServiceModel;
 using Mediaportal.TV.Server.Common.Types.Enum;
 using Mediaportal.TV.Server.TVDatabase.Presentation;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Channel;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channel;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.TuningDetail;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Tuner.Diseqc.Enum;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Tuner.Enum;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension;
 using Mediaportal.TV.Server.TVService.Interfaces;
 using Mediaportal.TV.Server.TVService.Interfaces.Enums;
 using Mediaportal.TV.Server.TVService.Interfaces.Services;
@@ -59,7 +56,7 @@ namespace Mediaportal.TV.Server.TVControl.Interfaces.Services
   [ServiceKnownType(typeof(ChannelSatelliteTurboFec))]
   [ServiceKnownType(typeof(ChannelScte))]
   [ServiceKnownType(typeof(ChannelStream))]
-  [ServiceKnownType(typeof(LnbTypeBLL))]
+  [ServiceKnownType(typeof(ScannedChannel))]
   public interface IControllerService
   {
     #region internal interface
@@ -70,29 +67,15 @@ namespace Mediaportal.TV.Server.TVControl.Interfaces.Services
     /// <value>Returns the AssemblyVersion of tvservice.exe</value>    
     string GetAssemblyVersion { [OperationContract] get; }
 
-    ///<summary>
-    ///Gets the total number of tv-cards installed.
-    ///</summary>
-    ///<value>Number which indicates the cards installed</value>
-    int Cards { [OperationContract] get; }
-
-    /// <summary>
-    /// Get the broadcast standards supported by the tuner hardware.
-    /// </summary>
-    /// <remarks>
-    /// This property is configurable.
-    /// </remarks>
-    [OperationContract]
-    BroadcastStandard SupportedBroadcastStandards(int cardId);
-
     /// <summary>
     /// Get the broadcast standards supported by the tuner code/class/type implementation.
     /// </summary>
     /// <remarks>
     /// This property is based on detected limitations and hard code capabilities.
     /// </remarks>
+    /// <param name="tunerId">The tuner's identifier.</param>
     [OperationContract]
-    BroadcastStandard PossibleBroadcastStandards(int cardId);
+    BroadcastStandard PossibleBroadcastStandards(int tunerId);
 
     /// <summary>
     /// Gets the name for a card.
@@ -169,10 +152,12 @@ namespace Mediaportal.TV.Server.TVControl.Interfaces.Services
     /// scans current transponder for channels.
     /// </summary>
     /// <param name="cardId">id of the card.</param>
-    /// <param name="channel">contains tuningdetails for the transponder.</param>
-    /// <returns>list of all channels found</returns>    
+    /// <param name="channel">The channel to tune to.</param>
+    /// <param name="isFastNetworkScan"><c>True</c> to do a fast network scan.</param>
+    /// <param name="channels">The channel information found.</param>
+    /// <param name="groupNames">The names of the groups referenced in <paramref name="channels"/>.</param>
     [OperationContract(Name = "Scan")]
-    IChannel[] Scan(int cardId, IChannel channel);
+    void Scan(int cardId, IChannel channel, bool isFastNetworkScan, out IList<ScannedChannel> channels, out IDictionary<ChannelGroupType, IDictionary<ulong, string>> groupNames);
 
     /// <summary>
     /// scans nit the current transponder for channels
@@ -217,16 +202,10 @@ namespace Mediaportal.TV.Server.TVControl.Interfaces.Services
     bool DeleteRecording(int idRecording);
 
     /// <summary>
-    /// Deletes invalid recordings from database. A recording is invalid if the corresponding file no longer exists.
-    /// </summary>
-    [OperationContract]
-    bool DeleteInvalidRecordings();
-
-    /// <summary>
     /// Deletes watched recordings from database.
     /// </summary>
     [OperationContract]
-    bool DeleteWatchedRecordings(string currentTitle);
+    bool DeleteWatchedRecordings(string currentTitle, MediaType mediaType);
 
     /// <summary>
     /// Checks if the schedule specified is currently being recorded.
@@ -266,19 +245,6 @@ namespace Mediaportal.TV.Server.TVControl.Interfaces.Services
     bool IsAnyCardRecording();
 
     /// <summary>
-    /// Determines if any card is currently busy recording or timeshifting
-    /// </summary>
-    /// <param name="userName"> </param>
-    /// <param name="isUserTS">true if the specified user is timeshifting</param>
-    /// <param name="isAnyUserTS">true if any user (except for the userTS) is timeshifting</param>
-    /// <param name="isRec">true if recording</param>
-    /// <returns>
-    /// 	<c>true</c> if a card is recording or timeshifting; otherwise, <c>false</c>.
-    /// </returns>
-    [OperationContract]
-    bool IsAnyCardRecordingOrTimeshifting(string userName, out bool isUserTS, out bool isAnyUserTS, out bool isRec);
-
-    /// <summary>
     /// Stops recording the Schedule specified
     /// </summary>
     /// <param name="idSchedule">id of the Schedule</param>
@@ -297,12 +263,6 @@ namespace Mediaportal.TV.Server.TVControl.Interfaces.Services
     /// Enable or disable the epg-grabber
     /// </summary>
     bool EpgGrabberEnabled { [OperationContract] get; [OperationContract] set; }
-
-    /// <summary>
-    /// Restarts the service.
-    /// </summary>
-    [OperationContract]
-    void Restart();
 
     /// <summary>
     /// Determines whether the card is in use
@@ -482,15 +442,6 @@ namespace Mediaportal.TV.Server.TVControl.Interfaces.Services
     string RecordingFileName(string user);
 
     /// <summary>
-    /// Gets the tv/radio channel on which the card is currently tuned
-    /// </summary>
-    /// <param name="userName"> </param>
-    /// <param name="idChannel"> </param>
-    /// <returns>IChannel</returns>
-    [OperationContract]
-    IChannel CurrentChannel(string userName, int idChannel);
-
-    /// <summary>
     /// returns the id of the current channel.
     /// </summary>
     /// <param name="userName"> </param>
@@ -505,17 +456,6 @@ namespace Mediaportal.TV.Server.TVControl.Interfaces.Services
     /// <returns>channel name</returns>
     [OperationContract]
     string CurrentChannelName(string userName);
-
-    /// <summary>
-    /// Returns whether the channel to which the card is tuned is
-    /// scrambled or not.
-    /// </summary>
-    /// <param name="userName"> </param>
-    /// <returns>
-    /// yes if channel is scrambled and CI/CAM cannot decode it, otherwise false
-    /// </returns>
-    [OperationContract]
-    bool IsScrambled(string userName);
 
     /// <summary>
     /// Returns the current filename used for timeshifting
@@ -562,7 +502,7 @@ namespace Mediaportal.TV.Server.TVControl.Interfaces.Services
     /// </summary>
     /// <param name="idCard"> </param>
     [OperationContract]
-    void StopCard(int idCard);
+    void StopScan(int idCard);
 
     /// <summary>
     /// Park timeshifting for the user supplied
@@ -588,48 +528,18 @@ namespace Mediaportal.TV.Server.TVControl.Interfaces.Services
     bool UnParkTimeShifting(string userName, double duration, int idChannel, out IUser user, out IVirtualCard card);
 
     /// <summary>
-    /// Query what card would be used for timeshifting on any given channel
-    /// </summary>
-    /// <param name="userName"> </param>
-    /// <param name="idChannel">The id channel.</param>
-    /// <returns>
-    /// returns card id which would be used when doing the actual timeshifting.
-    /// </returns>
-    [OperationContract]
-    int TimeShiftingWouldUseCard(string userName, int idChannel);
-
-    /// <summary>
     /// Start timeshifting on a specific channel
     /// </summary>
     /// <param name="userName"> </param>
     /// <param name="idChannel">The id channel.</param>
-    /// <param name="kickCardId"> </param>
     /// <param name="card">returns on which card timeshifting is started</param>
-    /// <param name="kickableCards"> </param>
-    /// <param name="forceCardId">Indicated, if the card should be forced</param>
-    /// <param name="user">user credentials.</param>
-    /// <returns>
-    /// TvResult indicating whether method succeeded
-    /// </returns>    
-    [OperationContract(Name = "StartTimeShiftingForceCardId")]    
-    TvResult StartTimeShifting(string userName, int idChannel, int? kickCardId, out IVirtualCard card, out Dictionary<int, List<IUser>> kickableCards, bool forceCardId, out IUser user);
-
-    /// <summary>
-    /// Start timeshifting on a specific channel
-    /// </summary>
-    /// <param name="userName"> </param>
-    /// <param name="idChannel">The id channel.</param>
-    /// <param name="kickCardId"> </param>
-    /// <param name="card">returns on which card timeshifting is started</param>
-    /// <param name="kickableCards"> </param>
-    /// <param name="cardChanged">indicates if card was changed</param>
     /// <param name="parkedDuration"> </param>
     /// <param name="user">user credentials.</param>
     /// <returns>
     /// TvResult indicating whether method succeeded
     /// </returns>
     [OperationContract(Name = "StartTimeShiftingGetCardChanged")]
-    TvResult StartTimeShifting(string userName, int idChannel, int? kickCardId, out IVirtualCard card, out Dictionary<int, List<IUser>> kickableCards, out bool cardChanged, out double? parkedDuration, out IUser user);
+    TvResult StartTimeShifting(string userName, int idChannel, out IVirtualCard card, out double? parkedDuration, out IUser user);
 
     /// <summary>
     /// Start timeshifting on a specific channel
@@ -641,22 +551,8 @@ namespace Mediaportal.TV.Server.TVControl.Interfaces.Services
     /// <returns>
     /// TvResult indicating whether method succeeded
     /// </returns>
-    [OperationContract(Name = "StartTimeShiftingGetCard")]
-    TvResult StartTimeShifting(string userName, int idChannel, out IVirtualCard card, out IUser user);
-
     [OperationContract(Name = "StartTimeShiftingPriorityGetCard")]
-    TvResult StartTimeShifting(string userName, int userPriority, int idChannel, out IVirtualCard card, out IUser user);
-
-
-    /// <summary>
-    /// Stops the time shifting.
-    /// </summary>
-    /// <param name="userName"> </param>
-    /// <param name="user">user credentials.</param>
-    /// <param name="reason">reason why timeshifting is stopped.</param>
-    /// <returns>true if success otherwise false</returns>
-    [OperationContract(Name = "StopTimeShiftingGetReason")]
-    bool StopTimeShifting(string userName, out IUser user, TvStoppedReason reason);
+    TvResult StartTimeShifting(string userName, int idChannel, out IVirtualCard card, out IUser user, int? userPriority = null, int? idTunerToUse = null);
 
     /// <summary>
     /// Stops the time shifting.
@@ -694,24 +590,10 @@ namespace Mediaportal.TV.Server.TVControl.Interfaces.Services
     /// </summary>
     /// <param name="userName"> </param>
     /// <param name="idCard"> </param>
-    /// <param name="user">The user.</param>
     /// <param name="channel">The channel.</param>
-    /// <param name="idChannel">The id channel.</param>
     /// <returns>true if succeeded</returns>
     [OperationContract(Name = "ScanByUser")]
-    TvResult Scan(string userName, int idCard, out IUser user, IChannel channel, int idChannel);
-
-    /// <summary>
-    /// Tunes the the specified card to the channel.
-    /// </summary>
-    /// <param name="userName"> </param>
-    /// <param name="idCard"> </param>
-    /// <param name="user">The user.</param>
-    /// <param name="channel">The channel.</param>
-    /// <param name="idChannel">The id channel.</param>
-    /// <returns>true if succeeded</returns>
-    [OperationContract]
-    TvResult Tune(string userName, int idCard, out IUser user, IChannel channel, int idChannel);
+    TvResult Scan(string userName, int idCard, IChannel channel);
 
     /// <summary>
     /// Gets the users for card.
@@ -737,68 +619,63 @@ namespace Mediaportal.TV.Server.TVControl.Interfaces.Services
     #region quality control
 
     /// <summary>
-    /// Indicates if bit rate modes are supported
+    /// Determine which (if any) quality control features are supported by a tuner.
     /// </summary>
-    /// <param name="cardId">Unique id of the card</param>
-    /// <returns>true/false</returns>
+    /// <param name="tunerId">The tuner's unique identifier.</param>
+    /// <param name="canSetEncodeMode"><c>True</c> if the tuner's encoding mode can be set.</param>
+    /// <param name="isPeakModeSupported"><c>True</c> if the tuner supports the variable-peak encoding mode.</param>
+    /// <param name="canSetBitRate"><c>True</c> if the tuner's average and/or peak encoding bit-rate can be set.</param>
+    /// <returns><c>true</c> if the check succeeded, otherwise <c>false</c></returns>
     [OperationContract]
-    bool SupportsQualityControl(int cardId);
+    bool GetSupportedQualityControlFeatures(int tunerId, out bool canSetEncodeMode, out bool isPeakModeSupported, out bool canSetBitRate);
 
     /// <summary>
-    /// Indicates if bit rate modes are supported
+    /// Get a tuner's current video and/or audio encoding mode.
     /// </summary>
-    /// <param name="cardId">Unique id of the card</param>
-    /// <returns>true/false</returns>
+    /// <param name="tunerId">The tuner's unique identifier.</param>
+    /// <returns>the mode</returns>
     [OperationContract]
-    bool SupportsBitRateModes(int cardId);
+    EncodeMode GetEncodeMode(int tunerId);
 
     /// <summary>
-    /// Indicates if peak bit rate mode is supported
+    /// Set a tuner's video and/or audio encoding mode.
     /// </summary>
-    /// <param name="cardId">Unique id of the card</param>
-    /// <returns>true/false</returns>
+    /// <param name="tunerId">The tuner's unique identifier.</param>
+    /// <param name="mode">The mode.</param>
     [OperationContract]
-    bool SupportsPeakBitRateMode(int cardId);
+    void SetEncodeMode(int tunerId, EncodeMode mode);
 
     /// <summary>
-    /// Indicates if bit rate control is supported
+    /// Get a tuner's current average video and/or audio bit-rate.
     /// </summary>
-    /// <param name="cardId">Unique id of the card</param>
-    /// <returns>true/false</returns>
+    /// <param name="tunerId">The tuner's unique identifier.</param>
+    /// <returns>the bit-rate, encoded as a percentage over the supported range</returns>
     [OperationContract]
-    bool SupportsBitRate(int cardId);
+    int GetAverageBitRate(int tunerId);
 
     /// <summary>
-    /// Gets the current quality type
+    /// Set a tuner's average video and/or audio bit-rate.
     /// </summary>
-    /// <param name="cardId">Unique id of the card</param>
-    /// <returns>QualityType</returns>
+    /// <param name="tunerId">The tuner's unique identifier.</param>
+    /// <param name="bitRate">The bit-rate, encoded as a percentage over the supported range.</param>
     [OperationContract]
-    QualityType GetQualityType(int cardId);
+    void SetAverageBitRate(int tunerId, int bitRate);
 
     /// <summary>
-    /// Sets the quality type
+    /// Get the tuner's current peak video and/or audio bit-rate.
     /// </summary>
-    /// <param name="cardId">Unique id of the card</param>
-    /// <param name="qualityType">The new quality type</param>
+    /// <param name="tunerId">The tuner's unique identifier.</param>
+    /// <returns>the bit-rate, encoded as a percentage over the supported range</returns>
     [OperationContract]
-    void SetQualityType(int cardId, QualityType qualityType);
+    int GetPeakBitRate(int tunerId);
 
     /// <summary>
-    /// Gets the current bitrate mdoe
+    /// Set the tuner's peak video and/or audio bit-rate.
     /// </summary>
-    /// <param name="cardId">Unique id of the card</param>
-    /// <returns>QualityType</returns>
+    /// <param name="tunerId">The tuner's unique identifier.</param>
+    /// <param name="bitRate">The bit-rate, encoded as a percentage over the supported range.</param>
     [OperationContract]
-    EncoderBitRateMode GetBitRateMode(int cardId);
-
-    /// <summary>
-    /// Sets the bitrate mode
-    /// </summary>
-    /// <param name="cardId">Unique id of the card</param>
-    /// <param name="bitRateMode">The new bitrate mdoe</param>
-    [OperationContract]
-    void SetBitRateMode(int cardId, EncoderBitRateMode bitRateMode);
+    void SetPeakBitRate(int tunerId, int bitRate);
 
     #endregion
 
@@ -851,10 +728,9 @@ namespace Mediaportal.TV.Server.TVControl.Interfaces.Services
     /// Registers a ci menu callback handler for user interaction
     /// </summary>
     /// <param name="cardId"></param>
-    /// <param name="callbackHandler"></param>
     /// <returns></returns>
     [OperationContract]
-    bool SetCiMenuHandler(int cardId, IConditionalAccessMenuCallBack callbackHandler);
+    bool SetCiMenuHandler(int cardId);
 
     #endregion
 
@@ -903,16 +779,22 @@ namespace Mediaportal.TV.Server.TVControl.Interfaces.Services
     IList<StreamPresentation> ListAllStreamingChannels();
 
     [OperationContract]
-    bool IsAnyCardParkedByUser(string userName);
-
-    [OperationContract]
     IList<CardPresentation> ListAllCards();
 
     [OperationContract]
     void ReloadControllerConfiguration();
 
+    #region system information
+
     [OperationContract]
     void GetBdaFixStatus(out bool isApplicable, out bool isNeeded);
+
+    [OperationContract]
+    bool GetDriveSpaceInformation(string drive, out ulong bytesTotal, out ulong bytesFreeAndAvailable);
+
+    #endregion
+
+    #region MCE service management
 
     [OperationContract]
     void GetMceServiceStatus(out bool isServiceInstalled, out bool isServiceRunning, out bool isPolicyActive);
@@ -922,6 +804,8 @@ namespace Mediaportal.TV.Server.TVControl.Interfaces.Services
 
     [OperationContract]
     void RemoveMceServicePolicy();
+
+    #endregion
 
     #region thumbnails
 
@@ -935,5 +819,8 @@ namespace Mediaportal.TV.Server.TVControl.Interfaces.Services
     void DeleteExistingThumbnails();
 
     #endregion
+
+    [OperationContract]
+    void ImportRecordings(string directory);
   }
 }

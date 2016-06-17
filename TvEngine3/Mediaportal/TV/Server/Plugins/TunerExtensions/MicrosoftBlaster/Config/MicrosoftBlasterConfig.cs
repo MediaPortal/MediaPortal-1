@@ -101,7 +101,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBlaster.Config
       this.LogDebug("Microsoft blaster config: activating");
 
       dataGridViewConfig.Rows.Clear();
-      IList<Tuner> tuners = ServiceAgents.Instance.TunerServiceAgent.ListAllTuners(TunerIncludeRelationEnum.None);
+      IList<Tuner> tuners = ServiceAgents.Instance.TunerServiceAgent.ListAllTuners(TunerRelation.None);
 
       IDictionary<string, TransceiverDetail> comboBoxValueLookup = null;
       TransceiverDetail blankTransceiverEntry = new TransceiverDetail();
