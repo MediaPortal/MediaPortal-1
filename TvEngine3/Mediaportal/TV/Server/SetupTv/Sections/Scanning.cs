@@ -33,6 +33,8 @@ using Mediaportal.TV.Server.Common.Types.Provider;
 using Mediaportal.TV.Server.SetupControls;
 using Mediaportal.TV.Server.SetupTV.Sections.Helpers;
 using Mediaportal.TV.Server.TVControl.ServiceAgents;
+using Mediaportal.TV.Server.TVDatabase.Entities;
+using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using MediaPortal.Common.Utils.ExtensionMethods;
 
@@ -63,8 +65,19 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     private FileDownloader _downloader = null;
     private string _fileNameTuningDetails = null;
 
-    public Scanning()
-      : base("Scanning")
+    private string _originalProviderDishNetwork;
+    private string _originalProviderFreesat;
+    private int _originalProviderFreeviewSatellite;
+    private string _originalProviderOpenTv;
+    private bool _originalPreferProvider2ChannelDetails;
+    private int _originalMinimumScanTime;
+    private int _originalTimeLimitSingleTransmitter;
+    private int _originalTimeLimitNetworkInformation;
+    private int _originalTimeLimitCableCard;
+    private bool _originalPreferHighDefinitionChannelNumbers;
+
+    public Scanning(ServerConfigurationChangedEventHandler handler)
+      : base("Scanning", handler)
     {
       InitializeComponent();
     }
@@ -205,18 +218,24 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       }
       if (checkBoxProvidersPreferProvider2ChannelDetails.Enabled)
       {
-        checkBoxProvidersPreferProvider2ChannelDetails.Checked = ServiceAgents.Instance.SettingServiceAgent.GetValue("scanPreferProvider2ChannelDetails", false);
+        _originalPreferProvider2ChannelDetails = ServiceAgents.Instance.SettingServiceAgent.GetValue("scanPreferProvider2ChannelDetails", false);
+        checkBoxProvidersPreferProvider2ChannelDetails.Checked = _originalPreferProvider2ChannelDetails;
       }
 
       // timing
-      numericUpDownTimingMinimum.Value = ServiceAgents.Instance.SettingServiceAgent.GetValue("minimumScanTime", 2000);
-      numericUpDownTimingLimitSingleTransmitter.Value = ServiceAgents.Instance.SettingServiceAgent.GetValue("timeLimitScanSingleTransmitter", 15000);
-      numericUpDownTimingLimitNetworkInformation.Value = ServiceAgents.Instance.SettingServiceAgent.GetValue("timeLimitScanNetworkInformation", 15000);
-      numericUpDownTimingLimitCableCard.Value = ServiceAgents.Instance.SettingServiceAgent.GetValue("timeLimitScanCableCard", 300000);
+      _originalMinimumScanTime = ServiceAgents.Instance.SettingServiceAgent.GetValue("minimumScanTime", 2000);
+      numericUpDownTimingMinimum.Value = _originalMinimumScanTime;
+      _originalTimeLimitSingleTransmitter = ServiceAgents.Instance.SettingServiceAgent.GetValue("timeLimitScanSingleTransmitter", 15000);
+      numericUpDownTimingLimitSingleTransmitter.Value = _originalTimeLimitSingleTransmitter;
+      _originalTimeLimitNetworkInformation = ServiceAgents.Instance.SettingServiceAgent.GetValue("timeLimitScanNetworkInformation", 15000);
+      numericUpDownTimingLimitNetworkInformation.Value = _originalTimeLimitNetworkInformation;
+      _originalTimeLimitCableCard = ServiceAgents.Instance.SettingServiceAgent.GetValue("timeLimitScanCableCard", 300000);
+      numericUpDownTimingLimitCableCard.Value = _originalTimeLimitCableCard;
 
       // other
       checkBoxChannelMovementDetection.Checked = ServiceAgents.Instance.SettingServiceAgent.GetValue("scanEnableChannelMovementDetection", false);
-      checkBoxPreferHighDefinitionChannelNumbers.Checked = ServiceAgents.Instance.SettingServiceAgent.GetValue("scanPreferHighDefinitionChannelNumbers", true);
+      _originalPreferHighDefinitionChannelNumbers = ServiceAgents.Instance.SettingServiceAgent.GetValue("scanPreferHighDefinitionChannelNumbers", true);
+      checkBoxPreferHighDefinitionChannelNumbers.Checked = _originalPreferHighDefinitionChannelNumbers;
       checkBoxSkipEncryptedChannels.Checked = !ServiceAgents.Instance.SettingServiceAgent.GetValue("scanStoreEncryptedChannels", true);
 
       // automatic channel groups
@@ -273,6 +292,28 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     {
       this.LogDebug("scanning: deactivating");
 
+      // Categorise tuners for triggering config reloads.
+      HashSet<int> tunerIdsChanged = new HashSet<int>();
+      IList<Tuner> tuners = ServiceAgents.Instance.TunerServiceAgent.ListAllTuners(TunerRelation.None);
+      List<int> tunerIdsAll = new List<int>(tuners.Count);
+      List<int> tunerIdsAtscScte = new List<int>(tuners.Count);
+      List<int> tunerIdsOther = new List<int>(tuners.Count);
+      BroadcastStandard broadcastStandardsAtscScte = BroadcastStandard.Atsc | BroadcastStandard.Scte;
+      BroadcastStandard broadcastStandardsDvb = (BroadcastStandard.MaskAnalog | BroadcastStandard.MaskDigital) & ~broadcastStandardsAtscScte;
+      foreach (Tuner tuner in tuners)
+      {
+        tunerIdsAll.Add(tuner.IdTuner);
+        BroadcastStandard tunerSupportedBroadcastStandards = (BroadcastStandard)tuner.SupportedBroadcastStandards;
+        if ((tunerSupportedBroadcastStandards & broadcastStandardsAtscScte) != 0)
+        {
+          tunerIdsAtscScte.Add(tuner.IdTuner);
+        }
+        else if ((tunerSupportedBroadcastStandards & broadcastStandardsDvb) != 0)
+        {
+          tunerIdsOther.Add(tuner.IdTuner);
+        }
+      }
+
       ChannelGroupType channelGroupTypes = ChannelGroupType.Manual;
 
       // providers
@@ -287,7 +328,10 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         )
       )
       {
-        SaveOpenTvProvider(countryName, comboBoxProvidersProvider1Region.SelectedItem, checkBoxProvidersProvider1IsHighDefinition.Checked);
+        if (SaveOpenTvProvider(countryName, comboBoxProvidersProvider1Region.SelectedItem, checkBoxProvidersProvider1IsHighDefinition.Checked))
+        {
+          tunerIdsChanged.UnionWith(tunerIdsOther);
+        }
         if (checkBoxAutomaticChannelGroupsProvider1Region.Checked)
         {
           channelGroupTypes |= ChannelGroupType.OpenTvRegion;
@@ -295,7 +339,10 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
         if (canReceiveUkSatellite)
         {
-          SaveFreesatProvider(comboBoxProvidersProvider2Region.SelectedItem, checkBoxProvidersProvider2IsHighDefinition.Checked);
+          if (SaveFreesatProvider(comboBoxProvidersProvider2Region.SelectedItem, checkBoxProvidersProvider2IsHighDefinition.Checked))
+          {
+            tunerIdsChanged.UnionWith(tunerIdsOther);
+          }
           if (checkBoxAutomaticChannelGroupsProvider2Region.Checked)
           {
             channelGroupTypes |= ChannelGroupType.FreesatRegion;
@@ -303,7 +350,10 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         }
         else if (countryName.Equals("New Zealand"))
         {
-          ServiceAgents.Instance.SettingServiceAgent.SaveValue("scanProviderFreeviewSatellite", (int)((BouquetFreeviewSatellite)comboBoxProvidersProvider2Region.SelectedItem));
+          if (SaveFreeviewSatelliteProvider(comboBoxProvidersProvider2Region.SelectedItem))
+          {
+            tunerIdsChanged.UnionWith(tunerIdsOther);
+          }
           if (checkBoxAutomaticChannelGroupsProvider2Region.Checked)
           {
             channelGroupTypes |= ChannelGroupType.FreeviewSatellite;
@@ -312,26 +362,50 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       }
       else if (string.Equals(countryName, "United States"))
       {
-        DishNetworkMarket market = (DishNetworkMarket)comboBoxProvidersProvider1Region.SelectedItem;
-        if (market != null)
+        if (SaveDishNetworkProvider(comboBoxProvidersProvider1Region.SelectedItem))
         {
-          ServiceAgents.Instance.SettingServiceAgent.SaveValue("scanProviderDishNetwork", string.Format("{0},{1}", market.Id, market.StateAbbreviation));
+          tunerIdsChanged.UnionWith(tunerIdsOther);
         }
         if (checkBoxAutomaticChannelGroupsProvider1Region.Checked)
         {
           channelGroupTypes |= ChannelGroupType.DishNetworkMarket;
         }
       }
+      if (checkBoxProvidersPreferProvider2ChannelDetails.Enabled && _originalPreferProvider2ChannelDetails != checkBoxProvidersPreferProvider2ChannelDetails.Checked)
+      {
+        ServiceAgents.Instance.SettingServiceAgent.SaveValue("scanPreferProvider2ChannelDetails", checkBoxProvidersPreferProvider2ChannelDetails.Checked);
+        tunerIdsChanged.UnionWith(tunerIdsOther);
+      }
 
       // timing
-      ServiceAgents.Instance.SettingServiceAgent.SaveValue("minimumScanTime", (int)numericUpDownTimingMinimum.Value);
-      ServiceAgents.Instance.SettingServiceAgent.SaveValue("timeLimitScanSingleTransmitter", (int)numericUpDownTimingLimitSingleTransmitter.Value);
-      ServiceAgents.Instance.SettingServiceAgent.SaveValue("timeLimitScanNetworkInformation", (int)numericUpDownTimingLimitNetworkInformation.Value);
-      ServiceAgents.Instance.SettingServiceAgent.SaveValue("timeLimitScanCableCard", (int)numericUpDownTimingLimitCableCard.Value);
+      if (_originalMinimumScanTime != numericUpDownTimingMinimum.Value)
+      {
+        ServiceAgents.Instance.SettingServiceAgent.SaveValue("minimumScanTime", (int)numericUpDownTimingMinimum.Value);
+        tunerIdsChanged.UnionWith(tunerIdsAll);
+      }
+      if (_originalTimeLimitSingleTransmitter != numericUpDownTimingLimitSingleTransmitter.Value)
+      {
+        ServiceAgents.Instance.SettingServiceAgent.SaveValue("timeLimitScanSingleTransmitter", (int)numericUpDownTimingLimitSingleTransmitter.Value);
+        tunerIdsChanged.UnionWith(tunerIdsAll);
+      }
+      if (_originalTimeLimitNetworkInformation != numericUpDownTimingLimitNetworkInformation.Value)
+      {
+        ServiceAgents.Instance.SettingServiceAgent.SaveValue("timeLimitScanNetworkInformation", (int)numericUpDownTimingLimitNetworkInformation.Value);
+        tunerIdsChanged.UnionWith(tunerIdsOther);
+      }
+      if (_originalTimeLimitCableCard != numericUpDownTimingLimitCableCard.Value)
+      {
+        ServiceAgents.Instance.SettingServiceAgent.SaveValue("timeLimitScanCableCard", (int)numericUpDownTimingLimitCableCard.Value);
+        tunerIdsChanged.UnionWith(tunerIdsAtscScte);
+      }
 
       // other
       ServiceAgents.Instance.SettingServiceAgent.SaveValue("scanEnableChannelMovementDetection", checkBoxChannelMovementDetection.Checked);
-      ServiceAgents.Instance.SettingServiceAgent.SaveValue("scanPreferHighDefinitionChannelNumbers", checkBoxPreferHighDefinitionChannelNumbers.Checked);
+      if (_originalPreferHighDefinitionChannelNumbers != checkBoxPreferHighDefinitionChannelNumbers.Checked)
+      {
+        ServiceAgents.Instance.SettingServiceAgent.SaveValue("scanPreferHighDefinitionChannelNumbers", checkBoxPreferHighDefinitionChannelNumbers.Checked);
+        tunerIdsChanged.UnionWith(tunerIdsOther);
+      }
       ServiceAgents.Instance.SettingServiceAgent.SaveValue("scanStoreEncryptedChannels", !checkBoxSkipEncryptedChannels.Checked);
 
       // automatic channel groups
@@ -384,7 +458,10 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
       DebugSettings();
 
-      // TODO trigger server-side config reloading for provider and time limit config... or should they just be re-read automatically at the start of each scan???
+      if (tunerIdsChanged.Count > 0)
+      {
+        OnServerConfigurationChanged(this, false, tunerIdsChanged);
+      }
 
       base.OnSectionDeActivated();
     }
@@ -428,6 +505,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.LogDebug("    NorDig channel lists    = {0}", checkBoxAutomaticChannelGroupsNorDigChannelLists.Checked);
       this.LogDebug("    Virgin Media categories = {0}", checkBoxAutomaticChannelGroupsVirginMediaChannelCategories.Checked);
     }
+
+    #region load/save provider-specific config
 
     private void LoadOpenTvProvider(string countryName, out object selectedRegion, out bool isHighDefinition)
     {
@@ -559,7 +638,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       {
         defaultConfig = string.Format("{0},{1}", (int)BouquetFreesat.EnglandHd, RegionFreesat.London_London.Id);
       }
-      string config = ServiceAgents.Instance.SettingServiceAgent.GetValue("scanProviderFreesat", defaultConfig);
+      _originalProviderFreesat = ServiceAgents.Instance.SettingServiceAgent.GetValue("scanProviderFreesat", defaultConfig);
+      string config = _originalProviderFreesat;
       if (string.IsNullOrEmpty(config))
       {
         config = defaultConfig;
@@ -641,7 +721,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       }
 
       string defaultConfig = string.Format("{0},{1}", defaultMarket.Id, defaultMarket.StateAbbreviation);
-      string config = ServiceAgents.Instance.SettingServiceAgent.GetValue("scanProviderDishNetwork", defaultConfig);
+      _originalProviderDishNetwork = ServiceAgents.Instance.SettingServiceAgent.GetValue("scanProviderDishNetwork", defaultConfig);
+      string config = _originalProviderDishNetwork;
       if (string.IsNullOrEmpty(config))
       {
         config = defaultConfig;
@@ -657,7 +738,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       selectedMarket = DishNetworkMarket.GetValue(marketId, parts[1]);
     }
 
-    private void SaveOpenTvProvider(string countryName, object selectedRegion, bool isHighDefinition)
+    private bool SaveOpenTvProvider(string countryName, object selectedRegion, bool isHighDefinition)
     {
       int bouquetId = 0;
       int regionId = 0;
@@ -750,10 +831,16 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         }
       }
 
-      ServiceAgents.Instance.SettingServiceAgent.SaveValue("scanProviderOpenTv", string.Format("{0},{1}", bouquetId, regionId));
+      string currentConfig = string.Format("{0},{1}", bouquetId, regionId);
+      if (!string.Equals(_originalProviderOpenTv, currentConfig))
+      {
+        ServiceAgents.Instance.SettingServiceAgent.SaveValue("scanProviderOpenTv", currentConfig);
+        return true;
+      }
+      return false;
     }
 
-    private void SaveFreesatProvider(object selectedRegion, bool isHighDefinition)
+    private bool SaveFreesatProvider(object selectedRegion, bool isHighDefinition)
     {
       RegionFreesat region = (RegionFreesat)selectedRegion;
       BouquetFreesat bouquet;
@@ -802,8 +889,42 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         }
       }
 
-      ServiceAgents.Instance.SettingServiceAgent.SaveValue("scanProviderFreesat", string.Format("{0},{1}", (int)bouquet, region.Id));
+      string currentConfig = string.Format("{0},{1}", (int)bouquet, region.Id);
+      if (!string.Equals(_originalProviderFreesat, currentConfig))
+      {
+        ServiceAgents.Instance.SettingServiceAgent.SaveValue("scanProviderFreesat", currentConfig);
+        return true;
+      }
+      return false;
     }
+
+    private bool SaveFreeviewSatelliteProvider(object selectedRegion)
+    {
+      int currentConfig = (int)((BouquetFreeviewSatellite)selectedRegion);
+      if (_originalProviderFreeviewSatellite != currentConfig)
+      {
+        ServiceAgents.Instance.SettingServiceAgent.SaveValue("scanProviderFreeviewSatellite", currentConfig);
+        return true;
+      }
+      return false;
+    }
+
+    private bool SaveDishNetworkProvider(object selectedMarket)
+    {
+      DishNetworkMarket market = (DishNetworkMarket)selectedMarket;
+      if (market != null)
+      {
+        string currentConfig = string.Format("{0},{1}", market.Id, market.StateAbbreviation);
+        if (!string.Equals(_originalProviderDishNetwork, currentConfig))
+        {
+          ServiceAgents.Instance.SettingServiceAgent.SaveValue("scanProviderDishNetwork", currentConfig);
+          return true;
+        }
+      }
+      return false;
+    }
+
+    #endregion
 
     #region tuning detail update
 
@@ -818,14 +939,13 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       }
 
       this.LogDebug("scanning: backup tuning details");
-      string tuningDetailRootPath = TuningDetailFilter.GetDataPath();
-      string fileNameBackupTemp = Path.Combine(tuningDetailRootPath, "backup_new.zip");
+      string fileNameBackupTemp = Path.Combine(TuningDetailFilter.DATA_PATH, "backup_new.zip");
       try
       {
         ZipFile zipFile = new ZipFile(fileNameBackupTemp, System.Text.Encoding.UTF8);
         try
         {
-          foreach (string directory in Directory.GetDirectories(tuningDetailRootPath))
+          foreach (string directory in Directory.EnumerateDirectories(TuningDetailFilter.DATA_PATH))
           {
             zipFile.AddDirectory(directory, Path.GetFileName(directory));
           }
@@ -836,7 +956,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
           zipFile.Dispose();
         }
 
-        string fileNameBackupFinal = Path.Combine(tuningDetailRootPath, "backup.zip");
+        string fileNameBackupFinal = Path.Combine(TuningDetailFilter.DATA_PATH, "backup.zip");
         if (File.Exists(fileNameBackupFinal))
         {
           File.Delete(fileNameBackupFinal);
@@ -852,7 +972,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
       this.LogDebug("scanning: tuning detail backup successful, starting download");
       buttonUpdateTuningDetails.Text = "Cancel...";
-      _fileNameTuningDetails = Path.Combine(tuningDetailRootPath, "tuning_details.zip");
+      _fileNameTuningDetails = Path.Combine(TuningDetailFilter.DATA_PATH, "tuning_details.zip");
       using (_downloader = new FileDownloader(120000))
       {
         _downloader.Proxy.Credentials = CredentialCache.DefaultCredentials;
@@ -863,21 +983,24 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
     private void OnTuningDetailDownloadCompleted(object sender, AsyncCompletedEventArgs e)
     {
-      if (e.Cancelled)
+      try
       {
-        this.LogDebug("scanning: tuning detail download cancelled");
-      }
-      else if (e.Error != null)
-      {
-        this.LogError(e.Error, "scanning: failed to download tuning details");
-        MessageBox.Show(string.Format("Download failed. {0}", SENTENCE_CHECK_LOG_FILES), MESSAGE_CAPTION, MessageBoxButtons.OK);
-      }
-      else
-      {
+        if (e.Cancelled)
+        {
+          this.LogDebug("scanning: tuning detail download cancelled");
+          return;
+        }
+        if (e.Error != null)
+        {
+          this.LogError(e.Error, "scanning: failed to download tuning details");
+          MessageBox.Show(string.Format("Download failed. {0}", SENTENCE_CHECK_LOG_FILES), MESSAGE_CAPTION, MessageBoxButtons.OK);
+          return;
+        }
+
         this.LogDebug("scanning: tuning detail download successful, extracting");
         try
         {
-          foreach (string directory in Directory.GetDirectories(Path.GetDirectoryName(_fileNameTuningDetails)))
+          foreach (string directory in Directory.EnumerateDirectories(Path.GetDirectoryName(_fileNameTuningDetails)))
           {
             Directory.Delete(directory, true);
           }
@@ -891,20 +1014,101 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
           {
             zipFile.Dispose();
           }
-          this.LogDebug("scanning: tuning details update successful");
+          this.LogDebug("scanning: extraction successful, updating satellite table");
         }
         catch (Exception ex)
         {
           this.LogError(ex, "scanning: failed to extract and update tuning details");
           MessageBox.Show(string.Format("Extract and update failed. {0}", SENTENCE_CHECK_LOG_FILES), MESSAGE_CAPTION, MessageBoxButtons.OK);
+          return;
         }
-      }
 
-      _downloader = null;
-      buttonUpdateTuningDetails.Text = "Update tuning details";
+        try
+        {
+          // Update the database of satellites based on the received details.
+          IList<Satellite> currentSatellites = ServiceAgents.Instance.TunerServiceAgent.ListAllSatellites();
+          Dictionary<int, Satellite> currentSatellitesByLongitude = new Dictionary<int, Satellite>(currentSatellites.Count);
+          List<Satellite> satellitesToSave = new List<Satellite>(currentSatellites.Count);
+          foreach (Satellite satellite in currentSatellites)
+          {
+            currentSatellitesByLongitude[satellite.Longitude] = satellite;
+          }
+          string satelliteTdDirectory = Path.Combine(Path.GetDirectoryName(_fileNameTuningDetails), TuningDetailFilter.SATELLITE_SUB_DIRECTORY);
+          foreach (string fileName in Directory.EnumerateFiles(satelliteTdDirectory))
+          {
+            Match m = Regex.Match(Path.GetFileNameWithoutExtension(fileName), @"^(\d+(\.\d)?).([EW]) (.*)$");
+            if (m.Success)
+            {
+              string name = m.Groups[4].Captures[0].Value;
+              int longitude = (int)(double.Parse(m.Groups[1].Captures[0].Value) * 10);
+              if (m.Groups[3].Captures[0].Value.Equals("W"))
+              {
+                longitude *= -1;
+              }
+
+              Satellite satellite;
+              if (currentSatellitesByLongitude.TryGetValue(longitude, out satellite))
+              {
+                if (!string.Equals(satellite.Name, name))
+                {
+                  this.LogDebug("  name change, longitude = {0}, old name = {1}, new name = {2}", Satellite.LongitudeString(longitude), satellite.Name, name);
+                  satellite.Name = name;
+                  satellitesToSave.Add(satellite);
+                }
+                currentSatellitesByLongitude.Remove(longitude);
+              }
+              else
+              {
+                this.LogDebug("  new, longitude = {0}, name = {1}", Satellite.LongitudeString(longitude), name);
+                satellitesToSave.Add(new Satellite
+                {
+                  Longitude = longitude,
+                  Name = name
+                });
+              }
+            }
+          }
+
+          if (satellitesToSave.Count > 0)
+          {
+            this.LogDebug("scanning: saving {0} update(s)", satellitesToSave.Count);
+            ServiceAgents.Instance.TunerServiceAgent.SaveSatellites(satellitesToSave);
+          }
+
+          // Any satellites that remain in satellitesByLongitude and that are
+          // not referenced by tuner satellites or tuning details can be
+          // deleted.
+          IList<Satellite> referencedSatellites = ServiceAgents.Instance.TunerServiceAgent.ListAllReferencedSatellites();
+          foreach (Satellite satellite in referencedSatellites)
+          {
+            currentSatellitesByLongitude.Remove(satellite.Longitude);
+          }
+
+          foreach (Satellite satellite in currentSatellitesByLongitude.Values)
+          {
+            this.LogDebug("scanning: delete satellite {0}", satellite);
+            ServiceAgents.Instance.TunerServiceAgent.DeleteSatellite(satellite.IdSatellite);
+          }
+        }
+        catch (Exception ex)
+        {
+          this.LogError(ex, "scanning: failed to update satellites");
+          MessageBox.Show(string.Format("Satellite update failed. {0}", SENTENCE_CHECK_LOG_FILES), MESSAGE_CAPTION, MessageBoxButtons.OK);
+          return;
+        }
+
+        this.LogDebug("scanning: tuning details update successful");
+      }
+      finally
+      {
+        _downloader = null;
+        buttonUpdateTuningDetails.Text = "Update tuning details";
+      }
     }
 
     #endregion
+
+    #region GUI handling
 
     private void checkBoxAutomaticChannelGroupsChannelProviders_CheckedChanged(object sender, EventArgs e)
     {
@@ -965,5 +1169,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         numericUpDownTimingMinimum.Value = numericUpDownTimingLimitCableCard.Value;
       }
     }
+
+    #endregion
   }
 }
