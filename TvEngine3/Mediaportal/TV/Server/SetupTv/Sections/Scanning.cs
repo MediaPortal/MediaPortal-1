@@ -572,7 +572,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       }
 
       string defaultConfig = string.Format("{0},{1}", defaultBouquetId, defaultRegionId);
-      string config = ServiceAgents.Instance.SettingServiceAgent.GetValue("scanProviderOpenTv", defaultConfig);
+      _originalProviderOpenTv = ServiceAgents.Instance.SettingServiceAgent.GetValue("scanProviderOpenTv", defaultConfig);
+      string config = _originalProviderOpenTv;
       if (string.IsNullOrEmpty(config))
       {
         config = defaultConfig;
@@ -673,14 +674,14 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
     private void LoadFreeviewSatelliteProvider(out object selectedRegion)
     {
-      int bouquetId = ServiceAgents.Instance.SettingServiceAgent.GetValue("scanProviderFreeviewSatellite", (int)BouquetFreeviewSatellite.Auckland);
-      if (bouquetId == 0)
+      _originalProviderFreeviewSatellite = ServiceAgents.Instance.SettingServiceAgent.GetValue("scanProviderFreeviewSatellite", (int)BouquetFreeviewSatellite.Auckland);
+      if (_originalProviderFreeviewSatellite == 0)
       {
         selectedRegion = BouquetFreeviewSatellite.Auckland;
         return;
       }
 
-      selectedRegion = (BouquetFreeviewSatellite)bouquetId;
+      selectedRegion = (BouquetFreeviewSatellite)_originalProviderFreeviewSatellite;
     }
 
     private void LoadDishNetworkProvider(out object selectedMarket)
