@@ -38,10 +38,18 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations
     public const int HIGH_BAND_LOF = 10600000;
     public const int SWITCH_FREQUENCY = 11700000;
 
-    public static void Convert(ref IChannelSatellite channel, int lnbLowBandLof, int lnbHighBandLof, int lnbSwitchFrequency, bool isBandStackedLnb, Tone22kState toneState, bool isToroidalDish)
+    public static void Convert(ref IChannelSatellite channel, int satIpSource, int lnbLowBandLof, int lnbHighBandLof, int lnbSwitchFrequency, bool isBandStackedLnb, Tone22kState toneState, bool isToroidalDish)
     {
-      Log.Debug("LNB: convert, transponder frequency = {0} kHz, polarisation = {1}, tone state = {2}, is toroidal dish = {3}", channel.Frequency, channel.Polarisation, toneState, isToroidalDish);
-      Log.Debug("LNB: LNB settings, low band LOF = {0} kHz, high band LOF = {1} kHz, switch frequency = {2} kHz, is band-stacked = {3}", lnbLowBandLof, lnbHighBandLof, lnbSwitchFrequency, isBandStackedLnb);
+      if (satIpSource > 0)
+      {
+        Log.Debug("LNB: convert, SAT>IP source = {0}, polarisation = {1}, is toroidal dish = {2}", satIpSource, channel.Polarisation, isToroidalDish);
+        channel.Longitude = satIpSource;
+      }
+      else
+      {
+        Log.Debug("LNB: convert, transponder frequency = {0} kHz, polarisation = {1}, tone state = {2}, is toroidal dish = {3}", channel.Frequency, channel.Polarisation, toneState, isToroidalDish);
+        Log.Debug("LNB: LNB settings, low band LOF = {0} kHz, high band LOF = {1} kHz, switch frequency = {2} kHz, is band-stacked = {3}", lnbLowBandLof, lnbHighBandLof, lnbSwitchFrequency, isBandStackedLnb);
+      }
 
       // Circularly polarised signals are inverted by toroidal (dual-reflector)
       // dishes.
@@ -55,6 +63,14 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations
         {
           channel.Polarisation = Polarisation.CircularLeft;
         }
+      }
+
+      if (satIpSource > 0)
+      {
+        // LNB (and DiSEqC) config is handled by the SAT>IP server. We have to
+        // trust the user to configure it correctly, and trust the SAT>IP
+        // server to handle band-stacked LNBs etc. properly.
+        return;
       }
 
       // Determine the local oscillator frequency and tone state.

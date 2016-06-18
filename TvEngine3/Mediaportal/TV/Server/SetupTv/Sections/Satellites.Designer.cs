@@ -54,6 +54,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.mpGroupBox1 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPGroupBox();
       this.dataGridViewColumnSatellite = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPDataGridViewTextBoxColumn();
       this.dataGridViewColumnTuner = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPDataGridViewTextBoxColumn();
+      this.dataGridViewColumnSatIpSource = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPDataGridViewTextBoxColumn();
       this.dataGridViewColumnLnbType = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPDataGridViewTextBoxColumn();
       this.dataGridViewColumnDiseqcMotor = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPDataGridViewTextBoxColumn();
       this.dataGridViewColumnDiseqcSwitch = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPDataGridViewTextBoxColumn();
@@ -118,6 +119,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.dataGridViewTunerSatellites.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.dataGridViewColumnSatellite,
             this.dataGridViewColumnTuner,
+            this.dataGridViewColumnSatIpSource,
             this.dataGridViewColumnLnbType,
             this.dataGridViewColumnDiseqcMotor,
             this.dataGridViewColumnDiseqcSwitch,
@@ -416,6 +418,13 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.dataGridViewColumnTuner.Name = "dataGridViewColumnTuner";
       this.dataGridViewColumnTuner.ReadOnly = true;
       // 
+      // dataGridViewColumnSatIpSource
+      // 
+      this.dataGridViewColumnSatIpSource.HeaderText = "SAT>IP Source";
+      this.dataGridViewColumnSatIpSource.Name = "dataGridViewColumnSatIpSource";
+      this.dataGridViewColumnSatIpSource.ReadOnly = true;
+      this.dataGridViewColumnSatIpSource.Width = 50;
+      // 
       // dataGridViewColumnLnbType
       // 
       this.dataGridViewColumnLnbType.HeaderText = "LNB Type";
@@ -513,6 +522,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     private MPGroupBox mpGroupBox1;
     private MPDataGridViewTextBoxColumn dataGridViewColumnSatellite;
     private MPDataGridViewTextBoxColumn dataGridViewColumnTuner;
+    private MPDataGridViewTextBoxColumn dataGridViewColumnSatIpSource;
     private MPDataGridViewTextBoxColumn dataGridViewColumnLnbType;
     private MPDataGridViewTextBoxColumn dataGridViewColumnDiseqcMotor;
     private MPDataGridViewTextBoxColumn dataGridViewColumnDiseqcSwitch;

@@ -25,9 +25,7 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Channel;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channel;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Exception;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Helper;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Tuner.Diseqc.Enum;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension;
 using UPnP.Infrastructure.CP.Description;
 
@@ -36,17 +34,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.SatIp
   /// <summary>
   /// An implementation of <see cref="ITuner"/> for SAT>IP satellite tuners.
   /// </summary>
-  internal class TunerSatIpSatellite : TunerSatIpBase, IDiseqcDevice
+  internal class TunerSatIpSatellite : TunerSatIpBase
   {
-    #region variables
-
-    /// <summary>
-    /// The current SAT>IP src parameter value.
-    /// </summary>
-    private int _currentSource = 1;
-
-    #endregion
-
     #region constructor
 
     /// <summary>
@@ -158,7 +147,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.SatIp
           break;
       }
 
-      string parameters = string.Format("src={0}&freq={1}&pol={2}&sr={3}&fec={4}&msys=dvbs", _currentSource, frequency, polarisation, satelliteChannel.SymbolRate, fecCodeRate);
+      string parameters = string.Format("src={0}&freq={1}&pol={2}&sr={3}&fec={4}&msys=dvbs", satelliteChannel.Longitude, frequency, polarisation, satelliteChannel.SymbolRate, fecCodeRate);
 
       // DVB-S2 or DVB-S?
       if (dvbs2Channel == null)
@@ -219,80 +208,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.SatIp
     }
 
     #endregion
-
-    #endregion
-
-    #region IDiseqcDevice members
-
-    /// <summary>
-    /// Send an arbitrary DiSEqC command.
-    /// </summary>
-    /// <param name="command">The command to send.</param>
-    /// <returns><c>true</c> if the command is sent successfully, otherwise <c>false</c></returns>
-    bool IDiseqcDevice.SendCommand(byte[] command)
-    {
-      this.LogDebug("SAT>IP satellite: send DiSEqC command");
-
-      if (command == null || command.Length == 0)
-      {
-        this.LogWarn("SAT>IP satellite: DiSEqC command not supplied");
-        return true;
-      }
-
-      // The SAT>IP interface currently doesn't support raw commands. We'll
-      // attempt to send non-raw commands if the command is a DiSEqC 1.0 switch
-      // command.
-      if (command.Length != 4 ||
-        (command[0] != (byte)DiseqcFrame.CommandFirstTransmissionNoReply &&
-        command[0] != (byte)DiseqcFrame.CommandRepeatTransmissionNoReply) ||
-        command[1] != (byte)DiseqcAddress.AnySwitch ||
-        command[2] != (byte)DiseqcCommand.WriteN0)
-      {
-        this.LogError("SAT>IP satellite: DiSEqC command not supported");
-        Dump.DumpBinary(command);
-        return false;
-      }
-
-      // Port A = 1, Port B = 2 etc.
-      _currentSource = ((command[3] & 0xc) >> 2) + 1;
-      this.LogDebug("SAT>IP satellite: result = success");
-      return true;
-    }
-
-    /// <summary>
-    /// Send a tone/data burst command.
-    /// </summary>
-    /// <param name="command">The command to send.</param>
-    /// <returns><c>true</c> if the command is sent successfully, otherwise <c>false</c></returns>
-    bool IDiseqcDevice.SendCommand(ToneBurst command)
-    {
-      // Not supported.
-      return false;
-    }
-
-    /// <summary>
-    /// Set the 22 kHz continuous tone state.
-    /// </summary>
-    /// <param name="state">The state to set.</param>
-    /// <returns><c>true</c> if the tone state is set successfully, otherwise <c>false</c></returns>
-    bool IDiseqcDevice.SetToneState(Tone22kState state)
-    {
-      // Set by SAT>IP server configuration.
-      return true;
-    }
-
-    /// <summary>
-    /// Retrieve the response to a previously sent DiSEqC command (or alternatively, check for a command
-    /// intended for this tuner).
-    /// </summary>
-    /// <param name="response">The response (or command).</param>
-    /// <returns><c>true</c> if the response is read successfully, otherwise <c>false</c></returns>
-    bool IDiseqcDevice.ReadResponse(out byte[] response)
-    {
-      // Not supported.
-      response = null;
-      return false;
-    }
 
     #endregion
   }

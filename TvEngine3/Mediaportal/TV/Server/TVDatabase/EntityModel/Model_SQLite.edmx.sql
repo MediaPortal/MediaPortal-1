@@ -727,6 +727,7 @@ CREATE TABLE "TunerSatellites"  (
     "IdTunerSatellite" int UNIQUE, 
     "IdSatellite" int NOT NULL, 
     "IdTuner" int NULL, 
+    "SatIpSource" int NOT NULL, 
     "IdLnbType" int NOT NULL, 
     "DiseqcPort" int NOT NULL, 
     "DiseqcMotorPosition" int NOT NULL, 

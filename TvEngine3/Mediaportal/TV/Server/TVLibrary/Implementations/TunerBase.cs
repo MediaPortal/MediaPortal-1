@@ -1342,7 +1342,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
             {
               throw new TvExceptionSatelliteNotReceivable(_tunerId, Satellite.LongitudeString(satelliteChannel.Longitude));
             }
-            SatelliteLnbHandler.Convert(ref satelliteChannel, satellite.LnbType.LowBandFrequency, satellite.LnbType.HighBandFrequency, satellite.LnbType.SwitchFrequency, satellite.LnbType.IsBandStacked, (Tone22kState)satellite.Tone22kState, satellite.IsToroidalDish);
+            SatelliteLnbHandler.Convert(ref satelliteChannel, satellite.SatIpSource, satellite.LnbType.LowBandFrequency, satellite.LnbType.HighBandFrequency, satellite.LnbType.SwitchFrequency, satellite.LnbType.IsBandStacked, (Tone22kState)satellite.Tone22kState, satellite.IsToroidalDish);
           }
 
           // Extension OnBeforeTune().
@@ -1392,9 +1392,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
               ThrowExceptionIfTuneCancelled();
             }
             else if (
-              satellite.DiseqcMotorPosition != TunerSatellite.DISEQC_MOTOR_POSITION_NONE ||
-              satellite.DiseqcPort != (int)DiseqcPort.None ||
-              satellite.ToneBurst != (int)ToneBurst.None
+              satellite.SatIpSource == 0 &&
+              (
+                satellite.DiseqcMotorPosition != TunerSatellite.DISEQC_MOTOR_POSITION_NONE ||
+                satellite.DiseqcPort != (int)DiseqcPort.None ||
+                satellite.ToneBurst != (int)ToneBurst.None
+              )
             )
             {
               throw new TvExceptionDiseqcNotSupported(_tunerId);

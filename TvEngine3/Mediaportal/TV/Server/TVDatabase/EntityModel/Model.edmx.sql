@@ -5,7 +5,7 @@
 -- -----------------------------------------------------------
 -- Entity Designer DDL Script for MySQL Server 4.1 and higher
 -- -----------------------------------------------------------
--- Date Created: 05/26/2016 16:12:19
+-- Date Created: 06/18/2016 08:42:11
 -- Generated from EDMX file: F:\sdev\Code\MediaPortal\MediaPortal-1_TVE35\TvEngine3\Mediaportal\TV\Server\TVDatabase\EntityModel\Model.edmx
 -- Target version: 2.0.0.0
 -- --------------------------------------------------
@@ -574,6 +574,7 @@ CREATE TABLE `TunerSatellites`(
 	`IdTunerSatellite` int NOT NULL AUTO_INCREMENT UNIQUE, 
 	`IdSatellite` int NOT NULL, 
 	`IdTuner` int, 
+	`SatIpSource` int NOT NULL, 
 	`IdLnbType` int NOT NULL, 
 	`DiseqcPort` int NOT NULL, 
 	`DiseqcMotorPosition` int NOT NULL, 

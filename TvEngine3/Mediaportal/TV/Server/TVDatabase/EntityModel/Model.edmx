@@ -598,6 +598,7 @@
     <Property Name="IdTunerSatellite" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
     <Property Name="IdSatellite" Type="int" Nullable="false" />
     <Property Name="IdTuner" Type="int" Nullable="true" />
+    <Property Name="SatIpSource" Type="int" Nullable="false" />
     <Property Name="IdLnbType" Type="int" Nullable="false" />
     <Property Name="DiseqcPort" Type="int" Nullable="false" />
     <Property Name="DiseqcMotorPosition" Type="int" Nullable="false" />
@@ -2078,6 +2079,7 @@
           <Property Type="Int32" Name="IdTunerSatellite" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Type="Int32" Name="IdSatellite" Nullable="false" />
           <Property Type="Int32" Name="IdTuner" Nullable="true" />
+          <Property Type="Int32" Name="SatIpSource" Nullable="false" />
           <Property Type="Int32" Name="IdLnbType" Nullable="false" />
           <Property Type="Int32" Name="DiseqcPort" Nullable="false" />
           <Property Type="Int32" Name="DiseqcMotorPosition" Nullable="false" />
@@ -2603,6 +2605,7 @@
           <ScalarProperty Name="IdTunerSatellite" ColumnName="IdTunerSatellite" />
           <ScalarProperty Name="IdSatellite" ColumnName="IdSatellite" />
           <ScalarProperty Name="IdTuner" ColumnName="IdTuner" />
+          <ScalarProperty Name="SatIpSource" ColumnName="SatIpSource" />
           <ScalarProperty Name="IdLnbType" ColumnName="IdLnbType" />
           <ScalarProperty Name="DiseqcPort" ColumnName="DiseqcPort" />
           <ScalarProperty Name="DiseqcMotorPosition" ColumnName="DiseqcMotorPosition" />
@@ -2633,130 +2636,130 @@
     </Options>
     <!-- Diagram content (shape and connector positions) -->
     <Diagrams>
-      <Diagram Name="Model" ZoomLevel="80">
-        <EntityTypeShape EntityType="TVDatabaseModel.CanceledSchedule" Width="1.75" PointX="0.5" PointY="16" Height="1.7566536458333317" IsExpanded="true" />
+      <Diagram Name="Model" ZoomLevel="88">
+        <EntityTypeShape EntityType="TVDatabaseModel.CanceledSchedule" Width="1.75" PointX="0.5" PointY="16.375" Height="1.7566536458333317" IsExpanded="true" />
         <EntityTypeShape EntityType="TVDatabaseModel.Tuner" Width="2.125" PointX="2.75" PointY="0.5" Height="5.8653369140625" IsExpanded="true" />
         <EntityTypeShape EntityType="TVDatabaseModel.TunerGroup" Width="1.5" PointX="0.5" PointY="3.625" Height="1.4279589843749996" IsExpanded="true" />
-        <EntityTypeShape EntityType="TVDatabaseModel.Channel" Width="1.75" PointX="4.875" PointY="9" Height="4.0575162760416656" IsExpanded="true" />
-        <EntityTypeShape EntityType="TVDatabaseModel.ChannelGroup" Width="1.625" PointX="9.125" PointY="10.5" Height="1.7566536458333317" IsExpanded="true" />
-        <EntityTypeShape EntityType="TVDatabaseModel.ChannelLinkageMap" Width="1.875" PointX="2.375" PointY="10" Height="1.9210009765624996" IsExpanded="true" />
-        <EntityTypeShape EntityType="TVDatabaseModel.ChannelMap" Width="1.5" PointX="3" PointY="6.75" Height="1.7566536458333326" IsExpanded="true" />
+        <EntityTypeShape EntityType="TVDatabaseModel.Channel" Width="1.75" PointX="4.875" PointY="9.375" Height="4.0575162760416656" IsExpanded="true" />
+        <EntityTypeShape EntityType="TVDatabaseModel.ChannelGroup" Width="1.625" PointX="9.125" PointY="10.875" Height="1.7566536458333317" IsExpanded="true" />
+        <EntityTypeShape EntityType="TVDatabaseModel.ChannelLinkageMap" Width="1.875" PointX="2.375" PointY="10.375" Height="1.9210009765624996" IsExpanded="true" />
+        <EntityTypeShape EntityType="TVDatabaseModel.ChannelMap" Width="1.5" PointX="3" PointY="7.25" Height="1.7566536458333326" IsExpanded="true" />
         <EntityTypeShape EntityType="TVDatabaseModel.Conflict" Width="1.5" PointX="0.625" PointY="6.625" Height="2.578390299479171" IsExpanded="true" />
-        <EntityTypeShape EntityType="TVDatabaseModel.GroupMap" Width="1.5" PointX="7.125" PointY="10.5" Height="1.9210009765625" IsExpanded="true" />
-        <EntityTypeShape EntityType="TVDatabaseModel.History" Width="1.5" PointX="5" PointY="13.625" Height="2.7427376302083335" IsExpanded="true" />
+        <EntityTypeShape EntityType="TVDatabaseModel.GroupMap" Width="1.5" PointX="7.125" PointY="10.875" Height="1.9210009765625" IsExpanded="true" />
+        <EntityTypeShape EntityType="TVDatabaseModel.History" Width="1.5" PointX="5" PointY="14" Height="2.7427376302083335" IsExpanded="true" />
         <EntityTypeShape EntityType="TVDatabaseModel.PendingDeletion" Width="1.625" PointX="15.5" PointY="3.75" Height="1.2636116536458353" IsExpanded="true" />
-        <EntityTypeShape EntityType="TVDatabaseModel.Program" Width="1.625" PointX="7.25" PointY="13.625" Height="6.5227262369791674" IsExpanded="true" />
-        <EntityTypeShape EntityType="TVDatabaseModel.ProgramCategory" Width="1.75" PointX="5" PointY="17" Height="2.0853483072916656" IsExpanded="true" />
-        <EntityTypeShape EntityType="TVDatabaseModel.ProgramCredit" Width="1.5" PointX="9.625" PointY="18.125" Height="1.7566536458333317" IsExpanded="true" />
-        <EntityTypeShape EntityType="TVDatabaseModel.Recording" Width="1.625" PointX="2.75" PointY="13.625" Height="4.7149055989583317" IsExpanded="true" />
+        <EntityTypeShape EntityType="TVDatabaseModel.Program" Width="1.625" PointX="7.25" PointY="14" Height="6.5227262369791674" IsExpanded="true" />
+        <EntityTypeShape EntityType="TVDatabaseModel.ProgramCategory" Width="1.75" PointX="5" PointY="17.375" Height="2.0853483072916656" IsExpanded="true" />
+        <EntityTypeShape EntityType="TVDatabaseModel.ProgramCredit" Width="1.5" PointX="9.625" PointY="18.5" Height="1.7566536458333317" IsExpanded="true" />
+        <EntityTypeShape EntityType="TVDatabaseModel.Recording" Width="1.625" PointX="2.75" PointY="14" Height="6.8514208984375031" IsExpanded="true" />
         <EntityTypeShape EntityType="TVDatabaseModel.RuleBasedSchedule" Width="1.875" PointX="13.375" PointY="2.625" Height="2.7427376302083335" IsExpanded="true" />
         <EntityTypeShape EntityType="TVDatabaseModel.Satellite" Width="1.5" PointX="8.25" PointY="7.75" Height="1.7566536458333335" IsExpanded="true" />
-        <EntityTypeShape EntityType="TVDatabaseModel.Schedule" Width="1.5" PointX="0.5" PointY="10.375" Height="4.8792529296875014" IsExpanded="true" />
+        <EntityTypeShape EntityType="TVDatabaseModel.Schedule" Width="1.5" PointX="0.5" PointY="10.75" Height="4.8792529296875014" IsExpanded="true" />
         <EntityTypeShape EntityType="TVDatabaseModel.ScheduleRulesTemplate" Width="2.125" PointX="13.125" PointY="0.5" Height="1.9210009765624996" IsExpanded="true" />
         <EntityTypeShape EntityType="TVDatabaseModel.Setting" Width="1.25" PointX="15.5" PointY="0.625" Height="1.4279589843750031" IsExpanded="true" />
         <EntityTypeShape EntityType="TVDatabaseModel.TuningDetail" Width="1.875" PointX="11.125" PointY="8.625" Height="7.8375048828125" IsExpanded="true" />
         <EntityTypeShape EntityType="TVDatabaseModel.Version" Width="1.5" PointX="15.5" PointY="2.25" Height="1.2636116536458353" IsExpanded="true" />
         <AssociationConnector Association="TVDatabaseModel.GroupMapChannelGroup">
-          <ConnectorPoint PointX="9.125" PointY="11.378326822916666" />
-          <ConnectorPoint PointX="8.625" PointY="11.378326822916666" />
+          <ConnectorPoint PointX="9.125" PointY="11.753326822916666" />
+          <ConnectorPoint PointX="8.625" PointY="11.753326822916666" />
         </AssociationConnector>
         <AssociationConnector Association="TVDatabaseModel.GroupMapChannel">
-          <ConnectorPoint PointX="6.625" PointY="11.46050048828125" />
-          <ConnectorPoint PointX="7.125" PointY="11.46050048828125" />
+          <ConnectorPoint PointX="6.625" PointY="11.83550048828125" />
+          <ConnectorPoint PointX="7.125" PointY="11.83550048828125" />
         </AssociationConnector>
         <AssociationConnector Association="TVDatabaseModel.ChannelRecording">
-          <ConnectorPoint PointX="4.875" PointY="13.057516276041667" />
-          <ConnectorPoint PointX="4.375" PointY="13.625" />
+          <ConnectorPoint PointX="4.875" PointY="13.432516276041667" />
+          <ConnectorPoint PointX="4.375" PointY="14" />
         </AssociationConnector>
         <AssociationConnector Association="TVDatabaseModel.ChannelProgram" ManuallyRouted="false">
-          <ConnectorPoint PointX="6.6249999999999982" PointY="13.057516276041666" />
-          <ConnectorPoint PointX="7.25" PointY="13.625" />
+          <ConnectorPoint PointX="6.6249999999999982" PointY="13.432516276041666" />
+          <ConnectorPoint PointX="7.25" PointY="14" />
         </AssociationConnector>
         <AssociationConnector Association="TVDatabaseModel.TunerChannelMap">
-          <ConnectorPoint PointX="3.75" PointY="6.2009895833333326" />
-          <ConnectorPoint PointX="3.75" PointY="6.75" />
+          <ConnectorPoint PointX="3.75" PointY="6.0366422526041656" />
+          <ConnectorPoint PointX="3.75" PointY="7.25" />
         </AssociationConnector>
         <AssociationConnector Association="TVDatabaseModel.ChannelChannelMap">
-          <ConnectorPoint PointX="4.875" PointY="9" />
-          <ConnectorPoint PointX="4.5000000000000009" PointY="8.5066536458333317" />
+          <ConnectorPoint PointX="4.875" PointY="9.375" />
+          <ConnectorPoint PointX="4.5000000000000009" PointY="9.0066536458333317" />
         </AssociationConnector>
         <AssociationConnector Association="TVDatabaseModel.ChannelSchedule">
-          <ConnectorPoint PointX="4.875" PointY="12.520508626302084" />
-          <ConnectorPoint PointX="2" PointY="12.520508626302084" />
+          <ConnectorPoint PointX="4.875" PointY="12.548878551432292" />
+          <ConnectorPoint PointX="2" PointY="12.548878551432292" />
         </AssociationConnector>
         <AssociationConnector Association="TVDatabaseModel.ScheduleParentSchedule">
-          <ConnectorPoint PointX="1.0319230769230769" PointY="15.254252929687501" />
-          <ConnectorPoint PointX="1.0319230769230769" PointY="15.504252929687503" />
-          <ConnectorPoint PointX="1.4784615384615383" PointY="15.504252929687503" />
-          <ConnectorPoint PointX="1.4784615384615383" PointY="15.254252929687501" />
+          <ConnectorPoint PointX="1.0319230769230769" PointY="15.629252929687501" />
+          <ConnectorPoint PointX="1.0319230769230769" PointY="15.879252929687503" />
+          <ConnectorPoint PointX="1.4784615384615383" PointY="15.879252929687503" />
+          <ConnectorPoint PointX="1.4784615384615383" PointY="15.629252929687501" />
         </AssociationConnector>
         <AssociationConnector Association="TVDatabaseModel.ProgramProgramCategory">
-          <ConnectorPoint PointX="7.25" PointY="18.042674153645834" />
-          <ConnectorPoint PointX="6.75" PointY="18.042674153645834" />
+          <ConnectorPoint PointX="7.25" PointY="18.417674153645834" />
+          <ConnectorPoint PointX="6.75" PointY="18.417674153645834" />
         </AssociationConnector>
         <AssociationConnector Association="TVDatabaseModel.ProgramProgramCredit">
-          <ConnectorPoint PointX="8.875" PointY="19.003326822916666" />
-          <ConnectorPoint PointX="9.625" PointY="19.003326822916666" />
+          <ConnectorPoint PointX="8.875" PointY="19.378326822916666" />
+          <ConnectorPoint PointX="9.625" PointY="19.378326822916666" />
         </AssociationConnector>
         <AssociationConnector Association="TVDatabaseModel.ChannelHistory">
-          <ConnectorPoint PointX="5.75" PointY="13.057516276041666" />
-          <ConnectorPoint PointX="5.75" PointY="13.625" />
+          <ConnectorPoint PointX="5.75" PointY="13.432516276041666" />
+          <ConnectorPoint PointX="5.75" PointY="14" />
         </AssociationConnector>
         <AssociationConnector Association="TVDatabaseModel.ChannelTuningDetail" ManuallyRouted="false">
-          <ConnectorPoint PointX="6.625" PointY="10.003326822916666" />
-          <ConnectorPoint PointX="11.125" PointY="10.003326822916666" />
+          <ConnectorPoint PointX="6.625" PointY="10.190826822916666" />
+          <ConnectorPoint PointX="11.125" PointY="10.190826822916666" />
         </AssociationConnector>
         <AssociationConnector Association="TVDatabaseModel.ScheduleRecording">
-          <ConnectorPoint PointX="2" PointY="14.439626464843752" />
-          <ConnectorPoint PointX="2.75" PointY="14.439626464843752" />
+          <ConnectorPoint PointX="2" PointY="14.814626464843752" />
+          <ConnectorPoint PointX="2.75" PointY="14.814626464843752" />
         </AssociationConnector>
-        <EntityTypeShape EntityType="TVDatabaseModel.RecordingCredit" Width="1.625" PointX="0.5" PointY="18.25" Height="1.7566536458333335" />
+        <EntityTypeShape EntityType="TVDatabaseModel.RecordingCredit" Width="1.625" PointX="0.5" PointY="18.625" Height="1.7566536458333335" />
         <AssociationConnector Association="TVDatabaseModel.RecordingRecordingCredit">
-          <ConnectorPoint PointX="2.75" PointY="19.128326822916666" />
-          <ConnectorPoint PointX="2.125" PointY="19.128326822916666" />
+          <ConnectorPoint PointX="2.75" PointY="19.503326822916666" />
+          <ConnectorPoint PointX="2.125" PointY="19.503326822916666" />
         </AssociationConnector>
         <AssociationConnector Association="TVDatabaseModel.ScheduleCanceledSchedule">
-          <ConnectorPoint PointX="0.70346153846153847" PointY="15.254252929687501" />
-          <ConnectorPoint PointX="0.70346153846153847" PointY="16" />
+          <ConnectorPoint PointX="0.70346153846153847" PointY="15.629252929687501" />
+          <ConnectorPoint PointX="0.70346153846153847" PointY="16.375" />
         </AssociationConnector>
         <AssociationConnector Association="TVDatabaseModel.ChannelLinkMap">
-          <ConnectorPoint PointX="4.875" PointY="10.96050048828125" />
-          <ConnectorPoint PointX="4.25" PointY="10.96050048828125" />
+          <ConnectorPoint PointX="4.875" PointY="11.33550048828125" />
+          <ConnectorPoint PointX="4.25" PointY="11.33550048828125" />
         </AssociationConnector>
         <AssociationConnector Association="TVDatabaseModel.ChannelPortalMap">
-          <ConnectorPoint PointX="4.875" PointY="10.417750244140624" />
-          <ConnectorPoint PointX="4.25" PointY="10.417750244140624" />
+          <ConnectorPoint PointX="4.875" PointY="10.792750244140624" />
+          <ConnectorPoint PointX="4.25" PointY="10.792750244140624" />
         </AssociationConnector>
         <AssociationConnector Association="TVDatabaseModel.RecordingProgramCategory">
-          <ConnectorPoint PointX="4.375" PointY="18.042674153645834" />
-          <ConnectorPoint PointX="5" PointY="18.042674153645834" />
+          <ConnectorPoint PointX="4.375" PointY="18.417674153645834" />
+          <ConnectorPoint PointX="5" PointY="18.417674153645834" />
         </AssociationConnector>
         <AssociationConnector Association="TVDatabaseModel.TunerConflict">
           <ConnectorPoint PointX="2.75" PointY="6.0366422526041656" />
           <ConnectorPoint PointX="2.125" PointY="6.625" />
         </AssociationConnector>
         <AssociationConnector Association="TVDatabaseModel.ChannelConflict">
-          <ConnectorPoint PointX="4.875" PointY="9.570445649739586" />
-          <ConnectorPoint PointX="2.09375" PointY="9.570445649739586" />
+          <ConnectorPoint PointX="4.875" PointY="9.84375" />
+          <ConnectorPoint PointX="2.09375" PointY="9.84375" />
           <ConnectorPoint PointX="2.09375" PointY="9.203390299479171" />
         </AssociationConnector>
         <AssociationConnector Association="TVDatabaseModel.ScheduleConflict">
-          <ConnectorPoint PointX="1.3125" PointY="10.375" />
+          <ConnectorPoint PointX="1.3125" PointY="10.75" />
           <ConnectorPoint PointX="1.3125" PointY="9.203390299479171" />
         </AssociationConnector>
         <AssociationConnector Association="TVDatabaseModel.ScheduleConflict1">
-          <ConnectorPoint PointX="1.71875" PointY="10.375" />
+          <ConnectorPoint PointX="1.71875" PointY="10.75" />
           <ConnectorPoint PointX="1.71875" PointY="9.203390299479171" />
         </AssociationConnector>
         <AssociationConnector Association="TVDatabaseModel.ProgramCategoryHistory">
-          <ConnectorPoint PointX="5.75" PointY="17" />
-          <ConnectorPoint PointX="5.75" PointY="16.367737630208332" />
+          <ConnectorPoint PointX="5.75" PointY="17.375" />
+          <ConnectorPoint PointX="5.75" PointY="16.742737630208332" />
         </AssociationConnector>
         <EntityTypeShape EntityType="TVDatabaseModel.LnbType" Width="1.625" PointX="8.25" PointY="5.5" Height="2.0853483072916656" />
-        <EntityTypeShape EntityType="TVDatabaseModel.GuideCategory" Width="1.75" PointX="5" PointY="19.625" Height="1.7566536458333335" />
+        <EntityTypeShape EntityType="TVDatabaseModel.GuideCategory" Width="1.75" PointX="5" PointY="20" Height="1.7566536458333335" />
         <AssociationConnector Association="TVDatabaseModel.GuideCategoryProgramCategory">
-          <ConnectorPoint PointX="5.875" PointY="19.625" />
-          <ConnectorPoint PointX="5.875" PointY="19.085348307291667" />
+          <ConnectorPoint PointX="5.875" PointY="20" />
+          <ConnectorPoint PointX="5.875" PointY="19.460348307291667" />
         </AssociationConnector>
         <AssociationConnector Association="TVDatabaseModel.TunerTunerGroup">
           <ConnectorPoint PointX="2.75" PointY="4.3389794921875" />
@@ -2782,19 +2785,19 @@
           <ConnectorPoint PointX="8.875" PointY="3.5033268229166667" />
           <ConnectorPoint PointX="8" PointY="3.5033268229166667" />
         </AssociationConnector>
-        <EntityTypeShape EntityType="TVDatabaseModel.TunerSatellite" Width="1.625" PointX="5.625" PointY="5.875" Height="2.9070849609374996" />
-        <AssociationConnector Association="TVDatabaseModel.TunerTunerSatellite" ManuallyRouted="true">
+        <EntityTypeShape EntityType="TVDatabaseModel.TunerSatellite" Width="1.625" PointX="5.5" PointY="6" Height="3.0714322916666656" />
+        <AssociationConnector Association="TVDatabaseModel.TunerTunerSatellite" ManuallyRouted="false">
           <ConnectorPoint PointX="4.71875" PointY="6.0366422526041656" />
-          <ConnectorPoint PointX="4.71875" PointY="6.3933236263020765" />
-          <ConnectorPoint PointX="5.625" PointY="6.3933236263020765" />
+          <ConnectorPoint PointX="4.71875" PointY="6.6433236263020836" />
+          <ConnectorPoint PointX="5.5" PointY="6.6433236263020836" />
         </AssociationConnector>
         <AssociationConnector Association="TVDatabaseModel.SatelliteTunerSatellite">
-          <ConnectorPoint PointX="8.25" PointY="8.26604248046875" />
-          <ConnectorPoint PointX="7.25" PointY="8.26604248046875" />
+          <ConnectorPoint PointX="8.25" PointY="8.4107161458333319" />
+          <ConnectorPoint PointX="7.125" PointY="8.4107161458333319" />
         </AssociationConnector>
         <AssociationConnector Association="TVDatabaseModel.LnbTypeTunerSatellite">
-          <ConnectorPoint PointX="8.25" PointY="6.7301741536458328" />
-          <ConnectorPoint PointX="7.25" PointY="6.7301741536458328" />
+          <ConnectorPoint PointX="8.25" PointY="6.7926741536458328" />
+          <ConnectorPoint PointX="7.125" PointY="6.7926741536458328" />
         </AssociationConnector>
         <AssociationConnector Association="TVDatabaseModel.SatelliteTuningDetail">
           <ConnectorPoint PointX="9.75" PointY="9.0658268229166659" />

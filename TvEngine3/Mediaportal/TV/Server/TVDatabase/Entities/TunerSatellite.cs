@@ -91,6 +91,21 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private Nullable<int> _idTuner;
     
         [DataMember]
+        public int SatIpSource
+        {
+            get { return _satIpSource; }
+            set
+            {
+                if (_satIpSource != value)
+                {
+                    _satIpSource = value;
+                    OnPropertyChanged("SatIpSource");
+                }
+            }
+        }
+        private int _satIpSource;
+    
+        [DataMember]
         public int IdLnbType
         {
             get { return _idLnbType; }

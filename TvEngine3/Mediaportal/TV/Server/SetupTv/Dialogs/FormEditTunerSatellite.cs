@@ -166,6 +166,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
 
       if (_tunerSatellite != null)
       {
+        numericUpDownSatIpSource.Value = _tunerSatellite.SatIpSource;
         comboBoxDiseqcSwitchPort.SelectedItem = ((DiseqcPort)_tunerSatellite.DiseqcPort).GetDescription();
         comboBoxToneBurst.SelectedItem = ((ToneBurst)_tunerSatellite.ToneBurst).GetDescription();
         comboBoxTone22kState.SelectedItem = ((Tone22kState)_tunerSatellite.Tone22kState).GetDescription();
@@ -173,6 +174,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       }
       else
       {
+        numericUpDownSatIpSource.Value = 0;
         comboBoxDiseqcSwitchPort.SelectedItem = DiseqcPort.None.GetDescription();
         comboBoxToneBurst.SelectedItem = ToneBurst.None.GetDescription();
         comboBoxTone22kState.SelectedItem = Tone22kState.Automatic.GetDescription();
@@ -267,6 +269,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
 
       _tunerSatellite.IdSatellite = ((Satellite)comboBoxSatellite.SelectedItem).IdSatellite;
       _tunerSatellite.IdTuner = ((Tuner)comboBoxTuner.SelectedItem).IdTuner;
+      _tunerSatellite.SatIpSource = (int)numericUpDownSatIpSource.Value;
       _tunerSatellite.IdLnbType = ((LnbType)comboBoxLnbType.SelectedItem).IdLnbType;
       _tunerSatellite.DiseqcPort = Convert.ToInt32(typeof(DiseqcPort).GetEnumFromDescription((string)comboBoxDiseqcSwitchPort.SelectedItem));
 
@@ -344,6 +347,29 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       finally
       {
         comboBoxTuner.EndUpdate();
+      }
+    }
+
+    private void numericUpDownSatIpSource_ValueChanged(object sender, EventArgs e)
+    {
+      bool isNotSatIp = numericUpDownSatIpSource.Value == 0;
+      comboBoxLnbType.Enabled = isNotSatIp;
+      comboBoxDiseqcSwitchPort.Enabled = isNotSatIp;
+      comboBoxDiseqcMotorPositionType.Enabled = isNotSatIp;
+      comboBoxToneBurst.Enabled = isNotSatIp;
+
+      if (isNotSatIp)
+      {
+        comboBoxLnbType_SelectedIndexChanged(null, null);
+        comboBoxDiseqcMotorPositionType_SelectedIndexChanged(null, null);
+      }
+      else
+      {
+        comboBoxDiseqcSwitchPort.SelectedItem = DiseqcPort.None.GetDescription();
+        comboBoxDiseqcMotorPositionType.SelectedItem = DISEQC_MOTOR_POSITION_TYPE_NONE;
+        comboBoxToneBurst.SelectedItem = ToneBurst.None.GetDescription();
+        comboBoxTone22kState.Enabled = false;
+        comboBoxTone22kState.SelectedItem = Tone22kState.Automatic.GetDescription();
       }
     }
 

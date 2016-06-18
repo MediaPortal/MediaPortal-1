@@ -49,17 +49,20 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.comboBoxSatellite = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPComboBox();
       this.numericUpDownDiseqcMotorPosition = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPNumericUpDown();
       this.comboBoxDiseqcMotorPositionType = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPComboBox();
+      this.numericUpDownSatIpSource = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPNumericUpDown();
+      this.labelSatIpSource = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownDiseqcMotorPosition)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownSatIpSource)).BeginInit();
       this.SuspendLayout();
       // 
       // buttonCancel
       // 
       this.buttonCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.buttonCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-      this.buttonCancel.Location = new System.Drawing.Point(258, 235);
+      this.buttonCancel.Location = new System.Drawing.Point(258, 260);
       this.buttonCancel.Name = "buttonCancel";
       this.buttonCancel.Size = new System.Drawing.Size(75, 23);
-      this.buttonCancel.TabIndex = 18;
+      this.buttonCancel.TabIndex = 20;
       this.buttonCancel.Text = "&Cancel";
       this.buttonCancel.UseVisualStyleBackColor = true;
       this.buttonCancel.Click += new System.EventHandler(this.buttonCancel_Click);
@@ -67,10 +70,10 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       // buttonOkay
       // 
       this.buttonOkay.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.buttonOkay.Location = new System.Drawing.Point(177, 235);
+      this.buttonOkay.Location = new System.Drawing.Point(177, 260);
       this.buttonOkay.Name = "buttonOkay";
       this.buttonOkay.Size = new System.Drawing.Size(75, 23);
-      this.buttonOkay.TabIndex = 17;
+      this.buttonOkay.TabIndex = 19;
       this.buttonOkay.Text = "&OK";
       this.buttonOkay.UseVisualStyleBackColor = true;
       this.buttonOkay.Click += new System.EventHandler(this.buttonOkay_Click);
@@ -78,20 +81,20 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       // labelIsToroidalDish
       // 
       this.labelIsToroidalDish.AutoSize = true;
-      this.labelIsToroidalDish.Location = new System.Drawing.Point(12, 203);
+      this.labelIsToroidalDish.Location = new System.Drawing.Point(12, 229);
       this.labelIsToroidalDish.Name = "labelIsToroidalDish";
       this.labelIsToroidalDish.Size = new System.Drawing.Size(70, 13);
-      this.labelIsToroidalDish.TabIndex = 15;
+      this.labelIsToroidalDish.TabIndex = 17;
       this.labelIsToroidalDish.Text = "Toroidal dish:";
       // 
       // checkBoxIsToroidalDish
       // 
       this.checkBoxIsToroidalDish.AutoSize = true;
       this.checkBoxIsToroidalDish.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.checkBoxIsToroidalDish.Location = new System.Drawing.Point(133, 201);
+      this.checkBoxIsToroidalDish.Location = new System.Drawing.Point(133, 227);
       this.checkBoxIsToroidalDish.Name = "checkBoxIsToroidalDish";
       this.checkBoxIsToroidalDish.Size = new System.Drawing.Size(27, 17);
-      this.checkBoxIsToroidalDish.TabIndex = 16;
+      this.checkBoxIsToroidalDish.TabIndex = 18;
       this.checkBoxIsToroidalDish.Text = " ";
       this.checkBoxIsToroidalDish.TextAlign = System.Drawing.ContentAlignment.TopRight;
       this.checkBoxIsToroidalDish.UseVisualStyleBackColor = true;
@@ -101,27 +104,27 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.comboBoxTone22kState.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
       this.comboBoxTone22kState.FormattingEnabled = true;
-      this.comboBoxTone22kState.Location = new System.Drawing.Point(133, 174);
+      this.comboBoxTone22kState.Location = new System.Drawing.Point(133, 200);
       this.comboBoxTone22kState.Name = "comboBoxTone22kState";
       this.comboBoxTone22kState.Size = new System.Drawing.Size(129, 21);
-      this.comboBoxTone22kState.TabIndex = 14;
+      this.comboBoxTone22kState.TabIndex = 16;
       // 
       // labelTone22kState
       // 
       this.labelTone22kState.AutoSize = true;
-      this.labelTone22kState.Location = new System.Drawing.Point(12, 177);
+      this.labelTone22kState.Location = new System.Drawing.Point(12, 203);
       this.labelTone22kState.Name = "labelTone22kState";
       this.labelTone22kState.Size = new System.Drawing.Size(94, 13);
-      this.labelTone22kState.TabIndex = 13;
+      this.labelTone22kState.TabIndex = 15;
       this.labelTone22kState.Text = "22 kHz tone state:";
       // 
       // labelToneBurst
       // 
       this.labelToneBurst.AutoSize = true;
-      this.labelToneBurst.Location = new System.Drawing.Point(12, 150);
+      this.labelToneBurst.Location = new System.Drawing.Point(12, 176);
       this.labelToneBurst.Name = "labelToneBurst";
       this.labelToneBurst.Size = new System.Drawing.Size(61, 13);
-      this.labelToneBurst.TabIndex = 11;
+      this.labelToneBurst.TabIndex = 13;
       this.labelToneBurst.Text = "Tone burst:";
       // 
       // comboBoxToneBurst
@@ -129,27 +132,27 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.comboBoxToneBurst.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
       this.comboBoxToneBurst.FormattingEnabled = true;
-      this.comboBoxToneBurst.Location = new System.Drawing.Point(133, 147);
+      this.comboBoxToneBurst.Location = new System.Drawing.Point(133, 173);
       this.comboBoxToneBurst.Name = "comboBoxToneBurst";
       this.comboBoxToneBurst.Size = new System.Drawing.Size(200, 21);
-      this.comboBoxToneBurst.TabIndex = 12;
+      this.comboBoxToneBurst.TabIndex = 14;
       // 
       // labelDiseqcMotorPosition
       // 
       this.labelDiseqcMotorPosition.AutoSize = true;
-      this.labelDiseqcMotorPosition.Location = new System.Drawing.Point(12, 123);
+      this.labelDiseqcMotorPosition.Location = new System.Drawing.Point(12, 149);
       this.labelDiseqcMotorPosition.Name = "labelDiseqcMotorPosition";
       this.labelDiseqcMotorPosition.Size = new System.Drawing.Size(115, 13);
-      this.labelDiseqcMotorPosition.TabIndex = 8;
+      this.labelDiseqcMotorPosition.TabIndex = 10;
       this.labelDiseqcMotorPosition.Text = "DiSEqC motor position:";
       // 
       // labelDiseqcSwitchPort
       // 
       this.labelDiseqcSwitchPort.AutoSize = true;
-      this.labelDiseqcSwitchPort.Location = new System.Drawing.Point(12, 96);
+      this.labelDiseqcSwitchPort.Location = new System.Drawing.Point(12, 122);
       this.labelDiseqcSwitchPort.Name = "labelDiseqcSwitchPort";
       this.labelDiseqcSwitchPort.Size = new System.Drawing.Size(101, 13);
-      this.labelDiseqcSwitchPort.TabIndex = 6;
+      this.labelDiseqcSwitchPort.TabIndex = 8;
       this.labelDiseqcSwitchPort.Text = "DiSEqC switch port:";
       // 
       // comboBoxDiseqcSwitchPort
@@ -157,18 +160,18 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.comboBoxDiseqcSwitchPort.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
       this.comboBoxDiseqcSwitchPort.FormattingEnabled = true;
-      this.comboBoxDiseqcSwitchPort.Location = new System.Drawing.Point(133, 93);
+      this.comboBoxDiseqcSwitchPort.Location = new System.Drawing.Point(133, 119);
       this.comboBoxDiseqcSwitchPort.Name = "comboBoxDiseqcSwitchPort";
       this.comboBoxDiseqcSwitchPort.Size = new System.Drawing.Size(200, 21);
-      this.comboBoxDiseqcSwitchPort.TabIndex = 7;
+      this.comboBoxDiseqcSwitchPort.TabIndex = 9;
       // 
       // labelLnbType
       // 
       this.labelLnbType.AutoSize = true;
-      this.labelLnbType.Location = new System.Drawing.Point(12, 69);
+      this.labelLnbType.Location = new System.Drawing.Point(12, 95);
       this.labelLnbType.Name = "labelLnbType";
       this.labelLnbType.Size = new System.Drawing.Size(54, 13);
-      this.labelLnbType.TabIndex = 4;
+      this.labelLnbType.TabIndex = 6;
       this.labelLnbType.Text = "LNB type:";
       // 
       // comboBoxLnbType
@@ -176,10 +179,10 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.comboBoxLnbType.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
       this.comboBoxLnbType.FormattingEnabled = true;
-      this.comboBoxLnbType.Location = new System.Drawing.Point(133, 66);
+      this.comboBoxLnbType.Location = new System.Drawing.Point(133, 92);
       this.comboBoxLnbType.Name = "comboBoxLnbType";
       this.comboBoxLnbType.Size = new System.Drawing.Size(200, 21);
-      this.comboBoxLnbType.TabIndex = 5;
+      this.comboBoxLnbType.TabIndex = 7;
       this.comboBoxLnbType.SelectedIndexChanged += new System.EventHandler(this.comboBoxLnbType_SelectedIndexChanged);
       this.comboBoxLnbType.Enter += new System.EventHandler(this.comboBoxLnbType_Enter);
       // 
@@ -225,7 +228,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       // numericUpDownDiseqcMotorPosition
       // 
       this.numericUpDownDiseqcMotorPosition.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.numericUpDownDiseqcMotorPosition.Location = new System.Drawing.Point(217, 121);
+      this.numericUpDownDiseqcMotorPosition.Location = new System.Drawing.Point(217, 147);
       this.numericUpDownDiseqcMotorPosition.Maximum = new decimal(new int[] {
             255,
             0,
@@ -238,7 +241,8 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
             0});
       this.numericUpDownDiseqcMotorPosition.Name = "numericUpDownDiseqcMotorPosition";
       this.numericUpDownDiseqcMotorPosition.Size = new System.Drawing.Size(45, 20);
-      this.numericUpDownDiseqcMotorPosition.TabIndex = 10;
+      this.numericUpDownDiseqcMotorPosition.TabIndex = 12;
+      this.numericUpDownDiseqcMotorPosition.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
       this.numericUpDownDiseqcMotorPosition.TruncateDecimalPlaces = false;
       this.numericUpDownDiseqcMotorPosition.Value = new decimal(new int[] {
             1,
@@ -251,11 +255,35 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.comboBoxDiseqcMotorPositionType.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
       this.comboBoxDiseqcMotorPositionType.FormattingEnabled = true;
-      this.comboBoxDiseqcMotorPositionType.Location = new System.Drawing.Point(133, 120);
+      this.comboBoxDiseqcMotorPositionType.Location = new System.Drawing.Point(133, 146);
       this.comboBoxDiseqcMotorPositionType.Name = "comboBoxDiseqcMotorPositionType";
       this.comboBoxDiseqcMotorPositionType.Size = new System.Drawing.Size(70, 21);
-      this.comboBoxDiseqcMotorPositionType.TabIndex = 9;
+      this.comboBoxDiseqcMotorPositionType.TabIndex = 11;
       this.comboBoxDiseqcMotorPositionType.SelectedIndexChanged += new System.EventHandler(this.comboBoxDiseqcMotorPositionType_SelectedIndexChanged);
+      // 
+      // numericUpDownSatIpSource
+      // 
+      this.numericUpDownSatIpSource.Location = new System.Drawing.Point(133, 66);
+      this.numericUpDownSatIpSource.Maximum = new decimal(new int[] {
+            255,
+            0,
+            0,
+            0});
+      this.numericUpDownSatIpSource.Name = "numericUpDownSatIpSource";
+      this.numericUpDownSatIpSource.Size = new System.Drawing.Size(45, 20);
+      this.numericUpDownSatIpSource.TabIndex = 5;
+      this.numericUpDownSatIpSource.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+      this.numericUpDownSatIpSource.TruncateDecimalPlaces = false;
+      this.numericUpDownSatIpSource.ValueChanged += new System.EventHandler(this.numericUpDownSatIpSource_ValueChanged);
+      // 
+      // labelSatIpSource
+      // 
+      this.labelSatIpSource.AutoSize = true;
+      this.labelSatIpSource.Location = new System.Drawing.Point(12, 68);
+      this.labelSatIpSource.Name = "labelSatIpSource";
+      this.labelSatIpSource.Size = new System.Drawing.Size(82, 13);
+      this.labelSatIpSource.TabIndex = 4;
+      this.labelSatIpSource.Text = "SAT>IP source:";
       // 
       // FormEditTunerSatellite
       // 
@@ -263,7 +291,9 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
       this.CancelButton = this.buttonCancel;
-      this.ClientSize = new System.Drawing.Size(345, 270);
+      this.ClientSize = new System.Drawing.Size(345, 295);
+      this.Controls.Add(this.labelSatIpSource);
+      this.Controls.Add(this.numericUpDownSatIpSource);
       this.Controls.Add(this.comboBoxDiseqcMotorPositionType);
       this.Controls.Add(this.numericUpDownDiseqcMotorPosition);
       this.Controls.Add(this.labelSatellite);
@@ -291,6 +321,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       this.Text = "Add/Edit Tuner Satellite";
       this.Load += new System.EventHandler(this.FormEditTunerSatellite_Load);
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownDiseqcMotorPosition)).EndInit();
+      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownSatIpSource)).EndInit();
       this.ResumeLayout(false);
       this.PerformLayout();
 
@@ -317,5 +348,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
     private MPComboBox comboBoxSatellite;
     private MPNumericUpDown numericUpDownDiseqcMotorPosition;
     private MPComboBox comboBoxDiseqcMotorPositionType;
+    private MPNumericUpDown numericUpDownSatIpSource;
+    protected MPLabel labelSatIpSource;
   }
 }

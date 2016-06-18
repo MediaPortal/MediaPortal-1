@@ -593,6 +593,7 @@
     <Property Name="IdTunerSatellite" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
     <Property Name="IdSatellite" Type="int" Nullable="false" />
     <Property Name="IdTuner" Type="int" Nullable="true" />
+    <Property Name="SatIpSource" Type="int" Nullable="false" />
     <Property Name="IdLnbType" Type="int" Nullable="false" />
     <Property Name="DiseqcPort" Type="int" Nullable="false" />
     <Property Name="DiseqcMotorPosition" Type="int" Nullable="false" />
