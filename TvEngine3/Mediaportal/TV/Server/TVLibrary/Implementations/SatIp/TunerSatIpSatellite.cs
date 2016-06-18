@@ -147,64 +147,63 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.SatIp
           break;
       }
 
-      string parameters = string.Format("src={0}&freq={1}&pol={2}&sr={3}&fec={4}&msys=dvbs", satelliteChannel.Longitude, frequency, polarisation, satelliteChannel.SymbolRate, fecCodeRate);
-
       // DVB-S2 or DVB-S?
-      if (dvbs2Channel == null)
+      string system = "dvbs";
+      string modulation = "qpsk";
+      string pilotTonesState = "off";
+      string rollOffFactor = "0.35";
+      if (dvbs2Channel != null)
       {
-        PerformTuning(dvbsChannel, parameters);
-        return;
+        system = "dvbs2";
+
+        switch (dvbs2Channel.ModulationScheme)
+        {
+          case ModulationSchemePsk.Psk4:
+            modulation = "qpsk";
+            break;
+          case ModulationSchemePsk.Psk8:
+            modulation = "8psk";
+            break;
+          default:
+            this.LogWarn("SAT>IP satellite: unsupported modulation scheme {0}, falling back to 8 PSK", dvbs2Channel.ModulationScheme);
+            modulation = "8psk";
+            break;
+        }
+
+        switch (dvbs2Channel.PilotTonesState)
+        {
+          case PilotTonesState.Off:
+            pilotTonesState = "off";
+            break;
+          case PilotTonesState.On:
+            pilotTonesState = "on";
+            break;
+          default:
+            this.LogWarn("SAT>IP satellite: unsupported pilot tones state {0}, falling back to on", dvbs2Channel.PilotTonesState);
+            pilotTonesState = "on";
+            break;
+        }
+
+        switch (dvbs2Channel.RollOffFactor)
+        {
+          case RollOffFactor.ThirtyFive:
+            rollOffFactor = "0.35";
+            break;
+          case RollOffFactor.TwentyFive:
+            rollOffFactor = "0.25";
+            break;
+          case RollOffFactor.Twenty:
+            rollOffFactor = "0.20";
+            break;
+          default:
+            this.LogWarn("SAT>IP satellite: unsupported roll-off factor {0}, falling back to 0.35", dvbs2Channel.RollOffFactor);
+            rollOffFactor = "0.35";
+            break;
+        }
       }
 
-      string modulation;
-      switch (dvbs2Channel.ModulationScheme)
-      {
-        case ModulationSchemePsk.Psk4:
-          modulation = "qpsk";
-          break;
-        case ModulationSchemePsk.Psk8:
-          modulation = "8psk";
-          break;
-        default:
-          this.LogWarn("SAT>IP satellite: unsupported modulation scheme {0}, falling back to 8 PSK", dvbs2Channel.ModulationScheme);
-          modulation = "8psk";
-          break;
-      }
-
-      string pilotTonesState;
-      switch (dvbs2Channel.PilotTonesState)
-      {
-        case PilotTonesState.Off:
-          pilotTonesState = "off";
-          break;
-        case PilotTonesState.On:
-          pilotTonesState = "on";
-          break;
-        default:
-          this.LogWarn("SAT>IP satellite: unsupported pilot tones state {0}, falling back to on", dvbs2Channel.PilotTonesState);
-          pilotTonesState = "on";
-          break;
-      }
-
-      string rollOffFactor;
-      switch (dvbs2Channel.RollOffFactor)
-      {
-        case RollOffFactor.ThirtyFive:
-          rollOffFactor = "0.35";
-          break;
-        case RollOffFactor.TwentyFive:
-          rollOffFactor = "0.25";
-          break;
-        case RollOffFactor.Twenty:
-          rollOffFactor = "0.20";
-          break;
-        default:
-          this.LogWarn("SAT>IP satellite: unsupported roll-off factor {0}, falling back to 0.35", dvbs2Channel.RollOffFactor);
-          rollOffFactor = "0.35";
-          break;
-      }
-
-      PerformTuning(dvbs2Channel, string.Format("{0}2&mtype={1}&plts={2}&ro={3}", parameters, modulation, pilotTonesState, rollOffFactor));
+      string parameters = string.Format("msys={0}&src={1}&freq={2}&pol={3}&mtype={4}&sr={5}&fec={6}&plts={7}&ro={8}", system, satelliteChannel.Longitude, frequency, polarisation, modulation, satelliteChannel.SymbolRate, fecCodeRate, pilotTonesState, rollOffFactor);
+      PerformTuning(channel as ChannelDvbBase, parameters);
     }
 
     #endregion
