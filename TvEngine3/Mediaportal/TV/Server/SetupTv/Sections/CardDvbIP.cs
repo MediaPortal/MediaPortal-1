@@ -37,9 +37,9 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
   public partial class CardDvbIP : SectionSettings
   {
     private readonly int _tunerId;
-    private TuningDetailFilter _tuningDetailFilter;
+    private TuningDetailFilter _tuningDetailFilter = null;
     private ChannelScanHelper _scanHelper = null;
-    private IDictionary<string, FileTuningDetail> _scanTuningDetails;
+    private IDictionary<string, FileTuningDetail> _scanTuningDetails = null;
 
     public CardDvbIP(string name, int tunerId)
       : base(name)
@@ -95,6 +95,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       {
         return;
       }
+      _scanTuningDetails = new Dictionary<string, FileTuningDetail>(tuningDetails.Count);
       foreach (FileTuningDetail tuningDetail in tuningDetails)
       {
         _scanTuningDetails[tuningDetail.Url] = tuningDetail;
