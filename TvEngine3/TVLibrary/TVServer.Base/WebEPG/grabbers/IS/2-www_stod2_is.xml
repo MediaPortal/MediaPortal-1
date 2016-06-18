@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Grabber>
+  <Info availableDays="0" timezone="Greenwich Standard Time" version="2.0.2" />
+  <Channels>
+    <Channel id="stod2@stod2.is" siteId="Stod-2" />
+    <Channel id="popptivi@stod2.is" siteId="PoppTivi" />
+    <Channel id="stod2sport@stod2.is" siteId="Stod-2-Sport" />
+    <Channel id="stod3@stod2.is" siteId="Stod-3" />
+    <Channel id="stod2sport2@stod2.is" siteId="Stod-2-Sport-2" />
+    <Channel id="stod2sport3@stod2.is" siteId="Stod-2-Sport-3" />
+    <Channel id="stod2sport4@stod2.is" siteId="Stod-2-Sport-4" />
+    <Channel id="stod2sport5@stod2.is" siteId="Stod-2-Sport-5" />
+    <Channel id="stod2sport6@stod2.is" siteId="Stod-2-Sport-6" />
+    <Channel id="stod2extra@stod2.is" siteId="Stod-2-Extra" />
+    <Channel id="stod2bio@stod2.is" siteId="Stod-2-Bio" />
+  </Channels>
+  <Listing type="Xml">
+    <Site url="http://www.stod2.is/XML--dagskrar-feed/XML-[ID]-dagskra-vikunnar" post="" external="false" encoding="utf-8" delay="5000" />
+    <Xml xpath="//event" channel="">
+      <Fields>
+        <Field name="#START" xmlname="@starttime" />
+        <Field name="#TITLE" xmlname="title" />
+        <Field name="#SUBTITLE" xmlname="org_title" />
+        <Field name="#DESCRIPTION" xmlname="description" />
+      </Fields>
+    </Xml>
+  </Listing>
+</Grabber>
