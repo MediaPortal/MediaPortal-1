@@ -574,6 +574,35 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog
     #region tuning
 
     /// <summary>
+    /// Check if the tuner can tune to a specific channel.
+    /// </summary>
+    /// <param name="channel">The channel to check.</param>
+    /// <returns><c>true</c> if the tuner can tune to the channel, otherwise <c>false</c></returns>
+    public override bool CanTune(IChannel channel)
+    {
+      if (!base.CanTune(channel))
+      {
+        return false;
+      }
+
+      // Check that the selected inputs are available for capture channels.
+      ChannelCapture captureChannel = channel as ChannelCapture;
+      if (captureChannel == null)
+      {
+        return true;
+      }
+
+      CaptureSourceVideo sourcesVideo = CaptureSourceVideo.TunerDefault;
+      CaptureSourceAudio sourcesAudio = CaptureSourceAudio.Automatic | CaptureSourceAudio.TunerDefault;
+      if (_crossbar != null)
+      {
+        sourcesVideo |= _crossbar.SupportedVideoSources;
+        sourcesAudio |= _crossbar.SupportedAudioSources;
+      }
+      return sourcesVideo.HasFlag(captureChannel.VideoSource) && sourcesAudio.HasFlag(captureChannel.AudioSource);
+    }
+
+    /// <summary>
     /// Actually tune to a channel.
     /// </summary>
     /// <param name="channel">The channel to tune to.</param>
