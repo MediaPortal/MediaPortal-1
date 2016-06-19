@@ -250,6 +250,51 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
       }
     }
 
+    public static void UpdateTuningDetailEpgInfo(TuningDetail transmitterTuningDetail)
+    {
+      string[] idStrings = transmitterTuningDetail.Provider.Split(',');
+      HashSet<int> ids = new HashSet<int>();
+      foreach (string id in idStrings)
+      {
+        int temp;
+        if (int.TryParse(id, out temp))
+        {
+          ids.Add(temp);
+        }
+      }
+      if (ids.Count == 0)
+      {
+        return;
+      }
+
+      using (ITuningDetailRepository tuningDetailRepository = new TuningDetailRepository())
+      {
+        IList<TuningDetail> tuningDetails = tuningDetailRepository.GetQuery<TuningDetail>(td => ids.Contains(td.IdTuning) && (td.GrabEpg != transmitterTuningDetail.GrabEpg || td.LastEpgGrabTime != transmitterTuningDetail.LastEpgGrabTime)).ToList();
+        if (tuningDetails.Count == 0)
+        {
+          return;
+        }
+
+        tuningDetailRepository.AttachEntityIfChangeTrackingDisabled(tuningDetailRepository.ObjectContext.TuningDetails, tuningDetails);
+        tuningDetailRepository.ApplyChanges(tuningDetailRepository.ObjectContext.TuningDetails, tuningDetails);
+        tuningDetailRepository.UnitOfWork.SaveChanges();
+        // TODO gibman, AcceptAllChanges() doesn't seem to reset the change trackers
+        //channelRepository.ObjectContext.AcceptAllChanges();
+        foreach (TuningDetail tuningDetail in tuningDetails)
+        {
+          tuningDetail.AcceptChanges();
+        }
+
+        if (OnStateChangedTuningDetailEvent != null)
+        {
+          foreach (TuningDetail tuningDetail in tuningDetails)
+          {
+            OnStateChangedTuningDetailEvent(tuningDetail.IdChannel);
+          }
+        }
+      }
+    }
+
     public static TuningDetail SaveTuningDetail(TuningDetail tuningDetail)
     {
       using (ITuningDetailRepository tuningDetailRepository = new TuningDetailRepository())

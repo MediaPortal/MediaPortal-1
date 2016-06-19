@@ -81,6 +81,9 @@ namespace Mediaportal.TV.Server.TVControl.Interfaces.Services
     IList<TuningDetail> GetStreamTuningDetails(string url, TuningDetailRelation includeRelations);
 
     [OperationContract]
+    void UpdateTuningDetailEpgInfo(TuningDetail transmitterTuningDetail);
+
+    [OperationContract]
     TuningDetail SaveTuningDetail(TuningDetail tuningDetail);
 
     [OperationContract]

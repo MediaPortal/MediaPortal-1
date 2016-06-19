@@ -23,6 +23,7 @@ using System.Data.SqlTypes;
 using System.Drawing;
 using System.Globalization;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Windows.Forms;
 using Mediaportal.TV.Server.Common.Types.Enum;
 using Mediaportal.TV.Server.SetupControls;
@@ -45,6 +46,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     private MPListViewStringColumnSorter _listViewColumnSorterLanguagesPreferred = null;
     private MPListViewStringColumnSorter _listViewColumnSorterProgramCategoriesUnmapped = null;
     private MPListViewStringColumnSorter _listViewColumnSorterProgramCategoriesMapped = null;
+
+    private TunerEpgGrabberProtocol _defaultEpgGrabberProtocols = TunerEpgGrabberProtocol.None;
 
     private bool _handlingGuideCategoryIsMovieChange = false;
     private IDictionary<int, DataGridViewRow> _guideCategories = null;
@@ -86,6 +89,87 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
           {
             _languageItems.Add(new ListViewItem(new string[] { lang.Name, lang.BibliographicCode }));
           }
+        }
+
+        _defaultEpgGrabberProtocols = TunerEpgGrabberProtocol.None;
+        string countryName = RegionInfo.CurrentRegion.EnglishName;
+        if (countryName != null)
+        {
+          if (countryName.Equals("Australia"))
+          {
+            _defaultEpgGrabberProtocols = TunerEpgGrabberProtocol.OpenTv;           // Foxtel
+          }
+          else if (countryName.Equals("Canada"))
+          {
+            _defaultEpgGrabberProtocols = TunerEpgGrabberProtocol.AtscEit | TunerEpgGrabberProtocol.BellTv | TunerEpgGrabberProtocol.ScteAeit;
+          }
+          else if (countryName.Equals("France"))
+          {
+            _defaultEpgGrabberProtocols = TunerEpgGrabberProtocol.MediaHighway1;    // Canalsat
+          }
+          else if (countryName.Equals("Germany"))
+          {
+            _defaultEpgGrabberProtocols = TunerEpgGrabberProtocol.Premiere;
+          }
+          else if (countryName.Equals("Italy"))
+          {
+            _defaultEpgGrabberProtocols = TunerEpgGrabberProtocol.OpenTv;           // Sky
+          }
+          else if (countryName.Equals("Netherlands, The"))
+          {
+            _defaultEpgGrabberProtocols = TunerEpgGrabberProtocol.MediaHighway1;    // Canal Digitaal
+          }
+          else if (countryName.Equals("New Zealand"))
+          {
+            _defaultEpgGrabberProtocols = TunerEpgGrabberProtocol.OpenTv;           // Sky
+          }
+          else if (countryName.Equals("Poland"))
+          {
+            _defaultEpgGrabberProtocols = TunerEpgGrabberProtocol.MediaHighway1;    // Cyfra+
+          }
+          else if (countryName.Equals("Spain"))
+          {
+            _defaultEpgGrabberProtocols = TunerEpgGrabberProtocol.MediaHighway2;    // Canal+/Digital+
+          }
+          else if (countryName.Equals("South Africa"))
+          {
+            _defaultEpgGrabberProtocols = TunerEpgGrabberProtocol.MultiChoice;
+          }
+          else if (countryName.Equals("Sweden"))
+          {
+            _defaultEpgGrabberProtocols = TunerEpgGrabberProtocol.ViasatSweden;
+          }
+          else if (countryName.Equals("United Kingdom"))
+          {
+            _defaultEpgGrabberProtocols = TunerEpgGrabberProtocol.Freesat | TunerEpgGrabberProtocol.OpenTv;   // Sky
+          }
+          else if (countryName.Equals("United States"))
+          {
+            _defaultEpgGrabberProtocols = TunerEpgGrabberProtocol.AtscEit | TunerEpgGrabberProtocol.DishNetwork | TunerEpgGrabberProtocol.ScteAeit;
+          }
+        }
+        _defaultEpgGrabberProtocols |= TunerEpgGrabberProtocol.DvbEit;
+
+        listViewTunerEpgGrabberFormatsAndProtocols.BeginUpdate();
+        try
+        {
+          listViewTunerEpgGrabberFormatsAndProtocols.Items.Clear();
+          listViewTunerEpgGrabberFormatsAndProtocols.Items.Add(new ListViewItem("DVB")).Tag = TunerEpgGrabberProtocol.DvbEit;
+          listViewTunerEpgGrabberFormatsAndProtocols.Items.Add(new ListViewItem("OpenTV [AU, IT, NZ, UK]")).Tag = TunerEpgGrabberProtocol.OpenTv;
+          listViewTunerEpgGrabberFormatsAndProtocols.Items.Add(new ListViewItem("MediaHighway 1 [FR, NL, PL]")).Tag = TunerEpgGrabberProtocol.MediaHighway1;
+          listViewTunerEpgGrabberFormatsAndProtocols.Items.Add(new ListViewItem("MediaHighway 2 [ES]")).Tag = TunerEpgGrabberProtocol.MediaHighway2;
+          listViewTunerEpgGrabberFormatsAndProtocols.Items.Add(new ListViewItem("Freesat [UK]")).Tag = TunerEpgGrabberProtocol.Freesat;
+          listViewTunerEpgGrabberFormatsAndProtocols.Items.Add(new ListViewItem("MultiChoice DStv [ZA]")).Tag = TunerEpgGrabberProtocol.MultiChoice;
+          listViewTunerEpgGrabberFormatsAndProtocols.Items.Add(new ListViewItem("Sky Germany")).Tag = TunerEpgGrabberProtocol.Premiere;
+          listViewTunerEpgGrabberFormatsAndProtocols.Items.Add(new ListViewItem("Viasat Sweden")).Tag = TunerEpgGrabberProtocol.ViasatSweden;
+          listViewTunerEpgGrabberFormatsAndProtocols.Items.Add(new ListViewItem("ATSC [CA, US]")).Tag = TunerEpgGrabberProtocol.AtscEit;
+          listViewTunerEpgGrabberFormatsAndProtocols.Items.Add(new ListViewItem("SCTE [CA, US]")).Tag = TunerEpgGrabberProtocol.ScteAeit;
+          listViewTunerEpgGrabberFormatsAndProtocols.Items.Add(new ListViewItem("Bell TV [CA]")).Tag = TunerEpgGrabberProtocol.BellTv;
+          listViewTunerEpgGrabberFormatsAndProtocols.Items.Add(new ListViewItem("Dish Network [US]")).Tag = TunerEpgGrabberProtocol.DishNetwork;
+        }
+        finally
+        {
+          listViewTunerEpgGrabberFormatsAndProtocols.EndUpdate();
         }
       }
 
@@ -146,79 +230,28 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       numericUpDownTunerEpgGrabberIdleTimeLimit.Value = ServiceAgents.Instance.SettingServiceAgent.GetValue("tunerEpgGrabberIdleTimeLimit", 600);
       numericUpDownTunerEpgGrabberIdleRefresh.Value = ServiceAgents.Instance.SettingServiceAgent.GetValue("tunerEpgGrabberIdleRefresh", 240);
 
-      TunerEpgGrabberProtocol epgProtocols = TunerEpgGrabberProtocol.None;
-      string countryName = RegionInfo.CurrentRegion.EnglishName;
-      if (countryName != null)
+      TunerEpgGrabberProtocol protocols = (TunerEpgGrabberProtocol)ServiceAgents.Instance.SettingServiceAgent.GetValue("tunerEpgGrabberProtocols", (int)_defaultEpgGrabberProtocols);
+      foreach (ListViewItem item in listViewTunerEpgGrabberFormatsAndProtocols.Items)
       {
-        if (countryName.Equals("Australia"))
+        if (protocols.HasFlag((TunerEpgGrabberProtocol)item.Tag))
         {
-          epgProtocols = TunerEpgGrabberProtocol.OpenTv;          // Foxtel
-        }
-        else if (countryName.Equals("Canada"))
-        {
-          epgProtocols = TunerEpgGrabberProtocol.AtscEit | TunerEpgGrabberProtocol.BellTv | TunerEpgGrabberProtocol.ScteAeit;
-        }
-        else if (countryName.Equals("France"))
-        {
-          epgProtocols = TunerEpgGrabberProtocol.MediaHighway1;   // Canalsat
-        }
-        else if (countryName.Equals("Germany"))
-        {
-          epgProtocols = TunerEpgGrabberProtocol.Premiere;
-        }
-        else if (countryName.Equals("Italy"))
-        {
-          epgProtocols = TunerEpgGrabberProtocol.OpenTv;          // Sky
-        }
-        else if (countryName.Equals("Netherlands, The"))
-        {
-          epgProtocols = TunerEpgGrabberProtocol.MediaHighway1;   // Canal Digitaal
-        }
-        else if (countryName.Equals("New Zealand"))
-        {
-          epgProtocols = TunerEpgGrabberProtocol.OpenTv;          // Sky
-        }
-        else if (countryName.Equals("Poland"))
-        {
-          epgProtocols = TunerEpgGrabberProtocol.MediaHighway1;   // Cyfra+
-        }
-        else if (countryName.Equals("Spain"))
-        {
-          epgProtocols = TunerEpgGrabberProtocol.MediaHighway2;   // Canal+/Digital+
-        }
-        else if (countryName.Equals("South Africa"))
-        {
-          epgProtocols = TunerEpgGrabberProtocol.MultiChoice;
-        }
-        else if (countryName.Equals("Sweden"))
-        {
-          epgProtocols = TunerEpgGrabberProtocol.ViasatSweden;
-        }
-        else if (countryName.Equals("United Kingdom"))
-        {
-          epgProtocols = TunerEpgGrabberProtocol.Freesat | TunerEpgGrabberProtocol.OpenTv;  // Sky
-        }
-        else if (countryName.Equals("United States"))
-        {
-          epgProtocols = TunerEpgGrabberProtocol.AtscEit | TunerEpgGrabberProtocol.DishNetwork | TunerEpgGrabberProtocol.ScteAeit;
+          item.Checked = true;
         }
       }
-      epgProtocols |= TunerEpgGrabberProtocol.DvbEit;
-      epgProtocols = (TunerEpgGrabberProtocol)ServiceAgents.Instance.SettingServiceAgent.GetValue("tunerEpgGrabberProtocols", (int)epgProtocols);
 
-      checkBoxTunerEpgGrabberProtocolAtsc.Checked = epgProtocols.HasFlag(TunerEpgGrabberProtocol.AtscEit);
-      checkBoxTunerEpgGrabberProtocolBellTv.Checked = epgProtocols.HasFlag(TunerEpgGrabberProtocol.BellTv);
-      checkBoxTunerEpgGrabberProtocolDishNetwork.Checked = epgProtocols.HasFlag(TunerEpgGrabberProtocol.DishNetwork);
-      checkBoxTunerEpgGrabberProtocolDvb.Checked = epgProtocols.HasFlag(TunerEpgGrabberProtocol.DvbEit);
-      checkBoxTunerEpgGrabberProtocolFreesat.Checked = epgProtocols.HasFlag(TunerEpgGrabberProtocol.Freesat);
-      checkBoxTunerEpgGrabberProtocolMhw1.Checked = epgProtocols.HasFlag(TunerEpgGrabberProtocol.MediaHighway1);
-      checkBoxTunerEpgGrabberProtocolMhw2.Checked = epgProtocols.HasFlag(TunerEpgGrabberProtocol.MediaHighway2);
-      checkBoxTunerEpgGrabberProtocolMultiChoice.Checked = epgProtocols.HasFlag(TunerEpgGrabberProtocol.MultiChoice);
-      checkBoxTunerEpgGrabberProtocolOpenTv.Checked = epgProtocols.HasFlag(TunerEpgGrabberProtocol.OpenTv);
-      checkBoxTunerEpgGrabberProtocolPremiere.Checked = epgProtocols.HasFlag(TunerEpgGrabberProtocol.Premiere);
-      checkBoxTunerEpgGrabberProtocolScte.Checked = epgProtocols.HasFlag(TunerEpgGrabberProtocol.ScteAeit);
-      checkBoxTunerEpgGrabberProtocolViasatSweden.Checked = epgProtocols.HasFlag(TunerEpgGrabberProtocol.ViasatSweden);
-      DebugTunerEpgGrabberSettings();
+      dataGridViewTunerEpgGrabberTransmitters.Rows.Clear();
+      IList<TuningDetail> tuningDetails = ServiceAgents.Instance.ChannelServiceAgent.ListAllDigitalTransmitterTuningDetails();
+      dataGridViewTunerEpgGrabberTransmitters.Rows.Add(tuningDetails.Count);
+      int rowIndex = 0;
+      foreach (TuningDetail tuningDetail in tuningDetails)
+      {
+        DataGridViewRow row = dataGridViewTunerEpgGrabberTransmitters.Rows[rowIndex++];
+        row.Tag = tuningDetail;
+        row.Cells["dataGridViewColumnTunerEpgGrabberTransmitterIsEnabled"].Value = tuningDetail.GrabEpg;
+        row.Cells["dataGridViewColumnTunerEpgGrabberTransmitterTuningDetail"].Value = tuningDetail.GetDescriptiveString();
+        row.Cells["dataGridViewColumnTunerEpgGrabberTransmitterChannels"].Value = tuningDetail.Name;
+        row.Cells["dataGridViewColumnTunerEpgGrabberTransmitterLastGrabTime"].Value = tuningDetail.LastEpgGrabTime.ToString("yyyy-MM-dd HH:mm:ss");
+      }
 
       // guide categories
       this.LogDebug("  guide categories...");
@@ -236,21 +269,21 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       IDictionary<int, IList<string>> programCategoryNamesByGuideCategory = new Dictionary<int, IList<string>>(guideCategories.Count + 1);
       programCategoryNamesByGuideCategory[-1] = new List<string>(programCategories.Count);
 
-      int row = 0;
+      rowIndex = 0;
       foreach (GuideCategory category in guideCategories)
       {
-        DataGridViewRow gridRow;
-        if (!_guideCategories.TryGetValue(category.IdGuideCategory, out gridRow))
+        DataGridViewRow row;
+        if (!_guideCategories.TryGetValue(category.IdGuideCategory, out row))
         {
-          gridRow = dataGridViewGuideCategories.Rows[row++];
-          _guideCategories[category.IdGuideCategory] = gridRow;
+          row = dataGridViewGuideCategories.Rows[rowIndex++];
+          _guideCategories[category.IdGuideCategory] = row;
         }
-        gridRow.Cells["dataGridViewColumnGuideCategoryName"].Value = category.Name;
-        gridRow.Cells["dataGridViewColumnGuideCategoryIsEnabled"].Value = category.IsEnabled;
-        DataGridViewCell cell = gridRow.Cells["dataGridViewColumnGuideCategoryIsMovieCategory"];
+        row.Cells["dataGridViewColumnGuideCategoryName"].Value = category.Name;
+        row.Cells["dataGridViewColumnGuideCategoryIsEnabled"].Value = category.IsEnabled;
+        DataGridViewCell cell = row.Cells["dataGridViewColumnGuideCategoryIsMovieCategory"];
         cell.Value = category.IsMovie;
         cell.ReadOnly = category.IsMovie;
-        gridRow.Tag = category;
+        row.Tag = category;
         _programCategories[category.IdGuideCategory] = new List<ListViewItem>(programCategories.Count);
         programCategoryNamesByGuideCategory[category.IdGuideCategory] = new List<string>(programCategories.Count);
       }
@@ -260,8 +293,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       {
         ListViewItem item = new ListViewItem(category.Category);
         item.Tag = category;
-        _programCategories[category.IdGuideCategory ?? -1].Add(item);
-        programCategoryNamesByGuideCategory[category.IdGuideCategory ?? -1].Add(category.Category);
+        _programCategories[category.IdGuideCategory.GetValueOrDefault(-1)].Add(item);
+        programCategoryNamesByGuideCategory[category.IdGuideCategory.GetValueOrDefault(-1)].Add(category.Category);
       }
       dataGridViewGuideCategories_SelectionChanged(null, null);
 
@@ -270,6 +303,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         this.LogDebug("    ID = {0}, name = {1}, is enabled = {2}, is movie = {3}, program categories = {4}", category.IdGuideCategory, category.Name, category.IsEnabled, category.IsMovie, string.Join(", ", programCategoryNamesByGuideCategory[category.IdGuideCategory]));
       }
       this.LogDebug("    unmapped program categories = {0}", string.Join(", ", programCategoryNamesByGuideCategory[-1]));
+
+      DebugTunerEpgGrabberSettings(protocols, true);
 
       base.OnSectionActivated();
     }
@@ -301,78 +336,49 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       ServiceAgents.Instance.SettingServiceAgent.SaveValue("tunerEpgGrabberIdleTimeLimit", (int)numericUpDownTunerEpgGrabberIdleTimeLimit.Value);
       ServiceAgents.Instance.SettingServiceAgent.SaveValue("tunerEpgGrabberIdleRefresh", (int)numericUpDownTunerEpgGrabberIdleRefresh.Value);
 
-      TunerEpgGrabberProtocol epgProtocols = TunerEpgGrabberProtocol.None;
-      if (checkBoxTunerEpgGrabberProtocolAtsc.Checked)
+      TunerEpgGrabberProtocol protocols = TunerEpgGrabberProtocol.None;
+      foreach (ListViewItem item in listViewTunerEpgGrabberFormatsAndProtocols.Items)
       {
-        epgProtocols |= TunerEpgGrabberProtocol.AtscEit;
+        if (item.Checked)
+        {
+          protocols |= (TunerEpgGrabberProtocol)item.Tag;
+        }
       }
-      if (checkBoxTunerEpgGrabberProtocolBellTv.Checked)
+      ServiceAgents.Instance.SettingServiceAgent.SaveValue("tunerEpgGrabberProtocols", (int)protocols);
+      DebugTunerEpgGrabberSettings(protocols, false);
+
+      foreach (DataGridViewRow row in dataGridViewTunerEpgGrabberTransmitters.Rows)
       {
-        epgProtocols |= TunerEpgGrabberProtocol.BellTv;
+        bool isEnabled = (bool)row.Cells["dataGridViewColumnTunerEpgGrabberTransmitterIsEnabled"].Value;
+        TuningDetail tuningDetail = row.Tag as TuningDetail;
+        if (tuningDetail.GrabEpg != isEnabled)
+        {
+          this.LogInfo("EPG: transmitter [{0}] grab EPG flag changed to {1}", tuningDetail.GetDescriptiveString(), isEnabled);
+          tuningDetail.GrabEpg = isEnabled;
+          ServiceAgents.Instance.ChannelServiceAgent.UpdateTuningDetailEpgInfo(tuningDetail);
+        }
       }
-      if (checkBoxTunerEpgGrabberProtocolDishNetwork.Checked)
-      {
-        epgProtocols |= TunerEpgGrabberProtocol.DishNetwork;
-      }
-      if (checkBoxTunerEpgGrabberProtocolDvb.Checked)
-      {
-        epgProtocols |= TunerEpgGrabberProtocol.DvbEit;
-      }
-      if (checkBoxTunerEpgGrabberProtocolFreesat.Checked)
-      {
-        epgProtocols |= TunerEpgGrabberProtocol.Freesat;
-      }
-      if (checkBoxTunerEpgGrabberProtocolMhw1.Checked)
-      {
-        epgProtocols |= TunerEpgGrabberProtocol.MediaHighway1;
-      }
-      if (checkBoxTunerEpgGrabberProtocolMhw2.Checked)
-      {
-        epgProtocols |= TunerEpgGrabberProtocol.MediaHighway2;
-      }
-      if (checkBoxTunerEpgGrabberProtocolMultiChoice.Checked)
-      {
-        epgProtocols |= TunerEpgGrabberProtocol.MultiChoice;
-      }
-      if (checkBoxTunerEpgGrabberProtocolOpenTv.Checked)
-      {
-        epgProtocols |= TunerEpgGrabberProtocol.OpenTv;
-      }
-      if (checkBoxTunerEpgGrabberProtocolPremiere.Checked)
-      {
-        epgProtocols |= TunerEpgGrabberProtocol.Premiere;
-      }
-      if (checkBoxTunerEpgGrabberProtocolScte.Checked)
-      {
-        epgProtocols |= TunerEpgGrabberProtocol.ScteAeit;
-      }
-      if (checkBoxTunerEpgGrabberProtocolViasatSweden.Checked)
-      {
-        epgProtocols |= TunerEpgGrabberProtocol.ViasatSweden;
-      }
-      ServiceAgents.Instance.SettingServiceAgent.SaveValue("tunerEpgGrabberProtocols", (int)epgProtocols);
-      DebugTunerEpgGrabberSettings();
 
       // guide categories
-      foreach (DataGridViewRow gridRow in dataGridViewGuideCategories.Rows)
+      foreach (DataGridViewRow row in dataGridViewGuideCategories.Rows)
       {
         bool save = false;
-        GuideCategory category = gridRow.Tag as GuideCategory;
-        string newName = (string)gridRow.Cells["dataGridViewColumnGuideCategoryName"].Value;
+        GuideCategory category = row.Tag as GuideCategory;
+        string newName = (string)row.Cells["dataGridViewColumnGuideCategoryName"].Value;
         if (!string.Equals(category.Name, newName))
         {
           this.LogInfo("EPG: guide category {0} name changed from {1} to {2}", category.IdGuideCategory, category.Name, newName);
           category.Name = newName;
           save = true;
         }
-        bool newBoolValue = (bool)gridRow.Cells["dataGridViewColumnGuideCategoryIsEnabled"].Value;
+        bool newBoolValue = (bool)row.Cells["dataGridViewColumnGuideCategoryIsEnabled"].Value;
         if (category.IsEnabled != newBoolValue)
         {
           this.LogInfo("EPG: guide category {0} enabled changed from {1} to {2}", category.IdGuideCategory, category.IsEnabled, newBoolValue);
           category.IsEnabled = newBoolValue;
           save = true;
         }
-        newBoolValue = (bool)gridRow.Cells["dataGridViewColumnGuideCategoryIsMovieCategory"].Value;
+        newBoolValue = (bool)row.Cells["dataGridViewColumnGuideCategoryIsMovieCategory"].Value;
         if (category.IsMovie != newBoolValue)
         {
           this.LogInfo("EPG: guide category {0} movie indicator changed from {1} to {2}", category.IdGuideCategory, category.IsMovie, newBoolValue);
@@ -383,7 +389,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         if (save)
         {
           category = ServiceAgents.Instance.ProgramCategoryServiceAgent.SaveGuideCategory(category);
-          gridRow.Tag = category;
+          row.Tag = category;
         }
       }
 
@@ -423,27 +429,30 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       base.OnSectionDeActivated();
     }
 
-    private void DebugTunerEpgGrabberSettings()
+    private void DebugTunerEpgGrabberSettings(TunerEpgGrabberProtocol protocols, bool doTransmitters)
     {
       this.LogDebug("  tuner EPG grabber...");
       this.LogDebug("    TS/rec.?             = {0}", checkBoxTunerEpgGrabberTimeShiftingRecordingEnable.Checked);
-      this.LogDebug("      time limit         = {0} seconds", numericUpDownTunerEpgGrabberTimeShiftingRecordingTimeLimit.Value);
+      this.LogDebug("      time limit         = {0} s", numericUpDownTunerEpgGrabberTimeShiftingRecordingTimeLimit.Value);
       this.LogDebug("    idle?                = {0}", checkBoxTunerEpgGrabberIdleEnable.Checked);
-      this.LogDebug("      time limit         = {0} seconds", numericUpDownTunerEpgGrabberIdleTimeLimit.Value);
-      this.LogDebug("      refresh            = {0} minutes", numericUpDownTunerEpgGrabberIdleRefresh.Value);
-      this.LogDebug("    protocols...");
-      this.LogDebug("      ATSC               = {0}", checkBoxTunerEpgGrabberProtocolAtsc.Checked);
-      this.LogDebug("      Bell TV            = {0}", checkBoxTunerEpgGrabberProtocolBellTv.Checked);
-      this.LogDebug("      Dish Network       = {0}", checkBoxTunerEpgGrabberProtocolDishNetwork.Checked);
-      this.LogDebug("      DVB                = {0}", checkBoxTunerEpgGrabberProtocolDvb.Checked);
-      this.LogDebug("      Freesat            = {0}", checkBoxTunerEpgGrabberProtocolFreesat.Checked);
-      this.LogDebug("      MediaHighway 1     = {0}", checkBoxTunerEpgGrabberProtocolMhw1.Checked);
-      this.LogDebug("      MediaHighway 2     = {0}", checkBoxTunerEpgGrabberProtocolMhw2.Checked);
-      this.LogDebug("      MultiChoice        = {0}", checkBoxTunerEpgGrabberProtocolMultiChoice.Checked);
-      this.LogDebug("      OpenTV             = {0}", checkBoxTunerEpgGrabberProtocolOpenTv.Checked);
-      this.LogDebug("      Premiere           = {0}", checkBoxTunerEpgGrabberProtocolPremiere.Checked);
-      this.LogDebug("      SCTE               = {0}", checkBoxTunerEpgGrabberProtocolScte.Checked);
-      this.LogDebug("      Viasat Sweden      = {0}", checkBoxTunerEpgGrabberProtocolViasatSweden.Checked);
+      this.LogDebug("      time limit         = {0} s", numericUpDownTunerEpgGrabberIdleTimeLimit.Value);
+      this.LogDebug("      refresh            = {0} m", numericUpDownTunerEpgGrabberIdleRefresh.Value);
+      this.LogDebug("    protocol(s)          = [{0}]", protocols);
+
+      if (doTransmitters)
+      {
+        ThreadPool.QueueUserWorkItem(delegate
+        {
+          this.LogDebug("    transmitters...");
+          foreach (DataGridViewRow row in dataGridViewTunerEpgGrabberTransmitters.Rows)
+          {
+            bool grabEpg = (bool)row.Cells["dataGridViewColumnTunerEpgGrabberTransmitterIsEnabled"].Value;
+            string lastGrabTime = (string)row.Cells["dataGridViewColumnTunerEpgGrabberTransmitterLastGrabTime"].Value;
+            string description = (string)row.Cells["dataGridViewColumnTunerEpgGrabberTransmitterTuningDetail"].Value;
+            this.LogDebug("      {0, 5} [{1}]: {2}", grabEpg, lastGrabTime, description);
+          }
+        });
+      }
     }
 
     private void buttonDeleteAll_Click(object sender, System.EventArgs e)

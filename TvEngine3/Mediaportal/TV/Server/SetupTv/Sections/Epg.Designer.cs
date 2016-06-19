@@ -60,19 +60,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.tabControl = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPTabControl();
       this.tabPageGeneral = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPTabPage();
       this.tabPageTunerGrabber = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPTabPage();
-      this.groupBoxTunerEpgGrabberProtocols = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPGroupBox();
-      this.checkBoxTunerEpgGrabberProtocolMhw1 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPCheckBox();
-      this.checkBoxTunerEpgGrabberProtocolPremiere = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPCheckBox();
-      this.checkBoxTunerEpgGrabberProtocolOpenTv = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPCheckBox();
-      this.checkBoxTunerEpgGrabberProtocolViasatSweden = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPCheckBox();
-      this.checkBoxTunerEpgGrabberProtocolDvb = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPCheckBox();
-      this.checkBoxTunerEpgGrabberProtocolMultiChoice = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPCheckBox();
-      this.checkBoxTunerEpgGrabberProtocolMhw2 = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPCheckBox();
-      this.checkBoxTunerEpgGrabberProtocolDishNetwork = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPCheckBox();
-      this.checkBoxTunerEpgGrabberProtocolAtsc = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPCheckBox();
-      this.checkBoxTunerEpgGrabberProtocolBellTv = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPCheckBox();
-      this.checkBoxTunerEpgGrabberProtocolFreesat = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPCheckBox();
-      this.checkBoxTunerEpgGrabberProtocolScte = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPCheckBox();
       this.labelTunerEpgGrabberIdleRefresh = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.buttonTunerEpgGrabberRefreshNow = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPButton();
       this.numericUpDownTunerEpgGrabberTimeShiftingRecordingTimeLimit = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPNumericUpDown();
@@ -86,26 +73,33 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.numericUpDownTunerEpgGrabberIdleRefresh = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPNumericUpDown();
       this.labelTunerEpgGrabberIdleRefreshUnit = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPLabel();
       this.tabPageGuideCategories = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPTabPage();
+      this.listViewTunerEpgGrabberFormatsAndProtocols = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPListView();
+      this.columnHeaderTunerEpgGrabberFormatsAndProtocol = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+      this.dataGridViewTunerEpgGrabberTransmitters = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPDataGridView();
+      this.dataGridViewColumnTunerEpgGrabberTransmitterIsEnabled = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPDataGridViewCheckBoxColumn();
+      this.dataGridViewColumnTunerEpgGrabberTransmitterTuningDetail = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPDataGridViewTextBoxColumn();
+      this.dataGridViewColumnTunerEpgGrabberTransmitterChannels = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPDataGridViewTextBoxColumn();
+      this.dataGridViewColumnTunerEpgGrabberTransmitterLastGrabTime = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPDataGridViewTextBoxColumn();
       this.tableLayoutPanelPreferredLanguages.SuspendLayout();
       this.tableLayoutPanelGuideCategories.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.dataGridViewGuideCategories)).BeginInit();
       this.tabControl.SuspendLayout();
       this.tabPageGeneral.SuspendLayout();
       this.tabPageTunerGrabber.SuspendLayout();
-      this.groupBoxTunerEpgGrabberProtocols.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTunerEpgGrabberTimeShiftingRecordingTimeLimit)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTunerEpgGrabberIdleTimeLimit)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTunerEpgGrabberIdleRefresh)).BeginInit();
       this.tabPageGuideCategories.SuspendLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.dataGridViewTunerEpgGrabberTransmitters)).BeginInit();
       this.SuspendLayout();
       // 
       // listViewProgramCategoriesUnmapped
       // 
       this.listViewProgramCategoriesUnmapped.AllowDrop = true;
       this.listViewProgramCategoriesUnmapped.AllowRowReorder = false;
-      this.listViewProgramCategoriesUnmapped.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.listViewProgramCategoriesUnmapped.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.listViewProgramCategoriesUnmapped.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeaderUnmappedProgramCategories});
       this.listViewProgramCategoriesUnmapped.FullRowSelect = true;
@@ -133,9 +127,9 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // 
       this.listViewProgramCategoriesMapped.AllowDrop = true;
       this.listViewProgramCategoriesMapped.AllowRowReorder = false;
-      this.listViewProgramCategoriesMapped.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.listViewProgramCategoriesMapped.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.listViewProgramCategoriesMapped.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeaderMappedProgramCategories});
       this.listViewProgramCategoriesMapped.FullRowSelect = true;
@@ -164,9 +158,9 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.listViewLanguagesPreferred.AllowColumnReorder = true;
       this.listViewLanguagesPreferred.AllowDrop = true;
       this.listViewLanguagesPreferred.AllowRowReorder = false;
-      this.listViewLanguagesPreferred.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.listViewLanguagesPreferred.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.listViewLanguagesPreferred.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeaderLanguagesPreferredName,
             this.columnHeaderLanguagesPreferredId});
@@ -200,9 +194,9 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.listViewLanguagesAvailable.AllowColumnReorder = true;
       this.listViewLanguagesAvailable.AllowDrop = true;
       this.listViewLanguagesAvailable.AllowRowReorder = false;
-      this.listViewLanguagesAvailable.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.listViewLanguagesAvailable.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.listViewLanguagesAvailable.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeaderLanguagesAvailableName,
             this.columnHeaderLanguagesAvailableId});
@@ -233,8 +227,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // 
       // textBoxPreferredRatingSystems
       // 
-      this.textBoxPreferredRatingSystems.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.textBoxPreferredRatingSystems.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.textBoxPreferredRatingSystems.Location = new System.Drawing.Point(168, 149);
       this.textBoxPreferredRatingSystems.Name = "textBoxPreferredRatingSystems";
       this.textBoxPreferredRatingSystems.Size = new System.Drawing.Size(295, 20);
@@ -242,8 +236,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // 
       // textBoxPreferredClassificationSystems
       // 
-      this.textBoxPreferredClassificationSystems.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.textBoxPreferredClassificationSystems.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.textBoxPreferredClassificationSystems.Location = new System.Drawing.Point(168, 123);
       this.textBoxPreferredClassificationSystems.Name = "textBoxPreferredClassificationSystems";
       this.textBoxPreferredClassificationSystems.Size = new System.Drawing.Size(295, 20);
@@ -251,8 +245,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // 
       // labelPreferredRatingSystems
       // 
-      this.labelPreferredRatingSystems.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.labelPreferredRatingSystems.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.labelPreferredRatingSystems.AutoSize = true;
       this.labelPreferredRatingSystems.Location = new System.Drawing.Point(6, 152);
       this.labelPreferredRatingSystems.Name = "labelPreferredRatingSystems";
@@ -281,8 +275,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // 
       // tableLayoutPanelPreferredLanguages
       // 
-      this.tableLayoutPanelPreferredLanguages.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.tableLayoutPanelPreferredLanguages.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.tableLayoutPanelPreferredLanguages.ColumnCount = 4;
       this.tableLayoutPanelPreferredLanguages.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
       this.tableLayoutPanelPreferredLanguages.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
@@ -345,9 +339,9 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // 
       // tableLayoutPanelGuideCategories
       // 
-      this.tableLayoutPanelGuideCategories.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.tableLayoutPanelGuideCategories.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.tableLayoutPanelGuideCategories.ColumnCount = 3;
       this.tableLayoutPanelGuideCategories.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
       this.tableLayoutPanelGuideCategories.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
@@ -397,6 +391,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
             this.dataGridViewColumnGuideCategoryName,
             this.dataGridViewColumnGuideCategoryIsEnabled,
             this.dataGridViewColumnGuideCategoryIsMovieCategory});
+      this.dataGridViewGuideCategories.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
       this.dataGridViewGuideCategories.Location = new System.Drawing.Point(6, 6);
       this.dataGridViewGuideCategories.MultiSelect = false;
       this.dataGridViewGuideCategories.Name = "dataGridViewGuideCategories";
@@ -432,9 +427,9 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // 
       this.tabControl.AllowDrop = true;
       this.tabControl.AllowReorderTabs = false;
-      this.tabControl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.tabControl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.tabControl.Controls.Add(this.tabPageGeneral);
       this.tabControl.Controls.Add(this.tabPageTunerGrabber);
       this.tabControl.Controls.Add(this.tabPageGuideCategories);
@@ -462,7 +457,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // 
       // tabPageTunerGrabber
       // 
-      this.tabPageTunerGrabber.Controls.Add(this.groupBoxTunerEpgGrabberProtocols);
+      this.tabPageTunerGrabber.Controls.Add(this.dataGridViewTunerEpgGrabberTransmitters);
+      this.tabPageTunerGrabber.Controls.Add(this.listViewTunerEpgGrabberFormatsAndProtocols);
       this.tabPageTunerGrabber.Controls.Add(this.labelTunerEpgGrabberIdleRefresh);
       this.tabPageTunerGrabber.Controls.Add(this.buttonTunerEpgGrabberRefreshNow);
       this.tabPageTunerGrabber.Controls.Add(this.numericUpDownTunerEpgGrabberTimeShiftingRecordingTimeLimit);
@@ -481,160 +477,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.tabPageTunerGrabber.TabIndex = 2;
       this.tabPageTunerGrabber.Text = "Tuner Grabber";
       this.tabPageTunerGrabber.UseVisualStyleBackColor = true;
-      // 
-      // groupBoxTunerEpgGrabberProtocols
-      // 
-      this.groupBoxTunerEpgGrabberProtocols.Controls.Add(this.checkBoxTunerEpgGrabberProtocolMhw1);
-      this.groupBoxTunerEpgGrabberProtocols.Controls.Add(this.checkBoxTunerEpgGrabberProtocolPremiere);
-      this.groupBoxTunerEpgGrabberProtocols.Controls.Add(this.checkBoxTunerEpgGrabberProtocolOpenTv);
-      this.groupBoxTunerEpgGrabberProtocols.Controls.Add(this.checkBoxTunerEpgGrabberProtocolViasatSweden);
-      this.groupBoxTunerEpgGrabberProtocols.Controls.Add(this.checkBoxTunerEpgGrabberProtocolDvb);
-      this.groupBoxTunerEpgGrabberProtocols.Controls.Add(this.checkBoxTunerEpgGrabberProtocolMultiChoice);
-      this.groupBoxTunerEpgGrabberProtocols.Controls.Add(this.checkBoxTunerEpgGrabberProtocolMhw2);
-      this.groupBoxTunerEpgGrabberProtocols.Controls.Add(this.checkBoxTunerEpgGrabberProtocolDishNetwork);
-      this.groupBoxTunerEpgGrabberProtocols.Controls.Add(this.checkBoxTunerEpgGrabberProtocolAtsc);
-      this.groupBoxTunerEpgGrabberProtocols.Controls.Add(this.checkBoxTunerEpgGrabberProtocolBellTv);
-      this.groupBoxTunerEpgGrabberProtocols.Controls.Add(this.checkBoxTunerEpgGrabberProtocolFreesat);
-      this.groupBoxTunerEpgGrabberProtocols.Controls.Add(this.checkBoxTunerEpgGrabberProtocolScte);
-      this.groupBoxTunerEpgGrabberProtocols.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.groupBoxTunerEpgGrabberProtocols.Location = new System.Drawing.Point(6, 178);
-      this.groupBoxTunerEpgGrabberProtocols.Name = "groupBoxTunerEpgGrabberProtocols";
-      this.groupBoxTunerEpgGrabberProtocols.Size = new System.Drawing.Size(463, 118);
-      this.groupBoxTunerEpgGrabberProtocols.TabIndex = 12;
-      this.groupBoxTunerEpgGrabberProtocols.TabStop = false;
-      this.groupBoxTunerEpgGrabberProtocols.Text = "Formats && Protocols";
-      // 
-      // checkBoxTunerEpgGrabberProtocolMhw1
-      // 
-      this.checkBoxTunerEpgGrabberProtocolMhw1.AutoSize = true;
-      this.checkBoxTunerEpgGrabberProtocolMhw1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.checkBoxTunerEpgGrabberProtocolMhw1.Location = new System.Drawing.Point(6, 65);
-      this.checkBoxTunerEpgGrabberProtocolMhw1.Name = "checkBoxTunerEpgGrabberProtocolMhw1";
-      this.checkBoxTunerEpgGrabberProtocolMhw1.Size = new System.Drawing.Size(165, 17);
-      this.checkBoxTunerEpgGrabberProtocolMhw1.TabIndex = 2;
-      this.checkBoxTunerEpgGrabberProtocolMhw1.Text = "MediaHighway 1 [FR, NL, PL]";
-      this.checkBoxTunerEpgGrabberProtocolMhw1.UseVisualStyleBackColor = true;
-      // 
-      // checkBoxTunerEpgGrabberProtocolPremiere
-      // 
-      this.checkBoxTunerEpgGrabberProtocolPremiere.AutoSize = true;
-      this.checkBoxTunerEpgGrabberProtocolPremiere.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.checkBoxTunerEpgGrabberProtocolPremiere.Location = new System.Drawing.Point(190, 65);
-      this.checkBoxTunerEpgGrabberProtocolPremiere.Name = "checkBoxTunerEpgGrabberProtocolPremiere";
-      this.checkBoxTunerEpgGrabberProtocolPremiere.Size = new System.Drawing.Size(87, 17);
-      this.checkBoxTunerEpgGrabberProtocolPremiere.TabIndex = 6;
-      this.checkBoxTunerEpgGrabberProtocolPremiere.Text = "Sky Germany";
-      this.checkBoxTunerEpgGrabberProtocolPremiere.UseVisualStyleBackColor = true;
-      // 
-      // checkBoxTunerEpgGrabberProtocolOpenTv
-      // 
-      this.checkBoxTunerEpgGrabberProtocolOpenTv.AutoSize = true;
-      this.checkBoxTunerEpgGrabberProtocolOpenTv.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.checkBoxTunerEpgGrabberProtocolOpenTv.Location = new System.Drawing.Point(6, 42);
-      this.checkBoxTunerEpgGrabberProtocolOpenTv.Name = "checkBoxTunerEpgGrabberProtocolOpenTv";
-      this.checkBoxTunerEpgGrabberProtocolOpenTv.Size = new System.Drawing.Size(146, 17);
-      this.checkBoxTunerEpgGrabberProtocolOpenTv.TabIndex = 1;
-      this.checkBoxTunerEpgGrabberProtocolOpenTv.Text = "OpenTV [AU, IT, NZ, UK]";
-      this.checkBoxTunerEpgGrabberProtocolOpenTv.UseVisualStyleBackColor = true;
-      // 
-      // checkBoxTunerEpgGrabberProtocolViasatSweden
-      // 
-      this.checkBoxTunerEpgGrabberProtocolViasatSweden.AutoSize = true;
-      this.checkBoxTunerEpgGrabberProtocolViasatSweden.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.checkBoxTunerEpgGrabberProtocolViasatSweden.Location = new System.Drawing.Point(190, 88);
-      this.checkBoxTunerEpgGrabberProtocolViasatSweden.Name = "checkBoxTunerEpgGrabberProtocolViasatSweden";
-      this.checkBoxTunerEpgGrabberProtocolViasatSweden.Size = new System.Drawing.Size(95, 17);
-      this.checkBoxTunerEpgGrabberProtocolViasatSweden.TabIndex = 7;
-      this.checkBoxTunerEpgGrabberProtocolViasatSweden.Text = "Viasat Sweden";
-      this.checkBoxTunerEpgGrabberProtocolViasatSweden.UseVisualStyleBackColor = true;
-      // 
-      // checkBoxTunerEpgGrabberProtocolDvb
-      // 
-      this.checkBoxTunerEpgGrabberProtocolDvb.AutoSize = true;
-      this.checkBoxTunerEpgGrabberProtocolDvb.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.checkBoxTunerEpgGrabberProtocolDvb.Location = new System.Drawing.Point(6, 19);
-      this.checkBoxTunerEpgGrabberProtocolDvb.Name = "checkBoxTunerEpgGrabberProtocolDvb";
-      this.checkBoxTunerEpgGrabberProtocolDvb.Size = new System.Drawing.Size(46, 17);
-      this.checkBoxTunerEpgGrabberProtocolDvb.TabIndex = 0;
-      this.checkBoxTunerEpgGrabberProtocolDvb.Text = "DVB";
-      this.checkBoxTunerEpgGrabberProtocolDvb.UseVisualStyleBackColor = true;
-      // 
-      // checkBoxTunerEpgGrabberProtocolMultiChoice
-      // 
-      this.checkBoxTunerEpgGrabberProtocolMultiChoice.AutoSize = true;
-      this.checkBoxTunerEpgGrabberProtocolMultiChoice.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.checkBoxTunerEpgGrabberProtocolMultiChoice.Location = new System.Drawing.Point(190, 42);
-      this.checkBoxTunerEpgGrabberProtocolMultiChoice.Name = "checkBoxTunerEpgGrabberProtocolMultiChoice";
-      this.checkBoxTunerEpgGrabberProtocolMultiChoice.Size = new System.Drawing.Size(129, 17);
-      this.checkBoxTunerEpgGrabberProtocolMultiChoice.TabIndex = 5;
-      this.checkBoxTunerEpgGrabberProtocolMultiChoice.Text = "MultiChoice DStv [ZA]";
-      this.checkBoxTunerEpgGrabberProtocolMultiChoice.UseVisualStyleBackColor = true;
-      // 
-      // checkBoxTunerEpgGrabberProtocolMhw2
-      // 
-      this.checkBoxTunerEpgGrabberProtocolMhw2.AutoSize = true;
-      this.checkBoxTunerEpgGrabberProtocolMhw2.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.checkBoxTunerEpgGrabberProtocolMhw2.Location = new System.Drawing.Point(6, 88);
-      this.checkBoxTunerEpgGrabberProtocolMhw2.Name = "checkBoxTunerEpgGrabberProtocolMhw2";
-      this.checkBoxTunerEpgGrabberProtocolMhw2.Size = new System.Drawing.Size(126, 17);
-      this.checkBoxTunerEpgGrabberProtocolMhw2.TabIndex = 3;
-      this.checkBoxTunerEpgGrabberProtocolMhw2.Text = "MediaHighway 2 [ES]";
-      this.checkBoxTunerEpgGrabberProtocolMhw2.UseVisualStyleBackColor = true;
-      // 
-      // checkBoxTunerEpgGrabberProtocolDishNetwork
-      // 
-      this.checkBoxTunerEpgGrabberProtocolDishNetwork.AutoSize = true;
-      this.checkBoxTunerEpgGrabberProtocolDishNetwork.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.checkBoxTunerEpgGrabberProtocolDishNetwork.Location = new System.Drawing.Point(337, 88);
-      this.checkBoxTunerEpgGrabberProtocolDishNetwork.Name = "checkBoxTunerEpgGrabberProtocolDishNetwork";
-      this.checkBoxTunerEpgGrabberProtocolDishNetwork.Size = new System.Drawing.Size(112, 17);
-      this.checkBoxTunerEpgGrabberProtocolDishNetwork.TabIndex = 11;
-      this.checkBoxTunerEpgGrabberProtocolDishNetwork.Text = "Dish Network [US]";
-      this.checkBoxTunerEpgGrabberProtocolDishNetwork.UseVisualStyleBackColor = true;
-      // 
-      // checkBoxTunerEpgGrabberProtocolAtsc
-      // 
-      this.checkBoxTunerEpgGrabberProtocolAtsc.AutoSize = true;
-      this.checkBoxTunerEpgGrabberProtocolAtsc.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.checkBoxTunerEpgGrabberProtocolAtsc.Location = new System.Drawing.Point(337, 19);
-      this.checkBoxTunerEpgGrabberProtocolAtsc.Name = "checkBoxTunerEpgGrabberProtocolAtsc";
-      this.checkBoxTunerEpgGrabberProtocolAtsc.Size = new System.Drawing.Size(96, 17);
-      this.checkBoxTunerEpgGrabberProtocolAtsc.TabIndex = 8;
-      this.checkBoxTunerEpgGrabberProtocolAtsc.Text = "ATSC [CA, US]";
-      this.checkBoxTunerEpgGrabberProtocolAtsc.UseVisualStyleBackColor = true;
-      // 
-      // checkBoxTunerEpgGrabberProtocolBellTv
-      // 
-      this.checkBoxTunerEpgGrabberProtocolBellTv.AutoSize = true;
-      this.checkBoxTunerEpgGrabberProtocolBellTv.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.checkBoxTunerEpgGrabberProtocolBellTv.Location = new System.Drawing.Point(337, 65);
-      this.checkBoxTunerEpgGrabberProtocolBellTv.Name = "checkBoxTunerEpgGrabberProtocolBellTv";
-      this.checkBoxTunerEpgGrabberProtocolBellTv.Size = new System.Drawing.Size(81, 17);
-      this.checkBoxTunerEpgGrabberProtocolBellTv.TabIndex = 10;
-      this.checkBoxTunerEpgGrabberProtocolBellTv.Text = "Bell TV [CA]";
-      this.checkBoxTunerEpgGrabberProtocolBellTv.UseVisualStyleBackColor = true;
-      // 
-      // checkBoxTunerEpgGrabberProtocolFreesat
-      // 
-      this.checkBoxTunerEpgGrabberProtocolFreesat.AutoSize = true;
-      this.checkBoxTunerEpgGrabberProtocolFreesat.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.checkBoxTunerEpgGrabberProtocolFreesat.Location = new System.Drawing.Point(190, 19);
-      this.checkBoxTunerEpgGrabberProtocolFreesat.Name = "checkBoxTunerEpgGrabberProtocolFreesat";
-      this.checkBoxTunerEpgGrabberProtocolFreesat.Size = new System.Drawing.Size(83, 17);
-      this.checkBoxTunerEpgGrabberProtocolFreesat.TabIndex = 4;
-      this.checkBoxTunerEpgGrabberProtocolFreesat.Text = "Freesat [UK]";
-      this.checkBoxTunerEpgGrabberProtocolFreesat.UseVisualStyleBackColor = true;
-      // 
-      // checkBoxTunerEpgGrabberProtocolScte
-      // 
-      this.checkBoxTunerEpgGrabberProtocolScte.AutoSize = true;
-      this.checkBoxTunerEpgGrabberProtocolScte.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.checkBoxTunerEpgGrabberProtocolScte.Location = new System.Drawing.Point(337, 42);
-      this.checkBoxTunerEpgGrabberProtocolScte.Name = "checkBoxTunerEpgGrabberProtocolScte";
-      this.checkBoxTunerEpgGrabberProtocolScte.Size = new System.Drawing.Size(96, 17);
-      this.checkBoxTunerEpgGrabberProtocolScte.TabIndex = 9;
-      this.checkBoxTunerEpgGrabberProtocolScte.Text = "SCTE [CA, US]";
-      this.checkBoxTunerEpgGrabberProtocolScte.UseVisualStyleBackColor = true;
       // 
       // labelTunerEpgGrabberIdleRefresh
       // 
@@ -671,6 +513,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.numericUpDownTunerEpgGrabberTimeShiftingRecordingTimeLimit.Size = new System.Drawing.Size(55, 20);
       this.numericUpDownTunerEpgGrabberTimeShiftingRecordingTimeLimit.TabIndex = 2;
       this.numericUpDownTunerEpgGrabberTimeShiftingRecordingTimeLimit.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+      this.numericUpDownTunerEpgGrabberTimeShiftingRecordingTimeLimit.TruncateDecimalPlaces = false;
       this.numericUpDownTunerEpgGrabberTimeShiftingRecordingTimeLimit.Value = new decimal(new int[] {
             30,
             0,
@@ -703,6 +546,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.numericUpDownTunerEpgGrabberIdleTimeLimit.Size = new System.Drawing.Size(55, 20);
       this.numericUpDownTunerEpgGrabberIdleTimeLimit.TabIndex = 6;
       this.numericUpDownTunerEpgGrabberIdleTimeLimit.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+      this.numericUpDownTunerEpgGrabberIdleTimeLimit.TruncateDecimalPlaces = false;
       this.numericUpDownTunerEpgGrabberIdleTimeLimit.Value = new decimal(new int[] {
             600,
             0,
@@ -775,6 +619,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.numericUpDownTunerEpgGrabberIdleRefresh.Size = new System.Drawing.Size(55, 20);
       this.numericUpDownTunerEpgGrabberIdleRefresh.TabIndex = 9;
       this.numericUpDownTunerEpgGrabberIdleRefresh.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+      this.numericUpDownTunerEpgGrabberIdleRefresh.TruncateDecimalPlaces = false;
       this.numericUpDownTunerEpgGrabberIdleRefresh.Value = new decimal(new int[] {
             240,
             0,
@@ -802,6 +647,77 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.tabPageGuideCategories.Text = "Guide Categories";
       this.tabPageGuideCategories.UseVisualStyleBackColor = true;
       // 
+      // listViewTunerEpgGrabberFormatsAndProtocols
+      // 
+      this.listViewTunerEpgGrabberFormatsAndProtocols.AllowColumnReorder = true;
+      this.listViewTunerEpgGrabberFormatsAndProtocols.AllowRowReorder = false;
+      this.listViewTunerEpgGrabberFormatsAndProtocols.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+      this.listViewTunerEpgGrabberFormatsAndProtocols.CheckBoxes = true;
+      this.listViewTunerEpgGrabberFormatsAndProtocols.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.columnHeaderTunerEpgGrabberFormatsAndProtocol});
+      this.listViewTunerEpgGrabberFormatsAndProtocols.FullRowSelect = true;
+      this.listViewTunerEpgGrabberFormatsAndProtocols.Location = new System.Drawing.Point(275, 6);
+      this.listViewTunerEpgGrabberFormatsAndProtocols.Name = "listViewTunerEpgGrabberFormatsAndProtocols";
+      this.listViewTunerEpgGrabberFormatsAndProtocols.Size = new System.Drawing.Size(180, 157);
+      this.listViewTunerEpgGrabberFormatsAndProtocols.TabIndex = 12;
+      this.listViewTunerEpgGrabberFormatsAndProtocols.UseCompatibleStateImageBehavior = false;
+      this.listViewTunerEpgGrabberFormatsAndProtocols.View = System.Windows.Forms.View.Details;
+      // 
+      // columnHeaderTunerEpgGrabberFormatsAndProtocol
+      // 
+      this.columnHeaderTunerEpgGrabberFormatsAndProtocol.Text = "Formats & Protocols";
+      this.columnHeaderTunerEpgGrabberFormatsAndProtocol.Width = 150;
+      // 
+      // dataGridViewTunerEpgGrabberTransmitters
+      // 
+      this.dataGridViewTunerEpgGrabberTransmitters.AllowUserToAddRows = false;
+      this.dataGridViewTunerEpgGrabberTransmitters.AllowUserToDeleteRows = false;
+      this.dataGridViewTunerEpgGrabberTransmitters.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+      this.dataGridViewTunerEpgGrabberTransmitters.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+      this.dataGridViewTunerEpgGrabberTransmitters.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.dataGridViewColumnTunerEpgGrabberTransmitterIsEnabled,
+            this.dataGridViewColumnTunerEpgGrabberTransmitterTuningDetail,
+            this.dataGridViewColumnTunerEpgGrabberTransmitterChannels,
+            this.dataGridViewColumnTunerEpgGrabberTransmitterLastGrabTime});
+      this.dataGridViewTunerEpgGrabberTransmitters.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
+      this.dataGridViewTunerEpgGrabberTransmitters.Location = new System.Drawing.Point(17, 183);
+      this.dataGridViewTunerEpgGrabberTransmitters.Name = "dataGridViewTunerEpgGrabberTransmitters";
+      this.dataGridViewTunerEpgGrabberTransmitters.RowHeadersVisible = false;
+      this.dataGridViewTunerEpgGrabberTransmitters.Size = new System.Drawing.Size(438, 195);
+      this.dataGridViewTunerEpgGrabberTransmitters.TabIndex = 13;
+      // 
+      // dataGridViewColumnTunerEpgGrabberTransmitterIsEnabled
+      // 
+      this.dataGridViewColumnTunerEpgGrabberTransmitterIsEnabled.HeaderText = "";
+      this.dataGridViewColumnTunerEpgGrabberTransmitterIsEnabled.Name = "dataGridViewColumnTunerEpgGrabberTransmitterIsEnabled";
+      this.dataGridViewColumnTunerEpgGrabberTransmitterIsEnabled.Width = 25;
+      // 
+      // dataGridViewColumnTunerEpgGrabberTransmitterTuningDetail
+      // 
+      this.dataGridViewColumnTunerEpgGrabberTransmitterTuningDetail.HeaderText = "Tuning Detail";
+      this.dataGridViewColumnTunerEpgGrabberTransmitterTuningDetail.Name = "dataGridViewColumnTunerEpgGrabberTransmitterTuningDetail";
+      this.dataGridViewColumnTunerEpgGrabberTransmitterTuningDetail.ReadOnly = true;
+      this.dataGridViewColumnTunerEpgGrabberTransmitterTuningDetail.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+      this.dataGridViewColumnTunerEpgGrabberTransmitterTuningDetail.Width = 140;
+      // 
+      // dataGridViewColumnTunerEpgGrabberTransmitterChannels
+      // 
+      this.dataGridViewColumnTunerEpgGrabberTransmitterChannels.HeaderText = "Channel(s)";
+      this.dataGridViewColumnTunerEpgGrabberTransmitterChannels.Name = "dataGridViewColumnTunerEpgGrabberTransmitterChannels";
+      this.dataGridViewColumnTunerEpgGrabberTransmitterChannels.ReadOnly = true;
+      this.dataGridViewColumnTunerEpgGrabberTransmitterChannels.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+      this.dataGridViewColumnTunerEpgGrabberTransmitterChannels.Width = 140;
+      // 
+      // dataGridViewColumnTunerEpgGrabberTransmitterLastGrabTime
+      // 
+      this.dataGridViewColumnTunerEpgGrabberTransmitterLastGrabTime.HeaderText = "Last Grab Time";
+      this.dataGridViewColumnTunerEpgGrabberTransmitterLastGrabTime.Name = "dataGridViewColumnTunerEpgGrabberTransmitterLastGrabTime";
+      this.dataGridViewColumnTunerEpgGrabberTransmitterLastGrabTime.ReadOnly = true;
+      this.dataGridViewColumnTunerEpgGrabberTransmitterLastGrabTime.Width = 105;
+      // 
       // Epg
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -818,12 +734,11 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.tabPageGeneral.PerformLayout();
       this.tabPageTunerGrabber.ResumeLayout(false);
       this.tabPageTunerGrabber.PerformLayout();
-      this.groupBoxTunerEpgGrabberProtocols.ResumeLayout(false);
-      this.groupBoxTunerEpgGrabberProtocols.PerformLayout();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTunerEpgGrabberTimeShiftingRecordingTimeLimit)).EndInit();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTunerEpgGrabberIdleTimeLimit)).EndInit();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTunerEpgGrabberIdleRefresh)).EndInit();
       this.tabPageGuideCategories.ResumeLayout(false);
+      ((System.ComponentModel.ISupportInitialize)(this.dataGridViewTunerEpgGrabberTransmitters)).EndInit();
       this.ResumeLayout(false);
 
     }
@@ -869,22 +784,16 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     private MPCheckBox checkBoxTunerEpgGrabberTimeShiftingRecordingEnable;
     private MPCheckBox checkBoxTunerEpgGrabberIdleEnable;
     private MPLabel labelTunerEpgGrabberIdleRefreshUnit;
-    private MPCheckBox checkBoxTunerEpgGrabberProtocolScte;
-    private MPCheckBox checkBoxTunerEpgGrabberProtocolAtsc;
-    private MPCheckBox checkBoxTunerEpgGrabberProtocolMhw2;
-    private MPCheckBox checkBoxTunerEpgGrabberProtocolMhw1;
-    private MPCheckBox checkBoxTunerEpgGrabberProtocolDvb;
-    private MPCheckBox checkBoxTunerEpgGrabberProtocolFreesat;
-    private MPCheckBox checkBoxTunerEpgGrabberProtocolOpenTv;
     private MPLabel labelTunerEpgGrabberIdleRefresh;
     private MPNumericUpDown numericUpDownTunerEpgGrabberTimeShiftingRecordingTimeLimit;
     private MPLabel labelTunerEpgGrabberTimeShiftingRecordingTimeLimitUnit;
     private MPLabel labelTunerEpgGrabberTimeShiftingRecordingTimeLimit;
-    private MPCheckBox checkBoxTunerEpgGrabberProtocolDishNetwork;
-    private MPCheckBox checkBoxTunerEpgGrabberProtocolBellTv;
-    private MPCheckBox checkBoxTunerEpgGrabberProtocolMultiChoice;
-    private MPCheckBox checkBoxTunerEpgGrabberProtocolViasatSweden;
-    private MPGroupBox groupBoxTunerEpgGrabberProtocols;
-    private MPCheckBox checkBoxTunerEpgGrabberProtocolPremiere;
+    private MPListView listViewTunerEpgGrabberFormatsAndProtocols;
+    private System.Windows.Forms.ColumnHeader columnHeaderTunerEpgGrabberFormatsAndProtocol;
+    private MPDataGridView dataGridViewTunerEpgGrabberTransmitters;
+    private MPDataGridViewCheckBoxColumn dataGridViewColumnTunerEpgGrabberTransmitterIsEnabled;
+    private MPDataGridViewTextBoxColumn dataGridViewColumnTunerEpgGrabberTransmitterTuningDetail;
+    private MPDataGridViewTextBoxColumn dataGridViewColumnTunerEpgGrabberTransmitterChannels;
+    private MPDataGridViewTextBoxColumn dataGridViewColumnTunerEpgGrabberTransmitterLastGrabTime;
   }
 }

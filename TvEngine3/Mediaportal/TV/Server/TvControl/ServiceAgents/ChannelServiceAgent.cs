@@ -134,6 +134,11 @@ namespace Mediaportal.TV.Server.TVControl.ServiceAgents
       return _channel.GetStreamTuningDetails(url, includeRelations);
     }
 
+    public void UpdateTuningDetailEpgInfo(TuningDetail transmitterTuningDetail)
+    {
+      _channel.UpdateTuningDetailEpgInfo(transmitterTuningDetail);
+    }
+
     public TuningDetail SaveTuningDetail(TuningDetail tuningDetail)
     {
       tuningDetail.UnloadAllUnchangedRelationsForEntity();
