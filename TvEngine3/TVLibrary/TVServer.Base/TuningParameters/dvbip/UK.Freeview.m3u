@@ -1,0 +1,29 @@
+﻿#EXTM3U
+#EXTINF:0,ABN TV
+http://stream.arqiva.tv/abntv
+#EXTINF:0,CCTV News
+http://stream.arqiva.tv/cctv-news
+#EXTINF:0,CCTV-4
+http://stream.arqiva.tv/cctv-4
+#EXTINF:0,CCTV-9 Documentary
+http://stream.arqiva.tv/cctv-9
+#EXTINF:0,Gay Network
+http://stream.arqiva.tv/gaynet
+#EXTINF:0,QVC Beauty
+http://stream.arqiva.tv/qvc-beau
+#EXTINF:0,QVC Extra
+http://stream.arqiva.tv/qvc-extra
+#EXTINF:0,QVC Plus
+http://stream.arqiva.tv/qvc-plus
+#EXTINF:0,QVC Style
+http://stream.arqiva.tv/qvc-style
+#EXTINF:0,Racing UK
+http://stream.arqiva.tv/racinguk
+#EXTINF:0,RT Documentary
+http://stream.arqiva.tv/rt-doc
+#EXTINF:0,Sonlife
+http://stream.arqiva.tv/sbntvuk
+#EXTINF:0,Showcase
+http://stream.arqiva.tv/showcase
+#EXTINF:0,Vintage TV
+http://stream.arqiva.tv/vintagetv

@@ -364,9 +364,18 @@ namespace TvLibrary.Implementations
           knownDevices.Add(devicePath);
           if (!previouslyKnownDevices.Contains(devicePath))
           {
-            Log.Log.Info("Detected new TechniSat *Star 2 tuner root device");
-            TvCardDvbSS2 tuner = new TvCardDvbSS2(connectedDevice);
-            _deviceEventListener.OnDeviceAdded(tuner);
+            uint numberOfTuners;
+            List<DeviceInfo> deviceInfos;
+            TvCardDvbB2C2.GetTunerInformation(out numberOfTuners, out deviceInfos);
+            if (numberOfTuners > 0)
+            {
+              foreach (DeviceInfo singleDevice in deviceInfos)
+              {
+                TvCardDvbB2C2 tuner = new TvCardDvbB2C2(connectedDevice, singleDevice);
+                _deviceEventListener.OnDeviceAdded(tuner);
+              }
+              Log.Log.Info("Detected new TechniSat *Star 2 tuner root device");
+            }
           }
         }
         else if (name.Equals("Elecard NWSource-Plus"))
