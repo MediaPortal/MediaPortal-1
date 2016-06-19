@@ -96,6 +96,7 @@
     <Compile Include="FinishedWorkEventArgs.cs" />
     <Compile Include="HttpProtocolSettings.cs" />
     <Compile Include="Url\CacheFolderEditor.cs" />
+    <Compile Include="Url\CrashReportMode.cs" />
     <Compile Include="Url\FilterProgramNumber.cs" />
     <Compile Include="Url\FilterProgramNumberCollection.cs" />
     <Compile Include="Url\FilterProgramNumberControl.cs">

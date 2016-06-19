@@ -317,6 +317,9 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter.Url
         {
             base.Parse(parameters);
 
+            int clientPortMin = this.ClientPortMin;
+            int clientPortMax = this.ClientPortMax;
+
             foreach (var param in parameters)
             {
                 if (String.CompareOrdinal(param.Name, RtspUrl.ParameterRtspOpenConnectionTimeout) == 0)
@@ -356,13 +359,32 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter.Url
 
                 if (String.CompareOrdinal(param.Name, RtspUrl.ParameterRtspClientPortMin) == 0)
                 {
-                    this.ClientPortMin = int.Parse(param.Value);
+                    clientPortMin = int.Parse(param.Value);
                 }
 
                 if (String.CompareOrdinal(param.Name, RtspUrl.ParameterRtspClientPortMax) == 0)
                 {
-                    this.ClientPortMax = int.Parse(param.Value);
+                    clientPortMax = int.Parse(param.Value);
                 }
+            }
+
+            // this.ClientPortMin must be always lower than this.ClientPortMax
+            // we must safely set values, in other case ArgumentOutOfRangeException will be thrown
+
+            if (clientPortMax >= this.ClientPortMax)
+            {
+                this.ClientPortMax = clientPortMax;
+                this.ClientPortMin = clientPortMin;
+            }
+            else if (clientPortMin <= this.ClientPortMin)
+            {
+                this.ClientPortMin = clientPortMin;
+                this.ClientPortMax = clientPortMax;
+            }
+            else
+            {
+                this.ClientPortMax = clientPortMax;
+                this.ClientPortMin = clientPortMin;
             }
         }
 

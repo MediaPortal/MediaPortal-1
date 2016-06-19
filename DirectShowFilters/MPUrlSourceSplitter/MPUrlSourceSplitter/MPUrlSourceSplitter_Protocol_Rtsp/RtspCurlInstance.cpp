@@ -573,6 +573,20 @@ HRESULT CRtspCurlInstance::Initialize(CDownloadRequest *downloadRequest)
             }
           }
 
+          if (control == NULL)
+          {
+            // no media control, try session control
+            for (unsigned int i = 0; ((control == NULL) && (i < this->rtspDownloadResponse->GetSessionDescription()->GetAttributes()->Count())); i++)
+            {
+              CAttribute *attribute = this->rtspDownloadResponse->GetSessionDescription()->GetAttributes()->GetItem(i);
+
+              if (attribute->IsInstanceTag(TAG_ATTRIBUTE_INSTANCE_CONTROL))
+              {
+                control = dynamic_cast<CControlAttribute *>(attribute);
+              }
+            }
+          }
+
           wchar_t *streamUrl = NULL;
           if (control == NULL)
           {
@@ -831,6 +845,20 @@ HRESULT CRtspCurlInstance::Initialize(CDownloadRequest *downloadRequest)
             if (attribute->IsInstanceTag(TAG_ATTRIBUTE_INSTANCE_CONTROL))
             {
               control = dynamic_cast<CControlAttribute *>(attribute);
+            }
+          }
+
+          if (control == NULL)
+          {
+            // no media control, try session control
+            for (unsigned int i = 0; ((control == NULL) && (i < this->rtspDownloadResponse->GetSessionDescription()->GetAttributes()->Count())); i++)
+            {
+              CAttribute *attribute = this->rtspDownloadResponse->GetSessionDescription()->GetAttributes()->GetItem(i);
+
+              if (attribute->IsInstanceTag(TAG_ATTRIBUTE_INSTANCE_CONTROL))
+              {
+                control = dynamic_cast<CControlAttribute *>(attribute);
+              }
             }
           }
           

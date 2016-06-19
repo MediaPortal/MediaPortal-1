@@ -15,12 +15,16 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter.Url
         #region Private fields
 
         private Uri uri;
-        private LogVerbosity verbosity = SimpleUrl.DefaultVerbosity;
-        private String networkInterface = NetworkInterfaceConverter.NetworkInterfaceSystemDefault;
-        private String cacheFolder = String.Empty;
-        private int maximumLogSize = SimpleUrl.DefaultLogMaximumSize;
+        private LogVerbosity verbosity;
+        private String networkInterface;
+        private String cacheFolder;
+        private int maximumLogSize;
 
-        private Mpeg2TsParser mpeg2TsParser = new Mpeg2TsParser();
+        private Mpeg2TsParser mpeg2TsParser;
+
+        private int crashMaxDumpFiles;
+        private int crashMaxRetainDays;
+        private String crashUserName;
 
         #endregion
 
@@ -48,6 +52,26 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter.Url
         protected SimpleUrl(Uri uri)
         {
             this.Uri = uri;
+
+            this.Verbosity = SimpleUrl.DefaultVerbosity;
+            this.NetworkInterface = NetworkInterfaceConverter.NetworkInterfaceSystemDefault;
+            this.CacheFolder = String.Empty;
+            this.MaximumLogSize = SimpleUrl.DefaultLogMaximumSize;
+
+            this.mpeg2TsParser = new Mpeg2TsParser();
+
+            this.DumpOutputPinData = SimpleUrl.DefaultDumpOutputPinData;
+            this.DumpParserInputData = SimpleUrl.DefaultDumpParserInputData;
+            this.DumpParserOutputData = SimpleUrl.DefaultDumpParserOutputData;
+            this.DumpProtocolInputData = SimpleUrl.DefaultDumpProtocolInputData;
+            this.DumpProtocolOutputData = SimpleUrl.DefaultDumpProtocolOutputData;
+
+            this.CrashReport = SimpleUrl.DefaultCrashReport;
+            this.CrashSendReport = SimpleUrl.DefaultCrashSendReport;
+            this.CrashMaxDumpFiles = SimpleUrl.DefaultCrashMaxDumpFiles;
+            this.CrashMaxRetainDays = SimpleUrl.DefaultCrashMaxRetainDays;
+            this.CrashReportMode = SimpleUrl.DefaultCrashReportMode;
+            this.CrashUserName = SimpleUrl.DefaultCrashUserName;
         }
 
         #endregion
@@ -223,6 +247,73 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter.Url
         [Category("Debug options"), Description("Specifies if output pin(s) have to dump data."), DefaultValue(SimpleUrl.DefaultDumpOutputPinData)]
         public Boolean DumpOutputPinData { get; set; }
 
+        /// <summary>
+        /// Specifies if crash reporting is enabled.
+        /// </summary>
+        [Category("Crash reporting"), Description("Specifies if crash reporting is enabled. It allows handling dump crash files (creating and retaining by maximum count and age)."), DefaultValue(SimpleUrl.DefaultCrashReport)]
+        public Boolean CrashReport { get; set; }
+
+        /// <summary>
+        /// Specifies if sending crash report is enabled.
+        /// </summary>
+        [Category("Crash reporting"), Description("Specifies if sending crash report is enabled."), DefaultValue(SimpleUrl.DefaultCrashSendReport)]
+        public Boolean CrashSendReport { get; set; }
+
+        /// <summary>
+        /// Gets or sets the maximum count of dump files.
+        /// </summary>
+        [Category("Crash reporting"), Description("The maximum count of dump files."), DefaultValue(SimpleUrl.DefaultCrashMaxDumpFiles)]
+        public int CrashMaxDumpFiles
+        {
+            get { return this.crashMaxDumpFiles; }
+            set
+            {
+                if (value < 0)
+                {
+                    throw new ArgumentOutOfRangeException("CrashMaxDumpFiles", value, "Value cannot be less than zero.");
+                }
+
+                this.crashMaxDumpFiles = value;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the maximum retain days for dump files.
+        /// </summary>
+        [Category("Crash reporting"), Description("The maximum retain days for dump files."), DefaultValue(SimpleUrl.DefaultCrashMaxRetainDays)]
+        public int CrashMaxRetainDays
+        {
+            get { return this.crashMaxRetainDays; }
+            set
+            {
+                if (value < 0)
+                {
+                    throw new ArgumentOutOfRangeException("CrashMaxRetainDays", value, "Value cannot be less than zero.");
+                }
+
+                this.crashMaxRetainDays = value;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the crash report mode.
+        /// </summary>
+        [Category("Crash reporting"), Description("The crash report mode. Basic mode dumps minimum  information, full mode dumps all possible information. Full mode produces very big dump file, it is not recommended to use it."), DefaultValue(SimpleUrl.DefaultCrashReportMode)]
+        public CrashReportMode CrashReportMode { get; set; }
+
+        /// <summary>
+        /// Gets or sets the crash user name.
+        /// </summary>
+        [Category("Crash reporting"), Description("The user name on MediaPortal forum to contact for dump files."), DefaultValue(SimpleUrl.DefaultCrashUserName)]
+        public String CrashUserName
+        {
+            get { return this.crashUserName; }
+            set
+            {
+                this.crashUserName = String.IsNullOrWhiteSpace(value) ? "" : value;
+            }
+        }
+
         #endregion
 
         #region Methods
@@ -273,6 +364,30 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter.Url
             if (this.DumpOutputPinData != SimpleUrl.DefaultDumpOutputPinData)
             {
                 parameters.Add(new Parameter(SimpleUrl.ParameterDumpOutputPinData, this.DumpOutputPinData ? SimpleUrl.DefaultTrue : SimpleUrl.DefaultFalse));
+            }
+            if (this.CrashReport != SimpleUrl.DefaultCrashReport)
+            {
+                parameters.Add(new Parameter(SimpleUrl.ParameterCrashReport, this.CrashReport ? SimpleUrl.DefaultTrue : SimpleUrl.DefaultFalse));
+            }
+            if (this.CrashSendReport != SimpleUrl.DefaultCrashSendReport)
+            {
+                parameters.Add(new Parameter(SimpleUrl.ParameterCrashSendReport, this.CrashSendReport ? SimpleUrl.DefaultTrue : SimpleUrl.DefaultFalse));
+            }
+            if (this.CrashMaxDumpFiles != SimpleUrl.DefaultCrashMaxDumpFiles)
+            {
+                parameters.Add(new Parameter(SimpleUrl.ParameterCrashMaxDumpFiles, this.CrashMaxDumpFiles.ToString()));
+            }
+            if (this.CrashMaxRetainDays != SimpleUrl.DefaultCrashMaxRetainDays)
+            {
+                parameters.Add(new Parameter(SimpleUrl.ParameterCrashMaxRetainDays, this.CrashMaxRetainDays.ToString()));
+            }
+            if (this.CrashReportMode != SimpleUrl.DefaultCrashReportMode)
+            {
+                parameters.Add(new Parameter(SimpleUrl.ParameterCrashReportMode, ((int)this.CrashReportMode).ToString()));
+            }
+            if (this.CrashUserName != SimpleUrl.DefaultCrashUserName)
+            {
+                parameters.Add(new Parameter(SimpleUrl.ParameterCrashUserName, this.CrashUserName));
             }
 
             // for MediaPortal IPTV Source Filter is live stream always true (overriden by filter itself)
@@ -341,6 +456,31 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter.Url
                 if (String.CompareOrdinal(param.Name, SimpleUrl.ParameterDumpOutputPinData) == 0)
                 {
                     this.DumpOutputPinData = (String.CompareOrdinal(param.Value, SimpleUrl.DefaultTrue) == 0);
+                }
+
+                if (String.CompareOrdinal(param.Name, SimpleUrl.ParameterCrashReport) == 0)
+                {
+                    this.CrashReport = (String.CompareOrdinal(param.Value, SimpleUrl.DefaultTrue) == 0);
+                }
+                if (String.CompareOrdinal(param.Name, SimpleUrl.ParameterCrashSendReport) == 0)
+                {
+                    this.CrashSendReport = (String.CompareOrdinal(param.Value, SimpleUrl.DefaultTrue) == 0);
+                }
+                if (String.CompareOrdinal(param.Name, SimpleUrl.ParameterCrashMaxDumpFiles) == 0)
+                {
+                    this.CrashMaxDumpFiles = int.Parse(param.Value);
+                }
+                if (String.CompareOrdinal(param.Name, SimpleUrl.ParameterCrashMaxRetainDays) == 0)
+                {
+                    this.CrashMaxRetainDays = int.Parse(param.Value);
+                }
+                if (String.CompareOrdinal(param.Name, SimpleUrl.ParameterCrashReportMode) == 0)
+                {
+                    this.CrashReportMode = (CrashReportMode)int.Parse(param.Value);
+                }
+                if (String.CompareOrdinal(param.Name, SimpleUrl.ParameterCrashUserName) == 0)
+                {
+                    this.CrashUserName = param.Value;
                 }
             }
 
@@ -437,6 +577,36 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter.Url
         /// </summary>
         protected static readonly String ParameterDumpOutputPinData = "DumpOutputPinData";
 
+        /// <summary>
+        /// Specifies parameter name for crash report.
+        /// </summary>
+        protected static readonly String ParameterCrashReport = "CrashReport";
+
+        /// <summary>
+        /// Specifies parameter name for sending crash report .
+        /// </summary>
+        protected static readonly String ParameterCrashSendReport = "CrashReportSendCrash";
+
+        /// <summary>
+        /// Specifies parameter name for crash report maximum count of dump file.
+        /// </summary>
+        protected static readonly String ParameterCrashMaxDumpFiles = "CrashReportMaxDumpFiles";
+
+        /// <summary>
+        /// Specifies parameter name for crash report maximum retain days.
+        /// </summary>
+        protected static readonly String ParameterCrashMaxRetainDays = "CrashReportMaxRetainDays";
+
+        /// <summary>
+        /// Specifies parameter name for crash report mode.
+        /// </summary>
+        protected static readonly String ParameterCrashReportMode = "CrashReportMode";
+
+        /// <summary>
+        /// Specifies parameter name for crash report user name.
+        /// </summary>
+        protected static readonly String ParameterCrashUserName = "CrashReportUserName";
+
         // default values for some parameters
 
         /// <summary>
@@ -505,6 +675,36 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter.Url
         /// Default value for output pin data parameter.
         /// </summary>
         public const Boolean DefaultDumpOutputPinData = false;
+
+        /// <summary>
+        /// Default value for crash report.
+        /// </summary>
+        public const Boolean DefaultCrashReport = true;
+
+        /// <summary>
+        /// Default value for sending crash report.
+        /// </summary>
+        public const Boolean DefaultCrashSendReport = true;
+
+        /// <summary>
+        /// Default value for maximum count of dump files.
+        /// </summary>
+        public const int DefaultCrashMaxDumpFiles = 3;
+
+        /// <summary>
+        /// Default for maximum retain days for dump files.
+        /// </summary>
+        public const int DefaultCrashMaxRetainDays = 14;
+
+        /// <summary>
+        /// Default value for crash report mode.
+        /// </summary>
+        public const CrashReportMode DefaultCrashReportMode = CrashReportMode.Basic;
+
+        /// <summary>
+        /// Default value for user name on MediaPortal forum to contact for dump files.
+        /// </summary>
+        public const String DefaultCrashUserName = "";
 
         #endregion
     }

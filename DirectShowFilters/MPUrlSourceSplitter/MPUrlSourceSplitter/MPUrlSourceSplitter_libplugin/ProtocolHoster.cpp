@@ -336,6 +336,9 @@ HRESULT CProtocolHoster::ProcessStreamPackage(CStreamPackage *streamPackage)
     }
   }
 
+  ASSERT((streamPackage->GetState() == CStreamPackage::Completed));
+  ASSERT(((streamPackage->GetError() == S_OK) && (streamPackage->GetResponse() != NULL)) || ((streamPackage->GetError() != S_OK)));
+
   return result;
 }
 
@@ -653,7 +656,6 @@ unsigned int WINAPI CProtocolHoster::ReceiveDataWorker(LPVOID lpParam)
 
       for (unsigned int i = 0; i < caller->streamPackages->Count(); i++)
       {
-        HRESULT res = S_OK;
         CStreamPackage *package = caller->streamPackages->GetItem(i);
 
         package->SetCompleted((caller->pauseSeekStopMode == PAUSE_SEEK_STOP_MODE_DISABLE_READING) ? E_PAUSE_SEEK_STOP_MODE_DISABLE_READING : result);
@@ -778,8 +780,6 @@ unsigned int WINAPI CProtocolHoster::ReceiveDataWorker(LPVOID lpParam)
 
         // don't wait too long
         LOCK_MUTEX(caller->mutex, 20)
-
-        CStreamPackage *package = NULL;
 
         if ((caller->pauseSeekStopMode != PAUSE_SEEK_STOP_MODE_DISABLE_READING) && (caller->streamPackages->Count() != 0))
         {

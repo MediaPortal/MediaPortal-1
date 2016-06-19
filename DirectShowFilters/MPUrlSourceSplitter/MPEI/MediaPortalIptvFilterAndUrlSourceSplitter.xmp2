@@ -164,6 +164,27 @@
               <ZipFileName>Installer{CopyFile}\{a2fba008-360c-4d1d-921d-d1f120694a4a}-MPUrlSourceSplitter_Protocol_M3U8_Decryption_None.dll</ZipFileName>
               <DestinationFilename>%TvServerBase%\MPUrlSourceSplitter\MPUrlSourceSplitter_Protocol_M3U8_Decryption_None.dll</DestinationFilename>
             </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
+              <Param1 />
+              <UpdateOption>AlwaysOverwrite</UpdateOption>
+              <LocalFileName>..\..\bin_Win32\crashrpt.dll</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{2cb839bf-0288-4658-875f-8ec29fbe40fb}-crashrpt.dll</ZipFileName>
+              <DestinationFilename>%TvServerBase%\MPUrlSourceSplitter\crashrpt.dll</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
+              <Param1 />
+              <UpdateOption>AlwaysOverwrite</UpdateOption>
+              <LocalFileName>..\..\bin_Win32\dbghelp.dll</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{5e333274-cbdc-4c41-b24a-a1c62bbdd2c1}-dbghelp.dll</ZipFileName>
+              <DestinationFilename>%TvServerBase%\MPUrlSourceSplitter\dbghelp.dll</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
+              <Param1 />
+              <UpdateOption>AlwaysOverwrite</UpdateOption>
+              <LocalFileName>..\..\bin_Win32\sendrpt.exe</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{2d34583c-5373-4cbc-becb-3e12c9ffe037}-sendrpt.exe</ZipFileName>
+              <DestinationFilename>%TvServerBase%\MPUrlSourceSplitter\sendrpt.exe</DestinationFilename>
+            </FileItem>
           </Items>
         </Files>
       </GroupItem>
@@ -320,6 +341,27 @@
               <LocalFileName>..\..\bin_Win32\MPUrlSourceSplitter_Protocol_M3U8_Decryption_None.dll</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{cdf881f9-6105-494f-8abe-f5e95e9b8418}-MPUrlSourceSplitter_Protocol_M3U8_Decryption_None.dll</ZipFileName>
               <DestinationFilename>%Base%\MPUrlSourceSplitter\MPUrlSourceSplitter_Protocol_M3U8_Decryption_None.dll</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
+              <Param1 />
+              <UpdateOption>AlwaysOverwrite</UpdateOption>
+              <LocalFileName>..\..\bin_Win32\crashrpt.dll</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{5f397a2d-3fdd-439c-9404-528c834fb9c8}-crashrpt.dll</ZipFileName>
+              <DestinationFilename>%Base%\MPUrlSourceSplitter\crashrpt.dll</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
+              <Param1 />
+              <UpdateOption>AlwaysOverwrite</UpdateOption>
+              <LocalFileName>..\..\bin_Win32\dbghelp.dll</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{b4ecd985-d1db-44ad-bbbf-c1ff15a2adde}-dbghelp.dll</ZipFileName>
+              <DestinationFilename>%Base%\MPUrlSourceSplitter\dbghelp.dll</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
+              <Param1 />
+              <UpdateOption>AlwaysOverwrite</UpdateOption>
+              <LocalFileName>..\..\bin_Win32\sendrpt.exe</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{2190190e-7419-466a-8c2d-af6d4f817e26}-sendrpt.exe</ZipFileName>
+              <DestinationFilename>%Base%\MPUrlSourceSplitter\sendrpt.exe</DestinationFilename>
             </FileItem>
           </Items>
         </Files>
@@ -1837,8 +1879,8 @@ public class Script
     <Version>
       <Major>2</Major>
       <Minor>2</Minor>
-      <Build>9</Build>
-      <Revision>5882</Revision>
+      <Build>15</Build>
+      <Revision>6002</Revision>
     </Version>
     <ExtensionDescription>The MediaPortal IPTV filter and url source splitter is a directshow source filter that enables direct playback for many protocols and filetypes used in online video sources in the internet.
 
@@ -1850,7 +1892,11 @@ Supported protocols:
 - Adobe HTTP Dynamic Streaming (HDS, F4M manifest)
 - Microsoft Smooth Streaming
 - Apple HTTP live streaming (M3U8 playlists)</ExtensionDescription>
-    <VersionDescription>- fixed crash on FFmpeg bad pointer to log method</VersionDescription>
+    <VersionDescription>- fixed parsing minimum and maximum client port
+- fixed freeze on crash reporting
+- changed parsing SDP (RTSP protocol) to allow origin without address type
+- changed searching for control attribute in RTSP protocol
+- handling and sending crash report only for filter</VersionDescription>
     <DevelopmentStatus>Stable</DevelopmentStatus>
     <OnlineLocation>http://www.team-mediaportal.com/index.php?option=com_mtree&amp;task=att_download&amp;link_id=327&amp;cf_id=24</OnlineLocation>
     <ReleaseDate>2014-11-05T20:21:47</ReleaseDate>
@@ -2044,11 +2090,32 @@ Supported protocols:
         <ZipFileName>Installer{CopyFile}\{a2fba008-360c-4d1d-921d-d1f120694a4a}-MPUrlSourceSplitter_Protocol_M3U8_Decryption_None.dll</ZipFileName>
         <DestinationFilename>%TvServerBase%\MPUrlSourceSplitter\MPUrlSourceSplitter_Protocol_M3U8_Decryption_None.dll</DestinationFilename>
       </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
+        <Param1 />
+        <UpdateOption>AlwaysOverwrite</UpdateOption>
+        <LocalFileName>..\..\bin_Win32\crashrpt.dll</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{2cb839bf-0288-4658-875f-8ec29fbe40fb}-crashrpt.dll</ZipFileName>
+        <DestinationFilename>%TvServerBase%\MPUrlSourceSplitter\crashrpt.dll</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
+        <Param1 />
+        <UpdateOption>AlwaysOverwrite</UpdateOption>
+        <LocalFileName>..\..\bin_Win32\dbghelp.dll</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{5e333274-cbdc-4c41-b24a-a1c62bbdd2c1}-dbghelp.dll</ZipFileName>
+        <DestinationFilename>%TvServerBase%\MPUrlSourceSplitter\dbghelp.dll</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
+        <Param1 />
+        <UpdateOption>AlwaysOverwrite</UpdateOption>
+        <LocalFileName>..\..\bin_Win32\sendrpt.exe</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{2d34583c-5373-4cbc-becb-3e12c9ffe037}-sendrpt.exe</ZipFileName>
+        <DestinationFilename>%TvServerBase%\MPUrlSourceSplitter\sendrpt.exe</DestinationFilename>
+      </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="true" Modified="true">
         <Param1 />
         <UpdateOption>OverwriteIfOlder</UpdateOption>
         <LocalFileName>MPUrlSourceSplitter.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{42db62e1-51dc-4025-ba23-7e1b044c3d9d}-MPUrlSourceSplitter.png</ZipFileName>
+        <ZipFileName>Installer{CopyFile}\{e66683f3-390e-4b5b-af31-c55bb7c525f6}-MPUrlSourceSplitter.png</ZipFileName>
         <DestinationFilename />
       </FileItem>
     </Items>

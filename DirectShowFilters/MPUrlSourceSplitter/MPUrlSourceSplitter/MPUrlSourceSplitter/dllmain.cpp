@@ -38,6 +38,10 @@
 #include "FFmpegLogger.h"
 #include "CrashReport.h"
 
+#include <dbghelp.h>
+#include <Shlwapi.h>
+#include <Psapi.h>
+
 #include <curl/curl.h>
 
 #include "ErrorCodes.h"
@@ -53,6 +57,11 @@ extern "C++" CFFmpegLogger *ffmpegLogger = NULL;
 extern "C++" CStaticLogger *staticLogger = NULL;
 
 CCrashReport *crashReport = NULL;
+
+// holds reference to exception handler returned in registration
+PVOID exceptionHandler = NULL;
+// exception handler for any unhandled exception in process
+static LONG WINAPI ExceptionHandler(struct _EXCEPTION_POINTERS *exceptionInfo);
 
 // Filter setup data
 const AMOVIESETUP_MEDIATYPE sudIptvMediaTypes[] =
@@ -169,6 +178,14 @@ BOOL APIENTRY DllMain(HMODULE hModule,
       // initialize crash report with default settings
       // with each passed URL can be crash report turned off or can be changed settings
 
+#ifndef _DEBUG
+      if (exceptionHandler == NULL)
+      {
+        // register exception handler
+        exceptionHandler = AddVectoredExceptionHandler(1, ExceptionHandler);
+      }
+#endif
+
       if (SUCCEEDED(result))
       {
         staticLogger = new CStaticLogger(&result);
@@ -227,9 +244,179 @@ BOOL APIENTRY DllMain(HMODULE hModule,
       FREE_MEM_CLASS(crashReport);
 
 #pragma warning(pop)
+
+#ifndef _DEBUG
+      if (exceptionHandler != NULL)
+      {
+        RemoveVectoredExceptionHandler(exceptionHandler);
+        exceptionHandler = NULL;
+      }
+#endif
     }
     break;
   }
 
   return FAILED(result) ? FALSE : DllEntryPoint((HINSTANCE)(hModule), ul_reason_for_call, lpReserved);
+}
+
+HMODULE GetModuleHandleByAddress(LPVOID address)
+{
+  HMODULE *moduleArray = NULL;
+
+  DWORD moduleArraySize = 0;
+  DWORD moduleArraySizeNeeded = 0;
+
+  if (EnumProcessModules(GetCurrentProcess(), moduleArray, moduleArraySize, &moduleArraySizeNeeded) == 0)
+  {
+    return NULL;
+  }
+
+  moduleArray = ALLOC_MEM_SET(moduleArray, HMODULE, (moduleArraySizeNeeded / sizeof(HMODULE)), 0);
+  if (moduleArray != NULL)
+  {
+    moduleArraySize = moduleArraySizeNeeded;
+
+    if (EnumProcessModules(GetCurrentProcess(), moduleArray, moduleArraySize, &moduleArraySizeNeeded) == 0)
+    {
+      return NULL;
+    }
+  }
+
+  HMODULE result = NULL;
+  unsigned int count = moduleArraySize / sizeof(HMODULE);
+  for (unsigned int i = 0; i < count; i++)
+  {
+    MODULEINFO moduleInfo;
+
+    if (GetModuleInformation(GetCurrentProcess(), moduleArray[i], &moduleInfo, sizeof(MODULEINFO)) == 0)
+    {
+      continue;
+    }
+
+    if (address < moduleInfo.lpBaseOfDll)
+    {
+      continue;
+    }
+
+    if ((ULONG_PTR)address >= ((ULONG_PTR)moduleInfo.lpBaseOfDll + moduleInfo.SizeOfImage))
+    {
+      continue;
+    }
+
+    result = (HMODULE)moduleInfo.lpBaseOfDll;
+    break;
+  }
+
+  FREE_MEM(moduleArray);
+
+  return result;
+}
+
+LONG WINAPI ExceptionHandler(struct _EXCEPTION_POINTERS *exceptionInfo)
+{
+  // we received some unhandled exception
+  // flush logs and continue with processing exception
+
+  // by ntstatus.h:
+
+  //
+  //  Values are 32 bit values laid out as follows:
+  //
+  //   3 3 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1 1 1 1 1 1
+  //   1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
+  //  +---+-+-+-----------------------+-------------------------------+
+  //  |Sev|C|R|     Facility          |               Code            |
+  //  +---+-+-+-----------------------+-------------------------------+
+  //
+  //  where
+  //
+  //      Sev - is the severity code
+  //
+  //          00 - Success
+  //          01 - Informational
+  //          10 - Warning
+  //          11 - Error
+  //
+  //      C - is the Customer code flag (0 for Microsoft errors, 1 for custom errors)
+  //
+  //      R - is a reserved bit
+  //
+  //      Facility - is the facility code
+  //
+  //      Code - is the facility's status code
+  //
+  // we care only about errors
+  if ((exceptionInfo != NULL) &&
+    (exceptionInfo->ExceptionRecord != NULL) &&
+    ((exceptionInfo->ExceptionRecord->ExceptionCode & 0xF0000000) == 0xC0000000) &&
+    (staticLogger != NULL))
+  {
+    HRESULT res = S_OK;
+    HANDLE currentProcess = GetCurrentProcess();
+    HANDLE currentThread = GetCurrentThread();
+    bool handleCrash = false;
+
+    if (SymInitialize(currentProcess, NULL, FALSE))
+    {
+      // initialize stack frame
+      STACKFRAME64 stackFrame;
+      memset(&stackFrame, 0, sizeof(STACKFRAME));
+
+#if defined(_WIN64)
+      stackFrame.AddrPC.Offset = exceptionInfo->ContextRecord->Rip;
+      stackFrame.AddrStack.Offset = exceptionInfo->ContextRecord->Rsp;
+      stackFrame.AddrFrame.Offset = exceptionInfo->ContextRecord->Rbp;
+#elif defined(WIN32)
+      stackFrame.AddrPC.Offset = exceptionInfo->ContextRecord->Eip;
+      stackFrame.AddrStack.Offset = exceptionInfo->ContextRecord->Esp;
+      stackFrame.AddrFrame.Offset = exceptionInfo->ContextRecord->Ebp;
+#endif
+      stackFrame.AddrPC.Mode = AddrModeFlat;
+      stackFrame.AddrStack.Mode = AddrModeFlat;
+      stackFrame.AddrFrame.Mode = AddrModeFlat;
+
+      ALLOC_MEM_DEFINE_SET(context, CONTEXT, 1, 0);
+      CHECK_POINTER_HRESULT(res, context, res, E_OUTOFMEMORY);
+
+      if (SUCCEEDED(res))
+      {
+        memcpy(context, exceptionInfo->ContextRecord, sizeof(CONTEXT));
+
+#if defined(_WIN64)
+        while ((!handleCrash) && StackWalk64(IMAGE_FILE_MACHINE_AMD64, currentProcess, currentThread, &stackFrame, context, NULL, SymFunctionTableAccess64, SymGetModuleBase64, 0))
+#elif defined(WIN32)
+        while ((!handleCrash) && StackWalk64(IMAGE_FILE_MACHINE_I386, currentProcess, currentThread, &stackFrame, context, NULL, SymFunctionTableAccess64, SymGetModuleBase64, 0))
+#endif
+        {
+          HMODULE exceptionModule = GetModuleHandleByAddress((LPVOID)stackFrame.AddrPC.Offset);
+
+          CHECK_POINTER_HRESULT(res, exceptionModule, res, E_FAIL);
+          ALLOC_MEM_DEFINE_SET(exceptionModuleFileName, wchar_t, MAX_PATH, 0);
+          CHECK_POINTER_HRESULT(res, exceptionModuleFileName, res, E_OUTOFMEMORY);
+          CHECK_CONDITION_HRESULT(res, GetModuleFileName(exceptionModule, exceptionModuleFileName, MAX_PATH) != 0, res, E_FAIL);
+
+          if (SUCCEEDED(res))
+          {
+            // we have exception module file name
+            handleCrash = staticLogger->IsRegisteredModule(exceptionModuleFileName);
+          }
+
+          FREE_MEM(exceptionModuleFileName);
+        }
+      }
+
+      FREE_MEM(context);
+    }
+
+    SymCleanup(currentProcess);
+
+    if (handleCrash && (crashReport != NULL))
+    {
+      // exception occured in one of our registered modules
+      // dump crash file
+      crashReport->HandleException(exceptionInfo);
+    }
+  }
+
+  return EXCEPTION_CONTINUE_SEARCH;
 }

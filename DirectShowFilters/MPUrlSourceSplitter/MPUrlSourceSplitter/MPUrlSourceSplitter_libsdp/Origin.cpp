@@ -191,17 +191,20 @@ unsigned int COrigin::Parse(const wchar_t *buffer, unsigned int length)
 
     // address type
     index = IndexOf(this->tagContent + position, tagContentLength - position, L" ", 1);
-    result = (index > 0) ? result : 0;
-
-    if (result != 0)
+    if (index > 0)
     {
-      this->addressType = Substring(this->tagContent, position, index);
-      result = (this->addressType != NULL) ? result : 0;
-    }
+      // address type is specified
 
-    if (result != 0)
-    {
-      position += index + 1;
+      if (result != 0)
+      {
+        this->addressType = Substring(this->tagContent, position, index);
+        result = (this->addressType != NULL) ? result : 0;
+      }
+
+      if (result != 0)
+      {
+        position += index + 1;
+      }
     }
 
     // address
@@ -225,12 +228,12 @@ unsigned int COrigin::Parse(const wchar_t *buffer, unsigned int length)
         this->flags |= ORIGIN_FLAG_NETWORK_TYPE_INTERNET;
       }
 
-      if (wcscmp(this->addressType, ORIGIN_ADDRESS_TYPE_IPV4) == 0)
+      if ((this->addressType != NULL) && (wcscmp(this->addressType, ORIGIN_ADDRESS_TYPE_IPV4) == 0))
       {
         this->flags |= ORIGIN_FLAG_ADDRESS_TYPE_IPV4;
       }
 
-      if (wcscmp(this->addressType, ORIGIN_ADDRESS_TYPE_IPV6) == 0)
+      if ((this->addressType != NULL) && (wcscmp(this->addressType, ORIGIN_ADDRESS_TYPE_IPV6) == 0))
       {
         this->flags |= ORIGIN_FLAG_ADDRESS_TYPE_IPV6;
       }
