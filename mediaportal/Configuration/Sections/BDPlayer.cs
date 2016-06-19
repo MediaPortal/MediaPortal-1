@@ -142,7 +142,7 @@ namespace MediaPortal.Configuration.Sections
       this.mpLabel6.Name = "mpLabel6";
       this.mpLabel6.Size = new System.Drawing.Size(441, 40);
       this.mpLabel6.TabIndex = 80;
-      this.mpLabel6.Text = "* If \'Use internal Blu-ray menu player\' is unchecked, video player will be use to" +
+      this.mpLabel6.Text = "* If \'Use internal Blu-ray menu player\' is unchecked, video player will be used to" +
     " play BD";
       this.mpLabel6.Click += new System.EventHandler(this.mpLabel6_Click);
       // 
@@ -166,7 +166,7 @@ namespace MediaPortal.Configuration.Sections
       this.useExternalPlayerForBluRay.Name = "useExternalPlayerForBluRay";
       this.useExternalPlayerForBluRay.Size = new System.Drawing.Size(289, 17);
       this.useExternalPlayerForBluRay.TabIndex = 8;
-      this.useExternalPlayerForBluRay.Text = "Use external player for Blu-rays ((replaces internal player)";
+      this.useExternalPlayerForBluRay.Text = "Use external player for Blu-rays (replaces internal player)";
       this.useExternalPlayerForBluRay.UseVisualStyleBackColor = true;
       this.useExternalPlayerForBluRay.CheckedChanged += new System.EventHandler(this.useExternalPlayerForBluRay_CheckedChanged);
       // 
