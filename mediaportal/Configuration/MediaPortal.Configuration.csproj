@@ -263,6 +263,9 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="Sections\BDPlayer.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="Sections\TVAdvancedOptions.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -647,6 +650,9 @@
     <Content Include="Resources\blu-ray_regions.png" />
     <None Include="Resources\ms_wed_7000.jpg" />
     <None Include="Resources\remote_MceHp.jpg" />
+    <EmbeddedResource Include="Sections\BDPlayer.resx">
+      <DependentUpon>BDPlayer.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Sections\TVAdvancedOptions.resx">
       <DependentUpon>TVAdvancedOptions.cs</DependentUpon>
       <SubType>Designer</SubType>

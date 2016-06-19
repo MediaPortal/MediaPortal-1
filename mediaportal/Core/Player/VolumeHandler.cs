@@ -34,6 +34,8 @@ namespace MediaPortal.Player
   {
     #region Vars
 
+    static HideVolumeOSD.HideVolumeOSDLib VolumeOSD;
+
     #endregion
 
     #region Constructors
@@ -45,6 +47,7 @@ namespace MediaPortal.Player
       if (GUIGraphicsContext.DeviceAudioConnected > 0)
       {
         bool isDigital;
+        bool hideWindowsOSD;
 
         using (Settings reader = new MPSettings())
         {
@@ -67,6 +70,8 @@ namespace MediaPortal.Player
           isDigital = reader.GetValueAsBool("volume", "digital", false);
 
           _showVolumeOSD = reader.GetValueAsBool("volume", "defaultVolumeOSD", true);
+
+          hideWindowsOSD = reader.GetValueAsBool("volume", "hideWindowsOSD", false);
         }
 
         try
@@ -79,6 +84,22 @@ namespace MediaPortal.Player
         catch (Exception ex)
         {
           Log.Error("VolumeHandler: Mixer exception when init {0}", ex);
+        }
+
+        if (OSInfo.OSInfo.Win8OrLater() && hideWindowsOSD)
+        {
+          try
+          {
+            bool tempShowVolumeOSD = _showVolumeOSD;
+
+            _showVolumeOSD = false;
+            
+            VolumeOSD = new HideVolumeOSD.HideVolumeOSDLib(IsMuted);
+            VolumeOSD.HideOSD();
+
+            _showVolumeOSD = tempShowVolumeOSD;
+          }
+          catch { }
         }
       }
       else
@@ -391,7 +412,7 @@ namespace MediaPortal.Player
 
     private int[] _volumeTable;
     private int _startupVolume;
-    private bool _showVolumeOSD;
+    private static bool _showVolumeOSD;
 
     #endregion Fields
   }

@@ -22,6 +22,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Net;
 using System.Net.Sockets;
@@ -160,24 +161,26 @@ namespace TvPlugin
     }
 
     /// <summary>
-    /// Sends an AMD "magic" packet for the given hardware ethernet address, with ipAddress as the target.
+    /// Sends an AMD "magic" packet for the given hardware ethernet address
+    /// to each of the specified ip addresses.
     /// </summary>
-    /// <param name="hwAddress">hardware ethernet address to wake up</param>
-    /// <param name="ipAddress">IP address to use as target</param>
-    /// <returns>bool indicating if the packet was sent successfully</returns>
-    private bool SendWakeOnLanPacket(byte[] hwAddress, IPAddress ipAddress)
+    /// <param name="hwAddress">The hardware ethernet address to wake up.</param>
+    /// <param name="broadcastAddresses">The collection of IP addresses to use as targets.</param>
+    /// <returns>False if the provided hwAddress is invalid, true otherwise.</returns>
+    private bool SendWakeOnLanPacket(byte[] hwAddress, IEnumerable<IPAddress> broadcastAddresses)
     {
-      if (IsValidEthernetAddress(hwAddress))
-      {
-        byte[] magicPacket = GetWakeOnLanMagicPacket(hwAddress);
-        SendMagicPacket(ipAddress, magicPacket);
-        return true;
-      }
-      else
+      if (!IsValidEthernetAddress(hwAddress))
       {
         Log.Debug("WOLMgr: Invalid ethernet address!");
         return false;
       }
+
+      byte[] magicPacket = GetWakeOnLanMagicPacket(hwAddress);
+      foreach (var ipAddress in broadcastAddresses)
+      {
+        SendMagicPacket(ipAddress, magicPacket);
+      }
+      return true;
     }
 
     private bool Ping(string hostName, int timeout)
@@ -286,7 +289,7 @@ namespace TvPlugin
       }
 
       // First, try to send WOL Packet
-      if (!SendWakeOnLanPacket(hwAddress, IPAddress.Broadcast))
+      if (!SendWakeOnLanPacket(hwAddress, GetBroadcastAddresses()))
       {
         Log.Debug("WOLMgr: FAILED to send the first wake-on-lan packet!");
       }
@@ -299,7 +302,9 @@ namespace TvPlugin
           return true;
         }
         // Send WOL Packet
-        if (!SendWakeOnLanPacket(hwAddress, IPAddress.Broadcast))
+        // Load the list of broadcast addresses each time to ensure any new adapters
+        // that have come online are included.
+        if (!SendWakeOnLanPacket(hwAddress, GetBroadcastAddresses()))
         {
           Log.Debug("WOLMgr: Sending the wake-on-lan packet failed (local network maybe not ready)! {0}s", (waited / 1000));
         }
@@ -309,13 +314,58 @@ namespace TvPlugin
       }
 
       // Timeout was reached and WOL packet can't be send (we stop here)
-      if (!SendWakeOnLanPacket(hwAddress, IPAddress.Broadcast))
+      if (!SendWakeOnLanPacket(hwAddress, GetBroadcastAddresses()))
       {
         Log.Debug("WOLMgr: FAILED to send wake-on-lan packet after the timeout {0}, try increase the value!", timeout);
         return false;
       }
 
       return false;
+    }
+
+    /// <summary>
+    /// Gets a collection of IPv4 broadcast addresses for all operational network interfaces.
+    /// </summary>
+    /// <returns>A collection of IPAddresses.</returns>
+    static IEnumerable<IPAddress> GetBroadcastAddresses()
+    {
+      foreach (var networkInterface in NetworkInterface.GetAllNetworkInterfaces())
+      {
+        // Skip interfaces that are not running
+        if (networkInterface.OperationalStatus != OperationalStatus.Up)
+          continue;
+        // Skip loopback adapters
+        if (networkInterface.NetworkInterfaceType == NetworkInterfaceType.Loopback)
+          continue;
+
+        // Get the local IPv4 Address information for the adapter
+        var unicastAddresses = networkInterface.GetIPProperties().UnicastAddresses;
+        var ipv4AddressInformation =
+          unicastAddresses.FirstOrDefault(info => info.Address.AddressFamily == AddressFamily.InterNetwork);
+
+        if (ipv4AddressInformation != null)
+        {
+          yield return GetSubnetBroadcastAddress(ipv4AddressInformation.Address, ipv4AddressInformation.IPv4Mask);
+        }
+      }
+    }
+
+    /// <summary>
+    /// Gets the subnet broadcast address for the specified IP Address and subnet mask.
+    /// </summary>
+    /// <param name="address">The IP address.</param>
+    /// <param name="subnetMask">The subnet mask.</param>
+    /// <returns>The subnet broadcast address.</returns>
+    static IPAddress GetSubnetBroadcastAddress(IPAddress address, IPAddress subnetMask)
+    {
+      var addressBytes = address.GetAddressBytes();
+      var subnetMaskBytes = subnetMask.GetAddressBytes();
+      var broadcastAddress = new byte[addressBytes.Length];
+      for (int i = 0; i < addressBytes.Length; i++)
+      {
+        broadcastAddress[i] = (byte)(addressBytes[i] | ~subnetMaskBytes[i]);
+      }
+      return new IPAddress(broadcastAddress);
     }
 
     /// <summary>
