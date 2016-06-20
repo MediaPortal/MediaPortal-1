@@ -15,8 +15,11 @@
 extern void LogDebug(const char* fmt, ...);
 extern DWORD m_tGTStartTime;
 
+// unit = milliseconds
+#define TIMEOUT_GENERIC_RTSP_RESPONSE 500
 
-#define TIMEOUT_GENERIC_RTSP_RESPONSE 500   // unit = milliseconds
+//Size in bytes of the CMemorySink buffer (TRANSPORT_PACKET_SIZE * TRANSPORT_PACKETS_PER_NETWORK_PACKET * 15)
+#define MEM_SINK_BUF_SIZE (188*7*15)
 
 
 CRTSPClient::CRTSPClient(CMemoryBuffer& buffer)
@@ -262,8 +265,8 @@ bool CRTSPClient::OpenStream(char* url)
     {
       continue;
     }
-		
-    CMemorySink* fileSink = CMemorySink::createNew(*m_env, m_buffer, 20000/*buffer size*/);
+    		
+    CMemorySink* fileSink = CMemorySink::createNew(*m_env, m_buffer, MEM_SINK_BUF_SIZE);
     subsession->sink = fileSink;
     if (subsession->sink == NULL) 
     {
@@ -413,7 +416,7 @@ bool CRTSPClient::Play(double start, double duration)
 
 void CRTSPClient::Continue()
 {
-  if (m_client != NULL && m_session != NULL)
+  if (m_client != NULL && m_session != NULL && m_isPaused)
   {
     InternalPlay(-1.0);
   }

@@ -9,7 +9,7 @@
 // For more details for memory leak detection see the alloctracing.h header
 #include "..\..\alloctracing.h"
 
-#define MAX_MEMORY_BUFFER_SIZE (1024L*1024L*128L)
+#define MAX_MEMORY_BUFFER_SIZE (1024L*1024L*64L)
 #define OVERFLOW_BUFFER_SIZE (MAX_MEMORY_BUFFER_SIZE - (1024L*1024L*4L))
 
 extern void LogDebug(const char *fmt, ...) ;
@@ -70,9 +70,9 @@ void CMemoryBuffer::Run(bool onOff)
 
 DWORD CMemoryBuffer::ReadFromBuffer(BYTE *pbData, long lDataLength)
 {	
+  if (!m_bRunning) return 0;
 	if (pbData==NULL) return 0;
 	if (lDataLength<=0) return 0;
-  if (!m_bRunning) return 0;
     		
 	//Log("get..%d/%d",lDataLength,m_BytesInBuffer);
   long bytesRead = 0;

@@ -576,7 +576,7 @@ bool CDeMultiplexer::GetVideoStreamType(CMediaType &pmt)
 
 void CDeMultiplexer::FlushVideo()
 {
-  LogDebug("demux:flush video");
+  //LogDebug("demux:flush video");
   CAutoLock flock (&m_sectionFlushVideo);
   CAutoLock lock (&m_sectionVideo);
   ivecBuffers it = m_vecVideoBuffers.begin();
@@ -628,7 +628,7 @@ void CDeMultiplexer::FlushVideo()
 
 void CDeMultiplexer::FlushAudio()
 {
-  LogDebug("demux:flush audio");
+  //LogDebug("demux:flush audio");
   CAutoLock flock (&m_sectionFlushAudio);
   CAutoLock lock (&m_sectionAudio);
   delete m_pCurrentAudioBuffer;
@@ -679,7 +679,7 @@ void CDeMultiplexer::FlushAudio()
 
 void CDeMultiplexer::FlushCurrentAudio()
 {
-  LogDebug("demux:flush current audio");
+  //LogDebug("demux:flush current audio");
   CAutoLock flock (&m_sectionFlushAudio);
   CAutoLock lock (&m_sectionAudio);
 
@@ -705,7 +705,7 @@ void CDeMultiplexer::FlushCurrentAudio()
 
 void CDeMultiplexer::FlushSubtitle()
 {
-  LogDebug("demux:flush subtitle");
+  //LogDebug("demux:flush subtitle");
   CAutoLock flock (&m_sectionFlushSubtitle);
   CAutoLock lock (&m_sectionSubtitle);
   delete m_pCurrentSubtitleBuffer;
@@ -724,7 +724,7 @@ void CDeMultiplexer::Flush(bool clearAVready)
 {
   if (m_bFlushRunning) return;
     
-  LogDebug("demux:flushing, clearAVready = %d", clearAVready);
+  LogDebug("demux:Flush(), clearAVready = %d", clearAVready);
 
   m_bFlushRunning = true; //Stall GetVideo()/GetAudio()/GetSubtitle() calls from pins 
 
