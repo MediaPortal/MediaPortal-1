@@ -991,12 +991,9 @@ STDMETHODIMP CTsReaderFilter::Run(REFERENCE_TIME tStart)
   {
     //using RTSP, if its streaming is paused then
     //stop pausing and continue streaming
-    if (m_rtspClient.IsPaused())
-    {
-      LogDebug("CTsReaderFilter::Run() - continue RTSP");
-      m_buffer.Run(true); //Just in case...
-      m_rtspClient.Continue();
-    }
+    LogDebug("CTsReaderFilter::Run() - continue RTSP");
+    m_buffer.Run(true); //Just in case...
+    m_rtspClient.Continue();
   }
 
   m_demultiplexer.m_LastDataFromRtsp=GET_TIME_NOW();
@@ -1070,10 +1067,17 @@ STDMETHODIMP CTsReaderFilter::Stop()
   //are we using rtsp?
   if (m_fileDuration == NULL)
   {
-    //yep then pause streaming
-    LogDebug("CTsReaderFilter::Stop()   -- pause RTSP");
-    m_buffer.Run(false);
-    PauseRtspStreaming();
+    if (!m_demultiplexer.IsMediaChanging())
+    {
+      //yep then pause streaming
+      LogDebug("CTsReaderFilter::Stop()  -- pause RTSP");
+      m_buffer.Run(false);
+      PauseRtspStreaming();
+    }
+    else
+    {
+      LogDebug("CTsReaderFilter::Stop()  -- Media changing - continue RTSP");
+    }
   }
   
   if (m_bStreamCompensated)
@@ -1128,7 +1132,9 @@ STDMETHODIMP CTsReaderFilter::Pause()
   
   { //Set scope for lock
     CAutoLock cObjectLock(m_pLock);
-  
+    
+    FILTER_STATE old_State = m_State;
+      
     if (m_State == State_Running)
     {
       m_lastPauseRun = GET_TIME_NOW();
@@ -1137,23 +1143,20 @@ STDMETHODIMP CTsReaderFilter::Pause()
     m_demultiplexer.m_bVideoSampleLate=false;
     m_demultiplexer.m_bAudioSampleLate=false;
   
-    //pause filter
+    //pause filter - this will update m_State
     hr=CSource::Pause();
   
     if (!m_bPauseOnClockTooFast)
     {
-      if (m_State == State_Paused)
-      {
-        CheckForMPAR();
-      }
+      CheckForMPAR();
+      
       //are we using rtsp?
       if (m_fileDuration==NULL)
       {
         //yes, are we busy seeking?
-        if (!IsSeeking())
+        if (!IsSeeking()) //When seeking, RTSP pause/play is handled in Seek() so don't do anything here
         {
-          //not seeking, is rtsp streaming at the moment?
-          if (m_rtspClient.IsPaused())
+          if (old_State == State_Stopped) //Transition to 'Pause' from 'Stopped'
           {
             if (m_demultiplexer.IsMediaChanging())
             {
@@ -1162,25 +1165,21 @@ STDMETHODIMP CTsReaderFilter::Pause()
               m_buffer.Run(true);
               m_rtspClient.Continue();
             }
-            else
+            else if (m_rtspClient.IsPaused())  //Start streaming
             {
-              //not streaming atm
               double startTime=m_seekTime.Millisecs();
               startTime/=1000.0;
       
-              //clear buffers
+              //clear RTSP buffer
               LogDebug("CTsReaderFilter::Pause() - start RTSP from %f", startTime);
               m_buffer.Clear();
-              
-              //Flushing is delegated
-              m_demultiplexer.DelegatedFlush(true, true);
-                  
+                                
               //start streaming
               m_buffer.Run(true);
               
               if (m_bTimeShifting && m_bZapinProgress)
               {
-                startTime = DurationUpdate(); //Force start to end of timeshift file when zapping
+                startTime = DurationUpdate(); //Force play to start to end of timeshift file when zapping
               }
               
               m_rtspClient.Play(startTime, ((double)m_duration.Duration().Millisecs())/1000.0);
@@ -1189,28 +1188,10 @@ STDMETHODIMP CTsReaderFilter::Pause()
             }                
             m_bRecording = true; //Force a duration update soon...
           }
-          else
+          else if (old_State == State_Running && !m_demultiplexer.IsMediaChanging())
           {
-            //we are streaming at the moment.
+            //we are transitioning from 'Run' to 'Paused' state and media is not changing
             PauseRtspStreaming();
-          }
-        }
-        else //we are seeking
-        {
-          IMediaSeeking * ptrMediaPos;
-    
-          if (SUCCEEDED(GetFilterGraph()->QueryInterface(IID_IMediaSeeking, (void**)&ptrMediaPos)))
-          {
-            LONGLONG currentPos;
-            ptrMediaPos->GetCurrentPosition(&currentPos);
-            ptrMediaPos->Release();
-            double clock = currentPos;clock /= 10000000.0;
-            float clockEnd = m_duration.EndPcr().ToClock() ;
-            if (clock >= clockEnd && clockEnd > 0 )
-            {
-              LogDebug("End of rtsp stream...");
-              m_demultiplexer.SetEndOfFile(true);
-            }
           }
         }
       }
@@ -1246,6 +1227,8 @@ STDMETHODIMP CTsReaderFilter::Load(LPCOLESTR pszFileName,const AM_MEDIA_TYPE *pm
     delete m_fileReader;
   if (m_fileDuration != NULL)
     delete m_fileDuration;
+  m_buffer.Run(false);
+  m_rtspClient.Stop();
   m_fileReader = NULL;
   m_fileDuration = NULL;
   m_seekTime = CRefTime(0L);
@@ -1254,6 +1237,7 @@ STDMETHODIMP CTsReaderFilter::Load(LPCOLESTR pszFileName,const AM_MEDIA_TYPE *pm
   m_bRecording=false ;
   m_isUNCfile = false;
   m_updateThreadDuration.StopUpdate(false);
+  DWORD startTimeout = 10000;
   m_bOnZap = false;
   m_bZapinProgress = false;
 
@@ -1275,7 +1259,7 @@ STDMETHODIMP CTsReaderFilter::Load(LPCOLESTR pszFileName,const AM_MEDIA_TYPE *pm
     if (bytesRead >= 0) url[bytesRead] = 0;
     fclose(fd);
 
-    LogDebug("open %s", url);
+    LogDebug("open rtsp:%s", url);
     if ( !m_rtspClient.OpenStream(url)) return E_FAIL;
 
     m_buffer.Clear();
@@ -1284,17 +1268,17 @@ STDMETHODIMP CTsReaderFilter::Load(LPCOLESTR pszFileName,const AM_MEDIA_TYPE *pm
     m_tickCount = GET_TIME_NOW();
     m_fileReader = new CMemoryReader(m_buffer);
     m_demultiplexer.SetFileReader(m_fileReader);
-    if (!m_demultiplexer.Start())
+    if (!m_demultiplexer.Start(startTimeout))
     {
-      LogDebug("close rtsp:%s", url);
+      LogDebug("CTsReaderFilter::Load(), close rtsp:%s", url);
+      m_buffer.Run(false);
       m_rtspClient.Stop();
       return E_FAIL;
     }
-    m_buffer.Run(false);
 
     // Pause. This will result in faster startup and channel change times,
     // because we don't have to SETUP a whole new session with the server.
-    m_rtspClient.Pause();
+    //m_rtspClient.Pause();
 
     //Note - calling m_rtspClient.OpenStream() above also updates the RTSP duration (in the RTSPClient)
     m_tickCount = GET_TIME_NOW()-m_rtspClient.Duration();   // Will be ready to update "virtual end Pcr" on recording in progress.
@@ -1312,7 +1296,7 @@ STDMETHODIMP CTsReaderFilter::Load(LPCOLESTR pszFileName,const AM_MEDIA_TYPE *pm
   {
     //rtsp:// stream
     //open stream
-    LogDebug("open rtsp:%s", url);
+    LogDebug("CTsReaderFilter::Load(), open rtsp:%s", url);
     if ( !m_rtspClient.OpenStream(url)) return E_FAIL;
 
     m_bTimeShifting = true;
@@ -1334,18 +1318,19 @@ STDMETHODIMP CTsReaderFilter::Load(LPCOLESTR pszFileName,const AM_MEDIA_TYPE *pm
 
     //get audio /video pids
     m_demultiplexer.SetFileReader(m_fileReader);
-    if (!m_demultiplexer.Start())
+    if (!m_demultiplexer.Start(startTimeout))
     {
       // stop streaming
-      LogDebug("close rtsp:%s", url);
+      LogDebug("CTsReaderFilter::Load(), close rtsp:%s", url);
+      m_buffer.Run(false);
       m_rtspClient.Stop();
       return E_FAIL;
     }
-    m_buffer.Run(false);
+    
 
     // Pause. This will result in faster startup and channel change times,
     // because we don't have to SETUP a whole new session with the server.
-    m_rtspClient.Pause();
+    //m_rtspClient.Pause();
 
     //Update the duration of the stream
     //Note - calling m_rtspClient.OpenStream() above also updates the RTSP duration (in the RTSPClient)
@@ -1373,6 +1358,7 @@ STDMETHODIMP CTsReaderFilter::Load(LPCOLESTR pszFileName,const AM_MEDIA_TYPE *pm
       m_bLiveTv = false ;
       m_fileReader = new FileReader();
       m_fileDuration = new FileReader();
+      startTimeout = m_isUNCfile ? 4000 : 2000;
     }
     else
     {
@@ -1393,8 +1379,10 @@ STDMETHODIMP CTsReaderFilter::Load(LPCOLESTR pszFileName,const AM_MEDIA_TYPE *pm
 
     //detect audio/video pids
     m_demultiplexer.SetFileReader(m_fileReader);
-    if (!m_demultiplexer.Start())
+    if (!m_demultiplexer.Start(startTimeout))
     {
+      m_fileReader->CloseFile();
+      m_fileDuration->CloseFile();
       return E_FAIL;
     }
 
@@ -1406,14 +1394,14 @@ STDMETHODIMP CTsReaderFilter::Load(LPCOLESTR pszFileName,const AM_MEDIA_TYPE *pm
 
     float milli = m_duration.Duration().Millisecs();
     milli /= 1000.0;
-    LogDebug("start:%x end:%x %f",
+    LogDebug("CTsReaderFilter::Load(), duration - start:%x end:%x %f",
       (DWORD)m_duration.StartPcr().PcrReferenceBase, (DWORD) m_duration.EndPcr().PcrReferenceBase, milli);
     m_fileReader->SetFilePointer(0LL, FILE_BEGIN);
   }
 
   if (length > 0)
   {
-    LogDebug("open %s, isTimeshift:%d, isUNC:%d", url, m_bTimeShifting, m_isUNCfile);
+    LogDebug("CTsReaderFilter::Load() succeeded, file/stream: %s, isTimeshift:%d, isUNC:%d", url, m_bTimeShifting, m_isUNCfile);
   }
 
   //AddGraphToRot(GetFilterGraph());
@@ -1526,13 +1514,12 @@ bool CTsReaderFilter::Seek(CRefTime& seekTime)
      
   	  if (loop >=50)
   	  {
-        LogDebug("CTsReaderFilter:: Rtsp Seek->start aborted");
-  		  return false;
+        LogDebug("CTsReaderFilter:: Rtsp Seek->Play() aborted, buffer empty");
   	  }
   	}
   	else
   	{
-      LogDebug("CTsReaderFilter:: Rtsp Seek->start aborted");
+      LogDebug("CTsReaderFilter:: Rtsp Seek->Play() failed");
   	}
     m_bRecording = true; // force a duration update soon..
   }

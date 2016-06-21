@@ -576,7 +576,7 @@ bool CDeMultiplexer::GetVideoStreamType(CMediaType &pmt)
 
 void CDeMultiplexer::FlushVideo()
 {
-  LogDebug("demux:flush video");
+  //LogDebug("demux:flush video");
   CAutoLock flock (&m_sectionFlushVideo);
   CAutoLock lock (&m_sectionVideo);
   ivecBuffers it = m_vecVideoBuffers.begin();
@@ -628,7 +628,7 @@ void CDeMultiplexer::FlushVideo()
 
 void CDeMultiplexer::FlushAudio()
 {
-  LogDebug("demux:flush audio");
+  //LogDebug("demux:flush audio");
   CAutoLock flock (&m_sectionFlushAudio);
   CAutoLock lock (&m_sectionAudio);
   delete m_pCurrentAudioBuffer;
@@ -679,7 +679,7 @@ void CDeMultiplexer::FlushAudio()
 
 void CDeMultiplexer::FlushCurrentAudio()
 {
-  LogDebug("demux:flush current audio");
+  //LogDebug("demux:flush current audio");
   CAutoLock flock (&m_sectionFlushAudio);
   CAutoLock lock (&m_sectionAudio);
 
@@ -705,7 +705,7 @@ void CDeMultiplexer::FlushCurrentAudio()
 
 void CDeMultiplexer::FlushSubtitle()
 {
-  LogDebug("demux:flush subtitle");
+  //LogDebug("demux:flush subtitle");
   CAutoLock flock (&m_sectionFlushSubtitle);
   CAutoLock lock (&m_sectionSubtitle);
   delete m_pCurrentSubtitleBuffer;
@@ -724,7 +724,7 @@ void CDeMultiplexer::Flush(bool clearAVready)
 {
   if (m_bFlushRunning) return;
     
-  LogDebug("demux:flushing, clearAVready = %d", clearAVready);
+  LogDebug("demux:Flush(), clearAVready = %d", clearAVready);
 
   m_bFlushRunning = true; //Stall GetVideo()/GetAudio()/GetSubtitle() calls from pins 
 
@@ -1039,7 +1039,7 @@ bool CDeMultiplexer::CheckCompensation(CRefTime rtStartTime)
 /// Starts the demuxer
 /// This method will read the file until we found the pat/sdt
 /// with all the audio/video pids
-bool CDeMultiplexer::Start()
+bool CDeMultiplexer::Start(DWORD timeout)
 {
   //reset some values
   m_bStarting=true ;
@@ -1070,7 +1070,6 @@ bool CDeMultiplexer::Start()
   m_reader->SetStopping(false);    
   CAutoLock lock (&m_filter.m_ReadAheadLock);
   DWORD m_Time = GET_TIME_NOW();
-  DWORD timeout = 10000;  
   m_hadPESfail = 0;
   
   while((GET_TIME_NOW() - m_Time) < timeout)
@@ -1105,7 +1104,7 @@ bool CDeMultiplexer::Start()
       m_reader->SetFilePointer(0,FILE_BEGIN);
       //Flush(true);
       //Flushing is delegated to CDeMultiplexer::ThreadProc()
-      DelegatedFlush(true, false);
+      //DelegatedFlush(true, false);
       m_streamPcr.Reset();
       m_bStarting=false;
 	    LogDebug("demux:Start() Succeeded : BytesProcessed:%d, DTS/PTS count = %d/%d, GOPts = %d", dwBytesProcessed, m_vidDTScount, m_vidPTScount, m_bUsingGOPtimestamp);

@@ -23,6 +23,7 @@ TsMPEG2TransportFileServerMediaSubsession::TsMPEG2TransportFileServerMediaSubses
 	m_bTimeshifting = timeshifting;
 	m_iChannelType = channelType;
 	m_iDurationCount = 0;
+	//m_dTotalDuration = 0.0;
 
   //Create a file duration measurement instance (and a file reader for it)
   m_pDuration = new CTsDuration();
@@ -58,7 +59,7 @@ FramedSource* TsMPEG2TransportFileServerMediaSubsession::createNewStreamSource(u
 
 	// Create the video source:
 	unsigned const inputDataChunkSize = PREFERRED_FRAME_SIZE;
-	TsStreamFileSource* fileSource= TsStreamFileSource::createNew(envir(), m_fileName, inputDataChunkSize, 0, m_iChannelType);
+	TsStreamFileSource* fileSource= TsStreamFileSource::createNew(envir(), m_fileName, m_pDuration, inputDataChunkSize, 0, m_iChannelType);
 	if (fileSource == NULL) return NULL;
 	fFileSize = fileSource->fileSize();
  
@@ -101,6 +102,8 @@ void TsMPEG2TransportFileServerMediaSubsession::seekStreamSource(FramedSource* i
 
   source->seekToTimeAbsolute(CRefTime((LONG)(seekNPT*1000.0)), *m_pDuration) ;
   
+  m_iDurationCount = 0;
+  
 	//LogDebug("TsMp2TFSMediaSubsession::seekStreamSource %f / %f", seekNPT, fileDuration);
 }
 
@@ -113,9 +116,11 @@ float TsMPEG2TransportFileServerMediaSubsession::duration() const
 
     if (m_iDurationCount < 1)
     {
-	    LogDebug("TsMp2TFSMediaSubsession::duration(): %f s", m_pDuration->Duration().Millisecs() / 1000.0f);
+	    LogDebug("TsMp2TFSMediaSubsession::duration(), actual: %f s, total: %f s", m_pDuration->Duration().Millisecs() / 1000.0f, m_pDuration->TotalDuration().Millisecs() / 1000.0f);
       m_iDurationCount++;
     }
+    
+    //m_dTotalDuration = (double)m_pDuration->TotalDuration().Millisecs() / 1000.0;
 
 	  return m_pDuration->Duration().Millisecs() / 1000.0f;
   }
