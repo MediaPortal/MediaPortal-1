@@ -2070,7 +2070,7 @@ namespace MediaPortal.Util
 
     public static void EjectCDROM()
     {
-      EjectCDROM(string.Empty);
+      mciSendString("set cdaudio door open", null, 0, IntPtr.Zero);
     }
     
     public static void CloseCDROM(string driveLetter)
