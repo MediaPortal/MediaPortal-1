@@ -4209,7 +4209,12 @@ public class MediaPortalApp : D3D, IRender
 
         // eject cd
         case Action.ActionType.ACTION_EJECTCD:
-          Utils.EjectCDROM();
+          if (GUIWindowManager.ActiveWindow != (int)GUIWindow.Window.WINDOW_MUSIC_FILES &&
+            GUIWindowManager.ActiveWindow != (int)GUIWindow.Window.WINDOW_PICTURES &&
+            GUIWindowManager.ActiveWindow != (int)GUIWindow.Window.WINDOW_VIDEOS)
+          {
+            Utils.EjectCDROM();
+          }
           break;
 
         // Display Render statistic
