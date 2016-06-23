@@ -580,6 +580,21 @@ namespace MediaPortal.GUI.Music
         }
       }
 
+      if (action.wID == Action.ActionType.ACTION_EJECTCD)
+      {
+        GUIListItem item = facadeLayout.SelectedListItem;
+        if (item == null || item.Path == null || Util.Utils.getDriveType(item.Path) != 5)
+        {
+          Util.Utils.EjectCDROM();
+        }
+        else
+        {
+          Util.Utils.EjectCDROM(Path.GetPathRoot(item.Path));
+        }
+
+        LoadDirectory(string.Empty);
+      }
+
       base.OnAction(action);
     }
 
@@ -1158,25 +1173,13 @@ namespace MediaPortal.GUI.Music
           break;
 
         case 654: // Eject
-          if (item != null && Util.Utils.getDriveType(item.Path) != 5)
+          if (item == null || item.Path == null || Util.Utils.getDriveType(item.Path) != 5)
           {
             Util.Utils.EjectCDROM();
           }
           else
           {
-            if (item != null && item.Path != null)
-            {
-              var driveInfo = new DriveInfo(Path.GetPathRoot(item.Path));
-
-              if (!driveInfo.IsReady)
-              {
-                Util.Utils.CloseCDROM(Path.GetPathRoot(item.Path));
-              }
-              else
-              {
             Util.Utils.EjectCDROM(Path.GetPathRoot(item.Path));
-          }
-            }
           }
           LoadDirectory(string.Empty);
           break;

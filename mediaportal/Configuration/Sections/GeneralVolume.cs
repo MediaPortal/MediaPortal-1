@@ -553,7 +553,7 @@ namespace MediaPortal.Configuration.Sections
       this.mpCBHideWinOSD.Name = "mpCBHideWinOSD";
       this.mpCBHideWinOSD.Size = new System.Drawing.Size(122, 17);
       this.mpCBHideWinOSD.TabIndex = 1;
-      this.mpCBHideWinOSD.Text = "Hide Windows  OSD";
+      this.mpCBHideWinOSD.Text = "Hide Windows OSD";
       this.mpCBHideWinOSD.UseVisualStyleBackColor = true;
       // 
       // GeneralVolume
