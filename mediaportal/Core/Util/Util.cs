@@ -2402,10 +2402,15 @@ namespace MediaPortal.Util
           //if (bInternal) return false;
           string strPath = xmlreader.GetValueAsString("movieplayer", "path", "");
           string strParams = xmlreader.GetValueAsString("movieplayer", "arguments", "");
-          if (extension.ToLowerInvariant() == ".ifo" || extension.ToLowerInvariant() == ".vob" || extension.ToLowerInvariant() == ".bdmv")
+          if (extension.ToLowerInvariant() == ".ifo" || extension.ToLowerInvariant() == ".vob")
           {
             strPath = xmlreader.GetValueAsString("dvdplayer", "path", "");
             strParams = xmlreader.GetValueAsString("dvdplayer", "arguments", "");
+          }
+          else if  (extension.ToLowerInvariant() == ".bdmv")
+          {
+            strPath = xmlreader.GetValueAsString("bdplayer", "path", "");
+            strParams = xmlreader.GetValueAsString("bdplayer", "arguments", "");
           }
           if (strPath != "")
           {
