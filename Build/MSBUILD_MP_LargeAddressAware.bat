@@ -13,4 +13,3 @@ echo Make MediaPortal 2GB LARGEADDRESSAWARE...
 cd %CURRENTPATH%
 call "%VS120COMNTOOLS%vsvars32.bat"
 EditBin.exe %MediaPortal%\MediaPortal.Application\bin\%1\MediaPortal.exe /LARGEADDRESSAWARE
-pause
