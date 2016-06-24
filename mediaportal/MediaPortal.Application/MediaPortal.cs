@@ -3074,6 +3074,11 @@ public class MediaPortalApp : D3D, IRender
 
     Log.Info("Main: Initializing volume handler");
     #pragma warning disable 168
+    if (VolumeHandler.Instance!=null)
+    {
+      Log.Error("Volume handler already created. Could break volume notifications.");
+    }
+    VolumeHandler.CreateInstance();
     GUIGraphicsContext.VolumeHandler = VolumeHandler.Instance;
     #pragma warning restore 168
 
