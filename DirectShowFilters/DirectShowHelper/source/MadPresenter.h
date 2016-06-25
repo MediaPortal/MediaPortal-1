@@ -89,10 +89,10 @@ class MPMadPresenter : public CUnknown, public IOsdRenderCallback, public CCritS
 
     DeviceState m_deviceState;
 
-    //int countFrame = 0;
-    //int firstFrame = 1;
-    //int secondFrame = 3;
-    //int resetFrame = -1;
+    int countFrame = 0;
+    int firstFrame = 1;
+    int secondFrame = 3;
+    int resetFrame = -1;
 
 };
 

@@ -299,22 +299,22 @@ HRESULT MPMadPresenter::RenderOsd(LPCSTR name, REFERENCE_TIME frameStart, RECT* 
   m_dwHeight = static_cast<WORD>(fullOutputRect->bottom) - static_cast<WORD>(fullOutputRect->top);
   m_dwWidth = static_cast<WORD>(fullOutputRect->right) - static_cast<WORD>(fullOutputRect->left);
 
-  //// Handle GetBackBuffer to be done only 2 frames
-  //countFrame++;
-  //if (countFrame == firstFrame || countFrame == secondFrame)
-  //{
-  //  if (SUCCEEDED(hr = m_pMadD3DDev->GetBackBuffer(0, 0, D3DBACKBUFFER_TYPE_MONO, &SurfaceMadVr)))
-  //  {
-  //    if (SUCCEEDED(hr = m_pCallback->RenderFrame(videoWidth, videoHeight, videoWidth, videoHeight, reinterpret_cast<DWORD>(SurfaceMadVr))))
-  //    {
-  //      SurfaceMadVr->Release();
-  //    }
-  //    if (countFrame == secondFrame)
-  //    {
-  //      countFrame = resetFrame;
-  //    }
-  //  }
-  //}
+  // Handle GetBackBuffer to be done only 2 frames
+  countFrame++;
+  if (countFrame == firstFrame || countFrame == secondFrame)
+  {
+    if (SUCCEEDED(hr = m_pMadD3DDev->GetBackBuffer(0, 0, D3DBACKBUFFER_TYPE_MONO, &SurfaceMadVr)))
+    {
+      if (SUCCEEDED(hr = m_pCallback->RenderFrame(videoWidth, videoHeight, videoWidth, videoHeight, reinterpret_cast<DWORD>(SurfaceMadVr))))
+      {
+        SurfaceMadVr->Release();
+      }
+      if (countFrame == secondFrame)
+      {
+        countFrame = resetFrame;
+      }
+    }
+  }
 
   RenderToTexture(m_pMPTextureOsd, videoWidth, videoHeight, videoWidth, videoHeight);
 
