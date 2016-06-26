@@ -709,6 +709,11 @@ namespace MediaPortal.Player
 
     public static void SetRefreshRateBasedOnFPS(double fps, string strFile, MediaType type)
     {
+      if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+      {
+        return;
+      }
+
       double currentRR = 0;
       if ((GUIGraphicsContext.DX9Device.DeviceCaps.AdapterOrdinal == -1) ||
           (Manager.Adapters.Count <= GUIGraphicsContext.DX9Device.DeviceCaps.AdapterOrdinal) ||
