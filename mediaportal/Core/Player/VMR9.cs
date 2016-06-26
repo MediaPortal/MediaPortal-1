@@ -178,6 +178,8 @@ namespace MediaPortal.Player
     private string medianFiltering = "";
     private int _freeframeCounter = 0;
     public Surface MadVrRenderTargetVMR9 = null;
+    protected bool UseMadVideoRenderer;      // is madVR used?
+    protected bool UseEVRMadVRForTV;
 
     #endregion
 
@@ -383,6 +385,12 @@ namespace MediaPortal.Player
     {
       try
       {
+        // Read settings
+        using (Settings xmlreader = new MPSettings())
+        {
+          UseMadVideoRenderer = xmlreader.GetValueAsBool("general", "useMadVideoRenderer", false);
+          UseEVRMadVRForTV = xmlreader.GetValueAsBool("general", "useEVRMadVRForTV", false);
+        }
         Log.Debug("VMR9: addvmr9 - thread : {0}", Thread.CurrentThread.Name);
         if (!_useVmr9)
         {
@@ -406,6 +414,20 @@ namespace MediaPortal.Player
         IntPtr upDevice = DirectShowUtil.GetUnmanagedDevice(GUIGraphicsContext.DX9Device);
 
         _scene = new PlaneScene(this);
+
+        // Check if need to set EVR for LiveTV when using madVR
+        if (UseMadVideoRenderer)
+        {
+          if (Util.Utils.IsVideo(g_Player.CurrentFile))
+          {
+            GUIGraphicsContext.VideoRenderer = GUIGraphicsContext.VideoRendererType.madVR;
+          }
+          else if (UseEVRMadVRForTV)
+          {
+            GUIGraphicsContext.VideoRenderer = GUIGraphicsContext.VideoRendererType.EVR;
+          }
+        }
+
         if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
         {
           // Process 5 frames to clear D3D dialog window
