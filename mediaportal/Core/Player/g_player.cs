@@ -1492,6 +1492,7 @@ namespace MediaPortal.Player
         }
 
         g_Player.SetResumeBDTitleState = title;
+        bool UseEVRMadVRForTV = false;
 
         IsPicture = false;
         IsExtTS = false;
@@ -1599,6 +1600,7 @@ namespace MediaPortal.Player
             using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.MPSettings())
             {
               _BDInternalMenu = xmlreader.GetValueAsBool("bdplayer", "useInternalBDPlayer", true);
+              UseEVRMadVRForTV = xmlreader.GetValueAsBool("general", "useEVRMadVRForTV", false);
             }
             if (_BDInternalMenu && extension == ".bdmv")
             {
@@ -1669,14 +1671,14 @@ namespace MediaPortal.Player
               if ((!bUseExternalPlayerForDVD && !bInternalDVD && !isImageFile && (extension == ".ifo" || extension == ".vob")) ||
                   (!bUseExternalPlayerForDVD && !bInternalDVD && isImageFile && Util.Utils.IsDVDImage(strFile)))
               {
-                  bInternalDVD = true;
+                bInternalDVD = true;
               }
 
               // Ensure BD player is configured external player for Bluray
               if ((!bUseExternalPlayerForBluray && !bInternalDVD && !isImageFile && extension == ".bdmv") ||
                   (!bUseExternalPlayerForBluray && !bInternalDVD && isImageFile && Util.Utils.IsBDImage(strFile)))
               {
-                  bInternalDVD = true;
+                bInternalDVD = true;
               }
 
               if ((bUseExternalPlayerForBluray && !isImageFile && extension == ".bdmv") ||
@@ -1768,6 +1770,28 @@ namespace MediaPortal.Player
               _chaptersname = _player.ChaptersName;
             }
             OnStarted();
+          }
+
+          // Needed this double check for madVR with EVR option.
+          if (AskForRefresh && (UseEVRMadVRForTV && GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.EVR))
+          {
+            // Refreshrate change done here. Blu-ray player will handle the refresh rate changes by itself
+            // Identify if it's a video
+            if (strFile.IndexOf(@"\BDMV\INDEX.BDMV") == -1 && type != MediaType.Radio)
+            {
+              // Make a double check on .ts because it can be recorded TV or Radio
+              if (extension == ".ts")
+              {
+                if (MediaInfo != null && MediaInfo.hasVideo)
+                {
+                  RefreshRateChanger.AdaptRefreshRate(strFile, (RefreshRateChanger.MediaType)(int)type);
+                }
+              }
+              else
+              {
+                RefreshRateChanger.AdaptRefreshRate(strFile, (RefreshRateChanger.MediaType)(int)type);
+              }
+            }
           }
 
           // Set bool to know if video if played from MyPictures
@@ -3066,9 +3090,8 @@ namespace MediaPortal.Player
 
     public static void Init()
     {
-      GUIGraphicsContext.OnVideoWindowChanged += new VideoWindowChangedHandler(OnVideoWindowChanged);
-      GUIGraphicsContext.OnGammaContrastBrightnessChanged +=
-        new VideoGammaContrastBrightnessHandler(OnGammaContrastBrightnessChanged);
+      GUIGraphicsContext.OnVideoWindowChanged += OnVideoWindowChanged;
+      GUIGraphicsContext.OnGammaContrastBrightnessChanged += OnGammaContrastBrightnessChanged;
     }
 
     private static void OnGammaContrastBrightnessChanged()
@@ -3121,10 +3144,7 @@ namespace MediaPortal.Player
       }
       Visible = (FullScreen || GUIGraphicsContext.Overlay ||
                  windowId == (int)GUIWindow.Window.WINDOW_SCHEDULER || inTV);
-      GUIWindow._mainThreadContext.Post(delegate
-      {
-        SetVideoWindow();
-      }, null);
+      SetVideoWindow();
     }
 
     /// <summary>
@@ -3692,6 +3712,11 @@ namespace MediaPortal.Player
           return true;
         }
         Log.Info("g_Player: ShowFullScreenWindow switching to fullscreen tv");
+        if (GUIGraphicsContext.Vmr9Active && GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+        {
+          // Need to know why sometimes this need to be set and break here with madVR otherwise it get stuck in loop until a dialog is displayed
+          GUIGraphicsContext.IsFullScreenVideo = true;
+        }
         GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
         GUIGraphicsContext.IsFullScreenVideo = true;
         return true;
