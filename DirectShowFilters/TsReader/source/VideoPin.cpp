@@ -682,11 +682,11 @@ HRESULT CVideoPin::FillBuffer(IMediaSample *pSample)
           pSample->GetPointer(&pSampleBuffer);
           memcpy(pSampleBuffer,buffer->Data(),buffer->Length());
           
-          if (demux.GetVideoServiceType()==SERVICE_TYPE_VIDEO_H264)
-          {
-            // Parse the sample buffer for Closed Caption data (testing...)
-            //demux.m_CcParserH264->parseAVC1sample(buffer->Data(), buffer->Length(), 4);
-          }
+          //if (demux.GetVideoServiceType()==SERVICE_TYPE_VIDEO_H264)
+          //{
+          //  // Parse the sample buffer for Closed Caption data (testing...)
+          //  demux.m_CcParserH264->parseAVC1sample(buffer->Data(), buffer->Length(), 4);
+          //}
 
           
           // delete the buffer
@@ -841,7 +841,9 @@ HRESULT CVideoPin::ChangeRate()
   
   if( m_dRateSeeking > 4.0 && 
      ((demux.GetVideoServiceType()==SERVICE_TYPE_VIDEO_H264) || 
-      (demux.GetVideoServiceType()==SERVICE_TYPE_VIDEO_MPEG4)) )
+      (demux.GetVideoServiceType()==SERVICE_TYPE_VIDEO_MPEG4)||
+      (demux.GetVideoServiceType()==SERVICE_TYPE_VIDEO_HEVC1)||
+      (demux.GetVideoServiceType()==SERVICE_TYPE_VIDEO_HEVC2)))
   {
     m_dRateSeeking = 1.0;  // Reset to a reasonable value.
     return E_FAIL;

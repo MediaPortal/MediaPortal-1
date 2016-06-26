@@ -54,12 +54,12 @@ CMpegPesParser::CMpegPesParser()
 	basicAudioInfo=BasicAudioInfo();
 }
 
-bool CMpegPesParser::ParseVideo(byte* tsPacket,bool isMpeg2,bool reset)
+bool CMpegPesParser::ParseVideo(byte* tsPacket,int vidType,bool reset)
 {
 	bool parsed=false;
   __int64 framesize=hdrParser.GetSize();
 
-	if (isMpeg2)
+	if (vidType == 1) // mpeg2
 	{
 		seqhdr seq;
 		if (hdrParser.Read(seq,framesize,&pmt,reset))
@@ -82,7 +82,7 @@ bool CMpegPesParser::ParseVideo(byte* tsPacket,bool isMpeg2,bool reset)
 			parsed=true;
 		}
 	}
-	else 
+	else if (vidType == 2) //AVC/H264
 	{
 	  // avchdr avc;
 		if (hdrParser.Read(avc,framesize,&pmt,reset))
@@ -105,16 +105,39 @@ bool CMpegPesParser::ParseVideo(byte* tsPacket,bool isMpeg2,bool reset)
 			parsed=true;
 		}
 	}
+	else if (vidType == 3) //HEVC
+	{
+	  // avchdr avc;
+		if (hdrParser.Read(hevc,framesize,&pmt,reset))
+		{
+			hdrParser.DumpHevcHeader(hevc);
+			basicVideoInfo.width=avc.width;
+			basicVideoInfo.height=avc.height;
+			if (avc.AvgTimePerFrame > 0)
+			  basicVideoInfo.fps=10000000.0 / (double)avc.AvgTimePerFrame;
+			else
+			  basicVideoInfo.fps=27.030;
+			basicVideoInfo.arx=avc.arx;
+			basicVideoInfo.ary=avc.ary;
+			if (!avc.progressive)
+				basicVideoInfo.isInterlaced=1;
+			else
+				basicVideoInfo.isInterlaced=0;
+			basicVideoInfo.streamType=3; // HEVC
+			basicVideoInfo.isValid=true;
+			parsed=true;
+		}
+	}
 	return parsed;
 }
 
-bool CMpegPesParser::OnTsPacket(byte *Frame,int Length,bool isMpeg2,bool reset)
+bool CMpegPesParser::OnTsPacket(byte *Frame,int Length,int vidType,bool reset)
 {
 	//LogDebug("Framesize: %i",Length);
 	//if (Length<=100) return false ; // arbitrary for safety.
   CAutoLock lock (&m_sectionVideoPmt);
 	hdrParser.Reset(Frame,Length);
-	return ParseVideo(Frame,isMpeg2,reset);
+	return ParseVideo(Frame,vidType,reset);
 }
 
 void CMpegPesParser::VideoReset()
