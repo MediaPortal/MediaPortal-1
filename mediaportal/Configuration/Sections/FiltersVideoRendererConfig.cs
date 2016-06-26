@@ -68,6 +68,7 @@ namespace MediaPortal.Configuration.Sections
 
           radioButtonEVR.Checked = xmlreader.GetValueAsBool("general", "useEVRenderer", ValueEVR);
           radioButtonMadVR.Checked = xmlreader.GetValueAsBool("general", "useMadVideoRenderer", false);
+          UseEVRMadVRForTV.Checked = xmlreader.GetValueAsBool("general", "useEVRMadVRForTV", false);
         }
         _init = true;
       }
@@ -91,6 +92,7 @@ namespace MediaPortal.Configuration.Sections
         xmlwriter.SetValueAsBool("general", "dx9decimatemask", checkBoxDecimateMask.Checked);
         xmlwriter.SetValueAsBool("general", "useEVRenderer", radioButtonEVR.Checked);
         xmlwriter.SetValueAsBool("general", "useMadVideoRenderer", radioButtonMadVR.Checked);
+        xmlwriter.SetValueAsBool("general", "useEVRMadVRForTV", UseEVRMadVRForTV.Checked);
       }
     }
 
@@ -131,6 +133,11 @@ namespace MediaPortal.Configuration.Sections
         mpVMR9FilterMethod.Enabled = false;
         labelFilteringHint.Enabled = false;
       }
+    }
+
+    private void mpCheckBox1_CheckedChanged(object sender, EventArgs e)
+    {
+
     }
   }
 }
