@@ -767,6 +767,10 @@ namespace MediaPortal.Player
         {
           return;
         }
+        if (destination.Left <= 0 && destination.Top <= 0 && destination.Width <= 1 && destination.Height <= 1)
+        {
+          return;
+        }
         if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
         {
           Size client = GUIGraphicsContext.form.ClientSize;
@@ -790,6 +794,10 @@ namespace MediaPortal.Player
             return;
           }
           if (destination.Width <= 0 || destination.Height <= 0)
+          {
+            return;
+          }
+          if (destination.Left <= 0 && destination.Top <= 0 && destination.Width <= 1 && destination.Height <= 1)
           {
             return;
           }
@@ -1165,7 +1173,7 @@ namespace MediaPortal.Player
                 if (_basicVideo != null)
                 {
                   if (!GUIGraphicsContext.IsFullScreenVideo)
-                    _basicVideo.SetDestinationPosition(-10, -10, 1, 1);
+                    _basicVideo.SetDestinationPosition(-100, -100, 50, 50);
                 }
               }
             }

@@ -765,7 +765,7 @@ namespace MediaPortal.Player
               if (basicVideo != null)
               {
                 if (!GUIGraphicsContext.IsFullScreenVideo)
-                  basicVideo.SetDestinationPosition(-10, -10, 1, 1);
+                  basicVideo.SetDestinationPosition(-100, -100, 50, 50);
               }
             }
           }
@@ -783,6 +783,7 @@ namespace MediaPortal.Player
               GUIGraphicsContext.VideoWindowHeight);
           }
         }
+
         CheckVideoResolutionChanges();
         updateTimer = DateTime.Now;
       }

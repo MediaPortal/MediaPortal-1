@@ -418,13 +418,13 @@ namespace MediaPortal.Player
         // Check if need to set EVR for LiveTV when using madVR
         if (UseMadVideoRenderer)
         {
-          if (Util.Utils.IsVideo(g_Player.CurrentFile))
-          {
-            GUIGraphicsContext.VideoRenderer = GUIGraphicsContext.VideoRendererType.madVR;
-          }
-          else if (UseEVRMadVRForTV)
+          if (UseEVRMadVRForTV && g_Player.IsTimeShifting)
           {
             GUIGraphicsContext.VideoRenderer = GUIGraphicsContext.VideoRendererType.EVR;
+          }
+          else
+          {
+            GUIGraphicsContext.VideoRenderer = GUIGraphicsContext.VideoRendererType.madVR;
           }
         }
 

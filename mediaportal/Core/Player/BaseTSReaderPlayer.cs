@@ -655,7 +655,7 @@ namespace MediaPortal.Player
 
     public override void SetVideoWindow()
     {
-      //lock (lockObj)
+      lock (lockObj)
       {
         Log.Debug("TSReaderPlayer: SetVideoWindow()");
         if (GUIGraphicsContext.IsFullScreenVideo != _isFullscreen)
@@ -805,7 +805,7 @@ namespace MediaPortal.Player
             {
               if (!GUIGraphicsContext.IsFullScreenVideo)
               {
-                _basicVideo.SetDestinationPosition(-10, -10, 1, 1);
+                _basicVideo.SetDestinationPosition(-100, -100, 50, 50);
                 //Log.Error("TsReader hide video window");
               }
             }
@@ -828,7 +828,7 @@ namespace MediaPortal.Player
             {
               if (!GUIGraphicsContext.IsFullScreenVideo)
               {
-                _basicVideo.SetDestinationPosition(-10, -10, GUIGraphicsContext.VideoWindowWidth,
+                _basicVideo.SetDestinationPosition(0, 0, GUIGraphicsContext.VideoWindowWidth,
                   GUIGraphicsContext.VideoWindowHeight);
                 //Log.Error("TsReader show video window");
               }
@@ -1474,20 +1474,29 @@ namespace MediaPortal.Player
 
     protected virtual void SetVideoPosition(Rectangle rDest)
     {
-      if (_videoWin != null)
+      lock (lockObj)
       {
-        if (rDest.Left < 0 || rDest.Top < 0 || rDest.Width <= 0 || rDest.Height <= 0)
+        if (_videoWin != null)
         {
-          return;
-        }
-        if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
-        {
-          Size client = GUIGraphicsContext.form.ClientSize;
-          _videoWin.SetWindowPosition(0, 0, client.Width, client.Height);
-        }
-        else
-        {
-          _videoWin.SetWindowPosition(rDest.Left, rDest.Top, rDest.Width, rDest.Height);
+          if (rDest.Left < 0 || rDest.Top < 0 || rDest.Width <= 0 || rDest.Height <= 0)
+          {
+            return;
+          }
+
+          if (rDest.Left <= 0 && rDest.Top <= 0 && rDest.Width <= 1 && rDest.Height <= 1)
+          {
+            return;
+          }
+
+          if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+          {
+            Size client = GUIGraphicsContext.form.ClientSize;
+            _videoWin.SetWindowPosition(0, 0, client.Width, client.Height);
+          }
+          else
+          {
+            _videoWin.SetWindowPosition(rDest.Left, rDest.Top, rDest.Width, rDest.Height);
+          }
         }
       }
     }
@@ -1496,13 +1505,19 @@ namespace MediaPortal.Player
     {
       if (_basicVideo != null)
       {
-        lock (_basicVideo)
+        lock (lockObj)
         {
           if (rSource.Left < 0 || rSource.Top < 0 || rSource.Width <= 0 || rSource.Height <= 0)
           {
             return;
           }
+
           if (rDest.Width <= 0 || rDest.Height <= 0)
+          {
+            return;
+          }
+
+          if (rDest.Left <= 0 && rDest.Top <= 0 && rDest.Width <= 1 && rDest.Height <= 1)
           {
             return;
           }
@@ -1599,6 +1614,29 @@ namespace MediaPortal.Player
       return 0;
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="message"></param>
+    internal static void OnMessage(GUIMessage message)
+    {
+      switch (message.Message)
+      {
+        case GUIMessage.MessageType.GUI_MSG_ONVIDEOFORMATCHANGED:
+          _isRadio = false;
+          _videoFormat.IsValid = true;
+          _videoFormat.streamType = (VideoStreamType)message.Param1;
+          _videoFormat.width = message.Param2;
+          _videoFormat.height = message.Param3;
+          _videoFormat.arX = message.Param4;
+          _videoFormat.arY = message.Param5;
+          _videoFormat.bitrate = message.Param6;
+          _videoFormat.isInterlaced = (message.Param7 == 1);
+          Log.Info("TsReaderPlayer: OnVideoFormatChanged - {0}", _videoFormat.ToString());
+          break;
+      }
+    }
+
     public int OnVideoFormatChanged(int streamType, int width, int height, int aspectRatioX, int aspectRatioY,
                                     int bitrate, int isInterlaced)
     {
@@ -1628,29 +1666,6 @@ namespace MediaPortal.Player
         Log.Info("TsReaderPlayer: OnVideoFormatChanged - {0} MP main thread", _videoFormat.ToString());
       }
       return 0;
-    }
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="message"></param>
-    internal static void OnMessage(GUIMessage message)
-    {
-      switch (message.Message)
-      {
-        case GUIMessage.MessageType.GUI_MSG_ONVIDEOFORMATCHANGED:
-          _isRadio = false;
-          _videoFormat.IsValid = true;
-          _videoFormat.streamType = (VideoStreamType)message.Param1;
-          _videoFormat.width = message.Param2;
-          _videoFormat.height = message.Param3;
-          _videoFormat.arX = message.Param4;
-          _videoFormat.arY = message.Param5;
-          _videoFormat.bitrate = message.Param6;
-          _videoFormat.isInterlaced = (message.Param7 == 1);
-          Log.Info("TsReaderPlayer: OnVideoFormatChanged - {0}", _videoFormat.ToString());
-          break;
-      }
     }
 
     public int OnBitRateChanged(int bitrate)
