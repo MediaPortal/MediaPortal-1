@@ -632,11 +632,16 @@ namespace MediaPortal.Player
         {
           return;
         }
+
+        if (rDest.Left <= 0 && rDest.Top <= 0 && rDest.Width <= 1 && rDest.Height <= 1)
+        {
+          return;
+        }
+
         if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
         {
           Size client = GUIGraphicsContext.form.ClientSize;
           videoWin.SetWindowPosition(0, 0, client.Width, client.Height);
-          //basicVideo.SetDestinationPosition(rDest.Left, rDest.Top, rDest.Width, rDest.Height);
         }
         else
         {
@@ -655,7 +660,13 @@ namespace MediaPortal.Player
           {
             return;
           }
+
           if (rDest.Width <= 0 || rDest.Height <= 0)
+          {
+            return;
+          }
+
+          if (rDest.Left <= 0 && rDest.Top <= 0 && rDest.Width <= 1 && rDest.Height <= 1)
           {
             return;
           }
@@ -721,7 +732,7 @@ namespace MediaPortal.Player
                   if (!GUIGraphicsContext.IsFullScreenVideo)
                   {
                     // Here is to hide video window madVR when skin didn't handle video overlay (the value need to be different from GUIVideoControl Render)
-                    basicVideo.SetDestinationPosition(-10, -10, 1, 1);
+                    basicVideo.SetDestinationPosition(-100, -100, 50, 50);
                     //Log.Error("VMR7 hide video window");
                   }
                 }
@@ -743,7 +754,7 @@ namespace MediaPortal.Player
               {
                 if (!GUIGraphicsContext.IsFullScreenVideo)
                 {
-                  basicVideo.SetDestinationPosition(-10, -10, GUIGraphicsContext.VideoWindowWidth,
+                  basicVideo.SetDestinationPosition(0, 0, GUIGraphicsContext.VideoWindowWidth,
                     GUIGraphicsContext.VideoWindowHeight);
                   //Log.Error("VMR7 show video window");
                 }

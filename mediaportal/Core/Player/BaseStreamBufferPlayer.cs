@@ -498,7 +498,7 @@ namespace MediaPortal.Player
           if (_basicVideo != null)
           {
             if (!GUIGraphicsContext.IsFullScreenVideo)
-              _basicVideo.SetDestinationPosition(-10, -10, 1, 1);
+              _basicVideo.SetDestinationPosition(-100, -100, 50, 50);
           }
         }
       }
@@ -1107,6 +1107,10 @@ namespace MediaPortal.Player
         {
           return;
         }
+        if (rDest.Left <= 0 && rDest.Top <= 0 && rDest.Width <= 1 && rDest.Height <= 1)
+        {
+          return;
+        }
         _videoWin.SetWindowPosition(rDest.Left, rDest.Top, rDest.Width, rDest.Height);
       }
     }
@@ -1122,6 +1126,10 @@ namespace MediaPortal.Player
             return;
           }
           if (rDest.Width <= 0 || rDest.Height <= 0)
+          {
+            return;
+          }
+          if (rDest.Left <= 0 && rDest.Top <= 0 && rDest.Width <= 1 && rDest.Height <= 1)
           {
             return;
           }

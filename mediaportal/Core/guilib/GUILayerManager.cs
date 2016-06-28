@@ -18,6 +18,8 @@
 
 #endregion
 
+using System;
+
 namespace MediaPortal.GUI.Library
 {
   public class GUILayerManager
