@@ -111,11 +111,11 @@ namespace MediaPortal.GUI.Library
             _layers[i].RenderLayer(timePassed);
             GUIFontManager.Present();
 
-            if (videoLayer != i)
-            {
-              uiVisible = true;
-              //Log.Error("Layer uiVisible and layer [{0}]", Enum.GetName(typeof (LayerType), i));
-            }
+            //if (videoLayer != i)
+            //{
+            //  uiVisible = true;
+            //  //Log.Error("Layer uiVisible and layer [{0}]", Enum.GetName(typeof (LayerType), i));
+            //}
           }
         }
       }

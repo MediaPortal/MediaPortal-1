@@ -259,7 +259,7 @@ HRESULT MPMadPresenter::ClearBackground(LPCSTR name, REFERENCE_TIME frameStart, 
   if (FAILED(hr = m_pCallback->RenderGui(videoWidth, videoHeight, videoWidth, videoHeight)))
     return hr;
 
-  uiVisible = hr == S_OK ? true : false;
+  uiVisible = false;// hr == S_OK ? true : false;
 
   if (FAILED(hr = m_pDevice->PresentEx(nullptr, nullptr, nullptr, nullptr, D3DPRESENT_FORCEIMMEDIATE)))
     return hr;
@@ -277,7 +277,8 @@ HRESULT MPMadPresenter::ClearBackground(LPCSTR name, REFERENCE_TIME frameStart, 
     return hr;
 
   //Log("ClearBackground hr: 0x%08x", hr);
-  return uiVisible ? CALLBACK_USER_INTERFACE : CALLBACK_EMPTY;
+  //Log("ClearBackground uiVisible: 0x%08x", uiVisible);
+  return uiVisible ? CALLBACK_INFO_DISPLAY : CALLBACK_EMPTY;
 }
 
 HRESULT MPMadPresenter::RenderOsd(LPCSTR name, REFERENCE_TIME frameStart, RECT* fullOutputRect, RECT* activeVideoRect)
@@ -324,7 +325,7 @@ HRESULT MPMadPresenter::RenderOsd(LPCSTR name, REFERENCE_TIME frameStart, RECT* 
   if (FAILED(hr = m_pCallback->RenderOverlay(videoWidth, videoHeight, videoWidth, videoHeight)))
     return hr;
 
-  uiVisible = hr == S_OK ? true : false;
+  uiVisible = false;// hr == S_OK ? true : false;
 
   if (FAILED(hr = m_pDevice->PresentEx(nullptr, nullptr, nullptr, nullptr, D3DPRESENT_FORCEIMMEDIATE)))
     return hr;
@@ -342,7 +343,8 @@ HRESULT MPMadPresenter::RenderOsd(LPCSTR name, REFERENCE_TIME frameStart, RECT* 
     return hr;
 
   //Log("RenderOsd hr: 0x%08x", hr);
-  return uiVisible ? CALLBACK_USER_INTERFACE : CALLBACK_EMPTY;
+  //Log("RenderOsd uiVisible: 0x%08x", uiVisible);
+  return uiVisible ? CALLBACK_INFO_DISPLAY : CALLBACK_EMPTY;
 }
 
 void MPMadPresenter::RenderToTexture(IDirect3DTexture9* pTexture, WORD cx, WORD cy, WORD arx, WORD ary)
