@@ -2601,7 +2601,7 @@ void CDeMultiplexer::FillVideoHEVC(CTsHeader& header, byte* tsPacket)
             if (!m_bFirstGopParsed)
             {
               m_bFirstGopParsed = true;
-              LogDebug("DeMultiplexer: First Gop after new PAT, %dx%d @ %d:%d, %.3fHz %s",m_mpegPesParser->basicVideoInfo.width,m_mpegPesParser->basicVideoInfo.height,m_mpegPesParser->basicVideoInfo.arx,m_mpegPesParser->basicVideoInfo.ary,(float)m_mpegPesParser->basicVideoInfo.fps, m_mpegPesParser->basicVideoInfo.isInterlaced ? "interlaced":"progressive");
+              LogDebug("DeMultiplexer: HEVC: First Gop after new PAT, %dx%d @ %d:%d, %.3fHz %s",m_mpegPesParser->basicVideoInfo.width,m_mpegPesParser->basicVideoInfo.height,m_mpegPesParser->basicVideoInfo.arx,m_mpegPesParser->basicVideoInfo.ary,(float)m_mpegPesParser->basicVideoInfo.fps, m_mpegPesParser->basicVideoInfo.isInterlaced ? "interlaced":"progressive");
             }
           }
 
@@ -2793,16 +2793,16 @@ void CDeMultiplexer::FillVideoH264(CTsHeader& header, byte* tsPacket)
   {            
     int dataLen = 188-headerlen;
 
-	m_byteRead = m_byteRead + dataLen;
-	m_sampleTime = GET_TIME_NOW();
-	DWORD elapsedTime = m_sampleTime - m_sampleTimePrev;
+  	m_byteRead = m_byteRead + dataLen;
+  	m_sampleTime = GET_TIME_NOW();
+  	DWORD elapsedTime = m_sampleTime - m_sampleTimePrev;
 
-	if (elapsedTime >= 5000)
-	{
+  	if (elapsedTime >= 5000)
+  	{
       m_bitRate = (float)m_byteRead*8*1000/elapsedTime;
-	  m_filter.OnBitRateChanged(m_bitRate);
-	  m_sampleTimePrev = m_sampleTime;
-	  m_byteRead = 0;
+  	  m_filter.OnBitRateChanged(m_bitRate);
+  	  m_sampleTimePrev = m_sampleTime;
+  	  m_byteRead = 0;
     }
 
     p->SetCount(dataLen);
@@ -3330,16 +3330,16 @@ void CDeMultiplexer::FillVideoMPEG2(CTsHeader& header, byte* tsPacket)
   {
     int dataLen = 188-headerlen;
 
-	m_byteRead = m_byteRead + dataLen;
-	m_sampleTime = GET_TIME_NOW();
-	DWORD elapsedTime = m_sampleTime - m_sampleTimePrev;
-
-	if (elapsedTime >= 5000)
-	{
+  	m_byteRead = m_byteRead + dataLen;
+  	m_sampleTime = GET_TIME_NOW();
+  	DWORD elapsedTime = m_sampleTime - m_sampleTimePrev;
+  
+  	if (elapsedTime >= 5000)
+  	{
       m_bitRate = (float)m_byteRead*8*1000/elapsedTime;
-	  m_filter.OnBitRateChanged(m_bitRate);
-	  m_sampleTimePrev = m_sampleTime;
-	  m_byteRead = 0;
+  	  m_filter.OnBitRateChanged(m_bitRate);
+  	  m_sampleTimePrev = m_sampleTime;
+  	  m_byteRead = 0;
     }
 
     p->SetCount(dataLen);

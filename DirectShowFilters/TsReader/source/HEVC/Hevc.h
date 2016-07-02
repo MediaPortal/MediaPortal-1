@@ -13,7 +13,7 @@ namespace HEVC
 
 	struct hevchdr
 	{
-		uint8_t profile, level;
+		uint8_t  profile, level;
 		uint64_t chromaFormat;
 		uint16_t lumaDepth, chromaDepth;
 		unsigned int width, height;
@@ -29,6 +29,11 @@ namespace HEVC
 		uint8_t ppsid;
 		hevchdr()
 		{
+      profile = 0;
+      level = 0;        
+      chromaFormat = 0;          
+      lumaDepth = 0;
+      chromaDepth = 0;
 			progressive = true;
 		  sps = NULL;
 		  pps = NULL;
@@ -40,6 +45,8 @@ namespace HEVC
 			ary = 0;
 			width = 0;
 			height = 0;
+			spsid = 0;
+      ppsid = 0;
 		}
 	};
 

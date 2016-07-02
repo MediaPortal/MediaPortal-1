@@ -32,21 +32,63 @@ void HevcNalDecode::processNALUnit(const uint8_t *pdata, std::size_t size, hevch
       
       //Initialise to normal values
       h.chromaFormat = YUV420;
+      
+      h.width  = psps -> pic_width_in_luma_samples;
+      h.height = psps -> pic_height_in_luma_samples;      
+      if (h.height == 1088) h.height = 1080;  // Prevent blur lines 
+
       h.lumaDepth    = psps -> bit_depth_luma_minus8 + 8; // bit_depth_luma_minus8
       h.chromaDepth  = psps -> bit_depth_chroma_minus8 + 8; // bit_depth_chroma_minus8
-
-			h.ar = 1;
-			h.arx = 1;
-			h.ary = 1;
-
-      h.width  = psps -> pic_width_in_luma_samples;
-      h.height = psps -> pic_height_in_luma_samples;
-
-      h.progressive = true;
-
-      if (h.height == 1088) h.height = 1080;  // Prevent blur lines 
       
-      h.AvgTimePerFrame = 370000; // lets go for 27Hz :-)
+      h.progressive  = (psps->profile_tier_level.general_progressive_source_flag > 0);
+      
+      h.profile      = psps->profile_tier_level.general_profile_idc;
+      h.level        = psps->profile_tier_level.general_level_idc;
+
+      if(psps -> vui_parameters_present_flag)
+      {
+        if (psps->vui_parameters.aspect_ratio_info_present_flag)
+        {
+          h.ar = psps->vui_parameters.aspect_ratio_idc;
+          if(h.ar == 255) //EXTENDED_SAR
+          {
+            h.arx = psps->vui_parameters.sar_width;
+            h.ary = psps->vui_parameters.sar_height;
+          }   
+          else  //Look up the aspect ratio from a table
+          {
+            struct {int x, y;} ar[] = {{0,0},{1,1},{12,11},{10,11},{16,11},{40,33},{24,11},{20,11},{32,11},{80,33},{18,11},{15,11},{64,33},{160,99},{4,3},{3,2},{2,1}};
+            if(h.ar > 16)
+            {
+              // aspect ratio reserved
+              h.ar = 0;
+              h.arx = 0;
+              h.ary = 0;
+            }
+            else
+            {
+              // use preset aspect ratio
+              h.arx = ar[h.ar].x;
+              h.ary = ar[h.ar].y;
+            }
+          }    
+           
+          h.arx *= h.width;
+          h.ary *= h.height;
+      
+          uint32_t a = h.arx, b = h.ary;
+          while(a) {uint32_t tmp = a; a = b % tmp; b = tmp;}
+          if(b) h.arx /= b, h.ary /= b;
+       }
+
+        if (psps->vui_parameters.vui_timing_info_present_flag)
+        {
+          if ((psps->vui_parameters.vui_time_scale > 0) && (psps->vui_parameters.vui_num_units_in_tick > 0))
+          {
+            h.AvgTimePerFrame = (__int64)((10000000.0 * (double)psps->vui_parameters.vui_num_units_in_tick)/(double)psps->vui_parameters.vui_time_scale);
+          }
+        }
+      }      
 
       break;
     }

@@ -1625,13 +1625,33 @@ bool CFrameHeaderParser::Read(HEVC::hevchdr& h, int len, CMediaType* pmt, bool r
 {
   if (reset)
   {
-    h.spslen=0;
-    h.ppslen=0;
-    h.height=0;
-    h.width=0;
-    h.AvgTimePerFrame=370000; //27 Hz
+    h.profile = 0;
+    h.level = 0;        
+    h.chromaFormat = 0;          
+    h.lumaDepth = 0;
+    h.chromaDepth = 0;
+		h.progressive = true;
+		if (h.sps != NULL)
+		{
+			free(h.sps);
+		}
+		if (h.pps != NULL)
+		{
+			free(h.pps);
+		}
+		h.sps = NULL;
+		h.pps = NULL;
+		h.spslen = 0;
+		h.ppslen = 0;
+		h.AvgTimePerFrame = 370000;  //27 Hz
+		h.ar = 0;
+		h.arx = 0;
+		h.ary = 0;
+		h.width = 0;
+		h.height = 0;
+		h.spsid = 0;
+    h.ppsid = 0;
   }
-
   
 	if (len > 4)
 	{
@@ -1738,40 +1758,7 @@ bool CFrameHeaderParser::Read(HEVC::hevchdr& h, int len, CMediaType* pmt, bool r
 		MPEG2VIDEOINFO* vi = (MPEG2VIDEOINFO*)pmt->AllocFormatBuffer(len);
 		memset(vi, 0, len);
 		vi->hdr.AvgTimePerFrame = h.AvgTimePerFrame;
-
-		/*
-		h.ar=h.width/h.height;
-		struct {DWORD x, y;} ar[] = {{h.width,h.height},{4,3},{16,9},{221,100},{h.width,h.height}};
-		int i = min(max(h.ar, 1), 5)-1;
-		*/
-		struct {DWORD x, y;} ar[] = {{0,0},{1,1},{12,11},{10,11},{16,11},{40,33},{24,11},{20,11},{32,11},{80,33},{18,11},{15,11},{64,33},{160,99},{4,3},{3,2},{2,1}};
-		if(h.ar == 255)
-		{
-			// make sure that both are 0 or none
-			if(h.arx == 0 || h.ary == 0)
-				h.arx = h.ary = 0;
-
-			// h.arx and h.ary now contain sample aspect ratio
-		}
-		else if(h.ar < 1 || h.ar > 16)
-		{
-			// aspect ratio unspecified or reserved
-			h.ar = 0;
-			h.arx = h.ary = 0;
-		}
-		else
-		{
-			// use preset aspect ratio
-			h.arx = ar[h.ar].x;
-			h.ary = ar[h.ar].y;
-		}
-
-		h.arx *= h.width;
-		h.ary *= h.height;
-
-		DWORD a = h.arx, b = h.ary;
-		while(a) {DWORD tmp = a; a = b % tmp; b = tmp;}
-		if(b) h.arx /= b, h.ary /= b;
+		  		  
 		vi->hdr.dwPictAspectRatioX = h.arx;
 		vi->hdr.dwPictAspectRatioY = h.ary;
     vi->hdr.rcSource.right = h.width;
@@ -1780,8 +1767,6 @@ bool CFrameHeaderParser::Read(HEVC::hevchdr& h, int len, CMediaType* pmt, bool r
     vi->hdr.rcTarget.bottom = h.height;
 		vi->hdr.bmiHeader.biWidth = h.width;
 		vi->hdr.bmiHeader.biHeight = h.height;
-		//vi->hdr.bmiHeader.biCompression = '462h';
-		//vi->hdr.bmiHeader.biCompression = '1CVA';
 		vi->hdr.bmiHeader.biCompression = 'CVEH';
 		vi->hdr.bmiHeader.biPlanes=1;
 
@@ -1807,7 +1792,7 @@ bool CFrameHeaderParser::Read(HEVC::hevchdr& h, int len, CMediaType* pmt, bool r
     vi->hdr.bmiHeader.biSizeImage = DIBSIZE(vi->hdr.bmiHeader);
 		vi->hdr.bmiHeader.biSize = sizeof(vi->hdr.bmiHeader);
 		vi->dwProfile = h.profile;
-		vi->dwFlags = 4; // ?
+		vi->dwFlags = 0; // ?
 		vi->dwLevel = h.level;
 		vi->cbSequenceHeader = extra;
 		vi->dwStartTimeCode=0;
@@ -2030,6 +2015,9 @@ void CFrameHeaderParser::DumpHevcHeader(HEVC::hevchdr h)
 	LogDebug("avg time/frame: %i",h.AvgTimePerFrame);
 	LogDebug("width: %i",h.width);
 	LogDebug("height: %i",h.height);
+	LogDebug("ARidx: %i",h.ar);
+	LogDebug("ARx: %i",h.arx);
+	LogDebug("ARy: %i",h.ary);
 	LogDebug("level: %i",h.level);
 	LogDebug("profile: %i",h.profile);
 	LogDebug("PPS len: %i",h.ppslen);
