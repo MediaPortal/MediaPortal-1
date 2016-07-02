@@ -944,6 +944,17 @@ void MadDeinit()
   }
 }
 
+void InitOSD()
+{
+  try
+  {
+    m_madPresenter->InitializeOSD();
+  }
+  catch (...)
+  {
+  }
+}
+
 void Vmr9SetDeinterlaceMode(int mode)
 {
   //0=None

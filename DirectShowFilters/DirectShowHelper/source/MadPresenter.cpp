@@ -84,6 +84,17 @@ MPMadPresenter::~MPMadPresenter()
   Log("MPMadPresenter::Destructor() 5 ");
 }
 
+void MPMadPresenter::InitializeOSD()
+{
+  CAutoLock cAutoLock(this);
+
+  if (m_pOsdServices)
+  {
+    m_pOsdServices->OsdSetRenderCallback("MP-GUI", this, nullptr);
+    Log("MPMadPresenter::InitializeOSD");
+  }
+}
+
 IBaseFilter* MPMadPresenter::Initialize()
 {
   CAutoLock cAutoLock(this);
@@ -109,26 +120,23 @@ IBaseFilter* MPMadPresenter::Initialize()
     return nullptr;
   Log("MPMadPresenter::Init 4()");
 
-  m_pOsdServices->OsdSetRenderCallback("MP-GUI", this, nullptr);
+  m_pManager->ConfigureDisplayModeChanger(true, true);
   Log("MPMadPresenter::Init 5()");
 
-  m_pManager->ConfigureDisplayModeChanger(true, true);
+  m_pSubRender->SetCallback(m_subProxy);
   Log("MPMadPresenter::Init 6()");
 
-  m_pSubRender->SetCallback(m_subProxy);
+  m_pCommand->SendCommandBool("disableSeekbar", true);
   Log("MPMadPresenter::Init 7()");
 
-  m_pCommand->SendCommandBool("disableSeekbar", true);
+  m_pWindow->put_Owner(m_hParent);
   Log("MPMadPresenter::Init 8()");
 
-  m_pWindow->put_Owner(m_hParent);
+  m_pWindow->SetWindowForeground(true);
   Log("MPMadPresenter::Init 9()");
 
-  m_pWindow->SetWindowForeground(true);
-  Log("MPMadPresenter::Init 10()");
-
   m_pWindow->put_MessageDrain(m_hParent);
-  Log("MPMadPresenter::Init 11()");
+  Log("MPMadPresenter::Init 10()");
 
   // TODO implement IMadVRSubclassReplacement
   //pSubclassReplacement->DisableSubclassing();
@@ -524,6 +532,9 @@ HRESULT MPMadPresenter::SetDevice(IDirect3DDevice9* pD3DDev)
 
   CAutoLock cAutoLock(this);
 
+  if (!pD3DDev)
+    return S_OK;
+
   if (!m_pCallback)
     return S_OK;
 
@@ -531,6 +542,9 @@ HRESULT MPMadPresenter::SetDevice(IDirect3DDevice9* pD3DDev)
 
   m_pMadD3DDev = static_cast<IDirect3DDevice9Ex*>(pD3DDev);
   m_deviceState.SetDevice(pD3DDev);
+
+  //if (m_pCallback && pD3DDev)
+  //  m_pCallback->SetSubtitleDevice((DWORD)pD3DDev);
 
   if (m_pMadD3DDev)
   {

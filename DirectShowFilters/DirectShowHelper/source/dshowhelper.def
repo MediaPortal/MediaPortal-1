@@ -24,3 +24,4 @@ EVRUpdateDisplayFPS     @19
 EVRGetDisplayFPS        @20
 MadInit                 @21
 MadDeinit               @22
+InitOSD                 @23
