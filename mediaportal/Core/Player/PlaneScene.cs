@@ -623,8 +623,9 @@ namespace MediaPortal.Player
         {
           lock (GUIGraphicsContext.RenderModeSwitch)
           {
-            grabber.OnFrame(width, height, arWidth, arHeight, (uint)surfaceMadVr.UnmanagedComPointer,
-              FrameGrabber.FrameSource.Video);
+            if (grabber !=null)
+              grabber.OnFrame(width, height, arWidth, arHeight, (uint)surfaceMadVr.UnmanagedComPointer,
+                FrameGrabber.FrameSource.Video);
           }
         }
         surfaceMadVr.ReleaseGraphics();
@@ -735,6 +736,7 @@ namespace MediaPortal.Player
     public void SetSubtitleDevice(IntPtr device)
     {
       // Set madVR D3D Device
+      GUIGraphicsContext.DX9DeviceMadVr = null;
       GUIGraphicsContext.DX9DeviceMadVr = new Device(device);
       ISubEngine engine = SubEngine.GetInstance(true);
       if (engine != null)

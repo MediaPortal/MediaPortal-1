@@ -5,6 +5,7 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using System.Text;
 using MediaPortal.ExtensionMethods;
+using MediaPortal.GUI.Library;
 
 namespace MediaPortal.Player
 {
@@ -738,6 +739,19 @@ namespace MediaPortal.Player
       }
       catch (Exception e)
       {
+      }
+    }
+
+    public static void SetRenderCallback(object madvr)
+    {
+      try
+      {
+        IMadVROsdServices osdServices = (IMadVROsdServices)madvr;
+        osdServices.OsdSetRenderCallback("MP-GUI", osdRenderCallback, reserved);
+      }
+      catch (Exception e)
+      {
+        Log.Error("[Madvr Interface] Error setting callback: " + e);
       }
     }
 

@@ -1119,6 +1119,8 @@ namespace MediaPortal.GUI.Library
       }
     }
 
+    public static bool RegisterOsd { get; set; }
+
     /// <summary>
     /// 
     /// </summary>

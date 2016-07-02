@@ -137,6 +137,9 @@ namespace MediaPortal.Player
     [DllImport("dshowhelper.dll", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
     private static extern unsafe void MadDeinit();
 
+    [DllImport("dshowhelper.dll", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
+    private static extern unsafe void InitOSD();
+
     #endregion
 
     #region static vars
@@ -378,6 +381,19 @@ namespace MediaPortal.Player
     #region public members
 
     /// <summary>
+    /// Register madVR OSD callback
+    /// </summary>
+    /// <param name="graphBuilder"></param>
+    public void RegisterOsd()
+    {
+      if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+      {
+        InitOSD();
+        GUIGraphicsContext.RegisterOsd = true;
+      }
+    }
+
+    /// <summary>
     /// Add VMR9 filter to graph and configure it
     /// </summary>
     /// <param name="graphBuilder"></param>
@@ -483,6 +499,7 @@ namespace MediaPortal.Player
         }
         else if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
         {
+          GUIGraphicsContext.RegisterOsd = false;
           var backbuffer = GUIGraphicsContext.DX9Device.PresentationParameters;
           MadInit(_scene, backbuffer.BackBufferWidth, backbuffer.BackBufferHeight, (uint)upDevice.ToInt32(),
             (uint)GUIGraphicsContext.ActiveForm.ToInt32(), ref _vmr9Filter);
@@ -786,6 +803,20 @@ namespace MediaPortal.Player
         GUIGraphicsContext.Vmr9FPS = 0f;
         currentVmr9State = Vmr9PlayState.Repaint;
         if (_scene != null) _scene.DrawVideo = false;
+      }
+      if (currentVmr9State == Vmr9PlayState.Repaint && frames == 0)
+      {
+        if (!GUIGraphicsContext.RegisterOsd && UseMadVideoRenderer)
+        {
+          if (VMR9Util.g_vmr9 != null) VMR9Util.g_vmr9.RegisterOsd();
+          if (!g_Player.Paused)
+          {
+            // TODO : Fix weird hack for madVR 3D that need pause/unpause to start
+            g_Player.Pause();
+            g_Player.Pause();
+          }
+          Log.Debug("VMR9Helper: Register madVR OSD");
+        }
       }
     }
 
