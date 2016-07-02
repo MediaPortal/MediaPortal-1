@@ -25,6 +25,7 @@ using System.Threading;
 using MediaPortal.ExtensionMethods;
 using MediaPortal.GUI.Library;
 using MediaPortal.Player.Subtitles;
+using MediaPortal.Profile;
 using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
 using Geometry = MediaPortal.GUI.Library.Geometry;
@@ -106,6 +107,8 @@ namespace MediaPortal.Player
                                             7.06f, 10.15f, 12.65f, 5.88f, 11.47f, 5.58f, 11.47f, 5.88f, 12.65f, 10.15f,
                                             7.06f
                                           };
+
+    private bool _disableLowLatencyMode = false;
 
     #endregion
 
@@ -293,6 +296,16 @@ namespace MediaPortal.Player
         _renderTarget = GUIGraphicsContext.DX9Device.GetRenderTarget(0);
       GUILayerManager.RegisterLayer(this, GUILayerManager.LayerType.Video);
       GUIWindowManager.Receivers += new SendMessageHandler(this.OnMessage);
+      using (Settings xmlreader = new MPSettings())
+      {
+        try
+        {
+          _disableLowLatencyMode = xmlreader.GetValueAsBool("general", "disableLowLatencyMode", true);
+        }
+        catch (Exception)
+        {
+        }
+      }
     }
 
     /// <summary>
@@ -648,7 +661,7 @@ namespace MediaPortal.Player
 
       if (GUIWindowManager.IsSwitchingToNewWindow && !_vmr9Util.InMenu)
       {
-        return 0; //dont present video during window transitions
+        return 1; // (0) -> S_OK, (1) -> S_FALSE; //dont present video during window transitions
       }
 
       if (width > 0 && height > 0)
@@ -685,7 +698,15 @@ namespace MediaPortal.Player
       }
 
       bool visible = false;
-      GUIGraphicsContext.RenderGUI.RenderFrame(GUIGraphicsContext.TimePassed, layers, ref visible);
+      if (_disableLowLatencyMode)
+      {
+        GUIGraphicsContext.RenderGUI.RenderFrame(GUIGraphicsContext.TimePassed, layers);
+      }
+      else
+      {
+        GUIGraphicsContext.RenderGUI.RenderFrame(GUIGraphicsContext.TimePassed, layers, ref visible);
+      }
+
       GUIFontManager.Present();
       device.EndScene();
 

@@ -254,29 +254,48 @@ HRESULT MPMadPresenter::ClearBackground(LPCSTR name, REFERENCE_TIME frameStart, 
   RenderToTexture(m_pMPTextureGui, videoWidth, videoHeight, videoWidth, videoHeight);
 
   if (FAILED(hr = m_deviceState.Store()))
+  {
+    Log("ClearBackground hr1: 0x%08x", hr);
     return hr;
+  }
 
   if (FAILED(hr = m_pCallback->RenderGui(videoWidth, videoHeight, videoWidth, videoHeight)))
+  {
+    Log("ClearBackground hr2: 0x%08x", hr);
     return hr;
+  }
 
   uiVisible = hr == S_OK ? true : false;
 
   if (FAILED(hr = m_pDevice->PresentEx(nullptr, nullptr, nullptr, nullptr, D3DPRESENT_FORCEIMMEDIATE)))
+  {
+    Log("ClearBackground hr3: 0x%08x", hr);
     return hr;
+  }
 
   if (FAILED(hr = SetupMadDeviceState()))
+  {
+    Log("ClearBackground hr4: 0x%08x", hr);
     return hr;
+  }
 
   if (FAILED(hr = SetupOSDVertex(m_pMadGuiVertexBuffer)))
+  {
+    Log("ClearBackground hr5: 0x%08x", hr);
     return hr;
+  }
 
   // Draw MP texture on madVR device's side
   RenderTexture(m_pMadGuiVertexBuffer, m_pRenderTextureGui);
 
   if (FAILED(hr = m_deviceState.Restore()))
+  {
+    Log("ClearBackground hr6: 0x%08x", hr);
     return hr;
+  }
 
   //Log("ClearBackground hr: 0x%08x", hr);
+  //Log("ClearBackground uiVisible: 0x%08x", uiVisible);
   return uiVisible ? CALLBACK_USER_INTERFACE : CALLBACK_EMPTY;
 }
 
@@ -319,29 +338,48 @@ HRESULT MPMadPresenter::RenderOsd(LPCSTR name, REFERENCE_TIME frameStart, RECT* 
   RenderToTexture(m_pMPTextureOsd, videoWidth, videoHeight, videoWidth, videoHeight);
 
   if (FAILED(hr = m_deviceState.Store()))
+  {
+    Log("RenderOsd hr1: 0x%08x", hr);
     return hr;
+  }
 
   if (FAILED(hr = m_pCallback->RenderOverlay(videoWidth, videoHeight, videoWidth, videoHeight)))
+  {
+    Log("RenderOsd hr2: 0x%08x", hr);
     return hr;
+  }
 
   uiVisible = hr == S_OK ? true : false;
 
   if (FAILED(hr = m_pDevice->PresentEx(nullptr, nullptr, nullptr, nullptr, D3DPRESENT_FORCEIMMEDIATE)))
+  {
+    Log("RenderOsd hr3: 0x%08x", hr);
     return hr;
+  }
 
   if (FAILED(hr = SetupMadDeviceState()))
+  {
+    Log("RenderOsd hr4: 0x%08x", hr);
     return hr;
+  }
 
   if (FAILED(hr = SetupOSDVertex(m_pMadOsdVertexBuffer)))
+  {
+    Log("RenderOsd hr5: 0x%08x", hr);
     return hr;
+  }
 
   // Draw MP texture on madVR device's side
   RenderTexture(m_pMadOsdVertexBuffer, m_pRenderTextureOsd);
 
   if (FAILED(hr = m_deviceState.Restore()))
+  {
+    Log("RenderOsd hr6: 0x%08x", hr);
     return hr;
+  }
 
   //Log("RenderOsd hr: 0x%08x", hr);
+  //Log("RenderOsd uiVisible: 0x%08x", uiVisible);
   return uiVisible ? CALLBACK_USER_INTERFACE : CALLBACK_EMPTY;
 }
 
