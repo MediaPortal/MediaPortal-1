@@ -69,6 +69,7 @@ namespace MediaPortal.Configuration.Sections
           radioButtonEVR.Checked = xmlreader.GetValueAsBool("general", "useEVRenderer", ValueEVR);
           radioButtonMadVR.Checked = xmlreader.GetValueAsBool("general", "useMadVideoRenderer", false);
           UseEVRMadVRForTV.Checked = xmlreader.GetValueAsBool("general", "useEVRMadVRForTV", false);
+          DisableLowLatencyMode.Checked = xmlreader.GetValueAsBool("general", "disableLowLatencyMode", false);
         }
         _init = true;
       }
@@ -93,6 +94,7 @@ namespace MediaPortal.Configuration.Sections
         xmlwriter.SetValueAsBool("general", "useEVRenderer", radioButtonEVR.Checked);
         xmlwriter.SetValueAsBool("general", "useMadVideoRenderer", radioButtonMadVR.Checked);
         xmlwriter.SetValueAsBool("general", "useEVRMadVRForTV", UseEVRMadVRForTV.Checked);
+        xmlwriter.SetValueAsBool("general", "disableLowLatencyMode", DisableLowLatencyMode.Checked);
       }
     }
 

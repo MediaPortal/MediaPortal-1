@@ -28,7 +28,9 @@ namespace MediaPortal.Configuration.Sections
     /// </summary>
     private void InitializeComponent()
     {
+      this.VMR9Tips = new MediaPortal.UserInterface.Controls.MPToolTip();
       this.mpGroupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.DisableLowLatencyMode = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.UseEVRMadVRForTV = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.mpMadLabel = new MediaPortal.UserInterface.Controls.MPLabel();
       this.radioButtonMadVR = new System.Windows.Forms.RadioButton();
@@ -42,7 +44,6 @@ namespace MediaPortal.Configuration.Sections
       this.mpVMR9FilterMethod = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.label1 = new System.Windows.Forms.Label();
       this.checkboxMpNonsquare = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.VMR9Tips = new MediaPortal.UserInterface.Controls.MPToolTip();
       this.mpGroupBox1.SuspendLayout();
       this.SuspendLayout();
       // 
@@ -50,6 +51,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.mpGroupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpGroupBox1.Controls.Add(this.DisableLowLatencyMode);
       this.mpGroupBox1.Controls.Add(this.UseEVRMadVRForTV);
       this.mpGroupBox1.Controls.Add(this.mpMadLabel);
       this.mpGroupBox1.Controls.Add(this.radioButtonMadVR);
@@ -71,6 +73,19 @@ namespace MediaPortal.Configuration.Sections
       this.mpGroupBox1.TabStop = false;
       this.mpGroupBox1.Text = "Video renderer - advanced settings";
       // 
+      // DisableLowLatencyMode
+      // 
+      this.DisableLowLatencyMode.AutoSize = true;
+      this.DisableLowLatencyMode.Checked = true;
+      this.DisableLowLatencyMode.CheckState = System.Windows.Forms.CheckState.Checked;
+      this.DisableLowLatencyMode.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.DisableLowLatencyMode.Location = new System.Drawing.Point(64, 327);
+      this.DisableLowLatencyMode.Name = "DisableLowLatencyMode";
+      this.DisableLowLatencyMode.Size = new System.Drawing.Size(303, 17);
+      this.DisableLowLatencyMode.TabIndex = 16;
+      this.DisableLowLatencyMode.Text = "Disable low latency rendering mode (making UI not smooth)";
+      this.DisableLowLatencyMode.UseVisualStyleBackColor = true;
+      // 
       // UseEVRMadVRForTV
       // 
       this.UseEVRMadVRForTV.AutoSize = true;
@@ -88,7 +103,7 @@ namespace MediaPortal.Configuration.Sections
       // mpMadLabel
       // 
       this.mpMadLabel.AutoSize = true;
-      this.mpMadLabel.Location = new System.Drawing.Point(61, 328);
+      this.mpMadLabel.Location = new System.Drawing.Point(61, 346);
       this.mpMadLabel.Name = "mpMadLabel";
       this.mpMadLabel.Size = new System.Drawing.Size(269, 13);
       this.mpMadLabel.TabIndex = 14;
@@ -261,5 +276,6 @@ namespace MediaPortal.Configuration.Sections
       private UserInterface.Controls.MPLabel mpMadLabel;
       private System.Windows.Forms.RadioButton radioButtonMadVR;
     private UserInterface.Controls.MPCheckBox UseEVRMadVRForTV;
+    private UserInterface.Controls.MPCheckBox DisableLowLatencyMode;
   }
 }
