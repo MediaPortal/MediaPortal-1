@@ -41,7 +41,7 @@ class CMpegPesParser
 private:
 	CFrameHeaderParser hdrParser;
 	avchdr avc;
-	hevchdr hevc;
+	HEVC::hevchdr hevc;
 	bool ParseVideo(byte* tsPacket,int vidType,bool reset);
 	bool ParseAudio(byte* audioPacket, int streamType, bool reset);
 

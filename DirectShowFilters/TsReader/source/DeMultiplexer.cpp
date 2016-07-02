@@ -53,8 +53,8 @@
 #define LOG_SAMPLES //LogDebug
 #define LOG_OUTSAMPLES //LogDebug
 
-#define LOG_SAMPLES_HEVC LogDebug
-#define LOG_OUTSAMPLES_HEVC LogDebug
+#define LOG_SAMPLES_HEVC //LogDebug
+#define LOG_OUTSAMPLES_HEVC //LogDebug
 
 extern void LogDebug(const char *fmt, ...);
 extern void LogRotate();
@@ -1122,7 +1122,7 @@ bool CDeMultiplexer::Start(DWORD timeout)
   m_streamPcr.Reset();
   m_iAudioReadCount=0;
   m_bStarting=false;
-	LogDebug("demux:Start() Failed due to timeout : BytesProcessed:%d, DTS/PTS count = %d/%d", dwBytesProcessed, m_vidDTScount, m_vidPTScount);
+	LogDebug("demux:Start() Failed due to timeout : BytesProcessed:%d, DTS/PTS count = %d/%d, BVI=%d, BAI=%d", dwBytesProcessed, m_vidDTScount, m_vidPTScount, m_mpegPesParser->basicVideoInfo.isValid, m_mpegPesParser->basicAudioInfo.isValid);
   return false;
 }
 
@@ -2219,8 +2219,7 @@ void CDeMultiplexer::FillVideo(CTsHeader& header, byte* tsPacket, int bufferOffs
   {
     FillVideoH264(header, tsPacket);
   }
-  else if (m_pids.videoPids[0].VideoServiceType == SERVICE_TYPE_VIDEO_HEVC1 || 
-           m_pids.videoPids[0].VideoServiceType == SERVICE_TYPE_VIDEO_HEVC2 )
+  else if (m_pids.videoPids[0].VideoServiceType == SERVICE_TYPE_VIDEO_HEVC)
   {
     //LogDebug("HEVC ts packet found, VideoServiceType = %x", m_pids.videoPids[0].VideoServiceType);
     FillVideoHEVC(header, tsPacket);

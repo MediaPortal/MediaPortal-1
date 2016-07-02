@@ -111,15 +111,15 @@ bool CMpegPesParser::ParseVideo(byte* tsPacket,int vidType,bool reset)
 		if (hdrParser.Read(hevc,framesize,&pmt,reset))
 		{
 			hdrParser.DumpHevcHeader(hevc);
-			basicVideoInfo.width=avc.width;
-			basicVideoInfo.height=avc.height;
-			if (avc.AvgTimePerFrame > 0)
-			  basicVideoInfo.fps=10000000.0 / (double)avc.AvgTimePerFrame;
+			basicVideoInfo.width=hevc.width;
+			basicVideoInfo.height=hevc.height;
+			if (hevc.AvgTimePerFrame > 0)
+			  basicVideoInfo.fps=10000000.0 / (double)hevc.AvgTimePerFrame;
 			else
 			  basicVideoInfo.fps=27.030;
-			basicVideoInfo.arx=avc.arx;
-			basicVideoInfo.ary=avc.ary;
-			if (!avc.progressive)
+			basicVideoInfo.arx=hevc.arx;
+			basicVideoInfo.ary=hevc.ary;
+			if (!hevc.progressive)
 				basicVideoInfo.isInterlaced=1;
 			else
 				basicVideoInfo.isInterlaced=0;

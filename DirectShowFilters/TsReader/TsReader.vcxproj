@@ -184,6 +184,9 @@
     <ClCompile Include="source\FileReader.cpp" />
     <ClCompile Include="source\FrameHeaderParser.cpp" />
     <ClCompile Include="source\GolombBuffer.cpp" />
+    <ClCompile Include="source\HEVC\BitstreamReader.cpp" />
+    <ClCompile Include="source\HEVC\Hevc.cpp" />
+    <ClCompile Include="source\HEVC\HevcNalDecode.cpp" />
     <ClCompile Include="source\MediaSeeking.cpp" />
     <ClCompile Include="source\MemoryBuffer.cpp" />
     <ClCompile Include="source\MemoryReader.cpp" />
@@ -216,6 +219,9 @@
     <ClInclude Include="source\FileReader.h" />
     <ClInclude Include="source\FrameHeaderParser.h" />
     <ClInclude Include="source\GolombBuffer.h" />
+    <ClInclude Include="source\HEVC\BitstreamReader.h" />
+    <ClInclude Include="source\HEVC\Hevc.h" />
+    <ClInclude Include="source\HEVC\HevcNalDecode.h" />
     <ClInclude Include="source\IAudioStream.h" />
     <ClInclude Include="source\ISubtitleStream.h" />
     <ClInclude Include="source\ITeletextSource.h" />

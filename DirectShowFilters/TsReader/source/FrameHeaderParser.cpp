@@ -1621,7 +1621,7 @@ bool CFrameHeaderParser::Read(avchdr& h, int len, CMediaType* pmt, bool reset)
 	return(true);
 }
 
-bool CFrameHeaderParser::Read(hevchdr& h, int len, CMediaType* pmt, bool reset)
+bool CFrameHeaderParser::Read(HEVC::hevchdr& h, int len, CMediaType* pmt, bool reset)
 {
   if (reset)
   {
@@ -1631,13 +1631,20 @@ bool CFrameHeaderParser::Read(hevchdr& h, int len, CMediaType* pmt, bool reset)
     h.width=0;
     h.AvgTimePerFrame=370000; //27 Hz
   }
+
   
 	if (len > 4)
 	{
 		int nal_len = BitRead(32);
 		INT64 next_nal = GetPos()+nal_len;
+		
+    //Process SPS or PPS
+	  LogDebug("HEVC::HevcNalDecode::processNALUnit, nal_len = %d, next_nal = %d", nal_len, next_nal);
+    HEVC::HevcNalDecode::processNALUnit(GetBufferPos(), nal_len, h);
+      
 		BYTE id=BitRead(8);
 		BYTE nal_type=(id & 0x7e)>>1;
+		BitRead(8); //skip over 2nd byte of header
 
 	  LogDebug("nal_len = %d, next_nal = %d", nal_len, next_nal);
 
@@ -1652,11 +1659,8 @@ bool CFrameHeaderParser::Read(hevchdr& h, int len, CMediaType* pmt, bool reset)
 			LogDebug("SPS found");
 			
 		  h.spsid = id;
-			__int64			pos = GetPos(); //Start of NAL data (excluding ID byte)
+			__int64			pos = GetPos(); //Start of NAL data (excluding ID bytes)
 			
-			double			num_units_in_tick;
-			double			time_scale;
-			bool			fixed_frame_rate_flag;			
 
 			// Copy the full SPS packet in case the PPS is not found in the same packet,
 			// but make sure we don't change the current position in the buffer.
@@ -1665,147 +1669,25 @@ bool CFrameHeaderParser::Read(hevchdr& h, int len, CMediaType* pmt, bool reset)
 			{
 				free(h.sps);
 			}
+			//Copy SPS to new buffer
 			h.spslen = next_nal - pos; //length excluding length and ID bytes
 			if ((h.spslen <= 0) || (h.spslen > 65534)) return(false); //Sanity check
 			h.sps = (BYTE*) malloc(h.spslen);
 			if (h.sps == NULL) return(false); //malloc error...
 			ByteRead(h.sps, h.spslen);
-			Seek(pos);
-	    //LogDebug("h.spslen = %d, bytes = %x %x %x %x, last byte = %x", h.spslen, *h.sps, *(h.sps+1), *(h.sps+2), *(h.sps+3), *(h.sps+(h.spslen-1)));
-
-			// Manage H264 escape codes (see "remove escapes (very rare 1:2^22)" in ffmpeg h264.c file)
-			//ByteRead((BYTE*)SPSTemp, min(MAX_SPS, GetRemaining()));
-			BYTE* buff = (BYTE*) malloc(h.spslen);
-			if (buff == NULL) return(false); //malloc error...
-			CGolombBuffer	gb (buff, h.spslen);
-			RemoveMpegEscapeCode (buff, h.sps, h.spslen);
-
-			h.profile = (BYTE)gb.BitRead(8);
-			gb.BitRead(8);
-			h.level = (BYTE)gb.BitRead(8);
-
-			gb.UExpGolombRead(); // seq_parameter_set_id
 			
-			//Initialise to normal values
-		  h.chromaFormat = YUV420;
-			h.lumaDepth = 8; // bit_depth_luma_minus8
-			h.chromaDepth = 8; // bit_depth_chroma_minus8
-
-			if(h.profile >= AVC_PROF_HP || h.profile==AVC_PROF_CAVLC444 || h.profile==AVC_PROF_83 || h.profile==AVC_PROF_86) // high profile etc
-			{
-			  h.chromaFormat = gb.UExpGolombRead();
-				if(h.chromaFormat == YUV444) // chroma_format_idc
-				{
-					gb.BitRead(1); // residue_transform_flag
-				}
-
-				h.lumaDepth = (WORD)gb.UExpGolombRead() + 8; // bit_depth_luma_minus8
-				h.chromaDepth = (WORD)gb.UExpGolombRead() + 8; // bit_depth_chroma_minus8
-
-				gb.BitRead(1); // qpprime_y_zero_transform_bypass_flag
-
-				if(gb.BitRead(1)) // seq_scaling_matrix_present_flag
-					for(int i = 0; i < 8; i++)
-						if(gb.BitRead(1)) // seq_scaling_list_present_flag
-							for(int j = 0, size = i < 6 ? 16 : 64, next = 8; j < size && next != 0; ++j)
-								next = (next + gb.SExpGolombRead() + 256) & 255;
-			}
-
-			gb.UExpGolombRead(); // log2_max_frame_num_minus4
-
-			UINT64 pic_order_cnt_type = gb.UExpGolombRead();
-
-			if(pic_order_cnt_type == 0)
-			{
-				gb.UExpGolombRead(); // log2_max_pic_order_cnt_lsb_minus4
-			}
-			else if(pic_order_cnt_type == 1)
-			{
-				gb.BitRead(1); // delta_pic_order_always_zero_flag
-				gb.SExpGolombRead(); // offset_for_non_ref_pic
-				gb.SExpGolombRead(); // offset_for_top_to_bottom_field
-				UINT64 num_ref_frames_in_pic_order_cnt_cycle = gb.UExpGolombRead();
-				for(int i = 0; i < num_ref_frames_in_pic_order_cnt_cycle; i++)
-					gb.SExpGolombRead(); // offset_for_ref_frame[i]
-			}
-
-			gb.UExpGolombRead(); // num_ref_frames
-			gb.BitRead(1); // gaps_in_frame_num_value_allowed_flag
-
-			UINT64 pic_width_in_mbs_minus1 = gb.UExpGolombRead();
-			UINT64 pic_height_in_map_units_minus1 = gb.UExpGolombRead();
-			BYTE frame_mbs_only_flag = (BYTE)gb.BitRead(1);
-
-			h.progressive = (frame_mbs_only_flag != 0);
-			h.width = (pic_width_in_mbs_minus1 + 1) * 16;
-			h.height = (2 - frame_mbs_only_flag) * (pic_height_in_map_units_minus1 + 1) * 16;
-
-			if (h.height == 1088) h.height = 1080;	// Prevent blur lines 
-
-			if (!frame_mbs_only_flag) 
-				gb.BitRead(1);							// mb_adaptive_frame_field_flag
-			gb.BitRead(1);								// direct_8x8_inference_flag
-			if (gb.BitRead(1))							// frame_cropping_flag
-			{
-				gb.UExpGolombRead();					// frame_cropping_rect_left_offset
-				gb.UExpGolombRead();					// frame_cropping_rect_right_offset
-				gb.UExpGolombRead();					// frame_cropping_rect_top_offset
-				gb.UExpGolombRead();					// frame_cropping_rect_bottom_offset
-			}
+//			Seek(pos); //Move back to the beginning of the SPS
+//	    //LogDebug("h.spslen = %d, bytes = %x %x %x %x, last byte = %x", h.spslen, *h.sps, *(h.sps+1), *(h.sps+2), *(h.sps+3), *(h.sps+(h.spslen-1)));
+//
+//			// Manage H264 escape codes (see "remove escapes (very rare 1:2^22)" in ffmpeg h264.c file)
+//			//ByteRead((BYTE*)SPSTemp, min(MAX_SPS, GetRemaining()));
+//			BYTE* buff = (BYTE*) malloc(h.spslen);
+//			if (buff == NULL) return(false); //malloc error...
+//			  
+//			CGolombBuffer	gb (buff, h.spslen);
+//			RemoveMpegEscapeCode (buff, h.sps, h.spslen);
 			
-			if (gb.BitRead(1))							// vui_parameters_present_flag
-			{
-				if (gb.BitRead(1))						// aspect_ratio_info_present_flag
-				{
-					h.ar = (BYTE)gb.BitRead(8); //aspect_ratio_idc
-					if (255 == h.ar)
-					{
-						h.arx = gb.BitRead(16);   //sar_width
-						h.ary = gb.BitRead(16);   //sar_height
-					}
-				}
-
-				if (gb.BitRead(1))						// overscan_info_present_flag
-				{
-					gb.BitRead(1);						// overscan_appropriate_flag
-				}
-
-				if (gb.BitRead(1))						// video_signal_type_present_flag
-				{
-					gb.BitRead(3);						// video_format
-					gb.BitRead(1);						// video_full_range_flag
-					if(gb.BitRead(1))					// colour_description_present_flag
-					{
-						gb.BitRead(8);					// colour_primaries
-						gb.BitRead(8);					// transfer_characteristics
-						gb.BitRead(8);					// matrix_coefficients
-					}
-				}
-				if(gb.BitRead(1))						// chroma_location_info_present_flag
-				{
-					gb.UExpGolombRead();				// chroma_sample_loc_type_top_field
-					gb.UExpGolombRead();				// chroma_sample_loc_type_bottom_field
-				}
-				if (gb.BitRead(1))						// timing_info_present_flag
-				{
-					num_units_in_tick		  = (double)gb.BitRead(32);
-					time_scale				    = (double)gb.BitRead(32);
-					fixed_frame_rate_flag	= (bool)gb.BitRead(1);
-
-					if ((time_scale > 0) && (num_units_in_tick > 0))
-					{
-						// VUI consider fields even for progressive stream : multiply num_units_in_tick by 2
-						h.AvgTimePerFrame = (REFERENCE_TIME)((20000000.0 * num_units_in_tick)/time_scale);
-				  }
-				  else // guess ?
-				  {
-						h.AvgTimePerFrame = 370000; // lets go for 27Hz :-)
-				  }
-				}
-			}
-
-			Seek(pos + gb.GetPos());
-			free(buff);
+			
 		}
 		else if(nal_type==0x22)
 		{
@@ -1817,6 +1699,7 @@ bool CFrameHeaderParser::Read(hevchdr& h, int len, CMediaType* pmt, bool reset)
 			{
 				free(h.pps);
 			}
+			//Copy PPS to new buffer
 			h.ppslen = next_nal - pos; //length excluding length and ID bytes
 			if ((h.ppslen <= 0) || (h.ppslen > 65534)) return(false); //Sanity check
 			h.pps = (BYTE*) malloc(h.ppslen);
@@ -1830,7 +1713,7 @@ bool CFrameHeaderParser::Read(hevchdr& h, int len, CMediaType* pmt, bool reset)
 		//Seek(next_nal);
 	}
 
-	//LogDebug("spslen = %I64d, ppslen = %I64d, height = %d, width = %d, AvgTimePerFrame = %I64d", h.spslen, h.ppslen, h.height, h.width, h.AvgTimePerFrame);
+	LogDebug("HEVC: spslen = %I64d, ppslen = %I64d, height = %d, width = %d, AvgTimePerFrame = %I64d", h.spslen, h.ppslen, h.height, h.width, h.AvgTimePerFrame);
 
 	if(h.spslen<=0 || h.ppslen<=0 || h.height<100 || h.width<100 || h.AvgTimePerFrame<=0) 
 	{
@@ -1842,12 +1725,12 @@ bool CFrameHeaderParser::Read(hevchdr& h, int len, CMediaType* pmt, bool reset)
 	{
 	  return(true);
 	}
-  else
+  else //Fill out PMT data
 	{
 		int extra = 2+1+h.spslen + 2+1+h.ppslen;
 		pmt->SetType(&MEDIATYPE_Video);
 		//pmt->SetSubtype(&MEDIASUBTYPE_H264);
-		pmt->SetSubtype(&MPG4_SubType);
+		pmt->SetSubtype(&MEDIASUBTYPE_HEVC);
 		pmt->formattype = FORMAT_MPEG2_VIDEO;
 		pmt->bTemporalCompression = TRUE;
 
@@ -1898,7 +1781,8 @@ bool CFrameHeaderParser::Read(hevchdr& h, int len, CMediaType* pmt, bool reset)
 		vi->hdr.bmiHeader.biWidth = h.width;
 		vi->hdr.bmiHeader.biHeight = h.height;
 		//vi->hdr.bmiHeader.biCompression = '462h';
-		vi->hdr.bmiHeader.biCompression = '1CVA';
+		//vi->hdr.bmiHeader.biCompression = '1CVA';
+		vi->hdr.bmiHeader.biCompression = 'CVEH';
 		vi->hdr.bmiHeader.biPlanes=1;
 
     switch (h.chromaFormat)
@@ -2140,7 +2024,7 @@ void CFrameHeaderParser::DumpAvcHeader(avchdr h)
 	LogDebug("=================================");
 }
 
-void CFrameHeaderParser::DumpHevcHeader(hevchdr h)
+void CFrameHeaderParser::DumpHevcHeader(HEVC::hevchdr h)
 {
 	LogDebug("====== HEVC HEADER =====");
 	LogDebug("avg time/frame: %i",h.AvgTimePerFrame);

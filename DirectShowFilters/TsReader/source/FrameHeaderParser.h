@@ -27,6 +27,7 @@
 //#include <mtype.h>
 #include "GolombBuffer.h"
 #include "PmtParser.h"
+#include "HEVC\HevcNalDecode.h"
 
 enum mpeg_t {mpegunk, mpeg1, mpeg2};
 
@@ -354,37 +355,37 @@ struct pshdr
 		}
 	};
 
-	struct hevchdr
-	{
-		BYTE profile, level;
-		UINT64 chromaFormat;
-		WORD lumaDepth, chromaDepth;
-		unsigned int width, height;
-		bool progressive;
-		BYTE * sps;
-		BYTE * pps;
-		__int64 spslen;
-		__int64 ppslen;
-		__int64 AvgTimePerFrame;
-		int arx, ary;
-		BYTE ar;
-		BYTE spsid;
-		BYTE ppsid;
-		hevchdr()
-		{
-			progressive = true;
-		  sps = NULL;
-		  pps = NULL;
-			spslen = 0;
-			ppslen = 0;
-			AvgTimePerFrame = 370000;  //27 Hz
-			ar = 0;
-			arx = 0;
-			ary = 0;
-			width = 0;
-			height = 0;
-		}
-	};
+//	struct hevchdr
+//	{
+//		BYTE profile, level;
+//		UINT64 chromaFormat;
+//		WORD lumaDepth, chromaDepth;
+//		unsigned int width, height;
+//		bool progressive;
+//		BYTE * sps;
+//		BYTE * pps;
+//		__int64 spslen;
+//		__int64 ppslen;
+//		__int64 AvgTimePerFrame;
+//		int arx, ary;
+//		BYTE ar;
+//		BYTE spsid;
+//		BYTE ppsid;
+//		hevchdr()
+//		{
+//			progressive = true;
+//		  sps = NULL;
+//		  pps = NULL;
+//			spslen = 0;
+//			ppslen = 0;
+//			AvgTimePerFrame = 370000;  //27 Hz
+//			ar = 0;
+//			arx = 0;
+//			ary = 0;
+//			width = 0;
+//			height = 0;
+//		}
+//	};
 
 	struct vc1hdr
 	{
@@ -452,7 +453,8 @@ struct BasicAudioInfo
 	}
 };
 
-class CFrameHeaderParser:public CGolombBuffer
+
+class CFrameHeaderParser:public CGolombBuffer, public HEVC::HevcNalDecode
 {
 	int m_tslen; // transport stream packet length (188 or 192 bytes, auto-detected)
 
@@ -480,14 +482,14 @@ public:
 	bool Read(trsechdr& h);
 	bool Read(pvahdr& h, bool fSync = true);
 	bool Read(avchdr& h, int len, CMediaType* pmt = NULL, bool reset = true);
-	bool Read(hevchdr& h, int len, CMediaType* pmt = NULL, bool reset = true);
+	bool Read(HEVC::hevchdr& h, int len, CMediaType* pmt = NULL, bool reset = true);
 	bool Read(vc1hdr& h, int len, CMediaType* pmt = NULL);
 
 	void RemoveMpegEscapeCode(BYTE* dst, BYTE* src, int length);
 
 	void DumpSequenceHeader(seqhdr h);
 	void DumpAvcHeader(avchdr h);
-	void DumpHevcHeader(hevchdr h);
+	void DumpHevcHeader(HEVC::hevchdr h);
 };
 
 #endif

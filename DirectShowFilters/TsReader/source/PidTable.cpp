@@ -137,28 +137,31 @@ void CPidTable::LogPIDs()
   // Log all video streams (Blu-ray can have multiple video streams)
   for(unsigned int i(0) ; i < videoPids.size() ; i++)
   {
-    LogDebug(" video    pid: 0x%4x type: %s DescriptorData: 0x%2x",
+    LogDebug(" Video    pid: 0x%4x type: %s (0x%2x) DescriptorData: 0x%2x",
       videoPids[i].Pid, 
       T2A(StreamFormatAsString(videoPids[i].VideoServiceType)),
+      videoPids[i].VideoServiceType,
       videoPids[i].DescriptorData);
   }
 
   // Log all audio streams
   for(unsigned int i(0) ; i < audioPids.size() ; i++)
   {
-	  LogDebug(" audio    pid: 0x%4x language: %3s type: %s",
+	  LogDebug(" Audio    pid: 0x%4x type: %s (0x%2x) language: %3s",
       audioPids[i].Pid, 
-      audioPids[i].Lang,
-      T2A(StreamFormatAsString(audioPids[i].AudioServiceType)));
+      T2A(StreamFormatAsString(audioPids[i].AudioServiceType)),
+      audioPids[i].AudioServiceType,
+      audioPids[i].Lang);
   }
   
   // Log all subtitle streams
   for(unsigned int i(0) ; i < subtitlePids.size() ; i++)
   {
-	  LogDebug(" Subtitle pid: 0x%4x language: %3s type: %s",
+	  LogDebug(" Subtitle pid: 0x%4x type: %s (0x%2x) language: %3s",
       subtitlePids[i].Pid, 
-      subtitlePids[i].Lang,
-      T2A(StreamFormatAsString(subtitlePids[i].SubtitleServiceType)));  
+      T2A(StreamFormatAsString(subtitlePids[i].SubtitleServiceType)),
+      subtitlePids[i].SubtitleServiceType, 
+      subtitlePids[i].Lang); 
   }  
 }
 
@@ -185,8 +188,6 @@ LPCTSTR CPidTable::StreamFormatAsString(int streamType)
 		return _T("H264");
 	case 0x24:
 		return _T("HEVC");
-	case 0x27:
-		return _T("HEVC2");
 	case 0xEA:
 		return _T("VC1");
 	case 0x80:
