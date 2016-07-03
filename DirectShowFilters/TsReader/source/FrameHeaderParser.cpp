@@ -1623,6 +1623,8 @@ bool CFrameHeaderParser::Read(avchdr& h, int len, CMediaType* pmt, bool reset)
 
 bool CFrameHeaderParser::Read(HEVC::hevchdr& h, int len, CMediaType* pmt, bool reset)
 {
+  using namespace HEVC;
+  
   if (reset)
   {
     h.profile = 0;
@@ -1655,31 +1657,30 @@ bool CFrameHeaderParser::Read(HEVC::hevchdr& h, int len, CMediaType* pmt, bool r
   
 	if (len > 4)
 	{
-		int nal_len = BitRead(32);
+		int nal_len = len;
 		INT64 next_nal = GetPos()+nal_len;
 		
     //Process SPS or PPS
 	  LogDebug("HEVC::HevcNalDecode::processNALUnit, nal_len = %d, next_nal = %d", nal_len, next_nal);
-    HEVC::HevcNalDecode::processNALUnit(GetBufferPos(), nal_len, h);
+    NALUnitType nal_type = HevcNalDecode::processNALUnit(GetBufferPos()+4, nal_len-4, h);
       
-		BYTE id=BitRead(8);
-		BYTE nal_type=(id & 0x7e)>>1;
-		BitRead(8); //skip over 2nd byte of header
+    BYTE id=nal_type;
+//		BYTE nal_type=(id & 0x7e)>>1;
+//		BitRead(8); //skip over 2nd byte of header
 
-	  LogDebug("nal_len = %d, next_nal = %d", nal_len, next_nal);
 
 		// we only want pic param and sequence param sets
-		if (nal_type!=0x21 && nal_type!=0x22)
+		if (nal_type!=NAL_SPS && nal_type!=NAL_PPS)
 		{
 		  return(false);
 		}
 
-		if(nal_type==0x21)
+		if(nal_type==NAL_SPS)
 		{
 			LogDebug("SPS found");
 			
 		  h.spsid = id;
-			__int64			pos = GetPos(); //Start of NAL data (excluding ID bytes)
+			__int64			pos = GetPos(); //Start of NAL data (including start code and ID bytes)
 			
 
 			// Copy the full SPS packet in case the PPS is not found in the same packet,
@@ -1690,7 +1691,7 @@ bool CFrameHeaderParser::Read(HEVC::hevchdr& h, int len, CMediaType* pmt, bool r
 				free(h.sps);
 			}
 			//Copy SPS to new buffer
-			h.spslen = next_nal - pos; //length excluding length and ID bytes
+			h.spslen = next_nal - pos; //length including start code and ID bytes
 			if ((h.spslen <= 0) || (h.spslen > 65534)) return(false); //Sanity check
 			h.sps = (BYTE*) malloc(h.spslen);
 			if (h.sps == NULL) return(false); //malloc error...
@@ -1709,7 +1710,7 @@ bool CFrameHeaderParser::Read(HEVC::hevchdr& h, int len, CMediaType* pmt, bool r
 			
 			
 		}
-		else if(nal_type==0x22)
+		else if(nal_type==NAL_PPS)
 		{
 			LogDebug("PPS found");
 			
@@ -1720,17 +1721,13 @@ bool CFrameHeaderParser::Read(HEVC::hevchdr& h, int len, CMediaType* pmt, bool r
 				free(h.pps);
 			}
 			//Copy PPS to new buffer
-			h.ppslen = next_nal - pos; //length excluding length and ID bytes
+			h.ppslen = next_nal - pos; //length including start code and ID bytes
 			if ((h.ppslen <= 0) || (h.ppslen > 65534)) return(false); //Sanity check
 			h.pps = (BYTE*) malloc(h.ppslen);
 			if (h.pps == NULL) return(false); //malloc error...
 			ByteRead(h.pps, h.ppslen);
 	    //LogDebug("h.ppslen = %d, bytes = %x %x %x %x, last byte = %x", h.ppslen, *h.pps, *(h.pps+1), *(h.pps+2), *(h.pps+3), *(h.pps+h.ppslen-1));
 		}
-
-		//BitByteAlign();
-
-		//Seek(next_nal);
 	}
 
 	LogDebug("HEVC: spslen = %I64d, ppslen = %I64d, height = %d, width = %d, AvgTimePerFrame = %I64d", h.spslen, h.ppslen, h.height, h.width, h.AvgTimePerFrame);
@@ -1747,9 +1744,8 @@ bool CFrameHeaderParser::Read(HEVC::hevchdr& h, int len, CMediaType* pmt, bool r
 	}
   else //Fill out PMT data
 	{
-		int extra = 2+1+h.spslen + 2+1+h.ppslen;
+		int extra = h.spslen + h.ppslen;
 		pmt->SetType(&MEDIATYPE_Video);
-		//pmt->SetSubtype(&MEDIASUBTYPE_H264);
 		pmt->SetSubtype(&MEDIASUBTYPE_HEVC);
 		pmt->formattype = FORMAT_MPEG2_VIDEO;
 		pmt->bTemporalCompression = TRUE;
@@ -1792,22 +1788,16 @@ bool CFrameHeaderParser::Read(HEVC::hevchdr& h, int len, CMediaType* pmt, bool r
     vi->hdr.bmiHeader.biSizeImage = DIBSIZE(vi->hdr.bmiHeader);
 		vi->hdr.bmiHeader.biSize = sizeof(vi->hdr.bmiHeader);
 		vi->dwProfile = h.profile;
-		vi->dwFlags = 0; // ?
+		vi->dwFlags = 0; // No length info at start of each NAL unit data block
 		vi->dwLevel = h.level;
 		vi->cbSequenceHeader = extra;
 		vi->dwStartTimeCode=0;
 		
 		BYTE* p = (BYTE*)&vi->dwSequenceHeader[0];
 
-		*p++ = (h.spslen+1) >> 8;
-		*p++ = (h.spslen+1) & 0xff;
-		*p++ = h.spsid;
 		memcpy(p, h.sps, h.spslen);
 		p += h.spslen;
 		
-		*p++ = (h.ppslen+1) >> 8;
-		*p++ = (h.ppslen+1) & 0xff;
-		*p++ = h.ppsid;
 		memcpy(p, h.pps, h.ppslen);
 		//p += h.ppslen;		
 		

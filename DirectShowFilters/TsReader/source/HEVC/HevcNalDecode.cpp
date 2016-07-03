@@ -17,7 +17,7 @@ using namespace HEVC;
 #define YUV422  2     
 #define YUV444  3     
 
-void HevcNalDecode::processNALUnit(const uint8_t *pdata, std::size_t size, hevchdr& h)
+NALUnitType HevcNalDecode::processNALUnit(const uint8_t *pdata, std::size_t size, hevchdr& h)
 {
   BitstreamReader bs(pdata, size);
 
@@ -31,7 +31,7 @@ void HevcNalDecode::processNALUnit(const uint8_t *pdata, std::size_t size, hevch
       processSPS(psps, bs);
       
       //Initialise to normal values
-      h.chromaFormat = YUV420;
+      h.chromaFormat = psps -> chroma_format_idc;
       
       h.width  = psps -> pic_width_in_luma_samples;
       h.height = psps -> pic_height_in_luma_samples;      
@@ -104,6 +104,7 @@ void HevcNalDecode::processNALUnit(const uint8_t *pdata, std::size_t size, hevch
     default: {}
   };
 
+  return type;
 }
 
 

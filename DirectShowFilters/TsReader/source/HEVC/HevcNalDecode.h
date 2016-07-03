@@ -16,7 +16,7 @@ namespace HEVC
   class HevcNalDecode
   {
     public:
-      void processNALUnit(const uint8_t *pdata, std::size_t size, hevchdr& h);
+      NALUnitType processNALUnit(const uint8_t *pdata, std::size_t size, hevchdr& h);
 
     protected:
       NALUnitType processNALUnitHeader(BitstreamReader &bs);

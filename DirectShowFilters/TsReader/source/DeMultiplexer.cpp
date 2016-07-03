@@ -2499,14 +2499,15 @@ void CDeMultiplexer::FillVideoHEVC(CTsHeader& header, byte* tsPacket)
         return;
       }
               
-      DWORD dwNalLength = _byteswap_ulong(size);  //dwNalLength is big-endian format
+      
+      DWORD dwNalStart = 0x01000000;  //NAL start code 
 
       //LogDebug("DeMux: NALU size %d", size);
 
-      p2->SetCount (size+sizeof(dwNalLength));
+      p2->SetCount (size+sizeof(dwNalStart));
       
-      memcpy (p2->GetData(), &dwNalLength, sizeof(dwNalLength));
-      memcpy (p2->GetData()+sizeof(dwNalLength), (start+3), size);
+      memcpy (p2->GetData(), &dwNalStart, sizeof(dwNalStart)); //Insert NAL start code
+      memcpy (p2->GetData()+sizeof(dwNalStart), (start+3), size);
       LOG_SAMPLES_HEVC("HEVC: Input p2 NALU Type: %d (%d), m_p->rtStart: %d, m_p->rtPrevStart: %d", (*(p2->GetData()+4)&0x7e)>>1, p2->GetCount(), (int)m_p->rtStart, (int)m_p->rtPrevStart);
       
       if ((m_p->rtStart != m_p->rtPrevStart) && (m_p->rtPrevStart != Packet::INVALID_TIME))
@@ -2553,15 +2554,15 @@ void CDeMultiplexer::FillVideoHEVC(CTsHeader& header, byte* tsPacket)
           if (!m_fHasAccessUnitDelimiters)
           {
             //Add fake AUD....
-            DWORD size = 2;
-            WORD data9 = 0xF046;            
-            DWORD dwNalLength = _byteswap_ulong(size);  //dwNalLength is big-endian format
+            DWORD size = 4;
+            DWORD data9 = 0x00100146;            
+            DWORD dwNalStart = 0x01000000;  //Insert NAL start code 
               
-            p->SetCount (size+sizeof(dwNalLength));
+            p->SetCount (size+sizeof(dwNalStart));
             
-            memcpy (p->GetData(), &dwNalLength, sizeof(dwNalLength));
-            memcpy (p->GetData()+sizeof(dwNalLength), &data9, size);
-            //LogDebug("Fake AUD: %x %x %x %x %x %x",  p->GetAt(0), p->GetAt(1), p->GetAt(2), p->GetAt(3), p->GetAt(4), p->GetAt(5));
+            memcpy (p->GetData(), &dwNalStart, sizeof(dwNalStart));  //Insert NAL start code
+            memcpy (p->GetData()+sizeof(dwNalStart), &data9, size);
+            //LogDebug("HEVC: Fake AUD: %x %x %x %x %x %x",  p->GetAt(0), p->GetAt(1), p->GetAt(2), p->GetAt(3), p->GetAt(4), p->GetAt(5));
           }
           
           while(m_pl.GetCount()>0)
