@@ -32,20 +32,17 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
 {
   internal class SubChannelManagerDri : SubChannelManagerBase
   {
-    private readonly bool _isCetonDevice = false;
     private readonly ServiceMux _muxService = null;
     private ISubChannelManager _subChannelManager = null;
 
     /// <summary>
     /// Initialise a new instance of the <see cref="SubChannelManagerDri"/> class.
     /// </summary>
-    /// <param name="isCetonDevice"><c>True</c> if the tuner is a Ceton product.</param>
     /// <param name="muxService">The tuner's DRI multiplex service.</param>
     /// <param name="subChannelManager">The wrapped stream tuner's sub-channel manager.</param>
-    public SubChannelManagerDri(bool isCetonDevice, ServiceMux muxService, ISubChannelManager subChannelManager)
+    public SubChannelManagerDri(ServiceMux muxService, ISubChannelManager subChannelManager)
       : base(false)
     {
-      _isCetonDevice = isCetonDevice;
       _muxService = muxService;
       _subChannelManager = subChannelManager;
     }
@@ -72,7 +69,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
       // extra video and audio streams. Therefore we have to do this...
       bool isNew;
       ChannelMpeg2Base mpeg2Channel = channel as ChannelMpeg2Base;
-      if (mpeg2Channel == null || (!_isCetonDevice && mpeg2Channel.ProgramNumber != 0))
+      if (mpeg2Channel == null || mpeg2Channel.ProgramNumber != 0)
       {
         return (ISubChannelInternal)_subChannelManager.Tune(id, channel, out isNew);
       }

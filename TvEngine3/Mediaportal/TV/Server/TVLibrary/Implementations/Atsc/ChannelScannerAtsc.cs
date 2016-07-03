@@ -1005,6 +1005,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Atsc
                 // but assigns them to physical channel 158 (which isn't
                 // actually used).
                 frequency = 0;
+                programNumber = 0;
               }
 
               ChannelScte scteChannel = new ChannelScte();

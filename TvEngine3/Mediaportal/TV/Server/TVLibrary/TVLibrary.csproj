@@ -124,6 +124,8 @@
     <Compile Include="Implementations\Atsc\EpgGrabberAtsc.cs" />
     <Compile Include="Implementations\DirectShow\Bda\TunerDetectorBda.cs" />
     <Compile Include="Implementations\DirectShow\TunerDirectShowMpeg2TsBase.cs" />
+    <Compile Include="Implementations\Dri\ChannelScannerDriCeton.cs" />
+    <Compile Include="Implementations\Dri\ChannelScannerDriSiliconDust.cs" />
     <Compile Include="Implementations\Dri\SubChannelManagerDri.cs" />
     <Compile Include="Implementations\Dvb\ChannelScannerDvb.cs" />
     <Compile Include="Implementations\Dvb\Enum\RollOffFactor.cs" />

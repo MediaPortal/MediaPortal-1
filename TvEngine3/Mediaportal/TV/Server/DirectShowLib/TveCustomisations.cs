@@ -715,7 +715,19 @@ namespace DirectShowLib
         string name = Name;
         if (name != null)
         {
-          if (name.Contains("Ceton"))
+          // ATI CableCARD tuners...
+          if (name.StartsWith("ATI TV Wonder OpenCable Receiver"))
+          {
+            // Example: ATI TV Wonder OpenCable Receiver (37F0), Unit #1
+            m = Regex.Match(name, @"^ATI\sTV\sWonder\sOpenCable\sReceiver\s\(([^\s]+)\),\sUnit\s\#\d+$", RegexOptions.IgnoreCase);
+            if (m.Success)
+            {
+              _productInstanceId = m.Groups[1].Captures[0].Value;
+              return _productInstanceId;
+            }
+          }
+          // Ceton CableCARD tuners...
+          else if (name.Contains("Ceton"))
           {
             // Example: Ceton InfiniTV PCIe (00-80-75-05) Tuner 1 (00-00-22-00-00-80-75-05)
             m = Regex.Match(name, @"\s+\(([^\s]+)\)\s+Tuner\s+\d+", RegexOptions.IgnoreCase);
@@ -725,9 +737,14 @@ namespace DirectShowLib
               return _productInstanceId;
             }
           }
+          // SiliconDust HDHomeRun tuners and Hauppauge CableCARD tuners
+          // (SiliconDust HDHomeRun PRIME clones)...
           else if (name.Contains("HDHomeRun") || name.StartsWith("Hauppauge OpenCable Receiver"))
           {
-            // Examples: HDHomeRun Prime Tuner 1316890F-1, Hauppauge OpenCable Receiver 201200AA-1
+            // Examples:
+            // Silicondust HDHomeRun Tuner 1316890F-1
+            // HDHomeRun Prime Tuner 1316890F-1
+            // Hauppauge OpenCable Receiver 201200AA-1
             m = Regex.Match(name, @"\s+([^\s]+)-\d$", RegexOptions.IgnoreCase);
             if (m.Success)
             {
@@ -907,8 +924,19 @@ namespace DirectShowLib
         string name = Name;
         if (name != null)
         {
-          // Ceton CableCARD tuners.
-          if (name.Contains("Ceton"))
+          // ATI CableCARD tuners...
+          if (name.StartsWith("ATI TV Wonder OpenCable Receiver"))
+          {
+            // Example: ATI TV Wonder OpenCable Receiver (37F0), Unit #1
+            m = Regex.Match(name, @"^ATI\sTV\sWonder\sOpenCable\sReceiver\s\([^\s]+\),\sUnit\s\#(\d+)$", RegexOptions.IgnoreCase);
+            if (m.Success)
+            {
+              _tunerInstanceId = int.Parse(m.Groups[1].Captures[0].Value);
+              return _tunerInstanceId;
+            }
+          }
+          // Ceton CableCARD tuners...
+          else if (name.Contains("Ceton"))
           {
             // Example: Ceton InfiniTV PCIe (00-80-75-05) Tuner 1 (00-00-22-00-00-80-75-05)
             m = Regex.Match(name, @"\s+\([^\s]+\)\s+Tuner\s+(\d+)", RegexOptions.IgnoreCase);
@@ -918,10 +946,14 @@ namespace DirectShowLib
               return _tunerInstanceId;
             }
           }
-          // Silicondust HDHomeRun tuners (Hauppauge CableCARD tuners are clones)
+          // SiliconDust HDHomeRun tuners and Hauppauge CableCARD tuners
+          // (SiliconDust HDHomeRun PRIME clones)...
           else if (name.Contains("HDHomeRun") || name.StartsWith("Hauppauge OpenCable Receiver"))
           {
-            // Examples: HDHomeRun Prime Tuner 1316890F-1, Hauppauge OpenCable Receiver 201200AA-1
+            // Examples:
+            // Silicondust HDHomeRun Tuner 1316890F-1
+            // HDHomeRun Prime Tuner 1316890F-1
+            // Hauppauge OpenCable Receiver 201200AA-1
             m = Regex.Match(name, @"\s+[^\s]+-(\d)$", RegexOptions.IgnoreCase);
             if (m.Success)
             {
@@ -937,7 +969,7 @@ namespace DirectShowLib
           return _tunerInstanceId;
         }
 
-        // Digital Devices tuners.
+        // Digital Devices tuners...
         // The device path contains two digits that identify the tuner type and
         // instance. The second digit is the zero-indexed tuner identifier.
         m = Regex.Match(devicePath, @"8b884e\d(\d)-fbca-11de-b16f-000000004d56", RegexOptions.IgnoreCase);

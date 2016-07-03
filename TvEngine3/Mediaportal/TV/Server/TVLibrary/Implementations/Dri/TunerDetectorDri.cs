@@ -98,25 +98,28 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
 
             string tunerInstanceId = null;
             string productInstanceId = null;
-            if (deviceDescriptor.FriendlyName.Contains("Ceton"))
+            Match m = null;
+            if (deviceDescriptor.FriendlyName.StartsWith("ATI"))
+            {
+              // Example: ATI TV Wonder OpenCable Receiver (37F0), Unit #1
+              m = Regex.Match(descriptor.FriendlyName, @"\(([^\s]+)\),\sUnit\s\#(\d+)$", RegexOptions.IgnoreCase);
+            }
+            else if (deviceDescriptor.FriendlyName.StartsWith("Ceton"))
             {
               // Example: Ceton InfiniTV PCIe (00-80-75-05) Tuner 1 (00-00-22-00-00-80-75-05)
-              Match m = Regex.Match(descriptor.FriendlyName, @"\s+\(([^\s]+)\)\s+Tuner\s+(\d+)", RegexOptions.IgnoreCase);
-              if (m.Success)
-              {
-                productInstanceId = m.Groups[1].Captures[0].Value;
-                tunerInstanceId = m.Groups[2].Captures[0].Value;
-              }
+              m = Regex.Match(descriptor.FriendlyName, @"\s+\(([^\s]+)\)\s+Tuner\s+(\d+)", RegexOptions.IgnoreCase);
             }
             else
             {
-              // Examples: HDHomeRun Prime Tuner 1316890F-1, Hauppauge OpenCable Receiver 201200AA-1
-              Match m = Regex.Match(descriptor.FriendlyName, @"\s+([^\s]+)-(\d)$", RegexOptions.IgnoreCase);
-              if (m.Success)
-              {
-                productInstanceId = m.Groups[1].Captures[0].Value;
-                tunerInstanceId = m.Groups[2].Captures[0].Value;
-              }
+              // Examples:
+              // HDHomeRun Prime Tuner 1316890F-1
+              // Hauppauge OpenCable Receiver 201200AA-1
+              m = Regex.Match(descriptor.FriendlyName, @"\s+([^\s]+)-(\d)$", RegexOptions.IgnoreCase);
+            }
+            if (m != null && m.Success)
+            {
+              productInstanceId = m.Groups[1].Captures[0].Value;
+              tunerInstanceId = m.Groups[2].Captures[0].Value;
             }
 
             tuners.Add(new TunerDri(deviceDescriptor, tunerInstanceId, productInstanceId, supportedBroadcastStandards, supportedModulationSchemes, controlPoint, new TunerStream(string.Format("MediaPortal DRI {0} Stream Source", uuid), 1)));

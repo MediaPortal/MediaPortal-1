@@ -54,6 +54,15 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
   /// </summary>
   internal class TunerDri : TunerBase, IConditionalAccessMenuActions
   {
+    private enum TunerVendor
+    {
+      Unknown,
+      Ati,
+      Ceton,
+      Hauppauge,
+      SiliconDust
+    }
+
     #region constants
 
     private static readonly Regex REGEX_SIGNAL_INFO = new Regex(@"^(\d+(\.\d+)?)[^\d]");
@@ -111,7 +120,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
 
     private volatile bool _isSignalLocked = false;
     private int _currentFrequency = -1;
-    private readonly bool _isCetonDevice = false;
+    private readonly TunerVendor _vendor = TunerVendor.Unknown;
     private bool _canPause = false;
     private ICollection<TunerModulation> _supportedModulationSchemes = null;
 
@@ -165,11 +174,27 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
       _controlPoint = controlPoint;
       _supportedModulationSchemes = supportedModulationSchemes;
       _streamTuner = new TunerInternalWrapper(streamTuner);
-      _isCetonDevice = descriptor.FriendlyName.Contains("Ceton");
       _caMenuHandler = new CableCardMmiHandler(EnterMenu, CloseDialog);
 
       _localIpAddress = descriptor.RootDescriptor.SSDPRootEntry.PreferredLink.Endpoint.EndPointIPAddress;
       _serverIpAddress = new Uri(descriptor.RootDescriptor.SSDPRootEntry.PreferredLink.DescriptionLocation).Host;
+
+      if (descriptor.FriendlyName.StartsWith("ATI"))
+      {
+        _vendor = TunerVendor.Ati;
+      }
+      else if (descriptor.FriendlyName.StartsWith("Ceton"))
+      {
+        _vendor = TunerVendor.Ceton;
+      }
+      else if (descriptor.FriendlyName.StartsWith("Hauppauge"))
+      {
+        _vendor = TunerVendor.Hauppauge;
+      }
+      else if (descriptor.FriendlyName.StartsWith("HDHomeRun"))
+      {
+        _vendor = TunerVendor.SiliconDust;
+      }
     }
 
     ~TunerDri()
@@ -196,7 +221,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
             firmwareVersion = value;
           }
         }
-        if (_isCetonDevice)
+        if (_vendor == TunerVendor.Ceton)
         {
           this.LogDebug("DRI CableCARD: Ceton-specific diagnostic parameters...");
           foreach (DiagParameterCeton p in DiagParameterCeton.Values)
@@ -239,7 +264,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
       // HDHR3-CC 20130708beta1
       // WinTV-DCR-2650 20130117
       // All Ceton firmware seems to be compatible.
-      if (!_isCetonDevice)
+      // ATI firmware compatibility is currently unknown.
+      if (_vendor == TunerVendor.Hauppauge || _vendor == TunerVendor.SiliconDust)
       {
         Match m = Regex.Match(firmwareVersion, @"20(\d{6})");
         if (!m.Success)
@@ -250,8 +276,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
         {
           int versionNumber = int.Parse(m.Groups[1].Captures[0].Value);
           if (
-            (firmwareVersion.StartsWith("HDHR") && versionNumber < 130708) ||
-            (firmwareVersion.StartsWith("WinTV") && versionNumber < 140121)
+            (_vendor == TunerVendor.SiliconDust && versionNumber < 130708) ||
+            (_vendor == TunerVendor.Hauppauge && versionNumber < 140121)
           )
           {
             throw new TvException("Please update the tuner's firmware. The current version - {0} - is not compatible.", firmwareVersion);
@@ -688,7 +714,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
     {
       this.LogDebug("DRI CableCARD: perform loading");
 
-      bool useKeepAlive = !_isCetonDevice;
+      bool useKeepAlive = _vendor == TunerVendor.Hauppauge || _vendor == TunerVendor.SiliconDust;   // not supported by Ceton; ATI support unknown (safest to assume not supported)
       this.LogInfo("DRI CableCARD: connect to device, keep-alive = {0}", useKeepAlive);
       _deviceConnection = _controlPoint.Connect(_descriptor.RootDescriptor, _descriptor.DeviceUUID, ResolveDataType, useKeepAlive);
 
@@ -743,9 +769,20 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
         extensions.Add(e);
       }
 
-      _subChannelManager = new SubChannelManagerDri(_isCetonDevice, _serviceMux, _streamTuner.SubChannelManager);
+      _subChannelManager = new SubChannelManagerDri(_serviceMux, _streamTuner.SubChannelManager);
       _streamTuner.InternalChannelScanningInterface.Tuner = this;
-      _channelScanner = new ChannelScannerDri(_streamTuner.InternalChannelScanningInterface, _isCetonDevice, _serverIpAddress, _serviceFdc.RequestTables);
+      if (_vendor == TunerVendor.Ceton)
+      {
+        _channelScanner = new ChannelScannerDriCeton(_streamTuner.InternalChannelScanningInterface, _serviceFdc.RequestTables, _serverIpAddress);
+      }
+      else if (_vendor == TunerVendor.SiliconDust || _vendor == TunerVendor.Hauppauge)
+      {
+        _channelScanner = new ChannelScannerDriSiliconDust(_streamTuner.InternalChannelScanningInterface, _serviceFdc.RequestTables, _serverIpAddress);
+      }
+      else
+      {
+        _channelScanner = new ChannelScannerDri(_streamTuner.InternalChannelScanningInterface, _serviceFdc.RequestTables);
+      }
       return extensions;
     }
 
@@ -1075,7 +1112,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
             _serviceFdc.GetFdcStatus(out bitrate, out isLocked, out frequency, out spectrumInversion, out pids);
             isPresent = _isSignalLocked;
 
-            if (_isCetonDevice)
+            if (_vendor == TunerVendor.Ceton)
             {
               string value = string.Empty;
               bool isVolatile = false;
