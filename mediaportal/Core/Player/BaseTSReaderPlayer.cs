@@ -764,7 +764,10 @@ namespace MediaPortal.Player
       //if (GUIGraphicsContext.InVmr9Render) return;
       if (_bMediaTypeChanged)
       {
-        DoGraphRebuild();
+        if (GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR) // it break DXVA process
+        {
+          DoGraphRebuild();
+        }
         _ireader.OnGraphRebuild(iChangedMediaTypes);
         _bMediaTypeChanged = false;
       }
