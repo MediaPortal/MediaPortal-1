@@ -2575,7 +2575,7 @@ void CDeMultiplexer::FillVideoHEVC(CTsHeader& header, byte* tsPacket)
             LOG_OUTSAMPLES_HEVC("HEVC: Output p4 NALU Type: %d (%d), rtStart: %d", (p4->GetAt(4)&0x7e)>>1, p4->GetCount(), (int)p->rtStart);
             
             nalID = p4->GetAt(4);
-            if (((nalID & 0xfe) == (33*2)) || ((nalID & 0xfe) == (34*2))) //Process SPS & PPS data
+            if (((nalID & 0xfe) >= (32*2)) && ((nalID & 0xfe) <= (34*2))) //Process VPS, SPS & PPS data
             {
               Gop = m_mpegPesParser->OnTsPacket(p4->GetData(), p4->GetCount(), 3, m_mpegParserReset);
               m_mpegParserReset = false;

@@ -20,6 +20,7 @@ namespace HEVC
 
     protected:
       NALUnitType processNALUnitHeader(BitstreamReader &bs);
+      void Remove3Byte(uint8_t* dst, const uint8_t* src, int length);
       void processSPS(std::shared_ptr<SPS> psps, BitstreamReader &bs);
       void processPPS(std::shared_ptr<PPS> ppps, BitstreamReader &bs);
       ProfileTierLevel processProfileTierLevel(std::size_t max_sub_layers_minus1, BitstreamReader &bs);

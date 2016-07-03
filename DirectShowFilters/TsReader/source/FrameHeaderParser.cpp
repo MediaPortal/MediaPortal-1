@@ -60,6 +60,8 @@ extern void LogDebug(const char *fmt, ...) ;
 #define YUV422  2     
 #define YUV444  3     
 
+using namespace HEVC;
+  
 int CFrameHeaderParser::MakeAACInitData(BYTE* pData, int profile, int freq, int channels)
 {
 	int srate_idx;
@@ -1621,10 +1623,8 @@ bool CFrameHeaderParser::Read(avchdr& h, int len, CMediaType* pmt, bool reset)
 	return(true);
 }
 
-bool CFrameHeaderParser::Read(HEVC::hevchdr& h, int len, CMediaType* pmt, bool reset)
+bool CFrameHeaderParser::Read(hevchdr& h, int len, CMediaType* pmt, bool reset)
 {
-  using namespace HEVC;
-  
   if (reset)
   {
     h.profile = 0;
@@ -1641,18 +1641,22 @@ bool CFrameHeaderParser::Read(HEVC::hevchdr& h, int len, CMediaType* pmt, bool r
 		{
 			free(h.pps);
 		}
+		if (h.vps != NULL)
+		{
+			free(h.vps);
+		}
 		h.sps = NULL;
 		h.pps = NULL;
+		h.vps = NULL;
 		h.spslen = 0;
 		h.ppslen = 0;
+		h.vpslen = 0;
 		h.AvgTimePerFrame = 370000;  //27 Hz
 		h.ar = 0;
 		h.arx = 0;
 		h.ary = 0;
 		h.width = 0;
 		h.height = 0;
-		h.spsid = 0;
-    h.ppsid = 0;
   }
   
 	if (len > 4)
@@ -1660,83 +1664,59 @@ bool CFrameHeaderParser::Read(HEVC::hevchdr& h, int len, CMediaType* pmt, bool r
 		int nal_len = len;
 		INT64 next_nal = GetPos()+nal_len;
 		
-    //Process SPS or PPS
-	  LogDebug("HEVC::HevcNalDecode::processNALUnit, nal_len = %d, next_nal = %d", nal_len, next_nal);
+    //Process VPS, SPS and PPS - only use actual NAL data (skip over 4 byte start code)
     NALUnitType nal_type = HevcNalDecode::processNALUnit(GetBufferPos()+4, nal_len-4, h);
       
-    BYTE id=nal_type;
-//		BYTE nal_type=(id & 0x7e)>>1;
-//		BitRead(8); //skip over 2nd byte of header
-
-
-		// we only want pic param and sequence param sets
-		if (nal_type!=NAL_SPS && nal_type!=NAL_PPS)
-		{
-		  return(false);
-		}
-
 		if(nal_type==NAL_SPS)
 		{
-			LogDebug("SPS found");
-			
-		  h.spsid = id;
-			__int64			pos = GetPos(); //Start of NAL data (including start code and ID bytes)
-			
-
-			// Copy the full SPS packet in case the PPS is not found in the same packet,
-			// but make sure we don't change the current position in the buffer.
-			
 			if (h.sps != NULL)
 			{
 				free(h.sps);
 			}
 			//Copy SPS to new buffer
-			h.spslen = next_nal - pos; //length including start code and ID bytes
+			h.spslen = nal_len; //length including start code and ID bytes
 			if ((h.spslen <= 0) || (h.spslen > 65534)) return(false); //Sanity check
 			h.sps = (BYTE*) malloc(h.spslen);
-			if (h.sps == NULL) return(false); //malloc error...
-			ByteRead(h.sps, h.spslen);
-			
-//			Seek(pos); //Move back to the beginning of the SPS
-//	    //LogDebug("h.spslen = %d, bytes = %x %x %x %x, last byte = %x", h.spslen, *h.sps, *(h.sps+1), *(h.sps+2), *(h.sps+3), *(h.sps+(h.spslen-1)));
-//
-//			// Manage H264 escape codes (see "remove escapes (very rare 1:2^22)" in ffmpeg h264.c file)
-//			//ByteRead((BYTE*)SPSTemp, min(MAX_SPS, GetRemaining()));
-//			BYTE* buff = (BYTE*) malloc(h.spslen);
-//			if (buff == NULL) return(false); //malloc error...
-//			  
-//			CGolombBuffer	gb (buff, h.spslen);
-//			RemoveMpegEscapeCode (buff, h.sps, h.spslen);
-			
-			
+			if (h.sps == NULL) { h.spslen = 0; return(false); } //malloc error...
+			ByteRead(h.sps, h.spslen);						
 		}
 		else if(nal_type==NAL_PPS)
 		{
-			LogDebug("PPS found");
-			
-		  h.ppsid = id;
-			__int64 pos = GetPos();
+			//LogDebug("PPS found");			
 			if (h.pps != NULL)
 			{
 				free(h.pps);
 			}
 			//Copy PPS to new buffer
-			h.ppslen = next_nal - pos; //length including start code and ID bytes
+			h.ppslen = nal_len; //length including start code and ID bytes
 			if ((h.ppslen <= 0) || (h.ppslen > 65534)) return(false); //Sanity check
 			h.pps = (BYTE*) malloc(h.ppslen);
-			if (h.pps == NULL) return(false); //malloc error...
+			if (h.pps == NULL) { h.ppslen = 0; return(false); } //malloc error...
 			ByteRead(h.pps, h.ppslen);
-	    //LogDebug("h.ppslen = %d, bytes = %x %x %x %x, last byte = %x", h.ppslen, *h.pps, *(h.pps+1), *(h.pps+2), *(h.pps+3), *(h.pps+h.ppslen-1));
+		}
+		else if(nal_type==NAL_VPS)
+		{
+			//LogDebug("VPS found");			
+			if (h.vps != NULL)
+			{
+				free(h.vps);
+			}
+			//Copy VPS to new buffer
+			h.vpslen = nal_len; //length including start code and ID bytes
+			if ((h.vpslen <= 0) || (h.vpslen > 65534)) return(false); //Sanity check
+			h.vps = (BYTE*) malloc(h.vpslen);
+			if (h.vps == NULL) { h.vpslen = 0; return(false); } //malloc error...
+			ByteRead(h.vps, h.vpslen);
 		}
 	}
 
-	LogDebug("HEVC: spslen = %I64d, ppslen = %I64d, height = %d, width = %d, AvgTimePerFrame = %I64d", h.spslen, h.ppslen, h.height, h.width, h.AvgTimePerFrame);
-
-	if(h.spslen<=0 || h.ppslen<=0 || h.height<100 || h.width<100 || h.AvgTimePerFrame<=0) 
+	if(h.spslen<=0 || h.ppslen<=0 || h.vpslen<=0 || h.height<100 || h.width<100 || h.AvgTimePerFrame<=0) 
 	{
-	  //Not found all the SPS and PPS information yet, or it's not a usable video stream
+	  //Not found all the VPS, SPS and PPS information yet, or it's not a usable video stream
 		return(false);
   }
+
+	// LogDebug("HEVC: vpslen = %I64d, spslen = %I64d, ppslen = %I64d, height = %d, width = %d, AvgTimePerFrame = %I64d", h.vpslen, h.spslen, h.ppslen, h.height, h.width, h.AvgTimePerFrame);
 
 	if(!pmt) 
 	{
@@ -1744,7 +1724,7 @@ bool CFrameHeaderParser::Read(HEVC::hevchdr& h, int len, CMediaType* pmt, bool r
 	}
   else //Fill out PMT data
 	{
-		int extra = h.spslen + h.ppslen;
+		int extra =  h.vpslen + h.spslen + h.ppslen;
 		pmt->SetType(&MEDIATYPE_Video);
 		pmt->SetSubtype(&MEDIASUBTYPE_HEVC);
 		pmt->formattype = FORMAT_MPEG2_VIDEO;
@@ -1788,18 +1768,26 @@ bool CFrameHeaderParser::Read(HEVC::hevchdr& h, int len, CMediaType* pmt, bool r
     vi->hdr.bmiHeader.biSizeImage = DIBSIZE(vi->hdr.bmiHeader);
 		vi->hdr.bmiHeader.biSize = sizeof(vi->hdr.bmiHeader);
 		vi->dwProfile = h.profile;
-		vi->dwFlags = 0; // No length info at start of each NAL unit data block
+		vi->dwFlags = 0; // No length info at start of each NAL unit data block, start codes delimit the NALs
 		vi->dwLevel = h.level;
 		vi->cbSequenceHeader = extra;
 		vi->dwStartTimeCode=0;
 		
 		BYTE* p = (BYTE*)&vi->dwSequenceHeader[0];
 
+		memcpy(p, h.vps, h.vpslen);
+		p += h.vpslen;
+	  //free(h.vps);
+		//h.vps = NULL;
+
 		memcpy(p, h.sps, h.spslen);
 		p += h.spslen;
+		//free(h.sps);
+		//h.sps = NULL;
 		
 		memcpy(p, h.pps, h.ppslen);
-		//p += h.ppslen;		
+		//free(h.pps);
+		//h.pps = NULL;
 		
 		pmt->SetFormat((BYTE*)vi, len);
 	}
@@ -1999,9 +1987,12 @@ void CFrameHeaderParser::DumpAvcHeader(avchdr h)
 	LogDebug("=================================");
 }
 
-void CFrameHeaderParser::DumpHevcHeader(HEVC::hevchdr h)
+void CFrameHeaderParser::DumpHevcHeader(hevchdr h)
 {
 	LogDebug("====== HEVC HEADER =====");
+	LogDebug("VPS len: %i",h.vpslen);
+	LogDebug("PPS len: %i",h.ppslen);
+	LogDebug("SPS len: %i",h.spslen);
 	LogDebug("avg time/frame: %i",h.AvgTimePerFrame);
 	LogDebug("width: %i",h.width);
 	LogDebug("height: %i",h.height);
@@ -2010,8 +2001,6 @@ void CFrameHeaderParser::DumpHevcHeader(HEVC::hevchdr h)
 	LogDebug("ARy: %i",h.ary);
 	LogDebug("level: %i",h.level);
 	LogDebug("profile: %i",h.profile);
-	LogDebug("PPS len: %i",h.ppslen);
-	LogDebug("SPS len: %i",h.spslen);
 	LogDebug("chromaFormat: %i",h.chromaFormat);
 	LogDebug("lumaDepth: %i",h.lumaDepth);
 	LogDebug("chromaDepth: %i",h.chromaDepth);

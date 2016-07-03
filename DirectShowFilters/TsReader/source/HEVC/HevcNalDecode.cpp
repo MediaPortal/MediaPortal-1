@@ -11,15 +11,15 @@
 
 using namespace HEVC;
 
-//Chroma format definitions
-#define YUV400  0     
-#define YUV420  1     
-#define YUV422  2     
-#define YUV444  3     
-
 NALUnitType HevcNalDecode::processNALUnit(const uint8_t *pdata, std::size_t size, hevchdr& h)
 {
-  BitstreamReader bs(pdata, size);
+	//Remove unwanted 'emulation_prevention_three_byte' bytes
+	uint8_t* pbuff = (uint8_t*) malloc(size);
+	if (pbuff == NULL) return NAL_RESERVED; //malloc error...
+	//Copies wanted data from 'pdata' to 'pbuff'
+	Remove3Byte (pbuff, pdata, size);
+
+  BitstreamReader bs(pbuff, size);
 
   NALUnitType type = processNALUnitHeader(bs);
 
@@ -104,7 +104,35 @@ NALUnitType HevcNalDecode::processNALUnit(const uint8_t *pdata, std::size_t size
     default: {}
   };
 
+  free(pbuff);
+
   return type;
+}
+
+//Remove 'emulation_prevention_three_byte' bytes
+void HevcNalDecode::Remove3Byte(uint8_t* dst, const uint8_t* src, int length)
+{
+	int		si=0;
+	int		di=0;
+	while(si+2<length){
+		//remove escapes (very rare 1:2^22)
+		if(src[si+2]>3){
+			dst[di++]= src[si++];
+			dst[di++]= src[si++];
+		}
+		else if(src[si]==0 && src[si+1]==0){
+			if(src[si+2]==3){ //escape
+				dst[di++]= 0;
+				dst[di++]= 0;
+				si+=3;
+				continue;
+			}
+			else //next start code
+				return;
+		}
+
+		dst[di++]= src[si++];
+	}
 }
 
 

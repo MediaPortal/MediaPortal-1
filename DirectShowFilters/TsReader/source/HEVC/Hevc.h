@@ -20,13 +20,13 @@ namespace HEVC
 		bool progressive;
 		uint8_t * sps;
 		uint8_t * pps;
+		uint8_t * vps;
 		__int64 spslen;
 		__int64 ppslen;
+		__int64 vpslen;
 		__int64 AvgTimePerFrame;
 		int arx, ary;
 		uint8_t ar;
-		uint8_t spsid;
-		uint8_t ppsid;
 		hevchdr()
 		{
       profile = 0;
@@ -37,16 +37,16 @@ namespace HEVC
 			progressive = true;
 		  sps = NULL;
 		  pps = NULL;
+		  vps = NULL;
 			spslen = 0;
 			ppslen = 0;
+			vpslen = 0;
 			AvgTimePerFrame = 370000;  //27 Hz
 			ar = 0;
 			arx = 0;
 			ary = 0;
 			width = 0;
 			height = 0;
-			spsid = 0;
-      ppsid = 0;
 		}
 	};
 
@@ -78,6 +78,7 @@ namespace HEVC
     NAL_FD_NUT     = 38,
     NAL_SEI_PREFIX = 39,
     NAL_SEI_SUFFIX = 40,
+    NAL_RESERVED   = 255
   };
 
   class ProfileTierLevel

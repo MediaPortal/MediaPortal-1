@@ -110,7 +110,7 @@ bool CMpegPesParser::ParseVideo(byte* tsPacket,int vidType,bool reset)
 	  // avchdr avc;
 		if (hdrParser.Read(hevc,framesize,&pmt,reset))
 		{
-			hdrParser.DumpHevcHeader(hevc);
+			//hdrParser.DumpHevcHeader(hevc);
 			basicVideoInfo.width=hevc.width;
 			basicVideoInfo.height=hevc.height;
 			if (hevc.AvgTimePerFrame > 0)
