@@ -585,24 +585,16 @@ namespace TvPlugin
       GUIMessage msgStopRecorder = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RECORDER_STOP, 0, 0, 0, 0, 0, null);
       GUIWindowManager.SendMessage(msgStopRecorder);
 
-      if (!_onPageLoadDone && m_navigator != null)
+      // needs for PIN protection function avoid to start tvhome with a protected group
+      var previousWindowId = GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow).PreviousWindowId;
+      if (previousWindowId == (int) Window.WINDOW_HOME ||
+          previousWindowId == (int) Window.WINDOW_SECOND_HOME)
       {
-        m_navigator.ReLoad();
-        LoadSettings(false);
-      }
-      else
-      {
-        // needs for PIN protection function avoid to start tvhome with a protected group
-        var previousWindowId = GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow).PreviousWindowId;
-        if (previousWindowId == (int) Window.WINDOW_HOME ||
-            previousWindowId == (int) Window.WINDOW_SECOND_HOME)
+        if (m_navigator != null && (m_navigator.CheckIfProtectedGroup() || _allowProtectedItem || _showAllRecording))
         {
-          if (m_navigator != null && (m_navigator.CheckIfProtectedGroup() || _allowProtectedItem || _showAllRecording))
-          {
-            _allowProtectedItem = false;
-            _showAllRecording = false;
-            LoadSettings(true);
-          }
+          _allowProtectedItem = false;
+          _showAllRecording = false;
+          LoadSettings(true);
         }
       }
 

@@ -3274,6 +3274,18 @@ namespace TvPlugin
       _autoZapMode = false;
       _autoZapTimer.Dispose();
 
+      // needs for PIN protection function avoid to start tvhome with a protected group
+      var previousWindowId = GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow).PreviousWindowId;
+      if (previousWindowId == (int)Window.WINDOW_HOME ||
+          previousWindowId == (int)Window.WINDOW_SECOND_HOME)
+      {
+        if (TVHome.m_navigator != null && (TVHome.m_navigator.CheckIfProtectedGroup() || TVHome._allowProtectedItem || TVHome._showAllRecording))
+        {
+          TVHome._allowProtectedItem = false;
+          TVHome._showAllRecording = false;
+          TVHome.LoadSettings(true);
+        }
+      }
       ///@
       /*
       if (!GUIGraphicsContext.IsTvWindow(newWindowId))
@@ -3296,6 +3308,19 @@ namespace TvPlugin
     {
       _autoZapTimer = new Timer();
       base.OnPageLoad();
+
+      // needs for PIN protection function avoid to start tvhome with a protected group
+      var previousWindowId = GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow).PreviousWindowId;
+      if (previousWindowId == (int)Window.WINDOW_HOME ||
+          previousWindowId == (int)Window.WINDOW_SECOND_HOME)
+      {
+        if (TVHome.m_navigator != null && (TVHome.m_navigator.CheckIfProtectedGroup() || TVHome._allowProtectedItem || TVHome._showAllRecording))
+        {
+          TVHome._allowProtectedItem = false;
+          TVHome._showAllRecording = false;
+          TVHome.LoadSettings(true);
+        }
+      }
     }
 
     private void RenderVolume(bool show)
