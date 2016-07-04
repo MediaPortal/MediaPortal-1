@@ -138,7 +138,7 @@ namespace MediaPortal.Player
     private static extern unsafe void MadDeinit();
 
     [DllImport("dshowhelper.dll", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
-    private static extern unsafe void InitOSD();
+    private static extern unsafe void InitOSD(ref bool initOsdDone);
 
     #endregion
 
@@ -388,8 +388,10 @@ namespace MediaPortal.Player
     {
       if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
       {
-        InitOSD();
-        GUIGraphicsContext.RegisterOsd = true;
+        bool initOsdDone = false;
+        InitOSD(ref initOsdDone);
+        GUIGraphicsContext.RegisterOsd = initOsdDone;
+        Log.Debug("VMR9: registering OSD done : {0}", GUIGraphicsContext.RegisterOsd);
       }
     }
 
@@ -815,7 +817,7 @@ namespace MediaPortal.Player
             g_Player.Pause();
             g_Player.Pause();
           }
-          Log.Debug("VMR9Helper: Register madVR OSD");
+          Log.Debug("VMR9: registering madVR OSD");
         }
       }
     }

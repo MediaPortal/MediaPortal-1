@@ -32,6 +32,9 @@ class MadSubtitleProxy : public CUnknown, public ISubRenderCallback, public CCri
     STDMETHOD(SetDevice)(IDirect3DDevice9* device);
     STDMETHOD(Render)(REFERENCE_TIME frameStart, int left, int top, int right, int bottom, int width, int height);
 
+    void SetNewDevice(bool pNewDevice);
+    bool GetNewDevice();
+
   private:
 
     HRESULT SetupMadDeviceState();
@@ -41,5 +44,7 @@ class MadSubtitleProxy : public CUnknown, public ISubRenderCallback, public CCri
     IVMR9Callback* m_pCallback;
 
     DeviceState m_deviceState;
+
+    bool m_pNewDevice = false;
 };
 
