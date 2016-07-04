@@ -99,22 +99,23 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
             string tunerInstanceId = null;
             string productInstanceId = null;
             Match m = null;
-            if (deviceDescriptor.FriendlyName.StartsWith("ATI"))
+            string friendlyName = deviceDescriptor.FriendlyName;
+            if (friendlyName.StartsWith("ATI"))
             {
               // Example: ATI TV Wonder OpenCable Receiver (37F0), Unit #1
-              m = Regex.Match(descriptor.FriendlyName, @"\(([^\s]+)\),\sUnit\s\#(\d+)$", RegexOptions.IgnoreCase);
+              m = Regex.Match(friendlyName, @"\(([^\s]+)\),\sUnit\s\#(\d+)$", RegexOptions.IgnoreCase);
             }
-            else if (deviceDescriptor.FriendlyName.StartsWith("Ceton"))
+            else if (friendlyName.StartsWith("Ceton"))
             {
-              // Example: Ceton InfiniTV PCIe (00-80-75-05) Tuner 1 (00-00-22-00-00-80-75-05)
-              m = Regex.Match(descriptor.FriendlyName, @"\s+\(([^\s]+)\)\s+Tuner\s+(\d+)", RegexOptions.IgnoreCase);
+              // Example: Ceton InfiniTV PCIe (00-80-75-05) Tuner 1
+              m = Regex.Match(friendlyName, @"\s+\(([^\s]+)\)\s+Tuner\s+(\d+)$", RegexOptions.IgnoreCase);
             }
             else
             {
               // Examples:
               // HDHomeRun Prime Tuner 1316890F-1
               // Hauppauge OpenCable Receiver 201200AA-1
-              m = Regex.Match(descriptor.FriendlyName, @"\s+([^\s]+)-(\d)$", RegexOptions.IgnoreCase);
+              m = Regex.Match(friendlyName, @"\s+([^\s]+)-(\d)$", RegexOptions.IgnoreCase);
             }
             if (m != null && m.Success)
             {
