@@ -275,6 +275,7 @@ namespace MediaPortal.Player
 
       public string Video { get; set; }
       public string VideoH264 { get; set; }
+      public string VideoHEVC { get; set; }
       public string Audio { get; set; }
       public string AudioAAC { get; set; }
       public string AudioDDPlus { get; set; }
@@ -306,6 +307,7 @@ namespace MediaPortal.Player
         filterConfig.AudioAAC = xmlreader.GetValueAsString("mytv", "aacaudiocodec", "");
         filterConfig.AudioDDPlus = xmlreader.GetValueAsString("mytv", "ddplusaudiocodec", "");
         filterConfig.VideoH264 = xmlreader.GetValueAsString("mytv", "h264videocodec", "");
+        filterConfig.VideoHEVC = xmlreader.GetValueAsString("mytv", "hevcvideocodec", "");
         filterConfig.AudioRenderer = xmlreader.GetValueAsString("mytv", "audiorenderer", "Default DirectSound Device");
         filterConfig.enableDVBBitmapSubtitles = xmlreader.GetValueAsBool("tvservice", "dvbbitmapsubtitles", false);
         filterConfig.enableDVBTtxtSubtitles = xmlreader.GetValueAsBool("tvservice", "dvbttxtsubtitles", false);
