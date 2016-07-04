@@ -83,6 +83,7 @@ public:
   void       FillVideo(CTsHeader& header, byte* tsPacket, int bufferOffset, int bufferLength);
   void       FillVideoH264(CTsHeader& header, byte* tsPacket);
   void       FillVideoMPEG2(CTsHeader& header, byte* tsPacket);
+  void       FillVideoHEVC(CTsHeader& header, byte* tsPacket);
   void       FillTeletext(CTsHeader& header, byte* tsPacket);
   void       SetEndOfFile(bool bEndOfFile);
   CPidTable  GetPidTable();
@@ -184,7 +185,7 @@ public:
   
   DWORD  m_lastFlushTime;
   
-  CcParseH264 *m_CcParserH264;
+  //CcParseH264 *m_CcParserH264;
 
 private:
   struct stAudioStream

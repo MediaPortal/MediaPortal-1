@@ -60,6 +60,8 @@ extern void LogDebug(const char *fmt, ...) ;
 #define YUV422  2     
 #define YUV444  3     
 
+using namespace HEVC;
+  
 int CFrameHeaderParser::MakeAACInitData(BYTE* pData, int profile, int freq, int channels)
 {
 	int srate_idx;
@@ -1621,6 +1623,177 @@ bool CFrameHeaderParser::Read(avchdr& h, int len, CMediaType* pmt, bool reset)
 	return(true);
 }
 
+bool CFrameHeaderParser::Read(hevchdr& h, int len, CMediaType* pmt, bool reset)
+{
+  if (reset)
+  {
+    h.profile = 0;
+    h.level = 0;        
+    h.chromaFormat = 0;          
+    h.lumaDepth = 0;
+    h.chromaDepth = 0;
+		h.progressive = true;
+		if (h.sps != NULL)
+		{
+			free(h.sps);
+		}
+		if (h.pps != NULL)
+		{
+			free(h.pps);
+		}
+		if (h.vps != NULL)
+		{
+			free(h.vps);
+		}
+		h.sps = NULL;
+		h.pps = NULL;
+		h.vps = NULL;
+		h.spslen = 0;
+		h.ppslen = 0;
+		h.vpslen = 0;
+		h.AvgTimePerFrame = 370000;  //27 Hz
+		h.ar = 0;
+		h.arx = 0;
+		h.ary = 0;
+		h.width = 0;
+		h.height = 0;
+  }
+  
+	if (len > 4)
+	{
+		int nal_len = len;
+		INT64 next_nal = GetPos()+nal_len;
+		
+    //Process VPS, SPS and PPS - only use actual NAL data (skip over 4 byte start code)
+    NALUnitType nal_type = HevcNalDecode::processNALUnit(GetBufferPos()+4, nal_len-4, h);
+      
+		if(nal_type==NAL_SPS)
+		{
+			if (h.sps != NULL)
+			{
+				free(h.sps);
+			}
+			//Copy SPS to new buffer
+			h.spslen = nal_len; //length including start code and ID bytes
+			if ((h.spslen <= 0) || (h.spslen > 65534)) return(false); //Sanity check
+			h.sps = (BYTE*) malloc(h.spslen);
+			if (h.sps == NULL) { h.spslen = 0; return(false); } //malloc error...
+			ByteRead(h.sps, h.spslen);						
+		}
+		else if(nal_type==NAL_PPS)
+		{
+			//LogDebug("PPS found");			
+			if (h.pps != NULL)
+			{
+				free(h.pps);
+			}
+			//Copy PPS to new buffer
+			h.ppslen = nal_len; //length including start code and ID bytes
+			if ((h.ppslen <= 0) || (h.ppslen > 65534)) return(false); //Sanity check
+			h.pps = (BYTE*) malloc(h.ppslen);
+			if (h.pps == NULL) { h.ppslen = 0; return(false); } //malloc error...
+			ByteRead(h.pps, h.ppslen);
+		}
+		else if(nal_type==NAL_VPS)
+		{
+			//LogDebug("VPS found");			
+			if (h.vps != NULL)
+			{
+				free(h.vps);
+			}
+			//Copy VPS to new buffer
+			h.vpslen = nal_len; //length including start code and ID bytes
+			if ((h.vpslen <= 0) || (h.vpslen > 65534)) return(false); //Sanity check
+			h.vps = (BYTE*) malloc(h.vpslen);
+			if (h.vps == NULL) { h.vpslen = 0; return(false); } //malloc error...
+			ByteRead(h.vps, h.vpslen);
+		}
+	}
+
+	if(h.spslen<=0 || h.ppslen<=0 || h.vpslen<=0 || h.height<100 || h.width<100 || h.AvgTimePerFrame<=0) 
+	{
+	  //Not found all the VPS, SPS and PPS information yet, or it's not a usable video stream
+		return(false);
+  }
+
+	// LogDebug("HEVC: vpslen = %I64d, spslen = %I64d, ppslen = %I64d, height = %d, width = %d, AvgTimePerFrame = %I64d", h.vpslen, h.spslen, h.ppslen, h.height, h.width, h.AvgTimePerFrame);
+
+	if(!pmt) 
+	{
+	  return(true);
+	}
+  else //Fill out PMT data
+	{
+		int extra =  h.vpslen + h.spslen + h.ppslen;
+		pmt->SetType(&MEDIATYPE_Video);
+		pmt->SetSubtype(&MEDIASUBTYPE_HEVC);
+		pmt->formattype = FORMAT_MPEG2_VIDEO;
+		pmt->bTemporalCompression = TRUE;
+
+		int len = FIELD_OFFSET(MPEG2VIDEOINFO, dwSequenceHeader) + extra;
+		MPEG2VIDEOINFO* vi = (MPEG2VIDEOINFO*)pmt->AllocFormatBuffer(len);
+		memset(vi, 0, len);
+		vi->hdr.AvgTimePerFrame = h.AvgTimePerFrame;
+		  		  
+		vi->hdr.dwPictAspectRatioX = h.arx;
+		vi->hdr.dwPictAspectRatioY = h.ary;
+    vi->hdr.rcSource.right = h.width;
+    vi->hdr.rcSource.bottom = h.height;
+    vi->hdr.rcTarget.right = h.width;
+    vi->hdr.rcTarget.bottom = h.height;
+		vi->hdr.bmiHeader.biWidth = h.width;
+		vi->hdr.bmiHeader.biHeight = h.height;
+		vi->hdr.bmiHeader.biCompression = 'CVEH';
+		vi->hdr.bmiHeader.biPlanes=1;
+
+    switch (h.chromaFormat)
+    {
+      case YUV420 :
+  		  vi->hdr.bmiHeader.biBitCount = h.lumaDepth + (h.chromaDepth/2);
+        break;
+      case YUV422 :
+  		  vi->hdr.bmiHeader.biBitCount = h.lumaDepth + h.chromaDepth;
+        break;
+      case YUV444 :
+  		  vi->hdr.bmiHeader.biBitCount = h.lumaDepth + (2*h.chromaDepth);
+        break;
+      case YUV400 : //Monochrome
+		    vi->hdr.bmiHeader.biBitCount = h.lumaDepth;
+        break;
+      default :
+  		  vi->hdr.bmiHeader.biBitCount = h.lumaDepth + (h.chromaDepth/2);
+    }
+
+		vi->hdr.bmiHeader.biClrUsed=0;
+    vi->hdr.bmiHeader.biSizeImage = DIBSIZE(vi->hdr.bmiHeader);
+		vi->hdr.bmiHeader.biSize = sizeof(vi->hdr.bmiHeader);
+		vi->dwProfile = h.profile;
+		vi->dwFlags = 0; // No length info at start of each NAL unit data block, start codes delimit the NALs
+		vi->dwLevel = h.level;
+		vi->cbSequenceHeader = extra;
+		vi->dwStartTimeCode=0;
+		
+		BYTE* p = (BYTE*)&vi->dwSequenceHeader[0];
+
+		memcpy(p, h.vps, h.vpslen);
+		p += h.vpslen;
+	  //free(h.vps);
+		//h.vps = NULL;
+
+		memcpy(p, h.sps, h.spslen);
+		p += h.spslen;
+		//free(h.sps);
+		//h.sps = NULL;
+		
+		memcpy(p, h.pps, h.ppslen);
+		//free(h.pps);
+		//h.pps = NULL;
+		
+		pmt->SetFormat((BYTE*)vi, len);
+	}
+
+	return(true);
+}
 
 bool CFrameHeaderParser::Read(vc1hdr& h, int len, CMediaType* pmt)
 {
@@ -1813,4 +1986,25 @@ void CFrameHeaderParser::DumpAvcHeader(avchdr h)
 	LogDebug("chromaDepth: %i",h.chromaDepth);
 	LogDebug("=================================");
 }
+
+void CFrameHeaderParser::DumpHevcHeader(hevchdr h)
+{
+	LogDebug("====== HEVC HEADER =====");
+	LogDebug("VPS len: %i",h.vpslen);
+	LogDebug("PPS len: %i",h.ppslen);
+	LogDebug("SPS len: %i",h.spslen);
+	LogDebug("avg time/frame: %i",h.AvgTimePerFrame);
+	LogDebug("width: %i",h.width);
+	LogDebug("height: %i",h.height);
+	LogDebug("ARidx: %i",h.ar);
+	LogDebug("ARx: %i",h.arx);
+	LogDebug("ARy: %i",h.ary);
+	LogDebug("level: %i",h.level);
+	LogDebug("profile: %i",h.profile);
+	LogDebug("chromaFormat: %i",h.chromaFormat);
+	LogDebug("lumaDepth: %i",h.lumaDepth);
+	LogDebug("chromaDepth: %i",h.chromaDepth);
+	LogDebug("=================================");
+}
+
 
