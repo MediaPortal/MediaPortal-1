@@ -43,9 +43,6 @@ HRESULT MadSubtitleProxy::SetDevice(IDirect3DDevice9* device)
   m_deviceState.SetDevice(device);
   m_pMadD3DDev = device;
 
-  if (m_pCallback && device)
-    m_pCallback->SetSubtitleDevice((DWORD)device);
-
   return S_OK;
 }
 
@@ -68,7 +65,11 @@ HRESULT MadSubtitleProxy::Render(REFERENCE_TIME frameStart, int left, int top, i
 
   if (!GetNewDevice())
   {
-    Log("MadSubtitleProxy::Render() GetNewDevice");
+    Log("MadSubtitleProxy::Render() SetNewDevice for D3D and subtitle");
+    if (m_pCallback)
+    {
+      m_pCallback->SetSubtitleDevice(reinterpret_cast<DWORD>(m_pMadD3DDev));
+    }
     SetNewDevice(true);
   }
 
