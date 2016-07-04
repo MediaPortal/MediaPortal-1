@@ -84,14 +84,34 @@ MPMadPresenter::~MPMadPresenter()
   Log("MPMadPresenter::Destructor() 5 ");
 }
 
-void MPMadPresenter::InitializeOSD()
+void MPMadPresenter::InitializeOSD(bool** initOsdDone)
 {
   CAutoLock cAutoLock(this);
 
-  if (m_pOsdServices)
+  if (m_subProxy->GetNewDevice())
   {
-    m_pOsdServices->OsdSetRenderCallback("MP-GUI", this, nullptr);
-    Log("MPMadPresenter::InitializeOSD");
+    if (m_pWindow)
+    {
+      m_pWindow->put_Owner(m_hParent);
+      Log("MPMadPresenter::InitializeOSD 1");
+      m_pWindow->SetWindowForeground(true);
+      Log("MPMadPresenter::InitializeOSD 2");
+      m_pWindow->put_WindowStyle(0x40000000 + 0x02000000 + 0x04000000);
+      Log("MPMadPresenter::InitializeOSD 3");
+      m_pWindow->put_MessageDrain(m_hParent);
+      Log("MPMadPresenter::InitializeOSD 4");
+    }
+
+    if (m_pOsdServices)
+    {
+      m_pOsdServices->OsdSetRenderCallback("MP-GUI", this, nullptr);
+      Log("MPMadPresenter::InitializeOSD 5");
+    }
+
+    // New D3D device initialized, tell C# that it is no need to try to initializing OSD
+    *initOsdDone = reinterpret_cast<bool*>(true);
+    // Setting SetNewDevice to false to avoid another checking
+    //m_subProxy->SetNewDevice(false);
   }
 }
 
@@ -131,12 +151,6 @@ IBaseFilter* MPMadPresenter::Initialize()
 
   m_pWindow->put_Owner(m_hParent);
   Log("MPMadPresenter::Init 8()");
-
-  m_pWindow->SetWindowForeground(true);
-  Log("MPMadPresenter::Init 9()");
-
-  m_pWindow->put_MessageDrain(m_hParent);
-  Log("MPMadPresenter::Init 10()");
 
   // TODO implement IMadVRSubclassReplacement
   //pSubclassReplacement->DisableSubclassing();
@@ -256,6 +270,9 @@ HRESULT MPMadPresenter::ClearBackground(LPCSTR name, REFERENCE_TIME frameStart, 
   if (!m_pCallback)
     return CALLBACK_EMPTY;
 
+  if (!m_pMPTextureGui || !m_pMadGuiVertexBuffer || !m_pRenderTextureGui)
+    return CALLBACK_EMPTY;
+
   m_dwHeight = static_cast<WORD>(fullOutputRect->bottom) - static_cast<WORD>(fullOutputRect->top);
   m_dwWidth = static_cast<WORD>(fullOutputRect->right) - static_cast<WORD>(fullOutputRect->left);
 
@@ -319,6 +336,9 @@ HRESULT MPMadPresenter::RenderOsd(LPCSTR name, REFERENCE_TIME frameStart, RECT* 
   CAutoLock cAutoLock(this);
 
   if (!m_pCallback)
+    return CALLBACK_EMPTY;
+
+  if (!m_pMPTextureOsd || !m_pMadOsdVertexBuffer || !m_pRenderTextureOsd)
     return CALLBACK_EMPTY;
 
   IDirect3DSurface9* SurfaceMadVr = nullptr; // This will be released by C# side

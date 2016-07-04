@@ -2248,6 +2248,7 @@ namespace DShowNET.Helper
     {
       try
       {
+        GC.WaitForPendingFinalizers();
         if (obj != null)
         {
           if (Marshal.IsComObject(obj))
@@ -2266,6 +2267,7 @@ namespace DShowNET.Helper
     {
       try
       {
+        GC.WaitForPendingFinalizers();
         if (obj != null)
         {
           if (Marshal.IsComObject(obj))

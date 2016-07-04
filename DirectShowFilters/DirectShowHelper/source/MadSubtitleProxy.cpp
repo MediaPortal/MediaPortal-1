@@ -19,6 +19,7 @@
 #include <initguid.h>
 #include <streams.h>
 #include <d3dx9.h>
+#include "dshowhelper.h"
 
 #include "MadSubtitleProxy.h"
 
@@ -37,6 +38,7 @@ MadSubtitleProxy::~MadSubtitleProxy()
 HRESULT MadSubtitleProxy::SetDevice(IDirect3DDevice9* device)
 {
   CAutoLock cAutoLock(this);
+  Log("MadSubtitleProxy::SetDevice() pD3DDev 0x:%x", device);
 
   m_deviceState.SetDevice(device);
   m_pMadD3DDev = device;
@@ -51,6 +53,9 @@ HRESULT MadSubtitleProxy::Render(REFERENCE_TIME frameStart, int left, int top, i
 {
   CAutoLock cAutoLock(this);
 
+  if (!m_pMadD3DDev)
+    return S_OK;
+
   if (m_pCallback)
   {
     m_deviceState.Store();
@@ -61,6 +66,12 @@ HRESULT MadSubtitleProxy::Render(REFERENCE_TIME frameStart, int left, int top, i
     m_deviceState.Restore();
   }
 
+  if (!GetNewDevice())
+  {
+    Log("MadSubtitleProxy::Render() GetNewDevice");
+    SetNewDevice(true);
+  }
+
   return S_OK;
 }
 
@@ -68,38 +79,54 @@ HRESULT MadSubtitleProxy::SetupMadDeviceState()
 {
   HRESULT hr = E_UNEXPECTED;
 
+  if (!m_pMadD3DDev)
+    return S_OK;
+
   RECT newScissorRect;
   newScissorRect.bottom = 1080;
   newScissorRect.top = 0;
   newScissorRect.left = 0;
   newScissorRect.right = 1920;
 
-  if (FAILED(hr = m_pMadD3DDev->SetScissorRect(&newScissorRect)))
-    return hr;
+  if (m_pMadD3DDev)
+  {
+    if (FAILED(hr = m_pMadD3DDev->SetScissorRect(&newScissorRect)))
+      return hr;
 
-  if (FAILED(hr = m_pMadD3DDev->SetVertexShader(NULL)))
-    return hr;
+    if (FAILED(hr = m_pMadD3DDev->SetVertexShader(NULL)))
+      return hr;
 
-  if (FAILED(hr = m_pMadD3DDev->SetPixelShader(NULL)))
-    return hr;
+    if (FAILED(hr = m_pMadD3DDev->SetPixelShader(NULL)))
+      return hr;
 
-  if (FAILED(hr = m_pMadD3DDev->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE)))
-    return hr;
+    if (FAILED(hr = m_pMadD3DDev->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE)))
+      return hr;
 
-  if (FAILED(hr = m_pMadD3DDev->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE)))
-    return hr;
+    if (FAILED(hr = m_pMadD3DDev->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE)))
+      return hr;
 
-  if (FAILED(hr = m_pMadD3DDev->SetRenderState(D3DRS_LIGHTING, FALSE)))
-    return hr;
+    if (FAILED(hr = m_pMadD3DDev->SetRenderState(D3DRS_LIGHTING, FALSE)))
+      return hr;
 
-  if (FAILED(hr = m_pMadD3DDev->SetRenderState(D3DRS_ZENABLE, FALSE)))
-    return hr;
+    if (FAILED(hr = m_pMadD3DDev->SetRenderState(D3DRS_ZENABLE, FALSE)))
+      return hr;
 
-  if (FAILED(hr = m_pMadD3DDev->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_ONE)))
-    return hr;
+    if (FAILED(hr = m_pMadD3DDev->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_ONE)))
+      return hr;
 
-  if (FAILED(hr = m_pMadD3DDev->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_SRCALPHA)))
-    return hr;
+    if (FAILED(hr = m_pMadD3DDev->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_SRCALPHA)))
+      return hr;
+  }
 
   return hr;
+}
+
+void MadSubtitleProxy::SetNewDevice(bool pnewDevice)
+{
+  m_pNewDevice = pnewDevice;
+}
+
+bool MadSubtitleProxy::GetNewDevice()
+{
+  return (m_pNewDevice);
 }

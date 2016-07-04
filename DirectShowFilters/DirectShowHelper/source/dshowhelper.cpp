@@ -888,11 +888,11 @@ void MadDeinit()
   }
 }
 
-void InitOSD()
+void InitOSD(bool** initOsdDone)
 {
   try
   {
-    m_madPresenter->InitializeOSD();
+    m_madPresenter->InitializeOSD(initOsdDone);
   }
   catch (...)
   {

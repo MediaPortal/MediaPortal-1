@@ -29,7 +29,7 @@ class MPMadPresenter : public CUnknown, public IOsdRenderCallback, public CCritS
     ~MPMadPresenter();
 
     IBaseFilter* Initialize();
-    void InitializeOSD();
+    void InitializeOSD(bool** initOsdDone);
     HRESULT Shutdown();
 
     STDMETHODIMP NonDelegatingQueryInterface(REFIID riid, void** ppv);
