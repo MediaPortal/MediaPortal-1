@@ -166,27 +166,40 @@ void CPmtParser::OnNewSection(CSection& section)
         }
   						
         if(indicator==DESCRIPTOR_DVB_AC3 || indicator==DESCRIPTOR_DVB_E_AC3)
-        {								
-          AudioPid pid;
-          pid.Pid=elementary_PID;
-          pid.AudioServiceType=(indicator==DESCRIPTOR_DVB_AC3) ? SERVICE_TYPE_AUDIO_AC3 : SERVICE_TYPE_AUDIO_DD_PLUS;
-          
-          for(unsigned int i(0); i<tempPids.size(); i++)
+        {							
+          bool newPid = true;
+          if (m_pidInfo.audioPids.size() > 0)	
           {
-            if(tempPids[i].Pid==elementary_PID)
+            AudioPid temp_pid = m_pidInfo.audioPids.back(); //Get the most recent audio PID data
+            if (temp_pid.Pid == elementary_PID) //It's the current PID, so don't create a new pidInfo entry
             {
-              pid.Lang[0]=tempPids[i].Lang[0];
-              pid.Lang[1]=tempPids[i].Lang[1];
-              pid.Lang[2]=tempPids[i].Lang[2];
-              pid.Lang[3]=tempPids[i].Lang[3]; // should be null if no extra data is available
-              pid.Lang[4]=tempPids[i].Lang[4];
-              pid.Lang[5]=tempPids[i].Lang[5];
-              tempPids.pop_back();
-              break;
+              newPid = false;
             }
           }
-
-          m_pidInfo.audioPids.push_back(pid);
+          
+          if (newPid)
+          {
+            AudioPid pid;
+            pid.Pid=elementary_PID;
+            pid.AudioServiceType=(indicator==DESCRIPTOR_DVB_AC3) ? SERVICE_TYPE_AUDIO_AC3 : SERVICE_TYPE_AUDIO_DD_PLUS;
+            
+            for(unsigned int i(0); i<tempPids.size(); i++)
+            {
+              if(tempPids[i].Pid==elementary_PID)
+              {
+                pid.Lang[0]=tempPids[i].Lang[0];
+                pid.Lang[1]=tempPids[i].Lang[1];
+                pid.Lang[2]=tempPids[i].Lang[2];
+                pid.Lang[3]=tempPids[i].Lang[3]; // should be null if no extra data is available
+                pid.Lang[4]=tempPids[i].Lang[4];
+                pid.Lang[5]=tempPids[i].Lang[5];
+                tempPids.pop_back();
+                break;
+              }
+            }
+    
+            m_pidInfo.audioPids.push_back(pid);
+          }
         }
   			
 		    // audio and subtitle languages

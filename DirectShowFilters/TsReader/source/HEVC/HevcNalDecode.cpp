@@ -13,13 +13,8 @@ using namespace HEVC;
 
 NALUnitType HevcNalDecode::processNALUnit(const uint8_t *pdata, std::size_t size, hevchdr& h)
 {
-	//Remove unwanted 'emulation_prevention_three_byte' bytes
-	uint8_t* pbuff = (uint8_t*) malloc(size);
-	if (pbuff == NULL) return NAL_RESERVED; //malloc error...
-	//Copies wanted data from 'pdata' to 'pbuff'
-	Remove3Byte (pbuff, pdata, size);
-
-  BitstreamReader bs(pbuff, size);
+	//Note: 'emulation_prevention_three_byte' removal is dealt with inside the BitstreamReader
+  BitstreamReader bs(pdata, size);
 
   NALUnitType type = processNALUnitHeader(bs);
 
@@ -104,12 +99,10 @@ NALUnitType HevcNalDecode::processNALUnit(const uint8_t *pdata, std::size_t size
     default: {}
   };
 
-  free(pbuff);
-
   return type;
 }
 
-//Remove 'emulation_prevention_three_byte' bytes
+//Remove 'emulation_prevention_three_byte' characters and copy to new buffer
 void HevcNalDecode::Remove3Byte(uint8_t* dst, const uint8_t* src, int length)
 {
 	int		si=0;

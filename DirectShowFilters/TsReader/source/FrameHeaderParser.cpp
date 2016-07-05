@@ -38,6 +38,8 @@
 
 extern void LogDebug(const char *fmt, ...) ;
 
+#define LOG_HEVC_FHP //LogDebug
+
 #define MARKER if(BitRead(1) != 1) {ASSERT(0); return(false);}
 #define countof(array) (sizeof(array)/sizeof(array[0]))
 #define DNew new
@@ -1664,11 +1666,13 @@ bool CFrameHeaderParser::Read(hevchdr& h, int len, CMediaType* pmt, bool reset)
 		int nal_len = len;
 		INT64 next_nal = GetPos()+nal_len;
 		
+		LOG_HEVC_FHP("HEVC FrameHeaderParser, len = %d", len);			
     //Process VPS, SPS and PPS - only use actual NAL data (skip over 4 byte start code)
     NALUnitType nal_type = HevcNalDecode::processNALUnit(GetBufferPos()+4, nal_len-4, h);
       
 		if(nal_type==NAL_SPS)
 		{
+			LOG_HEVC_FHP("SPS found");			
 			if (h.sps != NULL)
 			{
 				free(h.sps);
@@ -1682,7 +1686,7 @@ bool CFrameHeaderParser::Read(hevchdr& h, int len, CMediaType* pmt, bool reset)
 		}
 		else if(nal_type==NAL_PPS)
 		{
-			//LogDebug("PPS found");			
+			LOG_HEVC_FHP("PPS found");			
 			if (h.pps != NULL)
 			{
 				free(h.pps);
@@ -1696,7 +1700,7 @@ bool CFrameHeaderParser::Read(hevchdr& h, int len, CMediaType* pmt, bool reset)
 		}
 		else if(nal_type==NAL_VPS)
 		{
-			//LogDebug("VPS found");			
+			LOG_HEVC_FHP("VPS found");			
 			if (h.vps != NULL)
 			{
 				free(h.vps);
@@ -1716,7 +1720,7 @@ bool CFrameHeaderParser::Read(hevchdr& h, int len, CMediaType* pmt, bool reset)
 		return(false);
   }
 
-	// LogDebug("HEVC: vpslen = %I64d, spslen = %I64d, ppslen = %I64d, height = %d, width = %d, AvgTimePerFrame = %I64d", h.vpslen, h.spslen, h.ppslen, h.height, h.width, h.AvgTimePerFrame);
+	LOG_HEVC_FHP("HEVC: vpslen = %I64d, spslen = %I64d, ppslen = %I64d, height = %d, width = %d, AvgTimePerFrame = %I64d", h.vpslen, h.spslen, h.ppslen, h.height, h.width, h.AvgTimePerFrame);
 
 	if(!pmt) 
 	{

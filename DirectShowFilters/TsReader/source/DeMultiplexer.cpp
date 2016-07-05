@@ -1680,7 +1680,7 @@ void CDeMultiplexer::FillAudio(CTsHeader& header, byte* tsPacket, int bufferOffs
           }
           else if (m_AudioStreamType == SERVICE_TYPE_AUDIO_LATM_AAC)
           {
-            // LogDebug("LATM start PES = %d", len);
+            //LogDebug("LATM start PES = %d", len);
             while(len) 
             {
               //Find correct LATM/LAOS frame header sync sequence by 'learning' the correct header start pattern
