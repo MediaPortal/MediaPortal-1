@@ -126,9 +126,6 @@ IBaseFilter* MPMadPresenter::Initialize()
   m_pCommand->SendCommandBool("disableSeekbar", true);
   Log("MPMadPresenter::Init 7()");
 
-  m_pWindow->put_Owner(m_hParent);
-  Log("MPMadPresenter::Init 8()");
-
   // TODO implement IMadVRSubclassReplacement
   //pSubclassReplacement->DisableSubclassing();
 
