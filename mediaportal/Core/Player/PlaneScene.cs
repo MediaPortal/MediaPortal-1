@@ -755,6 +755,12 @@ namespace MediaPortal.Player
       }
     }
 
+    public void ForceOsdUpdate(bool pForce)
+    {
+      if (pForce)
+        VMR9Util.g_vmr9?.RegisterOsd();
+    }
+
     public static void RenderFor3DMode(GUIGraphicsContext.eRender3DModeHalf renderModeHalf, float timePassed,
       Surface backbuffer, Surface surface, Rectangle targetRect)
     {

@@ -53,7 +53,7 @@ class MPMadPresenter : public CUnknown, public IOsdRenderCallback, public CCritS
 
     MadSubtitleProxy* m_subProxy = nullptr;
 
-    OAHWND m_hParent = (OAHWND)nullptr;
+    OAHWND m_hParent = reinterpret_cast<OAHWND>(nullptr);
 
     IDirect3DDevice9Ex* m_pDevice = nullptr;
     IDirect3DDevice9Ex* m_pMadD3DDev = nullptr;

@@ -148,11 +148,67 @@ HANDLE m_hLogger = NULL;
 CAMEvent m_EndLoggingEvent;
 
 
+
+LONG LogWriteRegistryKeyString(HKEY hKey, LPCTSTR& lpSubKey, LPCTSTR& data)
+{  
+  LONG result = RegSetValueEx(hKey, lpSubKey, 0, REG_SZ, (LPBYTE)data, _tcslen(data) * sizeof(TCHAR));
+  
+  return result;
+}
+
+LONG LogReadRegistryKeyString(HKEY hKey, LPCTSTR& lpSubKey, LPCTSTR& data)
+{
+  DWORD dwSize = MAX_PATH * sizeof(TCHAR);
+  DWORD dwType = REG_SZ;
+  LONG result = RegQueryValueEx(hKey, lpSubKey, NULL, &dwType, (PBYTE)data, &dwSize);
+  
+  if (result != ERROR_SUCCESS)
+  {
+    if (result == ERROR_FILE_NOT_FOUND)
+    {
+      //create default value
+      result = LogWriteRegistryKeyString(hKey, lpSubKey, data);
+    }
+  }
+  
+  return result;
+}
+
 void LogPath(TCHAR* dest, TCHAR* name)
 {
-  TCHAR folder[MAX_PATH];
-  SHGetSpecialFolderPath(NULL,folder,CSIDL_COMMON_APPDATA,FALSE);
-  _stprintf(dest, _T("%s\\Team Mediaportal\\MediaPortal\\log\\%s.%s"), folder, m_RenderPrefix, name);
+  CAutoLock lock(&m_logFileLock); 
+  HKEY hKey;
+  //Try to read logging folder path from registry
+  LONG result = RegCreateKeyEx(HKEY_CURRENT_USER, _T("Software\\Team MediaPortal\\Client Common"), 0, NULL, 
+                                    REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &hKey, NULL);                                   
+  if (result == ERROR_SUCCESS)
+  {
+    //Get default log folder path
+    TCHAR folder[MAX_PATH];
+    SHGetSpecialFolderPath(NULL,folder,CSIDL_COMMON_APPDATA,FALSE);
+    TCHAR logFolder[MAX_PATH];
+    _stprintf(logFolder, _T("%s\\Team Mediaportal\\MediaPortal\\log"), folder);
+
+    //Read log folder path from registry (or write default path into registry if key doesn't exist)
+    LPCTSTR logFolderC = logFolder;    
+    LPCTSTR logFolderPath = _T("LogFolderPath");
+    result = LogReadRegistryKeyString(hKey, logFolderPath, logFolderC);
+    
+    if (result == ERROR_SUCCESS)
+    {
+      //Get full log file path
+      _stprintf(dest, _T("%s\\%s.%s"), logFolderC, m_RenderPrefix, name);
+    }
+  }
+    
+  if (result != ERROR_SUCCESS)
+  {
+    //Fall back to default log folder path
+    TCHAR folder[MAX_PATH];
+    SHGetSpecialFolderPath(NULL,folder,CSIDL_COMMON_APPDATA,FALSE);
+    //Get full log file path
+    _stprintf(dest, _T("%s\\Team Mediaportal\\MediaPortal\\log\\%s.%s"), folder, m_RenderPrefix, name);
+  }
 }
 
 
@@ -863,7 +919,6 @@ BOOL MadInit(IVMR9Callback* callback, DWORD width, DWORD height, DWORD dwD3DDevi
   Log("MPMadDshow::MadInit 4()");
   if (m_pVMR9Filter)
   {
-    //m_pVMR9Filter->AddRef();
     Log("MPMadDshow::MadInit 5()");
     *madFilter = m_pVMR9Filter;
     Log("MPMadDshow::MadInit 6()");
@@ -880,7 +935,6 @@ void MadDeinit()
   try
   {
     m_madPresenter->Shutdown();
-    m_pVMR9Filter->AddRef();
     ULONG refCount = m_pVMR9Filter->Release();
     Log("MPMadDshow::MadDeinit refCount(%d) to release", refCount);
     for (ULONG i = 1; i < refCount; ++i)
@@ -898,6 +952,8 @@ void InitOSD(bool** initOsdDone)
 {
   try
   {
+    //m_madPresenter->AddRef();
+    //m_pVMR9Filter->AddRef();
     m_madPresenter->InitializeOSD(initOsdDone);
   }
   catch (...)

@@ -63,32 +63,29 @@ MPMadPresenter::~MPMadPresenter()
 
 void MPMadPresenter::InitializeOSD(bool** initOsdDone)
 {
-  CAutoLock cAutoLock(this);
-
-  if (m_subProxy->GetNewDevice())
   {
-    if (m_pWindow)
-    {
-      m_pWindow->put_Owner(m_hParent);
-      Log("MPMadPresenter::InitializeOSD 1");
-      m_pWindow->SetWindowForeground(true);
-      Log("MPMadPresenter::InitializeOSD 2");
-      m_pWindow->put_WindowStyle(0x40000000 + 0x02000000 + 0x04000000);
-      Log("MPMadPresenter::InitializeOSD 3");
-      m_pWindow->put_MessageDrain(m_hParent);
-      Log("MPMadPresenter::InitializeOSD 4");
-    }
+    CAutoLock cAutoLock(this);
 
-    if (m_pOsdServices)
+    if (m_subProxy->GetNewDevice())
     {
-      m_pOsdServices->OsdSetRenderCallback("MP-GUI", this, nullptr);
-      Log("MPMadPresenter::InitializeOSD 5");
-    }
+      if (m_pOsdServices)
+      {
+        m_pOsdServices->OsdSetRenderCallback("MP-GUI", this, nullptr);
+        Log("MPMadPresenter::OsdSetRenderCallback");
+      }
 
-    // New D3D device initialized, tell C# that it is no need to try to initializing OSD
-    *initOsdDone = reinterpret_cast<bool*>(true);
-    // Setting SetNewDevice to false to avoid another checking
-    //m_subProxy->SetNewDevice(false);
+      //if (m_pWindow)
+      //{
+      //  m_pWindow->SetWindowForeground(true);
+      //  m_pWindow->put_WindowStyle(0x40000000 + 0x02000000 + 0x04000000);
+      //  m_pWindow->put_MessageDrain(m_hParent);
+      //  m_pWindow->put_Owner(m_hParent);
+      //  Log("MPMadPresenter::put_Owner");
+      //}
+
+      // New D3D device initialized, tell C# that it is no need to try to initializing OSD
+      *initOsdDone = reinterpret_cast<bool*>(true);
+    }
   }
 }
 
@@ -126,9 +123,6 @@ IBaseFilter* MPMadPresenter::Initialize()
   m_pCommand->SendCommandBool("disableSeekbar", true);
   Log("MPMadPresenter::Init 7()");
 
-  m_pWindow->put_Owner(m_hParent);
-  Log("MPMadPresenter::Init 8()");
-
   // TODO implement IMadVRSubclassReplacement
   //pSubclassReplacement->DisableSubclassing();
 
@@ -150,12 +144,12 @@ HRESULT MPMadPresenter::Shutdown()
       m_pCallback = nullptr;
     }
 
-    Log("MPMadPresenter::Shutdown() Scope  2 ");
+    Log("MPMadPresenter::Shutdown() Scope 2 ");
 
     if (m_pSubRender)
       m_pSubRender->SetCallback(nullptr);
 
-    Log("MPMadPresenter::Shutdown() Scope  3 ");
+    Log("MPMadPresenter::Shutdown() Scope 3 ");
 
     if (m_subProxy)
     {
@@ -163,7 +157,7 @@ HRESULT MPMadPresenter::Shutdown()
       m_subProxy = nullptr;
     }
 
-    Log("MPMadPresenter::Shutdown() Scope  4 ");
+    Log("MPMadPresenter::Shutdown() Scope 4 ");
   } // Scope for autolock
 
   if (m_pMad)
@@ -544,6 +538,8 @@ HRESULT MPMadPresenter::SetDevice(IDirect3DDevice9* pD3DDev)
 {
   HRESULT hr = S_FALSE;
 
+  Log("MPMadPresenter::SetDevice() pD3DDev 0 : 0x:%x", pD3DDev);
+
   CAutoLock cAutoLock(this);
 
   if (!pD3DDev)
@@ -551,8 +547,6 @@ HRESULT MPMadPresenter::SetDevice(IDirect3DDevice9* pD3DDev)
 
   if (!m_pCallback)
     return S_OK;
-
-  Log("MPMadPresenter::SetDevice() pD3DDev 0x:%x", pD3DDev);
 
   m_pMadD3DDev = static_cast<IDirect3DDevice9Ex*>(pD3DDev);
   m_deviceState.SetDevice(pD3DDev);
