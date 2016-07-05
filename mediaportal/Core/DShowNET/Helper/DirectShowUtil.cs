@@ -2266,6 +2266,7 @@ namespace DShowNET.Helper
             Marshal.ReleaseComObject(obj);
         }
         obj = null;
+        //GC.Collect();
       }
       catch (Exception)
       {
@@ -2285,6 +2286,7 @@ namespace DShowNET.Helper
             while (Marshal.FinalReleaseComObject(obj) > 0) ;
         }
         obj = null;
+        //GC.Collect();
       }
       catch (Exception)
       {
