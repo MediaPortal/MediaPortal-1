@@ -394,7 +394,10 @@ namespace MediaPortal.Player
         bool initOsdDone = false;
         InitOSD(ref initOsdDone);
         GUIGraphicsContext.RegisterOsd = initOsdDone;
-        Log.Debug("VMR9: registering OSD done : {0}", GUIGraphicsContext.RegisterOsd);
+        if (initOsdDone)
+        {
+          Log.Debug("VMR9: registering OSD done : {0}", GUIGraphicsContext.RegisterOsd);
+        }
       }
     }
 
@@ -816,13 +819,6 @@ namespace MediaPortal.Player
         if (!GUIGraphicsContext.RegisterOsd && UseMadVideoRenderer)
         {
           if (VMR9Util.g_vmr9 != null) VMR9Util.g_vmr9.RegisterOsd();
-          if (!g_Player.Paused)
-          {
-            // TODO : Fix weird hack for madVR 3D that need pause/unpause to start
-            g_Player.Pause();
-            g_Player.Pause();
-          }
-          Log.Debug("VMR9: registering madVR OSD");
         }
       }
     }
