@@ -59,29 +59,6 @@ MPMadPresenter::~MPMadPresenter()
   Log("MPMadPresenter::Destructor() - instance 0x%x", this);
 
   CAutoLock cAutoLock(this);
-
-  Log("MPMadPresenter::Destructor() 2 ");
-
-  if (m_pCallback)
-  {
-    m_pCallback->Release();
-    m_pCallback = nullptr;
-  }
-
-  Log("MPMadPresenter::Destructor() 3 ");
-
-  if (m_pSubRender)
-    m_pSubRender->SetCallback(nullptr);
-
-  Log("MPMadPresenter::Destructor() 4 ");
-
-  if (m_subProxy)
-  {
-    m_subProxy->Release();
-    m_subProxy = nullptr;
-  }
-
-  Log("MPMadPresenter::Destructor() 5 ");
 }
 
 void MPMadPresenter::InitializeOSD(bool** initOsdDone)
@@ -165,11 +142,28 @@ HRESULT MPMadPresenter::Shutdown()
 
     CAutoLock lock(this);
 
+    Log("MPMadPresenter::Shutdown() Scope 1 ");
+
     if (m_pCallback)
     {
       m_pCallback->Release();
       m_pCallback = nullptr;
     }
+
+    Log("MPMadPresenter::Shutdown() Scope  2 ");
+
+    if (m_pSubRender)
+      m_pSubRender->SetCallback(nullptr);
+
+    Log("MPMadPresenter::Shutdown() Scope  3 ");
+
+    if (m_subProxy)
+    {
+      m_subProxy->Release();
+      m_subProxy = nullptr;
+    }
+
+    Log("MPMadPresenter::Shutdown() Scope  4 ");
   } // Scope for autolock
 
   if (m_pMad)
@@ -217,21 +211,21 @@ HRESULT MPMadPresenter::QueryInterface(REFIID riid, void** ppvObject)
   HRESULT hr = E_NOINTERFACE;
   if (ppvObject == nullptr)
     hr = E_POINTER;
-  else if (riid == __uuidof(IOsdRenderCallback))
-  {
-    *ppvObject = static_cast<IOsdRenderCallback*>(this);
-    AddRef();
-    hr = S_OK;
-  }
-  else if (riid == __uuidof(ISubRender))
-  {
-    if (m_subProxy)
-    {
-      *ppvObject = static_cast<ISubRenderCallback*>(m_subProxy);
-      AddRef();
-      hr = S_OK;
-    }
-  }
+  //else if (riid == __uuidof(IOsdRenderCallback))
+  //{
+  //  *ppvObject = static_cast<IOsdRenderCallback*>(this);
+  //  AddRef();
+  //  hr = S_OK;
+  //}
+  //else if (riid == __uuidof(ISubRender))
+  //{
+  //  if (m_subProxy)
+  //  {
+  //    *ppvObject = static_cast<ISubRenderCallback*>(m_subProxy);
+  //    AddRef();
+  //    hr = S_OK;
+  //  }
+  //}
 
   return hr;
 }

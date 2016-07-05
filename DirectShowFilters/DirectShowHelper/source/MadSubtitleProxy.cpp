@@ -32,6 +32,7 @@ MadSubtitleProxy::MadSubtitleProxy(IVMR9Callback* pCallback) :
 
 MadSubtitleProxy::~MadSubtitleProxy()
 {
+  Log("MadSubtitleProxy::Destructor() - instance 0x%x", this);
   CAutoLock cAutoLock(this);
 }
 
