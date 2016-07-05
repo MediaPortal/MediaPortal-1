@@ -681,7 +681,6 @@ namespace MediaPortal
             catch (DeviceLostException)
             {
               // Indicate that the device has been lost
-              deviceLost = true;
               Log.Error("D3D: D3DERR_DEVICELOST - device is lost but cannot be reset at this time");
             }
             catch (DriverInternalErrorException)
