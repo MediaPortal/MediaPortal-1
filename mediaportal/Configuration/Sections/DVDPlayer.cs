@@ -39,9 +39,9 @@ namespace MediaPortal.Configuration.Sections
     private MPButton fileNameButton;
     private MPButton parametersButton;
     private MPTextBox parametersTextBox;
-    private MPCheckBox internalPlayerCheckBox;
     private OpenFileDialog openFileDialog;
     private MPGroupBox mpGroupBox3;
+    private MPCheckBox useExternalPlayerForDVD;
     private CheckBox useMediaInfo;
 
     public DVDPlayer()
@@ -64,12 +64,12 @@ namespace MediaPortal.Configuration.Sections
         fileNameTextBox.Text = xmlreader.GetValueAsString("dvdplayer", "path", @"");
         parametersTextBox.Text = xmlreader.GetValueAsString("dvdplayer", "arguments", "");
         useMediaInfo.Checked = xmlreader.GetValueAsBool("dvdplayer", "mediainfoused", false);
-
+        useExternalPlayerForDVD.Checked = xmlreader.GetValueAsBool("dvdplayer", "usefordvd", true);
         //
         // Fake a check changed to force a CheckChanged event
         //
-        internalPlayerCheckBox.Checked = xmlreader.GetValueAsBool("dvdplayer", "internal", true);
-        internalPlayerCheckBox.Checked = !internalPlayerCheckBox.Checked;
+        useExternalPlayerForDVD.Checked = xmlreader.GetValueAsBool("dvdplayer", "internal", true);
+        useExternalPlayerForDVD.Checked = !useExternalPlayerForDVD.Checked;
       }
     }
 
@@ -83,8 +83,9 @@ namespace MediaPortal.Configuration.Sections
         xmlwriter.SetValue("dvdplayer", "path", fileNameTextBox.Text);
         xmlwriter.SetValue("dvdplayer", "arguments", parametersTextBox.Text);
 
-        xmlwriter.SetValueAsBool("dvdplayer", "internal", !internalPlayerCheckBox.Checked);
+        xmlwriter.SetValueAsBool("dvdplayer", "internal", !useExternalPlayerForDVD.Checked);
         xmlwriter.SetValueAsBool("dvdplayer", "mediainfoused", useMediaInfo.Checked);
+        xmlwriter.SetValueAsBool("dvdplayer", "usefordvd", useExternalPlayerForDVD.Checked);
       }
     }
 
@@ -93,10 +94,10 @@ namespace MediaPortal.Configuration.Sections
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="e"></param>
-    private void internalPlayerCheckBox_CheckedChanged(object sender, EventArgs e)
+    private void useExternalPlayerForDVD_CheckedChanged(object sender, EventArgs e)
     {
       fileNameTextBox.Enabled =
-        parametersTextBox.Enabled = fileNameButton.Enabled = parametersButton.Enabled = internalPlayerCheckBox.Checked;
+        parametersTextBox.Enabled = fileNameButton.Enabled = parametersButton.Enabled = useExternalPlayerForDVD.Checked;
     }
 
     #region Designer generated code
@@ -107,8 +108,8 @@ namespace MediaPortal.Configuration.Sections
     /// </summary>
     private void InitializeComponent()
     {
-      this.internalPlayerCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.mpGroupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.useExternalPlayerForDVD = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.parametersButton = new MediaPortal.UserInterface.Controls.MPButton();
       this.parametersTextBox = new MediaPortal.UserInterface.Controls.MPTextBox();
       this.label2 = new MediaPortal.UserInterface.Controls.MPLabel();
@@ -124,25 +125,11 @@ namespace MediaPortal.Configuration.Sections
       this.mpGroupBox3.SuspendLayout();
       this.SuspendLayout();
       // 
-      // internalPlayerCheckBox
-      // 
-      this.internalPlayerCheckBox.AutoSize = true;
-      this.internalPlayerCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.internalPlayerCheckBox.Location = new System.Drawing.Point(168, 20);
-      this.internalPlayerCheckBox.Name = "internalPlayerCheckBox";
-      this.internalPlayerCheckBox.Size = new System.Drawing.Size(231, 17);
-      this.internalPlayerCheckBox.TabIndex = 0;
-      this.internalPlayerCheckBox.Text = "Use external player (replaces internal player)";
-      this.internalPlayerCheckBox.UseVisualStyleBackColor = true;
-      this.internalPlayerCheckBox.CheckedChanged += new System.EventHandler(this.internalPlayerCheckBox_CheckedChanged);
-      // 
       // mpGroupBox1
       // 
-      this.mpGroupBox1.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
-      this.mpGroupBox1.Controls.Add(this.internalPlayerCheckBox);
+      this.mpGroupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpGroupBox1.Controls.Add(this.useExternalPlayerForDVD);
       this.mpGroupBox1.Controls.Add(this.parametersButton);
       this.mpGroupBox1.Controls.Add(this.parametersTextBox);
       this.mpGroupBox1.Controls.Add(this.label2);
@@ -152,16 +139,26 @@ namespace MediaPortal.Configuration.Sections
       this.mpGroupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.mpGroupBox1.Location = new System.Drawing.Point(6, 73);
       this.mpGroupBox1.Name = "mpGroupBox1";
-      this.mpGroupBox1.Size = new System.Drawing.Size(462, 104);
+      this.mpGroupBox1.Size = new System.Drawing.Size(462, 161);
       this.mpGroupBox1.TabIndex = 1;
       this.mpGroupBox1.TabStop = false;
       this.mpGroupBox1.Text = "External Player";
       // 
+      // useExternalPlayerForDVD
+      // 
+      this.useExternalPlayerForDVD.AutoSize = true;
+      this.useExternalPlayerForDVD.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.useExternalPlayerForDVD.Location = new System.Drawing.Point(168, 19);
+      this.useExternalPlayerForDVD.Name = "useExternalPlayerForDVD";
+      this.useExternalPlayerForDVD.Size = new System.Drawing.Size(277, 17);
+      this.useExternalPlayerForDVD.TabIndex = 7;
+      this.useExternalPlayerForDVD.Text = "Use external player for DVDs (replaces internal player)";
+      this.useExternalPlayerForDVD.UseVisualStyleBackColor = true;
+      this.useExternalPlayerForDVD.CheckedChanged += new System.EventHandler(this.useExternalPlayerForDVD_CheckedChanged);
+      // 
       // parametersButton
       // 
-      this.parametersButton.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.parametersButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.parametersButton.Location = new System.Drawing.Point(374, 67);
       this.parametersButton.Name = "parametersButton";
       this.parametersButton.Size = new System.Drawing.Size(72, 22);
@@ -172,10 +169,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // parametersTextBox
       // 
-      this.parametersTextBox.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
+      this.parametersTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.parametersTextBox.BorderColor = System.Drawing.Color.Empty;
       this.parametersTextBox.Location = new System.Drawing.Point(168, 68);
       this.parametersTextBox.Name = "parametersTextBox";
@@ -192,9 +187,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // fileNameButton
       // 
-      this.fileNameButton.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.fileNameButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.fileNameButton.Location = new System.Drawing.Point(374, 43);
       this.fileNameButton.Name = "fileNameButton";
       this.fileNameButton.Size = new System.Drawing.Size(72, 22);
@@ -205,10 +198,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // fileNameTextBox
       // 
-      this.fileNameTextBox.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
+      this.fileNameTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.fileNameTextBox.BorderColor = System.Drawing.Color.Empty;
       this.fileNameTextBox.Location = new System.Drawing.Point(168, 44);
       this.fileNameTextBox.Name = "fileNameTextBox";
@@ -241,10 +232,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // mpGroupBox3
       // 
-      this.mpGroupBox3.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpGroupBox3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.mpGroupBox3.Controls.Add(this.useMediaInfo);
       this.mpGroupBox3.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.mpGroupBox3.Location = new System.Drawing.Point(6, 0);
@@ -276,6 +265,7 @@ namespace MediaPortal.Configuration.Sections
       this.mpGroupBox3.ResumeLayout(false);
       this.mpGroupBox3.PerformLayout();
       this.ResumeLayout(false);
+
     }
 
     #endregion

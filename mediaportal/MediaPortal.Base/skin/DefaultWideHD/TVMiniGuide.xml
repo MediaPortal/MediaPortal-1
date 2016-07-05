@@ -85,6 +85,14 @@
       <onright>34</onright>
       <scrollbarXOff>3052</scrollbarXOff>
       <showScrollbar>no</showScrollbar>
+      <texturebg>osd_progress_background.png</texturebg>
+      <lefttexture>green.png</lefttexture>
+      <midtexture>green.png</midtexture>
+      <righttexture>green.png</righttexture>
+      <ProgressBarWidth>890</ProgressBarWidth>
+      <ProgressBarHeight>10</ProgressBarHeight>
+      <ProgressBarXOffset>145</ProgressBarXOffset>
+      <ProgressBarYOffset>84</ProgressBarYOffset>
     </control>
     <control>
       <description>list to show channels with channel state logos</description>
@@ -138,6 +146,14 @@
       <onleft>36</onleft>
       <onright>34</onright>
       <showScrollbar>no</showScrollbar>
+      <texturebg>osd_progress_background.png</texturebg>
+      <lefttexture>green.png</lefttexture>
+      <midtexture>green.png</midtexture>
+      <righttexture>green.png</righttexture>
+      <ProgressBarWidth>890</ProgressBarWidth>
+      <ProgressBarHeight>10</ProgressBarHeight>
+      <ProgressBarXOffset>145</ProgressBarXOffset>
+      <ProgressBarYOffset>84</ProgressBarYOffset>
     </control>
     <control>
       <description>groups spin control</description>

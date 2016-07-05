@@ -79,6 +79,7 @@ namespace MediaPortal.Configuration.Sections
         string isSettingExist = reader.GetValueAsString("volume", "handler", "");
         int volumeStyle = reader.GetValueAsInt("volume", "handler", 1);
         bool isDigital = reader.GetValueAsBool("volume", "digital", true);
+        mpCBHideWinOSD.Checked = reader.GetValueAsBool("volume", "hideWindowsOSD", false);
 
         _useClassicHandler.Checked = volumeStyle == 0;
         _useWindowsHandler.Checked = volumeStyle == 1;
@@ -166,6 +167,8 @@ namespace MediaPortal.Configuration.Sections
           useDigital = true;
         }
         writer.SetValueAsBool("volume", "digital", useDigital);
+        writer.SetValueAsBool("volume", "hideWindowsOSD", mpCBHideWinOSD.Checked);
+
         writer.SetValue("volume", "table", _customText);
         writer.SetValue("volume", "startuplevel", _customLevel);
         writer.SetValueAsBool("volume", "defaultVolumeOSD", _useVolumeOSD.Checked);
@@ -292,6 +295,7 @@ namespace MediaPortal.Configuration.Sections
       this._useWindowsHandler = new MediaPortal.UserInterface.Controls.MPRadioButton();
       this._useClassicHandler = new MediaPortal.UserInterface.Controls.MPRadioButton();
       this.mpLabelOs = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.mpCBHideWinOSD = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.groupBoxVolumeOsd.SuspendLayout();
       this.groupBoxMixerControl.SuspendLayout();
       this.groupBoxStartup.SuspendLayout();
@@ -302,6 +306,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.groupBoxVolumeOsd.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxVolumeOsd.Controls.Add(this.mpCBHideWinOSD);
       this.groupBoxVolumeOsd.Controls.Add(this._useVolumeOSD);
       this.groupBoxVolumeOsd.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBoxVolumeOsd.Location = new System.Drawing.Point(0, 287);
@@ -540,6 +545,17 @@ namespace MediaPortal.Configuration.Sections
       this.mpLabelOs.TabIndex = 4;
       this.mpLabelOs.Text = "Due to different OS behaviours, not all options will be available";
       // 
+      // mpCBHideWinOSD
+      // 
+      this.mpCBHideWinOSD.AutoSize = true;
+      this.mpCBHideWinOSD.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.mpCBHideWinOSD.Location = new System.Drawing.Point(254, 19);
+      this.mpCBHideWinOSD.Name = "mpCBHideWinOSD";
+      this.mpCBHideWinOSD.Size = new System.Drawing.Size(122, 17);
+      this.mpCBHideWinOSD.TabIndex = 1;
+      this.mpCBHideWinOSD.Text = "Hide Windows OSD";
+      this.mpCBHideWinOSD.UseVisualStyleBackColor = true;
+      // 
       // GeneralVolume
       // 
       this.Controls.Add(this.mpLabelOs);
@@ -590,6 +606,7 @@ namespace MediaPortal.Configuration.Sections
     private MPRadioButton _useVistaHandler;
     private MPLabel mpLabelOs;
     private Label volumewarnlb;
+    private MPCheckBox mpCBHideWinOSD;
 
     private MPRadioButton _useSystemCurrent;
   }
