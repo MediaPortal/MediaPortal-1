@@ -183,6 +183,7 @@ namespace MediaPortal.Configuration.Sections
         CheckBoxValid(audioCodecComboBox);
         CheckBoxValid(videoCodecComboBox);
         CheckBoxValid(h264videoCodecComboBox);
+        CheckBoxValid(hevcvideoCodecComboBox);
         CheckBoxValid(audioRendererComboBox);
         CheckBoxValid(aacAudioCodecComboBox);
         CheckBoxValid(ddplusAudioCodecComboBox);
@@ -255,7 +256,7 @@ namespace MediaPortal.Configuration.Sections
         xmlwriter.SetValue("mytv", "audiocodec", audioCodecComboBox.Text);
         xmlwriter.SetValue("mytv", "videocodec", videoCodecComboBox.Text);
         xmlwriter.SetValue("mytv", "h264videocodec", h264videoCodecComboBox.Text);
-        xmlwriter.SetValue("mytv", "hevcvideoCodec", hevcvideoCodecComboBox.Text);
+        xmlwriter.SetValue("mytv", "hevcvideocodec", hevcvideoCodecComboBox.Text);
         xmlwriter.SetValue("mytv", "audiorenderer", audioRendererComboBox.Text);
         xmlwriter.SetValue("mytv", "aacaudiocodec", aacAudioCodecComboBox.Text);
         xmlwriter.SetValue("mytv", "ddplusaudiocodec", ddplusAudioCodecComboBox.Text);
