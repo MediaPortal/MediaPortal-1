@@ -907,6 +907,8 @@ double EVRGetDisplayFPS()
 
 BOOL MadInit(IVMR9Callback* callback, DWORD width, DWORD height, DWORD dwD3DDevice, OAHWND parent, IBaseFilter** madFilter)
 {
+  // Delay for 3 seconds on init to clear all pending garbage from C#
+  Sleep(3000);
   Log("MPMadDshow::MadInit 1");
   m_RenderPrefix = _T("mad");
 
@@ -952,8 +954,7 @@ void InitOSD(bool** initOsdDone)
 {
   try
   {
-    //m_madPresenter->AddRef();
-    //m_pVMR9Filter->AddRef();
+    m_madPresenter->AddRef();
     m_madPresenter->InitializeOSD(initOsdDone);
   }
   catch (...)
