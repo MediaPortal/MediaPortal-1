@@ -493,6 +493,9 @@ namespace MediaPortal
     /// </summary>
     protected void ToggleFullscreen()
     {
+      if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR && GUIGraphicsContext.InVmr9Render)
+        return;
+
       Log.Debug("D3D: ToggleFullScreen()");
 
       // disable event handlers
@@ -502,10 +505,10 @@ namespace MediaPortal
       }
 
       // Reset DialogMenu to avoid freeze when going to fullscreen/windowed
-      var dialogMenu = (GUIDialogMenu) GUIWindowManager.GetWindow((int) GUIWindow.Window.WINDOW_DIALOG_MENU);
+      var dialogMenu = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
       if (dialogMenu != null &&
-          (GUIWindowManager.RoutedWindow == (int) GUIWindow.Window.WINDOW_DIALOG_MENU ||
-           GUIWindowManager.RoutedWindow == (int) GUIWindow.Window.WINDOW_DIALOG_OK))
+          (GUIWindowManager.RoutedWindow == (int)GUIWindow.Window.WINDOW_DIALOG_MENU ||
+           GUIWindowManager.RoutedWindow == (int)GUIWindow.Window.WINDOW_DIALOG_OK))
       {
         dialogMenu.Dispose();
         GUIWindowManager.UnRoute(); // only unroute if we still the routed window

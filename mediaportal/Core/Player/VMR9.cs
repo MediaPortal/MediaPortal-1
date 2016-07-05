@@ -83,6 +83,9 @@ namespace MediaPortal.Player
 
     [PreserveSig]
     void RenderFrame(Int16 cx, Int16 cy, Int16 arx, Int16 ary, uint pSurface);
+
+    [PreserveSig]
+    void ForceOsdUpdate(bool pForce);
   }
 
   #endregion
@@ -509,6 +512,8 @@ namespace MediaPortal.Player
           hr = new HResult(graphBuilder.AddFilter(_vmr9Filter, "madVR"));
           Log.Info("VMR9: added madVR Renderer to graph");
           backbuffer.SafeDispose();
+          IVideoWindow videoWin = (IVideoWindow)graphBuilder;
+          videoWin.put_Owner(GUIGraphicsContext.ActiveForm);
         }
         else
         {
