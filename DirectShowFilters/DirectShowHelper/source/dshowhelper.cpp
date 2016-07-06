@@ -954,7 +954,6 @@ void InitOSD(bool** initOsdDone)
 {
   try
   {
-    m_madPresenter->AddRef();
     m_madPresenter->InitializeOSD(initOsdDone);
   }
   catch (...)

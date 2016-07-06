@@ -66,12 +66,13 @@ HRESULT MadSubtitleProxy::Render(REFERENCE_TIME frameStart, int left, int top, i
 
   if (!GetNewDevice())
   {
-    Log("MadSubtitleProxy::Render() SetNewDevice for D3D and subtitle : 0x:%x", m_pMadD3DDev);
     if (m_pCallback)
     {
+      Log("MadSubtitleProxy::Render() SetNewDevice for D3D and subtitle : 0x:%x", m_pMadD3DDev);
+      m_pCallback->ForceOsdUpdate(true);
       m_pCallback->SetSubtitleDevice(reinterpret_cast<DWORD>(m_pMadD3DDev));
+      SetNewDevice(true);
     }
-    SetNewDevice(true);
   }
 
   return S_OK;
