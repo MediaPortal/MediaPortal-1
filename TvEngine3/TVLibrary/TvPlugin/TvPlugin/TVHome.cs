@@ -337,10 +337,6 @@ namespace TvPlugin
           else
             Log.Info("TVHome V" + pluginVersion + ":ctor");
         }
-        else if (Connected)
-        {
-          OnRemoteConnectionEvent();
-        }
       }
       catch (Exception ex)
       {
@@ -349,10 +345,7 @@ namespace TvPlugin
 
       if (!firstNotLoaded)
       {
-        if (Connected)
-        {
-          _notifyManager.Start();
-        }
+        _notifyManager.Start();
       }
     }
 
@@ -375,7 +368,6 @@ namespace TvPlugin
       g_Player.PlayBackStopped += new g_Player.StoppedHandler(OnPlayBackStopped);
       g_Player.AudioTracksReady += new g_Player.AudioTracksReadyHandler(OnAudioTracksReady);
       ChannelTvOnOff += new OnChannelTvOnOffDelegate(OnChannelTvOnOff);
-      OnRemoteConnection = new OnRemoteConnectionDelegate(OnRemotingConnection);
 
       GUIWindowManager.Receivers += new SendMessageHandler(OnGlobalMessage);
 
@@ -585,16 +577,24 @@ namespace TvPlugin
       GUIMessage msgStopRecorder = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RECORDER_STOP, 0, 0, 0, 0, 0, null);
       GUIWindowManager.SendMessage(msgStopRecorder);
 
-      // needs for PIN protection function avoid to start tvhome with a protected group
-      var previousWindowId = GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow).PreviousWindowId;
-      if (previousWindowId == (int) Window.WINDOW_HOME ||
-          previousWindowId == (int) Window.WINDOW_SECOND_HOME)
+      if (!_onPageLoadDone && m_navigator != null)
       {
-        if (m_navigator != null && (m_navigator.CheckIfProtectedGroup() || _allowProtectedItem || _showAllRecording))
+        m_navigator.ReLoad();
+        LoadSettings(false);
+      }
+      else
+      {
+        // needs for PIN protection function avoid to start tvhome with a protected group
+        var previousWindowId = GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow).PreviousWindowId;
+        if (previousWindowId == (int)Window.WINDOW_HOME ||
+            previousWindowId == (int)Window.WINDOW_SECOND_HOME)
         {
-          _allowProtectedItem = false;
-          _showAllRecording = false;
-          LoadSettings(true);
+          if (m_navigator != null && (m_navigator.CheckIfProtectedGroup() || _allowProtectedItem || _showAllRecording))
+          {
+            _allowProtectedItem = false;
+            _showAllRecording = false;
+            LoadSettings(true);
+          }
         }
       }
 
@@ -822,7 +822,7 @@ namespace TvPlugin
 
         UpdateStateOfRecButton();
         UpdateGUIonPlaybackStateChange();
-        UpdateProgressPercentageBar();
+        //UpdateProgressPercentageBar();
         benchClock.Stop();
         Log.Warn("TVHome.OnClicked(): Total Time - {0} ms", benchClock.ElapsedMilliseconds.ToString());
       }
@@ -1098,14 +1098,10 @@ namespace TvPlugin
 
       Stopwatch timer = Stopwatch.StartNew();
       Log.Debug("TVHome: trying waiting for gentle.net DB connection {0} msec", timer.ElapsedMilliseconds);
-      //while (!success && timer.ElapsedMilliseconds < 10000) //10sec max
+      while (!success && timer.ElapsedMilliseconds < 2000) //10sec max
       {
         try
         {
-          ProviderFactory.ResetGentle(true);
-          if (provider != null) ProviderFactory.SetDefaultProvider(provider);
-          if (connectionString != null) ProviderFactory.SetDefaultProviderConnectionString(connectionString);
-          RemoteControl.ForceRegisterChannel();
           IList<Card> cards = TvDatabase.Card.ListAll();
           success = true;
         }
@@ -1119,6 +1115,7 @@ namespace TvPlugin
 
       if (!success)
       {
+        RemoteControl.Clear();
         GUIWindowManager.ActivateWindow((int)Window.WINDOW_SETTINGS_TVENGINE);
       }
       Log.Debug("TVHome: waiting for gentle.net DB connection {0} msec", timer.ElapsedMilliseconds);
@@ -1506,36 +1503,19 @@ namespace TvPlugin
     //  }
     //}
 
-    private static void OnRemotingConnection()
-    {
-      if (_recoverTV)
-      {
-        _recoverTV = false;
-        GUIMessage initMsg = null;
-        initMsg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_INIT, (int)Window.WINDOW_TV_OVERLAY, 0, 0, 0, 0, null);
-        GUIWindowManager.SendThreadMessage(initMsg);
-      }
-      if (firstNotLoaded)
-      {
-        firstNotLoaded = false;
-        OnLoaded();
-      }
-    }
-
-    private static void OnRemoteConnectionEvent()
-    {
-      if (OnRemoteConnection != null)
-      {
-        OnRemoteConnection();
-      }
-    }
-
     private static void RemoteControl_OnRemotingConnected()
     {
       if (!Connected)
         Log.Info("TVHome: OnRemotingConnected, recovered from a disconnection");
       Connected = true;
       _ServerNotConnectedHandled = false;
+
+      if (firstNotLoaded)
+      {
+        firstNotLoaded = false;
+        OnLoaded();
+      }
+
       if (_notifyManager != null)
       {
         _notifyManager.Start();
@@ -1917,8 +1897,6 @@ namespace TvPlugin
       RemoteControl.OnRemotingDisconnected -= RemoteControl_OnRemotingDisconnected;
       RemoteControl.OnRemotingConnected -= RemoteControl_OnRemotingConnected;
 
-      RemoteControl.ForceRegisterChannel();
-
       if (wasPrevWinTVplugin() && _autoTurnOnTv)
       {
         _playbackStopped = false;
@@ -1997,10 +1975,6 @@ namespace TvPlugin
       }
       finally
       {
-        ProviderFactory.ResetGentle(true);
-        if (provider != null) ProviderFactory.SetDefaultProvider(provider);
-        if (connectionString != null) ProviderFactory.SetDefaultProviderConnectionString(connectionString);
-        RemoteControl.ForceRegisterChannel();
         _resumed = true;
       }
     }
