@@ -66,25 +66,12 @@ void MPMadPresenter::InitializeOSD(bool** initOsdDone)
   {
     CAutoLock cAutoLock(this);
 
-    if (m_subProxy->GetNewDevice())
+    if (m_pOsdServices)
     {
-      if (m_pOsdServices)
-      {
-        m_pOsdServices->OsdSetRenderCallback("MP-GUI", this, nullptr);
-        Log("MPMadPresenter::OsdSetRenderCallback");
-      }
-
-      //if (m_pWindow)
-      //{
-      //  m_pWindow->SetWindowForeground(true);
-      //  m_pWindow->put_WindowStyle(0x40000000 + 0x02000000 + 0x04000000);
-      //  m_pWindow->put_MessageDrain(m_hParent);
-      //  m_pWindow->put_Owner(m_hParent);
-      //  Log("MPMadPresenter::put_Owner");
-      //}
-
-      // New D3D device initialized, tell C# that it is no need to try to initializing OSD
-      *initOsdDone = reinterpret_cast<bool*>(true);
+      Log("MPMadPresenter::OsdSetRenderCallback");
+      m_pOsdServices->OsdSetRenderCallback("MP-GUI", this, nullptr);
+            // New D3D device initialized, tell C# that it is no need to try to initializing OSD
+      *initOsdDone = reinterpret_cast<bool*>(true);      
     }
   }
 }
@@ -205,21 +192,21 @@ HRESULT MPMadPresenter::QueryInterface(REFIID riid, void** ppvObject)
   HRESULT hr = E_NOINTERFACE;
   if (ppvObject == nullptr)
     hr = E_POINTER;
-  //else if (riid == __uuidof(IOsdRenderCallback))
-  //{
-  //  *ppvObject = static_cast<IOsdRenderCallback*>(this);
-  //  AddRef();
-  //  hr = S_OK;
-  //}
-  //else if (riid == __uuidof(ISubRender))
-  //{
-  //  if (m_subProxy)
-  //  {
-  //    *ppvObject = static_cast<ISubRenderCallback*>(m_subProxy);
-  //    AddRef();
-  //    hr = S_OK;
-  //  }
-  //}
+  else if (riid == __uuidof(IOsdRenderCallback))
+  {
+    *ppvObject = static_cast<IOsdRenderCallback*>(this);
+    AddRef();
+    hr = S_OK;
+  }
+  else if (riid == __uuidof(ISubRender))
+  {
+    if (m_subProxy)
+    {
+      *ppvObject = static_cast<ISubRenderCallback*>(m_subProxy);
+      AddRef();
+      hr = S_OK;
+    }
+  }
 
   return hr;
 }

@@ -393,10 +393,9 @@ namespace MediaPortal.Player
       {
         bool initOsdDone = false;
         InitOSD(ref initOsdDone);
-        GUIGraphicsContext.RegisterOsd = initOsdDone;
         if (initOsdDone)
         {
-          Log.Debug("VMR9: registering OSD done : {0}", GUIGraphicsContext.RegisterOsd);
+          Log.Debug("VMR9: registering OSD done");
         }
       }
     }
@@ -507,7 +506,6 @@ namespace MediaPortal.Player
         }
         else if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
         {
-          GUIGraphicsContext.RegisterOsd = false;
           var backbuffer = GUIGraphicsContext.DX9Device.PresentationParameters;
           MadInit(_scene, backbuffer.BackBufferWidth, backbuffer.BackBufferHeight, (uint)upDevice.ToInt32(),
             (uint)GUIGraphicsContext.ActiveForm.ToInt32(), ref _vmr9Filter);
@@ -813,13 +811,6 @@ namespace MediaPortal.Player
         GUIGraphicsContext.Vmr9FPS = 0f;
         currentVmr9State = Vmr9PlayState.Repaint;
         if (_scene != null) _scene.DrawVideo = false;
-      }
-      if (currentVmr9State == Vmr9PlayState.Repaint && frames == 0)
-      {
-        if (!GUIGraphicsContext.RegisterOsd && UseMadVideoRenderer)
-        {
-          if (VMR9Util.g_vmr9 != null) VMR9Util.g_vmr9.RegisterOsd();
-        }
       }
     }
 
