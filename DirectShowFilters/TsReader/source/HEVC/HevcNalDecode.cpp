@@ -4,6 +4,31 @@
 #include <iostream>
 #include <stdexcept>
 #include <string>
+// Copyright (C) 2016 Team MediaPortal
+// http://www.team-mediaportal.com
+// 
+// MediaPortal is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 2 of the License, or
+// (at your option) any later version.
+// 
+// MediaPortal is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with MediaPortal. If not, see <http://www.gnu.org/licenses/>.
+
+// ========================================================================
+// The code in this file is derived from the 'HEVCESBrowser' project,
+// a tool for analyzing HEVC(h265) bitstreams authored by 'virinext'.
+// See https://github.com/virinext/hevcesbrowser
+// and http://www.codeproject.com/Tips/896030/The-Structure-of-HEVC-Video
+// Licensed under the GNU General Public License and 
+// the Code Project Open License, http://www.codeproject.com/info/cpol10.aspx
+// ========================================================================
+
 
 #include <sstream>
 
@@ -13,13 +38,8 @@ using namespace HEVC;
 
 NALUnitType HevcNalDecode::processNALUnit(const uint8_t *pdata, std::size_t size, hevchdr& h)
 {
-	//Remove unwanted 'emulation_prevention_three_byte' bytes
-	uint8_t* pbuff = (uint8_t*) malloc(size);
-	if (pbuff == NULL) return NAL_RESERVED; //malloc error...
-	//Copies wanted data from 'pdata' to 'pbuff'
-	Remove3Byte (pbuff, pdata, size);
-
-  BitstreamReader bs(pbuff, size);
+	//Note: 'emulation_prevention_three_byte' removal is dealt with inside the BitstreamReader
+  BitstreamReader bs(pdata, size);
 
   NALUnitType type = processNALUnitHeader(bs);
 
@@ -104,12 +124,10 @@ NALUnitType HevcNalDecode::processNALUnit(const uint8_t *pdata, std::size_t size
     default: {}
   };
 
-  free(pbuff);
-
   return type;
 }
 
-//Remove 'emulation_prevention_three_byte' bytes
+//Remove 'emulation_prevention_three_byte' characters and copy to new buffer
 void HevcNalDecode::Remove3Byte(uint8_t* dst, const uint8_t* src, int length)
 {
 	int		si=0;

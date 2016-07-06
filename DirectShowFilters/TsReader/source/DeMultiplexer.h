@@ -343,5 +343,7 @@ private:
   DWORD m_maxFileReadLatency;
   DWORD m_fileReadLatSum;
   DWORD m_fileReadLatCount;
+
+  int m_audioBytesRead;
     
 };
