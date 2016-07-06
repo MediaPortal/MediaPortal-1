@@ -117,7 +117,7 @@ void CPmtParser::OnNewSection(CSection& section)
       {
         VideoPid pid;
         pid.Pid=elementary_PID;
-        pid.VideoServiceType=stream_type;
+        pid.VideoServiceType = stream_type;
         if (!dvb_video_found) //Workaround for mis-detection of DC II streams...
         {
           m_pidInfo.videoPids.clear();

@@ -1569,7 +1569,7 @@ void CDeMultiplexer::FillAudio(CTsHeader& header, byte* tsPacket, int bufferOffs
         int lastADTSheaderPosn = 0;
         if (len > 0)
         {
-          //Check if we need to try the other AAC packetisation format...
+          //Check if we need to try a different AAC packetisation format (workaround for incorrectly described stream type in PMT)
           if (!m_mpegPesParser->basicAudioInfo.isValid)
           {
             m_audioBytesRead += len;
@@ -1580,17 +1580,21 @@ void CDeMultiplexer::FillAudio(CTsHeader& header, byte* tsPacket, int bufferOffs
                 LogDebug("demux: FillAudio() AAC, Swap from ADTS to LATM, bytesRead = %d, headerCount = %d", m_audioBytesRead, m_audHeaderCount);              
                 m_AudioStreamType = SERVICE_TYPE_AUDIO_LATM_AAC;
                 m_audioStreams[m_iAudioStream].audioType = SERVICE_TYPE_AUDIO_LATM_AAC;
+                m_currentAudHeader = 0;
+                m_lastAudHeader = 0;
+                m_audHeaderCount = 0;
+                m_audioBytesRead = 0;
               }
               else if (m_AudioStreamType == SERVICE_TYPE_AUDIO_LATM_AAC)
               {
                 LogDebug("demux: FillAudio() AAC, Swap from LATM to ADTS, bytesRead = %d, headerCount = %d", m_audioBytesRead, m_audHeaderCount);              
                 m_AudioStreamType = SERVICE_TYPE_AUDIO_AAC;
                 m_audioStreams[m_iAudioStream].audioType = SERVICE_TYPE_AUDIO_AAC;
+                m_currentAudHeader = 0;
+                m_lastAudHeader = 0;
+                m_audHeaderCount = 0;
+                m_audioBytesRead = 0;
               }
-              m_currentAudHeader = 0;
-              m_lastAudHeader = 0;
-              m_audHeaderCount = 0;
-              m_audioBytesRead = 0;
             }
           }
 
