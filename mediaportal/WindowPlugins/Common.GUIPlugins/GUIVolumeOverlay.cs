@@ -38,10 +38,10 @@ namespace Common.GUIPlugins
         return false;
 
       if(
-         !VolumeHandler.Instance.IsMuted && (!GUIGraphicsContext.VolumeOverlay ||
-         GUIGraphicsContext.DisableVolumeOverlay ||
-         GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_MOVIE_CALIBRATION ||
-         GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_UI_CALIBRATION))
+         VolumeHandler.Instance != null && (!VolumeHandler.Instance.IsMuted && (!GUIGraphicsContext.VolumeOverlay ||
+                                                                                GUIGraphicsContext.DisableVolumeOverlay ||
+                                                                                GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_MOVIE_CALIBRATION ||
+                                                                                GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_UI_CALIBRATION)))
       {
         GUIGraphicsContext.VolumeOverlay = false;
         return false;
@@ -54,7 +54,7 @@ namespace Common.GUIPlugins
       if (!_supportGUIVolume)
         return;
       
-      if (!VolumeHandler.Instance.IsEnabledVolumeOSD)
+      if (VolumeHandler.Instance != null && !VolumeHandler.Instance.IsEnabledVolumeOSD)
         return;
       
       if (iLayer != 3)
@@ -87,7 +87,7 @@ namespace Common.GUIPlugins
         pos.control.SetPosition(pos.XPos + +GUIGraphicsContext.VolumeOverlayOffsetX, pos.YPos + GUIGraphicsContext.VolumeOverlayOffsetY);
       }
 
-      if (VolumeHandler.Instance.IsMuted)
+      if (VolumeHandler.Instance != null && VolumeHandler.Instance.IsMuted)
       {
         _volumeBar.Maximum = VolumeHandler.Instance.StepMax;
         _volumeBar.Current = 0;
@@ -98,8 +98,11 @@ namespace Common.GUIPlugins
       }
       else
       {
-        _volumeBar.Maximum = VolumeHandler.Instance.StepMax;
-        _volumeBar.Current = VolumeHandler.Instance.Step;
+        if (VolumeHandler.Instance != null)
+        {
+          _volumeBar.Maximum = VolumeHandler.Instance.StepMax;
+          _volumeBar.Current = VolumeHandler.Instance.Step;
+        }
         if (!_imgMute.IsEffectAnimating(AnimationType.Hidden))
           _imgMute.Visible = false;
         _imgBG.Visible = true;
