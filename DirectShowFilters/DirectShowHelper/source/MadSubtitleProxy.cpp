@@ -24,9 +24,10 @@
 #include "MadSubtitleProxy.h"
 
 MadSubtitleProxy::MadSubtitleProxy(IVMR9Callback* pCallback) : 
-  CUnknown(NAME("MadSubtitleProxy"), NULL),
+  CUnknown(NAME("MadSubtitleProxy"), nullptr),
   m_pCallback(pCallback)
 {
+  Log("MadSubtitleProxy::Constructor() - instance 0x%x", this);
   CAutoLock cAutoLock(this);
 }
 
@@ -56,6 +57,14 @@ HRESULT MadSubtitleProxy::Render(REFERENCE_TIME frameStart, int left, int top, i
 
   if (m_pCallback)
   {
+    if (!GetNewDevice())
+    {
+      Log("MadSubtitleProxy::Render() SetNewDevice for D3D and subtitle : 0x:%x", m_pMadD3DDev);
+      m_pCallback->ForceOsdUpdate(true);
+      m_pCallback->SetSubtitleDevice(reinterpret_cast<DWORD>(m_pMadD3DDev));
+      SetNewDevice(true);
+    }
+
     m_deviceState.Store();
     SetupMadDeviceState();
 
@@ -63,18 +72,6 @@ HRESULT MadSubtitleProxy::Render(REFERENCE_TIME frameStart, int left, int top, i
 
     m_deviceState.Restore();
   }
-
-  if (!GetNewDevice())
-  {
-    if (m_pCallback)
-    {
-      Log("MadSubtitleProxy::Render() SetNewDevice for D3D and subtitle : 0x:%x", m_pMadD3DDev);
-      m_pCallback->ForceOsdUpdate(true);
-      m_pCallback->SetSubtitleDevice(reinterpret_cast<DWORD>(m_pMadD3DDev));
-      SetNewDevice(true);
-    }
-  }
-
   return S_OK;
 }
 

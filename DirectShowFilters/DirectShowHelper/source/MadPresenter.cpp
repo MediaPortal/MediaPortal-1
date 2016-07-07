@@ -51,13 +51,11 @@ MPMadPresenter::MPMadPresenter(IVMR9Callback* pCallback, DWORD width, DWORD heig
   m_subProxy = new MadSubtitleProxy(pCallback);
   if (m_subProxy)
     m_subProxy->AddRef();
-  Log("MPMadPresenter::MPMadPresenter() - instance 0x%x");
 }
 
 MPMadPresenter::~MPMadPresenter()
 {
   Log("MPMadPresenter::Destructor() - instance 0x%x", this);
-
   CAutoLock cAutoLock(this);
 }
 
@@ -70,8 +68,8 @@ void MPMadPresenter::InitializeOSD(bool** initOsdDone)
     {
       Log("MPMadPresenter::OsdSetRenderCallback");
       m_pOsdServices->OsdSetRenderCallback("MP-GUI", this, nullptr);
-            // New D3D device initialized, tell C# that it is no need to try to initializing OSD
-      *initOsdDone = reinterpret_cast<bool*>(true);      
+      // New D3D device initialized, tell C# that it is no need to try to initializing OSD
+      *initOsdDone = reinterpret_cast<bool*>(true);
     }
   }
 }
@@ -80,10 +78,10 @@ IBaseFilter* MPMadPresenter::Initialize()
 {
   CAutoLock cAutoLock(this);
 
-  Log("MPMadPresenter::Init 1()");
+  //Log("MPMadPresenter::Init 1()");
   HRESULT hr = CoCreateInstance(CLSID_madVR, nullptr, CLSCTX_INPROC_SERVER, __uuidof(IMadVRDirect3D9Manager), reinterpret_cast<void**>(&m_pMad));
 
-  Log("MPMadPresenter::Init 2()");
+  //Log("MPMadPresenter::Init 2()");
   if (FAILED(hr))
     return nullptr;
 
@@ -95,20 +93,20 @@ IBaseFilter* MPMadPresenter::Initialize()
   m_pMad->QueryInterface(&m_pWindow);
   m_pMad->QueryInterface(&m_pCommand);
 
-  Log("MPMadPresenter::Init 3()");
+  //Log("MPMadPresenter::Init 3()");
 
   if (!m_pBaseFilter || !m_pOsdServices || !m_pManager || !m_pSubclassReplacement || !m_pSubRender || !m_pCommand || !m_pWindow)
     return nullptr;
-  Log("MPMadPresenter::Init 4()");
+  //Log("MPMadPresenter::Init 4()");
 
   m_pManager->ConfigureDisplayModeChanger(true, true);
-  Log("MPMadPresenter::Init 5()");
+  //Log("MPMadPresenter::Init 5()");
 
   m_pSubRender->SetCallback(m_subProxy);
-  Log("MPMadPresenter::Init 6()");
+  //Log("MPMadPresenter::Init 6()");
 
   m_pCommand->SendCommandBool("disableSeekbar", true);
-  Log("MPMadPresenter::Init 7()");
+  //Log("MPMadPresenter::Init 7()");
 
   // TODO implement IMadVRSubclassReplacement
   //pSubclassReplacement->DisableSubclassing();
@@ -119,11 +117,9 @@ IBaseFilter* MPMadPresenter::Initialize()
 HRESULT MPMadPresenter::Shutdown()
 {
   { // Scope for autolock for the local variable (lock, which when deleted releases the lock)
-    Log("MPMadPresenter::Shutdown() - instance 0x%x");
-
     CAutoLock lock(this);
 
-    Log("MPMadPresenter::Shutdown() Scope 1 ");
+    Log("MPMadPresenter::Shutdown() start");
 
     if (m_pCallback)
     {
@@ -131,12 +127,12 @@ HRESULT MPMadPresenter::Shutdown()
       m_pCallback = nullptr;
     }
 
-    Log("MPMadPresenter::Shutdown() Scope 2 ");
+    //Log("MPMadPresenter::Shutdown() Scope 2 ");
 
     if (m_pSubRender)
       m_pSubRender->SetCallback(nullptr);
 
-    Log("MPMadPresenter::Shutdown() Scope 3 ");
+    //Log("MPMadPresenter::Shutdown() Scope 3 ");
 
     if (m_subProxy)
     {
@@ -144,34 +140,33 @@ HRESULT MPMadPresenter::Shutdown()
       m_subProxy = nullptr;
     }
 
-    Log("MPMadPresenter::Shutdown() Scope 4 ");
+    Log("MPMadPresenter::Shutdown() done ");
   } // Scope for autolock
 
   if (m_pMad)
   {
-    Log("MPMadPresenter::Shutdown() 1");
+    //Log("MPMadPresenter::Shutdown() 1");
 
     if (m_pWindow)
     {
-      Log("MPMadPresenter::Shutdown() 2");
+      //Log("MPMadPresenter::Shutdown() 2");
       m_pWindow->put_Owner(reinterpret_cast<OAHWND>(nullptr));
       m_pWindow->put_Visible(false);
-      Log("MPMadPresenter::Shutdown() 3");
+      //Log("MPMadPresenter::Shutdown() 3");
     }
 
     if (m_pCommand)
     {
-      Log("MPMadPresenter::Shutdown() 4");
+      //Log("MPMadPresenter::Shutdown() 4");
       m_pCommand->SendCommandBool("disableExclusiveMode", true);
       m_pCommand->SendCommand("restoreDisplayModeNow");
-      Log("MPMadPresenter::Shutdown() 5");
+      //Log("MPMadPresenter::Shutdown() 5");
     }
 
     if (m_pOsdServices)
     {
-      Log("MPMadPresenter::ReleaseOSD() 1");
       m_pOsdServices->OsdSetRenderCallback("MP-GUI", nullptr, nullptr);
-      Log("MPMadPresenter::ReleaseOSD() 2");
+      //Log("MPMadPresenter::ReleaseOSD() done");
     }
   }
 
@@ -525,7 +520,7 @@ HRESULT MPMadPresenter::SetDevice(IDirect3DDevice9* pD3DDev)
 {
   HRESULT hr = S_FALSE;
 
-  Log("MPMadPresenter::SetDevice() pD3DDev 0 : 0x:%x", pD3DDev);
+  Log("MPMadPresenter::SetDevice() pD3DDev : 0x:%x", pD3DDev);
 
   CAutoLock cAutoLock(this);
 
