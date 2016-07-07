@@ -290,6 +290,7 @@ namespace MediaPortal.GUI.Library
         DispatchThreadMessages();
       }
 
+      Log.Debug("SendThreadCallbackAndWait - Waitone");
       env.finished.WaitOne();
 
       return env.result;
