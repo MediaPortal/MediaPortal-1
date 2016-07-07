@@ -907,6 +907,7 @@ double EVRGetDisplayFPS()
 
 BOOL MadInit(IVMR9Callback* callback, DWORD width, DWORD height, DWORD dwD3DDevice, OAHWND parent, IBaseFilter** madFilter)
 {
+  Log("MPMadDshow::MadInit 0");
   // Delay for 3 seconds on init to clear all pending garbage from C#
   Sleep(3000);
   Log("MPMadDshow::MadInit 1");
