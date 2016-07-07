@@ -119,7 +119,7 @@ HRESULT MPMadPresenter::Shutdown()
   { // Scope for autolock for the local variable (lock, which when deleted releases the lock)
     CAutoLock lock(this);
 
-    Log("MPMadPresenter::Shutdown() start");
+    //Log("MPMadPresenter::Shutdown() start");
 
     if (m_pCallback)
     {
@@ -140,7 +140,7 @@ HRESULT MPMadPresenter::Shutdown()
       m_subProxy = nullptr;
     }
 
-    Log("MPMadPresenter::Shutdown() done ");
+    //Log("MPMadPresenter::Shutdown() done ");
   } // Scope for autolock
 
   if (m_pMad)

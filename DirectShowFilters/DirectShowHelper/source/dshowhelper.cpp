@@ -934,14 +934,16 @@ void MadDeinit()
 {
   try
   {
+    Log("MPMadDshow::MadDeinit shutdown start");
     m_madPresenter->Shutdown();
     ULONG refCount = m_pVMR9Filter->Release();
-    Log("MPMadDshow::MadDeinit refCount(%d) to release", refCount);
+    Log("MPMadDshow::MadDeinit reference counter to be released : (%d)", refCount);
     for (ULONG i = 1; i < refCount; ++i)
     {
       m_pVMR9Filter->Release();
     }
     m_pVMR9Filter = nullptr;
+    Log("MPMadDshow::MadDeinit shutdown done");
   }
   catch(...)
   {
