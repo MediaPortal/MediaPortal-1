@@ -993,7 +993,7 @@ namespace MediaPortal.Player
         MovieEnded();
         return false;
       }
-      if (_videoWin != null)
+      if (_videoWin != null && GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR)
       {
         _videoWin.put_WindowStyle(
           (WindowStyle)((int)WindowStyle.Child + (int)WindowStyle.ClipSiblings + (int)WindowStyle.ClipChildren));

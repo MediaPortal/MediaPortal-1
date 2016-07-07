@@ -75,6 +75,7 @@ MPMadPresenter*           m_madPresenter  = NULL;
 IBaseFilter*              m_pVMR9Filter   = NULL;
 IVMRSurfaceAllocator9*    m_allocator     = NULL;
 LONG                      m_iRecordingId  = 0;
+CComQIPtr<IBaseFilter>    m_pBaseFilter   = nullptr;
 
 map<int,IStreamBufferRecordControl*> m_mapRecordControl;
 typedef map<int,IStreamBufferRecordControl*>::iterator imapRecordControl;
@@ -905,22 +906,20 @@ double EVRGetDisplayFPS()
   return displayFPS;
 }
 
-BOOL MadInit(IVMR9Callback* callback, DWORD width, DWORD height, DWORD dwD3DDevice, OAHWND parent, IBaseFilter** madFilter)
+BOOL MadInit(IVMR9Callback* callback, DWORD width, DWORD height, DWORD dwD3DDevice, OAHWND parent, IBaseFilter* madFilter)
 {
   m_RenderPrefix = _T("mad");
   m_pDevice = reinterpret_cast<LPDIRECT3DDEVICE9>(dwD3DDevice);
 
   Log("MPMadDshow::MadInit 0");
-  // Delay for 3 seconds on init to clear all pending garbage from C#
-  Sleep(3000);
   Log("MPMadDshow::MadInit 1");
-
-  m_madPresenter = new MPMadPresenter(callback, width, height, parent, m_pDevice);
+  m_pBaseFilter.Attach(madFilter);
+  m_madPresenter = new MPMadPresenter(callback, width, height, parent, m_pDevice, m_pBaseFilter);
   m_pVMR9Filter = m_madPresenter->Initialize();
   Log("MPMadDshow::MadInit 2");
-  if (m_pVMR9Filter)
+  if (m_pBaseFilter)
   {
-    *madFilter = m_pVMR9Filter;
+    m_pBaseFilter.Release();
   }
   Log("MPMadDshow::MadInit 3");
 

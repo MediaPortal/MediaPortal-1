@@ -39,13 +39,14 @@ struct VID_FRAME_VERTEX
   float v;
 };
 
-MPMadPresenter::MPMadPresenter(IVMR9Callback* pCallback, DWORD width, DWORD height, OAHWND parent, IDirect3DDevice9* pDevice) :
+MPMadPresenter::MPMadPresenter(IVMR9Callback* pCallback, DWORD width, DWORD height, OAHWND parent, IDirect3DDevice9* pDevice, IBaseFilter* madFilter) :
   CUnknown(NAME("MPMadPresenter"), nullptr),
   m_pCallback(pCallback),
   m_dwGUIWidth(width),
   m_dwGUIHeight(height),
   m_hParent(parent),
-  m_pDevice(static_cast<IDirect3DDevice9Ex*>(pDevice))
+  m_pDevice(static_cast<IDirect3DDevice9Ex*>(pDevice)),
+  m_pMad(madFilter)
 {
   Log("MPMadPresenter::Constructor() - instance 0x%x", this);
   m_subProxy = new MadSubtitleProxy(pCallback);
@@ -79,11 +80,14 @@ IBaseFilter* MPMadPresenter::Initialize()
   CAutoLock cAutoLock(this);
 
   //Log("MPMadPresenter::Init 1()");
-  HRESULT hr = CoCreateInstance(CLSID_madVR, nullptr, CLSCTX_INPROC_SERVER, __uuidof(IMadVRDirect3D9Manager), reinterpret_cast<void**>(&m_pMad));
+
+  if (m_pMad == nullptr)
+  {
+    Log("MPMadPresenter: could not get m_pMad");
+    return nullptr;
+  }
 
   //Log("MPMadPresenter::Init 2()");
-  if (FAILED(hr))
-    return nullptr;
 
   m_pMad->QueryInterface(&m_pBaseFilter);
   m_pMad->QueryInterface(&m_pOsdServices);

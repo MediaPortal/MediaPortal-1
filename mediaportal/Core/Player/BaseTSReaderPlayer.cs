@@ -589,7 +589,7 @@ namespace MediaPortal.Player
       _basicVideo = _graphBuilder as IBasicVideo2;
       _videoWin = _graphBuilder as IVideoWindow;
 
-      if (_videoWin != null)
+      if (_videoWin != null && GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR)
       {
         _videoWin.put_WindowStyle(
           (WindowStyle)((int)WindowStyle.Child + (int)WindowStyle.ClipSiblings + (int)WindowStyle.ClipChildren));

@@ -303,7 +303,7 @@ namespace MediaPortal.Player
           Log.Error("DVDPlayer:Unable to SetNotifyWindow 0x{0:X}", hr);
         }
 
-        if (_videoWin != null)
+        if (_videoWin != null && GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR)
         {
           if (hr == 0)
           {
