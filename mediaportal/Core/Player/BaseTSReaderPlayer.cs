@@ -764,10 +764,7 @@ namespace MediaPortal.Player
       //if (GUIGraphicsContext.InVmr9Render) return;
       if (_bMediaTypeChanged)
       {
-        if (GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR) // it break DXVA process
-        {
-          DoGraphRebuild();
-        }
+        DoGraphRebuild();
         _ireader.OnGraphRebuild(iChangedMediaTypes);
         _bMediaTypeChanged = false;
       }
@@ -1712,33 +1709,19 @@ namespace MediaPortal.Player
       {
         lock (_mediaCtrl)
         {
-          int hr;
+          var hr = 0;
           try
           {
+            Log.Debug("DoGraphRebuild: mediaCtrl.Stop() 1");
+            hr = _mediaCtrl.StopWhenReady();
             hr = _mediaCtrl.Stop();
+            Log.Debug("DoGraphRebuild: mediaCtrl.Stop() 2");
             DsError.ThrowExceptionForHR(hr);
           }
-          catch (Exception error)
+          catch (Exception ex)
           {
-            Log.Error("Error stopping graph: {0}", error.Message);
+            Log.Error("DoGraphRebuild: Error while stopping graph : {0}", ex);
           }
-
-          try
-          {
-            //Make sure the graph has really stopped
-            FilterState state;
-            hr = _mediaCtrl.GetState(1000, out state);
-            DsError.ThrowExceptionForHR(hr);
-            if (state != FilterState.Stopped)
-            {
-              Log.Error("TSReaderPlayer: graph still running");
-            }
-          }
-          catch (Exception error)
-          {
-            Log.Error("Error checking graph state: {0}", error.Message);
-          }
-
           if (needRebuild)
           {
             // this is a hack for MS Video Decoder and AC3 audio change
@@ -2046,6 +2029,7 @@ namespace MediaPortal.Player
       }
 
       // we have to find first filter connected to tsreader which will be removed
+      bool needVideoUpdate = false;
       IPin pinFrom = DirectShowUtil.FindPin(_fileSource, PinDirection.Output, selection);
       IPin pinTo;
       if (pinFrom != null)
@@ -2080,9 +2064,23 @@ namespace MediaPortal.Player
           }
           else
           {
-            DirectShowUtil.DisconnectAllPins(_graphBuilder, pInfo.filter);
-            _graphBuilder.RemoveFilter(pInfo.filter);
-            Log.Debug("TSReaderPlayer: UpdateFilters Remove filter - {0}", fInfo.achName);
+            if (selection == "Video")
+            {
+              // Only remove the filter if it's not the same to add
+              if (fInfo.achName != MatchFilters(selection))
+              {
+                DirectShowUtil.DisconnectAllPins(_graphBuilder, pInfo.filter);
+                _graphBuilder.RemoveFilter(pInfo.filter);
+                needVideoUpdate = true;
+                Log.Debug("TSReaderPlayer: UpdateFilters Remove filter - {0}", fInfo.achName);
+              }
+            }
+            else
+            {
+              DirectShowUtil.DisconnectAllPins(_graphBuilder, pInfo.filter);
+              _graphBuilder.RemoveFilter(pInfo.filter);
+              Log.Debug("TSReaderPlayer: UpdateFilters Remove filter - {0}", fInfo.achName);
+            }
           }
           DsUtils.FreePinInfo(pInfo);
           DirectShowUtil.ReleaseComObject(fInfo.pGraph);
@@ -2099,10 +2097,17 @@ namespace MediaPortal.Player
         //Add Video Codec
         if (filterCodec.VideoCodec != null)
         {
-          DirectShowUtil.FinalReleaseComObject(filterCodec.VideoCodec);
-          filterCodec.VideoCodec = null;
+          if (needVideoUpdate)
+          {
+            DirectShowUtil.ReleaseComObject(filterCodec.VideoCodec);
+            filterCodec.VideoCodec = null;
+            filterCodec.VideoCodec = DirectShowUtil.AddFilterToGraph(this._graphBuilder, MatchFilters(selection));
+          }
         }
-        filterCodec.VideoCodec = DirectShowUtil.AddFilterToGraph(this._graphBuilder, MatchFilters(selection));
+        else
+        {
+          filterCodec.VideoCodec = DirectShowUtil.AddFilterToGraph(this._graphBuilder, MatchFilters(selection));
+        }
 
         if (VMR9Util.g_vmr9 != null && filterConfig != null && selection == "Video" && filterConfig.enableCCSubtitles)
         {
@@ -2124,7 +2129,7 @@ namespace MediaPortal.Player
         //Add Audio Codec
         if (filterCodec.AudioCodec != null)
         {
-          DirectShowUtil.FinalReleaseComObject(filterCodec.AudioCodec);
+          DirectShowUtil.ReleaseComObject(filterCodec.AudioCodec);
           filterCodec.AudioCodec = null;
         }
         filterCodec.AudioCodec = DirectShowUtil.AddFilterToGraph(this._graphBuilder, MatchFilters(selection));
