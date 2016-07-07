@@ -313,8 +313,20 @@ namespace TvPlugin
 
     public static void OnLoaded()
     {
-      Log.Info("TVHome:OnLoaded");
+      if (Thread.CurrentThread.Name != "MPMain" && Thread.CurrentThread.Name != "Config Main")
+      {
+        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_INIT_TV_LOAD, 0, 0, 0, 0, 0, null);
+        GUIWindowManager.SendThreadMessage(msg);
+      }
+      else
+      {
+        OnLoadedCallback();
+      }
+    }
 
+    public static void OnLoadedCallback()
+    {
+      Log.Info("TVHome:OnLoaded");
       try
       {
         if (Connected && !firstNotLoaded)
@@ -2184,6 +2196,12 @@ namespace TvPlugin
             }
             break;
           }
+        case GUIMessage.MessageType.GUI_MSG_INIT_TV_LOAD:
+          {
+            OnLoadedCallback();
+            Log.Info("TVHome: INIT TV load");
+          }
+          break;
       }
     }
 
