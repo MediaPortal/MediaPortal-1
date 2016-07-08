@@ -395,6 +395,11 @@ namespace MediaPortal.Player
         InitOSD(ref initOsdDone);
         if (initOsdDone)
         {
+          // Sending message to force unfocus/focus for 3D.
+          //var msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_UNFOCUS_FOCUS, 0, 0, 0, 0, 0, null);
+          //GUIWindowManager.SendMessage(msg);
+          IMediaControl mediactrl = (IMediaControl) _graphBuilder;
+          if (mediactrl != null) mediactrl.Run();
           Log.Debug("VMR9: registering OSD done");
         }
       }
@@ -515,6 +520,8 @@ namespace MediaPortal.Player
           backbuffer.SafeDispose();
           IVideoWindow videoWin = (IVideoWindow)graphBuilder;
           videoWin.put_Owner(GUIGraphicsContext.ActiveForm);
+          videoWin.put_WindowStyle((WindowStyle)((int)WindowStyle.Child + (int)WindowStyle.ClipChildren + (int)WindowStyle.ClipSiblings));
+          videoWin.put_MessageDrain(GUIGraphicsContext.ActiveForm);
         }
         else
         {
@@ -786,13 +793,16 @@ namespace MediaPortal.Player
 
         if (_threadId == Thread.CurrentThread.ManagedThreadId)
         {
-          if (_qualityInterface != null)
+          if (GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR)
           {
-            VideoRendererStatistics.Update(_qualityInterface);
-          }
-          else
-          {
-            Log.Debug("_qualityInterface is null!");
+            if (_qualityInterface != null)
+            {
+              VideoRendererStatistics.Update(_qualityInterface);
+            }
+            else
+            {
+              Log.Debug("_qualityInterface is null!");
+            }
           }
         }
       }

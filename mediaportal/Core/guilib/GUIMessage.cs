@@ -162,6 +162,7 @@ namespace MediaPortal.GUI.Library
       GUI_MSG_LOADSKIN = 148,
       GUI_MSG_ONVIDEOFORMATCHANGED = 149,
       GUI_MSG_INIT_TV_LOAD = 150,
+      GUI_MSG_UNFOCUS_FOCUS = 200,
       PS_ONSTANDBY = 9999
     } ;
 
