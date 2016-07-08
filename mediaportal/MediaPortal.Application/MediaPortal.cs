@@ -5160,7 +5160,18 @@ public class MediaPortalApp : D3D, IRender
             dlgNotify.SetHeading(GUILocalizeStrings.Get(1020)); // Information
             dlgNotify.SetText(GUILocalizeStrings.Get(300024)); // Scan finished
             dlgNotify.DoModal(GUIWindowManager.ActiveWindow);
-          }       
+          }
+          break;
+
+        case GUIMessage.MessageType.GUI_MSG_UNFOCUS_FOCUS:
+          if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+          {
+            // Workaround for madVR and 3D need to force a window change.
+            FormBorderStyle = FormBorderStyle.FixedSingle;
+            FormBorderStyle = FormBorderStyle.None;
+            Log.Debug("Main: madVR window done");
+            ForceMPFocus();
+          }
           break;
       }
     }

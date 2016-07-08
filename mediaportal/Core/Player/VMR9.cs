@@ -399,6 +399,9 @@ namespace MediaPortal.Player
           if (mediactrl != null) mediactrl.Run();
           IVideoWindow videoWin = (IVideoWindow)_graphBuilder;
           if (videoWin != null) videoWin.put_MessageDrain(GUIGraphicsContext.ActiveForm);
+          // Sending message to force unfocus/focus for 3D.
+          var msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_UNFOCUS_FOCUS, 0, 0, 0, 0, 0, null);
+          GUIWindowManager.SendThreadMessage(msg);
           Log.Debug("VMR9: registering OSD done");
         }
       }
@@ -437,7 +440,8 @@ namespace MediaPortal.Player
         }
 
         HResult hr;
-        IntPtr hMonitor = Manager.GetAdapterMonitor(GUIGraphicsContext.DX9Device.DeviceCaps.AdapterOrdinal);
+        //IntPtr hMonitor = Manager.GetAdapterMonitor(GUIGraphicsContext.DX9Device.DeviceCaps.AdapterOrdinal);
+        IntPtr hMonitor = Manager.GetAdapterMonitor(Win32.FindMonitorIndexForScreen());
         IntPtr upDevice = DirectShowUtil.GetUnmanagedDevice(GUIGraphicsContext.DX9Device);
 
         _scene = new PlaneScene(this);
