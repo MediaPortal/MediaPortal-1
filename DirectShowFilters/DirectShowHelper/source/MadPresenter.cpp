@@ -533,8 +533,8 @@ HRESULT MPMadPresenter::SetDevice(IDirect3DDevice9* pD3DDev)
   m_pMadD3DDev = static_cast<IDirect3DDevice9Ex*>(pD3DDev);
   m_deviceState.SetDevice(pD3DDev);
 
-  //if (m_pCallback && pD3DDev)
-  //  m_pCallback->SetSubtitleDevice((DWORD)pD3DDev);
+  if (m_pCallback && pD3DDev)
+    m_pCallback->SetSubtitleDevice((DWORD)pD3DDev);
 
   if (m_pMadD3DDev)
   {

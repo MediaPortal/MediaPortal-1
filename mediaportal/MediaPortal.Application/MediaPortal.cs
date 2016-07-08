@@ -5174,14 +5174,10 @@ public class MediaPortalApp : D3D, IRender
         case GUIMessage.MessageType.GUI_MSG_UNFOCUS_FOCUS:
           if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
           {
-            // Workaround for madVR and 3D need to force a window change.
-            if (!Windowed)
-            {
-              FormBorderStyle = FormBorderStyle.FixedSingle;
-              FormBorderStyle = FormBorderStyle.None;
-              Log.Debug("Main: madVR window done");
-              ForceMPFocus();
-            }
+            _updateInt = 0;
+            _madVR3D = true;
+            //    ForceMPFocus();
+
           }
           break;
       }
