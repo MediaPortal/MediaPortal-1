@@ -47,7 +47,7 @@ class CTsMuxerFilter : public CBaseFilter
                     CCritSec* filterLock,
                     CCritSec& receiveLock,
                     HRESULT* hr);
-    virtual ~CTsMuxerFilter(void);
+    virtual ~CTsMuxerFilter();
 
     CBasePin* GetPin(int n);
     HRESULT AddPin();

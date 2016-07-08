@@ -51,7 +51,7 @@ class CTsMuxer : public CUnknown, public IStreamMultiplexer, public ITsMuxer
 {
   public:
     CTsMuxer(LPUNKNOWN unk, HRESULT* hr);
-    virtual ~CTsMuxer(void);
+    virtual ~CTsMuxer();
 
     static CUnknown* WINAPI CreateInstance(LPUNKNOWN unk, HRESULT* hr);
 

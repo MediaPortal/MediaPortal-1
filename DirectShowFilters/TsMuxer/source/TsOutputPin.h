@@ -35,7 +35,7 @@ class CTsOutputPin : public CBaseOutputPin
 {
   public:    
     CTsOutputPin(CBaseFilter* filter, CCritSec* filterLock, HRESULT* hr);
-    virtual ~CTsOutputPin(void);
+    virtual ~CTsOutputPin();
 
     HRESULT CheckMediaType(const CMediaType* mediaType);
     HRESULT DecideBufferSize(IMemAllocator* allocator, ALLOCATOR_PROPERTIES* properties);

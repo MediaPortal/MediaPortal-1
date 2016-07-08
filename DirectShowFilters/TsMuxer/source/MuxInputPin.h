@@ -133,7 +133,7 @@ class CMuxInputPin : public CRenderedInputPin, CPacketSync, public IMuxInputPin
                   CCritSec* filterLock,
                   CCritSec& receiveLock,
                   HRESULT* hr);
-    virtual ~CMuxInputPin(void);
+    virtual ~CMuxInputPin();
 
     HRESULT BreakConnect();
     HRESULT CheckMediaType(const CMediaType* mediaType);

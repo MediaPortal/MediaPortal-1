@@ -51,7 +51,7 @@ CMuxInputPin::CMuxInputPin(unsigned char id,
   m_isDumpEnabled = false;
 }
 
-CMuxInputPin::~CMuxInputPin(void)
+CMuxInputPin::~CMuxInputPin()
 {
   StopDumping();
 }

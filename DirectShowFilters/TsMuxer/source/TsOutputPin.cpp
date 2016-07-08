@@ -33,7 +33,7 @@ CTsOutputPin::CTsOutputPin(CBaseFilter* filter, CCritSec* filterLock, HRESULT* h
   m_isDumpEnabled = false;
 }
 
-CTsOutputPin::~CTsOutputPin(void)
+CTsOutputPin::~CTsOutputPin()
 {
   StopDumping();
 }

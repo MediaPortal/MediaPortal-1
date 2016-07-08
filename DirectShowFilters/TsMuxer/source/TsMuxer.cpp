@@ -416,7 +416,7 @@ CTsMuxer::CTsMuxer(LPUNKNOWN unk, HRESULT* hr)
   LogDebug(L"muxer: completed");
 }
 
-CTsMuxer::~CTsMuxer(void)
+CTsMuxer::~CTsMuxer()
 {
   LogDebug(L"muxer: destructor");
   map<unsigned long, StreamInfo*>::iterator sIt = m_streamInfo.begin();

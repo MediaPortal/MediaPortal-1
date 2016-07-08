@@ -82,7 +82,7 @@ CTsMuxerFilter::CTsMuxerFilter(IStreamMultiplexer* multiplexer,
   LogDebug(L"filter: completed, hr = 0x%x", *hr);
 }
 
-CTsMuxerFilter::~CTsMuxerFilter(void)
+CTsMuxerFilter::~CTsMuxerFilter()
 {
   LogDebug(L"filter: destructor");
   CAutoLock pinLock(&m_inputPinsLock);
