@@ -396,8 +396,8 @@ namespace MediaPortal.Player
         if (initOsdDone)
         {
           // Sending message to force unfocus/focus for 3D.
-          //var msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_UNFOCUS_FOCUS, 0, 0, 0, 0, 0, null);
-          //GUIWindowManager.SendMessage(msg);
+          var msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_UNFOCUS_FOCUS, 0, 0, 0, 0, 0, null);
+          GUIWindowManager.SendThreadMessage(msg);
           IMediaControl mediactrl = (IMediaControl) _graphBuilder;
           if (mediactrl != null) mediactrl.Run();
           Log.Debug("VMR9: registering OSD done");
