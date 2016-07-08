@@ -158,6 +158,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       if (channel == null)
       {
         _sendCommands = true;
+        _currentPolarisation = Polarisation.Automatic;
         return;
       }
 
@@ -452,6 +453,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       }
 
       Stop();
+
+      _currentLongitude = LONGITUDE_UNKNOWN;
       byte[] cmd = new byte[4];
       cmd[0] = (byte)DiseqcFrame.CommandFirstTransmissionNoReply;
       if (direction == DiseqcDirection.West)
