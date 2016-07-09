@@ -19,6 +19,7 @@
 #endregion
 
 using System;
+using System.Globalization;
 using MediaPortal.Profile;
 using MediaPortal.ServiceImplementations;
 
@@ -70,6 +71,8 @@ namespace MediaPortal.Configuration.Sections
           radioButtonMadVR.Checked = xmlreader.GetValueAsBool("general", "useMadVideoRenderer", false);
           UseEVRMadVRForTV.Checked = xmlreader.GetValueAsBool("general", "useEVRMadVRForTV", false);
           DisableLowLatencyMode.Checked = xmlreader.GetValueAsBool("general", "disableLowLatencyMode", false);
+          UseMadVideoRenderer3D.Checked = xmlreader.GetValueAsBool("general", "useMadVideoRenderer3D", false);
+          UseMadVideoRenderer3DDelay.Value = xmlreader.GetValueAsInt("general", "useMadVideoRenderer3DDelay", 0);
         }
         _init = true;
       }
@@ -95,6 +98,8 @@ namespace MediaPortal.Configuration.Sections
         xmlwriter.SetValueAsBool("general", "useMadVideoRenderer", radioButtonMadVR.Checked);
         xmlwriter.SetValueAsBool("general", "useEVRMadVRForTV", UseEVRMadVRForTV.Checked);
         xmlwriter.SetValueAsBool("general", "disableLowLatencyMode", DisableLowLatencyMode.Checked);
+        xmlwriter.SetValueAsBool("general", "useMadVideoRenderer3D", UseMadVideoRenderer3D.Checked);
+        xmlwriter.SetValue("general", "useMadVideoRenderer3DDelay", UseMadVideoRenderer3DDelay.Value.ToString(CultureInfo.InvariantCulture));
       }
     }
 
@@ -138,6 +143,11 @@ namespace MediaPortal.Configuration.Sections
     }
 
     private void mpCheckBox1_CheckedChanged(object sender, EventArgs e)
+    {
+
+    }
+
+    private void DisableLowLatencyMode_CheckedChanged(object sender, EventArgs e)
     {
 
     }
