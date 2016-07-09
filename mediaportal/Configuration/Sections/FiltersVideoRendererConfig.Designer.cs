@@ -29,7 +29,12 @@ namespace MediaPortal.Configuration.Sections
     private void InitializeComponent()
     {
       this.VMR9Tips = new MediaPortal.UserInterface.Controls.MPToolTip();
+      this.checkboxDXEclusive = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.mpVMR9FilterMethod = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.checkboxMpNonsquare = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.mpGroupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.UseMadVideoRenderer3DDelay = new System.Windows.Forms.NumericUpDown();
+      this.UseMadVideoRenderer3D = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.DisableLowLatencyMode = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.UseEVRMadVRForTV = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.mpMadLabel = new MediaPortal.UserInterface.Controls.MPLabel();
@@ -40,17 +45,65 @@ namespace MediaPortal.Configuration.Sections
       this.checkBoxDecimateMask = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.labelFilteringHint = new MediaPortal.UserInterface.Controls.MPLabel();
       this.checkBoxVMRWebStreams = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.checkboxDXEclusive = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.mpVMR9FilterMethod = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.label1 = new System.Windows.Forms.Label();
-      this.checkboxMpNonsquare = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.mpLabel1 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.mpGroupBox1.SuspendLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.UseMadVideoRenderer3DDelay)).BeginInit();
       this.SuspendLayout();
+      // 
+      // checkboxDXEclusive
+      // 
+      this.checkboxDXEclusive.AutoSize = true;
+      this.checkboxDXEclusive.Checked = true;
+      this.checkboxDXEclusive.CheckState = System.Windows.Forms.CheckState.Checked;
+      this.checkboxDXEclusive.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.checkboxDXEclusive.Location = new System.Drawing.Point(43, 84);
+      this.checkboxDXEclusive.Name = "checkboxDXEclusive";
+      this.checkboxDXEclusive.Size = new System.Drawing.Size(385, 17);
+      this.checkboxDXEclusive.TabIndex = 5;
+      this.checkboxDXEclusive.Text = "Use exclusive mode (avoids tearing, MP stays on top during media playback)";
+      this.VMR9Tips.SetToolTip(this.checkboxDXEclusive, "Prevents video \"tearing\" during playback");
+      this.checkboxDXEclusive.UseVisualStyleBackColor = true;
+      // 
+      // mpVMR9FilterMethod
+      // 
+      this.mpVMR9FilterMethod.BorderColor = System.Drawing.Color.Empty;
+      this.mpVMR9FilterMethod.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.mpVMR9FilterMethod.FormattingEnabled = true;
+      this.mpVMR9FilterMethod.Items.AddRange(new object[] {
+            "None",
+            "Point Filtering",
+            "Bilinear Filtering",
+            "Anisotropic Filtering",
+            "Pyrimidal Quad Filtering",
+            "Gaussian Quad Filtering"});
+      this.mpVMR9FilterMethod.Location = new System.Drawing.Point(43, 152);
+      this.mpVMR9FilterMethod.Name = "mpVMR9FilterMethod";
+      this.mpVMR9FilterMethod.Size = new System.Drawing.Size(138, 21);
+      this.mpVMR9FilterMethod.TabIndex = 2;
+      this.VMR9Tips.SetToolTip(this.mpVMR9FilterMethod, "The filtering method determines the scaling algorithm used by the VMR9");
+      // 
+      // checkboxMpNonsquare
+      // 
+      this.checkboxMpNonsquare.AutoSize = true;
+      this.checkboxMpNonsquare.Checked = true;
+      this.checkboxMpNonsquare.CheckState = System.Windows.Forms.CheckState.Checked;
+      this.checkboxMpNonsquare.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.checkboxMpNonsquare.Location = new System.Drawing.Point(43, 107);
+      this.checkboxMpNonsquare.Name = "checkboxMpNonsquare";
+      this.checkboxMpNonsquare.Size = new System.Drawing.Size(303, 17);
+      this.checkboxMpNonsquare.TabIndex = 0;
+      this.checkboxMpNonsquare.Text = "Use nonsquare mixing for scaling (recommended for quality)";
+      this.VMR9Tips.SetToolTip(this.checkboxMpNonsquare, "Using non-square mixing avoids unnecessary scaling operations in the VMR9");
+      this.checkboxMpNonsquare.UseVisualStyleBackColor = true;
       // 
       // mpGroupBox1
       // 
       this.mpGroupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpGroupBox1.Controls.Add(this.mpLabel1);
+      this.mpGroupBox1.Controls.Add(this.UseMadVideoRenderer3DDelay);
+      this.mpGroupBox1.Controls.Add(this.UseMadVideoRenderer3D);
       this.mpGroupBox1.Controls.Add(this.DisableLowLatencyMode);
       this.mpGroupBox1.Controls.Add(this.UseEVRMadVRForTV);
       this.mpGroupBox1.Controls.Add(this.mpMadLabel);
@@ -68,10 +121,36 @@ namespace MediaPortal.Configuration.Sections
       this.mpGroupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.mpGroupBox1.Location = new System.Drawing.Point(6, 0);
       this.mpGroupBox1.Name = "mpGroupBox1";
-      this.mpGroupBox1.Size = new System.Drawing.Size(462, 388);
+      this.mpGroupBox1.Size = new System.Drawing.Size(428, 414);
       this.mpGroupBox1.TabIndex = 1;
       this.mpGroupBox1.TabStop = false;
       this.mpGroupBox1.Text = "Video renderer - advanced settings";
+      // 
+      // UseMadVideoRenderer3DDelay
+      // 
+      this.UseMadVideoRenderer3DDelay.Location = new System.Drawing.Point(305, 344);
+      this.UseMadVideoRenderer3DDelay.Maximum = new decimal(new int[] {
+            500,
+            0,
+            0,
+            0});
+      this.UseMadVideoRenderer3DDelay.Name = "UseMadVideoRenderer3DDelay";
+      this.UseMadVideoRenderer3DDelay.Size = new System.Drawing.Size(47, 20);
+      this.UseMadVideoRenderer3DDelay.TabIndex = 18;
+      this.UseMadVideoRenderer3DDelay.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+      // 
+      // UseMadVideoRenderer3D
+      // 
+      this.UseMadVideoRenderer3D.AutoSize = true;
+      this.UseMadVideoRenderer3D.Checked = true;
+      this.UseMadVideoRenderer3D.CheckState = System.Windows.Forms.CheckState.Checked;
+      this.UseMadVideoRenderer3D.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.UseMadVideoRenderer3D.Location = new System.Drawing.Point(64, 344);
+      this.UseMadVideoRenderer3D.Name = "UseMadVideoRenderer3D";
+      this.UseMadVideoRenderer3D.Size = new System.Drawing.Size(236, 17);
+      this.UseMadVideoRenderer3D.TabIndex = 17;
+      this.UseMadVideoRenderer3D.Text = "Force MP window refresh (for 3D) with value:";
+      this.UseMadVideoRenderer3D.UseVisualStyleBackColor = true;
       // 
       // DisableLowLatencyMode
       // 
@@ -81,10 +160,11 @@ namespace MediaPortal.Configuration.Sections
       this.DisableLowLatencyMode.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.DisableLowLatencyMode.Location = new System.Drawing.Point(64, 327);
       this.DisableLowLatencyMode.Name = "DisableLowLatencyMode";
-      this.DisableLowLatencyMode.Size = new System.Drawing.Size(303, 17);
+      this.DisableLowLatencyMode.Size = new System.Drawing.Size(310, 17);
       this.DisableLowLatencyMode.TabIndex = 16;
-      this.DisableLowLatencyMode.Text = "Disable low latency rendering mode (making UI not smooth)";
+      this.DisableLowLatencyMode.Text = "Disable low latency rendering mode (can cause stuttering UI)";
       this.DisableLowLatencyMode.UseVisualStyleBackColor = true;
+      this.DisableLowLatencyMode.CheckedChanged += new System.EventHandler(this.DisableLowLatencyMode_CheckedChanged);
       // 
       // UseEVRMadVRForTV
       // 
@@ -103,7 +183,7 @@ namespace MediaPortal.Configuration.Sections
       // mpMadLabel
       // 
       this.mpMadLabel.AutoSize = true;
-      this.mpMadLabel.Location = new System.Drawing.Point(61, 346);
+      this.mpMadLabel.Location = new System.Drawing.Point(61, 390);
       this.mpMadLabel.Name = "mpMadLabel";
       this.mpMadLabel.Size = new System.Drawing.Size(269, 13);
       this.mpMadLabel.TabIndex = 14;
@@ -191,38 +271,6 @@ namespace MediaPortal.Configuration.Sections
       this.checkBoxVMRWebStreams.Text = "Use for playback of web streams (enables OSD menus)";
       this.checkBoxVMRWebStreams.UseVisualStyleBackColor = true;
       // 
-      // checkboxDXEclusive
-      // 
-      this.checkboxDXEclusive.AutoSize = true;
-      this.checkboxDXEclusive.Checked = true;
-      this.checkboxDXEclusive.CheckState = System.Windows.Forms.CheckState.Checked;
-      this.checkboxDXEclusive.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.checkboxDXEclusive.Location = new System.Drawing.Point(43, 84);
-      this.checkboxDXEclusive.Name = "checkboxDXEclusive";
-      this.checkboxDXEclusive.Size = new System.Drawing.Size(385, 17);
-      this.checkboxDXEclusive.TabIndex = 5;
-      this.checkboxDXEclusive.Text = "Use exclusive mode (avoids tearing, MP stays on top during media playback)";
-      this.VMR9Tips.SetToolTip(this.checkboxDXEclusive, "Prevents video \"tearing\" during playback");
-      this.checkboxDXEclusive.UseVisualStyleBackColor = true;
-      // 
-      // mpVMR9FilterMethod
-      // 
-      this.mpVMR9FilterMethod.BorderColor = System.Drawing.Color.Empty;
-      this.mpVMR9FilterMethod.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.mpVMR9FilterMethod.FormattingEnabled = true;
-      this.mpVMR9FilterMethod.Items.AddRange(new object[] {
-            "None",
-            "Point Filtering",
-            "Bilinear Filtering",
-            "Anisotropic Filtering",
-            "Pyrimidal Quad Filtering",
-            "Gaussian Quad Filtering"});
-      this.mpVMR9FilterMethod.Location = new System.Drawing.Point(43, 152);
-      this.mpVMR9FilterMethod.Name = "mpVMR9FilterMethod";
-      this.mpVMR9FilterMethod.Size = new System.Drawing.Size(138, 21);
-      this.mpVMR9FilterMethod.TabIndex = 2;
-      this.VMR9Tips.SetToolTip(this.mpVMR9FilterMethod, "The filtering method determines the scaling algorithm used by the VMR9");
-      // 
       // label1
       // 
       this.label1.AutoSize = true;
@@ -231,19 +279,14 @@ namespace MediaPortal.Configuration.Sections
       this.label1.Size = new System.Drawing.Size(0, 13);
       this.label1.TabIndex = 1;
       // 
-      // checkboxMpNonsquare
+      // mpLabel1
       // 
-      this.checkboxMpNonsquare.AutoSize = true;
-      this.checkboxMpNonsquare.Checked = true;
-      this.checkboxMpNonsquare.CheckState = System.Windows.Forms.CheckState.Checked;
-      this.checkboxMpNonsquare.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.checkboxMpNonsquare.Location = new System.Drawing.Point(43, 107);
-      this.checkboxMpNonsquare.Name = "checkboxMpNonsquare";
-      this.checkboxMpNonsquare.Size = new System.Drawing.Size(303, 17);
-      this.checkboxMpNonsquare.TabIndex = 0;
-      this.checkboxMpNonsquare.Text = "Use nonsquare mixing for scaling (recommended for quality)";
-      this.VMR9Tips.SetToolTip(this.checkboxMpNonsquare, "Using non-square mixing avoids unnecessary scaling operations in the VMR9");
-      this.checkboxMpNonsquare.UseVisualStyleBackColor = true;
+      this.mpLabel1.AutoSize = true;
+      this.mpLabel1.Location = new System.Drawing.Point(61, 368);
+      this.mpLabel1.Name = "mpLabel1";
+      this.mpLabel1.Size = new System.Drawing.Size(274, 13);
+      this.mpLabel1.TabIndex = 19;
+      this.mpLabel1.Text = "Value 0 = instant, (Max) Value 500 takes 10-15 seconds.";
       // 
       // FiltersVideoRenderer
       // 
@@ -252,9 +295,10 @@ namespace MediaPortal.Configuration.Sections
       this.BackColor = System.Drawing.SystemColors.Window;
       this.Controls.Add(this.mpGroupBox1);
       this.Name = "FiltersVideoRenderer";
-      this.Size = new System.Drawing.Size(472, 391);
+      this.Size = new System.Drawing.Size(438, 409);
       this.mpGroupBox1.ResumeLayout(false);
       this.mpGroupBox1.PerformLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.UseMadVideoRenderer3DDelay)).EndInit();
       this.ResumeLayout(false);
 
     }
@@ -277,5 +321,8 @@ namespace MediaPortal.Configuration.Sections
       private System.Windows.Forms.RadioButton radioButtonMadVR;
     private UserInterface.Controls.MPCheckBox UseEVRMadVRForTV;
     private UserInterface.Controls.MPCheckBox DisableLowLatencyMode;
+    private UserInterface.Controls.MPCheckBox UseMadVideoRenderer3D;
+    private System.Windows.Forms.NumericUpDown UseMadVideoRenderer3DDelay;
+    private UserInterface.Controls.MPLabel mpLabel1;
   }
 }
