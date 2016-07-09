@@ -527,7 +527,7 @@ namespace MediaPortal.Player
           // Sending message to force unfocus/focus for 3D.
           var msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_UNFOCUS_FOCUS, 0, 0, 0, 0, 0, null);
           // Define the value (when equal to 500 it's immediate, 0 give around 10 secs of delay)
-          msg.Param1 = 500;
+          msg.Param1 = 250;
           GUIWindowManager.SendMessage(msg);
           GUIWindowManager.MadVrProcess();
         }
