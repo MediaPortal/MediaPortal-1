@@ -5174,10 +5174,9 @@ public class MediaPortalApp : D3D, IRender
         case GUIMessage.MessageType.GUI_MSG_UNFOCUS_FOCUS:
           if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
           {
-            _updateInt = 0;
+            _updateInt = message.Param1;
             _madVR3D = true;
-            //    ForceMPFocus();
-
+            //ForceMPFocus();
           }
           break;
       }

@@ -395,9 +395,11 @@ namespace MediaPortal.Player
         InitOSD(ref initOsdDone);
         if (initOsdDone)
         {
-          // Sending message to force unfocus/focus for 3D.
-          var msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_UNFOCUS_FOCUS, 0, 0, 0, 0, 0, null);
-          GUIWindowManager.SendThreadMessage(msg);
+          //// Sending message to force unfocus/focus for 3D.
+          //var msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_UNFOCUS_FOCUS, 0, 0, 0, 0, 0, null);
+          //// Define the value (when equal to 500 it's immediate, 0 give around 10 secs of delay)
+          //msg.Param1 = 0;
+          //GUIWindowManager.SendThreadMessage(msg);
           IMediaControl mediactrl = (IMediaControl) _graphBuilder;
           if (mediactrl != null) mediactrl.Run();
           Log.Debug("VMR9: registering OSD done");
@@ -522,6 +524,11 @@ namespace MediaPortal.Player
           videoWin.put_Owner(GUIGraphicsContext.ActiveForm);
           videoWin.put_WindowStyle((WindowStyle)((int)WindowStyle.Child + (int)WindowStyle.ClipChildren + (int)WindowStyle.ClipSiblings));
           videoWin.put_MessageDrain(GUIGraphicsContext.ActiveForm);
+          // Sending message to force unfocus/focus for 3D.
+          var msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_UNFOCUS_FOCUS, 0, 0, 0, 0, 0, null);
+          // Define the value (when equal to 500 it's immediate, 0 give around 10 secs of delay)
+          msg.Param1 = 500;
+          GUIWindowManager.SendMessage(msg);
         }
         else
         {

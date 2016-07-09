@@ -1732,8 +1732,8 @@ namespace MediaPortal
 
     protected void UnlockmadVr3D()
     {
-      // update information all 50 frames to avoid stuttering
-      if (_updateInt == 200)
+      // update when value is 500 (around 10 secs)
+      if (_updateInt == 500)
       {
         if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
         {
