@@ -529,6 +529,7 @@ namespace MediaPortal.Player
           // Define the value (when equal to 500 it's immediate, 0 give around 10 secs of delay)
           msg.Param1 = 500;
           GUIWindowManager.SendMessage(msg);
+          GUIWindowManager.MadVrProcess();
         }
         else
         {
