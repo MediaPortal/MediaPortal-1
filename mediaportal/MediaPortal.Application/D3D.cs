@@ -1706,7 +1706,7 @@ namespace MediaPortal
         }
         _updateInt++;
       }
-      if (_updateInt < 200)
+      if (_updateInt < 500)
       {
         _updateInt++;
       }
