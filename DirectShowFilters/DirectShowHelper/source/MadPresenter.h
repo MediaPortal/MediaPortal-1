@@ -25,7 +25,7 @@ using namespace std;
 class MPMadPresenter : public CUnknown, public IOsdRenderCallback, public CCritSec
 {
   public:
-    MPMadPresenter(IVMR9Callback* pCallback, DWORD width, DWORD height, OAHWND parent, IDirect3DDevice9* pDevice, IBaseFilter* madFilter);
+    MPMadPresenter(IVMR9Callback* pCallback, DWORD width, DWORD height, OAHWND parent, IDirect3DDevice9* pDevice);
     ~MPMadPresenter();
 
     IBaseFilter* Initialize();

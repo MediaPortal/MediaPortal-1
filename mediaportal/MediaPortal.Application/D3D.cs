@@ -202,6 +202,8 @@ namespace MediaPortal
     protected static Screen            _screenFocus;              // Screen Focus when minimize / restore to systray
     protected static Screen            _backupscreen;             // Screen Focus when minimize / restore to systray
     protected static Rectangle         _backupBounds;             // Bounds backup
+    protected int                      _updateInt = 0;
+    protected bool                     _madVR3D = false;
 
     #endregion
 
@@ -747,6 +749,7 @@ namespace MediaPortal
       }
       ResumePlayer();
       UpdateMouseCursor();
+      UnlockmadVr3D();
 
       // In minitv mode allow to loose focus
       if (ActiveForm != this && _alwaysOnTop && !_miniTvMode && GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.RUNNING)
@@ -1682,6 +1685,30 @@ namespace MediaPortal
 
         GUIGraphicsContext.IsFullScreenVideo = Menu == null;
         GUIWindowManager.ReplaceWindow(_lastActiveWindow);
+      }
+    }
+
+    protected void UnlockmadVr3D()
+    {
+      // update when value is 500 (around 10 secs)
+      if (_updateInt == 500)
+      {
+        if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+        {
+          // Workaround for madVR and 3D need to force a window change.
+          if (!Windowed && _madVR3D)
+          {
+            FormBorderStyle = FormBorderStyle.FixedSingle;
+            FormBorderStyle = FormBorderStyle.None;
+            Log.Debug("Main: madVR for 3D done");
+            _madVR3D = false;
+          }
+        }
+        _updateInt++;
+      }
+      if (_updateInt < 200)
+      {
+        _updateInt++;
       }
     }
 

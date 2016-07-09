@@ -135,7 +135,7 @@ namespace MediaPortal.Player
     private static extern unsafe void EVRUpdateDisplayFPS();
 
     [DllImport("dshowhelper.dll", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
-    private static extern unsafe bool MadInit(IVMR9PresentCallback callback, int width, int height, uint dwD3DDevice, uint parent, IBaseFilter madFilter);
+    private static extern unsafe bool MadInit(IVMR9PresentCallback callback, int width, int height, uint dwD3DDevice, uint parent, ref IBaseFilter madFilter);
 
     [DllImport("dshowhelper.dll", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
     private static extern unsafe void MadDeinit();
@@ -395,13 +395,13 @@ namespace MediaPortal.Player
         InitOSD(ref initOsdDone);
         if (initOsdDone)
         {
-          IMediaControl mediactrl = (IMediaControl)_graphBuilder;
+          //// Sending message to force unfocus/focus for 3D.
+          //var msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_UNFOCUS_FOCUS, 0, 0, 0, 0, 0, null);
+          //// Define the value (when equal to 500 it's immediate, 0 give around 10 secs of delay)
+          //msg.Param1 = 0;
+          //GUIWindowManager.SendThreadMessage(msg);
+          IMediaControl mediactrl = (IMediaControl) _graphBuilder;
           if (mediactrl != null) mediactrl.Run();
-          IVideoWindow videoWin = (IVideoWindow)_graphBuilder;
-          if (videoWin != null) videoWin.put_MessageDrain(GUIGraphicsContext.ActiveForm);
-          // Sending message to force unfocus/focus for 3D.
-          var msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_UNFOCUS_FOCUS, 0, 0, 0, 0, 0, null);
-          GUIWindowManager.SendThreadMessage(msg);
           Log.Debug("VMR9: registering OSD done");
         }
       }
@@ -440,8 +440,7 @@ namespace MediaPortal.Player
         }
 
         HResult hr;
-        //IntPtr hMonitor = Manager.GetAdapterMonitor(GUIGraphicsContext.DX9Device.DeviceCaps.AdapterOrdinal);
-        IntPtr hMonitor = Manager.GetAdapterMonitor(Win32.FindMonitorIndexForScreen());
+        IntPtr hMonitor = Manager.GetAdapterMonitor(GUIGraphicsContext.DX9Device.DeviceCaps.AdapterOrdinal);
         IntPtr upDevice = DirectShowUtil.GetUnmanagedDevice(GUIGraphicsContext.DX9Device);
 
         _scene = new PlaneScene(this);
@@ -514,15 +513,22 @@ namespace MediaPortal.Player
         }
         else if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
         {
-          _vmr9Filter = (IBaseFilter)ClassId.CoCreateInstance(ClassId.madVR);
+          var backbuffer = GUIGraphicsContext.DX9Device.PresentationParameters;
+          MadInit(_scene, backbuffer.BackBufferWidth, backbuffer.BackBufferHeight, (uint)upDevice.ToInt32(),
+            (uint)GUIGraphicsContext.ActiveForm.ToInt32(), ref _vmr9Filter);
+
           hr = new HResult(graphBuilder.AddFilter(_vmr9Filter, "madVR"));
+          Log.Info("VMR9: added madVR Renderer to graph");
+          backbuffer.SafeDispose();
           IVideoWindow videoWin = (IVideoWindow)graphBuilder;
           videoWin.put_Owner(GUIGraphicsContext.ActiveForm);
           videoWin.put_WindowStyle((WindowStyle)((int)WindowStyle.Child + (int)WindowStyle.ClipChildren + (int)WindowStyle.ClipSiblings));
-          var backbuffer = GUIGraphicsContext.DX9Device.PresentationParameters;
-          MadInit(_scene, backbuffer.BackBufferWidth, backbuffer.BackBufferHeight, (uint)upDevice.ToInt32(),
-            (uint)GUIGraphicsContext.ActiveForm.ToInt32(), _vmr9Filter);
-          backbuffer.SafeDispose();
+          videoWin.put_MessageDrain(GUIGraphicsContext.ActiveForm);
+          // Sending message to force unfocus/focus for 3D.
+          var msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_UNFOCUS_FOCUS, 0, 0, 0, 0, 0, null);
+          // Define the value (when equal to 500 it's immediate, 0 give around 10 secs of delay)
+          msg.Param1 = 500;
+          GUIWindowManager.SendMessage(msg);
         }
         else
         {
