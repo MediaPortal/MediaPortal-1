@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Grabber>
+  <Info availableDays="0" timezone="Greenwich Standard Time" version="2.0.2" />
+  <Channels>
+    <Channel id="skjareinn@skjareinn.is" siteId="skjareinn" />
+  </Channels>
+  <Listing type="Xml">
+    <Site url="http://www.skjareinn.is/einn/dagskrarupplysingar/?weeks=1&amp;output_format=xml" post="" external="false" encoding="utf-8" delay="5000" />
+    <Xml xpath="//event" channel="">
+      <Fields>
+        <Field name="#START" xmlname="@start-time" />
+        <Field name="#TITLE" xmlname="title" />
+        <Field name="#SUBTITLE" xmlname="original-title" />
+        <Field name="#DESCRIPTION" xmlname="description" />
+      </Fields>
+    </Xml>
+  </Listing>
+</Grabber>

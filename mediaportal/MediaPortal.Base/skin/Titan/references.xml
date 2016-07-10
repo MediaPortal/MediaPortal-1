@@ -362,6 +362,15 @@
     <spinPosY>1000</spinPosY>
     <spinAlign>right</spinAlign>
     <spinColor>FF000000</spinColor>
+	<texturebg>osd_progress_bg_list.png</texturebg>
+    <lefttexture>osd_progress_mid_lists_cap.png</lefttexture>
+    <midtexture>osd_progress_mid_lists.png</midtexture>
+    <righttexture>osd_progress_mid_lists_cap.png</righttexture>
+    <ProgressBarWidth>698</ProgressBarWidth>
+    <ProgressBarHeight>5</ProgressBarHeight>
+    <ProgressBarXOffset>-13</ProgressBarXOffset>
+    <ProgressBarYOffset>50</ProgressBarYOffset>
+    <SelectedProgressOnly>Yes</SelectedProgressOnly>	
     <explicitlyEnableScrollLabel>yes</explicitlyEnableScrollLabel>
   </control>
   <control>

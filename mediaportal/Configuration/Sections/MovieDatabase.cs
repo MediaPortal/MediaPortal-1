@@ -1672,6 +1672,13 @@ namespace MediaPortal.Configuration.Sections
       // Draw percentage into progressbar
       ProgressBarDrawPercentage(ref pbSearchCover, 0);
 
+      if (!string.IsNullOrEmpty(CurrentMovie.ThumbURL) && CurrentMovie.ThumbURL.Length > 7)
+      {
+        ComboBoxArt art = new ComboBoxArt("Current Cover", CurrentMovie.ThumbURL);
+        coversListBox.Items.Add(art);
+        coversListBox.Refresh();
+      }
+
       // Local images
       string strFilename = string.Empty;
       string strPath = string.Empty;

@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Grabber>
+  <Info availableDays="0" timezone="Greenwich Standard Time" version="2.0.2" />
+  <Channels>
+    <Channel id="ruv@ruv.is" siteId="ruv" />
+    <Channel id="ruvplus@ruv.is" siteId="ruv.plus" />
+    <Channel id="ruv2@ruv.is" siteId="ruv2" />
+    <Channel id="ruvhd@ruv.is" siteId="ruvhd" />
+    <Channel id="ras1@ruv.is" siteId="ras1" />
+    <Channel id="ras2@ruv.is" siteId="ras2" />
+  </Channels>
+  <Listing type="Xml">
+    <Site url="http://muninn.ruv.is/files/xml/[ID]/[DAY_OFFSET]" post="" external="false" encoding="utf-8" delay="5000" />
+    <Xml xpath="//event" channel="">
+      <Fields>
+        <Field name="#START" xmlname="@start-time" />
+        <Field name="#TITLE" xmlname="title" />
+        <Field name="#SUBTITLE" xmlname="original-title" />
+        <Field name="#DESCRIPTION" xmlname="description" />
+      </Fields>
+    </Xml>
+  </Listing>
+</Grabber>

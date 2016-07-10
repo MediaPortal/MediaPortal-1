@@ -2070,7 +2070,7 @@ namespace MediaPortal.Util
 
     public static void EjectCDROM()
     {
-      EjectCDROM(string.Empty);
+      mciSendString("set cdaudio door open", null, 0, IntPtr.Zero);
     }
     
     public static void CloseCDROM(string driveLetter)
@@ -2402,10 +2402,15 @@ namespace MediaPortal.Util
           //if (bInternal) return false;
           string strPath = xmlreader.GetValueAsString("movieplayer", "path", "");
           string strParams = xmlreader.GetValueAsString("movieplayer", "arguments", "");
-          if (extension.ToLowerInvariant() == ".ifo" || extension.ToLowerInvariant() == ".vob" || extension.ToLowerInvariant() == ".bdmv")
+          if (extension.ToLowerInvariant() == ".ifo" || extension.ToLowerInvariant() == ".vob")
           {
             strPath = xmlreader.GetValueAsString("dvdplayer", "path", "");
             strParams = xmlreader.GetValueAsString("dvdplayer", "arguments", "");
+          }
+          else if  (extension.ToLowerInvariant() == ".bdmv")
+          {
+            strPath = xmlreader.GetValueAsString("bdplayer", "path", "");
+            strParams = xmlreader.GetValueAsString("bdplayer", "arguments", "");
           }
           if (strPath != "")
           {
@@ -2435,7 +2440,7 @@ namespace MediaPortal.Util
                 }
               }
               // %filename% argument handling
-              else if (strParams.IndexOf("%filename%") >= 0)
+              else if (strParams.IndexOf("%filename%", StringComparison.Ordinal) >= 0)
                 strParams = strParams.Replace("%filename%", "\"" + strFile + "\"");
               
               Process movieplayer = new Process();
@@ -2466,7 +2471,8 @@ namespace MediaPortal.Util
                 OnStopExternal(movieplayer, true); // Event: External process stopped
               }
               Log.Debug("Util: External player stopped on {0}", strPath);
-              if (IsISOImage(strFile))
+              // Avoid unMount ISO
+              /*if (IsISOImage(strFile))
               {
                 if (!String.IsNullOrEmpty(DaemonTools.GetVirtualDrive()) &&
                     (g_Player.IsBDDirectory(DaemonTools.GetVirtualDrive()) ||
@@ -2474,13 +2480,10 @@ namespace MediaPortal.Util
                 {
                   DaemonTools.UnMount();
                 }
-              }
+              }*/
               return true;
             }
-            else
-            {
-              Log.Warn("Util: External player {0} does not exists", strPath);
-            }
+            Log.Warn("Util: External player {0} does not exists", strPath);
           }
         }
       }
