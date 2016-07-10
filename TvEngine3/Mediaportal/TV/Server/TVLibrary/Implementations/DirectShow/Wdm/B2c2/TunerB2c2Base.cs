@@ -35,7 +35,6 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Exception;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Tuner;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension.Enum;
 using MediaPortal.Common.Utils;
 using B2c2PidFilterMode = Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2.Enum.PidFilterMode;
 
@@ -463,100 +462,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
         }
       }
     }
-
-    #endregion
-
-    #region ITunerExtension members
-
-    /// <summary>
-    /// The loading priority for the extension.
-    /// </summary>
-    byte ITunerExtension.Priority
-    {
-      get
-      {
-        return 50;
-      }
-    }
-
-    /// <summary>
-    /// Does the extension control some part of the tuner hardware?
-    /// </summary>
-    public bool ControlsTunerHardware
-    {
-      get
-      {
-        return true;
-      }
-    }
-
-    /// <summary>
-    /// Attempt to initialise the interfaces used by the extension.
-    /// </summary>
-    /// <param name="tunerExternalId">The external identifier for the tuner.</param>
-    /// <param name="tunerSupportedBroadcastStandards">The broadcast standards supported by the tuner (eg. DVB-T, DVB-T2... etc.).</param>
-    /// <param name="context">Context required to initialise the interfaces.</param>
-    /// <returns><c>true</c> if the interfaces are successfully initialised, otherwise <c>false</c></returns>
-    public bool Initialise(string tunerExternalId, BroadcastStandard tunerSupportedBroadcastStandards, object context)
-    {
-      // This is a "special" implementation. We do initialisation in other functions.
-      return true;
-    }
-
-    #region tuner state change call backs
-
-    /// <summary>
-    /// This call back is invoked when the tuner has been successfully loaded.
-    /// </summary>
-    /// <param name="tuner">The tuner instance that this extension instance is associated with.</param>
-    /// <param name="action">The action to take, if any.</param>
-    public virtual void OnLoaded(ITuner tuner, out TunerAction action)
-    {
-      action = TunerAction.Default;
-    }
-
-    /// <summary>
-    /// This call back is invoked before a tune request is assembled.
-    /// </summary>
-    /// <param name="tuner">The tuner instance that this extension instance is associated with.</param>
-    /// <param name="currentChannel">The channel that the tuner is currently tuned to..</param>
-    /// <param name="channel">The channel that the tuner will been tuned to.</param>
-    /// <param name="action">The action to take, if any.</param>
-    public virtual void OnBeforeTune(ITuner tuner, IChannel currentChannel, ref IChannel channel, out TunerAction action)
-    {
-      action = TunerAction.Default;
-    }
-
-    /// <summary>
-    /// This call back is invoked after a tune request is submitted but before
-    /// the tuner is started.
-    /// </summary>
-    /// <param name="tuner">The tuner instance that this extension instance is associated with.</param>
-    /// <param name="currentChannel">The channel that the tuner has been tuned to.</param>
-    public virtual void OnAfterTune(ITuner tuner, IChannel currentChannel)
-    {
-    }
-
-    /// <summary>
-    /// This call back is invoked after a tune request is submitted, when the
-    /// tuner is started but before signal lock is checked.
-    /// </summary>
-    /// <param name="tuner">The tuner instance that this extension instance is associated with.</param>
-    /// <param name="currentChannel">The channel that the tuner is tuned to.</param>
-    public virtual void OnStarted(ITuner tuner, IChannel currentChannel)
-    {
-    }
-
-    /// <summary>
-    /// This call back is invoked before the tuner is stopped.
-    /// </summary>
-    /// <param name="tuner">The tuner instance that this extension instance is associated with.</param>
-    /// <param name="action">As an input, the action that the TV Engine wants to take; as an output, the action to take.</param>
-    public virtual void OnStop(ITuner tuner, ref TunerAction action)
-    {
-    }
-
-    #endregion
 
     #endregion
 
