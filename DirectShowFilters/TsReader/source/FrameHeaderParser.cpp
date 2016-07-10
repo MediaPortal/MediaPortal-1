@@ -1306,6 +1306,9 @@ bool CFrameHeaderParser::Read(avchdr& h, int len, CMediaType* pmt, bool reset)
     h.ppslen=0;
     h.height=0;
     h.width=0;
+		h.ar = 0;
+		h.arx = 0;
+		h.ary = 0;
     h.AvgTimePerFrame=370000; //27 Hz
   }
   
@@ -1435,11 +1438,37 @@ bool CFrameHeaderParser::Read(avchdr& h, int len, CMediaType* pmt, bool reset)
 				if (gb.BitRead(1))						// aspect_ratio_info_present_flag
 				{
 					h.ar = (BYTE)gb.BitRead(8); //aspect_ratio_idc
-					if (255 == h.ar)
-					{
+      		if(h.ar == 255) //EXTENDED_SAR
+      		{
 						h.arx = gb.BitRead(16);   //sar_width
 						h.ary = gb.BitRead(16);   //sar_height
-					}
+      			// make sure that both are 0 if one is 0
+      			if(h.arx == 0 || h.ary == 0)
+      			{
+      				h.arx = 0;
+      				h.ary = 0;
+      		  }
+      		}
+      		else if(h.ar > 16)
+      		{
+      			// aspect ratio reserved
+            h.arx = 0;
+            h.ary = 0;
+      		}
+      		else
+      		{
+      			// use preset aspect ratio
+      		  struct {DWORD x, y;} ar[] = {{0,0},{1,1},{12,11},{10,11},{16,11},{40,33},{24,11},{20,11},{32,11},{80,33},{18,11},{15,11},{64,33},{160,99},{4,3},{3,2},{2,1}};
+      			h.arx = ar[h.ar].x;
+      			h.ary = ar[h.ar].y;
+      		}
+      
+      		h.arx *= h.width;
+      		h.ary *= h.height;
+      
+      		DWORD a = h.arx, b = h.ary;
+      		while(a) {DWORD tmp = a; a = b % tmp; b = tmp;}
+      		if(b) h.arx /= b, h.ary /= b;
 				}
 
 				if (gb.BitRead(1))						// overscan_info_present_flag
@@ -1481,7 +1510,6 @@ bool CFrameHeaderParser::Read(avchdr& h, int len, CMediaType* pmt, bool reset)
 				}
 			}
 
-			Seek(pos + gb.GetPos());
 			free(buff);
 		}
 		else if(nal_type==0x8)
@@ -1501,10 +1529,6 @@ bool CFrameHeaderParser::Read(avchdr& h, int len, CMediaType* pmt, bool reset)
 			ByteRead(h.pps, h.ppslen);
 	    //LogDebug("h.ppslen = %d, bytes = %x %x %x %x, last byte = %x", h.ppslen, *h.pps, *(h.pps+1), *(h.pps+2), *(h.pps+3), *(h.pps+h.ppslen-1));
 		}
-
-		//BitByteAlign();
-
-		//Seek(next_nal);
 	}
 
 	//LogDebug("spslen = %I64d, ppslen = %I64d, height = %d, width = %d, AvgTimePerFrame = %I64d", h.spslen, h.ppslen, h.height, h.width, h.AvgTimePerFrame);
@@ -1533,39 +1557,6 @@ bool CFrameHeaderParser::Read(avchdr& h, int len, CMediaType* pmt, bool reset)
 		memset(vi, 0, len);
 		vi->hdr.AvgTimePerFrame = h.AvgTimePerFrame;
 
-		/*
-		h.ar=h.width/h.height;
-		struct {DWORD x, y;} ar[] = {{h.width,h.height},{4,3},{16,9},{221,100},{h.width,h.height}};
-		int i = min(max(h.ar, 1), 5)-1;
-		*/
-		struct {DWORD x, y;} ar[] = {{0,0},{1,1},{12,11},{10,11},{16,11},{40,33},{24,11},{20,11},{32,11},{80,33},{18,11},{15,11},{64,33},{160,99},{4,3},{3,2},{2,1}};
-		if(h.ar == 255)
-		{
-			// make sure that both are 0 or none
-			if(h.arx == 0 || h.ary == 0)
-				h.arx = h.ary = 0;
-
-			// h.arx and h.ary now contain sample aspect ratio
-		}
-		else if(h.ar < 1 || h.ar > 16)
-		{
-			// aspect ratio unspecified or reserved
-			h.ar = 0;
-			h.arx = h.ary = 0;
-		}
-		else
-		{
-			// use preset aspect ratio
-			h.arx = ar[h.ar].x;
-			h.ary = ar[h.ar].y;
-		}
-
-		h.arx *= h.width;
-		h.ary *= h.height;
-
-		DWORD a = h.arx, b = h.ary;
-		while(a) {DWORD tmp = a; a = b % tmp; b = tmp;}
-		if(b) h.arx /= b, h.ary /= b;
 		vi->hdr.dwPictAspectRatioX = h.arx;
 		vi->hdr.dwPictAspectRatioY = h.ary;
     vi->hdr.rcSource.right = h.width;
@@ -1670,7 +1661,11 @@ bool CFrameHeaderParser::Read(hevchdr& h, int len, CMediaType* pmt, bool reset)
     //Process VPS, SPS and PPS - only use actual NAL data (skip over 4 byte start code)
     NALUnitType nal_type = HevcNalDecode::processNALUnit(GetBufferPos()+4, nal_len-4, h);
       
-		if(nal_type==NAL_SPS)
+		if(nal_type==NAL_FAIL) //NAL decoding error
+		{
+		  return(false);
+		}
+		else if(nal_type==NAL_SPS)
 		{
 			LOG_HEVC_FHP("SPS found");			
 			if (h.sps != NULL)

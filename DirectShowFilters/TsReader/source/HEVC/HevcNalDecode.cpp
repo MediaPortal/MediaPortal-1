@@ -1,9 +1,3 @@
-#include "HevcNalDecode.h"
-//#include "HevcUtils.h"
-
-#include <iostream>
-#include <stdexcept>
-#include <string>
 // Copyright (C) 2016 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
@@ -29,10 +23,17 @@
 // the Code Project Open License, http://www.codeproject.com/info/cpol10.aspx
 // ========================================================================
 
+#include "HevcNalDecode.h"
+
+#include <iostream>
+#include <stdexcept>
+#include <string>
 
 #include <sstream>
 
 #include <assert.h>
+
+extern void LogDebug(const char *fmt, ...) ;
 
 using namespace HEVC;
 
@@ -40,17 +41,35 @@ NALUnitType HevcNalDecode::processNALUnit(const uint8_t *pdata, std::size_t size
 {
 	//Note: 'emulation_prevention_three_byte' removal is dealt with inside the BitstreamReader
   BitstreamReader bs(pdata, size);
+  
+  NALUnitType type = NAL_FAIL;
 
-  NALUnitType type = processNALUnitHeader(bs);
+	try
+	{
+    type = processNALUnitHeader(bs);
+	}
+	catch(...)
+	{
+    LogDebug("HevcNalDecode:processNALUnit exception ...");
+    return NAL_FAIL;
+	}
 
   switch(type)
   {
     case NAL_SPS:
     {
       std::shared_ptr<SPS> psps(new SPS);
-      processSPS(psps, bs);
+    	try
+    	{
+        processSPS(psps, bs);
+    	}
+    	catch(...)
+    	{
+        LogDebug("HevcNalDecode:processSPS exception ...");
+        return NAL_FAIL;
+    	}
       
-      //Initialise to normal values
+      //Assign values to hevchdr elements
       h.chromaFormat = psps -> chroma_format_idc;
       
       h.width  = psps -> pic_width_in_luma_samples;
@@ -74,6 +93,12 @@ NALUnitType HevcNalDecode::processNALUnit(const uint8_t *pdata, std::size_t size
           {
             h.arx = psps->vui_parameters.sar_width;
             h.ary = psps->vui_parameters.sar_height;
+      			// make sure that both are 0 if one is 0
+      			if(h.arx == 0 || h.ary == 0)
+      			{
+      				h.arx = 0;
+      				h.ary = 0;
+      		  }
           }   
           else  //Look up the aspect ratio from a table
           {
@@ -81,7 +106,6 @@ NALUnitType HevcNalDecode::processNALUnit(const uint8_t *pdata, std::size_t size
             if(h.ar > 16)
             {
               // aspect ratio reserved
-              h.ar = 0;
               h.arx = 0;
               h.ary = 0;
             }
@@ -99,7 +123,7 @@ NALUnitType HevcNalDecode::processNALUnit(const uint8_t *pdata, std::size_t size
           uint32_t a = h.arx, b = h.ary;
           while(a) {uint32_t tmp = a; a = b % tmp; b = tmp;}
           if(b) h.arx /= b, h.ary /= b;
-       }
+        }
 
         if (psps->vui_parameters.vui_timing_info_present_flag)
         {
@@ -113,15 +137,7 @@ NALUnitType HevcNalDecode::processNALUnit(const uint8_t *pdata, std::size_t size
       break;
     }
 
-    // case NAL_PPS:
-    // {
-    // 
-    //   std::shared_ptr<PPS> ppps(new PPS);
-    //   processPPS(ppps, bs);
-    //   break;
-    // }
-
-    default: {}
+    default: {} //Do not decode any other NALs
   };
 
   return type;
@@ -177,7 +193,6 @@ void HevcNalDecode::processSPS(std::shared_ptr<SPS> psps, BitstreamReader &bs)
   psps -> profile_tier_level = processProfileTierLevel(psps -> sps_max_sub_layers_minus1, bs);
 
   psps -> sps_seq_parameter_set_id = bs.getGolombU();
-//  psps -> sps_seq_parameter_set_id = 0;
   psps -> chroma_format_idc = bs.getGolombU();
 
   if(psps -> chroma_format_idc == 3)
@@ -277,101 +292,6 @@ void HevcNalDecode::processSPS(std::shared_ptr<SPS> psps, BitstreamReader &bs)
   psps -> sps_extension_flag = bs.getBits(1);
 }
 
-//=======================================================================
-
-void HevcNalDecode::processPPS(std::shared_ptr<PPS> ppps, BitstreamReader &bs)
-{
-  ppps -> pps_pic_parameter_set_id = bs.getGolombU();
-  ppps -> pps_seq_parameter_set_id  = bs.getGolombU();
-  ppps -> dependent_slice_segments_enabled_flag = bs.getBits(1);
-
-  ppps -> output_flag_present_flag = bs.getBits(1);
-  ppps -> num_extra_slice_header_bits = bs.getBits(3);
-  ppps -> sign_data_hiding_flag = bs.getBits(1);
-  ppps -> cabac_init_present_flag = bs.getBits(1);
-  ppps -> num_ref_idx_l0_default_active_minus1 = bs.getGolombU();
-  ppps -> num_ref_idx_l1_default_active_minus1 = bs.getGolombU();
-  ppps -> init_qp_minus26  = bs.getGolombS();
-  ppps -> constrained_intra_pred_flag = bs.getBits(1);
-  ppps -> transform_skip_enabled_flag = bs.getBits(1);
-  ppps -> cu_qp_delta_enabled_flag = bs.getBits(1);
-
-  if(ppps -> cu_qp_delta_enabled_flag)
-    ppps -> diff_cu_qp_delta_depth = bs.getGolombU();
-  else
-    ppps -> diff_cu_qp_delta_depth = 0;
-
-  ppps -> pps_cb_qp_offset = bs.getGolombS();
-  ppps -> pps_cr_qp_offset = bs.getGolombS();
-  ppps -> pps_slice_chroma_qp_offsets_present_flag = bs.getBits(1);
-  ppps -> weighted_pred_flag = bs.getBits(1);
-  ppps -> weighted_bipred_flag = bs.getBits(1);
-  ppps -> transquant_bypass_enabled_flag = bs.getBits(1);
-  ppps -> tiles_enabled_flag = bs.getBits(1);
-  ppps -> entropy_coding_sync_enabled_flag = bs.getBits(1);
-
-  if(ppps -> tiles_enabled_flag)
-  {
-    ppps -> num_tile_columns_minus1 = bs.getGolombU();
-    ppps -> num_tile_rows_minus1 = bs.getGolombU();
-    ppps -> uniform_spacing_flag = bs.getBits(1);
-
-    if(!ppps -> uniform_spacing_flag)
-    {
-      ppps -> column_width_minus1.resize(ppps -> num_tile_columns_minus1);
-      for(std::size_t i=0; i<ppps -> num_tile_columns_minus1; i++)
-        ppps -> column_width_minus1[i] = bs.getGolombU();
-
-      ppps -> row_height_minus1.resize(ppps -> num_tile_rows_minus1);
-      for(std::size_t i=0; i<ppps -> num_tile_rows_minus1; i++)
-        ppps -> row_height_minus1[i] = bs.getGolombU();
-    }
-    ppps -> loop_filter_across_tiles_enabled_flag = bs.getBits(1);
-  }
-  else
-  {
-    ppps -> num_tile_columns_minus1 = 0;
-    ppps -> num_tile_rows_minus1 = 0;
-    ppps -> uniform_spacing_flag = 1;
-    ppps -> loop_filter_across_tiles_enabled_flag = 1;
-  }
-
-  ppps -> pps_loop_filter_across_slices_enabled_flag = bs.getBits(1);
-  ppps -> deblocking_filter_control_present_flag = bs.getBits(1);
-
-  if(ppps -> deblocking_filter_control_present_flag)
-  {
-    ppps -> deblocking_filter_override_enabled_flag = bs.getBits(1);
-    ppps -> pps_deblocking_filter_disabled_flag = bs.getBits(1);
-
-    if(!ppps -> pps_deblocking_filter_disabled_flag)
-    {
-      ppps -> pps_beta_offset_div2 = bs.getGolombS();
-      ppps -> pps_tc_offset_div2 = bs.getGolombS();
-    }
-    else
-    {
-      ppps -> pps_beta_offset_div2 = 0;
-      ppps -> pps_tc_offset_div2 = 0;
-    }
-  }
-  else
-  {
-    ppps -> deblocking_filter_override_enabled_flag = 0;
-    ppps -> pps_deblocking_filter_disabled_flag = 0;
-  }
-
-  ppps -> pps_scaling_list_data_present_flag = bs.getBits(1);
-  if(ppps -> pps_scaling_list_data_present_flag)
-  {
-    ppps -> scaling_list_data = processScalingListData(bs);
-  }
-
-  ppps -> lists_modification_present_flag = bs.getBits(1);
-  ppps -> log2_parallel_merge_level_minus2 = bs.getGolombU();
-  ppps -> slice_segment_header_extension_present_flag = bs.getBits(1);
-  ppps -> pps_extension_flag = bs.getBits(1);
-}
 
 //=======================================================================
 
@@ -676,13 +596,13 @@ ShortTermRefPicSet HevcNalDecode::processShortTermRefPicSet(std::size_t stRpsIdx
 
     if(rpset.num_negative_pics > psps -> sps_max_dec_pic_buffering_minus1[psps -> sps_max_sub_layers_minus1])
     {
-      //onWarning("ShortTermRefPicSet: num_negative_pics > sps_max_dec_pic_buffering_minus1", &info, Parser::OUT_OF_RANGE);
+      LogDebug("HevcNalDecode:ShortTermRefPicSet: num_negative_pics > sps_max_dec_pic_buffering_minus1");
       return rpset;
     }
 
     if(rpset.num_positive_pics > psps -> sps_max_dec_pic_buffering_minus1[psps -> sps_max_sub_layers_minus1])
     {
-      //onWarning("ShortTermRefPicSet: num_positive_pics > sps_max_dec_pic_buffering_minus1", &info, Parser::OUT_OF_RANGE);
+      LogDebug("HevcNalDecode:ShortTermRefPicSet: num_positive_pics > sps_max_dec_pic_buffering_minus1");
       return rpset;      
     }
 
