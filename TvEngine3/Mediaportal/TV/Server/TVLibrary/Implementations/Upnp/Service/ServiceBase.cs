@@ -212,11 +212,25 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Upnp.Service
           {
             using (XmlReader xmlReader = XmlReader.Create(textReader, UPnPConfiguration.DEFAULT_XML_READER_SETTINGS))
             {
-              if (!xmlReader.ReadToFollowing("QueryStateVariableResponse", "urn:schemas-upnp-org:control-1-0"))
+              // Search for the QueryStateVariableResponse element. We don't
+              // use ReadToFollowing() or similar because ATI CableCARD tuners
+              // have an error in the namespace name.
+              // correct = urn:schemas-upnp-org:control-1-0
+              // ATI incorrect = urn=:schemas-upnp-org:control-1-0
+              bool foundResponse = false;
+              while (xmlReader.Read())
               {
-                throw new TvException("Failed to find QueryStateVariableResponse element in QueryStateVariable response.");
+                if (xmlReader.NodeType == XmlNodeType.Element && xmlReader.Name.EndsWith("QueryStateVariableResponse"))
+                {
+                  foundResponse = true;
+                  break;
+                }
               }
-              if (!xmlReader.ReadToFollowing("return"))
+              if (!foundResponse)
+              {
+                throw new Exception("Failed to find QueryStateVariableResponse element in QueryStateVariable response.");
+              }
+              if (!xmlReader.ReadToDescendant("return"))
               {
                 throw new TvException("Failed to find return element in QueryStateVariable response.");
               }
