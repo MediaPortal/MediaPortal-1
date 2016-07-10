@@ -55,20 +55,22 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri.Service
       if (bytes != null && bytes.Length > 0)
       {
         byte numberAudioCompressionFormat = bytes[0];
-        int audioProfileSize = Marshal.SizeOf(typeof(EncoderAudioProfile));
-        int expectedByteCount = (audioProfileSize * numberAudioCompressionFormat) + 1;
+        int expectedByteCount = (Marshal.SizeOf(typeof(EncoderAudioProfile)) * numberAudioCompressionFormat) + 1;
         if (bytes.Length != expectedByteCount)
         {
           throw new TvException("GetEncoderCapabilities audioProfile has {0} profile(s), but the byte count is {1} (expected {2}).", numberAudioCompressionFormat, bytes.Length, expectedByteCount);
         }
-        else
+
+        int i = 1;
+        while (i < expectedByteCount)
         {
-          for (int i = 1; i < expectedByteCount; i += audioProfileSize)
-          {
-            GCHandle handle = GCHandle.Alloc(bytes[i], GCHandleType.Pinned);
-            audioProfile.Add((EncoderAudioProfile)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(EncoderAudioProfile)));
-            handle.Free();
-          }
+          EncoderAudioProfile profile = new EncoderAudioProfile();
+          profile.AudioAlgorithmCode = (EncoderAudioAlgorithm)bytes[i++];
+          profile.SamplingRate = (uint)((bytes[i] << 24) | (bytes[i + 1] << 16) | (bytes[i + 2] << 8) | bytes[i]);  // note the endianness
+          i += 4;
+          profile.BitDepth = bytes[i++];
+          profile.NumberChannel = bytes[i++];
+          audioProfile.Add(profile);
         }
       }
       videoProfile = new List<EncoderVideoProfile>();
@@ -76,23 +78,26 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri.Service
       if (bytes != null && bytes.Length > 0)
       {
         byte numberVideoCompressionFormat = bytes[0];
-        int videoProfileSize = Marshal.SizeOf(typeof(EncoderVideoProfile));
-        int expectedByteCount = (videoProfileSize * numberVideoCompressionFormat) + 1;
+        int expectedByteCount = (Marshal.SizeOf(typeof(EncoderVideoProfile)) * numberVideoCompressionFormat) + 1;
         if (bytes.Length != expectedByteCount)
         {
           throw new TvException("GetEncoderCapabilities videoProfile has {0} profile(s), but the byte count is {1} (expected {2}).", numberVideoCompressionFormat, bytes.Length, expectedByteCount);
         }
-        else
+
+        int i = 1;
+        while (i < expectedByteCount)
         {
-          for (int i = 1; i < expectedByteCount; i += videoProfileSize)
-          {
-            GCHandle handle = GCHandle.Alloc(bytes[i], GCHandleType.Pinned);
-            videoProfile.Add((EncoderVideoProfile)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(EncoderVideoProfile)));
-            handle.Free();
-          }
+          EncoderVideoProfile profile = new EncoderVideoProfile();
+          profile.VerticalSize = (ushort)((bytes[i] << 8) | bytes[i + 1]);    // note the endianness
+          i += 2;
+          profile.HorizontalSize = (ushort)((bytes[i] << 8) | bytes[i + 1]);  // note the endianness
+          i += 2;
+          profile.AspectRatioInformation = (EncoderVideoAspectRatio)bytes[i++];
+          profile.FrameRateCode = (EncoderVideoFrameRate)bytes[i++];
+          profile.ProgressiveSequence = (EncoderVideoProgressiveSequence)bytes[i++];
+          videoProfile.Add(profile);
         }
       }
-
     }
 
     /// <summary>
@@ -147,13 +152,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri.Service
     /// <param name="currentVideoStepping">This argument provides the value of the VideoBitrateTarget state variable when the action response is created.</param>
     /// <param name="currentVideoMethod">This argument provides the value of the VideoEncoderMethodNumber state variable when the action response is created.</param>
     public void GetEncoderParameters(out uint currentAudioMax, out uint currentAudioMin, out EncoderMode currentAudioMode,
-                                    out uint currentAudioStepping, out uint currentAudioBitrate, out byte currentAudioMethod,
-                                    out bool currentMuteStatus, out EncoderFieldOrder currentFieldOrder,
-                                    out EncoderInputSelection currentSignalSource, out bool currentNoiseFilter,
-                                    out bool currentPulldownStatus, out bool currentPulldownSetting, out bool currentSapStatus,
-                                    out bool currentSapSetting, out uint currentVideoMax, out uint currentVideoMin,
-                                    out EncoderMode currentVideoMode, out uint currentVideoBitrate,
-                                    out uint currentVideoStepping, out byte currentVideoMethod)
+                                      out uint currentAudioStepping, out uint currentAudioBitrate, out byte currentAudioMethod,
+                                      out bool currentMuteStatus, out EncoderFieldOrder currentFieldOrder,
+                                      out EncoderInputSelection currentSignalSource, out bool currentNoiseFilter,
+                                      out bool currentPulldownStatus, out bool currentPulldownSetting, out bool currentSapStatus,
+                                      out bool currentSapSetting, out uint currentVideoMax, out uint currentVideoMin,
+                                      out EncoderMode currentVideoMode, out uint currentVideoBitrate,
+                                      out uint currentVideoStepping, out byte currentVideoMethod)
     {
       IList<object> outParams = _getEncoderParametersAction.InvokeAction(null);
       currentAudioMax = (uint)outParams[0];
