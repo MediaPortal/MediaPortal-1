@@ -51,7 +51,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri.Service
     /// <param name="currentSpectrumInversion">This argument provides the value of the SpectrumInversion state variable when the action response is created.</param>
     /// <param name="currentPidList">This argument provides the value of the PidList state variable when the action response is created.</param>
     public void GetFdcStatus(out uint currentBitrate, out bool currentCarrierLock, out uint currentFrequency,
-                            out bool currentSpectrumInversion, out IList<ushort> currentPidList)
+                              out bool currentSpectrumInversion, out IList<ushort> currentPidList)
     {
       IList<object> outParams = _getFdcStatusAction.InvokeAction(null);
       currentBitrate = (uint)outParams[0];

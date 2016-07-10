@@ -79,7 +79,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri.Service
     /// <param name="currentGenLock">This argument provides the value of the GenLock state variable when the action response is created.</param>
     /// <returns><c>true</c> if the action is executed, otherwise <c>false</c></returns>
     public bool SetAuxParameters(AuxInputType selectType, byte selectInput, AuxFormat selectFormat,
-                                out AuxFormat actualFormat, out bool currentGenLock)
+                                  out AuxFormat actualFormat, out bool currentGenLock)
     {
       actualFormat = AuxFormat.Unknown;
       currentGenLock = false;

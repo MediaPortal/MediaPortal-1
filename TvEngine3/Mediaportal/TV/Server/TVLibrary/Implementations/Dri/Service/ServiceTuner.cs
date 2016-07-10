@@ -55,7 +55,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri.Service
     /// <param name="currentModulation">This argument provides the value of the Modulation state variable when the action response is created.</param>
     /// <param name="pcrLockStatus">This argument provides the value of the PCRLock state variable when the action response is created.</param>
     public void SetTunerParameters(uint newFrequency, IList<TunerModulation> newModulationList,
-                            out uint currentFrequency, out TunerModulation currentModulation, out bool pcrLockStatus)
+                                    out uint currentFrequency, out TunerModulation currentModulation, out bool pcrLockStatus)
     {
       string newModulationListCsv = TunerModulation.All;
       if (newModulationList != null)
@@ -78,8 +78,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri.Service
     /// <param name="currentSignalLevel">This argument provides the value of the SignalLevel state variable when the action response is created. The unit is decibel milli-Volts (dBmV).</param>
     /// <param name="currentSnr">This argument provides the value of the SNR state variable when the action response is created. The unit is decibels (dB).</param>
     public void GetTunerParameters(out bool currentCarrierLock, out uint currentFrequency,
-                                  out TunerModulation currentModulation, out bool currentPcrLock,
-                                  out int currentSignalLevel, out uint currentSnr)
+                                    out TunerModulation currentModulation, out bool currentPcrLock,
+                                    out int currentSignalLevel, out uint currentSnr)
     {
       IList<object> outParams = _getTunerParametersAction.InvokeAction(null);
       currentCarrierLock = (bool)outParams[0];
