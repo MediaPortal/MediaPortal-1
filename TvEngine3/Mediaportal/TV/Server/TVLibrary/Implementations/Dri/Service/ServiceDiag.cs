@@ -18,9 +18,7 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
-using Mediaportal.TV.Server.TVLibrary.Implementations.Dri.Enum;
 using Mediaportal.TV.Server.TVLibrary.Implementations.Upnp.Service;
 using UPnP.Infrastructure.CP.DeviceTree;
 
@@ -43,23 +41,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri.Service
     /// <param name="parameter">This argument sets the A_ARG_TYPE_Parameter state variable.</param>
     /// <param name="value">This argument provides the value of the A_ARG_TYPE_Value state variable when the action response is created.</param>
     /// <param name="isVolatile">This argument provides the value of the A_ARG_TYPE_Volatile state variable when the action response is created.</param>
-    public void GetParameter(DiagParameterDri parameter, out string value, out bool isVolatile)
+    public void GetParameter(string parameter, out string value, out bool isVolatile)
     {
-      IList<object> outParams = _getParameterAction.InvokeAction(new List<object> { parameter.ToString() });
-      value = (string)outParams[0];
-      isVolatile = (bool)outParams[1];
-    }
-
-    /// <summary>
-    /// Upon receipt of the GetParameter action, the DRIT SHALL return the value and the type of the parameter in less
-    /// than 1s.
-    /// </summary>
-    /// <param name="parameter">This argument sets the A_ARG_TYPE_Parameter state variable.</param>
-    /// <param name="value">This argument provides the value of the A_ARG_TYPE_Value state variable when the action response is created.</param>
-    /// <param name="isVolatile">This argument provides the value of the A_ARG_TYPE_Volatile state variable when the action response is created.</param>
-    public void GetParameter(DiagParameterCeton parameter, out string value, out bool isVolatile)
-    {
-      IList<object> outParams = _getParameterAction.InvokeAction(new List<object> { parameter.ToString() });
+      IList<object> outParams = _getParameterAction.InvokeAction(new List<object> { parameter });
       value = (string)outParams[0];
       isVolatile = (bool)outParams[1];
     }

@@ -41,7 +41,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri.Service
     }
 
     /// <summary>
-    /// Upon receipt of the SetProgramaction, the DRIT SHALL perform in sequence the following actions in less than 1s,
+    /// Upon receipt of the SetProgram action, the DRIT SHALL perform in sequence the following actions in less than 1s,
     /// only if a Card is not inserted.
     /// 1.  Clear all the previous program PID from the PidList state variable.
     /// 2.  Send a ca_pmt() APDU to the Card.
@@ -58,7 +58,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri.Service
     /// Upon receipt of the AddPid action, the DRIT SHALL add all new PID values to the state variable in less than 1s.
     /// </summary>
     /// <param name="addPidList">This argument provides a list of PID values that need to be added to the PidList state variable.</param>
-    public void AddPid(IList<ushort> addPidList)
+    public void AddPid(IEnumerable<ushort> addPidList)
     {
       string addPidListHexCsv = string.Empty;
       if (addPidList != null)
@@ -73,7 +73,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri.Service
     /// than 1s.
     /// </summary>
     /// <param name="removePidList">This argument provides a list of PID values that need to be removed from the PidList state variable.</param>
-    public void RemovePid(IList<ushort> removePidList)
+    public void RemovePid(IEnumerable<ushort> removePidList)
     {
       string removePidListHexCsv = string.Empty;
       if (removePidList != null)

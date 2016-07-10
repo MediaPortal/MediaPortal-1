@@ -126,6 +126,7 @@
     <Compile Include="Implementations\DirectShow\TunerDirectShowMpeg2TsBase.cs" />
     <Compile Include="Implementations\Dri\ChannelScannerDriCeton.cs" />
     <Compile Include="Implementations\Dri\ChannelScannerDriSiliconDust.cs" />
+    <Compile Include="Implementations\Dri\Enum\TunerVendor.cs" />
     <Compile Include="Implementations\Dri\SubChannelManagerDri.cs" />
     <Compile Include="Implementations\Dvb\ChannelScannerDvb.cs" />
     <Compile Include="Implementations\Dvb\Enum\RollOffFactor.cs" />
@@ -195,8 +196,7 @@
     <Compile Include="Implementations\Dri\Enum\EncoderInputSelection.cs" />
     <Compile Include="Implementations\Dri\Enum\EncoderVideoProgressiveSequence.cs" />
     <Compile Include="Implementations\Dri\Enum\EncoderFieldOrder.cs" />
-    <Compile Include="Implementations\Dri\Enum\DiagParameterCeton.cs" />
-    <Compile Include="Implementations\Dri\Enum\DiagParameterDri.cs" />
+    <Compile Include="Implementations\Dri\Enum\DiagParameter.cs" />
     <Compile Include="Implementations\Dri\Enum\EncoderAudioAlgorithm.cs" />
     <Compile Include="Implementations\Dri\Enum\EncoderMode.cs" />
     <Compile Include="Implementations\Dri\Enum\EncoderVideoAspectRatio.cs" />

@@ -52,17 +52,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
   /// An implementation of <see cref="ITuner"/> for tuners which implement the
   /// CableLabs/OpenCable Digital Receiver Interface.
   /// </summary>
-  internal class TunerDri : TunerBase, IConditionalAccessMenuActions
+  internal class TunerDri : TunerBase, IConditionalAccessMenuActions, IMpeg2PidFilter
   {
-    private enum TunerVendor
-    {
-      Unknown,
-      Ati,
-      Ceton,
-      Hauppauge,
-      SiliconDust
-    }
-
     #region constants
 
     private static readonly Regex REGEX_SIGNAL_INFO = new Regex(@"^(\d+(\.\d+)?)[^\d]");
@@ -117,6 +108,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
     private object _caMenuCallBackLock = new object();
     private IConditionalAccessMenuCallBack _caMenuCallBack = null;
     private CableCardMmiHandler _caMenuHandler = null;
+
+    // PID filter variables
+    private int _maxPidCount = 0;
+    private HashSet<ushort> _pidFilterPids = new HashSet<ushort>();
+    private HashSet<ushort> _pidFilterPidsToRemove = new HashSet<ushort>();
+    private HashSet<ushort> _pidFilterPidsToAdd = new HashSet<ushort>();
+    private bool _isPidFilterDisabled = true;
 
     private volatile bool _isSignalLocked = false;
     private int _currentFrequency = -1;
@@ -210,24 +208,37 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
       try
       {
         this.LogDebug("DRI CableCARD: diagnostic parameters...");
-        string value = string.Empty;
-        bool isVolatile = false;
-        foreach (DiagParameterDri p in DiagParameterDri.Values)
+        List<string> supportedParameters = new List<string>(DiagParameter.Values.Count);
+        try
         {
-          _serviceDiag.GetParameter(p, out value, out isVolatile);
-          this.LogDebug("  {0}{1} = {2}", p.ToString(), isVolatile ? " [volatile]" : string.Empty, value);
-          if (p == DiagParameterDri.HostFirmware)
+          string csvParameterNames = (string)_serviceDiag.QueryStateVariable("ParameterList");
+          supportedParameters.AddRange(csvParameterNames.Split(','));
+        }
+        catch (Exception ex)
+        {
+          this.LogWarn(ex, "DRI CableCARD: failed to read diagnostic parameter list");
+          TunerVendor vendor = _vendor;
+          if (vendor == TunerVendor.Unknown)
           {
-            firmwareVersion = value;
+            vendor = TunerVendor.All;
+          }
+          foreach (DiagParameter p in DiagParameter.Values)
+          {
+            if (p.SupportedVendors.HasFlag(vendor))
+            {
+              supportedParameters.Add(p.ToString());
+            }
           }
         }
-        if (_vendor == TunerVendor.Ceton)
+        string value = string.Empty;
+        bool isVolatile = false;
+        foreach (string p in supportedParameters)
         {
-          this.LogDebug("DRI CableCARD: Ceton-specific diagnostic parameters...");
-          foreach (DiagParameterCeton p in DiagParameterCeton.Values)
+          _serviceDiag.GetParameter(p, out value, out isVolatile);
+          this.LogDebug("  {0}{1} = {2}", p, isVolatile ? " [volatile]" : string.Empty, value);
+          if (p == DiagParameter.HostFirmware)
           {
-            _serviceDiag.GetParameter(p, out value, out isVolatile);
-            this.LogDebug("  {0}{1} = {2}", p.ToString(), isVolatile ? " [volatile]" : string.Empty, value);
+            firmwareVersion = value;
           }
         }
 
@@ -749,6 +760,22 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
       this.LogDebug("DRI CableCARD: connected, connection ID = {0}, AV transport ID = {1}", _connectionId, _avTransportId);
 
       ReadDeviceInfo();
+
+      _isPidFilterDisabled = true;
+      _pidFilterPids.Clear();
+      _pidFilterPidsToAdd.Clear();
+      _pidFilterPidsToRemove.Clear();
+      string csvPids = (string)_serviceMux.QueryStateVariable("PIDList");
+      foreach (string pid in csvPids.Split(','))
+      {
+        _pidFilterPids.Add(Convert.ToUInt16(pid, 16));
+      }
+      if (_pidFilterPids.Count > 0)
+      {
+        _isPidFilterDisabled = false;
+        this.LogDebug("DRI CableCARD: initial mux service PID list = [{0}]", string.Join(", ", _pidFilterPids));
+      }
+
       TunerExtensionLoader loader = new TunerExtensionLoader();
       IList<ITunerExtension> extensions = loader.Load(this, _descriptor);
 
@@ -811,7 +838,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
       {
         if (state == TunerState.Stopped || state == TunerState.Paused)
         {
-          if (state == TunerState.Stopped)
+          if (state == TunerState.Stopped || !_canPause)
           {
             _serviceAvTransport.Stop((uint)_avTransportId);
             _transportState = AvTransportState.Stopped;
@@ -1051,8 +1078,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
         return;
       }
 
-      // Prefer CableCARD tuning. The other tuning method has not been tested.
-      if (isCableCardRequired || _cardStatus == CasCardStatus.Inserted)
+      if (isCableCardRequired)
       {
         TuneWithCableCard(channel, out isSignalLocked);
       }
@@ -1112,55 +1138,67 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
             _serviceFdc.GetFdcStatus(out bitrate, out isLocked, out frequency, out spectrumInversion, out pids);
             isPresent = _isSignalLocked;
 
-            if (_vendor == TunerVendor.Ceton)
+            bool readStrength = false;
+            bool readQuality = false;
+            if (_vendor != TunerVendor.Unknown)
             {
               string value = string.Empty;
               bool isVolatile = false;
-              _serviceDiag.GetParameter(DiagParameterCeton.OobSignalLevel, out value, out isVolatile);
-              // Example: "0.8 dBmV". Assumed range -25..25.
-              Match m = REGEX_SIGNAL_INFO.Match(value);
-              if (m.Success)
+              Match m;
+              if (DiagParameter.OobSignalLevel.SupportedVendors.HasFlag(_vendor))
               {
-                strength = (int)(double.Parse(value) * 2) + 50;
-                if (strength < 0)
+                // Example: "0.8 dBmV". Assumed range -25..25.
+                _serviceDiag.GetParameter(DiagParameter.OobSignalLevel, out value, out isVolatile);
+                m = REGEX_SIGNAL_INFO.Match(value);
+                if (!m.Success)
                 {
-                  strength = 0;
+                  this.LogWarn("DRI CableCARD: failed to interpret out-of-band signal level {0}", value);
                 }
-                else if (strength > 100)
+                else
                 {
-                  strength = 100;
-                }
-              }
-              else
-              {
-                this.LogWarn("DRI CableCARD: failed to interpret out-of-band signal level {0}", value);
-                strength = 0;
-              }
-              // Example: "31.9 dB". Use value as-is.
-              _serviceDiag.GetParameter(DiagParameterCeton.OobSnr, out value, out isVolatile);
-              m = REGEX_SIGNAL_INFO.Match(value);
-              if (m.Success)
-              {
-                quality = (int)double.Parse(value);
-                if (quality < 0)
-                {
-                  quality = 0;
-                }
-                else if (quality > 100)
-                {
-                  quality = 100;
+                  readStrength = true;
+                  strength = (int)(double.Parse(value) * 2) + 50;
+                  if (strength < 0)
+                  {
+                    strength = 0;
+                  }
+                  else if (strength > 100)
+                  {
+                    strength = 100;
+                  }
                 }
               }
-              else
+              if (DiagParameter.OobSnr.SupportedVendors.HasFlag(_vendor))
               {
-                this.LogWarn("DRI CableCARD: failed to interpret out-of-band signal-to-noise ratio {0}", value);
-                quality = 0;
+                // Example: "31.9 dB". Use value as-is.
+                _serviceDiag.GetParameter(DiagParameter.OobSnr, out value, out isVolatile);
+                m = REGEX_SIGNAL_INFO.Match(value);
+                if (!m.Success)
+                {
+                  this.LogWarn("DRI CableCARD: failed to interpret out-of-band signal-to-noise ratio {0}", value);
+                }
+                else
+                {
+                  quality = (int)double.Parse(value);
+                  if (quality < 0)
+                  {
+                    quality = 0;
+                  }
+                  else if (quality > 100)
+                  {
+                    quality = 100;
+                  }
+                }
               }
             }
-            else if (isLocked)
+
+            if (!readStrength)
             {
-              strength = 100;
-              quality = 100;
+              strength = isLocked ? 100 : 0;
+            }
+            if (!readQuality)
+            {
+              quality = isLocked ? 100 : 0;
             }
             return;
           }
@@ -1367,6 +1405,154 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
       this.LogDebug("DRI CableCARD: answer enquiry, answer = {0}, cancel = {1}", answer, cancel);
 
       // TODO I don't know how to implement this yet.
+      return true;
+    }
+
+    #endregion
+
+    #region IMpeg2PidFilter members
+
+    /// <summary>
+    /// Should the filter be enabled for a given transmitter.
+    /// </summary>
+    /// <param name="tuningDetail">The current transmitter tuning parameters.</param>
+    /// <returns><c>true</c> if the filter should be enabled, otherwise <c>false</c></returns>
+    bool IMpeg2PidFilter.ShouldEnable(IChannel tuningDetail)
+    {
+      // Enable when tuning without a CableCARD. When tuning with a CableCARD
+      // (CAS service SetChannel()), the PID filtering is handled automatically
+      // by the tuner.
+      bool enableFilter = false;
+      if (!tuningDetail.IsEncrypted)
+      {
+        IChannelPhysical physicalTuningDetail = tuningDetail as IChannelPhysical;
+        if (physicalTuningDetail == null || physicalTuningDetail.Frequency > 0)
+        {
+          enableFilter = true;
+        }
+      }
+
+      this.LogDebug("DRI CableCARD: need PID filter = {0}", enableFilter);
+      return enableFilter;
+    }
+
+    /// <summary>
+    /// Disable the filter.
+    /// </summary>
+    /// <returns><c>true</c> if the filter is successfully disabled, otherwise <c>false</c></returns>
+    bool IMpeg2PidFilter.Disable()
+    {
+      // It isn't really possible to disable the PID filter. We'll just remove
+      // all the PIDs.
+      if (_isPidFilterDisabled)
+      {
+        _pidFilterPids.Clear();
+        _pidFilterPidsToRemove.Clear();
+        _pidFilterPidsToAdd.Clear();
+        return true;
+      }
+
+      this.LogDebug("DRI CableCARD: disable PID filter");
+      if (_pidFilterPids.Count > 0)
+      {
+        this.LogDebug("  delete {0} current PID(s)...", _pidFilterPids.Count);
+        try
+        {
+          _serviceMux.RemovePid(_pidFilterPids);
+        }
+        catch (Exception ex)
+        {
+          this.LogError(ex, "DRI CableCARD: failed to remove all mux service PIDs");
+          return false;
+        }
+        _pidFilterPids.Clear();
+      }
+
+      _pidFilterPidsToRemove.Clear();
+      _pidFilterPidsToAdd.Clear();
+      _isPidFilterDisabled = true;
+      this.LogDebug("DRI CableCARD: result = success");
+      return true;
+    }
+
+    /// <summary>
+    /// Get the maximum number of streams that the filter can allow.
+    /// </summary>
+    int IMpeg2PidFilter.MaximumPidCount
+    {
+      get
+      {
+        return -1;    // maximum not known
+      }
+    }
+
+    /// <summary>
+    /// Configure the filter to allow one or more streams to pass through the filter.
+    /// </summary>
+    /// <param name="pids">A collection of stream identifiers.</param>
+    void IMpeg2PidFilter.AllowStreams(ICollection<ushort> pids)
+    {
+      _pidFilterPidsToAdd.UnionWith(pids);
+      _pidFilterPidsToRemove.ExceptWith(pids);
+    }
+
+    /// <summary>
+    /// Configure the filter to stop one or more streams from passing through the filter.
+    /// </summary>
+    /// <param name="pids">A collection of stream identifiers.</param>
+    void IMpeg2PidFilter.BlockStreams(ICollection<ushort> pids)
+    {
+      _pidFilterPidsToAdd.ExceptWith(pids);
+      _pidFilterPidsToRemove.UnionWith(pids);
+    }
+
+    /// <summary>
+    /// Apply the current filter configuration.
+    /// </summary>
+    /// <returns><c>true</c> if the filter configuration is successfully applied, otherwise <c>false</c></returns>
+    bool IMpeg2PidFilter.ApplyConfiguration()
+    {
+      if (_pidFilterPidsToAdd.Count == 0 && _pidFilterPidsToRemove.Count == 0)
+      {
+        return true;
+      }
+
+      this.LogDebug("DRI CableCARD: apply PID filter configuration");
+
+      if (_pidFilterPidsToRemove.Count > 0)
+      {
+        this.LogDebug("  delete {0} current PID(s)...", _pidFilterPidsToRemove.Count);
+        try
+        {
+          _serviceMux.RemovePid(_pidFilterPidsToRemove);
+        }
+        catch (Exception ex)
+        {
+          this.LogError(ex, "DRI CableCARD: failed to remove mux service PIDs");
+          return false;
+        }
+        _pidFilterPids.ExceptWith(_pidFilterPidsToRemove);
+        _pidFilterPidsToRemove.Clear();
+      }
+
+      if (_pidFilterPidsToAdd.Count > 0)
+      {
+        this.LogDebug("  add {0} new PID(s)...", _pidFilterPidsToAdd.Count);
+        try
+        {
+          _serviceMux.AddPid(_pidFilterPidsToAdd);
+        }
+        catch (Exception ex)
+        {
+          this.LogError(ex, "DRI CableCARD: failed to add mux service PIDs");
+          return false;
+        }
+
+        _pidFilterPids.UnionWith(_pidFilterPidsToAdd);
+        _pidFilterPidsToAdd.Clear();
+      }
+
+      this.LogDebug("DRI CableCARD: result = success");
       return true;
     }
 
