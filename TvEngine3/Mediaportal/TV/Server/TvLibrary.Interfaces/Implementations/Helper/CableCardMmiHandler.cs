@@ -165,7 +165,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Helper
           SmartCardApplication application = new SmartCardApplication();
           application.Type = (MmiApplicationType)applicationList[offset++];
           this.LogDebug("    type    = {0}", application.Type);
-          application.Version = (short)((applicationList[offset] << 8) + applicationList[offset + 1]);
+          application.Version = (short)((applicationList[offset] << 8) | applicationList[offset + 1]);
           this.LogDebug("    version = {0}", application.Version);
           offset += 2;
 
@@ -174,7 +174,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Helper
           offset += applicationNameLength;
           this.LogDebug("    name    = {0}", application.Name);
 
-          ushort applicationUrlLength = (ushort)((applicationList[offset] << 8) + applicationList[offset + 1]);
+          ushort applicationUrlLength = (ushort)((applicationList[offset] << 8) | applicationList[offset + 1]);
           string url = CompleteUri(System.Text.Encoding.ASCII.GetString(applicationList, offset, applicationUrlLength));  // URLs don't seem to be NULL terminated
           offset += applicationUrlLength;
 
@@ -361,7 +361,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Helper
           return;
         }
 
-        int uriLength = (data[3] << 8) + data[4] - 1;   // URI seems to be NULL terminated
+        int uriLength = (data[3] << 8) | data[4] - 1;   // URI seems to be NULL terminated
         uri = CompleteUri(System.Text.Encoding.ASCII.GetString(data, 5, uriLength));
       }
       catch (System.Exception ex)
