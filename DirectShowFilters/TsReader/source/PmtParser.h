@@ -28,6 +28,7 @@ using namespace std;
 #define SERVICE_TYPE_VIDEO_UNKNOWN  -1
 #define SERVICE_TYPE_VIDEO_MPEG1    0x1
 #define SERVICE_TYPE_VIDEO_MPEG2    0x2
+#define SERVICE_TYPE_PRIVATE_DATA   0x6
 #define SERVICE_TYPE_DCII_OR_LPCM   0x80 // can be DC-II MPEG2 Video OR LPCM Audio if registration descriptor=HDMV
 #define SERVICE_TYPE_VIDEO_MPEG4    0x10
 #define SERVICE_TYPE_VIDEO_H264     0x1b
