@@ -156,7 +156,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Upnp.Service
     {
       if (_pauseAction == null)
       {
-        this.LogWarn("UPnP: device {0} does not implement a AVTransport Pause action", _device.UDN);
+        this.LogWarn("UPnP: device {0} does not implement an AVTransport Pause action", _device.UDN);
         return false;
       }
 
@@ -168,7 +168,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Upnp.Service
     {
       if (_recordAction == null)
       {
-        this.LogWarn("UPnP: device {0} does not implement a AVTransport Record action", _device.UDN);
+        this.LogWarn("UPnP: device {0} does not implement an AVTransport Record action", _device.UDN);
         return false;
       }
 
@@ -201,7 +201,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Upnp.Service
     {
       if (_setPlayModeAction == null)
       {
-        this.LogWarn("UPnP: device {0} does not implement a AVTransport SetPlayMode action", _device.UDN);
+        this.LogWarn("UPnP: device {0} does not implement an AVTransport SetPlayMode action", _device.UDN);
         return false;
       }
 
@@ -213,7 +213,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Upnp.Service
     {
       if (_setRecordQualityModeAction == null)
       {
-        this.LogWarn("UPnP: device {0} does not implement a AVTransport SetRecordQualityMode action", _device.UDN);
+        this.LogWarn("UPnP: device {0} does not implement an AVTransport SetRecordQualityMode action", _device.UDN);
         return false;
       }
 
@@ -226,7 +226,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Upnp.Service
       actions = new List<AvTransportAction>();
       if (_getCurrentTransportActionsAction == null)
       {
-        this.LogWarn("UPnP: device {0} does not implement a AVTransport GetCurrentTransportActions action", _device.UDN);
+        this.LogWarn("UPnP: device {0} does not implement an AVTransport GetCurrentTransportActions action", _device.UDN);
         return false;
       }
 
@@ -237,7 +237,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Upnp.Service
       }
       catch
       {
-        this.LogWarn("UPnP: device {0} does not implement a AVTransport GetCurrentTransportActions action, threw exception", _device.UDN);
+        this.LogWarn("UPnP: device {0} does not implement an AVTransport GetCurrentTransportActions action, threw exception", _device.UDN);
         return false;
       }
       return true;
