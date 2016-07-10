@@ -37,10 +37,10 @@
 
 //#define LOG_SEEK_INFORMATION
 
-//#define SOUNDDEBUG // you will get NO sound if you enable debugging as there is a lot of output 
-
 #define CONVERT_90KHz_DS(x) (REFERENCE_TIME)(x * 111 + x / 9)
 #define CONVERT_DS_90KHz(x) (REFERENCE_TIME)(x / 100 - x / 1000)
+
+#define IDLE_SLEEP_DURATION 40
 
 using namespace std;
 
@@ -207,6 +207,8 @@ private:
 
   void DeliverBeginFlush();
   void DeliverEndFlush();
+
+  REFERENCE_TIME GetScr();
 
   CAudioPin*      m_pAudioPin;
   CVideoPin*      m_pVideoPin;

@@ -134,7 +134,6 @@ CBDReaderFilter::CBDReaderFilter(IUnknown *pUnk, HRESULT *phr):
   
   wcscpy(m_fileName, L"");
 
-  LogDebug("Wait for seeking to eof - false - constructor");
   m_bStopping = false;
   m_MPmainThreadID = GetCurrentThreadId();
 
@@ -350,11 +349,6 @@ STDMETHODIMP CBDReaderFilter::Action(int key)
 {
   lib.LogAction(key);
 
-  INT64 pos = -1;
-
-  if (m_pMediaSeeking)
-    HRESULT hr = m_pMediaSeeking->GetCurrentPosition(&pos);
-  
   switch (key)
   {  
     case BD_VK_0:
@@ -375,9 +369,9 @@ STDMETHODIMP CBDReaderFilter::Action(int key)
     case BD_VK_POPUP:
     case BD_VK_ROOT_MENU:
     case BD_VK_MOUSE_ACTIVATE:
-      return lib.ProvideUserInput(CONVERT_DS_90KHz(pos), (UINT32)key) == true ? S_OK : S_FALSE;
+      return lib.ProvideUserInput(GetScr(), (UINT32)key) == true ? S_OK : S_FALSE;
     break;
-    default:  
+    default:
       return S_FALSE;
   }
   return S_FALSE;
@@ -426,16 +420,7 @@ STDMETHODIMP CBDReaderFilter::GetTitleCount(UINT32* count)
 
 STDMETHODIMP CBDReaderFilter::MouseMove(UINT16 x, UINT16 y)
 {
-  INT64 pos = -1;
-
-  if (m_pMediaSeeking)
-  {
-    HRESULT hr = m_pMediaSeeking->GetCurrentPosition(&pos);
-    if (SUCCEEDED(hr))
-      pos = CONVERT_DS_90KHz(pos);
-  }
-
-  lib.MouseMove(CONVERT_DS_90KHz(pos), x, y);
+  lib.MouseMove(GetScr(), x, y);
   return S_OK;
 }
 
@@ -615,6 +600,8 @@ STDMETHODIMP CBDReaderFilter::Run(REFERENCE_TIME tStart)
   
   HRESULT hr = CSource::Run(tStart);
 
+  lib.SetRate((UINT32((double)BLURAY_RATE_NORMAL * m_dRate)));
+
   LogDebug("CBDReaderFilter::Run(%05.2f) state %d -->done", tStart / 10000000.0, m_State);
 
   if (!m_hCommandThread)
@@ -662,6 +649,9 @@ STDMETHODIMP CBDReaderFilter::Pause()
 
   CAutoLock cObjectLock(m_pLock);
   lib.SetState(State_Paused);
+
+  if (m_State == State_Running)
+    lib.SetRate(BLURAY_RATE_PAUSED);
 
   HRESULT hr = CSource::Pause();
 
@@ -803,6 +793,10 @@ void CBDReaderFilter::HandleBDEvent(BD_EVENT& pEv)
 {
   switch (pEv.event)
   {
+    case BD_EVENT_IDLE:
+      Sleep(IDLE_SLEEP_DURATION); // To avoid busy looping
+      break;
+
     case BD_EVENT_SEEK:
       if (m_bHandleSeekEvent)
       {
@@ -1118,5 +1112,10 @@ void CBDReaderFilter::DeliverEndFlush()
 
   if (m_pAudioPin && m_pAudioPin->IsConnected())
     m_pAudioPin->DeliverEndFlush();
+}
+
+REFERENCE_TIME CBDReaderFilter::GetScr()
+{
+  return CONVERT_DS_90KHz(m_rtCurrentTime) - m_demultiplexer.m_rtOffset;
 }
 
