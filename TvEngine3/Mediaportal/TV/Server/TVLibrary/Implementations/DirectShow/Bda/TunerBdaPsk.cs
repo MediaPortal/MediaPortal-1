@@ -253,9 +253,18 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
           ChannelDvbBase dvbChannel = channel as ChannelDvbBase;
           if (dvbChannel != null)
           {
-            hr |= dvbTuneRequest.put_ONID(dvbChannel.OriginalNetworkId);
-            hr |= dvbTuneRequest.put_TSID(dvbChannel.TransportStreamId);
-            hr |= dvbTuneRequest.put_SID(dvbChannel.ServiceId);
+            if (dvbChannel.OriginalNetworkId > 0)
+            {
+              hr |= dvbTuneRequest.put_ONID(dvbChannel.OriginalNetworkId);
+            }
+            if (dvbChannel.TransportStreamId > 0)
+            {
+              hr |= dvbTuneRequest.put_TSID(dvbChannel.TransportStreamId);
+            }
+            if (dvbChannel.ServiceId > 0)
+            {
+              hr |= dvbTuneRequest.put_SID(dvbChannel.ServiceId);
+            }
           }
           hr |= dvbTuneRequest.put_Locator(locator);
 

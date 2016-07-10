@@ -173,9 +173,20 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
           {
             throw new TvException("Failed to find DVB tune request interface on tune request.");
           }
-          hr |= dvbTuneRequest.put_ONID(dvbcChannel.OriginalNetworkId);
-          hr |= dvbTuneRequest.put_TSID(dvbcChannel.TransportStreamId);
-          hr |= dvbTuneRequest.put_SID(dvbcChannel.ProgramNumber);
+
+          if (dvbcChannel.OriginalNetworkId > 0)
+          {
+            hr |= dvbTuneRequest.put_ONID(dvbcChannel.OriginalNetworkId);
+          }
+          if (dvbcChannel.TransportStreamId > 0)
+          {
+            hr |= dvbTuneRequest.put_TSID(dvbcChannel.TransportStreamId);
+          }
+          if (dvbcChannel.ServiceId > 0)
+          {
+            hr |= dvbTuneRequest.put_SID(dvbcChannel.ServiceId);
+          }
+
           hr |= dvbTuneRequest.put_Locator(locator);
 
           if (hr != (int)NativeMethods.HResult.S_OK)
