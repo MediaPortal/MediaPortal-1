@@ -33,7 +33,6 @@ namespace MediaPortal.Configuration.Sections
       this.mpVMR9FilterMethod = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.checkboxMpNonsquare = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.mpGroupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.UseMadVideoRenderer3DDelay = new System.Windows.Forms.NumericUpDown();
       this.UseMadVideoRenderer3D = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.DisableLowLatencyMode = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.UseEVRMadVRForTV = new MediaPortal.UserInterface.Controls.MPCheckBox();
@@ -46,9 +45,7 @@ namespace MediaPortal.Configuration.Sections
       this.labelFilteringHint = new MediaPortal.UserInterface.Controls.MPLabel();
       this.checkBoxVMRWebStreams = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.label1 = new System.Windows.Forms.Label();
-      this.mpLabel1 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.mpGroupBox1.SuspendLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.UseMadVideoRenderer3DDelay)).BeginInit();
       this.SuspendLayout();
       // 
       // checkboxDXEclusive
@@ -101,8 +98,6 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.mpGroupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-      this.mpGroupBox1.Controls.Add(this.mpLabel1);
-      this.mpGroupBox1.Controls.Add(this.UseMadVideoRenderer3DDelay);
       this.mpGroupBox1.Controls.Add(this.UseMadVideoRenderer3D);
       this.mpGroupBox1.Controls.Add(this.DisableLowLatencyMode);
       this.mpGroupBox1.Controls.Add(this.UseEVRMadVRForTV);
@@ -121,23 +116,10 @@ namespace MediaPortal.Configuration.Sections
       this.mpGroupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.mpGroupBox1.Location = new System.Drawing.Point(6, 0);
       this.mpGroupBox1.Name = "mpGroupBox1";
-      this.mpGroupBox1.Size = new System.Drawing.Size(428, 414);
+      this.mpGroupBox1.Size = new System.Drawing.Size(428, 409);
       this.mpGroupBox1.TabIndex = 1;
       this.mpGroupBox1.TabStop = false;
       this.mpGroupBox1.Text = "Video renderer - advanced settings";
-      // 
-      // UseMadVideoRenderer3DDelay
-      // 
-      this.UseMadVideoRenderer3DDelay.Location = new System.Drawing.Point(305, 344);
-      this.UseMadVideoRenderer3DDelay.Maximum = new decimal(new int[] {
-            500,
-            0,
-            0,
-            0});
-      this.UseMadVideoRenderer3DDelay.Name = "UseMadVideoRenderer3DDelay";
-      this.UseMadVideoRenderer3DDelay.Size = new System.Drawing.Size(47, 20);
-      this.UseMadVideoRenderer3DDelay.TabIndex = 18;
-      this.UseMadVideoRenderer3DDelay.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
       // 
       // UseMadVideoRenderer3D
       // 
@@ -147,9 +129,9 @@ namespace MediaPortal.Configuration.Sections
       this.UseMadVideoRenderer3D.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.UseMadVideoRenderer3D.Location = new System.Drawing.Point(64, 344);
       this.UseMadVideoRenderer3D.Name = "UseMadVideoRenderer3D";
-      this.UseMadVideoRenderer3D.Size = new System.Drawing.Size(236, 17);
+      this.UseMadVideoRenderer3D.Size = new System.Drawing.Size(182, 17);
       this.UseMadVideoRenderer3D.TabIndex = 17;
-      this.UseMadVideoRenderer3D.Text = "Force MP window refresh (for 3D) with value:";
+      this.UseMadVideoRenderer3D.Text = "Force MP window refresh (for 3D)";
       this.UseMadVideoRenderer3D.UseVisualStyleBackColor = true;
       // 
       // DisableLowLatencyMode
@@ -183,7 +165,7 @@ namespace MediaPortal.Configuration.Sections
       // mpMadLabel
       // 
       this.mpMadLabel.AutoSize = true;
-      this.mpMadLabel.Location = new System.Drawing.Point(61, 390);
+      this.mpMadLabel.Location = new System.Drawing.Point(61, 367);
       this.mpMadLabel.Name = "mpMadLabel";
       this.mpMadLabel.Size = new System.Drawing.Size(269, 13);
       this.mpMadLabel.TabIndex = 14;
@@ -279,15 +261,6 @@ namespace MediaPortal.Configuration.Sections
       this.label1.Size = new System.Drawing.Size(0, 13);
       this.label1.TabIndex = 1;
       // 
-      // mpLabel1
-      // 
-      this.mpLabel1.AutoSize = true;
-      this.mpLabel1.Location = new System.Drawing.Point(61, 368);
-      this.mpLabel1.Name = "mpLabel1";
-      this.mpLabel1.Size = new System.Drawing.Size(274, 13);
-      this.mpLabel1.TabIndex = 19;
-      this.mpLabel1.Text = "Value 0 = instant, (Max) Value 500 takes 10-15 seconds.";
-      // 
       // FiltersVideoRenderer
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -298,7 +271,6 @@ namespace MediaPortal.Configuration.Sections
       this.Size = new System.Drawing.Size(438, 409);
       this.mpGroupBox1.ResumeLayout(false);
       this.mpGroupBox1.PerformLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.UseMadVideoRenderer3DDelay)).EndInit();
       this.ResumeLayout(false);
 
     }
@@ -322,7 +294,5 @@ namespace MediaPortal.Configuration.Sections
     private UserInterface.Controls.MPCheckBox UseEVRMadVRForTV;
     private UserInterface.Controls.MPCheckBox DisableLowLatencyMode;
     private UserInterface.Controls.MPCheckBox UseMadVideoRenderer3D;
-    private System.Windows.Forms.NumericUpDown UseMadVideoRenderer3DDelay;
-    private UserInterface.Controls.MPLabel mpLabel1;
   }
 }

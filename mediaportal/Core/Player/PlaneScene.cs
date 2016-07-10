@@ -324,6 +324,10 @@ namespace MediaPortal.Player
             Crop(cs);
           }
           break;
+        case GUIMessage.MessageType.GUI_MSG_REGISTER_MADVR_OSD:
+          if (VMR9Util.g_vmr9 != null)
+            VMR9Util.g_vmr9.RegisterOsd();
+          break;
       }
     }
 
@@ -758,8 +762,10 @@ namespace MediaPortal.Player
     public void ForceOsdUpdate(bool pForce)
     {
       if (pForce)
-        if (VMR9Util.g_vmr9 != null)
-          VMR9Util.g_vmr9.RegisterOsd();
+      {
+        var msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_REGISTER_MADVR_OSD, 0, 0, 0, 0, 0, null);
+        GUIWindowManager.SendThreadMessage(msg);
+      }
     }
 
     public static void RenderFor3DMode(GUIGraphicsContext.eRender3DModeHalf renderModeHalf, float timePassed,
