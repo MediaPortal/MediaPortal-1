@@ -65,7 +65,6 @@ void CPmtParser::OnNewSection(CSection& section)
 
   try
 	{
-		bool dvb_audio_found=false;
 		bool lpcm_audio_found=false;
 		bool dvb_video_found=false;
     int program_number = section.table_id_extension;
@@ -138,7 +137,6 @@ void CPmtParser::OnNewSection(CSection& section)
         pid.Pid=elementary_PID;
         pid.AudioServiceType=stream_type;
         m_pidInfo.audioPids.push_back(pid);
-        dvb_audio_found = true;
       }
       m_pidInfo.PcrPid=pcr_pid;
 
@@ -168,8 +166,18 @@ void CPmtParser::OnNewSection(CSection& section)
         }
   						
         if(indicator==DESCRIPTOR_DVB_AC3 || indicator==DESCRIPTOR_DVB_E_AC3)
-        {							          
-          if (!dvb_audio_found)
+        {							
+          bool newPid = true;
+          if (m_pidInfo.audioPids.size() > 0)	
+          {
+            AudioPid temp_pid = m_pidInfo.audioPids.back(); //Get the most recent audio PID data
+            if (temp_pid.Pid == elementary_PID) //It's the current PID, so don't create a new pidInfo entry
+            {
+              newPid = false;
+            }
+          }
+          
+          if (newPid)
           {
             AudioPid pid;
             pid.Pid=elementary_PID;
@@ -191,7 +199,6 @@ void CPmtParser::OnNewSection(CSection& section)
             }
     
             m_pidInfo.audioPids.push_back(pid);
-            dvb_audio_found = true;
           }
         }
   			
@@ -362,26 +369,26 @@ void CPmtParser::OnNewSection(CSection& section)
               section.Data[pointer+5]=='V' && 
               stream_type==SERVICE_TYPE_DCII_OR_LPCM)
           {
-            //LPCM audio
             AudioPid pid;
             pid.Pid=elementary_PID;
             pid.AudioServiceType=stream_type;
             m_pidInfo.audioPids.push_back(pid);
-            lpcm_audio_found = true;
-            dvb_audio_found = true;
+            lpcm_audio_found=true;
           }
           else if ( section.Data[pointer+2]=='H' && 
                     section.Data[pointer+3]=='E' && 
                     section.Data[pointer+4]=='V' && 
                     section.Data[pointer+5]=='C' && 
-                    stream_type==SERVICE_TYPE_PRIVATE_DATA &&
-                    !dvb_video_found)
+                    stream_type==SERVICE_TYPE_PRIVATE_DATA)
           {
             //HEVC video (backward compatibility with old streams)
             VideoPid pid;
             pid.Pid=elementary_PID;
             pid.VideoServiceType = SERVICE_TYPE_VIDEO_HEVC;
-            m_pidInfo.videoPids.clear(); //Workaround for mis-detection of DC II streams...
+            if (!dvb_video_found) //Workaround for mis-detection of DC II streams...
+            {
+              m_pidInfo.videoPids.clear();
+            }
             m_pidInfo.videoPids.push_back(pid);
             dvb_video_found = true;
           }
@@ -396,7 +403,6 @@ void CPmtParser::OnNewSection(CSection& section)
         pid.Pid=elementary_PID;
         pid.VideoServiceType=SERVICE_TYPE_VIDEO_MPEG2;
         m_pidInfo.videoPids.push_back(pid);
-        dvb_video_found = true;
       }
     }
     if (m_pmtCallback!=NULL)
