@@ -435,33 +435,41 @@ HRESULT MPMadPresenter::SetupOSDVertex(IDirect3DVertexBuffer9* pVertextBuf)
     rDest.right = m_dwWidth;
     rDest.top = 0;
 
-    vertices[0].x = static_cast<float>(rDest.left) - 0.5f;
-    vertices[0].y = static_cast<float>(rDest.top) - 0.5f;
+    vertices[0].x = static_cast<float>(rDest.left);// -0.5f;
+    vertices[0].y = static_cast<float>(rDest.top);// -0.5f;
     vertices[0].z = 0.0f;
     vertices[0].rhw = 1.0f;
     vertices[0].u = 0.0f;
     vertices[0].v = 0.0f;
 
-    vertices[1].x = static_cast<float>(rDest.right) - 0.5f;
-    vertices[1].y = static_cast<float>(rDest.top) - 0.5f;
+    vertices[1].x = static_cast<float>(rDest.right);// -0.5f;
+    vertices[1].y = static_cast<float>(rDest.top);// -0.5f;
     vertices[1].z = 0.0f;
     vertices[1].rhw = 1.0f;
     vertices[1].u = 1.0f;
     vertices[1].v = 0.0f;
 
-    vertices[2].x = static_cast<float>(rDest.right) - 0.5f;
-    vertices[2].y = static_cast<float>(rDest.bottom) - 0.5f;
+    vertices[2].x = static_cast<float>(rDest.right);// -0.5f;
+    vertices[2].y = static_cast<float>(rDest.bottom);// -0.5f;
     vertices[2].z = 0.0f;
     vertices[2].rhw = 1.0f;
     vertices[2].u = 1.0f;
     vertices[2].v = 1.0f;
 
-    vertices[3].x = static_cast<float>(rDest.left) - 0.5f;
-    vertices[3].y = static_cast<float>(rDest.bottom) - 0.5f;
+    vertices[3].x = static_cast<float>(rDest.left);// -0.5f;
+    vertices[3].y = static_cast<float>(rDest.bottom);// -0.5f;
     vertices[3].z = 0.0f;
     vertices[3].rhw = 1.0f;
     vertices[3].u = 0.0f;
     vertices[3].v = 1.0f;
+
+    // Update vertices to compensate texel/pixel coordinate origins (top left of pixel vs. center of texel)
+    // See https://msdn.microsoft.com/en-us/library/bb219690(VS.85).aspx
+    for (int i = 0; i < 4; i++)
+    {
+      vertices[i].x -= 0.5f;
+      vertices[i].y -= 0.5f;
+    }
 
     hr = pVertextBuf->Unlock();
     if (FAILED(hr))

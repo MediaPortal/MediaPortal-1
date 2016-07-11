@@ -324,6 +324,10 @@ namespace MediaPortal.Player
             Crop(cs);
           }
           break;
+        case GUIMessage.MessageType.GUI_MSG_REGISTER_MADVR_OSD:
+          if (VMR9Util.g_vmr9 != null)
+            VMR9Util.g_vmr9.RegisterOsd();
+          break;
       }
     }
 
@@ -649,78 +653,100 @@ namespace MediaPortal.Player
 
     private int RenderLayers(GUILayers layers, Int16 width, Int16 height, Int16 arWidth, Int16 arHeight)
     {
-      if (!GUIGraphicsContext.InVmr9Render)
+      bool visible = false;
+      try
       {
-        GUIGraphicsContext.InVmr9Render = true;
-      }
-
-      if (GUIGraphicsContext.IsSwitchingToNewSkin)
-      {
-        return -1;
-      }
-
-      if (GUIWindowManager.IsSwitchingToNewWindow && !_vmr9Util.InMenu)
-      {
-        return 1; // (0) -> S_OK, (1) -> S_FALSE; //dont present video during window transitions
-      }
-
-      if (width > 0 && height > 0)
-      {
-        _vmr9Util.VideoWidth = width;
-        _vmr9Util.VideoHeight = height;
-        _vmr9Util.VideoAspectRatioX = arWidth;
-        _vmr9Util.VideoAspectRatioY = arHeight;
-        _arVideoWidth = arWidth;
-        _arVideoHeight = arHeight;
-
-        if (GUIGraphicsContext.IsWindowVisible)
+        if (_reEntrant)
         {
-          Size nativeSize = new Size(width, height);
-          _shouldRenderTexture = SetVideoWindow(nativeSize);
+          Log.Error("PlaneScene: re-entrancy in PresentImage");
+          return -1;
+        }
+        if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.LOST)
+        {
+          return -1;
+        }
+
+        if (!GUIGraphicsContext.InVmr9Render)
+        {
+          GUIGraphicsContext.InVmr9Render = true;
+        }
+
+        if (GUIGraphicsContext.IsSwitchingToNewSkin)
+        {
+          return -1;
+        }
+
+        if (GUIWindowManager.IsSwitchingToNewWindow && !_vmr9Util.InMenu)
+        {
+          return 1; // (0) -> S_OK, (1) -> S_FALSE; //dont present video during window transitions
+        }
+
+        _reEntrant = true;
+        if (width > 0 && height > 0)
+        {
+          _vmr9Util.VideoWidth = width;
+          _vmr9Util.VideoHeight = height;
+          _vmr9Util.VideoAspectRatioX = arWidth;
+          _vmr9Util.VideoAspectRatioY = arHeight;
+          _arVideoWidth = arWidth;
+          _arVideoHeight = arHeight;
+
+          if (GUIGraphicsContext.IsWindowVisible)
+          {
+            Size nativeSize = new Size(width, height);
+            _shouldRenderTexture = SetVideoWindow(nativeSize);
+          }
+          else
+          {
+            Size nativeSize = new Size(1, 1);
+            _shouldRenderTexture = SetVideoWindow(nativeSize);
+          }
+        }
+
+        Device device = GUIGraphicsContext.DX9Device;
+
+        device.Clear(ClearFlags.Target, Color.FromArgb(0, 0, 0, 0), 1.0f, 0);
+        device.BeginScene();
+
+        if (layers == GUILayers.over)
+        {
+          SubtitleRenderer.GetInstance().Render();
+          BDOSDRenderer.GetInstance().Render();
+          GUIGraphicsContext.RenderOverlay = true;
+        }
+
+        //bool visible = false;
+        if (_disableLowLatencyMode)
+        {
+          GUIGraphicsContext.RenderGUI.RenderFrame(GUIGraphicsContext.TimePassed, layers);
         }
         else
         {
-          Size nativeSize = new Size(1, 1);
-          _shouldRenderTexture = SetVideoWindow(nativeSize);
+          GUIGraphicsContext.RenderGUI.RenderFrame(GUIGraphicsContext.TimePassed, layers, ref visible);
         }
+
+        GUIFontManager.Present();
+        device.EndScene();
+
+        if (layers == GUILayers.under)
+        {
+          GUIGraphicsContext.RenderGui = false;
+          GUIGraphicsContext.RenderOverlay = false;
+        }
+
+        // Present() call is done on C++ side so we are able to use DirectX 9 Ex device
+        // which allows us to skip the v-sync wait. We don't want to wait with madVR
+        // is it only increases the UI rendering time.
+        //return visible ? 0 : 1; // S_OK, S_FALSE
       }
-
-      Device device = GUIGraphicsContext.DX9Device;
-
-      device.Clear(ClearFlags.Target, Color.FromArgb(0, 0, 0, 0), 1.0f, 0);
-      device.BeginScene();
-
-      if (layers == GUILayers.over)
+      catch (Exception)
       {
-        SubtitleRenderer.GetInstance().Render();
-        BDOSDRenderer.GetInstance().Render();
-        GUIGraphicsContext.RenderOverlay = true;
       }
-
-      bool visible = false;
-      if (_disableLowLatencyMode)
+      finally
       {
-        GUIGraphicsContext.RenderGUI.RenderFrame(GUIGraphicsContext.TimePassed, layers);
+        _reEntrant = false;
       }
-      else
-      {
-        GUIGraphicsContext.RenderGUI.RenderFrame(GUIGraphicsContext.TimePassed, layers, ref visible);
-      }
-
-      GUIFontManager.Present();
-      device.EndScene();
-
-      if (layers == GUILayers.under)
-      {
-        GUIGraphicsContext.RenderGui = false;
-        GUIGraphicsContext.RenderOverlay = false;
-      }
-
-      // Present() call is done on C++ side so we are able to use DirectX 9 Ex device
-      // which allows us to skip the v-sync wait. We don't want to wait with madVR
-      // is it only increases the UI rendering time.
-
-      return visible ? 0 : 1;  // S_OK, S_FALSE
+      return visible ? 0 : 1; // S_OK, S_FALSE
     }
 
     public void SetRenderTarget(uint target)
@@ -757,7 +783,10 @@ namespace MediaPortal.Player
     public void ForceOsdUpdate(bool pForce)
     {
       if (pForce)
-        VMR9Util.g_vmr9?.RegisterOsd();
+      {
+        var msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_REGISTER_MADVR_OSD, 0, 0, 0, 0, 0, null);
+        GUIWindowManager.SendThreadMessage(msg);
+      }
     }
 
     public static void RenderFor3DMode(GUIGraphicsContext.eRender3DModeHalf renderModeHalf, float timePassed,
@@ -1211,8 +1240,8 @@ namespace MediaPortal.Player
 
       // Lock the buffer (which will return our structs)
       // Top right
-      verts[0].X = dstX - 0.5f;
-      verts[0].Y = dstY + dstHeight - 0.5f;
+      verts[0].X = dstX;// - 0.5f;
+      verts[0].Y = dstY + dstHeight;// - 0.5f;
       verts[0].Z = 0.0f;
       verts[0].Rhw = 1.0f;
       verts[0].Color = (int)lColorDiffuse;
@@ -1220,8 +1249,8 @@ namespace MediaPortal.Player
       verts[0].Tv = voff + vmax;
 
       // Top Left
-      verts[1].X = dstX - 0.5f;
-      verts[1].Y = dstY - 0.5f;
+      verts[1].X = dstX;// - 0.5f;
+      verts[1].Y = dstY;// - 0.5f;
       verts[1].Z = 0.0f;
       verts[1].Rhw = 1.0f;
       verts[1].Color = (int)lColorDiffuse;
@@ -1229,8 +1258,8 @@ namespace MediaPortal.Player
       verts[1].Tv = voff;
 
       // Bottom right
-      verts[2].X = dstX + dstWidth - 0.5f;
-      verts[2].Y = dstY + dstHeight - 0.5f;
+      verts[2].X = dstX + dstWidth;// - 0.5f;
+      verts[2].Y = dstY + dstHeight;// - 0.5f;
       verts[2].Z = 0.0f;
       verts[2].Rhw = 1.0f;
       verts[2].Color = (int)lColorDiffuse;
@@ -1238,13 +1267,22 @@ namespace MediaPortal.Player
       verts[2].Tv = voff + vmax;
 
       // Bottom left
-      verts[3].X = dstX + dstWidth - 0.5f;
-      verts[3].Y = dstY - 0.5f;
+      verts[3].X = dstX + dstWidth;// - 0.5f;
+      verts[3].Y = dstY;// - 0.5f;
       verts[3].Z = 0.0f;
       verts[3].Rhw = 1.0f;
       verts[3].Color = (int)lColorDiffuse;
       verts[3].Tu = uoff + umax;
       verts[3].Tv = voff;
+
+      // Update vertices to compensate texel/pixel coordinate origins (top left of pixel vs. center of texel)
+      // See https://msdn.microsoft.com/en-us/library/bb219690(VS.85).aspx
+      for (int i = 0; i < verts.Length; i++)
+      {
+        verts[i].X -= 0.5f;
+        verts[i].Y -= 0.5f;
+      }
+
       vertexBuffer.Unlock();
       unsafe
       {

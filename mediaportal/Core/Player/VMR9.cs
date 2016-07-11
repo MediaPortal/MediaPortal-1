@@ -187,7 +187,6 @@ namespace MediaPortal.Player
     protected bool UseMadVideoRenderer;      // is madVR used?
     protected bool UseEVRMadVRForTV;
     protected bool UseMadVideoRenderer3D;
-    protected int UseMadVideoRenderer3DDelay;
 
     #endregion
 
@@ -397,13 +396,15 @@ namespace MediaPortal.Player
         InitOSD(ref initOsdDone);
         if (initOsdDone)
         {
-          //// Sending message to force unfocus/focus for 3D.
-          //var msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_UNFOCUS_FOCUS, 0, 0, 0, 0, 0, null);
-          //// Define the value (when equal to 500 it's immediate, 0 give around 10 secs of delay)
-          //msg.Param1 = 0;
-          //GUIWindowManager.SendThreadMessage(msg);
           IMediaControl mediactrl = (IMediaControl) _graphBuilder;
           if (mediactrl != null) mediactrl.Run();
+          // Sending message to force unfocus/focus for 3D.
+          if (UseMadVideoRenderer3D)
+          {
+            var msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_UNFOCUS_FOCUS, 0, 0, 0, 0, 0, null);
+            GUIWindowManager.SendThreadMessage(msg);
+            Log.Debug("VMR9: send message for madVR refresh force");
+          }
           Log.Debug("VMR9: registering OSD done");
         }
       }
@@ -423,7 +424,6 @@ namespace MediaPortal.Player
           UseMadVideoRenderer = xmlreader.GetValueAsBool("general", "useMadVideoRenderer", false);
           UseEVRMadVRForTV = xmlreader.GetValueAsBool("general", "useEVRMadVRForTV", false);
           UseMadVideoRenderer3D = xmlreader.GetValueAsBool("general", "useMadVideoRenderer3D", false);
-          UseMadVideoRenderer3DDelay = xmlreader.GetValueAsInt("general", "useMadVideoRenderer3DDelay", 500);
         }
         Log.Debug("VMR9: addvmr9 - thread : {0}", Thread.CurrentThread.Name);
         if (!_useVmr9)
@@ -528,14 +528,6 @@ namespace MediaPortal.Player
           videoWin.put_Owner(GUIGraphicsContext.ActiveForm);
           videoWin.put_WindowStyle((WindowStyle)((int)WindowStyle.Child + (int)WindowStyle.ClipChildren + (int)WindowStyle.ClipSiblings));
           videoWin.put_MessageDrain(GUIGraphicsContext.ActiveForm);
-          // Sending message to force unfocus/focus for 3D.
-          if (UseMadVideoRenderer3D)
-          {
-            var msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_UNFOCUS_FOCUS, 0, 0, 0, 0, 0, null) {Param1 = UseMadVideoRenderer3DDelay};
-            // Define the value (when equal to 500 it's immediate, 0 give around 10 secs of delay)
-            GUIWindowManager.SendMessage(msg);
-            GUIWindowManager.MadVrProcess();
-          }
         }
         else
         {

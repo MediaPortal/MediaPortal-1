@@ -3450,7 +3450,6 @@ public class MediaPortalApp : D3D, IRender
 
     Log.Info("Startup: Starting Window Manager");
     GUIWindowManager.PreInit();
-    GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.RUNNING;
 
     Log.Info("Startup: Activating Window Manager");
     if ((_startWithBasicHome) && (File.Exists(GUIGraphicsContext.GetThemedSkinFile(@"\basichome.xml"))))
@@ -3485,6 +3484,9 @@ public class MediaPortalApp : D3D, IRender
     // ReSharper restore ObjectCreationAsStatement
 
     SetProcessWorkingSetSize(Process.GetCurrentProcess().Handle, -1, -1);
+
+    // Set running there some plugin can loop otherwise
+    GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.RUNNING;
   }
 
 
@@ -5174,9 +5176,14 @@ public class MediaPortalApp : D3D, IRender
         case GUIMessage.MessageType.GUI_MSG_UNFOCUS_FOCUS:
           if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
           {
-            _updateInt = message.Param1;
-            _madVR3D = true;
-            //ForceMPFocus();
+            // Workaround for madVR and 3D need to force a window change.
+            if (!Windowed)
+            {
+              FormBorderStyle = FormBorderStyle.FixedSingle;
+              FormBorderStyle = FormBorderStyle.None;
+              Log.Debug("Main: madVR for 3D done");
+              ForceMPFocus();
+            }
           }
           break;
       }

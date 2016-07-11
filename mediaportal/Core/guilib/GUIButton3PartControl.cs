@@ -459,9 +459,9 @@ namespace MediaPortal.GUI.Library
         }
 
         _imageNonFocusedMid.ColourDiffuse = ColourDiffuseTNFM;
-        // TODO must do a proper fix (Flickering on TVGuide)
-        if (GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR ||
-            !GUIGraphicsContext.InVmr9Render)
+        // TODO must do a proper fix (Flickering on TVGuide) most happen on Intel Graphics card.
+        //if (GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR ||
+        //    !GUIGraphicsContext.InVmr9Render)
         {
           _imageNonFocusedMid.OverlayFileName = OverlayFileNameTNFM;
         }

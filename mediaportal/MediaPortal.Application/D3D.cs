@@ -143,7 +143,6 @@ namespace MediaPortal
     protected GraphicsAdapterInfo  AdapterInfo;              // hold adapter info for the selected display on startup of MP
     protected int                  MouseTimeOutMP;           // Mouse activity timeout while in MP in seconds
     protected int                  MouseTimeOutFullscreen;   // Mouse activity timeout while in Fullscreen in seconds
-    protected bool                 deviceLost;
 
     #endregion
 
@@ -203,8 +202,6 @@ namespace MediaPortal
     protected static Screen            _screenFocus;              // Screen Focus when minimize / restore to systray
     protected static Screen            _backupscreen;             // Screen Focus when minimize / restore to systray
     protected static Rectangle         _backupBounds;             // Bounds backup
-    protected int                      _updateInt = 0;
-    protected bool                     _madVR3D = false;
 
     #endregion
 
@@ -684,7 +681,6 @@ namespace MediaPortal
             catch (DeviceLostException)
             {
               // Indicate that the device has been lost
-              deviceLost = true;
               Log.Error("D3D: D3DERR_DEVICELOST - device is lost but cannot be reset at this time");
             }
             catch (DriverInternalErrorException)
@@ -741,18 +737,6 @@ namespace MediaPortal
     /// </summary>
     protected void FullRender()
     {
-      if (deviceLost)
-      {
-        // Try to get the device back
-        AttemptRecovery();
-      }
-
-      // If we couldn't get the device back, don't try to render
-      if (deviceLost)
-      {
-        return;
-      }
-
       // don't render if form is minimized and not visible to the user
       // TODO: do not render when display is turned off or we are in away mode - needs testing
       //if (!IsVislbe || IsInAwayMode || !IsDisplayTurnedOn)
@@ -763,7 +747,6 @@ namespace MediaPortal
       }
       ResumePlayer();
       UpdateMouseCursor();
-      UnlockmadVr3D();
 
       // In minitv mode allow to loose focus
       if (ActiveForm != this && _alwaysOnTop && !_miniTvMode && GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.RUNNING)
@@ -835,34 +818,6 @@ namespace MediaPortal
         _firstTimeActivated = false;
       }
     }
-
-    protected void AttemptRecovery()
-    {
-      try
-      {
-        GUIGraphicsContext.DX9Device.TestCooperativeLevel();
-      }
-      catch (DeviceLostException)
-      {
-      }
-      catch (DeviceNotResetException)
-      {
-        try
-        {
-          GUIGraphicsContext.DX9Device.Reset(_presentParams);
-          deviceLost = false;
-
-          // Spew a message into the output window of the debugger
-          Log.Debug("Device successfully reset");
-        }
-        catch (DeviceLostException)
-        {
-          // If it's still lost or lost again, just do 
-          // nothing
-        }
-      }
-    }
-
 
 
     /// <summary>
@@ -1727,30 +1682,6 @@ namespace MediaPortal
 
         GUIGraphicsContext.IsFullScreenVideo = Menu == null;
         GUIWindowManager.ReplaceWindow(_lastActiveWindow);
-      }
-    }
-
-    protected void UnlockmadVr3D()
-    {
-      // update when value is 500 (around 10 secs)
-      if (_updateInt == 500)
-      {
-        if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
-        {
-          // Workaround for madVR and 3D need to force a window change.
-          if (!Windowed && _madVR3D)
-          {
-            FormBorderStyle = FormBorderStyle.FixedSingle;
-            FormBorderStyle = FormBorderStyle.None;
-            Log.Debug("Main: madVR for 3D done");
-            _madVR3D = false;
-          }
-        }
-        _updateInt++;
-      }
-      if (_updateInt < 500)
-      {
-        _updateInt++;
       }
     }
 

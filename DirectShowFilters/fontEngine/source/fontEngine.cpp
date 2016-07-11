@@ -531,7 +531,7 @@ void FontEngineDrawTexture(int textureNo,float x, float y, float nw, float nh, f
 
   if (needRedraw)
   {
-    FontEnginePresentTextures();
+    FontEnginePresentTextures(); // TODO 1
   }
 
   texture=&textureData[textureNo];
@@ -730,7 +730,7 @@ void FontEngineDrawTexture2(int textureNo1,float x, float y, float nw, float nh,
   }
 
   TransformMatrix matrix(m);
-  FontEnginePresentTextures();
+  FontEnginePresentTextures(); // TODO 0
 
   TEXTURE_DATA_T* texture1;
   TEXTURE_DATA_T* texture2;

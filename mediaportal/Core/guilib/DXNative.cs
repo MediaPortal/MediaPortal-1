@@ -87,6 +87,14 @@ namespace MediaPortal.GUI.Library
       }
     }
 
+    public static void FontEnginePresentTexturesSync()
+    {
+      lock (_lock)
+      {
+        FontEnginePresentTextures();
+      }
+    }
+
     [DllImport("fontEngine.dll", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
     public static extern unsafe void FontEngineInitialize(int iScreenWidth, int iScreenHeight, int poolFormat);
 
@@ -141,7 +149,7 @@ namespace MediaPortal.GUI.Library
                                                             FontEngineBlendMode blendMode);
 
     [DllImport("fontEngine.dll", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
-    public static extern unsafe void FontEnginePresentTextures();
+    private static extern unsafe void FontEnginePresentTextures();
 
     [DllImport("fontEngine.dll", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
     public static extern unsafe void FontEngineSetDevice(void* device);
