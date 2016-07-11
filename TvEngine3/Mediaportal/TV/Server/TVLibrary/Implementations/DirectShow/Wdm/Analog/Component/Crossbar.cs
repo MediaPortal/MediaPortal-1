@@ -325,7 +325,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
                 _pinMapAudio.Add(CaptureSourceAudio.Line3, i);
                 break;
               default:
-                this.LogWarn("WDM analog crossbar: {0} line audio inputs detected, not supported", countAudioLine);
+                this.LogWarn("WDM analog crossbar: {0} line audio inputs detected, only 3 supported", countAudioLine);
                 break;
             }
             break;
@@ -350,7 +350,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
                 _pinMapAudio.Add(CaptureSourceAudio.Spdif3, i);
                 break;
               default:
-                this.LogWarn("WDM analog crossbar: {0} S/PDIF audio inputs detected, not supported", countAudioSpdif);
+                this.LogWarn("WDM analog crossbar: {0} S/PDIF audio inputs detected, only 3 supported", countAudioSpdif);
                 break;
             }
             break;
@@ -368,7 +368,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
                 _pinMapAudio.Add(CaptureSourceAudio.Auxiliary3, i);
                 break;
               default:
-                this.LogWarn("WDM analog crossbar: {0} auxiliary audio inputs detected, not supported", countAudioAuxiliary);
+                this.LogWarn("WDM analog crossbar: {0} auxiliary audio inputs detected, only 3 supported", countAudioAuxiliary);
                 break;
             }
             break;
@@ -393,7 +393,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
                 _pinMapAudio.Add(CaptureSourceAudio.AesEbu3, i);
                 break;
               default:
-                this.LogWarn("WDM analog crossbar: {0} AES audio inputs detected, not supported", countAudioAes);
+                this.LogWarn("WDM analog crossbar: {0} AES audio inputs detected, only 3 supported", countAudioAes);
                 break;
             }
             break;
@@ -414,7 +414,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
                 _pinMapVideoDefaultAudio.Add(CaptureSourceVideo.Composite3, relatedPinIndex);
                 break;
               default:
-                this.LogWarn("WDM analog crossbar: {0} composite video inputs detected, not supported", countVideoComposite);
+                this.LogWarn("WDM analog crossbar: {0} composite video inputs detected, only 3 supported", countVideoComposite);
                 break;
             }
             break;
@@ -435,7 +435,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
                 _pinMapVideoDefaultAudio.Add(CaptureSourceVideo.Svideo3, relatedPinIndex);
                 break;
               default:
-                this.LogWarn("WDM analog crossbar: {0} s-video video inputs detected, not supported", countVideoSvideo);
+                this.LogWarn("WDM analog crossbar: {0} s-video video inputs detected, only 3 supported", countVideoSvideo);
                 break;
             }
             break;
@@ -456,7 +456,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
                 _pinMapVideoDefaultAudio.Add(CaptureSourceVideo.Rgb3, relatedPinIndex);
                 break;
               default:
-                this.LogWarn("WDM analog crossbar: {0} RGB video inputs detected, not supported", countVideoRgb);
+                this.LogWarn("WDM analog crossbar: {0} RGB video inputs detected, only 3 supported", countVideoRgb);
                 break;
             }
             break;
@@ -477,7 +477,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
                 _pinMapVideoDefaultAudio.Add(CaptureSourceVideo.Yryby3, relatedPinIndex);
                 break;
               default:
-                this.LogWarn("WDM analog crossbar: {0} YrYbY video inputs detected, not supported", countVideoYryby);
+                this.LogWarn("WDM analog crossbar: {0} YrYbY video inputs detected, only 3 supported", countVideoYryby);
                 break;
             }
             break;
@@ -505,7 +505,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
                 _pinMapVideoDefaultAudio.Add(CaptureSourceVideo.Hdmi3, relatedPinIndex);
                 break;
               default:
-                this.LogWarn("WDM analog crossbar: {0} serial digital (HDMI) video inputs detected, not supported", countVideoHdmi);
+                this.LogWarn("WDM analog crossbar: {0} serial digital (HDMI) video inputs detected, only 3 supported", countVideoHdmi);
                 break;
             }
             break;
