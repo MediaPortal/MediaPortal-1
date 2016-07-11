@@ -228,18 +228,18 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeEncoder
     private static readonly Guid PROPERTY_SET_AUDIO = new Guid(0x6337a7d7, 0x9f2f, 0x4ff7, 0x8e, 0xce, 0x14, 0xa5, 0x49, 0xd4, 0x8c, 0x2e);
     private static readonly Guid PROPERTY_SET_INFO = new Guid(0x9ba6c1a9, 0xd872, 0x4e89, 0x81, 0xf2, 0xb3, 0xf9, 0xda, 0x1f, 0x3e, 0x32);
 
-    private const int BIT_RATE_VIDEO_MINIMUM = 1000000;
-    private const int BIT_RATE_VIDEO_MAXIMUM = 13500000;
-    private const int BIT_RATE_VIDEO_MAXIMUM_COLOSSUS = 20000000;
-    private const int BIT_RATE_VIDEO_RESOLUTION = 500000;
-    private const int BIT_RATE_VIDEO_DEFAULT = 10000000;
-    private const int BIT_RATE_VIDEO_DEFAULT_PEAK = BIT_RATE_VIDEO_MAXIMUM;
-    private const int BIT_RATE_VIDEO_DEFAULT_PEAK_COLOSSUS = 15000000;
+    private const uint BIT_RATE_VIDEO_MINIMUM = 1000000;
+    private const uint BIT_RATE_VIDEO_MAXIMUM = 13500000;
+    private const uint BIT_RATE_VIDEO_MAXIMUM_COLOSSUS = 20000000;
+    private const uint BIT_RATE_VIDEO_RESOLUTION = 500000;
+    private const uint BIT_RATE_VIDEO_DEFAULT = 10000000;
+    private const uint BIT_RATE_VIDEO_DEFAULT_PEAK = BIT_RATE_VIDEO_MAXIMUM;
+    private const uint BIT_RATE_VIDEO_DEFAULT_PEAK_COLOSSUS = 15000000;
 
-    private const int BIT_RATE_AUDIO_MINIMUM = 64000;
-    private const int BIT_RATE_AUDIO_MAXIMUM = 256000;
-    private const int BIT_RATE_AUDIO_RESOLUTION = 32000;
-    private const int BIT_RATE_AUDIO_DEFAULT = 192000;
+    private const uint BIT_RATE_AUDIO_MINIMUM = 64000;
+    private const uint BIT_RATE_AUDIO_MAXIMUM = 256000;
+    private const uint BIT_RATE_AUDIO_RESOLUTION = 32000;
+    private const uint BIT_RATE_AUDIO_DEFAULT = 192000;
 
     private static readonly int VIDEO_ASPECT_RATIO_SETTINGS_SIZE = Marshal.SizeOf(typeof(VideoAspectRatioSettings));  // 12
     private static readonly int VIDEO_SCALER_SETTINGS_SIZE = Marshal.SizeOf(typeof(VideoScalerSettings));             // 44
@@ -550,37 +550,33 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeEncoder
         parameterId == CodecApiParameter.AV_ENC_COMMON_MAX_BIT_RATE || parameterId == PropSetID.ENCAPIPARAM_PeakBitRate)
       {
         minimum = BIT_RATE_VIDEO_MINIMUM;
-        Marshal.WriteInt32(minimum, 0, BIT_RATE_VIDEO_MINIMUM);
         if (_isColossus)
         {
           maximum = BIT_RATE_VIDEO_MAXIMUM_COLOSSUS;
-          Marshal.WriteInt32(maximum, 0, BIT_RATE_VIDEO_MAXIMUM_COLOSSUS);
         }
         else
         {
           maximum = BIT_RATE_VIDEO_MAXIMUM;
-          Marshal.WriteInt32(maximum, 0, BIT_RATE_VIDEO_MAXIMUM);
         }
         resolution = BIT_RATE_VIDEO_RESOLUTION;
-        Marshal.WriteInt32(resolution, 0, BIT_RATE_VIDEO_RESOLUTION);
       }
-      else if (parameterId == CodecApiParameter.AV_ENC_COMMON_RATE_CONTROL_MODE || parameterId == PropSetID.ENCAPIPARAM_BitRateMode)
+      else if (parameterId == CodecApiParameter.AV_ENC_COMMON_RATE_CONTROL_MODE)
+      {
+        minimum = (uint)eAVEncCommonRateControlMode.CBR;
+        maximum = (uint)eAVEncCommonRateControlMode.PeakConstrainedVBR;
+        resolution = (uint)1;
+      }
+      else if (parameterId == PropSetID.ENCAPIPARAM_BitRateMode)
       {
         minimum = (int)eAVEncCommonRateControlMode.CBR;
-        Marshal.WriteInt32(minimum, 0, (int)eAVEncCommonRateControlMode.CBR);
         maximum = (int)eAVEncCommonRateControlMode.PeakConstrainedVBR;
-        Marshal.WriteInt32(maximum, 0, (int)eAVEncCommonRateControlMode.PeakConstrainedVBR);
-        resolution = 1;
-        Marshal.WriteInt32(resolution, 0, 1);
+        resolution = (int)1;
       }
       else if (parameterId == CodecApiParameter.AV_ENC_AUDIO_MEAN_BIT_RATE)
       {
         minimum = BIT_RATE_AUDIO_MINIMUM;
-        Marshal.WriteInt32(minimum, 0, BIT_RATE_AUDIO_MINIMUM);
         maximum = BIT_RATE_AUDIO_MAXIMUM;
-        Marshal.WriteInt32(maximum, 0, BIT_RATE_AUDIO_MAXIMUM);
         resolution = BIT_RATE_AUDIO_RESOLUTION;
-        Marshal.WriteInt32(resolution, 0, BIT_RATE_AUDIO_RESOLUTION);
       }
       else
       {
@@ -614,58 +610,53 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeEncoder
         parameterId == CodecApiParameter.AV_ENC_COMMON_MAX_BIT_RATE ||
         parameterId == PropSetID.ENCAPIPARAM_PeakBitRate)
       {
-        int maxBitRate = BIT_RATE_VIDEO_MAXIMUM;
+        uint maxBitRate = BIT_RATE_VIDEO_MAXIMUM;
         if (_isColossus)
         {
           maxBitRate = BIT_RATE_VIDEO_MAXIMUM_COLOSSUS;
         }
-        int valueCount = 1 + ((maxBitRate - BIT_RATE_VIDEO_MINIMUM) / BIT_RATE_VIDEO_RESOLUTION);
+        uint valueCount = 1 + ((maxBitRate - BIT_RATE_VIDEO_MINIMUM) / BIT_RATE_VIDEO_RESOLUTION);
         values = new object[valueCount];
-        int bitRate = BIT_RATE_VIDEO_MINIMUM;
-        for (int i = 0; i < valueCount; i++)
+        uint bitRate = BIT_RATE_VIDEO_MINIMUM;
+        for (uint i = 0; i < valueCount; i++)
         {
           values[i] = bitRate;
-          Marshal.WriteInt32(values[i], 0, bitRate);
           bitRate += BIT_RATE_VIDEO_RESOLUTION;
         }
       }
-      else if (parameterId == CodecApiParameter.AV_ENC_COMMON_RATE_CONTROL_MODE || parameterId == PropSetID.ENCAPIPARAM_BitRateMode)
+      else if (parameterId == CodecApiParameter.AV_ENC_COMMON_RATE_CONTROL_MODE)
+      {
+        values = new object[2];
+        values[0] = (uint)eAVEncCommonRateControlMode.CBR;
+        values[1] = (uint)eAVEncCommonRateControlMode.PeakConstrainedVBR;
+      }
+      else if (parameterId == PropSetID.ENCAPIPARAM_BitRateMode)
       {
         values = new object[2];
         values[0] = (int)eAVEncCommonRateControlMode.CBR;
-        Marshal.WriteInt32(values[0], 0, (int)eAVEncCommonRateControlMode.CBR);
         values[1] = (int)eAVEncCommonRateControlMode.PeakConstrainedVBR;
-        Marshal.WriteInt32(values[1], 0, (int)eAVEncCommonRateControlMode.PeakConstrainedVBR);
       }
       else if (parameterId == CodecApiParameter.AV_ENC_AUDIO_MEAN_BIT_RATE)
       {
-        int valueCount = 1 + ((BIT_RATE_AUDIO_MAXIMUM - BIT_RATE_AUDIO_MINIMUM) / BIT_RATE_AUDIO_RESOLUTION);
+        uint valueCount = 1 + ((BIT_RATE_AUDIO_MAXIMUM - BIT_RATE_AUDIO_MINIMUM) / BIT_RATE_AUDIO_RESOLUTION);
         values = new object[valueCount];
-        int bitRate = BIT_RATE_AUDIO_MINIMUM;
+        uint bitRate = BIT_RATE_AUDIO_MINIMUM;
         for (int i = 0; i < valueCount; i++)
         {
           values[i] = bitRate;
-          Marshal.WriteInt32(values[i], 0, bitRate);
           bitRate += BIT_RATE_AUDIO_RESOLUTION;
         }
       }
       else if (parameterId == CodecApiParameter.AV_AUDIO_SAMPLE_RATE)
       {
         values = new object[7];
-        values[0] = 48000;
-        Marshal.WriteInt32(values[0], 0, 48000);
-        values[1] = 32000;
-        Marshal.WriteInt32(values[1], 0, 32000);
-        values[2] = 24000;
-        Marshal.WriteInt32(values[2], 0, 24000);
-        values[3] = 16000;
-        Marshal.WriteInt32(values[3], 0, 16000);
-        values[4] = 8000;
-        Marshal.WriteInt32(values[4], 0, 8000);
-        values[5] = 22050;
-        Marshal.WriteInt32(values[5], 0, 22050);
-        values[6] = 11025;
-        Marshal.WriteInt32(values[6], 0, 11025);
+        values[0] = (uint)48000;
+        values[1] = (uint)32000;
+        values[2] = (uint)24000;
+        values[3] = (uint)16000;
+        values[4] = (uint)8000;
+        values[5] = (uint)22050;
+        values[6] = (uint)11025;
       }
       else
       {
@@ -697,32 +688,30 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeEncoder
       if (parameterId == CodecApiParameter.AV_ENC_COMMON_MEAN_BIT_RATE || parameterId == PropSetID.ENCAPIPARAM_BitRate)
       {
         value = BIT_RATE_VIDEO_DEFAULT;
-        Marshal.WriteInt32(value, 0, BIT_RATE_VIDEO_DEFAULT);
       }
       else if (parameterId == CodecApiParameter.AV_ENC_COMMON_MAX_BIT_RATE || parameterId == PropSetID.ENCAPIPARAM_PeakBitRate)
       {
-        int peakBitRate = BIT_RATE_VIDEO_DEFAULT_PEAK;
+        value = BIT_RATE_VIDEO_DEFAULT_PEAK;
         if (_isColossus)
         {
-          peakBitRate = BIT_RATE_VIDEO_DEFAULT_PEAK_COLOSSUS;
+          value = BIT_RATE_VIDEO_DEFAULT_PEAK_COLOSSUS;
         }
-        value = peakBitRate;
-        Marshal.WriteInt32(value, 0, peakBitRate);
       }
-      else if (parameterId == CodecApiParameter.AV_ENC_COMMON_RATE_CONTROL_MODE || parameterId == PropSetID.ENCAPIPARAM_BitRateMode)
+      else if (parameterId == CodecApiParameter.AV_ENC_COMMON_RATE_CONTROL_MODE)
+      {
+        value = (uint)eAVEncCommonRateControlMode.PeakConstrainedVBR;
+      }
+      else if (parameterId == PropSetID.ENCAPIPARAM_BitRateMode)
       {
         value = (int)eAVEncCommonRateControlMode.PeakConstrainedVBR;
-        Marshal.WriteInt32(value, 0, (int)eAVEncCommonRateControlMode.PeakConstrainedVBR);
       }
       else if (parameterId == CodecApiParameter.AV_ENC_AUDIO_MEAN_BIT_RATE)
       {
         value = BIT_RATE_AUDIO_DEFAULT;
-        Marshal.WriteInt32(value, 0, BIT_RATE_AUDIO_DEFAULT);
       }
       else if (parameterId == CodecApiParameter.AV_AUDIO_SAMPLE_RATE)
       {
-        value = 48000;
-        Marshal.WriteInt32(value, 0, 48000);
+        value = (uint)48000;
       }
       else
       {
@@ -773,13 +762,11 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeEncoder
         VideoBitRateSettings settings = (VideoBitRateSettings)Marshal.PtrToStructure(_generalBuffer, typeof(VideoBitRateSettings));
         if (parameterId == CodecApiParameter.AV_ENC_COMMON_MEAN_BIT_RATE || parameterId == PropSetID.ENCAPIPARAM_BitRate)
         {
-          value = settings.BitRateSdi * 10;
-          Marshal.WriteInt32(value, 0, settings.BitRateSdi * 10);
+          value = (uint)settings.BitRateSdi * 10;
         }
         else if (parameterId == CodecApiParameter.AV_ENC_COMMON_MAX_BIT_RATE || parameterId == PropSetID.ENCAPIPARAM_PeakBitRate)
         {
-          value = settings.PeakBitRateSdi * 10;
-          Marshal.WriteInt32(value, 0, settings.PeakBitRateSdi * 10);
+          value = (uint)settings.PeakBitRateSdi * 10;
         }
         else
         {
@@ -788,8 +775,14 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeEncoder
           {
             mode = eAVEncCommonRateControlMode.CBR;
           }
-          value = (int)mode;
-          Marshal.WriteInt32(value, 0, (int)mode);
+          if (parameterId == CodecApiParameter.AV_ENC_COMMON_RATE_CONTROL_MODE)
+          {
+            value = (uint)mode;
+          }
+          else
+          {
+            value = (int)mode;
+          }
         }
       }
       else if (parameterId == CodecApiParameter.AV_ENC_AUDIO_MEAN_BIT_RATE || parameterId == CodecApiParameter.AV_AUDIO_SAMPLE_RATE)
@@ -809,13 +802,11 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeEncoder
         AudioAacSettings settings = (AudioAacSettings)Marshal.PtrToStructure(_generalBuffer, typeof(AudioAacSettings));
         if (parameterId == CodecApiParameter.AV_ENC_AUDIO_MEAN_BIT_RATE)
         {
-          value = settings.BitRate;
-          Marshal.WriteInt32(value, 0, settings.BitRate);
+          value = (uint)settings.BitRate;
         }
         else
         {
-          value = settings.SampleRate48k;
-          Marshal.WriteInt32(value, 0, settings.SampleRate48k);
+          value = (uint)settings.SampleRate48k;
         }
       }
       else
@@ -866,7 +857,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeEncoder
         VideoBitRateSettings settings = (VideoBitRateSettings)Marshal.PtrToStructure(_generalBuffer, typeof(VideoBitRateSettings));
         if (parameterId == CodecApiParameter.AV_ENC_COMMON_MEAN_BIT_RATE || parameterId == PropSetID.ENCAPIPARAM_BitRate)
         {
-          int bitRate = Marshal.ReadInt32(value, 0) / 10;
+          int bitRate = Convert.ToInt32(value) / 10;
           settings.BitRateSdi = bitRate;
           settings.BitRateSdp = bitRate;
           settings.BitRate720p = bitRate;
@@ -875,7 +866,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeEncoder
         }
         else if (parameterId == CodecApiParameter.AV_ENC_COMMON_MAX_BIT_RATE || parameterId == PropSetID.ENCAPIPARAM_PeakBitRate)
         {
-          int bitRate = Marshal.ReadInt32(value, 0) / 10;
+          int bitRate = Convert.ToInt32(value) / 10;
           settings.PeakBitRateSdi = bitRate;
           settings.PeakBitRateSdp = bitRate;
           settings.PeakBitRate720p = bitRate;
@@ -885,7 +876,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeEncoder
         else
         {
           EncoderMode mode = EncoderMode.VariableBitRate;
-          if (Marshal.ReadInt32(value, 0) == (int)eAVEncCommonRateControlMode.CBR)
+          if (Convert.ToInt32(value) == (int)eAVEncCommonRateControlMode.CBR)
           {
             mode = EncoderMode.ConstantBitRate;
           }
@@ -920,12 +911,11 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeEncoder
         AudioAacSettings settings = (AudioAacSettings)Marshal.PtrToStructure(_generalBuffer, typeof(AudioAacSettings));
         if (parameterId == CodecApiParameter.AV_ENC_AUDIO_MEAN_BIT_RATE)
         {
-          int bitRate = Marshal.ReadInt32(value, 0);
-          settings.BitRate = bitRate;
+          settings.BitRate = Convert.ToInt32(value);
         }
         else
         {
-          int sampleRate = Marshal.ReadInt32(value, 0);
+          int sampleRate = Convert.ToInt32(value);
           if (sampleRate % 1000 == 0)
           {
             settings.SampleRate48k = sampleRate;
