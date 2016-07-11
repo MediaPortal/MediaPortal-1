@@ -1419,11 +1419,13 @@ namespace Mediaportal.TV.TvPlugin
 
       if (!g_Player.IsTVRecording && !TVHome.Card.IsRecording)
       {
-        bool canSetMode;
-        bool isPeakModeSupported;
+        EncodeMode supportedEncodeModes;
         bool canSetBitRate;
-        TVHome.Card.GetSupportedQualityControlFeatures(out canSetMode, out isPeakModeSupported, out canSetBitRate);
-        if (canSetMode || isPeakModeSupported || canSetBitRate)
+        TVHome.Card.GetSupportedQualityControlFeatures(out supportedEncodeModes, out canSetBitRate);
+        if (
+          (supportedEncodeModes != EncodeMode.Default && (supportedEncodeModes & (supportedEncodeModes - 1)) != 0) ||   // supports more than one mode
+          canSetBitRate
+        )
         {
           dlg.AddLocalizedString(882);
         }
@@ -1652,11 +1654,10 @@ namespace Mediaportal.TV.TvPlugin
 
     private void ShowQualitySettingsMenu()
     {
-      bool canSetEncodeMode;
-      bool isPeakModeSupported;
+      EncodeMode supportedEncodeModes;
       bool canSetBitRate;
-      TVHome.Card.GetSupportedQualityControlFeatures(out canSetEncodeMode, out isPeakModeSupported, out canSetBitRate);
-      if (canSetEncodeMode)
+      TVHome.Card.GetSupportedQualityControlFeatures(out supportedEncodeModes, out canSetBitRate);
+      if (supportedEncodeModes != EncodeMode.Default && (supportedEncodeModes & (supportedEncodeModes - 1)) != 0)   // supports more than one mode
       {
         if (dlg == null)
         {
@@ -1666,27 +1667,33 @@ namespace Mediaportal.TV.TvPlugin
         dlg.SetHeading(882);
 
         dlg.ShowQuickNumbers = true;
-        dlg.AddLocalizedString(965);
-        dlg.AddLocalizedString(966);
-        if (isPeakModeSupported)
+        if (supportedEncodeModes.HasFlag(EncodeMode.ConstantBitRate))
+        {
+          dlg.AddLocalizedString(965);
+        }
+        if (supportedEncodeModes.HasFlag(EncodeMode.VariableBitRate))
+        {
+          dlg.AddLocalizedString(966);
+        }
+        if (supportedEncodeModes.HasFlag(EncodeMode.VariablePeakBitRate))
         {
           dlg.AddLocalizedString(967);
         }
         EncodeMode mode = TVHome.Card.EncodeMode;
-        switch (mode)
+        if (supportedEncodeModes.HasFlag(mode))
         {
-          case EncodeMode.ConstantBitRate:
-            dlg.SelectedLabel = 0;
-            break;
-          case EncodeMode.VariableBitRate:
-            dlg.SelectedLabel = 1;
-            break;
-          case EncodeMode.VariablePeakBitRate:
-            if (isPeakModeSupported)
-            {
+          switch (mode)
+          {
+            case EncodeMode.ConstantBitRate:
+              dlg.SelectedLabel = 0;
+              break;
+            case EncodeMode.VariableBitRate:
+              dlg.SelectedLabel = 1;
+              break;
+            case EncodeMode.VariablePeakBitRate:
               dlg.SelectedLabel = 2;
-            }
-            break;
+              break;
+          }
         }
         _isDialogVisible = true;
 
@@ -1794,7 +1801,7 @@ namespace Mediaportal.TV.TvPlugin
           int bitRate = (int)quality & 0x7f;
           this.LogInfo("Setting average bit-rate to: {0}%", bitRate);
           TVHome.Card.AverageBitRate = bitRate;
-          if (isPeakModeSupported)
+          if (supportedEncodeModes.HasFlag(EncodeMode.VariablePeakBitRate))
           {
             bitRate = (int)quality >> 7;
             this.LogInfo("Setting peak bit-rate to: {0}%", bitRate);

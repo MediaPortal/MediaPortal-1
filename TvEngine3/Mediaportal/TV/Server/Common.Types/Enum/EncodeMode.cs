@@ -18,6 +18,7 @@
 
 #endregion
 
+using System;
 using System.ComponentModel;
 
 namespace Mediaportal.TV.Server.Common.Types.Enum
@@ -25,6 +26,7 @@ namespace Mediaportal.TV.Server.Common.Types.Enum
   /// <summary>
   /// Encode modes.
   /// </summary>
+  [Flags]
   public enum EncodeMode
   {
     /// <summary>
@@ -35,16 +37,16 @@ namespace Mediaportal.TV.Server.Common.Types.Enum
     /// Constant bit-rate mode.
     /// </summary>
     [Description("Constant")]
-    ConstantBitRate,
+    ConstantBitRate = 1,
     /// <summary>
     /// Variable bit-rate mode.
     /// </summary>
     [Description("Variable")]
-    VariableBitRate,
+    VariableBitRate = 2,
     /// <summary>
     /// Variable peak bit-rate mode.
     /// </summary>
     [Description("Variable Peak")]
-    VariablePeakBitRate
+    VariablePeakBitRate = 4
   }
 }

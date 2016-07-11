@@ -22,12 +22,12 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.Entities
       get { return _entity; }
     }
 
-    // Stored as bits 2 to 15 (zero indexed, bit 0 is LSB) in the Quality property.
+    // Stored as bits 3 to 16 (zero indexed, bit 0 is LSB) in the Quality property.
     public QualityType QualityType
     {
       get
       {
-        int value = _entity.Quality >> 2;
+        int value = (_entity.Quality >> 3) & 0x3fff;
         if (Enum.IsDefined(typeof(QualityType), value))
         {
           return (QualityType)value;
@@ -38,47 +38,47 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.Entities
       {
         if (value != QualityType.Custom)
         {
-          _entity.Quality = ((int)value << 2) | (_entity.Quality & 3);
+          _entity.Quality = ((int)value << 3) | (_entity.Quality & 0x7ffe0007);
         }
       }
     }
 
-    // Stored as bits 2 to 8 (zero indexed, bit 0 is LSB) in the Quality property.
+    // Stored as bits 3 to 9 (zero indexed, bit 0 is LSB) in the Quality property.
     public int AverageBitRate
     {
       get
       {
-        return (_entity.Quality >> 2) & 0x7f;
+        return (_entity.Quality >> 3) & 0x7f;
       }
       set
       {
-        _entity.Quality = (value << 2) | (_entity.Quality & 0xfe03);
+        _entity.Quality = (value << 3) | (_entity.Quality & 0x7ffffc07);
       }
     }
 
-    // Stored as bits 9 to 15 (zero indexed, bit 0 is LSB) in the Quality property.
+    // Stored as bits 10 to 16 (zero indexed, bit 0 is LSB) in the Quality property.
     public int PeakBitRate
     {
       get
       {
-        return _entity.Quality >> 9;
+        return (_entity.Quality >> 10) & 0x7f;
       }
       set
       {
-        _entity.Quality = (value << 9) | (_entity.Quality & 0x1ff);
+        _entity.Quality = (value << 10) | (_entity.Quality & 0x7ffe03ff);
       }
     }
 
-    // Stored in the 2 least significant bits of the Quality property.
+    // Stored in the 3 least significant bits of the Quality property.
     public EncodeMode BitRateMode
     {
       get
       {
-        return (EncodeMode)(_entity.Quality & 3);
+        return (EncodeMode)(_entity.Quality & 7);
       }
       set
       {
-        _entity.Quality = (_entity.Quality & 0xfffc) | (int)value;
+        _entity.Quality = (_entity.Quality & 0x7ffffff8) | (int)value;
       }
     }
 

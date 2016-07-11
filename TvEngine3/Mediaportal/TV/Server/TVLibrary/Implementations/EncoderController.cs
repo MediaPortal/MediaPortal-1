@@ -49,8 +49,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     private int _countTimeShifters = 0;
     private int _countRecorders = 0;
 
-    private bool _canSetEncodeMode = false;
-    private bool _isPeakModeSupported = false;
+    private EncodeMode _supportedEncodeModes = EncodeMode.Default;
     private bool _canSetBitRate = false;
 
     private bool _isCustomSettings = false;
@@ -68,13 +67,20 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
         if (encoder != null)
         {
           _encoders.Add(encoder);
-          if (!_canSetEncodeMode && encoder.IsParameterSupported(PropSetID.ENCAPIPARAM_BitRateMode))
+          if (encoder.IsParameterSupported(PropSetID.ENCAPIPARAM_BitRateMode))
           {
-            _canSetEncodeMode = true;
-          }
-          if (!_isPeakModeSupported && encoder.IsParameterSupported(PropSetID.ENCAPIPARAM_PeakBitRate))
-          {
-            _isPeakModeSupported = true;
+            object[] supportedValues;
+            if (encoder.GetParameterValues(PropSetID.ENCAPIPARAM_BitRateMode, out supportedValues))
+            {
+              foreach (object value in supportedValues)
+              {
+                EncodeMode mode = (EncodeMode)value;
+                if (mode != EncodeMode.VariablePeakBitRate || encoder.IsParameterSupported(PropSetID.ENCAPIPARAM_PeakBitRate))
+                {
+                  _supportedEncodeModes |= mode;
+                }
+              }
+            }
           }
           if (!_canSetBitRate && encoder.IsParameterSupported(PropSetID.ENCAPIPARAM_BitRate))
           {
@@ -86,9 +92,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       if (_encoders.Count > 0)
       {
         this.LogInfo("encoder: supported features...");
-        this.LogInfo("  can set encode mode?    = {0}", _canSetEncodeMode);
-        this.LogInfo("  is peak mode supported? = {0}", _isPeakModeSupported);
-        this.LogInfo("  can set bit-rate?       = {0}", _canSetBitRate);
+        this.LogInfo("  supported encode modes = [{0}]", _supportedEncodeModes);
+        this.LogInfo("  can set bit-rate?      = {0}", _canSetBitRate);
       }
     }
 
@@ -97,13 +102,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// <summary>
     /// Determine which (if any) quality control features are supported by the tuner.
     /// </summary>
-    /// <param name="canSetEncodeMode"><c>True</c> if the tuner's encoding mode can be set.</param>
-    /// <param name="isPeakModeSupported"><c>True</c> if the tuner supports the variable-peak encoding mode.</param>
+    /// <param name="supportedEncodeModes">The encoding modes supported by the tuner.</param>
     /// <param name="canSetBitRate"><c>True</c> if the tuner's encoding bit-rate can be set.</param>
-    public void GetSupportedFeatures(out bool canSetEncodeMode, out bool isPeakModeSupported, out bool canSetBitRate)
+    public void GetSupportedFeatures(out EncodeMode supportedEncodeModes, out bool canSetBitRate)
     {
-      canSetEncodeMode = _canSetEncodeMode;
-      isPeakModeSupported = _isPeakModeSupported;
+      supportedEncodeModes = _supportedEncodeModes;
       canSetBitRate = _canSetBitRate;
     }
 
@@ -118,11 +121,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       }
       set
       {
-        if (!_canSetEncodeMode || (!_isPeakModeSupported && value == EncodeMode.VariablePeakBitRate))
-        {
-          return;
-        }
-        if (_settingsCurrent.EncodeMode == value)
+        if (!_supportedEncodeModes.HasFlag(value) || _settingsCurrent.EncodeMode == value)
         {
           return;
         }
@@ -204,7 +203,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       }
       set
       {
-        if (!_isPeakModeSupported)
+        if (!_supportedEncodeModes.HasFlag(EncodeMode.VariablePeakBitRate))
         {
           return;
         }

@@ -821,10 +821,9 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
     private void buttonEncoderSettingsCheckSupport_Click(object sender, EventArgs e)
     {
       this.LogInfo("tuner: check encoder setting support, tuner ID = {0}", _tuner.IdTuner);
-      bool canSetEncodeMode;
-      bool isPeakModeSupported;
+      EncodeMode supportedEncodeModes;
       bool canSetBitRate;
-      if (!ServiceAgents.Instance.ControllerServiceAgent.GetSupportedQualityControlFeatures(_tuner.IdTuner, out canSetEncodeMode, out isPeakModeSupported, out canSetBitRate))
+      if (!ServiceAgents.Instance.ControllerServiceAgent.GetSupportedQualityControlFeatures(_tuner.IdTuner, out supportedEncodeModes, out canSetBitRate))
       {
         this.LogError("tuner: failed to get supported features, tuner ID = {0}", _tuner.IdTuner);
         MessageBox.Show("Support check failed. " + SectionSettings.SENTENCE_CHECK_LOG_FILES, SectionSettings.MESSAGE_CAPTION, MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -832,10 +831,14 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       }
 
       this.LogInfo("tuner: encoder settings support result...");
-      this.LogInfo("  can set encode mode?    = {0}", canSetEncodeMode);
-      this.LogInfo("  is peak mode supported? = {0}", isPeakModeSupported);
-      this.LogInfo("  can set bit-rate?       = {0}", canSetBitRate);
-      if (!canSetEncodeMode && !isPeakModeSupported && !canSetBitRate)
+      this.LogInfo("  supported encode modes = [{0}]", supportedEncodeModes);
+      this.LogInfo("  can set bit-rate?      = {0}", canSetBitRate);
+      bool onlySupportsOneEncodeMode =
+      (
+        supportedEncodeModes == EncodeMode.Default ||
+        (supportedEncodeModes & (supportedEncodeModes - 1)) == 0
+      );
+      if (onlySupportsOneEncodeMode && !canSetBitRate)
       {
         MessageBox.Show("This tuner does not support encoder settings.", SectionSettings.MESSAGE_CAPTION, MessageBoxButtons.OK, MessageBoxIcon.Information);
         return;
@@ -863,7 +866,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       numericUpDownEncoderBitRateValuePeakRecording.Visible = true;
       labelEncoderBitRateValuePeakUnitRecording.Visible = true;
 
-      if (!canSetEncodeMode)
+      if (onlySupportsOneEncodeMode)
       {
         comboBoxEncoderBitRateModeTimeShifting.Enabled = false;
         comboBoxEncoderBitRateModeRecording.Enabled = false;
@@ -876,11 +879,17 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
         {
           comboBoxEncoderBitRateModeTimeShifting.Items.Add(EncodeMode.Default.GetDescription());
           comboBoxEncoderBitRateModeRecording.Items.Add(EncodeMode.Default.GetDescription());
-          comboBoxEncoderBitRateModeTimeShifting.Items.Add(EncodeMode.ConstantBitRate.GetDescription());
-          comboBoxEncoderBitRateModeRecording.Items.Add(EncodeMode.ConstantBitRate.GetDescription());
-          comboBoxEncoderBitRateModeTimeShifting.Items.Add(EncodeMode.VariableBitRate.GetDescription());
-          comboBoxEncoderBitRateModeRecording.Items.Add(EncodeMode.VariableBitRate.GetDescription());
-          if (isPeakModeSupported)
+          if (supportedEncodeModes.HasFlag(EncodeMode.ConstantBitRate))
+          {
+            comboBoxEncoderBitRateModeTimeShifting.Items.Add(EncodeMode.ConstantBitRate.GetDescription());
+            comboBoxEncoderBitRateModeRecording.Items.Add(EncodeMode.ConstantBitRate.GetDescription());
+          }
+          if (supportedEncodeModes.HasFlag(EncodeMode.VariableBitRate))
+          {
+            comboBoxEncoderBitRateModeTimeShifting.Items.Add(EncodeMode.VariableBitRate.GetDescription());
+            comboBoxEncoderBitRateModeRecording.Items.Add(EncodeMode.VariableBitRate.GetDescription());
+          }
+          if (supportedEncodeModes.HasFlag(EncodeMode.VariablePeakBitRate))
           {
             comboBoxEncoderBitRateModeTimeShifting.Items.Add(EncodeMode.VariablePeakBitRate.GetDescription());
             comboBoxEncoderBitRateModeRecording.Items.Add(EncodeMode.VariablePeakBitRate.GetDescription());
@@ -913,7 +922,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
 
       numericUpDownEncoderBitRateValuePeakTimeShifting.Value = _analogSettings.EncoderBitRatePeakTimeShifting;
       numericUpDownEncoderBitRateValuePeakRecording.Value = _analogSettings.EncoderBitRatePeakRecording;
-      if (!isPeakModeSupported)
+      if (!supportedEncodeModes.HasFlag(EncodeMode.VariablePeakBitRate))
       {
         numericUpDownEncoderBitRateValuePeakTimeShifting.Enabled = false;
         numericUpDownEncoderBitRateValuePeakRecording.Enabled = false;

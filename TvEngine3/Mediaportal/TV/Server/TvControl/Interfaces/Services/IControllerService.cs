@@ -622,12 +622,11 @@ namespace Mediaportal.TV.Server.TVControl.Interfaces.Services
     /// Determine which (if any) quality control features are supported by a tuner.
     /// </summary>
     /// <param name="tunerId">The tuner's unique identifier.</param>
-    /// <param name="canSetEncodeMode"><c>True</c> if the tuner's encoding mode can be set.</param>
-    /// <param name="isPeakModeSupported"><c>True</c> if the tuner supports the variable-peak encoding mode.</param>
+    /// <param name="supportedEncodeModes">The encoding modes supported by the tuner.</param>
     /// <param name="canSetBitRate"><c>True</c> if the tuner's average and/or peak encoding bit-rate can be set.</param>
     /// <returns><c>true</c> if the check succeeded, otherwise <c>false</c></returns>
     [OperationContract]
-    bool GetSupportedQualityControlFeatures(int tunerId, out bool canSetEncodeMode, out bool isPeakModeSupported, out bool canSetBitRate);
+    bool GetSupportedQualityControlFeatures(int tunerId, out EncodeMode supportedEncodeModes, out bool canSetBitRate);
 
     /// <summary>
     /// Get a tuner's current video and/or audio encoding mode.
