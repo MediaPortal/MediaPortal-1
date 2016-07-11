@@ -145,10 +145,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
         {
           mode = VideoEncoderBitrateMode.VariableBitRatePeak;
         }
-        int newMode = (int)mode;
-        object newModeObj = newMode;
-        Marshal.WriteInt32(newModeObj, 0, newMode);
-        if (SetParameterByValues(PropSetID.ENCAPIPARAM_BitRateMode, newModeObj))
+        int modeInt = (int)mode;
+        if (SetParameterByValues(PropSetID.ENCAPIPARAM_BitRateMode, modeInt))
         {
           _settingsCurrent.EncodeMode = value;
           _isCustomSettings = true;
@@ -182,7 +180,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
         }
         else
         {
-          success = SetParameterByRange(PropSetID.ENCAPIPARAM_BitRate, value);
+          success = SetParameterByRange(PropSetID.ENCAPIPARAM_BitRate, value, typeof(uint));
         }
         if (success)
         {
@@ -218,7 +216,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
         }
         else
         {
-          success = SetParameterByRange(PropSetID.ENCAPIPARAM_PeakBitRate, value);
+          success = SetParameterByRange(PropSetID.ENCAPIPARAM_PeakBitRate, value, typeof(uint));
         }
         if (success)
         {
@@ -443,9 +441,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       return success;
     }
 
-    private bool SetParameterByRange(Guid parameter, int valuePercent)
+    private bool SetParameterByRange(Guid parameter, int valuePercentage, Type valueType)
     {
-      this.LogDebug("encoder: set parameter {0} to {1}%", parameter, valuePercent);
+      this.LogDebug("encoder: set parameter {0} to {1}%", parameter, valuePercentage);
       bool success = false;
       foreach (IEncoder encoder in _encoders)
       {
@@ -465,53 +463,54 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
           continue;
         }
 
-        // TODO non-int type parameters not supported, is this a problem?
-        int minimumValue = Marshal.ReadInt32(minimum, 0);
-        int maximumValue = Marshal.ReadInt32(maximum, 0);
-        int resolutionValue = Marshal.ReadInt32(resolution, 0);
-        this.LogDebug("    range, minimum = {0}, maximum = {1}, resolution = {2}", minimumValue, maximumValue, resolutionValue);
+        this.LogDebug("    range, minimum = {0}, maximum = {1}, resolution = {2}", minimum, maximum, resolution);
 
-        int value = minimumValue;
-        int rawValue = minimumValue;
-        if (valuePercent <= 0)
+        // It's difficult to do calculations at run-time with dynamically typed
+        // objects. Convert to the widest numeric type for the calculation
+        // step, convert the result to the target type, and hope it all works!
+        object value = minimum;
+        decimal unquantisedValue;
+        if (valuePercentage <= 0)
         {
-          value = minimumValue;
-          rawValue = minimumValue;
+          value = minimum;
+          unquantisedValue = Convert.ToDecimal(minimum);
         }
-        else if (valuePercent >= 100)
+        else if (valuePercentage >= 100)
         {
-          value = maximumValue;
-          rawValue = maximumValue;
+          value = maximum;
+          unquantisedValue = Convert.ToDecimal(maximum);
         }
         else
         {
-          rawValue = minimumValue + (value * (maximumValue - minimumValue) / 100);
-          int currentQuanta = minimumValue;
-          while (rawValue > currentQuanta)
+          // Calculate the value.
+          decimal minimumDecimal = Convert.ToDecimal(minimum);
+          decimal maximumDecimal = Convert.ToDecimal(maximum);
+          decimal resolutionDecimal = Convert.ToDecimal(resolution);
+          unquantisedValue = minimumDecimal + (valuePercentage * (maximumDecimal - minimumDecimal) / 100);
+
+          // Quantise the calculated value.
+          decimal quantisedValueUpper = minimumDecimal;
+          while (unquantisedValue > quantisedValueUpper)
           {
-            currentQuanta += resolutionValue;
+            quantisedValueUpper += resolutionDecimal;
           }
-          int lowerQuanta = currentQuanta - resolutionValue;
-          if ((rawValue - lowerQuanta) < (currentQuanta - lowerQuanta))
+          decimal quantisedValueLower = quantisedValueUpper - resolutionDecimal;
+          if ((unquantisedValue - quantisedValueLower) < (quantisedValueUpper - quantisedValueLower))
           {
-            value = lowerQuanta;
+            value = Convert.ChangeType(quantisedValueLower, valueType);
+          }
+          else if (quantisedValueUpper > maximumDecimal)
+          {
+            value = maximum;
           }
           else
           {
-            if (currentQuanta > maximumValue)
-            {
-              value = maximumValue;
-            }
-            else
-            {
-              value = currentQuanta;
-            }
+            value = Convert.ChangeType(quantisedValueUpper, valueType);
           }
         }
-        this.LogDebug("    raw value = {0}, quantised value = {1}", rawValue, value);
-        object valueObj = value;
-        Marshal.WriteInt32(valueObj, 0, value);
-        if (encoder.SetParameterValue(parameter, valueObj))
+        this.LogDebug("    unquantised value = {0}, quantised value = {1}", unquantisedValue, value);
+
+        if (encoder.SetParameterValue(parameter, value))
         {
           this.LogDebug("    success!");
           success = true;
