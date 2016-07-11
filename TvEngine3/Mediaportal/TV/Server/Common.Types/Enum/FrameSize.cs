@@ -28,34 +28,36 @@ namespace Mediaportal.TV.Server.Common.Types.Enum
   {
     Automatic = 0,
     [Description("320x240 NTSC CIF square pixels")]
-    Fs320_240 = 1,
+    Fs320_240 = 0x00000001,
     [Description("352x240 NTSC CIF")]
-    Fs352_240 = 2,
+    Fs352_240 = 0x00000002,
     [Description("352x288 PAL CIF")]
-    Fs352_288 = 4,
+    Fs352_288 = 0x00000004,
     [Description("384x288")]
-    Fs384_288 = 8,
+    Fs384_288 = 0x00000008,
     [Description("480x360")]
-    Fs480_360 = 16,
+    Fs480_360 = 0x00000010,
     [Description("640x360")]
-    Fs640_360 = 32,
+    Fs640_360 = 0x00000020,
     [Description("640x480 NTSC square pixels")]
-    Fs640_480 = 64,
+    Fs640_480 = 0x00000040,
     [Description("704x480 NTSC TV broadcast")]
-    Fs704_480 = 128,
+    Fs704_480 = 0x00000080,
     [Description("704x576 PAL/SECAM TV broadcast")]
-    Fs704_576 = 256,
+    Fs704_576 = 0x00000100,
     [Description("720x480 NTSC ITU-601 D1 (recommended)")]
-    Fs720_480 = 512,
+    Fs720_480 = 0x00000200,
     [Description("720x576 PAL/SECAM ITU-601 D1 (recommended)")]
-    Fs720_576 = 1024,
+    Fs720_576 = 0x00000400,
     [Description("768x480")]
-    Fs768_480 = 2048,
+    Fs768_480 = 0x00000800,
     [Description("768x576 PAL square pixels")]
-    Fs768_576 = 4096,
+    Fs768_576 = 0x00001000,
     [Description("1280x720 HD")]
-    Fs1280_720 = 8192,
+    Fs1280_720 = 0x00002000,
+    [Description("1440x1080")]
+    Fs1440_1080 = 0x00004000,
     [Description("1920x1080 full HD")]
-    Fs1920_1080 = 16384
+    Fs1920_1080 = 0x00008000
   }
 }

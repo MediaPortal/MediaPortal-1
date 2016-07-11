@@ -358,10 +358,18 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog
             settings.VideoStandard == (int)AnalogVideoStandard.Ntsc433 ||
             settings.VideoStandard == (int)AnalogVideoStandard.PalM
           );
-          if (_capture.SupportedFrameSizes.HasFlag(FrameSize.Fs1920_1080) || _capture.SupportedFrameSizes.HasFlag(FrameSize.Fs1280_720))
+          if (
+            _capture.SupportedFrameSizes.HasFlag(FrameSize.Fs1920_1080) ||
+            _capture.SupportedFrameSizes.HasFlag(FrameSize.Fs1440_1080) ||
+            _capture.SupportedFrameSizes.HasFlag(FrameSize.Fs1280_720)
+          )
           {
             // Probably a capture device. Prefer high resolution.
             if (_capture.SupportedFrameSizes.HasFlag(FrameSize.Fs1920_1080))
+            {
+              settings.FrameSize = (int)FrameSize.Fs1920_1080;
+            }
+            else if (_capture.SupportedFrameSizes.HasFlag(FrameSize.Fs1440_1080))
             {
               settings.FrameSize = (int)FrameSize.Fs1920_1080;
             }

@@ -1063,6 +1063,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
           bmiHeader.Width = 1280;
           bmiHeader.Height = 720;
           break;
+        case FrameSize.Fs1440_1080:
+          bmiHeader.Width = 1440;
+          bmiHeader.Height = 1080;
+          break;
         case FrameSize.Fs1920_1080:
           bmiHeader.Width = 1920;
           bmiHeader.Height = 1080;
@@ -1763,6 +1767,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
           return 768;
         case FrameSize.Fs1280_720:
           return 1280;
+        case FrameSize.Fs1440_1080:
+          return 1440;
         case FrameSize.Fs1920_1080:
           return 1920;
       }
@@ -1793,6 +1799,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
           return 576;
         case FrameSize.Fs1280_720:
           return 720;
+        case FrameSize.Fs1440_1080:
         case FrameSize.Fs1920_1080:
           return 1080;
       }
@@ -1897,6 +1904,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
       else if (frameWidth == 1280 && frameHeight == 720)
       {
         frameSize = FrameSize.Fs1280_720;
+      }
+      else if (frameWidth == 1440 && frameHeight == 1080)
+      {
+        frameSize = FrameSize.Fs1440_1080;
       }
       else if (frameWidth == 1920 && frameHeight == 1080)
       {
