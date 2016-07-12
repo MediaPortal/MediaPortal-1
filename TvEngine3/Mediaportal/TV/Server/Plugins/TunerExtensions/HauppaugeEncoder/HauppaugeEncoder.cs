@@ -568,8 +568,8 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeEncoder
       }
       else if (parameterId == PropSetID.ENCAPIPARAM_BitRateMode)
       {
-        minimum = (int)eAVEncCommonRateControlMode.CBR;
-        maximum = (int)eAVEncCommonRateControlMode.PeakConstrainedVBR;
+        minimum = (int)VideoEncoderBitrateMode.ConstantBitRate;
+        maximum = (int)VideoEncoderBitrateMode.VariableBitRatePeak;
         resolution = (int)1;
       }
       else if (parameterId == CodecApiParameter.AV_ENC_AUDIO_MEAN_BIT_RATE)
@@ -633,8 +633,8 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeEncoder
       else if (parameterId == PropSetID.ENCAPIPARAM_BitRateMode)
       {
         values = new object[2];
-        values[0] = (int)eAVEncCommonRateControlMode.CBR;
-        values[1] = (int)eAVEncCommonRateControlMode.PeakConstrainedVBR;
+        values[0] = (int)VideoEncoderBitrateMode.ConstantBitRate;
+        values[1] = (int)VideoEncoderBitrateMode.VariableBitRatePeak;
       }
       else if (parameterId == CodecApiParameter.AV_ENC_AUDIO_MEAN_BIT_RATE)
       {
@@ -703,7 +703,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeEncoder
       }
       else if (parameterId == PropSetID.ENCAPIPARAM_BitRateMode)
       {
-        value = (int)eAVEncCommonRateControlMode.PeakConstrainedVBR;
+        value = (int)VideoEncoderBitrateMode.VariableBitRatePeak;
       }
       else if (parameterId == CodecApiParameter.AV_ENC_AUDIO_MEAN_BIT_RATE)
       {
@@ -768,20 +768,26 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeEncoder
         {
           value = (uint)settings.PeakBitRateSdi * 10;
         }
-        else
+        else if (parameterId == CodecApiParameter.AV_ENC_COMMON_RATE_CONTROL_MODE)
         {
-          eAVEncCommonRateControlMode mode = eAVEncCommonRateControlMode.PeakConstrainedVBR;
           if (settings.ModeSdi == EncoderMode.ConstantBitRate)
           {
-            mode = eAVEncCommonRateControlMode.CBR;
-          }
-          if (parameterId == CodecApiParameter.AV_ENC_COMMON_RATE_CONTROL_MODE)
-          {
-            value = (uint)mode;
+            value = (uint)eAVEncCommonRateControlMode.CBR;
           }
           else
           {
-            value = (int)mode;
+            value = (uint)eAVEncCommonRateControlMode.PeakConstrainedVBR;
+          }
+        }
+        else
+        {
+          if (settings.ModeSdi == EncoderMode.ConstantBitRate)
+          {
+            value = (int)VideoEncoderBitrateMode.ConstantBitRate;
+          }
+          else
+          {
+            value = (int)VideoEncoderBitrateMode.VariableBitRatePeak;
           }
         }
       }
@@ -854,10 +860,11 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeEncoder
           return false;
         }
 
+        int intValue = Convert.ToInt32(value);
         VideoBitRateSettings settings = (VideoBitRateSettings)Marshal.PtrToStructure(_generalBuffer, typeof(VideoBitRateSettings));
         if (parameterId == CodecApiParameter.AV_ENC_COMMON_MEAN_BIT_RATE || parameterId == PropSetID.ENCAPIPARAM_BitRate)
         {
-          int bitRate = Convert.ToInt32(value) / 10;
+          int bitRate = intValue / 10;
           settings.BitRateSdi = bitRate;
           settings.BitRateSdp = bitRate;
           settings.BitRate720p = bitRate;
@@ -866,7 +873,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeEncoder
         }
         else if (parameterId == CodecApiParameter.AV_ENC_COMMON_MAX_BIT_RATE || parameterId == PropSetID.ENCAPIPARAM_PeakBitRate)
         {
-          int bitRate = Convert.ToInt32(value) / 10;
+          int bitRate = intValue / 10;
           settings.PeakBitRateSdi = bitRate;
           settings.PeakBitRateSdp = bitRate;
           settings.PeakBitRate720p = bitRate;
@@ -876,7 +883,10 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeEncoder
         else
         {
           EncoderMode mode = EncoderMode.VariableBitRate;
-          if (Convert.ToInt32(value) == (int)eAVEncCommonRateControlMode.CBR)
+          if (
+            (parameterId == CodecApiParameter.AV_ENC_COMMON_RATE_CONTROL_MODE && intValue == (int)eAVEncCommonRateControlMode.CBR) ||
+            (parameterId == PropSetID.ENCAPIPARAM_PeakBitRate && intValue == (int)VideoEncoderBitrateMode.ConstantBitRate)
+          )
           {
             mode = EncoderMode.ConstantBitRate;
           }
