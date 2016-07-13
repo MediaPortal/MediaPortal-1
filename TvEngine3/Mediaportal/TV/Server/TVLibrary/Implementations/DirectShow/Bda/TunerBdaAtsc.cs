@@ -64,17 +64,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
     {
       this.LogDebug("BDA ATSC: create tuning space");
 
-      SystemTuningSpaces systemTuningSpaces = new SystemTuningSpaces();
       IATSCTuningSpace tuningSpace = null;
       IATSCLocator locator = null;
       try
       {
-        ITuningSpaceContainer container = systemTuningSpaces as ITuningSpaceContainer;
-        if (container == null)
-        {
-          throw new TvException("Failed to find tuning space container interface on system tuning spaces instance.");
-        }
-
         tuningSpace = (IATSCTuningSpace)new ATSCTuningSpace();
         int hr = tuningSpace.put_UniqueName(TuningSpaceName);
         hr |= tuningSpace.put_FriendlyName(TuningSpaceName);
@@ -104,10 +97,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
         {
           this.LogWarn("BDA ATSC: potential error creating tuning space, hr = 0x{0:x}", hr);
         }
-
-        object index;
-        hr = container.Add(tuningSpace, out index);
-        TvExceptionDirectShowError.Throw(hr, "Failed to add new tuning space to tuning space container.");
         return tuningSpace;
       }
       catch
@@ -115,10 +104,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
         Release.ComObject("BDA ATSC tuner tuning space", ref tuningSpace);
         Release.ComObject("BDA ATSC tuner locator", ref locator);
         throw;
-      }
-      finally
-      {
-        Release.ComObject("BDA ATSC tuner tuning space container", ref systemTuningSpaces);
       }
     }
 

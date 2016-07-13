@@ -273,64 +273,41 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
     /// <summary>
     /// Get the registered BDA tuning space for the tuner type if it exists.
     /// </summary>
+    /// <param name="container">The system's tuning space container.</param>
     /// <returns>the registed tuning space</returns>
-    private ITuningSpace GetTuningSpace()
+    private ITuningSpace GetTuningSpace(ITuningSpaceContainer container)
     {
       this.LogDebug("BDA base: get tuning space");
 
       // We're going to enumerate the tuning spaces registered in the system to
       // see if we can find the correct MediaPortal tuning space.
-      SystemTuningSpaces systemTuningSpaces = new SystemTuningSpaces();
+      IEnumTuningSpaces enumTuningSpaces;
+      int hr = container.get_EnumTuningSpaces(out enumTuningSpaces);
+      TvExceptionDirectShowError.Throw(hr, "Failed to get tuning space enumerator from tuning space container.");
       try
       {
-        ITuningSpaceContainer container = systemTuningSpaces as ITuningSpaceContainer;
-        if (container == null)
+        // Enumerate...
+        ITuningSpace[] spaces = new ITuningSpace[2];
+        int fetched;
+        while (enumTuningSpaces.Next(1, spaces, out fetched) == 0 && fetched == 1)
         {
-          throw new TvException("Failed to find tuning space container interface on system tuning spaces instance.");
-        }
-
-        IEnumTuningSpaces enumTuningSpaces;
-        int hr = container.get_EnumTuningSpaces(out enumTuningSpaces);
-        TvExceptionDirectShowError.Throw(hr, "Failed to get tuning space enumerator from tuning space container.");
-        try
-        {
-          // Enumerate...
-          ITuningSpace[] spaces = new ITuningSpace[2];
-          int fetched;
-          while (enumTuningSpaces.Next(1, spaces, out fetched) == 0 && fetched == 1)
+          // Is this the one we're looking for?
+          ITuningSpace tuningSpace = spaces[0];
+          string name;
+          hr = tuningSpace.get_UniqueName(out name);
+          if (hr == (int)NativeMethods.HResult.S_OK && string.Equals(name, TuningSpaceName))
           {
-            try
-            {
-              // Is this the one we're looking for?
-              string name;
-              hr = spaces[0].get_UniqueName(out name);
-              TvExceptionDirectShowError.Throw(hr, "Failed to get tuning space unique name.");
-              if (name.Equals(TuningSpaceName))
-              {
-                this.LogDebug("BDA base: found correct tuning space");
-                return spaces[0];
-              }
-              else
-              {
-                Release.ComObject("base BDA tuner tuning space", ref spaces[0]);
-              }
-            }
-            catch
-            {
-              Release.ComObject("base BDA tuner tuning space", ref spaces[0]);
-              throw;
-            }
+            this.LogDebug("BDA base: found correct tuning space");
+            return tuningSpace;
           }
-          return null;
+          Release.ComObject("base BDA tuner tuning space", ref tuningSpace);
+          TvExceptionDirectShowError.Throw(hr, "Failed to get tuning space unique name.");
         }
-        finally
-        {
-          Release.ComObject("base BDA tuner tuning space enumerator", ref enumTuningSpaces);
-        }
+        return null;
       }
       finally
       {
-        Release.ComObject("base BDA tuner tuning space container", ref systemTuningSpaces);
+        Release.ComObject("base BDA tuner tuning space enumerator", ref enumTuningSpaces);
       }
     }
 
@@ -761,10 +738,27 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
       if (_networkProviderClsid != typeof(MediaPortalNetworkProvider).GUID)
       {
         // Initialise the tuning space for Microsoft network providers.
-        _tuningSpace = GetTuningSpace();
-        if (_tuningSpace == null)
+        SystemTuningSpaces systemTuningSpaces = new SystemTuningSpaces();
+        try
         {
-          _tuningSpace = CreateTuningSpace();
+          ITuningSpaceContainer container = systemTuningSpaces as ITuningSpaceContainer;
+          if (container == null)
+          {
+            throw new TvException("Failed to find tuning space container interface on system tuning spaces instance.");
+          }
+
+          _tuningSpace = GetTuningSpace(container);
+          if (_tuningSpace == null)
+          {
+            _tuningSpace = CreateTuningSpace();
+            object index;
+            hr = container.Add(_tuningSpace, out index);
+            TvExceptionDirectShowError.Throw(hr, "Failed to add new tuning space to tuning space container.");
+          }
+        }
+        finally
+        {
+          Release.ComObject("base BDA tuner tuning space container", ref systemTuningSpaces);
         }
 
         // Some specific Microsoft network providers won't connect to the tuner

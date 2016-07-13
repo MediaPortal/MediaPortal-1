@@ -60,17 +60,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
     {
       this.LogDebug("BDA QAM: create tuning space");
 
-      SystemTuningSpaces systemTuningSpaces = new SystemTuningSpaces();
       IDVBTuningSpace tuningSpace = null;
       IDVBCLocator locator = null;
       try
       {
-        ITuningSpaceContainer container = systemTuningSpaces as ITuningSpaceContainer;
-        if (container == null)
-        {
-          throw new TvException("Failed to find tuning space container interface on system tuning spaces instance.");
-        }
-
         tuningSpace = (IDVBTuningSpace)new DVBTuningSpace();
         int hr = tuningSpace.put_UniqueName(TuningSpaceName);
         hr |= tuningSpace.put_FriendlyName(TuningSpaceName);
@@ -91,10 +84,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
         {
           this.LogWarn("BDA QAM: potential error creating tuning space, hr = 0x{0:x}", hr);
         }
-
-        object index;
-        hr = container.Add(tuningSpace, out index);
-        TvExceptionDirectShowError.Throw(hr, "Failed to add new tuning space to tuning space container.");
         return tuningSpace;
       }
       catch
@@ -102,10 +91,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
         Release.ComObject("BDA QAM tuner tuning space", ref tuningSpace);
         Release.ComObject("BDA QAM tuner locator", ref locator);
         throw;
-      }
-      finally
-      {
-        Release.ComObject("BDA QAM tuner tuning space container", ref systemTuningSpaces);
       }
     }
 
