@@ -564,7 +564,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeEncoder
       {
         minimum = (uint)eAVEncCommonRateControlMode.CBR;
         maximum = (uint)eAVEncCommonRateControlMode.PeakConstrainedVBR;
-        resolution = (uint)1;
+        resolution = 1u;
       }
       else if (parameterId == PropSetID.ENCAPIPARAM_BitRateMode)
       {
@@ -650,13 +650,13 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeEncoder
       else if (parameterId == CodecApiParameter.AV_AUDIO_SAMPLE_RATE)
       {
         values = new object[7];
-        values[0] = (uint)48000;
-        values[1] = (uint)32000;
-        values[2] = (uint)24000;
-        values[3] = (uint)16000;
-        values[4] = (uint)8000;
-        values[5] = (uint)22050;
-        values[6] = (uint)11025;
+        values[0] = 48000u;
+        values[1] = 32000u;
+        values[2] = 24000u;
+        values[3] = 16000u;
+        values[4] = 8000u;
+        values[5] = 22050u;
+        values[6] = 11025u;
       }
       else
       {
@@ -711,7 +711,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeEncoder
       }
       else if (parameterId == CodecApiParameter.AV_AUDIO_SAMPLE_RATE)
       {
-        value = (uint)48000;
+        value = 48000u;
       }
       else
       {
