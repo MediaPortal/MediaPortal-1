@@ -24,7 +24,7 @@
 class MadSubtitleProxy : public CUnknown, public ISubRenderCallback, public CCritSec
 {
   public:
-    MadSubtitleProxy(IVMR9Callback* pCallback);
+    MadSubtitleProxy(IVMR9Callback* pCallback, IMediaControl* pMediaControl);
     ~MadSubtitleProxy();
 
     DECLARE_IUNKNOWN;
@@ -43,8 +43,13 @@ class MadSubtitleProxy : public CUnknown, public ISubRenderCallback, public CCri
 
     IVMR9Callback* m_pCallback;
 
+    IMediaControl* m_pMediaControl;
+
     DeviceState m_deviceState;
 
     bool m_pNewDevice = false;
+
+    int deviceNULL = 0;
+    int counterBeforeProcessOSD = 0;
 };
 
