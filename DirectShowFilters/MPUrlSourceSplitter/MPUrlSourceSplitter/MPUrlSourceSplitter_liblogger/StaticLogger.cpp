@@ -281,14 +281,27 @@ bool CStaticLogger::RemoveLoggerContextReference(unsigned int context)
 bool CStaticLogger::RemoveLoggerFileReference(unsigned int context)
 {
   CLoggerContext *cnt = this->loggerContexts->GetItem(context);
+  bool result = false;
 
   if ((cnt != NULL) && (!cnt->IsFree()))
   {
-    cnt->RemoveLoggerFileReference();
-    return true;
+    while (!result)
+    {
+      LOCK_MUTEX(cnt->GetMutex(), INFINITE)
+
+      if (!cnt->IsFlushing())
+      {
+        cnt->RemoveLoggerFileReference();
+        result = true;
+      }
+
+      UNLOCK_MUTEX(cnt->GetMutex())
+
+     CHECK_CONDITION_EXECUTE(!result, Sleep(1));
+    }
   }
 
-  return false;
+  return result;
 }
 
 /* protected methods */
@@ -403,6 +416,12 @@ HRESULT CStaticLogger::FlushContext(unsigned int contextHandle)
   CHECK_POINTER_HRESULT(result, temporaryMessages, result, E_OUTOFMEMORY);
   CHECK_POINTER_HRESULT(result, context, result, E_INVALIDARG);
 
+  LOCK_MUTEX(context->GetMutex(), INFINITE)
+
+  context->SetFlushing(true);
+
+  UNLOCK_MUTEX(context->GetMutex())
+
   if (SUCCEEDED(result) && (context->GetLoggerFile() != NULL))
   {
     // in rare circumstances can be called Flush() method with LogMessage() method simultaneously
@@ -501,6 +520,12 @@ HRESULT CStaticLogger::FlushContext(unsigned int contextHandle)
       UNLOCK_MUTEX(context->GetMutex())
     }
   }
+
+  LOCK_MUTEX(context->GetMutex(), INFINITE)
+
+  context->SetFlushing(false);
+
+  UNLOCK_MUTEX(context->GetMutex())
 
   FREE_MEM_CLASS(temporaryMessages);
 

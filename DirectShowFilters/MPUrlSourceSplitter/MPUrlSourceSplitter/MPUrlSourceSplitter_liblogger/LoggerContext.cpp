@@ -103,6 +103,12 @@ void CLoggerContext::SetAllowedLogVerbosity(unsigned int allowedLogVerbosity)
   }
 }
 
+void CLoggerContext::SetFlushing(bool flushing)
+{
+  this->flags &= ~LOGGER_CONTEXT_FLAG_FLUSHING;
+  this->flags |= (flushing) ? LOGGER_CONTEXT_FLAG_FLUSHING : LOGGER_CONTEXT_FLAG_NONE;
+}
+
 /* other methods */
 
 bool CLoggerContext::IsAllowedLogVerbosity(unsigned int logVerbosity)
@@ -125,6 +131,11 @@ bool CLoggerContext::IsAllowedLogVerbosity(unsigned int logVerbosity)
 bool CLoggerContext::IsFree(void)
 {
   return (IsEqualGUID(this->loggerGUID, GUID_NULL) != 0);
+}
+
+bool CLoggerContext::IsFlushing(void)
+{
+  return this->IsSetFlags(LOGGER_CONTEXT_FLAG_FLUSHING);
 }
 
 unsigned int CLoggerContext::AddReference(void)

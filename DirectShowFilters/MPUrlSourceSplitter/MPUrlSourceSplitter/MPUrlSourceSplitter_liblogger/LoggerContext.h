@@ -29,12 +29,13 @@
 
 #define LOGGER_CONTEXT_FLAG_NONE                                      FLAGS_NONE
 
-#define LOGGER_CONTEXT_FLAG_VERBOSITY_ERROR                           (1 << (FLAGS_LAST + 0))
-#define LOGGER_CONTEXT_FLAG_VERBOSITY_WARNING                         (1 << (FLAGS_LAST + 1))
-#define LOGGER_CONTEXT_FLAG_VERBOSITY_INFO                            (1 << (FLAGS_LAST + 2))
-#define LOGGER_CONTEXT_FLAG_VERBOSITY_VERBOSE                         (1 << (FLAGS_LAST + 3))
+#define LOGGER_CONTEXT_FLAG_FLUSHING                                  (1 << (FLAGS_LAST + 0))
+#define LOGGER_CONTEXT_FLAG_VERBOSITY_ERROR                           (1 << (FLAGS_LAST + 1))
+#define LOGGER_CONTEXT_FLAG_VERBOSITY_WARNING                         (1 << (FLAGS_LAST + 2))
+#define LOGGER_CONTEXT_FLAG_VERBOSITY_INFO                            (1 << (FLAGS_LAST + 3))
+#define LOGGER_CONTEXT_FLAG_VERBOSITY_VERBOSE                         (1 << (FLAGS_LAST + 4))
 
-#define LOGGER_CONTEXT_FLAG_LAST                                      (FLAGS_LAST + 4)
+#define LOGGER_CONTEXT_FLAG_LAST                                      (FLAGS_LAST + 5)
 
 class CLoggerContext : public CFlags
 {
@@ -70,6 +71,10 @@ public:
   // @param allowedLogVerbosity : the allowed log verbosity to set
   void SetAllowedLogVerbosity(unsigned int allowedLogVerbosity);
 
+  // sets flushing flag for context
+  // @param : true if context is flushing to log file, false otherwise
+  void SetFlushing(bool flushing);
+
   /* other methods */
 
   // tests if specified log verbosity is allowed to log
@@ -79,6 +84,10 @@ public:
   // tests if logger context if free (no reference, can be used)
   // @return : true if logger context is free, false otherwise
   bool IsFree(void);
+
+  // tests if logger context is flushing
+  // @return : true if logger context is flushing, false otherwise
+  bool IsFlushing(void);
 
   // adds reference to logger context
   // @return : current reference count
