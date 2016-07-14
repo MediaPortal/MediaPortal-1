@@ -77,7 +77,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
         hr |= tuningSpace.put_MinPhysicalChannel(1);    // 1 for terrestrial, 2 for cable
         hr |= tuningSpace.put_MaxPhysicalChannel(158);  // 69 for terrestrial, 158 for cable
         hr |= tuningSpace.put_MinChannel(-1);
-        hr |= tuningSpace.put_MaxChannel(99);           // the number of scannable major channels
+        hr |= tuningSpace.put_MaxChannel(9999);         // the number of scannable major channels
         hr |= tuningSpace.put_MinMinorChannel(-1);
         hr |= tuningSpace.put_MaxMinorChannel(999);     // the number of minor channels per major channel
 
