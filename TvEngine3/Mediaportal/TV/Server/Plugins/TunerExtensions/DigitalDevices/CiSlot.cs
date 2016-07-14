@@ -91,7 +91,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
     private const int BUFFER_SIZE = 2048;       // This is arbitrary - an estimate of the buffer size needed to hold the largest menu or answer. Note must be greater than Pmt.MAX_SIZE.
     private const int MENU_TITLE_LENGTH = 256;
     private const int MAX_CA_SYSTEM_COUNT = 64;
-    private const int KS_METHOD_SIZE = 24;
+    private static readonly int KS_METHOD_SIZE = Marshal.SizeOf(typeof(KsMethod));  // 24
 
     #endregion
 
