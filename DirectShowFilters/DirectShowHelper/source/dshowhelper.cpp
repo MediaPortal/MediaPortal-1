@@ -905,7 +905,7 @@ double EVRGetDisplayFPS()
   return displayFPS;
 }
 
-BOOL MadInit(IVMR9Callback* callback, DWORD width, DWORD height, DWORD dwD3DDevice, OAHWND parent, IBaseFilter** madFilter)
+BOOL MadInit(IVMR9Callback* callback, DWORD width, DWORD height, DWORD dwD3DDevice, OAHWND parent, IBaseFilter** madFilter, IMediaControl* pMediaControl)
 {
   m_RenderPrefix = _T("mad");
   m_pDevice = reinterpret_cast<LPDIRECT3DDEVICE9>(dwD3DDevice);
@@ -915,7 +915,7 @@ BOOL MadInit(IVMR9Callback* callback, DWORD width, DWORD height, DWORD dwD3DDevi
   //Sleep(3000);
   Log("MPMadDshow::MadInit 1");
 
-  m_madPresenter = new MPMadPresenter(callback, width, height, parent, m_pDevice);
+  m_madPresenter = new MPMadPresenter(callback, width, height, parent, m_pDevice, pMediaControl);
   m_pVMR9Filter = m_madPresenter->Initialize();
   Log("MPMadDshow::MadInit 2");
   if (m_pVMR9Filter)
@@ -955,6 +955,17 @@ void InitOSD(bool** initOsdDone)
   try
   {
     m_madPresenter->InitializeOSD(initOsdDone);
+  }
+  catch (...)
+  {
+  }
+}
+
+void InitForceInitialize()
+{
+  try
+  {
+    m_madPresenter->ForceInitialize();
   }
   catch (...)
   {

@@ -768,6 +768,12 @@ namespace MediaPortal.Player
       }
     }
 
+    public void ForceInitialize()
+    {
+      if (VMR9Util.g_vmr9 != null)
+        VMR9Util.g_vmr9.ForceInitialize();
+    }
+
     public static void RenderFor3DMode(GUIGraphicsContext.eRender3DModeHalf renderModeHalf, float timePassed,
       Surface backbuffer, Surface surface, Rectangle targetRect)
     {

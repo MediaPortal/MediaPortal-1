@@ -25,7 +25,7 @@ using namespace std;
 class MPMadPresenter : public CUnknown, public IOsdRenderCallback, public CCritSec
 {
   public:
-    MPMadPresenter(IVMR9Callback* pCallback, DWORD width, DWORD height, OAHWND parent, IDirect3DDevice9* pDevice);
+    MPMadPresenter(IVMR9Callback* pCallback, DWORD width, DWORD height, OAHWND parent, IDirect3DDevice9* pDevice, IMediaControl* pMediaControl);
     ~MPMadPresenter();
 
     IBaseFilter* Initialize();
@@ -43,6 +43,7 @@ class MPMadPresenter : public CUnknown, public IOsdRenderCallback, public CCritS
     STDMETHODIMP ClearBackground(LPCSTR name, REFERENCE_TIME frameStart, RECT *fullOutputRect, RECT *activeVideoRect);
     STDMETHODIMP RenderOsd(LPCSTR name, REFERENCE_TIME frameStart, RECT *fullOutputRect, RECT *activeVideoRect);
     STDMETHODIMP SetDevice(IDirect3DDevice9* pD3DDev);
+    STDMETHODIMP ForceInitialize();
 
   private:
     void RenderToTexture(IDirect3DTexture9* pTexture, WORD cx, WORD cy, WORD arx, WORD ary);
@@ -59,6 +60,8 @@ class MPMadPresenter : public CUnknown, public IOsdRenderCallback, public CCritS
     IDirect3DDevice9Ex* m_pMadD3DDev = nullptr;
 
     IVMR9Callback* m_pCallback = nullptr;
+
+    IMediaControl* m_pMediaControl = nullptr;
     
     CComPtr<IUnknown> m_pMad = nullptr;
 

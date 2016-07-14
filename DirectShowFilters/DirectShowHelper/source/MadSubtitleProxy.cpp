@@ -22,10 +22,12 @@
 #include "dshowhelper.h"
 
 #include "MadSubtitleProxy.h"
+#include "madpresenter.h"
 
-MadSubtitleProxy::MadSubtitleProxy(IVMR9Callback* pCallback) : 
+MadSubtitleProxy::MadSubtitleProxy(IVMR9Callback* pCallback, IMediaControl* pMediaControl) :
   CUnknown(NAME("MadSubtitleProxy"), nullptr),
-  m_pCallback(pCallback)
+  m_pCallback(pCallback),
+  m_pMediaControl(pMediaControl)
 {
   Log("MadSubtitleProxy::Constructor() - instance 0x%x", this);
   CAutoLock cAutoLock(this);
@@ -45,6 +47,21 @@ HRESULT MadSubtitleProxy::SetDevice(IDirect3DDevice9* device)
   m_deviceState.SetDevice(device);
   m_pMadD3DDev = device;
 
+  if (!m_pMadD3DDev)
+  {
+    deviceNULL++;
+    counterBeforeProcessOSD = 0;
+  }
+
+  // if we get many D3D device to null, seend a callback to stop the playback.
+  if (!m_pMadD3DDev && deviceNULL > 3)
+  {
+    m_pMediaControl->Stop();
+    Log("MadSubtitleProxy::SetDevice() ImediaControl Stop");
+    m_pMediaControl->Run();
+    Log("MadSubtitleProxy::SetDevice() ImediaControl Run");
+    m_pCallback->ForceInitialize();
+  }
   return S_OK;
 }
 
@@ -53,24 +70,43 @@ HRESULT MadSubtitleProxy::Render(REFERENCE_TIME frameStart, int left, int top, i
   CAutoLock cAutoLock(this);
 
   if (!m_pMadD3DDev)
+  {
+    Log("MadSubtitleProxy::SetDevice() Render : 0x:%x", m_pMadD3DDev);
+    m_pMediaControl->Stop();
+    Log("MadSubtitleProxy::SetDevice() Render ImediaControl Stop");
+    m_pMediaControl->Run();
+    Log("MadSubtitleProxy::SetDevice() Render ImediaControl Run");
     return S_OK;
+  }
 
   if (m_pCallback)
   {
-    if (!GetNewDevice())
+    if (m_pMadD3DDev && counterBeforeProcessOSD < 10)
     {
-      Log("MadSubtitleProxy::Render() SetNewDevice for D3D and subtitle : 0x:%x", m_pMadD3DDev);
-      m_pCallback->ForceOsdUpdate(true);
-      m_pCallback->SetSubtitleDevice(reinterpret_cast<DWORD>(m_pMadD3DDev));
-      SetNewDevice(true);
+      counterBeforeProcessOSD++;
+      Log("MadSubtitleProxy::Render() counter before processing OSD callback : %u", counterBeforeProcessOSD);      
     }
+    
+    // Let at least 7 render pass to permit to be on a correct D3D device
+    if (m_pMadD3DDev && counterBeforeProcessOSD >= 10)
+    {
+      if (!GetNewDevice())
+      {
+        Log("MadSubtitleProxy::Render() SetNewDevice for D3D and subtitle : 0x:%x", m_pMadD3DDev);
+        m_pMediaControl->Stop();
+        m_pCallback->ForceOsdUpdate(true);
+        m_pCallback->SetSubtitleDevice(reinterpret_cast<DWORD>(m_pMadD3DDev));
+        SetNewDevice(true);
+        m_pMediaControl->Run();
+      }
 
-    m_deviceState.Store();
-    SetupMadDeviceState();
+      m_deviceState.Store();
+      SetupMadDeviceState();
 
-    m_pCallback->RenderSubtitle(frameStart, left, top, right, bottom, width, height);
+      m_pCallback->RenderSubtitle(frameStart, left, top, right, bottom, width, height);
 
-    m_deviceState.Restore();
+      m_deviceState.Restore();
+    }
   }
   return S_OK;
 }

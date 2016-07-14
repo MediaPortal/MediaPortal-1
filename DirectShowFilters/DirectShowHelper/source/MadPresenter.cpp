@@ -39,16 +39,17 @@ struct VID_FRAME_VERTEX
   float v;
 };
 
-MPMadPresenter::MPMadPresenter(IVMR9Callback* pCallback, DWORD width, DWORD height, OAHWND parent, IDirect3DDevice9* pDevice) :
+MPMadPresenter::MPMadPresenter(IVMR9Callback* pCallback, DWORD width, DWORD height, OAHWND parent, IDirect3DDevice9* pDevice, IMediaControl* pMediaControl) :
   CUnknown(NAME("MPMadPresenter"), nullptr),
   m_pCallback(pCallback),
   m_dwGUIWidth(width),
   m_dwGUIHeight(height),
   m_hParent(parent),
-  m_pDevice(static_cast<IDirect3DDevice9Ex*>(pDevice))
+  m_pDevice(static_cast<IDirect3DDevice9Ex*>(pDevice)),
+  m_pMediaControl(pMediaControl)
 {
   Log("MPMadPresenter::Constructor() - instance 0x%x", this);
-  m_subProxy = new MadSubtitleProxy(pCallback);
+  m_subProxy = new MadSubtitleProxy(pCallback, m_pMediaControl);
   if (m_subProxy)
     m_subProxy->AddRef();
 }
@@ -109,7 +110,7 @@ IBaseFilter* MPMadPresenter::Initialize()
   //Log("MPMadPresenter::Init 7()");
 
   // TODO implement IMadVRSubclassReplacement
-  //pSubclassReplacement->DisableSubclassing();
+  //m_pSubclassReplacement->DisableSubclassing();
 
   return m_pBaseFilter;
 }
@@ -435,33 +436,41 @@ HRESULT MPMadPresenter::SetupOSDVertex(IDirect3DVertexBuffer9* pVertextBuf)
     rDest.right = m_dwWidth;
     rDest.top = 0;
 
-    vertices[0].x = static_cast<float>(rDest.left) - 0.5f;
-    vertices[0].y = static_cast<float>(rDest.top) - 0.5f;
+    vertices[0].x = static_cast<float>(rDest.left);
+    vertices[0].y = static_cast<float>(rDest.top);
     vertices[0].z = 0.0f;
     vertices[0].rhw = 1.0f;
     vertices[0].u = 0.0f;
     vertices[0].v = 0.0f;
 
-    vertices[1].x = static_cast<float>(rDest.right) - 0.5f;
-    vertices[1].y = static_cast<float>(rDest.top) - 0.5f;
+    vertices[1].x = static_cast<float>(rDest.right);
+    vertices[1].y = static_cast<float>(rDest.top);
     vertices[1].z = 0.0f;
     vertices[1].rhw = 1.0f;
     vertices[1].u = 1.0f;
     vertices[1].v = 0.0f;
 
-    vertices[2].x = static_cast<float>(rDest.right) - 0.5f;
-    vertices[2].y = static_cast<float>(rDest.bottom) - 0.5f;
+    vertices[2].x = static_cast<float>(rDest.right);
+    vertices[2].y = static_cast<float>(rDest.bottom);
     vertices[2].z = 0.0f;
     vertices[2].rhw = 1.0f;
     vertices[2].u = 1.0f;
     vertices[2].v = 1.0f;
 
-    vertices[3].x = static_cast<float>(rDest.left) - 0.5f;
-    vertices[3].y = static_cast<float>(rDest.bottom) - 0.5f;
+    vertices[3].x = static_cast<float>(rDest.left);
+    vertices[3].y = static_cast<float>(rDest.bottom);
     vertices[3].z = 0.0f;
     vertices[3].rhw = 1.0f;
     vertices[3].u = 0.0f;
     vertices[3].v = 1.0f;
+
+    // Update vertices to compensate texel/pixel coordinate origins (top left of pixel vs. center of texel)
+    // See https://msdn.microsoft.com/en-us/library/bb219690(VS.85).aspx
+    for (int i = 0; i < 4; i++)
+    {
+      vertices[i].x -= 0.5f;
+      vertices[i].y -= 0.5f;
+    }
 
     hr = pVertextBuf->Unlock();
     if (FAILED(hr))
@@ -561,4 +570,13 @@ HRESULT MPMadPresenter::SetDevice(IDirect3DDevice9* pD3DDev)
 
   //Log("SetDevice hr: 0x%08x", hr);
   return hr;
+}
+
+HRESULT MPMadPresenter::ForceInitialize()
+{
+  //m_subProxy = new MadSubtitleProxy(m_pCallback);
+  //if (m_subProxy)
+  //  m_subProxy->AddRef();
+  //AddRef();
+    return S_OK;;
 }

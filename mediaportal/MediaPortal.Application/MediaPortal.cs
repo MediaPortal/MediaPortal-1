@@ -3482,7 +3482,6 @@ public class MediaPortalApp : D3D, IRender
 
     Log.Info("Startup: Starting Window Manager");
     GUIWindowManager.PreInit();
-    GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.RUNNING;
 
     Log.Info("Startup: Activating Window Manager");
     if ((_startWithBasicHome) && (File.Exists(GUIGraphicsContext.GetThemedSkinFile(@"\basichome.xml"))))
@@ -3517,6 +3516,9 @@ public class MediaPortalApp : D3D, IRender
     // ReSharper restore ObjectCreationAsStatement
 
     SetProcessWorkingSetSize(Process.GetCurrentProcess().Handle, -1, -1);
+
+    // Set running there some plugin can loop otherwise
+    GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.RUNNING;
   }
 
 

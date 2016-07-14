@@ -86,6 +86,9 @@ namespace MediaPortal.Player
 
     [PreserveSig]
     void ForceOsdUpdate(bool pForce);
+
+    [PreserveSig]
+    void ForceInitialize();
   }
 
   #endregion
@@ -135,13 +138,16 @@ namespace MediaPortal.Player
     private static extern unsafe void EVRUpdateDisplayFPS();
 
     [DllImport("dshowhelper.dll", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
-    private static extern unsafe bool MadInit(IVMR9PresentCallback callback, int width, int height, uint dwD3DDevice, uint parent, ref IBaseFilter madFilter);
+    private static extern unsafe bool MadInit(IVMR9PresentCallback callback, int width, int height, uint dwD3DDevice, uint parent, ref IBaseFilter madFilter, IMediaControl mPMediaControl);
 
     [DllImport("dshowhelper.dll", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
     private static extern unsafe void MadDeinit();
 
     [DllImport("dshowhelper.dll", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
     private static extern unsafe void InitOSD(ref bool initOsdDone);
+
+    [DllImport("dshowhelper.dll", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
+    private static extern unsafe void InitForceInitialize();
 
     #endregion
 
@@ -384,6 +390,16 @@ namespace MediaPortal.Player
 
     #region public members
 
+    public void ForceInitialize()
+    {
+      var msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_STOP_FILE, 0, 0, 0, 0, 0, null);
+      GUIWindowManager.SendThreadMessage(msg);
+      GUIWindowManager.MadVrProcess();
+      //Thread.Sleep(3000);
+      //string current = g_Player.currentFilePlaying;
+      //g_Player.Play(current);
+    }
+
     /// <summary>
     /// Register madVR OSD callback
     /// </summary>
@@ -518,8 +534,9 @@ namespace MediaPortal.Player
         else if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
         {
           var backbuffer = GUIGraphicsContext.DX9Device.PresentationParameters;
+          IMediaControl mPMediaControl = (IMediaControl)graphBuilder;
           MadInit(_scene, backbuffer.BackBufferWidth, backbuffer.BackBufferHeight, (uint)upDevice.ToInt32(),
-            (uint)GUIGraphicsContext.ActiveForm.ToInt32(), ref _vmr9Filter);
+            (uint)GUIGraphicsContext.ActiveForm.ToInt32(), ref _vmr9Filter, mPMediaControl);
 
           hr = new HResult(graphBuilder.AddFilter(_vmr9Filter, "madVR"));
           Log.Info("VMR9: added madVR Renderer to graph");
@@ -575,13 +592,14 @@ namespace MediaPortal.Player
           return false;
         }
 
-        _qualityInterface = _vmr9Filter as IQualProp;
-        _vmr9MixerBitmapInterface = _vmr9Filter as IVMRMixerBitmap9;
         _graphBuilder = graphBuilder;
         _instanceCounter++;
         _isVmr9Initialized = true;
         if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.VMR9)
         {
+          _qualityInterface = _vmr9Filter as IQualProp;
+          _vmr9MixerBitmapInterface = _vmr9Filter as IVMRMixerBitmap9;
+
           Log.Debug("VMR9: SetDeinterlacePrefs() for VMR9 mode");
           SetDeinterlacePrefs();
 
@@ -1249,7 +1267,7 @@ namespace MediaPortal.Player
             bmp.rDest.right = fx;
             bmp.fAlpha = alphaValue;
             //Log.Info("SaveVMR9Bitmap() called");
-            hr = g_vmr9.MixerBitmapInterface.SetAlphaBitmap(ref bmp);
+            if (g_vmr9.MixerBitmapInterface != null) hr = g_vmr9.MixerBitmapInterface.SetAlphaBitmap(ref bmp);
             if (hr != 0)
             {
               //Log.Info("SaveVMR9Bitmap() failed: error {0:X} on SetAlphaBitmap()",hr);
