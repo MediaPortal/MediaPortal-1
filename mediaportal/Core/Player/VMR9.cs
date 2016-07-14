@@ -392,12 +392,17 @@ namespace MediaPortal.Player
 
     public void ForceInitialize()
     {
-      var msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_STOP_FILE, 0, 0, 0, 0, 0, null);
-      GUIWindowManager.SendThreadMessage(msg);
-      GUIWindowManager.MadVrProcess();
-      //Thread.Sleep(3000);
-      //string current = g_Player.currentFilePlaying;
-      //g_Player.Play(current);
+      if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+      {
+        int currentPosition = (int)g_Player.CurrentPosition;
+        var msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAY_FILE, 0, 0, 0, 0, 0, null);
+        msg.Label = g_Player.currentFilePlaying;
+        GUIWindowManager.SendThreadMessage(msg);
+        msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SEEK_POSITION, 0, 0, 0, 0, 0, null);
+        msg.Param1 = currentPosition;
+        GUIWindowManager.SendThreadMessage(msg);
+        GUIWindowManager.MadVrProcess();
+      }
     }
 
     /// <summary>
@@ -544,6 +549,9 @@ namespace MediaPortal.Player
           IVideoWindow videoWin = (IVideoWindow)graphBuilder;
           videoWin.put_Owner(GUIGraphicsContext.ActiveForm);
           videoWin.put_WindowStyle((WindowStyle)((int)WindowStyle.Child + (int)WindowStyle.ClipChildren + (int)WindowStyle.ClipSiblings));
+          //videoWin.put_WindowStyle((WindowStyle)((int)WindowStyle.Child));
+          //videoWin.put_WindowStyle((WindowStyle)((int)WindowStyle.MaximizeBox + (int)WindowStyle.Child));
+          //videoWin.put_WindowStyleEx((WindowStyleEx)((int)WindowStyleEx.Topmost));
           videoWin.put_MessageDrain(GUIGraphicsContext.ActiveForm);
         }
         else

@@ -56,10 +56,6 @@ HRESULT MadSubtitleProxy::SetDevice(IDirect3DDevice9* device)
   // if we get many D3D device to null, seend a callback to stop the playback.
   if (!m_pMadD3DDev && deviceNULL > 3)
   {
-    m_pMediaControl->Stop();
-    Log("MadSubtitleProxy::SetDevice() ImediaControl Stop");
-    m_pMediaControl->Run();
-    Log("MadSubtitleProxy::SetDevice() ImediaControl Run");
     m_pCallback->ForceInitialize();
   }
   return S_OK;
@@ -74,8 +70,6 @@ HRESULT MadSubtitleProxy::Render(REFERENCE_TIME frameStart, int left, int top, i
     Log("MadSubtitleProxy::SetDevice() Render : 0x:%x", m_pMadD3DDev);
     m_pMediaControl->Stop();
     Log("MadSubtitleProxy::SetDevice() Render ImediaControl Stop");
-    m_pMediaControl->Run();
-    Log("MadSubtitleProxy::SetDevice() Render ImediaControl Run");
     return S_OK;
   }
 
@@ -84,7 +78,8 @@ HRESULT MadSubtitleProxy::Render(REFERENCE_TIME frameStart, int left, int top, i
     if (m_pMadD3DDev && counterBeforeProcessOSD < 10)
     {
       counterBeforeProcessOSD++;
-      Log("MadSubtitleProxy::Render() counter before processing OSD callback : %u", counterBeforeProcessOSD);      
+      m_pMediaControl->Run();
+      Log("MadSubtitleProxy::Render() counter before processing OSD callback : %u", counterBeforeProcessOSD);
     }
     
     // Let at least 7 render pass to permit to be on a correct D3D device
