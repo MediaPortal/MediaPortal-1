@@ -20,5 +20,6 @@
 
 ; This script is used for compiling the a complete MediaPortal installer in an x64 environment.
 !define x64Environment
+;!define VER_BUILD
 
 !include DeployToolUnPacker.nsi
