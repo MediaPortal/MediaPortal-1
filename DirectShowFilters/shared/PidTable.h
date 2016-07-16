@@ -52,6 +52,7 @@ using namespace std;
 #define STREAM_TYPE_AUDIO_DTS                   0x82  // defacto standard (ffdshow, libbluray etc.); DVB uses STREAM_TYPE_PES_PRIVATE_DATA with a descriptor, not supported by ATSC and SCTE
 #define STREAM_TYPE_AUDIO_E_AC3                 0x87  // this is the [ATSC] standard stream type; DVB uses STREAM_TYPE_PES_PRIVATE_DATA with a descriptor
 #define STREAM_TYPE_AUDIO_DTS_HD                0x88  // defacto standard (ATSC 2.0); DVB uses STREAM_TYPE_PES_PRIVATE_DATA with a descriptor, SCTE uses STREAM_TYPE_PES_PRIVATE_DATA with a descriptor
+#define STREAM_TYPE_AUDIO_AC4                   0x89  // (place-holder - revise later)
 
 #define STREAM_TYPE_PRIVATE_SECTIONS            0x05
 #define STREAM_TYPE_PES_PRIVATE_DATA            0x06

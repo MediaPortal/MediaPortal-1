@@ -47,6 +47,7 @@
 #define DESCRIPTOR_DVB_DTS                          0x7b
 #define DESCRIPTOR_DVB_EXTENSION                    0x7f
 #define DESCRIPTOR_DVB_X_DTS_HD                     0x0e
+#define DESCRIPTOR_DVB_X_AC4                        0x15
 
 #define DESCRIPTOR_ATSC_AC3                         0x81
 #define DESCRIPTOR_ATSC_CAPTION_SERVICE             0x86

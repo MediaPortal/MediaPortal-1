@@ -322,7 +322,10 @@ bool CBasePmtParser::DecodePmtSection(const CSection& section)
           (
             tag == DESCRIPTOR_DVB_EXTENSION &&
             length >= 1 &&
-            data[pointer] == DESCRIPTOR_DVB_X_DTS_HD
+            (
+              data[pointer] == DESCRIPTOR_DVB_X_DTS_HD ||
+              data[pointer] == DESCRIPTOR_DVB_X_AC4
+            )
           ) ||
           (tag == DESCRIPTOR_SCTE_DTS_HD && isScteTs)
         )
@@ -344,6 +347,10 @@ bool CBasePmtParser::DecodePmtSection(const CSection& section)
           else if (tag == DESCRIPTOR_DVB_DTS && !isScteTs)
           {
             pid->LogicalStreamType = STREAM_TYPE_AUDIO_DTS;
+          }
+          else if (tag == DESCRIPTOR_DVB_EXTENSION && data[pointer] == DESCRIPTOR_DVB_X_AC4)
+          {
+            pid->LogicalStreamType = STREAM_TYPE_AUDIO_AC4;
           }
           else
           {

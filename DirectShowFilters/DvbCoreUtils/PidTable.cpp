@@ -144,7 +144,7 @@ const wchar_t* CPidTable::StreamFormatAsString(unsigned char streamType)
     case STREAM_TYPE_VIDEO_MPEG4_PART2:
       return L"MPEG 4";
     case STREAM_TYPE_VIDEO_MPEG4_PART10_ANNEXA:
-      return L"H.264";
+      return L"H.264/AVC";
     case STREAM_TYPE_VIDEO_AUX:
       return L"ISO 23000-2";
     case STREAM_TYPE_VIDEO_MPEG4_PART10_ANNEXG:
@@ -158,7 +158,7 @@ const wchar_t* CPidTable::StreamFormatAsString(unsigned char streamType)
     case STREAM_TYPE_VIDEO_MPEG4_PART10_VIEW:
       return L"H.264 view";
     case STREAM_TYPE_VIDEO_MPEGH_PART2:
-      return L"H.265";
+      return L"H.265/HEVC";
     case STREAM_TYPE_VIDEO_VC1:
       return L"VC-1";
 
@@ -173,13 +173,15 @@ const wchar_t* CPidTable::StreamFormatAsString(unsigned char streamType)
     case STREAM_TYPE_AUDIO_MPEG4_PART3:
       return L"AAC";
     case STREAM_TYPE_AUDIO_AC3:
-      return L"AC3/DD";
+      return L"AC-3/DD";
     case STREAM_TYPE_AUDIO_DTS:
       return L"DTS";
     case STREAM_TYPE_AUDIO_E_AC3:
-      return L"E-AC3/DD+";
+      return L"E-AC-3/DD+";
     case STREAM_TYPE_AUDIO_DTS_HD:
       return L"DTS HD";
+    case STREAM_TYPE_AUDIO_AC4:
+      return L"AC-4";
 
     case STREAM_TYPE_PRIVATE_SECTIONS:
       return L"private sections";
@@ -238,6 +240,8 @@ bool CPidTable::IsAudioStream(unsigned char streamType)
     //streamType == STREAM_TYPE_AUDIO_DTS ||
     streamType == STREAM_TYPE_AUDIO_E_AC3 ||
     streamType == STREAM_TYPE_AUDIO_DTS_HD)
+    // AC-4 is a provisional stream type.
+    //streamType == STREAM_TYPE_AUDIO_AC4)
   {
     return true;
   }
@@ -246,7 +250,9 @@ bool CPidTable::IsAudioStream(unsigned char streamType)
 
 bool CPidTable::IsAudioLogicalStream(unsigned char logicalStreamType)
 {
-  if (IsAudioStream(logicalStreamType) || logicalStreamType == STREAM_TYPE_AUDIO_DTS)
+  if (IsAudioStream(logicalStreamType) ||
+    logicalStreamType == STREAM_TYPE_AUDIO_DTS ||
+    logicalStreamType == STREAM_TYPE_AUDIO_AC4)
   {
     return true;
   }
