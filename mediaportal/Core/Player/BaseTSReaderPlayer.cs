@@ -2072,6 +2072,34 @@ namespace MediaPortal.Player
                 needVideoUpdate = true;
                 Log.Debug("TSReaderPlayer: UpdateFilters Remove filter - {0}", fInfo.achName);
               }
+              else
+              {
+                VMR9Util vmr9 = VMR9Util.g_vmr9;
+                if (vmr9 != null && vmr9.IsVMR9Connected)
+                {
+                  Log.Debug("TSReaderPlayer: UpdateFilters disconnect output pin for filter - {0}", fInfo.achName);
+                  IPin pinVideoOut = DsFindPin.ByDirection(pInfo.filter, PinDirection.Output, 0);
+                  IPin videoInputRenderer = vmr9.PinConnectedInput;
+
+                  // This is the pin that we will connect to video renderer input.
+                  IPin pinVideoTo = vmr9.PinConnectedTo;
+                  pinVideoTo.Disconnect();
+                  hr = _graphBuilder.Connect(pinVideoOut, videoInputRenderer);
+                  if (hr != 0)
+                  {
+                    Log.Error("TSReaderPlayer: UpdateFilters could not connect output video pin");
+                    return;
+                  }
+
+                  Log.Debug("TSReaderPlayer: UpdateFilters video pin reconnected to video renderer");
+                  DirectShowUtil.ReleaseComObject(pinVideoTo);
+                  pinVideoTo = null;
+                  DirectShowUtil.ReleaseComObject(pinVideoOut);
+                  pinVideoOut = null;
+                  DirectShowUtil.ReleaseComObject(videoInputRenderer);
+                  videoInputRenderer = null;
+                }
+              }
             }
             else
             {
