@@ -51,13 +51,19 @@ HRESULT MadSubtitleProxy::SetDevice(IDirect3DDevice9* device)
   {
     deviceNULL++;
     counterBeforeProcessOSD = 0;
+    // if we get many D3D device to null, seend a callback to stop the playback.
+    if (deviceNULL > 5)
+    {
+      m_pCallback->ForceInitialize();
+      SetNewDevice(false);
+    }
+    // Force Render something
+    WORD videoHeight = static_cast<WORD>(1920);
+    WORD videoWidth = static_cast<WORD>(1080);
+
+    m_pCallback->RenderOverlay(videoWidth, videoHeight, videoWidth, videoHeight);
   }
 
-  // if we get many D3D device to null, seend a callback to stop the playback.
-  if (!m_pMadD3DDev && deviceNULL > 3)
-  {
-    m_pCallback->ForceInitialize();
-  }
   return S_OK;
 }
 
@@ -82,15 +88,14 @@ HRESULT MadSubtitleProxy::Render(REFERENCE_TIME frameStart, int left, int top, i
       Log("MadSubtitleProxy::Render() counter before processing OSD callback : %u", counterBeforeProcessOSD);
     }
     
-    // Let at least 7 render pass to permit to be on a correct D3D device
+    // Let at least 10 render pass to permit to be on a correct D3D device
     if (m_pMadD3DDev && counterBeforeProcessOSD >= 10)
     {
       if (!GetNewDevice())
       {
-        Log("MadSubtitleProxy::Render() SetNewDevice for D3D and subtitle : 0x:%x", m_pMadD3DDev);
+        Log("MadSubtitleProxy::Render() SetNewDevice for D3D : 0x:%x", m_pMadD3DDev);
         m_pMediaControl->Stop();
         m_pCallback->ForceOsdUpdate(true);
-        m_pCallback->SetSubtitleDevice(reinterpret_cast<DWORD>(m_pMadD3DDev));
         SetNewDevice(true);
         m_pMediaControl->Run();
       }

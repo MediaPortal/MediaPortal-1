@@ -543,7 +543,10 @@ HRESULT MPMadPresenter::SetDevice(IDirect3DDevice9* pD3DDev)
   m_deviceState.SetDevice(pD3DDev);
 
   if (m_pCallback && pD3DDev)
+  {
     m_pCallback->SetSubtitleDevice((DWORD)pD3DDev);
+    Log("MPMadPresenter::SetDevice() SetSubtitleDevice for D3D : 0x:%x", m_pMadD3DDev);
+  }
 
   if (m_pMadD3DDev)
   {
