@@ -589,13 +589,6 @@ namespace MediaPortal.Player
       _basicVideo = _graphBuilder as IBasicVideo2;
       _videoWin = _graphBuilder as IVideoWindow;
 
-      if (_videoWin != null && GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR)
-      {
-        _videoWin.put_WindowStyle(
-          (WindowStyle)((int)WindowStyle.Child + (int)WindowStyle.ClipSiblings + (int)WindowStyle.ClipChildren));
-        _videoWin.put_MessageDrain(GUIGraphicsContext.form.Handle);
-      }
-
       int hr = _mediaEvt.SetNotifyWindow(GUIGraphicsContext.ActiveForm, WM_GRAPHNOTIFY, IntPtr.Zero);
       if (hr < 0)
       {
@@ -623,6 +616,11 @@ namespace MediaPortal.Player
         CloseInterfaces();
         ExclusiveMode(false);
         return false;
+      }
+      if (_videoWin != null)
+      {
+        _videoWin.put_WindowStyle((WindowStyle)((int)WindowStyle.Child + (int)WindowStyle.ClipChildren + (int)WindowStyle.ClipSiblings));
+        _videoWin.put_MessageDrain(GUIGraphicsContext.form.Handle);
       }
       hr = _mediaCtrl.Run();
       if (hr < 0)

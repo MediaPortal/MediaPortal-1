@@ -993,12 +993,6 @@ namespace MediaPortal.Player
         MovieEnded();
         return false;
       }
-      if (_videoWin != null && GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR)
-      {
-        _videoWin.put_WindowStyle(
-          (WindowStyle)((int)WindowStyle.Child + (int)WindowStyle.ClipSiblings + (int)WindowStyle.ClipChildren));
-        _videoWin.put_MessageDrain(GUIGraphicsContext.form.Handle);
-      }
       if (_basicVideo != null)
       {
         hr = _basicVideo.GetVideoSize(out _videoWidth, out _videoHeight);
@@ -1014,6 +1008,11 @@ namespace MediaPortal.Player
         Log.Error("BDPlayer:_mediaCtrl==null");
         MovieEnded();
         return false;
+      }
+      if (_videoWin != null)
+      {
+        _videoWin.put_WindowStyle((WindowStyle)((int)WindowStyle.Child + (int)WindowStyle.ClipSiblings + (int)WindowStyle.ClipChildren));
+        _videoWin.put_MessageDrain(GUIGraphicsContext.form.Handle);
       }
       hr = _mediaCtrl.Run();
       if (hr < 0)
