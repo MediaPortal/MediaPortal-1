@@ -174,6 +174,14 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Mpeg2Ts.Enu
     [Description("Enhanced AC-3 (Dolby Digital Plus) Audio")]
     AudioEnhancedAc3 = 0x87,
     /// <summary>
+    /// AC-4 audio
+    /// </summary>
+    /// <remarks>
+    /// DVB has the AC-4 [extended] descriptor (tag extension 0x15).
+    /// </remarks>
+    [Description("AC-4 Audio")]
+    AudioAc4 = 1002,
+    /// <summary>
     /// DTS audio
     /// </summary>
     /// <remarks>
@@ -185,8 +193,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Mpeg2Ts.Enu
     /// DTS HD audio
     /// </summary>
     /// <remarks>
-    /// Matches the ATSC 2.0 stream type. DVB has the DTS-HD descriptor
-    /// (extended descriptor, tag 0x0e). SCTE has the DTS-HD descriptor (tag
+    /// Matches the ATSC 2.0 stream type. DVB has the DTS-HD [extended]
+    /// descriptor (tag extension 0x0e). SCTE has the DTS-HD descriptor (tag
     /// 0x7b).
     /// </remarks>
     [Description("DTS-HD Audio")]

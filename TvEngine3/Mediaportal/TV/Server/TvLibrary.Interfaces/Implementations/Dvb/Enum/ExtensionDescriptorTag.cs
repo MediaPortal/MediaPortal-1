@@ -107,6 +107,14 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Dvb.Enum
     /// <summary>
     /// broadcast identifier ancillary data descriptor
     /// </summary>
-    BciAncillaryData = 0x14
+    BciAncillaryData = 0x14,
+    /// <summary>
+    /// AC-4 descriptor
+    /// </summary>
+    Ac4 = 0x15,
+    /// <summary>
+    /// C2 bundle delivery system descriptor
+    /// </summary>
+    C2BundleDeliverySystem = 0x16
   }
 }

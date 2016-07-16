@@ -69,7 +69,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Mpeg2Ts
         streamType == LogicalStreamType.AudioAc3 ||
         streamType == LogicalStreamType.AudioEnhancedAc3 ||
         streamType == LogicalStreamType.AudioDts ||
-        streamType == LogicalStreamType.AudioDtsHd)
+        streamType == LogicalStreamType.AudioDtsHd ||
+        streamType == LogicalStreamType.AudioAc4)
       {
         return true;
       }

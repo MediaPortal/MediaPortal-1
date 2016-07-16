@@ -468,6 +468,17 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Mpeg2Ts
                       es.LogicalStreamType = LogicalStreamType.AudioDts;
                     }
                     break;
+                  case DescriptorTag.DvbExtension:
+                    ExtensionDescriptorTag tag = (ExtensionDescriptorTag)d.Data[0];
+                    if (tag == ExtensionDescriptorTag.DtsHdAudioStream)
+                    {
+                      es.LogicalStreamType = LogicalStreamType.AudioDtsHd;
+                    }
+                    else if (tag == ExtensionDescriptorTag.Ac4)
+                    {
+                      es.LogicalStreamType = LogicalStreamType.AudioAc4;
+                    }
+                    break;
                   case DescriptorTag.Subtitling:
                     es.LogicalStreamType = LogicalStreamType.Subtitles;
                     break;
