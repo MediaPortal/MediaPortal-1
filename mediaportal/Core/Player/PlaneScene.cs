@@ -740,12 +740,15 @@ namespace MediaPortal.Player
     public void SetSubtitleDevice(IntPtr device)
     {
       // Set madVR D3D Device
-      GUIGraphicsContext.DX9DeviceMadVr = null;
-      GUIGraphicsContext.DX9DeviceMadVr = new Device(device);
-      ISubEngine engine = SubEngine.GetInstance(true);
-      if (engine != null)
+      if (device != IntPtr.Zero)
       {
-        engine.SetDevice(device);
+        GUIGraphicsContext.DX9DeviceMadVr = new Device(device);
+        ISubEngine engine = SubEngine.GetInstance(true);
+        if (engine != null)
+        {
+          engine.SetDevice(device);
+        }
+        Log.Debug("Planescene: Set subtitle device - {0}", device);
       }
     }
 

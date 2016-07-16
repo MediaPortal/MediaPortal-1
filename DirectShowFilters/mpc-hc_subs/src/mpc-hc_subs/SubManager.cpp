@@ -153,7 +153,8 @@ void CSubManager::InvalidateSubtitle(ISubStream* pSubStream, REFERENCE_TIME rtIn
 	if(m_pSubStream == pSubStream && m_iSubtitleSel >= 0)
 	{
 		ATLTRACE("InvalidateSubtitle!");
-		m_pSubPicQueue->Invalidate(rtInvalidate);
+    if (m_pSubPicQueue)
+      m_pSubPicQueue->Invalidate(rtInvalidate);
 	}
 }
 
