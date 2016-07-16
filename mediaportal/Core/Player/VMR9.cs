@@ -548,11 +548,8 @@ namespace MediaPortal.Player
           backbuffer.SafeDispose();
           IVideoWindow videoWin = (IVideoWindow)graphBuilder;
           videoWin.put_Owner(GUIGraphicsContext.ActiveForm);
-          videoWin.put_WindowStyle((WindowStyle)((int)WindowStyle.Child + (int)WindowStyle.ClipChildren + (int)WindowStyle.ClipSiblings));
-          //videoWin.put_WindowStyle((WindowStyle)((int)WindowStyle.Child));
-          //videoWin.put_WindowStyle((WindowStyle)((int)WindowStyle.MaximizeBox + (int)WindowStyle.Child));
-          //videoWin.put_WindowStyleEx((WindowStyleEx)((int)WindowStyleEx.Topmost));
-          videoWin.put_MessageDrain(GUIGraphicsContext.ActiveForm);
+          Size client = GUIGraphicsContext.form.ClientSize;
+          videoWin.SetWindowPosition(0, 0, client.Width, client.Height);
         }
         else
         {

@@ -333,12 +333,6 @@ namespace MediaPortal.Player
           CloseInterfaces();
           return false;
         }
-        if (videoWin != null && GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR)
-        {
-          videoWin.put_WindowStyle(
-            (WindowStyle)((int)WindowStyle.Child + (int)WindowStyle.ClipChildren + (int)WindowStyle.ClipSiblings));
-          videoWin.put_MessageDrain(GUIGraphicsContext.form.Handle);
-        }
 
         #region FFDShowEngine and PostProcessingEngine Detection
 
@@ -379,6 +373,11 @@ namespace MediaPortal.Player
         // DsUtils.DumpFilters(graphBuilder);
         try
         {
+          if (videoWin != null)
+          {
+            videoWin.put_WindowStyle((WindowStyle)((int)WindowStyle.Child + (int)WindowStyle.ClipChildren + (int)WindowStyle.ClipSiblings));
+            videoWin.put_MessageDrain(GUIGraphicsContext.form.Handle);
+          }
           hr = mediaCtrl.Run();
           DsError.ThrowExceptionForHR(hr);
         }

@@ -302,19 +302,6 @@ namespace MediaPortal.Player
           Log.Error("DVDPlayer:Unable to SetNotifyWindow 0x{0:X}", hr);
         }
 
-        if (_videoWin != null && GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR)
-        {
-          if (hr == 0)
-          {
-            hr = _videoWin.put_WindowStyle((WindowStyle)((int)WindowStyle.Child +
-                                                         (int)WindowStyle.ClipChildren + (int)WindowStyle.ClipSiblings));
-            if (hr != 0)
-            {
-              Log.Info("DVDPlayer:Unable to set window style 0x{0:X}", hr);
-            }
-          }
-        }
-
         if (_basicVideo != null)
         {
           _basicVideo.SetDefaultSourcePosition();
@@ -325,6 +312,17 @@ namespace MediaPortal.Player
           _videoWin.SetWindowPosition(0, 0, GUIGraphicsContext.Width, GUIGraphicsContext.Height);
         }
 
+        if (_videoWin != null)
+        {
+          if (hr == 0)
+          {
+            hr = _videoWin.put_WindowStyle((WindowStyle)((int)WindowStyle.Child + (int)WindowStyle.ClipChildren + (int)WindowStyle.ClipSiblings));
+            if (hr != 0)
+            {
+              Log.Info("DVDPlayer:Unable to set window style 0x{0:X}", hr);
+            }
+          }
+        }
         hr = _mediaCtrl.Run();
         if (hr < 0 || hr > 1)
         {
