@@ -205,7 +205,8 @@ namespace MediaPortal
         {
           // copy the YUV video surface to our managed ARGB surface
           // Log.Debug("Calling VideoSurfaceToRGBSurface");
-          VideoSurfaceToRGBSurface(new IntPtr(pSurface), (IntPtr) rgbSurface.UnmanagedComPointer);
+          if (rgbSurface != null)
+            VideoSurfaceToRGBSurface(new IntPtr(pSurface), (IntPtr) rgbSurface.UnmanagedComPointer);
           lock (grabNotifier)
           {
             grabSample = false;
