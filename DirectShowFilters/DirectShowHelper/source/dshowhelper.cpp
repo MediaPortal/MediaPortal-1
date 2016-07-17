@@ -944,6 +944,7 @@ void MadDeinit()
     }
     m_pVMR9Filter = nullptr;
     Log("MPMadDshow::MadDeinit shutdown done");
+    Sleep(50);
   }
   catch(...)
   {
