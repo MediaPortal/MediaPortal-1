@@ -444,7 +444,7 @@ namespace MediaPortal.Player
           IMediaControl mediactrl = (IMediaControl) _graphBuilder;
           if (mediactrl != null) mediactrl.Run();
           // Sending message to force unfocus/focus for 3D.
-          if (UseMadVideoRenderer3D)
+          if (UseMadVideoRenderer3D && !g_Player.IsTimeShifting)
           {
             var msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_UNFOCUS_FOCUS, 0, 0, 0, 0, 0, null);
             GUIWindowManager.SendThreadMessage(msg);
