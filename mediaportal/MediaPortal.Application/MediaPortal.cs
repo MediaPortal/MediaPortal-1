@@ -480,6 +480,12 @@ public class MediaPortalApp : D3D, IRender
   [STAThread]
   public static void Main(string[] args)
   {
+    Log.Info("Starting deployer application");
+
+    Application.ThreadException += new System.Threading.ThreadExceptionEventHandler(Application_ThreadException);
+    AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(CurrentDomain_UnhandledException);
+    Application.ApplicationExit += new EventHandler(Application_ApplicationExit);
+
     using (Settings xmlreader = new MPSettings())
     {
       bool noAutoStartOnRDP = xmlreader.GetValueAsBool("general", "noautostartonrdp", false);
@@ -1077,6 +1083,20 @@ public class MediaPortalApp : D3D, IRender
     Environment.Exit(0);
   }
 
+  static void Application_ApplicationExit(object sender, EventArgs e)
+  {
+    Log.Info("Application Closed");
+  }
+
+  static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+  {
+    Log.Error(string.Format("*** UNHANDLED APPDOMAIN EXCEPTION ({0}) *****", e.IsTerminating ? "Terminating" : "Non-Terminating"), e.ExceptionObject as Exception);
+  }
+
+  static void Application_ThreadException(object sender, System.Threading.ThreadExceptionEventArgs e)
+  {
+    Log.Error("*** UNHANDLED THREAD EXCEPTION *****", e.Exception);
+  }
 
   /// <summary>
   /// Disables the Splash Screen
