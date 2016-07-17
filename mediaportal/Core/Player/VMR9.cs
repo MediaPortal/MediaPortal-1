@@ -175,7 +175,6 @@ namespace MediaPortal.Player
     private bool _inMenu = false;
     private IRender _renderFrame;
     internal IBaseFilter _vmr9Filter = null;
-    private GCHandle gch;
     private int _videoHeight, _videoWidth;
     private int _videoAspectRatioX, _videoAspectRatioY;
     private IQualProp _qualityInterface = null;
@@ -575,8 +574,6 @@ namespace MediaPortal.Player
           videoWin.put_Owner(GUIGraphicsContext.ActiveForm);
           Size client = GUIGraphicsContext.form.ClientSize;
           videoWin.SetWindowPosition(0, 0, client.Width, client.Height);
-          gch = GCHandle.Alloc(_vmr9Filter);
-          //GCHandle.Alloc(_vmr9Filter);
         }
         else
         {
@@ -1443,7 +1440,6 @@ namespace MediaPortal.Player
           //}
           DirectShowUtil.RemoveFilter(_graphBuilder, _vmr9Filter);
           DirectShowUtil.FinalReleaseComObject(_vmr9Filter);
-          gch.Free();
           Log.Debug("VMR9: Dispose 3");
         }
         _vmr9Filter = null;
