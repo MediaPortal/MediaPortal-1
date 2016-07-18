@@ -194,6 +194,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channel
       ChannelScte scteChannel = channel as ChannelScte;
       if (
         scteChannel == null ||
+        Frequency <= 0 ||       // switched digital video - frequency not known until tune time
         Frequency != scteChannel.Frequency ||
         ModulationScheme != scteChannel.ModulationScheme
       )
