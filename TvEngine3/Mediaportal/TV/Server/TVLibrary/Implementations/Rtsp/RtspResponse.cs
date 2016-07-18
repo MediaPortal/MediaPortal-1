@@ -140,7 +140,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Rtsp
 
       response._body = sections[1];
       string[] headers = sections[0].Split(new string[] { "\r\n" }, StringSplitOptions.None);
-      response._headers = new Dictionary<string, string>();
+      response._headers = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
       foreach (string header in headers)
       {
         string[] headerInfo = header.Split(new char[] { ':' }, 2);
