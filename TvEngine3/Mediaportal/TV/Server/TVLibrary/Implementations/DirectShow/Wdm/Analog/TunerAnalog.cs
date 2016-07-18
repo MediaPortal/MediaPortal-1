@@ -33,7 +33,6 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channel;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Exception;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension;
-using MediaPortal.Common.Utils.ExtensionMethods;
 using AnalogVideoStandard = Mediaportal.TV.Server.Common.Types.Enum.AnalogVideoStandard;
 using MediaType = Mediaportal.TV.Server.Common.Types.Enum.MediaType;
 using Regex = System.Text.RegularExpressions.Regex;
@@ -113,81 +112,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog
 
     #endregion
 
-    /// <summary>
-    /// Get a list of channels representing the external non-tuner sources available from this tuner.
-    /// </summary>
-    /// <returns>a list of channels, one channel per source</returns>
-    public IList<IChannel> GetSourceChannels()
-    {
-      if (_crossbar == null)
-      {
-        ChannelCapture channel = new ChannelCapture();
-        channel.AudioSource = CaptureSourceAudio.TunerDefault;
-        channel.IsEncrypted = false;
-        channel.IsVcrSignal = false;
-        channel.LogicalChannelNumber = channel.DefaultLogicalChannelNumber;
-        channel.Provider = "Capture";
-        if (_capture.VideoFilter != null)
-        {
-          channel.MediaType = MediaType.Television;
-          channel.Name = "Tuner " + TunerId + " Video Capture";
-          channel.VideoSource = CaptureSourceVideo.TunerDefault;
-        }
-        else
-        {
-          channel.MediaType = MediaType.Radio;
-          channel.Name = "Tuner " + TunerId + " Audio Capture";
-          channel.VideoSource = CaptureSourceVideo.None;
-        }
-        return new List<IChannel>() { channel };
-      }
-
-      IList<IChannel> channels = new List<IChannel>();
-      CaptureSourceVideo supportedVideoSources = _crossbar.SupportedVideoSources;
-      if (supportedVideoSources != CaptureSourceVideo.None)
-      {
-        foreach (CaptureSourceVideo source in System.Enum.GetValues(typeof(CaptureSourceVideo)))
-        {
-          if (source != CaptureSourceVideo.None && source != CaptureSourceVideo.Tuner && supportedVideoSources.HasFlag(source))
-          {
-            ChannelCapture channel = new ChannelCapture();
-            channel.AudioSource = CaptureSourceAudio.Automatic;
-            channel.Name = string.Format("Tuner {0} {1} Video Source", TunerId, channel.VideoSource.GetDescription());
-            channel.MediaType = MediaType.Television;
-            channel.VideoSource = source;
-            channel.IsEncrypted = false;
-            channel.IsVcrSignal = false;
-            channel.LogicalChannelNumber = channel.DefaultLogicalChannelNumber;
-            channel.Provider = "External Input";
-            channels.Add(channel);
-          }
-        }
-        return channels;
-      }
-
-      CaptureSourceAudio supportedAudioSources = _crossbar.SupportedAudioSources;
-      if (supportedAudioSources != CaptureSourceAudio.None)
-      {
-        foreach (CaptureSourceAudio source in System.Enum.GetValues(typeof(CaptureSourceAudio)))
-        {
-          if (source != CaptureSourceAudio.None && source != CaptureSourceAudio.Tuner && supportedAudioSources.HasFlag(source))
-          {
-            ChannelCapture channel = new ChannelCapture();
-            channel.AudioSource = source;
-            channel.MediaType = MediaType.Radio;
-            channel.Name = string.Format("Tuner {0} {1} Audio Source", TunerId, channel.AudioSource.GetDescription());
-            channel.VideoSource = CaptureSourceVideo.None;
-            channel.IsEncrypted = false;
-            channel.IsVcrSignal = false;
-            channel.LogicalChannelNumber = channel.DefaultLogicalChannelNumber;
-            channel.Provider = "External Input";
-            channels.Add(channel);
-          }
-        }
-      }
-      return channels;
-    }
-
     #region ITunerInternal members
 
     #region configuration
@@ -206,7 +130,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog
       {
         TVDatabase.Entities.AnalogTunerSettings settings;
         IEnumerable<TVDatabase.Entities.TunerProperty> properties;
-        GetDefaultConfiguration(out settings, out properties);
+        CreateDefaultConfiguration(out settings, out properties);
         configuration.AnalogTunerSettings = settings;
         if (properties != null)
         {
@@ -244,9 +168,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog
     }
 
     /// <summary>
-    /// Get sensible default configuration based on country and hardware capabilities.
+    /// Create sensible default configuration based on country and hardware capabilities.
     /// </summary>
-    private void GetDefaultConfiguration(out TVDatabase.Entities.AnalogTunerSettings settings, out IEnumerable<TVDatabase.Entities.TunerProperty> properties)
+    private void CreateDefaultConfiguration(out TVDatabase.Entities.AnalogTunerSettings settings, out IEnumerable<TVDatabase.Entities.TunerProperty> properties)
     {
       this.LogDebug("WDM analog: first detection, get default configuration");
       settings = new TVDatabase.Entities.AnalogTunerSettings();
@@ -261,9 +185,15 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog
       settings.EncoderBitRateModeRecording = (int)EncodeMode.ConstantBitRate;
       settings.EncoderBitRateRecording = 100;
       settings.EncoderBitRatePeakRecording = 100;
+
+      settings.ExternalInputSourceAudio = (int)CaptureSourceAudio.None;
+      settings.SupportedAudioSources = (int)CaptureSourceAudio.None;
+      settings.ExternalInputSourceVideo = (int)CaptureSourceVideo.None;
+      settings.SupportedVideoSources = (int)CaptureSourceVideo.None;
+
       settings.ExternalTunerProgram = string.Empty;
       settings.ExternalTunerProgramArguments = string.Empty;
-
+      settings.ExternalInputPhysicalChannelNumber = 7;
       string countryName = RegionInfo.CurrentRegion.EnglishName;
       Country country = CountryCollection.Instance.GetCountryByName(countryName);
       if (country == null)
@@ -274,7 +204,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog
       {
         settings.ExternalInputCountryId = country.Id;
       }
-      settings.ExternalInputPhysicalChannelNumber = 7;
+
+      settings.FrameRate = (int)FrameRate.Automatic;
+      settings.SupportedFrameSizes = (int)FrameRate.Automatic;
+      settings.FrameSize = (int)FrameSize.Automatic;
+      settings.SupportedFrameSizes = (int)FrameSize.Automatic;
+      settings.VideoStandard = (int)AnalogVideoStandard.None;
+      settings.SupportedVideoStandards = (int)AnalogVideoStandard.None;
 
       // Minimal loading, enough to build configuration.
       try
@@ -300,24 +236,39 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog
         if (_crossbar != null)
         {
           CaptureSourceVideo videoSources = _crossbar.SupportedVideoSources;
-          foreach (CaptureSourceVideo videoSource in System.Enum.GetValues(typeof(CaptureSourceVideo)))
-          {
-            if (videoSource != CaptureSourceVideo.None && videoSources.HasFlag(videoSource))
-            {
-              settings.ExternalInputSourceVideo = (int)videoSource;
-            }
-          }
           settings.SupportedVideoSources = (int)videoSources;
-
           CaptureSourceAudio audioSources = _crossbar.SupportedAudioSources;
-          foreach (CaptureSourceAudio audioSource in System.Enum.GetValues(typeof(CaptureSourceAudio)))
+          settings.SupportedAudioSources = (int)audioSources;
+
+          if (videoSources == CaptureSourceVideo.None)
           {
-            if (audioSource != CaptureSourceAudio.None && audioSources.HasFlag(audioSource))
+            settings.ExternalInputSourceVideo = (int)CaptureSourceVideo.None;
+            foreach (CaptureSourceAudio audioSource in System.Enum.GetValues(typeof(CaptureSourceAudio)))
             {
-              settings.ExternalInputSourceAudio = (int)audioSource;
+              if (audioSource != CaptureSourceAudio.None && audioSources.HasFlag(audioSource))
+              {
+                settings.ExternalInputSourceAudio = (int)audioSource;
+              }
             }
           }
-          settings.SupportedAudioSources = (int)audioSources;
+          else
+          {
+            foreach (CaptureSourceVideo videoSource in System.Enum.GetValues(typeof(CaptureSourceVideo)))
+            {
+              if (videoSource != CaptureSourceVideo.None && videoSources.HasFlag(videoSource))
+              {
+                settings.ExternalInputSourceVideo = (int)videoSource;
+              }
+            }
+            if (audioSources == CaptureSourceAudio.None)
+            {
+              settings.ExternalInputSourceAudio = (int)CaptureSourceAudio.None;
+            }
+            else
+            {
+              settings.ExternalInputSourceAudio = (int)CaptureSourceAudio.Automatic;
+            }
+          }
         }
         else
         {
@@ -371,7 +322,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog
             }
             else if (_capture.SupportedFrameSizes.HasFlag(FrameSize.Fs1440_1080))
             {
-              settings.FrameSize = (int)FrameSize.Fs1920_1080;
+              settings.FrameSize = (int)FrameSize.Fs1440_1080;
             }
             else
             {

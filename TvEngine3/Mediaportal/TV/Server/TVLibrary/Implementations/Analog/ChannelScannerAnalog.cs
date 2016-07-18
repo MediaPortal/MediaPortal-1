@@ -22,12 +22,13 @@ using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using Mediaportal.TV.Server.Common.Types.Enum;
-using Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog;
+using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
 using Mediaportal.TV.Server.TVLibrary.Implementations.Dvb;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Channel;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channel;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Tuner;
 using MediaPortal.Common.Utils.ExtensionMethods;
 
@@ -42,7 +43,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog
   /// </remarks>
   internal class ChannelScannerAnalog : ChannelScannerDvb
   {
-    private TunerAnalog _tuner = null;
+    private ITuner _tuner = null;
 
     #region constructor
 
@@ -55,7 +56,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog
     public ChannelScannerAnalog(ITuner tuner, IGrabberSiMpeg grabberMpeg, IGrabberSiDvb grabberDvb)
       : base(tuner, grabberMpeg, grabberDvb, null)
     {
-      _tuner = tuner as TunerAnalog;
+      _tuner = tuner;
     }
 
     #endregion
@@ -71,31 +72,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog
     /// <param name="groupNames">The names of the groups referenced in <paramref name="channels"/>.</param>
     public override void Scan(IChannel channel, bool isFastNetworkScan, out IList<ScannedChannel> channels, out IDictionary<ChannelGroupType, IDictionary<ulong, string>> groupNames)
     {
-      // External input "scanning".
-      if (_tuner != null)
+      ChannelCapture captureChannel = channel as ChannelCapture;
+      if (captureChannel != null)
       {
-        ChannelCapture captureChannel = channel as ChannelCapture;
-        if (captureChannel != null)
-        {
-          channels = new List<ScannedChannel>(100);
-          groupNames = new Dictionary<ChannelGroupType, IDictionary<ulong, string>>(2);
-          groupNames.Add(ChannelGroupType.BroadcastStandard, new Dictionary<ulong, string>(1) { { (ulong)BroadcastStandard.ExternalInput, BroadcastStandard.ExternalInput.GetDescription() } });
-          IDictionary<ulong, string> providerGroupNames = new Dictionary<ulong, string>(30);
-          foreach (IChannel sourceChannel in _tuner.GetSourceChannels())
-          {
-            ScannedChannel scannedChannel = new ScannedChannel(sourceChannel);
-            scannedChannel.IsVisibleInGuide = true;
-            scannedChannel.Groups.Add(ChannelGroupType.BroadcastStandard, new List<ulong>(1) { (ulong)BroadcastStandard.ExternalInput });
-
-            ulong hashCode = (ulong)sourceChannel.Provider.GetHashCode();
-            scannedChannel.Groups.Add(ChannelGroupType.ChannelProvider, new List<ulong>(1) { hashCode });
-            providerGroupNames[hashCode] = sourceChannel.Provider;
-
-            channels.Add(scannedChannel);
-          }
-          groupNames.Add(ChannelGroupType.ChannelProvider, providerGroupNames);
-          return;
-        }
+        // External input "scanning".
+        GetSourceChannels(out channels, out groupNames);
+        return;
       }
 
       base.Scan(channel, isFastNetworkScan, out channels, out groupNames);
@@ -150,5 +132,102 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog
     }
 
     #endregion
+
+    /// <summary>
+    /// Get a list of channels representing the external non-tuner sources available from this tuner.
+    /// </summary>
+    /// <param name="channels">The channel information found.</param>
+    /// <param name="groupNames">The names of the groups referenced in <paramref name="channels"/>.</param>
+    private void GetSourceChannels(out IList<ScannedChannel> channels, out IDictionary<ChannelGroupType, IDictionary<ulong, string>> groupNames)
+    {
+      channels = new List<ScannedChannel>(100);
+      groupNames = new Dictionary<ChannelGroupType, IDictionary<ulong, string>>(2);
+
+      Mediaportal.TV.Server.TVDatabase.Entities.AnalogTunerSettings settings = AnalogTunerSettingsManagement.GetAnalogTunerSettings(_tuner.TunerId);
+      if (settings == null)
+      {
+        this.LogWarn("scan analog: analog tuner settings are not available");
+        return;
+      }
+
+      IList<IChannel> tuningChannels = new List<IChannel>(100);
+      CaptureSourceVideo supportedVideoSources = (CaptureSourceVideo)settings.SupportedVideoSources;
+      CaptureSourceAudio supportedAudioSources = (CaptureSourceAudio)settings.SupportedAudioSources;
+      if (
+        supportedVideoSources == CaptureSourceVideo.TunerDefault ||
+        supportedAudioSources == CaptureSourceAudio.TunerDefault
+      )
+      {
+        ChannelCapture channel = new ChannelCapture();
+        channel.AudioSource = supportedAudioSources;
+        channel.IsVcrSignal = false;
+        channel.Provider = "Capture";
+        channel.VideoSource = supportedVideoSources;
+        if (supportedVideoSources == CaptureSourceVideo.TunerDefault)
+        {
+          channel.MediaType = MediaType.Television;
+          channel.Name = string.Format("Tuner {0} Video Capture", _tuner.TunerId);
+        }
+        else
+        {
+          channel.MediaType = MediaType.Radio;
+          channel.Name = string.Format("Tuner {0} Audio Capture", _tuner.TunerId);
+        }
+        tuningChannels.Add(channel);
+      }
+      else if (supportedVideoSources != CaptureSourceVideo.None)
+      {
+        foreach (CaptureSourceVideo source in System.Enum.GetValues(typeof(CaptureSourceVideo)))
+        {
+          if (source != CaptureSourceVideo.None && source != CaptureSourceVideo.Tuner && supportedVideoSources.HasFlag(source))
+          {
+            ChannelCapture channel = new ChannelCapture();
+            channel.AudioSource = CaptureSourceAudio.Automatic;
+            channel.IsVcrSignal = false;
+            channel.MediaType = MediaType.Television;
+            channel.Name = string.Format("Tuner {0} {1} Video Source", _tuner.TunerId, channel.VideoSource.GetDescription());
+            channel.Provider = "External Input";
+            channel.VideoSource = source;
+            tuningChannels.Add(channel);
+          }
+        }
+      }
+      else if (supportedAudioSources != CaptureSourceAudio.None)
+      {
+        foreach (CaptureSourceAudio source in System.Enum.GetValues(typeof(CaptureSourceAudio)))
+        {
+          if (source != CaptureSourceAudio.None && source != CaptureSourceAudio.Tuner && supportedAudioSources.HasFlag(source))
+          {
+            ChannelCapture channel = new ChannelCapture();
+            channel.AudioSource = source;
+            channel.IsVcrSignal = false;
+            channel.MediaType = MediaType.Radio;
+            channel.Name = string.Format("Tuner {0} {1} Audio Source", _tuner.TunerId, channel.AudioSource.GetDescription());
+            channel.Provider = "External Input";
+            channel.VideoSource = CaptureSourceVideo.None;
+            tuningChannels.Add(channel);
+          }
+        }
+      }
+
+      groupNames.Add(ChannelGroupType.BroadcastStandard, new Dictionary<ulong, string>(1) { { (ulong)BroadcastStandard.ExternalInput, BroadcastStandard.ExternalInput.GetDescription() } });
+      IDictionary<ulong, string> providerGroupNames = new Dictionary<ulong, string>(30);
+      foreach (IChannel channel in tuningChannels)
+      {
+        channel.IsEncrypted = false;
+        channel.LogicalChannelNumber = channel.DefaultLogicalChannelNumber;
+
+        ScannedChannel scannedChannel = new ScannedChannel(channel);
+        scannedChannel.IsVisibleInGuide = true;
+        scannedChannel.Groups.Add(ChannelGroupType.BroadcastStandard, new List<ulong>(1) { (ulong)BroadcastStandard.ExternalInput });
+
+        ulong hashCode = (ulong)channel.Provider.GetHashCode();
+        scannedChannel.Groups.Add(ChannelGroupType.ChannelProvider, new List<ulong>(1) { hashCode });
+        providerGroupNames[hashCode] = channel.Provider;
+
+        channels.Add(scannedChannel);
+      }
+      groupNames.Add(ChannelGroupType.ChannelProvider, providerGroupNames);
+    }
   }
 }
