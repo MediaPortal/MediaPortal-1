@@ -138,13 +138,24 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Rtsp
               }
             }
           }
-          return response.StatusCode;
         }
         finally
         {
           stream.Close();
           stream.Dispose();
         }
+
+        // Should we close the connection?
+        string connectionString;
+        if (
+          response.Headers.TryGetValue("Connection", out connectionString) &&
+          string.Equals("close", connectionString, StringComparison.InvariantCultureIgnoreCase)
+        )
+        {
+          _client.Close();
+          _client = null;
+        }
+        return response.StatusCode;
       }
     }
 
