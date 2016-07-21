@@ -1924,6 +1924,9 @@ namespace DirectShowLib
     public static readonly Guid TVAudioFilterPropertyPage = new Guid(0x71f96463, 0x78f3, 0x11d0, 0xa1, 0x8c, 0x00, 0xa0, 0xc9, 0x11, 0x89, 0x56);
   }
 
+  /*
+   * Redefined in TveCustomisations.cs.
+   * 
   static public class BDANodeCategory
   {
     /// <summary> KSNODE_BDA_RF_TUNER </summary>
@@ -1953,7 +1956,7 @@ namespace DirectShowLib
     /// <summary> KSNODE_BDA_IP_SINK </summary>
     public static readonly Guid IPSink = new Guid(0x71985f4e, 0x1ca1, 0x11d3, 0x9c, 0xc8, 0x00, 0xc0, 0x4f, 0x79, 0x71, 0xe0);
 
-  }
+  }*/
 
   static public class TAGTables
   {

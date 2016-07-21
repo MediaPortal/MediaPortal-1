@@ -473,25 +473,25 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
       {
         Guid function = descriptors[d].guidFunction;
         Log.Debug("    function {0} = {1}", d, function);
-        if (function == BDANodeCategory.EightVSBDemodulator)
+        if (function == BDANodeCategory.VSB_8_DEMODULATOR)
         {
           isVsbSupported = true;
         }
-        else if (function == BDANodeCategory.QAMDemodulator)
+        else if (function == BDANodeCategory.QAM_DEMODULATOR)
         {
           isQamSupported = true;
         }
-        else if (function == BDANodeCategory.COFDMDemodulator ||
-          function == TveGuid.KS_NODE_BDA_ISDB_T_DEMODULATOR)
+        else if (function == BDANodeCategory.COFDM_DEMODULATOR ||
+          function == BDANodeCategory.ISDB_T_DEMODULATOR)
         {
           isOfdmSupported = true;
         }
-        else if (function == BDANodeCategory.QPSKDemodulator)
+        else if (function == BDANodeCategory.QPSK_DEMODULATOR)
         {
           isPskSupported = true;
         }
-        else if (function == TveGuid.KS_NODE_BDA_8PSK_DEMODULATOR ||
-          function == TveGuid.KS_NODE_BDA_ISDB_S_DEMODULATOR)
+        else if (function == BDANodeCategory.PSK_8_DEMODULATOR ||
+          function == BDANodeCategory.ISDB_S_DEMODULATOR)
         {
           isPskSupported = true;
           isPsk8Supported = true;

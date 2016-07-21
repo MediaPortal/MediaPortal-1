@@ -345,6 +345,98 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
       }
     }
 
+    protected virtual string GetEventTypeName(Guid eventType)
+    {
+      // Some of these events are documented as fired by IBroadcastEvent or
+      // IBroadcastEventEx:
+      // https://msdn.microsoft.com/en-us/library/windows/desktop/dd695328(v=vs.85).aspx
+      if (eventType == EventID.XDSCodecNewXDSRating)
+      {
+        return "extended data services codec new rating";
+      }
+      else if (eventType == EventID.XDSCodecDuplicateXDSRating)
+      {
+        return "extended data services codec duplicate rating";
+      }
+      else if (eventType == EventID.XDSCodecNewXDSPacket)
+      {
+        return "extended data services codec new packet";
+      }
+      else if (eventType == EventID.DTFilterRatingChange)
+      {
+        return "decrypter/detagger filter rating change";
+      }
+      else if (eventType == EventID.DTFilterRatingsBlock)
+      {
+        return "decrypter/detagger filter ratings block";
+      }
+      else if (eventType == EventID.DTFilterRatingsUnblock)
+      {
+        return "decrypter/detagger filter ratings unblock";
+      }
+      else if (eventType == EventID.DTFilterXDSPacket)
+      {
+        return "decrypter/detagger filter extended data services packet";
+      }
+      else if (eventType == EventID.ETFilterEncryptionOn)
+      {
+        return "encrypter/tagger filter encryption on";
+      }
+      else if (eventType == EventID.ETFilterEncryptionOff)
+      {
+        return "encrypter/tagger filter encryption off";
+      }
+      else if (eventType == EventID.DTFilterCOPPUnblock)
+      {
+        return "decrypter/detagger filter certified output protection unblock";
+      }
+      else if (eventType == EventID.EncDecFilterError)
+      {
+        return "encrypter/tagger or decrypter/detagger filter error";   // (bad COPP driver?)
+      }
+      else if (eventType == EventID.DTFilterCOPPBlock)
+      {
+        return "decrypter/detagger filter certified output protection block";
+      }
+      else if (eventType == EventID.ETFilterCopyOnce)
+      {
+        return "encrypter/tagger filter copy once";
+      }
+      else if (eventType == EventID.ETFilterCopyNever)
+      {
+        return "encrypter/tagger filter copy never";
+      }
+      else if (eventType == EventID.DTFilterDataFormatOK)
+      {
+        return "decrypter/detagger filter data format okay";
+      }
+      else if (eventType == EventID.DTFilterDataFormatFailure)
+      {
+        return "decrypter/detagger filter data format failure";         // (corrupt, unreadable, old file?)
+      }
+      else if (eventType == EventID.ETDTFilterLicenseOK)
+      {
+        return "encrypter/tagger or decrypter/detagger filter license okay";
+      }
+      else if (eventType == EventID.ETDTFilterLicenseFailure)
+      {
+        return "encrypter/tagger or decrypter/detagger filter license failure";
+      }
+      else if (eventType == EventID.EncDecFilterEvent)
+      {
+        return "encrypter/tagger or decrypter/tagger filter event";
+      }
+      else if (eventType == EventID.FormatNotSupportedEvent)
+      {
+        return "format not supported";
+      }
+      else if (eventType == EventID.DemultiplexerFilterDiscontinuity)
+      {
+        return "demultiplexer filter discontinuity";
+      }
+      return eventType.ToString();
+    }
+
     #endregion
 
     /// <summary>
@@ -474,7 +566,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
 
     public int Fire(Guid eventId)
     {
-      this.LogDebug("DirectShow base: received broadcast event, ID = {0}", eventId);
+      this.LogDebug("DirectShow base: received broadcast event, type = {0}", GetEventTypeName(eventId));
+
+      // Seen through IBroadcastEvent with pur_berger's EyeTV Sat + PBDA driver.
+      // http://forum.team-mediaportal.com/threads/after-restart-tv-stops-playing-after-first-attempt.132016/
+      // EVENTID_TuningChanged
+      // EVENTID_NewSignalAcquired
       return 0;
     }
 
@@ -484,7 +581,167 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
 
     public int FireEx(Guid eventId, int param1, int param2, int param3, int param4)
     {
-      this.LogDebug("DirectShow base: received extended broadcast event, ID = {0}, param 1 = {1}, param 2 = {2}, param 3 = {3}, param 4 = {4}", eventId, param1, param2, param3, param4);
+      // All BdaEventType parameter handling is based on documentation found in
+      // bdamedia.h, cross-checked with experience where possible.
+      // All EventID parameter handling is based on documentation found on MSDN.
+      // https://msdn.microsoft.com/en-us/library/windows/desktop/dd695328(v=vs.85).aspx
+
+      // Seen through IBroadcastEventEx with pur_berger's EyeTV Sat + PBDA driver.
+      // http://forum.team-mediaportal.com/threads/after-restart-tv-stops-playing-after-first-attempt.132016/
+      // EVENTID_PSITable
+      // EVENTID_ServiceTerminated
+
+      // Seen through IBroadcastEventEx with Pete09's ATI CableCARD tuner
+      // (private testing).
+      // EVENTID_TuningChanging
+      // EVENTID_SignalStatusChanged
+      // EVENTID_NewSignalAcquired
+      // EVENTID_CardStatusChanged
+      // EVENTID_DRMParingStatusChanged
+      // EVENTID_DRMParingStepComplete
+
+      string paramString = string.Empty;
+      bool logEvent = true;
+      if (eventId == BdaEventType.PSI_TABLE)
+      {
+        int transportStreamId = param1 & 0xffff;
+        int originalNetworkId = (int)((uint)param1 >> 16);  // EIT only
+        int pid = param2 & 0xffff;
+        int tableId = (int)((uint)param2 >> 16);
+        int hashedVersion = param3;
+        int programNumber = param4 & 0xffff;                // PMT, EIT
+        int segmentNumber = (int)((uint)param4 >> 16);      // EIT only
+        logEvent = false;
+      }
+      else if (eventId == BdaEventType.SERVICE_TERMINATED)
+      {
+        string orbitalPosition = "N/A";
+        if (param4 != -1)
+        {
+          if (param4 > 1800)
+          {
+            orbitalPosition = string.Format("{0}° W", (float)param4 - 1800 / 10);
+          }
+          else
+          {
+            orbitalPosition = string.Format("{0}° E", (float)param4 / 10);
+          }
+        }
+        paramString = string.Format("ONID = {0}, TSID = {1}, service ID = {2}, frequency = {3} kHz, orbital position = {4}", ((uint)param2 >> 16), param1, param2 & 0xffff, param3, orbitalPosition);
+      }
+      else if (eventId == BdaEventType.SIGNAL_STATUS_CHANGED)
+      {
+        // undocumented param 1 values: 0 [on pending?], -1 [on fail?]
+      }
+      else if (eventId == BdaEventType.CARD_STATUS_CHANGED)
+      {
+        paramString = string.Format("status = {0}", (SmartCardStatusType)param1);
+      }
+      else if (eventId == BdaEventType.DRM_PAIRING_STATUS_CHANGED)
+      {
+        paramString = string.Format("status = {0}, HRESULT = {1}", (BDA_DrmPairingError)param1, (NativeMethods.HResult)param2);
+      }
+      else if (eventId == BdaEventType.DRM_PAIRING_STEP_COMPLETE)
+      {
+        string pairingManager;
+        if (param1 == 2)
+        {
+          pairingManager = "OCUR";    // open cable uni-directional receiver
+        }
+        else if (param1 == 3)
+        {
+          pairingManager = "PBDA";
+        }
+        else
+        {
+          pairingManager = string.Format("unknown ({0})", param1);
+        }
+        paramString = string.Format("pairing manager = {0}, step # = {1}, result = {2}", pairingManager, param2, param3);
+      }
+      else if (eventId == BdaEventType.MMI_MESSAGE)
+      {
+        string message;
+        if (param1 == 0)
+        {
+          message = "open";
+        }
+        else if (param1 == 1)
+        {
+          message = "close";
+        }
+        else
+        {
+          message = string.Format("unknown ({0})", param1);
+        }
+        paramString = string.Format("message = {0}", message);
+      }
+      else if (eventId == BdaEventType.ENTITLEMENT_CHANGED)
+      {
+        paramString = string.Format("entitlement = {0}", (EntitlementType)param1);
+      }
+      else if (eventId == BdaEventType.STB_CHANNEL_NUMBER)
+      {
+        paramString = string.Format("channel number = {0}", param1);
+      }
+
+      else if (eventId == EventID.EncDecFilterEvent)
+      {
+        EncDecEvents eventType = (EncDecEvents)param1;
+        if (eventType == EncDecEvents.CPEvent || eventType == EncDecEvents.RecordingStatus)
+        {
+          if (eventType == EncDecEvents.CPEvent)
+          {
+            paramString = string.Format("event type = {0}, sub-type = {1}", eventType, (CPEvents)param2);
+          }
+          // Guessed, not documented.
+          else if (eventType == EncDecEvents.RecordingStatus)
+          {
+            paramString = string.Format("event type = {0}, status = {1}", eventType, (CPRecordingStatus)param2);
+          }
+
+          // The documentation doesn't say it, but I suspect - based on the
+          // existence of relevant enums - that param3 and param4 may contain
+          // additional information.
+          if (param3 != 0)
+          {
+            paramString += string.Format(", param 3 = {0}", param3);
+          }
+          if (param4 != 0)
+          {
+            paramString += string.Format(", param 4 = {0}", param4);
+          }
+        }
+      }
+
+      if (logEvent)
+      {
+        string eventTypeName = GetEventTypeName(eventId);
+        if (paramString != null)
+        {
+          this.LogDebug("DirectShow base: received extended broadcast event, type = {0}, {1}", eventTypeName, paramString);
+        }
+        else
+        {
+          paramString = string.Empty;
+          if (param1 != 0)
+          {
+            paramString += string.Format(", param 1 = {0}", param1);
+          }
+          if (param4 != 0)
+          {
+            paramString += string.Format(", param 2 = {0}", param2);
+          }
+          if (param3 != 0)
+          {
+            paramString += string.Format(", param 3 = {0}", param3);
+          }
+          if (param4 != 0)
+          {
+            paramString += string.Format(", param 4 = {0}", param4);
+          }
+          this.LogDebug("DirectShow base: received extended broadcast event, type = {0}{1}", eventTypeName, paramString);
+        }
+      }
       return 0;
     }
 

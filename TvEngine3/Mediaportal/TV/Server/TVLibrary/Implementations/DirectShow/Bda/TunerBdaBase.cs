@@ -666,6 +666,303 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
       _eventRegistrations.Clear();
     }
 
+    protected override string GetEventTypeName(Guid eventType)
+    {
+      if (eventType == typeof(IESCloseMmiEvent).GUID)
+      {
+        return "close MMI";
+      }
+      else if (eventType == typeof(IESFileExpiryDateEvent).GUID)
+      {
+        return "file expiry date";
+      }
+      else if (eventType == typeof(IESIsdbCasResponseEvent).GUID)
+      {
+        return "ISDB CAS response";
+      }
+      else if (eventType == typeof(IESLicenseRenewalResultEvent).GUID)
+      {
+        return "license renewal result";
+      }
+      else if (eventType == typeof(IESOpenMmiEvent).GUID)
+      {
+        return "open MMI";
+      }
+      else if (eventType == typeof(IESRequestTunerEvent).GUID)
+      {
+        return "request tuner";
+      }
+      else if (eventType == typeof(IESValueUpdatedEvent).GUID)
+      {
+        return "value updated";
+      }
+
+      if (eventType == BdaEventType.TUNING_CHANGING)
+      {
+        return "tuning changing";
+      }
+      else if (eventType == BdaEventType.TUNING_CHANGED)
+      {
+        return "tuning changed";
+      }
+      else if (eventType == BdaEventType.CANDIDATE_POST_TUNE_DATA)
+      {
+        return "candidate post tune data";
+      }
+      else if (eventType == BdaEventType.CA_DENIAL_COUNT_CHANGED)
+      {
+        return "CA denial count changed";
+      }
+      else if (eventType == BdaEventType.SIGNAL_STATUS_CHANGED)
+      {
+        return "signal status changed";
+      }
+      else if (eventType == BdaEventType.NEW_SIGNAL_ACQUIRED)
+      {
+        return "new signal acquired";
+      }
+
+      else if (eventType == BdaEventType.EAS_MESSAGE_RECEIVED)
+      {
+        return "EAS message received";
+      }
+      else if (eventType == BdaEventType.PSI_TABLE)
+      {
+        return "PSI table";
+      }
+      else if (eventType == BdaEventType.SERVICE_TERMINATED)
+      {
+        return "service terminated";
+      }
+      else if (eventType == BdaEventType.CARD_STATUS_CHANGED)
+      {
+        return "card status changed";
+      }
+      else if (eventType == BdaEventType.DRM_PAIRING_STATUS_CHANGED)
+      {
+        return "DRM pairing status changed";
+      }
+      else if (eventType == BdaEventType.DRM_PAIRING_STEP_COMPLETE)
+      {
+        return "DRM pairing step complete";
+      }
+      else if (eventType == BdaEventType.MMI_MESSAGE)
+      {
+        return "MMI message";
+      }
+      else if (eventType == BdaEventType.ENTITLEMENT_CHANGED)
+      {
+        return "entitlement changed";
+      }
+      else if (eventType == BdaEventType.STB_CHANNEL_NUMBER)
+      {
+        return "STB channel number";
+      }
+
+      else if (eventType == BdaEventType.BDA_EVENTING_SERVICE_PENDING_EVENT)
+      {
+        return "eventing service pending";
+      }
+      else if (eventType == BdaEventType.BDA_CONDITIONAL_ACCESS_TAG)
+      {
+        return "conditional access tag";
+      }
+      else if (eventType == BdaEventType.CAS_FAILURE_SPANNING_EVENT)
+      {
+        return "CAS failure [spanning]";
+      }
+      else if (eventType == BdaEventType.CHANNEL_CHANGE_SPANNING_EVENT)
+      {
+        return "channel change [spanning]";
+      }
+      else if (eventType == BdaEventType.CHANNEL_TYPE_SPANNING_EVENT)
+      {
+        return "channel type [spanning]";
+      }
+      else if (eventType == BdaEventType.CHANNEL_INFO_SPANNING_EVENT)
+      {
+        return "channel info [spanning]";
+      }
+      else if (eventType == BdaEventType.RRT_SPANNING_EVENT)
+      {
+        return "regional ratings table [spanning]";
+      }
+      else if (eventType == BdaEventType.CAPTION_SERVICE_DESCRIPTOR_SPANNING_EVENT)
+      {
+        return "caption service descriptor [spanning]";
+      }
+      else if (eventType == BdaEventType.CONTENT_ADVISORY_DESCRIPTOR_SPANNING_EVENT)
+      {
+        return "content advisory descriptor [spanning]";
+      }
+      else if (eventType == BdaEventType.DVB_SCRAMBLING_CONTROL_SPANNING_EVENT)
+      {
+        return "DVB scrambling control [spanning]";
+      }
+      else if (eventType == BdaEventType.SIGNAL_AND_SERVICE_STATUS_SPANNING_EVENT)
+      {
+        return "signal and service status [spanning]";
+      }
+      else if (eventType == BdaEventType.EMM_MESSAGE_SPANNING_EVENT)
+      {
+        return "EMM message [spanning]";
+      }
+      else if (eventType == BdaEventType.AUDIO_TYPE_SPANNING_EVENT)
+      {
+        return "audio type [spanning]";
+      }
+      else if (eventType == BdaEventType.STREAM_TYPE_SPANNING_EVENT)
+      {
+        return "stream type [spanning]";
+      }
+      else if (eventType == BdaEventType.ARIB_CONTENT_SPANNING_EVENT)
+      {
+        return "ARIB content [spanning]";
+      }
+      else if (eventType == BdaEventType.LANGUAGE_SPANNING_EVENT)
+      {
+        return "language [spanning]";
+      }
+      else if (eventType == BdaEventType.DUAL_MONO_SPANNING_EVENT)
+      {
+        return "dual mono [spanning]";
+      }
+      else if (eventType == BdaEventType.PID_LIST_SPANNING_EVENT)
+      {
+        return "PID list [spanning]";
+      }
+      else if (eventType == BdaEventType.AUDIO_DESCRIPTOR_SPANNING_EVENT)
+      {
+        return "audio descriptor [spanning]";
+      }
+      else if (eventType == BdaEventType.SUBTITLE_SPANNING_EVENT)
+      {
+        return "subtitle [spanning]";
+      }
+      else if (eventType == BdaEventType.TELETEXT_SPANNING_EVENT)
+      {
+        return "teletext [spanning]";
+      }
+      else if (eventType == BdaEventType.STREAM_ID_SPANNING_EVENT)
+      {
+        return "stream ID [spanning]";
+      }
+      else if (eventType == BdaEventType.PBDA_PARENTAL_CONTROL_EVENT)
+      {
+        return "PBDA parental control";
+      }
+      else if (eventType == BdaEventType.TUNE_FAILURE_EVENT)
+      {
+        return "tune failure";
+      }
+      else if (eventType == BdaEventType.TUNE_FAILURE_SPANNING_EVENT)
+      {
+        return "tune failure [spanning]";
+      }
+      else if (eventType == BdaEventType.DVB_PARENTAL_RATING_DESCRIPTOR)
+      {
+        return "DVB parental rating descriptor";
+      }
+      else if (eventType == BdaEventType.DFN_WITH_NO_ACTUAL_AV_DATA)
+      {
+        return "decrypt failure notification with no actual A/V data";
+      }
+      else if (eventType == BdaEventType.BDA_ISDB_CAS_RESPONSE)
+      {
+        return "ISDB CAS response";
+      }
+      else if (eventType == BdaEventType.BDA_CAS_REQUEST_TUNER)
+      {
+        return "CAS request tuner";
+      }
+      else if (eventType == BdaEventType.BDA_CAS_RELEASE_TUNER)
+      {
+        return "CAS release tuner";
+      }
+      else if (eventType == BdaEventType.BDA_CAS_OPEN_MMI)
+      {
+        return "CAS open MMI";
+      }
+      else if (eventType == BdaEventType.BDA_CAS_CLOSE_MMI)
+      {
+        return "CAS close MMI";
+      }
+      else if (eventType == BdaEventType.BDA_CAS_BROADCAST_MMI)
+      {
+        return "CAS broadcast MMI";
+      }
+      else if (eventType == BdaEventType.BDA_TUNER_SIGNAL_LOCK)
+      {
+        return "tuner signal lock";
+      }
+      else if (eventType == BdaEventType.BDA_TUNER_NO_SIGNAL)
+      {
+        return "tuner no signal";
+      }
+      else if (eventType == BdaEventType.BDA_GPNV_VALUE_UPDATE)
+      {
+        return "GPNV value update";
+      }
+      else if (eventType == BdaEventType.BDA_UPDATE_DRM_STATUS)
+      {
+        return "update DRM status";
+      }
+      else if (eventType == BdaEventType.BDA_UPDATE_SCAN_STATE)
+      {
+        return "update scan state";
+      }
+      else if (eventType == BdaEventType.BDA_GUIDE_DATA_AVAILABLE)
+      {
+        return "guide data available";
+      }
+      else if (eventType == BdaEventType.BDA_GUIDE_SERVICE_INFORMATION_UPDATED)
+      {
+        return "guide service information updated";
+      }
+      else if (eventType == BdaEventType.BDA_GUIDE_DATA_ERROR)
+      {
+        return "guide data error";
+      }
+      else if (eventType == BdaEventType.BDA_DISEQC_RESPONSE_AVAILABLE)
+      {
+        return "DiSEqC response available";
+      }
+      else if (eventType == BdaEventType.BDA_LBIGS_OPEN_CONNECTION)
+      {
+        return "low bit-rate internet gateway service open connection";
+      }
+      else if (eventType == BdaEventType.BDA_LBIGS_SEND_DATA)
+      {
+        return "low bit-rate internet gateway service send data";
+      }
+      else if (eventType == BdaEventType.BDA_LBIGS_CLOSE_CONNECTION_HANDLE)
+      {
+        return "low bit-rate internet gateway service close connection handle";
+      }
+      else if (eventType == BdaEventType.BDA_ENCODER_SIGNAL_LOCK)
+      {
+        return "encoder signal lock";
+      }
+      else if (eventType == BdaEventType.BDA_FDC_STATUS)
+      {
+        return "forward data channel status";
+      }
+      else if (eventType == BdaEventType.BDA_FDC_TABLE_SECTION)
+      {
+        return "forward data channel table section";
+      }
+      else if (eventType == BdaEventType.BDA_TRANSPORT_STREAM_SELECTOR_INFO)
+      {
+        return "transport stream selector info";
+      }
+      else if (eventType == BdaEventType.BDA_RATING_PIN_RESET)
+      {
+        return "rating PIN reset";
+      }
+
+      return base.GetEventTypeName(eventType);
+    }
+
     #endregion
 
     #endregion
@@ -1055,7 +1352,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
     /// </summary>
     public int OnESEventReceived(Guid eventType, IESEvent esEvent)
     {
-      this.LogDebug("BDA base: received ES event, type = {0}", eventType);
+      this.LogDebug("BDA base: received ES event, type = {0}", GetEventTypeName(eventType));
 
       int id;
       int hr = esEvent.GetEventId(out id);
@@ -1080,6 +1377,441 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
         this.LogWarn("BDA base: failed to get event data, hr = 0x{0:x}", hr);
       }
 
+      if (eventType == typeof(IESOpenMmiEvent).GUID)
+      {
+        IESOpenMmiEvent openMmiEvent = esEvent as IESOpenMmiEvent;
+        if (openMmiEvent != null)
+        {
+          int dialogRequest;
+          int dialogNumber;
+          hr = openMmiEvent.GetDialogNumber(out dialogRequest, out dialogNumber);
+          if (hr == (int)NativeMethods.HResult.S_OK)
+          {
+            this.LogDebug("  dialog request = {0}", dialogRequest);
+            this.LogDebug("  dialog number  = {0}", dialogNumber);
+          }
+          else
+          {
+            this.LogWarn("BDA base: failed to get open MMI event dialog number, hr = 0x{0:x}", hr);
+          }
+
+          Guid dialogType;
+          hr = openMmiEvent.GetDialogType(out dialogType);
+          if (hr == (int)NativeMethods.HResult.S_OK)
+          {
+            this.LogDebug("  dialog type    = {0}", dialogType);
+          }
+          else
+          {
+            this.LogWarn("BDA base: failed to get open MMI event dialog type, hr = 0x{0:x}", hr);
+          }
+
+          string baseUrl;
+          string stringData;
+          hr = openMmiEvent.GetDialogStringData(out baseUrl, out stringData);
+          if (hr == (int)NativeMethods.HResult.S_OK)
+          {
+            this.LogDebug("  base URL       = {0}", baseUrl);
+            this.LogDebug("  string data    = {0}", stringData ?? "[null]");
+          }
+          else
+          {
+            this.LogWarn("BDA base: failed to get open MMI event dialog string data, hr = 0x{0:x}", hr);
+          }
+
+          byte[] dialogData;
+          hr = openMmiEvent.GetDialogData(out dialogData);
+          if (hr == (int)NativeMethods.HResult.S_OK)
+          {
+            this.LogDebug("  dialog data...");
+            Dump.DumpBinary(dialogData);
+          }
+          else
+          {
+            this.LogWarn("BDA base: failed to get open MMI event dialog data, hr = 0x{0:x}", hr);
+          }
+        }
+      }
+      else if (eventType == typeof(IESCloseMmiEvent).GUID)
+      {
+        IESCloseMmiEvent closeMmiEvent = esEvent as IESCloseMmiEvent;
+        if (closeMmiEvent != null)
+        {
+          int dialogNumber;
+          hr = closeMmiEvent.GetDialogNumber(out dialogNumber);
+          if (hr == (int)NativeMethods.HResult.S_OK)
+          {
+            this.LogDebug("  dialog number = {0}", dialogNumber);
+          }
+          else
+          {
+            this.LogWarn("BDA base: failed to get close MMI event dialog number, hr = 0x{0:x}", hr);
+          }
+        }
+      }
+      else if (eventType == typeof(IESValueUpdatedEvent).GUID)
+      {
+        IESValueUpdatedEvent valueUpdatedEvent = esEvent as IESValueUpdatedEvent;
+        if (valueUpdatedEvent != null)
+        {
+          string[] names;
+          hr = valueUpdatedEvent.GetValueNames(out names);
+          if (hr == (int)NativeMethods.HResult.S_OK)
+          {
+            this.LogDebug("  value names = [{0}]", names == null ? "null" : string.Join(", ", names));
+          }
+          else
+          {
+            this.LogWarn("BDA base: failed to get value updated event value names, hr = 0x{0:x}", hr);
+          }
+        }
+      }
+      else if (eventType == typeof(IESRequestTunerEvent).GUID)
+      {
+        IESRequestTunerEvent requestTunerEvent = esEvent as IESRequestTunerEvent;
+        if (requestTunerEvent != null)
+        {
+          byte priority;
+          hr = requestTunerEvent.GetPriority(out priority);
+          if (hr == (int)NativeMethods.HResult.S_OK)
+          {
+            string priorityString;
+            if (System.Enum.IsDefined(typeof(RequestTunerEventPriority), priority))
+            {
+              priorityString = ((RequestTunerEventPriority)priority).ToString();
+            }
+            else
+            {
+              priorityString = string.Format("reserved {0}", priority);
+            }
+            this.LogDebug("  priority     = {0}", priorityString);
+          }
+          else
+          {
+            this.LogWarn("BDA base: failed to get request tuner event priority, hr = 0x{0:x}", hr);
+          }
+
+          byte reason;
+          hr = requestTunerEvent.GetReason(out reason);
+          if (hr == (int)NativeMethods.HResult.S_OK)
+          {
+            string reasonString;
+            if (System.Enum.IsDefined(typeof(RequestTunerEventReason), reason))
+            {
+              reasonString = ((RequestTunerEventReason)reason).ToString();
+            }
+            else
+            {
+              reasonString = string.Format("reserved {0}", reason);
+            }
+            this.LogDebug("  reason       = {0}", reasonString);
+          }
+          else
+          {
+            this.LogWarn("BDA base: failed to get request tuner event reason, hr = 0x{0:x}", hr);
+          }
+
+          byte consequences;
+          hr = requestTunerEvent.GetConsequences(out consequences);
+          if (hr == (int)NativeMethods.HResult.S_OK)
+          {
+            string consequencesString;
+            if (System.Enum.IsDefined(typeof(RequestTunerEventConsequences), consequences))
+            {
+              consequencesString = ((RequestTunerEventConsequences)consequences).ToString();
+            }
+            else
+            {
+              consequencesString = string.Format("reserved {0}", consequences);
+            }
+            this.LogDebug("  consequences = {0}", consequencesString);
+          }
+          else
+          {
+            this.LogWarn("BDA base: failed to get request tuner event consequences, hr = 0x{0:x}", hr);
+          }
+
+          int estimatedTime;
+          hr = requestTunerEvent.GetEstimatedTime(out estimatedTime);
+          if (hr == (int)NativeMethods.HResult.S_OK)
+          {
+            this.LogDebug("  est. time    = {0} s", estimatedTime);
+          }
+          else
+          {
+            this.LogWarn("BDA base: failed to get request tuner event estimated time, hr = 0x{0:x}", hr);
+          }
+        }
+      }
+      else if (eventType == typeof(IESIsdbCasResponseEvent).GUID)
+      {
+        IESIsdbCasResponseEvent isdbCasResponseEvent = esEvent as IESIsdbCasResponseEvent;
+        if (isdbCasResponseEvent != null)
+        {
+          int requestId;
+          hr = isdbCasResponseEvent.GetRequestId(out requestId);
+          if (hr == (int)NativeMethods.HResult.S_OK)
+          {
+            this.LogDebug("  request ID  = {0}", requestId);
+          }
+          else
+          {
+            this.LogWarn("BDA base: failed to get ISDB CAS response event request ID, hr = 0x{0:x}", hr);
+          }
+
+          int status;
+          hr = isdbCasResponseEvent.GetStatus(out status);
+          if (hr == (int)NativeMethods.HResult.S_OK)
+          {
+            string statusString;
+            if (System.Enum.IsDefined(typeof(IsdbCasResponseEventStatus), status))
+            {
+              statusString = ((IsdbCasResponseEventStatus)status).ToString();
+            }
+            else
+            {
+              statusString = string.Format("reserved {0}", status);
+            }
+            this.LogDebug("  status      = {0}", statusString);
+          }
+          else
+          {
+            this.LogWarn("BDA base: failed to get ISDB CAS response event status, hr = 0x{0:x}", hr);
+          }
+
+          int dataLength;
+          hr = isdbCasResponseEvent.GetDataLength(out dataLength);
+          if (hr == (int)NativeMethods.HResult.S_OK)
+          {
+            this.LogDebug("  data length = {0}", requestId);
+          }
+          else
+          {
+            this.LogWarn("BDA base: failed to get ISDB CAS response event data length, hr = 0x{0:x}", hr);
+          }
+
+          byte[] responseData;
+          hr = isdbCasResponseEvent.GetResponseData(out responseData);
+          if (hr == (int)NativeMethods.HResult.S_OK)
+          {
+            this.LogDebug("  response data...");
+            Dump.DumpBinary(responseData);
+          }
+          else
+          {
+            this.LogWarn("BDA base: failed to get ISDB CAS response event response data, hr = 0x{0:x}", hr);
+          }
+        }
+      }
+      else if (eventType == typeof(IESLicenseRenewalResultEvent).GUID)
+      {
+        IESLicenseRenewalResultEvent licenseRenewalResultEvent = esEvent as IESLicenseRenewalResultEvent;
+        if (licenseRenewalResultEvent != null)
+        {
+          int callersId;
+          hr = licenseRenewalResultEvent.GetCallersId(out callersId);
+          if (hr == (int)NativeMethods.HResult.S_OK)
+          {
+            this.LogDebug("  callers ID             = {0}", callersId);
+          }
+          else
+          {
+            this.LogWarn("BDA base: failed to get license renewal result event callers ID, hr = 0x{0:x}", hr);
+          }
+
+          string fileName;
+          hr = licenseRenewalResultEvent.GetFileName(out fileName);
+          if (hr == (int)NativeMethods.HResult.S_OK)
+          {
+            this.LogDebug("  file name              = {0}", fileName);
+          }
+          else
+          {
+            this.LogWarn("BDA base: failed to get license renewal result event file name, hr = 0x{0:x}", hr);
+          }
+
+          bool isRenewalSuccessful;
+          hr = licenseRenewalResultEvent.IsRenewalSuccessful(out isRenewalSuccessful);
+          if (hr == (int)NativeMethods.HResult.S_OK)
+          {
+            this.LogDebug("  is renewal successful? = {0}", isRenewalSuccessful);
+          }
+          else
+          {
+            this.LogWarn("BDA base: failed to get license renewal result event success indicator, hr = 0x{0:x}", hr);
+          }
+
+          bool isCheckEntitlementCallRequired;
+          hr = licenseRenewalResultEvent.IsCheckEntitlementCallRequired(out isCheckEntitlementCallRequired);
+          if (hr == (int)NativeMethods.HResult.S_OK)
+          {
+            this.LogDebug("  is CE call required?   = {0}", isCheckEntitlementCallRequired);
+          }
+          else
+          {
+            this.LogWarn("BDA base: failed to get license renewal result event check entitlement call required indicator, hr = 0x{0:x}", hr);
+          }
+
+          int descrambledStatus;
+          hr = licenseRenewalResultEvent.GetDescrambledStatus(out descrambledStatus);
+          if (hr == (int)NativeMethods.HResult.S_OK)
+          {
+            string descrambledStatusString;
+            if (System.Enum.IsDefined(typeof(DescrambleStatus), descrambledStatus))
+            {
+              descrambledStatusString = ((DescrambleStatus)descrambledStatus).ToString();
+            }
+            else
+            {
+              descrambledStatusString = string.Format("reserved {0}", descrambledStatus);
+            }
+            this.LogDebug("  descrambled status     = {0}", descrambledStatus);
+          }
+          else
+          {
+            this.LogWarn("BDA base: failed to get license renewal result event descrambled status, hr = 0x{0:x}", hr);
+          }
+
+          int renewalResultCode;
+          hr = licenseRenewalResultEvent.GetRenewalResultCode(out renewalResultCode);
+          if (hr == (int)NativeMethods.HResult.S_OK)
+          {
+            this.LogDebug("  renewal result code    = {0}", renewalResultCode);
+          }
+          else
+          {
+            this.LogWarn("BDA base: failed to get license renewal result event renewal result code, hr = 0x{0:x}", hr);
+          }
+
+          int casFailureCode;
+          hr = licenseRenewalResultEvent.GetCASFailureCode(out casFailureCode);
+          if (hr == (int)NativeMethods.HResult.S_OK)
+          {
+            this.LogDebug("  CAS failure code       = {0}", casFailureCode);
+          }
+          else
+          {
+            this.LogWarn("BDA base: failed to get license renewal result event CAS failure code, hr = 0x{0:x}", hr);
+          }
+
+          int renewalHresult;
+          hr = licenseRenewalResultEvent.GetRenewalHResult(out renewalHresult);
+          if (hr == (int)NativeMethods.HResult.S_OK)
+          {
+            this.LogDebug("  renewal HRESULT        = 0x{0:x}", renewalHresult);
+          }
+          else
+          {
+            this.LogWarn("BDA base: failed to get license renewal result event HRESULT, hr = 0x{0:x}", hr);
+          }
+
+          int entitlementTokenLength;
+          hr = licenseRenewalResultEvent.GetEntitlementTokenLength(out entitlementTokenLength);
+          if (hr == (int)NativeMethods.HResult.S_OK)
+          {
+            this.LogDebug("  token length           = {0}", entitlementTokenLength);
+          }
+          else
+          {
+            this.LogWarn("BDA base: failed to get license renewal result event entitlement token length, hr = 0x{0:x}", hr);
+          }
+
+          byte[] entitlementToken;
+          hr = licenseRenewalResultEvent.GetEntitlementToken(out entitlementToken);
+          if (hr == (int)NativeMethods.HResult.S_OK)
+          {
+            this.LogDebug("  entitlement token...");
+            Dump.DumpBinary(entitlementToken);
+          }
+          else
+          {
+            this.LogWarn("BDA base: failed to get license renewal result event entitlement token, hr = 0x{0:x}", hr);
+          }
+
+          long expiryDate;
+          hr = licenseRenewalResultEvent.GetExpiryDate(out expiryDate);
+          if (hr == (int)NativeMethods.HResult.S_OK)
+          {
+            this.LogDebug("  expiry date            = {0}", new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddSeconds(expiryDate));
+          }
+          else
+          {
+            this.LogWarn("BDA base: failed to get license renewal result event expiry date, hr = 0x{0:x}", hr);
+          }
+        }
+      }
+      else if (eventType == typeof(IESFileExpiryDateEvent).GUID)
+      {
+        IESFileExpiryDateEvent fileExpiryDateEvent = esEvent as IESFileExpiryDateEvent;
+        if (fileExpiryDateEvent != null)
+        {
+          Guid tunerId;
+          hr = fileExpiryDateEvent.GetTunerId(out tunerId);
+          if (hr == (int)NativeMethods.HResult.S_OK)
+          {
+            this.LogDebug("  tuner ID          = {0}", tunerId);
+          }
+          else
+          {
+            this.LogWarn("BDA base: failed to get file expiry date event tuner ID, hr = 0x{0:x}", hr);
+          }
+
+          long expiryDate;
+          hr = fileExpiryDateEvent.GetExpiryDate(out expiryDate);
+          if (hr == (int)NativeMethods.HResult.S_OK)
+          {
+            this.LogDebug("  expiry date       = {0}", new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddSeconds(expiryDate));
+          }
+          else
+          {
+            this.LogWarn("BDA base: failed to get file expiry date event expiry date, hr = 0x{0:x}", hr);
+          }
+
+          hr = fileExpiryDateEvent.GetFinalExpiryDate(out expiryDate);
+          if (hr == (int)NativeMethods.HResult.S_OK)
+          {
+            this.LogDebug("  final expiry date = {0}", new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddSeconds(expiryDate));
+          }
+          else
+          {
+            this.LogWarn("BDA base: failed to get file expiry date event final expiry date, hr = 0x{0:x}", hr);
+          }
+
+          int maxRenewalCount;
+          hr = fileExpiryDateEvent.GetMaxRenewalCount(out maxRenewalCount);
+          if (hr == (int)NativeMethods.HResult.S_OK)
+          {
+            this.LogDebug("  max renewal count = {0}", maxRenewalCount);
+          }
+          else
+          {
+            this.LogWarn("BDA base: failed to get file expiry date event maximum renewal count, hr = 0x{0:x}", hr);
+          }
+
+          bool isEntitlementTokenPresent;
+          hr = fileExpiryDateEvent.IsEntitlementTokenPresent(out isEntitlementTokenPresent);
+          if (hr == (int)NativeMethods.HResult.S_OK)
+          {
+            this.LogDebug("  is token present? = {0}", isEntitlementTokenPresent);
+          }
+          else
+          {
+            this.LogWarn("BDA base: failed to get file expiry date event entitlement token present indicator, hr = 0x{0:x}", hr);
+          }
+
+          bool doesTokenExpireAfterFirstUse;
+          hr = fileExpiryDateEvent.DoesExpireAfterFirstUse(out doesTokenExpireAfterFirstUse);
+          if (hr == (int)NativeMethods.HResult.S_OK)
+          {
+            this.LogDebug("  is one use token? = {0}", doesTokenExpireAfterFirstUse);
+          }
+          else
+          {
+            this.LogWarn("BDA base: failed to get file expiry date event expiry after first use indicator, hr = 0x{0:x}", hr);
+          }
+        }
+      }
+      
       // The PBDA specification defines error codes in the core services
       // document. Zero is success.
       hr = esEvent.SetCompletionStatus(0);
