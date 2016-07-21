@@ -34,6 +34,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channel
   {
     #region constants
 
+    public const int FREQUENCY_OUT_OF_BAND_CHANNEL_SCAN = -1;
+    public const int FREQUENCY_SWITCHED_DIGITAL_VIDEO = 0;
+
     private static readonly Regex LOGICAL_CHANNEL_NUMBER_FORMAT = new Regex(@"^(\d+)([^\d](\d+))?$");
 
     #endregion

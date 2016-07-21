@@ -152,7 +152,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
           new FileTuningDetail
           {
             BroadcastStandard = BroadcastStandard.Scte,
-            Frequency = -1    // special value
+            Frequency = ChannelScte.FREQUENCY_OUT_OF_BAND_CHANNEL_SCAN
           }
         };
       }

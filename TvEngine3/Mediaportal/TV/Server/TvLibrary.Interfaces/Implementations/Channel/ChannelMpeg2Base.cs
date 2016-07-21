@@ -39,13 +39,21 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channel
   [KnownType(typeof(ChannelStream))]
   public abstract class ChannelMpeg2Base : ChannelBase
   {
+    #region constants
+
+    public const int PROGRAM_NUMBER_SCANNING = -1;
+    public const int PROGRAM_NUMBER_NOT_KNOWN_SELECT_FIRST = 0;
+    public const int PMT_PID_NOT_KNOWN = 0;
+
+    #endregion
+
     #region variables
 
     [DataMember]
     protected int _transportStreamId = -1;
 
     [DataMember]
-    protected int _programNumber = -1;
+    protected int _programNumber = PROGRAM_NUMBER_SCANNING;
 
     [DataMember]
     protected int _pmtPid = -1;

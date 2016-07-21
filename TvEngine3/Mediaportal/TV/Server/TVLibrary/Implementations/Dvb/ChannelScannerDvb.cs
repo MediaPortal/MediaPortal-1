@@ -1262,7 +1262,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
         {
           mpeg2Channel.TransportStreamId = transportStreamId;
           mpeg2Channel.ProgramNumber = serviceId;
-          mpeg2Channel.PmtPid = 0;
+          mpeg2Channel.PmtPid = ChannelMpeg2Base.PMT_PID_NOT_KNOWN;
           if (program != null)
           {
             mpeg2Channel.PmtPid = program.PmtPid;

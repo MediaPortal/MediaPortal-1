@@ -21,6 +21,7 @@
 using Mediaportal.TV.Server.TVLibrary.Implementations.Dvb;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Channel;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channel;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog
 {
@@ -41,7 +42,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog
       {
         return 1;   // TsMuxer's fixed/static program number
       }
-      return -1;    // scanning
+      return ChannelMpeg2Base.PROGRAM_NUMBER_SCANNING;
     }
   }
 }

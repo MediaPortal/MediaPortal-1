@@ -160,12 +160,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Atsc
       newChannel.Provider = "Cable";
       newChannel.MediaType = MediaType.Television;
       newChannel.IsEncrypted = true;
-      newChannel.Frequency = 0;             // only CableCARD tuners will be able to tune this channel
+      newChannel.Frequency = ChannelScte.FREQUENCY_SWITCHED_DIGITAL_VIDEO;                // only CableCARD tuners will be able to tune this channel
       newChannel.ModulationScheme = ModulationSchemeQam.Automatic;
       newChannel.TransportStreamId = 0;     // doesn't really matter
       newChannel.SourceId = 0;              // ideally we should have this; EPG data will have to be sourced externally
-      newChannel.ProgramNumber = 0;         // lookup the correct program number from the tuner when the channel is tuned
-      newChannel.PmtPid = 0;                // lookup the correct PID from the PAT when the channel is tuned
+      newChannel.ProgramNumber = ChannelMpeg2Base.PROGRAM_NUMBER_NOT_KNOWN_SELECT_FIRST;  // lookup the correct program number from the tuner when the channel is tuned
+      newChannel.PmtPid = ChannelMpeg2Base.PMT_PID_NOT_KNOWN;                             // lookup the correct PID from the PAT when the channel is tuned
       return CreateScannedChannel(newChannel, isVisibleInGuide, BroadcastStandard.Scte, groupNames);
     }
 
@@ -308,18 +308,18 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Atsc
     public void Scan(IChannel channel, bool isFastNetworkScan, out IList<ScannedChannel> channels, out IDictionary<ChannelGroupType, IDictionary<ulong, string>> groupNames)
     {
       ISet<string> ignoredChannelNumbers;
-      Scan(channel, isFastNetworkScan, out channels, out groupNames, out ignoredChannelNumbers);
+      Scan(channel, false, out channels, out groupNames, out ignoredChannelNumbers);
     }
 
     /// <summary>
     /// Tune to a specified channel and scan for channel information.
     /// </summary>
     /// <param name="channel">The channel to tune to.</param>
-    /// <param name="isFastNetworkScan"><c>True</c> to do a fast network scan.</param>
+    /// <param name="isForcedLvctScan"><c>True</c> to only use information received from the long-form virtual channel table.</param>
     /// <param name="channels">The channel information found.</param>
     /// <param name="groupNames">The names of the groups referenced in <paramref name="channels"/>.</param>
     /// <param name="ignoredChannelNumbers">A set of the channel numbers that were ignored for whatever reason.</param>
-    public void Scan(IChannel channel, bool isFastNetworkScan, out IList<ScannedChannel> channels, out IDictionary<ChannelGroupType, IDictionary<ulong, string>> groupNames, out ISet<string> ignoredChannelNumbers)
+    public void Scan(IChannel channel, bool isForcedLvctScan, out IList<ScannedChannel> channels, out IDictionary<ChannelGroupType, IDictionary<ulong, string>> groupNames, out ISet<string> ignoredChannelNumbers)
     {
       channels = new List<ScannedChannel>(100);
       groupNames = new Dictionary<ChannelGroupType, IDictionary<ulong, string>>(50);
@@ -351,6 +351,15 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Atsc
           _grabberScte.SetCallBack(this);
         }
 
+        TableType tableMask = TableType.Pat | TableType.Pmt;
+        tableMask |= TableType.AtscLvctCable | TableType.AtscLvctTerrestrial | TableType.AtscMgt;
+        tableMask |= TableType.ScteLvctCable | TableType.ScteLvctTerrestrial | TableType.ScteMgt;
+        if (!isForcedLvctScan)
+        {
+          tableMask |= TableType.AtscNit | TableType.AtscNtt | TableType.AtscSvct;
+          tableMask |= TableType.ScteNit | TableType.ScteNtt | TableType.ScteSvct;
+        }
+
         // An exception is thrown here if tuning fails for whatever reason.
         _tuner.Tune(0, channel);
 
@@ -377,10 +386,16 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Atsc
         }
 
         // Wait for scanning to complete.
+        bool isOutOfBandChannelScan = false;
         TimeSpan timeLimit = _timeLimitSingleTransmitter;
         ChannelScte scteChannel = channel as ChannelScte;
-        if (scteChannel != null && scteChannel.Frequency <= 0)
+        if (
+          !isForcedLvctScan &&
+          scteChannel != null &&
+          scteChannel.Frequency == ChannelScte.FREQUENCY_OUT_OF_BAND_CHANNEL_SCAN
+        )
         {
+          isOutOfBandChannelScan = true;
           timeLimit = _timeLimitCableCard;
         }
         do
@@ -392,19 +407,20 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Atsc
 
           // Check for scan completion.
           if (
-            // Basic requirement: PAT and PMT must have been received, and all
-            // seen tables must be complete.
-            _completeTables.HasFlag(TableType.Pat | TableType.Pmt) &&
-            _seenTables == _completeTables &&
+            // Basic requirement: PAT and PMT must have been received if not
+            // scanning the out-of-band channel, and all seen tables must be
+            // complete.
+            (_completeTables.HasFlag(TableType.Pat | TableType.Pmt) || isOutOfBandChannelScan) &&
+            (_seenTables & tableMask) == (_completeTables & tableMask) &&
             // Any one of the L-VCT tables must be complete, or the S-VCT, NIT
             // and NTT must be complete.
             (
               _completeTables.HasFlag(TableType.AtscLvctCable) ||
               _completeTables.HasFlag(TableType.AtscLvctTerrestrial) ||
-              _completeTables.HasFlag(TableType.AtscNit | TableType.AtscNtt | TableType.AtscSvct) ||
+              (!isForcedLvctScan && _completeTables.HasFlag(TableType.AtscNit | TableType.AtscNtt | TableType.AtscSvct)) ||
               _completeTables.HasFlag(TableType.ScteLvctCable) ||
               _completeTables.HasFlag(TableType.ScteLvctTerrestrial) ||
-              _completeTables.HasFlag(TableType.ScteNit | TableType.ScteNtt | TableType.ScteSvct)
+              (!isForcedLvctScan && _completeTables.HasFlag(TableType.ScteNit | TableType.ScteNtt | TableType.ScteSvct))
             )
           )
           {
@@ -415,12 +431,16 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Atsc
           // Flip over to the "CableCARD" time limit if we receive NIT, NTT or
           // SVCT from a clear QAM tuner.
           if (
-            _seenTables.HasFlag(TableType.AtscNit) ||
-            _seenTables.HasFlag(TableType.AtscNtt) ||
-            _seenTables.HasFlag(TableType.AtscSvct) ||
-            _seenTables.HasFlag(TableType.ScteNit) ||
-            _seenTables.HasFlag(TableType.ScteNtt) ||
-            _seenTables.HasFlag(TableType.ScteSvct)
+            !isOutOfBandChannelScan &&
+            !isForcedLvctScan &&
+            (
+              _seenTables.HasFlag(TableType.AtscNit) ||
+              _seenTables.HasFlag(TableType.AtscNtt) ||
+              _seenTables.HasFlag(TableType.AtscSvct) ||
+              _seenTables.HasFlag(TableType.ScteNit) ||
+              _seenTables.HasFlag(TableType.ScteNtt) ||
+              _seenTables.HasFlag(TableType.ScteSvct)
+            )
           )
           {
             timeLimit = _timeLimitCableCard;
@@ -1004,8 +1024,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Atsc
                 // Charter includes SDV channels in the CableCARD channel map,
                 // but assigns them to physical channel 158 (which isn't
                 // actually used).
-                frequency = 0;
-                programNumber = 0;
+                frequency = ChannelScte.FREQUENCY_SWITCHED_DIGITAL_VIDEO;
+                programNumber = ChannelMpeg2Base.PROGRAM_NUMBER_NOT_KNOWN_SELECT_FIRST;
               }
 
               ChannelScte scteChannel = new ChannelScte();
@@ -1047,6 +1067,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Atsc
 
               scteChannel.TransportStreamId = transportStreamId;    // may not be populated
               scteChannel.ProgramNumber = programNumber;
+              scteChannel.PmtPid = ChannelMpeg2Base.PMT_PID_NOT_KNOWN;
               scteChannel.SourceId = sourceId;
 
               newChannel = scteChannel;
@@ -1372,6 +1393,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Atsc
             atscChannel.TransportStreamId = transportStreamId;
             atscChannel.ProgramNumber = programNumber;
             atscChannel.SourceId = sourceId;
+            atscChannel.PmtPid = ChannelMpeg2Base.PMT_PID_NOT_KNOWN;
             if (program != null)
             {
               atscChannel.PmtPid = program.PmtPid;
@@ -1385,7 +1407,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Atsc
               broadcastStandard = BroadcastStandard.Scte;
               if (
                 (currentTransportStreamId != 0 && currentTransportStreamId != transportStreamId) ||   // Channel from another transport stream.
-                (scteChannel.Frequency <= 0)    // CableCARD scan
+                (scteChannel.Frequency == ChannelScte.FREQUENCY_OUT_OF_BAND_CHANNEL_SCAN)
               )
               {
                 // This channel is broadcast by a different transmitter.
@@ -1409,6 +1431,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Atsc
               scteChannel.TransportStreamId = transportStreamId;
               scteChannel.ProgramNumber = programNumber;
               scteChannel.SourceId = sourceId;
+              scteChannel.PmtPid = ChannelMpeg2Base.PMT_PID_NOT_KNOWN;
               if (program != null)
               {
                 scteChannel.PmtPid = program.PmtPid;
