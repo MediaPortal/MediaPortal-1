@@ -228,6 +228,8 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeEncoder
     private static readonly Guid PROPERTY_SET_AUDIO = new Guid(0x6337a7d7, 0x9f2f, 0x4ff7, 0x8e, 0xce, 0x14, 0xa5, 0x49, 0xd4, 0x8c, 0x2e);
     private static readonly Guid PROPERTY_SET_INFO = new Guid(0x9ba6c1a9, 0xd872, 0x4e89, 0x81, 0xf2, 0xb3, 0xf9, 0xda, 0x1f, 0x3e, 0x32);
 
+    // You need to amend the IEncoder implementation if you change the types of
+    // these BIT_RATE_* constants.
     private const uint BIT_RATE_VIDEO_MINIMUM = 1000000;
     private const uint BIT_RATE_VIDEO_MAXIMUM = 13500000;
     private const uint BIT_RATE_VIDEO_MAXIMUM_COLOSSUS = 20000000;
