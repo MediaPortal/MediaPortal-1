@@ -79,7 +79,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.SatIp
     /// <param name="channel">The channel to tune to.</param>
     public override void PerformTuning(IChannel channel)
     {
-      this.LogDebug("SAT>IP satellite: construct URL");
+      this.LogDebug("SAT>IP satellite: perform tuning");
       ChannelDvbS dvbsChannel = channel as ChannelDvbS;
       ChannelDvbS2 dvbs2Channel = channel as ChannelDvbS2;
       if (dvbsChannel == null && dvbs2Channel == null)

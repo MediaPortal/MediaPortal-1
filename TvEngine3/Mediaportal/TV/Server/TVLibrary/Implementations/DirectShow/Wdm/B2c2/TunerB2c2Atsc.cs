@@ -75,7 +75,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
     /// <param name="channel">The channel to tune to.</param>
     public override void PerformTuning(IChannel channel)
     {
-      this.LogDebug("B2C2 ATSC: set tuning parameters");
+      this.LogDebug("B2C2 ATSC: perform tuning");
       ChannelAtsc atscChannel = channel as ChannelAtsc;
       ChannelScte scteChannel = channel as ChannelScte;
       if (atscChannel == null && scteChannel == null)

@@ -58,7 +58,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.SatIp
     /// <param name="channel">The channel to tune to.</param>
     public override void PerformTuning(IChannel channel)
     {
-      this.LogDebug("SAT>IP terrestrial: construct URL");
+      this.LogDebug("SAT>IP terrestrial: perform tuning");
 
       IChannelOfdm ofdmChannel = channel as IChannelOfdm;
       if (ofdmChannel == null)

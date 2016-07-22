@@ -56,7 +56,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.SatIp
     /// <param name="channel">The channel to tune to.</param>
     public override void PerformTuning(IChannel channel)
     {
-      this.LogDebug("SAT>IP cable: construct URL");
+      this.LogDebug("SAT>IP cable: perform tuning");
       ChannelDvbC dvbcChannel = channel as ChannelDvbC;
       if (dvbcChannel == null)
       {

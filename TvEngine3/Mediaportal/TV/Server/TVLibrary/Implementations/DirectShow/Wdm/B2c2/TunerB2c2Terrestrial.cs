@@ -51,7 +51,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
     /// <param name="channel">The channel to tune to.</param>
     public override void PerformTuning(IChannel channel)
     {
-      this.LogDebug("B2C2 terrestrial: set tuning parameters");
+      this.LogDebug("B2C2 terrestrial: perform tuning");
       ChannelDvbT dvbtChannel = channel as ChannelDvbT;
       if (dvbtChannel == null)
       {
