@@ -524,13 +524,26 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog
     /// <returns><c>true</c> if the tuner can tune to the channel, otherwise <c>false</c></returns>
     public override bool CanTune(IChannel channel)
     {
+      ChannelCapture captureChannel = channel as ChannelCapture;
       if (!base.CanTune(channel))
       {
+        // Special case: analog tuners that don't have external inputs can tune
+        // capture channels if the video and audio inputs are the default
+        // inputs for the tuner. The default inputs will always be the tuner
+        // inputs, because they'll be the only available options. This enables
+        // support for external tuners connected via RF/coax.
+        if (
+          captureChannel != null &&
+          captureChannel.VideoSource == CaptureSourceVideo.TunerDefault &&
+          captureChannel.AudioSource == CaptureSourceAudio.TunerDefault
+        )
+        {
+          return true;
+        }
         return false;
       }
 
       // Check that the selected inputs are available for capture channels.
-      ChannelCapture captureChannel = channel as ChannelCapture;
       if (captureChannel == null)
       {
         return true;

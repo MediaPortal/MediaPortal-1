@@ -35,10 +35,10 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
     protected override void LoadProperties(TuningDetail tuningDetail)
     {
       comboBoxVideoSource.Items.Clear();
-      comboBoxVideoSource.Items.AddRange(typeof(CaptureSourceVideo).GetDescriptions());
+      comboBoxVideoSource.Items.AddRange(typeof(CaptureSourceVideo).GetDescriptions(~(int)CaptureSourceVideo.Tuner));
 
       comboBoxAudioSource.Items.Clear();
-      comboBoxAudioSource.Items.AddRange(typeof(CaptureSourceAudio).GetDescriptions());
+      comboBoxAudioSource.Items.AddRange(typeof(CaptureSourceAudio).GetDescriptions(~(int)CaptureSourceAudio.Tuner));
 
       if (tuningDetail != null)
       {
