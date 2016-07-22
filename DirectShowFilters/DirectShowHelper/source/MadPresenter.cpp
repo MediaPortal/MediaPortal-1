@@ -49,9 +49,11 @@ MPMadPresenter::MPMadPresenter(IVMR9Callback* pCallback, DWORD width, DWORD heig
   m_pMediaControl(pMediaControl)
 {
   Log("MPMadPresenter::Constructor() - instance 0x%x", this);
-  m_subProxy = new MadSubtitleProxy(pCallback, m_pMediaControl);
+  m_subProxy = new MadSubtitleProxy(pCallback, m_pMediaControl, this);
   if (m_subProxy)
     m_subProxy->AddRef();
+  m_pShutdown = false;
+  m_pInitOSDClear = false;
 }
 
 MPMadPresenter::~MPMadPresenter()
@@ -60,17 +62,31 @@ MPMadPresenter::~MPMadPresenter()
   CAutoLock cAutoLock(this);
 }
 
-void MPMadPresenter::InitializeOSD(bool** initOsdDone)
+void MPMadPresenter::InitializeOSD()
 {
   {
     CAutoLock cAutoLock(this);
 
     if (m_pOsdServices)
     {
-      Log("MPMadPresenter::OsdSetRenderCallback");
+      InitializeOSDClear();
       m_pOsdServices->OsdSetRenderCallback("MP-GUI", this, nullptr);
-      // New D3D device initialized, tell C# that it is no need to try to initializing OSD
-      *initOsdDone = reinterpret_cast<bool*>(true);
+      Log("MPMadPresenter::OsdSetRenderCallback InitializeOSD");
+    }
+  }
+}
+
+void MPMadPresenter::InitializeOSDClear()
+{
+  {
+    CAutoLock cAutoLock(this);
+
+    if (m_pOsdServices && !m_pShutdown)
+    {
+      Log("MPMadPresenter::OsdSetRenderCallback InitializeOSDClear");
+      m_pOsdServices->OsdSetRenderCallback("MP-GUI", nullptr, nullptr);
+      m_pInitOSDClear = true;
+      AddRef();
     }
   }
 }
@@ -120,7 +136,9 @@ HRESULT MPMadPresenter::Shutdown()
   { // Scope for autolock for the local variable (lock, which when deleted releases the lock)
     CAutoLock lock(this);
 
-    //Log("MPMadPresenter::Shutdown() start");
+    Log("MPMadPresenter::Shutdown() start");
+
+    m_pShutdown = true;
 
     if (m_pCallback)
     {
@@ -128,12 +146,12 @@ HRESULT MPMadPresenter::Shutdown()
       m_pCallback = nullptr;
     }
 
-    //Log("MPMadPresenter::Shutdown() Scope 2 ");
+    Log("MPMadPresenter::Shutdown() Scope 2 ");
 
     if (m_pSubRender)
       m_pSubRender->SetCallback(nullptr);
 
-    //Log("MPMadPresenter::Shutdown() Scope 3 ");
+    Log("MPMadPresenter::Shutdown() Scope 3 ");
 
     if (m_subProxy)
     {
@@ -141,36 +159,48 @@ HRESULT MPMadPresenter::Shutdown()
       m_subProxy = nullptr;
     }
 
-    //Log("MPMadPresenter::Shutdown() done ");
+    Log("MPMadPresenter::Shutdown() done ");
   } // Scope for autolock
 
   if (m_pMad)
   {
-    //Log("MPMadPresenter::Shutdown() 1");
+    Log("MPMadPresenter::Shutdown() 1");
 
     if (m_pWindow)
     {
-      //Log("MPMadPresenter::Shutdown() 2");
+      Log("MPMadPresenter::Shutdown() 2");
       m_pWindow->put_Owner(reinterpret_cast<OAHWND>(nullptr));
       m_pWindow->put_Visible(false);
-      //Log("MPMadPresenter::Shutdown() 3");
+      Log("MPMadPresenter::Shutdown() 3");
     }
 
     if (m_pCommand)
     {
-      //Log("MPMadPresenter::Shutdown() 4");
+      Log("MPMadPresenter::Shutdown() 4");
       m_pCommand->SendCommandBool("disableExclusiveMode", true);
       m_pCommand->SendCommand("restoreDisplayModeNow");
-      //Log("MPMadPresenter::Shutdown() 5");
+      Log("MPMadPresenter::Shutdown() 5");
     }
 
+    if (m_pInitOSDClear)
+    {
+      Log("MPMadPresenter::Shutdown() m_pInitOSDClear");
+      ULONG refCount = Release();
+      Log("MPMadPresenter::Shutdown() reference counter to be released for OSD : (%d)", refCount);
+      for (ULONG i = 1; i < refCount; ++i)
+      {
+        Release();
+      }
+    }
+
+    Log("MPMadPresenter::Shutdown() start OSD");
     if (m_pOsdServices)
     {
       m_pOsdServices->OsdSetRenderCallback("MP-GUI", nullptr, nullptr);
-      //Log("MPMadPresenter::ReleaseOSD() done");
+      Log("MPMadPresenter::ReleaseOSD() done");
     }
+    Log("MPMadPresenter::Shutdown() done OSD");
   }
-
   return S_OK;
 }
 
@@ -236,10 +266,10 @@ HRESULT MPMadPresenter::ClearBackground(LPCSTR name, REFERENCE_TIME frameStart, 
 
   bool uiVisible = false;
 
-  CAutoLock cAutoLock(this);
-
   if (!m_pCallback)
     return CALLBACK_EMPTY;
+
+  CAutoLock cAutoLock(this);
 
   if (!m_pMPTextureGui || !m_pMadGuiVertexBuffer || !m_pRenderTextureGui)
     return CALLBACK_EMPTY;
@@ -304,10 +334,10 @@ HRESULT MPMadPresenter::RenderOsd(LPCSTR name, REFERENCE_TIME frameStart, RECT* 
 
   bool uiVisible = false;
 
-  CAutoLock cAutoLock(this);
-
   if (!m_pCallback)
     return CALLBACK_EMPTY;
+
+  CAutoLock cAutoLock(this);
 
   if (!m_pMPTextureOsd || !m_pMadOsdVertexBuffer || !m_pRenderTextureOsd)
     return CALLBACK_EMPTY;
@@ -546,6 +576,7 @@ HRESULT MPMadPresenter::SetDevice(IDirect3DDevice9* pD3DDev)
   {
     m_pCallback->SetSubtitleDevice((DWORD)pD3DDev);
     Log("MPMadPresenter::SetDevice() SetSubtitleDevice for D3D : 0x:%x", m_pMadD3DDev);
+    m_pMediaControl->Run();
   }
 
   if (m_pMadD3DDev)
@@ -573,13 +604,4 @@ HRESULT MPMadPresenter::SetDevice(IDirect3DDevice9* pD3DDev)
 
   //Log("SetDevice hr: 0x%08x", hr);
   return hr;
-}
-
-HRESULT MPMadPresenter::ForceInitialize()
-{
-  //m_subProxy = new MadSubtitleProxy(m_pCallback);
-  //if (m_subProxy)
-  //  m_subProxy->AddRef();
-  //AddRef();
-    return S_OK;;
 }

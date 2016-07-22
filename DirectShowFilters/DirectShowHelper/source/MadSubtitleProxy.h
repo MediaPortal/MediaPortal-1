@@ -21,10 +21,12 @@
 #include "DeviceState.h"
 #include "mvrInterfaces.h"
 
+class MPMadPresenter;
+
 class MadSubtitleProxy : public CUnknown, public ISubRenderCallback, public CCritSec
 {
   public:
-    MadSubtitleProxy(IVMR9Callback* pCallback, IMediaControl* pMediaControl);
+    MadSubtitleProxy(IVMR9Callback* pCallback, IMediaControl* pMediaControl, MPMadPresenter* pPresenter);
     ~MadSubtitleProxy();
 
     DECLARE_IUNKNOWN;
@@ -45,11 +47,10 @@ class MadSubtitleProxy : public CUnknown, public ISubRenderCallback, public CCri
 
     IMediaControl* m_pMediaControl;
 
+    MPMadPresenter* m_pPresenter;
+
     DeviceState m_deviceState;
 
     bool m_pNewDevice = false;
-
-    int deviceNULL = 0;
-    int counterBeforeProcessOSD = 0;
 };
 

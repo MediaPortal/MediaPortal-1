@@ -86,9 +86,6 @@ namespace MediaPortal.Player
 
     [PreserveSig]
     void ForceOsdUpdate(bool pForce);
-
-    [PreserveSig]
-    void ForceInitialize();
   }
 
   #endregion
@@ -142,12 +139,6 @@ namespace MediaPortal.Player
 
     [DllImport("dshowhelper.dll", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
     private static extern unsafe void MadDeinit();
-
-    [DllImport("dshowhelper.dll", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
-    private static extern unsafe void InitOSD(ref bool initOsdDone);
-
-    [DllImport("dshowhelper.dll", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
-    private static extern unsafe void InitForceInitialize();
 
     #endregion
 
@@ -414,21 +405,6 @@ namespace MediaPortal.Player
 
     #region public members
 
-    public void ForceInitialize()
-    {
-      if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
-      {
-        int currentPosition = (int)g_Player.CurrentPosition;
-        var msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAY_FILE, 0, 0, 0, 0, 0, null);
-        msg.Label = g_Player.currentFilePlaying;
-        GUIWindowManager.SendThreadMessage(msg);
-        msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SEEK_POSITION, 0, 0, 0, 0, 0, null);
-        msg.Param1 = currentPosition;
-        GUIWindowManager.SendThreadMessage(msg);
-        GUIWindowManager.MadVrProcess();
-      }
-    }
-
     /// <summary>
     /// Register madVR OSD callback
     /// </summary>
@@ -437,20 +413,12 @@ namespace MediaPortal.Player
     {
       if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
       {
-        bool initOsdDone = false;
-        InitOSD(ref initOsdDone);
-        if (initOsdDone)
+        if (UseMadVideoRenderer3D && !g_Player.IsTimeShifting)
         {
-          IMediaControl mediactrl = (IMediaControl) _graphBuilder;
-          if (mediactrl != null) mediactrl.Run();
           // Sending message to force unfocus/focus for 3D.
-          if (UseMadVideoRenderer3D && !g_Player.IsTimeShifting)
-          {
-            var msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_UNFOCUS_FOCUS, 0, 0, 0, 0, 0, null);
-            GUIWindowManager.SendThreadMessage(msg);
-            Log.Debug("VMR9: send message for madVR refresh force");
-          }
-          Log.Debug("VMR9: registering OSD done");
+          var msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_UNFOCUS_FOCUS, 0, 0, 0, 0, 0, null);
+          GUIWindowManager.SendThreadMessage(msg);
+          Log.Debug("VMR9: send message for madVR refresh force");
         }
       }
     }

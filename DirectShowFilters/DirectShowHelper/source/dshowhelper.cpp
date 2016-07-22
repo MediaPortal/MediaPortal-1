@@ -950,28 +950,6 @@ void MadDeinit()
   }
 }
 
-void InitOSD(bool** initOsdDone)
-{
-  try
-  {
-    m_madPresenter->InitializeOSD(initOsdDone);
-  }
-  catch (...)
-  {
-  }
-}
-
-void InitForceInitialize()
-{
-  try
-  {
-    m_madPresenter->ForceInitialize();
-  }
-  catch (...)
-  {
-  }
-}
-
 void Vmr9SetDeinterlaceMode(int mode)
 {
   //0=None
