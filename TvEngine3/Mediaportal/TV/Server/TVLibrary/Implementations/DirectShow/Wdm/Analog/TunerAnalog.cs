@@ -20,12 +20,12 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Globalization;
 using DirectShowLib;
 using Mediaportal.TV.Server.Common.Types.Country;
 using Mediaportal.TV.Server.Common.Types.Enum;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
+using Mediaportal.TV.Server.TVLibrary.Implementations.Analog;
 using Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.Component;
 using Mediaportal.TV.Server.TVLibrary.Implementations.Enum;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Channel;
@@ -34,7 +34,6 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Exception;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension;
 using AnalogVideoStandard = Mediaportal.TV.Server.Common.Types.Enum.AnalogVideoStandard;
-using MediaType = Mediaportal.TV.Server.Common.Types.Enum.MediaType;
 using Regex = System.Text.RegularExpressions.Regex;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog
@@ -58,13 +57,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog
     private Capture _capture = null;
     private Encoder _encoder = null;
 
-    // Current setting values.
-    private CaptureSourceVideo _externalInputSourceVideo;
-    private CaptureSourceAudio _externalInputSourceAudio;
-    private int _externalInputCountryId;
-    private short _externalInputPhysicalChannelNumber;
-    private string _externalTunerProgram = string.Empty;
-    private string _externalTunerProgramArguments = string.Empty;
+    private CaptureSourceVideo _tunableSourcesVideo;
+    private CaptureSourceAudio _tunableSourcesAudio;
+    private ExternalTuner _externalTuner = new ExternalTuner();
 
     #endregion
 
@@ -141,21 +136,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog
         }
       }
 
-      _externalInputSourceVideo = (CaptureSourceVideo)configuration.AnalogTunerSettings.ExternalInputSourceVideo;
-      _externalInputSourceAudio = (CaptureSourceAudio)configuration.AnalogTunerSettings.ExternalInputSourceAudio;
-      _externalInputCountryId = configuration.AnalogTunerSettings.ExternalInputCountryId;
-      _externalInputPhysicalChannelNumber = (short)configuration.AnalogTunerSettings.ExternalInputPhysicalChannelNumber;
-      _externalTunerProgram = configuration.AnalogTunerSettings.ExternalTunerProgram;
-      _externalTunerProgramArguments = configuration.AnalogTunerSettings.ExternalTunerProgramArguments;
-
-      this.LogDebug("  external input...");
-      this.LogDebug("    video source  = {0} ({1})", _externalInputSourceVideo, (CaptureSourceVideo)configuration.AnalogTunerSettings.SupportedVideoSources);
-      this.LogDebug("    audio source  = {0} ({1})", _externalInputSourceAudio, (CaptureSourceAudio)configuration.AnalogTunerSettings.SupportedAudioSources);
-      this.LogDebug("    country       = {0}", _externalInputCountryId);
-      this.LogDebug("    phys. channel = {0}", _externalInputPhysicalChannelNumber);
-      this.LogDebug("  external tuner...");
-      this.LogDebug("    program       = {0}", _externalTunerProgram);
-      this.LogDebug("    program args  = {0}", _externalTunerProgramArguments);
+      _tunableSourcesVideo = (CaptureSourceVideo)configuration.AnalogTunerSettings.SupportedVideoSources;
+      _tunableSourcesVideo |= CaptureSourceVideo.TunerDefault;
+      _tunableSourcesAudio = (CaptureSourceAudio)configuration.AnalogTunerSettings.SupportedAudioSources;
+      _tunableSourcesAudio |= CaptureSourceAudio.Automatic | CaptureSourceAudio.TunerDefault;
 
       if (_capture != null)
       {
@@ -165,6 +149,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog
       {
         _encoder.ReloadConfiguration(configuration);
       }
+      _externalTuner.ReloadConfiguration(configuration.AnalogTunerSettings);
     }
 
     /// <summary>
@@ -172,7 +157,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog
     /// </summary>
     private void CreateDefaultConfiguration(out TVDatabase.Entities.AnalogTunerSettings settings, out IEnumerable<TVDatabase.Entities.TunerProperty> properties)
     {
-      this.LogDebug("WDM analog: first detection, get default configuration");
+      this.LogDebug("WDM analog: first detection, create default configuration");
       settings = new TVDatabase.Entities.AnalogTunerSettings();
       properties = null;
 
@@ -288,17 +273,17 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog
         {
           if (country == null)
           {
-            this.LogWarn("WDM analog capture: failed to get details for country {0}, using defaults for current standard {1}", countryName ?? "[null]", _capture.CurrentVideoStandard);
+            this.LogWarn("WDM analog: failed to get details for country {0}, using defaults for current standard {1}", countryName ?? "[null]", _capture.CurrentVideoStandard);
             settings.VideoStandard = (int)_capture.CurrentVideoStandard;
           }
           else if (!_capture.SupportedVideoStandards.HasFlag(country.VideoStandard))
           {
-            this.LogWarn("WDM analog capture: recognised country {0} but standard {1} not supported, using defaults for current standard {2}", countryName, country.VideoStandard, _capture.CurrentVideoStandard);
+            this.LogWarn("WDM analog: recognised country {0} but standard {1} not supported, using defaults for current standard {2}", countryName, country.VideoStandard, _capture.CurrentVideoStandard);
             settings.VideoStandard = (int)_capture.CurrentVideoStandard;
           }
           else
           {
-            this.LogDebug("WDM analog capture: recognised country {0}, using {1} defaults", countryName, country.VideoStandard);
+            this.LogDebug("WDM analog: recognised country {0}, using {1} defaults", countryName, country.VideoStandard);
             settings.VideoStandard = (int)country.VideoStandard;
           }
           settings.SupportedVideoStandards = (int)_capture.SupportedVideoStandards;
@@ -399,7 +384,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog
               settings.FrameRate = GetMaxFlagValue((int)_capture.SupportedFrameRates);
             }
           }
-          this.LogDebug("WDM analog capture: frame size = {0}, frame rate = {1}", (FrameSize)settings.FrameSize, (FrameRate)settings.FrameRate);
+          this.LogDebug("WDM analog: frame size = {0}, frame rate = {1}", (FrameSize)settings.FrameSize, (FrameRate)settings.FrameRate);
           settings.SupportedFrameSizes = (int)_capture.SupportedFrameSizes;
           settings.SupportedFrameRates = (int)_capture.SupportedFrameRates;
 
@@ -550,15 +535,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog
       {
         return true;
       }
-
-      CaptureSourceVideo sourcesVideo = CaptureSourceVideo.TunerDefault;
-      CaptureSourceAudio sourcesAudio = CaptureSourceAudio.Automatic | CaptureSourceAudio.TunerDefault;
-      if (_crossbar != null)
-      {
-        sourcesVideo |= _crossbar.SupportedVideoSources;
-        sourcesAudio |= _crossbar.SupportedAudioSources;
-      }
-      return sourcesVideo.HasFlag(captureChannel.VideoSource) && sourcesAudio.HasFlag(captureChannel.AudioSource);
+      return _tunableSourcesVideo.HasFlag(captureChannel.VideoSource) && _tunableSourcesAudio.HasFlag(captureChannel.AudioSource);
     }
 
     /// <summary>
@@ -567,6 +544,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog
     /// <param name="channel">The channel to tune to.</param>
     public override void PerformTuning(IChannel channel)
     {
+      this.LogDebug("WDM analog: perform tuning");
       ChannelAnalogTv analogTvChannel = channel as ChannelAnalogTv;
       ChannelCapture captureChannel = channel as ChannelCapture;
       ChannelFmRadio fmRadioChannel = channel as ChannelFmRadio;
@@ -575,76 +553,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog
         throw new TvException("Received request to tune incompatible channel.");
       }
 
-      // Channel or external input settings?
-      bool useExternalTuner = false;
-      IChannel tuneChannel = channel;
-      if (captureChannel != null)
-      {
-        if (captureChannel.VideoSource == CaptureSourceVideo.TunerDefault)
-        {
-          useExternalTuner = true;
-          if (_externalInputSourceVideo != CaptureSourceVideo.Tuner)
-          {
-            captureChannel.VideoSource = _externalInputSourceVideo;
-            captureChannel.MediaType = MediaType.Television;
-            if (captureChannel.VideoSource == CaptureSourceVideo.None)
-            {
-              captureChannel.MediaType = MediaType.Radio;
-            }
-          }
-          else
-          {
-            ChannelAnalogTv externalAnalogTvChannel = new ChannelAnalogTv();
-            externalAnalogTvChannel.Name = channel.Name;
-            externalAnalogTvChannel.Provider = channel.Provider;
-            externalAnalogTvChannel.LogicalChannelNumber = channel.LogicalChannelNumber;
-            externalAnalogTvChannel.MediaType = MediaType.Television;
-            externalAnalogTvChannel.IsEncrypted = channel.IsEncrypted;
-            externalAnalogTvChannel.IsHighDefinition = channel.IsHighDefinition;
-            externalAnalogTvChannel.IsThreeDimensional = channel.IsThreeDimensional;
-            externalAnalogTvChannel.TunerSource = AnalogTunerSource.Cable;
-            externalAnalogTvChannel.Country = CountryCollection.Instance.GetCountryById(_externalInputCountryId);
-            externalAnalogTvChannel.PhysicalChannelNumber = _externalInputPhysicalChannelNumber;
-            tuneChannel = externalAnalogTvChannel;
-          }
-        }
-
-        if (captureChannel.AudioSource == CaptureSourceAudio.TunerDefault)
-        {
-          useExternalTuner = true;
-          captureChannel.AudioSource = _externalInputSourceAudio;
-        }
-      }
-
-      // External tuner?
-      if (useExternalTuner && !string.IsNullOrEmpty(_externalTunerProgram))
-      {
-        this.LogDebug("WDM analog: using external tuner");
-        ProcessStartInfo startInfo = new ProcessStartInfo();
-        startInfo.CreateNoWindow = true;
-        startInfo.ErrorDialog = false;
-        startInfo.LoadUserProfile = false;
-        startInfo.UseShellExecute = true;
-        startInfo.WindowStyle = ProcessWindowStyle.Hidden;
-        startInfo.FileName = _externalTunerProgram;
-        startInfo.Arguments = _externalTunerProgramArguments.Replace("%channel number%", channel.LogicalChannelNumber.ToString());
-        try
-        {
-          Process p = Process.Start(startInfo);
-          if (p.WaitForExit(10000))
-          {
-            this.LogDebug("WDM analog: external tuner process exited with code {0}", p.ExitCode);
-          }
-          else
-          {
-            this.LogWarn("WDM analog: external tuner process failed to exit within 10 seconds");
-          }
-        }
-        catch (Exception ex)
-        {
-          this.LogWarn(ex, "WDM analog: external tuner process threw exception");
-        }
-      }
+      IChannel tuneChannel;
+      _externalTuner.Tune(channel, out tuneChannel);
 
       if (tuneChannel is ChannelAnalogTv || tuneChannel is ChannelFmRadio)
       {

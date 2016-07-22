@@ -25,11 +25,14 @@ using DirectShowLib.BDA;
 using Mediaportal.TV.Server.Common.Types.Enum;
 using Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Pbda;
 using Mediaportal.TV.Server.TVLibrary.Implementations.Helper;
+using Mediaportal.TV.Server.TVLibrary.Implementations.Scte;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using MediaPortal.Common.Utils;
 using IBdaTuner = DirectShowLib.BDA.ITuner;
 using ITveTuner = Mediaportal.TV.Server.TVLibrary.Interfaces.Tuner.ITuner;
+using TveAnalogVideoStandard = Mediaportal.TV.Server.Common.Types.Enum.AnalogVideoStandard;
+using WdmAnalogVideoStandard = DirectShowLib.AnalogVideoStandard;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
 {
@@ -38,6 +41,21 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
   /// </summary>
   internal class TunerDetectorBda : ITunerDetectorSystem, IDisposable
   {
+    [Flags]
+    private enum TunerType
+    {
+      Unknown = 0,
+      AnalogTv = 1,
+      AuxiliaryInput = 2,
+      FmRadio = 4,
+      Ofdm = 8,
+      Psk = 16,
+      Psk8 = 32,
+      Qam = 64,
+      QamDvb = 128,
+      Vsb = 256
+    }
+
     #region variables
 
     private bool _isMicrosoftGenericNpAvailable = false;
@@ -349,74 +367,85 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
         return tuners;
       }
 
-      bool isVsbSupported = false;
-      bool isQamSupported = false;
-      bool isQamDvbSupported = false;
-      bool isPskSupported = false;
-      bool isPsk8Supported = false;
-      bool isOfdmSupported = false;
+      TunerType tunerTypes = TunerType.Unknown;
       try
       {
         // We shouldn't need network providers to detect the tuner type.
-        this.LogDebug("  check type with topology node descriptors");
-        DetectSourceTypeInternal(tunerFilter, out isVsbSupported, out isQamSupported, out isPskSupported, out isPsk8Supported, out isOfdmSupported);
+        tunerTypes = DetectSourceTypeInternal(tunerFilter);
 
         // If we couldn't detect the type with the topology info, try network
         // providers. Try the Microsoft network provider first if available.
-        if (!isVsbSupported && !isQamSupported && !isPskSupported && !isOfdmSupported && _isMicrosoftGenericNpAvailable)
+        if (_isMicrosoftGenericNpAvailable && tunerTypes == TunerType.Unknown)
         {
-          this.LogDebug("  check type with Microsoft generic network provider");
-          DetectSourceTypeMicrosoftGenericNetworkProvider(tunerFilter, _graph, out isVsbSupported, out isQamSupported, out isQamDvbSupported, out isPskSupported, out isOfdmSupported);
+          tunerTypes = DetectSourceTypeMicrosoftGenericNetworkProvider(tunerFilter, _graph);
         }
+
         // Last shot is the old style Microsoft network providers.
-        if (!isVsbSupported && !isQamSupported && !isPskSupported && !isOfdmSupported)
+        if (tunerTypes == TunerType.Unknown)
         {
-          this.LogDebug("  check type with specific Microsoft network providers");
-          DetectSourceTypeMicrosoftSpecificNetworkProvider(tunerFilter, out isVsbSupported, out isQamSupported, out isPskSupported, out isOfdmSupported);
+          tunerTypes = DetectSourceTypeMicrosoftSpecificNetworkProvider(tunerFilter);
         }
-        if (!isVsbSupported && !isQamSupported && !isPskSupported && !isOfdmSupported)
+        if (tunerTypes == TunerType.Unknown)
         {
           this.LogError("BDA detector: failed to determine tuner type, name = {0}, device path = {1}", name, devicePath);
           return tuners;
         }
 
-        if (isVsbSupported)
+        if (tunerTypes.HasFlag(TunerType.Vsb))
         {
           BroadcastStandard supportedBroadcastStandards = BroadcastStandard.Atsc;
-          if (isQamSupported)
+          if (tunerTypes.HasFlag(TunerType.Qam))
           {
             supportedBroadcastStandards |= BroadcastStandard.Scte;
           }
 
           tuners.Add(new TunerBdaAtsc(device, supportedBroadcastStandards));
         }
-        else if (isQamSupported)
+        else if (tunerTypes.HasFlag(TunerType.Qam))
         {
-          if (isQamDvbSupported)
+          string countryName = System.Globalization.RegionInfo.CurrentRegion.EnglishName;
+          if (countryName != null && (countryName.Equals("United States") || countryName.Equals("Canada")))
           {
-            tuners.Add(new TunerBdaQam(device));
-          }
-          else if (tunerFilter is IBDA_ConditionalAccess)
-          {
-            tuners.Add(new TunerPbdaCableCard(device));
-          }
-          else
-          {
-            string countryName = System.Globalization.RegionInfo.CurrentRegion.EnglishName;
-            if (countryName != null && (countryName.Equals("United States") || countryName.Equals("Canada")))
+            if (tunerTypes.HasFlag(TunerType.QamDvb))
             {
-              tuners.Add(new TunerBdaAtsc(device, BroadcastStandard.Scte));
+              tuners.Add(new TunerScteWrapper(new TunerBdaQam(device)));
+            }
+            else if (tunerFilter is IBDA_ConditionalAccess)
+            {
+              tuners.Add(new TunerPbdaCableCard(device));
+
+              // Normally analog TV and auxiliary input support in BDA is
+              // implemented using a WDM analog filter graph behind the scenes.
+              // Using the BDA layer gives less flexibility and control.
+              // Therefore the native WDM implementation is normally preferred.
+              // CableCARD tuners are a special case. The PBDA proxy filter
+              // implements support internally by utilising the underlying DRI
+              // interface. There is no WDM interface available.
+              if (tunerTypes.HasFlag(TunerType.AnalogTv) || tunerTypes.HasFlag(TunerType.AuxiliaryInput))
+              {
+                BroadcastStandard broadcastStandards;
+                CaptureSourceVideo videoSources;
+                DetectAuxiliaryInputDetails(tunerFilter, out broadcastStandards, out videoSources);
+                if (videoSources != CaptureSourceVideo.None)
+                {
+                  tuners.Add(new TunerBdaAuxiliaryInput(device, videoSources));
+                }
+              }
             }
             else
             {
-              tuners.Add(new TunerBdaQam(device));
+              tuners.Add(new TunerBdaAtsc(device, BroadcastStandard.Scte));
             }
+          }
+          else
+          {
+            tuners.Add(new TunerBdaQam(device));
           }
         }
 
-        if (isPskSupported)
+        if (tunerTypes.HasFlag(TunerType.Psk))
         {
-          if (isPsk8Supported || device.Name.ToLowerInvariant().Contains("s2"))
+          if (tunerTypes.HasFlag(TunerType.Psk8) || device.Name.ToLowerInvariant().Contains("s2"))
           {
             tuners.Add(new TunerBdaPsk(device, BroadcastStandard.DvbS | BroadcastStandard.DvbS2));
           }
@@ -425,7 +454,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
             tuners.Add(new TunerBdaPsk(device, BroadcastStandard.DvbS));
           }
         }
-        if (isOfdmSupported)
+        if (tunerTypes.HasFlag(TunerType.Ofdm))
         {
           if (device.Name.ToLowerInvariant().Contains("t2"))
           {
@@ -446,71 +475,69 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
       }
     }
 
-    private static void DetectSourceTypeInternal(IBaseFilter filter, out bool isVsbSupported, out bool isQamSupported, out bool isPskSupported, out bool isPsk8Supported, out bool isOfdmSupported)
+    private static TunerType DetectSourceTypeInternal(IBaseFilter filter)
     {
-      isVsbSupported = false;
-      isQamSupported = false;
-      isPskSupported = false;
-      isPsk8Supported = false;
-      isOfdmSupported = false;
-
+      Log.Debug("  check type with topology node descriptors");
       IBDA_Topology topology = filter as IBDA_Topology;
       if (topology == null)
       {
         Log.Debug("  filter is not a BDA topology");
-        return;
+        return TunerType.Unknown;
       }
-      BDANodeDescriptor[] descriptors = new BDANodeDescriptor[21];
+
+      BDANodeDescriptor[] descriptors = new BDANodeDescriptor[20];
       int descriptorCount = 0;
-      int hr = topology.GetNodeDescriptors(out descriptorCount, 20, descriptors);
+      int hr = topology.GetNodeDescriptors(out descriptorCount, descriptors.Length, descriptors);
       if (hr != (int)NativeMethods.HResult.S_OK)
       {
         Log.Error("BDA detector: failed to get node descriptors from topology, hr = 0x{0:x}", hr);
-        return;
+        return TunerType.Unknown;
       }
+
       Log.Debug("  descriptor count = {0}", descriptorCount);
+      TunerType tunerTypes = TunerType.Unknown;
       for (int d = 0; d < descriptorCount; d++)
       {
         Guid function = descriptors[d].guidFunction;
         Log.Debug("    function {0} = {1}", d, function);
-        if (function == BDANodeCategory.VSB_8_DEMODULATOR)
+        if (function == BDANodeCategory.ANALOG_DEMODULATOR)
         {
-          isVsbSupported = true;
+          tunerTypes |= TunerType.AnalogTv;
+        }
+        else if (function == BDANodeCategory.VSB_8_DEMODULATOR)
+        {
+          tunerTypes |= TunerType.Vsb;
         }
         else if (function == BDANodeCategory.QAM_DEMODULATOR)
         {
-          isQamSupported = true;
+          tunerTypes |= TunerType.Qam;
         }
         else if (function == BDANodeCategory.COFDM_DEMODULATOR ||
           function == BDANodeCategory.ISDB_T_DEMODULATOR)
         {
-          isOfdmSupported = true;
+          tunerTypes |= TunerType.Ofdm;
         }
         else if (function == BDANodeCategory.QPSK_DEMODULATOR)
         {
-          isPskSupported = true;
+          tunerTypes |= TunerType.Psk;
         }
         else if (function == BDANodeCategory.PSK_8_DEMODULATOR ||
           function == BDANodeCategory.ISDB_S_DEMODULATOR)
         {
-          isPskSupported = true;
-          isPsk8Supported = true;
+          tunerTypes |= TunerType.Psk | TunerType.Psk8;
         }
       }
 
-      if (!isVsbSupported && !isQamSupported && !isPskSupported && !isOfdmSupported)
+      if (tunerTypes == TunerType.Unknown)
       {
         Log.Debug("  traversed topology but type not recognised");
       }
+      return tunerTypes;
     }
 
-    private static void DetectSourceTypeMicrosoftGenericNetworkProvider(IBaseFilter filter, IFilterGraph2 graph, out bool isVsbSupported, out bool isQamSupported, out bool isQamDvbSupported, out bool isPskSupported, out bool isOfdmSupported)
+    private static TunerType DetectSourceTypeMicrosoftGenericNetworkProvider(IBaseFilter filter, IFilterGraph2 graph)
     {
-      isVsbSupported = false;
-      isQamSupported = false;
-      isQamDvbSupported = false;
-      isPskSupported = false;
-      isOfdmSupported = false;
+      Log.Debug("  check type with Microsoft generic network provider");
       IBaseFilter genericNp = null;
       try
       {
@@ -519,7 +546,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
       catch (Exception ex)
       {
         Log.Error(ex, "BDA detector: failed to add Microsoft generic network provider to detection graph");
-        return;
+        return TunerType.Unknown;
       }
 
       try
@@ -527,48 +554,59 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
         if (!ConnectFilter(graph, genericNp, filter))
         {
           Log.Debug("  failed to connect to Microsoft generic network provider");
-          return;
+          return TunerType.Unknown;
         }
 
-        int networkTypesMax = 10;
         int networkTypeCount;
-        Guid[] networkTypes = new Guid[networkTypesMax];
-        int hr = (genericNp as ITunerCap).get_SupportedNetworkTypes(networkTypesMax, out networkTypeCount, networkTypes);
+        Guid[] networkTypes = new Guid[10];
+        int hr = (genericNp as ITunerCap).get_SupportedNetworkTypes(networkTypes.Length, out networkTypeCount, networkTypes);
         if (hr != (int)NativeMethods.HResult.S_OK)
         {
           Log.Error("BDA detector: connected to Microsoft generic network provider but failed to get supported network types, hr = 0x{0:x}", hr);
-          return;
+          return TunerType.Unknown;
         }
 
         Log.Debug("  network type count = {0}", networkTypeCount);
+        TunerType tunerTypes = TunerType.Unknown;
         for (int n = 0; n < networkTypeCount; n++)
         {
           Guid networkType = networkTypes[n];
           Log.Debug("    network type {0} = {1}", n, networkType);
-          if (networkType == NetworkType.DIGITAL_CABLE)
+          if (networkType == NetworkType.ANALOG_AUX_IN)
+          {
+            tunerTypes |= TunerType.AuxiliaryInput;
+          }
+          else if (networkType == NetworkType.ANALOG_FM)
+          {
+            tunerTypes |= TunerType.FmRadio;
+          }
+          else if (networkType == NetworkType.ANALOG_TV)
+          {
+            tunerTypes |= TunerType.AnalogTv;
+          }
+          else if (networkType == NetworkType.ATSC_TERRESTRIAL)
+          {
+            tunerTypes |= TunerType.Vsb;
+          }
+          else if (networkType == NetworkType.DIGITAL_CABLE)
           {
             // BDA hybrid ATSC/QAM, BDA DVB-C and PBDA CableCARD tuners all
             // advertise this network type. ATSC and DVB-C tuners usually
             // advertise additional types which allow us to identifiy them.
             // If we don't see those types, we assume this is a QAM or
             // CableCARD tuner.
-            isQamSupported = true;
-          }
-          else if (networkType == NetworkType.ATSC_TERRESTRIAL)
-          {
-            isVsbSupported = true;
+            tunerTypes |= TunerType.Qam;
           }
           else if (networkType == NetworkType.DVB_CABLE ||
             networkType == NetworkType.ISDB_CABLE)
           {
-            isQamSupported = true;
-            isQamDvbSupported = true;
+            tunerTypes |= TunerType.Qam | TunerType.QamDvb;
           }
           else if (networkType == NetworkType.DVB_TERRESTRIAL ||
             networkType == NetworkType.ISDB_TERRESTRIAL ||
             networkType == NetworkType.ISDB_T)
           {
-            isOfdmSupported = true;
+            tunerTypes |= TunerType.Ofdm;
           }
           else if (networkType == NetworkType.DVB_SATELLITE ||
             networkType == NetworkType.DIRECTV_SATELLITE ||
@@ -576,14 +614,15 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
             networkType == NetworkType.ISDB_SATELLITE ||
             networkType == NetworkType.ISDB_S)
           {
-            isPskSupported = true;
+            tunerTypes |= TunerType.Psk;
           }
         }
 
-        if (!isVsbSupported && !isQamSupported && !isPskSupported && !isOfdmSupported)
+        if (tunerTypes == TunerType.Unknown)
         {
           Log.Debug("  connected to Microsoft generic network provider but type not recognised");
         }
+        return tunerTypes;
       }
       finally
       {
@@ -592,31 +631,163 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
       }
     }
 
-    private void DetectSourceTypeMicrosoftSpecificNetworkProvider(IBaseFilter filter, out bool isVsbSupported, out bool isQamSupported, out bool isPskSupported, out bool isOfdmSupported)
+    private TunerType DetectSourceTypeMicrosoftSpecificNetworkProvider(IBaseFilter filter)
     {
-      isVsbSupported = false;
-      isQamSupported = false;
-      isPskSupported = false;
-      isOfdmSupported = false;
+      this.LogDebug("  check type with specific Microsoft network providers");
       if (ConnectFilter(_graph, _dvbtNp, filter))
       {
-        isOfdmSupported = true;
+        return TunerType.Ofdm;
       }
       else if (ConnectFilter(_graph, _dvbcNp, filter))
       {
-        isQamSupported = true;
+        return TunerType.QamDvb;
       }
       else if (ConnectFilter(_graph, _dvbsNp, filter))
       {
-        isPskSupported = true;
+        return TunerType.Psk;
       }
       else if (ConnectFilter(_graph, _atscNp, filter))
       {
-        isVsbSupported = true;
+        return TunerType.Vsb;
       }
-      else
+      this.LogDebug("  failed to connect to specific Microsoft network provider");
+      return TunerType.Unknown;
+    }
+
+    private static void DetectAuxiliaryInputDetails(IBaseFilter filter, out BroadcastStandard broadcastStandards, out CaptureSourceVideo videoSources)
+    {
+      broadcastStandards = BroadcastStandard.Unknown;
+      videoSources = CaptureSourceVideo.None;
+
+      Log.Debug("  check for extended auto-demodulate support");
+      IBDA_Topology topology = filter as IBDA_Topology;
+      if (topology == null)
       {
-        this.LogDebug("  failed to connect to specific Microsoft network provider");
+        Log.Debug("  filter is not a BDA topology");
+        return;
+      }
+      int nodeTypeCount;
+      int[] nodeTypes = new int[20];
+      int hr = topology.GetNodeTypes(out nodeTypeCount, nodeTypes.Length, nodeTypes);
+      if (hr != (int)NativeMethods.HResult.S_OK)
+      {
+        Log.Error("BDA detector: failed to get node types from topology, hr = 0x{0:x}", hr);
+        return;
+      }
+
+      Guid[] interfaces = new Guid[20];
+      Log.Debug("  topology node type count = {0}", nodeTypeCount);
+      for (int i = 0; i < nodeTypeCount; i++)
+      {
+        int nodeType = nodeTypes[i];
+
+        int interfaceCount;
+        hr = topology.GetNodeInterfaces(nodeType, out interfaceCount, interfaces.Length, interfaces);
+        if (hr != (int)NativeMethods.HResult.S_OK)
+        {
+          Log.Error("BDA detector: failed to get topology node type interfaces, node index = {0}, hr = 0x{1:x}", i, hr);
+          continue;
+        }
+
+        for (int j = 0; j < interfaceCount; j++)
+        {
+          if (interfaces[j] != typeof(IBDA_DigitalDemodulator).GUID)
+          {
+            continue;
+          }
+
+          object controlNode;
+          hr = topology.GetControlNode(0, 1, nodeType, out controlNode);
+          if (hr != (int)NativeMethods.HResult.S_OK || controlNode == null)
+          {
+            Log.Error("BDA detector: failed to get topology node type control node, node index = {0}, hr = 0x{1:x}", i, hr);
+            continue;
+          }
+          try
+          {
+            IBDA_AutoDemodulateEx autoDemodInterface = controlNode as IBDA_AutoDemodulateEx;
+            if (autoDemodInterface == null)
+            {
+              continue;
+            }
+
+            Log.Debug("  found extended auto-demodulate interface on node {0}", i);
+            int inputCountComposite;
+            int inputCountSvideo;
+            hr = autoDemodInterface.get_AuxInputCount(out inputCountComposite, out inputCountSvideo);
+            if (hr != (int)NativeMethods.HResult.S_OK)
+            {
+              Log.Error("BDA detector: failed to get auto-demodulator auxiliary input count, node index = {0}, hr = 0x{1:x}", i, hr);
+            }
+
+            AMTunerModeType tunerModes;
+            WdmAnalogVideoStandard videoStandards;
+            hr = autoDemodInterface.get_SupportedVideoFormats(out tunerModes, out videoStandards);
+            if (hr != (int)NativeMethods.HResult.S_OK)
+            {
+              Log.Error("BDA detector: failed to get auto-demodulator supported video formats, node index = {0}, hr = 0x{1:x}", i, hr);
+            }
+
+            Log.Debug("    s-video count   = {0}", inputCountSvideo);
+            Log.Debug("    composite count = {0}", inputCountComposite);
+            Log.Debug("    tuner modes     = [{0}]", tunerModes);
+            Log.Debug("    video standards = [{0}]", videoStandards);
+
+            if (tunerModes.HasFlag(AMTunerModeType.AMRadio))
+            {
+              broadcastStandards |= BroadcastStandard.AmRadio;
+            }
+            if (tunerModes.HasFlag(AMTunerModeType.FMRadio))
+            {
+              broadcastStandards |= BroadcastStandard.FmRadio;
+            }
+            if (tunerModes.HasFlag(AMTunerModeType.TV))
+            {
+              broadcastStandards |= BroadcastStandard.AnalogTelevision;
+            }
+
+            if (inputCountSvideo > 0)
+            {
+              broadcastStandards |= BroadcastStandard.ExternalInput;
+              videoSources |= CaptureSourceVideo.Svideo1;
+              if (inputCountSvideo > 1)
+              {
+                videoSources |= CaptureSourceVideo.Svideo2;
+                if (inputCountSvideo > 2)
+                {
+                  videoSources |= CaptureSourceVideo.Svideo3;
+                  if (inputCountSvideo > 3)
+                  {
+                    Log.Warn("BDA detector: {0} s-video video inputs detected, only 3 supported", inputCountSvideo);
+                  }
+                }
+              }
+            }
+            if (inputCountComposite > 0)
+            {
+              broadcastStandards |= BroadcastStandard.ExternalInput;
+              videoSources |= CaptureSourceVideo.Composite1;
+              if (inputCountComposite > 1)
+              {
+                videoSources |= CaptureSourceVideo.Composite2;
+                if (inputCountComposite > 2)
+                {
+                  videoSources |= CaptureSourceVideo.Composite3;
+                  if (inputCountComposite > 3)
+                  {
+                    Log.Warn("BDA detector: {0} composite video inputs detected, only 3 supported", inputCountComposite);
+                  }
+                }
+              }
+            }
+
+            return;
+          }
+          finally
+          {
+            Release.ComObject(string.Format("BDA detector control node {0}", i), ref controlNode);
+          }
+        }
       }
     }
 

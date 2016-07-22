@@ -26,6 +26,7 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Channel;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channel;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Exception;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Tuner;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.Scte
@@ -99,19 +100,18 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Scte
     /// <summary>
     /// Initialise a new instance of the <see cref="TunerScteWrapper"/> class.
     /// </summary>
-    /// <param name="name">The tuner's name.</param>
-    /// <param name="externalId">The external identifier for the tuner.</param>
     /// <param name="dvbcTuner">The internal tuner implementation.</param>
-    public TunerScteWrapper(string name, string externalId, ITunerInternal dvbcTuner)
-      : base(name, externalId, null, null, BroadcastStandard.Scte)
+    public TunerScteWrapper(ITuner dvbcTuner)
+      : base(dvbcTuner.Name, dvbcTuner.ExternalId, dvbcTuner.TunerInstanceId, dvbcTuner.ProductInstanceId, BroadcastStandard.Scte)
     {
       ChannelDvbC dvbChannel = new ChannelDvbC();
-      if (dvbcTuner == null || !dvbcTuner.CanTune(dvbChannel))
+      ITunerInternal internalTuner = dvbcTuner as ITunerInternal;
+      if (internalTuner == null || !dvbcTuner.CanTune(dvbChannel))
       {
         throw new TvException("Internal tuner implementation is not usable.");
       }
 
-      _dvbcTuner = new TunerInternalWrapper(dvbcTuner);
+      _dvbcTuner = new TunerInternalWrapper(internalTuner);
     }
 
     ~TunerScteWrapper()
