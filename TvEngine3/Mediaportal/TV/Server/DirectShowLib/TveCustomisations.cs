@@ -2034,8 +2034,8 @@ namespace DirectShowLib
   {
     public KsEventNotificationType NotificationType;
     public IntPtr EventOrSemaphore;
-    public UIntPtr Reserved1;
-    public UIntPtr Reserved2;
+    public IntPtr Reserved1;
+    public IntPtr Reserved2;
   }
 
   #endregion
@@ -2261,7 +2261,7 @@ namespace DirectShowLib.BDA
   /// <summary>
   /// KS event set IDs. Defined in bdamedia.h.
   /// </summary>
-  private static class BdaMediaEventSet
+  public static class BdaMediaEventSet
   {
     // Windows XP
     /// <summary> KSEVENTSETID_BdaCAEvent </summary>
@@ -2402,7 +2402,7 @@ namespace DirectShowLib.BDA
     /// <summary> ANALOG_TV_NETWORK_TYPE </summary>
     public static readonly Guid ANALOG_TV = new Guid(0xb820d87e, 0xe0e3, 0x478f, 0x8a, 0x38, 0x4e, 0x13, 0xf7, 0xb3, 0xdf, 0x42);
     /// <summary> ANALOG_AUXIN_NETWORK_TYPE </summary>
-    public static readonly Guid ANALOG_AUX_IN = new Guid(0x742EF867, 0x9E1, 0x40A3, 0x82, 0xD3, 0x96, 0x69, 0xBA, 0x35, 0x32, 0x5F);
+    public static readonly Guid ANALOG_AUX_IN = new Guid(0x742ef867, 0x09e1, 0x40a3, 0x82, 0xd3, 0x96, 0x69, 0xba, 0x35, 0x32, 0x5f);
     /// <summary> ANALOG_FM_NETWORK_TYPE </summary>
     public static readonly Guid ANALOG_FM = new Guid(0x7728087b, 0x2bb9, 0x4e30, 0x80, 0x78, 0x44, 0x94, 0x76, 0xe5, 0x9d, 0xbb);
     /// <summary> ISDB_TERRESTRIAL_TV_NETWORK_TYPE </summary>
@@ -2438,32 +2438,32 @@ namespace DirectShowLib.BDA
   {
     FreeToAir = 0,
     DescramblingPossible = 1,
-    TechnicalFailOther = 0x80010000,
-    FirmwareUpgradeRequired = 0x80010001,
-    InternalFailure = 0x80010002,
-    InitialisingNotReady = 0x80010003,
-    SetupRequired = 0x80010004,
-    NoAccessCard = 0x80010005,
-    AccessCardFailure = 0x80010006,
-    BadAccessCard = 0x80010007,
-    WrongAccessCard = 0x80010008,
-    ExpiredAccessCard = 0x80010009,
-    OutOfResources = 0x8001000a,
-    NotInPurchaseWindow = 0x8001000b,
-    NotInPurchaseWindowPrior = 0x8001000c,
-    NotInPurchaseWindowAfter = 0x8001000d,
-    NoEntitlementOther = 0x80020000,
-    AccessCardNotAuthorised = 0x80020001,
-    ServiceNotAuthorised = 0x80020002,
-    ServiceExpired = 0x80020003,
-    AccountNotAuthorised = 0x80020004,
-    AccountExpired = 0x80020005,
-    ServiceBlackedOut = 0x80020006,
-    PurchaseRequired = 0x80020007,
-    InsufficientCredit = 0x80020008,
-    PurchaseCanceled = 0x80020009,
-    RenewalEntitlementExpired = 0x8002000a,
-    ShowingNotAvailable = 0x8002000b,
-    ShowingNext = 0x8002000c
+    TechnicalFailOther = unchecked((int)0x80010000),
+    FirmwareUpgradeRequired = unchecked((int)0x80010001),
+    InternalFailure = unchecked((int)0x80010002),
+    InitialisingNotReady = unchecked((int)0x80010003),
+    SetupRequired = unchecked((int)0x80010004),
+    NoAccessCard = unchecked((int)0x80010005),
+    AccessCardFailure = unchecked((int)0x80010006),
+    BadAccessCard = unchecked((int)0x80010007),
+    WrongAccessCard = unchecked((int)0x80010008),
+    ExpiredAccessCard = unchecked((int)0x80010009),
+    OutOfResources = unchecked((int)0x8001000a),
+    NotInPurchaseWindow = unchecked((int)0x8001000b),
+    NotInPurchaseWindowPrior = unchecked((int)0x8001000c),
+    NotInPurchaseWindowAfter = unchecked((int)0x8001000d),
+    NoEntitlementOther = unchecked((int)0x80020000),
+    AccessCardNotAuthorised = unchecked((int)0x80020001),
+    ServiceNotAuthorised = unchecked((int)0x80020002),
+    ServiceExpired = unchecked((int)0x80020003),
+    AccountNotAuthorised = unchecked((int)0x80020004),
+    AccountExpired = unchecked((int)0x80020005),
+    ServiceBlackedOut = unchecked((int)0x80020006),
+    PurchaseRequired = unchecked((int)0x80020007),
+    InsufficientCredit = unchecked((int)0x80020008),
+    PurchaseCanceled = unchecked((int)0x80020009),
+    RenewalEntitlementExpired = unchecked((int)0x8002000a),
+    ShowingNotAvailable = unchecked((int)0x8002000b),
+    ShowingNext = unchecked((int)0x8002000c)
   }
 }

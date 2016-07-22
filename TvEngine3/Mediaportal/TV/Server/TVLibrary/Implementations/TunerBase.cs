@@ -549,7 +549,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// <summary>
     /// Get the tuner's priority.
     /// </summary>
-    public int Priority
+    int ITuner.Priority
     {
       get
       {
@@ -1722,7 +1722,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// <summary>
     /// The loading priority for the extension.
     /// </summary>
-    byte ITunerExtension.Priority
+    public byte Priority
     {
       get
       {
