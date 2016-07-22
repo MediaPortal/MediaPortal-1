@@ -426,6 +426,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
                 BroadcastStandard broadcastStandards;
                 CaptureSourceVideo videoSources;
                 DetectAuxiliaryInputDetails(tunerFilter, out broadcastStandards, out videoSources);
+                if (broadcastStandards.HasFlag(BroadcastStandard.AnalogTelevision))
+                {
+                  tuners.Add(new TunerBdaAnalogTv(device));
+                }
                 if (videoSources != CaptureSourceVideo.None)
                 {
                   tuners.Add(new TunerBdaAuxiliaryInput(device, videoSources));
