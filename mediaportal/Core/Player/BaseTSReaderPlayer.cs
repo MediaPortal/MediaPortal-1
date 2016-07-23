@@ -617,7 +617,7 @@ namespace MediaPortal.Player
         ExclusiveMode(false);
         return false;
       }
-      if (_videoWin != null)
+      if (_videoWin != null && GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR)
       {
         _videoWin.put_WindowStyle((WindowStyle)((int)WindowStyle.Child + (int)WindowStyle.ClipChildren + (int)WindowStyle.ClipSiblings));
         _videoWin.put_MessageDrain(GUIGraphicsContext.form.Handle);

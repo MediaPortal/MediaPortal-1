@@ -50,7 +50,7 @@ HRESULT MadSubtitleProxy::SetDevice(IDirect3DDevice9* device)
 
   if (!m_pMadD3DDev)
   {
-    m_pPresenter->InitializeOSDClear();
+    //m_pPresenter->InitializeOSDClear();
   }
 
   // Set that we receive a new D3D Device

@@ -1629,6 +1629,14 @@ public class MediaPortalApp : D3D, IRender
 
         // handle display changes
         case WM_DISPLAYCHANGE:
+          if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+          {
+            if (VMR9Util.g_vmr9 != null)
+            {
+              VMR9Util.g_vmr9.WindowsMessageMP();
+            }
+            Log.Debug("Main: WM_DISPLAYCHANGE WindowsMessageMP()");
+          }
           if (Windowed || !_ignoreFullscreenResolutionChanges)
           {
             OnDisplayChange(ref msg);
