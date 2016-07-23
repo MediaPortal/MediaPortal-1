@@ -29,7 +29,8 @@ class MPMadPresenter : public CUnknown, public IOsdRenderCallback, public CCritS
     ~MPMadPresenter();
 
     IBaseFilter* Initialize();
-    void InitializeOSD(bool** initOsdDone);
+    void InitializeOSD();
+    void InitializeOSDClear();
     HRESULT Shutdown();
 
     STDMETHODIMP NonDelegatingQueryInterface(REFIID riid, void** ppv);
@@ -43,7 +44,6 @@ class MPMadPresenter : public CUnknown, public IOsdRenderCallback, public CCritS
     STDMETHODIMP ClearBackground(LPCSTR name, REFERENCE_TIME frameStart, RECT *fullOutputRect, RECT *activeVideoRect);
     STDMETHODIMP RenderOsd(LPCSTR name, REFERENCE_TIME frameStart, RECT *fullOutputRect, RECT *activeVideoRect);
     STDMETHODIMP SetDevice(IDirect3DDevice9* pD3DDev);
-    STDMETHODIMP ForceInitialize();
 
   private:
     void RenderToTexture(IDirect3DTexture9* pTexture, WORD cx, WORD cy, WORD arx, WORD ary);
@@ -92,6 +92,9 @@ class MPMadPresenter : public CUnknown, public IOsdRenderCallback, public CCritS
     DWORD m_dwHeight = 0;
 
     DeviceState m_deviceState;
+
+    bool m_pShutdown = false;
+    bool m_pInitOSDClear = false;
 
     int countFrame = 0;
     int firstFrame = 1;

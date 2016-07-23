@@ -24,10 +24,11 @@
 #include "MadSubtitleProxy.h"
 #include "madpresenter.h"
 
-MadSubtitleProxy::MadSubtitleProxy(IVMR9Callback* pCallback, IMediaControl* pMediaControl) :
+MadSubtitleProxy::MadSubtitleProxy(IVMR9Callback* pCallback, IMediaControl* pMediaControl, MPMadPresenter* pPresenter) :
   CUnknown(NAME("MadSubtitleProxy"), nullptr),
   m_pCallback(pCallback),
-  m_pMediaControl(pMediaControl)
+  m_pMediaControl(pMediaControl),
+  m_pPresenter(pPresenter)
 {
   Log("MadSubtitleProxy::Constructor() - instance 0x%x", this);
   CAutoLock cAutoLock(this);
@@ -49,20 +50,11 @@ HRESULT MadSubtitleProxy::SetDevice(IDirect3DDevice9* device)
 
   if (!m_pMadD3DDev)
   {
-    deviceNULL++;
-    counterBeforeProcessOSD = 0;
-    // if we get many D3D device to null, seend a callback to stop the playback.
-    if (deviceNULL > 5)
-    {
-      m_pCallback->ForceInitialize();
-      SetNewDevice(false);
-    }
-    // Force Render something
-    WORD videoHeight = static_cast<WORD>(1920);
-    WORD videoWidth = static_cast<WORD>(1080);
-
-    m_pCallback->RenderOverlay(videoWidth, videoHeight, videoWidth, videoHeight);
+    m_pPresenter->InitializeOSDClear();
   }
+
+  // Set that we receive a new D3D Device
+  SetNewDevice(true);
 
   return S_OK;
 }
@@ -71,33 +63,15 @@ HRESULT MadSubtitleProxy::Render(REFERENCE_TIME frameStart, int left, int top, i
 {
   CAutoLock cAutoLock(this);
 
-  if (!m_pMadD3DDev)
-  {
-    Log("MadSubtitleProxy::SetDevice() Render : 0x:%x", m_pMadD3DDev);
-    m_pMediaControl->Stop();
-    Log("MadSubtitleProxy::SetDevice() Render ImediaControl Stop");
-    return S_OK;
-  }
-
   if (m_pCallback)
   {
-    if (m_pMadD3DDev && counterBeforeProcessOSD < 10)
+    if (m_pMadD3DDev)
     {
-      counterBeforeProcessOSD++;
-      m_pMediaControl->Run();
-      Log("MadSubtitleProxy::Render() counter before processing OSD callback : %u", counterBeforeProcessOSD);
-    }
-    
-    // Let at least 10 render pass to permit to be on a correct D3D device
-    if (m_pMadD3DDev && counterBeforeProcessOSD >= 10)
-    {
-      if (!GetNewDevice())
+      if (GetNewDevice())
       {
         Log("MadSubtitleProxy::Render() SetNewDevice for D3D : 0x:%x", m_pMadD3DDev);
-        m_pMediaControl->Stop();
-        m_pCallback->ForceOsdUpdate(true);
-        SetNewDevice(true);
-        m_pMediaControl->Run();
+        m_pPresenter->InitializeOSD();
+        SetNewDevice(false);
       }
 
       m_deviceState.Store();
