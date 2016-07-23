@@ -2462,7 +2462,7 @@ namespace MediaPortal.GUI.Video
 
     public bool ShouldRenderLayer()
     {
-      if (CheckScreenState())
+      //if (CheckScreenState()) // TODO added back OSD madVR hack
       {
         return true;
       }

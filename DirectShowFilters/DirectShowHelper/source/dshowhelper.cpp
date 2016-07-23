@@ -75,6 +75,7 @@ MPMadPresenter*           m_madPresenter  = NULL;
 IBaseFilter*              m_pVMR9Filter   = NULL;
 IVMRSurfaceAllocator9*    m_allocator     = NULL;
 LONG                      m_iRecordingId  = 0;
+int                       m_pRefCount = 0;
 
 map<int,IStreamBufferRecordControl*> m_mapRecordControl;
 typedef map<int,IStreamBufferRecordControl*>::iterator imapRecordControl;
@@ -936,9 +937,10 @@ void MadDeinit()
   {
     Log("MPMadDshow::MadDeinit shutdown start");
     m_madPresenter->Shutdown();
-    ULONG refCount = m_pVMR9Filter->Release();
-    Log("MPMadDshow::MadDeinit reference counter to be released : (%d)", refCount);
-    for (ULONG i = 1; i < refCount; ++i)
+    m_pRefCount = m_pVMR9Filter->Release();
+    m_pRefCount = m_pRefCount - 1;
+    Log("MPMadDshow::MadDeinit reference counter to be released : (%d)", m_pRefCount);
+    for (int i = 0; i < m_pRefCount; ++i)
     {
       m_pVMR9Filter->Release();
     }

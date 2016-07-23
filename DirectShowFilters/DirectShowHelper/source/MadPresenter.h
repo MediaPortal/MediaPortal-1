@@ -100,6 +100,6 @@ class MPMadPresenter : public CUnknown, public IOsdRenderCallback, public CCritS
     int firstFrame = 1;
     int secondFrame = 3;
     int resetFrame = -1;
-
+    int m_pRefCount = 0;
 };
 
