@@ -31,7 +31,6 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using MediaPortal.Common.Utils;
 using IBdaTuner = DirectShowLib.BDA.ITuner;
 using ITveTuner = Mediaportal.TV.Server.TVLibrary.Interfaces.Tuner.ITuner;
-using TveAnalogVideoStandard = Mediaportal.TV.Server.Common.Types.Enum.AnalogVideoStandard;
 using WdmAnalogVideoStandard = DirectShowLib.AnalogVideoStandard;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
@@ -399,9 +398,16 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
             supportedBroadcastStandards |= BroadcastStandard.Scte;
           }
 
-          tuners.Add(new TunerBdaAtsc(device, supportedBroadcastStandards));
+          if (tunerFilter is IBDA_ConditionalAccess)
+          {
+            tuners.Add(new TunerPbdaCableCard(device, supportedBroadcastStandards));
+          }
+          else
+          {
+            tuners.Add(new TunerBdaAtsc(device, supportedBroadcastStandards));
+          }
         }
-        else if (tunerTypes.HasFlag(TunerType.Qam))
+        else if (tunerTypes.HasFlag(TunerType.Qam) || tunerTypes.HasFlag(TunerType.QamDvb))
         {
           string countryName = System.Globalization.RegionInfo.CurrentRegion.EnglishName;
           if (countryName != null && (countryName.Equals("United States") || countryName.Equals("Canada")))
@@ -412,7 +418,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
             }
             else if (tunerFilter is IBDA_ConditionalAccess)
             {
-              tuners.Add(new TunerPbdaCableCard(device));
+              tuners.Add(new TunerPbdaCableCard(device, BroadcastStandard.Scte));
 
               // Normally analog TV and auxiliary input support in BDA is
               // implemented using a WDM analog filter graph behind the scenes.

@@ -24,6 +24,8 @@ using DirectShowLib;
 using DirectShowLib.BDA;
 using Mediaportal.TV.Server.Common.Types.Enum;
 using Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda;
+using Mediaportal.TV.Server.TVLibrary.Implementations.Dri;
+using Mediaportal.TV.Server.TVLibrary.Implementations.Dri.Enum;
 using Mediaportal.TV.Server.TVLibrary.Implementations.Enum;
 using Mediaportal.TV.Server.TVLibrary.Implementations.Helper;
 using Mediaportal.TV.Server.TVLibrary.Implementations.Mpeg2Ts;
@@ -58,10 +60,20 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Pbda
     /// </summary>
     private ISubChannelManager _subChannelManager = null;
 
+    /// <summary>
+    /// The tuner's channel scanning interface.
+    /// </summary>
+    protected IChannelScannerInternal _channelScanner = null;
+
     // CA menu variables
     private object _caMenuCallBackLock = new object();
     private IConditionalAccessMenuCallBack _caMenuCallBack = null;
     private CableCardMmiHandler _caMenuHandler = null;
+
+    private TunerVendor _vendor = TunerVendor.Unknown;
+    private string _ipAddress = null;
+    private SmartCardStatusType _cardStatus = SmartCardStatusType.CardRemoved;
+    private bool _isScanningOutOfBandChannel = false;
 
     #endregion
 
@@ -71,13 +83,123 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Pbda
     /// Initialise a new instance of the <see cref="TunerPbdaCableCard"/> class.
     /// </summary>
     /// <param name="device">The <see cref="DsDevice"/> instance to encapsulate.</param>
-    public TunerPbdaCableCard(DsDevice device)
-      : base(device, BroadcastStandard.Scte)
+    /// <param name="supportedBroadcastStandards">The broadcast standards supported by the tuner.</param>
+    public TunerPbdaCableCard(DsDevice device, BroadcastStandard supportedBroadcastStandards)
+      : base(device, supportedBroadcastStandards)
     {
       _caMenuHandler = new CableCardMmiHandler(EnterMenu, CloseDialog);
+
+      if (device.Name.StartsWith("ATI TV Wonder OpenCable Receiver"))
+      {
+        _vendor = TunerVendor.Ati;
+      }
+      else if (device.Name.StartsWith("Ceton"))
+      {
+        _vendor = TunerVendor.Ceton;
+      }
+      else if (device.Name.StartsWith("Hauppauge OpenCable Receiver"))
+      {
+        _vendor = TunerVendor.Hauppauge;
+      }
+      else if (device.Name.StartsWith("HDHomeRun Prime Tuner"))
+      {
+        _vendor = TunerVendor.SiliconDust;
+      }
     }
 
     #endregion
+
+    private void ReadDeviceInfo()
+    {
+      SmartCardAssociationType association;
+      string error;
+      bool isOutOfBandTunerLocked;
+      int hr = _caInterface.get_SmartCardStatus(out _cardStatus, out association, out error, out isOutOfBandTunerLocked);
+      if (hr != (int)NativeMethods.HResult.S_OK)
+      {
+        this.LogWarn("PBDA CableCARD: failed to get smart card status");
+      }
+      else
+      {
+        this.LogDebug("PBDA CableCARD: smart card status");
+        this.LogDebug("  status      = {0}", _cardStatus);
+        this.LogDebug("  association = {0}", association);
+        this.LogDebug("  OOB locked? = {0}", isOutOfBandTunerLocked);
+        this.LogDebug("  error       = {0}", error);
+      }
+
+      IBDA_DiagnosticProperties diagnosticPropertiesInterface = MainFilter as IBDA_DiagnosticProperties;
+      if (diagnosticPropertiesInterface == null)
+      {
+        this.LogWarn("PBDA CableCARD: failed to read diagnostic parameters, interface not available");
+        return;
+      }
+
+      this.LogDebug("PBDA CableCARD: diagnostic parameters...");
+      TunerVendor vendor = _vendor;
+      if (_vendor == TunerVendor.Unknown)
+      {
+        vendor = TunerVendor.All;
+      }
+      foreach (DiagParameter p in DiagParameter.Values)
+      {
+        if (p.SupportedVendors.HasFlag(_vendor))
+        {
+          object value;
+          hr = diagnosticPropertiesInterface.Read(p.ToString(), out value, null);
+          if (hr != (int)NativeMethods.HResult.S_OK)
+          {
+            this.LogWarn("PBDA CableCARD: failed to read diagnostic property, hr = 0x{0:x}, property = {1}", hr, p.ToString());
+          }
+          else
+          {
+            string stringValue = value as string;
+            if (value == null)
+            {
+              stringValue = "[null]";
+            }
+            else if (stringValue == null)
+            {
+              stringValue = "[not null but not a string]";
+            }
+            else if (p == DiagParameter.HostIpAddress)
+            {
+              _ipAddress = stringValue;
+            }
+            this.LogDebug("  {0} = {1}", p.ToString(), stringValue);
+          }
+        }
+      }
+    }
+
+    private static bool IsCableCardNeededToTune(ChannelScte channel)
+    {
+      if (
+        channel != null &&
+        (
+          channel.IsEncrypted ||
+          channel.Frequency == ChannelScte.FREQUENCY_SWITCHED_DIGITAL_VIDEO
+        )
+      )
+      {
+        return true;
+      }
+      return false;
+    }
+
+    private bool IsScanningOutOfBandChannel(ChannelScte channel)
+    {
+      if (
+        InternalChannelScanningInterface != null &&
+        InternalChannelScanningInterface.IsScanning &&
+        channel != null &&
+        channel.Frequency == ChannelScte.FREQUENCY_OUT_OF_BAND_CHANNEL_SCAN
+      )
+      {
+        return true;
+      }
+      return false;
+    }
 
     #region ITunerInternal members
 
@@ -94,7 +216,15 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Pbda
 
       if (streamFormat == StreamFormat.Default)
       {
-        streamFormat = StreamFormat.Scte;
+        streamFormat = StreamFormat.Mpeg2Ts;
+        if (SupportedBroadcastStandards.HasFlag(BroadcastStandard.Atsc))
+        {
+          streamFormat |= StreamFormat.Atsc;
+        }
+        if (SupportedBroadcastStandards.HasFlag(BroadcastStandard.Scte))
+        {
+          streamFormat |= StreamFormat.Scte;
+        }
       }
       IList<ITunerExtension> extensions = base.PerformLoading(streamFormat);
 
@@ -108,12 +238,31 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Pbda
         throw new TvException("Failed to find BDA conditional access interface on tuner filter.");
       }
 
+      ReadDeviceInfo();
+
       // CableCARD tuners are limited to one channel per tuner, even for
       // non-encrypted channels:
       // The DRIT SHALL output the selected program content as a single program
       // MPEG-TS in RTP packets according to [RTSP] and [RTP].
       // - OpenCable DRI I04 specification, 10 September 2010
       _subChannelManager = new SubChannelManagerMpeg2Ts(TsWriter as ITsWriter, false);
+
+      if (_ipAddress == null)
+      {
+        _channelScanner = new ChannelScannerDri(InternalChannelScanningInterface, null);
+      }
+      else if (_vendor == TunerVendor.Ceton)
+      {
+        _channelScanner = new ChannelScannerDriCeton(InternalChannelScanningInterface, null, _ipAddress);
+      }
+      else if (_vendor == TunerVendor.SiliconDust || _vendor == TunerVendor.Hauppauge)
+      {
+        _channelScanner = new ChannelScannerDriSiliconDust(InternalChannelScanningInterface, null, _ipAddress);
+      }
+      else
+      {
+        _channelScanner = new ChannelScannerDri(_channelScanner, null);
+      }
       return extensions;
     }
 
@@ -126,7 +275,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Pbda
       this.LogDebug("PBDA CableCARD: perform unloading");
       if (!isFinalising)
       {
+        _caInterface = null;
         _subChannelManager = null;
+        _channelScanner = null;
       }
       base.PerformUnloading(isFinalising);
     }
@@ -136,38 +287,42 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Pbda
     #region tuning
 
     /// <summary>
-    /// Get the broadcast standards supported by the tuner code/class/type implementation.
-    /// </summary>
-    public override BroadcastStandard PossibleBroadcastStandards
-    {
-      get
-      {
-        return BroadcastStandard.Scte;
-      }
-    }
-
-    /// <summary>
     /// Check if the tuner can tune to a specific channel.
     /// </summary>
     /// <param name="channel">The channel to check.</param>
     /// <returns><c>true</c> if the tuner can tune to the channel, otherwise <c>false</c></returns>
     public override bool CanTune(IChannel channel)
     {
-      // Tuning without a CableCARD (ATSC or clear QAM) is currently not supported.
-      ChannelScte scteChannel = channel as ChannelScte;
-      short virtualChannelNumber;
-      if (
-        scteChannel == null ||
-        !SupportedBroadcastStandards.HasFlag(BroadcastStandard.Scte) ||
-        (
-          (!short.TryParse(scteChannel.LogicalChannelNumber, out virtualChannelNumber) || virtualChannelNumber <= 0) &&
-          scteChannel.Frequency != -1   // special case: CableCARD scanning
-        )
-      )
+      // Is tuning physically possible?
+      if (!base.CanTune(channel))
       {
         return false;
       }
-      return true;
+
+      // Can we assemble a tune request that might succeed?
+
+      // Yes, if we can tune without a CableCARD.
+      ChannelScte scteChannel = channel as ChannelScte;
+      bool isOobScan = IsScanningOutOfBandChannel(scteChannel);
+      if (!isOobScan && !IsCableCardNeededToTune(scteChannel))
+      {
+        return true;
+      }
+
+      // Otherwise, yes, if the CableCARD is present and we have a valid
+      // virtual channel number, or we're scanning using the out-of-band tuner.
+      short virtualChannelNumber;
+      if (
+        (_caInterface == null || _cardStatus == SmartCardStatusType.CardInserted) &&
+        (
+          (short.TryParse(channel.LogicalChannelNumber, out virtualChannelNumber) && virtualChannelNumber > 0) ||
+          isOobScan
+        )
+      )
+      {
+        return true;
+      }
+      return false;
     }
 
     /// <summary>
@@ -177,36 +332,48 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Pbda
     public override void PerformTuning(IChannel channel)
     {
       this.LogDebug("PBDA CableCARD: perform tuning");
+
       ChannelScte scteChannel = channel as ChannelScte;
-      short virtualChannelNumber;
-      if (scteChannel == null || !short.TryParse(scteChannel.LogicalChannelNumber, out virtualChannelNumber))
+      bool isOobScan = IsScanningOutOfBandChannel(scteChannel);
+      if (!isOobScan && !IsCableCardNeededToTune(scteChannel))
       {
-        throw new TvException("Received request to tune incompatible channel.");
+        _isScanningOutOfBandChannel = false;
+        base.PerformTuning(channel);
+        return;
       }
 
-      // Tuning without a CableCARD (clear QAM) is currently not supported.
-      SmartCardStatusType status;
       SmartCardAssociationType association;
       string error;
       bool isOutOfBandTunerLocked = false;
-      int hr = _caInterface.get_SmartCardStatus(out status, out association, out error, out isOutOfBandTunerLocked);
+      int hr = _caInterface.get_SmartCardStatus(out _cardStatus, out association, out error, out isOutOfBandTunerLocked);
       TvExceptionDirectShowError.Throw(hr, "Failed to read smart card status.");
-      if (status != SmartCardStatusType.CardInserted || (ChannelScanningInterface.IsScanning && !isOutOfBandTunerLocked) || !string.IsNullOrEmpty(error))
+      if (
+        _cardStatus != SmartCardStatusType.CardInserted ||
+        (isOobScan && !isOutOfBandTunerLocked) ||
+        !string.IsNullOrEmpty(error)
+      )
       {
         this.LogError("PBDA CableCARD: smart card status");
-        this.LogError("  status      = {0}", status);
+        this.LogError("  status      = {0}", _cardStatus);
         this.LogError("  association = {0}", association);
         this.LogError("  OOB locked  = {0}", isOutOfBandTunerLocked);
         this.LogError("  error       = {0}", error);
         throw new TvException("CableCARD or out-of-band tuner error.");
       }
 
-      if (!ChannelScanningInterface.IsScanning)
+      _isScanningOutOfBandChannel = isOobScan;
+      if (!isOobScan)
       {
+        short virtualChannelNumber;
+        if (!short.TryParse(scteChannel.LogicalChannelNumber, out virtualChannelNumber))
+        {
+          throw new TvException("Received request to tune incompatible channel.");
+        }
+
         // Note: SDV not explicitly supported. We can't request the program
-        // number from the tuner like we can when interacting directly with the
-        // DRI interface. Therefore tuning SDV channels will fail if the
-        // channel program number is not correct.
+        // number from the tuner like we can when using the DRI interface.
+        // Therefore tuning SDV channels may fail if the channel program
+        // number is not specified or not correct.
         hr = _caInterface.TuneByChannel(virtualChannelNumber);
         TvExceptionDirectShowError.Throw(hr, "Failed to tune channel.");
       }
@@ -226,52 +393,41 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Pbda
     /// <param name="onlyGetLock"><c>True</c> to only get lock status.</param>
     public override void GetSignalStatus(out bool isLocked, out bool isPresent, out int strength, out int quality, bool onlyGetLock)
     {
-      if (ChannelScanningInterface != null && ChannelScanningInterface.IsScanning)
+      if (!_isScanningOutOfBandChannel)
       {
-        isLocked = false;
-        try
+        base.GetSignalStatus(out isLocked, out isPresent, out strength, out quality, onlyGetLock);
+        return;
+      }
+
+      isLocked = false;
+      try
+      {
+        if (_caInterface != null)
         {
-          // When scanning we need the OOB tuner to be locked. We already
-          // updated the lock status when tuning, so only update again when
-          // monitoring.
-          if (onlyGetLock)
+          SmartCardAssociationType association;
+          string error;
+          int hr = _caInterface.get_SmartCardStatus(out _cardStatus, out association, out error, out isLocked);
+          if (hr != (int)NativeMethods.HResult.S_OK)
           {
-            isLocked = true;
-          }
-          else
-          {
-            if (_caInterface != null)
-            {
-              SmartCardStatusType status;
-              SmartCardAssociationType association;
-              string error;
-              int hr = _caInterface.get_SmartCardStatus(out status, out association, out error, out isLocked);
-              if (hr != (int)NativeMethods.HResult.S_OK)
-              {
-                this.LogWarn("PBDA CableCARD: potential error updating signal status, hr = 0x{0:x}", hr);
-              }
-            }
-          }
-          return;
-        }
-        finally
-        {
-          // We can only get lock status for the OOB tuner.
-          isPresent = isLocked;
-          if (isLocked)
-          {
-            strength = 100;
-            quality = 100;
-          }
-          else
-          {
-            strength = 0;
-            quality = 0;
+            this.LogWarn("PBDA CableCARD: potential error updating signal status, hr = 0x{0:x}", hr);
           }
         }
       }
-
-      base.GetSignalStatus(out isLocked, out isPresent, out strength, out quality, onlyGetLock);
+      finally
+      {
+        // We can only get lock status for the OOB tuner.
+        isPresent = isLocked;
+        if (isLocked)
+        {
+          strength = 100;
+          quality = 100;
+        }
+        else
+        {
+          strength = 0;
+          quality = 0;
+        }
+      }
     }
 
     #endregion
@@ -289,7 +445,31 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Pbda
       }
     }
 
+    /// <summary>
+    /// Get the tuner's channel scanning interface.
+    /// </summary>
+    public override IChannelScannerInternal InternalChannelScanningInterface
+    {
+      get
+      {
+        return _channelScanner;
+      }
+    }
+
     #endregion
+
+    #endregion
+
+    #region IBroadcastEventEx member
+
+    public virtual int FireEx(Guid eventId, int param1, int param2, int param3, int param4)
+    {
+      if (eventId == BdaEventType.CARD_STATUS_CHANGED)
+      {
+        _cardStatus = (SmartCardStatusType)param1;
+      }
+      return base.FireEx(eventId, param1, param2, param3, param4);
+    }
 
     #endregion
 

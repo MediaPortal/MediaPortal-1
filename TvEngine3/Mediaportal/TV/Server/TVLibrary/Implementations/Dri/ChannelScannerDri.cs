@@ -25,6 +25,7 @@ using Mediaportal.TV.Server.TVLibrary.Implementations.Atsc;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Channel;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channel;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Tuner;
 
@@ -122,20 +123,26 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
       ManualResetEvent requestTablesEvent = new ManualResetEvent(false);
       try
       {
-        ThreadPool.QueueUserWorkItem(
-          delegate
-          {
-            do
+        if (_requestFdcTables != null)
+        {
+          ThreadPool.QueueUserWorkItem(
+            delegate
             {
-              _requestFdcTables(new List<byte> { 0xc2, 0xc3, 0xc4, 0xc7, 0xc8, 0xc9 });
+              do
+              {
+                _requestFdcTables(new List<byte> { 0xc2, 0xc3, 0xc4, 0xc7, 0xc8, 0xc9 });
+              }
+              while (!requestTablesEvent.WaitOne(30000));
             }
-            while (!requestTablesEvent.WaitOne(30000));
-          }
-        );
+          );
+        }
+        bool isForcedLvctScan = false;
         ISet<string> ignoredChannelNumbers;
         if (_scannerAtsc != null)
         {
-          _scannerAtsc.Scan(channel, isFastNetworkScan, out channels, out groupNames, out ignoredChannelNumbers);
+          ChannelScte scteChannel = channel as ChannelScte;
+          isForcedLvctScan = scteChannel != null && scteChannel.Frequency != ChannelScte.FREQUENCY_OUT_OF_BAND_CHANNEL_SCAN;
+          _scannerAtsc.Scan(channel, isForcedLvctScan, out channels, out groupNames, out ignoredChannelNumbers);
         }
         else
         {
@@ -169,13 +176,20 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
         this.LogInfo("  hidden  = {0} [{1}]", hiddenChannels.Count, string.Join(", ", hiddenChannels));
         this.LogInfo("  ignored = {0} [{1}]", ignoredChannelNumbers.Count, string.Join(", ", ignoredChannelNumbers));
 
-        UpdateChannels(channels, groupNames, ignoredChannelNumbers);
+        if (!isForcedLvctScan)
+        {
+          UpdateChannels(channels, groupNames, ignoredChannelNumbers);
+        }
       }
       finally
       {
-        requestTablesEvent.Set();
-        requestTablesEvent.Close();
-        requestTablesEvent.Dispose();
+        if (requestTablesEvent != null)
+        {
+          requestTablesEvent.Set();
+          Thread.Sleep(200);    // Give some time for the thread pool delegate to stop.
+          requestTablesEvent.Close();
+          requestTablesEvent.Dispose();
+        }
       }
     }
 

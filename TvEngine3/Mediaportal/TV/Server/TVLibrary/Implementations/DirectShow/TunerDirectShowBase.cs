@@ -564,7 +564,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
 
     #region IBroadcastEvent member
 
-    public int Fire(Guid eventId)
+    public virtual int Fire(Guid eventId)
     {
       this.LogDebug("DirectShow base: received broadcast event, type = {0}", GetEventTypeName(eventId));
 
@@ -579,7 +579,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
 
     #region IBroadcastEventEx member
 
-    public int FireEx(Guid eventId, int param1, int param2, int param3, int param4)
+    public virtual int FireEx(Guid eventId, int param1, int param2, int param3, int param4)
     {
       // All BdaEventType parameter handling is based on documentation found in
       // bdamedia.h, cross-checked with experience where possible.
