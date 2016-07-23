@@ -3322,7 +3322,7 @@ namespace TvPlugin
     public bool ShouldRenderLayer()
     {
       //TVHome.SendHeartBeat(); //not needed, now sent from tvoverlay.cs
-      if (CheckScreenState())
+      //if (CheckScreenState()) // TODO added back OSD madVR hack
       {
         return true;
       }
