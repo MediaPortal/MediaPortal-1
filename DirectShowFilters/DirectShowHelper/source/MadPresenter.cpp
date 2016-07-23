@@ -140,6 +140,17 @@ HRESULT MPMadPresenter::Shutdown()
 
     m_pShutdown = true;
 
+    if (m_pInitOSDClear)
+    {
+      m_pRefCount = Release();
+      m_pRefCount = m_pRefCount - 1;
+      Log("MPMadPresenter::Shutdown() reference counter to be released for OSD : (%d)", m_pRefCount);
+      for (int i = 0; i < m_pRefCount; ++i)
+      {
+        Release();
+      }
+    }
+
     if (m_pCallback)
     {
       m_pCallback->Release();
@@ -182,22 +193,10 @@ HRESULT MPMadPresenter::Shutdown()
       Log("MPMadPresenter::Shutdown() 5");
     }
 
-    if (m_pInitOSDClear)
-    {
-      Log("MPMadPresenter::Shutdown() m_pInitOSDClear");
-      ULONG refCount = Release();
-      Log("MPMadPresenter::Shutdown() reference counter to be released for OSD : (%d)", refCount);
-      for (ULONG i = 1; i < refCount; ++i)
-      {
-        Release();
-      }
-    }
-
     Log("MPMadPresenter::Shutdown() start OSD");
     if (m_pOsdServices)
     {
       m_pOsdServices->OsdSetRenderCallback("MP-GUI", nullptr, nullptr);
-      Log("MPMadPresenter::ReleaseOSD() done");
     }
     Log("MPMadPresenter::Shutdown() done OSD");
   }
@@ -221,7 +220,7 @@ HRESULT MPMadPresenter::QueryInterface(REFIID riid, void** ppvObject)
   else if (riid == __uuidof(IOsdRenderCallback))
   {
     *ppvObject = static_cast<IOsdRenderCallback*>(this);
-    AddRef();
+    //AddRef();
     hr = S_OK;
   }
   else if (riid == __uuidof(ISubRender))
@@ -229,7 +228,7 @@ HRESULT MPMadPresenter::QueryInterface(REFIID riid, void** ppvObject)
     if (m_subProxy)
     {
       *ppvObject = static_cast<ISubRenderCallback*>(m_subProxy);
-      AddRef();
+      //AddRef();
       hr = S_OK;
     }
   }
@@ -267,7 +266,10 @@ HRESULT MPMadPresenter::ClearBackground(LPCSTR name, REFERENCE_TIME frameStart, 
   bool uiVisible = false;
 
   if (!m_pCallback)
+  {
+    Log("ClearBackground m_pCallback : (0x%x)", m_pCallback);
     return CALLBACK_EMPTY;
+  }
 
   CAutoLock cAutoLock(this);
 
@@ -335,7 +337,10 @@ HRESULT MPMadPresenter::RenderOsd(LPCSTR name, REFERENCE_TIME frameStart, RECT* 
   bool uiVisible = false;
 
   if (!m_pCallback)
+  {
+    Log("RenderOsd m_pCallback : (0x%x)", m_pCallback);
     return CALLBACK_EMPTY;
+  }
 
   CAutoLock cAutoLock(this);
 
@@ -560,6 +565,12 @@ HRESULT MPMadPresenter::SetDevice(IDirect3DDevice9* pD3DDev)
   HRESULT hr = S_FALSE;
 
   Log("MPMadPresenter::SetDevice() pD3DDev : 0x:%x", pD3DDev);
+
+  if (!m_pCallback)
+  {
+    Log("MPMadPresenter::SetDevice() m_pCallback : (0x%x)", m_pCallback);
+    return S_OK;
+  }
 
   CAutoLock cAutoLock(this);
 
