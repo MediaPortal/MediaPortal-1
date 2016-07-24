@@ -132,7 +132,20 @@ NALUnitType HevcNalDecode::processNALUnit(const uint8_t *pdata, std::size_t size
             h.AvgTimePerFrame = (__int64)((10000000.0 * (double)psps->vui_parameters.vui_num_units_in_tick)/(double)psps->vui_parameters.vui_time_scale);
           }
         }
-      }      
+      }    
+      
+      if (h.arx == 0 && h.ary == 0) //Do something sensible if aspect ratio info not present
+      {
+        if (h.width > 0 && h.width > 0)
+        {
+          h.arx = h.width;
+          h.ary = h.height;
+      
+          uint32_t a = h.arx, b = h.ary;
+          while(a) {uint32_t tmp = a; a = b % tmp; b = tmp;}
+          if(b) h.arx /= b, h.ary /= b;
+        }  
+      }
 
       break;
     }

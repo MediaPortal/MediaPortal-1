@@ -257,8 +257,8 @@ void CTsDuration::UpdateDuration(bool logging, bool background)
     Loop-- ;
     if(m_endPcr.PcrReferenceBase < m_startPcr.PcrReferenceBase)
 		{
-			if (Loop < 4)		// Show log on 2nd wrong detection.
-				LogDebug("Abnormal start PCR, endPcr %I64d, startPcr %I64d",m_endPcr.PcrReferenceBase, m_startPcr.PcrReferenceBase);
+			//if (Loop < 4)		// Show log on 2nd wrong detection.
+			//	LogDebug("Abnormal start PCR, endPcr %I64d, startPcr %I64d",m_endPcr.PcrReferenceBase, m_startPcr.PcrReferenceBase);
 			Sleep(20) ;
 		}
   }
@@ -271,7 +271,9 @@ void CTsDuration::UpdateDuration(bool logging, bool background)
     // The startPcr read can also failed when it occurs between deleting and reusing the ts buffer.
     // This abort the method. Duration will be updated on next call.
   if (Loop==0)
-    LogDebug("PCR rollover normally found ! endPcr %I64d, startPcr %I64d",m_endPcr.PcrReferenceBase, m_startPcr.PcrReferenceBase);
+  {
+    //LogDebug("PCR rollover normally found ! endPcr %I64d, startPcr %I64d",m_endPcr.PcrReferenceBase, m_startPcr.PcrReferenceBase);
+  }
   else
   {
     if(Loop<3)  // 1 failed + 1 succeded is quasi-normal, more is a bit suspicious ( disk drive too slow or problem ? )

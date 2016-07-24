@@ -1651,6 +1651,8 @@ bool CFrameHeaderParser::Read(hevchdr& h, int len, CMediaType* pmt, bool reset)
 		h.width = 0;
 		h.height = 0;
   }
+
+	if ((len <= 0) || (len > 65534)) return(false); //Sanity check
   
 	if (len > 4)
 	{
@@ -1668,44 +1670,53 @@ bool CFrameHeaderParser::Read(hevchdr& h, int len, CMediaType* pmt, bool reset)
 		else if(nal_type==NAL_SPS)
 		{
 			LOG_HEVC_FHP("SPS found");			
-			if (h.sps != NULL)
+			//Copy SPS to buffer
+			if (h.sps != NULL && nal_len != h.spslen)
 			{
 				free(h.sps);
+				h.sps = NULL;
 			}
-			//Copy SPS to new buffer
-			h.spslen = nal_len; //length including start code and ID bytes
-			if ((h.spslen <= 0) || (h.spslen > 65534)) return(false); //Sanity check
-			h.sps = (BYTE*) malloc(h.spslen);
+			if (h.sps == NULL)
+			{
+				h.sps = (BYTE*) malloc(nal_len);
+			}
 			if (h.sps == NULL) { h.spslen = 0; return(false); } //malloc error...
-			ByteRead(h.sps, h.spslen);						
+			ByteRead(h.sps, nal_len);						
+			h.spslen = nal_len; //length including start code and ID bytes
 		}
 		else if(nal_type==NAL_PPS)
 		{
 			LOG_HEVC_FHP("PPS found");			
-			if (h.pps != NULL)
+			//Copy PPS to new buffer
+			if (h.pps != NULL && nal_len != h.ppslen)
 			{
 				free(h.pps);
+				h.pps = NULL;
 			}
-			//Copy PPS to new buffer
-			h.ppslen = nal_len; //length including start code and ID bytes
-			if ((h.ppslen <= 0) || (h.ppslen > 65534)) return(false); //Sanity check
-			h.pps = (BYTE*) malloc(h.ppslen);
+			if (h.pps == NULL)
+			{
+				h.pps = (BYTE*) malloc(nal_len);
+			}
 			if (h.pps == NULL) { h.ppslen = 0; return(false); } //malloc error...
-			ByteRead(h.pps, h.ppslen);
+			ByteRead(h.pps, nal_len);						
+			h.ppslen = nal_len; //length including start code and ID bytes
 		}
 		else if(nal_type==NAL_VPS)
 		{
 			LOG_HEVC_FHP("VPS found");			
-			if (h.vps != NULL)
+			//Copy VPS to new buffer
+			if (h.vps != NULL && nal_len != h.vpslen)
 			{
 				free(h.vps);
+				h.vps = NULL;
 			}
-			//Copy VPS to new buffer
-			h.vpslen = nal_len; //length including start code and ID bytes
-			if ((h.vpslen <= 0) || (h.vpslen > 65534)) return(false); //Sanity check
-			h.vps = (BYTE*) malloc(h.vpslen);
+			if (h.vps == NULL)
+			{
+				h.vps = (BYTE*) malloc(nal_len);
+			}
 			if (h.vps == NULL) { h.vpslen = 0; return(false); } //malloc error...
-			ByteRead(h.vps, h.vpslen);
+			ByteRead(h.vps, nal_len);						
+			h.vpslen = nal_len; //length including start code and ID bytes
 		}
 	}
 
@@ -1776,17 +1787,11 @@ bool CFrameHeaderParser::Read(hevchdr& h, int len, CMediaType* pmt, bool reset)
 
 		memcpy(p, h.vps, h.vpslen);
 		p += h.vpslen;
-	  //free(h.vps);
-		//h.vps = NULL;
 
 		memcpy(p, h.sps, h.spslen);
 		p += h.spslen;
-		//free(h.sps);
-		//h.sps = NULL;
 		
 		memcpy(p, h.pps, h.ppslen);
-		//free(h.pps);
-		//h.pps = NULL;
 		
 		pmt->SetFormat((BYTE*)vi, len);
 	}
