@@ -906,24 +906,25 @@ double EVRGetDisplayFPS()
   return displayFPS;
 }
 
-BOOL MadInit(IVMR9Callback* callback, DWORD width, DWORD height, DWORD dwD3DDevice, OAHWND parent, IBaseFilter** madFilter, IMediaControl* pMediaControl)
+BOOL MadInit(IVMR9Callback* callback, DWORD width, DWORD height, DWORD dwD3DDevice, HWND parent, IBaseFilter** madFilter, IMediaControl* pMediaControl, IGraphBuilder* mGraphbuilder, OAHWND** madHWnD)
 {
   m_RenderPrefix = _T("mad");
   m_pDevice = reinterpret_cast<LPDIRECT3DDEVICE9>(dwD3DDevice);
 
   Log("MPMadDshow::MadInit 0");
-  // Delay for 3 seconds on init to clear all pending garbage from C#
-  //Sleep(3000);
-  Log("MPMadDshow::MadInit 1");
 
-  m_madPresenter = new MPMadPresenter(callback, width, height, parent, m_pDevice, pMediaControl);
+  m_madPresenter = new MPMadPresenter(callback, width, height, parent, m_pDevice, pMediaControl, mGraphbuilder);
   m_pVMR9Filter = m_madPresenter->Initialize();
-  Log("MPMadDshow::MadInit 2");
+  //m_madPresenter->Initialize2();
+  Log("MPMadDshow::MadInit 1");
   if (m_pVMR9Filter)
   {
     *madFilter = m_pVMR9Filter;
   }
-  Log("MPMadDshow::MadInit 3");
+  Log("MPMadDshow::MadInit 2");
+
+  OAHWND m_hWnd = m_madPresenter->HWnDMadVR();
+  *madHWnD = &m_hWnd;
 
   if (!madFilter)
     return FALSE;
@@ -950,6 +951,12 @@ void MadDeinit()
   catch(...)
   {
   }
+}
+
+void WindowsMessage()
+{
+  //m_madPresenter->Initialize2();
+  //m_madPresenter->ForceMessage();
 }
 
 void Vmr9SetDeinterlaceMode(int mode)

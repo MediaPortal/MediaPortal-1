@@ -3385,7 +3385,8 @@ namespace TvPlugin
       //TVHome.SendHeartBeat(); //not needed, now sent from tvoverlay.cs
       //if (CheckScreenState()) // TODO added back OSD madVR hack
       {
-        return true;
+        if (GUIGraphicsContext.InVmr9Render)
+          return true;
       }
       return false;
     }
