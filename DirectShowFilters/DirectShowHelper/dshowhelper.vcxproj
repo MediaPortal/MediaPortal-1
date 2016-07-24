@@ -166,6 +166,7 @@
     <ClInclude Include="source\Scheduler.h" />
     <ClInclude Include="source\StatsRenderer.h" />
     <ClInclude Include="source\StdAfx.h" />
+    <ClInclude Include="source\StdString.h" />
     <ClInclude Include="source\TimeSource.h" />
     <ClInclude Include="source\version.h" />
   </ItemGroup>

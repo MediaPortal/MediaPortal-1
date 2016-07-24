@@ -27,7 +27,7 @@
 // For more details for memory leak detection see the alloctracing.h header
 #include "..\..\alloctracing.h"
 #include <vector>
-#include "../../MPAudioRenderer/AE_mixer/StdString.h"
+#include "StdString.h"
 
 const DWORD D3DFVF_VID_FRAME_VERTEX = D3DFVF_XYZRHW | D3DFVF_TEX1;
 
