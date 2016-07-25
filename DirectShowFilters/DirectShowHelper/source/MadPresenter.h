@@ -35,14 +35,14 @@ class MPMadPresenter : public CUnknown, public IOsdRenderCallback, public CCritS
     //void ForceMessage();
     //void ForceMessageExclusive();
     void SetDsWndVisible(bool);
-    virtual OAHWND HWnDMadVR() { return reinterpret_cast<OAHWND>(m_hWnd); }
+    virtual OAHWND HWnDMadVR() { return reinterpret_cast<OAHWND>(m_hWndKodi); }
 
     HRESULT Shutdown();
 
     //madVR Window
     static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
     OAHWND* m_hWndReturn;
-    HWND m_hWnd;
+    HWND m_hWndKodi;
     bool InitMadvrWindow(HWND &hWnd);
     void DeInitMadvrWindow();
     HINSTANCE m_hInstance;
