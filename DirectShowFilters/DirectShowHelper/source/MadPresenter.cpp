@@ -27,8 +27,10 @@
 // For more details for memory leak detection see the alloctracing.h header
 #include "..\..\alloctracing.h"
 #include <vector>
-#include "../../MPAudioRenderer/AE_mixer/StdString.h"
+#include "StdString.h"
+#include <afxwin.h>
 
+class CWnd;
 const DWORD D3DFVF_VID_FRAME_VERTEX = D3DFVF_XYZRHW | D3DFVF_TEX1;
 
 struct VID_FRAME_VERTEX
@@ -191,8 +193,8 @@ IBaseFilter* MPMadPresenter::Initialize()
   //hr = m_pGraphBuilder->AddFilter(m_pBaseFilter, L"madVR");
 
   // Create a madVR Window
-  if (InitMadvrWindow(m_hWnd))
-    Log("%s : Create DSPlayer window - hWnd: %i", __FUNCTION__, m_hWnd);
+  //if (InitMadvrWindow(m_hWndKodi))
+  //  Log("%s : Create DSPlayer window - hWnd: %i", __FUNCTION__, m_hWndKodi);
 
   m_pManager->ConfigureDisplayModeChanger(true, true);
   //Log("MPMadPresenter::Init 5()");
@@ -203,16 +205,25 @@ IBaseFilter* MPMadPresenter::Initialize()
   m_pCommand->SendCommandBool("disableSeekbar", true);
   //Log("MPMadPresenter::Init 7()");
 
-  if (m_pWindow)
-  {
-    //m_pWindow->put_Owner(m_hParent);
-    m_pWindow->put_Owner(reinterpret_cast<OAHWND>(m_hWnd));
-    //m_pWindow->put_WindowStyle(WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN);
-    //m_pWindow->put_AutoShow(OATRUE);
-    //m_pWindow->SetWindowForeground(OATRUE);
-    //m_pWindow->put_MessageDrain(reinterpret_cast<OAHWND>(m_hParent));
-    m_pWindow->SetWindowPosition(0, 0, m_dwGUIWidth, m_dwGUIHeight);
-    SetDsWndVisible(true);
+  //if (m_pWindow)
+  //{
+  //  //m_pWindow->put_Owner(m_hParent);
+  //  m_pWindow->put_Owner(reinterpret_cast<OAHWND>(m_hWndKodi));
+  //  m_pWindow->put_MessageDrain(reinterpret_cast<OAHWND>(m_hParent));
+  //  m_pWindow->SetWindowPosition(0, 0, m_dwGUIWidth, m_dwGUIHeight);
+  //  SetDsWndVisible(true);
+  //}
+
+  // MPC-HC
+  CWnd* m_pVideoWnd = CWnd::FromHandle(m_hParent);
+  m_pWindow->put_Owner(reinterpret_cast<OAHWND>(m_pVideoWnd->m_hWnd));
+  m_pWindow->put_WindowStyle(WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN);
+  m_pWindow->put_MessageDrain(reinterpret_cast<OAHWND>(m_pVideoWnd->m_hWnd));
+
+  for (CWnd* pWnd = m_pVideoWnd->GetWindow(GW_CHILD); pWnd; pWnd = pWnd->GetNextWindow()) {
+    // 1. lets WM_SETCURSOR through (not needed as of now)
+    // 2. allows CMouse::CursorOnWindow() to work with m_pVideoWnd
+    pWnd->EnableWindow(FALSE);
   }
 
   // TODO implement IMadVRSubclassReplacement
@@ -243,16 +254,16 @@ void MPMadPresenter::DeInitMadvrWindow()
 {
   // remove ourself as user data to ensure we're not called anymore
 
-  SetWindowLongPtr(m_hWnd, GWL_USERDATA, 0);
+  SetWindowLongPtr(m_hWndKodi, GWL_USERDATA, 0);
 
   // destroy the hidden window
-  DestroyWindow(m_hWnd);
+  DestroyWindow(m_hWndKodi);
 
   // unregister the window class
   //UnregisterClass(m_className.c_str(), m_hInstance);
 
   // reset the hWnd
-  m_hWnd = nullptr;
+  m_hWndKodi = nullptr;
 }
 
 
@@ -327,8 +338,8 @@ void MPMadPresenter::SetDsWndVisible(bool bVisible)
 {
   int cmd;
   bVisible ? cmd = SW_SHOW : cmd = SW_HIDE;
-  ShowWindow(m_hWnd, cmd);
-  UpdateWindow(m_hWnd);
+  ShowWindow(m_hWndKodi, cmd);
+  UpdateWindow(m_hWndKodi);
 }
 
 
@@ -373,49 +384,49 @@ HRESULT MPMadPresenter::Shutdown()
 
     DeInitMadvrWindow();
 
-    // Delay for 2 seconds on init to clear all pending garbage from C#
-    Sleep(2000);
+    //// Delay for 2 seconds on init to clear all pending garbage from C#
+    //Sleep(2000);
 
     Log("MPMadPresenter::Shutdown() done ");
   } // Scope for autolock
 
-  Log("MPMadPresenter::Shutdown() start OSD");
-  if (m_pOsdServices)
-  {
-    m_pOsdServices->OsdSetRenderCallback("MP-GUI", nullptr, nullptr);
-  }
-  Log("MPMadPresenter::Shutdown() done OSD");
-
-  //if (m_pMad)
+  //Log("MPMadPresenter::Shutdown() start OSD");
+  //if (m_pOsdServices)
   //{
-    //Log("MPMadPresenter::Shutdown() 1");
+  //  m_pOsdServices->OsdSetRenderCallback("MP-GUI", nullptr, nullptr);
+  //}
+  //Log("MPMadPresenter::Shutdown() done OSD");
 
-    //if (m_pWindow)
-    //{
-    //  Log("MPMadPresenter::Shutdown() 2");
-    //  m_pWindow->put_Owner(reinterpret_cast<OAHWND>(nullptr));
-    //  m_pWindow->put_Visible(false);
-    //  Log("MPMadPresenter::Shutdown() 3");
-    //}
+  if (m_pMad)
+  {
+    Log("MPMadPresenter::Shutdown() 1");
 
-    //if (m_pCommand)
-    //{
-    //  Log("MPMadPresenter::Shutdown() 4");
-    //  m_pCommand->SendCommandBool("disableExclusiveMode", true);
-    //  m_pCommand->SendCommand("restoreDisplayModeNow");
-    //  Log("MPMadPresenter::Shutdown() 5");
-    //}
+    if (m_pWindow)
+    {
+      Log("MPMadPresenter::Shutdown() 2");
+      m_pWindow->put_Owner(reinterpret_cast<OAHWND>(nullptr));
+      m_pWindow->put_Visible(false);
+      Log("MPMadPresenter::Shutdown() 3");
+    }
+
+    if (m_pCommand)
+    {
+      Log("MPMadPresenter::Shutdown() 4");
+      m_pCommand->SendCommandBool("disableExclusiveMode", true);
+      m_pCommand->SendCommand("restoreDisplayModeNow");
+      Log("MPMadPresenter::Shutdown() 5");
+    }
 
     //if (m_pExclusiveModeCallback)
     //  m_pExclusiveModeCallback->Unregister(m_exclusiveCallback, this);
 
-    //Log("MPMadPresenter::Shutdown() start OSD");
-    //if (m_pOsdServices)
-    //{
-    //  m_pOsdServices->OsdSetRenderCallback("MP-GUI", nullptr, nullptr);
-    //}
-    //Log("MPMadPresenter::Shutdown() done OSD");
-  //}
+    Log("MPMadPresenter::Shutdown() start OSD");
+    if (m_pOsdServices)
+    {
+      m_pOsdServices->OsdSetRenderCallback("MP-GUI", nullptr, nullptr);
+    }
+    Log("MPMadPresenter::Shutdown() done OSD");
+  }
 
   return S_OK;
 }
