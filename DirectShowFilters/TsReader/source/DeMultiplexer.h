@@ -68,7 +68,7 @@ public:
   virtual ~CDeMultiplexer(void);
 
   bool       Start(DWORD timeout);
-  void       Flush(bool clearAVready);
+  void       Flush(bool clearAVready, bool isMidStream);
   CBuffer*   GetVideo(bool earlyStall);
   CBuffer*   GetAudio(bool earlyStall, CRefTime rtStartTime);
   CBuffer*   GetSubtitle();
@@ -121,7 +121,7 @@ public:
   //  bool       HoldSubtitle();
   //  void       SetHoldSubtitle(bool onOff);
   void       ThreadProc();
-  void       FlushVideo();
+  void       FlushVideo(bool isMidStream);
   void       FlushAudio();
   void       FlushCurrentAudio();
   void       FlushSubtitle();

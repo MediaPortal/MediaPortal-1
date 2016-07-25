@@ -29,6 +29,50 @@
 #include "PmtParser.h"
 #include "HEVC\HevcNalDecode.h"
 
+//H264 NAL type numbers
+#define  H264_NAL_SLICE     1
+#define  H264_NAL_DPA       2
+#define  H264_NAL_DPB       3
+#define  H264_NAL_DPC       4
+#define  H264_NAL_IDR       5
+#define  H264_NAL_SEI       6
+#define  H264_NAL_SPS       7
+#define  H264_NAL_PPS       8
+#define  H264_NAL_AUD       9
+#define  H264_NAL_EOSEQ     10
+#define  H264_NAL_EOSTREAM  11
+#define  H264_NAL_FILL      12
+
+//HEVC NAL type numbers
+#define  HEVC_NAL_TRAIL_N       0
+#define  HEVC_NAL_TRAIL_R       1
+#define  HEVC_NAL_TSA_N         2
+#define  HEVC_NAL_TSA_R         3
+#define  HEVC_NAL_STSA_N        4
+#define  HEVC_NAL_STSA_R        5
+#define  HEVC_NAL_RADL_N        6
+#define  HEVC_NAL_RADL_R        7
+#define  HEVC_NAL_RASL_N        8
+#define  HEVC_NAL_RASL_R        9
+#define  HEVC_NAL_BLA_W_LP     16
+#define  HEVC_NAL_BLA_W_RADL   17
+#define  HEVC_NAL_BLA_N_LP     18
+#define  HEVC_NAL_IDR_W_RADL   19
+#define  HEVC_NAL_IDR_N_LP     20
+#define  HEVC_NAL_CRA_NUT      21
+#define  HEVC_NAL_IRAP_VCL23   23 
+#define  HEVC_NAL_VPS          32
+#define  HEVC_NAL_SPS          33
+#define  HEVC_NAL_PPS          34
+#define  HEVC_NAL_AUD          35
+#define  HEVC_NAL_EOS_NUT      36
+#define  HEVC_NAL_EOB_NUT      37
+#define  HEVC_NAL_FD_NUT       38
+#define  HEVC_NAL_SEI_PREFIX   39
+#define  HEVC_NAL_SEI_SUFFIX   40
+#define  HEVC_NAL_RESERVED    255
+
+
 enum mpeg_t {mpegunk, mpeg1, mpeg2};
 
 struct pshdr
@@ -353,6 +397,11 @@ struct pshdr
 			width = 0;
 			height = 0;
 		}
+	  ~avchdr()
+		{
+		  if (sps != NULL) free(sps);
+		  if (pps != NULL) free(pps);
+		}
 	};
 
 
@@ -384,6 +433,12 @@ struct BasicVideoInfo
 	int isInterlaced;
 	bool isValid;
 	int streamType;
+	BYTE * sps;
+	BYTE * pps;
+	BYTE * vps;
+	__int64 spslen;
+	__int64 ppslen;
+	__int64 vpslen;
 
 	BasicVideoInfo()
 	{
@@ -395,6 +450,19 @@ struct BasicVideoInfo
 		isInterlaced=0;
 		streamType=0;
 		isValid=false;
+		spslen=0;
+    ppslen=0;
+    vpslen=0;
+	  sps = NULL;
+	  pps = NULL;
+	  vps = NULL;
+	}
+	
+	~BasicVideoInfo()
+	{
+		if (sps != NULL) free(sps);
+		if (pps != NULL) free(pps);
+		if (vps != NULL) free(vps);
 	}
 };
 

@@ -30,7 +30,6 @@
 #include <stdexcept>
 #include <cassert>
 
-//#include "HevcUtils.h"
 
 BitstreamReader::BitstreamReader(const uint8_t *ptr, std::size_t size):
   m_ptr(ptr)
@@ -74,7 +73,7 @@ std::size_t BitstreamReader::availableInNalU()
 bool BitstreamReader::getBit()
 {
   if(m_posBase >= m_size)
-    throw std::runtime_error("BitstreamReader: not enought data");
+    throw std::runtime_error("BitstreamReader: not enough data");
 
   bool res = m_ptr[m_posBase] & 1 << m_posInBase;
 

@@ -375,6 +375,23 @@ void CPmtParser::OnNewSection(CSection& section)
             m_pidInfo.audioPids.push_back(pid);
             lpcm_audio_found=true;
           }
+          else if ( section.Data[pointer+2]=='H' && 
+                    section.Data[pointer+3]=='E' && 
+                    section.Data[pointer+4]=='V' && 
+                    section.Data[pointer+5]=='C' && 
+                    stream_type==SERVICE_TYPE_PRIVATE_DATA)
+          {
+            //HEVC video (backward compatibility with old streams)
+            VideoPid pid;
+            pid.Pid=elementary_PID;
+            pid.VideoServiceType = SERVICE_TYPE_VIDEO_HEVC;
+            if (!dvb_video_found) //Workaround for mis-detection of DC II streams...
+            {
+              m_pidInfo.videoPids.clear();
+            }
+            m_pidInfo.videoPids.push_back(pid);
+            dvb_video_found = true;
+          }
         }
         len2 -= x;
         len1 -= x;
