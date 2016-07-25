@@ -205,10 +205,10 @@ IBaseFilter* MPMadPresenter::Initialize()
   {
     //m_pWindow->put_Owner(m_hParent);
     m_pWindow->put_Owner(reinterpret_cast<OAHWND>(m_hWnd));
-    m_pWindow->put_WindowStyle(WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN);
-    m_pWindow->put_AutoShow(OATRUE);
-    m_pWindow->SetWindowForeground(OATRUE);
-    m_pWindow->put_MessageDrain(reinterpret_cast<OAHWND>(m_hParent));
+    //m_pWindow->put_WindowStyle(WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN);
+    //m_pWindow->put_AutoShow(OATRUE);
+    //m_pWindow->SetWindowForeground(OATRUE);
+    //m_pWindow->put_MessageDrain(reinterpret_cast<OAHWND>(m_hParent));
     m_pWindow->SetWindowPosition(0, 0, m_dwGUIWidth, m_dwGUIHeight);
     SetDsWndVisible(true);
   }

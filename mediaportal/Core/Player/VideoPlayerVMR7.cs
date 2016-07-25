@@ -373,7 +373,7 @@ namespace MediaPortal.Player
         // DsUtils.DumpFilters(graphBuilder);
         try
         {
-          if (videoWin != null && GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR)
+          if (videoWin != null)
           {
             videoWin.put_WindowStyle((WindowStyle)((int)WindowStyle.Child + (int)WindowStyle.ClipChildren + (int)WindowStyle.ClipSiblings));
             videoWin.put_MessageDrain(GUIGraphicsContext.form.Handle);
