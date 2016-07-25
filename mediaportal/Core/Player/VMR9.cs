@@ -554,9 +554,9 @@ namespace MediaPortal.Player
           //videoWin.put_Owner(GUIGraphicsContext.ActiveForm);
           //hr = new HResult(0);
 
-          //IVideoWindow videoWin = (IVideoWindow)graphBuilder;
-          ////videoWin.put_Owner(m_hWnd);
-          //videoWin.SetWindowPosition(0, 0, client.Width, client.Height);
+          IVideoWindow videoWin = (IVideoWindow)graphBuilder;
+          videoWin.put_Owner(m_hWnd);
+          videoWin.SetWindowPosition(0, 0, client.Width, client.Height);
 
           //WindowsMessage();
           Log.Info("VMR9: added madVR Renderer to graph");
