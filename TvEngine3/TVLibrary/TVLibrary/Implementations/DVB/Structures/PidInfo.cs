@@ -269,14 +269,6 @@ namespace TvLibrary.Implementations.DVB.Structures
     }
 
     /// <summary>
-    /// Determins if the pid is HEVC video
-    /// </summary>
-    public bool IsHEVCVideo
-    {
-      get { return (isVideo && stream_type == 0x24); }
-    }
-
-    /// <summary>
     /// Determins if the pid is AAC audio
     /// </summary>
     public bool IsAACAudio
