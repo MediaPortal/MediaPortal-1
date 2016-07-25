@@ -42,8 +42,8 @@ namespace MediaPortal.MusicPlayer.BASS
     private int _syncProc = 0;
 
     private Dictionary<int, GCHandle> _pinnedObjects = new Dictionary<int, GCHandle>();
-    
-    #endregion
+
+#endregion
 
     #region Properties
 
