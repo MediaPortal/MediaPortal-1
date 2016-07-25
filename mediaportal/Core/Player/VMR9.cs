@@ -548,11 +548,16 @@ namespace MediaPortal.Player
           MadInit(_scene, client.Width, client.Height, (uint)upDevice.ToInt32(),
             GUIGraphicsContext.form.Handle, ref _vmr9Filter, mPMediaControl, graphBuilder, ref m_hWnd);
 
-          hr = new HResult(0);//(graphBuilder.AddFilter(_vmr9Filter, "madVR"));
-          ////IVideoWindow videoWin = (IVideoWindow)graphBuilder;
+          // Adding madVR to the graph (from C#) or comment out and adding it from C++.
+          hr = new HResult(graphBuilder.AddFilter(_vmr9Filter, "madVR"));
+
           //videoWin.put_Owner(GUIGraphicsContext.ActiveForm);
-          ////videoWin.put_Owner(m_hWnd);
-          ////videoWin.SetWindowPosition(0, 0, client.Width, client.Height);
+          //hr = new HResult(0);
+
+          IVideoWindow videoWin = (IVideoWindow)graphBuilder;
+          videoWin.put_Owner(m_hWnd);
+          videoWin.SetWindowPosition(0, 0, client.Width, client.Height);
+
           //WindowsMessage();
           Log.Info("VMR9: added madVR Renderer to graph");
         }

@@ -187,8 +187,10 @@ IBaseFilter* MPMadPresenter::Initialize()
     return nullptr;
   //Log("MPMadPresenter::Init 4()");
 
-  hr = m_pGraphBuilder->AddFilter(m_pBaseFilter, L"madVR");
+  // Adding madVR to the graph (from C++) or comment out and adding it from C#.
+  //hr = m_pGraphBuilder->AddFilter(m_pBaseFilter, L"madVR");
 
+  // Create a madVR Window
   if (InitMadvrWindow(m_hWnd))
     Log("%s : Create DSPlayer window - hWnd: %i", __FUNCTION__, m_hWnd);
 
