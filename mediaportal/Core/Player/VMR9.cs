@@ -134,13 +134,13 @@ namespace MediaPortal.Player
     [DllImport("dshowhelper.dll", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
     private static extern unsafe void EVRUpdateDisplayFPS();
 
-    [DllImport("dshowhelper.dll", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
-    private static extern unsafe bool MadInit(IVMR9PresentCallback callback, int width, int height, uint dwD3DDevice, IntPtr parent, ref IBaseFilter madFilter, IMediaControl mPMediaControl, IGraphBuilder mGraphbuilder, ref IntPtr m_hWnd);
+    [DllImport("dshowhelper.dll", CallingConvention = CallingConvention.Cdecl)]
+    private static extern unsafe bool MadInit(IVMR9PresentCallback callback, int width, int height, uint dwD3DDevice, uint parent, ref IBaseFilter madFilter, IMediaControl mPMediaControl);
 
-    [DllImport("dshowhelper.dll", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
+    [DllImport("dshowhelper.dll", CallingConvention = CallingConvention.Cdecl)]
     private static extern unsafe void MadDeinit();
 
-    [DllImport("dshowhelper.dll", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
+    [DllImport("dshowhelper.dll", CallingConvention = CallingConvention.Cdecl)]
     private static extern unsafe void WindowsMessage();
 
     #endregion
@@ -543,22 +543,13 @@ namespace MediaPortal.Player
         }
         else if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
         {
-          Size client = GUIGraphicsContext.form.ClientSize;
-          IMediaControl mPMediaControl = (IMediaControl)graphBuilder;
-          MadInit(_scene, client.Width, client.Height, (uint)upDevice.ToInt32(),
-            GUIGraphicsContext.form.Handle, ref _vmr9Filter, mPMediaControl, graphBuilder, ref m_hWnd);
-
-          // Adding madVR to the graph (from C#) or comment out and adding it from C++.
+          IVideoWindow videoWin = (IVideoWindow) graphBuilder;
+          videoWin.put_Owner(GUIGraphicsContext.ActiveForm);
+          IMediaControl mPMediaControl = (IMediaControl) graphBuilder;
+          var backbuffer = GUIGraphicsContext.DX9Device.PresentationParameters;
+          MadInit(_scene, backbuffer.BackBufferWidth, backbuffer.BackBufferHeight, (uint) upDevice.ToInt32(),
+            (uint) GUIGraphicsContext.ActiveForm.ToInt32(), ref _vmr9Filter, mPMediaControl);
           hr = new HResult(graphBuilder.AddFilter(_vmr9Filter, "madVR"));
-
-          //videoWin.put_Owner(GUIGraphicsContext.ActiveForm);
-          //hr = new HResult(0);
-
-          IVideoWindow videoWin = (IVideoWindow)graphBuilder;
-          videoWin.put_Owner(m_hWnd);
-          videoWin.SetWindowPosition(0, 0, client.Width, client.Height);
-
-          //WindowsMessage();
           Log.Info("VMR9: added madVR Renderer to graph");
         }
         else

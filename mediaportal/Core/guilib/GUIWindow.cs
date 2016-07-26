@@ -488,8 +488,12 @@ namespace MediaPortal.GUI.Library
 
     public bool LoadSkin()
     {
-      GUIWindowManager.SendThreadCallback(LoadSkinThreaded, 0, 0, null);
-      return true;
+      if (Thread.CurrentThread.Name != "MPMain" && Thread.CurrentThread.Name != "Config Main")
+      {
+        GUIWindowManager.SendThreadCallback(LoadSkinThreaded, 0, 0, null);
+        return true;
+      }
+      return LoadSkinBool();
     }
 
     public int LoadSkinThreaded(int p1, int p2, object s)

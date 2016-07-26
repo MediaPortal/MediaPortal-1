@@ -26,16 +26,14 @@ class MPMadPresenter;
 class MadSubtitleProxy : public CUnknown, public ISubRenderCallback, public CCritSec
 {
   public:
-    MadSubtitleProxy(IVMR9Callback* pCallback, IMediaControl* pMediaControl, MPMadPresenter* pPresenter);
+    MadSubtitleProxy(IVMR9Callback* pCallback, MPMadPresenter* pPresenter);
     ~MadSubtitleProxy();
+    void Shutdown();
 
     DECLARE_IUNKNOWN;
 
     STDMETHOD(SetDevice)(IDirect3DDevice9* device);
     STDMETHOD(Render)(REFERENCE_TIME frameStart, int left, int top, int right, int bottom, int width, int height);
-
-    void SetNewDevice(bool pNewDevice);
-    bool GetNewDevice();
 
   private:
 
@@ -45,12 +43,8 @@ class MadSubtitleProxy : public CUnknown, public ISubRenderCallback, public CCri
 
     IVMR9Callback* m_pCallback;
 
-    IMediaControl* m_pMediaControl;
-
-    MPMadPresenter* m_pPresenter;
-
     DeviceState m_deviceState;
 
-    bool m_pNewDevice = false;
+    MPMadPresenter* m_pPresenter;
 };
 
