@@ -1086,7 +1086,7 @@ bool CDeMultiplexer::Start(DWORD timeout)
   DWORD m_Time = GET_TIME_NOW();
   m_hadPESfail = 0;
   
-  while((GET_TIME_NOW() - m_Time) < timeout)
+  while (dwBytesProcessed < INITIAL_READ_SIZE && (GET_TIME_NOW() - m_Time) < timeout)
   {
     m_bEndOfFile = false;  //reset eof every time through to ignore a false eof due to slow rtsp startup
     int BytesRead = ReadFromFile(READ_SIZE);    
@@ -1095,38 +1095,41 @@ bool CDeMultiplexer::Start(DWORD timeout)
       BytesRead = 0;
       Sleep(10);
     }      
-	  // LogDebug("demux:Start() BytesRead:%d, BytesProcessed:%d", BytesRead, dwBytesProcessed);
-    if (dwBytesProcessed>INITIAL_READ_SIZE || GetAudioStreamCount()>0) //Wait for first PAT to be found
-    {
-      if (  (!m_mpegPesParser->basicAudioInfo.isValid ||
-            ((m_pids.videoPids.size() > 0 && m_pids.videoPids[0].Pid > 1) &&                   //There is a video stream.....
-              (!m_mpegPesParser->basicVideoInfo.isValid ||               //and the first GOP header is not parsed....
-              !(m_vidPTScount > 5 || m_vidDTScount > 5 || !m_filter.m_bUseFPSfromDTSPTS || m_bUsingGOPtimestamp)))) &&  //or we havent seen enough PTS/DTS timestamps....
-           dwBytesProcessed<INITIAL_READ_SIZE)                                       //and we have not reached the data limit or the audio hasn't been parsed
-      {
-        //We are waiting for the first video GOP header to be parsed
-        //so that OnVideoFormatChanged() can be triggered if necessary
-        dwBytesProcessed+=BytesRead;
-        if (m_hadPESfail > 64)
-        {
-          //Probably initial decryption problems so allow more time....
-          timeout = 60000;
-        }
-        continue;
-      }
+    dwBytesProcessed+=BytesRead;
 
+    if (m_hadPESfail > 64)
+    {
+      //Probably initial decryption problems so allow more time....
+      timeout = 60000;
+    }
+	  
+    if (GetAudioStreamCount()>0) //Wait for first PAT to be found
+    {
+      if (!m_mpegPesParser->basicAudioInfo.isValid) continue; //The audio hasn't been parsed...
+
+      //Wait for the first video GOP header to be parsed (if there is a video stream)
+      //so that OnVideoFormatChanged() can be triggered if necessary. 
+      if (m_pids.videoPids.size() > 0 && m_pids.videoPids[0].Pid > 1) //There is a video stream
+      {
+        if (!m_mpegPesParser->basicVideoInfo.isValid) continue;  //The first GOP header is not parsed...
+        if (m_filter.m_bUseFPSfromDTSPTS && !m_bUsingGOPtimestamp && m_vidPTScount < 6 && m_vidDTScount < 6) continue;  //We havent seen enough PTS/DTS timestamps....
+      }
+            
+      //Success !!
+      //Move back to beginning of file (or RTSP memory buffer)
+      m_filter.SetSeeking(true); //Treat this as a 'seek' operation.
       m_reader->SetFilePointer(0,FILE_BEGIN);
-      //Flush(true);
       //Flushing is delegated to CDeMultiplexer::ThreadProc()
-      //DelegatedFlush(true, false);
+      DelegatedFlush(true, true);
+      m_filter.SetSeeking(false);
       m_streamPcr.Reset();
       m_bStarting=false;
 	    LogDebug("demux:Start() Succeeded : BytesProcessed:%d, DTS/PTS count = %d/%d, GOPts = %d", dwBytesProcessed+BytesRead, m_vidDTScount, m_vidPTScount, m_bUsingGOPtimestamp);
       return true;
     }
-    dwBytesProcessed+=BytesRead;
     Sleep(1);
   }
+  
   m_streamPcr.Reset();
   m_iAudioReadCount=0;
   m_bStarting=false;

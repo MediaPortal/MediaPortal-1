@@ -1375,7 +1375,7 @@ STDMETHODIMP CTsReaderFilter::Load(LPCOLESTR pszFileName,const AM_MEDIA_TYPE *pm
     milli /= 1000.0;
     LogDebug("CTsReaderFilter::Load(), duration - start:%x end:%x %f",
       (DWORD)m_duration.StartPcr().PcrReferenceBase, (DWORD) m_duration.EndPcr().PcrReferenceBase, milli);
-    m_fileReader->SetFilePointer(0LL, FILE_BEGIN);
+    //m_fileReader->SetFilePointer(0LL, FILE_BEGIN);
   }
 
   if (length > 0)
