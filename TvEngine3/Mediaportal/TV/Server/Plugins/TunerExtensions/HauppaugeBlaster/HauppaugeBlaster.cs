@@ -194,9 +194,17 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeBlaster
       {
         return;
       }
-      if (!(channel is ChannelAnalogTv) && !(channel is ChannelCapture))
+
+      ChannelCapture captureChannel = channel as ChannelCapture;
+      if (
+        captureChannel == null ||
+        (
+          captureChannel.VideoSource != CaptureSourceVideo.TunerDefault &&
+          captureChannel.AudioSource != CaptureSourceAudio.TunerDefault
+        )
+      )
       {
-        this.LogDebug("Hauppauge blaster: not tuning a capture channel");
+        this.LogDebug("Hauppauge blaster: not using the external tuner");
         return;
       }
 

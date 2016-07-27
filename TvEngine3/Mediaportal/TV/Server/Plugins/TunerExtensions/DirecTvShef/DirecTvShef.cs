@@ -174,9 +174,17 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DirecTvShef
       {
         return;
       }
-      if (!(channel is ChannelAnalogTv) && !(channel is ChannelCapture))
+
+      ChannelCapture captureChannel = channel as ChannelCapture;
+      if (
+        captureChannel == null ||
+        (
+          captureChannel.VideoSource != CaptureSourceVideo.TunerDefault &&
+          captureChannel.AudioSource != CaptureSourceAudio.TunerDefault
+        )
+      )
       {
-        this.LogDebug("DirecTV SHEF: not tuning a capture channel");
+        this.LogDebug("DirecTV SHEF: not using the external tuner");
         return;
       }
 

@@ -158,9 +158,17 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBlaster
       {
         return;
       }
-      if (!(channel is ChannelAnalogTv) && !(channel is ChannelCapture))
+
+      ChannelCapture captureChannel = channel as ChannelCapture;
+      if (
+        captureChannel == null ||
+        (
+          captureChannel.VideoSource != CaptureSourceVideo.TunerDefault &&
+          captureChannel.AudioSource != CaptureSourceAudio.TunerDefault
+        )
+      )
       {
-        this.LogDebug("Microsoft blaster: not tuning a capture channel");
+        this.LogDebug("Microsoft blaster: not using the external tuner");
         return;
       }
 
