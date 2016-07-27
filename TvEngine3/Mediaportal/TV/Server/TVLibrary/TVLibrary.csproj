@@ -99,6 +99,7 @@
       <Link>SolutionInfo.cs</Link>
     </Compile>
     <Compile Include="Implementations\Analog\ChannelScannerAnalog.cs" />
+    <Compile Include="Implementations\Analog\ExternalTuner.cs" />
     <Compile Include="Implementations\Analog\SubChannelManagerAnalog.cs" />
     <Compile Include="Implementations\Atsc\ChannelScannerAtsc.cs" />
     <Compile Include="Implementations\Atsc\Enum\ChannelType.cs" />
@@ -122,10 +123,15 @@
     <Compile Include="Implementations\Atsc\Enum\TransmissionSystem.cs" />
     <Compile Include="Implementations\Atsc\Enum\WaveformStandard.cs" />
     <Compile Include="Implementations\Atsc\EpgGrabberAtsc.cs" />
+    <Compile Include="Implementations\DirectShow\Bda\TunerBdaAnalogTv.cs" />
+    <Compile Include="Implementations\DirectShow\Bda\TunerBdaAuxiliaryInput.cs" />
     <Compile Include="Implementations\DirectShow\Bda\TunerDetectorBda.cs" />
     <Compile Include="Implementations\DirectShow\TunerDirectShowMpeg2TsBase.cs" />
     <Compile Include="Implementations\Dri\ChannelScannerDriCeton.cs" />
     <Compile Include="Implementations\Dri\ChannelScannerDriSiliconDust.cs" />
+    <Compile Include="Implementations\Dri\SubChannelDriOutOfBandScan.cs" />
+    <Compile Include="Implementations\Dri\TunerDriBase.cs" />
+    <Compile Include="Implementations\Dri\TunerDriAnalog.cs" />
     <Compile Include="Implementations\Dri\Enum\TunerVendor.cs" />
     <Compile Include="Implementations\Dri\SubChannelManagerDri.cs" />
     <Compile Include="Implementations\Dvb\ChannelScannerDvb.cs" />
@@ -171,7 +177,7 @@
     <Compile Include="Implementations\Dri\Enum\UserActivityUseReason.cs" />
     <Compile Include="Implementations\Dri\Service\ServiceUserActivity.cs" />
     <Compile Include="Implementations\Dri\TunerDetectorDri.cs" />
-    <Compile Include="Implementations\Dri\TunerDri.cs" />
+    <Compile Include="Implementations\Dri\TunerDriAtsc.cs" />
     <Compile Include="Implementations\DirectShow\Pbda\TunerPbdaCableCard.cs" />
     <Compile Include="Implementations\Dvb\SubChannelManagerDvb.cs" />
     <Compile Include="Implementations\Enum\StreamFormat.cs" />

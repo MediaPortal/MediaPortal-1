@@ -41,6 +41,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
   /// </summary>
   internal class TunerDetectorDri : ITunerDetectorUpnp
   {
+    private static readonly BroadcastStandard MANDATORY_BROADCAST_STANDARDS = BroadcastStandard.Scte;
     private static readonly HashSet<TunerModulation> MANDATORY_MODULATION_SCHEMES = new HashSet<TunerModulation> { TunerModulation.Qam64, TunerModulation.Qam256 };
 
     #region ITunerDetectorUpnp members
@@ -77,25 +78,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
             string uuid = childDeviceEn.Current.UUID;
             DeviceDescriptor deviceDescriptor = descriptor.FindDevice(uuid);
 
-            ICollection<TunerModulation> supportedModulationSchemes;
-            GetDriDeviceSupportedModulationSchemes(deviceDescriptor, controlPoint, out supportedModulationSchemes);
-
-            BroadcastStandard supportedBroadcastStandards = BroadcastStandard.Unknown;
-            if (supportedModulationSchemes.Contains(TunerModulation.Vsb8))
-            {
-              supportedBroadcastStandards |= BroadcastStandard.Atsc;
-            }
-            if (supportedModulationSchemes.Contains(TunerModulation.Qam64) || supportedModulationSchemes.Contains(TunerModulation.Qam256))
-            {
-              supportedBroadcastStandards |= BroadcastStandard.Scte;
-            }
-
-            if (supportedBroadcastStandards == BroadcastStandard.Unknown)
-            {
-              this.LogWarn("DRI detector: tuner {0} does not support any supported modulation schemes", uuid);
-              break;
-            }
-
             string tunerInstanceId = null;
             string productInstanceId = null;
             Match m = null;
@@ -123,7 +105,21 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
               tunerInstanceId = m.Groups[2].Captures[0].Value;
             }
 
-            tuners.Add(new TunerDri(deviceDescriptor, tunerInstanceId, productInstanceId, supportedBroadcastStandards, supportedModulationSchemes, controlPoint, new TunerStream(string.Format("MediaPortal DRI {0} Stream Source", uuid), 1)));
+            BroadcastStandard supportedBroadcastStandards;
+            ICollection<TunerModulation> supportedModulationSchemes;
+            GetDriDeviceCapabilities(deviceDescriptor, controlPoint, out supportedBroadcastStandards, out supportedModulationSchemes);
+
+            BroadcastStandard supportedBroadcastStandardsAnalog = supportedBroadcastStandards & (BroadcastStandard.AnalogTelevision | BroadcastStandard.ExternalInput);
+            if (supportedBroadcastStandardsAnalog != BroadcastStandard.Unknown)
+            {
+              tuners.Add(new TunerDriAnalog(deviceDescriptor, tunerInstanceId, productInstanceId, supportedBroadcastStandards, controlPoint, new TunerStream(string.Format("MediaPortal DRI Analog {0} Stream Source", uuid), 1)));
+            }
+
+            BroadcastStandard supportedBroadcastStandardsDigital = supportedBroadcastStandards & (BroadcastStandard.Atsc | BroadcastStandard.Scte);
+            if (supportedBroadcastStandardsDigital != BroadcastStandard.Unknown)
+            {
+              tuners.Add(new TunerDriAtsc(deviceDescriptor, tunerInstanceId, productInstanceId, supportedBroadcastStandards, supportedModulationSchemes, controlPoint, new TunerStream(string.Format("MediaPortal DRI ATSC {0} Stream Source", uuid), 1)));
+            }
             break;
           }
         }
@@ -137,83 +133,124 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
 
     #endregion
 
-    private static void GetDriDeviceSupportedModulationSchemes(DeviceDescriptor deviceDescriptor, UPnPControlPoint controlPoint, out ICollection<TunerModulation> supportedModulationSchemes)
+    private static void GetDriDeviceCapabilities(DeviceDescriptor deviceDescriptor, UPnPControlPoint controlPoint, out BroadcastStandard supportedBroadcastStandards, out ICollection<TunerModulation> supportedModulationSchemes)
     {
+      supportedBroadcastStandards = BroadcastStandard.Unknown;
       supportedModulationSchemes = new HashSet<TunerModulation>();
 
+      DeviceConnection connection = null;
+      ServiceAux serviceAux = null;
+      ServiceConnectionManager serviceConnectionManager = null;
+      ServiceTuner serviceTuner = null;
+      int connectionId = -1;
       try
       {
-        DeviceConnection connection = controlPoint.Connect(deviceDescriptor.RootDescriptor, deviceDescriptor.DeviceUUID, null, true);
-        try
-        {
-          int connectionId = 0;
-          ServiceTuner serviceTuner = new ServiceTuner(connection.Device);
-          ServiceConnectionManager serviceConnectionManager = new ServiceConnectionManager(connection.Device);
-          try
-          {
-            int avTransportId;
-            int rcsId;
-            serviceConnectionManager.PrepareForConnection(string.Empty, string.Empty, -1, ConnectionDirection.Output, out connectionId, out avTransportId, out rcsId);
+        connection = controlPoint.Connect(deviceDescriptor.RootDescriptor, deviceDescriptor.DeviceUUID, null, true);
+        serviceAux = new ServiceAux(connection.Device);
+        serviceConnectionManager = new ServiceConnectionManager(connection.Device);
+        serviceTuner = new ServiceTuner(connection.Device);
 
-            string csvTunerModulations = (string)serviceTuner.QueryStateVariable("ModulationList");
-            if (string.IsNullOrEmpty(csvTunerModulations))
-            {
-              supportedModulationSchemes = new HashSet<TunerModulation>(MANDATORY_MODULATION_SCHEMES);
-            }
-            else
-            {
-              foreach (string modulation in csvTunerModulations.Split(','))
-              {
-                TunerModulation tm = (TunerModulation)modulation.Trim();
-                if (tm == null)
-                {
-                  Log.Warn("DRI detector: tuner supports unrecognised modulation scheme {0}", modulation);
-                }
-                else if (tm == TunerModulation.Qam64 || tm == TunerModulation.Qam64_2)
-                {
-                  supportedModulationSchemes.Add(TunerModulation.Qam64);
-                }
-                else if (tm == TunerModulation.Qam256 || tm == TunerModulation.Qam256_2)
-                {
-                  supportedModulationSchemes.Add(TunerModulation.Qam256);
-                }
-                else if (tm == TunerModulation.Vsb8 || tm == TunerModulation.Vsb8_2)
-                {
-                  supportedModulationSchemes.Add(TunerModulation.Vsb8);
-                }
-                else if (tm == TunerModulation.All)
-                {
-                  supportedModulationSchemes.Add(TunerModulation.Qam64);
-                  supportedModulationSchemes.Add(TunerModulation.Qam256);
-                  supportedModulationSchemes.Add(TunerModulation.Vsb8);
-                }
-                else
-                {
-                  Log.Warn("DRI detector: tuner supports unsupported modulation scheme {0}", tm);
-                }
-              }
-            }
-          }
-          finally
-          {
-            serviceTuner.Dispose();
-            if (connectionId > 0)
-            {
-              serviceConnectionManager.ConnectionComplete(connectionId);
-            }
-            serviceConnectionManager.Dispose();
-          }
-        }
-        finally
+        int avTransportId;
+        int rcsId;
+        serviceConnectionManager.PrepareForConnection(string.Empty, string.Empty, -1, ConnectionDirection.Output, out connectionId, out avTransportId, out rcsId);
+
+        IList<AuxFormat> auxiliaryFormats;
+        byte inputCountSvideo = 0;
+        byte inputCountComposite = 0;
+        if (
+          serviceAux.GetAuxCapabilities(out auxiliaryFormats, out inputCountSvideo, out inputCountComposite) &&
+          (inputCountSvideo > 0 || inputCountComposite > 0)
+        )
         {
-          connection.Disconnect();
-          connection.Dispose();
+          supportedBroadcastStandards |= BroadcastStandard.ExternalInput;
+        }
+
+        string csvTunerModulations = (string)serviceTuner.QueryStateVariable("ModulationList");
+        if (string.IsNullOrEmpty(csvTunerModulations))
+        {
+          supportedBroadcastStandards |= MANDATORY_BROADCAST_STANDARDS;
+          supportedModulationSchemes = new HashSet<TunerModulation>(MANDATORY_MODULATION_SCHEMES);
+          return;
+        }
+
+        foreach (string modulation in csvTunerModulations.Split(','))
+        {
+          TunerModulation tm = (TunerModulation)modulation.Trim();
+          if (tm == null)
+          {
+            Log.Warn("DRI detector: tuner supports unrecognised modulation scheme {0}", modulation);
+          }
+          else if (tm == TunerModulation.Ntsc || tm == TunerModulation.NtscM)
+          {
+            // All vendors advertise these modulation schemes. However only the
+            // ATI tuner is actually capable of receiving analog channels.
+            if (deviceDescriptor.FriendlyName.StartsWith("ATI"))
+            {
+              // The external input broadcast standard is included because an
+              // STB can be connected via RF/coax.
+              supportedBroadcastStandards |= BroadcastStandard.AnalogTelevision | BroadcastStandard.ExternalInput;
+              supportedModulationSchemes.Add(tm);
+            }
+          }
+          else if (tm == TunerModulation.Qam64 || tm == TunerModulation.Qam64_2)
+          {
+            supportedBroadcastStandards |= BroadcastStandard.Scte;
+            supportedModulationSchemes.Add(TunerModulation.Qam64);
+          }
+          else if (tm == TunerModulation.Qam256 || tm == TunerModulation.Qam256_2)
+          {
+            supportedBroadcastStandards |= BroadcastStandard.Scte;
+            supportedModulationSchemes.Add(TunerModulation.Qam256);
+          }
+          else if (tm == TunerModulation.Vsb8 || tm == TunerModulation.Vsb8_2)
+          {
+            supportedBroadcastStandards |= BroadcastStandard.Atsc;
+            supportedModulationSchemes.Add(TunerModulation.Vsb8);
+          }
+          else if (tm == TunerModulation.All)   // In theory the ALL value should never be encountered here.
+          {
+            supportedBroadcastStandards |= BroadcastStandard.AnalogTelevision | BroadcastStandard.Atsc | BroadcastStandard.Scte;
+            supportedModulationSchemes.Add(TunerModulation.Ntsc);
+            supportedModulationSchemes.Add(TunerModulation.NtscM);
+            supportedModulationSchemes.Add(TunerModulation.Qam64);
+            supportedModulationSchemes.Add(TunerModulation.Qam256);
+            supportedModulationSchemes.Add(TunerModulation.Vsb8);
+          }
+          else
+          {
+            Log.Warn("DRI detector: tuner supports unsupported modulation scheme {0}", tm);
+          }
         }
       }
       catch (Exception ex)
       {
-        Log.Warn(ex, "DRI detector: failed to determine supported modulation schemes for tuner {0}, assuming only mandatory schemes supported", deviceDescriptor.DeviceUUID);
+        Log.Warn(ex, "DRI detector: failed to determine capabilities for tuner {0}, assuming only mandatory modulation schemes", deviceDescriptor.DeviceUUID);
+        supportedBroadcastStandards = MANDATORY_BROADCAST_STANDARDS;
         supportedModulationSchemes = new HashSet<TunerModulation>(MANDATORY_MODULATION_SCHEMES);
+      }
+      finally
+      {
+        if (serviceAux != null)
+        {
+          serviceAux.Dispose();
+        }
+        if (serviceTuner != null)
+        {
+          serviceTuner.Dispose();
+        }
+        if (serviceConnectionManager != null)
+        {
+          if (connectionId > 0)
+          {
+            serviceConnectionManager.ConnectionComplete(connectionId);
+          }
+          serviceConnectionManager.Dispose();
+        }
+        if (connection != null)
+        {
+          connection.Disconnect();
+          connection.Dispose();
+        }
       }
     }
   }

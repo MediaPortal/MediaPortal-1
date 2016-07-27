@@ -182,5 +182,38 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri.Service
       currentVideoStepping = (uint)outParams[18];
       currentVideoMethod = (byte)outParams[19];
     }
+
+    /// <remarks>
+    /// NOT A DRI ACTION.
+    /// </remarks>
+    public void GetEncoderModeDetails(out IList<EncoderMode> supportedModesVideo, out EncoderMode defaultModeVideo, out IList<EncoderMode> supportedModesAudio, out EncoderMode defaultModeAudio)
+    {
+      GetEncoderModeDetails("VideoBitrateMode", out supportedModesVideo, out defaultModeVideo);
+      GetEncoderModeDetails("AudioBitrateMode", out supportedModesAudio, out defaultModeAudio);
+    }
+
+    private void GetEncoderModeDetails(string variableName, out IList<EncoderMode> supportedModes, out EncoderMode defaultMode)
+    {
+      supportedModes = new List<EncoderMode>(EncoderMode.Values.Count);
+      defaultMode = null;
+      CpStateVariable variable;
+      if (_service.StateVariables.TryGetValue(variableName, out variable) && variable != null)
+      {
+        foreach (string value in variable.AllowedValueList)
+        {
+          EncoderMode mode = (EncoderMode)value;
+          if (mode != null)
+          {
+            supportedModes.Add(mode);
+          }
+        }
+
+        defaultMode = (EncoderMode)((string)variable.DefaultValue);
+        if (defaultMode == null)
+        {
+          defaultMode = variableName.ToLowerInvariant().Contains("audio") ? EncoderMode.ConstantBitRate : EncoderMode.AverageBitRate;
+        }
+      }
+    }
   }
 }

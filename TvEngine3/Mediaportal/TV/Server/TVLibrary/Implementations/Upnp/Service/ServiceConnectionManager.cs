@@ -59,9 +59,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Upnp.Service
                                       ConnectionDirection direction, out int connectionId, out int avTransportId,
                                       out int rcsId)
     {
-      connectionId = 0;
-      avTransportId = 0;
-      rcsId = 0;
+      connectionId = -1;
+      avTransportId = -1;
+      rcsId = -1;
       if (_prepareForConnectionAction == null)
       {
         this.LogWarn("UPnP: device {0} does not implement a ConnectionManager PrepareForConnection action", _device.UDN);
