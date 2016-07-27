@@ -227,9 +227,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
     /// <param name="configuration">The tuner's configuration.</param>
     public override void ReloadConfiguration(TVDatabase.Entities.Tuner configuration)
     {
-      base.ReloadConfiguration(configuration);
-
       this.LogDebug("BDA auxiliary input: reload configuration");
+      base.ReloadConfiguration(configuration);
 
       if (configuration.AnalogTunerSettings == null)
       {
@@ -345,15 +344,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
     public override void PerformTuning(IChannel channel)
     {
       this.LogDebug("BDA auxiliary input: perform tuning");
-      ChannelCapture captureChannel = channel as ChannelCapture;
-      if (captureChannel == null)
-      {
-        throw new TvException("Received request to tune incompatible channel.");
-      }
-
-      IChannel tuneChannel;
-      _externalTuner.Tune(channel, out tuneChannel);
-      base.PerformTuning(tuneChannel);
+      base.PerformTuning(_externalTuner.Tune(channel));
     }
 
     #endregion

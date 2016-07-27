@@ -37,8 +37,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channel
     public const int FREQUENCY_OUT_OF_BAND_CHANNEL_SCAN = -1;
     public const int FREQUENCY_SWITCHED_DIGITAL_VIDEO = 0;
 
-    private static readonly Regex LOGICAL_CHANNEL_NUMBER_FORMAT = new Regex(@"^(\d+)([^\d](\d+))?$");
-
     #endregion
 
     #region variables
@@ -197,9 +195,37 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channel
       ChannelScte scteChannel = channel as ChannelScte;
       if (
         scteChannel == null ||
-        Frequency <= 0 ||       // switched digital video - frequency not known until tune time
         Frequency != scteChannel.Frequency ||
+        Frequency == FREQUENCY_OUT_OF_BAND_CHANNEL_SCAN ||
+        Frequency == FREQUENCY_SWITCHED_DIGITAL_VIDEO ||
         ModulationScheme != scteChannel.ModulationScheme
+      )
+      {
+        return true;
+      }
+
+      // CableCARD tuners do not provide an independent decrypt mechanism.
+      // Applying a decrypt request also implies tuning and PID filtering. In
+      // particular, it is possible to tune and decrypt an encrypted program,
+      // and then also receive an additional non-encrypted program from the
+      // same transmitter and transport stream by manipulation of the PID
+      // filter. However it is not possible to reverse the order of operations
+      // (tune non-encrypted program followed by encrypted program) because the
+      // decrypt request would cause the PID filter to block the PIDs
+      // associated with the non-encrypted program.
+      // The condition below exists to force TVE to respect the CableCARD tuner
+      // limitation described above. In reality encryption, channel numbers and
+      // source IDs have nothing to do with whether channels/programs are
+      // broadcast from different transmitters.
+      if (
+        IsEncrypted != scteChannel.IsEncrypted ||
+        (
+          IsEncrypted &&
+          (
+            LogicalChannelNumber != scteChannel.LogicalChannelNumber ||
+            SourceId != scteChannel.SourceId
+          )
+        )
       )
       {
         return true;
@@ -304,6 +330,32 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channel
         return (short)(2 + ((carrierFrequency - 54000) / 6000));
       }
       return 0;
+    }
+
+    /// <summary>
+    /// Determine if a CableCARD is needed to tune the channel.
+    /// </summary>
+    /// <returns><c>true</c> if a CableCARD is needed to tune the channel, otherwise <c>false</c></returns>
+    public bool IsCableCardNeededToTune()
+    {
+      if (
+        IsEncrypted ||
+        IsOutOfBandScanChannel() ||
+        Frequency == FREQUENCY_SWITCHED_DIGITAL_VIDEO
+      )
+      {
+        return true;
+      }
+      return false;
+    }
+
+    /// <summary>
+    /// Determine if the channel is the out-of-band scan channel.
+    /// </summary>
+    /// <returns><c>true</c> if the channel is the out-of-band scan channel, otherwise <c>false</c></returns>
+    public bool IsOutOfBandScanChannel()
+    {
+      return Frequency == FREQUENCY_OUT_OF_BAND_CHANNEL_SCAN;
     }
   }
 }

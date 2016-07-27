@@ -327,13 +327,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
         return false;
       }
 
-      // Channels delivered using switched digital video are not supported.
       ChannelScte scteChannel = channel as ChannelScte;
-      if (scteChannel != null && scteChannel.Frequency <= 1750)  
-      {
-        return false;
-      }
-      return true;
+      return scteChannel == null || !scteChannel.IsCableCardNeededToTune();
     }
 
     #region tuning parameter translation

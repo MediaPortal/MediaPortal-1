@@ -54,8 +54,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog
       _externalTunerProgramArguments = configuration.ExternalTunerProgramArguments;
 
       this.LogDebug("  external input...");
-      this.LogDebug("    video source  = {0} ({1})", _externalInputSourceVideo, (CaptureSourceVideo)configuration.AnalogTunerSettings.SupportedVideoSources);
-      this.LogDebug("    audio source  = {0} ({1})", _externalInputSourceAudio, (CaptureSourceAudio)configuration.AnalogTunerSettings.SupportedAudioSources);
+      this.LogDebug("    video source  = {0} [{1}]", _externalInputSourceVideo, (CaptureSourceVideo)configuration.SupportedVideoSources);
+      this.LogDebug("    audio source  = {0} [{1}]", _externalInputSourceAudio, (CaptureSourceAudio)configuration.SupportedAudioSources);
       this.LogDebug("    country       = {0}", _externalInputCountryId);
       this.LogDebug("    phys. channel = {0}", _externalInputPhysicalChannelNumber);
       this.LogDebug("  external tuner...");
@@ -63,10 +63,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog
       this.LogDebug("    program args  = {0}", _externalTunerProgramArguments);
     }
 
-    public void Tune(IChannel channel, out IChannel tuneChannel)
+    public IChannel Tune(IChannel channel)
     {
-      tuneChannel = channel;
-
       // Channel or external input settings?
       ChannelCapture captureChannel = channel as ChannelCapture;
       if (
@@ -77,10 +75,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog
         )
       )
       {
-        return;
+        return channel;
       }
 
       this.LogDebug("external tuner: using external input");
+      IChannel tuneChannel;
       if (captureChannel.VideoSource == CaptureSourceVideo.TunerDefault && _externalInputSourceVideo == CaptureSourceVideo.Tuner)
       {
         ChannelAnalogTv externalAnalogTvChannel = new ChannelAnalogTv();
@@ -154,6 +153,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog
           this.LogWarn(ex, "external tuner: process threw exception");
         }
       }
+      return tuneChannel;
     }
   }
 }

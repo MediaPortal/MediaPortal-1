@@ -172,35 +172,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Pbda
       }
     }
 
-    private static bool IsCableCardNeededToTune(ChannelScte channel)
-    {
-      if (
-        channel != null &&
-        (
-          channel.IsEncrypted ||
-          channel.Frequency == ChannelScte.FREQUENCY_SWITCHED_DIGITAL_VIDEO
-        )
-      )
-      {
-        return true;
-      }
-      return false;
-    }
-
-    private bool IsScanningOutOfBandChannel(ChannelScte channel)
-    {
-      if (
-        InternalChannelScanningInterface != null &&
-        InternalChannelScanningInterface.IsScanning &&
-        channel != null &&
-        channel.Frequency == ChannelScte.FREQUENCY_OUT_OF_BAND_CHANNEL_SCAN
-      )
-      {
-        return true;
-      }
-      return false;
-    }
-
     #region ITunerInternal members
 
     #region state control
@@ -240,12 +211,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Pbda
 
       ReadDeviceInfo();
 
-      // CableCARD tuners are limited to one channel per tuner, even for
-      // non-encrypted channels:
-      // The DRIT SHALL output the selected program content as a single program
-      // MPEG-TS in RTP packets according to [RTSP] and [RTP].
-      // - OpenCable DRI I04 specification, 10 September 2010
-      _subChannelManager = new SubChannelManagerMpeg2Ts(TsWriter as ITsWriter, false);
+      _subChannelManager = new SubChannelManagerMpeg2Ts(TsWriter as ITsWriter);
 
       if (_ipAddress == null)
       {
@@ -294,7 +260,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Pbda
     public override bool CanTune(IChannel channel)
     {
       // Is tuning physically possible?
-      if (!base.CanTune(channel))
+      ChannelAtsc atscChannel = channel as ChannelAtsc;
+      if (atscChannel != null)
+      {
+        return SupportedBroadcastStandards.HasFlag(BroadcastStandard.Atsc);
+      }
+      ChannelScte scteChannel = channel as ChannelScte;
+      if (scteChannel == null || !SupportedBroadcastStandards.HasFlag(BroadcastStandard.Scte))
       {
         return false;
       }
@@ -302,9 +274,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Pbda
       // Can we assemble a tune request that might succeed?
 
       // Yes, if we can tune without a CableCARD.
-      ChannelScte scteChannel = channel as ChannelScte;
-      bool isOobScan = IsScanningOutOfBandChannel(scteChannel);
-      if (!isOobScan && !IsCableCardNeededToTune(scteChannel))
+      if (!scteChannel.IsCableCardNeededToTune())
       {
         return true;
       }
@@ -316,7 +286,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Pbda
         (_caInterface == null || _cardStatus == SmartCardStatusType.CardInserted) &&
         (
           (short.TryParse(channel.LogicalChannelNumber, out virtualChannelNumber) && virtualChannelNumber > 0) ||
-          isOobScan
+          scteChannel.IsOutOfBandScanChannel()
         )
       )
       {
@@ -334,14 +304,14 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Pbda
       this.LogDebug("PBDA CableCARD: perform tuning");
 
       ChannelScte scteChannel = channel as ChannelScte;
-      bool isOobScan = IsScanningOutOfBandChannel(scteChannel);
-      if (!isOobScan && !IsCableCardNeededToTune(scteChannel))
+      if (scteChannel == null || !scteChannel.IsCableCardNeededToTune())
       {
         _isScanningOutOfBandChannel = false;
         base.PerformTuning(channel);
         return;
       }
 
+      _isScanningOutOfBandChannel = scteChannel.IsOutOfBandScanChannel();
       SmartCardAssociationType association;
       string error;
       bool isOutOfBandTunerLocked = false;
@@ -349,7 +319,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Pbda
       TvExceptionDirectShowError.Throw(hr, "Failed to read smart card status.");
       if (
         _cardStatus != SmartCardStatusType.CardInserted ||
-        (isOobScan && !isOutOfBandTunerLocked) ||
+        (_isScanningOutOfBandChannel && !isOutOfBandTunerLocked) ||
         !string.IsNullOrEmpty(error)
       )
       {
@@ -361,8 +331,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Pbda
         throw new TvException("CableCARD or out-of-band tuner error.");
       }
 
-      _isScanningOutOfBandChannel = isOobScan;
-      if (!isOobScan)
+      if (!_isScanningOutOfBandChannel)
       {
         short virtualChannelNumber;
         if (!short.TryParse(scteChannel.LogicalChannelNumber, out virtualChannelNumber))
@@ -462,7 +431,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Pbda
 
     #region IBroadcastEventEx member
 
-    public virtual int FireEx(Guid eventId, int param1, int param2, int param3, int param4)
+    public override int FireEx(Guid eventId, int param1, int param2, int param3, int param4)
     {
       if (eventId == BdaEventType.CARD_STATUS_CHANGED)
       {

@@ -307,14 +307,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Tuner
     #region sub-channels
 
     /// <summary>
-    /// Can the tuner receive all sub-channels from the current transmitter simultaneously?
-    /// </summary>
-    bool CanSimultaneouslyReceiveTransmitterSubChannels
-    {
-      get;
-    }
-
-    /// <summary>
     /// Get a sub-channel.
     /// </summary>
     /// <param name="id">The sub-channel's identifier.</param>

@@ -35,9 +35,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
     /// The SDT is used to determine whether services are running or not.
     /// </remarks>
     /// <param name="tsWriter">The TS writer instance used to perform/implement time-shifting and recording.</param>
-    /// <param name="canSimultaneouslyReceiveServices"><c>True</c> if the tuner can simultaneously receive all services from the tuned transmitter.</param>
-    public SubChannelManagerDvb(ITsWriter tsWriter, bool canSimultaneouslyReceiveServices = true)
-      : base(tsWriter, canSimultaneouslyReceiveServices, new List<ushort> { SubChannelManagerMpeg2Ts.PID_PAT, 0x11 })
+    public SubChannelManagerDvb(ITsWriter tsWriter)
+      : base(tsWriter, new List<ushort> { SubChannelManagerMpeg2Ts.PID_PAT, 0x11 })
     {
     }
   }

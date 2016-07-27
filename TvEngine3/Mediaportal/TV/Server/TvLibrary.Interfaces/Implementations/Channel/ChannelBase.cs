@@ -19,6 +19,7 @@
 #endregion
 
 using System.Runtime.Serialization;
+using System.Text.RegularExpressions;
 using Mediaportal.TV.Server.Common.Types.Enum;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Channel;
 
@@ -44,6 +45,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channel
   [KnownType(typeof(ChannelStream))]
   public abstract class ChannelBase : IChannel
   {
+    #region constants
+
+    public static readonly Regex LOGICAL_CHANNEL_NUMBER_FORMAT = new Regex(@"^(\d+)([^\d](\d+))?$");
+    public const char LOGICAL_CHANNEL_NUMBER_SEPARATOR = '.';
+
+    #endregion
+
     #region variables
 
     [DataMember]

@@ -43,12 +43,6 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DirecTvShef
   /// </summary>
   public class DirecTvShef : BaseTunerExtension, IDisposable, IPowerDevice, ITvServerPlugin, ITvServerPluginCommunication
   {
-    #region constants
-
-    private static readonly Regex LOGICAL_CHANNEL_NUMBER_FORMAT = new Regex(@"^(\d+)([^\d](\d+))?$");
-
-    #endregion
-
     #region variables
 
     private static bool _isPluginEnabled = false;
@@ -188,7 +182,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DirecTvShef
         return;
       }
 
-      Match m = LOGICAL_CHANNEL_NUMBER_FORMAT.Match(channel.LogicalChannelNumber);
+      Match m = ChannelBase.LOGICAL_CHANNEL_NUMBER_FORMAT.Match(channel.LogicalChannelNumber);
       if (!m.Success)
       {
         this.LogError("DirecTV SHEF: invalid channel number, channel = {0}, number = {1}", channel.Name, channel.LogicalChannelNumber);

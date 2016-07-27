@@ -41,7 +41,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
     /// <param name="muxService">The tuner's DRI multiplex service.</param>
     /// <param name="subChannelManager">The wrapped stream tuner's sub-channel manager.</param>
     public SubChannelManagerDri(ServiceMux muxService, ISubChannelManager subChannelManager)
-      : base(false)
     {
       _muxService = muxService;
       _subChannelManager = subChannelManager;
@@ -58,22 +57,32 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
     /// <returns>the sub-channel</returns>
     protected override ISubChannelInternal OnTune(int id, IChannel channel, TimeSpan timeLimitReceiveStreamInfo)
     {
+      ChannelScte scteChannel = channel as ChannelScte;
+      if (scteChannel != null && scteChannel.Frequency == ChannelScte.FREQUENCY_OUT_OF_BAND_CHANNEL_SCAN)
+      {
+        // When scanning using the out-of-band tuner we don't require any
+        // in band stream. Special handling is required. The regular
+        // sub-channel manager throws an exception when PAT is not received.
+        return new SubChannelDriOutOfBandScan(id);
+      }
+
+      bool isNew;
+      ChannelMpeg2Base mpeg2Channel = channel as ChannelMpeg2Base;
+      if (mpeg2Channel == null || mpeg2Channel.ProgramNumber != ChannelMpeg2Base.PROGRAM_NUMBER_NOT_KNOWN_SELECT_FIRST)
+      {
+        return _subChannelManager.Tune(id, channel, out isNew) as ISubChannelInternal;
+      }
+
       // When switched digital video (SDV) is active - ie. the tuner uses a
       // tuning adaptor/resolver (TA/TR) to ask the cable system which
       // frequency and program number to tune - we have to ask the tuner what
       // the correct program number is.
       // Note that SiliconDust and Hauppauge tuners actually deliver a TS
-      // with a single program. For them it would be enough to set the
-      // program number to 0. However Ceton tuners deliver the PAT and PMT
-      // for all the programs in the full transport stream, only excluding
-      // extra video and audio streams. Therefore we have to do this...
-      bool isNew;
-      ChannelMpeg2Base mpeg2Channel = channel as ChannelMpeg2Base;
-      if (mpeg2Channel == null || mpeg2Channel.ProgramNumber != 0)
-      {
-        return (ISubChannelInternal)_subChannelManager.Tune(id, channel, out isNew);
-      }
-
+      // containing a single program. For them it would be enough to set the
+      // program number to PROGRAM_NUMBER_NOT_KNOWN_SELECT_FIRST. However Ceton
+      // tuners deliver the PAT and PMT for all the programs in the full
+      // transport stream, only excluding extra video and audio streams.
+      // Therefore we have to do this...
       int originalProgramNumber = mpeg2Channel.ProgramNumber;
       DateTime start = DateTime.Now;
       while (DateTime.Now - start < timeLimitReceiveStreamInfo)
@@ -86,13 +95,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
         }
         catch (Exception ex)
         {
-          this.LogError(ex, "DRI CableCARD: failed to determine program number, ID = {0}", id);
+          this.LogError(ex, "sub-channel manager DRI: failed to determine program number, ID = {0}", id);
         }
 
         ThrowExceptionIfTuneCancelled();
         if (mpeg2Channel.ProgramNumber != 0)
         {
-          this.LogDebug("DRI CableCARD: determined program number, ID = {0}, program number = {1}", id, mpeg2Channel.ProgramNumber);
+          this.LogDebug("sub-channel manager DRI: determined program number, ID = {0}, program number = {1}", id, mpeg2Channel.ProgramNumber);
           ISubChannelInternal subChannel = _subChannelManager.Tune(id, channel, out isNew) as ISubChannelInternal;
           if (subChannel != null)
           {
@@ -104,7 +113,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dri
 
         System.Threading.Thread.Sleep(20);
       }
-      this.LogError("DRI CableCARD: failed to determine program number, ID = {0}", id);
+      this.LogError("sub-channel manager DRI: failed to determine program number, ID = {0}", id);
       throw new TvException("The program number could not be determined.");
     }
 

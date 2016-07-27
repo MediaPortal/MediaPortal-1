@@ -31,12 +31,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channel
   [DataContract]
   public class ChannelAtsc : ChannelMpeg2Base, IChannelPhysical
   {
-    #region constants
-
-    private static readonly Regex LOGICAL_CHANNEL_NUMBER_FORMAT = new Regex(@"^(\d+)([^\d](\d+))?$");
-
-    #endregion
-
     #region variables
 
     [DataMember]

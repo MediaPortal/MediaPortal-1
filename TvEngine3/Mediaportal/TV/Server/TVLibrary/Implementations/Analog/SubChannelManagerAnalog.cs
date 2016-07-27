@@ -32,7 +32,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog
     /// </summary>
     /// <param name="tsWriter">The TS writer instance used to perform/implement time-shifting and recording.</param>
     public SubChannelManagerAnalog(ITsWriter tsWriter)
-      : base(tsWriter, true)
+      : base(tsWriter)
     {
     }
 

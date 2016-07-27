@@ -46,18 +46,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     private int _nextSubChannelId = 0;
 
     /// <summary>
-    /// Can the tuner receive all sub-channels from the tuned transmitter
-    /// simultaneously?
-    /// </summary>
-    /// <remarks>
-    /// This variable may seem obvious and unnecessary, especially for modern
-    /// tuners. However even today there are tuners that cannot receive more
-    /// than one sub-channel simultaneously. CableCARD tuners are a good
-    /// example.
-    /// </remarks>
-    private bool _canSimultaneouslyReceiveTransmitterSubChannels = true;
-
-    /// <summary>
     /// The maximum time to wait for implementation-dependent stream
     /// information (eg. PAT, PMT and CAT) to be received during tuning.
     /// </summary>
@@ -74,15 +62,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     private volatile bool _cancelTune = false;
 
     #endregion
-
-    /// <summary>
-    /// Initialise a new instance of the <see cref="SubChannelManagerBase"/> class.
-    /// </summary>
-    /// <param name="canSimultaneouslyReceiveTransmitterSubChannels"><c>True</c> if the tuner can simultaneously receive all sub-channels from the tuned transmitter.</param>
-    protected SubChannelManagerBase(bool canSimultaneouslyReceiveTransmitterSubChannels = true)
-    {
-      _canSimultaneouslyReceiveTransmitterSubChannels = canSimultaneouslyReceiveTransmitterSubChannels;
-    }
 
     #region ISubChannelManager members
 
@@ -186,31 +165,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
         isNew = true;
       }
 
-      // Some tuners (for example: CableCARD tuners) are only able to deliver
-      // one sub-channel.
-      if (!_canSimultaneouslyReceiveTransmitterSubChannels && _subChannels.Count > 0)
-      {
-        if (isNew)
-        {
-          // New sub-channel.
-          foreach (var sc in _subChannels.Values)
-          {
-            if (sc.CurrentChannel != channel)
-            {
-              // The tuner is currently receiving a different sub-channel.
-              throw new TvException("Tuner is not able to receive more than one sub-channel.");
-            }
-          }
-        }
-        else if (_subChannels.Count != 1)
-        {
-          // Existing sub-channel.
-          // If this is not the only sub-channel then by definition this must
-          // must be an attempt to tune to a different sub-channel. Not allowed.
-          throw new TvException("Tuner is not able to receive more than one sub-channel.");
-        }
-      }
-
       subChannel = OnTune(id, channel, _timeLimitReceiveStreamInfo);
       if (isNew && subChannel != null)
       {
@@ -237,17 +191,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     #endregion
 
     #region sub-channels
-
-    /// <summary>
-    /// Can the sub-channel manager receive multiple sub-channels from the current transmitter simultaneously?
-    /// </summary>
-    public bool CanSimultaneouslyReceiveTransmitterSubChannels
-    {
-      get
-      {
-        return _canSimultaneouslyReceiveTransmitterSubChannels;
-      }
-    }
 
     /// <summary>
     /// Get a sub-channel.

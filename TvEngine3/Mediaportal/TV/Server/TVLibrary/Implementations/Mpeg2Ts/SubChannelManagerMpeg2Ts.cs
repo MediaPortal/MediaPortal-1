@@ -225,10 +225,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Mpeg2Ts
     /// Initialise a new instance of the <see cref="SubChannelManagerMpeg2Ts"/> class.
     /// </summary>
     /// <param name="tsWriter">The TS writer instance used to perform/implement time-shifting and recording.</param>
-    /// <param name="canSimultaneouslyReceivePrograms"><c>True</c> if the tuner can simultaneously receive all programs from the tuned transmitter.</param>
     /// <param name="alwaysRequiredPids">The PIDs which are required for any and all sub-channels.</param>
-    public SubChannelManagerMpeg2Ts(ITsWriter tsWriter, bool canSimultaneouslyReceivePrograms = true, ICollection<ushort> alwaysRequiredPids = null)
-      : base(canSimultaneouslyReceivePrograms)
+    public SubChannelManagerMpeg2Ts(ITsWriter tsWriter, ICollection<ushort> alwaysRequiredPids = null)
     {
       _tsWriter = tsWriter;
       _tsWriter.SetObserver(this);

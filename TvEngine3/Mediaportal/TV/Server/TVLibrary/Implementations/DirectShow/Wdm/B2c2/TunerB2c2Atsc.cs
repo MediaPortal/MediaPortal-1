@@ -60,13 +60,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
         return false;
       }
 
-      // Channels delivered using switched digital video are not supported.
       ChannelScte scteChannel = channel as ChannelScte;
-      if (scteChannel != null && scteChannel.Frequency <= 0)
-      {
-        return false;
-      }
-      return true;
+      return scteChannel == null || !scteChannel.IsCableCardNeededToTune();
     }
 
     /// <summary>

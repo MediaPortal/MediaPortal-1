@@ -220,13 +220,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog
       try
       {
         crossbar.PerformLoading(graph);
-        CaptureSourceVideo supportedVideoSources = crossbar.SupportedVideoSources;
-        CaptureSourceAudio supportedAudioSources = crossbar.SupportedAudioSources;
         if (
-          (supportedVideoSources != CaptureSourceVideo.None && supportedVideoSources != CaptureSourceVideo.Tuner) ||
-          (supportedAudioSources != CaptureSourceAudio.None && supportedAudioSources != CaptureSourceAudio.Tuner)
+          crossbar.SupportedVideoSources != CaptureSourceVideo.None ||
+          crossbar.SupportedAudioSources != CaptureSourceAudio.None
         )
         {
+          // Tuner inputs count as external inputs as well because an STB can
+          // be connected via RF/coax.
           supportedBroadcastStandards |= BroadcastStandard.ExternalInput;
         }
 

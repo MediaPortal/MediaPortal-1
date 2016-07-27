@@ -67,7 +67,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         comboBoxCountry.Items.AddRange(CountryCollection.Instance.Countries);
       }
 
-      Tuner tuner = ServiceAgents.Instance.TunerServiceAgent.GetTuner(_tunerId, TunerRelation.None);
+      Tuner tuner = ServiceAgents.Instance.TunerServiceAgent.GetTuner(_tunerId, TunerRelation.AnalogTunerSettings);
       BroadcastStandard tunerSupportedBroadcastStandards = (BroadcastStandard)tuner.SupportedBroadcastStandards;
       this.LogDebug("  standard(s) = [{0}]", tunerSupportedBroadcastStandards);
 
@@ -84,7 +84,19 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         comboBoxScanMode.Items.Clear();
         if (tunerSupportedBroadcastStandards.HasFlag(BroadcastStandard.ExternalInput))
         {
-          comboBoxScanMode.Items.Add(SCAN_MODE_CAPTURE);
+          if (
+            (
+              tuner.AnalogTunerSettings.SupportedVideoSources != (int)CaptureSourceVideo.None &&
+              tuner.AnalogTunerSettings.SupportedVideoSources != (int)CaptureSourceVideo.Tuner
+            ) ||
+            (
+              tuner.AnalogTunerSettings.SupportedAudioSources != (int)CaptureSourceAudio.None &&
+              tuner.AnalogTunerSettings.SupportedAudioSources != (int)CaptureSourceAudio.Tuner
+            )
+          )
+          {
+            comboBoxScanMode.Items.Add(SCAN_MODE_CAPTURE);
+          }
           comboBoxScanMode.Items.Add(SCAN_MODE_EXTERNAL_TUNER);
         }
         if (tunerSupportedBroadcastStandards.HasFlag(BroadcastStandard.FmRadio))

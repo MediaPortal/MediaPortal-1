@@ -117,9 +117,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog
     /// <param name="configuration">The tuner's configuration.</param>
     public override void ReloadConfiguration(TVDatabase.Entities.Tuner configuration)
     {
-      base.ReloadConfiguration(configuration);
-
       this.LogDebug("WDM analog: reload configuration");
+      base.ReloadConfiguration(configuration);
 
       if (configuration.AnalogTunerSettings == null)
       {
@@ -524,26 +523,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog
     /// <returns><c>true</c> if the tuner can tune to the channel, otherwise <c>false</c></returns>
     public override bool CanTune(IChannel channel)
     {
-      ChannelCapture captureChannel = channel as ChannelCapture;
       if (!base.CanTune(channel))
       {
-        // Special case: analog tuners that don't have external inputs can tune
-        // capture channels if the video and audio inputs are the default
-        // inputs for the tuner. The default inputs will always be the tuner
-        // inputs, because they'll be the only available options. This enables
-        // support for external tuners connected via RF/coax.
-        if (
-          captureChannel != null &&
-          captureChannel.VideoSource == CaptureSourceVideo.TunerDefault &&
-          captureChannel.AudioSource == CaptureSourceAudio.TunerDefault
-        )
-        {
-          return true;
-        }
         return false;
       }
 
       // Check that the selected inputs are available for capture channels.
+      ChannelCapture captureChannel = channel as ChannelCapture;
       if (captureChannel == null)
       {
         return true;
@@ -566,9 +552,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog
         throw new TvException("Received request to tune incompatible channel.");
       }
 
-      IChannel tuneChannel;
-      _externalTuner.Tune(channel, out tuneChannel);
-
+      IChannel tuneChannel = _externalTuner.Tune(channel);
       if (tuneChannel is ChannelAnalogTv || tuneChannel is ChannelFmRadio)
       {
         if (_tuner != null)

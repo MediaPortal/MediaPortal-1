@@ -27,6 +27,7 @@ using System.Xml.Serialization;
 using Mediaportal.TV.Server.Plugins.TunerExtension.UsbUirt.Enum;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channel;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Helper;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using MediaPortal.Common.Utils;
@@ -296,7 +297,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.UsbUirt.Service
       if (profile.DigitCount > 0)
       {
         int digitCount = channelNumber.Length;
-        if (channelNumber.Contains("."))
+        if (channelNumber.Contains(ChannelBase.LOGICAL_CHANNEL_NUMBER_SEPARATOR.ToString()))
         {
           digitCount--;
         }
@@ -325,9 +326,9 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.UsbUirt.Service
         }
         isFirst = false;
 
-        if (c == '.')
+        if (c == ChannelBase.LOGICAL_CHANNEL_NUMBER_SEPARATOR)
         {
-          commandName = "separator (.)";
+          commandName = string.Format("separator ({0})", c);
           commandString = profile.Separator;
         }
         else

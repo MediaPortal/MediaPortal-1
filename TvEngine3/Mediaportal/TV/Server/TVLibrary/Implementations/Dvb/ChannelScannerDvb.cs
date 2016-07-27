@@ -1222,7 +1222,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Dvb
         {
           if (dishSubChannelNumber != 0)
           {
-            newChannel.LogicalChannelNumber = string.Format("{0}.{1}", lcn, dishSubChannelNumber);
+            newChannel.LogicalChannelNumber = string.Format("{0}{1}{2}", lcn, ChannelBase.LOGICAL_CHANNEL_NUMBER_SEPARATOR, dishSubChannelNumber);
           }
           else
           {

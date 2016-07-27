@@ -59,8 +59,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
     /// </summary>
     /// <param name="device">The <see cref="DsDevice"/> instance to encapsulate.</param>
     public TunerBdaAnalogTv(DsDevice device)
-      : base(device, device.DevicePath + "ATV", BroadcastStandard.AnalogTelevision)
+      : base(device, device.DevicePath + "ATV", BroadcastStandard.AnalogTelevision | BroadcastStandard.ExternalInput)
     {
+      // The external input broadcast standard is included above because an STB
+      // can be connected via RF/coax.
     }
 
     #endregion
@@ -216,9 +218,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
     /// <param name="configuration">The tuner's configuration.</param>
     public override void ReloadConfiguration(TVDatabase.Entities.Tuner configuration)
     {
-      base.ReloadConfiguration(configuration);
-
       this.LogDebug("BDA analog TV: reload configuration");
+      base.ReloadConfiguration(configuration);
 
       if (configuration.AnalogTunerSettings == null)
       {
@@ -304,21 +305,19 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
     /// <returns><c>true</c> if the tuner can tune to the channel, otherwise <c>false</c></returns>
     public override bool CanTune(IChannel channel)
     {
-      if (base.CanTune(channel))
+      if (!base.CanTune(channel))
       {
-        return true;
+        return false;
       }
 
-      // Special case: analog tuners that don't have external inputs can tune
-      // capture channels if the video and audio inputs are the default inputs
-      // for the tuner. The default inputs will always be the tuner inputs,
-      // because they'll be the only available options. This enables support
-      // for external tuners connected via RF/coax.
+      // Check that the selected inputs are available for capture channels.
       ChannelCapture captureChannel = channel as ChannelCapture;
       if (
-        captureChannel != null &&
-        captureChannel.VideoSource == CaptureSourceVideo.TunerDefault &&
-        captureChannel.AudioSource == CaptureSourceAudio.TunerDefault
+        captureChannel == null ||
+        (
+          CaptureSourceVideo.TunerDefault.HasFlag(captureChannel.VideoSource) &&
+          CaptureSourceAudio.TunerDefault.HasFlag(captureChannel.AudioSource)
+        )
       )
       {
         return true;
@@ -333,16 +332,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
     public override void PerformTuning(IChannel channel)
     {
       this.LogDebug("BDA analog TV: perform tuning");
-      ChannelAnalogTv analogTvChannel = channel as ChannelAnalogTv;
-      ChannelCapture captureChannel = channel as ChannelCapture;
-      if (analogTvChannel == null && captureChannel == null)
-      {
-        throw new TvException("Received request to tune incompatible channel.");
-      }
-
-      IChannel tuneChannel;
-      _externalTuner.Tune(channel, out tuneChannel);
-      base.PerformTuning(tuneChannel);
+      base.PerformTuning(_externalTuner.Tune(channel));
     }
 
     #endregion

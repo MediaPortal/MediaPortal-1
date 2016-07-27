@@ -1617,21 +1617,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     #region sub-channel management
 
     /// <summary>
-    /// Can the tuner receive all sub-channels from the current transmitter simultaneously?
-    /// </summary>
-    public bool CanSimultaneouslyReceiveTransmitterSubChannels
-    {
-      get
-      {
-        if (SubChannelManager == null)
-        {
-          return true;
-        }
-        return SubChannelManager.CanSimultaneouslyReceiveTransmitterSubChannels;
-      }
-    }
-
-    /// <summary>
     /// Free a sub-channel.
     /// </summary>
     /// <param name="id">The sub-channel's identifier.</param>

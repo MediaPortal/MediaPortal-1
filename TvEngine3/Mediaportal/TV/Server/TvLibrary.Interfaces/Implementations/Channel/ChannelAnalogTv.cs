@@ -137,14 +137,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channel
     /// Check if this channel and another channel are broadcast from different transmitters.
     /// </summary>
     /// <param name="channel">The channel to check.</param>
-    /// <param name="checkLogicalChannelNumber"><c>True</c> to check the logical channel number. The logical channel number is only a tuning parameter for blasters.</param>
     /// <returns><c>true</c> if the channels are broadcast from different transmitters, otherwise <c>false</c></returns>
-    public bool IsDifferentTransmitter(IChannel channel, bool checkLogicalChannelNumber)
+    public override bool IsDifferentTransmitter(IChannel channel)
     {
       ChannelAnalogTv analogChannel = channel as ChannelAnalogTv;
       if (
         analogChannel == null ||
-        (checkLogicalChannelNumber && LogicalChannelNumber != analogChannel.LogicalChannelNumber) ||
         PhysicalChannelNumber != analogChannel.PhysicalChannelNumber ||
         Frequency != analogChannel.Frequency ||
         (Country == null && analogChannel.Country != null) ||
@@ -156,11 +154,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channel
         return true;
       }
       return false;
-    }
-
-    public override bool IsDifferentTransmitter(IChannel channel)
-    {
-      return IsDifferentTransmitter(channel, true);
     }
 
     #endregion

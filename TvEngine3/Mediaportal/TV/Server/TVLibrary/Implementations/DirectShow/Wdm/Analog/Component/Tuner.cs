@@ -402,7 +402,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
       ChannelAnalogTv analogTvChannel = channel as ChannelAnalogTv;
       if (
         analogTvChannel != null &&
-        !analogTvChannel.IsDifferentTransmitter(_currentChannel, false)
+        !analogTvChannel.IsDifferentTransmitter(_currentChannel)
       )
       {
         this.LogDebug("WDM analog tuner: tuning not required");

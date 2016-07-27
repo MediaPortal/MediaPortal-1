@@ -77,14 +77,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces
     #region sub-channels
 
     /// <summary>
-    /// Can the sub-channel manager receive all sub-channels from the current transmitter simultaneously?
-    /// </summary>
-    bool CanSimultaneouslyReceiveTransmitterSubChannels
-    {
-      get;
-    }
-
-    /// <summary>
     /// Get a sub-channel.
     /// </summary>
     /// <param name="id">The sub-channel's identifier.</param>

@@ -977,9 +977,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
     /// <param name="configuration">The tuner's configuration.</param>
     public override void ReloadConfiguration(Tuner configuration)
     {
+      this.LogDebug("BDA base: reload configuration");
       base.ReloadConfiguration(configuration);
 
-      this.LogDebug("BDA base: reload configuration");
       this.LogDebug("  network provider = {0}", (BdaNetworkProvider)configuration.BdaNetworkProvider);
 
       bool save = false;

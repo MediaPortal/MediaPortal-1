@@ -987,7 +987,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Atsc
             }
             else
             {
-              lcn = string.Format("{0}.{1}", majorChannelNumber, minorChannelNumber);
+              lcn = string.Format("{0}{1}{2}", majorChannelNumber, ChannelBase.LOGICAL_CHANNEL_NUMBER_SEPARATOR, minorChannelNumber);
             }
             if (transmissionMedium != TransmissionMedium.Cable || applicationVirtualChannel || pathSelect == PathSelect.Path2 || outOfBand)   // not cable OR application (data) channel OR alternative feed
             {
@@ -1365,7 +1365,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Atsc
           }
           else
           {
-            newChannel.LogicalChannelNumber = string.Format("{0}.{1}", majorChannelNumber, minorChannelNumber);
+            newChannel.LogicalChannelNumber = string.Format("{0}{1}{2}", majorChannelNumber, ChannelBase.LOGICAL_CHANNEL_NUMBER_SEPARATOR, minorChannelNumber);
           }
           newChannel.IsEncrypted = accessControlled;
           if (program != null)

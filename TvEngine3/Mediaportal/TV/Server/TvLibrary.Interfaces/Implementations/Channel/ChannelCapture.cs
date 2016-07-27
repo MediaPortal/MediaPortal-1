@@ -98,26 +98,26 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channel
     /// Check if this channel and another channel are broadcast from different transmitters.
     /// </summary>
     /// <param name="channel">The channel to check.</param>
-    /// <param name="checkLogicalChannelNumber"><c>True</c> to check the logical channel number. The logical channel number is only a tuning parameter for blasters.</param>
     /// <returns><c>true</c> if the channels are broadcast from different transmitters, otherwise <c>false</c></returns>
-    public bool IsDifferentTransmitter(IChannel channel, bool checkLogicalChannelNumber)
+    public override bool IsDifferentTransmitter(IChannel channel)
     {
       ChannelCapture captureChannel = channel as ChannelCapture;
       if (
         captureChannel == null ||
-        (checkLogicalChannelNumber && LogicalChannelNumber != captureChannel.LogicalChannelNumber) ||
         VideoSource != captureChannel.VideoSource ||
-        AudioSource != captureChannel.AudioSource
+        AudioSource != captureChannel.AudioSource ||
+        (
+          LogicalChannelNumber != channel.LogicalChannelNumber &&
+          (
+            VideoSource == CaptureSourceVideo.TunerDefault ||
+            AudioSource == CaptureSourceAudio.TunerDefault
+          )
+        )
       )
       {
         return true;
       }
       return false;
-    }
-
-    public override bool IsDifferentTransmitter(IChannel channel)
-    {
-      return IsDifferentTransmitter(channel, true);
     }
 
     #endregion
