@@ -72,6 +72,7 @@ LPDIRECT3DDEVICE9         m_pDevice       = NULL;
 CVMR9AllocatorPresenter*  m_vmr9Presenter = NULL;
 MPEVRCustomPresenter*     m_evrPresenter  = NULL;
 MPMadPresenter*           m_madPresenter  = NULL;
+MadSubtitleProxy*         m_madSubtitleProxy = NULL;
 IBaseFilter*              m_pVMR9Filter   = NULL;
 IVMRSurfaceAllocator9*    m_allocator     = NULL;
 LONG                      m_iRecordingId  = 0;
@@ -906,25 +907,19 @@ double EVRGetDisplayFPS()
   return displayFPS;
 }
 
-BOOL MadInit(IVMR9Callback* callback, DWORD width, DWORD height, DWORD dwD3DDevice, HWND parent, IBaseFilter** madFilter, IMediaControl* pMediaControl, IGraphBuilder* mGraphbuilder, OAHWND** madHWnD)
+BOOL MadInit(IVMR9Callback* callback, DWORD width, DWORD height, DWORD dwD3DDevice, OAHWND parent, IBaseFilter** madFilter, IMediaControl* pMediaControl)
 {
   m_RenderPrefix = _T("mad");
-  m_pDevice = reinterpret_cast<LPDIRECT3DDEVICE9>(dwD3DDevice);
 
-  Log("MPMadDshow::MadInit 0");
+  m_pDevice = (LPDIRECT3DDEVICE9)(dwD3DDevice);
 
-  m_madPresenter = new MPMadPresenter(callback, width, height, parent, m_pDevice, pMediaControl, mGraphbuilder);
+  Log("MPMadDshow::MadInit");
+
+  m_madPresenter = new MPMadPresenter(callback, width, height, parent, m_pDevice, pMediaControl);
+  m_madSubtitleProxy = new MadSubtitleProxy(callback, m_madPresenter);
   m_pVMR9Filter = m_madPresenter->Initialize();
-  //m_madPresenter->Initialize2();
-  Log("MPMadDshow::MadInit 1");
-  if (m_pVMR9Filter)
-  {
-    *madFilter = m_pVMR9Filter;
-  }
-  Log("MPMadDshow::MadInit 2");
-
-  OAHWND m_hWnd = m_madPresenter->HWnDMadVR();
-  *madHWnD = &m_hWnd;
+  m_pVMR9Filter->AddRef();
+  *madFilter = m_pVMR9Filter;
 
   if (!madFilter)
     return FALSE;
@@ -937,6 +932,7 @@ void MadDeinit()
   try
   {
     Log("MPMadDshow::MadDeinit shutdown start");
+    m_madSubtitleProxy->Shutdown();
     m_madPresenter->Shutdown();
     m_pRefCount = m_pVMR9Filter->Release();
     m_pRefCount = m_pRefCount - 1;
@@ -951,12 +947,6 @@ void MadDeinit()
   catch(...)
   {
   }
-}
-
-void WindowsMessage()
-{
-  //m_madPresenter->Initialize2();
-  //m_madPresenter->ForceMessage();
 }
 
 void Vmr9SetDeinterlaceMode(int mode)
