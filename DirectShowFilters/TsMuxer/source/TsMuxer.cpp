@@ -19,6 +19,7 @@
  *
  */
 #include "TsMuxer.h"
+#include <algorithm>  // min(), max()
 #include <cstddef>    // NULL
 #include <cstring>    // memcpy(), memset(), strlen(), strncpy()
 #include <iomanip>    // setfill(), setw()

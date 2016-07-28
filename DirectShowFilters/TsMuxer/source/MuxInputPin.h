@@ -38,8 +38,8 @@ using namespace std;
 #define STREAM_TYPE_MPEG2_PROGRAM_STREAM 0xfd
 #define STREAM_TYPE_MPEG2_TRANSPORT_STREAM 0xfc
 #define STREAM_TYPE_TELETEXT 0xfb
-#define STREAM_TYPE_VPS 0xfa
-#define STREAM_TYPE_WSS 0xf9
+#define STREAM_TYPE_VPS 0xfa  // video programme system
+#define STREAM_TYPE_WSS 0xf9  // wide screen signalling
 
 #define RECEIVE_BUFFER_TS_PACKET_COUNT 5
 #define RECEIVE_BUFFER_SIZE TS_PACKET_LEN * RECEIVE_BUFFER_TS_PACKET_COUNT
@@ -94,8 +94,8 @@ const unsigned char STREAM_TYPES[] =
   STREAM_TYPE_VIDEO_MPEG2,
 
   STREAM_TYPE_TELETEXT,
-  STREAM_TYPE_VPS,        // video programme system
-  STREAM_TYPE_WSS,        // wide screen signalling
+  STREAM_TYPE_VPS,
+  STREAM_TYPE_WSS,
 
   STREAM_TYPE_MPEG1_SYSTEM_STREAM,
   STREAM_TYPE_MPEG2_PROGRAM_STREAM,
@@ -103,25 +103,25 @@ const unsigned char STREAM_TYPES[] =
   STREAM_TYPE_MPEG2_TRANSPORT_STREAM
 };
 
-const unsigned char MPEG1_VIDEO_INPUT_MEDIA_TYPE_COUNT = 3;
-const unsigned char MPEG1_AUDIO_INPUT_MEDIA_TYPE_COUNT = 3;
-const unsigned char MPEG2_VIDEO_INPUT_MEDIA_TYPE_COUNT = 2;
-const unsigned char MPEG2_AUDIO_INPUT_MEDIA_TYPE_COUNT = 2;
-const unsigned char TELETEXT_INPUT_MEDIA_TYPE_COUNT = 1;
-const unsigned char VPS_INPUT_MEDIA_TYPE_COUNT = 1;
-const unsigned char WSS_INPUT_MEDIA_TYPE_COUNT = 1;
-const unsigned char PROGRAM_STREAM_INPUT_MEDIA_TYPE_COUNT = 2;
-const unsigned char TRANSPORT_STREAM_INPUT_MEDIA_TYPE_COUNT = 1;
+const unsigned char INPUT_MEDIA_TYPE_COUNT_MPEG1_AUDIO = 3;
+const unsigned char INPUT_MEDIA_TYPE_COUNT_MPEG2_AUDIO = 2;
+const unsigned char INPUT_MEDIA_TYPE_COUNT_MPEG1_VIDEO = 3;
+const unsigned char INPUT_MEDIA_TYPE_COUNT_MPEG2_VIDEO = 2;
+const unsigned char INPUT_MEDIA_TYPE_COUNT_TELETEXT = 1;
+const unsigned char INPUT_MEDIA_TYPE_COUNT_VPS = 1;
+const unsigned char INPUT_MEDIA_TYPE_COUNT_WSS = 1;
+const unsigned char INPUT_MEDIA_TYPE_COUNT_PROGRAM_STREAM = 2;
+const unsigned char INPUT_MEDIA_TYPE_COUNT_TRANSPORT_STREAM = 1;
 
-const unsigned char INPUT_MEDIA_TYPE_COUNT = MPEG1_VIDEO_INPUT_MEDIA_TYPE_COUNT +
-                                              MPEG2_VIDEO_INPUT_MEDIA_TYPE_COUNT +
-                                              MPEG1_AUDIO_INPUT_MEDIA_TYPE_COUNT +
-                                              MPEG2_AUDIO_INPUT_MEDIA_TYPE_COUNT +
-                                              TELETEXT_INPUT_MEDIA_TYPE_COUNT +
-                                              VPS_INPUT_MEDIA_TYPE_COUNT +
-                                              WSS_INPUT_MEDIA_TYPE_COUNT +
-                                              PROGRAM_STREAM_INPUT_MEDIA_TYPE_COUNT +
-                                              TRANSPORT_STREAM_INPUT_MEDIA_TYPE_COUNT;
+const unsigned char INPUT_MEDIA_TYPE_COUNT = INPUT_MEDIA_TYPE_COUNT_MPEG1_AUDIO +
+                                              INPUT_MEDIA_TYPE_COUNT_MPEG2_AUDIO +
+                                              INPUT_MEDIA_TYPE_COUNT_MPEG1_VIDEO +
+                                              INPUT_MEDIA_TYPE_COUNT_MPEG2_VIDEO +
+                                              INPUT_MEDIA_TYPE_COUNT_TELETEXT +
+                                              INPUT_MEDIA_TYPE_COUNT_VPS +
+                                              INPUT_MEDIA_TYPE_COUNT_WSS +
+                                              INPUT_MEDIA_TYPE_COUNT_PROGRAM_STREAM +
+                                              INPUT_MEDIA_TYPE_COUNT_TRANSPORT_STREAM;
 
 
 class CMuxInputPin : public CRenderedInputPin, CPacketSync, public IMuxInputPin
