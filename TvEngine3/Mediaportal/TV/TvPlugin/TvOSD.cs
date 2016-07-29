@@ -118,7 +118,8 @@ namespace Mediaportal.TV.TvPlugin
     private bool _immediateSeekIsRelative = true;
     private int _immediateSeekValue = 10;
     private int m_subtitleDelay = 0;
-    private int m_delayInterval = 0;    
+    private int m_delayInterval = 0;
+    private int UpdateInt = 0;
 
     public TvOsd()
     {
@@ -153,9 +154,18 @@ namespace Mediaportal.TV.TvPlugin
 
     public override void Render(float timePassed)
     {
-      UpdateProgressBar();
-      SetVideoProgress(); // get the percentage of playback complete so far
-      Get_TimeInfo(); // show the time elapsed/total playing time
+      // update information all 50 frames to avoid stuttering
+      if (UpdateInt == 50 || UpdateInt == 0)
+      {
+        UpdateProgressBar();
+        //SetVideoProgress();
+        Get_TimeInfo(); // show the time elapsed/total playing time
+        if (UpdateInt == 50)
+        {
+          UpdateInt = 0;
+        }
+      }
+      UpdateInt++;
       SetRecorderStatus(); // BAV: fixing bug 1429: OSD is not updated with recording status 
       base.Render(timePassed); // render our controls to the screen
     }
@@ -429,17 +439,17 @@ namespace Mediaportal.TV.TvPlugin
                 PopulateAudioStreams();
               }*/
             }
-            if (iControl == btnChannelUp.GetID)
+            if (btnChannelUp != null && iControl == btnChannelUp.GetID)
             {
               OnNextChannel();
             }
-            if (iControl == btnChannelDown.GetID)
+            if (btnChannelDown != null && iControl == btnChannelDown.GetID)
             {
               OnPreviousChannel();
             }
             if (!g_Player.IsTVRecording)
             {
-              if (iControl == btnPreviousProgram.GetID)
+              if (btnPreviousProgram != null && iControl == btnPreviousProgram.GetID)
               {
                 Program prog = ServiceAgents.Instance.ProgramServiceAgent.GetProgramAt(m_dateTime, GetChannel().Entity.IdChannel);                
                 if (prog != null)
