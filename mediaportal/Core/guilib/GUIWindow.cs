@@ -514,11 +514,13 @@ namespace MediaPortal.GUI.Library
       // no filename is configured
       if (_windowXmlFileName == "")
       {
+        Log.Error("GUIWindow loadSkinValue false");
         return false;
       }
       // TODO what is the reason for this check
       if (Children.Count > 0)
       {
+        Log.Error("GUIWindow loadSkinValue false");
         return false;
       }
 
@@ -541,12 +543,14 @@ namespace MediaPortal.GUI.Library
         doc.Load(_windowXmlFileName);
         if (doc.DocumentElement == null)
         {
+          Log.Error("GUIWindow loadSkinValue false");
           return false;
         }
         string root = doc.DocumentElement.Name;
         // Check root element
         if (root != "window")
         {
+          Log.Error("GUIWindow loadSkinValue false");
           return false;
         }
 
@@ -569,12 +573,14 @@ namespace MediaPortal.GUI.Library
         XmlNode nodeId = doc.DocumentElement.SelectSingleNode("/window/id");
         if (nodeId == null)
         {
+          Log.Error("GUIWindow loadSkinValue false");
           return false;
         }
         // Set the default control that has the focus after loading the window
         XmlNode nodeDefault = doc.DocumentElement.SelectSingleNode("/window/defaultcontrol");
         if (nodeDefault == null)
         {
+          Log.Error("GUIWindow loadSkinValue false");
           return false;
         }
         // Convert the id to an int

@@ -142,6 +142,10 @@ protected:
 	BOOL     m_bIsVistaOrLater;
 	DWORD    m_dwLastThreadID;
   CCritSecFR     m_accessLock;
+
+  HINSTANCE m_pKernel32LibHandle;
+  typedef BOOL (WINAPI* CancelSynchronousIoFn)(HANDLE);
+  CancelSynchronousIoFn m_pCancelSynchronousIoProcHandle;
 };
 
 #endif

@@ -65,7 +65,7 @@ namespace TvLibrary.Implementations.DVB
     private readonly TeVii _TeVii;
     private readonly DigitalDevices _DigitalDevices;
     private readonly TunerDri _tunerDri;
-
+    private readonly TvCardDvbB2C2 _b2c2Card;
     private readonly IHardwareProvider _HWProvider;
 
     private readonly ICiMenuActions _ciMenu;
@@ -116,6 +116,11 @@ namespace TvLibrary.Implementations.DVB
           _CamType = (CamType)c.CamType;
           Log.Log.WriteFile("CAM is {0} model", _CamType);
         }
+        if (card is TvCardDvbB2C2)
+        {
+          Log.Log.WriteFile("B2C2 card detected in ConditionalAccess");
+          _b2c2Card = card as TvCardDvbB2C2;
+        }
 
         _mapSubChannels = new Dictionary<int, ConditionalAccessContext>();
         TunerDri driTuner = card as TunerDri;
@@ -133,7 +138,7 @@ namespace TvLibrary.Implementations.DVB
 
         if (isDVBC || isDVBS || isDVBT)
         {
-          Log.Log.WriteFile("Check for KNC");
+           Log.Log.WriteFile("Check for KNC");
           // Lookup device index of current card. only counting KNC cards by device path
           int DeviceIndex = KNCDeviceLookup.GetDeviceIndex(card);
           _knc = new KNCAPI(tunerFilter, (uint)DeviceIndex);
@@ -814,7 +819,24 @@ namespace TvLibrary.Implementations.DVB
             }
           }
         }
-
+        if(_b2c2Card!=null)
+        {
+          _b2c2Card.SendHwPids(HwPids);
+          /*
+          bool isDvbs = ((channel as DVBSChannel) != null);
+          if (isDvbs &&
+              (((DVBSChannel)channel).ModulationType == ModulationType.Mod8Psk ||
+              ((DVBSChannel)channel).ModulationType == ModulationType.Mod16Apsk ||
+              ((DVBSChannel)channel).ModulationType == ModulationType.Mod32Apsk)
+          )
+          {
+            _b2c2Card.SendHwPids(HwPids);
+          }else
+          {
+            _b2c2Card.SendHwPids(new List<ushort>());
+          }
+           */
+        }
         if (_digitalEveryWhere != null)
         {
           bool isDvbc = ((channel as DVBCChannel) != null);

@@ -27,6 +27,7 @@
 #include "TsDuration.h"
 #include "..\..\shared\AdaptionField.h"
 extern void LogDebug(const char *fmt, ...) ;
+extern void StopLogger();
 
 //~130ms of data @ 8Mbit/s
 #define DUR_READ_SIZE 131072
@@ -51,8 +52,8 @@ CTsDuration::~CTsDuration(void)
   else
   {
     LogDebug("CTsDuration::dtor - ERROR m_pFileReadBuffer is NULL !!");
+    StopLogger(); //Needed since logging thread might be re-started after CDeMultiplexer() destructor has called StopLogger()
   }
-  LogDebug("CTsDuration - dtor");
 }
 
 
