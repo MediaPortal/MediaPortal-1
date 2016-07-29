@@ -641,7 +641,7 @@ HRESULT CTsMuxer::Receive(IMuxInputPin* pin,
       info->IsIgnored = !m_isTeletextActive;
       info->StreamId = STREAM_ID_PRIVATE_STREAM_1;
       info->PmtDescriptorLength = 2;
-      info->PmtDescriptorBytes = new unsigned char[2];
+      info->PmtDescriptorBytes = new unsigned char[info->PmtDescriptorLength];
       if (info->PmtDescriptorBytes == NULL)
       {
         LogDebug(L"muxer: failed to allocate 2 bytes for pin %hhu's PMT descriptor bytes",
@@ -675,7 +675,7 @@ HRESULT CTsMuxer::Receive(IMuxInputPin* pin,
       info->IsIgnored = !active;
       info->StreamId = STREAM_ID_PRIVATE_STREAM_1;
       info->PmtDescriptorLength = 5;
-      info->PmtDescriptorBytes = new unsigned char[2];
+      info->PmtDescriptorBytes = new unsigned char[info->PmtDescriptorLength];
       if (info->PmtDescriptorBytes == NULL)
       {
         LogDebug(L"muxer: failed to allocate 2 bytes for pin %hhu's PMT descriptor bytes",
