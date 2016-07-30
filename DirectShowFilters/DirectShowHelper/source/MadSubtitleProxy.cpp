@@ -94,7 +94,7 @@ HRESULT MadSubtitleProxy::Render(REFERENCE_TIME frameStart, int left, int top, i
   {
     CAutoLock cAutoLock(this);
 
-    m_pPresenter->InitializeOSD();
+    //m_pPresenter->InitializeOSD();
     m_deviceState.Store();
     SetupMadDeviceState();
 

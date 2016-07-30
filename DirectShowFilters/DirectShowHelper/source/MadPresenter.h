@@ -31,6 +31,7 @@ class MPMadPresenter : public CUnknown, public IOsdRenderCallback, public CCritS
     IBaseFilter* Initialize();
     void InitializeOSD();
     void InitializeOSDClear();
+    void SetOSDCallback();
     HRESULT Shutdown();
 
     STDMETHODIMP NonDelegatingQueryInterface(REFIID riid, void** ppv);

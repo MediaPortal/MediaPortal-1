@@ -932,7 +932,7 @@ void MadDeinit()
   try
   {
     Log("MPMadDshow::MadDeinit shutdown start");
-    m_madSubtitleProxy->Shutdown();
+    //m_madSubtitleProxy->Shutdown();
     m_madPresenter->Shutdown();
     m_pRefCount = m_pVMR9Filter->Release();
     m_pRefCount = m_pRefCount - 1;
@@ -947,6 +947,11 @@ void MadDeinit()
   catch(...)
   {
   }
+}
+
+void WindowsMessage()
+{
+  m_madPresenter->SetOSDCallback();
 }
 
 void Vmr9SetDeinterlaceMode(int mode)
