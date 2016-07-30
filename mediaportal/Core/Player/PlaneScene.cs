@@ -666,6 +666,10 @@ namespace MediaPortal.Player
         {
           return -1;
         }
+        if (_stopPainting)
+        {
+          return -1;
+        }
 
         if (!GUIGraphicsContext.InVmr9Render)
         {
@@ -691,6 +695,8 @@ namespace MediaPortal.Player
           _vmr9Util.VideoAspectRatioY = arHeight;
           _arVideoWidth = arWidth;
           _arVideoHeight = arHeight;
+
+          //Log.Debug("PlaneScene width {0}, height {1}", width, height);
 
           if (GUIGraphicsContext.IsWindowVisible)
           {
