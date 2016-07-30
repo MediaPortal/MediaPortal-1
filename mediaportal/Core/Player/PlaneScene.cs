@@ -655,78 +655,106 @@ namespace MediaPortal.Player
 
     private int RenderLayers(GUILayers layers, Int16 width, Int16 height, Int16 arWidth, Int16 arHeight)
     {
-      if (!GUIGraphicsContext.InVmr9Render)
+      bool visible = false;
+      try
       {
-        GUIGraphicsContext.InVmr9Render = true;
-      }
-
-      if (GUIGraphicsContext.IsSwitchingToNewSkin)
-      {
-        return -1;
-      }
-
-      if (GUIWindowManager.IsSwitchingToNewWindow && !_vmr9Util.InMenu)
-      {
-        return 1; // (0) -> S_OK, (1) -> S_FALSE; //dont present video during window transitions
-      }
-
-      if (width > 0 && height > 0)
-      {
-        _vmr9Util.VideoWidth = width;
-        _vmr9Util.VideoHeight = height;
-        _vmr9Util.VideoAspectRatioX = arWidth;
-        _vmr9Util.VideoAspectRatioY = arHeight;
-        _arVideoWidth = arWidth;
-        _arVideoHeight = arHeight;
-
-        if (GUIGraphicsContext.IsWindowVisible)
+        if (_reEntrant)
         {
-          Size nativeSize = new Size(width, height);
-          _shouldRenderTexture = SetVideoWindow(nativeSize);
+          Log.Error("PlaneScene: re-entrancy in PresentImage");
+          return -1;
+        }
+        if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.LOST)
+        {
+          return -1;
+        }
+        if (_stopPainting)
+        {
+          return -1;
+        }
+
+        if (!GUIGraphicsContext.InVmr9Render)
+        {
+          GUIGraphicsContext.InVmr9Render = true;
+        }
+
+        if (GUIGraphicsContext.IsSwitchingToNewSkin)
+        {
+          return -1;
+        }
+
+        if (GUIWindowManager.IsSwitchingToNewWindow && !_vmr9Util.InMenu)
+        {
+          return 1; // (0) -> S_OK, (1) -> S_FALSE; //dont present video during window transitions
+        }
+
+        _reEntrant = true;
+        if (width > 0 && height > 0)
+        {
+          _vmr9Util.VideoWidth = width;
+          _vmr9Util.VideoHeight = height;
+          _vmr9Util.VideoAspectRatioX = arWidth;
+          _vmr9Util.VideoAspectRatioY = arHeight;
+          _arVideoWidth = arWidth;
+          _arVideoHeight = arHeight;
+
+          //Log.Debug("PlaneScene width {0}, height {1}", width, height);
+
+          if (GUIGraphicsContext.IsWindowVisible)
+          {
+            Size nativeSize = new Size(width, height);
+            _shouldRenderTexture = SetVideoWindow(nativeSize);
+          }
+          else
+          {
+            Size nativeSize = new Size(1, 1);
+            _shouldRenderTexture = SetVideoWindow(nativeSize);
+          }
+        }
+
+        Device device = GUIGraphicsContext.DX9Device;
+
+        device.Clear(ClearFlags.Target, Color.FromArgb(0, 0, 0, 0), 1.0f, 0);
+        device.BeginScene();
+
+        if (layers == GUILayers.over)
+        {
+          SubtitleRenderer.GetInstance().Render();
+          BDOSDRenderer.GetInstance().Render();
+          GUIGraphicsContext.RenderOverlay = true;
+        }
+
+        //bool visible = false;
+        if (_disableLowLatencyMode)
+        {
+          GUIGraphicsContext.RenderGUI.RenderFrame(GUIGraphicsContext.TimePassed, layers);
         }
         else
         {
-          Size nativeSize = new Size(1, 1);
-          _shouldRenderTexture = SetVideoWindow(nativeSize);
+          GUIGraphicsContext.RenderGUI.RenderFrame(GUIGraphicsContext.TimePassed, layers, ref visible);
         }
+
+        GUIFontManager.Present();
+        device.EndScene();
+
+        if (layers == GUILayers.under)
+        {
+          GUIGraphicsContext.RenderGui = false;
+          GUIGraphicsContext.RenderOverlay = false;
+        }
+
+        // Present() call is done on C++ side so we are able to use DirectX 9 Ex device
+        // which allows us to skip the v-sync wait. We don't want to wait with madVR
+        // is it only increases the UI rendering time.
+        //return visible ? 0 : 1; // S_OK, S_FALSE
       }
-
-      Device device = GUIGraphicsContext.DX9Device;
-
-      device.Clear(ClearFlags.Target, Color.FromArgb(0, 0, 0, 0), 1.0f, 0);
-      device.BeginScene();
-
-      if (layers == GUILayers.over)
+      catch (Exception)
       {
-        SubtitleRenderer.GetInstance().Render();
-        BDOSDRenderer.GetInstance().Render();
-        GUIGraphicsContext.RenderOverlay = true;
       }
-
-      bool visible = false;
-      if (_disableLowLatencyMode)
+      finally
       {
-        GUIGraphicsContext.RenderGUI.RenderFrame(GUIGraphicsContext.TimePassed, layers);
+        _reEntrant = false;
       }
-      else
-      {
-        GUIGraphicsContext.RenderGUI.RenderFrame(GUIGraphicsContext.TimePassed, layers, ref visible);
-      }
-
-      GUIFontManager.Present();
-      device.EndScene();
-
-      if (layers == GUILayers.under)
-      {
-        GUIGraphicsContext.RenderGui = false;
-        GUIGraphicsContext.RenderOverlay = false;
-      }
-
-      // Present() call is done on C++ side so we are able to use DirectX 9 Ex device
-      // which allows us to skip the v-sync wait. We don't want to wait with madVR
-      // is it only increases the UI rendering time.
-
-      return visible ? 0 : 1;  // S_OK, S_FALSE
+      return visible ? 0 : 1; // S_OK, S_FALSE
     }
 
     public void SetRenderTarget(uint target)

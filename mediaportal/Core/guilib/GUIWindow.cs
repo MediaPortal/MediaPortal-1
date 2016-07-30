@@ -1149,6 +1149,15 @@ namespace MediaPortal.GUI.Library
               {
                 break;
               }
+              if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR && switching)
+              {
+                // Some plugin get stuck in loop when madVR in use because it waiting madVR change that was already done before
+                if (GUIGraphicsContext.InVmr9Render)
+                {
+                  GUIWindowManager.Process();
+                  break;
+                }
+              }
               GUIWindowManager.Process();
             }
             GUIWindowManager.IsSwitchingToNewWindow = switching;
@@ -1893,6 +1902,7 @@ namespace MediaPortal.GUI.Library
                 }
                 return true;
               }
+
           }
 
           GUIControl cntlTarget = GetControl(message.TargetControlId);

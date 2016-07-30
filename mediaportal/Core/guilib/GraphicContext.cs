@@ -1037,14 +1037,20 @@ namespace MediaPortal.GUI.Library
       if (Thread.CurrentThread.Name != "MPMain" && Thread.CurrentThread.Name != "Config Main")
       {
         GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ONVIDEOWINDOWCHANGED, 0, 0, 0, 0, 0, null);
+        msg.Param1 = GUIGraphicsContext.VideoWindow.Left;
+        msg.Param2 = GUIGraphicsContext.VideoWindow.Top;
+        msg.Param3 = GUIGraphicsContext.VideoWindow.Width;
+        msg.Param4 = GUIGraphicsContext.VideoWindow.Height;
+        //Log.Debug("GraphicContext VideoWindowChanged (SendThreadMessage sender) Left: {0}, Top: {1}, Width: {2}, Height: {3}", msg.Param1, msg.Param2, msg.Param3, msg.Param4);
         GUIWindowManager.SendThreadMessage(msg);
       }
       else
       {
+        //Log.Debug("GraphicContext VideoWindowChanged (MP Main thread) Left: {0}, Top: {1}, Width: {2}, Height: {3}", VideoWindow.Left, VideoWindow.Top, VideoWindow.Width, VideoWindow.Height);
         if (OnVideoWindowChanged != null)
         {
-          Log.Debug("GraphicContext VideoWindowChanged()");
           OnVideoWindowChanged();
+          Log.Debug("GraphicContext VideoWindowChanged() MP Main thread");
         }
       }
     }
@@ -1128,10 +1134,12 @@ namespace MediaPortal.GUI.Library
       switch (message.Message)
       {
         case GUIMessage.MessageType.GUI_MSG_ONVIDEOWINDOWCHANGED:
+          //Log.Debug("GraphicContext VideoWindowChanged (SendThreadMessage receiver) Left: {0}, Top: {1}, Width: {2}, Height: {3}", message.Param1, message.Param2, message.Param3, message.Param4);
+          GUIGraphicsContext.VideoWindow = new Rectangle(message.Param1, message.Param2, message.Param3, message.Param4);
           if (OnVideoWindowChanged != null)
           {
-            Log.Debug("GraphicContext VideoWindowChanged()");
             OnVideoWindowChanged();
+            Log.Debug("GraphicContext VideoWindowChanged() SendThreadMessage receiver");
           }
           break;
         case GUIMessage.MessageType.GUI_MSG_SETVIDEOWINDOW:

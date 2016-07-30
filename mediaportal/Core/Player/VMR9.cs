@@ -823,7 +823,7 @@ namespace MediaPortal.Player
 
         if (_threadId == Thread.CurrentThread.ManagedThreadId)
         {
-          if (GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR)
+          if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.VMR9)
           {
             if (_qualityInterface != null)
             {
