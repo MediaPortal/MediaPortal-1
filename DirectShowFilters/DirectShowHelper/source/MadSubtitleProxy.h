@@ -46,5 +46,7 @@ class MadSubtitleProxy : public CUnknown, public ISubRenderCallback, public CCri
     DeviceState m_deviceState;
 
     MPMadPresenter* m_pPresenter;
+
+    bool m_pInitOSDRender = false;
 };
 

@@ -74,7 +74,7 @@ HRESULT MadSubtitleProxy::SetDevice(IDirect3DDevice9* device)
 
       if (!m_pMadD3DDev)
       {
-        m_pPresenter->m_pInitOSD = false;
+        m_pInitOSDRender = false;
         return S_FALSE;
       }
 
@@ -94,7 +94,12 @@ HRESULT MadSubtitleProxy::Render(REFERENCE_TIME frameStart, int left, int top, i
   {
     CAutoLock cAutoLock(this);
 
-    //m_pPresenter->InitializeOSD();
+    if (!m_pInitOSDRender)
+    {
+      m_pInitOSDRender = true;
+      m_pPresenter->m_pCallback->ForceOsdUpdate(true);
+      Log("MadSubtitleProxy::Render() ForceOsdUpdate");
+    }
     m_deviceState.Store();
     SetupMadDeviceState();
 
