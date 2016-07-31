@@ -188,8 +188,7 @@ namespace MediaPortal.Player
     protected bool UseMadVideoRenderer;      // is madVR used?
     protected bool UseEVRMadVRForTV;
     protected bool UseMadVideoRenderer3D;
-    protected DateTime playbackTimer;
-    private bool _notifyPlaying = true;
+    protected internal DateTime playbackTimer;
 
     #endregion
 
@@ -547,6 +546,7 @@ namespace MediaPortal.Player
         }
         else if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
         {
+          GUIGraphicsContext.MadVrOsd = false;
           IMediaControl mPMediaControl = (IMediaControl) graphBuilder;
           var backbuffer = GUIGraphicsContext.DX9Device.PresentationParameters;
           MadInit(_scene, backbuffer.BackBufferWidth, backbuffer.BackBufferHeight, (uint) upDevice.ToInt32(),
@@ -870,11 +870,12 @@ namespace MediaPortal.Player
       if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR && !GUIGraphicsContext.InVmr9Render)
       {
         TimeSpan tsPlay = DateTime.Now - playbackTimer;
-        if (tsPlay.Seconds >= 5)
+        // Register OSD back 2 seconds after rendering is done on madVR filter.
+        if (tsPlay.Seconds >= 2)
         {
-          if (_notifyPlaying)
+          if (GUIGraphicsContext.MadVrOsd)
           {
-            _notifyPlaying = false;
+            GUIGraphicsContext.MadVrOsd = false;
             GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_REGISTER_MADVR_OSD, 0, 0, 0, 0, 0, null);
             GUIWindowManager.SendThreadMessage(msg);
           }
@@ -1207,7 +1208,6 @@ namespace MediaPortal.Player
           Log.Debug("VMR9: StartMediaCtrl try to play with hr: 0x{0} - '{1}'", hr.ToString("X8"));
         }
         Log.Debug("VMR9: StartMediaCtrl hr: {0}", hr);
-        playbackTimer = DateTime.Now;
       }
       return hr;
     }

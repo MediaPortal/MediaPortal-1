@@ -49,6 +49,7 @@ class MPMadPresenter : public CUnknown, public IOsdRenderCallback, public CCritS
     bool m_pShutdown = false;
     bool m_pInitOSD = false;
     MadSubtitleProxy* m_subProxy = nullptr;
+    IVMR9Callback* m_pCallback = nullptr;
 
   private:
     HRESULT RenderToTexture(IDirect3DTexture9* pTexture);
@@ -61,8 +62,6 @@ class MPMadPresenter : public CUnknown, public IOsdRenderCallback, public CCritS
 
     IDirect3DDevice9Ex* m_pDevice = nullptr;
     IDirect3DDevice9Ex* m_pMadD3DDev = nullptr;
-
-    IVMR9Callback* m_pCallback = nullptr;
 
     IMediaControl* m_pMediaControl = nullptr;
 

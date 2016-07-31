@@ -793,11 +793,11 @@ namespace MediaPortal.Player
 
     public void ForceOsdUpdate(bool pForce)
     {
-      // Callback from C++ for madVR not used for now.
+      // Callback from C++ for madVR.
       if (pForce)
       {
-        var msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_REGISTER_MADVR_OSD, 0, 0, 0, 0, 0, null);
-        GUIWindowManager.SendThreadMessage(msg);
+        GUIGraphicsContext.MadVrOsd = true;
+        if (_vmr9Util != null) _vmr9Util.playbackTimer = DateTime.Now;
       }
     }
 

@@ -523,14 +523,14 @@ HRESULT MPMadPresenter::SetDevice(IDirect3DDevice9* pD3DDev)
     m_deviceState.SetDevice(pD3DDev);
     m_pCallback->SetSubtitleDevice((DWORD)pD3DDev);
     Log("MPMadPresenter::SetDevice() SetSubtitleDevice for D3D : 0x:%x", m_pMadD3DDev);
-    //if (m_pMediaControl)
-    //{
-    //  OAFilterState _fs = -1;
-    //  if (m_pMediaControl) m_pMediaControl->GetState(1000, &_fs);
-    //  if (_fs == State_Paused)
-    //    m_pMediaControl->Run();
-    //  Log("MPMadPresenter::SetDevice() m_pMediaControl : 0x:%x", _fs);
-    //}
+    if (m_pMediaControl)
+    {
+      OAFilterState _fs = -1;
+      if (m_pMediaControl) m_pMediaControl->GetState(1000, &_fs);
+      if (_fs == State_Paused)
+        m_pMediaControl->Run();
+      Log("MPMadPresenter::SetDevice() m_pMediaControl : 0x:%x", _fs);
+    }
   }
 
   if (m_pMadD3DDev)
