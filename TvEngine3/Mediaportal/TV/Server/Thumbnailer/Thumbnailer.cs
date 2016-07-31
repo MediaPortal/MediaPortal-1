@@ -342,6 +342,10 @@ namespace Mediaportal.TV.Server.Thumbnailer
         {
           this.LogWarn("thumbnailer: failed to get recording detail, ID = {0}", tveEvent.Recording);
         }
+        else if (r.MediaType != (int)MediaType.Television)
+        {
+          this.LogDebug("thumbnailer: non-TV recording, thumbnail not applicable");
+        }
         else
         {
           this.LogDebug("thumbnailer: enqueue recording, ID = {0}, file name = {0}", r.IdRecording, r.FileName ?? string.Empty);
