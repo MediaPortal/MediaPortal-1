@@ -58,6 +58,12 @@ using namespace std;
 #define DESCRIPTOR_AVC_VIDEO        0x28   
 #define DESCRIPTOR_HEVC_VIDEO       0x38   
 
+//TsReader/MP player video stream IDs
+#define VIDEO_STREAM_TYPE_MPEG2 		1
+#define VIDEO_STREAM_TYPE_H264 			2
+#define VIDEO_STREAM_TYPE_HEVC 			3
+
+
 class IPmtCallBack
 {
 public:

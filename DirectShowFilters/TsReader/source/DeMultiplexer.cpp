@@ -52,9 +52,9 @@
 // uncomment the //LogDebug to enable extra logging
 #define LOG_SAMPLES //LogDebug
 #define LOG_OUTSAMPLES //LogDebug
-
 #define LOG_SAMPLES_HEVC //LogDebug
 #define LOG_OUTSAMPLES_HEVC //LogDebug
+#define LOG_VID_BITRATE //LogDebug
 
 extern void LogDebug(const char *fmt, ...);
 extern void LogRotate();
@@ -136,8 +136,8 @@ CDeMultiplexer::CDeMultiplexer(CTsDuration& duration,CTsReaderFilter& filter)
   m_FirstVideoSample = 0x7FFFFFFF00000000LL;
   m_LastVideoSample = 0;
   
-  m_sampleTime = GET_TIME_NOW();
-  m_sampleTimePrev = GET_TIME_NOW();
+  m_sampleTime = 0;
+  m_sampleTimePrev = 0;
   m_byteRead = 0;
   m_bitRate = 0;
   m_LastDataFromRtsp = GET_TIME_NOW();
@@ -2308,18 +2308,6 @@ void CDeMultiplexer::FillVideoHEVC(CTsHeader& header, byte* tsPacket)
   if (headerlen < 188)
   {            
     int dataLen = 188-headerlen;
-
-  	m_byteRead = m_byteRead + dataLen;
-  	m_sampleTime = GET_TIME_NOW();
-  	DWORD elapsedTime = m_sampleTime - m_sampleTimePrev;
-  
-  	if (elapsedTime >= 5000)
-  	{
-      m_bitRate = (float)m_byteRead*8*1000/elapsedTime;
-  	  m_filter.OnBitRateChanged(m_bitRate);
-  	  m_sampleTimePrev = m_sampleTime;
-  	  m_byteRead = 0;
-    }
   
     p->SetCount(dataLen);
     p->SetData(&tsPacket[headerlen],dataLen);
@@ -2620,7 +2608,7 @@ void CDeMultiplexer::FillVideoHEVC(CTsHeader& header, byte* tsPacket)
             if ((nalIDp4 == HEVC_NAL_VPS) || (nalIDp4 == HEVC_NAL_SPS) || (nalIDp4 == HEVC_NAL_PPS)) //Process VPS, SPS & PPS data
             {
               //LogDebug("HEVC: VPS/SPS/PPS NAL, type = %d", nalIDp4);
-              Gop = m_mpegPesParser->OnTsPacket(p4->GetData(), p4->GetCount(), 3, m_mpegParserReset);
+              Gop = m_mpegPesParser->OnTsPacket(p4->GetData(), p4->GetCount(), VIDEO_STREAM_TYPE_HEVC, m_mpegParserReset);
               m_mpegParserReset = false;
             }
             
@@ -2692,6 +2680,25 @@ void CDeMultiplexer::FillVideoHEVC(CTsHeader& header, byte* tsPacket)
 
           if ((Gop || m_bFirstGopFound) && m_filter.GetVideoPin()->IsConnected())
           {
+            //Bitrate info calculation for MP player
+            m_byteRead = m_byteRead + p->GetCount();
+          	m_sampleTime = (float)timestamp.ToClock();
+          	float elapsedTime = m_sampleTime - m_sampleTimePrev;
+          	          
+          	if (elapsedTime > 5.0f)
+          	{
+              m_bitRate = ((float)m_byteRead*8.0f)/elapsedTime;
+          	  m_filter.OnBitRateChanged(m_bitRate);
+          	  m_sampleTimePrev = m_sampleTime;
+          	  m_byteRead = 0;
+          	  LOG_VID_BITRATE("HEVC: Rolling bitrate = %f", m_bitRate/1000000.0f);
+            }
+          	else if (elapsedTime < -0.5) 
+          	{
+          	  m_sampleTimePrev = m_sampleTime;
+            	m_byteRead = 0;
+          	}
+
             CRefTime Ref;
             CBuffer *pCurrentVideoBuffer = new CBuffer(p->GetCount());
             pCurrentVideoBuffer->Add(p->GetData(), p->GetCount());
@@ -2868,18 +2875,6 @@ void CDeMultiplexer::FillVideoH264(CTsHeader& header, byte* tsPacket)
   if (headerlen < 188)
   {            
     int dataLen = 188-headerlen;
-
-  	m_byteRead = m_byteRead + dataLen;
-  	m_sampleTime = GET_TIME_NOW();
-  	DWORD elapsedTime = m_sampleTime - m_sampleTimePrev;
-
-  	if (elapsedTime >= 5000)
-  	{
-      m_bitRate = (float)m_byteRead*8*1000/elapsedTime;
-  	  m_filter.OnBitRateChanged(m_bitRate);
-  	  m_sampleTimePrev = m_sampleTime;
-  	  m_byteRead = 0;
-    }
 
     p->SetCount(dataLen);
     p->SetData(&tsPacket[headerlen],dataLen);
@@ -3180,7 +3175,7 @@ void CDeMultiplexer::FillVideoH264(CTsHeader& header, byte* tsPacket)
             
             if (((nalIDp4 == H264_NAL_SPS) || (nalIDp4 == H264_NAL_PPS)) && (nalRefIdcp4 != 0)) //Process SPS & PPS data
             {
-              Gop = m_mpegPesParser->OnTsPacket(p4->GetData(), p4->GetCount(), 2, m_mpegParserReset);
+              Gop = m_mpegPesParser->OnTsPacket(p4->GetData(), p4->GetCount(), VIDEO_STREAM_TYPE_H264, m_mpegParserReset);
               m_mpegParserReset = false;
               
               if (Gop && !m_bFirstGopParsed)
@@ -3261,6 +3256,25 @@ void CDeMultiplexer::FillVideoH264(CTsHeader& header, byte* tsPacket)
 
           if ((Gop || m_bFirstGopFound) && m_filter.GetVideoPin()->IsConnected())
           {
+            //Bitrate info calculation for MP player
+            m_byteRead = m_byteRead + p->GetCount();
+          	m_sampleTime = (float)timestamp.ToClock();
+          	float elapsedTime = m_sampleTime - m_sampleTimePrev;
+          
+          	if (elapsedTime > 5.0f)
+          	{
+              m_bitRate = ((float)m_byteRead*8.0f)/elapsedTime;
+          	  m_filter.OnBitRateChanged(m_bitRate);
+          	  m_sampleTimePrev = m_sampleTime;
+          	  m_byteRead = 0;
+          	  LOG_VID_BITRATE("H264: Rolling bitrate = %f", m_bitRate/1000000.0f);
+            }
+          	else if (elapsedTime < -0.5) 
+          	{
+          	  m_sampleTimePrev = m_sampleTime;
+            	m_byteRead = 0;
+          	}
+
             CRefTime Ref;
             CBuffer *pCurrentVideoBuffer = new CBuffer(p->GetCount());
             pCurrentVideoBuffer->Add(p->GetData(), p->GetCount());
@@ -3445,18 +3459,6 @@ void CDeMultiplexer::FillVideoMPEG2(CTsHeader& header, byte* tsPacket)
   if (headerlen < 188)
   {
     int dataLen = 188-headerlen;
-
-  	m_byteRead = m_byteRead + dataLen;
-  	m_sampleTime = GET_TIME_NOW();
-  	DWORD elapsedTime = m_sampleTime - m_sampleTimePrev;
-  
-  	if (elapsedTime >= 5000)
-  	{
-      m_bitRate = (float)m_byteRead*8*1000/elapsedTime;
-  	  m_filter.OnBitRateChanged(m_bitRate);
-  	  m_sampleTimePrev = m_sampleTime;
-  	  m_byteRead = 0;
-    }
 
     p->SetCount(dataLen);
     p->SetData(&tsPacket[headerlen],dataLen);
@@ -3676,7 +3678,7 @@ void CDeMultiplexer::FillVideoMPEG2(CTsHeader& header, byte* tsPacket)
 
             // LogDebug("frame len %d decoded PTS %f (framerate %f), %c(%d)", p->GetCount(), m_CurrentVideoPts.IsValid ? (float)m_CurrentVideoPts.ToClock() : 0.0f,(float)m_curFramePeriod,frame_type,frame_count);
 
-            bool Gop = m_mpegPesParser->OnTsPacket(p->GetData(), p->GetCount(), 1, m_mpegParserReset);
+            bool Gop = m_mpegPesParser->OnTsPacket(p->GetData(), p->GetCount(), VIDEO_STREAM_TYPE_MPEG2, m_mpegParserReset);
             if (Gop)
             {
               m_mpegParserReset = true; //Reset next time around (so that it always searches for a full 'Gop' header)
@@ -3701,9 +3703,6 @@ void CDeMultiplexer::FillVideoMPEG2(CTsHeader& header, byte* tsPacket)
 
             if ((Gop || m_bFirstGopFound) && m_filter.GetVideoPin()->IsConnected())
             {
-              CRefTime Ref;
-              CBuffer *pCurrentVideoBuffer = new CBuffer(p->GetCount());
-              pCurrentVideoBuffer->Add(p->GetData(), p->GetCount());
               if (m_CurrentVideoPts.IsValid)
               {                                                     // Timestamp Ok.
                 m_LastValidFrameCount=frame_count;
@@ -3718,6 +3717,29 @@ void CDeMultiplexer::FillVideoMPEG2(CTsHeader& header, byte* tsPacket)
                   m_CurrentVideoPts.IsValid=true;
                 }
               }
+
+              //Bitrate info calculation for MP player
+              m_byteRead = m_byteRead + p->GetCount();
+            	m_sampleTime = (float)m_CurrentVideoPts.ToClock();
+            	float elapsedTime = m_sampleTime - m_sampleTimePrev;
+            
+            	if (elapsedTime > 5.0f)
+            	{
+                m_bitRate = ((float)m_byteRead*8.0f)/elapsedTime;
+            	  m_filter.OnBitRateChanged(m_bitRate);
+            	  m_sampleTimePrev = m_sampleTime;
+            	  m_byteRead = 0;
+          	    LOG_VID_BITRATE("MPEG2: Rolling bitrate = %f", m_bitRate/1000000.0f);
+              }
+            	else if (elapsedTime < -0.5) 
+            	{
+            	  m_sampleTimePrev = m_sampleTime;
+            	  m_byteRead = 0;
+            	}
+
+              CRefTime Ref;
+              CBuffer *pCurrentVideoBuffer = new CBuffer(p->GetCount());
+              pCurrentVideoBuffer->Add(p->GetData(), p->GetCount());
               pCurrentVideoBuffer->SetPts(m_CurrentVideoPts);   
               pCurrentVideoBuffer->SetPcr(m_duration.FirstStartPcr(),m_duration.MaxPcr());
               pCurrentVideoBuffer->MediaTime(Ref);

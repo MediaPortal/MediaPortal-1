@@ -165,8 +165,8 @@ public:
   bool m_bFlushRunning;
   bool m_bReadAheadFromFile;
 
-  DWORD m_sampleTime;
-  DWORD m_sampleTimePrev;
+  float m_sampleTime;
+  float m_sampleTimePrev;
   unsigned long m_byteRead;
   float m_bitRate;
 

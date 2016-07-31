@@ -59,7 +59,7 @@ bool CMpegPesParser::ParseVideo(byte* tsPacket,int vidType,bool reset)
 	bool parsed=false;
   __int64 framesize=hdrParser.GetSize();
 
-	if (vidType == 1) // mpeg2
+	if (vidType == VIDEO_STREAM_TYPE_MPEG2)
 	{
 		seqhdr seq;
 		if (hdrParser.Read(seq,framesize,&pmt,reset))
@@ -77,12 +77,12 @@ bool CMpegPesParser::ParseVideo(byte* tsPacket,int vidType,bool reset)
 				basicVideoInfo.isInterlaced=1;
 			else
 				basicVideoInfo.isInterlaced=0;
-			basicVideoInfo.streamType=1; //MPEG2
+			basicVideoInfo.streamType=VIDEO_STREAM_TYPE_MPEG2;
 			basicVideoInfo.isValid=true;
 			parsed=true;
 		}
 	}
-	else if (vidType == 2) //AVC/H264
+	else if (vidType == VIDEO_STREAM_TYPE_H264)
 	{
 	  // avchdr avc;
 		if (hdrParser.Read(avc,framesize,&pmt,reset))
@@ -100,7 +100,7 @@ bool CMpegPesParser::ParseVideo(byte* tsPacket,int vidType,bool reset)
 				basicVideoInfo.isInterlaced=1;
 			else
 				basicVideoInfo.isInterlaced=0;
-			basicVideoInfo.streamType=2; // H264
+			basicVideoInfo.streamType=VIDEO_STREAM_TYPE_H264;
 			basicVideoInfo.isValid=true;
 			
 		  //LogDebug("MpegPesParser: H264: SPS=%I64d, PPS=%I64d", avc.spslen, avc.ppslen);
@@ -145,7 +145,7 @@ bool CMpegPesParser::ParseVideo(byte* tsPacket,int vidType,bool reset)
 			parsed=true;
 		}
 	}
-	else if (vidType == 3) //HEVC
+	else if (vidType == VIDEO_STREAM_TYPE_HEVC)
 	{
 		if (hdrParser.Read(hevc,framesize,&pmt,reset))
 		{
@@ -162,7 +162,7 @@ bool CMpegPesParser::ParseVideo(byte* tsPacket,int vidType,bool reset)
 				basicVideoInfo.isInterlaced=1;
 			else
 				basicVideoInfo.isInterlaced=0;
-			basicVideoInfo.streamType=3; // HEVC
+			basicVideoInfo.streamType=VIDEO_STREAM_TYPE_HEVC;
 			basicVideoInfo.isValid=true;
 			
 		  //LogDebug("ParseVideo: SPS=%I64d, PPS=%I64d, VPS=%I64d",hevc.spslen, hevc.ppslen, hevc.vpslen);
