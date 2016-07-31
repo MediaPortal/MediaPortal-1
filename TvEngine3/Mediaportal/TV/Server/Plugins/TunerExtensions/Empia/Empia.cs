@@ -324,7 +324,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Empia
         }
         finally
         {
-          pin.Disconnect();
+          graph.Disconnect(pin);
           Release.ComObject("eMPIA infinite tee input pin", ref infTeeInputPin);
           graph.RemoveFilter(infTee);
           Release.ComObject("eMPIA infinite tee", ref infTee);

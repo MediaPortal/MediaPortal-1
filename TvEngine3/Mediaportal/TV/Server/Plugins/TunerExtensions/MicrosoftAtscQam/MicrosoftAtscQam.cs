@@ -239,7 +239,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftAtscQam
         }
         finally
         {
-          pin.Disconnect();
+          graph.Disconnect(pin);
           Release.ComObject("Microsoft ATSC QAM infinite tee input pin", ref infTeeInputPin);
           graph.RemoveFilter(infTee);
           Release.ComObject("Microsoft ATSC QAM infinite tee", ref infTee);

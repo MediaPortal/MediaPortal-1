@@ -1466,7 +1466,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MdPlugin
               this.LogDebug("MD plugin: nothing to do");
               return true;
             }
-            connectedPin.Disconnect();
+            _graph.Disconnect(connectedPin);
           }
           IBaseFilter lastFilter = upstreamFilter;
           if (!AddToGraph(_graph, ref lastFilter))

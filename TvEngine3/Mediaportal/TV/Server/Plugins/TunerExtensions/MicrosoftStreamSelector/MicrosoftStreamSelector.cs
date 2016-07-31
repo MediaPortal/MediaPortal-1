@@ -222,7 +222,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftStreamSelector
         }
         finally
         {
-          pin.Disconnect();
+          graph.Disconnect(pin);
           Release.ComObject("Microsoft stream selector infinite tee input pin", ref infTeeInputPin);
           graph.RemoveFilter(infTee);
           Release.ComObject("Microsoft stream selector infinite tee", ref infTee);

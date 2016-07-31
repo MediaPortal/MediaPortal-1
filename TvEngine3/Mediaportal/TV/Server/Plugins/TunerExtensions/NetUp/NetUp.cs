@@ -787,7 +787,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
         }
         finally
         {
-          pin.Disconnect();
+          graph.Disconnect(pin);
           Release.ComObject("NetUP infinite tee input pin", ref infTeeInputPin);
           graph.RemoveFilter(infTee);
           Release.ComObject("NetUP infinite tee", ref infTee);
