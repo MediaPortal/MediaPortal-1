@@ -1324,7 +1324,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
       {
         DevicesInUse.Instance.Remove(_deviceAudio);
         _deviceAudio.Dispose();
-        _deviceAudio = null;
       }
       if (_deviceVideo != null)
       {

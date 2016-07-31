@@ -149,6 +149,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
     /// </summary>
     private IBaseFilter _filterVbiSplitter = null;
 
+    /// <summary>
+    /// The upstream VBI output pin, usually associated with a video capture
+    /// filter.
+    /// </summary>
+    private IPin _pinUpstreamVbiOutput = null;
+
     #region settings
 
     /// <summary>
@@ -195,11 +201,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
     /// <summary>
     /// Initialise a new instance of the <see cref="Encoder"/> class.
     /// </summary>
-    /// <param name="isVbiEnabled"><c>True</c> if the vertical blanking interval data source should be detected and connected.</param>
-    public Encoder(bool isVbiEnabled = true)
+    public Encoder()
     {
-      _isVbiEnabled = isVbiEnabled;
-
       if (MEDIA_TYPES_CAPTURE.Count != 0)
       {
         return;
@@ -295,42 +298,47 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
         // Add a VBI splitter/decoder for teletext and
         // closed caption support.
         // ------------------------------------------------
-        if (_isVbiEnabled && capture.VideoFilter != null)
+        if (capture.VideoFilter != null)
         {
+          IBaseFilter vbiFilter = capture.VideoFilter;
           IPin vbiPin = null;
-          if (FindPinByCategoryOrMediaType(capture.VideoFilter, PinCategory.VBI, MEDIA_TYPES_VBI, out vbiPin))
+          try
           {
-            try
+            if (
+              FindPinByCategoryOrMediaType(vbiFilter, PinCategory.VBI, MEDIA_TYPES_VBI, out vbiPin) &&
+              AddAndConnectVbiFilter(graph, vbiPin, out _filterVbiSplitter)
+            )
             {
-              IBaseFilter vbiFilter = capture.VideoFilter;
-              if (AddAndConnectVbiFilter(graph, vbiPin, out _filterVbiSplitter))
-              {
-                vbiFilter = _filterVbiSplitter;
-              }
-              if (FindPinByCategoryOrMediaType(vbiFilter, PinCategory.TeleText, MEDIA_TYPES_TELETEXT, out teletextPin))
-              {
-                this.LogDebug("WDM analog encoder: found teletext output");
-                pinsToConnect.Add(teletextPin);
-              }
-              if (FindPinByCategoryOrMediaType(vbiFilter, Guid.Empty, MEDIA_TYPES_VPS, out vpsPin))
-              {
-                this.LogDebug("WDM analog encoder: found video program system output");
-                pinsToConnect.Add(vpsPin);
-              }
-              if (FindPinByCategoryOrMediaType(vbiFilter, Guid.Empty, MEDIA_TYPES_WSS, out wssPin))
-              {
-                this.LogDebug("WDM analog encoder: found wide screen signalling output");
-                pinsToConnect.Add(wssPin);
-              }
-              if (FindPinByCategoryOrMediaType(vbiFilter, PinCategory.CC, MEDIA_TYPES_CLOSED_CAPTIONS, out closedCaptionsPin))
-              {
-                this.LogDebug("WDM analog encoder: found closed captions output");
-              }
+              _isVbiEnabled = true;
+              _pinUpstreamVbiOutput = vbiPin;
+              vbiFilter = _filterVbiSplitter;
             }
-            finally
+          }
+          finally
+          {
+            if (_pinUpstreamVbiOutput == null && vbiPin != null)
             {
               Release.ComObject("WDM analog encoder capture VBI output pin", ref vbiPin);
             }
+          }
+          if (FindPinByCategoryOrMediaType(vbiFilter, PinCategory.TeleText, MEDIA_TYPES_TELETEXT, out teletextPin))
+          {
+            this.LogDebug("WDM analog encoder: found teletext output");
+            pinsToConnect.Add(teletextPin);
+          }
+          if (FindPinByCategoryOrMediaType(vbiFilter, Guid.Empty, MEDIA_TYPES_VPS, out vpsPin))
+          {
+            this.LogDebug("WDM analog encoder: found video program system output");
+            pinsToConnect.Add(vpsPin);
+          }
+          if (FindPinByCategoryOrMediaType(vbiFilter, Guid.Empty, MEDIA_TYPES_WSS, out wssPin))
+          {
+            this.LogDebug("WDM analog encoder: found wide screen signalling output");
+            pinsToConnect.Add(wssPin);
+          }
+          if (FindPinByCategoryOrMediaType(vbiFilter, PinCategory.CC, MEDIA_TYPES_CLOSED_CAPTIONS, out closedCaptionsPin))
+          {
+            this.LogDebug("WDM analog encoder: found closed captions output");
           }
         }
 
@@ -1040,10 +1048,79 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
     /// <param name="channel">The channel to tune to.</param>
     public void PerformTuning(IChannel channel)
     {
+      this.LogDebug("WDM analog encoder: perform tuning");
+
+      // Hauppauge have a bug in the driver for their HVR-22** products which
+      // will probably never be fixed. The bug causes a BSOD when the capture
+      // filter's VBI output pin is connected and the tuner transitions from
+      // being locked onto signal to unlocked. Due to the nature of the
+      // pre-conditions, the bug mainly affects scanning:
+      // http://forum.team-mediaportal.com/threads/hvr-2250-scanning-channels-causes-crash.102858/
+      // http://forum.team-mediaportal.com/threads/bsod-when-scanning-channels-analog-cable-hvr-2255-f111.132566/
+      //
+      // The following work-around should avoid BSODs in ideal conditions.
+      if (_pinUpstreamVbiOutput != null && _filterVbiSplitter != null)
+      {
+        bool isScanning = string.IsNullOrEmpty(channel.Name);
+        if ((!isScanning && !_isVbiEnabled) || (isScanning && _isVbiEnabled))
+        {
+          FilterInfo filterInfo;
+          int hr = _filterVbiSplitter.QueryFilterInfo(out filterInfo);
+          if (hr != (int)NativeMethods.HResult.S_OK || filterInfo.pGraph == null)
+          {
+            this.LogWarn("WDM analog encoder: failed to get VBI splitter filter info, hr = 0x{0:x}", hr);
+          }
+          else
+          {
+            try
+            {
+              if (isScanning && _isVbiEnabled)
+              {
+                this.LogDebug("WDM analog encoder: disconnect VBI");
+                hr = filterInfo.pGraph.Disconnect(_pinUpstreamVbiOutput);
+                _isVbiEnabled = hr != (int)NativeMethods.HResult.S_OK;
+                if (_isVbiEnabled)
+                {
+                  this.LogWarn("WDM analog encoder: failed to disconnect VBI splitter, hr = 0x{0:x}", hr);
+                }
+              }
+              else
+              {
+                this.LogDebug("WDM analog encoder: reconnect VBI");
+                IPin pin = null;
+                try
+                {
+                  pin = DsFindPin.ByDirection(_filterVbiSplitter, PinDirection.Input, 0);
+                  hr = filterInfo.pGraph.ConnectDirect(_pinUpstreamVbiOutput, pin, null);
+                  _isVbiEnabled = hr == (int)NativeMethods.HResult.S_OK;
+                  if (!_isVbiEnabled)
+                  {
+                    this.LogWarn("WDM analog encoder: failed to reconnect VBI splitter, hr = 0x{0:x}", hr);
+                  }
+                }
+                catch (Exception ex)
+                {
+                  this.LogWarn(ex, "WDM analog encoder: failed to reconnect VBI splitter");
+                }
+                finally
+                {
+                  Release.ComObject("WDM analog encoder VBI splitter filter input pin", ref pin);
+                }
+              }
+            }
+            finally
+            {
+              Release.FilterInfo(ref filterInfo);
+            }
+          }
+        }
+      }
+
+      this.LogDebug("WDM analog encoder: set TS multiplexer active components");
       ITsMultiplexer muxer = _filterTsMultiplexer as ITsMultiplexer;
       if (channel.MediaType == Mediaportal.TV.Server.Common.Types.Enum.MediaType.Television)
       {
-        muxer.SetActiveComponents(true, true, true, true, true);
+        muxer.SetActiveComponents(true, true, _isVbiEnabled, true, true);
       }
       else
       {
@@ -1065,7 +1142,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
       }
 
       Release.ComObject("WDM analog encoder TS multiplexer filter", ref _filterTsMultiplexer);
+      Release.ComObject("WDM analog encoder upstream VBI output pin", ref _pinUpstreamVbiOutput);
       Release.ComObject("WDM analog encoder VBI splitter filter", ref _filterVbiSplitter);
+      _isVbiEnabled = false;
 
       if (_filterEncoderAudio != null && _filterEncoderAudio != _filterEncoderVideo)
       {
@@ -1079,7 +1158,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
         {
           DevicesInUse.Instance.Remove(_deviceEncoderAudio);
           _deviceEncoderAudio.Dispose();
-          _deviceEncoderAudio = null;
         }
       }
 
