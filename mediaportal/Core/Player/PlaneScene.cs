@@ -326,7 +326,7 @@ namespace MediaPortal.Player
           break;
         case GUIMessage.MessageType.GUI_MSG_REGISTER_MADVR_OSD:
           if (VMR9Util.g_vmr9 != null)
-            VMR9Util.g_vmr9.RegisterOsd();
+            VMR9Util.g_vmr9.WindowsMessageMP();
           break;
       }
     }
@@ -793,6 +793,7 @@ namespace MediaPortal.Player
 
     public void ForceOsdUpdate(bool pForce)
     {
+      // Callback from C++ for madVR not used for now.
       if (pForce)
       {
         var msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_REGISTER_MADVR_OSD, 0, 0, 0, 0, 0, null);

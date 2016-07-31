@@ -1014,7 +1014,7 @@ namespace MediaPortal.Player
         _videoWin.put_WindowStyle((WindowStyle)((int)WindowStyle.Child + (int)WindowStyle.ClipSiblings + (int)WindowStyle.ClipChildren));
         _videoWin.put_MessageDrain(GUIGraphicsContext.form.Handle);
       }
-      hr = _mediaCtrl.Run();
+      if (VMR9Util.g_vmr9 != null) hr = VMR9Util.g_vmr9.StartMediaCtrl(_mediaCtrl);
       if (hr < 0)
       {
         Log.Error("BDPlayer: Unable to start playing");

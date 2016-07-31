@@ -324,8 +324,7 @@ namespace MediaPortal.Player
             }
           }
         }
-
-        hr = _mediaCtrl.Run();
+        if (VMR9Util.g_vmr9 != null) hr = VMR9Util.g_vmr9.StartMediaCtrl(_mediaCtrl);
         if (hr < 0 || hr > 1)
         {
           HResult hrdebug = new HResult(hr);

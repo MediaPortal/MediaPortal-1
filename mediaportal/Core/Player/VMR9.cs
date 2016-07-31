@@ -188,6 +188,8 @@ namespace MediaPortal.Player
     protected bool UseMadVideoRenderer;      // is madVR used?
     protected bool UseEVRMadVRForTV;
     protected bool UseMadVideoRenderer3D;
+    protected DateTime playbackTimer;
+    private bool _notifyPlaying = true;
 
     #endregion
 
@@ -415,7 +417,9 @@ namespace MediaPortal.Player
     /// <param name="graphBuilder"></param>
     public void WindowsMessageMP()
     {
+      Log.Debug("WMR9: Delayed OSD Callback");
       WindowsMessage();
+      RegisterOsd();
     }
 
     /// <summary>
@@ -543,14 +547,13 @@ namespace MediaPortal.Player
         }
         else if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
         {
-          IVideoWindow videoWin = (IVideoWindow) graphBuilder;
-          videoWin.put_Owner(GUIGraphicsContext.ActiveForm);
           IMediaControl mPMediaControl = (IMediaControl) graphBuilder;
           var backbuffer = GUIGraphicsContext.DX9Device.PresentationParameters;
           MadInit(_scene, backbuffer.BackBufferWidth, backbuffer.BackBufferHeight, (uint) upDevice.ToInt32(),
             (uint) GUIGraphicsContext.ActiveForm.ToInt32(), ref _vmr9Filter, mPMediaControl);
           hr = new HResult(graphBuilder.AddFilter(_vmr9Filter, "madVR"));
           Log.Info("VMR9: added madVR Renderer to graph");
+          MadvrInterface.SetRenderCallback(_vmr9Filter);
         }
         else
         {
@@ -801,6 +804,10 @@ namespace MediaPortal.Player
       {
         return;
       }
+
+      // Used for madVR
+      ProcessMadVrOsd();
+
       if (g_Player.Playing && g_Player.IsDVD && g_Player.IsDVDMenu)
       {
         GUIGraphicsContext.Vmr9FPS = 0f;
@@ -851,6 +858,23 @@ namespace MediaPortal.Player
         GUIGraphicsContext.Vmr9FPS = 0f;
         currentVmr9State = Vmr9PlayState.Repaint;
         if (_scene != null) _scene.DrawVideo = false;
+      }
+    }
+
+    public void ProcessMadVrOsd()
+    {
+      if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR && !GUIGraphicsContext.InVmr9Render)
+      {
+        TimeSpan tsPlay = DateTime.Now - playbackTimer;
+        if (tsPlay.Seconds >= 5)
+        {
+          if (_notifyPlaying)
+          {
+            _notifyPlaying = false;
+            GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_REGISTER_MADVR_OSD, 0, 0, 0, 0, 0, null);
+            GUIWindowManager.SendThreadMessage(msg);
+          }
+        }
       }
     }
 
@@ -1151,6 +1175,37 @@ namespace MediaPortal.Player
         }
         return _scene.Enabled;
       }
+    }
+
+    public int StartMediaCtrl(IMediaControl mediaCtrl)
+    {
+      MadvrInterface.OsdSetRenderCallback(_vmr9Filter);
+      var hr = mediaCtrl.Run();
+      Log.Debug("VMR9: StartMediaCtrl start hr: {0}", hr);
+      DsError.ThrowExceptionForHR(hr);
+      // S_FALSE from IMediaControl::Run means: The graph is preparing to run, but some filters have not completed the transition to a running state.
+      if (hr == 1)
+      {
+        // wait max. 5 seconds for the graph to transition to the running state
+        DateTime startTime = DateTime.Now;
+        FilterState filterState;
+        do
+        {
+          Thread.Sleep(10);
+          hr = mediaCtrl.GetState(10, out filterState);
+          hr = mediaCtrl.Run();
+          MadvrInterface.OsdSetRenderCallback(_vmr9Filter);
+          // check with timeout max. 10 times a second if the state changed
+        } while ((hr != 0) && ((DateTime.Now - startTime).TotalSeconds <= 5));
+        if (hr != 0) // S_OK
+        {
+          DsError.ThrowExceptionForHR(hr);
+          Log.Debug("VMR9: StartMediaCtrl try to play with hr: 0x{0} - '{1}'", hr.ToString("X8"));
+        }
+        Log.Debug("VMR9: StartMediaCtrl hr: {0}", hr);
+        playbackTimer = DateTime.Now;
+      }
+      return hr;
     }
 
     public void Vmr9MediaCtrl(IMediaControl mediaCtrl)

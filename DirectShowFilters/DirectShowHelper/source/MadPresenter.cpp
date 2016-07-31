@@ -26,6 +26,8 @@
 
 // For more details for memory leak detection see the alloctracing.h header
 #include "..\..\alloctracing.h"
+#include "StdString.h"
+#include "../../mpc-hc_subs/src/dsutil/DSUtil.h"
 
 const DWORD D3DFVF_VID_FRAME_VERTEX = D3DFVF_XYZRHW | D3DFVF_TEX1;
 
@@ -55,6 +57,9 @@ MPMadPresenter::MPMadPresenter(IVMR9Callback* pCallback, DWORD width, DWORD heig
 MPMadPresenter::~MPMadPresenter()
 {
   CAutoLock cAutoLock(this);
+  SAFE_DELETE(m_pMadD3DDev);
+  SAFE_DELETE(m_pCallback);
+
   Log("MPMadPresenter::Destructor() - instance 0x%x", this);
 }
 
@@ -90,6 +95,14 @@ void MPMadPresenter::InitializeOSDClear()
   }
 }
 
+void MPMadPresenter::SetOSDCallback()
+{
+  {
+    CAutoLock cAutoLock(this);
+    InitializeOSD();
+  }
+}
+
 IBaseFilter* MPMadPresenter::Initialize()
 {
   CAutoLock cAutoLock(this);
@@ -118,8 +131,18 @@ IBaseFilter* MPMadPresenter::Initialize()
 
   m_pCommand->SendCommandBool("disableSeekbar", true);
 
-  pWindow->put_Owner(m_hParent);
+  // MPC-HC
+  CWnd* m_pVideoWnd = CWnd::FromHandle(reinterpret_cast<HWND>(m_hParent));
+  pWindow->put_Owner((OAHWND)m_pVideoWnd->m_hWnd);
+  pWindow->put_WindowStyle(WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN);
+  pWindow->put_MessageDrain((OAHWND)m_pVideoWnd->m_hWnd);
   pWindow->SetWindowPosition(0, 0, m_dwGUIWidth, m_dwGUIHeight);
+
+  for (CWnd* pWnd = m_pVideoWnd->GetWindow(GW_CHILD); pWnd; pWnd = pWnd->GetNextWindow()) {
+    // 1. lets WM_SETCURSOR through (not needed as of now)
+    // 2. allows CMouse::CursorOnWindow() to work with m_pVideoWnd
+    pWnd->EnableWindow(FALSE);
+  }
 
   // TODO implement IMadVRSubclassReplacement
   //pSubclassReplacement->DisableSubclassing();
@@ -141,6 +164,9 @@ HRESULT MPMadPresenter::Shutdown()
       m_pCallback->Release();
       m_pCallback = nullptr;
     }
+
+    //// Delay for 2 seconds on init to clear all pending garbage from C#
+    //Sleep(2000); // TODO Test for 3D
 
     Log("MPMadPresenter::Shutdown() scope done ");
   } // Scope for autolock
@@ -166,14 +192,16 @@ HRESULT MPMadPresenter::Shutdown()
       m_pCommand->Release();
     }
 
-    m_pMad->Release();
-    m_pMad = nullptr;
-
-    // TODO see if really needed
-    //if (pOsdServices)
-    //{
-    //  pOsdServices->OsdSetRenderCallback("MP-GUI", nullptr, nullptr);
-    //}
+    if (m_pMadD3DDev) m_pMadD3DDev->Release();
+    if (m_pDevice) m_pDevice->Release();
+    if (m_pMadGuiVertexBuffer) m_pMadGuiVertexBuffer.Release();
+    if (m_pMadOsdVertexBuffer) m_pMadOsdVertexBuffer.Release();
+    if (m_pMadOsdVertexBuffer) m_pMadOsdVertexBuffer.Release();
+    if (m_pRenderTextureOsd) m_pRenderTextureOsd.Release();
+    if (m_pMPTextureGui) m_pMPTextureGui.Release();
+    if (m_pMPTextureOsd) m_pMPTextureOsd.Release();
+    if (m_pMad) m_pMad->Release();
+    if (pOsdServices) pOsdServices->OsdSetRenderCallback("MP-GUI", nullptr, nullptr);
   }
 
   Log("MPMadPresenter::Shutdown()");
@@ -495,14 +523,14 @@ HRESULT MPMadPresenter::SetDevice(IDirect3DDevice9* pD3DDev)
     m_deviceState.SetDevice(pD3DDev);
     m_pCallback->SetSubtitleDevice((DWORD)pD3DDev);
     Log("MPMadPresenter::SetDevice() SetSubtitleDevice for D3D : 0x:%x", m_pMadD3DDev);
-    if (m_pMediaControl)
-    {
-      OAFilterState _fs = -1;
-      if (m_pMediaControl) m_pMediaControl->GetState(1000, &_fs);
-      if (_fs == State_Paused)
-        m_pMediaControl->Run();
-      Log("MPMadPresenter::SetDevice() m_pMediaControl : 0x:%x", _fs);
-    }
+    //if (m_pMediaControl)
+    //{
+    //  OAFilterState _fs = -1;
+    //  if (m_pMediaControl) m_pMediaControl->GetState(1000, &_fs);
+    //  if (_fs == State_Paused)
+    //    m_pMediaControl->Run();
+    //  Log("MPMadPresenter::SetDevice() m_pMediaControl : 0x:%x", _fs);
+    //}
   }
 
   if (m_pMadD3DDev)

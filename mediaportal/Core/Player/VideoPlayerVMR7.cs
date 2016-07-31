@@ -378,8 +378,7 @@ namespace MediaPortal.Player
             videoWin.put_WindowStyle((WindowStyle)((int)WindowStyle.Child + (int)WindowStyle.ClipChildren + (int)WindowStyle.ClipSiblings));
             videoWin.put_MessageDrain(GUIGraphicsContext.form.Handle);
           }
-          hr = mediaCtrl.Run();
-          DsError.ThrowExceptionForHR(hr);
+          if (VMR9Util.g_vmr9 != null) hr = VMR9Util.g_vmr9.StartMediaCtrl(mediaCtrl);
         }
         catch (Exception error)
         {
