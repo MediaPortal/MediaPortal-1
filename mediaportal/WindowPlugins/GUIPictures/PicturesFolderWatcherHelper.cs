@@ -167,7 +167,7 @@ namespace MediaPortal.GUI.Pictures
         _Timer.AutoReset = true;
         _Timer.Enabled = watcherFile.EnableRaisingEvents;
       }
-      catch (ArgumentException ex)
+      catch (Exception ex)
       {
         Log.Error("PicturesFolderWatcher Unable to turn on monitoring for: {0} Exception: {1}", _currentFolder,
                   ex.Message);

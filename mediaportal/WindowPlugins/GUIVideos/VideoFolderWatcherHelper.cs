@@ -190,7 +190,7 @@ namespace MediaPortal.GUI.Video
         _Timer.AutoReset = true;
         _Timer.Enabled = watcherFile.EnableRaisingEvents;
       }
-      catch (ArgumentException ex)
+      catch (Exception ex)
       {
         Log.Error("VideoFolderWatcher Unable to turn on monitoring for: {0} Exception: {1}", _currentFolder,
                   ex.Message);
