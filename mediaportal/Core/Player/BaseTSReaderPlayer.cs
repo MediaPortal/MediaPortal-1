@@ -443,11 +443,19 @@ namespace MediaPortal.Player
         {
           return "Mpeg2";
         }
-        if (sType.subType == MEDIASUBTYPE_LATM_AAC_AUDIO) //MediaSubType.LATMAAC)
+        if (sType.subType == MEDIASUBTYPE_LATM_AAC_AUDIO)
         {
           return "LATMAAC";
         }
-        if (sType.subType == MEDIASUBTYPE_AAC_AUDIO) //MediaSubType.AAC)
+        if (sType.subType == MEDIASUBTYPE_LOAS_AAC_AUDIO)
+        {
+          return "LATMAAC";
+        }        
+        if (sType.subType == MEDIASUBTYPE_RAW_AAC_AUDIO)
+        {
+          return "AAC";
+        }
+        if (sType.subType == MEDIASUBTYPE_ADTS_AAC_AUDIO)
         {
           return "AAC";
         }
@@ -2069,9 +2077,19 @@ namespace MediaPortal.Player
       get { return new Guid("000001ff-0000-0010-8000-00aa00389b71"); }
     }
 
-    private static Guid MEDIASUBTYPE_AAC_AUDIO
+    private static Guid MEDIASUBTYPE_RAW_AAC_AUDIO
     {
       get { return new Guid("000000ff-0000-0010-8000-00aa00389b71"); }
+    }
+
+    private static Guid MEDIASUBTYPE_LOAS_AAC_AUDIO
+    {
+      get { return new Guid("00001602-0000-0010-8000-00aa00389b71"); }
+    }
+    
+    private static Guid MEDIASUBTYPE_ADTS_AAC_AUDIO
+    {
+      get { return new Guid("00001600-0000-0010-8000-00aa00389b71"); }
     }
 
     #endregion
