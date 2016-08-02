@@ -131,7 +131,10 @@ void CPmtParser::OnNewSection(CSection& section)
         stream_type==SERVICE_TYPE_AUDIO_AAC || 
         stream_type==SERVICE_TYPE_AUDIO_LATM_AAC ||
         stream_type==SERVICE_TYPE_AUDIO_DD_PLUS ||
-        stream_type==SERVICE_TYPE_AUDIO_E_AC3)
+        stream_type==SERVICE_TYPE_AUDIO_E_AC3 ||
+        stream_type==SERVICE_TYPE_AUDIO_DTS ||     
+        stream_type==SERVICE_TYPE_AUDIO_DTS_HD ||
+        stream_type==SERVICE_TYPE_AUDIO_DTS_HDMA)
       {				  
         AudioPid pid;
         pid.Pid=elementary_PID;
@@ -180,7 +183,7 @@ void CPmtParser::OnNewSection(CSection& section)
           }
         }
   						
-        if(indicator==DESCRIPTOR_DVB_AC3 || indicator==DESCRIPTOR_DVB_E_AC3)
+        if(indicator==DESCRIPTOR_DVB_AC3 || indicator==DESCRIPTOR_DVB_E_AC3 || indicator==DESCRIPTOR_DVB_DTS)
         {							
           bool newPid = true;
           if (m_pidInfo.audioPids.size() > 0)	
@@ -196,7 +199,18 @@ void CPmtParser::OnNewSection(CSection& section)
           {
             AudioPid pid;
             pid.Pid=elementary_PID;
-            pid.AudioServiceType=(indicator==DESCRIPTOR_DVB_AC3) ? SERVICE_TYPE_AUDIO_AC3 : SERVICE_TYPE_AUDIO_DD_PLUS;
+            switch (indicator)
+            {
+              case DESCRIPTOR_DVB_AC3:
+                pid.AudioServiceType=SERVICE_TYPE_AUDIO_AC3;
+                break;
+              case DESCRIPTOR_DVB_E_AC3:
+                pid.AudioServiceType=SERVICE_TYPE_AUDIO_DD_PLUS;
+                break;
+              case DESCRIPTOR_DVB_DTS:
+                pid.AudioServiceType=SERVICE_TYPE_AUDIO_DTS;
+                break;
+            }
             
             for(unsigned int i(0); i<tempPids.size(); i++)
             {

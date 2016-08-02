@@ -359,6 +359,13 @@ bool CMpegPesParser::ParseAudio(byte* audioPacket, int streamType, bool reset)
   	    streamType == SERVICE_TYPE_AUDIO_E_AC3)
   	{
       basicAudioInfo.channels=6;
+  	} 
+  	 	
+  	if (streamType == SERVICE_TYPE_AUDIO_DTS ||   
+  	    streamType == SERVICE_TYPE_AUDIO_DTS_HD ||
+  	    streamType == SERVICE_TYPE_AUDIO_DTS_HDMA)
+  	{
+      basicAudioInfo.channels=6;
   	}  	
   }
 	

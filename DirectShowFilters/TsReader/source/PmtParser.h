@@ -42,6 +42,9 @@ using namespace std;
 #define SERVICE_TYPE_AUDIO_LATM_AAC 0x11 //LATM AAC audio
 #define SERVICE_TYPE_AUDIO_DD_PLUS  0x84 
 #define SERVICE_TYPE_AUDIO_E_AC3    0x87 //ATSC E-AC3 stream
+#define SERVICE_TYPE_AUDIO_DTS      0x82
+#define SERVICE_TYPE_AUDIO_DTS_HD   0x85
+#define SERVICE_TYPE_AUDIO_DTS_HDMA 0x86 
 
 #define SERVICE_TYPE_DVB_SUBTITLES1 0x5
 #define SERVICE_TYPE_DVB_SUBTITLES2 0x6
@@ -57,6 +60,7 @@ using namespace std;
 #define DESCRIPTOR_AUDIO_STREAM     0x03   
 #define DESCRIPTOR_AVC_VIDEO        0x28   
 #define DESCRIPTOR_HEVC_VIDEO       0x38   
+#define DESCRIPTOR_DVB_DTS          0x7b
 
 //TsReader/MP player video stream IDs
 #define VIDEO_STREAM_TYPE_MPEG2 		1
