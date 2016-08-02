@@ -156,6 +156,7 @@
     <ClInclude Include="source\dshowhelper.h" />
     <ClInclude Include="source\DX9AllocatorPresenter.h" />
     <ClInclude Include="source\EVRCustomPresenter.h" />
+    <ClInclude Include="source\Geometry.h" />
     <ClInclude Include="source\IAVSyncClock.h" />
     <ClInclude Include="source\IMF.h" />
     <ClInclude Include="source\MadPresenter.h" />
@@ -164,6 +165,7 @@
     <ClInclude Include="source\MyQueue.h" />
     <ClInclude Include="source\OuterEVR.h" />
     <ClInclude Include="source\Scheduler.h" />
+    <ClInclude Include="source\smartptr.h" />
     <ClInclude Include="source\StatsRenderer.h" />
     <ClInclude Include="source\StdAfx.h" />
     <ClInclude Include="source\StdString.h" />

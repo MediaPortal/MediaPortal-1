@@ -52,11 +52,6 @@ void MadSubtitleProxy::Shutdown()
       m_pCallback->Release();
       m_pCallback = nullptr;
     }
-
-    if (m_pPresenter->m_subProxy)
-    {
-      m_pPresenter->m_subProxy->Release();
-    }
   }
 }
 

@@ -30,6 +30,11 @@ void DeviceState::SetDevice(IDirect3DDevice9* pDevice)
   m_pD3DDev = pDevice;
 }
 
+void DeviceState::Store_Surface(IDirect3DSurface9* pSurface)
+{
+  m_pSurface = pSurface;
+}
+
 HRESULT DeviceState::Store()
 {
   HRESULT hr = E_UNEXPECTED;
@@ -121,6 +126,9 @@ HRESULT DeviceState::Restore()
 
   if (m_pStreamData)
     m_pStreamData->Release();
+
+  if (m_pSurface)
+    m_pSurface->Release();
 
   if (FAILED(hr))
     return hr;

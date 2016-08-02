@@ -28,6 +28,7 @@
 #include "..\..\alloctracing.h"
 #include "StdString.h"
 #include "../../mpc-hc_subs/src/dsutil/DSUtil.h"
+#include <afxwin.h>
 
 const DWORD D3DFVF_VID_FRAME_VERTEX = D3DFVF_XYZRHW | D3DFVF_TEX1;
 
@@ -59,7 +60,6 @@ MPMadPresenter::~MPMadPresenter()
   CAutoLock cAutoLock(this);
   SAFE_DELETE(m_pMadD3DDev);
   SAFE_DELETE(m_pCallback);
-
   Log("MPMadPresenter::Destructor() - instance 0x%x", this);
 }
 
@@ -68,11 +68,9 @@ void MPMadPresenter::InitializeOSD()
   {
     CAutoLock cAutoLock(this);
 
-    CComQIPtr<IMadVROsdServices> pOsdServices = m_pMad;
-
-    if (pOsdServices && !m_pInitOSD)
+    if (m_pOsdServices && !m_pInitOSD)
     {
-      pOsdServices->OsdSetRenderCallback("MP-GUI", this, nullptr);
+      m_pOsdServices->OsdSetRenderCallback("MP-GUI", m_pORCB, nullptr);
       Log("MPMadPresenter::OsdSetRenderCallback InitializeOSD for device 0x:%x", m_pMadD3DDev);
       m_pInitOSD = true;
     }
@@ -112,42 +110,29 @@ IBaseFilter* MPMadPresenter::Initialize()
   if (FAILED(hr))
     return NULL;
 
-  CComQIPtr<IBaseFilter> baseFilter = m_pMad;
-  CComQIPtr<IMadVROsdServices> pOsdServices = m_pMad;
-  CComQIPtr<IMadVRDirect3D9Manager> manager = m_pMad;
-  CComQIPtr<IMadVRSubclassReplacement> pSubclassReplacement = m_pMad;
-  CComQIPtr<ISubRender> pSubRender = m_pMad;
-  CComQIPtr<IVideoWindow> pWindow = m_pMad;
-
+  m_pMad->QueryInterface(&m_baseFilter);
+  m_pMad->QueryInterface(&m_pOsdServices);
+  m_pMad->QueryInterface(&m_manager);
+  m_pMad->QueryInterface(&m_pSubclassReplacement);
+  m_pMad->QueryInterface(&m_pSubRender);
   m_pMad->QueryInterface(&m_pCommand);
+  m_pMad->QueryInterface(&m_pWindow);
 
-  if (!baseFilter || !pOsdServices || !manager || !pSubclassReplacement || !pSubRender || !m_pCommand || !pWindow)
-    return NULL;
+  if (!m_baseFilter || !m_pOsdServices || !m_manager || !m_pSubclassReplacement || !m_pSubRender || !m_pCommand || !m_pWindow)
+    return nullptr;
 
-  //pOsdServices->OsdSetRenderCallback("MP-GUI", this); // Init OSD from later to avoid failed start on 3D (when D3D device is changed from madVR)
-  manager->ConfigureDisplayModeChanger(false, true);
+  m_pORCB = this;
 
-  pSubRender->SetCallback(m_subProxy);
-
+  //m_pOsdServices->OsdSetRenderCallback("MP-GUI", m_pORCB); // Init OSD from later to avoid failed start on 3D (when D3D device is changed from madVR)
+  m_manager->ConfigureDisplayModeChanger(false, true);
+  m_pSubRender->SetCallback(m_subProxy);
   m_pCommand->SendCommandBool("disableSeekbar", true);
-
-  // MPC-HC
-  CWnd* m_pVideoWnd = CWnd::FromHandle(reinterpret_cast<HWND>(m_hParent));
-  pWindow->put_Owner((OAHWND)m_pVideoWnd->m_hWnd);
-  pWindow->put_WindowStyle(WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN);
-  pWindow->put_MessageDrain((OAHWND)m_pVideoWnd->m_hWnd);
-  pWindow->SetWindowPosition(0, 0, m_dwGUIWidth, m_dwGUIHeight);
-
-  for (CWnd* pWnd = m_pVideoWnd->GetWindow(GW_CHILD); pWnd; pWnd = pWnd->GetNextWindow()) {
-    // 1. lets WM_SETCURSOR through (not needed as of now)
-    // 2. allows CMouse::CursorOnWindow() to work with m_pVideoWnd
-    pWnd->EnableWindow(FALSE);
-  }
+  m_pWindow->SetWindowPosition(0, 0, m_dwGUIWidth, m_dwGUIHeight);
 
   // TODO implement IMadVRSubclassReplacement
   //pSubclassReplacement->DisableSubclassing();
 
-  return baseFilter;
+  return m_baseFilter;
 }
 
 HRESULT MPMadPresenter::Shutdown()
@@ -175,23 +160,23 @@ HRESULT MPMadPresenter::Shutdown()
 
   if (m_pMad)
   {
-    CComQIPtr<IVideoWindow> pWindow = m_pMad;
-    CComQIPtr<IMadVROsdServices> pOsdServices = m_pMad;
-
-    if (pWindow)
+    if (m_pWindow)
     {
-      pWindow->put_Owner(reinterpret_cast<OAHWND>(nullptr));
-      pWindow->put_Visible(false);
-      pWindow.Release();
+      m_pWindow->put_Owner(reinterpret_cast<OAHWND>(nullptr));
+      m_pWindow->put_Visible(false);
+      m_pWindow.Release();
     }
 
     if (m_pCommand)
     {
       m_pCommand->SendCommandBool("disableExclusiveMode", true);
       m_pCommand->SendCommand("restoreDisplayModeNow");
-      m_pCommand->Release();
+      m_pCommand.Release();
     }
 
+    if (m_pSubRender) m_pSubRender.Release();
+    if (m_manager) m_manager.Release();
+    if (m_baseFilter) m_baseFilter.Release();
     if (m_pMadD3DDev) m_pMadD3DDev->Release();
     if (m_pDevice) m_pDevice->Release();
     if (m_pMadGuiVertexBuffer) m_pMadGuiVertexBuffer.Release();
@@ -200,8 +185,9 @@ HRESULT MPMadPresenter::Shutdown()
     if (m_pRenderTextureOsd) m_pRenderTextureOsd.Release();
     if (m_pMPTextureGui) m_pMPTextureGui.Release();
     if (m_pMPTextureOsd) m_pMPTextureOsd.Release();
-    if (m_pMad) m_pMad->Release();
-    if (pOsdServices) pOsdServices->OsdSetRenderCallback("MP-GUI", nullptr, nullptr);
+    if (m_pMad) m_pMad.Release();
+    if (m_pInitOSD) if (m_pOsdServices) m_pOsdServices->OsdSetRenderCallback("MP-GUI", nullptr, nullptr);
+    if (m_pORCB) m_pORCB.Release();
   }
 
   Log("MPMadPresenter::Shutdown()");
@@ -508,6 +494,18 @@ HRESULT MPMadPresenter::SetupMadDeviceState()
   return hr;
 }
 
+HRESULT MPMadPresenter::SetDeviceOsd(IDirect3DDevice9* pD3DDev)
+{
+  CAutoLock cAutoLock(this);
+  if (!pD3DDev)
+  {
+    // release all resources
+    //m_pSubPicQueue = nullptr;
+    //m_pAllocator = nullptr;
+  }
+  return S_OK;
+}
+
 HRESULT MPMadPresenter::SetDevice(IDirect3DDevice9* pD3DDev)
 {
   HRESULT hr = S_FALSE;
@@ -523,14 +521,14 @@ HRESULT MPMadPresenter::SetDevice(IDirect3DDevice9* pD3DDev)
     m_deviceState.SetDevice(pD3DDev);
     m_pCallback->SetSubtitleDevice((DWORD)pD3DDev);
     Log("MPMadPresenter::SetDevice() SetSubtitleDevice for D3D : 0x:%x", m_pMadD3DDev);
-    if (m_pMediaControl)
-    {
-      OAFilterState _fs = -1;
-      if (m_pMediaControl) m_pMediaControl->GetState(1000, &_fs);
-      if (_fs == State_Paused)
-        m_pMediaControl->Run();
-      Log("MPMadPresenter::SetDevice() m_pMediaControl : 0x:%x", _fs);
-    }
+    //if (m_pMediaControl)
+    //{
+    //  OAFilterState _fs = -1;
+    //  if (m_pMediaControl) m_pMediaControl->GetState(1000, &_fs);
+    //  if (_fs == State_Paused)
+    //    m_pMediaControl->Run();
+    //  Log("MPMadPresenter::SetDevice() m_pMediaControl : 0x:%x", _fs);
+    //}
   }
 
   if (m_pMadD3DDev)

@@ -932,15 +932,8 @@ void MadDeinit()
   try
   {
     Log("MPMadDshow::MadDeinit shutdown start");
-    //m_madSubtitleProxy->Shutdown();
+    m_madSubtitleProxy->Shutdown();
     m_madPresenter->Shutdown();
-    /*m_pRefCount = m_pVMR9Filter->Release();
-    m_pRefCount = m_pRefCount - 1;
-    Log("MPMadDshow::MadDeinit reference counter to be released : (%d)", m_pRefCount);
-    for (int i = 0; i < m_pRefCount; ++i)
-    {
-      m_pVMR9Filter->Release();
-    }*/
     m_pVMR9Filter = nullptr;
     Log("MPMadDshow::MadDeinit shutdown done");
   }

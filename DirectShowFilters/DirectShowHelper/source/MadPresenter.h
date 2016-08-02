@@ -19,6 +19,8 @@
 #include "mvrInterfaces.h"
 #include "MadSubtitleProxy.h"
 #include "DeviceState.h"
+#include "smartptr.h"
+#include <tchar.h>
 
 using namespace std;
 
@@ -45,6 +47,7 @@ class MPMadPresenter : public CUnknown, public IOsdRenderCallback, public CCritS
     STDMETHODIMP ClearBackground(LPCSTR name, REFERENCE_TIME frameStart, RECT *fullOutputRect, RECT *activeVideoRect);
     STDMETHODIMP RenderOsd(LPCSTR name, REFERENCE_TIME frameStart, RECT *fullOutputRect, RECT *activeVideoRect);
     STDMETHODIMP SetDevice(IDirect3DDevice9* pD3DDev);
+    STDMETHODIMP SetDeviceOsd(IDirect3DDevice9* pD3DDev);
 
     bool m_pShutdown = false;
     bool m_pInitOSD = false;
@@ -65,7 +68,15 @@ class MPMadPresenter : public CUnknown, public IOsdRenderCallback, public CCritS
 
     IMediaControl* m_pMediaControl = nullptr;
 
-    IUnknown* m_pMad = nullptr;
+    Com::SmartPtr<IUnknown> m_pMad;
+    Com::SmartPtr<IMadVRCommand> m_pCommand;
+    Com::SmartQIPtr<IBaseFilter> m_baseFilter;
+    Com::SmartQIPtr<IMadVROsdServices> m_pOsdServices;
+    Com::SmartQIPtr<IMadVRDirect3D9Manager> m_manager;
+    Com::SmartQIPtr<IMadVRSubclassReplacement> m_pSubclassReplacement;
+    Com::SmartQIPtr<ISubRender> m_pSubRender;
+    Com::SmartQIPtr<IVideoWindow> m_pWindow;
+    Com::SmartPtr<IOsdRenderCallback> m_pORCB;
 
     CComQIPtr<IDirect3DTexture9> m_pRenderTextureGui = nullptr;
     CComQIPtr<IDirect3DTexture9> m_pRenderTextureOsd = nullptr;
@@ -86,8 +97,6 @@ class MPMadPresenter : public CUnknown, public IOsdRenderCallback, public CCritS
     DWORD m_dwHeight = 0;
 
     DeviceState m_deviceState;
-
-    IMadVRCommand* m_pCommand = nullptr;
 
     int countFrame = 0;
     int firstFrame = 1;
