@@ -80,6 +80,7 @@ class CTextUtil
                                           unsigned char encodedSequenceBitCountMaximum,
                                           unsigned char decodedSequenceByteCountMaximum,
                                           char** text);
+    static void MinimiseMemoryUsage(char* input, unsigned long actualInputLength, char** output);
 
     // multi-root tables
     static const unsigned char HUFFMAN_TABLE_BBC_1[];

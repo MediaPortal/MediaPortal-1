@@ -451,7 +451,7 @@ bool CTextUtil::IsoIec10646ToString(unsigned char* data, unsigned short dataLeng
   }
 
   // Re-encode 2 byte UTF-16 Unicode characters to UTF-8 to avoid premature NULL termination.
-  unsigned short bufferSize = (dataLength * 3) + 1; // each character may require up to 3 bytes, + 1 for NULL termination
+  unsigned short bufferSize = (dataLength * 4) + 1; // each character may require up to 4 bytes, + 1 for NULL termination
   char* t = new char[bufferSize];   
   if (t == NULL)
   {
@@ -463,6 +463,7 @@ bool CTextUtil::IsoIec10646ToString(unsigned char* data, unsigned short dataLeng
   unsigned long textIndex = 0;
   unsigned short w;
   bool isEmphasisOn = false;  // Used to demarcate abbreviation (eg. service short name) which we don't care about.
+  unsigned short utf16HighSurrogate = 0;
   t[textIndex++] = 0x15;      // EN 300 468 annex A table A.3: UTF-8 encoding of ISO/IEC 10646 BMP
   while (dataIndex + 1 < dataLength)
   {
@@ -500,23 +501,46 @@ bool CTextUtil::IsoIec10646ToString(unsigned char* data, unsigned short dataLeng
       if (w < 0x80)
       {
         t[textIndex++] = (char)w;
+        utf16HighSurrogate = 0;
       }
       else if (w < 0x800)
       {
         t[textIndex++] = (char)(((w >> 6) & 0x1f) | 0xc0);
         t[textIndex++] = (char)((w & 0x3f) | 0x80);
+        utf16HighSurrogate = 0;
+      }
+      else if (w >= 0xd800 && w <= 0xdbff)  // UTF-16 high surrogate
+      {
+        utf16HighSurrogate = w & 0x3ff;
+      }
+      else if (w >= 0xdc00 && w <= 0xdfff)  // UTF-16 low surrogate
+      {
+        if (utf16HighSurrogate == 0)
+        {
+          LogDebug(L"Unicode text: unexpected UTF-16 low surrogate without high surrogate, w = %hu", w);
+        }
+        else
+        {
+          unsigned long fullCodePoint = ((utf16HighSurrogate << 10) | (w & 0x3ff)) + 0x10000;
+          t[textIndex++] = (char)(((fullCodePoint >> 18) & 0x7) | 0xf0);
+          t[textIndex++] = (char)(((fullCodePoint >> 12) & 0x3f) | 0x80);
+          t[textIndex++] = (char)(((fullCodePoint >> 6) & 0x3f) | 0x80);
+          t[textIndex++] = (char)((fullCodePoint & 0x3f) | 0x80);
+          utf16HighSurrogate = 0;
+        }
       }
       else
       {
         t[textIndex++] = (char)(((w >> 12) & 0xf) | 0xe0);
         t[textIndex++] = (char)(((w >> 6) & 0x3f) | 0x80);
         t[textIndex++] = (char)((w & 0x3f) | 0x80);
+        utf16HighSurrogate = 0;
       }
     }
   }
 
   t[textIndex] = NULL;
-  *text = t;
+  MinimiseMemoryUsage(t, textIndex + 1, text);
   return true;
 }
 
@@ -904,7 +928,7 @@ bool CTextUtil::MultiRootHuffmanToString(unsigned char* data,
   while (c != 0);
 
   t[textIndex] = NULL;
-  *text = t;
+  MinimiseMemoryUsage(t, textIndex + 1, text);
   return true;
 }
 
@@ -1042,8 +1066,23 @@ bool CTextUtil::SingleRootHuffmanToString(unsigned char* data,
   }
 
   t[textIndex] = NULL;
-  *text = t;
+  MinimiseMemoryUsage(t, textIndex + 1, text);
   return true;
+}
+
+void CTextUtil::MinimiseMemoryUsage(char* input, unsigned long actualInputLength, char** output)
+{
+  *output = new char[actualInputLength];
+  if (*output == NULL)
+  {
+    LogDebug(L"text util: failed to allocate %lu bytes to minimise memory usage",
+              actualInputLength);
+    *output = input;
+    return;
+  }
+
+  memcpy(*output, input, actualInputLength);
+  delete[] input;
 }
 
 const unsigned char CTextUtil::HUFFMAN_TABLE_BBC_1[] =
