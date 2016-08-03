@@ -400,8 +400,6 @@ bool CDeMultiplexer::GetAudioStreamType(int stream,CMediaType& pmt, int iPositio
       pmt.SetFormat(AC3AudioFormat,sizeof(AC3AudioFormat));
       break;
     case SERVICE_TYPE_AUDIO_DTS:
-    case SERVICE_TYPE_AUDIO_DTS_HD:
-    case SERVICE_TYPE_AUDIO_DTS_HDMA:
       pmt.InitMediaType();
       pmt.SetType      (& MEDIATYPE_Audio);
       pmt.SetSubtype   (& MEDIASUBTYPE_DTS2);
@@ -410,6 +408,27 @@ bool CDeMultiplexer::GetAudioStreamType(int stream,CMediaType& pmt, int iPositio
       pmt.SetVariableSize();
       pmt.SetFormatType(&FORMAT_WaveFormatEx);
       pmt.SetFormat(DTSAudioFormat,sizeof(DTSAudioFormat));
+      break;
+    case SERVICE_TYPE_AUDIO_DTS_HD:
+    case SERVICE_TYPE_AUDIO_DTS_HDMA:
+      pmt.InitMediaType();
+      pmt.SetType      (& MEDIATYPE_Audio);
+      pmt.SetSubtype   (& MEDIASUBTYPE_DTS_HD);
+      pmt.SetSampleSize(1);
+      pmt.SetTemporalCompression(FALSE);
+      pmt.SetVariableSize();
+      pmt.SetFormatType(&FORMAT_WaveFormatEx);
+      pmt.SetFormat(DTSHDAudioFormat,sizeof(DTSHDAudioFormat));
+      break;
+    case SERVICE_TYPE_DCII_OR_LPCM: //HDMV/BD format LPCM audio
+      pmt.InitMediaType();
+      pmt.SetType      (& MEDIATYPE_Audio);
+      pmt.SetSubtype   (& MEDIASUBTYPE_BD_LPCM_AUDIO);
+      pmt.SetSampleSize(1);
+      pmt.SetTemporalCompression(FALSE);
+      pmt.SetVariableSize();
+      pmt.SetFormatType(&FORMAT_WaveFormatEx);
+      pmt.SetFormat(LPCMAudioFormat,sizeof(LPCMAudioFormat));
       break;
   }
   
