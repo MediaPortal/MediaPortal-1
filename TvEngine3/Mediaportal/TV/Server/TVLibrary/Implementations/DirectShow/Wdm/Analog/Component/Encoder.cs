@@ -20,6 +20,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using DirectShowLib;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
@@ -39,6 +40,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
   internal class Encoder
   {
     #region constants
+
+    private static readonly Regex HAUPPAUGE_SAA7164_DEVICE_ID = new Regex("pci#ven_1131&dev_7164&subsys_[0-9a-f]{4}0070");
 
     private static readonly IEnumerable<Guid> CYBERLINK_MULTIPLEXERS = new List<Guid>
     {
@@ -93,17 +96,57 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
       new Guid(0x2ff4bfb8, 0x7d35, 0x44cf, 0xaa, 0x67, 0xc5, 0x96, 0x61, 0xdf, 0x89, 0x29)
     };
 
-    private static IList<AMMediaType> MEDIA_TYPES_CAPTURE = new List<AMMediaType>();
-    private static IList<AMMediaType> MEDIA_TYPES_CAPTURE_VIDEO = new List<AMMediaType>();
-    private static IList<AMMediaType> MEDIA_TYPES_CAPTURE_AUDIO = new List<AMMediaType>();
-    private static IList<AMMediaType> MEDIA_TYPES_VIDEO = new List<AMMediaType>();
-    private static IList<AMMediaType> MEDIA_TYPES_AUDIO = new List<AMMediaType>();
-    private static IList<AMMediaType> MEDIA_TYPES_AUDIO_PCM = new List<AMMediaType>();
-    private static IList<AMMediaType> MEDIA_TYPES_VBI = new List<AMMediaType>();
-    private static IList<AMMediaType> MEDIA_TYPES_TELETEXT = new List<AMMediaType>();
-    private static IList<AMMediaType> MEDIA_TYPES_VPS = new List<AMMediaType>();
-    private static IList<AMMediaType> MEDIA_TYPES_WSS = new List<AMMediaType>();
-    private static IList<AMMediaType> MEDIA_TYPES_CLOSED_CAPTIONS = new List<AMMediaType>();
+    private static IList<AMMediaType> MEDIA_TYPES_CAPTURE = new List<AMMediaType>
+    {
+      new AMMediaType() { majorType = MediaType.Null, subType = MediaSubType.Mpeg2Transport },
+      new AMMediaType() { majorType = MediaType.Null, subType = MediaSubType.Mpeg2Program },
+      new AMMediaType() { majorType = MediaType.Null, subType = MediaSubType.MPEG1System }
+    };
+    private static IList<AMMediaType> MEDIA_TYPES_CAPTURE_VIDEO = new List<AMMediaType>
+    {
+      new AMMediaType() { majorType = MediaType.Video, subType = MediaSubType.MPEG1Payload },
+      new AMMediaType() { majorType = MediaType.Null, subType = MediaSubType.MPEG1Video },
+      new AMMediaType() { majorType = MediaType.Null, subType = MediaSubType.Mpeg2Video }
+    };
+    private static IList<AMMediaType> MEDIA_TYPES_CAPTURE_AUDIO = new List<AMMediaType>
+    {
+      new AMMediaType() { majorType = MediaType.Audio, subType = MediaSubType.MPEG1Payload },
+      new AMMediaType() { majorType = MediaType.Null, subType = MediaSubType.MPEG1Audio },
+      new AMMediaType() { majorType = MediaType.Null, subType = MediaSubType.MPEG1AudioPayload },
+      new AMMediaType() { majorType = MediaType.Null, subType = MediaSubType.Mpeg2Audio }
+    };
+    private static IList<AMMediaType> MEDIA_TYPES_VIDEO = new List<AMMediaType>
+    {
+      new AMMediaType() { majorType = MediaType.Video, subType = MediaSubType.Null }
+    };
+    private static IList<AMMediaType> MEDIA_TYPES_AUDIO = new List<AMMediaType>
+    {
+      new AMMediaType() { majorType = MediaType.Audio, subType = MediaSubType.Null }
+    };
+    private static IList<AMMediaType> MEDIA_TYPES_AUDIO_PCM = new List<AMMediaType>
+    {
+      new AMMediaType() { majorType = MediaType.Audio, subType = MediaSubType.PCM }
+    };
+    private static IList<AMMediaType> MEDIA_TYPES_VBI = new List<AMMediaType>
+    {
+      new AMMediaType() { majorType = MediaType.VBI, subType = MediaSubType.Null }
+    };
+    private static IList<AMMediaType> MEDIA_TYPES_TELETEXT = new List<AMMediaType>
+    {
+      new AMMediaType() { majorType = MediaType.VBI, subType = MediaSubType.TELETEXT }
+    };
+    private static IList<AMMediaType> MEDIA_TYPES_VPS = new List<AMMediaType>
+    {
+      new AMMediaType() { majorType = MediaType.VBI, subType = MediaSubType.VPS }
+    };
+    private static IList<AMMediaType> MEDIA_TYPES_WSS = new List<AMMediaType>
+    {
+      new AMMediaType() { majorType = MediaType.VBI, subType = MediaSubType.WSS }
+    };
+    private static IList<AMMediaType> MEDIA_TYPES_CLOSED_CAPTIONS = new List<AMMediaType>
+    {
+      new AMMediaType() { majorType = MediaType.AuxLine21Data, subType = MediaSubType.Line21_BytePair }
+    };
 
     #endregion
 
@@ -158,6 +201,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
     #region settings
 
     /// <summary>
+    /// Indicator for whether this encoder is associated with a Hauppauge
+    /// product designed around the NXP SAA7164 chipset (HVR-22**).
+    /// </summary>
+    private bool _isHauppaugeSaa7164Based = false;
+
+    /// <summary>
     /// Enable or disable vertical blanking interval data handling.
     /// </summary>
     private bool _isVbiEnabled = true;
@@ -192,43 +241,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
       {
         return _filterTsMultiplexer;
       }
-    }
-
-    #endregion
-
-    #region constructor
-
-    /// <summary>
-    /// Initialise a new instance of the <see cref="Encoder"/> class.
-    /// </summary>
-    public Encoder()
-    {
-      if (MEDIA_TYPES_CAPTURE.Count != 0)
-      {
-        return;
-      }
-
-      MEDIA_TYPES_CAPTURE.Add(new AMMediaType() { majorType = MediaType.Null, subType = MediaSubType.Mpeg2Transport });
-      MEDIA_TYPES_CAPTURE.Add(new AMMediaType() { majorType = MediaType.Null, subType = MediaSubType.Mpeg2Program });
-      MEDIA_TYPES_CAPTURE.Add(new AMMediaType() { majorType = MediaType.Null, subType = MediaSubType.MPEG1System });
-
-      MEDIA_TYPES_CAPTURE_VIDEO.Add(new AMMediaType() { majorType = MediaType.Video, subType = MediaSubType.MPEG1Payload });
-      MEDIA_TYPES_CAPTURE_VIDEO.Add(new AMMediaType() { majorType = MediaType.Null, subType = MediaSubType.MPEG1Video });
-      MEDIA_TYPES_CAPTURE_VIDEO.Add(new AMMediaType() { majorType = MediaType.Null, subType = MediaSubType.Mpeg2Video });
-
-      MEDIA_TYPES_CAPTURE_AUDIO.Add(new AMMediaType() { majorType = MediaType.Audio, subType = MediaSubType.MPEG1Payload });
-      MEDIA_TYPES_CAPTURE_AUDIO.Add(new AMMediaType() { majorType = MediaType.Null, subType = MediaSubType.MPEG1Audio });
-      MEDIA_TYPES_CAPTURE_AUDIO.Add(new AMMediaType() { majorType = MediaType.Null, subType = MediaSubType.MPEG1AudioPayload });
-      MEDIA_TYPES_CAPTURE_AUDIO.Add(new AMMediaType() { majorType = MediaType.Null, subType = MediaSubType.Mpeg2Audio });
-
-      MEDIA_TYPES_VIDEO.Add(new AMMediaType() { majorType = MediaType.Video, subType = MediaSubType.Null });
-      MEDIA_TYPES_AUDIO.Add(new AMMediaType() { majorType = MediaType.Audio, subType = MediaSubType.Null });
-      MEDIA_TYPES_AUDIO_PCM.Add(new AMMediaType() { majorType = MediaType.Audio, subType = MediaSubType.PCM });
-      MEDIA_TYPES_VBI.Add(new AMMediaType() { majorType = MediaType.VBI, subType = MediaSubType.Null });
-      MEDIA_TYPES_TELETEXT.Add(new AMMediaType() { majorType = MediaType.VBI, subType = MediaSubType.TELETEXT });
-      MEDIA_TYPES_VPS.Add(new AMMediaType() { majorType = MediaType.VBI, subType = MediaSubType.VPS });
-      MEDIA_TYPES_WSS.Add(new AMMediaType() { majorType = MediaType.VBI, subType = MediaSubType.WSS });
-      MEDIA_TYPES_CLOSED_CAPTIONS.Add(new AMMediaType() { majorType = MediaType.AuxLine21Data, subType = MediaSubType.Line21_BytePair });
     }
 
     #endregion
@@ -533,6 +545,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
         {
           throw new TvException("Failed to add and connect TS multiplexer.");
         }
+
+        _isHauppaugeSaa7164Based = _deviceEncoderVideo != null && HAUPPAUGE_SAA7164_DEVICE_ID.IsMatch(_deviceEncoderVideo.DevicePath);
       }
       finally
       {
@@ -1059,7 +1073,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
       // http://forum.team-mediaportal.com/threads/bsod-when-scanning-channels-analog-cable-hvr-2255-f111.132566/
       //
       // The following work-around should avoid BSODs in ideal conditions.
-      if (_pinUpstreamVbiOutput != null && _filterVbiSplitter != null)
+      if (_isHauppaugeSaa7164Based && _pinUpstreamVbiOutput != null && _filterVbiSplitter != null)
       {
         bool isScanning = string.IsNullOrEmpty(channel.Name);
         if ((!isScanning && !_isVbiEnabled) || (isScanning && _isVbiEnabled))
