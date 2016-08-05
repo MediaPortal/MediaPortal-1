@@ -1269,7 +1269,10 @@ int CDeMultiplexer::ReadFromFile(ULONG lDataLength)
     if (dwReadBytes > 0)
     {
       //yes, then process the raw data
-      OnRawData2(m_pFileReadBuffer,(int)dwReadBytes);
+      if (OnRawData2(m_pFileReadBuffer,(int)dwReadBytes))
+      {
+        Sleep(200); //Not enough data to initially sync or re-sync to stream
+      }
       m_LastDataFromRtsp = GET_TIME_NOW();
     }
     else
@@ -1324,7 +1327,11 @@ int CDeMultiplexer::ReadFromFile(ULONG lDataLength)
       if (dwReadBytes > 0)
       {        
         //process data
-        OnRawData2(m_pFileReadBuffer,(int)dwReadBytes);        
+        if (OnRawData2(m_pFileReadBuffer,(int)dwReadBytes))       
+        {
+          //Not enough data to initially sync ro re-sync to stream, so stall for a while
+          Sleep(200);
+        }
       }
       else
       {

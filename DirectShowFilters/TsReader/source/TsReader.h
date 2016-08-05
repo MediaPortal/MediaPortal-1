@@ -57,7 +57,7 @@
 #define SPEED_ADJ_LIMIT 4000
 
 //Vid/Aud/Sub buffer sizes and limits
-#define MAX_AUD_BUF_SIZE 640
+#define MAX_AUD_BUF_SIZE 960
 #define MAX_VID_BUF_SIZE 640
 #define MAX_SUB_BUF_SIZE 640
 #define AUD_BUF_SIZE_LOG_LIM (MAX_AUD_BUF_SIZE-100)
