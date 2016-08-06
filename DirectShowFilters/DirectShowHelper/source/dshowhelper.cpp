@@ -72,7 +72,6 @@ LPDIRECT3DDEVICE9         m_pDevice       = NULL;
 CVMR9AllocatorPresenter*  m_vmr9Presenter = NULL;
 MPEVRCustomPresenter*     m_evrPresenter  = NULL;
 MPMadPresenter*           m_madPresenter  = NULL;
-MadSubtitleProxy*         m_madSubtitleProxy = NULL;
 IBaseFilter*              m_pVMR9Filter   = NULL;
 IVMRSurfaceAllocator9*    m_allocator     = NULL;
 LONG                      m_iRecordingId  = 0;
@@ -911,14 +910,21 @@ BOOL MadInit(IVMR9Callback* callback, DWORD width, DWORD height, DWORD dwD3DDevi
 {
   m_RenderPrefix = _T("mad");
 
-  m_pDevice = (LPDIRECT3DDEVICE9)(dwD3DDevice);
+  m_pDevice = reinterpret_cast<LPDIRECT3DDEVICE9>(dwD3DDevice);
 
   Log("MPMadDshow::MadInit");
 
   m_madPresenter = new MPMadPresenter(callback, width, height, parent, m_pDevice, pMediaControl);
-  m_madSubtitleProxy = new MadSubtitleProxy(callback, m_madPresenter);
+
+  Com::SmartPtr<IUnknown> pRenderer;
+  m_madPresenter->CreateRenderer(&pRenderer);
   m_pVMR9Filter = m_madPresenter->Initialize();
-  m_pVMR9Filter->AddRef();
+  m_pVMR9Filter = Com::SmartQIPtr<IBaseFilter>(pRenderer).Detach();
+  
+  // madVR supports calling IVideoWindow::put_Owner before the pins are connected
+  //if (Com::SmartQIPtr<IVideoWindow> pVW = pCAP)
+  //    pVW->put_Owner((OAHWND)CDSPlayer::GetDShWnd());
+
   *madFilter = m_pVMR9Filter;
 
   if (!madFilter)
@@ -932,7 +938,6 @@ void MadDeinit()
   try
   {
     Log("MPMadDshow::MadDeinit shutdown start");
-    m_madSubtitleProxy->Shutdown();
     m_madPresenter->Shutdown();
     m_pVMR9Filter = nullptr;
     Log("MPMadDshow::MadDeinit shutdown done");

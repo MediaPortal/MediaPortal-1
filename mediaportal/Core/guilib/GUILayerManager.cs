@@ -111,13 +111,7 @@ namespace MediaPortal.GUI.Library
             _layers[i].RenderLayer(timePassed);
             GUIFontManager.Present();
 
-            // Currently Osd and Topbar2 layers are always reporting that they should be renderred.
-            // It is not 100% clear why that is done (probably just a bug fix done horribly wrong).
-            // As a side effet madVR won't be able to use low latency rendering path to make UI
-            // more fluid when video OSD is accessed.
-            //
-            // TODO: find out why the ugly workaround(?) has been introduced in the past.
-            if (videoLayer != i && i != (int)LayerType.Osd)
+            if (videoLayer != i)
             {
               uiVisible = true;
             }

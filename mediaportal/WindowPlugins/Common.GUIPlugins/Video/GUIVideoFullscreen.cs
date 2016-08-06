@@ -1220,7 +1220,6 @@ namespace MediaPortal.GUI.Video
               GUIWindowManager.IsOsdVisible = false;
               GUIWindowManager.IsPauseOsdVisible = false;
               GUIGraphicsContext.IsFullScreenVideo = false;
-
               GUILayerManager.UnRegisterLayer(this);
 
               /*imgVolumeMuteIcon.SafeDispose();
@@ -2456,14 +2455,14 @@ namespace MediaPortal.GUI.Video
                                       screenState.wasVMRBitmapVisible ||
                                       screenState.NotifyDialogVisible ||
                                       screenState.volumeVisible ||
-                                      screenState.forbiddenVisible ||
-                                      Math.Abs(screenState.Speed - 1) > 0 ||
+                                      screenState.forbiddenVisible || 
+                                      Math.Abs(screenState.Speed - 1) > 0 || 
                                       screenState.SeekStep != 0));
     }
 
     public bool ShouldRenderLayer()
     {
-      //if (CheckScreenState()) // TODO added back OSD madVR hack
+      if (CheckScreenState())
       {
         return true;
       }
