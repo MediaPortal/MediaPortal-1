@@ -174,14 +174,12 @@ void CPacketSync::OnRawData(byte* pData, int nDataLen)
 //             Only the basic 188 byte packet data is passed on for '192 byte' streams.
 bool CPacketSync::OnRawData2(byte* pData, int nDataLen)
 {
-  int syncOffset=0;
+  int syncOffset = m_packet_len - m_tempBufferPos;
   int tempBuffOffset=0;
   bool goodPacket = false;
 
-  if (m_tempBufferPos > 0 && m_bInSync) //We have some residual data from the last call, and we know the packet length
-  {
-    syncOffset = m_packet_len - m_tempBufferPos;
-    
+  if (m_bInSync && syncOffset >= 0 && m_tempBufferPos > 0) //We have some residual data from the last call, and we know the packet length
+  {    
     if (nDataLen <= syncOffset) 
     {
       //not enough total data to scan through a packet length, 
@@ -204,9 +202,8 @@ bool CPacketSync::OnRawData2(byte* pData, int nDataLen)
         goodPacket = true;
         break;
       }
-      else if (m_bInSync &&
-               ((m_tempBuffer[tempBuffOffset]==TS_PACKET_SYNC) ||
-                (pData[syncOffset]==TS_PACKET_SYNC))) //found a good packet
+      else if ((m_tempBuffer[tempBuffOffset]==TS_PACKET_SYNC) ||
+               (pData[syncOffset]==TS_PACKET_SYNC)) //found a good packet
       {
         if (syncOffset) 
         {
@@ -246,6 +243,10 @@ bool CPacketSync::OnRawData2(byte* pData, int nDataLen)
         return false;
       }
     }
+  }
+  else  //No residual data
+  {
+    syncOffset = 0;
   }
 
   m_tempBufferPos = 0; //We have consumed the residual data
