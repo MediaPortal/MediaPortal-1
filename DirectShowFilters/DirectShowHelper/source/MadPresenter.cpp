@@ -531,8 +531,8 @@ HRESULT MPMadPresenter::Render(REFERENCE_TIME frameStart, int left, int top, int
       }
 
       // TODO disable OSD delay for now
-      //m_pCallback->ForceOsdUpdate(true);
-      //Log("MPMadPresenter::Render() ForceOsdUpdate");
+      m_pCallback->ForceOsdUpdate(true);
+      Log("MPMadPresenter::Render() ForceOsdUpdate");
     }
     m_deviceState.Store();
     SetupMadDeviceState();
