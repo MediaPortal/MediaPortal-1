@@ -416,6 +416,9 @@ namespace MediaPortal.Player
     /// <param name="graphBuilder"></param>
     public void WindowsMessageMP()
     {
+      // Needed to enable 3D (TODO why is needed ?)
+      IVideoWindow _videoWindow = (IVideoWindow)_graphBuilder;
+      if (_videoWindow != null) _videoWindow.put_Owner(GUIGraphicsContext.form.Handle);
       Log.Debug("WMR9: Delayed OSD Callback");
       WindowsMessage();
       RegisterOsd();
@@ -866,7 +869,7 @@ namespace MediaPortal.Player
 
     public void ProcessMadVrOsd()
     {
-      if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR && !GUIGraphicsContext.InVmr9Render)
+      if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
       {
         TimeSpan tsPlay = DateTime.Now - playbackTimer;
         // Register OSD back 2 seconds after rendering is done on madVR filter.
@@ -1205,11 +1208,6 @@ namespace MediaPortal.Player
           Log.Debug("VMR9: StartMediaCtrl try to play with hr: 0x{0} - '{1}'", hr.ToString("X8"));
         }
         Log.Debug("VMR9: StartMediaCtrl hr: {0}", hr);
-      }
-      if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
-      {
-        // Init put owner for madVR 3D
-        //_videoWindow.put_Owner(GUIGraphicsContext.form.Handle);
       }
       return hr;
     }
