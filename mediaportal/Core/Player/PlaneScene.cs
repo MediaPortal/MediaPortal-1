@@ -768,16 +768,13 @@ namespace MediaPortal.Player
     public void SetSubtitleDevice(IntPtr device)
     {
       // Set madVR D3D Device
-      if (device != IntPtr.Zero)
+      GUIGraphicsContext.DX9DeviceMadVr = device != IntPtr.Zero ? new Device(device) : null;
+      ISubEngine engine = SubEngine.GetInstance(true);
+      if (engine != null)
       {
-        GUIGraphicsContext.DX9DeviceMadVr = new Device(device);
-        ISubEngine engine = SubEngine.GetInstance(true);
-        if (engine != null)
-        {
-          engine.SetDevice(device);
-        }
-        Log.Debug("Planescene: Set subtitle device - {0}", device);
+        engine.SetDevice(device);
       }
+      Log.Debug("Planescene: Set subtitle device - {0}", device);
     }
 
     public void RenderSubtitle(long frameStart, int left, int top, int right, int bottom, int width, int height)

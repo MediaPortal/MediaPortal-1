@@ -31,6 +31,7 @@ class DeviceState : public CCritSec
     HRESULT Store();
     HRESULT Restore();
     void Store_Surface(IDirect3DSurface9* pSurface);
+    void Shutdown();
 
   private:
     IDirect3DVertexShader9* m_pVS = nullptr;

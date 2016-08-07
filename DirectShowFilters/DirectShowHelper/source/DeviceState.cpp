@@ -22,6 +22,10 @@ DeviceState::DeviceState()
 
 DeviceState::~DeviceState()
 {
+  if (m_pVS) m_pVS->Release();
+  if (m_pStreamData) m_pStreamData->Release();
+  if (m_pTexture) m_pTexture->Release();
+  if (m_pSurface) m_pSurface->Release();
 }
 
 void DeviceState::SetDevice(IDirect3DDevice9* pDevice)
@@ -33,6 +37,14 @@ void DeviceState::SetDevice(IDirect3DDevice9* pDevice)
 void DeviceState::Store_Surface(IDirect3DSurface9* pSurface)
 {
   m_pSurface = pSurface;
+}
+
+void DeviceState::Shutdown()
+{
+  if (m_pVS) m_pVS->Release();
+  if (m_pStreamData) m_pStreamData->Release();
+  if (m_pTexture) m_pTexture->Release();
+  if (m_pSurface) m_pSurface->Release();
 }
 
 HRESULT DeviceState::Store()
@@ -90,7 +102,13 @@ HRESULT DeviceState::Restore()
   CAutoLock cAutoLock(this);
 
   if (!m_pD3DDev)
+  {
+    if (m_pVS) m_pVS->Release();
+    if (m_pStreamData) m_pStreamData->Release();
+    if (m_pTexture) m_pTexture->Release();
+    if (m_pSurface) m_pSurface->Release();
     return hr;
+  }
 
   if (FAILED(hr = m_pD3DDev->SetScissorRect(&m_ScissorRect)))
     return hr;

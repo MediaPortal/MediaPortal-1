@@ -96,7 +96,7 @@ void MPMadPresenter::InitializeOSD()
 void MPMadPresenter::SetOSDCallback()
 {
   {
-    CAutoLock cAutoLock(this);
+    //CAutoLock cAutoLock(this);
     //InitializeOSD(); // Disable OSD Callback from C#
   }
 }
@@ -202,7 +202,7 @@ void MPMadPresenter::ConfigureMadvr()
 HRESULT MPMadPresenter::Shutdown()
 {
   { // Scope for autolock for the local variable (lock, which when deleted releases the lock)
-    CAutoLock lock(this);
+    //CAutoLock lock(this);
 
     Log("MPMadPresenter::Shutdown() scope start");
 
@@ -456,7 +456,7 @@ HRESULT MPMadPresenter::SetDeviceOsd(IDirect3DDevice9* pD3DDev)
     //m_pSubPicQueue = nullptr;
     //m_pAllocator = nullptr;
     if (m_pCallback)
-      m_pCallback->SetSubtitleDevice((DWORD)pD3DDev);
+      m_pCallback->SetSubtitleDevice(reinterpret_cast<DWORD>(pD3DDev));
   }
   return S_OK;
 }
@@ -469,7 +469,13 @@ HRESULT MPMadPresenter::SetDevice(IDirect3DDevice9* pD3DDev)
 
   Log("MPMadPresenter::SetDevice() device 0x:%x", pD3DDev);
 
-  m_pMadD3DDev = (IDirect3DDevice9Ex*)pD3DDev;
+  if (!pD3DDev)
+  {
+    if (m_pMadD3DDev) m_pMadD3DDev->Release();
+    m_pMadD3DDev = nullptr;
+  }
+
+  m_pMadD3DDev = static_cast<IDirect3DDevice9Ex*>(pD3DDev);
 
   if (m_pMadD3DDev)
   {
@@ -490,7 +496,7 @@ HRESULT MPMadPresenter::SetDevice(IDirect3DDevice9* pD3DDev)
       m_pCallback->SetSubtitleDevice((DWORD)m_pMadD3DDev);
       Log("MPMadPresenter::SetDevice() reset subtitle device");
     }
-    m_pMadD3DDev = nullptr;
+    m_deviceState.Shutdown();
   }
 
   return hr;
@@ -530,7 +536,7 @@ HRESULT MPMadPresenter::Render(REFERENCE_TIME frameStart, int left, int top, int
         Log("MPMadPresenter::Render() m_pMediaControl : 0x:%x", _fs);
       }
 
-      // TODO disable OSD delay for now
+      // TODO disable OSD delay for now (used to force IVideoWindow on C# side)
       m_pCallback->ForceOsdUpdate(true);
       Log("MPMadPresenter::Render() ForceOsdUpdate");
     }
