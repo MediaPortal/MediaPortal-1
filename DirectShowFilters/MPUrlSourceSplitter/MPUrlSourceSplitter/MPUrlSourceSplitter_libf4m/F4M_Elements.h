@@ -27,6 +27,8 @@
 #define F4M_ELEMENT_MANIFEST                                      "manifest"
 #define F4M_ELEMENT_MANIFEST_ATTRIBUTE_XMLNS                      "xmlns"
 #define F4M_ELEMENT_MANIFEST_ATTRIBUTE_XMLNS_VALUE                "http://ns.adobe.com/f4m/1.0"
+#define F4M_ELEMENT_MANIFEST_ATTRIBUTE_XMLNS_VALUE_BASE           "http://ns.adobe.com/f4m"
+#define F4M_ELEMENT_MANIFEST_ATTRIBUTE_XMLNS_VALUE_BASE_LENGTH    23
 
 // The <streamType> element is a string representing the way in which the media is streamed. Valid values include "live",
 // "recorded", and "liveOrRecorded". It is assumed that all representations of the media have the same stream type, hence
