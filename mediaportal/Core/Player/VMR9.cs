@@ -1186,33 +1186,37 @@ namespace MediaPortal.Player
 
     public int StartMediaCtrl(IMediaControl mediaCtrl)
     {
-      var hr = mediaCtrl.Run();
-      Log.Debug("VMR9: StartMediaCtrl start hr: {0}", hr);
-      DsError.ThrowExceptionForHR(hr);
-      // S_FALSE from IMediaControl::Run means: The graph is preparing to run, but some filters have not completed the transition to a running state.
-      if (hr == 1)
+      lock (this)
       {
-        // wait max. 5 seconds for the graph to transition to the running state
-        DateTime startTime = DateTime.Now;
-        FilterState filterState;
-        do
+        // TEST but crash when DXVA Native is used in LAV
+        IVideoWindow _videoWindow = (IVideoWindow) _graphBuilder;
+        if (_videoWindow != null) _videoWindow.put_Owner(GUIGraphicsContext.form.Handle);
+
+        var hr = mediaCtrl.Run();
+        Log.Debug("VMR9: StartMediaCtrl start hr: {0}", hr);
+        DsError.ThrowExceptionForHR(hr);
+        // S_FALSE from IMediaControl::Run means: The graph is preparing to run, but some filters have not completed the transition to a running state.
+        if (hr == 1)
         {
-          Thread.Sleep(10);
-          hr = mediaCtrl.GetState(10, out filterState);
-          hr = mediaCtrl.Run();
-          // check with timeout max. 10 times a second if the state changed
-        } while ((hr != 0) && ((DateTime.Now - startTime).TotalSeconds <= 5));
-        if (hr != 0) // S_OK
-        {
-          DsError.ThrowExceptionForHR(hr);
-          Log.Debug("VMR9: StartMediaCtrl try to play with hr: 0x{0} - '{1}'", hr.ToString("X8"));
+          // wait max. 5 seconds for the graph to transition to the running state
+          DateTime startTime = DateTime.Now;
+          FilterState filterState;
+          do
+          {
+            Thread.Sleep(10);
+            hr = mediaCtrl.GetState(10, out filterState);
+            hr = mediaCtrl.Run();
+            // check with timeout max. 10 times a second if the state changed
+          } while ((hr != 0) && ((DateTime.Now - startTime).TotalSeconds <= 5));
+          if (hr != 0) // S_OK
+          {
+            DsError.ThrowExceptionForHR(hr);
+            Log.Debug("VMR9: StartMediaCtrl try to play with hr: 0x{0} - '{1}'", hr.ToString("X8"));
+          }
+          Log.Debug("VMR9: StartMediaCtrl hr: {0}", hr);
         }
-        Log.Debug("VMR9: StartMediaCtrl hr: {0}", hr);
+        return hr;
       }
-      //// TEST but crash when DXVA Native is used in LAV
-      //IVideoWindow _videoWindow = (IVideoWindow)_graphBuilder;
-      //if (_videoWindow != null) _videoWindow.put_Owner(GUIGraphicsContext.form.Handle);
-      return hr;
     }
 
     public void Vmr9MediaCtrl(IMediaControl mediaCtrl)
