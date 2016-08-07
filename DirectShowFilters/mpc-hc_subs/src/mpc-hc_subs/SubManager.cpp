@@ -60,6 +60,11 @@ void CSubManager::SetDevice(IDirect3DDevice9* d3DDev)
     // Release ressource
     m_pAllocator = nullptr;
     m_pSubPicQueue = nullptr;
+    if (m_d3DDev)
+    {
+      m_d3DDev.Release();
+      m_d3DDev = nullptr;
+    }
     return;
   }
 

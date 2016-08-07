@@ -202,7 +202,7 @@ void MPMadPresenter::ConfigureMadvr()
 HRESULT MPMadPresenter::Shutdown()
 {
   { // Scope for autolock for the local variable (lock, which when deleted releases the lock)
-    //CAutoLock lock(this);
+    CAutoLock lock(this);
 
     Log("MPMadPresenter::Shutdown() scope start");
 
