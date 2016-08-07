@@ -1209,6 +1209,9 @@ namespace MediaPortal.Player
         }
         Log.Debug("VMR9: StartMediaCtrl hr: {0}", hr);
       }
+      //// TEST but crash when DXVA Native is used in LAV
+      //IVideoWindow _videoWindow = (IVideoWindow)_graphBuilder;
+      //if (_videoWindow != null) _videoWindow.put_Owner(GUIGraphicsContext.form.Handle);
       return hr;
     }
 
