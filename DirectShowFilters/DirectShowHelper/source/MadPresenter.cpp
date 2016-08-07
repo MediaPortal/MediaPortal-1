@@ -57,12 +57,14 @@ MPMadPresenter::MPMadPresenter(IVMR9Callback* pCallback, DWORD width, DWORD heig
 
 MPMadPresenter::~MPMadPresenter()
 {
-  if (m_pSRCB) {
+  if (m_pSRCB)
+  {
     // nasty, but we have to let it know about our death somehow
     static_cast<CSubRenderCallback*>(static_cast<ISubRenderCallback*>(m_pSRCB))->SetDXRAP(nullptr);
   }
 
-  if (m_pORCB) {
+  if (m_pORCB)
+  {
     // nasty, but we have to let it know about our death somehow
     static_cast<COsdRenderCallback*>(static_cast<IOsdRenderCallback*>(m_pORCB))->SetDXRAP(nullptr);
   }
@@ -71,9 +73,14 @@ MPMadPresenter::~MPMadPresenter()
   //if (Com::SmartQIPtr<IMadVRExclusiveModeCallback> pEXL = m_pDXR)
   //  pEXL->Unregister(m_exclusiveCallback, this);
 
-  m_pMad.FullRelease();
-  m_pSRCB.FullRelease();
-  m_pORCB.FullRelease();
+  if (m_pMad)
+    m_pMad.Release();
+  
+  if (m_pSRCB)
+    m_pSRCB.Release();
+  
+  if (m_pORCB)
+    m_pORCB.Release();
 
   Log("MPMadPresenter::Destructor() - instance 0x%x", this);
 }
@@ -82,13 +89,15 @@ void MPMadPresenter::InitializeOSD()
 {
   // IOsdRenderCallback
   Com::SmartQIPtr<IMadVROsdServices> pOR = m_pMad;
-  if (!pOR) {
+  if (!pOR)
+  {
     m_pMad = nullptr;
     return;
   }
 
   m_pORCB = new COsdRenderCallback(this);
-  if (FAILED(pOR->OsdSetRenderCallback("MP-GUI", m_pORCB))) {
+  if (FAILED(pOR->OsdSetRenderCallback("MP-GUI", m_pORCB)))
+  {
     m_pMad = nullptr;
   }
 }
@@ -96,7 +105,7 @@ void MPMadPresenter::InitializeOSD()
 void MPMadPresenter::SetOSDCallback()
 {
   {
-    CAutoLock cAutoLock(this);
+    //CAutoLock cAutoLock(this);
     //InitializeOSD(); // Disable OSD Callback from C#
   }
 }
@@ -115,36 +124,42 @@ STDMETHODIMP MPMadPresenter::CreateRenderer(IUnknown** ppRenderer)
 {
   CheckPointer(ppRenderer, E_POINTER);
 
-  if (m_pMad) {
+  if (m_pMad)
+  {
     return E_UNEXPECTED;
   }
 
   m_pMad.CoCreateInstance(CLSID_madVR, GetOwner());
-  if (!m_pMad) {
+  if (!m_pMad)
+  {
     return E_FAIL;
   }
 
   Com::SmartQIPtr<ISubRender> pSR = m_pMad;
-  if (!pSR) {
+  if (!pSR)
+  {
     m_pMad = nullptr;
     return E_FAIL;
   }
 
   m_pSRCB = new CSubRenderCallback(this);
-  if (FAILED(pSR->SetCallback(m_pSRCB))) {
+  if (FAILED(pSR->SetCallback(m_pSRCB)))
+  {
     m_pMad = nullptr;
     return E_FAIL;
   }
 
   // IOsdRenderCallback
   Com::SmartQIPtr<IMadVROsdServices> pOR = m_pMad;
-  if (!pOR) {
+  if (!pOR)
+  {
     m_pMad = nullptr;
     return E_FAIL;
   }
 
   m_pORCB = new COsdRenderCallback(this);
-  if (FAILED(pOR->OsdSetRenderCallback("MP-GUI", m_pORCB))) {
+  if (FAILED(pOR->OsdSetRenderCallback("MP-GUI", m_pORCB)))
+  {
     m_pMad = nullptr;
     return E_FAIL;
   }
@@ -241,8 +256,10 @@ HRESULT MPMadPresenter::Shutdown()
 
 STDMETHODIMP MPMadPresenter::NonDelegatingQueryInterface(REFIID riid, void** ppv)
 {
-  if (riid != IID_IUnknown && m_pMad) {
-    if (SUCCEEDED(m_pMad->QueryInterface(riid, ppv))) {
+  if (riid != IID_IUnknown && m_pMad)
+  {
+    if (SUCCEEDED(m_pMad->QueryInterface(riid, ppv)))
+    {
       return S_OK;
     }
   }
@@ -456,7 +473,7 @@ HRESULT MPMadPresenter::SetDeviceOsd(IDirect3DDevice9* pD3DDev)
     //m_pSubPicQueue = nullptr;
     //m_pAllocator = nullptr;
     if (m_pCallback)
-      m_pCallback->SetSubtitleDevice((DWORD)pD3DDev);
+      m_pCallback->SetSubtitleDevice(reinterpret_cast<DWORD>(pD3DDev));
   }
   return S_OK;
 }
@@ -469,7 +486,13 @@ HRESULT MPMadPresenter::SetDevice(IDirect3DDevice9* pD3DDev)
 
   Log("MPMadPresenter::SetDevice() device 0x:%x", pD3DDev);
 
-  m_pMadD3DDev = (IDirect3DDevice9Ex*)pD3DDev;
+  if (!pD3DDev)
+  {
+    if (m_pMadD3DDev) m_pMadD3DDev->Release();
+    m_pMadD3DDev = nullptr;
+  }
+
+  m_pMadD3DDev = static_cast<IDirect3DDevice9Ex*>(pD3DDev);
 
   if (m_pMadD3DDev)
   {
@@ -490,7 +513,7 @@ HRESULT MPMadPresenter::SetDevice(IDirect3DDevice9* pD3DDev)
       m_pCallback->SetSubtitleDevice((DWORD)m_pMadD3DDev);
       Log("MPMadPresenter::SetDevice() reset subtitle device");
     }
-    m_pMadD3DDev = nullptr;
+    m_deviceState.Shutdown();
   }
 
   return hr;
@@ -530,7 +553,7 @@ HRESULT MPMadPresenter::Render(REFERENCE_TIME frameStart, int left, int top, int
         Log("MPMadPresenter::Render() m_pMediaControl : 0x:%x", _fs);
       }
 
-      // TODO disable OSD delay for now
+      // TODO disable OSD delay for now (used to force IVideoWindow on C# side)
       m_pCallback->ForceOsdUpdate(true);
       Log("MPMadPresenter::Render() ForceOsdUpdate");
     }

@@ -769,16 +769,13 @@ namespace MediaPortal.Player
     public void SetSubtitleDevice(IntPtr device)
     {
       // Set madVR D3D Device
-      if (device != IntPtr.Zero)
+      GUIGraphicsContext.DX9DeviceMadVr = device != IntPtr.Zero ? new Device(device) : null;
+      ISubEngine engine = SubEngine.GetInstance(true);
+      if (engine != null)
       {
-        GUIGraphicsContext.DX9DeviceMadVr = new Device(device);
-        ISubEngine engine = SubEngine.GetInstance(true);
-        if (engine != null)
-        {
-          engine.SetDevice(device);
-        }
-        Log.Debug("Planescene: Set subtitle device - {0}", device);
+        engine.SetDevice(device);
       }
+      Log.Debug("Planescene: Set subtitle device - {0}", device);
     }
 
     public void RenderSubtitle(long frameStart, int left, int top, int right, int bottom, int width, int height)
@@ -1252,8 +1249,8 @@ namespace MediaPortal.Player
 
       // Lock the buffer (which will return our structs)
       // Top right
-      verts[0].X = dstX - 0.5f;
-      verts[0].Y = dstY + dstHeight - 0.5f;
+      verts[0].X = dstX;// - 0.5f;
+      verts[0].Y = dstY + dstHeight;// - 0.5f;
       verts[0].Z = 0.0f;
       verts[0].Rhw = 1.0f;
       verts[0].Color = (int)lColorDiffuse;
@@ -1261,8 +1258,8 @@ namespace MediaPortal.Player
       verts[0].Tv = voff + vmax;
 
       // Top Left
-      verts[1].X = dstX - 0.5f;
-      verts[1].Y = dstY - 0.5f;
+      verts[1].X = dstX;// - 0.5f;
+      verts[1].Y = dstY;// - 0.5f;
       verts[1].Z = 0.0f;
       verts[1].Rhw = 1.0f;
       verts[1].Color = (int)lColorDiffuse;
@@ -1270,8 +1267,8 @@ namespace MediaPortal.Player
       verts[1].Tv = voff;
 
       // Bottom right
-      verts[2].X = dstX + dstWidth - 0.5f;
-      verts[2].Y = dstY + dstHeight - 0.5f;
+      verts[2].X = dstX + dstWidth;// - 0.5f;
+      verts[2].Y = dstY + dstHeight;// - 0.5f;
       verts[2].Z = 0.0f;
       verts[2].Rhw = 1.0f;
       verts[2].Color = (int)lColorDiffuse;
@@ -1279,13 +1276,22 @@ namespace MediaPortal.Player
       verts[2].Tv = voff + vmax;
 
       // Bottom left
-      verts[3].X = dstX + dstWidth - 0.5f;
-      verts[3].Y = dstY - 0.5f;
+      verts[3].X = dstX + dstWidth;// - 0.5f;
+      verts[3].Y = dstY;// - 0.5f;
       verts[3].Z = 0.0f;
       verts[3].Rhw = 1.0f;
       verts[3].Color = (int)lColorDiffuse;
       verts[3].Tu = uoff + umax;
       verts[3].Tv = voff;
+
+      // Update vertices to compensate texel/pixel coordinate origins (top left of pixel vs. center of texel)
+      // See https://msdn.microsoft.com/en-us/library/bb219690(VS.85).aspx
+      for (int i = 0; i < verts.Length; i++)
+      {
+        verts[i].X -= 0.5f;
+        verts[i].Y -= 0.5f;
+      }
+
       vertexBuffer.Unlock();
       unsafe
       {

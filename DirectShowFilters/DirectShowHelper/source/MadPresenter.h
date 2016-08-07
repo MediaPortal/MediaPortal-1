@@ -33,28 +33,35 @@ class MPMadPresenter : public CUnknown, public CCritSec
   public: COsdRenderCallback(MPMadPresenter* pDXRAP) : CUnknown(_T("COsdRender"), NULL) , m_pDXRAP(pDXRAP) {}
 
     DECLARE_IUNKNOWN
-    STDMETHODIMP NonDelegatingQueryInterface(REFIID riid, void** ppv) {
+    STDMETHODIMP NonDelegatingQueryInterface(REFIID riid, void** ppv)
+    {
       return
         QI(IOsdRenderCallback)
         __super::NonDelegatingQueryInterface(riid, ppv);
     }
 
-    void SetDXRAP(MPMadPresenter* pDXRAP) {
-      //CAutoLock cAutoLock(this); // TODO need to be commented to avoid deadlock.
+    void SetDXRAP(MPMadPresenter* pDXRAP)
+    {
+      CAutoLock cAutoLock(this); // TODO need to be commented to avoid deadlock.
       m_pDXRAP = pDXRAP;
     }
 
     // IOsdRenderCallback
 
-    STDMETHODIMP ClearBackground(LPCSTR name, REFERENCE_TIME frameStart, RECT *fullOutputRect, RECT *activeVideoRect) {
+    STDMETHODIMP ClearBackground(LPCSTR name, REFERENCE_TIME frameStart, RECT *fullOutputRect, RECT *activeVideoRect)
+    {
       CAutoLock cAutoLock(this);
       return m_pDXRAP ? m_pDXRAP->ClearBackground(name, frameStart, fullOutputRect, activeVideoRect) : E_UNEXPECTED;
     }
-    STDMETHODIMP RenderOsd(LPCSTR name, REFERENCE_TIME frameStart, RECT *fullOutputRect, RECT *activeVideoRect) {
+
+    STDMETHODIMP RenderOsd(LPCSTR name, REFERENCE_TIME frameStart, RECT *fullOutputRect, RECT *activeVideoRect)
+    {
       CAutoLock cAutoLock(this);
       return m_pDXRAP ? m_pDXRAP->RenderOsd(name, frameStart, fullOutputRect, activeVideoRect) : E_UNEXPECTED;
     }
-    STDMETHODIMP SetDevice(IDirect3DDevice9* pD3DDev) {
+
+    STDMETHODIMP SetDevice(IDirect3DDevice9* pD3DDev)
+    {
       CAutoLock cAutoLock(this);
       return m_pDXRAP ? m_pDXRAP->SetDeviceOsd(pD3DDev) : E_UNEXPECTED;
     }
@@ -71,25 +78,29 @@ class MPMadPresenter : public CUnknown, public CCritSec
     }
 
     DECLARE_IUNKNOWN
-    STDMETHODIMP NonDelegatingQueryInterface(REFIID riid, void** ppv) {
+    STDMETHODIMP NonDelegatingQueryInterface(REFIID riid, void** ppv)
+    {
       return
         QI(ISubRenderCallback)
         __super::NonDelegatingQueryInterface(riid, ppv);
     }
 
-    void SetDXRAP(MPMadPresenter* pDXRAP) {
-      //CAutoLock cAutoLock(this); // TODO need to be commented to avoid deadlock.
+    void SetDXRAP(MPMadPresenter* pDXRAP)
+    {
+      CAutoLock cAutoLock(this); // TODO need to be commented to avoid deadlock.
       m_pDXRAP = pDXRAP;
     }
 
     // ISubRenderCallback
 
-    STDMETHODIMP SetDevice(IDirect3DDevice9* pD3DDev) {
+    STDMETHODIMP SetDevice(IDirect3DDevice9* pD3DDev)
+    {
       CAutoLock cAutoLock(this);
       return m_pDXRAP ? m_pDXRAP->SetDevice(pD3DDev) : E_UNEXPECTED;
     }
 
-    STDMETHODIMP Render(REFERENCE_TIME rtStart, int left, int top, int right, int bottom, int width, int height) {
+    STDMETHODIMP Render(REFERENCE_TIME rtStart, int left, int top, int right, int bottom, int width, int height)
+    {
       CAutoLock cAutoLock(this);
       return m_pDXRAP ? m_pDXRAP->Render(rtStart, left, top, right, bottom, width, height) : E_UNEXPECTED;
     }

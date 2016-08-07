@@ -55,6 +55,19 @@ CSubManager::~CSubManager(void)
 
 void CSubManager::SetDevice(IDirect3DDevice9* d3DDev)
 {
+  if (!d3DDev)
+  {
+    // Release ressource
+    m_pAllocator = nullptr;
+    m_pSubPicQueue = nullptr;
+    if (m_d3DDev)
+    {
+      m_d3DDev.Release();
+      m_d3DDev = nullptr;
+    }
+    return;
+  }
+
   m_d3DDev = d3DDev;
 
   if (m_pAllocator)
@@ -254,8 +267,11 @@ int CSubManager::GetCurrent()
 
 void CSubManager::SetCurrent(int current)
 {
-	m_iSubtitleSel = current; 
-	UpdateSubtitle();
+  if (m_pAllocator && m_pSubPicQueue)
+  {
+    m_iSubtitleSel = current;
+    UpdateSubtitle();
+  }
 }
 
 void CSubManager::SetEnable(BOOL enabled)
