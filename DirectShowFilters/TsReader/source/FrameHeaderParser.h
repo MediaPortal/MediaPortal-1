@@ -401,6 +401,8 @@ struct pshdr
 		{
 		  if (sps != NULL) free(sps);
 		  if (pps != NULL) free(pps);
+		  sps = NULL;
+		  pps = NULL;
 		}
 	};
 
@@ -456,14 +458,7 @@ struct BasicVideoInfo
 	  sps = NULL;
 	  pps = NULL;
 	  vps = NULL;
-	}
-	
-	~BasicVideoInfo()
-	{
-		if (sps != NULL) free(sps);
-		if (pps != NULL) free(pps);
-		if (vps != NULL) free(vps);
-	}
+	}	
 };
 
 struct BasicAudioInfo

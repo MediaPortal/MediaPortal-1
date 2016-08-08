@@ -102,45 +102,13 @@ bool CMpegPesParser::ParseVideo(byte* tsPacket,int vidType,bool reset)
 				basicVideoInfo.isInterlaced=0;
 			basicVideoInfo.streamType=VIDEO_STREAM_TYPE_H264;
 			basicVideoInfo.isValid=true;
+
+		  basicVideoInfo.sps = avc.sps;
+		  basicVideoInfo.pps = avc.pps;
+		  basicVideoInfo.spslen = avc.spslen;
+		  basicVideoInfo.ppslen = avc.ppslen;
 			
 		  //LogDebug("MpegPesParser: H264: SPS=%I64d, PPS=%I64d", avc.spslen, avc.ppslen);
-
-			//Copy SPS header data if available
-			if (avc.spslen > 0 && avc.sps != NULL)
-			{
-				if (basicVideoInfo.sps != NULL && avc.spslen != basicVideoInfo.spslen)
-				{
-					free(basicVideoInfo.sps);
-					basicVideoInfo.sps = NULL;
-				}
-				if (basicVideoInfo.sps == NULL)
-				{
-					basicVideoInfo.sps = (BYTE*) malloc(avc.spslen);
-				}
-  			if (basicVideoInfo.sps != NULL) //malloc good
-  			{
-  			  memcpy (basicVideoInfo.sps, avc.sps, avc.spslen);
-  			  basicVideoInfo.spslen = avc.spslen;
-  		  } 		    	  
-			}
-			//Copy PPS header data if available
-			if (avc.ppslen > 0 && avc.pps != NULL)
-			{
-				if (basicVideoInfo.pps != NULL && avc.ppslen != basicVideoInfo.ppslen)
-				{
-					free(basicVideoInfo.pps);
-					basicVideoInfo.pps = NULL;
-				}
-				if (basicVideoInfo.pps == NULL)
-				{
-					basicVideoInfo.pps = (BYTE*) malloc(avc.ppslen);
-				}
-  			if (basicVideoInfo.pps != NULL) //malloc good
-  			{
-  			  memcpy (basicVideoInfo.pps, avc.pps, avc.ppslen);
-  			  basicVideoInfo.ppslen = avc.ppslen;
-  		  } 		    	  
-			}
 			
 			parsed=true;
 		}
@@ -164,63 +132,15 @@ bool CMpegPesParser::ParseVideo(byte* tsPacket,int vidType,bool reset)
 				basicVideoInfo.isInterlaced=0;
 			basicVideoInfo.streamType=VIDEO_STREAM_TYPE_HEVC;
 			basicVideoInfo.isValid=true;
+
+		  basicVideoInfo.sps = hevc.sps;
+		  basicVideoInfo.pps = hevc.pps;
+		  basicVideoInfo.vps = hevc.vps;
+		  basicVideoInfo.spslen = hevc.spslen;
+		  basicVideoInfo.ppslen = hevc.ppslen;
+		  basicVideoInfo.vpslen = hevc.vpslen;
 			
 		  //LogDebug("ParseVideo: SPS=%I64d, PPS=%I64d, VPS=%I64d",hevc.spslen, hevc.ppslen, hevc.vpslen);
-
-			//Copy SPS header data if available
-			if (hevc.spslen > 0 && hevc.sps != NULL)
-			{
-				if (basicVideoInfo.sps != NULL && hevc.spslen != basicVideoInfo.spslen)
-				{
-					free(basicVideoInfo.sps);
-					basicVideoInfo.sps = NULL;
-				}
-				if (basicVideoInfo.sps == NULL)
-				{
-					basicVideoInfo.sps = (BYTE*) malloc(hevc.spslen);
-				}
-  			if (basicVideoInfo.sps != NULL) //malloc good
-  			{
-  			  memcpy (basicVideoInfo.sps, hevc.sps, hevc.spslen);
-  			  basicVideoInfo.spslen = hevc.spslen;
-  		  } 		    	  
-			}
-			//Copy PPS header data if available
-			if (hevc.ppslen > 0 && hevc.pps != NULL)
-			{
-				if (basicVideoInfo.pps != NULL && hevc.ppslen != basicVideoInfo.ppslen)
-				{
-					free(basicVideoInfo.pps);
-					basicVideoInfo.pps = NULL;
-				}
-				if (basicVideoInfo.pps == NULL)
-				{
-					basicVideoInfo.pps = (BYTE*) malloc(hevc.ppslen);
-				}
-  			if (basicVideoInfo.pps != NULL) //malloc good
-  			{
-  			  memcpy (basicVideoInfo.pps, hevc.pps, hevc.ppslen);
-  			  basicVideoInfo.ppslen = hevc.ppslen;
-  		  } 		    	  
-			}
-			//Copy VPS header data if available
-			if (hevc.vpslen > 0 && hevc.vps != NULL)
-			{
-				if (basicVideoInfo.vps != NULL && hevc.vpslen != basicVideoInfo.vpslen)
-				{
-					free(basicVideoInfo.vps);
-					basicVideoInfo.vps = NULL;
-				}
-				if (basicVideoInfo.vps == NULL)
-				{
-					basicVideoInfo.vps = (BYTE*) malloc(hevc.vpslen);
-				}
-  			if (basicVideoInfo.vps != NULL) //malloc good
-  			{
-  			  memcpy (basicVideoInfo.vps, hevc.vps, hevc.vpslen);
-  			  basicVideoInfo.vpslen = hevc.vpslen;
-  		  } 		    	  
-			}
 			
 			parsed=true;
 		}
