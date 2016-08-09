@@ -300,21 +300,21 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.SmarDtvUsbCi
         _isFilterInGraph = true;
 
         // Connect the filter into the graph.
-        IPin tmpOutputPin = DsFindPin.ByDirection(lastFilter, PinDirection.Output, 0);
-        IPin tmpInputPin = DsFindPin.ByDirection(_ciFilter, PinDirection.Input, 0);
+        IPin lastFilterOutputPin = DsFindPin.ByDirection(lastFilter, PinDirection.Output, 0);
+        IPin ciFilterInputPin = DsFindPin.ByDirection(_ciFilter, PinDirection.Input, 0);
         try
         {
-          if (tmpInputPin == null || tmpOutputPin == null)
+          if (ciFilterInputPin == null || lastFilterOutputPin == null)
           {
             this.LogError("SmarDTV USB CI: failed to locate required pins");
             return false;
           }
-          hr = _graph.ConnectDirect(tmpOutputPin, tmpInputPin, null);
+          hr = _graph.ConnectDirect(lastFilterOutputPin, ciFilterInputPin, null);
         }
         finally
         {
-          Release.ComObject("SmarDTV upstream filter output pin", ref tmpOutputPin);
-          Release.ComObject("SmarDTV CI filter input pin", ref tmpInputPin);
+          Release.ComObject("SmarDTV upstream filter output pin", ref lastFilterOutputPin);
+          Release.ComObject("SmarDTV CI filter input pin", ref ciFilterInputPin);
         }
         if (hr != (int)NativeMethods.HResult.S_OK)
         {

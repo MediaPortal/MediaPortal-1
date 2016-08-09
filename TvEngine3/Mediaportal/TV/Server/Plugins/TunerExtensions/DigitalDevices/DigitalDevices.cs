@@ -868,11 +868,11 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
 
             // Stage 4: will this filter connect?
             int hr = (int)NativeMethods.HResult.E_FAIL;
-            IBaseFilter tmpCiFilter = obj as IBaseFilter;
-            IPin tmpFilterInputPin = DsFindPin.ByDirection(tmpCiFilter, PinDirection.Input, 0);
+            IBaseFilter tempCiFilter = obj as IBaseFilter;
+            IPin tempCiFilterInputPin = DsFindPin.ByDirection(tempCiFilter, PinDirection.Input, 0);
             try
             {
-              ICollection<RegPinMedium> tmpMediums = GetPinMediums(tmpFilterInputPin);
+              ICollection<RegPinMedium> tmpMediums = GetPinMediums(tempCiFilterInputPin);
               foreach (RegPinMedium m1 in mediums)
               {
                 foreach (RegPinMedium m2 in tmpMediums)
@@ -880,17 +880,17 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
                   if (m1.clsMedium == m2.clsMedium && m1.dw1 == m2.dw1 && m1.dw2 == m2.dw2)
                   {
                     // Stage 5: yes! Add and connect the filter.
-                    hr = _graph.AddFilter(tmpCiFilter, captureDevice.Name);
+                    hr = _graph.AddFilter(tempCiFilter, captureDevice.Name);
                     if (hr != (int)NativeMethods.HResult.S_OK)
                     {
                       this.LogError("Digital Devices: failed to add the filter for {0} {1} to the graph, hr = 0x{2:x}", captureDevice.Name, captureDevice.DevicePath, hr);
                       break;
                     }
-                    hr = _graph.ConnectDirect(lastFilterOutputPin, tmpFilterInputPin, null);
+                    hr = _graph.ConnectDirect(lastFilterOutputPin, tempCiFilterInputPin, null);
                     if (hr != (int)NativeMethods.HResult.S_OK)
                     {
                       this.LogError("Digital Devices: failed to connect the matching filter for {0} {1} into the graph, hr = 0x{2:x}", captureDevice.Name, captureDevice.DevicePath, hr);
-                      _graph.RemoveFilter(tmpCiFilter);
+                      _graph.RemoveFilter(tempCiFilter);
                     }
                     break;
                   }
@@ -903,20 +903,20 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
             }
             finally
             {
-              Release.ComObject("Digital Devices CI filter input pin", ref tmpFilterInputPin);
+              Release.ComObject("Digital Devices CI filter input pin", ref tempCiFilterInputPin);
             }
             if (hr != (int)NativeMethods.HResult.S_OK)
             {
-              Release.ComObject("Digital Devices CI filter", ref tmpCiFilter);
+              Release.ComObject("Digital Devices CI filter", ref tempCiFilter);
               captureDevice.Dispose();
               continue;
             }
 
             // Excellent - CI filter successfully added!
             this.LogDebug("Digital Devices:   added CI {0}, name = {1}, device path = {2}", ciIndex, captureDevice.Name, captureDevice.DevicePath);
-            PrivateCiContext context = new PrivateCiContext(captureDevice, tmpCiFilter, ciIndex);
+            PrivateCiContext context = new PrivateCiContext(captureDevice, tempCiFilter, ciIndex);
             _privateCiContexts.Add(captureDevice.DevicePath, context);
-            lastFilter = tmpCiFilter;
+            lastFilter = tempCiFilter;
             addedFilter = true;
             _isCiSlotPresent = true;
             break;
