@@ -176,6 +176,7 @@ HRESULT CTsMuxerFilter::AddPin()
     return hr;
   }
   m_inputPins.push_back(inputPin);
+  IncrementPinVersion();
   return S_OK;
 }
 
