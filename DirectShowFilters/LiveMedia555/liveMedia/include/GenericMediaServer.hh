@@ -14,7 +14,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2015 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2016 Live Networks, Inc.  All rights reserved.
 // A generic media server class, used to implement a RTSP server, and any other server that uses
 //  "ServerMediaSession" objects to describe media to be served.
 // C++ header
@@ -22,6 +22,9 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 #ifndef _GENERIC_MEDIA_SERVER_HH
 #define _GENERIC_MEDIA_SERVER_HH
 
+#ifndef _MEDIA_HH
+#include "Media.hh"
+#endif
 #ifndef _SERVER_MEDIA_SESSION_HH
 #include "ServerMediaSession.hh"
 #endif
@@ -111,9 +114,7 @@ public: // should be protected, but some old compilers complain otherwise
     virtual ~ClientSession();
 
     UsageEnvironment& envir() { return fOurServer.envir(); }
-    // Team MediaPortal modification - noteLiveness() must be virtual so that
-    // we can prevent paused streams from being killed.
-    virtual void noteLiveness();
+    void noteLiveness();
     static void noteClientLiveness(ClientSession* clientSession);
     static void livenessTimeoutTask(ClientSession* clientSession);
 
@@ -127,16 +128,36 @@ public: // should be protected, but some old compilers complain otherwise
   };
 
 protected:
-  virtual ClientConnection*
-  createNewClientConnection(int clientSocket, struct sockaddr_in clientAddr) = 0;
+  virtual ClientConnection* createNewClientConnection(int clientSocket, struct sockaddr_in clientAddr) = 0;
+  virtual ClientSession* createNewClientSession(u_int32_t sessionId) = 0;
+
+  ClientSession* createNewClientSessionWithId();
+      // Generates a new (unused) random session id, and calls the "createNewClientSession()"
+      // virtual function with this session id as parameter.
+
+  // Lookup a "ClientSession" object by sessionId (integer, and string):
+  ClientSession* lookupClientSession(u_int32_t sessionId);
+  ClientSession* lookupClientSession(char const* sessionIdStr);
+
+  // An iterator over our "ServerMediaSession" objects:
+  class ServerMediaSessionIterator {
+  public:
+    ServerMediaSessionIterator(GenericMediaServer& server);
+    virtual ~ServerMediaSessionIterator();
+    ServerMediaSession* next();
+  private:
+    HashTable::Iterator* fOurIterator;
+  };
 
 protected:
   friend class ClientConnection;
   friend class ClientSession;	
+  friend class ServerMediaSessionIterator;
   int fServerSocket;
   Port fServerPort;
   unsigned fReclamationSeconds;
 
+private:
   HashTable* fServerMediaSessions; // maps 'stream name' strings to "ServerMediaSession" objects
   HashTable* fClientConnections; // the "ClientConnection" objects that we're using
   HashTable* fClientSessions; // maps 'session id' strings to "ClientSession" objects

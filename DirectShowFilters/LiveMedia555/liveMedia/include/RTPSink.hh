@@ -14,7 +14,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2015 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2016 Live Networks, Inc.  All rights reserved.
 // RTP Sinks
 // C++ header
 
@@ -86,6 +86,9 @@ public:
   }
   unsigned& estimatedBitrate() { return fEstimatedBitrate; } // kbps; usually 0 (i.e., unset)
 
+  u_int32_t SSRC() const {return fSSRC;}
+     // later need a means of changing the SSRC if there's a collision #####
+
 protected:
   RTPSink(UsageEnvironment& env,
 	  Groupsock* rtpGS, unsigned char rtpPayloadType,
@@ -99,8 +102,6 @@ protected:
   // used by RTCP:
   friend class RTCPInstance;
   friend class RTPTransmissionStats;
-  u_int32_t SSRC() const {return fSSRC;}
-     // later need a means of changing the SSRC if there's a collision #####
   u_int32_t convertToRTPTimestamp(struct timeval tv);
   unsigned packetCount() const {return fPacketCount;}
   unsigned octetCount() const {return fOctetCount;}
@@ -170,7 +171,7 @@ private:
 private:
   friend class Iterator;
   unsigned fNumReceivers;
-    RTPSink& fOurRTPSink;
+  RTPSink& fOurRTPSink;
   HashTable* fTable;
 };
 
@@ -187,8 +188,8 @@ public:
   unsigned roundTripDelay() const;
       // The round-trip delay (in units of 1/65536 seconds) computed from
       // the most recently-received RTCP RR packet.
-  struct timeval timeCreated() const {return fTimeCreated;}
-  struct timeval lastTimeReceived() const {return fTimeReceived;}
+  struct timeval const& timeCreated() const {return fTimeCreated;}
+  struct timeval const& lastTimeReceived() const {return fTimeReceived;}
   void getTotalOctetCount(u_int32_t& hi, u_int32_t& lo);
   void getTotalPacketCount(u_int32_t& hi, u_int32_t& lo);
 
