@@ -40,42 +40,38 @@ MPRTSPServer* MPRTSPServer::createNew(UsageEnvironment& env,
 
 unsigned short MPRTSPServer::GetSessionCount()
 {
-  return (unsigned short)fClientSessions->numEntries();
+  return (unsigned short)m_clientSessions.size();
 }
 
 MPRTSPServer::MPRTSPClientSession* MPRTSPServer::GetSessionByIndex(unsigned short index)
 {
-  unsigned short currentIndex = 0;
-  HashTable::Iterator* it = HashTable::Iterator::create(*fClientSessions);
-  while (true)
+  if (index >= m_clientSessions.size())
   {
-    const char* key;
-    MPRTSPClientSession* clientSession = (MPRTSPClientSession*)it->next(key);
-    if (currentIndex == index || clientSession == NULL)
+    return NULL;
+  }
+  unsigned short currentIndex = 0;
+  map<u_int32_t, MPRTSPClientSession*>::iterator it = m_clientSessions.begin();
+  while (it != m_clientSessions.end())
+  {
+    if (currentIndex == index)
     {
-      return clientSession;
+      return it->second;
     }
+    it++;
     currentIndex++;
   }
+  return NULL;
 }
 
 bool MPRTSPServer::RemoveSessionById(u_int32_t sessionId)
 {
-  HashTable::Iterator* it = HashTable::Iterator::create(*fClientSessions);
-  while (true)
+  map<u_int32_t, MPRTSPClientSession*>::iterator it = m_clientSessions.find(sessionId);
+  if (it == m_clientSessions.end() || it->second == NULL)
   {
-    const char* key;
-    MPRTSPClientSession* clientSession = (MPRTSPClientSession*)it->next(key);
-    if (clientSession == NULL)
-    {
-      return false;
-    }
-    if (clientSession->SessionId() == sessionId)
-    {
-      delete clientSession;
-      return true;
-    }
+    return false;
   }
+  delete it->second;
+  return true;
 }
 
 MPRTSPServer::MPRTSPServer(UsageEnvironment& env,
@@ -90,6 +86,7 @@ MPRTSPServer::MPRTSPServer(UsageEnvironment& env,
 
 MPRTSPServer::~MPRTSPServer()
 {
+  m_clientSessions.clear();
 }
 
 GenericMediaServer::ClientConnection* MPRTSPServer::createNewClientConnection(int clientSocket, struct sockaddr_in clientAddr)
@@ -99,7 +96,9 @@ GenericMediaServer::ClientConnection* MPRTSPServer::createNewClientConnection(in
 
 GenericMediaServer::ClientSession* MPRTSPServer::createNewClientSession(u_int32_t sessionId)
 {
-  return new MPRTSPClientSession(*this, sessionId, m_reclamationTimeSeconds);
+  MPRTSPClientSession* session = new MPRTSPClientSession(*this, sessionId, m_reclamationTimeSeconds);
+  m_clientSessions[sessionId] = session;
+  return session;
 }
 
 
@@ -127,6 +126,8 @@ MPRTSPServer::MPRTSPClientSession::MPRTSPClientSession(MPRTSPServer& ourServer, 
 
 MPRTSPServer::MPRTSPClientSession::~MPRTSPClientSession()
 {
+  MPRTSPServer& server = static_cast<MPRTSPServer&>(fOurServer);
+  server.m_clientSessions.erase(fOurSessionId);
 }
 
 void MPRTSPServer::MPRTSPClientSession::handleCmd_PLAY(RTSPClientConnection* ourClientConnection,
@@ -162,6 +163,8 @@ void MPRTSPServer::MPRTSPClientSession::livenessTimeoutTaskMP(MPRTSPClientSessio
 
 void MPRTSPServer::MPRTSPClientSession::noteLiveness()
 {
+  if (fOurServerMediaSession != NULL) fOurServerMediaSession->noteLiveness();
+
   if (m_reclamationTimeSeconds > 0)
   {
     //LogDebug(L"noteLiveness::RescheduleDelayedTask");

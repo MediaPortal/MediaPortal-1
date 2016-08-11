@@ -22,6 +22,9 @@
 #ifndef _RTSP_SERVER_HH
 #include "RTSPServer.hh"
 #endif
+#include <map>
+
+using namespace std;
 
 
 class MPRTSPServer : public RTSPServer
@@ -123,4 +126,5 @@ class MPRTSPServer : public RTSPServer
 
   private:
     unsigned m_reclamationTimeSeconds;
+    map<u_int32_t, MPRTSPClientSession*> m_clientSessions;
 };
