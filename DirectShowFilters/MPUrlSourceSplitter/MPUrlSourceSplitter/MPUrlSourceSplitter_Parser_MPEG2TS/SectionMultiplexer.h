@@ -35,7 +35,7 @@ along with MediaPortal 2.  If not, see <http://www.gnu.org/licenses/>.
 class CSectionMultiplexer : public CFlags
 {
 public:
-  CSectionMultiplexer(HRESULT *result, unsigned int pid, unsigned int continuityCounter);
+  CSectionMultiplexer(HRESULT *result, unsigned int pid, unsigned int requestedPid, unsigned int continuityCounter);
   virtual ~CSectionMultiplexer();
 
   /* get methods */
@@ -43,6 +43,10 @@ public:
   // gets multiplexer PID
   // @return : multiplexer PID
   unsigned int GetPID(void);
+
+  // gets multiplexer requested PID
+  // @return : multiplexer requested PID
+  unsigned int GetRequestedPID(void);
 
   // gets continuity counter
   // @return : multiplexer continuity counter
@@ -75,6 +79,8 @@ public:
 protected:
   // holds pid for multiplexer
   unsigned int pid;
+  // holds requested pid for multiplexer
+  unsigned int requestedPid;
   // holds continuity counter
   unsigned int continuityCounter;
   // holds stream fragment contexts

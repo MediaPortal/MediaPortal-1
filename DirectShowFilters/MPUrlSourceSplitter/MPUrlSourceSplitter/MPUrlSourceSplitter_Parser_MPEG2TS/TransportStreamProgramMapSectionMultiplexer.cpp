@@ -24,8 +24,8 @@ along with MediaPortal 2.  If not, see <http://www.gnu.org/licenses/>.
 #include "TransportStreamProgramMapSection.h"
 
 
-CTransportStreamProgramMapSectionMultiplexer::CTransportStreamProgramMapSectionMultiplexer(HRESULT *result, unsigned int pid, unsigned int continuityCounter)
-  : CSectionMultiplexer(result, pid, continuityCounter)
+CTransportStreamProgramMapSectionMultiplexer::CTransportStreamProgramMapSectionMultiplexer(HRESULT *result, unsigned int pid, unsigned int requestedPid, unsigned int continuityCounter)
+  : CSectionMultiplexer(result, pid, requestedPid, continuityCounter)
 {
 }
 

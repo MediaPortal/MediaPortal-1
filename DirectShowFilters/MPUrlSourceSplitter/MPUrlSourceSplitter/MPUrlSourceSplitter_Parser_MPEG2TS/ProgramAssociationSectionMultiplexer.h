@@ -32,7 +32,7 @@ along with MediaPortal 2.  If not, see <http://www.gnu.org/licenses/>.
 class CProgramAssociationSectionMultiplexer : public CSectionMultiplexer
 {
 public:
-  CProgramAssociationSectionMultiplexer(HRESULT *result, unsigned int pid, unsigned int continuityCounter);
+  CProgramAssociationSectionMultiplexer(HRESULT *result, unsigned int pid, unsigned int requestedPid, unsigned int continuityCounter);
   virtual ~CProgramAssociationSectionMultiplexer();
 
   /* get methods */

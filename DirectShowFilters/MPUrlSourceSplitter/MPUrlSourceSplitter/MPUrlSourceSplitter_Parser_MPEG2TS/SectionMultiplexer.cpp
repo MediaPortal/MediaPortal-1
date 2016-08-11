@@ -25,10 +25,11 @@ along with MediaPortal 2.  If not, see <http://www.gnu.org/licenses/>.
 #include "ProgramSpecificInformationPacket.h"
 #include "TsPacketConstants.h"
 
-CSectionMultiplexer::CSectionMultiplexer(HRESULT *result, unsigned int pid, unsigned int continuityCounter)
+CSectionMultiplexer::CSectionMultiplexer(HRESULT *result, unsigned int pid, unsigned int requestedPid, unsigned int continuityCounter)
   : CFlags()
 {
   this->pid = pid;
+  this->requestedPid = requestedPid;
   this->continuityCounter = continuityCounter;
   this->streamFragmentContexts = NULL;
   this->sections = NULL;
@@ -57,6 +58,11 @@ CSectionMultiplexer::~CSectionMultiplexer()
 unsigned int CSectionMultiplexer::GetPID(void)
 {
   return this->pid;
+}
+
+unsigned int CSectionMultiplexer::GetRequestedPID(void)
+{
+  return this->requestedPid;
 }
 
 unsigned int CSectionMultiplexer::GetContinuityCounter(void)
@@ -183,7 +189,7 @@ HRESULT CSectionMultiplexer::MultiplexSections(void)
           }
 
           // table ID for PSI packet is not necessary
-          this->currentPacket = new CProgramSpecificInformationPacket(&result, this->pid, 0);
+          this->currentPacket = new CProgramSpecificInformationPacket(&result, this->requestedPid, 0);
           CHECK_POINTER_HRESULT(result, this->currentPacket, result, E_OUTOFMEMORY);
 
           if (SUCCEEDED(result))
