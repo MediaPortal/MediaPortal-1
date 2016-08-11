@@ -23,6 +23,7 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using DirectShowLib;
 using Mediaportal.TV.Server.Common.Types.Enum;
+using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVLibrary.Implementations.Helper;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Channel;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channel;
@@ -34,7 +35,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
   /// <summary>
   /// A WDM analog DirectShow crossbar graph component.
   /// </summary>
-  internal class Crossbar
+  internal class Crossbar : BaseComponent
   {
     #region constants
 
@@ -73,22 +74,22 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
     /// <summary>
     /// The video output pin index.
     /// </summary>
-    private int _pinIndexOutputVideo = -1;
+    private int _pinIndexOutputVideo = PIN_INDEX_NOT_SET;
 
     /// <summary>
     /// The audio output pin index.
     /// </summary>
-    private int _pinIndexOutputAudio = -1;
+    private int _pinIndexOutputAudio = PIN_INDEX_NOT_SET;
 
     /// <summary>
     /// The index of the video input pin which is currently routed to the video output pin.
     /// </summary>
-    private int _pinIndexRoutedVideo = -1;
+    private int _pinIndexRoutedVideo = PIN_INDEX_NOT_SET;
 
     /// <summary>
     /// The index of the audio input pin which is currently routed to the audio output pin.
     /// </summary>
-    private int _pinIndexRoutedAudio = -1;
+    private int _pinIndexRoutedAudio = PIN_INDEX_NOT_SET;
 
     #endregion
 
@@ -106,50 +107,18 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
     }
 
     /// <summary>
-    /// Get the video capture sources supported by the crossbar.
-    /// </summary>
-    public CaptureSourceVideo SupportedVideoSources
-    {
-      get
-      {
-        CaptureSourceVideo sources = CaptureSourceVideo.None;
-        foreach (CaptureSourceVideo source in _pinMapVideo.Keys)
-        {
-          sources |= source;
-        }
-        return sources;
-      }
-    }
-
-    /// <summary>
-    /// Get the audio capture sources supported by the crossbar.
-    /// </summary>
-    public CaptureSourceAudio SupportedAudioSources
-    {
-      get
-      {
-        CaptureSourceAudio sources = CaptureSourceAudio.None;
-        foreach (CaptureSourceAudio source in _pinMapAudio.Keys)
-        {
-          sources |= source;
-        }
-        return sources;
-      }
-    }
-
-    /// <summary>
     /// Get the tuner video input pin index.
     /// </summary>
     public int PinIndexInputTunerVideo
     {
       get
       {
-        int index = -1;
+        int index = PIN_INDEX_NOT_SET;
         if (_pinMapVideo.TryGetValue(CaptureSourceVideo.Tuner, out index))
         {
           return index;
         }
-        return -1;
+        return PIN_INDEX_NOT_SET;
       }
     }
 
@@ -160,12 +129,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
     {
       get
       {
-        int index = -1;
+        int index = PIN_INDEX_NOT_SET;
         if (_pinMapAudio.TryGetValue(CaptureSourceAudio.Tuner, out index))
         {
           return index;
         }
-        return -1;
+        return PIN_INDEX_NOT_SET;
       }
     }
 
@@ -227,8 +196,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
         DevicesInUse.Instance.Remove(_device);
         throw new TvException(ex, "Failed to add filter for main crossbar component to graph.");
       }
-
-      CheckCapabilities();
     }
 
     /// <summary>
@@ -254,11 +221,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
         hr = crossbar.get_CrossbarPinInfo(false, i, out relatedPinIndex, out connectorType);
         TvExceptionDirectShowError.Throw(hr, "Failed to get pin information for output pin {0}.", i);
         this.LogDebug("WDM analog crossbar: output pin {0}, type = {1}, related = {2}", i, connectorType, relatedPinIndex);
-        if (connectorType == PhysicalConnectorType.Video_VideoDecoder && _pinIndexOutputVideo == -1)
+        if (connectorType == PhysicalConnectorType.Video_VideoDecoder && _pinIndexOutputVideo == PIN_INDEX_NOT_SET)
         {
           _pinIndexOutputVideo = i;
         }
-        else if (connectorType == PhysicalConnectorType.Audio_AudioDecoder && _pinIndexOutputAudio == -1)
+        else if (connectorType == PhysicalConnectorType.Audio_AudioDecoder && _pinIndexOutputAudio == PIN_INDEX_NOT_SET)
         {
           _pinIndexOutputAudio = i;
         }
@@ -517,6 +484,79 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
     }
 
     /// <summary>
+    /// Set sensible default configuration based on country and hardware capabilities.
+    /// </summary>
+    public void SetDefaultConfiguration(AnalogTunerSettings settings)
+    {
+      CaptureSourceVideo supportedVideoSources = CaptureSourceVideo.None;
+      foreach (CaptureSourceVideo videoSource in _pinMapVideo.Keys)
+      {
+        supportedVideoSources |= videoSource;
+      }
+      settings.SupportedVideoSources = (int)supportedVideoSources;
+      CaptureSourceAudio supportedAudioSources = CaptureSourceAudio.None;
+      foreach (CaptureSourceAudio audioSource in _pinMapAudio.Keys)
+      {
+        supportedAudioSources |= audioSource;
+      }
+      settings.SupportedAudioSources = (int)supportedAudioSources;
+
+      if (supportedVideoSources == CaptureSourceVideo.None)
+      {
+        settings.ExternalInputSourceVideo = (int)CaptureSourceVideo.None;
+        if (supportedAudioSources == CaptureSourceAudio.None)
+        {
+          settings.ExternalInputSourceAudio = (int)CaptureSourceAudio.None;
+          return;
+        }
+
+        List<CaptureSourceAudio> preferredAudioSources = new List<CaptureSourceAudio>
+        {
+          CaptureSourceAudio.Hdmi1,
+          CaptureSourceAudio.AesEbu1,
+          CaptureSourceAudio.Spdif1,
+          CaptureSourceAudio.Line1,
+          CaptureSourceAudio.Auxiliary1,
+          CaptureSourceAudio.Tuner
+        };
+        foreach (CaptureSourceAudio audioSource in preferredAudioSources)
+        {
+          if (supportedAudioSources.HasFlag(audioSource))
+          {
+            settings.ExternalInputSourceAudio = (int)audioSource;
+            break;
+          }
+        }
+        return;
+      }
+
+      List<CaptureSourceVideo> preferredVideoSources = new List<CaptureSourceVideo>
+      {
+        CaptureSourceVideo.Hdmi1,
+        CaptureSourceVideo.Yryby1,
+        CaptureSourceVideo.Rgb1,
+        CaptureSourceVideo.Svideo1,
+        CaptureSourceVideo.Composite1
+      };
+      foreach (CaptureSourceAudio videoSource in preferredVideoSources)
+      {
+        if (supportedVideoSources.HasFlag(videoSource))
+        {
+          settings.ExternalInputSourceVideo = (int)videoSource;
+          break;
+        }
+      }
+      if (supportedAudioSources == CaptureSourceAudio.None)
+      {
+        settings.ExternalInputSourceAudio = (int)CaptureSourceAudio.None;
+      }
+      else
+      {
+        settings.ExternalInputSourceAudio = (int)CaptureSourceAudio.Automatic;
+      }
+    }
+
+    /// <summary>
     /// Actually tune to a channel.
     /// </summary>
     /// <param name="channel">The channel to tune to.</param>
@@ -540,7 +580,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
 
       bool updateAudio = false;   // For compatibility we force re-routing of audio if/when video is routed.
       int hr;
-      if (_pinIndexOutputVideo != -1)
+      if (_pinIndexOutputVideo != PIN_INDEX_NOT_SET)
       {
         if (sourceVideo == CaptureSourceVideo.None)
         {
@@ -548,14 +588,14 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
         }
         else
         {
-          int pinIndexRoutedVideoNew = -1;
+          int pinIndexRoutedVideoNew = PIN_INDEX_NOT_SET;
           if (!_pinMapVideo.TryGetValue(sourceVideo, out pinIndexRoutedVideoNew))
           {
             this.LogWarn("WDM analog crossbar: requested video source {0} is not available", sourceVideo);
           }
           else if (pinIndexRoutedVideoNew != _pinIndexRoutedVideo)
           {
-            this.LogDebug("WDM analog crossbar: route video -> {0}", sourceVideo);
+            this.LogDebug("WDM analog crossbar: route video, source = {0}, pin index = {1}", sourceVideo, pinIndexRoutedVideoNew);
             hr = crossbar.Route(_pinIndexOutputVideo, pinIndexRoutedVideoNew);
             TvExceptionDirectShowError.Throw(hr, "Failed to route video from input pin {0} to output pin {1}.", pinIndexRoutedVideoNew, _pinIndexOutputVideo);
             _pinIndexRoutedVideo = pinIndexRoutedVideoNew;
@@ -564,7 +604,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
         }
       }
 
-      if (_pinIndexOutputAudio != -1)
+      if (_pinIndexOutputAudio != PIN_INDEX_NOT_SET)
       {
         if (sourceAudio == CaptureSourceAudio.None)
         {
@@ -572,7 +612,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
         }
         else
         {
-          int pinIndexRoutedAudioNew = -1;
+          int pinIndexRoutedAudioNew = PIN_INDEX_NOT_SET;
           bool gotIndex = false;
           if (sourceAudio == CaptureSourceAudio.Automatic)
           {
@@ -588,7 +628,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
           }
           else if (updateAudio || pinIndexRoutedAudioNew != _pinIndexRoutedAudio)
           {
-            this.LogDebug("WDM analog crossbar: route audio -> {0}", sourceAudio);
+            this.LogDebug("WDM analog crossbar: route audio, source = {0}, pin index = {1}", sourceAudio, pinIndexRoutedAudioNew);
             hr = crossbar.Route(_pinIndexOutputAudio, pinIndexRoutedAudioNew);
             TvExceptionDirectShowError.Throw(hr, "Failed to route audio from input pin {0} to output pin {1}.", pinIndexRoutedAudioNew, _pinIndexOutputAudio);
             _pinIndexRoutedAudio = pinIndexRoutedAudioNew;
@@ -605,10 +645,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
     {
       this.LogDebug("WDM analog crossbar: perform unloading");
 
-      _pinIndexOutputVideo = -1;
-      _pinIndexOutputAudio = -1;
-      _pinIndexRoutedVideo = -1;
-      _pinIndexRoutedAudio = -1;
+      _pinIndexOutputVideo = PIN_INDEX_NOT_SET;
+      _pinIndexOutputAudio = PIN_INDEX_NOT_SET;
+      _pinIndexRoutedVideo = PIN_INDEX_NOT_SET;
+      _pinIndexRoutedAudio = PIN_INDEX_NOT_SET;
       _pinMapVideo.Clear();
       _pinMapVideoDefaultAudio.Clear();
       _pinMapAudio.Clear();

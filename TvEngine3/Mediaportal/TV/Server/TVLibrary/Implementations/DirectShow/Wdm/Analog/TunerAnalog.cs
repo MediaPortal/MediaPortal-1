@@ -33,7 +33,6 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channel;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Exception;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension;
-using AnalogVideoStandard = Mediaportal.TV.Server.Common.Types.Enum.AnalogVideoStandard;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog
 {
@@ -48,7 +47,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog
     private Tuner _tuner = null;
     private Crossbar _crossbar = null;
     private Capture _capture = null;
-    private Encoder _encoder = null;
+    private Encoder _encoder = new Encoder();
 
     private CaptureSourceVideo _tunableSourcesVideo;
     private CaptureSourceAudio _tunableSourcesAudio;
@@ -84,7 +83,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog
       {
         _capture = new Capture(device);
       }
-      _encoder = new Encoder();
     }
 
     #endregion
@@ -152,11 +150,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog
       settings.EncoderBitRateRecording = 100;
       settings.EncoderBitRatePeakRecording = 100;
 
-      settings.ExternalInputSourceAudio = (int)CaptureSourceAudio.None;
-      settings.SupportedAudioSources = (int)CaptureSourceAudio.None;
-      settings.ExternalInputSourceVideo = (int)CaptureSourceVideo.None;
-      settings.SupportedVideoSources = (int)CaptureSourceVideo.None;
-
       settings.ExternalTunerProgram = string.Empty;
       settings.ExternalTunerProgramArguments = string.Empty;
       settings.ExternalInputPhysicalChannelNumber = 7;
@@ -170,13 +163,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog
       {
         settings.ExternalInputCountryId = country.Id;
       }
-
-      settings.FrameRate = (int)FrameRate.Automatic;
-      settings.SupportedFrameSizes = (int)FrameRate.Automatic;
-      settings.FrameSize = (int)FrameSize.Automatic;
-      settings.SupportedFrameSizes = (int)FrameSize.Automatic;
-      settings.VideoStandard = (int)AnalogVideoStandard.None;
-      settings.SupportedVideoStandards = (int)AnalogVideoStandard.None;
 
       // Minimal loading, enough to build configuration.
       try
@@ -201,182 +187,17 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog
       {
         if (_crossbar != null)
         {
-          CaptureSourceVideo videoSources = _crossbar.SupportedVideoSources;
-          settings.SupportedVideoSources = (int)videoSources;
-          CaptureSourceAudio audioSources = _crossbar.SupportedAudioSources;
-          settings.SupportedAudioSources = (int)audioSources;
-
-          if (videoSources == CaptureSourceVideo.None)
-          {
-            settings.ExternalInputSourceVideo = (int)CaptureSourceVideo.None;
-            foreach (CaptureSourceAudio audioSource in System.Enum.GetValues(typeof(CaptureSourceAudio)))
-            {
-              if (audioSource != CaptureSourceAudio.None && audioSources.HasFlag(audioSource))
-              {
-                settings.ExternalInputSourceAudio = (int)audioSource;
-              }
-            }
-          }
-          else
-          {
-            foreach (CaptureSourceVideo videoSource in System.Enum.GetValues(typeof(CaptureSourceVideo)))
-            {
-              if (videoSource != CaptureSourceVideo.None && videoSources.HasFlag(videoSource))
-              {
-                settings.ExternalInputSourceVideo = (int)videoSource;
-              }
-            }
-            if (audioSources == CaptureSourceAudio.None)
-            {
-              settings.ExternalInputSourceAudio = (int)CaptureSourceAudio.None;
-            }
-            else
-            {
-              settings.ExternalInputSourceAudio = (int)CaptureSourceAudio.Automatic;
-            }
-          }
+          _crossbar.SetDefaultConfiguration(settings);
         }
-        else
+        _capture.SetDefaultConfiguration(settings);
+
+        var tempProperties = new List<TVDatabase.Entities.TunerProperty>();
+        foreach (var p in _capture.SupportedProperties)
         {
-          if (_capture.VideoFilter != null)
-          {
-            settings.ExternalInputSourceVideo = (int)CaptureSourceVideo.TunerDefault;
-            settings.SupportedVideoSources = (int)CaptureSourceVideo.TunerDefault;
-          }
-          if (_capture.AudioFilter != null)
-          {
-            settings.ExternalInputSourceAudio = (int)CaptureSourceAudio.TunerDefault;
-            settings.SupportedAudioSources = (int)CaptureSourceAudio.TunerDefault;
-          }
+          p.IdTuner = TunerId;
+          tempProperties.Add(p);
         }
-
-        if (_capture.VideoFilter != null)
-        {
-          if (country == null)
-          {
-            this.LogWarn("WDM analog: failed to get details for country {0}, using defaults for current standard {1}", countryName ?? "[null]", _capture.CurrentVideoStandard);
-            settings.VideoStandard = (int)_capture.CurrentVideoStandard;
-          }
-          else if (!_capture.SupportedVideoStandards.HasFlag(country.VideoStandard))
-          {
-            this.LogWarn("WDM analog: recognised country {0} but standard {1} not supported, using defaults for current standard {2}", countryName, country.VideoStandard, _capture.CurrentVideoStandard);
-            settings.VideoStandard = (int)_capture.CurrentVideoStandard;
-          }
-          else
-          {
-            this.LogDebug("WDM analog: recognised country {0}, using {1} defaults", countryName, country.VideoStandard);
-            settings.VideoStandard = (int)country.VideoStandard;
-          }
-          settings.SupportedVideoStandards = (int)_capture.SupportedVideoStandards;
-
-          bool isNtscStandard = (
-            settings.VideoStandard == (int)AnalogVideoStandard.NtscM ||
-            settings.VideoStandard == (int)AnalogVideoStandard.NtscMj ||
-            settings.VideoStandard == (int)AnalogVideoStandard.Ntsc433 ||
-            settings.VideoStandard == (int)AnalogVideoStandard.PalM
-          );
-          if (
-            _capture.SupportedFrameSizes.HasFlag(FrameSize.Fs1920_1080) ||
-            _capture.SupportedFrameSizes.HasFlag(FrameSize.Fs1440_1080) ||
-            _capture.SupportedFrameSizes.HasFlag(FrameSize.Fs1280_720)
-          )
-          {
-            // Probably a capture device. Prefer high resolution.
-            if (_capture.SupportedFrameSizes.HasFlag(FrameSize.Fs1920_1080))
-            {
-              settings.FrameSize = (int)FrameSize.Fs1920_1080;
-            }
-            else if (_capture.SupportedFrameSizes.HasFlag(FrameSize.Fs1440_1080))
-            {
-              settings.FrameSize = (int)FrameSize.Fs1440_1080;
-            }
-            else
-            {
-              settings.FrameSize = (int)FrameSize.Fs1280_720;
-            }
-            if (isNtscStandard)
-            {
-              if (_capture.SupportedFrameRates.HasFlag(FrameRate.Fr60))
-              {
-                settings.FrameRate = (int)FrameRate.Fr60;
-              }
-              else if (_capture.SupportedFrameRates.HasFlag(FrameRate.Fr59_94))
-              {
-                settings.FrameRate = (int)FrameRate.Fr59_94;
-              }
-              else if (_capture.SupportedFrameRates.HasFlag(FrameRate.Fr30))
-              {
-                settings.FrameRate = (int)FrameRate.Fr30;
-              }
-              else if (_capture.SupportedFrameRates.HasFlag(FrameRate.Fr29_97))
-              {
-                settings.FrameRate = (int)FrameRate.Fr29_97;
-              }
-              else
-              {
-                settings.FrameRate = GetMaxFlagValue((int)_capture.SupportedFrameRates);
-              }
-            }
-            else
-            {
-              if (_capture.SupportedFrameRates.HasFlag(FrameRate.Fr50))
-              {
-                settings.FrameRate = (int)FrameRate.Fr50;
-              }
-              else if (_capture.SupportedFrameRates.HasFlag(FrameRate.Fr25))
-              {
-                settings.FrameRate = (int)FrameRate.Fr25;
-              }
-              else
-              {
-                settings.FrameRate = GetMaxFlagValue((int)_capture.SupportedFrameRates);
-              }
-            }
-          }
-          else
-          {
-            if (isNtscStandard && _capture.SupportedFrameSizes.HasFlag(FrameSize.Fs720_480))
-            {
-              settings.FrameSize = (int)FrameSize.Fs720_480;
-              if (_capture.SupportedFrameRates.HasFlag(FrameRate.Fr29_97))
-              {
-                settings.FrameRate = (int)FrameRate.Fr29_97;
-              }
-              else
-              {
-                settings.FrameRate = GetMaxFlagValue((int)_capture.SupportedFrameRates);
-              }
-            }
-            else if (!isNtscStandard && _capture.SupportedFrameSizes.HasFlag(FrameSize.Fs720_576))
-            {
-              settings.FrameSize = (int)FrameSize.Fs720_576;
-              if (_capture.SupportedFrameRates.HasFlag(FrameRate.Fr25))
-              {
-                settings.FrameRate = (int)FrameRate.Fr25;
-              }
-              else
-              {
-                settings.FrameRate = GetMaxFlagValue((int)_capture.SupportedFrameRates);
-              }
-            }
-            else
-            {
-              settings.FrameSize = GetMaxFlagValue((int)_capture.SupportedFrameSizes);
-              settings.FrameRate = GetMaxFlagValue((int)_capture.SupportedFrameRates);
-            }
-          }
-          this.LogDebug("WDM analog: frame size = {0}, frame rate = {1}", (FrameSize)settings.FrameSize, (FrameRate)settings.FrameRate);
-          settings.SupportedFrameSizes = (int)_capture.SupportedFrameSizes;
-          settings.SupportedFrameRates = (int)_capture.SupportedFrameRates;
-
-          var tempProperties = new List<TVDatabase.Entities.TunerProperty>();
-          foreach (var p in _capture.SupportedProperties)
-          {
-            p.IdTuner = TunerId;
-            tempProperties.Add(p);
-          }
-          properties = tempProperties;
-        }
+        properties = tempProperties;
       }
       finally
       {
@@ -394,21 +215,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog
       {
         properties = TunerPropertyManagement.SaveTunerProperties(properties);
       }
-    }
-
-    private static int GetMaxFlagValue(int flags)
-    {
-      if (flags < 2)
-      {
-        return flags;
-      }
-      int value = 1;
-      while (flags > 1)
-      {
-        flags >>= 1;
-        value <<= 1;
-      }
-      return value;
     }
 
     #endregion
@@ -471,21 +277,21 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog
 
       if (!isFinalising)
       {
-        if (_encoder != null)
+        if (_tuner != null)
         {
-          _encoder.PerformUnloading(Graph);
-        }
-        if (_capture != null)
-        {
-          _capture.PerformUnloading(Graph);
+          _tuner.PerformUnloading(Graph);
         }
         if (_crossbar != null)
         {
           _crossbar.PerformUnloading(Graph);
         }
-        if (_tuner != null)
+        if (_capture != null)
         {
-          _tuner.PerformUnloading(Graph);
+          _capture.PerformUnloading(Graph);
+        }
+        if (_encoder != null)
+        {
+          _encoder.PerformUnloading(Graph);
         }
 
         RemoveTsWriterFromGraph();

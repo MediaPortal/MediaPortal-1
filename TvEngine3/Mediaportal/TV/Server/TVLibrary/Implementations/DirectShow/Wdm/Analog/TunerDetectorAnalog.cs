@@ -213,26 +213,20 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog
     {
       productInstanceId = null;
       tunerInstanceId = null;
-      supportedBroadcastStandards = BroadcastStandard.Unknown;
+
+      // Assume the crossbar has at least one input. Tuner inputs count as
+      // external inputs too because an STB can be connected via RF/coax.
+      supportedBroadcastStandards = BroadcastStandard.ExternalInput;
 
       IFilterGraph2 graph = (IFilterGraph2)new FilterGraph();
       Crossbar crossbar = new Crossbar(device);
       try
       {
         crossbar.PerformLoading(graph);
-        if (
-          crossbar.SupportedVideoSources != CaptureSourceVideo.None ||
-          crossbar.SupportedAudioSources != CaptureSourceAudio.None
-        )
-        {
-          // Tuner inputs count as external inputs as well because an STB can
-          // be connected via RF/coax.
-          supportedBroadcastStandards |= BroadcastStandard.ExternalInput;
-        }
 
         // In my experience the tuner instance ID is only stored with the tuner
         // component moniker... but try the crossbar if there is no tuner.
-        if (crossbar.PinIndexInputTunerVideo < 0 && crossbar.PinIndexInputTunerAudio < 0)
+        if (crossbar.PinIndexInputTunerVideo == Crossbar.PIN_INDEX_NOT_SET && crossbar.PinIndexInputTunerAudio == Crossbar.PIN_INDEX_NOT_SET)
         {
           GetIdentifiersForDevice(device, out productInstanceId, out tunerInstanceId);
           return;

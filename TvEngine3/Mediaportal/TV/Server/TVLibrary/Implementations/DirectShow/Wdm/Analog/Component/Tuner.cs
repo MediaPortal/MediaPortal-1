@@ -151,7 +151,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
       IPin pin = null;
 
       this.LogDebug("WDM analog tuner: add tuner");
-      if (crossbarInputPinIndexVideo >= 0)
+      if (crossbarInputPinIndexVideo != Crossbar.PIN_INDEX_NOT_SET)
       {
         pin = DsFindPin.ByDirection(crossbar.Filter, PinDirection.Input, crossbarInputPinIndexVideo);
       }
@@ -168,10 +168,16 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
         Release.ComObject("WDM analog tuner crossbar video input pin", ref pin);
       }
 
-      if ((crossbarInputPinIndexVideo >= 0 && crossbarInputPinIndexAudio >= 0) || _filterTuner == null)
+      if (
+        _filterTuner == null ||
+        (
+          crossbarInputPinIndexVideo != Crossbar.PIN_INDEX_NOT_SET &&
+          crossbarInputPinIndexAudio != Crossbar.PIN_INDEX_NOT_SET
+        )
+      )
       {
         this.LogDebug("WDM analog tuner: add TV audio");
-        if (crossbarInputPinIndexAudio >= 0)
+        if (crossbarInputPinIndexAudio != Crossbar.PIN_INDEX_NOT_SET)
         {
           pin = DsFindPin.ByDirection(crossbar.Filter, PinDirection.Input, crossbarInputPinIndexAudio);
         }
@@ -215,7 +221,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
           }
         }
       }
-      else if (_filterTuner != null && crossbarInputPinIndexVideo >= 0 && crossbarInputPinIndexAudio >= 0)
+      else if (_filterTuner != null && crossbarInputPinIndexVideo != Crossbar.PIN_INDEX_NOT_SET && crossbarInputPinIndexAudio != Crossbar.PIN_INDEX_NOT_SET)
       {
         pin = DsFindPin.ByDirection(crossbar.Filter, PinDirection.Input, crossbarInputPinIndexAudio);
         try
@@ -233,7 +239,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
       }
       else if (_filterTvAudio != null && _filterTuner == null)
       {
-        if (crossbarInputPinIndexVideo >= 0 && crossbarInputPinIndexAudio >= 0)
+        if (crossbarInputPinIndexVideo != Crossbar.PIN_INDEX_NOT_SET && crossbarInputPinIndexAudio != Crossbar.PIN_INDEX_NOT_SET)
         {
           pin = DsFindPin.ByDirection(crossbar.Filter, PinDirection.Input, crossbarInputPinIndexVideo);
           try

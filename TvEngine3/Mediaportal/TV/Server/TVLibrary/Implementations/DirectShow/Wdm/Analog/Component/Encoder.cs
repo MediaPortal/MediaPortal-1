@@ -30,14 +30,13 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Exception;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Multiplexer;
 using MediaPortal.Common.Utils;
-using MediaType = DirectShowLib.MediaType;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.Component
 {
   /// <summary>
   /// A WDM analog DirectShow encoder graph component.
   /// </summary>
-  internal class Encoder
+  internal class Encoder : BaseComponent
   {
     #region constants
 
@@ -96,61 +95,14 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
       new Guid(0x2ff4bfb8, 0x7d35, 0x44cf, 0xaa, 0x67, 0xc5, 0x96, 0x61, 0xdf, 0x89, 0x29)
     };
 
-    private static IList<AMMediaType> MEDIA_TYPES_CAPTURE = new List<AMMediaType>
-    {
-      new AMMediaType() { majorType = MediaType.Null, subType = MediaSubType.Mpeg2Transport },
-      new AMMediaType() { majorType = MediaType.Null, subType = MediaSubType.Mpeg2Program },
-      new AMMediaType() { majorType = MediaType.Null, subType = MediaSubType.MPEG1System }
-    };
-    private static IList<AMMediaType> MEDIA_TYPES_CAPTURE_VIDEO = new List<AMMediaType>
-    {
-      new AMMediaType() { majorType = MediaType.Video, subType = MediaSubType.MPEG1Payload },
-      new AMMediaType() { majorType = MediaType.Null, subType = MediaSubType.MPEG1Video },
-      new AMMediaType() { majorType = MediaType.Null, subType = MediaSubType.Mpeg2Video }
-    };
-    private static IList<AMMediaType> MEDIA_TYPES_CAPTURE_AUDIO = new List<AMMediaType>
-    {
-      new AMMediaType() { majorType = MediaType.Audio, subType = MediaSubType.MPEG1Payload },
-      new AMMediaType() { majorType = MediaType.Null, subType = MediaSubType.MPEG1Audio },
-      new AMMediaType() { majorType = MediaType.Null, subType = MediaSubType.MPEG1AudioPayload },
-      new AMMediaType() { majorType = MediaType.Null, subType = MediaSubType.Mpeg2Audio }
-    };
-    private static IList<AMMediaType> MEDIA_TYPES_VIDEO = new List<AMMediaType>
-    {
-      new AMMediaType() { majorType = MediaType.Video, subType = MediaSubType.Null }
-    };
-    private static IList<AMMediaType> MEDIA_TYPES_AUDIO = new List<AMMediaType>
-    {
-      new AMMediaType() { majorType = MediaType.Audio, subType = MediaSubType.Null }
-    };
-    private static IList<AMMediaType> MEDIA_TYPES_AUDIO_PCM = new List<AMMediaType>
-    {
-      new AMMediaType() { majorType = MediaType.Audio, subType = MediaSubType.PCM }
-    };
-    private static IList<AMMediaType> MEDIA_TYPES_VBI = new List<AMMediaType>
-    {
-      new AMMediaType() { majorType = MediaType.VBI, subType = MediaSubType.Null }
-    };
-    private static IList<AMMediaType> MEDIA_TYPES_TELETEXT = new List<AMMediaType>
-    {
-      new AMMediaType() { majorType = MediaType.VBI, subType = MediaSubType.TELETEXT }
-    };
-    private static IList<AMMediaType> MEDIA_TYPES_VPS = new List<AMMediaType>
-    {
-      new AMMediaType() { majorType = MediaType.VBI, subType = MediaSubType.VPS }
-    };
-    private static IList<AMMediaType> MEDIA_TYPES_WSS = new List<AMMediaType>
-    {
-      new AMMediaType() { majorType = MediaType.VBI, subType = MediaSubType.WSS }
-    };
-    private static IList<AMMediaType> MEDIA_TYPES_CLOSED_CAPTIONS = new List<AMMediaType>
-    {
-      new AMMediaType() { majorType = MediaType.AuxLine21Data, subType = MediaSubType.Line21_BytePair }
-    };
-
     #endregion
 
     #region variables
+
+    /// <summary>
+    /// The upstream capture component.
+    /// </summary>
+    private Capture _capture = null;
 
     /// <summary>
     /// The hardware video (or combined video-audio) encoder device.
@@ -188,15 +140,19 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
     private IBaseFilter _filterTsMultiplexer = null;
 
     /// <summary>
-    /// The VBI or WST codec/splitter filter.
+    /// The vertical blanking interval (VBI) codec or tee/sink-to-sink filter.
     /// </summary>
     private IBaseFilter _filterVbiSplitter = null;
 
     /// <summary>
-    /// The upstream VBI output pin, usually associated with a video capture
-    /// filter.
+    /// The closed captions (CC) decoder filter.
     /// </summary>
-    private IPin _pinUpstreamVbiOutput = null;
+    private IBaseFilter _filterCcDecoder = null;
+
+    /// <summary>
+    /// The world standard teletext (WST) codec filter.
+    /// </summary>
+    private IBaseFilter _filterWstCodec = null;
 
     #region settings
 
@@ -274,8 +230,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
     /// Load the encoder component.
     /// </summary>
     /// <remarks>
-    /// Add and connect the encoder and teletext filters into the tuner graph.
-    /// This function handles a huge variety of filter and pin connection
+    /// Add and connect the encoder and VBI filters into the graph. This
+    /// function handles a huge variety of filter and pin connection
     /// arrangements, including:
     /// - 1 or 2 capture filters
     /// - 1 or 2 encoder filters
@@ -293,218 +249,161 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
     public void PerformLoading(IFilterGraph2 graph, string productInstanceId, Capture capture)
     {
       this.LogDebug("WDM analog encoder: perform loading");
-      IList<IPin> pinsToConnect = new List<IPin>();
-      IPin capturePin = null;
+      _capture = capture;
+      IPin capturePin = capture.PinOutputCapture;
       IPin videoPin = null;
       bool isVideoPinCapture = false;
       IPin audioPin = null;
       bool isAudioPinCapture = false;
-      IPin teletextPin = null;
-      IPin vpsPin = null;
-      IPin wssPin = null;
       IPin closedCaptionsPin = null;
+      IDictionary<PinType, IPin> encoderOutputPins = new Dictionary<PinType, IPin>(5);
+      IDictionary<PinType, IPin> vbiOutputPins = new Dictionary<PinType, IPin>(5);
       try
       {
         // ------------------------------------------------
         // STAGE 1
-        // Add a VBI splitter/decoder for teletext and
-        // closed caption support.
+        // Add VBI splitter and/or decoder filters for
+        // closed captions, teletext, VPS and WSS support.
         // ------------------------------------------------
-        if (capture.VideoFilter != null)
+        IPin vbiPin = capture.PinOutputVbi;
+        if (vbiPin != null && AddAndConnectVbiFilters(graph, vbiPin, vbiOutputPins))
         {
-          IBaseFilter vbiFilter = capture.VideoFilter;
-          IPin vbiPin = null;
-          try
-          {
-            if (
-              FindPinByCategoryOrMediaType(vbiFilter, PinCategory.VBI, MEDIA_TYPES_VBI, out vbiPin) &&
-              AddAndConnectVbiFilter(graph, vbiPin, out _filterVbiSplitter)
-            )
-            {
-              _isVbiEnabled = true;
-              _pinUpstreamVbiOutput = vbiPin;
-              vbiFilter = _filterVbiSplitter;
-            }
-          }
-          finally
-          {
-            if (_pinUpstreamVbiOutput == null && vbiPin != null)
-            {
-              Release.ComObject("WDM analog encoder capture VBI output pin", ref vbiPin);
-            }
-          }
-          if (FindPinByCategoryOrMediaType(vbiFilter, PinCategory.TeleText, MEDIA_TYPES_TELETEXT, out teletextPin))
-          {
-            this.LogDebug("WDM analog encoder: found teletext output");
-            pinsToConnect.Add(teletextPin);
-          }
-          if (FindPinByCategoryOrMediaType(vbiFilter, Guid.Empty, MEDIA_TYPES_VPS, out vpsPin))
-          {
-            this.LogDebug("WDM analog encoder: found video program system output");
-            pinsToConnect.Add(vpsPin);
-          }
-          if (FindPinByCategoryOrMediaType(vbiFilter, Guid.Empty, MEDIA_TYPES_WSS, out wssPin))
-          {
-            this.LogDebug("WDM analog encoder: found wide screen signalling output");
-            pinsToConnect.Add(wssPin);
-          }
-          if (FindPinByCategoryOrMediaType(vbiFilter, PinCategory.CC, MEDIA_TYPES_CLOSED_CAPTIONS, out closedCaptionsPin))
-          {
-            this.LogDebug("WDM analog encoder: found closed captions output");
-          }
+          _isVbiEnabled = true;
+          vbiOutputPins.TryGetValue(PinType.ClosedCaptions, out closedCaptionsPin);
+          vbiOutputPins.Remove(PinType.ClosedCaptions);
         }
 
         // ------------------------------------------------
         // STAGE 2
-        // Find relevant pins and the stream config
-        // interface.
-        // ------------------------------------------------
-        this.LogDebug("WDM analog encoder: find capture outputs");
-        bool isCyberLinkEncoder = false;
-        FindPins(capture.VideoFilter, capture.AudioFilter, ref capturePin, ref videoPin, ref isVideoPinCapture, ref audioPin, ref isAudioPinCapture);
-        bool capturePinHasStreamConfigInterface = false;
-        bool videoPinHasStreamConfigInterface = false;
-        IAMStreamConfig streamConfig = capturePin as IAMStreamConfig;
-        if (streamConfig == null)
-        {
-          streamConfig = videoPin as IAMStreamConfig;
-          videoPinHasStreamConfigInterface = streamConfig != null;
-        }
-        else
-        {
-          capturePinHasStreamConfigInterface = true;
-        }
-        capture.SetStreamConfigInterface(streamConfig);
-
-        // ------------------------------------------------
-        // STAGE 3
         // Connect hardware or software encoder(s) if
         // required.
         // ------------------------------------------------
-        if (capturePin != null)
+        bool isCyberLinkEncoder = false;
+        if (capturePin == null)
         {
-          if (PinRequiresHardwareFilterConnection(capturePin))
-          {
-            this.LogDebug("WDM analog encoder: hardware encoder(s) and/or multiplexer required");
-            bool result;
-            if (capture.VideoFilter == null)
-            {
-              result = FilterGraphTools.AddAndConnectHardwareFilterByCategoryAndMedium(graph, capturePin, FilterCategory.WDMStreamingEncoderDevices, out _filterEncoderAudio, out _deviceEncoderAudio, productInstanceId);
-            }
-            else
-            {
-              result = FilterGraphTools.AddAndConnectHardwareFilterByCategoryAndMedium(graph, capturePin, FilterCategory.WDMStreamingEncoderDevices, out _filterEncoderVideo, out _deviceEncoderVideo, productInstanceId);
-            }
-
-            if (result && capture.VideoFilter == capture.AudioFilter)
-            {
-              _filterEncoderAudio = _filterEncoderVideo;
-              _deviceEncoderAudio = _deviceEncoderVideo;
-            }
-          }
-        }
-        else
-        {
-          if (capture.VideoFilter != null)
+          videoPin = capture.GetVideoOutputDetail(out isVideoPinCapture);
+          if (videoPin != null)
           {
             this.LogDebug("WDM analog encoder: connect capture video output");
             AddAndConnectEncoder(graph, true, videoPin, isVideoPinCapture, productInstanceId, out _filterEncoderVideo, out _deviceEncoderVideo, out isCyberLinkEncoder);
             if (_filterEncoderVideo != null)
             {
-              if (_deviceEncoderVideo == null)
-              {
-                if (ConnectSoftwareVideoEncoderExtraPins(graph, audioPin, closedCaptionsPin, _filterEncoderVideo))
-                {
-                  _filterEncoderAudio = _filterEncoderVideo;
-                }
-              }
-              else if (capture.AudioFilter != null)
+              videoPin = null;
+            }
+          }
+
+          audioPin = capture.GetAudioOutputDetail(out isAudioPinCapture);
+          if (audioPin != null)
+          {
+            if (_filterEncoderVideo != null)
+            {
+              if (_deviceEncoderVideo != null)
               {
                 this.LogDebug("WDM analog encoder: connect capture audio output to existing encoder");
                 if (FilterGraphTools.ConnectFilterWithPin(graph, audioPin, PinDirection.Output, _filterEncoderVideo))
                 {
                   _filterEncoderAudio = _filterEncoderVideo;
                   _deviceEncoderAudio = _deviceEncoderVideo;
+                  audioPin = null;
                 }
                 else
                 {
                   this.LogDebug("WDM analog encoder: separate encoder required");
                 }
               }
-            }
-          }
-
-          if (_filterEncoderAudio == null && capture.AudioFilter != null)
-          {
-            this.LogDebug("WDM analog encoder: connect capture audio output");
-            AddAndConnectEncoder(graph, false, audioPin, isAudioPinCapture, productInstanceId, out _filterEncoderAudio, out _deviceEncoderAudio, out isCyberLinkEncoder);
-            if (_filterEncoderAudio != null && capture.VideoFilter == capture.AudioFilter && _deviceEncoderVideo == null)
-            {
-              // If we have a shared video and audio capture, software video
-              // encoder, and hardware audio encoder... it is possible that
-              // the audio encoder is actually a capture.
-              Release.ComObject("WDM analog encoder capture audio output pin", ref audioPin);
-              if (FindPinByCategoryOrMediaType(_filterEncoderAudio, Guid.Empty, MEDIA_TYPES_AUDIO_PCM, out audioPin))
+              else if (ConnectSoftwareVideoEncoderExtraPins(graph, audioPin, closedCaptionsPin, _filterEncoderVideo))
               {
-                this.LogDebug("WDM analog encoder: detected chained audio capture, connect another audio encoder");
-                capture.SetAudioCapture(_filterEncoderAudio, _deviceEncoderAudio);
-                _filterEncoderAudio = null;
-                _deviceEncoderAudio = null;
-                AddAndConnectEncoder(graph, false, audioPin, isAudioPinCapture, productInstanceId, out _filterEncoderAudio, out _deviceEncoderAudio, out isCyberLinkEncoder);
+                _filterEncoderAudio = _filterEncoderVideo;
+                audioPin = null;
+              }
+            }
+
+            if (_filterEncoderAudio == null)
+            {
+              this.LogDebug("WDM analog encoder: connect capture audio output");
+              AddAndConnectEncoder(graph, false, audioPin, isAudioPinCapture, productInstanceId, out _filterEncoderAudio, out _deviceEncoderAudio, out isCyberLinkEncoder);
+              if (_filterEncoderAudio != null)
+              {
+                audioPin = null;
               }
             }
           }
         }
-
-        // ------------------------------------------------
-        // STAGE 4
-        // Cleanup pins.
-        // ------------------------------------------------
-        if (_filterEncoderVideo != null || _filterEncoderAudio != null)
+        else if (PinRequiresHardwareFilterConnection(capturePin))
         {
-          if (!capturePinHasStreamConfigInterface)
+          this.LogDebug("WDM analog encoder: hardware encoder(s) and/or multiplexer required");
+          bool result;
+          if (capture.VideoFilter == null)
           {
-            Release.ComObject("WDM analog encoder capture output pin", ref capturePin);
+            result = FilterGraphTools.AddAndConnectHardwareFilterByCategoryAndMedium(graph, capturePin, FilterCategory.WDMStreamingEncoderDevices, out _filterEncoderAudio, out _deviceEncoderAudio, productInstanceId);
           }
           else
           {
+            result = FilterGraphTools.AddAndConnectHardwareFilterByCategoryAndMedium(graph, capturePin, FilterCategory.WDMStreamingEncoderDevices, out _filterEncoderVideo, out _deviceEncoderVideo, productInstanceId);
+          }
+          if (result)
+          {
             capturePin = null;
-          }
-          if (_filterEncoderVideo != null)
-          {
-            if (!videoPinHasStreamConfigInterface)
+            if (capture.VideoFilter == capture.AudioFilter)
             {
-              Release.ComObject("WDM analog encoder capture video output pin", ref videoPin);
+              _filterEncoderAudio = _filterEncoderVideo;
+              _deviceEncoderAudio = _deviceEncoderVideo;
             }
-            else
-            {
-              videoPin = null;
-            }
-          }
-          if (_filterEncoderAudio != null)
-          {
-            Release.ComObject("WDM analog encoder capture audio output pin", ref audioPin);
           }
         }
 
         // ------------------------------------------------
-        // STAGE 5
+        // STAGE 3
+        // Find the encoder outputs.
+        // ------------------------------------------------
+        PinType findPinTypes = PinType.Video;
+        if (_filterEncoderVideo != null)
+        {
+          if (_filterEncoderVideo == _filterEncoderAudio)
+          {
+            findPinTypes |= PinType.Audio | PinType.Capture;
+          }
+          else if (_filterEncoderAudio == null)
+          {
+            findPinTypes |= PinType.Capture;
+          }
+          FindOutputPins("video encoder", _filterEncoderVideo, findPinTypes, encoderOutputPins, ref isVideoPinCapture, ref isAudioPinCapture);
+          encoderOutputPins.TryGetValue(PinType.Video, out videoPin);
+          if (findPinTypes.HasFlag(PinType.Audio))
+          {
+            encoderOutputPins.TryGetValue(PinType.Audio, out audioPin);
+          }
+        }
+        if (_filterEncoderAudio != null && _filterEncoderAudio != _filterEncoderVideo)
+        {
+          findPinTypes = PinType.Audio;
+          if (_filterEncoderVideo == null)
+          {
+            findPinTypes |= PinType.Capture;
+          }
+          FindOutputPins("audio encoder", _filterEncoderAudio, findPinTypes, encoderOutputPins, ref isVideoPinCapture, ref isAudioPinCapture);
+          encoderOutputPins.TryGetValue(PinType.Audio, out audioPin);
+        }
+        if (findPinTypes.HasFlag(PinType.Capture))
+        {
+          encoderOutputPins.TryGetValue(PinType.Capture, out capturePin);
+        }
+
+        // ------------------------------------------------
+        // STAGE 4
         // Connect a hardware or software multiplexer if
         // required.
         // ------------------------------------------------
-        this.LogDebug("WDM analog encoder: find encoder outputs");
-        FindPins(_filterEncoderVideo, _filterEncoderAudio, ref capturePin, ref videoPin, ref isVideoPinCapture, ref audioPin, ref isAudioPinCapture);
         AddAndConnectMultiplexer(graph, capturePin, videoPin, audioPin, productInstanceId, out _filterMultiplexer, out _deviceMultiplexer);
         if (_filterMultiplexer == null && _deviceEncoderAudio != null && isCyberLinkEncoder)
         {
-          // Add and connect a CyberLink multiplexer. This is required if a
-          // CyberLink audio encoder is used. If the muxer isn't in the
-          // graph, the audio encoder causes an access violation exception
-          // when you attempt to start the graph. My guess is that the
-          // encoder interacts with the muxer. I tried to mimic interfaces
-          // requested via QueryInterface() with our TS multiplexer but
-          // ultimately I never managed to make the encoder work without
-          // the CyberLink multiplexer.
+          // A CyberLink multiplexer is required if a CyberLink audio encoder
+          // is used. If the muxer isn't in the graph, the audio encoder causes
+          // an access violation exception when you attempt to start the graph.
+          // My guess is that the encoder interacts with the muxer. I tried to
+          // mimic interfaces requested via QueryInterface() with our TS
+          // multiplexer but ultimately I never managed to make the encoder
+          // work without the CyberLink multiplexer.
           if (!AddAndConnectCyberLinkMultiplexer(graph, videoPin, audioPin, out _filterMultiplexer))
           {
             throw new TvException("Failed to add and connect CyberLink multiplexer.");
@@ -512,51 +411,61 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
         }
 
         // ------------------------------------------------
-        // STAGE 6
-        // Cleanup and connect the TS multiplexer.
+        // STAGE 5
+        // Finally, complete the graph with the TS
+        // multiplexer.
         // ------------------------------------------------
+        List<IPin> pinsToConnect = new List<IPin>(5);
         if (_filterMultiplexer != null)
         {
-          Release.ComObject("WDM analog encoder capture output", ref capturePin);
-          Release.ComObject("WDM analog encoder video output", ref videoPin);
-          Release.ComObject("WDM analog encoder audio output", ref audioPin);
-          if (!FindPinByCategoryOrMediaType(_filterMultiplexer, Guid.Empty, MEDIA_TYPES_CAPTURE, out capturePin))
+          if (encoderOutputPins.Remove(PinType.Capture))
+          {
+            Release.ComObject("WDM analog encoder capture output pin", ref capturePin);
+          }
+          FindOutputPins("multiplexer", _filterMultiplexer, PinType.Capture, encoderOutputPins, ref isVideoPinCapture, ref isAudioPinCapture);
+          encoderOutputPins.TryGetValue(PinType.Capture, out capturePin);
+          if (capturePin == null)
           {
             throw new TvException("Failed to find capture output on multiplexer.");
           }
-          this.LogDebug("WDM analog encoder: found capture output on multiplexer");
+          pinsToConnect.Add(capturePin);
         }
-        if (capturePin != null)
+        else if (capturePin != null)
         {
           pinsToConnect.Add(capturePin);
         }
         else
         {
-          if (videoPin != null)
-          {
-            pinsToConnect.Add(videoPin);
-          }
-          if (audioPin != null)
-          {
-            pinsToConnect.Add(audioPin);
-          }
+          pinsToConnect.Add(videoPin);
+          pinsToConnect.Add(audioPin);
         }
-        if (!AddAndConnectTsMultiplexer(graph, pinsToConnect))
+        pinsToConnect.AddRange(vbiOutputPins.Values);
+        try
         {
-          throw new TvException("Failed to add and connect TS multiplexer.");
+          _filterTsMultiplexer = FilterGraphTools.AddFilterFromFile(graph, "TsMuxer.ax", typeof(MediaPortalTsMultiplexer).GUID, "MediaPortal TS Multiplexer");
         }
+        catch (Exception ex)
+        {
+          this.LogError(ex, "WDM analog encoder: failed to add TS multiplexer filter to graph");
+          throw;
+        }
+        ConnectTsMultiplexer(graph, pinsToConnect);
 
         _isHauppaugeSaa7164Based = _deviceEncoderVideo != null && HAUPPAUGE_SAA7164_DEVICE_ID.IsMatch(_deviceEncoderVideo.DevicePath);
       }
       finally
       {
-        Release.ComObject("WDM analog encoder final capture pin", ref capturePin);
-        Release.ComObject("WDM analog encoder final video pin", ref videoPin);
-        Release.ComObject("WDM analog encoder final audio pin", ref audioPin);
-        Release.ComObject("WDM analog encoder final teletext pin", ref teletextPin);
-        Release.ComObject("WDM analog encoder final video program system pin", ref vpsPin);
-        Release.ComObject("WDM analog encoder final wide screen signalling pin", ref wssPin);
-        Release.ComObject("WDM analog encoder final closed caption pin", ref closedCaptionsPin);
+        foreach (IPin pin in encoderOutputPins.Values)
+        {
+          IPin tempPin = pin;
+          Release.ComObject("WDM analog encoder encoder output pin", ref tempPin);
+        }
+        foreach (IPin pin in vbiOutputPins.Values)
+        {
+          IPin tempPin = pin;
+          Release.ComObject("WDM analog encoder VBI output pin", ref tempPin);
+        }
+        Release.ComObject("WDM analog encoder closed captions output pin", ref closedCaptionsPin);
       }
     }
 
@@ -570,205 +479,164 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
       return true;
     }
 
-    private bool FindPinByCategoryOrMediaType(IBaseFilter filter, Guid matchCategory, IList<AMMediaType> matchMediaTypes, out IPin matchedPin)
+    private delegate bool OnAvailableInputPin(int index, string name, IPin pin);
+
+    private void EnumerateUnconnectedFilterInputs(IBaseFilter filter, OnAvailableInputPin availableInputPinDelegate)
     {
-      if (matchMediaTypes == null)
-      {
-        matchMediaTypes = new List<AMMediaType>();
-      }
-      matchedPin = null;
-      Guid matchMediaMajorType = Guid.Empty;
-      Guid matchMediaSubType = Guid.Empty;
+      IEnumPins pinEnum;
+      int hr = filter.EnumPins(out pinEnum);
+      TvExceptionDirectShowError.Throw(hr, "Failed to obtain pin enumerator for unconnected filter.");
 
-      IEnumPins enumPins;
-      int hr = filter.EnumPins(out enumPins);
-      TvExceptionDirectShowError.Throw(hr, "Failed to obtain pin enumerator.");
-      try
+      int pinIndex = 0;
+      int pinCount = 0;
+      IPin[] pins = new IPin[2];
+      while (pinEnum.Next(1, pins, out pinCount) == (int)NativeMethods.HResult.S_OK && pinCount == 1)
       {
-        // For each output pin...
-        int pinCount;
-        IPin[] pins = new IPin[2];
-        while (enumPins.Next(1, pins, out pinCount) == (int)NativeMethods.HResult.S_OK && pinCount == 1)
+        IPin pin = pins[0];
+        try
         {
-          IPin pin = pins[0];
-          try
-          {
-            // We're not interested in input pins.
-            PinDirection direction;
-            hr = pin.QueryDirection(out direction);
-            TvExceptionDirectShowError.Throw(hr, "Failed to query direction for pin.");
-            if (direction == PinDirection.Input)
-            {
-              continue;
-            }
+          PinInfo pinInfo;
+          hr = pin.QueryPinInfo(out pinInfo);
+          TvExceptionDirectShowError.Throw(hr, "Failed to obtain pin information for unconnected filter pin {0}.", pinIndex);
+          Release.PinInfo(ref pinInfo);
 
-            // Does the category match?
-            if (matchCategory != Guid.Empty && matchCategory == DsUtils.GetPinCategory(pin))
-            {
-              matchedPin = pin;
-              return true;
-            }
+          if (pinInfo.dir != PinDirection.Input)
+          {
+            pinIndex--;     // compensate for the undesirable increment in the finally clause
+            continue;
+          }
 
-            // For each pin media type...
-            IEnumMediaTypes enumMediaTypes;
-            hr = pin.EnumMediaTypes(out enumMediaTypes);
-            TvExceptionDirectShowError.Throw(hr, "Failed to obtain media type enumerator for pin.");
-            try
-            {
-              int mediaTypeCount;
-              AMMediaType[] mediaTypes = new AMMediaType[2];
-              while (enumMediaTypes.Next(1, mediaTypes, out mediaTypeCount) == (int)NativeMethods.HResult.S_OK && mediaTypeCount == 1)
-              {
-                AMMediaType mediaType = mediaTypes[0];
-                try
-                {
-                  foreach (AMMediaType mt in matchMediaTypes)
-                  {
-                    if ((mediaType.majorType == mt.majorType || mt.majorType == MediaType.Null) && (mediaType.subType == mt.subType || mt.subType == MediaSubType.Null))
-                    {
-                      matchedPin = pin;
-                      matchMediaMajorType = mediaType.majorType;
-                      matchMediaSubType = mediaType.subType;
-                      return true;
-                    }
-                  }
-                }
-                finally
-                {
-                  Release.AmMediaType(ref mediaType);
-                }
-              }
-            }
-            finally
-            {
-              Release.ComObject("WDM analog encoder pin media type enumerator", ref enumMediaTypes);
-            }
-          }
-          catch (Exception ex)
+          IPin connectedPin;
+          hr = pin.ConnectedTo(out connectedPin);
+          if (hr == (int)NativeMethods.HResult.S_OK && connectedPin != null)
           {
-            this.LogError(ex, "WDM analog encoder: unexpected error in FindPinByMediaType()");
+            Release.ComObject("WDM analog encoder unconnected filter connected pin", ref connectedPin);
+            continue;
           }
-          finally
+
+          if (availableInputPinDelegate(pinIndex, pinInfo.name, pin))
           {
-            if (matchedPin == null)
-            {
-              Release.ComObject("WDM analog encoder non-matched pin", ref pin);
-            }
+            break;
           }
         }
+        finally
+        {
+          Release.ComObject("WDM analog encoder unconnected filter input pin", ref pin);
+          pinIndex++;
+        }
       }
-      finally
-      {
-        Release.ComObject("WDM analog encoder pin enumerator", ref enumPins);
-      }
-      return false;
     }
 
-    private bool AddAndConnectVbiFilter(IFilterGraph2 graph, IPin vbiPin, out IBaseFilter filter)
+    private bool AddAndConnectVbiFilters(IFilterGraph2 graph, IPin vbiPin, IDictionary<PinType, IPin> vbiOutputPins)
     {
       this.LogDebug("WDM analog encoder: add and connect VBI splitter");
-      filter = null;
-      DsDevice[] devices1 = DsDevice.GetDevicesOfCat(TveGuid.AM_KS_CATEGORY_MULTI_VBI_CODEC);
-      DsDevice[] devices2 = DsDevice.GetDevicesOfCat(FilterCategory.AMKSVBICodec);
-      DsDevice[] devices = new DsDevice[devices1.Length + devices2.Length];
-      devices1.CopyTo(devices, 0);
-      devices2.CopyTo(devices, devices1.Length);
+
+      // Note: the exact names of these filters varies depending on OS language.
+      bool isNewCodec = true;
       try
       {
-        for (int i = 0; i < devices.Length; i++)
+        _filterVbiSplitter = FilterGraphTools.AddFilterFromCategory(graph, TveGuid.AM_KS_CATEGORY_MULTI_VBI_CODEC, delegate(DsDevice device)
         {
-          DsDevice d = devices[i];
-          string deviceName = d.Name;
-          if (deviceName == null || (!deviceName.Contains("VBI") && !deviceName.Contains("WST")))
+          return device.Name.Contains("VBI");     // VBI Codec
+        });
+        if (_filterVbiSplitter == null)
+        {
+          isNewCodec = false;
+          if (Environment.OSVersion.Version.Major < 6)
           {
-            continue;
+            _filterVbiSplitter = FilterGraphTools.AddFilterFromCategory(graph, FilterCategory.AMKSSplitter, delegate
+            {
+              return true;                        // Tee/Sink-to-Sink Converter
+            });
           }
-
-          try
+          if (_filterVbiSplitter == null)
           {
-            this.LogDebug("WDM analog encoder:   try {0}", deviceName);
-            filter = FilterGraphTools.AddFilterFromDevice(graph, d);
-          }
-          catch (Exception ex)
-          {
-            this.LogError(ex, "WDM analog encoder: failed to add VBI splitter {0}", deviceName);
-            continue;
-          }
-          IPin pin = null;
-          try
-          {
-            pin = DsFindPin.ByDirection(filter, PinDirection.Input, 0);
-            int hr = graph.ConnectDirect(vbiPin, pin, null);
-            TvExceptionDirectShowError.Throw(hr, "Failed to connect VBI splitter.");
-            this.LogDebug("WDM analog encoder:     connected!");
-            return true;
-          }
-          catch (Exception ex)
-          {
-            this.LogError(ex, "WDM analog encoder: failed to connect VBI splitter {0}", deviceName);
-            graph.RemoveFilter(filter);
-            Release.ComObject("WDM analog encoder VBI splitter filter candidate", ref filter);
-          }
-          finally
-          {
-            Release.ComObject("WDM analog encoder VBI splitter input pin", ref pin);
+            this.LogWarn("WDM analog encoder: failed to add VBI splitter");
+            return false;
           }
         }
+      }
+      catch (Exception ex)
+      {
+        this.LogWarn(ex, "WDM analog encoder: failed to add VBI splitter, is new = {0}", isNewCodec);
+        return false;
+      }
+
+      IPin pin = null;
+      try
+      {
+        pin = DsFindPin.ByDirection(_filterVbiSplitter, PinDirection.Input, 0);
+        int hr = graph.ConnectDirect(vbiPin, pin, null);
+        TvExceptionDirectShowError.Throw(hr, "Failed to connect VBI splitter.");
+        this.LogDebug("WDM analog encoder:   connected!");
+      }
+      catch (Exception ex)
+      {
+        this.LogError(ex, "WDM analog encoder: failed to connect VBI splitter, is new = {0}", isNewCodec);
+        graph.RemoveFilter(_filterVbiSplitter);
+        Release.ComObject("WDM analog encoder VBI splitter filter candidate", ref _filterVbiSplitter);
+        return false;
       }
       finally
       {
-        foreach (DsDevice d in devices)
-        {
-          d.Dispose();
-        }
-      }
-      return false;
-    }
-
-    private void FindPins(IBaseFilter filterVideo, IBaseFilter filterAudio, ref IPin pinCapture, ref IPin pinVideo, ref bool isVideoPinCapture, ref IPin pinAudio, ref bool isAudioPinCapture)
-    {
-      if (pinCapture == null && (filterVideo == null || filterAudio == null || filterVideo == filterAudio))
-      {
-        if (FindPinByCategoryOrMediaType(filterVideo ?? filterAudio, Guid.Empty, MEDIA_TYPES_CAPTURE, out pinCapture))
-        {
-          this.LogDebug("WDM analog encoder:   found capture output");
-          return;
-        }
+        Release.ComObject("WDM analog encoder VBI splitter input pin", ref pin);
       }
 
-      if (pinVideo == null && filterVideo != null)
+      bool dummyBool = false;
+      if (isNewCodec)
       {
-        if (FindPinByCategoryOrMediaType(filterVideo, Guid.Empty, MEDIA_TYPES_CAPTURE_VIDEO, out pinVideo))
+        FindOutputPins("VBI splitter", _filterVbiSplitter, PinType.AnyVbiSubType, vbiOutputPins, ref dummyBool, ref dummyBool);
+        return true;
+      }
+
+      // The CC decoder must be connected before the WST codec. It won't
+      // connect if you connect the WST codec first.
+      try
+      {
+        this.LogDebug("WDM analog encoder: add and connect closed captions decoder");
+        _filterCcDecoder = FilterGraphTools.AddFilterFromCategory(graph, FilterCategory.AMKSVBICodec, delegate(DsDevice device)
         {
-          isVideoPinCapture = true;
-          this.LogDebug("WDM analog encoder:   found video capture output");
+          return device.Name.Contains("CC");    // CC Decoder
+        });
+        if (_filterCcDecoder == null)
+        {
+          this.LogWarn("WDM analog encoder: failed to add closed captions decoder");
         }
         else
         {
-          isVideoPinCapture = false;
-          if (FindPinByCategoryOrMediaType(filterVideo, Guid.Empty, MEDIA_TYPES_VIDEO, out pinVideo))
-          {
-            this.LogDebug("WDM analog encoder:   found video output");
-          }
+          FilterGraphTools.ConnectFilters(graph, _filterVbiSplitter, 0, _filterCcDecoder, 0);
+          FindOutputPins("closed captions decoder", _filterCcDecoder, PinType.ClosedCaptions, vbiOutputPins, ref dummyBool, ref dummyBool);
         }
       }
-
-      if (pinAudio == null && filterAudio != null)
+      catch (Exception ex)
       {
-        if (FindPinByCategoryOrMediaType(filterAudio, Guid.Empty, MEDIA_TYPES_CAPTURE_AUDIO, out pinAudio))
+        this.LogWarn(ex, "WDM analog encoder: failed to add and/or connect closed captions decoder");
+      }
+
+      try
+      {
+        this.LogDebug("WDM analog encoder: add and connect world standard teletext codec");
+        _filterWstCodec = FilterGraphTools.AddFilterFromCategory(graph, FilterCategory.AMKSVBICodec, delegate(DsDevice device)
         {
-          isAudioPinCapture = true;
-          this.LogDebug("WDM analog encoder:   found audio capture output");
+          return device.Name.Contains("WST");   // WST Codec
+        });
+        if (_filterWstCodec == null)
+        {
+          this.LogWarn("WDM analog encoder: failed to add world standard teletext codec");
         }
         else
         {
-          isAudioPinCapture = false;
-          if (FindPinByCategoryOrMediaType(filterAudio, Guid.Empty, MEDIA_TYPES_AUDIO, out pinAudio))
-          {
-            this.LogDebug("WDM analog encoder:   found audio output");
-          }
+          // Yes, you must connect output pin 0 again. The Tee/Sink-to-Sink
+          // Converter is weird. It moves the CC decoder connection to pin 1.
+          FilterGraphTools.ConnectFilters(graph, _filterVbiSplitter, 0, _filterWstCodec, 0);
+          FindOutputPins("world standard teletext codec", _filterWstCodec, PinType.Teletext, vbiOutputPins, ref dummyBool, ref dummyBool);
         }
       }
+      catch (Exception ex)
+      {
+        this.LogWarn(ex, "WDM analog encoder: failed to add and/or connect world standard teletext codec");
+      }
+      return true;
     }
 
     private void AddAndConnectEncoder(IFilterGraph2 graph, bool isVideo, IPin pin, bool isCapturePin, string productInstanceId, out IBaseFilter filter, out DsDevice device, out bool isCyberLink)
@@ -777,141 +645,118 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
       device = null;
       isCyberLink = false;
 
-      if (pin == null)
-      {
-        this.LogWarn("WDM analog encoder: failed to find output");
-        return;
-      }
-      else if (PinRequiresHardwareFilterConnection(pin))
+      if (PinRequiresHardwareFilterConnection(pin))
       {
         this.LogDebug("WDM analog encoder:   hardware encoder (and/or multiplexer) required");
         FilterGraphTools.AddAndConnectHardwareFilterByCategoryAndMedium(graph, pin, FilterCategory.WDMStreamingEncoderDevices, out filter, out device, productInstanceId);
+        return;
       }
-      else if (!isCapturePin)
+      else if (isCapturePin)
       {
-        this.LogDebug("WDM analog encoder:   software encoder required");
+        this.LogDebug("WDM analog encoder:   encoder not required for capture output");
+        return;
+      }
 
-        System.Collections.IEnumerable softwareEncoders;
-        bool isPreferredEncoder = false;
-        if (isVideo)
+      this.LogDebug("WDM analog encoder:   software encoder required");
+      System.Collections.IEnumerable softwareEncoders;
+      bool isPreferredEncoder = false;
+      if (isVideo)
+      {
+        if (_encoderVideo == null)
         {
-          if (_encoderVideo == null)
-          {
-            softwareEncoders = SoftwareEncoderManagement.ListAllSofwareEncodersVideo();
-          }
-          else
-          {
-            softwareEncoders = new List<VideoEncoder> { _encoderVideo };
-            isPreferredEncoder = true;
-          }
+          softwareEncoders = SoftwareEncoderManagement.ListAllSofwareEncodersVideo();
         }
         else
         {
-          if (_encoderAudio == null)
-          {
-            softwareEncoders = SoftwareEncoderManagement.ListAllSofwareEncodersAudio();
-          }
-          else
-          {
-            softwareEncoders = new List<AudioEncoder> { _encoderAudio };
-            isPreferredEncoder = true;
-          }
+          softwareEncoders = new List<VideoEncoder> { _encoderVideo };
+          isPreferredEncoder = true;
         }
-
-        string name;
-        string classId;
-        foreach (var encoder in softwareEncoders)
-        {
-          name = encoder.ToString();
-          if (isVideo)
-          {
-            VideoEncoder videoEncoder = encoder as VideoEncoder;
-            classId = videoEncoder.ClassId;
-          }
-          else
-          {
-            AudioEncoder audioEncoder = encoder as AudioEncoder;
-            classId = audioEncoder.ClassId;
-          }
-          bool success = false;
-          try
-          {
-            this.LogDebug("WDM analog encoder:     try {0}, CLSID = {1}", name, classId);
-            filter = FilterGraphTools.AddFilterFromRegisteredClsid(graph, new Guid(classId), string.Format("{0} {1}", name, isVideo ? "Video" : "Audio"));
-            if (FilterGraphTools.ConnectFilterWithPin(graph, pin, PinDirection.Output, filter))
-            {
-              success = true;
-              isCyberLink = name.ToLowerInvariant().Contains("cyberlink");
-              return;
-            }
-          }
-          catch
-          {
-          }
-          finally
-          {
-            if (!success && filter != null)
-            {
-              graph.RemoveFilter(filter);
-              Release.ComObject("WDM analog encoder software encoder candidate", ref filter);
-            }
-          }
-        }
-
-        throw new TvExceptionNeedSoftwareEncoder(isVideo, isPreferredEncoder);
       }
       else
       {
-        this.LogDebug("WDM analog encoder:   found capture output, encoder not required");
+        if (_encoderAudio == null)
+        {
+          softwareEncoders = SoftwareEncoderManagement.ListAllSofwareEncodersAudio();
+        }
+        else
+        {
+          softwareEncoders = new List<AudioEncoder> { _encoderAudio };
+          isPreferredEncoder = true;
+        }
       }
+
+      string name;
+      string classId;
+      foreach (var encoder in softwareEncoders)
+      {
+        name = encoder.ToString();
+        if (isVideo)
+        {
+          VideoEncoder videoEncoder = encoder as VideoEncoder;
+          classId = videoEncoder.ClassId;
+        }
+        else
+        {
+          AudioEncoder audioEncoder = encoder as AudioEncoder;
+          classId = audioEncoder.ClassId;
+        }
+        bool success = false;
+        try
+        {
+          this.LogDebug("WDM analog encoder:     try {0}, CLSID = {1}", name, classId);
+          filter = FilterGraphTools.AddFilterFromRegisteredClsid(graph, new Guid(classId), string.Format("{0} {1}", name, isVideo ? "Video" : "Audio"));
+          if (FilterGraphTools.ConnectFilterWithPin(graph, pin, PinDirection.Output, filter))
+          {
+            success = true;
+            isCyberLink = name.ToLowerInvariant().Contains("cyberlink");
+            return;
+          }
+        }
+        catch
+        {
+        }
+        finally
+        {
+          if (!success && filter != null)
+          {
+            graph.RemoveFilter(filter);
+            Release.ComObject("WDM analog encoder software encoder candidate", ref filter);
+          }
+        }
+      }
+
+      throw new TvExceptionNeedSoftwareEncoder(isVideo, isPreferredEncoder);
     }
 
     private bool ConnectSoftwareVideoEncoderExtraPins(IFilterGraph2 graph, IPin audioPin, IPin closedCaptionsPin, IBaseFilter videoEncoder)
     {
+      this.LogDebug("WDM analog encoder: connect software video encoder extra pins");
+
       // Sometimes the video encoder may also encode audio and/or closed
       // captions. Unfortunately the encoders I've seen don't advertise the
       // supported media types on their input pins. We're forced to check the
       // pin name to determine the type.
       bool connectedAudio = false;
-      int i = 1;
-      while (true)
+      EnumerateUnconnectedFilterInputs(videoEncoder, delegate(int index, string name, IPin pin)
       {
-        IPin inputPin = DsFindPin.ByDirection(videoEncoder, PinDirection.Input, i);
-        if (inputPin == null)
+        this.LogDebug("WDM analog encoder:   pin, index = {0}, name = {1}...", index, name);
+        if (DsUtils.GetPinCategory(pin) == PinCategory.CC || name.ToLowerInvariant().Contains("cc"))
         {
-          return connectedAudio;
+          if (closedCaptionsPin != null && graph.ConnectDirect(closedCaptionsPin, pin, null) == (int)NativeMethods.HResult.S_OK)
+          {
+            this.LogDebug("WDM analog encoder:     connected closed captions!");
+            closedCaptionsPin = null;
+          }
         }
-        try
+        else if (audioPin != null && graph.ConnectDirect(audioPin, pin, null) == (int)NativeMethods.HResult.S_OK)
         {
-          if (i == 1)
-          {
-            this.LogDebug("WDM analog encoder: connect software video encoder extra pins");
-          }
-          string pinName = FilterGraphTools.GetPinName(inputPin);
-          this.LogDebug("WDM analog encoder:   pin {0}...", pinName);
-          if (DsUtils.GetPinCategory(inputPin) == PinCategory.CC || pinName.ToLowerInvariant().Contains("cc"))
-          {
-            if (closedCaptionsPin != null && graph.ConnectDirect(closedCaptionsPin, inputPin, null) == (int)NativeMethods.HResult.S_OK)
-            {
-              this.LogDebug("WDM analog encoder:     connected closed captions!");
-              closedCaptionsPin = null;
-            }
-          }
-          else
-          {
-            if (audioPin != null && graph.ConnectDirect(audioPin, inputPin, null) == (int)NativeMethods.HResult.S_OK)
-            {
-              this.LogDebug("WDM analog encoder:     connected audio!");
-              audioPin = null;
-            }
-          }
-          i++;
+          this.LogDebug("WDM analog encoder:     connected audio!");
+          audioPin = null;
+          connectedAudio = true;
         }
-        finally
-        {
-          Release.ComObject("WDM analog encoder software video encoder extra input pin", ref inputPin);
-        }
-      }
+        return closedCaptionsPin != null || audioPin != null;
+      });
+      return connectedAudio;
     }
 
     private void AddAndConnectMultiplexer(IFilterGraph2 graph, IPin pinCapture, IPin pinVideo, IPin pinAudio, string productInstanceId, out IBaseFilter filter, out DsDevice device)
@@ -937,7 +782,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
         if (PinRequiresHardwareFilterConnection(pinVideo))
         {
           this.LogDebug("WDM analog encoder: hardware multiplexer required");
-          if (!FilterGraphTools.AddAndConnectHardwareFilterByCategoryAndMedium(graph, pinCapture, FilterCategory.WDMStreamingMultiplexerDevices, out filter, out device, productInstanceId))
+          if (!FilterGraphTools.AddAndConnectHardwareFilterByCategoryAndMedium(graph, pinVideo, FilterCategory.WDMStreamingMultiplexerDevices, out filter, out device, productInstanceId))
           {
             throw new TvException("Failed to find hardware encoder or multiplexer to connect to video output.");
           }
@@ -1007,42 +852,35 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
       return false;
     }
 
-    private bool AddAndConnectTsMultiplexer(IFilterGraph2 graph, IList<IPin> pinsToConnect)
+    private void ConnectTsMultiplexer(IFilterGraph2 graph, IEnumerable<IPin> pinsToConnect)
     {
-      this.LogDebug("WDM analog encoder: add and connect TS multiplexer");
+      this.LogDebug("WDM analog encoder: connect TS multiplexer");
+      IEnumerator<IPin> pinEnumerator = pinsToConnect.GetEnumerator();
       try
       {
-        _filterTsMultiplexer = FilterGraphTools.AddFilterFromFile(graph, "TsMuxer.ax", typeof(MediaPortalTsMultiplexer).GUID, "MediaPortal TS Multiplexer");
+        EnumerateUnconnectedFilterInputs(_filterTsMultiplexer, delegate(int index, string name, IPin pin)
+        {
+          IPin pinToConnect = null;
+          while (pinToConnect == null && pinEnumerator.MoveNext())
+          {
+            pinToConnect = pinEnumerator.Current;
+          }
+          if (pinToConnect != null)
+          {
+            int hr = graph.ConnectDirect(pinToConnect, pin, null);
+            TvExceptionDirectShowError.Throw(hr, "Failed to connect TS multiplexer pin {0}.", index);
+            return false;
+          }
+          return true;
+        });
       }
       catch (Exception ex)
       {
-        this.LogError(ex, "WDM analog encoder: failed to add TS multiplexer filter to graph");
-        return false;
-      }
-
-      IPin inputPin = null;
-      int pinIndex = 0;
-      foreach (IPin pinToConnect in pinsToConnect)
-      {
-        try
-        {
-          inputPin = DsFindPin.ByDirection(_filterTsMultiplexer, PinDirection.Input, pinIndex++);
-          int hr = graph.ConnectDirect(pinToConnect, inputPin, null);
-          TvExceptionDirectShowError.Throw(hr, "Failed to connect TS multiplexer.");
-        }
-        catch (Exception ex)
-        {
-          this.LogError(ex, "WDM analog encoder: failed to connect TS multiplexer pin {0}", pinIndex);
-          return false;
-        }
-        finally
-        {
-          Release.ComObject("WDM analog encoder TS muxer input pin " + pinIndex, ref inputPin);
-        }
+        this.LogError(ex, "WDM analog encoder: failed to connect TS multiplexer");
+        throw;
       }
 
       ApplyTsMuxerConfig();
-      return true;
     }
 
     private void ApplyTsMuxerConfig()
@@ -1052,6 +890,67 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
       {
         tsMuxer.DumpInput(_tsMuxerInputDumpMask);
       }
+    }
+
+    private void EnableVbi(IFilterGraph2 graph)
+    {
+      this.LogDebug("WDM analog encoder: enable VBI");
+      IDictionary<PinType, IPin> pins = new Dictionary<PinType, IPin>(5);
+      if (!AddAndConnectVbiFilters(graph, _capture.PinOutputVbi, pins))
+      {
+        return;
+      }
+      IPin closedCaptionsPin = null;
+      try
+      {
+        pins.TryGetValue(PinType.ClosedCaptions, out closedCaptionsPin);
+        pins.Remove(PinType.ClosedCaptions);
+        ConnectTsMultiplexer(graph, pins.Values);
+        // All Hauppauge SAA7164-based cards have hardware encoding.
+        if (_deviceEncoderVideo != null)
+        {
+          ConnectSoftwareVideoEncoderExtraPins(graph, null, closedCaptionsPin, _filterEncoderVideo);
+        }
+        _isVbiEnabled = true;
+      }
+      catch (Exception ex)
+      {
+        this.LogWarn(ex, "wDM analog encoder: failed to connect VBI output pins");
+      }
+      finally
+      {
+        Release.ComObject("WDM analog encoder closed captions output pin", ref closedCaptionsPin);
+        foreach (IPin pin in pins.Values)
+        {
+          IPin tempPin = pin;
+          Release.ComObject("WDM analog encoder VBI output pin", ref tempPin);
+        }
+      }
+    }
+
+    private void DisableVbi(IFilterGraph2 graph)
+    {
+      this.LogDebug("WDM analog encoder: disable VBI");
+      int hr = (int)NativeMethods.HResult.S_OK;
+      if (_filterCcDecoder != null)
+      {
+        hr |= graph.RemoveFilter(_filterCcDecoder);
+      }
+      if (_filterWstCodec != null)
+      {
+        hr |= graph.RemoveFilter(_filterWstCodec);
+      }
+      hr |= graph.RemoveFilter(_filterVbiSplitter);
+      if (hr != (int)NativeMethods.HResult.S_OK)
+      {
+        this.LogWarn("WDM analog encoder: failed to remove one or more VBI filters, hr = 0x{0:x}", hr);
+        return;
+      }
+
+      Release.ComObject("WDM analog encoder VBI splitter filter", ref _filterVbiSplitter);
+      Release.ComObject("WDM analog encoder CC decoder filter", ref _filterCcDecoder);
+      Release.ComObject("WDM analog encoder WST codec filter", ref _filterWstCodec);
+      _isVbiEnabled = false;
     }
 
     #endregion
@@ -1073,53 +972,29 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
       // http://forum.team-mediaportal.com/threads/bsod-when-scanning-channels-analog-cable-hvr-2255-f111.132566/
       //
       // The following work-around should avoid BSODs in ideal conditions.
-      if (_isHauppaugeSaa7164Based && _pinUpstreamVbiOutput != null && _filterVbiSplitter != null)
+      if (_isHauppaugeSaa7164Based)
       {
         bool isScanning = string.IsNullOrEmpty(channel.Name);
         if ((!isScanning && !_isVbiEnabled) || (isScanning && _isVbiEnabled))
         {
           FilterInfo filterInfo;
-          int hr = _filterVbiSplitter.QueryFilterInfo(out filterInfo);
+          int hr = _filterTsMultiplexer.QueryFilterInfo(out filterInfo);
           if (hr != (int)NativeMethods.HResult.S_OK || filterInfo.pGraph == null)
           {
-            this.LogWarn("WDM analog encoder: failed to get VBI splitter filter info, hr = 0x{0:x}", hr);
+            this.LogWarn("WDM analog encoder: failed to get TS multiplexer filter info, hr = 0x{0:x}", hr);
           }
           else
           {
+            IFilterGraph2 graph = (IFilterGraph2)filterInfo.pGraph;
             try
             {
               if (isScanning && _isVbiEnabled)
               {
-                this.LogDebug("WDM analog encoder: disconnect VBI");
-                hr = filterInfo.pGraph.Disconnect(_pinUpstreamVbiOutput);
-                _isVbiEnabled = hr != (int)NativeMethods.HResult.S_OK;
-                if (_isVbiEnabled)
-                {
-                  this.LogWarn("WDM analog encoder: failed to disconnect VBI splitter, hr = 0x{0:x}", hr);
-                }
+                DisableVbi(graph);
               }
               else
               {
-                this.LogDebug("WDM analog encoder: reconnect VBI");
-                IPin pin = null;
-                try
-                {
-                  pin = DsFindPin.ByDirection(_filterVbiSplitter, PinDirection.Input, 0);
-                  hr = filterInfo.pGraph.ConnectDirect(_pinUpstreamVbiOutput, pin, null);
-                  _isVbiEnabled = hr == (int)NativeMethods.HResult.S_OK;
-                  if (!_isVbiEnabled)
-                  {
-                    this.LogWarn("WDM analog encoder: failed to reconnect VBI splitter, hr = 0x{0:x}", hr);
-                  }
-                }
-                catch (Exception ex)
-                {
-                  this.LogWarn(ex, "WDM analog encoder: failed to reconnect VBI splitter");
-                }
-                finally
-                {
-                  Release.ComObject("WDM analog encoder VBI splitter filter input pin", ref pin);
-                }
+                EnableVbi(graph);
               }
             }
             finally
@@ -1149,15 +1024,20 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
     public void PerformUnloading(IFilterGraph2 graph)
     {
       this.LogDebug("WDM analog encoder: perform unloading");
+
+      _capture = null;
       if (graph != null)
       {
         graph.RemoveFilter(_filterTsMultiplexer);
         graph.RemoveFilter(_filterVbiSplitter);
+        graph.RemoveFilter(_filterCcDecoder);
+        graph.RemoveFilter(_filterWstCodec);
       }
 
       Release.ComObject("WDM analog encoder TS multiplexer filter", ref _filterTsMultiplexer);
-      Release.ComObject("WDM analog encoder upstream VBI output pin", ref _pinUpstreamVbiOutput);
       Release.ComObject("WDM analog encoder VBI splitter filter", ref _filterVbiSplitter);
+      Release.ComObject("WDM analog encoder CC decoder filter", ref _filterCcDecoder);
+      Release.ComObject("WDM analog encoder WST codec filter", ref _filterWstCodec);
       _isVbiEnabled = false;
 
       if (_filterEncoderAudio != null && _filterEncoderAudio != _filterEncoderVideo)

@@ -127,6 +127,7 @@
     <Compile Include="Implementations\DirectShow\Bda\TunerBdaAuxiliaryInput.cs" />
     <Compile Include="Implementations\DirectShow\Bda\TunerDetectorBda.cs" />
     <Compile Include="Implementations\DirectShow\TunerDirectShowMpeg2TsBase.cs" />
+    <Compile Include="Implementations\DirectShow\Wdm\Analog\Component\BaseComponent.cs" />
     <Compile Include="Implementations\Dri\ChannelScannerDriCeton.cs" />
     <Compile Include="Implementations\Dri\ChannelScannerDriSiliconDust.cs" />
     <Compile Include="Implementations\Dri\SubChannelDriOutOfBandScan.cs" />

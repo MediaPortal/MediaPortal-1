@@ -45,7 +45,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
     /// You can use <see cref="IsThisComObjectInstalled">IsThisComObjectInstalled</see> to check if the CLSID is valid before calling this method.
     /// </remarks>
     /// <param name="graph">The graph.</param>
-    /// <param name="clsid">The class ID (CLSID) for the filter class. The class must expose the IBaseFilter interface.</param>
+    /// <param name="clsid">The filter's class ID (CLSID). The class must expose the IBaseFilter interface.</param>
     /// <param name="name">The name or label to use for the filter.</param>
     /// <returns>the instance of the filter if the method successfully created it, otherwise <c>null</c></returns>
     public static IBaseFilter AddFilterFromRegisteredClsid(IFilterGraph2 graph, Guid clsid, string name)
@@ -73,7 +73,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
     /// </summary>
     /// <param name="graph">The graph.</param>
     /// <param name="fileName">The name of the file containing the filter implementation.</param>
-    /// <param name="clsid">The class ID (CLSID) for the filter class. The class must expose the IBaseFilter interface.</param>
+    /// <param name="clsid">The filter's class ID (CLSID). The class must expose the IBaseFilter interface.</param>
     /// <param name="filterName">The name or label to use for the filter.</param>
     /// <returns>the instance of the filter if the method successfully created it, otherwise <c>null</c></returns>
     public static IBaseFilter AddFilterFromFile(IFilterGraph2 graph, string fileName, Guid clsid, string filterName)
@@ -99,7 +99,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
     /// Add a filter to a DirectShow graph using its corresponding <see cref="DsDevice"/> (<see cref="IMoniker"/> wrapper).
     /// </summary>
     /// <param name="graph">The graph.</param>
-    /// <param name="device">The device.</param>
+    /// <param name="device">The device instance associated with the filter.</param>
     /// <param name="name">The name or label to use for the filter.</param>
     /// <returns>the instance of the filter if the method successfully created it, otherwise <c>null</c></returns>
     public static IBaseFilter AddFilterFromDevice(IFilterGraph2 graph, DsDevice device, string name = null)
@@ -121,6 +121,47 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
         throw;
       }
       return filter;
+    }
+
+    public delegate bool DeviceSelectorDelegate(DsDevice device);
+
+    /// <summary>
+    /// Add a filter to a DirectShow graph using it's category identifier and name.
+    /// </summary>
+    /// <param name="graph">The graph.</param>
+    /// <param name="categoryId">The identifier of the category which the filter is associated with.</param>
+    /// <param name="deviceCheckDelegate">A delegate for selecting the target device/filter.</param>
+    /// <returns>the instance of the filter if the method successfully created it, otherwise <c>null</c></returns>
+    public static IBaseFilter AddFilterFromCategory(IFilterGraph2 graph, Guid categoryId, DeviceSelectorDelegate deviceSelectorDelegate)
+    {
+      DsDevice[] devices = DsDevice.GetDevicesOfCat(categoryId);
+      if (devices == null)
+      {
+        return null;
+      }
+      try
+      {
+        for (int i = 0; i < devices.Length; i++)
+        {
+          DsDevice device = devices[i];
+          if (device == null || device.Name == null)
+          {
+            continue;
+          }
+          if (deviceSelectorDelegate(device))
+          {
+            return AddFilterFromDevice(graph, device);
+          }
+        }
+      }
+      finally
+      {
+        foreach (DsDevice d in devices)
+        {
+          d.Dispose();
+        }
+      }
+      return null;
     }
 
     /// <summary>
@@ -539,11 +580,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
         int pinCount;
         while (pinEnum.Next(1, pins, out pinCount) == (int)HResult.S_OK && pinCount == 1)
         {
-          IPin p = pins[0];
+          IPin pinToCheck = pins[0];
           try
           {
             PinDirection d;
-            hr = p.QueryDirection(out d);
+            hr = pinToCheck.QueryDirection(out d);
             TvExceptionDirectShowError.Throw(hr, "Failed to find medium on hardware filter, can't get pin direction.");
 
             if (d != direction)
@@ -551,14 +592,14 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
               continue;
             }
 
-            ICollection<RegPinMedium> tempMediums = GetPinMediums(p);
+            ICollection<RegPinMedium> tempMediums = GetPinMediums(pinToCheck);
             foreach (RegPinMedium m1 in mediums)
             {
               foreach (RegPinMedium m2 in tempMediums)
               {
                 if (m1.clsMedium == m2.clsMedium && m1.dw1 == m2.dw1 && m1.dw2 == m2.dw2)
                 {
-                  pin = p;
+                  pin = pinToCheck;
                   return true;
                 }
               }
@@ -568,7 +609,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
           {
             if (pin == null)
             {
-              Release.ComObject("filter graph tools find-medium-on-hardware-filter pin", ref p);
+              Release.ComObject("filter graph tools find-medium-on-hardware-filter pin", ref pinToCheck);
             }
           }
         }

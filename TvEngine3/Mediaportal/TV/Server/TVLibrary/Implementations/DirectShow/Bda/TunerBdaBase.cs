@@ -421,34 +421,23 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
     private void AddAndConnectTransportInformationFilterIntoGraph()
     {
       this.LogDebug("BDA base: add BDA MPEG 2 transport information filter");
-      DsDevice[] devices = DsDevice.GetDevicesOfCat(FilterCategory.BDATransportInformationRenderersCategory);
       try
       {
-        for (int i = 0; i < devices.Length; i++)
+        _filterTransportInformation = FilterGraphTools.AddFilterFromCategory(Graph, FilterCategory.BDATransportInformationRenderersCategory, delegate(DsDevice device)
         {
-          DsDevice device = devices[i];
-          if (device.Name == null || !device.Name.Equals("BDA MPEG2 Transport Information Filter"))
-          {
-            continue;
-          }
-          _filterTransportInformation = FilterGraphTools.AddFilterFromDevice(Graph, device);
-          FilterGraphTools.ConnectFilters(Graph, _filterMpeg2Demultiplexer, 0, _filterTransportInformation, 0);
+          return device.Name == "BDA MPEG2 Transport Information Filter";
+        });
+        if (_filterTransportInformation == null)
+        {
+          this.LogWarn("BDA base: transport information filter not found");
           return;
         }
+        FilterGraphTools.ConnectFilters(Graph, _filterMpeg2Demultiplexer, 0, _filterTransportInformation, 0);
       }
       catch (Exception ex)
       {
         this.LogWarn(ex, "BDA base: failed to add and connect BDA MPEG 2 transport information filter");
-        return;
       }
-      finally
-      {
-        foreach (DsDevice d in devices)
-        {
-          d.Dispose();
-        }
-      }
-      this.LogWarn("BDA base: transport information filter not found");
     }
 
     /// <summary>
