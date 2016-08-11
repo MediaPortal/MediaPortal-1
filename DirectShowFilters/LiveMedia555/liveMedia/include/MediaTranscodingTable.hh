@@ -14,7 +14,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2015 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2016 Live Networks, Inc.  All rights reserved.
 // A class that implements a database that can be accessed to create
 // "FramedFilter" (subclass) objects that transcode one codec into another.
 // The implementation of this class just returns NULL for each codec lookup;
@@ -44,6 +44,15 @@ public:
     //  as the input to the new "FramedFilter" (subclass) object.)
     outputCodecName = NULL;
     return NULL;
+  }
+
+  virtual Boolean weWillTranscode(char const* /*mediumName*/, char const* /*codecName*/) {
+    // Default implementation: Return False.
+    // You would reimplement this in a subclass - returning True for each
+    // <mediumName>/<codecName> for which you'll do transcoding.
+    // Note: Unlike "lookupTranscoder()", this function does not actually create any 'transcoding'
+    // filter objects.  (It may be called before "MediaSubsession::initiate()".)
+    return False;
   }
 
 protected: // we are to be subclassed only

@@ -14,7 +14,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2015 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2016 Live Networks, Inc.  All rights reserved.
 // RTP sink for MPEG-4 Elementary Stream video (RFC 3016)
 // Implementation
 
@@ -65,8 +65,8 @@ void MPEG4ESVideoRTPSink
   if (fragmentationOffset == 0) {
     // Begin by inspecting the 4-byte code at the start of the frame:
     if (numBytesInFrame < 4) return; // shouldn't happen
-    unsigned startCode = (frameStart[0]<<24) | (frameStart[1]<<16)
-      | (frameStart[2]<<8) | frameStart[3];
+    u_int32_t startCode
+      = (frameStart[0]<<24) | (frameStart[1]<<16) | (frameStart[2]<<8) | frameStart[3];
 
     fVOPIsPresent = startCode == VOP_START_CODE;
   }
