@@ -1956,7 +1956,7 @@ CAfhsSegmentFragmentCollection *CMPUrlSourceSplitter_Protocol_Afhs::GetSegmentsF
           fragmentTimestamp = max(fragmentTimestamp, fragmentEntry->GetFirstFragmentTimestamp());
           
           unsigned int indexInFragmentEntry = (unsigned int)((fragmentTimestamp - fragmentEntry->GetFirstFragmentTimestamp()) / (uint64_t)fragmentEntry->GetFragmentDuration());
-          unsigned int indexCount = (nextFragmentEntry == NULL) ? 1 : (nextFragmentEntry->GetCumulatedFragmentCount() - fragmentEntry->GetCumulatedFragmentCount());
+          unsigned int indexCount = (nextFragmentEntry == NULL) ? segmentRunEntryTable->GetFragmentsCount() : (nextFragmentEntry->GetCumulatedFragmentCount() - fragmentEntry->GetCumulatedFragmentCount());
 
           fragmentTimestamp = fragmentEntry->GetFirstFragmentTimestamp() + indexInFragmentEntry * fragmentEntry->GetFragmentDuration();
 
